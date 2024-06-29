@@ -43,7 +43,7 @@
 			},
 			{
 				"name": "oad_type",
-				"comment": "Device type ID, references the oauthauth_types table",
+				"comment": "Device type ID, references the oathauth_types table",
 				"type": "integer",
 				"options": { "notnull": true }
 			},

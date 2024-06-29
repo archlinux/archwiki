@@ -11,8 +11,8 @@
 	 *
 	 * @class
 	 * @extends OO.ui.SearchWidget
-	 * @mixins OO.ui.mixin.RequestManager
-	 * @mixins mw.widgets.TitleWidget
+	 * @mixes OO.ui.mixin.RequestManager
+	 * @mixes mw.widgets.TitleWidget
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
@@ -21,7 +21,7 @@
 		config = config || {};
 
 		// Parent constructor
-		mw.widgets.TitleSearchWidget.parent.call( this, config );
+		mw.widgets.TitleSearchWidget.super.call( this, config );
 
 		// Mixin constructors
 		mw.widgets.TitleWidget.call( this, config );
@@ -55,14 +55,14 @@
 	/* Methods */
 
 	/**
-	 * @inheritdoc mw.widgets.TitleWidget
+	 * @inheritdoc
 	 */
 	mw.widgets.TitleSearchWidget.prototype.getQueryValue = function () {
 		return this.getQuery().getValue();
 	};
 
 	/**
-	 * Handle choose events from the result widget
+	 * Handle choose events from the result widget.
 	 *
 	 * @param {OO.ui.OptionWidget} item Chosen item
 	 */
@@ -83,25 +83,25 @@
 				return;
 			}
 			// Parent method
-			mw.widgets.TitleSearchWidget.parent.prototype.onQueryChange.call( widget );
+			mw.widgets.TitleSearchWidget.super.prototype.onQueryChange.call( widget );
 			widget.results.addItems( widget.getOptionsFromData( data ) );
 		} );
 	};
 
 	/**
-	 * @inheritdoc OO.ui.mixin.RequestManager
+	 * @inheritdoc
 	 */
 	mw.widgets.TitleSearchWidget.prototype.getRequestQuery = function () {
 		return this.getQueryValue();
 	};
 	/**
-	 * @inheritdoc OO.ui.mixin.RequestManager
+	 * @inheritdoc
 	 */
 	mw.widgets.TitleSearchWidget.prototype.getRequest = function () {
 		return this.getSuggestionsPromise();
 	};
 	/**
-	 * @inheritdoc OO.ui.mixin.RequestManager
+	 * @inheritdoc
 	 */
 	mw.widgets.TitleSearchWidget.prototype.getRequestCacheDataFromResponse = function ( response ) {
 		return response.query || {};

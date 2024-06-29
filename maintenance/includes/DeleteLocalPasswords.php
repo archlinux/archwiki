@@ -22,7 +22,8 @@
  */
 
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
 require_once __DIR__ . '/../Maintenance.php';
 
@@ -106,10 +107,10 @@ ERROR
 	/**
 	 * Get the primary DB handle for the current user batch. This is provided for the benefit
 	 * of authentication extensions which subclass this and work with wiki farms.
-	 * @return IMaintainableDatabase
+	 * @return IDatabase
 	 */
 	protected function getUserDB() {
-		return $this->getDB( DB_PRIMARY );
+		return $this->getPrimaryDB();
 	}
 
 	protected function processUsers( array $userBatch, IDatabase $dbw ) {
@@ -117,32 +118,32 @@ ERROR
 			return;
 		}
 		if ( $this->getOption( 'delete' ) ) {
-			$dbw->update( 'user',
-				[ 'user_password' => PasswordFactory::newInvalidPassword()->toString() ],
-				[ 'user_name' => $userBatch ],
-				__METHOD__
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( 'user' )
+				->set( [ 'user_password' => PasswordFactory::newInvalidPassword()->toString() ] )
+				->where( [ 'user_name' => $userBatch ] )
+				->caller( __METHOD__ )->execute();
 		} elseif ( $this->getOption( 'prefix' ) ) {
-			$dbw->update( 'user',
-				[ 'user_password = ' . $dbw->buildConcat( [ $dbw->addQuotes( ':null:' ),
-						'user_password' ] ) ],
-				[
+			$dbw->newUpdateQueryBuilder()
+				->update( 'user' )
+				->set( [ 'user_password = ' . $dbw->buildConcat( [ $dbw->addQuotes( ':null:' ),
+						'user_password' ] ) ] )
+				->where( [
 					'NOT (user_password ' . $dbw->buildLike( ':null:', $dbw->anyString() ) . ')',
-					"user_password != " . $dbw->addQuotes( PasswordFactory::newInvalidPassword()->toString() ),
+					$dbw->expr( 'user_password', '!=', PasswordFactory::newInvalidPassword()->toString() ),
 					'user_password IS NOT NULL',
 					'user_name' => $userBatch,
-				],
-				__METHOD__
-			);
+				] )
+				->caller( __METHOD__ )->execute();
 		} elseif ( $this->getOption( 'unprefix' ) ) {
-			$dbw->update( 'user',
-				[ 'user_password = ' . $dbw->buildSubString( 'user_password', strlen( ':null:' ) + 1 ) ],
-				[
-					'user_password ' . $dbw->buildLike( ':null:', $dbw->anyString() ),
+			$dbw->newUpdateQueryBuilder()
+				->update( 'user' )
+				->set( [ 'user_password = ' . $dbw->buildSubString( 'user_password', strlen( ':null:' ) + 1 ) ] )
+				->where( [
+					$dbw->expr( 'user_password', IExpression::LIKE, new LikeValue( ':null:', $dbw->anyString() ) ),
 					'user_name' => $userBatch,
-				],
-				__METHOD__
-			);
+				] )
+				->caller( __METHOD__ )->execute();
 		}
 		$this->total += $dbw->affectedRows();
 		$this->waitForReplication();
@@ -165,13 +166,13 @@ ERROR
 		}
 
 		$lastUsername = '';
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		do {
 			$this->output( "\t ... querying from '$lastUsername'\n" );
 			$users = $dbw->newSelectQueryBuilder()
 				->select( 'user_name' )
 				->from( 'user' )
-				->where( [ 'user_name > ' . $dbw->addQuotes( $lastUsername ) ] )
+				->where( $dbw->expr( 'user_name', '>', $lastUsername ) )
 				->orderBy( 'user_name ASC' )
 				->limit( $this->getBatchSize() )
 				->caller( __METHOD__ )->fetchFieldValues();

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Fahimrazick",
 			"Jayarathina",
 			"Shanmugamp7",
 			"தமிழ்க்குரிசில்",
-			"மதனாஹரன்",
-			"Fahimrazick"
+			"மதனாஹரன்"
 		]
 	},
 	"fancycaptcha-badlogin": "தானியங்கு கடவுச் சொல் உடைத்தலிலிருந்து பாதுகாக்க உதவுவதற்காகத் தயவு செய்து கீழேயுள்ள பெட்டியில் தோன்றும் சொற்களை உள்ளிடவும் ([[Special:Captcha/help|கூடிய தகவல்]]):",

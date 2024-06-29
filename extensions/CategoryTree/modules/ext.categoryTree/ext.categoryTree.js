@@ -39,7 +39,7 @@
 
 		$link.attr( {
 			title: mw.msg( 'categorytree-collapse' ),
-			'data-ct-state': 'expanded'
+			'aria-expanded': 'true'
 		} );
 
 		if ( !$link.data( 'ct-loaded' ) ) {
@@ -60,7 +60,7 @@
 
 		$link.attr( {
 			title: mw.msg( 'categorytree-expand' ),
-			'data-ct-state': 'collapsed'
+			'aria-expanded': 'false'
 		} );
 	}
 
@@ -68,10 +68,13 @@
 	 * Handles clicks on the expand buttons, and calls the appropriate function
 	 *
 	 * @this {Element} CategoryTreeToggle
+	 * @param {jQuery.Event} e
 	 */
-	function handleNode() {
+	function handleNode( e ) {
+		e.preventDefault();
+
 		var $link = $( this );
-		if ( $link.attr( 'data-ct-state' ) === 'collapsed' ) {
+		if ( $link.attr( 'aria-expanded' ) === 'false' ) {
 			expandNode( $link );
 		} else {
 			collapseNode( $link );
@@ -86,12 +89,16 @@
 	function attachHandler( $content ) {
 		$content.find( '.CategoryTreeToggle' )
 			.on( 'click', handleNode )
-			.attr( 'title', function () {
-				return mw.msg(
-					$( this ).attr( 'data-ct-state' ) === 'collapsed' ?
-						'categorytree-expand' :
-						'categorytree-collapse'
-				);
+			.attr( {
+				href: '#',
+				role: 'button',
+				title: function () {
+					return mw.msg(
+						$( this ).attr( 'aria-expanded' ) === 'false' ?
+							'categorytree-expand' :
+							'categorytree-collapse'
+					);
+				}
 			} )
 			.addClass( 'CategoryTreeToggleHandlerAttached' );
 	}

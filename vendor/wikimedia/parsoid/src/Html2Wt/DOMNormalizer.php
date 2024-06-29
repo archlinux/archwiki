@@ -59,9 +59,6 @@ class DOMNormalizer {
 	/** @var SerializerState */
 	private $state;
 
-	/**
-	 * @param SerializerState $state
-	 */
 	public function __construct( SerializerState $state ) {
 		if ( !self::$specializedAttribHandlers ) {
 			self::$specializedAttribHandlers = [
@@ -76,11 +73,6 @@ class DOMNormalizer {
 		$this->inInsertedContent = false;
 	}
 
-	/**
-	 * @param Node $a
-	 * @param Node $b
-	 * @return bool
-	 */
 	private static function similar( Node $a, Node $b ): bool {
 		if ( DOMCompat::nodeName( $a ) === 'a' ) {
 			// FIXME: Similar to 1ce6a98, DiffDOMUtils::nextNonDeletedSibling is being
@@ -130,19 +122,10 @@ class DOMNormalizer {
 			&& self::mergable( DiffDOMUtils::firstNonDeletedChild( $a ), $b );
 	}
 
-	/**
-	 * @param Node $node
-	 * @param bool $rtl
-	 * @return Node|null
-	 */
 	private static function firstChild( Node $node, bool $rtl ): ?Node {
 		return $rtl ? DiffDOMUtils::lastNonDeletedChild( $node ) : DiffDOMUtils::firstNonDeletedChild( $node );
 	}
 
-	/**
-	 * @param Node $node
-	 * @return bool
-	 */
 	private function isInsertedContent( Node $node ): bool {
 		while ( true ) {
 			if ( DiffUtils::hasInsertedDiffMark( $node ) ) {
@@ -155,11 +138,6 @@ class DOMNormalizer {
 		}
 	}
 
-	/**
-	 * @param Node $a
-	 * @param Node $b
-	 * @return bool
-	 */
 	private function rewriteablePair( Node $a, Node $b ): bool {
 		if ( isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $a )] ) ) {
 			// For <i>/<b> pair, we need not check whether the node being transformed
@@ -185,11 +163,6 @@ class DOMNormalizer {
 		return false;
 	}
 
-	/**
-	 * @param Node $node
-	 * @param string $mark
-	 * @param bool $dontRecurse
-	 */
 	public function addDiffMarks( Node $node, string $mark, bool $dontRecurse = false ): void {
 		if ( !$this->state->selserMode || DiffUtils::hasDiffMark( $node, $mark ) ) {
 			return;
@@ -295,10 +268,6 @@ class DOMNormalizer {
 		return $b;
 	}
 
-	/**
-	 * @param Element $node
-	 * @param bool $rtl
-	 */
 	public function hoistLinks( Element $node, bool $rtl ): void {
 		$sibling = self::firstChild( $node, $rtl );
 		$hasHoistableContent = false;
@@ -345,10 +314,6 @@ class DOMNormalizer {
 		}
 	}
 
-	/**
-	 * @param Element $node
-	 * @return Node|null
-	 */
 	public function stripIfEmpty( Element $node ): ?Node {
 		$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 		$dp = DOMDataUtils::getDataParsoid( $node );
@@ -371,9 +336,6 @@ class DOMNormalizer {
 		}
 	}
 
-	/**
-	 * @param Node $node
-	 */
 	public function moveTrailingSpacesOut( Node $node ): void {
 		$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 		$last = DiffDOMUtils::lastNonDeletedChild( $node );
@@ -399,9 +361,6 @@ class DOMNormalizer {
 		}
 	}
 
-	/**
-	 * @param Element $node
-	 */
 	public function stripBRs( Element $node ): void {
 		$child = $node->firstChild;
 		while ( $child ) {
@@ -490,7 +449,7 @@ class DOMNormalizer {
 		if ( !$node->hasAttribute( 'href' ) ) {
 			return $node;
 		}
-		$nodeHref = $node->getAttribute( 'href' );
+		$nodeHref = DOMCompat::getAttribute( $node, 'href' ) ?? '';
 
 		// If there are no tags to swap, we are done
 		if ( $firstChild instanceof Element &&
@@ -543,7 +502,8 @@ class DOMNormalizer {
 	 */
 	public function normalizeNode( Node $node ): ?Node {
 		$dp = null;
-		if ( DOMCompat::nodeName( $node ) === 'th' || DOMCompat::nodeName( $node ) === 'td' ) {
+		$nodeName = DOMCompat::nodeName( $node );
+		if ( $nodeName === 'th' || $nodeName === 'td' ) {
 			'@phan-var Element $node'; // @var Element $node
 			$dp = DOMDataUtils::getDataParsoid( $node );
 			// Table cells (td/th) previously used the stx_v flag for single-row syntax.
@@ -594,11 +554,11 @@ class DOMNormalizer {
 			return $this->stripIfEmpty( $node );
 
 			// Quote tags
-		} elseif ( isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $node )] ) ) {
+		} elseif ( isset( Consts::$WTQuoteTags[$nodeName] ) ) {
 			return $this->stripIfEmpty( $node );
 
 			// Anchors
-		} elseif ( DOMCompat::nodeName( $node ) === 'a' ) {
+		} elseif ( $nodeName === 'a' ) {
 			'@phan-var Element $node'; // @var Element $node
 			$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 			// We could have checked for !mw:ExtLink but in
@@ -615,7 +575,7 @@ class DOMNormalizer {
 			return $this->moveFormatTagOutsideATag( $node );
 
 			// Table cells
-		} elseif ( DOMCompat::nodeName( $node ) === 'td' ) {
+		} elseif ( $nodeName === 'td' ) {
 			'@phan-var Element $node'; // @var Element $node
 			$dp = DOMDataUtils::getDataParsoid( $node );
 			// * HTML <td>s won't have escapable prefixes
@@ -639,13 +599,13 @@ class DOMNormalizer {
 			return $node;
 
 			// Font tags without any attributes
-		} elseif ( DOMCompat::nodeName( $node ) === 'font' && DOMDataUtils::noAttrs( $node ) ) {
+		} elseif ( $nodeName === 'font' && DOMDataUtils::noAttrs( $node ) ) {
 			$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 			DOMUtils::migrateChildren( $node, $node->parentNode, $node );
 			$node->parentNode->removeChild( $node );
 
 			return $next;
-		} elseif ( $node instanceof Element && DOMCompat::nodeName( $node ) === 'p'
+		} elseif ( $node instanceof Element && $nodeName === 'p'
 			&& !WTUtils::isLiteralHTMLNode( $node ) ) {
 			$next = DiffDOMUtils::nextNonSepSibling( $node );
 			// Normalization of <p></p>, <p><br/></p>, <p><meta/></p> and the like to avoid
@@ -702,11 +662,6 @@ class DOMNormalizer {
 		return $node;
 	}
 
-	/**
-	 * @param Node $a
-	 * @param Node $b
-	 * @return Node
-	 */
 	public function normalizeSiblingPair( Node $a, Node $b ): Node {
 		if ( !$this->rewriteablePair( $a, $b ) ) {
 			return $b;
@@ -751,10 +706,6 @@ class DOMNormalizer {
 		return $b;
 	}
 
-	/**
-	 * @param Node $node
-	 * @param bool $recurse
-	 */
 	public function processSubtree( Node $node, bool $recurse ): void {
 		// Process the first child outside the loop.
 		$a = DiffDOMUtils::firstNonDeletedChild( $node );
@@ -784,11 +735,6 @@ class DOMNormalizer {
 		}
 	}
 
-	/**
-	 * @param Node $node
-	 * @param bool $recurse
-	 * @return Node|null
-	 */
 	public function processNode( Node $node, bool $recurse ): ?Node {
 		// Normalize 'node' and the subtree rooted at 'node'
 		// recurse = true  => recurse and normalize subtree

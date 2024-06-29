@@ -20,6 +20,7 @@
  * @file
  */
 
+use MediaWiki\Cache\GenderCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Linker\LinkTarget;
@@ -27,6 +28,7 @@ use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserConfig;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -44,6 +46,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 	private NamespaceInfo $namespaceInfo;
 	private GenderCache $genderCache;
 	private CommentFormatter $commentFormatter;
+	private TempUserConfig $tempUserConfig;
 
 	/**
 	 * @param ApiQuery $query
@@ -54,6 +57,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param GenderCache $genderCache
 	 * @param CommentFormatter $commentFormatter
+	 * @param TempUserConfig $tempUserConfig
 	 */
 	public function __construct(
 		ApiQuery $query,
@@ -63,7 +67,8 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		Language $contentLanguage,
 		NamespaceInfo $namespaceInfo,
 		GenderCache $genderCache,
-		CommentFormatter $commentFormatter
+		CommentFormatter $commentFormatter,
+		TempUserConfig $tempUserConfig
 	) {
 		parent::__construct( $query, $moduleName, 'wl' );
 		$this->commentStore = $commentStore;
@@ -72,6 +77,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		$this->namespaceInfo = $namespaceInfo;
 		$this->genderCache = $genderCache;
 		$this->commentFormatter = $commentFormatter;
+		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	public function execute() {
@@ -183,13 +189,9 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		}
 
 		if ( $params['type'] !== null ) {
-			try {
-				$rcTypes = RecentChange::parseToRCType( $params['type'] );
-				if ( $rcTypes ) {
-					$options['rcTypes'] = $rcTypes;
-				}
-			} catch ( Exception $e ) {
-				ApiBase::dieDebug( __METHOD__, $e->getMessage() );
+			$rcTypes = RecentChange::parseToRCType( $params['type'] );
+			if ( $rcTypes ) {
+				$options['rcTypes'] = $rcTypes;
 			}
 		}
 
@@ -346,7 +348,6 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 			}
 		}
 
-		/* Add user data and 'anon' flag, if user is anonymous. */
 		if ( $this->fld_user || $this->fld_userid ) {
 			if ( $recentChangeInfo['rc_deleted'] & RevisionRecord::DELETED_USER ) {
 				$vals['userhidden'] = true;
@@ -365,9 +366,17 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 				if ( $this->fld_user ) {
 					$vals['user'] = $recentChangeInfo['rc_user_text'];
+					$vals['temp'] = $this->tempUserConfig->isTempName(
+						$recentChangeInfo['rc_user_text']
+					);
 				}
 
+				// Whether the user is a logged-out user (IP user). This does
+				// not include temporary users, though they are grouped with IP
+				// users for FILTER_NOT_ANON and FILTER_ANON, to match the
+				// recent changes filters (T343322).
 				$vals['anon'] = !$recentChangeInfo['rc_user'];
+
 			}
 		}
 
@@ -485,11 +494,11 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 			],
 			'user' => [
 				ParamValidator::PARAM_TYPE => 'user',
-				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'id', 'interwiki' ],
 			],
 			'excludeuser' => [
 				ParamValidator::PARAM_TYPE => 'user',
-				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'id', 'interwiki' ],
 			],
 			'dir' => [
 				ParamValidator::PARAM_DEFAULT => 'older',

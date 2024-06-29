@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWLatexInspector class.
  *
- * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license MIT
  */
 
@@ -61,19 +61,19 @@ ve.ui.MWLatexInspector.prototype.initialize = function () {
 	this.idInput = new OO.ui.TextInputWidget();
 	this.qidInput = new mw.widgets.MathWbEntitySelector();
 
-	var inputField = new OO.ui.FieldLayout( this.input, {
+	const inputField = new OO.ui.FieldLayout( this.input, {
 		align: 'top',
 		label: ve.msg( 'math-visualeditor-mwlatexdialog-card-formula' )
 	} );
-	var displayField = new OO.ui.FieldLayout( this.displaySelect, {
+	const displayField = new OO.ui.FieldLayout( this.displaySelect, {
 		align: 'top',
 		label: ve.msg( 'math-visualeditor-mwlatexinspector-display' )
 	} );
-	var idField = new OO.ui.FieldLayout( this.idInput, {
+	const idField = new OO.ui.FieldLayout( this.idInput, {
 		align: 'top',
 		label: ve.msg( 'math-visualeditor-mwlatexinspector-id' )
 	} );
-	var qidField = new OO.ui.FieldLayout( this.qidInput, {
+	const qidField = new OO.ui.FieldLayout( this.qidInput, {
 		align: 'top',
 		label: ve.msg( 'math-visualeditor-mwlatexinspector-qid' )
 	} );
@@ -95,8 +95,8 @@ ve.ui.MWLatexInspector.prototype.initialize = function () {
 ve.ui.MWLatexInspector.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWLatexInspector.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
-			var display = this.selectedNode.getAttribute( 'mw' ).attrs.display || 'default';
-			var attributes = this.selectedNode && this.selectedNode.getAttribute( 'mw' ).attrs,
+			const display = this.selectedNode.getAttribute( 'mw' ).attrs.display || 'default';
+			const attributes = this.selectedNode && this.selectedNode.getAttribute( 'mw' ).attrs,
 				id = attributes && attributes.id || '',
 				qid = attributes && attributes.qid || '',
 				isReadOnly = this.isReadOnly();
@@ -133,9 +133,9 @@ ve.ui.MWLatexInspector.prototype.updateMwData = function ( mwData ) {
 	// Parent method
 	ve.ui.MWLatexInspector.super.prototype.updateMwData.call( this, mwData );
 
-	var display = this.displaySelect.findSelectedItem().getData();
-	var id = this.idInput.getValue();
-	var qid = this.qidInput.getValue();
+	const display = this.displaySelect.findSelectedItem().getData();
+	const id = this.idInput.getValue();
+	const qid = this.qidInput.getValue();
 
 	mwData.attrs.display = display !== 'default' ? display : undefined;
 	mwData.attrs.id = id || undefined;

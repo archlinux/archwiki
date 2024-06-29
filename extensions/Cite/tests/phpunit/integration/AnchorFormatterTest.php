@@ -3,76 +3,48 @@
 namespace Cite\Tests\Integration;
 
 use Cite\AnchorFormatter;
-use Cite\ReferenceMessageLocalizer;
-use Message;
+use MediaWiki\Parser\Sanitizer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @coversDefaultClass \Cite\AnchorFormatter
- *
+ * @covers \Cite\AnchorFormatter
  * @license GPL-2.0-or-later
  */
 class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		global $wgFragmentMode;
-		$wgFragmentMode = [ 'html5' ];
+		$this->overrideConfigValue( 'FragmentMode', [ 'html5' ] );
 	}
 
-	/**
-	 * @covers ::refKey
-	 */
 	public function testRefKey() {
-		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
-		$mockMessageLocalizer->method( 'msg' )->willReturnCallback(
-			function ( ...$args ) {
-				$msg = $this->createMock( Message::class );
-				$msg->method( 'plain' )->willReturn( '(' . implode( '|', $args ) . ')' );
-				return $msg;
-			}
-		);
-		$formatter = new AnchorFormatter( $mockMessageLocalizer );
+		$formatter = new AnchorFormatter();
 
 		$this->assertSame(
-			'(cite_reference_link_prefix)key(cite_reference_link_suffix)',
-			$formatter->refKey( 'key', null ) );
+			'cite_ref-key',
+			$formatter->backLink( 'key', null ) );
 		$this->assertSame(
-			'(cite_reference_link_prefix)' .
-				'(cite_reference_link_key_with_num&#124;key&#124;2)(cite_reference_link_suffix)',
-			$formatter->refKey( 'key', '2' ) );
+			'cite_ref-key_2',
+			$formatter->backLink( 'key', '2' ) );
 	}
 
-	/**
-	 * @covers ::getReferencesKey
-	 */
 	public function testGetReferencesKey() {
-		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
-		$mockMessageLocalizer->method( 'msg' )->willReturnCallback(
-			function ( ...$args ) {
-				$msg = $this->createMock( Message::class );
-				$msg->method( 'plain' )->willReturn( '(' . implode( '|', $args ) . ')' );
-				return $msg;
-			}
-		);
-		$formatter = new AnchorFormatter( $mockMessageLocalizer );
+		$formatter = new AnchorFormatter();
 
 		$this->assertSame(
-			'(cite_references_link_prefix)key(cite_references_link_suffix)',
-			$formatter->getReferencesKey( 'key' ) );
+			'cite_note-key',
+			$formatter->jumpLink( 'key' ) );
 	}
 
 	/**
-	 * @covers ::normalizeKey
-	 * @covers ::__construct
 	 * @dataProvider provideKeyNormalizations
 	 */
 	public function testNormalizeKey( $key, $expected ) {
 		/** @var AnchorFormatter $formatter */
-		$formatter = TestingAccessWrapper::newFromObject( new AnchorFormatter(
-			$this->createMock( ReferenceMessageLocalizer::class ) ) );
-		$this->assertSame( $expected, $formatter->normalizeKey( $key ) );
+		$formatter = TestingAccessWrapper::newFromObject( new AnchorFormatter() );
+		$normalized = $formatter->normalizeKey( $key );
+		$encoded = Sanitizer::safeEncodeAttribute( Sanitizer::escapeIdForLink( $normalized ) );
+		$this->assertSame( $expected, $encoded );
 	}
 
 	public static function provideKeyNormalizations() {

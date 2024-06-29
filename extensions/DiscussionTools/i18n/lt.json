@@ -167,7 +167,6 @@
 	"echo-category-title-dt-subscription-archiving": "Aptarimo puslapio {{PLURAL:$1|archyvavimas}}",
 	"echo-pref-tooltip-dt-subscription": "Pranešti man, kai kas nors paskelbia naują komentarą temoje, kurią {{GENDERprenumeruoju}}.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Pranešti man, kai tema, kurią {{GENDER:|prenumeruoju}}, yra archyvuojama arba pašalinta iš puslapio, arba jei pranešimų apie naujus komentarus, paskelbtus toje temoje, nepavyksta išsiųsti dėl kitų priežasčių.",
-	"minerva-talk-full-page": "Skaityti kaip viki puslapį",
 	"tag-discussiontools-added-comment-description": "Šiame keitime buvo pridėtas aptarimo puslapio komentaras",
 	"tag-discussiontools-edit": "Redaguotas komentaras",
 	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nauja tema]",

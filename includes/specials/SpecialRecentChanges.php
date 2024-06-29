@@ -28,15 +28,17 @@ use ChangesListBooleanFilter;
 use ChangesListStringOptionsFilterGroup;
 use ChangeTags;
 use HtmlArmor;
-use IContextSource;
 use MediaWiki\ChangeTags\ChangeTagsStore;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\SpecialPage\ChangesListSpecialPage;
 use MediaWiki\Title\TitleValue;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\TempUser\TempUserConfig;
+use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\Utils\MWTimestamp;
 use MessageCache;
 use OOUI\ButtonWidget;
@@ -68,16 +70,27 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	 * @param WatchedItemStoreInterface|null $watchedItemStore
 	 * @param MessageCache|null $messageCache
 	 * @param UserOptionsLookup|null $userOptionsLookup
+	 * @param ChangeTagsStore|null $changeTagsStore
+	 * @param UserIdentityUtils|null $userIdentityUtils
+	 * @param TempUserConfig|null $tempUserConfig
 	 */
 	public function __construct(
 		WatchedItemStoreInterface $watchedItemStore = null,
 		MessageCache $messageCache = null,
 		UserOptionsLookup $userOptionsLookup = null,
-		ChangeTagsStore $changeTagsStore = null
+		ChangeTagsStore $changeTagsStore = null,
+		UserIdentityUtils $userIdentityUtils = null,
+		TempUserConfig $tempUserConfig = null
 	) {
-		parent::__construct( 'Recentchanges', '' );
 		// This class is extended and therefor fallback to global state - T265310
 		$services = MediaWikiServices::getInstance();
+
+		parent::__construct(
+			'Recentchanges',
+			'',
+			$userIdentityUtils ?? $services->getUserIdentityUtils(),
+			$tempUserConfig ?? $services->getTempUserConfig()
+		);
 		$this->watchedItemStore = $watchedItemStore ?? $services->getWatchedItemStore();
 		$this->messageCache = $messageCache ?? $services->getMessageCache();
 		$this->userOptionsLookup = $userOptionsLookup ?? $services->getUserOptionsLookup();
@@ -475,7 +488,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			->from( 'recentchanges' )
 			->caller( __METHOD__ )
 			->fetchRow();
-		if ( !$rcInfo ) {
+		if ( !$rcInfo || $rcInfo->min_id === null ) {
 			return false;
 		}
 		$rcSize = $rcInfo->max_id - $rcInfo->min_id;
@@ -486,7 +499,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		$tagCount = $dbr->newSelectQueryBuilder()
 			->table( 'change_tag' )
 			->where( [
-				'ct_rc_id >= ' . $dbr->addQuotes( $rcInfo->min_id ),
+				$dbr->expr( 'ct_rc_id', '>=', $rcInfo->min_id ),
 				'ct_tag_id' => $tagIds
 			] )
 			->caller( __METHOD__ )
@@ -632,36 +645,36 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		$extraOpts = $this->getExtraOptions( $opts );
 		$extraOptsCount = count( $extraOpts );
 		$count = 0;
-		$submit = ' ' . Xml::submitButton( $this->msg( 'recentchanges-submit' )->text() );
+		$submit = ' ' . Html::submitButton( $this->msg( 'recentchanges-submit' )->text() );
 
-		$out = Xml::openElement( 'table', [ 'class' => 'mw-recentchanges-table' ] );
+		$out = Html::openElement( 'table', [ 'class' => 'mw-recentchanges-table' ] );
 		foreach ( $extraOpts as $name => $optionRow ) {
 			# Add submit button to the last row only
 			++$count;
 			$addSubmit = ( $count === $extraOptsCount ) ? $submit : '';
 
-			$out .= Xml::openElement( 'tr', [ 'class' => $name . 'Form' ] );
+			$out .= Html::openElement( 'tr', [ 'class' => $name . 'Form' ] );
 			if ( is_array( $optionRow ) ) {
-				$out .= Xml::tags(
+				$out .= Html::rawElement(
 					'td',
 					[ 'class' => 'mw-label mw-' . $name . '-label' ],
 					$optionRow[0]
 				);
-				$out .= Xml::tags(
+				$out .= Html::rawElement(
 					'td',
 					[ 'class' => 'mw-input' ],
 					$optionRow[1] . $addSubmit
 				);
 			} else {
-				$out .= Xml::tags(
+				$out .= Html::rawElement(
 					'td',
 					[ 'class' => 'mw-input', 'colspan' => 2 ],
 					$optionRow . $addSubmit
 				);
 			}
-			$out .= Xml::closeElement( 'tr' );
+			$out .= Html::closeElement( 'tr' );
 		}
-		$out .= Xml::closeElement( 'table' );
+		$out .= Html::closeElement( 'table' );
 
 		$unconsumed = $opts->getUnconsumedValues();
 		foreach ( $unconsumed as $key => $value ) {
@@ -670,7 +683,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 
 		$t = $this->getPageTitle();
 		$out .= Html::hidden( 'title', $t->getPrefixedText() );
-		$form = Xml::tags( 'form', [ 'action' => wfScript() ], $out );
+		$form = Html::rawElement( 'form', [ 'action' => wfScript() ], $out );
 		$panel[] = $form;
 		$panelString = implode( "\n", $panel );
 
@@ -803,10 +816,12 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		$tagFilter = ChangeTags::buildTagFilterSelector(
 			$opts['tagfilter'], false, $this->getContext()
 		);
-		if ( count( $tagFilter ) ) {
+		if ( $tagFilter ) {
 			$tagFilter[1] .= ' ' . Html::rawElement( 'span', [ 'class' => [ 'mw-input-with-label' ] ],
-				Xml::checkLabel(
-					$this->msg( 'invert' )->text(), 'inverttags', 'inverttags', $opts['inverttags'] )
+				Html::element( 'input', [
+					'type' => 'checkbox', 'name' => 'inverttags', 'value' => '1', 'checked' => $opts['inverttags'],
+					'id' => 'inverttags'
+				] ) . '&nbsp;' . Html::label( $this->msg( 'invert' )->text(), 'inverttags' )
 			);
 			$extraOpts['tagfilter'] = $tagFilter;
 		}
@@ -847,18 +862,17 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			[ 'selected' => $opts['namespace'], 'all' => '', 'in-user-lang' => true ],
 			[ 'name' => 'namespace', 'id' => 'namespace' ]
 		);
-		$nsLabel = Xml::label( $this->msg( 'namespace' )->text(), 'namespace' );
-		$attribs = [ 'class' => [ 'mw-input-with-label' ] ];
-		$invert = Html::rawElement( 'span', $attribs, Xml::checkLabel(
-			$this->msg( 'invert' )->text(), 'invert', 'nsinvert',
-			$opts['invert'],
-			[ 'title' => $this->msg( 'tooltip-invert' )->text() ]
-		) );
-		$associated = Html::rawElement( 'span', $attribs, Xml::checkLabel(
-			$this->msg( 'namespace_association' )->text(), 'associated', 'nsassociated',
-			$opts['associated'],
-			[ 'title' => $this->msg( 'tooltip-namespace_association' )->text() ]
-		) );
+		$nsLabel = Html::label( $this->msg( 'namespace' )->text(), 'namespace' );
+		$invert = Html::rawElement( 'label', [
+			'class' => 'mw-input-with-label', 'title' => $this->msg( 'tooltip-invert' )->text(),
+		], Html::element( 'input', [
+			'type' => 'checkbox', 'name' => 'invert', 'value' => '1', 'checked' => $opts['invert'],
+		] ) . '&nbsp;' . $this->msg( 'invert' )->escaped() );
+		$associated = Html::rawElement( 'label', [
+			'class' => 'mw-input-with-label', 'title' => $this->msg( 'tooltip-namespace_association' )->text(),
+		], Html::element( 'input', [
+			'type' => 'checkbox', 'name' => 'associated', 'value' => '1', 'checked' => $opts['associated'],
+		] ) . '&nbsp;' . $this->msg( 'namespace_association' )->escaped() );
 
 		return [ $nsLabel, "$nsSelect $invert $associated" ];
 	}

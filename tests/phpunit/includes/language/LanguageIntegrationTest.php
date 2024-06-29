@@ -45,8 +45,8 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::convertDoubleWidth
-	 * @covers Language::normalizeForSearch
+	 * @covers \Language::convertDoubleWidth
+	 * @covers \Language::normalizeForSearch
 	 */
 	public function testLanguageConvertDoubleWidthToSingleWidth() {
 		$this->assertSame(
@@ -60,7 +60,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideFormattableTimes
-	 * @covers Language::formatTimePeriod
+	 * @covers \Language::formatTimePeriod
 	 */
 	public function testFormatTimePeriod( $seconds, $format, $expected, $desc ) {
 		$this->assertEquals( $expected, $this->getLang()->formatTimePeriod( $seconds, $format ), $desc );
@@ -264,8 +264,8 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::truncateForDatabase
-	 * @covers Language::truncateInternal
+	 * @covers \Language::truncateForDatabase
+	 * @covers \Language::truncateInternal
 	 */
 	public function testTruncateForDatabase() {
 		$this->assertEquals(
@@ -331,8 +331,8 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideTruncateData
-	 * @covers Language::truncateForVisual
-	 * @covers Language::truncateInternal
+	 * @covers \Language::truncateForVisual
+	 * @covers \Language::truncateInternal
 	 */
 	public function testTruncateForVisual(
 		$expected, $string, $length, $ellipsis = '...', $adjustLength = true
@@ -364,7 +364,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideHTMLTruncateData
-	 * @covers Language::truncateHTML
+	 * @covers \Language::truncateHTML
 	 */
 	public function testTruncateHtml( $len, $ellipsis, $input, $expected ) {
 		// Actual HTML...
@@ -439,34 +439,34 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * Test too short timestamp
-	 * @covers Language::sprintfDate
+	 * @covers \Language::sprintfDate
 	 */
 	public function testSprintfDateTooShortTimestamp() {
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$this->getLang()->sprintfDate( 'xiY', '1234567890123' );
 	}
 
 	/**
 	 * Test too long timestamp
-	 * @covers Language::sprintfDate
+	 * @covers \Language::sprintfDate
 	 */
 	public function testSprintfDateTooLongTimestamp() {
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$this->getLang()->sprintfDate( 'xiY', '123456789012345' );
 	}
 
 	/**
 	 * Test too short timestamp
-	 * @covers Language::sprintfDate
+	 * @covers \Language::sprintfDate
 	 */
 	public function testSprintfDateNotAllDigitTimestamp() {
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$this->getLang()->sprintfDate( 'xiY', '-1234567890123' );
 	}
 
 	/**
 	 * @dataProvider provideSprintfDateSamples
-	 * @covers Language::sprintfDate
+	 * @covers \Language::sprintfDate
 	 */
 	public function testSprintfDate( $format, $ts, $expected, $msg ) {
 		$ttl = null;
@@ -498,7 +498,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	/**
 	 * sprintfDate should always use UTC when no zone is given.
 	 * @dataProvider provideSprintfDateSamples
-	 * @covers Language::sprintfDate
+	 * @covers \Language::sprintfDate
 	 */
 	public function testSprintfDateNoZone( $format, $ts, $expected, $ignore, $msg ) {
 		$oldTZ = date_default_timezone_get();
@@ -519,7 +519,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	/**
 	 * sprintfDate should use passed timezone
 	 * @dataProvider provideSprintfDateSamples
-	 * @covers Language::sprintfDate
+	 * @covers \Language::sprintfDate
 	 */
 	public function testSprintfDateTZ( $format, $ts, $ignore, $expected, $msg ) {
 		$tz = new DateTimeZone( 'Asia/Seoul' );
@@ -536,7 +536,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * sprintfDate should only calculate a TTL if the caller is going to use it.
-	 * @covers Language::sprintfDate
+	 * @covers \Language::sprintfDate
 	 */
 	public function testSprintfDateNoTtlIfNotNeeded() {
 		$noTtl = 'unused'; // Value used to represent that the caller didn't pass a variable in.
@@ -908,31 +908,115 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 			],
 			[
 				'xtY',
-				'20120102090705',
-				'平成24',
-				'平成24',
-				'nengo'
+				'18660101000000',
+				'西暦1866',
+				'西暦1866',
+				'nengo - before meiji'
+			],
+			[
+				'xtY',
+				'18670101000000',
+				'西暦1867',
+				'西暦1867',
+				'nengo - before meiji'
+			],
+			[
+				'xtY',
+				'18721231235959',
+				'西暦1872',
+				'西暦1872',
+				'nengo - meiji, but Lunisolar calendar'
+			],
+			[
+				'xtY',
+				'18730101000000',
+				'明治6',
+				'明治6',
+				'nengo - meiji 6th'
+			],
+			[
+				'xtY',
+				'19120729235959',
+				'明治45',
+				'明治45',
+				'nengo - meiji 45th last day'
+			],
+			[
+				'xtY',
+				'19120730000000',
+				'大正元',
+				'大正元',
+				'nengo - taisho first day'
+			],
+			[
+				'xtY',
+				'19130101000000',
+				'大正2',
+				'大正2',
+				'nengo - taisho 2nd'
+			],
+			[
+				'xtY',
+				'19261224235959',
+				'大正15',
+				'大正15',
+				'nengo - taisho last day'
+			],
+			[
+				'xtY',
+				'19261225000000',
+				'昭和元',
+				'昭和元',
+				'nengo - first day of Showa'
+			],
+			[
+				'xtY',
+				'19270101000000',
+				'昭和2',
+				'昭和2',
+				'nengo - second year of Showa'
+			],
+			[
+				'xtY',
+				'19890107235959',
+				'昭和64',
+				'昭和64',
+				'nengo - last day of Showa'
+			],
+			[
+				'xtY',
+				'19890108000000',
+				'平成元',
+				'平成元',
+				'nengo - first day of Heisei'
+			],
+			[
+				'xtY',
+				'19900101000000',
+				'平成2',
+				'平成2',
+				'nengo - second year of Heisei'
 			],
 			[
 				'xtY',
 				'20190430235959',
 				'平成31',
 				'平成31',
-				'nengo - last day of heisei'
+				'nengo - last day of Heisei'
 			],
 			[
 				'xtY',
 				'20190501000000',
 				'令和元',
 				'令和元',
-				'nengo - first day of reiwa'
+				'nengo - first day of Reiwa'
 			],
 			[
 				'xtY',
 				'20200501000000',
 				'令和2',
 				'令和2',
-				'nengo - second year of reiwa'
+				'nengo - second year of Reiwa'
 			],
 			[
 				'xrxkYY',
@@ -968,7 +1052,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideFormatSizes
-	 * @covers Language::formatSize
+	 * @covers \Language::formatSize
 	 */
 	public function testFormatSize( $size, $expected, $msg ) {
 		$this->assertEquals(
@@ -1046,7 +1130,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideFormatBitrate
-	 * @covers Language::formatBitrate
+	 * @covers \Language::formatBitrate
 	 */
 	public function testFormatBitrate( $bps, $expected, $msg ) {
 		$this->assertEquals(
@@ -1128,7 +1212,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideFormatDuration
-	 * @covers Language::formatDuration
+	 * @covers \Language::formatDuration
 	 */
 	public function testFormatDuration( $duration, $expected, $intervals = [] ) {
 		$this->assertEquals(
@@ -1265,7 +1349,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideCheckTitleEncodingData
-	 * @covers Language::checkTitleEncoding
+	 * @covers \Language::checkTitleEncoding
 	 */
 	public function testCheckTitleEncoding( $s ) {
 		$this->assertEquals(
@@ -1331,7 +1415,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideRomanNumeralsData
-	 * @covers Language::romanNumeral
+	 * @covers \Language::romanNumeral
 	 */
 	public function testRomanNumerals( $num, $numerals ) {
 		$this->assertEquals(
@@ -1390,7 +1474,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideHebrewNumeralsData
-	 * @covers Language::hebrewNumeral
+	 * @covers \Language::hebrewNumeral
 	 */
 	public function testHebrewNumeral( $num, $numerals ) {
 		$this->assertEquals(
@@ -1461,7 +1545,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider providePluralData
-	 * @covers Language::convertPlural
+	 * @covers \Language::convertPlural
 	 */
 	public function testConvertPlural( $expected, $number, $forms ) {
 		$chosen = $this->getLang()->convertPlural( $number, $forms );
@@ -1505,7 +1589,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::embedBidi()
+	 * @covers \Language::embedBidi()
 	 */
 	public function testEmbedBidi() {
 		$lre = "\u{202A}"; // U+202A LEFT-TO-RIGHT EMBEDDING
@@ -1530,7 +1614,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::translateBlockExpiry()
+	 * @covers \Language::translateBlockExpiry()
 	 * @dataProvider provideTranslateBlockExpiry
 	 */
 	public function testTranslateBlockExpiry( $expectedData, $str, $now, $desc ) {
@@ -1582,8 +1666,8 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideFormatNum
-	 * @covers Language::formatNum
-	 * @covers Language::formatNumNoSeparators
+	 * @covers \Language::formatNum
+	 * @covers \Language::formatNumNoSeparators
 	 */
 	public function testFormatNum(
 		$translateNumerals, $langCode, $number, $noSeparators, $expected
@@ -1671,7 +1755,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::parseFormattedNumber
+	 * @covers \Language::parseFormattedNumber
 	 * @dataProvider parseFormattedNumberProvider
 	 */
 	public function testParseFormattedNumber( $langCode, $number ) {
@@ -1701,7 +1785,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::listToText
+	 * @covers \Language::listToText
 	 */
 	public function testListToText() {
 		$lang = $this->getLang();
@@ -1722,8 +1806,8 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	 * This might be a bit cumbersome to maintain long-term,
 	 * but still valueable to have as integration test.
 	 *
-	 * @covers Language
-	 * @covers LocalisationCache
+	 * @covers \Language
+	 * @covers \LocalisationCache
 	 */
 	public function testGetNamespaceAliasesReal() {
 		$language = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'zh' );
@@ -1733,7 +1817,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::getNamespaceAliases
+	 * @covers \Language::getNamespaceAliases
 	 */
 	public function testGetNamespaceAliasesFullLogic() {
 		$hooks = $this->createHookContainer( [
@@ -1766,7 +1850,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::equals
+	 * @covers \Language::equals
 	 */
 	public function testEquals() {
 		$languageFactory = $this->getServiceContainer()->getLanguageFactory();
@@ -1787,7 +1871,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 
 	/**
 	 * @dataProvider provideUcfirst
-	 * @covers Language::ucfirst
+	 * @covers \Language::ucfirst
 	 */
 	public function testUcfirst( $orig, $expected, $desc, $overrides = false ) {
 		$lang = $this->newLanguage();
@@ -1807,7 +1891,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 			// overrides do not affect ASCII characters
 			[ 'foo', 'Foo', 'ASCII is not overridden', [ 'f' => 'b' ] ],
 			// but they do affect non-ascii ones
-			[ 'èl', 'Ll' , 'Non-ASCII is overridden', [ 'è' => 'L' ] ],
+			[ 'èl', 'Ll', 'Non-ASCII is overridden', [ 'è' => 'L' ] ],
 			[ 'ვიკიპედია', 'ვიკიპედია', 'Georgian case is preserved', false ],
 		];
 	}
@@ -1851,18 +1935,18 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 			$this->overrideConfigValues( $options );
 		}
 
-		$langNameUtils = MediaWikiServices::getInstance()->getLanguageNameUtils();
+		$langNameUtils = $this->getServiceContainer()->getLanguageNameUtils();
 		$this->assertSame( $expected,
 			$langNameUtils->getLanguageNames( ...$otherArgs )[strtolower( $code )] ?? '' );
 		$this->assertSame( $expected, $langNameUtils->getLanguageName( $code, ...$otherArgs ) );
 	}
 
 	private function getLanguageNames( ...$args ) {
-		return MediaWikiServices::getInstance()->getLanguageNameUtils()->getLanguageNames( ...$args );
+		return $this->getServiceContainer()->getLanguageNameUtils()->getLanguageNames( ...$args );
 	}
 
 	private function getLanguageName( ...$args ) {
-		return MediaWikiServices::getInstance()->getLanguageNameUtils()->getLanguageName( ...$args );
+		return $this->getServiceContainer()->getLanguageNameUtils()->getLanguageName( ...$args );
 	}
 
 	private function getFileName( ...$args ) {
@@ -1880,7 +1964,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	/**
 	 * @todo This really belongs in the cldr extension's tests.
 	 *
-	 * @covers MediaWiki\Languages\LanguageNameUtils::isKnownLanguageTag
+	 * @covers \MediaWiki\Languages\LanguageNameUtils::isKnownLanguageTag
 	 */
 	public function testCldr() {
 		if ( !ExtensionRegistry::getInstance()->isLoaded( 'CLDR' ) ) {
@@ -1897,8 +1981,8 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::getNamespaces
-	 * @covers Language::fixVariableInNamespace
+	 * @covers \Language::getNamespaces
+	 * @covers \Language::fixVariableInNamespace
 	 * @dataProvider provideGetNamespaces
 	 */
 	public function testGetNamespaces( string $langCode, array $config, array $expected ) {
@@ -2035,7 +2119,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::getGroupName
+	 * @covers \Language::getGroupName
 	 */
 	public function testGetGroupName() {
 		$lang = $this->getLang();
@@ -2044,7 +2128,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::getGroupMemberName
+	 * @covers \Language::getGroupMemberName
 	 */
 	public function testGetGroupMemberName() {
 		$lang = $this->getLang();
@@ -2058,11 +2142,23 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::msg
+	 * @covers \Language::msg
 	 */
 	public function testMsg() {
 		$lang = TestingAccessWrapper::newFromObject( $this->getLang() );
 		$this->assertSame( 'Line 1:', $lang->msg( 'lineno', '1' )->text() );
+	}
+
+	/**
+	 * @covers \Language::getBlockDurations
+	 */
+	public function testBlockDurations() {
+		$lang = $this->getLang();
+		$durations = $lang->getBlockDurations();
+
+		$this->assertContains( 'other', $durations );
+		$this->assertContains( 'infinite', $durations );
+		$this->assertContains( '1 day', $durations );
 	}
 
 }

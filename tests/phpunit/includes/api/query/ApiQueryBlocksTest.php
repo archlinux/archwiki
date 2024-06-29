@@ -1,24 +1,23 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Tests\Api\ApiTestCase;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers ApiQueryBlocks
+ * @covers \ApiQueryBlocks
  */
 class ApiQueryBlocksTest extends ApiTestCase {
-
-	protected $tablesUsed = [
-		'ipblocks',
-		'ipblocks_restrictions',
-	];
 
 	public function testExecute() {
 		[ $data ] = $this->doApiRequest( [
@@ -33,8 +32,7 @@ class ApiQueryBlocksTest extends ApiTestCase {
 		$sysop = $this->getTestSysop()->getUser();
 
 		$block = new DatabaseBlock( [
-			'address' => $badActor->getName(),
-			'user' => $badActor->getId(),
+			'address' => $badActor,
 			'by' => $sysop,
 			'expiry' => 'infinity',
 		] );
@@ -61,11 +59,8 @@ class ApiQueryBlocksTest extends ApiTestCase {
 		$sysop = $this->getTestSysop()->getUser();
 
 		$block = new DatabaseBlock( [
-			'address' => $badActor->getName(),
-			'user' => $badActor->getId(),
+			'address' => $badActor,
 			'by' => $sysop,
-			'ipb_expiry' => 'infinity',
-			'ipb_sitewide' => 1,
 		] );
 
 		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
@@ -92,8 +87,7 @@ class ApiQueryBlocksTest extends ApiTestCase {
 		$sysop = $this->getTestSysop()->getUser();
 
 		$block = new DatabaseBlock( [
-			'address' => $badActor->getName(),
-			'user' => $badActor->getId(),
+			'address' => $badActor,
 			'by' => $sysop,
 			'expiry' => 'infinity',
 			'sitewide' => 0,
@@ -137,8 +131,7 @@ class ApiQueryBlocksTest extends ApiTestCase {
 		$this->db->insert( 'ipblocks_restrictions', [
 			'ir_ipb_id' => $block->getId(),
 			'ir_type' => ActionRestriction::TYPE_ID,
-			// Value 1 = BlockActionInfo::ACTION_UPLOAD
-			'ir_value' => 1,
+			'ir_value' => BlockActionInfo::ACTION_UPLOAD,
 		] );
 
 		// Test without requesting restrictions.

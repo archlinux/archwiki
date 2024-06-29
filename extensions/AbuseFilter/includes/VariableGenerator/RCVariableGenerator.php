@@ -8,11 +8,12 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use MimeAnalyzer;
 use MWFileProps;
 use RecentChange;
 use RepoGroup;
-use User;
 
 /**
  * This class contains the logic used to create variable holders used to
@@ -36,6 +37,7 @@ class RCVariableGenerator extends VariableGenerator {
 
 	/**
 	 * @param AbuseFilterHookRunner $hookRunner
+	 * @param UserFactory $userFactory
 	 * @param MimeAnalyzer $mimeAnalyzer
 	 * @param RepoGroup $repoGroup
 	 * @param WikiPageFactory $wikiPageFactory
@@ -45,6 +47,7 @@ class RCVariableGenerator extends VariableGenerator {
 	 */
 	public function __construct(
 		AbuseFilterHookRunner $hookRunner,
+		UserFactory $userFactory,
 		MimeAnalyzer $mimeAnalyzer,
 		RepoGroup $repoGroup,
 		WikiPageFactory $wikiPageFactory,
@@ -52,7 +55,7 @@ class RCVariableGenerator extends VariableGenerator {
 		User $contextUser,
 		VariableHolder $vars = null
 	) {
-		parent::__construct( $hookRunner, $vars );
+		parent::__construct( $hookRunner, $userFactory, $vars );
 
 		$this->mimeAnalyzer = $mimeAnalyzer;
 		$this->repoGroup = $repoGroup;
@@ -134,6 +137,14 @@ class RCVariableGenerator extends VariableGenerator {
 		$userIdentity = $this->rc->getPerformerIdentity();
 		if ( $userIdentity->isRegistered() && $name !== $userIdentity->getName() ) {
 			$this->addUserVars( $userIdentity, $this->rc );
+		} else {
+			// Set the user_type so that creations of temporary accounts vs named accounts can be filtered for an
+			// abuse filter that matches account creations.
+			$this->vars->setLazyLoadVar(
+				'user_type',
+				'user-type',
+				[ 'user-identity' => $userIdentity ]
+			);
 		}
 
 		$this->vars->setVar( 'accountname', $name );

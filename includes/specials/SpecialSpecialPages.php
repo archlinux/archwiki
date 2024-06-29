@@ -25,10 +25,10 @@ namespace MediaWiki\Specials;
 
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
-use Parser;
-use ParserOutput;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\Core\TOCData;
 
@@ -74,8 +74,9 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 		foreach ( $pages as $page ) {
 			$group = $page->getFinalGroupName();
 			$desc = $page->getDescription();
-			if ( is_string( $desc ) ) { // T343849
-				wfDeprecated( 'string return from SpecialPage::getDescription()', '1.41' );
+			// T343849
+			if ( is_string( $desc ) ) {
+				wfDeprecated( "string return from {$page->getName()}::getDescription()", '1.41' );
 				$desc = ( new RawMessage( '$1' ) )->rawParams( $desc );
 			}
 			$groups[$group][$desc->text()] = [
@@ -166,7 +167,7 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 		$pout = new ParserOutput;
 		$pout->setTOCData( $tocData );
 		$pout->setOutputFlag( ParserOutputFlags::SHOW_TOC );
-		$pout->setText( Parser::TOC_PLACEHOLDER );
+		$pout->setRawText( Parser::TOC_PLACEHOLDER );
 		$out->addParserOutput( $pout );
 
 		// Format contents

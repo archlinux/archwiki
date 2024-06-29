@@ -4,18 +4,22 @@ namespace MediaWiki\Tests\Rest\PathTemplateMatcher;
 
 use MediaWiki\Rest\PathTemplateMatcher\PathConflict;
 use MediaWiki\Rest\PathTemplateMatcher\PathMatcher;
+use MediaWikiUnitTestCase;
 
 /**
  * @covers \MediaWiki\Rest\PathTemplateMatcher\PathMatcher
  * @covers \MediaWiki\Rest\PathTemplateMatcher\PathConflict
  */
-class PathMatcherTest extends \MediaWikiUnitTestCase {
+class PathMatcherTest extends MediaWikiUnitTestCase {
 	private static $normalRoutes = [
 		'/a/b',
 		'/b/{x}',
 		'/c/{x}/d',
 		'/c/{x}/e',
 		'/c/{x}/{y}/d',
+		'/d/',
+		'/',
+		'/d//e'
 	];
 
 	public static function provideConflictingRoutes() {
@@ -26,6 +30,8 @@ class PathMatcherTest extends \MediaWikiUnitTestCase {
 			[ '/b/a', 1, '/b/{x}' ],
 			[ '/b/{x}', 1, '/b/{x}' ],
 			[ '/{x}/{y}/d', 2, '/c/{x}/d' ],
+			[ '/d/{x}', 5, '/d/' ],
+			[ '/{x}', 6, '/' ]
 		];
 	}
 
@@ -41,6 +47,9 @@ class PathMatcherTest extends \MediaWikiUnitTestCase {
 			[ '/c/1/f', false ],
 			[ '/c//e', [ 'params' => [ 'x' => '' ], 'userData' => 3 ] ],
 			[ '/c///e', false ],
+			[ '/d/', [ 'params' => [], 'userData' => 5 ] ],
+			[ '/', [ 'params' => [], 'userData' => 6 ] ],
+			[ '/d//e', [ 'params' => [], 'userData' => 7 ] ]
 		];
 	}
 

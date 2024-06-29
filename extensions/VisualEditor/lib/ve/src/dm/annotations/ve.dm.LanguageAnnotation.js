@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel LanguageAnnotation class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -78,7 +78,7 @@ ve.dm.LanguageAnnotation.static.describeChange = function ( key, change ) {
 	}
 
 	// Parent method
-	return ve.dm.LanguageAnnotation.parent.static.describeChange.apply( this, arguments );
+	return ve.dm.LanguageAnnotation.super.static.describeChange.apply( this, arguments );
 };
 
 /* Methods */

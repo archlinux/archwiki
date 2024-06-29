@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Gadgets;
 
 use InvalidArgumentException;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader as RL;
 
 /**
@@ -32,8 +33,10 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	 */
 	private function getGadget() {
 		if ( !$this->gadget ) {
+			/** @var GadgetRepo $repo */
+			$repo = MediaWikiServices::getInstance()->getService( 'GadgetsRepo' );
 			try {
-				$this->gadget = GadgetRepo::singleton()->getGadget( $this->id );
+				$this->gadget = $repo->getGadget( $this->id );
 			} catch ( InvalidArgumentException $e ) {
 				// Fallback to a placeholder object...
 				$this->gadget = Gadget::newEmptyGadget( $this->id );
@@ -60,8 +63,10 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 			foreach ( $gadget->getScripts() as $script ) {
 				$pages[$script] = [ 'type' => 'script' ];
 			}
-			foreach ( $gadget->getJSONs() as $json ) {
-				$pages[$json] = [ 'type' => 'data' ];
+			if ( $gadget->isPackaged() ) {
+				foreach ( $gadget->getJSONs() as $json ) {
+					$pages[$json] = [ 'type' => 'data' ];
+				}
 			}
 		}
 
@@ -74,7 +79,9 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	 * @return string
 	 */
 	public function getRequireKey( $titleText ): string {
-		return GadgetRepo::singleton()->titleWithoutPrefix( $titleText );
+		/** @var GadgetRepo $repo */
+		$repo = MediaWikiServices::getInstance()->getService( 'GadgetsRepo' );
+		return $repo->titleWithoutPrefix( $titleText, $this->id );
 	}
 
 	/**
@@ -98,7 +105,7 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	 * @return bool
 	 */
 	public function isPackaged(): bool {
-		return $this->gadget->isPackaged();
+		return $this->getGadget()->isPackaged();
 	}
 
 	/**

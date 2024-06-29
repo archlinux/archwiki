@@ -128,7 +128,7 @@ class TokenUtils {
 				$token instanceof EndTagTk
 			) &&
 			$token->getName() === 'link' &&
-			preg_match( self::SOL_TRANSPARENT_LINK_REGEX, $token->getAttribute( 'rel' ) ?? '' );
+			preg_match( self::SOL_TRANSPARENT_LINK_REGEX, $token->getAttributeV( 'rel' ) ?? '' );
 	}
 
 	/**
@@ -147,7 +147,7 @@ class TokenUtils {
 			( $token->getName() === 'meta' &&
 				$token->hasAttribute( 'property' ) &&
 				preg_match( $env->getSiteConfig()->bswPagePropRegexp(),
-					$token->getAttribute( 'property' ) ?? '' )
+					$token->getAttributeV( 'property' ) ?? '' )
 			) );
 	}
 
@@ -197,7 +197,7 @@ class TokenUtils {
 	public static function isEmptyLineMetaToken( $token ): bool {
 		return $token instanceof SelfclosingTagTk &&
 			$token->getName() === 'meta' &&
-			$token->getAttribute( 'typeof' ) === 'mw:EmptyLine';
+			$token->getAttributeV( 'typeof' ) === 'mw:EmptyLine';
 	}
 
 	/**
@@ -210,10 +210,10 @@ class TokenUtils {
 	 *   no match.
 	 */
 	public static function matchTypeOf( Token $t, string $typeRe ): ?string {
-		if ( !$t->hasAttribute( 'typeof' ) ) {
+		$v = $t->getAttributeV( 'typeof' );
+		if ( $v === null ) {
 			return null;
 		}
-		$v = $t->getAttribute( 'typeof' );
 		Assert::invariant( is_string( $v ), "Typeof is not simple" );
 		foreach ( preg_split( '/\s+/', $v, -1, PREG_SPLIT_NO_EMPTY ) as $ty ) {
 			$count = preg_match( $typeRe, $ty );
@@ -264,7 +264,7 @@ class TokenUtils {
 		}
 
 		// update/clear tsr
-		for ( $i = 0,  $n = count( $tokens );  $i < $n;  $i++ ) {
+		for ( $i = 0, $n = count( $tokens );  $i < $n;  $i++ ) {
 			$t = $tokens[$i];
 			switch ( is_object( $t ) ? get_class( $t ) : null ) {
 				case TagTk::class:
@@ -305,7 +305,7 @@ class TokenUtils {
 
 					// Process attributes
 					if ( isset( $t->attribs ) ) {
-						for ( $j = 0,  $m = count( $t->attribs );  $j < $m;  $j++ ) {
+						for ( $j = 0, $m = count( $t->attribs );  $j < $m;  $j++ ) {
 							$a = $t->attribs[$j];
 							if ( is_array( $a->k ) ) {
 								self::shiftTokenTSR( $a->k, $offset );
@@ -497,7 +497,7 @@ class TokenUtils {
 			if ( $sr instanceof DomSourceRange ) {
 				// Adjust widths back from being character offsets
 				if ( $sr->openWidth !== null ) {
-					$sr->openWidth = $sr->openWidth - $sr->start;
+					$sr->openWidth -= $sr->start;
 				}
 				if ( $sr->closeWidth !== null ) {
 					$sr->closeWidth = $sr->end - $sr->closeWidth;

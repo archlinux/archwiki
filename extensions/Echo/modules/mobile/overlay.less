@@ -51,25 +51,5 @@
 		max-width: none; // T219320
 		top: @overlayHeaderHeight;
 		bottom: @overlayHeaderHeight;
-
-		.mw-echo-ui-notificationsWidget {
-			top: @overlayHeaderHeight;
-			height: 100%;
-		}
-
-		.mw-echo-ui-notificationsListWidget > .mw-echo-ui-notificationItemWidget {
-			border-left: 0;
-			border-right: 0;
-		}
-	}
-
-	/* stylelint-disable-next-line selector-class-pattern */
-	.user-button {
-		position: absolute;
-		right: 0;
-		top: 0;
-		padding-right: 0;
-		// Should correspond to @z-indexOverOverlay in MobileFrontend
-		z-index: 2;
 	}
 }

@@ -36,12 +36,8 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
+
 		$this->overrideConfigValue( MainConfigNames::UseRCPatrol, true );
-		$this->tablesUsed = array_merge( $this->tablesUsed, [
-			'page',
-			'recentchanges',
-			'logging',
-		] );
 	}
 
 	public function provideAuthorize() {
@@ -95,8 +91,10 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 		$performer = $this->mockRegisteredUltimateAuthority();
 		$userMock = $this->createMock( User::class );
 		$userMock->method( 'pingLimiter' )
-			->withConsecutive( [ 'rollback', 1 ], [ 'edit', 1 ] )
-			->willReturnOnConsecutiveCalls( false, false );
+			->willReturnMap( [
+				[ 'rollback', 1, false ],
+				[ 'edit', 1, false ],
+			] );
 		$userFactoryMock = $this->createMock( UserFactory::class );
 		$userFactoryMock->method( 'newFromAuthority' )
 			->with( $performer )

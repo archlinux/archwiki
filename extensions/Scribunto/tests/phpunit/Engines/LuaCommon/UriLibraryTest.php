@@ -12,15 +12,15 @@ class UriLibraryTest extends LuaEngineTestBase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->setMwGlobals( [
-			'wgServer' => '//wiki.local',
-			'wgCanonicalServer' => 'http://wiki.local',
-			'wgUsePathInfo' => true,
-			'wgActionPaths' => [],
-			'wgScript' => '/w/index.php',
-			'wgScriptPath' => '/w',
-			'wgArticlePath' => '/wiki/$1',
-			'wgFragmentMode' => [ 'legacy', 'html5' ],
+		$this->overrideConfigValues( [
+			'Server' => '//wiki.local',
+			'CanonicalServer' => 'http://wiki.local',
+			'UsePathInfo' => true,
+			'ActionPaths' => [],
+			'Script' => '/w/index.php',
+			'ScriptPath' => '/w',
+			'ArticlePath' => '/wiki/$1',
+			'FragmentMode' => [ 'legacy', 'html5' ],
 		] );
 	}
 

@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"1233qwer1234qwer4",
+			"Amire80",
 			"Balint36",
 			"DannyS712",
 			"Fitoschido",
@@ -17,8 +18,7 @@
 			"Tocaibon",
 			"Urhixidur",
 			"לערי ריינהארט",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Sotlinee leams",
@@ -239,11 +239,11 @@
 	"versionrequiredtext": "La version $1 de MediaWiki a covente par doprâ cheste pagjine.\nCjale la [[Special:Version|pagjine de version]].",
 	"ok": "Va ben",
 	"retrievedfrom": "Cjapât fûr di $1",
-	"youhavenewmessages": "Tu âs $1 ($2).",
-	"youhavenewmessagesfromusers": "{{PLURAL:$4|Tu âs}} $1 da {{PLURAL:$3|un altri utent|$3 utens}} ($2).",
-	"youhavenewmessagesmanyusers": "Tu âs $1 di tancj utents ($2)",
-	"newmessageslinkplural": "{{PLURAL:$1|un gnûf messaç|999=gnûfs messaçs}}",
-	"newmessagesdifflinkplural": "{{PLURAL:$1|ultin cambiament|999=ultins cambiaments}}",
+	"new-messages": "Tu âs $1 ($2).",
+	"new-messages-from-users": "{{PLURAL:$4|Tu âs}} $1 da {{PLURAL:$3|un altri utent|$3 utens}} ($2).",
+	"new-messages-from-many-users": "Tu âs $1 di tancj utents ($2)",
+	"new-messages-link-plural": "{{PLURAL:$1|un gnûf messaç|999=gnûfs messaçs}}",
+	"new-messages-diff-link-plural": "{{PLURAL:$1|ultin cambiament|999=ultins cambiaments}}",
 	"editsection": "cambie",
 	"editold": "cambie",
 	"viewsourceold": "cjale risultive",
@@ -254,7 +254,9 @@
 	"showtoc": "mostre",
 	"hidetoc": "plate",
 	"collapsible-collapse": "Strenç",
+	"collapsible-collapse-all-text": "Strenç dut",
 	"collapsible-expand": "Slargje",
+	"collapsible-expand-all-text": "Slargje dut",
 	"confirmable-confirm": "Sestu {{GENDER:$1|sugûr|sigure}}?",
 	"confirmable-yes": "Sì",
 	"confirmable-no": "No",
@@ -778,7 +780,6 @@
 	"filehist-nothumb": "Nissune miniature",
 	"filehist-user": "Utent",
 	"filehist-dimensions": "Dimensions",
-	"filehist-filesize": "Dimension dal file",
 	"filehist-comment": "Coment",
 	"imagelinks": "Ûs dal file",
 	"linkstoimage": "{{PLURAL:$1|La pagjine ca sot e dopre|Lis $1 pagjinis ca sot a doprin}} chest file:",

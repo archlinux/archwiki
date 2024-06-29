@@ -26,7 +26,6 @@
 	"echo-pref-subscription-edit-thank": "Mi ringrazzia p'un mè canciamentu",
 	"echo-pref-tooltip-edit-thank": "Avvìsami quannu quarchidunu mi ringrazzia p'un canciamentu ca fici.",
 	"echo-category-title-edit-thank": "Ringrazziamenti",
-	"notification-thanks-diff-link": "lu tò canciamentu",
 	"log-name-thanks": "Riggistru dî ringrazziamenti",
 	"log-description-thanks": "Ccassutta c'è na lista di l'utenti chi foru ringrazziati di àutri utenti.",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|ringrazziau}} a {{GENDER:$4|$3}}",
@@ -35,6 +34,5 @@
 	"notification-link-text-view-post": "Talìa lu cummentu",
 	"thanks-error-invalidpostid": "L'ID dû missaggiu nun è vàlidu.",
 	"flow-thanks-confirmation-special": "Voi ringrazziari pubblicamenti pi stu cummentu?",
-	"flow-thanks-thanked-notice": "{{GENDER:$3|Ringrazziasti}} $1 pû {{GENDER:$2|sò}} cummentu.",
-	"notification-flow-thanks-post-link": "lu tò cummentu"
+	"flow-thanks-thanked-notice": "{{GENDER:$3|Ringrazziasti}} $1 pû {{GENDER:$2|sò}} cummentu."
 }

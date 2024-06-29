@@ -26,9 +26,9 @@
 namespace MediaWiki\Specials;
 
 use File;
-use HTMLForm;
 use ILanguageConverter;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\Linker;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -271,7 +271,5 @@ class SpecialFileDuplicateSearch extends SpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialFileDuplicateSearch::class, 'SpecialFileDuplicateSearch' );

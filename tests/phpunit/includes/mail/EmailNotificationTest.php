@@ -5,6 +5,7 @@ use MediaWiki\Title\Title;
 
 /**
  * @group Database
+ * @covers \EmailNotification
  */
 class EmailNotificationTest extends MediaWikiIntegrationTestCase {
 
@@ -13,19 +14,11 @@ class EmailNotificationTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->tablesUsed = [
-			'watchlist',
-			'watchlist_expiry',
-		];
-
 		$this->emailNotification = new EmailNotification();
 
 		$this->overrideConfigValue( MainConfigNames::WatchlistExpiry, true );
 	}
 
-	/**
-	 * @covers EmailNotification::notifyOnPageChange
-	 */
 	public function testNotifyOnPageChange(): void {
 		$store = $this->getServiceContainer()->getWatchedItemStore();
 

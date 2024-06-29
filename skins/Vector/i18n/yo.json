@@ -4,7 +4,9 @@
 			"Demmy"
 		]
 	},
-	"vector-language-button-label": "{{PLURAL:$1|ojúewé $1|àwọn ojúewé $1}}",
+	"vector-languages": "Àwọn èdè",
+	"vector-language-button-label": "{{PLURAL:$1|èdè $1|Àwọn èdè $1}}",
+	"vector-no-language-button-label": "Àfikún àwọn édé",
 	"vector-action-addsection": "Àfikún orí-ọ̀rọ̀",
 	"vector-action-delete": "Ìparẹ́",
 	"vector-action-move": "Ìyípòdà",
@@ -17,5 +19,11 @@
 	"vector-view-view": "Àwòkà",
 	"vector-view-viewsource": "Wo àmìọ̀rọ̀",
 	"vector-more-actions": "Ọ̀pọ̀",
-	"vector-searchsuggest-containing": "Ṣe ìwárí fún àwọn ojúewé tó ní <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Ṣe ìwárí fún àwọn ojúewé tó ní <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Àwọn àkóónú",
+	"vector-toc-beginning": "Ìbẹ̀rẹ̀",
+	"vector-main-menu-label": "Ẹ̀ka àkọ́kọ́",
+	"vector-page-tools-label": "Àwọn irinṣẹ́",
+	"vector-page-tools-general-label": "Àpapọ̀",
+	"vector-unpin-element-label": "bòmọ́lẹ̀"
 }

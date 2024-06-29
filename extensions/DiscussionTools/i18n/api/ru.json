@@ -9,7 +9,8 @@
 			"Playershut",
 			"Sunpriat",
 			"Vlad5250",
-			"Wileyfoxyx"
+			"Wileyfoxyx",
+			"Okras"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Сообщение с идентификатором '$1' не найдено.",
@@ -27,6 +28,8 @@
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Добавить новое сообщение как ответ на предыдущее сообщение.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Добавить новый раздел обсуждения и первое сообщение в нём.",
 	"apihelp-discussiontoolsedit-summary": "Отправить сообщение на страницу обсуждения.",
+	"apihelp-discussiontoolsfindcomment-summary": "Найти комментарий по его идентификатору или названию.",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "Идентификатор комментария или название",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Названия тем для проверки",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Получить состояния подписки на заданные темы.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Номер версии для использования (по умолчанию — последняя версия).",

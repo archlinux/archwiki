@@ -9,7 +9,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.41",
+		"MediaWiki": ">= 1.42",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -67,6 +67,9 @@
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
 	],
+	"DatabaseVirtualDomains": [
+		"virtual-LoginNotify"
+	],
 	"config": {
 		"LoginNotifyAttemptsKnownIP": {
 			"description": "The number of failed login attempts to permit from a known IP before a notification is triggered.",
@@ -112,20 +115,16 @@
 			"description": "Set to false to disable caching IPs in memcache. Set to 0 to cache forever. Default 60 days.",
 			"value": 5184000
 		},
-		"LoginNotifySeenDatabase": {
-			"description": "The database to store the loginnotify_seen_net table. This can be a shared database if CentralIdLookupProvider is configured to return a unique ID for the user.",
-			"value": null
-		},
-		"LoginNotifySeenCluster": {
-			"description": "The external cluster to store the loginnotify_seen_net table in. The default is to store it in the core database.",
-			"value": null
-		},
 		"LoginNotifyUseCheckUser": {
 			"description": "Use the CheckUser cu_changes table if it is available. This is redundant with LoginNotify's own table, available with MediaWiki 1.41. Setting this to true will be deprecated in a later release. Defaults to true temporarily during WMF pilot.",
 			"value": true
 		},
 		"LoginNotifyUseSeenTable": {
 			"description": "Use the loginnotify_seen_net table. This is redundant with LoginNotifyUseCheckUser although both can be enabled during migration. Defaults to false temporarily during WMF pilot.",
+			"value": false
+		},
+		"LoginNotifyUseCentralId": {
+			"description": "Use central user IDs in the loginnotify_seen_net table. This should be set to true if the loginnotify_seen_net is in a shared database. CentralAuth should be installed and all users should be attached to it.",
 			"value": false
 		},
 		"LoginNotifySeenExpiry": {

@@ -9,15 +9,15 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use Config;
-use ConfigFactory;
-use Html;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigFactory;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
-use SpecialPage;
-use User;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\User;
 
 class PreferenceHooks implements
 	LocalUserCreatedHook,
@@ -80,7 +80,21 @@ class PreferenceHooks implements
 			if ( HookUtils::isFeatureAvailableToUser( $user, $feature ) ) {
 				$preferences["discussiontools-$feature"] = [
 					'type' => 'toggle',
+					// The following messages are used here:
+					// * discussiontools-preference-autotopicsub
+					// * discussiontools-preference-newtopictool
+					// * discussiontools-preference-replytool
+					// * discussiontools-preference-sourcemodetoolbar
+					// * discussiontools-preference-topicsubscription
+					// * discussiontools-preference-visualenhancements
 					'label-message' => "discussiontools-preference-$feature",
+					// The following messages are used here:
+					// * discussiontools-preference-autotopicsub-help
+					// * discussiontools-preference-newtopictool-help
+					// * discussiontools-preference-replytool-help
+					// * discussiontools-preference-sourcemodetoolbar-help
+					// * discussiontools-preference-topicsubscription-help
+					// * discussiontools-preference-visualenhancements-help
 					'help-message' => "discussiontools-preference-$feature-help",
 					'section' => 'editing/discussion',
 				];

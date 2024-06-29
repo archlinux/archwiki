@@ -2,20 +2,19 @@
 /**
  * @private
  */
-class Less_Tree_Url extends Less_Tree {
+class Less_Tree_Url extends Less_Tree implements Less_Tree_HasValueProperty {
 
 	public $attrs;
 	public $value;
 	public $currentFileInfo;
 	public $isEvald;
-	public $type = 'Url';
 
 	/**
 	 * @param Less_Tree_Variable|Less_Tree_Quoted|Less_Tree_Anonymous $value
 	 * @param array|null $currentFileInfo
 	 * @param bool|null $isEvald
 	 */
-	public function __construct( $value, $currentFileInfo = null, $isEvald = null ) {
+	public function __construct( Less_Tree $value, $currentFileInfo = null, $isEvald = null ) {
 		$this->value = $value;
 		$this->currentFileInfo = $currentFileInfo;
 		$this->isEvald = $isEvald;
@@ -35,10 +34,10 @@ class Less_Tree_Url extends Less_Tree {
 	}
 
 	/**
-	 * @param Less_Environment $ctx
+	 * @param Less_Environment $env
 	 */
-	public function compile( $ctx ) {
-		$val = $this->value->compile( $ctx );
+	public function compile( $env ) {
+		$val = $this->value->compile( $env );
 
 		if ( !$this->isEvald ) {
 			// Add the base path if the URL is relative
@@ -71,7 +70,7 @@ class Less_Tree_Url extends Less_Tree {
 			}
 		}
 
-		return new Less_Tree_Url( $val, $this->currentFileInfo, true );
+		return new self( $val, $this->currentFileInfo, true );
 	}
 
 }

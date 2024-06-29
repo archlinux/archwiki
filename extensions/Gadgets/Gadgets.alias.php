@@ -434,9 +434,11 @@ $specialPageAliases['vi'] = [
 /** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'Gadgets' => [ '小工具' ],
+	'GadgetUsage' => [ '小工具使用统计' ],
 ];
 
 /** Traditional Chinese (中文（繁體）) */
 $specialPageAliases['zh-hant'] = [
 	'Gadgets' => [ '小工具' ],
+	'GadgetUsage' => [ '小工具使用統計' ],
 ];

@@ -1,6 +1,11 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiUsageException;
+use IDBAccessObject;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Permissions\RateLimiter;
 use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
@@ -12,7 +17,7 @@ use MediaWiki\Title\Title;
  * @group Database
  * @group medium
  *
- * @covers ApiChangeContentModel
+ * @covers \ApiChangeContentModel
  * @author DannyS712
  */
 class ApiChangeContentModelTest extends ApiTestCase {
@@ -20,11 +25,6 @@ class ApiChangeContentModelTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'change_tag', 'change_tag_def', 'logging' ]
-		);
 
 		$this->getExistingTestPage( 'ExistingPage' );
 
@@ -73,6 +73,40 @@ class ApiChangeContentModelTest extends ApiTestCase {
 			],
 			null,
 			$this->mockAnonAuthorityWithoutPermissions( [ 'editcontentmodel' ] ) );
+	}
+
+	/**
+	 * Test that the `editcontentmodel` rate limit is enforced
+	 */
+	public function testRateLimitApplies() {
+		$limiter = $this->createNoOpMock(
+			RateLimiter::class,
+			[ 'limit', 'isLimitable', ]
+		);
+		$limiter->method( 'limit' )
+			->willReturnCallback( function ( $user, $action, $incr ) {
+				if ( $action === 'editcontentmodel' ) {
+					$this->assertSame( 1, $incr );
+					return true;
+				}
+				return false;
+			} );
+		$limiter->method( 'isLimitable' )
+			->willReturn( true );
+
+		$this->setService( 'RateLimiter', $limiter );
+
+		$this->setExpectedApiException( [
+			'apierror-ratelimited',
+			wfMessage( 'action-ratelimited' )
+		] );
+
+		$this->doApiRequestWithToken( [
+			'action' => 'changecontentmodel',
+			'title' => 'ExistingPage',
+			'summary' => 'test',
+			'model' => 'text'
+		] );
 	}
 
 	/**
@@ -137,7 +171,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 
 		$this->assertSame(
 			'wikitext',
-			$title->getContentModel( Title::READ_LATEST ),
+			$title->getContentModel( IDBAccessObject::READ_LATEST ),
 			'`ExistingPage` should be wikitext'
 		);
 
@@ -183,7 +217,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 
 		$this->assertSame(
 			'wikitext',
-			$title->getContentModel( Title::READ_LATEST ),
+			$title->getContentModel( IDBAccessObject::READ_LATEST ),
 			'`ExistingPage` should be wikitext'
 		);
 
@@ -225,7 +259,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 		);
 		$this->assertSame(
 			'testing',
-			$title->getContentModel( Title::READ_LATEST ),
+			$title->getContentModel( IDBAccessObject::READ_LATEST ),
 			'Dummy:NoDirectEditing should start with the `testing` content model'
 		);
 
@@ -267,7 +301,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 		);
 		$this->assertSame(
 			'wikitext',
-			$title->getContentModel( Title::READ_LATEST ),
+			$title->getContentModel( IDBAccessObject::READ_LATEST ),
 			'`ExistingPage` should be wikitext'
 		);
 
@@ -283,7 +317,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 
 		$this->assertSame(
 			'text',
-			$title->getContentModel( Title::READ_LATEST ),
+			$title->getContentModel( IDBAccessObject::READ_LATEST ),
 			'API can successfully change the content model'
 		);
 
@@ -304,7 +338,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 
 		$this->assertSame(
 			'wikitext',
-			$title->getContentModel( Title::READ_LATEST ),
+			$title->getContentModel( IDBAccessObject::READ_LATEST ),
 			'API can also change the content model back'
 		);
 

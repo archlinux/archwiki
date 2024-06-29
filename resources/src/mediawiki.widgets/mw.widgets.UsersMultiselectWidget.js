@@ -21,15 +21,15 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {mw.Api} [api] Instance of mw.Api (or subclass thereof) to use for queries
-	 * @cfg {number} [limit=10] Number of results to show in autocomplete menu
-	 * @cfg {string} [name] Name of input to submit results (when used in HTML forms)
-	 * @cfg {boolean} [ipAllowed=false] Show IP addresses in autocomplete menu
+	 * @param {mw.Api} [config.api] Instance of mw.Api (or subclass thereof) to use for queries
+	 * @param {number} [config.limit=10] Number of results to show in autocomplete menu
+	 * @param {string} [config.name] Name of input to submit results (when used in HTML forms)
+	 * @param {boolean} [config.ipAllowed=false] Show IP addresses in autocomplete menu
 	 *  If false, single IP addresses are not allowed, even if IP ranges are allowed.
-	 * @cfg {boolean} [ipRangeAllowed=false] Show IP ranges in autocomplete menu
-	 * @cfg {Object} [ipRangeLimits] Maximum allowed IP ranges (defaults match HTMLUserTextField.php)
-	 * @cfg {number} [ipRangeLimits.IPv4 = 16] Maximum allowed IPv4 range
-	 * @cfg {number} [ipRangeLimits.IPv6 = 32] Maximum allowed IPv6 range
+	 * @param {boolean} [config.ipRangeAllowed=false] Show IP ranges in autocomplete menu
+	 * @param {Object} [config.ipRangeLimits] Maximum allowed IP ranges (defaults match HTMLUserTextField.php)
+	 * @param {number} [config.ipRangeLimits.IPv4 = 16] Maximum allowed IPv4 range
+	 * @param {number} [config.ipRangeLimits.IPv6 = 32] Maximum allowed IPv6 range
 	 */
 	mw.widgets.UsersMultiselectWidget = function MwWidgetsUsersMultiselectWidget( config ) {
 		// Config initialization
@@ -44,7 +44,7 @@
 		}, config );
 
 		// Parent constructor
-		mw.widgets.UsersMultiselectWidget.parent.call( this, $.extend( {}, config, {} ) );
+		mw.widgets.UsersMultiselectWidget.super.call( this, $.extend( {}, config, {} ) );
 
 		// Mixin constructors
 		OO.ui.mixin.PendingElement.call( this, $.extend( {}, config, { $pending: this.$handle } ) );
@@ -87,7 +87,7 @@
 	/* Methods */
 
 	/**
-	 * Get currently selected usernames
+	 * Get currently selected usernames.
 	 *
 	 * @return {string[]} usernames
 	 */
@@ -96,14 +96,12 @@
 	};
 
 	/**
-	 * Update autocomplete menu with items
+	 * Update autocomplete menu with items.
 	 *
 	 * @private
 	 */
 	mw.widgets.UsersMultiselectWidget.prototype.updateMenuItems = function () {
-		var isValidIp,
-			isValidRange,
-			inputValue = this.input.getValue();
+		var inputValue = this.input.getValue();
 
 		if ( inputValue === this.inputValue ) {
 			// Do not restart api query if nothing has changed in the input
@@ -117,6 +115,7 @@
 		if ( inputValue.length > 0 ) {
 			this.pushPending();
 
+			var isValidIp, isValidRange;
 			if ( this.ipAllowed || this.ipRangeAllowed ) {
 				isValidIp = mw.util.isIPAddress( inputValue, false );
 				isValidRange = !isValidIp &&
@@ -192,7 +191,7 @@
 	};
 
 	mw.widgets.UsersMultiselectWidget.prototype.onInputChange = function () {
-		mw.widgets.UsersMultiselectWidget.parent.prototype.onInputChange.apply( this, arguments );
+		mw.widgets.UsersMultiselectWidget.super.prototype.onInputChange.apply( this, arguments );
 
 		this.updateMenuItems();
 	};

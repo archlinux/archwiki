@@ -11,6 +11,7 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\AutoURLLinkText;
+use Wikimedia\Parsoid\Html2Wt\ConstrainedText\ConstrainedText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\ExtLinkText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\MagicLinkText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\WikiLinkText;
@@ -78,7 +79,7 @@ class LinkHandlerUtils {
 	 * @return string
 	 */
 	private static function getHref( Env $env, Element $node ): string {
-		$href = $node->getAttribute( 'href' ) ?? '';
+		$href = DOMCompat::getAttribute( $node, 'href' ) ?? '';
 		if ( ( $href[0] ?? '' ) === '/' && ( $href[1] ?? '' ) !== '/' ) {
 			// protocol-less but absolute.  let's find a base href
 			foreach ( $env->getSiteConfig()->interwikiMapNoNamespaces() as $prefix => $interwikiInfo ) {
@@ -188,14 +189,14 @@ class LinkHandlerUtils {
 
 		// Figure out the type of the link
 		if ( $node->hasAttribute( 'rel' ) ) {
-			$rel = $node->getAttribute( 'rel' ) ?? '';
+			$rel = DOMCompat::getAttribute( $node, 'rel' ) ?? '';
 			// Parsoid only emits and recognizes ExtLink, WikiLink, and PageProp rel values.
 			// Everything else defaults to ExtLink during serialization (unless it is
 			// serializable to a wikilink)
 			// We're keeping the preg_match here instead of going through DOMUtils::matchRel
 			// because we have \b guards to handle the multivalue, and we're keeping the matches,
 			// which matchRel doesn't do.
-			if ( preg_match( '/\b(mw:(WikiLink|ExtLink|MediaLink|PageProp)[^\s]*)\b/', $rel, $typeMatch ) ) {
+			if ( preg_match( '/\b(mw:(WikiLink|ExtLink|MediaLink|PageProp)\S*)\b/', $rel, $typeMatch ) ) {
 				$rtData->type = $typeMatch[1];
 				// Strip link subtype info
 				if ( $typeMatch[2] === 'WikiLink' || $typeMatch[2] === 'ExtLink' ) {
@@ -231,7 +232,7 @@ class LinkHandlerUtils {
 		// Check if the link content has been modified or is newly inserted content.
 		// FIXME: This will only work with selser of course. Hard to test without selser.
 		if (
-			$state->inModifiedContent ||
+			$state->inInsertedContent ||
 			DiffUtils::hasDiffMark( $node, DiffMarkers::SUBTREE_CHANGED )
 		) {
 			$rtData->contentModified = true;
@@ -457,7 +458,7 @@ class LinkHandlerUtils {
 		$categoryNs = $env->getSiteConfig()->canonicalNamespaceId( 'category' );
 		$fileNs = $env->getSiteConfig()->canonicalNamespaceId( 'file' );
 
-		if ( ( $linkTitle->getNamespaceId() === $categoryNs || $linkTitle->getNamespaceId() === $fileNs ) &&
+		if ( ( $linkTitle->getNamespace() === $categoryNs || $linkTitle->getNamespace() === $fileNs ) &&
 			$linkData->type === 'mw:WikiLink' &&
 			$linkTarget[0] !== ':' ) {
 			// Escape category and file links
@@ -571,7 +572,9 @@ class LinkHandlerUtils {
 				// Relative link
 				(
 					(
-						$env->getSiteConfig()->namespaceHasSubpages( $env->getPageConfig()->getNs() ) &&
+						$env->getSiteConfig()->namespaceHasSubpages(
+							$env->getContextTitle()->getNamespace()
+						) &&
 						preg_match( '#^\.\./.*[^/]$#D', $strippedTargetValue ) &&
 						$contentString === $env->resolveTitle( $strippedTargetValue )
 					) ||
@@ -675,9 +678,7 @@ class LinkHandlerUtils {
 			if ( $linkData->type === 'mw:PageProp/Language' ) {
 				// Fix up the content string
 				// TODO: see if linkData can be cleaner!
-				if ( !isset( $linkData->content->string ) ) {
-					$linkData->content->string = Utils::decodeWtEntities( $target['value'] );
-				}
+				$linkData->content->string ??= Utils::decodeWtEntities( $target['value'] );
 			}
 		}
 
@@ -701,7 +702,7 @@ class LinkHandlerUtils {
 						if ( !(
 							$nextNode instanceof Element && DOMCompat::nodeName( $nextNode ) === 'link' &&
 							DOMUtils::hasRel( $nextNode, 'mw:PageProp/Category' ) &&
-							$nextNode->getAttribute( 'href' ) === $node->getAttribute( 'href' )
+							DOMCompat::getAttribute( $nextNode, 'href' ) === DOMCompat::getAttribute( $node, 'href' )
 						) ) {
 							$linkTarget = ':' . $linkTarget;
 						}
@@ -1012,8 +1013,8 @@ class LinkHandlerUtils {
 				// Without an href, we just emit the string as text.
 				// However, to preserve targets for anchor links,
 				// serialize as a span with a name.
-				if ( $node->hasAttribute( 'name' ) ) {
-					$name = $node->getAttribute( 'name' );
+				$name = DOMCompat::getAttribute( $node, 'name' );
+				if ( $name !== null ) {
 					$doc = $node->ownerDocument;
 					$span = $doc->createElement( 'span' );
 					$span->setAttribute( 'name', $name );
@@ -1041,23 +1042,36 @@ class LinkHandlerUtils {
 	public static function figureHandler(
 		SerializerState $state, Element $node, ?MediaStructure $ms
 	): void {
-		$env = $state->getEnv();
-
 		if ( !$ms ) {
-			$env->log(
+			$state->getEnv()->log(
 				'error/html2wt/figure',
 				"Couldn't parse media structure: ",
 				DOMCompat::getOuterHTML( $node )
 			);
-			$state->emitChunk( '', $node );
 			return;
 		}
+		$ct = self::figureToConstrainedText( $state, $ms );
+		$state->emitChunk( $ct ?? '', $node );
+	}
 
+	/**
+	 * Serialize a figure to contrained text.
+	 *
+	 * WARN: There's probably more to do to ensure this is purely functional,
+	 * no side-effects (ie. calls to state->emit) happen while processing.
+	 *
+	 * @param SerializerState $state
+	 * @param MediaStructure $ms
+	 * @return ?ConstrainedText
+	 */
+	public static function figureToConstrainedText(
+		SerializerState $state, MediaStructure $ms
+	): ?ConstrainedText {
+		$env = $state->getEnv();
 		$outerElt = $ms->containerElt ?? $ms->mediaElt;
 		$linkElt = $ms->linkElt;
 		$elt = $ms->mediaElt;
 		$captionElt = $ms->captionElt;
-
 		$format = WTUtils::getMediaFormat( $outerElt );
 
 		// Try to identify the local title to use for this image.
@@ -1065,19 +1079,17 @@ class LinkHandlerUtils {
 		if ( !isset( $resource['value'] ) ) {
 			// from non-parsoid HTML: try to reconstruct resource from src?
 			// (this won't work for manual-thumb images)
-			if ( !$elt->hasAttribute( 'src' ) ) {
+			$src = DOMCompat::getAttribute( $elt, 'src' );
+			if ( $src === null ) {
 				$env->log( 'error/html2wt/figure',
 					'In WSP.figureHandler, img does not have resource or src:',
-					DOMCompat::getOuterHTML( $node )
+					DOMCompat::getOuterHTML( $outerElt )
 				);
-				$state->emitChunk( '', $node );
-				return;
+				return null;
 			}
-			$src = $elt->getAttribute( 'src' ) ?? '';
 			if ( preg_match( '/^https?:/', $src ) ) {
 				// external image link, presumably $wgAllowExternalImages=true
-				$state->emitChunk( new AutoURLLinkText( $src, $node ), $node );
-				return;
+				return new AutoURLLinkText( $src, $outerElt );
 			}
 			$resource = [
 				'value' => $src,
@@ -1142,9 +1154,9 @@ class LinkHandlerUtils {
 				$strippedHref = preg_replace(
 					'#[?]((?:page=\d+)|(?:lang=[a-z]+(?:-[a-z]+)*))$#Di',
 					'',
-					$linkElt->getAttribute( 'href' ) ?? ''
+					DOMCompat::getAttribute( $linkElt, 'href' ) ?? ''
 				);
-				if ( $strippedHref === $elt->getAttribute( 'resource' ) ) {
+				if ( $strippedHref === DOMCompat::getAttribute( $elt, 'resource' ) ) {
 					// default link: same place as resource
 					$link = $resource;
 				}
@@ -1173,7 +1185,7 @@ class LinkHandlerUtils {
 			);
 			// FIXME: We should just be able to serialize the children of the
 			// fragment, however, we need some way of marking this as being
-			// inModifiedContent so that any bare text is assured to be escaped
+			// inInsertedContent so that any bare text is assured to be escaped
 			$captionElt = $outerElt->ownerDocument->createElement( 'div' );
 			DOMDataUtils::getDataParsoid( $captionElt )->setTempFlag( TempData::IS_NEW );
 			DOMUtils::migrateChildren( $fragment, $captionElt );
@@ -1189,7 +1201,7 @@ class LinkHandlerUtils {
 
 			// Alt stuff
 			if ( !WTUtils::hasVisibleCaption( $outerElt ) && $elt->hasAttribute( 'alt' ) ) {
-				$altOnElt = trim( $elt->getAttribute( 'alt' ) );
+				$altOnElt = trim( DOMCompat::getAttribute( $elt, 'alt' ) ?? '' );
 				$altFromCaption = trim( WTUtils::textContentFromCaption( $captionElt ) );
 				// The first condition is to support an empty \alt=\ option
 				// when no caption is present
@@ -1265,7 +1277,7 @@ class LinkHandlerUtils {
 					// to contain arbitrary wikitext, even though it is stripped
 					// to a string before emitting.
 					$value = $state->serializer->wteHandlers->escapeLinkContent(
-						$state, $value, false, $node, true
+						$state, $value, false, $outerElt, true
 					);
 				}
 				$nopts[] = [
@@ -1366,16 +1378,13 @@ class LinkHandlerUtils {
 				$a = WTSUtils::getAttrFromDataMw( $outerDMW, $o['ck'], true );
 				if ( $a !== null ) {
 					if ( isset( $a[1]->html ) ) {
-						// FIXME: Apply this to more that just page?
-						if ( $o['prop'] === 'page' ) {
-							$page = $state->serializer->getAttributeValueAsShadowInfo( $outerElt, 'page' );
-							if ( isset( $page['value'] ) ) {
-								$nopts[] = [
-									'ck' => $o['prop'],
-									'ak' => [ $page['value'] ],
-								];
-								continue;
-							}
+						$si = $state->serializer->getAttributeValueAsShadowInfo( $outerElt, $o['ck'] );
+						if ( isset( $si['value'] ) ) {
+							$nopts[] = [
+								'ck' => $o['ck'],
+								'ak' => [ $si['value'] ],
+							];
+							continue;
 						}
 					} else {
 						$v = $a[1]->txt;
@@ -1457,12 +1466,12 @@ class LinkHandlerUtils {
 			// preserve upright option
 			$nopts[] = [
 				'ck' => $upright['ck'],
-				'ak' => [ $upright['ak'] ],  // FIXME: don't use ak here!
+				'ak' => [ $upright['ak'] ], // FIXME: don't use ak here!
 			];
 		}
 
 		if (
-			!DOMCompat::getClassList( $outerElt )->contains( 'mw-default-size' ) &&
+			!DOMUtils::hasClass( $outerElt, 'mw-default-size' ) &&
 			$format !== 'Frame' && !$hasManualthumb
 		) {
 			$size = $getLastOpt( 'width' );
@@ -1474,8 +1483,8 @@ class LinkHandlerUtils {
 				// preserve original width/height string if not touched
 				$nopts[] = [
 					'ck' => 'width',
-					'v' => $sizeString,  // original size string
-					'ak' => [ '$1' ],  // don't add px or the like
+					'v' => $sizeString, // original size string
+					'ak' => [ '$1' ], // don't add px or the like
 				];
 			} else {
 				$bbox = null;
@@ -1491,7 +1500,7 @@ class LinkHandlerUtils {
 					// so this only has the effect of modifying the width.
 					(
 						DOMCompat::nodeName( $elt ) !== 'audio' ||
-						!DOMCompat::getClassList( $outerElt )->contains( 'mw-default-audio-height' )
+						!DOMUtils::hasClass( $outerElt, 'mw-default-audio-height' )
 					)
 				) {
 					$height = intval( $wh['value'] );
@@ -1507,7 +1516,7 @@ class LinkHandlerUtils {
 						// box explicitly square (100x100px). The 'px' is
 						// added by the alias though, and can be localized.
 						'v' => $bbox . 'x' . $bbox,
-						'ak' => $mwAliases['img_width'],  // adds the 'px' suffix
+						'ak' => $mwAliases['img_width'], // adds the 'px' suffix
 					];
 				}
 			}
@@ -1621,9 +1630,9 @@ class LinkHandlerUtils {
 		}
 		$wikitext .= ']]';
 
-		$state->emitChunk( new WikiLinkText(
-			$wikitext, $node, $state->getEnv()->getSiteConfig(), 'mw:File'
-		), $node );
+		return new WikiLinkText(
+			$wikitext, $outerElt, $state->getEnv()->getSiteConfig(), 'mw:File'
+		);
 	}
 
 }

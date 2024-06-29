@@ -1,7 +1,7 @@
 /* eslint-disable no-jquery/no-jquery-constructor, no-jquery/no-other-methods, no-jquery/no-class,
-	no-jquery/no-extend, no-jquery/no-data, no-jquery/no-css, no-jquery/no-visibility, no-jquery/no-trigger,
-	no-jquery/no-is-empty-object, no-jquery/no-find-collection, no-jquery/no-attr, no-jquery/no-parent,
-	no-jquery/no-each-collection */
+	no-jquery/no-extend, no-jquery/no-data, no-jquery/no-css, no-jquery/no-visibility,
+	no-jquery/no-trigger, no-jquery/no-is-empty-object, no-jquery/no-find-collection,
+	no-jquery/no-attr, no-jquery/no-parent, no-jquery/no-each-collection */
 /**
  * This adds behaviour to Vector's tabs in the bottom right so that at smaller
  * displays they collapse under the more menu.

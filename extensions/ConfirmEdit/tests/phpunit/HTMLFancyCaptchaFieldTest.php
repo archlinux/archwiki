@@ -2,6 +2,7 @@
 
 use MediaWiki\Extension\ConfirmEdit\FancyCaptcha\HTMLFancyCaptchaField;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 
 /**

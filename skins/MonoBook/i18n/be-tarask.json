@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Red Winged Duck"
+			"Red Winged Duck",
+			"Renessaince"
 		]
 	},
 	"skinname-monobook": "Монакніга",
@@ -11,6 +12,7 @@
 	"monobook-jumptonavigation": "Перайсьці да навігацыі",
 	"monobook-jumptosearch": "Перайсьці да пошуку",
 	"monobook-more-actions": "Болей",
+	"cactions-mobile": "Дзеяньні на старонцы",
 	"monobook-cactions-label": "Дзеяньні на старонцы",
 	"monobook-notifications-link": "Паведамленьні ($1)",
 	"monobook-notifications-link-none": "Паведамленьні",

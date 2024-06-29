@@ -95,13 +95,13 @@ class DoubleRedirectJob extends Job {
 	public static function fixRedirects( $reason, $redirTitle ) {
 		# Need to use the primary DB to get the redirect table updated in the same transaction
 		$services = MediaWikiServices::getInstance();
-		$dbw = $services->getDBLoadBalancerFactory()->getPrimaryDatabase();
+		$dbw = $services->getConnectionProvider()->getPrimaryDatabase();
 		$res = $dbw->newSelectQueryBuilder()
 			->select( [ 'page_namespace', 'page_title' ] )
 			->from( 'redirect' )
 			->join( 'page', null, 'page_id = rd_from' )
 			->where( [ 'rd_namespace' => $redirTitle->getNamespace(), 'rd_title' => $redirTitle->getDBkey() ] )
-			->andWhere( [ 'rd_interwiki' => [ '', null ] ] )
+			->andWhere( [ 'rd_interwiki' => '' ] )
 			->caller( __METHOD__ )->fetchResultSet();
 		if ( !$res->numRows() ) {
 			return;
@@ -152,7 +152,7 @@ class DoubleRedirectJob extends Job {
 		}
 
 		$targetRev = $this->revisionLookup
-			->getRevisionByTitle( $this->title, 0, RevisionLookup::READ_LATEST );
+			->getRevisionByTitle( $this->title, 0, IDBAccessObject::READ_LATEST );
 		if ( !$targetRev ) {
 			wfDebug( __METHOD__ . ": target redirect already deleted, ignoring" );
 
@@ -236,7 +236,7 @@ class DoubleRedirectJob extends Job {
 	 *  the page is not a redirect or the redirect loops.
 	 */
 	public static function getFinalDestination( $title ) {
-		$dbw = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getPrimaryDatabase();
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 
 		// Circular redirect check
 		$seenTitles = [];
@@ -273,7 +273,7 @@ class DoubleRedirectJob extends Job {
 					$row->rd_namespace,
 					$row->rd_title,
 					'',
-					$row->rd_interwiki ?? ''
+					$row->rd_interwiki
 				);
 			}
 		}

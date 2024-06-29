@@ -16,7 +16,7 @@ use Wikimedia\TestingAccessWrapper;
 class SpecialWatchlistTest extends SpecialPageTestBase {
 	protected function setUp(): void {
 		parent::setUp();
-		$this->tablesUsed = [ 'watchlist' ];
+
 		$this->setTemporaryHook(
 			'ChangesListSpecialPageQuery',
 			HookContainer::NOOP
@@ -53,7 +53,9 @@ class SpecialWatchlistTest extends SpecialPageTestBase {
 			$services->getWatchedItemStore(),
 			$services->getWatchlistManager(),
 			$services->getUserOptionsLookup(),
-			$services->getChangeTagsStore()
+			$services->getChangeTagsStore(),
+			$services->getUserIdentityUtils(),
+			$services->getTempUserConfig()
 		);
 	}
 

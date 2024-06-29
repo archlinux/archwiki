@@ -17,7 +17,11 @@ class NotificationServiceClientUnitTest extends MediaWikiUnitTestCase {
 
 		$mock->expects( $this->exactly( $numOfCalls ) )
 			->method( 'sendRequest' )
-			->withConsecutive( ...$expected );
+			->willReturnCallback( function ( $provider, $payload ) use ( &$expected ): void {
+				$expectedIdx = array_search( [ $provider, $payload ], $expected, true );
+				$this->assertNotFalse( $expectedIdx, "Unexpected arguments (provider: $provider)" );
+				unset( $expected[$expectedIdx] );
+			} );
 
 		$mock->sendCheckEchoRequests( $subscriptions );
 	}
@@ -48,38 +52,38 @@ class NotificationServiceClientUnitTest extends MediaWikiUnitTestCase {
 		$subscriptions[] = Subscription::newFromRow( $row );
 
 		return [
+			[
+				1,
+				[ $subscriptions[0], $subscriptions[1] ],
 				[
-					1,
-					[ $subscriptions[0], $subscriptions[1] ],
 					[
+						'fcm',
 						[
-							'fcm',
-							[
-								'deviceTokens' => [ "JKL123", 'DEF456' ],
-								'messageType' => 'checkEchoV1'
-							]
+							'deviceTokens' => [ "JKL123", 'DEF456' ],
+							'messageType' => 'checkEchoV1'
 						]
 					]
-				],
+				]
+			],
+			[
+				2,
+				$subscriptions,
 				[
-					2,
-					$subscriptions,
 					[
+						'fcm',
 						[
-							'fcm',
-							[
-								'deviceTokens' => [ "JKL123", 'DEF456' ],
-								'messageType' => 'checkEchoV1'
-							]
-						],
-						[
-							'apns',
-							[
-								'deviceTokens' => [ 'GHI789' ],
-								'messageType' => 'checkEchoV1',
-								'topic' => 'test'
-							]
+							'deviceTokens' => [ "JKL123", 'DEF456' ],
+							'messageType' => 'checkEchoV1'
 						]
+					],
+					[
+						'apns',
+						[
+							'deviceTokens' => [ 'GHI789' ],
+							'messageType' => 'checkEchoV1',
+							'topic' => 'test'
+						]
+					]
 				]
 			]
 		];

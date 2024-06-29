@@ -2,7 +2,7 @@
 /**
  * Import XML dump files into the current wiki.
  *
- * Copyright © 2005 Brion Vibber <brion@pobox.com>
+ * Copyright © 2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
  */
 
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Permissions\UltimateAuthority;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -273,7 +274,7 @@ TEXT
 				$this->progress( "$this->revCount ($revrate revs/sec)" );
 			}
 		}
-		$this->getServiceContainer()->getDBLoadBalancerFactory()->waitForReplication();
+		$this->waitForReplication();
 	}
 
 	private function progress( $string ) {
@@ -309,10 +310,12 @@ TEXT
 	private function importFromHandle( $handle ) {
 		$this->startTime = microtime( true );
 
+		$user = User::newSystemUser( User::MAINTENANCE_SCRIPT_USER, [ 'steal' => true ] );
+
 		$source = new ImportStreamSource( $handle );
 		$importer = $this->getServiceContainer()
 			->getWikiImporterFactory()
-			->getWikiImporter( $source );
+			->getWikiImporter( $source, new UltimateAuthority( $user ) );
 
 		// Updating statistics require a lot of time so disable it
 		$importer->disableStatisticsUpdate();

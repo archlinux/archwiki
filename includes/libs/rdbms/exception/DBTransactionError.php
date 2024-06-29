@@ -24,7 +24,6 @@ use Wikimedia\NormalizedException\NormalizedExceptionTrait;
 
 /**
  * @newable
- * @stable to extend
  * @ingroup Database
  */
 class DBTransactionError extends DBExpectedError implements INormalizedException {
@@ -52,8 +51,3 @@ class DBTransactionError extends DBExpectedError implements INormalizedException
 		);
 	}
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( DBTransactionError::class, 'DBTransactionError' );

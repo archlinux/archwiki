@@ -1,7 +1,12 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -11,17 +16,13 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group medium
  * @group Database
  *
- * @covers ApiQueryInfo
+ * @covers \ApiQueryInfo
  */
 class ApiQueryInfoTest extends ApiTestCase {
+	use TempUserTestTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'watchlist', 'watchlist_expiry' ]
-		);
 
 		$this->overrideConfigValues( [
 			MainConfigNames::WatchlistExpiry => true,
@@ -120,9 +121,7 @@ class ApiQueryInfoTest extends ApiTestCase {
 		$title = $page->getTitle();
 
 		// Disabled
-		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, [
-			'enabled' => false,
-		] );
+		$this->disableAutoCreateTempUser();
 		[ $data ] = $this->doApiRequest( [
 			'action' => 'query',
 			'prop' => 'info',
@@ -135,13 +134,7 @@ class ApiQueryInfoTest extends ApiTestCase {
 
 		// Enabled
 		$this->setGroupPermissions( '*', 'createaccount', true );
-		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, [
-			'enabled' => true,
-			'actions' => [ 'edit' ],
-			'genPattern' => 'Unregistered $1',
-			'serialProvider' => [],
-			'serialMapping' => [],
-		] );
+		$this->enableAutoCreateTempUser();
 		[ $data ] = $this->doApiRequest( [
 			'action' => 'query',
 			'prop' => 'info',
@@ -225,8 +218,7 @@ class ApiQueryInfoTest extends ApiTestCase {
 		$sysop = $this->getTestSysop()->getUser();
 
 		$block = new DatabaseBlock( [
-			'address' => $badActor->getName(),
-			'user' => $badActor->getId(),
+			'address' => $badActor,
 			'by' => $sysop,
 			'expiry' => 'infinity',
 			'sitewide' => 1,
@@ -246,8 +238,6 @@ class ApiQueryInfoTest extends ApiTestCase {
 				'intestactions' => 'edit',
 				'intestactionsdetail' => 'full',
 		], null, false, $badActor );
-
-		$blockStore->deleteBlock( $block );
 
 		$this->assertArrayHasKey( 'query', $data );
 		$this->assertArrayHasKey( 'pages', $data['query'] );

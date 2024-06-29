@@ -1,4 +1,6 @@
 /* stylelint-disable selector-class-pattern */
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
 
 /**
  * Helper classes used across special pages and actions
@@ -62,6 +64,9 @@
 	}
 }
 
+.mw-diff-edit,
+.mw-diff-tool,
+.mw-diff-undo,
 .comment--without-parentheses,
 .mw-changeslist-links,
 .mw-diff-bytes,
@@ -75,6 +80,10 @@
 	&::after {
 		content: '@{msg-parentheses-end}';
 	}
+}
+
+.mw-comment-none {
+	.mixin-screen-reader-text();
 }
 
 .mw-changeslist-links {

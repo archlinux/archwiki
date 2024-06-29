@@ -6,7 +6,7 @@
 	},
 	"math-visualeditor-mwlatexinspector-display": "Хьагойтар",
 	"math-visualeditor-symbol-group-math-symbols": "Хьаракаши константаши",
-	"mw_math_mathml": "SVG (MathML can be enabled via browser plugin)",
-	"mw_math_source": "LaTeX-разметка (йоазон браузерашта)",
+	"mw-math-mathml": "SVG (MathML can be enabled via browser plugin)",
+	"mw-math-source": "LaTeX-разметка (йоазон браузерашта)",
 	"prefs-math": "Формулаш гуш хилар"
 }

@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\Site;
+
 /**
  * Interface to retrieve Site objects, for implementation by service classes.
  *
@@ -46,3 +48,6 @@ interface SiteLookup {
 	public function getSites();
 
 }
+
+/** @deprecated class alias since 1.41 */
+class_alias( SiteLookup::class, 'SiteLookup' );

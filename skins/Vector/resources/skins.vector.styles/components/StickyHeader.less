@@ -18,6 +18,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	border-bottom: @border-width-base @border-style-base @border-color-content-box;
 
 	//
 	// Layout
@@ -116,8 +117,8 @@
 }
 
 // T298836 Sticky header is only shown at higher resolutions
-@media ( min-width: @min-width-desktop ) {
-	&.client-js.vector-sticky-header-enabled {
+@media ( min-width: @min-width-breakpoint-desktop ) {
+	.client-js.vector-sticky-header-enabled {
 		// T290518: When the sticky header is enabled (feature flag is on, js is
 		// enabled, and viewport is at higher resolutions), add scroll padding to the
 		// root element. This is needed so that the sticky header does not overlap the
@@ -141,24 +142,22 @@
 			transform: translateY( 0 );
 		}
 
-		// - T314330 `.vector-feature-toc-pinned-clientpref-1 #vector-toc-pinned-container`
-		//   Prevent ToC from jumping when sticky header is enabled.
+		.vector-sticky-pinned-container {
+			top: ~'calc( @{height-header} + @{grid-row-gap} )';
+			max-height: ~'calc( 100vh - @{height-header} - (@{grid-row-gap} * 2) )';
+		}
+
 		// - T289817 `.mw-sticky-header-element` provides an API for template developers
 		//   to make their templates compatible with the Vector 2022 sticky header.
 		//   @stable See the Integration notes for developers section at
 		//   https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements/Features/Sticky_Header
 		// - `.charts-stickyhead th` makes chart and table headers appear below the sticky header.
-		&.vector-feature-toc-pinned-clientpref-1 #vector-toc-pinned-container,
-		&.vector-feature-page-tools-pinned-enabled .vector-page-tools-landmark,
+		// - Unlike the rule above targeting toc & page tools, this does not need extra padding
+		//   for the context box, since these elements are inside the content container.
 		.mw-sticky-header-element,
 		.charts-stickyhead th {
 			/* stylelint-disable-next-line declaration-no-important */
 			top: @height-header !important;
-		}
-
-		#vector-toc-pinned-container .vector-toc,
-		#vector-page-tools-pinned-container .vector-page-tools {
-			max-height: ~'calc( 100vh - @{height-header} - @{max-height-bottom-spacing-scroll-indicator} )';
 		}
 	}
 }

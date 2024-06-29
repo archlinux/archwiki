@@ -10,7 +10,8 @@
 			"Stanqo",
 			"Termininja",
 			"Vlad5250",
-			"Vodnokon4e"
+			"Vodnokon4e",
+			"Yasen igra"
 		]
 	},
 	"minerva-last-modified-date": "Последна промяна: в $2, на $1",
@@ -56,6 +57,12 @@
 	"minerva-page-actions-history": "История",
 	"minerva-skin-desc": "Адаптивен облик преди всичко за мобилна употреба",
 	"skin-minerva-issue-learn-more": "Научете повече",
+	"skin-minerva-time-ago-seconds": "преди {{PLURAL:$1|$1 секунда|$1 секунди}}",
+	"skin-minerva-time-ago-minutes": "преди {{PLURAL:$1|$1 минута|$1 минути}}",
+	"skin-minerva-time-ago-hours": "преди {{PLURAL:$1|$1 час|$1 часа}}",
+	"skin-minerva-time-ago-days": "преди {{PLURAL:$1|$1 ден|$1 дни}}",
+	"skin-minerva-time-ago-months": "преди {{PLURAL:$1|$1 месец|$1 месеца}}",
+	"skin-minerva-time-ago-years": "преди {{PLURAL:$1|$1 година|$1 години}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категории",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Преглед на категории на страници",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Подобрено справяне с проблеми на страницата",

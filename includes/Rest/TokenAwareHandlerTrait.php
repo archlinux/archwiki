@@ -11,7 +11,7 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * This trait can be used on handlers that choose to support token-based CSRF protection. Note that doing so is
- * discouraged, and you should preferrably require that the endpoint be used with a session provider that is
+ * discouraged, and you should preferably require that the endpoint be used with a session provider that is
  * safe against CSRF, such as OAuth.
  * @see Handler::requireSafeAgainstCsrf()
  *
@@ -53,12 +53,24 @@ trait TokenAwareHandlerTrait {
 			throw new LogicException( 'This trait must be used on handler classes.' );
 		}
 
-		if ( $this->getSession()->getProvider()->safeAgainstCsrf() ) {
+		if ( !$this->needsToken() ) {
 			return null;
 		}
 
 		$body = $this->getValidatedBody();
 		return $body['token'] ?? '';
+	}
+
+	/**
+	 * Determines whether a CSRF token is needed.
+	 *
+	 * Returns false if the request has been authenticated in a way that
+	 * protects against CSRF, such as OAuth.
+	 *
+	 * @return bool
+	 */
+	protected function needsToken(): bool {
+		return !$this->getSession()->getProvider()->safeAgainstCsrf();
 	}
 
 	/**

@@ -1,12 +1,17 @@
 <?php
 
+namespace Wikimedia\Tests\Rdbms;
+
+use DatabaseTestHelper;
+use MediaWikiCoversValidator;
+use PHPUnit\Framework\TestCase;
 use Wikimedia\Rdbms\DeleteQueryBuilder;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
  * @covers \Wikimedia\Rdbms\DeleteQueryBuilder
  */
-class DeleteQueryBuilderTest extends PHPUnit\Framework\TestCase {
+class DeleteQueryBuilderTest extends TestCase {
 	use MediaWikiCoversValidator;
 
 	/** @var DatabaseTestHelper */
@@ -65,7 +70,7 @@ class DeleteQueryBuilderTest extends PHPUnit\Framework\TestCase {
 			->caller( 'foo' );
 		$this->assertEquals(
 			[
-				'table' => 't' ,
+				'table' => 't',
 				'conds' => [ 'a' => 'b' ],
 				'caller' => 'foo',
 			],

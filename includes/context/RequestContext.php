@@ -22,24 +22,39 @@
  * @file
  */
 
+namespace MediaWiki\Context;
+
+use BadMethodCallException;
+use InvalidArgumentException;
+use Language;
+use LogicException;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\CsrfTokenSet;
+use MediaWiki\Session\PHPSessionHandler;
+use MediaWiki\Session\SessionManager;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MessageSpecifier;
+use RuntimeException;
+use Skin;
+use Timing;
 use Wikimedia\Assert\Assert;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\IPUtils;
 use Wikimedia\NonSerializable\NonSerializableTrait;
 use Wikimedia\ScopedCallback;
+use WikiPage;
 
 /**
  * Group all the pieces relevant to the context of a request into one instance
@@ -156,9 +171,10 @@ class RequestContext implements IContextSource, MutableContext {
 	 */
 	public function getRequest() {
 		if ( $this->request === null ) {
-			global $wgCommandLineMode;
 			// create the WebRequest object on the fly
-			if ( $wgCommandLineMode ) {
+			if ( MW_ENTRY_POINT === 'cli' ) {
+				// Don't use real WebRequest in CLI mode, it throws errors when trying to access
+				// things that don't exist, e.g. "Unable to determine IP".
 				$this->request = new FauxRequest( [] );
 			} else {
 				$this->request = new WebRequest();
@@ -198,7 +214,7 @@ class RequestContext implements IContextSource, MutableContext {
 			$logger = LoggerFactory::getInstance( 'GlobalTitleFail' );
 			$logger->info(
 				__METHOD__ . ' called with no title set.',
-				[ 'exception' => new Exception ]
+				[ 'exception' => new RuntimeException ]
 			);
 		}
 
@@ -256,14 +272,13 @@ class RequestContext implements IContextSource, MutableContext {
 	 * canUseWikiPage() to check whether this method can be called safely.
 	 *
 	 * @since 1.19
-	 * @throws MWException
 	 * @return WikiPage
 	 */
 	public function getWikiPage() {
 		if ( $this->wikipage === null ) {
 			$title = $this->getTitle();
 			if ( $title === null ) {
-				throw new MWException( __METHOD__ . ' called without Title object set' );
+				throw new BadMethodCallException( __METHOD__ . ' called without Title object set' );
 			}
 			$this->wikipage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 		}
@@ -349,6 +364,7 @@ class RequestContext implements IContextSource, MutableContext {
 		// Invalidate cached user interface language and skin
 		$this->lang = null;
 		$this->skin = null;
+		$this->skinName = null;
 	}
 
 	/**
@@ -379,6 +395,7 @@ class RequestContext implements IContextSource, MutableContext {
 		// Invalidate cached user interface language and skin
 		$this->lang = null;
 		$this->skin = null;
+		$this->skinName = null;
 	}
 
 	/**
@@ -487,6 +504,14 @@ class RequestContext implements IContextSource, MutableContext {
 		}
 
 		return $this->lang;
+	}
+
+	/**
+	 * @since 1.42
+	 * @return Bcp47Code
+	 */
+	public function getLanguageCode() {
+		return $this->getLanguage();
 	}
 
 	/**
@@ -629,7 +654,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 * @since 1.21
 	 */
 	public function exportSession() {
-		$session = MediaWiki\Session\SessionManager::getGlobalSession();
+		$session = SessionManager::getGlobalSession();
 		return [
 			'ip' => $this->getRequest()->getIP(),
 			'headers' => $this->getRequest()->getAllHeaders(),
@@ -663,7 +688,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 */
 	public static function importScopedSession( array $params ) {
 		if ( strlen( $params['sessionId'] ) &&
-			MediaWiki\Session\SessionManager::getGlobalSession()->isPersistent()
+			SessionManager::getGlobalSession()->isPersistent()
 		) {
 			// Check to avoid sending random cookies for the wrong users.
 			// This method should only called by CLI scripts or by HTTP job runners.
@@ -688,7 +713,7 @@ class RequestContext implements IContextSource, MutableContext {
 			$context = RequestContext::getMain();
 
 			// Commit and close any current session
-			if ( MediaWiki\Session\PHPSessionHandler::isEnabled() ) {
+			if ( PHPSessionHandler::isEnabled() ) {
 				session_write_close(); // persist
 				session_id( '' ); // detach
 				$_SESSION = []; // clear in-memory array
@@ -697,7 +722,7 @@ class RequestContext implements IContextSource, MutableContext {
 			// Get new session, if applicable
 			$session = null;
 			if ( strlen( $params['sessionId'] ) ) { // don't make a new random ID
-				$manager = MediaWiki\Session\SessionManager::singleton();
+				$manager = SessionManager::singleton();
 				$session = $manager->getSessionById( $params['sessionId'], true )
 					?: $manager->getEmptySession();
 			}
@@ -713,7 +738,7 @@ class RequestContext implements IContextSource, MutableContext {
 			// of the User object being attached to the wrong IP, headers, or session.
 			$context->setUser( $user );
 			StubGlobalUser::setUser( $context->getUser() ); // b/c
-			if ( $session && MediaWiki\Session\PHPSessionHandler::isEnabled() ) {
+			if ( $session && PHPSessionHandler::isEnabled() ) {
 				session_id( $session->getId() );
 				AtEase::quietCall( 'session_start' );
 			}
@@ -780,3 +805,6 @@ class RequestContext implements IContextSource, MutableContext {
 	}
 
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( RequestContext::class, 'RequestContext' );

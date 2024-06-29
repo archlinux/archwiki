@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Deviathan (on dv.wikipedia.org)",
 			"Fitoschido",
 			"Glacious",
@@ -9,8 +10,7 @@
 			"MtDu",
 			"Ushau97",
 			"Zhatre",
-			"לערי ריינהארט",
-			"Amire80"
+			"לערי ריינהארט"
 		]
 	},
 	"tog-hideminor": "ކުދި އުނި އިތުރުތައް އެންމެފަހުގެ ބަދަލުތަކުގެ ލިސްޓުން ފޮރުއްވަވާ",
@@ -166,11 +166,11 @@
 	"badaccess": "ހުއްދައިގެ ކުށެއް",
 	"ok": "ރަނގަޅު",
 	"retrievedfrom": "$1 އިން",
-	"youhavenewmessages": "ތިޔަބޭފުޅާއަށް $1 ($2)",
-	"youhavenewmessagesfromusers": "ތިބޭފުޅާއަށް {{PLURAL:$3|މެމްބަރެއް|$3 މެމްބަރުން}} $1 ފޮނުއްވާފައިވެއެވެ. ($2)",
-	"youhavenewmessagesmanyusers": "ތިބޭފުޅާއަށް ގިނަ މެމްބަރުން $1 ފޮނުއްވާފައިވެއެވެ. ($2)",
-	"newmessageslinkplural": "{{PLURAL:$1|އާ މެސެޖެއް|މެސެޖުތައް}}",
-	"newmessagesdifflinkplural": "ފަހު {{PLURAL:$1|ބަދަލު|ބަދަލުތައް}}",
+	"new-messages": "ތިޔަބޭފުޅާއަށް $1 ($2)",
+	"new-messages-from-users": "ތިބޭފުޅާއަށް {{PLURAL:$3|މެމްބަރެއް|$3 މެމްބަރުން}} $1 ފޮނުއްވާފައިވެއެވެ. ($2)",
+	"new-messages-from-many-users": "ތިބޭފުޅާއަށް ގިނަ މެމްބަރުން $1 ފޮނުއްވާފައިވެއެވެ. ($2)",
+	"new-messages-link-plural": "{{PLURAL:$1|އާ މެސެޖެއް|މެސެޖުތައް}}",
+	"new-messages-diff-link-plural": "ފަހު {{PLURAL:$1|ބަދަލު|ބަދަލުތައް}}",
 	"editsection": "އުނިއިތުރު ގެންނަވާ",
 	"editold": "އުނިއިތުރު ގެންނަވާ",
 	"viewsourceold": "މަސްދަރު ބައްލަވާ",
@@ -209,7 +209,7 @@
 	"namespaceprotected": "ތިބޭފުޅާއަށް '''$1'''ގައިވާ ޞަފްޙާތަކަށް ބަދަލުގެނައުމުގެ ހުއްދައެއް ނުވޭ!",
 	"ns-specialprotected": "ޚާއްސަ ޞަފްޙާތަކަށް އުނިއިތުރު ނުގެންނެވޭނެއެވެ.",
 	"logouttext": "'''ތިބޭފުޅާއަށް ބޭރަށް ވަޑައިގެންނެވިއްޖެ.'''\n\nތިބޭފުޅާއަށް {{SITENAME}} ބޭނުންކުރެވޭނެއެވެ. ނަމަވެސް އެހެން މެމްބަރެއްގެ ގޮތުގައި <span class='plainlinks'>[$1 ވަދެވަޑައިގަނެވިދާނެއެވެ.]</span> ނުވަތަ ތި މެމްބަރުގެ ގޮތުގައި ވަދެވަޑައިގެންނެވޭނެއެވެ.",
-	"welcomeuser": "މަރުޙަބާ،  $1!",
+	"welcomeuser": "މަރުޙަބާ، $1!",
 	"yourname": "މެންބަރުގެނަން",
 	"yourpassword": "ސިއްރުބަސް",
 	"userlogin-yourpassword-ph": "ސިއްރު ބަސް ޖައްސަވާ",

@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Assele",
+			"Bashkorttan",
 			"Haqmar",
 			"Macofe",
 			"Айсар",
 			"З. ӘЙЛЕ",
 			"Танзиля Кутлугильдина",
-			"Янмурза Баки",
-			"Bashkorttan"
+			"Янмурза Баки"
 		]
 	},
 	"wikieditor": "Викитексты мөхәррирләүҙең киңәйтелгән интерфейсы",
@@ -22,10 +22,6 @@
 	"wikieditor-toolbar-tool-bold-example": "Ҡалын яҙылыш",
 	"wikieditor-toolbar-tool-italic": "Ҡыя",
 	"wikieditor-toolbar-tool-italic-example": "Ҡыя яҙылыш",
-	"wikieditor-toolbar-tool-ilink": "Эске һылтанма",
-	"wikieditor-toolbar-tool-ilink-example": "Һылтанма исеме",
-	"wikieditor-toolbar-tool-xlink": "Тышҡы һылтанма (http:// префиксы тураһында онотмағыҙ)",
-	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com һылтанма исеме",
 	"wikieditor-toolbar-tool-link": "Һылтанма",
 	"wikieditor-toolbar-tool-link-title": "Һылтанма ҡуйыу",
 	"wikieditor-toolbar-tool-link-int": "Вики биткә күсеү",
@@ -43,12 +39,10 @@
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Һеҙ күрһәткән исем ғәмәлдән сыҡҡан",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Тышҡы һылтанма",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Был мәҡәлә бите түгел, ә оҡшаш атамалы темалар исемлеге",
-	"wikieditor-toolbar-tool-link-int-invalid": "Күрһәтелгән атама дөрөҫ түгел.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Һеҙ күрһәткән URL-адрес башҡа вики-биттең һылтанмаһына оҡшаған.\nБыл һылтанманы эске һылтанмаға әйләндерергә теләйһегеҙме?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Эске һылтанма",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Тышҡы һылтанма",
 	"wikieditor-toolbar-tool-file": "Фотоһүрәттәр һәм медиафайлдар",
-	"wikieditor-toolbar-tool-file-example": "Миҫал.jpg",
 	"wikieditor-toolbar-tool-file-title": "Файл өҫтәү",
 	"wikieditor-toolbar-file-target": "Файл исеме:",
 	"wikieditor-toolbar-file-caption": "Имза:",
@@ -94,7 +88,6 @@
 	"wikieditor-toolbar-tool-gallery-example": "Миҫал.jpg|Тасуирлама1\nМиҫал.jpg|Тасуирлама2",
 	"wikieditor-toolbar-tool-newline": "Яңы юл",
 	"wikieditor-toolbar-tool-table": "Таблица",
-	"wikieditor-toolbar-tool-table-example-old": "! 1-се исем\n! 2-се исем\n! 3-сө исем\n|-\n| юл 1, ячейка 1\n| юл 1, ячейка 2\n| юл 1, ячейка 3\n|-\n| юл 2, ячейка 1\n| юл 2, ячейка 2\n| юл 2, ячейка 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Күҙәнәк тексы",
 	"wikieditor-toolbar-tool-table-example-header": "Атама исеме",
 	"wikieditor-toolbar-tool-table-example-caption": "Аңлатма тексы",

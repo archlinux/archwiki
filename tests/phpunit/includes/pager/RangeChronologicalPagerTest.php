@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Pager\RangeChronologicalPager;
 
 /**
@@ -13,7 +14,7 @@ use MediaWiki\Pager\RangeChronologicalPager;
 class RangeChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 
 	/**
-	 * @covers RangeChronologicalPager::getDateCond
+	 * @covers \MediaWiki\Pager\RangeChronologicalPager::getDateCond
 	 * @dataProvider getDateCondProvider
 	 */
 	public function testGetDateCond( $inputYear, $inputMonth, $inputDay, $expected ) {
@@ -41,7 +42,7 @@ class RangeChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers RangeChronologicalPager::getDateRangeCond
+	 * @covers \MediaWiki\Pager\RangeChronologicalPager::getDateRangeCond
 	 * @dataProvider getDateRangeCondProvider
 	 */
 	public function testGetDateRangeCond( $start, $end, $expected ) {
@@ -53,29 +54,29 @@ class RangeChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 	 * Data provider in [ start, end, [ expected output has start condition, has end cond ] ] format
 	 */
 	public static function getDateRangeCondProvider() {
-		$db = wfGetDB( DB_PRIMARY );
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 
 		return [
 			[
 				'20161201000000',
 				'20161202235959',
 				[
-					$db->buildComparison( '>=', [ '' => $db->timestamp( '20161201000000' ) ] ),
-					$db->buildComparison( '<', [ '' => $db->timestamp( '20161203000000' ) ] ),
+					$dbw->buildComparison( '>=', [ '' => $dbw->timestamp( '20161201000000' ) ] ),
+					$dbw->buildComparison( '<', [ '' => $dbw->timestamp( '20161203000000' ) ] ),
 				],
 			],
 			[
 				'',
 				'20161202235959',
 				[
-					$db->buildComparison( '<', [ '' => $db->timestamp( '20161203000000' ) ] ),
+					$dbw->buildComparison( '<', [ '' => $dbw->timestamp( '20161203000000' ) ] ),
 				],
 			],
 			[
 				'20161201000000',
 				'',
 				[
-					$db->buildComparison( '>=', [ '' => $db->timestamp( '20161201000000' ) ] ),
+					$dbw->buildComparison( '>=', [ '' => $dbw->timestamp( '20161201000000' ) ] ),
 				],
 			],
 			[ '', '', [] ],
@@ -83,7 +84,7 @@ class RangeChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers RangeChronologicalPager::getDateRangeCond
+	 * @covers \MediaWiki\Pager\RangeChronologicalPager::getDateRangeCond
 	 * @dataProvider getDateRangeCondInvalidProvider
 	 */
 	public function testGetDateRangeCondInvalid( $start, $end ) {

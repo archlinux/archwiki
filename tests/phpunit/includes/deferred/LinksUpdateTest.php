@@ -3,6 +3,7 @@
 use MediaWiki\Deferred\LinksUpdate\LinksTable;
 use MediaWiki\Deferred\LinksUpdate\LinksTableGroup;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Interwiki\ClassicInterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentityValue;
@@ -12,19 +13,19 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers MediaWiki\Deferred\LinksUpdate\LinksUpdate
- * @covers MediaWiki\Deferred\LinksUpdate\CategoryLinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\ExternalLinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\GenericPageLinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\ImageLinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\InterwikiLinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\LangLinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\LinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\LinksTableGroup
- * @covers MediaWiki\Deferred\LinksUpdate\PageLinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\PagePropsTable
- * @covers MediaWiki\Deferred\LinksUpdate\TemplateLinksTable
- * @covers MediaWiki\Deferred\LinksUpdate\TitleLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\LinksUpdate
+ * @covers \MediaWiki\Deferred\LinksUpdate\CategoryLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\ExternalLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\GenericPageLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\ImageLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\InterwikiLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\LangLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\LinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\LinksTableGroup
+ * @covers \MediaWiki\Deferred\LinksUpdate\PageLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\PagePropsTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\TemplateLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\TitleLinksTable
  *
  * @group LinksUpdate
  * @group Database
@@ -35,35 +36,29 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->tablesUsed = array_merge( $this->tablesUsed,
+		// Set up 'linksupdatetest' as a interwiki prefix for testing
+		// See ParserTestRunner:appendInterwikiSetup for similar test code
+		static $testInterwikis = [
 			[
-				'interwiki',
-				'page_props',
-				'pagelinks',
-				'categorylinks',
-				'category',
-				'langlinks',
-				'externallinks',
-				'imagelinks',
-				'templatelinks',
-				'iwlinks',
-				'recentchanges',
-			]
-		);
-
-		$this->getDb()->newReplaceQueryBuilder()
-			->replaceInto( 'interwiki' )
-			->uniqueIndexFields( [ 'iw_prefix' ] )
-			->row( [
 				'iw_prefix' => 'linksupdatetest',
 				'iw_url' => 'http://testing.com/wiki/$1',
-				'iw_api' => 'http://testing.com/w/api.php',
+				// 'iw_api' => 'http://testing.com/w/api.php',
 				'iw_local' => 0,
-				'iw_trans' => 0,
-				'iw_wikiid' => 'linksupdatetest',
-			] )
-			->caller( __METHOD__ )->execute();
-		$this->overrideConfigValue( MainConfigNames::RCWatchCategoryMembership, true );
+			],
+		];
+		$GLOBAL_SCOPE = 2; // See ParserTestRunner::appendInterwikiSetup
+		$this->overrideConfigValues( [
+			MainConfigNames::InterwikiScopes => $GLOBAL_SCOPE,
+			MainConfigNames::InterwikiCache =>
+			ClassicInterwikiLookup::buildCdbHash( $testInterwikis, $GLOBAL_SCOPE ),
+			MainConfigNames::RCWatchCategoryMembership => true,
+		] );
+		// Reset title services after interwiki prefixes change
+		$services = MediaWikiServices::getInstance();
+		$services->resetServiceForTesting( 'InterwikiLookup' );
+		$services->resetServiceForTesting( '_MediaWikiTitleCodec' );
+		$services->resetServiceForTesting( 'TitleFormatter' );
+		$services->resetServiceForTesting( 'TitleParser' );
 	}
 
 	public function addDBDataOnce() {
@@ -94,7 +89,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers ParserOutput::addLink
+	 * @covers \MediaWiki\Parser\ParserOutput::addLink
 	 */
 	public function testUpdate_pagelinks() {
 		/** @var Title $t */
@@ -112,14 +107,14 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'pagelinks',
 			[ 'pl_namespace', 'pl_title' ],
-			'pl_from = ' . self::$testingPageId,
+			[ 'pl_from' => self::$testingPageId ],
 			[
 				[ NS_MAIN, 'Bar' ],
 				[ NS_MAIN, 'Foo' ],
 			]
 		);
 		$this->assertArrayEquals( [
-			Title::makeTitle( NS_MAIN, 'Foo' ),  // newFromText doesn't yield the same internal state....
+			Title::makeTitle( NS_MAIN, 'Foo' ), // newFromText doesn't yield the same internal state....
 			Title::makeTitle( NS_MAIN, 'Bar' ),
 		], $update->getAddedLinks() );
 
@@ -135,7 +130,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'pagelinks',
 			[ 'pl_namespace', 'pl_title' ],
-			'pl_from = ' . self::$testingPageId,
+			[ 'pl_from' => self::$testingPageId ],
 			[
 				[ NS_MAIN, 'Bar' ],
 				[ NS_MAIN, 'Baz' ],
@@ -160,7 +155,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'pagelinks',
 			[ 'pl_namespace', 'pl_title', 'pl_from_namespace' ],
-			'pl_from = ' . self::$testingPageId,
+			[ 'pl_from' => self::$testingPageId ],
 			[
 				[ NS_MAIN, 'Foo', NS_MAIN ],
 			]
@@ -174,7 +169,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'pagelinks',
 			[ 'pl_namespace', 'pl_title', 'pl_from_namespace' ],
-			'pl_from = ' . self::$testingPageId,
+			[ 'pl_from' => self::$testingPageId ],
 			[
 				[ NS_MAIN, 'Foo', NS_USER ],
 			]
@@ -182,7 +177,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers ParserOutput::addExternalLink
+	 * @covers \MediaWiki\Parser\ParserOutput::addExternalLink
 	 */
 	public function testUpdate_externallinks() {
 		/** @var ParserOutput $po */
@@ -196,7 +191,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'externallinks',
 			[ 'el_to_domain_index', 'el_to_path' ],
-			'el_from = ' . self::$testingPageId,
+			[ 'el_from' => self::$testingPageId ],
 			[
 				[ 'http://com.testing.', '/wiki/Bar' ],
 				[ 'http://com.testing.', '/wiki/Foo' ],
@@ -217,7 +212,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'externallinks',
 			[ 'el_to_domain_index', 'el_to_path' ],
-			'el_from = ' . self::$testingPageId,
+			[ 'el_from' => self::$testingPageId ],
 			[
 				[ 'http://com.testing.', '/wiki/Bar' ],
 				[ 'http://com.testing.', '/wiki/Baz' ],
@@ -232,8 +227,60 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		], $update->getRemovedExternalLinks() );
 	}
 
+	public function testUpdate_externallinksWrongOldEntry() {
+		/** @var ParserOutput $po */
+		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
+
+		// Insert invalid entry from T350476
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'externallinks' )
+			->row( [
+				'el_from' => self::$testingPageId,
+				'el_to_domain_index' => 'http://.com.testing.',
+				'el_to_path' => '/',
+			] )
+			->row( [
+				'el_from' => self::$testingPageId,
+				'el_to_domain_index' => 'http://.',
+				'el_to_path' => '/',
+			] )
+			->row( [
+				'el_from' => self::$testingPageId,
+				'el_to_domain_index' => '',
+				'el_to_path' => null,
+			] )
+			->execute();
+
+		// Test that the invalid entries are removed on LinksUpdate
+		$po = new ParserOutput();
+		$po->setTitleText( $t->getPrefixedText() );
+		$po->addExternalLink( 'http://testing.com/wiki/Bar' );
+		$po->addExternalLink( 'http://testing.com/wiki/Baz' );
+		$update = $this->assertLinksUpdate(
+			$t,
+			$po,
+			'externallinks',
+			[ 'el_to_domain_index', 'el_to_path' ],
+			[ 'el_from' => self::$testingPageId ],
+			[
+				[ 'http://com.testing.', '/wiki/Bar' ],
+				[ 'http://com.testing.', '/wiki/Baz' ],
+			]
+		);
+
+		$this->assertArrayEquals( [
+			'http://testing.com/wiki/Bar',
+			'http://testing.com/wiki/Baz',
+		], $update->getAddedExternalLinks() );
+		$this->assertArrayEquals( [
+			'http://testing.com/',
+			'http:///',
+			'',
+		], $update->getRemovedExternalLinks() );
+	}
+
 	/**
-	 * @covers ParserOutput::addCategory
+	 * @covers \MediaWiki\Parser\ParserOutput::addCategory
 	 */
 	public function testUpdate_categorylinks() {
 		/** @var ParserOutput $po */
@@ -249,7 +296,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'categorylinks',
 			[ 'cl_to', 'cl_sortkey' ],
-			'cl_from = ' . self::$testingPageId,
+			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Bar', "BAR\nTESTING" ],
 				[ 'Foo', "FOO\nTESTING" ]
@@ -275,7 +322,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'categorylinks',
 			[ 'cl_to', 'cl_sortkey' ],
-			'cl_from = ' . self::$testingPageId,
+			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Bar', "BAR\nTESTING" ],
 				[ 'Baz', "BAZ\nTESTING" ]
@@ -391,7 +438,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'categorylinks',
 			[ 'cl_to', 'cl_sortkey' ],
-			'cl_from = ' . self::$testingPageId,
+			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Bar', "BAR\nOLD" ],
 				[ 'Foo', "FOO\nOLD" ],
@@ -420,7 +467,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'categorylinks',
 			[ 'cl_to', 'cl_sortkey' ],
-			'cl_from = ' . self::$testingPageId,
+			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Bar', "BAR\nOLD" ],
 				[ 'Foo', "FOO\nOLD" ],
@@ -450,7 +497,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'categorylinks',
 			[ 'cl_to', 'cl_sortkey' ],
-			'cl_from = ' . self::$testingPageId,
+			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Baz', "BAZ\nNEW" ],
 				[ 'Foo', "FOO\nNEW" ],
@@ -469,7 +516,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers ParserOutput::addInterwikiLink
+	 * @covers \MediaWiki\Parser\ParserOutput::addInterwikiLink
 	 */
 	public function testUpdate_iwlinks() {
 		/** @var ParserOutput $po */
@@ -486,7 +533,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'iwlinks',
 			[ 'iwl_prefix', 'iwl_title' ],
-			'iwl_from = ' . self::$testingPageId,
+			[ 'iwl_from' => self::$testingPageId ],
 			[
 				[ 'linksupdatetest', 'T1' ],
 				[ 'linksupdatetest', 'T2' ],
@@ -504,7 +551,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'iwlinks',
 			[ 'iwl_prefix', 'iwl_title' ],
-			'iwl_from = ' . self::$testingPageId,
+			[ 'iwl_from' => self::$testingPageId ],
 			[
 				[ 'linksupdatetest', 'T2' ],
 				[ 'linksupdatetest', 'T3' ]
@@ -513,7 +560,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers ParserOutput::addTemplate
+	 * @covers \MediaWiki\Parser\ParserOutput::addTemplate
 	 */
 	public function testUpdate_templatelinks() {
 		/** @var ParserOutput $po */
@@ -532,7 +579,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'templatelinks',
 			[ 'tl_target_id' ],
-			'tl_from = ' . self::$testingPageId,
+			[ 'tl_from' => self::$testingPageId ],
 			[
 				[ $linkTargetLookup->acquireLinkTargetId( $target1, $this->db ) ],
 				[ $linkTargetLookup->acquireLinkTargetId( $target2, $this->db ) ],
@@ -550,7 +597,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$po,
 			'templatelinks',
 			[ 'tl_target_id' ],
-			'tl_from = ' . self::$testingPageId,
+			[ 'tl_from' => self::$testingPageId ],
 			[
 				[ $linkTargetLookup->acquireLinkTargetId( $target2, $this->db ) ],
 				[ $linkTargetLookup->acquireLinkTargetId( $target3, $this->db ) ],
@@ -559,36 +606,36 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers ParserOutput::addImage
+	 * @covers \MediaWiki\Parser\ParserOutput::addImage
 	 */
 	public function testUpdate_imagelinks() {
 		/** @var ParserOutput $po */
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 
-		$po->addImage( "1.png" );
-		$po->addImage( "2.png" );
+		$po->addImage( new TitleValue( NS_FILE, "1.png" ) );
+		$po->addImage( new TitleValue( NS_FILE, "2.png" ) );
 
 		$this->assertLinksUpdate(
 			$t,
 			$po,
 			'imagelinks',
 			'il_to',
-			'il_from = ' . self::$testingPageId,
+			[ 'il_from' => self::$testingPageId ],
 			[ [ '1.png' ], [ '2.png' ] ]
 		);
 
 		/** @var ParserOutput $po */
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 
-		$po->addImage( "2.png" );
-		$po->addImage( "3.png" );
+		$po->addImage( new TitleValue( NS_FILE, "2.png" ) );
+		$po->addImage( new TitleValue( NS_FILE, "3.png" ) );
 
 		$this->assertLinksUpdate(
 			$t,
 			$po,
 			'imagelinks',
 			'il_to',
-			'il_from = ' . self::$testingPageId,
+			[ 'il_from' => self::$testingPageId ],
 			[ [ '2.png' ], [ '3.png' ] ]
 		);
 	}
@@ -596,8 +643,8 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	public function testUpdate_imagelinks_move() {
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 
-		$po->addImage( "1.png" );
-		$po->addImage( "2.png" );
+		$po->addImage( new TitleValue( NS_FILE, "1.png" ) );
+		$po->addImage( new TitleValue( NS_FILE, "2.png" ) );
 
 		$fromNamespace = $t->getNamespace();
 		$this->assertLinksUpdate(
@@ -611,8 +658,8 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 
 		$oldT = $t;
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "User:Testing", self::$testingPageId );
-		$po->addImage( "1.png" );
-		$po->addImage( "2.png" );
+		$po->addImage( new TitleValue( NS_FILE, "1.png" ) );
+		$po->addImage( new TitleValue( NS_FILE, "2.png" ) );
 
 		$fromNamespace = $t->getNamespace();
 		$this->assertMoveLinksUpdate(
@@ -627,7 +674,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers ParserOutput::addLanguageLink
+	 * @covers \MediaWiki\Parser\ParserOutput::addLanguageLink
 	 */
 	public function testUpdate_langlinks() {
 		$this->overrideConfigValue( MainConfigNames::CapitalLinks, true );
@@ -635,16 +682,16 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		/** @var ParserOutput $po */
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 
-		$po->addLanguageLink( 'De:1' );
-		$po->addLanguageLink( 'En:1' );
-		$po->addLanguageLink( 'Fr:1' );
+		$po->addLanguageLink( new TitleValue( 0, '1', '', 'De' ) );
+		$po->addLanguageLink( new TitleValue( 0, '1', '', 'En' ) );
+		$po->addLanguageLink( new TitleValue( 0, '1', '', 'Fr' ) );
 
 		$this->assertLinksUpdate(
 			$t,
 			$po,
 			'langlinks',
 			[ 'll_lang', 'll_title' ],
-			'll_from = ' . self::$testingPageId,
+			[ 'll_from' => self::$testingPageId ],
 			[
 				[ 'De', '1' ],
 				[ 'En', '1' ],
@@ -653,15 +700,15 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		);
 
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
-		$po->addLanguageLink( 'En:2' );
-		$po->addLanguageLink( 'Fr:1' );
+		$po->addLanguageLink( new TitleValue( 0, '2', '', 'En' ) );
+		$po->addLanguageLink( new TitleValue( 0, '1', '', 'Fr' ) );
 
 		$this->assertLinksUpdate(
 			$t,
 			$po,
 			'langlinks',
 			[ 'll_lang', 'll_title' ],
-			'll_from = ' . self::$testingPageId,
+			[ 'll_from' => self::$testingPageId ],
 			[
 				[ 'En', '2' ],
 				[ 'Fr', '1' ]
@@ -670,17 +717,31 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers ParserOutput::setPageProperty
+	 * @param bool $useDeprecatedApi
+	 * @covers \MediaWiki\Parser\ParserOutput::setPageProperty
+	 * @covers \MediaWiki\Parser\ParserOutput::setNumericPageProperty
+	 * @covers \MediaWiki\Parser\ParserOutput::setUnsortedPageProperty
+	 * @dataProvider provideUseDeprecatedApi
 	 */
-	public function testUpdate_page_props() {
+	public function testUpdate_page_props( $useDeprecatedApi ) {
 		/** @var ParserOutput $po */
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 
 		$fields = [ 'pp_propname', 'pp_value', 'pp_sortkey' ];
-		$cond = 'pp_page = ' . self::$testingPageId;
+		$cond = [ 'pp_page' => self::$testingPageId ];
 
-		$po->setPageProperty( 'deleted', 1 );
-		$po->setPageProperty( 'changed', 1 );
+		$setNumericPageProperty = 'setNumericPageProperty';
+		$setUnsortedPageProperty = 'setUnsortedPageProperty';
+		if ( $useDeprecatedApi ) {
+			// ::setPageProperty is deprecated when used for non-string values;
+			// and when used for string values it is identical to
+			// ::setUnsortedPageProperty
+			$indexedPageProperty = 'setPageProperty';
+			$setUnsortedPageProperty = 'setPageProperty';
+		}
+
+		$po->$setNumericPageProperty( 'deleted', 1 );
+		$po->$setNumericPageProperty( 'changed', 1 );
 		$this->assertLinksUpdate(
 			$t, $po, 'page_props', $fields, $cond,
 			[
@@ -691,35 +752,49 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 
+		// Elements of the $expected array are 3-element arrays:
+		// First element is the page property name
+		// Second element is the page property value
+		//    (These are stringified when encoded into the database.)
+		// Third element is the sort key (as a float, or null)
 		$expected = [];
-		$po->setPageProperty( "bool", true );
-		$expected[] = [ "bool", true ];
 
-		$po->setPageProperty( 'changed', 2 );
-		$expected[] = [ 'changed', 2 ];
-
-		$po->setPageProperty( "float", 4.0 + 1.0 / 4.0 );
-		$expected[] = [ "float", 4.0 + 1.0 / 4.0 ];
-
-		$po->setPageProperty( "int", -7 );
-		$expected[] = [ "int", -7 ];
-
-		$po->setPageProperty( "string", "33 bar" );
-		$expected[] = [ "string", "33 bar" ];
-
-		// compute expected sortkey values
-		foreach ( $expected as &$row ) {
-			$value = $row[1];
-
-			if ( is_int( $value ) || is_float( $value ) || is_bool( $value ) ) {
-				$row[] = floatval( $value );
-			} else {
-				$row[] = null;
-			}
+		if ( $useDeprecatedApi ) {
+			// Using legacy API this is only coerced during LinksUpdate
+			$po->setPageProperty( 'bool', true );
+			$expected[] = [ "bool", true, 1.0 ];
 		}
 
+		$po->$setNumericPageProperty( 'changed', 2 );
+		$expected[] = [ 'changed', 2, 2.0 ];
+
+		$f = 4.0 + 1.0 / 4.0;
+		$po->$setNumericPageProperty( "float", $f );
+		$expected[] = [ "float", $f, $f ];
+
+		$po->$setNumericPageProperty( "int", -7 );
+		$expected[] = [ "int", -7, -7.0 ];
+
+		$po->$setUnsortedPageProperty( "string", "33 bar" );
+		$expected[] = [ "string", "33 bar", null ];
+
+		if ( !$useDeprecatedApi ) {
+			// A numeric string *does* get indexed if you use
+			// ::setNumericPageProperty
+			$po->setNumericPageProperty( "numeric-string", "33" );
+			$expected[] = [ "numeric-string", 33, 33.0 ];
+			// And similarly a numeric argument won't get indexed if you
+			// use ::setUnsortedPageProperty
+			$po->setUnsortedPageProperty( "unsorted", 33 );
+			$expected[] = [ "unsorted", "33", null ];
+		}
+
+		// Note that the ::assertSelect machinery will sort by the columns
+		// provided in $fields; in our case we should sort by property name
+		usort( $expected, static fn ( $a, $b ): int => $a[0] <=> $b[0] );
+
 		$update = $this->assertLinksUpdate(
-			$t, $po, 'page_props', $fields, 'pp_page = ' . self::$testingPageId, $expected );
+			$t, $po, 'page_props', $fields, [ 'pp_page' => self::$testingPageId ], $expected );
 
 		$expectedAssoc = [];
 		foreach ( $expected as [ $name, $value ] ) {
@@ -733,6 +808,11 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			],
 			$update->getRemovedProperties()
 		);
+	}
+
+	public static function provideUseDeprecatedApi() {
+		yield "Non-deprecated API" => [ false ];
+		yield "Deprecated API" => [ true ];
 	}
 
 	// @todo test recursive, too!
@@ -805,23 +885,36 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	/**
 	 * Confirm that repeatedly saving the same ParserOutput does not lead to
 	 * DELETE/INSERT queries (T299662)
+	 * @dataProvider provideUseDeprecatedApi
 	 */
-	public function testNullEdit() {
+	public function testNullEdit( bool $useDeprecatedApi ) {
+		$setNumericPageProperty = 'setNumericPageProperty';
+		$setUnsortedPageProperty = 'setUnsortedPageProperty';
+		if ( $useDeprecatedApi ) {
+			$setNumericPageProperty = 'setPageProperty';
+			$setUnsortedPageProperty = 'setPageProperty';
+		}
+
 		/** @var ParserOutput $po */
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 		$po->addCategory( 'Test', 'Test' );
 		$po->addExternalLink( 'http://www.example.com/' );
-		$po->addImage( 'Test' );
+		$po->addImage( new TitleValue( NS_FILE, 'Test' ) );
 		$po->addInterwikiLink( new TitleValue( 0, 'test', '', 'test' ) );
-		$po->addLanguageLink( 'en:Test' );
+		$po->addLanguageLink( new TitleValue( 0, 'Test', '', 'en' ) );
 		$po->addLink( new TitleValue( 0, 'Test' ) );
-		$po->setPageProperty( 'string', 'x' );
-		$po->setPageProperty( 'numeric-string', '1' );
-		$po->setPageProperty( 'int', 10 );
-		$po->setPageProperty( 'float', 2 / 3 );
-		$po->setPageProperty( 'true', true );
-		$po->setPageProperty( 'false', false );
-		$po->setPageProperty( 'null', null );
+		$po->$setUnsortedPageProperty( 'string', 'x' );
+		$po->$setUnsortedPageProperty( 'numeric-string', '1' );
+		$po->$setNumericPageProperty( 'int', 10 );
+		$po->$setNumericPageProperty( 'float', 2 / 3 );
+		if ( $useDeprecatedApi ) {
+			$po->setPageProperty( 'true', true );
+			$po->setPageProperty( 'false', false );
+			$this->expectDeprecationAndContinue( '/::setPageProperty with non-scalar value/' );
+			$po->setPageProperty( 'null', null );
+		} else {
+			$po->$setUnsortedPageProperty( 'null', '' );
+		}
 
 		$update = new LinksUpdate( $t, $po );
 		$update->setStrictTestMode();
@@ -862,11 +955,11 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 		$po->addCategory( $s, $s );
 		$po->addExternalLink( 'https://foo.com' );
-		$po->addImage( $s );
+		$po->addImage( new TitleValue( NS_FILE, $s ) );
 		$po->addInterwikiLink( new TitleValue( 0, $s, '', $s ) );
-		$po->addLanguageLink( "$s:$s" );
+		$po->addLanguageLink( new TitleValue( 0, $s, '', $s ) );
 		$po->addLink( new TitleValue( 0, $s ) );
-		$po->setPageProperty( $s, $s );
+		$po->setUnsortedPageProperty( $s, $s );
 		$po->addTemplate( new TitleValue( 0, $s ), 1, 1 );
 
 		$update = new LinksUpdate( $t, $po );
@@ -911,7 +1004,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 
 	private function setTransactionTicket( LinksUpdate $update ) {
 		$update->setTransactionTicket(
-			$this->getServiceContainer()->getDBLoadBalancerFactory()->getEmptyTransactionTicket( __METHOD__ )
+			$this->getServiceContainer()->getConnectionProvider()->getEmptyTransactionTicket( __METHOD__ )
 		);
 	}
 }

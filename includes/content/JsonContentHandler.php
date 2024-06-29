@@ -21,6 +21,7 @@
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\Content\ValidationParams;
+use MediaWiki\Parser\ParserOutput;
 
 /**
  * Content handler for JSON text.
@@ -89,18 +90,6 @@ class JsonContentHandler extends CodeContentHandler {
 		Content $content,
 		PreSaveTransformParams $pstParams
 	): Content {
-		$shouldCallDeprecatedMethod = $this->shouldCallDeprecatedContentTransformMethod(
-			$content,
-			$pstParams
-		);
-
-		if ( $shouldCallDeprecatedMethod ) {
-			return $this->callDeprecatedContentPST(
-				$content,
-				$pstParams
-			);
-		}
-
 		'@phan-var JsonContent $content';
 
 		// FIXME: WikiPage::doUserEditContent invokes PST before validation. As such, native
@@ -131,15 +120,15 @@ class JsonContentHandler extends CodeContentHandler {
 		// As such, native data may be invalid (though output is discarded later in that case).
 		if ( $cpoParams->getGenerateHtml() ) {
 			if ( $content->isValid() ) {
-				$parserOutput->setText( $content->rootValueTable( $content->getData()->getValue() ) );
+				$parserOutput->setRawText( $content->rootValueTable( $content->getData()->getValue() ) );
 			} else {
 				$error = wfMessage( 'invalid-json-data' )->parse();
-				$parserOutput->setText( $error );
+				$parserOutput->setRawText( $error );
 			}
 
 			$parserOutput->addModuleStyles( [ 'mediawiki.content.json' ] );
 		} else {
-			$parserOutput->setText( null );
+			$parserOutput->setRawText( null );
 		}
 	}
 }

@@ -1,21 +1,14 @@
 /**
  * Initialise code that requires MobileFrontend.
- *
- * @todo anything that doesn't require MobileFrontend should be moved into ./setup.js
- * @todo anything that can be rewritten without MobileFrontend (possibly using new frontend
- * framework or upstreamed from MobileFrotend to core) should be and moved into ./setup.js
- * @todo anything left should be moved to MobileFrontend extension and removed from here.
  */
 
 module.exports = function () {
-	var
-		// eslint-disable-next-line no-restricted-properties
-		mobile = mw.mobileFrontend.require( 'mobile.startup' ),
-		PageHTMLParser = mobile.PageHTMLParser,
-		LanguageInfo = mobile.LanguageInfo,
+	const
+		ms = require( 'mobile.startup' ),
+		PageHTMLParser = ms.PageHTMLParser,
 		permissions = mw.config.get( 'wgMinervaPermissions' ) || {},
-		toast = mobile.toast,
-		time = mobile.time,
+		notifyOnPageReload = ms.notifyOnPageReload,
+		time = ms.time,
 		preInit = require( './preInit.js' ),
 		mobileRedirect = require( './mobileRedirect.js' ),
 		search = require( './search.js' ),
@@ -29,11 +22,10 @@ module.exports = function () {
 		ctaDrawers = require( './ctaDrawers.js' ),
 		drawers = require( './drawers.js' ),
 		desktopMMV = mw.loader.getState( 'mmv.bootstrap' ),
-		overlayManager = mobile.OverlayManager.getSingleton(),
-		currentPage = mobile.currentPage(),
-		currentPageHTMLParser = mobile.currentPageHTMLParser(),
+		overlayManager = ms.getOverlayManager(),
+		currentPage = ms.currentPage(),
+		currentPageHTMLParser = ms.currentPageHTMLParser(),
 		api = new mw.Api(),
-		eventBus = mobile.eventBusSingleton,
 		namespaceIDs = mw.config.get( 'wgNamespaceIds' );
 
 	/**
@@ -48,12 +40,12 @@ module.exports = function () {
 			return;
 		}
 
-		var el = ev.target.closest( PageHTMLParser.THUMB_SELECTOR );
+		const el = ev.target.closest( PageHTMLParser.THUMB_SELECTOR );
 		if ( !el ) {
 			return;
 		}
 
-		var thumb = currentPageHTMLParser.getThumbnail( $( el ) );
+		const thumb = currentPageHTMLParser.getThumbnail( $( el ) );
 		if ( !thumb ) {
 			return;
 		}
@@ -78,7 +70,10 @@ module.exports = function () {
 	 * @param {HTMLElement} container Container to search within
 	 */
 	function initMediaViewer( container ) {
-		container.addEventListener( 'click', onClickImage );
+		// T360781 Ensure correct type before using `addEventListener`.
+		if ( container instanceof HTMLElement ) {
+			container.addEventListener( 'click', onClickImage );
+		}
 	}
 
 	/**
@@ -90,7 +85,7 @@ module.exports = function () {
 	function initButton() {
 		// This catches language selectors in page actions and in secondary actions (e.g. Main Page)
 		// eslint-disable-next-line no-jquery/no-global-selector
-		var $primaryBtn = $( '.language-selector' );
+		const $primaryBtn = $( '.language-selector' );
 
 		if ( $primaryBtn.length ) {
 			// We only bind the click event to the first language switcher in page
@@ -129,28 +124,27 @@ module.exports = function () {
 			return;
 		}
 
-		return mobile.mediaViewer.overlay( {
-			api: api,
+		return ms.mediaViewer.overlay( {
+			api,
 			thumbnails: currentPageHTMLParser.getThumbnails(),
-			title: title,
-			eventBus: eventBus
+			title
 		} );
 	}
 
 	// Routes
 	overlayManager.add( /^\/media\/(.+)$/, makeMediaViewerOverlayIfNeeded );
 	overlayManager.add( /^\/languages$/, function () {
-		return mobile.languageOverlay();
+		return ms.languages.languageOverlay();
 	} );
 	// Register a LanguageInfo overlay which has no built-in functionality;
 	// a hook is fired when a language is selected, and extensions can respond
 	// to that hook. See GrowthExperiments WelcomeSurvey feature (in gerrit
 	// Ib558dc7c46cc56ff667957f9126bbe0471d25b8e for example usage).
 	overlayManager.add( /^\/languages\/all$/, function () {
-		return mobile.languageInfoOverlay( new LanguageInfo( api ), true );
+		return ms.languages.languageInfoOverlay( api, true );
 	} );
 	overlayManager.add( /^\/languages\/all\/no-suggestions$/, function () {
-		return mobile.languageInfoOverlay( new LanguageInfo( api ), false );
+		return ms.languages.languageInfoOverlay( api, false );
 	} );
 
 	// Setup
@@ -166,24 +160,20 @@ module.exports = function () {
 	 * months or years
 	 *
 	 * @ignore
-	 * @param {jQuery.Object} $lastModifiedLink
+	 * @param {jQuery} $lastModifiedLink
 	 */
 	function initHistoryLink( $lastModifiedLink ) {
-		var delta, $msg, $bar,
-			ts, username, gender;
-
-		ts = $lastModifiedLink.data( 'timestamp' );
-		username = $lastModifiedLink.data( 'user-name' ) || false;
-		gender = $lastModifiedLink.data( 'user-gender' );
-
+		const ts = $lastModifiedLink.data( 'timestamp' );
 		if ( ts ) {
-			delta = time.getTimeAgoDelta( parseInt( ts, 10 ) );
+			const username = $lastModifiedLink.data( 'user-name' ) || false;
+			const gender = $lastModifiedLink.data( 'user-gender' );
+			const delta = time.getTimeAgoDelta( parseInt( ts, 10 ) );
 			if ( time.isRecent( delta ) ) {
-				$bar = $lastModifiedLink.closest( '.last-modified-bar' );
+				const $bar = $lastModifiedLink.closest( '.last-modified-bar' );
 				$bar.addClass( 'active' );
 			}
 
-			$msg = $( '<span>' )
+			const $msg = $( '<span>' )
 				// The new element should maintain the non-js element's CSS classes.
 				.attr( 'class', $lastModifiedLink.attr( 'class' ) )
 				.html(
@@ -201,15 +191,14 @@ module.exports = function () {
 	 * @param {jQuery.Event} ev
 	 */
 	function amcHistoryClickHandler( ev ) {
-		var
-			self = this,
-			amcOutreach = mobile.amcOutreach,
-			amcCampaign = amcOutreach.loadCampaign(),
-			onDismiss = function () {
-				toast.showOnPageReload( mw.msg( 'mobile-frontend-amc-outreach-dismissed-message' ) );
-				window.location = self.href;
-			},
-			drawer = amcCampaign.showIfEligible( amcOutreach.ACTIONS.onHistoryLink, onDismiss, currentPage.title, 'action=history' );
+		const self = this;
+		const amcOutreach = ms.amcOutreach;
+		const amcCampaign = amcOutreach.loadCampaign();
+		const onDismiss = function () {
+			notifyOnPageReload( mw.msg( 'mobile-frontend-amc-outreach-dismissed-message' ) );
+			window.location = self.href;
+		};
+		const drawer = amcCampaign.showIfEligible( amcOutreach.ACTIONS.onHistoryLink, onDismiss, currentPage.title, 'action=history' );
 
 		if ( drawer ) {
 			ev.preventDefault();
@@ -225,7 +214,7 @@ module.exports = function () {
 
 	/**
 	 * @method
-	 * @param {jQuery.Object} $lastModifiedLink
+	 * @param {jQuery} $lastModifiedLink
 	 * @ignore
 	 */
 	function initAmcHistoryLink( $lastModifiedLink ) {
@@ -246,6 +235,28 @@ module.exports = function () {
 		$( '.modified-enhancement' ).each( function () {
 			initHistoryLink( $( this ) );
 		} );
+		Array.prototype.forEach.call( document.querySelectorAll( '.mw-diff-timestamp' ), ( tsNode ) => {
+			const ts = tsNode.dataset.timestamp;
+			if ( ts ) {
+				const ago = time.getTimeAgoDelta(
+					parseInt(
+						( new Date( ts ) ).getTime() / 1000,
+						10
+					)
+				);
+				// Supported messages:
+				// * skin-minerva-time-ago-seconds
+				// * skin-minerva-time-ago-minutes
+				// * skin-minerva-time-ago-hours
+				// * skin-minerva-time-ago-days
+				// * skin-minerva-time-ago-months
+				// * skin-minerva-time-ago-years
+				tsNode.textContent = mw.msg(
+					`skin-minerva-time-ago-${ ago.unit }`,
+					mw.language.convertNumber( ago.value )
+				);
+			}
+		} );
 	}
 
 	/**
@@ -256,15 +267,13 @@ module.exports = function () {
 	 * months or years
 	 *
 	 * @ignore
-	 * @param {jQuery.Object} [$tagline]
+	 * @param {jQuery} [$tagline]
 	 */
 	function initRegistrationDate( $tagline ) {
-		var msg, ts;
-
-		ts = $tagline.data( 'userpage-registration-date' );
+		const ts = $tagline.data( 'userpage-registration-date' );
 
 		if ( ts ) {
-			msg = time.getRegistrationMessage( ts, $tagline.data( 'userpage-gender' ) );
+			const msg = time.getRegistrationMessage( ts, $tagline.data( 'userpage-gender' ) );
 			$tagline.text( msg );
 		}
 	}
@@ -305,24 +314,22 @@ module.exports = function () {
 	 * @return {boolean}
 	 */
 	function isUserUri( url ) {
-		var
-			title = TitleUtil.newFromUri( url ),
-			namespace = title ? title.getNamespaceId() : undefined;
+		const title = TitleUtil.newFromUri( url );
+		const namespace = title ? title.getNamespaceId() : undefined;
 		return namespace === namespaceIDs.user;
 	}
 
 	/**
 	 * Strip the edit action from red links to nonexistent User namespace pages.
 	 *
-	 * @param {jQuery.Object} $redLinks
-	 * @return {void}
+	 * @param {jQuery} $redLinks
 	 */
 	function initUserRedLinks( $redLinks ) {
 		$redLinks.filter( function ( _, element ) {
 			// Filter out non-User namespace pages.
 			return isUserUri( element.href );
 		} ).each( function ( _, element ) {
-			var uri = new mw.Uri( element.href );
+			const uri = new mw.Uri( element.href );
 			if ( uri.query.action !== 'edit' ) {
 				// Nothing to strip.
 				return;
@@ -359,12 +366,11 @@ module.exports = function () {
 	}
 
 	$( function () {
-		var
-			// eslint-disable-next-line no-jquery/no-global-selector
-			$watch = $( '#page-actions-watch' ),
-			toolbarElement = document.querySelector( Toolbar.selector ),
-			userMenu = document.querySelector( '.minerva-user-menu' ), // See UserMenuDirector.
-			navigationDrawer = document.querySelector( '.navigation-drawer' );
+		// eslint-disable-next-line no-jquery/no-global-selector
+		const $watch = $( '#page-actions-watch' );
+		const toolbarElement = document.querySelector( Toolbar.selector );
+		const userMenu = document.querySelector( '.minerva-user-menu' ); // See UserMenuDirector.
+		const navigationDrawer = document.querySelector( '.navigation-drawer' );
 
 		// The `minerva-animations-ready` class can be used by clients to prevent unwanted
 		// CSS transitions from firing on page load in some browsers (see
@@ -376,7 +382,7 @@ module.exports = function () {
 
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '.mw-mf-page-center__mask' ).on( 'click', function ( ev ) {
-			var path = router.getPath();
+			const path = router.getPath();
 			// avoid jumping to the top of the page and polluting history by avoiding the
 			// resetting of the hash unless the hash is being utilised (T237015).
 			if ( !path ) {
@@ -392,7 +398,7 @@ module.exports = function () {
 		// - search
 		search();
 		// - mobile redirect
-		mobileRedirect( mobile.amcOutreach, currentPage );
+		mobileRedirect( ms.amcOutreach, currentPage );
 
 		// Enhance timestamps on last-modified bar and watchlist
 		// to show relative time.
@@ -411,7 +417,7 @@ module.exports = function () {
 		}
 		if ( navigationDrawer ) {
 			ToggleList.bind( window, navigationDrawer );
-			var navigationDrawerMask = navigationDrawer.querySelector( '.main-menu-mask' );
+			const navigationDrawerMask = navigationDrawer.querySelector( '.main-menu-mask' );
 			// The 'for' attribute is used to close the drawer when the mask is clicked without JS
 			// Since we are using JS to enhance the drawer behavior, we need to
 			// remove the attribute to prevent the drawer from being toggled twice
@@ -437,12 +443,12 @@ module.exports = function () {
 			}
 
 			// Mutate TOC.
-			var $toctitle = $container.find( '.toctitle' );
+			const $toctitle = $container.find( '.toctitle' );
 			$( '<span>' ).addClass( 'toc-title-icon' ).prependTo( $toctitle );
 			$( '<span>' ).addClass( 'toc-title-state-icon' ).appendTo( $toctitle );
 
 			// Init red links.
-			var $redLinks = currentPageHTMLParser.getRedLinks();
+			const $redLinks = currentPageHTMLParser.getRedLinks();
 			ctaDrawers.initRedlinksCta(
 				$redLinks.filter( function ( _, element ) {
 					// Filter out local User namespace pages.

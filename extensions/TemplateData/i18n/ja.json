@@ -16,7 +16,8 @@
 			"Tmv",
 			"Translatealcd",
 			"Yamagata Yusuke",
-			"Yusuke1109"
+			"Yusuke1109",
+			"Waki285"
 		]
 	},
 	"templatedata-desc": "テンプレートパラメーターのデータストレージを実装する (JSON を使用)",
@@ -102,6 +103,7 @@
 	"templatedata-modal-table-param-aliases": "別名",
 	"templatedata-modal-table-param-autovalue": "自動入力値",
 	"templatedata-modal-table-param-default": "既定 ($1)",
+	"templatedata-modal-table-param-status": "状態",
 	"templatedata-modal-table-param-deprecated": "非推奨",
 	"templatedata-modal-table-param-deprecatedValue": "非推奨のガイダンス",
 	"templatedata-modal-table-param-description": "説明 ($1)",

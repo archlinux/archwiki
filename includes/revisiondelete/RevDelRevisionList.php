@@ -19,6 +19,8 @@
  * @ingroup RevisionDelete
  */
 
+use MediaWiki\Cache\HTMLCacheUpdater;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
@@ -48,7 +50,7 @@ class RevDelRevisionList extends RevDelList {
 	/** @var HookRunner */
 	private $hookRunner;
 
-	/** @var HtmlCacheUpdater */
+	/** @var HTMLCacheUpdater */
 	private $htmlCacheUpdater;
 
 	/** @var RevisionStore */
@@ -63,7 +65,7 @@ class RevDelRevisionList extends RevDelList {
 	 * @param array $ids
 	 * @param LBFactory $lbFactory
 	 * @param HookContainer $hookContainer
-	 * @param HtmlCacheUpdater $htmlCacheUpdater
+	 * @param HTMLCacheUpdater $htmlCacheUpdater
 	 * @param RevisionStore $revisionStore
 	 */
 	public function __construct(
@@ -72,7 +74,7 @@ class RevDelRevisionList extends RevDelList {
 		array $ids,
 		LBFactory $lbFactory,
 		HookContainer $hookContainer,
-		HtmlCacheUpdater $htmlCacheUpdater,
+		HTMLCacheUpdater $htmlCacheUpdater,
 		RevisionStore $revisionStore
 	) {
 		parent::__construct( $context, $page, $ids, $lbFactory );
@@ -164,7 +166,7 @@ class RevDelRevisionList extends RevDelList {
 		if ( isset( $row->rev_id ) ) {
 			return new RevDelRevisionItem( $this, $row );
 		} elseif ( isset( $row->ar_rev_id ) ) {
-			return new RevDelArchivedRevisionItem( $this, $row );
+			return new RevDelArchivedRevisionItem( $this, $row, $this->lbFactory );
 		} else {
 			// This shouldn't happen. :)
 			throw new InvalidArgumentException( 'Invalid row type in RevDelRevisionList' );
@@ -191,7 +193,7 @@ class RevDelRevisionList extends RevDelList {
 	public function doPostCommitUpdates( array $visibilityChangeMap ) {
 		$this->htmlCacheUpdater->purgeTitleUrls(
 			$this->page,
-			HtmlCacheUpdater::PURGE_INTENT_TXROUND_REFLECTED
+			HTMLCacheUpdater::PURGE_INTENT_TXROUND_REFLECTED
 		);
 		// Extensions that require referencing previous revisions may need this
 		$this->hookRunner->onArticleRevisionVisibilitySet(

@@ -29,6 +29,8 @@ use MediaWiki\Block\DatabaseBlock;
  * Maintenance script to clean up user blocks with user names not matching the
  * 'user' table.
  *
+ * TODO: delete this script after the block_target schema migration is complete
+ *
  * @ingroup Maintenance
  */
 class CleanupBlocks extends Maintenance {
@@ -40,7 +42,7 @@ class CleanupBlocks extends Maintenance {
 	}
 
 	public function execute() {
-		$db = $this->getDB( DB_PRIMARY );
+		$db = $this->getPrimaryDB();
 		$blockQuery = DatabaseBlock::getQueryInfo();
 
 		$max = $db->newSelectQueryBuilder()
@@ -112,11 +114,10 @@ class CleanupBlocks extends Maintenance {
 			}
 
 			if ( $delete ) {
-				$db->delete(
-					'ipblocks',
-					[ 'ipb_id' => $delete ],
-					__METHOD__
-				);
+				$db->newDeleteQueryBuilder()
+					->deleteFrom( 'ipblocks' )
+					->where( [ 'ipb_id' => $delete ] )
+					->caller( __METHOD__ )->execute();
 			}
 		}
 

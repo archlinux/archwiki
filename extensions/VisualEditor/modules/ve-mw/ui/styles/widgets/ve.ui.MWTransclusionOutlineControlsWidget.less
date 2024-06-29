@@ -1,12 +1,13 @@
+@import 'mediawiki.skin.variables.less';
+
 .ve-ui-mwTransclusionOutlineControlsWidget {
-	background-color: #fff; // @background-color-base; aka @wmui-color-base100;
+	background-color: @background-color-base;
 	position: absolute;
 	bottom: 0;
 	left: 0;
 	right: 0;
 	height: 2.5em;
-	// @border-dialog-bar
-	border-top: 1px solid #c8ccd1;
+	border-top: @border-width-base @border-style-base @border-color-subtle;
 	padding: 2px;
 	display: flex;
 	align-items: flex-start;

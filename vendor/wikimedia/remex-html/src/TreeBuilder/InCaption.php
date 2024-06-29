@@ -49,53 +49,53 @@ class InCaption extends InsertionMode {
 		$stack = $builder->stack;
 
 		switch ( $name ) {
-		case 'caption':
-			if ( !$stack->isInTableScope( 'caption' ) ) {
-				$builder->error( "</caption> matches a start tag which is not in scope, ignoring",
-					$sourceStart );
-				return;
-			}
+			case 'caption':
+				if ( !$stack->isInTableScope( 'caption' ) ) {
+					$builder->error( "</caption> matches a start tag which is not in scope, ignoring",
+						$sourceStart );
+					return;
+				}
 
-			$builder->generateImpliedEndTags( false, $sourceStart );
-			if ( $stack->current->htmlName !== 'caption' ) {
-				$builder->error( "</caption> found but another element is open", $sourceStart );
-			}
-			$builder->popAllUpToName( 'caption', $sourceStart, $sourceLength );
-			$builder->afe->clearToMarker();
-			$dispatcher->switchMode( Dispatcher::IN_TABLE );
-			break;
+				$builder->generateImpliedEndTags( false, $sourceStart );
+				if ( $stack->current->htmlName !== 'caption' ) {
+					$builder->error( "</caption> found but another element is open", $sourceStart );
+				}
+				$builder->popAllUpToName( 'caption', $sourceStart, $sourceLength );
+				$builder->afe->clearToMarker();
+				$dispatcher->switchMode( Dispatcher::IN_TABLE );
+				break;
 
-		case 'table':
-			if ( !$stack->isInTableScope( 'caption' ) ) {
-				$builder->error( '</table> found in caption, but there is no ' .
-					'caption in scope, ignoring', $sourceStart );
-				return;
-			}
-			$builder->generateImpliedEndTags( false, $sourceStart );
-			if ( $stack->current->htmlName !== 'caption' ) {
-				$builder->error( '</table> found in caption, closing caption', $sourceStart );
-			}
-			$builder->popAllUpToName( 'caption', $sourceStart, 0 );
-			$builder->afe->clearToMarker();
-			$dispatcher->switchMode( Dispatcher::IN_TABLE )
-				->endTag( $name, $sourceStart, $sourceLength );
-			break;
+			case 'table':
+				if ( !$stack->isInTableScope( 'caption' ) ) {
+					$builder->error( '</table> found in caption, but there is no ' .
+						'caption in scope, ignoring', $sourceStart );
+					return;
+				}
+				$builder->generateImpliedEndTags( false, $sourceStart );
+				if ( $stack->current->htmlName !== 'caption' ) {
+					$builder->error( '</table> found in caption, closing caption', $sourceStart );
+				}
+				$builder->popAllUpToName( 'caption', $sourceStart, 0 );
+				$builder->afe->clearToMarker();
+				$dispatcher->switchMode( Dispatcher::IN_TABLE )
+					->endTag( $name, $sourceStart, $sourceLength );
+				break;
 
-		case 'body':
-		case 'col':
-		case 'colgroup':
-		case 'html':
-		case 'tbody':
-		case 'td':
-		case 'tfoot':
-		case 'th':
-		case 'thead':
-		case 'tr':
-			$this->builder->error( "end tag </$name> ignored in caption mode", $sourceStart );
-			break;
+			case 'body':
+			case 'col':
+			case 'colgroup':
+			case 'html':
+			case 'tbody':
+			case 'td':
+			case 'tfoot':
+			case 'th':
+			case 'thead':
+			case 'tr':
+				$this->builder->error( "end tag </$name> ignored in caption mode", $sourceStart );
+				break;
 
-		default:
-			$this->dispatcher->inBody->endTag( $name, $sourceStart, $sourceLength );
+			default:
+				$this->dispatcher->inBody->endTag( $name, $sourceStart, $sourceLength );
 		}
 	}
 

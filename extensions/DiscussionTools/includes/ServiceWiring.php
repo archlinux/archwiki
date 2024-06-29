@@ -49,7 +49,6 @@ return [
 	},
 	'DiscussionTools.ThreadItemFormatter' => static function ( MediaWikiServices $services ): ThreadItemFormatter {
 		return new ThreadItemFormatter(
-			$services->getTitleFormatter(),
 			$services->getLinkRenderer()
 		);
 	},

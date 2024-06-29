@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { getMediaHash, ROUTE_REGEXP, LEGACY_ROUTE_REGEXP } = require( 'mmv.head' );
+const { getMediaHash, ROUTE_REGEXP, LEGACY_ROUTE_REGEXP, isMediaViewerEnabledOnClick } = require( 'mmv.head' );
 const Config = require( './mmv.Config.js' );
 const HtmlUtils = require( './mmv.HtmlUtils.js' );
 
@@ -138,7 +138,7 @@ const HtmlUtils = require( './mmv.HtmlUtils.js' );
 				} catch ( e ) {
 					message = e.message;
 					if ( e.stack ) {
-						message += `\n${e.stack}`;
+						message += `\n${ e.stack }`;
 					}
 					deferred.reject( message );
 					return;
@@ -164,7 +164,7 @@ const HtmlUtils = require( './mmv.HtmlUtils.js' );
 						mw.log.warn( message2 );
 						this.cleanupOverlay();
 						this.viewerIsBroken = true;
-						mw.notify( `Error loading MediaViewer: ${message2}` );
+						mw.notify( `Error loading MediaViewer: ${ message2 }` );
 						return $.Deferred().reject( message2 );
 					}
 				);
@@ -185,18 +185,22 @@ const HtmlUtils = require( './mmv.HtmlUtils.js' );
 			// new images correctly
 			this.viewerInitialized = false;
 
-			this.$thumbs = $content.find(
-				'.gallery .image img, ' +
-				'a.image img, ' +
-				'#file a img'
-			);
-
 			this.$parsoidThumbs = $content.find(
 				'[typeof*="mw:File"] a.mw-file-description img, ' +
 				// TODO: Remove mw:Image when version 2.4.0 of the content is no
 				// longer supported
 				'[typeof*="mw:Image"] a.mw-file-description img'
 			);
+
+			this.$thumbs = $content
+				.find(
+					'.gallery .image img, ' +
+					'a.image img, ' +
+					'a.mw-file-description img, ' +
+					'#file a img'
+				)
+				// Skip duplicates that are actually Parsoid thumbs
+				.not( this.$parsoidThumbs );
 
 			try {
 				this.$thumbs.each( ( i, thumb ) => this.processThumb( thumb ) );
@@ -245,7 +249,7 @@ const HtmlUtils = require( './mmv.HtmlUtils.js' );
 			$thumbContainer.on( {
 				mouseenter: () => {
 					// There is no point preloading if clicking the thumb won't open Media Viewer
-					if ( !this.config.isMediaViewerEnabledOnClick() ) {
+					if ( !isMediaViewerEnabledOnClick() ) {
 						return;
 					}
 					this.preloadOnHoverTimer = setTimeout( () => {
@@ -268,7 +272,7 @@ const HtmlUtils = require( './mmv.HtmlUtils.js' );
 		processThumb( thumb ) {
 			let title;
 			const $thumb = $( thumb );
-			const $link = $thumb.closest( 'a.image' );
+			const $link = $thumb.closest( 'a.image, a.mw-file-description' );
 			const $thumbContainer = $link.closest( '.thumb' );
 			const $enlarge = $thumbContainer.find( '.magnify a' );
 			const link = $link.prop( 'href' );
@@ -550,7 +554,7 @@ const HtmlUtils = require( './mmv.HtmlUtils.js' );
 			}
 
 			// Don't load if someone has specifically stopped us from doing so
-			if ( !this.config.isMediaViewerEnabledOnClick() ) {
+			if ( !isMediaViewerEnabledOnClick() ) {
 				return true;
 			}
 
@@ -694,6 +698,7 @@ const HtmlUtils = require( './mmv.HtmlUtils.js' );
 				} );
 			}
 		}
+
 		whenThumbsReady() {
 			return this.thumbsReadyDeferred.promise();
 		}

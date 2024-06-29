@@ -29,6 +29,10 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Installer\DatabaseInstaller;
+use MediaWiki\Installer\DatabaseUpdater;
+use MediaWiki\Installer\Installer;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\DatabaseSqlite;
@@ -71,7 +75,7 @@ class UpdateMediaWiki extends Maintenance {
 		global $wgMessagesDirs;
 		// T206765: We need to load the installer i18n files as some of errors come installer/updater code
 		// T310378: We have to ensure we do this before execute()
-		$wgMessagesDirs['MediawikiInstaller'] = dirname( __DIR__ ) . '/includes/installer/i18n';
+		$wgMessagesDirs['MediaWikiInstaller'] = dirname( __DIR__ ) . '/includes/installer/i18n';
 	}
 
 	public function execute() {
@@ -117,7 +121,7 @@ class UpdateMediaWiki extends Maintenance {
 
 		$this->output( 'MediaWiki ' . MW_VERSION . " Updater\n\n" );
 
-		$this->getServiceContainer()->getDBLoadBalancerFactory()->waitForReplication();
+		$this->waitForReplication();
 
 		// Check external dependencies are up to date
 		if ( !$this->hasOption( 'skip-external-dependencies' ) ) {
@@ -131,7 +135,7 @@ class UpdateMediaWiki extends Maintenance {
 
 		# Attempt to connect to the database as a privileged user
 		# This will vomit up an error if there are permissions problems
-		$db = $this->getDB( DB_PRIMARY );
+		$db = $this->getPrimaryDB();
 
 		# Check to see whether the database server meets the minimum requirements
 		/** @var DatabaseInstaller $dbInstallerClass */

@@ -7,6 +7,7 @@
 			"Uzume"
 		]
 	},
+	"content-model-scribunto": "Modul Scribunto",
 	"scribunto-desc": "Ogrodje za vključevanje skriptnih jezikov v strani MediaWiki",
 	"scribunto-line": "v vrstici $1",
 	"scribunto-module-line": "v $1 v vrstici $2",

@@ -5,10 +5,13 @@ use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialBlock;
 use MediaWiki\Status\Status;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
 
@@ -18,6 +21,10 @@ use Wikimedia\TestingAccessWrapper;
  * @coversDefaultClass \MediaWiki\Specials\SpecialBlock
  */
 class SpecialBlockTest extends SpecialPageTestBase {
+	use MockAuthorityTrait;
+
+	private $blockStore;
+
 	/**
 	 * @inheritDoc
 	 */
@@ -27,6 +34,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			$services->getBlockUtils(),
 			$services->getBlockPermissionCheckerFactory(),
 			$services->getBlockUserFactory(),
+			$this->blockStore,
 			$services->getUserNameUtils(),
 			$services->getUserNamePrefixSearch(),
 			$services->getBlockActionInfo(),
@@ -35,9 +43,9 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		);
 	}
 
-	protected function tearDown(): void {
-		$this->resetTables();
-		parent::tearDown();
+	protected function setUp(): void {
+		parent::setUp();
+		$this->blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 	}
 
 	/**
@@ -87,7 +95,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$block = $this->insertBlock();
 
 		// Refresh the block from the database.
-		$block = DatabaseBlock::newFromTarget( $block->getTargetUserIdentity() );
+		$block = $this->blockStore->newFromTarget( $block->getTargetUserIdentity() );
 
 		$page = $this->newSpecialPage();
 
@@ -116,8 +124,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$actionId = 100;
 
 		$block = new DatabaseBlock( [
-			'address' => $badActor->getName(),
-			'user' => $badActor->getId(),
+			'address' => $badActor,
 			'by' => $sysop,
 			'expiry' => 'infinity',
 			'sitewide' => 0,
@@ -133,10 +140,10 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			new ActionRestriction( 0, $actionId ),
 		] );
 
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$this->blockStore->insertBlock( $block );
 
 		// Refresh the block from the database.
-		$block = DatabaseBlock::newFromTarget( $block->getTargetUserIdentity() );
+		$block = $this->blockStore->newFromTarget( $block->getTargetUserIdentity() );
 
 		$page = $this->newSpecialPage();
 
@@ -185,7 +192,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = DatabaseBlock::newFromTarget( $badActor );
+		$block = $this->blockStore->newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 	}
@@ -201,14 +208,13 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		// Create a block that will be updated.
 		$block = new DatabaseBlock( [
-			'address' => $badActor->getName(),
-			'user' => $badActor->getId(),
+			'address' => $badActor,
 			'by' => $sysop,
 			'expiry' => 'infinity',
 			'sitewide' => 0,
 			'enableAutoblock' => false,
 		] );
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$this->blockStore->insertBlock( $block );
 
 		$page = $this->newSpecialPage();
 		$reason = 'test';
@@ -232,7 +238,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = DatabaseBlock::newFromTarget( $badActor );
+		$block = $this->blockStore->newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertTrue( $block->isAutoblocking() );
@@ -283,7 +289,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = DatabaseBlock::newFromTarget( $badActor );
+		$block = $this->blockStore->newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertCount( 3, $block->getRestrictions() );
@@ -336,7 +342,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = DatabaseBlock::newFromTarget( $badActor );
+		$block = $this->blockStore->newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
@@ -353,7 +359,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = DatabaseBlock::newFromTarget( $badActor );
+		$block = $this->blockStore->newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
@@ -369,7 +375,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = DatabaseBlock::newFromTarget( $badActor );
+		$block = $this->blockStore->newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
@@ -382,7 +388,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = DatabaseBlock::newFromTarget( $badActor );
+		$block = $this->blockStore->newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertTrue( $block->isSitewide() );
@@ -437,7 +443,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		if ( is_string( $expected ) ) {
 			$this->assertStatusError( $expected, $result );
 		} else {
-			$block = DatabaseBlock::newFromTarget( $target );
+			$block = $this->blockStore->newFromTarget( $target );
 			$this->assertSame( $expected, $block->isUsertalkEditAllowed() );
 		}
 	}
@@ -627,7 +633,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			'by' => $performer,
 			'hideName' => true,
 		] );
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$this->blockStore->insertBlock( $block );
 
 		// Matches the existing block
 		$defaultData = [
@@ -760,9 +766,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	public function testProcessFormErrorsHideUserProlific() {
 		$this->overrideConfigValue( MainConfigNames::HideUserContribLimit, 0 );
 
-		$performer = $this->getTestSysop()->getUser();
-		$this->overrideUserPermissions( $performer, [ 'block', 'hideuser' ] );
-
+		$performer = $this->mockRegisteredUltimateAuthority();
 		$userToBlock = $this->getTestUser()->getUser();
 		$pageSaturn = $this->getExistingTestPage( 'Saturn' );
 		$pageSaturn->doUserEditContent(
@@ -772,7 +776,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		);
 
 		$context = new DerivativeContext( RequestContext::getMain() );
-		$context->setUser( $performer );
+		$context->setAuthority( $performer );
 
 		$result = $this->newSpecialPage()->processForm(
 			[
@@ -866,22 +870,16 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$sysop = $this->getTestSysop()->getUser();
 
 		$block = new DatabaseBlock( [
-			'address' => $badActor->getName(),
-			'user' => $badActor->getId(),
+			'address' => $badActor,
 			'by' => $sysop,
 			'expiry' => 'infinity',
 			'sitewide' => 1,
 			'enableAutoblock' => true,
 		] );
 
-		$this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$this->blockStore->insertBlock( $block );
 
 		return $block;
-	}
-
-	protected function resetTables() {
-		$this->db->delete( 'ipblocks', '*', __METHOD__ );
-		$this->db->delete( 'ipblocks_restrictions', '*', __METHOD__ );
 	}
 
 	/**
@@ -892,6 +890,9 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	private function getBlockRestrictionStore(): BlockRestrictionStore {
 		$dbProvider = $this->createMock( IConnectionProvider::class );
 
-		return new BlockRestrictionStore( $dbProvider );
+		return new BlockRestrictionStore(
+			$dbProvider,
+			$this->getConfVar( MainConfigNames::BlockTargetMigrationStage )
+		);
 	}
 }

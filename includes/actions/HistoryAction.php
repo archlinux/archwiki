@@ -217,7 +217,7 @@ class HistoryAction extends FormlessAction {
 			}
 			$out->addWikiMsg( 'nohistory' );
 
-			$dbr = $services->getDBLoadBalancerFactory()->getReplicaDatabase();
+			$dbr = $services->getConnectionProvider()->getReplicaDatabase();
 
 			# show deletion/move log if there is an entry
 			LogEventsList::showLogExtract(
@@ -226,7 +226,7 @@ class HistoryAction extends FormlessAction {
 				$this->getTitle(),
 				'',
 				[ 'lim' => 10,
-					'conds' => [ 'log_action != ' . $dbr->addQuotes( 'revision' ) ],
+					'conds' => [ $dbr->expr( 'log_action', '!=', 'revision' ) ],
 					'showIfEmpty' => false,
 					'msgKey' => [ 'moveddeleted-notice' ]
 				]
@@ -353,7 +353,7 @@ class HistoryAction extends FormlessAction {
 			return new FakeResultWrapper( [] );
 		}
 
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 
 		if ( $direction === self::DIR_PREV ) {
 			[ $dirs, $oper ] = [ "ASC", ">=" ];
@@ -361,25 +361,17 @@ class HistoryAction extends FormlessAction {
 			[ $dirs, $oper ] = [ "DESC", "<=" ];
 		}
 
-		if ( $offset ) {
-			$offsets = [ "rev_timestamp $oper " . $dbr->addQuotes( $dbr->timestamp( $offset ) ) ];
-		} else {
-			$offsets = [];
-		}
-
-		$page_id = $this->getWikiPage()->getId();
-
-		$res = MediaWikiServices::getInstance()->getRevisionStore()->newSelectQueryBuilder( $dbr )
+		$queryBuilder = MediaWikiServices::getInstance()->getRevisionStore()->newSelectQueryBuilder( $dbr )
 			->joinComment()
-			->where( [ 'rev_page' => $page_id ] )
-			->andWhere( $offsets )
+			->where( [ 'rev_page' => $this->getWikiPage()->getId() ] )
 			->useIndex( [ 'revision' => 'rev_page_timestamp' ] )
 			->orderBy( [ 'rev_timestamp' ], $dirs )
-			->limit( $limit )
-			->caller( __METHOD__ )
-			->fetchResultSet();
+			->limit( $limit );
+		if ( $offset ) {
+			$queryBuilder->andWhere( $dbr->expr( 'rev_timestamp', $oper, $dbr->timestamp( $offset ) ) );
+		}
 
-		return $res;
+		return $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 	}
 
 	/**

@@ -10,11 +10,9 @@
 /**
  * ContentEditable MediaWiki reference node.
  *
- * @class
- * @extends ve.ce.LeafNode
- * @mixin ve.ce.FocusableNode
- *
  * @constructor
+ * @extends ve.ce.LeafNode
+ * @mixes ve.ce.FocusableNode
  * @param {ve.dm.MWReferenceNode} model Model to observe
  * @param {Object} [config] Configuration options
  */
@@ -109,7 +107,8 @@ ve.ce.MWReferenceNode.prototype.onAttributeChange = function ( key ) {
 };
 
 /**
- * @inheritdoc ve.ce.FocusableNode
+ * @override
+ * @see ve.ce.FocusableNode
  */
 ve.ce.MWReferenceNode.prototype.executeCommand = function () {
 	const items = ve.ui.contextItemFactory.getRelatedItems( [ this.model ] );
@@ -117,7 +116,8 @@ ve.ce.MWReferenceNode.prototype.executeCommand = function () {
 	if ( items.length ) {
 		const contextItem = ve.ui.contextItemFactory.lookup( items[ 0 ].name );
 		if ( contextItem ) {
-			const command = this.getRoot().getSurface().getSurface().commandRegistry.lookup( contextItem.static.commandName );
+			const command = this.getRoot().getSurface().getSurface().commandRegistry
+				.lookup( contextItem.static.commandName );
 			if ( command ) {
 				command.execute( this.focusableSurface.getSurface() );
 			}

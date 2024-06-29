@@ -19,7 +19,6 @@ class DiscussionToolsHooks implements
 	/**
 	 * @param OverflowMenuItem[] &$overflowMenuItems
 	 * @param string[] &$resourceLoaderModules
-	 * @param bool $isSectionEditable
 	 * @param array $threadItemData
 	 * @param IContextSource $contextSource
 	 * @return bool|void
@@ -27,11 +26,14 @@ class DiscussionToolsHooks implements
 	public function onDiscussionToolsAddOverflowMenuItems(
 		array &$overflowMenuItems,
 		array &$resourceLoaderModules,
-		bool $isSectionEditable,
 		array $threadItemData,
 		IContextSource $contextSource
 	) {
-		if ( ( $threadItemData['type'] ?? null ) === 'heading' && $isSectionEditable ) {
+		if (
+			( $threadItemData['type'] ?? null ) === 'heading' &&
+			!( $threadItemData['uneditableSection'] ?? false ) &&
+			$contextSource->getSkin()->getSkinName() === 'minerva'
+		) {
 			$overflowMenuItems[] = new OverflowMenuItem(
 				'edit',
 				'edit',

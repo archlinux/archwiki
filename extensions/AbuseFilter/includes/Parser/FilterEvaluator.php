@@ -15,8 +15,8 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleWarning;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Parser\Sanitizer;
 use Psr\Log\LoggerInterface;
-use Sanitizer;
 use Wikimedia\Equivset\Equivset;
 use Wikimedia\IPUtils;
 
@@ -497,7 +497,7 @@ class FilterEvaluator {
 
 				return $this->callFunc( $functionName, $dataArgs, $node->position );
 			case AFPTreeNode::ARRAY_INDEX:
-				list( $array, $offset ) = $node->children;
+				[ $array, $offset ] = $node->children;
 
 				$array = $this->evalNode( $array );
 				// Note: we MUST evaluate the offset to ensure it is valid, regardless
@@ -529,7 +529,7 @@ class FilterEvaluator {
 				return $array[$offset];
 
 			case AFPTreeNode::UNARY:
-				list( $operation, $argument ) = $node->children;
+				[ $operation, $argument ] = $node->children;
 				$argument = $this->evalNode( $argument );
 				if ( $operation === '-' ) {
 					return $argument->unaryMinus();
@@ -537,30 +537,30 @@ class FilterEvaluator {
 				return $argument;
 
 			case AFPTreeNode::KEYWORD_OPERATOR:
-				list( $keyword, $leftOperand, $rightOperand ) = $node->children;
+				[ $keyword, $leftOperand, $rightOperand ] = $node->children;
 				$leftOperand = $this->evalNode( $leftOperand );
 				$rightOperand = $this->evalNode( $rightOperand );
 
 				return $this->callKeyword( $keyword, $leftOperand, $rightOperand, $node->position );
 			case AFPTreeNode::BOOL_INVERT:
-				list( $argument ) = $node->children;
+				[ $argument ] = $node->children;
 				$argument = $this->evalNode( $argument );
 				return $argument->boolInvert();
 
 			case AFPTreeNode::POW:
-				list( $base, $exponent ) = $node->children;
+				[ $base, $exponent ] = $node->children;
 				$base = $this->evalNode( $base );
 				$exponent = $this->evalNode( $exponent );
 				return $base->pow( $exponent );
 
 			case AFPTreeNode::MUL_REL:
-				list( $op, $leftOperand, $rightOperand ) = $node->children;
+				[ $op, $leftOperand, $rightOperand ] = $node->children;
 				$leftOperand = $this->evalNode( $leftOperand );
 				$rightOperand = $this->evalNode( $rightOperand );
 				return $leftOperand->mulRel( $rightOperand, $op, $node->position );
 
 			case AFPTreeNode::SUM_REL:
-				list( $op, $leftOperand, $rightOperand ) = $node->children;
+				[ $op, $leftOperand, $rightOperand ] = $node->children;
 				$leftOperand = $this->evalNode( $leftOperand );
 				$rightOperand = $this->evalNode( $rightOperand );
 				switch ( $op ) {
@@ -575,14 +575,14 @@ class FilterEvaluator {
 				}
 				// Unreachable line
 			case AFPTreeNode::COMPARE:
-				list( $op, $leftOperand, $rightOperand ) = $node->children;
+				[ $op, $leftOperand, $rightOperand ] = $node->children;
 				$leftOperand = $this->evalNode( $leftOperand );
 				$rightOperand = $this->evalNode( $rightOperand );
 				$this->raiseCondCount();
 				return $leftOperand->compareOp( $rightOperand, $op );
 
 			case AFPTreeNode::LOGIC:
-				list( $op, $leftOperand, $rightOperand ) = $node->children;
+				[ $op, $leftOperand, $rightOperand ] = $node->children;
 				$leftOperand = $this->evalNode( $leftOperand );
 				$value = $leftOperand->getType() === AFPData::DUNDEFINED ? false : $leftOperand->toBool();
 				// Short-circuit.
@@ -596,7 +596,7 @@ class FilterEvaluator {
 				return $leftOperand->boolOp( $rightOperand, $op );
 
 			case AFPTreeNode::CONDITIONAL:
-				list( $condition, $valueIfTrue, $valueIfFalse ) = $node->children;
+				[ $condition, $valueIfTrue, $valueIfFalse ] = $node->children;
 				$condition = $this->evalNode( $condition );
 				$isTrue = $condition->getType() === AFPData::DUNDEFINED ? false : $condition->toBool();
 				if ( $isTrue ) {
@@ -613,13 +613,13 @@ class FilterEvaluator {
 				}
 
 			case AFPTreeNode::ASSIGNMENT:
-				list( $varName, $value ) = $node->children;
+				[ $varName, $value ] = $node->children;
 				$value = $this->evalNode( $value );
 				$this->setUserVariable( $varName, $value );
 				return $value;
 
 			case AFPTreeNode::INDEX_ASSIGNMENT:
-				list( $varName, $offset, $value ) = $node->children;
+				[ $varName, $offset, $value ] = $node->children;
 
 				$array = $this->getVarValue( $varName );
 
@@ -658,7 +658,7 @@ class FilterEvaluator {
 				return $value;
 
 			case AFPTreeNode::ARRAY_APPEND:
-				list( $varName, $value ) = $node->children;
+				[ $varName, $value ] = $node->children;
 
 				$array = $this->getVarValue( $varName );
 				$value = $this->evalNode( $value );

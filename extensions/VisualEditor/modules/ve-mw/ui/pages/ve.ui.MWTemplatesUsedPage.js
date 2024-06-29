@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWTemplatesUsedPage class.
  *
- * @copyright 2011-2016 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -30,9 +30,7 @@ ve.ui.MWTemplatesUsedPage = function VeUiMWTemplatesUsedPage() {
 	} );
 
 	this.templatesUsedFieldset.$group.addClass( [
-		'mw-body-content',
-		// HACK: T287733
-		mw.config.get( 'skin' ) === 'vector' || mw.config.get( 'skin' ) === 'vector-2022' ? 'vector-body' : null
+		'mw-body-content'
 	] );
 
 	target.getContentApi().get( {

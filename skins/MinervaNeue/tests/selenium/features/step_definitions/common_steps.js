@@ -20,7 +20,7 @@ const createPages = ( pages ) => {
 		return bot.loginGetEditToken( {
 			username: browser.options.username,
 			password: browser.options.password,
-			apiUrl: `${browser.options.baseUrl}/api.php`
+			apiUrl: `${ browser.options.baseUrl }/api.php`
 		} )
 			.then( () => {
 				return bot.batch(
@@ -32,7 +32,9 @@ const createPages = ( pages ) => {
 					throw err;
 				} );
 			} )
-			.catch( ( err ) => { throw err; } );
+			.catch( ( err ) => {
+				throw err;
+			} );
 	} );
 };
 
@@ -85,7 +87,7 @@ const pageExistsWithText = ( title, text ) => {
 };
 
 const iAmOnAPageThatDoesNotExist = () => {
-	return iAmOnPage( `NewPage ${new Date()}` );
+	return iAmOnPage( `NewPage ${ new Date() }` );
 };
 
 const iShouldSeeAToastNotification = async () => {

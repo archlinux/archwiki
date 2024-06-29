@@ -24,9 +24,8 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Page\UndeletePage;
 use MediaWiki\Page\UndeletePageFactory;
 use MediaWiki\Page\WikiPageFactory;
-use MediaWiki\Permissions\Authority;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -74,7 +73,7 @@ class ApiUndelete extends ApiBase {
 		$params = $this->extractRequestParams();
 
 		$user = $this->getUser();
-		$block = $user->getBlock( Authority::READ_LATEST );
+		$block = $user->getBlock( IDBAccessObject::READ_LATEST );
 		if ( $block && $block->isSitewide() ) {
 			$this->dieBlocked( $block );
 		}

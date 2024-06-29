@@ -6,7 +6,7 @@
 		]
 	},
 	"prefs-gadgets": "Gadget",
-	"gadgets": "Gadget",
+	"special-gadgets": "Gadget",
 	"gadgetusage": "उपकरणाच्या वापराची सांख्यिकी",
 	"gadgetusage-gadget": "उपकरण (गॅजेट)",
 	"gadgetusage-usercount": "वापरणाऱ्यांची संख्या",
@@ -18,7 +18,5 @@
 	"gadgets-export": "Hamoaka",
 	"gadgets-export-title": "Famoahana gadget",
 	"gadgets-not-found": "Tsy hita ny gadget « $1 ».",
-	"gadgets-export-download": "Hampidina",
-	"right-gadgets-definition-edit": "उपकरणाच्या व्याख्या संपादा",
-	"action-gadgets-definition-edit": "ही उपकरण व्याख्या संपादा"
+	"gadgets-export-download": "Hampidina"
 }

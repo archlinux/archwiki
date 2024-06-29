@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\Math;
 
 use DataValues\StringValue;
-use Html;
 use InvalidArgumentException;
+use MediaWiki\Html\Html;
 use ValueFormatters\ValueFormatter;
 use Wikibase\Lib\Formatters\SnakFormatter;
 

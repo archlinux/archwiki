@@ -108,7 +108,7 @@ class DbFactory {
 	}
 
 	/**
-	 * Wrapper function for wfGetDB, some extensions like MobileFrontend is
+	 * Wrapper function for LBFactory::getExternalLB/getMainLB, some extensions like MobileFrontend is
 	 * using this to issue sql queries against Echo database directly.  This
 	 * is totally not accepted and should be updated to use Echo database access
 	 * objects

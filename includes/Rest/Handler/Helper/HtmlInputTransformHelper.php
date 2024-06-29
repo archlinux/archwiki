@@ -24,14 +24,15 @@ use InvalidArgumentException;
 use LanguageCode;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Edit\ParsoidOutputStash;
+use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\Edit\SelserContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\HtmlToContentTransform;
 use MediaWiki\Parser\Parsoid\HtmlTransformFactory;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
-use MediaWiki\Parser\Parsoid\ParsoidRenderID;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -41,7 +42,6 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use MWUnknownContentModelException;
 use ParserOptions;
-use ParserOutput;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -298,7 +298,7 @@ class HtmlInputTransformHelper {
 		$this->page = $page;
 
 		if ( !isset( $body['html'] ) ) {
-			throw new HttpException( 'Expected `html` key in body' );
+			throw new LocalizedHttpException( new MessageValue( "rest-missing-body-field", [ 'html' ] ) );
 		}
 
 		$html = is_array( $body['html'] ) ? $body['html']['body'] : $body['html'];
@@ -414,8 +414,7 @@ class HtmlInputTransformHelper {
 				$selserContext = $this->fetchSelserContextFromStash( $renderId );
 			} catch ( InvalidArgumentException $ex ) {
 				$this->stats->increment( 'html_input_transform.original_html.given.as_renderid.bad' );
-				throw new HttpException(
-					'Bad stash key',
+				throw new LocalizedHttpException( new MessageValue( "rest-bad-stash-key" ),
 					400,
 					[
 						'reason' => $ex->getMessage(),
@@ -527,7 +526,7 @@ class HtmlInputTransformHelper {
 			return $this->transform->htmlToContent();
 		} catch ( ClientError $e ) {
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-html-backend-error' ),
+				new MessageValue( 'rest-html-backend-error', [ $e->getMessage() ] ),
 				400,
 				[ 'reason' => $e->getMessage() ]
 			);
@@ -599,8 +598,7 @@ class HtmlInputTransformHelper {
 			}
 		} catch ( RevisionAccessException $e ) {
 			// The client supplied bad revision ID, or the revision was deleted or suppressed.
-			throw new HttpException(
-				'The specified revision does not exist.',
+			throw new LocalizedHttpException( new MessageValue( "rest-specified-revision-unavailable" ),
 				404,
 				[ 'reason' => $e->getMessage() ]
 			);
@@ -635,7 +633,7 @@ class HtmlInputTransformHelper {
 					return null;
 				}
 
-				$cachedRenderID = $this->parsoidOutputAccess->getParsoidRenderID( $parserOutput );
+				$cachedRenderID = ParsoidRenderID::newFromParserOutput( $parserOutput );
 				if ( $cachedRenderID->getKey() !== $renderID->getKey() ) {
 					$this->stats->increment( 'html_input_transform.original_html.given.as_renderid.' .
 						'stash_miss_pc_fallback.not_found.mismatch' );
@@ -668,14 +666,12 @@ class HtmlInputTransformHelper {
 	private function throwHttpExceptionForStatus( Status $status ) {
 		// TODO: make this nicer.
 		if ( $status->hasMessage( 'parsoid-resource-limit-exceeded' ) ) {
-			throw new HttpException(
-				'Resource limit exceeeded',
+			throw new LocalizedHttpException( new MessageValue( "rest-parsoid-resource-exceeded" ),
 				413,
 				[ 'reason' => $status->getHTML() ]
 			);
 		} else {
-			throw new HttpException(
-				'Parsoid error',
+			throw new LocalizedHttpException( new MessageValue( "rest-parsoid-error" ),
 				400,
 				[ 'reason' => $status->getHTML() ]
 			);

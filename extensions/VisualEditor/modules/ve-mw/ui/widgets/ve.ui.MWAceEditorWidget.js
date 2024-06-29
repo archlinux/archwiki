@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWAceEditorWidget class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /* global ace */
@@ -141,6 +141,7 @@ ve.ui.MWAceEditorWidget.prototype.setupEditor = function () {
 	this.editor.renderer.on( 'resize', this.onEditorResize.bind( this ) );
 	this.setEditorValue( this.getValue() );
 	// Force resize (T303964)
+	// eslint-disable-next-line es-x/no-resizable-and-growable-arraybuffers
 	this.editor.resize( true );
 };
 
@@ -414,6 +415,7 @@ ve.ui.MWAceEditorWidget.prototype.adjustSize = function ( force ) {
 	// so do nothing here unless this is a user triggered resize, otherwise call the parent method.
 	if ( force ) {
 		this.loadingPromise.done( function () {
+			// eslint-disable-next-line es-x/no-resizable-and-growable-arraybuffers
 			widget.editor.resize();
 		} );
 	}

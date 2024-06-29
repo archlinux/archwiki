@@ -3,6 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Core;
 
+use Wikimedia\JsonCodec\JsonCodecable;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
+use Wikimedia\Parsoid\Utils\CompatJsonCodec;
+
 /**
  * Section metadata for generating TOC.
  *
@@ -19,7 +23,9 @@ namespace Wikimedia\Parsoid\Core;
  * Linker.php::tocLine() and ::makeHeadline() demonstrate how these
  * properties are used to create headings and table of contents lines.
  */
-class SectionMetadata implements \JsonSerializable {
+class SectionMetadata implements \JsonSerializable, JsonCodecable {
+	use JsonCodecableTrait;
+
 	/**
 	 * The heading tag level: a 1 here means an <H1> tag was used, a
 	 * 2 means an <H2> tag was used, etc.
@@ -51,7 +57,7 @@ class SectionMetadata implements \JsonSerializable {
 	 *   We strip any parameter from accepted tags, except dir="rtl|ltr" from <span>,
 	 *   to allow setting directionality in toc items.
 	 *
-	 * @note This should be converted into the proper target variant.
+	 * @note This should be converted into the proper html variant.
 	 */
 	public string $line;
 
@@ -71,6 +77,7 @@ class SectionMetadata implements \JsonSerializable {
 	/**
 	 * The title of the page that generated this heading.
 	 * For template-generated sections, this will be the template title.
+	 * This string is in "prefixed DB key" format.
 	 */
 	public ?string $fromTitle;
 
@@ -118,7 +125,9 @@ class SectionMetadata implements \JsonSerializable {
 	 * This is very similar to the $anchor property, but is appropriately
 	 * URL-escaped to make it appropriate to use in constructing a URL
 	 * fragment link.  You should almost always prepend a `#` symbol
-	 * to `linkAnchor` if you are using it correctly.
+	 * to `linkAnchor` if you are using it correctly.  You are still
+	 * responsible for HTML-escaping the resulting URL if you are emitting
+	 * this as an HTML attribute.
 	 */
 	public string $linkAnchor;
 
@@ -202,6 +211,9 @@ class SectionMetadata implements \JsonSerializable {
 	 * supported as a value.  (A future revision will allow anything
 	 * that core's JsonCodec can handle.)  Attempts to set other types
 	 * as extension data values will break ParserCache for the page.
+	 *
+	 * @todo When more complex values than scalar values are supported,
+	 * TOCData::__clone should be updated to take that into account.
 	 *
 	 * @param string $key The key for accessing the data. Extensions
 	 *   should take care to avoid conflicts in naming keys. It is
@@ -339,6 +351,62 @@ class SectionMetadata implements \JsonSerializable {
 		return $this->toLegacy();
 	}
 
+	// JsonCodecable interface
+
+	/** @inheritDoc */
+	public function toJsonArray(): array {
+		$ret = [];
+		if ( $this->tocLevel !== 0 ) {
+			$ret['tocLevel'] = $this->tocLevel;
+		}
+		if ( $this->hLevel !== -1 ) {
+			$ret['hLevel'] = $this->hLevel;
+		}
+		if ( $this->line !== '' ) {
+			$ret['line'] = $this->line;
+		}
+		if ( $this->number !== '' ) {
+			$ret['number'] = $this->number;
+		}
+		if ( $this->index !== '' ) {
+			$ret['index'] = $this->index;
+		}
+		if ( $this->fromTitle !== null ) {
+			$ret['fromTitle'] = $this->fromTitle;
+		}
+		if ( $this->codepointOffset !== null ) {
+			$ret['codepointOffset'] = $this->codepointOffset;
+		}
+		if ( $this->anchor !== '' ) {
+			$ret['anchor'] = $this->anchor;
+		}
+		if ( $this->linkAnchor !== $this->anchor ) {
+			$ret['linkAnchor'] = $this->linkAnchor;
+		}
+		if ( $this->extensionData ) {
+			$ret['extensionData'] = $this->extensionData;
+		}
+		return $ret;
+	}
+
+	/** @inheritDoc */
+	public static function newFromJsonArray( array $json ) {
+		return new SectionMetadata(
+			$json['tocLevel'] ?? 0,
+			$json['hLevel'] ?? -1,
+			$json['line'] ?? '',
+			$json['number'] ?? '',
+			$json['index'] ?? '',
+			$json['fromTitle'] ?? null,
+			$json['codepointOffset'] ?? null,
+			$json['anchor'] ?? '',
+			$json['linkAnchor'] ?? $json['anchor'] ?? '',
+			$json['extensionData'] ?? null
+		);
+	}
+
+	// Pretty-printing
+
 	/**
 	 * For use in parser tests and wherever else humans might appreciate
 	 * some formatting in the JSON encoded output. For now, nothing special.
@@ -370,9 +438,8 @@ class SectionMetadata implements \JsonSerializable {
 
 		# Extension data
 		if ( $this->extensionData ) {
-			# This should go through a JsonCodec, as it might have
-			# data which requires special serialization.
-			$buf .= " ext:" . json_encode( $this->extensionData );
+			$codec = new CompatJsonCodec();
+			$buf .= " ext:" . json_encode( $codec->toJsonArray( $this->extensionData ) );
 		}
 
 		return $buf;

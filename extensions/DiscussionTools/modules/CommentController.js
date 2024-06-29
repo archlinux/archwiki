@@ -97,6 +97,15 @@ CommentController.prototype.getTranscludedFromSource = function () {
 
 CommentController.static.initType = 'page';
 
+/* Events */
+
+/**
+ * The current widget has been torn down
+ *
+ * @event teardown
+ * @param string mode Teardown mode. See dt.ui.ReplyWidget#teardown.
+ */
+
 /* Methods */
 
 /**
@@ -129,7 +138,7 @@ CommentController.prototype.setup = function ( mode, hideErrors, suppressNotific
 		this.replyWidgetPromise = this.getTranscludedFromSource().then( function ( commentDetails ) {
 			return commentController.createReplyWidget( commentDetails, { mode: mode } );
 		}, function ( code, data ) {
-			commentController.teardown();
+			commentController.onReplyWidgetTeardown();
 
 			if ( !hideErrors ) {
 				OO.ui.alert(
@@ -299,8 +308,8 @@ CommentController.prototype.getReplyWidgetClass = function ( visual ) {
 	// If 2017WTE mode is enabled, always use ReplyWidgetVisual.
 	visual = visual || enable2017Wikitext;
 
-	return mw.loader.using( controller.getReplyWidgetModules( visual ) ).then( function () {
-		return require( visual ? 'ext.discussionTools.ReplyWidgetVisual' : 'ext.discussionTools.ReplyWidgetPlain' );
+	return mw.loader.using( controller.getReplyWidgetModules() ).then( function () {
+		return require( 'ext.discussionTools.ReplyWidget' )[ visual ? 'ReplyWidgetVisual' : 'ReplyWidgetPlain' ];
 	} );
 };
 
@@ -321,7 +330,7 @@ CommentController.prototype.createReplyWidget = function ( commentDetails, confi
 
 CommentController.prototype.setupReplyWidget = function ( replyWidget, data, suppressNotifications ) {
 	replyWidget.connect( this, {
-		teardown: 'teardown',
+		teardown: 'onReplyWidgetTeardown',
 		reloadPage: this.emit.bind( this, 'reloadPage' )
 	} );
 
@@ -345,15 +354,41 @@ CommentController.prototype.focus = function () {
 	this.replyWidget.focus();
 };
 
+/**
+ * Scroll the widget into view and focus it
+ */
 CommentController.prototype.showAndFocus = function () {
 	var commentController = this;
-	this.replyWidget.scrollElementIntoView( { padding: scrollPadding } )
-		.then( function () {
-			commentController.focus();
+	if ( this.replyWidgetPromise ) {
+		this.replyWidgetPromise.then( function ( replyWidget ) {
+			replyWidget.scrollElementIntoView( { padding: scrollPadding } )
+				.then( function () {
+					commentController.focus();
+				} );
 		} );
+	}
 };
 
-CommentController.prototype.teardown = function ( mode ) {
+/**
+ * Try to tear down the reply widget, if it is setup
+ *
+ * @return {jQuery.Promise} Resolves when the widget is torn down, rejects if it fails.
+ */
+CommentController.prototype.tryTeardown = function () {
+	if ( this.replyWidgetPromise ) {
+		return this.replyWidgetPromise.then( function ( replyWidget ) {
+			return replyWidget.tryTeardown();
+		} );
+	}
+	return $.Deferred().resolve().promise();
+};
+
+/**
+ * Handle teardown events from the reply widget
+ *
+ * @param {string} mode Teardown mode. See dt.ui.ReplyWidget#teardown
+ */
+CommentController.prototype.onReplyWidgetTeardown = function ( mode ) {
 	$( this.newListItem ).parents( '.collapsible-block' ).prev().removeClass( 'collapsible-heading-disabled' );
 
 	if ( mode === 'refresh' ) {
@@ -407,9 +442,8 @@ CommentController.prototype.getApiQuery = function ( pageName, checkboxes ) {
 		assert: mw.user.isAnon() ? 'anon' : 'user',
 		assertuser: mw.user.getName() || undefined,
 		uselang: mw.config.get( 'wgUserLanguage' ),
-		// HACK: Always display reply links afterwards, ignoring preferences etc., in case this was
-		// a page view with reply links forced with ?dtenable=1 or otherwise
-		dtenable: '1',
+		// Pass through dtenable query string param from original request
+		dtenable: new URLSearchParams( location.search ).get( 'dtenable' ) ? '1' : undefined,
 		dttags: tags.join( ',' )
 	};
 

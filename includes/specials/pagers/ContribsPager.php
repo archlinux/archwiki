@@ -25,12 +25,12 @@ use ChangesList;
 use ChangeTags;
 use DateTime;
 use HtmlArmor;
-use IContextSource;
 use InvalidArgumentException;
 use MapCacheLRU;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -176,7 +176,7 @@ class ContribsPager extends RangeChronologicalPager {
 	) {
 		// Class is used directly in extensions - T266484
 		$services = MediaWikiServices::getInstance();
-		$dbProvider ??= $services->getDBLoadBalancerFactory();
+		$dbProvider ??= $services->getConnectionProvider();
 
 		// Set ->target before calling parent::__construct() so
 		// parent can call $this->getIndexField() and get the right result. Set
@@ -573,7 +573,6 @@ class ContribsPager extends RangeChronologicalPager {
 		$this->mParentLens = [];
 		$revisions = [];
 		$linkBatch = $this->linkBatchFactory->newLinkBatch();
-		$isIpRange = self::isQueryableRange( $this->target, $this->getConfig() );
 		# Give some pointers to make (last) links
 		foreach ( $this->mResult as $row ) {
 			if ( isset( $row->rev_parent_id ) && $row->rev_parent_id ) {
@@ -581,8 +580,8 @@ class ContribsPager extends RangeChronologicalPager {
 			}
 			if ( $this->revisionStore->isRevisionRow( $row ) ) {
 				$this->mParentLens[(int)$row->rev_id] = $row->rev_len;
-				if ( $isIpRange ) {
-					// If this is an IP range, batch the IP's talk page
+				if ( $this->target !== $row->rev_user_text ) {
+					// If the target does not match the author, batch the author's talk page
 					$linkBatch->add( NS_USER_TALK, $row->rev_user_text );
 				}
 				$linkBatch->add( $row->page_namespace, $row->page_title );
@@ -764,12 +763,12 @@ class ContribsPager extends RangeChronologicalPager {
 			$authority = $this->getAuthority();
 			$d = ChangesList::revDateLink( $revRecord, $authority, $lang, $page );
 
-			# When querying for an IP range, we want to always show user and user talk links.
+			// When the author is different from the target, always show user and user talk links
 			$userlink = '';
 			$revUser = $revRecord->getUser();
 			$revUserId = $revUser ? $revUser->getId() : 0;
 			$revUserText = $revUser ? $revUser->getName() : '';
-			if ( self::isQueryableRange( $this->target, $this->getConfig() ) ) {
+			if ( $this->target !== $revUserText ) {
 				$userlink = ' <span class="mw-changeslist-separator"></span> '
 					. $lang->getDirMark()
 					. Linker::userLink( $revUserId, $revUserText );

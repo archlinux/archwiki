@@ -6,8 +6,6 @@
 			"Srđan"
 		]
 	},
-	"apierror-visualeditor-docserver-http-error": "Greška prilikom kontaktiranja Parsoid/RESTBase servera: $1",
-	"apierror-visualeditor-docserver": "Greška prilikom kontaktiranja Parsoid/RESTBase servera (nema odgovora)",
 	"apihelp-visualeditor-param-basetimestamp": "Postavite ovo na vremensku oznaku verzije koja je uređivana prilikom čuvanja. Koristi se da bi se otkrili sukobi u izmjenama.",
 	"apihelp-visualeditor-param-cachekey": "Koristite rezultat prethodnog zahtjeva za serializeforcache s ovim ključem da biste serijalizirali ili koristili razl. Nadjačava $1html.",
 	"apihelp-visualeditor-param-etag": "ETag za slanje.",

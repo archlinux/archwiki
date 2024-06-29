@@ -8,12 +8,14 @@
 			"NMW03",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"아라"
+			"아라",
+			"Nemoralis"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck hesab edir ki, səhifəyə yeni məzmun əlavə olunub",
 	"tag-editcheck-newreference-description": "Səhifəyə istinad əlavə edildi",
 	"tag-editcheck-references-description": "EditCheck hesab edir ki, istinad lazım ola bilər",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Redaktə Yoxlanışı (istinadlar) aktivləşdirilib]]",
 	"tag-editcheck-references-activated-description": "EditCheck istinad lazım olduğunu düşünür və interfeys göstərilir",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizual redaktor]]",
 	"tag-visualeditor-description": "Redaktə [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizual redaktorun]] köməyi ilə edilib",
@@ -27,7 +29,6 @@
 	"visualeditor-feedback-tool": "Bu funksiya haqqında rəyinizi bildirin",
 	"visualeditor-help-label": "İstifadəçinin bələdçisini oxu",
 	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
-	"visualeditor-help-title": "Redaktorun istifadəsinə dair bələdçi",
 	"visualeditor-welcomedialog-action": "Redaktəyə başla",
 	"visualeditor-welcomedialog-content": "Burada hər kəs redaktə edə bilər. Hər düzəliş təkmilləşməyə kömək edir.",
 	"visualeditor-welcomedialog-content-thanks": "Hər kəsin daha çox şey öyrənməsinə kömək etdiyiniz üçün sizə təşəkkür edirik!",

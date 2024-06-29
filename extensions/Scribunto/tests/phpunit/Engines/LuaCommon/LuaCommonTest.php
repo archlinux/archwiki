@@ -119,7 +119,7 @@ class LuaCommonTest extends LuaEngineTestBase {
 	public function testNoLeakedGlobals() {
 		$interpreter = $this->getEngine()->getInterpreter();
 
-		list( $actualGlobals ) = $interpreter->callFunction(
+		[ $actualGlobals ] = $interpreter->callFunction(
 			$interpreter->loadString(
 				'local t = {} for k in pairs( _G ) do t[#t+1] = k end return t',
 				'getglobals'

@@ -21,8 +21,6 @@
  * @ingroup Maintenance
  */
 
-use Wikimedia\Rdbms\IDatabase;
-
 require_once __DIR__ . '/Maintenance.php';
 
 /**
@@ -62,7 +60,7 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 			'revision',
 			'rev_id',
 			'rev',
-			$revisionStore->getQueryInfo()
+			$revisionStore->newSelectQueryBuilder( $this->getReplicaDB() )->joinComment()
 		);
 
 		$this->output( "Populating ar_len column\n" );
@@ -70,7 +68,7 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 			'archive',
 			'ar_id',
 			'ar',
-			$revisionStore->getArchiveQueryInfo()
+			$revisionStore->newArchiveSelectQueryBuilder( $this->getReplicaDB() )->joinComment()
 		);
 
 		$this->output( "rev_len and ar_len population complete "
@@ -83,12 +81,12 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 	 * @param string $table
 	 * @param string $idCol
 	 * @param string $prefix
-	 * @param array $queryInfo
+	 * @param \Wikimedia\Rdbms\SelectQueryBuilder $queryBuilder should use a replica db
 	 * @return int
 	 */
-	protected function doLenUpdates( $table, $idCol, $prefix, $queryInfo ) {
-		$dbr = $this->getDB( DB_REPLICA );
-		$dbw = $this->getDB( DB_PRIMARY );
+	protected function doLenUpdates( $table, $idCol, $prefix, $queryBuilder ) {
+		$dbr = $this->getReplicaDB();
+		$dbw = $this->getPrimaryDB();
 		$batchSize = $this->getBatchSize();
 		$start = $dbw->newSelectQueryBuilder()
 			->select( "MIN($idCol)" )
@@ -111,25 +109,19 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 
 		while ( $blockStart <= $end ) {
 			$this->output( "...doing $idCol from $blockStart to $blockEnd\n" );
-			$res = $dbr->select(
-				$queryInfo['tables'],
-				$queryInfo['fields'],
-				[
+
+			$res = $queryBuilder
+				->where( [
 					"$idCol >= $blockStart",
 					"$idCol <= $blockEnd",
-					$dbr->makeList( [
-						"{$prefix}_len" => null,
-						$dbr->makeList( [
-							"{$prefix}_len" => 0,
-							// sha1( "" )
-							"{$prefix}_sha1 != " . $dbr->addQuotes( 'phoiac9h4m842xq45sp7s6u21eteeq1' ),
-						], IDatabase::LIST_AND )
-					], IDatabase::LIST_OR )
-				],
-				__METHOD__,
-				[],
-				$queryInfo['joins']
-			);
+					$dbr->expr( "{$prefix}_len", '=', null )
+						->orExpr(
+							$dbr->expr( "{$prefix}_len", '=', 0 )
+								// sha1( "" )
+								->and( "{$prefix}_sha1", '!=', 'phoiac9h4m842xq45sp7s6u21eteeq1' )
+						),
+				] )
+				->caller( __METHOD__ )->fetchResultSet();
 
 			if ( $res->numRows() > 0 ) {
 				$this->beginTransaction( $dbw, __METHOD__ );
@@ -157,7 +149,7 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 	 * @return bool
 	 */
 	protected function upgradeRow( $row, $table, $idCol, $prefix ) {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
 		$revFactory = $this->getServiceContainer()->getRevisionFactory();
 		if ( $table === 'archive' ) {
@@ -175,11 +167,11 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 		}
 
 		# Update the row...
-		$dbw->update( $table,
-			[ "{$prefix}_len" => $revRecord->getSize() ],
-			[ $idCol => $row->$idCol ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( $table )
+			->set( [ "{$prefix}_len" => $revRecord->getSize() ] )
+			->where( [ $idCol => $row->$idCol ] )
+			->caller( __METHOD__ )->execute();
 
 		return true;
 	}

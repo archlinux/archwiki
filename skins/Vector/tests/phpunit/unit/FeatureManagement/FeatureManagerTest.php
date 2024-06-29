@@ -62,26 +62,6 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getFeatureBodyClass
-	 */
-	public function testGetFeatureBodyClass() {
-		$featureManager = new FeatureManager();
-		$featureManager->registerSimpleRequirement( 'requirement', true );
-		$featureManager->registerSimpleRequirement( 'disabled', false );
-		$featureManager->registerFeature( 'sticky-header', [ 'requirement' ] );
-		$featureManager->registerFeature( 'TableOfContents', [ 'requirement' ] );
-		$featureManager->registerFeature( 'Test', [ 'disabled' ] );
-		$this->assertEquals(
-			[
-				'vector-feature-sticky-header-enabled',
-				'vector-feature-table-of-contents-enabled',
-				'vector-feature-test-disabled'
-			],
-			$featureManager->getFeatureBodyClass()
-		);
-	}
-
-	/**
 	 * @dataProvider provideInvalidFeatureConfig
 	 * @covers ::registerFeature
 	 */

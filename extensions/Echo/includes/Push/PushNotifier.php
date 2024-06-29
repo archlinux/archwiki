@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Notifications\Push;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\MediaWikiServices;
-use User;
+use MediaWiki\User\User;
 
 class PushNotifier {
 

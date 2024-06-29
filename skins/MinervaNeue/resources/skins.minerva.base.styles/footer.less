@@ -39,11 +39,6 @@
 			margin-top: 42px;
 			font-size: 1em;
 			font-weight: bold;
-
-			// FIXME: Remove when cache has cleared for I55a25dfb8aba3d1b589a36ba4cba3bba0fe710a1
-			&:first-child {
-				margin-top: 0;
-			}
 		}
 
 		// No margin top on logo needed if it follows the #p-lang element and nothing has been loaded
@@ -56,6 +51,21 @@
 		.hlist,
 		.license {
 			font-size: 0.875em;
+		}
+	}
+}
+
+// Night mode
+html.skin-theme-clientpref-night {
+	.minerva-footer-logo img {
+		.night-mode-invert-image();
+	}
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		.minerva-footer-logo img {
+			.night-mode-invert-image();
 		}
 	}
 }

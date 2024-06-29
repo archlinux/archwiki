@@ -1,11 +1,11 @@
 <?php
 
-use MediaWiki\Block\BlockManager;
-use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Tests\Unit\MockBlockTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
@@ -14,14 +14,15 @@ use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserIdentityValue;
 
 /**
- * @covers Skin
+ * @covers \Skin
  * @group Database
  */
 class SkinTest extends MediaWikiIntegrationTestCase {
 	use MockAuthorityTrait;
+	use MockBlockTrait;
 
 	/**
-	 * @covers Skin
+	 * @covers \Skin
 	 */
 	public function testGetSkinName() {
 		$skin = new SkinFallback();
@@ -40,7 +41,68 @@ class SkinTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( isset( $modules['styles'] ), 'style key is set by default' );
 	}
 
-	public function provideGetDefaultModulesWatchWrite() {
+	/**
+	 * @param bool $isSyndicated
+	 * @param string $html
+	 * @return OutputPage
+	 */
+	private function getMockOutputPage( $isSyndicated, $html ) {
+		$mock = $this->createMock( OutputPage::class );
+		$mock->expects( $this->once() )
+			->method( 'isSyndicated' )
+			->willReturn( $isSyndicated );
+		$mock->method( 'getHTML' )
+			->willReturn( $html );
+		return $mock;
+	}
+
+	public static function provideGetDefaultModulesForOutput() {
+		return [
+			[
+				false,
+				'',
+				[]
+			],
+			[
+				true,
+				'',
+				[ 'mediawiki.feedlink' ]
+			],
+			[
+				false,
+				'FOO mw-ui-button BAR',
+				[ 'mediawiki.ui.button' ]
+			],
+			[
+				true,
+				'FOO mw-ui-button BAR',
+				[ 'mediawiki.ui.button', 'mediawiki.feedlink' ]
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetDefaultModulesForOutput
+	 */
+	public function testGetDefaultModulesForContent( $isSyndicated, $html, array $expectedModuleStyles ) {
+		$skin = new class extends Skin {
+			public function outputPage() {
+			}
+		};
+		$fakeContext = new RequestContext();
+		$fakeContext->setTitle( Title::makeTitle( NS_MAIN, 'Test' ) );
+		$fakeContext->setOutput( $this->getMockOutputPage( $isSyndicated, $html ) );
+		$skin->setContext( $fakeContext );
+
+		$modules = $skin->getDefaultModules();
+
+		$actualStylesModule = array_merge( ...array_values( $modules['styles'] ) );
+		foreach ( $expectedModuleStyles as $expected ) {
+			$this->assertContains( $expected, $actualStylesModule );
+		}
+	}
+
+	public function provideGetDefaultModulesForRights() {
 		yield 'no rights' => [
 			$this->mockRegisteredNullAuthority(), // $authority
 			false, // $hasModule
@@ -52,9 +114,9 @@ class SkinTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideGetDefaultModulesWatchWrite
+	 * @dataProvider provideGetDefaultModulesForRights
 	 */
-	public function testGetDefaultModulesWatchWrite( Authority $authority, bool $hasModule ) {
+	public function testGetDefaultModulesForRights( Authority $authority, bool $hasModule ) {
 		$skin = new class extends Skin {
 			public function outputPage() {
 			}
@@ -391,20 +453,17 @@ class SkinTest extends MediaWikiIntegrationTestCase {
 			public function outputPage() {
 			}
 		};
-		$relevantUser = UserIdentityValue::newRegistered( 1, '123.123.123.123' );
+		$relevantUser = UserIdentityValue::newRegistered( 1, 'SomeUser' );
 		$skin->setRelevantUser( $relevantUser );
 		$this->assertSame( $relevantUser, $skin->getRelevantUser() );
 
-		$blockManagerMock = $this->createNoOpMock( BlockManager::class, [ 'getUserBlock' ] );
-		$blockManagerMock->method( 'getUserBlock' )
-			->with( $relevantUser )
-			->willReturn( new DatabaseBlock( [
-				'address' => $relevantUser,
-				'wiki' => $relevantUser->getWikiId(),
-				'by' => UserIdentityValue::newAnonymous( '123.123.123.123' ),
-				'hideName' => true
-			] ) );
-		$this->setService( 'BlockManager', $blockManagerMock );
+		$this->installMockBlockManager(
+			[
+				'target' => $relevantUser,
+				'hideName' => true,
+			]
+		);
+
 		$ctx = RequestContext::getMain();
 		$ctx->setAuthority( $this->mockAnonNullAuthority() );
 		$skin->setContext( $ctx );
@@ -475,9 +534,6 @@ class SkinTest extends MediaWikiIntegrationTestCase {
 				return $this->createMock( UserIdentity::class );
 			} );
 		$this->setService( 'UserIdentityLookup', $userIdentityLookup );
-		$blockManager = $this->createMock( BlockManager::class );
-		$blockManager->method( 'getUserBlock' )->willReturn( null );
-		$this->setService( 'BlockManager', $blockManager );
 		$skin->setRelevantTitle(
 			Title::makeTitle( NS_USER, $user->getName() )
 		);

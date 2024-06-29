@@ -10,6 +10,13 @@ const
  * @param {string} direction the scroll direction
  */
 function firePageTitleScrollHook( direction ) {
+	/**
+	 * For use by WikimediaEvents only.
+	 * @event vector.page_title_scroll
+	 * @internal
+	 * @property {string} context
+	 * @property {string} action
+	 */
 	if ( direction === 'down' ) {
 		mw.hook( SCROLL_TITLE_HOOK ).fire( {
 			context: SCROLL_TITLE_CONTEXT_BELOW

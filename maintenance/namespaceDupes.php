@@ -2,7 +2,7 @@
 /**
  * Check for articles to fix after adding/deleting namespaces
  *
- * Copyright © 2005-2007 Brion Vibber <brion@pobox.com>
+ * Copyright © 2005-2007 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,14 +26,15 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\LikeValue;
 
 /**
  * Maintenance script that checks for articles to fix after
@@ -42,11 +43,6 @@ use Wikimedia\Rdbms\IResultWrapper;
  * @ingroup Maintenance
  */
 class NamespaceDupes extends Maintenance {
-
-	/**
-	 * @var IMaintainableDatabase
-	 */
-	protected $db;
 
 	/**
 	 * Total number of pages that need fixing that are automatically resolveable
@@ -230,8 +226,6 @@ class NamespaceDupes extends Maintenance {
 				// have rd_interwiki=w and rd_namespace=0, which would match the
 				// query for a conflicting namespace "Foo" if filtering wasn't done.
 				$this->checkLinkTable( 'redirect', 'rd', $ns, $name, $options,
-					[ 'rd_interwiki' => null ] );
-				$this->checkLinkTable( 'redirect', 'rd', $ns, $name, $options,
 					[ 'rd_interwiki' => '' ] );
 			}
 		}
@@ -368,48 +362,45 @@ class NamespaceDupes extends Maintenance {
 	private function checkLinkTable( $table, $fieldPrefix, $ns, $name, $options,
 		$extraConds = []
 	) {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
 		$batchConds = [];
 		$fromField = "{$fieldPrefix}_from";
-		$batchSize = 500;
+		$batchSize = 100;
+		$sqb = $dbw->newSelectQueryBuilder()
+			->select( $fromField )
+			->where( $extraConds )
+			->limit( $batchSize );
+
 		$linksMigration = $this->getServiceContainer()->getLinksMigration();
 		if ( isset( $linksMigration::$mapping[$table] ) ) {
-			$queryInfo = $linksMigration->getQueryInfo( $table );
+			$sqb->queryInfo( $linksMigration->getQueryInfo( $table ) );
 			[ $namespaceField, $titleField ] = $linksMigration->getTitleFields( $table );
+			$schemaMigrationStage = $this->getConfig()->get( $linksMigration::$mapping[$table]['config'] );
+			$linkTargetLookup = $this->getServiceContainer()->getLinkTargetLookup();
+			$targetIdField = $linksMigration::$mapping[$table]['target_id'];
 		} else {
-			$queryInfo = [
-				'tables' => [ $table ],
-				'fields' => [
-					"{$fieldPrefix}_namespace",
-					"{$fieldPrefix}_title"
-				],
-				'joins' => []
-			];
+			$sqb->table( $table );
 			$namespaceField = "{$fieldPrefix}_namespace";
 			$titleField = "{$fieldPrefix}_title";
+			$sqb->fields( [ $namespaceField, $titleField ] );
+			// Variables only used for links migration, init only
+			$schemaMigrationStage = -1;
+			$linkTargetLookup = null;
+			$targetIdField = '';
 		}
+		$sqb->andWhere( [
+				$namespaceField => 0,
+				$dbw->expr( $titleField, IExpression::LIKE, new LikeValue( "$name:", $dbw->anyString() ) ),
+			] )
+			->orderBy( [ $titleField, $fromField ] )
+			->caller( __METHOD__ );
 
+		$updateRowsPerQuery = $this->getConfig()->get( MainConfigNames::UpdateRowsPerQuery );
 		while ( true ) {
-			$res = $dbw->select(
-				$queryInfo['tables'],
-				array_merge( [ $fromField ], $queryInfo['fields'] ),
-				array_merge(
-					$batchConds,
-					$extraConds,
-					[
-						$namespaceField => 0,
-						$titleField . $dbw->buildLike( "$name:", $dbw->anyString() )
-					]
-				),
-				__METHOD__,
-				[
-					'ORDER BY' => [ $titleField, $fromField ],
-					'LIMIT' => $batchSize
-				],
-				$queryInfo['joins']
-			);
-
+			$res = ( clone $sqb )
+				->andWhere( $batchConds )
+				->fetchResultSet();
 			if ( $res->numRows() == 0 ) {
 				break;
 			}
@@ -434,7 +425,14 @@ class NamespaceDupes extends Maintenance {
 				}
 
 				if ( isset( $linksMigration::$mapping[$table] ) ) {
-					$setValue = $linksMigration->getLinksConditions( $table, $destTitle );
+					$setValue = [];
+					if ( $schemaMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+						$setValue[$targetIdField] = $linkTargetLookup->acquireLinkTargetId( $destTitle, $dbw );
+					}
+					if ( $schemaMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+						$setValue["{$fieldPrefix}_namespace"] = $destTitle->getNamespace();
+						$setValue["{$fieldPrefix}_title"] = $destTitle->getDBkey();
+					}
 					$whereCondition = $linksMigration->getLinksConditions(
 						$table,
 						new TitleValue( 0, $row->$titleField )
@@ -458,19 +456,17 @@ class NamespaceDupes extends Maintenance {
 					];
 				}
 
-				$dbw->update( $table,
-					// SET
-					$setValue,
-					// WHERE
-					array_merge( [ $fromField => $row->$fromField ], $whereCondition ),
-					__METHOD__,
-					[ 'IGNORE' ]
-				);
+				$dbw->newUpdateQueryBuilder()
+					->update( $table )
+					->ignore()
+					->set( $setValue )
+					->where( [ $fromField => $row->$fromField ] )
+					->andWhere( $whereCondition )
+					->caller( __METHOD__ )
+					->execute();
 
-				$rowsToDeleteIfStillExists[] = $dbw->makeList(
-					array_merge( [ $fromField => $row->$fromField ], $deleteCondition ),
-					IDatabase::LIST_AND
-				);
+				// In case there is a key conflict on UPDATE IGNORE the row needs deletion
+				$rowsToDeleteIfStillExists[] = array_merge( [ $fromField => $row->$fromField ], $deleteCondition );
 
 				$this->output( "$table $logTitle -> " .
 					$destTitle->getPrefixedDBkey() . "\n"
@@ -478,14 +474,22 @@ class NamespaceDupes extends Maintenance {
 			}
 
 			if ( $options['fix'] && count( $rowsToDeleteIfStillExists ) > 0 ) {
-				$dbw->delete(
-					$table,
-					$dbw->makeList( $rowsToDeleteIfStillExists, IDatabase::LIST_OR ),
-					__METHOD__
-				);
+				$affectedRows = 0;
+				$deleteBatches = array_chunk( $rowsToDeleteIfStillExists, $updateRowsPerQuery );
+				foreach ( $deleteBatches as $deleteBatch ) {
+					$dbw->newDeleteQueryBuilder()
+						->deleteFrom( $table )
+						->where( $dbw->factorConds( $deleteBatch ) )
+						->caller( __METHOD__ )
+						->execute();
+					$affectedRows += $dbw->affectedRows();
+					if ( count( $deleteBatches ) > 1 ) {
+						$this->waitForReplication();
+					}
+				}
 
-				$this->deletedLinks += $dbw->affectedRows();
-				$this->resolvableLinks -= $dbw->affectedRows();
+				$this->deletedLinks += $affectedRows;
+				$this->resolvableLinks -= $affectedRows;
 			}
 
 			$batchConds = [
@@ -527,7 +531,7 @@ class NamespaceDupes extends Maintenance {
 	 * @return IResultWrapper
 	 */
 	private function getTargetList( $ns, $name, $options ) {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
 		if (
 			$options['move-talk'] &&
@@ -543,7 +547,7 @@ class NamespaceDupes extends Maintenance {
 			->from( 'page' )
 			->where( [
 				'page_namespace' => $checkNamespaces,
-				'page_title' . $dbw->buildLike( "$name:", $dbw->anyString() ),
+				$dbw->expr( 'page_title', IExpression::LIKE, new LikeValue( "$name:", $dbw->anyString() ) ),
 			] )
 			->caller( __METHOD__ )->fetchResultSet();
 	}
@@ -615,33 +619,58 @@ class NamespaceDupes extends Maintenance {
 	 * @return bool
 	 */
 	private function movePage( $id, LinkTarget $newLinkTarget ) {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
-		$dbw->update( 'page',
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'page' )
+			->set( [
 				"page_namespace" => $newLinkTarget->getNamespace(),
 				"page_title" => $newLinkTarget->getDBkey(),
-			],
-			[
+			] )
+			->where( [
 				"page_id" => $id,
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		// Update *_from_namespace in links tables
 		$fromNamespaceTables = [
-			[ 'pagelinks', 'pl' ],
-			[ 'templatelinks', 'tl' ],
-			[ 'imagelinks', 'il' ]
+			[ 'pagelinks', 'pl', [ 'pl_namespace', 'pl_title' ] ],
+			[ 'templatelinks', 'tl', [ 'tl_target_id' ] ],
+			[ 'imagelinks', 'il', [ 'il_to' ] ]
 		];
-		foreach ( $fromNamespaceTables as [ $table, $fieldPrefix ] ) {
-			$dbw->update( $table,
-				// SET
-				[ "{$fieldPrefix}_from_namespace" => $newLinkTarget->getNamespace() ],
-				// WHERE
-				[ "{$fieldPrefix}_from" => $id ],
-				__METHOD__
-			);
+		$updateRowsPerQuery = $this->getConfig()->get( MainConfigNames::UpdateRowsPerQuery );
+		foreach ( $fromNamespaceTables as [ $table, $fieldPrefix, $additionalPrimaryKeyFields ] ) {
+			$fromField = "{$fieldPrefix}_from";
+			$fromNamespaceField = "{$fieldPrefix}_from_namespace";
+
+			$res = $dbw->newSelectQueryBuilder()
+				->select( $additionalPrimaryKeyFields )
+				->from( $table )
+				->where( [ $fromField => $id ] )
+				->andWhere( $dbw->expr( $fromNamespaceField, '!=', $newLinkTarget->getNamespace() ) )
+				->caller( __METHOD__ )
+				->fetchResultSet();
+			if ( !$res ) {
+				continue;
+			}
+
+			$updateConds = [];
+			foreach ( $res as $row ) {
+				$updateConds[] = array_merge( [ $fromField => $id ], (array)$row );
+			}
+			$updateBatches = array_chunk( $updateConds, $updateRowsPerQuery );
+			foreach ( $updateBatches as $updateBatch ) {
+				$dbw->newUpdateQueryBuilder()
+					->update( $table )
+					->set( [ $fromNamespaceField => $newLinkTarget->getNamespace() ] )
+					->where( $dbw->factorConds( $updateBatch ) )
+					->caller( __METHOD__ )
+					->execute();
+				if ( count( $updateBatches ) > 1 ) {
+					$this->waitForReplication();
+				}
+			}
 		}
 
 		return true;
@@ -681,7 +710,8 @@ class NamespaceDupes extends Maintenance {
 	 * @return bool
 	 */
 	private function mergePage( $row, Title $newTitle ) {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
+		$updateRowsPerQuery = $this->getConfig()->get( MainConfigNames::UpdateRowsPerQuery );
 
 		$id = $row->page_id;
 
@@ -691,19 +721,34 @@ class NamespaceDupes extends Maintenance {
 		$sourceTitle = Title::makeTitle( $row->page_namespace, $row->page_title );
 		$sourceTitle->resetArticleID( $id );
 		$wikiPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $sourceTitle );
-		$wikiPage->loadPageData( WikiPage::READ_LATEST );
+		$wikiPage->loadPageData( IDBAccessObject::READ_LATEST );
 
 		$destId = $newTitle->getArticleID();
 		$this->beginTransaction( $dbw, __METHOD__ );
-		$dbw->update( 'revision',
-			// SET
-			[ 'rev_page' => $destId ],
-			// WHERE
-			[ 'rev_page' => $id ],
-			__METHOD__
-		);
+		$revIds = $dbw->newSelectQueryBuilder()
+			->select( 'rev_id' )
+			->from( 'revision' )
+			->where( [ 'rev_page' => $id ] )
+			->caller( __METHOD__ )
+			->fetchFieldValues();
+		$updateBatches = array_chunk( array_map( 'intval', $revIds ), $updateRowsPerQuery );
+		foreach ( $updateBatches as $updateBatch ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'revision' )
+				->set( [ 'rev_page' => $destId ] )
+				->where( [ 'rev_id' => $updateBatch ] )
+				->caller( __METHOD__ )
+				->execute();
+			if ( count( $updateBatches ) > 1 ) {
+				$this->waitForReplication();
+			}
+		}
 
-		$dbw->delete( 'page', [ 'page_id' => $id ], __METHOD__ );
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'page' )
+			->where( [ 'page_id' => $id ] )
+			->caller( __METHOD__ )
+			->execute();
 
 		$this->commitTransaction( $dbw, __METHOD__ );
 

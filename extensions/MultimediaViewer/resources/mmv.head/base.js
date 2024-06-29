@@ -36,6 +36,21 @@
 		 * @member mw.mmv
 		 */
 		LEGACY_ROUTE_REGEXP: /^mediaviewer\/(.+)$/,
+
+		/**
+		 * Returns true if MediaViewer should handle thumbnail clicks.
+		 *
+		 * @param {Map} mwConfig
+		 * @param {Object} mwUser
+		 * @param {mw.SafeStorage} mwStorage
+		 * @return {boolean}
+		 */
+		isMediaViewerEnabledOnClick( mwConfig = mw.config, mwUser = mw.user, mwStorage = mw.storage ) {
+			return mwConfig.get( 'wgMediaViewer' ) && // global opt-out switch, can be set in user JS
+				mwConfig.get( 'wgMediaViewerOnClick' ) && // thumbnail opt-out, can be set in preferences
+				( mwUser.isNamed() || !mwStorage.get( 'wgMediaViewerOnClick' ) || mwStorage.get( 'wgMediaViewerOnClick' ) === '1' ); // thumbnail opt-out for anons
+		},
+
 		/**
 		 * Returns the location hash (route string) for the given file title.
 		 *
@@ -43,6 +58,6 @@
 		 * @return {string} the location hash
 		 * @member mw.mmv
 		 */
-		getMediaHash: ( imageFileTitle ) => `#/media/${imageFileTitle}`
+		getMediaHash: ( imageFileTitle ) => `#/media/${ encodeURI( imageFileTitle ) }`
 	};
 }() );

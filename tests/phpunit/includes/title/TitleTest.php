@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Cache\BacklinkCache;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
@@ -103,7 +104,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideInNamespace
-	 * @covers MediaWiki\Title\Title::inNamespace
+	 * @covers \MediaWiki\Title\Title::inNamespace
 	 */
 	public function testInNamespace( $title, $ns, $expectedBool ) {
 		$title = Title::newFromText( $title );
@@ -111,7 +112,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::inNamespaces
+	 * @covers \MediaWiki\Title\Title::inNamespaces
 	 */
 	public function testInNamespaces() {
 		$mainpage = Title::newFromText( 'Main Page' );
@@ -136,7 +137,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideHasSubjectNamespace
-	 * @covers MediaWiki\Title\Title::hasSubjectNamespace
+	 * @covers \MediaWiki\Title\Title::hasSubjectNamespace
 	 */
 	public function testHasSubjectNamespace( $title, $ns, $expectedBool ) {
 		$title = Title::newFromText( $title );
@@ -170,7 +171,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider dataGetContentModel
-	 * @covers MediaWiki\Title\Title::getContentModel
+	 * @covers \MediaWiki\Title\Title::getContentModel
 	 */
 	public function testGetContentModel( $title, $expectedModelId ) {
 		$title = Title::newFromText( $title );
@@ -179,7 +180,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider dataGetContentModel
-	 * @covers MediaWiki\Title\Title::hasContentModel
+	 * @covers \MediaWiki\Title\Title::hasContentModel
 	 */
 	public function testHasContentModel( $title, $expectedModelId ) {
 		$title = Title::newFromText( $title );
@@ -217,10 +218,10 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsSiteConfigPage
-	 * @covers MediaWiki\Title\Title::isSiteConfigPage
-	 * @covers MediaWiki\Title\Title::isSiteJsConfigPage
-	 * @covers MediaWiki\Title\Title::isSiteJsonConfigPage
-	 * @covers MediaWiki\Title\Title::isSiteCssConfigPage
+	 * @covers \MediaWiki\Title\Title::isSiteConfigPage
+	 * @covers \MediaWiki\Title\Title::isSiteJsConfigPage
+	 * @covers \MediaWiki\Title\Title::isSiteJsonConfigPage
+	 * @covers \MediaWiki\Title\Title::isSiteCssConfigPage
 	 */
 	public function testSiteConfigPage( $title, $expected ) {
 		$title = Title::newFromText( $title );
@@ -274,10 +275,10 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsUserConfigPage
-	 * @covers MediaWiki\Title\Title::isUserConfigPage
-	 * @covers MediaWiki\Title\Title::isUserJsConfigPage
-	 * @covers MediaWiki\Title\Title::isUserJsonConfigPage
-	 * @covers MediaWiki\Title\Title::isUserCssConfigPage
+	 * @covers \MediaWiki\Title\Title::isUserConfigPage
+	 * @covers \MediaWiki\Title\Title::isUserJsConfigPage
+	 * @covers \MediaWiki\Title\Title::isUserJsonConfigPage
+	 * @covers \MediaWiki\Title\Title::isUserCssConfigPage
 	 */
 	public function testIsUserConfigPage( $title, $expected ) {
 		$title = Title::newFromText( $title );
@@ -331,7 +332,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsWikitextPage
-	 * @covers MediaWiki\Title\Title::isWikitextPage
+	 * @covers \MediaWiki\Title\Title::isWikitextPage
 	 */
 	public function testIsWikitextPage( $title, $expectedBool ) {
 		$title = Title::newFromText( $title );
@@ -351,7 +352,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetOtherpage
-	 * @covers MediaWiki\Title\Title::getOtherPage
+	 * @covers \MediaWiki\Title\Title::getOtherPage
 	 *
 	 * @param string $text
 	 * @param string|null $expected
@@ -366,7 +367,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::clearCaches
+	 * @covers \MediaWiki\Title\Title::clearCaches
 	 */
 	public function testClearCaches() {
 		$linkCache = $this->getServiceContainer()->getLinkCache();
@@ -382,7 +383,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getFieldFromPageStore
+	 * @covers \MediaWiki\Title\Title::getFieldFromPageStore
 	 */
 	public function testUseCaches() {
 		$title1 = Title::makeTitle( NS_MAIN, __METHOD__ . '998724352' );
@@ -459,10 +460,10 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideGetLinkURL
 	 *
-	 * @covers MediaWiki\Title\Title::getLinkURL
-	 * @covers MediaWiki\Title\Title::getFullURL
-	 * @covers MediaWiki\Title\Title::getLocalURL
-	 * @covers MediaWiki\Title\Title::getFragmentForURL
+	 * @covers \MediaWiki\Title\Title::getLinkURL
+	 * @covers \MediaWiki\Title\Title::getFullURL
+	 * @covers \MediaWiki\Title\Title::getLocalURL
+	 * @covers \MediaWiki\Title\Title::getFragmentForURL
 	 */
 	public function testGetLinkURL(
 		$expected,
@@ -494,7 +495,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideProperPage
-	 * @covers MediaWiki\Title\Title::toPageIdentity
+	 * @covers \MediaWiki\Title\Title::toPageIdentity
 	 */
 	public function testToPageIdentity( $ns, $text ) {
 		$title = Title::makeTitle( $ns, $text );
@@ -510,7 +511,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideProperPage
-	 * @covers MediaWiki\Title\Title::toPageRecord
+	 * @covers \MediaWiki\Title\Title::toPageRecord
 	 */
 	public function testToPageRecord( $ns, $text ) {
 		$title = Title::makeTitle( $ns, $text );
@@ -535,7 +536,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideImproperPage
-	 * @covers MediaWiki\Title\Title::toPageRecord
+	 * @covers \MediaWiki\Title\Title::toPageRecord
 	 */
 	public function testToPageRecord_fail( $ns, $text, $fragment = '', $interwiki = '' ) {
 		$title = Title::makeTitle( $ns, $text, $fragment, $interwiki );
@@ -570,7 +571,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideImproperPage
-	 * @covers MediaWiki\Title\Title::getId
+	 * @covers \MediaWiki\Title\Title::getId
 	 */
 	public function testGetId_fail( $ns, $text, $fragment = '', $interwiki = '' ) {
 		$title = Title::makeTitle( $ns, $text, $fragment, $interwiki );
@@ -581,7 +582,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideImproperPage
-	 * @covers MediaWiki\Title\Title::getId
+	 * @covers \MediaWiki\Title\Title::getId
 	 */
 	public function testGetId_fragment() {
 		$title = Title::makeTitle( NS_MAIN, 'Test', 'References' );
@@ -592,7 +593,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideImproperPage
-	 * @covers MediaWiki\Title\Title::toPageIdentity
+	 * @covers \MediaWiki\Title\Title::toPageIdentity
 	 */
 	public function testToPageIdentity_fail( $ns, $text, $fragment = '', $interwiki = '' ) {
 		$title = Title::makeTitle( $ns, $text, $fragment, $interwiki );
@@ -612,7 +613,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideMakeTitle
-	 * @covers MediaWiki\Title\Title::makeTitle
+	 * @covers \MediaWiki\Title\Title::makeTitle
 	 */
 	public function testMakeTitle( $expected, $ns, $text, $fragment = '', $interwiki = '' ) {
 		$title = Title::makeTitle( $ns, $text, $fragment, $interwiki );
@@ -631,7 +632,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideMakeTitle_invalid
-	 * @covers MediaWiki\Title\Title::makeTitle
+	 * @covers \MediaWiki\Title\Title::makeTitle
 	 */
 	public function testMakeTitle_invalid( $expected, $ns, $text, $fragment = '', $interwiki = '' ) {
 		$title = Title::makeTitle( $ns, $text, $fragment, $interwiki );
@@ -655,7 +656,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideMakeName
-	 * @covers MediaWiki\Title\Title::makeName
+	 * @covers \MediaWiki\Title\Title::makeName
 	 */
 	public function testMakeName( $expected, $ns, $text, $fragment = '', $interwiki = '' ) {
 		$titleName = Title::makeName( $ns, $text, $fragment, $interwiki );
@@ -680,7 +681,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideMakeTitleSafe
-	 * @covers MediaWiki\Title\Title::makeTitleSafe
+	 * @covers \MediaWiki\Title\Title::makeTitleSafe
 	 */
 	public function testMakeTitleSafe( $expected, $ns, $text, $fragment = '', $interwiki = '' ) {
 		$title = Title::makeTitleSafe( $ns, $text, $fragment, $interwiki );
@@ -697,7 +698,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideMakeTitleSafe_invalid
-	 * @covers MediaWiki\Title\Title::makeTitleSafe
+	 * @covers \MediaWiki\Title\Title::makeTitleSafe
 	 */
 	public function testMakeTitleSafe_invalid( $ns, $text, $fragment = '', $interwiki = '' ) {
 		$title = Title::makeTitleSafe( $ns, $text, $fragment, $interwiki );
@@ -706,9 +707,9 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getContentModel
-	 * @covers MediaWiki\Title\Title::setContentModel
-	 * @covers MediaWiki\Title\Title::uncache
+	 * @covers \MediaWiki\Title\Title::getContentModel
+	 * @covers \MediaWiki\Title\Title::setContentModel
+	 * @covers \MediaWiki\Title\Title::uncache
 	 */
 	public function testSetContentModel() {
 		// NOTE: must use newFromText to test behavior of internal instance cache (T281337)
@@ -723,8 +724,8 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::newFromID
-	 * @covers MediaWiki\Title\Title::newFromRow
+	 * @covers \MediaWiki\Title\Title::newFromID
+	 * @covers \MediaWiki\Title\Title::newFromRow
 	 */
 	public function testNewFromId() {
 		// First id
@@ -757,7 +758,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::newFromID
+	 * @covers \MediaWiki\Title\Title::newFromID
 	 */
 	public function testNewFromMissingId() {
 		// Testing return of null for an id that does not exist
@@ -860,7 +861,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * See also mediawiki.Title.test.js
-	 * @covers MediaWiki\Title\Title::secureAndSplit
+	 * @covers \MediaWiki\Title\Title::secureAndSplit
 	 * @dataProvider provideValidSecureAndSplit
 	 * @note This mainly tests MediaWikiTitleCodec::parseTitle().
 	 */
@@ -870,7 +871,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * See also mediawiki.Title.test.js
-	 * @covers MediaWiki\Title\Title::secureAndSplit
+	 * @covers \MediaWiki\Title\Title::secureAndSplit
 	 * @dataProvider provideInvalidSecureAndSplit
 	 * @note This mainly tests MediaWikiTitleCodec::parseTitle().
 	 */
@@ -893,7 +894,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideSpecialNamesWithAndWithoutParameter
-	 * @covers MediaWiki\Title\Title::fixSpecialName
+	 * @covers \MediaWiki\Title\Title::fixSpecialName
 	 */
 	public function testFixSpecialNameRetainsParameter( $text, $expectedParam ) {
 		$title = Title::newFromText( $text );
@@ -959,8 +960,10 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * Superseded by OutputPageTest::testGetJsVarsAboutPageLang
+	 *
 	 * @dataProvider provideGetPageViewLanguage
-	 * @covers MediaWiki\Title\Title::getPageViewLanguage
+	 * @covers \MediaWiki\Title\Title::getPageViewLanguage
 	 */
 	public function testGetPageViewLanguage( $expected, $titleText, $contLang,
 		$lang, $variant, $msg = ''
@@ -995,7 +998,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideSubpage
-	 * @covers MediaWiki\Title\Title::getSubpage
+	 * @covers \MediaWiki\Title\Title::getSubpage
 	 */
 	public function testSubpage( $title, $sub, LinkTarget $expected ) {
 		$title = Title::newFromText( $title );
@@ -1020,7 +1023,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isAlwaysKnown
+	 * @covers \MediaWiki\Title\Title::isAlwaysKnown
 	 * @dataProvider provideIsAlwaysKnown
 	 * @param string $page
 	 * @param bool $isKnown
@@ -1059,7 +1062,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isValid
+	 * @covers \MediaWiki\Title\Title::isValid
 	 * @dataProvider provideIsValid
 	 * @param Title $title
 	 * @param bool $isValid
@@ -1082,7 +1085,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isValidRedirectTarget
+	 * @covers \MediaWiki\Title\Title::isValidRedirectTarget
 	 * @dataProvider provideIsValidRedirectTarget
 	 * @param Title $title
 	 * @param bool $isValid
@@ -1118,7 +1121,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::canExist
+	 * @covers \MediaWiki\Title\Title::canExist
 	 * @dataProvider provideCanExist
 	 * @param Title $title
 	 * @param bool $canExist
@@ -1128,7 +1131,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isAlwaysKnown
+	 * @covers \MediaWiki\Title\Title::isAlwaysKnown
 	 */
 	public function testIsAlwaysKnownOnInterwiki() {
 		$title = Title::makeTitle( NS_MAIN, 'Interwiki link', '', 'externalwiki' );
@@ -1152,7 +1155,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetSkinFromConfigSubpage
-	 * @covers MediaWiki\Title\Title::getSkinFromConfigSubpage
+	 * @covers \MediaWiki\Title\Title::getSkinFromConfigSubpage
 	 */
 	public function testGetSkinFromConfigSubpage( $title, $expected ) {
 		$title = Title::newFromText( $title );
@@ -1160,7 +1163,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getWikiId
+	 * @covers \MediaWiki\Title\Title::getWikiId
 	 */
 	public function testGetWikiId() {
 		$title = Title::newFromText( 'Foo' );
@@ -1168,9 +1171,9 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getFragment
-	 * @covers MediaWiki\Title\Title::getFragment
-	 * @covers MediaWiki\Title\Title::uncache
+	 * @covers \MediaWiki\Title\Title::getFragment
+	 * @covers \MediaWiki\Title\Title::getFragment
+	 * @covers \MediaWiki\Title\Title::uncache
 	 */
 	public function testSetFragment() {
 		// NOTE: must use newFromText to test behavior of internal instance cache (T281337)
@@ -1185,7 +1188,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::__clone
+	 * @covers \MediaWiki\Title\Title::__clone
 	 */
 	public function testClone() {
 		// NOTE: must use newFromText to test behavior of internal instance cache (T281337)
@@ -1219,7 +1222,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideBaseTitleCases
-	 * @covers MediaWiki\Title\Title::getBaseText
+	 * @covers \MediaWiki\Title\Title::getBaseText
 	 */
 	public function testGetBaseText( $namespace, $title, $expected ) {
 		$title = Title::makeTitle( $namespace, $title );
@@ -1228,7 +1231,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideBaseTitleCases
-	 * @covers MediaWiki\Title\Title::getBaseTitle
+	 * @covers \MediaWiki\Title\Title::getBaseTitle
 	 */
 	public function testGetBaseTitle( $namespace, $title, $expected ) {
 		$title = Title::makeTitle( $namespace, $title );
@@ -1237,6 +1240,16 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue(
 			$base->equals( Title::makeTitleSafe( $title->getNamespace(), $expected ) )
 		);
+	}
+
+	/**
+	 * Don't explode on invalid titles (T290194).
+	 * @covers \MediaWiki\Title\Title::getBaseTitle
+	 */
+	public function testGetBaseTitle_invalid() {
+		$title = Title::makeTitle( -23, 'Test' );
+		$base = $title->getBaseTitle();
+		$this->assertSame( $title, $base );
 	}
 
 	public static function provideRootTitleCases() {
@@ -1261,7 +1274,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideRootTitleCases
-	 * @covers MediaWiki\Title\Title::getRootText
+	 * @covers \MediaWiki\Title\Title::getRootText
 	 */
 	public function testGetRootText( $namespace, $title, $expected ) {
 		$title = Title::makeTitle( $namespace, $title );
@@ -1270,7 +1283,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideRootTitleCases
-	 * @covers MediaWiki\Title\Title::getRootTitle
+	 * @covers \MediaWiki\Title\Title::getRootTitle
 	 */
 	public function testGetRootTitle( $namespace, $title, $expected ) {
 		$title = Title::makeTitle( $namespace, $title );
@@ -1279,6 +1292,16 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue(
 			$root->equals( Title::makeTitleSafe( $title->getNamespace(), $expected ) )
 		);
+	}
+
+	/**
+	 * Don't explode on invalid titles (T290194).
+	 * @covers \MediaWiki\Title\Title::getRootTitle
+	 */
+	public function testGetRootTitle_invalid() {
+		$title = Title::makeTitle( -23, 'Test' );
+		$base = $title->getRootTitle();
+		$this->assertSame( $title, $base );
 	}
 
 	public static function provideSubpageTitleCases() {
@@ -1302,7 +1325,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideSubpageTitleCases
-	 * @covers MediaWiki\Title\Title::getSubpageText
+	 * @covers \MediaWiki\Title\Title::getSubpageText
 	 */
 	public function testGetSubpageText( $namespace, $title, $expected ) {
 		$title = Title::makeTitle( $namespace, $title );
@@ -1318,7 +1341,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getTitleValue
+	 * @covers \MediaWiki\Title\Title::getTitleValue
 	 * @dataProvider provideGetTitleValue
 	 */
 	public function testGetTitleValue( $text ) {
@@ -1350,7 +1373,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getFragment
+	 * @covers \MediaWiki\Title\Title::getFragment
 	 * @dataProvider provideGetFragment
 	 *
 	 * @param string $full
@@ -1362,7 +1385,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::exists
+	 * @covers \MediaWiki\Title\Title::exists
 	 */
 	public function testExists() {
 		$title = Title::makeTitle( NS_PROJECT, 'New page' );
@@ -1388,14 +1411,14 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 			'exists() should rely on link cache unless READ_LATEST is used'
 		);
 		$this->assertTrue(
-			$title->exists( Title::READ_LATEST ),
+			$title->exists( IDBAccessObject::READ_LATEST ),
 			'exists() should re-query database when READ_LATEST is used'
 		);
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getArticleID
-	 * @covers MediaWiki\Title\Title::getId
+	 * @covers \MediaWiki\Title\Title::getArticleID
+	 * @covers \MediaWiki\Title\Title::getId
 	 */
 	public function testGetArticleID() {
 		$title = Title::makeTitle( NS_PROJECT, __METHOD__ );
@@ -1427,7 +1450,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideNonProperTitles
-	 * @covers MediaWiki\Title\Title::getArticleID
+	 * @covers \MediaWiki\Title\Title::getArticleID
 	 */
 	public function testGetArticleIDFromNonProperTitle( $title ) {
 		// make sure nothing explodes
@@ -1504,7 +1527,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideCanHaveTalkPage
-	 * @covers MediaWiki\Title\Title::canHaveTalkPage
+	 * @covers \MediaWiki\Title\Title::canHaveTalkPage
 	 *
 	 * @param Title $title
 	 * @param bool $expected
@@ -1516,7 +1539,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetTalkPage_good
-	 * @covers MediaWiki\Title\Title::getTalkPageIfDefined
+	 * @covers \MediaWiki\Title\Title::getTalkPageIfDefined
 	 */
 	public function testGetTalkPage_good( Title $title, Title $expected ) {
 		$actual = $title->getTalkPage();
@@ -1525,7 +1548,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetTalkPage_bad
-	 * @covers MediaWiki\Title\Title::getTalkPageIfDefined
+	 * @covers \MediaWiki\Title\Title::getTalkPageIfDefined
 	 */
 	public function testGetTalkPage_bad( Title $title ) {
 		$this->expectException( MWException::class );
@@ -1534,7 +1557,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetTalkPage_broken
-	 * @covers MediaWiki\Title\Title::getTalkPageIfDefined
+	 * @covers \MediaWiki\Title\Title::getTalkPageIfDefined
 	 */
 	public function testGetTalkPage_broken( Title $title, Title $expected, $valid ) {
 		// NOTE: Eventually we want to throw in this case. But while there is still code that
@@ -1547,7 +1570,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetTalkPage_good
-	 * @covers MediaWiki\Title\Title::getTalkPageIfDefined
+	 * @covers \MediaWiki\Title\Title::getTalkPageIfDefined
 	 */
 	public function testGetTalkPageIfDefined_good( Title $title, Title $expected ) {
 		$actual = $title->getTalkPageIfDefined();
@@ -1557,7 +1580,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetTalkPage_bad
-	 * @covers MediaWiki\Title\Title::getTalkPageIfDefined
+	 * @covers \MediaWiki\Title\Title::getTalkPageIfDefined
 	 */
 	public function testGetTalkPageIfDefined_bad( Title $title ) {
 		$talk = $title->getTalkPageIfDefined();
@@ -1569,7 +1592,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetSubjectPage_good
-	 * @covers MediaWiki\Title\Title::getSubjectPage
+	 * @covers \MediaWiki\Title\Title::getSubjectPage
 	 */
 	public function testGetSubjectPage_good( Title $title, Title $expected ) {
 		$actual = $title->getSubjectPage();
@@ -1578,7 +1601,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetOtherPage_good
-	 * @covers MediaWiki\Title\Title::getOtherPage
+	 * @covers \MediaWiki\Title\Title::getOtherPage
 	 */
 	public function testGetOtherPage_good( Title $title, Title $expected ) {
 		$actual = $title->getOtherPage();
@@ -1587,7 +1610,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGetTalkPage_bad
-	 * @covers MediaWiki\Title\Title::getOtherPage
+	 * @covers \MediaWiki\Title\Title::getOtherPage
 	 */
 	public function testGetOtherPage_bad( Title $title ) {
 		$this->expectException( MWException::class );
@@ -1612,7 +1635,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsMovable
-	 * @covers MediaWiki\Title\Title::isMovable
+	 * @covers \MediaWiki\Title\Title::isMovable
 	 *
 	 * @param string|Title $title
 	 * @param bool $expected
@@ -1665,7 +1688,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getPrefixedText
+	 * @covers \MediaWiki\Title\Title::getPrefixedText
 	 * @dataProvider provideGetPrefixedText
 	 */
 	public function testGetPrefixedText( Title $title, $expected ) {
@@ -1708,7 +1731,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getPrefixedDBKey
+	 * @covers \MediaWiki\Title\Title::getPrefixedDBKey
 	 * @dataProvider provideGetPrefixedDBKey
 	 */
 	public function testGetPrefixedDBKey( Title $title, $expected ) {
@@ -1725,7 +1748,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getFragmentForURL
+	 * @covers \MediaWiki\Title\Title::getFragmentForURL
 	 * @dataProvider provideGetFragmentForURL
 	 *
 	 * @param string $titleStr
@@ -1756,7 +1779,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isRawHtmlMessage
+	 * @covers \MediaWiki\Title\Title::isRawHtmlMessage
 	 * @dataProvider provideIsRawHtmlMessage
 	 */
 	public function testIsRawHtmlMessage( $textForm, $expected ) {
@@ -1774,7 +1797,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::newMainPage
+	 * @covers \MediaWiki\Title\Title::newMainPage
 	 */
 	public function testNewMainPage() {
 		$mock = $this->createMock( MessageCache::class );
@@ -1792,7 +1815,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Regression test for T297571
 	 *
-	 * @covers MediaWiki\Title\Title::newMainPage
+	 * @covers \MediaWiki\Title\Title::newMainPage
 	 */
 	public function testNewMainPageNoRecursion() {
 		$mock = $this->createMock( MessageCache::class );
@@ -1807,7 +1830,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::newMainPage
+	 * @covers \MediaWiki\Title\Title::newMainPage
 	 */
 	public function testNewMainPageWithLocal() {
 		$local = $this->createMock( MessageLocalizer::class );
@@ -1820,7 +1843,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getTitleProtection
+	 * @covers \MediaWiki\Title\Title::getTitleProtection
 	 */
 	public function testGetTitleProtection() {
 		$title = $this->getNonexistingTestPage( 'UTest1' )->getTitle();
@@ -1828,7 +1851,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::deleteTitleProtection
+	 * @covers \MediaWiki\Title\Title::deleteTitleProtection
 	 */
 	public function testDeleteTitleProtection() {
 		$title = $this->getExistingTestPage( 'UTest1' )->getTitle();
@@ -1836,9 +1859,10 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getCdnUrls
+	 * @covers \MediaWiki\Title\Title::getCdnUrls
 	 */
 	public function testGetCdnUrls() {
+		$this->hideDeprecated( Title::class . '::getCdnUrls' );
 		$this->assertEquals(
 			[
 				'https://example.org/wiki/Example',
@@ -1902,7 +1926,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getNsText
+	 * @covers \MediaWiki\Title\Title::getNsText
 	 * @dataProvider provideNamespaces
 	 */
 	public function testGetNsText( $namespace, $expected ) {
@@ -1924,7 +1948,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getSubjectNsText
+	 * @covers \MediaWiki\Title\Title::getSubjectNsText
 	 * @dataProvider providePagesWithSubjects
 	 */
 	public function testGetSubjectNsText( Title $title, $expected ) {
@@ -1941,7 +1965,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getTalkNsText
+	 * @covers \MediaWiki\Title\Title::getTalkNsText
 	 * @dataProvider provideTitlesWithTalkPages
 	 */
 	public function testGetTalkNsText( Title $title, $expected ) {
@@ -1950,7 +1974,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isSpecial
+	 * @covers \MediaWiki\Title\Title::isSpecial
 	 */
 	public function testIsSpecial() {
 		$title = Title::makeTitle( NS_SPECIAL, 'Recentchanges/Subpage' );
@@ -1958,7 +1982,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isSpecial
+	 * @covers \MediaWiki\Title\Title::isSpecial
 	 */
 	public function testIsNotSpecial() {
 		$title = Title::newFromText( 'NotSpecialPage/Subpage', NS_SPECIAL );
@@ -1966,7 +1990,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isTalkPage
+	 * @covers \MediaWiki\Title\Title::isTalkPage
 	 */
 	public function testIsTalkPage() {
 		$title = Title::newFromText( 'Talk page', NS_TALK );
@@ -1995,8 +2019,8 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isSubpage
-	 * @covers MediaWiki\Title\Title::isSubpageOf
+	 * @covers \MediaWiki\Title\Title::isSubpage
+	 * @covers \MediaWiki\Title\Title::isSubpageOf
 	 * @dataProvider provideNsWithSubpagesSupport
 	 */
 	public function testIsSubpageOfWithNamespacesSubpages( $namespace, $pageName, $subpageName ) {
@@ -2015,8 +2039,8 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isSubpage
-	 * @covers MediaWiki\Title\Title::isSubpageOf
+	 * @covers \MediaWiki\Title\Title::isSubpage
+	 * @covers \MediaWiki\Title\Title::isSubpageOf
 	 * @dataProvider provideNsWithNoSubpages
 	 */
 	public function testIsSubpageOfWithoutNamespacesSubpages( $namespace, $pageName, $subpageName ) {
@@ -2036,7 +2060,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getEditURL
+	 * @covers \MediaWiki\Title\Title::getEditURL
 	 * @dataProvider provideTitleEditURLs
 	 */
 	public function testGetEditURL( Title $title, $expected ) {
@@ -2053,7 +2077,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getEditURL
+	 * @covers \MediaWiki\Title\Title::getEditURL
 	 * @dataProvider provideTitleEditURLsWithActionPaths
 	 */
 	public function testGetEditUrlWithActionPaths( Title $title, $expected ) {
@@ -2063,16 +2087,16 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isMainPage
-	 * @covers MediaWiki\Title\Title::equals
+	 * @covers \MediaWiki\Title\Title::isMainPage
+	 * @covers \MediaWiki\Title\Title::equals
 	 */
 	public function testIsMainPage() {
 		$this->assertTrue( Title::newMainPage()->isMainPage() );
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isMainPage
-	 * @covers MediaWiki\Title\Title::equals
+	 * @covers \MediaWiki\Title\Title::isMainPage
+	 * @covers \MediaWiki\Title\Title::equals
 	 * @dataProvider provideMainPageTitles
 	 */
 	public function testIsNotMainPage( Title $title, $expected ) {
@@ -2087,8 +2111,8 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getPrefixedURL
-	 * @covers MediaWiki\Title\Title::prefix
+	 * @covers \MediaWiki\Title\Title::getPrefixedURL
+	 * @covers \MediaWiki\Title\Title::prefix
 	 * @dataProvider provideDataForTestGetPrefixedURL
 	 */
 	public function testGetPrefixedURL( Title $title, $expected ) {
@@ -2111,7 +2135,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::__toString
+	 * @covers \MediaWiki\Title\Title::__toString
 	 */
 	public function testToString() {
 		$title = Title::makeTitle( NS_USER, 'User test' );
@@ -2120,7 +2144,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getFullText
+	 * @covers \MediaWiki\Title\Title::getFullText
 	 * @dataProvider provideDataForTestGetFullText
 	 */
 	public function testGetFullText( Title $title, $expected ) {
@@ -2188,7 +2212,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::isSamePageAs
+	 * @covers \MediaWiki\Title\Title::isSamePageAs
 	 * @dataProvider provideIsSamePageAs
 	 */
 	public function testIsSamePageAs( Title $firstValue, $secondValue, $expectedSame ) {
@@ -2199,16 +2223,16 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getArticleID
-	 * @covers MediaWiki\Title\Title::getId
-	 * @covers MediaWiki\Title\Title::getLength
-	 * @covers MediaWiki\Title\Title::getLatestRevID
-	 * @covers MediaWiki\Title\Title::exists
-	 * @covers MediaWiki\Title\Title::isNewPage
-	 * @covers MediaWiki\Title\Title::isRedirect
-	 * @covers MediaWiki\Title\Title::getTouched
-	 * @covers MediaWiki\Title\Title::getContentModel
-	 * @covers MediaWiki\Title\Title::getFieldFromPageStore
+	 * @covers \MediaWiki\Title\Title::getArticleID
+	 * @covers \MediaWiki\Title\Title::getId
+	 * @covers \MediaWiki\Title\Title::getLength
+	 * @covers \MediaWiki\Title\Title::getLatestRevID
+	 * @covers \MediaWiki\Title\Title::exists
+	 * @covers \MediaWiki\Title\Title::isNewPage
+	 * @covers \MediaWiki\Title\Title::isRedirect
+	 * @covers \MediaWiki\Title\Title::getTouched
+	 * @covers \MediaWiki\Title\Title::getContentModel
+	 * @covers \MediaWiki\Title\Title::getFieldFromPageStore
 	 */
 	public function testGetFieldsOfNonExistingPage() {
 		$title = Title::makeTitle( NS_MAIN, 'ThisDoesNotExist-92347852349' );
@@ -2225,7 +2249,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getDefaultSystemMessage
+	 * @covers \MediaWiki\Title\Title::getDefaultSystemMessage
 	 */
 	public function testGetDefaultSystemMessage() {
 		$title = Title::makeTitle( NS_MEDIAWIKI, 'Logouttext' );
@@ -2235,7 +2259,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getDefaultSystemMessage
+	 * @covers \MediaWiki\Title\Title::getDefaultSystemMessage
 	 */
 	public function testGetDefaultSystemMessageReturnsNull() {
 		$title = Title::makeTitle( NS_MAIN, 'Some title' );

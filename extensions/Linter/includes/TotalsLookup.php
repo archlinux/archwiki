@@ -20,6 +20,8 @@
 
 namespace MediaWiki\Linter;
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\WikiMap\WikiMap;
 use WANObjectCache;
 use Wikimedia\Rdbms\Database as MWDatabase;
 
@@ -40,12 +42,21 @@ class TotalsLookup {
 	private $catManager;
 
 	/**
+	 * @var Database
+	 */
+	private $db;
+
+	/**
 	 * @param CategoryManager $catManager
 	 * @param WANObjectCache $cache
+	 * @param Database $db
 	 */
-	public function __construct( CategoryManager $catManager, WANObjectCache $cache ) {
+	public function __construct(
+		CategoryManager $catManager, WANObjectCache $cache, Database $db
+	) {
 		$this->cache = $cache;
 		$this->catManager = $catManager;
+		$this->db = $db;
 	}
 
 	/**
@@ -63,20 +74,20 @@ class TotalsLookup {
 	 */
 	public function getTotals() {
 		$cats = $this->catManager->getVisibleCategories();
+		$db = $this->db;
 		$fetchedTotals = false;
 		$totals = [];
 		foreach ( $cats as $cat ) {
 			$totals[$cat] = $this->cache->getWithSetCallback(
 				$this->makeKey( $cat ),
 				WANObjectCache::TTL_INDEFINITE,
-				static function ( $oldValue, &$ttl, &$setOpts, $oldAsOf ) use ( $cat, &$fetchedTotals ) {
+				static function ( $oldValue, &$ttl, &$setOpts, $oldAsOf ) use ( $cat, $db, &$fetchedTotals ) {
 					$setOpts += MWDatabase::getCacheSetOptions(
 						Database::getDBConnectionRef( DB_REPLICA )
 					);
 					if ( $fetchedTotals === false ) {
-						$fetchedTotals = ( new Database( 0 ) )->getTotals();
+						$fetchedTotals = $db->getTotals();
 					}
-
 					return $fetchedTotals[$cat];
 				},
 				[
@@ -90,6 +101,49 @@ class TotalsLookup {
 		}
 
 		return $totals;
+	}
+
+	/**
+	 * Send stats to statsd and update totals cache
+	 *
+	 * @param array $changes
+	 */
+	public function updateStats( array $changes ) {
+		$mwServices = MediaWikiServices::getInstance();
+		$linterStatsdSampleFactor = $mwServices->getMainConfig()->get( 'LinterStatsdSampleFactor' );
+
+		if ( $linterStatsdSampleFactor === false ) {
+			// Don't send to statsd, but update cache with $changes
+			$raw = $changes['added'];
+			foreach ( $changes['deleted'] as $cat => $count ) {
+				if ( isset( $raw[$cat] ) ) {
+					$raw[$cat] -= $count;
+				} else {
+					// Negative value
+					$raw[$cat] = 0 - $count;
+				}
+			}
+
+			foreach ( $raw as $cat => $count ) {
+				if ( $count != 0 ) {
+					// There was a change in counts, invalidate the cache
+					$this->touchCategoryCache( $cat );
+				}
+			}
+			return;
+		} elseif ( mt_rand( 1, $linterStatsdSampleFactor ) != 1 ) {
+			return;
+		}
+
+		$totals = $this->db->getTotals();
+		$wiki = WikiMap::getCurrentWikiId();
+		$stats = $mwServices->getStatsdDataFactory();
+		foreach ( $totals as $name => $count ) {
+			$stats->gauge( "linter.category.$name.$wiki", $count );
+		}
+		$stats->gauge( "linter.totals.$wiki", array_sum( $totals ) );
+
+		$this->touchAllCategoriesCache();
 	}
 
 	/**

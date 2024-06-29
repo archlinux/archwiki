@@ -1,9 +1,10 @@
 <?php
 
-namespace MediaWiki\ParamValidator\TypeDef;
+namespace MediaWiki\Tests\ParamValidator\TypeDef;
 
 use ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
+use MediaWiki\ParamValidator\TypeDef\TagsDef;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -12,7 +13,7 @@ use Wikimedia\ParamValidator\ValidationException;
 
 /**
  * @group Database
- * @covers MediaWiki\ParamValidator\TypeDef\TagsDef
+ * @covers \MediaWiki\ParamValidator\TypeDef\TagsDef
  */
 class TagsDefTest extends MediaWikiIntegrationTestCase {
 
@@ -23,8 +24,6 @@ class TagsDefTest extends MediaWikiIntegrationTestCase {
 
 		ChangeTags::defineTag( 'tag1' );
 		ChangeTags::defineTag( 'tag2' );
-
-		$this->tablesUsed[] = 'change_tag_def';
 
 		// Since the type def shouldn't care about the specific user,
 		// remove the right from relevant groups to ensure that it's not

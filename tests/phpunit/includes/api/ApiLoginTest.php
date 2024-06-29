@@ -1,10 +1,18 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiErrorFormatter;
+use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
+use MediaWiki\Auth\AuthenticationResponse;
+use MediaWiki\Auth\UsernameAuthenticationRequest;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Session\BotPasswordSessionProvider;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Session\Token;
 use MediaWiki\User\BotPassword;
 use MediaWiki\User\User;
+use MWRestrictions;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -12,14 +20,9 @@ use Wikimedia\TestingAccessWrapper;
  * @group Database
  * @group medium
  *
- * @covers ApiLogin
+ * @covers \ApiLogin
  */
 class ApiLoginTest extends ApiTestCase {
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->tablesUsed[] = 'bot_passwords';
-	}
 
 	public static function provideEnableBotPasswords() {
 		return [
@@ -58,7 +61,7 @@ class ApiLoginTest extends ApiTestCase {
 			'action' => 'login',
 			'lgname' => '',
 			'lgpassword' => $this->getTestSysop()->getPassword(),
-			'lgtoken' => (string)( new MediaWiki\Session\Token( 'foobar', '' ) ),
+			'lgtoken' => (string)( new Token( 'foobar', '' ) ),
 		], $session );
 		$this->assertSame( 'Failed', $ret[0]['login']['result'] );
 	}
@@ -163,7 +166,7 @@ class ApiLoginTest extends ApiTestCase {
 		$this->assertArrayNotHasKey( 'warnings', $ret );
 
 		// Lose the session
-		MediaWiki\Session\SessionManager::getGlobalSession()->clear();
+		SessionManager::getGlobalSession()->clear();
 		$ret[2] = [];
 
 		$ret = $this->doApiRequest( [
@@ -236,10 +239,10 @@ class ApiLoginTest extends ApiTestCase {
 		);
 
 		$mockProvider = $this->createMock(
-			MediaWiki\Auth\AbstractSecondaryAuthenticationProvider::class );
+			AbstractSecondaryAuthenticationProvider::class );
 		$mockProvider->method( 'beginSecondaryAuthentication' )->willReturn(
-			MediaWiki\Auth\AuthenticationResponse::newUI(
-				[ new MediaWiki\Auth\UsernameAuthenticationRequest ],
+			AuthenticationResponse::newUI(
+				[ new UsernameAuthenticationRequest ],
 				// Slightly silly message here
 				wfMessage( 'mainpage' )
 			)
@@ -286,7 +289,6 @@ class ApiLoginTest extends ApiTestCase {
 				],
 			] ),
 			MainConfigNames::EnableBotPasswords => true,
-			MainConfigNames::BotPasswordsDatabase => false,
 			MainConfigNames::CentralIdLookupProvider => 'local',
 			MainConfigNames::GrantPermissions => [
 				'test' => [ 'read' => true ],

@@ -2,9 +2,8 @@
 
 namespace MediaWiki\Extension\TemplateData;
 
-use CommentStoreComment;
 use ExtensionRegistry;
-use Html;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\Config;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\EventLogging\EventLogging;
@@ -13,20 +12,21 @@ use MediaWiki\Hook\EditPage__showEditForm_initialHook;
 use MediaWiki\Hook\OutputPageBeforeHTMLHook;
 use MediaWiki\Hook\ParserFetchTemplateDataHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
+use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\RenderedRevision;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Storage\Hook\MultiContentSaveHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use OutputPage;
 use Parser;
 use PPFrame;
 use RequestContext;
-use ResourceLoader;
-use Status;
 
 /**
  * @license GPL-2.0-or-later
@@ -42,8 +42,7 @@ class Hooks implements
 	OutputPageBeforeHTMLHook
 {
 
-	/** @var Config */
-	private $config;
+	private Config $config;
 
 	public function __construct( Config $mainConfig ) {
 		$this->config = $mainConfig;
@@ -80,14 +79,13 @@ class Hooks implements
 		$name = 'jquery.uls.data';
 		if ( !isset( $resourceModules[$name] ) && !$resourceLoader->isModuleRegistered( $name ) ) {
 			$resourceLoader->register( [
-				'jquery.uls.data' => [
+				$name => [
 					'localBasePath' => dirname( __DIR__ ),
 					'remoteExtPath' => 'TemplateData',
 					'scripts' => [
 						'lib/jquery.uls/src/jquery.uls.data.js',
 						'lib/jquery.uls/src/jquery.uls.data.utils.js',
 					],
-					'targets' => [ 'desktop', 'mobile' ],
 				]
 			] );
 		}
@@ -212,7 +210,8 @@ class Hooks implements
 	 */
 	public static function render( ?string $input, array $args, Parser $parser, PPFrame $frame ): string {
 		$parserOutput = $parser->getOutput();
-		$ti = TemplateDataBlob::newFromJSON( wfGetDB( DB_REPLICA ), $input ?? '' );
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
+		$ti = TemplateDataBlob::newFromJSON( $dbr, $input ?? '' );
 
 		$status = $ti->getStatus();
 		if ( !$status->isOK() ) {
@@ -260,7 +259,7 @@ class Hooks implements
 	public function onOutputPageBeforeHTML( $output, &$text ) {
 		$services = MediaWikiServices::getInstance();
 		$props = $services->getPageProps()->getProperties( $output->getTitle(), 'templatedata' );
-		if ( !empty( $props ) ) {
+		if ( $props ) {
 			$lang = $output->getLanguage();
 			$localizer = new TemplateDataMessageLocalizer( $lang );
 			$formatter = new TemplateDataHtmlFormatter( $localizer, $lang->getCode() );
@@ -287,8 +286,10 @@ class Hooks implements
 	public function onParserFetchTemplateData( array $tplTitles, array &$tplData ): bool {
 		$tplData = [];
 
-		$pageProps = MediaWikiServices::getInstance()->getPageProps();
-		$wikiPageFactory = MediaWikiServices::getInstance()->getWikiPageFactory();
+		$services = MediaWikiServices::getInstance();
+		$pageProps = $services->getPageProps();
+		$wikiPageFactory = $services->getWikiPageFactory();
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
 
 		// This inefficient implementation is currently tuned for
 		// Parsoid's use case where it requests info for exactly one title.
@@ -331,7 +332,7 @@ class Hooks implements
 				continue;
 			}
 
-			$tdb = TemplateDataBlob::newFromDatabase( wfGetDB( DB_REPLICA ), $props[$pageId] );
+			$tdb = TemplateDataBlob::newFromDatabase( $dbr, $props[$pageId] );
 			$status = $tdb->getStatus();
 			if ( !$status->isOK() ) {
 				// Invalid data. Parsoid has no use for the error.

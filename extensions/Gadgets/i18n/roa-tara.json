@@ -8,7 +8,7 @@
 	"prefs-gadgets": "Gadget",
 	"prefs-description-gadgets": "Abbilite dettaglie aggiundive pu cunde tune.",
 	"gadgets-prefstext": "Sotte stè 'n'elenghe de gadget speciale ca tu abbilità sus a 'u cunde tune.\nSte riale sò assaije basate sus a JavaScript, accussì Javascript addà essere abbilitate jndr'à 'u browser tune pe le fà fatià.\nVide ca ste riale non ge tènene effette sus a sta pàgene de preferenze.\n\nPò vide pure ca ste gadget non ge sonde parte d'u softuee de MediaUicchi e sonde normalmende sviluppate e mandenute da l'utinde d'a Uicchipèdie locale tune.\nLe amministrature locale de inderfacce ponne cangià l'elenghede le gadget disponibbele ausanne le [[MediaWiki:Gadgets-definition|definiziune]], ele amministrature locale ponne cangià le lore [[Special:Gadgets|descriziune]], quanne puè 'ndrucà 'u codece sorgende de ogne gadget. Le numere de le utinde pe ogne gadget sus a sta uicchi ste elengate sus a [[Special:GadgetUsage|Statisteche d'ause de le gadget]].",
-	"gadgets": "Gadget",
+	"special-gadgets": "Gadget",
 	"gadgetusage": "Statisteche sus a l'ause d'u gadget",
 	"gadgetusage-gadget": "Gadget",
 	"gadgetusage-usercount": "Numere de utinde",
@@ -33,9 +33,5 @@
 	"gadgets-export-text": "Pe esportà 'u $1 gadget, cazze sus a 'u buttone \"{{int:gadgets-export-download}}\", reggistre 'u file scarecate, veje'a pàgene Special:Import sus 'a Uicchi de destinazione e carechele. Pò aggiunge 'a seguende pàgene MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nTu a ave le permesse appropriate sus 'a Uicchi de destinazione (ingludenne le deritte a cangià le messagge d'u sisteme) e 'a 'mbortazione da file carecate adda essere abbilitate.",
 	"gadgets-export-download": "Scareche",
 	"gadgets-validate-notset": "'A probbietà <code>$1</code> non g'ha state 'mbostate.",
-	"gadgets-validate-wrongtype": "'A probbietà <code>$1</code> adda essere de tipe <code>$2</code> invece ca de tipe <code>$3</code>.",
-	"right-gadgets-edit": "Cange le accessorie JavaScript e le pàggene CSS",
-	"action-gadgets-edit": "cange stu accessorie JavaScript o pàgene CSS",
-	"right-gadgets-definition-edit": "Cange le definiziune de le gadget",
-	"action-gadgets-definition-edit": "cange 'a definizione de l'accessore"
+	"gadgets-validate-wrongtype": "'A probbietà <code>$1</code> adda essere <code>$2</code> invece de <code>$3</code>."
 }

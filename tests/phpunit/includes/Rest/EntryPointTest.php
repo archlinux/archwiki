@@ -4,20 +4,26 @@ namespace MediaWiki\Tests\Rest;
 
 use GuzzleHttp\Psr7\Stream;
 use GuzzleHttp\Psr7\Uri;
-use MediaWiki\Request\WebResponse;
-use MediaWiki\Rest\CorsUtils;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Rest\EntryPoint;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\RequestInterface;
-use RequestContext;
+use MediaWiki\Tests\MockEnvironment;
+use MediaWikiIntegrationTestCase;
 
 /**
  * @covers \MediaWiki\Rest\EntryPoint
  * @covers \MediaWiki\Rest\Router
  */
-class EntryPointTest extends \MediaWikiIntegrationTestCase {
+class EntryPointTest extends MediaWikiIntegrationTestCase {
 	use RestTestTrait;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->overrideConfigValue( MainConfigNames::RestPath, '/rest' );
+	}
 
 	private function createRouter( RequestInterface $request ) {
 		return $this->newRouter( [
@@ -25,18 +31,22 @@ class EntryPointTest extends \MediaWikiIntegrationTestCase {
 		] );
 	}
 
-	private function createWebResponse() {
-		return $this->getMockBuilder( WebResponse::class )
-			->onlyMethods( [ 'header' ] )
-			->getMock();
-	}
+	/**
+	 * @param RequestData $request
+	 * @param MockEnvironment $env
+	 *
+	 * @return EntryPoint
+	 */
+	private function getEntryPoint( RequestData $request, MockEnvironment $env ): EntryPoint {
+		$entryPoint = new EntryPoint(
+			$request,
+			$env->makeFauxContext(),
+			$env,
+			$this->getServiceContainer()
+		);
 
-	private function createCorsUtils() {
-		$cors = $this->createMock( CorsUtils::class );
-		$cors->method( 'modifyResponse' )
-			->willReturnArgument( 1 );
-
-		return $cors;
+		$entryPoint->setRouter( $this->createRouter( $request ) );
+		return $entryPoint;
 	}
 
 	public static function mockHandlerHeader() {
@@ -50,24 +60,21 @@ class EntryPointTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	public function testHeader() {
-		$webResponse = $this->createWebResponse();
-		$webResponse->method( 'header' )
-			->withConsecutive(
-				[ 'HTTP/1.1 200 OK', true, null ],
-				[ 'Foo: Bar', true, null ]
-			);
+		$uri = '/rest/mock/EntryPoint/header';
+		$request = new RequestData( [ 'uri' => new Uri( $uri ) ] );
 
-		$request = new RequestData( [ 'uri' => new Uri( '/rest/mock/EntryPoint/header' ) ] );
+		$env = new MockEnvironment();
+		$env->setRequestInfo( $uri );
 
-		$entryPoint = new EntryPoint(
-			RequestContext::getMain(),
+		$entryPoint = $this->getEntryPoint(
 			$request,
-			$webResponse,
-			$this->createRouter( $request ),
-			$this->createCorsUtils()
+			$env
 		);
-		$entryPoint->execute();
-		$this->assertTrue( true );
+
+		$entryPoint->enableOutputCapture();
+		$entryPoint->run();
+		$env->assertHeaderValue( 'Bar', 'Foo' );
+		$env->assertStatusCode( 200 );
 	}
 
 	public static function mockHandlerBodyRewind() {
@@ -86,17 +93,22 @@ class EntryPointTest extends \MediaWikiIntegrationTestCase {
 	 * Make sure EntryPoint rewinds a seekable body stream before reading.
 	 */
 	public function testBodyRewind() {
-		$request = new RequestData( [ 'uri' => new Uri( '/rest/mock/EntryPoint/bodyRewind' ) ] );
-		$entryPoint = new EntryPoint(
-			RequestContext::getMain(),
+		$uri = '/rest/mock/EntryPoint/bodyRewind';
+		$request = new RequestData( [ 'uri' => new Uri( $uri ) ] );
+
+		$env = new MockEnvironment();
+		$env->setRequestInfo( $uri );
+
+		$entryPoint = $this->getEntryPoint(
 			$request,
-			$this->createWebResponse(),
-			$this->createRouter( $request ),
-			$this->createCorsUtils()
+			$env
 		);
-		ob_start();
-		$entryPoint->execute();
-		$this->assertSame( 'hello', ob_get_clean() );
+
+		$entryPoint->enableOutputCapture();
+		$entryPoint->run();
+
+		// NOTE: MediaWikiEntryPoint::doPostOutputShutdown flushes all output buffers
+		$this->assertStringContainsString( 'hello', $entryPoint->getCapturedOutput() );
 	}
 
 }

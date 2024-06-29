@@ -1,4 +1,4 @@
-var BODY_NOTIFICATIONS_REVEAL_CLASS = 'navigation-enabled secondary-navigation-enabled';
+const BODY_NOTIFICATIONS_REVEAL_CLASS = 'navigation-enabled secondary-navigation-enabled';
 
 /**
  * Wire up the main menu

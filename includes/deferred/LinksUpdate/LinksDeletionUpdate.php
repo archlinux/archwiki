@@ -22,15 +22,14 @@
 
 namespace MediaWiki\Deferred\LinksUpdate;
 
-use DeferredUpdates;
-use EnqueueableDataUpdate;
 use InvalidArgumentException;
 use JobSpecification;
 use MediaWiki\Category\Category;
+use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\EnqueueableDataUpdate;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MWException;
-use ParserOutput;
+use MediaWiki\Parser\ParserOutput;
 use WikiPage;
 
 /**
@@ -46,7 +45,6 @@ class LinksDeletionUpdate extends LinksUpdate implements EnqueueableDataUpdate {
 	 * @param WikiPage $page Page we are updating
 	 * @param int|null $pageId ID of the page we are updating [optional]
 	 * @param string|null $timestamp TS_MW timestamp of deletion
-	 * @throws MWException
 	 */
 	public function __construct( WikiPage $page, $pageId = null, $timestamp = null ) {
 		$this->page = $page;
@@ -70,7 +68,7 @@ class LinksDeletionUpdate extends LinksUpdate implements EnqueueableDataUpdate {
 	protected function doIncrementalUpdate() {
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getMainConfig();
-		$lbFactory = $services->getDBLoadBalancerFactory();
+		$dbProvider = $services->getConnectionProvider();
 		$batchSize = $config->get( MainConfigNames::UpdateRowsPerQuery );
 
 		$id = $this->mId;
@@ -118,7 +116,7 @@ class LinksDeletionUpdate extends LinksUpdate implements EnqueueableDataUpdate {
 				->where( [ 'rc_id' => $rcIdBatch ] )
 				->caller( __METHOD__ )->execute();
 			if ( count( $rcIdBatches ) > 1 ) {
-				$lbFactory->commitAndWaitForReplication(
+				$dbProvider->commitAndWaitForReplication(
 					__METHOD__, $this->ticket, [ 'domain' => $dbw->getDomainID() ]
 				);
 			}
@@ -137,6 +135,3 @@ class LinksDeletionUpdate extends LinksUpdate implements EnqueueableDataUpdate {
 		];
 	}
 }
-
-/** @deprecated since 1.38 */
-class_alias( LinksDeletionUpdate::class, 'LinksDeletionUpdate' );

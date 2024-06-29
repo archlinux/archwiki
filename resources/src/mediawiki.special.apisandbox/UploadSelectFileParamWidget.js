@@ -1,15 +1,15 @@
 /**
- * A wrapper for OO.ui.SelectFileWidget
+ * A wrapper for OO.ui.SelectFileInputWidget
  *
  * @class
  * @private
  * @constructor
  */
 function UploadSelectFileParamWidget() {
-	UploadSelectFileParamWidget.parent.call( this );
+	UploadSelectFileParamWidget.super.call( this );
 }
 
-OO.inheritClass( UploadSelectFileParamWidget, OO.ui.SelectFileWidget );
+OO.inheritClass( UploadSelectFileParamWidget, OO.ui.SelectFileInputWidget );
 
 /**
  * @return {string}
@@ -19,14 +19,21 @@ UploadSelectFileParamWidget.prototype.getApiValueForDisplay = function () {
 };
 
 /**
- * @return {Mixed}
+ * @return {boolean}
+ */
+UploadSelectFileParamWidget.prototype.requiresFormData = function () {
+	return true;
+};
+
+/**
+ * @return {any}
  */
 UploadSelectFileParamWidget.prototype.getApiValue = function () {
 	return this.getValue();
 };
 
 /**
- * There should be `@param {Mixed} newValue` but that results in
+ * There should be `@param {any} newValue` but that results in
  * `no-unused-vars` eslint rule failing
  */
 UploadSelectFileParamWidget.prototype.setApiValue = function () {

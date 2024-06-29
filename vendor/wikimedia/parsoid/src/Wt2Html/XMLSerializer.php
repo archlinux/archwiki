@@ -40,32 +40,28 @@ class XMLSerializer {
 	/**
 	 * Elements that strip leading newlines
 	 * http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#html-fragment-serialization-algorithm
-	 * @namespace
-	 * @private
 	 */
-	private static $newlineStrippingElements = [
+	private const NEWLINE_STRIPPING_ELEMENTS = [
 		'pre' => true,
 		'textarea' => true,
 		'listing' => true
 	];
 
-	private static $entityEncodings = [
-		'<' => '&lt;',
-		'&' => '&amp;',
-		'"' => '&quot;',
-		"'" => '&apos;',
+	private const ENTITY_ENCODINGS = [
+		'single' => [ '<' => '&lt;', '&' => '&amp;', "'" => '&apos;' ],
+		'double' => [ '<' => '&lt;', '&' => '&amp;', '"' => '&quot;' ],
+		'xml' => [ '<' => '&lt;', '&' => '&amp;' ],
 	];
 
 	/**
 	 * HTML entity encoder helper.
 	 * Only supports the few entities we'll actually need: <&'"
 	 * @param string $raw Input string
-	 * @param string $encodeChars String with the characters that should be encoded
+	 * @param string $encodeChars Set of characters to encode, "single", "double", or "xml"
 	 * @return string
 	 */
 	private static function encodeHtmlEntities( string $raw, string $encodeChars ): string {
-		$encodings = array_intersect_key( self::$entityEncodings, array_flip( str_split( $encodeChars ) ) );
-		return strtr( $raw, $encodings );
+		return strtr( $raw, self::ENTITY_ENCODINGS[$encodeChars] );
 	}
 
 	/**
@@ -114,7 +110,6 @@ class XMLSerializer {
 	 *   - $bit: (string) piece of HTML code
 	 *   - $node: (Node) ??
 	 *   - $flag: (string|null) 'start' or 'end' (??)
-	 * @return void
 	 */
 	private static function serializeToString( Node $node, array $options, callable $accum ): void {
 		$smartQuote = $options['smartQuote'];
@@ -137,12 +132,12 @@ class XMLSerializer {
 					) {
 						// use single quotes
 						$accum( ' ' . $an . "='"
-							. self::encodeHtmlEntities( $av, "<&'" ) . "'",
+							. self::encodeHtmlEntities( $av, 'single' ) . "'",
 							$node );
 					} else {
 						// use double quotes
 						$accum( ' ' . $an . '="'
-							. self::encodeHtmlEntities( $av, '<&"' ) . '"',
+							. self::encodeHtmlEntities( $av, 'double' ) . '"',
 							$node );
 					}
 				}
@@ -164,7 +159,7 @@ class XMLSerializer {
 							$accum( $child->nodeValue, $node );
 						}
 					} else {
-						if ( $child && isset( self::$newlineStrippingElements[$localName] )
+						if ( $child && isset( self::NEWLINE_STRIPPING_ELEMENTS[$localName] )
 							&& $child->nodeType === XML_TEXT_NODE && str_starts_with( $child->nodeValue, "\n" )
 						) {
 							/* If current node is a pre, textarea, or listing element,
@@ -198,7 +193,7 @@ class XMLSerializer {
 
 			case XML_TEXT_NODE:
 				'@phan-var Text $node'; // @var Text $node
-				$accum( self::encodeHtmlEntities( $node->nodeValue, '<&' ), $node );
+				$accum( self::encodeHtmlEntities( $node->nodeValue, 'xml' ), $node );
 				return;
 
 			case XML_COMMENT_NODE:
@@ -256,14 +251,14 @@ class XMLSerializer {
 				$out['offsets'][$out['uid']]['html'][1] += strlen( $bit );
 			}
 		} else {
-			$newUid = $node->hasAttribute( 'id' ) ? $node->getAttribute( 'id' ) : null;
+			$newUid = DOMCompat::getAttribute( $node, 'id' );
 			// Encapsulated siblings don't have generated ids (but may have an id),
 			// so associate them with preceding content.
 			if ( $newUid && $newUid !== $out['uid'] && !$out['last'] ) {
 				if ( !WTUtils::isEncapsulationWrapper( $node ) ) {
 					$out['uid'] = $newUid;
 				} elseif ( WTUtils::isFirstEncapsulationWrapperNode( $node ) ) {
-					$about = $node->getAttribute( 'about' ) ?? '';
+					$about = DOMCompat::getAttribute( $node, 'about' );
 					$aboutSiblings = WTUtils::getAboutSiblings( $node, $about );
 					$out['last'] = end( $aboutSiblings );
 					$out['uid'] = $newUid;

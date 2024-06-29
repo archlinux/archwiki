@@ -3,7 +3,7 @@
 namespace MediaWiki\Tests\Storage;
 
 use ChangeTags;
-use CommentStoreComment;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -91,14 +91,6 @@ class EditResultBuilderDbTest extends MediaWikiIntegrationTestCase {
 			self::CONTENT_B,
 			'20050101210041'
 		);
-
-		$this->tablesUsed = [
-			'page',
-			'revision',
-			'comment',
-			'text',
-			'content'
-		];
 	}
 
 	private function getLatestTestRevision(): RevisionRecord {

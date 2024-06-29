@@ -21,7 +21,7 @@
  */
 
 use MediaWiki\Auth\AuthManager;
-use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Cache\GenderCache;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
@@ -142,7 +142,7 @@ class ApiQueryUsers extends ApiQueryBase {
 				$this->addWhereFld( 'user_id', $userids );
 			}
 
-			$this->addBlockInfoToQuery( isset( $this->prop['blockinfo'] ) );
+			$this->addDeletedUserFilter();
 
 			$data = [];
 			$res = $this->select( __METHOD__ );
@@ -163,8 +163,9 @@ class ApiQueryUsers extends ApiQueryBase {
 				$this->addJoinConds( [ 'user_groups' => [ 'JOIN', 'ug_user=user_id' ] ] );
 				$this->addFields( [ 'user_name' ] );
 				$this->addFields( [ 'ug_user', 'ug_group', 'ug_expiry' ] );
-				$this->addWhere( 'ug_expiry IS NULL OR ug_expiry >= ' .
-					$db->addQuotes( $db->timestamp() ) );
+				$this->addWhere(
+					$db->expr( 'ug_expiry', '=', null )->or( 'ug_expiry', '>=', $db->timestamp() )
+				);
 				$userGroupsRes = $this->select( __METHOD__ );
 
 				foreach ( $userGroupsRes as $row ) {
@@ -177,6 +178,12 @@ class ApiQueryUsers extends ApiQueryBase {
 					$userNames[] = $row->user_name;
 				}
 				$this->genderCache->doQuery( $userNames, __METHOD__ );
+			}
+
+			if ( isset( $this->prop['blockinfo'] ) ) {
+				$blockInfos = $this->getBlockDetailsForRows( $res );
+			} else {
+				$blockInfos = null;
 			}
 
 			foreach ( $res as $row ) {
@@ -227,11 +234,11 @@ class ApiQueryUsers extends ApiQueryBase {
 					$data[$key]['rights'] = $this->getPermissionManager()
 						->getUserPermissions( $user );
 				}
-				if ( $row->ipb_deleted ) {
+				if ( $row->hu_deleted ) {
 					$data[$key]['hidden'] = true;
 				}
-				if ( isset( $this->prop['blockinfo'] ) && $row->ipb_by_text !== null ) {
-					$data[$key] += $this->getBlockDetails( DatabaseBlock::newFromRow( $row ) );
+				if ( isset( $this->prop['blockinfo'] ) && isset( $blockInfos[$row->user_id] ) ) {
+					$data[$key] += $blockInfos[$row->user_id];
 				}
 
 				if ( isset( $this->prop['emailable'] ) ) {

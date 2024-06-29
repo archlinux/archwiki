@@ -5,10 +5,10 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use TitleValue;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\ActionSpecifier

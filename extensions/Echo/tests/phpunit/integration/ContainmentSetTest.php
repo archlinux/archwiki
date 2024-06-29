@@ -3,9 +3,9 @@
 namespace MediaWiki\Extension\Notifications\Test\Integration;
 
 use MediaWiki\Extension\Notifications\ContainmentSet;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use User;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\Notifications\ContainmentSet

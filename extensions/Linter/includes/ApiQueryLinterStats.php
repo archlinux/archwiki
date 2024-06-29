@@ -22,14 +22,20 @@ namespace MediaWiki\Linter;
 use ApiQuery;
 use ApiQueryBase;
 use ApiResult;
-use MediaWiki\MediaWikiServices;
+use WANObjectCache;
 
 class ApiQueryLinterStats extends ApiQueryBase {
+
+	private WANObjectCache $cache;
+
 	/**
 	 * @param ApiQuery $queryModule
+	 * @param string $moduleName
+	 * @param WANObjectCache $cache
 	 */
-	public function __construct( ApiQuery $queryModule ) {
-		parent::__construct( $queryModule, 'linterstats', 'lntrst' );
+	public function __construct( ApiQuery $queryModule, string $moduleName, WANObjectCache $cache ) {
+		parent::__construct( $queryModule, $moduleName, 'lntrst' );
+		$this->cache = $cache;
 	}
 
 	/**
@@ -38,9 +44,9 @@ class ApiQueryLinterStats extends ApiQueryBase {
 	public function execute() {
 		$totalsLookup = new TotalsLookup(
 			new CategoryManager(),
-			MediaWikiServices::getInstance()->getMainWANObjectCache()
+			$this->cache,
+			new Database( 0 )
 		);
-
 		$totals = $totalsLookup->getTotals();
 		ApiResult::setArrayType( $totals, 'assoc' );
 		$this->getResult()->addValue( [ 'query', 'linterstats' ], 'totals', $totals );

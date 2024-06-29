@@ -9,8 +9,8 @@ use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Notifier;
 use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\User;
 use stdClass;
-use User;
 
 class Notification extends AbstractEntity implements Bundleable {
 

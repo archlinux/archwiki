@@ -137,7 +137,7 @@ class PHandler extends DOMHandler {
 			// If this node could break this wikitext line and emit
 			// non-ws content on a new line, the P-tag will be on that new line
 			// with text content that needs P-wrapping.
-			if ( preg_match( '/\n[^\s]/', $node->textContent ) ) {
+			if ( preg_match( '/\n\S/', $node->textContent ) ) {
 				return false;
 			}
 		}
@@ -172,10 +172,6 @@ class PHandler extends DOMHandler {
 		return false;
 	}
 
-	/**
-	 * @param Node $node
-	 * @return bool
-	 */
 	private function newWikitextLineMightHaveBlockNode( Node $node ): bool {
 		$node = DiffDOMUtils::nextNonDeletedSibling( $node );
 		while ( $node ) {

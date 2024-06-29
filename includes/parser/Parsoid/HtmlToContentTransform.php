@@ -11,11 +11,13 @@ use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
 use MediaWiki\Rest\HttpException;
+use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use Wikimedia\Bcp47Code\Bcp47Code;
+use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\PageBundle;
@@ -36,60 +38,27 @@ use Wikimedia\Parsoid\Utils\Timing;
  * @unstable should be stable before 1.40 release
  */
 class HtmlToContentTransform {
-	/** @var array */
-	private $options = [];
-
-	/** @var ?int */
-	private $oldid = null;
-
-	/** @var ?Bcp47Code */
-	private $contentLanguage = null;
-
-	/** @var ?Content */
-	private $originalContent = null;
-
-	/** @var ?RevisionRecord */
-	private $originalRevision = null;
-
+	private array $options = [];
+	private ?int $oldid = null;
+	private ?Bcp47Code $contentLanguage = null;
+	private ?Content $originalContent = null;
+	private ?RevisionRecord $originalRevision = null;
 	/**
 	 * Whether $this->doc has had any necessary processing applied,
 	 * such as injecting data-parsoid attributes from a PageBundle.
-	 * @var bool
 	 */
-	private $docHasBeenProcessed = false;
-
-	/** @var ?Document */
-	private $doc = null;
-
-	/** @var ?Element */
-	private $originalBody = null;
-
-	/** @var ?StatsdDataFactoryInterface A statistics aggregator */
-	protected $metrics = null;
-
-	/** @var PageBundle */
-	private $modifiedPageBundle;
-
-	/** @var PageBundle */
-	private $originalPageBundle;
-
-	/** @var ?PageConfig */
-	private $pageConfig = null;
-
-	/** @var Parsoid */
-	private $parsoid;
-
-	/** @var array */
-	private $parsoidSettings;
-
-	/** @var PageIdentity */
-	private $page;
-
-	/** @var PageConfigFactory */
-	private $pageConfigFactory;
-
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
+	private bool $docHasBeenProcessed = false;
+	private ?Document $doc = null;
+	private ?Element $originalBody = null;
+	protected ?StatsdDataFactoryInterface $metrics = null;
+	private PageBundle $modifiedPageBundle;
+	private PageBundle $originalPageBundle;
+	private ?PageConfig $pageConfig = null;
+	private Parsoid $parsoid;
+	private array $parsoidSettings;
+	private PageIdentity $page;
+	private PageConfigFactory $pageConfigFactory;
+	private IContentHandlerFactory $contentHandlerFactory;
 
 	/**
 	 * @param string $modifiedHTML
@@ -123,19 +92,9 @@ class HtmlToContentTransform {
 		$this->metrics = $metrics;
 	}
 
-	private function startTiming(): Timing {
-		return Timing::start( $this->metrics );
-	}
-
 	private function incrementMetrics( string $key ) {
 		if ( $this->metrics ) {
 			$this->metrics->increment( $key );
-		}
-	}
-
-	private function timingMetrics( string $key, $value ) {
-		if ( $this->metrics ) {
-			$this->metrics->timing( $key, $value );
 		}
 	}
 
@@ -322,7 +281,7 @@ class HtmlToContentTransform {
 			} catch ( RevisionAccessException $exception ) {
 				// TODO: Throw a different exception, this class should not know
 				//       about HTTP status codes.
-				throw new HttpException( 'The specified revision is deleted or suppressed.', 404 );
+				throw new LocalizedHttpException( new MessageValue( "rest-specified-revision-unavailable" ), 404 );
 			}
 		}
 
@@ -549,7 +508,7 @@ class HtmlToContentTransform {
 		$this->incrementMetrics(
 			"downgrade.from.{$downgrade['from']}.to.{$downgrade['to']}"
 		);
-		$downgradeTiming = $this->startTiming();
+		$downgradeTiming = Timing::start( $this->metrics );
 		Parsoid::downgrade( $downgrade, $pb );
 		$downgradeTiming->end( 'downgrade.time' );
 
@@ -585,20 +544,6 @@ class HtmlToContentTransform {
 		}
 
 		$this->validatePageBundle( $pb );
-
-		// TODO: HACK! Remove as soon as change I41e6c741a3e2e is in the version of Parsoid used by MW.
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
-		if ( isset( $pb->parsoid['ids'] ) && is_object( $pb->parsoid['ids'] ) ) {
-			// recursively convert stdClass objects to associative arrays.
-			$pb->parsoid = json_decode( json_encode( $pb->parsoid ), true );
-		}
-
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
-		if ( isset( $pb->mw['ids'] ) && is_object( $pb->mw['ids'] ) ) {
-			// recursively convert stdClass objects to associative arrays.
-			$pb->mw = json_decode( json_encode( $pb->mw ), true );
-		}
-
 		PageBundle::apply( $doc, $pb );
 	}
 
@@ -617,7 +562,7 @@ class HtmlToContentTransform {
 
 		if ( $knowsOriginal && !empty( $this->parsoidSettings['useSelser'] ) ) {
 			if ( !$this->getPageConfig()->getRevisionContent() ) {
-				throw new HttpException( 'Could not find previous revision. Has the page been locked / deleted?',
+				throw new LocalizedHttpException( new MessageValue( "rest-previous-revision-unavailable" ),
 					409 );
 			}
 
@@ -659,24 +604,10 @@ class HtmlToContentTransform {
 	 * @return string
 	 */
 	private function htmlToText(): string {
-		// Performance Timing options
-		$timing = $this->startTiming();
-
 		$doc = $this->getModifiedDocument();
 		$htmlSize = $this->getModifiedHtmlSize();
-
-		// Send input size to statsd/Graphite
-		$this->timingMetrics( 'html2wt.size.input', $htmlSize );
-
 		$inputContentVersion = $this->getSchemaVersion();
-
-		$this->incrementMetrics(
-			'html2wt.original.version.' . $inputContentVersion
-		);
-
 		$selserData = $this->getSelserData();
-
-		$timing->end( 'html2wt.init' );
 
 		try {
 			$text = $this->parsoid->dom2wikitext( $this->getPageConfig(), $doc, [
@@ -689,15 +620,6 @@ class HtmlToContentTransform {
 			throw new HttpException( $e->getMessage(), 400 );
 		} catch ( ResourceLimitExceededException $e ) {
 			throw new HttpException( $e->getMessage(), 413 );
-		}
-
-		$total = $timing->end( 'html2wt.total' );
-		$this->timingMetrics( 'html2wt.size.output', strlen( $text ) );
-
-		if ( $htmlSize ) {  // Avoid division by zero
-			// NOTE: the name timePerInputKB is misleading, since $htmlSize is
-			//       in characters, not bytes.
-			$this->timingMetrics( 'html2wt.timePerInputKB', $total * 1024 / $htmlSize );
 		}
 
 		return $text;

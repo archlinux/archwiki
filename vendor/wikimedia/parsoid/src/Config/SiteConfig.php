@@ -18,9 +18,9 @@ use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentModelHandler;
+use Wikimedia\Parsoid\Core\LinkTarget;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Ext\AnnotationStripper;
-use Wikimedia\Parsoid\Ext\Cite\Cite;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\Gallery\Gallery;
@@ -28,7 +28,6 @@ use Wikimedia\Parsoid\Ext\Indicator\Indicator;
 use Wikimedia\Parsoid\Ext\JSON\JSON;
 use Wikimedia\Parsoid\Ext\LST\LST;
 use Wikimedia\Parsoid\Ext\Nowiki\Nowiki;
-use Wikimedia\Parsoid\Ext\Poem\Poem;
 use Wikimedia\Parsoid\Ext\Pre\Pre;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -98,9 +97,7 @@ abstract class SiteConfig {
 		Indicator::class,
 		// The following implementations will move to their own repositories
 		// soon, but for now are implemented in the Parsoid repo.
-		Cite::class,
-		LST::class,
-		Poem::class
+		LST::class
 	];
 
 	/**
@@ -299,19 +296,38 @@ abstract class SiteConfig {
 
 	/**
 	 * Whether to enable linter Backend.
-	 * @return bool|string[] Boolean to enable/disable all linting, or an array
-	 *  of enabled linting types.
+	 * Consults the allow list and block list from ::getLinterConfig().
+	 *
+	 * @param null $type If $type is null or omitted, returns true if *any* linting
+	 *   type is enabled; otherwise returns true only if the specified
+	 *   linting type is enabled.
+	 * @return bool If $type is null or omitted, returns true if *any* linting
+	 *   type is enabled; otherwise returns true only if the specified
+	 *   linting type is enabled.
 	 */
-	public function linting() {
-		return $this->linterEnabled;
-	}
-
-	/**
-	 * Maximum run length for Tidy whitespace bug
-	 * @return int Length in Unicode codepoints
-	 */
-	public function tidyWhitespaceBugMaxLength(): int {
-		return 100;
+	final public function linting( ?string $type = null ) {
+		if ( !$this->linterEnabled ) {
+			return false;
+		}
+		$lintConfig = $this->getLinterConfig();
+		// Allow list
+		$allowList = $lintConfig['enabled'] ?? null;
+		if ( is_array( $allowList ) ) {
+			if ( $type === null ) {
+				return count( $allowList ) > 0;
+			}
+			return $allowList[$type] ?? false;
+		}
+		// Block list
+		if ( $type === null ) {
+			return true;
+		}
+		$blockList = $lintConfig['disabled'] ?? null;
+		if ( is_array( $blockList ) ) {
+			return !( $blockList[$type] ?? false );
+		}
+		// No specific configuration
+		return true;
 	}
 
 	/**
@@ -407,6 +423,7 @@ abstract class SiteConfig {
 
 	/**
 	 * Map a namespace index to its preferred name
+	 * (with spaces, not underscores).
 	 *
 	 * @note This replaces namespaceNames
 	 * @param int $ns
@@ -479,7 +496,7 @@ abstract class SiteConfig {
 
 	/**
 	 * Interwiki link data
-	 * @return array[] Keys are interwiki prefixes, values are arrays with the following keys:
+	 * @return array<string,array> Keys are interwiki prefixes, values are arrays with the following keys:
 	 *   - prefix: (string) The interwiki prefix, same as the key.
 	 *   - url: (string) Target URL, containing a '$1' to be replaced by the interwiki target.
 	 *   - protorel: (bool, optional) Whether the url may be accessed by both http:// and https://.
@@ -495,17 +512,16 @@ abstract class SiteConfig {
 	/**
 	 * Interwiki link data, after removing items that conflict with namespace names.
 	 * (In case of such conflict, namespace wins, interwiki is ignored.)
-	 * @return array[] See interwikiMap()
+	 * @return array<string,array> See interwikiMap()
 	 */
 	public function interwikiMapNoNamespaces(): array {
 		if ( $this->interwikiMapNoNamespaces === null ) {
-			$map = $this->interwikiMap();
-			foreach ( array_keys( $map ) as $key ) {
-				if ( $this->namespaceId( $key ) !== null ) {
-					unset( $map[$key] );
+			$this->interwikiMapNoNamespaces = [];
+			foreach ( $this->interwikiMap() as $key => $value ) {
+				if ( $this->namespaceId( $key ) === null ) {
+					$this->interwikiMapNoNamespaces[$key] = $value;
 				}
 			}
-			$this->interwikiMapNoNamespaces = $map;
 		}
 		return $this->interwikiMapNoNamespaces;
 	}
@@ -584,7 +600,7 @@ abstract class SiteConfig {
 			}
 		}
 
-		foreach ( $this->iwMatcher as list( $keys, $regex, $numLangs ) ) {
+		foreach ( $this->iwMatcher as [ $keys, $regex, $numLangs ] ) {
 			if ( preg_match( $regex, $href, $m, PREG_UNMATCHED_AS_NULL ) ) {
 				foreach ( $keys as $i => $key ) {
 					if ( isset( $m[$i + 1] ) ) {
@@ -653,10 +669,10 @@ abstract class SiteConfig {
 	abstract public function langBcp47(): Bcp47Code;
 
 	/**
-	 * Main page title
-	 * @return string
+	 * Main page title, as LinkTarget
+	 * @return LinkTarget
 	 */
-	abstract public function mainpage(): string;
+	abstract public function mainPageLinkTarget(): LinkTarget;
 
 	/**
 	 * Lookup config
@@ -736,7 +752,7 @@ abstract class SiteConfig {
 		string $htmlTitle,
 		$lang
 	): void {
-		$lang = Utils::mwCodeToBcp47( $lang );
+		$lang = Utils::mwCodeToBcp47( $lang, true, $this->getLogger() );
 		// Display title
 		$titleElement = DOMCompat::querySelector( $document, 'title' );
 		if ( !$titleElement ) {
@@ -926,25 +942,17 @@ abstract class SiteConfig {
 
 	/**
 	 * Default thumbnail width
-	 * @return int
 	 */
 	abstract public function widthOption(): int;
 
-	/**
-	 * @return array
-	 */
 	abstract protected function getVariableIDs(): array;
 
-	/**
-	 * @return array
-	 */
 	abstract protected function getMagicWords(): array;
 
 	/**
 	 * Does the SiteConfig provide precomputed function synonyms?
 	 * If no, the SiteConfig is expected to provide an implementation
 	 * for updateFunctionSynonym.
-	 * @return bool
 	 */
 	protected function haveComputedFunctionSynonyms(): bool {
 		return true;
@@ -952,17 +960,11 @@ abstract class SiteConfig {
 
 	/**
 	 * Get a list of precomputed function synonyms
-	 * @return array
 	 */
 	protected function getFunctionSynonyms(): array {
 		return [];
 	}
 
-	/**
-	 * @param string $func
-	 * @param string $magicword
-	 * @param bool $caseSensitive
-	 */
 	protected function updateFunctionSynonym( string $func, string $magicword, bool $caseSensitive ): void {
 		throw new \RuntimeException( "Unexpected code path!" );
 	}
@@ -1018,17 +1020,9 @@ abstract class SiteConfig {
 	 */
 	public function getMagicWordForFunctionHook( string $str ): ?string {
 		$this->populateMagicWords();
-		if ( isset( $this->functionSynonyms[1][$str] ) ) {
-			return $this->functionSynonyms[1][$str];
-		} else {
+		return $this->functionSynonyms[1][$str] ??
 			# Case insensitive functions
-			$str = mb_strtolower( $str );
-			if ( isset( $this->functionSynonyms[0][$str] ) ) {
-				return $this->functionSynonyms[0][$str];
-			} else {
-				return null;
-			}
-		}
+			$this->functionSynonyms[0][mb_strtolower( $str )] ?? null;
 	}
 
 	/**
@@ -1220,29 +1214,37 @@ abstract class SiteConfig {
 	}
 
 	/**
-	 * Get the maximum columns in a table before the table is considered large.
-	 *
-	 * This lint heuristic value is hardcoded here and centrally determined without
-	 * an option to set it per-wiki.
-	 *
-	 * @return int
+	 * Return the desired linter configuration.  These are heuristic values
+	 * which have hardcoded defaults but could be overridden on a per-wiki
+	 * basis.
+	 * @return array{enabled?:string[],disabled?:string[],maxTableColumnHeuristic?:int,maxTableRowsToCheck?:int}
 	 */
-	public function getMaxTableColumnLintHeuristic(): int {
-		return 5;
-	}
-
-	/**
-	 * Get the maximum rows (header or data) to be checked for the large table lint
-	 * - If we consider the first N rows to be representative of the table, and the table
-	 *   is well-formed and uniform, it is sufficent to check the first N rows to check
-	 *   if the table is "large".
-	 * - This heuristic is used together with the getMaxTableColumnLintHeuristic to
-	 *   identify "large tables".
-	 *
-	 * @return int
-	 */
-	public function getMaxTableRowsToCheckLintHeuristic(): int {
-		return 10;
+	public function getLinterConfig(): array {
+		return [
+			// Allow list for specific lint types.
+			// Takes precedence over block list.
+			'enabled' => null,
+			// Block list for specific lint types.
+			// Not used if an allow list is set.
+			'disabled' => null,
+			// The maximum columns in a table before the table is considered
+			// large
+			'maxTableColumnHeuristic' => 5,
+			// The maximum rows (header or data) to be checked for the large
+			// table lint
+			// - If we consider the first N rows to be representative of the
+			//   table, and the table is well-formed and uniform, it is
+			//   sufficent to check the first N rows to check if the table is
+			//   "large".
+			// - This heuristic is used together with the
+			//   'maxTableColumnHeuristic' to identify "large tables".
+			'maxTableRowsToCheck' => 10,
+			// Max length of content covered by 'white-space:nowrap' CSS
+			// that we consider "safe" when Tidy is replaced.  Beyond that,
+			// wikitext will have to be fixed up to manually insert whitespace
+			// at the right places.  Length in bytes.
+			'tidyWhitespaceBugMaxLength' => 100,
+		];
 	}
 
 	/**
@@ -1485,9 +1487,6 @@ abstract class SiteConfig {
 		}
 	}
 
-	/**
-	 * @return array
-	 */
 	protected function getExtConfig(): array {
 		if ( !$this->extConfig ) {
 			$this->constructExtConfig();
@@ -1595,10 +1594,10 @@ abstract class SiteConfig {
 		return $extConfig['domProcessors'];
 	}
 
-	/** @phan-var array<string,int> */
+	/** @var array<string,int> */
 	protected $wt2htmlLimits = [
 		// We won't handle pages beyond this size
-		'wikitextSize' => 2048 * 1024,  // ParserOptions::maxIncludeSize
+		'wikitextSize' => 2048 * 1024, // ParserOptions::maxIncludeSize
 
 		// Max list items per page
 		'listItem' => 30000,
@@ -1624,10 +1623,10 @@ abstract class SiteConfig {
 		return $this->wt2htmlLimits;
 	}
 
-	/** @phan-var array<string,int> */
+	/** @var array<string,int> */
 	protected $html2wtLimits = [
 		// We refuse to serialize HTML strings bigger than this
-		'htmlSize' => 10000000,  // 10M
+		'htmlSize' => 10000000, // 10M
 	];
 
 	/**
@@ -1663,9 +1662,6 @@ abstract class SiteConfig {
 		return $logger;
 	}
 
-	/**
-	 * @return array
-	 */
 	abstract public function getNoFollowConfig(): array;
 
 	/** @return string|false */

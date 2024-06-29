@@ -17,7 +17,6 @@
 	"cite_error_included_ref": "Kóńceca toflicka <code>&lt;/ref&gt;</code> felujo za toflicku <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Toflicki <code>&lt;ref&gt;</code> eksistěruju za kupku z mjenim \"$1\", ale wótpowědujuca toflicka <code>&lt;references group=\"$1\"/&gt;</code> njejo se namakała abo zacynjacy <code>&lt;/ref&gt;</code> felujo",
 	"cite_error_references_group_mismatch": "Toflicka <code>&lt;ref&gt;</code> w <code>&lt;references&gt;</code> jo ze kupkowym atributom \"$1\" w konflikśe.",
-	"cite_error_references_missing_group": "Toflicka <code>&lt;ref&gt;</code>, kótaraž jo w <code>&lt;references&gt;</code> definěrowana, ma kupkowy atribut \"$1\", kótaryž njepokazujo se w pjerwjejšnem teksće.",
 	"cite_error_references_missing_key": "Toflicka <code>&lt;ref&gt;</code> z mjenim \"$1\", kótaraž jo w <code>&lt;references&gt;</code> definěrowana, njewužywa se w pjerwjejšnem teksće.",
 	"cite_error_references_no_key": "Toflicka <code>&lt;ref&gt;</code>, kótaraž jo w <code>&lt;references&gt;</code> definěrowana, njama mjenjowy atribut.",
 	"cite_error_empty_references_define": "Toflicka <code>&lt;ref&gt;</code>, kótaraž jo w <code>&lt;references&gt;</code> z mjenim \"$1\" definěrowana, njama wopśimjeśe.",

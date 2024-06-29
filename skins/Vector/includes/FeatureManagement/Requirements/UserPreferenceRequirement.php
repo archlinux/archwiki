@@ -21,63 +21,54 @@
 
 namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsLookup;
-use User;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\UserIdentity;
 
 /**
  * @package MediaWiki\Skins\Vector\FeatureManagement\Requirements
  */
 final class UserPreferenceRequirement implements Requirement {
 
-	/**
-	 * @var User
-	 */
-	private $user;
+	private UserIdentity $user;
 
-	/**
-	 * @var UserOptionsLookup
-	 */
-	 private $userOptionsLookup;
+	private UserOptionsLookup $userOptionsLookup;
 
-	/**
-	 * @var string
-	 */
-	private $optionName;
+	private string $optionName;
 
-	/**
-	 * @var string
-	 */
-	private $requirementName;
+	private string $requirementName;
 
-	/**
-	 * @var Title|null
-	 */
-	private $title;
+	private ?Title $title;
+
+	private OverrideableRequirementHelper $helper;
 
 	/**
 	 * This constructor accepts all dependencies needed to determine whether
 	 * the overridable config is enabled for the current user and request.
 	 *
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param UserOptionsLookup $userOptionsLookup
 	 * @param string $optionName The name of the user preference.
 	 * @param string $requirementName The name of the requirement presented to FeatureManager.
+	 * @param WebRequest $request
 	 * @param Title|null $title
 	 */
 	public function __construct(
-		User $user,
+		UserIdentity $user,
 		UserOptionsLookup $userOptionsLookup,
 		string $optionName,
 		string $requirementName,
-		$title = null
+		WebRequest $request,
+		Title $title = null
 	) {
 		$this->user = $user;
 		$this->userOptionsLookup = $userOptionsLookup;
 		$this->optionName = $optionName;
 		$this->requirementName = $requirementName;
 		$this->title = $title;
+		$this->helper = new OverrideableRequirementHelper( $request, $requirementName );
 	}
 
 	/**
@@ -95,7 +86,7 @@ final class UserPreferenceRequirement implements Requirement {
 	 *
 	 * @return bool
 	 */
-	public function isPreferenceEnabled() {
+	public function isPreferenceEnabled(): bool {
 		$user = $this->user;
 		$userOptionsLookup = $this->userOptionsLookup;
 		$optionValue = $userOptionsLookup->getOption(
@@ -104,7 +95,7 @@ final class UserPreferenceRequirement implements Requirement {
 		);
 		// Check for 0, '0' or 'disabled'.
 		// Any other value will be handled as enabled.
-		$isEnabled = (bool)$optionValue && $optionValue !== 'disabled';
+		$isEnabled = $optionValue && $optionValue !== 'disabled';
 
 		return $this->title && $isEnabled;
 	}
@@ -113,6 +104,7 @@ final class UserPreferenceRequirement implements Requirement {
 	 * @inheritDoc
 	 */
 	public function isMet(): bool {
-		return $this->isPreferenceEnabled();
+		$override = $this->helper->isMet();
+		return $override ?? $this->isPreferenceEnabled();
 	}
 }

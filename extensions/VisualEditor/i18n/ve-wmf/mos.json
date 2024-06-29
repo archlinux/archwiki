@@ -7,6 +7,7 @@
 	"tag-editcheck-newcontent-description": "tek bãoonego gésgo o b pãas-ã bũmbu gʋlsga pugin",
 	"tag-editcheck-newreference-description": "O b rɩka seb-tika m pãas sebrã pugin",
 	"tag-editcheck-references-description": "tek bãoonego gés'gu tâgs tɩ o b pãas-ã seb-tika ning o b m boora",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Edit Check (references) activated]]",
 	"tag-editcheck-references-activated-description": "tek bãoonego gésgo tâag sê tɩ o b na tôog m boore sén tikɩ, la UI sẽn yé",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|gésgo tekrɩ]]",
 	"tag-visualeditor-description": "Tékra maane tɩ yaa [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]]",

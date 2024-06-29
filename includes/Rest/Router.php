@@ -86,6 +86,9 @@ class Router {
 	/** @var StatsdDataFactoryInterface */
 	private $stats;
 
+	/** @var ServiceOptions */
+	private $options;
+
 	/**
 	 * @internal
 	 * @var array
@@ -94,6 +97,11 @@ class Router {
 		MainConfigNames::CanonicalServer,
 		MainConfigNames::InternalServer,
 		MainConfigNames::RestPath,
+		// From RootSpecHandler::CONSTRUCTOR_OPTIONS
+		MainConfigNames::RightsUrl,
+		MainConfigNames::RightsText,
+		MainConfigNames::EmergencyContact,
+		MainConfigNames::Sitename,
 	];
 
 	/**
@@ -129,6 +137,7 @@ class Router {
 
 		$this->routeFiles = $routeFiles;
 		$this->extraRoutes = $extraRoutes;
+		$this->options = $options;
 		$this->baseUrl = $options->get( MainConfigNames::CanonicalServer );
 		$this->privateBaseUrl = $options->get( MainConfigNames::InternalServer );
 		$this->rootPath = $options->get( MainConfigNames::RestPath );
@@ -164,7 +173,7 @@ class Router {
 	 * @return string The cache key
 	 */
 	private function getCacheKey() {
-		return $this->cacheBag->makeKey( __CLASS__, '1' );
+		return $this->cacheBag->makeKey( __CLASS__, '4' );
 	}
 
 	/**
@@ -222,9 +231,11 @@ class Router {
 	 * Get an iterator for all defined routes, including loading the routes from
 	 * the JSON files.
 	 *
+	 * @unstable
+	 *
 	 * @return AppendIterator
 	 */
-	private function getAllRoutes() {
+	public function getAllRoutes() {
 		$iterator = new AppendIterator;
 		$iterator->append( new \ArrayIterator( $this->getRoutesFromFiles() ) );
 		$iterator->append( new \ArrayIterator( $this->extraRoutes ) );
@@ -284,6 +295,29 @@ class Router {
 	}
 
 	/**
+	 * Returns the path part of the route URL for the given route, including the root path.
+	 * Intended for use in relative redirects.
+	 *
+	 * @since 1.42
+	 *
+	 * @param string $route
+	 * @param array $pathParams
+	 * @param array $queryParams
+	 *
+	 * @return string
+	 * @see getPrivateRouteUrl
+	 */
+	public function getRoutePath(
+		string $route,
+		array $pathParams = [],
+		array $queryParams = []
+	): string {
+		$route = $this->substPathParams( $route, $pathParams );
+		$path = $this->rootPath . $route;
+		return wfAppendQuery( $path, $queryParams );
+	}
+
+	/**
 	 * Returns a full URL for the given route.
 	 * Intended for use in redirects and when including links to endpoints in output.
 	 *
@@ -300,9 +334,7 @@ class Router {
 		array $pathParams = [],
 		array $queryParams = []
 	): string {
-		$route = $this->substPathParams( $route, $pathParams );
-		$url = $this->baseUrl . $this->rootPath . $route;
-		return wfAppendQuery( $url, $queryParams );
+		return $this->baseUrl . $this->getRoutePath( $route, $pathParams, $queryParams );
 	}
 
 	/**
@@ -329,9 +361,7 @@ class Router {
 		array $pathParams = [],
 		array $queryParams = []
 	): string {
-		$route = $this->substPathParams( $route, $pathParams );
-		$url = $this->privateBaseUrl . $this->rootPath . $route;
-		return wfAppendQuery( $url, $queryParams );
+		return $this->privateBaseUrl . $this->getRoutePath( $route, $pathParams, $queryParams );
 	}
 
 	/**
@@ -406,11 +436,14 @@ class Router {
 			}
 		}
 
+		$pathForMetrics = '(unknown)';
 		$handler = null;
 		try {
 			// Use rawurldecode so a "+" in path params is not interpreted as a space character.
 			$request->setPathParams( array_map( 'rawurldecode', $match['params'] ) );
 			$handler = $this->createHandler( $request, $match['userData'] );
+
+			$this->setBodyData( $request, $handler );
 
 			// Replace any characters that may have a special meaning in the metrics DB.
 			$pathForMetrics = $handler->getPath();
@@ -468,6 +501,23 @@ class Router {
 	 * @return Handler
 	 */
 	private function createHandler( RequestInterface $request, array $spec ): Handler {
+		$handler = $this->instantiateHandlerObject( $spec );
+
+		// TODO: split the init method, so instantiateHandlerObject can inject the spec.
+		$handler->init( $this, $request, $spec, $this->authority, $this->responseFactory,
+			$this->hookContainer, $this->session
+		);
+
+		return $handler;
+	}
+
+	/**
+	 * Creates a handler from the given spec, but does not initialize it.
+	 * @param array $spec
+	 * @return Handler
+	 */
+	public function instantiateHandlerObject( array $spec ): Handler {
+		// Hack for factory methods defined by Router
 		$objectFactorySpec = array_intersect_key(
 			$spec,
 			[
@@ -480,9 +530,6 @@ class Router {
 		);
 		/** @var $handler Handler (annotation for PHPStorm) */
 		$handler = $this->objectFactory->createObject( $objectFactorySpec );
-		$handler->init( $this, $request, $spec, $this->authority, $this->responseFactory,
-			$this->hookContainer, $this->session
-		);
 
 		return $handler;
 	}
@@ -492,6 +539,7 @@ class Router {
 	 *
 	 * @param Handler $handler
 	 * @return ResponseInterface
+	 * @throws HttpException
 	 */
 	private function executeHandler( $handler ): ResponseInterface {
 		ProfilingContext::singleton()->init( MW_ENTRY_POINT, $handler->getPath() );
@@ -546,6 +594,37 @@ class Router {
 		$this->stats = $stats;
 
 		return $this;
+	}
+
+	private function setBodyData( RequestInterface $request, Handler $handler ) {
+		// fail if the request method is in nobodymethod but has body
+		$requestMethod = $request->getMethod();
+		if ( in_array( $requestMethod, RequestInterface::NO_BODY_METHODS ) ) {
+			// check if the request has a body
+			if ( $request->hasBody() ) {
+				// NOTE: Don't throw, see T359509.
+				// TODO: Ignore only empty bodies, log a warning or fail if
+				//       there is actual content.
+				return;
+			}
+		}
+
+		// fail if the request method expects a body but has no body
+		if ( in_array( $requestMethod, RequestInterface::BODY_METHODS ) ) {
+			// check if it has no body
+			if ( !$request->hasBody() ) {
+				throw new LocalizedHttpException( new MessageValue( "rest-request-body-expected", [ $requestMethod ] ),
+					411
+				);
+			}
+		}
+
+		// call parsedbody
+		if ( $request->hasBody() ) {
+			$parsedBody = $handler->parseBodyData( $request );
+			// Set the parsed body data on the request object
+			$request->setParsedBody( $parsedBody );
+		}
 	}
 
 }

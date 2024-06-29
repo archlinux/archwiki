@@ -1,10 +1,23 @@
 # Changelog
 
+## 4.0.0
+
+The library now requires PHP 7.4 or later.
+
+Changed:
+
+* Switch to PSR-4 autoloader.
+
+Removed:
+
+* PHP 7.2, and 7.3 are no longer supported.
+
 ## 3.0.0
 
 The library now requires PHP 7.2 or later.
 
 Changed:
+
 * Add strict type hints to `RelPath::joinPath()` and other RelPath methods.
 
 Removed:

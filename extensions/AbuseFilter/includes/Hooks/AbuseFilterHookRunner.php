@@ -7,8 +7,8 @@ use MediaWiki\Extension\AbuseFilter\VariableGenerator\RCVariableGenerator;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use RecentChange;
-use User;
 
 /**
  * Handle running AbuseFilter's hooks

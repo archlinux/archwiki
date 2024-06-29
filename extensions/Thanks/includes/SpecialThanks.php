@@ -4,12 +4,13 @@ namespace MediaWiki\Extension\Thanks;
 
 use ApiMain;
 use ApiUsageException;
-use FormSpecialPage;
 use HTMLForm;
-use Linker;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Request\DerivativeRequest;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\User\UserFactory;
-use Status;
+use MediaWiki\User\UserRigorOptions;
 
 class SpecialThanks extends FormSpecialPage {
 
@@ -116,6 +117,9 @@ class SpecialThanks extends FormSpecialPage {
 		} elseif ( $this->type === 'flow' ) {
 			$msgKey = 'flow-thanks-confirmation-special';
 		} else {
+			// The following messages are used here
+			// * thanks-confirmation-special-rev
+			// * thanks-confirmation-special-log
 			$msgKey = 'thanks-confirmation-special-' . $this->type;
 		}
 		return '<p>' . $this->msg( $msgKey )->escaped() . '</p>';
@@ -189,7 +193,7 @@ class SpecialThanks extends FormSpecialPage {
 	 */
 	public function onSuccess() {
 		$sender = $this->getUser();
-		$recipient = $this->userFactory->newFromName( $this->result['recipient'] );
+		$recipient = $this->userFactory->newFromName( $this->result['recipient'], UserRigorOptions::RIGOR_NONE );
 		$link = Linker::userLink( $recipient->getId(), $recipient->getName() );
 
 		if ( in_array( $this->type, [ 'rev', 'log' ] ) ) {

@@ -168,7 +168,6 @@
 	"echo-category-title-dt-subscription": " {{PLURAL:$1|Langganan}} halaman pembicaraan",
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Pengarsipan}} halaman pembicaraan",
 	"echo-pref-tooltip-dt-subscription": "Kabarkan saya ketika seseorang mengirim komentar baru di topik di mana saya {{GENDER:|berlangganan}}.",
-	"minerva-talk-full-page": "Baca sebagai halaman wiki",
 	"tag-discussiontools-added-comment-description": "Sebuah komentar halaman pembicaraan ditambahkan dalam suntingan ini",
 	"tag-discussiontools-description": "Suntingan dibuat menggunakan DiscussionTools",
 	"tag-discussiontools-edit": "Menyunting komentar",

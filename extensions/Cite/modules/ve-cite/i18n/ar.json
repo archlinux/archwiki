@@ -70,7 +70,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "يتم تعريف هذا المرجع في قالب أو كتلة أخرى تم إنشاؤها، ويمكن الآن معاينته فقط في وضع المصدر.",
 	"cite-ve-referenceslist-missingreflist": "قائمة المراجع هذه مولدة بواسطة قالب، وحاليا يمكن تعديلها فقط في نمط المصدر.",
 	"cite-ve-toolbar-group-label": "مرجع",
-	"cite-ve-othergroup-item": "استشهاد $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "مراجع",
-	"visualeditor-internal-list-diff-group-name-mwreference": "اسم مجموعة المراجع: \"$1\""
+	"cite-ve-othergroup-item": "استشهاد $1"
 }

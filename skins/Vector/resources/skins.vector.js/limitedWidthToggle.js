@@ -38,11 +38,6 @@ function init() {
 	if ( !settings || !toggle || !toggleIcon ) {
 		return;
 	}
-	// Remove any references to the old cookie.
-	// We retain this for longer than usual to make sure we remove this cookie from as
-	// many clients as possible.
-	// FIXME: This can be removed in November 2023.
-	mw.cookie.set( 'mwclientprefs', null );
 
 	setDataAttribute( toggle );
 
@@ -67,8 +62,8 @@ function init() {
 
 		features.toggle( LIMITED_WIDTH_FEATURE_NAME );
 		setDataAttribute( toggle );
-		toggleIcon.classList.remove( `mw-ui-icon-wikimedia-${oldIcon}` );
-		toggleIcon.classList.add( `mw-ui-icon-wikimedia-${newIcon}` );
+		toggleIcon.classList.remove( `mw-ui-icon-wikimedia-${ oldIcon }` );
+		toggleIcon.classList.add( `mw-ui-icon-wikimedia-${ newIcon }` );
 		window.dispatchEvent( new Event( 'resize' ) );
 		if ( isLimitedWidth ) {
 			// Now is full width, show notification

@@ -26,26 +26,14 @@
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.fancyCaptcha.styles": {
-			"styles": "ext.confirmEdit.fancyCaptcha.less",
-			"targets": [
-				"mobile",
-				"desktop"
-			]
+			"styles": "ext.confirmEdit.fancyCaptcha.less"
 		},
 		"ext.confirmEdit.fancyCaptcha": {
 			"scripts": "ext.confirmEdit.fancyCaptcha.js",
-			"dependencies": "mediawiki.api",
-			"targets": [
-				"mobile",
-				"desktop"
-			]
+			"dependencies": "mediawiki.api"
 		},
 		"ext.confirmEdit.fancyCaptchaMobile": {
 			"scripts": "ext.confirmEdit.fancyCaptcha.js",
-			"targets": [
-				"mobile",
-				"desktop"
-			],
 			"dependencies": "mobile.startup"
 		}
 	},
@@ -72,6 +60,10 @@
 		},
 		"CaptchaDeleteOnSolve": {
 			"value": false
+		},
+		"CaptchaStorageDirectory": {
+			"description": "The directory that captchas will be stored in on the CaptchaFileBackend. You probably don't need to change this!",
+			"value": "captcha-render"
 		}
 	},
 	"manifest_version": 2

@@ -1,14 +1,17 @@
 <?php
 
-namespace MediaWiki\Auth;
+namespace MediaWiki\Tests\Auth;
 
+use MediaWiki\Auth\AuthenticationRequest;
+use MediaWikiIntegrationTestCase;
+use Message;
 use ReflectionMethod;
 use const E_USER_DEPRECATED;
 
 /**
  * @group AuthManager
  */
-abstract class AuthenticationRequestTestCase extends \MediaWikiIntegrationTestCase {
+abstract class AuthenticationRequestTestCase extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @param array $args
@@ -28,11 +31,11 @@ abstract class AuthenticationRequestTestCase extends \MediaWikiIntegrationTestCa
 			$this->assertIsArray( $data, "Field $field" );
 			$this->assertArrayHasKey( 'type', $data, "Field $field" );
 			$this->assertArrayHasKey( 'label', $data, "Field $field" );
-			$this->assertInstanceOf( \Message::class, $data['label'], "Field $field, label" );
+			$this->assertInstanceOf( Message::class, $data['label'], "Field $field, label" );
 
 			if ( $data['type'] !== 'null' ) {
 				$this->assertArrayHasKey( 'help', $data, "Field $field" );
-				$this->assertInstanceOf( \Message::class, $data['help'], "Field $field, help" );
+				$this->assertInstanceOf( Message::class, $data['help'], "Field $field, help" );
 			}
 
 			if ( isset( $data['optional'] ) ) {
@@ -59,7 +62,7 @@ abstract class AuthenticationRequestTestCase extends \MediaWikiIntegrationTestCa
 					$this->assertArrayHasKey( 'options', $data, "Field $field" );
 					$this->assertIsArray( $data['options'], "Field $field, options" );
 					foreach ( $data['options'] as $val => $msg ) {
-						$this->assertInstanceOf( \Message::class, $msg, "Field $field, option $val" );
+						$this->assertInstanceOf( Message::class, $msg, "Field $field, option $val" );
 					}
 					break;
 				case 'checkbox':
@@ -120,3 +123,5 @@ abstract class AuthenticationRequestTestCase extends \MediaWikiIntegrationTestCa
 		return $reflectionMethod->invoke( new static() );
 	}
 }
+
+class_alias( AuthenticationRequestTestCase::class, 'MediaWiki\\Auth\\AuthenticationRequestTestCase' );

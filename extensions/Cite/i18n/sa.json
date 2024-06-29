@@ -18,7 +18,6 @@
 	"cite_error_included_ref": "समाप्तिः <code>&lt;/ref&gt;</code> <code>&lt;ref&gt;</code> शृङ्खला लुप्ता",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> \"$1\" नामकस्य गणस्य अङ्कनं विद्यते, कीन्तु किमपि अनुरूपं <code>&lt;references group=\"$1\"/&gt;</code> अङ्कनं न प्राप्तम्",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> टैग इन <code>&lt;references&gt;</code>सङ्घर्षगणलक्षणं \"$1\" विद्यते ।",
-	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> अङ्कनपरिभाषिते <code>&lt;references&gt;</code> एतस्मिन् गणस्य विशेषः \"$1\" यश्च पूर्वलेखे न दृष्टम् ।",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> अङ्कनं \"$1\" नाम्ना सह परिभाषितम् <code>&lt;references&gt;</code> पूर्वलेखे उपयोगाय न जातम् ।",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>अङ्कने परिभाषितं <code>&lt;references&gt;</code> किमपि नामलक्षणं न विद्यते ।",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> अङ्कने परिभाषितं <code>&lt;references&gt;</code>  \"$1\" नामकः कोऽपि अन्तर्विषयः न विद्यते ।",

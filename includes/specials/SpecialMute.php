@@ -22,16 +22,16 @@
 namespace MediaWiki\Specials;
 
 use ErrorPageError;
-use HTMLForm;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Preferences\MultiUsernameFilter;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserIdentityUtils;
-use MediaWiki\User\UserOptionsManager;
 
 /**
  * A special page that allows users to modify their notification
@@ -211,20 +211,22 @@ class SpecialMute extends FormSpecialPage {
 			throw new ErrorPageError( 'specialmute', 'specialmute-error-mutelist-disabled' );
 		}
 
-		if ( !$this->getUser()->getEmailAuthenticationTimestamp() ) {
+		if ( !$this->getUser()->isEmailConfirmed() ) {
 			throw new ErrorPageError( 'specialmute', 'specialmute-error-no-email-set' );
 		}
 
 		$target = $this->getTarget();
 
-		$fields['email-blacklist'] = [
-			'type' => 'check',
-			'label-message' => [
-				'specialmute-label-mute-email',
-				$target ? $target->getName() : ''
-			],
-			'default' => $this->isTargetMuted( 'email-blacklist' ),
-		];
+		if ( $target && $this->userIdentityUtils->isNamed( $target ) ) {
+			$fields['email-blacklist'] = [
+				'type' => 'check',
+				'label-message' => [
+					'specialmute-label-mute-email',
+					$target->getName()
+				],
+				'default' => $this->isTargetMuted( 'email-blacklist' ),
+			];
+		}
 
 		$legacyUser = $target ? User::newFromIdentity( $target ) : null;
 		$this->getHookRunner()->onSpecialMuteModifyFormFields( $legacyUser, $this->getUser(), $fields );
@@ -244,7 +246,7 @@ class SpecialMute extends FormSpecialPage {
 		if ( $username !== null ) {
 			$target = $this->userIdentityLookup->getUserIdentityByName( $username );
 		}
-		if ( !$target || !$this->userIdentityUtils->isNamed( $target ) ) {
+		if ( !$target || !$target->isRegistered() ) {
 			throw new ErrorPageError( 'specialmute', 'specialmute-error-invalid-user' );
 		} else {
 			$this->target = $target;

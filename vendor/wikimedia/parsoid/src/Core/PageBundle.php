@@ -37,14 +37,6 @@ class PageBundle {
 	/** @var string|null */
 	public $contentmodel;
 
-	/**
-	 * @param string $html
-	 * @param ?array $parsoid
-	 * @param ?array $mw
-	 * @param ?string $version
-	 * @param ?array $headers
-	 * @param ?string $contentmodel
-	 */
 	public function __construct(
 		string $html, ?array $parsoid = null, ?array $mw = null,
 		?string $version = null, ?array $headers = null,
@@ -58,10 +50,14 @@ class PageBundle {
 		$this->contentmodel = $contentmodel;
 	}
 
-	public function toHtml(): string {
+	public function toDom(): Document {
 		$doc = DOMUtils::parseHTML( $this->html );
 		self::apply( $doc, $this );
-		return ContentUtils::toXML( $doc );
+		return $doc;
+	}
+
+	public function toHtml(): string {
+		return ContentUtils::toXML( $this->toDom() );
 	}
 
 	/**
@@ -134,7 +130,10 @@ class PageBundle {
 			DOMCompat::getBody( $doc ),
 			static function ( Node $node ) use ( &$pb ): void {
 				if ( $node instanceof Element ) {
-					$id = $node->getAttribute( 'id' ) ?? '';
+					$id = DOMCompat::getAttribute( $node, 'id' );
+					if ( $id === null ) {
+						return;
+					}
 					if ( isset( $pb->parsoid['ids'][$id] ) ) {
 						DOMDataUtils::setJSONAttribute(
 							$node, 'data-parsoid', $pb->parsoid['ids'][$id]

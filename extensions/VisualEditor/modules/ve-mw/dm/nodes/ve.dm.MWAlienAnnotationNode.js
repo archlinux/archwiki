@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWAlienAnnotationNode class.
  *
- * @copyright 2011-2021 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 

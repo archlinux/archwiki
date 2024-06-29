@@ -4,10 +4,10 @@
 			"Anthonymodec",
 			"Atej2*",
 			"Joshateji",
+			"Medaho",
 			"Misteld",
 			"Sagbosam",
-			"Samatics",
-			"Medaho"
+			"Samatics"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "A na mọ owẹn dé yi eyin mẹde sẹ́ gblọndo yọyọ dé dó hodọdopọ ehe mẹ. A sọgan vọ tito owẹ̀n he a yinwanna lẹ tọn jlado.",
@@ -114,7 +114,6 @@
 	"discussiontools-topicsubscription-special-title": "Hosọ he a sọgan yigbe na lẹ",
 	"echo-category-title-dt-subscription": "Weda hodọdopọ tọn {{PLURAL:$1|he yin gbeyina|he yin gbeyina lẹ}}",
 	"echo-pref-tooltip-dt-subscription": "Dike na ma yọnẹn na eyin dọ linlẹn yọyọ lẹ biọ hosọ he n yigbe na lẹ mẹ.",
-	"minerva-talk-full-page": "Hia ẹ taidi weda wiki tọn de",
 	"tag-discussiontools-added-comment-description": "Gblọndo weda hodọdopọ tọn dé ko yin yiyidogọ to vọjlado ehe mẹ",
 	"tag-discussiontools-description": "Vọjlado he yin bibasi gbọn DiscussionTools yiyizan dali",
 	"tag-discussiontools-edit": "Gblọndo he yin vivọjlado",

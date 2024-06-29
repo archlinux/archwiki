@@ -23,6 +23,7 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+use MediaWiki\MainConfigNames;
 use MediaWiki\User\ActorMigration;
 use MediaWiki\User\UserIdentity;
 
@@ -51,7 +52,7 @@ class RemoveUnusedAccounts extends Maintenance {
 		$this->output( "Checking for unused user accounts...\n" );
 		$delUser = [];
 		$delActor = [];
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'user_id', 'user_name', 'user_touched', 'actor_id' ] )
 			->from( 'user' )
@@ -91,26 +92,57 @@ class RemoveUnusedAccounts extends Maintenance {
 		# If required, go back and delete each marked account
 		if ( $count > 0 && $this->hasOption( 'delete' ) ) {
 			$this->output( "\nDeleting unused accounts..." );
-			$dbw = $this->getDB( DB_PRIMARY );
-			$dbw->delete( 'user', [ 'user_id' => $delUser ], __METHOD__ );
+			$dbw = $this->getPrimaryDB();
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'user' )
+				->where( [ 'user_id' => $delUser ] )
+				->caller( __METHOD__ )->execute();
 			# Keep actor rows referenced from ipblocks
-			$keep = $dbw->newSelectQueryBuilder()
-				->select( 'ipb_by_actor' )
-				->from( 'ipblocks' )
-				->where( [ 'ipb_by_actor' => $delActor ] )
-				->caller( __METHOD__ )->fetchFieldValues();
+			$stage = $this->getConfig()
+				->get( MainConfigNames::BlockTargetMigrationStage );
+			if ( $stage & SCHEMA_COMPAT_READ_OLD ) {
+				$keep = $dbw->newSelectQueryBuilder()
+					->select( 'ipb_by_actor' )
+					->from( 'ipblocks' )
+					->where( [ 'ipb_by_actor' => $delActor ] )
+					->caller( __METHOD__ )->fetchFieldValues();
+			} else {
+				$keep = $dbw->newSelectQueryBuilder()
+					->select( 'bl_by_actor' )
+					->from( 'block' )
+					->where( [ 'bl_by_actor' => $delActor ] )
+					->caller( __METHOD__ )->fetchFieldValues();
+			}
 			$del = array_diff( $delActor, $keep );
 			if ( $del ) {
-				$dbw->delete( 'actor', [ 'actor_id' => $del ], __METHOD__ );
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'actor' )
+					->where( [ 'actor_id' => $del ] )
+					->caller( __METHOD__ )->execute();
 			}
 			if ( $keep ) {
 				$dbw->update( 'actor', [ 'actor_user' => null ], [ 'actor_id' => $keep ], __METHOD__ );
 			}
-			$dbw->delete( 'user_groups', [ 'ug_user' => $delUser ], __METHOD__ );
-			$dbw->delete( 'user_former_groups', [ 'ufg_user' => $delUser ], __METHOD__ );
-			$dbw->delete( 'user_properties', [ 'up_user' => $delUser ], __METHOD__ );
-			$dbw->delete( 'logging', [ 'log_actor' => $delActor ], __METHOD__ );
-			$dbw->delete( 'recentchanges', [ 'rc_actor' => $delActor ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'user_groups' )
+				->where( [ 'ug_user' => $delUser ] )
+				->caller( __METHOD__ )->execute();
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'user_former_groups' )
+				->where( [ 'ufg_user' => $delUser ] )
+				->caller( __METHOD__ )->execute();
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'user_properties' )
+				->where( [ 'up_user' => $delUser ] )
+				->caller( __METHOD__ )->execute();
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'logging' )
+				->where( [ 'log_actor' => $delActor ] )
+				->caller( __METHOD__ )->execute();
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'recentchanges' )
+				->where( [ 'rc_actor' => $delActor ] )
+				->caller( __METHOD__ )->execute();
 			$this->output( "done.\n" );
 			# Update the site_stats.ss_users field
 			$users = $dbw->newSelectQueryBuilder()
@@ -146,7 +178,7 @@ class RemoveUnusedAccounts extends Maintenance {
 			return true;
 		}
 
-		$dbo = $this->getDB( $primary ? DB_PRIMARY : DB_REPLICA );
+		$dbo = $primary ? $this->getPrimaryDB() : $this->getReplicaDB();
 		$checks = [
 			'archive' => 'ar',
 			'image' => 'img',
@@ -181,7 +213,7 @@ class RemoveUnusedAccounts extends Maintenance {
 		$count += (int)$dbo->newSelectQueryBuilder()
 			->select( 'COUNT(*)' )
 			->from( 'logging' )
-			->where( [ 'log_actor' => $actor, 'log_type != ' . $dbo->addQuotes( 'newusers' ) ] )
+			->where( [ 'log_actor' => $actor, $dbo->expr( 'log_type', '!=', 'newusers' ) ] )
 			->caller( __METHOD__ )->fetchField();
 
 		$this->commitTransaction( $dbo, __METHOD__ );

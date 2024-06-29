@@ -9,7 +9,7 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
-use Wikimedia\Parsoid\Ext\PHPUtils;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 
 class TraditionalMode extends Mode {
 	/**
@@ -19,7 +19,7 @@ class TraditionalMode extends Mode {
 	protected function __construct( ?string $mode = null ) {
 		parent::__construct( $mode ?? 'traditional' );
 		$this->scale = 1;
-		$this->padding = PHPUtils::arrayToObject( [ 'thumb' => 30, 'box' => 5, 'border' => 8 ] );
+		$this->padding = (object)[ 'thumb' => 30, 'box' => 5, 'border' => 8 ];
 	}
 
 	/** @var float */
@@ -27,24 +27,12 @@ class TraditionalMode extends Mode {
 	/** @var \stdClass */
 	protected $padding;
 
-	/**
-	 * @param Element $ul
-	 * @param string $k
-	 * @param string $v
-	 */
-	private function appendAttr( Element $ul, string $k, string $v ) {
-		$val = $ul->hasAttribute( $k ) ? $ul->getAttribute( $k ) : '';
-		if ( strlen( $val ) > 0 ) {
-			$val .= ' ';
-		}
-		$ul->setAttribute( $k, $val . $v );
+	private function appendAttr( Element $ul, string $k, string $v ): void {
+		$val = DOMCompat::getAttribute( $ul, $k );
+		$val = ( $val === null || trim( $val ) === '' ) ? $v : "$val $v";
+		$ul->setAttribute( $k, $val );
 	}
 
-	/**
-	 * @param Opts $opts
-	 * @param DocumentFragment $domFragment
-	 * @return Element
-	 */
 	private function ul(
 		Opts $opts, DocumentFragment $domFragment
 	): Element {
@@ -60,10 +48,6 @@ class TraditionalMode extends Mode {
 		return $ul;
 	}
 
-	/**
-	 * @param Opts $opts
-	 * @param Element $ul
-	 */
 	protected function perRow( Opts $opts, Element $ul ): void {
 		if ( $opts->imagesPerRow > 0 ) {
 			$padding = $this->padding;
@@ -73,21 +57,12 @@ class TraditionalMode extends Mode {
 		}
 	}
 
-	/**
-	 * @param Opts $opts
-	 * @param Element $ul
-	 */
 	protected function setAdditionalOptions( Opts $opts, Element $ul ): void {
 	}
 
-	/**
-	 * @param Opts $opts
-	 * @param Element $ul
-	 * @param DocumentFragment $caption
-	 */
 	private function caption(
 		Opts $opts, Element $ul, DocumentFragment $caption
-	) {
+	): void {
 		$doc = $ul->ownerDocument;
 		$li = $doc->createElement( 'li' );
 		$li->setAttribute( 'class', 'gallerycaption' );
@@ -156,12 +131,6 @@ class TraditionalMode extends Mode {
 		return 'width: ' . $this->boxWidth( $width ) . 'px;';
 	}
 
-	/**
-	 * @param Document $doc
-	 * @param Element $box
-	 * @param ?Element $gallerytext
-	 * @param float $width
-	 */
 	protected function galleryText(
 		Document $doc, Element $box, ?Element $gallerytext,
 		float $width
@@ -176,11 +145,6 @@ class TraditionalMode extends Mode {
 		$box->appendChild( $div );
 	}
 
-	/**
-	 * @param Opts $opts
-	 * @param Element $ul
-	 * @param ParsedLine $o
-	 */
 	private function line( Opts $opts, Element $ul, ParsedLine $o ): void {
 		$doc = $ul->ownerDocument;
 
@@ -226,9 +190,6 @@ class TraditionalMode extends Mode {
 		return $domFragment;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getModuleStyles(): array {
 		return [ 'mediawiki.page.gallery.styles' ];
 	}

@@ -4,9 +4,7 @@ namespace MediaWiki\Rest\Handler;
 
 use FormatJson;
 use IApiMessage;
-use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
-use MediaWiki\Rest\Validator\JsonBodyValidator;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Utils\MWTimestamp;
@@ -50,21 +48,6 @@ class UpdateHandler extends EditHandler {
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
 			],
-		];
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getBodyValidator( $contentType ) {
-		if ( $contentType !== 'application/json' ) {
-			throw new HttpException( "Unsupported Content-Type",
-				415,
-				[ 'content_type' => $contentType ]
-			);
-		}
-
-		return new JsonBodyValidator( [
 			'source' => [
 				self::PARAM_SOURCE => 'body',
 				ParamValidator::PARAM_TYPE => 'string',
@@ -85,7 +68,10 @@ class UpdateHandler extends EditHandler {
 				ParamValidator::PARAM_TYPE => 'array',
 				ParamValidator::PARAM_REQUIRED => false,
 			],
-		] + $this->getTokenParamDefinition() );
+
+		]
+			+ $this->getTokenParamDefinition()
+			+ parent::getParamSettings();
 	}
 
 	/**
@@ -93,6 +79,7 @@ class UpdateHandler extends EditHandler {
 	 */
 	protected function getActionModuleParameters() {
 		$body = $this->getValidatedBody();
+		'@phan-var array $body';
 
 		$title = $this->getTitleParameter();
 		$baseRevId = $body['latest']['id'] ?? 0;
@@ -105,7 +92,9 @@ class UpdateHandler extends EditHandler {
 			);
 		}
 
-		$token = $this->getToken() ?? $this->getUser()->getEditToken();
+		// Use a known good CSRF token if a token is not needed because we are
+		// using a method of authentication that protects against CSRF, like OAuth.
+		$token = $this->needsToken() ? $this->getToken() : $this->getUser()->getEditToken();
 
 		$params = [
 			'action' => 'edit',
@@ -186,6 +175,7 @@ class UpdateHandler extends EditHandler {
 	 */
 	private function getConflictData() {
 		$body = $this->getValidatedBody();
+		'@phan-var array $body';
 		$baseRevId = $body['latest']['id'] ?? 0;
 		$title = $this->titleParser->parseTitle( $this->getValidatedParams()['title'] );
 

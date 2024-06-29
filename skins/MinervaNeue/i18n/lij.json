@@ -52,9 +52,16 @@
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discusción]]",
 	"minerva-skin-desc": "'Na prìmma skin reatîva pe apægi mòbili",
 	"skin-minerva-issue-learn-more": "Pe savéine de ciù",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 segóndo|$1 segóndi}} fa",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 menûto|$1 menûti}} fa",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 ôa|$1 ôe}} fa",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 giórno|$1 giórni}} fa",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 méize|$1 méixi}} fa",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 ànno|$1 ànni}} fa",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorîe",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vizoalizâ e categorîe de pàgine",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Gestión megioâ di problêmi de pàgine",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "I problêmi da pàgina (Template:ambox) saiàn inserîi inta vôxe.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Pe desdìccia a fonçión \"ragrùppa pe pàgina\" a no l'é disponìbile inta versción mòbile. Se ti ti vêu dêuviâla, ti ti gh'æ da vixitâ o scîto inta versción desktop."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Pe desdìccia a fonçión \"ragrùppa pe pàgina\" a no l'é disponìbile inta versción mòbile. Se ti ti vêu dêuviâla, ti ti gh'æ da vixitâ o scîto inta versción desktop.",
+	"skin-minerva-night-mode-unavailable": "Pàgina disponìbile sôlo inti coî do têma \"Giórno\"."
 }

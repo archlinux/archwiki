@@ -21,15 +21,15 @@ const { ProgressBar } = require( 'mmv' );
 	QUnit.module( 'mmv.ui.ProgressBar', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sense check', function ( assert ) {
-		var progressBar = new ProgressBar( $( '<div>' ) );
+		const progressBar = new ProgressBar( $( '<div>' ) );
 		assert.true( progressBar instanceof ProgressBar, 'ProgressBar created sccessfully' );
 		assert.strictEqual( progressBar.$progress.hasClass( 'empty' ), true, 'ProgressBar starts empty' );
 	} );
 
 	QUnit.test( 'animateTo()', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			$div = $( '<div>' ).css( { width: 250, position: 'relative' } ).appendTo( $qf ),
-			progress = new ProgressBar( $div );
+		const $qf = $( '#qunit-fixture' );
+		const $div = $( '<div>' ).css( { width: 250, position: 'relative' } ).appendTo( $qf );
+		const progress = new ProgressBar( $div );
 
 		assert.strictEqual( progress.$progress.hasClass( 'empty' ), true, 'Progress bar is hidden' );
 		assert.strictEqual( progress.$percent.width(), 0, 'Progress bar\'s indicator is at 0' );
@@ -59,9 +59,9 @@ const { ProgressBar } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'jumpTo()/hide()', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			$div = $( '<div>' ).css( { width: 250, position: 'relative' } ).appendTo( $qf ),
-			progress = new ProgressBar( $div );
+		const $qf = $( '#qunit-fixture' );
+		const $div = $( '<div>' ).css( { width: 250, position: 'relative' } ).appendTo( $qf );
+		const progress = new ProgressBar( $div );
 
 		assert.strictEqual( progress.$progress.hasClass( 'empty' ), true, 'Progress bar is hidden' );
 		assert.strictEqual( progress.$percent.width(), 0, 'Progress bar\'s indicator is at 0' );

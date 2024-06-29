@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWMathNode class.
  *
- * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license MIT
  */
 

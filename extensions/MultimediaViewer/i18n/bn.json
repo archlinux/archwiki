@@ -3,10 +3,10 @@
 		"authors": [
 			"Aftab1995",
 			"Aftabuzzaman",
+			"Aishik Rehman",
 			"Macofe",
 			"Tauhid16",
-			"আফতাবুজ্জামান",
-			"Aishik Rehman"
+			"আফতাবুজ্জামান"
 		]
 	},
 	"multimediaviewer-desc": "একটি পূর্ণস্ক্রিন ইন্টারফেসের মধ্যে একটি বড় মাপের থাম্বনেল প্রসারিত করে।",
@@ -105,12 +105,13 @@
 	"multimediaviewer-title-popup-text-more": "সম্পূর্ণ বিবরণ দেখুন",
 	"multimediaviewer-credit-popup-text-more": "পূর্ণ প্রণেতা এবং উৎস দেখুন",
 	"multimediaviewer-download-attribution-cta-header": "আপনার প্রণেতাকে আরোপ করা প্রয়োজন",
-	"multimediaviewer-download-optional-attribution-cta-header": "আপনি প্রণেতাকে আরোপ করতে পারেন",
+	"multimediaviewer-download-optional-attribution-cta-header": "আপনি প্রণেতাকে কৃতিত্ব দিতে পারেন",
 	"multimediaviewer-download-attribution-cta": "কিভাবে আমাকে দেখান",
 	"multimediaviewer-reuse-warning-deletion": "এই ফাইলটি অপসারণের জন্য বিবেচনা করা হয়েছে।",
 	"multimediaviewer-reuse-warning-nonfree": "এই ফাইলটিতে একটি উন্মুক্ত লাইসেন্স নেই।",
 	"multimediaviewer-reuse-warning-generic": "এটি ব্যবহার করার আগে [$1 এর বিস্তারিত] পরীক্ষা করুন।",
 	"multimediaviewer-attr-plain": "সাধারণ",
+	"multimediaviewer-attr-html": "এইচটিএমএল",
 	"multimediaviewer-options-tooltip": "মিডিয়া ভিউয়ার সক্রিয় অথবা নিষ্ক্রিয় করুন",
 	"multimediaviewer-options-dialog-header": "মিডিয়া ভিউয়ার নিষ্ক্রিয় করবেন?",
 	"multimediaviewer-options-text-header": "সব ফাইলের জন্য এই দেখার বৈশিষ্ট্য এড়িয়ে যান।",

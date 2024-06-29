@@ -22,6 +22,8 @@
 	"apihelp-discussiontoolsedit-summary": "Post a message on a discussion page.",
 	"apihelp-discussiontoolsfindcomment-summary": "Find a comment by its ID or name.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "Comment ID or name",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Heading hash fragment",
+	"apihelp-discussiontoolsfindcomment-param-page": "Page that the heading hash fragment once existed on",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Names of the topics to check",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Get the subscription statuses of given topics.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "The revision number to use (defaults to latest revision).",

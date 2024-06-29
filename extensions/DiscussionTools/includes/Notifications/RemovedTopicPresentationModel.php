@@ -13,8 +13,8 @@ use Language;
 use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
-use SpecialPage;
-use User;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\User;
 
 class RemovedTopicPresentationModel extends EchoEventPresentationModel {
 
@@ -134,9 +134,9 @@ class RemovedTopicPresentationModel extends EchoEventPresentationModel {
 		];
 
 		// Known preferences used below:
-		// echo-subscriptions-email-dt-subscription-archiving
-		// echo-subscriptions-push-dt-subscription-archiving
-		// echo-subscriptions-web-dt-subscription-archiving
+		// * echo-subscriptions-email-dt-subscription-archiving
+		// * echo-subscriptions-push-dt-subscription-archiving
+		// * echo-subscriptions-web-dt-subscription-archiving
 
 		$category = $this->getCategory();
 		$isDisabled = true;

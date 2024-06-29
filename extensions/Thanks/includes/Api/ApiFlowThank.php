@@ -10,7 +10,7 @@ use Flow\Model\PostRevision;
 use Flow\Model\UUID;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Title\Title;
-use User;
+use MediaWiki\User\User;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**

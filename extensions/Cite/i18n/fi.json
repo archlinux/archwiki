@@ -32,7 +32,6 @@
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code>-elementin sulkeva <code>&lt;/ref&gt;</code>-elementti puuttuu",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code>-elementit löytyivät ryhmälle nimeltä ”$1”, mutta vastaavaa <code>&lt;references group=\"$1\"/&gt;</code>-elementtiä ei löytynyt",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code>-elementti <code>&lt;references&gt;</code>-elementin sisällä sisältää ristiriitaisen ryhmämääritteen ”$1”.",
-	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>-elementissä määritetty <code>&lt;ref&gt;</code>-elementti sisältää ryhmämääritteen ”$1”, jota ei mainita aiemmassa tekstissä.",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code>-elementin nimeä ”$1”, johon viitataan elementissä <code>&lt;references&gt;</code> ei käytetä edeltävässä tekstissä.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code>-elementissä määritetyllä <code>&lt;ref&gt;</code>-elementillä ei ole nimimääritettä.",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>-elementissä määritetyllä <code>&lt;ref&gt;</code>-elementillä nimellä ”$1” ei ole sisältöä.",

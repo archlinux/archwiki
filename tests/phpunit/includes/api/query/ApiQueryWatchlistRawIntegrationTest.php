@@ -1,14 +1,18 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
+use WatchedItemQueryService;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers ApiQueryWatchlistRaw
+ * @covers \ApiQueryWatchlistRaw
  */
 class ApiQueryWatchlistRawIntegrationTest extends ApiTestCase {
 	// TODO: This test should use Authority, but can't due to User::saveSettings
@@ -17,11 +21,6 @@ class ApiQueryWatchlistRawIntegrationTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'watchlist', 'watchlist_expiry' ]
-		);
 
 		$this->loggedInUser = $this->getMutableTestUser()->getUser();
 		$this->notLoggedInUser = $this->getMutableTestUser()->getUser();

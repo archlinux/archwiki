@@ -10,7 +10,7 @@
 	"math_syntax_error": "حطا ساختار",
 	"math_unknown_error": "ناشناسین حطا",
 	"math_unknown_function": "ناشناس عملگر",
-	"mw_math_mathml": "MathML اگر ممکن انت (آزمایشی)",
-	"mw_math_source": "LaTeX ءِ سرچممگ (پہ نبشتانکانءِ بروزرا)",
+	"mw-math-mathml": "MathML اگر ممکن انت (آزمایشی)",
+	"mw-math-source": "LaTeX ءِ سرچممگ (پہ نبشتانکانءِ بروزرا)",
 	"prefs-math": "ریاضی"
 }

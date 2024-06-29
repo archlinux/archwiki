@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"94rain",
 			"A2093064",
 			"Bowleerin",
 			"Ch.Andrew",
@@ -16,8 +17,7 @@
 			"Waihorace",
 			"Winston Sung",
 			"Xiplus",
-			"飞舞回堂前",
-			"94rain"
+			"飞舞回堂前"
 		]
 	},
 	"thanks-desc": "提供可讓使用者感謝編輯、評論..等的連結。",
@@ -51,7 +51,6 @@
 	"echo-pref-subscription-edit-thank": "對我的編輯表示感謝",
 	"echo-pref-tooltip-edit-thank": "當有人感謝我所做的編輯時，請通知我。",
 	"echo-category-title-edit-thank": "感謝",
-	"notification-thanks-diff-link": "您的編輯",
 	"notification-header-rev-thank": "$1對於{{GENDER:$4|您}}在<strong>$3</strong>所作出的編輯表示{{GENDER:$2|感謝}}。",
 	"notification-header-creation-thank": "$1對於{{GENDER:$4|您}}所建立的<strong>$3</strong>表示{{GENDER:$2|感謝}}。",
 	"notification-header-log-thank": "$1{{GENDER:$2|已感謝}}{{GENDER:$4|您}}對於<strong>$3</strong>的相關操作。",
@@ -70,7 +69,6 @@
 	"thanks-error-invalidpostid": "貼文ID無效。",
 	"flow-thanks-confirmation-special": "您是否要對此評論公開表達感謝？",
 	"flow-thanks-thanked-notice": "$1已收到{{GENDER:$3|您}}對{{GENDER:$2|他的|她的|他的}}評論的感謝。",
-	"notification-flow-thanks-post-link": "您的評論",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|已感謝}}{{GENDER:$5|您}}於「<strong>$3</strong>」中的評論。",
 	"notification-compact-header-flow-thank": "$1{{GENDER:$2|已感謝}}{{GENDER:$3|您}}。",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|有$1位|100=有超過99位}}對於{{GENDER:$3|您}}在「<strong>$2</strong>」所作出的評論表示感謝。",

@@ -2,24 +2,29 @@
 	"@metadata": {
 		"authors": [
 			"BerryAVGN",
+			"Dirruw'o",
 			"Katunchik",
 			"Megakott",
 			"Okras",
-			"Vlad5250"
+			"Vlad5250",
+			"Kareyac"
 		]
 	},
 	"rest-prefix-mismatch": "Запрашиваемый путь ($1) не найден внутри корневого пути REST API ($2)",
 	"rest-wrong-method": "Метод запроса ($1) не был {{{{PLURAL:$3|}}|разрешённым методом для этого пути|одним из разрешённых методов для этого пути}} ($2)",
 	"rest-no-match": "Запрошенный относительный путь ($1) не соответствует ни одному известному обработчику",
-	"rest-nonexistent-title": "Указанного заголовка ($1) не существует",
+	"rest-nonexistent-title": "Указанной страницы ($1) не существует",
 	"rest-nonexistent-title-revision": "Указанной версии ($1) не существует для указанной страницы ($2)",
 	"rest-nonexistent-revision": "Запрошенная редакция ($1) не существует",
 	"rest-nonexistent-user": "Указанный пользователь ($1) не существует",
 	"rest-invalid-user": "Указанное имя участника ($1) некорректно",
+	"rest-invalid-title": "Указанный заголовок ($1) не относится к вики-странице.",
 	"rest-unsupported-content-type": "Неподдерживаемый Content-Type: $1",
+	"rest-permission-error": "Доступ запрещён: $1",
 	"rest-permission-denied-anon": "Не доступно анонимному участнику",
 	"rest-permission-denied-title": "Участник не обладает правами чтения заголовка ($1)",
 	"rest-permission-denied-revision": "Участник не имеет доступа к запрошенной версии ($1).",
+	"rest-rate-limit-exceeded": "Превышен лимит скорости. Пожалуйста, повторите попытку позже.",
 	"rest-resource-limit-exceeded": "Превышены лимиты ресурсов при обработке запроса.",
 	"rest-pagehistory-incompatible-params": "Параметры «older_than» и «newer_than» нельзя указывать одновременно",
 	"rest-pagehistory-param-range-error": "Идентификатор версии должен быть больше 0",
@@ -37,10 +42,11 @@
 	"rest-page-source-type-error": "Тип содержимого запрошенного источника страницы не поддерживается.",
 	"rest-no-revision": "Не удалось получить версию для заголовка $1",
 	"rest-media-too-many-links": "Слишком много медиа-ссылок найдено в заголовке $1 (разрешено $2)",
-	"rest-html-backend-error": "Невозможно получить Parsoid HTML",
+	"rest-html-backend-error": "Невозможно получить Parsoid HTML: $1",
 	"rest-bad-json-body": "Неверное тело запроса, должно быть объектом JSON.",
 	"rest-json-body-parse-error": "Не удалось выполнить синтаксический анализ тела запроса как JSON: $1",
 	"rest-missing-body-field": "В теле запроса отсутствует обязательное поле «$1».",
+	"rest-body-validation error": "Недопустимый режим запроса: $1",
 	"rest-extraneous-body-fields": "В теле запроса обнаружены посторонние поля: $1",
 	"rest-bad-content-model": "Неверная модель содержимого: $1",
 	"rest-update-cannot-create-page": "Страница «$1» не может быть создана, так как она уже существует. Чтобы обновить существующую страницу, укажите идентификатор базовой версии в структуре под ключом «latest» в теле запроса.",
@@ -50,5 +56,6 @@
 	"rest-requires-safe-against-csrf": "Для этой конечной точки требуется поставщик сеансов, безопасный для CSRF.",
 	"rest-badtoken": "Предоставленный CSRF-токен недействителен.",
 	"rest-badtoken-missing": "Параметр <var>token</var> является обязательным, если только не используется метод аутентификации, безопасный для CSRF.",
-	"rest-badtoken-nosession": "Ошибка CSRF — нет сеанса."
+	"rest-badtoken-nosession": "Ошибка CSRF — нет сеанса.",
+	"rest-parsoid-error": "Ошибка Parsoid."
 }

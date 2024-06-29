@@ -72,7 +72,7 @@
 				node.nodeType === Node.ELEMENT_NODE &&
 				// element with childnodes, and not a script, style or an element we created
 				node.childNodes &&
-				!/(script|style)/i.test( node.tagName ) &&
+				!/^(script|style)$/i.test( node.tagName ) &&
 				!(
 					node.tagName.toLowerCase() === 'span' &&
 					node.className.match( /\bhighlight/ )
@@ -88,7 +88,16 @@
 
 	/**
 	 * Highlight certain text in current nodes (by wrapping it in `<span class="highlight">...</span>`).
+	 * Provided by the jquery.highlightText ResourceLoader module.
 	 *
+	 * @example
+	 * mw.loader.using( 'jquery.highlightText' ).then( () => {
+	 *       // no styling is provided by default.
+	 *       mw.util.addCSS( `.highlight { background: yellow; }` )
+	 *       $( '#bodyContent' ).highlightText( 'bear' );
+	 * } );
+	 * @memberof jQueryPlugins
+	 * @method highlightText
 	 * @param {string} matchString String to match
 	 * @param {Object} [options]
 	 * @param {string} [options.method='splitAndHighlight'] Method of matching to use, one of:
@@ -97,7 +106,6 @@
 	 *   - 'prefixPlusComboHighlight': Match `matchString` plus any combining characters at
 	 *     the beginning of text only.
 	 * @return {jQuery}
-	 * @chainable
 	 */
 	$.fn.highlightText = function ( matchString, options ) {
 		options = options || {};

@@ -122,8 +122,7 @@
 	 *  fetched from the API.
 	 */
 	mw.echo.api.APIHandler.prototype.createNewFetchNotificationPromise = function ( type, sources, overrideParams ) {
-		var fetchNotifPromise,
-			fetchingSource = 'local',
+		var fetchingSource = 'local',
 			me = this,
 			params = $.extend( {
 				action: 'query',
@@ -151,7 +150,7 @@
 		this.apiErrorState[ type ][ fetchingSource ] = false;
 
 		// Create the fetch promise
-		fetchNotifPromise = this.api.get( $.extend( true, params, overrideParams ) );
+		var fetchNotifPromise = this.api.get( $.extend( true, params, overrideParams ) );
 
 		// Only cache promises that don't have override params in them
 		if ( !overrideParams ) {

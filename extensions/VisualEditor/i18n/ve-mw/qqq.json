@@ -35,7 +35,8 @@
 			"Woytecr",
 			"Yejianfei",
 			"Zoranzoki21",
-			"Ата"
+			"Ата",
+			"Jack who built the house"
 		]
 	},
 	"accesskey-ca-ve-edit": "{{doc-accesskey}}",
@@ -48,7 +49,7 @@
 	"accesskey-ca-createsource-local": "{{doc-accesskey}}",
 	"collabpad-doctitle": "Name of CollabPad special page with a document subtitle",
 	"collabpad-import-subtitle": "Subtitle of CollabPad page, linking to the page the content was imported from",
-	"collabpad": "Name of CollabPad special page",
+	"collabpad": "{{doc-special|CollabPad}}",
 	"tooltip-ca-ve-edit": "Tooltip of the dedicated VisualEditor \"Edit\" tab.\n{{Identical|Edit this page}}",
 	"tooltip-ca-ve-edit-local": "Tooltip of the dedicated VisualEditor \"Edit local description\" tab.",
 	"tooltip-ca-ve-create": "Tooltip of the dedicated VisualEditor \"Create\" tab.",
@@ -354,6 +355,10 @@
 	"visualeditor-preference-tabs-prefer-ve": "Used in [[Special:Preferences]].\n\nUsed as label for a radio button to have VisualEditor be the preferred editor. Shown together with the following buttons, so consider formulating them consistently:\n* {{msg-mw|Visualeditor-preference-tabs-multi-tab}}\n* {{msg-mw|Visualeditor-preference-tabs-prefer-wt}}\n* {{msg-mw|Visualeditor-preference-tabs-remember-last}}",
 	"visualeditor-preference-tabs-prefer-wt": "Used in [[Special:Preferences]].\n\nUsed as label for a radio button to have the wikitext editor be the preferred editor. Shown together with the following buttons, so consider formulating them consistently:\n* {{msg-mw|Visualeditor-preference-tabs-multi-tab}}\n* {{msg-mw|Visualeditor-preference-tabs-prefer-ve}}\n* {{msg-mw|Visualeditor-preference-tabs-remember-last}}",
 	"visualeditor-preference-tabs-remember-last": "Used in [[Special:Preferences]].\n\nUsed as label for a radio button to have VisualEditor remember whether it was the last editor or not. Shown together with the following buttons, so consider formulating them consistently:\n* {{msg-mw|Visualeditor-preference-tabs-multi-tab}}\n* {{msg-mw|Visualeditor-preference-tabs-prefer-ve}}\n* {{msg-mw|Visualeditor-preference-tabs-prefer-wt}}",
+	"visualeditor-preference-collab-label": "Used in [[Special:Preferences]].\n\nUsed as label for checkbox to enable collaborative editing.\n\nThe description for this checkbox is {{msg-mw|visualeditor-preference-collab-description}}",
+	"visualeditor-preference-collab-description": "Used in [[Special:Preferences]].\n\nUsed as description for the checkbox to enable collaborative editing.\n\nThe label for this checkbox is {{msg-mw|visualeditor-preference-collab-label}}.",
+	"visualeditor-preference-collab-info-link": "{{optional|Used on [[Special:Preferences]] as a link to a page where users can learn about this Beta Feature. Defaults to a page on MediaWiki.org.}}",
+	"visualeditor-preference-collab-discussion-link": "{{optional|Used on [[Special:Preferences]] as a link to a page where users can discuss this Beta Feature. Defaults to a page on MediaWiki.org.}}",
 	"visualeditor-quick-access-characters.json": "{{notranslate}}\n{{ignored}}\nJSON object mapping character labels to actual characters that can be inserted using the special character inserter.",
 	"visualeditor-rebase-client-export": "Label for button to export a document\n{{Identical|Export}}",
 	"visualeditor-rebase-client-export-start": "Label for button to start a process to export a document\n\nSee also:\n* {{msg-mw|visualeditor-rebase-client-export}}",

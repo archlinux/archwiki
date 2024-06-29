@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\ChangeTags;
 
-use ChangeTags;
+use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
 use WANObjectCache;
@@ -20,25 +20,24 @@ class ChangeTagsManager {
 	public const SERVICE_NAME = 'AbuseFilterChangeTagsManager';
 	private const CONDS_LIMIT_TAG = 'abusefilter-condition-limit';
 
-	/** @var LBFactory */
-	private $lbFactory;
-
-	/** @var WANObjectCache */
-	private $cache;
-
-	/** @var CentralDBManager */
-	private $centralDBManager;
+	private ChangeTagsStore $changeTagsStore;
+	private LBFactory $lbFactory;
+	private WANObjectCache $cache;
+	private CentralDBManager $centralDBManager;
 
 	/**
+	 * @param ChangeTagsStore $changeTagsStore
 	 * @param LBFactory $lbFactory
 	 * @param WANObjectCache $cache
 	 * @param CentralDBManager $centralDBManager
 	 */
 	public function __construct(
+		ChangeTagsStore $changeTagsStore,
 		LBFactory $lbFactory,
 		WANObjectCache $cache,
 		CentralDBManager $centralDBManager
 	) {
+		$this->changeTagsStore = $changeTagsStore;
 		$this->lbFactory = $lbFactory;
 		$this->cache = $cache;
 		$this->centralDBManager = $centralDBManager;
@@ -49,7 +48,7 @@ class ChangeTagsManager {
 	 */
 	public function purgeTagCache(): void {
 		// xxx: this doesn't purge all existing caches, see T266105
-		ChangeTags::purgeTagCacheAll();
+		$this->changeTagsStore->purgeTagCacheAll();
 		$this->cache->delete( $this->getCacheKeyForStatus( true ) );
 		$this->cache->delete( $this->getCacheKeyForStatus( false ) );
 	}

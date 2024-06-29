@@ -51,7 +51,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "See viide on määratletud mallis või muus genereeritud plokis ning praegu saab seda eelvaadelda ainult lähteteksti režiimis.",
 	"cite-ve-referenceslist-missingreflist": "Selle viiteloendi tekitab mall.",
 	"cite-ve-toolbar-group-label": "Viide",
-	"cite-ve-othergroup-item": "Viide: {{lc:$1}}",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Viited",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Viiterühma nimi: \"$1\""
+	"cite-ve-othergroup-item": "Viide: {{lc:$1}}"
 }

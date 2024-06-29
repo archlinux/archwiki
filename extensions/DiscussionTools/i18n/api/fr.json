@@ -7,7 +7,8 @@
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"Lofhi"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Commentaire avec l’ID « $1 » non trouvé.",
@@ -30,6 +31,8 @@
 	"apihelp-discussiontoolsedit-summary": "Créer un message sur une page de discussion.",
 	"apihelp-discussiontoolsfindcomment-summary": "Trouver un commentaire par son identifiant ou son nom.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "Identifiant ou nom du commentaire",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Fragment de hachage de l'en-tête de discussion",
+	"apihelp-discussiontoolsfindcomment-param-page": "Page de discussion sur laquelle le fragment de hachage de l'en-tête existait autrefois",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Noms des sujets à vérifier",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Obtenir les états d’inscription des sujets donnés.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Le numéro de révision à utiliser (par défaut, la dernière révision).",

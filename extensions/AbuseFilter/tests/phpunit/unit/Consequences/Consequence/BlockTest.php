@@ -10,12 +10,12 @@ use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Block;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
+use MediaWiki\Status\Status;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use MessageLocalizer;
 use Psr\Log\NullLogger;
-use Status;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Block

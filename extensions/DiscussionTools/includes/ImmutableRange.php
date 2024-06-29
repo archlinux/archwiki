@@ -30,11 +30,11 @@ use Wikimedia\Parsoid\DOM\Text;
  * @property int $startOffset
  */
 class ImmutableRange {
-	private $mCommonAncestorContainer;
-	private $mEndContainer;
-	private $mEndOffset;
-	private $mStartContainer;
-	private $mStartOffset;
+	private ?Node $mCommonAncestorContainer = null;
+	private Node $mEndContainer;
+	private int $mEndOffset;
+	private Node $mStartContainer;
+	private int $mStartOffset;
 
 	/**
 	 * Find the common ancestor container of two nodes
@@ -47,19 +47,34 @@ class ImmutableRange {
 		$ancestorsA = [];
 		$ancestorsB = [];
 
+		$parent = $a;
 		do {
-			$ancestorsA[] = $a;
-		} while ( ( $a = $a->parentNode ) );
+			// While walking up the parents of $a we found $b is a parent of $a or even identical
+			if ( $parent === $b ) {
+				return $b;
+			}
+			$ancestorsA[] = $parent;
+		} while ( $parent = $parent->parentNode );
+
+		$parent = $b;
 		do {
-			$ancestorsB[] = $b;
-		} while ( ( $b = $b->parentNode ) );
+			// While walking up the parents of $b we found $a is a parent of $b or even identical
+			if ( $parent === $a ) {
+				return $a;
+			}
+			$ancestorsB[] = $parent;
+		} while ( $parent = $parent->parentNode );
 
 		$node = null;
-		while ( end( $ancestorsA ) && end( $ancestorsA ) === end( $ancestorsB ) ) {
-			$node = end( $ancestorsA );
-			array_pop( $ancestorsA );
-			array_pop( $ancestorsB );
+		// Start with the top-most (hopefully) identical root node, walk down, skip everything
+		// that's identical, and stop at the first mismatch
+		$indexA = count( $ancestorsA );
+		$indexB = count( $ancestorsB );
+		while ( $indexA-- && $indexB-- && $ancestorsA[$indexA] === $ancestorsB[$indexB] ) {
+			// Remember the last match closest to $a and $b
+			$node = $ancestorsA[$indexA];
 		}
+
 		if ( !$node ) {
 			throw new DOMException( 'Nodes are not in the same document' );
 		}
@@ -69,9 +84,6 @@ class ImmutableRange {
 
 	/**
 	 * Get the root ancestor of a node
-	 *
-	 * @param Node $node
-	 * @return Node
 	 */
 	private static function getRootNode( Node $node ): Node {
 		while ( $node->parentNode ) {
@@ -82,12 +94,6 @@ class ImmutableRange {
 		return $node;
 	}
 
-	/**
-	 * @param Node $startNode
-	 * @param int $startOffset
-	 * @param Node $endNode
-	 * @param int $endOffset
-	 */
 	public function __construct(
 		Node $startNode, int $startOffset, Node $endNode, int $endOffset
 	) {
@@ -127,10 +133,6 @@ class ImmutableRange {
 
 	/**
 	 * Clone range with a new start position
-	 *
-	 * @param Node $startNode
-	 * @param int $startOffset
-	 * @return self
 	 */
 	public function setStart( Node $startNode, int $startOffset ): self {
 		return $this->setStartOrEnd( 'start', $startNode, $startOffset );
@@ -138,10 +140,6 @@ class ImmutableRange {
 
 	/**
 	 * Clone range with a new end position
-	 *
-	 * @param Node $endNode
-	 * @param int $endOffset
-	 * @return self
 	 */
 	public function setEnd( Node $endNode, int $endOffset ): self {
 		return $this->setStartOrEnd( 'end', $endNode, $endOffset );
@@ -239,8 +237,6 @@ class ImmutableRange {
 	 *
 	 * Ported from https://github.com/TRowbotham/PHPDOM (MIT)
 	 * @see https://dom.spec.whatwg.org/#dom-range-extractcontents
-	 *
-	 * @return DocumentFragment
 	 */
 	public function extractContents(): DocumentFragment {
 		$fragment = $this->mStartContainer->ownerDocument->createDocumentFragment();
@@ -412,8 +408,6 @@ class ImmutableRange {
 	/**
 	 * Ported from https://github.com/TRowbotham/PHPDOM (MIT)
 	 * @see https://dom.spec.whatwg.org/#dom-range-clonecontents
-	 *
-	 * @return DocumentFragment
 	 */
 	public function cloneContents(): DocumentFragment {
 		$ownerDocument = $this->mStartContainer->ownerDocument;

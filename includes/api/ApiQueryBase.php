@@ -25,6 +25,7 @@ use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -227,7 +228,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * input, consider using addWhereIDsFld() instead.
 	 *
 	 * @see IDatabase::select()
-	 * @param string|array $value
+	 * @param string|array|IExpression $value
 	 */
 	protected function addWhere( $value ) {
 		if ( is_array( $value ) ) {
@@ -243,7 +244,7 @@ abstract class ApiQueryBase extends ApiBase {
 
 	/**
 	 * Same as addWhere(), but add the WHERE clauses only if a condition is met
-	 * @param string|array $value
+	 * @param string|array|IExpression $value
 	 * @param bool $condition If false, do nothing
 	 * @return bool
 	 */
@@ -328,11 +329,11 @@ abstract class ApiQueryBase extends ApiBase {
 		$db = $this->getDB();
 
 		if ( $start !== null ) {
-			$this->addWhere( $field . $after . $db->addQuotes( $start ) );
+			$this->addWhere( $db->expr( $field, $after, $start ) );
 		}
 
 		if ( $end !== null ) {
-			$this->addWhere( $field . $before . $db->addQuotes( $end ) );
+			$this->addWhere( $db->expr( $field, $before, $end ) );
 		}
 
 		if ( $sort ) {

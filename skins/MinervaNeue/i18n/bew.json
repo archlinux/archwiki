@@ -32,7 +32,7 @@
 	"mobile-frontend-placeholder": "Cari di {{SITENAME}}",
 	"mobile-frontend-random-button": "Sembarang",
 	"mobile-frontend-redirected-from": "Dialihin deri \"[[$1]]\"",
-	"mobile-frontend-talk-back-to-filepage": "Kombali ke berekas \"$1\".",
+	"mobile-frontend-talk-back-to-filepage": "Kombali ke gepokan \"$1\".",
 	"mobile-frontend-talk-back-to-page": "Kombali ke halaman \"$1\".",
 	"mobile-frontend-talk-back-to-projectpage": "Kombali ke halaman proyèk \"$1\".",
 	"mobile-frontend-talk-back-to-userpage": "Kombali ke halaman pemaké \"{{GENDER:$1|$1}}\".",

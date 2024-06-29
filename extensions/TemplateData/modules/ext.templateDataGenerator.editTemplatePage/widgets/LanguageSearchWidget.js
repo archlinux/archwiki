@@ -84,7 +84,9 @@ LanguageSearchWidget.prototype.addResults = function () {
 		query = this.query.getValue().trim(),
 		compare = window.Intl && Intl.Collator ?
 			new Intl.Collator( this.lang, { sensitivity: 'base' } ).compare :
-			function ( a, b ) { return a.toLowerCase() === b.toLowerCase() ? 0 : 1; },
+			function ( a, b ) {
+				return a.toLowerCase() === b.toLowerCase() ? 0 : 1;
+			},
 		hasQuery = !!query.length,
 		items = [];
 

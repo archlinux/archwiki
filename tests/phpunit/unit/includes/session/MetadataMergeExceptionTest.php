@@ -1,18 +1,22 @@
 <?php
 
-namespace MediaWiki\Session;
+namespace MediaWiki\Tests\Session;
+
+use MediaWiki\Session\MetadataMergeException;
+use MediaWikiUnitTestCase;
+use UnexpectedValueException;
 
 /**
  * @group Session
- * @covers MediaWiki\Session\MetadataMergeException
+ * @covers \MediaWiki\Session\MetadataMergeException
  */
-class MetadataMergeExceptionTest extends \MediaWikiUnitTestCase {
+class MetadataMergeExceptionTest extends MediaWikiUnitTestCase {
 
 	public function testBasics() {
 		$data = [ 'foo' => 'bar' ];
 
 		$ex = new MetadataMergeException();
-		$this->assertInstanceOf( \UnexpectedValueException::class, $ex );
+		$this->assertInstanceOf( UnexpectedValueException::class, $ex );
 		$this->assertSame( [], $ex->getContext() );
 
 		$ex2 = new MetadataMergeException( 'Message', 42, $ex, $data );

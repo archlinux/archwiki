@@ -38,19 +38,6 @@
 			this.scrollTop = this.scrollHeight;
 		} );
 
-		// Show/hide Creative Commons thingy
-		$( '.licenseRadio' ).on( 'click', function () {
-			var $wrapper = $( '#config-cc-wrapper' );
-			if ( $( '#config__LicenseCode_cc-choose' ).is( ':checked' ) ) {
-				// FIXME: Use CSS transition
-				// eslint-disable-next-line no-jquery/no-animate-toggle
-				$wrapper.show( 'slow' );
-			} else {
-				// eslint-disable-next-line no-jquery/no-animate-toggle
-				$wrapper.hide( 'slow' );
-			}
-		} );
-
 		// Show/hide random stuff (email, upload)
 		$( '.showHideRadio' ).on( 'click', function () {
 			var $wrapper = $( '#' + $( this ).attr( 'rel' ) );
@@ -193,23 +180,26 @@
 			$sidebar.addClass( 'sidebar' );
 			var sidebarLogo = data.sidebar || data.icon;
 			if ( sidebarLogo ) {
-				$( '<img>' ).attr( 'src', sidebarLogo )
-					.addClass( 'logo-sidebar' ).appendTo( $sidebar );
+				var $sidebarCard = $( '<span>' ).addClass( 'cdx-card' ).css( 'display', 'inline-block' ).append(
+					$( '<span>' ).addClass( 'cdx-card__thumbnail cdx-thumbnail' ).html(
+						$( '<img>' ).attr( 'src', sidebarLogo ).addClass( 'logo-sidebar' )
+					)
+				).appendTo( $sidebar );
 
-				var $menu = $( '<ul>' ).append(
-					$( '<li>' ).append(
-						$( '<a>' ).attr( 'href', '#' )
-							.text( $preview.data( 'main-page' ) )
+				var $menu = $( '<span>' ).addClass( 'cdx-card__text' ).append(
+					$( '<span>' ).addClass( 'cdx-card__text__title' ).append(
+						$( '<a>' ).attr( 'href', '#' ).text( $preview.data( 'main-page' ) )
 					)
 				);
-				$( '<nav>' ).append( $menu ).appendTo( $sidebar );
+				$menu.appendTo( $sidebarCard );
 			}
-			var $main = $( '<div>' ).addClass( 'logo-main' );
+			var $main = $( '<span>' ).addClass( 'logo-main' ).addClass( 'cdx-card' );
 			if ( data.icon ) {
-				$( '<img>' ).attr( 'src', data.icon )
-					.addClass( 'logo-icon' ).appendTo( $main );
+				$( '<span>' ).addClass( 'cdx-card__thumbnail cdx-thumbnail' ).html(
+					$( '<img>' ).attr( 'src', data.icon ).addClass( 'logo-icon' )
+				).appendTo( $main );
 			}
-			var $container = $( '<div>' ).appendTo( $main );
+			var $container = $( '<span>' ).addClass( 'cdx-card__text' ).appendTo( $main );
 
 			var fallback = {
 				wordmark: $( '[name=config_LogoSiteName]' ).val()
@@ -274,5 +264,12 @@
 			addDroppers( $previewArea, $previewArea.data( 'filedrop' ) );
 			renderLogo( $previewArea );
 		}
+
+		$( 'a.config-help-field-hint' ).on( 'click', function () {
+			// eslint-disable-next-line no-jquery/no-class-state
+			$( this )
+				.siblings( 'div.config-help-field-content' )
+				.toggleClass( 'config-help-field-content-hidden' );
+		} );
 	} );
 }() );

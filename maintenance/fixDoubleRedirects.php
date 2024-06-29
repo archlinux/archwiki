@@ -56,22 +56,22 @@ class FixDoubleRedirects extends Maintenance {
 			$title = null;
 		}
 
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 
 		// See also SpecialDoubleRedirects
 		// TODO: support batch querying
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( [
-				'pa.page_namespace AS pa_namespace',
-				'pa.page_title AS pa_title',
-				'pb.page_namespace AS pb_namespace',
-				'pb.page_title AS pb_title',
+				'pa_namespace' => 'pa.page_namespace',
+				'pa_title' => 'pa.page_title',
+				'pb_namespace' => 'pb.page_namespace',
+				'pb_title' => 'pb.page_title',
 			] )
 			->from( 'redirect' )
 			->join( 'page', 'pa', 'rd_from = pa.page_id' )
 			->join( 'page', 'pb', [ 'rd_namespace = pb.page_namespace', 'rd_title = pb.page_title' ] )
 			// T42352
-			->where( [ 'rd_interwiki' => [ null, '' ], 'pb.page_is_redirect' => 1 ] );
+			->where( [ 'rd_interwiki' => '', 'pb.page_is_redirect' => 1 ] );
 
 		if ( $title != null ) {
 			$queryBuilder->andWhere( [

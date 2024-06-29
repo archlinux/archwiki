@@ -15,7 +15,9 @@ class TitleBlacklistPreAuthenticationProviderTest extends MediaWikiIntegrationTe
 	/**
 	 * @dataProvider provideGetAuthenticationRequests
 	 */
-	public function testGetAuthenticationRequests( $action, $username, $expectedReqs ) {
+	public function testGetAuthenticationRequests( $action, $provideUser, $expectedReqs ) {
+		$username = $provideUser ? $this->getTestSysop()->getUser()->getName() : null;
+
 		$provider = new TitleBlacklistPreAuthenticationProvider();
 		$this->initProvider( $provider, null, null, $this->getServiceContainer()->getAuthManager() );
 		$reqs = $provider->getAuthenticationRequests( $action, [ 'username' => $username ] );
@@ -24,11 +26,11 @@ class TitleBlacklistPreAuthenticationProviderTest extends MediaWikiIntegrationTe
 
 	public static function provideGetAuthenticationRequests() {
 		return [
-			[ AuthManager::ACTION_LOGIN, null, [] ],
-			[ AuthManager::ACTION_CREATE, null, [] ],
-			[ AuthManager::ACTION_CREATE, 'UTSysop', [ new TitleBlacklistAuthenticationRequest() ] ],
-			[ AuthManager::ACTION_CHANGE, null, [] ],
-			[ AuthManager::ACTION_REMOVE, null, [] ],
+			[ AuthManager::ACTION_LOGIN, false, [] ],
+			[ AuthManager::ACTION_CREATE, false, [] ],
+			[ AuthManager::ACTION_CREATE, true, [ new TitleBlacklistAuthenticationRequest() ] ],
+			[ AuthManager::ACTION_CHANGE, false, [] ],
+			[ AuthManager::ACTION_REMOVE, false, [] ],
 		];
 	}
 }

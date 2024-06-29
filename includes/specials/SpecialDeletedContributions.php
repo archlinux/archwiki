@@ -23,12 +23,13 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use LogEventsList;
-use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\Block;
+use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Html\FormOptions;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\DeletedContribsPager;
 use MediaWiki\Permissions\PermissionManager;
@@ -60,6 +61,7 @@ class SpecialDeletedContributions extends SpecialPage {
 	private UserNamePrefixSearch $userNamePrefixSearch;
 	private CommentFormatter $commentFormatter;
 	private LinkBatchFactory $linkBatchFactory;
+	private DatabaseBlockStore $blockStore;
 
 	/**
 	 * @param PermissionManager $permissionManager
@@ -71,6 +73,7 @@ class SpecialDeletedContributions extends SpecialPage {
 	 * @param UserNamePrefixSearch $userNamePrefixSearch
 	 * @param CommentFormatter $commentFormatter
 	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param DatabaseBlockStore $blockStore
 	 */
 	public function __construct(
 		PermissionManager $permissionManager,
@@ -81,7 +84,8 @@ class SpecialDeletedContributions extends SpecialPage {
 		UserNameUtils $userNameUtils,
 		UserNamePrefixSearch $userNamePrefixSearch,
 		CommentFormatter $commentFormatter,
-		LinkBatchFactory $linkBatchFactory
+		LinkBatchFactory $linkBatchFactory,
+		DatabaseBlockStore $blockStore
 	) {
 		parent::__construct( 'DeletedContributions', 'deletedhistory' );
 		$this->permissionManager = $permissionManager;
@@ -93,6 +97,7 @@ class SpecialDeletedContributions extends SpecialPage {
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
 		$this->commentFormatter = $commentFormatter;
 		$this->linkBatchFactory = $linkBatchFactory;
+		$this->blockStore = $blockStore;
 	}
 
 	/**
@@ -244,9 +249,9 @@ class SpecialDeletedContributions extends SpecialPage {
 			$links = $this->getLanguage()->pipeList( $tools );
 
 			// Show a note if the user is blocked and display the last block log entry.
-			$block = DatabaseBlock::newFromTarget( $userObj, $userObj );
-			if ( $block !== null && $block->getType() != DatabaseBlock::TYPE_AUTO ) {
-				if ( $block->getType() == DatabaseBlock::TYPE_RANGE ) {
+			$block = $this->blockStore->newFromTarget( $userObj, $userObj );
+			if ( $block !== null && $block->getType() != Block::TYPE_AUTO ) {
+				if ( $block->getType() == Block::TYPE_RANGE ) {
 					$nt = $this->namespaceInfo->getCanonicalName( NS_USER )
 						. ':' . $block->getTargetName();
 				}
@@ -331,7 +336,5 @@ class SpecialDeletedContributions extends SpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialDeletedContributions::class, 'SpecialDeletedContributions' );

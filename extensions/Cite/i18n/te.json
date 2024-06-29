@@ -24,7 +24,6 @@
 	"cite_error_included_references": "<code>&lt;references&gt;</code> కు మూసివేత ట్యాగు లేదు",
 	"cite_error_group_refs_without_references": "\"$1\" అనే గ్రూపులో <code>&lt;ref&gt;</code> ట్యాగులు ఉన్నాయి గానీ, దానికి సంబంధించిన <code>&lt;references group=\"$1\"/&gt;</code> ట్యాగు కనబడలేదు",
 	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code> లోని <code>&lt;ref&gt;</code> ట్యాగుకు చెందిన \"$1\" అనే గుణంలో వైరుద్ధ్యం ఉంది.",
-	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> లో నిర్వచించిన <code>&lt;ref&gt;</code> ట్యాగు యొక్క \"$1\" అనే గుంపు గుణం ముందున్న పాఠ్యంలో లేదు.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> లో \"$1\" అనే పేరుతో నిర్వచించిన <code>&lt;ref&gt;</code> ట్యాగును ముందరి పాఠ్యంలో వాడలేదు.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code> లో నిర్వచించిన <code>&lt;ref&gt;</code> ట్యాగుకు పేరు గుణం లేదు.",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> లో \"$1\" పేరుతో నిర్వచించిన <code>&lt;ref&gt;</code> ట్యాగులో పాఠ్యమేమీ లేదు.",

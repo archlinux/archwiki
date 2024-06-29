@@ -3,6 +3,7 @@
 		"authors": [
 			"Crazymadlover",
 			"DannyS712",
+			"Eulalio",
 			"Fitoschido",
 			"Jakeukalane",
 			"Macofe",
@@ -13,7 +14,8 @@
 			"Ryo567",
 			"Sanbec",
 			"Themasterriot",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"No se"
 		]
 	},
 	"gadgets-desc": "Permite a los usuarios seleccionar [[Special:Gadgets|accesorios de CSS y JavaScript]] personalizados en sus [[Special:Preferences#mw-prefsection-gadgets|preferencias]].",
@@ -21,7 +23,7 @@
 	"prefs-description-gadgets": "Activar funciones adicionales para tu cuenta.",
 	"gadgets-prefstext": "Debajo hay una lista de accesorios especiales que puedes activar para tu cuenta.\nLa mayoría de ellos se basan en JavaScript, así que debes tenerlo activado en tu navegador para que funcionen.\nObserva que estos accesorios no tendrán efecto en esta página de preferencias.\n\nTen en cuenta también que estos accesorios especiales no forman parte del software MediaWiki, y son desarrollados y mantenidos por usuarios de tu wiki local.\nLos administradores de interfaz locales pueden editar las [[MediaWiki:Gadgets-definition|definiciones]] de los accesorios disponibles y los administradores pueden editar las [[Special:Gadgets|descripciones]], donde podrás ver el código fuente de cada accesorio. El número de usuarios que han activado cada accesorio en esta wiki se puede consultar en las [[Special:GadgetUsage|Estadísticas de uso de accesorios]].",
 	"gadgets-prefstext-safemode": "Los accesorios no están disponibles en este momento porque tienes activado el modo seguro. [[#mw-input-wpforcesafemode|Deshabilita el modo seguro]] para utilizarlos.",
-	"gadgets": "Accesorios",
+	"special-gadgets": "Accesorios",
 	"gadgetusage": "Estadísticas de uso de accesorios",
 	"gadgetusage-gadget": "Accesorio",
 	"gadgetusage-usercount": "Número de usuarios",
@@ -35,10 +37,11 @@
 	"gadgets-editdescription": "Editar descripción",
 	"gadgets-viewdescription": "Ver descripción",
 	"gadgets-uses": "Usos",
-	"gadgets-required-rights": "Requiere {{PLURAL:$2|el siguiente permiso|los siguientes permisos}}:\n\n$1",
+	"gadgets-required-rights": "Requiere lo siguiente {{PLURAL:$2|right|permisos}}:\n$1",
 	"gadgets-required-skins": "Disponible en {{PLURAL:$2|la apariencia $1|las siguientes apariencias: $1}}.",
 	"gadgets-required-actions": "Limitado a {{PLURAL:$2|la acción «$1»|las siguientes acciones: $1}}.",
 	"gadgets-required-namespaces": "Limitado {{PLURAL:$2|al espacio de nombres «$1»|a los siguientes espacios de nombres: $1}}.",
+	"gadgets-required-categories": "Limitado a {{PLURAL:$2| categoría $1 |las siguientes categorías: $1}}.",
 	"gadgets-required-contentmodels": "Limitado {{PLURAL:$2|al modelo de contenido $1|a los siguientes modelos de contenido: $1}}.",
 	"gadgets-default": "Activado para todos de manera predeterminada.",
 	"gadgets-legacy": "No se ha cargado el accesorio. Este debe migrarse a ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Más información])",
@@ -51,10 +54,8 @@
 	"gadgets-requires-es6": "Este accesorio solo funciona en navegadores compatibles con ES6",
 	"gadgets-validate-notset": "La propiedad <code>$1</code> no está establecida.",
 	"gadgets-validate-wrongtype": "La propiedad <code>$1</code> debe ser de tipo <code>$2</code> en vez de <code>$3</code>.",
-	"right-gadgets-edit": "Editar páginas de accesorios JavaScript y CSS",
-	"action-gadgets-edit": "editar esta página de accesorios JavaScript y CSS",
-	"right-gadgets-definition-edit": "Editar definiciones de accesorios",
-	"action-gadgets-definition-edit": "editar esta definición de accesorio",
-	"gadgets-wrong-contentmodel": "Las páginas del espacio de nombres {{ns:2302}} solo pueden tener el modelo de contenido «GadgetDefinition».",
+	"gadgets-validate-invalidskins": "L{{PLURAL:$2|a siguiente apariencia no existe|as siguientes apariencias no existen}}: $1",
+	"gadgets-validate-invalidrights": "{{PLURAL:$2|El siguiente permiso no existe|Los siguientes permisos no existen}}: $1",
+	"gadgets-validate-duplicate": "Se detectó una segunda definición de gadget $1 y se ignorará",
 	"gadgets-supports-urlload": "Este accesorio admite su carga a través de una URL con el parámetro <code>?withgadget</code>."
 }

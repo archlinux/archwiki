@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\HTMLForm\Field;
+
+use MediaWiki\HTMLForm\HTMLFormField;
+
 /*
  * @stable to extend
  */
@@ -59,6 +63,10 @@ class HTMLHiddenField extends HTMLFormField {
 		return $this->getTableRow( $value );
 	}
 
+	public function getCodex( $value ) {
+		return $this->getTableRow( $value );
+	}
+
 	public function getInputHTML( $value ) {
 		return '';
 	}
@@ -71,3 +79,6 @@ class HTMLHiddenField extends HTMLFormField {
 		return false;
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( HTMLHiddenField::class, 'HTMLHiddenField' );

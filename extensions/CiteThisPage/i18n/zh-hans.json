@@ -5,13 +5,14 @@
 			"Hzy980512",
 			"Liuxinyu970226",
 			"Mywood",
-			"Xiaomingyan"
+			"Xiaomingyan",
+			"LittlePaw365"
 		]
 	},
 	"citethispage": "引用此页",
 	"citethispage-desc": "添加[[Special:CiteThisPage|引用]]特殊页面和工具箱链接",
-	"citethispage-link": "引用本页",
-	"tooltip-citethispage": "关于如何引用本页的信息",
+	"citethispage-link": "引用此页",
+	"tooltip-citethispage": "有关如何引用此页面的信息",
 	"citethispage-change-submit": "引用",
 	"citethispage-change-target": "页面：",
 	"citethispage-badrevision": "错误：找不到页面“$1”中任何修订ID为$2的修订版本。",

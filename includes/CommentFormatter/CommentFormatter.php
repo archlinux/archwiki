@@ -2,6 +2,7 @@
 
 namespace MediaWiki\CommentFormatter;
 
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
@@ -347,7 +348,7 @@ class CommentFormatter {
 	) {
 		// '*' used to be the comment inserted by the software way back
 		// in antiquity in case none was provided, here for backwards
-		// compatibility, acc. to brion -ævar
+		// compatibility, acc. to [brooke] -ævar
 		if ( $formatted == '' || $formatted == '*' ) {
 			return '';
 		}
@@ -400,7 +401,7 @@ class CommentFormatter {
 			$block = " <span class=\"comment\">" . wfMessage( 'rev-deleted-comment' )->escaped() . "</span>";
 		}
 		if ( $revRecord->isDeleted( RevisionRecord::DELETED_COMMENT ) ) {
-			$class = \MediaWiki\Linker\Linker::getRevisionDeletedClass( $revRecord );
+			$class = Linker::getRevisionDeletedClass( $revRecord );
 			return " <span class=\"$class comment\">$block</span>";
 		}
 		return $block;

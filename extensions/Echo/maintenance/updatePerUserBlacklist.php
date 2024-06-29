@@ -5,7 +5,7 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\User\User;
 
 require_once getenv( 'MW_INSTALL_PATH' ) !== false
 	? getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php'
@@ -31,7 +31,6 @@ class EchoUpdatePerUserBlacklist extends LoggedUpdateMaintenance {
 	}
 
 	public function doDBUpdates() {
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$dbw = $this->getDB( DB_PRIMARY );
 		$dbr = $this->getDB( DB_REPLICA );
 		$iterator = new BatchRowIterator(
@@ -52,7 +51,7 @@ class EchoUpdatePerUserBlacklist extends LoggedUpdateMaintenance {
 
 		$this->output( "Updating Echo Notification Blacklist...\n" );
 
-		$centralIdLookup = MediaWikiServices::getInstance()->getCentralIdLookup();
+		$centralIdLookup = $this->getServiceContainer()->getCentralIdLookup();
 		$processed = 0;
 		foreach ( $iterator as $batch ) {
 			foreach ( $batch as $row ) {
@@ -86,7 +85,7 @@ class EchoUpdatePerUserBlacklist extends LoggedUpdateMaintenance {
 					__METHOD__
 				);
 				$processed += $dbw->affectedRows();
-				$lbFactory->waitForReplication();
+				$this->waitForReplication();
 			}
 
 			$this->output( "Updated $processed Users\n" );

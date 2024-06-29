@@ -55,7 +55,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Šī atsauce ir definēta veidnē vai citā ģenerētā blokā un šobrīd ir priekšskatāma tikai vikikoda režīmā.",
 	"cite-ve-referenceslist-missingreflist": "Šo atsauču sarakstu ģenerē veidne.",
 	"cite-ve-toolbar-group-label": "Atsauce",
-	"cite-ve-othergroup-item": "$1 atsauce",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Atsauces",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Atsauču grupas nosaukums: \"$1\""
+	"cite-ve-othergroup-item": "$1 atsauce"
 }

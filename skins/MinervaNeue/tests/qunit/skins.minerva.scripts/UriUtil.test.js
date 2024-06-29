@@ -1,6 +1,6 @@
 ( function () {
-	var UriUtil = require( '../../../resources/skins.minerva.scripts/UriUtil.js' );
-	var mwUriOrg = mw.Uri;
+	const UriUtil = require( '../../../resources/skins.minerva.scripts/UriUtil.js' );
+	const mwUriOrg = mw.Uri;
 
 	QUnit.module( 'Minerva UriUtil', {
 		beforeEach: function () {

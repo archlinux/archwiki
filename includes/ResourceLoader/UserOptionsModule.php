@@ -3,7 +3,7 @@
 namespace MediaWiki\ResourceLoader;
 
 use MediaWiki\MediaWikiServices;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 
 /**
  * This program is free software; you can redistribute it and/or modify
@@ -89,6 +89,3 @@ class UserOptionsModule extends Module {
 		return self::GROUP_PRIVATE;
 	}
 }
-
-/** @deprecated since 1.39 */
-class_alias( UserOptionsModule::class, 'ResourceLoaderUserOptionsModule' );

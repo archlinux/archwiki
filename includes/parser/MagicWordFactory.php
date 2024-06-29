@@ -1,7 +1,5 @@
 <?php
 /**
- * See docs/magicword.md.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Parser
  */
 
 namespace MediaWiki\Parser;
@@ -28,7 +25,9 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 
 /**
- * A factory that stores information about MagicWords, and creates them on demand with caching.
+ * Store information about magic words, and create/cache MagicWord objects.
+ *
+ * See docs/magicword.md.
  *
  * Possible future improvements:
  *   * Simultaneous searching for a number of magic words
@@ -38,13 +37,11 @@ use MediaWiki\HookContainer\HookRunner;
  * @ingroup Parser
  */
 class MagicWordFactory {
-	/** #@- */
 
-	/** @var bool */
-	private $mVariableIDsInitialised = false;
+	private bool $mVariableIDsInitialised = false;
 
 	/** @var string[] */
-	private $mVariableIDs = [
+	private array $mVariableIDs = [
 		'!',
 		'=',
 		'currentmonth',
@@ -127,7 +124,7 @@ class MagicWordFactory {
 	];
 
 	/** @var string[] */
-	private $mDoubleUnderscoreIDs = [
+	private array $mDoubleUnderscoreIDs = [
 		'notoc',
 		'nogallery',
 		'forcetoc',
@@ -144,47 +141,32 @@ class MagicWordFactory {
 		'nocontentconvert',
 	];
 
-	/** @var string[] */
-	private $mSubstIDs = [
-		'subst',
-		'safesubst',
-	];
+	/** @var array<string,MagicWord> */
+	private array $mObjects = [];
+	private ?MagicWordArray $mDoubleUnderscoreArray = null;
 
-	/** @var array [ string => MagicWord ] */
-	private $mObjects = [];
-
-	/** @var MagicWordArray */
-	private $mDoubleUnderscoreArray = null;
-
-	/** @var Language */
-	private $contLang;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** #@- */
+	private Language $contLang;
+	private HookRunner $hookRunner;
 
 	/**
-	 * @param Language $contLang Content language
-	 * @param HookContainer $hookContainer
+	 * @internal For ServiceWiring only
 	 */
-	public function __construct( Language $contLang, HookContainer $hookContainer ) {
-		$this->contLang = $contLang;
+	public function __construct( Language $contentLanguage, HookContainer $hookContainer ) {
+		$this->contLang = $contentLanguage;
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
-	public function getContentLanguage() {
+	public function getContentLanguage(): Language {
 		return $this->contLang;
 	}
 
 	/**
-	 * Factory: creates an object representing an ID
+	 * Get a MagicWord object for a given internal ID
 	 *
 	 * @param string $id The internal name of the magic word
-	 *
 	 * @return MagicWord
 	 */
-	public function get( $id ) {
+	public function get( $id ): MagicWord {
 		if ( !isset( $this->mObjects[$id] ) ) {
 			$mw = new MagicWord( null, [], false, $this->contLang );
 			$mw->load( $id );
@@ -198,7 +180,7 @@ class MagicWordFactory {
 	 *
 	 * @return string[]
 	 */
-	public function getVariableIDs() {
+	public function getVariableIDs(): array {
 		if ( !$this->mVariableIDsInitialised ) {
 			# Get variable IDs
 			$this->hookRunner->onMagicWordwgVariableIDs( $this->mVariableIDs );
@@ -210,10 +192,20 @@ class MagicWordFactory {
 
 	/**
 	 * Get an array of parser substitution modifier IDs
+	 *
 	 * @return string[]
+	 * @deprecated since 1.42, use {@see getSubstArray} instead
 	 */
-	public function getSubstIDs() {
-		return $this->mSubstIDs;
+	public function getSubstIDs(): array {
+		wfDeprecated( __METHOD__, '1.42' );
+		return [ 'subst', 'safesubst' ];
+	}
+
+	/**
+	 * @internal for use in {@see Parser::braceSubstitution} only
+	 */
+	public function getSubstArray(): MagicWordArray {
+		return $this->newArray( [ 'subst', 'safesubst' ] );
 	}
 
 	/**
@@ -232,7 +224,7 @@ class MagicWordFactory {
 	 *
 	 * @return MagicWordArray
 	 */
-	public function getDoubleUnderscoreArray() {
+	public function getDoubleUnderscoreArray(): MagicWordArray {
 		if ( $this->mDoubleUnderscoreArray === null ) {
 			$this->hookRunner->onGetDoubleUnderscoreIDs( $this->mDoubleUnderscoreIDs );
 			$this->mDoubleUnderscoreArray = $this->newArray( $this->mDoubleUnderscoreIDs );
@@ -243,7 +235,7 @@ class MagicWordFactory {
 	/**
 	 * Get a new MagicWordArray with provided $names
 	 *
-	 * @param array $names
+	 * @param string[] $names
 	 * @return MagicWordArray
 	 */
 	public function newArray( array $names = [] ): MagicWordArray {
@@ -251,7 +243,5 @@ class MagicWordFactory {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( MagicWordFactory::class, 'MagicWordFactory' );

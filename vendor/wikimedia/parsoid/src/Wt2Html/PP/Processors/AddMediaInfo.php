@@ -149,12 +149,6 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 		return $frag;
 	}
 
-	/**
-	 * @param Element $elt
-	 * @param array $info
-	 * @param DataMw $dataMw
-	 * @param bool $hasDimension
-	 */
 	private static function addSources(
 		Element $elt, array $info, DataMw $dataMw, bool $hasDimension
 	): void {
@@ -194,10 +188,6 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 		}
 	}
 
-	/**
-	 * @param Element $elt
-	 * @param array $info
-	 */
 	private static function addTracks( Element $elt, array $info ): void {
 		$doc = $elt->ownerDocument;
 		if ( is_array( $info['thumbdata']['timedtext'] ?? null ) ) {
@@ -399,12 +389,6 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 		return $img;
 	}
 
-	/**
-	 * @param string $key
-	 * @param string $message
-	 * @param ?array $params
-	 * @return array
-	 */
 	private static function makeErr(
 		string $key, string $message, ?array $params = null
 	): array {
@@ -416,21 +400,12 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 		return $e;
 	}
 
-	/**
-	 * @param Element $container
-	 * @param Element $span
-	 * @param array $errs
-	 * @param DataMw $dataMw
-	 * @param string|null $alt
-	 */
 	private static function handleErrors(
 		Element $container, Element $span, array $errs, DataMw $dataMw,
 		?string $alt
 	): void {
 		if ( !DOMUtils::hasTypeOf( $container, 'mw:Error' ) ) {
-			$typeOf = $container->getAttribute( 'typeof' ) ?? '';
-			$typeOf = 'mw:Error' . ( $typeOf ? ' ' . $typeOf : '' );
-			$container->setAttribute( 'typeof', $typeOf );
+			DOMUtils::addTypeOf( $container, 'mw:Error', true );
 		}
 		if ( is_array( $dataMw->errors ?? null ) ) {
 			$errs = array_merge( $dataMw->errors, $errs );
@@ -441,35 +416,17 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 		}
 	}
 
-	/**
-	 * @param Element $elt
-	 * @param Element $span
-	 * @param string $attribute
-	 */
 	private static function copyOverAttribute(
 		Element $elt, Element $span, string $attribute
 	): void {
 		DOMDataUtils::addNormalizedAttribute(
 			$elt,
 			$attribute,
-			$span->getAttribute( $attribute ) ?? '',
+			DOMCompat::getAttribute( $span, $attribute ),
 			WTSUtils::getAttributeShadowInfo( $span, $attribute )['value']
 		);
 	}
 
-	/**
-	 * @param Env $env
-	 * @param PegTokenizer $urlParser
-	 * @param Element $container
-	 * @param Element $oldAnchor
-	 * @param array $attrs
-	 * @param DataMw $dataMw
-	 * @param bool $isImage
-	 * @param string|null $captionText
-	 * @param int $page
-	 * @param string $lang
-	 * @return Element
-	 */
 	private static function replaceAnchor(
 		Env $env, PegTokenizer $urlParser, Element $container,
 		Element $oldAnchor, array $attrs, DataMw $dataMw, bool $isImage,
@@ -505,6 +462,17 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 					// An external link!
 					$href = Sanitizer::cleanUrl( $env->getSiteConfig(), $val, 'external' );
 					$anchor->setAttribute( 'href', $href );
+					// Similar to AddLinkAttributes
+					$extLinkAttribs = $env->getExternalLinkAttribs( $href );
+					foreach ( $extLinkAttribs as $key => $val ) {
+						if ( $key === 'rel' ) {
+							foreach ( $val as $v ) {
+								DOMUtils::addRel( $anchor, $v );
+							}
+						} else {
+							$anchor->setAttribute( $key, $val );
+						}
+					}
 				} else {
 					$link = $env->makeTitleFromText( $val, null, true );
 					if ( $link !== null ) {
@@ -624,8 +592,8 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$dataMw = DOMDataUtils::getDataMw( $container );
 
 			$dims = [
-				'width' => (int)$span->getAttribute( 'data-width' ) ?: null,
-				'height' => (int)$span->getAttribute( 'data-height' ) ?: null,
+				'width' => (int)DOMCompat::getAttribute( $span, 'data-width' ) ?: null,
+				'height' => (int)DOMCompat::getAttribute( $span, 'data-height' ) ?: null,
 			];
 
 			$page = WTSUtils::getAttrFromDataMw( $dataMw, 'page', true );
@@ -633,8 +601,9 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				$dims['page'] = $page[1]->txt;
 			}
 
-			if ( $span->hasAttribute( 'lang' ) ) {
-				$dims['lang'] = $span->getAttribute( 'lang' );
+			$lang = DOMCompat::getAttribute( $span, 'lang' );
+			if ( $lang !== null ) {
+				$dims['lang'] = $lang;
 			}
 
 			// "starttime" should be used if "thumbtime" isn't present,
@@ -668,7 +637,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$manualthumb = WTSUtils::getAttrFromDataMw( $dataMw, 'manualthumb', true );
 			if ( $manualthumb !== null ) {
 				$val = $manualthumb[1]->txt;
-				$title = $env->makeTitleFromText( $val, $attrs['title']->getNamespaceId(), true );
+				$title = $env->makeTitleFromText( $val, $attrs['title']->getNamespace(), true );
 				if ( $title === null ) {
 					$errs[] = self::makeErr(
 						'apierror-invalidtitle',
@@ -804,8 +773,6 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 					break;
 			}
 
-			$needsTMHModules = $needsTMHModules || !$isImage;
-
 			$alt = null;
 			$keepAltInDataMw = !$isImage || $errs;
 			$attr = WTSUtils::getAttrFromDataMw( $dataMw, 'alt', $keepAltInDataMw );
@@ -820,6 +787,14 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				self::handleErrors( $container, $span, $errs, $dataMw, $alt );
 				continue;
 			}
+
+			$needsTMHModules = $needsTMHModules || !$isImage;
+
+			$env->getMetadata()->addImage(
+				$attrs['title'],
+				$info['timestamp'] ?? null,
+				$info['sha1'] ?? null,
+			);
 
 			$elt = self::$handler( $env, $span, $attrs, $info, $dataMw, $container, $alt );
 			DOMCompat::getClassList( $elt )->add( 'mw-file-element' );

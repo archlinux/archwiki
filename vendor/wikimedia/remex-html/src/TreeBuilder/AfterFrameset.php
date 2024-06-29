@@ -17,19 +17,19 @@ class AfterFrameset extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'html':
-			$dispatcher->inBody->startTag(
-				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'html':
+				$dispatcher->inBody->startTag(
+					$name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		case 'noframes':
-			$dispatcher->inHead->startTag(
-				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'noframes':
+				$dispatcher->inHead->startTag(
+					$name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$builder->error( "unexpected start tag after frameset, ignoring", $sourceStart );
-			return;
+			default:
+				$builder->error( "unexpected start tag after frameset, ignoring", $sourceStart );
+				return;
 		}
 	}
 
@@ -38,12 +38,12 @@ class AfterFrameset extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'html':
-			$dispatcher->switchMode( Dispatcher::AFTER_AFTER_FRAMESET );
-			break;
+			case 'html':
+				$dispatcher->switchMode( Dispatcher::AFTER_AFTER_FRAMESET );
+				break;
 
-		default:
-			$builder->error( "unexpected end tag after frameset, ignoring", $sourceStart );
+			default:
+				$builder->error( "unexpected end tag after frameset, ignoring", $sourceStart );
 		}
 	}
 

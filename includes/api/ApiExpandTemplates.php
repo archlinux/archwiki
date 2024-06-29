@@ -20,6 +20,7 @@
  * @file
  */
 
+use MediaWiki\Parser\Parser;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -151,10 +152,14 @@ class ApiExpandTemplates extends ApiBase {
 				if ( isset( $prop['categories'] ) ) {
 					$categories = $p_output->getCategoryNames();
 					if ( $categories ) {
+						$defaultSortKey = $p_output->getPageProperty( 'defaultsort' ) ?? '';
 						$categories_result = [];
 						foreach ( $categories as $category ) {
 							$entry = [
-								'sortkey' => $p_output->getCategorySortKey( $category ),
+								// Note that ::getCategorySortKey() returns
+								// the empty string '' to mean
+								// "use the default sort key"
+								'sortkey' => $p_output->getCategorySortKey( $category ) ?: $defaultSortKey,
 							];
 							ApiResult::setContentValue( $entry, 'category', $category );
 							$categories_result[] = $entry;

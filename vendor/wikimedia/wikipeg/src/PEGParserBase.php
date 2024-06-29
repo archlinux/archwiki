@@ -4,6 +4,7 @@ namespace Wikimedia\WikiPEG;
 
 abstract class PEGParserBase {
 	protected static $FAILED;
+	protected static $UNDEFINED;
 	protected $currPos;
 	protected $savedPos;
 	protected $input;
@@ -28,6 +29,9 @@ abstract class PEGParserBase {
 	public function __construct() {
 		if ( !self::$FAILED ) {
 			self::$FAILED = new \stdClass;
+		}
+		if ( !self::$UNDEFINED ) {
+			self::$UNDEFINED = new \stdClass;
 		}
 	}
 

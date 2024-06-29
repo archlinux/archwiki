@@ -16,6 +16,13 @@
  *
  */
 
+namespace MediaWiki\Composer;
+
+use Composer\Script\Event;
+use DOMDocument;
+use DOMNode;
+use InvalidArgumentException;
+
 /**
  * Edit phpunit.xml to speed up code coverage generation.
  *
@@ -26,7 +33,9 @@
  * code.
  */
 class ComposerPhpunitXmlCoverageEdit {
-
+	/**
+	 * @param Event $event
+	 */
 	public static function onEvent( $event ) {
 		$IP = dirname( dirname( __DIR__ ) );
 		// TODO: Support passing arbitrary directories for core (or extensions/skins).

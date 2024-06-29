@@ -1,5 +1,16 @@
 <?php
 
+namespace MediaWiki\Tests\Site;
+
+use Exception;
+use MediaWiki\Site\MediaWikiSite;
+use MediaWiki\Site\Site;
+use MediaWiki\Site\SiteImporter;
+use MediaWiki\Site\SiteList;
+use MediaWiki\Site\SiteStore;
+use MediaWikiIntegrationTestCase;
+use Psr\Log\LoggerInterface;
+
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +34,7 @@
  *
  * @group Site
  *
- * @covers SiteImporter
+ * @covers \MediaWiki\Site\SiteImporter
  *
  * @author Daniel Kinzler
  */
@@ -41,7 +52,7 @@ class SiteImporterTest extends MediaWikiIntegrationTestCase {
 		$store->method( 'getSites' )
 			->willReturn( new SiteList() );
 
-		$errorHandler = $this->createMock( Psr\Log\LoggerInterface::class );
+		$errorHandler = $this->createMock( LoggerInterface::class );
 		$errorHandler->expects( $this->exactly( $errorCount ) )
 			->method( 'error' );
 

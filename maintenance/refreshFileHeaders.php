@@ -64,14 +64,14 @@ class RefreshFileHeaders extends Maintenance {
 		$minor_mime = str_replace( ' ', '_', $this->getOption( 'minor_mime', '' ) );
 
 		$count = 0;
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 
 		do {
 			$queryBuilder = FileSelectQueryBuilder::newForFile( $dbr );
 
-			$queryBuilder->where( [ 'img_name > ' . $dbr->addQuotes( $start ) ] );
+			$queryBuilder->where( $dbr->expr( 'img_name', '>', $start ) );
 			if ( strlen( $end ) ) {
-				$queryBuilder->andWhere( 'img_name <= ' . $dbr->addQuotes( $end ) );
+				$queryBuilder->andWhere( $dbr->expr( 'img_name', '<=', $end ) );
 			}
 
 			if ( strlen( $media_type ) ) {

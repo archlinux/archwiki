@@ -25,11 +25,6 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$this->blockRestrictionStore = $this->getServiceContainer()->getBlockRestrictionStore();
 	}
 
-	protected function tearDown(): void {
-		$this->resetTables();
-		parent::tearDown();
-	}
-
 	/**
 	 * @covers ::loadByBlockId
 	 * @covers ::resultToRestrictions
@@ -309,7 +304,8 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$this->blockRestrictionStore->insert( [
 			new PageRestriction( $block->getId(), $pageFoo->getId() ),
 		] );
-		$autoblockId = $block->doAutoblock( '127.0.0.1' );
+		$autoblockId = $this->getServiceContainer()->getDatabaseBlockStore()
+			->doAutoblock( $block, '127.0.0.1' );
 
 		// Ensure that the restrictions on the block have not changed.
 		$restrictions = $this->blockRestrictionStore->loadByBlockId( $block->getId() );
@@ -347,7 +343,8 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$this->blockRestrictionStore->insert( [
 			new PageRestriction( $block->getId(), $page->getId() ),
 		] );
-		$autoblockId = $block->doAutoblock( '127.0.0.1' );
+		$autoblockId = $this->getServiceContainer()->getDatabaseBlockStore()
+			->doAutoblock( $block, '127.0.0.1' );
 
 		// Ensure that the restrictions on the block have not changed.
 		$restrictions = $this->blockRestrictionStore->loadByBlockId( $block->getId() );
@@ -530,8 +527,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$sysop = $this->getTestSysop()->getUser();
 
 		$block = new DatabaseBlock( [
-			'address' => $badActor->getName(),
-			'user' => $badActor->getId(),
+			'address' => $badActor,
 			'by' => $sysop,
 			'expiry' => 'infinity',
 			'sitewide' => 0,
@@ -549,10 +545,5 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 			'ir_type' => $type,
 			'ir_value' => $value,
 		] );
-	}
-
-	protected function resetTables() {
-		$this->db->delete( 'ipblocks', '*', __METHOD__ );
-		$this->db->delete( 'ipblocks_restrictions', '*', __METHOD__ );
 	}
 }

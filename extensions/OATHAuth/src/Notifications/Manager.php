@@ -20,15 +20,16 @@
 
 namespace MediaWiki\Extension\OATHAuth\Notifications;
 
-use EchoEvent;
 use ExtensionRegistry;
+use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\OATHAuth\OATHUser;
-use SpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
 
 /**
  * Manages logic for configuring and sending out notifications with Echo
  */
 class Manager {
+
 	/**
 	 * Whether Echo is installed and can be used
 	 *
@@ -48,12 +49,14 @@ class Manager {
 		if ( !self::isEnabled() ) {
 			return;
 		}
-		EchoEvent::create( [
+		Event::create( [
+			// message used: notification-header-oathauth-disable
 			'type' => 'oathauth-disable',
 			'title' => SpecialPage::getTitleFor( 'Preferences' ),
 			'agent' => $oUser->getUser(),
 			'extra' => [
 				'self' => $self,
+				'activeDevices' => count( $oUser->getKeys() ),
 			]
 		] );
 	}
@@ -67,10 +70,14 @@ class Manager {
 		if ( !self::isEnabled() ) {
 			return;
 		}
-		EchoEvent::create( [
+		Event::create( [
+			// message used: notification-header-oathauth-enable
 			'type' => 'oathauth-enable',
 			'title' => SpecialPage::getTitleFor( 'Preferences' ),
-			'agent' => $oUser->getUser()
+			'agent' => $oUser->getUser(),
+			'extra' => [
+				'activeDevices' => count( $oUser->getKeys() ),
+			],
 		] );
 	}
 }

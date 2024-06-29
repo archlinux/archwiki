@@ -8,7 +8,6 @@ use Wikimedia\Parsoid\NodeData\DataBag;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Utils\PHPUtils;
 
 /**
  * @coversDefaultClass  \Wikimedia\Parsoid\Utils\DOMDataUtils
@@ -42,11 +41,11 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		$doc = DOMUtils::parseHTML( "<p>Hello, world</p>" );
 		$doc->bag = new DataBag(); // see Env::createDocument
 		$p = DOMCompat::querySelector( $doc, 'p' );
-		DOMDataUtils::storeInPageBundle( $p, $env, PHPUtils::arrayToObject( [
+		DOMDataUtils::storeInPageBundle( $p, $env, (object)[
 			'parsoid' => [ 'go' => 'team' ],
 			'mw' => [ 'test' => 'me' ],
-		] ), DOMDataUtils::usedIdIndex( $p ) );
-		$id = $p->getAttribute( 'id' ) ?? '';
+		], DOMDataUtils::usedIdIndex( $p ) );
+		$id = DOMCompat::getAttribute( $p, 'id' ) ?? '';
 		$this->assertNotEquals( '', $id );
 		// Use the 'native' getElementById, not DOMCompat::getElementById,
 		// in order to test T232390.
@@ -55,8 +54,6 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @return void
-	 * @throws \Wikimedia\Parsoid\Core\ClientError
 	 * @covers ::extractPageBundle
 	 */
 	public function testExtractPageBundle() {

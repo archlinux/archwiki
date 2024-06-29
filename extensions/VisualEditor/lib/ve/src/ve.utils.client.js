@@ -1,7 +1,7 @@
 /*!
  * VisualEditor client (browser) specific utilities that interact with a rendered DOM.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -286,30 +286,6 @@ ve.fixSelectionNodes = function ( selection ) {
 		fixNodeProperty( 'anchorNode' );
 		fixNodeProperty( 'focusNode' );
 	}
-};
-
-/**
- * Register a passive event listener
- *
- * @deprecated Pass { passive: true } directly to addEventListener
- * @param {HTMLElement} elem Element to register event on
- * @param {string} event Name of event to register
- * @param {Function} handler Event handler (which cannot call event.preventDefault)
- */
-ve.addPassiveEventListener = function ( elem, event, handler ) {
-	elem.addEventListener( event, handler, { passive: true } );
-};
-
-/**
- * Remove a passive event listener
- *
- * @deprecated Pass { passive: true } directly to removeEventListener
- * @param {HTMLElement} elem Element to remove event from
- * @param {string} event Name of event to remove
- * @param {Function} handler Event handler to remove
- */
-ve.removePassiveEventListener = function ( elem, event, handler ) {
-	elem.removeEventListener( event, handler, { passive: true } );
 };
 
 /**

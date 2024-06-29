@@ -1,8 +1,8 @@
 <?php
 
-use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\UltimateAuthority;
-use MediaWiki\User\UserFactory;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IDatabase;
@@ -17,6 +17,7 @@ use Wikimedia\Rdbms\UpdateQueryBuilder;
  * @author DannyS712
  */
 class UserFactoryTest extends MediaWikiIntegrationTestCase {
+	use TempUserTestTrait;
 
 	private function getUserFactory() {
 		return $this->getServiceContainer()->getUserFactory();
@@ -159,7 +160,7 @@ class UserFactoryTest extends MediaWikiIntegrationTestCase {
 			'Invalid confirmation codes result in null users when reading from replicas'
 		);
 
-		$user2 = $factory->newFromConfirmationCode( $fakeCode, UserFactory::READ_LATEST );
+		$user2 = $factory->newFromConfirmationCode( $fakeCode, IDBAccessObject::READ_LATEST );
 		$this->assertNull(
 			$user2,
 			'Invalid confirmation codes result in null users when reading from master'
@@ -191,17 +192,7 @@ class UserFactoryTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewTempPlaceholder() {
-		$this->overrideConfigValue(
-			MainConfigNames::AutoCreateTempUser,
-			[
-				'enabled' => true,
-				'actions' => [ 'edit' ],
-				'genPattern' => '*Unregistered $1',
-				'matchPattern' => '*$1',
-				'serialProvider' => [ 'type' => 'local' ],
-				'serialMapping' => [ 'type' => 'plain-numeric' ],
-			]
-		);
+		$this->enableAutoCreateTempUser();
 		$user = $this->getUserFactory()->newTempPlaceholder();
 		$this->assertTrue( $user->isTemp() );
 		$this->assertFalse( $user->isRegistered() );
@@ -210,18 +201,8 @@ class UserFactoryTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewUnsavedTempUser() {
-		$this->overrideConfigValue(
-			MainConfigNames::AutoCreateTempUser,
-			[
-				'enabled' => true,
-				'actions' => [ 'edit' ],
-				'genPattern' => '*Unregistered $1',
-				'matchPattern' => '*$1',
-				'serialProvider' => [ 'type' => 'local' ],
-				'serialMapping' => [ 'type' => 'plain-numeric' ],
-			]
-		);
-		$user = $this->getUserFactory()->newUnsavedTempUser( '*Unregistered 1234' );
+		$this->enableAutoCreateTempUser();
+		$user = $this->getUserFactory()->newUnsavedTempUser( '~1234' );
 		$this->assertTrue( $user->isTemp() );
 		$this->assertFalse( $user->isNamed() );
 	}

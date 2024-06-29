@@ -14,7 +14,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 lang}}",
 	"vector-no-language-button-label": "Ajoute lang yo",
 	"vector-no-language-button-aria-label": "Atik sa a egziste sèlman nan lang sa a. Ajoute atik la pou lòt lang",
-	"vector-language-redirect-to-top": "Sou {{SITENAME}} sa a lyen lang yo nan tèt paj la anfas tit atik la. [[#p-lang-btn|Ale nan tèt]].",
 	"vector-language-variant-switcher-label": "Chanje variant lang",
 	"vector-action-addsection": "Ajoute yon sijè",
 	"vector-action-delete": "Efase",

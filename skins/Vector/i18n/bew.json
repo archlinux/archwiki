@@ -17,7 +17,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 basa}}",
 	"vector-no-language-button-label": "Tambah basa",
 	"vector-no-language-button-aria-label": "Ni makalah cuman ada dalem ni basa. Tambah makalah bakal laèn-laèn basa",
-	"vector-language-redirect-to-top": "Sènggètan basa ada di bagèan atas halaman di sebrangnya judul.",
 	"vector-language-variant-switcher-label": "Robah ragem basa",
 	"vector-action-addsection": "Tambah topik",
 	"vector-action-delete": "Apus",
@@ -62,7 +61,7 @@
 	"vector-prefs-limited-width": "Nyalain mode lèbar kewates",
 	"vector-prefs-limited-width-help": "Nyalain mode lèbar kewates biar lebi ènak ngebacanya.",
 	"empty-language-selector-body": "Isi halaman kaga' didukung di laèn-laèn basa.",
-	"vector-toc-unpinned-popup": "Daptar isi udah dipindahin ke mari.",
-	"vector-page-tools-unpinned-popup": "Menu peranti udah dipindahin ke mari.",
-	"vector-main-menu-unpinned-popup": "Menu utama udah dipindahin ke mari."
+	"vector-toc-unpinned-popup": "Daptar isi udah mingsèr ke mari.",
+	"vector-page-tools-unpinned-popup": "Menu peranti udah mingsèr ke mari.",
+	"vector-main-menu-unpinned-popup": "Menu utama udah mingsèr ke mari."
 }

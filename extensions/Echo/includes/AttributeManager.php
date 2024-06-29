@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications;
 
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserOptionsLookup;
 
 /**
  * An object that manages attributes of echo notifications: category, eligibility,

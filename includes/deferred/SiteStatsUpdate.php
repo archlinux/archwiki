@@ -17,9 +17,13 @@
  *
  * @file
  */
+
+namespace MediaWiki\Deferred;
+
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\SiteStats\SiteStats;
+use UnexpectedValueException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -115,7 +119,7 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 		}
 
 		( new AutoCommitUpdate(
-			$services->getDBLoadBalancerFactory()->getPrimaryDatabase(),
+			$services->getConnectionProvider()->getPrimaryDatabase(),
 			__METHOD__,
 			static function ( IDatabase $dbw, $fname ) use ( $deltaByType, $shards ) {
 				$set = [];
@@ -176,7 +180,7 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getMainConfig();
 
-		$dbr = $services->getDBLoadBalancerFactory()->getReplicaDatabase( false, 'vslow' );
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase( false, 'vslow' );
 		# Get non-bot users than did some recent action other than making accounts.
 		# If account creation is included, the number gets inflated ~20+ fold on enwiki.
 		$activeUsers = $dbr->newSelectQueryBuilder()
@@ -184,12 +188,12 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 			->from( 'recentchanges' )
 			->join( 'actor', 'actor', 'actor_id=rc_actor' )
 			->where( [
-				'rc_type != ' . $dbr->addQuotes( RC_EXTERNAL ), // Exclude external (Wikidata)
-				'actor_user IS NOT NULL',
-				'rc_bot' => 0,
-				'rc_log_type != ' . $dbr->addQuotes( 'newusers' ) . ' OR rc_log_type IS NULL',
-				'rc_timestamp >= ' . $dbr->addQuotes(
-					$dbr->timestamp( time() - $config->get( MainConfigNames::ActiveUserDays ) * 24 * 3600 ) ),
+				$dbr->expr( 'rc_type', '!=', RC_EXTERNAL ), // Exclude external (Wikidata)
+				$dbr->expr( 'actor_user', '!=', null ),
+				$dbr->expr( 'rc_bot', '=', 0 ),
+				$dbr->expr( 'rc_log_type', '!=', 'newusers' )->or( 'rc_log_type', '=', null ),
+				$dbr->expr( 'rc_timestamp', '>=',
+					$dbr->timestamp( time() - $config->get( MainConfigNames::ActiveUserDays ) * 24 * 3600 ) )
 			] )
 			->caller( __METHOD__ )
 			->fetchField();
@@ -205,3 +209,6 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 		return $activeUsers;
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( SiteStatsUpdate::class, 'SiteStatsUpdate' );

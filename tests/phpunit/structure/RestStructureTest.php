@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\MainConfigSchema;
@@ -14,6 +16,7 @@ use MediaWiki\Rest\PathTemplateMatcher\PathMatcher;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\ResponseFactory;
 use MediaWiki\Rest\Router;
+use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\Session\Session;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
@@ -106,8 +109,7 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 			$services = $this->getFakeServiceContainer();
 
 			// NOTE: createRouter() implements the logic for determining the list of route files to load.
-			$entryPoint = TestingAccessWrapper::newFromClass( EntryPoint::class );
-			$router = $entryPoint->createRouter( $services, $context, new RequestData(), $responseFactory, $cors );
+			$router = EntryPoint::createRouter( $services, $context, new RequestData(), $responseFactory, $cors );
 			$router = TestingAccessWrapper::newFromObject( $router );
 		}
 
@@ -130,8 +132,9 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 			$responseFactory = $this->createNoOpMock( ResponseFactory::class );
 			$cors = $this->createNoOpMock( CorsUtils::class );
 
-			$this->router = TestingAccessWrapper::newFromClass( EntryPoint::class )
-				->createRouter( $this->getServiceContainer(), $context, new RequestData(), $responseFactory, $cors );
+			$this->router = EntryPoint::createRouter(
+				$this->getServiceContainer(), $context, new RequestData(), $responseFactory, $cors
+			);
 		}
 		return $this->router;
 	}
@@ -204,8 +207,6 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function assertParameter( string $name, $settings, $msg ) {
-		static $sources = [ 'path', 'query', 'post' ];
-
 		$router = TestingAccessWrapper::newFromObject( $this->getRouter() );
 
 		$dataName = $this->dataName();
@@ -216,8 +217,9 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 
 		// REST-specific parameters
 		$ret['allowedKeys'][] = Handler::PARAM_SOURCE;
-		if ( !in_array( $settings[Handler::PARAM_SOURCE] ?? '', $sources, true ) ) {
-			$ret['issues'][Handler::PARAM_SOURCE] = "PARAM_SOURCE must be 'path', 'query', or 'post'";
+		$ret['allowedKeys'][] = Handler::PARAM_DESCRIPTION;
+		if ( !in_array( $settings[Handler::PARAM_SOURCE] ?? '', Validator::KNOWN_PARAM_SOURCES, true ) ) {
+			$ret['issues'][Handler::PARAM_SOURCE] = "PARAM_SOURCE must be one of " . implode( ', ', Validator::KNOWN_PARAM_SOURCES );
 		}
 
 		// Warn about unknown keys. Don't fail, they might be for forward- or back-compat.

@@ -8,6 +8,7 @@
 			"Y-M D"
 		]
 	},
+	"multimediaviewer-optin-pref": "Gweredekaat <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-repository-local": "Gouzout hiroc'h",
 	"multimediaviewer-datetime-created": "Krouet: $1",
 	"multimediaviewer-datetime-uploaded": "Pellgaset: $1",

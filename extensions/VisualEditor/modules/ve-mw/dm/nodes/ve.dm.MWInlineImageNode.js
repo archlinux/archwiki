@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWInlineImage class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -150,6 +150,7 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 ve.dm.MWInlineImageNode.static.toDomElements = function ( dataElement, doc, converter ) {
 	var attributes = dataElement.attributes,
 		container = doc.createElement( 'span' ),
+		imgWrapper = doc.createElement( attributes.href ? 'a' : 'span' ),
 		img = doc.createElement( attributes.isError ? 'span' : attributes.mediaTag ),
 		classes = [],
 		originalClasses = attributes.originalClasses;
@@ -207,17 +208,13 @@ ve.dm.MWInlineImageNode.static.toDomElements = function ( dataElement, doc, conv
 		container.className = classes.join( ' ' );
 	}
 
-	var firstChild;
 	if ( attributes.href ) {
-		firstChild = doc.createElement( 'a' );
-		firstChild.setAttribute( 'href', attributes.href );
-	} else {
-		firstChild = doc.createElement( 'span' );
+		imgWrapper.setAttribute( 'href', attributes.href );
 	}
 
 	if ( attributes.imgWrapperClassAttr ) {
 		// eslint-disable-next-line mediawiki/class-doc
-		firstChild.className = attributes.imgWrapperClassAttr;
+		imgWrapper.className = attributes.imgWrapperClassAttr;
 	}
 
 	if ( attributes.imageClassAttr ) {
@@ -227,14 +224,14 @@ ve.dm.MWInlineImageNode.static.toDomElements = function ( dataElement, doc, conv
 
 	if ( attributes.isError ) {
 		if ( converter.isForPreview() ) {
-			firstChild.classList.add( 'new' );
+			imgWrapper.classList.add( 'new' );
 		}
 		var filename = mw.libs.ve.normalizeParsoidResourceName( attributes.resource || '' );
 		img.appendChild( doc.createTextNode( attributes.errorText ? attributes.errorText : filename ) );
 	}
 
-	container.appendChild( firstChild );
-	firstChild.appendChild( img );
+	imgWrapper.appendChild( img );
+	container.appendChild( imgWrapper );
 
 	return [ container ];
 };

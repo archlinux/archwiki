@@ -39,12 +39,12 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 	public function testWriteCacheSkip() {
 		$renderer =
 			$this->getMockBuilder( MathRenderer::class )->onlyMethods( [
-					'writeToDatabase',
+				'writeToCache',
 					'render',
 					'getMathTableName',
 					'getHtmlOutput'
 				] )->getMock();
-		$renderer->expects( $this->never() )->method( 'writeToDatabase' );
+		$renderer->expects( $this->never() )->method( 'writeToCache' );
 		/** @var MathRenderer $renderer */
 		$renderer->writeCache();
 	}
@@ -56,12 +56,12 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 	public function testWriteCache() {
 		$renderer =
 			$this->getMockBuilder( MathRenderer::class )->onlyMethods( [
-					'writeToDatabase',
+				'writeToCache',
 					'render',
 					'getMathTableName',
 					'getHtmlOutput'
 				] )->getMock();
-		$renderer->expects( $this->never() )->method( 'writeToDatabase' );
+		$renderer->expects( $this->never() )->method( 'writeToCache' );
 		/** @var MathRenderer $renderer */
 		$renderer->writeCache();
 	}
@@ -87,10 +87,10 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 					'render',
 					'getMathTableName',
 					'getHtmlOutput',
-					'readFromDatabase',
+				'readFromCache',
 					'setTex'
 				] )->setConstructorArgs( [ self::TEXVCCHECK_INPUT ] )->getMock();
-		$renderer->expects( $this->never() )->method( 'readFromDatabase' );
+		$renderer->expects( $this->never() )->method( 'readFromCache' );
 		$renderer->expects( $this->once() )->method( 'setTex' )->with( self::TEXVCCHECK_OUTPUT );
 
 		/** @var MathRenderer $renderer */
@@ -106,10 +106,10 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 					'render',
 					'getMathTableName',
 					'getHtmlOutput',
-					'readFromDatabase',
+				'readFromCache',
 					'setTex'
 				] )->setConstructorArgs( [ self::TEXVCCHECK_INPUT ] )->getMock();
-		$renderer->expects( $this->never() )->method( 'readFromDatabase' );
+		$renderer->expects( $this->never() )->method( 'readFromCache' );
 		$renderer->expects( $this->never() )->method( 'setTex' );
 
 		/** @var MathRenderer $renderer */
@@ -125,10 +125,10 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 					'render',
 					'getMathTableName',
 					'getHtmlOutput',
-					'readFromDatabase',
+				'readFromCache',
 					'setTex'
 				] )->setConstructorArgs( [ self::TEXVCCHECK_INPUT ] )->getMock();
-		$renderer->expects( $this->once() )->method( 'readFromDatabase' )
+		$renderer->expects( $this->once() )->method( 'readFromCache' )
 			->willReturn( false );
 		$renderer->expects( $this->once() )->method( 'setTex' )->with( self::TEXVCCHECK_OUTPUT );
 
@@ -147,10 +147,10 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 					'render',
 					'getMathTableName',
 					'getHtmlOutput',
-					'readFromDatabase',
+				'readFromCache',
 					'setTex'
 				] )->setConstructorArgs( [ self::TEXVCCHECK_INPUT ] )->getMock();
-		$renderer->expects( $this->once() )->method( 'readFromDatabase' )
+		$renderer->expects( $this->once() )->method( 'readFromCache' )
 			->willReturn( true );
 		$renderer->expects( $this->never() )->method( 'setTex' );
 

@@ -4,16 +4,16 @@ namespace MediaWiki\Extension\ConfirmEdit\SimpleCaptcha;
 
 use ApiBase;
 use ApiEditPage;
-use BagOStuff;
-use Config;
-use ConfigException;
 use Content;
 use ExtensionRegistry;
 use HTMLForm;
 use IContextSource;
+use IDBAccessObject;
 use MailAddress;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
@@ -22,25 +22,22 @@ use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
 use MediaWiki\ExternalLinks\ExternalLinksLookup;
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\ContentSecurityPolicy;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Revision\RevisionAccessException;
-use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserNameUtils;
+use MediaWiki\User\User;
 use Message;
-use ObjectCache;
 use OOUI\FieldLayout;
 use OOUI\HiddenInputWidget;
 use OOUI\NumberInputWidget;
-use OutputPage;
 use ParserOptions;
 use RequestContext;
-use Status;
 use TextContent;
 use UnexpectedValueException;
-use User;
-use WebRequest;
 use Wikimedia\IPUtils;
 use WikiPage;
 
@@ -353,72 +350,6 @@ class SimpleCaptcha {
 	}
 
 	/**
-	 * Increase bad login counter after a failed login.
-	 * The user might be required to solve a captcha if the count is high.
-	 * @param string $username
-	 * TODO use Throttler
-	 */
-	public function increaseBadLoginCounter( $username ) {
-		global $wgCaptchaBadLoginExpiration, $wgCaptchaBadLoginPerUserExpiration;
-
-		$cache = ObjectCache::getLocalClusterInstance();
-
-		if ( $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN ) ) {
-			$key = $this->badLoginKey( $cache );
-			$cache->incrWithInit( $key, $wgCaptchaBadLoginExpiration );
-		}
-
-		if ( $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
-			$key = $this->badLoginPerUserKey( $username, $cache );
-			$cache->incrWithInit( $key, $wgCaptchaBadLoginPerUserExpiration );
-		}
-	}
-
-	/**
-	 * Reset bad login counter after a successful login.
-	 * @param string $username
-	 */
-	public function resetBadLoginCounter( $username ) {
-		if ( $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
-			$cache = ObjectCache::getLocalClusterInstance();
-			$cache->delete( $this->badLoginPerUserKey( $username, $cache ) );
-		}
-	}
-
-	/**
-	 * Check if a bad login has already been registered for this
-	 * IP address. If so, require a captcha.
-	 * @return bool
-	 * @private
-	 */
-	public function isBadLoginTriggered() {
-		global $wgCaptchaBadLoginAttempts;
-
-		$cache = ObjectCache::getLocalClusterInstance();
-		return $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN )
-			&& (int)$cache->get( $this->badLoginKey( $cache ) ) >= $wgCaptchaBadLoginAttempts;
-	}
-
-	/**
-	 * Is the per-user captcha triggered?
-	 *
-	 * @param User|string $u User object, or name
-	 * @return bool
-	 */
-	public function isBadLoginPerUserTriggered( $u ) {
-		global $wgCaptchaBadLoginPerUserAttempts;
-
-		$cache = ObjectCache::getLocalClusterInstance();
-
-		if ( is_object( $u ) ) {
-			$u = $u->getName();
-		}
-		$badLoginPerUserKey = $this->badLoginPerUserKey( $u, $cache );
-		return $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER )
-			&& (int)$cache->get( $badLoginPerUserKey ) >= $wgCaptchaBadLoginPerUserAttempts;
-	}
-
-	/**
 	 * Check if the current IP is allowed to skip captchas. This checks
 	 * the whitelist from two sources.
 	 *  1) From the server-side config array $wgCaptchaWhitelistIP
@@ -501,33 +432,6 @@ class SimpleCaptcha {
 		}
 
 		return $validIPs;
-	}
-
-	/**
-	 * Internal cache key for badlogin checks.
-	 * @param BagOStuff $cache
-	 * @return string
-	 */
-	private function badLoginKey( BagOStuff $cache ) {
-		global $wgRequest;
-		$ip = $wgRequest->getIP();
-
-		return $cache->makeGlobalKey( 'captcha', 'badlogin', 'ip', $ip );
-	}
-
-	/**
-	 * Cache key for badloginPerUser checks.
-	 * @param string $username
-	 * @param BagOStuff $cache
-	 * @return string
-	 */
-	private function badLoginPerUserKey( $username, BagOStuff $cache ) {
-		$userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
-		$username = $userNameUtils->getCanonical( $username, UserNameUtils::RIGOR_USABLE ) ?: $username;
-
-		return $cache->makeGlobalKey(
-			'captcha', 'badlogin', 'user', md5( $username )
-		);
 	}
 
 	/**
@@ -667,7 +571,9 @@ class SimpleCaptcha {
 				// Get links from the database
 				$oldLinks = ExternalLinksLookup::getExternalLinksForPage(
 					$title->getArticleID(),
-					wfGetDB( DB_REPLICA ),
+					MediaWikiServices::getInstance()
+						->getConnectionProvider()
+						->getReplicaDatabase(),
 					__METHOD__
 				);
 				// Share a parse operation with Article::doEdit()
@@ -913,14 +819,14 @@ class SimpleCaptcha {
 		$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 		if ( !$this->doConfirmEdit( $page, $content, '', $context, $user ) ) {
 			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
-			$status->apiHookResult = [];
+			$status->statusData = [];
 			// give an error message for the user to know, what goes wrong here.
 			// this can't be done for addurl trigger, because this requires one "free" save
 			// for the user, which we don't know, when he did it.
 			if ( $this->action === 'edit' ) {
 				$status->fatal( 'captcha-edit-fail' );
 			}
-			$this->addCaptchaAPI( $status->apiHookResult );
+			$this->addCaptchaAPI( $status->statusData );
 			$key = CacheKeyHelper::getKeyForPage( $page );
 			$this->activatedCaptchas[$key] = true;
 			return false;
@@ -1079,7 +985,7 @@ class SimpleCaptcha {
 	protected function passCaptcha( $index, $word ) {
 		// Don't check the same CAPTCHA twice in one session,
 		// if the CAPTCHA was already checked - Bug T94276
-		if ( isset( $this->captchaSolved ) ) {
+		if ( $this->captchaSolved !== null ) {
 			return $this->captchaSolved;
 		}
 
@@ -1161,7 +1067,7 @@ class SimpleCaptcha {
 	 * @return string
 	 * @private
 	 */
-	private function loadText( $title, $section, $flags = RevisionLookup::READ_LATEST ) {
+	private function loadText( $title, $section, $flags = IDBAccessObject::READ_LATEST ) {
 		$revRecord = MediaWikiServices::getInstance()
 			->getRevisionLookup()
 			->getRevisionByTitle( $title, 0, $flags );
@@ -1207,7 +1113,7 @@ class SimpleCaptcha {
 	public function showHelp() {
 		$context = RequestContext::getMain();
 		$out = $context->getOutput();
-		$out->setPageTitle( $context->msg( 'captchahelp-title' ) );
+		$out->setPageTitleMsg( $context->msg( 'captchahelp-title' ) );
 		$out->addWikiMsg( 'captchahelp-text' );
 		if ( CaptchaStore::get()->cookiesNeeded() ) {
 			$out->addWikiMsg( 'captchahelp-cookies-needed' );

@@ -220,7 +220,7 @@ class FilterProfiler {
 		$slowFilterThreshold = $this->options->get( 'AbuseFilterSlowFilterRuntimeLimit' );
 
 		foreach ( $data as $filterName => $params ) {
-			list( $filterID, $global ) = GlobalNameUtils::splitGlobalName( $filterName );
+			[ $filterID, $global ] = GlobalNameUtils::splitGlobalName( $filterName );
 			// @todo Maybe add a parameter to recordProfilingResult to record global filters
 			// data separately (in the foreign wiki)
 			if ( !$global ) {

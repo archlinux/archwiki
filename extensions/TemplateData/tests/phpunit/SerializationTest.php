@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Extension\TemplateData\TemplateDataStatus;
+use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Status\Status;
 
 /**
  * @covers \MediaWiki\Extension\TemplateData\TemplateDataStatus

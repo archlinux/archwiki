@@ -31,7 +31,5 @@
 	"cite-ve-dialogbutton-reference-tooltip": "بنيادي",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "حوالا فھرست",
 	"cite-ve-toolbar-group-label": "حوالو",
-	"cite-ve-othergroup-item": "$1 حوالو",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "حوالا",
-	"visualeditor-internal-list-diff-group-name-mwreference": "حوالو گروھ نالو: \"$1\""
+	"cite-ve-othergroup-item": "$1 حوالو"
 }

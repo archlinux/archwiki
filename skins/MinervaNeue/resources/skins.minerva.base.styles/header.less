@@ -1,9 +1,9 @@
 .header-container {
 	border-bottom: @border-subtle;
-	padding: 0 @contentPadding;
+	padding: 0 @padding-content;
 
 	&.header-chrome {
-		background-color: @background-color-light;
+		background-color: var( --background-color-interactive );
 		border: 0;
 		box-shadow: inset 0 -1px 3px rgba( 0, 0, 0, 0.08 );
 	}
@@ -22,7 +22,7 @@
 			margin-left: 5px;
 			font-size: 1em;
 			text-decoration: none;
-			color: @color-base;
+			color: var( --color-base );
 
 			span {
 				line-height: 0;
@@ -34,7 +34,7 @@
 			}
 
 			sup {
-				color: @color-subtle;
+				color: var( --color-subtle );
 				display: none;
 
 				.beta & {
@@ -61,14 +61,41 @@
 		.branding-box {
 			// Handle logos that are larger than the set branding box width
 			// This will also cause the searchbox overlay to be misaligned with the .minerva-heading searchbox
-			min-width: @brandingBoxWidth;
+			min-width: @width-branding-box;
 			width: auto;
 		}
 
 		.search-box {
 			display: block;
-			width: @searchBoxWidth;
-			max-width: @searchBoxWidth;
+			width: @width-search-box;
+			max-width: @width-search-box;
+		}
+	}
+}
+
+// Night mode
+html.skin-theme-clientpref-night {
+	// The following icons use background-image instead of mask-image.
+	// These can be removed if a fix for T358246 is found.
+	.minerva-icon.minerva-icon--search-base20,
+	.minerva-icon.minerva-icon--search,
+	.page-actions-menu__list .minerva-icon,
+	.mw-editsection .minerva-icon,
+	.toggle-list .minerva-icon,
+	.branding-box img {
+		.night-mode-invert-image();
+	}
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		.minerva-icon.minerva-icon--search-base20,
+		.minerva-icon.minerva-icon--search,
+		.page-actions-menu__list .minerva-icon,
+		.mw-editsection .minerva-icon,
+		.toggle-list .minerva-icon,
+		.branding-box img {
+			.night-mode-invert-image();
 		}
 	}
 }

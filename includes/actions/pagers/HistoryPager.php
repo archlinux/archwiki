@@ -27,6 +27,8 @@ use ChangesList;
 use ChangeTags;
 use HistoryAction;
 use HtmlArmor;
+use IDBAccessObject;
+use MapCacheLRU;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentFormatter\CommentFormatter;
@@ -43,7 +45,6 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Watchlist\WatchlistManager;
 use stdClass;
-use Xml;
 
 /**
  * @ingroup Pager
@@ -66,6 +67,8 @@ class HistoryPager extends ReverseChronologicalPager {
 
 	/** @var bool Whether to show the tag editing UI */
 	protected $showTagEditUI;
+
+	protected MapCacheLRU $tagsCache;
 
 	/** @var string */
 	private $tagFilter;
@@ -128,6 +131,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		$this->getDateCond( $year, $month, $day );
 		$this->conds = $conds;
 		$this->showTagEditUI = ChangeTags::showTagEditingUI( $this->getAuthority() );
+		$this->tagsCache = new MapCacheLRU( 50 );
 		$services = MediaWikiServices::getInstance();
 		$this->revisionStore = $services->getRevisionStore();
 		$this->linkBatchFactory = $linkBatchFactory ?? $services->getLinkBatchFactory();
@@ -141,7 +145,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		$this->changeTagsStore = $changeTagsStore ?? $services->getChangeTagsStore();
 	}
 
-	// For hook compatibility...
+	// For hook compatibility…
 	public function getArticle() {
 		return $this->historyPage->getArticle();
 	}
@@ -204,7 +208,7 @@ class HistoryPager extends ReverseChronologicalPager {
 			}
 			$this->revisions[] = $this->revisionStore->newRevisionFromRow(
 				$row,
-				RevisionStore::READ_NORMAL,
+				IDBAccessObject::READ_NORMAL,
 				$title
 			);
 		}
@@ -281,7 +285,7 @@ class HistoryPager extends ReverseChronologicalPager {
 				] ) . "\n" . $s;
 				$s .= Html::hidden( 'type', 'revision', [ 'form' => 'mw-history-revisionactions' ] ) . "\n";
 
-				$this->buttons .= Xml::tags( 'div', [ 'class' =>
+				$this->buttons .= Html::rawElement( 'div', [ 'class' =>
 					'mw-history-revisionactions' ], $actionButtons );
 			}
 
@@ -376,7 +380,9 @@ class HistoryPager extends ReverseChronologicalPager {
 			$lastlink = $this->lastLink( $revRecord, null );
 		} else {
 			// Do not display a link, because this is the oldest revision of the page
-			$lastlink = $this->historyPage->message['last'];
+			$lastlink = Html::element( 'span', [
+				'class' => 'mw-history-histlinks-previous',
+			], $this->historyPage->message['last'] );
 		}
 		$curLastlinks = Html::rawElement( 'span', [], $curlink ) .
 			Html::rawElement( 'span', [], $lastlink );
@@ -403,18 +409,20 @@ class HistoryPager extends ReverseChronologicalPager {
 			if ( !$this->showTagEditUI
 				&& !$revRecord->userCan( RevisionRecord::DELETED_RESTRICTED, $this->getAuthority() )
 			) {
-				$del = Xml::check( 'deleterevisions', false, [ 'disabled' => 'disabled' ] );
-			// Otherwise, enable the checkbox...
+				$del = Html::check( 'deleterevisions', false, [ 'disabled' => 'disabled' ] );
+			// Otherwise, enable the checkbox…
 			} else {
-				$del = Xml::check( 'showhiderevisions', false,
-					[ 'name' => 'ids[' . $revRecord->getId() . ']', 'form' => 'mw-history-revisionactions' ] );
+				$del = Html::check(
+					'ids[' . $revRecord->getId() . ']', false,
+					[ 'form' => 'mw-history-revisionactions' ]
+				);
 			}
-		// User can only view deleted revisions...
+		// User can only view deleted revisions…
 		} elseif ( $revRecord->getVisibility() && $this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
 			// If revision was hidden from sysops, disable the link
 			if ( !$revRecord->userCan( RevisionRecord::DELETED_RESTRICTED, $this->getAuthority() ) ) {
 				$del = Linker::revDeleteLinkDisabled( false );
-			// Otherwise, show the link...
+			// Otherwise, show the link…
 			} else {
 				$query = [
 					'type' => 'revision',
@@ -486,10 +494,17 @@ class HistoryPager extends ReverseChronologicalPager {
 		$s .= $pagerTools->toHTML();
 
 		# Tags
-		[ $tagSummary, $newClasses ] = ChangeTags::formatSummaryRow(
-			$row->ts_tags,
-			'history',
-			$this->getContext()
+		[ $tagSummary, $newClasses ] = $this->tagsCache->getWithSetCallback(
+			$this->tagsCache->makeKey(
+				$row->ts_tags ?? '',
+				$this->getUser()->getName(),
+				$lang->getCode()
+			),
+			fn () => ChangeTags::formatSummaryRow(
+				$row->ts_tags,
+				'history',
+				$this->getContext()
+			)
 		);
 		$classes = array_merge( $classes, $newClasses );
 		if ( $tagSummary !== '' ) {
@@ -508,7 +523,7 @@ class HistoryPager extends ReverseChronologicalPager {
 			$attribs['class'] = implode( ' ', $classes );
 		}
 
-		return Xml::tags( 'li', $attribs, $s ) . "\n";
+		return Html::rawElement( 'li', $attribs, $s ) . "\n";
 	}
 
 	/**
@@ -534,12 +549,15 @@ class HistoryPager extends ReverseChronologicalPager {
 		if ( $latest === $rev->getId()
 			|| !$rev->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() )
 		) {
-			return $cur;
+			return Html::element( 'span', [
+				'class' => 'mw-history-histlinks-current',
+			], $cur );
 		} else {
 			return $this->getLinkRenderer()->makeKnownLink(
 				$this->getTitle(),
 				new HtmlArmor( $cur ),
 				[
+					'class' => 'mw-history-histlinks-current',
 					'title' => $this->historyPage->message['tooltip-cur']
 				],
 				[
@@ -564,13 +582,16 @@ class HistoryPager extends ReverseChronologicalPager {
 		if ( !$prevRev->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ||
 			( $nextRev && !$nextRev->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() ) )
 		) {
-			return $last;
+			return Html::element( 'span', [
+				'class' => 'mw-history-histlinks-previous',
+			], $last );
 		}
 
 		return $this->getLinkRenderer()->makeKnownLink(
 			$this->getTitle(),
 			new HtmlArmor( $last ),
 			[
+				'class' => 'mw-history-histlinks-previous',
 				'title' => $this->historyPage->message['tooltip-last']
 			],
 			[
@@ -594,7 +615,7 @@ class HistoryPager extends ReverseChronologicalPager {
 			$radio = [ 'type' => 'radio', 'value' => $id ];
 			/** @todo Move title texts to javascript */
 			if ( $firstInList ) {
-				$first = Xml::element( 'input',
+				$first = Html::element( 'input',
 					array_merge( $radio, [
 						// Disable the hidden radio because it can still
 						// be selected with arrow keys on Firefox
@@ -614,13 +635,13 @@ class HistoryPager extends ReverseChronologicalPager {
 				} else {
 					$checkmark = [];
 				}
-				$first = Xml::element( 'input',
+				$first = Html::element( 'input',
 					array_merge( $radio, $checkmark, [
 						'name' => 'oldid',
 						'id' => "mw-oldid-$id" ] ) );
 				$checkmark = [];
 			}
-			$second = Xml::element( 'input',
+			$second = Html::element( 'input',
 				array_merge( $radio, $checkmark, [
 					'name' => 'diff',
 					'id' => "mw-diff-$id" ] ) );
@@ -653,8 +674,5 @@ class HistoryPager extends ReverseChronologicalPager {
 
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( HistoryPager::class, 'HistoryPager' );

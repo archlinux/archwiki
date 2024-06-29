@@ -8,8 +8,5 @@ interface HeadingItem extends ThreadItem {
 	 */
 	public function getHeadingLevel(): int;
 
-	/**
-	 * @return bool
-	 */
 	public function isPlaceholderHeading(): bool;
 }

@@ -40,14 +40,14 @@ class UserEditCountInitJob extends Job implements GenericParameterJob {
 	}
 
 	public function run() {
-		$dbw = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getPrimaryDatabase();
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 
 		$dbw->newUpdateQueryBuilder()
 			->update( 'user' )
 			->set( [ 'user_editcount' => $this->params['editCount'] ] )
 			->where( [
 				'user_id' => $this->params['userId'],
-				'user_editcount IS NULL OR user_editcount < ' . $dbw->addQuotes( $this->params['editCount'] )
+				$dbw->expr( 'user_editcount', '=', null )->or( 'user_editcount', '<', $this->params['editCount'] )
 			] )
 			->caller( __METHOD__ )->execute();
 

@@ -9,12 +9,12 @@ namespace MediaWiki\Skin\Timeless;
 
 use BaseTemplate;
 use File;
-use Html;
-use Linker;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
-use ResourceLoaderSkinModule;
-use Sanitizer;
-use SpecialPage;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\ResourceLoader\SkinModule;
+use MediaWiki\SpecialPage\SpecialPage;
 
 class TimelessTemplate extends BaseTemplate {
 
@@ -475,7 +475,7 @@ class TimelessTemplate extends BaseTemplate {
 				'role' => 'banner'
 			]
 		);
-		$logos = ResourceLoaderSkinModule::getAvailableLogos( $config );
+		$logos = SkinModule::getAvailableLogos( $config );
 		if ( $part !== 'image' ) {
 			$wordmarkImage = $this->getLogoImage( $config->get( 'TimelessWordmark' ), true );
 			if ( !$wordmarkImage && isset( $logos['wordmark'] ) ) {
@@ -703,7 +703,7 @@ class TimelessTemplate extends BaseTemplate {
 			$extraTools['notifications-notice'] = $personalTools['notifications-notice'];
 			unset( $personalTools['notifications-notice'] );
 		}
-		$class = empty( $extraTools ) ? '' : 'extension-icons';
+		$class = $extraTools === [] ? '' : 'extension-icons';
 
 		// Re-label some messages
 		if ( isset( $personalTools['userpage'] ) ) {
@@ -736,7 +736,7 @@ class TimelessTemplate extends BaseTemplate {
 		);
 
 		// Extra icon stuff (echo etc)
-		if ( !empty( $extraTools ) ) {
+		if ( $extraTools !== [] ) {
 			$iconList = '';
 			foreach ( $extraTools as $key => $item ) {
 				$iconList .= $skin->makeListItem( $key, $item );
@@ -985,8 +985,8 @@ class TimelessTemplate extends BaseTemplate {
 		$catList = '';
 
 		$allCats = $skin->getOutput()->getCategoryLinks();
-		if ( !empty( $allCats ) ) {
-			if ( !empty( $allCats['normal'] ) ) {
+		if ( $allCats !== [] ) {
+			if ( isset( $allCats['normal'] ) && $allCats['normal'] !== [] ) {
 				$catList .= $this->getCatList(
 					$allCats['normal'],
 					'normal-catlinks',

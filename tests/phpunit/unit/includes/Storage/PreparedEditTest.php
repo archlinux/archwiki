@@ -1,8 +1,9 @@
 <?php
 
-namespace MediaWiki\Edit;
+namespace MediaWiki\Tests\Edit;
 
-use ParserOutput;
+use MediaWiki\Edit\PreparedEdit;
+use MediaWiki\Parser\ParserOutput;
 
 /**
  * @covers \MediaWiki\Edit\PreparedEdit

@@ -5,7 +5,7 @@
 namespace MediaWiki\SecureLinkFixer;
 
 return [
-	'HSTSPreloadLookup' => static function () {
+	'HSTSPreloadLookup' => static function (): HSTSPreloadLookup {
 		return new HSTSPreloadLookup( __DIR__ . '/../domains.php' );
 	}
 ];

@@ -19,10 +19,13 @@ abstract class TokenHandler {
 	protected $pipelineId;
 	/** @var array */
 	protected $options;
-	/** @var bool */
-	protected $disabled;
-	/** @var bool */
-	protected $onAnyEnabled;
+	/** This is set if the token handler is disabled for the entire pipeline. */
+	protected bool $disabled = false;
+	/**
+	 * This is set/reset by the token handlers at various points in the token stream based on what
+	 * is encountered. This only enables/disables the onAny handler.
+	 */
+	protected bool $onAnyEnabled = true;
 	/** @var bool */
 	protected $atTopLevel = false;
 
@@ -34,19 +37,8 @@ abstract class TokenHandler {
 		$this->manager = $manager;
 		$this->env = $manager->getEnv();
 		$this->options = $options;
-
-		// This is set if the token handler is disabled for the entire pipeline.
-		$this->disabled = false;
-
-		// This is set/reset by the token handlers at various points
-		// in the token stream based on what is encountered.
-		// This only enables/disables the onAny handler.
-		$this->onAnyEnabled = true;
 	}
 
-	/**
-	 * @param int $id
-	 */
 	public function setPipelineId( int $id ): void {
 		$this->pipelineId = $id;
 	}
@@ -135,11 +127,7 @@ abstract class TokenHandler {
 	 */
 	public function process( $tokens ): array {
 		$accum = [];
-		$i = 0;
-		$n = count( $tokens );
-		while ( $i < $n ) {
-			$token = $tokens[$i];
-
+		foreach ( $tokens as $token ) {
 			$res = null;
 			$resTokens = null; // Not needed but helpful for code comprehension
 			if ( $token instanceof NlTk ) {
@@ -169,8 +157,6 @@ abstract class TokenHandler {
 				// Avoid array_merge() -- see https://w.wiki/3zvE
 				PHPUtils::pushArray( $accum, $resTokens );
 			}
-
-			$i++;
 		}
 
 		return $accum;

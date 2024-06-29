@@ -8,8 +8,8 @@ use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Status\Status;
 use Message;
-use Status;
 
 /**
  * This class validates filters, e.g. before saving.
@@ -223,7 +223,7 @@ class FilterValidator {
 	 * @return Status
 	 */
 	public function checkThrottleParameters( array $params ): Status {
-		list( $throttleCount, $throttlePeriod ) = explode( ',', $params[1], 2 );
+		[ $throttleCount, $throttlePeriod ] = explode( ',', $params[1], 2 );
 		$throttleGroups = array_slice( $params, 2 );
 		$validGroups = [
 			'ip',

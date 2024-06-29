@@ -21,92 +21,74 @@
 @font-size-minerva-small: unit( 14 / @font-size-browser, rem ); // Equals `14px` at `16px` browser default.
 @font-size-minerva-smallest: unit( 13 / @font-size-browser, rem ); // Equals `13px` at `16px` browser default.
 
-// colors
-@background-color-light: #eaecf0;
-@background-color-lightest: #f8f9fa;
-@box-shadow-color-drawer: rgba( 0, 0, 0, 0.35 );
-
 //
 // Icons
 //
-@icon-touch-area-sm: 34;
-@icon-touch-area-md: 44;
-@icon-color: #54595d;
-@min-size-icon: 20px;
+@icon-padding-medium: @size-75;
+@icon-size-medium: @size-icon-medium;
+@min-size-icon: @min-size-icon-medium;
 @size-icon: 1.5em;
 @width-icon-gutter: 1em;
 
-// Small icon
-@icon-glyph-size-sm: 16;
-@icon-size-sm: unit( @icon-glyph-size-sm / @font-size-browser, em );
-@icon-padding-sm: unit( ( @icon-touch-area-sm - @icon-glyph-size-sm ) / 2 / @font-size-browser, em );
-
-// Medium icon
-@icon-glyph-size-md: 20;
-@icon-size-md: unit( @icon-glyph-size-md / @font-size-browser, em );
-@icon-padding-md: unit( ( @icon-touch-area-md - @icon-glyph-size-md ) / 2 / @font-size-browser, em );
-@margin-icon-md-labelled: 8px;
-
 // Navigation Drawers
-@rightDrawerWidth: 60%;
-@menuButtonIconSize: 3.5em;
+@drawer-width-right: 60%;
+@menu-button-icon-size: 3.5em;
 
 // Headings
-@fontSizeH1: 1.7em;
-@fontSizeH2: 1.5em;
-@fontSizeH3: 1.2em;
+@font-size-h1: 1.7em;
+@font-size-h2: 1.5em;
+@font-size-h3: 1.2em;
 
 // Content
-@contentPadding: 16px;
-@contentMargin: 16px;
+@padding-content: 16px;
+@margin-content: 16px;
 
 // Header
-@siteHeaderHeight: unit( 54 / @font-size-browser, em );
-@overlayHeaderHeight: unit( 48 / @font-size-browser, em );
-@headerVerticalPadding: 0.15em;
-@searchBoxWidth: 375/16em;
-@deviceWidthTabletEms: unit( @width-breakpoint-tablet / @font-size-browser, em );
-@brandingBoxWidth: @deviceWidthTabletEms - (3 * @menuButtonIconSize + @width-icon-gutter) - @searchBoxWidth;
+@height-site-header: unit( 54 / @font-size-browser, em );
+@height-overlay-header: unit( 48 / @font-size-browser, em );
+@padding-vertical-header: 0.15em;
+@width-search-box: 375/16em;
+@device-width-tablet-ems: unit( @width-breakpoint-tablet / @font-size-browser, em );
+@width-branding-box: @device-width-tablet-ems - (3 * @menu-button-icon-size + @width-icon-gutter) - @width-search-box;
 
-@titleSectionSpacingTop: 20px;
+@top-spacing-title-section: @spacing-125;
 
 // Page actions
 // TODO: Replace by `@font-size-minerva-small`.
-@taglineFontSize: 0.85em;
+@font-size-tag-line: 0.85em;
 
 // colors
-@semiTransparent: rgba( 0, 0, 0, 0.8 );
+@opaque: rgba( 0, 0, 0, 0.8 );
 
-@lastModifiedBarActiveBackgroundColor: #00af89;
 @background-color-toast-notification: #202122;
 
 // Typography
 @line-height-content: 1.65;
 
-@headingMargin: 0.5em;
+@margin-heading: 0.5em;
 
 // blockquote
-@padding-start-blockquote: 32px;
+@padding-start-blockquote: @spacing-200;
 // Make it a tad smaller on mobile to fit more contents.
-@padding-end-blockquote: 24px;
-@padding-vertical-blockquote: 8px;
+@padding-end-blockquote: @spacing-150;
+@padding-vertical-blockquote: @spacing-50;
 
 // custom tablet styling
-@contentPaddingTablet: 3.35em;
+@padding-content-tablet: 3.35em;
 
 // note since content does not use view border box we have to include padding.
-@contentMaxWidthTablet: @width-breakpoint-desktop - ( 2 * @contentPaddingTablet );
+@max-width-content-tablet: @width-breakpoint-desktop - ( 2 * @padding-content-tablet );
 
 // Wiki specific variables
-@infoboxWidth: 320px;
+@width-infobox: 320px;
 
 // z-index:
-@z-indexOccluded: -1;
-@z-indexBase: 0;
-@z-indexAboveContent: 1;
-@z-indexDrawer: 2;
-@z-indexOverlay: 3;
-@z-indexOverOverlay: 4;
+@z-index-occluded: -1;
+@z-index-base: 0;
+@z-index-above-content: 1;
+@z-index-drawer: 2;
+@z-index-overlay: 3;
+@z-index-over-overlay: 4;
 
 // Animations & Transitions
 // Transitions > Timing Functions

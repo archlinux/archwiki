@@ -9,7 +9,7 @@ use MediaWiki\User\CentralId\LocalIdLookup;
 use MediaWiki\User\UserIdentityValue;
 
 /**
- * @covers LocalIdLookup
+ * @covers \MediaWiki\User\CentralId\LocalIdLookup
  * @group Database
  */
 class LocalIdLookupTest extends MediaWikiIntegrationTestCase {
@@ -45,14 +45,21 @@ class LocalIdLookupTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function newLookup( array $configOverride = [] ) {
-		return new LocalIdLookup(
+		$lookup = new LocalIdLookup(
 			new HashConfig( [
 				MainConfigNames::SharedDB => null,
 				MainConfigNames::SharedTables => [],
 				MainConfigNames::LocalDatabases => [],
 			] + $configOverride ),
-			$this->getServiceContainer()->getDBLoadBalancerFactory()
+			$this->getServiceContainer()->getConnectionProvider(),
+			$this->getServiceContainer()->getHideUserUtils()
 		);
+		$lookup->init(
+			'test',
+			$this->getServiceContainer()->getUserIdentityLookup(),
+			$this->getServiceContainer()->getUserFactory()
+		);
+		return $lookup;
 	}
 
 	public function testLookupCentralIds() {

@@ -101,7 +101,7 @@ TEXT
 	 * @return bool
 	 */
 	protected function doPopulate( array $data, $force ) {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
 		if ( !$force ) {
 			$row = $dbw->newSelectQueryBuilder()
@@ -129,18 +129,17 @@ TEXT
 				->caller( __METHOD__ )->fetchRow();
 
 			if ( !$row ) {
-				$dbw->insert(
-					'interwiki',
-					[
+				$dbw->newInsertQueryBuilder()
+					->insertInto( 'interwiki' )
+					->ignore()
+					->row( [
 						'iw_prefix' => $prefix,
 						'iw_url' => $d['url'],
 						'iw_local' => 1,
 						'iw_api' => '',
 						'iw_wikiid' => '',
-					],
-					__METHOD__,
-					[ 'IGNORE' ]
-				);
+					] )
+					->caller( __METHOD__ )->execute();
 			}
 
 			$lookup->invalidateCache( $prefix );

@@ -1,8 +1,11 @@
 <?php
 
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Wikimedia\ScopedCallback;
 
 /**

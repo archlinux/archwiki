@@ -65,11 +65,10 @@
 	 * @return {string[]} Source names
 	 */
 	mw.echo.dm.CrossWikiNotificationItem.prototype.getSourceNames = function () {
-		var i,
-			sourceNames = [],
+		var sourceNames = [],
 			sourceLists = this.list.getItems();
 
-		for ( i = 0; i < sourceLists.length; i++ ) {
+		for ( var i = 0; i < sourceLists.length; i++ ) {
 			sourceNames.push( sourceLists[ i ].getName() );
 		}
 
@@ -103,12 +102,11 @@
 	 * @return {boolean} There are unseen items
 	 */
 	mw.echo.dm.CrossWikiNotificationItem.prototype.hasUnseen = function () {
-		var i, j, items,
-			sourceLists = this.getList().getItems();
+		var sourceLists = this.getList().getItems();
 
-		for ( i = 0; i < sourceLists.length; i++ ) {
-			items = sourceLists[ i ].getItems();
-			for ( j = 0; j < items.length; j++ ) {
+		for ( var i = 0; i < sourceLists.length; i++ ) {
+			var items = sourceLists[ i ].getItems();
+			for ( var j = 0; j < items.length; j++ ) {
 				if ( !items[ j ].isSeen() ) {
 					return true;
 				}

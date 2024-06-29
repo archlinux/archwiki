@@ -16,7 +16,7 @@
 	"prefs-gadgets": "Gadgeturi",
 	"prefs-description-gadgets": "Activați funcții adiționale pentru contul dvs.",
 	"gadgets-prefstext-safemode": "Gadget-urile nu sunt disponibile momentan deoarece modul sigur a fost activat. Vă rugăm să [[#mw-input-wpforcesafemode|dezactivați modul sigur]] pentru a utiliza gadgeturi.",
-	"gadgets": "Gadgeturi",
+	"special-gadgets": "Gadgeturi",
 	"gadgetusage": "Statistici de utilizare a gadgeturilor",
 	"gadgetusage-gadget": "Gadget",
 	"gadgetusage-usercount": "Număr de utilizatori",

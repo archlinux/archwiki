@@ -2,6 +2,7 @@
 
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\TargetPage;
+use MediaWiki\Title\Title;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Model\TargetPage

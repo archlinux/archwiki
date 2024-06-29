@@ -38,7 +38,6 @@
 	"echo-pref-subscription-edit-thank": "मेरो सम्पादनको लागि धन्यवाद",
 	"echo-pref-tooltip-edit-thank": "कसैले मेरो सम्पादनको लागि मलाई धन्यवाद दिएमा मलाई सूचित गर्ने ।",
 	"echo-category-title-edit-thank": "धन्यवाद",
-	"notification-thanks-diff-link": "तपाईंको सम्पादन",
 	"notification-header-rev-thank": "$1ले {{GENDER:$4|तपाईंलाई}} \"<strong>$3</strong>\"को सम्पादनको लागी {{GENDER:$2|धन्यवाद दिनुभएको छ}}।",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|धन्यवाद}} {{GENDER:$4|तपाईकाे}} सृजनाका लागि <strong>$3</strong> छ।",
 	"notification-compact-header-edit-thank": "$1ले {{GENDER:$3|तपाईं}}लाई {{GENDER:$2|धन्यवाद}} दिनुभो।",
@@ -55,7 +54,6 @@
 	"thanks-error-invalidpostid": "पोस्ट ठेगाना अमान्य छ।",
 	"flow-thanks-confirmation-special": "के तपाईं यस प्रतिक्रियाको लागि धन्यवाद पठाउन चाहनुहुन्छ?",
 	"flow-thanks-thanked-notice": "तपाईंलाई {{GENDER:$2|उसले|उनले|उनिहरूले}} दिएको प्रतिक्रिया मन परेको छ भन्ने सूचना $1लाई पठाइएको छ ।",
-	"notification-flow-thanks-post-link": "तपाईंको टिप्पणी",
 	"notification-header-flow-thank": " \"<strong>$3</strong>\" मा तपाईँको प्रतिक्रियाको लागि $1 ले {{GENDER:$5|तपाईँलाई}} {{GENDER:$2|धन्यवाद}} दिनुभो ।",
 	"notification-compact-header-flow-thank": "$1ले {{GENDER:$3|तपाईं}}लाई {{GENDER:$2|धन्यवाद}} दिनुभो।",
 	"ipb-action-thanks": "धन्यवाद पठाउँदै"

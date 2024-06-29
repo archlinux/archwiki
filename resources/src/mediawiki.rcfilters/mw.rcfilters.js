@@ -1,11 +1,20 @@
 /**
- * @class
+ * Components for use on the RecentChanges page. Provided by the `mediawiki.rcfilters.filters.ui` module.
+ *
+ * @namespace rcfilters
+ * @private
  * @singleton
  */
-mw.rcfilters = {
+const rcfilters = {
 	Controller: require( './Controller.js' ),
 	HighlightColors: require( './HighlightColors.js' ),
 	UriProcessor: require( './UriProcessor.js' ),
+	/**
+	 * Models used by RecentChanges Filters.
+	 *
+	 * @namespace rcfilters.dm
+	 * @private
+	 */
 	dm: {
 		ChangesListViewModel: require( './dm/ChangesListViewModel.js' ),
 		FilterGroup: require( './dm/FilterGroup.js' ),
@@ -15,49 +24,22 @@ mw.rcfilters = {
 		SavedQueriesModel: require( './dm/SavedQueriesModel.js' ),
 		SavedQueryItemModel: require( './dm/SavedQueryItemModel.js' )
 	},
+	/**
+	 * Widgets used by RecentChanges Filters.
+	 *
+	 * @namespace rcfilters.ui
+	 * @private
+	 */
 	ui: {
 		MainWrapperWidget: require( './ui/MainWrapperWidget.js' )
 	},
-	utils: {
-		addArrayElementsUnique: function ( arr, elements ) {
-			elements = Array.isArray( elements ) ? elements : [ elements ];
-
-			elements.forEach( function ( element ) {
-				if ( arr.indexOf( element ) === -1 ) {
-					arr.push( element );
-				}
-			} );
-
-			return arr;
-		},
-		normalizeParamOptions: function ( givenOptions, legalOptions, supportsAll ) {
-			var result = [];
-			supportsAll = supportsAll === undefined ? true : !!supportsAll;
-
-			if ( supportsAll && givenOptions.indexOf( 'all' ) > -1 ) {
-				// If anywhere in the values there's 'all', we
-				// treat it as if only 'all' was selected.
-				// Example: param=valid1,valid2,all
-				// Result: param=all
-				return [ 'all' ];
-			}
-
-			// Get rid of any dupe and invalid parameter, only output
-			// valid ones
-			// Example: param=valid1,valid2,invalid1,valid1
-			// Result: param=valid1,valid2
-			givenOptions.forEach( function ( value ) {
-				if (
-					legalOptions.indexOf( value ) > -1 &&
-					result.indexOf( value ) === -1
-				) {
-					result.push( value );
-				}
-			} );
-
-			return result;
-		}
-	}
+	/**
+	 * Utils used by RecentChanges Filters.
+	 *
+	 * @namespace rcfilters.ui
+	 * @private
+	 */
+	utils: require( './utils.js' )
 };
 
 /**
@@ -95,11 +77,11 @@ function init() {
 		limitPreferenceName = mw.config.get( 'wgStructuredChangeFiltersLimitPreferenceName' ),
 		activeFiltersCollapsedName = mw.config.get( 'wgStructuredChangeFiltersCollapsedPreferenceName' ),
 		initialCollapsedState = mw.config.get( 'wgStructuredChangeFiltersCollapsedState' ),
-		filtersModel = new mw.rcfilters.dm.FiltersViewModel(),
-		changesListModel = new mw.rcfilters.dm.ChangesListViewModel( $initialFieldset ),
-		savedQueriesModel = new mw.rcfilters.dm.SavedQueriesModel( filtersModel ),
+		filtersModel = new rcfilters.dm.FiltersViewModel(),
+		changesListModel = new rcfilters.dm.ChangesListViewModel( $initialFieldset ),
+		savedQueriesModel = new rcfilters.dm.SavedQueriesModel( filtersModel ),
 		specialPage = mw.config.get( 'wgCanonicalSpecialPageName' ),
-		controller = new mw.rcfilters.Controller(
+		controller = new rcfilters.Controller(
 			filtersModel, changesListModel, savedQueriesModel,
 			{
 				savedQueriesPreferenceName: savedQueriesPreferenceName,
@@ -151,7 +133,7 @@ function init() {
 		};
 	}
 
-	mainWrapperWidget = new mw.rcfilters.ui.MainWrapperWidget(
+	mainWrapperWidget = new rcfilters.ui.MainWrapperWidget(
 		controller,
 		filtersModel,
 		savedQueriesModel,
@@ -193,8 +175,8 @@ function init() {
 	/**
 	 * Fired when initialization of the filtering interface for changes list is complete.
 	 *
-	 * @event structuredChangeFilters_ui_initialized
-	 * @member mw.hook
+	 * @event ~'structuredChangeFilters.ui.initialized'
+	 * @memberof Hooks
 	 */
 	mw.hook( 'structuredChangeFilters.ui.initialized' ).fire();
 }
@@ -213,4 +195,4 @@ if ( !window.QUnit ) {
 	}
 }
 
-module.exports = mw.rcfilters;
+module.exports = rcfilters;

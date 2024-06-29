@@ -25,7 +25,7 @@ class ReplaceQueryBuilder {
 	private $table = '';
 
 	/**
-	 * @var array The rows to be passed to IDatabase::replace()
+	 * @var list<array> The rows to be passed to IDatabase::replace()
 	 */
 	private $rows = [];
 
@@ -104,6 +104,7 @@ class ReplaceQueryBuilder {
 	 * Manually set the table name to be passed to IDatabase::replace()
 	 *
 	 * @param string $table The table name
+	 * @param-taint $table exec_sql
 	 * @return $this
 	 */
 	public function table( $table ) {
@@ -115,6 +116,7 @@ class ReplaceQueryBuilder {
 	 * Set table for the query. Alias for table().
 	 *
 	 * @param string $table The table name
+	 * @param-taint $table exec_sql
 	 * @return $this
 	 */
 	public function replaceInto( string $table ) {
@@ -124,7 +126,7 @@ class ReplaceQueryBuilder {
 	/**
 	 * Add rows to be inserted.
 	 *
-	 * @param array $rows
+	 * @param list<array> $rows
 	 *   $rows should be an integer-keyed list of such string-keyed maps, defining a list of new rows.
 	 *   The keys in each map must be identical to each other and in the same order.
 	 *   The rows must not collide with each other.
@@ -168,6 +170,7 @@ class ReplaceQueryBuilder {
 	 * Set the method name to be included in an SQL comment.
 	 *
 	 * @param string $fname
+	 * @param-taint $fname exec_sql
 	 * @return $this
 	 */
 	public function caller( $fname ) {

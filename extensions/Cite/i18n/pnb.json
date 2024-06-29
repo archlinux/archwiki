@@ -18,7 +18,6 @@
 	"cite_error_included_ref": "بند کردا &lt;/ref&gt ؛ &lt;ref&gt دا گھاٹا ٹیگ",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> ٹیگ اک ٹولی جیدا ناں \"$1\" اے ہیگے نیں، پر کوئی <code>&lt;references group=\"$1\"/&gt;</code> ٹیگ نا  لبھیا۔",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> ٹیگ ان  <code>&lt;references&gt;</code> دے رپھڑی اٹریبیوٹ \"$1\"۔",
-	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> ٹیگ دسیا گیا <code>&lt;references&gt;</code> دے ٹولی اٹریبیوٹ \"$1\" جیہڑے  پہلی لکھت چ ناں دسے۔",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> ٹیگ ناں نال \"$1\" <code>&lt;references&gt;</code> چ دسیا گیا پہلی کسے لکھت چ نئیں ورتیا گیا۔",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> ٹیگ دسیا گیا <code>&lt;references&gt;</code> چ دا کوئی ناں اٹریبیوٹ نئیں۔",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> ٹیگ دسیا گیا <code>&lt;references&gt;</code> چ \"$1\" ناں نال، ایدے چ کج نئیں۔",

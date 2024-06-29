@@ -6,21 +6,21 @@
 
 namespace MediaWiki\Skins\Vector\Tests\Integration;
 
-use HashConfig;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\ResourceLoader\Context;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirements\LimitedWidthContentRequirement;
 use MediaWiki\Skins\Vector\Hooks;
 use MediaWiki\Skins\Vector\SkinVector22;
 use MediaWiki\Skins\Vector\SkinVectorLegacy;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsManager;
+use MediaWiki\User\Options\UserOptionsManager;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use ReflectionMethod;
 use RequestContext;
-use ResourceLoaderContext;
 use RuntimeException;
-use User;
 
 /**
  * Integration tests for Vector Hooks.
@@ -341,7 +341,7 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 	public function testGetActiveABTest( $configData, $expected ) {
 		$config = new HashConfig( $configData );
 		$vectorConfig = Hooks::getActiveABTest(
-			$this->createMock( ResourceLoaderContext::class ),
+			$this->createMock( Context::class ),
 			$config
 		);
 
@@ -359,7 +359,7 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		$config = new HashConfig( $configData );
 		$this->expectException( RuntimeException::class );
 		Hooks::getActiveABTest(
-			$this->createMock( ResourceLoaderContext::class ),
+			$this->createMock( Context::class ),
 			$config
 		);
 	}
@@ -368,8 +368,8 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::onLocalUserCreated
 	 */
 	public function testOnLocalUserCreatedLegacy() {
-		$this->setMwGlobals( [
-			'wgVectorDefaultSkinVersionForNewAccounts' => Constants::SKIN_VERSION_LEGACY,
+		$config = new HashConfig( [
+			'VectorDefaultSkinVersionForNewAccounts' => Constants::SKIN_VERSION_LEGACY,
 		] );
 
 		$user = $this->createMock( User::class );
@@ -377,20 +377,22 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		$userOptionsManager->expects( $this->once() )
 			->method( 'setOption' )
 			->with( $user, 'skin', Constants::SKIN_NAME_LEGACY );
-		$this->setService( 'UserOptionsManager', $userOptionsManager );
 
 		// NOTE: Using $this->getServiceContainer()->getHookContainer()->run( ... )
 		// will instead call Echo's legacy hook as that is already registered which
 		// will break this test. Use Vector's hook handler instead.
-		( new Hooks() )->onLocalUserCreated( $user, false );
+		( new Hooks(
+			$config,
+			$userOptionsManager
+		) )->onLocalUserCreated( $user, false );
 	}
 
 	/**
 	 * @covers ::onLocalUserCreated
 	 */
 	public function testOnLocalUserCreatedLatest() {
-		$this->setMwGlobals( [
-			'wgVectorDefaultSkinVersionForNewAccounts' => Constants::SKIN_VERSION_LATEST,
+		$config = new HashConfig( [
+			'VectorDefaultSkinVersionForNewAccounts' => Constants::SKIN_VERSION_LATEST,
 		] );
 
 		$user = $this->createMock( User::class );
@@ -398,22 +400,25 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		$userOptionsManager->expects( $this->once() )
 			->method( 'setOption' )
 			->with( $user, 'skin', Constants::SKIN_NAME_MODERN );
-		$this->setService( 'UserOptionsManager', $userOptionsManager );
 
 		// NOTE: Using $this->getServiceContainer()->getHookContainer()->run( ... )
 		// will instead call Echo's legacy hook as that is already registered which
 		// will break this test. Use Vector's hook handler instead.
-		( new Hooks() )->onLocalUserCreated( $user, false );
+		( new Hooks(
+			$config,
+			$userOptionsManager
+		) )->onLocalUserCreated( $user, false );
 	}
 
 	/**
 	 * @covers ::onSkinTemplateNavigation
 	 */
 	public function testOnSkinTemplateNavigation() {
-		$this->setMwGlobals( [
-			'wgVectorUseIconWatch' => true,
-		] );
-		$skin = new SkinVector22( [ 'name' => 'vector' ] );
+		$this->overrideConfigValue( 'VectorUseIconWatch', true );
+		$skin = new SkinVector22(
+			$this->getServiceContainer()->get( 'Vector.FeatureManagerFactory' ),
+			[ 'name' => 'vector' ]
+		);
 		$skin->getContext()->setTitle( Title::newFromText( 'Foo' ) );
 		$contentNavWatch = [
 			'associated-pages' => [],
@@ -452,7 +457,10 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::updateUserLinksItems
 	 */
 	public function testUpdateUserLinksItems() {
-		$vector2022Skin = new SkinVector22( [ 'name' => 'vector-2022' ] );
+		$vector2022Skin = new SkinVector22(
+			$this->getServiceContainer()->get( 'Vector.FeatureManagerFactory' ),
+			[ 'name' => 'vector-2022' ]
+		);
 		$contentNav = [
 			'associated-pages' => [],
 			'views' => [],
@@ -493,7 +501,10 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		$updateUserLinksDropdownItems->setAccessible( true );
 
 		// Anon users
-		$skin = new SkinVector22( [ 'name' => 'vector-2022' ] );
+		$skin = new SkinVector22(
+			$this->getServiceContainer()->get( 'Vector.FeatureManagerFactory' ),
+			[ 'name' => 'vector-2022' ]
+		);
 		$contentAnon = [
 			'user-menu' => [
 				'anonuserpage' => [ 'class' => [], 'icon' => 'anonuserpage' ],
@@ -553,73 +564,6 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertTrue( isset( $contentRegistered['user-menu-logout']['logout'] ),
 			'Logout link in user links dropdown is not set'
-		);
-	}
-
-	/**
-	 * @covers ::updateUserLinksOverflowItems
-	 */
-	public function testUpdateUserLinksOverflowItems() {
-		$updateUserLinksOverflowItems = new ReflectionMethod(
-			Hooks::class,
-			'updateUserLinksOverflowItems'
-		);
-		$updateUserLinksOverflowItems->setAccessible( true );
-		$skin = new SkinVector22( [ 'name' => 'vector-2022' ] );
-
-		// Registered user
-		$registeredUser = $this->createMock( User::class );
-		$registeredUser->method( 'isRegistered' )->willReturn( true );
-		$context = new RequestContext();
-		$context->setUser( $registeredUser );
-		$skin->setContext( $context );
-		$content = [
-			'notifications' => [
-				'alert' => [ 'class' => [], 'icon' => 'alert' ],
-			],
-			'user-interface-preferences' => [
-				'uls' => [ 'class' => [], 'icon' => 'uls' ],
-			],
-			'user-page' => [
-				'userpage' => [ 'class' => [], 'icon' => 'userpage' ],
-				'watchlist' => [ 'class' => [], 'icon' => 'watchlist' ],
-			],
-			'user-menu' => [
-				'watchlist' => [ 'class' => [], 'icon' => 'watchlist' ],
-			],
-		];
-		$updateUserLinksOverflowItems->invokeArgs( null, [ $skin, &$content ] );
-		$this->assertContains( 'user-links-collapsible-item',
-			$content['vector-user-menu-overflow']['uls']['class'],
-			'ULS link in user links overflow requires collapsible class'
-		);
-		$this->assertContains( 'user-links-collapsible-item',
-			$content['vector-user-menu-overflow']['userpage']['class'],
-			'User page link in user links overflow requires collapsible class'
-		);
-		$this->assertNotContains( 'vector-icon',
-			$content['vector-user-menu-overflow']['userpage']['class'],
-			'User page link in user links overflow does not have icon classes'
-		);
-		$this->assertContains( 'user-links-collapsible-item',
-			$content['vector-user-menu-overflow']['watchlist']['class'],
-			'Watchlist link in user links overflow requires collapsible class'
-		);
-		$this->assertContains( 'cdx-button',
-			$content['vector-user-menu-overflow']['watchlist']['link-class'],
-			'Watchlist link in user links overflow requires button classes'
-		);
-		$this->assertContains( 'cdx-button--weight-quiet',
-			$content['vector-user-menu-overflow']['watchlist']['link-class'],
-			'Watchlist link in user links overflow requires quiet button classes'
-		);
-		$this->assertContains( 'cdx-button--icon-only',
-			$content['vector-user-menu-overflow']['watchlist']['link-class'],
-			'Watchlist link in user links overflow hides text'
-		);
-		$this->assertTrue(
-			$content['vector-user-menu-overflow']['watchlist']['id'] === 'pt-watchlist-2',
-			'Watchlist link in user links has unique id'
 		);
 	}
 

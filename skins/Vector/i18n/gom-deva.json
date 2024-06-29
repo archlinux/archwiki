@@ -15,7 +15,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 भास|$1 भासो}}",
 	"vector-no-language-button-label": "भासो जोड",
 	"vector-no-language-button-aria-label": "हो लेख फकत ह्या भासेंत असतित्वांत आसा. हेर भासानी लेख जोड.",
-	"vector-language-redirect-to-top": "ह्या {{SITENAME}} -चेर भासेच्यो दुवे लेखाच्या माथाळ्या सामकार पानाच्या वयल्या भागांत आसात. [[#p-lang-btn|वयर वच]].",
 	"vector-action-addsection": "माथाळो ज़ोड",
 	"vector-action-delete": "काडून उडयात",
 	"vector-action-move": "दुसरेकडे व्हरात",

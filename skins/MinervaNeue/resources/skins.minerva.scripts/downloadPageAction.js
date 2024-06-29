@@ -1,20 +1,28 @@
-( function ( M, track ) {
-	var MAX_PRINT_TIMEOUT = 3000,
-		printSetTimeoutReference = 0,
-		mobile = M.require( 'mobile.startup' ),
-		icons = mobile.icons,
-		lazyImageLoader = mobile.lazyImages.lazyImageLoader,
-		browser = mobile.Browser.getSingleton();
+( function ( track ) {
+	const MAX_PRINT_TIMEOUT = 3000;
+	let printSetTimeoutReference = 0;
+	const mobile = require( 'mobile.startup' );
+
+	/**
+	 * Helper function to detect iOs
+	 *
+	 * @ignore
+	 * @param {string} userAgent User Agent
+	 * @return {boolean}
+	 */
+	function isIos( userAgent ) {
+		return /ipad|iphone|ipod/i.test( userAgent );
+	}
 
 	/**
 	 * Helper function to retrieve the Android version
 	 *
 	 * @ignore
 	 * @param {string} userAgent User Agent
-	 * @return {number|false} An integer.
+	 * @return {number|boolean} Integer version number, or false if not found
 	 */
 	function getAndroidVersion( userAgent ) {
-		var match = userAgent.toLowerCase().match( /android\s(\d\.]*)/ );
+		const match = userAgent.toLowerCase().match( /android\s(\d\.]*)/ );
 		return match ? parseInt( match[ 1 ] ) : false;
 	}
 
@@ -23,10 +31,10 @@
 	 *
 	 * @ignore
 	 * @param {string} userAgent User Agent
-	 * @return {number|false} An integer.
+	 * @return {number|boolean} Integer version number, or false if not found
 	 */
 	function getChromeVersion( userAgent ) {
-		var match = userAgent.toLowerCase().match( /chrom(e|ium)\/(\d+)\./ );
+		const match = userAgent.toLowerCase().match( /chrom(e|ium)\/(\d+)\./ );
 		return match ? parseInt( match[ 2 ] ) : false;
 	}
 
@@ -42,8 +50,8 @@
 	 * @return {boolean}
 	 */
 	function isAvailable( windowObj, page, userAgent, supportedNamespaces ) {
-		var androidVersion = getAndroidVersion( userAgent ),
-			chromeVersion = getChromeVersion( userAgent );
+		const androidVersion = getAndroidVersion( userAgent );
+		const chromeVersion = getChromeVersion( userAgent );
 
 		if ( typeof window.print !== 'function' ) {
 			// T309591: No window.print support
@@ -59,7 +67,7 @@
 			return false;
 		}
 
-		if ( browser.isIos() || chromeVersion === false ||
+		if ( isIos( userAgent ) || chromeVersion === false ||
 			windowObj.chrome === undefined
 		) {
 			// we support only chrome/chromium on desktop/android
@@ -75,9 +83,10 @@
 	 *
 	 * @param {HTMLElement} portletItem
 	 * @param {Icon} spinner
+	 * @param {Function} [loadAllImagesInPage]
 	 */
-	function onClick( portletItem, spinner ) {
-		var icon = portletItem.querySelector( '.minerva-icon--download' );
+	function onClick( portletItem, spinner, loadAllImagesInPage ) {
+		const icon = portletItem.querySelector( '.minerva-icon--download' );
 		function doPrint() {
 			printSetTimeoutReference = clearTimeout( printSetTimeoutReference );
 			track( 'minerva.downloadAsPDF', {
@@ -104,7 +113,7 @@
 			// If all image downloads are taking longer to load then the MAX_PRINT_TIMEOUT
 			// abort the spinner and print regardless.
 			printSetTimeoutReference = setTimeout( doPrint, MAX_PRINT_TIMEOUT );
-			lazyImageLoader.loadImages( lazyImageLoader.queryPlaceholders( document.getElementById( 'content' ) ) )
+			( loadAllImagesInPage || mobile.loadAllImagesInPage )()
 				.then( doPrintBeforeTimeout, doPrintBeforeTimeout );
 		}
 	}
@@ -119,15 +128,13 @@
 	 * @param {number[]} supportedNamespaces
 	 * @param {Window} [windowObj] window object
 	 * @param {boolean} [overflowList] Append to overflow list
-	 * @return {jQuery.Object|null}
+	 * @return {jQuery|null}
 	 */
 	function downloadPageAction( page, supportedNamespaces, windowObj, overflowList ) {
-		var
-			portletLink, iconElement,
-			spinner = ( overflowList ) ? icons.spinner( {
-				label: '',
-				isIconOnly: false
-			} ) : icons.spinner();
+		const spinner = ( overflowList ) ? mobile.spinner( {
+			label: '',
+			isIconOnly: false
+		} ) : mobile.spinner();
 
 		if (
 			isAvailable(
@@ -137,7 +144,7 @@
 		) {
 			// FIXME: Use p-views when cache has cleared.
 			const actionID = document.querySelector( '#p-views' ) ? 'p-views' : 'page-actions';
-			portletLink = mw.util.addPortletLink(
+			const portletLink = mw.util.addPortletLink(
 				overflowList ? 'page-actions-overflow' : actionID,
 				'#',
 				mw.msg( 'minerva-download' ),
@@ -151,9 +158,9 @@
 			);
 			if ( portletLink ) {
 				portletLink.addEventListener( 'click', function () {
-					onClick( portletLink, spinner );
+					onClick( portletLink, spinner, mobile.loadAllImagesInPage );
 				} );
-				iconElement = portletLink.querySelector( '.minerva-icon' );
+				const iconElement = portletLink.querySelector( '.minerva-icon' );
 				if ( iconElement ) {
 					iconElement.classList.add( 'minerva-icon--download' );
 				}
@@ -168,12 +175,11 @@
 	}
 
 	module.exports = {
-		downloadPageAction: downloadPageAction,
+		downloadPageAction,
 		test: {
-			isAvailable: isAvailable,
-			onClick: onClick
+			isAvailable,
+			onClick
 		}
 	};
 
-// eslint-disable-next-line no-restricted-properties
-}( mw.mobileFrontend, mw.track ) );
+}( mw.track ) );

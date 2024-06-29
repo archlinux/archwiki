@@ -20,6 +20,7 @@
  */
 
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -73,7 +74,7 @@ class RevDelLogList extends RevDelList {
 	}
 
 	public static function suggestTarget( $target, array $ids ) {
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$result = $dbr->newSelectQueryBuilder()
 			->select( 'log_type' )
 			->distinct()
@@ -124,7 +125,12 @@ class RevDelLogList extends RevDelList {
 	}
 
 	public function newItem( $row ) {
-		return new RevDelLogItem( $this, $row, $this->commentStore );
+		return new RevDelLogItem(
+			$this,
+			$row,
+			$this->commentStore,
+			MediaWikiServices::getInstance()->getConnectionProvider()
+		);
 	}
 
 	public function getLogAction() {

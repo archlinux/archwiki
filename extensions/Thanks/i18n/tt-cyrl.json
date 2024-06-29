@@ -21,7 +21,6 @@
 	"thanks": "Рәхмәт белдерү",
 	"thanks-submit": "Рәхмәт белдерү",
 	"echo-category-title-edit-thank": "Рәхмәтләр",
-	"notification-thanks-diff-link": "төзәтмәгез",
 	"notification-header-rev-thank": "$1 {{GENDER:$4|сезгә}} <strong>$3</strong> битендә ясаган кертемегез өчен {{GENDER:$2|рәхмәт әйтте}}.",
 	"log-name-thanks": "Рәхмәт әйтү көндәлеге",
 	"logeventslist-thanks-log": "Рәхмәт әйтү көндәлеге"

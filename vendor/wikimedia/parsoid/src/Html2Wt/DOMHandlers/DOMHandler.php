@@ -51,9 +51,6 @@ class DOMHandler {
 	/** @var bool */
 	private $forceSOL;
 
-	/**
-	 * @param bool $forceSOL
-	 */
 	public function __construct( bool $forceSOL = false ) {
 		$this->forceSOL = $forceSOL;
 	}
@@ -215,8 +212,9 @@ class DOMHandler {
 		$res = '';
 		while ( !DOMUtils::atTheTop( $node ) ) {
 			$dp = DOMDataUtils::getDataParsoid( $node );
-			if ( isset( $listTypes[DOMCompat::nodeName( $node )] ) ) {
-				if ( DOMCompat::nodeName( $node ) === 'li' ) {
+			$nodeName = DOMCompat::nodeName( $node );
+			if ( isset( $listTypes[$nodeName] ) ) {
+				if ( $nodeName === 'li' ) {
 					$parentNode = $node->parentNode;
 					while ( $parentNode && !( isset( $parentTypes[DOMCompat::nodeName( $parentNode )] ) ) ) {
 						$parentNode = $parentNode->parentNode;
@@ -233,7 +231,7 @@ class DOMHandler {
 						);
 					}
 				} elseif ( !WTUtils::isLiteralHTMLNode( $node ) ) {
-					$res = $listTypes[DOMCompat::nodeName( $node )] . $res;
+					$res = $listTypes[$nodeName] . $res;
 				}
 			} elseif ( !WTUtils::isLiteralHTMLNode( $node ) ||
 				empty( $dp->autoInsertedStart ) || empty( $dp->autoInsertedEnd )

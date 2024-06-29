@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.41.0"
+		"MediaWiki": ">= 1.42.0"
 	},
 	"AvailableRights": [
 		"abusefilter-modify",
@@ -115,7 +115,12 @@
 		"abusefilter": "abusefilter-log-header"
 	},
 	"LogActionsHandlers": {
-		"abusefilter/hit": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseLogHitFormatter",
+		"abusefilter/hit": {
+			"class": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseLogHitFormatter",
+			"services": [
+				"AbuseFilterSpecsFormatter"
+			]
+		},
 		"abusefilter/modify": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterModifyLogFormatter",
 		"abusefilter/create": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterModifyLogFormatter",
 		"abusefilterblockeddomainhit/*": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterBlockedDomainHitLogFormatter",
@@ -310,11 +315,7 @@
 			"dependencies": "ext.codeEditor.ace"
 		},
 		"ext.abuseFilter.visualEditor": {
-			"scripts": "ve-abusefilter/ve.init.mw.AbuseFilterSaveErrorHandler.js",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"scripts": "ve-abusefilter/ve.init.mw.AbuseFilterSaveErrorHandler.js"
 		}
 	},
 	"attributes": {
@@ -338,7 +339,6 @@
 		},
 		"AutoPromoteGroups": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\AutoPromoteGroupsHandler",
-			"factory": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\AutoPromoteGroupsHandler::factory",
 			"services": [
 				"AbuseFilterConsequencesRegistry",
 				"AbuseFilterBlockAutopromoteStore"
@@ -564,7 +564,7 @@
 			"description": "Whether to include IP in the abuse_filter_log"
 		},
 		"AbuseFilterActorTableSchemaMigrationStage": {
-			"value": 3,
+			"value": 769,
 			"description": "Stage of the migration of af_user/af_user_text to af_actor and afh_user/afh_user_text to afh_actor. Should be one of the following (combinations of) constants: SCHEMA_COMPAT_OLD, SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD, SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_NEW, SCHEMA_COMPAT_NEW. See also \"Schema compatibility flags\" in includes/Defines.php in core. Note: When changing the default here, change it also in unit tests."
 		},
 		"AbuseFilterEnableBlockedExternalDomain": {

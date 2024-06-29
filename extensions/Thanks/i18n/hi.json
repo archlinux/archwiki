@@ -37,7 +37,6 @@
 	"echo-pref-subscription-edit-thank": "मेरे सम्पादन के लिए मुझे धन्यवाद दे।",
 	"echo-pref-tooltip-edit-thank": "जब कोई मेरे सम्पादन के लिये मुझे धन्यवाद कहे, मुझे सूचित करें।",
 	"echo-category-title-edit-thank": "धन्यवाद",
-	"notification-thanks-diff-link": "आपके सम्पादन",
 	"notification-header-rev-thank": "$1 जी ने {{GENDER:$4|आपको}} <strong>$3</strong> में सम्पादन हेतु {{GENDER:$2|धन्यवाद}} दिया है।",
 	"notification-compact-header-edit-thank": "$1 ने {{GENDER:$3|आपको}} {{GENDER:$2|धन्यवाद दिया}}।",
 	"log-name-thanks": "धन्यवाद लॉग",
@@ -48,6 +47,5 @@
 	"thanks-error-invalidpostid": "पोस्ट पता वैध नहीं है।",
 	"flow-thanks-confirmation-special": "क्या आप इस टिप्पणी के लिए धन्यवाद भेजना चाहते हो?",
 	"flow-thanks-thanked-notice": "$1 को अधिसूचित किया गया है कि आपको {{GENDER:$2|उनकी|उनकी|उनकी}} टिप्पणियाँ पसन्द आयीं।",
-	"notification-flow-thanks-post-link": "आपकी टिप्पणी",
 	"notification-compact-header-flow-thank": "$1 ने {{GENDER:$3|आपको}} {{GENDER:$2|धन्यवाद दिया}}।"
 }

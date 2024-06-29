@@ -177,7 +177,7 @@ class ContentUtils {
 			if ( $dmw->attribs ?? null ) {
 				foreach ( $dmw->attribs as &$a ) {
 					foreach ( $a as $kOrV ) {
-						if ( gettype( $kOrV ) !== 'string' && isset( $kOrV->html ) ) {
+						if ( !is_string( $kOrV ) && isset( $kOrV->html ) ) {
 							$kOrV->html = $proc( $kOrV->html );
 						}
 					}
@@ -231,7 +231,7 @@ class ContentUtils {
 	}
 
 	/**
-	 * Shift the DSR of a DOM fragment.
+	 * Shift the DOM Source Range (DSR) of a DOM fragment.
 	 * @param Env $env
 	 * @param Node $rootNode
 	 * @param callable $dsrFunc
@@ -254,17 +254,17 @@ class ContentUtils {
 				return;
 			}
 			$dp = DOMDataUtils::getDataParsoid( $node );
-			if ( ( $dp->dsr ?? null ) !== null ) {
+			if ( isset( $dp->dsr ) ) {
 				$dp->dsr = $dsrFunc( clone $dp->dsr );
 				// We don't need to setDataParsoid because dp is not a copy
 			}
 			$tmp = $dp->getTemp();
-			if ( ( $tmp->origDSR ?? null ) !== null ) {
+			if ( isset( $tmp->origDSR ) ) {
 				// Even though tmp shouldn't escape Parsoid, go ahead and
 				// convert to enable hybrid testing.
 				$tmp->origDSR = $dsrFunc( clone $tmp->origDSR );
 			}
-			if ( ( $dp->extTagOffsets ?? null ) !== null ) {
+			if ( isset( $dp->extTagOffsets ) ) {
 				$dp->extTagOffsets = $dsrFunc( clone $dp->extTagOffsets );
 			}
 
@@ -326,7 +326,7 @@ class ContentUtils {
 		$offsets = [];
 		$collect = static function ( int $n ) use ( &$offsetMap, &$offsets ) {
 			if ( !array_key_exists( $n, $offsetMap ) ) {
-				$box = PHPUtils::arrayToObject( [ 'value' => $n ] );
+				$box = (object)[ 'value' => $n ];
 				$offsetMap[$n] = $box;
 				$offsets[] =& $box->value;
 			}

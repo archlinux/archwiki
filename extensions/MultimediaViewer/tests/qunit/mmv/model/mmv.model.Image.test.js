@@ -21,37 +21,36 @@ const { ImageModel, License } = require( 'mmv' );
 	QUnit.module( 'mmv.model.Image', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Image model constructor sense check', function ( assert ) {
-		var
-			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
-			name = 'Foo bar',
-			size = 100,
-			width = 10,
-			height = 15,
-			mime = 'image/jpeg',
-			url = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
-			pageID = 42,
-			descurl = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
-			descShortUrl = '',
-			repo = 'wikimediacommons',
-			datetime = '2011-07-04T23:31:14Z',
-			anondatetime = '20110704000000',
-			origdatetime = '2010-07-04T23:31:14Z',
-			description = 'This is a test file.',
-			source = 'WMF',
-			author = 'Ryan Kaldari',
-			authorCount = 1,
-			permission = 'only use for good, not evil',
-			deletionReason = 'poor quality',
-			license = new License( 'cc0' ),
-			attribution = 'Created by my cats on a winter morning',
-			latitude = 39.12381283,
-			longitude = 100.983829,
-			restrictions = [ 'trademarked' ],
-			imageData = new ImageModel(
-				title, name, size, width, height, mime, url,
-				descurl, descShortUrl, pageID, repo, datetime, anondatetime, origdatetime,
-				description, source, author, authorCount, license, permission, attribution,
-				deletionReason, latitude, longitude, restrictions );
+		const title = mw.Title.newFromText( 'File:Foobar.jpg' );
+		const name = 'Foo bar';
+		const size = 100;
+		const width = 10;
+		const height = 15;
+		const mime = 'image/jpeg';
+		const url = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg';
+		const pageID = 42;
+		const descurl = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg';
+		const descShortUrl = '';
+		const repo = 'wikimediacommons';
+		const datetime = '2011-07-04T23:31:14Z';
+		const anondatetime = '20110704000000';
+		const origdatetime = '2010-07-04T23:31:14Z';
+		const description = 'This is a test file.';
+		const source = 'WMF';
+		const author = 'Ryan Kaldari';
+		const authorCount = 1;
+		const permission = 'only use for good, not evil';
+		const deletionReason = 'poor quality';
+		const license = new License( 'cc0' );
+		const attribution = 'Created by my cats on a winter morning';
+		const latitude = 39.12381283;
+		const longitude = 100.983829;
+		const restrictions = [ 'trademarked' ];
+		const imageData = new ImageModel(
+			title, name, size, width, height, mime, url,
+			descurl, descShortUrl, pageID, repo, datetime, anondatetime, origdatetime,
+			description, source, author, authorCount, license, permission, attribution,
+			deletionReason, latitude, longitude, restrictions );
 
 		assert.strictEqual( imageData.title, title, 'Title is set correctly' );
 		assert.strictEqual( imageData.name, name, 'Name is set correctly' );
@@ -81,39 +80,38 @@ const { ImageModel, License } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'hasCoords()', function ( assert ) {
-		var
-			firstImageData = new ImageModel(
-				mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
-				10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
-				'example', 'tester', '2013-11-10', '20131110', '2013-11-09', 'Blah blah blah',
-				'A person', 'Another person', 1, 'CC-BY-SA-3.0', 'Permitted', 'My cat'
-			),
-			secondImageData = new ImageModel(
-				mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
-				10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
-				'example', 'tester', '2013-11-10', '20131110', '2013-11-09', 'Blah blah blah',
-				'A person', 'Another person', 1, 'CC-BY-SA-3.0', 'Permitted', 'My cat',
-				undefined, '39.91820938', '78.09812938'
-			);
+		const firstImageData = new ImageModel(
+			mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
+			10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
+			'example', 'tester', '2013-11-10', '20131110', '2013-11-09', 'Blah blah blah',
+			'A person', 'Another person', 1, 'CC-BY-SA-3.0', 'Permitted', 'My cat'
+		);
+		const secondImageData = new ImageModel(
+			mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
+			10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
+			'example', 'tester', '2013-11-10', '20131110', '2013-11-09', 'Blah blah blah',
+			'A person', 'Another person', 1, 'CC-BY-SA-3.0', 'Permitted', 'My cat',
+			undefined, '39.91820938', '78.09812938'
+		);
 
 		assert.strictEqual( firstImageData.hasCoords(), false, 'No coordinates present means hasCoords returns false.' );
 		assert.strictEqual( secondImageData.hasCoords(), true, 'Coordinates present means hasCoords returns true.' );
 	} );
 
 	QUnit.test( 'parseExtmeta()', function ( assert ) {
-		var stringData = { value: 'foo' },
-			plaintextData = { value: 'fo<b>o</b>' },
-			integerData = { value: 3 },
-			integerStringData = { value: '3' },
-			zeroPrefixedIntegerStringData = { value: '03' },
-			floatData = { value: 1.23 },
-			floatStringData = { value: '1.23' },
-			booleanData = { value: 'yes' },
-			wrongBooleanData = { value: 'blah' },
-			listDataEmpty = { value: '' },
-			listDataSingle = { value: 'foo' },
-			listDataMultiple = { value: 'foo|bar|baz' },
-			missingData;
+		const stringData = { value: 'foo' };
+		const plaintextData = { value: 'fo<b>o</b>' };
+		const integerData = { value: 3 };
+		const integerStringData = { value: '3' };
+		const zeroPrefixedIntegerStringData = { value: '03' };
+		const floatData = { value: 1.23 };
+		const floatStringData = { value: '1.23' };
+		const booleanData = { value: 'yes' };
+		const wrongBooleanData = { value: 'blah' };
+		const listDataEmpty = { value: '' };
+		const listDataSingle = { value: 'foo' };
+		const listDataMultiple = { value: 'foo|bar|baz' };
+		const missingData = undefined;
 
 		assert.strictEqual( ImageModel.parseExtmeta( stringData, 'string' ), 'foo',
 			'Extmeta string parsed correctly.' );
@@ -141,6 +139,13 @@ const { ImageModel, License } = require( 'mmv' );
 			'Extmeta list with multiple elements parsed correctly.' );
 		assert.strictEqual( ImageModel.parseExtmeta( missingData, 'string' ), undefined,
 			'Extmeta missing data parsed correctly.' );
+
+		assert.strictEqual( ImageModel.parseExtmeta( { value: '1960-03-14' }, 'datetime' ), '1960-03-14',
+			'Extmeta date is parsed correctly.' );
+		assert.strictEqual( ImageModel.parseExtmeta( { value: '1960' }, 'datetime' ), '1960',
+			'Extmeta year is parsed correctly.' );
+		assert.strictEqual( ImageModel.parseExtmeta( { value: '1926<div style="display: none;">date QS:P571,+1926-00-00T00:00:00Z/9</div>' }, 'datetime' ), '1926',
+			'Extmeta year is extracted from hidden div.' );
 
 		assert.throws( function () {
 			ImageModel.parseExtmeta( stringData, 'strong' );

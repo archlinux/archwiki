@@ -16,10 +16,6 @@
 	 * @cfg {boolean} [bundle=false] This notification item is part of a bundle.
 	 */
 	mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( controller, model, config ) {
-		var i, secondaryUrls, urlObj, linkButton, $icon, isOutsideMenu, echoMoment,
-			outsideMenuItemCounter = 0,
-			$message = $( '<div>' ).addClass( 'mw-echo-ui-notificationItemWidget-content-message' );
-
 		config = config || {};
 
 		// Parent constructor
@@ -42,6 +38,7 @@
 			markAsRead: !this.model.isRead()
 		} );
 
+		var $icon;
 		// Icon
 		if ( this.model.getIconURL() ) {
 			$icon = $( '<div>' )
@@ -53,6 +50,7 @@
 				} ) );
 		}
 
+		var $message = $( '<div>' ).addClass( 'mw-echo-ui-notificationItemWidget-content-message' );
 		// Content
 		$message.append(
 			$( '<div>' )
@@ -93,7 +91,7 @@
 		// Timestamp
 		// We want to use extra-short timestamp strings; we change the locale
 		// to our echo-defined one and use that instead of the normal moment locale
-		echoMoment = moment.utc( this.model.getTimestamp() );
+		var echoMoment = moment.utc( this.model.getTimestamp() );
 		echoMoment.locale( 'echo-shortRelativeTime' );
 		echoMoment.local();
 
@@ -126,15 +124,16 @@
 		}
 
 		// Actions
-		secondaryUrls = this.model.getSecondaryUrls();
-		for ( i = 0; i < secondaryUrls.length; i++ ) {
-			urlObj = secondaryUrls[ i ];
+		var outsideMenuItemCounter = 0;
+		var secondaryUrls = this.model.getSecondaryUrls();
+		for ( var i = 0; i < secondaryUrls.length; i++ ) {
+			var urlObj = secondaryUrls[ i ];
 
 			// Items are placed outside the dotdotdot menu if they are
 			// prioritized explicitly, *except* for items inside a bundle
 			// (where all actions are inside the menu) or there are more than
 			// two prioritized actions (all others go into the menu)
-			isOutsideMenu = !this.bundle &&
+			var isOutsideMenu = !this.bundle &&
 				(
 					(
 						// Make sure we don't have too many prioritized items
@@ -147,7 +146,7 @@
 					secondaryUrls.length <= mw.echo.config.maxPrioritizedActions
 				);
 
-			linkButton = new mw.echo.ui.MenuItemWidget( {
+			var linkButton = new mw.echo.ui.MenuItemWidget( {
 				type: urlObj.type,
 				actionData: urlObj.data,
 				icon: urlObj.icon || 'next',

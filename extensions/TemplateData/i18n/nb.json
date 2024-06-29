@@ -91,6 +91,7 @@
 	"templatedata-modal-table-param-aliases": "Alias",
 	"templatedata-modal-table-param-autovalue": "Autoverdi",
 	"templatedata-modal-table-param-default": "Standard ($1)",
+	"templatedata-modal-table-param-status": "Status",
 	"templatedata-modal-table-param-deprecated": "Foreldet",
 	"templatedata-modal-table-param-deprecatedValue": "Foreldet instruksjon",
 	"templatedata-modal-table-param-description": "Beskrivelse ($1)",

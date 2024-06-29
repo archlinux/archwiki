@@ -1,17 +1,17 @@
 const popUpNotification = require( '../../resources/skins.vector.js/popupNotification.js' );
 
 /**
- * @type string
+ * @type {string}
  */
 let testId;
 
 /**
- * @type string
+ * @type {string}
  */
 let testMessage;
 
 /**
- * @type string
+ * @type {string}
  */
 let vectorPopupClass;
 

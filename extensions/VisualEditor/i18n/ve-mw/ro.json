@@ -265,6 +265,7 @@
 	"visualeditor-mwsignature-tool": "Semnătura dumneavoastră",
 	"visualeditor-preference-visualeditor": "Activează editorul vizual",
 	"visualeditor-preference-newwikitexteditor-enable": "Utilizați modul wikitext înăuntrul editorului vizual, în locul unui editor wikitext diferit.",
+	"visualeditor-preference-newwikitexteditor-help": "Acesta este uneori numit „editorul de wikitext 2017”.",
 	"visualeditor-preference-tabs": "Mod de editare:",
 	"visualeditor-preference-tabs-multi-tab": "Arată-mi ambele file de modificare",
 	"visualeditor-preference-tabs-prefer-ve": "Oferă-mi întotdeauna editorul vizual atunci când este posibil",

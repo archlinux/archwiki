@@ -5,6 +5,7 @@
 			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
+	"content-model-scribunto": "Scribunto-modula",
 	"scribunto-line": "gurgadasas $1",
 	"scribunto-parser-dialog-title": "Skriptameattáhus",
 	"scribunto-error-short": "Skriptameattáhus: $1",

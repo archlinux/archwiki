@@ -328,6 +328,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Bruk alltid visuell redigering når det er mulig",
 	"visualeditor-preference-tabs-prefer-wt": "Bruk alltid kilderedigering",
 	"visualeditor-preference-tabs-remember-last": "Husk min sist brukte editor",
+	"visualeditor-preference-collab-label": "Samarbeidsredigering",
+	"visualeditor-preference-collab-description": "Inviter andre brukere til å bli med i redigeringsøkten i visuell redigering.",
 	"visualeditor-rebase-client-export": "Eksporter",
 	"visualeditor-rebase-client-export-start": "Eksporter …",
 	"visualeditor-rebase-client-import": "Importer",

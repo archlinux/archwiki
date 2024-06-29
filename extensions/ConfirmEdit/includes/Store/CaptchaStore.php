@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\ConfirmEdit\Store;
 
 use BadMethodCallException;
-use ConfigException;
+use MediaWiki\Config\ConfigException;
 
 abstract class CaptchaStore {
 	/**

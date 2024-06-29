@@ -24,6 +24,8 @@
  */
 
 use MediaWiki\ChangeTags\Taggable;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
@@ -288,14 +290,12 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 	 *
 	 * @param IDatabase|null $dbw
 	 * @return int ID of the log entry
-	 * @throws MWException
 	 */
 	public function insert( IDatabase $dbw = null ) {
-		$dbw = $dbw ?: wfGetDB( DB_PRIMARY );
+		$services = MediaWikiServices::getInstance();
+		$dbw = $dbw ?: $services->getConnectionProvider()->getPrimaryDatabase();
 
 		$this->timestamp ??= wfTimestampNow();
-
-		$services = MediaWikiServices::getInstance();
 		$actorId = $services->getActorStore()->acquireActorId( $this->getPerformerIdentity(), $dbw );
 
 		// Trim spaces on user supplied text
@@ -311,7 +311,7 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 			$relations['associated_rev_id'] = $revId;
 		}
 
-		$data = [
+		$row = [
 			'log_type' => $this->getType(),
 			'log_action' => $this->getSubtype(),
 			'log_timestamp' => $dbw->timestamp( $this->getTimestamp() ),
@@ -322,17 +322,21 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 			'log_params' => LogEntryBase::makeParamBlob( $params ),
 		];
 		if ( isset( $this->deleted ) ) {
-			$data['log_deleted'] = $this->deleted;
+			$row['log_deleted'] = $this->deleted;
 		}
-		$data += $services->getCommentStore()->insert( $dbw, 'log_comment', $comment );
+		$row += $services->getCommentStore()->insert( $dbw, 'log_comment', $comment );
 
-		$dbw->insert( 'logging', $data, __METHOD__ );
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'logging' )
+			->row( $row )
+			->caller( __METHOD__ )
+			->execute();
 		$this->id = $dbw->insertId();
 
 		$rows = [];
 		foreach ( $relations as $tag => $values ) {
 			if ( !strlen( $tag ) ) {
-				throw new MWException( "Got empty log search tag." );
+				throw new UnexpectedValueException( "Got empty log search tag." );
 			}
 
 			if ( !is_array( $values ) ) {
@@ -348,7 +352,12 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 			}
 		}
 		if ( count( $rows ) ) {
-			$dbw->insert( 'log_search', $rows, __METHOD__, [ 'IGNORE' ] );
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'log_search' )
+				->ignore()
+				->rows( $rows )
+				->caller( __METHOD__ )
+				->execute();
 		}
 
 		return $this->id;
@@ -426,7 +435,7 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 						$tags = $this->getTags();
 						if ( $tags && $canAddTags ) {
 							$revId = $this->getAssociatedRevId();
-							ChangeTags::addTags(
+							MediaWikiServices::getInstance()->getChangeTagsStore()->addTags(
 								$tags,
 								null,
 								$revId > 0 ? $revId : null,
@@ -441,7 +450,7 @@ class ManualLogEntry extends LogEntryBase implements Taggable {
 				}
 			},
 			DeferredUpdates::POSTSEND,
-			wfGetDB( DB_PRIMARY )
+			MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase()
 		);
 	}
 

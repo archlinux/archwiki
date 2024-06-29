@@ -1,12 +1,23 @@
 <?php
 
+namespace MediaWiki\Tests\Site;
+
+use MediaWiki\Site\CachingSiteStore;
+use MediaWiki\Site\HashSiteStore;
+use MediaWiki\Site\MediaWikiSite;
+use MediaWiki\Site\Site;
+use MediaWiki\Site\SiteList;
+use MediaWiki\Site\SiteStore;
+use MediaWikiIntegrationTestCase;
+use ObjectCache;
+
 /**
- * @covers CachingSiteStore
+ * @covers \MediaWiki\Site\CachingSiteStore
  * @group Site
  * @group Database
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
-class CachingSiteStoreTest extends \MediaWikiIntegrationTestCase {
+class CachingSiteStoreTest extends MediaWikiIntegrationTestCase {
 
 	public function testGetSites() {
 		$testSites = TestSites::getSites();

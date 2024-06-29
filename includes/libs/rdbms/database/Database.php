@@ -37,7 +37,6 @@ use Wikimedia\ScopedCallback;
 /**
  * Relational database abstraction object
  *
- * @stable to extend
  * @ingroup Database
  * @since 1.28
  */
@@ -83,6 +82,8 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	/** @var bool Whether to use SSL connections */
 	protected $ssl;
+	/** @var bool Whether to check for warnings */
+	protected $strictWarnings;
 	/** @var array Current LoadBalancer tracking information */
 	protected $lbInfo = [];
 	/** @var string|false Current SQL query delimiter */
@@ -93,7 +94,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	/** @var array<string,array> Map of (name => (UNIX time,trx ID)) for current lock() mutexes */
 	protected $sessionNamedLocks = [];
-	/** @var array<string,array> Map of (name => (type,pristine,trx ID)) for current temp tables */
+	/** @var array<string,TempTableInfo> Current temp tables */
 	protected $sessionTempTables = [];
 
 	/** @var int Affected row count for the last statement to query() */
@@ -152,11 +153,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	/** @var string Idiom used when a cancelable atomic section started the transaction */
 	private const NOT_APPLICABLE = 'n/a';
 
-	/** @var int Writes to this temporary table do not affect lastDoneWrites() */
-	private const TEMP_NORMAL = 1;
-	/** @var int Writes to this temporary table effect lastDoneWrites() */
-	private const TEMP_PSEUDO_PERMANENT = 2;
-
 	/** How long before it is worth doing a dummy query to test the connection */
 	private const PING_TTL = 1.0;
 	/** Dummy SQL query */
@@ -183,7 +179,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	/**
 	 * @note exceptions for missing libraries/drivers should be thrown in initConnection()
-	 * @stable to call
 	 * @param array $params Parameters passed from Database::factory()
 	 */
 	public function __construct( array $params ) {
@@ -224,6 +219,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$this->agent = (string)$params['agent'];
 		$this->serverName = $params['serverName'];
 		$this->nonNativeInsertSelectBatchSize = $params['nonNativeInsertSelectBatchSize'] ?? 10000;
+		$this->strictWarnings = !empty( $params['strictWarnings'] );
 
 		$this->profiler = is_callable( $params['profiler'] ) ? $params['profiler'] : null;
 		$this->errorLogger = $params['errorLogger'];
@@ -284,7 +280,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	abstract protected function open( $server, $user, $password, $db, $schema, $tablePrefix );
 
 	/**
-	 * @stable to override
 	 * @return array Map of (Database::ATTR_* constant => value)
 	 * @since 1.31
 	 */
@@ -408,7 +403,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	/**
 	 * Get information about an index into an object
 	 *
-	 * @stable to override
 	 * @param string $table Table name
 	 * @param string $index Index name
 	 * @param string $fname Calling function name
@@ -419,7 +413,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	/**
 	 * Wrapper for addslashes()
 	 *
-	 * @stable to override
 	 * @param string $s String to be slashed.
 	 * @return string Slashed string.
 	 */
@@ -589,69 +582,49 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	abstract protected function doSingleStatementQuery( string $sql ): QueryStatus;
 
 	/**
+	 * Determine whether a write query affects a permanent table.
+	 * This includes pseudo-permanent tables.
+	 *
 	 * @param Query $query
-	 * @param bool $pseudoPermanent Treat any table from CREATE TEMPORARY as pseudo-permanent
-	 * @return array[] List of change n-tuples with:
-	 *   - int: self::TEMP_* constant for temp table operations
-	 *   - string: SQL query verb from $sql
-	 *   - string: Name of the temp table changed in $sql
+	 * @return bool
 	 */
-	private function getTempTableWrites( Query $query, $pseudoPermanent ) {
-		$tempTableChanges = [];
-		$tables = [];
-		foreach ( $query->getTables() as $table ) {
-			$tables[] = $this->platform->tableName( $table, 'raw' );
+	private function hasPermanentTable( Query $query ) {
+		if ( $query->getVerb() === 'CREATE TEMPORARY' ) {
+			// Temporary table creation is allowed
+			return false;
 		}
-		foreach ( $tables as $table ) {
-			if ( $query->getVerb() === 'CREATE' ) {
-				// Record the type of temporary table being created
-				$tableType = $pseudoPermanent ? self::TEMP_PSEUDO_PERMANENT : self::TEMP_NORMAL;
-			} elseif ( isset( $this->sessionTempTables[$table] ) ) {
-				$tableType = $this->sessionTempTables[$table]['type'];
-			} else {
-				$tableType = null;
-			}
-
-			if ( $tableType !== null ) {
-				$tempTableChanges[] = [ $tableType, $query->getVerb(), $table ];
-			}
+		$table = $query->getWriteTable();
+		if ( $table === null ) {
+			// Parse error? Assume permanent.
+			return true;
 		}
-
-		return $tempTableChanges;
+		$rawTable = $this->platform->tableName( $table, 'raw' );
+		$tempInfo = $this->sessionTempTables[$rawTable] ?? null;
+		return !$tempInfo || $tempInfo->pseudoPermanent;
 	}
 
 	/**
-	 * @param IResultWrapper|bool $ret
-	 * @param array[] $changes List of change n-tuples with from getTempTableWrites()
+	 * Register creation and dropping of temporary tables
+	 *
+	 * @param Query $query
 	 */
-	protected function registerTempWrites( $ret, array $changes ) {
-		if ( $ret === false ) {
+	protected function registerTempTables( Query $query ) {
+		$table = $query->getWriteTable();
+		if ( $table === null ) {
 			return;
 		}
+		switch ( $query->getVerb() ) {
+			case 'CREATE TEMPORARY':
+				$rawTable = $this->platform->tableName( $table, 'raw' );
+				$this->sessionTempTables[$rawTable] = new TempTableInfo(
+					$this->transactionManager->getTrxId(),
+					(bool)( $query->getFlags() & self::QUERY_PSEUDO_PERMANENT )
+				);
+				break;
 
-		foreach ( $changes as [ $tmpTableType, $verb, $table ] ) {
-			switch ( $verb ) {
-				case 'CREATE':
-					$this->sessionTempTables[$table] = [
-						'type' => $tmpTableType,
-						'pristine' => true,
-						'trxId' => $this->transactionManager->getTrxId()
-					];
-					break;
-				case 'DROP':
-					unset( $this->sessionTempTables[$table] );
-					break;
-				case 'TRUNCATE':
-					if ( isset( $this->sessionTempTables[$table] ) ) {
-						$this->sessionTempTables[$table]['pristine'] = true;
-					}
-					break;
-				default:
-					if ( isset( $this->sessionTempTables[$table] ) ) {
-						$this->sessionTempTables[$table]['pristine'] = false;
-					}
-					break;
-			}
+			case 'DROP':
+				$rawTable = $this->platform->tableName( $table, 'raw' );
+				unset( $this->sessionTempTables[$rawTable] );
 		}
 	}
 
@@ -702,16 +675,13 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$this->assertHasConnectionHandle();
 
 		$isPermWrite = false;
-		if ( $sql->isWriteQuery() ) {
-			$pseudoPermanent = $this->flagsHolder::contains( $sql->getFlags(), self::QUERY_PSEUDO_PERMANENT );
-			$tempTableChanges = $this->getTempTableWrites( $sql, $pseudoPermanent );
-			$isPermWrite = !$tempTableChanges;
-			foreach ( $tempTableChanges as [ $tmpType ] ) {
-				$isPermWrite = $isPermWrite || ( $tmpType !== self::TEMP_NORMAL );
-			}
+		$isWrite = $sql->isWriteQuery();
+		if ( $isWrite ) {
+			ChangedTablesTracker::recordQuery( $this->currentDomain, $sql );
 			// Permit temporary table writes on replica connections, but require a writable
 			// master connection for writes to persistent tables.
-			if ( $isPermWrite ) {
+			if ( $this->hasPermanentTable( $sql ) ) {
+				$isPermWrite = true;
 				$info = $this->getReadOnlyReason();
 				if ( $info ) {
 					[ $reason, $source ] = $info;
@@ -729,9 +699,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 					);
 				}
 			}
-		} else {
-			// No temporary tables written to either
-			$tempTableChanges = [];
 		}
 
 		// Whether a silent retry attempt is left for recoverable connection loss errors
@@ -755,7 +722,9 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		);
 
 		// Register creation and dropping of temporary tables
-		$this->registerTempWrites( $status->res, $tempTableChanges );
+		if ( $status->res ) {
+			$this->registerTempTables( $sql );
+		}
 		$this->completeCriticalSection( __METHOD__, $cs );
 
 		return $status;
@@ -864,12 +833,12 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		// Avoid the overhead of logging calls unless debug mode is enabled
 		if ( $this->flagsHolder->getFlag( self::DBO_DEBUG ) ) {
 			$this->logger->debug(
-				"{method} [{runtime}s] {db_server}: {sql}",
+				"{method} [{runtime_ms}ms] {db_server}: {sql}",
 				$this->getLogContext( [
 					'method' => $fname,
 					'sql' => $sql->getSQL(),
 					'domain' => $this->getDomainID(),
-					'runtime' => round( $queryRuntime, 3 ),
+					'runtime_ms' => round( $queryRuntime * 1000, 3 ),
 					'db_log_category' => 'query'
 				] )
 			);
@@ -1080,7 +1049,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		}
 		// Loss of temp tables breaks future callers relying on those tables for queries
 		foreach ( $priorSessInfo->tempTables as $tableName => $tableInfo ) {
-			if ( $tableInfo['trxId'] && $tableInfo['trxId'] === $priorSessInfo->trxId ) {
+			if ( $tableInfo->trxId && $tableInfo->trxId === $priorSessInfo->trxId ) {
 				// Treat lost temp tables created during the lost transaction as a transaction
 				// state problem. Connection loss on ROLLBACK (non-SAVEPOINT) is tolerable since
 				// rollback automatically triggered server-side.
@@ -1150,7 +1119,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	/**
 	 * Reset any additional subclass trx* and session* fields
-	 * @stable to override
 	 */
 	protected function doHandleSessionLossPreconnect() {
 		// no-op
@@ -1162,7 +1130,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 * It returns false by default, and not all engines support detecting this yet.
 	 * If this returns false, it will be treated as a generic query error.
 	 *
-	 * @stable to override
 	 * @param int|string $errno Error number
 	 * @return bool
 	 * @since 1.39
@@ -1371,7 +1338,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$table, $vars, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
 	) {
 		$options = (array)$options;
-		// Don't turn this into using platform directly, DatabaseMysqlBase overrides this.
+		// Don't turn this into using platform directly, DatabaseMySQL overrides this.
 		$sql = $this->selectSQLText( $table, $vars, $conds, $fname, $options, $join_conds );
 		// Treat SELECT queries with FOR UPDATE as writes. This matches
 		// how MySQL enforces read_only (FOR SHARE and LOCK IN SHADE MODE are allowed).
@@ -1379,7 +1346,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 			? self::QUERY_CHANGE_ROWS
 			: self::QUERY_CHANGE_NONE;
 
-		$query = new Query( $sql, $flags, 'SELECT', $table );
+		$query = new Query( $sql, $flags, 'SELECT' );
 		return $this->query( $query, $fname );
 	}
 
@@ -1403,7 +1370,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	/**
 	 * @inheritDoc
-	 * @stable to override
 	 */
 	public function estimateRowCount(
 		$tables, $var = '*', $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
@@ -1497,10 +1463,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	abstract public function tableExists( $table, $fname = __METHOD__ );
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function indexUnique( $table, $index, $fname = __METHOD__ ) {
 		$indexInfo = $this->indexInfo( $table, $index, $fname );
 
@@ -1517,8 +1479,21 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 			return true;
 		}
 		$this->query( $query, $fname );
-
+		if ( $this->strictWarnings ) {
+			$this->checkInsertWarnings( $query, $fname );
+		}
 		return true;
+	}
+
+	/**
+	 * Check for warnings after performing an INSERT query, and throw exceptions
+	 * if necessary.
+	 *
+	 * @param Query $query
+	 * @param string $fname
+	 * @return void
+	 */
+	protected function checkInsertWarnings( Query $query, $fname ) {
 	}
 
 	public function update( $table, $set, $conds, $fname = __METHOD__, $options = [] ) {
@@ -1528,10 +1503,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return true;
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function databasesAreIndependent() {
 		return false;
 	}
@@ -1550,7 +1521,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
-	 * @stable to override
 	 * @param DatabaseDomain $domain
 	 * @throws DBConnectionError
 	 * @throws DBError
@@ -1573,13 +1543,12 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $this->serverName ?? $this->getServer() ?? 'unknown';
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function addQuotes( $s ) {
 		if ( $s instanceof Blob ) {
 			$s = $s->fetch();
+		}
+		if ( $s instanceof IExpression ) {
+			return $s->toSql( $this );
 		}
 		if ( $s === null ) {
 			return 'NULL';
@@ -1590,6 +1559,10 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		} else {
 			return "'" . $this->strencode( $s ) . "'";
 		}
+	}
+
+	public function expr( string $field, string $op, $value ): Expression {
+		return new Expression( $field, $op, $value );
 	}
 
 	public function nextSequenceValue( $seqName ) {
@@ -1679,8 +1652,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 							"SELECT $autoIncrementColumn AS id FROM $encTable " .
 							"WHERE ($sqlConditions)",
 							self::QUERY_CHANGE_NONE,
-							'SELECT',
-							$table
+							'SELECT'
 						);
 						$sRes = $this->query( $query, $fname, self::QUERY_CHANGE_ROWS );
 						$insertId = (int)$sRes->fetchRow()['id'];
@@ -1709,7 +1681,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
-	 * @stable to override
 	 * @param string $table
 	 * @return string|null The AUTO_INCREMENT/SERIAL column; null if not needed
 	 */
@@ -1718,7 +1689,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
-	 * @stable to override
 	 * @param string $table
 	 * @return array<string,string> Map of (column => type); [] if not needed
 	 */
@@ -1726,10 +1696,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return [];
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function deleteJoin(
 		$delTable,
 		$joinTable,
@@ -1739,21 +1705,16 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$fname = __METHOD__
 	) {
 		$sql = $this->platform->deleteJoinSqlText( $delTable, $joinTable, $delVar, $joinVar, $conds );
-		$query = new Query( $sql, self::QUERY_CHANGE_ROWS, 'DELETE', [ $delTable, $joinTable ] );
+		$query = new Query( $sql, self::QUERY_CHANGE_ROWS, 'DELETE', $delTable );
 		$this->query( $query, $fname );
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function textFieldSize( $table, $field ) {
 		$tableName = $this->tableName( $table );
 		$query = new Query(
 			"SHOW COLUMNS FROM $tableName LIKE \"$field\"",
 			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
-			'SHOW',
-			$table
+			'SHOW'
 		);
 		$res = $this->query( $query, __METHOD__ );
 		$row = $res->fetchObject();
@@ -1820,7 +1781,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
-	 * @stable to override
 	 * @param array $insertOptions
 	 * @param array $selectOptions
 	 * @return bool Whether an INSERT SELECT with these options will be replication safe
@@ -1932,28 +1892,19 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 			$selectOptions,
 			$selectJoinConds
 		);
-		if ( is_string( $destTable ) ) {
-			$destTable = [ $destTable ];
-		}
-		if ( is_string( $srcTable ) ) {
-			$srcTable = [ $srcTable ];
-		}
-		$query = new Query( $sql, self::QUERY_CHANGE_ROWS, 'INSERT', array_merge( $destTable, $srcTable ) );
+		$query = new Query(
+			$sql,
+			self::QUERY_CHANGE_ROWS,
+			'INSERT',
+			$destTable
+		);
 		$this->query( $query, $fname );
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function wasDeadlock() {
 		return false;
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function wasReadOnlyError() {
 		return false;
 	}
@@ -1961,7 +1912,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	/**
 	 * Do not use this method outside of Database/DBError classes
 	 *
-	 * @stable to override
 	 * @param int|string $errno
 	 * @return bool Whether the given query error was a connection drop
 	 * @since 1.38
@@ -1971,7 +1921,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
-	 * @stable to override
 	 * @param int|string $errno
 	 * @return bool Whether it is known that the last query error only caused statement rollback
 	 * @note This is for backwards compatibility for callers catching DBError exceptions in
@@ -1984,7 +1933,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	/**
 	 * @inheritDoc
-	 * @stable to override
 	 */
 	public function serverIsReadOnly() {
 		return false;
@@ -2399,7 +2347,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 * Issues the BEGIN command to the database server.
 	 *
 	 * @see Database::begin()
-	 * @stable to override
 	 * @param string $fname
 	 * @throws DBError
 	 */
@@ -2585,10 +2532,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$this->commit( $fname, self::FLUSHING_INTERNAL );
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function duplicateTableStructure(
 		$oldName,
 		$newName,
@@ -2598,18 +2541,10 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		throw new RuntimeException( __METHOD__ . ' is not implemented in descendant class' );
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function listTables( $prefix = null, $fname = __METHOD__ ) {
 		throw new RuntimeException( __METHOD__ . ' is not implemented in descendant class' );
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function listViews( $prefix = null, $fname = __METHOD__ ) {
 		throw new RuntimeException( __METHOD__ . ' is not implemented in descendant class' );
 	}
@@ -2775,18 +2710,10 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $res;
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function encodeBlob( $b ) {
 		return $b;
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function decodeBlob( $b ) {
 		if ( $b instanceof Blob ) {
 			$b = $b->fetch();
@@ -2794,10 +2721,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $b;
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function setSessionOptions( array $options ) {
 	}
 
@@ -2906,7 +2829,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	/**
 	 * Called by sourceStream() to check if we've reached a statement end
 	 *
-	 * @stable to override
 	 * @param string &$sql SQL assembled so far
 	 * @param string &$newLine New line about to be added to $sql
 	 * @return bool Whether $newLine contains end of the statement
@@ -2950,7 +2872,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 * @param string $method
 	 * @return bool Success
 	 * @throws DBError
-	 * @stable to override
 	 */
 	protected function doLockIsFree( string $lockName, string $method ) {
 		return true; // not implemented
@@ -2989,7 +2910,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 * @param int $timeout
 	 * @return float|null UNIX timestamp of lock acquisition; null on failure
 	 * @throws DBError
-	 * @stable to override
 	 */
 	protected function doLock( string $lockName, string $method, int $timeout ) {
 		return microtime( true ); // not implemented
@@ -3027,7 +2947,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 * @param string $method
 	 * @return bool Success
 	 * @throws DBError
-	 * @stable to override
 	 */
 	protected function doUnlock( string $lockName, string $method ) {
 		return true; // not implemented
@@ -3068,10 +2987,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $unlocker;
 	}
 
-	/**
-	 * @inheritDoc
-	 * @stable to override
-	 */
 	public function namedLocksEnqueue() {
 		return false;
 	}
@@ -3092,38 +3007,16 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return true;
 	}
 
-	public function truncate( $tables, $fname = __METHOD__ ) {
-		$tables = is_array( $tables ) ? $tables : [ $tables ];
-
-		$tablesTruncate = [];
-		foreach ( $tables as $table ) {
-			// Skip TEMPORARY tables with no writes nor sequence updates detected.
-			// This mostly is an optimization for integration testing.
-			$rawTable = $this->tableName( $table, 'raw' );
-			$isPristineTempTable = isset( $this->sessionTempTables[$rawTable] )
-			? $this->sessionTempTables[$rawTable]['pristine']
-			: false;
-			if ( !$isPristineTempTable ) {
-				$tablesTruncate[] = $table;
-			}
-		}
-
-		if ( $tablesTruncate ) {
-			$this->doTruncate( $tablesTruncate, $fname );
-		}
+	public function truncateTable( $table, $fname = __METHOD__ ) {
+		$sql = "TRUNCATE TABLE " . $this->tableName( $table );
+		$query = new Query( $sql, self::QUERY_CHANGE_SCHEMA, 'TRUNCATE', $table );
+		$this->query( $query, $fname );
 	}
 
-	/**
-	 * @see Database::truncate()
-	 * @stable to override
-	 * @param string[] $tables
-	 * @param string $fname
-	 */
-	protected function doTruncate( array $tables, $fname ) {
+	public function truncate( $tables, $fname = __METHOD__ ) {
+		$tables = is_array( $tables ) ? $tables : [ $tables ];
 		foreach ( $tables as $table ) {
-			$sql = "TRUNCATE TABLE " . $this->tableName( $table );
-			$query = new Query( $sql, self::QUERY_CHANGE_SCHEMA, 'TRUNCATE', $table );
-			$this->query( $query, $fname );
+			$this->truncateTable( $table, $fname );
 		}
 	}
 
@@ -3155,7 +3048,6 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 * This catches broken callers than catch and ignore disconnection exceptions.
 	 * Unlike checking isOpen(), this is safe to call inside of open().
 	 *
-	 * @stable to override
 	 * @return mixed
 	 * @throws DBUnexpectedError
 	 * @since 1.26
@@ -3494,7 +3386,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $this->platform->buildIntegerCast( $field );
 	}
 
-	public function tableName( $name, $format = 'quoted' ) {
+	public function tableName( string $name, $format = 'quoted' ) {
 		return $this->platform->tableName( $name, $format );
 	}
 

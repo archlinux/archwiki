@@ -76,13 +76,13 @@ class ErrorPageError extends MWException implements ILocalizedException {
 	 */
 	public function report( $action = self::SEND_OUTPUT ) {
 		if ( self::isCommandLine() || defined( 'MW_API' ) ) {
-			parent::report();
+			MWExceptionRenderer::output( $this, MWExceptionRenderer::AS_PRETTY );
 		} else {
 			global $wgOut;
 			$wgOut->showErrorPage( $this->title, $this->msg, $this->params );
 			// Allow skipping of the final output step, so that web-based page views
 			// from MediaWiki.php, can inspect the staged OutputPage state, and perform
-			// graceful shutdown via doPreOutputCommit first, just like for regular
+			// graceful shutdown via prepareForOutput() first, just like for regular
 			// output when there isn't an error page.
 			if ( $action === self::SEND_OUTPUT ) {
 				$wgOut->output();

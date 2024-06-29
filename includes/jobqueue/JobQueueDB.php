@@ -1,7 +1,5 @@
 <?php
 /**
- * Database-backed job queue code.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -28,16 +26,23 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\ScopedCallback;
 
 /**
- * Class to handle job queues stored in the DB
+ * Database-backed job queue storage.
  *
- * @ingroup JobQueue
  * @since 1.21
+ * @ingroup JobQueue
  */
 class JobQueueDB extends JobQueue {
-	private const CACHE_TTL_SHORT = 30; // integer; seconds to cache info without re-validating
-	private const MAX_AGE_PRUNE = 604800; // integer; seconds a job can live once claimed
-	private const MAX_JOB_RANDOM = 2147483647; // integer; 2^31 - 1, used for job_random
-	private const MAX_OFFSET = 255; // integer; maximum number of rows to skip
+	/* seconds to cache info without re-validating */
+	private const CACHE_TTL_SHORT = 30;
+	/* seconds a job can live once claimed */
+	private const MAX_AGE_PRUNE = 7 * 24 * 3600;
+	/**
+	 * Used for job_random, the highest safe 32-bit signed integer.
+	 * Equivalent to `( 2 ** 31 ) - 1` on 64-bit.
+	 */
+	private const MAX_JOB_RANDOM = 2_147_483_647;
+	/* maximum number of rows to skip */
+	private const MAX_OFFSET = 255;
 
 	/** @var IMaintainableDatabase|DBError|null */
 	protected $conn;
@@ -146,7 +151,10 @@ class JobQueueDB extends JobQueue {
 		try {
 			$count = $dbr->newSelectQueryBuilder()
 				->from( 'job' )
-				->where( [ 'job_cmd' => $this->type, "job_token != {$dbr->addQuotes( '' )}" ] )
+				->where( [
+					'job_cmd' => $this->type,
+					$dbr->expr( 'job_token', '!=', '' ),
+				] )
 				->caller( __METHOD__ )->fetchRowCount();
 		} catch ( DBError $e ) {
 			throw $this->getDBException( $e );
@@ -159,7 +167,8 @@ class JobQueueDB extends JobQueue {
 	/**
 	 * @see JobQueue::doGetAbandonedCount()
 	 * @return int
-	 * @throws MWException on database error
+	 * @throws JobQueueConnectionError
+	 * @throws JobQueueError
 	 */
 	protected function doGetAbandonedCount() {
 		if ( $this->claimTTL <= 0 ) {
@@ -182,8 +191,8 @@ class JobQueueDB extends JobQueue {
 				->where(
 					[
 						'job_cmd' => $this->type,
-						"job_token != {$dbr->addQuotes( '' )}",
-						$dbr->buildComparison( '>=', [ 'job_attempts' => $this->maxTries ] ),
+						$dbr->expr( 'job_token', '!=', '' ),
+						$dbr->expr( 'job_attempts', '>=', $this->maxTries ),
 					]
 				)
 				->caller( __METHOD__ )->fetchRowCount();
@@ -370,7 +379,7 @@ class JobQueueDB extends JobQueue {
 						[
 							'job_cmd' => $this->type,
 							'job_token' => '', // unclaimed
-							$dbw->buildComparison( $gte ? '>=' : '<=', [ 'job_random' => $rand ] )
+							$dbw->expr( 'job_random', $gte ? '>=' : '<=', $rand )
 						]
 					)
 					->orderBy(
@@ -504,12 +513,13 @@ class JobQueueDB extends JobQueue {
 	/**
 	 * @see JobQueue::doAck()
 	 * @param RunnableJob $job
-	 * @throws MWException When the job is invalid or on database error.
+	 * @throws JobQueueConnectionError
+	 * @throws JobQueueError
 	 */
 	protected function doAck( RunnableJob $job ) {
 		$id = $job->getMetadata( 'id' );
 		if ( $id === null ) {
-			throw new MWException( "Job of type '{$job->getType()}' has no ID." );
+			throw new UnexpectedValueException( "Job of type '{$job->getType()}' has no ID." );
 		}
 
 		$dbw = $this->getPrimaryDB();
@@ -531,7 +541,7 @@ class JobQueueDB extends JobQueue {
 	/**
 	 * @see JobQueue::doDeduplicateRootJob()
 	 * @param IJobSpecification $job
-	 * @throws MWException When a database or job error occurs.
+	 * @throws JobQueueConnectionError
 	 * @return bool
 	 */
 	protected function doDeduplicateRootJob( IJobSpecification $job ) {
@@ -729,9 +739,9 @@ class JobQueueDB extends JobQueue {
 					->where(
 						[
 							'job_cmd' => $this->type,
-							"job_token != {$dbw->addQuotes( '' )}", // was acquired
-							$dbw->buildComparison( '<',  [ 'job_token_timestamp' => $claimCutoff ] ), // stale
-							$dbw->buildComparison( '<',  [ 'job_attempts' => $this->maxTries ] ), // retries left
+							$dbw->expr( 'job_token', '!=', '' ), // was acquired
+							$dbw->expr( 'job_token_timestamp', '<', $claimCutoff ), // stale
+							$dbw->expr( 'job_attempts', '<', $this->maxTries ), // retries left
 						]
 					)
 					->caller( __METHOD__ )->fetchResultSet();
@@ -752,7 +762,7 @@ class JobQueueDB extends JobQueue {
 						] )
 						->where( [
 							'job_id' => $ids,
-							"job_token != {$dbw->addQuotes( '' )}"
+							$dbw->expr( 'job_token', '!=', '' ),
 						] )
 						->caller( __METHOD__ )->execute();
 
@@ -770,12 +780,12 @@ class JobQueueDB extends JobQueue {
 				->where(
 					[
 						'job_cmd' => $this->type,
-						"job_token != {$dbw->addQuotes( '' )}", // was acquired
-						$dbw->buildComparison( '<', [ 'job_token_timestamp' => $pruneCutoff ] ) // stale
+						$dbw->expr( 'job_token', '!=', '' ), // was acquired
+						$dbw->expr( 'job_token_timestamp', '<', $pruneCutoff ) // stale
 					]
 				);
 			if ( $this->claimTTL > 0 ) { // only prune jobs attempted too many times...
-				$qb->andWhere( "job_attempts >= {$dbw->addQuotes( $this->maxTries )}" );
+				$qb->andWhere( $dbw->expr( 'job_attempts', '>=', $this->maxTries ) );
 			}
 			// Get the IDs of jobs that are considered stale and should be removed. Selecting
 			// the IDs first means that the UPDATE can be done by primary key (less deadlocks).

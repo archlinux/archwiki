@@ -5,16 +5,19 @@
  */
 class Less_Cache {
 
-	// directory less.php can use for storing data
+	/** @var string|false Directory less.php can use for storing data */
 	public static $cache_dir = false;
 
-	// prefix for the storing data
+	/** @var string Prefix for the storing data */
 	public static $prefix = 'lessphp_';
 
-	// prefix for the storing vars
+	/** @var string Prefix for the storing vars */
 	public static $prefix_vars = 'lessphpvars_';
 
-	// specifies the number of seconds after which data created by less.php will be seen as 'garbage' and potentially cleaned up
+	/**
+	 * @var int Specifies the number of seconds after which data created by less.php will be seen
+	 *  as 'garbage' and potentially cleaned up
+	 */
 	public static $gc_lifetime = 604800;
 
 	/**
@@ -146,7 +149,7 @@ class Less_Cache {
 
 		$compiled = $parser->getCss();
 
-		$less_files = $parser->allParsedFiles();
+		$less_files = $parser->AllParsedFiles();
 
 		return $compiled;
 	}
@@ -213,7 +216,7 @@ class Less_Cache {
 
 		// only remove files with extensions created by less.php
 		// css files removed based on the list files
-		$remove_types = [ 'lesscache' => 1,'list' => 1,'less' => 1,'map' => 1 ];
+		$remove_types = [ 'lesscache' => 1, 'list' => 1, 'less' => 1, 'map' => 1 ];
 
 		$files = scandir( self::$cache_dir );
 		if ( !$files ) {
@@ -261,7 +264,7 @@ class Less_Cache {
 	/**
 	 * Get the list of less files and generated css file from a list file
 	 */
-	static function ListFiles( $list_file, &$list, &$css_file_name ) {
+	public static function ListFiles( $list_file, &$list, &$css_file_name ) {
 		$list = explode( "\n", file_get_contents( $list_file ) );
 
 		// pop the cached name that should match $compiled_name

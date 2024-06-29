@@ -138,7 +138,7 @@ class ForkController {
 				}
 				// Throttle restarts
 				if ( $this->procsToStart ) {
-					usleep( 500000 );
+					usleep( 500_000 );
 				}
 			}
 
@@ -221,7 +221,5 @@ class ForkController {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( ForkController::class, 'ForkController' );

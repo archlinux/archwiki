@@ -8,9 +8,6 @@ use MediaWiki\Extension\Notifications\Model\Event;
  * @group medium
  */
 class TalkPageFunctionalTest extends ApiTestCase {
-	/** @inheritDoc */
-	protected $tablesUsed = [ 'echo_event' ];
-
 	/**
 	 * Creates and updates a user talk page a few times to ensure proper events are
 	 * created.

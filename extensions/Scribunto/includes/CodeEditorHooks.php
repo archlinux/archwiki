@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Scribunto;
 
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\CodeEditor\Hooks\CodeEditorGetPageLanguageHook;
 use MediaWiki\Title\Title;
 
@@ -11,6 +12,14 @@ use MediaWiki\Title\Title;
  */
 class CodeEditorHooks implements CodeEditorGetPageLanguageHook {
 
+	private bool $useCodeEditor;
+
+	public function __construct(
+		Config $config
+	) {
+		$this->useCodeEditor = $config->get( 'ScribuntoUseCodeEditor' );
+	}
+
 	/**
 	 * @param Title $title
 	 * @param string|null &$languageCode
@@ -19,8 +28,7 @@ class CodeEditorHooks implements CodeEditorGetPageLanguageHook {
 	 * @return bool
 	 */
 	public function onCodeEditorGetPageLanguage( Title $title, ?string &$languageCode, string $model, string $format ) {
-		global $wgScribuntoUseCodeEditor;
-		if ( $wgScribuntoUseCodeEditor && $title->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
+		if ( $this->useCodeEditor && $title->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
 			$engine = Scribunto::newDefaultEngine();
 			if ( $engine->getCodeEditorLanguage() ) {
 				$languageCode = $engine->getCodeEditorLanguage();

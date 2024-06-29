@@ -47,9 +47,7 @@
 				isIp = mw.util.isIPAddress( blocktarget, true ),
 				isNonEmptyIp = isIp && !isEmpty,
 				expiryValue = expiryWidget.getValue(),
-				// infinityValues are the values the BlockUser class accepts as infinity (sf. wfIsInfinity)
-				infinityValues = [ 'infinite', 'indefinite', 'infinity', 'never' ],
-				isIndefinite = infinityValues.indexOf( expiryValue ) !== -1,
+				isIndefinite = mw.util.isInfinity( expiryValue ),
 				editingRestrictionValue = editingRestrictionWidget.getValue(),
 				isSitewide = editingRestrictionValue === 'sitewide';
 
@@ -58,12 +56,7 @@
 			anonOnlyWidget.setDisabled( !isIp && !isEmpty );
 
 			if ( hideUserWidget ) {
-				hideUserWidget.setDisabled(
-					isNonEmptyIp ||
-					!isIndefinite ||
-					!isSitewide ||
-					mw.util.isTemporaryUser( blocktarget )
-				);
+				hideUserWidget.setDisabled( isNonEmptyIp || !isIndefinite || !isSitewide );
 			}
 
 			updateWatchOption( blocktarget );

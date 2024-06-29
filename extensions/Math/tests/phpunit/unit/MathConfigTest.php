@@ -57,7 +57,8 @@ class MathConfigTest extends TestCase {
 		yield 'mathml string' => [ 'mathml', MathConfig::MODE_MATHML ];
 		yield 'latexml string' => [ 'latexml', MathConfig::MODE_LATEXML ];
 		yield 'native string' => [ 'native', MathConfig::MODE_NATIVE_MML ];
-		yield 'wrong capitalizaton' => [ 'LaTeXmL', MathConfig::MODE_LATEXML ];
+		yield 'mathjax string' => [ 'mathjax', MathConfig::MODE_NATIVE_JAX ];
+		yield 'wrong capitalization' => [ 'LaTeXmL', MathConfig::MODE_LATEXML ];
 		yield 'unrecognized' => [ 'garbage', self::TEST_DEFAULT ];
 	}
 
@@ -103,7 +104,7 @@ class MathConfigTest extends TestCase {
 			'MathValidModes' => [ MathConfig::MODE_MATHML ],
 		] );
 		$this->assertEquals(
-			[ 'mathml' => 'mw_math_mathml' ],
+			[ 'mathml' => 'mw-math-mathml' ],
 			$mathConfig->getValidRenderingModeKeys() );
 	}
 

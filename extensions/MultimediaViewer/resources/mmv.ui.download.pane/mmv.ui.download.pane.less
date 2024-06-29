@@ -44,10 +44,12 @@
 			min-width: 10px;
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
-			border-left: 1px solid mix( #000, @color-progressive, 20% );
+			// equivalent to @color-progressive. Hardcoded until T357740 is fixed.
+			border-left: 1px solid mix( #000, #36c, 20% );
 
 			&:hover {
-				border-bottom: 1px solid mix( #000, @color-progressive, 20% );
+				// equivalent to @color-progressive. Hardcoded until T357740 is fixed.
+				border-bottom: 1px solid mix( #000, #36c, 20% );
 			}
 		}
 

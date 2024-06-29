@@ -21,6 +21,8 @@
  * @ingroup Change tagging
  */
 
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
@@ -170,7 +172,7 @@ class ChangeTags {
 			if ( $description === false ) {
 				continue;
 			}
-			$displayTags[] = Xml::tags(
+			$displayTags[] = Html::rawElement(
 				'span',
 				[ 'class' => 'mw-tag-marker ' .
 					Sanitizer::escapeClass( "mw-tag-marker-$tag" ) ],
@@ -186,7 +188,7 @@ class ChangeTags {
 			->numParams( count( $displayTags ) )
 			->rawParams( implode( ' ', $displayTags ) )
 			->parse();
-		$markers = Xml::tags( 'span', [ 'class' => 'mw-tag-markers' ], $markers );
+		$markers = Html::rawElement( 'span', [ 'class' => 'mw-tag-markers' ], $markers );
 
 		return [ $markers, $classes ];
 	}
@@ -595,7 +597,7 @@ class ChangeTags {
 		$logEntry->setParameters( $logParams );
 		$logEntry->setRelations( [ 'Tag' => array_merge( $tagsAdded, $tagsRemoved ) ] );
 
-		$dbw = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getPrimaryDatabase();
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 		$logId = $logEntry->insert( $dbw );
 		// Only send this to UDP, not RC, similar to patrol events
 		$logEntry->publish( $logId, 'udp' );
@@ -646,7 +648,9 @@ class ChangeTags {
 	 * Get the name of the change_tag table to use for modifyDisplayQuery().
 	 * This also does first-call initialisation of the table in testing mode.
 	 *
-	 * @deprecated since 1.41 use ChangeTags::CHANGE_TAG instead
+	 * @deprecated since 1.41 use ChangeTags::CHANGE_TAG or 'change_tag' instead.
+	 *   Note that directly querying this table is discouraged, try using one of
+	 *   the existing functions instead.
 	 * @return string
 	 */
 	public static function getDisplayTableName() {
@@ -705,7 +709,7 @@ class ChangeTags {
 		];
 
 		if ( $ooui ) {
-			$options = Xml::listDropDownOptionsOoui( $autocomplete );
+			$options = Html::listDropdownOptionsOoui( $autocomplete );
 
 			$data[] = new OOUI\ComboBoxInputWidget( [
 				'id' => 'tagfilter',
@@ -719,12 +723,13 @@ class ChangeTags {
 			$datalist->setTagName( 'datalist' );
 			$datalist->addOptions( $autocomplete );
 
-			$data[] = Xml::input(
+			$data[] = Html::input(
 				'tagfilter',
-				20,
 				$selected,
+				'text',
 				[
-					'class' => 'mw-tagfilter-input mw-ui-input mw-ui-input-inline',
+					'class' => [ 'mw-tagfilter-input', 'mw-ui-input', 'mw-ui-input-inline' ],
+					'size' => 20,
 					'id' => 'tagfilter',
 					'list' => 'tagfilter-datalist',
 				]

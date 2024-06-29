@@ -12,14 +12,9 @@ use Wikimedia\Parsoid\Utils\DOMDataUtils;
 
 class AddLinkAttributesTest extends TestCase {
 
-	/**
-	 * @param string $html
-	 * @param int $pageNs
-	 * @param string $expected
-	 */
 	private function verifyNoFollow( string $html, int $pageNs, string $expected ): void {
-		$pageConfig = new MockPageConfig( [ 'pagens' => $pageNs ], null );
 		$siteConfig = new MockSiteConfig( [] );
+		$pageConfig = new MockPageConfig( $siteConfig, [ 'pagens' => $pageNs ], null );
 		$mockEnv = new MockEnv( [ 'pageConfig' => $pageConfig, "siteConfig" => $siteConfig ] );
 		$doc = ContentUtils::createAndLoadDocument( $html );
 		$body = DOMCompat::getBody( $doc );
@@ -32,14 +27,9 @@ class AddLinkAttributesTest extends TestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
-	/**
-	 * @param string $html
-	 * @param string $target
-	 * @param string $expected
-	 */
 	private function verifyTarget( string $html, string $target, string $expected ) {
-		$pageConfig = new MockPageConfig( [], null );
 		$siteConfig = new MockSiteConfig( [ 'externallinktarget' => $target ] );
+		$pageConfig = new MockPageConfig( $siteConfig, [], null );
 		$mockEnv = new MockEnv( [ 'pageConfig' => $pageConfig, "siteConfig" => $siteConfig ] );
 		$doc = ContentUtils::createAndLoadDocument( $html );
 		$body = DOMCompat::getBody( $doc );

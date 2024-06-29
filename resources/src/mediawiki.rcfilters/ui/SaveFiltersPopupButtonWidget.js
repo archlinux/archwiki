@@ -5,9 +5,9 @@
  * default.
  *
  * @class mw.rcfilters.ui.SaveFiltersPopupButtonWidget
+ * @ignore
  * @extends OO.ui.PopupButtonWidget
  *
- * @constructor
  * @param {mw.rcfilters.Controller} controller Controller
  * @param {mw.rcfilters.dm.SavedQueriesModel} model View model
  * @param {Object} [config] Configuration object
@@ -23,7 +23,7 @@ var SaveFiltersPopupButtonWidget = function MwRcfiltersUiSaveFiltersPopupButtonW
 	this.model = model;
 
 	// Parent
-	SaveFiltersPopupButtonWidget.parent.call( this, $.extend( {
+	SaveFiltersPopupButtonWidget.super.call( this, $.extend( {
 		framed: false,
 		icon: 'bookmark',
 		title: mw.msg( 'rcfilters-savedqueries-add-new-title' ),

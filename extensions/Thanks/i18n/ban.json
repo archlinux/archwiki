@@ -37,7 +37,6 @@
 	"echo-pref-subscription-edit-thank": "Ngaturang suksma majeng tiang antuk uahan titiang",
 	"echo-pref-tooltip-edit-thank": "Élingin tiang ri kala satunggil jadma ngaturang suksema majeng tiang antuk uahan sané kakardi tiang.",
 	"echo-category-title-edit-thank": "Suksma",
-	"notification-thanks-diff-link": "uahan Ida",
 	"notification-header-rev-thank": "$1 sampun {{GENDER:$2|ngaturang suksma}} majeng {{GENDER:$4|Ida}} antuk uahan ring <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 sampun {{GENDER:$2|ngaturang suksma majeng}} {{GENDER:$4|Ida}} antuk pangardian <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 sampun {{GENDER:$2|ngaturang suksma majeng}} {{GENDER:$4|Ida}} antuk tatindakan Ida kakait sareng <strong>$3</strong>.",
@@ -56,7 +55,6 @@
 	"thanks-error-invalidpostid": "ID posting nénten patut.",
 	"flow-thanks-confirmation-special": "Napiké Ida jagi ngirimang suksma publik antuk cawisan puniki?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Ida}} sampun ngaturang suksma majeng $1 antuk cawisan{{GENDER:$2|nyané}}.",
-	"notification-flow-thanks-post-link": "penampen ragané",
 	"notification-header-flow-thank": "$1 sampun {{GENDER:$2|ngaturang suksma}} majeng {{GENDER:$5|Ida}} antuk cawisan ring\"<strong>$3</strong>\".",
 	"notification-compact-header-flow-thank": "$1 sampun {{GENDER:$2|ngaturang suksma}} majeng {{GENDER:$3|Ida}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Ajadma|$1 jadma|100=99+ jadma}} sampun ngaturang suksma majeng {{GENDER:$3|Ida}} antuk cawisan ring <strong>$2</strong>."

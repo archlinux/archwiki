@@ -47,8 +47,8 @@ class ResetPageRandom extends Maintenance {
 
 	public function execute() {
 		$batchSize = $this->getBatchSize();
-		$dbw = $this->getDB( DB_PRIMARY );
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbw = $this->getPrimaryDB();
+		$dbr = $this->getReplicaDB();
 		$from = wfTimestampOrNull( TS_MW, $this->getOption( 'from' ) );
 		$to = wfTimestampOrNull( TS_MW, $this->getOption( 'to' ) );
 
@@ -79,24 +79,22 @@ class ResetPageRandom extends Maintenance {
 			// time range, it was created before or after the occurrence of T208909 and its page_random
 			// is considered valid. The replica is used for this read since page_id and the rev_timestamp
 			// will not change between queries.
-			$res = $dbr->select(
-				'page',
-				'page_id',
-				[
-					'(' . $dbr->selectSQLText(
-						'revision',
-						'MIN(rev_timestamp)',
-						'rev_page=page_id',
-						__METHOD__
-					) . ') ' .
-						'BETWEEN ' . $dbr->addQuotes( $dbr->timestamp( $from ) ) .
-						' AND ' . $dbr->addQuotes( $dbr->timestamp( $to ) ),
-					'page_id > ' . $dbr->addQuotes( $batchStart )
-				],
-				__METHOD__,
-				[ 'LIMIT' => $batchSize, 'ORDER BY' => 'page_id' ]
+			$queryBuilder = $dbr->newSelectQueryBuilder()
+				->select( 'page_id' )
+				->from( 'page' )
+				->where( $dbr->expr( 'page_id', '>', $batchStart ) )
+				->limit( $batchSize )
+				->orderBy( 'page_id' );
+			$subquery = $queryBuilder->newSubquery()
+				->select( 'MIN(rev_timestamp)' )
+				->from( 'revision' )
+				->where( 'rev_page=page_id' );
+			$queryBuilder->andWhere(
+				'(' . $subquery->getSQL() . ') BETWEEN ' .
+				$dbr->addQuotes( $dbr->timestamp( $from ) ) . ' AND ' . $dbr->addQuotes( $dbr->timestamp( $to ) )
 			);
 
+			$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 			$row = null;
 			foreach ( $res as $row ) {
 				if ( !$dry ) {

@@ -10,7 +10,7 @@
 	"math_syntax_error": "синтаксонь ильведевкс",
 	"math_unknown_error": "апак содань ильведькс",
 	"math_unknown_function": "апак содань функция «$1»",
-	"mw_math_mathml": "SVG-с печтамо марто MathML (варчамонь)",
-	"mw_math_source": "LaTeX лисьмапряпарцунсо (текст вальмань туртов)",
+	"mw-math-mathml": "SVG-с печтамо марто MathML (варчамонь)",
+	"mw-math-source": "LaTeX лисьмапряпарцунсо (текст вальмань туртов)",
 	"prefs-math": "Математика"
 }

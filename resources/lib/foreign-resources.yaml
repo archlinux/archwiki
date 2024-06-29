@@ -145,39 +145,32 @@ codex:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
   authors: Design Systems team, Wikimedia Foundation
-  version: 1.0.0
+  version: 1.3.6
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-1.0.0.tgz
-  integrity: sha384-H8UVecyUPQhPmGkoGfv2r4Gj3vPUt3lFVVPM6gb+mUcWyEjmqkRppO/wp03fDN+j
+  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-1.3.6.tgz
+  integrity: sha384-7qDs2QEc9v/G07vhQow6FkK4LARI/MpAiOFMkB7v8YpUFY85fFTWUbevYwXMwkWs
   dest:
+    package/dist/codex.cjs:
     package/dist/codex.js:
-    package/dist/codex.mjs:
-    package/dist/codex.umd.js:
-    package/dist/codex.style.css:
-    package/dist/codex.style-rtl.css:
-    package/dist/codex.style-legacy.css:
-    package/dist/codex.style-legacy-rtl.css:
-    package/dist/codex-search.js:
-    package/dist/codex-search.mjs:
-    package/dist/codex-search.style.css:
-    package/dist/codex-search.style-rtl.css:
-    package/dist/codex-search.style-legacy.css:
-    package/dist/codex-search.style-legacy-rtl.css:
+    package/dist/codex.umd.cjs:
+    package/dist/codex.*.css:
+    package/dist/modules/*: modules
     package/dist/mixins/*: mixins
     package/LICENSE:
     package/README.md:
+    package/CHANGELOG.md:
 
 codex-design-tokens:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
   authors: Design Systems team, Wikimedia Foundation
-  version: 1.0.0
+  version: 1.3.6
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-1.0.0.tgz
-  integrity: sha384-+2j3ZA26VXcfSYhFQSAhXJbLeEeiguvgQJhH3B5MTBYdzpMAwsMlcQey83FhF10K
+  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-1.3.6.tgz
+  integrity: sha384-dm62tinMLu1ZzR0L0Ero5DDh8dR/aelbP7Y9Z6YErVRDHub8CNUnKOZyX7BQQAUe
   dest:
-    package/dist/theme-wikimedia-ui.less:
-    package/dist/theme-wikimedia-ui-legacy.less:
+    package/dist/theme-*.less:
+    package/dist/theme-*-experimental.css:
     package/LICENSE:
     package/README.md:
 
@@ -185,10 +178,10 @@ codex-icons:
   license: MIT
   homepage: https://doc.wikimedia.org/codex/
   authors: Design Systems team, Wikimedia Foundation
-  version: 1.0.0
+  version: 1.3.6
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-1.0.0.tgz
-  integrity: sha384-FU0AnKFaxrRcuxOCSOOFryNh7RDNEAl4smIgDzntGfdng7Qx/+gGwChS4ZM3jiGF
+  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-1.3.6.tgz
+  integrity: sha384-mjlS1mr1i2ChG8+DTJHk6EQywwEjA4KlrPfI+GxpSdJPfoOMaM5EtyFQ9bLi2LnM
   dest:
     package/dist/codex-icons.json:
     package/dist/codex-icon-paths.less:
@@ -359,10 +352,10 @@ oojs-router:
   license: MIT
   homepage: https://www.mediawiki.org/wiki/OOjs_Router
   authors: OOjs Team and other contributors
-  version: 0.3.0
+  version: 0.5.0
   type: tar
-  src: https://registry.npmjs.org/oojs-router/-/oojs-router-0.3.0.tgz
-  integrity: sha384-FeAuFD6G2sGGXCWvxncx9QOTEAoq5VQdNWkXEhvi4XAoOSqe8RGms5JgmL8Fl8FB
+  src: https://registry.npmjs.org/oojs-router/-/oojs-router-0.5.0.tgz
+  integrity: sha384-DhU20g/ayQzVWBjtflLRbk+deM1YBsIvYzjFthUOfQCXrYWJLH9bgm12eQZsC1gy
   dest:
     package/dist/oojs-router.js:
     package/LICENSE:
@@ -373,10 +366,10 @@ ooui:
   license: MIT
   homepage: https://www.mediawiki.org/wiki/OOUI
   authors: OOUI Team and other contributors
-  version: 0.48.1
+  version: 0.49.0
   type: tar
-  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.48.1.tgz
-  integrity: sha384-KLcC6S53ofSxNbsr6QIP7SCl3JQ/MqKJQmYpjACTAMzNyUIuS48jCCHhQu/dzE5y
+  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.49.1.tgz
+  integrity: sha384-A+rqZuEBs57mX/Q5XApnmUG+jbQvq6GwA0Wi6Fipc7gpLqRORooUlm5aT3hFav75
 
   dest:
     # Main stuff
@@ -409,20 +402,20 @@ pako:
   license: MIT AND Zlib
   homepage: https://github.com/nodeca/pako
   authors: Andrei Tuputcyn, Vitaly Puzrin, Friedel Ziegelmayer, Kirill Efimov, Jean-loup Gailly, and Mark Adler
-  version: 2.0.4
+  version: 2.1.0
   type: multi-file
   files:
-    pako_deflate.es5.js:
-      src: https://raw.githubusercontent.com/nodeca/pako/2.0.4/dist/pako_deflate.es5.js
-      integrity: sha384-msHzmf3Olqx90vEgQHrbqpn7Kx6Tv0L5VXKPQoq+yDnkrvKwzlufduA/rLk1suNV
-    pako_deflate.es5.min.js:
-      src: https://raw.githubusercontent.com/nodeca/pako/2.0.4/dist/pako_deflate.es5.min.js
-      integrity: sha384-pf3n4cvQTsHiADofGl9lD5qWFRGmwV+T/M/nzv8ep3YbDDJVo9Fov/rQ8JHuH74J
+    pako_deflate.js:
+      src: https://raw.githubusercontent.com/nodeca/pako/2.1.0/dist/pako_deflate.js
+      integrity: sha384-OnIes9Zm3mAxdP2URZyV1WjDdCm6WcghykNJeIHvUSGUBwAYJuBE9oIMyHkDgWmL
+    pako_deflate.min.js:
+      src: https://raw.githubusercontent.com/nodeca/pako/2.1.0/dist/pako_deflate.min.js
+      integrity: sha384-g47DZI9UNr0h29/i2S4PKozocdFoRssd5kkkeDdXjsIWnoRo0iNfgnaVvKFzhMr+
     README.md:
-      src: https://raw.githubusercontent.com/nodeca/pako/2.0.4/README.md
+      src: https://raw.githubusercontent.com/nodeca/pako/2.1.0/README.md
       integrity: sha384-mQ9cShSJ6yG8JTPL7LkbnfUnTmc7LA2hnBMSNfb5X7xk6pTFzVTurK9gcSMgJu3B
     LICENSE:
-      src: https://raw.githubusercontent.com/nodeca/pako/2.0.4/LICENSE
+      src: https://raw.githubusercontent.com/nodeca/pako/2.1.0/LICENSE
       integrity: sha384-9tg5LwdfxM6Fpdp6Sep9VI0qXS7Eg5gQRPvNrfV3DKIkVVL3EwSK2atu+zRoEwJg
 
 pinia:
@@ -444,16 +437,16 @@ qunitjs:
   license: MIT
   homepage: https://qunitjs.com
   authors: OpenJS Foundation and other contributors
-  version: 2.19.4
+  version: 2.20.0
   type: multi-file
   # Integrity from link modals at https://code.jquery.com/qunit/
   files:
     qunit.js:
-      src: https://code.jquery.com/qunit/qunit-2.19.4.js
-      integrity: sha256-ZFjYNVAOk8Ozw+xXXCfNuf87Knngp3BVxFk3lBLD/Uc=
+      src: https://code.jquery.com/qunit/qunit-2.20.0.js
+      integrity: sha256-qDPbT8viaD6gCaTrUd7FOE5lU5S9H5U5bbuQMADnrRY=
     qunit.css:
-      src: https://code.jquery.com/qunit/qunit-2.19.4.css
-      integrity: sha256-qwmW00heo7d+2GZQ2eKAsTbPZ/Tw5emPGigowFrXpVk=
+      src: https://code.jquery.com/qunit/qunit-2.20.0.css
+      integrity: sha256-NN2oro7r8aYcRYA4fnBbijdLRS7Rc4Pz9ikcmlwWvl4=
 
 sinonjs:
   license: BSD-3-Clause
@@ -469,11 +462,10 @@ vue:
   license: MIT
   homepage: https://vuejs.org/
   authors: Yuxi (Evan) You
-  version: 3.2.37
+  version: 3.3.9
   type: tar
-  # This is the migration build of Vue 3.2.37 which provides compatibility for Vue 2 code
-  src: https://registry.npmjs.org/@vue/compat/-/compat-3.2.37.tgz
-  integrity: sha512-MIYkFAz3Fur1mtZBqrNMYTymlohCQ0ol6vtNb58cqExLSCt63xZaXyiZZYPvS6WaMXfbNBDPXMvU9tO922eFCA==
+  src: https://registry.npmjs.org/vue/-/vue-3.3.9.tgz
+  integrity: sha512-sy5sLCTR8m6tvUk1/ijri3Yqzgpdsmxgj6n6yl7GXXCXqVbmW2RCXe9atE4cEI6Iv7L89v5f35fZRRr5dChP9w==
   dest:
     package/README.md:
     package/LICENSE:

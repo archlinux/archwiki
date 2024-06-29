@@ -20,15 +20,15 @@
 
 namespace MediaWiki\Specials;
 
-use DeferredUpdates;
 use DoubleRedirectJob;
 use ErrorPageError;
-use File;
+use IDBAccessObject;
 use LogEventsList;
 use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\MovePageFactory;
@@ -39,7 +39,8 @@ use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleArrayFromResult;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use MediaWiki\Widget\ComplexTitleInputWidget;
 use OOUI\ButtonInputWidget;
@@ -57,6 +58,8 @@ use SearchEngineFactory;
 use StringUtils;
 use ThrottledError;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 use Xml;
 
 /**
@@ -106,6 +109,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 	private SearchEngineFactory $searchEngineFactory;
 	private WatchlistManager $watchlistManager;
 	private RestrictionStore $restrictionStore;
+	private TitleFactory $titleFactory;
 
 	/**
 	 * @param MovePageFactory $movePageFactory
@@ -120,6 +124,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 	 * @param SearchEngineFactory $searchEngineFactory
 	 * @param WatchlistManager $watchlistManager
 	 * @param RestrictionStore $restrictionStore
+	 * @param TitleFactory $titleFactory
 	 */
 	public function __construct(
 		MovePageFactory $movePageFactory,
@@ -133,7 +138,8 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		WikiPageFactory $wikiPageFactory,
 		SearchEngineFactory $searchEngineFactory,
 		WatchlistManager $watchlistManager,
-		RestrictionStore $restrictionStore
+		RestrictionStore $restrictionStore,
+		TitleFactory $titleFactory
 	) {
 		parent::__construct( 'Movepage' );
 		$this->movePageFactory = $movePageFactory;
@@ -148,6 +154,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		$this->searchEngineFactory = $searchEngineFactory;
 		$this->watchlistManager = $watchlistManager;
 		$this->restrictionStore = $restrictionStore;
+		$this->titleFactory = $titleFactory;
 	}
 
 	public function doesWrites() {
@@ -363,7 +370,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 				->from( 'redirect' )
 				->where( [ 'rd_namespace' => $this->oldTitle->getNamespace() ] )
 				->andWhere( [ 'rd_title' => $this->oldTitle->getDBkey() ] )
-				->andWhere( [ 'rd_interwiki' => [ '', null ] ] );
+				->andWhere( [ 'rd_interwiki' => '' ] );
 
 			$hasRedirects = (bool)$queryBuilder->caller( __METHOD__ )->fetchField();
 		} else {
@@ -460,18 +467,21 @@ class SpecialMovePage extends UnlistedSpecialPage {
 			]
 		);
 
-		$options = Xml::listDropDownOptions(
-			$this->msg( 'movepage-reason-dropdown' )->inContentLanguage()->text(),
+		$options = Html::listDropdownOptions(
+			$this->msg( 'movepage-reason-dropdown' )
+				->page( $this->oldTitle )
+				->inContentLanguage()
+				->text(),
 			[ 'other' => $this->msg( 'movereasonotherlist' )->text() ]
 		);
-		$options = Xml::listDropDownOptionsOoui( $options );
+		$options = Html::listDropdownOptionsOoui( $options );
 
 		$fields[] = new FieldLayout(
 			new DropdownInputWidget( [
 				'name' => 'wpReasonList',
 				'inputId' => 'wpReasonList',
 				'infusable' => true,
-				'value' => 'other',
+				'value' => $this->getRequest()->getText( 'wpReasonList', 'other' ),
 				'options' => $options,
 			] ),
 			[
@@ -489,7 +499,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 				'id' => 'wpReason',
 				'maxLength' => CommentStore::COMMENT_CHARACTER_LIMIT,
 				'infusable' => true,
-				'value' => $this->reason,
+				'value' => $this->getRequest()->getText( 'wpReason' ),
 			] ),
 			[
 				'label' => $this->msg( 'moveotherreason' )->text(),
@@ -738,7 +748,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 			// Delete an associated image if there is
 			if ( $nt->getNamespace() === NS_FILE ) {
 				$file = $this->repoGroup->getLocalRepo()->newFile( $nt );
-				$file->load( File::READ_LATEST );
+				$file->load( IDBAccessObject::READ_LATEST );
 				if ( $file->exists() ) {
 					$file->deleteFile( $reason, $user, false );
 				}
@@ -843,8 +853,11 @@ class SpecialMovePage extends UnlistedSpecialPage {
 			)
 		) ) {
 			$conds = [
-				'page_title' . $dbr->buildLike( $ot->getDBkey() . '/', $dbr->anyString() )
-					. ' OR page_title = ' . $dbr->addQuotes( $ot->getDBkey() )
+				$dbr->expr(
+					'page_title',
+					IExpression::LIKE,
+					new LikeValue( $ot->getDBkey() . '/', $dbr->anyString() )
+				)->or( 'page_title', '=', $ot->getDBkey() )
 			];
 			$conds['page_namespace'] = [];
 			if ( $this->nsInfo->hasSubpages( $nt->getNamespace() ) ) {
@@ -867,7 +880,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 
 		$extraPages = [];
 		if ( $conds !== null ) {
-			$extraPages = new TitleArrayFromResult(
+			$extraPages = $this->titleFactory->newTitleArrayFromResult(
 				$dbr->newSelectQueryBuilder()
 					->select( [ 'page_id', 'page_namespace', 'page_title' ] )
 					->from( 'page' )
@@ -992,15 +1005,19 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		);
 
 		if ( $nsHasSubpages ) {
-			$this->showSubpagesList( $subpages, $count, 'movesubpagetext', true );
+			$this->showSubpagesList(
+				$subpages, $count, 'movesubpagetext', 'movesubpagetext-truncated', true
+			);
 		}
 
 		if ( !$titleIsTalk && $countTalk > 0 ) {
-			$this->showSubpagesList( $subpagesTalk, $countTalk, 'movesubpagetalktext' );
+			$this->showSubpagesList(
+				$subpagesTalk, $countTalk, 'movesubpagetalktext', 'movesubpagetalktext-truncated'
+			);
 		}
 	}
 
-	private function showSubpagesList( $subpages, $pagecount, $wikiMsg, $noSubpageMsg = false ) {
+	private function showSubpagesList( $subpages, $pagecount, $msg, $truncatedMsg, $noSubpageMsg = false ) {
 		$out = $this->getOutput();
 
 		# No subpages.
@@ -1013,14 +1030,9 @@ class SpecialMovePage extends UnlistedSpecialPage {
 
 		if ( $pagecount > $maximumMovedPages ) {
 			$subpages = $this->truncateSubpagesList( $subpages );
-			// TODO: Replace with a message key once this is uploaded to Gerrit. This is hardcoded to avoid
-			//  having the i18n rebuilt for all deployments due to this security patch.
-			$out->addWikiTextAsInterface(
-				"The first $maximumMovedPages {{PLURAL:$maximumMovedPages|subpage|subpages}} " .
-				( $noSubpageMsg ? 'for this page' : 'for the corresponding talk page' ) . ' are shown below.'
-			);
+			$out->addWikiMsg( $truncatedMsg, $this->getLanguage()->formatNum( $maximumMovedPages ) );
 		} else {
-			$out->addWikiMsg( $wikiMsg, $this->getLanguage()->formatNum( $pagecount ) );
+			$out->addWikiMsg( $msg, $this->getLanguage()->formatNum( $pagecount ) );
 		}
 		$out->addHTML( "<ul>\n" );
 

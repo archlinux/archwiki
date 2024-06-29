@@ -11,7 +11,7 @@
 	"gadgets-desc": "Để các thành viên chọn những [[Special:Gadgets|tiện ích]] đặc chế bằng CSS và JavaScript trong [[Special:Preferences#mw-prefsection-gadgets|tùy chọn]]",
 	"prefs-gadgets": "Tiện ích",
 	"gadgets-prefstext": "Bạn có thể kích hoạt các tiện ích đặc biệt bên dưới.\nCác tiện ích này chủ yếu dựa trên JavaScript, do đó bạn phải kích hoạt JavaScript trong trình duyệt để các tiện ích này hoạt động.\nChú ý rằng những tiện ích này sẽ không có tác dụng trong trang tùy chọn cá nhân.\n\nCũng chú ý rằng những tiện ích đặc biệt này không phải là một phần của phần mềm MediaWiki, mà thường được phát triển và bảo trì bởi những thành viên ở wiki của họ.\nCác bảo quản viên giao diện ở từng ngôn ngữ có thể sửa đổi các [[MediaWiki:Gadgets-definition|định nghĩa]], và các bảo quản viên có thể sửa đổi các [[Special:Gadgets|lời miêu tả]], ở đấy có thể xem mã nguồn của mọi tiện ích. Xem các tiện ích theo số người dùng tại wiki này tại [[Special:GadgetUsage|Thống kê sử dụng tiện ích]].",
-	"gadgets": "Tiện ích",
+	"special-gadgets": "Tiện ích",
 	"gadgetusage": "Thống kê sử dụng tiện ích",
 	"gadgetusage-gadget": "Tiện ích",
 	"gadgetusage-usercount": "Số người dùng",
@@ -38,10 +38,5 @@
 	"gadgets-export-download": "Tải về",
 	"gadgets-validate-notset": "Thuộc tính <code>$1</code> không được đặt.",
 	"gadgets-validate-wrongtype": "Thuộc tính <code>$1</code> phải là kiểu <code>$2</code> thay vì <code>$3</code>.",
-	"right-gadgets-edit": "Sửa đổi trang tiện ích JavaScript và CSS",
-	"action-gadgets-edit": "sửa đổi trang tiện ích JavaScript hoặc CSS này",
-	"right-gadgets-definition-edit": "Sửa đổi các định nghĩa tiện ích",
-	"action-gadgets-definition-edit": "sửa đổi định nghĩa của tiện ích này",
-	"gadgets-wrong-contentmodel": "Các trang trong không gian tên {{ns:2302}} phải có mô hình nội dung GadgetDefinition.",
 	"gadgets-supports-urlload": "Có thể tải tiện ích này bằng cách thêm tham số truy vấn <code>?withgadget</code> vào URL."
 }

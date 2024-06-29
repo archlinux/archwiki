@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Abijeet Patro",
 			"Ajeetsinghawadhi",
 			"Phoenix303",
 			"Saurmandal",
@@ -90,6 +91,7 @@
 	"templatedata-modal-table-param-aliases": "उपनाम",
 	"templatedata-modal-table-param-autovalue": "स्वचालित वैल्यू",
 	"templatedata-modal-table-param-default": "डिफ़ॉल्ट ($1)",
+	"templatedata-modal-table-param-status": "स्थिति",
 	"templatedata-modal-table-param-deprecated": "कालग्रस्त",
 	"templatedata-modal-table-param-deprecatedValue": "बहिष्कृत मार्गदर्शन",
 	"templatedata-modal-table-param-description": "विवरण ($1)",

@@ -38,7 +38,8 @@ return [
 			),
 			Math::getMathConfig( $services ),
 			$services->getUserOptionsLookup(),
-			LoggerFactory::getInstance( 'Math' )
+			LoggerFactory::getInstance( 'Math' ),
+			$services->getMainWANObjectCache()
 		);
 	},
 	'Math.WikibaseConnector' => static function ( MediaWikiServices $services ): MathWikibaseConnector {

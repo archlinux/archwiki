@@ -10,10 +10,8 @@
 /**
  * Context item for a citation needed template.
  *
- * @class
- * @extends ve.ui.MWDefinedTransclusionContextItem
- *
  * @constructor
+ * @extends ve.ui.MWDefinedTransclusionContextItem
  * @param {ve.ui.LinearContext} context Context the item is in
  * @param {ve.dm.Model} model Model the item is related to
  * @param {Object} [config]
@@ -57,34 +55,38 @@ ve.ui.MWCitationNeededContextItem.prototype.onAddClick = function () {
 	let promise;
 	if ( encapsulatedWikitext ) {
 		this.addButton.setDisabled( true );
-		promise = ve.init.target.parseWikitextFragment( encapsulatedWikitext, false, this.model.getDocument() ).then( function ( response ) {
+		promise = ve.init.target
+			.parseWikitextFragment( encapsulatedWikitext, false, this.model.getDocument() )
+			.then( ( response ) => {
 
-			if ( ve.getProp( response, 'visualeditor', 'result' ) !== 'success' ) {
-				return ve.createDeferred().reject().promise();
-			}
+				if ( ve.getProp( response, 'visualeditor', 'result' ) !== 'success' ) {
+					return ve.createDeferred().reject().promise();
+				}
 
-			const dmDoc = ve.ui.MWWikitextStringTransferHandler.static.createDocumentFromParsoidHtml(
-				response.visualeditor.content,
-				surface.getModel().getDocument()
-			);
-			const nodes = dmDoc.getDocumentNode().children.filter( function ( node ) {
-				return !node.isInternal();
+				const dmDoc = ve.ui.MWWikitextStringTransferHandler.static
+					.createDocumentFromParsoidHtml(
+						response.visualeditor.content,
+						surface.getModel().getDocument()
+					);
+				const nodes = dmDoc.getDocumentNode().children.filter( function ( node ) {
+					return !node.isInternal();
+				} );
+				let range;
+
+				// Unwrap single content branch nodes to match internal copy/paste behaviour
+				// (which wouldn't put the open and close tags in the clipboard to begin with).
+				if (
+					nodes.length === 1 &&
+					nodes[ 0 ].canContainContent()
+				) {
+					range = nodes[ 0 ].getRange();
+				}
+
+				surface.getModel().pushStaging();
+				surface.getModel().getFragment()
+					.insertDocument( dmDoc, range ).collapseToEnd().select();
+				return true;
 			} );
-			let range;
-
-			// Unwrap single content branch nodes to match internal copy/paste behaviour
-			// (which wouldn't put the open and close tags in the clipboard to begin with).
-			if (
-				nodes.length === 1 &&
-				nodes[ 0 ].canContainContent()
-			) {
-				range = nodes[ 0 ].getRange();
-			}
-
-			surface.getModel().pushStaging();
-			surface.getModel().getFragment().insertDocument( dmDoc, range ).collapseToEnd().select();
-			return true;
-		} );
 		promise.always( function () {
 			contextItem.addButton.setDisabled( false );
 		} );
@@ -101,7 +103,7 @@ ve.ui.MWCitationNeededContextItem.prototype.onAddClick = function () {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWCitationNeededContextItem.prototype.renderBody = function () {
 	const date = this.getCanonicalParam( 'date' );

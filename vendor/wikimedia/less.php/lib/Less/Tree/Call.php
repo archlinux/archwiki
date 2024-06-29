@@ -3,7 +3,7 @@
  * @private
  * @see less.tree.Call in less.js 3.0.0 https://github.com/less/less.js/blob/v3.0.0/dist/less.js#L6336
  */
-class Less_Tree_Call extends Less_Tree {
+class Less_Tree_Call extends Less_Tree implements Less_Tree_HasValueProperty {
 	public $value;
 
 	public $name;
@@ -12,7 +12,6 @@ class Less_Tree_Call extends Less_Tree {
 	public $mathOn;
 	public $index;
 	public $currentFileInfo;
-	public $type = 'Call';
 
 	public function __construct( $name, $args, $index, $currentFileInfo = null ) {
 		$this->name = $name;
@@ -47,24 +46,35 @@ class Less_Tree_Call extends Less_Tree {
 			$args[] = $a->compile( $env );
 		}
 
+		foreach ( $args as $key => $arg ) {
+			if ( $arg instanceof Less_Tree_Expression ) {
+				$arg->throwAwayComments();
+
+				if ( count( $arg->value ) === 1 ) {
+					$subNode = $arg->value[0];
+					array_splice( $args, $key, 1, [ $subNode ] );
+				}
+			}
+		}
+
 		Less_Environment::$mathOn = $currentMathContext;
 
 		$nameLC = strtolower( $this->name );
 		switch ( $nameLC ) {
 			case '%':
-			$nameLC = '_percent';
+				$nameLC = '_percent';
 				break;
 
 			case 'get-unit':
-			$nameLC = 'getunit';
+				$nameLC = 'getunit';
 				break;
 
 			case 'data-uri':
-			$nameLC = 'datauri';
+				$nameLC = 'datauri';
 				break;
 
 			case 'svg-gradient':
-			$nameLC = 'svggradient';
+				$nameLC = 'svggradient';
 				break;
 		}
 
@@ -73,7 +83,7 @@ class Less_Tree_Call extends Less_Tree {
 			$result = Less_Tree_DefaultFunc::compile();
 		} else {
 			$func = null;
-			if ( method_exists( 'Less_Functions', $nameLC ) ) {
+			if ( method_exists( Less_Functions::class, $nameLC ) ) {
 				$functions = new Less_Functions( $env, $this->currentFileInfo );
 				$func = [ $functions, $nameLC ];
 			} elseif ( isset( $env->functions[$nameLC] ) && is_callable( $env->functions[$nameLC] ) ) {
@@ -82,7 +92,7 @@ class Less_Tree_Call extends Less_Tree {
 			// If the function name isn't known to LESS, output it unchanged as CSS.
 			if ( $func ) {
 				try {
-					$result = call_user_func_array( $func, $args );
+					$result = $func( ...$args );
 				} catch ( Exception $e ) {
 					// Preserve original trace, especially from custom functions.
 					// https://github.com/wikimedia/less.php/issues/38
@@ -99,7 +109,7 @@ class Less_Tree_Call extends Less_Tree {
 			return $result;
 		}
 
-		return new Less_Tree_Call( $this->name, $args, $this->index, $this->currentFileInfo );
+		return new self( $this->name, $args, $this->index, $this->currentFileInfo );
 	}
 
 	/**

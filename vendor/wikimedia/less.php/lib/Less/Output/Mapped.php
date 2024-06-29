@@ -52,7 +52,7 @@ class Less_Output_Mapped extends Less_Output {
 	 * @param string $chunk
 	 * @param array|null $fileInfo
 	 * @param int $index
-	 * @param mixed $mapLines
+	 * @param bool|null $mapLines
 	 */
 	public function add( $chunk, $fileInfo = null, $index = 0, $mapLines = null ) {
 		// ignore adding empty strings
@@ -84,19 +84,19 @@ class Less_Output_Mapped extends Less_Output {
 
 			if ( !$mapLines ) {
 				$this->generator->addMapping(
-						$this->lineNumber + 1,					// generated_line
-						$this->column,							// generated_column
-						count( $sourceLines ),					// original_line
-						strlen( $sourceColumns ),					// original_column
+						$this->lineNumber + 1, // generated_line
+						$this->column, // generated_column
+						count( $sourceLines ), // original_line
+						strlen( $sourceColumns ), // original_column
 						$fileInfo
 				);
 			} else {
 				for ( $i = 0, $count = count( $lines ); $i < $count; $i++ ) {
 					$this->generator->addMapping(
-						$this->lineNumber + $i + 1,				// generated_line
-						$i === 0 ? $this->column : 0,			// generated_column
-						count( $sourceLines ) + $i,				// original_line
-						$i === 0 ? strlen( $sourceColumns ) : 0, 	// original_column
+						$this->lineNumber + $i + 1, // generated_line
+						$i === 0 ? $this->column : 0, // generated_column
+						count( $sourceLines ) + $i, // original_line
+						$i === 0 ? strlen( $sourceColumns ) : 0, // original_column
 						$fileInfo
 					);
 				}

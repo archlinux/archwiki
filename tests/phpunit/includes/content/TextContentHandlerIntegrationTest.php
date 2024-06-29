@@ -14,14 +14,21 @@ class TextContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 			'title' => 'TextContentTest_testGetParserOutput',
 			'model' => CONTENT_MODEL_TEXT,
 			'text' => "hello ''world'' & [[stuff]]\n",
-			'expectedHtml' => "hello ''world'' &amp; [[stuff]]",
+			'expectedHtml' => "<pre>hello ''world'' &amp; [[stuff]]\n</pre>",
+			'expectedFields' =>	[ 'Links' => [] ]
+		];
+		yield 'Multi line render' => [
+			'title' => 'TextContentTest_testGetParserOutput',
+			'model' => CONTENT_MODEL_TEXT,
+			'text' => "Test 1\nTest 2\n\nTest 3\n",
+			'expectedHtml' => "<pre>Test 1\nTest 2\n\nTest 3\n</pre>",
 			'expectedFields' =>	[ 'Links' => [] ]
 		];
 	}
 
 	/**
 	 * @dataProvider provideGetParserOutput
-	 * @covers TextContentHandler::fillParserOutput
+	 * @covers \TextContentHandler::fillParserOutput
 	 */
 	public function testGetParserOutput( $title, $model, $text, $expectedHtml,
 		$expectedFields = null, $parserOptions = null

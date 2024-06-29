@@ -20,6 +20,7 @@
  * @ingroup Actions
  */
 
+use MediaWiki\Context\IContextSource;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Status\Status;
 use MediaWiki\User\User;
@@ -95,6 +96,12 @@ class WatchAction extends FormAction {
 		return Status::wrap( $result );
 	}
 
+	/**
+	 * @throws UserNotLoggedIn
+	 * @throws PermissionsError
+	 * @throws ReadOnlyError
+	 * @throws UserBlockedError
+	 */
 	protected function checkCanExecute( User $user ) {
 		if ( !$user->isRegistered()
 			|| ( $user->isTemp() && !$user->isAllowed( 'editmywatchlist' ) )

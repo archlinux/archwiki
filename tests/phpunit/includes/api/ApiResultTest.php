@@ -1,15 +1,25 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use AllowDynamicProperties;
+use ApiErrorFormatter;
+use ApiResult;
+use Exception;
+use InvalidArgumentException;
 use MediaWiki\Title\Title;
+use MediaWikiIntegrationTestCase;
+use RuntimeException;
+use UnexpectedValueException;
 
 /**
- * @covers ApiResult
+ * @covers \ApiResult
  * @group API
  */
 class ApiResultTest extends MediaWikiIntegrationTestCase {
 
 	/**
-	 * @covers ApiResult
+	 * @covers \ApiResult
 	 */
 	public function testStaticDataMethods() {
 		$arr = [];
@@ -198,7 +208,7 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$arr = [];
-		$result2 = new ApiResult( 8388608 );
+		$result2 = new ApiResult( 8_388_608 );
 		$result2->addValue( null, 'foo', 'bar' );
 		ApiResult::setValue( $arr, 'baz', $result2 );
 		$this->assertSame( [
@@ -234,10 +244,10 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ApiResult
+	 * @covers \ApiResult
 	 */
 	public function testInstanceDataMethods() {
-		$result = new ApiResult( 8388608 );
+		$result = new ApiResult( 8_388_608 );
 
 		$result->addValue( null, 'setValue', '1' );
 
@@ -496,8 +506,8 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $result->addValue( null, 'foo', $obj ) );
 		$this->assertSame( 2, $result->getSize() );
 
-		$result = new ApiResult( 8388608 );
-		$result2 = new ApiResult( 8388608 );
+		$result = new ApiResult( 8_388_608 );
+		$result2 = new ApiResult( 8_388_608 );
 		$result2->addValue( null, 'foo', 'bar' );
 		$result->addValue( null, 'baz', $result2 );
 		$this->assertSame( [
@@ -508,7 +518,7 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 			ApiResult::META_TYPE => 'assoc',
 		], $result->getResultData() );
 
-		$result = new ApiResult( 8388608 );
+		$result = new ApiResult( 8_388_608 );
 		$result->addValue( null, 'foo', "foo\x80bar" );
 		$result->addValue( null, 'bar', "a\xcc\x81" );
 		$result->addValue( null, 'baz', 74 );
@@ -523,7 +533,7 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 			ApiResult::META_TYPE => 'assoc',
 		], $result->getResultData() );
 
-		$result = new ApiResult( 8388608 );
+		$result = new ApiResult( 8_388_608 );
 		$obj = (object)[ 1 => 'one' ];
 		$arr = [];
 		$result->addValue( $arr, 'foo', $obj );
@@ -537,11 +547,11 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ApiResult
+	 * @covers \ApiResult
 	 */
 	public function testMetadata() {
 		$arr = [ 'foo' => [ 'bar' => [] ] ];
-		$result = new ApiResult( 8388608 );
+		$result = new ApiResult( 8_388_608 );
 		$result->addValue( null, 'foo', [ 'bar' => [] ] );
 
 		$expect = [
@@ -602,7 +612,7 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ApiResult
+	 * @covers \ApiResult
 	 */
 	public function testUtilityFunctions() {
 		$arr = [
@@ -691,7 +701,7 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ApiResult
+	 * @covers \ApiResult
 	 * @dataProvider provideTransformations
 	 * @param string $label
 	 * @param array $input
@@ -914,8 +924,8 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 					'defaultArray' => [ 'b', 'c', 'a', ApiResult::META_TYPE => 'array' ],
 					'defaultAssoc' => [ 'x' => 'a', 1 => 'b', 0 => 'c', ApiResult::META_TYPE => 'assoc' ],
 					'defaultAssoc2' => [ 2 => 'a', 3 => 'b', 0 => 'c', ApiResult::META_TYPE => 'assoc' ],
-					'array' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
-					'BCarray' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
+					'array' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
+					'BCarray' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
 					'BCassoc' => [ 'a', 'b', 'c', ApiResult::META_TYPE => 'assoc' ],
 					'assoc' => [ 2 => 'a', 0 => 'b', 1 => 'c', ApiResult::META_TYPE => 'assoc' ],
 					'kvp' => [ 'x' => 'a', 'y' => 'b',
@@ -952,8 +962,8 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 					'defaultAssoc2' => (object)[ 2 => 'a', 3 => 'b',
 						0 => 'c', ApiResult::META_TYPE => 'assoc'
 					],
-					'array' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
-					'BCarray' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
+					'array' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
+					'BCarray' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
 					'BCassoc' => (object)[ 'a', 'b', 'c', ApiResult::META_TYPE => 'assoc' ],
 					'assoc' => (object)[ 2 => 'a', 0 => 'b', 1 => 'c', ApiResult::META_TYPE => 'assoc' ],
 					'kvp' => (object)[ 'x' => 'a', 'y' => 'b',
@@ -986,8 +996,8 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 					'defaultArray' => [ 'b', 'c', 'a', ApiResult::META_TYPE => 'array' ],
 					'defaultAssoc' => [ 'x' => 'a', 1 => 'b', 0 => 'c', ApiResult::META_TYPE => 'assoc' ],
 					'defaultAssoc2' => [ 2 => 'a', 3 => 'b', 0 => 'c', ApiResult::META_TYPE => 'assoc' ],
-					'array' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
-					'BCarray' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
+					'array' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
+					'BCarray' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
 					'BCassoc' => [ 'a', 'b', 'c', ApiResult::META_TYPE => 'assoc' ],
 					'assoc' => [ 2 => 'a', 0 => 'b', 1 => 'c', ApiResult::META_TYPE => 'assoc' ],
 					'kvp' => [
@@ -1029,7 +1039,7 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 					'defaultArray' => [ 'b', 'c', 'a', ApiResult::META_TYPE => 'array' ],
 					'defaultAssoc' => [ 'x' => 'a', 1 => 'b', 0 => 'c', ApiResult::META_TYPE => 'assoc' ],
 					'defaultAssoc2' => [ 2 => 'a', 3 => 'b', 0 => 'c', ApiResult::META_TYPE => 'assoc' ],
-					'array' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
+					'array' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
 					'BCarray' => [ 'x' => 'a', 1 => 'b', 0 => 'c', ApiResult::META_TYPE => 'assoc' ],
 					'BCassoc' => [ 'a', 'b', 'c', ApiResult::META_TYPE => 'array' ],
 					'assoc' => [ 2 => 'a', 0 => 'b', 1 => 'c', ApiResult::META_TYPE => 'assoc' ],
@@ -1075,8 +1085,8 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 					'defaultAssoc2' => (object)[ 2 => 'a', 3 => 'b',
 						0 => 'c', ApiResult::META_TYPE => 'assoc'
 					],
-					'array' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
-					'BCarray' => [ 'a', 'c', 'b', ApiResult::META_TYPE => 'array' ],
+					'array' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
+					'BCarray' => [ 'c', 'b', 'a', ApiResult::META_TYPE => 'array' ],
 					'BCassoc' => (object)[ 'a', 'b', 'c', ApiResult::META_TYPE => 'assoc' ],
 					'assoc' => (object)[ 2 => 'a', 0 => 'b', 1 => 'c', ApiResult::META_TYPE => 'assoc' ],
 					'kvp' => [
@@ -1129,8 +1139,8 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 					'defaultArray' => [ 'b', 'c', 'a' ],
 					'defaultAssoc' => (object)[ 'x' => 'a', 1 => 'b', 0 => 'c' ],
 					'defaultAssoc2' => (object)[ 2 => 'a', 3 => 'b', 0 => 'c' ],
-					'array' => [ 'a', 'c', 'b' ],
-					'BCarray' => [ 'a', 'c', 'b' ],
+					'array' => [ 'c', 'b', 'a' ],
+					'BCarray' => [ 'c', 'b', 'a' ],
 					'BCassoc' => (object)[ 'a', 'b', 'c' ],
 					'assoc' => (object)[ 2 => 'a', 0 => 'b', 1 => 'c' ],
 					'kvp' => [
@@ -1230,6 +1240,34 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 					ApiResult::META_CONTENT => 'bar',
 				],
 			],
+
+			[
+				'Types: Numeric keys in array and BCarray',
+				[
+					'array' => [
+						0 => 'd',
+						'x' => 'a',
+						1 => 'b',
+						'1.5' => 'c',
+						'0.5  ' => 'e',
+						ApiResult::META_TYPE => 'array'
+					],
+					'BCarray' => [
+						0 => 'd',
+						'x' => 'a',
+						1 => 'b',
+						'1.5' => 'c',
+						'0.5  ' => 'e',
+						ApiResult::META_TYPE => 'BCarray'
+					],
+				],
+				[ 'Types' => [] ],
+				[
+					'array' => [ 'd', 'e', 'b', 'c', 'a', ApiResult::META_TYPE => 'array' ],
+					'BCarray' => [ 'd', 'e', 'b', 'c', 'a', ApiResult::META_TYPE => 'array' ],
+					ApiResult::META_TYPE => 'assoc',
+				],
+			],
 		];
 	}
 
@@ -1254,7 +1292,7 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ApiResult
+	 * @covers \ApiResult
 	 */
 	public function testAddMetadataToResultVars() {
 		$arr = [
@@ -1348,8 +1386,8 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( UnexpectedValueException $ex ) {
 			$this->assertSame(
-				'ApiResultTestSerializableObject::serializeForApiResult() ' .
-					'returned an object of class ApiResultTestStringifiableObject',
+				'MediaWiki\Tests\Api\ApiResultTestSerializableObject::serializeForApiResult() ' .
+					'returned an object of class MediaWiki\Tests\Api\ApiResultTestStringifiableObject',
 				$ex->getMessage(),
 				'Expected exception'
 			);
@@ -1361,7 +1399,7 @@ class ApiResultTest extends MediaWikiIntegrationTestCase {
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( UnexpectedValueException $ex ) {
 			$this->assertSame(
-				'ApiResultTestSerializableObject::serializeForApiResult() ' .
+				'MediaWiki\Tests\Api\ApiResultTestSerializableObject::serializeForApiResult() ' .
 					'returned an invalid value: Cannot add non-finite floats to ApiResult',
 				$ex->getMessage(),
 				'Expected exception'
@@ -1394,7 +1432,7 @@ class ApiResultTestStringifiableObject {
 	}
 }
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class ApiResultTestSerializableObject {
 	private $ret;
 

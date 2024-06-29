@@ -13,10 +13,8 @@ class CiteParserTagHooks {
 
 	/**
 	 * Enables the two <ref> and <references> tags.
-	 *
-	 * @param Parser $parser
 	 */
-	public static function register( Parser $parser ) {
+	public static function register( Parser $parser ): void {
 		$parser->setHook( 'ref', [ __CLASS__, 'ref' ] );
 		$parser->setHook( 'references', [ __CLASS__, 'references' ] );
 	}
@@ -84,15 +82,9 @@ class CiteParserTagHooks {
 
 	/**
 	 * Get or create Cite state for this parser.
-	 *
-	 * @param Parser $parser
-	 *
-	 * @return Cite
 	 */
 	private static function citeForParser( Parser $parser ): Cite {
-		if ( !isset( $parser->extCite ) ) {
-			$parser->extCite = new Cite( $parser );
-		}
+		$parser->extCite ??= new Cite( $parser );
 		return $parser->extCite;
 	}
 

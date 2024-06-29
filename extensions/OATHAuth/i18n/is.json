@@ -5,10 +5,8 @@
 		]
 	},
 	"disableoathforuser": "Gera tveggja-þrepa auðkenningu notandans óvirka",
-	"specialpages-group-oath": "Tveggja-þrepa auðkenning",
 	"oathauth-account": "Heiti aðgangs:",
 	"oathauth-enable": "Virkja tveggja-þrepa auðkenningu",
-	"oathauth-token": "Teikn",
 	"oathauth-disable": "Gera tveggja-þrepa auðkenningu óvirka",
 	"oathauth-validatedoath": "Sannreyndi tveggja-þrepa auðkenni. Tveggja-þrepa auðkenning er núna skilyrði.",
 	"oathauth-disabledoath": "Gerði tveggja-þrepa auðkenningu óvirka.",

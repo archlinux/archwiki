@@ -17,10 +17,10 @@
 	}
 	// It should always be possible to dismiss the menu by tapping outside of it.
 	max-width: 80%;
-	z-index: @z-indexDrawer;
+	z-index: @z-index-drawer;
 	// Add vertical scrollbar as needed.
 	overflow-y: auto;
-	background-color: @background-color-light;
+	background-color: var( --background-color-interactive );
 	transform: translate( -100%, 0 );
 
 	ul {
@@ -36,8 +36,8 @@
 	right: 0;
 	opacity: 0;
 	bottom: 0;
-	background: @semiTransparent;
-	z-index: @z-indexAboveContent;
+	background: @opaque;
+	z-index: @z-index-above-content;
 	// don't use display: none because it's not animatable
 	visibility: hidden;
 }
@@ -49,7 +49,7 @@
 
 #main-menu-input:checked ~ #mw-mf-page-left {
 	visibility: visible;
-	box-shadow: 1px 0 8px 0 @box-shadow-color-drawer;
+	box-shadow: 1px 0 8px 0 var( --box-shadow-color-drawer );
 	transform: translate( 0, 0 );
 }
 

@@ -31,6 +31,7 @@ class ParamValidatorCallbacks implements Callbacks {
 	 * @return array
 	 */
 	private function getParamsFromSource( $source ) {
+		// This switch block must match Validator::KNOWN_PARAM_SOURCES
 		switch ( $source ) {
 			case 'path':
 				return $this->request->getPathParams();
@@ -40,6 +41,9 @@ class ParamValidatorCallbacks implements Callbacks {
 
 			case 'post':
 				return $this->request->getPostParams();
+
+			case 'body':
+				return $this->request->getParsedBody() ?? [];
 
 			default:
 				throw new InvalidArgumentException( __METHOD__ . ": Invalid source '$source'" );

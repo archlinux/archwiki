@@ -1,15 +1,23 @@
 <?php
 
+namespace Wikimedia\Tests\Rdbms;
+
+use Exception;
+use InvalidArgumentException;
 use MediaWiki\Tests\Unit\Libs\Rdbms\AddQuoterMock;
 use MediaWiki\Tests\Unit\Libs\Rdbms\SQLPlatformTestHelper;
+use MediaWikiCoversValidator;
+use MediaWikiTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 use Wikimedia\Rdbms\DBLanguageError;
+use Wikimedia\Rdbms\Expression;
 use Wikimedia\Rdbms\LikeMatch;
 
 /**
- * @covers Wikimedia\Rdbms\Platform\SQLPlatform
- * @covers Wikimedia\Rdbms\Database
+ * @covers \Wikimedia\Rdbms\Platform\SQLPlatform
+ * @covers \Wikimedia\Rdbms\Database
  */
-class SQLPlatformTest extends PHPUnit\Framework\TestCase {
+class SQLPlatformTest extends TestCase {
 
 	use MediaWikiCoversValidator;
 	use MediaWikiTestCaseTrait;
@@ -209,33 +217,6 @@ class SQLPlatformTest extends PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @param string $query
-	 * @param bool $res
-	 * @dataProvider provideIsWriteQuery
-	 */
-	public function testIsWriteQuery( string $query, bool $res ) {
-		$this->assertSame( $res, $this->platform->isWriteQuery( $query, 0 ) );
-	}
-
-	/**
-	 * @return array
-	 */
-	public static function provideIsWriteQuery(): array {
-		return [
-			[ 'SELECT foo', false ],
-			[ '  SELECT foo FROM bar', false ],
-			[ 'BEGIN', false ],
-			[ 'SHOW EXPLAIN FOR 12;', false ],
-			[ 'USE foobar', false ],
-			[ '(SELECT 1)', false ],
-			[ 'INSERT INTO foo', true ],
-			[ 'TRUNCATE bar', true ],
-			[ 'DELETE FROM baz', true ],
-			[ 'CREATE TABLE foobar', true ]
-		];
-	}
-
-	/**
 	 * @dataProvider provideSelect
 	 */
 	public function testSelect( $sql, $sqlText ) {
@@ -276,6 +257,36 @@ class SQLPlatformTest extends PHPUnit\Framework\TestCase {
 				[
 					'tables' => 'table',
 					'fields' => [ 'field', 'alias' => 'field2' ],
+					'conds' => new Expression( 'alias', '=', 'text' ),
+				],
+				"SELECT  field,field2 AS alias  " .
+				"FROM table    " .
+				"WHERE alias = 'text'"
+			],
+			[
+				[
+					'tables' => 'table',
+					'fields' => [ 'field', 'alias' => 'field2' ],
+					'conds' => [ new Expression( 'alias', '=', 'text' ) ],
+				],
+				"SELECT  field,field2 AS alias  " .
+				"FROM table    " .
+				"WHERE (alias = 'text')"
+			],
+			[
+				[
+					'tables' => 'table',
+					'fields' => [ 'field', 'alias' => 'field2' ],
+					'conds' => ( new Expression( 'alias', '>', 'text' ) )->or( 'alias', '<', 'ext' ),
+				],
+				"SELECT  field,field2 AS alias  " .
+				"FROM table    " .
+				"WHERE (alias > 'text' OR alias < 'ext')"
+			],
+			[
+				[
+					'tables' => 'table',
+					'fields' => [ 'field', 'alias' => 'field2' ],
 					'conds' => [],
 				],
 				"SELECT  field,field2 AS alias  " .
@@ -299,15 +310,6 @@ class SQLPlatformTest extends PHPUnit\Framework\TestCase {
 				"SELECT  field,field2 AS alias  " .
 				"FROM table    " .
 				"WHERE 0"
-			],
-			[
-				[
-					// 'tables' with space prepended indicates pre-escaped table name
-					'tables' => ' table LEFT JOIN table2',
-					'fields' => [ 'field' ],
-					'conds' => [ 'field' => 'text' ],
-				],
-				"SELECT  field  FROM  table LEFT JOIN table2    WHERE field = 'text'"
 			],
 			[
 				[
@@ -1077,5 +1079,38 @@ class SQLPlatformTest extends PHPUnit\Framework\TestCase {
 	public function testMakeWhereFrom2dInvalid( $data ) {
 		$this->expectException( InvalidArgumentException::class );
 		$this->platform->makeWhereFrom2d( $data, 'ns', 'title' );
+	}
+
+	public static function provideQualifiedTableComponents() {
+		yield [
+			'table',
+			[ 'table' ],
+		];
+		yield [
+			'database.table',
+			[ 'database', 'table' ],
+		];
+		yield [
+			'database.schema.table',
+			[ 'database', 'schema', 'table' ],
+		];
+		yield [
+			'"database"."schema"."table"',
+			[ 'database', 'schema', 'table' ],
+		];
+		yield [
+			'"database".schema."table"',
+			[ 'database', 'schema', 'table' ],
+		];
+	}
+
+	/**
+	 * @dataProvider provideQualifiedTableComponents
+	 */
+	public function testQualifiedTableComponents( $tableName, $expectedComponents ) {
+		$this->assertSame(
+			$expectedComponents,
+			$this->platform->qualifiedTableComponents( $tableName )
+		);
 	}
 }

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -45,25 +46,6 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[
-				'page',
-				'revision',
-				'ip_changes',
-				'text',
-				'archive',
-				'recentchanges',
-				'logging',
-				'page_props',
-				'comment',
-				'slots',
-				'content',
-				'content_models',
-				'slot_roles',
-			]
-		);
-
 		// First create our dummy page
 		$this->archivedPage = Title::makeTitle( NS_MAIN, 'PageArchiveTest_thePage' );
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $this->archivedPage );
@@ -101,7 +83,7 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers PageArchive::undeleteAsUser
+	 * @covers \PageArchive::undeleteAsUser
 	 */
 	public function testUndeleteRevisions() {
 		// TODO: MCR: Test undeletion with multiple slots. Check that slots remain untouched.
@@ -199,9 +181,9 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers PageArchive::listPagesBySearch
-	 * @covers PageArchive::listPagesByPrefix
-	 * @covers PageArchive::listPages
+	 * @covers \PageArchive::listPagesBySearch
+	 * @covers \PageArchive::listPagesByPrefix
+	 * @covers \PageArchive::listPages
 	 */
 	public function testListPagesBySearch() {
 		$pages = PageArchive::listPagesBySearch( 'PageArchiveTest_thePage' );
@@ -220,8 +202,8 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers PageArchive::listPagesByPrefix
-	 * @covers PageArchive::listPages
+	 * @covers \PageArchive::listPagesByPrefix
+	 * @covers \PageArchive::listPages
 	 */
 	public function testListPagesByPrefix() {
 		$pages = PageArchive::listPagesByPrefix( 'PageArchiveTest' );

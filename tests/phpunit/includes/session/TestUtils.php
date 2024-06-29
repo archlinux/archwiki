@@ -1,9 +1,16 @@
 <?php
 
-namespace MediaWiki\Session;
+namespace MediaWiki\Tests\Session;
 
+use MediaWiki\Session\PHPSessionHandler;
+use MediaWiki\Session\Session;
+use MediaWiki\Session\SessionBackend;
+use MediaWiki\Session\SessionManager;
 use PHPUnit\Framework\Assert;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
+use TestLogger;
+use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -14,42 +21,31 @@ class TestUtils {
 	/**
 	 * Override the singleton for unit testing
 	 * @param SessionManager|null $manager
-	 * @return \Wikimedia\ScopedCallback|null
+	 * @return ScopedCallback|null
 	 */
 	public static function setSessionManagerSingleton( SessionManager $manager = null ) {
 		session_write_close();
 
-		$rInstance = new \ReflectionProperty(
-			SessionManager::class, 'instance'
-		);
-		$rInstance->setAccessible( true );
-		$rGlobalSession = new \ReflectionProperty(
-			SessionManager::class, 'globalSession'
-		);
-		$rGlobalSession->setAccessible( true );
-		$rGlobalSessionRequest = new \ReflectionProperty(
-			SessionManager::class, 'globalSessionRequest'
-		);
-		$rGlobalSessionRequest->setAccessible( true );
+		$staticAccess = TestingAccessWrapper::newFromClass( SessionManager::class );
 
-		$oldInstance = $rInstance->getValue();
+		$oldInstance = $staticAccess->instance;
 
 		$reset = [
-			[ $rInstance, $oldInstance ],
-			[ $rGlobalSession, $rGlobalSession->getValue() ],
-			[ $rGlobalSessionRequest, $rGlobalSessionRequest->getValue() ],
+			[ 'instance', $oldInstance ],
+			[ 'globalSession', $staticAccess->globalSession ],
+			[ 'globalSessionRequest', $staticAccess->globalSessionRequest ],
 		];
 
-		$rInstance->setValue( $manager );
-		$rGlobalSession->setValue( null );
-		$rGlobalSessionRequest->setValue( null );
+		$staticAccess->instance = $manager;
+		$staticAccess->globalSession = null;
+		$staticAccess->globalSessionRequest = null;
 		if ( $manager && PHPSessionHandler::isInstalled() ) {
 			PHPSessionHandler::install( $manager );
 		}
 
-		return new \Wikimedia\ScopedCallback( static function () use ( &$reset, $oldInstance ) {
-			foreach ( $reset as &$arr ) {
-				$arr[0]->setValue( $arr[1] );
+		return new ScopedCallback( static function () use ( $reset, $staticAccess, $oldInstance ) {
+			foreach ( $reset as [ $property, $oldValue ] ) {
+				$staticAccess->$property = $oldValue;
 			}
 			if ( $oldInstance && PHPSessionHandler::isInstalled() ) {
 				PHPSessionHandler::install( $oldInstance );
@@ -64,7 +60,7 @@ class TestUtils {
 	 *  fields necessary.
 	 */
 	public static function getDummySessionBackend() {
-		$rc = new \ReflectionClass( SessionBackend::class );
+		$rc = new ReflectionClass( SessionBackend::class );
 		if ( !method_exists( $rc, 'newInstanceWithoutConstructor' ) ) {
 			Assert::markTestSkipped(
 				'ReflectionClass::newInstanceWithoutConstructor isn\'t available'
@@ -72,7 +68,7 @@ class TestUtils {
 		}
 
 		$ret = $rc->newInstanceWithoutConstructor();
-		TestingAccessWrapper::newFromObject( $ret )->logger = new \TestLogger;
+		TestingAccessWrapper::newFromObject( $ret )->logger = new TestLogger;
 		return $ret;
 	}
 
@@ -86,13 +82,13 @@ class TestUtils {
 	 * @return Session
 	 */
 	public static function getDummySession( $backend = null, $index = -1, $logger = null ) {
-		$rc = new \ReflectionClass( Session::class );
+		$rc = new ReflectionClass( Session::class );
 
 		$session = $rc->newInstanceWithoutConstructor();
 		$priv = TestingAccessWrapper::newFromObject( $session );
 		$priv->backend = $backend ?? new DummySessionBackend();
 		$priv->index = $index;
-		$priv->logger = $logger ?? new \TestLogger();
+		$priv->logger = $logger ?? new TestLogger();
 		return $session;
 	}
 

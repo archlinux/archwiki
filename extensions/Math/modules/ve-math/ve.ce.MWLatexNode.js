@@ -4,7 +4,7 @@
  * An abstract class that has most of the common functionality
  * for the different tags in the Math extension.
  *
- * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license MIT
  */
 

@@ -29,7 +29,5 @@
 	"cite-ve-referenceslist-isempty-default": "Бұл бетте бұл тізімге кірген дереккөздер жоқ.",
 	"cite-ve-referenceslist-missingref": "Бұл дереккөз үлгі немесе басқа құрылған блокқа белгіленген және оны код режимінде ғана өңдеуге болады.",
 	"cite-ve-toolbar-group-label": "Дереккөзін көрсету",
-	"cite-ve-othergroup-item": "$1 дереккөз",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Дереккөздер",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Дереккөз тобының атауы: \"$1\""
+	"cite-ve-othergroup-item": "$1 дереккөз"
 }

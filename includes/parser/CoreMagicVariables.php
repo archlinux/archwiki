@@ -22,6 +22,7 @@
  */
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Specials\SpecialVersion;
 use MediaWiki\Utils\MWTimestamp;
 use Psr\Log\LoggerInterface;
@@ -77,8 +78,8 @@ class CoreMagicVariables {
 	 * @param ConvertibleTimestamp $ts Timestamp to use when expanding magic variable
 	 * @param ServiceOptions $svcOptions Service options for the parser
 	 * @param LoggerInterface $logger
-	 * @return string|null The expanded value, or null to indicate the given
-	 *  index wasn't a known magic variable.
+	 * @return string|null The expanded value, as wikitext, or null to
+	 *  indicate the given index wasn't a known magic variable.
 	 */
 	public static function expand(
 		// Fundamental options

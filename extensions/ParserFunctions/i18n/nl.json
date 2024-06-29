@@ -22,8 +22,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Fout in uitdrukking: Onbekend leesteken \"$1\".",
 	"pfunc_expr_unclosed_bracket": "Fout in uitdrukking: niet gesloten haakje openen.",
 	"pfunc_expr_division_by_zero": "Deling door nul",
-	"pfunc_expr_invalid_argument": "Ongeldige parameter voor $1: < -1 of > 1",
-	"pfunc_expr_invalid_argument_ln": "Ongeldige parameter voor ln: <= 0",
+	"pfunc_expr_invalid_argument": "Ongeldige parameter voor $1: kleiner dan -1 of groter dan 1",
+	"pfunc_expr_invalid_argument_ln": "Ongeldige parameter voor ln: kleiner of  gelijk aan 0",
 	"pfunc_expr_unknown_error": "Fout in uitdrukking: onbekende fout ($1).",
 	"pfunc_expr_not_a_number": "In $1: resultaat is geen getal",
 	"pfunc_string_too_long": "Fout: De tekst is langer dan de limiet van $1 {{PLURAL:$1|teken|tekens}}"

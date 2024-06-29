@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWWikitextStringTransferHandler tests.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 QUnit.module( 've.ui.MWWikitextStringTransferHandler', ve.test.utils.newMwEnvironment( {

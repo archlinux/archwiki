@@ -6,7 +6,7 @@
 	"math_syntax_error": "سويلەم جۇيەسىنىڭ قاتەسى",
 	"math_unknown_error": "بەلگىسىز قاتە",
 	"math_unknown_function": "بەلگىسىز جەتە",
-	"mw_math_mathml": "ەگەر ىقتىيمال بولسا — MathML (سىناقتاما)",
-	"mw_math_source": "بۇنى TeX پىشىمىندە قالدىر (ماتىندىك شولعىشتارعا)",
+	"mw-math-mathml": "ەگەر ىقتىيمال بولسا — MathML (سىناقتاما)",
+	"mw-math-source": "بۇنى TeX پىشىمىندە قالدىر (ماتىندىك شولعىشتارعا)",
 	"prefs-math": "ورنەكتەر"
 }

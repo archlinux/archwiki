@@ -21,8 +21,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Napaka v izrazu: Nepričakovano ločilo »$1«.",
 	"pfunc_expr_unclosed_bracket": "Napaka v izrazu: Nezaprt oklepaj.",
 	"pfunc_expr_division_by_zero": "Deljenje z ničlo.",
-	"pfunc_expr_invalid_argument": "Neeljaven argument za $1: < −1 ali > 1.",
-	"pfunc_expr_invalid_argument_ln": "Neveljaven argument za ln: <= 0.",
+	"pfunc_expr_invalid_argument": "Neeljaven argument za $1: manj kot −1 ali več kot 1.",
+	"pfunc_expr_invalid_argument_ln": "Neveljaven argument za ln: manj kot ali enako 0.",
 	"pfunc_expr_unknown_error": "Napaka v izrazu: Neznana napaka ($1).",
 	"pfunc_expr_not_a_number": "V $1: Rezultat ni število.",
 	"pfunc_string_too_long": "Napaka: Niz presega omejitev $1 {{PLURAL:$1|znaka|znakov}}"

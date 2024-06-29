@@ -24,8 +24,6 @@ class CommentModifier {
 
 	/**
 	 * Add an attribute to a list item to remove pre-whitespace in Parsoid
-	 *
-	 * @param Element $listItem
 	 */
 	private static function whitespaceParsoidHack( Element $listItem ): void {
 		// HACK: Setting data-parsoid removes the whitespace after the list item,
@@ -36,9 +34,6 @@ class CommentModifier {
 
 	/**
 	 * Remove extra linebreaks from a wikitext string
-	 *
-	 * @param string $wikitext
-	 * @return string
 	 */
 	public static function sanitizeWikitextLinebreaks( string $wikitext ): string {
 		$wikitext = CommentUtils::htmlTrim( $wikitext );
@@ -432,9 +427,6 @@ class CommentModifier {
 
 	/**
 	 * Add another list item after the given one.
-	 *
-	 * @param Element $previousItem
-	 * @return Element
 	 */
 	public static function addSiblingListItem( Element $previousItem ): Element {
 		$listItem = $previousItem->ownerDocument->createElement( $previousItem->tagName );
@@ -444,10 +436,6 @@ class CommentModifier {
 
 	/**
 	 * Create an element that will convert to the provided wikitext
-	 *
-	 * @param Document $doc
-	 * @param string $wikitext
-	 * @return Element
 	 */
 	public static function createWikitextNode( Document $doc, string $wikitext ): Element {
 		$span = $doc->createElement( 'span' );
@@ -460,9 +448,6 @@ class CommentModifier {
 
 	/**
 	 * Check if an element created by ::createWikitextNode() starts with list item markup.
-	 *
-	 * @param Element $node
-	 * @return bool
 	 */
 	private static function isWikitextNodeListItem( Element $node ): bool {
 		$dataMw = json_decode( $node->getAttribute( 'data-mw' ) ?? '', true );
@@ -473,9 +458,6 @@ class CommentModifier {
 
 	/**
 	 * Append a user signature to the comment in the container.
-	 *
-	 * @param DocumentFragment $container
-	 * @param string $signature
 	 */
 	public static function appendSignature( DocumentFragment $container, string $signature ): void {
 		$doc = $container->ownerDocument;
@@ -513,10 +495,6 @@ class CommentModifier {
 
 	/**
 	 * Append a user signature to the comment in the provided wikitext.
-	 *
-	 * @param string $wikitext
-	 * @param string $signature
-	 * @return string
 	 */
 	public static function appendSignatureWikitext( string $wikitext, string $signature ): string {
 		$wikitext = CommentUtils::htmlTrim( $wikitext );

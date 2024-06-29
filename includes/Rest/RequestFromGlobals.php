@@ -5,6 +5,8 @@ namespace MediaWiki\Rest;
 use GuzzleHttp\Psr7\LazyOpenStream;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
+use InvalidArgumentException;
+use MediaWiki\Request\WebRequest;
 
 // phpcs:disable MediaWiki.Usage.SuperGlobalsUsage.SuperGlobals
 
@@ -28,16 +30,18 @@ class RequestFromGlobals extends RequestBase {
 	// RequestInterface
 
 	public function getMethod() {
-		return $_SERVER['REQUEST_METHOD'] ?? 'GET';
+		// Even though the spec says that method names should always be
+		// upper case, some clients may send lower case method names (T359306).
+		return strtoupper( $_SERVER['REQUEST_METHOD'] ?? 'GET' );
 	}
 
 	public function getUri() {
 		if ( $this->uri === null ) {
-			$requestUrl = \MediaWiki\Request\WebRequest::getGlobalRequestURL();
+			$requestUrl = WebRequest::getGlobalRequestURL();
 
 			try {
 				$uriInstance = new Uri( $requestUrl );
-			} catch ( \InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException $e ) {
 				// Uri constructor will throw exception if the URL is
 				// relative and contains colon-number pattern that
 				// looks like a port.
@@ -99,4 +103,5 @@ class RequestFromGlobals extends RequestBase {
 	public function getPostParams() {
 		return $_POST;
 	}
+
 }

@@ -124,7 +124,7 @@ const Tab = require( './mmv.ui.reuse.tab.js' );
 					// * mw-editfont-monospace
 					// * mw-editfont-sans-serif
 					// * mw-editfont-serif
-					classes: [ `mw-editfont-${mw.user.options.get( 'editfont' )}` ],
+					classes: [ `mw-editfont-${ mw.user.options.get( 'editfont' ) }` ],
 					placeholder: mw.message( 'multimediaviewer-reuse-loading-placeholder' ).text(),
 					autosize: true,
 					maxRows: 5
@@ -321,13 +321,11 @@ const Tab = require( './mmv.ui.reuse.tab.js' );
 		 * @param {number} height New height to set
 		 */
 		updateEmbedHtml( thumbnail, width, height ) {
-			let src;
-
 			if ( !this.embedFileInfo ) {
 				return;
 			}
 
-			src = thumbnail.url || this.embedFileInfo.imageInfo.url;
+			let src = thumbnail.url || this.embedFileInfo.imageInfo.url;
 
 			// If the image dimension requested are "large", use the current image url
 			if ( width > Embed.LARGE_IMAGE_WIDTH_THRESHOLD || height > Embed.LARGE_IMAGE_HEIGHT_THRESHOLD ) {

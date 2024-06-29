@@ -2,11 +2,10 @@
 
 namespace MediaWiki\Html;
 
-use Wikimedia\Assert\Assert;
+use MediaWiki\Tidy\RemexCompatFormatter;
 use Wikimedia\RemexHtml\HTMLData;
 use Wikimedia\RemexHtml\Serializer\HtmlFormatter;
 use Wikimedia\RemexHtml\Serializer\Serializer;
-use Wikimedia\RemexHtml\Serializer\SerializerNode;
 use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
 use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
 use Wikimedia\RemexHtml\TreeBuilder\TreeBuilder;
@@ -25,46 +24,42 @@ class HtmlHelper {
 	 * @param callable $modifyCallback A callback which takes a single
 	 *   RemexHtml\Serializer\SerializerNode argument and actually performs the modification on it.
 	 *   It must return the new node (which can be the original node object).
+	 * @param bool $html5format Defaults to true, which uses standard HTML5
+	 *   serialization for the parsed HTML.  If set to false, uses a
+	 *   serialization which is more compatible with the output of the
+	 *   legacy parser; see RemexCompatFormatter for more details.
+	 *   When false, attributes and text nodes contain unexpanded character references (entities).
 	 * @return string
 	 */
 	public static function modifyElements(
 		string $htmlFragment,
 		callable $shouldModifyCallback,
-		callable $modifyCallback
+		callable $modifyCallback,
+		bool $html5format = true
 	) {
-		$formatter = new class( $options = [], $shouldModifyCallback, $modifyCallback ) extends HtmlFormatter {
-			/** @var callable */
-			private $shouldModifyCallback;
-
-			/** @var callable */
-			private $modifyCallback;
-
-			public function __construct( $options, $shouldModifyCallback, $modifyCallback ) {
-				parent::__construct( $options );
-				$this->shouldModifyCallback = $shouldModifyCallback;
-				$this->modifyCallback = $modifyCallback;
-			}
-
-			public function element( SerializerNode $parent, SerializerNode $node, $contents ) {
-				if ( ( $this->shouldModifyCallback )( $node ) ) {
-					$node = clone $node;
-					$node->attrs = clone $node->attrs;
-					$newNode = ( $this->modifyCallback )( $node );
-					Assert::parameterType( SerializerNode::class, $newNode, 'return value' );
-					return parent::element( $parent, $newNode, $contents );
-				} else {
-					return parent::element( $parent, $node, $contents );
-				}
-			}
-
-			public function startDocument( $fragmentNamespace, $fragmentName ) {
-				return '';
-			}
-		};
+		if ( $html5format ) {
+			$formatter = new class( [], $shouldModifyCallback, $modifyCallback ) extends HtmlFormatter {
+				use HtmlHelperTrait;
+			};
+		} else {
+			$formatter = new class( [], $shouldModifyCallback, $modifyCallback ) extends RemexCompatFormatter {
+				use HtmlHelperTrait;
+			};
+		}
 		$serializer = new Serializer( $formatter );
-		$treeBuilder = new TreeBuilder( $serializer );
+		$treeBuilder = new TreeBuilder( $serializer, $html5format ? [] : [
+			'ignoreErrors' => true,
+			'ignoreNulls' => true,
+		] );
 		$dispatcher = new Dispatcher( $treeBuilder );
-		$tokenizer = new Tokenizer( $dispatcher, $htmlFragment );
+		$tokenizer = new Tokenizer( $dispatcher, $htmlFragment, $html5format ? [] : [
+			// RemexCompatFormatter expects 'ignoreCharRefs' to be used (T354361). The other options are
+			// for consistency with RemexDriver and supposedly improve performance.
+			'ignoreErrors' => true,
+			'ignoreCharRefs' => true,
+			'ignoreNulls' => true,
+			'skipPreprocess' => true,
+		] );
 
 		$tokenizer->execute( [
 			'fragmentNamespace' => HTMLData::NS_HTML,
@@ -76,7 +71,5 @@ class HtmlHelper {
 
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( HtmlHelper::class, 'MediaWiki\\HtmlHelper' );

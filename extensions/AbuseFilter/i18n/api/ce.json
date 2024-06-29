@@ -9,8 +9,8 @@
 	"apihelp-query+abuselog-param-limit": "МогӀаман чохь дӀайаздарийн максимум дукхалла.",
 	"apihelp-query+abuselog-param-prop": "Муьлха билгалонаш оьшуш йу.",
 	"apihelp-query+abuselog-param-wiki": "Вики, хиташ гайтархьама.",
-	"apihelp-query+abuselog-example-1": "Гайта тептар чуьра тӀаьхьара дӀайаздарш",
-	"apihelp-query+abuselog-example-2": "Гайта [[API]] тептар чуьра тӀаьхьара дӀайаздарш",
+	"apihelp-query+abuselog-example-1": "Гайта журнал чуьра тӀаьхьара дӀайаздарш",
+	"apihelp-query+abuselog-example-2": "Гайта [[API]] журнал чуьра тӀаьхьара дӀайаздарш",
 	"apihelp-abuselogprivatedetails-param-logid": "AbuseLog дӀайаздаран идентификатор талларна.",
 	"apihelp-abuselogprivatedetails-param-reason": "Талла, нийса бахьна."
 }

@@ -1,8 +1,17 @@
 <?php
 
+namespace Wikimedia\Tests\Rdbms;
+
+use DatabaseTestHelper;
+use HashBagOStuff;
+use MediaWiki\Tests\MockDatabase;
 use MediaWiki\Tests\Unit\Libs\Rdbms\AddQuoterMock;
 use MediaWiki\Tests\Unit\Libs\Rdbms\SQLPlatformTestHelper;
+use MediaWikiCoversValidator;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use RuntimeException;
+use Throwable;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\Database\DatabaseFlags;
 use Wikimedia\Rdbms\DatabaseDomain;
@@ -22,11 +31,11 @@ use Wikimedia\TestingAccessWrapper;
 
 /**
  * @dataProvider provideAddQuotes
- * @covers Wikimedia\Rdbms\Database
- * @covers Wikimedia\Rdbms\Database\DatabaseFlags
- * @covers Wikimedia\Rdbms\Platform\SQLPlatform
+ * @covers \Wikimedia\Rdbms\Database
+ * @covers \Wikimedia\Rdbms\Database\DatabaseFlags
+ * @covers \Wikimedia\Rdbms\Platform\SQLPlatform
  */
-class DatabaseTest extends PHPUnit\Framework\TestCase {
+class DatabaseTest extends TestCase {
 
 	use MediaWikiCoversValidator;
 
@@ -55,11 +64,9 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 	}
 
 	public static function provideTableName() {
-		// Formatting is mostly ignored since addIdentifierQuotes is abstract.
-		// For testing of addIdentifierQuotes, see actual Database subclas tests.
 		return [
 			'local' => [
-				'tablename',
+				'"tablename"',
 				'tablename',
 				'quoted',
 			],
@@ -69,7 +76,7 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 				'raw',
 			],
 			'shared' => [
-				'sharedb.tablename',
+				'"sharedb"."tablename"',
 				'tablename',
 				'quoted',
 				[ 'dbname' => 'sharedb', 'schema' => null, 'prefix' => '' ],
@@ -81,7 +88,7 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 				[ 'dbname' => 'sharedb', 'schema' => null, 'prefix' => '' ],
 			],
 			'shared-prefix' => [
-				'sharedb.sh_tablename',
+				'"sharedb"."sh_tablename"',
 				'tablename',
 				'quoted',
 				[ 'dbname' => 'sharedb', 'schema' => null, 'prefix' => 'sh_' ],
@@ -93,7 +100,7 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 				[ 'dbname' => 'sharedb', 'schema' => null, 'prefix' => 'sh_' ],
 			],
 			'foreign' => [
-				'databasename.tablename',
+				'"databasename"."tablename"',
 				'databasename.tablename',
 				'quoted',
 			],
@@ -102,6 +109,16 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 				'databasename.tablename',
 				'raw',
 			],
+			'foreign only DB quoted' => [
+				'"databasename"."tablename"',
+				'"databasename".tablename',
+				'quoted',
+			],
+			'foreign only table quoted' => [
+				'"databasename"."tablename"',
+				'databasename."tablename"',
+				'quoted',
+			],
 		];
 	}
 
@@ -109,13 +126,42 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 	 * @dataProvider provideTableName
 	 */
 	public function testTableName( $expected, $table, $format, array $alias = null ) {
+		// Use MockDatabase to avoid useless stub SQLPlatformTestHelper::addIdentifierQuotes
+		$db = new MockDatabase();
 		if ( $alias ) {
-			$this->db->setTableAliases( [ $table => $alias ] );
+			$db->setTableAliases( [ $table => $alias ] );
 		}
 		$this->assertEquals(
 			$expected,
-			$this->db->tableName( $table, $format ?: 'quoted' )
+			$db->tableName( $table, $format ?: 'quoted' )
 		);
+	}
+
+	public static function provideYagniTableName() {
+		$names = [
+			'"',
+			'a.b.c.d',
+			'"a.b".c',
+			'"my_""wiki"."mw_page"',
+			'"my_""wiki"."mw_page"',
+			'"""my_""wiki"."mw_page"',
+			'"my_""wiki"""."mw_page"',
+		];
+		foreach ( $names as $name ) {
+			yield [ $name ];
+		}
+	}
+
+	/**
+	 * Maybe these cases could be made to work, but YAGNI
+	 *
+	 * @dataProvider provideYagniTableName
+	 * @param string $table
+	 */
+	public function testYagniTableName( $table ) {
+		$this->expectException( DBLanguageError::class );
+		$db = new MockDatabase();
+		$db->tableName( $table );
 	}
 
 	public static function provideTableNamesWithIndexClauseOrJOIN() {
@@ -749,9 +795,6 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 	}
 
 	public function testShouldRejectPseudoPermanentTemporaryTableOperationsOnReplicaDatabaseConnection() {
-		$this->expectException( DBReadOnlyRoleError::class );
-		$this->expectExceptionMessage( 'Server is configured as a read-only replica database.' );
-
 		$dbr = new DatabaseTestHelper(
 			__CLASS__ . '::' . $this->getName(),
 			[ 'topologyRole' => Database::ROLE_STREAMING_REPLICA ]
@@ -762,6 +805,14 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 			"CREATE TEMPORARY TABLE temp_test_table (temp_column int);",
 			__METHOD__,
 			Database::QUERY_PSEUDO_PERMANENT
+		);
+
+		$this->expectException( DBReadOnlyRoleError::class );
+		$this->expectExceptionMessage( 'Server is configured as a read-only replica database.' );
+		// phpcs:ignore MediaWiki.Usage.DbrQueryUsage.DbrQueryFound
+		$dbr->query(
+			"INSERT INTO temp_test_table (temp_column) VALUES (42);",
+			__METHOD__
 		);
 	}
 

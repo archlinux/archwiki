@@ -4,8 +4,8 @@
 			"Macofe",
 			"Maxí",
 			"Snævar",
-			"Sveinn í Felli",
-			"Stefán Örvar Sigmundsson"
+			"Stefán Örvar Sigmundsson",
+			"Sveinn í Felli"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|þakka}}}}",
@@ -30,7 +30,6 @@
 	"echo-pref-subscription-edit-thank": "Þakkar mér fyrir breytingu mína",
 	"echo-pref-tooltip-edit-thank": "Láta mig vita þegar einhver þakkar mér fyrir breytingu sem ég gerði.",
 	"echo-category-title-edit-thank": "Þakkir",
-	"notification-thanks-diff-link": "þín breyting",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|þakkaði}} {{GENDER:$4|þér}} fyrir breytingu þína á '''$3'''.",
 	"notification-compact-header-edit-thank": "$1 {{GENDER:$2|þakkaði}} {{GENDER:$3|þér}}.",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Einn notandi þakkaði|$1 notendur þökkuðu|100=99+ notendur þökkuðu}} {{GENDER:$3|þér}} fyrir breytingu þína á <strong>$2</strong>.",
@@ -40,7 +39,6 @@
 	"notification-link-text-view-post": "Birta athugasemd",
 	"flow-thanks-confirmation-special": "Viltu senda opinbert þakkarboð fyrir þessa athugasemd?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Þú}} þakkaðir $1 fyrir athugasemd {{GENDER:$2|sína}}.",
-	"notification-flow-thanks-post-link": "þín athugasemd",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|þakkaði}} {{GENDER:$5|þér}} fyrir athugasemd þína við „<strong>$3</strong>“.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|þakkaði}} {{GENDER:$3|þér}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Einn notandi þakkaði|$1 notendur þökkuðu|100=99+ notendur þökkuðu}} {{GENDER:$3|þér}} fyrir athugasemdina þína við <strong>$2</strong>."

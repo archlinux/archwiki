@@ -10,14 +10,13 @@
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Skiekundeformule",
-	"math-visualeditor-mwcheminspector-title": "Skiekundeformule",
 	"math-visualeditor-mwlatexinspector-display-default": "Standert",
 	"math-visualeditor-mwmathdialog-title": "Wiskundeformule",
 	"math_failure": "Untsjutbere formule",
 	"math_syntax_error": "Sinboufout",
 	"math_unknown_error": "Unbekinde fout",
 	"math_unknown_function": "unbekinde funksje \"$1\"",
-	"mw_math_mathml": "SVG mei PNG-tebekfal (MathML kin ynskeakele wurde mei in webblêderútwreiding)",
-	"mw_math_source": "LaTeX-boarne (foar tekstblêders)",
+	"mw-math-mathml": "SVG mei PNG-tebekfal (MathML kin ynskeakele wurde mei in webblêderútwreiding)",
+	"mw-math-source": "LaTeX-boarne (foar tekstblêders)",
 	"prefs-math": "Formules"
 }

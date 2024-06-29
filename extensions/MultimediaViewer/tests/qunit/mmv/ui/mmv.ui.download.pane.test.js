@@ -21,7 +21,7 @@ const DownloadPane = require( 'mmv.ui.download.pane' );
 	QUnit.module( 'mmv.ui.download.pane', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
-		var download = new DownloadPane( $( '#qunit-fixture' ) );
+		const download = new DownloadPane( $( '#qunit-fixture' ) );
 
 		assert.true( download instanceof DownloadPane, 'download UI element is created.' );
 		assert.strictEqual( download.$pane.length, 1, 'Pane div created.' );
@@ -37,12 +37,12 @@ const DownloadPane = require( 'mmv.ui.download.pane' );
 	} );
 
 	QUnit.test( 'set()/empty():', function ( assert ) {
-		var download = new DownloadPane( $( '#qunit-fixture' ) ),
-			src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
-			image = { // fake ImageModel
-				title: new mw.Title( 'File:Foobar.jpg' ),
-				url: src
-			};
+		const download = new DownloadPane( $( '#qunit-fixture' ) );
+		const src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg';
+		const image = { // fake ImageModel
+			title: new mw.Title( 'File:Foobar.jpg' ),
+			url: src
+		};
 
 		assert.strictEqual( download.imageExtension, undefined, 'Image extension is not set.' );
 
@@ -63,17 +63,16 @@ const DownloadPane = require( 'mmv.ui.download.pane' );
 	} );
 
 	QUnit.test( 'attach()/unattach():', function ( assert ) {
-		var hsstub, tstub,
-			download = new DownloadPane( $( '#qunit-fixture' ) ),
-			image = {
-				title: new mw.Title( 'File:Foobar.jpg' ),
-				url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg'
-			};
+		const download = new DownloadPane( $( '#qunit-fixture' ) );
+		const image = {
+			title: new mw.Title( 'File:Foobar.jpg' ),
+			url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg'
+		};
 
 		download.set( image );
 
-		hsstub = this.sandbox.stub( download, 'handleSizeSwitch' );
-		tstub = this.sandbox.stub( download.downloadSizeMenu.getMenu(), 'toggle' );
+		const hsstub = this.sandbox.stub( download, 'handleSizeSwitch' );
+		const tstub = this.sandbox.stub( download.downloadSizeMenu.getMenu(), 'toggle' );
 
 		// Triggering action events before attaching should do nothing
 		download.downloadSizeMenu.getMenu().emit(
@@ -111,8 +110,8 @@ const DownloadPane = require( 'mmv.ui.download.pane' );
 	} );
 
 	QUnit.test( 'handleSizeSwitch():', function ( assert ) {
-		var download = new DownloadPane( $( '#qunit-fixture' ) ),
-			newImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/NewFoobar.jpg';
+		const download = new DownloadPane( $( '#qunit-fixture' ) );
+		const newImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/NewFoobar.jpg';
 
 		download.utils.getThumbnailUrlPromise = function () {
 			return $.Deferred().resolve( { url: newImageUrl } ).promise();
@@ -136,27 +135,26 @@ const DownloadPane = require( 'mmv.ui.download.pane' );
 	} );
 
 	QUnit.test( 'setButtonText() sense check:', function ( assert ) {
-		var download = new DownloadPane( $( '#qunit-fixture' ) ),
-			message;
+		const download = new DownloadPane( $( '#qunit-fixture' ) );
 
 		download.setButtonText( 'large', 'jpg', 100, 200 );
 		assert.true( true, 'Setting the text did not cause any errors' );
 
-		message = download.$downloadButton.html();
+		const message = download.$downloadButton.html();
 		download.setButtonText( 'small', 'png', 1000, 2000 );
 		assert.notStrictEqual( download.$downloadButton.html(), message, 'Button text was updated' );
 	} );
 
 	QUnit.test( 'getExtensionFromUrl():', function ( assert ) {
-		var download = new DownloadPane( $( '#qunit-fixture' ) );
+		const download = new DownloadPane( $( '#qunit-fixture' ) );
 
 		assert.strictEqual( download.getExtensionFromUrl( 'http://example.com/bing/foo.bar.png' ),
 			'png', 'Extension is parsed correctly' );
 	} );
 
 	QUnit.test( 'setDownloadUrl', function ( assert ) {
-		var download = new DownloadPane( $( '#qunit-fixture' ) ),
-			imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/NewFoobar.jpg';
+		const download = new DownloadPane( $( '#qunit-fixture' ) );
+		const imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/NewFoobar.jpg';
 
 		download.setDownloadUrl( imageUrl );
 

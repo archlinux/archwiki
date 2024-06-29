@@ -1,14 +1,15 @@
 <?php
 
-namespace Wikimedia\ParamValidator\TypeDef;
+namespace Wikimedia\Tests\ParamValidator\TypeDef;
 
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\SimpleCallbacks;
+use Wikimedia\ParamValidator\TypeDef\StringDef;
 use Wikimedia\ParamValidator\ValidationException;
 
 /**
- * @covers Wikimedia\ParamValidator\TypeDef\StringDef
+ * @covers \Wikimedia\ParamValidator\TypeDef\StringDef
  */
 class StringDefTest extends TypeDefTestCase {
 

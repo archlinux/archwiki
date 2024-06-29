@@ -29,7 +29,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 γλώσσα|$1 γλώσσες}}",
 	"vector-no-language-button-label": "Προσθήκη γλωσσών",
 	"vector-no-language-button-aria-label": "Αυτό το λήμμα υπάρχει μόνο σε αυτή τη γλώσσα. Προσθέστε το λήμμα για άλλες γλώσσες",
-	"vector-language-redirect-to-top": "Οι σύνδεσμοι γλώσσας βρίσκονται στο επάνω μέρος της σελίδας απέναντι από τον τίτλο του λήμματος.",
 	"vector-language-variant-switcher-label": "Αλλαγή παραλλαγής γλώσσας",
 	"vector-action-addsection": "Προσθήκη θέματος",
 	"vector-action-delete": "Διαγραφή",

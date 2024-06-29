@@ -43,7 +43,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Ovaj je popis izvora generirao predložak ili drugi generirani blok i za sada ga je moguće vidjeti jedino u uređivaču kôda.",
 	"cite-ve-referenceslist-missingreflist": "Ovaj je popis izvora generirao predložak.",
 	"cite-ve-toolbar-group-label": "Citiraj",
-	"cite-ve-othergroup-item": "$1 referenca",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencije",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Naziv grupe referenci: $1"
+	"cite-ve-othergroup-item": "$1 referenca"
 }

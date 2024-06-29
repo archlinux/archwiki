@@ -23,6 +23,7 @@
 
 use MediaWiki\MediaWikiServices;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * Search engine hook for SQLite
@@ -191,6 +192,8 @@ class SearchSqlite extends SearchDatabase {
 		$filteredTerm =
 			$this->filter( MediaWikiServices::getInstance()->getContentLanguage()->lc( $term ) );
 		$dbr = $this->dbProvider->getReplicaDatabase();
+		// The real type is still IDatabase, but IReplicaDatabase is used for safety.
+		'@phan-var IDatabase $dbr';
 		// phpcs:ignore MediaWiki.Usage.DbrQueryUsage.DbrQueryFound
 		$resultSet = $dbr->query( $this->getQuery( $filteredTerm, $fulltext ), __METHOD__ );
 
@@ -268,7 +271,7 @@ class SearchSqlite extends SearchDatabase {
 		$page = $dbr->tableName( 'page' );
 		$searchindex = $dbr->tableName( 'searchindex' );
 		return "SELECT $searchindex.rowid, page_namespace, page_title " .
-			"FROM $page,$searchindex " .
+			"FROM $searchindex CROSS JOIN $page " .
 			"WHERE page_id=$searchindex.rowid AND $match";
 	}
 
@@ -278,7 +281,7 @@ class SearchSqlite extends SearchDatabase {
 		$page = $dbr->tableName( 'page' );
 		$searchindex = $dbr->tableName( 'searchindex' );
 		return "SELECT COUNT(*) AS c " .
-			"FROM $page,$searchindex " .
+			"FROM $searchindex CROSS JOIN $page " .
 			"WHERE page_id=$searchindex.rowid AND $match " .
 			$this->queryNamespaces();
 	}

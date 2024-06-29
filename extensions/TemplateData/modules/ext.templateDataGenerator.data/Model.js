@@ -164,6 +164,16 @@ Model.static.getAllProperties = function ( getFullData ) {
 		autovalue: {
 			type: 'string'
 		},
+		status: {
+			type: 'select',
+			children: [
+				'optional',
+				'deprecated',
+				'required',
+				'suggested'
+			],
+			default: 'optional'
+		},
 		deprecated: {
 			type: 'boolean',
 			// This should only be defined for boolean properties.
@@ -996,7 +1006,7 @@ Model.prototype.outputTemplateData = function () {
 
 		// Go over all properties
 		for ( var prop in allProps ) {
-			if ( prop === 'deprecatedValue' || prop === 'name' ) {
+			if ( prop === 'status' || prop === 'deprecatedValue' || prop === 'name' ) {
 				continue;
 			}
 
@@ -1006,12 +1016,12 @@ Model.prototype.outputTemplateData = function () {
 					// or if the current type is not undefined
 					if (
 						original.params[ key ] &&
-						original.params[ key ].type !== 'unknown' &&
-						this.params[ key ].type === 'unknown'
+						original.params[ key ][ prop ] !== 'unknown' &&
+						this.params[ key ][ prop ] === 'unknown'
 					) {
 						result.params[ name ][ prop ] = undefined;
 					} else {
-						result.params[ name ][ prop ] = this.params[ key ].type;
+						result.params[ name ][ prop ] = this.params[ key ][ prop ];
 					}
 					break;
 				case 'boolean':

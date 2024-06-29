@@ -12,29 +12,30 @@
 	 * Category selector widget. Displays an OO.ui.MenuTagMultiselectWidget
 	 * and autocompletes with available categories.
 	 *
-	 *     mw.loader.using( 'mediawiki.widgets.CategoryMultiselectWidget', function () {
-	 *       var selector = new mw.widgets.CategoryMultiselectWidget( {
-	 *         searchTypes: [
-	 *           mw.widgets.CategoryMultiselectWidget.SearchType.OpenSearch,
-	 *           mw.widgets.CategoryMultiselectWidget.SearchType.InternalSearch
-	 *         ]
-	 *       } );
+	 * @example
+	 * mw.loader.using( 'mediawiki.widgets.CategoryMultiselectWidget', function () {
+	 *   var selector = new mw.widgets.CategoryMultiselectWidget( {
+	 *     searchTypes: [
+	 *       mw.widgets.CategoryMultiselectWidget.SearchType.OpenSearch,
+	 *       mw.widgets.CategoryMultiselectWidget.SearchType.InternalSearch
+	 *     ]
+	 *   } );
 	 *
-	 *       $( document.body ).append( selector.$element );
+	 *   $( document.body ).append( selector.$element );
 	 *
-	 *       selector.setSearchTypes( [ mw.widgets.CategoryMultiselectWidget.SearchType.SubCategories ] );
-	 *     } );
+	 *   selector.setSearchTypes( [ mw.widgets.CategoryMultiselectWidget.SearchType.SubCategories ] );
+	 * } );
 	 *
 	 * @class mw.widgets.CategoryMultiselectWidget
 	 * @uses mw.Api
 	 * @extends OO.ui.MenuTagMultiselectWidget
-	 * @mixins OO.ui.mixin.PendingElement
+	 * @mixes OO.ui.mixin.PendingElement
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {mw.Api} [api] Instance of mw.Api (or subclass thereof) to use for queries
-	 * @cfg {number} [limit=10] Maximum number of results to load
-	 * @cfg {mw.widgets.CategoryMultiselectWidget.SearchType[]} [searchTypes=[mw.widgets.CategoryMultiselectWidget.SearchType.OpenSearch]]
+	 * @param {mw.Api} [config.api] Instance of mw.Api (or subclass thereof) to use for queries
+	 * @param {number} [config.limit=10] Maximum number of results to load
+	 * @param {mw.widgets.CategoryMultiselectWidget.SearchType[]} [config.searchTypes=[mw.widgets.CategoryMultiselectWidget.SearchType.OpenSearch]]
 	 *   Default search API to use when searching.
 	 */
 	mw.widgets.CategoryMultiselectWidget = function MWCategoryMultiselectWidget( config ) {
@@ -48,7 +49,7 @@
 		this.validateSearchTypes();
 
 		// Parent constructor
-		mw.widgets.CategoryMultiselectWidget.parent.call( this, $.extend( true, {}, config, {
+		mw.widgets.CategoryMultiselectWidget.super.call( this, $.extend( true, {}, config, {
 			menu: {
 				filterFromInput: false
 			},
@@ -87,8 +88,7 @@
 	mw.widgets.CategoryMultiselectWidget.prototype.updateMenuItems = function () {
 		this.getMenu().clearItems();
 		this.getNewMenuItems( this.input.$input.val() ).then( function ( items ) {
-			var existingItems, filteredItems,
-				menu = this.getMenu();
+			var menu = this.getMenu();
 
 			// Never show the menu if the input lost focus in the meantime
 			if ( !this.input.$input.is( ':focus' ) ) {
@@ -96,12 +96,12 @@
 			}
 
 			// Array of strings of the data of OO.ui.MenuOptionsWidgets
-			existingItems = menu.getItems().map( function ( item ) {
+			var existingItems = menu.getItems().map( function ( item ) {
 				return item.data;
 			} );
 
 			// Remove if items' data already exists
-			filteredItems = items.filter( function ( item ) {
+			var filteredItems = items.filter( function ( item ) {
 				return existingItems.indexOf( item ) === -1;
 			} );
 
@@ -121,7 +121,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.CategoryMultiselectWidget.prototype.clearInput = function () {
-		mw.widgets.CategoryMultiselectWidget.parent.prototype.clearInput.call( this );
+		mw.widgets.CategoryMultiselectWidget.super.prototype.clearInput.call( this );
 		// Abort all pending requests, we won't need their results
 		this.api.abort();
 	};
@@ -135,9 +135,7 @@
 	 * @return {jQuery.Promise} Resolves with an array of categories
 	 */
 	mw.widgets.CategoryMultiselectWidget.prototype.getNewMenuItems = function ( input ) {
-		var i,
-			promises = [],
-			deferred = $.Deferred();
+		var deferred = $.Deferred();
 
 		if ( input.trim() === '' ) {
 			deferred.resolve( [] );
@@ -146,21 +144,21 @@
 
 		// Abort all pending requests, we won't need their results
 		this.api.abort();
-		for ( i = 0; i < this.searchTypes.length; i++ ) {
+		var promises = [];
+		for ( var i = 0; i < this.searchTypes.length; i++ ) {
 			promises.push( this.searchCategories( input, this.searchTypes[ i ] ) );
 		}
 
 		this.pushPending();
 
 		$.when.apply( $, promises ).done( function () {
-			var categoryNames,
-				allData = [],
+			var allData = [],
 				dataSets = Array.prototype.slice.apply( arguments );
 
 			// Collect values from all results
 			allData = allData.concat.apply( allData, dataSets );
 
-			categoryNames = allData
+			var categoryNames = allData
 				// Remove duplicates
 				.filter( function ( value, index, self ) {
 					return self.indexOf( value ) === index;
@@ -193,7 +191,7 @@
 		if ( !title ) {
 			return false;
 		}
-		return mw.widgets.CategoryMultiselectWidget.parent.prototype.isAllowedData.call( this, data );
+		return mw.widgets.CategoryMultiselectWidget.super.prototype.isAllowedData.call( this, data );
 	};
 
 	/**

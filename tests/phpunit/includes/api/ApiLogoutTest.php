@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
 use MediaWiki\User\User;
 
 /**
@@ -7,7 +9,7 @@ use MediaWiki\User\User;
  * @group Database
  * @group medium
  *
- * @covers ApiLogout
+ * @covers \ApiLogout
  */
 class ApiLogoutTest extends ApiTestCase {
 

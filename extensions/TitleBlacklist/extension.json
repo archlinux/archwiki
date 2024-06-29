@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42"
 	},
 	"GroupPermissions": {
 		"sysop": {
@@ -60,18 +60,10 @@
 			"scripts": "mediawiki.api.titleblacklist.js",
 			"dependencies": [
 				"mediawiki.api"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.titleblacklist.visualEditor": {
-			"scripts": "ve-titleblacklist/ve.init.mw.TitleBlacklistSaveErrorHandler.js",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"scripts": "ve-titleblacklist/ve.init.mw.TitleBlacklistSaveErrorHandler.js"
 		}
 	},
 	"attributes": {
@@ -85,6 +77,7 @@
 		"localBasePath": "modules",
 		"remoteExtPath": "TitleBlacklist/modules"
 	},
+	"callback": "MediaWiki\\Extension\\TitleBlacklist\\Hooks::onRegistration",
 	"Hooks": {
 		"getUserPermissionsErrorsExpensive": "TitleBlacklistHookHandler",
 		"TitleGetEditNotices": "TitleBlacklistHookHandler",

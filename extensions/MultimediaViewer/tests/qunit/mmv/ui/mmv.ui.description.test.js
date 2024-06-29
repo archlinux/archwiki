@@ -4,7 +4,7 @@ const { Description } = require( 'mmv' );
 	QUnit.module( 'mmv.ui.description', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
-		var description = new Description( $( '#qunit-fixture' ) );
+		const description = new Description( $( '#qunit-fixture' ) );
 
 		assert.true( description instanceof Description, 'Image description UI element is created' );
 		assert.strictEqual( description.$imageDescDiv.length, 1, 'Image description div is created' );
@@ -12,7 +12,7 @@ const { Description } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Setting data in different combinations works well', function ( assert ) {
-		var description = new Description( $( '#qunit-fixture' ) );
+		const description = new Description( $( '#qunit-fixture' ) );
 
 		description.set( null, null );
 		assert.strictEqual( description.$imageDescDiv.hasClass( 'empty' ), true,
@@ -34,7 +34,7 @@ const { Description } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Emptying data works as expected', function ( assert ) {
-		var description = new Description( $( '#qunit-fixture' ) );
+		const description = new Description( $( '#qunit-fixture' ) );
 
 		description.set( 'foo', 'bar' );
 		description.empty();

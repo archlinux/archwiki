@@ -6,7 +6,6 @@
 	},
 	"apierror-visualeditor-badcachekey": "Nije pronađena keširana serijalizacija sa tim ključem",
 	"apierror-visualeditor-difffailed": "Prikaz razlike nije uspeo",
-	"apierror-visualeditor-docserver": "Greška pri kontaktiranju servera Parsoid/RESTBase (nema odgovora)",
 	"apihelp-visualeditor-param-basetimestamp": "Kada čuvate, postavite ovo na vremensku oznaku izmene koja je bila uređena. Koristi se za otkrivanje sukoba izmena.",
 	"apihelp-visualeditor-param-editintro": "Uređivanje uvoda za dodavanje obaveštenja.",
 	"apihelp-visualeditor-param-etag": "ETag za slanje.",

@@ -8,7 +8,6 @@
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Formulë kimike",
-	"math-visualeditor-mwcheminspector-title": "Formulë kimike",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Redaktim i shpejtë",
 	"math-visualeditor-mwlatexdialog-card-formula": "Formulë",
 	"math-visualeditor-mwlatexdialog-card-options": "Opsionet",
@@ -39,7 +38,7 @@
 	"math_syntax_error": "Gabim sintakse",
 	"math_unknown_error": "gabim i panjohur",
 	"math_unknown_function": "funksion i panjohur \"$1\"",
-	"mw_math_mathml": "MathML",
-	"mw_math_source": "Lëre si TeX (për shfletuesit tekst)",
+	"mw-math-mathml": "MathML",
+	"mw-math-source": "Lëre si TeX (për shfletuesit tekst)",
 	"prefs-math": "Formula"
 }

@@ -7,6 +7,7 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\Validator\BodyValidator;
+use MediaWiki\Rest\Validator\JsonBodyValidator;
 use MediaWiki\Rest\Validator\NullBodyValidator;
 use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\Session\Session;
@@ -20,13 +21,19 @@ use Wikimedia\Message\MessageValue;
 abstract class Handler {
 
 	/**
-	 * (string) ParamValidator constant to specify the source of the parameter.
-	 * Value must be 'path', 'query', or 'post'.
-	 * 'post' refers to application/x-www-form-urlencoded or multipart/form-data encoded parameters
-	 * in the body of a POST request (in other words, parameters in PHP's $_POST). For other kinds
-	 * of POST parameters, such as JSON fields, use BodyValidator instead of ParamValidator.
+	 * @see Validator::KNOWN_PARAM_SOURCES
 	 */
-	public const PARAM_SOURCE = 'rest-param-source';
+	public const KNOWN_PARAM_SOURCES = Validator::KNOWN_PARAM_SOURCES;
+
+	/**
+	 * @see Validator::PARAM_SOURCE
+	 */
+	public const PARAM_SOURCE = Validator::PARAM_SOURCE;
+
+	/**
+	 * @see Validator::PARAM_DESCRIPTION
+	 */
+	public const PARAM_DESCRIPTION = Validator::PARAM_DESCRIPTION;
 
 	/** @var Router */
 	private $router;
@@ -46,7 +53,7 @@ abstract class Handler {
 	/** @var array|null */
 	private $validatedParams;
 
-	/** @var mixed */
+	/** @var mixed|null */
 	private $validatedBody;
 
 	/** @var ConditionalHeaderUtil */
@@ -210,11 +217,48 @@ abstract class Handler {
 	 * @throws HttpException On validation failure.
 	 */
 	public function validate( Validator $restValidator ) {
-		$validatedParams = $restValidator->validateParams( $this->getParamSettings() );
-		$validatedBody = $restValidator->validateBody( $this->request, $this );
-		$this->validatedParams = $validatedParams;
-		$this->validatedBody = $validatedBody;
+		$paramSettings = $this->getParamSettings();
+		$legacyValidatedBody = $restValidator->validateBody( $this->request, $this );
+
+		$this->validatedParams = $restValidator->validateParams( $paramSettings );
+
+		if ( $legacyValidatedBody !== null ) {
+			// TODO: warn if $bodyParamSettings is not empty
+			// TODO: trigger a deprecation warning
+			$this->validatedBody = $legacyValidatedBody;
+		} else {
+			$this->validatedBody = $restValidator->validateBodyParams( $paramSettings );
+
+			// If there is a body, check if it contains extra fields.
+			if ( $this->getRequest()->hasBody() ) {
+				$this->detectExtraneousBodyFields( $restValidator );
+			}
+		}
+
 		$this->postValidationSetup();
+	}
+
+	/**
+	 * Subclasses may override this to disable or modify checks for extraneous
+	 * body fields.
+	 *
+	 * @since 1.42
+	 * @stable to override
+	 * @param Validator $restValidator
+	 * @throws HttpException On validation failure.
+	 */
+	protected function detectExtraneousBodyFields( Validator $restValidator ) {
+		$parsedBody = $this->getRequest()->getParsedBody();
+
+		if ( !$parsedBody ) {
+			// nothing to do
+			return;
+		}
+
+		$restValidator->detectExtraneousBodyFields(
+			$this->getParamSettings(),
+			$parsedBody
+		);
 	}
 
 	/**
@@ -350,14 +394,148 @@ abstract class Handler {
 	}
 
 	/**
+	 * Returns an OpenAPI Operation Object specification structure as an associative array.
+	 *
+	 * @see https://swagger.io/specification/#operation-object
+	 *
+	 * Per default, this will contain information about the supported parameters, as well as
+	 * the response for status 200.
+	 *
+	 * Subclasses may override this to provide additional information.
+	 *
+	 * @since 1.42
+	 * @stable to override
+	 *
+	 * @param string $method The HTTP method to produce a spec for ("get", "post", etc).
+	 *        Useful for handlers that behave differently depending on the
+	 *        request method.
+	 *
+	 * @return array
+	 */
+	public function getOpenApiSpec( string $method ): array {
+		$parameters = [];
+
+		// XXX: Maybe we want to be able to define a spec file in the route definition?
+		// NOTE: the route definition may not be loaded when this is called before init()!
+
+		foreach ( $this->getParamSettings() as $name => $paramSetting ) {
+			$param = Validator::getParameterSpec(
+				$name,
+				$paramSetting
+			);
+
+			$location = $param['in'];
+			if ( $location !== 'post' && $location !== 'body' ) {
+				// 'post' and 'body' are handled in getRequestSpec()
+				// but others are added as normal parameters
+				$parameters[] = $param;
+			}
+		}
+
+		$spec = [
+			'parameters' => $parameters,
+			'responses' => $this->getResponseSpec(),
+		];
+
+		$requestBody = $this->getRequestSpec();
+		if ( $requestBody ) {
+			$spec['requestBody'] = $requestBody;
+		}
+
+		return $spec;
+	}
+
+	/**
+	 * Returns an OpenAPI Request Body Object specification structure as an associative array.
+	 * @see https://swagger.io/specification/#request-body-object
+	 *
+	 * Per default, this calls getBodyValidator() to get a SchemaValidator,
+	 * and then calls getBodySpec() on it.
+	 * If no SchemaValidator is supported, this returns null;
+	 *
+	 * Subclasses may override this to provide additional information about the structure of responses.
+	 *
+	 * @stable to override
+	 * @return ?array
+	 */
+	protected function getRequestSpec(): ?array {
+		$request = [];
+
+		// XXX: support additional content types?!
+		try {
+			$validator = $this->getBodyValidator( 'application/json' );
+
+			// TODO: all validators should support getBodySpec()!
+			if ( $validator instanceof JsonBodyValidator ) {
+				$schema = $validator->getOpenAPISpec();
+
+				if ( $schema !== [] ) {
+					$request['content']['application/json']['schema'] = $schema;
+				}
+			}
+		} catch ( HttpException $ex ) {
+			// JSON not supported, ignore.
+		}
+
+		return $request ?: null;
+	}
+
+	/**
+	 * Returns an OpenAPI Schema Object specification structure as an associative array.
+	 * @see https://swagger.io/specification/#schema-object
+	 *
+	 * Returns null per default. Subclasses that return a JSON response should
+	 * implement this method to return a schema of the response body.
+	 *
+	 * @stable to override
+	 * @return ?array
+	 */
+	protected function getResponseBodySchema(): ?array {
+		return null;
+	}
+
+	/**
+	 * Returns an OpenAPI Responses Object specification structure as an associative array.
+	 * @see https://swagger.io/specification/#responses-object
+	 *
+	 * Per default, this will contain basic information response for status 200, 400, and 500.
+	 * The getResponseBodySchema() method is used to determine the structure of the response for status 200.
+	 *
+	 * Subclasses may override this to provide additional information about the structure of responses.
+	 *
+	 * @stable to override
+	 * @return array
+	 */
+	protected function getResponseSpec(): array {
+		$ok = [ 'description' => 'OK' ];
+
+		$bodySchema = $this->getResponseBodySchema();
+
+		if ( $bodySchema ) {
+			$ok['content']['application/json']['schema'] = $bodySchema;
+		}
+
+		// XXX: we should add info about redirects, and maybe a default for errors?
+		return [
+			'200' => $ok,
+			'400' => [ '$ref' => '#/components/responses/GenericErrorResponse' ],
+			'500' => [ '$ref' => '#/components/responses/GenericErrorResponse' ],
+		];
+	}
+
+	/**
 	 * Fetch the BodyValidator
 	 *
 	 * @stable to override
 	 *
 	 * @param string $contentType Content type of the request.
-	 * @return BodyValidator
+	 * @return BodyValidator A {@see NullBodyValidator} in this default implementation
+	 * @throws HttpException It's possible to fail early here when e.g. $contentType is unsupported,
+	 *  or later when {@see BodyValidator::validateBody} is called
 	 */
 	public function getBodyValidator( $contentType ) {
+		// TODO: Create a JsonBodyValidator if getParamSettings() returns body params.
+		// XXX: also support multipart/form-data and application/x-www-form-urlencoded?
 		return new NullBodyValidator();
 	}
 
@@ -377,11 +555,84 @@ abstract class Handler {
 
 	/**
 	 * Fetch the validated body
-	 * @return mixed Value returned by the body validator, or null if validate() was
+	 * @return mixed|null Value returned by the body validator, or null if validate() was
 	 *  not called yet, validation failed, there was no body, or the body was form data.
 	 */
 	public function getValidatedBody() {
 		return $this->validatedBody;
+	}
+
+	/**
+	 * Returns the parsed body of the request.
+	 * Should only be called if $request->hasBody() returns true.
+	 *
+	 * The default implementation handles application/x-www-form-urlencoded
+	 * and multipart/form-data by calling $request->getPostParams().
+	 *
+	 * The default implementation handles application/json by parsing
+	 * the body content as JSON. Only object structures (maps) are supported,
+	 * other types will trigger an HttpException with status 400.
+	 *
+	 * Other content types will trigger a HttpException with status 415 per
+	 * default.
+	 *
+	 * Subclasses may override this method to support parsing additional
+	 * content types or to disallow content types by throwing an HttpException
+	 * with status 415. Subclasses may also return null to indicate that they
+	 * support reading the content, but intent to handle it as an unparsed
+	 * stream in their implementation of the execute() method.
+	 *
+	 * @since 1.42
+	 *
+	 * @throws HttpException If the content type is not supported or the content
+	 *         is malformed.
+	 *
+	 * @return array|null The body content represented as an associative array,
+	 *         or null if the request body is accepted unparsed.
+	 */
+	public function parseBodyData( RequestInterface $request ): ?array {
+		// Parse the body based on its content type
+		$contentType = $request->getBodyType();
+
+		// HACK: If the Handler uses a custom BodyValidator, the
+		// getBodyValidator() is also responsible for checking whether
+		// the content type is valid, and for parsing the body.
+		// See T359149.
+		$bodyValidator = $this->getBodyValidator( $contentType ?? 'unknown/unknown' );
+		if ( !$bodyValidator instanceof NullBodyValidator ) {
+			// TODO: Trigger a deprecation warning.
+			return null;
+		}
+
+		switch ( $contentType ) {
+			case 'application/x-www-form-urlencoded':
+			case 'multipart/form-data':
+				return $request->getPostParams();
+			case 'application/json':
+				$jsonStream = $request->getBody();
+				$parsedBody = json_decode( "$jsonStream", true );
+				if ( !is_array( $parsedBody ) ) {
+					throw new LocalizedHttpException(
+						new MessageValue(
+							'rest-json-body-parse-error',
+							[ 'not a valid JSON object' ]
+						),
+						400
+					);
+				}
+				return $parsedBody;
+			case null:
+				// Specifying no Content-Type is fine if the body is empty
+				if ( $request->getBody()->getSize() === 0 ) {
+					return null;
+				}
+				// no break, else fall through to the error below.
+			default:
+				throw new LocalizedHttpException(
+					new MessageValue( 'rest-unsupported-content-type', [ $contentType ?? '(null)' ] ),
+					415
+				);
+		}
 	}
 
 	/**

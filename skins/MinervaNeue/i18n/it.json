@@ -56,6 +56,12 @@
 	"minerva-page-actions-history": "Cronologia",
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussione]]",
 	"skin-minerva-issue-learn-more": "Ulteriori informazioni",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 secondo|$1 secondi}} fa",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 minuto|$1 minuti}} fa",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 ora|$1 ore}} fa",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 giorno|$1 giorni}} fa",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 mese|$1 mesi}} fa",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 anno|$1 anni}} fa",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorie",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Visualizza le categorie delle pagine",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sfortunatamente, il raggruppamento dei risultati per pagina non è disponibile sui dispositivi mobili. Se desideri utilizzare la funzione \"raggruppa per pagina\", utilizza il sito in versione desktop."

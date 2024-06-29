@@ -1,19 +1,22 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\TitleValue;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
-use MediaWiki\User\UserOptionsLookup;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\Expression;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers WatchedItemQueryService
+ * @covers \WatchedItemQueryService
  */
 class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 
@@ -22,8 +25,6 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 	 */
 	private function getMockCommentStore() {
 		$mockStore = $this->createMock( CommentStore::class );
-		$mockStore->method( 'getFields' )
-			->willReturn( [ 'commentstore' => 'fields' ] );
 		$mockStore->method( 'getJoin' )
 			->willReturn( [
 				'tables' => [ 'commentstore' => 'table' ],
@@ -48,6 +49,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 			$this->getMockWatchedItemStore(),
 			$this->createHookContainer(),
 			$userOptionsLookup ?? $this->createMock( UserOptionsLookup::class ),
+			$this->createMock( TempUserConfig::class ),
 			false
 		);
 	}
@@ -897,7 +899,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 			[
 				'mysql',
 				[],
-				[ "rc_timestamp > ''" ],
+				[ new Expression( 'rc_timestamp', '>', '' ) ],
 			],
 			[
 				'mysql',
@@ -929,6 +931,13 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		$conds = array_merge( $commonConds, $expectedExtraConds );
 
 		$mockDb = $this->getMockDb();
+		$mockDb->expects( $this->any() )
+			->method( 'expr' )
+			->with(
+				'rc_timestamp',
+				$this->isType( 'string' ),
+				$this->isType( 'string' )
+			)->willReturnCallback( static fn ( $field, $op, $val ) => new Expression( $field, $op, $val ) );
 		$mockDb->expects( $this->once() )
 			->method( 'select' )
 			->with(

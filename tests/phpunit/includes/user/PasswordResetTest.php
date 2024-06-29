@@ -9,11 +9,12 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
-use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\PasswordReset;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
-use MediaWiki\User\UserOptionsLookup;
 use Psr\Log\NullLogger;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -21,7 +22,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * TODO make this a unit test, all dependencies are injected, but DatabaseBlock::__construct()
  * can't be used in unit tests.
  *
- * @covers PasswordReset
+ * @covers \MediaWiki\User\PasswordReset
  * @group Database
  */
 class PasswordResetTest extends MediaWikiIntegrationTestCase {
@@ -210,7 +211,7 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 	 * @param string|null $username
 	 * @param string|null $email
 	 * @param User[] $usersWithEmail
-	 * @covers SendPasswordResetEmailUpdate
+	 * @covers \MediaWiki\Deferred\SendPasswordResetEmailUpdate
 	 */
 	public function testExecute(
 		$expectedError,

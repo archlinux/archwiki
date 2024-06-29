@@ -87,6 +87,7 @@
 	"templatedata-modal-table-param-aliases": "Alias",
 	"templatedata-modal-table-param-autovalue": "Auto valore",
 	"templatedata-modal-table-param-default": "Predefinite ($1)",
+	"templatedata-modal-table-param-status": "State",
 	"templatedata-modal-table-param-deprecated": "Sconzigliate",
 	"templatedata-modal-table-param-deprecatedValue": "Guide sconzigliate",
 	"templatedata-modal-table-param-description": "Descrizione ($1)",

@@ -159,7 +159,7 @@ class Serializer implements AbstractSerializer {
 	public function characters( $preposition, $refElement, $text, $start, $length,
 		$sourceStart, $sourceLength
 	) {
-		list( $parent, $refNode ) = $this->interpretPlacement( $preposition, $refElement );
+		[ $parent, $refNode ] = $this->interpretPlacement( $preposition, $refElement );
 		$encoded = (string)$this->formatter->characters( $parent, $text, $start, $length );
 
 		$children =& $parent->children;
@@ -197,7 +197,7 @@ class Serializer implements AbstractSerializer {
 	public function insertElement( $preposition, $refElement, Element $element, $void,
 		$sourceStart, $sourceLength
 	) {
-		list( $parent, $refNode ) = $this->interpretPlacement( $preposition, $refElement );
+		[ $parent, $refNode ] = $this->interpretPlacement( $preposition, $refElement );
 		$children =& $parent->children;
 		$lastChildIndex = count( $children ) - 1;
 		$lastChild = $lastChildIndex >= 0 ? $children[$lastChildIndex] : null;
@@ -287,7 +287,7 @@ class Serializer implements AbstractSerializer {
 	}
 
 	public function comment( $preposition, $refElement, $text, $sourceStart, $sourceLength ) {
-		list( $parent, $refNode ) = $this->interpretPlacement( $preposition, $refElement );
+		[ $parent, $refNode ] = $this->interpretPlacement( $preposition, $refElement );
 		$encoded = $this->formatter->comment( $parent, $text );
 		$children =& $parent->children;
 		$lastChildIndex = count( $children ) - 1;

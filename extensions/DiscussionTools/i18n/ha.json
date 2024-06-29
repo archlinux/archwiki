@@ -14,7 +14,7 @@
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Za ku sami sanarwa a yadda wani yayi sabon sharhi a cikin wannan tattaunawar.  Kuna iya daidaita saitin sanarwarku a cikin zaɓin zaɓi.",
-	"discussiontools-autotopicsubpopup-dismiss": "Yauwa, Na Samu..",
+	"discussiontools-autotopicsubpopup-dismiss": "Yauwa, na samu",
 	"discussiontools-autotopicsubpopup-preferences": "Gyara zaɓuɓɓuka",
 	"discussiontools-autotopicsubpopup-title": "Kun shiga cikin masu karɓar saƙo.",
 	"discussiontools-defaultsummary-reply": "Mayarwa",
@@ -88,6 +88,5 @@
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "Rashin samun dama",
 	"discussiontools-topicsubscription-special-title": "Maudu'an da aka zaba",
 	"echo-category-title-dt-subscription": "Shafin magana{{PLURAL:$1|}}",
-	"echo-pref-tooltip-dt-subscription": "ku sanar dani idan wani ya wallafa sabon tsokaci akan maudu'in dana zaba",
-	"minerva-talk-full-page": "Karanta amatsayin shafi na wiki"
+	"echo-pref-tooltip-dt-subscription": "ku sanar dani idan wani ya wallafa sabon tsokaci akan maudu'in dana zaba"
 }

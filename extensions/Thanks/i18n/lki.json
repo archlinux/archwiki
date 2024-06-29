@@ -24,7 +24,6 @@
 	"echo-pref-subscription-edit-thank": "برای ویرایش‌هایم از من سپاسگزاری کن",
 	"echo-pref-tooltip-edit-thank": "وقتی کسی از ویرایش‌های من تشکر می‌کند مرا آگاه کن.",
 	"echo-category-title-edit-thank": " سپاسگزاریةل",
-	"notification-thanks-diff-link": "دةسکاری هؤمة",
 	"notification-header-rev-thank": "$1 به خاطر ویرایشتان در $3 از {{GENDER:$4|شما}} {{GENDER:$2|تشکر کرد}}.",
 	"log-name-thanks": "سیاههٔ تشکرها",
 	"log-description-thanks": "این فهرستی است از کاربرانی که کاربران دیگر از آن‌ها تشکر کرده‌اند.",
@@ -33,6 +32,5 @@
 	"notification-link-text-view-post": "نمایش گةپةل-قسةل",
 	"thanks-error-invalidpostid": "شناسهٔ پست معتبر نیست.",
 	"flow-thanks-confirmation-special": "می‌خواهید برای این نظر علناً تشکر بفرستید؟",
-	"flow-thanks-thanked-notice": "$1 تشکر شما را برای دیدگاه {{GENDER:$2|او|او|آنها}} دریافت کرد.",
-	"notification-flow-thanks-post-link": "گةپ/قِسة هؤمة"
+	"flow-thanks-thanked-notice": "$1 تشکر شما را برای دیدگاه {{GENDER:$2|او|او|آنها}} دریافت کرد."
 }

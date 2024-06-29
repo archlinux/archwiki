@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
 
 /**
@@ -14,7 +15,9 @@ class DatabaseIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->db = wfGetDB( DB_PRIMARY );
+		$this->db = MediaWikiServices::getInstance()
+			->getConnectionProvider()
+			->getPrimaryDatabase();
 	}
 
 	public function testUnknownTableCorruptsResults() {
@@ -100,5 +103,47 @@ class DatabaseIntegrationTest extends MediaWikiIntegrationTestCase {
 			file_get_contents( $newPath ),
 			"The generated schema in '$type' type has to be the same"
 		);
+	}
+
+	/**
+	 * T352229
+	 */
+	public function testBooleanValues() {
+		$res = $this->db->newSelectQueryBuilder()
+			->select( [ 'false' => '1=0', 'true' => '1=1' ] )
+			->fetchResultSet();
+		$obj = $res->fetchObject();
+		$this->assertCount( 2, (array)$obj );
+		$this->assertSame( '0', $obj->false );
+		$this->assertSame( '1', $obj->true );
+
+		$res->seek( 0 );
+		$row = $res->fetchRow();
+		$this->assertCount( 4, $row );
+		$this->assertSame( '0', $row[0] );
+		$this->assertSame( '1', $row[1] );
+		$this->assertSame( '0', $row['false'] );
+		$this->assertSame( '1', $row['true'] );
+	}
+
+	public function testListTables() {
+		$prefix = $this->db->tablePrefix() . 'listtables_';
+		$table = $prefix . 'table';
+		$view = $prefix . 'view';
+		$allTables = $this->db->listTables();
+		$this->assertIsArray( $allTables );
+
+		$this->assertSame( [], $this->db->listTables( $prefix ) );
+
+		try {
+			$this->db->query( "CREATE TABLE $table (i INT)" );
+			$this->assertSame( [ $table ], $this->db->listTables( $prefix ) );
+			// Confirm that listTables() does not include views (T45571)
+			$this->db->query( "CREATE VIEW $view AS SELECT * FROM $table" );
+			$this->assertSame( [ $table ], $this->db->listTables( $prefix ) );
+		} finally {
+			$this->db->query( "DROP VIEW IF EXISTS $view" );
+			$this->db->query( "DROP TABLE IF EXISTS $table" );
+		}
 	}
 }

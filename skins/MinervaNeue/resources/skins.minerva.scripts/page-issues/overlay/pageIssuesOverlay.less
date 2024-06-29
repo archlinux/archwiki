@@ -8,7 +8,7 @@
 	margin: 0;
 	padding: 0;
 	font-size: @font-size-minerva-smallest;
-	color: @color-subtle;
+	color: var( --color-subtle );
 }
 
 // overlay styles
@@ -20,10 +20,10 @@
 			.issue-notice {
 				padding: @smallIconSize @smallIconSize @smallIconSize 0;
 
-				.mf-icon {
+				.minerva-ambox-icon {
 					float: left;
 					position: relative;
-					left: ( @contentPadding / 2 ) + @spacing-horizontal-button;
+					left: ( @padding-content / 2 ) + @spacing-horizontal-button;
 				}
 			}
 
@@ -50,9 +50,13 @@
 			line-height: 1;
 		}
 
+		p {
+			margin: 0;
+		}
+
 		// assume date
 		small i {
-			color: @color-subtle;
+			color: var( --color-subtle );
 		}
 	}
 }

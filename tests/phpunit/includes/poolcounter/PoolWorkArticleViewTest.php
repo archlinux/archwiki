@@ -1,6 +1,8 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Logger\Spi as LoggerSpi;
+use MediaWiki\PoolCounter\PoolWorkArticleView;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -9,11 +11,10 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
- * @covers PoolWorkArticleView
+ * @covers \MediaWiki\PoolCounter\PoolWorkArticleView
  * @group Database
  */
 class PoolWorkArticleViewTest extends MediaWikiIntegrationTestCase {
-	protected $tablesUsed = [ 'page' ];
 
 	/**
 	 * @param LoggerInterface|null $logger

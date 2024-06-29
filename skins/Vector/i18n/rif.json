@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"AjellidnArif",
 			"Amara-Amaziɣ",
-			"MoubarikBelkasim",
-			"AjellidnArif"
+			"MoubarikBelkasim"
 		]
 	},
 	"vector-opt-out": "Beddeř ɣar udem d aqdim",
@@ -24,6 +24,21 @@
 	"vector-jumptosearch": "Nḍu ɣar tarzzut",
 	"vector-jumptocontent": "Nḍu ɣar tarsit",
 	"vector-more-actions": "Arni",
+	"vector-client-prefs-label": "Tifras",
+	"vector-feature-limited-width-name": "Tuzzeggʷart",
+	"vector-feature-custom-font-size-name": "Tiddi n tira",
+	"vector-feature-limited-width-0-label": "Miriw",
+	"vector-feature-custom-font-size-0-label": "Ameẓẓyan",
+	"vector-feature-custom-font-size-1-label": "Nurmal",
+	"vector-feature-custom-font-size-2-label": "Ameqqran",
+	"skin-night-mode-name": "Kulur",
+	"skin-night-mode-0-label": "Aziř",
+	"skin-night-mode-1-label": "Tameddit",
+	"skin-night-mode-2-label": "Uṭumatik",
+	"skin-theme-name": "Kulur",
+	"skin-theme-day-label": "Aziř",
+	"skin-theme-night-label": "Tameddit",
+	"skin-theme-os-label": "Uṭumatik",
 	"vector-search-loader": "yetɛemmar",
 	"vector-searchsuggest-containing": "Arzu x tisnawin i daysent <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Tirsitin",
@@ -36,5 +51,6 @@
 	"vector-page-tools-label": "Imassen",
 	"vector-page-tools-actions-label": "Tigawin",
 	"vector-pin-element-label": "smutti ɣar uɣezdis",
-	"vector-unpin-element-label": "snuffar"
+	"vector-unpin-element-label": "snuffar",
+	"vector-main-menu-unpinned-popup": "Menu tamezwarut temutti da."
 }

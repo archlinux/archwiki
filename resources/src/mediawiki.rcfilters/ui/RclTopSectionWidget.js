@@ -3,12 +3,12 @@ var RclToOrFromWidget = require( './RclToOrFromWidget.js' ),
 	RclTopSectionWidget;
 
 /**
- * Top section (between page title and filters) on Special:RecentChangesLinked (AKA RelatedChanges)
+ * Top section (between page title and filters) on Special:RecentChangesLinked (AKA RelatedChanges).
  *
  * @class mw.rcfilters.ui.RclTopSectionWidget
+ * @ignore
  * @extends OO.ui.Widget
  *
- * @constructor
  * @param {mw.rcfilters.ui.SavedLinksListWidget} savedLinksListWidget
  * @param {mw.rcfilters.Controller} controller
  * @param {mw.rcfilters.dm.FilterItem} showLinkedToModel Model for 'showlinkedto' parameter
@@ -23,7 +23,7 @@ RclTopSectionWidget = function MwRcfiltersUiRclTopSectionWidget(
 	config = config || {};
 
 	// Parent
-	RclTopSectionWidget.parent.call( this, config );
+	RclTopSectionWidget.super.call( this, config );
 
 	this.controller = controller;
 

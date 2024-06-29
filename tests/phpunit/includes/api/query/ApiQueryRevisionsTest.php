@@ -1,14 +1,23 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
+use MediaWiki\User\UserIdentityValue;
+use WikitextContent;
 
 /**
  * @group API
  * @group Database
  * @group medium
- * @covers ApiQueryRevisions
+ * @covers \ApiQueryRevisions
  */
 class ApiQueryRevisionsTest extends ApiTestCase {
+	use TempUserTestTrait;
 
 	/**
 	 * @group medium
@@ -43,6 +52,34 @@ class ApiQueryRevisionsTest extends ApiTestCase {
 				);
 			}
 		}
+	}
+
+	/**
+	 * @group Database
+	 * @group medium
+	 */
+	public function testRevisionMadeByTempUser() {
+		$this->enableAutoCreateTempUser();
+		$tempUser = new UserIdentityValue( 1236764321, '~1' );
+
+		$title = $this->getNonexistingTestPage( 'TestPage1' )->getTitle();
+		$this->editPage(
+			$title,
+			'Some Content',
+			'Create Page',
+			NS_MAIN,
+			new UltimateAuthority( $tempUser )
+		);
+
+		$apiResult = $this->doApiRequest( [
+			'action' => 'query',
+			'prop' => 'revisions',
+			'titles' => 'TestPage1'
+		] );
+		$this->assertArrayHasKey( 'query', $apiResult[0] );
+		$this->assertArrayHasKey( 'pages', $apiResult[0]['query'] );
+		$this->assertArrayHasKey( 'temp', $apiResult[0]['query']['pages'][1]['revisions'][0] );
+		$this->assertTrue( $apiResult[0]['query']['pages'][1]['revisions'][0]['temp'] );
 	}
 
 	/**

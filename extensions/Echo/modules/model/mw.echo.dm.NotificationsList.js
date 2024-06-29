@@ -123,11 +123,10 @@
 	 * @return {number[]} Item IDs
 	 */
 	mw.echo.dm.NotificationsList.prototype.getAllItemIds = function () {
-		var i,
-			idArray = [],
+		var idArray = [],
 			items = this.getItems();
 
-		for ( i = 0; i < items.length; i++ ) {
+		for ( var i = 0; i < items.length; i++ ) {
 			idArray.push( items[ i ].getId() );
 		}
 
@@ -141,11 +140,10 @@
 	 * @return {number[]} Item IDs
 	 */
 	mw.echo.dm.NotificationsList.prototype.getAllItemIdsByType = function ( type ) {
-		var i,
-			idArray = [],
+		var idArray = [],
 			items = this.getItems();
 
-		for ( i = 0; i < items.length; i++ ) {
+		for ( var i = 0; i < items.length; i++ ) {
 			if ( items[ i ].getType() === type ) {
 				idArray.push( items[ i ].getId() );
 			}

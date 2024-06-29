@@ -24,13 +24,11 @@
 	"thanks-submit": "Teşekur bırışe",
 	"echo-pref-subscription-edit-thank": "Serva iştiraki mı rê teşekur biyo",
 	"echo-category-title-edit-thank": "Teşekur",
-	"notification-thanks-diff-link": "vırnayışê şıma",
 	"notification-header-rev-thank": "$1, qandé vurnayışê pera  <strong>$3</strong>i {{GENDER:$4|şıma}} rê {{GENDER:$2|teşekur kerd}}.",
 	"notification-header-creation-thank": "$1, serva vıraştışê pela <strong>$3</strong> {{GENDER:$4|şıma}} rê {{GENDER:$2|teşekur kerd}}.",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Yew merdım|$1 merdımi|100=99+ merduman}} qandé <strong>$2</strong>  {{GENDER:$3|şıma }} rê   teşekur kerd.",
 	"log-name-thanks": "Qeydê teşekuran",
 	"logentry-thanks-thank": "$1  {{GENDER:$4|$3}} rê {{GENDER:$2|teşekur kerd}}",
 	"logeventslist-thanks-log": "Roceke teşekuri",
-	"notification-link-text-view-post": "Tefsiri bıvêne",
-	"notification-flow-thanks-post-link": "raweyê şıma"
+	"notification-link-text-view-post": "Tefsiri bıvêne"
 }

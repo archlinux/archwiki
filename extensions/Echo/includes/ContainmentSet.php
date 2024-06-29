@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Notifications;
 use BadMethodCallException;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\MultiUsernameFilter;
-use User;
+use MediaWiki\User\User;
 use WANObjectCache;
 
 /**

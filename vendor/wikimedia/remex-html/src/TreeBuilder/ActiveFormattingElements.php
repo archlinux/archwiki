@@ -2,6 +2,8 @@
 
 namespace Wikimedia\RemexHtml\TreeBuilder;
 
+use LogicException;
+
 /**
  * The list of active formatting elements
  */
@@ -78,7 +80,7 @@ class ActiveFormattingElements {
 	public function push( Element $elt ) {
 		// Must not be in the list already
 		if ( $elt->prevAFE !== null || $this->head === $elt ) {
-			throw new \Exception( 'Cannot insert a node into the AFE list twice' );
+			throw new LogicException( 'Cannot insert a node into the AFE list twice' );
 		}
 
 		// "Noah's Ark clause" -- if there are already three copies of

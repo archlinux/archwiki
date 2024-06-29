@@ -38,7 +38,9 @@
 			textSelectionFn,
 			hasErrorsOnSave = false,
 			selectedLine = 0,
-			returnFalse = function () { return false; },
+			returnFalse = function () {
+				return false;
+			},
 			api = new mw.Api();
 
 		// Initialize state
@@ -333,7 +335,7 @@
 					// Protocol relative
 					basePath = window.location.protocol + basePath;
 				}
-				ace.config.set( 'basePath', basePath + '/CodeEditor/modules/ace' );
+				ace.config.set( 'basePath', basePath + '/CodeEditor/modules/lib/ace' );
 
 				if ( lang ) {
 					// Ace doesn't like replacing a textarea directly.
@@ -413,10 +415,12 @@
 					} );
 
 					// Use jQuery UI resizable() so that users can make the box taller
+					// eslint-disable-next-line es-x/no-resizable-and-growable-arraybuffers
 					container.resizable( {
 						handles: 's',
 						minHeight: $box.height(),
 						resize: function () {
+							// eslint-disable-next-line es-x/no-resizable-and-growable-arraybuffers
 							context.codeEditor.resize();
 						}
 					} );
@@ -430,6 +434,8 @@
 					}
 
 					context.fn.setupStatusBar();
+
+					document.body.classList.remove( 'codeeditor-loading' );
 
 					// Let modules know we're ready to start working with the content
 					context.fn.trigger( 'ready' );

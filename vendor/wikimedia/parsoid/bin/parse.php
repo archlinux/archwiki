@@ -25,6 +25,7 @@ use Wikimedia\Parsoid\Mocks\MockMetrics;
 use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
+use Wikimedia\Parsoid\ParserTests\DummyAnnotation;
 use Wikimedia\Parsoid\ParserTests\TestUtils;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Tools\ExtendedOptsProcessor;
@@ -33,6 +34,7 @@ use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\ScriptUtils;
+use Wikimedia\Parsoid\Utils\Title;
 
 // phpcs:ignore MediaWiki.Files.ClassMatchesFilename.WrongCase
 class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
@@ -257,10 +259,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$this->setAllowUnregisteredOptions( false );
 	}
 
-	/**
-	 * @param array $configOpts
-	 */
-	private function setupMwConfig( array $configOpts ) {
+	private function setupMwConfig( array $configOpts ): void {
 		$services = MediaWikiServices::getInstance();
 		$siteConfig = $services->getParsoidSiteConfig();
 		// Overwriting logger so that it logs to console/file
@@ -276,9 +275,9 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$dataAccess = $services->getParsoidDataAccess();
 		$pcFactory = $services->getParsoidPageConfigFactory();
 		// XXX we're ignoring 'pageLanguage' & 'pageLanguageDir' in $configOpts
-		$title = \Title::newFromText(
-			$configOpts['title'] ?? $siteConfig->mainpage()
-		);
+		$title = isset( $configOpts['title'] )
+			? \Title::newFromText( $configOpts['title'] )
+			: $siteConfig->mainPageLinkTarget();
 
 		$wikitextOverride = $configOpts['pageContent'] ?? null;
 		$revision = $configOpts['revid'] ?? null;
@@ -303,16 +302,16 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$this->pageConfig = $pcFactory->create(
 			$title,
 			null, // UserIdentity
-			$revisionRecord ?? $revision
+			$revisionRecord ?? $revision,
+			null,
+			null,
+			$configOpts['ensureAccessibleContent']
 		);
 		$this->metadata = new \ParserOutput();
 		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 	}
 
-	/**
-	 * @param array $configOpts
-	 */
-	private function setupApiConfig( array $configOpts ) {
+	private function setupApiConfig( array $configOpts ): void {
 		$api = new ApiHelper( $configOpts );
 
 		$siteConfig = new SiteConfig( $api, $configOpts );
@@ -322,25 +321,35 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 		$dataAccess = new DataAccess( $api, $siteConfig, $configOpts );
 		$this->siteConfig = $siteConfig;
-		$this->pageConfig = new PageConfig( $api, $configOpts + [
-			'title' => $siteConfig->mainpage(),
-			'loadData' => true,
+		$configOpts['title'] = isset( $configOpts['title'] )
+			? Title::newFromText( $configOpts['title'], $siteConfig )
+			: $siteConfig->mainPageLinkTarget();
+
+		$this->pageConfig = new PageConfig( $api, $siteConfig, $configOpts + [
+			'loadData' => true
 		] );
-		$this->metadata = new StubMetadataCollector();
+
+		if ( $configOpts['ensureAccessibleContent'] ) {
+			try {
+				$this->pageConfig->getPageMainContent();
+			} catch ( \Error $e ) {
+				throw new \RuntimeException( 'The specified revision does not exist.' );
+			}
+		}
+
+		$this->metadata = new StubMetadataCollector( $siteConfig );
 		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 	}
 
-	/**
-	 * @param array $configOpts
-	 */
-	private function setupMockConfig( array $configOpts ) {
+	private function setupMockConfig( array $configOpts ): void {
 		$siteConfig = new MockSiteConfig( $configOpts );
-		$dataAccess = new MockDataAccess( $configOpts );
+		$siteConfig->registerExtensionModule( DummyAnnotation::class );
+		$dataAccess = new MockDataAccess( $siteConfig, $configOpts );
 		$pageContent = new MockPageContent( [ 'main' =>
 			$configOpts['pageContent'] ?? '' ] );
 		$this->siteConfig = $siteConfig;
-		$this->pageConfig = new MockPageConfig( $configOpts, $pageContent );
-		$this->metadata = new StubMetadataCollector();
+		$this->pageConfig = new MockPageConfig( $siteConfig, $configOpts, $pageContent );
+		$this->metadata = new StubMetadataCollector( $siteConfig );
 		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 	}
 
@@ -384,13 +393,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 	}
 
-	/**
-	 * @param array $configOpts
-	 * @param array $parsoidOpts
-	 * @param string $html
-	 * @param ?SelserData $selserData
-	 * @return string
-	 */
 	public function html2Wt(
 		array $configOpts, array $parsoidOpts, string $html,
 		?SelserData $selserData = null
@@ -408,10 +410,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 	}
 
-	/**
-	 * @param string $html
-	 * @return string
-	 */
 	private function maybeNormalize( string $html ): string {
 		if ( $this->hasOption( 'normalize' ) ) {
 			$html = TestUtils::normalizeOut(
@@ -539,15 +537,16 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 
 		if ( $this->hasOption( 'profile' ) ) {
-			if ( !isset( $parsoidOpts['traceFlags'] ) ) {
-				$parsoidOpts['traceFlags'] = [];
-			}
+			$parsoidOpts['traceFlags'] ??= [];
 			$parsoidOpts['traceFlags']['time'] = true;
 		}
 
 		$startsAtHtml = $this->hasOption( 'html2wt' ) ||
 			$this->hasOption( 'html2html' ) ||
 			$this->hasOption( 'selser' );
+
+		$configOpts['ensureAccessibleContent'] = !$startsAtHtml ||
+			isset( $configOpts['revid'] );
 
 		if ( $startsAtHtml ) {
 			$this->transformFromHtml( $configOpts, $parsoidOpts, $input );
@@ -570,19 +569,13 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 	 */
 	private function startFlameGraphProfiler() {
 		$profiler = new ExcimerProfiler;
-		$profiler->setPeriod( 0.01 );
-		$profiler->setEventType( EXCIMER_CPU );
+		$profiler->setPeriod( 0.00001 );
+		$profiler->setEventType( EXCIMER_REAL );
 		$profiler->start();
 		register_shutdown_function( static function () use ( $profiler ) {
 			$profiler->stop();
-			$fgPath = getenv( 'FLAMEGRAPH_PATH' );
-			if ( empty( $fgPath ) ) {
-				$fgPath = "/usr/local/bin/flamegraph.pl";
-			}
-			$fgOutDir = getenv( 'FLAMEGRAPH_OUTDIR' );
-			if ( empty( $fgOutDir ) ) {
-				$fgOutDir = "/tmp";
-			}
+			$fgPath = getenv( 'FLAMEGRAPH_PATH' ) ?: '/usr/local/bin/flamegraph.pl';
+			$fgOutDir = getenv( 'FLAMEGRAPH_OUTDIR' ) ?: '/tmp';
 			// phpcs:disable MediaWiki.Usage.ForbiddenFunctions.popen
 			$pipe = popen( "$fgPath > $fgOutDir/profile.svg", "w" );
 			fwrite( $pipe, $profiler->getLog()->formatCollapsed() );

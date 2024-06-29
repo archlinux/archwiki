@@ -153,11 +153,11 @@
 	 * per page, and the number of notifications on the current page.
 	 */
 	mw.echo.ui.PaginationWidget.prototype.updateLabel = function () {
-		var label,
-			itemsInPage = this.model.getCurrentPageItemCount(),
+		var itemsInPage = this.model.getCurrentPageItemCount(),
 			firstNotifNum = this.model.getCurrPageIndex() * this.itemsPerPage,
 			lastNotifNum = firstNotifNum + itemsInPage;
 
+		var label;
 		if ( itemsInPage === 0 ) {
 			label = '';
 		} else if ( !this.model.hasPrevPage() && !this.model.hasNextPage() ) {

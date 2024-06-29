@@ -15,7 +15,7 @@
 	 * @constructor
 	 * @param {string} apiurl The API url
 	 * @param {Object} [config] Configuration options
-	 * @cfg {string} [scriptDirUrl] The url of the API script
+	 * @param {string} [config.scriptDirUrl] The url of the API script
 	 */
 	mw.widgets.MediaResourceProvider = function MwWidgetsMediaResourceProvider( apiurl, config ) {
 		config = config || {};
@@ -92,7 +92,7 @@
 	};
 
 	/**
-	 * Override parent method and get results from the source
+	 * Override parent method and get results from the source.
 	 *
 	 * @param {number} [howMany] The number of items to pull from the API
 	 * @return {jQuery.Promise} Promise that is resolved into an array
@@ -134,7 +134,7 @@
 	};
 
 	/**
-	 * Get continuation API data
+	 * Get continuation API data.
 	 *
 	 * @param {number} howMany The number of results to retrieve
 	 * @return {Object} API request data
@@ -144,7 +144,7 @@
 	};
 
 	/**
-	 * Set continuation data for the next page
+	 * Set continuation data for the next page.
 	 *
 	 * @param {Object} continueData Continuation data
 	 */
@@ -152,7 +152,7 @@
 	};
 
 	/**
-	 * Sort the results
+	 * Sort the results.
 	 *
 	 * @param {Object[]} results API results
 	 * @return {Object[]} Sorted results
@@ -169,19 +169,17 @@
 	 *  the fetched data.
 	 */
 	mw.widgets.MediaResourceProvider.prototype.fetchAPIresults = function ( howMany ) {
-		var xhr, api,
-			provider = this;
+		var provider = this;
 
 		if ( !this.isValid() ) {
 			return $.Deferred().reject().promise( { abort: function () {} } );
 		}
 
-		api = this.isLocal ? new mw.Api() : new mw.ForeignApi( this.getAPIurl(), { anonymous: true } );
-		xhr = api.get( $.extend( {}, this.getStaticParams(), this.getUserParams(), this.getContinueData( howMany ) ) );
+		var api = this.isLocal ? new mw.Api() : new mw.ForeignApi( this.getAPIurl(), { anonymous: true } );
+		var xhr = api.get( $.extend( {}, this.getStaticParams(), this.getUserParams(), this.getContinueData( howMany ) ) );
 		return xhr
 			.then( function ( data ) {
-				var page, newObj, raw,
-					results = [];
+				var results = [];
 
 				if ( data.error ) {
 					provider.toggleDepleted( true );
@@ -199,10 +197,10 @@
 				// If the source returned no results, it will not have a
 				// query property
 				if ( data.query ) {
-					raw = data.query.pages;
+					var raw = data.query.pages;
 					if ( raw ) {
 						// Strip away the page ids
-						for ( page in raw ) {
+						for ( var page in raw ) {
 							if ( !raw[ page ].imageinfo ) {
 								// The search may give us pages that belong to the File:
 								// namespace but have no files in them, either because
@@ -211,7 +209,7 @@
 								// imageinfo. Skip those files.
 								continue;
 							}
-							newObj = raw[ page ].imageinfo[ 0 ];
+							var newObj = raw[ page ].imageinfo[ 0 ];
 							newObj.title = raw[ page ].title;
 							newObj.index = raw[ page ].index;
 							results.push( newObj );
@@ -224,7 +222,7 @@
 	};
 
 	/**
-	 * Set name
+	 * Set name.
 	 *
 	 * @param {string} name
 	 */
@@ -233,7 +231,7 @@
 	};
 
 	/**
-	 * Get name
+	 * Get name.
 	 *
 	 * @return {string} name
 	 */
@@ -254,7 +252,7 @@
 	};
 
 	/**
-	 * Get prop
+	 * Get prop.
 	 *
 	 * @return {string} prop
 	 */
@@ -263,7 +261,7 @@
 	};
 
 	/**
-	 * Set prop
+	 * Set prop.
 	 *
 	 * @param {string} prop
 	 */
@@ -272,7 +270,7 @@
 	};
 
 	/**
-	 * Set thumb sizes
+	 * Set thumb sizes.
 	 *
 	 * @param {number[]} sizes Available thumbnail sizes
 	 */
@@ -281,7 +279,7 @@
 	};
 
 	/**
-	 * Set image sizes
+	 * Set image sizes.
 	 *
 	 * @param {number[]} sizes Available image sizes
 	 */
@@ -290,7 +288,7 @@
 	};
 
 	/**
-	 * Get thumb sizes
+	 * Get thumb sizes.
 	 *
 	 * @return {number[]} sizes Available thumbnail sizes
 	 */
@@ -299,7 +297,7 @@
 	};
 
 	/**
-	 * Get image sizes
+	 * Get image sizes.
 	 *
 	 * @return {number[]} sizes Available image sizes
 	 */

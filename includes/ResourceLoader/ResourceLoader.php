@@ -23,17 +23,17 @@
 namespace MediaWiki\ResourceLoader;
 
 use BagOStuff;
-use DeferredUpdates;
 use Exception;
 use ExtensionRegistry;
 use HashBagOStuff;
 use HttpStatus;
-use IBufferingStatsdDataFactory;
 use InvalidArgumentException;
 use Less_Environment;
 use Less_Parser;
+use LogicException;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\Config;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\HtmlJsCode;
@@ -44,7 +44,7 @@ use MediaWiki\Profiler\ProfilingContext;
 use MediaWiki\Request\HeaderCallback;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\WikiMap\WikiMap;
 use MWExceptionHandler;
 use MWExceptionRenderer;
@@ -69,6 +69,7 @@ use Wikimedia\Minify\JavaScriptMinifierState;
 use Wikimedia\Minify\MinifierState;
 use Wikimedia\RequestTimeout\TimeoutException;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 use Wikimedia\WrappedString;
 
@@ -120,8 +121,8 @@ class ResourceLoader implements LoggerAwareInterface {
 	private $hookContainer;
 	/** @var BagOStuff */
 	private $srvCache;
-	/** @var IBufferingStatsdDataFactory */
-	private $stats;
+	/** @var StatsFactory */
+	private $statsFactory;
 	/** @var int */
 	private $maxageVersioned;
 	/** @var int */
@@ -186,7 +187,7 @@ class ResourceLoader implements LoggerAwareInterface {
 		$this->hookContainer = $services->getHookContainer();
 
 		$this->srvCache = $services->getLocalServerObjectCache();
-		$this->stats = $services->getStatsdDataFactory();
+		$this->statsFactory = $services->getStatsFactory();
 
 		// Add 'local' source first
 		$this->addSource( 'local', $params['loadScript'] ?? '/load.php' );
@@ -458,9 +459,7 @@ class ResourceLoader implements LoggerAwareInterface {
 			}
 		}
 
-		// Batched version of WikiModule::getTitleInfo
-		$dbr = wfGetDB( DB_REPLICA );
-		WikiModule::preloadTitleInfo( $context, $dbr, $moduleNames );
+		WikiModule::preloadTitleInfo( $context, $moduleNames );
 
 		// Prime in-object cache for message blobs for modules with messages
 		$modulesWithMessages = [];
@@ -870,7 +869,10 @@ class ResourceLoader implements LoggerAwareInterface {
 		$statStart = $_SERVER['REQUEST_TIME_FLOAT'];
 		return new ScopedCallback( function () use ( $statStart ) {
 			$statTiming = microtime( true ) - $statStart;
-			$this->stats->timing( 'resourceloader.responseTime', $statTiming * 1000 );
+
+			$this->statsFactory->getTiming( 'resourceloader_response_time_seconds' )
+				->copyToStatsdAt( 'resourceloader.responseTime' )
+				->observe( 1000 * $statTiming );
 		} );
 	}
 
@@ -1176,8 +1178,14 @@ MESSAGE;
 		if ( $only === 'styles' ) {
 			$minifier = new IdentityMinifierState;
 			$this->addOneModuleResponse( $context, $minifier, $name, $module, $this->extraHeaders );
+			// NOTE: This is not actually "minified". IdentityMinifierState is a no-op wrapper
+			// to ease code reuse. The filter() call below performs CSS minification.
+			$styles = $minifier->getMinifiedOutput();
+			if ( $context->getDebug() ) {
+				return [ $styles, null ];
+			}
 			return [
-				self::filter( 'minify-css', $minifier->getMinifiedOutput(),
+				self::filter( 'minify-css', $styles,
 					[ 'cache' => $shouldCache ] ),
 				null
 			];
@@ -1227,11 +1235,16 @@ MESSAGE;
 				BagOStuff::TTL_DAY,
 				$callback
 			);
-			$this->stats->increment( implode( '.', [
-				"resourceloader_cache",
-				$context->isSourceMap() ? 'map-js' : 'minify-js',
-				$isHit ? 'hit' : 'miss'
-			] ) );
+
+			$mapType = $context->isSourceMap() ? 'map-js' : 'minify-js';
+			$statsdNamespace = implode( '.', [
+				"resourceloader_cache", $mapType, $isHit ? 'hit' : 'miss'
+			] );
+			$this->statsFactory->getCounter( 'resourceloader_cache_total' )
+				->setLabel( 'type', $mapType )
+				->setLabel( 'status', $isHit ? 'hit' : 'miss' )
+				->copyToStatsdAt( [ $statsdNamespace ] )
+				->increment();
 		} else {
 			[ $response, $offsetArray ] = $callback();
 		}
@@ -1789,12 +1802,12 @@ MESSAGE;
 	 *
 	 * @param array $configuration List of configuration values keyed by variable name
 	 * @return string JavaScript code
-	 * @throws Exception
+	 * @throws LogicException
 	 */
 	public static function makeConfigSetScript( array $configuration ) {
 		$json = self::encodeJsonForScript( $configuration );
 		if ( $json === false ) {
-			$e = new Exception(
+			$e = new LogicException(
 				'JSON serialization of config data failed. ' .
 				'This usually means the config data is not valid UTF-8.'
 			);
@@ -2152,7 +2165,7 @@ MESSAGE;
 			return self::applyFilter( $filter, $data ) ?? $data;
 		}
 
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+		$statsFactory = MediaWikiServices::getInstance()->getStatsFactory();
 		$cache = ObjectCache::getLocalServerInstance( CACHE_ANYTHING );
 
 		$key = $cache->makeGlobalKey(
@@ -2162,16 +2175,22 @@ MESSAGE;
 			md5( $data )
 		);
 
-		$incKey = "resourceloader_cache.$filter.hit";
+		$status = 'hit';
+		$incKey = "resourceloader_cache.$filter.$status";
 		$result = $cache->getWithSetCallback(
 			$key,
 			BagOStuff::TTL_DAY,
-			static function () use ( $filter, $data, &$incKey ) {
-				$incKey = "resourceloader_cache.$filter.miss";
+			static function () use ( $filter, $data, &$incKey, &$status ) {
+				$status = 'miss';
+				$incKey = "resourceloader_cache.$filter.$status";
 				return self::applyFilter( $filter, $data );
 			}
 		);
-		$stats->increment( $incKey );
+		$statsFactory->getCounter( 'resourceloader_cache_total' )
+			->setLabel( 'type', $filter )
+			->setLabel( 'status', $status )
+			->copyToStatsdAt( [ $incKey ] )
+			->increment();
 
 		// Use $data on cache failure
 		return $result ?? $data;
@@ -2313,8 +2332,3 @@ MESSAGE;
 		return $this->errors;
 	}
 }
-
-/**
- * @deprecated since 1.39
- */
-class_alias( ResourceLoader::class, 'ResourceLoader' );

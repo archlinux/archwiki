@@ -7,7 +7,7 @@
 		]
 	},
 	"math-tracking-category-error": "Pages wi math errors",
-	"mw_math_mathml": "MathML wi SVG or PNG fawback (experimental)",
-	"mw_math_source": "LaTeX soorce (for text brousers)",
+	"mw-math-mathml": "MathML wi SVG or PNG fawback (experimental)",
+	"mw-math-source": "LaTeX soorce (for text brousers)",
 	"prefs-math": "Renderin math"
 }

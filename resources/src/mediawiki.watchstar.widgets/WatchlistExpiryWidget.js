@@ -3,7 +3,7 @@
  * with a selection widget that can determine how long the page will be watched.
  * If a page is being watched then a dropdown with expiry options is included.
  *
- * @class
+ * @exports mediawiki.watchstar.widgets
  * @extends OO.ui.Widget
  * @param {string} action One of 'watch', 'unwatch'
  * @param {string} pageTitle Title of page that this widget will watch or unwatch
@@ -23,7 +23,7 @@ function WatchlistExpiryWidget( action, pageTitle, updateWatchLink, config ) {
 	config = config || {};
 	$link = config.$link;
 
-	WatchlistExpiryWidget.parent.call( this, config );
+	WatchlistExpiryWidget.super.call( this, config );
 
 	messageLabel = new OO.ui.LabelWidget( {
 		label: config.message
@@ -91,11 +91,12 @@ function WatchlistExpiryWidget( action, pageTitle, updateWatchLink, config ) {
 			api.watch( pageTitle, value )
 				.done( function ( watchResponse ) {
 					var message,
-						mwTitle = mw.Title.newFromText( pageTitle );
+						mwTitle = mw.Title.newFromText( pageTitle ),
+						isInfinity = mw.util.isInfinity( value );
 					if ( mwTitle.isTalkPage() ) {
-						message = value === 'infinite' ? 'addedwatchindefinitelytext-talk' : 'addedwatchexpirytext-talk';
+						message = isInfinity ? 'addedwatchindefinitelytext-talk' : 'addedwatchexpirytext-talk';
 					} else {
-						message = value === 'infinite' ? 'addedwatchindefinitelytext' : 'addedwatchexpirytext';
+						message = isInfinity ? 'addedwatchindefinitelytext' : 'addedwatchexpirytext';
 					}
 
 					// The following messages can be used here:

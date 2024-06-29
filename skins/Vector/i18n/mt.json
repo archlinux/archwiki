@@ -18,7 +18,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 lingwa|$1 lingwi}}",
 	"vector-no-language-button-label": "Żid lingwa",
 	"vector-no-language-button-aria-label": "Dan l-artiklu jeżisti biss f'din il-lingwa. Żid l-artiklu għal lingwi oħra.",
-	"vector-language-redirect-to-top": "Fuq il-{{SITENAME}}, il-ħoloq tal-lingwi jinsabu fuq in-naħa ta' fuq tal-paġna, ħdejn it-titlu tal-artiklu. [[#p-lang-btn|Mur fuq]].",
 	"vector-language-variant-switcher-label": "Biddel il-varjant tal-lingwa",
 	"vector-action-addsection": "Żid diskussjoni",
 	"vector-action-delete": "Ħassar",

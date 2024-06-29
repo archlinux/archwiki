@@ -10,48 +10,34 @@ use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Parsoid;
 
-/** Test cases for the linter */
-
+/**
+ * Test cases for the linter
+ *
+ * @covers \Wikimedia\Parsoid\Wt2Html\PP\Processors\Linter
+ */
 class LinterTest extends TestCase {
-	/**
-	 * @param string $wt
-	 * @param array $options
-	 * @return array
-	 */
-	private function wtToLint( string $wt, array $options = [] ): array {
-		$opts = [
-			'prefix' => $options['prefix'] ?? 'enwiki',
-			'pageName' => $options['pageName'] ?? 'main',
-			'wrapSections' => false
-		];
 
-		$siteOptions = [ 'linting' => true ] + $options;
+	private function wtToLint( string $wt, array $linterOverrides = [] ): array {
+		$siteOptions = [
+			'linting' => true,
+			'linterOverrides' => $linterOverrides,
+		];
 		$siteConfig = new MockSiteConfig( $siteOptions );
-		$dataAccess = new MockDataAccess( [] );
+
+		$dataAccess = new MockDataAccess( $siteConfig, [] );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
-		$content = new MockPageContent( [ $opts['pageName'] => $wt ] );
-		$pageConfig = new MockPageConfig( [], $content );
+		$content = new MockPageContent( [ 'main' => $wt ] );
+		$pageConfig = new MockPageConfig( $siteConfig, [], $content );
 
 		return $parsoid->wikitext2lint( $pageConfig, [] );
 	}
 
-	/**
-	 * @param string $description
-	 * @param string $wt
-	 * @param array $opts
-	 */
 	private function expectEmptyResults( string $description, string $wt, array $opts = [] ): void {
 		$result = $this->wtToLint( $wt, $opts );
 		$this->assertSame( [], $result, $description );
 	}
 
-	/**
-	 * @param string $description
-	 * @param string $wt
-	 * @param string $cat
-	 * @param array $opts
-	 */
 	private function expectLinterCategoryToBeAbsent( string $description, string $wt, string $cat,
 		array $opts = []
 	): void {
@@ -63,11 +49,6 @@ class LinterTest extends TestCase {
 		}
 	}
 
-	/**
-	 * @param string $description
-	 * @param string $wt
-	 * @param string $type
-	 */
 	private function noLintsOfThisType( string $description, string $wt, string $type ): void {
 		$this->expectLinterCategoryToBeAbsent( $description, $wt, $type );
 	}
@@ -1054,88 +1035,6 @@ class LinterTest extends TestCase {
 	/**
 	 * @covers \Wikimedia\Parsoid\Wt2Html\ParserPipeline
 	 */
-	public function testLintIssueInRefTags(): void {
-		$desc = "should attribute linter issues to the ref tag";
-		$result = $this->wtToLint( "a <ref><b>x</ref> <references/>" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'missing-end-tag', $result[0]['type'], $desc );
-		$this->assertEquals( [ 7, 11, 3, 0 ], $result[0]['dsr'], $desc );
-		$this->assertTrue( isset( $result[0]['params'] ), $desc );
-		$this->assertEquals( 'b', $result[0]['params']['name'], $desc );
-
-		$desc = "should attribute linter issues to the ref tag even if references is templated";
-		$result = $this->wtToLint( "a <ref><b>x</ref> {{1x|<references/>}}" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'missing-end-tag', $result[0]['type'], $desc );
-		$this->assertEquals( [ 7, 11, 3, 0 ], $result[0]['dsr'], $desc );
-		$this->assertTrue( isset( $result[0]['params'] ), $desc );
-		$this->assertEquals( 'b', $result[0]['params']['name'], $desc );
-
-		$desc = "should attribute linter issues to the ref tag even when " .
-			"ref and references are both templated";
-		$wt = "a <ref><b>x</ref> b <ref>{{1x|<b>x}}</ref> " .
-			"{{1x|c <ref><b>y</ref>}} {{1x|<references/>}}";
-		$result = $this->wtToLint( $wt );
-		$this->assertCount( 3, $result, $desc );
-		$this->assertEquals( 'missing-end-tag', $result[0]['type'], $desc );
-		$this->assertEquals( [ 7, 11, 3, 0 ], $result[0]['dsr'], $desc );
-		$this->assertTrue( isset( $result[0]['params'] ), $desc );
-		$this->assertEquals( 'b', $result[0]['params']['name'], $desc );
-
-		$this->assertEquals( 'missing-end-tag', $result[1]['type'], $desc );
-		$this->assertEquals( [ 25, 36, null, null ], $result[1]['dsr'], $desc );
-		$this->assertTrue( isset( $result[1]['params'] ), $desc );
-		$this->assertEquals( 'b', $result[1]['params']['name'], $desc );
-		$this->assertTrue( isset( $result[1]['templateInfo'] ), $desc );
-		$this->assertEquals( '1x', $result[1]['templateInfo']['name'], $desc );
-
-		$this->assertEquals( 'missing-end-tag', $result[2]['type'], $desc );
-		$this->assertEquals( [ 43, 67, null, null ], $result[2]['dsr'], $desc );
-		$this->assertTrue( isset( $result[2]['params'] ), $desc );
-		$this->assertEquals( 'b', $result[2]['params']['name'], $desc );
-		$this->assertTrue( isset( $result[2]['templateInfo'] ), $desc );
-		$this->assertEquals( '1x', $result[2]['templateInfo']['name'], $desc );
-
-		$desc = "should attribute linter issues properly when ref " .
-			"tags are in non-templated references tag";
-		$wt = "a <ref><s>x</ref> b <ref name='x' /> <references> " .
-			"<ref name='x'>{{1x|<b>boo}}</ref> </references>";
-		$result = $this->wtToLint( $wt );
-		$this->assertCount( 2, $result, $desc );
-
-		$this->assertEquals( 'missing-end-tag', $result[0]['type'], $desc );
-		$this->assertEquals( [ 7, 11, 3, 0 ], $result[0]['dsr'], $desc );
-		$this->assertTrue( isset( $result[0]['params'] ), $desc );
-		$this->assertEquals( 's', $result[0]['params']['name'], $desc );
-
-		$this->assertEquals( 'missing-end-tag', $result[1]['type'], $desc );
-		$this->assertEquals( [ 64, 77, null, null ], $result[1]['dsr'], $desc );
-		$this->assertTrue( isset( $result[1]['params'] ), $desc );
-		$this->assertEquals( 'b', $result[1]['params']['name'], $desc );
-		$this->assertTrue( isset( $result[1]['templateInfo'] ), $desc );
-		$this->assertEquals( '1x', $result[1]['templateInfo']['name'], $desc );
-
-		$desc = "should lint inside ref with redefinition";
-		$wt = "<ref name=\"test\">123</ref>\n" .
-			"<ref name=\"test\"><s>345</ref>\n" .
-			"</references>";
-		$result = $this->wtToLint( $wt );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'missing-end-tag', $result[0]['type'], $desc );
-		$this->assertEquals( [ 44, 50, 3, 0 ], $result[0]['dsr'], $desc );
-		$this->assertTrue( isset( $result[0]['params'] ), $desc );
-		$this->assertEquals( 's', $result[0]['params']['name'], $desc );
-
-		$desc = "should not get into a cycle trying to lint ref in ref";
-		$result = $this->wtToLint(
-			"{{#tag:ref|<ref name='y' />|name='x'}}{{#tag:ref|<ref name='x' />|name='y'}}<ref name='x' />"
-		);
-		$this->wtToLint( "<ref name='x' />{{#tag:ref|<ref name='x' />|name=x}}" );
-	}
-
-	/**
-	 * @covers \Wikimedia\Parsoid\Wt2Html\ParserPipeline
-	 */
 	public function testDivSpanFlipTidyBug(): void {
 		$desc = "should not trigger this lint when there are no style or class attributes";
 		$this->expectEmptyResults( $desc, "<span><div>x</div></span>" );
@@ -1638,7 +1537,7 @@ class LinterTest extends TestCase {
 	}
 
 	/**
-	 * @covers       \Wikimedia\Parsoid\Wt2Html\ParserPipeline
+	 * @covers \Wikimedia\Parsoid\Wt2Html\ParserPipeline
 	 *
 	 * @param string[] $wikiTextLines
 	 * @param int $columnCount
@@ -1646,12 +1545,12 @@ class LinterTest extends TestCase {
 	 * @param string|null $templateName
 	 *
 	 * @dataProvider provideLargeTablesTests
-	 * @
 	 */
 	public function testLargeTables( $wikiTextLines, $columnCount, $dsr = [], $templateName = null ): void {
 		$opts = [];
 		$siteConfig = new MockSiteConfig( $opts );
-		$columnsMax = $siteConfig->getMaxTableColumnLintHeuristic();
+		$lintConfig = $siteConfig->getLinterConfig();
+		$columnsMax = $lintConfig['maxTableColumnHeuristic'] ?? 0;
 
 		$desc = 'should identify large width table for T334528';
 		$result = $this->wtToLint( implode( "\n", $wikiTextLines ) );
@@ -1668,6 +1567,82 @@ class LinterTest extends TestCase {
 		if ( $templateName ) {
 			$this->assertTrue( isset( $result[0]['templateInfo'] ), $desc );
 			$this->assertEquals( $templateName, $result[0]['templateInfo']['name'], $desc );
+		}
+	}
+
+	/**
+	 * @see testLogInlineBackgroundWithoutColor
+	 * @see https://phabricator.wikimedia.org/T358238
+	 *
+	 * Provides test cases for the 'night-mode-unaware-background-color' lint
+	 * We are skipping DSR checks for this lint since:
+	 * - DSR functionality is shared with all lints
+	 * - that DSR functionality is adequately tested in other lints
+	 * - there is nothing unusual DSR-wise about this lint that
+	 *   needs special verification.
+	 */
+	public function provideLogInlineBackgroundWithoutColor(): array {
+		return [
+			[
+				'should not lint when style attribute is missing',
+				'<div></div>',
+				false,
+			],
+			[
+				'should lint when background color is present but font color is missing',
+				'<div style="background-color: red;"></div>',
+				true,
+			],
+			[
+				'should lint when background-color is present but font color is missing in a template',
+				'{{1x|<div style="background-color: red;"></div>}}',
+				true,
+				"1x"
+			],
+			[
+				'should lint when background is present but font color is missing',
+				'<div style="background: green;"></div>',
+				true,
+			],
+			[
+				'should not have lint any issues when both background color and font color are present',
+				'<div style="background-color: red; color: black;"></div>',
+				false,
+			],
+			[
+				'should not lint when font color is present but background color is missing',
+				'<div style="color: red;"></div>',
+				false,
+			],
+			[
+				'should not lint when both background color and font color are present,' .
+				' even though they are missing spaces',
+				'<div style="background-color:black;color:blue;"></div>' .
+				'<div style="color:blue;background-color:black;"></div>',
+				false,
+			],
+		];
+	}
+
+	/**
+	 * @covers \Wikimedia\Parsoid\Wt2Html\ParserPipeline
+	 * @covers \Wikimedia\Parsoid\Wt2Html\PP\Processors\Linter::lintNightModeUnawareBackgroundColor
+	 * @see https://phabricator.wikimedia.org/T358238
+	 * @dataProvider provideLogInlineBackgroundWithoutColor
+	 */
+	public function testLogInlineBackgroundWithoutColor(
+		string $desc, string $wikitext, bool $haveLint, ?string $templateName = null
+	): void {
+		if ( !$haveLint ) {
+			$this->expectEmptyResults( $desc, $wikitext );
+		} else {
+			$result = $this->wtToLint( $wikitext );
+			$this->assertCount( 1, $result, $desc );
+			$this->assertEquals( 'night-mode-unaware-background-color', $result[0]['type'], $desc );
+			if ( $templateName ) {
+				$this->assertTrue( isset( $result[0]['templateInfo'] ), $desc );
+				$this->assertEquals( $templateName, $result[0]['templateInfo']['name'], $desc );
+			}
 		}
 	}
 }

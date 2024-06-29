@@ -6,7 +6,7 @@
 	},
 	"gadgets-desc": "Letur brúkarar velja persónligar [[Special:Gadgets|CSS og JavaScript gadgets]] í teirra [[Special:Preferences#mw-prefsection-gadgets|innstillingum]]",
 	"prefs-gadgets": "Gadgets",
-	"gadgets": "Gadgets",
+	"special-gadgets": "Gadgets",
 	"gadgets-title": "Gadgets",
 	"gadgets-pagetext": "Niðanfyri er ein listi yvir serstakar gadgets (ískotisfunktiónir), ið brúkarar kunnu aktivera á teirra [[Special:Preferences#mw-prefsection-gadgets|innstillar síðu]], sum víst á [[MediaWiki:Gadgets-definition|definitions]].\nHetta yvirlitið gevur lætta atgongd til kervisboð síðurnar, ið hevur frágreiðingar og kotur um hvørja gadget.",
 	"gadgets-uses": "Brúkar",

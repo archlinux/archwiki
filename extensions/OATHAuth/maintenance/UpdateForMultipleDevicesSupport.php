@@ -23,6 +23,7 @@ namespace MediaWiki\Extension\OATHAuth\Maintenance;
 use FormatJson;
 use LoggedUpdateMaintenance;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
+use MediaWiki\MediaWikiServices;
 
 if ( getenv( 'MW_INSTALL_PATH' ) ) {
 	$IP = getenv( 'MW_INSTALL_PATH' );
@@ -42,8 +43,9 @@ class UpdateForMultipleDevicesSupport extends LoggedUpdateMaintenance {
 	}
 
 	protected function doDBUpdates() {
-		$database = OATHAuthServices::getInstance()->getDatabase();
-		$dbw = $database->getDB( DB_PRIMARY );
+		$dbw = MediaWikiServices::getInstance()
+			->getDBLoadBalancerFactory()
+			->getPrimaryDatabase( 'virtual-oathauth' );
 
 		$maxId = $dbw->newSelectQueryBuilder()
 			->select( 'MAX(id)' )
@@ -88,7 +90,7 @@ class UpdateForMultipleDevicesSupport extends LoggedUpdateMaintenance {
 				$decodedData = FormatJson::decode( $row->data, true );
 
 				if ( isset( $decodedData['keys'] ) ) {
-					$updated += 1;
+					$updated++;
 
 					foreach ( $decodedData['keys'] as $keyData ) {
 						$toAdd[] = [
@@ -101,14 +103,14 @@ class UpdateForMultipleDevicesSupport extends LoggedUpdateMaintenance {
 			}
 
 			if ( $toAdd ) {
-				$dbw->insert(
-					'oathauth_devices',
-					$toAdd,
-					__METHOD__
-				);
+				$dbw->newInsertQueryBuilder()
+					->insertInto( 'oathauth_devices' )
+					->rows( $toAdd )
+					->caller( __METHOD__ )
+					->execute();
 			}
 
-			$database->waitForReplication();
+			$this->waitForReplication();
 		}
 
 		$this->output( "Done, updated data for $updated users.\n" );

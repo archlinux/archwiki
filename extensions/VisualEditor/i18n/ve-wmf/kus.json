@@ -7,6 +7,7 @@
 	"tag-editcheck-newcontent-description": "EditCheck tɛn'ɛs ye ba paas nɛ bʋnpaal lakirin la",
 	"tag-editcheck-newreference-description": "Ba paas kpinnim lak̃ir la ni",
 	"tag-editcheck-references-description": "EditCheck tɛn'ɛs ye ba pa' na ti bɔɔd kplnnim",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Edit Check (references) activated]]",
 	"tag-editcheck-references-activated-description": "EditCheck tɛn'ɛs ye ba pa'a ti bɔɔd, kpinnim ka UI lɛɛ bɛ",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visual edit]]",
 	"tag-visualeditor-description": "Tiakir kanɛ niŋ nɛ [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]]",

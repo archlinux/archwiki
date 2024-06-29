@@ -2,7 +2,7 @@
 /**
  * Page protection
  *
- * Copyright © 2005 Brion Vibber <brion@pobox.com>
+ * Copyright © 2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,14 +27,14 @@ namespace MediaWiki\Page;
 
 use Article;
 use ErrorPageError;
-use HTMLForm;
-use IContextSource;
 use Language;
 use LogEventsList;
 use LogPage;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
@@ -570,7 +570,7 @@ class ProtectionForm {
 				'id' => 'wpProtectReasonSelection',
 				'name' => 'wpProtectReasonSelection',
 				'flatlist' => true,
-				'options' => Xml::listDropDownOptions(
+				'options' => Html::listDropdownOptions(
 					$this->mContext->msg( 'protect-dropdown' )->inContentLanguage()->text(),
 					[ 'other' => $this->mContext->msg( 'protect-otherreason-op' )->text() ]
 				),
@@ -663,7 +663,5 @@ class ProtectionForm {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( ProtectionForm::class, 'ProtectionForm' );

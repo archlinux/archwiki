@@ -36,7 +36,5 @@
 	"cite-ve-referenceslist-isempty-default": "এই তালিকাত অন্তৰ্ভুক্ত কৰিবলৈ এইটো পৃষ্ঠাত কোনো তথ্যসূত্ৰ নাই।",
 	"cite-ve-referenceslist-missingref": "এই তথ্যসূত্ৰটো এটা সাঁচ বা আন উৎপন্ন ব্লক হিচাপে সংজ্ঞায়িত কৰা হৈছে আৰু ইয়াক কেৱল উৎস ৰূপতহে সম্পাদনা কৰিব পাৰি।",
 	"cite-ve-toolbar-group-label": "উদ্ধৃতি দিয়ক",
-	"cite-ve-othergroup-item": "$1টা তথ্যসূত্ৰ",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "তথ্যসূত্ৰ",
-	"visualeditor-internal-list-diff-group-name-mwreference": "তথ্যসূত্ৰ গোটৰ নাম: \"$1\""
+	"cite-ve-othergroup-item": "$1টা তথ্যসূত্ৰ"
 }

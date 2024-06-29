@@ -3,7 +3,8 @@
 		"authors": [
 			"Edwingudfriend",
 			"Matma Rex",
-			"Wangombe"
+			"Wangombe",
+			"Sheilawangari"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Jibu",
@@ -27,8 +28,8 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Jisajili",
 	"discussiontools-topicsubscription-button-unsubscribe": "jiondoe",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Jiondoe",
-	"discussiontools-topicsubscription-notify-subscribed-body": "Utapokea arifa kuhusu maoni mapya katika mada hii.",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Utapokea}} arifa kuhusu maoni mapya katika mada hii.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Wewe}} umejiandikisha!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "Hutapokea tena arifa kuhusu maoni mapya katika mada hii.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "Umejiondoa."
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Hutapokea}} tena arifa kuhusu maoni mapya katika mada hii.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Umejiondoa.}}"
 }

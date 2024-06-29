@@ -50,7 +50,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Táto referencia je definovaná v šablóne alebo inej generovanej časti textu a zatiaľ je možné editovať ju len v režime zdrojového kódu.",
 	"cite-ve-referenceslist-missingreflist": "Tento zoznam referencií je generovaný šablónou a zatiaľ ho je možné upravovať len v režime zdrojového textu.",
 	"cite-ve-toolbar-group-label": "Citácia",
-	"cite-ve-othergroup-item": "$1 referencia",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencie",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Názov skupiny referencií: „$1“"
+	"cite-ve-othergroup-item": "$1 referencia"
 }

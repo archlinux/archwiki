@@ -69,6 +69,7 @@ function language.new( code )
 	local checkSelf = util.makeCheckSelfFunction( 'mw.language', 'lang', lang, 'language object' )
 
 	local wrappers = {
+		toBcp47Code = 0,
 		lcfirst = 1,
 		ucfirst = 1,
 		lc = 1,

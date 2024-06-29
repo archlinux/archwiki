@@ -26,12 +26,12 @@
 namespace MediaWiki\Specials;
 
 use ApiMessage;
-use HTMLForm;
-use IContextSource;
 use LogEventsList;
 use LogPage;
 use ManualLogEntry;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
@@ -238,7 +238,7 @@ class SpecialPageLanguage extends FormSpecialPage {
 		}
 
 		// Load the page language from DB
-		$dbw ??= MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getPrimaryDatabase();
+		$dbw ??= MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 		$oldLanguage = $dbw->newSelectQueryBuilder()
 			->select( 'page_lang' )
 			->from( 'page' )

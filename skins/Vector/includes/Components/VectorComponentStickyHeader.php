@@ -58,25 +58,26 @@ class VectorComponentStickyHeader implements VectorComponent {
 	private $search;
 	/** @var VectorComponent|null */
 	private $langButton;
+
 	/** @var bool */
-	private $includeEditIcons;
+	private $visualEditorTabPositionFirst;
 
 	/**
 	 * @param MessageLocalizer $localizer
 	 * @param VectorComponent $searchBox
 	 * @param VectorComponent|null $langButton
-	 * @param bool $includeEditIcons whether to include edit icons in the result
+	 * @param bool $visualEditorTabPositionFirst
 	 */
 	public function __construct(
 		MessageLocalizer $localizer,
 		VectorComponent $searchBox,
 		$langButton = null,
-		$includeEditIcons = false
+		bool $visualEditorTabPositionFirst = false
 	) {
 		$this->search = $searchBox;
 		$this->langButton = $langButton;
-		$this->includeEditIcons = $includeEditIcons;
 		$this->localizer = $localizer;
+		$this->visualEditorTabPositionFirst = $visualEditorTabPositionFirst;
 	}
 
 	/**
@@ -99,11 +100,9 @@ class VectorComponentStickyHeader implements VectorComponent {
 			self::HISTORY_ICON,
 			self::WATCHSTAR_ICON,
 		];
-		if ( $this->includeEditIcons ) {
-			$icons[] = self::EDIT_WIKITEXT_ICON;
-			$icons[] = self::EDIT_PROTECTED_ICON;
-			$icons[] = self::EDIT_VE_ICON;
-		}
+		$icons[] = $this->visualEditorTabPositionFirst ? self::EDIT_VE_ICON : self::EDIT_WIKITEXT_ICON;
+		$icons[] = $this->visualEditorTabPositionFirst ? self::EDIT_WIKITEXT_ICON : self::EDIT_VE_ICON;
+		$icons[] = self::EDIT_PROTECTED_ICON;
 		$iconButtons = [];
 		foreach ( $icons as $icon ) {
 			$iconButtons[] = new VectorComponentButton(

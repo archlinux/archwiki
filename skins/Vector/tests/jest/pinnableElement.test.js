@@ -51,9 +51,9 @@ const movableData = { ...simpleData, ...{
 const initializeHTML = ( headerData ) => {
 	pinnedStatus = headerData[ 'is-pinned' ];
 	const pinnableHeaderHTML = mustache.render( pinnableHeaderTemplate, headerData );
-	const pinnableElementHTML = `<div id="pinnable-element">${pinnableHeaderHTML}</div>`;
+	const pinnableElementHTML = `<div id="pinnable-element">${ pinnableHeaderHTML }</div>`;
 	document.body.innerHTML = `<div id="pinned-container">
-			${headerData[ 'is-pinned' ] ? pinnableElementHTML : ''}
+			${ headerData[ 'is-pinned' ] ? pinnableElementHTML : '' }
 		</div>
 		<div class="vector-dropdown">
 			<input type="checkbox" id="checkbox" class="vector-menu-checkbox">
@@ -62,7 +62,7 @@ const initializeHTML = ( headerData ) => {
 			</label>
 			<div class="vector-menu-content">
 				<div id="unpinned-container">
-				${!headerData[ 'is-pinned' ] ? pinnableElementHTML : ''}
+				${ !headerData[ 'is-pinned' ] ? pinnableElementHTML : '' }
 				</div>
 			</div>
 		</div>
@@ -80,7 +80,7 @@ describe( 'Pinnable header', () => {
 		pinnableElement.initPinnableElement();
 		const pinButton = /** @type {HTMLElement} */ ( document.querySelector( '.vector-pinnable-header-pin-button' ) );
 		const unpinButton = /** @type {HTMLElement} */ ( document.querySelector( '.vector-pinnable-header-unpin-button' ) );
-		const header = /** @type {HTMLElement} */ ( document.querySelector( `.${simpleData[ 'data-pinnable-element-id' ]}-pinnable-header` ) );
+		const header = /** @type {HTMLElement} */ ( document.querySelector( `.${ simpleData[ 'data-pinnable-element-id' ] }-pinnable-header` ) );
 
 		expect( header.classList.contains( pinnableElement.PINNED_HEADER_CLASS ) ).toBe( false );
 		expect( header.classList.contains( pinnableElement.UNPINNED_HEADER_CLASS ) ).toBe( true );
@@ -139,7 +139,7 @@ describe( 'Pinnable header', () => {
 	test( 'isPinned() calls features.isEnabled()', () => {
 		initializeHTML( simpleData );
 		pinnableElement.initPinnableElement();
-		const header = /** @type {HTMLElement} */ ( document.querySelector( `.${simpleData[ 'data-pinnable-element-id' ]}-pinnable-header` ) );
+		const header = /** @type {HTMLElement} */ ( document.querySelector( `.${ simpleData[ 'data-pinnable-element-id' ] }-pinnable-header` ) );
 
 		features.isEnabled.mockClear();
 		pinnableElement.isPinned( header );

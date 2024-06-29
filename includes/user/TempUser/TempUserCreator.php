@@ -8,10 +8,14 @@ use MediaWiki\Auth\Throttler;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\Session;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserRigorOptions;
+use MediaWiki\Utils\MWTimestamp;
 use UnexpectedValueException;
 use Wikimedia\ObjectFactory\ObjectFactory;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * Service for temporary user creation. For convenience this also proxies the
@@ -27,6 +31,7 @@ class TempUserCreator implements TempUserConfig {
 	private RealTempUserConfig $config;
 	private UserFactory $userFactory;
 	private AuthManager $authManager;
+	private CentralIdLookup $centralIdLookup;
 	private ?Throttler $throttler;
 	private array $serialProviderConfig;
 	private array $serialMappingConfig;
@@ -64,12 +69,14 @@ class TempUserCreator implements TempUserConfig {
 		ObjectFactory $objectFactory,
 		UserFactory $userFactory,
 		AuthManager $authManager,
+		CentralIdLookup $centralIdLookup,
 		?Throttler $throttler
 	) {
 		$this->config = $config;
 		$this->objectFactory = $objectFactory;
 		$this->userFactory = $userFactory;
 		$this->authManager = $authManager;
+		$this->centralIdLookup = $centralIdLookup;
 		$this->throttler = $throttler;
 		$this->serialProviderConfig = $config->getSerialProviderConfig();
 		$this->serialMappingConfig = $config->getSerialMappingConfig();
@@ -90,6 +97,7 @@ class TempUserCreator implements TempUserConfig {
 			$result = $this->throttler->increase(
 				null, $request->getIP(), 'TempUserCreator' );
 			if ( $result ) {
+				// TODO: Use a custom message here (T357777, T357802)
 				$message = wfMessage( 'acct_creation_throttle_hit' )->params( $result['count'] )
 					->durationParams( $result['wait'] );
 				$status->fatal( $message );
@@ -99,29 +107,19 @@ class TempUserCreator implements TempUserConfig {
 
 		if ( $name === null ) {
 			$name = $this->acquireName();
+			if ( $name === null ) {
+				// If the $name remains null after calling ::acquireName, then
+				// we cannot generate a username and therefore cannot create a user.
+				// In this case return a CreateStatus indicating no user was created.
+				return CreateStatus::newFatal( 'temp-user-unable-to-acquire' );
+			}
 		}
+		$createStatus = $this->attemptAutoCreate( $name );
 
-		$user = $this->userFactory->newFromName( $name, UserRigorOptions::RIGOR_USABLE );
-		if ( !$user ) {
-			$status->fatal( 'internalerror_info',
-				'Unable to create user with automatically generated name' );
-			return $status;
-		}
-
-		$status = $this->authManager->autoCreateUser(
-			$user,
-			AuthManager::AUTOCREATE_SOURCE_TEMP,
-			true /* login */,
-			false /* log */
-		);
-		$createStatus = new CreateStatus;
-		$createStatus->merge( $status );
-		// Make userexists warning be fatal
-		if ( $createStatus->hasMessage( 'userexists' ) ) {
-			$createStatus->fatal( 'userexists' );
-		}
 		if ( $createStatus->isOK() ) {
-			$createStatus->value = $user;
+			// The temporary account name didn't already exist, so now attempt to login
+			// using ::attemptAutoCreate as there isn't a public method to just login.
+			$this->attemptAutoCreate( $name, true );
 		}
 		return $createStatus;
 	}
@@ -154,16 +152,89 @@ class TempUserCreator implements TempUserConfig {
 		return $this->config->getMatchPattern();
 	}
 
+	public function getMatchPatterns(): array {
+		return $this->config->getMatchPatterns();
+	}
+
+	public function getMatchCondition( IReadableDatabase $db, string $field, string $op ): IExpression {
+		return $this->config->getMatchCondition( $db, $field, $op );
+	}
+
+	public function getExpireAfterDays(): ?int {
+		return $this->config->getExpireAfterDays();
+	}
+
+	public function getNotifyBeforeExpirationDays(): ?int {
+		return $this->config->getNotifyBeforeExpirationDays();
+	}
+
+	/**
+	 * Attempts to auto create a temporary user using
+	 * AuthManager::autoCreateUser, and optionally log them
+	 * in if $login is true.
+	 *
+	 * @param string $name
+	 * @param bool $login Whether to also log the user in to this temporary account.
+	 * @return CreateStatus
+	 */
+	private function attemptAutoCreate( string $name, bool $login = false ): CreateStatus {
+		$createStatus = new CreateStatus;
+		// Verify the $name is usable.
+		$user = $this->userFactory->newFromName( $name, UserRigorOptions::RIGOR_USABLE );
+		if ( !$user ) {
+			$createStatus->fatal( 'internalerror_info',
+				'Unable to create user with automatically generated name' );
+			return $createStatus;
+		}
+		$status = $this->authManager->autoCreateUser(
+			$user,
+			AuthManager::AUTOCREATE_SOURCE_TEMP,
+			$login, // login
+			false // log
+		);
+		$createStatus->merge( $status );
+		// If a userexists warning is a part of the status, then
+		// add the fatal error temp-user-unable-to-acquire.
+		if ( $createStatus->hasMessage( 'userexists' ) ) {
+			$createStatus->fatal( 'temp-user-unable-to-acquire' );
+		}
+		if ( $createStatus->isOK() ) {
+			$createStatus->value = $user;
+		}
+		return $createStatus;
+	}
+
 	/**
 	 * Acquire a new username and return it. Permanently reserve the ID in
 	 * the database.
 	 *
-	 * @return string
+	 * @return string|null The username, or null if the auto-generated username is
+	 *    already in use.
 	 */
-	private function acquireName(): string {
-		$index = $this->getSerialProvider()->acquireIndex();
+	private function acquireName(): ?string {
+		$year = null;
+		if ( $this->serialProviderConfig['useYear'] ?? false ) {
+			$year = MWTimestamp::getInstance()->format( 'Y' );
+		}
+		// Check if the temporary account name is already in use as the ID provided
+		// may not be properly collision safe (T353390)
+		$index = $this->getSerialProvider()->acquireIndex( (int)$year );
 		$serialId = $this->getSerialMapping()->getSerialIdForIndex( $index );
-		return $this->config->getGeneratorPattern()->generate( $serialId );
+		$username = $this->config->getGeneratorPattern()->generate( $serialId, $year );
+
+		// Because the ::acquireIndex method may not always return a unique index,
+		// make sure that the temporary account name does not already exist. This
+		// is needed because of the problems discussed in T353390.
+		// The problems discussed at that task should not require the use of a primary lookup.
+		$centralId = $this->centralIdLookup->centralIdFromName(
+			$username,
+			CentralIdLookup::AUDIENCE_RAW
+		);
+		if ( !$centralId ) {
+			// If no user exists with this name centrally, then return the $username.
+			return $username;
+		}
+		return null;
 	}
 
 	/**
@@ -253,7 +324,7 @@ class TempUserCreator implements TempUserConfig {
 	 * previously stashed username instead of acquiring a new one.
 	 *
 	 * @param Session $session
-	 * @return string The username
+	 * @return string|null The username, or null if no username could be acquired
 	 */
 	public function acquireAndStashName( Session $session ) {
 		$name = $session->get( 'TempUser:name' );
@@ -261,8 +332,10 @@ class TempUserCreator implements TempUserConfig {
 			return $name;
 		}
 		$name = $this->acquireName();
-		$session->set( 'TempUser:name', $name );
-		$session->save();
+		if ( $name !== null ) {
+			$session->set( 'TempUser:name', $name );
+			$session->save();
+		}
 		return $name;
 	}
 

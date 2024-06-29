@@ -3,13 +3,13 @@
 namespace MediaWiki\Tests\Maintenance;
 
 use DumpCategoriesAsRdf;
-use IMaintainableDatabase;
 use MediaWiki\MainConfigNames;
 use MediaWikiLangTestCase;
+use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
- * @covers CategoriesRdf
- * @covers DumpCategoriesAsRdf
+ * @covers \MediaWiki\Category\CategoriesRdf
+ * @covers \DumpCategoriesAsRdf
  */
 class CategoriesRdfTest extends MediaWikiLangTestCase {
 	public function getCategoryIterator() {

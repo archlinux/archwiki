@@ -12,7 +12,7 @@
 	"gadgets-desc": "Omogućava korisnicima da izaberu prilagođene [[Special:Gadgets|CSS i javaskript spravice]] u svojim [[Special:Preferences#mw-prefsection-gadgets|podešavanjima]]",
 	"prefs-gadgets": "Spravice",
 	"gadgets-prefstext": "Ispod se nalazi lista posebnih spravica koje možete da omogućite za svoj nalog. \nOve spravice se najčešće zasnivaju na JavaScript-u, tako da on mora da bude omogućen u vašem pregledaču da bi mogle da rade. \nImajte na umu da ove spravice neće uticati na ovu stranicu za podešavanje.\n\nImajte na umu i da ove posebne spravice nisu deo softvera Medijaviki, već ih obično razvijaju i održavaju korisnici na vašem lokalnom vikiju.\nLokalni administratori mogu da uređuju [[MediaWiki:Gadgets-definition|definicije]] i [[Special:Gadgets|opise]] dostupnih spravica. Broj korisnika za svaku spravicu na ovom vikiju naveden je u [[Special:GadgetUsage|statistici korišćenja spravica]].",
-	"gadgets": "Spravice",
+	"special-gadgets": "Spravice",
 	"gadgetusage": "Statistika korišćenja gadžeta",
 	"gadgetusage-gadget": "Spravica",
 	"gadgetusage-usercount": "Broj korisnika",
@@ -34,9 +34,5 @@
 	"gadgets-export-title": "Izvoz spravice",
 	"gadgets-not-found": "Spravica „$1“ nije pronađena.",
 	"gadgets-export-text": "Da biste izvezli $1 spravicu, kliknite na dugme „{{int:gadgets-export-download}}“, sačuvajte preuzetu datoteku,\npređite na ''Special:Import'' na željenoj vikiji i pošaljite spravicu. Nakon toga, dodajte sledeće na ''MediaWiki:Gadgets-definition'' stranicu:\n<pre>$2</pre>\nMorate imati određene dozvole na navedenoj vikiji (uključujući i pravo za uređivanje sistemskih poruka), dok uvoz preko datoteka mora biti omogućen.",
-	"gadgets-export-download": "Preuzmi",
-	"right-gadgets-edit": "uređivanje JavaScript i CSS stranica gedžeta",
-	"action-gadgets-edit": "uredite javaskript i CSS stranice ove spravice",
-	"right-gadgets-definition-edit": "uređivanje definicija gedžeta",
-	"action-gadgets-definition-edit": "uredite definiciju ove spravice"
+	"gadgets-export-download": "Preuzmi"
 }

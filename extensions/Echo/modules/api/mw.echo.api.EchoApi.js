@@ -29,11 +29,9 @@
 	 *  the default limit stated in the class.
 	 */
 	mw.echo.api.EchoApi.prototype.registerForeignSources = function ( sources, unreadOnly, limit ) {
-		var s;
-
 		limit = limit || this.limit;
 
-		for ( s in sources ) {
+		for ( var s in sources ) {
 			this.network.setApiHandler( s, new mw.echo.api.ForeignAPIHandler( sources[ s ].url, {
 				unreadOnly: !!unreadOnly,
 				limit: limit
@@ -47,10 +45,9 @@
 	 * @param {string[]} sources An array of source names
 	 */
 	mw.echo.api.EchoApi.prototype.registerLocalSources = function ( sources ) {
-		var i,
-			localHandler = this.network.getApiHandler( 'local' );
+		var localHandler = this.network.getApiHandler( 'local' );
 
-		for ( i = 0; i < sources.length; i++ ) {
+		for ( var i = 0; i < sources.length; i++ ) {
 			this.network.setApiHandler( sources[ i ], localHandler );
 		}
 	};
@@ -105,8 +102,7 @@
 	 * @return {Object} API parameter definitions to override
 	 */
 	mw.echo.api.EchoApi.prototype.convertFiltersToAPIParams = function ( filterObject ) {
-		var titles,
-			overrideParams = {};
+		var overrideParams = {};
 
 		filterObject = filterObject || {};
 
@@ -129,7 +125,7 @@
 		}
 
 		if ( filterObject.titles ) {
-			titles = Array.isArray( filterObject.titles ) ? filterObject.titles : [ filterObject.titles ];
+			var titles = Array.isArray( filterObject.titles ) ? filterObject.titles : [ filterObject.titles ];
 			if ( titles.indexOf( null ) !== -1 ) {
 				// Map null to '[]'
 				titles.splice( titles.indexOf( null ), 1, '[]' );
@@ -213,12 +209,11 @@
 		var overrideParams = { notcrosswikisummary: false, notbundle: bundle };
 		return this.network.getApiHandler( 'local' ).fetchNotifications( type, sourceArray, true, overrideParams )
 			.then( function ( result ) {
-				var i,
-					items = OO.getProp( result, 'query', 'notifications', 'list' ),
+				var items = OO.getProp( result, 'query', 'notifications', 'list' ),
 					groups = {};
 
 				// Split the items to groups
-				for ( i = 0; i < items.length; i++ ) {
+				for ( var i = 0; i < items.length; i++ ) {
 					groups[ items[ i ].wiki ] = groups[ items[ i ].wiki ] || [];
 					groups[ items[ i ].wiki ].push( items[ i ] );
 				}

@@ -69,7 +69,7 @@ class JavaScriptContentTest extends TextContentTest {
 	}
 
 	/**
-	 * @covers JavaScriptContent::addSectionHeader
+	 * @covers \JavaScriptContent::addSectionHeader
 	 */
 	public function testAddSectionHeader() {
 		$content = $this->newContent( 'hello world' );
@@ -170,7 +170,7 @@ class JavaScriptContentTest extends TextContentTest {
 	}
 
 	/**
-	 * @covers JavaScriptContent::matchMagicWord
+	 * @covers \JavaScriptContent::matchMagicWord
 	 */
 	public function testMatchMagicWord() {
 		$mw = $this->getServiceContainer()->getMagicWordFactory()->get( "staticredirect" );
@@ -183,7 +183,7 @@ class JavaScriptContentTest extends TextContentTest {
 	}
 
 	/**
-	 * @covers JavaScriptContent::updateRedirect
+	 * @covers \JavaScriptContent::updateRedirect
 	 * @dataProvider provideUpdateRedirect
 	 */
 	public function testUpdateRedirect( $oldText, $expectedText ) {
@@ -208,15 +208,15 @@ class JavaScriptContentTest extends TextContentTest {
 				'#REDIRECT [[Someplace]]',
 			],
 			[
-				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=MediaWiki:MonoBook.js\u0026action=raw\u0026ctype=text/javascript");',
-				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=TestUpdateRedirect_target\u0026action=raw\u0026ctype=text/javascript");'
+				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=MediaWiki:MonoBook.js&action=raw&ctype=text/javascript");',
+				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=TestUpdateRedirect_target&action=raw&ctype=text/javascript");'
 			]
 		];
 		// phpcs:enable
 	}
 
 	/**
-	 * @covers JavaScriptContent::getModel
+	 * @covers \JavaScriptContent::getModel
 	 */
 	public function testGetModel() {
 		$content = $this->newContent( "hello world." );
@@ -225,7 +225,7 @@ class JavaScriptContentTest extends TextContentTest {
 	}
 
 	/**
-	 * @covers JavaScriptContent::getContentHandler
+	 * @covers \JavaScriptContent::getContentHandler
 	 */
 	public function testGetContentHandler() {
 		$content = $this->newContent( "hello world." );
@@ -243,7 +243,7 @@ class JavaScriptContentTest extends TextContentTest {
 	}
 
 	/**
-	 * @covers JavaScriptContent::getRedirectTarget
+	 * @covers \JavaScriptContent::getRedirectTarget
 	 * @dataProvider provideGetRedirectTarget
 	 */
 	public function testGetRedirectTarget( $title, $text ) {
@@ -265,30 +265,40 @@ class JavaScriptContentTest extends TextContentTest {
 		return [
 			[
 				'MediaWiki:MonoBook.js',
-				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=MediaWiki:MonoBook.js\u0026action=raw\u0026ctype=text/javascript");'
+				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=MediaWiki:MonoBook.js&action=raw&ctype=text/javascript");'
 			],
 			[
 				'User:FooBar/common.js',
-				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=User:FooBar/common.js\u0026action=raw\u0026ctype=text/javascript");'
+				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=User:FooBar/common.js&action=raw&ctype=text/javascript");'
 			],
 			[
 				'Gadget:FooBaz.js',
-				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=Gadget:FooBaz.js\u0026action=raw\u0026ctype=text/javascript");'
+				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=Gadget:FooBaz.js&action=raw&ctype=text/javascript");'
 			],
 			// Unicode
 			[
 				'User:😂/unicode.js',
-				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=User:%F0%9F%98%82/unicode.js\u0026action=raw\u0026ctype=text/javascript");'
+				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=User:%F0%9F%98%82/unicode.js&action=raw&ctype=text/javascript");'
 			],
 			// No #REDIRECT comment
 			[
 				null,
-				'mw.loader.load("//example.org/w/index.php?title=MediaWiki:NoRedirect.js\u0026action=raw\u0026ctype=text/javascript");'
+				'mw.loader.load("//example.org/w/index.php?title=MediaWiki:NoRedirect.js&action=raw&ctype=text/javascript");'
 			],
 			// Different domain
 			[
 				null,
-				'/* #REDIRECT */mw.loader.load("//example.com/w/index.php?title=MediaWiki:OtherWiki.js\u0026action=raw\u0026ctype=text/javascript");'
+				'/* #REDIRECT */mw.loader.load("//example.com/w/index.php?title=MediaWiki:OtherWiki.js&action=raw&ctype=text/javascript");'
+			],
+			// Ampersand
+			[
+				'User:Penn & Teller/ampersand.js',
+				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=User:Penn_%26_Teller/ampersand.js&action=raw&ctype=text/javascript");'
+			],
+			// T107289: Support redirect pages created in MW 1.41 and earlier, \u0026 instead of literal &
+			[
+				'MediaWiki:MonoBook.js',
+				'/* #REDIRECT */mw.loader.load("//example.org/w/index.php?title=MediaWiki:MonoBook.js\u0026action=raw\u0026ctype=text/javascript");'
 			],
 		];
 		// phpcs:enable

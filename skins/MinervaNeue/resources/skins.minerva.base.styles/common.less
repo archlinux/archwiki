@@ -7,14 +7,8 @@
 
 .client-js .mw-redirectedfrom,
 /* FIXME: Use generic rule for print stylesheets */
-.printfooter,
-.jsonly {
+.printfooter {
 	display: none;
-}
-
-/* TODO: Fix specificity */
-.client-js .jsonly {
-	display: inherit;
 }
 
 // currently used to hide talk button
@@ -33,7 +27,7 @@
 	width: 100%;
 	min-height: 100%;
 	position: relative;
-	background-color: @background-color-light;
+	background-color: var( --background-color-interactive );
 }
 
 .content {
@@ -41,5 +35,5 @@
 	// triggers a browser bug which affects the edit cards in Visual Editor:
 	// https://bugs.chromium.org/p/chromium/issues/detail?id=20574
 	position: relative;
-	z-index: @z-indexBase;
+	z-index: @z-index-base;
 }

@@ -89,7 +89,6 @@
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "شرکتوں میں ترمیم",
 	"discussiontools-topicsubscription-special-intro": "گفتگو میں شامل ہونے سے {{GENDER:|آپ}} تبادلۂ خیال صفحات پر ہونے والی گفتگو سے باخبر رہیں گے۔ جب کوئی ساتھی کسی تبصرے کا جواب دے گا تو اسی کی اطلاع آپ کو موصول ہوگی۔ \n\n\nآپ [[Special:Preferences#mw-prefsection-echo|اپنی ترجیحات]] سے اطلاع ناموں کو وصول کرنے کا طریقہ متعین کر سکتے ہیں۔",
 	"discussiontools-topicsubscription-special-title": "گفتگو میں شرکتیں",
-	"minerva-talk-full-page": "ویکی صفحہ کی شکل میں دیکھیں",
 	"tag-discussiontools-edit": "ترمیم شدہ تبصرہ",
 	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} نیا موضوع]",
 	"tag-discussiontools-reply-description": "صارف نے DiscussionTools استعمال کرنے ہوئے تبصرے کا جواب دیا",

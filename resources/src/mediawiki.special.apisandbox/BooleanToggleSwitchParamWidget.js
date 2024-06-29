@@ -8,7 +8,7 @@ var UtilMixin = require( './UtilMixin.js' );
  * @constructor
  */
 function BooleanToggleSwitchParamWidget() {
-	BooleanToggleSwitchParamWidget.parent.call( this );
+	BooleanToggleSwitchParamWidget.super.call( this );
 }
 
 OO.inheritClass( BooleanToggleSwitchParamWidget, OO.ui.ToggleSwitchWidget );
@@ -22,7 +22,7 @@ BooleanToggleSwitchParamWidget.prototype.getApiValue = function () {
 };
 
 /**
- * @param {Mixed} newValue
+ * @param {any} newValue
  */
 BooleanToggleSwitchParamWidget.prototype.setApiValue = function ( newValue ) {
 	this.setValue( this.apiBool( newValue ) );

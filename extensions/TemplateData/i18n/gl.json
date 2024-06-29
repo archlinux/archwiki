@@ -92,6 +92,7 @@
 	"templatedata-modal-table-param-aliases": "Pseudónimos",
 	"templatedata-modal-table-param-autovalue": "Valor automático",
 	"templatedata-modal-table-param-default": "Por defecto ($1)",
+	"templatedata-modal-table-param-status": "Estado",
 	"templatedata-modal-table-param-deprecated": "Obsoleto",
 	"templatedata-modal-table-param-deprecatedValue": "Guía obsoleta",
 	"templatedata-modal-table-param-description": "Descrición ($1)",

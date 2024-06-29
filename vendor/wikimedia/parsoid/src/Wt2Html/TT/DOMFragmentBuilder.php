@@ -32,7 +32,7 @@ class DOMFragmentBuilder extends TokenHandler {
 	 * @return bool
 	 */
 	private function subpipelineUnnecessary( array $toks, Token $contextTok ): bool {
-		for ( $i = 0,  $n = count( $toks );  $i < $n;  $i++ ) {
+		for ( $i = 0, $n = count( $toks );  $i < $n;  $i++ ) {
 			$t = $toks[$i];
 
 			// For wikilinks and extlinks, templates should be properly nested
@@ -57,15 +57,11 @@ class DOMFragmentBuilder extends TokenHandler {
 		return true;
 	}
 
-	/**
-	 * @param Token $scopeToken
-	 * @return TokenHandlerResult
-	 */
 	private function buildDOMFragment( Token $scopeToken ): TokenHandlerResult {
 		$contentKV = $scopeToken->getAttributeKV( 'content' );
 		$content = $contentKV->v;
 		if ( is_string( $content ) ||
-			$this->subpipelineUnnecessary( $content, $scopeToken->getAttribute( 'contextTok' ) )
+			$this->subpipelineUnnecessary( $content, $scopeToken->getAttributeV( 'contextTok' ) )
 		) {
 			// New pipeline not needed. Pass them through
 			return new TokenHandlerResult( is_string( $content ) ? [ $content ] : $content );
@@ -83,7 +79,7 @@ class DOMFragmentBuilder extends TokenHandler {
 			);
 
 			$pipelineOpts = [
-				'inlineContext' => $scopeToken->getAttribute( 'inlineContext' ) === "1",
+				'inlineContext' => $scopeToken->getAttributeV( 'inlineContext' ) === "1",
 				'expandTemplates' => $this->options['expandTemplates'],
 				'inTemplate' => $this->options['inTemplate']
 			];

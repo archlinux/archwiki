@@ -6,7 +6,6 @@
 	},
 	"math-desc": "Wiskundige formules tussen <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>-etiketten zetten",
 	"math-visualeditor-mwchemdialog-title": "Chemiske formule",
-	"math-visualeditor-mwcheminspector-title": "Chemiske formule",
 	"math-visualeditor-mwlatexinspector-display-default": "Standard",
 	"math-visualeditor-mwmathdialog-title": "Wiskündige formule",
 	"math_failure": "Wiskundige formule niet begriepelik",
@@ -16,9 +15,9 @@
 	"math_syntax_error": "Syntaktiese fout in formule",
 	"math_unknown_error": "Onbekende fout in formule",
 	"math_unknown_function": "onbekende funksie \"$1\"",
-	"mw_math_latexml": "LaTeXML (experimenteel; gebruukt MathML)",
-	"mw_math_mathml": "MathML",
-	"mw_math_source": "Laot TeX-bronkode staon (veur tekstwebkiekers)",
+	"mw-math-latexml": "LaTeXML (experimenteel; gebruukt MathML)",
+	"mw-math-mathml": "MathML",
+	"mw-math-source": "Laot TeX-bronkode staon (veur tekstwebkiekers)",
 	"prefs-math": "Wiskündige formules",
 	"mathstatus": "Status formuleweadergåve"
 }

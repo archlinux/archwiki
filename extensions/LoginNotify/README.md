@@ -7,25 +7,14 @@ The LoginNotify extension notifies you when someone logs into your account. It c
 * Navigate to Special:Version on your wiki to verify that the extension is successfully installed.
 
 #### Configuration parameters
-	"@doc": "The number of failed login attempts to permit from a known IP before a notification is triggered.",
-	"LoginNotifyAttemptsKnownIP": 10
-	"@doc": "The time-to-live of the count of failed login attempts from a known IP (from the time of the first failed attempt).",
-	"LoginNotifyExpiryKnownIP": 604800,
-	"@doc": "The number of failed login attempts to permit from a new IP before a notification is triggered.",
-	"LoginNotifyAttemptsNewIP": 3,
-	"@doc": "The time-to-live of the count of failed login attempts from a new IP (from the time of the first failed attempt).",
-	"LoginNotifyExpiryNewIP": 1209600,
-	"@doc": "Whether to trigger a notification after failed logins from known IPs.",
-	"LoginNotifyCheckKnownIPs": true,
-	"@doc": "Whether to trigger a notification after successful logins from unknown IPs.",
-	"LoginNotifyEnableOnSuccess": true,
-	"@doc": "Override this to use a different secret than $wgSecretKey",
-	"LoginNotifySecretKey": null,
-	"@doc": "Expiry in seconds. Default is 180 days",
-	"LoginNotifyCookieExpire": 15552000,
-	"@doc": "Override to allow sharing login cookies between sites on different subdomains",
-	"LoginNotifyCookieDomain": null,
-	"@doc": "Maximum number of users (records) to track as having successfully logged in on a particular device.",
-	"LoginNotifyMaxCookieRecords": 6,
-	"@doc": "Set to false to disable caching IPs in memcache. Set to 0 to cache forever. Default 60 days.",
-	"LoginNotifyCacheLoginIPExpiry": 5184000
+
+See extension.json.
+
+To place the loginnotify_seen_net table in a shared database, use
+
+```php
+$wgVirtualDomainsMapping['virtual-LoginNotify'] = [
+	'db' => '<shared database name>'
+];
+$wgLoginNotifyUseCentralId = true;
+```

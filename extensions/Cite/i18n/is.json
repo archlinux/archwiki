@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Snævar",
-			"Sveinn í Felli",
-			"Stefán Örvar Sigmundsson"
+			"Stefán Örvar Sigmundsson",
+			"Sveinn í Felli"
 		]
 	},
 	"cite-desc": "Bætir við <code>&lt;ref&gt;</code> og <code>&lt;references&gt;</code> tögum við heimildir",
@@ -22,7 +22,6 @@
 	"cite_error_included_references": "Lokunar tag vantar fyrir <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> tag er til fyrir hóp tilvísana undir nafninu \"$1\". Ekkert sambærilegt <code>&lt;references group=\"$1\"/&gt;</code> tag fannst.",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code>-merki í <code>&lt;references&gt;</code> hefur ósamkvæma hópeigindið „$1“.",
-	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> tag skilgreint í <code>&lt;references&gt;</code> hefur hópa eigindið \"$1\" sem birtist ekki í textanum á undan.",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> tag með nafnið \"$1\" og er skilgreint í <code>&lt;references&gt;</code> er ekki notað í textanum á undan.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>-merki skilgreint í <code>&lt;references&gt;</code> hefur ekkert name-eigindi.",
 	"cite_error_empty_references_define": "Bæta þarf innihaldi við tilvísun með nafnið \"$1\".",

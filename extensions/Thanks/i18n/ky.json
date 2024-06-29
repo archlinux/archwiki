@@ -7,6 +7,9 @@
 	},
 	"thanks-desc": "Түзөтүүлөр, пикирлер, ж.б. үчүн колдонуучуларга ыраазычылык билдирүү үчүн шилтемелерди кошот.",
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ыраазычылык билдирүү}}}}",
+	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|ыраазычылык билдирдиңиз}}}}",
+	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Ыраазычылык билдирүү}}}}",
+	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Ыраазычылык билдирдиңиз}}}}",
 	"thanks-button-action-cancel": "Жокко чыгаруу",
 	"thanks-error-undefined": "Ыраазычылык билдирилген жок (катанын коду: $1). Кайра аракеттенип көрүңүз.",
 	"thanks-error-invalid-log-id": "Журналдын жазуусу табылган жок",
@@ -19,12 +22,11 @@
 	"thanks-confirmation2": "{{GENDER:$1|Ыраазычылыгыңыз}} жалпыга көрүнөт.",
 	"echo-pref-subscription-edit-thank": "Түзөткөнүм үчүн ыраазычылык",
 	"echo-category-title-edit-thank": "Ыраазычылык",
-	"notification-thanks-diff-link": "сиздин оңдооңуз",
 	"log-name-thanks": "Ыраазычылык журналы",
+	"logentry-thanks-thank": "$1 {{GENDER:$4|$3}} колдонуучусуна {{GENDER:$2|ыраазычылык билдирди}}",
 	"logeventslist-thanks-log": "Ыраазычылык журналы",
 	"thanks-confirmation-special-rev": "Бул түзөтүү үчүн баары көрө ала турган ыраазычылык билдиргиңиз келеби ?",
 	"notification-link-text-view-post": "Пикирди окуу",
 	"notification-link-text-view-logentry": "Журналдын жазуусун көрүү",
-	"notification-flow-thanks-post-link": "пикириңиз",
 	"ipb-action-thanks": "Ыраазычылык билдирүү"
 }

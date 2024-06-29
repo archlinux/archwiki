@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\PoolCounter;
+
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Status\Status;
 
@@ -99,8 +101,10 @@ abstract class PoolCounterWork {
 	public function logError( $status ) {
 		$key = $this->poolCounter->getKey();
 
-		wfDebugLog( 'poolcounter', "Pool key '$key' ({$this->type}): "
-			. $status->getMessage()->inLanguage( 'en' )->useDatabase( false )->text() );
+		$this->poolCounter->getLogger()->info(
+			"Pool key '$key' ({$this->type}): " .
+			$status->getMessage()->inLanguage( 'en' )->useDatabase( false )->text()
+		);
 	}
 
 	/**
@@ -168,7 +172,7 @@ abstract class PoolCounterWork {
 				} finally {
 					$this->poolCounter->release();
 				}
-				// no fall-through, because try returns or throws
+			// no fall-through, because try returns or throws
 			case PoolCounter::DONE:
 				$result = $this->getCachedWork();
 				if ( $result === false ) {
@@ -186,14 +190,15 @@ abstract class PoolCounterWork {
 				if ( $result !== false ) {
 					return $result;
 				}
-				/* no break */
+			/* no break */
 
 			/* These two cases should never be hit... */
 			case PoolCounter::ERROR:
 			default:
 				$errors = [
 					PoolCounter::QUEUE_FULL => 'pool-queuefull',
-					PoolCounter::TIMEOUT => 'pool-timeout' ];
+					PoolCounter::TIMEOUT => 'pool-timeout',
+				];
 
 				$status = Status::newFatal( $errors[$status->value] ?? 'pool-errorunknown' );
 				$this->logError( $status );
@@ -201,3 +206,6 @@ abstract class PoolCounterWork {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.41 */
+class_alias( PoolCounterWork::class, 'PoolCounterWork' );

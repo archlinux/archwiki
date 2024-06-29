@@ -8,6 +8,8 @@ use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\ParsoidParser;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Revision\SlotRecord;
@@ -17,10 +19,8 @@ use MediaWiki\Title\TitleFactory;
 use MediaWikiUnitTestCase;
 use MockTitleTrait;
 use MWException;
-use Parser;
 use ParserFactory;
 use ParserOptions;
-use ParserOutput;
 use ReflectionClass;
 use Wikimedia\UUID\GlobalIdGenerator;
 use WikitextContent;
@@ -82,7 +82,7 @@ class WikitextContentHandlerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers WikitextContentHandler::makeEmptyContent
+	 * @covers \WikitextContentHandler::makeEmptyContent
 	 */
 	public function testMakeEmptyContent() {
 		$handler = $this->newWikitextContentHandler();

@@ -9,10 +9,10 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use Config;
 use DateTimeZone;
 use ILanguageConverter;
 use Language;
+use MediaWiki\Config\Config;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPageFactory;
@@ -38,8 +38,6 @@ class LanguageData {
 
 	/**
 	 * Compute data we need to parse discussion threads on pages.
-	 *
-	 * @return array
 	 */
 	public function getLocalData(): array {
 		$config = $this->config;
@@ -149,11 +147,6 @@ class LanguageData {
 	/**
 	 * Convert a date format string to a different language variant, leaving all special characters
 	 * unchanged and applying language conversion to the plain text fragments.
-	 *
-	 * @param string $format
-	 * @param ILanguageConverter $langConv
-	 * @param string $variant
-	 * @return string
 	 */
 	private function convertDateFormat(
 		string $format,

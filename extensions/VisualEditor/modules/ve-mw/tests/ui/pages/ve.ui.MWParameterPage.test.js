@@ -4,7 +4,7 @@ QUnit.module( 've.ui.MWParameterPage', ve.test.utils.newMwEnvironment );
 	[ undefined, '', ve.ui.MWLazyMultilineTextInputWidget ],
 	[ 'content', '', ve.ui.MWLazyMultilineTextInputWidget ],
 
-	[ 'line', '', OO.ui.TextInputWidget ],
+	[ 'line', '', ve.ui.MWLazyMultilineTextInputWidget ],
 	[ 'line', '\n', ve.ui.MWLazyMultilineTextInputWidget ],
 
 	[ 'number', '', ve.ui.MWLazyMultilineTextInputWidget ],
@@ -39,7 +39,7 @@ QUnit.module( 've.ui.MWParameterPage', ve.test.utils.newMwEnvironment );
 	[ 'wiki-template-name', 'GoodTitle', mw.widgets.TitleInputWidget ],
 	[ 'wiki-template-name', '[[BadTitle]]', ve.ui.MWLazyMultilineTextInputWidget ]
 ].forEach( ( [ type, value, expected ] ) =>
-	QUnit.test( `createValueInput: ${type}, ${value}`, ( assert ) => {
+	QUnit.test( `createValueInput: ${ type }, ${ value }`, ( assert ) => {
 		const transclusion = new ve.dm.MWTransclusionModel(),
 			template = new ve.dm.MWTemplateModel( transclusion, {} ),
 			parameter = new ve.dm.MWParameterModel( template, 'p', value );
@@ -69,7 +69,7 @@ QUnit.module( 've.ui.MWParameterPage', ve.test.utils.newMwEnvironment );
 	[ 'wiki-file-name', mw.widgets.TitleInputWidget ],
 	[ 'wiki-template-name', mw.widgets.TitleInputWidget ]
 ].forEach( ( [ type, expected ] ) =>
-	QUnit.test( `suggestedvalues: ${type}`, ( assert ) => {
+	QUnit.test( `suggestedvalues: ${ type }`, ( assert ) => {
 		const transclusion = new ve.dm.MWTransclusionModel(),
 			template = new ve.dm.MWTemplateModel( transclusion, {} ),
 			parameter = new ve.dm.MWParameterModel( template, 'p', '' );

@@ -7,7 +7,7 @@
 	display: flex;
 	min-width: auto;
 	// Support Firefox: Needs `min-height` to vertically align icons in menu. See T233517.
-	min-height: @siteHeaderHeight;
+	min-height: @height-site-header;
 	height: 100%;
 	width: auto;
 	// Center vertically.
@@ -23,6 +23,7 @@
 
 	.minerva-notifications {
 		ul {
+			list-style: none;
 			display: flex;
 			align-items: center;
 		}

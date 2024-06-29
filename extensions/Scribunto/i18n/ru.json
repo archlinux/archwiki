@@ -5,6 +5,7 @@
 			"Force majeure",
 			"HarpyWar",
 			"Ignatus",
+			"Iniquity",
 			"Jack who built the house",
 			"Kaganer",
 			"Kalan",
@@ -16,8 +17,7 @@
 			"Okras",
 			"Ole Yves",
 			"Patrick Star",
-			"Stjn",
-			"Iniquity"
+			"Stjn"
 		]
 	},
 	"scribunto-desc": "Средство для включения скриптовых языков на страницах MediaWiki",

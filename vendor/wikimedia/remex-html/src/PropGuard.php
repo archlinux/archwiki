@@ -2,6 +2,8 @@
 
 namespace Wikimedia\RemexHtml;
 
+use InvalidArgumentException;
+
 /**
  * This is a statically configurable mechanism for preventing the setting of
  * undeclared properties on objects. The point of it is to detect programmer
@@ -12,7 +14,7 @@ trait PropGuard {
 
 	public function __set( $name, $value ) {
 		if ( self::$armed ) {
-			throw new \Exception( "Property \"$name\" on object of class " . get_class( $this ) .
+			throw new InvalidArgumentException( "Property \"$name\" on object of class " . get_class( $this ) .
 				" is undeclared" );
 		} else {
 			$this->$name = $value;

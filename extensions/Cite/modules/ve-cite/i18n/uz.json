@@ -42,7 +42,5 @@
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Manbalar roʻyxati",
 	"cite-ve-reference-input-placeholder": "Siz qanaqa dalil keltirmoqchisiz?",
 	"cite-ve-toolbar-group-label": "Manba qoʻshish",
-	"cite-ve-othergroup-item": "$1 manbasi",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Manbalar",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Manba guruhi nomi: „$1“"
+	"cite-ve-othergroup-item": "$1 manbasi"
 }

@@ -19,7 +19,6 @@
 	"cite_error_included_ref": "Awan ti pangrikep ti <code>&lt;/ref&gt;</code> para iti etiketa ti <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Adda dagiti etiketa ti <code>&lt;ref&gt;</code> para iti grupo a nanaganan ti \"$1\", ngem awan ti nabirukan a kapada nga etiketa ti <code>&lt;references group=\"$1\"/&gt;</code>, wenno awan ti pangrikep ti <code>&lt;/ref&gt;</code>",
 	"cite_error_references_group_mismatch": "Ti etiketa ti <code>&lt;ref&gt;</code> iti <code>&lt;references&gt;</code> ket addaan iti agsinnungat a gupit ti grupo ti \"$1\".",
-	"cite_error_references_missing_group": "Ti etiketa ti <code>&lt;ref&gt;</code> a naipalawag iti <code>&lt;references&gt;</code> ket addaan iti gupit ti grupo ti \"$1\" a saan nga agparang iti dati a teksto.",
 	"cite_error_references_missing_key": "Ti etiketa ti <code>&lt;ref&gt;</code> nga addaan iti nagan ti \"$1\" a naipalawag iti <code>&lt;references&gt;</code> ket saan a nausar iti dati a teksto.",
 	"cite_error_references_no_key": "Ti etiketa ti <code>&lt;ref&gt;</code> a naipalawag iti <code>&lt;references&gt;</code> ket awan ti nainagan a gupit.",
 	"cite_error_empty_references_define": "Ti etiketa ti <code>&lt;ref&gt;</code> a naipalawag iti <code>&lt;references&gt;</code> nga addaan iti nagan a \"$1\" ket awan linaon.",

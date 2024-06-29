@@ -20,7 +20,7 @@ use WikiExporter;
  *
  * @group Database
  * @group Dump
- * @covers BackupDumper
+ * @covers \BackupDumper
  */
 class BackupDumperLoggerTest extends DumpTestCase {
 
@@ -59,9 +59,6 @@ class BackupDumperLoggerTest extends DumpTestCase {
 	}
 
 	public function addDBData() {
-		$this->tablesUsed[] = 'logging';
-		$this->tablesUsed[] = 'user';
-
 		try {
 			$user1 = User::newFromName( 'BackupDumperLogUserA' );
 			$this->userId1 = $user1->getId();

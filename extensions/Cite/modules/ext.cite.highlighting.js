@@ -1,21 +1,19 @@
 'use strict';
 
 /**
+ * @file Dynamic highlighting while reading an article
  * @author Thiemo Kreuz
  */
 ( function () {
 	/**
-	 * Checks if the ID uses a composite format that does not only consist of a sequential number,
-	 * as specified in "cite_reference_link_key_with_num".
+	 * Checks if the ID uses a composite format that does not only consist of a sequential number.
 	 *
 	 * @param {string} id
 	 * @return {boolean}
 	 */
 	function isNamedReference( id ) {
-		const prefix = mw.msg( 'cite_reference_link_prefix' );
-
 		// Note: This assumes IDs start with the prefix; this is guaranteed by the parser function
-		return /\D/.test( id.slice( prefix.length ) );
+		return /^cite_ref-\D/.test( id );
 	}
 
 	/**

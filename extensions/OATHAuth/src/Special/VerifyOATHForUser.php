@@ -2,13 +2,12 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
-use ConfigException;
-use FormSpecialPage;
 use HTMLForm;
 use ManualLogEntry;
-use MediaWiki\Extension\OATHAuth\IModule;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\User\UserFactory;
 use MWException;
 
@@ -16,12 +15,8 @@ class VerifyOATHForUser extends FormSpecialPage {
 
 	private const OATHAUTH_IS_ENABLED = 'enabled';
 	private const OATHAUTH_NOT_ENABLED = 'disabled';
-
-	/** @var OATHUserRepository */
-	private $userRepo;
-
-	/** @var UserFactory */
-	private $userFactory;
+	private OATHUserRepository $userRepo;
+	private UserFactory $userFactory;
 
 	/** @var string */
 	private $enabledStatus;
@@ -34,6 +29,8 @@ class VerifyOATHForUser extends FormSpecialPage {
 	 * @param UserFactory $userFactory
 	 */
 	public function __construct( $userRepo, $userFactory ) {
+		// messages used: verifyoathforuser (display "name" on Special:SpecialPages),
+		// right-oathauth-verify-user, action-oathauth-verify-user
 		parent::__construct( 'VerifyOATHForUser', 'oathauth-verify-user' );
 		$this->userRepo = $userRepo;
 		$this->userFactory = $userFactory;
@@ -62,7 +59,7 @@ class VerifyOATHForUser extends FormSpecialPage {
 	 */
 	public function alterForm( HTMLForm $form ) {
 		$form->setMessagePrefix( 'oathauth' );
-		$form->getOutput()->setPageTitle( $this->msg( 'oathauth-verify-for-user' ) );
+		$form->getOutput()->setPageTitleMsg( $this->msg( 'oathauth-verify-for-user' ) );
 	}
 
 	/**
@@ -123,16 +120,11 @@ class VerifyOATHForUser extends FormSpecialPage {
 		}
 		$oathUser = $this->userRepo->findByUser( $user );
 
-		if ( !( $oathUser->getModule() instanceof IModule ) ||
-			!$oathUser->getModule()->isEnabled( $oathUser ) ) {
-			$result = self::OATHAUTH_NOT_ENABLED;
-		} else {
-			$result = self::OATHAUTH_IS_ENABLED;
-		}
+		$this->enabledStatus = $oathUser->isTwoFactorAuthEnabled()
+			? self::OATHAUTH_IS_ENABLED
+			: self::OATHAUTH_NOT_ENABLED;
 
-		$this->enabledStatus = $result;
-
-		// message used: logentry-oath-verify
+		// messages used: logentry-oath-verify, log-action-oath-verify
 		$logEntry = new ManualLogEntry( 'oath', 'verify' );
 		$logEntry->setPerformer( $this->getUser() );
 		$logEntry->setTarget( $user->getUserPage() );

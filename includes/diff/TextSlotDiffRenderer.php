@@ -21,12 +21,15 @@
  * @ingroup DifferenceEngine
  */
 
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
 use MediaWiki\Diff\TextDiffer\TextDiffer;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use OOUI\ToggleSwitchWidget;
@@ -255,12 +258,14 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 					new ToggleSwitchWidget( [
 						'id' => 'mw-diffPage-inline-toggle-switch',
 						'href' => $newTitle->getLocalURL( $values ),
-						'value' => $isInlineDiffType
+						'value' => $isInlineDiffType,
+						'title' => $context->msg( 'diff-inline-switch-desc' )->plain()
 					] ),
 					[
 						'id' => 'mw-diffPage-inline-toggle-switch-layout',
 						'label' => $context->msg( 'diff-inline-format-label' )->plain(),
-						'infusable' => true
+						'infusable' => true,
+						'title' => $context->msg( 'diff-inline-switch-desc' )->plain()
 					]
 				),
 			);

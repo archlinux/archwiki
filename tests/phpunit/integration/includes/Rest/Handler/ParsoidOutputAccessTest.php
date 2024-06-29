@@ -1,22 +1,19 @@
 <?php
 
-use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Json\JsonCodec;
+use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\Page\ParserOutputAccess;
-use MediaWiki\Parser\ParserCacheFactory;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Parser\Parsoid\ParsoidParser;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
-use MediaWiki\Rest\HttpException;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
+use MediaWiki\Title\Title;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Log\NullLogger;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\PageBundle;
@@ -76,27 +73,6 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 	): void {
 		$services = $this->getServiceContainer();
 
-		$parsoidCacheConfig += [
-			'CacheThresholdTime' => 0,
-		];
-
-		$parserCacheFactoryOptions = new ServiceOptions( ParserCacheFactory::CONSTRUCTOR_OPTIONS, [
-			'CacheEpoch' => '20200202112233',
-			'OldRevisionParserCacheExpireTime' => 60 * 60,
-		] );
-
-		$parserCacheFactory = new ParserCacheFactory(
-			$parserCacheBag ?: new HashBagOStuff(),
-			new WANObjectCache( [ 'cache' => new HashBagOStuff(), ] ),
-			$this->createHookContainer(),
-			new JsonCodec(),
-			new NullStatsdDataFactory(),
-			new NullLogger(),
-			$parserCacheFactoryOptions,
-			$services->getTitleFactory(),
-			$services->getWikiPageFactory()
-		);
-
 		$mockParsoid = $this->newMockParsoid( $expectedParses );
 		$parsoidParser = new ParsoidParser(
 			$mockParsoid,
@@ -122,11 +98,6 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 	private function getParsoidOutputAccessWithCache(): ParsoidOutputAccess {
 		$services = $this->getServiceContainer();
 		return new ParsoidOutputAccess(
-			new ServiceOptions(
-				ParsoidOutputAccess::CONSTRUCTOR_OPTIONS,
-				$services->getMainConfig(),
-				[ 'ParsoidWikiID' => 'MyWiki' ]
-			),
 			$services->getParsoidParserFactory(),
 			$services->getParserOutputAccess(),
 			$services->getPageStore(),
@@ -183,32 +154,9 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Parser\Parsoid\ParsoidOutputAccess::getParserOutput
-	 */
-	public function testGetParserOutputThrowsIfNotWikitext() {
-		$this->markTestSkipped( 'Broken by fix for T324711. Restore once we have T311728.' );
-
-		$this->resetServicesWithMockedParsoid( 0 );
-		$access = $this->getParsoidOutputAccessWithCache();
-		$parserOptions = $this->getParserOptions();
-
-		$page = $this->getNonexistingTestPage( __METHOD__ );
-		$updater = $page->newPageUpdater( $this->getTestUser()->getUserIdentity() );
-		$updater->setContent( SlotRecord::MAIN, new JavaScriptContent( '{}' ) );
-		$updater->saveRevision( CommentStoreComment::newUnsavedComment( 'testing' ) );
-
-		// NOTE: The fact that we throw an HttpException here is a code smell.
-		//       It should be a different exception which gets converted to an HttpException later.
-		$this->expectException( HttpException::class );
-		$this->expectExceptionCode( 400 );
-		$access->getParserOutput( $page, $parserOptions );
-	}
-
-	/**
 	 * Tests that getParserOutput() will return output.
 	 *
 	 * @covers \MediaWiki\Parser\Parsoid\ParsoidOutputAccess::getParserOutput
-	 * @covers \MediaWiki\Parser\Parsoid\ParsoidOutputAccess::getParsoidRenderID
 	 */
 	public function testGetParserOutput() {
 		$this->resetServicesWithMockedParsoid( 1 );
@@ -223,8 +171,8 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 
 		$output = $status->getValue();
 
-		// check that getParsoidRenderID() doesn't throw
-		$this->assertNotNull( $access->getParsoidRenderID( $output ) );
+		// check that ParsoidRenderID::newFromParserOutput()  doesn't throw
+		$this->assertNotNull( ParsoidRenderID::newFromParserOutput( $output ) );
 
 		// Ensure that we can still create a valid instance of PageBundle from the ParserOutput
 		$pageBundle = PageBundleParserOutputConverter::pageBundleFromParserOutput( $output );
@@ -341,7 +289,7 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * @covers \MediaWiki\Parser\Parsoid\ParsoidOutputAccess::getParserOutput
 	 */
-	public function testDummyContentForBadModel() {
+	public function testNonParsoidOutput() {
 		// Expect no cache writes!
 		$cacheBag = $this->getMockBuilder( HashBagOStuff::class )
 			->onlyMethods( [ 'set', 'setMulti' ] )
@@ -358,55 +306,13 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$this->editPage( $page, new JavaScriptContent( '"not wikitext"' ) );
 
 		$status = $access->getParserOutput( $page, $parserOptions );
-		$this->assertContainsHtml( 'Dummy output', $status );
+		$this->assertContainsHtml( 'not wikitext', $status );
 
 		/** @var ParserOutput $parserOutput */
 		$parserOutput = $status->getValue();
-		$this->assertSame( '0/dummy-output', $parserOutput->getExtensionData( 'parsoid-render-id' ) );
-
-		$expTime = $parserOutput->getCacheExpiry();
-		$this->assertSame( 0, $expTime );
-
-		// Get the ParserOutput again, this should trigger a new parse
-		// since we suppressed caching for non-wikitext content.
-		$status = $access->getParserOutput( $page, $parserOptions );
-		$this->assertContainsHtml( 'Dummy output', $status );
-	}
-
-	/**
-	 * Unsupported functionality at this point
-	 */
-	public static function provideCacheThresholdData() {
-		return [
-			yield "fast parse" => [ 1, 2 ], // high threshold, no caching
-			yield "slow parse" => [ 0, 1 ], // low threshold, caching
-		];
-	}
-
-	/**
-	 * @dataProvider provideCacheThresholdData()
-	 */
-	public function testHtmlWithCacheThreshold(
-		$cacheThresholdTime,
-		$expectedCalls
-	) {
-		$this->markTestSkipped( 'Supported removed. Will be fixed by T346398.' );
-
-		$page = $this->getExistingTestPage( __METHOD__ );
-		$parsoidCacheConfig = [
-			'CacheThresholdTime' => $cacheThresholdTime
-		];
-		$parserOptions = $this->getParserOptions();
-
-		$this->resetServicesWithMockedParsoid( $expectedCalls, $parsoidCacheConfig );
-		$access = $this->getParsoidOutputAccessWithCache();
-		$status = $access->getParserOutput( $page, $parserOptions );
-		$this->assertContainsHtml( self::MOCKED_HTML, $status );
-		$this->checkMetadata( $status );
-
-		$status = $access->getParserOutput( $page, $parserOptions );
-		$this->assertContainsHtml( self::MOCKED_HTML, $status );
-		$this->checkMetadata( $status );
+		$this->assertNotNull(
+			ParsoidRenderID::newFromParserOutput( $parserOutput )->getKey()
+		);
 	}
 
 	public function testOldRevisionIsCached() {
@@ -464,9 +370,9 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 		$this->assertContainsHtml( self::MOCKED_HTML . ' of ' . self::WIKITEXT, $status1 );
 		$this->checkMetadata( $status1 );
 
-		// check that getParsoidRenderID() doesn't throw
+		// check that ParsoidRenderID::newFromParserOutput() doesn't throw
 		$output1 = $status1->getValue();
-		$this->assertNotNull( $access->getParsoidRenderID( $output1 ) );
+		$this->assertNotNull( ParsoidRenderID::newFromParserOutput( $output1 ) );
 	}
 
 	public static function provideSupportsContentModels() {
@@ -510,7 +416,7 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 		/** @var ParserOutput $parserOutput */
 		$parserOutput = $status->getValue();
 		$this->assertStringContainsString( __METHOD__, $parserOutput->getRawText() );
-		$this->assertNotEmpty( $parserOutput->getExtensionData( 'parsoid-render-id' ) );
+		$this->assertNotEmpty( $parserOutput->getRenderId() );
 		$this->assertNotEmpty( $parserOutput->getCacheRevisionId() );
 		$this->assertNotEmpty( $parserOutput->getCacheTime() );
 	}
@@ -543,7 +449,7 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 		/** @var ParserOutput $parserOutput */
 		$parserOutput = $status->getValue();
 		$this->assertStringContainsString( __METHOD__, $parserOutput->getRawText() );
-		$this->assertNotEmpty( $parserOutput->getExtensionData( 'parsoid-render-id' ) );
+		$this->assertNotEmpty( $parserOutput->getRenderId() );
 		$this->assertNotEmpty( $parserOutput->getCacheRevisionId() );
 		$this->assertNotEmpty( $parserOutput->getCacheTime() );
 	}
@@ -566,7 +472,7 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 		/** @var ParserOutput $parserOutput */
 		$parserOutput = $status->getValue();
 		$this->assertStringContainsString( __METHOD__, $parserOutput->getRawText() );
-		$this->assertNotEmpty( $parserOutput->getExtensionData( 'parsoid-render-id' ) );
+		$this->assertNotEmpty( $parserOutput->getRenderId() );
 		$this->assertNotEmpty( $parserOutput->getCacheRevisionId() );
 		$this->assertNotEmpty( $parserOutput->getCacheTime() );
 	}
@@ -597,7 +503,7 @@ class ParsoidOutputAccessTest extends MediaWikiIntegrationTestCase {
 		/** @var ParserOutput $parserOutput */
 		$parserOutput = $status->getValue();
 		$this->assertStringContainsString( __METHOD__, $parserOutput->getRawText() );
-		$this->assertNotEmpty( $parserOutput->getExtensionData( 'parsoid-render-id' ) );
+		$this->assertNotEmpty( $parserOutput->getRenderId() );
 		// The revision ID is set to 0, so that's what is in the cache.
 		$this->assertSame( 0, $parserOutput->getCacheRevisionId() );
 		$this->assertNotEmpty( $parserOutput->getCacheTime() );

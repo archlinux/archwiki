@@ -1,7 +1,7 @@
 /*!
  * VisualEditor MediaWiki Initialization DesktopArticleTarget class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -96,6 +96,7 @@ ve.init.mw.DesktopArticleTarget.static.toolbarGroups.push(
 		type: 'mwHelpList',
 		icon: 'help',
 		indicator: null,
+		title: ve.msg( 'visualeditor-help-tool' ),
 		include: [ { group: 'help' } ],
 		promote: [ 'mwUserGuide' ]
 	},
@@ -210,7 +211,7 @@ ve.init.mw.DesktopArticleTarget.prototype.addSurface = function ( dmDoc, config 
 		// Other skins pass 'undefined' to use the default padding of +10px.
 		overlayPadding: mw.config.get( 'skin' ) === 'vector-2022' ? -10 : undefined
 	}, config );
-	return ve.init.mw.DesktopArticleTarget.parent.prototype.addSurface.call( this, dmDoc, config );
+	return ve.init.mw.DesktopArticleTarget.super.prototype.addSurface.call( this, dmDoc, config );
 };
 
 /**
@@ -351,7 +352,7 @@ ve.init.mw.DesktopArticleTarget.prototype.loadSuccess = function () {
 		$( '#ca-edit' ).removeClass( 'visualeditor-showtabdialog' );
 		// Set up a temporary window manager
 		var windowManager = new OO.ui.WindowManager();
-		$( document.body ).append( windowManager.$element );
+		$( OO.ui.getTeleportTarget() ).append( windowManager.$element );
 		this.editingTabDialog = new mw.libs.ve.EditingTabDialog();
 		windowManager.addWindows( [ this.editingTabDialog ] );
 		windowManager.openWindow( this.editingTabDialog )

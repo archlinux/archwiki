@@ -27,8 +27,8 @@ namespace MediaWiki\Extension\Scribunto;
 use Article;
 use Content;
 use EmptyBagOStuff;
-use Html;
 use IContextSource;
+use MediaWiki\Config\Config;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Hook\EditFilterMergedContentHook;
 use MediaWiki\Hook\EditPage__showReadOnlyForm_initialHook;
@@ -40,18 +40,19 @@ use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\ParserLimitReportFormatHook;
 use MediaWiki\Hook\ParserLimitReportPrepareHook;
 use MediaWiki\Hook\SoftwareInfoHook;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\ArticleViewHeaderHook;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 use ObjectCache;
-use OutputPage;
 use Parser;
-use ParserOutput;
 use PPFrame;
-use Status;
-use User;
 use UtfNormal\Validator;
 use Wikimedia\PSquare;
 use Xml;
@@ -73,6 +74,14 @@ class Hooks implements
 	ArticleViewHeaderHook,
 	ContentHandlerDefaultModelForHook
 {
+	private Config $config;
+
+	public function __construct(
+		Config $config
+	) {
+		$this->config = $config;
+	}
+
 	/**
 	 * Define content handler constant upon extension registration
 	 */
@@ -100,7 +109,7 @@ class Hooks implements
 	 * @return bool
 	 */
 	public function onParserFirstCallInit( $parser ) {
-		$parser->setFunctionHook( 'invoke', [ self::class, 'invokeHook' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'invoke', [ $this, 'invokeHook' ], Parser::SFH_OBJECT_ARGS );
 		return true;
 	}
 
@@ -134,9 +143,7 @@ class Hooks implements
 	 * @param array $args
 	 * @return string
 	 */
-	public static function invokeHook( Parser $parser, PPFrame $frame, array $args ) {
-		global $wgScribuntoGatherFunctionStats;
-
+	public function invokeHook( Parser $parser, PPFrame $frame, array $args ) {
 		try {
 			if ( count( $args ) < 2 ) {
 				throw new ScribuntoException( 'scribunto-common-nofunction' );
@@ -165,7 +172,7 @@ class Hooks implements
 			// have an index, we don't need the index offset.
 			$childFrame = $frame->newChild( $args, $title, $bits['index'] === '' ? 0 : 1 );
 
-			if ( $wgScribuntoGatherFunctionStats ) {
+			if ( $this->config->get( 'ScribuntoGatherFunctionStats' ) ) {
 				$u0 = $engine->getResourceUsage( $engine::CPU_SECONDS );
 				$result = $module->invoke( $functionName, $childFrame );
 				$u1 = $engine->getResourceUsage( $engine::CPU_SECONDS );
@@ -175,7 +182,7 @@ class Hooks implements
 					// Since the overhead of stats is worst when #invoke
 					// calls are very short, don't process measurements <= 20ms.
 					if ( $timingMs > 20 ) {
-						self::reportTiming( $moduleName, $functionName, $timingMs );
+						$this->reportTiming( $moduleName, $functionName, $timingMs );
 					}
 				}
 			} else {
@@ -197,18 +204,26 @@ class Hooks implements
 					wfMessage( 'scribunto-common-no-details' )->inContentLanguage()->text()
 				);
 			}
+
+			// Index this error by a uniq ID so that we are independent of
+			// page parse order. (T300979)
+			// (The only way this will conflict is if two exceptions have
+			// exactly the same backtrace, in which case we really only need
+			// one copy of the backtrace!)
+			$uuid = substr( sha1( $html ), -8 );
 			$parserOutput = $parser->getOutput();
-			$errors = $parserOutput->getExtensionData( 'ScribuntoErrors' );
-			if ( $errors === null ) {
-				// On first hook use, set up error array and output
-				$errors = [];
-				$parser->addTrackingCategory( 'scribunto-common-error-category' );
-				$parserOutput->addModules( [ 'ext.scribunto.errors' ] );
-			}
-			$errors[] = $html;
-			$parserOutput->setExtensionData( 'ScribuntoErrors', $errors );
-			$parserOutput->addJsConfigVars( 'ScribuntoErrors', $errors );
-			$id = 'mw-scribunto-error-' . ( count( $errors ) - 1 );
+			$parserOutput->appendExtensionData( 'ScribuntoErrors', $uuid );
+			$parserOutput->setExtensionData( "ScribuntoErrors-$uuid", $html );
+
+			$parserOutput->appendJsConfigVar( 'ScribuntoErrors', $uuid );
+			$parserOutput->setJsConfigVar( "ScribuntoErrors-$uuid", $html );
+
+			// These methods are idempotent; doesn't hurt to call them every
+			// time.
+			$parser->addTrackingCategory( 'scribunto-common-error-category' );
+			$parserOutput->addModules( [ 'ext.scribunto.errors' ] );
+
+			$id = "mw-scribunto-error-$uuid";
 			$parserError = htmlspecialchars( $e->getMessage() );
 
 			// #iferror-compatible error element
@@ -224,14 +239,12 @@ class Hooks implements
 	 * @param string $functionName
 	 * @param int $timing Function execution time in milliseconds.
 	 */
-	public static function reportTiming( $moduleName, $functionName, $timing ) {
-		global $wgScribuntoGatherFunctionStats, $wgScribuntoSlowFunctionThreshold;
-
-		if ( !$wgScribuntoGatherFunctionStats ) {
+	private function reportTiming( $moduleName, $functionName, $timing ) {
+		if ( !$this->config->get( 'ScribuntoGatherFunctionStats' ) ) {
 			return;
 		}
 
-		$threshold = $wgScribuntoSlowFunctionThreshold;
+		$threshold = $this->config->get( 'ScribuntoSlowFunctionThreshold' );
 		if ( !( is_float( $threshold ) && $threshold > 0 && $threshold < 1 ) ) {
 			return;
 		}

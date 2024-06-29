@@ -27,7 +27,6 @@
 	"cite_error_included_references": "Chybí uzavírací značka k <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Nalezena značka <code>&lt;ref&gt;</code> pro skupinu „$1“, ale neexistuje příslušná značka <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "Značka <code>&lt;ref&gt;</code> uvnitř <code>&lt;references&gt;</code> má definovánu jinou skupinu „$1“.",
-	"cite_error_references_missing_group": "Značka <code>&lt;ref&gt;</code> uvnitř <code>&lt;references&gt;</code> používá skupinu „$1“, která se v předchozím textu neobjevuje.",
 	"cite_error_references_missing_key": "Na <code>&lt;ref&gt;</code> se jménem „$1“ definovaný uvnitř <code>&lt;references&gt;</code> nejsou v předchozím textu žádné odkazy.",
 	"cite_error_references_no_key": "U značky <code>&lt;ref&gt;</code> definované uvnitř <code>&lt;references&gt;</code> chybí atribut <code>name</code>.",
 	"cite_error_empty_references_define": "U značky <code>&lt;ref&gt;</code> s názvem „$1“ definované uvnitř <code>&lt;references&gt;</code> chybí obsah.",

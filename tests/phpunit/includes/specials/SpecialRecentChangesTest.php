@@ -1,8 +1,10 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialRecentChanges;
+use MediaWiki\Tests\SpecialPage\AbstractChangesListSpecialPageTestCase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
@@ -22,7 +24,10 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 		return new SpecialRecentChanges(
 			$this->getServiceContainer()->getWatchedItemStore(),
 			$this->getServiceContainer()->getMessageCache(),
-			$this->getServiceContainer()->getUserOptionsLookup()
+			$this->getServiceContainer()->getUserOptionsLookup(),
+			$this->getServiceContainer()->getChangeTagsStore(),
+			$this->getServiceContainer()->getUserIdentityUtils(),
+			$this->getServiceContainer()->getTempUserConfig()
 		);
 	}
 
@@ -176,8 +181,6 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 	 * check for syntax errors etc. It doesn't verify the logic.
 	 */
 	public function testIsDenseTagFilter() {
-		$this->tablesUsed[] = 'change_tag_def';
-		$this->tablesUsed[] = 'change_tag';
 		ChangeTags::defineTag( 'rc-test-tag' );
 		$req = new FauxRequest();
 		$req->setVal( 'tagfilter', 'rc-test-tag' );
@@ -205,8 +208,6 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 	 * @dataProvider provideDenseTagFilter
 	 */
 	public function testDenseTagFilter( $dense ) {
-		$this->tablesUsed[] = 'change_tag_def';
-		$this->tablesUsed[] = 'change_tag';
 		ChangeTags::defineTag( 'rc-test-tag' );
 		$req = new FauxRequest();
 		$req->setVal( 'tagfilter', 'rc-test-tag' );
@@ -223,7 +224,7 @@ class SpecialRecentChangesTest extends AbstractChangesListSpecialPageTestCase {
 				$dense,
 				WatchedItemStoreInterface $watchedItemStore = null,
 				MessageCache $messageCache = null,
-				\MediaWiki\User\UserOptionsLookup $userOptionsLookup = null
+				\MediaWiki\User\Options\UserOptionsLookup $userOptionsLookup = null
 			) {
 				parent::__construct( $watchedItemStore, $messageCache, $userOptionsLookup );
 				$this->dense = $dense;

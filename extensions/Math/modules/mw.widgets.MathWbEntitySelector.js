@@ -86,7 +86,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.MathWbEntitySelector.prototype.getLookupRequest = function () {
-		var api = this.getApi(),
+		const api = this.getApi(),
 			query = this.getQueryValue(),
 			widget = this,
 			promiseAbortObject = {
@@ -101,7 +101,7 @@
 	};
 
 	// eslint-disable-next-line no-jquery/no-global-selector
-	var $wbEntitySelector = $( '#wbEntitySelector' );
+	const $wbEntitySelector = $( '#wbEntitySelector' );
 	if ( $wbEntitySelector.length ) {
 		OO.ui.infuse( $wbEntitySelector );
 	}

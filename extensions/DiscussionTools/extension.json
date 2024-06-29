@@ -7,9 +7,9 @@
 	"descriptionmsg": "discussiontools-desc",
 	"manifest_version": 2,
 	"requires": {
-		"MediaWiki": ">= 1.41",
+		"MediaWiki": ">= 1.42.0",
 		"extensions": {
-			"VisualEditor": ">= 0.1.2",
+			"VisualEditor": "*",
 			"Linter": "*"
 		}
 	},
@@ -30,11 +30,7 @@
 	},
 	"ResourceModules": {
 		"ext.discussionTools.init.styles": {
-			"styles": "dt.init.less",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"styles": "dt.init.less"
 		},
 		"ext.discussionTools.debug.styles": {
 			"styles": "dt.debug.less"
@@ -47,6 +43,7 @@
 				"permalinks.js",
 				"topicsubscriptions.js",
 				"mobile.js",
+				"overflowMenu.js",
 				"LedeSectionDialog.js",
 				{
 					"name": "controller/contLangMessages.json",
@@ -65,7 +62,8 @@
 					"config": {
 						"replyIndentation": "DiscussionToolsReplyIndentation",
 						"switchTime": "DiscussionToolsTimestampFormatSwitchTime",
-						"showFeedbackLinks": "DiscussionToolsShowFeedbackLinks"
+						"showFeedbackLinks": "DiscussionToolsShowFeedbackLinks",
+						"enablePermalinksFrontend": "DiscussionToolsEnablePermalinksFrontend"
 					}
 				},
 				"ReplyLinksController.js",
@@ -141,7 +139,10 @@
 				"discussiontools-replywidget-loading",
 				"discussiontools-replywidget-watchthis",
 				"discussiontools-target-comment-missing",
+				"discussiontools-target-heading-missing",
 				"discussiontools-target-comments-missing",
+				"discussiontools-target-comment-found-moved",
+				"discussiontools-target-heading-found-moved",
 				"discussiontools-topicsubscription-button-subscribe",
 				"discussiontools-topicsubscription-button-subscribe-label",
 				"discussiontools-topicsubscription-button-subscribe-tooltip",
@@ -152,20 +153,15 @@
 				"discussiontools-topicsubscription-notify-subscribed-title",
 				"discussiontools-topicsubscription-notify-unsubscribed-body",
 				"discussiontools-topicsubscription-notify-unsubscribed-title",
-				"minerva-talk-full-page",
 				"pagetitle",
 				"skin-view-edit"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.discussionTools.minervaicons": {
-			"selectorWithoutVariant": ".mw-ui-icon-minerva-{name}:before",
+			"selectorWithoutVariant": ".minerva-icon--{name}",
 			"useDataURI": false,
 			"defaultColor": "#54595d",
-			"class": "ResourceLoaderOOUIIconPackModule",
+			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
 			"icons": [
 				"bell",
 				"bellOutline"
@@ -179,15 +175,14 @@
 			"styles": "debughighlighter.less",
 			"dependencies": [
 				"ext.discussionTools.init"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.discussionTools.ReplyWidget": {
 			"packageFiles": [
+				"dt.ui.ReplyWidget.init.js",
 				"dt.ui.ReplyWidget.js",
+				"dt.ui.ReplyWidgetVisual.js",
+				"dt.ui.ReplyWidgetPlain.js",
 				"ModeTabSelectWidget.js",
 				"ModeTabOptionWidget.js",
 				"AbandonCommentDialog.js",
@@ -203,10 +198,21 @@
 					"name": "licenseMessages.json",
 					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getTermsOfUseMessagesParsed",
 					"versionCallback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getTermsOfUseMessagesVersion"
-				}
+				},
+				"dt-ve/CommentTarget.js",
+				"dt-ve/CommentTargetWidget.js",
+				"dt-ve/dt.dm.MWSignatureNode.js",
+				"dt-ve/dt.ce.MWSignatureNode.js",
+				"dt-ve/dt.ui.MWSignatureContextItem.js",
+				"dt-ve/dt.ui.registries.js",
+				"dt-ve/dt.ui.UsernameCompletionAction.js",
+				"dt-ve/dt.ui.UsernameCompletionTool.js",
+				"dt-ve/dt.dm.PingNode.js",
+				"dt-ve/dt.ce.PingNode.js"
 			],
 			"styles": [
-				"dt.ui.ReplyWidget.less"
+				"dt.ui.ReplyWidget.less",
+				"dt-ve/CommentTargetWidget.less"
 			],
 			"messages": [
 				"discussiontools-replywidget-abandon",
@@ -235,6 +241,8 @@
 				"discussiontools-replywidget-reply",
 				"discussiontools-replywidget-return-to-newtopic",
 				"discussiontools-replywidget-return-to-reply",
+				"discussiontools-replywidget-signature-body",
+				"discussiontools-replywidget-signature-title",
 				"discussiontools-replywidget-summary",
 				"discussiontools-replywidget-transcluded",
 				"ooui-popup-widget-close-button-aria-label",
@@ -244,69 +252,24 @@
 				"visualeditor-mweditmode-tooltip"
 			],
 			"dependencies": [
-				"oojs-ui-widgets",
-				"oojs-ui.styles.indicators",
 				"ext.discussionTools.init",
+				"ext.visualEditor.articleTarget",
+				"ext.visualEditor.mwcore",
+				"ext.visualEditor.mwsignature",
+				"ext.visualEditor.mwwikitext",
+				"ext.visualEditor.switching",
+				"mediawiki.editfont.styles",
+				"mediawiki.jqueryMsg",
+				"mediawiki.user",
 				"mediawiki.widgets.AbandonEditDialog",
-				"mediawiki.widgets.visibleLengthLimit"
+				"mediawiki.widgets.visibleLengthLimit",
+				"oojs-ui-widgets",
+				"oojs-ui.styles.indicators"
 			],
 			"optionalDependencies": {
 				"ConfirmEdit": "ext.confirmEdit.CaptchaInputWidget"
 			},
-			"factory": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::addOptionalDependencies",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
-		},
-		"ext.discussionTools.ReplyWidgetPlain": {
-			"packageFiles": [
-				"dt.ui.ReplyWidgetPlain.js"
-			],
-			"dependencies": [
-				"ext.discussionTools.ReplyWidget",
-				"mediawiki.editfont.styles",
-				"mediawiki.user",
-				"mediawiki.jqueryMsg",
-				"ext.visualEditor.switching"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
-			]
-		},
-		"ext.discussionTools.ReplyWidgetVisual": {
-			"packageFiles": [
-				"dt.ui.ReplyWidgetVisual.js",
-				"dt-ve/CommentTarget.js",
-				"dt-ve/CommentTargetWidget.js",
-				"dt-ve/dt.dm.MWSignatureNode.js",
-				"dt-ve/dt.ce.MWSignatureNode.js",
-				"dt-ve/dt.ui.MWSignatureContextItem.js",
-				"dt-ve/dt.ui.registries.js",
-				"dt-ve/dt.ui.UsernameCompletionAction.js",
-				"dt-ve/dt.ui.UsernameCompletionTool.js",
-				"dt-ve/dt.dm.PingNode.js",
-				"dt-ve/dt.ce.PingNode.js"
-			],
-			"styles": [
-				"dt-ve/CommentTargetWidget.less"
-			],
-			"messages": [
-				"discussiontools-replywidget-signature-title",
-				"discussiontools-replywidget-signature-body"
-			],
-			"dependencies": [
-				"ext.discussionTools.ReplyWidget",
-				"ext.visualEditor.mwcore",
-				"ext.visualEditor.mwsignature",
-				"ext.visualEditor.mwwikitext",
-				"ext.visualEditor.articleTarget"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"factory": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::addOptionalDependencies"
 		}
 	},
 	"ForeignResourcesDir": "modules/lib",
@@ -418,7 +381,9 @@
 			"class": "\\MediaWiki\\Extension\\DiscussionTools\\SpecialTopicSubscriptions",
 			"services": [
 				"LinkRenderer",
-				"LinkBatchFactory"
+				"LinkBatchFactory",
+				"DiscussionTools.ThreadItemStore",
+				"DiscussionTools.ThreadItemFormatter"
 			]
 		},
 		"FindComment": {
@@ -437,6 +402,7 @@
 		"DiscussionToolsDebug": {
 			"class": "\\MediaWiki\\Extension\\DiscussionTools\\SpecialDiscussionToolsDebug",
 			"services": [
+				"LanguageFactory",
 				"ParserOutputAccess",
 				"DiscussionTools.CommentParser"
 			]
@@ -453,6 +419,7 @@
 		"LoadExtensionSchemaUpdates": "installer",
 		"GetDoubleUnderscoreIDs": "parser",
 		"ParserAfterTidy": "parser",
+		"ParserOutputPostCacheTransform": "parser",
 		"BeforeDisplayNoArticleText": "page",
 		"BeforePageDisplay": "page",
 		"GetActionName": "page",
@@ -482,7 +449,6 @@
 		"page": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\PageHooks",
 			"services": [
-				"ConfigFactory",
 				"DiscussionTools.SubscriptionStore",
 				"UserNameUtils",
 				"UserOptionsLookup"
@@ -577,30 +543,26 @@
 			"description": "Override availability of DiscussionTools visual enhancements's reply buttons sub-feature. 'default', 'available', or 'unavailable'."
 		},
 		"DiscussionTools_visualenhancements_reply_icon_languages": {
-			"value": [
-				"ar",
-				"zh",
-				"yue",
-				"ja",
-				"nod"
-			],
-			"description": "A list of language codes which will receive an icon in their enhanced reply-button treatment, due to translation being very short (T323537).",
+			"value": {
+				"ar": true,
+				"zh": true,
+				"yue": true,
+				"ja": true,
+				"nod": true
+			},
+			"description": "A dictionary of language codes which will receive an icon in their enhanced reply-button treatment, due to translation being very short (T323537). Language fallbacks will be checked unless a language is explicitly set to `false` (T352289). Normalized language codes are lower case.",
 			"merge_strategy": "provide_default"
-		},
-		"DiscussionTools_visualenhancements_newsectionlink_enable": {
-			"value": true,
-			"description": "Enable visual enhancements on non-talk, non-article namespaces if they have __NEWSECTIONLINK__ magic word. Temporary config for phased rollout (T331635)"
 		},
 		"DiscussionToolsEnablePermalinksBackend": {
 			"value": true,
 			"description": "Enable the permalinks backend. Do not enable this unless the database tables exist."
 		},
-		"DiscussionToolsEnableTimestampLinks": {
+		"DiscussionToolsEnablePermalinksFrontend": {
 			"value": true,
-			"description": "Convert signature timestamps to comment links."
+			"description": "Enable permalinks frontend features: 1. Convert signature timestamps to comment links. 2. Show notification when the target comment is found on another page."
 		},
 		"DiscussionToolsAutoTopicSubEditor": {
-			"value": "discussiontoolsapi",
+			"value": "any",
 			"description": "Editor which triggers automatic topic subscriptions. Either 'discussiontoolsapi' for edits made using DiscussionTools' API (e.g. reply and new topic tools), or 'any' for any editor."
 		},
 		"DiscussionToolsTalkPageParserCacheExpiry": {

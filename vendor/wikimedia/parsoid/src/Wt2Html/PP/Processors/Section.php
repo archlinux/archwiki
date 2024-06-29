@@ -24,47 +24,30 @@ class Section {
 	/** @var SectionMetadata */
 	public $metadata;
 
-	/**
-	 * @param int $level
-	 * @param int $debugId
-	 * @param Document $ownerDoc
-	 */
 	public function __construct( int $level, int $debugId, Document $ownerDoc ) {
 		$this->level = $level;
 		$this->debugId = $debugId;
 		$this->container = $ownerDoc->createElement( 'section' );
 		// Use named arguments here in PHP 8.0+
 		$this->metadata = new SectionMetadata(
-			-1 /* tocLevel */,
+			-1, /* tocLevel */
 			$level /* hLevel */
 		);
 	}
 
-	/**
-	 * @param int $id
-	 */
 	public function setId( int $id ): void {
 		$this->container->setAttribute( 'data-mw-section-id', (string)$id );
 		// $this->container->setAttribute( 'data-debug-id', (string)$this->debugId );
 	}
 
-	/**
-	 * @param string $aboutId
-	 */
 	public function setAboutId( string $aboutId ): void {
 		$this->container->setAttribute( 'about', $aboutId );
 	}
 
-	/**
-	 * @param Node $node
-	 */
 	public function addNode( Node $node ): void {
 		$this->container->appendChild( $node );
 	}
 
-	/**
-	 * @param Section $section
-	 */
 	public function addSection( Section $section ): void {
 		// error_log( "Appending to " . $this->debugId . '\n' );
 		$this->container->appendChild( $section->container );

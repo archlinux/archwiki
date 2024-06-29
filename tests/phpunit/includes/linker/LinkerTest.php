@@ -1,6 +1,8 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\SiteConfiguration;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -16,7 +18,7 @@ use MediaWiki\User\User;
 class LinkerTest extends MediaWikiLangTestCase {
 	/**
 	 * @dataProvider provideCasesForUserLink
-	 * @covers MediaWiki\Linker\Linker::userLink
+	 * @covers \MediaWiki\Linker\Linker::userLink
 	 */
 	public function testUserLink( $expected, $userId, $userName, $altUserName = false, $msg = '' ) {
 		$this->overrideConfigValue( MainConfigNames::ArticlePath, '/wiki/$1' );
@@ -155,7 +157,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideUserToolLinks
-	 * @covers MediaWiki\Linker\Linker::userToolLinks
+	 * @covers \MediaWiki\Linker\Linker::userToolLinks
 	 * @param string $expected
 	 * @param int $userId
 	 * @param string $userText
@@ -181,7 +183,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideUserTalkLink
-	 * @covers MediaWiki\Linker\Linker::userTalkLink
+	 * @covers \MediaWiki\Linker\Linker::userTalkLink
 	 * @param string $expected
 	 * @param int $userId
 	 * @param string $userText
@@ -207,7 +209,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideBlockLink
-	 * @covers MediaWiki\Linker\Linker::blockLink
+	 * @covers \MediaWiki\Linker\Linker::blockLink
 	 * @param string $expected
 	 * @param int $userId
 	 * @param string $userText
@@ -233,7 +235,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideEmailLink
-	 * @covers MediaWiki\Linker\Linker::emailLink
+	 * @covers \MediaWiki\Linker\Linker::emailLink
 	 * @param string $expected
 	 * @param int $userId
 	 * @param string $userText
@@ -259,8 +261,8 @@ class LinkerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideCasesForFormatComment
-	 * @covers MediaWiki\Linker\Linker::formatComment
-	 * @covers MediaWiki\Linker\Linker::formatLinksInComment
+	 * @covers \MediaWiki\Linker\Linker::formatComment
+	 * @covers \MediaWiki\Linker\Linker::formatLinksInComment
 	 * @covers \MediaWiki\CommentFormatter\CommentParser
 	 * @covers \MediaWiki\CommentFormatter\CommentFormatter
 	 */
@@ -479,7 +481,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Linker\Linker::formatLinksInComment
+	 * @covers \MediaWiki\Linker\Linker::formatLinksInComment
 	 * @covers \MediaWiki\CommentFormatter\CommentParser
 	 * @covers \MediaWiki\CommentFormatter\CommentFormatter
 	 * @dataProvider provideCasesForFormatLinksInComment
@@ -510,7 +512,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Linker\Linker::generateRollback
+	 * @covers \MediaWiki\Linker\Linker::generateRollback
 	 * @dataProvider provideCasesForRollbackGeneration
 	 */
 	public function testGenerateRollback( $rollbackEnabled, $expectedModules, $title ) {
@@ -632,7 +634,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Linker\Linker::tooltipAndAccesskeyAttribs
+	 * @covers \MediaWiki\Linker\Linker::tooltipAndAccesskeyAttribs
 	 * @dataProvider provideTooltipAndAccesskeyAttribs
 	 */
 	public function testTooltipAndAccesskeyAttribs( $name, $msgParams, $options, $expected ) {
@@ -654,7 +656,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Linker\Linker::commentBlock
+	 * @covers \MediaWiki\Linker\Linker::commentBlock
 	 * @dataProvider provideCommentBlock
 	 */
 	public function testCommentBlock(
@@ -731,7 +733,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Linker\Linker::revComment
+	 * @covers \MediaWiki\Linker\Linker::revComment
 	 * @dataProvider provideRevComment
 	 */
 	public function testRevComment(
@@ -794,7 +796,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Linker\Linker::specialLink
+	 * @covers \MediaWiki\Linker\Linker::specialLink
 	 * @dataProvider provideSpecialLink
 	 */
 	public function testSpecialLink( $expected, $target, $key = null ) {

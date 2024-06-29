@@ -23,6 +23,9 @@
  */
 
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\Context\ContextSource;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
@@ -503,7 +506,7 @@ class ChangesList extends ContextSource {
 			if ( $this->lastdate != '' ) {
 				$s .= "</ul>\n";
 			}
-			$s .= Xml::element( 'h4', null, $date ) . "\n<ul class=\"special\">";
+			$s .= Html::element( 'h4', [], $date ) . "\n<ul class=\"special\">";
 			$this->lastdate = $date;
 			$this->rclistOpen = true;
 		}
@@ -573,7 +576,7 @@ class ChangesList extends ContextSource {
 			);
 		}
 
-		$s .= Html::rawElement( 'div', [ 'class' => 'mw-changeslist-links' ],
+		$s .= Html::rawElement( 'span', [ 'class' => 'mw-changeslist-links' ],
 				Html::rawElement( 'span', [], $diffLink ) .
 				Html::rawElement( 'span', [], $histLink )
 			) .
@@ -1021,6 +1024,7 @@ class ChangesList extends ContextSource {
 		$type = $rc->getAttribute( 'rc_source' );
 		switch ( $type ) {
 			case RecentChange::SRC_EDIT:
+			case RecentChange::SRC_CATEGORIZE:
 			case RecentChange::SRC_NEW:
 				$attrs['data-mw-revid'] = $rc->mAttribs['rc_this_oldid'];
 				break;
@@ -1028,9 +1032,6 @@ class ChangesList extends ContextSource {
 				$attrs['data-mw-logid'] = $rc->mAttribs['rc_logid'];
 				$attrs['data-mw-logaction'] =
 					$rc->mAttribs['rc_log_type'] . '/' . $rc->mAttribs['rc_log_action'];
-				break;
-			case RecentChange::SRC_CATEGORIZE:
-				$attrs['data-mw-revid'] = $rc->mAttribs['rc_this_oldid'];
 				break;
 		}
 

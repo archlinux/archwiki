@@ -64,6 +64,14 @@ return testframework.getTestProvider( {
 		func = type, args = { mw.site.scriptPath },
 		expect = { 'string' }
 	},
+	{ name = 'parameter set: stylePath',
+		func = type, args = { mw.site.stylePath },
+		expect = { 'string' }
+	},
+	{ name = 'parameter set: currentVersion',
+		func = type, args = { mw.site.currentVersion },
+		expect = { 'string' }
+	},
 
 	{ name = 'parameter set: stats.pages',
 		func = type, args = { mw.site.stats.pages },

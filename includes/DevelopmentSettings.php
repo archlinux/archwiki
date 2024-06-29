@@ -42,7 +42,7 @@ if ( MW_ENTRY_POINT === 'index' ) {
  */
 
 global $wgDevelopmentWarnings, $wgShowExceptionDetails, $wgShowHostnames,
-	$wgCommandLineMode, $wgDebugLogFile,
+	$wgDebugLogFile,
 	$wgDBerrorLog, $wgDebugLogGroups;
 
 // Use of wfWarn() should cause tests to fail
@@ -55,7 +55,10 @@ $wgShowHostnames = true;
 // Enable log files
 $logDir = getenv( 'MW_LOG_DIR' );
 if ( $logDir ) {
-	if ( $wgCommandLineMode ) {
+	if ( !file_exists( $logDir ) ) {
+		mkdir( $logDir );
+	}
+	if ( MW_ENTRY_POINT === 'cli' ) {
 		$wgDebugLogFile = "$logDir/mw-debug-cli.log";
 	} else {
 		$wgDebugLogFile = "$logDir/mw-debug-www.log";
@@ -119,12 +122,13 @@ $wgVueDevelopmentMode = true;
  * (Must reference a Phabricator ticket)
  */
 
-global $wgSQLMode, $wgLocalisationCacheConf, $wgCiteBookReferencing,
+global $wgSQLMode, $wgDBStrictWarnings, $wgLocalisationCacheConf, $wgCiteBookReferencing,
 	$wgCacheDirectory, $wgEnableUploads, $wgUsePigLatinVariant,
 	$wgVisualEditorEnableWikitext, $wgDefaultUserOptions;
 
 // Enable MariaDB/MySQL strict mode (T108255)
 $wgSQLMode = 'STRICT_ALL_TABLES,ONLY_FULL_GROUP_BY';
+$wgDBStrictWarnings = true;
 
 // Localisation Cache to StaticArray (T218207)
 $wgLocalisationCacheConf['store'] = 'array';

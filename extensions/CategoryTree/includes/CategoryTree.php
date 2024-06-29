@@ -24,11 +24,10 @@
 
 namespace MediaWiki\Extension\CategoryTree;
 
-use Exception;
 use ExtensionRegistry;
-use FormatJson;
 use IContextSource;
 use MediaWiki\Category\Category;
+use MediaWiki\Config\Config;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
@@ -37,228 +36,41 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use Parser;
 use RequestContext;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Core functions for the CategoryTree extension, an AJAX based gadget
  * to display the category structure of a wiki
  */
 class CategoryTree {
-	/** @var array */
-	private $mOptions = [];
+	/** @var OptionManager */
+	public $optionManager;
+
+	/** @var Config */
+	private $config;
+
+	/** @var IConnectionProvider */
+	private $dbProvider;
 
 	/** @var LinkRenderer */
 	private $linkRenderer;
 
 	/**
 	 * @param array $options
+	 * @param Config $config
+	 * @param IConnectionProvider $dbProvider
+	 * @param LinkRenderer $linkRenderer
 	 */
-	public function __construct( array $options ) {
-		global $wgCategoryTreeDefaultOptions;
-		$this->linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
-
-		// ensure default values and order of options.
-		// Order may become important, it may influence the cache key!
-		foreach ( $wgCategoryTreeDefaultOptions as $option => $default ) {
-			$this->mOptions[$option] = $options[$option] ?? $default;
-		}
-
-		$this->mOptions['mode'] = self::decodeMode( $this->mOptions['mode'] );
-
-		if ( $this->mOptions['mode'] === CategoryTreeMode::PARENTS ) {
-			// namespace filter makes no sense with CategoryTreeMode::PARENTS
-			$this->mOptions['namespaces'] = false;
-		}
-
-		$this->mOptions['hideprefix'] = self::decodeHidePrefix( $this->mOptions['hideprefix'] );
-		$this->mOptions['showcount'] = self::decodeBoolean( $this->mOptions['showcount'] );
-		$this->mOptions['namespaces'] = self::decodeNamespaces( $this->mOptions['namespaces'] );
-
-		if ( $this->mOptions['namespaces'] ) {
-			# automatically adjust mode to match namespace filter
-			if ( count( $this->mOptions['namespaces'] ) === 1
-				&& $this->mOptions['namespaces'][0] === NS_CATEGORY ) {
-				$this->mOptions['mode'] = CategoryTreeMode::CATEGORIES;
-			} elseif ( !in_array( NS_FILE, $this->mOptions['namespaces'] ) ) {
-				$this->mOptions['mode'] = CategoryTreeMode::PAGES;
-			} else {
-				$this->mOptions['mode'] = CategoryTreeMode::ALL;
-			}
-		}
-	}
-
-	/**
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function getOption( $name ) {
-		return $this->mOptions[$name];
-	}
-
-	/**
-	 * @return bool
-	 */
-	private function isInverse() {
-		return $this->getOption( 'mode' ) === CategoryTreeMode::PARENTS;
-	}
-
-	/**
-	 * @param mixed $nn
-	 * @return array|bool
-	 */
-	private static function decodeNamespaces( $nn ) {
-		if ( $nn === false || $nn === null ) {
-			return false;
-		}
-
-		if ( !is_array( $nn ) ) {
-			$nn = preg_split( '![\s#:|]+!', $nn );
-		}
-
-		$namespaces = [];
-		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
-		foreach ( $nn as $n ) {
-			if ( is_int( $n ) ) {
-				$ns = $n;
-			} else {
-				$n = trim( $n );
-				if ( $n === '' ) {
-					continue;
-				}
-
-				$lower = strtolower( $n );
-
-				if ( is_numeric( $n ) ) {
-					$ns = (int)$n;
-				} elseif ( $n === '-' || $n === '_' || $n === '*' || $lower === 'main' ) {
-					$ns = NS_MAIN;
-				} else {
-					$ns = $contLang->getNsIndex( $n );
-				}
-			}
-
-			if ( is_int( $ns ) ) {
-				$namespaces[] = $ns;
-			}
-		}
-
-		# get elements into canonical order
-		sort( $namespaces );
-		return $namespaces;
-	}
-
-	/**
-	 * @param mixed $mode
-	 * @return int|string
-	 */
-	public static function decodeMode( $mode ) {
-		global $wgCategoryTreeDefaultOptions;
-
-		if ( $mode === null ) {
-			return $wgCategoryTreeDefaultOptions['mode'];
-		}
-		if ( is_int( $mode ) ) {
-			return $mode;
-		}
-
-		$mode = trim( strtolower( $mode ) );
-
-		if ( is_numeric( $mode ) ) {
-			return (int)$mode;
-		}
-
-		if ( $mode === 'all' ) {
-			$mode = CategoryTreeMode::ALL;
-		} elseif ( $mode === 'pages' ) {
-			$mode = CategoryTreeMode::PAGES;
-		} elseif ( $mode === 'categories' || $mode === 'sub' ) {
-			$mode = CategoryTreeMode::CATEGORIES;
-		} elseif ( $mode === 'parents' || $mode === 'super' || $mode === 'inverse' ) {
-			$mode = CategoryTreeMode::PARENTS;
-		} elseif ( $mode === 'default' ) {
-			$mode = $wgCategoryTreeDefaultOptions['mode'];
-		}
-
-		return (int)$mode;
-	}
-
-	/**
-	 * Helper function to convert a string to a boolean value.
-	 * Perhaps make this a global function in MediaWiki proper
-	 * @param mixed $value
-	 * @return bool|null|string
-	 */
-	public static function decodeBoolean( $value ) {
-		if ( $value === null ) {
-			return null;
-		}
-		if ( is_bool( $value ) ) {
-			return $value;
-		}
-		if ( is_int( $value ) ) {
-			return ( $value > 0 );
-		}
-
-		$value = trim( strtolower( $value ) );
-		if ( is_numeric( $value ) ) {
-			return ( (int)$value > 0 );
-		}
-
-		if ( $value === 'yes' || $value === 'y'
-			|| $value === 'true' || $value === 't' || $value === 'on'
-		) {
-			return true;
-		} elseif ( $value === 'no' || $value === 'n'
-			|| $value === 'false' || $value === 'f' || $value === 'off'
-		) {
-			return false;
-		} elseif ( $value === 'null' || $value === 'default' || $value === 'none' || $value === 'x' ) {
-			return null;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * @param mixed $value
-	 * @return int|string
-	 */
-	public static function decodeHidePrefix( $value ) {
-		global $wgCategoryTreeDefaultOptions;
-
-		if ( $value === null ) {
-			return $wgCategoryTreeDefaultOptions['hideprefix'];
-		}
-		if ( is_int( $value ) ) {
-			return $value;
-		}
-		if ( $value === true ) {
-			return CategoryTreeHidePrefix::ALWAYS;
-		}
-		if ( $value === false ) {
-			return CategoryTreeHidePrefix::NEVER;
-		}
-
-		$value = trim( strtolower( $value ) );
-
-		if ( $value === 'yes' || $value === 'y'
-			|| $value === 'true' || $value === 't' || $value === 'on'
-		) {
-			return CategoryTreeHidePrefix::ALWAYS;
-		} elseif ( $value === 'no' || $value === 'n'
-			|| $value === 'false' || $value === 'f' || $value === 'off'
-		) {
-			return CategoryTreeHidePrefix::NEVER;
-		} elseif ( $value === 'always' ) {
-			return CategoryTreeHidePrefix::ALWAYS;
-		} elseif ( $value === 'never' ) {
-			return CategoryTreeHidePrefix::NEVER;
-		} elseif ( $value === 'auto' ) {
-			return CategoryTreeHidePrefix::AUTO;
-		} elseif ( $value === 'categories' || $value === 'category' || $value === 'smart' ) {
-			return CategoryTreeHidePrefix::CATEGORIES;
-		} else {
-			return $wgCategoryTreeDefaultOptions['hideprefix'];
-		}
+	public function __construct(
+		array $options,
+		Config $config,
+		IConnectionProvider $dbProvider,
+		LinkRenderer $linkRenderer
+	) {
+		$this->optionManager = new OptionManager( $options, $config );
+		$this->config = $config;
+		$this->dbProvider = $dbProvider;
+		$this->linkRenderer = $linkRenderer;
 	}
 
 	/**
@@ -269,57 +81,6 @@ class CategoryTree {
 		# Add the modules
 		$outputPage->addModuleStyles( 'ext.categoryTree.styles' );
 		$outputPage->addModules( 'ext.categoryTree' );
-	}
-
-	/**
-	 * @param array $options
-	 * @param string $enc
-	 * @return mixed
-	 * @throws Exception
-	 */
-	protected static function encodeOptions( array $options, $enc ) {
-		if ( $enc === 'mode' || $enc === '' ) {
-			$opt = $options['mode'];
-		} elseif ( $enc === 'json' ) {
-			$opt = FormatJson::encode( $options );
-		} else {
-			throw new Exception( 'Unknown encoding for CategoryTree options: ' . $enc );
-		}
-
-		return $opt;
-	}
-
-	/**
-	 * @param int|null $depth
-	 * @return string
-	 */
-	public function getOptionsAsCacheKey( $depth = null ) {
-		$key = '';
-
-		foreach ( $this->mOptions as $k => $v ) {
-			if ( is_array( $v ) ) {
-				$v = implode( '|', $v );
-			}
-			$key .= $k . ':' . $v . ';';
-		}
-
-		if ( $depth !== null ) {
-			$key .= ';depth=' . $depth;
-		}
-		return $key;
-	}
-
-	/**
-	 * @param int|null $depth
-	 * @return mixed
-	 */
-	public function getOptionsAsJsStructure( $depth = null ) {
-		$opt = $this->mOptions;
-		if ( $depth !== null ) {
-			$opt['depth'] = $depth;
-		}
-
-		return self::encodeOptions( $opt, 'json' );
 	}
 
 	/**
@@ -336,7 +97,7 @@ class CategoryTree {
 	public function getTag( ?Parser $parser, $category, $hideroot = false, array $attr = [],
 		$depth = 1, $allowMissing = false
 	) {
-		global $wgCategoryTreeDisableCache;
+		$disableCache = $this->config->get( 'CategoryTreeDisableCache' );
 
 		$category = trim( $category );
 		if ( $category === '' ) {
@@ -344,10 +105,10 @@ class CategoryTree {
 		}
 
 		if ( $parser ) {
-			if ( $wgCategoryTreeDisableCache === true ) {
+			if ( $disableCache === true ) {
 				$parser->getOutput()->updateCacheExpiry( 0 );
-			} elseif ( is_int( $wgCategoryTreeDisableCache ) ) {
-				$parser->getOutput()->updateCacheExpiry( $wgCategoryTreeDisableCache );
+			} elseif ( is_int( $disableCache ) ) {
+				$parser->getOutput()->updateCacheExpiry( $disableCache );
 			}
 		}
 
@@ -363,8 +124,8 @@ class CategoryTree {
 			$attr['class'] = 'CategoryTreeTag';
 		}
 
-		$attr['data-ct-mode'] = $this->mOptions['mode'];
-		$attr['data-ct-options'] = $this->getOptionsAsJsStructure();
+		$attr['data-ct-mode'] = $this->optionManager->getOption( 'mode' );
+		$attr['data-ct-options'] = $this->optionManager->getOptionsAsJsStructure();
 
 		if ( !$allowMissing && !$title->getArticleID() ) {
 			$html = Html::rawElement( 'span', [ 'class' => 'CategoryTreeNotice' ],
@@ -391,18 +152,16 @@ class CategoryTree {
 	 * @return string
 	 */
 	public function renderChildren( Title $title, $depth = 1 ) {
-		global $wgCategoryTreeMaxChildren, $wgCategoryTreeUseCategoryTable;
-
 		if ( !$title->inNamespace( NS_CATEGORY ) ) {
 			// Non-categories can't have children. :)
 			return '';
 		}
 
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = $this->dbProvider->getReplicaDatabase();
 
-		$inverse = $this->isInverse();
-		$mode = $this->getOption( 'mode' );
-		$namespaces = $this->getOption( 'namespaces' );
+		$inverse = $this->optionManager->isInverse();
+		$mode = $this->optionManager->getOption( 'mode' );
+		$namespaces = $this->optionManager->getOption( 'namespaces' );
 
 		$tables = [ 'page', 'categorylinks' ];
 		$fields = [ 'page_id', 'page_namespace', 'page_title',
@@ -410,7 +169,10 @@ class CategoryTree {
 			'cl_from' ];
 		$where = [];
 		$joins = [];
-		$options = [ 'ORDER BY' => 'cl_type, cl_sortkey', 'LIMIT' => $wgCategoryTreeMaxChildren ];
+		$options = [
+			'ORDER BY' => 'cl_type, cl_sortkey',
+			'LIMIT' => $this->config->get( 'CategoryTreeMaxChildren' )
+		];
 
 		if ( $inverse ) {
 			$joins['categorylinks'] = [ 'RIGHT JOIN', [
@@ -437,7 +199,7 @@ class CategoryTree {
 		}
 
 		# fetch member count if possible
-		$doCount = !$inverse && $wgCategoryTreeUseCategoryTable;
+		$doCount = !$inverse && $this->config->get( 'CategoryTreeUseCategoryTable' );
 
 		if ( $doCount ) {
 			$tables = array_merge( $tables, [ 'category' ] );
@@ -454,8 +216,8 @@ class CategoryTree {
 		# collect categories separately from other pages
 		$categories = '';
 		$other = '';
-		$suppressTranslations = self::decodeBoolean(
-			$this->getOption( 'notranslations' )
+		$suppressTranslations = OptionManager::decodeBoolean(
+			$this->optionManager->getOption( 'notranslations' )
 		) && ExtensionRegistry::getInstance()->isLoaded( 'Translate' );
 
 		if ( $suppressTranslations ) {
@@ -517,9 +279,7 @@ class CategoryTree {
 	 * @return string
 	 */
 	public function renderParents( Title $title ) {
-		global $wgCategoryTreeMaxChildren;
-
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = $this->dbProvider->getReplicaDatabase();
 
 		$res = $dbr->select(
 			'categorylinks',
@@ -527,7 +287,7 @@ class CategoryTree {
 			[ 'cl_from' => $title->getArticleID() ],
 			__METHOD__,
 			[
-				'LIMIT' => $wgCategoryTreeMaxChildren,
+				'LIMIT' => $this->config->get( 'CategoryTreeMaxChildren' ),
 				'ORDER BY' => 'cl_to'
 			]
 		);
@@ -544,7 +304,7 @@ class CategoryTree {
 					$special,
 					$t->getText(),
 					[ 'class' => 'CategoryTreeLabel' ],
-					[ 'target' => $t->getDBkey() ] + $this->mOptions
+					[ 'target' => $t->getDBkey() ] + $this->optionManager->getOptions()
 				)
 			);
 		}
@@ -559,10 +319,9 @@ class CategoryTree {
 	 * @return string
 	 */
 	public function renderNode( Title $title, $children = 0 ) {
-		global $wgCategoryTreeUseCategoryTable;
-
-		if ( $wgCategoryTreeUseCategoryTable && $title->inNamespace( NS_CATEGORY )
-			&& !$this->isInverse()
+		if ( $this->config->get( 'CategoryTreeUseCategoryTable' )
+			&& $title->inNamespace( NS_CATEGORY )
+			&& !$this->optionManager->isInverse()
 		) {
 			$cat = Category::newFromTitle( $title );
 		} else {
@@ -581,12 +340,12 @@ class CategoryTree {
 	 * @return string
 	 */
 	public function renderNodeInfo( Title $title, Category $cat = null, $children = 0 ) {
-		$mode = $this->getOption( 'mode' );
+		$mode = $this->optionManager->getOption( 'mode' );
 
 		$isInCatNS = $title->inNamespace( NS_CATEGORY );
 		$key = $title->getDBkey();
 
-		$hideprefix = $this->getOption( 'hideprefix' );
+		$hideprefix = $this->optionManager->getOption( 'hideprefix' );
 
 		if ( $hideprefix === CategoryTreeHidePrefix::ALWAYS ) {
 			$hideprefix = true;
@@ -636,18 +395,19 @@ class CategoryTree {
 				$attr['class'] = 'CategoryTreeEmptyBullet';
 			} else {
 				$linkattr = [
+					// href and role will be added client-side
 					'class' => 'CategoryTreeToggle',
 					'data-ct-title' => $key,
 				];
 
 				if ( $children === 0 ) {
-					$linkattr['data-ct-state'] = 'collapsed';
+					$linkattr['aria-expanded'] = 'false';
 				} else {
 					$linkattr['data-ct-loaded'] = true;
-					$linkattr['data-ct-state'] = 'expanded';
+					$linkattr['aria-expanded'] = 'true';
 				}
 
-				$bullet = Html::element( 'span', $linkattr ) . ' ';
+				$bullet = Html::element( 'a', $linkattr ) . ' ';
 			}
 		} else {
 			$bullet = '';
@@ -657,7 +417,7 @@ class CategoryTree {
 
 		$s .= $link;
 
-		if ( $count !== false && $this->getOption( 'showcount' ) ) {
+		if ( $count !== false && $this->optionManager->getOption( 'showcount' ) ) {
 			$s .= self::createCountString( RequestContext::getMain(), $cat, $count );
 		}
 
@@ -776,32 +536,5 @@ class CategoryTree {
 			$t = Title::newFromText( $title );
 		}
 		return $t;
-	}
-
-	/**
-	 * Internal function to cap depth
-	 * @param string $mode
-	 * @param int $depth
-	 * @return int|mixed
-	 */
-	public static function capDepth( $mode, $depth ) {
-		global $wgCategoryTreeMaxDepth;
-
-		if ( !is_numeric( $depth ) ) {
-			return 1;
-		}
-
-		$depth = intval( $depth );
-
-		if ( is_array( $wgCategoryTreeMaxDepth ) ) {
-			$max = $wgCategoryTreeMaxDepth[$mode] ?? 1;
-		} elseif ( is_numeric( $wgCategoryTreeMaxDepth ) ) {
-			$max = $wgCategoryTreeMaxDepth;
-		} else {
-			wfDebug( 'CategoryTree::capDepth: $wgCategoryTreeMaxDepth is invalid.' );
-			$max = 1;
-		}
-
-		return min( $depth, $max );
 	}
 }

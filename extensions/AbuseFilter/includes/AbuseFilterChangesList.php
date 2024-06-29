@@ -4,13 +4,13 @@ namespace MediaWiki\Extension\AbuseFilter;
 
 use HtmlArmor;
 use IContextSource;
-use Linker;
 use LogFormatter;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use OldChangesList;
 use RecentChange;
-use SpecialPage;
 
 class AbuseFilterChangesList extends OldChangesList {
 

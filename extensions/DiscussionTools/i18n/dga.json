@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"ANTHONY DERY",
 			"Amire80",
+			"Joachim Yirkang",
 			"Linus Konkor",
 			"NgmenRaphael",
 			"Yirkang",
-			"Zakaria Tunsung",
-			"ANTHONY DERY",
-			"Joachim Yirkang"
+			"Zakaria Tunsung"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Fo}} na nyɛ la duoro ka neɛ kaŋa wa wa di dɛmo paalaa a dɛmo a dɛmmo diibo zie ŋa. Fo na toɔŋ leɛre la fo duori danworo waaloŋ a yi a pɛrɛfɛrɛnsere zieŋ.",
@@ -23,11 +23,14 @@
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Yeli gampɛlɛ]] are where people discuss how to make content on {{SITENAME}} the best that it can be. {{GENDER:|You}} can use this page to start a discussion with others about how to improve [[:{{SUBJECTPAGENAME}}]].",
 	"discussiontools-emptystate-desc-self": "Noba naŋ be {{SITENAME}} naŋ baŋ toŋ neŋ la a [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|kombo vuo]] a naŋ toɔle noba zaa duoroo {{GENDER:|you}}, kyɛ ka fo naŋ nyɛ la teɛre ma ka ba naŋ e o",
 	"discussiontools-emptystate-desc-self-anon": "Noba naŋ be {{SITENAME}} naŋ toɔŋ toŋ neŋ la [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|yɛlɛ pɛlɛ]] a toɔle noba duori kyaare maalembo yineŋ IP aderese {{GENDER:|fooŋ}} tono neŋ a pampana.\n IP aderese yaga zaa leɛre la wagere mine kaŋa, kyɛ maŋ toɔle ko amine noba bamine. Fo naŋ baŋ [$1 maale la akante] bee [$2 kpɛ o poɔ] a vɛŋ nendaare kaŋa burburo neŋ tontonneba mine kpɛ yiibu. Maale akante a sɔgle a fo  IP aderese.",
+	"discussiontools-emptystate-desc-self-temp": "Noba naŋ be  {{SITENAME}} na baŋ tone la [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|talk page]] a toɔle neŋgyamaa duoroo ko a {{GENDER:|fooŋ}}.\n\nGbɛɛ yaga, [[{{MediaWiki:tempuser-helppage}}|ŋa na saŋɛɛ]]. Ka fooŋ naŋ kyaa nyɛrɛ teɛrema, a naŋ nyɛ teɛrema duoroo mine, [$1 maale akante] bee [$2 kpɛ o poɔ].",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|yɛlɛ pɛlɛ]] e la zie noba naŋ maŋ did demmo kyaare lɛ yelzu ko a {{SITENAME}} lɛ naŋ senne ka o waa. Piili demmo kyaare lɛnɛɛ fo na naŋ gyooneŋ ane peɛre taa {{GENDER:{{PAGENAME}}|aneŋ}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Boŋ {{GENDER:|you}} yeli ka a kyɛ naŋ e la gyamaa zie ka ba nyɛ.",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|Talk pages]] e la zie na noba naŋ maŋ di demmo kyaare neŋ lɛ ba naŋ naŋ de maale yelnyɔgeraa a {{SITENAME}} poɔ a lɛ naŋ senneka o are. Toŋ neŋ a gampɛle ŋa a piili naŋ a demmo kyaare neŋ a maale emmo naŋ be IP aderese. Boŋ {{GENDER:|you}} yeli kyɛnaŋ toɔle gaa la ziir ka noba nyɛ.A IP aderese yaga leɛre la wagere mine, kyɛ maŋ poŋ gaa noba yaga ziiri.",
+	"discussiontools-emptystate-desc-user-temp": "Toŋ ne a ŋa [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|talk page]] a na piilii demɛ diibu {{GENDER:{{PAGENAME}}|with}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] kyaare neŋ lɛ fo naŋ na gaa nimitɔɔre {{Site Name}}. Boŋ {{GENDER:|fo}}  na yeli noba yaga naŋ nyɛ o la. Koroŋ zaa[[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] e la [[{{MediaWiki:tempuser-helppage}}|temporary account]], a yeli gampɛle ŋa naŋ deɛ saaŋ la. [[{{MediaWiki:tempuser-helppage}}|zanne yaga]]",
 	"discussiontools-emptystate-title": "Piili demmo kyaare {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "{{GENDER:|fo waabo yaane}} a fo yeli gampɛle",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|fo waabo yaane}} a fo yeli gampɛle",
+	"discussiontools-emptystate-title-self-temp": "{{GENDER:|fo waabo yaane}} a fo wagere zaa yeli gampɛle",
 	"discussiontools-emptystate-title-user": "Piili a demmo neŋ {{GENDER:{{PAGENAME}}|neŋ}} {{PAGENAME}}",
 	"discussiontools-emptystate-title-user-anon": "{{GENDER:|fo waabo yaane}} a yeli gampɛle ŋa",
 	"discussiontools-emptystate-title-user-temp": "Piili a demmo {{GENDER:{{PAGENAME}}|neŋ}} {{PAGENAME}}",
@@ -117,6 +120,7 @@
 	"discussiontools-replywidget-abandontopic-keep": "Kyɔge sɛgerɛ",
 	"discussiontools-replywidget-advanced": "Tɔnnooŋ",
 	"discussiontools-replywidget-anon-warning": "<strong> fo ba kpɛ. </strong> ka \nfoo na nyɛ teɛrema ka neɛ wa tere nɔ-iruu ane yelteɛbo neŋ a fo yuori naŋ seŋ ka o e a fo IP aderese, fo na baŋ [$1 kpɛ la] bee [$2 maale akanet].",
+	"discussiontools-replywidget-autocreate-warning": "<strong> fo ba kpɛ.</strong> fo naŋ waa maale ennɛ, akante seŋ ka fo maale ko fo. [[$3|zanne yaga]]. [$1 Log in] bee [$2 create an account] ka foo naŋ nyɛ teɛrema ka neɛ kaŋa tere nɔ-iruu kyɛ ka o akante saaŋ, kyɛ naŋ boɔrɔ yelsoore mine.",
 	"discussiontools-replywidget-cancel": "Iribarebo",
 	"discussiontools-replywidget-feedback": "{{GENDER:|poŋ a nyaabo}}  kyaare neŋ a yɛlɛ ama",
 	"discussiontools-replywidget-keyboard-shortcut-submit": "Fo naŋ baŋ neɛ la $1a toɔle tere a fo yelteɛbo",
@@ -142,6 +146,9 @@
 	"discussiontools-replywidget-watchthis": "De a ganzu ŋa paali fo [[Special:Watchlist|watchlist]]",
 	"discussiontools-target-comment-missing": "A yelteɛbo kontoɔ nyɛ. O naŋ baŋ yi la bee gaa zie kaŋa",
 	"discussiontools-target-comments-missing": "Yelteɛbo paale mine koŋ baŋ nyɛ. A naŋ baŋ saaŋ la bee gaa zie kaŋa.",
+	"discussiontools-target-heading-missing": "A yelzu ŋa kontoɔŋ nyɛ. O naŋ baŋ saaŋ la bee yi gaa zie kaŋa",
+	"discussiontools-target-comment-found-moved": "A yelteɛbo ba toɔŋ be a gampɛle ŋa poɔŋ, kyɛ o be la a ama poɔ{{PLURAL:$1|}}",
+	"discussiontools-target-heading-found-moved": "A yelzu ba toɔ be a gampɛle poɔ, kyɛ o ba tona a ama poɔ {{PLURAL:$1|page|pages}}:",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|neɛ|noba}} aba yɛlɛ yelle yelbu",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|teɛroo|teɛɛroo}}",
 	"discussiontools-topicheader-latestcomment": "Yelle paaba : $1",
@@ -178,7 +185,6 @@
 	"echo-category-title-dt-subscription-archiving": "Yeli gampɛle {{PLURAL\n:$1|nyaabo}}{{PLURAL:$1|}}.",
 	"echo-pref-tooltip-dt-subscription": "Teɛrema ka neɛ tɔɔle yelteɛbo paala N naŋ  {{GENDER:|subscribed}} te.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Teɛrema a yelzu N naŋ \n {{GENDER:|kpɛ}} o poɔ nyɛ la eebo bee yi la a gampɛle poɔ,bee ka teɛrema kyaare yeteɛbo saama emmo a yelzuri koŋ toɔŋ toɔle ane yɛlɛ mine zuiŋ poɔ.",
-	"minerva-talk-full-page": "Kanne aŋa wiki gampɛle",
 	"discussiontools-comments-before-first-heading-category-desc": "Kanne a gampɛle ŋa yelzu a Zie ŋa poɔ. Ama naŋ baŋ wanne la gadama kaŋa a yɛlɛ poɔŋ a gaŋ a zaa a taŋgaraa appɔ poɔŋ.",
 	"tag-discussiontools-added-comment-description": "A yeli gampɛle yelteɛbo da be la a maale emmore ŋa",
 	"tag-discussiontools-description": "Maale emmo e yineŋ dɛmmoboma",

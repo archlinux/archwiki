@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Tests\Revision;
 
-use CommentStoreComment;
 use ContentHandler;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -47,25 +47,6 @@ class ArchivedRevisionLookupTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[
-				'page',
-				'revision',
-				'ip_changes',
-				'text',
-				'archive',
-				'recentchanges',
-				'logging',
-				'page_props',
-				'comment',
-				'slots',
-				'content',
-				'content_models',
-				'slot_roles',
-			]
-		);
 
 		$timestamp = 1635000000;
 		MWTimestamp::setFakeTime( $timestamp );
@@ -210,7 +191,7 @@ class ArchivedRevisionLookupTest extends MediaWikiIntegrationTestCase {
 		$db = $this->getDb();
 		$revisions = $lookup->listRevisions(
 			$this->archivedPage,
-			[ 'ar_timestamp < ' . $db->addQuotes( $db->timestamp( $this->secondRev->getTimestamp() ) ) ],
+			[ $db->expr( 'ar_timestamp', '<', $db->timestamp( $this->secondRev->getTimestamp() ) ) ],
 			1 );
 		$this->assertSame( 1, $revisions->numRows() );
 		// Get the rows as arrays

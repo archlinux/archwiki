@@ -24,6 +24,8 @@
 	"apihelp-discussiontoolsedit-summary": "{{doc-apihelp-summary|discussiontoolsedit}}",
 	"apihelp-discussiontoolsfindcomment-summary": "{{doc-apihelp-summary|discussiontoolsfindcomment}}",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "{{doc-apihelp-param|discussiontoolsfindcomment|idorname}}",
+	"apihelp-discussiontoolsfindcomment-param-heading": "{{doc-apihelp-param|discussiontoolsfindcomment|heading}}",
+	"apihelp-discussiontoolsfindcomment-param-page": "{{doc-apihelp-param|discussiontoolsfindcomment|page}}",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "{{doc-apihelp-param|discussiontoolsgetsubscriptions|commentname}}",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "{{doc-apihelp-summary|discussiontoolsgetsubscriptions}}",
 	"apihelp-discussiontoolspageinfo-param-oldid": "{{doc-apihelp-param|discussiontoolspageinfo|oldid}}",

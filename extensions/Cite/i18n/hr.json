@@ -25,7 +25,6 @@
 	"cite_error_included_ref": "nedostaje zatvarajući <code>&lt;/ref&gt;</code> za <code>&lt;ref&gt;</code> oznaku",
 	"cite_error_group_refs_without_references": "oznake <code>&lt;ref&gt;</code> postoje za skupinu \"$1\", ali nema pripadajuće oznake <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> oznaka u <code>&lt;references&gt;</code> ima konfliktni grupni atribut  \"$1\".",
-	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> ima grupni atribut \"$1\" koji se ne pojavljuje u ranijem tekstu.",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> oznaka s imenom \"$1\" definirana u <code>&lt;references&gt;</code> nije prethodno rabljena u tekstu.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> nema parametar \"name\" (ime).",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> s imenom \"$1\" nema sadržaja.",

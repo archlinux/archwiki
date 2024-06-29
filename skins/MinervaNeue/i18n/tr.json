@@ -69,9 +69,16 @@
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Tartışma]]",
 	"minerva-skin-desc": "Duyarlı bir mobil ilk görünümü",
 	"skin-minerva-issue-learn-more": "Daha fazla bilgi",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 saniye}} önce",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 dakika}} önce",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 saat}} önce",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 gün}} önce",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 ay}} önce",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 yıl}} önce",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoriler",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Sayfanın kategorilerini görüntüle",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Geliştirilmiş sayfa sorunları iyileştirmesi",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Sayfa sorunları (Şablon:ambox) maddede belirtilmiş olacaktır.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Maalesef, sonuçları sayfaya göre gruplandırma mobil cihazda mevcut değil. Grup olarak sayfa özelliğini kullanmak istiyorsanız, lütfen masaüstü sitesini ziyaret edin."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Maalesef, sonuçları sayfaya göre gruplandırma mobil cihazda mevcut değil. Grup olarak sayfa özelliğini kullanmak istiyorsanız, lütfen masaüstü sitesini ziyaret edin.",
+	"skin-minerva-night-mode-unavailable": "Sayfa yalnızca \"Gündüz\" renk temasında vardır."
 }

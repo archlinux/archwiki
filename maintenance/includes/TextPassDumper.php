@@ -2,7 +2,7 @@
 /**
  * BackupDumper that postprocesses XML dumps from dumpBackup.php to add page text
  *
- * Copyright (C) 2005 Brion Vibber <brion@pobox.com>
+ * Copyright (C) 2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ class TextPassDumper extends BackupDumper {
 	protected $failureTimeout = 5;
 
 	/** @var int In bytes. Maximum size to read from the stub in on go. */
-	protected $bufferSize = 524288;
+	protected $bufferSize = 524_288;
 
 	/** @var array */
 	protected $php = [ PHP_BINARY ];
@@ -168,7 +168,7 @@ TEXT
 		}
 	}
 
-	public function finalSetup( SettingsBuilder $settingsBuilder = null ) {
+	public function finalSetup( SettingsBuilder $settingsBuilder ) {
 		parent::finalSetup( $settingsBuilder );
 
 		SevenZipStream::register();
@@ -555,7 +555,7 @@ TEXT
 			$contentHandler = $this->getServiceContainer()
 				->getContentHandlerFactory()
 				->getContentHandler( $model );
-		} catch ( MWException $ex ) {
+		} catch ( MWUnknownContentModelException $ex ) {
 			wfWarn( "Unable to apply export transformation for content model '$model': " .
 				$ex->getMessage() );
 

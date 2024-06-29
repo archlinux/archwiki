@@ -22,11 +22,12 @@
 
 namespace MediaWiki\Deferred\LinksUpdate;
 
-use AutoCommitUpdate;
-use BacklinkCache;
-use DataUpdate;
-use DeferredUpdates;
+use IDBAccessObject;
 use Job;
+use MediaWiki\Cache\BacklinkCache;
+use MediaWiki\Deferred\AutoCommitUpdate;
+use MediaWiki\Deferred\DataUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
@@ -34,13 +35,13 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use MWException;
-use ParserOutput;
 use RefreshLinksJob;
 use RuntimeException;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\ScopedCallback;
 
@@ -83,14 +84,14 @@ class LinksUpdate extends DataUpdate {
 	/** @var LinksTableGroup */
 	private $tableFactory;
 
+	private IConnectionProvider $connectionProvider;
+
 	/**
 	 * @param PageIdentity $page The page we're updating
 	 * @param ParserOutput $parserOutput Output from a full parse of this page
 	 * @param bool $recursive Queue jobs for recursive updates?
 	 * @param bool $maybeRedirectChanged True if the page's redirect target may have changed in the
 	 *   latest revision. If false, this is used as a hint to skip some unnecessary updates.
-	 *
-	 * @throws MWException
 	 */
 	public function __construct(
 		PageIdentity $page,
@@ -118,6 +119,7 @@ class LinksUpdate extends DataUpdate {
 		);
 		// TODO: this does not have to be called in LinksDeletionUpdate
 		$this->tableFactory->setParserOutput( $parserOutput );
+		$this->connectionProvider = $services->getDBLoadBalancerFactory();
 	}
 
 	public function setTransactionTicket( $ticket ) {
@@ -143,7 +145,7 @@ class LinksUpdate extends DataUpdate {
 	public function doUpdate() {
 		if ( !$this->mId ) {
 			// NOTE: subclasses may initialize mId directly!
-			$this->mId = $this->mTitle->getArticleID( Title::READ_LATEST );
+			$this->mId = $this->mTitle->getArticleID( IDBAccessObject::READ_LATEST );
 		}
 
 		if ( !$this->mId ) {
@@ -539,7 +541,7 @@ class LinksUpdate extends DataUpdate {
 	 */
 	protected function getDB() {
 		if ( !$this->db ) {
-			$this->db = wfGetDB( DB_PRIMARY );
+			$this->db = $this->connectionProvider->getPrimaryDatabase();
 		}
 
 		return $this->db;
@@ -555,6 +557,3 @@ class LinksUpdate extends DataUpdate {
 		return $this->mRecursive;
 	}
 }
-
-/** @deprecated since 1.38 */
-class_alias( LinksUpdate::class, 'LinksUpdate' );

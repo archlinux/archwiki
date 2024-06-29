@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
@@ -22,17 +23,11 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
  * behavior as implemented by the PHP parser.
  */
 class ParagraphWrapper extends TokenHandler {
-	/** @var bool */
-	private $inPre;
 
-	/** @var bool */
-	private $hasOpenPTag;
-
-	/** @var bool */
-	private $inBlockElem;
-
-	/** @var bool */
-	private $inBlockquote;
+	private bool $inPre = false;
+	private bool $hasOpenPTag = false;
+	private bool $inBlockElem = false;
+	private bool $inBlockquote = false;
 
 	/**
 	 * The state machine in the PreHandler is line based and only suppresses
@@ -41,19 +36,11 @@ class ParagraphWrapper extends TokenHandler {
 	 * is mimicked here.  Rather than replicate that awareness in both passes,
 	 * we piggyback on it here to undo indent-pres when they're found to be
 	 * undesirable.
-	 *
-	 * @var bool
 	 */
-	private $undoIndentPre;
-
-	/** @var array */
-	private $tokenBuffer;
-
-	/** @var array */
-	private $nlWsTokens;
-
-	/** @var int */
-	private $newLineCount;
+	private bool $undoIndentPre = false;
+	private array $tokenBuffer = [];
+	private array $nlWsTokens = [];
+	private int $newLineCount = 0;
 
 	/** @var array */
 	private $currLineTokens = [];
@@ -71,14 +58,6 @@ class ParagraphWrapper extends TokenHandler {
 	 */
 	public function __construct( TokenTransformManager $manager, array $options ) {
 		parent::__construct( $manager, $options );
-		$this->inPre = false;
-		$this->undoIndentPre = false;
-		$this->hasOpenPTag = false;
-		$this->inBlockElem = false;
-		$this->inBlockquote = false;
-		$this->tokenBuffer = [];
-		$this->nlWsTokens = [];
-		$this->newLineCount = 0;
 		// Disable p-wrapper
 		$this->disabled = !empty( $this->options['inlineContext'] );
 		$this->reset();
@@ -198,7 +177,7 @@ class ParagraphWrapper extends TokenHandler {
 	 *
 	 * @param array &$out array to append to
 	 * @param int &$offset The offset reference to update
-	 * @return Token|string
+	 * @return Token
 	 */
 	public function processOneNlTk( array &$out, &$offset ) {
 		$n = count( $this->nlWsTokens );
@@ -210,9 +189,7 @@ class ParagraphWrapper extends TokenHandler {
 				$out[] = $t;
 			}
 		}
-
-		// FIXME: We should return null and fix callers
-		return "";
+		throw new UnreachableException( 'nlWsTokens was expected to contain an NlTk.' );
 	}
 
 	/**

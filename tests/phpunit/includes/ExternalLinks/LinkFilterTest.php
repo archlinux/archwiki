@@ -2,10 +2,12 @@
 
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Tests\Unit\Libs\Rdbms\AddQuoterMock;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeMatch;
 
 /**
- * @covers MediaWiki\ExternalLinks\LinkFilter
+ * @covers \MediaWiki\ExternalLinks\LinkFilter
  * @group Database
  */
 class LinkFilterTest extends MediaWikiLangTestCase {
@@ -114,6 +116,11 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 				'news:4df8kh$iagfewewf(at)newsbf02aaa.news.aol.com' ],
 			[ '', 'news:*.aol.com',
 				'news:4df8kh$iagfewewf(at)newsbf02aaa.news.aol.com' ],
+
+			// (T347574) Only set host if it's not already set (if // is used)
+			[ 'news:', 'comp.compression', 'news://comp.compression' ],
+			[ 'news:', 'comp.compression', 'news:comp.compression' ],
+
 			[ '', 'git://github.com/prwef/abc-def.git', 'git://github.com/prwef/abc-def.git' ],
 			[ 'git://', 'github.com/', 'git://github.com/prwef/abc-def.git' ],
 			[ 'git://', '*.github.com/', 'git://a.b.c.d.e.f.github.com/prwef/abc-def.git' ],
@@ -121,8 +128,8 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 			[ 'telnet://', '*.test.com', 'telnet://shell.test.com/~home/' ],
 			[ '', 'http://test.com', 'http://test.com/index?arg=1' ],
 			[ 'http://', '*.test.com', 'http://www.test.com/index?arg=1' ],
-			[ '' ,
-				'http://xx23124:__ffdfdef__@www.test.com:12345/dir' ,
+			[ '',
+				'http://xx23124:__ffdfdef__@www.test.com:12345/dir',
 				'http://name:pass@www.test.com:12345/dir/dir/file.xyz.php#__se__?arg1=_&arg2[]=4rtg'
 			],
 			[ 'http://', '127.0.0.1', 'http://127.000.000.001' ],
@@ -207,7 +214,7 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 		$likeArrays = LinkFilter::makeLikeArray( $pattern, $protocol );
 		$likeArray = array_merge( $likeArrays[0], $likeArrays[1] );
 
-		$this->assertTrue( $likeArray !== false,
+		$this->assertIsArray( $likeArrays,
 			"LinkFilter::makeLikeArray('$pattern', '$protocol') returned false on a valid pattern"
 		);
 
@@ -286,7 +293,7 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 				'mailto:',
 				'//',
 				'file://', # Non-default
-		] );
+			] );
 
 		$index = LinkFilter::makeIndexes( $url );
 		$this->assertEquals( $expected, $index, "LinkFilter::makeIndexes(\"$url\")" );
@@ -383,7 +390,7 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 			'mailto:',
 			'//',
 			'file://', # Non-default
-		] );
+			] );
 
 		$index = LinkFilter::reverseIndexes( $url );
 		$this->assertEquals( $expected, $index, "LinkFilter::reverseIndexe(\"$url\")" );
@@ -492,7 +499,19 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 			],
 		] );
 		$conds = LinkFilter::getQueryConditions( $query, $options );
-		$this->assertEquals( $expected, $conds );
+		if ( !$conds ) {
+			$this->assertEquals( $expected, $conds );
+			return;
+		}
+		$sqlConds = [];
+		foreach ( $conds as $cond ) {
+			if ( $cond instanceof IExpression ) {
+				$sqlConds[] = $cond->toSql( new AddQuoterMock() );
+			} else {
+				$sqlConds[] = $cond;
+			}
+		}
+		$this->assertEquals( $expected, $sqlConds );
 	}
 
 	public static function provideGetQueryConditions() {
@@ -501,56 +520,56 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 				'example.com',
 				[],
 				[
-					'((el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' )) OR ' .
-					'((el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\' ))',
-					'el_to_path LIKE \'/%\' ESCAPE \'`\' ',
+					'(el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' OR ' .
+					'el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\')',
+					'el_to_path LIKE \'/%\' ESCAPE \'`\'',
 				],
 			],
 			'Basic example with path' => [
 				'example.com/foobar',
 				[],
 				[
-					'((el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' )) OR ' .
-					'((el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\' ))',
-					'el_to_path LIKE \'/foobar%\' ESCAPE \'`\' ',
+					'(el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' OR ' .
+					'el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\')',
+					'el_to_path LIKE \'/foobar%\' ESCAPE \'`\'',
 				],
 			],
 			'Wildcard domain' => [
 				'*.example.com',
 				[],
 				[
-					'((el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' )) OR ' .
-					'((el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\' ))',
-					'el_to_path LIKE \'/%\' ESCAPE \'`\' ',
+					'(el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' OR ' .
+					'el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\')',
+					'el_to_path LIKE \'/%\' ESCAPE \'`\'',
 				],
 			],
 			'Wildcard domain with path' => [
 				'*.example.com/foobar',
 				[],
 				[
-					'((el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' )) OR ' .
-					'((el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\' ))',
-					'el_to_path LIKE \'/foobar%\' ESCAPE \'`\' ',
+					'(el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' OR ' .
+					'el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\')',
+					'el_to_path LIKE \'/foobar%\' ESCAPE \'`\'',
 				],
 			],
 			'Wildcard domain with path, oneWildcard=true' => [
 				'*.example.com/foobar',
 				[ 'oneWildcard' => true ],
 				[
-					'((el_to_domain_index = \'http://com.example.\')) OR ' .
-					'((el_to_domain_index = \'https://com.example.\'))',
-					'el_to_path LIKE \'/foobar%\' ESCAPE \'`\' ',
+					'(el_to_domain_index = \'http://com.example.\' OR ' .
+					'el_to_domain_index = \'https://com.example.\')',
+					'el_to_path LIKE \'/foobar%\' ESCAPE \'`\'',
 				],
 			],
 			'Constant prefix' => [
 				'example.com/blah/blah/blah/blah/blah/blah/blah/blah/blah/blah?foo=',
 				[],
 				[
-					'((el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' )) OR ' .
-					'((el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\' ))',
+					'(el_to_domain_index LIKE \'http://com.example.%\' ESCAPE \'`\' OR ' .
+					'el_to_domain_index LIKE \'https://com.example.%\' ESCAPE \'`\')',
 					'el_to_path LIKE ' .
 					'\'/blah/blah/blah/blah/blah/blah/blah/blah/blah/blah?foo=%\' ' .
-					'ESCAPE \'`\' ',
+					'ESCAPE \'`\'',
 				],
 			],
 			'Bad protocol' => [
@@ -562,22 +581,22 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 				'gaps.example',
 				[],
 				[
-					'((el_to_domain_index LIKE \'http://example.gaps.%\' ESCAPE \'`\' ) AND ' .
-					'((el_id < 10) OR (el_id > 20)) AND ' .
-					'((el_id < 100) OR (el_id > 200)) AND ' .
-					'((el_id < 1000) OR (el_id > 2000))) OR ' .
-					'((el_to_domain_index LIKE \'https://example.gaps.%\' ESCAPE \'`\' ) AND ' .
-					'((el_id < 30) OR (el_id > 40)) AND ' .
-					'((el_id < 5000) OR (el_id > 60000)))',
-					'el_to_path LIKE \'/%\' ESCAPE \'`\' ',
+					'((el_to_domain_index LIKE \'http://example.gaps.%\' ESCAPE \'`\' AND ' .
+					'(el_id < 10 OR el_id > 20) AND ' .
+					'(el_id < 100 OR el_id > 200) AND ' .
+					'(el_id < 1000 OR el_id > 2000)) OR ' .
+					'(el_to_domain_index LIKE \'https://example.gaps.%\' ESCAPE \'`\' AND ' .
+					'(el_id < 30 OR el_id > 40) AND ' .
+					'(el_id < 5000 OR el_id > 60000)))',
+					'el_to_path LIKE \'/%\' ESCAPE \'`\'',
 				],
 			],
 			'Various options' => [
 				'example.com',
 				[ 'protocol' => 'https://' ],
 				[
-					"((el_to_domain_index LIKE 'https://com.example.%' ESCAPE '`' ))",
-					"el_to_path LIKE '/%' ESCAPE '`' ",
+					"(el_to_domain_index LIKE 'https://com.example.%' ESCAPE '`')",
+					"el_to_path LIKE '/%' ESCAPE '`'",
 				],
 			],
 		];

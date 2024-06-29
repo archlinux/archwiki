@@ -20,17 +20,15 @@
 
 namespace MediaWiki\Block;
 
-use IContextSource;
 use InvalidArgumentException;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Title\Title;
-use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
-use Message;
-use RequestContext;
 
 /**
  * @note Extensions should not subclass this, as MediaWiki currently does not
@@ -88,7 +86,9 @@ abstract class AbstractBlock implements Block {
 	 *  - wiki: (string|false) The wiki the block has been issued in,
 	 *    self::LOCAL for the local wiki (since 1.38)
 	 *  - reason: (string|Message|CommentStoreComment) Reason for the block
-	 *  - timestamp: (string) The time at which the block comes into effect
+	 *  - timestamp: (string) The time at which the block comes into effect,
+	 *    in any format supported by wfTimestamp()
+	 *  - decodedTimestamp: (string) The timestamp in MW 14-character format
 	 *  - hideName: (bool) Hide the target user name
 	 *  - anonOnly: (bool) Used if the target is an IP address. The block only
 	 *    applies to anon and temporary users using this IP address, and not to
@@ -109,7 +109,11 @@ abstract class AbstractBlock implements Block {
 		$this->wikiId = $options['wiki'];
 		$this->setTarget( $options['address'] );
 		$this->setReason( $options['reason'] );
-		$this->setTimestamp( wfTimestamp( TS_MW, $options['timestamp'] ) );
+		if ( isset( $options['decodedTimestamp'] ) ) {
+			$this->setTimestamp( $options['decodedTimestamp'] );
+		} else {
+			$this->setTimestamp( wfTimestamp( TS_MW, $options['timestamp'] ) );
+		}
 		$this->setHideName( (bool)$options['hideName'] );
 		$this->isHardblock( !$options['anonOnly'] );
 	}
@@ -135,22 +139,6 @@ abstract class AbstractBlock implements Block {
 	public function getId( $wikiId = self::LOCAL ): ?int {
 		$this->assertWiki( $wikiId );
 		return null;
-	}
-
-	/**
-	 * Get the reason given for creating the block, as a string.
-	 *
-	 * Deprecated, since this gives the caller no control over the language
-	 * or format, and no access to the comment's data.
-	 *
-	 * @deprecated since 1.35. Use getReasonComment instead.
-	 * @since 1.33
-	 * @return string
-	 */
-	public function getReason() {
-		wfDeprecated( __METHOD__, '1.35' );
-		$language = RequestContext::getMain()->getLanguage();
-		return $this->reason->message->inLanguage( $language )->plain();
 	}
 
 	/**
@@ -284,6 +272,7 @@ abstract class AbstractBlock implements Block {
 
 		$res = null;
 		switch ( $right ) {
+			case 'autocreateaccount':
 			case 'createaccount':
 				$res = $this->isCreateAccountBlocked();
 				break;
@@ -302,7 +291,7 @@ abstract class AbstractBlock implements Block {
 			// If a block would disable login, then it should
 			// prevent any right that all users cannot do
 			$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
-			$anon = new User;
+			$anon = MediaWikiServices::getInstance()->getUserFactory()->newAnonymous();
 			$res = $permissionManager->userHasRight( $anon, $right ) ? $res : true;
 		}
 
@@ -402,7 +391,8 @@ abstract class AbstractBlock implements Block {
 			$this->type = null;
 		} else {
 			[ $parsedTarget, $this->type ] = MediaWikiServices::getInstance()
-				->getBlockUtils()
+				->getBlockUtilsFactory()
+				->getBlockUtils( $this->wikiId )
 				->parseBlockTarget( $target );
 			if ( $parsedTarget !== null ) {
 				$this->assertWiki( is_string( $parsedTarget ) ? self::LOCAL : $parsedTarget->getWikiId() );
@@ -435,13 +425,14 @@ abstract class AbstractBlock implements Block {
 	public function getPermissionsError( IContextSource $context ) {
 		wfDeprecated( __METHOD__, '1.35' );
 		$message = MediaWikiServices::getInstance()
-			->getBlockErrorFormatter()->getMessage(
+			->getFormatterFactory()->getBlockErrorFormatter( $context )
+			->getMessage(
 				$this,
 				$context->getUser(),
-				$context->getLanguage(),
+				null,
 				$context->getRequest()->getIP()
 			);
-		return array_merge( [ $message->getKey() ], $message->getParams() );
+		return [ $message->getKey(), ...$message->getParams() ];
 	}
 
 	/**
@@ -452,7 +443,7 @@ abstract class AbstractBlock implements Block {
 	 * page needs to be passed into the block object, which is unaware
 	 * of the user.
 	 *
-	 * The ipb_allow_usertalk flag (which corresponds to the property
+	 * The bl_allow_usertalk flag (which corresponds to the property
 	 * allowUsertalk) is used on sitewide blocks and partial blocks
 	 * that contain a namespace restriction on the user talk namespace,
 	 * but do not contain a page restriction on the user's talk page.
@@ -500,7 +491,7 @@ abstract class AbstractBlock implements Block {
 			}
 		}
 
-		// This is a type of block which uses the ipb_allow_usertalk
+		// This is a type of block which uses the bl_allow_usertalk
 		// flag. The flag can still be overridden by global configs.
 		if ( !MediaWikiServices::getInstance()->getMainConfig()
 			->get( MainConfigNames::BlockAllowsUTEdit )
@@ -564,6 +555,9 @@ abstract class AbstractBlock implements Block {
 		return $this->isCreateAccountBlocked();
 	}
 
+	/**
+	 * @return AbstractBlock[]
+	 */
 	public function toArray(): array {
 		return [ $this ];
 	}

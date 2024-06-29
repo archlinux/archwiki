@@ -26,7 +26,6 @@ use MessageSpecifier;
  * frequently, so we try to give friendly error messages for them.
  *
  * @newable
- * @stable to extend
  * @ingroup Database
  * @since 1.23
  */
@@ -56,8 +55,3 @@ class DBExpectedError extends DBError implements MessageSpecifier {
 		return $this->params;
 	}
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( DBExpectedError::class, 'DBExpectedError' );

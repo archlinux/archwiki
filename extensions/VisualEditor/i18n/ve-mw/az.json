@@ -320,6 +320,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Mümkün olduğu halda həmişə vizual redaktoru aç",
 	"visualeditor-preference-tabs-prefer-wt": "Mümkün olduğu halda həmişə mənbə redaktorunu aç",
 	"visualeditor-preference-tabs-remember-last": "Axırınca redaktorumu yadda saxla",
+	"visualeditor-preference-collab-label": "Birgə redaktə",
+	"visualeditor-preference-collab-description": "Digər istifadəçiləri vizual redaktorda redaktə sessiyanıza qoşulmağa dəvət edin.",
 	"visualeditor-rebase-client-export": "İxrac",
 	"visualeditor-rebase-client-export-start": "İxrac et...",
 	"visualeditor-rebase-client-import": "İdxal",

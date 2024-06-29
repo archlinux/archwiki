@@ -19,6 +19,5 @@
 	"discussiontools-replywidget-summary": "Resume",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|comentariu|comentarios}}",
 	"discussiontools-topicheader-latestcomment": "Últimu comentariu: $1",
-	"discussiontools-topicsubscription-button-subscribe": "soscríbite",
-	"minerva-talk-full-page": "Lleer como páxina wiki"
+	"discussiontools-topicsubscription-button-subscribe": "soscríbite"
 }

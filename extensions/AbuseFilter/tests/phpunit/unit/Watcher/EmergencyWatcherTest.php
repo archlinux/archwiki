@@ -8,8 +8,8 @@ use MediaWiki\Extension\AbuseFilter\EmergencyCache;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWikiUnitTestCase;
-use MWTimestamp;
 use Wikimedia\Rdbms\LBFactory;
 
 /**

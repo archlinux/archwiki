@@ -16,6 +16,6 @@
 	"math_syntax_error": "सूत्र (syntax) त्रुटि",
 	"math_unknown_error": "अज्ञात समस्या",
 	"math_unknown_function": "अज्ञात निर्देशन",
-	"mw_math_source": "यसलाई TeX को रुपमा  छोड्ने(पाठ प्रदर्शको लागि)",
+	"mw-math-source": "यसलाई TeX को रुपमा  छोड्ने(पाठ प्रदर्शको लागि)",
 	"prefs-math": "गणित"
 }

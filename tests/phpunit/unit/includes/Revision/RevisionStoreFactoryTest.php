@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Tests\Unit\Revision;
 
-use CommentStore;
 use HashBagOStuff;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Page\PageStoreFactory;
@@ -16,7 +16,6 @@ use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Storage\NameTableStoreFactory;
 use MediaWiki\Storage\SqlBlobStore;
 use MediaWiki\Title\TitleFactory;
-use MediaWiki\User\ActorMigration;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\User\UserIdentityLookup;
@@ -29,11 +28,11 @@ use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\TestingAccessWrapper;
 
+/**
+ * @covers \MediaWiki\Revision\RevisionStoreFactory
+ */
 class RevisionStoreFactoryTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @covers \MediaWiki\Revision\RevisionStoreFactory::__construct
-	 */
 	public function testValidConstruction_doesntCauseErrors() {
 		new RevisionStoreFactory(
 			$this->getMockLoadBalancerFactory(),
@@ -43,7 +42,6 @@ class RevisionStoreFactoryTest extends MediaWikiUnitTestCase {
 			$this->getHashWANObjectCache(),
 			new HashBagOStuff(),
 			$this->createMock( CommentStore::class ),
-			$this->createMock( ActorMigration::class ),
 			$this->getMockActorStoreFactory(),
 			new NullLogger(),
 			$this->createMock( IContentHandlerFactory::class ),
@@ -61,12 +59,10 @@ class RevisionStoreFactoryTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideWikiIds
-	 * @covers \MediaWiki\Revision\RevisionStoreFactory::getRevisionStore
 	 */
 	public function testGetRevisionStore( $wikiId ) {
 		$cache = $this->getHashWANObjectCache();
 		$commentStore = $this->createMock( CommentStore::class );
-		$actorMigration = $this->createMock( ActorMigration::class );
 
 		$factory = new RevisionStoreFactory(
 			$this->getMockLoadBalancerFactory(),
@@ -76,7 +72,6 @@ class RevisionStoreFactoryTest extends MediaWikiUnitTestCase {
 			$cache,
 			new HashBagOStuff(),
 			$commentStore,
-			$actorMigration,
 			$this->getMockActorStoreFactory(),
 			new NullLogger(),
 			$this->createMock( IContentHandlerFactory::class ),
@@ -97,7 +92,6 @@ class RevisionStoreFactoryTest extends MediaWikiUnitTestCase {
 		// ensure all other required services are correctly set
 		$this->assertSame( $cache, $wrapper->cache );
 		$this->assertSame( $commentStore, $wrapper->commentStore );
-		$this->assertSame( $actorMigration, $wrapper->actorMigration );
 
 		$this->assertInstanceOf( ILoadBalancer::class, $wrapper->loadBalancer );
 		$this->assertInstanceOf( BlobStore::class, $wrapper->blobStore );

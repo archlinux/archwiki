@@ -14,7 +14,6 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
-use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\NodeData\TemplateInfo;
@@ -87,10 +86,6 @@ class DOMRangeBuilder {
 	/** @var string */
 	protected $traceType;
 
-	/**
-	 * @param Document $document
-	 * @param Frame $frame
-	 */
 	public function __construct(
 		Document $document, Frame $frame
 	) {
@@ -101,10 +96,6 @@ class DOMRangeBuilder {
 		$this->traceType = "tplwrap";
 	}
 
-	/**
-	 * @param Element $target
-	 * @param Element $source
-	 */
 	protected function updateDSRForFirstRangeNode( Element $target, Element $source ): void {
 		$srcDP = DOMDataUtils::getDataParsoid( $source );
 		$tgtDP = DOMDataUtils::getDataParsoid( $target );
@@ -179,7 +170,7 @@ class DOMRangeBuilder {
 	 * @return string
 	 */
 	protected function getRangeId( Element $node ): string {
-		return $node->getAttribute( "about" ) ?? '';
+		return DOMCompat::getAttribute( $node, "about" );
 	}
 
 	/**
@@ -351,25 +342,19 @@ class DOMRangeBuilder {
 		return $node;
 	}
 
-/**
- * @param Element $meta
- */
 	private static function stripStartMeta( Element $meta ): void {
 		if ( DOMCompat::nodeName( $meta ) === 'meta' ) {
 			$meta->parentNode->removeChild( $meta );
 		} else {
 			// Remove mw:* from the typeof.
-			$type = $meta->getAttribute( 'typeof' ) ?? '';
-			$type = preg_replace( '/(?:^|\s)mw:[^\/]*(\/[^\s]+|(?=$|\s))/D', '', $type );
-			$meta->setAttribute( 'typeof', $type );
+			$type = DOMCompat::getAttribute( $meta, 'typeof' );
+			if ( $type !== null ) {
+				$type = preg_replace( '/(?:^|\s)mw:[^\/]*(\/\S+|(?=$|\s))/D', '', $type );
+				$meta->setAttribute( 'typeof', $type );
+			}
 		}
 	}
 
-	/**
-	 * @param array $nestingInfo
-	 * @param ?string $startId
-	 * @return ?string
-	 */
 	private static function findToplevelEnclosingRange(
 		array $nestingInfo, ?string $startId
 	): ?string {
@@ -398,9 +383,7 @@ class DOMRangeBuilder {
 	private function recordTemplateInfo(
 		string $compoundTplId, DOMRangeInfo $range, TemplateInfo $templateInfo
 	): void {
-		if ( !isset( $this->compoundTpls[$compoundTplId] ) ) {
-			$this->compoundTpls[$compoundTplId] = [];
-		}
+		$this->compoundTpls[$compoundTplId] ??= [];
 
 		// Record template args info along with any intervening wikitext
 		// between templates that are part of the same compound structure.
@@ -761,7 +744,7 @@ class DOMRangeBuilder {
 	private function ensureElementsInRange( DOMRangeInfo $range ): void {
 		$n = $range->start;
 		$e = $range->end;
-		$about = $range->startElem->getAttribute( 'about' ) ?? '';
+		$about = DOMCompat::getAttribute( $range->startElem, 'about' );
 		while ( $n ) {
 			$next = $n->nextSibling;
 			if ( !( $n instanceof Element ) ) {
@@ -883,9 +866,12 @@ class DOMRangeBuilder {
 			// and not allow its content to be edited directly.
 			$startElem = $range->startElem;
 			if ( $startElem !== $encapTgt ) {
-				$t1 = $startElem->getAttribute( 'typeof' ) ?? '';
-				$t2 = $encapTgt->getAttribute( 'typeof' ) ?? '';
-				$encapTgt->setAttribute( 'typeof', $t2 ? $t1 . ' ' . $t2 : $t1 );
+				$t1 = DOMCompat::getAttribute( $startElem, 'typeof' );
+				if ( $t1 !== null ) {
+					foreach ( array_reverse( explode( ' ', $t1 ) ) as $t ) {
+						DOMUtils::addTypeOf( $encapTgt, $t, true );
+					}
+				}
 			}
 
 			/* ----------------------------------------------------------------
@@ -987,8 +973,9 @@ class DOMRangeBuilder {
 				}
 
 				// Set up dsr->start, dsr->end, and data-mw on the target node
-				$encapDataMw = new DataMw( [ 'parts' => $parts ] );
-				// FIXME: This is going to clobber any data-mw on $encapTgt, see T214241
+				// Avoid clobbering existing (ex: extension) data-mw information (T214241)
+				$encapDataMw = DOMDataUtils::getDataMw( $encapTgt );
+				$encapDataMw->parts = $parts;
 				DOMDataUtils::setDataMw( $encapTgt, $encapDataMw );
 				$encapDP->pi = $pi;
 
@@ -1110,7 +1097,6 @@ class DOMRangeBuilder {
 	 * @param Node $rootNode
 	 * @param ElementRange[] &$tpls Template start and end elements by ID
 	 * @param DOMRangeInfo[] &$tplRanges Template range info
-	 * @return void
 	 */
 	private function findWrappableTemplateRangesRecursive(
 		Node $rootNode, array &$tpls, array &$tplRanges
@@ -1260,10 +1246,6 @@ class DOMRangeBuilder {
 		return WTUtils::matchTplType( $elem );
 	}
 
-	/**
-	 * @param ?TemplateInfo $templateInfo
-	 * @param TempData $tmp
-	 */
 	protected function verifyTplInfoExpectation( ?TemplateInfo $templateInfo, TempData $tmp ): void {
 		if ( !$templateInfo ) {
 			// An assertion here is probably an indication that we're
@@ -1272,9 +1254,6 @@ class DOMRangeBuilder {
 		}
 	}
 
-	/**
-	 * @param Node $root
-	 */
 	public function execute( Node $root ): void {
 		$tplRanges = $this->findWrappableMetaRanges( $root );
 		if ( count( $tplRanges ) > 0 ) {

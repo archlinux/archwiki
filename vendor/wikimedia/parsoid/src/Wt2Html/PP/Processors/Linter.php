@@ -33,7 +33,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 	/** @var ParsoidExtensionAPI */
 	private $extApi = null;
 
-	/** @phan-var array<string,bool>|null */
+	/** @var array<string,bool>|null */
 	private $tagsWithChangedMisnestingBehavior = null;
 
 	/** @var string|null */
@@ -117,13 +117,8 @@ class Linter implements Wt2HtmlDOMProcessor {
 
 	/**
 	 * Finds a matching node at the "start" of this node.
-	 * @param ?Node $node
-	 * @param Element $match
-	 * @return ?Element
 	 */
-	private function leftMostMisnestedDescendent(
-		?Node $node, Element $match
-	): ?Element {
+	private function leftMostMisnestedDescendent( ?Node $node, Element $match ): ?Element {
 		if ( !$node instanceof Element ) {
 			return null;
 		}
@@ -156,10 +151,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * This "adjacency" is wrt the HTML string. In a DOM, this can either
 	 * be the next sibling OR, it might be the left-most-descendent of
 	 * of $node's parent's sibling (and so on up the ancestor chain).
-	 *
-	 * @param Node $node
-	 * @param Element $match
-	 * @return Element|null
 	 */
 	private function getMatchingMisnestedNode( Node $node, Element $match ): ?Element {
 		if ( DOMUtils::atTheTop( $node ) ) {
@@ -184,14 +175,8 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * FIXME: We might potentially be computing this information redundantly
 	 * for every lint we find within this template's content. It could probably
 	 * be cached in tplInfo after it is computed once.
-	 *
-	 * @param Env $env
-	 * @param ?stdClass $tplInfo Template info.
-	 * @return ?array
 	 */
-	private function findEnclosingTemplateName(
-		Env $env, ?stdClass $tplInfo
-	): ?array {
+	private function findEnclosingTemplateName( Env $env, ?stdClass $tplInfo ): ?array {
 		if ( !$tplInfo ) {
 			return null;
 		}
@@ -232,12 +217,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *   we might have to post-process the node's DSR.
 	 * - If the lint is found in template content, then the DSR spans
 	 *   the transclusion markup in the toplevel page source.
-	 *
-	 * @param ?array $tplLintInfo
-	 * @param ?stdClass $tplInfo
-	 * @param ?DomSourceRange $nodeDSR
-	 * @param ?callable $updateNodeDSR
-	 * @return ?DomSourceRange
 	 */
 	private function findLintDSR(
 		?array $tplLintInfo, ?stdClass $tplInfo, ?DomSourceRange $nodeDSR,
@@ -252,9 +231,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 
 	/**
 	 * Determine if a node has an identical nested tag (?)
-	 * @param Element $node
-	 * @param string $name
-	 * @return bool
 	 */
 	private function hasIdenticalNestedTag( Element $node, string $name ): bool {
 		$c = $node->firstChild;
@@ -278,9 +254,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 
 	/**
 	 * Determine if a node has misnestable content
-	 * @param Node $node
-	 * @param string $name
-	 * @return bool
 	 */
 	private function hasMisnestableContent( Node $node, string $name ): bool {
 		// For A, TD, TH, H* tags, Tidy doesn't seem to propagate
@@ -332,9 +305,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * For the other tags in that w3c spec section, I haven't reasoned
 	 * through when exactly they are optional. Not handling that complexity
 	 * for now since those are likely uncommon use cases in our corpus.
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	private function endTagOptional( Node $node ): bool {
 		static $tagNames = [ 'tr', 'td', 'th', 'li' ];
@@ -343,8 +313,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 
 	/**
 	 * Find the nearest ancestor heading tag
-	 * @param Node $node
-	 * @return Node|null
 	 */
 	private function getHeadingAncestor( Node $node ): ?Node {
 		while ( $node && !DOMUtils::isHeading( $node ) ) {
@@ -359,10 +327,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * and if the content ends in non-whitespace text, it treats the second
 	 * unclosed opening tag as a closing tag. But, a HTML5 parser won't do this.
 	 * So, detect this pattern and flag for linter fixup.
-	 *
-	 * @param Node $c
-	 * @param DataParsoid $dp
-	 * @return bool
 	 */
 	private function matchedOpenTagPairExists( Node $c, DataParsoid $dp ): bool {
 		$lc = $c->lastChild;
@@ -385,13 +349,13 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log Treebuilder fixups marked by dom.markTreeBuilderFixup.js
+	 * Lint Treebuilder fixups marked by dom.markTreeBuilderFixup.js
 	 *
 	 * It handles the following scenarios:
 	 *
-	 * 1. Unclosed end tags
-	 * 2. Unclosed start tags
-	 * 3. Stripped tags
+	 * 1. Unclosed end tags (`missing-end-tag`, `missing-end-tag-in-heading`)
+	 * 2. Invalid self-closed tags (`self-closed-tag`)
+	 * 3. Stripped tags (`stripped-tag`)
 	 *
 	 * In addition, we have specialized categories for some patterns
 	 * where we encounter unclosed end tags.
@@ -400,13 +364,8 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * 5. html5-misnesting
 	 * 6. multiple-unclosed-formatting-tags
 	 * 7. unclosed-quotes-in-heading
-	 *
-	 * @param Env $env
-	 * @param Element $c
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
 	 */
-	private function logTreeBuilderFixup(
+	private function lintTreeBuilderFixup(
 		Env $env, Element $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		// This might have been processed as part of
@@ -415,17 +374,17 @@ class Linter implements Wt2HtmlDOMProcessor {
 			return;
 		}
 
-		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+		$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 		// During DSR computation, stripped meta tags
 		// surrender their width to its previous sibling.
 		// We record the original DSR in the tmp attribute
 		// for that reason.
-		$dsr = $this->findLintDSR( $templateInfo, $tplInfo, $dp->tmp->origDSR ?? $dp->dsr ?? null );
+		$dsr = $this->findLintDSR( $tplLintInfo, $tplInfo, $dp->tmp->origDSR ?? $dp->dsr ?? null );
 		$lintObj = null;
 		if ( DOMUtils::isMarkerMeta( $c, 'mw:Placeholder/StrippedTag' ) ) {
 			$lintObj = [
 				'dsr' => $dsr,
-				'templateInfo' => $templateInfo,
+				'templateInfo' => $tplLintInfo,
 				'params' => [ 'name' => $dp->name ?? null ],
 			];
 			$env->recordLint( 'stripped-tag', $lintObj );
@@ -452,7 +411,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 			if ( !empty( $dp->selfClose ) && $cNodeName !== 'meta' ) {
 				$lintObj = [
 					'dsr' => $dsr,
-					'templateInfo' => $templateInfo,
+					'templateInfo' => $tplLintInfo,
 					'params' => [ 'name' => $cNodeName ],
 				];
 				$env->recordLint( 'self-closed-tag', $lintObj );
@@ -466,7 +425,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 			) {
 				$lintObj = [
 					'dsr' => $dsr,
-					'templateInfo' => $templateInfo,
+					'templateInfo' => $tplLintInfo,
 					'params' => [ 'name' => $cNodeName ],
 				];
 
@@ -497,8 +456,9 @@ class Linter implements Wt2HtmlDOMProcessor {
 					!$this->hasIdenticalNestedTag( $c, DOMCompat::nodeName( $c ) )
 				) {
 					$env->recordLint( 'html5-misnesting', $lintObj );
-				// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
-				} elseif ( !$isHtmlElement && DOMUtils::isQuoteElt( $c ) &&
+				} elseif (
+					!$isHtmlElement && DOMUtils::isQuoteElt( $c ) &&
+					// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.Found
 					( $ancestor = $this->getHeadingAncestor( $c->parentNode ) )
 				) {
 					$lintObj['params']['ancestorName'] = DOMCompat::nodeName( $ancestor );
@@ -533,7 +493,9 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log fostered content marked by markFosteredContent.js
+	 * Lint fostered content marked by MarkFosteredContent.
+	 *
+	 * Lint category: `fostered`
 	 *
 	 * This will log cases like:
 	 *
@@ -544,14 +506,8 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * |}
 	 *
 	 * Here 'foo' gets fostered out.
-	 *
-	 * @param Env $env
-	 * @param Element $node
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
-	 * @return ?Element
 	 */
-	private function logFosteredContent(
+	private function lintFostered(
 		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	): ?Element {
 		$maybeTable = $node->nextSibling;
@@ -587,12 +543,12 @@ class Linter implements Wt2HtmlDOMProcessor {
 			// Let us carry on with regularly scheduled programming.
 		}
 
-		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+		$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 		$lintObj = [
 			'dsr' => $this->findLintDSR(
-				$templateInfo, $tplInfo, DOMDataUtils::getDataParsoid( $maybeTable )->dsr ?? null
+				$tplLintInfo, $tplInfo, DOMDataUtils::getDataParsoid( $maybeTable )->dsr ?? null
 			),
-			'templateInfo' => $templateInfo,
+			'templateInfo' => $tplLintInfo,
 		];
 		$env->recordLint( 'fostered', $lintObj );
 
@@ -600,13 +556,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log obsolete HTML tags
-	 * @param Env $env
-	 * @param Element $c
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
+	 * Lint obsolete HTML tags.
+	 *
+	 * Lint category: `obsolete-tag`, `tidy-font-bug`
 	 */
-	private function logObsoleteHTMLTags(
+	private function lintObsoleteTag(
 		Env $env, Element $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if ( !$this->obsoleteTagsRE ) {
@@ -622,14 +576,14 @@ class Linter implements Wt2HtmlDOMProcessor {
 			$this->obsoleteTagsRE = '/^(?:' . implode( '|', $elts ) . ')$/D';
 		}
 
-		$templateInfo = null;
+		$tplLintInfo = null;
 		if ( ( empty( $dp->autoInsertedStart ) || empty( $dp->autoInsertedEnd ) ) &&
 			preg_match( $this->obsoleteTagsRE, DOMCompat::nodeName( $c ) )
 		) {
-			$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+			$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 			$lintObj = [
-				'dsr' => $this->findLintDSR( $templateInfo, $tplInfo, $dp->dsr ?? null ),
-				'templateInfo' => $templateInfo,
+				'dsr' => $this->findLintDSR( $tplLintInfo, $tplInfo, $dp->dsr ?? null ),
+				'templateInfo' => $tplLintInfo,
 				'params' => [ 'name' => DOMCompat::nodeName( $c ) ],
 			];
 			$env->recordLint( 'obsolete-tag', $lintObj );
@@ -663,7 +617,8 @@ class Linter implements Wt2HtmlDOMProcessor {
 			$tidyFontBug = $c->firstChild !== null;
 			$haveLink = false;
 			for ( $n = $c->firstChild;  $n;  $n = $n->nextSibling ) {
-				if ( DOMCompat::nodeName( $n ) !== 'a' &&
+				$nodeName = DOMCompat::nodeName( $n );
+				if ( $nodeName !== 'a' &&
 					!WTUtils::isRenderingTransparentNode( $n ) &&
 					!WTUtils::isTplMarkerMeta( $n )
 				) {
@@ -671,7 +626,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 					break;
 				}
 
-				if ( DOMCompat::nodeName( $n ) === 'a' || DOMCompat::nodeName( $n ) === 'figure' ) {
+				if ( $nodeName === 'a' || $nodeName === 'figure' ) {
 					if ( !$haveLink ) {
 						$haveLink = true;
 					} else {
@@ -682,10 +637,10 @@ class Linter implements Wt2HtmlDOMProcessor {
 			}
 
 			if ( $tidyFontBug ) {
-				$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+				$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 				$env->recordLint( 'tidy-font-bug', [
-					'dsr' => $this->findLintDSR( $templateInfo, $tplInfo, $dp->dsr ?? null ),
-					'templateInfo' => $templateInfo,
+					'dsr' => $this->findLintDSR( $tplLintInfo, $tplInfo, $dp->dsr ?? null ),
+					'templateInfo' => $tplLintInfo,
 					'params' => [ 'name' => 'font' ]
 				] );
 			}
@@ -693,21 +648,19 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log bogus (=unrecognized) media options
+	 * Log bogus (=unrecognized) media options.
 	 *
 	 * See - https://www.mediawiki.org/wiki/Help:Images#Syntax
 	 *
-	 * @param Env $env
-	 * @param Node $c
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
+	 * Lint category: `bogus-image-options`
 	 */
-	private function logBogusMediaOptions(
+	private function lintBogusImageOptions(
 		Env $env, Node $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
+		// Despite the lint category name, this checks all media, not just images
 		if ( WTUtils::isGeneratedFigure( $c ) && !empty( $dp->optList ) ) {
 			$items = [];
-			$bogusPx = isset( $dp->getTemp()->bogusPx );
+			$bogusPx = $dp->getTempFlag( TempData::BOGUS_PX );
 			foreach ( $dp->optList as $item ) {
 				if (
 					$item['ck'] === 'bogus' ||
@@ -717,10 +670,10 @@ class Linter implements Wt2HtmlDOMProcessor {
 				}
 			}
 			if ( $items ) {
-				$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+				$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 				$env->recordLint( 'bogus-image-options', [
-					'dsr' => $this->findLintDSR( $templateInfo, $tplInfo, $dp->dsr ?? null ),
-					'templateInfo' => $templateInfo,
+					'dsr' => $this->findLintDSR( $tplLintInfo, $tplInfo, $dp->dsr ?? null ),
+					'templateInfo' => $tplLintInfo,
 					'params' => [ 'items' => $items ]
 				] );
 			}
@@ -728,7 +681,9 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log tables Tidy deletes
+	 * Lint tables Tidy deletes.
+	 *
+	 * Lint category: `deletable-table-tag`
 	 *
 	 * In this example below, the second table is in a fosterable position
 	 * (inside a <tr>). The tree builder closes the first table at that point
@@ -746,13 +701,8 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *   |c
 	 *   |}
 	 *   |}
-	 *
-	 * @param Env $env
-	 * @param Node $c
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
 	 */
-	private function logDeletableTables(
+	private function lintDeletableTableTag(
 		Env $env, Node $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if ( DOMCompat::nodeName( $c ) === 'table' ) {
@@ -760,9 +710,9 @@ class Linter implements Wt2HtmlDOMProcessor {
 			if ( $prev instanceof Element && DOMCompat::nodeName( $prev ) === 'table' &&
 				!empty( DOMDataUtils::getDataParsoid( $prev )->autoInsertedEnd )
 			) {
-				$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+				$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 				$dsr = $this->findLintDSR(
-					$templateInfo,
+					$tplLintInfo,
 					$tplInfo,
 					$dp->dsr ?? null,
 					static function ( ?DomSourceRange $nodeDSR ): ?DomSourceRange {
@@ -779,7 +729,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 				);
 				$lintObj = [
 					'dsr' => $dsr,
-					'templateInfo' => $templateInfo,
+					'templateInfo' => $tplLintInfo,
 					'params' => [ 'name' => 'table' ],
 				];
 				$env->recordLint( 'deletable-table-tag', $lintObj );
@@ -789,9 +739,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 
 	/**
 	 * Find the first child passing the filter.
-	 * @param Node $node
-	 * @param callable $filter
-	 * @return Node|null
 	 */
 	private function findMatchingChild( Node $node, callable $filter ): ?Node {
 		$c = $node->firstChild;
@@ -814,26 +761,20 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * Special case for enwiki that has Template:nowrap which
 	 * assigns class='nowrap' with CSS white-space:nowrap in
 	 * MediaWiki:Common.css
-	 *
-	 * @param Node $node
-	 * @return bool
 	 */
 	private function hasNoWrapCSS( Node $node ): bool {
 		return $node instanceof Element && (
-			str_contains( $node->getAttribute( 'style' ) ?? '', 'nowrap' ) ||
-			preg_match( '/(?:^|\s)nowrap(?:$|\s)/D', $node->getAttribute( 'class' ) ?? '' )
+			str_contains( DOMCompat::getAttribute( $node, 'style' ) ?? '', 'nowrap' ) ||
+			DOMUtils::hasClass( $node, 'nowrap' )
 		);
 	}
 
 	/**
-	 * Log bad P wrapping
+	 * Lint bad P wrapping.
 	 *
-	 * @param Env $env
-	 * @param Element $node
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
+	 * Lint category: `pwrap-bug-workaround`
 	 */
-	private function logBadPWrapping(
+	private function lintPWrapBugWorkaround(
 		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if (
@@ -845,10 +786,10 @@ class Linter implements Wt2HtmlDOMProcessor {
 				return DOMCompat::nodeName( $e ) === 'p';
 			} );
 			if ( $p ) {
-				$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+				$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 				$lintObj = [
-					'dsr' => $this->findLintDSR( $templateInfo, $tplInfo, $dp->dsr ?? null ),
-					'templateInfo' => $templateInfo,
+					'dsr' => $this->findLintDSR( $tplLintInfo, $tplInfo, $dp->dsr ?? null ),
+					'templateInfo' => $tplLintInfo,
 					'params' => [
 						'root' => DOMCompat::nodeName( $node->parentNode ),
 						'child' => DOMCompat::nodeName( $node ),
@@ -860,13 +801,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log Tidy div span flip
-	 * @param Env $env
-	 * @param Element $node
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
+	 * Lint Tidy div span flip.
+	 *
+	 * Lint category: `misc-tidy-replacement-issues`
 	 */
-	private function logTidyDivSpanFlip(
+	private function lintMiscTidyReplacementIssues(
 		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if ( DOMCompat::nodeName( $node ) !== 'span' ) {
@@ -885,23 +824,21 @@ class Linter implements Wt2HtmlDOMProcessor {
 			return;
 		}
 
-		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+		$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 		$lintObj = [
-			'dsr' => $this->findLintDSR( $templateInfo, $tplInfo, $dp->dsr ?? null ),
-			'templateInfo' => $templateInfo,
+			'dsr' => $this->findLintDSR( $tplLintInfo, $tplInfo, $dp->dsr ?? null ),
+			'templateInfo' => $tplLintInfo,
 			'params' => [ 'subtype' => 'div-span-flip' ]
 		];
 		$env->recordLint( 'misc-tidy-replacement-issues', $lintObj );
 	}
 
 	/**
-	 * Log tidy whitespace bug
-	 * @param Env $env
-	 * @param Node $node
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
+	 * Lint tidy whitespace bug.
+	 *
+	 * Lint category: `tidy-whitespace-bug`
 	 */
-	private function logTidyWhitespaceBug(
+	private function lintTidyWhitespaceBug(
 		Env $env, Node $node, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		// We handle a run of nodes in one shot.
@@ -933,7 +870,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 			if ( $node instanceof Text || !$this->hasNoWrapCSS( $node ) ) {
 				// No CSS property that affects whitespace.
 				$s = $node->textContent;
-				if ( preg_match( '/^([^\s]*)\s/', $s, $m ) ) { // PORT-FIXME: non-ASCII whitespace?
+				if ( preg_match( '/^(\S*)\s/', $s, $m ) ) { // PORT-FIXME: non-ASCII whitespace?
 					$runLength += strlen( $m[1] );
 					$nowrapNodes[] = [
 						'node' => $node,
@@ -1009,7 +946,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 			if ( !( $prev instanceof Comment ) ) {
 				$s = $prev->textContent;
 				// Find the last \s in the string
-				if ( preg_match( '/\s([^\s]*)$/D', $s, $m ) ) { // PORT-FIXME: non-ASCII whitespace here?
+				if ( preg_match( '/\s(\S*)$/D', $s, $m ) ) { // PORT-FIXME: non-ASCII whitespace here?
 					$runLength += strlen( $m[1] );
 					break;
 				} else {
@@ -1019,7 +956,10 @@ class Linter implements Wt2HtmlDOMProcessor {
 			$prev = $prev->previousSibling;
 		}
 
-		if ( $runLength < $env->getSiteConfig()->tidyWhitespaceBugMaxLength() ) {
+		$lintConfig = $env->getSiteConfig()->getLinterConfig();
+		$tidyWhitespaceBugMaxLength = $lintConfig['tidyWhitespaceBugMaxLength'] ?? 100;
+
+		if ( $runLength < $tidyWhitespaceBugMaxLength ) {
 			// Mark processed nodes and bail
 			$markProcessedNodes();
 			return;
@@ -1027,20 +967,20 @@ class Linter implements Wt2HtmlDOMProcessor {
 
 		// For every node where Tidy hoists whitespace,
 		// emit an event to flag a whitespace fixup opportunity.
-		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+		$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 		$n = count( $nowrapNodes ) - 1;
 		foreach ( $nowrapNodes as $i => $o ) {
 			if ( $o['tidybug'] && $i < $n && empty( $nowrapNodes[$i + 1]['hasLeadingWS'] ) ) {
 				$nowrapNode = $o['node']; // (see above)
 				$lintObj = [
 					'dsr' => $this->findLintDSR(
-						$templateInfo,
+						$tplLintInfo,
 						$tplInfo,
 						$nowrapNode instanceof Element
 							? DOMDataUtils::getDataParsoid( $nowrapNode )->dsr ?? null
 							: null
 					),
-					'templateInfo' => $templateInfo,
+					'templateInfo' => $tplLintInfo,
 					'params' => [
 						'node' => DOMCompat::nodeName( $o['node'] ),
 						'sibling' => DOMCompat::nodeName( $o['node']->nextSibling )
@@ -1064,10 +1004,9 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *
 	 * Ex: https://it.wikipedia.org/wiki/Hubert_H._Humphrey_Metrodome?oldid=93017491#Note
 	 *
-	 * @param array $lints
-	 * @param Env $env
+	 * Lint category: `multiple-unclosed-formatting-tags`
 	 */
-	private function detectMultipleUnclosedFormattingTags( array $lints, Env $env ): void {
+	private function lintMultipleUnclosedFormattingTags( array $lints, Env $env ): void {
 		$firstUnclosedTag = [
 			'small' => null,
 			'big' => null
@@ -1097,24 +1036,20 @@ class Linter implements Wt2HtmlDOMProcessor {
 			$env->recordLint( 'multiple-unclosed-formatting-tags', [
 				'params' => $item['params'] ?? [],
 				'dsr' => $item['dsr'] ?? null,
-				'templateInfo' => $item['templateInfo'] ?? null
+				'templateInfo' => $item['tplLintInfo'] ?? null
 			] );
 		}
 	}
 
 	/**
 	 * Post-process an array of lints
-	 * @param array $lints
-	 * @param Env $env
 	 */
 	private function postProcessLints( array $lints, Env $env ): void {
-		$this->detectMultipleUnclosedFormattingTags( $lints, $env );
+		$this->lintMultipleUnclosedFormattingTags( $lints, $env );
 	}
 
 	/**
 	 * Get wikitext list item ancestor
-	 * @param ?Node $node
-	 * @return ?Node
 	 */
 	private function getWikitextListItemAncestor( ?Node $node ): ?Node {
 		while ( $node && !DOMUtils::isListItem( $node ) ) {
@@ -1131,19 +1066,17 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log PHP parser bug
-	 * @param Env $env
-	 * @param Element $node
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
+	 * Lint a PHP parser bug.
+	 *
+	 * Lint category: `multiline-html-table-in-list`
 	 */
-	private function logPHPParserBug(
+	private function lintMultilineHtmlTableInList(
 		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		$li = null;
-		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
 		if ( !WTUtils::isLiteralHTMLNode( $node ) ||
 			DOMCompat::nodeName( $node ) !== 'table' ||
+			// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.Found
 			!( $li = $this->getWikitextListItemAncestor( $node ) ) ||
 			!str_contains( DOMCompat::getOuterHTML( $node ), "\n" )
 		) {
@@ -1153,12 +1086,12 @@ class Linter implements Wt2HtmlDOMProcessor {
 		// We have an HTML table nested inside a list
 		// that has a newline break in its outer HTML
 		// => we are in trouble with the PHP Parser + Remex combo
-		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+		$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 		$lintObj = [
 			'dsr' => $this->findLintDSR(
-				$templateInfo, $tplInfo, DOMDataUtils::getDataParsoid( $node )->dsr ?? null
+				$tplLintInfo, $tplInfo, DOMDataUtils::getDataParsoid( $node )->dsr ?? null
 			),
-			'templateInfo' => $templateInfo,
+			'templateInfo' => $tplLintInfo,
 			'params' => [
 				'name' => 'table',
 				'ancestorName' => DOMCompat::nodeName( $li ),
@@ -1168,7 +1101,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log wikilinks or media in external links
+	 * Log wikilinks or media in external links.
 	 *
 	 * HTML tags can be nested but this is not the case for <a> tags
 	 * which when nested outputs the <a> tags adjacent to each other
@@ -1176,14 +1109,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * in the outer external link
 	 * [http://google.com This is [[Google]]'s search page]
 	 *
-	 * @param Env $env
-	 * @param Element $c
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
+	 * Linter category: `wikilink-in-extlink`
 	 */
-	private function logWikilinksInExtlinks(
+	private function lintWikilinksInExtlink(
 		Env $env, Element $c, DataParsoid $dp, ?stdClass $tplInfo
-	) {
+	): void {
 		if ( DOMCompat::nodeName( $c ) === 'a' &&
 			DOMUtils::hasRel( $c, "mw:ExtLink" ) &&
 			// Images in extlinks will end up with broken up extlinks inside the
@@ -1212,34 +1142,27 @@ class Linter implements Wt2HtmlDOMProcessor {
 				} );
 			}
 			if ( $lintError ) {
-				$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+				$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 				$lintObj = [
 					'dsr' => $this->findLintDSR(
-						$templateInfo, $tplInfo, DOMDataUtils::getDataParsoid( $c )->dsr ?? null
+						$tplLintInfo, $tplInfo, DOMDataUtils::getDataParsoid( $c )->dsr ?? null
 					),
-					'templateInfo' => $templateInfo,
+					'templateInfo' => $tplLintInfo,
 				];
 				$env->recordLint( 'wikilink-in-extlink', $lintObj );
 			}
 		}
 	}
 
-	/**
-	 * @param Env $env
-	 * @param stdClass|null $tplInfo
-	 * @param Element $node
-	 * @param int $numColumns
-	 * @param int $columnsMax
-	 * @return void
-	 */
-	private function logLargeTableEntry(
-		Env $env, ?stdClass $tplInfo, Element $node, int $numColumns, int $columnsMax ) {
-		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+	private function recordLargeTablesLint(
+		Env $env, ?stdClass $tplInfo, Element $node, int $numColumns, int $columnsMax
+	): void {
+		$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
 		$lintObj = [
 			'dsr' => $this->findLintDSR(
-				$templateInfo, $tplInfo, DOMDataUtils::getDataParsoid( $node )->dsr ?? null
+				$tplLintInfo, $tplInfo, DOMDataUtils::getDataParsoid( $node )->dsr ?? null
 			),
-			'templateInfo' => $templateInfo,
+			'templateInfo' => $tplLintInfo,
 			'params' => [
 				'name' => 'table',
 				'columns' => $numColumns,
@@ -1252,9 +1175,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 	/**
 	 * TODO: In the future, this may merit being moved to DOMUtils
 	 * along with its "previous" variant.
-	 *
-	 * @param ?Node $n
-	 * @return ?Element
 	 */
 	private function skipNonElementNodes( ?Node $n ): ?Element {
 		while ( $n && !( $n instanceof Element ) ) {
@@ -1264,17 +1184,16 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log large tables
+	 * Lint large tables.
 	 *
-	 * we need to identify the articles having such tables
-	 * to help editors optimize their articles
+	 * Identify articles having overly-large tables
+	 * to help editors optimize their articles.
 	 *
-	 * @param Env $env
-	 * @param Element $node
-	 * @param DataParsoid $dp
-	 * @param ?stdClass $tplInfo
+	 * Linter category: `large-tables`
 	 */
-	private function logLargeTables( Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo ) {
+	private function lintLargeTables(
+		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
+	): void {
 		if ( DOMCompat::nodeName( $node ) !== 'table' ) {
 			return;
 		}
@@ -1287,8 +1206,9 @@ class Linter implements Wt2HtmlDOMProcessor {
 			return;
 		}
 
-		$maxColumns = $env->getSiteConfig()->getMaxTableColumnLintHeuristic();
-		$maxRowsToCheck = $env->getSiteConfig()->getMaxTableRowsToCheckLintHeuristic();
+		$lintConfig = $env->getSiteConfig()->getLinterConfig();
+		$maxColumns = $lintConfig['maxTableColumnHeuristic'] ?? 5;
+		$maxRowsToCheck = $lintConfig['maxTableRowsToCheck'] ?? 10;
 
 		$trCount = 0;
 		$tbody = DOMCompat::querySelector( $node, 'tbody' );
@@ -1300,13 +1220,13 @@ class Linter implements Wt2HtmlDOMProcessor {
 		while ( $tr && $trCount < $maxRowsToCheck ) {
 			$numTh = $tr->getElementsByTagName( 'th' )->length;
 			if ( $numTh > $maxColumns ) {
-				$this->logLargeTableEntry( $env, $tplInfo, $node, $numTh, $maxColumns );
+				$this->recordLargeTablesLint( $env, $tplInfo, $node, $numTh, $maxColumns );
 				return;
 			}
 
 			$numTd = $tr->getElementsByTagName( 'td' )->length;
 			if ( $numTd > $maxColumns ) {
-				$this->logLargeTableEntry( $env, $tplInfo, $node, $numTd, $maxColumns );
+				$this->recordLargeTablesLint( $env, $tplInfo, $node, $numTd, $maxColumns );
 				return;
 			}
 
@@ -1316,32 +1236,63 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
+	 * Log inline background color style rules without a color style rule.
+	 *
+	 * This function identifies elements with inline style attributes
+	 * that have background color set but don't have a color style rule.
+	 * It records linter events for such elements to help editors make
+	 * their articles comply with WCAG color contrast rules.
+	 *
+	 * Linter category: `night-mode-unaware-background-color`
+	 */
+	private function lintNightModeUnawareBackgroundColor(
+		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
+	): void {
+		// Get inline style attribute value
+		$styleAttrValue = DOMCompat::getAttribute( $node, 'style' );
+
+		// Check if background color is set but font color is not
+		if (
+			( $styleAttrValue !== null ) &&
+			preg_match( '/(^|;)\s*background(-color)?\s*:/i', $styleAttrValue ) &&
+			!preg_match( '/(^|;)\s*color\s*:/i', $styleAttrValue )
+		) {
+			$tplLintInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+			$lintObj = [
+				'dsr' => $this->findLintDSR(
+					$tplLintInfo, $tplInfo, DOMDataUtils::getDataParsoid( $node )->dsr ?? null
+				),
+				'templateInfo' => $tplLintInfo,
+			];
+			$env->recordLint( 'night-mode-unaware-background-color', $lintObj );
+		}
+	}
+
+	/**
 	 * Log wikitext fixups
-	 * @param Element $node
-	 * @param Env $env
-	 * @param ?stdClass $tplInfo
-	 * @return ?Element
 	 */
 	private function logWikitextFixups(
 		Element $node, Env $env, ?stdClass $tplInfo
 	): ?Element {
 		$dp = DOMDataUtils::getDataParsoid( $node );
 
-		$this->logTreeBuilderFixup( $env, $node, $dp, $tplInfo );
-		$this->logDeletableTables( $env, $node, $dp, $tplInfo ); // For T161341
-		$this->logBadPWrapping( $env, $node, $dp, $tplInfo ); // For T161306
-		$this->logObsoleteHTMLTags( $env, $node, $dp, $tplInfo );
-		$this->logBogusMediaOptions( $env, $node, $dp, $tplInfo );
-		$this->logTidyWhitespaceBug( $env, $node, $dp, $tplInfo );
-		$this->logTidyDivSpanFlip( $env, $node, $dp, $tplInfo );
+		$this->lintTreeBuilderFixup( $env, $node, $dp, $tplInfo );
+		$this->lintDeletableTableTag( $env, $node, $dp, $tplInfo ); // For T161341
+		$this->lintPWrapBugWorkaround( $env, $node, $dp, $tplInfo ); // For T161306
+		$this->lintObsoleteTag( $env, $node, $dp, $tplInfo );
+		$this->lintBogusImageOptions( $env, $node, $dp, $tplInfo );
+		$this->lintTidyWhitespaceBug( $env, $node, $dp, $tplInfo );
+		$this->lintMiscTidyReplacementIssues( $env, $node, $dp, $tplInfo );
 
 		// When an HTML table is nested inside a list and if any part of the table
 		// is on a new line, the PHP parser misnests the list and the table.
 		// Tidy fixes the misnesting one way (puts table inside/outside the list)
 		// HTML5 parser fix it another way (list expands to rest of the page!)
-		$this->logPHPParserBug( $env, $node, $dp, $tplInfo );
-		$this->logWikilinksInExtlinks( $env, $node, $dp, $tplInfo );
-		$this->logLargeTables( $env, $node, $dp, $tplInfo );
+		$this->lintMultilineHtmlTableInList( $env, $node, $dp, $tplInfo );
+		$this->lintWikilinksInExtlink( $env, $node, $dp, $tplInfo );
+		$this->lintLargeTables( $env, $node, $dp, $tplInfo );
+
+		$this->lintNightModeUnawareBackgroundColor( $env, $node, $dp, $tplInfo );
 
 		// Log fostered content, but skip rendering-transparent nodes
 		if (
@@ -1353,7 +1304,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 			!( DOMCompat::nodeName( $node ) === 'link' &&
 				DOMUtils::hasTypeOf( $node, 'mw:Extension/section' ) )
 		) {
-			return $this->logFosteredContent( $env, $node, $dp, $tplInfo );
+			return $this->lintFostered( $env, $node, $dp, $tplInfo );
 		} else {
 			return null;
 		}
@@ -1367,10 +1318,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *   to the transclusion that generated them.
 	 * - When we process extensions, if we have a lint handler for the
 	 *   extension, let the extension's lint handler compute lints.
-	 *
-	 * @param Node $root
-	 * @param Env $env
-	 * @param ?stdClass $tplInfo
 	 */
 	private function findLints(
 		Node $root, Env $env, ?stdClass $tplInfo = null
@@ -1385,7 +1332,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 			// !tplInfo check is to protect against templated content in
 			// extensions which might in turn be nested in templated content.
 			if ( !$tplInfo && WTUtils::isFirstEncapsulationWrapperNode( $node ) ) {
-				$aboutSibs = WTUtils::getAboutSiblings( $node, $node->getAttribute( 'about' ) ?? '' );
+				$aboutSibs = WTUtils::getAboutSiblings( $node, DOMCompat::getAttribute( $node, 'about' ) );
 				$tplInfo = (object)[
 					'first' => $node,
 					'last' => end( $aboutSibs ),

@@ -26,39 +26,24 @@ use MediaWiki\Title\TitleValue;
  */
 class LinksDeletionUpdateTest extends MediaWikiLangTestCase {
 	public function testUpdate() {
-		$this->tablesUsed = array_merge( $this->tablesUsed,
-			[
-				'interwiki',
-				'page_props',
-				'pagelinks',
-				'categorylinks',
-				'langlinks',
-				'externallinks',
-				'imagelinks',
-				'templatelinks',
-				'iwlinks',
-				'recentchanges',
-			]
-		);
-
 		$res = $this->insertPage( 'Source' );
 		$id = $res['id'];
 		$title = $res['title'];
 		$wikiPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		$po = new ParserOutput();
-		$po->addCategory( 'Cat', 'cat' );
+		$po->addCategory( new TitleValue( NS_CATEGORY, 'Cat' ), 'cat' );
 		$po->addExternalLink( 'https://en.wikipedia.org/' );
-		$po->addImage( 'Wiki.png' );
+		$po->addImage( new TitleValue( NS_FILE, 'Wiki.png' ) );
 		$po->addLink( new TitleValue( 0, 'foo', '', 'iwprefix' ) );
-		$po->addLanguageLink( 'fr:Francais' );
+		$po->addLanguageLink( new TitleValue( 0, 'Francais', '', 'fr' ) );
 		$po->addLink( new TitleValue( 0, 'Target' ) );
 		$po->setPageProperty( 'int', 1 );
 		$po->addTemplate( new TitleValue( NS_TEMPLATE, '!' ), 1, 1 );
 
 		$linksUpdate = new LinksUpdate( $title, $po, false );
 		$linksUpdate->setTransactionTicket(
-			$this->getServiceContainer()->getDBLoadBalancerFactory()->getEmptyTransactionTicket( __METHOD__ )
+			$this->getServiceContainer()->getConnectionProvider()->getEmptyTransactionTicket( __METHOD__ )
 		);
 		$linksUpdate->doUpdate();
 
@@ -83,7 +68,7 @@ class LinksDeletionUpdateTest extends MediaWikiLangTestCase {
 
 		$linksDeletionUpdate = new LinksDeletionUpdate( $wikiPage, $id );
 		$linksDeletionUpdate->setTransactionTicket(
-			$this->getServiceContainer()->getDBLoadBalancerFactory()->getEmptyTransactionTicket( __METHOD__ )
+			$this->getServiceContainer()->getConnectionProvider()->getEmptyTransactionTicket( __METHOD__ )
 		);
 		$linksDeletionUpdate->doUpdate();
 

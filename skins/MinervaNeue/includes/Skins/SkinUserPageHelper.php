@@ -22,25 +22,30 @@ namespace MediaWiki\Minerva\Skins;
 
 use IContextSource;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
-use User;
 
 class SkinUserPageHelper {
 	/**
-	 * @var UserNameUtils
-	 */
-	private $userNameUtils;
-
-	/**
 	 * @var UserFactory
 	 */
-	private $userFactory;
+	private UserFactory $userFactory;
+
+	/**
+	 * @var UserNameUtils
+	 */
+	private UserNameUtils $userNameUtils;
+
+	/**
+	 * @var IContextSource
+	 */
+	private IContextSource $context;
 
 	/**
 	 * @var Title|null
 	 */
-	private $title;
+	private ?Title $title;
 
 	/**
 	 * @var bool
@@ -53,26 +58,33 @@ class SkinUserPageHelper {
 	private $pageUser;
 
 	/**
-	 * @var IContextSource|null
-	 */
-	private $context;
-
-	/**
-	 * @param UserNameUtils $userNameUtils
 	 * @param UserFactory $userFactory
-	 * @param Title|null $title
-	 * @param IContextSource|null $context
+	 * @param UserNameUtils $userNameUtils
 	 */
 	public function __construct(
-		UserNameUtils $userNameUtils,
 		UserFactory $userFactory,
-		Title $title = null,
-		IContextSource $context = null
+		UserNameUtils $userNameUtils
 	) {
-		$this->userNameUtils = $userNameUtils;
 		$this->userFactory = $userFactory;
-		$this->title = $title;
+		$this->userNameUtils = $userNameUtils;
+	}
+
+	/**
+	 * @param IContextSource $context
+	 * @return $this
+	 */
+	public function setContext( IContextSource $context ) {
 		$this->context = $context;
+		return $this;
+	}
+
+	/**
+	 * @param Title|null $title
+	 * @return $this
+	 */
+	public function setTitle( ?Title $title ) {
+		$this->title = $title;
+		return $this;
 	}
 
 	/**

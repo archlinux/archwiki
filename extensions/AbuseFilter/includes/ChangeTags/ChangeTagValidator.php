@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\ChangeTags;
 
 use ChangeTags;
-use Status;
+use MediaWiki\Status\Status;
 
 /**
  * Service for testing whether filters can tag edits and other changes

@@ -4,6 +4,7 @@ namespace MediaWiki\Rest\Handler\Helper;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageLookup;
@@ -19,7 +20,6 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SuppressedDataException;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
-use Message;
 use TextContent;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -106,7 +106,7 @@ class PageContentHelper {
 	public function getPage(): ?ExistingPageRecord {
 		if ( $this->pageRecord === false ) {
 			$titleText = $this->getTitleText();
-			if ( !$titleText ) {
+			if ( $titleText === null ) {
 				return null;
 			}
 			$this->pageRecord = $this->pageLookup->getExistingPageByText( $titleText );
@@ -121,7 +121,7 @@ class PageContentHelper {
 
 		if ( $this->pageIdentity === null ) {
 			$titleText = $this->getTitleText();
-			if ( !$titleText ) {
+			if ( $titleText === null ) {
 				return null;
 			}
 			$this->pageIdentity = $this->pageLookup->getPageByText( $titleText );
@@ -348,6 +348,14 @@ class PageContentHelper {
 	public function checkHasContent() {
 		$titleText = $this->getTitleText() ?? '';
 
+		$page = $this->getPageIdentity();
+		if ( !$page ) {
+			throw new LocalizedHttpException(
+				MessageValue::new( 'rest-invalid-title' )->plaintextParams( $titleText ),
+				404
+			);
+		}
+
 		if ( !$this->hasContent() ) {
 			// needs to check if it's possibly a variant title
 			throw new LocalizedHttpException(
@@ -369,8 +377,8 @@ class PageContentHelper {
 	 * @throws LocalizedHttpException if the content is not accessible
 	 */
 	public function checkAccess() {
-		$this->checkAccessPermission();
-		$this->checkHasContent();
+		$this->checkHasContent(); // Status 404: Not Found
+		$this->checkAccessPermission(); // Status 403: Forbidden
 	}
 
 }

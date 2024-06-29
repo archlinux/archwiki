@@ -5,9 +5,9 @@ namespace MediaWiki\Extension\DiscussionTools;
 use ApiBase;
 use ApiMain;
 use ApiUsageException;
-use Config;
-use ConfigFactory;
 use DerivativeContext;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
 use MediaWiki\Extension\VisualEditor\ApiParsoidTrait;
@@ -19,6 +19,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
 use SkinFactory;
+use Wikimedia\Assert\Assert;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\StringDef;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -201,7 +202,8 @@ class ApiDiscussionToolsEdit extends ApiBase {
 							'watchlist' => $params['watchlist'],
 							'captchaid' => $params['captchaid'],
 							'captchaword' => $params['captchaword'],
-							'nocontent' => $params['nocontent'],
+							// Always fetch content if auto-subscribing, it's needed below (T359751)
+							'nocontent' => $autoSubscribe ? null : $params['nocontent'],
 							// NOTE: Must use getText() to work; PHP array from $params['tags'] is not understood
 							// by the visualeditoredit API.
 							'tags' => $this->getRequest()->getText( 'tags' ),
@@ -233,6 +235,11 @@ class ApiDiscussionToolsEdit extends ApiBase {
 						$lastHeading = end( $threads );
 						$subscribableHeadingName = $lastHeading->getName();
 						$subscribableSectionTitle = $lastHeading->getLinkableTitle();
+					}
+					if ( $params['nocontent'] ) {
+						// We had to fetch content even if not requested by the caller (T359751), but pretend we didn't
+						unset( $result['content'] );
+						$result['nocontent'] = true;
 					}
 				}
 
@@ -267,30 +274,20 @@ class ApiDiscussionToolsEdit extends ApiBase {
 				$headers = $response['headers'];
 				$doc = DOMUtils::parseHTML( $response['body'] );
 
-				// Don't trust RESTBase to always give us the revision we requested,
-				// instead get the revision ID from the document and use that.
+				// Validate that we got the revision we requested.
 				// Ported from ve.init.mw.ArticleTarget.prototype.parseMetadata
 				$docRevId = null;
 				$aboutDoc = $doc->documentElement->getAttribute( 'about' );
-
 				if ( $aboutDoc ) {
 					preg_match( '/revision\\/([0-9]+)$/', $aboutDoc, $docRevIdMatches );
 					if ( $docRevIdMatches ) {
 						$docRevId = (int)$docRevIdMatches[ 1 ];
 					}
 				}
-
-				if ( !$docRevId ) {
-					$this->dieWithError( 'apierror-visualeditor-docserver', 'docserver' );
-				}
-
-				if ( $docRevId !== $requestedRevision->getId() ) {
-					// TODO: If this never triggers, consider removing the check.
-					$this->getLogger()->warning(
-						"Requested revision {$requestedRevision->getId()} " .
-						"but received {$docRevId}."
-					);
-				}
+				Assert::postcondition( $docRevId !== null,
+					'Parsoid document had no revision information' );
+				Assert::postcondition( $docRevId === $requestedRevision->getId(),
+					'Parsoid revision did not match requested revision' );
 
 				$container = DOMCompat::getBody( $doc );
 

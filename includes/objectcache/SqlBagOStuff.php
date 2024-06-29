@@ -178,7 +178,6 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 		$this->multiPrimaryMode = $params['multiPrimaryMode'] ?? false;
 
 		$this->attrMap[self::ATTR_DURABILITY] = self::QOS_DURABILITY_RDBMS;
-		$this->attrMap[self::ATTR_EMULATION] = self::QOS_EMULATION_SQL;
 
 		$this->hasZlib = extension_loaded( 'zlib' );
 	}
@@ -1112,7 +1111,7 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 		// Note that tombstones always have past expiration dates
 		return [
 			'keyname' => $keys,
-			'exptime >= ' . $db->addQuotes( $db->timestamp( $time ) )
+			$db->expr( 'exptime', '>=', $db->timestamp( $time ) )
 		];
 	}
 
@@ -1222,7 +1221,7 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 		$set = [];
 		foreach ( $expressionsByColumn as $column => [ $updateExpression, $initExpression ] ) {
 			$rhs = $db->conditional(
-				'exptime >= ' . $db->addQuotes( $db->timestamp( $mtUnixTs ) ),
+				$db->expr( 'exptime', '>=', $db->timestamp( $mtUnixTs ) ),
 				$updateExpression,
 				$initExpression
 			);
@@ -1469,12 +1468,8 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 				$res = $db->newSelectQueryBuilder()
 					->select( [ 'keyname', 'exptime' ] )
 					->from( $this->getTableNameByShard( $tableIndex ) )
-					->where(
-						array_merge(
-							[ 'exptime < ' . $db->addQuotes( $db->timestamp( $cutoffUnix ) ) ],
-							$maxExp ? [ 'exptime >= ' . $db->addQuotes( $maxExp ) ] : []
-						)
-					)
+					->where( $db->expr( 'exptime', '<', $db->timestamp( $cutoffUnix ) ) )
+					->andWhere( $maxExp ? $db->expr( 'exptime', '>=', $maxExp ) : [] )
 					->orderBy( 'exptime', SelectQueryBuilder::SORT_ASC )
 					->limit( $batchSize )
 					->caller( __METHOD__ )
@@ -1497,7 +1492,7 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 						->deleteFrom( $this->getTableNameByShard( $tableIndex ) )
 						->where( [
 							'keyname' => $keys,
-							$db->buildComparison( '<', [ 'exptime' => $db->timestamp( $cutoffUnix ) ] ),
+							$db->expr( 'exptime', '<', $db->timestamp( $cutoffUnix ) ),
 						] )
 						->caller( __METHOD__ )->execute();
 					$keysDeletedCount += $db->affectedRows();

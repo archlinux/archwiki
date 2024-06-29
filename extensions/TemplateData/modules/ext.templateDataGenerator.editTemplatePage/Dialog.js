@@ -1,4 +1,4 @@
-var AutosizeTextInputWidget = require( './widgets/AutosizeTextInputWidget.js' ),
+var
 	LanguageSearchWidget = require( './widgets/LanguageSearchWidget.js' ),
 	Metrics = require( './Metrics.js' ),
 	Model = require( 'ext.templateDataGenerator.data' ).Model,
@@ -780,7 +780,7 @@ Dialog.prototype.onParamSelectChoose = function ( item ) {
 	this.selectedParamKey = paramKey;
 
 	// The panel with the `propInputs` widgets must be made visible before changing their value.
-	// Otherwiese the autosize feature of MultilineTextInputWidget doesn't work.
+	// Otherwise the autosize feature of MultilineTextInputWidget doesn't work.
 	this.switchPanels( this.editParamPanel );
 	// Fill in parameter detail
 	this.getParameterDetails( paramKey );
@@ -856,12 +856,13 @@ Dialog.prototype.onTemplateFormatInputWidgetEnter = function () {
 Dialog.prototype.onParamPropertyInputChange = function ( propName, value ) {
 	var $errors = $( [] ),
 		allProps = Model.static.getAllProperties( true ),
+		prop = allProps[ propName ],
 		propInput = this.propInputs[ propName ],
-		dependentField = allProps[ propName ].textValue;
+		dependentField = prop.textValue;
 
-	if ( allProps[ propName ].type === 'select' ) {
+	if ( propName === 'type' ) {
 		var selected = propInput.getMenu().findSelectedItem();
-		value = selected ? selected.getData() : allProps[ propName ].default;
+		value = selected ? selected.getData() : prop.default;
 		this.toggleSuggestedValues( value );
 	}
 
@@ -875,12 +876,12 @@ Dialog.prototype.onParamPropertyInputChange = function ( propName, value ) {
 		}
 	}
 
-	if ( allProps[ propName ].type === 'array' ) {
+	if ( prop.type === 'array' ) {
 		value = propInput.getValue();
 	}
 
-	if ( allProps[ propName ].restrict ) {
-		if ( value.match( allProps[ propName ].restrict ) ) {
+	if ( prop.restrict ) {
+		if ( value.match( prop.restrict ) ) {
 			// Error! Don't fix the model
 			$errors = $errors.add( $( '<p>' ).text( mw.msg( 'templatedata-modal-errormsg', '|', '=', '}}' ) ) );
 		}
@@ -959,6 +960,38 @@ Dialog.prototype.getParameterDetails = function ( paramKey ) {
 	}
 	// Update suggested values field visibility
 	this.toggleSuggestedValues( paramData.type || allProps.type.default );
+
+	var status;
+	// This accepts one of the three booleans only if the other two are false
+	if ( paramData.deprecated ) {
+		status = !paramData.required && !paramData.suggested && 'deprecated';
+	} else if ( paramData.required ) {
+		status = !paramData.deprecated && !paramData.suggested && 'required';
+	} else if ( paramData.suggested ) {
+		status = !paramData.deprecated && !paramData.required && 'suggested';
+	} else {
+		status = 'optional';
+	}
+	// Status is false at this point when more than one was set to true
+	this.propFieldLayout.status.toggle( status );
+	this.propFieldLayout.deprecated.toggle( !status );
+	this.propFieldLayout.required.toggle( !status );
+	this.propFieldLayout.suggested.toggle( !status );
+	if ( !status ) {
+		// No unambiguous status found, can't use the dropdown
+		this.propInputs.status.getMenu().disconnect( this );
+	} else {
+		this.changeParamPropertyInput( paramKey, 'status', status );
+		this.propInputs.status.getMenu().connect( this, {
+			choose: function ( item ) {
+				var selected = item.getData();
+				// Forward selection from the dropdown to the hidden checkboxes, these get saved
+				this.propInputs.deprecated.setSelected( selected === 'deprecated' );
+				this.propInputs.required.setSelected( selected === 'required' );
+				this.propInputs.suggested.setSelected( selected === 'suggested' );
+			}
+		} );
+	}
 
 	this.startParameterInputTracking( paramData );
 };
@@ -1122,23 +1155,23 @@ Dialog.prototype.createParamDetails = function () {
 	var paramFieldset = new OO.ui.FieldsetLayout();
 
 	for ( var propName in paramProperties ) {
+		var prop = paramProperties[ propName ];
 		var propInput;
-		var config = {
-			multiline: paramProperties[ propName ].multiline
-		};
-		if ( paramProperties[ propName ].multiline ) {
-			config.autosize = true;
-		}
+		var config = {};
 		// Create the property inputs
-		switch ( paramProperties[ propName ].type ) {
+		switch ( prop.type ) {
 			case 'select':
 				propInput = new OO.ui.DropdownWidget( config );
 				var items = [];
-				for ( var i in paramProperties[ propName ].children ) {
+				for ( var i in prop.children ) {
 					items.push( new OO.ui.MenuOptionWidget( {
-						data: paramProperties[ propName ].children[ i ],
+						data: prop.children[ i ],
 
 						// The following messages are used here:
+						// * templatedata-doc-param-status-optional
+						// * templatedata-doc-param-status-deprecated
+						// * templatedata-doc-param-status-required
+						// * templatedata-doc-param-status-suggested
 						// * templatedata-doc-param-type-boolean, templatedata-doc-param-type-content,
 						// * templatedata-doc-param-type-date, templatedata-doc-param-type-line,
 						// * templatedata-doc-param-type-number, templatedata-doc-param-type-string,
@@ -1146,7 +1179,7 @@ Dialog.prototype.createParamDetails = function () {
 						// * templatedata-doc-param-type-url, templatedata-doc-param-type-wiki-file-name,
 						// * templatedata-doc-param-type-wiki-page-name, templatedata-doc-param-type-wiki-template-name,
 						// * templatedata-doc-param-type-wiki-user-name
-						label: mw.msg( 'templatedata-doc-param-' + propName + '-' + paramProperties[ propName ].children[ i ] )
+						label: mw.msg( 'templatedata-doc-param-' + propName + '-' + prop.children[ i ] )
 					} ) );
 				}
 				propInput.getMenu().addItems( items );
@@ -1160,13 +1193,12 @@ Dialog.prototype.createParamDetails = function () {
 				propInput = new OO.ui.TagMultiselectWidget( config );
 				break;
 			default:
-				if ( config.multiline === true ) {
-					delete config.multiline;
-					propInput = new OO.ui.MultilineTextInputWidget( config );
-				} else {
-					delete config.multiline;
-					propInput = new AutosizeTextInputWidget( config );
+				config.autosize = true;
+				if ( !prop.multiline ) {
+					config.rows = 1;
+					config.allowLinebreaks = false;
 				}
+				propInput = new OO.ui.MultilineTextInputWidget( config );
 				break;
 		}
 
@@ -1180,8 +1212,6 @@ Dialog.prototype.createParamDetails = function () {
 		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-deprecatedValue
 		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-description
 		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-example
-		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-importoption
-		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-importoption-subtitle
 		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-label
 		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-name
 		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-required
@@ -1201,8 +1231,6 @@ Dialog.prototype.createParamDetails = function () {
 			// * templatedata-modal-table-param-deprecatedValue
 			// * templatedata-modal-table-param-description
 			// * templatedata-modal-table-param-example
-			// * templatedata-modal-table-param-importoption
-			// * templatedata-modal-table-param-importoption-subtitle
 			// * templatedata-modal-table-param-label
 			// * templatedata-modal-table-param-name
 			// * templatedata-modal-table-param-required
@@ -1241,8 +1269,6 @@ Dialog.prototype.updateParamDetailsLanguage = function () {
 		// * templatedata-modal-table-param-deprecatedValue
 		// * templatedata-modal-table-param-description
 		// * templatedata-modal-table-param-example
-		// * templatedata-modal-table-param-importoption
-		// * templatedata-modal-table-param-importoption-subtitle
 		// * templatedata-modal-table-param-label
 		// * templatedata-modal-table-param-name
 		// * templatedata-modal-table-param-required

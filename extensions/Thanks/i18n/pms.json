@@ -19,7 +19,6 @@
 	"echo-pref-subscription-edit-thank": "Aringrassieme për mia modìfica",
 	"echo-pref-tooltip-edit-thank": "Aviseme cand cheidun a m'aringrassia për na modìfica ch'i l'hai fàit.",
 	"echo-category-title-edit-thank": "Mersì",
-	"notification-thanks-diff-link": "soa modìfica",
 	"log-name-thanks": "Argistr dj'aringrassiament",
 	"log-description-thanks": "Sì-sota a-i é na lista d'utent aringrassià da d'àutri utent.",
 	"logentry-thanks-thank": "$1 a l'ha {{GENDER:$2|aringrassià}} {{GENDER:$4|$3}}"

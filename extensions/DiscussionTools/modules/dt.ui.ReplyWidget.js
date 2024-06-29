@@ -74,11 +74,8 @@ function ReplyWidget( commentController, commentDetails, config ) {
 		flags: [ 'primary', 'progressive' ],
 		label: this.replyButtonLabel,
 		title: this.replyButtonLabel + ' [' +
-			// TODO: Use VE keyboard shortcut generating code
-			( $.client.profile().platform === 'mac' ?
-				'⌘⏎' :
-				mw.msg( 'visualeditor-key-ctrl' ) + '+' + mw.msg( 'visualeditor-key-enter' )
-			) + ']',
+			new ve.ui.Trigger( ve.ui.commandHelpRegistry.lookup( 'dialogConfirm' ).shortcuts[ 0 ] ).getMessage() +
+			']',
 		accessKey: mw.msg( 'discussiontools-replywidget-publish-accesskey' )
 	} );
 	this.cancelButton = new OO.ui.ButtonWidget( {
@@ -86,11 +83,8 @@ function ReplyWidget( commentController, commentDetails, config ) {
 		label: mw.msg( 'discussiontools-replywidget-cancel' ),
 		framed: false,
 		title: mw.msg( 'discussiontools-replywidget-cancel' ) + ' [' +
-			// TODO: Use VE keyboard shortcut generating code
-			( $.client.profile().platform === 'mac' ?
-				'⎋' :
-				mw.msg( 'visualeditor-key-escape' )
-			) + ']'
+			new ve.ui.Trigger( ve.ui.commandHelpRegistry.lookup( 'dialogCancel' ).shortcuts[ 0 ] ).getMessage() +
+			']'
 	} );
 
 	this.$headerWrapper = $( '<div>' ).addClass( 'ext-discussiontools-ui-replyWidget-headerWrapper' );
@@ -327,6 +321,33 @@ function ReplyWidget( commentController, commentDetails, config ) {
 /* Inheritance */
 
 OO.inheritClass( ReplyWidget, OO.ui.Widget );
+
+/* Events */
+
+/**
+ * The widget has been torn down
+ *
+ * @event teardown
+ * @param string mode Teardown mode. See #teardown.
+ */
+
+/**
+ * The widget has had contents cleared
+ *
+ * @event clear
+ */
+
+/**
+ * Auto save storage has been cleared for the widget
+ *
+ * @event clearStorage
+ */
+
+/**
+ * The 'Reload page' button in the widget was clicked
+ *
+ * @event reloadPage
+ */
 
 /* Methods */
 
@@ -715,7 +736,7 @@ ReplyWidget.prototype.teardown = function ( mode ) {
 		this.modeTabSelect.blur();
 	}
 	this.unbindBeforeUnloadHandler();
-	this.$window[ 0 ].removeEventListener( 'scroll', this.onWindowScrollThrottled, { passive: true } );
+	this.$window[ 0 ].removeEventListener( 'scroll', this.onWindowScrollThrottled );
 	mw.hook( 'wikipage.watchlistChange' ).remove( this.onWatchToggleHandler );
 
 	this.isTornDown = true;
@@ -750,7 +771,7 @@ ReplyWidget.prototype.onWatchToggle = function ( isWatched ) {
  * Handle key down events anywhere in the reply widget
  *
  * @param {jQuery.Event} e Key down event
- * @return {boolean} Return false to prevent default event
+ * @return {boolean|undefined} Return false to prevent default event
  */
 ReplyWidget.prototype.onKeyDown = function ( e ) {
 	if ( e.which === OO.ui.Keys.ESCAPE ) {
@@ -765,7 +786,8 @@ ReplyWidget.prototype.onKeyDown = function ( e ) {
 		if ( e.ctrlKey || e.metaKey ) {
 			this.onReplyClick();
 			return false;
-		} else if ( e.target.tagName === 'INPUT' ) {
+		} else if ( e.target.tagName === 'INPUT' && !this.$bodyWrapper[ 0 ].contains( e.target ) && !this.replyButton.isDisabled() ) {
+			// The body wrapper can contain VE UI widgets that you may need to press enter within
 			this.showEnterWarning();
 			return false;
 		}

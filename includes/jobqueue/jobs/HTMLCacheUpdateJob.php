@@ -22,7 +22,6 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
-use MediaWiki\Title\TitleArrayFromResult;
 
 /**
  * Job to purge the HTML/file cache for all pages that link to or use another page or file
@@ -140,9 +139,9 @@ class HTMLCacheUpdateJob extends Job {
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getMainConfig();
 
-		$lbFactory = $services->getDBLoadBalancerFactory();
-		$dbw = $lbFactory->getPrimaryDatabase();
-		$ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
+		$dbProvider = $services->getConnectionProvider();
+		$dbw = $dbProvider->getPrimaryDatabase();
+		$ticket = $dbProvider->getEmptyTransactionTicket( __METHOD__ );
 		// Update page_touched (skipping pages already touched since the root job).
 		// Check $wgUpdateRowsPerQuery; batch jobs are sized by that already.
 		$batches = array_chunk( $pageIds, $config->get( MainConfigNames::UpdateRowsPerQuery ) );
@@ -151,10 +150,10 @@ class HTMLCacheUpdateJob extends Job {
 				->update( 'page' )
 				->set( [ 'page_touched' => $dbw->timestamp( $newTouchedUnix ) ] )
 				->where( [ 'page_id' => $batch ] )
-				->andWhere( $dbw->buildComparison( '<', [ 'page_touched' => $dbw->timestamp( $casTsUnix ) ] ) )
+				->andWhere( $dbw->expr( 'page_touched', '<', $dbw->timestamp( $casTsUnix ) ) )
 				->caller( __METHOD__ )->execute();
 			if ( count( $batches ) > 1 ) {
-				$lbFactory->commitAndWaitForReplication( __METHOD__, $ticket );
+				$dbProvider->commitAndWaitForReplication( __METHOD__, $ticket );
 			}
 		}
 		// Get the list of affected pages (races only mean something else did the purge)
@@ -165,10 +164,12 @@ class HTMLCacheUpdateJob extends Job {
 		if ( $config->get( MainConfigNames::PageLanguageUseDB ) ) {
 			$queryBuilder->field( 'page_lang' );
 		}
-		$titleArray = new TitleArrayFromResult( $queryBuilder->caller( __METHOD__ )->fetchResultSet() );
+		$titleArray = $services->getTitleFactory()->newTitleArrayFromResult(
+			$queryBuilder->caller( __METHOD__ )->fetchResultSet()
+		);
 
 		// Update CDN and file caches
-		$htmlCache = MediaWikiServices::getInstance()->getHtmlCacheUpdater();
+		$htmlCache = $services->getHtmlCacheUpdater();
 		$htmlCache->purgeTitleUrls(
 			$titleArray,
 			$htmlCache::PURGE_NAIVE | $htmlCache::PURGE_URLS_LINKSUPDATE_ONLY,

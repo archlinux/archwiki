@@ -27,6 +27,7 @@ use MediaWiki\Content\Transform\ContentTransformer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -35,6 +36,7 @@ use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserNameUtils;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -55,6 +57,8 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	// see self::checkRevDel()
 	private const IS_DELETED = 1; // Whether the field is revision-deleted
 	private const CANNOT_VIEW = 2; // Whether the user cannot view the field due to revdel
+
+	private const LIMIT_PARSE = 1;
 
 	// endregion
 
@@ -83,6 +87,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	private CommentFormatter $commentFormatter;
 	private TempUserCreator $tempUserCreator;
 	private UserFactory $userFactory;
+	private UserNameUtils $userNameUtils;
 
 	/**
 	 * @since 1.37 Support injection of services
@@ -99,6 +104,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	 * @param CommentFormatter|null $commentFormatter
 	 * @param TempUserCreator|null $tempUserCreator
 	 * @param UserFactory|null $userFactory
+	 * @param UserNameUtils|null $userNameUtils
 	 */
 	public function __construct(
 		ApiQuery $queryModule,
@@ -112,7 +118,8 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		ContentTransformer $contentTransformer = null,
 		CommentFormatter $commentFormatter = null,
 		TempUserCreator $tempUserCreator = null,
-		UserFactory $userFactory = null
+		UserFactory $userFactory = null,
+		UserNameUtils $userNameUtils = null
 	) {
 		parent::__construct( $queryModule, $moduleName, $paramPrefix );
 		// This class is part of the stable interface and
@@ -127,6 +134,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		$this->commentFormatter = $commentFormatter ?? $services->getCommentFormatter();
 		$this->tempUserCreator = $tempUserCreator ?? $services->getTempUserCreator();
 		$this->userFactory = $userFactory ?? $services->getUserFactory();
+		$this->userNameUtils = $userNameUtils ?? $services->getUserNameUtils();
 	}
 
 	public function execute() {
@@ -246,13 +254,15 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 			$this->parseContent = $params['parse'];
 			if ( $this->parseContent ) {
 				// Must manually initialize unset limit
-				$this->limit ??= 1;
+				$this->limit ??= self::LIMIT_PARSE;
 			}
 			$this->section = $params['section'] ?? false;
 		}
 
-		$userMax = $this->parseContent ? 1 : ( $smallLimit ? ApiBase::LIMIT_SML1 : ApiBase::LIMIT_BIG1 );
-		$botMax = $this->parseContent ? 1 : ( $smallLimit ? ApiBase::LIMIT_SML2 : ApiBase::LIMIT_BIG2 );
+		$userMax = $this->parseContent ? self::LIMIT_PARSE :
+			( $smallLimit ? ApiBase::LIMIT_SML1 : ApiBase::LIMIT_BIG1 );
+		$botMax = $this->parseContent ? self::LIMIT_PARSE :
+			( $smallLimit ? ApiBase::LIMIT_SML2 : ApiBase::LIMIT_BIG2 );
 		if ( $this->limit == 'max' ) {
 			$this->limit = $this->getMain()->canApiHighLimits() ? $botMax : $userMax;
 			if ( $this->setParsedLimit ) {
@@ -333,6 +343,9 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 				$u = $revision->getUser( RevisionRecord::RAW );
 				if ( $this->fld_user ) {
 					$vals['user'] = $u->getName();
+				}
+				if ( $this->userNameUtils->isTemp( $u->getName() ) ) {
+					$vals['temp'] = true;
 				}
 				if ( !$u->isRegistered() ) {
 					$vals['anon'] = true;
@@ -657,7 +670,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 				$po = $this->contentRenderer->getParserOutput(
 					$content,
 					$title,
-					$revision->getId(),
+					$revision,
 					ParserOptions::newFromContext( $this->getContext() )
 				);
 				$text = $po->getText();
@@ -775,6 +788,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	public function getAllowedParams() {
 		$slotRoles = $this->slotRoleRegistry->getKnownRoles();
 		sort( $slotRoles, SORT_STRING );
+		$smallLimit = $this->getMain()->canApiHighLimits() ? ApiBase::LIMIT_SML2 : ApiBase::LIMIT_SML1;
 
 		return [
 			'prop' => [
@@ -812,11 +826,11 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 					'contentmodel' => 'apihelp-query+revisions+base-paramvalue-prop-contentmodel',
 					'comment' => 'apihelp-query+revisions+base-paramvalue-prop-comment',
 					'parsedcomment' => 'apihelp-query+revisions+base-paramvalue-prop-parsedcomment',
-					'content' => 'apihelp-query+revisions+base-paramvalue-prop-content',
+					'content' => [ 'apihelp-query+revisions+base-paramvalue-prop-content', $smallLimit ],
 					'tags' => 'apihelp-query+revisions+base-paramvalue-prop-tags',
 					'roles' => 'apihelp-query+revisions+base-paramvalue-prop-roles',
 					'parsetree' => [ 'apihelp-query+revisions+base-paramvalue-prop-parsetree',
-						CONTENT_MODEL_WIKITEXT ],
+						CONTENT_MODEL_WIKITEXT, $smallLimit ],
 				],
 				EnumDef::PARAM_DEPRECATED_VALUES => [
 					'parsetree' => true,
@@ -838,7 +852,8 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 				IntegerDef::PARAM_MIN => 1,
 				IntegerDef::PARAM_MAX => ApiBase::LIMIT_BIG1,
 				IntegerDef::PARAM_MAX2 => ApiBase::LIMIT_BIG2,
-				ApiBase::PARAM_HELP_MSG => 'apihelp-query+revisions+base-param-limit',
+				ApiBase::PARAM_HELP_MSG => [ 'apihelp-query+revisions+base-param-limit',
+					$smallLimit, self::LIMIT_PARSE ],
 			],
 			'expandtemplates' => [
 				ParamValidator::PARAM_DEFAULT => false,
@@ -852,18 +867,18 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 			],
 			'parse' => [
 				ParamValidator::PARAM_DEFAULT => false,
-				ApiBase::PARAM_HELP_MSG => 'apihelp-query+revisions+base-param-parse',
+				ApiBase::PARAM_HELP_MSG => [ 'apihelp-query+revisions+base-param-parse', self::LIMIT_PARSE ],
 				ParamValidator::PARAM_DEPRECATED => true,
 			],
 			'section' => [
 				ApiBase::PARAM_HELP_MSG => 'apihelp-query+revisions+base-param-section',
 			],
 			'diffto' => [
-				ApiBase::PARAM_HELP_MSG => 'apihelp-query+revisions+base-param-diffto',
+				ApiBase::PARAM_HELP_MSG => [ 'apihelp-query+revisions+base-param-diffto', $smallLimit ],
 				ParamValidator::PARAM_DEPRECATED => true,
 			],
 			'difftotext' => [
-				ApiBase::PARAM_HELP_MSG => 'apihelp-query+revisions+base-param-difftotext',
+				ApiBase::PARAM_HELP_MSG => [ 'apihelp-query+revisions+base-param-difftotext', $smallLimit ],
 				ParamValidator::PARAM_DEPRECATED => true,
 			],
 			'difftotextpst' => [

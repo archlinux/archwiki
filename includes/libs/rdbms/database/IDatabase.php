@@ -404,7 +404,8 @@ interface IDatabase extends IReadableDatabase {
 	 *   a non-boolean option to the option parameters and each integer-keyed value is the
 	 *   name of a boolean option. Supported options are:
 	 *     - IGNORE: Boolean: skip update of rows that would cause unique key conflicts.
-	 *       IDatabase::affectedRows() can be used to determine how many rows were updated.
+	 *       IDatabase::affectedRows() includes all matching rows,
+	 *       that includes also rows not updated due to key conflict.
 	 * @param-taint $options none
 	 * @return bool Return true if no exception was thrown (deprecated since 1.33)
 	 * @return-taint none
@@ -504,7 +505,6 @@ interface IDatabase extends IReadableDatabase {
 	 *   buildExcludedValue() to reference the value of a column from the corresponding row
 	 *   in $rows that conflicts with the current row.
 	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
-	 * @return bool Return true if no exception was thrown (deprecated since 1.33)
 	 * @throws DBError If an error occurs, {@see query}
 	 * @since 1.22
 	 */

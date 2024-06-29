@@ -22,18 +22,18 @@ namespace MediaWiki\Actions;
 use Action;
 use Article;
 use CreditsAction;
-use IContextSource;
 use InfoAction;
 use MarkpatrolledAction;
 use McrRestoreAction;
 use McrUndoAction;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Title\Title;
 use Psr\Log\LoggerInterface;
 use RawAction;
-use RequestContext;
 use RevertAction;
 use RollbackAction;
 use UnwatchAction;
@@ -105,6 +105,7 @@ class ActionFactory {
 				'RedirectLookup',
 				'RestrictionStore',
 				'LinksMigration',
+				'UserFactory',
 			],
 		],
 		'markpatrolled' => [
@@ -142,6 +143,7 @@ class ActionFactory {
 				'PermissionManager',
 				'RevisionLookup',
 				'RestrictionStore',
+				'UserFactory',
 			],
 		],
 		'revert' => [

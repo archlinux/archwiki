@@ -148,7 +148,7 @@ class FilterProfilerTest extends MediaWikiUnitTestCase {
 		);
 
 		$found = false;
-		foreach ( $logger->getBuffer() as list( , $entry ) ) {
+		foreach ( $logger->getBuffer() as [ , $entry ] ) {
 			$check = preg_match(
 				"/^Edit filter .+ on .+ is taking longer than expected$/",
 				$entry

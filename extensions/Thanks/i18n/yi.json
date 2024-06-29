@@ -29,7 +29,6 @@
 	"echo-pref-subscription-edit-thank": "דאנקט מיך פאר מיין רעדאקטירונג",
 	"echo-pref-tooltip-edit-thank": "זיי מיך מודיע ווען איינער דאנקט מיך פאר א רעדאקטירונג מיינע.",
 	"echo-category-title-edit-thank": "אַ דאַנק",
-	"notification-thanks-diff-link": "אײַער רעדאקטירונג",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|האט}} {{GENDER:$4|אייך}} געדאַנקט פֿאר אייער רעדאקטירונג אויף <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|האט}} {{GENDER:$4|אייך}} געדאנקט פאר אייער שאפֿונג פון <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$2|האט}} {{GENDER:$4|אייך}} געדאַנקט פֿאַר אייער פעולה בנוגע <strong>$3</strong>.",
@@ -45,7 +44,6 @@
 	"notification-link-text-view-logentry": "באקוקן לאגבוך איינגאב",
 	"flow-thanks-confirmation-special": "צי ווילט איר שיקן עפנטלעך א דאַנק פאר דער הערה?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|איר}} האט געדאנקט $1 פאר {{GENDER:$2|זיין|איר|זייער}} הערה.",
-	"notification-flow-thanks-post-link": "אייער הערה",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|האט}} {{GENDER:$5|אייך}} געדאַנקט פֿאר אייער הערה אין <strong>$3</strong>.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|האט געדאנקט}} {{GENDER:$3|אייך}}.",
 	"ipb-action-thanks": "שיקן א דאנק"

@@ -65,6 +65,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 			/** @property {HtmlUtils} htmlUtils - */
 			this.htmlUtils = new HtmlUtils();
 		}
+
 		/**
 		 * Check whether this is a Creative Commons license.
 		 *
@@ -73,6 +74,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 		isCc() {
 			return this.internalName ? this.internalName.slice( 0, 2 ) === 'cc' : false;
 		}
+
 		/**
 		 * Check whether this is a public domain "license".
 		 *
@@ -81,6 +83,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 		isPd() {
 			return this.internalName === 'pd';
 		}
+
 		/**
 		 * Check whether this is a free license.
 		 *
@@ -90,6 +93,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 			// licenses with missing nonfree information are assumed free
 			return !this.nonFree;
 		}
+
 		/**
 		 * Check whether reusers need to attribute the author
 		 *
@@ -99,6 +103,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 			// to be on the safe side, if the attribution required flag is not set, it is assumed to be true
 			return !this.isPd() && this.attributionRequired !== false;
 		}
+
 		/**
 		 * Returns the short name of the license:
 		 * - if we have interface messages for this license (basically just CC and PD), use those
@@ -109,7 +114,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 		 * FIXME a model should not depend on an i18n class. We should probably use view models.
 		 */
 		getShortName() {
-			const message = `multimediaviewer-license-${this.internalName || ''}`;
+			const message = `multimediaviewer-license-${ this.internalName || '' }`;
 			if ( mw.messages.exists( message ) ) {
 				// The following messages are used here:
 				// * multimediaviewer-license-cc-by-1.0
@@ -134,6 +139,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 				return this.shortName;
 			}
 		}
+
 		/**
 		 * Returns a short HTML representation of the license.
 		 *

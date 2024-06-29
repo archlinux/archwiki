@@ -1,9 +1,11 @@
 ( function () {
 	/**
-	 * This is an implementation of MessagePoster for wikitext talk pages.
+	 * Posts messages to wikitext talk pages.
 	 *
 	 * @class mw.messagePoster.WikitextMessagePoster
+	 * @classdesc An implementation of MessagePoster for wikitext talk pages.
 	 * @extends mw.messagePoster.MessagePoster
+	 * @type {mw.messagePoster.WikitextMessagePoster}
 	 *
 	 * @constructor
 	 * @param {mw.Title} title Wikitext page in a talk namespace, to post to
@@ -29,7 +31,7 @@
 	WikitextMessagePoster.prototype.post = function ( subject, body, options ) {
 		var additionalParams;
 		options = options || {};
-		mw.messagePoster.WikitextMessagePoster.parent.prototype.post.call( this, subject, body, options );
+		mw.messagePoster.WikitextMessagePoster.super.prototype.post.call( this, subject, body, options );
 
 		// Add signature if needed
 		if ( body.indexOf( '~~~' ) === -1 ) {

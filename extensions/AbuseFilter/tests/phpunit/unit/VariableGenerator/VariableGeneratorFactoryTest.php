@@ -8,11 +8,12 @@ use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use MediaWikiUnitTestCase;
 use MimeAnalyzer;
 use RecentChange;
 use RepoGroup;
-use User;
 
 /**
  * @group Test
@@ -28,7 +29,8 @@ class VariableGeneratorFactoryTest extends MediaWikiUnitTestCase {
 			$this->createMock( TextExtractor::class ),
 			$this->createMock( MimeAnalyzer::class ),
 			$this->createMock( RepoGroup::class ),
-			$this->createMock( WikiPageFactory::class )
+			$this->createMock( WikiPageFactory::class ),
+			$this->createMock( UserFactory::class )
 		);
 	}
 

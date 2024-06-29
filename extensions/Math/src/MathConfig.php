@@ -28,9 +28,6 @@ class MathConfig {
 	/** @var string use input tex as formula rendering */
 	public const MODE_SOURCE = 'source';
 
-	/** @var string render formula into PNG images */
-	public const MODE_PNG = 'png';
-
 	/** @var string render formula into MathML */
 	public const MODE_MATHML = 'mathml';
 
@@ -39,13 +36,16 @@ class MathConfig {
 
 	/** @var string render formula into MathML using PHP (currently in development) */
 	public const MODE_NATIVE_MML = 'native';
+	/** @var string render formula into MathML using PHP and output it via MathJax */
+	public const MODE_NATIVE_JAX = 'mathjax';
 
 	/** @var string[] a list of all supported rendering modes */
 	private const SUPPORTED_MODES = [
 		self::MODE_SOURCE,
 		self::MODE_LATEXML,
 		self::MODE_MATHML,
-		self::MODE_NATIVE_MML
+		self::MODE_NATIVE_MML,
+		self::MODE_NATIVE_JAX
 	];
 
 	/**
@@ -55,13 +55,12 @@ class MathConfig {
 		self::MODE_SOURCE => 3,
 		self::MODE_MATHML => 5,
 		self::MODE_LATEXML => 7,
-		self::MODE_NATIVE_MML => 8
+		self::MODE_NATIVE_MML => 8,
+		self::MODE_NATIVE_JAX => 9
 	];
 
-	/** @var ServiceOptions */
-	private $options;
-	/** @var ExtensionRegistry */
-	private $registry;
+	private ServiceOptions $options;
+	private ExtensionRegistry $registry;
 
 	/**
 	 * @param ServiceOptions $options
@@ -118,7 +117,7 @@ class MathConfig {
 	public function getValidRenderingModeKeys(): array {
 		$result = [];
 		foreach ( $this->getValidRenderingModes() as $mode ) {
-			$result[$mode] = 'mw_math_' . $mode;
+			$result[$mode] = 'mw-math-' . $mode;
 		}
 		return $result;
 	}
@@ -132,7 +131,7 @@ class MathConfig {
 	public function getValidRenderingModeNames(): array {
 		$result = [];
 		foreach ( $this->getValidRenderingModes() as $mode ) {
-			$result[$mode] = Message::newFromKey( 'mw_math_' . $mode );
+			$result[$mode] = Message::newFromKey( 'mw-math-' . $mode );
 		}
 		return $result;
 	}
@@ -144,7 +143,7 @@ class MathConfig {
 	 * @return Message
 	 */
 	public function getRenderingModeName( string $mode ): Message {
-		return Message::newFromKey( 'mw_math_' . $mode );
+		return Message::newFromKey( 'mw-math-' . $mode );
 	}
 
 	/**

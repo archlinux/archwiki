@@ -7,7 +7,8 @@
 			"Nike",
 			"Valtlai",
 			"Valtlait",
-			"VezonThunder"
+			"VezonThunder",
+			"01miki10"
 		]
 	},
 	"pfunc_desc": "Laajentaa jäsennintä loogisilla funktiolla.",
@@ -26,8 +27,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Virhe lausekkeessa: tunnistamaton välimerkki ”$1”.",
 	"pfunc_expr_unclosed_bracket": "Virhe ilmauksessa: sulkeva sulkumerkki puuttuu",
 	"pfunc_expr_division_by_zero": "Virhe: Jako nollalla",
-	"pfunc_expr_invalid_argument": "Virheellinen arvo $1: < -1 tai > 1",
-	"pfunc_expr_invalid_argument_ln": "Virheellinen arvo funktiolle ln: <= 0",
+	"pfunc_expr_invalid_argument": "Virheellinen arvo $1: pienempi kuin -1 tai suurempi kuin 1.",
+	"pfunc_expr_invalid_argument_ln": "Virheellinen arvo funktiolle ln: pienempi tai yhtä suuri kuin 0.",
 	"pfunc_expr_unknown_error": "Virhe lausekkeessa: tuntematon virhe ($1)",
 	"pfunc_expr_not_a_number": "Lausekkeessa $1: tulos ei ole luku",
 	"pfunc_string_too_long": "Virhe: Merkkijono ylittää $1 merkin ylärajan"

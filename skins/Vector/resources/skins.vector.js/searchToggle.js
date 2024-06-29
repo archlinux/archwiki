@@ -107,7 +107,7 @@ function bindToggleClickHandler( searchBox, header, searchToggle ) {
  */
 module.exports = function initSearchToggle( searchToggle ) {
 	const headerContainer =
-		/** @type {HTMLElement|null} */ ( searchToggle.closest( `.${HEADER_CONTAINER_CLASS}` ) );
+		/** @type {HTMLElement|null} */ ( searchToggle.closest( `.${ HEADER_CONTAINER_CLASS }` ) );
 	const header =
 		/** @type {HTMLElement|null} */ ( headerContainer && headerContainer.firstElementChild );
 

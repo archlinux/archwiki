@@ -2,10 +2,13 @@
 
 namespace Wikimedia\Tests\Stats;
 
+use IBufferingStatsdDataFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Wikimedia\Stats\Emitters\NullEmitter;
 use Wikimedia\Stats\Exceptions\IllegalOperationException;
+use Wikimedia\Stats\Metrics\BaseMetric;
+use Wikimedia\Stats\Metrics\CounterMetric;
 use Wikimedia\Stats\Metrics\NullMetric;
 use Wikimedia\Stats\OutputFormats;
 use Wikimedia\Stats\StatsCache;
@@ -168,11 +171,11 @@ class MetricTest extends TestCase {
 
 	public function testSampledMetrics() {
 		$rounds = 10;
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger );
+		$m = StatsFactory::newNull();
 		$ten_percent_metrics = $m->getCounter( 'test.sampled.ten' )->setSampleRate( 0.1 );
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger );
+		$m = StatsFactory::newNull();
 		$all_metrics = $m->getCounter( 'test.sampled.hundred' )->setSampleRate( 1.0 );
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger );
+		$m = StatsFactory::newNull();
 		$zero_metrics = $m->getCounter( 'test.sampled.zero' )->setSampleRate( 0.0 );
 		for ( $i = 0; $i < $rounds; $i++ ) {
 			$ten_percent_metrics->increment();
@@ -180,19 +183,27 @@ class MetricTest extends TestCase {
 			$zero_metrics->increment();
 		}
 		$this->assertLessThan( $rounds, count( $ten_percent_metrics->getSamples() ) ); // random
-		$this->assertCount( $rounds,  $all_metrics->getSamples() );
+		$this->assertCount( $rounds, $all_metrics->getSamples() );
 		$this->assertCount( 0, $zero_metrics->getSamples() );
+
+		# getSampleCount() should count all samples regardless of sample rate
+		$this->assertEquals( 10, $ten_percent_metrics->getSampleCount() );
+		$this->assertEquals( 10, $all_metrics->getSampleCount() );
+		$this->assertEquals( 10, $zero_metrics->getSampleCount() );
 	}
 
 	public function testTimerNotStarted() {
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger );
-		$this->expectWarning();
-		$this->expectWarningMessage( 'Stats: stop() called before start() for metric \'test\'' );
-		$m->getTiming( 'test' )->stop();
+		$m = StatsFactory::newNull();
+		$this->expectPHPWarning(
+			'Stats: stop() called before start() for metric \'test\'',
+			static function () use ( $m ) {
+				$m->getTiming( 'test' )->stop();
+			}
+		);
 	}
 
 	public function testErrorOnChangingStaticLabelsWithMetricsInCache() {
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger );
+		$m = StatsFactory::newNull();
 		$m->getCounter( 'testMetric' );
 		$this->expectException( IllegalOperationException::class );
 		$m->addStaticLabel( 'a', '1' );
@@ -209,8 +220,27 @@ class MetricTest extends TestCase {
 		$this->assertInstanceOf( NullMetric::class, $metric );
 	}
 
+	public function testStaticLabelsPrecedeWorkingLabels() {
+		$cache = new StatsCache;
+		$formatter = OutputFormats::getNewFormatter( OutputFormats::getFormatFromString( 'statsd' ) );
+		$emitter = OutputFormats::getNewEmitter( 'mediawiki', $cache, $formatter );
+		$statsFactory = new StatsFactory( $cache, $emitter, new NullLogger );
+		$statsFactory->withComponent( 'demo' )
+			->addStaticLabel( 'first', 'foo' )
+			->addStaticLabel( 'second', 'bar' )
+			->getCounter( 'testMetric_total' )
+			->setLabel( 'third', 'baz' )
+			->setLabel( 'fourth', 'qux' )
+			->increment();
+
+		$this->assertEquals(
+			'mediawiki.demo.testMetric_total.foo.bar.baz.qux:1|c',
+			TestingAccessWrapper::newFromObject( $emitter )->render()[0]
+		);
+	}
+
 	public function testChangingLabelsToUsedMetric() {
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger );
+		$m = StatsFactory::newNull();
 		$m->getCounter( 'testMetricCounter' )->setLabel( 'labelOne', 'a' )->increment();
 		$counter = @$m->getCounter( 'testMetricCounter' )->setLabel( 'labelTwo', 'b' );
 		$this->assertInstanceOf( NullMetric::class, $counter );
@@ -222,8 +252,41 @@ class MetricTest extends TestCase {
 		$this->assertInstanceOf( NullMetric::class, $timer );
 	}
 
+	public function testCounterHandleNotAllLabelsHaveValues() {
+		$m = StatsFactory::newNull();
+		$m->getCounter( 'testMetricCounter' )->setLabel( 'labelOne', 'a' )->increment();
+		$this->expectPHPWarning(
+			'Stats: Cannot associate label keys with label values: Not all initialized labels have an assigned value.',
+			static function () use ( $m ) {
+				$m->getCounter( 'testMetricCounter' )->increment();
+			}
+		);
+	}
+
+	public function testGaugeHandleNotAllLabelsHaveValues() {
+		$m = StatsFactory::newNull();
+		$m->getGauge( 'testMetricGauge' )->setLabel( 'labelOne', 'a' )->set( 1 );
+		$this->expectPHPWarning(
+			'Stats: Cannot associate label keys with label values: Not all initialized labels have an assigned value.',
+			static function () use ( $m ) {
+				$m->getGauge( 'testMetricGauge' )->set( 1 );
+			}
+		);
+	}
+
+	public function testTimingHandleNotAllLabelsHaveValues() {
+		$m = StatsFactory::newNull();
+		$m->getTiming( 'testMetricTiming' )->setLabel( 'labelOne', 'a' )->observe( 1 );
+		$this->expectPHPWarning(
+			'Stats: Cannot associate label keys with label values: Not all initialized labels have an assigned value.',
+			static function () use ( $m ) {
+				$m->getTiming( 'testMetricTiming' )->observe( 1 );
+			}
+		);
+	}
+
 	public function testSampleRateOOB() {
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger );
+		$m = StatsFactory::newNull();
 		$metric = @$m->getCounter( 'testMetricCounter' )->setSampleRate( 1.1 );
 		$this->assertInstanceOf( NullMetric::class, $metric );
 		$metric = @$m->getGauge( 'testMetricGauge' )->setSampleRate( -1 );
@@ -233,7 +296,7 @@ class MetricTest extends TestCase {
 	}
 
 	public function testSampleRateDisallowed() {
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger );
+		$m = StatsFactory::newNull();
 		$m->getCounter( 'testMetric' )->increment();
 		$metric = @$m->getCounter( 'testMetric' )->setSampleRate( 0.5 );
 		$this->assertInstanceOf( NullMetric::class, $metric );
@@ -243,5 +306,134 @@ class MetricTest extends TestCase {
 		$m->getTiming( 'testMetricTiming' )->observe( 1 );
 		$metric = @$m->getTiming( 'testMetricTiming' )->setSampleRate( 0.5 );
 		$this->assertInstanceOf( NullMetric::class, $metric );
+	}
+
+	public function testCopyToStatsdAtEmptyArrayResetsValue() {
+		$baseMetric = new BaseMetric( '', 'testMetric' );
+		$metric = new CounterMetric(
+			$baseMetric->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) ),
+			new NullLogger
+		);
+		$metric->copyToStatsdAt( 'test' );
+		$this->assertEquals( [ 'test' ], $baseMetric->getStatsdNamespaces() );
+		$metric->copyToStatsdAt( [] );
+		$this->assertEquals( [], $baseMetric->getStatsdNamespaces() );
+	}
+
+	public function testHandleInvalidStatsdNamespace() {
+		$m = StatsFactory::newNull();
+		$m = $m->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) );
+		$this->expectPHPWarning(
+			'Stats: StatsD namespace must be a string.',
+			function () use ( $m ) {
+				$metric = $m->getCounter( 'testMetricCounter' )->copyToStatsdAt( null );
+				$this->assertInstanceOf( NullMetric::class, $metric );
+			}
+		);
+	}
+
+	public function testHandleEmptyStatsdNamespace() {
+		$m = StatsFactory::newNull();
+		$m = $m->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) );
+		$this->expectPHPWarning(
+			'Stats: StatsD namespace cannot be empty.',
+			function () use ( $m ) {
+				$metric = $m->getCounter( 'testMetricCounter' )->copyToStatsdAt( '' );
+				$this->assertInstanceOf( NullMetric::class, $metric );
+			}
+		);
+	}
+
+	public function testHandleNonStringStatsdNamespaceInArray() {
+		$m = StatsFactory::newNull();
+		$m = $m->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) );
+		$this->expectPHPWarning(
+			'Stats: StatsD namespace must be a string.',
+			function () use ( $m ) {
+				$metric = $m->getCounter( 'testMetricCounter' )->copyToStatsdAt( [ null ] );
+				$this->assertInstanceOf( NullMetric::class, $metric );
+			}
+		);
+	}
+
+	public function testCanChangeLabelsWhileTimerIsStarted() {
+		$cache = new StatsCache;
+		$formatter = OutputFormats::getNewFormatter( OutputFormats::getFormatFromString( 'dogstatsd' ) );
+		$emitter = OutputFormats::getNewEmitter( 'mediawiki', $cache, $formatter );
+		$statsFactory = new StatsFactory( $cache, $emitter, new NullLogger );
+		$timer = $statsFactory->getTiming( 'test', )->setLabel( 'foo', 'bar' );
+
+		// start() and stop() called so close together here should be fractions of a millisecond
+		$timer->start();
+		$timer->setLabel( 'foo', 'baz' )->stop();
+		$this->assertMatchesRegularExpression(
+			'/^mediawiki\.test:(0\.[0-9]+)\|ms\|#foo:baz$/',
+			TestingAccessWrapper::newFromObject( $emitter )->render()[0]
+		);
+	}
+
+	public function testStatsdDataFactoryPersistsWithComponent() {
+		$statsFactory = StatsFactory::newNull();
+
+		$timingArgs = [ 'test.timing.1', 'test.timing.2' ];
+		$statsdMock = $this->createMock( IBufferingStatsdDataFactory::class );
+		$statsdMock->expects( $this->exactly( 2 ) )
+			->method( 'timing' )
+			->with( $this->callback( static function ( $key ) use ( &$timingArgs ) {
+				$nextKey = array_shift( $timingArgs );
+				return $nextKey === $key;
+			}, 1.0 ) );
+
+		$statsFactory = $statsFactory->withStatsdDataFactory( $statsdMock );
+
+		// withComponent() returns a whole new StatsFactory instance
+		$componentStatsFactory = $statsFactory->withComponent( 'TestComponent' );
+
+		$componentStatsFactory->getTiming( 'testMetricTiming' )
+			->copyToStatsdAt( [ 'test.timing.1', 'test.timing.2' ] )
+			->observe( 1 );
+	}
+
+	public function testWithComponentStatsdFactoryChanges() {
+		$statsFactory = StatsFactory::newNull();
+
+		// statsdDataFactory should be null if withComponent called prior to calling withStatsdDataFactory()
+		$noStatsd = TestingAccessWrapper::newFromObject( $statsFactory->withComponent( 'foo' ) );
+		$this->assertNull( $noStatsd->statsdDataFactory );
+
+		// call withStatsdDataFactory
+		$statsFactory = $statsFactory->withStatsdDataFactory( $this->createMock( IBufferingStatsdDataFactory::class ) );
+
+		// statsdDataFactory should be an instance of IBufferingStatsdDataFactory
+		$yesStatsd = TestingAccessWrapper::newFromObject( $statsFactory->withComponent( 'foo' ) );
+		$this->assertInstanceOf( IBufferingStatsdDataFactory::class, $yesStatsd->statsdDataFactory );
+
+		// disable statsdDataFactory
+		$statsFactory = $statsFactory->withStatsdDataFactory( null );
+
+		// statsdDataFactory should be null again
+		$noStatsdAgain = TestingAccessWrapper::newFromObject( $statsFactory->withComponent( 'foo' ) );
+		$this->assertNull( $noStatsdAgain->statsdDataFactory );
+	}
+
+	/**
+	 * PHPUnit 10 compatible replacement for expectWarning().
+	 *
+	 * @param string $msg
+	 * @param callable $callback
+	 * @return void
+	 */
+	private function expectPHPWarning( string $msg, callable $callback ): void {
+		try {
+			$errorEmitted = false;
+			set_error_handler( function ( $_, $actualMsg ) use ( $msg, &$errorEmitted ) {
+				$this->assertStringContainsString( $msg, $actualMsg );
+				$errorEmitted = true;
+			}, E_USER_WARNING );
+			$callback();
+			$this->assertTrue( $errorEmitted, "No PHP warning was emitted." );
+		} finally {
+			restore_error_handler();
+		}
 	}
 }

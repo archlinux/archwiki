@@ -7,7 +7,6 @@
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Chemiese formule",
-	"math-visualeditor-mwcheminspector-title": "Chemiese formule",
 	"math-visualeditor-mwlatexdialog-card-formula": "Formule",
 	"math-visualeditor-mwlatexdialog-card-options": "Keuses",
 	"math-visualeditor-mwlatexinspector-display": "Aansig",
@@ -23,7 +22,7 @@
 	"math_syntax_error": "sintaksfout",
 	"math_unknown_error": "onbekende fout",
 	"math_unknown_function": "onbekende funksie",
-	"mw_math_mathml": "MathML",
-	"mw_math_source": "Los as LaTeX (vir teksblaaiers).",
+	"mw-math-mathml": "MathML",
+	"mw-math-source": "Los as LaTeX (vir teksblaaiers).",
 	"prefs-math": "Wiskunde"
 }

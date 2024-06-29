@@ -1,7 +1,7 @@
 /*!
  * VisualEditor MediaWiki Initialization ArticleTarget class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -472,8 +472,11 @@ ve.init.mw.ArticleTarget.prototype.surfaceReady = function () {
 	if ( !this.canEdit ) {
 		this.getSurface().setReadOnly( true );
 	} else {
-		// Auto-save
-		this.initAutosave();
+		// TODO: If the user rejects joining the collab session, start auto-save
+		if ( !this.currentUrl.searchParams.has( 'collabSession' ) ) {
+			// Auto-save
+			this.initAutosave();
+		}
 
 		setTimeout( function () {
 			mw.libs.ve.targetSaver.preloadDeflate();
@@ -1804,7 +1807,9 @@ ve.init.mw.ArticleTarget.prototype.getSurfaceConfig = function ( config ) {
 			// * mw-textarea-sproteced
 			.concat( this.protectedClasses )
 			// addClass doesn't like empty strings
-			.filter( function ( c ) { return c; } )
+			.filter( function ( c ) {
+				return c;
+			} )
 	}, config ) );
 };
 
@@ -1998,9 +2003,9 @@ ve.init.mw.ArticleTarget.prototype.showSaveDialog = function ( action, checkboxN
 	var saveProcess = new OO.ui.Process();
 	mw.hook( 've.preSaveProcess' ).fire( saveProcess, target );
 
-	saveProcess.execute().done( function () {
-		target.emit( 'saveWorkflowBegin' );
+	target.emit( 'saveWorkflowBegin' );
 
+	saveProcess.execute().done( function () {
 		// Preload the serialization
 		target.prepareCacheKey( target.getDocToSave() );
 
@@ -2245,7 +2250,10 @@ ve.init.mw.ArticleTarget.prototype.getSectionHashFromPage = function () {
 		section = this.section;
 	}
 	if ( section > 0 ) {
-		var $section = $sections.eq( section - 1 ).parent().find( '.mw-headline' );
+		// Compatibility with pre-T13555 markup
+		var $section = $sections.eq( section - 1 )
+			.closest( '.mw-heading, h1, h2, h3, h4, h5, h6' )
+			.find( 'h1, h2, h3, h4, h5, h6, .mw-headline' );
 
 		if ( $section.length && $section.attr( 'id' ) ) {
 			return '#' + $section.attr( 'id' );

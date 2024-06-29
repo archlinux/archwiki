@@ -33,7 +33,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 	 * This code is not in Wikitext\Consts.php because this
 	 * information is Parsoid-implementation-specific.
 	 */
-	private static $WtTagsWithLimitedTSR = [
+	private const WT_TAGS_WITH_LIMITED_TSR = [
 		"b"  => true,
 		"i"  => true,
 		"h1" => true,
@@ -72,7 +72,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 		//   constructs: placeholders, lang variants)
 		$name = DOMCompat::nodeName( $n );
 		return !(
-			isset( self::$WtTagsWithLimitedTSR[$name] ) ||
+			isset( self::WT_TAGS_WITH_LIMITED_TSR[$name] ) ||
 			DOMUtils::matchTypeOf(
 				$n,
 				'/^mw:(Placeholder|LanguageVariant)$/D'
@@ -284,7 +284,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 		$env->log( "trace/dsr", static function () use ( $args ) {
 			$buf = '';
 			foreach ( $args as $arg ) {
-				$buf .= ( gettype( $arg ) === 'string' ? $arg : PHPUtils::jsonEncode( $arg ) );
+				$buf .= is_string( $arg ) ? $arg : PHPUtils::jsonEncode( $arg );
 			}
 			return $buf;
 		} );
@@ -509,7 +509,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 					}
 
 					// Compute width of opening/closing tags for this dom $node
-					list( $stWidth, $etWidth ) =
+					[ $stWidth, $etWidth ] =
 						$this->computeTagWidths( $stWidth, $etWidth, $child, $dp );
 
 					if ( !empty( $dp->autoInsertedStart ) ) {
@@ -567,7 +567,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 							return "     before-recursing:" .
 								"[cs,ce]=" . PHPUtils::jsonEncode( [ $cs, $ce ] ) .
 								"; [sw,ew]=" . PHPUtils::jsonEncode( [ $stWidth, $etWidth ] ) .
-								"; subtree-[cs,ce]=" . PHPUtils::jsonEncode( [ $ccs,$cce ] );
+								"; subtree-[cs,ce]=" . PHPUtils::jsonEncode( [ $ccs, $cce ] );
 						} );
 
 						$this->trace( $env, "<recursion>" );
@@ -616,7 +616,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 					$env->log( "trace/dsr", static function () use ( $frame, $child, $cs, $ce, $dp ) {
 						return "     UPDATING " . DOMCompat::nodeName( $child ) .
 							" with " . PHPUtils::jsonEncode( [ $cs, $ce ] ) .
-							"; typeof: " . ( $child->getAttribute( "typeof" ) ?? '' );
+							"; typeof: " . ( DOMCompat::getAttribute( $child, "typeof" ) ?? '' );
 					} );
 				}
 
@@ -638,9 +638,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 						} elseif ( $nType === XML_ELEMENT_NODE ) {
 							DOMUtils::assertElt( $sibling );
 							$siblingDP = DOMDataUtils::getDataParsoid( $sibling );
-							if ( !isset( $siblingDP->dsr ) ) {
-								$siblingDP->dsr = new DomSourceRange( null, null, null, null );
-							}
+							$siblingDP->dsr ??= new DomSourceRange( null, null, null, null );
 							$sdsrStart = $siblingDP->dsr->start;
 							if ( !empty( $siblingDP->fostered ) ||
 								( $sdsrStart !== null && $sdsrStart === $newCE ) ||

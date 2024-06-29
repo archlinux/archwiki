@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel VisualDiff class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /* global treeDiffer */
@@ -93,6 +93,40 @@ ve.dm.VisualDiff.static.getDataFromNode = function ( node, innerRange ) {
 };
 
 /**
+ * Compare the linear data for two nodes
+ *
+ * @param {ve.dm.Node} oldNode Node from the old document
+ * @param {ve.dm.Node} newNode Node from the new document
+ * @return {boolean} The linear data is the same
+ */
+ve.dm.VisualDiff.static.compareNodes = function ( oldNode, newNode ) {
+	if ( oldNode.length !== newNode.length || !oldNode.isDiffComparable( newNode ) ) {
+		return false;
+	}
+
+	var oldData = this.getDataFromNode( oldNode );
+	var newData = this.getDataFromNode( newNode );
+
+	if ( JSON.stringify( oldData ) === JSON.stringify( newData ) ) {
+		return true;
+	}
+
+	// If strings are not equal, the data may still be the same as far as
+	// we are concerned so should compare them properly.
+	var oldStore = oldNode.getRoot().getDocument().getStore();
+	var newStore = newNode.getRoot().getDocument().getStore();
+
+	for ( var i = 0, ilen = oldData.length; i < ilen; i++ ) {
+		if ( oldData[ i ] !== newData[ i ] &&
+			!ve.dm.ElementLinearData.static.compareElements( oldData[ i ], newData[ i ], oldStore, newStore ) ) {
+			return false;
+		}
+	}
+
+	return true;
+};
+
+/**
  * Attach the internal list indexOrder to each node referenced by the internal
  * list, ahead of document merge.
  *
@@ -181,7 +215,7 @@ ve.dm.VisualDiff.prototype.diffList = function ( oldNodes, newNodes ) {
 	for ( var i = 0, ilen = oldNodes.length; i < ilen; i++ ) {
 		for ( j = 0, jlen = newNodes.length; j < jlen; j++ ) {
 			if ( !Object.prototype.hasOwnProperty.call( diff.newToOld, j ) &&
-				this.compareNodes( oldNodes[ i ], newNodes[ j ] )
+				this.constructor.static.compareNodes( oldNodes[ i ], newNodes[ j ] )
 			) {
 				diff.oldToNew[ i ] = j;
 				diff.newToOld[ j ] = i;
@@ -342,40 +376,6 @@ ve.dm.VisualDiff.prototype.calculateDiffMoves = function ( oldToNew, newToOld ) 
 	}
 
 	return moves;
-};
-
-/**
- * Compare the linear data for two nodes
- *
- * @param {ve.dm.Node} oldNode Node from the old document
- * @param {ve.dm.Node} newNode Node from the new document
- * @return {boolean} The linear data is the same
- */
-ve.dm.VisualDiff.prototype.compareNodes = function ( oldNode, newNode ) {
-	if ( oldNode.length !== newNode.length || !oldNode.isDiffComparable( newNode ) ) {
-		return false;
-	}
-
-	var oldData = this.constructor.static.getDataFromNode( oldNode );
-	var newData = this.constructor.static.getDataFromNode( newNode );
-
-	if ( JSON.stringify( oldData ) === JSON.stringify( newData ) ) {
-		return true;
-	}
-
-	// If strings are not equal, the data may still be the same as far as
-	// we are concerned so should compare them properly.
-	var oldStore = oldNode.getRoot().getDocument().getStore();
-	var newStore = newNode.getRoot().getDocument().getStore();
-
-	for ( var i = 0, ilen = oldData.length; i < ilen; i++ ) {
-		if ( oldData[ i ] !== newData[ i ] &&
-			!ve.dm.ElementLinearData.static.compareElements( oldData[ i ], newData[ i ], oldStore, newStore ) ) {
-			return false;
-		}
-	}
-
-	return true;
 };
 
 /**
@@ -546,7 +546,7 @@ ve.dm.VisualDiff.prototype.diffListNodes = function ( oldNode, newNode ) {
 		var oldMetadata = oldFlatList.metadata[ i ];
 		var newMetadata = newFlatList.metadata[ j ];
 
-		var listNodeAttributeChange = this.diffAttributes( oldMetadata.listNode, newMetadata.listNode );
+		var listNodeAttributeChange = this.diffAttributes( oldMetadata.listNode, newMetadata.listNode, 'listType' );
 		var listItemAttributeChange = this.diffAttributes( oldMetadata.listItem, newMetadata.listItem );
 		var depthChange = oldMetadata.depth === newMetadata.depth ? false :
 			{
@@ -597,10 +597,17 @@ ve.dm.VisualDiff.prototype.diffListNodes = function ( oldNode, newNode ) {
  * Appends information for each list item to a flat list object. Will be called
  * once for each list node within a nested list.
  *
+ * Only nested lists at the end of list items are flattened.
+ *
  * If a list item contains a non-list node that contains a list, that list will
- * not get flattened out. If a list item contains more than one identical list
+ * not get flattened out. A list node followed by a non-list node will not be
+ * flattened out either. If a list item contains more than one identical list
  * node, they will be flattened out to the same depth, and the information that
  * they were separate lists will be lost.
+ *
+ * If a list item contains more than one un-flattened node, each one of them
+ * will be treated as a separate list item when flattened, but the original
+ * items will be put back together later. (T345891)
  *
  * @param {ve.dm.Node} listNode A list node, possibly nested inside another list
  * @param {Object} flatList Flat structure describing the entire list
@@ -611,17 +618,36 @@ ve.dm.VisualDiff.prototype.flattenList = function ( listNode, flatList, depth ) 
 
 	for ( var i = 0, ilen = listItems.length; i < ilen; i++ ) {
 		var listItem = listItems[ i ];
+
 		// If listItem has no children, make the item itself the contents (e.g. an AlienBlockNode in a list)
-		var listContents = listItem.children || [ listItem ];
+		if ( !listItem.children ) {
+			flatList.metadata.push( {
+				listNode: listNode,
+				listItem: listItem,
+				depth: depth
+			} );
+			flatList.nodes.push( listItem );
+			continue;
+		}
+
+		var listContents = listItem.children;
+
+		// Find the first sub-list
+		var firstListIndex = listContents.length;
+		while ( firstListIndex >= 1 && listContents[ firstListIndex - 1 ].isDiffedAsList() ) {
+			firstListIndex--;
+		}
+
 		for ( var j = 0, jlen = listContents.length; j < jlen; j++ ) {
 			var listContent = listContents[ j ];
-			if ( listContent.isDiffedAsList() ) {
+			if ( j >= firstListIndex ) {
 				this.flattenList( listContent, flatList, depth + 1 );
 			} else {
 				flatList.metadata.push( {
 					listNode: listNode,
 					listItem: listItem,
-					depth: depth
+					depth: depth,
+					isContinued: j > 0
 				} );
 				flatList.nodes.push( listContent );
 			}
@@ -758,17 +784,24 @@ ve.dm.VisualDiff.prototype.diffTreeNodes = function ( oldTreeNode, newTreeNode )
  *
  * @param {ve.dm.Node} oldNode Node from the old document
  * @param {ve.dm.Node} newNode Node from the new document
+ * @param {string} [diffTypeAsAttribute] Diff the type of the node as an attribute with this name
  * @return {Object|boolean} The attributes diff, or false if unchanged
  */
-ve.dm.VisualDiff.prototype.diffAttributes = function ( oldNode, newNode ) {
+ve.dm.VisualDiff.prototype.diffAttributes = function ( oldNode, newNode, diffTypeAsAttribute ) {
+	var oldAttributes = oldNode.getAttributes();
+	var newAttributes = newNode.getAttributes();
+	if ( diffTypeAsAttribute ) {
+		oldAttributes[ diffTypeAsAttribute ] = oldNode.getType();
+		newAttributes[ diffTypeAsAttribute ] = newNode.getType();
+	}
 	var attributesUnchanged = ve.compare( oldNode.getAttributes(), newNode.getAttributes() );
 
 	if ( attributesUnchanged ) {
 		return false;
 	}
 	return {
-		oldAttributes: oldNode.getAttributes(),
-		newAttributes: newNode.getAttributes()
+		oldAttributes: oldAttributes,
+		newAttributes: newAttributes
 	};
 };
 

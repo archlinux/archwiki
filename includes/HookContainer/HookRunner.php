@@ -4,15 +4,17 @@ namespace MediaWiki\HookContainer;
 
 use Article;
 use File;
-use IContextSource;
 use JsonContent;
 use MailAddress;
 use ManualLogEntry;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Mail\UserEmailContact;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\RenameUser\RenameuserSQL;
 use MediaWiki\ResourceLoader as RL;
@@ -21,10 +23,10 @@ use MediaWiki\Session\Session;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use Parser;
 use ParserOptions;
 use Skin;
 use StatusValue;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * This class provides an implementation of the core hook interfaces,
@@ -106,8 +108,8 @@ class HookRunner implements
 	\MediaWiki\Hook\ActionBeforeFormDisplayHook,
 	\MediaWiki\Hook\ActionModifyFormFieldsHook,
 	\MediaWiki\Hook\AddNewAccountHook,
-	\MediaWiki\Hook\AfterBuildFeedLinksHook,
-	\MediaWiki\Hook\AfterFinalPageOutputHook,
+	\MediaWiki\Output\Hook\AfterBuildFeedLinksHook,
+	\MediaWiki\Output\Hook\AfterFinalPageOutputHook,
 	\MediaWiki\Hook\AfterImportPageHook,
 	\MediaWiki\Hook\AfterParserFetchFileAndTitleHook,
 	\MediaWiki\Hook\AlternateEditHook,
@@ -120,8 +122,8 @@ class HookRunner implements
 	\MediaWiki\Hook\ArticleUpdateBeforeRedirectHook,
 	\MediaWiki\Hook\BadImageHook,
 	\MediaWiki\Hook\BeforeInitializeHook,
-	\MediaWiki\Hook\BeforePageDisplayHook,
-	\MediaWiki\Hook\BeforePageRedirectHook,
+	\MediaWiki\Output\Hook\BeforePageDisplayHook,
+	\MediaWiki\Output\Hook\BeforePageRedirectHook,
 	\MediaWiki\Hook\BeforeParserFetchFileAndTitleHook,
 	\MediaWiki\Hook\BeforeParserFetchTemplateRevisionRecordHook,
 	\MediaWiki\Hook\BeforeWelcomeCreationHook,
@@ -187,7 +189,7 @@ class HookRunner implements
 	\MediaWiki\Hook\FormatAutocommentsHook,
 	\MediaWiki\Hook\GalleryGetModesHook,
 	\MediaWiki\Hook\GetBlockErrorMessageKeyHook,
-	\MediaWiki\Hook\GetCacheVaryCookiesHook,
+	\MediaWiki\Output\Hook\GetCacheVaryCookiesHook,
 	\MediaWiki\Hook\GetCanonicalURLHook,
 	\MediaWiki\Hook\GetDefaultSortkeyHook,
 	\MediaWiki\Hook\GetDoubleUnderscoreIDsHook,
@@ -229,7 +231,7 @@ class HookRunner implements
 	\MediaWiki\Hook\IsUploadAllowedFromUrlHook,
 	\MediaWiki\Hook\IsValidEmailAddrHook,
 	\MediaWiki\Hook\LanguageGetNamespacesHook,
-	\MediaWiki\Hook\LanguageLinksHook,
+	\MediaWiki\Output\Hook\LanguageLinksHook,
 	\MediaWiki\Hook\LanguageSelectorHook,
 	\MediaWiki\Hook\LinkerMakeExternalImageHook,
 	\MediaWiki\Hook\LinkerMakeExternalLinkHook,
@@ -251,7 +253,7 @@ class HookRunner implements
 	\MediaWiki\Hook\MaintenanceRefreshLinksInitHook,
 	\MediaWiki\Hook\MaintenanceShellStartHook,
 	\MediaWiki\Hook\MaintenanceUpdateAddParamsHook,
-	\MediaWiki\Hook\MakeGlobalVariablesScriptHook,
+	\MediaWiki\Output\Hook\MakeGlobalVariablesScriptHook,
 	\MediaWiki\Hook\ManualLogEntryBeforePublishHook,
 	\MediaWiki\Hook\MarkPatrolledCompleteHook,
 	\MediaWiki\Hook\MarkPatrolledHook,
@@ -269,12 +271,12 @@ class HookRunner implements
 	\MediaWiki\Hook\OpenSearchUrlsHook,
 	\MediaWiki\Hook\OtherAutoblockLogLinkHook,
 	\MediaWiki\Hook\OtherBlockLogLinkHook,
-	\MediaWiki\Hook\OutputPageAfterGetHeadLinksArrayHook,
-	\MediaWiki\Hook\OutputPageBeforeHTMLHook,
-	\MediaWiki\Hook\OutputPageBodyAttributesHook,
-	\MediaWiki\Hook\OutputPageCheckLastModifiedHook,
-	\MediaWiki\Hook\OutputPageMakeCategoryLinksHook,
-	\MediaWiki\Hook\OutputPageParserOutputHook,
+	\MediaWiki\Output\Hook\OutputPageAfterGetHeadLinksArrayHook,
+	\MediaWiki\Output\Hook\OutputPageBeforeHTMLHook,
+	\MediaWiki\Output\Hook\OutputPageBodyAttributesHook,
+	\MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook,
+	\MediaWiki\Output\Hook\OutputPageMakeCategoryLinksHook,
+	\MediaWiki\Output\Hook\OutputPageParserOutputHook,
 	\MediaWiki\Hook\PageHistoryBeforeListHook,
 	\MediaWiki\Hook\PageHistoryLineEndingHook,
 	\MediaWiki\Hook\PageHistoryPager__doBatchLookupsHook,
@@ -352,6 +354,8 @@ class HookRunner implements
 	\MediaWiki\Hook\SpecialMuteModifyFormFieldsHook,
 	\MediaWiki\Hook\SpecialNewpagesConditionsHook,
 	\MediaWiki\Hook\SpecialNewPagesFiltersHook,
+	\MediaWiki\Hook\SpecialPrefixIndexGetFormFiltersHook,
+	\MediaWiki\Hook\SpecialPrefixIndexQueryHook,
 	\MediaWiki\Hook\SpecialRandomGetRandomTitleHook,
 	\MediaWiki\Hook\SpecialRecentChangesPanelHook,
 	\MediaWiki\Hook\SpecialResetTokensTokensHook,
@@ -3323,7 +3327,7 @@ class HookRunner implements
 	}
 
 	public function onSearchDataForIndex2( array &$fields, \ContentHandler $handler,
-		\WikiPage $page, \ParserOutput $output, \SearchEngine $engine, RevisionRecord $revision
+		\WikiPage $page, ParserOutput $output, \SearchEngine $engine, RevisionRecord $revision
 	) {
 		return $this->container->run(
 			'SearchDataForIndex2',
@@ -3736,6 +3740,22 @@ class HookRunner implements
 		return $this->container->run(
 			'SpecialPasswordResetOnSubmit',
 			[ &$users, $data, &$error ]
+		);
+	}
+
+	public function onSpecialPrefixIndexGetFormFilters( IContextSource $contextSource, array &$filters ) {
+		$this->container->run(
+			'SpecialPrefixIndexGetFormFilters',
+			[ $contextSource, &$filters ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	public function onSpecialPrefixIndexQuery( array $fieldData, SelectQueryBuilder $queryBuilder ) {
+		$this->container->run(
+			'SpecialPrefixIndexQuery',
+			[ $fieldData, $queryBuilder ],
+			[ 'abortable' => false ]
 		);
 	}
 

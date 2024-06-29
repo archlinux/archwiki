@@ -3,14 +3,14 @@
 		"authors": [
 			"Aftab1995",
 			"Aftabuzzaman",
+			"Aishik Rehman",
 			"Bellayet",
 			"Bodhisattwa",
 			"Elias Ahmmad",
 			"Macofe",
 			"Nasir8891",
 			"আজিজ",
-			"আফতাবুজ্জামান",
-			"Aishik Rehman"
+			"আফতাবুজ্জামান"
 		]
 	},
 	"thanks-desc": "সম্পাদনা, মতামত, ইত্যাদির জন্য ব্যবহারকারীদের ধন্যবাদ জানানোর লিঙ্ক সংযোজন করে।",
@@ -42,7 +42,6 @@
 	"echo-pref-subscription-edit-thank": "আমার সম্পাদনার জন্য আমার ধন্যবাদসমূহ",
 	"echo-pref-tooltip-edit-thank": "আমার কোনো সম্পাদনার জন্য কেউ আমাকে ধন্যবাদ দিলে তা আমাকে জানান।",
 	"echo-category-title-edit-thank": "ধন্যবাদসমূহ",
-	"notification-thanks-diff-link": "আপনার সম্পাদনা",
 	"notification-header-rev-thank": "$1 <strong>$3</strong>-এ আপনার সম্পাদনার জন্য {{GENDER:$4|আপনাকে}} {{GENDER:$2|ধন্যবাদ জানিয়েছেন}}।",
 	"notification-header-creation-thank": "$1 <strong>$3</strong> পাতাটি সৃষ্টির জন্য {{GENDER:$4|আপনাকে}} {{GENDER:$2|ধন্যবাদ জানিয়েছেন}}।",
 	"notification-header-log-thank": "<strong>$3</strong> সম্পর্কিত কর্মের জন্য $1 {{GENDER:$4|আপনাকে}} {{GENDER:$2|ধন্যবাদ জানিয়েছেন}}।",
@@ -61,7 +60,6 @@
 	"thanks-error-invalidpostid": "পোস্ট আইডি বৈধ নয়।",
 	"flow-thanks-confirmation-special": "আপনি কি এই মন্তব্যের জন্য সর্বজনীনভাবে ধন্যবাদ দিতে চান?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|আপনি}} $1 কে {{GENDER:$2|তার|তার|তাদের}} মন্তব্যের জন্য ধন্যবাদ দিয়েছেন।",
-	"notification-flow-thanks-post-link": "আপনার মন্তব্য",
 	"notification-header-flow-thank": "<strong>$3</strong>-এ আপনার মন্তব্যের জন্য $1 {{GENDER:$5|আপনাকে}} {{GENDER:$2|ধন্যবাদ}} জানিয়েছেন।",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|আপনাকে}} {{GENDER:$2|ধন্যবাদ দিয়েছেন}}।",
 	"notification-bundle-header-flow-thank": "\"<strong>$2</strong>\"-এ আপনার মন্তব্যের জন্য {{PLURAL:$1|একজন ব্যক্তি|$1 জন ব্যক্তি|100=৯৯+ জন ব্যক্তি}} {{GENDER:$3|আপনাকে}} ধন্যবাদ জানিয়েছেন।",

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DiffTreeNode class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -39,21 +39,9 @@ OO.inheritClass( ve.DiffTreeNode, treeDiffer.TreeNode );
  */
 ve.DiffTreeNode.prototype.isEqual = function ( otherNode ) {
 	if ( !this.node.isDiffedAsTree() && !otherNode.node.isDiffedAsTree() ) {
-		var nodeRange = this.node.getOuterRange();
-		var otherNodeRange = otherNode.node.getOuterRange();
-		// Optimization: Most nodes we compare are different, so do a quick check
-		// on the range length first.
-		return nodeRange.getLength() === otherNodeRange.getLength() &&
-			JSON.stringify( this.doc.getData( nodeRange ) ) === JSON.stringify( otherNode.doc.getData( otherNodeRange ) );
+		return ve.dm.VisualDiff.static.compareNodes( this.node, otherNode.node );
 	} else {
-		if ( this.node.getType() !== otherNode.node.getType() ) {
-			return false;
-		}
-		var hashObject = this.node.getHashObject();
-		var otherHashObject = otherNode.node.getHashObject();
-		delete hashObject.originalDomElementsHash;
-		delete otherHashObject.originalDomElementsHash;
-		return ve.compare( hashObject, otherHashObject );
+		return ve.dm.ElementLinearData.static.compareElementsUnannotated( this.node.element, otherNode.node.element );
 	}
 };
 

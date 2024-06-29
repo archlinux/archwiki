@@ -1,6 +1,7 @@
 .content {
 	ol {
-		padding-left: 2.25em;
+		margin: 0;
+		padding: 0 0 0 2.25em;
 	}
 
 	ul {
@@ -21,7 +22,7 @@
 	ul {
 		ol,
 		ul {
-			margin-left: 1em;
+			margin: 0 0 0 1em;
 		}
 	}
 
@@ -37,11 +38,19 @@
 
 /* As in Vector, indenting of definition lists, and bolding of definition terms is generically useful */
 dl {
-	margin-top: 0.2em;
-	margin-bottom: 0.5em;
-	margin-left: 1em;
+	margin: 0.2em 0 0.5em 1em;
 
 	dt {
 		font-weight: bold;
+	}
+
+	/*
+	 * Historically Minerva used a CSS reset to reset the margin of dd elements to 0.
+	 * The main use case here is talk pages which can have significant intendation levels.
+	 * This should likely be reconsidered for appropriate semantic use of dd elements and
+	 * scoped to talk pages at a later date.
+	 */
+	dd {
+		margin: 0;
 	}
 }

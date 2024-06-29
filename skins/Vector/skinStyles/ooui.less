@@ -1,12 +1,10 @@
 @import 'mediawiki.skin.variables.less';
 
-.oo-ui-defaultOverlay,
-.skin-vector .oo-ui-windowManager-modal > .oo-ui-dialog,
-.skin-vector .ve-ui-overlay-global {
-	z-index: @z-index-overlay;
-}
-
-body > .oo-ui-windowManager,
-.oo-ui-defaultOverlay {
+// For compatibility with code older than #mw-teleport-target (T350544)
+body > .oo-ui-windowManager {
 	font-size: @font-size-base;
+
+	> .oo-ui-dialog {
+		z-index: @z-index-overlay;
+	}
 }

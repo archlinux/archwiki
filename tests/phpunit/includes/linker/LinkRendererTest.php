@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkRendererFactory;
@@ -11,7 +12,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 
 /**
- * @covers MediaWiki\Linker\LinkRenderer
+ * @covers \MediaWiki\Linker\LinkRenderer
  */
 class LinkRendererTest extends MediaWikiLangTestCase {
 	use LinkCacheTestTrait;

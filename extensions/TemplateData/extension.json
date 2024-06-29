@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42"
 	},
 	"APIModules": {
 		"templatedata": "MediaWiki\\Extension\\TemplateData\\Api\\ApiTemplateData"
@@ -82,7 +82,6 @@
 			"styles": "templateDataGenerator.ui.less",
 			"packageFiles": [
 				"init.js",
-				"widgets/AutosizeTextInputWidget.js",
 				"widgets/ParamSelectWidget.js",
 				"widgets/ParamWidget.js",
 				"widgets/ParamImportWidget.js",
@@ -112,6 +111,10 @@
 			"messages": [
 				"comma-separator",
 				"templatedata-doc-no-params-set",
+				"templatedata-doc-param-status-optional",
+				"templatedata-doc-param-status-deprecated",
+				"templatedata-doc-param-status-required",
+				"templatedata-doc-param-status-suggested",
 				"templatedata-doc-param-type-boolean",
 				"templatedata-doc-param-type-content",
 				"templatedata-doc-param-type-date",
@@ -165,6 +168,7 @@
 				"templatedata-modal-table-param-suggestedvalues",
 				"templatedata-modal-placeholder-multiselect",
 				"templatedata-modal-table-param-default",
+				"templatedata-modal-table-param-status",
 				"templatedata-modal-table-param-deprecated",
 				"templatedata-modal-table-param-deprecatedValue",
 				"templatedata-modal-table-param-description",
@@ -192,7 +196,7 @@
 		},
 		"ext.templateData.images": {
 			"localBasePath": "modules/ext.templateData.images",
-			"class": "ResourceLoaderImageModule",
+			"class": "MediaWiki\\ResourceLoader\\ImageModule",
 			"selectorWithVariant": ".oo-ui-icon-{name}.oo-ui-image-invert",
 			"selectorWithoutVariant": ".oo-ui-icon-{name}",
 			"variants": {

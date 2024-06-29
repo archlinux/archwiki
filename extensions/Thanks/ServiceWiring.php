@@ -11,12 +11,12 @@ return [
 		): ThanksQueryHelper {
 			return new ThanksQueryHelper(
 				$services->getTitleFactory(),
-				$services->getDBLoadBalancer()
+				$services->getConnectionProvider()
 			);
 	},
 	'ThanksLogStore' => static function ( MediaWikiServices $services ): LogStore {
 		return new LogStore(
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getActorNormalization(),
 			new ServiceOptions(
 				LogStore::CONSTRUCTOR_OPTIONS,

@@ -208,7 +208,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function extractExtBody( Token $token ): string {
-		$src = $token->getAttribute( 'source' );
+		$src = $token->getAttributeV( 'source' );
 		$extTagOffsets = $token->dataParsoid->extTagOffsets;
 		'@phan-var \Wikimedia\Parsoid\Core\DomSourceRange $extTagOffsets';
 		return $extTagOffsets->stripTags( $src );
@@ -225,8 +225,16 @@ class Utils {
 	}
 
 	/**
-	 * Check for valid DSR range(s)
-	 * DSR = "DOM Source Range".
+	 * Basic check if a DOM Source Range (DSR) is valid.
+	 *
+	 * Clarifications about the "basic validity checks":
+	 * - Only checks for underflow, not for overflow.
+	 * - Does not verify that start <= end
+	 * - Does not verify that openWidth + endWidth <= end - start
+	 *   (even so, the values might be invalid because of content)
+	 * These would be overkill for our purposes. Given how DSR computation
+	 * works in thie codebase, the real scenarios we care about are
+	 * non-null / non-negative values since that can happen.
 	 *
 	 * @param ?DomSourceRange $dsr DSR source range values
 	 * @param bool $all Also check the widths of the container tag
@@ -238,9 +246,11 @@ class Utils {
 		return $dsr !== null &&
 			self::isValidOffset( $dsr->start ) &&
 			self::isValidOffset( $dsr->end ) &&
-			( !$all || ( self::isValidOffset( $dsr->openWidth ) &&
+			( !$all || (
+				self::isValidOffset( $dsr->openWidth ) &&
 				self::isValidOffset( $dsr->closeWidth )
-				) );
+			  )
+			);
 	}
 
 	/**
@@ -361,11 +371,11 @@ class Utils {
 	 * @return DataMw
 	 */
 	public static function getExtArgInfo( Token $extToken ): DataMw {
-		$name = $extToken->getAttribute( 'name' );
-		$options = $extToken->getAttribute( 'options' );
+		$name = $extToken->getAttributeV( 'name' );
+		$options = $extToken->getAttributeV( 'options' );
 		$defaultDataMw = new DataMw( [
 			'name' => $name,
-			'attrs' => PHPUtils::arrayToObject( TokenUtils::kvToHash( $options ) ),
+			'attrs' => (object)TokenUtils::kvToHash( $options ),
 		] );
 		$extTagOffsets = $extToken->dataParsoid->extTagOffsets;
 		if ( $extTagOffsets->closeWidth !== 0 ) {
@@ -477,7 +487,7 @@ class Utils {
 	 * that this mapping will remain in sync with upstream.
 	 *
 	 * @param string|Bcp47Code $code BCP-47 language code
-	 * @return string Mediawiki-internal language code
+	 * @return string MediaWiki-internal language code
 	 */
 	public static function bcp47ToMwCode( $code ): string {
 		// This map is dumped from
@@ -536,7 +546,7 @@ class Utils {
 	 * effectively a no-op and avoid the issue of upstream sync of the
 	 * mapping table.
 	 *
-	 * @param string|Bcp47Code $code Mediawiki-internal language code or object
+	 * @param string|Bcp47Code $code MediaWiki-internal language code or object
 	 * @param bool $strict If true, this code will log a deprecation message
 	 *  or fail if a MediaWiki-internal language code is passed.
 	 * @param ?LoggerInterface $warnLogger A deprecation warning will be

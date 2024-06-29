@@ -24,7 +24,6 @@
 namespace MediaWiki\Specials;
 
 use HtmlArmor;
-use HTMLForm;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
@@ -32,6 +31,7 @@ use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Feed\FeedItem;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\NewPagesPager;
 use MediaWiki\Permissions\GroupPermissionsLookup;
@@ -40,7 +40,7 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\IncludableSpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 
 /**
  * A special page that list newly created pages

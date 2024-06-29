@@ -7,7 +7,6 @@ namespace MediaWiki\Extension\ConfirmEdit;
 use ApiBase;
 use Content;
 use ExtensionRegistry;
-use Html;
 use HTMLForm;
 use IContextSource;
 use MailAddress;
@@ -20,22 +19,23 @@ use MediaWiki\Hook\EditPage__showEditForm_fieldsHook;
 use MediaWiki\Hook\EditPageBeforeEditButtonsHook;
 use MediaWiki\Hook\EmailUserFormHook;
 use MediaWiki\Hook\EmailUserHook;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Hook\TitleReadWhitelistHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\Hook\AuthChangeFormFieldsHook;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MessageSpecifier;
-use OutputPage;
 use ParserOutput;
-use SpecialPage;
-use Status;
-use User;
 use Wikimedia\IPUtils;
 use WikiPage;
 
@@ -331,7 +331,6 @@ class Hooks implements
 				'styles' => 'resources/libs/ext.confirmEdit.CaptchaInputWidget.less',
 				'messages' => $messages,
 				'dependencies' => 'oojs-ui-core',
-				'targets' => [ 'desktop', 'mobile' ],
 			]
 		] );
 	}

@@ -49,7 +49,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Тота референца дефинована у шаблону або у иншаким ґенерованим блоку и затераз ю мож опатрац лєм у жридловим режиму.",
 	"cite-ve-referenceslist-missingreflist": "Тот список референцох ґенеровал шаблон и затераз ше го може ушорйовац лєм у жридловим режиму.",
 	"cite-ve-toolbar-group-label": "Референца",
-	"cite-ve-othergroup-item": "$1 референца",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Референци",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Назва ґрупи референцох: „$1”"
+	"cite-ve-othergroup-item": "$1 референца"
 }

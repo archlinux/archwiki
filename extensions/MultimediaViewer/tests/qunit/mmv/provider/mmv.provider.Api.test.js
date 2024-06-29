@@ -21,19 +21,19 @@ const { Api } = require( 'mmv' );
 	QUnit.module( 'mmv.provider.Api', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Api constructor sense check', function ( assert ) {
-		var api = { get: function () {} },
-			options = {},
-			apiProvider = new Api( api, options ),
-			ApiProviderWithNoOptions = new Api( api );
+		const api = { get: function () {} };
+		const options = {};
+		const apiProvider = new Api( api, options );
+		const ApiProviderWithNoOptions = new Api( api );
 
 		assert.true( apiProvider instanceof Api );
 		assert.true( ApiProviderWithNoOptions instanceof Api );
 	} );
 
 	QUnit.test( 'apiGetWithMaxAge()', function ( assert ) {
-		var api = {},
-			options = {},
-			apiProvider = new Api( api, options );
+		const api = {};
+		let options = {};
+		let apiProvider = new Api( api, options );
 
 		api.get = this.sandbox.stub();
 		apiProvider.apiGetWithMaxAge( {} );
@@ -60,17 +60,16 @@ const { Api } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'getCachedPromise success', function ( assert ) {
-		var api = { get: function () {} },
-			apiProvider = new Api( api ),
-			oldMwLog = mw.log,
-			promiseSource,
-			promiseShouldBeCached = false;
+		const api = { get: function () {} };
+		const apiProvider = new Api( api );
+		const oldMwLog = mw.log;
+		let promiseShouldBeCached = false;
 
 		mw.log = function () {
 			assert.true( false, 'mw.log should not have been called' );
 		};
 
-		promiseSource = function ( result ) {
+		const promiseSource = function ( result ) {
 			return function () {
 				assert.strictEqual( promiseShouldBeCached, false, 'promise was not cached' );
 				return $.Deferred().resolve( result );
@@ -94,17 +93,16 @@ const { Api } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'getCachedPromise failure', function ( assert ) {
-		var api = { get: function () {} },
-			apiProvider = new Api( api ),
-			oldMwLog = mw.log,
-			promiseSource,
-			promiseShouldBeCached = false;
+		const api = { get: function () {} };
+		const apiProvider = new Api( api );
+		const oldMwLog = mw.log;
+		let promiseShouldBeCached = false;
 
 		mw.log = function () {
 			assert.true( true, 'mw.log was called' );
 		};
 
-		promiseSource = function ( result ) {
+		const promiseSource = function ( result ) {
 			return function () {
 				assert.strictEqual( promiseShouldBeCached, false, 'promise was not cached' );
 				return $.Deferred().reject( result );
@@ -128,11 +126,10 @@ const { Api } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'getErrorMessage', function ( assert ) {
-		var api = { get: function () {} },
-			apiProvider = new Api( api ),
-			errorMessage;
+		const api = { get: function () {} };
+		const apiProvider = new Api( api );
 
-		errorMessage = apiProvider.getErrorMessage( {
+		const errorMessage = apiProvider.getErrorMessage( {
 			servedby: 'mw1194',
 			error: {
 				code: 'unknown_action',
@@ -147,12 +144,11 @@ const { Api } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'getQueryField', function ( assert ) {
-		var api = { get: function () {} },
-			apiProvider = new Api( api ),
-			done = assert.async( 3 ),
-			data;
+		const api = { get: function () {} };
+		const apiProvider = new Api( api );
+		const done = assert.async( 3 );
 
-		data = {
+		const data = {
 			query: {
 				imageusage: [
 					{
@@ -180,12 +176,11 @@ const { Api } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'getQueryPage', function ( assert ) {
-		var api = { get: function () {} },
-			apiProvider = new Api( api ),
-			done = assert.async( 5 ),
-			data;
+		const api = { get: function () {} };
+		const apiProvider = new Api( api );
+		const done = assert.async( 5 );
 
-		data = {
+		const data = {
 			query: {
 				pages: [
 					{

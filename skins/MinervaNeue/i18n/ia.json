@@ -51,11 +51,18 @@
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussion]]",
 	"minerva-skin-desc": "Un apparentia responsive concipite pro dispositivos mobile",
 	"skin-minerva-issue-learn-more": "Leger plus",
+	"skin-minerva-time-ago-seconds": "$1 secunda{{PLURAL:$1||s}} retro",
+	"skin-minerva-time-ago-minutes": "$1 minuta{{PLURAL:$1||s}} retro",
+	"skin-minerva-time-ago-hours": "$1 hora{{PLURAL:$1||s}} retro",
+	"skin-minerva-time-ago-days": "$1 die{{PLURAL:$1||s}} retro",
+	"skin-minerva-time-ago-months": "$1 mense{{PLURAL:$1||s}} retro",
+	"skin-minerva-time-ago-years": "$1 anno{{PLURAL:$1||s}} retro",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorias",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vider categorias de paginas",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tractamento meliorate de problemas de paginas",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemas de paginas (Template:ambox) essera inserite in le articulo.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Infortunatemente, le gruppamento de resultatos per pagina non es disponibile sur mobile. Si tu vole usar iste function, visita le sito pro scriptorio.",
+	"skin-minerva-night-mode-unavailable": "Pagina disponibile solmente con le thema de colores “Die”.",
 	"minerva.css": "/* Le codice CSS placiate essera cargate pro le usatores del apparentia MinervaNeue */",
 	"minerva.js": "/* Le codice JavaScript placiate hic essera cargate pro le usatores del apparentia MinervaNeue */"
 }

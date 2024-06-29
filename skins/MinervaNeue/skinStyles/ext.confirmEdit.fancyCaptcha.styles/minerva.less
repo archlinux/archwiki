@@ -5,7 +5,7 @@
 /* fancycaptcha reload button */
 .confirmedit-captcha-reload,
 #mf-captcha-reload-container {
-	border-top: @border-width-base dashed @border-color-subtle;
+	border-top: @border-width-base dashed var( --border-color-subtle );
 	display: inline-block;
 	padding: 8px 20px;
 
@@ -20,7 +20,7 @@
 	display: block;
 	border-top: @border-subtle;
 	padding: 0.8em 0.5em;
-	color: @color-subtle;
+	color: var( --color-subtle );
 }
 
 .mw-ui-container {
@@ -30,7 +30,7 @@
 		border: @border-subtle;
 		border-radius: @border-radius-base;
 		overflow: hidden;
-		background: @background-color-base;
+		background: var( --background-color-base );
 		text-align: center;
 
 		input:not( [ type='submit' ] ) {

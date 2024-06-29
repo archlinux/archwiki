@@ -13,7 +13,7 @@ use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\ParserOptionsRegisterHook;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use Parser;
 use ParserOptions;
 
@@ -78,6 +78,10 @@ class ParserHooksHandler implements
 	 */
 	public function mathTagHook( ?string $content, array $attributes, Parser $parser ) {
 		$mode = $parser->getOptions()->getOption( 'math' );
+		if ( $mode === MathConfig::MODE_NATIVE_JAX ) {
+			$parser->getOutput()->addModules( [ 'ext.math.mathjax' ] );
+			$mode = MathConfig::MODE_NATIVE_MML;
+		}
 		$renderer = $this->rendererFactory->getRenderer( $content ?? '', $attributes, $mode );
 
 		$parser->getOutput()->addModuleStyles( [ 'ext.math.styles' ] );

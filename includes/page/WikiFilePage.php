@@ -91,7 +91,7 @@ class WikiFilePage extends WikiPage {
 		// Foreign image page
 		$from = $this->mFile->getRedirected();
 		$to = $this->mFile->getName();
-		if ( $from == $to ) {
+		if ( $from === null || $from === $to ) {
 			return null;
 		}
 		$this->mRedirectTarget = Title::makeTitle( NS_FILE, $to );
@@ -99,7 +99,7 @@ class WikiFilePage extends WikiPage {
 	}
 
 	/**
-	 * @return bool|mixed|Title
+	 * @return bool|Title|string False, Title of in-wiki target, or string with URL
 	 */
 	public function followRedirect() {
 		$this->loadFile();
@@ -108,7 +108,7 @@ class WikiFilePage extends WikiPage {
 		}
 		$from = $this->mFile->getRedirected();
 		$to = $this->mFile->getName();
-		if ( $from == $to ) {
+		if ( $from === null || $from === $to ) {
 			return false;
 		}
 		return Title::makeTitle( NS_FILE, $to );
@@ -123,7 +123,7 @@ class WikiFilePage extends WikiPage {
 			return parent::isRedirect();
 		}
 
-		return (bool)$this->mFile->getRedirected();
+		return $this->mFile->getRedirected() !== null;
 	}
 
 	/**
@@ -225,10 +225,11 @@ class WikiFilePage extends WikiPage {
 		$this->loadFile();
 		$title = $this->mTitle;
 		$file = $this->mFile;
+		$titleFactory = MediaWikiServices::getInstance()->getTitleFactory();
 
 		if ( !$file instanceof LocalFile ) {
 			wfDebug( __METHOD__ . " is not supported for this file" );
-			return new TitleArrayFromResult( new FakeResultWrapper( [] ) );
+			return $titleFactory->newTitleArrayFromResult( new FakeResultWrapper( [] ) );
 		}
 
 		/** @var LocalRepo $repo */
@@ -242,7 +243,7 @@ class WikiFilePage extends WikiPage {
 			->where( [ 'page_namespace' => $title->getNamespace(), 'page_title' => $title->getDBkey(), ] )
 			->caller( __METHOD__ )->fetchResultSet();
 
-		return new TitleArrayFromResult( $res );
+		return $titleFactory->newTitleArrayFromResult( $res );
 	}
 
 	/**

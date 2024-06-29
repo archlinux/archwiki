@@ -19,9 +19,6 @@ class ApiVisualEditorTest extends ApiTestCase {
 	/** @var ScopedCallback|null */
 	private $scopedCallback;
 
-	/** @var @inheritDoc */
-	protected $tablesUsed = [ 'page', 'revision' ];
-
 	protected function setUp(): void {
 		parent::setUp();
 		$this->scopedCallback = ExtensionRegistry::getInstance()->setAttributeForTest(

@@ -20,8 +20,10 @@
 
 use MediaWiki\EditPage\Constraint\IEditConstraint;
 use MediaWiki\EditPage\Constraint\UserRateLimitConstraint;
-use MediaWiki\Title\Title;
-use MediaWiki\User\User;
+use MediaWiki\Permissions\RateLimiter;
+use MediaWiki\Permissions\RateLimitSubject;
+use MediaWiki\User\UserIdentityValue;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests the UserRateLimitConstraint
@@ -33,61 +35,44 @@ use MediaWiki\User\User;
 class UserRateLimitConstraintTest extends MediaWikiUnitTestCase {
 	use EditConstraintTestTrait;
 
+	/**
+	 * @param bool $fail
+	 *
+	 * @return MockObject&RateLimiter
+	 */
+	private function getRateLimiter( $fail ) {
+		$mock = $this->createNoOpMock( RateLimiter::class, [ 'limit' ] );
+		$expectedArgs = [
+			[ 'edit', 1, false ],
+			[ 'linkpurge', 0, false ],
+			[ 'editcontentmodel', 1, $fail ]
+		];
+		$mock->expects( $this->exactly( 3 ) )
+			->method( 'limit' )
+			->willReturnCallback( function ( $_, $action, $incrBy ) use ( &$expectedArgs ) {
+				$curExpectedArgs = array_shift( $expectedArgs );
+				$this->assertSame( $curExpectedArgs[0], $action );
+				$this->assertSame( $curExpectedArgs[1], $incrBy );
+				return $curExpectedArgs[2];
+			} );
+		return $mock;
+	}
+
 	public function testPass() {
-		// Cannot assert that 0 parameters are passed, since PHP fills in the default
-		// values before PHPUnit checks; first call uses both defaults, third call
-		// uses the default of 1 for the second parameter
-		$user = $this->getMockBuilder( User::class )
-			->onlyMethods( [ 'pingLimiter' ] )
-			->getMock();
-		$user->expects( $this->exactly( 3 ) )
-			->method( 'pingLimiter' )
-			->withConsecutive(
-				[ 'edit', 1 ],
-				[ 'linkpurge', 0 ],
-				[ 'editcontentmodel', 1 ]
-			)
-			->willReturnOnConsecutiveCalls(
-					false,
-					false,
-					false
-				);
+		$limiter = $this->getRateLimiter( false );
 
-		$title = $this->createMock( Title::class );
-		$title->expects( $this->once() )
-			->method( 'getContentModel' )
-			->willReturn( 'OldContentModel' );
+		$subject = new RateLimitSubject( new UserIdentityValue( 1, 'test' ), null, [] );
 
-		$constraint = new UserRateLimitConstraint( $user, $title, 'NewContentModel' );
+		$constraint = new UserRateLimitConstraint( $limiter, $subject, 'OldContentModel', 'NewContentModel' );
 		$this->assertConstraintPassed( $constraint );
 	}
 
 	public function testFailure() {
-		// Cannot assert that 0 parameters are passed, since PHP fills in the default
-		// values before PHPUnit checks; first call uses both defaults, third call
-		// uses the default of 1 for the second parameter
-		$user = $this->getMockBuilder( User::class )
-			->onlyMethods( [ 'pingLimiter' ] )
-			->getMock();
-		$user->expects( $this->exactly( 3 ) )
-			->method( 'pingLimiter' )
-			->withConsecutive(
-				[ 'edit', 1 ],
-				[ 'linkpurge', 0 ],
-				[ 'editcontentmodel', 1 ]
-			)
-			->willReturnOnConsecutiveCalls(
-					false,
-					false,
-					true // Only die on the last check
-				);
+		$limiter = $this->getRateLimiter( true );
 
-		$title = $this->createMock( Title::class );
-		$title->expects( $this->once() )
-			->method( 'getContentModel' )
-			->willReturn( 'OldContentModel' );
+		$subject = new RateLimitSubject( new UserIdentityValue( 1, 'test' ), null, [] );
 
-		$constraint = new UserRateLimitConstraint( $user, $title, 'NewContentModel' );
+		$constraint = new UserRateLimitConstraint( $limiter, $subject, 'OldContentModel', 'NewContentModel' );
 		$this->assertConstraintFailed( $constraint, IEditConstraint::AS_RATE_LIMITED );
 	}
 

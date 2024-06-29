@@ -15,7 +15,7 @@
 	"prefs-gadgets": "Perkakas",
 	"prefs-description-gadgets": "Aktifkan fitur tambahan untuk akun Anda.",
 	"gadgets-prefstext": "Berikut adalah daftar perkakas istimewa yang dapat Anda aktifkan untuk akun Anda. Semua perkakas tersebut sebagian besar berbasis JavaScript sehingga Anda harus mengaktifkan JavaScript pada penjelajah Anda untuk dapat menjalankannya. Perhatikan bahwa berbagai perkakas tersebut tidak memiliki pengaruh terhadap halaman preferensi ini.\n\nJuga perhatikan bahwa perkakas istimewa ini bukanlah bagian dari perangkat lunak MediaWiki dan biasanya dikembangkan dan dipelihara oleh para pengguna di wiki lokal Anda. Pengurus antarmuka lokal dapat menyunting [[MediaWiki:Gadgets-definition|definisi]] perkakas yang tersedia, dan pengurus lokal dapat mengubah [[Special:Gadgets|deskripsi]]nya, di mana Anda bisa melihat kode sumber setiap perkakas. Banyak pengguna untuk setiap perkekas didaftarkan dalam [[Special:GadgetUsage|Statistik penggunaan perkakas]].",
-	"gadgets": "Alat (Perkakas)",
+	"special-gadgets": "Alat (Perkakas)",
 	"gadgetusage": "Statistik penggunaan perkakas",
 	"gadgetusage-gadget": "Perkakas",
 	"gadgetusage-usercount": "Jumlah pengguna",
@@ -42,10 +42,5 @@
 	"gadgets-export-download": "Unduh",
 	"gadgets-validate-notset": "Atribut <code>$1</code> tidak diatur.",
 	"gadgets-validate-wrongtype": "Atribut <code>$1</code> harusnya bertipe <code>$2</code> bukannya <code>$3</code>.",
-	"right-gadgets-edit": "Mengubah halaman JavaScript dan CSS perkakas",
-	"action-gadgets-edit": "mengubah halaman JavaScript atau CSS perkakas ini",
-	"right-gadgets-definition-edit": "Mengubah definisi perkakas",
-	"action-gadgets-definition-edit": "mengubah definisi perkakas ini",
-	"gadgets-wrong-contentmodel": "Halaman dalam ruang nama {{ns:2302}} harus mematuhi model konten GadgetDefinition.",
 	"gadgets-supports-urlload": "Perkakas ini mendukung pemuatan melalui URL dengan parameter kueri <code>?withgadget</code>."
 }

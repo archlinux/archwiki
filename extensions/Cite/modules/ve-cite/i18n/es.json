@@ -77,7 +77,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Esta referencia está definida en una plantilla u otro bloque generado y, por ahora, solo puede previsualizarse en modo código.",
 	"cite-ve-referenceslist-missingreflist": "Esta lista de referencias se genera mediante una plantilla.",
 	"cite-ve-toolbar-group-label": "Citar",
-	"cite-ve-othergroup-item": "referencia $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencias",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nombre de grupo de referencias: «$1»"
+	"cite-ve-othergroup-item": "referencia $1"
 }

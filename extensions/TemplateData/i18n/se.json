@@ -70,6 +70,7 @@
 	"templatedata-modal-table-param-aliases": "Paramehtera lassenamat",
 	"templatedata-modal-table-param-autovalue": "Automáhtalaš árvu",
 	"templatedata-modal-table-param-default": "Dábálaš ($1)",
+	"templatedata-modal-table-param-status": "Dilli",
 	"templatedata-modal-table-param-deprecated": "Boarásnuvvan",
 	"templatedata-modal-table-param-deprecatedValue": "Boarásnuvvan rávven",
 	"templatedata-modal-table-param-description": "Govvádus ($1)",

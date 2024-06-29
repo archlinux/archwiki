@@ -14,7 +14,6 @@
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Formulo kimyewi",
-	"math-visualeditor-mwcheminspector-title": "Formulo kimyewi",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Vurnayışo pêt",
 	"math-visualeditor-mwlatexdialog-card-formula": "Formul",
 	"math-visualeditor-mwlatexdialog-card-options": "Weçinıteki",
@@ -53,8 +52,8 @@
 	"math_syntax_error": "xetaya rêza qıseyan",
 	"math_unknown_error": "xetaya nêzanıtiye",
 	"math_unknown_function": "fonksiyon $1 nizanyeno",
-	"mw_math_mathml": "MathML, SVG ya na PNG pey şiyayış  (modern browseran u hacetanê resayneyaya tewsiye beno)",
-	"mw_math_source": "Çımeyê LaTeXi (seba geyroğê metınan rê)",
+	"mw-math-mathml": "MathML, SVG ya na PNG pey şiyayış  (modern browseran u hacetanê resayneyaya tewsiye beno)",
+	"mw-math-source": "Çımeyê LaTeXi (seba geyroğê metınan rê)",
 	"prefs-math": "Matematigane simgey",
 	"mathstatus": "Weziyetê matematiki",
 	"math-wikibase-formula": "Formul",

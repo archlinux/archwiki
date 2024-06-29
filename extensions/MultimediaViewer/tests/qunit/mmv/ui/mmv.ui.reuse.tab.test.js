@@ -18,7 +18,7 @@
 const { Tab } = require( 'mmv.ui.reuse.shareembed' );
 
 ( function () {
-	var $fixture = $( '#qunit-fixture' );
+	const $fixture = $( '#qunit-fixture' );
 
 	function makeReuseTab() {
 		return new Tab( $( '<div>' ).appendTo( $fixture ), $fixture );
@@ -27,7 +27,7 @@ const { Tab } = require( 'mmv.ui.reuse.shareembed' );
 	QUnit.module( 'mmv.ui.reuse.Tab', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Object creation, UI construction and basic funtionality', function ( assert ) {
-		var reuseTab = makeReuseTab();
+		const reuseTab = makeReuseTab();
 
 		assert.true( reuseTab instanceof Tab, 'Reuse UI element is created.' );
 		assert.strictEqual( reuseTab.$pane.length, 1, 'Pane created.' );

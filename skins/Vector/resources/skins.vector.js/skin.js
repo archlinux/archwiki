@@ -11,6 +11,7 @@ const languageButton = require( './languageButton.js' ),
 	watchstar = require( './watchstar.js' ).init,
 	setupIntersectionObservers = require( './setupIntersectionObservers.js' ),
 	menuTabs = require( './menuTabs.js' ),
+	legacyMessageBoxStyles = require( './legacyMessageBoxStyles.js' ),
 	teleportTarget = /** @type {HTMLElement} */require( /** @type {string} */ ( 'mediawiki.page.ready' ) ).teleportTarget;
 
 /**
@@ -46,33 +47,6 @@ function enableCssAnimations( document ) {
 }
 
 /**
- * In https://phabricator.wikimedia.org/T313409 #p-namespaces was renamed to #p-associatedPages
- * This code maps items added by gadgets to the new menu.
- * This code can be removed in MediaWiki 1.40.
- */
-function addNamespacesGadgetSupport() {
-	// Set up hidden dummy portlet.
-	const dummyPortlet = document.createElement( 'div' );
-	dummyPortlet.setAttribute( 'id', 'p-namespaces' );
-	dummyPortlet.setAttribute( 'style', 'display: none;' );
-	dummyPortlet.appendChild( document.createElement( 'ul' ) );
-	document.body.appendChild( dummyPortlet );
-	mw.hook( 'util.addPortletLink' ).add( function ( /** @type {Element} */ node ) {
-		const namespaces = document.querySelector( '#p-namespaces' );
-		// If it was added to p-namespaces, show warning and move.
-		if ( namespaces && node.closest( '#p-namespaces' ) ) {
-			const list = document.querySelector( '#p-associated-pages ul' );
-			if ( list ) {
-				list.appendChild( node );
-			}
-			mw.log.warn( 'Please update call to mw.util.addPortletLink with ID p-namespaces. Use p-associatedPages instead.' );
-			// in case it was empty before:
-			mw.util.showPortlet( 'p-associated-pages' );
-		}
-	} );
-}
-
-/**
  * @param {Window} window
  * @return {void}
  */
@@ -82,11 +56,6 @@ function main( window ) {
 	languageButton();
 	echo();
 	portletsManager.main();
-	dropdownMenus();
-	// menuTabs should follow `dropdownMenus` as that can move menu items from a
-	// tab menu to a dropdown.
-	menuTabs();
-	addNamespacesGadgetSupport();
 	watchstar();
 	limitedWidthToggle();
 	// Initialize the search toggle for the main header only. The sticky header
@@ -100,6 +69,31 @@ function main( window ) {
 	setupIntersectionObservers.main();
 	// Apply body styles to teleported elements
 	teleportTarget.classList.add( 'vector-body' );
+
+	// Load client preferences
+	const clientPreferenceSelector = '#vector-client-prefs';
+	const clientPreferenceExists = document.querySelectorAll( clientPreferenceSelector ).length > 0;
+	if ( clientPreferenceExists ) {
+		mw.loader.using( [
+			'skins.vector.clientPreferences',
+			'skins.vector.search.codex.styles',
+			'skins.vector.search.codex.scripts'
+		] ).then( () => {
+			const clientPreferences = require( /** @type {string} */ ( 'skins.vector.clientPreferences' ) );
+			const clientPreferenceConfig = ( require( './clientPreferences.json' ) );
+			// Can be removed once wgVectorNightMode is removed.
+			if ( document.documentElement.classList.contains( 'vector-feature-night-mode-disabled' ) ) {
+				// @ts-ignore issues relating to delete operator are not relevant here.
+				delete clientPreferenceConfig[ 'skin-theme' ];
+			}
+			clientPreferences.render( clientPreferenceSelector, clientPreferenceConfig );
+		} );
+	}
+
+	dropdownMenus();
+	// menuTabs should follow `dropdownMenus` as that can move menu items from a
+	// tab menu to a dropdown.
+	menuTabs();
 }
 
 /**
@@ -108,6 +102,7 @@ function main( window ) {
  */
 function init( window ) {
 	const now = mw.now();
+	legacyMessageBoxStyles();
 	// This is the earliest time we can run JS for users (and bucket anonymous
 	// users for A/B tests).
 	// Where the browser supports it, for a 10% sample of users
@@ -145,7 +140,7 @@ if ( document.readyState === 'interactive' || document.readyState === 'complete'
 
 // Provider of skins.vector.js module:
 /**
-* skins.vector.js
-* @stable for use inside WikimediaEvents ONLY.
-*/
+ * skins.vector.js
+ * @stable for use inside WikimediaEvents ONLY.
+ */
 module.exports = { pinnableElement };

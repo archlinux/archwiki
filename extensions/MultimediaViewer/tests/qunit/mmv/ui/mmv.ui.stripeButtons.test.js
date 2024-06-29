@@ -21,17 +21,16 @@ const { StripeButtons } = require( 'mmv' );
 	QUnit.module( 'mmv.ui.StripeButtons', QUnit.newMwEnvironment() );
 
 	function createStripeButtons() {
-		var $fixture = $( '#qunit-fixture' );
+		const $fixture = $( '#qunit-fixture' );
 		return new StripeButtons( $fixture );
 	}
 
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
-		var buttons,
-			oldMwUserIsAnon = mw.user.isAnon;
+		const oldMwUserIsAnon = mw.user.isAnon;
 
 		// first pretend we are anonymous
 		mw.user.isAnon = () => true;
-		buttons = createStripeButtons();
+		let buttons = createStripeButtons();
 
 		assert.true( buttons instanceof StripeButtons, 'UI element is created.' );
 		assert.strictEqual( buttons.buttons.$descriptionPage.length, 1, 'File page button created for anon.' );
@@ -46,9 +45,14 @@ const { StripeButtons } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'set()/empty() sense test:', function ( assert ) {
-		var buttons = createStripeButtons(),
-			fakeImageInfo = { descriptionUrl: '//commons.wikimedia.org/wiki/File:Foo.jpg' },
-			fakeRepoInfo = { displayName: 'Wikimedia Commons', isCommons: function () { return true; } };
+		const buttons = createStripeButtons();
+		const fakeImageInfo = { descriptionUrl: '//commons.wikimedia.org/wiki/File:Foo.jpg' };
+		const fakeRepoInfo = {
+			displayName: 'Wikimedia Commons',
+			isCommons: function () {
+				return true;
+			}
+		};
 
 		buttons.set( fakeImageInfo, fakeRepoInfo );
 		buttons.empty();
@@ -57,13 +61,17 @@ const { StripeButtons } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Description page button', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			buttons = new StripeButtons( $qf ),
-			$button = buttons.buttons.$descriptionPage,
-			descriptionUrl = 'http://example.com/desc',
-			descriptionUrl2 = 'http://example.com/different-desc',
-			imageInfo = { descriptionUrl: descriptionUrl },
-			repoInfo = { isCommons: function () { return false; } };
+		const $qf = $( '#qunit-fixture' );
+		const buttons = new StripeButtons( $qf );
+		const $button = buttons.buttons.$descriptionPage;
+		const descriptionUrl = 'http://example.com/desc';
+		const descriptionUrl2 = 'http://example.com/different-desc';
+		const imageInfo = { descriptionUrl: descriptionUrl };
+		const repoInfo = {
+			isCommons: function () {
+				return false;
+			}
+		};
 
 		buttons.setDescriptionPageButton( imageInfo, repoInfo );
 

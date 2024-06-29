@@ -2,7 +2,7 @@
 /**
  * Contain classes to list log entries
  *
- * Copyright © 2004 Brion Vibber <brion@pobox.com>
+ * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,8 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorNormalization;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
 /**
  * @ingroup Pager
@@ -275,7 +277,7 @@ class LogPager extends ReverseChronologicalPager {
 			$parts = explode( $interwikiDelimiter, $page->getDBkey() );
 			if ( count( $parts ) == 2 ) {
 				[ $name, $database ] = array_map( 'trim', $parts );
-				if ( strstr( $database, '*' ) ) { // Search for wildcard in database name
+				if ( str_contains( $database, '*' ) ) {
 					$doUserRightsLogLike = true;
 				}
 			}
@@ -308,9 +310,13 @@ class LogPager extends ReverseChronologicalPager {
 					$params[] = $db->anyString();
 				}
 			}
-			$this->mConds[] = 'log_title' . $db->buildLike( ...$params );
+			$this->mConds[] = $db->expr( 'log_title', IExpression::LIKE, new LikeValue( ...$params ) );
 		} elseif ( $pattern && !$this->getConfig()->get( MainConfigNames::MiserMode ) ) {
-			$this->mConds[] = 'log_title' . $db->buildLike( $page->getDBkey(), $db->anyString() );
+			$this->mConds[] = $db->expr(
+				'log_title',
+				IExpression::LIKE,
+				new LikeValue( $page->getDBkey(), $db->anyString() )
+			);
 			$this->pattern = $pattern;
 		} else {
 			$this->mConds['log_title'] = $page->getDBkey();
@@ -531,8 +537,5 @@ class LogPager extends ReverseChronologicalPager {
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( LogPager::class, 'LogPager' );

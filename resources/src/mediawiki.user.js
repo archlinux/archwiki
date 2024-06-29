@@ -1,6 +1,7 @@
 /**
- * @class mw.user
- * @singleton
+ * User library provided by 'mediawiki.user' ResourceLoader module.
+ *
+ * @namespace mw.user
  */
 ( function () {
 	var userInfoPromise, tempUserNamePromise, pageviewRandomId, sessionId;
@@ -70,7 +71,7 @@
 	}
 
 	// mw.user with the properties options and tokens gets defined in mediawiki.base.js.
-	Object.assign( mw.user, {
+	Object.assign( mw.user, /** @lends mw.user */{
 
 		/**
 		 * Generate a random user session ID.
@@ -79,8 +80,8 @@
 		 * session or series of sessions. Its uniqueness should not be depended on unless the
 		 * browser supports the crypto API.
 		 *
-		 * Known problems with Math.random():
-		 * Using the Math.random function we have seen sets
+		 * Known problems with `Math.random()`:
+		 * Using the `Math.random` function we have seen sets
 		 * with 1% of non uniques among 200,000 values with Safari providing most of these.
 		 * Given the prevalence of Safari in mobile the percentage of duplicates in
 		 * mobile usages of this code is probably higher.
@@ -89,8 +90,9 @@
 		 * We need about 80 bits to make sure that probability of collision
 		 * on 155 billion  is <= 1%
 		 *
-		 * See https://en.wikipedia.org/wiki/Birthday_attack#Mathematics
-		 * n(p;H) = n(0.01,2^80)= sqrt (2 * 2^80 * ln(1/(1-0.01)))
+		 * See {@link https://en.wikipedia.org/wiki/Birthday_attack#Mathematics}
+		 *
+		 * `n(p;H) = n(0.01,2^80)= sqrt (2 * 2^80 * ln(1/(1-0.01)))`
 		 *
 		 * @return {string} 80 bit integer (20 characters) in hex format, padded
 		 */
@@ -150,9 +152,9 @@
 		},
 
 		/**
-		 * Get the current user's database id
+		 * Get the current user's database id.
 		 *
-		 * Not to be confused with #id.
+		 * Not to be confused with {@link mw.user#id id}.
 		 *
 		 * @return {number} Current user's id, or 0 if user is anonymous
 		 */
@@ -161,7 +163,7 @@
 		},
 
 		/**
-		 * Is the user a normal non-temporary registered user?
+		 * Check whether the user is a normal non-temporary registered user.
 		 *
 		 * @return {boolean}
 		 */
@@ -170,7 +172,7 @@
 		},
 
 		/**
-		 * Is the user an autocreated temporary user?
+		 * Check whether the user is an autocreated temporary user.
 		 *
 		 * @return {boolean}
 		 */
@@ -179,7 +181,7 @@
 		},
 
 		/**
-		 * Get the current user's name
+		 * Get the current user's name.
 		 *
 		 * @return {string|null} User name string or null if user is anonymous
 		 */
@@ -226,7 +228,7 @@
 		},
 
 		/**
-		 * Get date user registered, if available
+		 * Get date user registered, if available.
 		 *
 		 * @return {boolean|null|Date} False for anonymous users, null if data is
 		 *  unavailable, or Date for when the user registered.
@@ -243,7 +245,23 @@
 		},
 
 		/**
-		 * Whether the current user is anonymous
+		 * Get date user first registered, if available.
+		 * @return {boolean|null|Date} False for anonymous users, null if data is
+		 *  unavailable, or Date for when the user registered. For temporary users
+		 *  that is when their temporary account was created.
+		 */
+		getFirstRegistration: function () {
+			if ( mw.user.isAnon() ) {
+				return false;
+			}
+			var registration = mw.config.get( 'wgUserFirstRegistration' );
+			// Registration may be unavailable if the user signed up before MediaWiki
+			// began tracking this.
+			return registration ? new Date( registration ) : null;
+		},
+
+		/**
+		 * Check whether the current user is anonymous.
 		 *
 		 * @return {boolean}
 		 */
@@ -252,7 +270,7 @@
 		},
 
 		/**
-		 * Retrieve a random ID, generating it if needed
+		 * Retrieve a random ID, generating it if needed.
 		 *
 		 * This ID is shared across windows, tabs, and page views. It is persisted
 		 * for the duration of one browser session (until the browser app is closed),
@@ -278,9 +296,9 @@
 		},
 
 		/**
-		 * Get the current user's name or the session ID
+		 * Get the current user's name or the session ID.
 		 *
-		 * Not to be confused with #getId.
+		 * Not to be confused with {@link mw.user#getId getId}.
 		 *
 		 * @return {string} User name or random session ID
 		 */
@@ -289,7 +307,7 @@
 		},
 
 		/**
-		 * Get the current user's groups
+		 * Get the current user's groups.
 		 *
 		 * @param {Function} [callback]
 		 * @return {jQuery.Promise}
@@ -302,20 +320,24 @@
 		},
 
 		/**
-		 * Get the current user's rights
+		 * Get the current user's rights.
 		 *
 		 * @param {Function} [callback]
 		 * @return {jQuery.Promise}
 		 */
 		getRights: function ( callback ) {
 			return getUserInfo().then(
-				function ( userInfo ) { return userInfo.rights; },
-				function () { return []; }
+				function ( userInfo ) {
+					return userInfo.rights;
+				},
+				function () {
+					return [];
+				}
 			).then( callback );
 		},
 
 		/**
-		 * Manage client preferences
+		 * Manage client preferences.
 		 *
 		 * For skins that enable the `clientPrefEnabled` option (see Skin class in PHP),
 		 * this feature allows you to store preferences in the browser session that will
@@ -326,21 +348,21 @@
 		 * and swap class names server-side through the Skin interface.
 		 *
 		 * This feature is limited to page views by unregistered users. For logged-in requests,
-		 * store preferences in the database instead, via UserOptionsManager or mw.Api#saveOption
+		 * store preferences in the database instead, via UserOptionsManager or `mw.Api.saveOption`
 		 * (may be hidden or API-only to exclude from Special:Preferences), and then include the
 		 * desired classes directly in Skin::getHtmlElementAttributes.
 		 *
 		 * Classes toggled by this feature must be named as `<feature>-clientpref-<value>`,
-		 * where `value` contains only alphanumerical characters (a-zA-Z0-9), and `feature`
+		 * where `value` contains only alphanumerical characters (a-z, A-Z, and 0-9), and `feature`
 		 * can also include hyphens.
 		 *
-		 * @class mw.user.clientPrefs
-		 * @singleton
+		 * @namespace mw.user.clientPrefs
 		 */
 		clientPrefs: {
 			/**
-			 * Change the class on the HTML document element, and save the value in a cookie
+			 * Change the class on the HTML document element, and save the value in a cookie.
 			 *
+			 * @memberof mw.user.clientPrefs
 			 * @param {string} feature
 			 * @param {string} value
 			 * @return {boolean} True if feature was stored successfully, false if the value
@@ -348,6 +370,13 @@
 			 *   e.g. a matching class was not defined on the HTML document element.
 			 */
 			set: function ( feature, value ) {
+				if ( mw.user.isNamed() ) {
+					// Avoid storing an unused cookie and returning true when the setting
+					// wouldn't actually be applied.
+					// Encourage future-proof and server-first implementations.
+					// Encourage feature parity for logged-in users.
+					throw new Error( 'clientPrefs are for unregistered users only' );
+				}
 				if ( !isValidFeatureName( feature ) || !isValidFeatureValue( value ) ) {
 					return false;
 				}
@@ -371,8 +400,9 @@
 			},
 
 			/**
-			 * Retrieve the current value of the feature from the HTML document element
+			 * Retrieve the current value of the feature from the HTML document element.
 			 *
+			 * @memberof mw.user.clientPrefs
 			 * @param {string} feature
 			 * @return {string|boolean} returns boolean if the feature is not recognized
 			 *  returns string if a feature was found.

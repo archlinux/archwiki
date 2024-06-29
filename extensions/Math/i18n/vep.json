@@ -9,7 +9,7 @@
 	"math_syntax_error": "sintaksine petuz",
 	"math_unknown_error": "tundmatoi petuz",
 	"math_unknown_function": "tundmatoi funkcii",
-	"mw_math_mathml": "MathML, ku sab (eksperimentaližikš)",
-	"mw_math_source": "Jätkat nece TeX-formas (tekstkaclimiden täht)",
+	"mw-math-mathml": "MathML, ku sab (eksperimentaližikš)",
+	"mw-math-source": "Jätkat nece TeX-formas (tekstkaclimiden täht)",
 	"prefs-math": "Matematik"
 }

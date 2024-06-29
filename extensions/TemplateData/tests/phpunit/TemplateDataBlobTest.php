@@ -4,6 +4,9 @@ use MediaWiki\Extension\TemplateData\Api\ApiTemplateData;
 use MediaWiki\Extension\TemplateData\TemplateDataBlob;
 use MediaWiki\Extension\TemplateData\TemplateDataHtmlFormatter;
 use MediaWiki\Extension\TemplateData\TemplateDataValidator;
+use MediaWiki\Language\RawMessage;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
@@ -844,7 +847,7 @@ class TemplateDataBlobTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Verify we can gzdecode() which came in PHP 5.4.0. Mediawiki needs a
+	 * Verify we can gzdecode() which came in PHP 5.4.0. MediaWiki needs a
 	 * fallback function for it.
 	 * If this test fail, we are most probably attempting to use gzdecode()
 	 * with PHP before 5.4.

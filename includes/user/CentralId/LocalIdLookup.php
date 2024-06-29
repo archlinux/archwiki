@@ -23,6 +23,8 @@
 namespace MediaWiki\User\CentralId;
 
 use DBAccessObjectUtils;
+use IDBAccessObject;
+use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
 use MediaWiki\User\UserIdentity;
@@ -42,6 +44,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
 class LocalIdLookup extends CentralIdLookup {
 
 	private IConnectionProvider $dbProvider;
+	private HideUserUtils $hideUserUtils;
 
 	/** @var string|null */
 	private $sharedDB;
@@ -55,15 +58,18 @@ class LocalIdLookup extends CentralIdLookup {
 	/**
 	 * @param Config $config
 	 * @param IConnectionProvider $dbProvider
+	 * @param HideUserUtils $hideUserUtils
 	 */
 	public function __construct(
 		Config $config,
-		IConnectionProvider $dbProvider
+		IConnectionProvider $dbProvider,
+		HideUserUtils $hideUserUtils
 	) {
 		$this->sharedDB = $config->get( MainConfigNames::SharedDB );
 		$this->sharedTables = $config->get( MainConfigNames::SharedTables );
 		$this->localDatabases = $config->get( MainConfigNames::LocalDatabases );
 		$this->dbProvider = $dbProvider;
+		$this->hideUserUtils = $hideUserUtils;
 	}
 
 	public function isAttached( UserIdentity $user, $wikiId = UserIdentity::LOCAL ): bool {
@@ -85,54 +91,50 @@ class LocalIdLookup extends CentralIdLookup {
 	}
 
 	public function lookupCentralIds(
-		array $idToName, $audience = self::AUDIENCE_PUBLIC, $flags = self::READ_NORMAL
+		array $idToName, $audience = self::AUDIENCE_PUBLIC, $flags = IDBAccessObject::READ_NORMAL
 	): array {
 		if ( !$idToName ) {
 			return [];
 		}
 		$audience = $this->checkAudience( $audience );
-		[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
-		$db = DBAccessObjectUtils::getDBFromIndex( $this->dbProvider, $index );
+		$db = DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
 		$queryBuilder = $db->newSelectQueryBuilder();
 		$queryBuilder
 			->select( [ 'user_id', 'user_name' ] )
 			->from( 'user' )
 			->where( [ 'user_id' => array_map( 'intval', array_keys( $idToName ) ) ] )
-			->options( $options );
+			->recency( $flags );
 
 		if ( $audience && !$audience->isAllowed( 'hideuser' ) ) {
-			$queryBuilder->leftJoin( 'ipblocks', null, 'ipb_user=user_id' );
-			$queryBuilder->field( 'ipb_deleted' );
+			$this->hideUserUtils->addFieldToBuilder( $queryBuilder );
 		}
 
 		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 		foreach ( $res as $row ) {
-			$idToName[$row->user_id] = empty( $row->ipb_deleted ) ? $row->user_name : '';
+			$idToName[$row->user_id] = empty( $row->hu_deleted ) ? $row->user_name : '';
 		}
 
 		return $idToName;
 	}
 
 	public function lookupUserNames(
-		array $nameToId, $audience = self::AUDIENCE_PUBLIC, $flags = self::READ_NORMAL
+		array $nameToId, $audience = self::AUDIENCE_PUBLIC, $flags = IDBAccessObject::READ_NORMAL
 	): array {
 		if ( !$nameToId ) {
 			return [];
 		}
 
 		$audience = $this->checkAudience( $audience );
-		[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
-		$db = DBAccessObjectUtils::getDBFromIndex( $this->dbProvider, $index );
+		$db = DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
 		$queryBuilder = $db->newSelectQueryBuilder();
 		$queryBuilder
 			->select( [ 'user_id', 'user_name' ] )
 			->from( 'user' )
 			->where( [ 'user_name' => array_map( 'strval', array_keys( $nameToId ) ) ] )
-			->options( $options );
+			->recency( $flags );
 
 		if ( $audience && !$audience->isAllowed( 'hideuser' ) ) {
-			$queryBuilder->leftJoin( 'ipblocks', null, 'ipb_user=user_id' );
-			$queryBuilder->where( [ 'ipb_deleted' => [ 0, null ] ] );
+			$queryBuilder->andWhere( $this->hideUserUtils->getExpression( $db ) );
 		}
 
 		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
@@ -144,8 +146,5 @@ class LocalIdLookup extends CentralIdLookup {
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( LocalIdLookup::class, 'LocalIdLookup' );

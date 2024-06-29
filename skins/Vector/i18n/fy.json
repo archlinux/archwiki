@@ -26,7 +26,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-no-language-button-label": "Talen tafoegje",
 	"vector-no-language-button-aria-label": "Dit artikel is der allinnich yn dizze taal. It artikel foar oare talen tafoegje",
-	"vector-language-redirect-to-top": "Hjir op {{GRAMMAR:l|{{SITENAME}}}} steane de taalkeppelings boppe-oan 'e side tsjinoer de titel fan 't artikel. [[#p-lang-btn|Nei boppen]].",
 	"vector-language-variant-switcher-label": "Taalfariant feroarje",
 	"vector-action-addsection": "Nij mêd",
 	"vector-action-delete": "Wiskje",

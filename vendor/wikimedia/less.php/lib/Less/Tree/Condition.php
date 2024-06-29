@@ -9,7 +9,6 @@ class Less_Tree_Condition extends Less_Tree {
 	public $rvalue;
 	public $index;
 	public $negate;
-	public $type = 'Condition';
 
 	public function __construct( $op, $l, $r, $i = 0, $negate = false ) {
 		$this->op = trim( $op );
@@ -24,6 +23,11 @@ class Less_Tree_Condition extends Less_Tree {
 		$this->rvalue = $visitor->visitObj( $this->rvalue );
 	}
 
+	/**
+	 * @param Less_Environment $env
+	 * @return bool
+	 * @see less-2.5.3.js#Condition.prototype.eval
+	 */
 	public function compile( $env ) {
 		$a = $this->lvalue->compile( $env );
 		$b = $this->rvalue->compile( $env );
@@ -38,28 +42,19 @@ class Less_Tree_Condition extends Less_Tree {
 				break;
 
 			default:
-				if ( Less_Parser::is_method( $a, 'compare' ) ) {
-					$result = $a->compare( $b );
-				} elseif ( Less_Parser::is_method( $b, 'compare' ) ) {
-					$result = $b->compare( $a );
-				} else {
-					throw new Less_Exception_Compiler( 'Unable to perform comparison', null, $this->index );
-				}
-
-				switch ( $result ) {
-					case -1:
+				$res = Less_Tree::nodeCompare( $a, $b );
+				// In JS, switch(undefined) with -1,0,-1,defaults goes to `default`.
+				// In PHP, switch(null) would go to case 0. Use if/else instead.
+				if ( $res === -1 ) {
 					$result = $this->op === '<' || $this->op === '=<' || $this->op === '<=';
-						break;
-
-					case 0:
+				} elseif ( $res === 0 ) {
 					$result = $this->op === '=' || $this->op === '>=' || $this->op === '=<' || $this->op === '<=';
-						break;
-
-					case 1:
+				} elseif ( $res === 1 ) {
 					$result = $this->op === '>' || $this->op === '>=';
-						break;
+				} else {
+					// null, NAN
+					$result = false;
 				}
-				break;
 		}
 
 		return $this->negate ? !$result : $result;

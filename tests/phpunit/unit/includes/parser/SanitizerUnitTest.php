@@ -1,6 +1,10 @@
 <?php
 
+namespace MediaWiki\Tests\Parser;
+
 use MediaWiki\Parser\Sanitizer;
+use MediaWikiUnitTestCase;
+use UtfNormal\Constants;
 
 /**
  * @group Sanitizer
@@ -9,7 +13,7 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideDecodeCharReferences
-	 * @covers Sanitizer::decodeCharReferences
+	 * @covers \MediaWiki\Parser\Sanitizer::decodeCharReferences
 	 */
 	public function testDecodeCharReferences( string $expected, string $input ) {
 		$this->assertSame( $expected, Sanitizer::decodeCharReferences( $input ) );
@@ -42,21 +46,21 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 				'&foo;',
 			],
 			'Invalid numbered entity (decimal)' => [
-				UtfNormal\Constants::UTF8_REPLACEMENT,
+				Constants::UTF8_REPLACEMENT,
 				"&#888888888888888888;",
 			],
 			'Invalid numbered entity (hex)' => [
-				UtfNormal\Constants::UTF8_REPLACEMENT,
+				Constants::UTF8_REPLACEMENT,
 				"&#x88888888888888888;",
 			],
 			// These cases are also "very large" numbers, but they will
 			// truncate down to ASCII.  So be careful.
 			'Invalid numbered entity w/ valid truncation (decimal)' => [
-				UtfNormal\Constants::UTF8_REPLACEMENT,
+				Constants::UTF8_REPLACEMENT,
 				"&#18446744073709551681;",
 			],
 			'Invalid numbered entity w/ valid truncation (hex)' => [
-				UtfNormal\Constants::UTF8_REPLACEMENT,
+				Constants::UTF8_REPLACEMENT,
 				"&#x10000000000000041;",
 			],
 		];
@@ -64,7 +68,7 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideTagAttributesToDecode
-	 * @covers Sanitizer::decodeTagAttributes
+	 * @covers \MediaWiki\Parser\Sanitizer::decodeTagAttributes
 	 */
 	public function testDecodeTagAttributes( $expected, $attributes, $message = '' ) {
 		$this->assertSame( $expected,
@@ -140,7 +144,7 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideCssCommentsFixtures
-	 * @covers Sanitizer::checkCss
+	 * @covers \MediaWiki\Parser\Sanitizer::checkCss
 	 */
 	public function testCssCommentsChecking( $expected, $css, $message = '' ) {
 		$this->assertSame( $expected,
@@ -165,16 +169,6 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 				'Remove anything after a comment-start token' ],
 			[ '', "\\2f\\2a unifinished comment'",
 				'Remove anything after a backslash-escaped comment-start token' ],
-			[
-				'/* insecure input */',
-				'filter: progid:DXImageTransform.Microsoft.AlphaImageLoader'
-					. '(src=\'asdf.png\',sizingMethod=\'scale\');'
-			],
-			[
-				'/* insecure input */',
-				'-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader'
-					. '(src=\'asdf.png\',sizingMethod=\'scale\')";'
-			],
 			[ '/* insecure input */', 'width: expression(1+1);' ],
 			[ '/* insecure input */', 'background-image: image(asdf.png);' ],
 			[ '/* insecure input */', 'background-image: -webkit-image(asdf.png);' ],
@@ -195,7 +189,7 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideEscapeHtmlAllowEntities
-	 * @covers Sanitizer::escapeHtmlAllowEntities
+	 * @covers \MediaWiki\Parser\Sanitizer::escapeHtmlAllowEntities
 	 */
 	public function testEscapeHtmlAllowEntities( $expected, $html ) {
 		$this->assertSame(
@@ -215,7 +209,7 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideIsReservedDataAttribute
-	 * @covers Sanitizer::isReservedDataAttribute
+	 * @covers \MediaWiki\Parser\Sanitizer::isReservedDataAttribute
 	 */
 	public function testIsReservedDataAttribute( $attr, $expected ) {
 		$this->assertSame( $expected, Sanitizer::isReservedDataAttribute( $attr ) );
@@ -231,14 +225,15 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 			[ 'data-parsoid', true ],
 			[ 'data-mw-foo', true ],
 			[ 'data-ooui-foo', true ],
-			[ 'data-mwfoo', true ], // could be false but this is how it's implemented currently
+			// could be false but this is how it's implemented currently
+			[ 'data-mwfoo', true ],
 		];
 	}
 
 	/**
 	 * @dataProvider provideStripAllTags
 	 *
-	 * @covers Sanitizer::stripAllTags()
+	 * @covers \MediaWiki\Parser\Sanitizer::stripAllTags()
 	 * @covers \MediaWiki\Parser\RemexStripTagHandler
 	 *
 	 * @param string $input

@@ -2,6 +2,7 @@
 
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\User\User;
 
 /**
  * Tests for the built in notification types

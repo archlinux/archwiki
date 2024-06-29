@@ -54,5 +54,13 @@
 		"expected": "../cases/tracked-template/tracked-template-getText.json",
 		"config": "../data/commonswiki-config.json",
 		"data": "../data/commonswiki-data.json"
+	},
+	{
+		"name": "suppressed talk classes",
+		"title": "User_talk:ESanders_(WMF)/suppressed-talk",
+		"dom": "cases/suppressed-talk/suppressed-talk.html",
+		"expected": "../cases/suppressed-talk/suppressed-talk-getText.json",
+		"config": "../data/enwiki-config.json",
+		"data": "../data/enwiki-data.json"
 	}
 ]

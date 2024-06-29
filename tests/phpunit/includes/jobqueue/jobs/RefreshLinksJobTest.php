@@ -1,10 +1,11 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Page\PageAssertionException;
 use MediaWiki\Title\Title;
 
 /**
- * @covers RefreshLinksJob
+ * @covers \RefreshLinksJob
  *
  * @group JobQueue
  * @group Database
@@ -13,16 +14,6 @@ use MediaWiki\Title\Title;
  * @author Addshore
  */
 class RefreshLinksJobTest extends MediaWikiIntegrationTestCase {
-
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->tablesUsed[] = 'page';
-		$this->tablesUsed[] = 'revision';
-
-		$this->tablesUsed[] = 'pagelinks';
-		$this->tablesUsed[] = 'categorylinks';
-	}
 
 	/**
 	 * @param string $name

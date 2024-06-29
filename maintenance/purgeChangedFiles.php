@@ -107,7 +107,7 @@ class PurgeChangedFiles extends Maintenance {
 		}
 
 		// Validate the timestamps
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$this->startTimestamp = $dbr->timestamp( $this->getOption( 'starttime' ) );
 		$this->endTimestamp = $dbr->timestamp( $this->getOption( 'endtime' ) );
 
@@ -138,7 +138,7 @@ class PurgeChangedFiles extends Maintenance {
 	 */
 	protected function purgeFromLogType( $type ) {
 		$repo = $this->getServiceContainer()->getRepoGroup()->getLocalRepo();
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 
 		foreach ( self::$typeMappings[$type] as $logType => $logActions ) {
 			$this->verbose( "Scanning for {$logType}/" . implode( ',', $logActions ) . "\n" );
@@ -150,8 +150,8 @@ class PurgeChangedFiles extends Maintenance {
 					'log_namespace' => NS_FILE,
 					'log_type' => $logType,
 					'log_action' => $logActions,
-					$dbr->buildComparison( '>=', [ 'log_timestamp' => $this->startTimestamp ] ),
-					$dbr->buildComparison( '<=', [ 'log_timestamp' => $this->endTimestamp ] ),
+					$dbr->expr( 'log_timestamp', '>=', $this->startTimestamp ),
+					$dbr->expr( 'log_timestamp', '<=', $this->endTimestamp ),
 				] )
 				->caller( __METHOD__ )->fetchResultSet();
 

@@ -1,6 +1,9 @@
 <?php
 
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionManager;
@@ -9,7 +12,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
 /**
- * @covers Action
+ * @covers \Action
  *
  * @group Action
  * @group Database

@@ -2,18 +2,13 @@
 
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
+use MediaWiki\Title\Title;
 
 /**
  * @group Echo
  * @group Database
  */
 class ThankYouEditTest extends MediaWikiIntegrationTestCase {
-
-	protected function setUp(): void {
-		parent::setUp();
-		$this->tablesUsed[] = 'echo_event';
-		$this->tablesUsed[] = 'echo_notification';
-	}
 
 	private function deleteEchoData() {
 		$db = DbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );

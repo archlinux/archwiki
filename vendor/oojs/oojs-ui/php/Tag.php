@@ -319,7 +319,10 @@ class Tag {
 	}
 
 	/**
-	 * Reset the unique ID, for consistent test output
+	 * Reset the unique ID, for consistent test output.
+	 * Warning: Do not use this function outside of tests!
+	 *
+	 * @see https://phabricator.wikimedia.org/T345515
 	 */
 	public static function resetElementId() {
 		self::$elementId = 0;

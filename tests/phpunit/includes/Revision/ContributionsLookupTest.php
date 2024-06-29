@@ -3,6 +3,7 @@
 namespace MediaWiki\Tests\Revision;
 
 use ChangeTags;
+use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Permissions\UltimateAuthority;
@@ -12,7 +13,6 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
-use Message;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -57,7 +57,7 @@ class ContributionsLookupTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		if ( $this->db->getType() == 'mysql' && strpos( $this->db->getSoftwareLink(), 'MySQL' ) ) {
+		if ( $this->db->getType() === 'mysql' && str_contains( $this->db->getSoftwareLink(), 'MySQL' ) ) {
 			$this->markTestSkipped( 'See T256006' );
 		}
 

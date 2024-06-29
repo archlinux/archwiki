@@ -8,10 +8,10 @@ use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Title\TitleValue;
 use MediaWikiUnitTestCase;
 use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
-use TitleValue;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\EditStashCache

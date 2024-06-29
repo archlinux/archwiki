@@ -2,7 +2,7 @@
 /**
  * Deal with importing all those nasty globals and things
  *
- * Copyright © 2003 Brion Vibber <brion@pobox.com>
+ * Copyright © 2003 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,11 +40,12 @@ use MWException;
  * @ingroup HTTP
  */
 class FauxRequest extends WebRequest {
-	private $wasPosted;
-	private $requestUrl;
-	protected $cookies = [];
-	/** @var array */
-	private $uploadData = [];
+	private bool $wasPosted;
+	private ?string $requestUrl = null;
+	private array $serverInfo;
+
+	protected array $cookies = [];
+	private array $uploadData = [];
 
 	/**
 	 * @stable to call
@@ -60,6 +61,7 @@ class FauxRequest extends WebRequest {
 								$session = null, $protocol = 'http'
 	) {
 		$this->requestTime = microtime( true );
+		$this->serverInfo = $_SERVER;
 
 		$this->data = $data;
 		$this->wasPosted = $wasPosted;
@@ -75,6 +77,14 @@ class FauxRequest extends WebRequest {
 			throw new InvalidArgumentException( "MediaWiki\Request\FauxRequest() got bogus session" );
 		}
 		$this->protocol = $protocol;
+	}
+
+	public function response(): FauxResponse {
+		/* Lazy initialization of response object for this request */
+		if ( !$this->response ) {
+			$this->response = new FauxResponse();
+		}
+		return $this->response;
 	}
 
 	/**
@@ -103,6 +113,10 @@ class FauxRequest extends WebRequest {
 		} else {
 			return $this->data;
 		}
+	}
+
+	public function getQueryValuesOnly() {
+		return $this->getQueryValues();
 	}
 
 	public function getMethod() {
@@ -202,10 +216,35 @@ class FauxRequest extends WebRequest {
 
 	/**
 	 * @param string $url
+	 *
 	 * @since 1.25
 	 */
-	public function setRequestURL( $url ) {
+	public function setRequestURL( string $url ) {
 		$this->requestUrl = $url;
+
+		if ( preg_match( '@^(.*)://@', $url, $m ) ) {
+			$this->protocol = $m[1];
+		}
+	}
+
+	/**
+	 * @since 1.42
+	 * @return bool
+	 */
+	public function hasRequestURL(): bool {
+		return $this->requestUrl !== null;
+	}
+
+	protected function getServerInfo( $name, $default = null ): ?string {
+		return $this->serverInfo[$name] ?? $default;
+	}
+
+	/**
+	 * @see $_SERVER
+	 * @param array $info
+	 */
+	public function setServerInfo( array $info ) {
+		$this->serverInfo = $info;
 	}
 
 	/**
@@ -288,7 +327,5 @@ class FauxRequest extends WebRequest {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( FauxRequest::class, 'FauxRequest' );

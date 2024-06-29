@@ -2,6 +2,8 @@
 
 namespace Wikimedia\Rdbms;
 
+use IDBAccessObject;
+
 /**
  * Build SELECT queries with a fluent interface.
  *
@@ -189,7 +191,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add a single table to the SELECT query. Alias for table().
 	 *
-	 * @param string $table The table name
+	 * @param string|JoinGroup|SelectQueryBuilder $table The table, see table() for details
 	 * @param-taint $table exec_sql
 	 * @param string|null $alias The table alias, or null for no alias
 	 * @param-taint $alias exec_sql
@@ -281,7 +283,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Add conditions to the query. The supplied conditions will be appended
 	 * to the existing conditions, separated by AND.
 	 *
-	 * @param string|array $conds
+	 * @param string|array|IExpression $conds
 	 * @param-taint $conds exec_sql_numkey
 	 *
 	 * May be either a string containing a single condition, or an array of
@@ -337,7 +339,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add conditions to the query. Alias for where().
 	 *
-	 * @param string|array $conds
+	 * @param string|array|IExpression $conds
 	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
 	 */
@@ -348,7 +350,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add conditions to the query. Alias for where().
 	 *
-	 * @param string|array $conds
+	 * @param string|array|IExpression $conds
 	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
 	 */
@@ -470,6 +472,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * If there is an existing GROUP BY clause, the new one will be appended.
 	 *
 	 * @param string|string[] $group
+	 * @param-taint $group exec_sql
 	 * @return $this
 	 */
 	public function groupBy( $group ) {
@@ -486,6 +489,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * If there is an existing HAVING clause, the new one will be appended.
 	 *
 	 * @param string|string[] $having
+	 * @param-taint $having exec_sql_numkey
 	 * @return $this
 	 */
 	public function having( $having ) {
@@ -498,9 +502,12 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * additional fields to it.
 	 *
 	 * @param string[]|string $fields The field or list of fields to order by.
-	 * @param string|null $direction self::SORT_ASC or self::SORT_DESC.
-	 * If this is null then $fields is assumed to optionally contain ASC or DESC
-	 * after each field name.
+	 * @param-taint $fields exec_sql
+	 * @param string|null $direction Sorting direction applied to all fields,
+	 *   self::SORT_ASC or self::SORT_DESC. If different fields need to be sorted in opposite
+	 *   directions, then this parameter must be omitted, and $fields must contain 'ASC' or 'DESC'
+	 *   after each field name.
+	 * @param-taint $direction exec_sql
 	 * @return $this
 	 */
 	public function orderBy( $fields, $direction = null ) {
@@ -545,6 +552,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * array will be merged with the existing value.
 	 *
 	 * @param string|string[] $index
+	 * @param-taint $index exec_sql
 	 * @return $this
 	 */
 	public function useIndex( $index ) {
@@ -562,6 +570,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * array will be merged with the existing value.
 	 *
 	 * @param string|string[] $index
+	 * @param-taint $index exec_sql
 	 * @return $this
 	 */
 	public function ignoreIndex( $index ) {
@@ -681,6 +690,19 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 */
 	public function options( array $options ) {
 		$this->options = array_merge( $this->options, $options );
+		return $this;
+	}
+
+	/**
+	 * @param int $recency Bitfield of IDBAccessObject::READ_* constants
+	 * @return $this
+	 */
+	public function recency( $recency ) {
+		if ( ( $recency & IDBAccessObject::READ_EXCLUSIVE ) == IDBAccessObject::READ_EXCLUSIVE ) {
+			$this->forUpdate();
+		} elseif ( ( $recency & IDBAccessObject::READ_LOCKING ) == IDBAccessObject::READ_LOCKING ) {
+			$this->lockInShareMode();
+		}
 		return $this;
 	}
 

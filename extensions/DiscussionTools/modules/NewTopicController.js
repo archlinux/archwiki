@@ -147,8 +147,8 @@ NewTopicController.prototype.setupReplyWidget = function ( replyWidget, data ) {
 	this.replyWidget.connect( this, { bodyFocus: 'onBodyFocus' } );
 
 	replyWidget.connect( this, {
-		clear: 'clear',
-		clearStorage: 'clearStorage'
+		clear: 'onReplyWidgetClear',
+		clearStorage: 'onReplyWidgetClearStorage'
 	} );
 };
 
@@ -162,7 +162,7 @@ NewTopicController.prototype.focus = function () {
 /**
  * Restore the widget to its original state
  */
-NewTopicController.prototype.clear = function () {
+NewTopicController.prototype.onReplyWidgetClear = function () {
 	// This is going to get called as part of the teardown chain from replywidget
 	this.sectionTitle.setValue( '' );
 	this.sectionTitleField.setWarnings( [] );
@@ -171,7 +171,7 @@ NewTopicController.prototype.clear = function () {
 /**
  * Remove any storage that the widget is using
  */
-NewTopicController.prototype.clearStorage = function () {
+NewTopicController.prototype.onReplyWidgetClearStorage = function () {
 	// This is going to get called as part of the teardown chain from replywidget
 	if ( this.replyWidget ) {
 		this.replyWidget.storage.remove( 'title' );
@@ -195,8 +195,9 @@ NewTopicController.prototype.storeEditSummary = function () {
 /**
  * @inheritdoc
  */
-NewTopicController.prototype.teardown = function ( abandoned ) {
-	NewTopicController.super.prototype.teardown.call( this, abandoned );
+NewTopicController.prototype.onReplyWidgetTeardown = function ( abandoned ) {
+	// Parent method
+	NewTopicController.super.prototype.onReplyWidgetTeardown.call( this, abandoned );
 
 	this.container.$element.detach();
 

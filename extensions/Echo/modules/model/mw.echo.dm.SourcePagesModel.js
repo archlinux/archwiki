@@ -79,10 +79,8 @@
 	 * @param {Object} sourceData A detailed object about sources and pages
 	 */
 	mw.echo.dm.SourcePagesModel.prototype.setAllSources = function ( sourceData ) {
-		var source;
-
 		this.reset();
-		for ( source in sourceData ) {
+		for ( var source in sourceData ) {
 			if ( Object.prototype.hasOwnProperty.call( sourceData, source ) ) {
 				this.setSourcePagesDetails( source, sourceData[ source ] );
 			}
@@ -164,7 +162,6 @@
 	 * @param {Object} details Details object
 	 */
 	mw.echo.dm.SourcePagesModel.prototype.setSourcePagesDetails = function ( source, details ) {
-		var i, page;
 		this.sources[ source ] = {
 			title: details.source.title || source,
 			base: details.source.base,
@@ -172,8 +169,8 @@
 			pages: {}
 		};
 
-		for ( i = 0; i < details.pages.length; i++ ) {
-			page = details.pages[ i ];
+		for ( var i = 0; i < details.pages.length; i++ ) {
+			var page = details.pages[ i ];
 			this.sources[ source ].pages[ page.title ] = page;
 		}
 	};

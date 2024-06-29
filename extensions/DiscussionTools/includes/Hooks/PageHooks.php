@@ -10,10 +10,7 @@
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
 use Article;
-use Config;
-use ConfigFactory;
 use ExtensionRegistry;
-use Html;
 use IContextSource;
 use MediaWiki\Actions\Hook\GetActionNameHook;
 use MediaWiki\Extension\DiscussionTools\CommentFormatter;
@@ -25,19 +22,20 @@ use MediaWiki\Hook\OutputPageBeforeHTMLHook;
 use MediaWiki\Hook\OutputPageParserOutputHook;
 use MediaWiki\Hook\SidebarBeforeOutputHook;
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\BeforeDisplayNoArticleTextHook;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
-use MediaWiki\User\UserOptionsLookup;
 use OOUI\ButtonWidget;
-use OutputPage;
 use ParserOutput;
 use RequestContext;
 use Skin;
 use SkinTemplate;
-use SpecialPage;
 
 class PageHooks implements
 	BeforeDisplayNoArticleTextHook,
@@ -49,18 +47,15 @@ class PageHooks implements
 	SkinTemplateNavigation__UniversalHook
 {
 
-	private Config $config;
 	private SubscriptionStore $subscriptionStore;
 	private UserNameUtils $userNameUtils;
 	private UserOptionsLookup $userOptionsLookup;
 
 	public function __construct(
-		ConfigFactory $configFactory,
 		SubscriptionStore $subscriptionStore,
 		UserNameUtils $userNameUtils,
 		UserOptionsLookup $userOptionsLookup
 	) {
-		$this->config = $configFactory->makeConfig( 'discussiontools' );
 		$this->subscriptionStore = $subscriptionStore;
 		$this->userNameUtils = $userNameUtils;
 		$this->userOptionsLookup = $userOptionsLookup;
@@ -68,6 +63,7 @@ class PageHooks implements
 
 	private function isMobile(): bool {
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
+			/** @var \MobileContext $mobFrontContext */
 			$mobFrontContext = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
 			return $mobFrontContext->shouldDisplayMobileView();
 		}
@@ -86,29 +82,39 @@ class PageHooks implements
 	public function onBeforePageDisplay( $output, $skin ): void {
 		$user = $output->getUser();
 		$req = $output->getRequest();
+		$title = $output->getTitle();
+
 		foreach ( HookUtils::FEATURES as $feature ) {
 			// Add a CSS class for each enabled feature
 			if ( HookUtils::isFeatureEnabledForOutput( $output, $feature ) ) {
+				// The following CSS classes are generated here:
+				// * ext-discussiontools-replytool-enabled
+				// * ext-discussiontools-newtopictool-enabled
+				// * ext-discussiontools-sourcemodetoolbar-enabled
+				// * ext-discussiontools-topicsubscription-enabled
+				// * ext-discussiontools-autotopicsub-enabled
+				// * ext-discussiontools-visualenhancements-enabled
+				// * ext-discussiontools-visualenhancements_reply-enabled
+				// * ext-discussiontools-visualenhancements_pageframe-enabled
 				$output->addBodyClasses( "ext-discussiontools-$feature-enabled" );
 			}
 		}
 
-		if ( $this->isMobile() && HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS ) ) {
+		$isMobile = $this->isMobile();
+
+		if ( $isMobile && HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS ) ) {
 			$output->addBodyClasses( 'collapsible-headings-collapsed' );
 		}
 
 		// Load style modules if the tools can be available for the title
 		// to selectively hide DT features, depending on the body classes added above.
-		$availableForTitle = HookUtils::isAvailableForTitle( $output->getTitle() );
-		if ( $availableForTitle ) {
+		if ( HookUtils::isAvailableForTitle( $title ) ) {
 			$output->addModuleStyles( 'ext.discussionTools.init.styles' );
 		}
 
 		// Load modules if any DT feature is enabled for this user
 		if ( HookUtils::isFeatureEnabledForOutput( $output ) ) {
-			$output->addModules( [
-				'ext.discussionTools.init'
-			] );
+			$output->addModules( 'ext.discussionTools.init' );
 
 			$enabledVars = [];
 			foreach ( HookUtils::FEATURES as $feature ) {
@@ -171,9 +177,7 @@ class PageHooks implements
 			) );
 		}
 
-		if ( $output->getSkin()->getSkinName() === 'minerva' ) {
-			$title = $output->getTitle();
-
+		if ( $isMobile ) {
 			if (
 				$title->isTalkPage() &&
 				HookUtils::isFeatureEnabledForOutput( $output, HookUtils::REPLYTOOL ) && (
@@ -209,7 +213,9 @@ class PageHooks implements
 					$output->addModuleStyles( 'jquery.makeCollapsible.styles' );
 				}
 			}
+		}
 
+		if ( $output->getSkin()->getSkinName() === 'minerva' ) {
 			if (
 				$req->getRawVal( 'action', 'view' ) === 'view' &&
 				HookUtils::isFeatureEnabledForOutput( $output, HookUtils::NEWTOPICTOOL ) &&
@@ -217,10 +223,8 @@ class PageHooks implements
 				HookUtils::shouldShowNewSectionTab( $output->getContext() )
 			) {
 				$output->enableOOUI();
-				$output->addModuleStyles( [
-					// For speechBubbleAdd
-					'oojs-ui.styles.icons-alerts',
-				] );
+				// For speechBubbleAdd
+				$output->addModuleStyles( 'oojs-ui.styles.icons-alerts' );
 				$output->addBodyClasses( 'ext-discussiontools-init-new-topic-opened' );
 
 				// Minerva doesn't show a new topic button.
@@ -264,41 +268,41 @@ class PageHooks implements
 		// multiple sources!
 
 		$isMobile = $this->isMobile();
+		$visualEnhancementsEnabled =
+			HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS );
+		$visualEnhancementsReplyEnabled =
+			HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS_REPLY );
 
 		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::TOPICSUBSCRIPTION ) ) {
 			// Just enable OOUI PHP - the OOUI subscribe button isn't infused unless VISUALENHANCEMENTS are enabled
 			$output->setupOOUI();
 			$text = CommentFormatter::postprocessTopicSubscription(
-				$text, $output, $this->subscriptionStore, $isMobile
+				$text, $output, $this->subscriptionStore, $isMobile, $visualEnhancementsEnabled
 			);
 		}
 
 		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::REPLYTOOL ) ) {
 			$output->enableOOUI();
-			$text = CommentFormatter::postprocessReplyTool( $text, $output, $isMobile );
+			$text = CommentFormatter::postprocessReplyTool(
+				$text, $output, $isMobile, $visualEnhancementsReplyEnabled
+			);
 		}
 
-		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS ) ) {
+		if ( $visualEnhancementsEnabled ) {
 			$output->enableOOUI();
 			if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::TOPICSUBSCRIPTION ) ) {
-				$output->addModuleStyles( [
-					// Visually enhanced topic subscriptions
-					// bell, bellOutline
-					'oojs-ui.styles.icons-alerts',
-				] );
+				// Visually enhanced topic subscriptions: bell, bellOutline
+				$output->addModuleStyles( 'oojs-ui.styles.icons-alerts' );
 			}
 			if (
 				$isMobile ||
 				(
-					HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS_REPLY ) &&
+					$visualEnhancementsReplyEnabled &&
 					CommentFormatter::isLanguageRequiringReplyIcon( $output->getLanguage() )
 				)
 			) {
-				$output->addModuleStyles( [
-					// Reply button:
-					// share
-					'oojs-ui.styles.icons-content',
-				] );
+				// Reply button: share
+				$output->addModuleStyles( 'oojs-ui.styles.icons-content' );
 			}
 			if ( $isMobile ) {
 				$output->addModuleStyles( [
@@ -311,8 +315,6 @@ class PageHooks implements
 			}
 			$text = CommentFormatter::postprocessVisualEnhancements( $text, $output, $isMobile );
 		}
-
-		return true;
 	}
 
 	/**
@@ -332,8 +334,6 @@ class PageHooks implements
 
 		// This hook can be executed more than once per page view if the page content is composed from
 		// multiple sources!
-
-		$isMobile = $this->isMobile();
 
 		CommentFormatter::postprocessTableOfContents( $pout, $output );
 
@@ -441,15 +441,10 @@ class PageHooks implements
 		$coreConfig = RequestContext::getMain()->getConfig();
 		$iconpath = $coreConfig->get( 'ExtensionAssetsPath' ) . '/DiscussionTools/images';
 
-		$dir = $context->getLanguage()->getDir();
-		$lang = $context->getLanguage()->getHtmlCode();
-
-		$titleMsg = false;
-		$descMsg = false;
 		$descParams = [];
 		$buttonMsg = 'discussiontools-emptystate-button';
 		$title = $context->getTitle();
-		if ( $title->getNamespace() === NS_USER_TALK && !$title->isSubpage() ) {
+		if ( $title->inNamespace( NS_USER_TALK ) && !$title->isSubpage() ) {
 			// This is a user talk page
 			$isIP = $this->userNameUtils->isIP( $title->getText() );
 			$isTemp = $this->userNameUtils->isTemp( $title->getText() );

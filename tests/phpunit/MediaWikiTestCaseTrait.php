@@ -121,6 +121,20 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
+	 * Skip the test if not running the necessary php version
+	 *
+	 * @since 1.42 (also backported to 1.39.8, 1.40.4 and 1.41.2)
+	 *
+	 * @param string $op
+	 * @param string $version
+	 */
+	protected function markTestSkippedIfPhp( $op, $version ) {
+		if ( version_compare( PHP_VERSION, $version, $op ) ) {
+			$this->markTestSkipped( "PHP $version isn't supported for this test" );
+		}
+	}
+
+	/**
 	 * Don't throw a warning if $function is deprecated and called later
 	 *
 	 * @since 1.19
@@ -441,27 +455,31 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
-	 * Forward-compatibility method to replace assertObjectHasAttribute in PHPUnit 9. This can be removed when
-	 * upgrading to PHPUnit 10, which introduces this method upstream.
+	 * This method allows you to assert that the given callback emits a PHP error. It is a PHPUnit 10 compatible
+	 * replacement for expectNotice(), expectWarning(), expectError(), and the other methods deprecated in
+	 * https://github.com/sebastianbergmann/phpunit/issues/5062.
+	 *
+	 * @param int $errorLevel
+	 * @param callable $callback
+	 * @param string|null $msg String that must be contained in the error message
 	 */
-	protected function assertObjectHasProperty( string $propertyName, object $object, string $message = '' ): void {
-		$this->assertTrue(
-			( new ReflectionObject( $object ) )->hasProperty( $propertyName ),
-			$message ?: 'Failed asserting that object of class "' . get_class( $object ) .
-					"\" has property \"$propertyName\""
-		);
+	protected function expectPHPError(
+		int $errorLevel,
+		callable $callback,
+		string $msg = null
+	): void {
+		try {
+			$errorEmitted = false;
+			set_error_handler( function ( $_, $actualMsg ) use ( $msg, &$errorEmitted ) {
+				if ( $msg !== null ) {
+					$this->assertStringContainsString( $msg, $actualMsg );
+				}
+				$errorEmitted = true;
+			}, $errorLevel );
+			$callback();
+			$this->assertTrue( $errorEmitted, "No PHP error was emitted." );
+		} finally {
+			restore_error_handler();
+		}
 	}
-
-	/**
-	 * Forward-compatibility method to replace assertObjectNotHasAttribute in PHPUnit 9. This can be removed when
-	 * upgrading to PHPUnit 10, which introduces this method upstream.
-	 */
-	protected function assertObjectNotHasProperty( string $propertyName, object $object, string $message = '' ): void {
-		$this->assertFalse(
-			( new ReflectionObject( $object ) )->hasProperty( $propertyName ),
-			$message ?: 'Failed asserting that object of class "' . get_class( $object ) .
-				"\" does not have property \"$propertyName\""
-		);
-	}
-
 }

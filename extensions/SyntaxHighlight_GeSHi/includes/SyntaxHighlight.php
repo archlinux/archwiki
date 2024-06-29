@@ -21,20 +21,20 @@ namespace MediaWiki\SyntaxHighlight;
 use Content;
 use ExtensionRegistry;
 use FormatJson;
-use Html;
 use IContextSource;
 use MediaWiki\Api\Hook\ApiFormatHighlightHook;
 use MediaWiki\Content\Hook\ContentGetParserOutputHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\SoftwareInfoHook;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use Parser;
 use ParserOptions;
-use ParserOutput;
 use RuntimeException;
-use Sanitizer;
-use Status;
 use TextContent;
 use WANObjectCache;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -54,7 +54,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 	/** @var int Cache version. Increment whenever the HTML changes. */
 	private const CACHE_VERSION = 2;
 
-	/** @var array Mapping of MIME-types to lexer names. */
+	/** @var array<string,string> Mapping of MIME-types to lexer names. */
 	private static $mimeLexers = [
 		'text/javascript'  => 'javascript',
 		'application/json' => 'javascript',
@@ -84,7 +84,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 	/**
 	 * Get the Pygments lexer name for a particular language.
 	 *
-	 * @param string $lang Language name.
+	 * @param string|null $lang Language name.
 	 * @return string|null Lexer name, or null if no matching lexer.
 	 */
 	private static function getLexer( $lang ) {
@@ -94,9 +94,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 			return null;
 		}
 
-		if ( !$lexers ) {
-			$lexers = Pygmentize::getLexers();
-		}
+		$lexers ??= Pygmentize::getLexers();
 
 		$lexer = strtolower( $lang );
 
@@ -110,7 +108,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 		// a compatible Pygments lexer with a different name.
 		if ( isset( $geshi2pygments[$lexer] ) ) {
 			$lexer = $geshi2pygments[$lexer];
-			if ( in_array( $lexer, $lexers, true ) ) {
+			if ( isset( $lexers[$lexer] ) ) {
 				return $lexer;
 			}
 		}
@@ -142,7 +140,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 	}
 
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	private static function getModuleStyles(): array {
 		return [ 'ext.pygments' ];
@@ -157,7 +155,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 	 */
 	private static function processContent( string $text, array $args, ?Parser $parser = null ): array {
 		// Don't trim leading spaces away, just the linefeeds
-		$out = preg_replace( '/^\n+/', '', rtrim( $text ) );
+		$out = rtrim( trim( $text, "\n" ) );
 		$trackingCats = [];
 
 		// Convert deprecated attributes
@@ -198,7 +196,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 
 		// Register CSS
 		$parser->getOutput()->addModuleStyles( self::getModuleStyles() );
-		if ( !empty( $args['linelinks'] ) && ctype_alpha( $args['linelinks'] ) ) {
+		if ( !empty( $args['linelinks'] ) ) {
 			$parser->getOutput()->addModules( [ 'ext.pygments.linenumbers' ] );
 		}
 
@@ -333,7 +331,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 			$options['linenostart'] = (int)$args['start'];
 		}
 
-		if ( !empty( $args['linelinks'] ) && ctype_alpha( $args['linelinks'] ) ) {
+		if ( !empty( $args['linelinks'] ) ) {
 			$options['linespans'] = $args['linelinks'];
 		}
 
@@ -509,7 +507,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 			if ( ctype_digit( $value ) ) {
 				$lines[] = (int)$value;
 			} elseif ( strpos( $value, '-' ) !== false ) {
-				list( $start, $end ) = array_map( 'intval', explode( '-', $value ) );
+				[ $start, $end ] = array_map( 'intval', explode( '-', $value ) );
 				if ( self::validHighlightRange( $start, $end ) ) {
 					for ( $i = $start; $i <= $end; $i++ ) {
 						$lines[] = $i;

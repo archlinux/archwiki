@@ -13,9 +13,7 @@
  * - copy/paste not available from context menu (Firefox, Chrome on Linux -- kbd & main menu commands ok)
  * - accessibility: tab/shift-tab are overridden. is there a consistent alternative for keyboard-reliant users?
  * - accessibility: accesskey on the original textarea needs to be moved over or otherwise handled
- * - 'discard your changes?' check on tab close doesn't trigger
  * - scrollbar initializes too wide; need to trigger resize check after that's filled
- * - cursor/scroll position not maintained over previews/show changes
  */
 /*
  * JavaScript for WikiEditor Table of Contents

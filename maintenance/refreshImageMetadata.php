@@ -121,7 +121,7 @@ class RefreshImageMetadata extends Maintenance {
 		$reserialize = $this->hasOption( 'convert-to-json' );
 		$oldimage = $this->hasOption( 'oldimage' );
 
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		if ( $oldimage ) {
 			$fieldPrefix = 'oi_';
 			$queryBuilderTemplate  = FileSelectQueryBuilder::newForOldFile( $dbw );
@@ -146,7 +146,7 @@ class RefreshImageMetadata extends Maintenance {
 		$batchCondition = [];
 		// For the WHERE img_name > 'foo' condition that comes after doing a batch
 		if ( $start !== false ) {
-			$batchCondition[] = $fieldPrefix . 'name >= ' . $dbw->addQuotes( $start );
+			$batchCondition[] = $dbw->expr( $fieldPrefix . 'name', '>=', $start );
 		}
 		do {
 			$queryBuilder = clone $queryBuilderTemplate;
@@ -187,7 +187,7 @@ class RefreshImageMetadata extends Maintenance {
 			}
 			if ( $res->numRows() > 0 ) {
 				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
-				$batchCondition = [ $fieldPrefix . 'name > ' . $dbw->addQuotes( $row->$nameField ) ];
+				$batchCondition = [ $dbw->expr( $fieldPrefix . 'name', '>', $row->$nameField ) ];
 			}
 			$this->waitForReplication();
 			if ( $sleep ) {
@@ -220,7 +220,7 @@ class RefreshImageMetadata extends Maintenance {
 		$like = $this->getOption( 'metadata-contains', false );
 
 		if ( $end !== false ) {
-			$queryBuilder->andWhere( $fieldPrefix . 'name <= ' . $dbw->addQuotes( $end ) );
+			$queryBuilder->andWhere( $dbw->expr( $fieldPrefix . 'name', '<=', $end ) );
 		}
 		if ( $mime !== false ) {
 			[ $major, $minor ] = File::splitMime( $mime );

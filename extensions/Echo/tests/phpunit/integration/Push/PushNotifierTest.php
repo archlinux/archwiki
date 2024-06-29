@@ -2,6 +2,8 @@
 
 use MediaWiki\Extension\Notifications\Push\NotificationRequestJob;
 use MediaWiki\Extension\Notifications\Push\PushNotifier;
+use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\User;
 use Wikimedia\TestingAccessWrapper;
 
 /** @covers \MediaWiki\Extension\Notifications\Push\PushNotifier */

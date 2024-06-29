@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -31,10 +32,10 @@ use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -56,6 +57,7 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  * @ingroup API
  */
 class ApiEditPage extends ApiBase {
+	use ApiCreateTempUserTrait;
 	use ApiWatchlistTrait;
 
 	private IContentHandlerFactory $contentHandlerFactory;
@@ -498,7 +500,10 @@ class ApiEditPage extends ApiBase {
 		$ep->setApiEditOverride( true );
 		$ep->setContextTitle( $titleObj );
 		$ep->importFormData( $req );
-		$ep->maybeActivateTempUserCreate( true );
+		$tempUserCreateStatus = $ep->maybeActivateTempUserCreate( true );
+		if ( !$tempUserCreateStatus->isOK() ) {
+			$this->dieWithError( 'apierror-tempuseracquirefailed', 'tempuseracquirefailed' );
+		}
 
 		// T255700: Ensure content models of the base content
 		// and fetched revision remain the same before attempting to save.
@@ -538,8 +543,8 @@ class ApiEditPage extends ApiBase {
 		switch ( $statusValue ) {
 			case EditPage::AS_HOOK_ERROR:
 			case EditPage::AS_HOOK_ERROR_EXPECTED:
-				if ( isset( $status->apiHookResult ) ) {
-					$r = $status->apiHookResult;
+				if ( $status->statusData !== null ) {
+					$r = $status->statusData;
 					$r['result'] = 'Failure';
 					$apiResult->addValue( null, $this->getModuleName(), $r );
 					return;
@@ -600,28 +605,13 @@ class ApiEditPage extends ApiBase {
 				$this->persistGlobalSession();
 
 				if ( isset( $result['savedTempUser'] ) ) {
-					$returnToQuery = $params['returntoquery'];
-					$returnToAnchor = $params['returntoanchor'];
-					if ( str_starts_with( $returnToQuery, '?' ) ) {
-						// Remove leading '?' if provided (both ways work, but this is more common elsewhere)
-						$returnToQuery = substr( $returnToQuery, 1 );
-					}
-					if ( $returnToAnchor !== '' && !str_starts_with( $returnToAnchor, '#' ) ) {
-						// Add leading '#' if missing (it's required)
-						$returnToAnchor = '#' . $returnToAnchor;
-					}
 					$r['tempusercreated'] = true;
-					$url = $titleObj->getFullURL();
-					$redirectUrl = $url;
-					$this->getHookRunner()->onTempUserCreatedRedirect(
-						$this->getRequest()->getSession(),
-						$result['savedTempUser'],
-						$params['returnto'] ?? $titleObj->getPrefixedDBkey(),
-						$params['returntoquery'],
-						$params['returntoanchor'],
-						$redirectUrl
+					$params['returnto'] ??= $titleObj->getPrefixedDBkey();
+					$redirectUrl = $this->getTempUserRedirectUrl(
+						$params,
+						$result['savedTempUser']
 					);
-					if ( $redirectUrl !== $url ) {
+					if ( $redirectUrl ) {
 						$r['tempusercreatedredirect'] = $redirectUrl;
 					}
 				}
@@ -753,7 +743,7 @@ class ApiEditPage extends ApiBase {
 		// which is why this is here and not at the bottom.
 		$params += $this->getWatchlistParams();
 
-		return $params + [
+		$params += [
 			'md5' => null,
 			'prependtext' => [
 				ParamValidator::PARAM_TYPE => 'text',
@@ -781,22 +771,15 @@ class ApiEditPage extends ApiBase {
 			'contentmodel' => [
 				ParamValidator::PARAM_TYPE => $this->contentHandlerFactory->getContentModels(),
 			],
-			'returnto' => [
-				ParamValidator::PARAM_TYPE => 'title',
-			],
-			'returntoquery' => [
-				ParamValidator::PARAM_TYPE => 'string',
-				ParamValidator::PARAM_DEFAULT => '',
-			],
-			'returntoanchor' => [
-				ParamValidator::PARAM_TYPE => 'string',
-				ParamValidator::PARAM_DEFAULT => '',
-			],
 			'token' => [
 				// Standard definition automatically inserted
 				ApiBase::PARAM_HELP_MSG_APPEND => [ 'apihelp-edit-param-token' ],
 			],
 		];
+
+		$params += $this->getCreateTempUserParams();
+
+		return $params;
 	}
 
 	public function needsToken() {

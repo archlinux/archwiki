@@ -11,7 +11,6 @@
 	},
 	"apierror-visualeditor-badcachekey": "Није пронађена кеширана серијализација са тим кључем",
 	"apierror-visualeditor-difffailed": "Приказ разлике није успео",
-	"apierror-visualeditor-docserver": "Грешка при контактирању сервера Parsoid/RESTBase (нема одговора)",
 	"apihelp-visualeditor-param-basetimestamp": "Када чувате, поставите ово на временску ознаку измене која је била уређена. Користи се за откривање сукоба измена.",
 	"apihelp-visualeditor-param-editintro": "Уређивање увода за додавање обавештења.",
 	"apihelp-visualeditor-param-etag": "ETag за слање.",

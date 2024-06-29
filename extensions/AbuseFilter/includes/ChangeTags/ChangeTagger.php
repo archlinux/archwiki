@@ -3,9 +3,9 @@
 namespace MediaWiki\Extension\AbuseFilter\ChangeTags;
 
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentityValue;
 use RecentChange;
-use TitleValue;
 
 /**
  * Class that collects change tags to be later applied

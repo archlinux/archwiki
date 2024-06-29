@@ -20,11 +20,13 @@
 
 namespace MediaWiki\Tests\User;
 
+use IDBAccessObject;
 use InvalidArgumentException;
 use LogEntryBase;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Config\SiteConfiguration;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Request\WebRequest;
@@ -40,7 +42,6 @@ use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
-use RequestContext;
 use TestLogger;
 use Wikimedia\Assert\PreconditionException;
 
@@ -101,6 +102,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 			new TestLogger(),
 			new RealTempUserConfig( [
 				'enabled' => true,
+				'expireAfterDays' => null,
 				'actions' => [ 'edit' ],
 				'serialProvider' => [ 'type' => 'local' ],
 				'serialMapping' => [ 'type' => 'plain-numeric' ],
@@ -113,10 +115,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->tablesUsed[] = 'user';
-		$this->tablesUsed[] = 'user_groups';
-		$this->tablesUsed[] = 'user_former_groups';
-		$this->tablesUsed[] = 'logging';
+
 		$this->expiryTime = wfTimestamp( TS_MW, time() + 100500 );
 		$this->clearHooks();
 	}
@@ -228,7 +227,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$user->confirmEmail();
 		$this->assertArrayEquals(
 			[ '*', 'user', 'named', 'dummy' ],
-			$manager->getUserImplicitGroups( $user, UserGroupManager::READ_NORMAL, true )
+			$manager->getUserImplicitGroups( $user, IDBAccessObject::READ_NORMAL, true )
 		);
 		$this->assertArrayEquals(
 			[ '*', 'user', 'named', 'dummy' ],
@@ -577,7 +576,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$row->ug_user = $user->getId();
 		$row->ug_group = 'test';
 		$row->ug_expiry = null;
-		$manager->loadGroupMembershipsFromArray( $user, [ $row ], UserGroupManager::READ_NORMAL );
+		$manager->loadGroupMembershipsFromArray( $user, [ $row ], IDBAccessObject::READ_NORMAL );
 		$memberships = $manager->getUserGroupMemberships( $user );
 		$this->assertCount( 1, $memberships );
 		$this->assertArrayHasKey( 'test', $memberships );
@@ -1288,7 +1287,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertArrayEquals(
 			[ 'sysop', 'interface-admin', 'baz' ],
-			$manager->getUserPrivilegedGroups( $user, UserGroupManager::READ_NORMAL, true )
+			$manager->getUserPrivilegedGroups( $user, IDBAccessObject::READ_NORMAL, true )
 		);
 		$this->assertArrayEquals(
 			[ 'sysop', 'interface-admin', 'baz' ],
@@ -1302,7 +1301,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$user = $this->getTestUser( [] )->getUser();
 		$this->assertArrayEquals(
 			[],
-			$manager->getUserPrivilegedGroups( $user, UserGroupManager::READ_NORMAL, true )
+			$manager->getUserPrivilegedGroups( $user, IDBAccessObject::READ_NORMAL, true )
 		);
 	}
 }

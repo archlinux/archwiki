@@ -12,7 +12,6 @@
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "ქიმიური ფორმულა",
-	"math-visualeditor-mwcheminspector-title": "ქიმიური ფორმულა",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "სწრაფი რედაქტირება",
 	"math-visualeditor-mwlatexdialog-card-formula": "ფორმულა",
 	"math-visualeditor-mwlatexdialog-card-options": "პარამეტრები",
@@ -65,8 +64,8 @@
 	"math_syntax_error": "სინტაქსი არასწორია",
 	"math_unknown_error": "უცნობი შეცდომა",
 	"math_unknown_function": "უცნობი ფუნქცია „$1“",
-	"mw_math_mathml": "MathML თუ შესაძლებელია (ექსპერიმენტული)",
-	"mw_math_source": "LaTeX-ის წყარო (ტექსტური ბრაუზერებისთვის)",
+	"mw-math-mathml": "MathML თუ შესაძლებელია (ექსპერიმენტული)",
+	"mw-math-source": "LaTeX-ის წყარო (ტექსტური ბრაუზერებისთვის)",
 	"prefs-math": "მათემატიკა",
 	"mathstatus": "Math-ის მდგომარეობა",
 	"datatypes-type-math": "მათემატიკური გამოსახულება",

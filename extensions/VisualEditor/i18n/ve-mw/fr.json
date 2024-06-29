@@ -58,7 +58,8 @@
 			"Wyz",
 			"Zarisi",
 			"Zebulon84",
-			"Zetud"
+			"Zetud",
+			"Lofhi"
 		]
 	},
 	"collabpad-doctitle": "CollabPad : $1",
@@ -363,12 +364,14 @@
 	"visualeditor-mwsignature-tool": "Votre signature",
 	"visualeditor-preference-visualeditor": "Activer l’éditeur visuel",
 	"visualeditor-preference-newwikitexteditor-enable": "Utiliser le mode wikicode dans l’éditeur visuel, au lieu d’un éditeur de wikicode distinct",
-	"visualeditor-preference-newwikitexteditor-help": "C’est quelquefois appelé l’'éditeur wikitexte 2017'.",
+	"visualeditor-preference-newwikitexteditor-help": "Ce mode est parfois appelé « éditeur de wikicode 2017 ».",
 	"visualeditor-preference-tabs": "Mode de modification :",
 	"visualeditor-preference-tabs-multi-tab": "Afficher les deux onglets de modification",
 	"visualeditor-preference-tabs-prefer-ve": "Toujours utiliser l’éditeur visuel quand c’est possible",
 	"visualeditor-preference-tabs-prefer-wt": "Toujours m’afficher l’éditeur de source",
 	"visualeditor-preference-tabs-remember-last": "Se souvenir de mon dernier éditeur utilisé",
+	"visualeditor-preference-collab-label": "Édition collaborative",
+	"visualeditor-preference-collab-description": "Invitez d'autres utilisateurs à rejoindre votre session d'édition dans l'éditeur visuel.",
 	"visualeditor-rebase-client-export": "Exporter",
 	"visualeditor-rebase-client-export-start": "Exporter...",
 	"visualeditor-rebase-client-import": "Importer",

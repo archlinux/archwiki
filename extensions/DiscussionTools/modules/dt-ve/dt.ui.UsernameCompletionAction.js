@@ -1,9 +1,3 @@
-/*!
- * VisualEditor UserInterface MWUsernameCompletionAction class.
- *
- * @copyright 2011-2019 VisualEditor Team and others; see http://ve.mit-license.org
- */
-
 var sequence,
 	controller = require( 'ext.discussionTools.init' ).controller;
 

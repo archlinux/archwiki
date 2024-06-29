@@ -4,8 +4,8 @@
  */
 class Less_Tree_DefaultFunc {
 
-	static $error_;
-	static $value_;
+	private static $error_;
+	private static $value_;
 
 	public static function compile() {
 		if ( self::$error_ ) {

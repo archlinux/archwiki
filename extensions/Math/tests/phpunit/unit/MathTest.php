@@ -2,7 +2,7 @@
 namespace MediaWiki\Extension\Math\Tests;
 
 use ExtensionRegistry;
-use HashConfig;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\Math;
 use MediaWiki\Extension\Math\MathConfig;

@@ -3,7 +3,6 @@
 namespace Cite;
 
 use LogicException;
-use Parser;
 use StripState;
 
 /**
@@ -19,29 +18,9 @@ class ReferenceStack {
 	 * string for the default group) and reference name.
 	 *
 	 * References without a name get a numeric index, starting from 0. Conflicts are avoided by
-	 * disallowing numeric names (e.g. <ref name="1">) in {@see Cite::validateRef}.
+	 * disallowing numeric names (e.g. <ref name="1">) in {@see Validator::validateRef}.
 	 *
-	 * Elements (almost all are optional):
-	 * - 'name': The original name="…" of a reference (also used as the array key), or null for
-	 *       anonymous references.
-	 * - 'key': Sequence number for all references, no matter which group, starting from 1. Used to
-	 *       generate IDs and anchors.
-	 * - 'number': Sequence number per group, starting from 1. To be used in the [1] footnote
-	 *       marker.
-	 * - 'extendsIndex': Sequence number for sub-references with the same extends="…", starting
-	 *       from 1. Used in addition to the 'number' in [1.1] footnote markers.
-	 * - 'count': How often a reference is reused. 0 means not reused, i.e. the reference appears
-	 *       only one time. -1 for anonymous references that cannot be reused.
-	 * - 'extends': Marks a sub-reference. Points to the parent reference by name.
-	 * - 'follow': Marks an incomplete follow="…". This is valid e.g. in the Page:… namespace on
-	 *       Wikisource.
-	 * - '__placeholder__': Temporarily marks an incomplete parent reference that was referenced via
-	 *       extends="…" before it exists.
-	 * - 'text': The content inside the <ref>…</ref> tag. Null for <ref /> without content. Also
-	 *       null for <ref></ref> without any non-whitespace content.
-	 * - 'dir': Direction of the text. Should either be "ltr" or "rtl".
-	 *
-	 * @var array[][]
+	 * @var array<string,array<string|int,ReferenceStackItem>>
 	 */
 	private array $refs = [];
 
@@ -50,13 +29,8 @@ class ReferenceStack {
 	 */
 	private int $refSequence = 0;
 
-	/**
-	 * Counter for the number of refs in each group.
-	 * @var int[]
-	 */
+	/** @var int[] Counter for the number of refs in each group */
 	private array $groupRefSequence = [];
-	/** @var int[][] */
-	private array $extendsCount = [];
 
 	/**
 	 * <ref> call stack
@@ -68,26 +42,21 @@ class ReferenceStack {
 	 */
 	private array $refCallStack = [];
 
-	/**
-	 * @deprecated We should be able to push this responsibility to calling code.
-	 */
-	private ErrorReporter $errorReporter;
-
-	public function __construct( ErrorReporter $errorReporter ) {
-		$this->errorReporter = $errorReporter;
-	}
+	private const ACTION_ASSIGN = 'assign';
+	private const ACTION_INCREMENT = 'increment';
+	private const ACTION_NEW_FROM_PLACEHOLDER = 'new-from-placeholder';
+	private const ACTION_NEW = 'new';
 
 	/**
 	 * Leave a mark in the stack which matches an invalid ref tag.
 	 */
-	public function pushInvalidRef() {
+	public function pushInvalidRef(): void {
 		$this->refCallStack[] = false;
 	}
 
 	/**
 	 * Populate $this->refs and $this->refCallStack based on input and arguments to <ref>
 	 *
-	 * @param Parser $parser
 	 * @param StripState $stripState
 	 * @param ?string $text Content from the <ref> tag
 	 * @param string[] $argv
@@ -97,11 +66,9 @@ class ReferenceStack {
 	 * @param ?string $follow Guaranteed to not be a numeric string
 	 * @param ?string $dir ref direction
 	 *
-	 * @return ?array ref structure, or null if no footnote marker should be rendered
-	 * @suppress PhanTypePossiblyInvalidDimOffset To many complaints about array indizes
+	 * @return ?ReferenceStackItem ref structure, or null if no footnote marker should be rendered
 	 */
 	public function pushRef(
-		Parser $parser,
 		StripState $stripState,
 		?string $text,
 		array $argv,
@@ -110,34 +77,29 @@ class ReferenceStack {
 		?string $extends,
 		?string $follow,
 		?string $dir
-	): ?array {
-		if ( !isset( $this->refs[$group] ) ) {
-			$this->refs[$group] = [];
-		}
-		if ( !isset( $this->groupRefSequence[$group] ) ) {
-			$this->groupRefSequence[$group] = 0;
-		}
+	): ?ReferenceStackItem {
+		$this->refs[$group] ??= [];
+		$this->groupRefSequence[$group] ??= 0;
 
-		$ref = [
-			'count' => $name ? 0 : -1,
-			'dir' => $dir,
-			// This assumes we are going to register a new reference, instead of reusing one
-			'key' => ++$this->refSequence,
-			'name' => $name,
-			'text' => $text,
-		];
+		$ref = new ReferenceStackItem();
+		$ref->count = 1;
+		$ref->dir = $dir;
+		// TODO: Read from this group field or deprecate it.
+		$ref->group = $group;
+		$ref->name = $name;
+		$ref->text = $text;
 
 		if ( $follow ) {
 			if ( !isset( $this->refs[$group][$follow] ) ) {
 				// Mark an incomplete follow="…" as such. This is valid e.g. in the Page:… namespace
 				// on Wikisource.
-				$this->refs[$group][] = $ref + [ 'follow' => $follow ];
-				$this->refCallStack[] = [ 'new', $this->refSequence, $group, $name, $extends, $text,
-					$argv ];
+				$ref->follow = $follow;
+				$ref->key = $this->nextRefSequence();
+				$this->refs[$group][] = $ref;
+				$this->refCallStack[] = [ self::ACTION_NEW, $ref->key, $group, $name, $text, $argv ];
 			} elseif ( $text !== null ) {
 				// We know the parent already, so just perform the follow="…" and bail out
-				$this->appendText( $group, $follow, ' ' . $text );
-				$this->refSequence--;
+				$this->resolveFollow( $group, $follow, $text );
 			}
 			// A follow="…" never gets its own footnote marker
 			return null;
@@ -146,81 +108,73 @@ class ReferenceStack {
 		if ( !$name ) {
 			// This is an anonymous reference, which will be given a numeric index.
 			$this->refs[$group][] = &$ref;
-			$action = 'new';
-		} elseif ( isset( $this->refs[$group][$name]['__placeholder__'] ) ) {
-			// Populate a placeholder.
-			unset( $this->refs[$group][$name]['__placeholder__'] );
-			unset( $ref['number'] );
-			$ref = array_merge( $ref, $this->refs[$group][$name] );
-			$this->refs[$group][$name] =& $ref;
-			$action = 'new-from-placeholder';
+			$ref->key = $this->nextRefSequence();
+			$action = self::ACTION_NEW;
 		} elseif ( !isset( $this->refs[$group][$name] ) ) {
 			// Valid key with first occurrence
 			$this->refs[$group][$name] = &$ref;
-			$action = 'new';
+			$ref->key = $this->nextRefSequence();
+			$action = self::ACTION_NEW;
+		} elseif ( $this->refs[$group][$name]->placeholder ) {
+			// Populate a placeholder.
+			$ref->extendsCount = $this->refs[$group][$name]->extendsCount;
+			$ref->key = $this->nextRefSequence();
+			$ref->number = $this->refs[$group][$name]->number;
+			$this->refs[$group][$name] =& $ref;
+			$action = self::ACTION_NEW_FROM_PLACEHOLDER;
 		} else {
 			// Change an existing entry.
 			$ref = &$this->refs[$group][$name];
-			$ref['count']++;
-			// Rollback the global counter since we won't create a new ref.
-			$this->refSequence--;
-			if ( $ref['text'] === null && $text !== null ) {
+			$ref->count++;
+
+			if ( $ref->dir && $dir && $ref->dir !== $dir ) {
+				$ref->warnings[] = [ 'cite_error_ref_conflicting_dir', $name ];
+			}
+
+			if ( $ref->text === null && $text !== null ) {
 				// If no text was set before, use this text
-				$ref['text'] = $text;
+				$ref->text = $text;
 				// Use the dir parameter only from the full definition of a named ref tag
-				$ref['dir'] = $dir;
-				$action = 'assign';
+				$ref->dir = $dir;
+				$action = self::ACTION_ASSIGN;
 			} else {
 				if ( $text !== null
 					// T205803 different strip markers might hide the same text
 					&& $stripState->unstripBoth( $text )
-					!== $stripState->unstripBoth( $ref['text'] )
+					!== $stripState->unstripBoth( $ref->text )
 				) {
 					// two refs with same name and different text
-					// add error message to the original ref
-					// TODO: standardize error display and move to `validateRef`.
-					$ref['text'] .= ' ' . $this->errorReporter->plain(
-						$parser, 'cite_error_references_duplicate_key', $name
-					);
+					$ref->warnings[] = [ 'cite_error_references_duplicate_key', $name ];
 				}
-				$action = 'increment';
+				$action = self::ACTION_INCREMENT;
 			}
 		}
 
-		$ref['number'] = $ref['number'] ?? ++$this->groupRefSequence[$group];
+		$ref->number ??= ++$this->groupRefSequence[$group];
 
 		// Do not mess with a known parent a second time
-		if ( $extends && !isset( $ref['extendsIndex'] ) ) {
-			$this->extendsCount[$group][$extends] =
-				( $this->extendsCount[$group][$extends] ?? 0 ) + 1;
-
-			$ref['extends'] = $extends;
-			$ref['extendsIndex'] = $this->extendsCount[$group][$extends];
-
-			if ( isset( $this->refs[$group][$extends]['number'] ) ) {
-				// Adopt the parent's number.
-				$ref['number'] = $this->refs[$group][$extends]['number'];
+		if ( $extends && !isset( $ref->extendsIndex ) ) {
+			$parentRef =& $this->refs[$group][$extends];
+			if ( !isset( $parentRef ) ) {
+				// Create a new placeholder and give it the current sequence number.
+				$parentRef = new ReferenceStackItem();
+				$parentRef->name = $extends;
+				$parentRef->number = $ref->number;
+				$parentRef->placeholder = true;
+			} else {
+				$ref->number = $parentRef->number;
 				// Roll back the group sequence number.
 				--$this->groupRefSequence[$group];
-			} else {
-				// Transfer my number to parent ref.
-				$this->refs[$group][$extends] = [
-					'number' => $ref['number'],
-					'__placeholder__' => true,
-				];
 			}
-		} elseif ( $extends && $ref['extends'] !== $extends ) {
+			$parentRef->extendsCount ??= 0;
+			$ref->extends = $extends;
+			$ref->extendsIndex = ++$parentRef->extendsCount;
+		} elseif ( $extends && $ref->extends !== $extends ) {
 			// TODO: Change the error message to talk about "conflicting content or parent"?
-			$error = $this->errorReporter->plain( $parser, 'cite_error_references_duplicate_key',
-				$name );
-			if ( isset( $ref['text'] ) ) {
-				$ref['text'] .= ' ' . $error;
-			} else {
-				$ref['text'] = $error;
-			}
+			$ref->warnings[] = [ 'cite_error_references_duplicate_key', $name ];
 		}
 
-		$this->refCallStack[] = [ $action, $ref['key'], $group, $name, $extends, $text, $argv ];
+		$this->refCallStack[] = [ $action, $ref->key, $group, $name, $text, $argv ];
 		return $ref;
 	}
 
@@ -252,8 +206,6 @@ class ReferenceStack {
 	/**
 	 * Partially undoes the effect of calls to stack()
 	 *
-	 * Called by guardedReferences()
-	 *
 	 * The option to define <ref> within <references> makes the
 	 * behavior of <ref> context dependent.  This is normally fine
 	 * but certain operations (especially #tag) lead to out-of-order
@@ -269,7 +221,6 @@ class ReferenceStack {
 	 * @param int $key Autoincrement counter for this ref.
 	 * @param string $group
 	 * @param ?string $name The name attribute passed in the ref tag.
-	 * @param ?string $extends
 	 * @param ?string $text
 	 * @param array $argv
 	 *
@@ -280,7 +231,6 @@ class ReferenceStack {
 		int $key,
 		string $group,
 		?string $name,
-		?string $extends,
 		?string $text,
 		array $argv
 	): array {
@@ -292,9 +242,7 @@ class ReferenceStack {
 		if ( $lookup === null ) {
 			// Find anonymous ref by key.
 			foreach ( $this->refs[$group] as $k => $v ) {
-				if ( isset( $this->refs[$group][$k]['key'] ) &&
-					$this->refs[$group][$k]['key'] === $key
-				) {
+				if ( $this->refs[$group][$k]->key === $key ) {
 					$lookup = $k;
 					break;
 				}
@@ -306,17 +254,14 @@ class ReferenceStack {
 			throw new LogicException( "Cannot roll back unknown ref by key $key." );
 		} elseif ( !isset( $this->refs[$group][$lookup] ) ) {
 			throw new LogicException( "Cannot roll back missing named ref \"$lookup\"." );
-		} elseif ( $this->refs[$group][$lookup]['key'] !== $key ) {
+		} elseif ( $this->refs[$group][$lookup]->key !== $key ) {
 			throw new LogicException(
 				"Cannot roll back corrupt named ref \"$lookup\" which should have had key $key." );
 		}
-
-		if ( $extends ) {
-			$this->extendsCount[$group][$extends]--;
-		}
+		$ref =& $this->refs[$group][$lookup];
 
 		switch ( $action ) {
-			case 'new':
+			case self::ACTION_NEW:
 				// Rollback the addition of new elements to the stack
 				unset( $this->refs[$group][$lookup] );
 				if ( !$this->refs[$group] ) {
@@ -324,20 +269,22 @@ class ReferenceStack {
 				} elseif ( isset( $this->groupRefSequence[$group] ) ) {
 					$this->groupRefSequence[$group]--;
 				}
-				// TODO: Don't we need to rollback extendsCount as well?
+				if ( $ref->extends ) {
+					$this->refs[$group][$ref->extends]->extendsCount--;
+				}
 				break;
-			case 'new-from-placeholder':
-				$this->refs[$group][$lookup]['__placeholder__'] = true;
-				unset( $this->refs[$group][$lookup]['count'] );
+			case self::ACTION_NEW_FROM_PLACEHOLDER:
+				$ref->placeholder = true;
+				$ref->count = 0;
 				break;
-			case 'assign':
+			case self::ACTION_ASSIGN:
 				// Rollback assignment of text to pre-existing elements
-				$this->refs[$group][$lookup]['text'] = null;
-				$this->refs[$group][$lookup]['count']--;
+				$ref->text = null;
+				$ref->count--;
 				break;
-			case 'increment':
+			case self::ACTION_INCREMENT:
 				// Rollback increase in named ref occurrences
-				$this->refs[$group][$lookup]['count']--;
+				$ref->count--;
 				break;
 			default:
 				throw new LogicException( "Unknown call stack action \"$action\"" );
@@ -350,22 +297,17 @@ class ReferenceStack {
 	 *
 	 * @param string $group
 	 *
-	 * @return array[] The references from the removed group
+	 * @return array<string|int,ReferenceStackItem> The references from the removed group
 	 */
 	public function popGroup( string $group ): array {
 		$refs = $this->getGroupRefs( $group );
 		unset( $this->refs[$group] );
 		unset( $this->groupRefSequence[$group] );
-		unset( $this->extendsCount[$group] );
 		return $refs;
 	}
 
 	/**
-	 * Retruns true if the group exists and contains references.
-	 *
-	 * @param string $group
-	 *
-	 * @return bool
+	 * Returns true if the group exists and contains references.
 	 */
 	public function hasGroup( string $group ): bool {
 		return isset( $this->refs[$group] ) && $this->refs[$group];
@@ -391,23 +333,32 @@ class ReferenceStack {
 	 *
 	 * @param string $group
 	 *
-	 * @return array[]
+	 * @return array<string|int,ReferenceStackItem>
 	 */
 	public function getGroupRefs( string $group ): array {
 		return $this->refs[$group] ?? [];
 	}
 
-	/**
-	 * @param string $group
-	 * @param string $name
-	 * @param string $text
-	 */
-	public function appendText( string $group, string $name, string $text ) {
-		if ( isset( $this->refs[$group][$name]['text'] ) ) {
-			$this->refs[$group][$name]['text'] .= $text;
-		} else {
-			$this->refs[$group][$name]['text'] = $text;
+	private function resolveFollow( string $group, string $follow, string $text ): void {
+		$previousRef =& $this->refs[$group][$follow];
+		$previousRef->text ??= '';
+		$previousRef->text .= " $text";
+	}
+
+	public function listDefinedRef( string $group, string $name, string $text ): void {
+		$ref =& $this->refs[$group][$name];
+		$ref ??= new ReferenceStackItem();
+		$ref->placeholder = false;
+		if ( !isset( $ref->text ) ) {
+			$ref->text = $text;
+		} elseif ( $ref->text !== $text ) {
+			// two refs with same key and different content
+			$ref->warnings[] = [ 'cite_error_references_duplicate_key', $name ];
 		}
+	}
+
+	private function nextRefSequence() {
+		return ++$this->refSequence;
 	}
 
 }

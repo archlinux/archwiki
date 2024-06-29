@@ -3,7 +3,8 @@
 		"authors": [
 			"Beginneruser",
 			"Havadar-hvac",
-			"Jeeputer"
+			"Jeeputer",
+			"Ebraminio"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "نظری با شناسهٔ «$1» یافت نشد.",
@@ -12,11 +13,11 @@
 	"apierror-discussiontools-formtoken-used": "نظر را قبلاً ارسال کردید. صفحه را دوباره بارگیری کنید تا آن را ببینید.",
 	"apierror-discussiontools-subscription-failed-add": "ناتوان در اشتراک در این موضوع",
 	"apierror-discussiontools-subscription-failed-remove": "ناتوان در توقف اشتراک در این موضوع",
-	"apihelp-discussiontoolsedit-param-commentid": "شناسه نظر برای پاسخ دادن. تنها در صورتی که <var>paction</var> روی <var>addcomment</var> تنظیم شده‌باشد استفاده می‌شود. <var>commentname</var> را نادیده می‌گیرد.",
-	"apihelp-discussiontoolsedit-param-commentname": "نام پیام برای پاسخ دادن. تنها در صورت <var>paction</var> روی <var>addcomment</var> تنظیم شده‌باشد استفاده می‌شود.",
+	"apihelp-discussiontoolsedit-param-commentid": "شناسه نظر برای پاسخ دادن. تنها در صورتی که <var>paction</var> روی <var>addcomment</var> تنظیم شده باشد استفاده می‌شود. <var>commentname</var> را نادیده می‌گیرد.",
+	"apihelp-discussiontoolsedit-param-commentname": "نام پیام برای پاسخ دادن. تنها در صورت <var>paction</var> روی <var>addcomment</var> تنظیم شده باشد استفاده می‌شود.",
 	"apihelp-discussiontoolsedit-param-autosubscribe": "کاربر به صورت خودکار در موضوع صفحه بحث مشترک شود؟",
 	"apihelp-discussiontoolsedit-param-html": "محتوا برای ارسال، در قالب اچ‌تی‌ام‌ال. همزمان همراه با <var>wikitext</var> قابل استفاده نیست.",
-	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} تنها در صورتی که <var>paction</var> روی <var>addtopic</var> تنظیم شده‌باشد استفاده می‌شود.",
+	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} تنها در صورتی که <var>paction</var> روی <var>addtopic</var> تنظیم شده باشد استفاده می‌شود.",
 	"apihelp-discussiontoolsedit-param-wikitext": "محتوا برای ارسال، در قالب ویکی‌متن. همزمان همراه با <var>html</var> قابل استفاده نیست.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "افزودن یک نظر تازه به‌عنوان پاسخی به یک نظر از پیش موجود.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "افزودن یک بخش گفتگوی تازه و نخستین نظر در آن.",

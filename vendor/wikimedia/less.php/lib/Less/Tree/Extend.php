@@ -11,13 +11,14 @@ class Less_Tree_Extend extends Less_Tree {
 	public $allowBefore;
 	public $allowAfter;
 	public $firstExtendOnThisSelectorPath;
-	public $type = 'Extend';
 	public $ruleset;
 
 	public $object_id;
 	public $parent_ids = [];
 
 	/**
+	 * @param Less_Tree_Selector $selector
+	 * @param string $option
 	 * @param int $index
 	 */
 	public function __construct( $selector, $option, $index ) {
@@ -54,11 +55,11 @@ class Less_Tree_Extend extends Less_Tree {
 		Less_Parser::$has_extends = true;
 		$this->selector = $this->selector->compile( $env );
 		return $this;
-		// return new Less_Tree_Extend( $this->selector->compile($env), $this->option, $this->index);
+		// return new self( $this->selector->compile($env), $this->option, $this->index);
 	}
 
 	public function clone() {
-		return new Less_Tree_Extend( $this->selector, $this->option, $this->index );
+		return new self( $this->selector, $this->option, $this->index );
 	}
 
 	public function findSelfSelectors( $selectors ) {

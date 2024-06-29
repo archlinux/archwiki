@@ -17,9 +17,9 @@
 	 * @param {Object} data The response of the API request
 	 */
 	function examinerTestProcess( data ) {
-		var msg, exClass;
 		$.removeSpinner( 'filter-check' );
 
+		var msg, exClass;
 		if ( data.abusefiltercheckmatch.result ) {
 			exClass = 'mw-abusefilter-examine-match';
 			msg = 'abusefilter-examine-match';
@@ -42,9 +42,9 @@
 	 * @param {Object} details Details about the error
 	 */
 	function examinerTestProcessFailure( error, details ) {
-		var msg;
 		$.removeSpinner( 'filter-check' );
 
+		var msg;
 		if ( error === 'badsyntax' ) {
 			$syntaxResult.attr(
 				'class', 'mw-abusefilter-syntaxresult-error'

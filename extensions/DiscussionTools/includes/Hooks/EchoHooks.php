@@ -21,6 +21,7 @@ use MediaWiki\Extension\Notifications\Hooks\EchoGetBundleRulesHook;
 use MediaWiki\Extension\Notifications\Hooks\EchoGetEventsForRevisionHook;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Revision\RevisionRecord;
+use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 
 class EchoHooks implements
 	BeforeCreateEchoEventHook,
@@ -29,16 +30,14 @@ class EchoHooks implements
 {
 	/**
 	 * Add notification events to Echo
-	 *
-	 * @param array &$notifications
-	 * @param array &$notificationCategories
-	 * @param array &$icons
 	 */
 	public function onBeforeCreateEchoEvent(
 		array &$notifications,
 		array &$notificationCategories,
 		array &$icons
 	) {
+		// The following messages are generated upstream
+		// * echo-category-title-dt-subscription
 		$notificationCategories['dt-subscription'] = [
 			'priority' => 3,
 			'tooltip' => 'echo-pref-tooltip-dt-subscription',
@@ -67,6 +66,8 @@ class EchoHooks implements
 			],
 		];
 
+		// The following messages are generated upstream
+		// * echo-category-title-dt-subscription-archiving
 		$notificationCategories['dt-subscription-archiving'] = [
 			'priority' => 3,
 			'tooltip' => 'echo-pref-tooltip-dt-subscription-archiving',
@@ -105,10 +106,6 @@ class EchoHooks implements
 		$notifications['mention']['presentation-model'] = EnhancedEchoMentionPresentationModel::class;
 	}
 
-	/**
-	 * @param Event $event
-	 * @param string &$bundleString
-	 */
 	public function onEchoGetBundleRules( Event $event, string &$bundleString ) {
 		switch ( $event->getType() ) {
 			case 'dt-subscribed-new-comment':
@@ -123,9 +120,7 @@ class EchoHooks implements
 	}
 
 	/**
-	 * @param array &$events
-	 * @param RevisionRecord $revision
-	 * @param bool $isRevert
+	 * @throws ResourceLimitExceededException
 	 */
 	public function onEchoGetEventsForRevision( array &$events, RevisionRecord $revision, bool $isRevert ) {
 		if ( $isRevert ) {

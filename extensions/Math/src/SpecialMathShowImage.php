@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Math;
 
 use MediaWiki\Extension\Math\Render\RendererFactory;
-use SpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
 
 /**
  * Description of SpecialMathShowSVG
@@ -81,10 +81,9 @@ class SpecialMathShowImage extends SpecialPage {
 			echo $this->printSvgError( 'No Inputhash specified' );
 		} else {
 			if ( $tex === '' && $asciimath === '' ) {
-				$this->renderer = $this->rendererFactory->getRenderer( '', [], $this->mode );
-				$this->renderer->setMd5( $hash );
+				$this->renderer = $this->rendererFactory->getFromHash( $hash );
 				$this->noRender = $request->getBool( 'noRender', false );
-				$isInDatabase = $this->renderer->readFromDatabase();
+				$isInDatabase = $this->renderer->readFromCache();
 				if ( $isInDatabase || $this->noRender ) {
 					$success = $isInDatabase;
 				} else {

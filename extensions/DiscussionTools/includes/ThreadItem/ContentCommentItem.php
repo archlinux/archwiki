@@ -7,8 +7,8 @@ use MediaWiki\Extension\DiscussionTools\CommentModifier;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ImmutableRange;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
-use Sanitizer;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -21,15 +21,18 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 		jsonSerialize as protected traitJsonSerialize;
 	}
 
-	private $signatureRanges;
-	private $timestampRanges;
-	private $timestamp;
-	private $author;
-	private $displayName;
+	/** @var ImmutableRange[] */
+	private array $signatureRanges;
+	/** @var ImmutableRange[] */
+	private array $timestampRanges;
+	private DateTimeImmutable $timestamp;
+	private string $author;
+	private ?string $displayName;
 
 	/**
 	 * @param int $level
 	 * @param ImmutableRange $range
+	 * @param bool|string $transcludedFrom
 	 * @param ImmutableRange[] $signatureRanges Objects describing the extent of signatures (plus
 	 *  timestamps) for this comment. There is always at least one signature, but there may be
 	 *  multiple. The author and timestamp of the comment is determined from the first signature.
@@ -40,12 +43,12 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 	 * @param ?string $displayName Comment author's display name
 	 */
 	public function __construct(
-		int $level, ImmutableRange $range,
+		int $level, ImmutableRange $range, $transcludedFrom,
 		array $signatureRanges, array $timestampRanges,
 		DateTimeImmutable $timestamp,
 		string $author, ?string $displayName = null
 	) {
-		parent::__construct( 'comment', $level, $range );
+		parent::__construct( 'comment', $level, $range, $transcludedFrom );
 		$this->signatureRanges = $signatureRanges;
 		$this->timestampRanges = $timestampRanges;
 		$this->timestamp = $timestamp;
@@ -65,7 +68,7 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 	}
 
 	/**
-	 * Get the HTML of this comment's body
+	 * Get the DOM of this comment's body
 	 *
 	 * @param bool $stripTrailingSeparator Strip a trailing separator between the body and
 	 *  the signature which consists of whitespace and hyphens e.g. ' --'
@@ -133,7 +136,7 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 			if ( $href ) {
 				$siteConfig = MediaWikiServices::getInstance()->getMainConfig();
 				$title = Title::newFromText( CommentUtils::getTitleFromUrl( $href, $siteConfig ) );
-				if ( $title && $title->getNamespace() === NS_USER ) {
+				if ( $title && $title->inNamespace( NS_USER ) ) {
 					// TODO: Consider returning User objects
 					$users[] = $title;
 				}
@@ -157,7 +160,7 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 	}
 
 	/**
-	 * @return ImmutableRange Range of the thread item's "body"
+	 * @return ImmutableRange Range of the comment's "body"
 	 */
 	public function getBodyRange(): ImmutableRange {
 		// Exclude last signature from body

@@ -3,6 +3,7 @@
 @import '../../../minerva.less/minerva.variables.less';
 @import '../../../minerva.less/minerva.mixins.less';
 
+// FIXME: Upstream to ResourceLoader/SkinModule content-tables styles [T359888]
 // These are only intended for smaller screens.
 // This avoids having to undo them from another media query,
 // by putting the original in a media query instead.
@@ -37,38 +38,23 @@
 		overflow: auto; /* for browsers that don't support overflow-y */
 		overflow-y: hidden;
 		overflow-x: auto;
+	}
 
-		caption {
-			text-align: left;
-		}
+	caption {
+		font-weight: bold;
+		text-align: left;
 	}
 }
 
-// For skinning normal data tables
-// Compare with mediawiki.legacy/shared.css
-// Move out of .content selector to avoid increased
-// specificty conflicts e.g. with tablesorter (T205945)
+// Overrides for ResourceLoaderSkinModule "content".
 .wikitable {
-	border: @border-width-base @border-style-base #54595d;
-	// Note older browsers will fall back to @border-color-subtle
-	border-color: fade( #54595d, 30 );
-
 	// We only style cells that are direct children of the wikitable table since
 	// table tags may be used for non-table purposes within the cells.
 	> tr > th,
 	> tr > td,
 	> * > tr > th,
 	> * > tr > td {
-		border: @border-width-base @border-style-base #54595d;
-		// Note older browsers will fall back to @border-color-subtle
-		border-color: fade( #54595d, 30 );
+		// content-tables uses 0.2em 0.4em. Can these be consolidated?
 		padding: 0.2em;
-	}
-
-	// Make headings distinguishable
-	> tr > th,
-	> * > tr > th {
-		background-color: @background-color-light;
-		text-align: center;
 	}
 }

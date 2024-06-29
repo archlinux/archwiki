@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Push;
 
-use CentralIdLookup;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\UserIdentity;
 
 class Utils {

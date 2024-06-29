@@ -21,15 +21,11 @@ class SpecialUnblockTest extends SpecialPageTestBase {
 		return new SpecialUnblock(
 			$services->getUnblockUserFactory(),
 			$services->getBlockUtils(),
+			$services->getDatabaseBlockStore(),
 			$services->getUserNameUtils(),
 			$services->getUserNamePrefixSearch(),
 			$services->getWatchlistManager()
 		);
-	}
-
-	protected function tearDown(): void {
-		$this->db->delete( 'ipblocks', '*', __METHOD__ );
-		parent::tearDown();
 	}
 
 	/**

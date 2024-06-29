@@ -82,10 +82,95 @@ local tests = {
 		func = mw.text.nowiki,
 		args = { '*"&\'<=>[]{|}#*:;\n*\n#\n:\n;\nhttp://example.com:80/\nRFC 123, ISBN 456' },
 		expect = {
-			'&#42;&#34;&#38;&#39;&#60;&#61;&#62;&#91;&#93;&#123;&#124;&#125;#*:;' ..
+			'&#42;&#34;&#38;&#39;&#60;&#61;&#62;&#91;&#93;&#123;&#124;&#125;#*:&#59;' ..
 			'\n&#42;\n&#35;\n&#58;\n&#59;\nhttp&#58;//example.com:80/' ..
 			'\nRFC&#32;123, ISBN&#32;456'
 		}
+	},
+
+        -- nowiki tests cases taken from wfEscapeWikiText test cases in core
+	{ name = 'nowiki noescapes',
+		func = mw.text.nowiki,
+		args = { 'a' },
+		expect = {
+			'a'
+		}
+	},
+	{ name = 'nowiki braces and brackets',
+		func = mw.text.nowiki,
+		args = { '[[WikiLink]] {{Template}} <html>' },
+		expect = {
+			'&#91;&#91;WikiLink&#93;&#93; &#123;&#123;Template&#125;&#125; &#60;html&#62;'
+		}
+	},
+	{ name = 'nowiki quotes',
+		func = mw.text.nowiki,
+		args = { '"' .. "'" },
+		expect = { '&#34;&#39;' },
+	},
+	{ name = 'nowiki tokens',
+		func = mw.text.nowiki,
+		args = { '{| {- {+ !! ~~~~~ __FOO__' },
+		expect = {
+			'&#123;&#124; &#123;- &#123;+ &#33;! ~~&#126;~~ _&#95;FOO_&#95;'
+		},
+	},
+	{ name = 'nowiki start of line',
+		func = mw.text.nowiki,
+		args = { '* foo\n! bar\n# bat\n:baz\n pre\n----' },
+		expect = {
+			'&#42; foo\n&#33; bar\n&#35; bat\n&#58;baz\n&#32;pre\n&#45;---',
+		},
+	},
+	{ name = 'nowiki paragraph separators',
+		func = mw.text.nowiki,
+		args = { 'a\n\n\n\nb' },
+		expect = { 'a\n&#10;\n&#10;b' },
+	},
+	{ name = 'nowiki language converter',
+		func = mw.text.nowiki,
+		args = { '-{ foo ; bar }-' },
+		expect = { '&#45;&#123; foo &#59; bar &#125;-' },
+	},
+	{ name = 'nowiki left-side context: |+',
+		func = mw.text.nowiki,
+		args = { '+ foo + bar' },
+		expect = { '&#43; foo + bar' },
+	},
+	{ name = 'nowiki left-side context: |-',
+		func = mw.text.nowiki,
+		args = { '- foo - bar' },
+		expect = { '&#45; foo - bar' },
+	},
+	{ name = 'nowiki left-side context: __FOO__',
+		func = mw.text.nowiki,
+		args = { '_FOO__' },
+		expect = { '&#95;FOO_&#95;' },
+	},
+	{ name = 'nowiki left-side context: ~~~',
+		func = mw.text.nowiki,
+		args = { '~~ long string here' },
+		expect = { '&#126;~ long string here' },
+	},
+	{ name = 'nowiki left-side context: newlines',
+		func = mw.text.nowiki,
+		args = { '\n\n\nFoo' },
+		expect = { '&#10;\n&#10;Foo' },
+	},
+	{ name = 'nowiki right-side context: ~~~',
+		func = mw.text.nowiki,
+		args = { 'long string here ~~' },
+		expect = { 'long string here ~&#126;' },
+	},
+	{ name = 'nowiki right-side context: __FOO__',
+		func = mw.text.nowiki,
+		args = { '__FOO_' },
+		expect = { '&#95;&#95;FOO&#95;' },
+	},
+	{ name = 'nowiki right-side context: newlines',
+		func = mw.text.nowiki,
+		args = { 'foo\n\n\n' },
+		expect = { 'foo\n&#10;&#10;' },
 	},
 
 	{ name = 'tag, simple',

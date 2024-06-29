@@ -48,7 +48,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "ข้อมูลอ้างอิงนี้กำหนดไว้ในแม่แบบหรือบล็อกอื่นๆ ที่สร้างขึ้น ในขณะนี้สามารถดูตัวอย่างได้เฉพาะในโหมดต้นฉบับ",
 	"cite-ve-referenceslist-missingreflist": "ข้อมูลอ้างอิงนี้ถูกสร้างขึ้นโดยแม่แบบ",
 	"cite-ve-toolbar-group-label": "อ้างอิง",
-	"cite-ve-othergroup-item": "$1 อ้างอิง",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "อ้างอิง",
-	"visualeditor-internal-list-diff-group-name-mwreference": "ชื่อกลุ่มอ้างอิง: \"$1\""
+	"cite-ve-othergroup-item": "$1 อ้างอิง"
 }

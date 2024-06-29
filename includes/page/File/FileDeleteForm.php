@@ -32,7 +32,6 @@ use MediaWiki\Page\DeletePage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use MWException;
 
 /**
  * File deletion user interface
@@ -53,7 +52,6 @@ class FileDeleteForm {
 	 * @param bool $deleteTalk
 	 * @return Status The value can be an integer with the log ID of the deletion, or false in case of
 	 *   scheduled deletion.
-	 * @throws MWException
 	 */
 	public static function doDelete(
 		Title $title,
@@ -104,7 +102,7 @@ class FileDeleteForm {
 				}
 				$deletePage->setDeleteAssociatedTalk( true );
 			}
-			$dbw = $services->getDBLoadBalancerFactory()->getPrimaryDatabase();
+			$dbw = $services->getConnectionProvider()->getPrimaryDatabase();
 			$dbw->startAtomic( __METHOD__, $dbw::ATOMIC_CANCELABLE );
 			// delete the associated article first
 			$deleteStatus = $deletePage
@@ -174,7 +172,5 @@ class FileDeleteForm {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( FileDeleteForm::class, 'FileDeleteForm' );

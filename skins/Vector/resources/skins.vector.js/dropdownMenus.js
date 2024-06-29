@@ -9,10 +9,11 @@ const
 
 /**
  * Enhance dropdownMenu functionality and accessibility using core's checkboxHack.
+ * @param {HTMLElement[]|NodeList} [containers]
  */
-function bind() {
+function dropdownMenus( containers ) {
 	// Search for all dropdown containers using the CHECKBOX_HACK_CONTAINER_SELECTOR.
-	const containers = document.querySelectorAll( CHECKBOX_HACK_CONTAINER_SELECTOR );
+	containers = containers || document.querySelectorAll( CHECKBOX_HACK_CONTAINER_SELECTOR );
 
 	Array.prototype.forEach.call( containers, function ( container ) {
 		const
@@ -165,6 +166,6 @@ Array.prototype.forEach.call(
 mw.hook( 'util.addPortletLink' ).add( addPortletLinkHandler );
 
 module.exports = {
-	dropdownMenus: function dropdownMenus() { bind(); },
+	dropdownMenus,
 	addPortletLinkHandler: addPortletLinkHandler
 };

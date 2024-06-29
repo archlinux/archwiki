@@ -1,22 +1,15 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
 /**
  * @author Addshore
- * @covers ApiSetNotificationTimestamp
+ * @covers \ApiSetNotificationTimestamp
  * @group API
  * @group medium
  * @group Database
  */
 class ApiSetNotificationTimestampIntegrationTest extends ApiTestCase {
-
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'page', 'watchlist', 'watchlist_expiry' ]
-		);
-	}
 
 	public function testStuff() {
 		$user = $this->getTestUser()->getUser();

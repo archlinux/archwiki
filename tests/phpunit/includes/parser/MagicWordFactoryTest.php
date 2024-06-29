@@ -1,11 +1,17 @@
 <?php
 
+namespace MediaWiki\Tests\Parser;
+
+use Language;
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Parser\MagicWordArray;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWikiIntegrationTestCase;
+use UnexpectedValueException;
 
 /**
  * @covers \MediaWiki\Parser\MagicWordFactory
+ * @covers \MediaWiki\Parser\MagicWord
  *
  * @author Derick N. Alangi
  */
@@ -40,7 +46,7 @@ class MagicWordFactoryTest extends MediaWikiIntegrationTestCase {
 	public function testGetInvalidMagicWord() {
 		$magicWordFactory = $this->makeMagicWordFactory();
 
-		$this->expectException( MWException::class );
+		$this->expectException( UnexpectedValueException::class );
 		@$magicWordFactory->get( 'invalid magic word' );
 	}
 
@@ -53,13 +59,13 @@ class MagicWordFactoryTest extends MediaWikiIntegrationTestCase {
 		$this->assertContainsOnly( 'string', $varIds );
 	}
 
-	public function testGetSubstIDs() {
+	public function testGetSubstArray() {
 		$magicWordFactory = $this->makeMagicWordFactory();
-		$substIds = $magicWordFactory->getSubstIDs();
+		$substArray = $magicWordFactory->getSubstArray();
 
-		$this->assertIsArray( $substIds );
-		$this->assertNotEmpty( $substIds );
-		$this->assertContainsOnly( 'string', $substIds );
+		$text = 'SafeSubst:x';
+		$this->assertSame( 'safesubst', $substArray->matchStartAndRemove( $text ) );
+		$this->assertSame( 'x', $text );
 	}
 
 	public function testGetDoubleUnderscoreArray() {

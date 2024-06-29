@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Умар"
+			"Умар",
+			"Исмаил Садуев"
 		]
 	},
 	"linterrors": "Статикин анализаторан гӀалаташ",
@@ -46,7 +47,7 @@
 	"linter-heading-low-priority": "Лахара приоритет",
 	"linter-heading-medium-priority": "Йукъара приоритет",
 	"linter-numerrors": "($1 {{PLURAL:$1|гӀалат}})",
-	"linter-page-edit": "нисйе",
+	"linter-page-edit": "нисйан",
 	"linter-page-history": "истори",
 	"linter-page-viewsource": "код хьажар",
 	"linter-pager-bogus-image-options-details": "Файлийн харц билгалонаш",

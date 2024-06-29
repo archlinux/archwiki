@@ -6,10 +6,10 @@ use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Storage\PreparedUpdate;
 use MediaWiki\Title\Title;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use MWTimestamp;
+use MediaWiki\Utils\MWTimestamp;
 use RecentChange;
-use User;
 use WikiPage;
 
 /**
@@ -23,16 +23,21 @@ class VariableGenerator {
 
 	/** @var AbuseFilterHookRunner */
 	protected $hookRunner;
+	/** @var UserFactory */
+	protected $userFactory;
 
 	/**
 	 * @param AbuseFilterHookRunner $hookRunner
+	 * @param UserFactory $userFactory
 	 * @param VariableHolder|null $vars
 	 */
 	public function __construct(
 		AbuseFilterHookRunner $hookRunner,
+		UserFactory $userFactory,
 		VariableHolder $vars = null
 	) {
 		$this->hookRunner = $hookRunner;
+		$this->userFactory = $userFactory;
 		$this->vars = $vars ?? new VariableHolder();
 	}
 
@@ -73,7 +78,7 @@ class VariableGenerator {
 	 */
 	public function addUserVars( UserIdentity $userIdentity, RecentChange $rc = null ): self {
 		$asOf = $rc ? $rc->getAttribute( 'rc_timestamp' ) : wfTimestampNow();
-		$user = User::newFromIdentity( $userIdentity );
+		$user = $this->userFactory->newFromUserIdentity( $userIdentity );
 
 		$this->vars->setLazyLoadVar(
 			'user_editcount',
@@ -82,6 +87,12 @@ class VariableGenerator {
 		);
 
 		$this->vars->setVar( 'user_name', $user->getName() );
+
+		$this->vars->setLazyLoadVar(
+			'user_type',
+			'user-type',
+			[ 'user-identity' => $userIdentity ]
+		);
 
 		$this->vars->setLazyLoadVar(
 			'user_emailconfirm',

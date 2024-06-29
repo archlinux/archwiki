@@ -86,9 +86,9 @@ SPARQLD;
 		$this->setBatchSize( 200 );
 		$this->addOption( 'output', "Output file (default is stdout). Will be overwritten.", false,
 			true, 'o' );
-		$this->addOption( 'start', 'Starting timestamp (inclusive), in ISO or Mediawiki format.',
+		$this->addOption( 'start', 'Starting timestamp (inclusive), in ISO or MediaWiki format.',
 			true, true, 's' );
-		$this->addOption( 'end', 'Ending timestamp (exclusive), in ISO or Mediawiki format.', true,
+		$this->addOption( 'end', 'Ending timestamp (exclusive), in ISO or MediaWiki format.', true,
 			true, 'e' );
 	}
 
@@ -386,8 +386,8 @@ SPARQL;
 	 */
 	private function addTimestampConditions( BatchRowIterator $it, IReadableDatabase $dbr ) {
 		$it->addConditions( [
-			'rc_timestamp >= ' . $dbr->addQuotes( $dbr->timestamp( $this->startTS ) ),
-			'rc_timestamp < ' . $dbr->addQuotes( $dbr->timestamp( $this->endTS ) ),
+			$dbr->expr( 'rc_timestamp', '>=', $dbr->timestamp( $this->startTS ) ),
+			$dbr->expr( 'rc_timestamp', '<', $dbr->timestamp( $this->endTS ) ),
 		] );
 	}
 

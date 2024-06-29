@@ -12,8 +12,8 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use MediaWiki\User\UserOptionsLookup;
 
 /**
  * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
@@ -47,7 +47,7 @@ class Hooks implements
 	 * @param string $format
 	 * @return null|string
 	 */
-	public function getPageLanguage( Title $title, $model, $format ) {
+	private function getPageLanguage( Title $title, $model, $format ) {
 		if ( $model === CONTENT_MODEL_JAVASCRIPT ) {
 			return 'javascript';
 		} elseif ( $model === CONTENT_MODEL_CSS ) {
@@ -87,9 +87,14 @@ class Hooks implements
 		$lang = $this->getPageLanguage( $title, $model, $format );
 		if ( $lang && $this->userOptionsLookup->getOption( $output->getUser(), 'usebetatoolbar' ) ) {
 			$output->addModules( 'ext.codeEditor' );
+			$output->addModuleStyles( 'ext.codeEditor.styles' );
 			$output->addJsConfigVars( 'wgCodeEditorCurrentLanguage', $lang );
 			// Needed because ACE adds a blob: url web-worker.
 			$output->getCSP()->addScriptSrc( 'blob:' );
+
+			if ( $this->userOptionsLookup->getOption( $output->getUser(), 'usecodeeditor' ) ) {
+				$output->addBodyClasses( 'codeeditor-loading' );
+			}
 		} elseif ( !ExtensionRegistry::getInstance()->isLoaded( 'WikiEditor' ) ) {
 			throw new ErrorPageError( 'codeeditor-error-title', 'codeeditor-error-message' );
 		}

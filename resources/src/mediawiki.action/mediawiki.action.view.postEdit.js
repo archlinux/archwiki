@@ -8,17 +8,18 @@
 	 *
 	 * Code that fires the postEdit hook should first set `wgRevisionId` and `wgCurRevisionId`
 	 * to the revision associated with the edit that triggered the postEdit hook, then fire
-	 * the postEdit hook, e.g.:
+	 * the postEdit hook.
 	 *
-	 *     mw.config.set( {
-	 *        wgCurRevisionId: data.newrevid,
-	 *        wgRevisionId: data.newrevid
-	 *     } );
-	 *     // Now fire the hook.
-	 *     mw.hook( 'postEdit' ).fire();
+	 * @example
+	 * mw.config.set( {
+	 *    wgCurRevisionId: data.newrevid,
+	 *    wgRevisionId: data.newrevid
+	 * } );
+	 * // Now fire the hook.
+	 * mw.hook( 'postEdit' ).fire();
 	 *
-	 * @event postEdit
-	 * @member mw.hook
+	 * @event ~'postEdit'
+	 * @memberof Hooks
 	 * @param {Object} [data] Optional data
 	 * @param {string|jQuery|Array} [data.message] Message that listeners
 	 *  should use when displaying notifications. String for plain text,
@@ -32,59 +33,24 @@
 	 * After the listener for #postEdit removes the notification.
 	 *
 	 * @deprecated
-	 * @event postEdit_afterRemoval
-	 * @member mw.hook
+	 * @event ~'postEdit.afterRemoval'
+	 * @memberof Hooks
 	 */
 
 	var config = require( './config.json' );
-	var contLangMessages = require( './contLangMessages.json' );
 	var storageKey = 'mw-PostEdit' + mw.config.get( 'wgPageName' );
-
-	function showTempUserPopup() {
-		var title = mw.message( 'postedit-temp-created-label' ).text();
-		var $content = mw.message(
-			'postedit-temp-created',
-			mw.util.getUrl( 'Special:CreateAccount' ),
-			contLangMessages[ 'tempuser-helppage' ]
-		).parseDom();
-
-		var $username = $( '.mw-temp-user-banner-username' );
-		if ( $username.length ) {
-			// If supported by the skin, display a popup anchored to the username in the banner
-			var popup = new OO.ui.PopupWidget( {
-				padded: true,
-				head: true,
-				label: title,
-				$content: $content,
-				$floatableContainer: $username,
-				classes: [ 'postedit-tempuserpopup' ],
-				// Work around T307062
-				position: 'below',
-				autoFlip: false
-			} );
-			$( document.body ).append( popup.$element );
-			popup.toggle( true );
-		} else {
-			// Otherwise display a mw.notify message
-			mw.notify( $content, {
-				title: title,
-				classes: [ 'postedit-tempuserpopup' ],
-				autoHide: false
-			} );
-		}
-	}
 
 	function showConfirmation( data ) {
 		var label;
 
 		data = data || {};
 
-		label = data.message || new OO.ui.HtmlSnippet( mw.message(
+		label = data.message || mw.msg(
 			config.EditSubmitButtonLabelPublish ?
 				'postedit-confirmation-published' :
 				'postedit-confirmation-saved',
 			data.user || mw.user
-		).escaped() );
+		);
 
 		data.message = new OO.ui.MessageWidget( {
 			type: 'success',
@@ -100,7 +66,7 @@
 		mw.hook( 'postEdit.afterRemoval' ).fire();
 
 		if ( data.tempUserCreated ) {
-			showTempUserPopup();
+			mw.tempUserCreated.showPopup();
 		}
 	}
 
@@ -139,13 +105,13 @@
 	/**
 	 * Show post-edit messages.
 	 *
-	 * Usage:
-	 *
-	 *     var postEdit = require( 'mediawiki.action.view.postEdit' );
-	 *     postEdit.fireHook( 'saved' );
+	 * @example
+	 * var postEdit = require( 'mediawiki.action.view.postEdit' );
+	 * postEdit.fireHook( 'saved' );
 	 *
 	 * @class mw.plugin.action.view.postEdit
 	 * @singleton
+	 * @ignore
 	 */
 	module.exports = {
 
@@ -154,6 +120,7 @@
 		 *
 		 * This is just a shortcut for firing mw.hook#postEdit.
 		 *
+		 * @ignore
 		 * @param {string} [action] One of 'saved', 'created', 'restored'
 		 * @param {boolean} [tempUserCreated] Whether a temporary account was created during this edit
 		 */
@@ -184,6 +151,7 @@
 		 * The necessary data is stored in session storage for up to 20 minutes, and cleared when the
 		 * page is loaded again.
 		 *
+		 * @ignore
 		 * @param {string} [action] One of 'saved', 'created', 'restored'
 		 * @param {boolean} [tempUserCreated] Whether a temporary account was created during this edit
 		 */

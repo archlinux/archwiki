@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWCategoriesPage class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -26,7 +26,7 @@ ve.ui.MWCategoriesPage = function VeUiMWCategoriesPage( name, config ) {
 	// Properties
 	this.fragment = null;
 	this.defaultSortKeyTouched = false;
-	this.fallbackDefaultSortKey = ve.init.target.getPageName();
+	this.fallbackDefaultSortKey = mw.Title.newFromText( ve.init.target.getPageName() ).getMainText();
 	this.categoriesFieldset = new OO.ui.FieldsetLayout( {
 		label: ve.msg( 'visualeditor-dialog-meta-categories-data-label' ),
 		icon: 'tag'
@@ -161,7 +161,7 @@ ve.ui.MWCategoriesPage.prototype.onMetaListRemove = function ( metaItem ) {
 /**
  * Get default sort key item.
  *
- * @return {string} Default sort key item
+ * @return {Object} Default sort key item
  */
 ve.ui.MWCategoriesPage.prototype.getDefaultSortKeyItem = function () {
 	return this.fragment.getDocument().getMetaList().getItemsInGroup( 'mwDefaultSort' )[ 0 ] || null;
@@ -246,7 +246,7 @@ ve.ui.MWCategoriesPage.prototype.setup = function ( fragment, config ) {
 	} );
 
 	this.defaultSortInput.setValue(
-		defaultSortKeyItem ? defaultSortKeyItem.getAttribute( 'content' ) : this.fallbackDefaultSortKey
+		defaultSortKeyItem ? defaultSortKeyItem.getAttribute( 'sortkey' ) : this.fallbackDefaultSortKey
 	).setReadOnly( config.isReadOnly );
 	this.defaultSortKeyTouched = false;
 
@@ -272,11 +272,7 @@ ve.ui.MWCategoriesPage.prototype.focus = function () {
  */
 ve.ui.MWCategoriesPage.prototype.teardown = function ( data ) {
 	var currentDefaultSortKeyItem = this.getDefaultSortKeyItem(),
-		newDefaultSortKey = this.defaultSortInput.getValue(),
-		newDefaultSortKeyData = {
-			type: 'mwDefaultSort',
-			attributes: { content: newDefaultSortKey }
-		};
+		newDefaultSortKey = this.defaultSortInput.getValue();
 
 	if ( data && data.action === 'done' ) {
 		// Alter the default sort key iff it's been touched & is actually different
@@ -286,9 +282,17 @@ ve.ui.MWCategoriesPage.prototype.teardown = function ( data ) {
 					this.fragment.removeMeta( currentDefaultSortKeyItem );
 				}
 			} else {
+				var newDefaultSortKeyData = {
+					type: 'mwDefaultSort',
+					attributes: {
+						sortkey: newDefaultSortKey
+					}
+				};
 				if ( !currentDefaultSortKeyItem ) {
-					this.fragment.insertMeta( newDefaultSortKeyData );
-				} else if ( currentDefaultSortKeyItem.getAttribute( 'content' ) !== newDefaultSortKey ) {
+					var firstCategory = this.fragment.getDocument().getMetaList().getItemsInGroup( 'mwCategory' )[ 0 ],
+						offset = firstCategory && firstCategory.getOffset();
+					this.fragment.insertMeta( newDefaultSortKeyData, offset );
+				} else if ( currentDefaultSortKeyItem.getAttribute( 'sortkey' ) !== newDefaultSortKey ) {
 					this.fragment.replaceMeta(
 						currentDefaultSortKeyItem,
 						ve.extendObject( true, {},

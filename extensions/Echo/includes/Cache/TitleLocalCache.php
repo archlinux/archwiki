@@ -2,8 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications\Cache;
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageRecord;
+use MediaWiki\Page\PageStore;
+use MediaWiki\Title\TitleFactory;
 
 /**
  * Cache class that maps article id to Title object.
@@ -11,13 +12,28 @@ use MediaWiki\Page\PageRecord;
  * deemed necessary. See also T344124.
  */
 class TitleLocalCache extends LocalCache {
+	private PageStore $pageStore;
+	private TitleFactory $titleFactory;
+
+	/**
+	 * @param PageStore $pageStore
+	 * @param TitleFactory $titleFactory
+	 */
+	public function __construct(
+		PageStore $pageStore,
+		TitleFactory $titleFactory
+	) {
+		parent::__construct();
+		$this->pageStore = $pageStore;
+		$this->titleFactory = $titleFactory;
+	}
+
 	/**
 	 * @inheritDoc
 	 */
 	protected function resolve( array $lookups ) {
 		if ( $lookups ) {
-			$titles = MediaWikiServices::getInstance()
-				->getPageStore()
+			$titles = $this->pageStore
 				->newSelectQueryBuilder()
 				->wherePageIds( $lookups )
 				->caller( __METHOD__ )
@@ -25,7 +41,7 @@ class TitleLocalCache extends LocalCache {
 
 			/** @var PageRecord $title */
 			foreach ( $titles as $title ) {
-				$title = MediaWikiServices::getInstance()->getTitleFactory()->castFromPageIdentity( $title );
+				$title = $this->titleFactory->castFromPageIdentity( $title );
 				yield $title->getArticleID() => $title;
 			}
 		}

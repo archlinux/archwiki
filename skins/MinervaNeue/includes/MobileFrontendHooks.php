@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Minerva;
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Config\ConfigFactory;
 use MobileContext;
 use MobileFrontend\Features\Feature;
 use MobileFrontend\Features\FeaturesManager;
@@ -19,6 +19,16 @@ class MobileFrontendHooks implements
 	MobileFrontendFeaturesRegistrationHook,
 	RequestContextCreateSkinMobileHook
 {
+	private ConfigFactory $configFactory;
+	private SkinOptions $skinOptions;
+
+	public function __construct(
+		ConfigFactory $configFactory,
+		SkinOptions $skinOptions
+	) {
+		$this->configFactory = $configFactory;
+		$this->skinOptions = $skinOptions;
+	}
 
 	/**
 	 * Register mobile web beta features
@@ -28,8 +38,7 @@ class MobileFrontendHooks implements
 	 * @param FeaturesManager $featureManager
 	 */
 	public function onMobileFrontendFeaturesRegistration( FeaturesManager $featureManager ) {
-		$config = MediaWikiServices::getInstance()->getConfigFactory()
-			->makeConfig( 'minerva' );
+		$config = $this->configFactory->makeConfig( 'minerva' );
 
 		try {
 			$featureManager->registerFeature(
@@ -88,6 +97,13 @@ class MobileFrontendHooks implements
 					$config->get( 'MinervaPersonalMenu' )
 				)
 			);
+			$featureManager->registerFeature(
+				new Feature(
+					'MinervaNightMode',
+					'skin-minerva',
+					$config->get( 'MinervaNightMode' )
+				)
+			);
 		} catch ( RuntimeException $e ) {
 			// features already registered...
 			// due to a bug it's possible for this to run twice
@@ -104,6 +120,6 @@ class MobileFrontendHooks implements
 	public function onRequestContextCreateSkinMobile(
 		MobileContext $mobileContext, Skin $skin
 	) {
-		Hooks::setMinervaSkinOptions( $mobileContext, $skin );
+		$this->skinOptions->setMinervaSkinOptions( $mobileContext, $skin );
 	}
 }

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel Change class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -109,7 +109,9 @@ ve.dm.Change.static.deserialize = function ( data, preserveStoreValues, unsafe )
 		selections = {},
 		transactions = [],
 		// If stores is undefined, create an array of nulls
-		stores = data.stores || data.transactions.map( function () { return null; } );
+		stores = data.stores || data.transactions.map( function () {
+			return null;
+		} );
 
 	/**
 	 * Apply annotations in-place to array of code units
@@ -136,7 +138,9 @@ ve.dm.Change.static.deserialize = function ( data, preserveStoreValues, unsafe )
 		null,
 		preserveStoreValues ? function noop( x ) {
 			return x;
-		} : function ( x ) { return deserializeValue( x, unsafe ); }
+		} : function ( x ) {
+			return deserializeValue( x, unsafe );
+		}
 	);
 	var prevInfo;
 	for ( var i = 0, iLen = data.transactions.length; i < iLen; i++ ) {
@@ -965,7 +969,7 @@ ve.dm.Change.prototype.squash = function () {
 	return new ve.dm.Change(
 		this.start,
 		[ ve.dm.TransactionSquasher.static.squash( this.transactions ) ],
-		[ this.store.clone() ],
+		[ this.store.slice() ],
 		// Shallow clone (the individual selections are immutable so need no cloning)
 		ve.cloneObject( this.selections )
 	);

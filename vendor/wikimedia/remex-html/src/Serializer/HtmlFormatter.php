@@ -181,59 +181,59 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		}
 
 		switch ( $node->nodeType ) {
-		case XML_ELEMENT_NODE:
-			'@phan-var \DOMElement $node'; /** @var \DOMElement $node */
-			return $this->formatDOMElement( $node, $contents );
+			case XML_ELEMENT_NODE:
+				'@phan-var \DOMElement $node'; /** @var \DOMElement $node */
+				return $this->formatDOMElement( $node, $contents );
 
-		case XML_DOCUMENT_NODE:
-			if ( !$this->useSourceDoctype ) {
-				return "<!DOCTYPE html>" . $contents;
-			} else {
+			case XML_DOCUMENT_NODE:
+				if ( !$this->useSourceDoctype ) {
+					return "<!DOCTYPE html>" . $contents;
+				} else {
+					return $contents;
+				}
+
+			case XML_DOCUMENT_FRAG_NODE:
 				return $contents;
-			}
 
-		case XML_DOCUMENT_FRAG_NODE:
-			return $contents;
+			case XML_TEXT_NODE:
+				'@phan-var \DOMCharacterData $node'; /** @var \DOMCharacterData $node */
+				$text = $node->data;
+				$parent = $node->parentNode;
+				if ( $parent->namespaceURI !== HTMLData::NS_HTML
+					|| !isset( $this->rawTextElements[$parent->nodeName] )
+				) {
+					$text = strtr( $text, $this->textEscapes );
+				}
+				return $text;
 
-		case XML_TEXT_NODE:
-			'@phan-var \DOMCharacterData $node'; /** @var \DOMCharacterData $node */
-			$text = $node->data;
-			$parent = $node->parentNode;
-			if ( $parent->namespaceURI !== HTMLData::NS_HTML
-				|| !isset( $this->rawTextElements[$parent->nodeName] )
-			) {
-				$text = strtr( $text, $this->textEscapes );
-			}
-			return $text;
+			case XML_CDATA_SECTION_NODE:
+				'@phan-var \DOMCdataSection $node'; /** @var \DOMCdataSection $node */
+				$parent = $node->parentNode;
+				if ( $parent->namespaceURI === HTMLData::NS_HTML ) {
+					// CDATA is not allowed in HTML nodes
+					return $node->data;
+				} else {
+					return "<![CDATA[{$node->data}]]>";
+				}
 
-		case XML_CDATA_SECTION_NODE:
-			'@phan-var \DOMCdataSection $node'; /** @var \DOMCdataSection $node */
-			$parent = $node->parentNode;
-			if ( $parent->namespaceURI === HTMLData::NS_HTML ) {
-				// CDATA is not allowed in HTML nodes
-				return $node->data;
-			} else {
-				return "<![CDATA[{$node->data}]]>";
-			}
+			case XML_PI_NODE:
+				'@phan-var \DOMProcessingInstruction $node'; /** @var \DOMProcessingInstruction $node */
+				return "<?{$node->target} {$node->data}>";
 
-		case XML_PI_NODE:
-			'@phan-var \DOMProcessingInstruction $node'; /** @var \DOMProcessingInstruction $node */
-			return "<?{$node->target} {$node->data}>";
+			case XML_COMMENT_NODE:
+				'@phan-var \DOMComment $node'; /** @var \DOMComment $node */
+				return "<!--{$node->data}-->";
 
-		case XML_COMMENT_NODE:
-			'@phan-var \DOMComment $node'; /** @var \DOMComment $node */
-			return "<!--{$node->data}-->";
+			case XML_DOCUMENT_TYPE_NODE:
+				'@phan-var \DOMDocumentType $node'; /** @var \DOMDocumentType $node */
+				if ( $this->useSourceDoctype ) {
+					return "<!DOCTYPE {$node->name}>";
+				} else {
+					return '';
+				}
 
-		case XML_DOCUMENT_TYPE_NODE:
-			'@phan-var \DOMDocumentType $node'; /** @var \DOMDocumentType $node */
-			if ( $this->useSourceDoctype ) {
-				return "<!DOCTYPE {$node->name}>";
-			} else {
+			default:
 				return '';
-			}
-
-		default:
-			return '';
 		}
 	}
 
@@ -259,25 +259,25 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		$s = '<' . $name;
 		foreach ( $node->attributes as $attr ) {
 			switch ( $attr->namespaceURI ) {
-			case HTMLData::NS_XML:
-				$attrName = 'xml:' . $attr->localName;
-				break;
-			case HTMLData::NS_XMLNS:
-				if ( $attr->localName === 'xmlns' ) {
-					$attrName = 'xmlns';
-				} else {
-					$attrName = 'xmlns:' . $attr->localName;
-				}
-				break;
-			case HTMLData::NS_XLINK:
-				$attrName = 'xlink:' . $attr->localName;
-				break;
-			default:
-				if ( strlen( $attr->prefix ) ) {
-					$attrName = $attr->prefix . ':' . $attr->localName;
-				} else {
-					$attrName = $attr->localName;
-				}
+				case HTMLData::NS_XML:
+					$attrName = 'xml:' . $attr->localName;
+					break;
+				case HTMLData::NS_XMLNS:
+					if ( $attr->localName === 'xmlns' ) {
+						$attrName = 'xmlns';
+					} else {
+						$attrName = 'xmlns:' . $attr->localName;
+					}
+					break;
+				case HTMLData::NS_XLINK:
+					$attrName = 'xlink:' . $attr->localName;
+					break;
+				default:
+					if ( strlen( $attr->prefix ) ) {
+						$attrName = $attr->prefix . ':' . $attr->localName;
+					} else {
+						$attrName = $attr->localName;
+					}
 			}
 			if ( $this->reverseCoercion ) {
 				$attrName = DOMUtils::uncoerceName( $attrName );

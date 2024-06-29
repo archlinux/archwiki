@@ -143,7 +143,9 @@ class ApiQueryUserContribs extends ApiQueryBase {
 						->caller( $fname )
 						->limit( $limit )
 						->whereUserNamePrefix( $this->params['userprefix'] )
-						->where( $fromName ? $dbSecondary->buildComparison( $op, [ 'actor_name' => $fromName ] ) : [] )
+						->where( $fromName !== false
+							? $dbSecondary->buildComparison( $op, [ 'actor_name' => $fromName ] )
+							: [] )
 						->orderByName( $sort )
 						->fetchUserIdentities();
 
@@ -671,7 +673,7 @@ class ApiQueryUserContribs extends ApiQueryBase {
 			],
 			'user' => [
 				ParamValidator::PARAM_TYPE => 'user',
-				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'interwiki' ],
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'interwiki' ],
 				ParamValidator::PARAM_ISMULTI => true
 			],
 			'userids' => [

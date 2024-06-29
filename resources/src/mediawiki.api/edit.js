@@ -1,18 +1,20 @@
-/**
- * @class mw.Api.plugin.edit
- */
 ( function () {
 
-	Object.assign( mw.Api.prototype, {
+	Object.assign( mw.Api.prototype, /** @lends mw.Api.prototype */ {
+		/**
+		 * @callback mw.Api.EditTransform
+		 * @param {Object} revision Current revision
+		 * @param {string} revision.content Current revision content
+		 * @return {string|Object|jQuery.Promise} New content, object with edit
+		 *  API parameters, or promise providing one of those.
+		 */
 
 		/**
-		 * Post to API with csrf token. If we have no token, get one and try to post.
-		 * If we have a cached token try using that, and if it fails, blank out the
-		 * cached token and start over.
+		 * Post to API with `csrf` token. See [#postWithToken]{@link mw.Api#postWithToken}
 		 *
 		 * @param {Object} params API parameters
 		 * @param {Object} [ajaxOptions]
-		 * @return {jQuery.Promise} See #post
+		 * @return {jQuery.Promise} See [#post]{@link mw.Api#post}
 		 */
 		postWithEditToken: function ( params, ajaxOptions ) {
 			return this.postWithToken( 'csrf', params, ajaxOptions );
@@ -30,12 +32,11 @@
 		/**
 		 * Create a new page.
 		 *
-		 * Example:
-		 *
-		 *     new mw.Api().create( 'Sandbox',
-		 *         { summary: 'Load sand particles.' },
-		 *         'Sand.'
-		 *     );
+		 * @example
+		 * new mw.Api().create( 'Sandbox',
+		 *     { summary: 'Load sand particles.' },
+		 *     'Sand.'
+		 * );
 		 *
 		 * @since 1.28
 		 * @param {mw.Title|string} title Page title
@@ -63,56 +64,55 @@
 		 * To create a new page, use #create() instead.
 		 *
 		 * Simple transformation:
-		 *
-		 *     new mw.Api()
-		 *         .edit( 'Sandbox', function ( revision ) {
-		 *             return revision.content.replace( 'foo', 'bar' );
-		 *         } )
-		 *         .then( function () {
-		 *             console.log( 'Saved!' );
-		 *         } );
-		 *
-		 * Set save parameters by returning an object instead of a string:
-		 *
-		 *     new mw.Api().edit(
-		 *         'Sandbox',
-		 *         function ( revision ) {
-		 *             return {
-		 *                 text: revision.content.replace( 'foo', 'bar' ),
-		 *                 summary: 'Replace "foo" with "bar".',
-		 *                 assert: 'bot',
-		 *                 minor: true
-		 *             };
-		 *         }
-		 *     )
+		 * ```
+		 * new mw.Api()
+		 *     .edit( 'Sandbox', function ( revision ) {
+		 *         return revision.content.replace( 'foo', 'bar' );
+		 *     } )
 		 *     .then( function () {
 		 *         console.log( 'Saved!' );
 		 *     } );
+		 * ```
+		 *
+		 * Set save parameters by returning an object instead of a string:
+		 * ```
+		 * new mw.Api().edit(
+		 *     'Sandbox',
+		 *     function ( revision ) {
+		 *         return {
+		 *             text: revision.content.replace( 'foo', 'bar' ),
+		 *             summary: 'Replace "foo" with "bar".',
+		 *             assert: 'bot',
+		 *             minor: true
+		 *         };
+		 *     }
+		 * )
+		 * .then( function () {
+		 *     console.log( 'Saved!' );
+		 * } );
+		 * ```
 		 *
 		 * Transform asynchronously by returning a promise.
-		 *
-		 *     new mw.Api()
-		 *         .edit( 'Sandbox', function ( revision ) {
-		 *             return Spelling
-		 *                 .corrections( revision.content )
-		 *                 .then( function ( report ) {
-		 *                     return {
-		 *                         text: report.output,
-		 *                         summary: report.changelog
-		 *                     };
-		 *                 } );
-		 *         } )
-		 *         .then( function () {
-		 *             console.log( 'Saved!' );
-		 *         } );
+		 * ```
+		 * new mw.Api()
+		 *     .edit( 'Sandbox', function ( revision ) {
+		 *         return Spelling
+		 *             .corrections( revision.content )
+		 *             .then( function ( report ) {
+		 *                 return {
+		 *                     text: report.output,
+		 *                     summary: report.changelog
+		 *                 };
+		 *             } );
+		 *     } )
+		 *     .then( function () {
+		 *         console.log( 'Saved!' );
+		 *     } );
+		 * ```
 		 *
 		 * @since 1.28
 		 * @param {mw.Title|string} title Page title
-		 * @param {Function} transform Callback that prepares the edit
-		 * @param {Object} transform.revision Current revision
-		 * @param {string} transform.revision.content Current revision content
-		 * @param {string|Object|jQuery.Promise} transform.return New content, object with edit
-		 *  API parameters, or promise providing one of those.
+		 * @param {mw.Api.EditTransform} transform Callback that prepares the edit
 		 * @return {jQuery.Promise} Edit API response
 		 */
 		edit: function ( title, transform ) {
@@ -171,7 +171,7 @@
 		/**
 		 * Post a new section to the page.
 		 *
-		 * @see #postWithEditToken
+		 * @see mw.Api#postWithEditToken
 		 * @param {mw.Title|string} title Target page
 		 * @param {string} header
 		 * @param {string} message wikitext message
@@ -188,10 +188,5 @@
 			}, additionalParams ) );
 		}
 	} );
-
-	/**
-	 * @class mw.Api
-	 * @mixins mw.Api.plugin.edit
-	 */
 
 }() );

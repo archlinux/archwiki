@@ -7,33 +7,33 @@
 namespace Cite\Hooks;
 
 use ApiQuerySiteinfo;
-use Config;
 use ExtensionRegistry;
 use MediaWiki\Api\Hook\APIQuerySiteInfoGeneralInfoHook;
+use MediaWiki\Config\Config;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Hook\EditPage__showEditForm_initialHook;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
+use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
+use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsLookup;
-use OutputPage;
+use MediaWiki\User\Options\UserOptionsLookup;
 
 /**
+ * @license GPL-2.0-or-later
  * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
  */
 class CiteHooks implements
 	ContentHandlerDefaultModelForHook,
 	ResourceLoaderGetConfigVarsHook,
+	ResourceLoaderRegisterModulesHook,
 	APIQuerySiteInfoGeneralInfoHook,
 	EditPage__showEditForm_initialHook
 {
 
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
+	private UserOptionsLookup $userOptionsLookup;
 
-	/**
-	 * @param UserOptionsLookup $userOptionsLookup
-	 */
 	public function __construct( UserOptionsLookup $userOptionsLookup ) {
 		$this->userOptionsLookup = $userOptionsLookup;
 	}
@@ -71,6 +71,36 @@ class CiteHooks implements
 	}
 
 	/**
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ResourceLoaderRegisterModules
+	 */
+	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'Popups' ) ) {
+			$dir = dirname( __DIR__, 2 ) . '/modules/';
+			$resourceLoader->register( [
+				'ext.cite.referencePreviews' => [
+					'localBasePath' => $dir . '/ext.cite.referencePreviews',
+					'remoteExtPath' => 'Cite/modules/ext.cite.referencePreviews',
+					'dependencies' => [
+						'ext.popups.main',
+					],
+					'styles' => [
+						'referencePreview.less',
+					],
+					'packageFiles' => [
+						'index.js',
+						'constants.js',
+						'createReferenceGateway.js',
+						'createReferencePreview.js',
+						'isReferencePreviewsEnabled.js',
+						'referencePreviewsInstrumentation.js',
+						'setUserConfigFlags.js'
+					]
+				]
+			] );
+		}
+	}
+
+	/**
 	 * Hook: APIQuerySiteInfoGeneralInfo
 	 *
 	 * Expose configs via action=query&meta=siteinfo
@@ -91,13 +121,18 @@ class CiteHooks implements
 	 * @param OutputPage $outputPage object.
 	 */
 	public function onEditPage__showEditForm_initial( $editPage, $outputPage ) {
-		if ( $editPage->contentModel !== CONTENT_MODEL_WIKITEXT ) {
+		$extensionRegistry = ExtensionRegistry::getInstance();
+		$allowedContentModels = array_merge(
+			[ CONTENT_MODEL_WIKITEXT ],
+			$extensionRegistry->getAttribute( 'CiteAllowedContentModels' )
+		);
+		if ( !in_array( $editPage->contentModel, $allowedContentModels ) ) {
 			return;
 		}
 
-		$wikiEditorEnabled = ExtensionRegistry::getInstance()->isLoaded( 'WikiEditor' );
+		$wikiEditorEnabled = $extensionRegistry->isLoaded( 'WikiEditor' );
 
-		$user = $editPage->getArticle()->getContext()->getUser();
+		$user = $editPage->getContext()->getUser();
 
 		if (
 			$wikiEditorEnabled &&

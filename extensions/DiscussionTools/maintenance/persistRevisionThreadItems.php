@@ -47,12 +47,12 @@ class PersistRevisionThreadItems extends Maintenance {
 	public function execute() {
 		$services = MediaWikiServices::getInstance();
 
-		$this->dbr = $this->getDB( DB_REPLICA );
+		$this->dbr = $dbr = $this->getDB( DB_REPLICA );
 		$this->itemStore = $services->getService( 'DiscussionTools.ThreadItemStore' );
 		$this->revStore = $services->getRevisionStore();
 		$this->lang = $services->getLanguageFactory()->getLanguage( 'en' );
 
-		$qb = $this->dbr->newSelectQueryBuilder();
+		$qb = $dbr->newSelectQueryBuilder();
 
 		$qb->queryInfo( $this->revStore->getQueryInfo( [ 'page' ] ) );
 
@@ -84,31 +84,32 @@ class PersistRevisionThreadItems extends Maintenance {
 		// Add conditions from HookUtils::isAvailableForTitle().
 		// Keep this in sync with that method.
 		$nsInfo = $services->getNamespaceInfo();
+		$signatureNamespaces = array_values( array_filter(
+			$nsInfo->getValidNamespaces(),
+			[ $nsInfo, 'wantSignatures' ]
+		) );
 		$qb->leftJoin( 'page_props', null, [
 			'pp_propname' => 'newsectionlink',
 			'pp_page = page_id',
 		] );
-		$qb->where( $this->dbr->makeList( [
-			'page_namespace' => array_values( array_filter(
-				$nsInfo->getValidNamespaces(),
-				[ $nsInfo, 'wantSignatures' ]
-			) ),
-			'pp_propname IS NOT NULL',
-		], IReadableDatabase::LIST_OR ) );
+		$qb->where(
+			$dbr->expr( 'page_namespace', '=', $signatureNamespaces )
+				->or( 'pp_propname', '!=', null )
+		);
 
 		if ( $this->getOption( 'current' ) ) {
 			$qb->where( 'rev_id = page_latest' );
 			$index = [ 'page_id' ];
 
 			if ( $this->getOption( 'touched-after' ) ) {
-				$qb->where( $this->dbr->buildComparison( '>', [
-					'page_touched' => $this->dbr->timestamp( $this->getOption( 'touched-after' ) )
-				] ) );
+				$qb->where( $dbr->expr(
+					'page_touched', '>', $dbr->timestamp( $this->getOption( 'touched-after' ) )
+				) );
 			}
 			if ( $this->getOption( 'touched-before' ) ) {
-				$qb->where( $this->dbr->buildComparison( '<', [
-					'page_touched' => $this->dbr->timestamp( $this->getOption( 'touched-before' ) )
-				] ) );
+				$qb->where( $dbr->expr(
+					'page_touched', '<', $dbr->timestamp( $this->getOption( 'touched-before' ) )
+				) );
 			}
 
 		} else {
@@ -119,10 +120,6 @@ class PersistRevisionThreadItems extends Maintenance {
 		$this->process( $qb, $index );
 	}
 
-	/**
-	 * @param SelectQueryBuilder $qb
-	 * @param array $index
-	 */
 	private function process( SelectQueryBuilder $qb, array $index ): void {
 		$start = microtime( true );
 

@@ -492,17 +492,17 @@ class Exif {
 
 			if ( isset( $this->mFilteredExifData['GPSAltitudeRef'] ) ) {
 				switch ( $this->mFilteredExifData['GPSAltitudeRef'] ) {
-				case "\0":
-					// Above sea level
-					break;
-				case "\1":
-					// Below sea level
-					$this->mFilteredExifData['GPSAltitude'] *= -1;
-					break;
-				default:
-					// Invalid
-					unset( $this->mFilteredExifData['GPSAltitude'] );
-					break;
+					case "\0":
+						// Above sea level
+						break;
+					case "\1":
+						// Below sea level
+						$this->mFilteredExifData['GPSAltitude'] *= -1;
+						break;
+					default:
+						// Invalid
+						unset( $this->mFilteredExifData['GPSAltitude'] );
+						break;
 				}
 			}
 		}
@@ -675,12 +675,6 @@ class Exif {
 		unset( $this->mFilteredExifData[$prop . 'Ref'] );
 	}
 
-	/** #@- */
-
-	/** #@+
-	 * @return array
-	 */
-
 	/**
 	 * Get $this->mRawExifData
 	 * @return array
@@ -696,8 +690,6 @@ class Exif {
 	public function getFilteredData() {
 		return $this->mFilteredExifData;
 	}
-
-	/** #@- */
 
 	/**
 	 * The version of the output format
@@ -778,7 +770,7 @@ class Exif {
 	 * @return bool
 	 */
 	private function isLong( $in ) {
-		if ( !is_array( $in ) && sprintf( '%d', $in ) == $in && $in >= 0 && $in <= 4294967296 ) {
+		if ( !is_array( $in ) && sprintf( '%d', $in ) == $in && $in >= 0 && $in <= 4_294_967_296 ) {
 			$this->debug( $in, __FUNCTION__, true );
 
 			return true;
@@ -852,8 +844,6 @@ class Exif {
 
 		return false;
 	}
-
-	/** #@- */
 
 	/**
 	 * Validates if a tag has a legal value according to the Exif spec

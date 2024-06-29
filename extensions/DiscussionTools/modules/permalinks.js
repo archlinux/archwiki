@@ -1,7 +1,7 @@
 function init( $pageContainer ) {
 	$pageContainer.find( '.ext-discussiontools-init-timestamplink' ).on( 'click', function () {
 		copyLink( this.href );
-	} );
+	} ).attr( 'data-event-name', 'discussiontools.permalink-copied' );
 }
 
 function copyLink( link ) {

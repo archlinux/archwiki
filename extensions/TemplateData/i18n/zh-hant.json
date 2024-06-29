@@ -9,12 +9,12 @@
 			"LNDDYL",
 			"Liuxinyu970226",
 			"Simon Shek",
+			"SunAfterRain",
 			"Tranve",
 			"Wehwei",
 			"Winston Sung",
 			"Xiplus",
-			"Zhxy 519",
-			"SunAfterRain"
+			"Zhxy 519"
 		]
 	},
 	"templatedata-desc": "實現模板參數的資料儲存（使用 JSON）",
@@ -31,7 +31,7 @@
 	"templatedata-doc-param-name": "參數",
 	"templatedata-doc-param-status": "狀態",
 	"templatedata-doc-param-status-deprecated": "不建議使用",
-	"templatedata-doc-param-status-optional": "選填",
+	"templatedata-doc-param-status-optional": "非必填",
 	"templatedata-doc-param-status-required": "必填",
 	"templatedata-doc-param-status-suggested": "建議",
 	"templatedata-doc-param-suggestedvalues": "建議值",

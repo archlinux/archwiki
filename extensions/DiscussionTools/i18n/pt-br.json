@@ -172,7 +172,6 @@
 	"echo-category-title-dt-subscription": "{{PLURAL:$1|Inscrição|Inscrições}} da página de discussão",
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Arquivamento|Arquivamentos}} de páginas de discussão",
 	"echo-pref-tooltip-dt-subscription": "Notifique-me quando alguém postar um novo comentário em um tópico no qual estou inscrito.",
-	"minerva-talk-full-page": "Ler como página wiki",
 	"tag-discussiontools-added-comment-description": "Um comentário na página de discussão foi adicionado nesta edição",
 	"tag-discussiontools-description": "Edição feita usando DiscussionTools",
 	"tag-discussiontools-edit": "Comentário editado",

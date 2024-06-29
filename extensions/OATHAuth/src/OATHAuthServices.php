@@ -49,16 +49,16 @@ class OATHAuthServices {
 	}
 
 	/**
-	 * @return OATHAuthDatabase
-	 */
-	public function getDatabase(): OATHAuthDatabase {
-		return $this->services->getService( 'OATHAuthDatabase' );
-	}
-
-	/**
 	 * @return OATHAuthModuleRegistry
 	 */
 	public function getModuleRegistry(): OATHAuthModuleRegistry {
 		return $this->services->getService( 'OATHAuthModuleRegistry' );
+	}
+
+	/**
+	 * @return OATHUserRepository
+	 */
+	public function getUserRepository(): OATHUserRepository {
+		return $this->services->getService( 'OATHUserRepository' );
 	}
 }

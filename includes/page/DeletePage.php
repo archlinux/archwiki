@@ -6,23 +6,27 @@ use BadMethodCallException;
 use BagOStuff;
 use ChangeTags;
 use Content;
-use DeferrableUpdate;
-use DeferredUpdates;
 use DeletePageJob;
 use Exception;
+use IDBAccessObject;
 use JobQueueGroup;
 use LogicException;
 use ManualLogEntry;
 use MediaWiki\Cache\BacklinkCacheFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\DeferrableUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Deferred\SearchUpdate;
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\ResourceLoader\WikiModule;
@@ -32,9 +36,6 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\UserFactory;
-use Message;
-use SearchUpdate;
-use SiteStatsUpdate;
 use StatusValue;
 use Wikimedia\IPUtils;
 use Wikimedia\Message\ITextFormatter;
@@ -537,10 +538,10 @@ class DeletePage {
 		$dbw = $this->lbFactory->getPrimaryDatabase();
 		$dbw->startAtomic( __METHOD__ );
 
-		$page->loadPageData( WikiPage::READ_LATEST );
+		$page->loadPageData( IDBAccessObject::READ_LATEST );
 		$id = $page->getId();
 		// T98706: lock the page from various other updates but avoid using
-		// WikiPage::READ_LOCKING as that will carry over the FOR UPDATE to
+		// IDBAccessObject::READ_LOCKING as that will carry over the FOR UPDATE to
 		// the revisions queries (which also JOIN on user). Only lock the page
 		// row and CAS check on page_latest to see if the trx snapshot matches.
 		$lockedLatest = $page->lockAndGetLatest();
@@ -588,7 +589,7 @@ class DeletePage {
 					LoggerFactory::getInstance( 'wfDebug' )->debug(
 						'explicit transaction active in ' . __METHOD__ . ' while deleting {title}', [
 						'title' => $title->getText(),
-					] );
+						] );
 				}
 				continue;
 			}
@@ -893,7 +894,7 @@ class DeletePage {
 		);
 
 		// Reset the page object and the Title object
-		$page->loadFromRow( false, WikiPage::READ_LATEST );
+		$page->loadFromRow( false, IDBAccessObject::READ_LATEST );
 
 		// Search engine
 		DeferredUpdates::addUpdate( new SearchUpdate( $page->getId(), $page->getTitle() ) );

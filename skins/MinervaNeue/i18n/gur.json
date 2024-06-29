@@ -3,9 +3,9 @@
 		"authors": [
 			"Akakiiri",
 			"Amire80",
+			"Amoramah",
 			"Ayire Adongo",
-			"Dnshitobu",
-			"Amoramah"
+			"Dnshitobu"
 		]
 	},
 	"minerva-last-modified-date": "Pooren demesego on $1, at $2",
@@ -54,6 +54,12 @@
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussion]]",
 	"minerva-skin-desc": "Mobaale se'ere n de yia",
 	"skin-minerva-issue-learn-more": "Zamesɛ zo'e zo'e",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 second|$1 seconds}} n tole",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 minute|$1 minutes}} n tole",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 hour|$1 hours}} n tole",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 day|$1 days}} n tole",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 month|$1 months}} n tole",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 year|$1 years}} n tole",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Buuri buuri",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Bisɛ pɛgera buuri buuri",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Pɛgera daaŋɔ tibegɔ",

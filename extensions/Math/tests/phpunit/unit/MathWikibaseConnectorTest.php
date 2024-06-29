@@ -3,8 +3,10 @@
 namespace MediaWiki\Extension\Math\Tests;
 
 use DataValues\StringValue;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Logger\LoggerFactory;
+use Psr\Log\LoggerInterface;
 use Wikibase\DataModel\Entity\BasicEntityIdParser;
 use Wikibase\DataModel\Entity\EntityIdParsingException;
 use Wikibase\DataModel\Entity\Item;
@@ -66,7 +68,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 					if ( $id === 'Q1' ) {
 						return new ItemId( 'Q1' );
 					} else {
-						throw new \ConfigException();
+						throw new ConfigException();
 					}
 				} );
 
@@ -131,7 +133,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 					if ( str_starts_with( $id, 'Q' ) ) {
 						return new ItemId( $id );
 					} else {
-						throw new \ConfigException();
+						throw new ConfigException();
 					}
 				} );
 
@@ -177,7 +179,8 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 	/**
 	 * @dataProvider provideItemSetups
 	 */
-	public function testFetchMassEnergyEquivalenceHasPartsItem( Item $item ) {
+	public function testFetchMassEnergyEquivalenceHasPartsItem( bool $hasPart ) {
+		$item = $this->setupMassEnergyEquivalenceItem( $hasPart );
 		$wikibaseConnector = $this->getWikibaseConnectorWithExistingItems( new EntityRevision( $item ) );
 		$wikibaseInfo = $wikibaseConnector->fetchWikibaseFromId( 'Q1', 'en' );
 
@@ -205,18 +208,27 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 	/**
 	 * @dataProvider provideItemSetups
 	 */
-	public function testFetchMassEnergyWithStorageExceptionLogging( Item $item ) {
-		$wikibaseConnector = $this->getWikibaseConnectorWithExistingItems( new EntityRevision( $item ), true );
+	public function testFetchMassEnergyWithStorageExceptionLogging( bool $hasPart ) {
+		$logger = $this->createMock( LoggerInterface::class );
+		$logger->expects( $this->once() )
+			->method( 'warning' )
+			->with( 'Cannot fetch URL for EntityId Q3. Reason: Test Exception' );
 
-		$this->expectError();
-		$this->expectErrorMessage( 'LOG[warning]: Cannot fetch URL for EntityId Q3. Reason: Test Exception' );
+		$item = $this->setupMassEnergyEquivalenceItem( $hasPart );
+		$wikibaseConnector = $this->getWikibaseConnectorWithExistingItems(
+			new EntityRevision( $item ),
+			true,
+			$logger
+		);
+
 		$wikibaseConnector->fetchWikibaseFromId( 'Q1', 'en' );
 	}
 
 	/**
 	 * @dataProvider provideItemSetups
 	 */
-	public function testFetchMassEnergyWithStorageException( Item $item ) {
+	public function testFetchMassEnergyWithStorageException( bool $hasPart ) {
+		$item = $this->setupMassEnergyEquivalenceItem( $hasPart );
 		$wikibaseConnector = $this->getWikibaseConnectorWithExistingItems(
 			new EntityRevision( $item ),
 			true,
@@ -237,10 +249,10 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 		}
 	}
 
-	public function provideItemSetups(): array {
+	public static function provideItemSetups(): array {
 		return [
-			[ $this->setupMassEnergyEquivalenceItem( true ) ],
-			[ $this->setupMassEnergyEquivalenceItem( false ) ],
+			[ true ],
+			[ false ],
 		];
 	}
 }

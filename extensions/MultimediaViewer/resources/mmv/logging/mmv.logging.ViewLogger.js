@@ -149,6 +149,7 @@
 				.on( 'focus.mmv-view-logger', () => this.startViewDuration() )
 				.on( 'blur.mmv-view-logger', () => this.stopViewDuration() );
 		}
+
 		/*
 			 * Stops listening to events
 			 */

@@ -1,15 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"BadDog"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Odgovori",
 	"discussiontools-emptystate-button": "Započni razgovor",
-	"discussiontools-emptystate-desc": "Na [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|stranicama za razgovor]] raspravljamo kako stvoriti najbolji mogući sadržaj na projektu {{SITENAME}}. Ovdje {{GENDER:|možete}} započeti rasprave sa drugim suradnicima o poboljšanjima na stranici [[:{{SUBJECTPAGENAME}}]].",
+	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Stranice za razgovor]] služe kao mjesto za diskusiju o tome kako stvoriti najbolju moguću sadržinu na projektu {{SITENAME}}. Ovdje {{GENDER:|možete}} započeti razgovor o poboljšanjima stranice [[:{{SUBJECTPAGENAME}}]].",
 	"discussiontools-emptystate-desc-self": "Osobe na projektu {{SITENAME}} mogu rabiti ovu [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|stranicu za razgovor]] da objave javnu poruku za {{GENDER:|vas}}, o kojoj bit ćete obaviješteni.",
 	"discussiontools-emptystate-desc-self-anon": "Osobe na projektu {{SITENAME}} mogu rabiti ovu [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|stranicu za razgovor]] za objavu javne poruke o uređivanjima učinjenim s IP-adrese koju trenutačno {{GENDER:|koristite}}.\n\nMnoge se IP-adrese povremeno mijenjaju, i često više ljudi koristi istu adresu. Da biste izbjegli buduće zabune s drugim odjavljenim suradnicima možete [$1 izraditi korisnički račun] ili [$2 se prijaviti]. Također, ako imate račun, vaša IP-adresa neće biti vidljiva.",
-	"discussiontools-emptystate-title": "Započnite raspravu o stranici {{SUBJECTPAGENAME}}",
+	"discussiontools-emptystate-title": "Započnite razgovor o stranici {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "{{GENDER:|Dobro došli}} na svoju stranicu za razgovor",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|Dobro došli}} na ovu stranicu za razgovor",
 	"discussiontools-emptystate-title-user": "Započnite razgovor sa {{GENDER:{{PAGENAME}}|suradnikom|suradnicom|suradnikom/suradnicom}} {{PAGENAME}}",
@@ -32,6 +33,7 @@
 	"discussiontools-findcomment-results-transcluded": "(transkludirano s druge stranice)",
 	"discussiontools-ledesection-button": "Više o ovoj stranici",
 	"discussiontools-ledesection-title": "O ovoj stranici za razgovor",
+	"discussiontools-newtopic-missing-title": "Navedite naslov teme. Ako kliknete na dugme „{{int:discussiontools-replywidget-newtopic}}”, tema će biti objavljena bez naslova.",
 	"discussiontools-pageframe-latestcomment": "Posljednji komentar: $2, $1 u temi $3",
 	"discussiontools-pageframe-latestcomment-notopic": "Posljednji komentar: $2, $1",
 	"discussiontools-pagetitle-newtopic": "Započinjanje nove teme na $1",
@@ -53,13 +55,14 @@
 	"discussiontools-replylink": "{{GENDER:|odgovori}}",
 	"discussiontools-replywidget-advanced": "Napredno",
 	"discussiontools-replywidget-cancel": "Otkaži",
+	"discussiontools-replywidget-feedback": "{{GENDER:|Povratne informacije}} o ovoj funkciji",
 	"discussiontools-replywidget-mode-source": "Izvor",
 	"discussiontools-replywidget-mode-visual": "Vizualno",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Odgovor}} korisniku/-ci {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Pregled",
 	"discussiontools-replywidget-reply": "{{GENDER:|Odgovori}}",
 	"discussiontools-replywidget-summary": "Sažetak",
-	"discussiontools-replywidget-watchthis": "Dodajte ovu stranicu na [[Special:Watchlist|spisak praćenja]]",
+	"discussiontools-replywidget-watchthis": "Dodaj stranicu na [[Special:Watchlist|listu praćenja]]",
 	"discussiontools-topicheader-authorcount": "U raspravi {{PLURAL:$1|prisutan $1 suradnik|prisutnih $1 suradnika}}",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komentar|komentara}}",
 	"discussiontools-topicheader-latestcomment": "Posljednji komentar: $1",
@@ -70,6 +73,5 @@
 	"discussiontools-topicsubscription-notify-subscribed-body": "Dobivat {{GENDER:|ćete}} obavijesti o novim komentarima na ovoj temi.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "Odsad {{GENDER:|pratite}}!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "Više više {{GENDER:|nećete}} dobivati obavijesti o novim komentarima na ovoj temi.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "Prestali {{GENDER:|ste}} pratiti.",
-	"minerva-talk-full-page": "Čitaj kao wikistranicu"
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Prestali {{GENDER:|ste}} pratiti."
 }

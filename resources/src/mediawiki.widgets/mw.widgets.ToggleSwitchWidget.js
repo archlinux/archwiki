@@ -7,18 +7,18 @@
 ( function () {
 	/**
 	 * This extends ToggleSwitchWidget by adding an invisible checkbox
-	 * element which will be used to submit the value
+	 * element which will be used to submit the value.
 	 *
 	 * @class
 	 * @extends OO.ui.ToggleSwitchWidget
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {string} [name] Name of input to submit results (when used in HTML forms)
+	 * @param {string} [config.name] Name of input to submit results (when used in HTML forms)
 	 */
 	mw.widgets.ToggleSwitchWidget = function MwWidgetsToggleWidget( config ) {
 		// Parent constructor
-		mw.widgets.ToggleSwitchWidget.parent.call( this, $.extend( {}, config, {} ) );
+		mw.widgets.ToggleSwitchWidget.super.call( this, $.extend( {}, config, {} ) );
 
 		if ( 'name' in config ) {
 			// Use this instead of <input type="hidden">, because hidden inputs do not have separate
@@ -51,7 +51,7 @@
 	/* Methods */
 
 	mw.widgets.ToggleSwitchWidget.prototype.isSelected = function () {
-		return mw.widgets.ToggleSwitchWidget.parent.prototype.getValue.call( this );
+		return mw.widgets.ToggleSwitchWidget.super.prototype.getValue.call( this );
 	};
 
 	mw.widgets.ToggleSwitchWidget.prototype.getValue = function () {

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
@@ -16,7 +17,7 @@ class TemplateCategoriesTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Title\Title::getParentCategories
+	 * @covers \MediaWiki\Title\Title::getParentCategories
 	 */
 	public function testTemplateCategories() {
 		$user = new User();

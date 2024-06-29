@@ -21,16 +21,16 @@ const { Repo, ForeignApiRepo, ForeignDbRepo } = require( 'mmv' );
 	QUnit.module( 'mmv.model.Repo', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Repo constructor sense check', function ( assert ) {
-		var displayName = 'Wikimedia Commons',
-			favicon = '//commons.wikimedia.org/favicon.ico',
-			apiUrl = '//commons.wikimedia.org/w/api.php',
-			server = '//commons.wikimedia.org',
-			articlePath = '//commons.wikimedia.org/wiki/$1',
-			descBaseUrl = '//commons.wikimedia.org/wiki/File:',
-			localRepo = new Repo( displayName, favicon, true ),
-			foreignApiRepo = new ForeignApiRepo( displayName, favicon,
-				false, apiUrl, server, articlePath ),
-			foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl );
+		const displayName = 'Wikimedia Commons';
+		const favicon = '//commons.wikimedia.org/favicon.ico';
+		const apiUrl = '//commons.wikimedia.org/w/api.php';
+		const server = '//commons.wikimedia.org';
+		const articlePath = '//commons.wikimedia.org/wiki/$1';
+		const descBaseUrl = '//commons.wikimedia.org/wiki/File:';
+		const localRepo = new Repo( displayName, favicon, true );
+		const foreignApiRepo = new ForeignApiRepo( displayName, favicon,
+			false, apiUrl, server, articlePath );
+		const foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl );
 
 		assert.true( localRepo instanceof Repo, 'Local repo creation works' );
 		assert.true( foreignApiRepo instanceof ForeignApiRepo,
@@ -39,20 +39,20 @@ const { Repo, ForeignApiRepo, ForeignDbRepo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'getArticlePath()', function ( assert ) {
-		var displayName = 'Wikimedia Commons',
-			favicon = '//commons.wikimedia.org/favicon.ico',
-			apiUrl = '//commons.wikimedia.org/w/api.php',
-			server = '//commons.wikimedia.org',
-			articlePath = '/wiki/$1',
-			descBaseUrl = '//commons.wikimedia.org/wiki/File:',
-			localRepo = new Repo( displayName, favicon, true ),
-			foreignApiRepo = new ForeignApiRepo( displayName, favicon,
-				false, apiUrl, server, articlePath ),
-			foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl ),
-			expectedLocalArticlePath = '/wiki/$1',
-			expectedFullArticlePath = '//commons.wikimedia.org/wiki/$1',
-			oldWgArticlePath = mw.config.get( 'wgArticlePath' ),
-			oldWgServer = mw.config.get( 'wgServer' );
+		const displayName = 'Wikimedia Commons';
+		const favicon = '//commons.wikimedia.org/favicon.ico';
+		const apiUrl = '//commons.wikimedia.org/w/api.php';
+		const server = '//commons.wikimedia.org';
+		const articlePath = '/wiki/$1';
+		const descBaseUrl = '//commons.wikimedia.org/wiki/File:';
+		const localRepo = new Repo( displayName, favicon, true );
+		const foreignApiRepo = new ForeignApiRepo( displayName, favicon,
+			false, apiUrl, server, articlePath );
+		const foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl );
+		const expectedLocalArticlePath = '/wiki/$1';
+		const expectedFullArticlePath = '//commons.wikimedia.org/wiki/$1';
+		const oldWgArticlePath = mw.config.get( 'wgArticlePath' );
+		const oldWgServer = mw.config.get( 'wgServer' );
 
 		mw.config.set( 'wgArticlePath', '/wiki/$1' );
 		mw.config.set( 'wgServer', server );
@@ -71,19 +71,19 @@ const { Repo, ForeignApiRepo, ForeignDbRepo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'getSiteLink()', function ( assert ) {
-		var displayName = 'Wikimedia Commons',
-			favicon = '//commons.wikimedia.org/favicon.ico',
-			apiUrl = '//commons.wikimedia.org/w/api.php',
-			server = '//commons.wikimedia.org',
-			articlePath = '/wiki/$1',
-			descBaseUrl = '//commons.wikimedia.org/wiki/File:',
-			localRepo = new Repo( displayName, favicon, true ),
-			foreignApiRepo = new ForeignApiRepo( displayName, favicon,
-				false, apiUrl, server, articlePath ),
-			foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl ),
-			expectedSiteLink = '//commons.wikimedia.org/wiki/',
-			oldWgArticlePath = mw.config.get( 'wgArticlePath' ),
-			oldWgServer = mw.config.get( 'wgServer' );
+		const displayName = 'Wikimedia Commons';
+		const favicon = '//commons.wikimedia.org/favicon.ico';
+		const apiUrl = '//commons.wikimedia.org/w/api.php';
+		const server = '//commons.wikimedia.org';
+		const articlePath = '/wiki/$1';
+		const descBaseUrl = '//commons.wikimedia.org/wiki/File:';
+		const localRepo = new Repo( displayName, favicon, true );
+		const foreignApiRepo = new ForeignApiRepo( displayName, favicon,
+			false, apiUrl, server, articlePath );
+		const foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl );
+		const expectedSiteLink = '//commons.wikimedia.org/wiki/';
+		const oldWgArticlePath = mw.config.get( 'wgArticlePath' );
+		const oldWgServer = mw.config.get( 'wgServer' );
 
 		mw.config.set( 'wgArticlePath', '/wiki/$1' );
 		mw.config.set( 'wgServer', server );

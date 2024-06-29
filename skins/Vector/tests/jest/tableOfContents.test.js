@@ -165,7 +165,7 @@ describe( 'Table of contents', () => {
 	describe( 'binds event listeners', () => {
 		test( 'for onHeadingClick', () => {
 			toc = mount();
-			const heading = /** @type {HTMLElement} */ ( document.querySelector( `#toc-foo .${toc.LINK_CLASS}` ) );
+			const heading = /** @type {HTMLElement} */ ( document.querySelector( `#toc-foo .${ toc.LINK_CLASS }` ) );
 			heading.click();
 
 			expect( onToggleClick ).not.toBeCalled();
@@ -174,7 +174,7 @@ describe( 'Table of contents', () => {
 		} );
 		test( 'for onToggleClick', () => {
 			toc = mount();
-			const toggle = /** @type {HTMLElement} */ ( document.querySelector( `#toc-bar .${toc.TOGGLE_CLASS}` ) );
+			const toggle = /** @type {HTMLElement} */ ( document.querySelector( `#toc-bar .${ toc.TOGGLE_CLASS }` ) );
 			toggle.click();
 
 			expect( onHeadingClick ).not.toBeCalled();
@@ -213,8 +213,8 @@ describe( 'Table of contents', () => {
 			 */
 			function testActiveClasses( id, activeSection, activeTopSection ) {
 				toc.changeActiveSection( id );
-				activeSections = container.querySelectorAll( `.${toc.ACTIVE_SECTION_CLASS}` );
-				activeTopSections = container.querySelectorAll( `.${toc.ACTIVE_TOP_SECTION_CLASS}` );
+				activeSections = container.querySelectorAll( `.${ toc.ACTIVE_SECTION_CLASS }` );
+				activeTopSections = container.querySelectorAll( `.${ toc.ACTIVE_TOP_SECTION_CLASS }` );
 				expect( activeSections.length ).toEqual( 1 );
 				expect( activeTopSections.length ).toEqual( 1 );
 				expect( activeSections[ 0 ] ).toEqual( activeSection );
@@ -246,14 +246,14 @@ describe( 'Table of contents', () => {
 	describe( 'applies the correct aria attributes', () => {
 		test( 'when initialized', () => {
 			toc = mount();
-			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${toc.TOGGLE_CLASS}` ) );
+			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${ toc.TOGGLE_CLASS }` ) );
 
 			expect( toggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'true' );
 		} );
 
 		test( 'when expanding sections', () => {
 			toc = mount();
-			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${toc.TOGGLE_CLASS}` ) );
+			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${ toc.TOGGLE_CLASS }` ) );
 
 			toc.expandSection( 'toc-bar' );
 			expect( toggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'true' );
@@ -261,7 +261,7 @@ describe( 'Table of contents', () => {
 
 		test( 'when toggling sections', () => {
 			toc = mount();
-			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${toc.TOGGLE_CLASS}` ) );
+			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${ toc.TOGGLE_CLASS }` ) );
 
 			toc.toggleExpandSection( 'toc-bar' );
 			expect( toggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'false' );
@@ -288,8 +288,8 @@ describe( 'Table of contents', () => {
 				newURL: 'http://example.com#qux'
 			} ) );
 
-			const activeSections = container.querySelectorAll( `.${toc.ACTIVE_SECTION_CLASS}` );
-			const activeTopSections = container.querySelectorAll( `.${toc.ACTIVE_TOP_SECTION_CLASS}` );
+			const activeSections = container.querySelectorAll( `.${ toc.ACTIVE_SECTION_CLASS }` );
+			const activeTopSections = container.querySelectorAll( `.${ toc.ACTIVE_TOP_SECTION_CLASS }` );
 			expect( activeSections.length ).toEqual( 1 );
 			expect( activeTopSections.length ).toEqual( 1 );
 			expect(
@@ -351,7 +351,7 @@ describe( 'Table of contents', () => {
 
 			toc = mount();
 
-			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${toc.TOGGLE_CLASS}` ) );
+			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${ toc.TOGGLE_CLASS }` ) );
 			// Collapse section.
 			toc.toggleExpandSection( 'toc-bar' );
 			expect( toggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'false' );
@@ -383,7 +383,7 @@ describe( 'Table of contents', () => {
 				}
 			] );
 
-			const newToggleButton = /** @type {HTMLElement} */ ( document.querySelector( `#toc-bar .${toc.TOGGLE_CLASS}` ) );
+			const newToggleButton = /** @type {HTMLElement} */ ( document.querySelector( `#toc-bar .${ toc.TOGGLE_CLASS }` ) );
 			expect( newToggleButton ).not.toBeNull();
 			// Check that the sections render in their expanded form.
 			expect( newToggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'true' );

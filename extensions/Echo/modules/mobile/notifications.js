@@ -1,3 +1,5 @@
+var mobile = require( 'mobile.startup' );
+
 /**
  * @fires echo.mobile every time the notifications overlay is opened
  */
@@ -20,7 +22,7 @@ function init() {
 	var
 		notificationsFilterOverlay = require( './notificationsFilterOverlay.js' ),
 		notificationsOverlay = require( './overlay.js' ),
-		overlayManager = mw.mobileFrontend.require( 'mobile.startup' ).OverlayManager.getSingleton(),
+		overlayManager = mobile.getOverlayManager(),
 		initialized = false;
 
 	function showNotificationOverlay() {

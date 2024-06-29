@@ -33,9 +33,8 @@
 	 * @param {string} [url] The widget url
 	 */
 	mw.echo.ui.PlaceholderItemWidget.prototype.setLink = function ( url ) {
-		var $link;
 		if ( url ) {
-			$link = $( '<a>' )
+			var $link = $( '<a>' )
 				.addClass( 'mw-echo-ui-placeholderItemWidget-link' )
 				.attr( 'href', url );
 			this.$element.html( $link.append( this.$label ) );

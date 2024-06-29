@@ -41,7 +41,7 @@ class WebResponse {
 	protected static $setCookies = [];
 
 	/** @var bool Used to disable setters before running jobs post-request (T191537) */
-	protected static $disableForPostSend = false;
+	protected $disableForPostSend = false;
 
 	/**
 	 * Disable setters for post-send processing
@@ -50,10 +50,10 @@ class WebResponse {
 	 * self::statusHeader() will log a warning and return without
 	 * setting cookies or headers.
 	 *
-	 * @since 1.32
+	 * @since 1.32 (non-static since 1.42)
 	 */
-	public static function disableForPostSend() {
-		self::$disableForPostSend = true;
+	public function disableForPostSend() {
+		$this->disableForPostSend = true;
 	}
 
 	/**
@@ -63,7 +63,7 @@ class WebResponse {
 	 * @param null|int $http_response_code Forces the HTTP response code to the specified value.
 	 */
 	public function header( $string, $replace = true, $http_response_code = null ) {
-		if ( self::$disableForPostSend ) {
+		if ( $this->disableForPostSend ) {
 			wfDebugLog( 'header', 'ignored post-send header {header}', 'all', [
 				'header' => $string,
 				'replace' => $replace,
@@ -79,6 +79,15 @@ class WebResponse {
 		} else {
 			header( $string, $replace );
 		}
+	}
+
+	/**
+	 * @see http_response_code
+	 * @return int|bool
+	 * @since 1.42
+	 */
+	public function getStatusCode() {
+		return http_response_code();
 	}
 
 	/**
@@ -103,7 +112,7 @@ class WebResponse {
 	 * @param int $code Status code
 	 */
 	public function statusHeader( $code ) {
-		if ( self::$disableForPostSend ) {
+		if ( $this->disableForPostSend ) {
 			wfDebugLog( 'header', 'ignored post-send status header {code}', 'all', [
 				'code' => $code,
 				'exception' => new RuntimeException( 'Ignored post-send status header' ),
@@ -140,8 +149,7 @@ class WebResponse {
 	 *   - raw: bool, true to suppress encoding of the value
 	 *   - sameSite: string|null, SameSite attribute. May be "strict", "lax",
 	 *     "none", or null or "" for no attribute. (default absent)
-	 *   - sameSiteLegacy: bool|null, If true, SameSite=None cookies will be
-	 *     also be sent as a legacy cookie with an ss0 prefix
+	 *   - sameSiteLegacy: bool|null, this option is now ignored
 	 * @since 1.22 Replaced $prefix, $domain, and $forceSecure with $options
 	 */
 	public function setCookie( $name, $value, $expire = 0, $options = [] ) {
@@ -153,7 +161,6 @@ class WebResponse {
 		$cookieSecure = $mainConfig->get( MainConfigNames::CookieSecure );
 		$cookieExpiration = $mainConfig->get( MainConfigNames::CookieExpiration );
 		$cookieHttpOnly = $mainConfig->get( MainConfigNames::CookieHttpOnly );
-		$useSameSiteLegacyCookies = $mainConfig->get( MainConfigNames::UseSameSiteLegacyCookies );
 		$options = array_filter( $options, static function ( $a ) {
 			return $a !== null;
 		} ) + [
@@ -164,17 +171,7 @@ class WebResponse {
 			'httpOnly' => $cookieHttpOnly,
 			'raw' => false,
 			'sameSite' => '',
-			'sameSiteLegacy' => $useSameSiteLegacyCookies
 		];
-
-		if ( strcasecmp( $options['sameSite'], 'none' ) === 0
-			&& !empty( $options['sameSiteLegacy'] )
-		) {
-			$legacyOptions = $options;
-			$legacyOptions['sameSiteLegacy'] = false;
-			$legacyOptions['sameSite'] = '';
-			$this->setCookie( "ss0-$name", $value, $expire, $legacyOptions );
-		}
 
 		if ( $expire === null ) {
 			$expire = 0; // Session cookie
@@ -182,7 +179,7 @@ class WebResponse {
 			$expire = time() + $cookieExpiration;
 		}
 
-		if ( self::$disableForPostSend ) {
+		if ( $this->disableForPostSend ) {
 			$prefixedName = $options['prefix'] . $name;
 			wfDebugLog( 'cookie', 'ignored post-send cookie {cookie}', 'all', [
 				'cookie' => $prefixedName,
@@ -206,7 +203,7 @@ class WebResponse {
 			return;
 		}
 
-		// Note: Don't try to move this earlier to reuse it for self::$disableForPostSend,
+		// Note: Don't try to move this earlier to reuse it for $this->disableForPostSend,
 		// we need to use the altered values from the hook here. (T198525)
 		$prefixedName = $options['prefix'] . $name;
 		$value = (string)$value;
@@ -230,7 +227,7 @@ class WebResponse {
 		}
 
 		// PHP deletes if value is the empty string; also, a past expiry is deleting
-		$deleting = ( $value === '' || $setOptions['expires'] > 0 && $setOptions['expires'] <= time() );
+		$deleting = ( $value === '' || ( $setOptions['expires'] > 0 && $setOptions['expires'] <= time() ) );
 
 		$logDesc = "$func: \"$prefixedName\", \"$value\", \"" .
 			implode( '", "', array_map( 'strval', $setOptions ) ) . '"';
@@ -265,7 +262,7 @@ class WebResponse {
 	 * @since 1.27
 	 */
 	public function clearCookie( $name, $options = [] ) {
-		$this->setCookie( $name, '', time() - 31536000 /* 1 year */, $options );
+		$this->setCookie( $name, '', time() - 31_536_000 /* 1 year */, $options );
 	}
 
 	/**
@@ -279,7 +276,5 @@ class WebResponse {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( WebResponse::class, 'WebResponse' );

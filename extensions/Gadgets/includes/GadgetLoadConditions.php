@@ -1,7 +1,4 @@
 <?php
-
-namespace MediaWiki\Extension\Gadgets;
-
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +15,18 @@ namespace MediaWiki\Extension\Gadgets;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @author Siddharth VP
  * @file
  */
 
-use OutputPage;
-use Skin;
-use User;
+namespace MediaWiki\Extension\Gadgets;
 
+use MediaWiki\Output\OutputPage;
+use MediaWiki\User\User;
+use Skin;
+
+/**
+ * @author Siddharth VP
+ */
 class GadgetLoadConditions {
 	/** @var User */
 	private $user;
@@ -35,31 +36,27 @@ class GadgetLoadConditions {
 	private $action;
 	/** @var int */
 	private $namespace;
+	/** @var string[] */
+	private $categories;
 	/** @var string */
 	private $contentModel;
-	/** @var bool */
-	private $isMobileView;
 	/** @var string|null */
 	private $withGadgetParam;
 
 	/**
 	 * @param OutputPage $out
 	 */
-	public function __construct( OutputPage $out, bool $isMobileView = false ) {
+	public function __construct( OutputPage $out ) {
 		$this->user = $out->getUser();
 		$this->skin = $out->getSkin();
 		$this->action = $out->getContext()->getActionName();
 		$this->namespace = $out->getTitle()->getNamespace();
+		$this->categories = $out->getCategories();
 		$this->contentModel = $out->getTitle()->getContentModel();
 		$this->withGadgetParam = $out->getRequest()->getRawVal( 'withgadget' );
-		$this->isMobileView = $isMobileView;
 	}
 
-	/**
-	 * @param Gadget $gadget
-	 * @return bool
-	 */
-	public function check( Gadget $gadget ) {
+	public function check( Gadget $gadget ): bool {
 		$urlLoad = $this->withGadgetParam === $gadget->getName() && $gadget->supportsUrlLoad();
 
 		return ( $gadget->isEnabled( $this->user ) || $urlLoad )
@@ -67,7 +64,7 @@ class GadgetLoadConditions {
 			&& $gadget->isActionSupported( $this->action )
 			&& $gadget->isSkinSupported( $this->skin )
 			&& $gadget->isNamespaceSupported( $this->namespace )
-			&& $gadget->isContentModelSupported( $this->contentModel )
-			&& $gadget->isTargetSupported( $this->isMobileView );
+			&& $gadget->isCategorySupported( $this->categories )
+			&& $gadget->isContentModelSupported( $this->contentModel );
 	}
 }

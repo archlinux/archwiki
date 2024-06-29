@@ -97,7 +97,7 @@ class SimpleStack extends Stack {
 		$eltIndex = $elt->stackIndex;
 		$n = count( $this->elements );
 		for ( $i = $eltIndex + 1; $i < $n; $i++ ) {
-			$this->elements[$i]->stackIndex --;
+			$this->elements[$i]->stackIndex--;
 		}
 		$elt->stackIndex = null;
 	}

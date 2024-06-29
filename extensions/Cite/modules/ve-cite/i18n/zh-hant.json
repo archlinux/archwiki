@@ -18,10 +18,10 @@
 			"Shirayuki",
 			"Simon Shek",
 			"Spring Roll Conan",
+			"SunAfterRain",
 			"Vincent Liu",
 			"Waihorace",
-			"Zhxy 519",
-			"SunAfterRain"
+			"Zhxy 519"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書籍",
@@ -68,7 +68,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "此參考文獻已定義於模板或其它產生的區塊上，目前只能使用原始碼模式來預覽。",
 	"cite-ve-referenceslist-missingreflist": "此參考資料列表由模板生成。",
 	"cite-ve-toolbar-group-label": "引用",
-	"cite-ve-othergroup-item": "$1 參考文獻",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "參考文獻",
-	"visualeditor-internal-list-diff-group-name-mwreference": "參考文獻群組名稱：「$1」"
+	"cite-ve-othergroup-item": "$1 參考文獻"
 }

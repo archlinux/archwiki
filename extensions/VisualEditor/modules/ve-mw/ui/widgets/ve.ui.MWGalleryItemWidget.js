@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWGalleryItemWidget class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -35,6 +35,9 @@ ve.ui.MWGalleryItemWidget = function VeUiMWGalleryItemWidget( imageInfo, config 
 	this.isError = imageInfo.isError;
 	this.imageClassAttr = imageInfo.imageClassAttr;
 	this.imgWrapperClassAttr = imageInfo.imgWrapperClassAttr;
+	this.mw = imageInfo.mw;
+	this.mediaClass = imageInfo.mediaClass;
+	this.mediaTag = imageInfo.mediaTag;
 
 	// Configuration initialization
 	config = config || {};

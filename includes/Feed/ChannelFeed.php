@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright © 2004 Brion Vibber <brion@pobox.com>
+ * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -144,7 +144,5 @@ abstract class ChannelFeed extends FeedItem {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( ChannelFeed::class, 'ChannelFeed' );

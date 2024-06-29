@@ -2,24 +2,25 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use Html;
 use IContextSource;
 use Language;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookRunner;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ThreadItem;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Utils\MWTimestamp;
 use MWExceptionHandler;
-use MWTimestamp;
 use ParserOutput;
-use Sanitizer;
 use Throwable;
-use WebRequest;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
@@ -40,8 +41,6 @@ class CommentFormatter {
 	 * Get a comment parser object for a DOM element
 	 *
 	 * This method exists so it can mocked in tests.
-	 *
-	 * @return CommentParser
 	 */
 	protected static function getParser(): CommentParser {
 		return MediaWikiServices::getInstance()->getService( 'DiscussionTools.CommentParser' );
@@ -79,6 +78,10 @@ class CommentFormatter {
 
 		// How long this method took, in seconds
 		$pout->setLimitReportData(
+			// The following messages can be generated upstream
+			// * discussiontools-limitreport-timeusage-value
+			// * discussiontools-limitreport-timeusage-value-text
+			// * discussiontools-limitreport-timeusage-value-html
 			'discussiontools-limitreport-timeusage',
 			sprintf( '%.3f', $duration )
 		);
@@ -92,14 +95,14 @@ class CommentFormatter {
 	}
 
 	/**
-	 * Add a topic container around a heading element
+	 * Add a wrapper, topic container, and subscribe link around a heading element
 	 *
 	 * @param Element $headingElement Heading element
 	 * @param ContentHeadingItem|null $headingItem Heading item
 	 * @param array|null &$tocInfo TOC info
 	 * @return Element Wrapper element (either found or newly added)
 	 */
-	protected static function addTopicContainer(
+	protected static function handleHeading(
 		Element $headingElement,
 		?ContentHeadingItem $headingItem = null,
 		?array &$tocInfo = null
@@ -110,90 +113,144 @@ class CommentFormatter {
 			$wrapperNode instanceof Element &&
 			DOMCompat::getClassList( $wrapperNode )->contains( 'mw-heading' )
 		) ) {
+			// Do not add the wrapper if the heading has attributes generated from wikitext (T353489).
+			// Only allow reserved attributes (e.g. 'data-mw', which can't be used in wikitext, but which
+			// are used internally by our own code and by Parsoid) and the 'id' attribute used by Parsoid.
+			foreach ( $headingElement->attributes as $attr ) {
+				if ( $attr->name !== 'id' && !Sanitizer::isReservedDataAttribute( $attr->name ) ) {
+					return $headingElement;
+				}
+			}
+
 			$wrapperNode = $doc->createElement( 'div' );
-			$wrapperNode->setAttribute( 'class', 'mw-heading mw-heading2' );
 			$headingElement->parentNode->insertBefore( $wrapperNode, $headingElement );
 			$wrapperNode->appendChild( $headingElement );
 		}
-
-		DOMCompat::getClassList( $wrapperNode )->add( 'ext-discussiontools-init-section' );
 
 		if ( !$headingItem ) {
 			return $wrapperNode;
 		}
 
+		$uneditable = DOMCompat::querySelector( $wrapperNode, 'mw\\:editsection' ) === null;
+		$headingItem->setUneditableSection( $uneditable );
+		self::addOverflowMenuButton( $headingItem, $doc, $wrapperNode );
+
+		$latestReplyItem = $headingItem->getLatestReply();
+
+		$bar = null;
+		if ( $latestReplyItem ) {
+			$bar = $doc->createElement( 'div' );
+			$bar->setAttribute(
+				'class',
+				'ext-discussiontools-init-section-bar'
+			);
+		}
+
+		self::addTopicContainer(
+			$wrapperNode, $latestReplyItem, $doc, $headingItem, $bar, $tocInfo
+		);
+
+		self::addSubscribeLink(
+			$headingItem, $doc, $wrapperNode, $latestReplyItem, $bar
+		);
+
+		if ( $latestReplyItem ) {
+			// The check for if ( $latestReplyItem ) prevents $bar from being null
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
+			$wrapperNode->appendChild( $bar );
+		}
+
+		return $wrapperNode;
+	}
+
+	/**
+	 * Add a topic container around a heading element.
+	 *
+	 * A topic container is the information displayed when the "Show discusion activity" user
+	 * preference is selected. This displays information such as the latest comment time, number
+	 * of comments, and number of editors in the discussion.
+	 */
+	protected static function addTopicContainer(
+		Element $wrapperNode,
+		?ContentCommentItem $latestReplyItem,
+		Document $doc,
+		ContentHeadingItem $headingItem,
+		?Element $bar,
+		array &$tocInfo
+	) {
+		if ( !DOMCompat::getClassList( $wrapperNode )->contains( 'mw-heading' ) ) {
+			DOMCompat::getClassList( $wrapperNode )->add( 'mw-heading' );
+			DOMCompat::getClassList( $wrapperNode )->add( 'mw-heading2' );
+		}
+		DOMCompat::getClassList( $wrapperNode )->add( 'ext-discussiontools-init-section' );
+
+		if ( !$latestReplyItem ) {
+			return;
+		}
+
+		$latestReplyJSON = json_encode( static::getJsonArrayForCommentMarker( $latestReplyItem ) );
+		$latestReply = $doc->createComment(
+			// Timestamp output varies by user timezone, so is formatted later
+			'__DTLATESTCOMMENTTHREAD__' . htmlspecialchars( $latestReplyJSON, ENT_NOQUOTES ) . '__'
+		);
+
+		$commentCount = $doc->createComment(
+			'__DTCOMMENTCOUNT__' . $headingItem->getCommentCount() . '__'
+		);
+
+		$authorCount = $doc->createComment(
+			'__DTAUTHORCOUNT__' . count( $headingItem->getAuthorsBelow() ) . '__'
+		);
+
+		$metadata = $doc->createElement( 'div' );
+		$metadata->setAttribute(
+			'class',
+			'ext-discussiontools-init-section-metadata'
+		);
+		$metadata->appendChild( $latestReply );
+		$metadata->appendChild( $commentCount );
+		$metadata->appendChild( $authorCount );
+		$bar->appendChild( $metadata );
+
+		$tocInfo[ $headingItem->getLinkableTitle() ] = [
+			'commentCount' => $headingItem->getCommentCount(),
+		];
+	}
+
+	/**
+	 * Add a subscribe/unsubscribe link to the right of a heading element
+	 */
+	protected static function addSubscribeLink(
+		ContentHeadingItem $headingItem,
+		Document $doc,
+		Element $wrapperNode,
+		?ContentCommentItem $latestReplyItem,
+		?Element $bar
+	) {
 		$headingJSONEscaped = htmlspecialchars(
 			json_encode( static::getJsonForHeadingMarker( $headingItem ) )
 		);
 
 		// Replaced in ::postprocessTopicSubscription() as the text depends on user state
 		if ( $headingItem->isSubscribable() ) {
-			$subscribeLink = $doc->createComment( '__DTSUBSCRIBELINK__' . $headingJSONEscaped );
-			$headingElement->insertBefore( $subscribeLink, $headingElement->firstChild );
-
 			$subscribeButton = $doc->createComment( '__DTSUBSCRIBEBUTTONDESKTOP__' . $headingJSONEscaped );
 			$wrapperNode->insertBefore( $subscribeButton, $wrapperNode->firstChild );
 		}
 
-		$editable = DOMCompat::querySelector( $wrapperNode, 'mw\\:editsection' ) !== null;
-		self::addOverflowMenuButton( $headingItem, $doc, $wrapperNode, [ 'editable' => $editable ] );
-
-		// Visual enhancements: topic containers
-		$latestReplyItem = $headingItem->getLatestReply();
-		if ( $latestReplyItem ) {
-			$latestReplyJSON = json_encode( static::getJsonArrayForCommentMarker( $latestReplyItem ) );
-			$latestReply = $doc->createComment(
-				// Timestamp output varies by user timezone, so is formatted later
-				'__DTLATESTCOMMENTTHREAD__' . htmlspecialchars( $latestReplyJSON, ENT_NOQUOTES ) . '__'
-			);
-
-			$commentCount = $doc->createComment(
-				'__DTCOMMENTCOUNT__' . $headingItem->getCommentCount() . '__'
-			);
-
-			$authorCount = $doc->createComment(
-				'__DTAUTHORCOUNT__' . count( $headingItem->getAuthorsBelow() ) . '__'
-			);
-
-			// Topic subscriptions
-			$metadata = $doc->createElement( 'div' );
-			$metadata->setAttribute(
-				'class',
-				'ext-discussiontools-init-section-metadata'
-			);
-
-			$metadata->appendChild( $latestReply );
-			$metadata->appendChild( $commentCount );
-			$metadata->appendChild( $authorCount );
-
-			$actions = $doc->createElement( 'div' );
-			$actions->setAttribute(
-				'class',
-				'ext-discussiontools-init-section-actions'
-			);
-
-			if ( $headingItem->isSubscribable() ) {
-				$subscribeButton = $doc->createComment( '__DTSUBSCRIBEBUTTONMOBILE__' . $headingJSONEscaped );
-				$actions->appendChild( $subscribeButton );
-			}
-
-			$bar = $doc->createElement( 'div' );
-			$bar->setAttribute(
-				'class',
-				'ext-discussiontools-init-section-bar'
-			);
-
-			$bar->appendChild( $metadata );
-			$bar->appendChild( $actions );
-
-			$wrapperNode->appendChild( $bar );
-
-			$tocInfo[ $headingItem->getLinkableTitle() ] = [
-				'commentCount' => $headingItem->getCommentCount(),
-			];
+		if ( !$latestReplyItem ) {
+			return;
 		}
 
-		return $wrapperNode;
+		$actions = $doc->createElement( 'div' );
+		$actions->setAttribute(
+			'class',
+			'ext-discussiontools-init-section-actions'
+		);
+		if ( $headingItem->isSubscribable() ) {
+			$subscribeButton = $doc->createComment( '__DTSUBSCRIBEBUTTONMOBILE__' . $headingJSONEscaped );
+			$actions->appendChild( $subscribeButton );
+		}
+		$bar->appendChild( $actions );
 	}
 
 	/**
@@ -222,7 +279,7 @@ class CommentFormatter {
 
 		$url = $title->getCanonicalURL();
 		$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
-		$enableTimestampLinks = $dtConfig->get( 'DiscussionToolsEnableTimestampLinks' );
+		$enablePermalinksFrontend = $dtConfig->get( 'DiscussionToolsEnablePermalinksFrontend' );
 
 		// Iterate in reverse order, because adding the range markers for a thread item
 		// can invalidate the ranges of subsequent thread items (T298096)
@@ -270,7 +327,7 @@ class CommentFormatter {
 					$headingElement = CommentUtils::closestElement( $headline, [ 'h2' ] );
 
 					if ( $headingElement ) {
-						static::addTopicContainer( $headingElement, $threadItem, $tocInfo );
+						static::handleHeading( $headingElement, $threadItem, $tocInfo );
 					}
 				}
 			} elseif ( $threadItem instanceof ContentCommentItem ) {
@@ -287,7 +344,7 @@ class CommentFormatter {
 
 				CommentModifier::addReplyLink( $threadItem, $replyButtons );
 
-				if ( $enableTimestampLinks ) {
+				if ( $enablePermalinksFrontend ) {
 					$timestampRanges = $threadItem->getTimestampRanges();
 					$lastTimestamp = end( $timestampRanges );
 					$existingLink = CommentUtils::closestElement( $lastTimestamp->startContainer, [ 'a' ] ) ??
@@ -300,8 +357,7 @@ class CommentFormatter {
 						$lastTimestamp->surroundContents( $link );
 					}
 				}
-				$editable = DOMCompat::querySelector( $replyButtons, 'mw\\:editsection' ) !== null;
-				self::addOverflowMenuButton( $threadItem, $doc, $replyButtons, [ 'editable' => $editable ] );
+				self::addOverflowMenuButton( $threadItem, $doc, $replyButtons );
 			}
 
 			$range->insertNode( $startMarker );
@@ -322,7 +378,7 @@ class CommentFormatter {
 			if ( $wrapper instanceof Element && DOMCompat::getClassList( $wrapper )->contains( 'toctitle' ) ) {
 				continue;
 			}
-			$headingElement = static::addTopicContainer( $headingElement );
+			$headingElement = static::handleHeading( $headingElement );
 			if ( !$startOfSections ) {
 				$startOfSections = $headingElement;
 			}
@@ -345,6 +401,8 @@ class CommentFormatter {
 		) {
 			$pout->setExtensionData( 'DiscussionTools-hasCommentsInLedeContent', true );
 			MediaWikiServices::getInstance()->getTrackingCategories()
+				// The following messages are generated upstream:
+				// * discussiontools-comments-before-first-heading-category-desc
 				->addTrackingCategory( $pout, 'discussiontools-comments-before-first-heading-category', $title );
 		}
 
@@ -356,7 +414,10 @@ class CommentFormatter {
 			return $item->jsonSerialize( true );
 		}, $threadItemSet->getThreadsStructured() );
 
-		$pout->setJsConfigVar( 'wgDiscussionToolsPageThreads', $threadsJSON );
+		// Temporary hack to deal with T351461#9358034: this should be a
+		// call to `setJsConfigVar` but Parsoid is currently reprocessing
+		// content from extensions.
+		$pout->addJsConfigVars( 'wgDiscussionToolsPageThreads', $threadsJSON );
 
 		// Like DOMCompat::getInnerHTML(), but disable 'smartQuote' for compatibility with
 		// ParserOutput::EDITSECTION_REGEX matching 'mw:editsection' tags (T274709)
@@ -371,16 +432,12 @@ class CommentFormatter {
 	 * @param ThreadItem $threadItem The heading or comment item
 	 * @param Document $document Retrieved by parsing page HTML
 	 * @param Element $element The element to add the overflow menu button to
-	 * @param array $data Arbitrary data to encode with the button HTML. The thread item is always included.
 	 * @return void
 	 */
 	protected static function addOverflowMenuButton(
-		ThreadItem $threadItem, Document $document, Element $element, array $data = []
+		ThreadItem $threadItem, Document $document, Element $element
 	): void {
-		$overflowMenuDataJSON = json_encode( array_merge(
-			$data,
-			[ 'threadItem' => $threadItem ]
-		) );
+		$overflowMenuDataJSON = json_encode( [ 'threadItem' => $threadItem ] );
 
 		$overflowMenuButton = $document->createComment(
 			'__DTELLIPSISBUTTON__' . htmlspecialchars( $overflowMenuDataJSON, ENT_NOQUOTES )
@@ -391,16 +448,14 @@ class CommentFormatter {
 	/**
 	 * Replace placeholders for all interactive tools with nothing. This is intended for cases where
 	 * interaction is unexpected, e.g. reply links while previewing an edit.
-	 *
-	 * @param string $text
-	 * @return string
 	 */
-	public static function removeInteractiveTools( string $text ) {
+	public static function removeInteractiveTools( string $text ): string {
 		$text = strtr( $text, [
 			'<!--__DTREPLYBUTTONSCONTENT__-->' => '',
 		] );
 
 		$text = preg_replace( '/<!--__DTELLIPSISBUTTON__(.*?)-->/', '', $text );
+		// No longer used, this can be removed once parser cache expires:
 		$text = preg_replace( '/<!--__DTSUBSCRIBELINK__(.*?)-->/', '', $text );
 		$text = preg_replace( '/<!--__DTSUBSCRIBEBUTTON(DESKTOP|MOBILE)__(.*?)-->/', '', $text );
 
@@ -409,22 +464,19 @@ class CommentFormatter {
 
 	/**
 	 * Replace placeholders for topic subscription buttons with the real thing.
-	 *
-	 * @param string $text
-	 * @param IContextSource $contextSource
-	 * @param SubscriptionStore $subscriptionStore
-	 * @param bool $isMobile
-	 * @return string
 	 */
 	public static function postprocessTopicSubscription(
 		string $text, IContextSource $contextSource,
-		SubscriptionStore $subscriptionStore, bool $isMobile
+		SubscriptionStore $subscriptionStore, bool $isMobile, bool $useButtons
 	): string {
 		$doc = DOMCompat::newDocument( true );
 
+		// No longer used, this can be removed once parser cache expires:
+		$text = preg_replace( '/<!--__DTSUBSCRIBELINK__(.*?)-->/', '', $text );
+
 		$matches = [];
 		$itemDataByName = [];
-		preg_match_all( '/<!--__DTSUBSCRIBELINK__(.*?)-->/', $text, $matches );
+		preg_match_all( '/<!--__DTSUBSCRIBEBUTTONDESKTOP__(.*?)-->/', $text, $matches );
 		foreach ( $matches[1] as $itemData ) {
 			$itemDataByName[ $itemData ] = json_decode( htmlspecialchars_decode( $itemData ), true );
 		}
@@ -443,9 +495,10 @@ class CommentFormatter {
 		$lang = $contextSource->getLanguage();
 		$title = $contextSource->getTitle();
 		$text = preg_replace_callback(
-			'/<!--__(DTSUBSCRIBELINK|DTSUBSCRIBEBUTTON(?:DESKTOP|MOBILE))__(.*?)-->/',
-			static function ( $matches ) use ( $doc, $itemsByName, $itemDataByName, $lang, $title, $isMobile ) {
-				$isLink = $matches[1] === 'DTSUBSCRIBELINK';
+			'/<!--__(DTSUBSCRIBEBUTTON(?:DESKTOP|MOBILE))__(.*?)-->/',
+			static function ( $matches ) use (
+				$doc, $itemsByName, $itemDataByName, $lang, $title, $isMobile, $useButtons
+			) {
 				$buttonIsMobile = $matches[1] === 'DTSUBSCRIBEBUTTONMOBILE';
 
 				$itemData = $itemDataByName[ $matches[2] ];
@@ -461,7 +514,11 @@ class CommentFormatter {
 					'section' => $itemData['linkableTitle'],
 				] );
 
-				if ( $isLink ) {
+				if ( $buttonIsMobile !== $isMobile ) {
+					return '';
+				}
+
+				if ( !$useButtons ) {
 					$subscribe = $doc->createElement( 'span' );
 					$subscribe->setAttribute(
 						'class',
@@ -501,10 +558,6 @@ class CommentFormatter {
 
 					return DOMCompat::getOuterHTML( $subscribe );
 				} else {
-					if ( $buttonIsMobile !== $isMobile ) {
-						return '';
-					}
-
 					$subscribe = new \OOUI\ButtonWidget( [
 						'classes' => [ 'ext-discussiontools-init-section-subscribeButton' ],
 						'framed' => false,
@@ -537,14 +590,9 @@ class CommentFormatter {
 
 	/**
 	 * Replace placeholders for reply links with the real thing.
-	 *
-	 * @param string $text
-	 * @param IContextSource $contextSource
-	 * @param bool $isMobile
-	 * @return string
 	 */
 	public static function postprocessReplyTool(
-		string $text, IContextSource $contextSource, bool $isMobile
+		string $text, IContextSource $contextSource, bool $isMobile, bool $useButtons
 	): string {
 		$doc = DOMCompat::newDocument( true );
 
@@ -554,40 +602,43 @@ class CommentFormatter {
 
 		$text = preg_replace_callback(
 			'/<!--__DTREPLYBUTTONSCONTENT__-->/',
-			static function ( $matches ) use ( $doc, $replyLinkText, $replyButtonText, $isMobile, $lang ) {
+			static function ( $matches ) use ( $doc, $replyLinkText, $replyButtonText, $isMobile, $useButtons, $lang ) {
 				$replyLinkButtons = $doc->createElement( 'span' );
 
-				// Reply
-				$replyLink = $doc->createElement( 'a' );
-				$replyLink->setAttribute( 'class', 'ext-discussiontools-init-replylink-reply' );
-				$replyLink->setAttribute( 'role', 'button' );
-				$replyLink->setAttribute( 'tabindex', '0' );
-				// Set empty 'href' to avoid a:not([href]) selector in MobileFrontend
-				$replyLink->setAttribute( 'href', '' );
-				$replyLink->textContent = $replyLinkText;
+				if ( $useButtons ) {
+					// Visual enhancements button
+					$useIcon = $isMobile || static::isLanguageRequiringReplyIcon( $lang );
+					$replyLinkButton = new \OOUI\ButtonWidget( [
+						'classes' => [ 'ext-discussiontools-init-replybutton' ],
+						'framed' => false,
+						'label' => $replyButtonText,
+						'icon' => $useIcon ? 'share' : null,
+						'flags' => [ 'progressive' ],
+						'infusable' => true,
+					] );
 
-				$bracket = $doc->createElement( 'span' );
-				$bracket->setAttribute( 'class', 'ext-discussiontools-init-replylink-bracket' );
-				$bracketOpen = $bracket->cloneNode( false );
-				$bracketClose = $bracket->cloneNode( false );
-				$bracketOpen->textContent = '[';
-				$bracketClose->textContent = ']';
+					DOMCompat::setInnerHTML( $replyLinkButtons, $replyLinkButton->toString() );
+				} else {
+					// Reply link
+					$replyLink = $doc->createElement( 'a' );
+					$replyLink->setAttribute( 'class', 'ext-discussiontools-init-replylink-reply' );
+					$replyLink->setAttribute( 'role', 'button' );
+					$replyLink->setAttribute( 'tabindex', '0' );
+					// Set empty 'href' to avoid a:not([href]) selector in MobileFrontend
+					$replyLink->setAttribute( 'href', '' );
+					$replyLink->textContent = $replyLinkText;
 
-				// Visual enhancements button
-				$useIcon = $isMobile || static::isLanguageRequiringReplyIcon( $lang );
-				$replyLinkButton = new \OOUI\ButtonWidget( [
-					'classes' => [ 'ext-discussiontools-init-replybutton' ],
-					'framed' => false,
-					'label' => $replyButtonText,
-					'icon' => $useIcon ? 'share' : null,
-					'flags' => [ 'progressive' ],
-					'infusable' => true,
-				] );
+					$bracket = $doc->createElement( 'span' );
+					$bracket->setAttribute( 'class', 'ext-discussiontools-init-replylink-bracket' );
+					$bracketOpen = $bracket->cloneNode( false );
+					$bracketClose = $bracket->cloneNode( false );
+					$bracketOpen->textContent = '[';
+					$bracketClose->textContent = ']';
 
-				DOMCompat::setInnerHTML( $replyLinkButtons, $replyLinkButton->toString() );
-				$replyLinkButtons->appendChild( $bracketOpen );
-				$replyLinkButtons->appendChild( $replyLink );
-				$replyLinkButtons->appendChild( $bracketClose );
+					$replyLinkButtons->appendChild( $bracketOpen );
+					$replyLinkButtons->appendChild( $replyLink );
+					$replyLinkButtons->appendChild( $bracketClose );
+				}
 
 				return DOMCompat::getInnerHTML( $replyLinkButtons );
 			},
@@ -635,10 +686,6 @@ class CommentFormatter {
 		return $JSON;
 	}
 
-	/**
-	 * @param ContentHeadingItem $heading
-	 * @return array
-	 */
 	private static function getJsonForHeadingMarker( ContentHeadingItem $heading ): array {
 		$JSON = $heading->jsonSerialize();
 		$JSON['text'] = $heading->getText();
@@ -652,11 +699,6 @@ class CommentFormatter {
 	 * Signature timestamps don't have seconds-level accuracy, so any
 	 * time difference of less than 120 seconds is treated as being
 	 * posted "just now".
-	 *
-	 * @param MWTimestamp $timestamp
-	 * @param Language $lang
-	 * @param UserIdentity $user
-	 * @return string
 	 */
 	public static function getSignatureRelativeTime(
 		MWTimestamp $timestamp, Language $lang, UserIdentity $user
@@ -675,11 +717,6 @@ class CommentFormatter {
 
 	/**
 	 * Post-process visual enhancements features (topic containers)
-	 *
-	 * @param string $text
-	 * @param IContextSource $contextSource
-	 * @param bool $isMobile
-	 * @return string
 	 */
 	public static function postprocessVisualEnhancements(
 		string $text, IContextSource $contextSource, bool $isMobile
@@ -742,71 +779,66 @@ class CommentFormatter {
 			},
 			$text
 		);
-		if ( $isMobile ) {
-			$text = preg_replace_callback(
-				'/<!--__DTELLIPSISBUTTON__(.*?)-->/',
-				static function ( $matches ) use ( $contextSource ) {
-					$overflowMenuData = json_decode( htmlspecialchars_decode( $matches[1] ), true ) ?? [];
+		$text = preg_replace_callback(
+			'/<!--__DTELLIPSISBUTTON__(.*?)-->/',
+			static function ( $matches ) use ( $contextSource, $isMobile ) {
+				$overflowMenuData = json_decode( htmlspecialchars_decode( $matches[1] ), true ) ?? [];
 
-					$isSectionEditable = $overflowMenuData['editable'] ?? false;
-					// TODO: Remove the fallback to empty array after the parser cache is updated.
-					$threadItem = $overflowMenuData['threadItem'] ?? [];
-					$overflowMenuItems = [];
-					$resourceLoaderModules = [];
+				// TODO: Remove the fallback to empty array after the parser cache is updated.
+				$threadItem = $overflowMenuData['threadItem'] ?? [];
+				// TODO: Remove $overflowMenuData['editable'] after caches clear
+				if ( isset( $overflowMenuData['editable'] ) ) {
+					$threadItem['uneditableSection'] = !$overflowMenuData['editable'];
+				}
+				$threadItemType = $threadItem['type'] ?? null;
+				if ( !$isMobile && $threadItemType === 'heading' ) {
+					// Displaying the overflow menu next to a topic heading is a bit more
+					// complicated on desktop, so leaving it out for now.
+					return '';
+				}
+				$overflowMenuItems = [];
+				$resourceLoaderModules = [];
 
-					self::getHookRunner()->onDiscussionToolsAddOverflowMenuItems(
+				self::getHookRunner()->onDiscussionToolsAddOverflowMenuItems(
+					$overflowMenuItems,
+					$resourceLoaderModules,
+					$threadItem,
+					$contextSource
+				);
+
+				if ( $overflowMenuItems ) {
+					usort(
 						$overflowMenuItems,
-						$resourceLoaderModules,
-						$isSectionEditable,
-						$threadItem,
-						$contextSource
+						static function ( OverflowMenuItem $itemA, OverflowMenuItem $itemB ): int {
+							return $itemB->getWeight() - $itemA->getWeight();
+						}
 					);
 
-					if ( $overflowMenuItems ) {
-						usort(
-							$overflowMenuItems,
-							static function ( OverflowMenuItem $itemA, OverflowMenuItem $itemB ): int {
-								return $itemB->getWeight() - $itemA->getWeight();
-							}
-						);
+					$overflowButton = new ButtonMenuSelectWidget( [
+						'classes' => [
+							'ext-discussiontools-init-section-overflowMenuButton'
+						],
+						'framed' => false,
+						'icon' => 'ellipsis',
+						'infusable' => true,
+						'data' => [
+							'itemConfigs' => $overflowMenuItems,
+							'resourceLoaderModules' => $resourceLoaderModules
+						]
+					] );
+					return $overflowButton->toString();
+				} else {
+					return '';
+				}
+			},
+			$text
+		);
 
-						$overflowButton = new ButtonMenuSelectWidget( [
-							'classes' => [
-								// TODO: Remove ellipsisButton class after parser cache is updated
-								'ext-discussiontools-init-section-ellipsisButton',
-								'ext-discussiontools-init-section-overflowMenuButton'
-							],
-							'framed' => false,
-							'icon' => 'ellipsis',
-							'infusable' => true,
-							'data' => [
-								'itemConfigs' => $overflowMenuItems,
-								'resourceLoaderModules' => $resourceLoaderModules
-							]
-						] );
-						return $overflowButton->toString();
-					} else {
-						return '';
-					}
-				},
-				$text
-			);
-		} else {
-			$text = preg_replace(
-				'/<!--__DTELLIPSISBUTTON__(.*?)-->/',
-				'',
-				$text
-			);
-		}
 		return $text;
 	}
 
 	/**
 	 * Post-process visual enhancements features for page subtitle
-	 *
-	 * @param ParserOutput $pout
-	 * @param IContextSource $contextSource
-	 * @return ?string
 	 */
 	public static function postprocessVisualEnhancementsSubtitle(
 		ParserOutput $pout, IContextSource $contextSource
@@ -851,9 +883,6 @@ class CommentFormatter {
 
 	/**
 	 * Post-process visual enhancements features for table of contents
-	 *
-	 * @param ParserOutput $pout
-	 * @param IContextSource $contextSource
 	 */
 	public static function postprocessTableOfContents(
 		ParserOutput $pout, IContextSource $contextSource
@@ -888,9 +917,6 @@ class CommentFormatter {
 
 	/**
 	 * Check if the talk page had no comments or headings.
-	 *
-	 * @param ParserOutput $pout
-	 * @return bool
 	 */
 	public static function isEmptyTalkPage( ParserOutput $pout ): bool {
 		return $pout->getExtensionData( 'DiscussionTools-isEmptyTalkPage' ) === true;
@@ -898,9 +924,6 @@ class CommentFormatter {
 
 	/**
 	 * Append content to an empty talk page
-	 *
-	 * @param ParserOutput $pout
-	 * @param string $content
 	 */
 	public static function appendToEmptyTalkPage( ParserOutput $pout, string $content ): void {
 		$text = $pout->getRawText();
@@ -910,9 +933,6 @@ class CommentFormatter {
 
 	/**
 	 * Check if the talk page has content above the first heading, in the lede section.
-	 *
-	 * @param ParserOutput $pout
-	 * @return bool
 	 */
 	public static function hasLedeContent( ParserOutput $pout ): bool {
 		return $pout->getExtensionData( 'DiscussionTools-hasLedeContent' ) === true;
@@ -920,18 +940,45 @@ class CommentFormatter {
 
 	/**
 	 * Check if the talk page has comments above the first heading, in the lede section.
-	 *
-	 * @param ParserOutput $pout
-	 * @return bool
 	 */
 	public static function hasCommentsInLedeContent( ParserOutput $pout ): bool {
 		return $pout->getExtensionData( 'DiscussionTools-hasCommentsInLedeContent' ) === true;
 	}
 
-	public static function isLanguageRequiringReplyIcon( Language $lang ): bool {
-		$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
+	/**
+	 * Check if the language requires an icon for the reply button
+	 *
+	 * @param Language $userLang Language
+	 * @return bool
+	 */
+	public static function isLanguageRequiringReplyIcon( Language $userLang ): bool {
+		$services = MediaWikiServices::getInstance();
+
+		$dtConfig = $services->getConfigFactory()->makeConfig( 'discussiontools' );
 		$languages = $dtConfig->get( 'DiscussionTools_visualenhancements_reply_icon_languages' );
-		return in_array( $lang->getCode(), $languages, true );
+
+		if ( array_is_list( $languages ) ) {
+			// Detect legacy list format
+			throw new ConfigException(
+				'DiscussionTools_visualenhancements_reply_icon_languages must be an associative array'
+			);
+		}
+
+		// User language matched exactly and is explicitly set to true or false
+		if ( isset( $languages[ $userLang->getCode() ] ) ) {
+			return (bool)$languages[ $userLang->getCode() ];
+		}
+
+		// Check fallback languages
+		$fallbackLanguages = $userLang->getFallbackLanguages();
+		foreach ( $fallbackLanguages as $fallbackLanguage ) {
+			if ( isset( $languages[ $fallbackLanguage ] ) ) {
+				return (bool)$languages[ $fallbackLanguage ];
+			}
+		}
+
+		// Language not listed, default is to show no icon
+		return false;
 	}
 
 }

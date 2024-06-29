@@ -12,7 +12,7 @@
 		]
 	},
 	"tag-editcheck-newreference-description": "পাতাটিতে একটি তথ্যসূত্র যোগ হয়েছে",
-	"tag-editcheck-references-activated": "সম্পাদনা পরীক্ষা (তথ্যসূত্র) সক্রিয় করা হয়েছে",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|সম্পাদনা পরীক্ষা (তথ্যসূত্র) সক্রিয় করা হয়েছে]]",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|দৃশ্যমান সম্পাদনা]]",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|দৃশ্যমান সম্পাদনা]] ব্যবহার করে সম্পাদিত",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|দৃশ্যমান সম্পাদনা: যাচাই করুন]]",
@@ -25,7 +25,6 @@
 	"visualeditor-feedback-tool": "এই সফটওয়্যার সম্পর্কে আপনার প্রতিক্রিয়া জানান",
 	"visualeditor-help-label": "ব্যবহারকারী নির্দেশিকা পড়ুন",
 	"visualeditor-help-link": "mw:Help:VisualEditor/User guide/bn",
-	"visualeditor-help-title": "কিভাবে সম্পাদক ব্যবহার করতে হবে তার জন্য নির্দেশিকা",
 	"visualeditor-welcomedialog-action": "সম্পাদনা শুরু করুন",
 	"visualeditor-welcomedialog-content": "যেকেউ সম্পাদনা করার মাধ্যমে মানোন্নয়নে সাহায্য করতে পারেন।",
 	"visualeditor-welcomedialog-content-thanks": "জ্ঞানের জগৎকে সমৃদ্ধ করতে সাহায্য করার জন্য আপনাকে ধন্যবাদ!",

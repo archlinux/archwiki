@@ -261,66 +261,66 @@ class Dispatcher implements TokenHandler {
 			}
 
 			switch ( $node->htmlName ) {
-			case 'select':
-				if ( $last ) {
-					return self::IN_SELECT;
-				}
-				for ( $ancestorIdx = $idx - 1; $ancestorIdx >= 1; $ancestorIdx-- ) {
-					$ancestor = $stack->item( $ancestorIdx );
-					if ( $ancestor->htmlName === 'template' ) {
+				case 'select':
+					if ( $last ) {
 						return self::IN_SELECT;
-					} elseif ( $ancestor->htmlName === 'table' ) {
-						return self::IN_SELECT_IN_TABLE;
 					}
-				}
-				return self::IN_SELECT;
+					for ( $ancestorIdx = $idx - 1; $ancestorIdx >= 1; $ancestorIdx-- ) {
+						$ancestor = $stack->item( $ancestorIdx );
+						if ( $ancestor->htmlName === 'template' ) {
+							return self::IN_SELECT;
+						} elseif ( $ancestor->htmlName === 'table' ) {
+							return self::IN_SELECT_IN_TABLE;
+						}
+					}
+					return self::IN_SELECT;
 
-			case 'td':
-			case 'th':
-				if ( !$last ) {
-					return self::IN_CELL;
-				}
-				break;
+				case 'td':
+				case 'th':
+					if ( !$last ) {
+						return self::IN_CELL;
+					}
+					break;
 
-			case 'tr':
-				return self::IN_ROW;
+				case 'tr':
+					return self::IN_ROW;
 
-			case 'tbody':
-			case 'thead':
-			case 'tfoot':
-				return self::IN_TABLE_BODY;
+				case 'tbody':
+				case 'thead':
+				case 'tfoot':
+					return self::IN_TABLE_BODY;
 
-			case 'caption':
-				return self::IN_CAPTION;
+				case 'caption':
+					return self::IN_CAPTION;
 
-			case 'colgroup':
-				return self::IN_COLUMN_GROUP;
+				case 'colgroup':
+					return self::IN_COLUMN_GROUP;
 
-			case 'table':
-				return self::IN_TABLE;
+				case 'table':
+					return self::IN_TABLE;
 
-			case 'template':
-				return $this->templateModeStack->current;
+				case 'template':
+					return $this->templateModeStack->current;
 
-			case 'head':
-				if ( $last ) {
+				case 'head':
+					if ( $last ) {
+						return self::IN_BODY;
+					} else {
+						return self::IN_HEAD;
+					}
+
+				case 'body':
 					return self::IN_BODY;
-				} else {
-					return self::IN_HEAD;
-				}
 
-			case 'body':
-				return self::IN_BODY;
+				case 'frameset':
+					return self::IN_FRAMESET;
 
-			case 'frameset':
-				return self::IN_FRAMESET;
-
-			case 'html':
-				if ( $builder->headElement === null ) {
-					return self::BEFORE_HEAD;
-				} else {
-					return self::AFTER_HEAD;
-				}
+				case 'html':
+					if ( $builder->headElement === null ) {
+						return self::BEFORE_HEAD;
+					} else {
+						return self::AFTER_HEAD;
+					}
 			}
 		}
 

@@ -10,9 +10,6 @@
 		]
 	},
 	"apierror-visualeditor-difffailed": "Nepodařilo se zobrazit rozdíl",
-	"apierror-visualeditor-docserver-http-error": "Vyskytla se chyba při kontaktování Parsoid/RESTBase serveru: $1",
-	"apierror-visualeditor-docserver-http": "Vyskytla se chyba při kontaktování Parsoid/RESTBase serveru (HTTP $1)",
-	"apierror-visualeditor-docserver": "Vyskytla se chyba při kontaktování Parsoid/RESTBase serveru (bez odpovědi)",
 	"apihelp-visualeditor-param-basetimestamp": "Při ukládání toto nastavte na časové razítko revize, která se editovala. Slouží k detekci editačních konfliktů.",
 	"apihelp-visualeditor-param-cachekey": "Při serializaci nebo porovnání použít výsledek předchozího požadavku serializeforcache s tímto klíčem. Přepíše $1html.",
 	"apihelp-visualeditor-param-editintro": "Editační upozornění, které chcete přidat do oznámení.",

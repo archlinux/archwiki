@@ -22,6 +22,8 @@
 	"apihelp-discussiontoolsedit-summary": "Veröffentlichen einer Nachricht auf einer Diskussionsseite.",
 	"apihelp-discussiontoolsfindcomment-summary": "Einen Kommentar anhand seiner ID oder seines Namens suchen.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "Kommentar-ID oder Name",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Hash-Fragment der Überschrift",
+	"apihelp-discussiontoolsfindcomment-param-page": "Seite, auf der das Hash-Fragment der Überschrift einst vorhanden war",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Namen der zu prüfenden Themen",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Ermittelt den Abonnementstatus der angegebenen Themen.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Die zu verwendende Versionsnummer (Standardwert ist die letzte Version).",

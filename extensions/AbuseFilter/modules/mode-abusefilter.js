@@ -129,13 +129,11 @@ ace.define( 'ace/mode/abusefilter', [ 'require', 'exports', 'module', 'ace/lib/o
 		};
 
 		this.createWorker = function ( session ) {
-			var extPath = mw.config.get( 'wgExtensionAssetsPath' ),
-				worker,
-				apiPath;
+			var extPath = mw.config.get( 'wgExtensionAssetsPath' );
 			ace.config.set( 'workerPath', extPath + '/AbuseFilter/modules' );
-			worker = new WorkerClient( [ 'ace' ], 'ace/mode/abusefilter_worker', 'AbuseFilterWorker' );
+			var worker = new WorkerClient( [ 'ace' ], 'ace/mode/abusefilter_worker', 'AbuseFilterWorker' );
 
-			apiPath = mw.config.get( 'wgServer' ) + new mw.Api().defaults.ajax.url;
+			var apiPath = mw.config.get( 'wgServer' ) + new mw.Api().defaults.ajax.url;
 			if ( apiPath.slice( 0, 2 ) === '//' ) {
 				apiPath = window.location.protocol + apiPath;
 			}

@@ -7,7 +7,7 @@
 	"gadgets-desc": "El permet ai utent de scernì foeura di [[Special:Gadgets|acessori CSS e JavaScript]] in di so [[Special:Preferences#mw-prefsection-gadgets|preferenze]]",
 	"prefs-gadgets": "Acessori",
 	"gadgets-prefstext": "Chi de sota a gh'è una lista di acessori speciai che te podet ativà per la toa utenza. \nLa pupart de sti acessori chì l'è fondada sora 'l JavaScript, donca gh'è besogn de ativà el JavaScript in del to programa de navigazzion de fai fonzionà a la sgiusta manera. Notà che i acessori i avarann nissun efet in quella pagina de preferenze chì.\n\nDessorapù, notà che 'sti accessori speciai i fann minga part del programa MediaWiki e de solit a inn realizzad e sgestid di utent de ciaschedun sit wiki. I minestrador de l'interfacia del sit i poden modifegà la lista di acessori disponibil per mezz di pagine di [[MediaWiki:Gadgets-definition|definizzion]], inveci i minestrador del sit i poden modifegà i so [[Special:Gadgets|descrizzion]], 'doe te podet vedè el codes sorgent de ciaschedun di acessori. El numer de utent per ciaschedun di acessori in su 'sto wiki chì l'è in la lista in di [[Special:GadgetUsage|statisteghe de utilizazzion di acessori]].",
-	"gadgets": "Acessori",
+	"special-gadgets": "Acessori",
 	"gadgetusage": "Statisteghe de l'uso di acessori",
 	"gadgetusage-gadget": "Acessori",
 	"gadgetusage-usercount": "Numer de utent",
@@ -34,10 +34,5 @@
 	"gadgets-export-download": "Descarega",
 	"gadgets-validate-notset": "La proprietà <code>$1</code> l'è minga impostada.",
 	"gadgets-validate-wrongtype": "La proprietà <code>$1</code> la gh'hà de vesser de tipo <code>$2</code> inscambi che <code>$3</code>.",
-	"right-gadgets-edit": "Modifega i acessori JavaScript e i pagine CSS",
-	"action-gadgets-edit": "modifega quell acessori Javascript chì o la pagina CSS",
-	"right-gadgets-definition-edit": "Modifega i definizzion di acessori",
-	"action-gadgets-definition-edit": "modifegà i definizzin di acessori",
-	"gadgets-wrong-contentmodel": "I pagine del spazzi di nom {{ns:2302}} i gh'hann de vegnì del modell de contegnud GadgetDefinition.",
 	"gadgets-supports-urlload": "Quell acessori el suporta el caregament per mez de URL cont el parametro de query <code>?withgadget</code> ."
 }

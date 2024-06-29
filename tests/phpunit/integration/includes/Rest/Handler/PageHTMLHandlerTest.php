@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
-use DeferredUpdates;
 use Exception;
 use HashBagOStuff;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Hook\ParserLogLinterDataHook;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Rest\Handler\PageHTMLHandler;
@@ -42,16 +42,11 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		// Clean up these tables after each test
-		$this->tablesUsed = [
-			'page',
-			'revision',
-			'comment',
-			'text',
-			'content'
-		];
-
 		$this->parserCacheBagOStuff = new HashBagOStuff();
+		// Protect the ObjectCacheFactory from the service container reset,
+		// so the emulated parser cache persists between calls to executeHandler().
+		$objectCacheFactory = $this->getServiceContainer()->getObjectCacheFactory();
+		$this->setService( 'ObjectCacheFactory', $objectCacheFactory );
 	}
 
 	/**
@@ -62,7 +57,13 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	private function newHandler( ?Parsoid $parsoid = null ): PageHTMLHandler {
 		if ( $parsoid ) {
 			$this->resetServicesWithMockedParsoid( $parsoid );
+		} else {
+			// ParserOutputAccess has a localCache which can return stale content.
+			// Resetting ensures that ParsoidCachePrewarmJob gets a fresh copy
+			// of ParserOutputAccess and ParsoidOutputAccess without these problems!
+			$this->resetServices();
 		}
+
 		return $this->newPageHtmlHandler();
 	}
 
@@ -108,7 +109,7 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$handler = $this->newHandler();
-		$data = $this->executeHandlerAndGetBodyData( $handler, $request, [
+		$this->executeHandlerAndGetBodyData( $handler, $request, [
 			'format' => 'with_html'
 		] );
 	}
@@ -187,6 +188,55 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 
 		$msg = wfMessage( 'logouttext' )->inLanguage( 'de' )->useDatabase( false );
 		$this->assertStringContainsString( $msg->parse(), $htmlResponse );
+	}
+
+	/**
+	 * Assert that we return a 404 even if an associated remote file description
+	 * page exists (T353688).
+	 */
+	public function testRemoteDescriptionWithNonexistentFilePage() {
+		$name = 'JustSomeSillyFile.png';
+
+		$this->installMockFileRepo( $name );
+
+		$page = $this->getNonexistingTestPage( "File:$name" );
+
+		$request = new RequestData(
+			[ 'pathParams' => [ 'title' => $page->getTitle()->getPrefixedDBkey() ] ]
+		);
+		$handler = $this->newHandler();
+		$exception = $this->executeHandlerAndGetHttpException( $handler, $request, [
+			'format' => 'with_html'
+		] );
+
+		$this->assertSame( 404, $exception->getCode() );
+	}
+
+	/**
+	 * Assert that we return the local page content even if an associated remote
+	 * file description page exists (T353688).
+	 */
+	public function testRemoteDescriptionWithExistingFilePage() {
+		$name = 'JustSomeSillyFile.png';
+
+		$this->installMockFileRepo( $name );
+
+		$pageName = "File:$name";
+		$this->editPage( $pageName, 'Local content' );
+
+		$request = new RequestData(
+			[ 'pathParams' => [ 'title' => $pageName ] ]
+		);
+		$handler = $this->newHandler();
+		$data = $this->executeHandlerAndGetBodyData( $handler, $request, [
+			'format' => 'with_html'
+		] );
+
+		$this->assertSame( $pageName, $data['key'] );
+		$this->assertSame( $pageName, $data['title'] );
+
+		$this->assertStringContainsString( '<html', $data['html'] );
+		$this->assertStringContainsString( 'Local content', $data['html'] );
 	}
 
 	/**
@@ -459,8 +509,7 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testStashingWithRateLimitExceeded() {
 		// Set the rate limit to 1 request per minute
 		$this->overrideConfigValue(
-			MainConfigNames::RateLimits,
-			[
+			MainConfigNames::RateLimits, [
 				'stashbasehtml' => [
 					'&can-bypass' => false,
 					'ip' => [ 1, 60 ],
@@ -470,12 +519,13 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$page = $this->getExistingTestPage();
+		$authority = $this->getAuthority();
 
-		$this->executePageHTMLRequest( $page, [ 'stash' => true ] );
+		$this->executePageHTMLRequest( $page, [ 'stash' => true ], [], $authority );
 		// In this request, the rate limit has been exceeded, so it should throw.
 		$this->expectException( LocalizedHttpException::class );
 		$this->expectExceptionCode( 429 );
-		$this->executePageHTMLRequest( $page, [ 'stash' => true ] );
+		$this->executePageHTMLRequest( $page, [ 'stash' => true ], [], $authority );
 	}
 
 }

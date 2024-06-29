@@ -1,26 +1,29 @@
 {
 	"@metadata": {
 		"authors": [
+			"Arielyurusova",
 			"Bowleerin",
 			"Cwlin0416",
 			"Kly",
 			"Liangent",
 			"Liuxinyu970226",
+			"LowensteinYang",
 			"Mark85296341",
 			"Philip",
+			"SunAfterRain",
 			"Waihorace",
 			"Wbxshiori",
 			"Winston Sung",
-			"乌拉跨氪",
-			"SunAfterRain"
+			"乌拉跨氪"
 		]
 	},
 	"cite-desc": "加入用於參考資料的 <code>&lt;ref&gt;</code> 與 <code>&lt;references/&gt;</code> 標籤",
 	"cite_error": "引用錯誤：$1",
 	"cite_error_ref_invalid_dir": "無效的 <code>dir=\"$1\"</code>，必須是 <code>ltr</code> 或 <code>rtl</code>",
+	"cite_error_ref_conflicting_dir": "其中一個名為\"$1\"的<code>&lt;ref&gt;</code>標籤具有衝突的dir（書寫方向）屬性。",
 	"cite_error_ref_numeric_key": "無效的 <code>&lt;ref&gt;</code> 標籤，name 屬性不能使用數字，請使用可描述內容的標題",
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> 標籤開頭格式錯誤或名稱不正確",
-	"cite_error_ref_too_many_keys": "無效的 <code>&lt;ref&gt;</code> 標籤，無效的 name 屬性值，可能名稱過長",
+	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code>標籤內有無效參數",
 	"cite_error_ref_nested_extends": "不允許超出一個層級深度的擴充 <code>&lt;ref&gt;</code> 標籤",
 	"cite_error_ref_no_input": "無效的 <code>&lt;ref&gt;</code> 標籤，沒有名稱的參考必須要有內容",
 	"cite_error_references_duplicate_key": "無效的<code>&lt;ref&gt;</code>標籤；name屬性“$1”使用不同內容定義了多次",
@@ -32,7 +35,6 @@
 	"cite_error_included_references": "<code>&lt;references&gt;</code> 缺少結束標籤",
 	"cite_error_group_refs_without_references": "使用群組名稱 \"$1\" 的 <code>&lt;ref&gt;</code> 標籤已存在，但查無對應的 <code>&lt;references group=\"$1\"/&gt;</code> 標籤",
 	"cite_error_references_group_mismatch": "在 <code>&lt;references&gt;</code> 中的 <code>&lt;ref&gt;</code> 標籤 group 屬性衝突 \"$1\"。",
-	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>內定義的name（名稱）為「$2」的<code>&lt;ref&gt;</code>標籤有未在前文內出現過的group（分組）屬性「$1」。",
 	"cite_error_references_missing_key": "在 <code>&lt;references&gt;</code> 中定義的 <code>&lt;ref&gt;</code> 標籤設定 name 屬性為 \"$1\"，但在前文中並未使用。",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code> 中定義的<code>&lt;ref&gt;</code> 沒有設定 name 屬性。",
 	"cite_error_empty_references_define": "group（分組）為「$2」的<code>&lt;references&gt;</code>內定義的name（名稱）為「$1」的<code>&lt;ref&gt;</code>標籤沒有內容。",

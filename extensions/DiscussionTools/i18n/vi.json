@@ -3,6 +3,7 @@
 		"authors": [
 			"Bluetpp",
 			"CactiStaccingCrane",
+			"Doraemonluonbentoi",
 			"Dotr",
 			"Flyplanevn27",
 			"Matma Rex",
@@ -10,6 +11,7 @@
 			"Nghiemtrongdai VN",
 			"NguoiDungKhongDinhDanh",
 			"Phjtieudoc",
+			"Pisceskaze",
 			"Vinhtantran"
 		]
 	},
@@ -142,9 +144,9 @@
 	"discussiontools-topicsubscription-error-not-found-body": "Không tìm thấy theo dõi được chỉ định trong URL.",
 	"discussiontools-topicsubscription-error-not-found-title": "Không tìm thấy theo dõi",
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Bạn}} sẽ nhận được thông báo về bình luận mới trong chủ đề này.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "Bạn đã theo dõi.",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "Bạn sẽ không nhận thông báo bình luận mới trong chủ đề này nữa.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "Bạn đã ngừng theo dõi.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Bạn}} đã theo dõi!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Bạn}} không còn nhận được thông báo về bình luận mới trong chủ đề này.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Bạn}} đã ngừng theo dõi.",
 	"discussiontools-topicsubscription-pager-actions": "Tác vụ",
 	"discussiontools-topicsubscription-pager-created": "Theo dõi đầu tiên",
 	"discussiontools-topicsubscription-pager-notified": "Thông báo mới nhất",
@@ -159,7 +161,6 @@
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Lưu trữ}} trang thảo luận",
 	"echo-pref-tooltip-dt-subscription": "Gửi thông báo cho tôi khi có người bình luận về chủ đề tôi theo dõi.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Thông báo cho tôi khi một chủ đề tôi theo dõi được lưu trữ hoặc xóa khỏi trang, hoặc nếu thông báo về bình luận mới được đăng tại chủ đề đó không thể gửi được vì lý do nào khác.",
-	"minerva-talk-full-page": "Đọc dưới dạng trang wiki",
 	"tag-discussiontools-added-comment-description": "Sửa đổi này thêm một lời bình luận vào trang thảo luận",
 	"tag-discussiontools-description": "Sửa đổi bằng Công cụ Thảo luận",
 	"tag-discussiontools-edit": "Đã sửa bình luận",

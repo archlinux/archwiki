@@ -9,7 +9,7 @@
 	"math_syntax_error": "syntaktiski zmylk",
 	"math_unknown_error": "njeznaty zmylk",
 	"math_unknown_function": "njeznata funkcija \"$1\"",
-	"mw_math_mathml": "MathML jeli móžno (eksperimentalnje)",
-	"mw_math_source": "Jako TeX wostajić (za tekstowe wobhladowaki)",
+	"mw-math-mathml": "MathML jeli móžno (eksperimentalnje)",
+	"mw-math-source": "Jako TeX wostajić (za tekstowe wobhladowaki)",
 	"prefs-math": "Math"
 }

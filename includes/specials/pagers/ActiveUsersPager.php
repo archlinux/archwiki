@@ -21,8 +21,9 @@
 
 namespace MediaWiki\Pager;
 
-use IContextSource;
+use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
@@ -42,7 +43,6 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * @ingroup Pager
  */
 class ActiveUsersPager extends UsersPager {
-
 	/**
 	 * @var FormOptions
 	 */
@@ -71,6 +71,7 @@ class ActiveUsersPager extends UsersPager {
 	 * @param IConnectionProvider $dbProvider
 	 * @param UserGroupManager $userGroupManager
 	 * @param UserIdentityLookup $userIdentityLookup
+	 * @param HideUserUtils $hideUserUtils
 	 * @param FormOptions $opts
 	 */
 	public function __construct(
@@ -80,6 +81,7 @@ class ActiveUsersPager extends UsersPager {
 		IConnectionProvider $dbProvider,
 		UserGroupManager $userGroupManager,
 		UserIdentityLookup $userIdentityLookup,
+		HideUserUtils $hideUserUtils,
 		FormOptions $opts
 	) {
 		parent::__construct(
@@ -89,6 +91,7 @@ class ActiveUsersPager extends UsersPager {
 			$dbProvider,
 			$userGroupManager,
 			$userIdentityLookup,
+			$hideUserUtils,
 			null,
 			null
 		);
@@ -144,7 +147,7 @@ class ActiveUsersPager extends UsersPager {
 			$conds = array_merge( $conds, $data['conds'] );
 		}
 		if ( $this->requestedUser != '' ) {
-			$conds[] = 'qcc_title >= ' . $dbr->addQuotes( $this->requestedUser );
+			$conds[] = $dbr->expr( 'qcc_title', '>=', $this->requestedUser );
 		}
 		if ( $this->groups !== [] ) {
 			$tables['ug1'] = 'user_groups';
@@ -162,9 +165,7 @@ class ActiveUsersPager extends UsersPager {
 			$conds['ug2.ug_user'] = null;
 		}
 		if ( !$this->canSeeHideuser() ) {
-			$conds[] = 'NOT EXISTS (' . $dbr->selectSQLText(
-					'ipblocks', '1', [ 'ipb_user=user_id', 'ipb_deleted' => 1 ], __METHOD__
-				) . ')';
+			$conds[] = $this->hideUserUtils->getExpression( $dbr );
 		}
 		$subquery = $dbr->buildSelectSubquery( $tables, $fields, $conds, $fname, $options, $jconds );
 
@@ -172,10 +173,10 @@ class ActiveUsersPager extends UsersPager {
 		$tables = [ 'qcc_users' => $subquery, 'recentchanges' ];
 		$jconds = [ 'recentchanges' => [ 'LEFT JOIN', [
 			'rc_actor = actor_id',
-			'rc_type != ' . $dbr->addQuotes( RC_EXTERNAL ), // Don't count wikidata.
-			'rc_type != ' . $dbr->addQuotes( RC_CATEGORIZE ), // Don't count categorization changes.
-			'rc_log_type IS NULL OR rc_log_type != ' . $dbr->addQuotes( 'newusers' ),
-			'rc_timestamp >= ' . $dbr->addQuotes( $timestamp ),
+			$dbr->expr( 'rc_type', '!=', RC_EXTERNAL ), // Don't count wikidata.
+			$dbr->expr( 'rc_type', '!=', RC_CATEGORIZE ), // Don't count categorization changes.
+			$dbr->expr( 'rc_log_type', '=', null )->or( 'rc_log_type', '!=', 'newusers' ),
+			$dbr->expr( 'rc_timestamp', '>=', $timestamp ),
 		] ] ];
 		$conds = [];
 
@@ -237,15 +238,33 @@ class ActiveUsersPager extends UsersPager {
 		// Although the first query already hits the block table for un-privileged, this
 		// is done in two queries to avoid huge quicksorts and to make COUNT(*) correct.
 		$dbr = $this->getDatabase();
-		$res = $dbr->newSelectQueryBuilder()
-			->select( [ 'ipb_user', 'deleted' => 'MAX(ipb_deleted)', 'sitewide' => 'MAX(ipb_sitewide)' ] )
-			->from( 'ipblocks' )
-			->where( [ 'ipb_user' => $uids ] )
-			->groupBy( [ 'ipb_user' ] )
-			->caller( __METHOD__ )->fetchResultSet();
+		if ( $this->blockTargetReadStage === SCHEMA_COMPAT_READ_OLD ) {
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [
+					'bt_user' => 'ipb_user',
+					'deleted' => 'MAX(ipb_deleted)',
+					'sitewide' => 'MAX(ipb_sitewide)'
+				] )
+				->from( 'ipblocks' )
+				->where( [ 'ipb_user' => $uids ] )
+				->groupBy( [ 'ipb_user' ] )
+				->caller( __METHOD__ )->fetchResultSet();
+		} else {
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [
+					'bt_user',
+					'deleted' => 'MAX(bl_deleted)',
+					'sitewide' => 'MAX(bl_sitewide)'
+				] )
+				->from( 'block_target' )
+				->join( 'block', null, 'bl_target=bt_id' )
+				->where( [ 'bt_user' => $uids ] )
+				->groupBy( [ 'bt_user' ] )
+				->caller( __METHOD__ )->fetchResultSet();
+		}
 		$this->blockStatusByUid = [];
 		foreach ( $res as $row ) {
-			$this->blockStatusByUid[$row->ipb_user] = [
+			$this->blockStatusByUid[$row->bt_user] = [
 				'deleted' => $row->deleted,
 				'sitewide' => $row->sitewide,
 			];

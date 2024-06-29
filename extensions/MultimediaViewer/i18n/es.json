@@ -15,7 +15,9 @@
 			"PoLuX124",
 			"Rodney Araujo",
 			"Themasterriot",
-			"Tiberius1701"
+			"Tiberius1701",
+			"Eulalio",
+			"No se"
 		]
 	},
 	"multimediaviewer-desc": "Expande las miniaturas a un tamaño mayor en una vista de pantalla completa",
@@ -28,6 +30,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|un autor más|$1 autores más}}",
 	"multimediaviewer-multiple-authors-combine": "$1 y $2",
 	"multimediaviewer-metadata-error": "No se pueden cargar detalles de la imagen (error: $1)",
+	"multimediaviewer-file-not-found-error": "Lo sentimos, el archivo $1 no se puede mostrar porque no está presente en la página actual.",
 	"multimediaviewer-thumbnail-error": "No se puede mostrar el archivo",
 	"multimediaviewer-thumbnail-error-description": "Parece que hay un problema técnico. Puedes $1 si persiste. Error: $2",
 	"multimediaviewer-thumbnail-error-retry": "reintentar",

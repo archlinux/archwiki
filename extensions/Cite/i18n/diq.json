@@ -29,7 +29,6 @@
 	"cite_error_included_references": "Seba çıniyayışê <code>&lt;references&gt;</code> ra etiketo racıneyêno",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> Pê namey \"$1\" ya yew etiketê grube esto, lakin dustê cı de etiketê <code>&lt;references group=\"$1\"/&gt;</code> nêvineya",
 	"cite_error_references_group_mismatch": "etiketê <code>&lt;ref&gt;</code>î, zerre <code>&lt;references/&gt;</code> de ser grupê \"$1\"î konflikt keno.",
-	"cite_error_references_missing_group": "etiketê <code>&lt;ref&gt;</code>î, zerre <code>&lt;references/&gt;</code> de tevsir biyo ke ser grupê \"$1\"î ke verni de nieseno.",
 	"cite_error_references_missing_key": "etiketê <code>&lt;ref&gt;</code>î, zerre <code>&lt;references/&gt;</code> de tevisr biyo ser name \"$1\"î verni de niesto.",
 	"cite_error_references_no_key": "etiketê <code>&lt;ref&gt;</code>î, zerre <code>&lt;references/&gt;</code> de tevsir biyo name xo çini yo.",
 	"cite_error_empty_references_define": "etiketê <code>&lt;ref&gt;</code>î, zerre <code>&lt;references/&gt;</code> de tevsir biyo \"$1\" kontent xo çini yo.",

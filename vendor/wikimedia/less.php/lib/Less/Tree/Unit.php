@@ -4,10 +4,9 @@
  */
 class Less_Tree_Unit extends Less_Tree {
 
-	var $numerator = [];
-	var $denominator = [];
+	public $numerator = [];
+	public $denominator = [];
 	public $backupUnit;
-	public $type = 'Unit';
 
 	public function __construct( $numerator = [], $denominator = [], $backupUnit = null ) {
 		$this->numerator = $numerator;
@@ -28,7 +27,6 @@ class Less_Tree_Unit extends Less_Tree {
 			$output->add( $this->denominator[0] );
 		} elseif ( !Less_Parser::$options['strictUnits'] && $this->backupUnit ) {
 			$output->add( $this->backupUnit );
-			return;
 		}
 	}
 
@@ -45,14 +43,14 @@ class Less_Tree_Unit extends Less_Tree {
 	}
 
 	/**
-	 * @param Less_Tree_Unit $other
+	 * @param self $other
 	 */
 	public function compare( $other ) {
 		return $this->is( $other->toString() ) ? 0 : -1;
 	}
 
 	public function is( $unitString ) {
-		return $this->toString() === $unitString;
+		return strtoupper( $this->toString() ) === strtoupper( $unitString );
 	}
 
 	public function isLength() {

@@ -74,6 +74,13 @@ class CacheTime implements ParserCacheMetadata, JsonUnserializable {
 	}
 
 	/**
+	 * @return bool true if a cache time has been set
+	 */
+	public function hasCacheTime(): bool {
+		return $this->mCacheTime !== '';
+	}
+
+	/**
 	 * setCacheTime() sets the timestamp expressing when the page has been rendered.
 	 * This does not control expiry, see updateCacheExpiry() for that!
 	 * @param string $t TS_MW timestamp
@@ -151,19 +158,8 @@ class CacheTime implements ParserCacheMetadata, JsonUnserializable {
 			return 0;
 		}
 
-		$expire = $this->mCacheExpiry;
-
-		if ( $expire === null ) {
-			$expire = $parserCacheExpireTime;
-		} else {
-			$expire = min( $expire, $parserCacheExpireTime );
-		}
-
-		if ( $expire <= 0 ) {
-			return 0; // not cacheable
-		} else {
-			return $expire;
-		}
+		$expire = min( $this->mCacheExpiry ?? $parserCacheExpireTime, $parserCacheExpireTime );
+		return $expire > 0 ? $expire : 0;
 	}
 
 	/**

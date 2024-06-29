@@ -7,7 +7,6 @@ const { action, assert, REST, utils } = require( 'api-testing' );
 const domino = require( 'domino' );
 const should = require( 'chai' ).should();
 const semver = require( 'semver' );
-const url = require( 'url' );
 const fs = require( 'fs' );
 
 const parsoidOptions = {
@@ -68,7 +67,7 @@ function contentTypeMatcher( expectedMime, expectedSpec, expectedVersion ) {
 		const [ , mime, spec, version ] = parts;
 
 		// match version using caret semantics
-		if ( !semver.satisfies( version, `^${expectedVersion || defaultContentVersion}` ) ) {
+		if ( !semver.satisfies( version, `^${ expectedVersion || defaultContentVersion }` ) ) {
 			return false;
 		}
 
@@ -83,13 +82,9 @@ function contentTypeMatcher( expectedMime, expectedSpec, expectedVersion ) {
 // TODO: Replace all occurrences of (Lint Page/Lint_Page) with `page`.
 describe( '/transform/ endpoint', function () {
 	const client = new REST();
-	const parsedUrl = new url.URL( client.req.app );
-	const PARSOID_URL = parsedUrl.href;
-	const endpointPrefix = client.pathPrefix = 'rest.php/coredev/v0';
+	const endpointPrefix = client.pathPrefix = 'rest.php/v1';
 	const page = utils.title( 'TransformSource_' );
-	const pageWithSpaces = page.replace( '_', ' ' );
 	const pageEncoded = encodeURIComponent( page );
-	const pageWithSpacesEncoded = encodeURIComponent( pageWithSpaces );
 	const pageContent = '{|\nhi\n|ho\n|}';
 	let revid;
 
@@ -204,8 +199,8 @@ describe( '/transform/ endpoint', function () {
 				.expect( 406 )
 				.expect( function ( res ) {
 					// FIXME: See skipped html error test above
-					JSON.parse( res.error.text ).message.should.equal(
-						'Not acceptable'
+					JSON.parse( res.error.text ).errorKey.should.equal(
+						'rest-unsupported-target-format'
 					);
 				} )
 				.end( done );
@@ -491,7 +486,7 @@ describe( '/transform/ endpoint', function () {
 				.end( done );
 		} );
 
-		it( 'should lint the given page, transform', function ( done ) {
+		it( 'should lint the given revision, transform', function ( done ) {
 			if ( skipForNow ) {
 				return this.skip();
 			} // Enable linting config
@@ -507,24 +502,18 @@ describe( '/transform/ endpoint', function () {
 				.end( done );
 		} );
 
-		it( 'should redirect title to latest revision (lint)', function ( done ) {
+		it( 'should lint the given page, transform', function ( done ) {
 			if ( skipForNow ) {
 				return this.skip();
 			} // Enable linting config
 			client.req
-				.post( endpointPrefix + '/transform/wikitext/to/lint/' )
-				.send( {
-					original: {
-						title: 'Lint_Page'
-					}
-				} )
-				.expect( 307 ) // no revid or wikitext source provided
+				.post( endpointPrefix + '/transform/wikitext/to/lint/Lint_Page' )
+				.send( {} )
+				.expect( status200 )
 				.expect( function ( res ) {
-					res.headers.should.have.property( 'location' );
-					res.headers.location.should.equal(
-						PARSOID_URL + endpointPrefix +
-						'/transform/wikitext/to/lint/Lint%20Page/102'
-					);
+					res.body.should.be.instanceof( Array );
+					res.body.length.should.equal( 1 );
+					res.body[ 0 ].type.should.equal( 'fostered' );
 				} )
 				.end( done );
 		} );
@@ -641,17 +630,12 @@ describe( '/transform/ endpoint', function () {
 			client.req
 				.post( endpointPrefix + '/transform/wikitext/to/html/' )
 				.send( {
+					// no revid or wikitext source provided
 					original: {
 						title: page
 					}
 				} )
-				.expect( 307 ) // no revid or wikitext source provided
-				.expect( function ( res ) {
-					res.headers.should.have.property( 'location' );
-					res.headers.location.should.equal(
-						PARSOID_URL + endpointPrefix + `/transform/wikitext/to/html/${pageWithSpacesEncoded}/${revid}`
-					);
-				} )
+				.expect( validHtmlResponse() )
 				.end( done );
 		} );
 
@@ -660,17 +644,12 @@ describe( '/transform/ endpoint', function () {
 			client.req
 				.post( endpointPrefix + '/transform/wikitext/to/pagebundle/' )
 				.send( {
+					// no revid or wikitext source provided
 					original: {
 						title: page
 					}
 				} )
-				.expect( 307 ) // no revid or wikitext source provided
-				.expect( function ( res ) {
-					res.headers.should.have.property( 'location' );
-					res.headers.location.should.equal(
-						PARSOID_URL + endpointPrefix + `/transform/wikitext/to/pagebundle/${pageWithSpacesEncoded}/${revid}`
-					);
-				} )
+				.expect( validPageBundleResponse() )
 				.end( done );
 		} );
 
@@ -682,16 +661,7 @@ describe( '/transform/ endpoint', function () {
 						title: page
 					}
 				} )
-				.expect( 307 ) // no revid or wikitext source provided
-				.expect( function ( res ) {
-					res.headers.should.have.property( 'location' );
-					const expected = PARSOID_URL + endpointPrefix +
-						`/transform/wikitext/to/html/${pageWithSpacesEncoded}/`;
-
-					assert.strictEqual(
-						res.headers.location.startsWith( expected ), true, res.headers.location
-					);
-				} )
+				.expect( validHtmlResponse() )
 				.end( done );
 		} );
 
@@ -2057,7 +2027,7 @@ describe( '/transform/ endpoint', function () {
 					const doc = domino.createDocument( html );
 					const meta = doc.querySelector( 'meta[property="mw:html:version"], meta[property="mw:htmlVersion"]' );
 					meta.getAttribute( 'content' ).should.satisfy(
-						( version ) => semver.satisfies( version, `^${contentVersion}` )
+						( version ) => semver.satisfies( version, `^${ contentVersion }` )
 					);
 				} ) )
 				.end( done );
@@ -2305,8 +2275,8 @@ describe( '/transform/ endpoint', function () {
 				.send( { wikitext: '== h2 ==' } )
 				.expect( 404 )
 				.expect( function ( res ) {
-					JSON.parse( res.error.text ).message.should.equal(
-						'Invalid transform: wikitext/to/pagebundle'
+					JSON.parse( res.error.text ).errorKey.should.equal(
+						'rest-invalid-transform'
 					);
 				} )
 				.end( done );
@@ -2316,7 +2286,7 @@ describe( '/transform/ endpoint', function () {
 	describe( 'ETags', function () {
 		it( '/transform/ should use ETag from If-Match header', async () => {
 			const { statusCode: status1, headers: headers1, text: text1 } = await client.req
-				.get( `rest.php/v1/revision/${revid}/html` )
+				.get( `rest.php/v1/revision/${ revid }/html` )
 				.query( { stash: 'yes' } );
 
 			assert.deepEqual( status1, 200, text1 );
@@ -2325,7 +2295,7 @@ describe( '/transform/ endpoint', function () {
 			// The request above should have stashed a rendering associated with the ETag it
 			// returned. Pass the ETag in the If-Match header.
 			const { statusCode: status2, text: text2 } = await client.req
-				.post( endpointPrefix + `/transform/html/to/wikitext/${page}/${revid}` )
+				.post( endpointPrefix + `/transform/html/to/wikitext/${ page }/${ revid }` )
 				.set( 'If-Match', headers1.etag )
 				.send( {
 					html: text1
@@ -2340,7 +2310,7 @@ describe( '/transform/ endpoint', function () {
 
 		it( '/transform/ should use ETag from body', async () => {
 			const { statusCode: status1, headers: headers1, text: text1 } = await client.req
-				.get( `rest.php/v1/revision/${revid}/html` )
+				.get( `rest.php/v1/revision/${ revid }/html` )
 				.query( { stash: 'yes' } );
 
 			assert.deepEqual( status1, 200, text1 );
@@ -2350,7 +2320,7 @@ describe( '/transform/ endpoint', function () {
 			// returned. Submit it in the request body.
 			// Don't put the revision ID into the path, to test that the one from the ETag is used.
 			const { statusCode: status2, text: text2 } = await client.req
-				.post( endpointPrefix + `/transform/html/to/wikitext/${page}` )
+				.post( endpointPrefix + `/transform/html/to/wikitext/${ page }` )
 				.send( {
 					html: text1,
 					original: { etag: headers1.etag }
@@ -2365,7 +2335,7 @@ describe( '/transform/ endpoint', function () {
 
 		it( '/transform/ should refuse non-matching ETags in header', async () => {
 			const { status, text } = await client.req
-				.post( endpointPrefix + `/transform/html/to/wikitext/${page}/${revid}` )
+				.post( endpointPrefix + `/transform/html/to/wikitext/${ page }/${ revid }` )
 				.set( 'If-Match', '"1337/deadbeef"' )
 				.send( {
 					html: '<p>hello</p>'
@@ -2376,7 +2346,7 @@ describe( '/transform/ endpoint', function () {
 
 		it( '/transform/ should refuse non-matching ETags in the body', async () => {
 			const { status, text } = await client.req
-				.post( endpointPrefix + `/transform/html/to/wikitext/${page}` )
+				.post( endpointPrefix + `/transform/html/to/wikitext/${ page }` )
 				.send( {
 					html: '<p>hello</p>',
 					original: { etag: '"1337/deadbeef"' }
@@ -2393,7 +2363,7 @@ describe( '/transform/ endpoint', function () {
 		//       stashed or cached. If so, it should be used for selser.
 		it.skip( 'should trigger on If-Match header', async () => {
 			const pageResponse = await client.req
-				.get( `rest.php/v1/page/${pageEncoded}/html` )
+				.get( `rest.php/v1/page/${ pageEncoded }/html` )
 				.query( { stash: 'yes' } );
 
 			pageResponse.headers.should.have.property( 'etag' );
@@ -2429,7 +2399,7 @@ describe( '/transform/ endpoint', function () {
 	describe( 'stashing with renderid in body', function () {
 		it( 'should trigger on renderid field in the body', async () => {
 			const pageResponse = await client.req
-				.get( `rest.php/v1/page/${pageEncoded}/html` )
+				.get( `rest.php/v1/page/${ pageEncoded }/html` )
 				.query( { stash: 'yes' } );
 
 			pageResponse.headers.should.have.property( 'etag' );
@@ -2469,7 +2439,7 @@ describe( '/transform/ endpoint', function () {
 	describe( 'selser using rendering based on revid', function () {
 		it( 'should trigger on revid field in the body', async () => {
 			const pageResponse = await client.req
-				.get( `rest.php/v1/page/${pageEncoded}/with_html` );
+				.get( `rest.php/v1/page/${ pageEncoded }/with_html` );
 
 			const transformResponse = await client.req
 				.post( endpointPrefix + '/transform/html/to/wikitext/' )

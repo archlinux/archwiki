@@ -19,7 +19,6 @@
 	"cite_error_included_ref": "A nchiusa <code>&lt;/ref&gt;</code> nun se trova p' 'o tag <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "'O tag <code>&lt;ref&gt;</code> esiste p' 'o gruppo annummenato \"$1\", ma nun currisponne a 'o tag accucchiato <code>&lt;references group=\"$1\"/&gt;</code>, o a nu tag 'e nchiusa <code>&lt;/ref&gt;</code> manco",
 	"cite_error_references_group_mismatch": "'O tag <code>&lt;ref&gt;</code> tag int' 'e <code>&lt;references&gt;</code> tène cunflitte cu l'attribbute d' 'o gruppo \"$1\".",
-	"cite_error_references_missing_group": "'O tag <code>&lt;ref&gt;</code> definito int'a <code>&lt;references&gt;</code> ave n'attribbuto 'e gruppo \"$1\" cosa ca nun se veresse dint' 'o testo 'e primma.",
 	"cite_error_references_missing_key": "'O tag <code>&lt;ref&gt;</code> c' 'o nomme \"$1\" definito int'a <code>&lt;references&gt;</code> nun è ausato dint' 'o testo 'e primma.",
 	"cite_error_references_no_key": "'O tag <code>&lt;ref&gt;</code> definito int'a <code>&lt;references&gt;</code> nun tene n'attribbuto 'e nomme.",
 	"cite_error_empty_references_define": "'O tag <code>&lt;ref&gt;</code> definito int'a <code>&lt;references&gt;</code> c' 'o nomme \"$1\" nun tene cuntenute.",

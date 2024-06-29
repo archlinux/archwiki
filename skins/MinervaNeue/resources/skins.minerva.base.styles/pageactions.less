@@ -2,12 +2,12 @@
 @import '../../minerva.less/minerva.variables.less';
 
 .heading-holder {
-	padding: @titleSectionSpacingTop 0 0;
+	padding: @top-spacing-title-section 0 0;
 	position: relative;
 
 	.tagline {
-		color: @color-subtle;
-		font-size: @taglineFontSize;
+		color: var( --color-subtle );
+		font-size: @font-size-tag-line;
 	}
 }
 
@@ -21,15 +21,13 @@
 	opacity: 0.25;
 }
 
-// FIXME: Remove #page-actions when cache has cleared
-#p-views,
-#page-actions {
+#p-views {
 	position: relative;
 }
 
 .page-actions-menu {
 	box-sizing: border-box;
-	border-top: @border-width-base @border-style-base #eaecf0;
+	border-top: @border-width-base @border-style-base var( --border-color-muted );
 	border-bottom: @border-subtle;
 	margin-top: -@border-width-base; // Offset top border.
 }
@@ -48,7 +46,7 @@
 	overflow: hidden;
 
 	.cdx-button {
-		color: @icon-color !important;
+		color: var( --color-subtle ) !important;
 		font-weight: 500;
 	}
 }
@@ -88,9 +86,7 @@
 // On small devices that don't support Javascript, hide the page actions bar
 @media all and ( max-width: @width-breakpoint-mobile - 1 ) {
 	.client-nojs {
-		// FIXME: Remove #page-actions when cache has cleared
-		#p-views,
-		#page-actions {
+		#p-views {
 			display: none;
 		}
 

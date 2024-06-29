@@ -10,10 +10,6 @@
 	"wikieditor-toolbar-tool-bold-example": "စာလုံးအထူ",
 	"wikieditor-toolbar-tool-italic": "အစောင်း",
 	"wikieditor-toolbar-tool-italic-example": "စာလုံးအစောင်း",
-	"wikieditor-toolbar-tool-ilink": "အတွင်းပိုင်း လင့်ခ်",
-	"wikieditor-toolbar-tool-ilink-example": "ချိတ်ဆက်ထားသော ခေါင်းစဉ်",
-	"wikieditor-toolbar-tool-xlink": "ပြင်ပလင့်ခ်များ (http:// ရှေ့ဆက်ကို မမေ့ပါနှင့်)",
-	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com လင့်ခ်ခေါင်းစဉ်",
 	"wikieditor-toolbar-tool-link": "လင့်",
 	"wikieditor-toolbar-tool-link-title": "လင့်ခ် ထည့်ပေါင်းရန်",
 	"wikieditor-toolbar-tool-link-int": "ဝီကီစာမျက်နှာတစ်ခုသို့",
@@ -34,7 +30,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "အတွင်းပိုင်း လင့်ခ်",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "ပြင်ပ လင့်ခ်",
 	"wikieditor-toolbar-tool-file": "ရုပ်ပုံများနှင့် မီဒီယာ",
-	"wikieditor-toolbar-tool-file-example": "Example.jpg",
 	"wikieditor-toolbar-tool-file-title": "ဖိုင်ထည့်ရန်",
 	"wikieditor-toolbar-file-target": "ဖိုင်အမည်:",
 	"wikieditor-toolbar-file-caption": "ပုံစာ",
@@ -56,7 +51,6 @@
 	"wikieditor-toolbar-tool-redirect": "ပြန်ညွှန်း",
 	"wikieditor-toolbar-group-insert": "ထည့်သွင်းရန်",
 	"wikieditor-toolbar-tool-table": "ဇယား",
-	"wikieditor-toolbar-tool-table-example-old": "-\n! ခေါင်းစဉ် ၁\n! ခေါင်းစဉ် ၂\n! ခေါင်းစဉ် ၃\n|-\n| အတန်း ၁, အကွက် ၁\n| အတန်း ၁, အကွက် ၂\n| အတန်း ၁, အကွက် ၃\n|-\n| အတန်း ၂, အကွက် ၁\n| အတန်း ၂, အကွက် ၂\n| အတန်း ၂, အကွက် ၃",
 	"wikieditor-toolbar-tool-table-example-header": "ခေါင်းစဉ် စာသား",
 	"wikieditor-toolbar-tool-table-title": "ဇယားထည့်ရန်",
 	"wikieditor-toolbar-tool-table-example": "ဥပမာ",
@@ -76,8 +70,5 @@
 	"wikieditor-toolbar-help-content-ilink-description": "ပြင်ပ လင့်ခ်",
 	"wikieditor-toolbar-help-content-xlink-description": "ပြင်ပ လင့်ခ်",
 	"wikieditor-realtimepreview-preview": "ကြိုတင်အစမ်းကြည့်ရှုရန်",
-	"wikieditor-realtimepreview-reload": "ပြန်လည်ခေါ်ယူရန်",
-	"wikieditor-realtimepreview-beta-label": "အချိန်နှင့်တပြေးညီ အကြိုမြင်ကွင်း",
-	"wikieditor-realtimepreview-onboarding-title": "အချိန်နှင့်တပြေးညီ အကြိုမြင်ကွင်း",
-	"wikieditor-realtimepreview-onboarding-button": "အိုကေ သဘောပေါက်ပြီ"
+	"wikieditor-realtimepreview-reload": "ပြန်လည်ခေါ်ယူရန်"
 }

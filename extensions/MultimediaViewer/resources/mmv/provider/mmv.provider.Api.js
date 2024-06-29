@@ -73,7 +73,7 @@
 				this.cache[ key ] = getPromise();
 				this.cache[ key ].fail( ( error ) => {
 					// constructor.name is usually not reliable in inherited classes, but OOjs fixes that
-					mw.log( `${this.constructor.name} provider failed to load: `, error );
+					mw.log( `${ this.constructor.name } provider failed to load: `, error );
 				} );
 			}
 			return this.cache[ key ];
@@ -113,7 +113,7 @@
 			const errorCode = data.error && data.error.code;
 			let errorMessage = data.error && data.error.info || 'unknown error';
 			if ( errorCode ) {
-				errorMessage = `${errorCode}: ${errorMessage}`;
+				errorMessage = `${ errorCode }: ${ errorMessage }`;
 			}
 			return errorMessage;
 		}

@@ -8,8 +8,8 @@ use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Parser;
-use User;
 
 /**
  * Component that represents a section of a page to be used from EchoEventPresentationModel subclass.

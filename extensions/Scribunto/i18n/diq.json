@@ -22,7 +22,7 @@
 	"scribunto-common-error-category": "Xırabiya skriptiya pele",
 	"scribunto-common-nosuchmodule": "Xırabiya skripti: \"$2\" nameya yew modul çıniyo.",
 	"scribunto-common-backtrace": "Peydşiyayış:",
-	"scribunto-lua-in-function": "Fonksiyonê \"$1\" dı",
+	"scribunto-lua-in-function": "Fonksiyonê \"$1\" de",
 	"scribunto-lua-error": "Xetay lua: $2.",
 	"scribunto-luastandalone-proc-error": "Xetay lua: Proses nêşeno bıvıraziyo.",
 	"scribunto-module-with-errors-category-desc": "Module dê yew xeta esta",

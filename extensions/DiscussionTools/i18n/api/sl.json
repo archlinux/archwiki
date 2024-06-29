@@ -24,6 +24,8 @@
 	"apihelp-discussiontoolsedit-summary": "Objava sporočila na razpravni strani.",
 	"apihelp-discussiontoolsfindcomment-summary": "Iskanje komentarja po ID-ju ali imenu.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "ID ali ime komentarja",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Fragment zgoščene vrednosti podnaslova",
+	"apihelp-discussiontoolsfindcomment-param-page": "Stran, na kateri je nekoč obstajal fragment zgoščene vrednosti naslova",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Imena tem za preverjanje",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Pridobi stanja naročenosti na predložene teme.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Številka redakcije za uporabo (po privzetem zadnja redakcija).",

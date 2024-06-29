@@ -65,7 +65,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Aquesta referència està definida en una plantilla o en un altre bloc generat. Per això, per ara només pot previsualitzar-se en mode codi.",
 	"cite-ve-referenceslist-missingreflist": "Aquesta llista de referències ha estat generada per una plantilla i, per ara, només es pot modificar en mode de codi font.",
 	"cite-ve-toolbar-group-label": "Referència",
-	"cite-ve-othergroup-item": "referència $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referències",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nom del grup de referències: «$1»"
+	"cite-ve-othergroup-item": "referència $1"
 }

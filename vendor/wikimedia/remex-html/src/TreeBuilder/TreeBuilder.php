@@ -238,7 +238,7 @@ class TreeBuilder {
 	 * @param int $sourceLength The input length
 	 */
 	public function insertCharacters( $text, $start, $length, $sourceStart, $sourceLength ) {
-		list( $prep, $ref ) = $this->appropriatePlace();
+		[ $prep, $ref ] = $this->appropriatePlace();
 		$this->handler->characters( $prep, $ref, $text, $start, $length,
 			$sourceStart, $sourceLength );
 	}
@@ -272,7 +272,7 @@ class TreeBuilder {
 	public function insertForeign( $ns, $name, Attributes $attrs, $void,
 		$sourceStart, $sourceLength
 	) {
-		list( $prep, $ref ) = $this->appropriatePlace();
+		[ $prep, $ref ] = $this->appropriatePlace();
 		$element = new Element( $ns, $name, $attrs );
 		$this->handler->insertElement( $prep, $ref, $element, $void,
 			$sourceStart, $sourceLength );
@@ -324,7 +324,7 @@ class TreeBuilder {
 	 * @param int $sourceLength
 	 */
 	public function comment( $place, $text, $sourceStart, $sourceLength ) {
-		list( $prep, $ref ) = $place ?? $this->appropriatePlace();
+		[ $prep, $ref ] = $place ?? $this->appropriatePlace();
 		$this->handler->comment( $prep, $ref, $text, $sourceStart, $sourceLength );
 	}
 
@@ -626,7 +626,7 @@ class TreeBuilder {
 			// Insert whatever last node ended up being in the previous step at
 			// the appropriate place for inserting a node, but using common
 			// ancestor as the override target. [14]
-			list( $prep, $ref ) = $this->appropriatePlace( $ancestor );
+			[ $prep, $ref ] = $this->appropriatePlace( $ancestor );
 			$insertions[] = [ $prep, $ref, $lastNode ];
 
 			// Execute queued insertions in reverse order.
@@ -738,7 +738,7 @@ class TreeBuilder {
 		$stack = $this->stack;
 		$current = $stack->current;
 		while ( $current && $current->htmlName !== $name &&
-		  isset( self::$impliedEndTags[$current->htmlName] )
+			isset( self::$impliedEndTags[$current->htmlName] )
 		) {
 			$popped = $stack->pop();
 			$this->handler->endTag( $popped, $pos, 0 );

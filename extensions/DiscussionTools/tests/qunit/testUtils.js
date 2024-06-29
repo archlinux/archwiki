@@ -32,8 +32,6 @@ module.exports.getThreadContainer = function ( doc ) {
 /**
  * Get the offset path from ancestor to offset in descendant
  *
- * @copyright 2011-2019 VisualEditor Team and others; see http://ve.mit-license.org
- *
  * @param {Node} ancestor The ancestor node
  * @param {Node} node The descendant node
  * @param {number} nodeOffset The offset in the descendant node

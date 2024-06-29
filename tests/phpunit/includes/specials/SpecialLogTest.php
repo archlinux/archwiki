@@ -4,6 +4,7 @@
  * @author Legoktm
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -24,7 +25,7 @@ class SpecialLogTest extends SpecialPageTestBase {
 		$services = $this->getServiceContainer();
 		return new SpecialLog(
 			$services->getLinkBatchFactory(),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getActorNormalization(),
 			$services->getUserIdentityLookup(),
 			$services->getUserNameUtils()

@@ -46,7 +46,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Custu riferimentu est definidu in unu template o un'àtera genia de blocu generadu, e pro como si podet ammustrare in anteprima petzi cun s'editore de còdighe mitza.",
 	"cite-ve-referenceslist-missingreflist": "Custa lista de riferimentos (de notas) est ingendrada dae unu template, e pro como podet èssere modificada petzi cun s'editore de còdighe mitza.",
 	"cite-ve-toolbar-group-label": "Tzita",
-	"cite-ve-othergroup-item": "$1 riferimentu",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Notas (riferimentos)",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nùmene de su grupu de riferimentos: \"$1\""
+	"cite-ve-othergroup-item": "$1 riferimentu"
 }

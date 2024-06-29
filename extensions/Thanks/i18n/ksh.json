@@ -23,7 +23,6 @@
 	"echo-pref-subscription-edit-thank": "Dank mer för ming Änderong",
 	"echo-pref-tooltip-edit-thank": "Lohß mesch weße, wann sesch einer för en Änderong bedangk, di esch jemaat han.",
 	"echo-category-title-edit-thank": "Dank",
-	"notification-thanks-diff-link": "Ding Änderong",
 	"notification-header-rev-thank": "{{GENDER:$2|Dä|Dat|Dä Metmaacher|De|Dat}} \n$1 hät sesch bei Der bedangk för Ding Änderong aan dä Sigg '''$3'''.{{GENDER:$4|}}",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Eijne|$1 Lük|100=mih wi 99 Lük}} han sesch beij Der bedangk för Ding Ännderong aan dä Sigg <strong>$2</strong>.{{GENDER:$3|}}",
 	"log-name-thanks": "Et Logbohch vum Bedangke",
@@ -34,7 +33,6 @@
 	"thanks-error-invalidpostid": "Di Kännong för dä Beijdraach es nit jöltesch",
 	"flow-thanks-confirmation-special": "Wells De Desch öffentlesch för heh dä Kommäntaa bedanke?",
 	"flow-thanks-thanked-notice": "{{GENDER:$2|Dä|Dat|Dä Metmaacher|De|Dat}} $1 hät Dinge Dangk krähje för wat {{GENDER:$2|hä|et|hä|sei|et}} jeschrevve hät.",
-	"notification-flow-thanks-post-link": "wat de jeschrevve häs",
 	"notification-header-flow-thank": "{{GENDER:$2|Dä|Dat|Dä Metmaacher|De|Dat}} $1 hät sesch bei Der bedangk för wat de em Affschnedd '''$3''' op dä Sigg '''$4''' aanjemärk häs.{{GENDER:$5|}}",
 	"notification-compact-header-flow-thank": "{{GENDER:$2|Dä|Dat|Dä Metmaacher|De|Dat}} $1 hät sesch beij Der bedangk.{{GENDER:$3|}}",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Eijne|$1 Lük|100=mih wi 99 Lük}} han sesch beij Der bedangk för Dinge Bemärkong en dä Sigg <strong>$2</strong>.{{GENDER:$3|}}"

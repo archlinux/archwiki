@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\CiteThisPage;
 
-use Config;
+use MediaWiki\Config\Config;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use SpecialPage;
 
 class Hooks implements \MediaWiki\Hook\SidebarBeforeOutputHook {
 	/**
@@ -41,7 +41,7 @@ class Hooks implements \MediaWiki\Hook\SidebarBeforeOutputHook {
 
 		$revid = $out->getRevisionId();
 
-		if ( $revid === 0 || empty( $revid ) ) {
+		if ( $revid === 0 || $revid === null ) {
 			return;
 		}
 

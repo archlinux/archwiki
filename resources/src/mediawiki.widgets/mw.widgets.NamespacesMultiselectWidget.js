@@ -7,7 +7,7 @@
 ( function () {
 
 	/**
-	 * Creates an mw.widgets.NamespacesMultiselectWidget object
+	 * Creates an mw.widgets.NamespacesMultiselectWidget object.
 	 *
 	 * TODO: A lot of this is duplicated in mw.widgets.UsersMultiselectWidget
 	 * and mw.widgets.TitlesMultiselectWidget. These classes should be
@@ -20,12 +20,11 @@
 	 * @param {Object} [config] Configuration options
 	 */
 	mw.widgets.NamespacesMultiselectWidget = function MwWidgetsNamespacesMultiselectWidget( config ) {
-		var i, ilen, option,
-			namespaces = {},
+		var namespaces = {},
 			options = mw.widgets.NamespaceInputWidget.static.getNamespaceDropdownOptions( {} );
 
-		for ( i = 0, ilen = options.length; i < ilen; i++ ) {
-			option = options[ i ];
+		for ( var i = 0, ilen = options.length; i < ilen; i++ ) {
+			var option = options[ i ];
 			namespaces[ option.data ] = option.label;
 		}
 
@@ -34,7 +33,7 @@
 		}, config );
 
 		// Parent constructor
-		mw.widgets.NamespacesMultiselectWidget.parent.call( this, $.extend( true,
+		mw.widgets.NamespacesMultiselectWidget.super.call( this, $.extend( true,
 			{
 				menu: {
 					filterMode: 'substring'

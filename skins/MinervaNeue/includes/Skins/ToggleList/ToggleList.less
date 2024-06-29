@@ -17,7 +17,7 @@
 }
 
 .toggle-list-item__label {
-	color: @color-subtle;
+	color: var( --color-subtle );
 	font-weight: bold;
 	font-size: @font-size-minerva-small;
 	// Overflow text is ellipsized in one line.
@@ -28,6 +28,6 @@
 	// Always occlude the checkbox. The checkbox display cannot be none since its focus state is used
 	// for other selectors.
 	position: absolute;
-	z-index: @z-indexOccluded;
+	z-index: @z-index-occluded;
 	opacity: 0;
 }

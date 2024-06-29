@@ -4,7 +4,7 @@ namespace Cite\Tests;
 
 use Cite\Cite;
 use Cite\ErrorReporter;
-use Cite\ReferencesFormatter;
+use Cite\ReferenceListFormatter;
 use Cite\ReferenceStack;
 use Language;
 use Parser;
@@ -12,49 +12,41 @@ use ParserOptions;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @coversDefaultClass \Cite\Cite
- *
+ * @covers \Cite\Cite
  * @license GPL-2.0-or-later
  */
 class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->setMwGlobals( [
-			'wgLanguageCode' => 'qqx',
-		] );
+		$this->overrideConfigValue( 'LanguageCode', 'qqx' );
 	}
 
 	/**
-	 * @covers ::checkRefsNoReferences
 	 * @dataProvider provideCheckRefsNoReferences
 	 */
 	public function testCheckRefsNoReferences(
 		array $initialRefs, bool $isSectionPreview, string $expectedOutput
 	) {
-		global $wgCiteResponsiveReferences;
-		$wgCiteResponsiveReferences = true;
+		$this->overrideConfigValue( 'CiteResponsiveReferences', true );
 
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'halfParsed' )->willReturnCallback(
-			static function ( $parser, ...$args ) {
-				return '(' . implode( '|', $args ) . ')';
-			}
+			static fn ( $parser, ...$args ) => '(' . implode( '|', $args ) . ')'
 		);
 
-		$referenceStack = new ReferenceStack( $mockErrorReporter );
+		$referenceStack = new ReferenceStack();
 		TestingAccessWrapper::newFromObject( $referenceStack )->refs = $initialRefs;
 
-		$referencesFormatter = $this->createMock( ReferencesFormatter::class );
-		$referencesFormatter->method( 'formatReferences' )->willReturn( '<references />' );
+		$formatter = $this->createMock( ReferenceListFormatter::class );
+		$formatter->method( 'formatReferences' )->willReturn( '<references />' );
 
 		$cite = $this->newCite();
 		/** @var Cite $spy */
 		$spy = TestingAccessWrapper::newFromObject( $cite );
 		$spy->referenceStack = $referenceStack;
 		$spy->errorReporter = $mockErrorReporter;
-		$spy->referencesFormatter = $referencesFormatter;
+		$spy->referenceListFormatter = $formatter;
 		$spy->isSectionPreview = $isSectionPreview;
 
 		$parser = $this->createNoOpMock( Parser::class );
@@ -79,7 +71,7 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 			'Named group' => [
 				[ 'foo' => [ [ 'name' => 'a' ] ] ],
 				false,
-				"\n" . '<br />(cite_error_group_refs_without_references|foo)'
+				"\n<br />(cite_error_group_refs_without_references|foo)"
 			],
 			'Named group in preview' => [
 				[ 'foo' => [ [ 'name' => 'a' ] ] ],

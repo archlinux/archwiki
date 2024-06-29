@@ -166,7 +166,9 @@ function initTopicSubscriptions( $container, threadItemSet ) {
 		buttonsByName[ name ] = button;
 
 		// Restore data attribute
-		button.$element[ 0 ].setAttribute( 'data-mw-subscribed', String( subscribedStateTemp ) );
+		if ( subscribedStateTemp !== null ) {
+			button.$element[ 0 ].setAttribute( 'data-mw-subscribed', String( subscribedStateTemp ) );
+		}
 
 		var title = mw.config.get( 'wgRelevantPageName' ) + '#' + headingItem.getLinkableTitle();
 
@@ -249,10 +251,10 @@ function initNewTopicsSubscription() {
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$button = $( '.menu__item--page-actions-overflow-t-page-subscribe' );
 		$label = $button.find( '.toggle-list-item__label' );
-		$icon = $button.find( '.mw-ui-icon' );
+		$icon = $button.find( '.minerva-icon' );
 		// HACK: We can't set data-mw-subscribed intially in Minerva, so work it out from the icon
 		// eslint-disable-next-line no-jquery/no-class-state
-		var initialState = $icon.hasClass( 'mw-ui-icon-minerva-bell' ) ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED;
+		var initialState = $icon.hasClass( 'minerva-icon--bell' ) ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED;
 		$button.attr( 'data-mw-subscribed', String( initialState ) );
 	} else {
 		// eslint-disable-next-line no-jquery/no-global-selector
@@ -272,8 +274,8 @@ function initNewTopicsSubscription() {
 		changeSubscription( titleObj.getPrefixedText(), name, !subscribedState, true )
 			.then( function ( result ) {
 				updateSubscribeLink( $button[ 0 ], result.subscribe ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED, $label[ 0 ], true );
-				$icon.toggleClass( 'mw-ui-icon-minerva-bell', !!result.subscribe );
-				$icon.toggleClass( 'mw-ui-icon-minerva-bellOutline', !result.subscribe );
+				$icon.toggleClass( 'minerva-icon--bell', !!result.subscribe );
+				$icon.toggleClass( 'minerva-icon--bellOutline', !result.subscribe );
 			} );
 	} );
 }
@@ -369,7 +371,7 @@ function maybeShowFirstTimeAutoTopicSubPopup() {
 	} );
 
 	// Like in highlight()
-	lastHighlightComment.getNativeRange().insertNode( popup.$element[ 0 ] );
+	lastHighlightComment.getRange().insertNode( popup.$element[ 0 ] );
 	// Pull it outside of headings to avoid silly fonts
 	if ( popup.$element.closest( 'h1, h2, h3, h4, h5, h6' ).length ) {
 		popup.$element.closest( 'h1, h2, h3, h4, h5, h6' ).after( popup.$element );
@@ -426,15 +428,18 @@ function updateSubscriptionStates( $container, headingsToUpdate ) {
 	for ( var headingName in headingsToUpdate ) {
 		var link = linksByName[ headingName ];
 		var button = buttonsByName[ headingName ];
-		// We can get the subscription state from the link or the button
-		var subscribedState = getSubscribedStateFromElement( link );
+		var subscribedState = getSubscribedStateFromElement( link || button.$element[ 0 ] );
 
 		if ( subscribedState === STATE_AUTOSUBSCRIBED ) {
 			maybeShowFirstTimeAutoTopicSubPopup();
 		} else if ( subscribedState === null || subscribedState === STATE_UNSUBSCRIBED ) {
 			topicsToCheck.push( headingName );
-			pendingLinks.push( link );
-			pendingButtons.push( button );
+			if ( link ) {
+				pendingLinks.push( link );
+			}
+			if ( button ) {
+				pendingButtons.push( button );
+			}
 		}
 	}
 	$( pendingLinks ).addClass( 'ext-discussiontools-init-section-subscribe-link-pending' );
@@ -469,8 +474,12 @@ function updateSubscriptionStates( $container, headingsToUpdate ) {
 		// Update state of each topic for which there is a subscription
 		for ( var subItemName in response.subscriptions ) {
 			var state = response.subscriptions[ subItemName ];
-			updateSubscribeLink( linksByName[ subItemName ], state );
-			updateSubscribeButton( buttonsByName[ subItemName ], state );
+			if ( linksByName[ subItemName ] ) {
+				updateSubscribeLink( linksByName[ subItemName ], state );
+			}
+			if ( buttonsByName[ subItemName ] ) {
+				updateSubscribeButton( buttonsByName[ subItemName ], state );
+			}
 			if ( state === STATE_AUTOSUBSCRIBED ) {
 				maybeShowFirstTimeAutoTopicSubPopup();
 			}

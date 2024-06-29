@@ -4,8 +4,8 @@ const { MetadataPanel, License } = require( 'mmv' );
 QUnit.module( 'mmv.ui.metadataPanel', QUnit.newMwEnvironment() );
 
 QUnit.test( '.empty()', function ( assert ) {
-	var $qf = $( '#qunit-fixture' );
-	var panel = new MetadataPanel(
+	const $qf = $( '#qunit-fixture' );
+	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
 		mw.storage,
@@ -17,7 +17,8 @@ QUnit.test( '.empty()', function ( assert ) {
 		'$license',
 		'$title',
 		'$location',
-		'$datetime'
+		'$datetimeCreated',
+		'$datetimeUpdated'
 	].forEach( function ( thing ) {
 		assert.strictEqual( panel[ thing ].text(), '', thing + ' empty text' );
 	} );
@@ -26,27 +27,30 @@ QUnit.test( '.empty()', function ( assert ) {
 		'$licenseLi',
 		'$credit',
 		'$locationLi',
-		'$datetimeLi'
+		'$datetimeCreatedLi',
+		'$datetimeUpdatedLi'
 	].forEach( function ( thing ) {
 		assert.true( panel[ thing ].hasClass( 'empty' ), thing + ' empty class' );
 	} );
 } );
 
 QUnit.test( '.setLocationData()', function ( assert ) {
-	var $qf = $( '#qunit-fixture' );
-	var panel = new MetadataPanel(
+	const $qf = $( '#qunit-fixture' );
+	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
 		mw.storage,
 		new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage )
 	);
-	var fileName = 'Foobar.jpg';
-	var latitude = 12.3456789;
-	var longitude = 98.7654321;
-	var imageData = {
+	const fileName = 'Foobar.jpg';
+	let latitude = 12.3456789;
+	let longitude = 98.7654321;
+	const imageData = {
 		latitude: latitude,
 		longitude: longitude,
-		hasCoords: function () { return true; },
+		hasCoords: function () {
+			return true;
+		},
 		title: mw.Title.newFromText( 'File:Foobar.jpg' )
 	};
 
@@ -99,28 +103,34 @@ QUnit.test( '.setLocationData()', function ( assert ) {
 } );
 
 QUnit.test( '.setImageInfo()', function ( assert ) {
-	var $qf = $( '#qunit-fixture' );
-	var panel = new MetadataPanel(
+	const $qf = $( '#qunit-fixture' );
+	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
 		mw.storage,
 		new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage )
 	);
-	var title = 'Foo bar';
-	var image = {
+	const title = 'Foo bar';
+	const image = {
 		filePageTitle: mw.Title.newFromText( 'File:' + title + '.jpg' )
 	};
-	var imageData = {
+	const imageData = {
 		title: image.filePageTitle,
 		url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
 		descriptionUrl: 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
-		hasCoords: function () { return false; }
+		hasCoords: function () {
+			return false;
+		}
 	};
-	var repoData = {
-		getArticlePath: function () { return 'Foo'; },
-		isCommons: function () { return false; }
+	const repoData = {
+		getArticlePath: function () {
+			return 'Foo';
+		},
+		isCommons: function () {
+			return false;
+		}
 	};
-	var clock = this.sandbox.useFakeTimers();
+	const clock = this.sandbox.useFakeTimers();
 
 	panel.setImageInfo( image, imageData, repoData );
 
@@ -130,7 +140,8 @@ QUnit.test( '.setImageInfo()', function ( assert ) {
 		imageData.descriptionUrl + '?uselang=qqx#(license-header)',
 		'User is directed to file page for license information' );
 	assert.strictEqual( panel.$license.prop( 'target' ), '', 'License information opens in same window' );
-	assert.true( panel.$datetimeLi.hasClass( 'empty' ), 'Date/Time is empty' );
+	assert.true( panel.$datetimeCreatedLi.hasClass( 'empty' ), 'Date/Time is empty' );
+	assert.true( panel.$datetimeUpdatedLi.hasClass( 'empty' ), 'Date/Time is empty' );
 	assert.true( panel.$locationLi.hasClass( 'empty' ), 'Location is empty' );
 
 	imageData.creationDateTime = '2013-08-26T14:41:02Z';
@@ -143,17 +154,17 @@ QUnit.test( '.setImageInfo()', function ( assert ) {
 	imageData.restrictions = [ 'trademarked', 'default', 'insignia' ];
 
 	panel.setImageInfo( image, imageData, repoData );
-	var creditPopupText = panel.creditField.$element.attr( 'original-title' );
+	const creditPopupText = panel.creditField.$element.attr( 'original-title' );
 	clock.tick( 10 );
 
 	assert.strictEqual( panel.$title.text(), title, 'Title is correctly set' );
 	assert.false( panel.$credit.hasClass( 'empty' ), 'Credit is not empty' );
-	assert.false( panel.$datetimeLi.hasClass( 'empty' ), 'Date/Time is not empty' );
+	assert.false( panel.$datetimeCreatedLi.hasClass( 'empty' ), 'Date/Time is not empty' );
 	assert.strictEqual( panel.creditField.$element.find( '.mw-mmv-author' ).text(), imageData.author, 'Author text is correctly set' );
 	assert.strictEqual( panel.creditField.$element.find( '.mw-mmv-source' ).html(), '<b>Lost</b><a href="foo">Bar</a>', 'Source text is correctly set' );
 	// Either multimediaviewer-credit-popup-text or multimediaviewer-credit-popup-text-more.
 	assert.true( creditPopupText === '(multimediaviewer-credit-popup-text)' || creditPopupText === '(multimediaviewer-credit-popup-text-more)', 'Source tooltip is correctly set' );
-	assert.strictEqual( panel.$datetime.text(), '(multimediaviewer-datetime-created: 26 August 2013)', 'Correct date is displayed' );
+	assert.strictEqual( panel.$datetimeCreated.text(), '(multimediaviewer-datetime-created: 26 August 2013)', 'Correct date is displayed' );
 	assert.strictEqual( panel.$license.text(), '(multimediaviewer-license-cc-by-2.0)', 'License is correctly set' );
 	assert.strictEqual( panel.$license.prop( 'target' ), '_blank', 'License information opens in new window' );
 	assert.true( panel.$restrictions.children().last().children().hasClass( 'mw-mmv-restriction-default' ), 'Default restriction is correctly displayed last' );
@@ -162,15 +173,16 @@ QUnit.test( '.setImageInfo()', function ( assert ) {
 	panel.setImageInfo( image, imageData, repoData );
 	clock.tick( 10 );
 
-	assert.strictEqual( panel.$datetime.text(), '(multimediaviewer-datetime-uploaded: 25 August 2013)', 'Correct date is displayed' );
+	assert.false( panel.$datetimeUpdatedLi.hasClass( 'empty' ), 'Date/Time is not empty' );
+	assert.strictEqual( panel.$datetimeUpdated.text(), '(multimediaviewer-datetime-uploaded: 25 August 2013)', 'Correct date is displayed' );
 
 	clock.restore();
 } );
 
 // FIXME: test broken since migrating to require/packageFiles
 QUnit.skip( 'Setting permission information works as expected', function ( assert ) {
-	var $qf = $( '#qunit-fixture' );
-	var panel = new MetadataPanel(
+	const $qf = $( '#qunit-fixture' );
+	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
 		mw.storage,
@@ -184,21 +196,21 @@ QUnit.skip( 'Setting permission information works as expected', function ( asser
 } );
 
 QUnit.test( 'Date formatting', function ( assert ) {
-	var $qf = $( '#qunit-fixture' );
-	var panel = new MetadataPanel(
+	const $qf = $( '#qunit-fixture' );
+	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
 		mw.storage,
 		new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage )
 	);
-	var date1 = 'Garbage';
-	var result = panel.formatDate( date1 );
+	const date1 = 'Garbage';
+	const result = panel.formatDate( date1 );
 
 	assert.strictEqual( result, date1, 'Invalid date is correctly ignored' );
 } );
 
 QUnit.test( 'About links', function ( assert ) {
-	var $qf = $( '#qunit-fixture' );
+	const $qf = $( '#qunit-fixture' );
 
 	this.sandbox.stub( mw.user, 'isAnon' );
 	// eslint-disable-next-line no-new

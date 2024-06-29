@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aishik Rehman",
 			"Ankan",
+			"Borhan",
 			"Ed g2s",
 			"Kupulak",
 			"Matma Rex",
@@ -10,9 +12,7 @@
 			"Yahya",
 			"ZI Jony",
 			"আজিজ",
-			"আফতাবুজ্জামান",
-			"Aishik Rehman",
-			"Borhan"
+			"আফতাবুজ্জামান"
 		]
 	},
 	"discussiontools": "আলোচনা সরঞ্জাম",
@@ -33,7 +33,7 @@
 	"discussiontools-emptystate-title": "{{SUBJECTPAGENAME}} নিয়ে একটি আলোচনা শুরু করুন",
 	"discussiontools-emptystate-title-self": "আপনার আলাপ পাতায় স্বাগতম",
 	"discussiontools-emptystate-title-self-anon": "এই আলাপ পাতায় স্বাগতম",
-	"discussiontools-emptystate-title-self-temp": "আপনার আলাপ পাতায় {{GENDER:|স্বাগতম}}",
+	"discussiontools-emptystate-title-self-temp": "আপনার অস্থায়ী আলাপ পাতায় {{GENDER:|স্বাগতম}}",
 	"discussiontools-emptystate-title-user": "{{PAGENAME}}-এর {{GENDER:{{PAGENAME}}|সাথে}} একটি আলোচনা শুরু করুন",
 	"discussiontools-emptystate-title-user-anon": "এই আলাপ পাতায় স্বাগতম",
 	"discussiontools-emptystate-title-user-temp": "{{PAGENAME}}-এর {{GENDER:{{PAGENAME}}|সাথে}} একটি আলোচনা শুরু করুন",
@@ -152,6 +152,9 @@
 	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "এই মন্তব্যটি খুঁজে পাওয়া যায়নি। এটি সম্ভবত মুছে ফেলা বা সরিয়ে ফেলা হয়েছে।",
 	"discussiontools-target-comments-missing": "নতুন মন্তব্যগুলি খুঁজে পাওয়া যায়নি। এগুলি সম্ভবত মুছে ফেলা বা সরিয়ে ফেলা হয়েছে।",
+	"discussiontools-target-heading-missing": "এই আলোচনাটি খুঁজে পাওয়া যায়নি। এটি সম্ভবত মুছে ফেলা বা সরিয়ে ফেলা হয়েছে।",
+	"discussiontools-target-comment-found-moved": "এই মন্তব্যটি এই পাতায় খুঁজে পাওয়া যায় নি, তবে এটি নিম্নলিখিত {{PLURAL:$1|পাতায়|পাতাগুলিতে}} বিদ্যমান:",
+	"discussiontools-target-heading-found-moved": "এই আলোচনাটি এই পাতায় খুঁজে পাওয়া যায় নি, তবে এটি নিম্নলিখিত {{PLURAL:$1|পাতায়|পাতাগুলিতে}} বিদ্যমান:",
 	"discussiontools-topicheader-authorcount": "$1 জন {{PLURAL:$1|ব্যক্তি}} মন্তব্য করেছেন",
 	"discussiontools-topicheader-commentcount": "$1টি {{PLURAL:$1|মন্তব্য}}",
 	"discussiontools-topicheader-latestcomment": "সর্বশেষ মন্তব্য: $1",
@@ -188,7 +191,6 @@
 	"echo-category-title-dt-subscription-archiving": "আলাপ পাতা {{PLURAL:$1|সংগ্রহশালাভুক্ত}} হলে",
 	"echo-pref-tooltip-dt-subscription": "আমার অনুসরণ করা আলোচনায় কেউ নতুন মন্তব্য করলে আমাকে অবহিত করুন।",
 	"echo-pref-tooltip-dt-subscription-archiving": "আমি অনুসরণ করছি এমন একটি বিষয় আর্কাইভ করা হলে বা পাতা থেকে সরানো হলে আমাকে অবহিত করুন, অথবা যদি সেই আলোচনায় পোস্ট করা নতুন মন্তব্যের বিজ্ঞপ্তি কোনও কারণে পাঠানো না গেলে আমাকে অবহিত করুন।",
-	"minerva-talk-full-page": "উইকি পাতা হিসেবে পড়ুন",
 	"tag-discussiontools-added-comment-description": "এই সম্পাদনায় একটি মন্তব্য যোগ হয়েছে",
 	"tag-discussiontools-description": "আলোচনা সরঞ্জাম ব্যবহার করে  সম্পাদনা করা হয়েছে",
 	"tag-discussiontools-edit": "সম্পাদিত মন্তব্য",

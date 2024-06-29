@@ -4,7 +4,7 @@
 // implementation where each copy can deviate but deletion is easy. See additional discussion in
 // T218358 and I95b08e77eece5cd4dae62f6f237d492d6b0fe42b.
 ( function () {
-	var UriUtil = require( './UriUtil.js' );
+	const UriUtil = require( './UriUtil.js' );
 
 	/**
 	 * Returns the decoded wiki page title referenced by the passed link as a string when parsable.
@@ -46,11 +46,8 @@
 	 * @return {mw.Title|null} A Title or `null`.
 	 */
 	function newFromUri( uri, options ) {
-		var
-			mwUri,
-			regExp,
-			matches,
-			title;
+		let mwUri;
+		let title;
 
 		try {
 			// uri may or may not be a Uri but the Uri constructor accepts a Uri parameter.
@@ -70,11 +67,11 @@
 
 		if ( mwUri.query.title ) {
 			// True if input starts with wgScriptPath.
-			regExp = new RegExp( '^' + mw.util.escapeRegExp( mw.config.get( 'wgScriptPath' ) ) + '/' );
+			const regExp = new RegExp( '^' + mw.util.escapeRegExp( mw.config.get( 'wgScriptPath' ) ) + '/' );
 
 			// URL has a nonempty `title` query parameter like `/w/index.php?title=Foo`. The script
 			// path should match.
-			matches = regExp.test( mwUri.path );
+			const matches = regExp.test( mwUri.path );
 			if ( !matches ) {
 				return null;
 			}
@@ -84,12 +81,12 @@
 		} else {
 			// True if input starts with wgArticlePath and ends with a nonempty page title. The
 			// first matching group (index 1) is the page title.
-			regExp = new RegExp( '^' + mw.util.escapeRegExp( mw.config.get( 'wgArticlePath' ) ).replace( '\\$1', '(.+)' ) );
+			const regExp = new RegExp( '^' + mw.util.escapeRegExp( mw.config.get( 'wgArticlePath' ) ).replace( '\\$1', '(.+)' ) );
 
 			// No title query parameter is present so the URL may be "pretty" like `/wiki/Foo`.
 			// `Uri.path` should not contain query parameters or a fragment, as is assumed in
 			// `Uri.getRelativePath()`. Try to isolate the title.
-			matches = regExp.exec( mwUri.path );
+			const matches = regExp.exec( mwUri.path );
 			if ( !matches || !matches[ 1 ] ) {
 				return null;
 			}
@@ -128,7 +125,7 @@
 	 * @return {boolean} True if uri has no query parameters or only known parameters for reading.
 	 */
 	function isReadOnlyUri( uri ) {
-		var length = Object.keys( uri.query ).length;
+		const length = Object.keys( uri.query ).length;
 		return length === ( ( 'oldid' in uri.query ? 1 : 0 ) + ( 'title' in uri.query ? 1 : 0 ) );
 	}
 

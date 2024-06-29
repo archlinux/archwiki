@@ -18,6 +18,7 @@
  * @file
  */
 
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
@@ -42,11 +43,10 @@ class RefreshLinks extends Maintenance {
 		$this->addOption( 'dfn-only', 'Delete links from nonexistent articles only' );
 		$this->addOption( 'new-only', 'Only affect articles with just a single edit' );
 		$this->addOption( 'redirects-only', 'Only fix redirects, not all links' );
-		$this->addOption( 'old-redirects-only', 'Only fix redirects with no redirect table entry' );
 		$this->addOption( 'touched-only', 'Only fix pages that have been touched after last update' );
 		$this->addOption( 'e', 'Last page id to refresh', false, true );
 		$this->addOption( 'dfn-chunk-size', 'Maximum number of existent IDs to check per ' .
-			'query, default 100000', false, true );
+			'query, default 100,000', false, true );
 		$this->addOption( 'namespace', 'Only fix pages in this namespace', false, true );
 		$this->addOption( 'category', 'Only fix pages in this category', false, true );
 		$this->addOption( 'tracking-category', 'Only fix pages in this tracking category', false, true );
@@ -63,7 +63,7 @@ class RefreshLinks extends Maintenance {
 		// delete entries for nonexistent IDs that fall outside the range.
 		$start = (int)$this->getArg( 0 ) ?: null;
 		$end = (int)$this->getOption( 'e' ) ?: null;
-		$dfnChunkSize = (int)$this->getOption( 'dfn-chunk-size', 100000 );
+		$dfnChunkSize = (int)$this->getOption( 'dfn-chunk-size', 100_000 );
 
 		if ( $this->hasOption( 'dfn-only' ) ) {
 			$this->deleteLinksFromNonexistent( $start, $end, $this->getBatchSize(), $dfnChunkSize );
@@ -81,10 +81,10 @@ class RefreshLinks extends Maintenance {
 		}
 
 		if ( $this->hasOption( 'before-timestamp' ) ) {
-			$timeCond = $dbr->buildComparison( '<', [
-				'page_links_updated' => $this->getOption( 'before-timestamp' )
-			] );
-			$builder->andWhere( [ "$timeCond OR page_links_updated IS NULL" ] );
+			$builder->andWhere(
+				$dbr->expr( 'page_links_updated', '<', $this->getOption( 'before-timestamp' ) )
+					->or( 'page_links_updated', '=', null )
+			);
 		}
 
 		if ( $this->hasOption( 'category' ) ) {
@@ -100,17 +100,9 @@ class RefreshLinks extends Maintenance {
 		} else {
 			$new = $this->hasOption( 'new-only' );
 			$redir = $this->hasOption( 'redirects-only' );
-			$oldRedir = $this->hasOption( 'old-redirects-only' );
 			$touched = $this->hasOption( 'touched-only' );
 			$what = $redir ? 'redirects' : 'links';
-			if ( $oldRedir ) {
-				$builder->leftJoin( 'redirect', null, 'page_id=rd_from' )
-					->andWhere( [
-						'page_is_redirect' => 1,
-						'rd_from' => null,
-					] );
-				$this->output( "Refreshing old redirects from $start...\n" );
-			} elseif ( $new ) {
+			if ( $new ) {
 				$builder->andWhere( [ 'page_is_new' => 1 ] );
 				$this->output( "Refreshing $what from new pages...\n" );
 			} else {
@@ -121,7 +113,7 @@ class RefreshLinks extends Maintenance {
 				}
 				$this->output( "Refreshing $what from pages...\n" );
 			}
-			$this->doRefreshLinks( $builder, $redir || $oldRedir );
+			$this->doRefreshLinks( $builder, $redir );
 			if ( !$this->hasOption( 'namespace' ) ) {
 				$this->deleteLinksFromNonexistent( $start, $end, $this->getBatchSize(), $dfnChunkSize );
 			}
@@ -217,7 +209,10 @@ class RefreshLinks extends Maintenance {
 		if ( $rt === null ) {
 			// The page is not a redirect
 			// Delete any redirect table entry for it
-			$dbw->delete( 'redirect', [ 'rd_from' => $id ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'redirect' )
+				->where( [ 'rd_from' => $id ] )
+				->caller( __METHOD__ )->execute();
 			$fieldValue = 0;
 		} else {
 			$page->insertRedirectEntry( $rt );
@@ -265,7 +260,7 @@ class RefreshLinks extends Maintenance {
 	 * @author Merlijn van Deen <valhallasw@arctus.nl>
 	 */
 	private function deleteLinksFromNonexistent( $start = null, $end = null, $batchSize = 100,
-		$chunkSize = 100000
+		$chunkSize = 100_000
 	) {
 		$this->waitForReplication();
 		$this->output( "Deleting illegal entries from the links tables...\n" );
@@ -309,7 +304,7 @@ class RefreshLinks extends Maintenance {
 	 * @param int $batchSize The size of deletion batches
 	 */
 	private function dfnCheckInterval( $start = null, $end = null, $batchSize = 100 ) {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$dbr = $this->getDB( DB_REPLICA, [ 'vslow' ] );
 
 		$linksTables = [
@@ -344,7 +339,10 @@ class RefreshLinks extends Maintenance {
 				$numIds = count( $ids );
 				if ( $numIds ) {
 					$counter += $numIds;
-					$dbw->delete( $table, [ $field => $ids ], __METHOD__ );
+					$dbw->newDeleteQueryBuilder()
+						->deleteFrom( $table )
+						->where( [ $field => $ids ] )
+						->caller( __METHOD__ )->execute();
 					$this->output( ", $counter" );
 					$tableStart = $ids[$numIds - 1] + 1;
 					$this->waitForReplication();

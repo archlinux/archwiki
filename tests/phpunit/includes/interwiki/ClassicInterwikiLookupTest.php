@@ -6,15 +6,13 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\WikiMap\WikiMap;
 
 /**
- * @covers MediaWiki\Interwiki\ClassicInterwikiLookup
+ * @covers \MediaWiki\Interwiki\ClassicInterwikiLookup
  * @group Database
  */
 class ClassicInterwikiLookupTest extends MediaWikiIntegrationTestCase {
 
 	private function populateDB( $iwrows ) {
-		$this->db->delete( 'interwiki', '*', __METHOD__ );
 		$this->db->insert( 'interwiki', array_values( $iwrows ), __METHOD__ );
-		$this->tablesUsed[] = 'interwiki';
 	}
 
 	/**
@@ -40,7 +38,7 @@ class ClassicInterwikiLookupTest extends MediaWikiIntegrationTestCase {
 			$lang,
 			WANObjectCache::newEmpty(),
 			$services->getHookContainer(),
-			$services->getDBLoadBalancerFactory()
+			$services->getConnectionProvider()
 		);
 	}
 

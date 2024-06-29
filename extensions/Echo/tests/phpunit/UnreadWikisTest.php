@@ -2,6 +2,7 @@
 
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\UnreadWikis;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\TestingAccessWrapper;
 
 /**

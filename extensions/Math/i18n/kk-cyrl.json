@@ -15,7 +15,7 @@
 	"math_syntax_error": "сөйлем жүйесінің қатесі",
 	"math_unknown_error": "белгісіз қате",
 	"math_unknown_function": "белгісіз функция '$1'",
-	"mw_math_mathml": "Егер ықтимал болса — MathML (сынақтама)",
-	"mw_math_source": "Бұны TeX пішімінде қалдыр (мәтіндік шолғыштарға)",
+	"mw-math-mathml": "Егер ықтимал болса — MathML (сынақтама)",
+	"mw-math-source": "Бұны TeX пішімінде қалдыр (мәтіндік шолғыштарға)",
 	"prefs-math": "Математикалық өрнектер"
 }

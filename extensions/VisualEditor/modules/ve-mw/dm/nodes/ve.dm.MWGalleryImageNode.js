@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWGalleryImageNode class.
  *
- * @copyright 2016 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -41,7 +41,7 @@ ve.dm.MWGalleryImageNode.static.matchFunction = function ( element ) {
 ve.dm.MWGalleryImageNode.static.parentNodeTypes = [ 'mwGallery' ];
 
 ve.dm.MWGalleryImageNode.static.preserveHtmlAttributes = function ( attribute ) {
-	var attributes = [ 'typeof', 'class', 'src', 'resource', 'width', 'height', 'href', 'rel', 'alt' ];
+	var attributes = [ 'typeof', 'class', 'src', 'resource', 'width', 'height', 'href', 'rel', 'alt', 'data-mw' ];
 	return attributes.indexOf( attribute ) === -1;
 };
 // By handling our own children we ensure that original DOM attributes
@@ -73,8 +73,8 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 	// TODO: Improve handling of missing files. See 'isError' in MWBlockImageNode#toDataElement
 	var li = domElements[ 0 ];
 	var img = li.querySelector( '.mw-file-element' );
-	var a = img.parentNode;
-	var container = a.parentNode;
+	var imgWrapper = img.parentNode;
+	var container = imgWrapper.parentNode;
 
 	// Get caption (may be missing for mode="packed-hover" galleries)
 	var captionNode = li.querySelector( '.gallerytext' );
@@ -87,10 +87,28 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 		}
 	}
 
+	// For video thumbnails, the `alt` attribute is only in the data-mw of the container (see: T348703)
+	var mwDataJSON = container.getAttribute( 'data-mw' );
+	var mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
+	var mwAttribs = mwData.attribs || [];
+	var containerAlt;
+	for ( var i = mwAttribs.length - 1; i >= 0; i-- ) {
+		if ( mwAttribs[ i ][ 0 ] === 'alt' && mwAttribs[ i ][ 1 ].txt ) {
+			containerAlt = mwAttribs[ i ][ 1 ].txt;
+			break;
+		}
+	}
+
+	var altPresent = img.hasAttribute( 'alt' ) || containerAlt !== undefined;
+	var altText = null;
+	if ( altPresent ) {
+		altText = img.hasAttribute( 'alt' ) ? img.getAttribute( 'alt' ) : containerAlt;
+	}
+
 	var altFromCaption = captionNode ?
 		ve.dm.MWGalleryImageNode.static.textContentFromCaption( captionNode ).trim() : '';
-	var altTextSame = img.hasAttribute( 'alt' ) && altFromCaption &&
-		( img.getAttribute( 'alt' ).trim() === altFromCaption );
+	var altTextSame = altPresent && altFromCaption &&
+		( altText.trim() === altFromCaption );
 
 	var caption;
 	if ( captionNode ) {
@@ -117,7 +135,15 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 
 	var types = ve.dm.MWImageNode.static.rdfaToTypes[ typeofAttrs[ 0 ] ];
 
-	var hrefSame = a.classList.contains( 'mw-file-description' );
+	var href = imgWrapper.getAttribute( 'href' );
+	if ( href ) {
+		// Convert absolute URLs to relative if the href refers to a page on this wiki.
+		// Otherwise Parsoid generates |link= options for copy-pasted images (T193253).
+		var targetData = mw.libs.ve.getTargetDataFromHref( href, converter.getTargetHtmlDocument() );
+		if ( targetData.isInternal ) {
+			href = mw.libs.ve.encodeParsoidResourceName( targetData.title );
+		}
+	}
 
 	var dataElement = {
 		type: this.name,
@@ -125,17 +151,18 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 			mediaClass: types.mediaClass,
 			mediaTag: img.nodeName.toLowerCase(),
 			resource: img.getAttribute( 'resource' ),
-			altText: img.getAttribute( 'alt' ),
+			altText: altText,
 			altTextSame: altTextSame,
-			href: hrefSame ? null : a.getAttribute( 'href' ),
+			href: href,
 			// 'src' for images, 'poster' for video/audio
 			src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
 			width: width !== null && width !== '' ? +width : null,
 			height: height !== null && height !== '' ? +height : null,
 			isError: isError,
 			errorText: errorText,
+			mw: mwData,
 			imageClassAttr: img.getAttribute( 'class' ),
-			imgWrapperClassAttr: a.getAttribute( 'class' )
+			imgWrapperClassAttr: imgWrapper.getAttribute( 'class' )
 		}
 	};
 
@@ -156,22 +183,19 @@ ve.dm.MWGalleryImageNode.static.toDomElements = function ( data, doc, converter 
 		li = doc.createElement( 'li' ),
 		thumbDiv = doc.createElement( 'div' ),
 		container = doc.createElement( 'span' ),
-		a = doc.createElement( 'a' ),
-		img = doc.createElement( attributes.isError ? 'span' : ( attributes.mediaTag || 'img' ) ),
-		alt = attributes.altText;
-
-	// FIXME: attributes.mediaTag and attributes.mediaClass aren't set after edit
+		imgWrapper = doc.createElement( attributes.href ? 'a' : 'span' ),
+		img = doc.createElement( attributes.isError ? 'span' : attributes.mediaTag ),
+		alt = attributes.altText,
+		mwData = ve.copy( attributes.mw ) || {};
 
 	li.classList.add( 'gallerybox' );
 	thumbDiv.classList.add( 'thumb' );
 	container.setAttribute( 'typeof', ve.dm.MWImageNode.static.getRdfa(
-		( attributes.mediaClass || 'File' ), 'none', attributes.isError
+		attributes.mediaClass, 'none', attributes.isError
 	) );
 
-	if ( attributes.href !== null ) {
-		a.setAttribute( 'href', attributes.href );
-	} else {
-		a.setAttribute( 'href', attributes.resource );
+	if ( attributes.href ) {
+		imgWrapper.setAttribute( 'href', attributes.href );
 	}
 
 	if ( attributes.imageClassAttr ) {
@@ -181,7 +205,7 @@ ve.dm.MWGalleryImageNode.static.toDomElements = function ( data, doc, converter 
 
 	if ( attributes.imgWrapperClassAttr ) {
 		// eslint-disable-next-line mediawiki/class-doc
-		a.className = attributes.imgWrapperClassAttr;
+		imgWrapper.className = attributes.imgWrapperClassAttr;
 	}
 
 	img.setAttribute( 'resource', attributes.resource );
@@ -195,8 +219,8 @@ ve.dm.MWGalleryImageNode.static.toDomElements = function ( data, doc, converter 
 	img.setAttribute( attributes.isError ? 'data-width' : 'width', attributes.width );
 	img.setAttribute( attributes.isError ? 'data-height' : 'height', attributes.height );
 
-	a.appendChild( img );
-	container.appendChild( a );
+	imgWrapper.appendChild( img );
+	container.appendChild( imgWrapper );
 	thumbDiv.appendChild( container );
 	li.appendChild( thumbDiv );
 
@@ -206,11 +230,33 @@ ve.dm.MWGalleryImageNode.static.toDomElements = function ( data, doc, converter 
 	while ( captionWrapper.firstChild ) {
 		li.appendChild( captionWrapper.firstChild );
 	}
+	var captionText = ve.dm.MWGalleryImageNode.static.textContentFromCaption( li ).trim();
 
-	if ( attributes.altTextSame ) {
-		img.setAttribute( 'alt', ve.dm.MWGalleryImageNode.static.textContentFromCaption( li ).trim() );
-	} else if ( typeof alt === 'string' ) {
-		img.setAttribute( 'alt', alt );
+	if ( img.nodeName.toLowerCase() === 'img' ) {
+		if ( attributes.altTextSame && captionText ) {
+			img.setAttribute( 'alt', captionText );
+		} else if ( typeof alt === 'string' ) {
+			img.setAttribute( 'alt', alt );
+		}
+	} else {
+		var mwAttribs = mwData.attribs || [];
+		mwAttribs = mwAttribs.filter(
+			function ( attr ) {
+				return attr[ 0 ] !== 'alt';
+			}
+		);
+		// Parsoid only sets an alt in the data-mw.attribs if it's explicit
+		// in the source
+		if ( !attributes.altTextSame && typeof alt === 'string' ) {
+			mwAttribs.push( [ 'alt', { txt: alt } ] );
+		}
+		if ( mwData.attribs || mwAttribs.length ) {
+			mwData.attribs = mwAttribs;
+		}
+	}
+
+	if ( !ve.isEmptyObject( mwData ) ) {
+		container.setAttribute( 'data-mw', JSON.stringify( mwData ) );
 	}
 
 	return [ li ];

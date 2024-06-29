@@ -1,12 +1,5 @@
-/*!
- * VisualEditor ContentEditable MWPingNode class.
- *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
- * @license The MIT License (MIT); see LICENSE.txt
- */
-
 /**
- * ContentEditable MediaWiki ping node.
+ * PingNode view.
  *
  * @class
  * @extends ve.ce.LeafNode

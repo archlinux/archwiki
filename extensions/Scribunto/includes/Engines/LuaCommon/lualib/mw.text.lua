@@ -100,18 +100,31 @@ local nowikiRepl1 = {
 	['{'] = '&#123;',
 	['|'] = '&#124;',
 	['}'] = '&#125;',
+	[';'] = '&#59;',
 }
 
 local nowikiRepl2 = {
+	["\n!"] = "\n&#33;", ["\r!"] = "\r&#33;",
 	["\n#"] = "\n&#35;", ["\r#"] = "\r&#35;",
 	["\n*"] = "\n&#42;", ["\r*"] = "\r&#42;",
 	["\n:"] = "\n&#58;", ["\r:"] = "\r&#58;",
-	["\n;"] = "\n&#59;", ["\r;"] = "\r&#59;",
 	["\n "] = "\n&#32;", ["\r "] = "\r&#32;",
 	["\n\n"] = "\n&#10;", ["\r\n"] = "&#13;\n",
 	["\n\r"] = "\n&#13;", ["\r\r"] = "\r&#13;",
 	["\n\t"] = "\n&#9;", ["\r\t"] = "\r&#9;",
 }
+
+local nowikiRepl3 = {
+   ['+'] = '&#43;',
+   ['-'] = '&#45;',
+   ['_'] = '&#95;',
+   ['~'] = '&#126;',
+   ["\n"] = "&#10;",
+   ["\r"] = "&#13;",
+   ["\t"] = "&#9;",
+}
+
+local nowikiRepl4 = nowikiRepl3
 
 local nowikiReplMagic = {}
 for sp, esc in pairs( {
@@ -128,13 +141,20 @@ end
 
 function mwtext.nowiki( s )
 	-- string.gsub is safe here, because we're only caring about ASCII chars
-	s = string.gsub( s, '["&\'<=>%[%]{|}]', nowikiRepl1 )
+	s = string.gsub( s, '["&\'<=>%[%]{|};]', nowikiRepl1 )
 	s = '\n' .. s
-	s = string.gsub( s, '[\r\n][#*:; \n\r\t]', nowikiRepl2 )
+	s = string.gsub( s, '[\r\n][!#*: \n\r\t]', nowikiRepl2 )
 	s = string.gsub( s, '([\r\n])%-%-%-%-', '%1&#45;---' )
 	s = string.sub( s, 2 )
+	s = string.gsub( s, '!!', '&#33;!' )
 	s = string.gsub( s, '__', '_&#95;' )
 	s = string.gsub( s, '://', '&#58;//' )
+	s = string.gsub( s, '~~~', '~~&#126;' )
+	-- protect first and last character
+	s = string.gsub( s, '^[%-+_~]', nowikiRepl3 )
+	s = string.gsub( s, '[_~\r\n\t]$', nowikiRepl4 )
+	-- technically, should only do these if $wgEnableMagicLinks, but
+	-- it doesn't hurt to be safe
 	s = string.gsub( s, 'ISBN%s', nowikiReplMagic )
 	s = string.gsub( s, 'RFC%s', nowikiReplMagic )
 	s = string.gsub( s, 'PMID%s', nowikiReplMagic )

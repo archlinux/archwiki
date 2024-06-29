@@ -1,6 +1,4 @@
 ( function () {
-	'use strict';
-
 	var $thankedLabel = $( '<span>' ).addClass( 'mw-thanks-flow-thanked mw-ui-quiet' );
 
 	var attrName = 'data-flow-id';
@@ -14,9 +12,9 @@
 
 	function reloadThankedState() {
 		$( 'a.mw-thanks-flow-thank-link' ).each( function ( idx, el ) {
-			var $thankLink = $( el ),
-				author = findPostAuthorFromThankLink( $thankLink );
+			var $thankLink = $( el );
 			if ( mw.thanks.thanked.contains( $thankLink.closest( '.flow-post' ).attr( attrName ), cookieName ) ) {
+				var author = findPostAuthorFromThankLink( $thankLink );
 				mw.thanks.getUserGender( author )
 					.done( function ( recipientGender ) {
 						$thankLink.before(

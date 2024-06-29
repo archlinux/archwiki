@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Cgmbo"
+			"Cgmbo",
+			"Amire80"
 		]
 	},
 	"discussiontools": "Bisadilu ya kusolula",
@@ -13,7 +14,7 @@
 	"discussiontools-emptystate-desc-user": "Nge lenda sadila lutiti yai sambu na kuyantika masolo ti [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] yina bo ta tula na kisika ya bantu yonso sambu bantu ya nkaka kumona yo. [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Longuka mambu mingi ya ke tala mutindu bo ke sadilaka lutiti yai]].",
 	"discussiontools-emptystate-title": "Yantika disolo mosi ya ke tadila [[:{{SUBJECTPAGENAME}}|{{{SUBJECTPAGENAME}}]]",
 	"discussiontools-emptystate-title-self": "Kukwisa ya mbote na lutiti na nge ya masolo",
-	"discussiontools-emptystate-title-user": "Yantika disolo ti [[:{{SUBJECTPAGENAME}}|{{{PAGENAME}}]]",
+	"discussiontools-emptystate-title-user": "Yantika disolo ti {{GENDER:{{PAGENAME}}|with}} {{PAGENAME}}",
 	"discussiontools-error-comment-conflict": "Beto me kuka ve kubumba komantere na nge, sambu muntu ya nkaka salaka komantere nzila mosi ti nge. Meka diaka, to tula diaka lutiti yai sambu na kumona bakomantere ya nsuka.",
 	"discussiontools-error-comment-disappeared": "Beto ke kuka ve kumona komantere yina nge ke pesila mvutu na lutiti yai. Ziku bo me vwansa yo to yo me kuma na lutiti ya nkaka. Tula diaka lutiti mpi meka diaka.",
 	"discussiontools-error-comment-is-transcluded": "Nge lenda sadila ve lien \"{{int:discussiontools-replylink}}\" sambu na kupesa mvutu na komantere yai. Sambu na kupesa mvutu, bweta na \"$1\" sambu na kusadila lutiti ya mvimba.",

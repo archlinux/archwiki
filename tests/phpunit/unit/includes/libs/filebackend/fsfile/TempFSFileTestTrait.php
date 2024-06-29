@@ -1,5 +1,7 @@
 <?php
 
+namespace Wikimedia\Tests\FileBackend\FSFile;
+
 /**
  * Code shared between the unit and integration tests
  */
@@ -7,7 +9,7 @@ trait TempFSFileTestTrait {
 	abstract protected function newFile();
 
 	/**
-	 * @covers TempFSFile
+	 * @covers \TempFSFile
 	 */
 	public function testPurge() {
 		$file = $this->newFile();
@@ -17,7 +19,7 @@ trait TempFSFileTestTrait {
 	}
 
 	/**
-	 * @covers TempFSFile
+	 * @covers \TempFSFile
 	 */
 	public function testBind() {
 		$file = $this->newFile();
@@ -38,7 +40,7 @@ trait TempFSFileTestTrait {
 	}
 
 	/**
-	 * @covers TempFSFile
+	 * @covers \TempFSFile
 	 */
 	public function testPreserve() {
 		$file = $this->newFile();

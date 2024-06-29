@@ -70,7 +70,7 @@ class MoveLogFormatter extends LogFormatter {
 
 		$params = $this->extractParameters();
 		$destTitle = Title::newFromText( $params[3] );
-		if ( !$destTitle ) {
+		if ( !$destTitle || !$destTitle->exists() ) {
 			return '';
 		}
 
@@ -81,7 +81,7 @@ class MoveLogFormatter extends LogFormatter {
 			[
 				'wpOldTitle' => $destTitle->getPrefixedDBkey(),
 				'wpNewTitle' => $this->entry->getTarget()->getPrefixedDBkey(),
-				'wpReason' => $this->msg( 'revertmove' )->inContentLanguage()->text(),
+				'wpReason' => $this->msg( 'revertmove-summary' )->inContentLanguage()->text(),
 				'wpMovetalk' => 0
 			]
 		);

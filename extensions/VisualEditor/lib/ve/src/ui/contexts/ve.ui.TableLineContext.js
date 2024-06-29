@@ -1,13 +1,13 @@
 /*!
  * VisualEditor UserInterface Table Context class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
  * Context menu for editing tables.
  *
- * Two are usually generated for column and row actions separately.
+ * Three are usually generated for column, row and (on mobile) table-wide actions separately.
  *
  * @class
  * @extends ve.ui.Context
@@ -54,6 +54,7 @@ ve.ui.TableLineContext = function VeUiTableLineContext( tableNode, itemGroup, co
 	// The following classes are used here:
 	// * ve-ui-tableLineContext-col
 	// * ve-ui-tableLineContext-row
+	// * ve-ui-tableLineContext-table
 	this.$element
 		.addClass( 've-ui-tableLineContext ve-ui-tableLineContext-' + itemGroup )
 		.append( this.icon.$element, this.popup.$element );

@@ -108,7 +108,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 					$image = $bits[0];
 					$options = '';
 				} else {
-					list( $image, $options ) = $bits;
+					[ $image, $options ] = $bits;
 					$options = '|' . $options;
 				}
 
@@ -155,13 +155,11 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 			// Handle desc spec
 			$cmd = strtok( $line, " \t" );
 			if ( $cmd == 'desc' ) {
-				$typesText = $descTypesCanonical;
-				// FIXME: Support this ...
-				// $typesText = wfMessage( 'imagemap_desc_types' )->inContentLanguage()->text();
-				// if ( $descTypesCanonical != $typesText ) {
-				// 	// i18n desc types exists
-				// 	$typesText = $descTypesCanonical . ', ' . $typesText;
-				// }
+				$typesText = wfMessage( 'imagemap_desc_types' )->inContentLanguage()->text();
+				if ( $descTypesCanonical != $typesText ) {
+					// i18n desc types exists
+					$typesText = $descTypesCanonical . ', ' . $typesText;
+				}
 				$types = array_map( 'trim', explode( ',', $typesText ) );
 				$type = trim( strtok( '' ) ?: '' );
 				$descType = array_search( $type, $types, true );
@@ -208,7 +206,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 			DOMUtils::assertElt( $a );
 
 			$href = $a->getAttribute( 'href' );
-			$externLink = DOMUtils::matchRel( $a, '#^mw:ExtLink/#D' ) !== null;
+			$externLink = DOMUtils::matchRel( $a, '#^mw:ExtLink#D' ) !== null;
 			$alt = '';
 
 			$hasContent = $externLink || ( DOMDataUtils::getDataParsoid( $a )->stx ?? null ) === 'piped';
@@ -253,13 +251,19 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 			}
 
 			// Construct the area tag
+
 			$attribs = [ 'href' => $href ];
 			if ( $externLink ) {
 				$attribs['class'] = 'plainlinks';
-				// FIXME: T186241
-				// if ( $wgNoFollowLinks ) {
-				// 	$attribs['rel'] = 'nofollow';
-				// }
+				// The AddLinkAttributes pass isn't run on nested pipelines
+				// so $a doesn't have rel/target attributes to copy over
+				$extLinkAttribs = $extApi->getExternalLinkAttribs( $href );
+				if ( isset( $extLinkAttribs['rel'] ) ) {
+					$attribs['rel'] = implode( ' ', $extLinkAttribs['rel'] );
+				}
+				if ( isset( $extLinkAttribs['target'] ) ) {
+					$attribs['target'] = $extLinkAttribs['target'];
+				}
 			}
 			if ( $shape != 'default' ) {
 				$attribs['shape'] = $shape;

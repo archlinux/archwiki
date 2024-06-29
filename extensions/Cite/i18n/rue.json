@@ -17,7 +17,6 @@
 	"cite_error_included_ref": "Хыбить закінчіня <code>&lt;/ref&gt;</code> k&nbsp;таґу <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Найдена значка <code>&lt;ref&gt;</code> про ґрупу „$1“, але не існує приналежна значка <code>&lt;references group=\"$1\"/&gt;</code> або хыбить заперачій <code>&lt;/ref&gt;</code>.",
 	"cite_error_references_group_mismatch": "Значка <code>&lt;ref&gt;</code> внутрї <code>&lt;references&gt;</code> має дефіновану іншу ґрупу „$1“.",
-	"cite_error_references_missing_group": "Значка <code>&lt;ref&gt;</code> внутрї <code>&lt;references&gt;</code> хоснує ґрупу „$1“, котра ся в попереднїм текстї не обявує.",
 	"cite_error_references_missing_key": "На <code>&lt;ref&gt;</code> з іменом „$1“ дефінованый внутрї <code>&lt;references&gt;</code> не суть в попереднїм текстї жадны одказы.",
 	"cite_error_references_no_key": "У значкы <code>&lt;ref&gt;</code> дефінованой внутрї <code>&lt;references&gt;</code> хыбить атрібут <code>name</code>.",
 	"cite_error_empty_references_define": "У значкы <code>&lt;ref&gt;</code> з назвов „$1“ дефінованой внутрї <code>&lt;references&gt;</code> хыбить обсяг.",

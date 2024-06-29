@@ -24,25 +24,30 @@ namespace MediaWiki\Output;
 
 use Article;
 use Content;
-use ContextSource;
 use CSSJanus;
 use Exception;
 use ExtensionRegistry;
 use File;
 use HtmlArmor;
-use IContextSource;
 use InvalidArgumentException;
 use JavaScriptContent;
+use Language;
 use LanguageCode;
-use LinkCache;
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\ContextSource;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\PermissionStatus;
@@ -56,18 +61,15 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\MWTimestamp;
-use Message;
 use MWDebug;
-use MWException;
 use OOUI\Element;
 use OOUI\Theme;
-use Parser;
 use ParserOptions;
-use ParserOutput;
-use RequestContext;
+use RuntimeException;
 use Skin;
 use TextContent;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -92,6 +94,11 @@ use Wikimedia\WrappedStringList;
  */
 class OutputPage extends ContextSource {
 	use ProtectedHookAccessorTrait;
+
+	/** Output CSP policies as headers */
+	public const CSP_HEADERS = 'headers';
+	/** Output CSP policies as meta tags */
+	public const CSP_META = 'meta';
 
 	// Constants for getJSVars()
 	private const JS_VAR_EARLY = 1;
@@ -417,6 +424,11 @@ class OutputPage extends ContextSource {
 	 */
 	private $copyrightUrl;
 
+	/**
+	 * @var Language|null
+	 */
+	private $contentLang;
+
 	/** @var array Profiling data */
 	private $limitReportJSData = [];
 
@@ -435,6 +447,8 @@ class OutputPage extends ContextSource {
 	 * @var ContentSecurityPolicy
 	 */
 	private $CSP;
+
+	private string $cspOutputMode = self::CSP_HEADERS;
 
 	/**
 	 * @var array A cache of the names of the cookies that will influence the cache
@@ -613,29 +627,10 @@ class OutputPage extends ContextSource {
 			if ( $module instanceof RL\Module
 				&& $module->getOrigin() <= $this->getAllowedModules( $type )
 			) {
-				if ( $this->mTarget && !in_array( $this->mTarget, $module->getTargets() ) ) {
-					$this->warnModuleTargetFilter( $module->getName() );
-					continue;
-				}
 				$filteredModules[] = $val;
 			}
 		}
 		return $filteredModules;
-	}
-
-	private function warnModuleTargetFilter( $moduleName ) {
-		static $warnings = [];
-		if ( isset( $warnings[$this->mTarget][$moduleName] ) ) {
-			return;
-		}
-		$warnings[$this->mTarget][$moduleName] = true;
-		$this->getResourceLoader()->getLogger()->debug(
-			'Module "{module}" not loadable on target "{target}".',
-			[
-				'module' => $moduleName,
-				'target' => $this->mTarget,
-			]
-		);
 	}
 
 	/**
@@ -696,15 +691,6 @@ class OutputPage extends ContextSource {
 	 */
 	public function getTarget() {
 		return $this->mTarget;
-	}
-
-	/**
-	 * Sets ResourceLoader target for load.php links. If null, will be omitted
-	 *
-	 * @param string|null $target
-	 */
-	public function setTarget( $target ) {
-		$this->mTarget = $target;
 	}
 
 	/**
@@ -930,7 +916,6 @@ class OutputPage extends ContextSource {
 		# Not modified
 		# Give a 304 Not Modified response code and disable body output
 		wfDebug( __METHOD__ . ": NOT MODIFIED, $info", 'private' );
-		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal Scalar okay with php8.1
 		ini_set( 'zlib.output_compression', 0 );
 		$this->getRequest()->response()->statusHeader( 304 );
 		$this->sendCacheControl();
@@ -1645,7 +1630,7 @@ class OutputPage extends ContextSource {
 		$lb->setArray( $arr );
 
 		# Fetch existence plus the hiddencat property
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$fields = array_merge(
 			LinkCache::getSelectFields(),
 			[ 'pp_value' ]
@@ -1964,7 +1949,7 @@ class OutputPage extends ContextSource {
 
 	/**
 	 * Set the timestamp of the revision which will be displayed. This is used
-	 * to avoid a extra DB call in Skin::lastModified().
+	 * to avoid a extra DB call in SkinComponentFooter::lastModified().
 	 *
 	 * @param string|null $timestamp
 	 * @return mixed Previous value
@@ -2038,8 +2023,6 @@ class OutputPage extends ContextSource {
 	 * @param bool $linestart Is this the start of a line? (Defaults to true)
 	 * @param PageReference|null $title Optional title to use; default of `null`
 	 *   means use current page title.
-	 * @throws MWException if $title is not provided and OutputPage::getTitle()
-	 *   is null
 	 * @since 1.32
 	 */
 	public function addWikiTextAsInterface(
@@ -2047,7 +2030,7 @@ class OutputPage extends ContextSource {
 	) {
 		$title ??= $this->getTitle();
 		if ( !$title ) {
-			throw new MWException( 'Title is null' );
+			throw new RuntimeException( 'Title is null' );
 		}
 		$this->addWikiTextTitleInternal( $text, $title, $linestart, /*interface*/true );
 	}
@@ -2086,8 +2069,6 @@ class OutputPage extends ContextSource {
 	 * @param bool $linestart Is this the start of a line? (Defaults to true)
 	 * @param PageReference|null $title Optional title to use; default of `null`
 	 *   means use current page title.
-	 * @throws MWException if $title is not provided and OutputPage::getTitle()
-	 *   is null
 	 * @since 1.32
 	 */
 	public function addWikiTextAsContent(
@@ -2095,7 +2076,7 @@ class OutputPage extends ContextSource {
 	) {
 		$title ??= $this->getTitle();
 		if ( !$title ) {
-			throw new MWException( 'Title is null' );
+			throw new RuntimeException( 'Title is null' );
 		}
 		$this->addWikiTextTitleInternal( $text, $title, $linestart, /*interface*/false );
 	}
@@ -2151,6 +2132,83 @@ class OutputPage extends ContextSource {
 	 */
 	public function getOutputFlag( string $name ): bool {
 		return isset( $this->mOutputFlags[$name] );
+	}
+
+	/**
+	 * @internal For use by ViewAction/Article only
+	 * @since 1.42
+	 * @param Bcp47Code $lang
+	 */
+	public function setContentLangForJS( Bcp47Code $lang ): void {
+		$this->contentLang = MediaWikiServices::getInstance()->getLanguageFactory()
+			->getLanguage( $lang );
+	}
+
+	/**
+	 * Which language getJSVars should use
+	 *
+	 * Use of this is strongly discouraged in favour of ParserOutput::getLanguage(),
+	 * and should not be needed in most cases given that ParserOutput::getText()
+	 * already takes care of 'lang' and 'dir' attributes.
+	 *
+	 * Consider whether RequestContext::getLanguage (e.g. OutputPage::getLanguage
+	 * or Skin::getLanguage) or MediaWikiServices::getContentLanguage is more
+	 * appropiate first for your use case.
+	 *
+	 * @since 1.42
+	 * @return Language
+	 */
+	private function getContentLangForJS(): Language {
+		if ( !$this->contentLang ) {
+			// If this is not set, then we're likely not on in a request that renders page content
+			// (e.g. ViewAction or ApiParse), but rather a different Action or SpecialPage.
+			// In that case there isn't a main ParserOutput object to represent the page or output.
+			// But, the skin and frontend code mostly don't make this distinction, and so we still
+			// need to return something for mw.config.
+			//
+			// For historical reasons, the expectation is that:
+			// * on a SpecialPage, we return the language for the content area just like on a
+			//   page view. SpecialPage content is localised, and so this is the user language.
+			// * on an Action about a WikiPage, we return the language that content would have
+			//   been shown in, if this were a page view. This is generally the page language
+			//   as stored in the database, except adapted to the current user (e.g. in case of
+			//   translated pages or a language variant preference)
+			//
+			// This mess was centralised to here in 2023 (T341244).
+			$title = $this->getTitle();
+			if ( $title->isSpecialPage() ) {
+				// Special pages render in the interface language, based on request context.
+				// If the user's preference (or request parameter) specifies a variant,
+				// the content may have been converted to the user's language variant.
+				$pageLang = $this->getLanguage();
+			} else {
+				wfDebug( __METHOD__ . ' has to guess ParserOutput language' );
+				// Guess what Article::getParserOutput and ParserOptions::optionsHash() would decide
+				// on a page view:
+				//
+				// - Pages may have a custom page_lang set in the database,
+				//   via Title::getPageLanguage/Title::getDbPageLanguage
+				//
+				// - Interface messages (NS_MEDIAWIKI) render based on their subpage,
+				//   via Title::getPageLanguage/ContentHandler::getPageLanguage/MessageCache::figureMessage
+				//
+				// - Otherwise, pages are assumed to be in the wiki's default content language.
+				//   via Title::getPageLanguage/ContentHandler::getPageLanguage/MediaWikiServices::getContentLanguage
+				$pageLang = $title->getPageLanguage();
+			}
+			if ( $title->getNamespace() !== NS_MEDIAWIKI ) {
+				$services = MediaWikiServices::getInstance();
+				$langConv = $services->getLanguageConverterFactory()->getLanguageConverter( $pageLang );
+				// NOTE: LanguageConverter::getPreferredVariant inspects global RequestContext.
+				// This usually returns $pageLang unchanged.
+				$variant = $langConv->getPreferredVariant();
+				if ( $pageLang->getCode() !== $variant ) {
+					$pageLang = $services->getLanguageFactory()->getLanguage( $variant );
+				}
+			}
+			$this->contentLang = $pageLang;
+		}
+		return $this->contentLang;
 	}
 
 	/**
@@ -2280,20 +2338,10 @@ class OutputPage extends ContextSource {
 		// This cannot be moved to addParserOutputText because that is not
 		// called by EditPage for Preview.
 
-		// T294950/T293513: ParserOutput::getTOCHTML() has been
-		// replaced by ParserOutput::getTOCData(), and
 		// ParserOutputFlags::SHOW_TOC is used to indicate whether the TOC
 		// should be shown (or hidden) in the output.
 		$this->mEnableTOC = $this->mEnableTOC ||
 			$parserOutput->getOutputFlag( ParserOutputFlags::SHOW_TOC );
-		// But extensions used to be able to modify ParserOutput::setTOCHTML()
-		// to toggle TOC in the OutputPageParserOutput hook; so for backward
-		// compatibility check to see if that happened.
-		$isTocPresent = $parserOutput->hasTOCHTML();
-		if ( $isTocPresent && !$this->mEnableTOC ) {
-			// Eventually we'll emit a deprecation message here (T293513)
-			$this->mEnableTOC = true;
-		}
 		// Uniform handling of all boolean flags: they are OR'ed together
 		// (See ParserOutput::collectMetadata())
 		$flags =
@@ -2306,6 +2354,18 @@ class OutputPage extends ContextSource {
 		}
 	}
 
+	private function getParserOutputText( ParserOutput $parserOutput, array $poOptions = [] ): string {
+		// Add default options from the skin
+		$skin = $this->getSkin();
+		$skinOptions = $skin->getOptions();
+		$poOptions += [
+			'skin' => $skin,
+			'injectTOC' => $skinOptions['toc'],
+		];
+		// Note: this path absolutely expects $parserOutput to be mutated by getText, see T353257
+		return $parserOutput->getText( $poOptions );
+	}
+
 	/**
 	 * Add the HTML and enhancements for it (like ResourceLoader modules) associated with a
 	 * ParserOutput object, without any other metadata.
@@ -2315,7 +2375,8 @@ class OutputPage extends ContextSource {
 	 * @param array $poOptions Options to ParserOutput::getText()
 	 */
 	public function addParserOutputContent( ParserOutput $parserOutput, $poOptions = [] ) {
-		$this->addParserOutputText( $parserOutput, $poOptions );
+		$text = $this->getParserOutputText( $parserOutput, $poOptions );
+		$this->addParserOutputText( $text, $poOptions );
 
 		$this->addModules( $parserOutput->getModules() );
 		$this->addModuleStyles( $parserOutput->getModuleStyles() );
@@ -2326,19 +2387,15 @@ class OutputPage extends ContextSource {
 	/**
 	 * Add the HTML associated with a ParserOutput object, without any metadata.
 	 *
-	 * @since 1.24
-	 * @param ParserOutput $parserOutput
+	 * @internal For local use only
+	 * @param string|ParserOutput $text
 	 * @param array $poOptions Options to ParserOutput::getText()
 	 */
-	public function addParserOutputText( ParserOutput $parserOutput, $poOptions = [] ) {
-		// Add default options from the skin
-		$skin = $this->getSkin();
-		$skinOptions = $skin->getOptions();
-		$poOptions += [
-			'skin' => $skin,
-			'injectTOC' => $skinOptions['toc'],
-		];
-		$text = $parserOutput->getText( $poOptions );
+	public function addParserOutputText( $text, $poOptions = [] ) {
+		if ( $text instanceof ParserOutput ) {
+			wfDeprecated( __METHOD__ . ' with ParserOutput as first arg', '1.42' );
+			$text = $this->getParserOutputText( $text, $poOptions );
+		}
 		$this->getHookRunner()->onOutputPageBeforeHTML( $this, $text );
 		$this->addHTML( $text );
 	}
@@ -2350,8 +2407,9 @@ class OutputPage extends ContextSource {
 	 * @param array $poOptions Options to ParserOutput::getText()
 	 */
 	public function addParserOutput( ParserOutput $parserOutput, $poOptions = [] ) {
+		$text = $this->getParserOutputText( $parserOutput, $poOptions );
 		$this->addParserOutputMetadata( $parserOutput );
-		$this->addParserOutputText( $parserOutput, $poOptions );
+		$this->addParserOutputText( $text, $poOptions );
 	}
 
 	/**
@@ -2370,7 +2428,6 @@ class OutputPage extends ContextSource {
 	 *
 	 * @param string $text Wikitext in the page content language
 	 * @param bool $linestart Is this the start of a line? (Defaults to true)
-	 * @throws MWException
 	 * @return string HTML
 	 * @since 1.32
 	 */
@@ -2393,7 +2450,6 @@ class OutputPage extends ContextSource {
 	 *
 	 * @param string $text Wikitext in the user interface language
 	 * @param bool $linestart Is this the start of a line? (Defaults to true)
-	 * @throws MWException
 	 * @return string HTML
 	 * @since 1.32
 	 */
@@ -2418,7 +2474,6 @@ class OutputPage extends ContextSource {
 	 *
 	 * @param string $text Wikitext in the user interface language
 	 * @param bool $linestart Is this the start of a line? (Defaults to true)
-	 * @throws MWException
 	 * @return string HTML
 	 * @since 1.32
 	 */
@@ -2437,14 +2492,12 @@ class OutputPage extends ContextSource {
 	 * @param bool $interface Use interface language (instead of content language) while parsing
 	 *   language sensitive magic words like GRAMMAR and PLURAL.  This also disables
 	 *   LanguageConverter.
-	 * @throws MWException
 	 * @return ParserOutput
 	 */
 	private function parseInternal( $text, $title, $linestart, $interface ) {
 		if ( $title === null ) {
-			throw new MWException( 'Empty $mTitle in ' . __METHOD__ );
+			throw new RuntimeException( 'Empty $mTitle in ' . __METHOD__ );
 		}
-
 		$popts = $this->parserOptions();
 
 		$oldInterface = $popts->setInterfaceMessage( (bool)$interface );
@@ -2924,7 +2977,9 @@ class OutputPage extends ContextSource {
 		}
 
 		if ( $this->mArticleBodyOnly ) {
-			$this->CSP->sendHeaders();
+			if ( $this->cspOutputMode === self::CSP_HEADERS ) {
+				$this->CSP->sendHeaders();
+			}
 			echo $this->mBodytext;
 		} else {
 			// Enable safe mode if requested (T152169)
@@ -2941,7 +2996,9 @@ class OutputPage extends ContextSource {
 			// adding of CSS or Javascript by extensions, adding CSP sources.
 			$this->getHookRunner()->onBeforePageDisplay( $this, $sk );
 
-			$this->CSP->sendHeaders();
+			if ( $this->cspOutputMode === self::CSP_HEADERS ) {
+				$this->CSP->sendHeaders();
+			}
 
 			try {
 				$sk->outputPage();
@@ -3291,11 +3348,10 @@ class OutputPage extends ContextSource {
 	 *  or ResourceLoader available; this should ideally be to a page that provides similar
 	 *  functionality without requiring JavaScript
 	 * @param string|Message $msg Message key (string) for page text, or a Message object
-	 * @param string|string[]|\MessageSpecifier $params Message parameters; ignored if $msg
-	 *  is a Message object
+	 * @param mixed ...$params Message parameters; ignored if $msg is a Message object
 	 */
 	public function showPendingTakeover(
-		$fallbackUrl, $msg, $params = []
+		$fallbackUrl, $msg, ...$params
 	) {
 		if ( $msg instanceof Message ) {
 			if ( $params !== [] ) {
@@ -3305,7 +3361,7 @@ class OutputPage extends ContextSource {
 			}
 			$this->addHTML( $msg->parseAsBlock() );
 		} else {
-			$this->addWikiMsgArray( $msg, $params );
+			$this->addHTML( $this->msg( $msg, ...$params )->parseAsBlock() );
 		}
 
 		// Redirect if the user has no JS (<noscript>)
@@ -3409,9 +3465,8 @@ class OutputPage extends ContextSource {
 			// Separate user-specific batch for improved cache-hit ratio.
 			$userBatch = [ 'user.styles', 'user' ];
 			$siteBatch = array_diff( $moduleStyles, $userBatch );
-			$dbr = wfGetDB( DB_REPLICA );
-			RL\WikiModule::preloadTitleInfo( $context, $dbr, $siteBatch );
-			RL\WikiModule::preloadTitleInfo( $context, $dbr, $userBatch );
+			RL\WikiModule::preloadTitleInfo( $context, $siteBatch );
+			RL\WikiModule::preloadTitleInfo( $context, $userBatch );
 
 			// Filter out modules handled by buildExemptModules()
 			$moduleStyles = array_filter( $moduleStyles,
@@ -3523,6 +3578,8 @@ class OutputPage extends ContextSource {
 		$bodyClasses[] = $userdir;
 		$bodyClasses[] = "sitedir-$sitedir";
 
+		// See Article:showDiffPage for class to support article diff styling
+
 		$underline = $services->getUserOptionsLookup()->getOption( $this->getUser(), 'underline' );
 		if ( $underline < 2 ) {
 			// The following classes can be used here:
@@ -3588,7 +3645,7 @@ class OutputPage extends ContextSource {
 	 * @return string|WrappedStringList HTML
 	 */
 	public function makeResourceLoaderLink( $modules, $only, array $extraQuery = [] ) {
-		// Apply 'target' and 'origin' filters
+		// Apply 'origin' filters
 		$modules = $this->filterModules( (array)$modules, null, $only );
 
 		return RL\ClientHtml::makeLoad(
@@ -3619,7 +3676,7 @@ class OutputPage extends ContextSource {
 	 */
 	public function getBottomScripts() {
 		// Keep the hook appendage separate to preserve WrappedString objects.
-		// This enables Skin::bottomScripts() to merge them where possible.
+		// This enables to merge them where possible.
 		$extraHtml = '';
 		$this->getHookRunner()->onSkinAfterBottomScripts( $this->getSkin(), $extraHtml );
 
@@ -3736,7 +3793,9 @@ class OutputPage extends ContextSource {
 			$articleId = $wikiPage->getId();
 		}
 
-		$lang = $title->getPageViewLanguage();
+		// ParserOutput informs HTML/CSS via lang/dir attributes.
+		// We inform JavaScript via mw.config from here.
+		$lang = $this->getContentLangForJS();
 
 		// Pre-process information
 		$separatorTransTable = $lang->separatorTransformTable();
@@ -3797,6 +3856,8 @@ class OutputPage extends ContextSource {
 			$vars['wgUserEditCount'] = $user->getEditCount();
 			$userReg = $user->getRegistration();
 			$vars['wgUserRegistration'] = $userReg ? (int)wfTimestamp( TS_UNIX, $userReg ) * 1000 : null;
+			$userFirstReg = $services->getUserRegistrationLookup()->getFirstRegistration( $user );
+			$vars['wgUserFirstRegistration'] = $userFirstReg ? (int)wfTimestamp( TS_UNIX, $userFirstReg ) * 1000 : null;
 			// Get the revision ID of the oldest new message on the user's talk
 			// page. This can be used for constructing new message alerts on
 			// the client side.
@@ -3944,6 +4005,15 @@ class OutputPage extends ContextSource {
 	public function getHeadLinksArray() {
 		$tags = [];
 		$config = $this->getConfig();
+
+		if ( $this->cspOutputMode === self::CSP_META ) {
+			foreach ( $this->CSP->getDirectives() as $header => $directive ) {
+				$tags["meta-csp-$header"] = Html::element( 'meta', [
+					'http-equiv' => $header,
+					'content' => $directive,
+				] );
+			}
+		}
 
 		$tags['meta-generator'] = Html::element( 'meta', [
 			'name' => 'generator',
@@ -4594,24 +4664,22 @@ class OutputPage extends ContextSource {
 
 	/**
 	 * Add a wikitext-formatted message to the output.
-	 * This is equivalent to:
 	 *
-	 *    $wgOut->addWikiText( wfMessage( ... )->plain() )
-	 *
-	 * @param mixed ...$args
+	 * @param string $name Message key
+	 * @param mixed ...$args Message parameters. Unlike wfMessage(), this method only accepts
+	 *     variadic parameters (they can't be passed as a single array parameter).
 	 */
-	public function addWikiMsg( ...$args ) {
-		$name = array_shift( $args );
+	public function addWikiMsg( $name, ...$args ) {
 		$this->addWikiMsgArray( $name, $args );
 	}
 
 	/**
 	 * Add a wikitext-formatted message to the output.
-	 * Like addWikiMsg() except the parameters are taken as an array
-	 * instead of a variable argument list.
 	 *
-	 * @param string $name
-	 * @param array $args
+	 * @param string $name Message key
+	 * @param array $args Message parameters. Unlike wfMessage(), this method only accepts
+	 *     the parameters as an array (they can't be passed as variadic parameters),
+	 *     or just a single parameter (this only works by accident, don't rely on it).
 	 */
 	public function addWikiMsgArray( $name, $args ) {
 		$this->addHTML( $this->msg( $name, $args )->parseAsBlock() );
@@ -4744,6 +4812,23 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
+	 * Sets the output mechanism for content security policies (HTTP headers or meta tags).
+	 * Defaults to HTTP headers; in most cases this should not be changed.
+	 *
+	 * Meta mode should not be used together with setArticleBodyOnly() as meta tags and other
+	 * headers are not output when that flag is set.
+	 *
+	 * @param string $mode One of the CSP_* constants
+	 * @phan-param 'headers'|'meta' $mode
+	 * @return void
+	 * @see self::CSP_HEADERS
+	 * @see self::CSP_META
+	 */
+	public function setCspOutputMode( string $mode ): void {
+		$this->cspOutputMode = $mode;
+	}
+
+	/**
 	 * The final bits that go to the bottom of a page
 	 * HTML document including the closing tags
 	 *
@@ -4765,7 +4850,5 @@ class OutputPage extends ContextSource {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( OutputPage::class, 'OutputPage' );

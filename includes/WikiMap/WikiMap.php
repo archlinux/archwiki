@@ -22,7 +22,7 @@ namespace MediaWiki\WikiMap;
 
 use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
-use MediaWikiSite;
+use MediaWiki\Site\MediaWikiSite;
 use Wikimedia\Rdbms\DatabaseDomain;
 
 /**
@@ -325,7 +325,5 @@ class WikiMap {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( WikiMap::class, 'WikiMap' );

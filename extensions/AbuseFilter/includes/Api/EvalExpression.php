@@ -9,7 +9,7 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesFormatter;
-use Status;
+use MediaWiki\Status\Status;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class EvalExpression extends ApiBase {

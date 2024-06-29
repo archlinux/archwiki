@@ -2,8 +2,8 @@
 
 namespace LoginNotify;
 
-use Exception;
 use Job;
+use LogicException;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 
@@ -38,17 +38,17 @@ class DeferredChecksJob extends Job {
 		// user_id exists in the database, we need to explicitly load.
 		$user->load();
 		if ( !$user->getId() ) {
-			throw new Exception( "Can't find user for user id=" . print_r( $userId, true ) );
+			throw new LogicException( "Can't find user for user id=" . print_r( $userId, true ) );
 		}
 		if ( !isset( $this->params['subnet'] ) || !is_string( $this->params['subnet'] ) ) {
-			throw new Exception( __CLASS__
+			throw new LogicException( __CLASS__
 				. " expected to receive a string parameter 'subnet', got "
 				. print_r( $this->params['subnet'], true )
 			);
 		}
 		$subnet = $this->params['subnet'];
 		if ( !isset( $this->params['resultSoFar'] ) || !is_string( $this->params['resultSoFar'] ) ) {
-			throw new Exception( __CLASS__
+			throw new LogicException( __CLASS__
 				. " expected to receive a string parameter 'resultSoFar', got "
 				. print_r( $this->params['resultSoFar'], true )
 			);
@@ -65,7 +65,7 @@ class DeferredChecksJob extends Job {
 				$loginNotify->sendSuccessNoticeDeferred( $user, $subnet, $resultSoFar );
 				break;
 			default:
-				throw new Exception( 'Unknown check type ' . print_r( $checkType, true ) );
+				throw new LogicException( 'Unknown check type ' . print_r( $checkType, true ) );
 		}
 
 		return true;

@@ -23,22 +23,23 @@ namespace MediaWiki\Linter;
 use ApiQuerySiteinfo;
 use Content;
 use IContextSource;
+use JobQueueGroup;
 use MediaWiki\Api\Hook\APIQuerySiteInfoGeneralInfoHook;
+use MediaWiki\Deferred\MWCallableUpdate;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\InfoActionHook;
 use MediaWiki\Hook\ParserLogLinterDataHook;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\RevisionFromEditCompleteHook;
 use MediaWiki\Page\Hook\WikiPageDeletionUpdatesHook;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use MWCallableUpdate;
-use OutputPage;
 use Skin;
-use SpecialPage;
+use WANObjectCache;
 use WikiPage;
 
 class Hooks implements
@@ -49,14 +50,23 @@ class Hooks implements
 	RevisionFromEditCompleteHook,
 	WikiPageDeletionUpdatesHook
 {
-	/** @var LinkRenderer */
-	private $linkRenderer;
+	private LinkRenderer $linkRenderer;
+	private WANObjectCache $cache;
+	private JobQueueGroup $jobQueueGroup;
 
 	/**
 	 * @param LinkRenderer $linkRenderer
+	 * @param WANObjectCache $cache
+	 * @param JobQueueGroup $jobQueueGroup
 	 */
-	public function __construct( LinkRenderer $linkRenderer ) {
+	public function __construct(
+		LinkRenderer $linkRenderer,
+		WANObjectCache $cache,
+		JobQueueGroup $jobQueueGroup
+	) {
 		$this->linkRenderer = $linkRenderer;
+		$this->cache = $cache;
+		$this->jobQueueGroup = $jobQueueGroup;
 	}
 
 	/**
@@ -103,9 +113,15 @@ class Hooks implements
 	 */
 	public function onWikiPageDeletionUpdates( $wikiPage, $content, &$updates ) {
 		$id = $wikiPage->getId();
-		$updates[] = new MWCallableUpdate( static function () use ( $id ) {
+		$cache = $this->cache;
+		$updates[] = new MWCallableUpdate( static function () use ( $id, $cache ) {
 			$database = new Database( $id );
-			$database->updateStats( $database->setForPage( [] ) );
+			$totalsLookup = new TotalsLookup(
+				new CategoryManager(),
+				$cache,
+				$database
+			);
+			$totalsLookup->updateStats( $database->setForPage( [] ) );
 		}, __METHOD__ );
 	}
 
@@ -140,7 +156,12 @@ class Hooks implements
 			!in_array( $wikiPage->getContentModel(), self::LINTABLE_CONTENT_MODELS ) )
 		) {
 			$database = new Database( $wikiPage->getId() );
-			$database->updateStats( $database->setForPage( [] ) );
+			$totalsLookup = new TotalsLookup(
+				new CategoryManager(),
+				$this->cache,
+				$database
+			);
+			$totalsLookup->updateStats( $database->setForPage( [] ) );
 		}
 	}
 
@@ -158,7 +179,6 @@ class Hooks implements
 			'high' => $catManager->getHighPriority(),
 			'medium' => $catManager->getMediumPriority(),
 			'low' => $catManager->getLowPriority(),
-			'none' => $catManager->getNonePriority(),
 		];
 	}
 
@@ -196,7 +216,8 @@ class Hooks implements
 				SpecialPage::getTitleFor( 'LintErrors' ),
 				$context->msg( 'pageinfo-linter-moreinfo' )->text(),
 				[],
-				[ 'namespace' => $title->getNamespace(), 'titlesearch' => $title->getText(), 'exactmatch' => 1 ]
+				[ 'wpNamespaceRestrictions' => $title->getNamespace(),
+					'titlesearch' => $title->getText(), 'exactmatch' => 1 ]
 			),
 		];
 	}
@@ -259,8 +280,8 @@ class Hooks implements
 		$job = new RecordLintJob( $title, [
 			'errors' => $errors,
 			'revision' => $revision,
-		] );
-		MediaWikiServices::getInstance()->getJobQueueGroup()->push( $job );
+		], $this->cache );
+		$this->jobQueueGroup->push( $job );
 		return true;
 	}
 }

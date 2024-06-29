@@ -11,6 +11,5 @@
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Geþancod}}}}",
 	"thanks-error-undefined": "Þancung tosælde (woges runword: $1). Sec eft la.",
 	"thanks-thank-tooltip": "{{GENDER:$1|Send}} þanc {{GENDER:$2|þissum brucende|þisse brucicgan}}",
-	"echo-category-title-edit-thank": "Þancunga",
-	"notification-thanks-diff-link": "þīn ādihtung"
+	"echo-category-title-edit-thank": "Þancunga"
 }

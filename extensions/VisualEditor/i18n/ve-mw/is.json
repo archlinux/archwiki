@@ -3,10 +3,10 @@
 		"authors": [
 			"Maxí",
 			"Snævar",
+			"Stefán Örvar Sigmundsson",
 			"Sveinki",
 			"Sveinn í Felli",
-			"TMg",
-			"Stefán Örvar Sigmundsson"
+			"TMg"
 		]
 	},
 	"tooltip-ca-ve-edit": "Breyta þessari síðu",
@@ -41,7 +41,7 @@
 	"visualeditor-dialog-media-page-advanced": "Ítarlegt",
 	"visualeditor-dialog-media-page-general": "Almennt",
 	"visualeditor-dialog-media-position-checkbox": "Láta texta renna um þetta atriði",
-	"visualeditor-dialog-media-position-checkbox-help": "Þú getur haft atriðið þannig að það birtist á textalínunni í staðinn fyrir að fljóta á síðunni. Þú ætti aðeins að gera þetta í sjaldgæfu tilfelli því það brýtur upp flæði textans ef þú hakar ekki við þennan reit.",
+	"visualeditor-dialog-media-position-checkbox-help": "Þú getur látið þetta miðilsatriði birtast innfellt með texta síðunnar í stað þess að fljóta. Þú ættir einungis að gera þetta sjaldan þar sem þetta mun brjóta upp flæði textans ef þú hakar í þennan reit.",
 	"visualeditor-dialog-media-position-section": "Staðsetning",
 	"visualeditor-dialog-media-position-section-help": "Þú getur stillt þar sem þetta atriði birtist á síðunni. Þetta er stundum notað til að brjóta upp langa röð mynda öðrum megin á síðunni.",
 	"visualeditor-dialog-media-save": "Vista",
@@ -55,7 +55,7 @@
 	"visualeditor-dialog-media-type-frameless": "Rammalaus",
 	"visualeditor-dialog-media-type-none": "Einföld",
 	"visualeditor-dialog-media-type-section": "Tegund myndar",
-	"visualeditor-dialog-media-type-section-help": "Þú getur stillt hvernig atriðið birtist á síðunni. Þetta á vera smámynd til að halda samræmi við aðrar síður í langflestum tilfellum.",
+	"visualeditor-dialog-media-type-section-help": "Þú getur stillt hvernig miðilsatriðið birtist á síðunni. Þetta ætti að vera smámyndarsnið til að vera í samræmi við aðrar síður í næstum öllum tilfellum.",
 	"visualeditor-dialog-media-type-thumb": "Smámynd",
 	"visualeditor-dialog-media-upload": "Hlaða inn",
 	"visualeditor-dialog-meta-advancedsettings-label": "Ítarlegar stillingar",

@@ -52,10 +52,6 @@
 					"name": "ve-confirmedit-hCaptcha/config.json",
 					"callback": "MediaWiki\\Extension\\ConfirmEdit\\hCaptcha\\Hooks\\ResourceLoaderHooks::getHCaptchaResourceLoaderConfig"
 				}
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		}
 	},

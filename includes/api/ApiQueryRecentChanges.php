@@ -30,6 +30,7 @@ use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\Title;
+use MediaWiki\User\UserNameUtils;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -46,6 +47,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	private NameTableStore $changeTagDefStore;
 	private NameTableStore $slotRoleStore;
 	private SlotRoleRegistry $slotRoleRegistry;
+	private UserNameUtils $userNameUtils;
 
 	private $formattedComments = [];
 
@@ -57,6 +59,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	 * @param NameTableStore $changeTagDefStore
 	 * @param NameTableStore $slotRoleStore
 	 * @param SlotRoleRegistry $slotRoleRegistry
+	 * @param UserNameUtils $userNameUtils
 	 */
 	public function __construct(
 		ApiQuery $query,
@@ -65,7 +68,8 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		RowCommentFormatter $commentFormatter,
 		NameTableStore $changeTagDefStore,
 		NameTableStore $slotRoleStore,
-		SlotRoleRegistry $slotRoleRegistry
+		SlotRoleRegistry $slotRoleRegistry,
+		UserNameUtils $userNameUtils
 	) {
 		parent::__construct( $query, $moduleName, 'rc' );
 		$this->commentStore = $commentStore;
@@ -73,6 +77,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		$this->changeTagDefStore = $changeTagDefStore;
 		$this->slotRoleStore = $slotRoleStore;
 		$this->slotRoleRegistry = $slotRoleRegistry;
+		$this->userNameUtils = $userNameUtils;
 	}
 
 	private $fld_comment = false, $fld_parsedcomment = false, $fld_user = false, $fld_userid = false,
@@ -143,11 +148,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		] );
 
 		if ( $params['type'] !== null ) {
-			try {
-				$this->addWhereFld( 'rc_type', RecentChange::parseToRCType( $params['type'] ) );
-			} catch ( Exception $e ) {
-				ApiBase::dieDebug( __METHOD__, $e->getMessage() );
-			}
+			$this->addWhereFld( 'rc_type', RecentChange::parseToRCType( $params['type'] ) );
 		}
 
 		$title = $params['title'];
@@ -542,6 +543,10 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 					$vals['userid'] = (int)$row->actor_user;
 				}
 
+				if ( isset( $row->actor_name ) && $this->userNameUtils->isTemp( $row->actor_name ) ) {
+					$vals['temp'] = true;
+				}
+
 				if ( !$row->actor_user ) {
 					$vals['anon'] = true;
 				}
@@ -701,11 +706,11 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			],
 			'user' => [
 				ParamValidator::PARAM_TYPE => 'user',
-				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'id', 'interwiki' ],
 			],
 			'excludeuser' => [
 				ParamValidator::PARAM_TYPE => 'user',
-				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'id', 'interwiki' ],
 			],
 			'tag' => null,
 			'prop' => [

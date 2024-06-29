@@ -29,7 +29,6 @@ use Wikimedia\TestingAccessWrapper;
  * @coversNothing
  */
 class ContentHandlerFunctionalTest extends MediaWikiIntegrationTestCase {
-	protected $tablesUsed = [ 'page' ];
 
 	public function testMakeEmptyContent() {
 		$contentHandlerFactory = MediaWikiServices::getInstance()->getContentHandlerFactory();
@@ -71,7 +70,6 @@ class ContentHandlerFunctionalTest extends MediaWikiIntegrationTestCase {
 
 			$title = $this->getExistingTestPage()->getTitle();
 			$content = $handler->makeEmptyContent();
-			$this->assertInstanceOf( ParserOutput::class, $content->getParserOutput( $title ) );
 
 			$gpoParams = new ContentParseParams( $title );
 			$this->assertInstanceOf(
@@ -97,11 +95,6 @@ class ContentHandlerFunctionalTest extends MediaWikiIntegrationTestCase {
 			$popts = ParserOptions::newFromAnon();
 			$content = $handler->makeEmptyContent();
 
-			$this->assertInstanceOf(
-				Content::class,
-				$content->preSaveTransform( $title, $user, $popts )
-			);
-
 			$pstParams = new PreSaveTransformParamsValue( $title, $user, $popts );
 			$this->assertInstanceOf(
 				Content::class,
@@ -124,11 +117,6 @@ class ContentHandlerFunctionalTest extends MediaWikiIntegrationTestCase {
 			$title = $this->getExistingTestPage()->getTitle();
 			$popts = ParserOptions::newFromAnon();
 			$content = $handler->makeEmptyContent();
-
-			$this->assertInstanceOf(
-				Content::class,
-				$content->preloadTransform( $title, $popts, [] )
-			);
 
 			$pltParams = new PreloadTransformParamsValue( $title, $popts, [] );
 			$this->assertInstanceOf(

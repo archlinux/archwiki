@@ -40,7 +40,6 @@
 	"echo-pref-subscription-edit-thank": "poďakuje mi niekto za moje úpravy",
 	"echo-pref-tooltip-edit-thank": "Upozornite ma, ak mi niekto poďakuje za moju úpravu.",
 	"echo-category-title-edit-thank": "poďakovanie",
-	"notification-thanks-diff-link": "vašu úpravu",
 	"notification-header-rev-thank": "$1 {{GENDER:$4|vám}} {{GENDER:$2|poďakoval|poďakovala}} za úpravu stránky '''$3'''.",
 	"notification-header-creation-thank": "$1 {{GENDER:$4|vám}} {{GENDER:$2|poďakoval|poďakovala}} za vytvorenie stránky <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$4|vám}} {{GENDER:$2|poďakoval|poďakovala}} za vašu akciu súvisiacu so stránkou <strong>$3</strong>.",
@@ -59,7 +58,6 @@
 	"thanks-error-invalidpostid": "ID komentára nie je platné.",
 	"flow-thanks-confirmation-special": "Chcete verejne poďakovať za tento komentár?",
 	"flow-thanks-thanked-notice": "{{GENDER:$2|Používateľ|Používateľka|Používateľ(ka)}} $1 {{GENDER:$2|obdržal|obdržala|obdržal(a)}} {{GENDER:$3|vaše}} poďakovanie za svoj komentár.",
-	"notification-flow-thanks-post-link": "váš komentár",
 	"notification-header-flow-thank": "$1 {{GENDER:$5|vám}} {{GENDER:$2|poďakoval|poďakovala}} za komentár k téme „<strong>$3</strong>“.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|vám}} {{GENDER:$2|poďakoval|poďakovala|poďakoval(a)}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Jeden človek|$1 ľudia|$1 ľudí|100=Viac ako 99 ľudí}} {{GENDER:$3|vám}} {{PLURAL:$1|poďakoval|poďakovali|poďakovalo}} za váš komentár k téme „<strong>$2</strong>“."

@@ -379,7 +379,7 @@ class ExprParser {
 		}
 
 		// Finish off the operator array
-		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $op = array_pop( $operators ) ) {
 			if ( $op === self::EXPR_OPEN ) {
 				throw new ExprError( 'unclosed_bracket' );

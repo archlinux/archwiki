@@ -9,7 +9,7 @@
 			"Tynnoel"
 		]
 	},
-	"vector-skin-desc": "Addá 2 Vector hámi:\n* 2011 - Ođđaáigásaš veršuvdna Monobookas, ođđa hápmi ja ollu buoriduvvon bealit.\n* 2022 - Vector mii lea WMFas huksejuvvon [[mw:Desktop Improvements]] -prošeavtta áigge.",
+	"vector-skin-desc": "Addá 2 Vector hámi:\n* 2011 - Ođđaáigásaš veršuvdna Monobookas, ođđa hápmi ja ollu buoriduvvon bealit.\n* 2022 - Vector mii lea WMFas huksejuvvon [[mw:Desktop Improvements|Desktop Improvements]] -prošeavtta áigge.",
 	"prefs-vector-enable-vector-1-label": "Ane klassihkalaš Vectora",
 	"prefs-vector-enable-vector-1-help": "Daid boahttevaš jagiid mii áigot ceahkkálaga ođasmahttit Vector hámi. Klassihkalaš Vector čájeha dutnje dan boares Vector veršuvnna (juovlamánnu 2019) Deaddil [[mw:Reading/Web/Desktop_Improvements|project page]] vai oahpat eambbo.",
 	"vector-opt-out": "Molsso ovdalaš hápmái ",
@@ -20,7 +20,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 giella|$1 giela}}",
 	"vector-no-language-button-label": "Lasit gielaid",
 	"vector-no-language-button-aria-label": "Dát artihkkal gávdno dušše dán gillii. Ráhkat artihkkala eará gielaide.",
-	"vector-language-redirect-to-top": "Giellaliŋkkat leat bajimusas dan siiddus, bajilčállaga guoras.",
 	"vector-language-variant-switcher-label": "Lonut giellavariánta",
 	"vector-action-addsection": "Lasit fáttá",
 	"vector-action-delete": "Sihko",
@@ -37,7 +36,18 @@
 	"vector-jumptosearch": "Njuikes ohcamii",
 	"vector-jumptocontent": "Njuikes sisdollui",
 	"vector-more-actions": "Eanet",
-	"vector-feature-limited-width-name": "Čuoldda govdodat",
+	"vector-client-prefs-label": "Olggosoaidnin",
+	"vector-feature-limited-width-name": "Govdodat",
+	"vector-feature-custom-font-size-name": "Teaksta",
+	"vector-feature-limited-width-0-label": "Govdat",
+	"vector-feature-limited-width-1-label": "Dábálaš",
+	"vector-feature-custom-font-size-0-label": "Unni",
+	"vector-feature-custom-font-size-1-label": "Dábálaš",
+	"vector-feature-custom-font-size-2-label": "Stuoris",
+	"skin-night-mode-name": "Ivdni",
+	"skin-night-mode-2-label": "Automáhtalaš",
+	"skin-theme-name": "Ivdni",
+	"skin-theme-os-label": "Automáhtalaš",
 	"vector-search-loader": "Viežžamin ohcanevttohusaid",
 	"vector-searchsuggest-containing": "Oza siidduid main lea <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Oahpisdeapmi",
@@ -69,9 +79,6 @@
 	"vector-toc-unpinned-popup": "Sisdoallologahallan lea sirdon deike.",
 	"vector-page-tools-unpinned-popup": "Reaidofállu lea sirdon deike.",
 	"vector-main-menu-unpinned-popup": "Váldofállu lea sirdon deike.",
-	"vector-readability-survey-title": "Wikimedia lohkanreaidu",
-	"vector-readability-survey-fontSize": "Čálussturrodat",
-	"vector-readability-survey-lineHeight": "Gurgadasa allodat",
-	"vector-readability-survey-reset": "máhcat",
-	"vector-readability-survey-share": "joatkke"
+	"vector-client-prefs-unpinned-popup": "Olggosoaidnin fállu lea sirdon deike.",
+	"vector-2022-beta-preview-label": "Vector 2022 -betaveršuvdna"
 }

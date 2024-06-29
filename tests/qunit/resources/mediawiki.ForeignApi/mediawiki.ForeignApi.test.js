@@ -1,13 +1,13 @@
-( function () {
-	QUnit.module( 'mediawiki.ForeignApi', QUnit.newMwEnvironment( {
-		beforeEach: function () {
-			this.server = this.sandbox.useFakeServer();
-			this.server.respondImmediately = true;
-		}
-	} ) );
+QUnit.module( 'mediawiki.ForeignApi', function ( hooks ) {
+	var CoreForeignApi = require( 'mediawiki.ForeignApi.core' ).ForeignApi;
+
+	hooks.beforeEach( function () {
+		this.server = this.sandbox.useFakeServer();
+		this.server.respondImmediately = true;
+	} );
 
 	QUnit.test( 'origin is included in GET requests', function ( assert ) {
-		var api = new mw.ForeignApi( '//localhost:4242/w/api.php' );
+		var api = new CoreForeignApi( '//localhost:4242/w/api.php' );
 
 		this.server.respond( function ( request ) {
 			assert.true( /origin=/.test( request.url ), 'origin is included in GET requests' );
@@ -18,7 +18,7 @@
 	} );
 
 	QUnit.test( 'origin is included in POST requests', function ( assert ) {
-		var api = new mw.ForeignApi( '//localhost:4242/w/api.php' );
+		var api = new CoreForeignApi( '//localhost:4242/w/api.php' );
 
 		this.server.respond( function ( request ) {
 			assert.true( /origin=/.test( request.requestBody ), 'origin is included in POST request body' );
@@ -31,7 +31,7 @@
 
 	QUnit.test( 'origin is not included in same-origin GET requests', function ( assert ) {
 		var apiUrl = location.protocol + '//' + location.host + '/w/api.php',
-			api = new mw.ForeignApi( apiUrl );
+			api = new CoreForeignApi( apiUrl );
 
 		this.server.respond( function ( request ) {
 			assert.strictEqual( request.url.match( /origin=.*?(?:&|$)/ ), null, 'origin is not included in GET requests' );
@@ -43,7 +43,7 @@
 
 	QUnit.test( 'origin is not included in same-origin POST requests', function ( assert ) {
 		var apiUrl = location.protocol + '//' + location.host + '/w/api.php',
-			api = new mw.ForeignApi( apiUrl );
+			api = new CoreForeignApi( apiUrl );
 
 		this.server.respond( function ( request ) {
 			assert.strictEqual( request.requestBody.match( /origin=.*?(?:&|$)/ ), null, 'origin is not included in POST request body' );
@@ -54,4 +54,4 @@
 		return api.post( {} );
 	} );
 
-}() );
+} );

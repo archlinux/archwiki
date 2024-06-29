@@ -21,9 +21,11 @@ use ExtensionRegistry;
 use FlaggablePageView;
 use IBufferingStatsdDataFactory;
 use IDBAccessObject;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Request\DerivativeRequest;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Storage\PageEditStash;
 use MediaWiki\Title\Title;
@@ -50,7 +52,7 @@ class ApiVisualEditorEdit extends ApiBase {
 	public function __construct(
 		ApiMain $main,
 		string $name,
-		VisualEditorHookRunner $hookRunner,
+		HookContainer $hookContainer,
 		IBufferingStatsdDataFactory $statsdDataFactory,
 		PageEditStash $pageEditStash,
 		SkinFactory $skinFactory,
@@ -61,7 +63,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
 		$this->setStats( $statsdDataFactory );
-		$this->hookRunner = $hookRunner;
+		$this->hookRunner = new VisualEditorHookRunner( $hookContainer );
 		$this->pageEditStash = $pageEditStash;
 		$this->skinFactory = $skinFactory;
 		$this->wikiPageFactory = $wikiPageFactory;
@@ -338,10 +340,13 @@ class ApiVisualEditorEdit extends ApiBase {
 		$apiParams = [
 			'action' => 'compare',
 			'prop' => 'diff',
+			// Because we're just providing wikitext, we only care about the main slot
+			'slots' => SlotRecord::MAIN,
 			'fromtitle' => $title->getPrefixedDBkey(),
 			'fromrev' => $fromId,
 			'fromsection' => $section,
-			'totext' => $wikitext,
+			'toslots' => SlotRecord::MAIN,
+			'totext-main' => $wikitext,
 			'topst' => true,
 		];
 
@@ -358,15 +363,12 @@ class ApiVisualEditorEdit extends ApiBase {
 			/* enable write? */ false
 		);
 		$api->execute();
-		$result = $api->getResult()->getResultData( null, [
-			/* Transform content nodes to '*' */ 'BC' => [],
-			/* Add back-compat subelements */ 'Types' => [],
-		] );
+		$result = $api->getResult()->getResultData();
 
-		if ( !isset( $result['compare']['*'] ) ) {
+		if ( !isset( $result['compare']['bodies'][SlotRecord::MAIN] ) ) {
 			$this->dieWithError( 'apierror-visualeditor-difffailed', 'difffailed' );
 		}
-		$diffRows = $result['compare']['*'];
+		$diffRows = $result['compare']['bodies'][SlotRecord::MAIN];
 
 		$context = new DerivativeContext( $this->getContext() );
 		$context->setTitle( $title );

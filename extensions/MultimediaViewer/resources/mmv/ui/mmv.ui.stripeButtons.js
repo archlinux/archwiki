@@ -64,8 +64,7 @@ const UiElement = require( './mmv.ui.js' );
 		 * @param {function(jQuery, string)} callback a function that will be called with each button
 		 */
 		eachButton( callback ) {
-			let buttonName;
-			for ( buttonName in this.buttons ) {
+			for ( const buttonName in this.buttons ) {
 				callback( this.buttons[ buttonName ], buttonName );
 			}
 		}

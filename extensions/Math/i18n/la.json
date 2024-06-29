@@ -9,7 +9,7 @@
 	"math_syntax_error": "erratum syntaxis",
 	"math_unknown_error": "error ignotus",
 	"math_unknown_function": "functio ignota",
-	"mw_math_mathml": "MathML",
-	"mw_math_source": "Stet ut TeX (pro navigatri texti)",
+	"mw-math-mathml": "MathML",
+	"mw-math-source": "Stet ut TeX (pro navigatri texti)",
 	"prefs-math": "Interpretatio artis mathematicae"
 }

@@ -72,7 +72,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "این ارجاع در یک الگو یا سایر بلوک‌های تولیدشده تعریف شده است، برای الان فقط در حالت مبدأ پیش‌نمایش داده می‌شود.",
 	"cite-ve-referenceslist-missingreflist": "این فهرست ارجاع با یک سند مرجع تولید شده‌، و برای الان فقط می‎تواند در حالت مبدأ ویرایش شود.",
 	"cite-ve-toolbar-group-label": "یادکرد",
-	"cite-ve-othergroup-item": "$1 ارجاع",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "ارجاعات",
-	"visualeditor-internal-list-diff-group-name-mwreference": "نام گروه ارجاع: «$1»"
+	"cite-ve-othergroup-item": "$1 ارجاع"
 }

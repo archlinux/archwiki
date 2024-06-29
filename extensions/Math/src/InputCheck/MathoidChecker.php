@@ -29,25 +29,17 @@ class MathoidChecker extends BaseChecker {
 	/** @var string */
 	private $response;
 
-	/**
-	 * @param WANObjectCache $cache
-	 * @param HttpRequestFactory $httpFactory
-	 * @param LoggerInterface $logger
-	 * @param string $url
-	 * @param int $timeout
-	 * @param string $input
-	 * @param string $type
-	 */
 	public function __construct(
 		WANObjectCache $cache,
 		HttpRequestFactory $httpFactory,
 		LoggerInterface $logger,
-		$url,
-		$timeout,
+		string $url,
+		int $timeout,
 		string $input,
-		string $type
+		string $type,
+		bool $purge
 	) {
-		parent::__construct( $input );
+		parent::__construct( $input, $purge );
 		$this->url = $url;
 		$this->timeout = $timeout;
 		$this->cache = $cache;
@@ -61,8 +53,12 @@ class MathoidChecker extends BaseChecker {
 	 */
 	public function getCheckResponse(): array {
 		if ( !isset( $this->statusCode ) ) {
-			list( $this->statusCode, $this->response ) = $this->cache->getWithSetCallback(
-				$this->getCacheKey(),
+			$cacheInputKey = $this->getCacheKey();
+			if ( $this->purge ) {
+				$this->cache->delete( $cacheInputKey, WANObjectCache::TTL_INDEFINITE );
+			}
+			[ $this->statusCode, $this->response ] = $this->cache->getWithSetCallback(
+				$cacheInputKey,
 				WANObjectCache::TTL_INDEFINITE,
 				[ $this, 'runCheck' ],
 				[ 'version' => self::VERSION ]
@@ -134,7 +130,7 @@ class MathoidChecker extends BaseChecker {
 		return null;
 	}
 
-	public function getValidTex() {
+	public function getValidTex(): ?string {
 		[ $statusCode, $content ] = $this->getCheckResponse();
 		if ( $statusCode === 200 ) {
 			$json = json_decode( $content );

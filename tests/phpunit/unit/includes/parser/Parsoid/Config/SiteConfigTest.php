@@ -14,16 +14,15 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Parser\MagicWordArray;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Parsoid\Config\SiteConfig;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\NamespaceInfo;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
 use MediaWikiUnitTestCase;
 use MessageCache;
-use MWException;
 use NullStatsdDataFactory;
-use Parser;
 use ParserFactory;
 use UnexpectedValueException;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
@@ -61,6 +60,11 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		MainConfigNames::NoFollowNsExceptions => [ 5 ],
 		MainConfigNames::NoFollowDomainExceptions => [ 'www.mediawiki.org' ],
 		MainConfigNames::ExternalLinkTarget => false,
+		MainConfigNames::EnableMagicLinks => [
+			'ISBN' => true,
+			'PMID' => true,
+			'RFC' => true,
+		],
 	];
 
 	private function createMockOrOverride( string $class, array $overrides ) {
@@ -673,26 +677,6 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			LanguageConverterFactory::class => $langConverterFactoryMock
 		] );
 		$this->assertTrue( $config->langConverterEnabledBcp47( $langMock ) );
-	}
-
-	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabledBcp47
-	 */
-	public function testLangConverterEnabled_exception() {
-		$langFactoryMock = $this->createMock( LanguageFactory::class );
-		$langFactoryMock
-			->method( 'getLanguage' )
-			->with( 'zh' )
-			->willThrowException( new MWException( 'TEST' ) );
-		$langConverterFactoryMock = $this->createMock( LanguageConverterFactory::class );
-		$langConverterFactoryMock
-			->method( 'isConversionDisabled' )
-			->willReturn( false );
-		$config = $this->createSiteConfig( [], [], [
-			LanguageFactory::class => $langFactoryMock,
-			LanguageConverterFactory::class => $langConverterFactoryMock,
-		] );
-		$this->assertFalse( $config->langConverterEnabledBcp47( new Bcp47CodeValue( 'zh' ) ) );
 	}
 
 	/**

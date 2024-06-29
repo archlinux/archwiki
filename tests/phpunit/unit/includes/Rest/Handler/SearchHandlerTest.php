@@ -6,6 +6,8 @@ use InvalidArgumentException;
 use Language;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Language\FormatterFactory;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
@@ -20,13 +22,16 @@ use MediaWiki\Rest\RequestData;
 use MediaWiki\Search\Entity\SearchResultThumbnail;
 use MediaWiki\Search\SearchResultThumbnailProvider;
 use MediaWiki\Status\Status;
+use MediaWiki\Status\StatusFormatter;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Title\TitleValue;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWikiUnitTestCase;
 use MockSearchResultSet;
 use PHPUnit\Framework\MockObject\MockObject;
 use SearchEngine;
+use SearchEngineConfig;
 use SearchEngineFactory;
 use SearchResult;
 use SearchResultSet;
@@ -37,7 +42,7 @@ use Wikimedia\Message\MessageValue;
 /**
  * @covers \MediaWiki\Rest\Handler\SearchHandler
  */
-class SearchHandlerTest extends \MediaWikiUnitTestCase {
+class SearchHandlerTest extends MediaWikiUnitTestCase {
 
 	use DummyServicesTrait;
 	use MediaTestTrait;
@@ -83,7 +88,7 @@ class SearchHandlerTest extends \MediaWikiUnitTestCase {
 		$hookContainer ??= $this->createHookContainer();
 		/** @var UserOptionsLookup|MockObject $userOptionsLookup */
 		$userOptionsLookup = $this->createMock( UserOptionsLookup::class );
-		$searchEngineConfig = new \SearchEngineConfig(
+		$searchEngineConfig = new SearchEngineConfig(
 			$config,
 			$language,
 			$hookContainer,
@@ -137,6 +142,14 @@ class SearchHandlerTest extends \MediaWikiUnitTestCase {
 			$hookContainer
 		);
 
+		$mockStatusFormatter = $this->createNoOpMock( StatusFormatter::class, [ 'getMessage' ] );
+		$mockStatusFormatter->method( 'getMessage' )->willReturn(
+			new RawMessage( 'testing' )
+		);
+
+		$mockFormatterFactory = $this->createNoOpMock( FormatterFactory::class, [ 'getStatusFormatter' ] );
+		$mockFormatterFactory->method( 'getStatusFormatter' )->willReturn( $mockStatusFormatter );
+
 		return new SearchHandler(
 			$config,
 			$searchEngineFactory,
@@ -145,7 +158,8 @@ class SearchHandlerTest extends \MediaWikiUnitTestCase {
 			$permissionManager,
 			$redirectLookup,
 			$pageStore,
-			$mockTitleFormatter
+			$mockTitleFormatter,
+			$mockFormatterFactory,
 		);
 	}
 

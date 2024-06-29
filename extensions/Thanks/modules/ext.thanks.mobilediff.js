@@ -1,8 +1,6 @@
 ( function () {
 	// To allow users to cancel a thanks in the event of an accident, the action is delayed.
 	var THANKS_DELAY = 2000,
-		mobile = mw.mobileFrontend.require( 'mobile.startup' ),
-		IconButton = mobile.IconButton,
 		msgOptions = {
 			// tag ensures that only one message in workflow is shown at any time
 			tag: 'thanks'
@@ -47,10 +45,12 @@
 	 * @return {jQuery} $button now disabled
 	 */
 	function disableThanks( $button, gender ) {
-		return $button
+		$button
 			.addClass( 'thanked' )
-			.prop( 'disabled', true )
+			.prop( 'disabled', true );
+		$button.find( 'span' ).eq( 1 )
 			.text( mw.msg( 'thanks-button-thanked', mw.user, gender ) );
+		return $button;
 	}
 
 	/**
@@ -62,18 +62,24 @@
 	 * @return {jQuery|null} The HTML of the button.
 	 */
 	function createThankLink( name, rev, gender ) {
-		var timeout,
-			button = new IconButton( {
-				weight: 'primary',
-				action: 'progressive',
-				size: 'medium',
-				additionalClassNames: 'mw-mf-action-button',
-				icon: 'userTalk',
-				isIconOnly: false,
-				glyphPrefix: 'thanks',
-				label: mw.msg( 'thanks-button-thank', mw.user, gender )
-			} ),
-			$button = button.$el;
+		const button = document.createElement( 'button' ),
+			label = document.createElement( 'span' ),
+			icon = document.createElement( 'span' );
+		let timeout;
+
+		// https://doc.wikimedia.org/codex/latest/components/demos/button.html#css-only-version
+		button.classList.add(
+			'cdx-button',
+			'mw-mf-action-button',
+			'cdx-button--action-progressive',
+			'cdx-button--weight-primary'
+		);
+		label.textContent = mw.msg( 'thanks-button-thank', mw.user, gender );
+		icon.classList.add( 'mw-thanks-icon', 'cdx-button__icon' );
+		icon.setAttribute( 'aria-hidden', 'true' );
+		button.appendChild( icon );
+		button.appendChild( label );
+		const $button = $( button );
 
 		// Don't make thank button for self
 		if ( name === mw.config.get( 'wgUserName' ) ) {
@@ -129,10 +135,9 @@
 	function init( $user, $container ) {
 		var username = $user.data( 'user-name' ),
 			rev = $user.data( 'revision-id' ),
-			gender = $user.data( 'user-gender' ),
-			$thankBtn;
+			gender = $user.data( 'user-gender' );
 
-		$thankBtn = createThankLink( username, rev, gender );
+		var $thankBtn = createThankLink( username, rev, gender );
 		if ( $thankBtn ) {
 			$thankBtn.prependTo( $container );
 		}

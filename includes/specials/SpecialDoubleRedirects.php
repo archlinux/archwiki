@@ -107,10 +107,7 @@ class SpecialDoubleRedirects extends QueryPage {
 				// This isn't an optimization, it is required for correct results,
 				// otherwise a non-double redirect like Bar -> w:Foo will show up
 				// like "Bar -> Foo -> w:Foo".
-
-				// Need to check both NULL and "" for some reason,
-				// apparently either can be stored for non-iw entries.
-				'ra.rd_interwiki' => [ null, '' ],
+				'ra.rd_interwiki' => '',
 
 				'pb.page_namespace = ra.rd_namespace',
 				'pb.page_title = ra.rd_title',
@@ -259,7 +256,5 @@ class SpecialDoubleRedirects extends QueryPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialDoubleRedirects::class, 'SpecialDoubleRedirects' );

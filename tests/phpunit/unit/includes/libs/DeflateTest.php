@@ -18,10 +18,16 @@
  *
  */
 
+namespace Wikimedia\Tests;
+
+use Deflate;
+use MediaWikiTestCaseTrait;
+use PHPUnit\Framework\TestCase;
+
 /**
- * @covers Deflate
+ * @covers \Deflate
  */
-class DeflateTest extends PHPUnit\Framework\TestCase {
+class DeflateTest extends TestCase {
 	use MediaWikiTestCaseTrait;
 
 	public static function provideIsDeflated() {

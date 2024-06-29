@@ -1,5 +1,4 @@
 @import 'mediawiki.skin.variables.less';
-@width-breakpoint-tablet: 720px;
 
 .ext-discussiontools-ui-replyWidget {
 	margin-bottom: 1em;
@@ -69,6 +68,7 @@
 		margin: 1em 0;
 		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.25 );
 
+		// OOUI Apex theme
 		.skin-monobook & {
 			box-shadow: 0 0.2em 1em rgba( 0, 0, 0, 0.3 );
 		}
@@ -141,6 +141,7 @@
 		}
 
 		.ext-discussiontools-ui-modeTab {
+			// OOUI Apex theme
 			.skin-monobook & {
 				margin-top: 0;
 			}
@@ -219,6 +220,7 @@
 
 		&-links {
 			// Extra specificity to override rules from MediaWiki
+			&,
 			.mw-content-ltr &,
 			.mw-content-rtl & {
 				margin: 0;
@@ -374,7 +376,7 @@
 				left: 1em;
 
 				// Hide warning icon below tablet width
-				@media all and ( max-width: @width-breakpoint-tablet ) {
+				@media all and ( max-width: @max-width-breakpoint-mobile ) {
 					& {
 						display: none;
 					}
@@ -388,7 +390,7 @@
 			margin-left: 3em;
 
 			// Hide warning icon below tablet width
-			@media all and ( max-width: @width-breakpoint-tablet ) {
+			@media all and ( max-width: @max-width-breakpoint-mobile ) {
 				& {
 					margin-left: 0;
 				}
@@ -429,7 +431,7 @@
 		}
 
 		// Change field layout and order on mobile
-		@media all and ( max-width: @width-breakpoint-tablet ) {
+		@media all and ( max-width: @max-width-breakpoint-mobile ) {
 			.oo-ui-fieldLayout-header {
 				order: 1;
 			}

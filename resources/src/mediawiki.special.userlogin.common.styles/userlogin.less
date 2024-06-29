@@ -1,5 +1,6 @@
 /* User login and signup forms */
 @import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
 
 @defaultFormWidth: 290px;
 
@@ -17,8 +18,9 @@
 	justify-content: center;
 }
 
-.mw-htmlform-field-HTMLSubmitField + .mw-form-related-link-container {
-	margin-top: 0.5em;
+/* TODO: Remove this and allow Codex's default field spacing of 24px to take effect */
+.mw-htmlform-codex .cdx-field {
+	margin: 0 0 15px;
 }
 
 .mw-htmlform .mw-secure {
@@ -58,7 +60,7 @@ section.mw-form-header {
 /* FIXME: These should be namespaced to mw-ext-confirmedit-fancycaptcha-, and really shouldn't be in core at all */
 /* stylelint-disable-next-line selector-class-pattern */
 .fancycaptcha-captcha-container {
-	background-color: #f8f9fa;
+	background-color: @background-color-neutral-subtle;
 	margin-bottom: 15px;
 	border: @border-subtle;
 	border-radius: @border-radius-base;
@@ -95,10 +97,14 @@ section.mw-form-header {
 	width: 100%;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-.htmlform-tip,
-.mw-ui-vform-field,
-.mw-userlogin-rememberme,
-.mw-htmlform-field-HTMLTextField {
-	margin: 0 0 15px;
+.cdx-message .mw-userLogin-icon {
+	&--user-temporary {
+		.cdx-mixin-css-icon(@cdx-icon-user-temporary);
+	}
+}
+
+.mw-login-flush-right {
+	float: right;
+	padding-right: 0;
+	margin-right: 0;
 }

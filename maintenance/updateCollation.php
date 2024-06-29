@@ -32,7 +32,6 @@ use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
-use Wikimedia\Rdbms\LBFactory;
 
 /**
  * Maintenance script that will find all rows in the categorylinks table
@@ -48,10 +47,10 @@ class UpdateCollation extends Maintenance {
 	private $numRowsProcessed = 0;
 
 	/** @var bool */
-	private $dryRun;
+	private $force;
 
 	/** @var bool */
-	private $force;
+	private $dryRun;
 
 	/** @var bool */
 	private $verboseStats;
@@ -70,9 +69,6 @@ class UpdateCollation extends Maintenance {
 
 	/** @var IMaintainableDatabase */
 	private $dbw;
-
-	/** @var LBFactory */
-	private $lbFactory;
 
 	/** @var NamespaceInfo */
 	private $namespaceInfo;
@@ -115,7 +111,6 @@ TEXT
 	private function init() {
 		$services = $this->getServiceContainer();
 		$this->namespaceInfo = $services->getNamespaceInfo();
-		$this->lbFactory = $services->getDBLoadBalancerFactory();
 
 		if ( $this->hasOption( 'target-collation' ) ) {
 			$this->collationName = $this->getOption( 'target-collation' );
@@ -136,8 +131,8 @@ TEXT
 		$this->force = $this->getOption( 'force' );
 		$this->dryRun = $this->getOption( 'dry-run' );
 		$this->verboseStats = $this->getOption( 'verbose-stats' );
-		$this->dbw = $this->getDB( DB_PRIMARY );
-		$this->dbr = $this->getDB( DB_REPLICA );
+		$this->dbw = $this->getPrimaryDB();
+		$this->dbr = $this->getReplicaDB();
 		$this->targetTable = $this->getOption( 'target-table' );
 	}
 
@@ -156,54 +151,21 @@ TEXT
 			}
 		}
 
-		// Locally at least, (my local is a rather old version of mysql)
-		// mysql seems to filesort if there is both an equality
-		// (but not for an inequality) condition on cl_collation in the
-		// WHERE and it is also the first item in the ORDER BY.
-		if ( $this->hasOption( 'previous-collation' ) ) {
-			$orderBy = 'cl_to, cl_type, cl_from';
-		} else {
-			$orderBy = 'cl_collation, cl_to, cl_type, cl_from';
-		}
-
 		$collationConds = [];
 		if ( !$this->force && !$this->targetTable ) {
 			if ( $this->hasOption( 'previous-collation' ) ) {
 				$collationConds['cl_collation'] = $this->getOption( 'previous-collation' );
 			} else {
-				$collationConds = [
-					0 => 'cl_collation != ' . $this->dbr->addQuotes( $this->collationName )
-				];
-			}
-
-			$count = $this->dbr->estimateRowCount(
-				'categorylinks',
-				'*',
-				$collationConds,
-				__METHOD__
-			);
-			// Improve estimate if feasible
-			if ( $count < 1000000 ) {
-				$count = $this->dbr->newSelectQueryBuilder()
-					->select( 'COUNT(*)' )
-					->from( 'categorylinks' )
-					->where( $collationConds )
-					->caller( __METHOD__ )->fetchField();
-			}
-			if ( $count == 0 ) {
-				$this->output( "Collations up-to-date.\n" );
-
-				return;
-			}
-			if ( $this->dryRun ) {
-				$this->output( "$count rows would be updated.\n" );
-			} else {
-				$this->output( "Fixing collation for $count rows.\n" );
+				$collationConds[] = $this->dbr->expr( 'cl_collation', '!=', $this->collationName );
 			}
 		}
-		$batchConds = [];
+		$maxPageId = (int)$this->dbr->newSelectQueryBuilder()
+			->select( 'MAX(page_id)' )
+			->from( 'page' )
+			->caller( __METHOD__ )->fetchField();
+		$batchValue = 0;
 		do {
-			$this->output( "Selecting next $batchSize rows..." );
+			$this->output( "Selecting next $batchSize pages from cl_from = $batchValue... " );
 
 			// cl_type must be selected as a number for proper paging because
 			// enums suck.
@@ -222,11 +184,13 @@ TEXT
 				// per T58041
 				->straightJoin( 'page', null, 'cl_from = page_id' )
 				->where( $collationConds )
-				->andWhere( $batchConds )
-				->limit( $batchSize )
-				->orderBy( $orderBy )
+				->andWhere(
+					$this->dbw->expr( 'cl_from', '>=', $batchValue )
+						->and( 'cl_from', '<', $batchValue + $this->getBatchSize() )
+				)
+				->orderBy( 'cl_from' )
 				->caller( __METHOD__ )->fetchResultSet();
-			$this->output( " processing..." );
+			$this->output( "processing... " );
 
 			if ( $res->numRows() ) {
 				if ( $this->targetTable ) {
@@ -234,17 +198,15 @@ TEXT
 				} else {
 					$this->updateBatch( $res );
 				}
-				$res->seek( $res->numRows() - 1 );
-				$lastRow = $res->fetchObject();
-				$batchConds = [ $this->getBatchCondition( $lastRow, $this->dbw ) ];
 			}
+			$batchValue += $this->getBatchSize();
 
 			if ( $this->dryRun ) {
 				$this->output( "{$this->numRowsProcessed} rows would be updated so far.\n" );
 			} else {
 				$this->output( "{$this->numRowsProcessed} done.\n" );
 			}
-		} while ( $res->numRows() == $batchSize );
+		} while ( $maxPageId >= $batchValue );
 
 		if ( !$this->dryRun ) {
 			$this->output( "{$this->numRowsProcessed} rows processed\n" );
@@ -257,39 +219,9 @@ TEXT
 	}
 
 	/**
-	 * Return an SQL expression selecting rows which sort above the given row,
-	 * assuming an ordering of cl_collation, cl_to, cl_type, cl_from
-	 * @param stdClass $row
-	 * @param IDatabase $dbw
-	 * @return string
-	 */
-	private function getBatchCondition( $row, $dbw ) {
-		if ( $this->hasOption( 'previous-collation' ) ) {
-			$fields = [ 'cl_to', 'cl_type', 'cl_from' ];
-		} else {
-			$fields = [ 'cl_collation', 'cl_to', 'cl_type', 'cl_from' ];
-		}
-		$conds = [];
-		foreach ( $fields as $field ) {
-			if ( $dbw->getType() === 'mysql' && $field === 'cl_type' ) {
-				// Range conditions with enums are weird in mysql
-				// This must be a numeric literal, or it won't work.
-				$value = intval( $row->cl_type_numeric );
-			} else {
-				$value = $row->$field;
-			}
-			$conds[ $field ] = $value;
-		}
-
-		return $dbw->buildComparison( '>', $conds );
-	}
-
-	/**
 	 * Update a set of rows in the categorylinks table
-	 *
-	 * @param IResultWrapper $res The rows to update
 	 */
-	private function updateBatch( $res ) {
+	private function updateBatch( IResultWrapper $res ) {
 		if ( !$this->dryRun ) {
 			$this->beginTransaction( $this->dbw, __METHOD__ );
 		}
@@ -298,12 +230,12 @@ TEXT
 			if ( !$row->cl_collation ) {
 				# This is an old-style row, so the sortkey needs to be
 				# converted.
-				if ( $row->cl_sortkey == $title->getText()
-					|| $row->cl_sortkey == $title->getPrefixedText()
+				if ( $row->cl_sortkey === $title->getText()
+					|| $row->cl_sortkey === $title->getPrefixedText()
 				) {
 					$prefix = '';
 				} else {
-					# Custom sortkey, use it as a prefix
+					# Custom sortkey, so use it as a prefix
 					$prefix = $row->cl_sortkey;
 				}
 			} else {
@@ -345,10 +277,8 @@ TEXT
 
 	/**
 	 * Copy a set of rows to the target table
-	 *
-	 * @param IResultWrapper $res
 	 */
-	private function copyBatch( $res ) {
+	private function copyBatch( IResultWrapper $res ) {
 		$sortKeyInputs = [];
 		foreach ( $res as $row ) {
 			$title = Title::newFromRow( $row );
@@ -379,7 +309,11 @@ TEXT
 			$this->numRowsProcessed += count( $rowsToInsert );
 		} else {
 			$this->beginTransaction( $this->dbw, __METHOD__ );
-			$this->dbw->insert( $this->targetTable, $rowsToInsert, __METHOD__, [ 'IGNORE' ] );
+			$this->dbw->newInsertQueryBuilder()
+				->insertInto( $this->targetTable )
+				->ignore()
+				->rows( $rowsToInsert )
+				->caller( __METHOD__ )->execute();
 			$this->numRowsProcessed += $this->dbw->affectedRows();
 			$this->commitTransaction( $this->dbw, __METHOD__ );
 		}
@@ -387,10 +321,8 @@ TEXT
 
 	/**
 	 * Update the verbose statistics
-	 *
-	 * @param string $key
 	 */
-	private function updateSortKeySizeHistogram( $key ) {
+	private function updateSortKeySizeHistogram( string $key ) {
 		if ( !$this->verboseStats ) {
 			return;
 		}
@@ -409,7 +341,7 @@ TEXT
 			return;
 		}
 		$maxLength = max( array_keys( $this->sizeHistogram ) );
-		if ( $maxLength == 0 ) {
+		if ( $maxLength === 0 ) {
 			return;
 		}
 		$numBins = 20;
@@ -434,7 +366,7 @@ TEXT
 					break;
 				}
 			}
-			if ( $coarseIndex == $numBins - 1 ) {
+			if ( $coarseIndex === ( $numBins - 1 ) ) {
 				$coarseHistogram[$coarseIndex] += $val;
 			}
 			$raw .= $val;
@@ -449,10 +381,13 @@ TEXT
 			$val = $coarseHistogram[$coarseIndex] ?? 0;
 			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 			$boundary = $coarseBoundaries[$coarseIndex];
-			$this->output( sprintf( "%-10s %-10d |%s\n",
-				$prevBoundary . '-' . ( $boundary - 1 ) . ': ',
-				$val,
-				str_repeat( '*', $scale * $val ) ) );
+			$this->output(
+				sprintf( "%-10s %-10d |%s\n",
+					$prevBoundary . '-' . ( $boundary - 1 ) . ': ',
+					$val,
+					str_repeat( '*', $scale * $val )
+				)
+			);
 			$prevBoundary = $boundary;
 		}
 	}

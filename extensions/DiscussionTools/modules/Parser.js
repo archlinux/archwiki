@@ -291,16 +291,17 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 		}
 	}
 
+	/**
+	 * @param {string} text
+	 * @return {number}
+	 */
 	function untransformDigits( text ) {
-		if ( !digits ) {
-			return text;
-		}
-		return text.replace(
+		return Number( digits ? text.replace(
+			// digits list comes from site config so is trusted
+			// eslint-disable-next-line security/detect-non-literal-regexp
 			new RegExp( '[' + digits.join( '' ) + ']', 'g' ),
-			function ( m ) {
-				return digits.indexOf( m );
-			}
-		);
+			( m ) => digits.indexOf( m )
+		) : text );
 	}
 
 	var parser = this;
@@ -313,7 +314,7 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 	 * Timestamp parser
 	 *
 	 * @param {Array} match RegExp match data
-	 * @return {Object} Result, an object with the following keys:
+	 * @return {Object} Result, an object with the following keys (or null if the date is invalid):
 	 *  - {moment} date Moment date object
 	 *  - {string|null} warning Warning message if the input wasn't correctly formed
 	 */
@@ -339,7 +340,7 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 					break;
 				case 'd':
 				case 'j':
-					day = Number( untransformDigits( text ) );
+					day = untransformDigits( text );
 					break;
 				case 'D':
 				case 'l':
@@ -360,21 +361,21 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 					break;
 				case 'm':
 				case 'n':
-					monthIdx = Number( untransformDigits( text ) ) - 1;
+					monthIdx = untransformDigits( text ) - 1;
 					break;
 				case 'Y':
-					year = Number( untransformDigits( text ) );
+					year = untransformDigits( text );
 					break;
 				case 'xkY':
 					// Thai year
-					year = Number( untransformDigits( text ) ) - 543;
+					year = untransformDigits( text ) - 543;
 					break;
 				case 'G':
 				case 'H':
-					hour = Number( untransformDigits( text ) );
+					hour = untransformDigits( text );
 					break;
 				case 'i':
-					minute = Number( untransformDigits( text ) );
+					minute = untransformDigits( text );
 					break;
 				case 's':
 					// Seconds - unused, because most timestamp formats omit them
@@ -411,6 +412,13 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 			} else {
 				dateWarning = 'Ambiguous time at DST switchover was parsed';
 			}
+		}
+
+		// We require the date to be compatible with our libraries, for example zero or negative years (T352455)
+		// In PHP we need to check with MWTimestamp.
+		// In JS we need to check with Moment.
+		if ( !date.isValid() ) {
+			return null;
 		}
 
 		return {
@@ -623,7 +631,12 @@ Parser.prototype.getUsernameFromLink = function ( link ) {
 	if ( link.classList.contains( 'mw-selflink' ) ) {
 		title = this.title;
 	} else {
-		title = mw.Title.newFromText( utils.getTitleFromUrl( link.href ) || '' );
+		var titleString = utils.getTitleFromUrl( link.href ) || '';
+		// Performance optimization, skip strings that obviously don't contain a namespace
+		if ( !titleString || titleString.indexOf( ':' ) === -1 ) {
+			return null;
+		}
+		title = mw.Title.newFromText( titleString );
 	}
 	if ( !title ) {
 		return null;
@@ -724,21 +737,23 @@ Parser.prototype.findSignature = function ( timestampNode, until ) {
 			//
 			// Handle links nested in formatting elements.
 			if ( event === 'leave' && node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'a' ) {
-				var user = parser.getUsernameFromLink( node );
-				if ( user ) {
-					// Accept the first link to the user namespace, then only accept links to that user
-					if ( sigUsername === null ) {
-						sigUsername = user.username;
-					}
-					if ( user.username === sigUsername ) {
-						lastLinkNode = node;
-						if ( user.displayName ) {
-							sigDisplayName = user.displayName;
+				if ( !node.classList.contains( 'ext-discussiontools-init-timestamplink' ) ) {
+					var user = parser.getUsernameFromLink( node );
+					if ( user ) {
+						// Accept the first link to the user namespace, then only accept links to that user
+						if ( sigUsername === null ) {
+							sigUsername = user.username;
+						}
+						if ( user.username === sigUsername ) {
+							lastLinkNode = node;
+							if ( user.displayName ) {
+								sigDisplayName = user.displayName;
+							}
 						}
 					}
+					// Keep looking if a node with links wasn't a link to a user page
+					// "Doc James (talk · contribs · email)"
 				}
-				// Keep looking if a node with links wasn't a link to a user page
-				// "Doc James (talk · contribs · email)"
 			}
 		}
 	);
@@ -749,7 +764,7 @@ Parser.prototype.findSignature = function ( timestampNode, until ) {
 		endContainer: timestampNode.parentNode,
 		endOffset: utils.childIndexOf( timestampNode ) + 1
 	};
-	var nativeRange = ThreadItem.prototype.getNativeRange.call( { range: range } );
+	var nativeRange = ThreadItem.prototype.getRange.call( { range: range } );
 
 	// Expand the range so that it covers sibling nodes.
 	// This will include any wrapping formatting elements as part of the signature.
@@ -778,7 +793,8 @@ Parser.prototype.findSignature = function ( timestampNode, until ) {
  * separators (isCommentSeparator()).
  *
  * @private
- * @param {Node} node Node to start searching at. If it isn't a leaf node, its children are ignored.
+ * @param {Node|null} node Node after which to start searching
+ *   (if null, start at the beginning of the document).
  * @return {Node}
  */
 Parser.prototype.nextInterestingLeafNode = function ( node ) {
@@ -789,9 +805,8 @@ Parser.prototype.nextInterestingLeafNode = function ( node ) {
 		// eslint-disable-next-line no-bitwise
 		NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
 		function ( n ) {
-			// Ignore this node and its descendants
-			// (unless it's the root node, this is a special case for "fakeHeading" handling)
-			if ( node !== rootNode && ( n === node || n.parentNode === node ) ) {
+			// Skip past the starting node and its descendants
+			if ( n === node || n.parentNode === node ) {
 				return NodeFilter.FILTER_REJECT;
 			}
 			// Ignore some elements usually used as separators or headers (and their descendants)
@@ -809,7 +824,9 @@ Parser.prototype.nextInterestingLeafNode = function ( node ) {
 		},
 		false
 	);
-	treeWalker.currentNode = node;
+	if ( node ) {
+		treeWalker.currentNode = node;
+	}
 	treeWalker.nextNode();
 	if ( !treeWalker.currentNode ) {
 		throw new Error( 'nextInterestingLeafNode not found' );
@@ -859,9 +876,9 @@ Parser.prototype.buildThreadItems = function () {
 	);
 
 	var curComment, range;
-	var curCommentEnd = this.rootNode;
+	var curCommentEnd = null;
 
-	var node, lastSigNode;
+	var node;
 	while ( ( node = treeWalker.nextNode() ) ) {
 		var match;
 		if ( node.tagName && ( match = node.tagName.match( /^h([1-6])$/i ) ) ) {
@@ -880,9 +897,8 @@ Parser.prototype.buildThreadItems = function () {
 			curCommentEnd = node;
 		} else if ( node.nodeType === Node.TEXT_NODE && ( match = this.findTimestamp( node, timestampRegexps ) ) ) {
 			var warnings = [];
-			var foundSignature = this.findSignature( node, lastSigNode );
+			var foundSignature = this.findSignature( node, curCommentEnd );
 			var author = foundSignature.username;
-			lastSigNode = foundSignature.nodes[ 0 ];
 
 			if ( !author ) {
 				// Ignore timestamps for which we couldn't find a signature. It's probably not a real
@@ -898,7 +914,7 @@ Parser.prototype.buildThreadItems = function () {
 
 			// Everything from the last comment up to here is the next comment
 			var startNode = this.nextInterestingLeafNode( curCommentEnd );
-			var endNode = lastSigNode;
+			var endNode = foundSignature.nodes[ 0 ];
 
 			// Skip to the end of the "paragraph". This only looks at tag names and can be fooled by CSS, but
 			// avoiding that would be more difficult and slower.
@@ -911,7 +927,7 @@ Parser.prototype.buildThreadItems = function () {
 			// no way to indicate which one you're replying to (this might matter in the future for
 			// notifications or something).
 			utils.linearWalk(
-				lastSigNode,
+				endNode,
 				// eslint-disable-next-line no-loop-func
 				function ( event, n ) {
 					var match2, foundSignature2;
@@ -959,6 +975,9 @@ Parser.prototype.buildThreadItems = function () {
 			var level = Math.min( startLevel, endLevel );
 
 			var parserResult = dfParsers[ match.parserIndex ]( match.matchData );
+			if ( !parserResult ) {
+				continue;
+			}
 			var dateTime = parserResult.date;
 			if ( parserResult.warning ) {
 				warnings.push( parserResult.warning );

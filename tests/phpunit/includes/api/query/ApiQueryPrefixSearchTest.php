@@ -1,13 +1,17 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
 use MediaWiki\MainConfigNames;
+use MediaWiki\Tests\Api\ApiTestCase;
+use MockCompletionSearchEngine;
 
 /**
  * @group API
  * @group medium
  * @group Database
  *
- * @covers ApiQueryPrefixSearch
+ * @covers \ApiQueryPrefixSearch
  */
 class ApiQueryPrefixSearchTest extends ApiTestCase {
 	private const TEST_QUERY = 'unittest';

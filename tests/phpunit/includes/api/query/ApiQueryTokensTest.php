@@ -1,11 +1,15 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
+use MediaWiki\Tests\Api\ApiTestCase;
 
 /**
  * @group API
  * @group medium
- * @covers ApiQueryTokens
+ * @covers \ApiQueryTokens
  */
 class ApiQueryTokensTest extends ApiTestCase {
 

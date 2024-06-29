@@ -9,7 +9,6 @@ use MediaWiki\Extension\DiscussionTools\ImmutableRange;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
-use MediaWiki\MediaWikiServices;
 use RuntimeException;
 use stdClass;
 use Wikimedia\Parsoid\DOM\Element;
@@ -28,11 +27,6 @@ class CommentParserTest extends IntegrationTestCase {
 	 * Get the offset path from ancestor to offset in descendant
 	 *
 	 * Convert Unicode codepoint offsets to UTF-16 code unit offsets.
-	 *
-	 * @param Element $ancestor
-	 * @param Node $node
-	 * @param int $nodeOffset
-	 * @return string
 	 */
 	private static function getOffsetPath(
 		Element $ancestor, Node $node, int $nodeOffset
@@ -117,9 +111,11 @@ class CommentParserTest extends IntegrationTestCase {
 	public function testGetTimestampRegexp(
 		string $format, string $expected, string $message
 	): void {
+		$config = static::getJson( "../data/enwiki-config.json" );
+		$data = static::getJson( "../data/enwiki-data.json" );
 		/** @var CommentParser $parser */
 		$parser = TestingAccessWrapper::newFromObject(
-			MediaWikiServices::getInstance()->getService( 'DiscussionTools.CommentParser' )
+			$this->createParser( $config, $data )
 		);
 
 		// HACK: Fix differences between JS & PHP regexes
@@ -140,17 +136,19 @@ class CommentParserTest extends IntegrationTestCase {
 	 * @dataProvider provideTimestampParser
 	 */
 	public function testGetTimestampParser(
-		string $format, array $data, string $expected, string $message
+		string $format, ?array $digits, array $matchData, string $expected, string $message
 	): void {
+		$config = static::getJson( "../data/enwiki-config.json" );
+		$data = static::getJson( "../data/enwiki-data.json" );
 		/** @var CommentParser $parser */
 		$parser = TestingAccessWrapper::newFromObject(
-			MediaWikiServices::getInstance()->getService( 'DiscussionTools.CommentParser' )
+			$this->createParser( $config, $data )
 		);
 
 		$expected = new DateTimeImmutable( $expected );
 
-		$tsParser = $parser->getTimestampParser( 'en', $format, null, 'UTC', [ 'UTC' => 'UTC' ] );
-		static::assertEquals( $expected, $tsParser( $data )['date'], $message );
+		$tsParser = $parser->getTimestampParser( 'en', $format, $digits, 'UTC', [ 'UTC' => 'UTC' ] );
+		static::assertEquals( $expected, $tsParser( $matchData )['date'], $message );
 	}
 
 	public static function provideTimestampParser(): array {
@@ -164,9 +162,11 @@ class CommentParserTest extends IntegrationTestCase {
 		string $sample, string $expected, string $expectedUtc, string $format,
 		string $timezone, array $timezoneAbbrs, string $message
 	): void {
+		$config = static::getJson( "../data/enwiki-config.json" );
+		$data = static::getJson( "../data/enwiki-data.json" );
 		/** @var CommentParser $parser */
 		$parser = TestingAccessWrapper::newFromObject(
-			MediaWikiServices::getInstance()->getService( 'DiscussionTools.CommentParser' )
+			$this->createParser( $config, $data )
 		);
 
 		$regexp = $parser->getTimestampRegexp( 'en', $format, '\\d', $timezoneAbbrs );
@@ -201,9 +201,8 @@ class CommentParserTest extends IntegrationTestCase {
 		$doc = static::createDocument( $dom );
 		$container = static::getThreadContainer( $doc );
 
-		$this->setupEnv( $config, $data );
-		$title = MediaWikiServices::getInstance()->getTitleParser()->parseTitle( $title );
-		$threadItemSet = static::createParser( $data )->parse( $container, $title );
+		$title = $this->createTitleParser( $config )->parseTitle( $title );
+		$threadItemSet = $this->createParser( $config, $data )->parse( $container, $title );
 		$threads = $threadItemSet->getThreads();
 
 		$processedThreads = [];

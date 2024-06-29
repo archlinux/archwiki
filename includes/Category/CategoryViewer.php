@@ -23,14 +23,15 @@
 namespace MediaWiki\Category;
 
 use Collation;
-use ContextSource;
 use DeprecationHelper;
 use HtmlArmor;
-use IContextSource;
 use ILanguageConverter;
 use ImageGalleryBase;
 use ImageGalleryClassNotFoundException;
-use LinkCache;
+use InvalidArgumentException;
+use MediaWiki\Cache\LinkCache;
+use MediaWiki\Context\ContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
@@ -40,7 +41,6 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
-use MWException;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class CategoryViewer extends ContextSource {
@@ -367,7 +367,7 @@ class CategoryViewer extends ContextSource {
 	}
 
 	protected function doCategoryQuery() {
-		$dbr = wfGetDB( DB_REPLICA, 'category' );
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 
 		$this->nextPage = [
 			'page' => null,
@@ -388,11 +388,17 @@ class CategoryViewer extends ContextSource {
 			# set in $wgCategoryCollation, pagination might go totally haywire.
 			$extraConds = [ 'cl_type' => $type ];
 			if ( isset( $this->from[$type] ) ) {
-				$extraConds[] = 'cl_sortkey >= '
-					. $dbr->addQuotes( $this->collation->getSortKey( $this->from[$type] ) );
+				$extraConds[] = $dbr->expr(
+					'cl_sortkey',
+					'>=',
+					$this->collation->getSortKey( $this->from[$type] )
+				);
 			} elseif ( isset( $this->until[$type] ) ) {
-				$extraConds[] = 'cl_sortkey < '
-					. $dbr->addQuotes( $this->collation->getSortKey( $this->until[$type] ) );
+				$extraConds[] = $dbr->expr(
+					'cl_sortkey',
+					'<',
+					$this->collation->getSortKey( $this->until[$type] )
+				);
 				$this->flip[$type] = true;
 			}
 
@@ -757,7 +763,6 @@ class CategoryViewer extends ContextSource {
 	 *
 	 * @param PageReference $page The title (usually $this->title)
 	 * @param string $section Which section
-	 * @throws MWException
 	 * @return LinkTarget
 	 */
 	private function addFragmentToTitle( PageReference $page, string $section ): LinkTarget {
@@ -772,7 +777,7 @@ class CategoryViewer extends ContextSource {
 				$fragment = 'mw-category-media';
 				break;
 			default:
-				throw new MWException( __METHOD__ .
+				throw new InvalidArgumentException( __METHOD__ .
 					" Invalid section $section." );
 		}
 
@@ -835,7 +840,5 @@ class CategoryViewer extends ContextSource {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( CategoryViewer::class, 'CategoryViewer' );

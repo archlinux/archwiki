@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Maintenance;
 
-use DeferredUpdates;
 use Exception;
 use LCStoreNull;
 use LogicException;
 use Maintenance;
 use MediaWiki;
 use MediaWiki\Config\Config;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -208,8 +208,6 @@ class MaintenanceRunner {
 	 *        not including the script itself.
 	 */
 	private function initInternal( string $script, array $scriptArgv ) {
-		global $wgCommandLineMode;
-
 		$this->script = $script;
 		$this->scriptArgv = $scriptArgv;
 
@@ -222,8 +220,6 @@ class MaintenanceRunner {
 
 		// make sure we clean up after ourselves.
 		register_shutdown_function( [ $this, 'cleanup' ] );
-
-		$wgCommandLineMode = true;
 
 		// Turn off output buffering if it's on
 		while ( ob_get_level() > 0 ) {
@@ -541,7 +537,7 @@ class MaintenanceRunner {
 	 * @return void
 	 */
 	public function defineSettings() {
-		global $wgCommandLineMode, $IP;
+		global $IP;
 
 		if ( $this->parameters->hasOption( 'conf' ) ) {
 			// Define the constant instead of directly setting $settingsFile
@@ -586,7 +582,6 @@ class MaintenanceRunner {
 			}
 			$this->withoutLocalSettings = true;
 		}
-		$wgCommandLineMode = true;
 	}
 
 	/**
@@ -759,11 +754,9 @@ class MaintenanceRunner {
 	 * @return bool
 	 */
 	public static function shouldExecute() {
-		global $wgCommandLineMode;
-
 		if ( !function_exists( 'debug_backtrace' ) ) {
 			// If someone has a better idea...
-			return $wgCommandLineMode;
+			return MW_ENTRY_POINT === 'cli';
 		}
 
 		$bt = debug_backtrace();

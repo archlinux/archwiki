@@ -9,7 +9,6 @@
 			"संतोष दहिवळ"
 		]
 	},
-	"math-visualeditor-mwcheminspector-title": "रासायनिक सूत्र",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "त्वरीत संपादन",
 	"math-visualeditor-mwlatexdialog-card-options": "पर्याय",
 	"math-visualeditor-mwmathdialog-title": "सूत्र",
@@ -25,8 +24,8 @@
 	"math-tracking-category-error-desc": "या वर्गात असणाऱ्या पानांत गणितीय खूणपताका वापरण्यात त्रुटी आहे.",
 	"math_unknown_error": "अपरिचित त्रुटी",
 	"math_unknown_function": "अज्ञात फंक्शन \"$1\"",
-	"mw_math_mathml": "शक्य असल्यास मॅथ एमएल (MathML) (प्रयोगावस्था)",
-	"mw_math_source": "LaTeX स्रोत(टेक्स्ट न्याहाळकांकरिता)",
+	"mw-math-mathml": "शक्य असल्यास मॅथ एमएल (MathML) (प्रयोगावस्था)",
+	"mw-math-source": "LaTeX स्रोत(टेक्स्ट न्याहाळकांकरिता)",
 	"prefs-math": "गणित",
 	"mathstatus": "गणितीय स्थिती"
 }

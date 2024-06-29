@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Html;
 use Language;
-use Sanitizer;
-use SpecialPage;
+use MediaWiki\Html\Html;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\SpecialPage\SpecialPage;
 
 class EchoHtmlEmailFormatter extends EchoEventFormatter {
 

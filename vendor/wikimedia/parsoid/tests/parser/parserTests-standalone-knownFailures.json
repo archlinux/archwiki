@@ -33,6 +33,19 @@
         "selser [0,[3,[1,0]]]": "{{1x|}}{| width = '100%'\n|foo\n|}",
         "selser [0,[0,[[1],4]]]": "{{1x|}}{| width = '100%'\n| data-foobar=\"bz5rz9\" |foo<!--4qz9ay-->\n|}"
     },
+    "1. Template wrapping shouldn't ignore fostered content": {
+        "wt2wt": "\nhiho\n{|\n{{tr}}\n{{1x|\n}}\n\nhiho\n|}",
+        "selser [2,4]": "12aq8e6\n\n\n\n1jsmwag",
+        "selser [[2],0]": "em1p42\n\nhiho\n{|\n{{tr}}\n{{1x|\n}}\n\nhiho",
+        "selser [0,[4,0]]": "{|<!--g1bk35-->\n{{tr}}\n{{1x|\n}}\n\nhiho\n|}",
+        "selser [2,[3,0]]": "1uq4e67\n\n{|\n{{tr}}\n{{1x|\n}}\n\nhiho\n|}",
+        "selser [2,[2,0]]": "tq9px4\n\n{|<!--ityqtj-->\n{{tr}}\n{{1x|\n}}\n\nhiho\n|}",
+        "selser [4,0]": "xgjdon\n{|\n{{tr}}\n{{1x|\n}}\n\nhiho",
+        "selser [2,2]": "tcvl39\n\n\n\ndky0ja\n{|\n{{tr}}\n{{1x|\n}}\n\nhiho",
+        "selser [2,0]": "1fb5hmu\n\n{|\n{{tr}}\n{{1x|\n}}\n\nhiho",
+        "selser [3,0]": "{|\n{{tr}}\n{{1x|\n}}\n\nhiho",
+        "selser [2,1]": "taa2fs\n\n{| data-foobar=\"l73o9o\"\n{{tr}}\n{{1x|\n}}\n\nhiho\n|}"
+    },
     "1. includeonly in html attr key": {
         "html2wt": "<span id=\"foo\">bar</span>\n"
     },
@@ -67,6 +80,18 @@
     },
     "2. Nested mixed wikitext and html list (incompatible)": {
         "html2wt": "; hi\n: {{1x|<li>ho</li>}}"
+    },
+    "2. Template wrapping shouldn't ignore fostered content": {
+        "wt2wt": "\nhiho\n{|\n{{tr}}\n{{1x|\n }}\n\nhiho\n|}",
+        "selser [2,[3,0]]": "7r98ao\n\n{|\n{{tr}}\n{{1x|\n }}\n\nhiho\n|}",
+        "selser [[3],0]": "{|\n{{tr}}\n{{1x|\n }}\n\nhiho",
+        "selser [0,2]": "\n\nzdnz78\n{|\n{{tr}}\n{{1x|\n }}\n\nhiho",
+        "selser [[2],2]": "mkczsa\n\nhiho\n\ntuwhmn\n{|\n{{tr}}\n{{1x|\n }}\n\nhiho",
+        "selser [[4],0]": "1vsoxut\n{|\n{{tr}}\n{{1x|\n }}\n\nhiho",
+        "selser [0,[4,0]]": "{|<!--iqf0bj-->\n{{tr}}\n{{1x|\n }}\n\nhiho\n|}",
+        "selser [2,1]": "1xqx39b\n\n{| data-foobar=\"vh6l68\"\n{{tr}}\n{{1x|\n }}\n\nhiho\n|}",
+        "selser [0,1]": "{| data-foobar=\"a0zlmn\"\n{{tr}}\n{{1x|\n }}\n\nhiho\n|}",
+        "selser [2,0]": "1j06got\n\n{|\n{{tr}}\n{{1x|\n }}\n\nhiho"
     },
     "2. includeonly in html attr value": {
         "wt2html": "<p data-parsoid='{\"dsr\":[0,155,0,0]}'><span id=\"v1\" about=\"#mwt1\" typeof=\"mw:ExpandedAttrs\" data-parsoid='{\"stx\":\"html\",\"a\":{\"id\":\"v1\"},\"sa\":{\"id\":\"&lt;noinclude>v1&lt;/noinclude>&lt;includeonly>v2&lt;/includeonly>\"},\"dsr\":[0,76,66,7]}' data-mw='{\"attribs\":[[{\"txt\":\"id\"},{\"html\":\"&lt;meta typeof=\\\"mw:Includes/NoInclude\\\" data-parsoid=&apos;{\\\"src\\\":\\\"&amp;lt;noinclude>\\\",\\\"dsr\\\":[10,21,null,null]}&apos;/>v1&lt;meta typeof=\\\"mw:Includes/NoInclude/End\\\" data-parsoid=&apos;{\\\"src\\\":\\\"&amp;lt;/noinclude>\\\",\\\"dsr\\\":[23,35,null,null]}&apos;/>&lt;meta typeof=\\\"mw:Includes/IncludeOnly\\\" data-parsoid=&apos;{\\\"dsr\\\":[35,64,null,null]}&apos; data-mw=&apos;{\\\"src\\\":\\\"&amp;lt;includeonly>v2&amp;lt;/includeonly>\\\"}&apos;/>&lt;meta typeof=\\\"mw:Includes/IncludeOnly/End\\\" data-parsoid=&apos;{\\\"src\\\":\\\"\\\",\\\"dsr\\\":[64,64,null,null]}&apos;/>\"}]]}'>bar</span>\n<span id='\"v1\"' about=\"#mwt2\" typeof=\"mw:ExpandedAttrs\" data-parsoid='{\"stx\":\"html\",\"a\":{\"id\":\"\\\"v1\\\"\"},\"sa\":{\"id\":\"&lt;noinclude>\\\"v1\\\"&lt;/noinclude>&lt;includeonly>\\\"v2\\\"&lt;/includeonly>\"},\"dsr\":[77,155,68,7]}' data-mw='{\"attribs\":[[{\"txt\":\"id\"},{\"html\":\"&lt;meta typeof=\\\"mw:Includes/NoInclude\\\" data-parsoid=&apos;{\\\"src\\\":\\\"&amp;lt;noinclude>\\\",\\\"dsr\\\":[86,97,null,null]}&apos;/>\\\"v1\\\"&lt;meta typeof=\\\"mw:Includes/NoInclude/End\\\" data-parsoid=&apos;{\\\"src\\\":\\\"&amp;lt;/noinclude>\\\",\\\"dsr\\\":[101,113,null,null]}&apos;/>&lt;meta typeof=\\\"mw:Includes/IncludeOnly\\\" data-parsoid=&apos;{\\\"dsr\\\":[113,144,null,null]}&apos; data-mw=&apos;{\\\"src\\\":\\\"&amp;lt;includeonly>\\\\\\\"v2\\\\\\\"&amp;lt;/includeonly>\\\"}&apos;/>&lt;meta typeof=\\\"mw:Includes/IncludeOnly/End\\\" data-parsoid=&apos;{\\\"src\\\":\\\"\\\",\\\"dsr\\\":[144,144,null,null]}&apos;/>\"}]]}'>bar</span></p>",
@@ -144,20 +169,6 @@
     "<wbr> is valid wikitext (T54468)": {
         "html2wt": "<wbr />\n"
     },
-    "Abort table cell attribute parsing on wikilink": {
-        "wt2wt": "{|\n|testing [[one|two]]<nowiki> |three</nowiki>||four\n| testing one two |three||four\n|testing=\"[[one|two]]<nowiki>\" |three</nowiki>||four\n|}",
-        "html2html": "<table data-parsoid='{\"dsr\":[0,140,2,2]}'>\n<tbody data-parsoid='{\"dsr\":[3,138,0,0]}'><tr data-parsoid='{\"autoInsertedStart\":true,\"dsr\":[3,137,0,0]}'><td data-parsoid='{\"dsr\":[3,47,1,0]}'>testing <a rel=\"mw:WikiLink\" href=\"./One\" title=\"One\" data-parsoid='{\"stx\":\"piped\",\"a\":{\"href\":\"./One\"},\"sa\":{\"href\":\"one\"},\"dsr\":[12,23,6,2]}'>two</a><span typeof=\"mw:Nowiki\" data-parsoid='{\"dsr\":[23,47,8,9]}'> |three</span></td><td data-parsoid='{\"stx\":\"row\",\"dsr\":[47,53,2,0]}'>four</td>\n<td data-parsoid='{\"a\":{\"testing\":null,\"one\":null,\"two\":null},\"sa\":{\"testing\":\"\",\"one\":\"\",\"two\":\"\"},\"dsr\":[54,78,19,0]}'>three</td><td data-parsoid='{\"stx\":\"row\",\"dsr\":[78,84,2,0]}'>four</td>\n<td data-parsoid='{\"dsr\":[85,131,1,0]}'>testing=\"<a rel=\"mw:WikiLink\" href=\"./One\" title=\"One\" data-parsoid='{\"stx\":\"piped\",\"a\":{\"href\":\"./One\"},\"sa\":{\"href\":\"one\"},\"dsr\":[95,106,6,2]}'>two</a><span typeof=\"mw:Nowiki\" data-parsoid='{\"dsr\":[106,131,8,9]}'>\" |three</span></td><td data-parsoid='{\"stx\":\"row\",\"dsr\":[131,137,2,0]}'>four</td></tr>\n</tbody></table>",
-        "html2wt": "{|\n|testing [[one|two]]<nowiki> |three</nowiki>||four\n| testing one two |three||four\n|testing=\"[[one|two]]<nowiki>\" |three</nowiki>||four\n|}",
-        "selser [1]": "{| data-foobar=\"66fol0\"\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
-        "selser [[0,1]]": "{|\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
-        "selser [[0,[[[2,0,0],1,0,2,[2],4,[0,2,0],4],0]]]": "{|\n|jmvhm1testing [[one|two]] |three|| data-foobar=\"1shr01n\" |four\n|tby7d\n| testing one two |three||18pbj54four\n|1c3ad6u\n|testing=\"18gycam[[one|two]]<nowiki>\" |three</nowiki>\n|fsdzo0\n|}",
-        "selser [2]": "1wu4vn\n{|\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
-        "selser [[0,[[4,[4],3,[3],3,2,3,3],3]]]": "{|\n|1kxbby7||f19k30\n|testing one two |\n|1pq73j5\n|}",
-        "selser [[4,[2,3]]]": "{|<!--1vbv47r--><!--1q0o4rr-->\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
-        "selser [[3,1]]": "{|\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
-        "selser [[0,2]]": "{|\n<!--160e6cw-->|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
-        "selser [[4,[[2,[2],4,3,2,4,[3,4,4],1],0]]]": "{|<!--3nev4g-->\n|1jw4mk0\n|testing [[one|two]] |three||4ybyuufour\n|1cx5oih\n|1orkt2r||four\n|uabrr0\n|157h2ct6x6cj5|| data-foobar=\"1ey4pzz\" |four\n|}"
-    },
     "Accept empty attributes in th-cells": {
         "html2wt": "{|\n!foo\n!bar\n|}"
     },
@@ -173,6 +184,24 @@
         "selser [[[2]]]": "<font color=#x>1hva2gnfoo</font>",
         "selser [[[3]]]": "<font color=#x></font>",
         "selser [[[4]]]": "<font color=#x>1wi04hg</font>"
+    },
+    "Bail on table cell attribute parsing on wikilink": {
+        "wt2wt": "{|\n|testing [[one|two]]<nowiki> |three</nowiki>||four\n| testing one two |three||four\n|testing=\"[[one|two]]<nowiki>\" |three</nowiki>||four\n|}",
+        "html2html": "<table data-parsoid='{\"dsr\":[0,140,2,2]}'>\n<tbody data-parsoid='{\"dsr\":[3,138,0,0]}'><tr data-parsoid='{\"autoInsertedStart\":true,\"dsr\":[3,137,0,0]}'><td data-parsoid='{\"dsr\":[3,47,1,0]}'>testing <a rel=\"mw:WikiLink\" href=\"./One\" title=\"One\" data-parsoid='{\"stx\":\"piped\",\"a\":{\"href\":\"./One\"},\"sa\":{\"href\":\"one\"},\"dsr\":[12,23,6,2]}'>two</a><span typeof=\"mw:Nowiki\" data-parsoid='{\"dsr\":[23,47,8,9]}'> |three</span></td><td data-parsoid='{\"stx\":\"row\",\"dsr\":[47,53,2,0]}'>four</td>\n<td data-parsoid='{\"a\":{\"testing\":null,\"one\":null,\"two\":null},\"sa\":{\"testing\":\"\",\"one\":\"\",\"two\":\"\"},\"dsr\":[54,78,19,0]}'>three</td><td data-parsoid='{\"stx\":\"row\",\"dsr\":[78,84,2,0]}'>four</td>\n<td data-parsoid='{\"dsr\":[85,131,1,0]}'>testing=\"<a rel=\"mw:WikiLink\" href=\"./One\" title=\"One\" data-parsoid='{\"stx\":\"piped\",\"a\":{\"href\":\"./One\"},\"sa\":{\"href\":\"one\"},\"dsr\":[95,106,6,2]}'>two</a><span typeof=\"mw:Nowiki\" data-parsoid='{\"dsr\":[106,131,8,9]}'>\" |three</span></td><td data-parsoid='{\"stx\":\"row\",\"dsr\":[131,137,2,0]}'>four</td></tr>\n</tbody></table>",
+        "html2wt": "{|\n|testing [[one|two]]<nowiki> |three</nowiki>||four\n| testing one two |three||four\n|testing=\"[[one|two]]<nowiki>\" |three</nowiki>||four\n|}",
+        "selser [[3,1]]": "{|\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [[3,[2,0]]]": "{|<!--xb8p09-->\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [2]": "hgisit\n{|\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [[0,2]]": "{|\n<!--s1ac4r-->|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [1]": "{| data-foobar=\"m6t5pu\"\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [[4,[[1,[4],2,[3],[4],3,[2,1,0],0],3]]]": "{|<!--15jn3oo-->\n| data-foobar=\"1dpsv1f\" |testing [[one|two]] |three||shmm44\n|1a9hxti\n| testing one two | ||u4sv1d\n|7kwa0etesting=\"[[one|two]]<nowiki>\" |three</nowiki>||four\n|}",
+        "selser [[3,2]]": "{|<!--1bcn9tp-->\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [[4,[[0,2,0,4,3,0,[2,0,3],4],2]]]": "{|<!--ucy21x-->\n|testing [[one|two]] |three\n|1sw2rre||four\n|lmqy2j\n|203rzetesting=\"[[one|two]]\n|1boms42<!--cy3v8j-->\n|}",
+        "selser [[0,[2,2]]]": "{|\n<!--1a5ha30-->|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four<!--1xb2qs8-->\n|}",
+        "selser [[0,1]]": "{|\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [[2,2]]": "{|<!--1ya6ph8-->\n<!--wmgbkt-->|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [[0,[1,0]]]": "{|\n|testing [[one|two]] |three||four\n|testing one two |three||four\n|testing=\"[[one|two]]\" |three||four\n|}",
+        "selser [[0,[[2,0,0,[3],3,0,3,0],4]]]": "{|\n|6oy5gu\n|testing [[one|two]] |three||four\n|testing one two | \n|four<!--1xkfpb6-->\n|}"
     },
     "Bare pipe character from a template (T54363)": {
         "html2wt": "|\n"
@@ -191,6 +220,9 @@
     },
     "Categories and newlines: should behave properly with linkprefix (T87753)": {
         "selser [[3],0,3,0,0]": "\n\n[[تصنيف:Bar]]"
+    },
+    "Category with newline in sort key": {
+        "metadata": "cat=Wikidata:Tools sort=*"
     },
     "Common list": {
         "html2wt": "* Common list\n* item 2\n* item 3"
@@ -217,11 +249,7 @@
     },
     "Decoding of HTML entities in headings and links for IDs and link fragments (T103714)": {
         "html2wt": "== A&B&amp;C&amp;amp;D&amp;amp;amp;E ==\n[[#A&B&amp;C&amp;amp;D&amp;amp;amp;E]]",
-        "selser [3,2,1]": "7ijk5s\n\n[[#A&B&C&amp;amp;D&amp;amp;amp;E]]",
-        "selser [3,2,[1]]": "jil05u\n\n[[#A&B&C&amp;amp;D&amp;amp;amp;E]]",
-        "selser [4,2,1]": "s078h6\n\n1xg44n1\n\n[[#A&B&C&amp;amp;D&amp;amp;amp;E]]",
-        "selser [1,2,[2]]": "==A&B&amp;C&amp;amp;D&amp;amp;amp;E==\nrtkcgi\njn1m2m[[#A&B&C&amp;amp;D&amp;amp;amp;E]]",
-        "selser [[0,2,0,3,0,0,0,0],4,[1]]": "==ngxj3gA&B&amp;&amp;amp;D&amp;amp;amp;E==\n45ozgq\n\n[[#A&B&C&amp;amp;D&amp;amp;amp;E]]"
+        "selser [0,[4,4,1]]": "yj16gg\n\niboewz\n\n[[#A&B&C&amp;amp;D&amp;amp;amp;E]]"
     },
     "Don't fall for the self-closing div": {
         "wt2wt": "<div>hello world</div>",
@@ -289,11 +317,6 @@
     },
     "Expansion of multi-line templates in attribute values (T8255 check 2)": {
         "html2wt": "<div style=\"background: \n#00FF00\">-</div>"
-    },
-    "Expansion of multi-line templates in attribute values (T8255)": {
-        "wt2html": "<div style=\"background: \n#00FF00\" about=\"#mwt2\" typeof=\"mw:ExpandedAttrs\" data-parsoid='{\"stx\":\"html\",\"a\":{\"style\":\"background: \\n#00FF00\"},\"sa\":{\"style\":\"background: {{1x|#00FF00}}\"},\"dsr\":[0,47,40,6]}' data-mw='{\"attribs\":[[{\"txt\":\"style\"},{\"html\":\"background: &lt;span about=\\\"#mwt1\\\" typeof=\\\"mw:Transclusion\\\" data-parsoid=&apos;{\\\"pi\\\":[[{\\\"k\\\":\\\"1\\\"}]],\\\"dsr\\\":[24,38,null,null]}&apos; data-mw=&apos;{\\\"parts\\\":[{\\\"template\\\":{\\\"target\\\":{\\\"wt\\\":\\\"1x\\\",\\\"href\\\":\\\"./Template:1x\\\"},\\\"params\\\":{\\\"1\\\":{\\\"wt\\\":\\\"#00FF00\\\"}},\\\"i\\\":0}}]}&apos;>\\n#00FF00&lt;/span>\"}]]}'>-</div>",
-        "html2html": "<div style=\"background: Template:Identity\" about=\"#mwt2\" typeof=\"mw:ExpandedAttrs\" data-parsoid='{\"stx\":\"html\",\"a\":{\"style\":\"background: Template:Identity\"},\"sa\":{\"style\":\"background: {{identity|#00FF00}}\"},\"dsr\":[0,53,46,6]}' data-mw='{\"attribs\":[[{\"txt\":\"style\"},{\"html\":\"background: &lt;a rel=\\\"mw:WikiLink\\\" href=\\\"./Template:Identity\\\" title=\\\"Template:Identity\\\" about=\\\"#mwt1\\\" typeof=\\\"mw:Transclusion\\\" data-parsoid=&apos;{\\\"stx\\\":\\\"simple\\\",\\\"a\\\":{\\\"href\\\":\\\"./Template:Identity\\\"},\\\"sa\\\":{\\\"href\\\":\\\"Template:Identity\\\"},\\\"dsr\\\":[24,44,null,null],\\\"pi\\\":[[{\\\"k\\\":\\\"1\\\"}]]}&apos; data-mw=&apos;{\\\"parts\\\":[{\\\"template\\\":{\\\"target\\\":{\\\"wt\\\":\\\"identity\\\",\\\"href\\\":\\\"./Template:Identity\\\"},\\\"params\\\":{\\\"1\\\":{\\\"wt\\\":\\\"#00FF00\\\"}},\\\"i\\\":0}}]}&apos;>Template:Identity&lt;/a>\"}]]}'>-</div>",
-        "html2wt": "<div style=\"background: {{identity|#00FF00}}\">-</div>"
     },
     "Extra new lines before and after lists are preserved": {
         "html2wt": "a\n\n\n* b\n\n\nc",
@@ -631,9 +654,6 @@
     "Namespace (lang=de) Benutzer {{ns:User}}": {
         "html2wt": "Benutzer\n"
     },
-    "Namespace 0 {{ns:00}} (T6783)": {
-        "html2wt": ""
-    },
     "Namespace File {{ns:File}}": {
         "html2wt": "File\n"
     },
@@ -698,10 +718,6 @@
     },
     "Nested lists 8 (multiple nesting transitions)": {
         "html2wt": "* foo\n*** bar\n** baz\n* boo"
-    },
-    "Nested lists 9 (extension interaction)": {
-        "html2html": "<ul data-parsoid='{\"dsr\":[0,1,0,0]}'><li class=\"mw-empty-elt\" data-parsoid='{\"dsr\":[0,1,1,0]}'></li></ul>\n<div class=\"mw-references-wrap\" typeof=\"mw:Extension/references\" about=\"#mwt2\" data-parsoid='{\"dsr\":[2,16,14,0]}' data-mw='{\"name\":\"references\",\"attrs\":{}}'><ol class=\"mw-references references\" data-parsoid=\"{}\"></ol></div>\n",
-        "html2wt": "*\n<references />\n"
     },
     "Nested template calls": {
         "html2wt": "(My parameter is: param)\n"
@@ -950,9 +966,6 @@
         "selser [[0,0,2]]": "=== hi <span id=\"x\">hi</span>1w2au0v hi ho ===",
         "selser [[4,[3],0]]": "=== 64yg7h<span id=\"x\"></span> hi ho ==="
     },
-    "Special page transclusion twice (T7021)": {
-        "selser [[0,2,0]]": "{{Special:Prefixindex/Xyzzyx}}<nowiki/>af0o8m\n{{Special:Prefixindex/Xyzzyx}}"
-    },
     "Special parser function": {
         "wt2html": "<p data-parsoid='{\"dsr\":[0,65,0,0]}'><span about=\"#mwt1\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[0,23,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"#special:RandomPage\",\"function\":\"special\"},\"params\":{},\"i\":0}}]}'>Parser function implementation for pf_special missing in Parsoid.</span>\n<span about=\"#mwt2\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[24,45,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"#special:BaDtItLe\",\"function\":\"special\"},\"params\":{},\"i\":0}}]}'>Parser function implementation for pf_special missing in Parsoid.</span>\n<span about=\"#mwt3\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[46,65,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"#special:Foobar\",\"function\":\"special\"},\"params\":{},\"i\":0}}]}'>Parser function implementation for pf_special missing in Parsoid.</span></p>",
         "html2html": "<p data-parsoid='{\"dsr\":[0,65,0,0]}'><span about=\"#mwt1\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[0,23,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"#special:RandomPage\",\"function\":\"special\"},\"params\":{},\"i\":0}}]}'>Parser function implementation for pf_special missing in Parsoid.</span>\n<span about=\"#mwt2\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[24,45,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"#special:BaDtItLe\",\"function\":\"special\"},\"params\":{},\"i\":0}}]}'>Parser function implementation for pf_special missing in Parsoid.</span>\n<span about=\"#mwt3\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[46,65,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"#special:Foobar\",\"function\":\"special\"},\"params\":{},\"i\":0}}]}'>Parser function implementation for pf_special missing in Parsoid.</span></p>"
@@ -1034,10 +1047,6 @@
         "selser [[[2],0,0]]": "*lrgux8\n*******Foo {{bullet}}",
         "selser [[1,0,0]]": "*******Foo {{bullet}}",
         "selser [[[[[[[1]]]]],0,0]]": "*******Foo {{bullet}}"
-    },
-    "T2529: Uncovered bullet in parser function result": {
-        "html2html": "<ul data-parsoid='{\"dsr\":[0,22,0,0]}'><li data-parsoid='{\"dsr\":[0,22,1,0,1,0]}'>Foo<span about=\"#mwt1\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[5,22,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"lc:{{bullet}}\",\"function\":\"lc\"},\"params\":{},\"i\":0}}]}'>bar</span></li></ul>",
-        "html2wt": "* Foo{{lc:{{bullet}}}}"
     },
     "T2553: link with two variables in a piped link": {
         "wt2wt": "{|\n|[[{{{1}}}<nowiki>|</nowiki>{{{2}}}]]\n|}",
@@ -1667,5 +1676,8 @@
     "{{#special:}} page name, known": {
         "wt2html": "<p data-parsoid='{\"dsr\":[0,26,0,0]}'><span about=\"#mwt1\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[0,26,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"#special:Recentchanges\",\"function\":\"special\"},\"params\":{},\"i\":0}}]}'>Parser function implementation for pf_special missing in Parsoid.</span></p>",
         "html2html": "<p data-parsoid='{\"dsr\":[0,26,0,0]}'><span about=\"#mwt1\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[]],\"dsr\":[0,26,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"#special:Recentchanges\",\"function\":\"special\"},\"params\":{},\"i\":0}}]}'>Parser function implementation for pf_special missing in Parsoid.</span></p>"
+    },
+    "{{defaultsort}} should be location-independent (T353530)": {
+        "metadata": "cat=Foo sort=\ncat=Bat sort="
     }
 }

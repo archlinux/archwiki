@@ -1,10 +1,10 @@
 /**
- * Top section (between page title and filters) on Special:Recentchanges
+ * Top section (between page title and filters) on Special:Recentchanges.
  *
  * @class mw.rcfilters.ui.RcTopSectionWidget
+ * @ignore
  * @extends OO.ui.Widget
  *
- * @constructor
  * @param {mw.rcfilters.ui.SavedLinksListWidget} savedLinksListWidget
  * @param {jQuery} $topLinks Content of the community-defined links
  * @param {Object} [config] Configuration object
@@ -21,7 +21,7 @@ var RcTopSectionWidget = function MwRcfiltersUiRcTopSectionWidget(
 	config = config || {};
 
 	// Parent
-	RcTopSectionWidget.parent.call( this, config );
+	RcTopSectionWidget.super.call( this, config );
 
 	this.$topLinks = $topLinks;
 
@@ -29,7 +29,7 @@ var RcTopSectionWidget = function MwRcfiltersUiRcTopSectionWidget(
 		framed: false,
 		indicator: topLinksCookieValue === 'collapsed' ? 'down' : 'up',
 		flags: [ 'progressive' ],
-		label: $( '<span>' ).append( mw.message( 'rcfilters-other-review-tools' ).parse() ).contents()
+		label: mw.message( 'rcfilters-other-review-tools' ).parseDom()
 	} );
 
 	this.$topLinks

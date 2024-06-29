@@ -79,7 +79,7 @@ abstract class Token implements \JsonSerializable {
 	 * @param string $name
 	 * @return string|Token|Token[]|KV[]|null
 	 */
-	public function getAttribute( string $name ) {
+	public function getAttributeV( string $name ) {
 		return KV::lookup( $this->attribs, $name );
 	}
 
@@ -134,13 +134,9 @@ abstract class Token implements \JsonSerializable {
 	public function setShadowInfo( string $name, $value, $origValue ): void {
 		// Don't shadow if value is the same or the orig is null
 		if ( $value !== $origValue && $origValue !== null ) {
-			if ( !isset( $this->dataParsoid->a ) ) {
-				$this->dataParsoid->a = [];
-			}
+			$this->dataParsoid->a ??= [];
 			$this->dataParsoid->a[$name] = $value;
-			if ( !isset( $this->dataParsoid->sa ) ) {
-				$this->dataParsoid->sa = [];
-			}
+			$this->dataParsoid->sa ??= [];
 			$this->dataParsoid->sa[$name] = $origValue;
 		}
 	}
@@ -158,7 +154,7 @@ abstract class Token implements \JsonSerializable {
 	 *   - fromsrc: (bool)
 	 */
 	public function getAttributeShadowInfo( string $name ): array {
-		$curVal = $this->getAttribute( $name );
+		$curVal = $this->getAttributeV( $name );
 
 		// Not the case, continue regular round-trip information.
 		if ( !property_exists( $this->dataParsoid, 'a' ) ||
@@ -199,16 +195,12 @@ abstract class Token implements \JsonSerializable {
 	 * @param string $name
 	 */
 	public function removeAttribute( string $name ): void {
-		$out = [];
-		$attribs = $this->attribs;
-		// FIXME: Could use array_filter
-		for ( $i = 0, $l = count( $attribs ); $i < $l; $i++ ) {
-			$kv = $attribs[$i];
-			if ( mb_strtolower( $kv->k ) !== $name ) {
-				$out[] = $kv;
+		foreach ( $this->attribs as $i => $kv ) {
+			if ( mb_strtolower( $kv->k ) === $name ) {
+				unset( $this->attribs[$i] );
 			}
 		}
-		$this->attribs = $out;
+		$this->attribs = array_values( $this->attribs );
 	}
 
 	/**
@@ -389,16 +381,12 @@ abstract class Token implements \JsonSerializable {
 		return $token;
 	}
 
-	/**
-	 * @param string $key
-	 * @return ?string
-	 */
 	public function fetchExpandedAttrValue( string $key ): ?string {
 		if ( preg_match(
-			'/mw:ExpandedAttrs/', $this->getAttribute( 'typeof' ) ?? ''
+			'/mw:ExpandedAttrs/', $this->getAttributeV( 'typeof' ) ?? ''
 		) ) {
 			$attribs = PHPUtils::jsonDecode(
-				$this->getAttribute( 'data-mw' ), false
+				$this->getAttributeV( 'data-mw' ), false
 			)->attribs;
 			foreach ( $attribs as $attr ) {
 				if ( $attr[0]->txt === $key ) {

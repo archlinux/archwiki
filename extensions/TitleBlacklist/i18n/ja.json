@@ -18,9 +18,11 @@
 			"Whym",
 			"Yamagata Yusuke",
 			"Yusuke1109",
-			"青子守歌"
+			"青子守歌",
+			"Waki285"
 		]
 	},
+	"action-tboverride": "許可されていないページ名/利用者名一覧による制限を受けない",
 	"action-tboverride-account": "利用者名ブラックリストの無視",
 	"action-titleblacklistlog": "ページ名ブラックリストの記録の閲覧",
 	"log-name-titleblacklist": "ページ名ブラックリストの記録",
@@ -35,6 +37,7 @@
 	"titleblacklist-forbidden-new-account": "利用者名「$2」の作成は禁止されています。\nこれは以下の許可されていないページ名の一覧項目と一致します: <code>$1</code>",
 	"titleblacklist-invalid": "ページ名許可されていないページ名の一覧内の以下の{{PLURAL:$1|行}}は無効{{PLURAL:$1|です}}。\n保存する前に{{PLURAL:$1|修正して}}ください:",
 	"titleblacklist-override": "照合した場合は許可されていないページ名の一覧を上書き",
+	"titleblacklist-override-help": "十分な権限を持つ利用者は、これを設定して、許可されていないタイトルリストのチェックを無視できます。",
 	"titleblacklist-warning": "<strong>警告: このページは下記の許可されていないページ名の一覧項目に一致しているため管理者と <code>tboverride</code> 権限のある利用者のみが編集できます:</strong><br /><code>$1</code>",
 	"right-tboverride": "許可されていないページ名/利用者名一覧による制限を受けない",
 	"right-tboverride-account": "利用者名ブラックリストを無視",

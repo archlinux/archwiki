@@ -3,12 +3,12 @@
 		"authors": [
 			"Fitoschido",
 			"Ikiwaner",
+			"Kisare",
 			"Kwisha",
 			"Lloffiwr",
 			"Rance",
 			"Stephenwanjau",
-			"Wangombe",
-			"Kisare"
+			"Wangombe"
 		]
 	},
 	"right-abusefilter-modify": "Rekebisha cinchungi vya unyanyasaji",
@@ -113,10 +113,10 @@
 	"abusefilter-edit-builder-vars-user-age": "Umri wa akaunti ya mtumiaji",
 	"abusefilter-edit-builder-vars-user-name": "Jina la akaunti ya mtumiaji",
 	"abusefilter-edit-builder-vars-user-emailconfirm": "Wakati anwani ya barua pepe ilidhibitishwa",
-	"abusefilter-edit-builder-vars-recent-contributors": "Watumiaji kumi wa mwisho kuchangia ukurasa huu",
-	"abusefilter-edit-builder-vars-all-links": "Viungo vyote vya nje katika hati mpya",
 	"abusefilter-edit-builder-vars-added-links": "Viungo vyote vya nje vilivyoongezwa katika hariri",
 	"abusefilter-edit-builder-vars-removed-links": "Viungo vyote vya nje vilivyotolewa katika hariri",
+	"abusefilter-edit-builder-vars-all-links": "Viungo vyote vya nje katika hati mpya",
+	"abusefilter-edit-builder-vars-recent-contributors": "Watumiaji kumi wa mwisho kuchangia ukurasa huu",
 	"abusefilter-edit-builder-vars-old-links": "Viungo katika ukurasa, kabla ya harir",
 	"abusefilter-filter-log": "Mabadiliko ya hivi karibuni ya chujio",
 	"abusefilter-history": "Badili historia ya matumizi mabaya ya chujio #$1",

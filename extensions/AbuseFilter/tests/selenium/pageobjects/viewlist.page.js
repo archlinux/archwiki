@@ -3,10 +3,17 @@
 const Page = require( 'wdio-mediawiki/Page' );
 
 class ViewListPage extends Page {
-	get title() { return $( '#firstHeading' ); }
-	get newFilterButton() { return $( '.oo-ui-buttonElement a' ); }
+	get title() {
+		return $( '#firstHeading' );
+	}
 
-	get filterSavedNotice() { return $( '.mw-message-box-success' ); }
+	get newFilterButton() {
+		return $( '.oo-ui-buttonElement a' );
+	}
+
+	get filterSavedNotice() {
+		return $( '.mw-message-box-success' );
+	}
 
 	async savedFilterID() {
 		const successElement = await this.filterSavedNotice;

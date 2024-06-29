@@ -28,44 +28,44 @@ class InTableBody extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'tr':
-			$builder->clearStackBack( self::$tableBodyContext, $sourceStart );
-			$builder->insertElement( $name, $attrs, false, $sourceStart, $sourceLength );
-			$dispatcher->switchMode( Dispatcher::IN_ROW );
-			break;
+			case 'tr':
+				$builder->clearStackBack( self::$tableBodyContext, $sourceStart );
+				$builder->insertElement( $name, $attrs, false, $sourceStart, $sourceLength );
+				$dispatcher->switchMode( Dispatcher::IN_ROW );
+				break;
 
-		case 'th':
-		case 'td':
-			$builder->error( "<$name> encountered in table body (not row) mode", $sourceStart );
-			$builder->clearStackBack( self::$tableBodyContext, $sourceStart );
-			$builder->insertElement( 'tr', new PlainAttributes, false, $sourceStart, 0 );
-			$dispatcher->switchMode( Dispatcher::IN_ROW )
-				->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'th':
+			case 'td':
+				$builder->error( "<$name> encountered in table body (not row) mode", $sourceStart );
+				$builder->clearStackBack( self::$tableBodyContext, $sourceStart );
+				$builder->insertElement( 'tr', new PlainAttributes, false, $sourceStart, 0 );
+				$dispatcher->switchMode( Dispatcher::IN_ROW )
+					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		case 'caption':
-		case 'col':
-		case 'colgroup':
-		case 'tbody':
-		case 'tfoot':
-		case 'thead':
-			if ( !$stack->isInTableScope( 'tbody' )
-			  && !$stack->isInTableScope( 'thead' )
-			  && !$stack->isInTableScope( 'tfoot' )
-			) {
-				$builder->error( "<$name> encountered in table body mode " .
-					"when there is no tbody/thead/tfoot in scope", $sourceStart );
-				return;
-			}
-			$builder->clearStackBack( self::$tableBodyContext, $sourceStart );
-			$builder->pop( $sourceStart, 0 );
-			$dispatcher->switchMode( Dispatcher::IN_TABLE )
-				->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'caption':
+			case 'col':
+			case 'colgroup':
+			case 'tbody':
+			case 'tfoot':
+			case 'thead':
+				if ( !$stack->isInTableScope( 'tbody' )
+					&& !$stack->isInTableScope( 'thead' )
+					&& !$stack->isInTableScope( 'tfoot' )
+				) {
+					$builder->error( "<$name> encountered in table body mode " .
+						"when there is no tbody/thead/tfoot in scope", $sourceStart );
+					return;
+				}
+				$builder->clearStackBack( self::$tableBodyContext, $sourceStart );
+				$builder->pop( $sourceStart, 0 );
+				$dispatcher->switchMode( Dispatcher::IN_TABLE )
+					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$dispatcher->inTable->startTag( $name, $attrs, $selfClose,
-				$sourceStart, $sourceLength );
+			default:
+				$dispatcher->inTable->startTag( $name, $attrs, $selfClose,
+					$sourceStart, $sourceLength );
 		}
 	}
 
@@ -75,31 +75,31 @@ class InTableBody extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'tbody':
-		case 'tfoot':
-		case 'thead':
-			if ( !$stack->isInTableScope( $name ) ) {
-				$builder->error( "</$name> found but no $name in scope", $sourceStart );
+			case 'tbody':
+			case 'tfoot':
+			case 'thead':
+				if ( !$stack->isInTableScope( $name ) ) {
+					$builder->error( "</$name> found but no $name in scope", $sourceStart );
+					return;
+				}
+				$builder->clearStackBack( self::$tableBodyContext, $sourceStart );
+				$builder->pop( $sourceStart, $sourceLength );
+				$dispatcher->switchMode( Dispatcher::IN_TABLE );
+				break;
+
+			case 'body':
+			case 'caption':
+			case 'col':
+			case 'colgroup':
+			case 'html':
+			case 'td':
+			case 'th':
+			case 'tr':
+				$builder->error( "</$name> found in table body mode, ignoring", $sourceStart );
 				return;
-			}
-			$builder->clearStackBack( self::$tableBodyContext, $sourceStart );
-			$builder->pop( $sourceStart, $sourceLength );
-			$dispatcher->switchMode( Dispatcher::IN_TABLE );
-			break;
 
-		case 'body':
-		case 'caption':
-		case 'col':
-		case 'colgroup':
-		case 'html':
-		case 'td':
-		case 'th':
-		case 'tr':
-			$builder->error( "</$name> found in table body mode, ignoring", $sourceStart );
-			return;
-
-		default:
-			$dispatcher->inTable->endTag( $name, $sourceStart, $sourceLength );
+			default:
+				$dispatcher->inTable->endTag( $name, $sourceStart, $sourceLength );
 		}
 	}
 

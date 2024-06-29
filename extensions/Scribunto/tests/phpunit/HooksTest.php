@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Scribunto\Tests;
 
 use MediaWiki\Extension\Scribunto\Hooks;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWikiCoversValidator;
 use Monolog\Test\TestCase;
@@ -32,7 +33,9 @@ class HooksTest extends TestCase {
 	) {
 		$title = Title::newFromText( $name );
 		$model = $before;
-		$ret = ( new Hooks )->onContentHandlerDefaultModelFor( $title, $model );
+		$ret = ( new Hooks(
+			MediaWikiServices::getInstance()->getMainConfig()
+		) )->onContentHandlerDefaultModelFor( $title, $model );
 		$this->assertSame( $retVal, $ret );
 		$this->assertSame( $expected, $model );
 	}

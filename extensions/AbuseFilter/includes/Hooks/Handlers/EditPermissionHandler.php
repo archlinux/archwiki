@@ -10,10 +10,10 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
 use MessageSpecifier;
 use StatusValue;
-use TitleValue;
-use User;
 
 /**
  * This hook handler is for very simple checks, rather than the much more advanced ones
@@ -26,6 +26,8 @@ class EditPermissionHandler implements GetUserPermissionsErrorsHook, JsonValidat
 		'domain',
 		'notes'
 	];
+
+	private const JSON_OPTIONAL_FIELDS = [ 'addedBy' ];
 
 	/**
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/getUserPermissionsErrors
@@ -92,12 +94,27 @@ class EditPermissionHandler implements GetUserPermissionsErrorsHook, JsonValidat
 		$entryNumber = 0;
 		foreach ( $data as $element ) {
 			$entryNumber++;
-			// Check if each element is an object with all known fields, and no other fields
-			if ( is_object( $element ) && count( get_object_vars( $element ) ) === count( self::JSON_OBJECT_FIELDS ) ) {
+			// Check if each element is an object with all known fields, allow optional fields but no other fields
+			if ( is_object( $element ) && count( get_object_vars( $element ) ) >= count( self::JSON_OBJECT_FIELDS ) ) {
 				foreach ( self::JSON_OBJECT_FIELDS as $field ) {
 					if ( !property_exists( $element, $field ) || !is_string( $element->{$field} ) ) {
 						$isValid = false;
 						break 2;
+					}
+				}
+
+				foreach ( self::JSON_OPTIONAL_FIELDS as $field ) {
+					if ( property_exists( $element, $field ) && !is_string( $element->{$field} ) ) {
+						$isValid = false;
+						break 2;
+					}
+				}
+				foreach ( $element as $field => $value ) {
+					if (
+						!in_array( $field, array_merge( self::JSON_OPTIONAL_FIELDS, self::JSON_OBJECT_FIELDS ) )
+					) {
+						$isValid = false;
+						break;
 					}
 				}
 			} else {

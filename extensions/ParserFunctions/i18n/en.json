@@ -18,8 +18,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Expression error: Unrecognized punctuation character \"$1\".",
 	"pfunc_expr_unclosed_bracket": "Expression error: Unclosed bracket.",
 	"pfunc_expr_division_by_zero": "Division by zero.",
-	"pfunc_expr_invalid_argument": "Invalid argument for $1: < -1 or > 1.",
-	"pfunc_expr_invalid_argument_ln": "Invalid argument for ln: <= 0.",
+	"pfunc_expr_invalid_argument": "Invalid argument for $1: less than -1 or greater than 1.",
+	"pfunc_expr_invalid_argument_ln": "Invalid argument for ln: less than or equal to 0.",
 	"pfunc_expr_unknown_error": "Expression error: Unknown error ($1).",
 	"pfunc_expr_not_a_number": "In $1: Result is not a number.",
 	"pfunc_string_too_long": "Error: String exceeds $1 character limit."

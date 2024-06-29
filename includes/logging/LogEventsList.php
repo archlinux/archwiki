@@ -2,7 +2,7 @@
 /**
  * Contain classes to list log entries
  *
- * Copyright © 2004 Brion Vibber <brion@pobox.com>
+ * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,14 @@
  * @file
  */
 
+use MediaWiki\Context\ContextSource;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
@@ -57,6 +61,9 @@ class LogEventsList extends ContextSource {
 	/** @var HookRunner */
 	private $hookRunner;
 
+	/** @var MapCacheLRU */
+	private $tagsCache;
+
 	/**
 	 * @param IContextSource $context
 	 * @param LinkRenderer|null $linkRenderer
@@ -71,6 +78,7 @@ class LogEventsList extends ContextSource {
 			$this->linkRenderer = $linkRenderer;
 		}
 		$this->hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
+		$this->tagsCache = new MapCacheLRU( 50 );
 	}
 
 	/**
@@ -209,8 +217,21 @@ class LogEventsList extends ContextSource {
 		// Load the log names
 		foreach ( LogPage::validTypes() as $type ) {
 			$page = new LogPage( $type );
+			$pageText = $page->getName()->text();
+			if ( in_array( $pageText, $typesByName ) ) {
+				LoggerFactory::getInstance( 'error' )->error(
+					'The log type {log_type_one} has the same translation as {log_type_two} for {lang}. ' .
+					'{log_type_one} will not be displayed in the drop down menu on Special:Log.',
+					[
+						'log_type_one' => $type,
+						'log_type_two' => array_search( $pageText, $typesByName ),
+						'lang' => $this->getLanguage()->getCode(),
+					]
+				);
+				continue;
+			}
 			if ( $this->getAuthority()->isAllowed( $page->getRestriction() ) ) {
-				$typesByName[$type] = $page->getName()->text();
+				$typesByName[$type] = $pageText;
 			}
 		}
 
@@ -325,10 +346,17 @@ class LogEventsList extends ContextSource {
 		$del = $this->getShowHideLinks( $row );
 
 		// Any tags...
-		[ $tagDisplay, $newClasses ] = ChangeTags::formatSummaryRow(
-			$row->ts_tags,
-			'logevent',
-			$this->getContext()
+		[ $tagDisplay, $newClasses ] = $this->tagsCache->getWithSetCallback(
+			$this->tagsCache->makeKey(
+				$row->ts_tags ?? '',
+				$this->getUser()->getName(),
+				$this->getLanguage()->getCode()
+			),
+			fn () => ChangeTags::formatSummaryRow(
+				$row->ts_tags,
+				'logevent',
+				$this->getContext()
+			)
 		);
 		$classes = array_merge(
 			[ 'mw-logline-' . $entry->getType() ],
@@ -506,7 +534,7 @@ class LogEventsList extends ContextSource {
 	 * @param array $param Associative Array with the following additional options:
 	 * - lim Integer Limit of items to show, default is 50
 	 * - conds Array Extra conditions for the query
-	 *   (e.g. 'log_action != ' . $dbr->addQuotes( 'revision' ))
+	 *   (e.g. $dbr->expr( 'log_action', '!=', 'revision' ))
 	 * - showIfEmpty boolean Set to false if you don't want any output in case the loglist is empty
 	 *   if set to true (default), "No matching items in log" is displayed if loglist is empty
 	 * - msgKey Array If you want a nice box with a message, set this to the key of the message.
@@ -592,7 +620,7 @@ class LogEventsList extends ContextSource {
 
 		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( $param['useMaster'] ) {
-			$pager->mDb = $services->getDBLoadBalancerFactory()->getPrimaryDatabase();
+			$pager->mDb = $services->getConnectionProvider()->getPrimaryDatabase();
 		}
 		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( isset( $param['offset'] ) ) { # Tell pager to ignore WebRequest offset

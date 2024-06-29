@@ -482,12 +482,14 @@
 			{
 				"name": "rd_interwiki",
 				"type": "string",
-				"options": { "notnull": false, "length": 32, "default": null }
+				"options": { "notnull": false, "length": 32, "default": null },
+				"comment": "After T346290 all values have been computed and this field is never null. TODO: Mark as not null (T348029)."
 			},
 			{
 				"name": "rd_fragment",
 				"type": "binary",
-				"options": { "notnull": false, "length": 255, "default": null }
+				"options": { "notnull": false, "length": 255, "default": null },
+				"comment": "After T346290 all values have been computed and this field is never null. TODO: Mark as not null (T348029)."
 			}
 		],
 		"indexes": [
@@ -695,12 +697,6 @@
 				"name": "iwl_prefix_title_from",
 				"columns": [ "iwl_prefix", "iwl_title", "iwl_from" ],
 				"comment": "Index for ApiQueryIWBacklinks",
-				"unique": false
-			},
-			{
-				"name": "iwl_prefix_from_title",
-				"columns": [ "iwl_prefix", "iwl_from", "iwl_title" ],
-				"comment": "Index for ApiQueryIWLinks",
 				"unique": false
 			}
 		],
@@ -1156,14 +1152,7 @@
 			}
 		],
 		"indexes": [
-			{ "name": "site_global_key", "columns": [ "site_global_key" ], "unique": true },
-			{ "name": "site_type", "columns": [ "site_type" ], "unique": false },
-			{ "name": "site_group", "columns": [ "site_group" ], "unique": false },
-			{ "name": "site_source", "columns": [ "site_source" ], "unique": false },
-			{ "name": "site_language", "columns": [ "site_language" ], "unique": false },
-			{ "name": "site_protocol", "columns": [ "site_protocol" ], "unique": false },
-			{ "name": "site_domain", "columns": [ "site_domain" ], "unique": false },
-			{ "name": "site_forward", "columns": [ "site_forward" ], "unique": false }
+			{ "name": "site_global_key", "columns": [ "site_global_key" ], "unique": true }
 		],
 		"pk": [ "site_id" ]
 	},
@@ -1575,12 +1564,6 @@
 				"name": "cl_timestamp",
 				"comment": "Used by the API (and some extensions)",
 				"columns": [ "cl_to", "cl_timestamp" ],
-				"unique": false
-			},
-			{
-				"name": "cl_collation_ext",
-				"comment": "Used when updating collation (e.g. updateCollation.php)",
-				"columns": [ "cl_collation", "cl_to", "cl_type", "cl_from" ],
 				"unique": false
 			}
 		],
@@ -2621,6 +2604,307 @@
 		]
 	},
 	{
+		"name": "block",
+		"comment": "Blocks against user accounts, IP addresses and IP ranges.",
+		"columns": [
+			{
+				"name": "bl_id",
+				"comment": "Primary key.",
+				"type": "integer",
+				"options": {
+					"autoincrement": true,
+					"notnull": true,
+					"unsigned": true
+				}
+			},
+			{
+				"name": "bl_target",
+				"comment": "The block target. Foreign key to block_target.bt_id.",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"unsigned": true
+				}
+			},
+			{
+				"name": "bl_by_actor",
+				"comment": "Actor who made the block.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true
+				}
+			},
+			{
+				"name": "bl_reason_id",
+				"comment": "Key to comment_id. Text comment made by blocker.",
+				"type": "bigint",
+				"options": {
+					"unsigned": true,
+					"notnull": true
+				}
+			},
+			{
+				"name": "bl_timestamp",
+				"comment": "Creation (or refresh) date in standard YMDHMS form. IP blocks expire automatically.",
+				"type": "mwtimestamp",
+				"options": {
+					"notnull": true
+				}
+			},
+			{
+				"name": "bl_anon_only",
+				"comment": "If set to 1, block applies only to logged-out users and temporary users.",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": true,
+					"length": 1,
+					"default": 0
+				}
+			},
+			{
+				"name": "bl_create_account",
+				"comment": "Block prevents account creation from matching IP addresses",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": true,
+					"length": 1,
+					"default": 1
+				}
+			},
+			{
+				"name": "bl_enable_autoblock",
+				"comment": "Block triggers autoblocks",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": true,
+					"length": 1,
+					"default": 1
+				}
+			},
+			{
+				"name": "bl_expiry",
+				"comment": "Time at which the block will expire. May be \"infinity\"",
+				"type": "mwtimestamp",
+				"options": {
+					"notnull": true,
+					"CustomSchemaOptions": {
+						"allowInfinite": true
+					}
+				}
+			},
+			{
+				"name": "bl_deleted",
+				"comment": "If true, this block causes the username to be hidden, and the expiry must be infinite. This is denormalized into rev_deleted and the other deleted bitfields (T346716).",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": true,
+					"length": 1,
+					"default": 0
+				}
+			},
+			{
+				"name": "bl_block_email",
+				"comment": "Block prevents user from accessing Special:Emailuser",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": true,
+					"length": 1,
+					"default": 0
+				}
+			},
+			{
+				"name": "bl_allow_usertalk",
+				"comment": "Block allows user to edit their own talk page",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": true,
+					"length": 1,
+					"default": 0
+				}
+			},
+			{
+				"name": "bl_parent_block_id",
+				"comment": "ID of the block that caused this block to exist. Autoblocks set this to the original block so that the original block being deleted also deletes the autoblocks.",
+				"type": "integer",
+				"options": {
+					"notnull": false,
+					"unsigned": true,
+					"default": null
+				}
+			},
+			{
+				"name": "bl_sitewide",
+				"comment": "Block user from editing any page on the site (other than their own user talk page).",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": true,
+					"length": 1,
+					"default": 1
+				}
+			}
+		],
+		"indexes": [
+			{
+				"name": "bl_timestamp",
+				"comment": "Index for Special:BlockList",
+				"columns": [
+					"bl_timestamp"
+				],
+				"unique": false
+			},
+			{
+				"name": "bl_target",
+				"comment": "For searching by target",
+				"columns": [ "bl_target" ],
+				"unique": false
+			},
+			{
+				"name": "bl_expiry",
+				"comment": "Index for table pruning",
+				"columns": [
+					"bl_expiry"
+				],
+				"unique": false
+			},
+			{
+				"name": "bl_parent_block_id",
+				"comment": "Index for removing autoblocks when a parent block is removed",
+				"columns": [
+					"bl_parent_block_id"
+				],
+				"unique": false
+			}
+		],
+		"pk": [
+			"bl_id"
+		]
+	},
+	{
+		"name": "block_target",
+		"comment": "The targets of blocks",
+		"columns": [
+			{
+				"name": "bt_id",
+				"comment": "Primary key.",
+				"type": "integer",
+				"options": {
+					"autoincrement": true,
+					"notnull": true,
+					"unsigned": true
+				}
+			},
+			{
+				"name": "bt_address",
+				"comment": "Blocked IP address or range in dotted-quad form, or null for a user block. If bt_auto is 1 then the address is private.",
+				"type": "blob",
+				"options": {
+					"notnull": false,
+					"length": 255
+				}
+			},
+			{
+				"name": "bt_user",
+				"comment": "Blocked user ID or null for IP blocks.",
+				"type": "integer",
+				"options": {
+					"notnull": false,
+					"unsigned": true
+				}
+			},
+			{
+				"name": "bt_user_text",
+				"comment": "The name of the blocked user, or null for IP blocks. For Special:BlockList sorting (T48013).",
+				"type": "binary",
+				"options": {
+					"notnull": false,
+					"length": 255
+				}
+			},
+			{
+				"name": "bt_auto",
+				"comment": "Indicates that the IP address was banned because a banned user accessed a page through it. If this is 1, ipb_address will be hidden, and the block identified by block ID number.",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": true,
+					"length": 1,
+					"default": 0
+				}
+			},
+			{
+				"name": "bt_range_start",
+				"comment": "Start of an address range, in hexadecimal. Null for single-IP and user blocks.",
+				"type": "blob",
+				"options": {
+					"notnull": false,
+					"length": 255
+				}
+			},
+			{
+				"name": "bt_range_end",
+				"comment": "End of an address range, in hexadecimal. Null for single-IP and user blocks.",
+				"type": "blob",
+				"options": {
+					"notnull": false,
+					"length": 255
+				}
+			},
+			{
+				"name": "bt_ip_hex",
+				"comment": "If the block is for a single IP, this is the IP address in hexadecimal. If the block is for a range, the start of the range in hexadecimal, identical to bt_range_start.",
+				"type": "blob",
+				"options": {
+					"notnull": false,
+					"length": 255
+				}
+			},
+			{
+				"name": "bt_count",
+				"comment": "The number of block rows associated with this target.",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"default": 0
+				}
+			}
+		],
+		"indexes": [
+			{
+				"name": "bt_address",
+				"comment": "For finding single IP blocks and for Special:BlockList searching.",
+				"columns": [ "bt_address" ],
+				"options": { "lengths": [ 42 ] },
+				"unique": false
+			},
+			{
+				"name": "bt_ip_user_text",
+				"comment": "For sorting Special:BlockList by target (T48013)",
+				"columns": [ "bt_ip_hex", "bt_user_text" ],
+				"options": { "lengths": [ 35, 255 ] },
+				"unique": false
+			},
+			{
+				"name": "bt_range",
+				"comment": "For querying whether an IP address is in any range",
+				"columns": [
+					"bt_range_start",
+					"bt_range_end"
+				],
+				"options": { "lengths": [ 35, 35 ] },
+				"unique": false
+			},
+			{
+				"name": "bt_user",
+				"comment": "For querying whether a logged-in user is blocked",
+				"columns": [ "bt_user" ],
+				"unique": false
+			}
+		],
+		"pk": [
+			"bt_id"
+		]
+	},
+	{
 		"name": "image",
 		"comment": "Uploaded images and other files.",
 		"columns": [
@@ -3292,7 +3576,7 @@
 			},
 			{
 				"name": "page_is_redirect",
-				"comment": "1 indicates the article is a redirect.",
+				"comment": "1 indicates the article is a redirect. If so, there is a row in the `redirect` table with rd_from=page_id, which contains the redirect target.",
 				"type": "mwtinyint",
 				"options": { "notnull": true, "unsigned": true, "default": 0 }
 			},
@@ -3485,7 +3769,7 @@
 			},
 			{
 				"name": "user_is_temp",
-				"comment": "A boolean value representing whether the user is a temporary user. Zero if any type of user other than a temporary user. This exists to allow temporary users to be identified from the database only, by external applications.",
+				"comment": "This exists to allow temporary users to be identified from the database only, by external applications, and is not for use within MediaWiki (see T333223). A boolean value representing whether the user is a temporary user. Zero if any type of user other than a temporary user.",
 				"type": "mwtinyint",
 				"options": {
 					"notnull": true,
@@ -3512,6 +3796,12 @@
 				"options": { "unsigned": true, "notnull": true }
 			},
 			{
+				"name": "uas_year",
+				"comment": "The year to which this row belongs, if $wgAutoCreateTempUser['serialProvider']['useYear'] is true.",
+				"type": "smallint",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
 				"name": "uas_value",
 				"comment": "The maximum allocated ID value",
 				"type": "integer",
@@ -3519,7 +3809,7 @@
 			}
 		],
 		"indexes": [],
-		"pk": [ "uas_shard" ]
+		"pk": [ "uas_shard", "uas_year" ]
 	},
 	{
 		"name": "revision",

@@ -3,6 +3,7 @@
 namespace MediaWiki\Rest\Handler\Helper;
 
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\RedirectStore;
@@ -11,6 +12,7 @@ use MediaWiki\Rest\Response;
 use MediaWiki\Rest\ResponseFactory;
 use MediaWiki\Rest\Router;
 use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleValue;
 
 /**
  * Helper class for handling page redirects, for use with REST Handlers that provide access
@@ -28,6 +30,7 @@ class PageRedirectHelper {
 	private LanguageConverterFactory $languageConverterFactory;
 	private bool $followWikiRedirects = false;
 	private string $titleParamName = 'title';
+	private bool $useRelativeRedirects = true;
 
 	public function __construct(
 		RedirectStore $redirectStore,
@@ -45,6 +48,13 @@ class PageRedirectHelper {
 		$this->path = $path;
 		$this->request = $request;
 		$this->languageConverterFactory = $languageConverterFactory;
+	}
+
+	/**
+	 * @param bool $useRelativeRedirects
+	 */
+	public function setUseRelativeRedirects( bool $useRelativeRedirects ): void {
+		$this->useRelativeRedirects = $useRelativeRedirects;
 	}
 
 	/**
@@ -105,6 +115,12 @@ class PageRedirectHelper {
 			return null;
 		}
 
+		if ( $redirectTarget->isSameLinkAs( TitleValue::newFromPage( $page ) ) ) {
+			// This can happen if the current page is virtual file description
+			// page backed by a remote file repo (T353688).
+			return null;
+		}
+
 		return $this->getTargetUrl( $redirectTarget );
 	}
 
@@ -159,19 +175,30 @@ class PageRedirectHelper {
 	}
 
 	/**
-	 * @param string|PageReference $title
-	 * @return string
+	 * @param string|LinkTarget|PageReference $title
+	 * @return string The target to use in the Location header. Will be relative,
+	 *         unless setUseRelativeRedirects( false ) was called.
 	 */
 	public function getTargetUrl( $title ): string {
 		if ( !is_string( $title ) ) {
 			$title = $this->titleFormatter->getPrefixedDBkey( $title );
 		}
 
-		return $this->router->getRouteUrl(
-			$this->path,
-			[ $this->titleParamName => $title ],
-			$this->request->getQueryParams()
-		);
+		$pathParams = [ $this->titleParamName => $title ];
+
+		if ( $this->useRelativeRedirects ) {
+			return $this->router->getRoutePath(
+				$this->path,
+				$pathParams,
+				$this->request->getQueryParams()
+			);
+		} else {
+			return $this->router->getRouteUrl(
+				$this->path,
+				$pathParams,
+				$this->request->getQueryParams()
+			);
+		}
 	}
 
 	/**

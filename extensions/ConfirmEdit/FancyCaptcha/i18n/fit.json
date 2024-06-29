@@ -5,8 +5,6 @@
 			"Pyscowicz"
 		]
 	},
-	"fancycaptcha-captcha": "Turvallisuustarkistus",
-	"fancycaptcha-accountcreate": "Automaattisten käyttäjätunnusten luonnin estämiseksi kirjota kuvassa näkyvät kirjaimet alla olevaan tekstikentthään ([[Special:Captcha/help|lisätietoa]]):",
 	"fancycaptcha-imgcaptcha-ph": "Kirjota kuvassa oleva teksti",
 	"fancycaptcha-reload-text": "Vaiha"
 }

@@ -16,5 +16,7 @@
 	"scribunto-lua-error": "Lua greška: $2.",
 	"scribunto-limitreport-timeusage": "Lua – upotreba vremena",
 	"scribunto-limitreport-timeusage-value": "$1/$2 sekundi",
-	"scribunto-limitreport-memusage": "Lua – upotreba memorije"
+	"scribunto-limitreport-memusage": "Lua – upotreba memorije",
+	"nstab-module": "Modul",
+	"tooltip-ca-nstab-module": "Prikaži stranicu modula"
 }

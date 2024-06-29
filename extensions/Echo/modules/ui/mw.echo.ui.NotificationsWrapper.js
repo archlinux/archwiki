@@ -38,7 +38,7 @@
 
 		// Initialize
 		this.$element
-			.addClass( 'mw-echo-notificationsWrapper' )
+			.addClass( 'mw-echo-notificationsWrapper skin-invert' )
 			.append( this.notificationsWidget.$element );
 	};
 

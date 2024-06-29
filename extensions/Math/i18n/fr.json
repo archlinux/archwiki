@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Amire80",
 			"Constructeur",
 			"Djiboun",
@@ -18,12 +19,13 @@
 			"Wladek92",
 			"Wyz",
 			"Yona b",
-			"Zebulon84"
+			"Zebulon84",
+			"SleaY"
 		]
 	},
 	"math-desc": "Restitue les formules mathématiques entre les balises <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"popups-settings-option-math-tooltip": "Expliquer les formules mathématiques au survol.",
 	"math-visualeditor-mwchemdialog-title": "Formule chimique",
-	"math-visualeditor-mwcheminspector-title": "Formule chimique",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Modification rapide",
 	"math-visualeditor-mwlatexdialog-card-formula": "Formule",
 	"math-visualeditor-mwlatexdialog-card-options": "Options",
@@ -81,9 +83,9 @@
 	"math_syntax_error": "erreur de syntaxe",
 	"math_timeout": "Délai dépassé pour le rendu $1 sur « $2 ».",
 	"math-test-end": "Tests du serveur pour le mode rendu ''$1'' terminés.",
-	"math-test-fail": "Le test ''$1'' <span style=\"color:red\">a échoué</span>.",
+	"math-test-fail": "Le test ''$1'' a échoué.",
 	"math-test-start": "Exécution des tests de serveur pour le mode de rendu ''$1''.",
-	"math-test-success": "Le test ''$1'' <span style=\"color:green\">a réussi</span>.",
+	"math-test-success": "Le test ''$1'' a réussi.",
 	"math-test-contains-diff": "La chaîne renvoyée « $1 » ne contient pas la chaîne attendue « $2 ».",
 	"math-test-equals-diff": "La chaîne renvoyée « $1 » est différente de celle attendue « $2 ».",
 	"math-tracking-category-error": "Pages avec erreurs de balises math",
@@ -96,10 +98,11 @@
 	"math-tracking-category-render-error-desc": "Les pages de cette catégorie ont des erreurs de rendu liées aux balises mathématiques.",
 	"math_unknown_error": "erreur indéterminée",
 	"math_unknown_function": "fonction inconnue « $1 »",
-	"mw_math_latexml": "LaTeXML (expérimental, utilise MathML)",
-	"mw_math_mathml": "SVG (MathML peut être activé via une extension du navigateur)",
-	"mw_math_native": "MathML (expérimental ; sans images)",
-	"mw_math_source": "Source LaTeX (pour les navigateurs en mode texte)",
+	"mw-math-latexml": "LaTeXML (expérimental, utilise MathML)",
+	"mw-math-mathjax": "Rendu MathJax côté client (pour les navigateurs avec une prise en charge MathML limitée)",
+	"mw-math-mathml": "SVG (MathML peut être activé via une extension du navigateur)",
+	"mw-math-native": "MathML (expérimental ; sans images)",
+	"mw-math-source": "Source LaTeX (pour les navigateurs en mode texte)",
 	"prefs-math": "Mathématiques",
 	"mathstatus": "État mathématique",
 	"mathwikibase": "Informations sur la formule mathématique",
@@ -120,6 +123,5 @@
 	"math-wikibase-special-form-button": "Demander des informations",
 	"math-wikibase-special-error-header": "Erreur",
 	"math-wikibase-special-error-invalid-argument": "L’ID de l’élément Wikibase que vous avez spécifié n’existe pas.",
-	"math-wikibase-special-error-unknown": "Une erreur inconnue s’est produite lors de la récupération des données depuis Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "L’extension Wikibase est nécessaire pour utiliser cette page spéciale."
+	"math-wikibase-special-error-unknown": "Une erreur inconnue s’est produite lors de la récupération des données depuis Wikibase."
 }

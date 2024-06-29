@@ -31,7 +31,6 @@ use RuntimeException;
  * catching the exception and then rethrowing it is also acceptable.
  *
  * @newable
- * @stable to extend
  * @ingroup Database
  */
 class DBError extends RuntimeException {
@@ -50,8 +49,3 @@ class DBError extends RuntimeException {
 		$this->db = $db;
 	}
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( DBError::class, 'DBError' );

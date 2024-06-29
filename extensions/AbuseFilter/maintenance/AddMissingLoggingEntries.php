@@ -14,7 +14,7 @@ use LoggedUpdateMaintenance;
 use ManualLogEntry;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
-use User;
+use MediaWiki\User\User;
 
 /**
  * @codeCoverageIgnore

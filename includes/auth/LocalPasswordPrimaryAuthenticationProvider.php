@@ -21,8 +21,9 @@
 
 namespace MediaWiki\Auth;
 
+use IDBAccessObject;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
-use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -138,7 +139,7 @@ class LocalPasswordPrimaryAuthenticationProvider
 		if ( $this->getPasswordFactory()->needsUpdate( $pwhash ) ) {
 			$newHash = $this->getPasswordFactory()->newFromPlaintext( $req->password );
 			$fname = __METHOD__;
-			\DeferredUpdates::addCallableUpdate( function () use ( $newHash, $oldRow, $fname ) {
+			DeferredUpdates::addCallableUpdate( function () use ( $newHash, $oldRow, $fname ) {
 				$dbw = $this->dbProvider->getPrimaryDatabase();
 				$dbw->newUpdateQueryBuilder()
 					->update( 'user' )
@@ -182,20 +183,19 @@ class LocalPasswordPrimaryAuthenticationProvider
 		return !$this->getPassword( $row->user_password ) instanceof \InvalidPassword;
 	}
 
-	public function testUserExists( $username, $flags = User::READ_NORMAL ) {
+	public function testUserExists( $username, $flags = IDBAccessObject::READ_NORMAL ) {
 		$username = $this->userNameUtils->getCanonical(
 			$username, UserRigorOptions::RIGOR_USABLE );
 		if ( $username === false ) {
 			return false;
 		}
 
-		[ $mode, $options ] = \DBAccessObjectUtils::getDBOptions( $flags );
-		$db = \DBAccessObjectUtils::getDBFromIndex( $this->dbProvider, $mode );
+		$db = \DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
 		return (bool)$db->newSelectQueryBuilder()
 			->select( [ 'user_id' ] )
 			->from( 'user' )
 			->where( [ 'user_name' => $username ] )
-			->options( $options )
+			->recency( $flags )
 			->caller( __METHOD__ )->fetchField();
 	}
 

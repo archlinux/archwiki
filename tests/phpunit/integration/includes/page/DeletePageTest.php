@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Tests\Page;
 
-use CommentStoreComment;
 use Content;
 use ContentHandler;
-use DeferredUpdates;
+use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\DeletePage;
@@ -26,22 +26,6 @@ use WikiPage;
  * @note Permission-related tests are in \MediaWiki\Tests\Unit\Page\DeletePageTest
  */
 class DeletePageTest extends MediaWikiIntegrationTestCase {
-	protected $tablesUsed = [
-		'page',
-		'revision',
-		'redirect',
-		'archive',
-		'text',
-		'slots',
-		'content',
-		'slot_roles',
-		'content_models',
-		'recentchanges',
-		'logging',
-		'pagelinks',
-		'change_tag',
-		'change_tag_def',
-	];
 
 	private const PAGE_TEXT = "[[Stuart Little]]\n" .
 		"{{Multiple issues}}\n" .
@@ -84,6 +68,7 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 
 	private function assertDeletionLogged(
 		ProperPageIdentity $title,
+		int $pageID,
 		User $deleter,
 		string $reason,
 		bool $suppress,
@@ -100,6 +85,7 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 				'log_actor',
 				'log_namespace',
 				'log_title',
+				'log_page',
 			],
 			[ 'log_id' => $logID ],
 			[ [
@@ -109,6 +95,7 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 				(string)$deleter->getActorId(),
 				(string)$title->getNamespace(),
 				$title->getDBkey(),
+				$pageID,
 			] ],
 			[],
 			$commentQuery['joins']
@@ -306,7 +293,7 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertPageObjectsConsistency( $page );
 		$this->assertArchiveVisibility( $page->getTitle(), $suppress );
-		$this->assertDeletionLogged( $page, $deleterUser, $reason, $suppress, $logSubtype, $logID );
+		$this->assertDeletionLogged( $page, $id, $deleterUser, $reason, $suppress, $logSubtype, $logID );
 		$this->assertDeletionTags( $logID, $tags );
 		$this->assertPageLinksUpdate( $id, $immediate );
 

@@ -1,9 +1,8 @@
-var mobile = mw.mobileFrontend.require( 'mobile.startup' ),
+var mobile = require( 'mobile.startup' ),
 	Overlay = mobile.Overlay,
 	list = require( './list.js' ),
 	promisedView = mobile.promisedView,
-	View = mobile.View,
-	Anchor = mobile.Anchor;
+	View = mobile.View;
 
 /**
  * @param {Overlay} overlay
@@ -49,7 +48,7 @@ function onCountChange( count ) {
  * @return {Overlay}
  */
 function notificationsOverlay( onBeforeExit ) {
-	var markAllReadButton, overlay,
+	var markAllReadButton,
 		oouiPromise = mw.loader.using( 'oojs-ui' ).then( function () {
 			markAllReadButton = new OO.ui.ButtonWidget( {
 				icon: 'checkAll'
@@ -63,15 +62,15 @@ function notificationsOverlay( onBeforeExit ) {
 	// hide the button spinner as it is confusing to see in the top right corner
 	markAllReadButtonView.$el.hide();
 
-	overlay = Overlay.make(
+	var overlay = Overlay.make(
 		{
 			heading: '<strong>' + mw.message( 'notifications' ).escaped() + '</strong>',
-			footerAnchor: new Anchor( {
+			footerAnchor: {
 				href: mw.util.getUrl( 'Special:Notifications' ),
 				progressive: true,
 				additionalClassNames: 'footer-link notifications-archive-link',
 				label: mw.msg( 'echo-overlay-link' )
-			} ).options,
+			},
 			headerActions: [ markAllReadButtonView ],
 			isBorderBox: false,
 			className: 'overlay notifications-overlay navigation-drawer',

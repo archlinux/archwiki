@@ -161,17 +161,12 @@ class ParserPipelineFactory {
 		'attrExpansion'
 	];
 
-	/** @var array */
-	private $pipelineCache;
+	private array $pipelineCache = [];
 
 	/** @var Env */
 	private $env;
 
-	/**
-	 * @param Env $env
-	 */
 	public function __construct( Env $env ) {
-		$this->pipelineCache = [];
 		$this->env = $env;
 	}
 
@@ -183,19 +178,13 @@ class ParserPipelineFactory {
 	 */
 	private function defaultOptions( array $options ): array {
 		// default: not in a template
-		if ( !isset( $options['inTemplate'] ) ) {
-			$options['inTemplate'] = false;
-		}
+		$options['inTemplate'] ??= false;
 
 		// default: not an include context
-		if ( !isset( $options['isInclude'] ) ) {
-			$options['isInclude'] = false;
-		}
+		$options['isInclude'] ??= false;
 
 		// default: wrap templates
-		if ( !isset( $options['expandTemplates'] ) ) {
-			$options['expandTemplates'] = true;
-		}
+		$options['expandTemplates'] ??= true;
 
 		// Catch pipeline option typos
 		foreach ( $options as $k => $v ) {
@@ -251,11 +240,6 @@ class ParserPipelineFactory {
 		);
 	}
 
-	/**
-	 * @param string $cacheKey
-	 * @param array $options
-	 * @return string
-	 */
 	private function getCacheKey( string $cacheKey, array $options ): string {
 		if ( empty( $options['isInclude'] ) ) {
 			$cacheKey .= '::noInclude';
@@ -284,10 +268,6 @@ class ParserPipelineFactory {
 		return $cacheKey;
 	}
 
-	/**
-	 * @param string $src
-	 * @return Document
-	 */
 	public function parse( string $src ): Document {
 		$pipe = $this->getPipeline( 'text/x-mediawiki/full' );
 		$pipe->init( [
@@ -319,11 +299,9 @@ class ParserPipelineFactory {
 		$options = $this->defaultOptions( $options );
 		$cacheKey = $this->getCacheKey( $type, $options );
 
-		if ( empty( $this->pipelineCache[$cacheKey] ) ) {
-			$this->pipelineCache[$cacheKey] = [];
-		}
+		$this->pipelineCache[$cacheKey] ??= [];
 
-		if ( count( $this->pipelineCache[$cacheKey] ) ) {
+		if ( $this->pipelineCache[$cacheKey] ) {
 			$pipe = array_pop( $this->pipelineCache[$cacheKey] );
 		} else {
 			$pipe = $this->makePipeline( $type, $cacheKey, $options );
@@ -343,9 +321,7 @@ class ParserPipelineFactory {
 	 */
 	public function returnPipeline( ParserPipeline $pipe ): void {
 		$cacheKey = $pipe->getCacheKey();
-		if ( empty( $this->pipelineCache[$cacheKey] ) ) {
-			$this->pipelineCache[$cacheKey] = [];
-		}
+		$this->pipelineCache[$cacheKey] ??= [];
 		if ( count( $this->pipelineCache[$cacheKey] ) < 100 ) {
 			$this->pipelineCache[$cacheKey][] = $pipe;
 		}

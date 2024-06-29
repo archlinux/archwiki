@@ -3,7 +3,6 @@
 namespace MediaWiki\Utils;
 
 use BadMethodCallException;
-use Exception;
 use InvalidArgumentException;
 use MediaWiki\MainConfigSchema;
 use MWDebug;
@@ -111,7 +110,7 @@ class UrlUtils {
 	 * specifies a protocol, PROTO_HTTP, PROTO_HTTPS, PROTO_RELATIVE and
 	 * PROTO_CURRENT do not change that.
 	 *
-	 * Parent references (/../) in the path are resolved (as in wfRemoveDotSegments).
+	 * Parent references (/../) in the path are resolved (as in ::removeDotSegments).
 	 *
 	 * @todo this won't work with current-path-relative URLs like "subdir/foo.html", etc.
 	 *
@@ -166,7 +165,7 @@ class UrlUtils {
 					// user to override the port number (T67184)
 					if ( $defaultProto === PROTO_HTTPS && $this->httpsPort != 443 ) {
 						if ( isset( $bits['port'] ) ) {
-							throw new Exception(
+							throw new InvalidArgumentException(
 								'A protocol-relative server may not contain a port number' );
 						}
 						$url = "$defaultProtoWithoutSlashes$serverUrl:{$this->httpsPort}$url";
@@ -441,7 +440,7 @@ class UrlUtils {
 
 		// parse_url() incorrectly handles schemes case-sensitively. Convert it to lowercase.
 		$bits['scheme'] = strtolower( $bits['scheme'] );
-		$bits['host'] = $bits['host'] ?? '';
+		$bits['host'] ??= '';
 
 		// most of the protocols are followed by ://, but mailto: and sometimes news: not, check for it
 		if ( in_array( $bits['scheme'] . '://', $this->validProtocols ) ) {
@@ -482,10 +481,8 @@ class UrlUtils {
 			return null;
 		}
 		return preg_replace_callback(
-			'/((?:%[89A-F][0-9A-F])+)/i',
-			static function ( array $matches ) {
-				return urldecode( $matches[1] );
-			},
+			'/(?:%[89A-F][0-9A-F])+/i',
+			static fn ( $m ) => urldecode( $m[0] ),
 			$expanded
 		);
 	}

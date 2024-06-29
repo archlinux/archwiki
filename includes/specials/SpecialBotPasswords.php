@@ -24,10 +24,11 @@
 namespace MediaWiki\Specials;
 
 use ErrorPageError;
-use HTMLForm;
 use HTMLRestrictionsField;
 use InvalidPassword;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\GrantsInfo;
@@ -105,8 +106,9 @@ class SpecialBotPasswords extends FormSpecialPage {
 	 * @param string|null $par
 	 */
 	public function execute( $par ) {
-		$this->getOutput()->disallowUserJs();
 		$this->requireNamedUser();
+		$this->getOutput()->disallowUserJs();
+		$this->getOutput()->addModuleStyles( 'mediawiki.special' );
 		$this->addHelpLink( 'Manual:Bot_passwords' );
 
 		if ( $par !== null ) {
@@ -165,19 +167,23 @@ class SpecialBotPasswords extends FormSpecialPage {
 				}
 			}
 
-			$lang = $this->getLanguage();
 			$showGrants = $this->grantsInfo->getValidGrants();
-			$grantLinks = array_map( [ $this->grantsLocalization, 'getGrantsLink' ], $showGrants );
+			$grantNames = $this->grantsLocalization->getGrantDescriptionsWithClasses(
+				$showGrants, $this->getLanguage() );
 
+			$fields[] = [
+				'type' => 'info',
+				'default' => '',
+				'help-message' => 'botpasswords-help-grants',
+			];
 			$fields['grants'] = [
 				'type' => 'checkmatrix',
 				'label-message' => 'botpasswords-label-grants',
-				'help-message' => 'botpasswords-help-grants',
 				'columns' => [
 					$this->msg( 'botpasswords-label-grants-column' )->escaped() => 'grant'
 				],
 				'rows' => array_combine(
-					$grantLinks,
+					$grantNames,
 					$showGrants
 				),
 				'default' => array_map(
@@ -186,12 +192,13 @@ class SpecialBotPasswords extends FormSpecialPage {
 					},
 					$this->botPassword->getGrants()
 				),
-				'tooltips' => array_combine(
-					$grantLinks,
+				'tooltips-html' => array_combine(
+					$grantNames,
 					array_map(
-						static function ( $rights ) use ( $lang ) {
-							return $lang->semicolonList( array_map( [ User::class, 'getRightDescription' ], $rights ) );
-						},
+						fn ( $rights ) => Html::rawElement( 'ul', [], implode( '', array_map(
+							fn ( $right ) => Html::rawElement( 'li', [], $this->msg( "right-$right" )->parse() ),
+							$rights
+						) ) ),
 						array_intersect_key( $this->grantsInfo->getRightsByGrant(),
 							array_fill_keys( $showGrants, true ) )
 					)
@@ -213,7 +220,7 @@ class SpecialBotPasswords extends FormSpecialPage {
 		} else {
 			$linkRenderer = $this->getLinkRenderer();
 
-			$dbr = BotPassword::getDB( DB_REPLICA );
+			$dbr = BotPassword::getReplicaDatabase();
 			$res = $dbr->newSelectQueryBuilder()
 				->select( [ 'bp_app_id', 'bp_password' ] )
 				->from( 'bot_passwords' )
@@ -442,7 +449,5 @@ class SpecialBotPasswords extends FormSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialBotPasswords::class, 'SpecialBotPasswords' );

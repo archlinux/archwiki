@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Cedric31",
+			"Lhanars",
 			"Nicolas Eynaud",
-			"Vriullop",
-			"Lhanars"
+			"Vriullop"
 		]
 	},
 	"echo-desc": "Sistèma per avertir los utilizaires dels eveniments e messatges",

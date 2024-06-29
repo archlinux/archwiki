@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Protostar",
-			"122112ê"
+			"122112ê",
+			"Protostar"
 		]
 	},
 	"vector-languages": "Langwej dɛn",
@@ -20,6 +20,7 @@
 	"vector-more-actions": "Mòr",
 	"vector-searchsuggest-containing": "Sɔch fɔ pej dɛn we gɛt<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Kòntèntdèm",
+	"vector-toc-beginning": "Bigin",
 	"vector-main-menu-label": "Men mɛnyu",
 	"vector-page-tools-label": "Tul dɛn",
 	"vector-page-tools-general-label": "Jeneral",

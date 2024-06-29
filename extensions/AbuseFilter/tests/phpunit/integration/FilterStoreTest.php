@@ -37,12 +37,6 @@ class FilterStoreTest extends MediaWikiIntegrationTestCase {
 		'group' => 'default'
 	];
 
-	/** @inheritDoc */
-	protected $tablesUsed = [
-		'abuse_filter',
-		'actor',
-	];
-
 	/**
 	 * @param int $id
 	 */
@@ -53,9 +47,15 @@ class FilterStoreTest extends MediaWikiIntegrationTestCase {
 		// Use some black magic to bypass checks
 		/** @var FilterStore $filterStore */
 		$filterStore = TestingAccessWrapper::newFromObject( AbuseFilterServices::getFilterStore() );
+		$row = $filterStore->filterToDatabaseRow( $filter );
+		$row += AbuseFilterServices::getActorMigration()->getInsertValues(
+			$this->db,
+			'af_user',
+			$this->getTestUser()->getUserIdentity()
+		);
 		$this->db->insert(
 			'abuse_filter',
-			$filterStore->filterToDatabaseRow( $filter ),
+			$row,
 			__METHOD__
 		);
 	}
@@ -130,10 +130,6 @@ class FilterStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testSaveFilter_invalid() {
-		$this->overrideConfigValue(
-			'AbuseFilterActorTableSchemaMigrationStage',
-			SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
-		);
 		$row = [
 			'id' => null,
 			'rules' => '1==1',
@@ -158,10 +154,6 @@ class FilterStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testSaveFilter_noChange() {
-		$this->overrideConfigValue(
-			'AbuseFilterActorTableSchemaMigrationStage',
-			SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
-		);
 		$row = [
 			'id' => '1',
 			'rules' => '/**/',

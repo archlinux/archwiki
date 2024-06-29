@@ -1,14 +1,16 @@
 <?php
 
-namespace MediaWiki\Parser\Parsoid;
+namespace MediaWiki\Tests\Parser\Parsoid;
 
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWikiUnitTestCase;
-use ParserOutput;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Core\PageBundle;
 
 /**
- * @covers MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter
+ * @covers \MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter
  */
 class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 	/** @dataProvider provideParserOutputFromPageBundle */
@@ -20,7 +22,12 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $pageBundle->mw, $extensionData['mw'] );
 		$this->assertSame( $pageBundle->parsoid, $extensionData['parsoid'] );
 		$this->assertSame( $pageBundle->headers, $extensionData['headers'] );
-		$this->assertSame( $pageBundle->headers['content-language'], $extensionData['headers']['content-language'] );
+
+		if ( isset( $pageBundle->headers['content-language'] ) ) {
+			$this->assertSame( $pageBundle->headers['content-language'], $extensionData['headers']['content-language'] );
+			$this->assertSame( $pageBundle->headers['content-language'], (string)$output->getLanguage() );
+		}
+
 		$this->assertSame( $pageBundle->version, $extensionData['version'] );
 		$this->assertSame( $pageBundle->contentmodel, $extensionData['contentmodel'] );
 	}
@@ -34,6 +41,7 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 		$original->setPageProperty( 'forcetoc', '' );
 		$original->recordOption( 'test1' );
 		$original->recordOption( 'test2' );
+		$original->setLanguage( new Bcp47CodeValue( 'fr' ) );
 
 		// This should preserve the metadata.
 		$output = PageBundleParserOutputConverter::parserOutputFromPageBundle( $pageBundle, $original );
@@ -54,8 +62,18 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 		$this->assertSame( '', $output->getPageProperty( 'forcetoc' ) );
 		$this->assertSame( [ 'test1', 'test2' ], $output->getUsedOptions() );
 
+		// Some meta-data can be overridden
+		if ( isset( $pageBundle->headers['content-language'] ) ) {
+			$this->assertSame(
+				$pageBundle->headers['content-language'],
+				(string)$output->getLanguage()
+			);
+		} else {
+			$this->assertSame( 'fr', (string)$output->getLanguage() );
+		}
+
 		// Check that $original and $output can be modified independently of each other
-		$original->setText( 'new text version' );
+		$original->setRawText( 'new text version' );
 		$this->assertNotSame( 'new text version', $output->getRawText() );
 	}
 
@@ -100,8 +118,21 @@ class PageBundleParserOutputConverterTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $extensionData['version'] ?? '0.0.0', $pageBundle->version );
 
 		$this->assertSame( $extensionData['headers'] ?? [], $pageBundle->headers );
-		$this->assertSame( $extensionData['headers']['content-language'], $pageBundle->headers['content-language'] );
 		$this->assertSame( $extensionData['contentmodel'] ?? null, $pageBundle->contentmodel );
+
+		if ( isset( $extensionData['headers']['content-language'] ) ) {
+			$this->assertSame(
+				$extensionData['headers']['content-language'],
+				$pageBundle->headers['content-language']
+			);
+		}
+
+		if ( $parserOutput->getLanguage() ) {
+			$this->assertSame(
+				$parserOutput->getLanguage(),
+				$pageBundle->headers['content-language']
+			);
+		}
 	}
 
 	public function providePageBundleFromParserOutput() {

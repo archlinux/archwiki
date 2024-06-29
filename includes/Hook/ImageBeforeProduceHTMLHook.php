@@ -4,8 +4,8 @@ namespace MediaWiki\Hook;
 
 use File;
 use MediaWiki\Linker\DummyLinker;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
-use Parser;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md.
@@ -22,7 +22,7 @@ interface ImageBeforeProduceHTMLHook {
 	 *
 	 * @since 1.35
 	 *
-	 * @param DummyLinker $linker Formerly a Skin/Linker, now a DummyLinker for b/c
+	 * @param DummyLinker $linker Deprecated, do not use.
 	 * @param Title &$title Title object of the image
 	 * @param File|false &$file File object, or false if it doesn't exist
 	 * @param array &$frameParams Various parameters with special meanings; see documentation in

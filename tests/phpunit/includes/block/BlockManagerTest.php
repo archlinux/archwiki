@@ -7,7 +7,6 @@ use MediaWiki\Block\SystemBlock;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\FauxResponse;
-use MediaWiki\Request\WebRequest;
 use MediaWiki\User\User;
 use Psr\Log\NullLogger;
 use Wikimedia\TestingAccessWrapper;
@@ -63,11 +62,12 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 				BlockManager::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()
 			),
-			$services->getPermissionManager(),
 			$services->getUserFactory(),
 			$services->getUserIdentityUtils(),
 			new NullLogger(),
-			$services->getHookContainer()
+			$services->getHookContainer(),
+			$services->getDatabaseBlockStore(),
+			$services->getProxyLookup()
 		];
 	}
 
@@ -76,20 +76,6 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 		$permissionManager = $this->getServiceContainer()->getPermissionManager();
 		$permissionManager->invalidateUsersRightsCache();
 
-		// Ensure that the `UserGetRights` hook in PermissionManager is triggerred
-		// when checking if the user has `ipblock-exempt`, so that CentralAuth can
-		// grant `ipblock-exempt` via global groups. We also assert that, since the
-		// user should have `ipblock-exempt`, that the `GetUserBlock` hook is called
-		// with `$ip` as `null` since the ip should be ignored
-		$onUserGetRightsCalled = false;
-		$this->setTemporaryHook(
-			'UserGetRights',
-			static function ( $user, &$rights ) use ( &$onUserGetRightsCalled ) {
-				$onUserGetRightsCalled = true;
-				$rights[] = 'ipblock-exempt';
-				return true;
-			}
-		);
 		$onGetUserBlockCalled = false;
 		$onGetUserBlockIP = false;
 		$this->setTemporaryHook(
@@ -102,22 +88,21 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$blockManager = $this->getBlockManager( [] );
-		$block = $blockManager->getUserBlock(
+		$block = $blockManager->getBlock(
 			$this->user,
-			$this->createMock( WebRequest::class ),
+			null,
 			false
 		);
 
 		// We don't actually care about the block, just whether or not the right hooks were called
-		$this->assertTrue( $onUserGetRightsCalled, 'Extensions should be able to grant rights' );
 		$this->assertTrue(
 			$onGetUserBlockCalled,
 			'Check that HookRunner::onGetUserBlock was called'
 		);
 		$this->assertNull(
 			$onGetUserBlockIP,
-			'The `GetUserBlock` hook should have been called with null since the user' .
-				' was granted `ipblock-exempt` via the `UserGetRights` hook'
+			'The `GetUserBlock` hook should have been called with null since we ' .
+			'didn\'t pass a request'
 		);
 	}
 
@@ -147,8 +132,6 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			$user,
 			$user->getRequest()
 		) );
-
-		$blockStore->deleteBlock( $block );
 	}
 
 	/**
@@ -184,8 +167,6 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 			$expectKeepCookie ? 0 : 1,
 			$response->getCookies()
 		);
-
-		$blockStore->deleteBlock( $block );
 	}
 
 	public static function provideBlocksForShouldApplyCookieBlock() {
@@ -939,6 +920,60 @@ class BlockManagerTest extends MediaWikiIntegrationTestCase {
 				false,
 			],
 		];
+	}
+
+	public function testGetBlocksForIPList() {
+		$blockManager = $this->getBlockManager( [] );
+		$block = new DatabaseBlock( [
+			'address' => '1.2.3.4',
+			'by' => $this->getTestSysop()->getUser(),
+		] );
+		$inserted = $this->getServiceContainer()
+			->getDatabaseBlockStore()
+			->insertBlock( $block );
+		$this->assertTrue(
+			(bool)$inserted['id'],
+			'Check that the block was inserted correctly'
+		);
+
+		// Early return of empty array if no ips in the list
+		$list = $blockManager->getBlocksForIPList( [], true, false );
+		$this->assertCount(
+			0,
+			$list,
+			'No blocks retrieved if no ips listed'
+		);
+
+		// Early return of empty array if all ips are either invalid or trusted proxies,
+		// '192.168.1.1' is set to trusted in setUp();
+		$list = $blockManager->getBlocksForIPList(
+			[ '300.300.300.300', '192.168.1.1' ],
+			true,
+			false
+		);
+		$this->assertCount(
+			0,
+			$list,
+			'No blocks retrieved if all ips are invalid or trusted proxies'
+		);
+
+		// Actually fetching, block was inserted above
+		$list = $blockManager->getBlocksForIPList( [ '1.2.3.4' ], true, false );
+		$this->assertCount(
+			1,
+			$list,
+			'Block retrieved for the blocked ip'
+		);
+		$this->assertInstanceOf(
+			DatabaseBlock::class,
+			$list[0],
+			'DatabaseBlock returned'
+		);
+		$this->assertSame(
+			$inserted['id'],
+			$list[0]->getId(),
+			'Block returned is the correct one'
+		);
 	}
 
 	/**

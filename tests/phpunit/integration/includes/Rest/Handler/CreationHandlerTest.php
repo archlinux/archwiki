@@ -5,6 +5,7 @@ namespace MediaWiki\Tests\Rest\Handler;
 use ApiUsageException;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Rest\Handler\CreationHandler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
@@ -16,6 +17,7 @@ use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWikiIntegrationTestCase;
 use MockTitleTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
@@ -347,7 +349,10 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 					'content_model' => CONTENT_MODEL_WIKITEXT,
 				] ),
 			],
-			new MessageValue( 'rest-missing-body-field', [ 'source' ] ),
+			DataMessageValue::new( 'rest-body-validation-error', [
+				DataMessageValue::new( 'paramvalidator-missingparam', [], 'missingparam' )
+					->plaintextParams( 'source' )
+			], 'missingparam' ),
 		];
 		yield "missing comment field" => [
 			[ // Request data received by CreationHandler
@@ -362,7 +367,10 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 					'content_model' => CONTENT_MODEL_WIKITEXT,
 				] ),
 			],
-			new MessageValue( 'rest-missing-body-field', [ 'comment' ] ),
+			DataMessageValue::new( 'rest-body-validation-error', [
+				DataMessageValue::new( 'paramvalidator-missingparam', [], 'missingparam' )
+					->plaintextParams( 'comment' )
+			], 'missingparam' ),
 		];
 		yield "missing title field" => [
 			[ // Request data received by CreationHandler
@@ -377,7 +385,10 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 					'content_model' => CONTENT_MODEL_WIKITEXT,
 				] ),
 			],
-			new MessageValue( 'rest-missing-body-field', [ 'title' ] ),
+			DataMessageValue::new( 'rest-body-validation-error', [
+				DataMessageValue::new( 'paramvalidator-missingparam', [], 'missingparam' )
+					->plaintextParams( 'title' )
+			], 'missingparam' ),
 		];
 	}
 
@@ -456,7 +467,7 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 		yield "badtoken" => [
 			new ApiUsageException(
 				null,
-				Status::newFatal( 'apierror-badtoken', [ 'plaintext' => 'BAD' ] )
+				Status::newFatal( 'apierror-badtoken', Message::plaintextParam( 'BAD' ) )
 			),
 			new LocalizedHttpException(
 				new MessageValue(

@@ -25,6 +25,7 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\Title\Title;
 
 /**
@@ -44,7 +45,7 @@ class NukePage extends Maintenance {
 		$name = $this->getArg( 0 );
 		$delete = $this->hasOption( 'delete' );
 
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );
 
 		# Get page ID
@@ -70,10 +71,16 @@ class NukePage extends Maintenance {
 			# Delete the page record and associated recent changes entries
 			if ( $delete ) {
 				$this->output( "Deleting page record..." );
-				$dbw->delete( 'page', [ 'page_id' => $id ], __METHOD__ );
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'page' )
+					->where( [ 'page_id' => $id ] )
+					->caller( __METHOD__ )->execute();
 				$this->output( "done.\n" );
 				$this->output( "Cleaning up recent changes..." );
-				$dbw->delete( 'recentchanges', [ 'rc_cur_id' => $id ], __METHOD__ );
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'recentchanges' )
+					->where( [ 'rc_cur_id' => $id ] )
+					->caller( __METHOD__ )->execute();
 				$this->output( "done.\n" );
 			}
 
@@ -107,10 +114,13 @@ class NukePage extends Maintenance {
 	}
 
 	public function deleteRevisions( $ids ) {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );
 
-		$dbw->delete( 'revision', [ 'rev_id' => $ids ], __METHOD__ );
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'revision' )
+			->where( [ 'rev_id' => $ids ] )
+			->caller( __METHOD__ )->execute();
 
 		$this->commitTransaction( $dbw, __METHOD__ );
 	}

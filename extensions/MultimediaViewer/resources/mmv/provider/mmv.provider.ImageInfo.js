@@ -109,7 +109,7 @@ const ImageModel = require( '../model/mmv.model.Image.js' );
 					if ( page.imageinfo && page.imageinfo.length ) {
 						return ImageModel.newFromImageInfo( file, page );
 					} else if ( page.missing === true && page.imagerepository === '' ) {
-						return $.Deferred().reject( `file does not exist: ${file.getPrefixedDb()}` );
+						return $.Deferred().reject( `file does not exist: ${ file.getPrefixedDb() }` );
 					} else {
 						return $.Deferred().reject( 'unknown error' );
 					}

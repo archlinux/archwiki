@@ -29,6 +29,7 @@
 	"nuke-maxpages": "حداکثر تعداد صفحه‌ها:",
 	"nuke-editby": "ایجاد شده توسط [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "صفحهٔ '''$1''' حذف شده است.",
+	"nuke-deletion-queued": "صفحهٔ «$1» در نوبت حذف قرار گرفت.",
 	"nuke-not-deleted": "صفحهٔ [[:$1]] را '''نمی‌توان''' حذف کرد.",
 	"nuke-delete-more": "[[Special:Nuke|حذف صفحه‌های بیشتر]]",
 	"nuke-pattern": "الگوی SQL LIKE (مثلاً %) برای نام صفحه:",

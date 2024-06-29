@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42"
 	},
 	"GroupPermissions": {
 		"*": {
@@ -71,11 +71,7 @@
 		},
 		"ext.confirmEdit.visualEditor": {
 			"scripts": "ve-confirmedit/ve.init.mw.CaptchaSaveErrorHandler.js",
-			"dependencies": "ext.confirmEdit.CaptchaInputWidget",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"dependencies": "ext.confirmEdit.CaptchaInputWidget"
 		},
 		"ext.confirmEdit.simpleCaptcha": {
 			"styles": "../SimpleCaptcha/resources/ext.confirmEdit.simpleCaptcha.css"

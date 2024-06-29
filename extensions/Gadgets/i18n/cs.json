@@ -11,7 +11,7 @@
 	"prefs-gadgets": "Udělátka",
 	"prefs-description-gadgets": "Zapněte si na svém účtu doplňkové funkce.",
 	"gadgets-prefstext": "Níže je přehled speciálních udělátek, která si můžete ve svém účtu zapnout.\nTato udělátka jsou založena převážně na JavaScriptu, takže je pro jejich funkčnost nutné mít v prohlížeči JavaScript zapnutý.\nUdělátka nejsou aplikována na této stránce nastavení.\n\nUvědomte si také, že speciální udělátka nejsou součástí softwaru MediaWiki a&nbsp;jsou vytvářena a&nbsp;spravována uživateli této wiki.\nMístní správci rozhraní mohou upravovat [[MediaWiki:Gadgets-definition|definice]] dostupných udělátek a&nbsp;místní správci mohou upravovat jejich [[Special:Gadgets|popisy]], kde naleznete také jejich zdrojové kódy. Počty uživatelů každého udělátka na této wiki jsou zaznamenány ve [[Special:GadgetUsage|statistice užívání udělátek]].",
-	"gadgets": "Udělátka",
+	"special-gadgets": "Udělátka",
 	"gadgetusage": "Statistika využití udělátek",
 	"gadgetusage-gadget": "Udělátko",
 	"gadgetusage-usercount": "Počet uživatelů",
@@ -25,7 +25,7 @@
 	"gadgets-editdescription": "Editovat popis",
 	"gadgets-viewdescription": "Zobrazit popis",
 	"gadgets-uses": "používá",
-	"gadgets-required-rights": "Vyžaduje následující {{PLURAL:$2|oprávnění}}:\n\n$1",
+	"gadgets-required-rights": "Vyžaduje následující {{PLURAL:$2|oprávnění}}: $1.",
 	"gadgets-required-skins": "Dostupné {{PLURAL:$2|pro vzhled $1|pro následující vzhledy: $1}}.",
 	"gadgets-required-actions": "Omezeno na {{PLURAL:$2|akci stránky „$1“|následující akce stránky: $1}}.",
 	"gadgets-default": "Implicitně zapnuto všem.",
@@ -38,10 +38,5 @@
 	"gadgets-export-download": "Stáhnout",
 	"gadgets-validate-notset": "Není nastavena vlastnost <code>$1</code>.",
 	"gadgets-validate-wrongtype": "Vlastnost <code>$1</code> musí být typu <code>$2</code> namísto typu <code>$3</code>.",
-	"right-gadgets-edit": "Editace stránek s JavaScriptem a CSS udělátek",
-	"action-gadgets-edit": "editovat stránku s JavaScriptem nebo CSS tohoto udělátka",
-	"right-gadgets-definition-edit": "Editace definic udělátek",
-	"action-gadgets-definition-edit": "editovat definici tohoto udělátka",
-	"gadgets-wrong-contentmodel": "Stránky ve jmenném prostoru {{ns:2302}} musí mít jako model obsahu ''GadgetDefinition''.",
 	"gadgets-supports-urlload": "Toto udělátko podporuje načítání prostřednictví URL pomocí parametru <code>?withgadget</code>."
 }

@@ -1,25 +1,26 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
+use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use TestUserRegistry;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers ApiUserrights
+ * @covers \ApiUserrights
  */
 class ApiUserrightsTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'change_tag', 'change_tag_def', 'logging' ]
-		);
+
 		$this->overrideConfigValues( [
 			MainConfigNames::AddGroups => [],
 			MainConfigNames::RemoveGroups => [],
@@ -151,12 +152,7 @@ class ApiUserrightsTest extends ApiTestCase {
 		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 		$blockStore->insertBlock( $block );
 
-		try {
-			$this->doSuccessfulRightsChange();
-		} finally {
-			$blockStore->deleteBlock( $block );
-			$user->clearInstanceCache();
-		}
+		$this->doSuccessfulRightsChange();
 	}
 
 	public function testBlockedWithoutUserrights() {
@@ -168,12 +164,7 @@ class ApiUserrightsTest extends ApiTestCase {
 		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 		$blockStore->insertBlock( $block );
 
-		try {
-			$this->doFailedRightsChange( 'blocked' );
-		} finally {
-			$blockStore->deleteBlock( $block );
-			$user->clearInstanceCache();
-		}
+		$this->doFailedRightsChange( 'blocked' );
 	}
 
 	public function testAddMultiple() {

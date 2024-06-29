@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.47.4
+ * OOUI v0.49.0
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2023 OOUI Team and other contributors.
+ * Copyright 2011–2024 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2023-07-10T16:09:15Z
+ * Date: 2024-02-07T18:56:29Z
  */
 .oo-ui-element-hidden {
   display: none !important;
@@ -256,6 +256,7 @@
   box-sizing: border-box;
   min-height: 40px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
 }
 
 .oo-ui-floatableElement {
@@ -338,7 +339,7 @@
 }
 
 .oo-ui-pendingElement-pending {
-  background-color: #ddd;
+  background-color: #eee;
   background-image: linear-gradient(135deg, #fff 25%, transparent 25%, transparent 50%, #fff 50%, #fff 75%, transparent 75%, transparent);
   background-size: 1.5625em 1.5625em;
   animation: oo-ui-pendingElement-stripes 650ms linear infinite;
@@ -446,7 +447,7 @@
 }
 .oo-ui-fieldLayout.oo-ui-fieldLayout-align-top .oo-ui-fieldLayout-help,
 .oo-ui-fieldLayout.oo-ui-fieldLayout-align-inline .oo-ui-fieldLayout-help {
-  margin-top: -0.3em;
+  margin-top: -0.5em;
   margin-right: -0.625em;
 }
 .oo-ui-fieldLayout > .oo-ui-popupButtonWidget {
@@ -571,11 +572,9 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 .oo-ui-fieldsetLayout > .oo-ui-inline-help {
   margin-bottom: 0.5em;
 }
-.oo-ui-fieldsetLayout > .oo-ui-fieldsetLayout-header > .oo-ui-popupButtonWidget {
-  margin-right: 0;
-}
-.oo-ui-fieldsetLayout > .oo-ui-fieldsetLayout-header > .oo-ui-popupButtonWidget:last-child {
-  margin-right: 0;
+.oo-ui-fieldsetLayout .oo-ui-fieldsetLayout-help,
+.oo-ui-fieldsetLayout .oo-ui-fieldsetLayout-help:last-child {
+  margin-right: -0.625em;
 }
 
 .oo-ui-formLayout + .oo-ui-fieldsetLayout,
@@ -1265,7 +1264,7 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   transition-duration: 250ms;
 }
 .oo-ui-textInputWidget .oo-ui-pendingElement-pending {
-  background-color: #ddd;
+  background-color: #eee;
 }
 .oo-ui-textInputWidget.oo-ui-iconElement > .oo-ui-iconElement-icon,
 .oo-ui-textInputWidget.oo-ui-indicatorElement > .oo-ui-indicatorElement-indicator {
@@ -1632,7 +1631,7 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   transform: translate(-25%);
 }
 .oo-ui-progressBarWidget.oo-ui-widget-disabled {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 @keyframes oo-ui-progressBarWidget-slide {
   from {
@@ -1713,6 +1712,210 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 .oo-ui-selectFileInputWidget-empty.oo-ui-widget-enabled .oo-ui-selectFileInputWidget-label {
   cursor: default;
+}
+.oo-ui-selectFileInputWidget-dropTarget {
+  position: relative;
+  cursor: default;
+  height: 8.815em;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-dropLabel,
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-selectButton {
+  display: none;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-thumbnail {
+  width: 7.815em;
+  position: absolute;
+  top: 0.5em;
+  bottom: 0.5em;
+  left: 0.5em;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-thumbnail > .oo-ui-selectFileInputWidget-noThumbnail-icon {
+  opacity: 0.4;
+  height: 7.815em;
+  width: 7.815em;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-pendingElement-pending {
+  background-repeat: repeat;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-info {
+  display: block;
+  height: 100%;
+  width: auto;
+  margin-right: 0;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-info > .oo-ui-inputWidget-input {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.oo-ui-selectFileInputWidget-dropTarget.oo-ui-selectFileInputWidget-withThumbnail .oo-ui-selectFileInputWidget-info {
+  margin-left: 8.815em;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-label {
+  display: block;
+  position: relative;
+  top: inherit;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-fileName {
+  display: block;
+}
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-selectFileInputWidget-dropTarget {
+  text-align: center;
+}
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-thumbnail,
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-info {
+  display: none;
+}
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-selectButton {
+  display: block;
+  margin: 2.2em 1em 1em;
+}
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-widget-enabled .oo-ui-selectFileInputWidget-dropLabel {
+  display: block;
+}
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-widget-disabled.oo-ui-selectFileInputWidget-dropTarget {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-widget-disabled.oo-ui-selectFileInputWidget-dropTarget,
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-widget-disabled.oo-ui-selectFileInputWidget-dropTarget .oo-ui-selectFileInputWidget-selectButton,
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-widget-disabled.oo-ui-selectFileInputWidget-dropTarget .oo-ui-buttonElement-button {
+  /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+  cursor: no-drop;
+}
+.oo-ui-selectFileInputWidget-dropTarget {
+  background-color: #fff;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+.oo-ui-selectFileInputWidget-dropTarget.oo-ui-selectFileInputWidget-empty {
+  border-style: dashed;
+}
+.oo-ui-selectFileInputWidget-dropTarget .oo-ui-pendingElement-pending {
+  background-size: 1.5625em 1.5625em;
+}
+.oo-ui-selectFileInputWidget-buttonOnly {
+  width: auto;
+  max-width: none;
+}
+.oo-ui-selectFileInputWidget.oo-ui-widget-enabled.oo-ui-selectFileInputWidget-canDrop.oo-ui-selectFileInputWidget-dropTarget,
+.oo-ui-selectFileInputWidget.oo-ui-widget-enabled.oo-ui-selectFileInputWidget-canDrop .oo-ui-selectFileInputWidget-info > .oo-ui-inputWidget-input {
+  background-color: #e1f3ff;
+}
+.oo-ui-selectFileInputWidget.oo-ui-widget-enabled.oo-ui-selectFileInputWidget-cantDrop.oo-ui-selectFileInputWidget-dropTarget,
+.oo-ui-selectFileInputWidget.oo-ui-widget-enabled.oo-ui-selectFileInputWidget-cantDrop .oo-ui-selectFileInputWidget-info > .oo-ui-inputWidget-input {
+  background-color: #e1f3ff;
+  background-color: #ffdcdc;
+}
+.oo-ui-selectFileInputWidget.oo-ui-widget-disabled.oo-ui-selectFileInputWidget-dropTarget,
+.oo-ui-selectFileInputWidget.oo-ui-selectFileInputWidget-empty.oo-ui-widget-disabled.oo-ui-selectFileInputWidget-dropTarget {
+  background-color: #f3f3f3;
+  color: #ccc;
+  border-color: #ddd;
+  text-shadow: 0 1px 1px #fff;
+}
+
+
+.oo-ui-toggleSwitchWidget {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  box-sizing: border-box;
+  transform: translateZ(0);
+  background-color: #ebebeb;
+  background-image: linear-gradient(to bottom, #ddd 0, #fafafa 100%);
+  width: 4em;
+  height: 2em;
+  margin-right: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 1em;
+  box-shadow: 0 0 0 #fff, inset 0 0.1em 0.2em #ddd;
+}
+.oo-ui-toggleSwitchWidget.oo-ui-widget-enabled {
+  cursor: pointer;
+}
+.oo-ui-toggleSwitchWidget-grip {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+}
+.oo-ui-toggleSwitchWidget a {
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 3;
+}
+.oo-ui-toggleSwitchWidget:last-child {
+  margin-right: 0;
+}
+.oo-ui-toggleSwitchWidget.oo-ui-widget-disabled {
+  opacity: 0.5;
+}
+.oo-ui-toggleSwitchWidget.oo-ui-widget-enabled:hover,
+.oo-ui-toggleSwitchWidget.oo-ui-widget-enabled:hover .oo-ui-toggleSwitchWidget-grip {
+  border-color: #aaa;
+}
+.oo-ui-toggleSwitchWidget.oo-ui-widget-enabled:focus {
+  outline: 0;
+  border-color: #ace;
+  box-shadow: 0 0 2px 2px #ace;
+}
+.oo-ui-toggleSwitchWidget.oo-ui-widget-enabled:focus .oo-ui-toggleSwitchWidget-grip {
+  border-color: #ace;
+}
+.oo-ui-toggleSwitchWidget-grip {
+  background-color: #ebebeb;
+  background-image: linear-gradient(to bottom, #fafafa 0, #ddd 100%);
+  top: 0.25em;
+  left: 0.25em;
+  width: 1.5em;
+  height: 1.5em;
+  margin-top: -1px;
+  border: 1px solid #ccc;
+  border-radius: 1em;
+  box-shadow: 0 0.1em 0.25em rgba(0, 0, 0, 0.1);
+  transition-property: left, margin-left;
+  transition-duration: 250ms;
+}
+.oo-ui-toggleSwitchWidget-glow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  border-radius: 1em;
+  box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.07);
+  transition-property: opacity;
+  transition-duration: 250ms;
+  background-color: #cde7f4;
+  background-image: linear-gradient(to bottom, #b0d9ee 0, #eaf4fa 100%);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.oo-ui-toggleWidget-off .oo-ui-toggleSwitchWidget-glow {
+  opacity: 0;
+}
+.oo-ui-toggleWidget-off .oo-ui-toggleSwitchWidget-grip {
+  left: 0.25em;
+  margin-left: 0;
+}
+.oo-ui-toggleWidget-on .oo-ui-toggleSwitchWidget-glow {
+  opacity: 1;
+}
+.oo-ui-toggleWidget-on .oo-ui-toggleSwitchWidget-grip {
+  left: 2.25em;
+  margin-left: -2px;
 }
 
 .oo-ui-defaultOverlay {

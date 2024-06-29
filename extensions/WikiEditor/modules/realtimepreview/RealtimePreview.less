@@ -1,11 +1,17 @@
 @import 'mediawiki.skin.variables.less';
 
-.ext-WikiEditor-realtimepreview-button:hover {
-	background-color: @background-color-interactive;
-}
+.ext-WikiEditor-realtimepreview-button {
+	&:hover {
+		background-color: @background-color-interactive;
+	}
 
-.ext-WikiEditor-realtimepreview-button.oo-ui-toggleWidget-on .oo-ui-labelElement-label {
-	color: @color-progressive;
+	&.oo-ui-toggleWidget-on .oo-ui-labelElement-label {
+		color: @color-progressive;
+	}
+
+	&.oo-ui-buttonElement-frameless.oo-ui-labelElement.oo-ui-iconElement:first-child {
+		margin-left: 0;
+	}
 }
 
 /* stylelint-disable selector-max-id */
@@ -65,6 +71,7 @@
 		top: 8px;
 		right: 15px;
 		z-index: 5;
+		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.25 );
 	}
 
 	&:hover .ext-WikiEditor-reloadButton {

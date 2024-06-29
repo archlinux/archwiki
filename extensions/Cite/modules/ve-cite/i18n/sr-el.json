@@ -49,7 +49,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Ova referenca je definisana u šablonu ili drugom generisanom bloku i za sada može da se pregleda samo u izvornom režimu.",
 	"cite-ve-referenceslist-missingreflist": "Ovu listu referenci je generisao šablon i za sada se može uređivati samo u izvornom režimu.",
 	"cite-ve-toolbar-group-label": "Referenca",
-	"cite-ve-othergroup-item": "$1 izvor",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Reference",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Ime grupe referenci: „$1”"
+	"cite-ve-othergroup-item": "$1 izvor"
 }

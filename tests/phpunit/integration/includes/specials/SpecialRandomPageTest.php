@@ -7,13 +7,13 @@ use MediaWiki\Specials\SpecialRandomPage;
  */
 class SpecialRandomPageTest extends MediaWikiIntegrationTestCase {
 
-	/** @var RandomPage */
+	/** @var SpecialRandomPage */
 	private $page;
 
 	public function setUp(): void {
 		$services = $this->getServiceContainer();
 		$this->page = new SpecialRandomPage(
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getNamespaceInfo()
 		);
 		parent::setUp();

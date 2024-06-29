@@ -32,11 +32,6 @@ final class Constants {
 	 */
 	public const SKIN_VERSION_LATEST = '2';
 
-	/**
-	 * @var string
-	 */
-	public const SERVICE_FEATURE_MANAGER = 'Vector.FeatureManager';
-
 	// These are tightly coupled to skin.json's configs. See skin.json for documentation.
 	/**
 	 * @var string
@@ -231,28 +226,6 @@ final class Constants {
 	/**
 	 * @var string
 	 */
-	public const FEATURE_ZEBRA_DESIGN = 'ZebraDesign';
-
-	/**
-	 * @var string
-	 */
-	public const REQUIREMENT_ZEBRA_DESIGN = 'ZebraDesign';
-
-	/**
-	 * @var string
-	 */
-	public const CONFIG_ZEBRA_DESIGN = 'VectorZebraDesign';
-
-	/**
-	 * Requirement that checks the value of ABTestEnrollment.
-	 *
-	 * @var string
-	 */
-	public const REQUIREMENT_ZEBRA_AB_TEST = 'VectorZebraDesign';
-
-	/**
-	 * @var string
-	 */
 	public const PREF_KEY_FONT_SIZE = 'vector-font-size';
 
 	/**
@@ -268,22 +241,22 @@ final class Constants {
 	/**
 	 * @var string
 	 */
+	public const FEATURE_CLIENT_PREFS_PINNED = 'ClientPrefsPinned';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_CLIENT_PREFS_PINNED = 'ClientPrefsPinned';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_CLIENT_PREFS_PINNED = 'vector-client-prefs-pinned';
+
+	/**
+	 * @var string
+	 */
 	public const CONFIG_KEY_CLIENT_PREFERENCES = 'VectorClientPreferences';
-
-	/**
-	 * @var string
-	 */
-	public const PREF_KEY_TYPOGRAPHY_SURVEY = 'vector-typography-survey';
-
-	/**
-	 * @var string
-	 */
-	public const FEATURE_TYPOGRAPHY_SURVEY = 'TypographySurvey';
-
-	/**
-	 * @var string
-	 */
-	public const REQUIREMENT_TYPOGRAPHY_SURVEY = 'TypographySurvey';
 
 	/**
 	 * @var string
@@ -294,6 +267,48 @@ final class Constants {
 	 * @var string
 	 */
 	public const REQUIREMENT_CLIENT_PREFERENCES = 'ClientPreferences';
+
+	/**
+	 * @var string
+	 */
+	public const CONFIG_KEY_NIGHT_MODE = 'VectorNightMode';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_NIGHT_MODE = 'NightMode';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_NIGHT_MODE = 'NightMode';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_NIGHT_MODE = 'vector-theme';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_PREF_NIGHT_MODE = 'PrefNightMode';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_NIGHT_MODE = 'PrefNightMode';
+
+	/**
+	 * @var string
+	 */
+	public const VECTOR_2022_BETA_KEY = 'vector-2022-beta-feature';
+
+	/**
+	 * @var array
+	 */
+	public const VECTOR_BETA_FEATURES = [
+		self::CONFIG_KEY_CLIENT_PREFERENCES,
+	];
 
 	/**
 	 * This class is for namespacing constants only. Forbid construction.

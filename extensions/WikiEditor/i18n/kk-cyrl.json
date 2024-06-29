@@ -5,7 +5,8 @@
 			"Arystanbek",
 			"Batyrbek.kz",
 			"GaiJin",
-			"Kaztrans"
+			"Kaztrans",
+			"Casserium"
 		]
 	},
 	"wikieditor": "Уикимәтінді өңдеудің кеңейтілген интерфейсі",
@@ -17,10 +18,6 @@
 	"wikieditor-toolbar-tool-bold-example": "Жуан мәтін",
 	"wikieditor-toolbar-tool-italic": "Көлбеу мәтін",
 	"wikieditor-toolbar-tool-italic-example": "Көлбеу мәтін",
-	"wikieditor-toolbar-tool-ilink": "Ішкі сілтеме",
-	"wikieditor-toolbar-tool-ilink-example": "Сілтеме тақырыбы",
-	"wikieditor-toolbar-tool-xlink": "Сыртқы сілтеме (алдына http:// енгізуін ұмытпаңыз)",
-	"wikieditor-toolbar-tool-xlink-example": "http://www.мысал.com сілтеме тақырыбы",
 	"wikieditor-toolbar-tool-link": "Сілтеме",
 	"wikieditor-toolbar-tool-link-title": "Сілтеме қою",
 	"wikieditor-toolbar-tool-link-int": "уики бетіне бару",
@@ -38,12 +35,10 @@
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Жарамсыз атау",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Сыртқы сілтеме",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Айрық бет",
-	"wikieditor-toolbar-tool-link-int-invalid": "Cіз көрсеткен атау дұрыс емес",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Сіз көрсеткен URL басқа уики бетіне сілтейді.\nІшкі сілтеме жасағыңыз келе ме?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Ішкі сілтеме",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Сыртқы сілтеме",
 	"wikieditor-toolbar-tool-file": "Файл орнату",
-	"wikieditor-toolbar-tool-file-example": "Мысал.jpg",
 	"wikieditor-toolbar-tool-file-title": "Файл кірістіру",
 	"wikieditor-toolbar-file-target": "Файл атауы:",
 	"wikieditor-toolbar-file-caption": "Тақырыбы",
@@ -86,7 +81,6 @@
 	"wikieditor-toolbar-tool-gallery-example": "Example.jpg|Сипаттамасы1\nExample.jpg|Сипаттамасы2",
 	"wikieditor-toolbar-tool-newline": "Жаңа жол",
 	"wikieditor-toolbar-tool-table": "Кесте",
-	"wikieditor-toolbar-tool-table-example-old": "! тақырыпша 1\n! тақырыпша 2\n! тақырыпша 3\n|-\n| жол 1, ұяшық 1\n| жол 1, ұяшық 2\n| жол 1, ұяшық 3\n|-\n| жол 2, ұяшық 1\n| жол 2, ұяшық 2\n| жол 2, ұяшық 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Ұяшық мәтіні",
 	"wikieditor-toolbar-tool-table-example-header": "Тақырыпша мәтіні",
 	"wikieditor-toolbar-tool-table-title": "Кесте енгізу",
@@ -150,5 +144,6 @@
 	"wikieditor-toolbar-help-content-file-caption": "Файл тақырыбы",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Қолтаңба және уақыт",
 	"wikieditor-toolbar-help-content-signature-description": "Қолтаңба",
-	"wikieditor-toolbar-help-content-indent-description": "Шегініс"
+	"wikieditor-toolbar-help-content-indent-description": "Шегініс",
+	"tag-wikieditor-description": "Өңдеме [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010 жылғы уикимәтін редакторы) көмегімен жасалған"
 }

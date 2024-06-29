@@ -21,64 +21,64 @@ const { FileRepoInfo } = require( 'mmv' );
 	QUnit.module( 'mmv.provider.FileRepoInfo', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'FileRepoInfo constructor sense check', function ( assert ) {
-		var api = { get: function () {} },
-			fileRepoInfoProvider = new FileRepoInfo( api );
+		const api = { get: function () {} };
+		const fileRepoInfoProvider = new FileRepoInfo( api );
 
 		assert.true( fileRepoInfoProvider instanceof FileRepoInfo );
 	} );
 
 	QUnit.test( 'FileRepoInfo get test', function ( assert ) {
-		var apiCallCount = 0,
-			api = { get: function () {
-				apiCallCount++;
-				return $.Deferred().resolve( {
-					query: {
-						repos: [
-							{
-								name: 'shared',
-								displayname: 'Wikimedia Commons',
-								rootUrl: '//upload.beta.wmflabs.org/wikipedia/commons',
-								local: false,
-								url: '//upload.beta.wmflabs.org/wikipedia/commons',
-								thumbUrl: '//upload.beta.wmflabs.org/wikipedia/commons/thumb',
-								initialCapital: true,
-								descBaseUrl: '//commons.wikimedia.beta.wmflabs.org/wiki/File:',
-								scriptDirUrl: '//commons.wikimedia.beta.wmflabs.org/w',
-								fetchDescription: true,
-								favicon: 'http://en.wikipedia.org/favicon.ico'
-							},
-							{
-								name: 'wikimediacommons',
-								displayname: 'Wikimedia Commons',
-								rootUrl: '//upload.beta.wmflabs.org/wikipedia/en',
-								local: false,
-								url: '//upload.beta.wmflabs.org/wikipedia/en',
-								thumbUrl: '//upload.beta.wmflabs.org/wikipedia/en/thumb',
-								initialCapital: true,
-								scriptDirUrl: 'http://commons.wikimedia.org/w',
-								fetchDescription: true,
-								descriptionCacheExpiry: 43200,
-								apiurl: 'http://commons.wikimedia.org/w/api.php',
-								articlepath: '/wiki/$1',
-								server: '//commons.wikimedia.org',
-								favicon: '//commons.wikimedia.org/favicon.ico'
-							},
-							{
-								name: 'local',
-								displayname: null,
-								rootUrl: '//upload.beta.wmflabs.org/wikipedia/en',
-								local: true,
-								url: '//upload.beta.wmflabs.org/wikipedia/en',
-								thumbUrl: '//upload.beta.wmflabs.org/wikipedia/en/thumb',
-								initialCapital: true,
-								scriptDirUrl: '/w',
-								favicon: 'http://en.wikipedia.org/favicon.ico'
-							}
-						]
-					}
-				} );
-			} },
-			fileRepoInfoProvider = new FileRepoInfo( api );
+		let apiCallCount = 0;
+		const api = { get: function () {
+			apiCallCount++;
+			return $.Deferred().resolve( {
+				query: {
+					repos: [
+						{
+							name: 'shared',
+							displayname: 'Wikimedia Commons',
+							rootUrl: '//upload.beta.wmflabs.org/wikipedia/commons',
+							local: false,
+							url: '//upload.beta.wmflabs.org/wikipedia/commons',
+							thumbUrl: '//upload.beta.wmflabs.org/wikipedia/commons/thumb',
+							initialCapital: true,
+							descBaseUrl: '//commons.wikimedia.beta.wmflabs.org/wiki/File:',
+							scriptDirUrl: '//commons.wikimedia.beta.wmflabs.org/w',
+							fetchDescription: true,
+							favicon: 'http://en.wikipedia.org/favicon.ico'
+						},
+						{
+							name: 'wikimediacommons',
+							displayname: 'Wikimedia Commons',
+							rootUrl: '//upload.beta.wmflabs.org/wikipedia/en',
+							local: false,
+							url: '//upload.beta.wmflabs.org/wikipedia/en',
+							thumbUrl: '//upload.beta.wmflabs.org/wikipedia/en/thumb',
+							initialCapital: true,
+							scriptDirUrl: 'http://commons.wikimedia.org/w',
+							fetchDescription: true,
+							descriptionCacheExpiry: 43200,
+							apiurl: 'http://commons.wikimedia.org/w/api.php',
+							articlepath: '/wiki/$1',
+							server: '//commons.wikimedia.org',
+							favicon: '//commons.wikimedia.org/favicon.ico'
+						},
+						{
+							name: 'local',
+							displayname: null,
+							rootUrl: '//upload.beta.wmflabs.org/wikipedia/en',
+							local: true,
+							url: '//upload.beta.wmflabs.org/wikipedia/en',
+							thumbUrl: '//upload.beta.wmflabs.org/wikipedia/en/thumb',
+							initialCapital: true,
+							scriptDirUrl: '/w',
+							favicon: 'http://en.wikipedia.org/favicon.ico'
+						}
+					]
+				}
+			} );
+		} };
+		const fileRepoInfoProvider = new FileRepoInfo( api );
 
 		return fileRepoInfoProvider.get().then( function ( repos ) {
 			assert.strictEqual( repos.shared.displayName,
@@ -114,11 +114,11 @@ const { FileRepoInfo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'FileRepoInfo fail test', function ( assert ) {
-		var api = { get: function () {
-				return $.Deferred().resolve( {} );
-			} },
-			done = assert.async(),
-			fileRepoInfoProvider = new FileRepoInfo( api );
+		const api = { get: function () {
+			return $.Deferred().resolve( {} );
+		} };
+		const done = assert.async();
+		const fileRepoInfoProvider = new FileRepoInfo( api );
 
 		fileRepoInfoProvider.get().fail( function () {
 			assert.true( true, 'promise rejected when no data is returned' );

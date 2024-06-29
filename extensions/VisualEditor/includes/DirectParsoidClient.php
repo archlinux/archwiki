@@ -12,7 +12,6 @@ namespace MediaWiki\Extension\VisualEditor;
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
-use MediaWiki\Parser\Parsoid\ParsoidRenderID;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\Handler\Helper\HtmlInputTransformHelper;
 use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
@@ -124,18 +123,17 @@ class DirectParsoidClient implements ParsoidClient {
 			]
 		];
 
-		$renderId = $etag ? ParsoidRenderID::newFromETag( $etag ) : null;
-
 		$metrics = MediaWikiServices::getInstance()->getParsoidSiteConfig()->metrics();
 		if ( $metrics ) {
 			$helper->setMetrics( $metrics );
 		}
 
-		$helper->init( $page, $body, [], null, $pageLanguage );
-
-		if ( $oldid || $renderId ) {
-			$helper->setOriginal( $oldid, $renderId );
+		if ( $oldid || $etag ) {
+			$body['original']['revid'] = $oldid;
+			$body['original']['renderid'] = $etag;
 		}
+
+		$helper->init( $page, $body, [], null, $pageLanguage );
 
 		return $helper;
 	}

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Soumaya",
-			"Raizkgh"
+			"Raizkgh",
+			"Soumaya"
 		]
 	},
 	"gadgets-desc": "Sẽn dat n sõng-b tɩ b yãk b sẽn dat n maan to-to wã. [[Special:Gadgets|CSS and JavaScript\n gadgets]] in their [[Special:Preferences#mw-prefsection-gadgets|preferences]]",
@@ -10,7 +10,7 @@
 	"prefs-description-gadgets": "Yãk-y n tool-y neda Yãk n tool-yã a taab",
 	"gadgets-prefstext": "Ci-dessous apparaît une liste de gadgets que vous pouvez activer pour votre compte.\nIls font appel principalement à JavaScript qui doit donc être activé dans votre navigateur Web pour les faire fonctionner.\nNotez que ces gadgets n’auront aucun effet sur cette page de préférences.\n\nNotez également que ces gadgets spéciaux ne font pas partie du logiciel MediaWiki et qu’ils sont généralement développés et maintenus par les utilisateurs de votre wiki local.\nLes administrateurs d’interface locaux peuvent modifier les [[MediaWiki:Gadgets-definition|définitions]] des gadgets disponibles et les administrateurs locaux peuvent modifier leurs [[Special:Gadgets|descriptions]], où vous pouvez trouver le code source de chaque gadget. Le nombre d’utilisateurs pour chaque gadget sur ce wiki est listé dans les [[Special:GadgetUsage|statistiques d’utilisation des gadgets]].",
 	"gadgets-prefstext-safemode": "B pa tõe n tall CSS/JavaScript sẽn yaa b sẽn da yãk tɩ b tõe n tall a soaba ye. Sõng-y tɩ y [#mw-input-wpforcesafemode] yɩ segl-maand sẽn tõe n sõng-y tɩ d tũ ne [[#mw-input-wpforcesafemode| disable safe mode]] CSS/JavaScript sẽn yaa toor-toorã.",
-	"gadgets": "Dɩtb-dãmb",
+	"special-gadgets": "Dɩtb-dãmb",
 	"gadgetusage": "Dɩtb sẽn wilgd tɩ b tũnugda ne tʋʋm-kãsemsã",
 	"gadgetusage-gadget": "Dɩtb-dãmb",
 	"gadgetusage-usercount": "Sõngd-dãmb sõor",
@@ -36,10 +36,5 @@
 	"gadgets-requires-es6": "A Zeova Kaset rãmbã sẽn yaa b rãmb n pa tõe n maan b sẽn datã n maan b toorẽ wã yĩnga.",
 	"gadgets-validate-notset": "B pa yãk bũmb ning sẽn boond tɩ <code>$1</code> wã ye.",
 	"gadgets-validate-wrongtype": "Bãngr ning sẽn yaa <code>$1</code> wã segd n yaa <code>$2</code> sẽn pa <code>$3</code> ye.",
-	"right-gadgets-edit": "Yãk-y n tool-y neda JavaScript la CSS seb-n-taar",
-	"action-gadgets-edit": "sak n tool-yẽnga JavaScript wall CSS seb-kãngã",
-	"right-gadgets-definition-edit": "Modifẽ-y bũmb nins b sẽn boond tɩ gadgetsã",
-	"action-gadgets-definition-edit": "sak n wilg tɩ bũmb ning b sẽn yeel tɩ \"gaddget\" wã",
-	"gadgets-wrong-contentmodel": "Pagbã sẽn be {{ns:2302}} yʋy zĩiga pʋgẽ wã segd n yaa GadgetDefinition content modelã.",
 	"gadgets-supports-urlload": "A woto wã sõngda URL sẽn tar \"<code>?withgadget</code> query parameter\" n tall n tall n tʋm."
 }

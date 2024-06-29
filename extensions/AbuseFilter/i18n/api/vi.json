@@ -5,7 +5,8 @@
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
 			"Nguyenphutrong2",
-			"Pisceskaze"
+			"Pisceskaze",
+			"NguyenHung"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Kiểm tra xem liệu một bộ lọc lạm dụng có khớp với một tập hợp các biến, một chỉnh sửa hoặc một sự kiện lạm dụng đã ghi hay không.",
@@ -27,6 +28,7 @@
 	"apihelp-abusefilterunblockautopromote-summary": "Bỏ chặn người dùng nhận quảng cáo tự động do hậu quả của bộ lọc lạm dụng.",
 	"apihelp-abusefilterunblockautopromote-param-user": "Tên người dùng của người dùng mà bạn muốn bỏ khóa.",
 	"apihelp-abusefilterunblockautopromote-example-1": "Gỡ lệnh cấm tự động cấp quyền cho [[User:Example]].",
+	"apihelp-query+abusefilters-summary": "Hiển thị chi tiết của các bộ lọc sai phạm.",
 	"apihelp-query+abusefilters-param-startid": "ID bộ lọc để bắt đầu việc đếm.",
 	"apihelp-query+abusefilters-param-endid": "ID bộ lọc để dừng việc đếm.",
 	"apihelp-query+abusefilters-param-show": "Chỉ hiện các bộ lọc đáp ứng được những tiêu chí này.",
@@ -34,6 +36,8 @@
 	"apihelp-query+abusefilters-param-prop": "Thuộc tính mà bạn muốn lấy.",
 	"apihelp-query+abusefilters-example-1": "Danh sách kích hoạt các bộ lọc công cộng",
 	"apihelp-query+abusefilters-example-2": "Hiện một số chi tiết về các bộ lọc",
+	"apihelp-query+abuselog-summary": "Hiển thị các sự kiện bị phát hiện bởi một trong các bộ lọc sai phạm.",
+	"apihelp-query+abuselog-param-logid": "Hiển thị một mục có ID nhật ký nhất định.",
 	"apihelp-query+abuselog-param-start": "Các dấu thời gian (timestamp) để bắt đầu việc đếm.",
 	"apihelp-query+abuselog-param-end": "Dấu thời gian để dừng việc đếm.",
 	"apihelp-query+abuselog-param-user": "Chỉ hiện các mục được thực hiện bởi một người dùng hoặc địa chỉ IP.",

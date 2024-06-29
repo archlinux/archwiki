@@ -9,11 +9,11 @@ use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyLoadedVariable;
 use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityUtils;
 use MessageLocalizer;
-use TitleValue;
 
 /**
  * Consequence that removes all user groups from a user.

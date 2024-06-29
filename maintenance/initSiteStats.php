@@ -19,10 +19,11 @@
  *
  * @file
  * @ingroup Maintenance
- * @author Brion Vibber
+ * @author Brooke Vibber
  * @author Rob Church <robchur@gmail.com>
  */
 
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\SiteStats\SiteStatsInit;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -72,7 +73,7 @@ class InitSiteStats extends Maintenance {
 
 		if ( $this->hasOption( 'active' ) ) {
 			$this->output( "\nCounting and updating active users..." );
-			$active = SiteStatsUpdate::cacheUpdate( $this->getDB( DB_PRIMARY ) );
+			$active = SiteStatsUpdate::cacheUpdate( $this->getPrimaryDB() );
 			$this->output( "{$active}\n" );
 		}
 

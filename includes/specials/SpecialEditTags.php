@@ -279,19 +279,19 @@ class SpecialEditTags extends UnlistedSpecialPage {
 		$out->wrapWikiMsg( '<p>$1</p>', "tags-edit-{$this->typeName}-explanation" );
 
 		// Show form
-		$form = Xml::openElement( 'form', [ 'method' => 'post',
+		$form = Html::openElement( 'form', [ 'method' => 'post',
 				'action' => $this->getPageTitle()->getLocalURL( [ 'action' => 'submit' ] ),
 				'id' => 'mw-revdel-form-revisions' ] ) .
 			Xml::fieldset( $this->msg( "tags-edit-{$this->typeName}-legend",
 				count( $this->ids ) )->text() ) .
 			$this->buildCheckBoxes() .
-			Xml::openElement( 'table' ) .
+			Html::openElement( 'table' ) .
 			"<tr>\n" .
 				'<td class="mw-label">' .
-					Xml::label( $this->msg( 'tags-edit-reason' )->text(), 'wpReason' ) .
+					Html::label( $this->msg( 'tags-edit-reason' )->text(), 'wpReason' ) .
 				'</td>' .
 				'<td class="mw-input">' .
-					Xml::input( 'wpReason', 60, $this->reason, [
+					Html::element( 'input', [ 'name' => 'wpReason', 'size' => 60, 'value' => $this->reason,
 						'id' => 'wpReason',
 						// HTML maxlength uses "UTF-16 code units", which means that characters outside BMP
 						// (e.g. emojis) count for two each. This limit is overridden in JS to instead count
@@ -302,17 +302,17 @@ class SpecialEditTags extends UnlistedSpecialPage {
 			"</tr><tr>\n" .
 				'<td></td>' .
 				'<td class="mw-submit">' .
-					Xml::submitButton( $this->msg( "tags-edit-{$this->typeName}-submit",
+					Html::submitButton( $this->msg( "tags-edit-{$this->typeName}-submit",
 						$numRevisions )->text(), [ 'name' => 'wpSubmit' ] ) .
 				'</td>' .
 			"</tr>\n" .
-			Xml::closeElement( 'table' ) .
+			Html::closeElement( 'table' ) .
 			Html::hidden( 'wpEditToken', $this->getUser()->getEditToken() ) .
 			Html::hidden( 'target', $this->targetObj->getPrefixedText() ) .
 			Html::hidden( 'type', $this->typeName ) .
 			Html::hidden( 'ids', implode( ',', $this->ids ) ) .
-			Xml::closeElement( 'fieldset' ) . "\n" .
-			Xml::closeElement( 'form' ) . "\n";
+			Html::closeElement( 'fieldset' ) . "\n" .
+			Html::closeElement( 'form' ) . "\n";
 
 		$out->addHTML( $form );
 	}
@@ -359,16 +359,19 @@ class SpecialEditTags extends UnlistedSpecialPage {
 			$html = '<table id="mw-edittags-tags-selector-multi"><tr><td>';
 			$tagSelect = $this->getTagSelect( [], $this->msg( 'tags-edit-add' )->plain() );
 			$html .= '<p>' . $tagSelect[0] . '</p>' . $tagSelect[1] . '</td><td>';
-			$html .= Xml::element( 'p', null, $this->msg( 'tags-edit-remove' )->plain() );
-			$html .= Xml::checkLabel( $this->msg( 'tags-edit-remove-all-tags' )->plain(),
-				'wpRemoveAllTags', 'mw-edittags-remove-all' );
+			$html .= Html::element( 'p', [], $this->msg( 'tags-edit-remove' )->plain() );
+			$html .= Html::element( 'input', [
+				'type' => 'checkbox', 'name' => 'wpRemoveAllTags', 'value' => '1',
+				'id' => 'mw-edittags-remove-all'
+			] ) . '&nbsp;'
+				. Html::label( $this->msg( 'tags-edit-remove-all-tags' )->plain(), 'mw-edittags-remove-all' );
 			$i = 0; // used for generating checkbox IDs only
 			foreach ( $tags as $tag ) {
-				$html .= Xml::element( 'br' ) . "\n" . Xml::checkLabel( $tag,
-					'wpTagsToRemove[]', 'mw-edittags-remove-' . $i++, false, [
-						'value' => $tag,
-						'class' => 'mw-edittags-remove-checkbox',
-					] );
+				$id = 'mw-edittags-remove-' . $i++;
+				$html .= Html::element( 'br' ) . "\n" . Html::element( 'input', [
+					'type' => 'checkbox', 'name' => 'wpTagsToRemove[]', 'value' => $tag,
+					'class' => 'mw-edittags-remove-checkbox', 'id' => $id,
+				] ) . '&nbsp;' . Html::label( $tag, $id );
 			}
 		}
 
@@ -394,7 +397,7 @@ class SpecialEditTags extends UnlistedSpecialPage {
 	 */
 	protected function getTagSelect( $selectedTags, $label ) {
 		$result = [];
-		$result[0] = Xml::label( $label, 'mw-edittags-tag-list' );
+		$result[0] = Html::label( $label, 'mw-edittags-tag-list' );
 
 		$select = new XmlSelect( 'wpTagList[]', 'mw-edittags-tag-list', $selectedTags );
 		$select->setAttribute( 'multiple', 'multiple' );
@@ -505,7 +508,5 @@ class SpecialEditTags extends UnlistedSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialEditTags::class, 'SpecialEditTags' );

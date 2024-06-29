@@ -5,16 +5,17 @@
 			"HanV",
 			"Konovalov",
 			"Mainframe98",
+			"McDutchie",
 			"Nickthijssen1994",
 			"Robin van der Vliet",
 			"Robin0van0der0vliet",
 			"SPQRobin",
 			"Saruman",
 			"Siebrand",
-			"Sjoerddebruin",
-			"McDutchie"
+			"Sjoerddebruin"
 		]
 	},
+	"content-model-scribunto": "Scribunto-module",
 	"scribunto-desc": "Framework voor het inbedden van scripttalen in pagina's",
 	"scribunto-line": "op regel $1",
 	"scribunto-module-line": "in $1 op regel $2",

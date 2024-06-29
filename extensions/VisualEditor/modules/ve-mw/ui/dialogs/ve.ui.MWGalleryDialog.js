@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWGalleryDialog class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -428,7 +428,10 @@ ve.ui.MWGalleryDialog.prototype.getSetupProcess = function ( data ) {
 						isError: image.getAttribute( 'isError' ),
 						errorText: image.getAttribute( 'errorText' ),
 						imageClassAttr: image.getAttribute( 'imageClassAttr' ),
-						imgWrapperClassAttr: image.getAttribute( 'imgWrapperClassAttr' )
+						imgWrapperClassAttr: image.getAttribute( 'imgWrapperClassAttr' ),
+						mw: image.getAttribute( 'mw' ),
+						mediaClass: image.getAttribute( 'mediaClass' ),
+						mediaTag: image.getAttribute( 'mediaTag' )
 					} );
 				}
 
@@ -668,7 +671,11 @@ ve.ui.MWGalleryDialog.prototype.onRequestImagesSuccess = function ( response ) {
 					resource: title,
 					altText: null,
 					altTextSame: true,
-					href: null,
+					// TODO: support changing the link in the UI somewhere;
+					// for now, always link to the resource. Do it here when
+					// generating new results, so existing links from source
+					// will be preserved.
+					href: title,
 					src: '',
 					height: thumbUrls[ title ].height,
 					width: thumbUrls[ title ].width,
@@ -676,7 +683,10 @@ ve.ui.MWGalleryDialog.prototype.onRequestImagesSuccess = function ( response ) {
 					captionDocument: this.createCaptionDocument( null ),
 					isError: false,
 					errorText: null,
-					imageClassAttr: 'mw-file-element'
+					imageClassAttr: 'mw-file-element',
+					mw: {},
+					mediaClass: 'File',
+					mediaTag: 'img'
 				}, config ) );
 				delete this.selectedFilenames[ title ];
 			}
@@ -1040,7 +1050,10 @@ ve.ui.MWGalleryDialog.prototype.insertOrUpdateNode = function () {
 			isError: galleryItem.isError,
 			errorText: galleryItem.errorText,
 			imageClassAttr: galleryItem.imageClassAttr,
-			imgWrapperClassAttr: galleryItem.imgWrapperClassAttr
+			imgWrapperClassAttr: galleryItem.imgWrapperClassAttr,
+			mw: galleryItem.mw,
+			mediaClass: galleryItem.mediaClass,
+			mediaTag: galleryItem.mediaTag
 		};
 
 		return [

@@ -27,6 +27,7 @@ use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
 
 /**
@@ -71,6 +72,16 @@ class TextContentHandler extends ContentHandler {
 	 * @return Content|false
 	 */
 	public function merge3( Content $oldContent, Content $myContent, Content $yourContent ) {
+		// Nothing to do when the unsaved edit is already identical to the latest revision
+		if ( $myContent->equals( $yourContent ) ) {
+			return $yourContent;
+		}
+		// Impossible to have a conflict when the user just edited the latest revision. This can
+		// happen e.g. when $wgDiff3 is badly configured.
+		if ( $oldContent->equals( $yourContent ) ) {
+			return $myContent;
+		}
+
 		$this->checkModelID( $oldContent->getModel() );
 		$this->checkModelID( $myContent->getModel() );
 		$this->checkModelID( $yourContent->getModel() );
@@ -171,18 +182,6 @@ class TextContentHandler extends ContentHandler {
 		Content $content,
 		PreSaveTransformParams $pstParams
 	): Content {
-		$shouldCallDeprecatedMethod = $this->shouldCallDeprecatedContentTransformMethod(
-			$content,
-			$pstParams
-		);
-
-		if ( $shouldCallDeprecatedMethod ) {
-			return $this->callDeprecatedContentPST(
-				$content,
-				$pstParams
-			);
-		}
-
 		'@phan-var TextContent $content';
 
 		$text = $content->getText();
@@ -240,15 +239,17 @@ class TextContentHandler extends ContentHandler {
 				$method = new ReflectionMethod( $content, 'getHtml' );
 				$method->setAccessible( true );
 				$html = $method->invoke( $content );
+				$html = "<pre>$html</pre>";
 			} else {
 				// Return an HTML representation of the content
 				$html = htmlspecialchars( $content->getText(), ENT_COMPAT );
+				$html = "<pre>$html</pre>";
 			}
 		} else {
 			$html = null;
 		}
 
 		$output->clearWrapperDivClass();
-		$output->setText( $html );
+		$output->setRawText( $html );
 	}
 }

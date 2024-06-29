@@ -20,9 +20,9 @@
 
 namespace MediaWiki\Pager;
 
-use ContextSource;
 use HtmlArmor;
-use IContextSource;
+use MediaWiki\Context\ContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
@@ -203,7 +203,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 		$this->mIsBackwards = ( $this->mRequest->getVal( 'dir' ) == 'prev' );
 		// Let the subclass set the DB here; otherwise use a replica DB for the current wiki
 		if ( !$this->mDb ) {
-			$this->mDb = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+			$this->mDb = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		}
 
 		$index = $this->getIndexField(); // column to sort on
@@ -966,8 +966,5 @@ abstract class IndexPager extends ContextSource implements Pager {
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( IndexPager::class, 'IndexPager' );

@@ -19,8 +19,8 @@
 	"math_syntax_error": "ڕستەکار هەڵەیە",
 	"math_unknown_error": "هەڵەیەکی نەزانراو",
 	"math_unknown_function": "فەرمانێکی نەناسراو «$1»",
-	"mw_math_mathml": "فۆرموولاکانی ماتماتیک بە فۆرماتی SVG یان PNG (پێشنیارکراوە)",
-	"mw_math_source": "وەک LaTeX بمێنێتەوە (بۆ وێبگەڕە دەقی‌یەکان)",
+	"mw-math-mathml": "فۆرموولاکانی ماتماتیک بە فۆرماتی SVG یان PNG (پێشنیارکراوە)",
+	"mw-math-source": "وەک LaTeX بمێنێتەوە (بۆ وێبگەڕە دەقی‌یەکان)",
 	"prefs-math": "ماتماتیک",
 	"math-wikibase-special-error-header": "ھەڵە"
 }

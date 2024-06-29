@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWConfirmationDialog class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -41,7 +41,7 @@ ve.ui.MWConfirmationDialog.static.size = 'small';
  */
 ve.ui.MWConfirmationDialog.static.confirm = function ( prompt, successCmd ) {
 	var windowManager = new OO.ui.WindowManager();
-	$( document.body ).append( windowManager.$element );
+	$( OO.ui.getTeleportTarget() ).append( windowManager.$element );
 	var dialog = new ve.ui.MWConfirmationDialog();
 	windowManager.addWindows( [ dialog ] );
 	windowManager.openWindow( dialog, {
@@ -60,12 +60,6 @@ ve.ui.MWConfirmationDialog.static.confirm = function ( prompt, successCmd ) {
 
 /**
  * @inheritdoc
- *
- * @param {Object} [data] Dialog opening data
- * @param {jQuery|string|Function|null} [data.title] Dialog title, omit to use
- *  the {@link #static-title static title}
- * @param {Object[]} [data.actions] List of configuration options for each
- *   {@link OO.ui.ActionWidget action widget}, omit to use the default "OK".
  */
 ve.ui.MWConfirmationDialog.prototype.getSetupProcess = function ( data ) {
 	data = data || {};

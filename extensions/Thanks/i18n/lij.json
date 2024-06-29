@@ -37,7 +37,6 @@
 	"echo-pref-subscription-edit-thank": "O me ringrassia pe 'na mæ modiffica",
 	"echo-pref-tooltip-edit-thank": "Famme savei quande quarcun o me ringrassia pe 'na modiffica ch'ho fæto.",
 	"echo-category-title-edit-thank": "Ringrassiamenti",
-	"notification-thanks-diff-link": "a to modiffica",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|o|a}} {{GENDER:$4|t'}}{{GENDER:$2|ha ringrassiou}} pe-a to modiffica sciu <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|o|a}} t'ha {{GENDER:$4|ringrassiou|ringrassiâ|ringrassiou/â}} pi avei creou a paggina <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$2|o|a}} t'ha {{GENDER:$4|ringrassiou|ringrassiâ|ringrassiou/â}} pe-a to assion sciu <strong>$3</strong>.",
@@ -56,7 +55,6 @@
 	"thanks-error-invalidpostid": "L'ID do messaggio o no l'è vallido.",
 	"flow-thanks-confirmation-special": "Ti voeu ringrassiâ pubricamente pe questo commento?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Ti t'hæ ringrassiou}} $1 pe {{GENDER:$2|o so}} commento.",
-	"notification-flow-thanks-post-link": "o to commento",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|o|a}} {{GENDER:$5|t'}}{{GENDER:$2|ha ringrassiou}} pe-o to commento sciu \"<strong>$3</strong>\".",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|o|a} {{GENDER:$3|t'}}}ha ringrassiou.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|'Na person-a a t'ha|$1 person-e t'han|100=Ciù de 99 person-e t'han}} {{GENDER:$3|ringrassiou|ringrassiâ|ringrassiou/â}} pe-o to commento sciu <strong>$2</strong>."

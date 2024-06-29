@@ -26,8 +26,3 @@ namespace Wikimedia\Rdbms;
  */
 class DBReplicationWaitError extends DBExpectedError {
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( DBReplicationWaitError::class, 'DBReplicationWaitError' );

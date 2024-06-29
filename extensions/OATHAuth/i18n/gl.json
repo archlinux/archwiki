@@ -4,18 +4,16 @@
 			"ArenaL5",
 			"Banjo",
 			"Elisardojm",
-			"Toliño",
-			"Reedy"
+			"Reedy",
+			"Toliño"
 		]
 	},
 	"oathauth-desc": "Proporciona un soporte de autenticación mediante HMAC baseado en contrasinais dunha soa vez",
 	"disableoathforuser": "Desactivar a autenticación de dous factores dun usuario",
-	"specialpages-group-oath": "Autenticación de dous factores",
 	"oathauth-account": "Nome da conta:",
 	"oathauth-secret": "Clave secreta de autenticación de dous factoresː",
 	"oathauth-enable": "Activar a autenticación de dous factores",
-	"oathauth-scratchtokens": "A seguinte é unha lista de pases dun só uso. Estes pases unicamente se poden empregar unha vez, e son para casos de emerxencia. Escríbaos nun papel e gárdeos nun lugar seguro. Se perde o seu teléfono, estes pases son o único xeito de recuperar a súa conta. '''Esta é a única vez que poderá ver os pases.'''",
-	"oathauth-token": "Pase",
+	"oathauth-recoverycodes": "A seguinte é unha lista de pases dun só uso. Estes pases unicamente se poden empregar unha vez, e son para casos de emerxencia. Escríbaos nun papel e gárdeos nun lugar seguro. Se perde o seu teléfono, estes pases son o único xeito de recuperar a súa conta. '''Esta é a única vez que poderá ver os pases.'''",
 	"oathauth-disable": "Desactivar a autenticación de dous factores",
 	"oathauth-validatedoath": "Validáronse as credenciais de dous factores. Agora hase aplicar a autenticación de dous factores.",
 	"oathauth-noscratchforvalidation": "Non pode utilizar códigos predefinidos para confirmar a autenticación de dous pasos. Tales códigos só sirven como respaldo e para uso ocasional accesorio. Utilice un código de verificación provinte do seu xerador de códigos.",

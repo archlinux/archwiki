@@ -32,8 +32,14 @@ class InputCheckFactoryTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewMathoidChecker() {
-		$checker = $this->newServiceInstance( InputCheckFactory::class, [] )
-			->newMathoidChecker( 'FORMULA', 'TYPE' );
+		$checker = $this->newServiceInstance( InputCheckFactory::class, [
+			'options' => new ServiceOptions( InputCheckFactory::CONSTRUCTOR_OPTIONS, [
+				'MathMathMLUrl' => 'something',
+				'MathTexVCService' => 'mathoid',
+				'MathLaTeXMLTimeout' => 240
+			] )
+		] )
+			->newMathoidChecker( 'FORMULA', 'TYPE', false );
 		$this->assertInstanceOf( MathoidChecker::class, $checker );
 	}
 

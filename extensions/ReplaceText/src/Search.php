@@ -19,11 +19,23 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
+use MediaWiki\Config\Config;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 class Search {
+	private Config $config;
+	private IConnectionProvider $loadBalancer;
+
+	public function __construct(
+		Config $config,
+		IConnectionProvider $loadBalancer
+	) {
+		$this->config = $config;
+		$this->loadBalancer = $loadBalancer;
+	}
 
 	/**
 	 * @param string $search
@@ -34,12 +46,10 @@ class Search {
 	 * @param bool $use_regex
 	 * @return IResultWrapper Resulting rows
 	 */
-	public static function doSearchQuery(
+	public function doSearchQuery(
 		$search, $namespaces, $category, $prefix, $pageLimit, $use_regex = false
 	) {
-		global $wgReplaceTextResultsLimit;
-
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getReplicaDatabase();
 		$tables = [ 'page', 'revision', 'text', 'slots', 'content' ];
 		$vars = [ 'page_id', 'page_namespace', 'page_title', 'old_text', 'slot_role_id' ];
 		if ( $use_regex ) {
@@ -56,11 +66,11 @@ class Search {
 			'slot_content_id = content_id',
 			$dbr->buildIntegerCast( 'SUBSTR(content_address, 4)' ) . ' = old_id'
 		];
-		if ( $pageLimit === null || $pageLimit === "" ) {
-			$pageLimit = $wgReplaceTextResultsLimit;
+		if ( $pageLimit === null || $pageLimit === '' ) {
+			$pageLimit = $this->config->get( 'ReplaceTextResultsLimit' );
 		}
 		self::categoryCondition( $category, $tables, $conds );
-		self::prefixCondition( $prefix, $conds );
+		$this->prefixCondition( $prefix, $conds );
 		$options = [
 			'ORDER BY' => 'page_namespace, page_title',
 			'LIMIT' => $pageLimit
@@ -87,12 +97,12 @@ class Search {
 	 * @param string|null $prefix
 	 * @param array &$conds
 	 */
-	public static function prefixCondition( $prefix, &$conds ) {
+	private function prefixCondition( $prefix, &$conds ) {
 		if ( strval( $prefix ) === '' ) {
 			return;
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getReplicaDatabase();
 		$title = Title::newFromText( $prefix );
 		if ( $title !== null ) {
 			$prefix = $title->getDbKey();
@@ -103,7 +113,7 @@ class Search {
 	}
 
 	/**
-	 * @param IDatabase $dbr
+	 * @param IReadableDatabase $dbr
 	 * @param string $column
 	 * @param string $regex
 	 * @return string query condition for regex
@@ -127,7 +137,7 @@ class Search {
 	 * @param bool $use_regex
 	 * @return IResultWrapper Resulting rows
 	 */
-	public static function getMatchingTitles(
+	public function getMatchingTitles(
 		$str,
 		$namespaces,
 		$category,
@@ -135,9 +145,7 @@ class Search {
 		$pageLimit,
 		$use_regex = false
 	) {
-		global $wgReplaceTextResultsLimit;
-
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getReplicaDatabase();
 
 		$tables = [ 'page' ];
 		$vars = [ 'page_title', 'page_namespace' ];
@@ -153,11 +161,11 @@ class Search {
 			$comparisonCond,
 			'page_namespace' => $namespaces,
 		];
-		if ( $pageLimit === null || $pageLimit === "" ) {
-			$pageLimit = $wgReplaceTextResultsLimit;
+		if ( $pageLimit === null || $pageLimit === '' ) {
+			$pageLimit = $this->config->get( 'ReplaceTextResultsLimit' );
 		}
 		self::categoryCondition( $category, $tables, $conds );
-		self::prefixCondition( $prefix, $conds );
+		$this->prefixCondition( $prefix, $conds );
 		$sort = [ 'ORDER BY' => 'page_namespace, page_title', 'LIMIT' => $pageLimit ];
 
 		return $dbr->select( $tables, $vars, $conds, __METHOD__, $sort );

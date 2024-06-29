@@ -82,7 +82,7 @@ class PipelineUtils {
 	 *    - string srcText - if set, defines the source text for the expansion
 	 *    - SourceRange  srcOffsets - if set, defines the range within the
 	 *          source text that $content corresponds to
-	 *    - bool   sol
+	 *    - bool   sol Whether tokens should be processed in start-of-line context.
 	 * @return Token[]|DocumentFragment (depending on pipeline type)
 	 */
 	public static function processContentInPipeline(
@@ -126,7 +126,7 @@ class PipelineUtils {
 	 *    Unexpanded templates can occur in the content of extension tags.
 	 * @return array
 	 */
-	public static function expandValueToDOM(
+	public static function expandAttrValueToDOM(
 		Env $env, Frame $frame, array $v, bool $expandTemplates, bool $inTemplate
 	): array {
 		if ( is_array( $v['html'] ?? null ) ) {
@@ -177,12 +177,12 @@ class PipelineUtils {
 	 *    Unexpanded templates can occur in the content of extension tags.
 	 * @return array
 	 */
-	public static function expandValuesToDOM(
+	public static function expandAttrValuesToDOM(
 		Env $env, $frame, array $vals, bool $expandTemplates, bool $inTemplate
 	): array {
 		$ret = [];
 		foreach ( $vals as $v ) {
-			$ret[] = self::expandValueToDOM( $env, $frame, $v, $expandTemplates, $inTemplate );
+			$ret[] = self::expandAttrValueToDOM( $env, $frame, $v, $expandTemplates, $inTemplate );
 		}
 		return $ret;
 	}
@@ -326,7 +326,7 @@ class PipelineUtils {
 			$wrapperName = 'span';
 		} elseif (
 			in_array( DOMCompat::nodeName( $node ), [ 'style', 'script' ], true ) &&
-			count( $domFragment->childNodes ) > 1
+			( $node->nextSibling !== null )
 		) {
 			// <style>/<script> tags are not fostered, so if we're wrapping
 			// more than a single node, they aren't a good representation for
@@ -347,7 +347,7 @@ class PipelineUtils {
 				!$node->hasAttribute( 'data-parsoid' ),
 				"Expected node to have its data attributes loaded" );
 
-			$nodeData = DOMDataUtils::getNodeData( $node )->clone();
+			$nodeData = DOMDataUtils::getNodeData( $node )->cloneNodeData();
 
 			if ( $wrapperName !== DOMCompat::nodeName( $node ) ) {
 				// Create a copy of the node without children
@@ -445,9 +445,7 @@ class PipelineUtils {
 	public static function encapsulateExpansionHTML(
 		Env $env, Token $token, array $expansion, array $opts
 	): array {
-		if ( !isset( $opts['unpackOutput'] ) ) {
-			$opts['unpackOutput'] = true; // Default
-		}
+		$opts['unpackOutput'] ??= true; // Default
 		// Get placeholder tokens to get our subdom through the token processing
 		// stages. These will be finally unwrapped on the DOM.
 		$toks = self::getWrapperTokens( $expansion['domFragment'], $opts );
@@ -491,10 +489,6 @@ class PipelineUtils {
 		return $toks;
 	}
 
-	/**
-	 * @param Document $doc
-	 * @param array &$textCommentAccum
-	 */
 	private static function wrapAccum(
 		Document $doc, array &$textCommentAccum
 	): void {
@@ -587,11 +581,6 @@ class PipelineUtils {
 		return self::encapsulateExpansionHTML( $env, $token, $expansion, $opts );
 	}
 
-	/**
-	 * @param Env $env
-	 * @param DocumentFragment $domFragment
-	 * @return array
-	 */
 	public static function makeExpansion(
 		Env $env, DocumentFragment $domFragment
 	): array {
@@ -600,11 +589,6 @@ class PipelineUtils {
 		return [ 'domFragment' => $domFragment, 'html' => $fragmentId ];
 	}
 
-	/**
-	 * @param Env $env
-	 * @param array &$expansions
-	 * @param Node $node
-	 */
 	private static function doExtractExpansions( Env $env, array &$expansions, Node $node ): void {
 		$nodes = null;
 		$expAccum = null;
@@ -614,7 +598,7 @@ class PipelineUtils {
 						$node->hasAttribute( 'about' )
 					) {
 					$dp = DOMDataUtils::getDataParsoid( $node );
-					$about = $node->hasAttribute( 'about' ) ? $node->getAttribute( 'about' ) : null;
+					$about = DOMCompat::getAttribute( $node, 'about' );
 					$nodes = WTUtils::getAboutSiblings( $node, $about );
 					$key = null;
 					if ( DOMUtils::hasTypeOf( $node, 'mw:Transclusion' ) ) {
@@ -683,5 +667,17 @@ class PipelineUtils {
 		// Kick off the extraction
 		self::doExtractExpansions( $env, $expansions, $body->firstChild );
 		return $expansions;
+	}
+
+	/**
+	 * Fetches output of encapsulations that return HTML from the legacy parser
+	 */
+	public static function fetchHTML( Env $env, string $source ): ?DocumentFragment {
+		$ret = $env->getDataAccess()->parseWikitext(
+			$env->getPageConfig(), $env->getMetadata(), $source
+		);
+		return $ret === '' ? null : DOMUtils::parseHTMLToFragment(
+				$env->topLevelDoc, DOMUtils::stripPWrapper( $ret )
+			);
 	}
 }

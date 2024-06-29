@@ -1,14 +1,12 @@
 /*!
  * VisualEditor user interface MWVESwitchPopupWidget class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
 mw.libs.ve = mw.libs.ve || {};
 /**
- *
- *
  * @class
  * @extends OO.ui.PopupWidget
  *

@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Bluehill",
+			"Dr1t jg",
 			"Jerrykim306",
 			"Kwj2772",
 			"MemphisA5",
 			"Revi",
 			"Ykhwong",
-			"아라",
-			"Dr1t jg"
+			"아라"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "편집 필터가 변수 집합, 편집, 또는 기록된 편집 필터 이벤트와 일치하는지 확인합니다.",
@@ -45,10 +45,8 @@
 	"apihelp-query+abuselog-param-user": "주어진 사용자 또는 IP 주소에 의한 기록만을 보여줍니다.",
 	"apihelp-query+abuselog-param-title": "주어진 문서에서 발생한 기록만을 보여줍니다.",
 	"apihelp-query+abuselog-param-filter": "주어진 필터 ID에서 발생한 기록만을 보여 줍니다. 파이프로 구분되며, 전역 필터의 접두사는 \"$1\"입니다.",
-	"apihelp-query+abuselog-param-filter-central": "주어진 필터 아이디로만 걸러진 항목만 보여줘. 파이프로 분리해.",
 	"apihelp-query+abuselog-param-limit": "나열할 기록의 최대 양.",
 	"apihelp-query+abuselog-param-prop": "가져올 속성입니다.",
-	"apihelp-query+abuselog-param-wiki": "히트를 보여줄 위키.",
 	"apihelp-query+abuselog-example-1": "최근 기록 보기",
 	"apihelp-query+abuselog-example-2": "[[API]]의 최근 기록 보기",
 	"apihelp-abuselogprivatedetails-summary": "악용 기록 항목의 비공개 세부 사항을 봅니다.",

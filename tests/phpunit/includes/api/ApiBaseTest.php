@@ -1,25 +1,41 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiBase;
+use ApiBlockInfoTrait;
+use ApiMain;
+use ApiMessage;
+use ApiUsageException;
+use DomainException;
+use Exception;
 use MediaWiki\Api\Validator\SubmoduleDef;
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MessageSpecifier;
+use MWException;
+use StatusValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\ParamValidator\TypeDef\StringDef;
 use Wikimedia\TestingAccessWrapper;
+use WikiPage;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers ApiBase
+ * @covers \ApiBase
  */
 class ApiBaseTest extends ApiTestCase {
 
@@ -341,8 +357,8 @@ class ApiBaseTest extends ApiTestCase {
 				$this->assertSame( $expected, $result );
 			}
 			$actualWarnings = array_map( static function ( $warn ) {
-				return $warn instanceof Message
-					? array_merge( [ $warn->getKey() ], $warn->getParams() )
+				return $warn instanceof MessageSpecifier
+					? [ $warn->getKey(), ...$warn->getParams() ]
 					: $warn;
 			}, $mock->warnings );
 			$this->assertSame( $warnings, $actualWarnings );
@@ -1424,8 +1440,7 @@ class ApiBaseTest extends ApiTestCase {
 		// Has a blocked $user, so special block handling
 		$user = $this->getMutableTestUser()->getUser();
 		$block = new DatabaseBlock( [
-			'address' => $user->getName(),
-			'user' => $user->getId(),
+			'address' => $user,
 			'by' => $this->getTestSysop()->getUser(),
 			'reason' => __METHOD__,
 			'expiry' => time() + 100500,
@@ -1486,8 +1501,7 @@ class ApiBaseTest extends ApiTestCase {
 		// Has a blocked $user, so special block handling
 		$user = $this->getMutableTestUser()->getUser();
 		$block = new DatabaseBlock( [
-			'address' => $user->getName(),
-			'user' => $user->getId(),
+			'address' => $user,
 			'by' => $this->getTestSysop()->getUser(),
 			'reason' => __METHOD__,
 			'expiry' => time() + 100500,
@@ -1574,7 +1588,7 @@ class ApiBaseTest extends ApiTestCase {
 	}
 
 	/**
-	 * @covers ApiBase::extractRequestParams
+	 * @covers \ApiBase::extractRequestParams
 	 */
 	public function testExtractRequestParams() {
 		$request = new FauxRequest( [

@@ -9,15 +9,14 @@ use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\Module;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWikiCoversValidator;
-use ResourceLoaderTestCase;
-use ResourceLoaderTestModule;
+use PHPUnit\Framework\TestCase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group ResourceLoader
  * @covers \MediaWiki\ResourceLoader\ClientHtml
  */
-class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
+class ClientHtmlTest extends TestCase {
 
 	use MediaWikiCoversValidator;
 

@@ -78,127 +78,127 @@ const { ImageInfo } = require( 'mmv' );
 	} ) );
 
 	QUnit.test( 'ImageInfo constructor sense check', function ( assert ) {
-		var api = { get: function () {} },
-			imageInfoProvider = new ImageInfo( api );
+		const api = { get: function () {} };
+		const imageInfoProvider = new ImageInfo( api );
 
 		assert.true( imageInfoProvider instanceof ImageInfo );
 	} );
 
 	QUnit.test( 'ImageInfo get test', function ( assert ) {
-		var apiCallCount = 0,
-			api = { get: function () {
-				apiCallCount++;
-				return $.Deferred().resolve( {
-					query: {
-						pages: [
-							{
-								ns: 6,
-								title: 'File:Stuff.jpg',
-								missing: true,
-								imagerepository: 'shared',
-								imageinfo: [
-									{
-										timestamp: '2013-08-25T14:41:02Z',
-										userid: '3053121',
-										size: 346684,
-										width: 720,
-										height: 1412,
-										comment: 'User created page with UploadWizard',
-										url: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Stuff.jpg',
-										descriptionurl: 'https://commons.wikimedia.org/wiki/File:Stuff.jpg',
-										sha1: 'a1ba23d471f4dad208b71c143e2e105a0e3032db',
-										metadata: [],
-										extmetadata: {
-											ObjectName: {
-												value: 'Some stuff',
-												source: 'commons-templates'
-											},
-											License: {
-												value: 'cc0',
-												source: 'commons-templates',
-												hidden: ''
-											},
-											LicenseShortName: {
-												value: 'CC0',
-												source: 'commons-templates'
-											},
-											UsageTerms: {
-												value: 'Creative Commons Public Domain Dedication',
-												source: 'commons-templates'
-											},
-											LicenseUrl: {
-												value: 'http://creativecommons.org/publicdomain/zero/1.0/',
-												source: 'commons-templates'
-											},
-											GPSLatitude: {
-												value: '90.000000',
-												source: 'commons-desc-page'
-											},
-											GPSLongitude: {
-												value: ' 180.000000',
-												source: 'commons-desc-page'
-											},
-											ImageDescription: {
-												value: 'Wikis stuff',
-												source: 'commons-desc-page'
-											},
-											DateTimeOriginal: {
-												value: '<time class="dtstart" datetime="2009-02-18">18 February 2009</time>\u00a0(according to <a href="//en.wikipedia.org/wiki/Exchangeable_image_file_format" class="extiw" title="en:Exchangeable image file format">EXIF</a> data)',
-												source: 'commons-desc-page'
-											},
-											DateTime: {
-												value: '2013-08-25T14:41:02Z',
-												source: 'commons-desc-page'
-											},
-											Credit: {
-												value: 'Wikipedia',
-												source: 'commons-desc-page',
-												hidden: ''
-											},
-											Artist: {
-												value: 'John Smith',
-												source: 'commons-desc-page'
-											},
-											AuthorCount: {
-												value: '2',
-												source: 'commons-desc-page'
-											},
-											Attribution: {
-												value: 'By John Smith',
-												source: 'commons-desc-page'
-											},
-											Permission: {
-												value: 'Do not use. Ever.',
-												source: 'commons-desc-page'
-											},
-											AttributionRequired: {
-												value: 'no',
-												source: 'commons-desc-page'
-											},
-											NonFree: {
-												value: 'yes',
-												source: 'commons-desc-page'
-											},
-											Restrictions: {
-												value: 'trademarked|insignia',
-												source: 'commons-desc-page'
-											},
-											DeletionReason: {
-												value: 'copyvio',
-												source: 'commons-desc-page'
-											}
+		let apiCallCount = 0;
+		const api = { get: function () {
+			apiCallCount++;
+			return $.Deferred().resolve( {
+				query: {
+					pages: [
+						{
+							ns: 6,
+							title: 'File:Stuff.jpg',
+							missing: true,
+							imagerepository: 'shared',
+							imageinfo: [
+								{
+									timestamp: '2013-08-25T14:41:02Z',
+									userid: '3053121',
+									size: 346684,
+									width: 720,
+									height: 1412,
+									comment: 'User created page with UploadWizard',
+									url: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Stuff.jpg',
+									descriptionurl: 'https://commons.wikimedia.org/wiki/File:Stuff.jpg',
+									sha1: 'a1ba23d471f4dad208b71c143e2e105a0e3032db',
+									metadata: [],
+									extmetadata: {
+										ObjectName: {
+											value: 'Some stuff',
+											source: 'commons-templates'
 										},
-										mime: 'image/jpeg',
-										mediatype: 'BITMAP'
-									}
-								]
-							}
-						]
-					}
-				} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			imageInfoProvider = new ImageInfo( api );
+										License: {
+											value: 'cc0',
+											source: 'commons-templates',
+											hidden: ''
+										},
+										LicenseShortName: {
+											value: 'CC0',
+											source: 'commons-templates'
+										},
+										UsageTerms: {
+											value: 'Creative Commons Public Domain Dedication',
+											source: 'commons-templates'
+										},
+										LicenseUrl: {
+											value: 'http://creativecommons.org/publicdomain/zero/1.0/',
+											source: 'commons-templates'
+										},
+										GPSLatitude: {
+											value: '90.000000',
+											source: 'commons-desc-page'
+										},
+										GPSLongitude: {
+											value: ' 180.000000',
+											source: 'commons-desc-page'
+										},
+										ImageDescription: {
+											value: 'Wikis stuff',
+											source: 'commons-desc-page'
+										},
+										DateTimeOriginal: {
+											value: '<time class="dtstart" datetime="2009-02-18">18 February 2009</time>\u00a0(according to <a href="//en.wikipedia.org/wiki/Exchangeable_image_file_format" class="extiw" title="en:Exchangeable image file format">EXIF</a> data)',
+											source: 'commons-desc-page'
+										},
+										DateTime: {
+											value: '2013-08-25T14:41:02Z',
+											source: 'commons-desc-page'
+										},
+										Credit: {
+											value: 'Wikipedia',
+											source: 'commons-desc-page',
+											hidden: ''
+										},
+										Artist: {
+											value: 'John Smith',
+											source: 'commons-desc-page'
+										},
+										AuthorCount: {
+											value: '2',
+											source: 'commons-desc-page'
+										},
+										Attribution: {
+											value: 'By John Smith',
+											source: 'commons-desc-page'
+										},
+										Permission: {
+											value: 'Do not use. Ever.',
+											source: 'commons-desc-page'
+										},
+										AttributionRequired: {
+											value: 'no',
+											source: 'commons-desc-page'
+										},
+										NonFree: {
+											value: 'yes',
+											source: 'commons-desc-page'
+										},
+										Restrictions: {
+											value: 'trademarked|insignia',
+											source: 'commons-desc-page'
+										},
+										DeletionReason: {
+											value: 'copyvio',
+											source: 'commons-desc-page'
+										}
+									},
+									mime: 'image/jpeg',
+									mediatype: 'BITMAP'
+								}
+							]
+						}
+					]
+				}
+			} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const imageInfoProvider = new ImageInfo( api );
 
 		return imageInfoProvider.get( file ).then( function ( image ) {
 			assert.strictEqual( image.title.getPrefixedDb(), 'File:Stuff.jpg', 'title is set correctly' );
@@ -212,7 +212,7 @@ const { ImageInfo } = require( 'mmv' );
 			assert.strictEqual( image.repo, 'shared', 'repo is set correctly' );
 			assert.strictEqual( image.uploadDateTime, '2013-08-25T14:41:02Z', 'uploadDateTime is set correctly' );
 			assert.strictEqual( image.anonymizedUploadDateTime, '20130825000000', 'anonymizedUploadDateTime is set correctly' );
-			assert.strictEqual( image.creationDateTime, '18 February 2009\u00a0(according to EXIF data)', 'creationDateTime is set correctly' );
+			assert.strictEqual( image.creationDateTime, '2009-02-18', 'creationDateTime is set correctly' );
 			assert.strictEqual( image.description, 'Wikis stuff', 'description is set correctly' );
 			assert.strictEqual( image.source, 'Wikipedia', 'source is set correctly' );
 			assert.strictEqual( image.author, 'John Smith', 'author is set correctly' );
@@ -238,12 +238,12 @@ const { ImageInfo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'ImageInfo fail test', function ( assert ) {
-		var api = { get: function () {
-				return $.Deferred().resolve( {} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			done = assert.async(),
-			imageInfoProvider = new ImageInfo( api );
+		const api = { get: function () {
+			return $.Deferred().resolve( {} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const done = assert.async();
+		const imageInfoProvider = new ImageInfo( api );
 
 		imageInfoProvider.get( file ).fail( function () {
 			assert.true( true, 'promise rejected when no data is returned' );
@@ -252,20 +252,20 @@ const { ImageInfo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'ImageInfo fail test 2', function ( assert ) {
-		var api = { get: function () {
-				return $.Deferred().resolve( {
-					query: {
-						pages: [
-							{
-								title: 'File:Stuff.jpg'
-							}
-						]
-					}
-				} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			done = assert.async(),
-			imageInfoProvider = new ImageInfo( api );
+		const api = { get: function () {
+			return $.Deferred().resolve( {
+				query: {
+					pages: [
+						{
+							title: 'File:Stuff.jpg'
+						}
+					]
+				}
+			} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const done = assert.async();
+		const imageInfoProvider = new ImageInfo( api );
 
 		imageInfoProvider.get( file ).fail( function () {
 			assert.true( true, 'promise rejected when imageinfo is missing' );
@@ -274,22 +274,22 @@ const { ImageInfo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'ImageInfo missing page test', function ( assert ) {
-		var api = { get: function () {
-				return $.Deferred().resolve( {
-					query: {
-						pages: [
-							{
-								title: 'File:Stuff.jpg',
-								missing: true,
-								imagerepository: ''
-							}
-						]
-					}
-				} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			done = assert.async(),
-			imageInfoProvider = new ImageInfo( api );
+		const api = { get: function () {
+			return $.Deferred().resolve( {
+				query: {
+					pages: [
+						{
+							title: 'File:Stuff.jpg',
+							missing: true,
+							imagerepository: ''
+						}
+					]
+				}
+			} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const done = assert.async();
+		const imageInfoProvider = new ImageInfo( api );
 
 		imageInfoProvider.get( file ).fail( function ( errorMessage ) {
 			assert.strictEqual( errorMessage, 'file does not exist: File:Stuff.jpg',

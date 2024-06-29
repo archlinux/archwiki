@@ -2,15 +2,15 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use DeferredUpdates;
-use Html;
 use HTMLForm;
 use IContextSource;
 use LogEventsList;
 use LogPage;
 use ManualLogEntry;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Pager\AbuseLogPager;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\LBFactory;
@@ -89,7 +89,7 @@ class HideAbuseLog extends AbuseFilterView {
 
 		$hideReasonsOther = $this->msg( 'revdelete-reasonotherlist' )->text();
 		$hideReasons = $this->msg( 'revdelete-reason-dropdown-suppress' )->inContentLanguage()->text();
-		$hideReasons = Xml::listDropDownOptions( $hideReasons, [ 'other' => $hideReasonsOther ] );
+		$hideReasons = Xml::listDropdownOptions( $hideReasons, [ 'other' => $hideReasonsOther ] );
 
 		$formInfo = [
 			'showorhide' => [
@@ -113,7 +113,7 @@ class HideAbuseLog extends AbuseFilterView {
 			],
 		];
 
-		$actionURL = $this->getTitle( 'hide' )->getFullURL( [ 'hideids' => array_fill_keys( $this->hideIDs, 1 ) ] );
+		$actionURL = $this->getTitle( 'hide' )->getLocalURL( [ 'hideids' => array_fill_keys( $this->hideIDs, 1 ) ] );
 		HTMLForm::factory( 'ooui', $formInfo, $this->getContext() )
 			->setAction( $actionURL )
 			->setWrapperLegend( $this->msg( 'abusefilter-log-hide-legend' )->text() )

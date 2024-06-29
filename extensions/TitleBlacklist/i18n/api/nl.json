@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Mainframe98",
-			"Sjoerddebruin",
-			"McDutchie"
+			"McDutchie",
+			"Sjoerddebruin"
 		]
 	},
 	"apihelp-titleblacklist-summary": "Een paginatitel, bestandsnaam of gebruikersnaam valideren aan de hand van de TitleBlacklist.",

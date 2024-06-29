@@ -19,7 +19,7 @@ class Less_Output {
 	 * @param string $chunk The chunk to output
 	 * @param array|null $fileInfo The file information
 	 * @param int $index The index
-	 * @param mixed $mapLines
+	 * @param bool|null $mapLines
 	 */
 	public function add( $chunk, $fileInfo = null, $index = 0, $mapLines = null ) {
 		$this->strs[] = $chunk;

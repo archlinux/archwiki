@@ -5,10 +5,10 @@
 			"LoveIceLang",
 			"Macofe",
 			"Snævar",
+			"Stefán Örvar Sigmundsson",
 			"Sveinki",
 			"Sveinn í Felli",
-			"පසිඳු කාවින්ද",
-			"Stefán Örvar Sigmundsson"
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"echo-desc": "Kerfi til að tilkynna notendum um viðburði og skilaboð",
@@ -19,7 +19,7 @@
 	"prefs-blocknotificationslist": "Þaggaðir notendur",
 	"echo-pref-send-me": "Senda mér:",
 	"echo-pref-send-to": "Senda til:",
-	"echo-pref-email-format": "Stílviðmið tölvupósts:",
+	"echo-pref-email-format": "Tölvupóstsnið:",
 	"echo-pref-web": "Á netinu",
 	"echo-pref-email": "Með tölvupósti",
 	"echo-pref-email-frequency-never": "Ekki senda mér tilkynningar í tölvupósti",
@@ -27,7 +27,7 @@
 	"echo-pref-email-frequency-daily": "Daglegt yfirlit yfir tilkynningar",
 	"echo-pref-email-frequency-weekly": "Vikulegt yfirlit yfir tilkynningar",
 	"echo-pref-email-format-html": "HTML",
-	"echo-pref-email-format-plain-text": "óstílfærður texti",
+	"echo-pref-email-format-plain-text": "Venjulegur texti",
 	"echo-pref-cross-wiki-notifications": "Sýna tilkynningar frá öðrum wiki",
 	"echo-pref-notifications-blacklist": "Ekki birta tilkynningar frá þessum notendum. ([[mw:Special:MyLanguage/Help:Notifications#mute|frekari upplýsingar]])",
 	"echo-learn-more": "Vita meira",

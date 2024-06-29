@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\SpamBlacklist;
 
 use LogicException;
 use MediaWiki\Title\Title;
-use User;
+use MediaWiki\User\User;
 use Wikimedia\AtEase\AtEase;
 
 /**

@@ -4,6 +4,8 @@ namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 use CoreTagHooks;
 use FormatJson;
+use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 
 class TextLibrary extends LibraryBase {
 	// Matches Lua mw.text constants
@@ -12,8 +14,6 @@ class TextLibrary extends LibraryBase {
 	private const JSON_PRETTY = 4;
 
 	public function register() {
-		global $wgUrlProtocols;
-
 		$lib = [
 			'unstrip' => [ $this, 'textUnstrip' ],
 			'unstripNoWiki' => [ $this, 'textUnstripNoWiki' ],
@@ -30,7 +30,8 @@ class TextLibrary extends LibraryBase {
 			'nowiki_protocols' => [],
 		];
 
-		foreach ( $wgUrlProtocols as $prot ) {
+		$urlProtocols = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::UrlProtocols );
+		foreach ( $urlProtocols as $prot ) {
 			if ( substr( $prot, -1 ) === ':' ) {
 				// To convert the protocol into a case-insensitive Lua pattern,
 				// we need to replace letters with a character class like [Xx]

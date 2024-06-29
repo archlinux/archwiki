@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Meqqal",
 			"CorrelMoris38",
-			"Jilorisa"
+			"Jilorisa",
+			"Meqqal",
+			"Ultron90"
 		]
 	},
 	"visualeditor-ca-createlocaldescriptionsource": "Ruhangai kotolinahasan kowonuan sandad",
 	"visualeditor-ca-createsource": "Pomonsoi toud",
 	"visualeditor-ca-editsource": "Simbanai toud",
-	"visualeditor-ca-editsource-section": "Simbanai toud",
+	"visualeditor-ca-editsource-section": "simbanai toud",
 	"visualeditor-descriptionpagelink": "Project:MongingiditVisual"
 }

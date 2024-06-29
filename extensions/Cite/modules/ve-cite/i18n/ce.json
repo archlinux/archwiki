@@ -7,7 +7,7 @@
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Жайна",
-	"visualeditor-cite-tool-name-journal": "Тептар",
+	"visualeditor-cite-tool-name-journal": "Йаззам",
 	"visualeditor-cite-tool-name-news": "Керланаш",
 	"visualeditor-cite-tool-name-web": "Веб-сайт",
 	"cite-ve-changedesc-ref-group-both": "ТӀетовжамийн тоба хийцина «$1» тӀера «$2» тӀе",
@@ -36,8 +36,6 @@
 	"cite-ve-reference-input-placeholder": "Муьлхачунна тӀетовжа лаьа хьуна?",
 	"cite-ve-referenceslist-isempty": "ХӀокху могӀаман йукъатоха, хӀокху агӀонгахь йац «$1» тобанца хьажоргаш.",
 	"cite-ve-referenceslist-isempty-default": "ХӀокху могӀаман йукъатоха, хӀокху агӀонгахь йац хьажоргаш.",
-	"cite-ve-toolbar-group-label": "Белгалдахарш",
-	"cite-ve-othergroup-item": "$1 билгалдаккхар",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "ТӀетовжамаш",
-	"visualeditor-internal-list-diff-group-name-mwreference": "ТӀетовжамин тобана цӀе: «$1»"
+	"cite-ve-toolbar-group-label": "Хьосташ",
+	"cite-ve-othergroup-item": "$1 билгалдаккхар"
 }

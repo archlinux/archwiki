@@ -34,7 +34,6 @@
 	"echo-pref-subscription-edit-thank": "నా మార్పుకు ధన్యవాదాలు",
 	"echo-pref-tooltip-edit-thank": "నేను చేసిన మార్పుకు ఎవరైనా ధన్యవాదాలు చెపితే నాకు తెలియజేయి",
 	"echo-category-title-edit-thank": "ధన్యవాదాలు",
-	"notification-thanks-diff-link": "మీ మార్పు",
 	"notification-header-rev-thank": "<strong>$3</strong> లో మీరు చేసిన దిద్దుబాటుకు గాను $1, {{GENDER:$4|మీకు}} {{GENDER:$2|ధన్యవాదాలు}} చెప్పారు.",
 	"notification-header-creation-thank": "<strong>$3</strong> ను సృష్టించినందుకు $1, {{GENDER:$4|మీకు}} {{GENDER:$2|ధన్యవాదాలు}} చెప్పారు.",
 	"notification-header-log-thank": "<strong>$3</strong> కు సంబంధించి {{GENDER:$4|మీరు}} తీసుకున్న చర్యకు గాను $1, {{GENDER:$2|ధన్యవాదాలు}} చెప్పారు.",
@@ -49,6 +48,5 @@
 	"thanks-confirmation-special-log": "ఈ లాగ్ చర్యకు గాను మీరు బహిరంగంగా ధన్యవాదాలు పంపాలనుకుంటున్నారా?",
 	"thanks-confirmation-special-rev": "ఈ దిద్దుబాటుకు గాను, బహిరంగంగా ధన్యవాదాలు పంపిస్తారా?",
 	"notification-link-text-view-post": "వ్యాఖ్యను చూడండి",
-	"flow-thanks-confirmation-special": "ఈ వ్యాఖ్యకు బహిరంగంగా  ధన్యవాదములు తెలుపుతారా?",
-	"notification-flow-thanks-post-link": "మీ వ్యాఖ్య"
+	"flow-thanks-confirmation-special": "ఈ వ్యాఖ్యకు బహిరంగంగా  ధన్యవాదములు తెలుపుతారా?"
 }

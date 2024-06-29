@@ -12,10 +12,11 @@ use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use MimeAnalyzer;
 use MWFileProps;
 use UploadBase;
-use User;
 use Wikimedia\Assert\PreconditionException;
 use WikiPage;
 
@@ -43,6 +44,7 @@ class RunVariableGenerator extends VariableGenerator {
 
 	/**
 	 * @param AbuseFilterHookRunner $hookRunner
+	 * @param UserFactory $userFactory
 	 * @param TextExtractor $textExtractor
 	 * @param MimeAnalyzer $mimeAnalyzer
 	 * @param WikiPageFactory $wikiPageFactory
@@ -52,6 +54,7 @@ class RunVariableGenerator extends VariableGenerator {
 	 */
 	public function __construct(
 		AbuseFilterHookRunner $hookRunner,
+		UserFactory $userFactory,
 		TextExtractor $textExtractor,
 		MimeAnalyzer $mimeAnalyzer,
 		WikiPageFactory $wikiPageFactory,
@@ -59,7 +62,7 @@ class RunVariableGenerator extends VariableGenerator {
 		Title $title,
 		VariableHolder $vars = null
 	) {
-		parent::__construct( $hookRunner, $vars );
+		parent::__construct( $hookRunner, $userFactory, $vars );
 		$this->textExtractor = $textExtractor;
 		$this->mimeAnalyzer = $mimeAnalyzer;
 		$this->wikiPageFactory = $wikiPageFactory;
@@ -86,7 +89,7 @@ class RunVariableGenerator extends VariableGenerator {
 		if ( $filterText === null ) {
 			return null;
 		}
-		list( $oldContent, $oldAfText, $text ) = $filterText;
+		[ $oldContent, $oldAfText, $text ] = $filterText;
 		return $this->newVariableHolderForEdit(
 			$page, $summary, $content, $text, $oldAfText, $oldContent
 		);
@@ -199,7 +202,7 @@ class RunVariableGenerator extends VariableGenerator {
 			if ( $filterText === null ) {
 				return null;
 			}
-			list( $oldContent, $oldAfText, $text ) = $filterText;
+			[ $oldContent, $oldAfText, $text ] = $filterText;
 		} else {
 			// Optimization
 			$oldContent = null;
@@ -334,6 +337,14 @@ class RunVariableGenerator extends VariableGenerator {
 		// generateUserVars records $this->user->getName() which would be the IP for unregistered users
 		if ( $this->user->isRegistered() ) {
 			$this->addUserVars( $this->user );
+		} else {
+			// Set the user_type for IP users, so that filters can distinguish between account
+			// creations from temporary accounts and those from IP addresses.
+			$this->vars->setLazyLoadVar(
+				'user_type',
+				'user-type',
+				[ 'user-identity' => $this->user ]
+			);
 		}
 
 		$this->vars->setVar( 'action', $autocreate ? 'autocreateaccount' : 'createaccount' );

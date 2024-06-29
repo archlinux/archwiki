@@ -23,10 +23,11 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
+use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\ActiveUsersPager;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -45,24 +46,28 @@ class SpecialActiveUsers extends SpecialPage {
 	private IConnectionProvider $dbProvider;
 	private UserGroupManager $userGroupManager;
 	private UserIdentityLookup $userIdentityLookup;
+	private HideUserUtils $hideUserUtils;
 
 	/**
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param IConnectionProvider $dbProvider
 	 * @param UserGroupManager $userGroupManager
 	 * @param UserIdentityLookup $userIdentityLookup
+	 * @param HideUserUtils $hideUserUtils
 	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
 		UserGroupManager $userGroupManager,
-		UserIdentityLookup $userIdentityLookup
+		UserIdentityLookup $userIdentityLookup,
+		HideUserUtils $hideUserUtils
 	) {
 		parent::__construct( 'Activeusers' );
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->dbProvider = $dbProvider;
 		$this->userGroupManager = $userGroupManager;
 		$this->userIdentityLookup = $userIdentityLookup;
+		$this->hideUserUtils = $hideUserUtils;
 	}
 
 	/**
@@ -96,6 +101,7 @@ class SpecialActiveUsers extends SpecialPage {
 			$this->dbProvider,
 			$this->userGroupManager,
 			$this->userIdentityLookup,
+			$this->hideUserUtils,
 			$opts
 		);
 		$usersBody = $pager->getBody();
@@ -221,7 +227,5 @@ class SpecialActiveUsers extends SpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialActiveUsers::class, 'SpecialActiveUsers' );

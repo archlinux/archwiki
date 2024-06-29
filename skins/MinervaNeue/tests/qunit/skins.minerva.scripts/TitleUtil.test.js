@@ -1,6 +1,6 @@
 ( function () {
-	var TitleUtil = require( '../../../resources/skins.minerva.scripts/TitleUtil.js' );
-	var mwUriOrg = mw.Uri;
+	const TitleUtil = require( '../../../resources/skins.minerva.scripts/TitleUtil.js' );
+	const mwUriOrg = mw.Uri;
 
 	QUnit.module( 'Minerva TitleUtil', QUnit.newMwEnvironment( {
 		beforeEach: function () {
@@ -76,7 +76,7 @@
 		empty: '',
 		metawiki: 'https://meta.wikimedia.org'
 	}, function ( assert, authority ) {
-		var validateReadOnlyLink = { validateReadOnlyLink: true };
+		const validateReadOnlyLink = { validateReadOnlyLink: true };
 		assert.strictEqual(
 			TitleUtil.newFromUri( authority + '/w/index.php?title=Title' ).getPrefixedDb(),
 			'Title',

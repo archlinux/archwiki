@@ -4,11 +4,12 @@ namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 use Exception;
 use FormatJson;
-use Html;
 use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxInterpreter;
 use MediaWiki\Extension\Scribunto\Scribunto;
+use MediaWiki\Extension\Scribunto\ScribuntoContent;
 use MediaWiki\Extension\Scribunto\ScribuntoEngineBase;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use ObjectCache;
@@ -81,7 +82,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @return LuaEngine
 	 */
 	public static function newAutodetectEngine( array $options ) {
-		global $wgScribuntoEngineConf;
+		$engineConf = MediaWikiServices::getInstance()->getMainConfig()->get( 'ScribuntoEngineConf' );
 		$engine = 'luastandalone';
 		try {
 			LuaSandboxInterpreter::checkLuaSandboxVersion();
@@ -93,7 +94,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		unset( $options['factory'] );
 
 		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
-		return Scribunto::newEngine( $options + $wgScribuntoEngineConf[$engine] );
+		return Scribunto::newEngine( $options + $engineConf[$engine] );
 	}
 
 	/**
@@ -362,7 +363,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		static $cache = null;
 
 		if ( !$cache ) {
-			$cache = ObjectCache::getLocalServerInstance( 'hash' );
+			$cache = ObjectCache::getLocalServerInstance( CACHE_HASH );
 		}
 
 		$mtime = filemtime( $fileName );
@@ -375,7 +376,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 
 		$code = false;
 		if ( $fileData ) {
-			list( $code, $cachedMtime ) = $fileData;
+			[ $code, $cachedMtime ] = $fileData;
 			if ( $cachedMtime < $mtime ) {
 				$code = false;
 			}
@@ -735,7 +736,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 			throw new LuaError( 'expandTemplate: template inclusion denied' );
 		}
 
-		list( $dom, $finalTitle ) = $this->parser->getTemplateDom( $title );
+		[ $dom, $finalTitle ] = $this->parser->getTemplateDom( $title );
 		if ( $dom === false ) {
 			throw new LuaError( "expandTemplate: template \"$titleText\" does not exist" );
 		}
@@ -962,7 +963,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		}
 
 		$parser = $this->getParser();
-		list( $text, $finalTitle ) = $parser->fetchTemplateAndTitle( $titleObj );
+		[ $text, $finalTitle ] = $parser->fetchTemplateAndTitle( $titleObj );
 
 		$json = FormatJson::decode( $text, true );
 		if ( is_array( $json ) ) {
@@ -971,6 +972,63 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		// We'll throw an error for non-tables on the Lua side
 
 		return [ $json ];
+	}
+
+	/**
+	 * @see Content::updateRedirect
+	 *
+	 * @param ScribuntoContent $content
+	 * @param Title $target
+	 * @return ScribuntoContent
+	 */
+	public function updateRedirect( ScribuntoContent $content, Title $target ): ScribuntoContent {
+		if ( !$content->isRedirect() ) {
+			return $content;
+		}
+		return $this->makeRedirectContent( $target );
+	}
+
+	/**
+	 * @see Content::getRedirectTarget
+	 *
+	 * @param ScribuntoContent $content
+	 * @return Title|null
+	 */
+	public function getRedirectTarget( ScribuntoContent $content ) {
+		$text = $content->getText();
+		preg_match( '/^return require \[\[(.*?)\]\]/', $text, $matches );
+		if ( isset( $matches[1] ) ) {
+			$title = Title::newFromText( $matches[1] );
+			// Can only redirect to other Scribunto pages
+			if ( $title && $title->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
+				// Have a title, check that the current content equals what
+				// the redirect content should be
+				if ( $content->equals( $this->makeRedirectContent( $title ) ) ) {
+					return $title;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @see ContentHandler::makeRedirectContent
+	 * @param Title $destination
+	 * @param string $text
+	 * @return ScribuntoContent
+	 */
+	public function makeRedirectContent( Title $destination, $text = '' ) {
+		$targetPage = $destination->getPrefixedText();
+		$redirectText = "return require [[$targetPage]]";
+		return new ScribuntoContent( $redirectText );
+	}
+
+	/**
+	 * @see ContentHandler::supportsRedirects
+	 * @return bool true
+	 */
+	public function supportsRedirects(): bool {
+		return true;
 	}
 }
 

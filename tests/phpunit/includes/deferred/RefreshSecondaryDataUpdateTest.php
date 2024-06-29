@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Deferred\DataUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Storage\DerivedPageDataUpdater;
 use MediaWiki\Title\Title;
@@ -7,7 +9,7 @@ use Psr\Log\NullLogger;
 use Wikimedia\ScopedCallback;
 
 /**
- * @covers RefreshSecondaryDataUpdate
+ * @covers \RefreshSecondaryDataUpdate
  * @group Database
  */
 class RefreshSecondaryDataUpdateTest extends MediaWikiIntegrationTestCase {

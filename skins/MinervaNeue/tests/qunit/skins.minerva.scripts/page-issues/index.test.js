@@ -1,11 +1,10 @@
-( function ( M ) {
-	var
-		mobile = M.require( 'mobile.startup' ),
+( function () {
+	const
+		mobile = require( 'mobile.startup' ),
 		pageIssues = require( '../../../../resources/skins.minerva.scripts/page-issues/index.js' ),
 		insertBannersOrNotice = pageIssues.test.insertBannersOrNotice,
-		OverlayManager = mobile.OverlayManager,
 		PageHTMLParser = mobile.PageHTMLParser,
-		overlayManager = OverlayManager.getSingleton(),
+		overlayManager = mobile.getOverlayManager(),
 		$mockContainer = $(
 			'<div id=\'bodyContent\'>' +
 				'<table class=\'ambox ambox-content\'>' +
@@ -30,11 +29,10 @@
 	} );
 
 	QUnit.test( 'insertBannersOrNotice() should add an icon', function ( assert ) {
-		// FIXME: Remove mw-ui-icon when T346184 and/or T346162 has been resolved.
-		assert.true( /(mw-ui-icon|mf-icon)/.test( processedAmbox.html() ) );
+		assert.true( /(minerva-icon)/.test( processedAmbox.html() ) );
 	} );
 	QUnit.test( 'clicking on the product of insertBannersOrNotice() should trigger a URL change', function ( assert ) {
 		processedAmbox.click();
 		assert.strictEqual( window.location.hash, '#/issues/' + SECTION );
 	} );
-}( mw.mobileFrontend ) );
+}() );

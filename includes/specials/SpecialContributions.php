@@ -23,18 +23,20 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use HTMLMultiSelectField;
 use LogEventsList;
-use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\Block;
+use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Pager\ContribsPager;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\SpecialPage\IncludableSpecialPage;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -43,16 +45,14 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ExternalUserNames;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\User\UserRigorOptions;
-use MWException;
-use PoolCounterWorkViaCallback;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -75,6 +75,7 @@ class SpecialContributions extends IncludableSpecialPage {
 	private CommentFormatter $commentFormatter;
 	private UserFactory $userFactory;
 	private UserIdentityLookup $userIdentityLookup;
+	private DatabaseBlockStore $blockStore;
 	private ?ContribsPager $pager = null;
 
 	/**
@@ -89,6 +90,7 @@ class SpecialContributions extends IncludableSpecialPage {
 	 * @param CommentFormatter|null $commentFormatter
 	 * @param UserFactory|null $userFactory
 	 * @param UserIdentityLookup|null $userIdentityLookup
+	 * @param DatabaseBlockStore|null $blockStore
 	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory = null,
@@ -101,14 +103,15 @@ class SpecialContributions extends IncludableSpecialPage {
 		UserOptionsLookup $userOptionsLookup = null,
 		CommentFormatter $commentFormatter = null,
 		UserFactory $userFactory = null,
-		UserIdentityLookup $userIdentityLookup = null
+		UserIdentityLookup $userIdentityLookup = null,
+		DatabaseBlockStore $blockStore = null
 	) {
 		parent::__construct( 'Contributions' );
 		// This class is extended and therefore falls back to global state - T269521
 		$services = MediaWikiServices::getInstance();
 		$this->linkBatchFactory = $linkBatchFactory ?? $services->getLinkBatchFactory();
 		$this->permissionManager = $permissionManager ?? $services->getPermissionManager();
-		$this->dbProvider = $dbProvider ?? $services->getDBLoadBalancerFactory();
+		$this->dbProvider = $dbProvider ?? $services->getConnectionProvider();
 		$this->revisionStore = $revisionStore ?? $services->getRevisionStore();
 		$this->namespaceInfo = $namespaceInfo ?? $services->getNamespaceInfo();
 		$this->userNameUtils = $userNameUtils ?? $services->getUserNameUtils();
@@ -117,6 +120,7 @@ class SpecialContributions extends IncludableSpecialPage {
 		$this->commentFormatter = $commentFormatter ?? $services->getCommentFormatter();
 		$this->userFactory = $userFactory ?? $services->getUserFactory();
 		$this->userIdentityLookup = $userIdentityLookup ?? $services->getUserIdentityLookup();
+		$this->blockStore = $blockStore ?? $services->getDatabaseBlockStore();
 	}
 
 	public function execute( $par ) {
@@ -145,9 +149,7 @@ class SpecialContributions extends IncludableSpecialPage {
 		$this->opts['deletedOnly'] = $request->getBool( 'deletedOnly' );
 
 		if ( !strlen( $target ) ) {
-			if ( !$this->including() ) {
-				$out->addHTML( $this->getForm( $this->opts ) );
-			}
+			$out->addHTML( $this->getForm( $this->opts ) );
 
 			return;
 		}
@@ -294,9 +296,7 @@ class SpecialContributions extends IncludableSpecialPage {
 		if ( $this->getHookRunner()->onSpecialContributionsBeforeMainOutput(
 			$notExternal ? $userObj->getId() : 0, $userObj, $this )
 		) {
-			if ( !$this->including() ) {
-				$out->addHTML( $this->getForm( $this->opts ) );
-			}
+			$out->addHTML( $this->getForm( $this->opts ) );
 			// We want a pure UserIdentity for imported actors, so the first letter
 			// of them is in lowercase and queryable.
 			$userIdentity = $notExternal ? $userObj :
@@ -457,13 +457,14 @@ class SpecialContributions extends IncludableSpecialPage {
 				// For IP ranges you must give DatabaseBlock::newFromTarget the CIDR string
 				// and not a user object.
 				if ( IPUtils::isValidRange( $userObj->getName() ) ) {
-					$block = DatabaseBlock::newFromTarget( $userObj->getName(), $userObj->getName() );
+					$block = $this->blockStore
+						->newFromTarget( $userObj->getName(), $userObj->getName() );
 				} else {
-					$block = DatabaseBlock::newFromTarget( $userObj, $userObj );
+					$block = $this->blockStore->newFromTarget( $userObj, $userObj );
 				}
 
-				if ( $block !== null && $block->getType() != DatabaseBlock::TYPE_AUTO ) {
-					if ( $block->getType() == DatabaseBlock::TYPE_RANGE ) {
+				if ( $block !== null && $block->getType() != Block::TYPE_AUTO ) {
+					if ( $block->getType() == Block::TYPE_RANGE ) {
 						$nt = $this->namespaceInfo->getCanonicalName( NS_USER )
 							. ':' . $block->getTargetName();
 					}
@@ -582,7 +583,7 @@ class SpecialContributions extends IncludableSpecialPage {
 
 		# Block / Change block / Unblock links
 		if ( $permissionManager->userHasRight( $sp->getUser(), 'block' ) ) {
-			if ( $target->getBlock() && $target->getBlock()->getType() != DatabaseBlock::TYPE_AUTO ) {
+			if ( $target->getBlock() && $target->getBlock()->getType() != Block::TYPE_AUTO ) {
 				$tools['block'] = $linkRenderer->makeKnownLink( # Change block link
 					SpecialPage::getTitleFor( 'Block', $username ),
 					$sp->msg( 'change-blocklink' )->text(),
@@ -683,6 +684,11 @@ class SpecialContributions extends IncludableSpecialPage {
 	 * @return string HTML fragment
 	 */
 	protected function getForm( array $pagerOptions ) {
+		if ( $this->including() ) {
+			// Do not show a form when special page is included in wikitext
+			return '';
+		}
+
 		// Modules required only for the form
 		$this->getOutput()->addModules( [
 			'mediawiki.special.contributions',
@@ -721,16 +727,15 @@ class SpecialContributions extends IncludableSpecialPage {
 			];
 		}
 
-		$target = $this->opts['target'] ?? null;
+		$target = $this->opts['target'] ?? '';
 		$fields['target'] = [
 			'type' => 'user',
-			'default' => $target ?
-				str_replace( '_', ' ', $target ) : '' ,
+			'default' => str_replace( '_', ' ', $target ),
 			'label' => $this->msg( 'sp-contributions-username' )->text(),
 			'name' => 'target',
 			'id' => 'mw-target-user-or-ip',
 			'size' => 40,
-			'autofocus' => !$target,
+			'autofocus' => $target === '',
 			'section' => 'contribs-top',
 			'ipallowed' => true,
 			'iprange' => true,
@@ -953,7 +958,6 @@ class SpecialContributions extends IncludableSpecialPage {
 
 	/**
 	 * @inheritDoc
-	 * @throws MWException
 	 */
 	public function getAssociatedNavigationLinks(): array {
 		if (
@@ -971,7 +975,5 @@ class SpecialContributions extends IncludableSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialContributions::class, 'SpecialContributions' );

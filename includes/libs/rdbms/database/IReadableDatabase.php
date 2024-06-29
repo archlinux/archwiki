@@ -107,7 +107,7 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	public function getSoftwareLink();
 
 	/**
-	 * A string describing the current software version, like from mysql_get_server_info()
+	 * A string describing the current software version
 	 *
 	 * @return string Version information from the database server.
 	 */
@@ -664,6 +664,21 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * @throws DBError
 	 */
 	public function decodeBlob( $b );
+
+	/**
+	 * See Expression::__construct()
+	 *
+	 * @since 1.42
+	 * @param string $field
+	 * @param-taint $field exec_sql
+	 * @param string $op One of '>', '<', '!=', '=', '>=', '<=', IExpression::LIKE, IExpression::NOT_LIKE
+	 * @param-taint $op exec_sql
+	 * @param string|int|float|bool|Blob|null|LikeValue|non-empty-list<string|int|float|bool|Blob> $value
+	 * @param-taint $value escapes_sql
+	 * @return Expression
+	 * @phan-side-effect-free
+	 */
+	public function expr( string $field, string $op, $value ): Expression;
 
 	/**
 	 * Get a debugging string that mentions the database type, the ID of this instance,

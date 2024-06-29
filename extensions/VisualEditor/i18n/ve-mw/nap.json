@@ -130,7 +130,7 @@
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Campo obsoleto",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "'O campo è obsoleto. $1",
 	"visualeditor-dialog-transclusion-loading": "Carrecanno...",
-	"visualeditor-dialog-transclusion-no-template-description": "'O template \"$1\" nun tene descrizione ancora, ma putessero cumparì cocche nfurmaziune dint' 'a [[$2|paggena d' 'o template]].",
+	"visualeditor-dialog-transclusion-no-template-description": "'O template \"$1\" nun tene na descrizione, nce putessero stà nfurmaziuni dint' 'a [[$2|paggena d' 'o modello]].",
 	"visualeditor-dialog-transclusion-param-default": "Predefinito: $1",
 	"visualeditor-dialog-transclusion-required-parameter": "Campo richiesto",
 	"visualeditor-dialog-transclusion-required-parameter-description": "'O campo è obbligatorio.",

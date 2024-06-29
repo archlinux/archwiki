@@ -616,11 +616,22 @@ $magicWords['ru'] = [
 
 /** Serbian (Cyrillic script) (српски (ћирилица)) */
 $magicWords['sr-ec'] = [
+	'if' => [ 0, 'ако' ],
 	'default' => [ 0, '#подразумевано' ],
 	'time' => [ 0, 'време' ],
 	'pos' => [ 0, 'поз' ],
 	'count' => [ 0, 'број' ],
 	'replace' => [ 0, 'замени' ],
+];
+
+/** Serbian (Latin script) (srpski (latinica)) */
+$magicWords['sr-el'] = [
+	'if' => [ 0, 'ako' ],
+	'default' => [ 0, '#podrazumevano' ],
+	'time' => [ 0, 'vreme' ],
+	'pos' => [ 0, 'poz' ],
+	'count' => [ 0, 'broj' ],
+	'replace' => [ 0, 'zameni' ],
 ];
 
 /** Swedish (svenska) */

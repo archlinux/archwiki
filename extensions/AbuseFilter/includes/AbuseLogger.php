@@ -2,20 +2,22 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use DeferredUpdates;
 use ExtensionRegistry;
 use InvalidArgumentException;
 use ManualLogEntry;
 use MediaWiki\CheckUser\Hooks;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
-use User;
+use Profiler;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\ScopedCallback;
 
 class AbuseLogger {
 	public const CONSTRUCTOR_OPTIONS = [
@@ -119,7 +121,7 @@ class AbuseLogger {
 		$loggedGlobalFilters = [];
 
 		foreach ( $actionsTaken as $filter => $actions ) {
-			list( $filterID, $global ) = GlobalNameUtils::splitGlobalName( $filter );
+			[ $filterID, $global ] = GlobalNameUtils::splitGlobalName( $filter );
 			$thisLog = $logTemplate;
 			$thisLog['afl_filter_id'] = $filterID;
 			$thisLog['afl_global'] = (int)$global;
@@ -248,7 +250,15 @@ class AbuseLogger {
 					$entry->setPerformer( new UserIdentityValue( 0, $this->requestIP ) );
 				}
 				$rc = $entry->getRecentChange();
-				Hooks::updateCheckUserData( $rc );
+				// We need to send the entries on POSTSEND to ensure that the user definitely exists, as a temporary
+				// account being created by this edit may not exist until after AbuseFilter processes the edit.
+				DeferredUpdates::addCallableUpdate( static function () use ( $rc ) {
+					// Silence the TransactionProfiler warnings for performing write queries (T359648).
+					$trxProfiler = Profiler::instance()->getTransactionProfiler();
+					$scope = $trxProfiler->silenceForScope( $trxProfiler::EXPECTATION_REPLICAS_ONLY );
+					Hooks::updateCheckUserData( $rc );
+					ScopedCallback::consume( $scope );
+				} );
 			}
 
 			if ( $this->options->get( 'AbuseFilterNotifications' ) !== false ) {

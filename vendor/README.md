@@ -19,7 +19,7 @@ Adding or updating libraries
 ----------------------------
 
 0. Read the [documentation] on the process for adding new libraries.
-1. Ensure you're using version 2.6.4 of composer via `composer --version`.
+1. Ensure you're using version 2.7.2 of composer via `composer --version`.
    Everyone using the same version means that diffs from the autoloader are
    minimal and so easier to validate and manually rebase. This is most easily
    done with Docker. For example, to run `composer update --no-dev` do:

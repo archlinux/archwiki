@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface FormatAction class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -52,21 +52,18 @@ ve.ui.FormatAction.prototype.convert = function ( type, attributes ) {
 	}
 
 	var fragments = [];
-	var i, length;
+
 	// We can't have headings or pre's in a list, so if we're trying to convert
 	// things that are in lists to a heading or a pre, split the list
-	var selected = fragment.getLeafNodes();
-	for ( i = 0, length = selected.length; i < length; i++ ) {
-		var contentBranch = selected[ i ].node.isContent() ?
-			selected[ i ].node.getParent() :
-			selected[ i ].node;
+	fragment.getSelectedLeafNodes().forEach( function ( node ) {
+		var contentBranch = node.isContent() ? node.getParent() : node;
 
 		fragments.push( surfaceModel.getLinearFragment( contentBranch.getOuterRange(), true ) );
-	}
+	} );
 
-	for ( i = 0, length = fragments.length; i < length; i++ ) {
-		fragments[ i ].isolateAndUnwrap( type );
-	}
+	fragments.forEach( function ( f ) {
+		f.isolateAndUnwrap( type );
+	} );
 
 	fragment.convertNodes( type, attributes );
 	if ( fragmentSelection.isCollapsed() ) {

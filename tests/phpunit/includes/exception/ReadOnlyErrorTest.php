@@ -3,7 +3,7 @@
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 
 /**
- * @covers ReadOnlyError
+ * @covers \ReadOnlyError
  * @author Addshore
  */
 class ReadOnlyErrorTest extends MediaWikiIntegrationTestCase {
@@ -15,7 +15,7 @@ class ReadOnlyErrorTest extends MediaWikiIntegrationTestCase {
 		$e = new ReadOnlyError();
 		$this->assertEquals( 'readonly', $e->title );
 		$this->assertEquals( 'readonlytext', $e->msg );
-		$this->assertEquals( $reason, $e->params );
+		$this->assertEquals( [ $reason ], $e->params );
 	}
 
 }

@@ -104,7 +104,7 @@ class ScriptUtils {
 				'',
 				'      fostered, process-fixups, Normalize, pwrap, ',
 				'      media, migrate-metas, migrate-nls, dsr, tplwrap, ',
-				'      dom-unpack, pp:EXT (replace EXT with extension: Cite, Poem, etc)',
+				'      dom-unpack, pp:EXT (replace EXT with extension: Pre, Gallery, etc)',
 				'      fixups, strip-metas, lang-converter, redlinks, ',
 				'      displayspace, linkclasses, sections, convertoffsets',
 				'      i18n, cleanup',
@@ -248,9 +248,7 @@ class ScriptUtils {
 		}
 
 		if ( isset( $cliOpts['apiURL'] ) ) {
-			if ( !isset( $envOptions['mwApis'] ) ) {
-				$envOptions['mwApis'] = [];
-			}
+			$envOptions['mwApis'] ??= [];
 			$envOptions['mwApis'][] = [ 'prefix' => 'customwiki', 'uri' => $cliOpts['apiURL'] ];
 		}
 
@@ -277,13 +275,7 @@ class ScriptUtils {
 	 * @return bool
 	 */
 	public static function booleanOption( $val ): bool {
-		if ( !$val ) {
-			return false;
-		}
-		if ( is_string( $val ) && preg_match( '/^(no|false)$/D', $val ) ) {
-			return false;
-		}
-		return true;
+		return $val && $val !== 'no' && $val !== 'false';
 	}
 
 	/**

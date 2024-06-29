@@ -25,9 +25,9 @@ namespace MediaWiki\Specials;
 
 use ErrorPageError;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Language\FormatterFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\SpecialPage\LoginSignupSpecialPage;
-use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use StatusValue;
 
@@ -48,13 +48,17 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 		'authform-wrongtoken' => 'sessionfailure',
 	];
 
+	private FormatterFactory $formatterFactory;
+
 	/**
 	 * @param AuthManager $authManager
+	 * @param FormatterFactory $formatterFactory
 	 */
-	public function __construct( AuthManager $authManager ) {
+	public function __construct( AuthManager $authManager, FormatterFactory $formatterFactory ) {
 		parent::__construct( 'CreateAccount', 'createaccount' );
 
 		$this->setAuthManager( $authManager );
+		$this->formatterFactory = $formatterFactory;
 	}
 
 	public function doesWrites() {
@@ -70,10 +74,12 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 		$status = $this->mPosted ?
 			$authManager->authorizeCreateAccount( $performer ) :
 			$authManager->probablyCanCreateAccount( $performer );
+
 		if ( !$status->isGood() ) {
+			$formatter = $this->formatterFactory->getStatusFormatter( $this->getContext() );
 			throw new ErrorPageError(
 				'createacct-error',
-				Status::wrap( $status )->getMessage()
+				$formatter->getMessage( $status )
 			);
 		}
 	}
@@ -105,6 +111,7 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 		$session = $this->getRequest()->getSession();
 		$user = $this->targetUser ?: $this->getUser();
 
+		$injected_html = '';
 		if ( $direct ) {
 			# Only save preferences if the user is not creating an account for someone else.
 			if ( !$this->proxyAccountCreation ) {
@@ -140,15 +147,13 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 				);
 				return;
 			}
+			$this->getHookRunner()->onUserLoginComplete( $user, $injected_html, $direct );
 		}
 
 		$this->clearToken();
 
 		# Run any hooks; display injected HTML
-		$injected_html = '';
 		$welcome_creation_msg = 'welcomecreation-msg';
-		$this->getHookRunner()->onUserLoginComplete( $user, $injected_html, $direct );
-
 		/**
 		 * Let any extensions change what message is shown.
 		 * @see https://www.mediawiki.org/wiki/Manual:Hooks/BeforeWelcomeCreation
@@ -187,7 +192,5 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialCreateAccount::class, 'SpecialCreateAccount' );

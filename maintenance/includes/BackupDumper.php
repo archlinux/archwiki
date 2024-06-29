@@ -2,7 +2,7 @@
 /**
  * Base classes for database-dumping maintenance scripts.
  *
- * Copyright © 2005 Brion Vibber <brion@pobox.com>
+ * Copyright © 2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -176,7 +176,7 @@ abstract class BackupDumper extends Maintenance {
 		}
 	}
 
-	public function finalSetup( SettingsBuilder $settingsBuilder = null ) {
+	public function finalSetup( SettingsBuilder $settingsBuilder ) {
 		parent::finalSetup( $settingsBuilder );
 		// re-declare the --schema-version option to include the default schema version
 		// in the description.

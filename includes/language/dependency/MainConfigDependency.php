@@ -20,7 +20,7 @@
 use MediaWiki\MediaWikiServices;
 
 /**
- * Depend on a MediaWiki configuration variable.
+ * Depend on a MediaWiki configuration variable from the global config.
  *
  * @ingroup Language
  */

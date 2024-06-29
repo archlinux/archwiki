@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use FormSpecialPage;
 use HTMLForm;
 use MediaWiki\Extension\Notifications\NotifUser;
-use SpecialPage;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
 
 /**
  * Form for marking notifications as read by ID.

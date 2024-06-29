@@ -4,7 +4,8 @@
 
 .content {
 	p {
-		margin: 0.5em 0 1em 0;
+		padding-bottom: 0.5em;
+		margin: 0.5em 0 0 0;
 	}
 
 	hr {
@@ -51,6 +52,7 @@
 	}
 
 	pre {
+		margin: 0;
 		padding: 1em;
 	}
 }
@@ -61,7 +63,7 @@ strong {
 }
 
 blockquote {
-	border-left: 3px @border-style-base @border-color-subtle;
+	border-left: 3px @border-style-base var( --border-color-subtle );
 	padding: @padding-vertical-blockquote @padding-end-blockquote @padding-vertical-blockquote @padding-start-blockquote;
 	font-family: @font-family-serif;
 	font-size: 1.1em;

@@ -67,7 +67,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Ця примітка визначена в шаблоні чи іншому генерованому блоці, і наразі її можна попередньо переглянути лише в режимі редагування коду.",
 	"cite-ve-referenceslist-missingreflist": "Список приміток генерується шаблоном.",
 	"cite-ve-toolbar-group-label": "Джерело",
-	"cite-ve-othergroup-item": "$1 посилання",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Примітки",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Назва групи приміток: «$1»"
+	"cite-ve-othergroup-item": "$1 посилання"
 }

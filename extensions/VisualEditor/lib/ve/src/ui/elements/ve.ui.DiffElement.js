@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface DiffElement class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -23,11 +23,6 @@ ve.ui.DiffElement = function VeUiDiffElement( visualDiff, config ) {
 
 	this.elementId = 0;
 
-	// Documents
-	// Avoid using these and instead use a node's root to determine the document it came from.
-	this.oldDoc = visualDiff.oldDoc;
-	this.newDoc = visualDiff.newDoc;
-
 	this.$overlays = $( '<div>' ).addClass( 've-ui-diffElement-overlays' );
 	this.$content = $( '<div>' ).addClass( 've-ui-diffElement-content' );
 	this.$messages = $( '<div>' ).addClass( 've-ui-diffElement-messages' );
@@ -44,11 +39,15 @@ ve.ui.DiffElement = function VeUiDiffElement( visualDiff, config ) {
 		mousemove: this.onDocumentMouseMove.bind( this )
 	} );
 
-	this.renderDiff( diff.docDiff, diff.internalListDiff, diff.metaListDiff );
+	this.renderDiff( diff.docDiff, diff.internalListDiff, diff.metaListDiff, visualDiff.newDoc.getHtmlDocument() );
 
 	if ( visualDiff.timedOut ) {
-		var $warning = this.constructor.static.createWarning( ve.msg( 'visualeditor-diff-timed-out' ) );
-		this.$messages.append( $warning );
+		var warning = new OO.ui.MessageWidget( {
+			type: 'warning',
+			classes: [ 've-ui-diffElement-warning' ],
+			label: ve.msg( 'visualeditor-diff-timed-out' )
+		} );
+		this.$messages.append( warning.$element );
 	}
 
 	// DOM
@@ -66,21 +65,6 @@ ve.ui.DiffElement = function VeUiDiffElement( visualDiff, config ) {
 OO.inheritClass( ve.ui.DiffElement, OO.ui.Element );
 
 /* Static methods */
-
-/**
- * Create a formatted warning message
- *
- * @param {string} msg Warning message text
- * @return {jQuery} Warning message DOM
- */
-ve.ui.DiffElement.static.createWarning = function ( msg ) {
-	var $warning = $( '<div>' ).addClass( 've-ui-diffElement-warning' ),
-		alertIcon = new OO.ui.IconWidget( {
-			icon: 'alert',
-			flags: [ 'warning' ]
-		} );
-	return $warning.append( alertIcon.$element, $( '<span>' ).text( msg ) );
-};
 
 /**
  * Compare attribute sets between two elements
@@ -323,8 +307,9 @@ ve.ui.DiffElement.prototype.renderQueue = function ( queue, parentNode, spacerNo
  * @param {Object} diff Object describing the diff
  * @param {Object} internalListDiff Object describing the diff of the internal list
  * @param {Object} metaListDiff Object describing the diff of the meta list
+ * @param {HTMLDocument} newHtmlDocument HTML document of context, for resolving attributes
  */
-ve.ui.DiffElement.prototype.renderDiff = function ( diff, internalListDiff, metaListDiff ) {
+ve.ui.DiffElement.prototype.renderDiff = function ( diff, internalListDiff, metaListDiff, newHtmlDocument ) {
 	var documentNode = this.$document[ 0 ],
 		diffQueue = [],
 		internalListDiffQueue = [],
@@ -436,7 +421,7 @@ ve.ui.DiffElement.prototype.renderDiff = function ( diff, internalListDiff, meta
 	this.descriptions.addItems( this.descriptionItemsStack );
 	this.descriptionItemsStack = null;
 
-	ve.resolveAttributes( documentNode, this.newDoc.getHtmlDocument(), ve.dm.Converter.static.computedAttributes );
+	ve.resolveAttributes( documentNode, newHtmlDocument, ve.dm.Converter.static.computedAttributes );
 
 	if ( !documentNode.children.length ) {
 		var noChanges = document.createElement( 'div' );
@@ -588,8 +573,7 @@ ve.ui.DiffElement.prototype.getChangedLeafNodeData = function ( newNode, diff ) 
 
 	if ( linearDiff ) {
 		// If there is a content change, splice it in
-		var nodeDiffData = linearDiff;
-		var annotatedData = this.annotateNode( nodeDiffData );
+		var annotatedData = this.annotateNode( linearDiff, newNode );
 		ve.batchSplice( nodeData, 1, newNode.length, annotatedData );
 	}
 	if ( attributeChange ) {
@@ -620,9 +604,6 @@ ve.ui.DiffElement.prototype.getChangedLeafNodeData = function ( newNode, diff ) 
  */
 ve.ui.DiffElement.prototype.appendListItem = function ( diffData, insertIndex, listNode, listNodeData, listItemData, depthChange ) {
 	if ( depthChange === 0 ) {
-		// List node itself may have been modified
-		ve.batchSplice( diffData, 0, 1, listNodeData );
-
 		// Current list item belongs to the same list as the previous list item
 		ve.batchSplice( diffData, insertIndex, 0, listItemData );
 		insertIndex += listItemData.length;
@@ -829,17 +810,13 @@ ve.ui.DiffElement.prototype.iterateDiff = function ( diff, callbacks ) {
  * @return {Array} Linear data for the diff
  */
 ve.ui.DiffElement.prototype.getChangedListNodeData = function ( newListNode, diff ) {
-	var diffData = this.constructor.static.getDataFromNode( newListNode ),
+	var diffData = [],
 		diffElement = this;
-
-	// Keep only the root list node
-	ve.batchSplice( diffData, 1, diffData.length - 2, [] );
 
 	// These will be adjusted for each item
 	var insertIndex = 1;
-	var depth = 0;
-	var lastListNode = null;
-	var listNodeData;
+	var depth = -1;
+	var listNodesInfoCache = new Map();
 
 	var listDiffItems = [];
 
@@ -948,10 +925,16 @@ ve.ui.DiffElement.prototype.getChangedListNodeData = function ( newListNode, dif
 
 		// Get linear data. Also get list node, since may need ancestors
 		var listNode = item.metadata.listNode;
-		// Only re-fetch list node data once per list
-		if ( listNode !== lastListNode ) {
-			listNodeData = [ diffElement.constructor.static.getDataFromNode( listNode )[ 0 ] ];
-			lastListNode = listNode;
+		var listNodeInfo;
+		if ( !listNodesInfoCache.has( listNode ) ) {
+			// Only re-fetch list node data once per list
+			listNodeInfo = {
+				data: [ diffElement.constructor.static.getDataFromNode( listNode )[ 0 ] ],
+				changeDone: false
+			};
+			listNodesInfoCache.set( listNode, listNodeInfo );
+		} else {
+			listNodeInfo = listNodesInfoCache.get( listNode );
 		}
 
 		var listItemNode = item.metadata.listItem;
@@ -983,26 +966,42 @@ ve.ui.DiffElement.prototype.getChangedListNodeData = function ( newListNode, dif
 
 		// Check for attribute changes
 		if ( item.diff && item.diff.attributeChange ) {
-			[ 'depthChange', 'listNodeAttributeChange', 'listItemAttributeChange' ].forEach( function ( listChangeType ) {
+			var attributeChange = {
+				oldAttributes: {},
+				newAttributes: {}
+			};
+
+			[ 'listNodeAttributeChange', 'depthChange', 'listItemAttributeChange' ].forEach( function ( listChangeType ) {
 				if ( item.diff.attributeChange[ listChangeType ] ) {
-					var change = diffElement.compareNodeAttributes(
-						listChangeType === 'listNodeAttributeChange' ?
-							listNodeData :
-							listItemData,
-						0,
-						item.diff.attributeChange[ listChangeType ]
-					);
-					if ( change ) {
-						diffElement.descriptionItemsStack.push( change );
+					if ( listChangeType === 'listNodeAttributeChange' && depthChange > 0 ) {
+						var change = diffElement.compareNodeAttributes( listNodeInfo.data, 0, item.diff.attributeChange[ listChangeType ] );
+						if ( change ) {
+							diffElement.descriptionItemsStack.push( change );
+							listNodeInfo.changeDone = true;
+						}
+					} else if ( listChangeType !== 'listNodeAttributeChange' || !listNodeInfo.changeDone ) {
+						ve.extendObject( attributeChange.oldAttributes, item.diff.attributeChange[ listChangeType ].oldAttributes );
+						ve.extendObject( attributeChange.newAttributes, item.diff.attributeChange[ listChangeType ].newAttributes );
 					}
 				}
 			} );
+
+			var listItemChange = diffElement.compareNodeAttributes( listItemData, 0, attributeChange );
+			if ( listItemChange ) {
+				diffElement.descriptionItemsStack.push( listItemChange );
+			}
 		}
 
-		// Record the index to splice in the next list item data into the diffData
-		insertIndex = diffElement.appendListItem(
-			diffData, insertIndex, listNode, listNodeData, listItemData, depthChange
-		);
+		if ( item.metadata.isContinued ) {
+			ve.batchSplice( diffData, insertIndex - 1, 0, contentData );
+			insertIndex += contentData.length;
+
+		} else {
+			// Record the index to splice in the next list item data into the diffData
+			insertIndex = diffElement.appendListItem(
+				diffData, insertIndex, listNode, listNodeInfo.data, listItemData, depthChange
+			);
+		}
 
 		depth = newDepth;
 	} );
@@ -1180,7 +1179,7 @@ ve.ui.DiffElement.prototype.getChangedTreeNodeData = function ( oldTreeNode, new
 			if ( info.linearDiff ) {
 				// If there is a content change, splice it in
 				nodeDiffData = info.linearDiff;
-				var annotatedData = this.annotateNode( nodeDiffData );
+				var annotatedData = this.annotateNode( nodeDiffData, newNode );
 				ve.batchSplice( nodeData, nodeRangeStart + 1, newNode.getLength(), annotatedData );
 			}
 			if ( info.attributeChange ) {
@@ -1320,7 +1319,8 @@ ve.ui.DiffElement.prototype.getInternalListChangedNodeElements = function ( diff
 	data = data.slice( 1, data.length - 2 );
 
 	this.markMove( move, listItemNode );
-	var documentSlice = this.newDoc.cloneWithData( data, true, true );
+	var newDoc = newNode.getRoot().getDocument();
+	var documentSlice = newDoc.cloneWithData( data, true, true );
 	var body = ve.dm.converter.getDomFromModel( documentSlice, ve.dm.Converter.static.PREVIEW_MODE ).body;
 	while ( body.childNodes.length ) {
 		listItemNode.appendChild(
@@ -1446,17 +1446,19 @@ ve.ui.DiffElement.prototype.markMove = function ( move, elementOrData, offset ) 
  * Annotate some data to highlight diff
  *
  * @param {Array} linearDiff Linear diff, mapping arrays of linear data to diff
- * actions (remove, insert or retain)
+ *  actions (remove, insert or retain)
+ * @param {ve.dm.Node} newNode Node from the new document
  * @return {Array} Data with annotations added
  */
-ve.ui.DiffElement.prototype.annotateNode = function ( linearDiff ) {
+ve.ui.DiffElement.prototype.annotateNode = function ( linearDiff, newNode ) {
 	var DIFF_DELETE = ve.DiffMatchPatch.static.DIFF_DELETE,
 		DIFF_INSERT = ve.DiffMatchPatch.static.DIFF_INSERT,
 		DIFF_CHANGE_DELETE = ve.DiffMatchPatch.static.DIFF_CHANGE_DELETE,
 		DIFF_CHANGE_INSERT = ve.DiffMatchPatch.static.DIFF_CHANGE_INSERT,
 		items = [],
 		start = 0, // The starting index for a range for building an annotation
-		diffElement = this;
+		diffElement = this,
+		newDoc = newNode.getRoot().getDocument();
 
 	// Make a new document from the diff
 	var diffDocData = linearDiff[ 0 ][ 1 ];
@@ -1464,7 +1466,7 @@ ve.ui.DiffElement.prototype.annotateNode = function ( linearDiff ) {
 	for ( i = 1, ilen = linearDiff.length; i < ilen; i++ ) {
 		diffDocData = diffDocData.concat( linearDiff[ i ][ 1 ] );
 	}
-	var diffDoc = this.newDoc.cloneWithData( diffDocData );
+	var diffDoc = newDoc.cloneWithData( diffDocData );
 
 	// Add spans with the appropriate attributes for removes and inserts
 	// TODO: do insert and remove outside of loop
@@ -1591,7 +1593,7 @@ ve.ui.DiffElement.prototype.annotateNode = function ( linearDiff ) {
 	this.descriptionItemsStack.push.apply( this.descriptionItemsStack, items );
 
 	// Merge the stores and get the data
-	this.newDoc.getStore().merge( diffDoc.getStore() );
+	newDoc.getStore().merge( diffDoc.getStore() );
 	var annotatedLinearDiff = diffDoc.getData( { start: 0, end: diffDoc.getLength() } );
 
 	return annotatedLinearDiff;

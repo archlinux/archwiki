@@ -5,7 +5,6 @@ namespace MediaWiki\Extension\Math\Tests;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use RequestContext;
-use User;
 
 /**
  * @covers \MediaWiki\Extension\Math\HookHandlers\PreferencesHooksHandler
@@ -26,7 +25,7 @@ class PreferencesIntegrationTest extends MediaWikiIntegrationTestCase {
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'Dummy' ) );
 		$allPreferences = $this->getServiceContainer()
 			->getPreferencesFactory()
-			->getFormDescriptor( $this->createMock( User::class ), $context );
+			->getFormDescriptor( $this->getTestUser()->getUser(), $context );
 		$this->assertArrayHasKey( 'math', $allPreferences );
 		$mathPrefs = $allPreferences['math'];
 		$this->assertSame( 'radio', $mathPrefs['type'] );

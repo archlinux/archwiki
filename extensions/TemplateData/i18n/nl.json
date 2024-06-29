@@ -104,6 +104,7 @@
 	"templatedata-modal-table-param-aliases": "Aliassen",
 	"templatedata-modal-table-param-autovalue": "Automatische waarde",
 	"templatedata-modal-table-param-default": "Standaard ($1)",
+	"templatedata-modal-table-param-status": "Status",
 	"templatedata-modal-table-param-deprecated": "Verouderd",
 	"templatedata-modal-table-param-deprecatedValue": "Verouderingsinstructies",
 	"templatedata-modal-table-param-description": "Beschrijving ($1)",

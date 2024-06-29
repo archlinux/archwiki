@@ -1,17 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Filzstift",
 			"Matma Rex",
 			"Metalhead64",
-			"ToBeFree",
-			"Filzstift"
+			"ToBeFree"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Keine gecachte Serialisierung mit diesem Schlüssel gefunden",
 	"apierror-visualeditor-difffailed": "Unterschied fehlgeschlagen",
-	"apierror-visualeditor-docserver-http-error": "Fehler bei der Kontaktaufnahme mit dem Parsoid-/RESTBase-Server: $1",
-	"apierror-visualeditor-docserver-http": "Fehler bei der Kontaktaufnahme mit dem Parsoid-/RESTBase-Server (HTTP $1): $2",
-	"apierror-visualeditor-docserver": "Fehler beim Kontaktieren des Parsoid-/RESTBase-Servers (keine Antwort)",
 	"apihelp-visualeditor-param-basetimestamp": "Lege dies beim Speichern auf den Zeitstempel der Version fest, die bearbeitet wurde. Wird verwendet, um Bearbeitungskonflikte aufzuspüren.",
 	"apihelp-visualeditor-param-badetag": "Wenn die RESTBase-Abfrage einen scheinbar ungültigen ETag zurückgegeben hat, übergebe ihn hier für die Protokollierung.",
 	"apihelp-visualeditor-param-cachekey": "Zum Anordnen oder Unterscheiden, verwende das Ergebnis einer früheren serializeforcache-Anfrage mit diesem Schlüssel. Überschreibt $1html.",

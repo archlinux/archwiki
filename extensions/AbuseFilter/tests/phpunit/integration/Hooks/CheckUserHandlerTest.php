@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Hooks;
+namespace MediaWiki\Extension\AbuseFilter\Tests\Integration\Hooks;
 
 use MediaWiki\Extension\AbuseFilter\FilterUser;
 use MediaWiki\Extension\AbuseFilter\Hooks\Handlers\CheckUserHandler;
@@ -21,8 +21,10 @@ class CheckUserHandlerTest extends MediaWikiIntegrationTestCase {
 
 	private function getCheckUserHandler(): CheckUserHandler {
 		$filterUser = $this->createMock( FilterUser::class );
-		$filterUser->method( 'getUserIdentity' )
-			->willReturn( new UserIdentityValue( 1, 'Abuse filter' ) );
+		$filterUser->method( 'isSameUserAs' )
+			->willReturnCallback( static function ( $user ) {
+				return $user->getName() === 'Abuse filter';
+			} );
 		$userIdentityUtils = $this->createMock( UserIdentityUtils::class );
 		$userIdentityUtils->method( 'isNamed' )
 			->willReturnCallback( static function ( $name ) {

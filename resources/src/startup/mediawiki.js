@@ -1,10 +1,5 @@
 /**
  * Base library for MediaWiki.
- *
- * Exposed globally as `mw`, with `mediaWiki` as alias.
- *
- * @class mw
- * @singleton
  */
 /* global $CODE */
 
@@ -14,42 +9,16 @@
 	var con = window.console;
 
 	/**
-	 * Log a message to window.console.
+	 * ES3 compatible class similar to [ES6 Map]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map}.
 	 *
-	 * Useful to force logging of some errors that are otherwise hard to detect (i.e., this logs
-	 * also in production mode).
-	 *
-	 * @private
-	 * @param {string} topic Stream name passed by mw.track
-	 * @param {Object} data Data passed by mw.track
-	 * @param {Error} [data.exception]
-	 * @param {string} data.source Error source
-	 * @param {string} [data.module] Name of module which caused the error
-	 */
-	function logError( topic, data ) {
-		var e = data.exception;
-		var msg = ( e ? 'Exception' : 'Error' ) +
-			' in ' + data.source +
-			( data.module ? ' in module ' + data.module : '' ) +
-			( e ? ':' : '.' );
-
-		con.log( msg );
-
-		// If we have an exception object, log it to the warning channel to trigger
-		// proper stacktraces in browsers that support it.
-		if ( e ) {
-			con.warn( e );
-		}
-	}
-
-	/**
-	 * Create an object that can be read from or written to via methods that allow
+	 * @class mw.Map
+	 * @classdesc Create an object that can be read from or written to via methods that allow
 	 * interaction both with single and multiple properties at once.
 	 *
-	 * @private
-	 * @class mw.Map
-	 *
-	 * @constructor
+	 * @example
+	 * const map = new mw.Map();
+	 * map.set( 'foo', 5 );
+	 * alert( 5 === map.get( 'foo' ) );
 	 */
 	function Map() {
 		this.values = Object.create( null );
@@ -63,9 +32,10 @@
 		 *
 		 * If called with no arguments, all values are returned.
 		 *
+		 * @memberof mw.Map
 		 * @param {string|Array} [selection] Key or array of keys to retrieve values for.
-		 * @param {Mixed} [fallback=null] Value for keys that don't exist.
-		 * @return {Mixed|Object|null} If selection was a string, returns the value,
+		 * @param {any} [fallback=null] Value for keys that don't exist.
+		 * @return {any|Object|null} If selection was a string, returns the value,
 		 *  If selection was an array, returns an object of key/values.
 		 *  If no selection is passed, a new object with all key/values is returned.
 		 */
@@ -108,8 +78,9 @@
 		/**
 		 * Set one or more key/value pairs.
 		 *
+		 * @memberof mw.Map
 		 * @param {string|Object} selection Key to set value for, or object mapping keys to values
-		 * @param {Mixed} [value] Value to set (optional, only in use when key is a string)
+		 * @param {any} [value] Value to set (optional, only in use when key is a string)
 		 * @return {boolean} True on success, false on failure
 		 */
 		set: function ( selection, value ) {
@@ -133,6 +104,7 @@
 		/**
 		 * Check if a given key exists in the map.
 		 *
+		 * @memberof mw.Map
 		 * @param {string} selection Key to check
 		 * @return {boolean} True if the key exists
 		 */
@@ -147,9 +119,7 @@
 	 * This method is mainly intended for verbose logging. It is a no-op in production mode.
 	 * In ResourceLoader debug mode, it will use the browser's console.
 	 *
-	 * See {@link mw.log} for other logging methods.
-	 *
-	 * @member mw
+	 * @ignore
 	 * @param {...string} msg Messages to output to console.
 	 */
 	var log = function () {
@@ -157,24 +127,23 @@
 	};
 
 	/**
-	 * Collection of methods to help log messages to the console.
-	 *
-	 * @class mw.log
-	 * @singleton
-	 */
-
-	/**
 	 * Write a message to the browser console's warning channel.
 	 *
+	 * @memberof mw.log
+	 * @method warn
 	 * @param {...string} msg Messages to output to console
 	 */
 	log.warn = Function.prototype.bind.call( con.warn, con );
 
 	/**
-	 * @class mw
+	 * Base library for MediaWiki. Exposed globally as `mw`, with `mediaWiki` as alias.
+	 *
+	 * @namespace mw
+	 * @singleton
+	 * @hideconstructor
+	 * @static
 	 */
 	var mw = {
-
 		/**
 		 * Get the current time, measured in milliseconds since January 1, 1970 (UTC).
 		 *
@@ -182,6 +151,7 @@
 		 * floating-point values with microsecond precision that are guaranteed to be monotonic.
 		 * On all other browsers, it will fall back to using `Date`.
 		 *
+		 * @memberof mw
 		 * @return {number} Current time
 		 */
 		now: function () {
@@ -192,7 +162,9 @@
 
 			// Define the relevant shortcut
 			mw.now = navStart && perf.now ?
-				function () { return navStart + perf.now(); } :
+				function () {
+					return navStart + perf.now();
+				} :
 				Date.now;
 
 			return mw.now();
@@ -208,24 +180,47 @@
 		 */
 		trackQueue: [],
 
-		track: function ( topic, data ) {
-			mw.trackQueue.push( { topic: topic, data: data } );
-			// This method is extended by mediawiki.base to also fire events.
+		/**
+		 * Track `'resourceloader.exception'` event and send it to the window console.
+		 *
+		 * This exists for internal use by mw.loader only, to remember and buffer
+		 * very early events for `mw.trackSubscribe( 'resourceloader.exception' )`
+		 * even while `mediawiki.base` and `mw.track` are still in-flight.
+		 *
+		 * @private
+		 * @param {Object} data
+		 * @param {Error} [data.exception]
+		 * @param {string} data.source Error source
+		 * @param {string} [data.module] Name of module which caused the error
+		 */
+		trackError: function ( data ) {
+			if ( mw.track ) {
+				mw.track( 'resourceloader.exception', data );
+			} else {
+				mw.trackQueue.push( { topic: 'resourceloader.exception', data: data } );
+			}
+
+			// Log an error message to window.console, even in production mode.
+			var e = data.exception;
+			var msg = ( e ? 'Exception' : 'Error' ) +
+				' in ' + data.source +
+				( data.module ? ' in module ' + data.module : '' ) +
+				( e ? ':' : '.' );
+
+			con.log( msg );
+
+			// If we have an exception object, log it to the warning channel to trigger
+			// proper stacktraces in browsers that support it.
+			if ( e ) {
+				con.warn( e );
+			}
 		},
 
 		/**
-		 * Track an early error event via mw.track and send it to the window console.
+		 * Library that predates the ES6 Map class with similar functionality.
 		 *
-		 * @private
-		 * @param {string} topic Topic name
-		 * @param {Object} data Data describing the event, encoded as an object; see mw#logError
+		 * @type {mw.Map}
 		 */
-		trackError: function ( topic, data ) {
-			mw.track( topic, data );
-			logError( topic, data );
-		},
-
-		// Expose Map constructor
 		Map: Map,
 
 		/**
@@ -234,21 +229,24 @@
 		 * Check out [the complete list of configuration values](https://www.mediawiki.org/wiki/Manual:Interface/JavaScript#mw.config)
 		 * on mediawiki.org.
 		 *
-		 * @property {mw.Map} config
+		 * @memberof mw
+		 * @type {mw.Map}
 		 */
 		config: new Map(),
 
 		/**
 		 * Store for messages.
 		 *
-		 * @property {mw.Map}
+		 * @memberof mw
+		 * @type {mw.Map}
 		 */
 		messages: new Map(),
 
 		/**
 		 * Store for templates associated with a module.
 		 *
-		 * @property {mw.Map}
+		 * @type {mw.Map}
+		 * @memberof mw
 		 */
 		templates: new Map(),
 
@@ -260,4 +258,6 @@
 
 	// Attach to window and globally alias
 	window.mw = window.mediaWiki = mw;
+
+	$CODE.undefineQUnit();
 }() );

@@ -9,11 +9,9 @@ use MediaWiki\ResourceLoader\MessageBlobStore;
 use MediaWiki\ResourceLoader\Module;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use ReflectionMethod;
-use ResourceLoaderFileModuleTestingSubclass;
-use ResourceLoaderTestCase;
-use ResourceLoaderTestModule;
 
 /**
+ * @group ResourceLoader
  * @covers \MediaWiki\ResourceLoader\Module
  */
 class ModuleTest extends ResourceLoaderTestCase {
@@ -31,12 +29,12 @@ class ModuleTest extends ResourceLoaderTestCase {
 		];
 
 		$module = new FileModule( $baseParams );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$version = json_encode( $module->getVersionHash( $context ) );
 
 		// Exactly the same
 		$module = new FileModule( $baseParams );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$this->assertEquals(
 			$version,
 			json_encode( $module->getVersionHash( $context ) ),
@@ -47,7 +45,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$module = new FileModule( [
 			'dependencies' => [ 'mediawiki', 'jquery' ],
 		] + $baseParams );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$this->assertEquals(
 			$version,
 			json_encode( $module->getVersionHash( $context ) ),
@@ -58,7 +56,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$module = new FileModule( [
 			'messages' => [ 'world', 'hello' ],
 		] + $baseParams );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$this->assertEquals(
 			$version,
 			json_encode( $module->getVersionHash( $context ) ),
@@ -69,7 +67,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$module = new FileModule( [
 			'scripts' => [ 'bar.js', 'foo.js' ],
 		] + $baseParams );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$this->assertNotEquals(
 			$version,
 			json_encode( $module->getVersionHash( $context ) ),
@@ -78,7 +76,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 
 		// Subclass
 		$module = new ResourceLoaderFileModuleTestingSubclass( $baseParams );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$this->assertNotEquals(
 			$version,
 			json_encode( $module->getVersionHash( $context ) ),
@@ -88,7 +86,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 
 	public function testGetVersionHash_debug() {
 		$module = new ResourceLoaderTestModule( [ 'script' => 'foo();' ] );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$context = $this->getResourceLoaderContext( [ 'debug' => 'true' ] );
 		$this->assertSame( '', $module->getVersionHash( $context ) );
 	}
@@ -98,7 +96,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$module = new ResourceLoaderTestModule( [
 			'script' => 'foo();'
 		] );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$version = $module->getVersionHash( $context );
 		$this->assertSame( ResourceLoader::HASH_LENGTH, strlen( $version ), 'Hash length' );
 	}
@@ -108,7 +106,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$module = $this->getMockBuilder( Module::class )
 			->onlyMethods( [ 'getDefinitionSummary' ] )->getMock();
 		$module->method( 'getDefinitionSummary' )->willReturn( [ 'a' => 'summary' ] );
-		$module->setName( "" );
+		$module->setName( 'test' );
 
 		$this->expectException( LogicException::class );
 		$this->expectExceptionMessage( 'must call parent' );
@@ -126,18 +124,18 @@ class ModuleTest extends ResourceLoaderTestCase {
 		] );
 		$context = $this->getResourceLoaderContext( [ 'debug' => 'true' ] );
 		$module->setConfig( $context->getResourceLoader()->getConfig() );
-		$module->setName( "" );
+		$module->setName( 'test' );
 
 		$this->assertEquals(
 			[
-				'https://example.org/w/load.php?debug=1&lang=en&modules=&only=scripts'
+				'https://example.org/w/load.php?debug=1&lang=en&modules=test&only=scripts'
 			],
 			$module->getScriptURLsForDebug( $context ),
 			'script urls debug=true'
 		);
 		$this->assertEquals(
 			[ 'all' => [
-				'/w/load.php?debug=1&lang=en&modules=&only=styles'
+				'/w/load.php?debug=1&lang=en&modules=test&only=styles'
 			] ],
 			$module->getStyleURLsForDebug( $context ),
 			'style urls debug=true'
@@ -146,14 +144,14 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$context = $this->getResourceLoaderContext( [ 'debug' => '2' ] );
 		$this->assertEquals(
 			[
-				'https://example.org/w/load.php?debug=2&lang=en&modules=&only=scripts'
+				'https://example.org/w/load.php?debug=2&lang=en&modules=test&only=scripts'
 			],
 			$module->getScriptURLsForDebug( $context ),
 			'script urls debug=2'
 		);
 		$this->assertEquals(
 			[ 'all' => [
-				'/w/load.php?debug=2&lang=en&modules=&only=styles'
+				'/w/load.php?debug=2&lang=en&modules=test&only=styles'
 			] ],
 			$module->getStyleURLsForDebug( $context ),
 			'style urls debug=2'
@@ -164,28 +162,26 @@ class ModuleTest extends ResourceLoaderTestCase {
 		yield 'valid ES5' => [ "\n'valid';" ];
 
 		yield 'valid ES6/ES2015 for-of' => [
-			"var x = ['a', 'b']; for (var key of x) { console.log(key); }",
-			'Parse error: Unexpected token; token ; expected in file \'input\' on line 1'
+			"var x = ['a', 'b']; for (var key of x) { console.log(key); }"
 		];
 
 		yield 'valid ES2016 exponentiation' => [
-			"var x = 2; var y = 3; console.log(x ** y);",
-			'Parse error: Missing ) in parenthetical in file \'input\' on line 1'
+			"var x = 2; var y = 3; console.log(x ** y);"
 		];
 
 		yield 'valid ES2017 async-await' => [
 			"var foo = async function(x) { return await x.fetch(); }",
-			'Parse error: Missing ; before statement in file \'input\' on line 1'
+			'Parse error: Unexpected: function on line 1'
 		];
 
 		yield 'valid ES2018 spread in object literal' => [
 			"var x = {b: 2, c: 3}; var y = {a: 1, ...x};",
-			'Parse error: Invalid property name in file \'input\' on line 1'
+			'Parse error: Unexpected: ... on line 1'
 		];
 
 		yield 'SyntaxError' => [
 			"var a = 'this is';\n {\ninvalid",
-			'Parse error: Unexpected token; token } expected in file \'input\' on line 3"'
+			'Parse error: Unclosed { on line 3'
 		];
 
 		// If an implementation matches inputs using a regex with runaway backtracking,
@@ -210,8 +206,6 @@ class ModuleTest extends ResourceLoaderTestCase {
 
 	/**
 	 * @dataProvider provideValidateScripts
-	 * @covers JSMinPlus
-	 * @covers JSParser
 	 */
 	public function testValidateScriptFile( $input, $error = null ) {
 		$this->overrideConfigValue( MainConfigNames::ResourceLoaderValidateJS, true );
@@ -271,7 +265,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$module = new ResourceLoaderTestModule( [
 			'script' => $raw
 		] );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$this->assertEquals( $raw, $module->getScript( $context ), 'Raw script' );
 		$this->assertEquals(
 			[ 'plainScripts' => [ [ 'content' => $raw ] ] ],
@@ -317,7 +311,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$context = $this->getResourceLoaderContext();
 
 		$module = new ResourceLoaderTestModule();
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$this->assertSame( [], $module->getHeaders( $context ), 'Default' );
 
 		$module = $this->getMockBuilder( ResourceLoaderTestModule::class )
@@ -339,7 +333,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 			'https://example.org/script.js' => [ 'as' => 'script' ],
 			'/example.png' => [ 'as' => 'image' ],
 		] );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$this->assertSame(
 			[
 				'Link: <https://example.org/script.js>;rel=preload;as=script,' .

@@ -7,7 +7,8 @@
 			"PPerviz",
 			"Toghrul Rahimli",
 			"Vugar 1981",
-			"Wertuose"
+			"Wertuose",
+			"Nemoralis"
 		]
 	},
 	"categorytree": "Kateqoriya ağacı",
@@ -26,7 +27,7 @@
 	"categorytree-member-counts": "Bu kateqoriya, {{PLURAL:$1|1 altkateqoriya|$1 altkateqoriya}}, {{PLURAL:$2|1 səhifə|$2 səhifə}} və {{PLURAL:$3|1 fayl|$3 fayl}}dan ibarətdir.",
 	"categorytree-num-categories": "$1 kat.",
 	"categorytree-num-pages": "$1 səh.",
-	"categorytree-num-files": "$1 F",
+	"categorytree-num-files": "$1 fayl",
 	"categorytree-num-empty": "boş",
 	"categorytree-load": "yüklə",
 	"categorytree-loading": "yüklənir…",

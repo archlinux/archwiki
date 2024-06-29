@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWTemplateDialog class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -37,7 +37,7 @@ ve.ui.MWTemplateDialog = function VeUiMWTemplateDialog( config ) {
 	this.preventReselection = false;
 
 	this.confirmDialogs = new ve.ui.WindowManager( { factory: ve.ui.windowFactory, isolate: true } );
-	$( document.body ).append( this.confirmDialogs.$element );
+	$( OO.ui.getTeleportTarget() ).append( this.confirmDialogs.$element );
 };
 
 /* Inheritance */

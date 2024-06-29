@@ -13,7 +13,8 @@
 			"ToprakM",
 			"Trncmvsr",
 			"Violetanka",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Cobija"
 		]
 	},
 	"templatedata-desc": "Şablon parametreleri için veri depolama uygulayın (JSON kullanarak)",
@@ -52,8 +53,8 @@
 	"templatedata-editbutton": "Şablon veriyi değiştir",
 	"templatedata-errormsg-jsonbadformat": "Bozuk JSON biçimi. Bu işlemi iptal edebilir, böylece düzeltebilir, geçerli <templatedata> etiketlerini silip tekrar deneyebilir veya geçerli şablon veriyi yenisiyle değiştirmeye devam edebilirsiniz.",
 	"templatedata-errormsg-insertblank": "Bilgi içermeyen şablon veriyi eklemek istediğinizden emin misiniz?",
-	"templatedata-exists-on-related-page": "Lütfen dikkat: \"[[$1]]\" ilgili sayfasında zaten bir şablon veri bloğu var.",
-	"templatedata-helplink": "Şablon veri hakkında bilgi",
+	"templatedata-exists-on-related-page": "Lütfen dikkat: \"[[$1]]\" ilgili sayfasında zaten bir şablon verisi bloku var.",
+	"templatedata-helplink": "Şablon verisi hakkında bilgi",
 	"templatedata-invalid-duplicate-value": "\"$1\" özelliği (\"$3\"), \"$2\" değerinin bir kopyasıdır.",
 	"templatedata-invalid-empty-array": "\"$1\" özelliği, dizisinde en az bir değere sahip olmalıdır.",
 	"templatedata-invalid-format": "\"$1\" özelliği, \"inline\", \"block\" veya geçerli bir biçim dizesi olması bekleniyor.",
@@ -111,7 +112,7 @@
 	"templatedata-modal-table-param-suggestedvalues": "Önerilen değerler",
 	"templatedata-modal-placeholder-multiselect": "Değer ekle...",
 	"templatedata-modal-table-param-type": "Tür",
-	"templatedata-modal-title": "Şablon veri düzenleyicisi",
+	"templatedata-modal-title": "Şablon verisi düzenleyicisi",
 	"templatedata-modal-title-addparam": "Yeni parametre ekle",
 	"templatedata-modal-title-choose-language": "Dil seç",
 	"templatedata-modal-title-language": "Dil",

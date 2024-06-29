@@ -9,36 +9,34 @@ module.exports = {
 	install: function ( app ) {
 		/**
 		 * Adds an `$i18n()` instance method that can be used in all components. This method is a
-		 * proxy to mw.message.
+		 * proxy to {@link mw.message}.
 		 *
 		 * Usage:
-		 *     `<p>{{ $i18n( 'my-message-key', param1, param2 ) }}</p>`
-		 *     or
-		 *     `<p>{{ $i18n( 'my-message-key' ).params( [ param1, param2 ] ) }}</p>`
+		 * ```
+		 * <p>{{ $i18n( 'my-message-key', param1, param2 ) }}</p>
+		 * ```
+		 * or
+		 * ```
+		 * <p>{{ $i18n( 'my-message-key' ).params( [ param1, param2 ] ) }}</p>
+		 * ```
 		 *
 		 * Note that this method only works for messages that return text. For messages that
-		 * need to be parsed to HTML, use the v-i18n-html directive.
+		 * need to be parsed to HTML, use the `v-i18n-html` directive.
 		 *
 		 * @param {string} key Key of message to get
-		 * @param {...Mixed} parameters Values for $N replacements
+		 * @param {...any} parameters Values for $N replacements
 		 * @return {mw.Message}
+		 * @memberof module:Vue.prototype
 		 */
 		function $i18n( key, ...parameters ) {
 			// eslint-disable-next-line mediawiki/msg-doc
 			return mw.message( key, ...parameters );
 		}
-		// This should be app.config.globalProperties.$i18n = ... , but that doesn't work
-		// with Vue 2-style app construction. Change this to use globalProperties when we're
-		// ready to drop compatibility for Vue 2-style new Vue( ... )
-		app.prototype.$i18n = $i18n;
-		// Calls to static method Vue.use cause Vue to argue about the wrong usage of .provide()
-		// before a Vue application instance is created. In those cases typeof app === 'function';
-		// This check can be drop when Vue 2 compatibility is abandoned.
-		if ( typeof app === 'object' ) {
-			// Facilitate the usage of $i18n in Vue 3 applications using setup() function
-			// from the composition API.
-			app.provide( 'i18n', $i18n );
-		}
+
+		// Make $i18n available as a global property
+		app.config.globalProperties.$i18n = $i18n;
+		// Also make $i18n available in setup() functions through inject()
+		app.provide( 'i18n', $i18n );
 
 		function renderI18nHtml( el, binding ) {
 			/* eslint-disable mediawiki/msg-doc */

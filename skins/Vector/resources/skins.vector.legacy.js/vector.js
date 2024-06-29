@@ -1,5 +1,5 @@
-/* eslint-disable no-jquery/no-jquery-constructor, no-jquery/no-other-methods, no-jquery/no-css, no-jquery/no-find-collection,
-	no-jquery/no-each-collection, no-jquery/no-attr */
+/* eslint-disable no-jquery/no-jquery-constructor, no-jquery/no-other-methods, no-jquery/no-css,
+	no-jquery/no-find-collection, no-jquery/no-each-collection, no-jquery/no-attr */
 /**
  * Collapsible tabs for Vector
  */

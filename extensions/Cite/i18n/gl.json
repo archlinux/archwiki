@@ -27,7 +27,6 @@
 	"cite_error_included_references": "Falta a etiqueta de peche para <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "As etiquetas <code>&lt;ref&gt;</code> existen para un grupo chamado \"$1\", pero non se atopou a etiqueta <code>&lt;references group=\"$1\"/&gt;</code> correspondente",
 	"cite_error_references_group_mismatch": "A etiqueta <code>&lt;ref&gt;</code> en <code>&lt;references&gt;</code> ten un atributo de grupo conflitivo \"$1\".",
-	"cite_error_references_missing_group": "A etiqueta <code>&lt;ref&gt;</code> co nome \"$2\" definida en <code>&lt;references&gt;</code> ten un atributo de grupo \"$1\" que non aparece no texto anterior.",
 	"cite_error_references_missing_key": "A etiqueta <code>&lt;ref&gt;</code> co nome \"$1\" definida en <code>&lt;references&gt;</code> non se utiliza no texto anterior.",
 	"cite_error_references_no_key": "A etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> non ten nome de atributo.",
 	"cite_error_empty_references_define": "A etiqueta <code>&lt;ref&gt;</code> co nome \"$1\" definida no grupo \"$2\" de <code>&lt;references&gt;</code> non ten contido.",

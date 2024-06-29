@@ -7,7 +7,7 @@ use ApiMain;
 use ApiUsageException;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseThreadItem;
 use MediaWiki\Title\Title;
-use TitleFormatter;
+use MediaWiki\Title\TitleFormatter;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiDiscussionToolsFindComment extends ApiBase {
@@ -33,18 +33,42 @@ class ApiDiscussionToolsFindComment extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 
-		$idOrName = $params['idorname'];
-
 		$values = [];
 
-		$byId = $this->threadItemStore->findNewestRevisionsById( $idOrName );
-		foreach ( $byId as $item ) {
-			$values[] = $this->getValue( $item, 'id' );
-		}
+		$this->requireAtLeastOneParameter( $params, 'idorname', 'heading', 'page' );
 
-		$byName = $this->threadItemStore->findNewestRevisionsByName( $idOrName );
-		foreach ( $byName as $item ) {
-			$values[] = $this->getValue( $item, 'name' );
+		if ( $params['idorname'] ) {
+			$idOrName = $params['idorname'];
+
+			$byId = $this->threadItemStore->findNewestRevisionsById( $idOrName );
+			foreach ( $byId as $item ) {
+				$values[] = $this->getValue( $item, 'id' );
+			}
+
+			$byName = $this->threadItemStore->findNewestRevisionsByName( $idOrName );
+			foreach ( $byName as $item ) {
+				$values[] = $this->getValue( $item, 'name' );
+			}
+		} else {
+			$this->requireAtLeastOneParameter( $params, 'heading' );
+			$this->requireAtLeastOneParameter( $params, 'page' );
+
+			$heading = $params['heading'];
+			$page = $params['page'];
+
+			$title = Title::newFromText( $page );
+			if ( $title ) {
+				$articleId = $title->getArticleId();
+
+				if ( $articleId ) {
+					$byHeading = $this->threadItemStore->findNewestRevisionsByHeading(
+						$heading, $articleId, $title->getTitleValue()
+					);
+					foreach ( $byHeading as $item ) {
+						$values[] = $this->getValue( $item, 'heading' );
+					}
+				}
+			}
 		}
 
 		$redirects = 0;
@@ -60,7 +84,6 @@ class ApiDiscussionToolsFindComment extends ApiBase {
 			if ( $redirects === 1 && $value['couldredirect'] ) {
 				$value['shouldredirect'] = true;
 			}
-			unset( $value['couldredirect'] );
 			$this->getResult()->addValue( $this->getModuleName(), null, $value );
 		}
 	}
@@ -69,7 +92,7 @@ class ApiDiscussionToolsFindComment extends ApiBase {
 	 * Get a value to add to the results
 	 *
 	 * @param DatabaseThreadItem $item Thread item
-	 * @param string $matchedBy How the thread item was matched (id or name)
+	 * @param string $matchedBy How the thread item was matched (id, name or heading)
 	 * @return array
 	 */
 	private function getValue( DatabaseThreadItem $item, string $matchedBy ): array {
@@ -83,8 +106,7 @@ class ApiDiscussionToolsFindComment extends ApiBase {
 			'matchedby' => $matchedBy,
 			// Could this be an automatic redirect? Will be converted to 'shouldredirect'
 			// if there is only one of these in the result set.
-			// Matches logic in Special:GoToComment
-			'couldredirect' => $item->getRevision()->isCurrent() && !is_string( $item->getTranscludedFrom() )
+			'couldredirect' => $item->isCanonicalPermalink(),
 		];
 	}
 
@@ -94,7 +116,13 @@ class ApiDiscussionToolsFindComment extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'idorname' => [
-				ParamValidator::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_TYPE => 'string',
+			],
+			'heading' => [
+				ParamValidator::PARAM_TYPE => 'string',
+			],
+			'page' => [
+				ParamValidator::PARAM_TYPE => 'string',
 			],
 		];
 	}

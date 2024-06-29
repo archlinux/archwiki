@@ -1,10 +1,12 @@
+var HighlightColors = require( '../HighlightColors.js' );
+
 /**
- * A button to configure highlight for a filter item
+ * A button to configure highlight for a filter item.
  *
  * @class mw.rcfilters.ui.FilterItemHighlightButton
+ * @ignore
  * @extends OO.ui.PopupButtonWidget
  *
- * @constructor
  * @param {mw.rcfilters.Controller} controller RCFilters controller
  * @param {mw.rcfilters.dm.FilterItem} model Filter item model
  * @param {mw.rcfilters.ui.HighlightPopupWidget} highlightPopup Shared highlight color picker
@@ -14,7 +16,7 @@ var FilterItemHighlightButton = function MwRcfiltersUiFilterItemHighlightButton(
 	config = config || {};
 
 	// Parent
-	FilterItemHighlightButton.parent.call( this, $.extend( true, {}, config, {
+	FilterItemHighlightButton.super.call( this, $.extend( true, {}, config, {
 		icon: 'highlight',
 		indicator: 'down'
 	} ) );
@@ -56,7 +58,7 @@ FilterItemHighlightButton.prototype.onAction = function () {
 	this.popup.setFilterItem( this.model );
 
 	// Parent method
-	FilterItemHighlightButton.parent.prototype.onAction.call( this );
+	FilterItemHighlightButton.super.prototype.onAction.call( this );
 };
 
 /**
@@ -71,7 +73,7 @@ FilterItemHighlightButton.prototype.updateUiBasedOnModel = function () {
 		currentColor !== null
 	);
 
-	mw.rcfilters.HighlightColors.forEach( function ( c ) {
+	HighlightColors.forEach( function ( c ) {
 		// The following classes are used here:
 		// * mw-rcfilters-ui-filterItemHighlightButton-circle-color-c1
 		// * mw-rcfilters-ui-filterItemHighlightButton-circle-color-c2

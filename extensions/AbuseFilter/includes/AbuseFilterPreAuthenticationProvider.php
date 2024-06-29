@@ -6,10 +6,10 @@ use IBufferingStatsdDataFactory;
 use MediaWiki\Auth\AbstractPreAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use SpecialPage;
 use StatusValue;
-use User;
 
 /**
  * AuthenticationProvider used to filter account creations. This runs after normal preauth providers

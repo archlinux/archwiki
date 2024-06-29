@@ -45,15 +45,13 @@ class BenchmarkJsValidate extends Benchmarker {
 		}
 
 		$filename = basename( $file );
-		$parser = new JSParser();
 
 		$this->bench( [
-			"JSParser::parse ($filename)" => [
-				'function' => static function ( $parser, $content, $filename ) {
-					// phpcs:ignore Generic.PHP.NoSilencedErrors
-					@$parser->parse( $content, $filename, 1 );
+			"Peast::parse ($filename)" => [
+				'function' => static function ( $content ) {
+					Peast\Peast::ES2016( $content )->parse();
 				},
-				'args' => [ $parser, $content, $filename ]
+				'args' => [ $content ]
 			]
 		] );
 	}

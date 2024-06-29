@@ -4,12 +4,12 @@ namespace MediaWiki\Extension\Notifications;
 
 use BagOStuff;
 use CachedBagOStuff;
-use CentralIdLookup;
-use DeferredUpdates;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\User;
 use ObjectCache;
 use UnexpectedValueException;
-use User;
 
 /**
  * A small wrapper around ObjectCache to manage

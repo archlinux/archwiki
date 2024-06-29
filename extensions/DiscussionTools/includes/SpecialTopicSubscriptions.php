@@ -5,20 +5,26 @@ namespace MediaWiki\Extension\DiscussionTools;
 use ErrorPageError;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Linker\LinkRenderer;
-use SpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
 
 class SpecialTopicSubscriptions extends SpecialPage {
 
 	private LinkRenderer $linkRenderer;
 	private LinkBatchFactory $linkBatchFactory;
+	private ThreadItemStore $threadItemStore;
+	private ThreadItemFormatter $threadItemFormatter;
 
 	public function __construct(
 		LinkRenderer $linkRenderer,
-		LinkBatchFactory $linkBatchFactory
+		LinkBatchFactory $linkBatchFactory,
+		ThreadItemStore $threadItemStore,
+		ThreadItemFormatter $threadItemFormatter
 	) {
 		parent::__construct( 'TopicSubscriptions' );
 		$this->linkRenderer = $linkRenderer;
 		$this->linkBatchFactory = $linkBatchFactory;
+		$this->threadItemStore = $threadItemStore;
+		$this->threadItemFormatter = $threadItemFormatter;
 	}
 
 	/**
@@ -38,7 +44,9 @@ class SpecialTopicSubscriptions extends SpecialPage {
 		$pager = new TopicSubscriptionsPager(
 			$this->getContext(),
 			$this->linkRenderer,
-			$this->linkBatchFactory
+			$this->linkBatchFactory,
+			$this->threadItemStore,
+			$this->threadItemFormatter
 		);
 		$this->getOutput()->addParserOutputContent( $pager->getFullOutput() );
 	}

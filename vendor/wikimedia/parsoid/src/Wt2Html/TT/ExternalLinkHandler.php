@@ -30,10 +30,6 @@ class ExternalLinkHandler extends TokenHandler {
 		}
 	}
 
-	/**
-	 * @param string $str
-	 * @return bool
-	 */
 	private static function imageExtensions( string $str ): bool {
 		switch ( $str ) {
 			case 'jpg': // fall through
@@ -46,11 +42,6 @@ class ExternalLinkHandler extends TokenHandler {
 		}
 	}
 
-	/**
-	 * @param array $array
-	 * @param callable $fn
-	 * @return bool
-	 */
 	private function arraySome( array $array, callable $fn ): bool {
 		foreach ( $array as $value ) {
 			if ( $fn( $value ) ) {
@@ -60,10 +51,6 @@ class ExternalLinkHandler extends TokenHandler {
 		return false;
 	}
 
-	/**
-	 * @param string $href
-	 * @return bool
-	 */
 	private function hasImageLink( string $href ): bool {
 		$allowedPrefixes = $this->env->getSiteConfig()->allowedExternalImagePrefixes();
 		$bits = explode( '.', $href );
@@ -85,15 +72,11 @@ class ExternalLinkHandler extends TokenHandler {
 			} );
 	}
 
-	/**
-	 * @param Token $token
-	 * @return TokenHandlerResult|null
-	 */
 	private function onUrlLink( Token $token ): ?TokenHandlerResult {
 		$tagAttrs = null;
 		$builtTag = null;
 		$env = $this->env;
-		$origHref = $token->getAttribute( 'href' );
+		$origHref = $token->getAttributeV( 'href' );
 		$href = TokenUtils::tokensToString( $origHref );
 		$dataParsoid = $token->dataParsoid->clone();
 
@@ -138,7 +121,7 @@ class ExternalLinkHandler extends TokenHandler {
 					$builtTag,
 					// Make sure there are no IDN-ignored characters in the text so
 					// the user doesn't accidentally copy any.
-					Sanitizer::cleanUrl( $env->getSiteConfig(), $href, '' ),   // mode could be 'wikilink'
+					Sanitizer::cleanUrl( $env->getSiteConfig(), $href, '' ), // mode could be 'wikilink'
 					new EndTagTk(
 						'a',
 						[],
@@ -158,14 +141,14 @@ class ExternalLinkHandler extends TokenHandler {
 		$newAttrs = null;
 		$aStart = null;
 		$env = $this->env;
-		$origHref = $token->getAttribute( 'href' );
+		$origHref = $token->getAttributeV( 'href' );
 		$hasExpandedAttrs = TokenUtils::hasTypeOf( $token, 'mw:ExpandedAttrs' );
 		$href = TokenUtils::tokensToString( $origHref );
 		$hrefWithEntities = TokenUtils::tokensToString( $origHref, false, [
 				'includeEntities' => true
 			]
 		);
-		$content = $token->getAttribute( 'mw:content' );
+		$content = $token->getAttributeV( 'mw:content' );
 		$dataParsoid = $token->dataParsoid->clone();
 		$magLinkType = TokenUtils::matchTypeOf(
 			$token, '#^mw:(Ext|Wiki)Link/(ISBN|RFC|PMID)$#'
@@ -203,7 +186,6 @@ class ExternalLinkHandler extends TokenHandler {
 		} elseif ( ( !$hasExpandedAttrs && is_string( $origHref ) ) ||
 					$this->urlParser->tokenizeURL( $hrefWithEntities ) !== false
 		) {
-			$rdfaType = 'mw:ExtLink';
 			if ( is_array( $content ) && count( $content ) === 1 && is_string( $content[0] ) ) {
 				$src = $content[0];
 				if ( $env->getSiteConfig()->hasValidProtocol( $src ) &&
@@ -221,7 +203,7 @@ class ExternalLinkHandler extends TokenHandler {
 				}
 			}
 
-			$newAttrs = [ new KV( 'rel', $rdfaType ) ];
+			$newAttrs = [ new KV( 'rel', 'mw:ExtLink' ) ];
 			// combine with existing rdfa attrs
 			// href is set explicitly below
 			$newAttrs = WikiLinkHandler::buildLinkAttrs(
@@ -236,7 +218,7 @@ class ExternalLinkHandler extends TokenHandler {
 				// and we need src without those spaces.
 				$tsr0a = $dataParsoid->tsr->start + 1;
 				$tsr1a = $dataParsoid->extLinkContentOffsets->start -
-					strlen( $token->getAttribute( 'spaces' ) ?? '' );
+					strlen( $token->getAttributeV( 'spaces' ) ?? '' );
 				$length = $tsr1a - $tsr0a;
 				$aStart->addNormalizedAttribute( 'href', $href,
 					substr( $this->manager->getFrame()->getSrcText(), $tsr0a, $length ) );

@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 
@@ -10,22 +12,18 @@ use MediaWiki\Title\Title;
  * @group Database
  * @group medium
  *
- * @covers ApiProtect
+ * @covers \ApiProtect
  */
 class ApiProtectTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'page_restrictions', 'logging', 'watchlist', 'watchlist_expiry' ]
-		);
 
 		$this->overrideConfigValue( MainConfigNames::WatchlistExpiry, true );
 	}
 
 	/**
-	 * @covers ApiProtect::execute()
+	 * @covers \ApiProtect::execute()
 	 */
 	public function testProtectWithWatch(): void {
 		$title = Title::makeTitle( NS_MAIN, 'TestProtectWithWatch' );

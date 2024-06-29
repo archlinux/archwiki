@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Deferred\DeferredUpdates;
 use Wikimedia\LightweightObjectStore\StorageAwareness;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
@@ -7,8 +8,8 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @author Matthias Mullie <mmullie@wikimedia.org>
  * @group BagOStuff
- * @covers BagOStuff
- * @covers MediumSpecificBagOStuff
+ * @covers \BagOStuff
+ * @covers \MediumSpecificBagOStuff
  */
 abstract class BagOStuffTestBase extends MediaWikiIntegrationTestCase {
 	/** @var BagOStuff */

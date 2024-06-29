@@ -24,23 +24,23 @@
 namespace MediaWiki\Extension\MultimediaViewer;
 
 use CategoryPage;
-use Config;
 use ExtensionRegistry;
 use MediaWiki\Category\Category;
+use MediaWiki\Config\Config;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\MakeGlobalVariablesScriptHook;
 use MediaWiki\Hook\ThumbnailBeforeProduceHTMLHook;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\CategoryPageViewHook;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
-use MediaWiki\User\UserOptionsLookup;
-use OutputPage;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\User;
+use MobileContext;
 use Skin;
 use ThumbnailImage;
-use User;
 
 class Hooks implements
 	MakeGlobalVariablesScriptHook,
@@ -51,34 +51,38 @@ class Hooks implements
 	ResourceLoaderGetConfigVarsHook,
 	ThumbnailBeforeProduceHTMLHook
 {
-	/** Link to more information about this module */
+	/** @var string Link to more information about this module */
 	protected static $infoLink =
 		'https://mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About';
 
-	/** Link to a page where this module can be discussed */
+	/** @var string Link to a page where this module can be discussed */
 	protected static $discussionLink =
 		'https://mediawiki.org/wiki/Special:MyLanguage/Extension_talk:Media_Viewer/About';
 
-	/** Link to help about this module */
+	/** @var string Link to help about this module */
 	protected static $helpLink =
 		'https://mediawiki.org/wiki/Special:MyLanguage/Help:Extension:Media_Viewer';
 
-	/**
-	 * @var UserOptionsLookup
-	 */
-	private $userOptionsLookup;
+	private Config $config;
 	private SpecialPageFactory $specialPageFactory;
+	private UserOptionsLookup $userOptionsLookup;
+	private ?MobileContext $mobileContext;
 
 	/**
-	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param Config $config
 	 * @param SpecialPageFactory $specialPageFactory
+	 * @param UserOptionsLookup $userOptionsLookup
 	 */
 	public function __construct(
+		Config $config,
+		SpecialPageFactory $specialPageFactory,
 		UserOptionsLookup $userOptionsLookup,
-		SpecialPageFactory $specialPageFactory
+		?MobileContext $mobileContext
 	) {
-		$this->userOptionsLookup = $userOptionsLookup;
+		$this->config = $config;
 		$this->specialPageFactory = $specialPageFactory;
+		$this->userOptionsLookup = $userOptionsLookup;
+		$this->mobileContext = $mobileContext;
 	}
 
 	/**
@@ -86,9 +90,7 @@ class Hooks implements
 	 * @param array &$defaultOptions
 	 */
 	public function onUserGetDefaultOptions( &$defaultOptions ) {
-		global $wgMediaViewerEnableByDefault;
-
-		if ( $wgMediaViewerEnableByDefault ) {
+		if ( $this->config->get( 'MediaViewerEnableByDefault' ) ) {
 			$defaultOptions['multimediaviewer-enable'] = 1;
 		}
 	}
@@ -99,14 +101,14 @@ class Hooks implements
 	 * @return bool
 	 */
 	protected function shouldHandleClicks( User $performer ): bool {
-		global $wgMediaViewerEnableByDefaultForAnonymous,
-			$wgMediaViewerEnableByDefault;
-
 		if ( $performer->isNamed() ) {
 			return (bool)$this->userOptionsLookup->getOption( $performer, 'multimediaviewer-enable' );
 		}
 
-		return (bool)( $wgMediaViewerEnableByDefaultForAnonymous ?? $wgMediaViewerEnableByDefault );
+		return (bool)(
+			$this->config->get( 'MediaViewerEnableByDefaultForAnonymous' ) ??
+			$this->config->get( 'MediaViewerEnableByDefault' )
+		);
 	}
 
 	/**
@@ -114,13 +116,12 @@ class Hooks implements
 	 * Could be on article pages or on Category pages
 	 * @param OutputPage $out
 	 */
-	protected static function getModules( OutputPage $out ) {
+	protected function getModules( OutputPage $out ) {
 		// The MobileFrontend extension provides its own implementation of MultimediaViewer.
 		// See https://phabricator.wikimedia.org/T65504 and subtasks for more details.
 		// To avoid loading MMV twice, we check the environment we are running in.
 		$isMobileFrontendView = ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
-			MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' )
-				->shouldDisplayMobileView();
+			$this->mobileContext && $this->mobileContext->shouldDisplayMobileView();
 		if ( !$isMobileFrontendView ) {
 			$out->addModules( [ 'mmv.head', 'mmv.bootstrap.autostart' ] );
 		}
@@ -147,7 +148,7 @@ class Hooks implements
 				$fileRelatedSpecialPages );
 
 		if ( $pageHasThumbnails || $pageIsFilePage || $pageIsFileRelatedSpecialPage || $pageIsFlowPage ) {
-			self::getModules( $out );
+			$this->getModules( $out );
 		}
 	}
 
@@ -161,7 +162,7 @@ class Hooks implements
 		$cat = Category::newFromTitle( $title );
 		if ( $cat->getFileCount() > 0 ) {
 			$out = $catPage->getContext()->getOutput();
-			self::getModules( $out );
+			$this->getModules( $out );
 		}
 	}
 
@@ -187,17 +188,14 @@ class Hooks implements
 	 * @param Config $config
 	 */
 	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
-		global $wgMediaViewerUseThumbnailGuessing, $wgMediaViewerExtensions,
-			$wgMediaViewerImageQueryParameter, $wgMediaViewerRecordVirtualViewBeaconURI;
-
 		$vars['wgMultimediaViewer'] = [
 			'infoLink' => self::$infoLink,
 			'discussionLink' => self::$discussionLink,
 			'helpLink' => self::$helpLink,
-			'useThumbnailGuessing' => (bool)$wgMediaViewerUseThumbnailGuessing,
-			'imageQueryParameter' => $wgMediaViewerImageQueryParameter,
-			'recordVirtualViewBeaconURI' => $wgMediaViewerRecordVirtualViewBeaconURI,
-			'extensions' => $wgMediaViewerExtensions,
+			'useThumbnailGuessing' => (bool)$this->config->get( 'MediaViewerUseThumbnailGuessing' ),
+			'imageQueryParameter' => $this->config->get( 'MediaViewerImageQueryParameter' ),
+			'recordVirtualViewBeaconURI' => $this->config->get( 'MediaViewerRecordVirtualViewBeaconURI' ),
+			'extensions' => $this->config->get( 'MediaViewerExtensions' ),
 		];
 		$vars['wgMediaViewer'] = true;
 	}
@@ -210,9 +208,12 @@ class Hooks implements
 	 * @return void
 	 */
 	public function onMakeGlobalVariablesScript( &$vars, $out ): void {
-		$isMultimediaViewerEnable = $this->userOptionsLookup->getDefaultOption( 'multimediaviewer-enable' );
-
 		$user = $out->getUser();
+		$isMultimediaViewerEnable = $this->userOptionsLookup->getDefaultOption(
+			'multimediaviewer-enable',
+			$user
+		);
+
 		$vars['wgMediaViewerOnClick'] = $this->shouldHandleClicks( $user );
 		// needed because of T71942; could be different for anon and logged-in
 		$vars['wgMediaViewerEnabledByDefault'] = (bool)$isMultimediaViewerEnable;

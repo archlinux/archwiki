@@ -29,6 +29,7 @@ class ExtensionProcessor implements Processor {
 		MainConfigNames::AvailableRights,
 		MainConfigNames::CentralIdLookupProviders,
 		MainConfigNames::ChangeCredentialsBlacklist,
+		MainConfigNames::ConditionalUserOptions,
 		MainConfigNames::ConfigRegistry,
 		MainConfigNames::ContentHandlers,
 		MainConfigNames::DefaultUserOptions,
@@ -39,6 +40,7 @@ class ExtensionProcessor implements Processor {
 		MainConfigNames::FilterLogTypes,
 		MainConfigNames::GrantPermissionGroups,
 		MainConfigNames::GrantPermissions,
+		MainConfigNames::GrantRiskGroups,
 		MainConfigNames::GroupPermissions,
 		MainConfigNames::GroupsAddToSelf,
 		MainConfigNames::GroupsRemoveFromSelf,
@@ -141,6 +143,7 @@ class ExtensionProcessor implements Processor {
 		'AutoloadClasses',
 		'AutoloadNamespaces',
 		'ExtensionMessagesFiles',
+		'TranslationAliasesDirs',
 		'ForeignResourcesDir',
 		'Hooks',
 		'MessagePosterModule',
@@ -163,6 +166,7 @@ class ExtensionProcessor implements Processor {
 	protected $globals = [
 		'wgExtensionMessagesFiles' => [],
 		'wgMessagesDirs' => [],
+		'TranslationAliasesDirs' => [],
 	];
 
 	/**
@@ -255,6 +259,7 @@ class ExtensionProcessor implements Processor {
 		$this->extractHooks( $info, $path );
 		$this->extractExtensionMessagesFiles( $dir, $info );
 		$this->extractMessagesDirs( $dir, $info );
+		$this->extractTranslationAliasesDirs( $dir, $info );
 		$this->extractSkins( $dir, $info );
 		$this->extractSkinImportPaths( $dir, $info );
 		$this->extractNamespaces( $info );
@@ -646,8 +651,6 @@ class ExtensionProcessor implements Processor {
 					$data['localBasePath'] = "$dir/{$data['localBasePath']}";
 				}
 			}
-			// Satisfy PHPUnit ResourcesTest::testUnsatisfiableDependencies
-			$data['targets'] = [ 'test' ];
 			$this->attributes['QUnitTestModules']["test.{$info['name']}"] = $data;
 		}
 
@@ -687,6 +690,21 @@ class ExtensionProcessor implements Processor {
 				foreach ( (array)$files as $file ) {
 					$this->globals["wgMessagesDirs"][$name][] = "$dir/$file";
 				}
+			}
+		}
+	}
+
+	/**
+	 * Set localization related settings, which need to be expanded to use
+	 * absolute paths
+	 *
+	 * @param string $dir
+	 * @param array $info
+	 */
+	protected function extractTranslationAliasesDirs( $dir, array $info ) {
+		foreach ( $info['TranslationAliasesDirs'] ?? [] as $name => $files ) {
+			foreach ( (array)$files as $file ) {
+				$this->globals['wgTranslationAliasesDirs'][$name][] = "$dir/$file";
 			}
 		}
 	}
@@ -769,7 +787,9 @@ class ExtensionProcessor implements Processor {
 		if ( isset( $this->credits[$name] ) ) {
 			$firstPath = $this->credits[$name]['path'];
 			$secondPath = $credits['path'];
-			throw new Exception( "It was attempted to load $name twice, from $firstPath and $secondPath." );
+			throw new InvalidArgumentException(
+				"It was attempted to load $name twice, from $firstPath and $secondPath."
+			);
 		}
 
 		$this->credits[$name] = $credits;
@@ -780,7 +800,7 @@ class ExtensionProcessor implements Processor {
 	protected function extractForeignResourcesDir( array $info, string $name, string $dir ): void {
 		if ( array_key_exists( 'ForeignResourcesDir', $info ) ) {
 			if ( !is_string( $info['ForeignResourcesDir'] ) ) {
-				throw new Exception( "Incorrect ForeignResourcesDir type, must be a string (in $name)" );
+				throw new InvalidArgumentException( "Incorrect ForeignResourcesDir type, must be a string (in $name)" );
 			}
 			$this->attributes['ForeignResourcesDir'][$name] = "{$dir}/{$info['ForeignResourcesDir']}";
 		}
@@ -873,6 +893,14 @@ class ExtensionProcessor implements Processor {
 				"The configuration setting '$key' was already set by MediaWiki core or"
 				. " another extension, and cannot be set again by $extName." );
 		}
+		if ( isset( $value[ExtensionRegistry::MERGE_STRATEGY] ) &&
+			$value[ExtensionRegistry::MERGE_STRATEGY] === 'array_merge_recursive' ) {
+			wfDeprecatedMsg(
+				"Using the array_merge_recursive merge strategy in extension.json and skin.json" .
+				" was deprecated in MediaWiki 1.42",
+				"1.42"
+			);
+		}
 		$this->globals[$key] = $value;
 	}
 
@@ -920,23 +948,6 @@ class ExtensionProcessor implements Processor {
 		} else {
 			$array[$name] = $value;
 		}
-	}
-
-	/**
-	 * @deprecated since 1.39, use getExtractedAutoloadInfo instead
-	 *
-	 * @param string $dir
-	 * @param array $info
-	 *
-	 * @return array
-	 */
-	public function getExtraAutoloaderPaths( $dir, array $info ) {
-		wfDeprecated( __METHOD__, '1.39' );
-		$paths = [];
-		if ( isset( $info['load_composer_autoloader'] ) && $info['load_composer_autoloader'] === true ) {
-			$paths[] = "$dir/vendor/autoload.php";
-		}
-		return $paths;
 	}
 
 	/**

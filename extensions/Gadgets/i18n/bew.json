@@ -6,7 +6,7 @@
 	},
 	"prefs-gadgets": "Alat",
 	"prefs-description-gadgets": "Nyalain keboléan bakal lu punya rèkening.",
-	"gadgets": "Alat",
+	"special-gadgets": "Alat",
 	"gadgetusage": "Statistik pemakéan alat",
 	"gadgetusage-gadget": "Alat",
 	"gadgetusage-usercount": "Jumblah pemaké",
@@ -25,9 +25,5 @@
 	"gadgets-export-title": "Èkspor alat",
 	"gadgets-not-found": "Alat \"$1\" kaga' ketemu.",
 	"gadgets-export-download": "Comot",
-	"gadgets-validate-notset": "Ciri <code>$1</code> kaga' disetèl.",
-	"right-gadgets-edit": "Permak halaman JavaScript èn CSS alat",
-	"action-gadgets-edit": "permak ni halaman JavaScript èn CSS alat",
-	"right-gadgets-definition-edit": "Permak ta'rip alat",
-	"action-gadgets-definition-edit": "permak ni ta'rip alat"
+	"gadgets-validate-notset": "Ciri <code>$1</code> kaga' disetèl."
 }

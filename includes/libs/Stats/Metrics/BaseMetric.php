@@ -22,6 +22,7 @@ declare( strict_types=1 );
 namespace Wikimedia\Stats\Metrics;
 
 use IBufferingStatsdDataFactory;
+use InvalidArgumentException;
 use Wikimedia\Stats\Exceptions\IllegalOperationException;
 use Wikimedia\Stats\Sample;
 use Wikimedia\Stats\StatsUtils;
@@ -65,6 +66,9 @@ class BaseMetric implements BaseMetricInterface {
 	/** @var IBufferingStatsdDataFactory|null */
 	private ?IBufferingStatsdDataFactory $statsdDataFactory = null;
 
+	/** @var string[] */
+	private array $statsdNamespaces = [];
+
 	/** @inheritDoc */
 	public function __construct( string $component, string $name ) {
 		$this->component = $component;
@@ -102,6 +106,11 @@ class BaseMetric implements BaseMetricInterface {
 	}
 
 	/** @inheritDoc */
+	public function getSampleCount(): int {
+		return count( $this->samples );
+	}
+
+	/** @inheritDoc */
 	public function withStaticLabels( array $labelKeys, array $labelValues ): BaseMetricInterface {
 		$this->labelKeys = $labelKeys;
 		$this->staticLabels = array_combine( $labelKeys, $labelValues );
@@ -126,6 +135,29 @@ class BaseMetric implements BaseMetricInterface {
 	public function withStatsdDataFactory( $statsdDataFactory ): BaseMetric {
 		$this->statsdDataFactory = $statsdDataFactory;
 		return $this;
+	}
+
+	/** @inheritDoc */
+	public function setStatsdNamespaces( $statsdNamespaces ): void {
+		if ( $this->statsdDataFactory === null ) {
+			return;
+		}
+		$statsdNamespaces = is_array( $statsdNamespaces ) ? $statsdNamespaces : [ $statsdNamespaces ];
+
+		foreach ( $statsdNamespaces as $namespace ) {
+			if ( $namespace === '' ) {
+				throw new InvalidArgumentException( "Stats: StatsD namespace cannot be empty." );
+			}
+			if ( !is_string( $namespace ) ) {
+				throw new InvalidArgumentException( "Stats: StatsD namespace must be a string." );
+			}
+		}
+		$this->statsdNamespaces = $statsdNamespaces;
+	}
+
+	/** @inheritDoc */
+	public function getStatsdNamespaces(): array {
+		return $this->statsdNamespaces;
 	}
 
 	/**
@@ -166,6 +198,14 @@ class BaseMetric implements BaseMetricInterface {
 	public function getLabelValues(): array {
 		$output = [];
 		$labels = StatsUtils::mergeLabels( $this->staticLabels, $this->workingLabels );
+
+		# make sure all labels are accounted for
+		if ( array_diff( $this->labelKeys, array_keys( $labels ) ) ) {
+			throw new IllegalOperationException(
+				"Stats: Cannot associate label keys with label values: "
+				. "Not all initialized labels have an assigned value." );
+		}
+
 		foreach ( $this->labelKeys as $labelKey ) {
 			$output[] = $labels[$labelKey];
 		}

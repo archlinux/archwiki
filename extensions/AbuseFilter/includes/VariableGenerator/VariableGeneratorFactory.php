@@ -7,10 +7,11 @@ use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use MimeAnalyzer;
 use RecentChange;
 use RepoGroup;
-use User;
 
 class VariableGeneratorFactory {
 	public const SERVICE_NAME = 'AbuseFilterVariableGeneratorFactory';
@@ -25,6 +26,8 @@ class VariableGeneratorFactory {
 	private $repoGroup;
 	/** @var WikiPageFactory */
 	private $wikiPageFactory;
+	/** @var UserFactory */
+	private $userFactory;
 
 	/**
 	 * @param AbuseFilterHookRunner $hookRunner
@@ -32,19 +35,22 @@ class VariableGeneratorFactory {
 	 * @param MimeAnalyzer $mimeAnalyzer
 	 * @param RepoGroup $repoGroup
 	 * @param WikiPageFactory $wikiPageFactory
+	 * @param UserFactory $userFactory
 	 */
 	public function __construct(
 		AbuseFilterHookRunner $hookRunner,
 		TextExtractor $textExtractor,
 		MimeAnalyzer $mimeAnalyzer,
 		RepoGroup $repoGroup,
-		WikiPageFactory $wikiPageFactory
+		WikiPageFactory $wikiPageFactory,
+		UserFactory $userFactory
 	) {
 		$this->hookRunner = $hookRunner;
 		$this->textExtractor = $textExtractor;
 		$this->mimeAnalyzer = $mimeAnalyzer;
 		$this->repoGroup = $repoGroup;
 		$this->wikiPageFactory = $wikiPageFactory;
+		$this->userFactory = $userFactory;
 	}
 
 	/**
@@ -52,7 +58,7 @@ class VariableGeneratorFactory {
 	 * @return VariableGenerator
 	 */
 	public function newGenerator( VariableHolder $holder = null ): VariableGenerator {
-		return new VariableGenerator( $this->hookRunner, $holder );
+		return new VariableGenerator( $this->hookRunner, $this->userFactory, $holder );
 	}
 
 	/**
@@ -64,6 +70,7 @@ class VariableGeneratorFactory {
 	public function newRunGenerator( User $user, Title $title, VariableHolder $holder = null ): RunVariableGenerator {
 		return new RunVariableGenerator(
 			$this->hookRunner,
+			$this->userFactory,
 			$this->textExtractor,
 			$this->mimeAnalyzer,
 			$this->wikiPageFactory,
@@ -86,6 +93,7 @@ class VariableGeneratorFactory {
 	): RCVariableGenerator {
 		return new RCVariableGenerator(
 			$this->hookRunner,
+			$this->userFactory,
 			$this->mimeAnalyzer,
 			$this->repoGroup,
 			$this->wikiPageFactory,

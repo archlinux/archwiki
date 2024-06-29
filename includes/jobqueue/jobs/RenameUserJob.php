@@ -1,10 +1,8 @@
 <?php
 
 use MediaWiki\Config\Config;
-use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
-use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\ILBFactory;
 
 /**
@@ -22,9 +20,9 @@ use Wikimedia\Rdbms\ILBFactory;
  *   - timestampColumn : The *_timestamp column
  *   - minTimestamp    : The minimum bound of the timestamp column range for this batch
  *   - maxTimestamp    : The maximum bound of the timestamp column range for this batch
- *   - uniqueKey       : A column that is unique (preferrably the PRIMARY KEY) [optional]
+ *   - uniqueKey       : A column that is unique (preferably the PRIMARY KEY) [optional]
  * b) The unique key based rename parameters:
- *   - uniqueKey : A column that is unique (preferrably the PRIMARY KEY)
+ *   - uniqueKey : A column that is unique (preferably the PRIMARY KEY)
  *   - keyId     : A list of values for this column to determine rows to update for this batch
  *
  * To avoid some race conditions, the following parameters should be set:
@@ -38,9 +36,6 @@ class RenameUserJob extends Job {
 	/** @var ILBFactory */
 	private $lbFactory;
 
-	/** @var LoggerInterface */
-	private $logger;
-
 	public function __construct(
 		Title $title,
 		$params,
@@ -51,25 +46,12 @@ class RenameUserJob extends Job {
 
 		$this->updateRowsPerQuery = $config->get( MainConfigNames::UpdateRowsPerQuery );
 		$this->lbFactory = $lbFactory;
-		$this->logger = LoggerFactory::getInstance( 'Renameuser' );
 	}
 
 	public function run() {
-		$dbw = $this->lbFactory->getMainLB()->getMaintenanceConnectionRef( DB_PRIMARY );
+		$dbw = $this->lbFactory->getPrimaryDatabase();
 		$table = $this->params['table'];
 		$column = $this->params['column'];
-
-		// It's not worth a hook to let extensions add themselves to that list.
-		// Just check whether the table and column still exist instead.
-		if ( !$dbw->tableExists( $table, __METHOD__ ) ) {
-			$this->logger->info(
-				"Ignoring job {$this->toString()}, table $table does not exist" );
-			return true;
-		} elseif ( !$dbw->fieldExists( $table, $column, __METHOD__ ) ) {
-			$this->logger->info(
-				"Ignoring job {$this->toString()}, column $table.$column does not exist" );
-			return true;
-		}
 
 		$oldname = $this->params['oldname'];
 		$newname = $this->params['newname'];
@@ -100,8 +82,8 @@ class RenameUserJob extends Job {
 		}
 		# Bound by timestamp if given
 		if ( $timestampColumn !== null ) {
-			$conds[] = "$timestampColumn >= " . $dbw->addQuotes( $minTimestamp );
-			$conds[] = "$timestampColumn <= " . $dbw->addQuotes( $maxTimestamp );
+			$conds[] = $dbw->expr( $timestampColumn, '>=', $minTimestamp );
+			$conds[] = $dbw->expr( $timestampColumn, '<=', $maxTimestamp );
 		# Bound by unique key if given (B/C)
 		} elseif ( $uniqueKey !== null && $keyId !== null ) {
 			$conds[$uniqueKey] = $keyId;
@@ -111,8 +93,12 @@ class RenameUserJob extends Job {
 
 		# Actually update the rows for this job...
 		if ( $uniqueKey !== null ) {
-			# Select the rows to update by PRIMARY KEY
-			$ids = $dbw->selectFieldValues( $table, $uniqueKey, $conds, __METHOD__ );
+			// Select the rows to update by PRIMARY KEY
+			$ids = $dbw->newSelectQueryBuilder()
+				->select( $uniqueKey )
+				->from( $table )
+				->where( $conds )
+				->caller( __METHOD__ )->fetchFieldValues();
 			# Update these rows by PRIMARY KEY to avoid replica lag
 			foreach ( array_chunk( $ids, $this->updateRowsPerQuery ) as $batch ) {
 				$dbw->commit( __METHOD__, 'flush' );

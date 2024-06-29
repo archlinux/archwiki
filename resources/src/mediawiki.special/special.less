@@ -66,27 +66,6 @@
 	font-style: italic;
 }
 
-/* Special:Block */
-.mw-ipb-conveniencelinks {
-	font-size: 90%;
-	text-align: right;
-}
-
-.mw-block-hideuser,
-.mw-block-confirm {
-	font-weight: bold;
-}
-
-#mw-input-wpReason .oo-ui-dropdownInputWidget,
-#mw-input-wpReason .oo-ui-textInputWidget {
-	display: block;
-	max-width: 50em;
-}
-
-#mw-input-wpReason .oo-ui-textInputWidget {
-	margin-top: 0.5em;
-}
-
 /* Special:BlockList */
 .mw-blocklist .mw-usertoollinks,
 .mw-blocklist-actions {
@@ -137,6 +116,8 @@
 	margin-top: 0;
 }
 
+/* Special:Undelete */
+.mw-undelete-editcomments,
 /* Special:MovePage */
 .mw-movepage-editreasons,
 /* Special:RevisionDelete */
@@ -197,4 +178,41 @@ th.mw-revdel-checkbox {
 /* stylelint-disable-next-line selector-class-pattern */
 .passwordpolicies-policy-flags {
 	font-size: 90%;
+}
+
+.mw-listgrouprights-table,
+.mw-passwordpolicies-table {
+	& tr:target,
+	& tr:target code {
+		background-color: @background-color-progressive-subtle;
+	}
+}
+
+.mw-grantriskgroup- {
+	&vandalism {
+		.cdx-mixin-css-icon( @cdx-icon-alert, @color-warning );
+	}
+
+	&security {
+		.cdx-mixin-css-icon( @cdx-icon-alert, @color-error );
+	}
+
+	&internal {
+		.cdx-mixin-css-icon( @cdx-icon-error, @color-error );
+	}
+
+	&vandalism,
+	&security,
+	&internal {
+		// Hide text, replaced with the icon
+		text-indent: -10000px;
+	}
+
+	.mw-htmlform-field-HTMLCheckMatrix & {
+		&vandalism,
+		&security,
+		&internal {
+			vertical-align: middle;
+		}
+	}
 }

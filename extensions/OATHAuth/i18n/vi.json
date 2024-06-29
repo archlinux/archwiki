@@ -12,12 +12,11 @@
 	"disableoathforuser": "Tắt xác thực dùng hai nhân tố của thành viên",
 	"verifyoathforuser": "Xác minh tình trạng xác thực dùng hai nhân tố",
 	"oath": "Xác thực OATH",
-	"specialpages-group-oath": "Xác thực dùng hai nhân tố",
 	"oathauth-account": "Tên tài khoản:",
 	"oathauth-secret": "Chìa khóa bí mật của xác thực hai nhân tố:",
 	"oathauth-enable": "Xác thực dùng hai nhân tố",
+	"oathauth-recoverycodes": "Dưới đây là danh sách các mã khôi phục dùng một lần. Các mã này chỉ có thể dùng một lần trong trường hợp khẩn cấp không có dùng được thiết bị của bạn. Xin hãy ghi xuống các mã này và lưu giữ chúng ở một nơi an toàn. Khuyên bạn dùng xong mã nào thì đánh dấu nó là đã dùng rồi. Nếu bạn mất thiết bị của bạn, các mã này là cách duy nhất để cứu tài khoản của bạn. '''Các mã này sẽ không bao giờ hiển thị nữa'''.",
 	"oathauth-recoverycodes-important": "Bước nhà rất quan trọng! Đừng bỏ lỡ bước này!",
-	"oathauth-token": "Token",
 	"oathauth-disable": "Tắt xác thực dùng hai nhân tố",
 	"oathauth-validatedoath": "Đã xác nhận thông tin xác thực dùng hai nhân tố. Từ nay sẽ áp dụng việc xác thực dùng hai nhân tố.",
 	"oathauth-noscratchforvalidation": "Bạn không thể sử dụng mã khôi phục để xác thực dùng hai nhân tố. Các mã khôi phục chỉ để sao lưu hoặc sử dụng tình cờ. Xin hãy nhập mã từ trình xác thực dùng hai nhân tố của bạn (như Google Authenticator).",
@@ -75,7 +74,6 @@
 	"oathauth-enable-generic": "Bật",
 	"oathauth-disable-generic": "Tắt",
 	"oathauth-invalid-data-format": "Dữ liệu cung cấp để tạo khóa cho phương pháp xác thực này không hợp lệ",
-	"oathauth-invalid-key-type": "Khóa thiết lập cho thành viên không khớp với kiểu bắt buộc của phương pháp xác thực đã chọn",
 	"oathauth-disable-page-title": "Tắt $1",
 	"oathauth-enable-page-title": "Bật $1",
 	"oathauth-action-exclusive-to-2fa": "Chỉ thành viên đã bật xác thực dùng hai nhân tố mới thực hiện được tác vụ này.",
@@ -102,5 +100,6 @@
 	"oathauth-verify-disabled": "{{GENDER:$1}}$1 không bật xác thực dùng hai nhân tố.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Nhóm|Các nhóm}} bị tắt:",
 	"oathauth-prefs-disabledgroups-help": "Tư cách thành viên của {{GENDER:$2}}bạn trong {{PLURAL:$1|nhóm|các nhóm}} này bị tắt cho đến khi bạn bật chế độ [[Special:Manage Two-factor authentication|xác thực dùng hai nhân tố]].",
+	"oathauth-qrcode-alt": "Mã QR quét được đại diện cho khóa mật mã.",
 	"oathauth-hint": "Nếu bạn không dùng được thiết bị hoặc ứng dụng bình thường của bạn, bạn có thể nhập mã khôi phục vào hộp này. Bạn đã nhận các mã khôi phục này vào lúc bật chế độ xác thực dùng hai nhân tố."
 }

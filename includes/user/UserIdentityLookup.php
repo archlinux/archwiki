@@ -30,7 +30,7 @@ use Wikimedia\Rdbms\IReadableDatabase;
  * @package MediaWiki\User
  * @since 1.36
  */
-interface UserIdentityLookup extends IDBAccessObject {
+interface UserIdentityLookup {
 
 	/**
 	 * Find an identity of a user by $name
@@ -42,7 +42,7 @@ interface UserIdentityLookup extends IDBAccessObject {
 	 */
 	public function getUserIdentityByName(
 		string $name,
-		int $queryFlags = self::READ_NORMAL
+		int $queryFlags = IDBAccessObject::READ_NORMAL
 	): ?UserIdentity;
 
 	/**
@@ -54,15 +54,15 @@ interface UserIdentityLookup extends IDBAccessObject {
 	 */
 	public function getUserIdentityByUserId(
 		int $userId,
-		int $queryFlags = self::READ_NORMAL
+		int $queryFlags = IDBAccessObject::READ_NORMAL
 	): ?UserIdentity;
 
 	/**
 	 * Returns a specialized SelectQueryBuilder for querying the UserIdentity objects.
 	 *
 	 * @param IReadableDatabase|int $dbOrQueryFlags The database connection to perform the query on,
-	 *   or one of the self::READ_* constants.
+	 *   or one of the IDBAccessObject::READ_* constants.
 	 * @return UserSelectQueryBuilder
 	 */
-	public function newSelectQueryBuilder( $dbOrQueryFlags = self::READ_NORMAL ): UserSelectQueryBuilder;
+	public function newSelectQueryBuilder( $dbOrQueryFlags = IDBAccessObject::READ_NORMAL ): UserSelectQueryBuilder;
 }

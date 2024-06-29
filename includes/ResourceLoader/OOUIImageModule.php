@@ -20,7 +20,7 @@
 
 namespace MediaWiki\ResourceLoader;
 
-use Exception;
+use LogicException;
 
 /**
  * Loads the module definition from JSON files in the format that OOUI uses, converting it to the
@@ -65,7 +65,7 @@ class OOUIImageModule extends ImageModule {
 						if ( !isset( $definition[$key] ) ) {
 							$definition[$key] = $value;
 						} elseif ( $definition[$key] !== $value ) {
-							throw new Exception(
+							throw new LogicException(
 								"Mismatched OOUI theme images definition: " .
 									"key '$key' of theme '$theme' for module '$module' " .
 									"does not match other themes"
@@ -154,6 +154,3 @@ class OOUIImageModule extends ImageModule {
 		return $data;
 	}
 }
-
-/** @deprecated since 1.39 */
-class_alias( OOUIImageModule::class, 'ResourceLoaderOOUIImageModule' );

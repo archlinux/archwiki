@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Special;
 
-use Html;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesFactory;
@@ -28,6 +27,7 @@ use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewList;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewRevert;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewTestBatch;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewTools;
+use MediaWiki\Html\Html;
 use MediaWiki\Title\Title;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
@@ -175,10 +175,9 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 	/**
 	 * Instantiate the view class
 	 *
-	 * @phan-param class-string $viewClass
 	 * @suppress PhanTypeInvalidCallableArraySize
 	 *
-	 * @param string $viewClass
+	 * @param class-string<AbuseFilterView> $viewClass
 	 * @param array $params
 	 * @return AbuseFilterView
 	 */

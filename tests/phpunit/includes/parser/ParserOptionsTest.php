@@ -1,15 +1,24 @@
 <?php
 
+namespace MediaWiki\Tests\Parser;
+
+use DummyContentForTesting;
+use InvalidArgumentException;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
+use MediaWikiLangTestCase;
+use ParserOptions;
+use stdClass;
 use Wikimedia\ScopedCallback;
 
 /**
- * @covers ParserOptions
+ * @covers \ParserOptions
  * @group Database
  */
 class ParserOptionsTest extends MediaWikiLangTestCase {
@@ -395,5 +404,14 @@ class ParserOptionsTest extends MediaWikiLangTestCase {
 
 		$options->setRenderReason( 'just a test' );
 		$this->assertIsString( 'just a test', $options->getRenderReason() );
+	}
+
+	public function testSuppressSectionEditLinks() {
+		$options = ParserOptions::newFromAnon();
+
+		$this->assertFalse( $options->getSuppressSectionEditLinks() );
+
+		$options->setSuppressSectionEditLinks();
+		$this->assertTrue( $options->getSuppressSectionEditLinks() );
 	}
 }

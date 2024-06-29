@@ -9,8 +9,6 @@
 	"wikieditor-toolbar-tool-bold-example": "موٹی لکھت",
 	"wikieditor-toolbar-tool-italic": "ترچھا",
 	"wikieditor-toolbar-tool-italic-example": "ترچھی لکھت",
-	"wikieditor-toolbar-tool-ilink": "اندرلا لنک",
-	"wikieditor-toolbar-tool-ilink-example": "لنک عنوان",
 	"wikieditor-toolbar-tool-link": "لنک",
 	"wikieditor-toolbar-tool-link-title": "لنک پاؤ",
 	"wikieditor-toolbar-tool-link-int": "وکی ورقے تے",
@@ -22,7 +20,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "اندرلا لنک",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "ٻاہرلا لنک",
 	"wikieditor-toolbar-tool-file": "تصویراں تے میڈیا",
-	"wikieditor-toolbar-tool-file-example": "Example.jpg",
 	"wikieditor-toolbar-tool-file-title": "فائل پاؤ",
 	"wikieditor-toolbar-file-target": "فائل دا ناں:",
 	"wikieditor-toolbar-file-caption": "عنوان:",
@@ -103,6 +100,5 @@
 	"wikieditor-toolbar-help-content-indent2": "حاشیہ لڳی عبارت",
 	"wikieditor-toolbar-help-content-indent3": "حاشیہ لڳی عبارت",
 	"wikieditor-realtimepreview-preview": "پیشگی ݙکھالا",
-	"wikieditor-realtimepreview-reload": "ولدا لوڈ کرو",
-	"wikieditor-realtimepreview-onboarding-button": "ٹھیک ہے، سمجھ گھدے"
+	"wikieditor-realtimepreview-reload": "ولدا لوڈ کرو"
 }

@@ -22,30 +22,30 @@
 
 namespace MediaWiki\Linker;
 
-use ContextSource;
-use DerivativeContext;
 use File;
 use HtmlArmor;
-use IContextSource;
 use Language;
 use MediaTransformError;
 use MediaTransformOutput;
+use MediaWiki\Context\ContextSource;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\HtmlHelper;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\ExternalUserNames;
-use MediaWiki\User\User;
-use Message;
+use MediaWiki\User\UserIdentityValue;
 use MessageLocalizer;
-use Parser;
-use RequestContext;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 use Wikimedia\Parsoid\Core\TOCData;
@@ -103,8 +103,7 @@ class Linker {
 	 *     'broken': Page is known not to exist, so don't check if it does.
 	 *     'noclasses': Don't add any classes automatically (includes "new",
 	 *       "stub", "mw-redirect", "extiw").  Only use the class attribute
-	 *       provided, if any, so you get a simple blue link with no funny i-
-	 *       cons.
+	 *       provided, if any, so you get a simple blue link with no icons.
 	 *     'forcearticlepath': Use the article path always, even with a querystring.
 	 *       Has compatibility issues on some setups, so avoid wherever possible.
 	 *     'http': Force a full URL with http:// as the scheme.
@@ -333,7 +332,8 @@ class Linker {
 	) {
 		$title = Title::newFromLinkTarget( $title );
 		$res = null;
-		$dummy = new DummyLinker;
+		// DummyLinker is deprecated since 1.42, $dummy will be replaced with null.
+		$dummy = new DummyLinker();
 		$hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
 		if ( !$hookRunner->onImageBeforeProduceHTML( $dummy, $title,
 			// @phan-suppress-next-line PhanTypeMismatchArgument Type mismatch on pass-by-ref args
@@ -708,19 +708,29 @@ class Linker {
 						$manualthumb = true;
 					}
 				}
-			} elseif ( isset( $frameParams['framed'] ) ) {
-				// Use image dimensions, don't scale
-				$thumb = $file->getUnscaledThumb( $handlerParams );
-				$noscale = true;
-				$rdfaType = 'mw:File/Frame';
 			} else {
-				# Do not present an image bigger than the source, for bitmap-style images
-				# This is a hack to maintain compatibility with arbitrary pre-1.10 behavior
 				$srcWidth = $file->getWidth( $page );
+				if ( isset( $frameParams['framed'] ) ) {
+					$rdfaType = 'mw:File/Frame';
+					if ( !$file->isVectorized() ) {
+						// Use image dimensions, don't scale
+						$noscale = true;
+					} else {
+						// framed is unscaled, but for vectorized images
+						// we need to a width for scaling up for the high density variants
+						$handlerParams['width'] = $srcWidth;
+					}
+				}
+
+				// Do not present an image bigger than the source, for bitmap-style images
+				// This is a hack to maintain compatibility with arbitrary pre-1.10 behavior
 				if ( $srcWidth && !$file->mustRender() && $handlerParams['width'] > $srcWidth ) {
 					$handlerParams['width'] = $srcWidth;
 				}
-				$thumb = $file->transform( $handlerParams );
+
+				$thumb = $noscale
+					? $file->getUnscaledThumb( $handlerParams )
+					: $file->transform( $handlerParams );
 			}
 
 			if ( $thumb ) {
@@ -994,7 +1004,7 @@ class Linker {
 	 * @param string $query Urlencoded query string to prepend
 	 * @return string Urlencoded URL
 	 */
-	protected static function getUploadUrl( $destFile, $query = '' ) {
+	public static function getUploadUrl( $destFile, $query = '' ) {
 		$mainConfig = MediaWikiServices::getInstance()->getMainConfig();
 		$uploadMissingFileUrl = $mainConfig->get( MainConfigNames::UploadMissingFileUrl );
 		$uploadNavigationUrl = $mainConfig->get( MainConfigNames::UploadNavigationUrl );
@@ -1122,7 +1132,6 @@ class Linker {
 	 * @param string $url URL to link to
 	 * @param-taint $url escapes_html
 	 * @param string $text Text of link
-	 * @param-taint $text escapes_html
 	 * @param bool $escape Do we escape the link text?
 	 * @param-taint $escape none
 	 * @param string $linktype Type of external link. Gets added to the classes
@@ -1234,27 +1243,24 @@ class Linker {
 	/**
 	 * Generate standard user tool links (talk, contributions, block link, etc.)
 	 *
-	 * @since 1.16.3
+	 * @since 1.42
 	 * @param int $userId User identifier
 	 * @param string $userText User name or IP address
 	 * @param bool $redContribsWhenNoEdits Should the contributions link be
 	 *   red if the user has no edits?
 	 * @param int $flags Customisation flags (e.g. Linker::TOOL_LINKS_NOBLOCK
 	 *   and Linker::TOOL_LINKS_EMAIL).
-	 * @param int|null $edits User edit count (optional, for performance)
-	 * @param bool $useParentheses (optional) Wrap comments in parentheses where needed
-	 * @return string HTML fragment
+	 * @param int|null $edits User edit count. If you enable $redContribsWhenNoEdits,
+	 *  you may pass a pre-computed edit count here, or 0 if the caller knows that
+	 *  the account has 0 edits. Otherwise, the value is unused and null may
+	 *  be passed. If $redContribsWhenNoEdits is enabled and null is passed, the
+	 *  edit count will be lazily fetched from UserEditTracker.
+	 * @return string[] Array of HTML fragments, each of them a link tag with a distinctive
+	 *   class; or a single string on error.
 	 */
-	public static function userToolLinks(
-		$userId, $userText, $redContribsWhenNoEdits = false, $flags = 0, $edits = null,
-		$useParentheses = true
-	) {
-		if ( $userText === '' ) {
-			wfDebug( __METHOD__ . ' received an empty username. Are there database errors ' .
-				'that need to be fixed?' );
-			return ' ' . wfMessage( 'empty-username' )->parse();
-		}
-		global $wgLang;
+	public static function userToolLinkArray(
+		$userId, $userText, $redContribsWhenNoEdits = false, $flags = 0, $edits = null
+	): array {
 		$services = MediaWikiServices::getInstance();
 		$disableAnonTalk = $services->getMainConfig()->get( MainConfigNames::DisableAnonTalk );
 		$talkable = !( $disableAnonTalk && $userId == 0 );
@@ -1263,7 +1269,7 @@ class Linker {
 
 		if ( $userId == 0 && ExternalUserNames::isExternal( $userText ) ) {
 			// No tools for an external user
-			return '';
+			return [];
 		}
 
 		$items = [];
@@ -1275,9 +1281,9 @@ class Linker {
 			$attribs = [];
 			$attribs['class'] = 'mw-usertoollinks-contribs';
 			if ( $redContribsWhenNoEdits ) {
-				if ( intval( $edits ) === 0 && $edits !== 0 ) {
-					$user = User::newFromId( $userId );
-					$edits = $user->getEditCount();
+				if ( $edits === null ) {
+					$user = UserIdentityValue::newRegistered( $userId, $userText );
+					$edits = $services->getUserEditTracker()->getUserEditCount( $user );
 				}
 				if ( $edits === 0 ) {
 					// Note: "new" class is inappropriate here, as "new" class
@@ -1301,6 +1307,19 @@ class Linker {
 
 		( new HookRunner( $services->getHookContainer() ) )->onUserToolLinksEdit( $userId, $userText, $items );
 
+		return $items;
+	}
+
+	/**
+	 * Generate standard tool links HTML from a link array returned by userToolLinkArray().
+	 * @since 1.42
+	 * @param array $items
+	 * @param bool $useParentheses (optional, default true) Wrap comments in parentheses where needed
+	 * @return string
+	 */
+	public static function renderUserToolLinksArray( array $items, bool $useParentheses ): string {
+		global $wgLang;
+
 		if ( !$items ) {
 			return '';
 		}
@@ -1318,6 +1337,34 @@ class Linker {
 		}
 		return ' <span class="mw-usertoollinks mw-changeslist-links">' .
 			implode( ' ', $tools ) . '</span>';
+	}
+
+	/**
+	 * Generate standard user tool links (talk, contributions, block link, etc.)
+	 *
+	 * @since 1.16.3
+	 * @param int $userId User identifier
+	 * @param string $userText User name or IP address
+	 * @param bool $redContribsWhenNoEdits Should the contributions link be
+	 *   red if the user has no edits?
+	 * @param int $flags Customisation flags (e.g. Linker::TOOL_LINKS_NOBLOCK
+	 *   and Linker::TOOL_LINKS_EMAIL).
+	 * @param int|null $edits User edit count (optional, for performance)
+	 * @param bool $useParentheses (optional, default true) Wrap comments in parentheses where needed
+	 * @return string HTML fragment
+	 */
+	public static function userToolLinks(
+		$userId, $userText, $redContribsWhenNoEdits = false, $flags = 0, $edits = null,
+		$useParentheses = true
+	) {
+		if ( $userText === '' ) {
+			wfDebug( __METHOD__ . ' received an empty username. Are there database errors ' .
+				'that need to be fixed?' );
+			return ' ' . wfMessage( 'empty-username' )->parse();
+		}
+
+		$items = self::userToolLinkArray( $userId, $userText, $redContribsWhenNoEdits, $flags, $edits );
+		return self::renderUserToolLinksArray( $items, $useParentheses );
 	}
 
 	/**
@@ -1730,27 +1777,32 @@ class Linker {
 	/**
 	 * Add another level to the Table of Contents
 	 *
+	 * @deprecated since 1.42
 	 * @since 1.16.3
 	 * @return string
 	 */
 	public static function tocIndent() {
+		wfDeprecated( __METHOD__, '1.42' );
 		return "\n<ul>\n";
 	}
 
 	/**
 	 * Finish one or more sublevels on the Table of Contents
 	 *
+	 * @deprecated since 1.42
 	 * @since 1.16.3
 	 * @param int $level
 	 * @return string
 	 */
 	public static function tocUnindent( $level ) {
+		wfDeprecated( __METHOD__, '1.42' );
 		return "</li>\n" . str_repeat( "</ul>\n</li>\n", $level > 0 ? $level : 0 );
 	}
 
 	/**
 	 * parameter level defines if we are on an indentation level
 	 *
+	 * @deprecated since 1.42
 	 * @since 1.16.3
 	 * @param string $linkAnchor Identifier
 	 * @param string $tocline Properly escaped HTML
@@ -1760,6 +1812,7 @@ class Linker {
 	 * @return string
 	 */
 	public static function tocLine( $linkAnchor, $tocline, $tocnumber, $level, $sectionIndex = false ) {
+		wfDeprecated( __METHOD__, '1.42' );
 		$classes = "toclevel-$level";
 
 		// Parser.php used to suppress tocLine by setting $sectionindex to false.
@@ -1784,22 +1837,26 @@ class Linker {
 	 * End a Table Of Contents line.
 	 * tocUnindent() will be used instead if we're ending a line below
 	 * the new level.
+	 * @deprecated since 1.42
 	 * @since 1.16.3
 	 * @return string
 	 */
 	public static function tocLineEnd() {
+		wfDeprecated( __METHOD__, '1.42' );
 		return "</li>\n";
 	}
 
 	/**
 	 * Wraps the TOC in a div with ARIA navigation role and provides the hide/collapse JavaScript.
 	 *
+	 * @deprecated since 1.42
 	 * @since 1.16.3
 	 * @param string $toc Html of the Table Of Contents
 	 * @param Language|null $lang Language for the toc title, defaults to user language
 	 * @return string Full html of the TOC
 	 */
 	public static function tocList( $toc, Language $lang = null ) {
+		wfDeprecated( __METHOD__, '1.42' );
 		$lang ??= RequestContext::getMain()->getLanguage();
 
 		$title = wfMessage( 'toc' )->inLanguage( $lang )->escaped();
@@ -1832,6 +1889,7 @@ class Linker {
 	 * @internal For use by ParserOutput and API modules
 	 * Generate a table of contents from a section tree.
 	 *
+	 * @deprecated since 1.42
 	 * @since 1.16.3. $lang added in 1.17. Parameters changed in 1.40.
 	 * @param ?TOCData $tocData Return value of ParserOutput::getSections()
 	 * @param Language|null $lang Language for the toc title, defaults to user language
@@ -1840,6 +1898,7 @@ class Linker {
 	 * @return string HTML fragment
 	 */
 	public static function generateTOC( ?TOCData $tocData, Language $lang = null, array $options = [] ): string {
+		wfDeprecated( __METHOD__, '1.42' );
 		$toc = '';
 		$lastLevel = 0;
 		$maxTocLevel = $options['maxtoclevel'] ?? null;
@@ -1880,6 +1939,7 @@ class Linker {
 	/**
 	 * Create a headline for content
 	 *
+	 * @deprecated since 1.42
 	 * @since 1.16.3
 	 * @param int $level The level of the headline (1-6)
 	 * @param string $attribs Any attributes for the headline, starting with
@@ -1896,6 +1956,7 @@ class Linker {
 	public static function makeHeadline( $level, $attribs, $anchor, $html,
 		$link, $fallbackAnchor = false
 	) {
+		wfDeprecated( __METHOD__, '1.42' );
 		$anchorEscaped = htmlspecialchars( $anchor, ENT_COMPAT );
 		$fallback = '';
 		if ( $fallbackAnchor !== false && $fallbackAnchor !== $anchor ) {
@@ -2020,7 +2081,7 @@ class Linker {
 			return null;
 		}
 
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 
 		// Up to the value of $wgShowRollbackEditCount revisions are counted
 		$queryBuilder = MediaWikiServices::getInstance()->getRevisionStore()->newSelectQueryBuilder( $dbr );
@@ -2416,7 +2477,5 @@ class Linker {
 
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( Linker::class, 'Linker' );

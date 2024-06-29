@@ -23,19 +23,19 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Tidy\TidyDriverBase;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsLookup;
-use Parser;
+use MediaWiki\User\Options\UserOptionsLookup;
 use ParserFactory;
 use ParserOptions;
-use ParserOutput;
 use Xml;
 
 /**
@@ -47,7 +47,7 @@ use Xml;
 class SpecialExpandTemplates extends SpecialPage {
 
 	/** @var int Maximum size in bytes to include. 50 MB allows fixing those huge pages */
-	private const MAX_INCLUDE_SIZE = 50000000;
+	private const MAX_INCLUDE_SIZE = 50_000_000;
 
 	private ParserFactory $parserFactory;
 	private UserOptionsLookup $userOptionsLookup;
@@ -246,7 +246,6 @@ class SpecialExpandTemplates extends SpecialPage {
 	 * @param OutputPage $out
 	 */
 	private function showHtmlPreview( Title $title, ParserOutput $pout, OutputPage $out ) {
-		$lang = $title->getPageViewLanguage();
 		$out->addHTML( "<h2>" . $this->msg( 'expand_templates_preview' )->escaped() . "</h2>\n" );
 
 		if ( $this->getConfig()->get( MainConfigNames::RawHtml ) ) {
@@ -277,13 +276,7 @@ class SpecialExpandTemplates extends SpecialPage {
 			}
 		}
 
-		$out->addHTML( Html::openElement( 'div', [
-			'class' => 'mw-content-' . $lang->getDir(),
-			'dir' => $lang->getDir(),
-			'lang' => $lang->getHtmlCode(),
-		] ) );
 		$out->addParserOutputContent( $pout, [ 'enableSectionEditLinks' => false ] );
-		$out->addHTML( Html::closeElement( 'div' ) );
 		$out->setCategoryLinks( $pout->getCategoryMap() );
 	}
 
@@ -292,7 +285,5 @@ class SpecialExpandTemplates extends SpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialExpandTemplates::class, 'SpecialExpandTemplates' );

@@ -1,14 +1,3 @@
-/**
- * Fetch and display a preview of the current editing area.
- *
- * Usage:
- *
- *     var preview = require( 'mediawiki.page.preview' );
- *     preview.doPreview();
- *
- * @class mw.plugin.page.preview
- * @singleton
- */
 ( function () {
 	var api = new mw.Api();
 
@@ -37,6 +26,7 @@
 	/**
 	 * Wrap a string in parentheses.
 	 *
+	 * @private
 	 * @param {string} str
 	 * @return {string}
 	 */
@@ -89,15 +79,13 @@
 	 *
 	 * @private
 	 * @param {Array} templates List of template titles.
-	 * @param {boolean} isSection Whether a section is currently being edited.
 	 */
-	function showTemplates( templates, isSection ) {
+	function showTemplates( templates ) {
 		// The .templatesUsed div can be empty, if no templates are in use.
 		// In that case, we have to create the required structure.
 		var $parent = $( '.templatesUsed' );
 
 		// Find or add the explanation text (the toggler for collapsing).
-		var explanationMsg = isSection ? 'templatesusedsection' : 'templatesusedpreview';
 		var $explanation = $parent.find( '.mw-templatesUsedExplanation p' );
 		if ( $explanation.length === 0 ) {
 			$explanation = $( '<p>' );
@@ -115,10 +103,7 @@
 		}
 
 		if ( templates.length === 0 ) {
-			// The following messages can be used here:
-			// * templatesusedpreview
-			// * templatesusedsection
-			$explanation.msg( explanationMsg, 0 );
+			$explanation.msg( 'templatesusedpreview', 0 );
 			$list.empty();
 			return;
 		}
@@ -131,7 +116,9 @@
 			// Build a list of template names for this batch.
 			var titles = templates
 				.slice( batch, batch + batchSize )
-				.map( function ( template ) { return template.title; } );
+				.map( function ( template ) {
+					return template.title;
+				} );
 			requests.push( api.post( {
 				action: 'query',
 				format: 'json',
@@ -175,10 +162,7 @@
 				.then( function () {
 					$list.html( $listNew.html() );
 				} );
-			// The following messages can be used here:
-			// * templatesusedpreview
-			// * templatesusedsection
-			$explanation.msg( explanationMsg, templatesAllInfo.length );
+			$explanation.msg( 'templatesusedpreview', templatesAllInfo.length );
 		} ).always( function () {
 			$parent.removeClass( 'mw-preview-loading-elements-loading' );
 		} );
@@ -333,9 +317,8 @@
 	 * @private
 	 * @param {Object} config
 	 * @param {Object} response
-	 * @param {boolean} isSection Whether a section is currently being edited.
 	 */
-	function handleParseResponse( config, response, isSection ) {
+	function handleParseResponse( config, response ) {
 		var $content;
 
 		// Js config variables and modules.
@@ -365,6 +348,14 @@
 
 		// Table of contents.
 		if ( response.parse.sections ) {
+			/**
+			 * Fired when dynamic changes have been made to the table of contents.
+			 *
+			 * @event ~'wikipage.tableOfContents'
+			 * @memberof Hooks
+			 * @param {Object[]} sections Metadata about each section, as returned by
+			 *   [API:Parse]{@link https://www.mediawiki.org/wiki/Special:MyLanguage/API:Parsing_wikitext}.
+			 */
 			mw.hook( 'wikipage.tableOfContents' ).fire(
 				response.parse.hidetoc ? [] : response.parse.sections
 			);
@@ -372,7 +363,7 @@
 
 		// Templates.
 		if ( response.parse.templates ) {
-			showTemplates( response.parse.templates, isSection );
+			showTemplates( response.parse.templates );
 		}
 
 		// Limit report.
@@ -392,21 +383,10 @@
 
 		// Remove preview note, if present (added by Live Preview, etc.).
 		config.$previewNode.find( '.previewnote' ).remove();
+		// Remove any previous preview
+		config.$previewNode.children( '.mw-parser-output' ).remove();
 
-		$content = config.$previewNode.children( '.mw-content-ltr,.mw-content-rtl' );
-
-		if ( !$content.length ) {
-			var dir = $( 'html' ).attr( 'dir' );
-			$content = $( '<div>' )
-				.attr( 'lang', mw.config.get( 'wgContentLanguage' ) )
-				.attr( 'dir', dir )
-				// The following classes are used here:
-				// * mw-content-ltr
-				// * mw-content-rtl
-				.addClass( 'mw-content-' + dir );
-		}
-
-		$content.html( response.parse.text );
+		$content = $( $.parseHTML( response.parse.text ) );
 
 		config.$previewNode.append( $content ).show();
 
@@ -491,7 +471,9 @@
 	/**
 	 * Get the selectors of elements that should be grayed out while the preview is being generated.
 	 *
+	 * @memberof module:mediawiki.page.preview
 	 * @return {string[]}
+	 * @stable
 	 */
 	function getLoadingSelectors() {
 		return [
@@ -506,14 +488,14 @@
 			'.templatesUsed',
 			'.limitreport',
 			'.mw-summary-preview',
-			'.hiddencats',
-			'.mw-editTools'
+			'.hiddencats'
 		];
 	}
 
 	/**
 	 * Fetch and display a preview of the current editing area.
 	 *
+	 * @memberof module:mediawiki.page.preview
 	 * @param {Object} config Configuration options.
 	 * @param {jQuery} [config.$previewNode=$( '#wikiPreview' )] Where the preview should be displayed.
 	 * @param {jQuery} [config.$diffNode=$( '#wikiDiff' )] Where diffs should be displayed (if showDiff is set).
@@ -526,9 +508,15 @@
 	 *   fetched from `$( '#wpSummaryWidget' )`.
 	 * @param {boolean} [config.showDiff=false] Shows a diff in the preview area instead of the content.
 	 * @param {string} [config.title=mw.config.get( 'wgPageName' )] The title of the page being previewed
-	 * @param {Array} [config.loadingSelectors=getLoadingSelectors()] An array of query selectors
+	 * @param {string[]} [config.loadingSelectors=getLoadingSelectors()] An array of query selectors
 	 *   (i.e. '#catlinks') that should be grayed out while the preview is being generated.
-	 * @return {jQuery.Promise}
+	 * @return {jQuery.Promise|undefined} jQuery.Promise or `undefined` if no `$textareaNode` was provided in the config.
+	 * @fires Hooks~'wikipage.categories'
+	 * @fires Hooks~'wikipage.content'
+	 * @fires Hooks~'wikipage.diff'
+	 * @fires Hooks~'wikipage.indicators'
+	 * @fires Hooks~'wikipage.tableOfContents'
+	 * @stable
 	 */
 	function doPreview( config ) {
 		config = $.extend( {
@@ -648,7 +636,7 @@
 				if ( config.showDiff ) {
 					handleDiffResponse( config, diffResponse );
 				} else {
-					handleParseResponse( config, parseResponse[ 0 ], section !== '' );
+					handleParseResponse( config, parseResponse[ 0 ] );
 				}
 
 				mw.hook( 'wikipage.editform' ).fire( config.$formNode );
@@ -661,7 +649,15 @@
 			} );
 	}
 
-	// Expose public methods.
+	/**
+	 * Fetch and display a preview of the current editing area.
+	 *
+	 * @example
+	 * var preview = require( 'mediawiki.page.preview' );
+	 * preview.doPreview();
+	 *
+	 * @exports mediawiki.page.preview
+	 */
 	module.exports = {
 		doPreview: doPreview,
 		getLoadingSelectors: getLoadingSelectors

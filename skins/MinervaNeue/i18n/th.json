@@ -9,6 +9,7 @@
 			"Kaoavi",
 			"Octahedron80",
 			"Patsagorn Y.",
+			"RidJasper",
 			"Trisorn Triboon"
 		]
 	},
@@ -58,6 +59,12 @@
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|อภิปราย]]",
 	"minerva-skin-desc": "สกินดั้งเดิมสำหรับอุปกรณ์เคลื่อนที่",
 	"skin-minerva-issue-learn-more": "เรียนรู้เพิ่มเติม",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 วินาที}}ที่แล้ว",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 นาที}}ที่แล้ว",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 ชั่วโมง}}ที่แล้ว",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 วัน}}ที่แล้ว",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 เดือน}}ที่แล้ว",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 ปี}}ที่แล้ว",
 	"skin-minerva-mobile-option-MinervaShowCategories": "หมวดหมู่",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "ดูหมวดหมู่ของหน้า",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "ปรับปรุงการแสดงผลปัญหาหน้า",

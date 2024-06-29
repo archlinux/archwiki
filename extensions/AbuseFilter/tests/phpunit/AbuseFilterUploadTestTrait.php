@@ -2,6 +2,7 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\User\User;
 
 /**
  * This trait can be used to perform uploads in integration tests.

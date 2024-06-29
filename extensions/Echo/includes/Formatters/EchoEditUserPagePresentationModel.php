@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
 use Message;
-use Sanitizer;
 
 class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 

@@ -9,7 +9,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * The urls herein are not actually called, because we mock the return results.
  *
- * @covers MultiHttpClient
+ * @covers \MultiHttpClient
  */
 class MultiHttpClientTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -122,7 +122,7 @@ class MultiHttpClientTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				'method' => 'GET',
-				'url' => 'http://example.test/67890' ,
+				'url' => 'http://example.test/67890',
 			]
 		];
 		$responses = $this->createClient()->runMulti( $reqs );

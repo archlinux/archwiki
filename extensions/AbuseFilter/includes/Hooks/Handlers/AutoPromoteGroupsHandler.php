@@ -3,11 +3,11 @@
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
 use BagOStuff;
+use HashBagOStuff;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\User\Hook\GetAutoPromoteGroupsHook;
 use MediaWiki\User\UserIdentity;
-use ObjectCache;
 
 class AutoPromoteGroupsHandler implements GetAutoPromoteGroupsHook {
 
@@ -21,35 +21,18 @@ class AutoPromoteGroupsHandler implements GetAutoPromoteGroupsHook {
 	private $blockAutopromoteStore;
 
 	/**
-	 * @param BagOStuff $cache
 	 * @param ConsequencesRegistry $consequencesRegistry
 	 * @param BlockAutopromoteStore $blockAutopromoteStore
+	 * @param BagOStuff|null $cache
 	 */
 	public function __construct(
-		BagOStuff $cache,
 		ConsequencesRegistry $consequencesRegistry,
-		BlockAutopromoteStore $blockAutopromoteStore
+		BlockAutopromoteStore $blockAutopromoteStore,
+		BagOStuff $cache = null
 	) {
-		$this->cache = $cache;
+		$this->cache = $cache ?? new HashBagOStuff();
 		$this->consequencesRegistry = $consequencesRegistry;
 		$this->blockAutopromoteStore = $blockAutopromoteStore;
-	}
-
-	/**
-	 * @param ConsequencesRegistry $consequencesRegistry
-	 * @param BlockAutopromoteStore $blockAutopromoteStore
-	 * @return self
-	 * @todo Can we avoid this factory method?
-	 */
-	public static function factory(
-		ConsequencesRegistry $consequencesRegistry,
-		BlockAutopromoteStore $blockAutopromoteStore
-	): self {
-		return new self(
-			ObjectCache::getInstance( 'hash' ),
-			$consequencesRegistry,
-			$blockAutopromoteStore
-		);
 	}
 
 	/**

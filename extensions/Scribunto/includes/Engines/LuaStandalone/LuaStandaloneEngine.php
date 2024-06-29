@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Scribunto\Engines\LuaStandalone;
 use Exception;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine;
 use MediaWiki\Logger\LoggerFactory;
-use ParserOutput;
+use MediaWiki\Parser\ParserOutput;
 use Wikimedia\AtEase\AtEase;
 
 class LuaStandaloneEngine extends LuaEngine {

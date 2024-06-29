@@ -18,7 +18,6 @@
 	"echo-pref-subscription-edit-thank": "ការថ្លែងអំណរគុណចំពោះការកែប្រែរបស់ខ្ញុំ",
 	"echo-pref-tooltip-edit-thank": "ជូនដំណឹងដល់ខ្ញុំពេលនរណាម្នាក់ថ្លែងអំណរគុណចំពោះការកែប្រែរបស់ខ្ញុំ",
 	"echo-category-title-edit-thank": "ការថ្លែងអំណរគុណ",
-	"notification-thanks-diff-link": "កំណែប្រែរបស់អ្នក",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|បានថ្លែងអំណរគុណ}}{{GENDER:$4|អ្នក}}សម្រាប់ការកែប្រែរបស់អ្នកនៅ<strong>$3</strong>។",
 	"notification-header-log-thank": "$1 {{GENDER:$2|បានថ្លែងអំណរគុណ}}{{GENDER:$4|អ្នក}}សម្រាប់សកម្មភាពនានារបស់អ្នកនៅ<strong>$3</strong>។",
 	"notification-compact-header-edit-thank": "$1 {{GENDER:$2|បានថ្លែងអំណរគុណ}}{{GENDER:$4|អ្នក}}។",

@@ -41,15 +41,19 @@
 			/** @property {string} url - */
 			this.url = url;
 		}
+
 		getUrl() {
 			return this.url;
 		}
+
 		getPrefixedDb() {
 			return this.title;
 		}
+
 		getPrefixedText() {
 			return text( this.getPrefixedDb() );
 		}
+
 		getDomain() {
 			return this.domain;
 		}

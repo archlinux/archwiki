@@ -10,8 +10,8 @@
 namespace MediaWiki\Extension\TitleBlacklist;
 
 use CoreParserFunctions;
-use Exception;
 use ExtensionRegistry;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\AntiSpoof\AntiSpoof;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\AtEase\AtEase;
@@ -84,7 +84,7 @@ class TitleBlacklistEntry {
 		}
 
 		if ( !is_array( $wgTitleBlacklistUsernameSources ) ) {
-			throw new Exception(
+			throw new ConfigException(
 				'$wgTitleBlacklistUsernameSources must be "*", false or an array' );
 		}
 
@@ -128,7 +128,7 @@ class TitleBlacklistEntry {
 
 			if ( $status->isOK() ) {
 				// Remove version from return value
-				list( , $title ) = explode( ':', $status->getValue(), 2 );
+				[ , $title ] = explode( ':', $status->getValue(), 2 );
 			} else {
 				wfDebugLog( 'TitleBlacklist', 'AntiSpoof could not normalize "' . $title . '" ' .
 					$status->getMessage( false, false, 'en' )->text() . '.'

@@ -24,23 +24,45 @@
  * @ingroup Installer
  */
 
+namespace MediaWiki\Installer;
+
+use AutoLoader;
+use EmptyBagOStuff;
+use Exception;
+use ExecutableFinder;
+use ExtensionDependencyError;
+use ExtensionProcessor;
+use ExtensionRegistry;
 use GuzzleHttp\Psr7\Header;
+use IntlChar;
+use InvalidArgumentException;
+use Language;
+use LogicException;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\GlobalVarConfig;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MultiConfig;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\Interwiki\NullInterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Status\Status;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
+use MediaWiki\User\StaticUserOptionsLookup;
 use MediaWiki\User\User;
+use MWCryptRand;
+use ParserOptions;
+use RuntimeException;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Services\ServiceDisabledException;
+use WikitextContent;
 
 /**
  * The Installer helps admins create or upgrade their wiki.
@@ -241,7 +263,7 @@ abstract class Installer {
 		'_LogoTagline' => '',
 		'_LogoTaglineWidth' => 117,
 		'_LogoTaglineHeight' => 13,
-
+		'_WithDevelopmentSettings' => false,
 		'wgAuthenticationTokenVersion' => 1,
 	];
 
@@ -326,18 +348,13 @@ abstract class Installer {
 			'icon' => '',
 			'text' => ''
 		],
-		'cc-choose' => [
-			// Details will be filled in by the selector.
-			'url' => '',
-			'icon' => '',
-			'text' => '',
-		],
 	];
 
 	/**
 	 * @var HookContainer|null
 	 */
 	protected $autoExtensionHookContainer;
+	protected array $virtualDomains = [];
 
 	/**
 	 * UI interface for displaying a short message
@@ -390,7 +407,7 @@ abstract class Installer {
 
 		// Load the installer's i18n.
 		$messageDirs = $baseConfig->get( MainConfigNames::MessagesDirs );
-		$messageDirs['MediawikiInstaller'] = __DIR__ . '/i18n';
+		$messageDirs['MediaWikiInstaller'] = __DIR__ . '/i18n';
 
 		$configOverrides->set( MainConfigNames::MessagesDirs, $messageDirs );
 
@@ -494,7 +511,10 @@ abstract class Installer {
 
 				// Disable user options database fetching, only rely on default options.
 				'UserOptionsLookup' => static function ( MediaWikiServices $services ) {
-					return $services->get( '_DefaultOptionsLookup' );
+					return new StaticUserOptionsLookup(
+						[],
+						$services->getMainConfig()->get( MainConfigNames::DefaultUserOptions )
+					);
 				},
 
 				// Restore to default wiring, in case it was overwritten by disableStorage()
@@ -630,7 +650,7 @@ abstract class Installer {
 	 * @since 1.30
 	 */
 	public static function getDBInstallerClass( $type ) {
-		return ucfirst( $type ) . 'Installer';
+		return '\\MediaWiki\\Installer\\' . ucfirst( $type ) . 'Installer';
 	}
 
 	/**
@@ -686,7 +706,7 @@ abstract class Installer {
 		}
 
 		if ( !str_ends_with( $lsFile, '.php' ) ) {
-			throw new Exception(
+			throw new RuntimeException(
 				'The installer cannot yet handle non-php settings files: ' . $lsFile . '. ' .
 				'Use `php maintenance/run.php update` to update an existing installation.'
 			);
@@ -792,7 +812,7 @@ abstract class Installer {
 				'unwrap' => true,
 			] );
 			$html = Parser::stripOuterParagraph( $html );
-		} catch ( Wikimedia\Services\ServiceDisabledException $e ) {
+		} catch ( ServiceDisabledException $e ) {
 			$html = '<!--DB access attempted during parse-->  ' . htmlspecialchars( $text );
 		}
 
@@ -832,8 +852,7 @@ abstract class Installer {
 		if ( !$status->isOK() ) {
 			return $status;
 		}
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$status->value->insert(
+		$status->getDB()->insert(
 			'site_stats',
 			[
 				'ss_row_id' => 1,
@@ -1334,7 +1353,7 @@ abstract class Installer {
 	 */
 	protected function getExtensionInfo( $type, $parentRelPath, $name ) {
 		if ( $this->getVar( 'IP' ) === null ) {
-			throw new Exception( 'Cannot find extensions since the IP variable is not yet set' );
+			throw new RuntimeException( 'Cannot find extensions since the IP variable is not yet set' );
 		}
 		if ( $type !== 'extension' && $type !== 'skin' ) {
 			throw new InvalidArgumentException( "Invalid extension type" );
@@ -1515,6 +1534,7 @@ abstract class Installer {
 			),
 			MediaWikiServices::getInstance()->getObjectFactory()
 		);
+		$this->virtualDomains = $data['attributes']['DatabaseVirtualDomains'] ?? [];
 
 		return Status::newGood();
 	}
@@ -1622,10 +1642,21 @@ abstract class Installer {
 	 */
 	public function getAutoExtensionHookContainer() {
 		if ( !$this->autoExtensionHookContainer ) {
-			throw new \Exception( __METHOD__ .
+			throw new LogicException( __METHOD__ .
 				': includeExtensions() has not been called' );
 		}
 		return $this->autoExtensionHookContainer;
+	}
+
+	/**
+	 * Get the virtual domains
+	 *
+	 * @internal For use by DatabaseInstaller
+	 * @since 1.42
+	 * @return array
+	 */
+	public function getVirtualDomains(): array {
+		return $this->virtualDomains;
 	}
 
 	/**

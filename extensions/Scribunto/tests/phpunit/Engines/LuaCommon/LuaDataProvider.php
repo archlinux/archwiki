@@ -66,7 +66,7 @@ class LuaDataProvider implements Iterator {
 	 * @return mixed Test result
 	 */
 	public function run( $key ) {
-		list( $ret ) = $this->engine->getInterpreter()->callFunction( $this->exports['run'], $key );
+		[ $ret ] = $this->engine->getInterpreter()->callFunction( $this->exports['run'], $key );
 		return $ret;
 	}
 }

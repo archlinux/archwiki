@@ -70,6 +70,13 @@ interface BaseMetricInterface {
 	public function getSamples(): array;
 
 	/**
+	 * Returns a count of samples recorded by the metric.
+	 *
+	 * @return int
+	 */
+	public function getSampleCount(): int;
+
+	/**
 	 * Returns the Metric Name
 	 *
 	 * @return string
@@ -86,7 +93,22 @@ interface BaseMetricInterface {
 	public function withStaticLabels( array $labelKeys, array $labelValues ): BaseMetricInterface;
 
 	/**
-	 * Add a label with key => value
+	 * Add a label with key => value.
+	 * Note that the order in which labels are added is significant for StatsD output.
+	 *
+	 * Static Labels always appear first.
+	 *
+	 * Example:
+	 * ```php
+	 * $statsFactory->withComponent( 'demo' )
+	 *     ->addStaticLabel( 'first', 'foo' )
+	 *     ->addStaticLabel( 'second', 'bar' )
+	 *     ->getCounter( 'testMetric_total' )
+	 *     ->setLabel( 'third', 'baz' )
+	 *     ->increment();
+	 * ```
+	 * statsd: "mediawiki.demo.testMetric_total.foo.bar.baz"
+	 * prometheus: "mediawiki_demo_testMetric_total{first='foo',second='bar',third='baz'}
 	 *
 	 * @param string $key
 	 * @param string $value
@@ -126,6 +148,21 @@ interface BaseMetricInterface {
 	 * Gets StatsD Data Factory instance or null.
 	 */
 	public function getStatsdDataFactory();
+
+	/**
+	 * Validates and sets legacy StatsD namespaces.
+	 *
+	 * @param string|string[] $statsdNamespaces
+	 * @return void
+	 */
+	public function setStatsdNamespaces( $statsdNamespaces ): void;
+
+	/**
+	 * Returns the configured legacy StatsD namespaces.
+	 *
+	 * @return string[]
+	 */
+	public function getStatsdNamespaces(): array;
 
 	/**
 	 * StatsD Data Factory instance to copy metrics to.

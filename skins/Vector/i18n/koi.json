@@ -17,6 +17,7 @@
 	"vector-view-history": "Синмалӧмлӧн история",
 	"vector-view-view": "Лыддьöтны",
 	"vector-more-actions": "Эшӧ",
+	"vector-feature-custom-font-size-2-label": "Ыджыт",
 	"vector-searchsuggest-containing": "Листбоккез кошшом, кытӧн эм <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Пытшкӧс",
 	"vector-toc-beginning": "Пондӧм",
@@ -24,6 +25,6 @@
 	"vector-page-tools-label": "Инструменттэз",
 	"vector-page-tools-general-label": "Ӧтувья",
 	"vector-unpin-element-label": "сайöвтны",
-	"vector-readability-survey-description": "Кытшӧма Википедиялӧн текст кажитчӧ буржыкӧн?Улісь ысласян тувйӧн лӧсьӧтӧ бансӧ.Унажык тӧдмалӧ [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading проект йылісь|Позьӧ лыддьӧтны проектcӧ]]",
-	"vector-readability-survey-optout": "Личкӧ одзлань,медбы ыстыны миянлӧ ассиныт дизайн и пыртны донтан гижӧт мӧд листбок вылӧ.[[#close-vector-survey|Remove this tool]]"
+	"vector-2022-beta-preview-label": "Vector 2022-лӧн бета версия",
+	"vector-2022-beta-preview-description": "Босьтӧ Vector 2022  виль функцияэзлісь одзвывса видзӧтӧм"
 }

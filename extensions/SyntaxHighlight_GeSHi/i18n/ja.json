@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ant176",
 			"Aotake",
 			"Fryed-peach",
 			"JtFuruhata",
@@ -10,8 +11,7 @@
 			"Rxy",
 			"Shirayuki",
 			"Sujiniku",
-			"Yuukin0248",
-			"Ant176"
+			"Yuukin0248"
 		]
 	},
 	"syntaxhighlight-desc": "[http://pygments.org/ Pygments - Python 構文ハイライト機能] を利用したタグ <code>&lt;syntaxhighlight&gt;</code> を提供する",

@@ -1,7 +1,10 @@
 <?php
 
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
@@ -87,7 +90,7 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
+	 * @covers \LogFormatter::newFromEntry
 	 */
 	public function testNormalLogParams() {
 		$entry = $this->newLogEntry( 'test', [] );
@@ -121,17 +124,17 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 		$this->assertEquals( $paramsWithoutTools[1], $paramsWithTools[1] );
 		$this->assertEquals( $paramsWithoutTools[2], $paramsWithTools[2] );
 
-		$this->assertEquals( $userLink, $paramsWithoutTools[0]['raw'] );
-		$this->assertEquals( $userLink . $userTools, $paramsWithTools[0]['raw'] );
+		$this->assertEquals( Message::rawParam( $userLink ), $paramsWithoutTools[0] );
+		$this->assertEquals( Message::rawParam( $userLink . $userTools ), $paramsWithTools[0] );
 
 		$this->assertEquals( $this->user->getName(), $paramsWithoutTools[1] );
 
-		$this->assertEquals( $titleLink, $paramsWithoutTools[2]['raw'] );
+		$this->assertEquals( Message::rawParam( $titleLink ), $paramsWithoutTools[2] );
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getActionText
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getActionText
 	 */
 	public function testLogParamsTypeRaw() {
 		$params = [ '4:raw:raw' => Linker::link( $this->title, null, [], [] ) ];
@@ -147,8 +150,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getActionText
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getActionText
 	 */
 	public function testLogParamsTypeMsg() {
 		$params = [ '4:msg:msg' => 'log-description-phpunit' ];
@@ -164,8 +167,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getActionText
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getActionText
 	 */
 	public function testLogParamsTypeMsgContent() {
 		$params = [ '4:msg-content:msgContent' => 'log-description-phpunit' ];
@@ -181,8 +184,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getActionText
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getActionText
 	 */
 	public function testLogParamsTypeNumber() {
 		global $wgLang;
@@ -200,8 +203,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getActionText
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getActionText
 	 */
 	public function testLogParamsTypeUserLink() {
 		$params = [ '4:user-link:userLink' => $this->user->getName() ];
@@ -220,8 +223,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getActionText
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getActionText
 	 */
 	public function testLogParamsTypeUserLink_empty() {
 		$params = [ '4:user-link:userLink' => ':' ];
@@ -237,8 +240,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getActionText
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getActionText
 	 */
 	public function testLogParamsTypeTitleLink() {
 		$params = [ '4:title-link:titleLink' => $this->title->getText() ];
@@ -254,8 +257,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getActionText
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getActionText
 	 */
 	public function testLogParamsTypePlain() {
 		$params = [ '4:plain:plain' => 'Some plain text' ];
@@ -271,7 +274,7 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getPerformerElement
+	 * @covers \LogFormatter::getPerformerElement
 	 * @dataProvider provideLogElement
 	 */
 	public function testGetPerformerElement( $deletedFlag, $allowedAction ) {
@@ -320,8 +323,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::newFromEntry
-	 * @covers LogFormatter::getComment
+	 * @covers \LogFormatter::newFromEntry
+	 * @covers \LogFormatter::getComment
 	 * @dataProvider provideLogElement
 	 */
 	public function testLogComment( $deletedFlag, $allowedAction ) {
@@ -383,8 +386,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideApiParamFormatting
-	 * @covers LogFormatter::formatParametersForApi
-	 * @covers LogFormatter::formatParameterValueForApi
+	 * @covers \LogFormatter::formatParametersForApi
+	 * @covers \LogFormatter::formatParameterValueForApi
 	 */
 	public function testApiParamFormatting( $key, $value, $expected ) {
 		$entry = $this->newLogEntry( 'param', [ $key => $value ] );
@@ -445,7 +448,7 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	 * Third parties bots listen to those messages. They are clever enough
 	 * to fetch the i18n messages from the wiki and then analyze the IRC feed
 	 * to reverse engineer the $1, $2 messages.
-	 * One thing bots can not detect is when MediaWiki change the meaning of
+	 * One thing bots cannot detect is when MediaWiki change the meaning of
 	 * a message like what happened when we deployed 1.19. $1 became the user
 	 * performing the action which broke basically all bots around.
 	 *
@@ -477,8 +480,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	 */
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypeBlock() {
 		$sep = $this->context->msg( 'colon-separator' )->text();
@@ -528,8 +531,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypeDelete() {
 		$sep = $this->context->msg( 'colon-separator' )->text();
@@ -552,8 +555,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypeNewusers() {
 		$this->assertIRCComment(
@@ -579,8 +582,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypeMove() {
 		$move_params = [
@@ -609,8 +612,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypePatrol() {
 		# patrol/patrol
@@ -626,8 +629,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypeProtect() {
 		$protectParams = [
@@ -676,8 +679,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypeUpload() {
 		$sep = $this->context->msg( 'colon-separator' )->text();
@@ -700,8 +703,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypeMerge() {
 		$sep = $this->context->msg( 'colon-separator' )->text();
@@ -720,8 +723,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LogFormatter::getIRCActionComment
-	 * @covers LogFormatter::getIRCActionText
+	 * @covers \LogFormatter::getIRCActionComment
+	 * @covers \LogFormatter::getIRCActionText
 	 */
 	public function testIrcMsgForLogTypeImport() {
 		$sep = $this->context->msg( 'colon-separator' )->text();

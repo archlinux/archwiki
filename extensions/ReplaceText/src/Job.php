@@ -21,11 +21,15 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
-use CommentStoreComment;
 use ContentHandler;
 use Job as JobParent;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Page\MovePageFactory;
+use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Title\Title;
+use MediaWiki\User\UserFactory;
+use MediaWiki\Watchlist\WatchlistManager;
 use RecentChange;
 use RequestContext;
 use TextContent;
@@ -36,13 +40,35 @@ use Wikimedia\ScopedCallback;
  * - based on /includes/RefreshLinksJob.php
  */
 class Job extends JobParent {
+	private MovePageFactory $movePageFactory;
+	private PermissionManager $permissionManager;
+	private UserFactory $userFactory;
+	private WatchlistManager $watchlistManager;
+	private WikiPageFactory $wikiPageFactory;
+
 	/**
 	 * Constructor.
 	 * @param Title $title
 	 * @param array|bool $params Cannot be === true
+	 * @param MovePageFactory $movePageFactory
+	 * @param PermissionManager $permissionManager
+	 * @param UserFactory $userFactory
+	 * @param WatchlistManager $watchlistManager
+	 * @param WikiPageFactory $wikiPageFactory
 	 */
-	function __construct( $title, $params = [] ) {
+	function __construct( $title, $params,
+		MovePageFactory $movePageFactory,
+		PermissionManager $permissionManager,
+		UserFactory $userFactory,
+		WatchlistManager $watchlistManager,
+		WikiPageFactory $wikiPageFactory
+	) {
 		parent::__construct( 'replaceText', $title, $params );
+		$this->movePageFactory = $movePageFactory;
+		$this->permissionManager = $permissionManager;
+		$this->userFactory = $userFactory;
+		$this->watchlistManager = $watchlistManager;
+		$this->wikiPageFactory = $wikiPageFactory;
 	}
 
 	/**
@@ -50,11 +76,14 @@ class Job extends JobParent {
 	 * @return bool success
 	 */
 	function run() {
-		$services = MediaWikiServices::getInstance();
 		// T279090
-		$current_user = $services->getUserFactory()->newFromId( $this->params['user_id'] );
-		$permissionManager = $services->getPermissionManager();
-		if ( !$permissionManager->userCan(
+		$current_user = $this->userFactory->newFromId( $this->params['user_id'] );
+		if ( !$current_user->isRegistered() ) {
+			$this->error = 'replacetext: the user ID ' . $this->params['user_id'] .
+				' does not belong to a registered user.';
+			return false;
+		}
+		if ( !$this->permissionManager->userCan(
 			'replacetext', $current_user, $this->title
 		) ) {
 			$this->error = 'replacetext: permission no longer valid';
@@ -89,7 +118,7 @@ class Job extends JobParent {
 
 			$reason = $this->params['edit_summary'];
 			$create_redirect = $this->params['create_redirect'];
-			$mvPage = $services->getMovePageFactory()->newMovePage( $this->title, $new_title );
+			$mvPage = $this->movePageFactory->newMovePage( $this->title, $new_title );
 			$mvStatus = $mvPage->move( $current_user, $reason, $create_redirect );
 			if ( !$mvStatus->isOK() ) {
 				$this->error = 'replaceText: error while moving: ' . $this->title->getPrefixedDBkey() .
@@ -98,10 +127,10 @@ class Job extends JobParent {
 			}
 
 			if ( $this->params['watch_page'] ) {
-				$services->getWatchlistManager()->addWatch( $current_user, $new_title );
+				$this->watchlistManager->addWatch( $current_user, $new_title );
 			}
 		} else {
-			$wikiPage = $services->getWikiPageFactory()->newFromTitle( $this->title );
+			$wikiPage = $this->wikiPageFactory->newFromTitle( $this->title );
 			$latestRevision = $wikiPage->getRevisionRecord();
 
 			if ( $latestRevision === null ) {
@@ -166,14 +195,14 @@ class Job extends JobParent {
 			if ( $hasMatches ) {
 				$edit_summary = CommentStoreComment::newUnsavedComment( $this->params['edit_summary'] );
 				$flags = EDIT_MINOR;
-				if ( $permissionManager->userHasRight( $current_user, 'bot' ) ) {
+				if ( $this->permissionManager->userHasRight( $current_user, 'bot' ) ) {
 					$flags |= EDIT_FORCE_BOT;
 				}
 				if ( isset( $this->params['botEdit'] ) && $this->params['botEdit'] ) {
 					$flags |= EDIT_FORCE_BOT;
 				}
-				if ( $permissionManager->userHasRight( $current_user, 'patrol' ) ||
-					$permissionManager->userHasRight( $current_user, 'autopatrol' ) ) {
+				if ( $this->permissionManager->userHasRight( $current_user, 'patrol' ) ||
+					$this->permissionManager->userHasRight( $current_user, 'autopatrol' ) ) {
 					$updater->setRcPatrolStatus( RecentChange::PRC_PATROLLED );
 				}
 				$updater->saveRevision( $edit_summary, $flags );

@@ -26,20 +26,22 @@ namespace MediaWiki\Specials;
 use ArchivedFile;
 use ChangesList;
 use ChangeTags;
-use DerivativeContext;
 use ErrorPageError;
 use File;
-use LinkBatch;
+use IDBAccessObject;
 use LocalRepo;
 use LogEventsList;
 use LogPage;
+use MediaWiki\Cache\LinkBatch;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\UndeletePage;
 use MediaWiki\Page\UndeletePageFactory;
 use MediaWiki\Page\WikiPageFactory;
@@ -55,9 +57,22 @@ use MediaWiki\Status\Status;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use MediaWiki\User\UserOptionsLookup;
-use Message;
+use MediaWiki\Watchlist\WatchlistManager;
+use OOUI\ActionFieldLayout;
+use OOUI\ButtonInputWidget;
+use OOUI\CheckboxInputWidget;
+use OOUI\DropdownInputWidget;
+use OOUI\FieldLayout;
+use OOUI\FieldsetLayout;
+use OOUI\FormLayout;
+use OOUI\HorizontalLayout;
+use OOUI\HtmlSnippet;
+use OOUI\Layout;
+use OOUI\PanelLayout;
+use OOUI\TextInputWidget;
+use OOUI\Widget;
 use PageArchive;
 use PermissionsError;
 use RepoGroup;
@@ -132,6 +147,7 @@ class SpecialUndelete extends SpecialPage {
 	private UndeletePageFactory $undeletePageFactory;
 	private ArchivedRevisionLookup $archivedRevisionLookup;
 	private CommentFormatter $commentFormatter;
+	private WatchlistManager $watchlistManager;
 
 	/**
 	 * @param PermissionManager $permissionManager
@@ -148,6 +164,7 @@ class SpecialUndelete extends SpecialPage {
 	 * @param UndeletePageFactory $undeletePageFactory
 	 * @param ArchivedRevisionLookup $archivedRevisionLookup
 	 * @param CommentFormatter $commentFormatter
+	 * @param WatchlistManager $watchlistManager
 	 */
 	public function __construct(
 		PermissionManager $permissionManager,
@@ -163,7 +180,8 @@ class SpecialUndelete extends SpecialPage {
 		SearchEngineFactory $searchEngineFactory,
 		UndeletePageFactory $undeletePageFactory,
 		ArchivedRevisionLookup $archivedRevisionLookup,
-		CommentFormatter $commentFormatter
+		CommentFormatter $commentFormatter,
+		WatchlistManager $watchlistManager
 	) {
 		parent::__construct( 'Undelete', 'deletedhistory' );
 		$this->permissionManager = $permissionManager;
@@ -180,6 +198,7 @@ class SpecialUndelete extends SpecialPage {
 		$this->undeletePageFactory = $undeletePageFactory;
 		$this->archivedRevisionLookup = $archivedRevisionLookup;
 		$this->commentFormatter = $commentFormatter;
+		$this->watchlistManager = $watchlistManager;
 	}
 
 	public function doesWrites() {
@@ -217,7 +236,15 @@ class SpecialUndelete extends SpecialPage {
 		$this->mDiff = $request->getCheck( 'diff' );
 		$this->mDiffOnly = $request->getBool( 'diffonly',
 			$this->userOptionsLookup->getOption( $this->getUser(), 'diffonly' ) );
-		$this->mComment = $request->getText( 'wpComment' );
+		$commentList = $request->getText( 'wpCommentList', 'other' );
+		$comment = $request->getText( 'wpComment' );
+		if ( $commentList === 'other' ) {
+			$this->mComment = $comment;
+		} elseif ( $comment !== '' ) {
+			$this->mComment = $commentList . $this->msg( 'colon-separator' )->inContentLanguage()->text() . $comment;
+		} else {
+			$this->mComment = $commentList;
+		}
 		$this->mUnsuppress = $request->getVal( 'wpUnsuppress' ) &&
 			$this->permissionManager->userHasRight( $user, 'suppressrevision' );
 		$this->mToken = $request->getVal( 'token' );
@@ -408,22 +435,22 @@ class SpecialUndelete extends SpecialPage {
 		$out->enableOOUI();
 
 		$fields = [];
-		$fields[] = new \OOUI\ActionFieldLayout(
-			new \OOUI\TextInputWidget( [
+		$fields[] = new ActionFieldLayout(
+			new TextInputWidget( [
 				'name' => 'prefix',
 				'inputId' => 'prefix',
 				'infusable' => true,
 				'value' => $this->mSearchPrefix,
 				'autofocus' => true,
 			] ),
-			new \OOUI\ButtonInputWidget( [
+			new ButtonInputWidget( [
 				'label' => $this->msg( 'undelete-search-submit' )->text(),
 				'flags' => [ 'primary', 'progressive' ],
 				'inputId' => 'searchUndelete',
 				'type' => 'submit',
 			] ),
 			[
-				'label' => new \OOUI\HtmlSnippet(
+				'label' => new HtmlSnippet(
 					$this->msg(
 						$fuzzySearch ? 'undelete-search-full' : 'undelete-search-prefix'
 					)->parse()
@@ -432,26 +459,26 @@ class SpecialUndelete extends SpecialPage {
 			]
 		);
 
-		$fieldset = new \OOUI\FieldsetLayout( [
+		$fieldset = new FieldsetLayout( [
 			'label' => $this->msg( 'undelete-search-box' )->text(),
 			'items' => $fields,
 		] );
 
-		$form = new \OOUI\FormLayout( [
+		$form = new FormLayout( [
 			'method' => 'get',
 			'action' => wfScript(),
 		] );
 
 		$form->appendContent(
 			$fieldset,
-			new \OOUI\HtmlSnippet(
+			new HtmlSnippet(
 				Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
 				Html::hidden( 'fuzzy', $fuzzySearch )
 			)
 		);
 
 		$out->addHTML(
-			new \OOUI\PanelLayout( [
+			new PanelLayout( [
 				'expanded' => false,
 				'padded' => true,
 				'framed' => true,
@@ -703,7 +730,7 @@ class SpecialUndelete extends SpecialPage {
 				'rows' => 25
 			], $content->getText() . "\n" );
 
-			$buttonFields[] = new \OOUI\ButtonInputWidget( [
+			$buttonFields[] = new ButtonInputWidget( [
 				'type' => 'submit',
 				'name' => 'preview',
 				'label' => $this->msg( 'showpreview' )->text()
@@ -712,7 +739,7 @@ class SpecialUndelete extends SpecialPage {
 			$sourceView = '';
 		}
 
-		$buttonFields[] = new \OOUI\ButtonInputWidget( [
+		$buttonFields[] = new ButtonInputWidget( [
 			'name' => 'diff',
 			'type' => 'submit',
 			'label' => $this->msg( 'showdiff' )->text()
@@ -737,9 +764,9 @@ class SpecialUndelete extends SpecialPage {
 					'type' => 'hidden',
 					'name' => 'wpEditToken',
 					'value' => $user->getEditToken() ] ) .
-				new \OOUI\FieldLayout(
-					new \OOUI\Widget( [
-						'content' => new \OOUI\HorizontalLayout( [
+				new FieldLayout(
+					new Widget( [
+						'content' => new HorizontalLayout( [
 							'items' => $buttonFields
 						] )
 					] )
@@ -942,8 +969,7 @@ class SpecialUndelete extends SpecialPage {
 		$out->setArticleBodyOnly( true );
 		$dbr = $this->dbProvider->getReplicaDatabase();
 		if ( $this->mHistoryOffset ) {
-			$encOffset = $dbr->addQuotes( $dbr->timestamp( $this->mHistoryOffset ) );
-			$extraConds = [ "ar_timestamp < $encOffset" ];
+			$extraConds = [ $dbr->expr( 'ar_timestamp', '<', $dbr->timestamp( $this->mHistoryOffset ) ) ];
 		} else {
 			$extraConds = [];
 		}
@@ -995,6 +1021,7 @@ class SpecialUndelete extends SpecialPage {
 		$out = $this->getOutput();
 		if ( $this->mAllowed ) {
 			$out->addModules( 'mediawiki.misc-authed-ooui' );
+			$out->addModuleStyles( 'mediawiki.special' );
 		}
 		$out->addModuleStyles( 'mediawiki.interface.helpers.styles' );
 		$out->wrapWikiMsg(
@@ -1043,7 +1070,7 @@ class SpecialUndelete extends SpecialPage {
 
 			$action = $this->getPageTitle()->getLocalURL( [ 'action' => 'submit' ] );
 			# Start the form here
-			$form = new \OOUI\FormLayout( [
+			$form = new FormLayout( [
 				'method' => 'post',
 				'action' => $action,
 				'id' => 'undelete',
@@ -1062,22 +1089,32 @@ class SpecialUndelete extends SpecialPage {
 		}
 
 		if ( $this->mAllowed && ( $haveRevisions || $haveFiles ) ) {
+			$unsuppressAllowed = $this->permissionManager->userHasRight( $this->getUser(), 'suppressrevision' );
 			$fields = [];
-			$fields[] = new \OOUI\Layout( [
-				'content' => new \OOUI\HtmlSnippet( $this->msg( 'undeleteextrahelp' )->parseAsBlock() )
+			$fields[] = new Layout( [
+				'content' => new HtmlSnippet( $this->msg( 'undeleteextrahelp' )->parseAsBlock() )
 			] );
 
-			$fields[] = new \OOUI\FieldLayout(
-				new \OOUI\TextInputWidget( [
-					'name' => 'wpComment',
-					'inputId' => 'wpComment',
+			$dropdownComment = $this->msg( 'undelete-comment-dropdown' )
+				->page( $this->mTargetObj )->inContentLanguage()->text();
+			// Add additional specific reasons for unsuppress
+			if ( $unsuppressAllowed ) {
+				$dropdownComment .= "\n" . $this->msg( 'undelete-comment-dropdown-unsuppress' )
+					->page( $this->mTargetObj )->inContentLanguage()->text();
+			}
+			$options = Xml::listDropdownOptions(
+				$dropdownComment,
+				[ 'other' => $this->msg( 'undeletecommentotherlist' )->text() ]
+			);
+			$options = Xml::listDropdownOptionsOoui( $options );
+
+			$fields[] = new FieldLayout(
+				new DropdownInputWidget( [
+					'name' => 'wpCommentList',
+					'inputId' => 'wpCommentList',
 					'infusable' => true,
-					'value' => $this->mComment,
-					'autofocus' => true,
-					// HTML maxlength uses "UTF-16 code units", which means that characters outside BMP
-					// (e.g. emojis) count for two each. This limit is overridden in JS to instead count
-					// Unicode codepoints.
-					'maxLength' => CommentStore::COMMENT_CHARACTER_LIMIT,
+					'value' => $this->getRequest()->getText( 'wpCommentList', 'other' ),
+					'options' => $options,
 				] ),
 				[
 					'label' => $this->msg( 'undeletecomment' )->text(),
@@ -1085,9 +1122,44 @@ class SpecialUndelete extends SpecialPage {
 				]
 			);
 
-			if ( $this->permissionManager->userHasRight( $this->getUser(), 'suppressrevision' ) ) {
-				$fields[] = new \OOUI\FieldLayout(
-					new \OOUI\CheckboxInputWidget( [
+			$fields[] = new FieldLayout(
+				new TextInputWidget( [
+					'name' => 'wpComment',
+					'inputId' => 'wpComment',
+					'infusable' => true,
+					'value' => $this->getRequest()->getText( 'wpComment' ),
+					'autofocus' => true,
+					// HTML maxlength uses "UTF-16 code units", which means that characters outside BMP
+					// (e.g. emojis) count for two each. This limit is overridden in JS to instead count
+					// Unicode codepoints.
+					'maxLength' => CommentStore::COMMENT_CHARACTER_LIMIT,
+				] ),
+				[
+					'label' => $this->msg( 'undeleteothercomment' )->text(),
+					'align' => 'top',
+				]
+			);
+
+			if ( $this->getUser()->isRegistered() ) {
+				$checkWatch = $this->watchlistManager->isWatched( $this->getUser(), $this->mTargetObj )
+					|| $this->getRequest()->getText( 'wpWatch' );
+				$fields[] = new FieldLayout(
+					new CheckboxInputWidget( [
+						'name' => 'wpWatch',
+						'inputId' => 'mw-undelete-watch',
+						'value' => '1',
+						'selected' => $checkWatch,
+					] ),
+					[
+						'label' => $this->msg( 'watchthis' )->text(),
+						'align' => 'inline',
+					]
+				);
+			}
+
+			if ( $unsuppressAllowed ) {
+				$fields[] = new FieldLayout(
+					new CheckboxInputWidget( [
 						'name' => 'wpUnsuppress',
 						'inputId' => 'mw-undelete-unsuppress',
 						'value' => '1',
@@ -1104,8 +1176,8 @@ class SpecialUndelete extends SpecialPage {
 				$this->getContext()->getAuthority()
 			);
 			if ( $undelPage->canProbablyUndeleteAssociatedTalk()->isGood() ) {
-				$fields[] = new \OOUI\FieldLayout(
-					new \OOUI\CheckboxInputWidget( [
+				$fields[] = new FieldLayout(
+					new CheckboxInputWidget( [
 						'name' => 'undeletetalk',
 						'inputId' => 'mw-undelete-undeletetalk',
 						'selected' => false,
@@ -1117,11 +1189,11 @@ class SpecialUndelete extends SpecialPage {
 				);
 			}
 
-			$fields[] = new \OOUI\FieldLayout(
-				new \OOUI\Widget( [
-					'content' => new \OOUI\HorizontalLayout( [
+			$fields[] = new FieldLayout(
+				new Widget( [
+					'content' => new HorizontalLayout( [
 						'items' => [
-							new \OOUI\ButtonInputWidget( [
+							new ButtonInputWidget( [
 								'name' => 'restore',
 								'inputId' => 'mw-undelete-submit',
 								'value' => '1',
@@ -1129,7 +1201,7 @@ class SpecialUndelete extends SpecialPage {
 								'flags' => [ 'primary', 'progressive' ],
 								'type' => 'submit',
 							] ),
-							new \OOUI\ButtonInputWidget( [
+							new ButtonInputWidget( [
 								'name' => 'invert',
 								'inputId' => 'mw-undelete-invert',
 								'value' => '1',
@@ -1140,21 +1212,43 @@ class SpecialUndelete extends SpecialPage {
 				] )
 			);
 
-			$fieldset = new \OOUI\FieldsetLayout( [
+			$fieldset = new FieldsetLayout( [
 				'label' => $this->msg( 'undelete-fieldset-title' )->text(),
 				'id' => 'mw-undelete-table',
 				'items' => $fields,
 			] );
 
+			$link = '';
+			if ( $this->getAuthority()->isAllowed( 'editinterface' ) ) {
+				if ( $unsuppressAllowed ) {
+					$link .= $this->getLinkRenderer()->makeKnownLink(
+						$this->msg( 'undelete-comment-dropdown-unsuppress' )->inContentLanguage()->getTitle(),
+						$this->msg( 'undelete-edit-commentlist-unsuppress' )->text(),
+						[],
+						[ 'action' => 'edit' ]
+					);
+					$link .= $this->msg( 'pipe-separator' )->escaped();
+				}
+				$link .= $this->getLinkRenderer()->makeKnownLink(
+					$this->msg( 'undelete-comment-dropdown' )->inContentLanguage()->getTitle(),
+					$this->msg( 'undelete-edit-commentlist' )->text(),
+					[],
+					[ 'action' => 'edit' ]
+				);
+
+				$link = Html::rawElement( 'p', [ 'class' => 'mw-undelete-editcomments' ], $link );
+			}
+
 			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable form is set, when used here
 			$form->appendContent(
-				new \OOUI\PanelLayout( [
+				new PanelLayout( [
 					'expanded' => false,
 					'padded' => true,
 					'framed' => true,
 					'content' => $fieldset,
 				] ),
-				new \OOUI\HtmlSnippet(
+				new HtmlSnippet(
+					$link .
 					Html::hidden( 'target', $this->mTarget ) .
 					Html::hidden( 'wpEditToken', $this->getUser()->getEditToken() )
 				)
@@ -1213,7 +1307,7 @@ class SpecialUndelete extends SpecialPage {
 			$history .= $misc;
 
 			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable form is set, when used here
-			$form->appendContent( new \OOUI\HtmlSnippet( $history ) );
+			$form->appendContent( new HtmlSnippet( $history ) );
 			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable form is set, when used here
 			$out->addHTML( (string)$form );
 		} else {
@@ -1226,7 +1320,7 @@ class SpecialUndelete extends SpecialPage {
 	protected function formatRevisionRow( $row, $earliestLiveTime, $remaining ) {
 		$revRecord = $this->revisionStore->newRevisionFromArchiveRow(
 				$row,
-				RevisionStore::READ_NORMAL,
+				IDBAccessObject::READ_NORMAL,
 				$this->mTargetObj
 			);
 
@@ -1560,6 +1654,12 @@ class SpecialUndelete extends SpecialPage {
 
 			$link = $this->getLinkRenderer()->makeKnownLink( $this->mTargetObj );
 			$out->addWikiMsg( 'undeletedpage', Message::rawParam( $link ) );
+
+			$this->watchlistManager->setWatch(
+				$this->getRequest()->getCheck( 'wpWatch' ),
+				$this->getAuthority(),
+				$this->mTargetObj
+			);
 		}
 	}
 

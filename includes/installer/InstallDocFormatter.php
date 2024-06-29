@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Installer-specific wikitext formatting.
  *
@@ -20,14 +21,14 @@
  * @file
  */
 
+namespace MediaWiki\Installer;
+
 class InstallDocFormatter {
 	/** @var string */
 	private $text;
 
 	public static function format( $text ) {
-		$obj = new self( $text );
-
-		return $obj->execute();
+		return ( new self( $text ) )->execute();
 	}
 
 	protected function __construct( $text ) {
@@ -66,12 +67,10 @@ class InstallDocFormatter {
 		);
 
 		// add links to manual to every global variable mentioned
-		$text = preg_replace(
+		return preg_replace(
 			'/\$wg[a-z0-9_]+/i',
 			"{$linkStart}https://www.mediawiki.org/wiki/Manual:$0{$linkEnd}",
 			$text
 		);
-
-		return $text;
 	}
 }

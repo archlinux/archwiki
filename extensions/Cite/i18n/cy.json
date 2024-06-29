@@ -24,7 +24,6 @@
 	"cite_error_included_references": "Tag clo ar goll ar gyfer <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Mae tagiau <code>&lt;ref&gt;</code> yn bodoli am grŵp o'r enw \"$1\", ond ni ellir canfod y tag <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "Mae gan y tag <code>&lt;ref&gt;</code> oddi mewn i <code>&lt;references&gt;</code> briodoledd grŵp anghyson \"$1\".",
-	"cite_error_references_missing_group": "Mae yna tag <code>&lt;ref&gt;</code> ag enw \"$2\" yn y <code>&lt;references&gt;</code> sydd â phriodoledd grŵp \"$1\" nad yw'n cael ei ddefnyddio yn nhestun cynt.",
 	"cite_error_references_missing_key": "Ni ddefnyddir y tag <code>&lt;ref&gt;</code> o'r enw \"$1\", a ddiffinir yn <code>&lt;references&gt;</code>, yn y testun blaenorol.",
 	"cite_error_references_no_key": "Nid oes dim priodoledd o enw gan y tag <code>&lt;ref&gt;</code> a ddiffinir yn <code>&lt;references&gt;</code>",
 	"cite_error_empty_references_define": "Mae tag <code>&lt;ref&gt;</code> ag enw \"$1\" a ddiffinir yn y grŵp <code>&lt;references&gt;</code> \"$2\" heb gynnwys.",

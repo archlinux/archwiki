@@ -7,7 +7,6 @@
 	},
 	"apierror-visualeditor-badcachekey": "ह्या कळीसाठी कोणतेही कॅचेमालिकाकरण सापडले नाही.",
 	"apierror-visualeditor-difffailed": "फ़रक दाखवणे शक्य नाही",
-	"apierror-visualeditor-docserver": "पार्सोईड/रेस्टबेसशी संपर्क होऊ शकला नाही.",
 	"apihelp-visualeditor-param-basetimestamp": "जतन करतांना, यास संपादित केलेल्या आवृत्तीच्या वेळठश्यावर स्थापा.संपादन विसंवादाला शोधण्यास उपयोगी.",
 	"apihelp-visualeditor-param-editintro": "सूचना जोडण्यासाठी परिचय संपादित करा",
 	"apihelp-visualeditor-param-etag": "पाठवण्यासाठी ई-टॅग करा",

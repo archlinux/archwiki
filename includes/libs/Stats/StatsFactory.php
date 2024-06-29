@@ -24,8 +24,10 @@ namespace Wikimedia\Stats;
 use IBufferingStatsdDataFactory;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use TypeError;
 use Wikimedia\Stats\Emitters\EmitterInterface;
+use Wikimedia\Stats\Emitters\NullEmitter;
 use Wikimedia\Stats\Exceptions\IllegalOperationException;
 use Wikimedia\Stats\Exceptions\InvalidConfigurationException;
 use Wikimedia\Stats\Metrics\BaseMetric;
@@ -94,11 +96,25 @@ class StatsFactory {
 	 * @return StatsFactory
 	 */
 	public function withComponent( string $component ): StatsFactory {
-		return new StatsFactory( $this->cache, $this->emitter, $this->logger, $component );
+		$statsFactory = new StatsFactory( $this->cache, $this->emitter, $this->logger, $component );
+		return $statsFactory->withStatsdDataFactory( $this->statsdDataFactory );
 	}
 
 	/**
 	 * Adds a label key-value pair to all metrics created by this StatsFactory instance.
+	 * Note that the order in which labels are added is significant for StatsD output.
+	 *
+	 * Example:
+	 * ```php
+	 * $statsFactory->withComponent( 'demo' )
+	 *     ->addStaticLabel( 'first', 'foo' )
+	 *     ->addStaticLabel( 'second', 'bar' )
+	 *     ->getCounter( 'testMetric_total' )
+	 *     ->setLabel( 'third', 'baz' )
+	 *     ->increment();
+	 * ```
+	 * outputs statsd: "mediawiki.demo.testMetric_total.foo.bar.baz"
+	 * outputs prometheus: "mediawiki_demo_testMetric_total{first='foo',second='bar',third='baz'}
 	 *
 	 * @param string $key
 	 * @param string $value
@@ -118,7 +134,7 @@ class StatsFactory {
 		return $this;
 	}
 
-	public function withStatsdDataFactory( IBufferingStatsdDataFactory $statsdDataFactory ): StatsFactory {
+	public function withStatsdDataFactory( ?IBufferingStatsdDataFactory $statsdDataFactory ): StatsFactory {
 		$this->statsdDataFactory = $statsdDataFactory;
 		return $this;
 	}
@@ -163,8 +179,22 @@ class StatsFactory {
 	 * Send all buffered metrics to the target and destroy the cache.
 	 */
 	public function flush(): void {
+		$this->trackUsage();
 		$this->emitter->send();
 		$this->cache->clear();
+	}
+
+	/**
+	 * Create a metric totaling all samples in the cache.
+	 */
+	private function trackUsage(): void {
+		$accumulator = 0;
+		foreach ( $this->cache->getAllMetrics() as $metric ) {
+			$accumulator += $metric->getSampleCount();
+		}
+		$this->getCounter( 'stats_buffered_total' )
+			->copyToStatsdAt( 'stats.statslib.buffered' )
+			->incrementBy( $accumulator );
 	}
 
 	/**
@@ -197,5 +227,19 @@ class StatsFactory {
 			$this->cache->set( $this->component, $name, $metric );
 		}
 		return $metric->fresh();
+	}
+
+	/**
+	 * Returns an instance of StatsFactory as a NULL value object
+	 * as a default for consumer code to fall back to. This can also
+	 * be used in tests environment where we don't need the full
+	 * UDP emitter object.
+	 *
+	 * @since 1.42
+	 *
+	 * @return self
+	 */
+	public static function newNull(): self {
+		return new self( new StatsCache(), new NullEmitter(), new NullLogger() );
 	}
 }

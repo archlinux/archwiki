@@ -23,7 +23,7 @@
 namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
-use User;
+use MediaWiki\User\UserIdentity;
 
 /**
  * @package MediaWiki\Skins\Vector\FeatureManagement\Requirements
@@ -31,21 +31,18 @@ use User;
  */
 class LoggedInRequirement implements Requirement {
 
-	/**
-	 * @var User
-	 */
-	private $user;
+	private UserIdentity $user;
 
 	/**
-	 * @var string The name of the requirement
+	 * The name of the requirement
 	 */
-	private $name;
+	private string $name;
 
 	/**
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param string $name The name of the requirement
 	 */
-	public function __construct( User $user, string $name ) {
+	public function __construct( UserIdentity $user, string $name ) {
 		$this->user = $user;
 		$this->name = $name;
 	}

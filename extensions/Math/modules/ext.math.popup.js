@@ -1,25 +1,25 @@
 ( function () {
 	'use strict';
-	var previewType = 'math';
-	var api = new mw.Rest();
-	var isValidId = function ( qid ) {
+	const previewType = 'math';
+	const api = new mw.Rest();
+	const isValidId = function ( qid ) {
 		return qid.match( /Q\d+/g ) === null;
 	};
-	var fetch = function ( qid ) {
+	const fetch = function ( qid ) {
 		return api.get( '/math/v0/popup/html/' + qid, {}, {
 			Accept: 'application/json; charset=utf-8',
 			'Accept-Language': mw.config.language
 		} );
 	};
-	var fetchPreviewForTitle = function ( title, el ) {
-		var deferred = $.Deferred();
-		var qidstr = el.parentNode.parentNode.dataset.qid;
+	const fetchPreviewForTitle = function ( title, el ) {
+		const deferred = $.Deferred();
+		let qidstr = el.parentNode.parentNode.dataset.qid;
 		if ( isValidId( qidstr ) ) {
 			return deferred.reject();
 		}
 		qidstr = qidstr.slice( 1 );
 		fetch( qidstr ).then( function ( body ) {
-			var model = {
+			const model = {
 				title: body.title,
 				url: body.canonicalurl,
 				languageCode: body.pagelanguagehtmlcode,
@@ -42,12 +42,17 @@
 			}
 		}
 	);
-	module.exports = {
+
+	const mathDisabledByUser = mw.user.isNamed() && mw.user.options.get( 'math-popups' ) !== '1';
+	const selector = '.mwe-math-element[data-qid] img';
+	const mathAppliesToThisPage = document.querySelectorAll( selector ).length > 0;
+
+	module.exports = !mathAppliesToThisPage || mathDisabledByUser ? null : {
 		type: previewType,
-		selector: '.mwe-math-element[data-qid] img',
+		selector,
 		gateway: {
-			fetch: fetch,
-			fetchPreviewForTitle: fetchPreviewForTitle
+			fetch,
+			fetchPreviewForTitle
 		}
 	};
 }() );

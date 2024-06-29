@@ -24,12 +24,13 @@ namespace MediaWiki\ResourceLoader;
 
 use Exception;
 use FileContentsHasher;
-use JSParser;
 use LogicException;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use Peast\Peast;
+use Peast\Syntax\Exception as PeastSyntaxException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -62,8 +63,6 @@ abstract class Module implements LoggerAwareInterface {
 
 	/** @var string|null Module name */
 	protected $name = null;
-	/** @var string[] What client platforms the module targets (e.g. desktop, mobile) */
-	protected $targets = [ 'desktop', 'mobile' ];
 	/** @var string[]|null Skin names */
 	protected $skins = null;
 
@@ -124,7 +123,7 @@ abstract class Module implements LoggerAwareInterface {
 	public const ORIGIN_ALL = 10;
 
 	/** @var int Cache version for user-script JS validation errors from validateScriptFile(). */
-	private const USERJSPARSE_CACHE_VERSION = 2;
+	private const USERJSPARSE_CACHE_VERSION = 3;
 
 	/**
 	 * Get this module's name. This is set when the module is registered
@@ -492,16 +491,6 @@ abstract class Module implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Get target(s) for the module, eg ['desktop'] or ['desktop', 'mobile']
-	 *
-	 * @stable to override
-	 * @return string[]
-	 */
-	public function getTargets() {
-		return $this->targets;
-	}
-
-	/**
 	 * Get list of skins for which this module must be available to load.
 	 *
 	 * By default, modules are available to all skins.
@@ -829,7 +818,7 @@ abstract class Module implements LoggerAwareInterface {
 	 * @return array
 	 */
 	final protected function buildContent( Context $context ) {
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+		$statsFactory = MediaWikiServices::getInstance()->getStatsFactory();
 		$statStart = microtime( true );
 
 		// This MUST build both scripts and styles, regardless of whether $context->getOnly()
@@ -914,10 +903,15 @@ abstract class Module implements LoggerAwareInterface {
 		}
 
 		$statTiming = microtime( true ) - $statStart;
-		$stats->timing( "resourceloader_build.all", 1000 * $statTiming );
-		$name = $this->getName();
-		$statName = strtr( $name, '.', '_' );
-		$stats->timing( "resourceloader_build.$statName", 1000 * $statTiming );
+		$statName = strtr( $this->getName(), '.', '_' );
+
+		$statsFactory->getTiming( 'resourceloader_build_seconds' )
+			->setLabel( 'name', $statName )
+			->copyToStatsdAt( [
+				'resourceloader_build.all',
+				"resourceloader_build.$statName",
+			] )
+			->observe( 1000 * $statTiming );
 
 		return $content;
 	}
@@ -1066,6 +1060,18 @@ abstract class Module implements LoggerAwareInterface {
 	}
 
 	/**
+	 * Whether to skip the structure test ResourcesTest::testRespond() for this
+	 * module.
+	 *
+	 * @since 1.42
+	 * @stable to override
+	 * @return bool
+	 */
+	public function shouldSkipStructureTest() {
+		return $this->getGroup() === self::GROUP_PRIVATE;
+	}
+
+	/**
 	 * Validate a user-provided JavaScript blob.
 	 *
 	 * @param string $fileName
@@ -1090,15 +1096,10 @@ abstract class Module implements LoggerAwareInterface {
 			),
 			$cache::TTL_WEEK,
 			static function () use ( $contents, $fileName ) {
-				$parser = new JSParser();
 				try {
-					// Ignore compiler warnings (T77169)
-					// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-					@$parser->parse( $contents, $fileName, 1 );
-				} catch ( TimeoutException $e ) {
-					throw $e;
-				} catch ( Exception $e ) {
-					return $e->getMessage();
+					Peast::ES2016( $contents )->parse();
+				} catch ( PeastSyntaxException $e ) {
+					return $e->getMessage() . " on line " . $e->getPosition()->getLine();
 				}
 				// Cache success as null
 				return null;
@@ -1113,8 +1114,7 @@ abstract class Module implements LoggerAwareInterface {
 			// the response itself.
 			return 'mw.log.error(' .
 				json_encode(
-					'JavaScript parse error (scripts need to be valid ECMAScript 5): ' .
-					$error
+					'Parse error: ' . $error
 				) .
 				');';
 		}
@@ -1147,6 +1147,3 @@ abstract class Module implements LoggerAwareInterface {
 		] );
 	}
 }
-
-/** @deprecated since 1.39 */
-class_alias( Module::class, 'ResourceLoaderModule' );

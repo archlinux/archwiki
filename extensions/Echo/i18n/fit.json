@@ -25,7 +25,6 @@
 	"echo-category-title-system-emailonly": "{{PLURAL:$1|Systeemi}}",
 	"echo-category-title-thank-you-edit": "{{PLURAL:$1|Mookkausvirstanpylväs|Mookkausvirstanpylväät}}",
 	"notifications": "Ilmotukset",
-	"tooltip-pt-notifications-alert": "{{GENDER:|Hälytyksesi}}",
 	"echo-specialpage": "Ilmotukset",
 	"notificationsmarkread-legend": "Markeeraa ilmotus luetuksi",
 	"echo-notification-placeholder": "Ei ilmotuksia.",

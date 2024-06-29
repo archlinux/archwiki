@@ -7,7 +7,7 @@
 		]
 	},
 	"skinname-monobook": "MonoBook",
-	"monobook-desc": "自 2004 年以來的經典 MediaWiki 主題，以頁面背景中的書籍黑白照片為名",
+	"monobook-desc": "自 2004 年以來的經典 MediaWiki 外觀，以頁面背景中的一張黑白書籍照片為名",
 	"monobook.css": "/* 此 CSS 會影響使用 Monobook 介面外觀的使用者 */",
 	"monobook.js": "/* 此 JavaScript 會用於使用 Monobook 介面外觀的使用者 */",
 	"monobook-jumptotop": "返回頂端",

@@ -38,7 +38,7 @@ const getHeadingIntersectionHandler = ( changeActiveSection ) => {
 			section :
 			section.querySelector( HEADLINE_SELECTOR );
 		if ( headline ) {
-			changeActiveSection( `${TOC_SECTION_ID_PREFIX}${headline.id}` );
+			changeActiveSection( `${ TOC_SECTION_ID_PREFIX }${ headline.id }` );
 		}
 	};
 };
@@ -206,8 +206,8 @@ const setupTableOfContents = ( tocElement, bodyContent, initSectionObserverFn ) 
 	} );
 	const headingSelector = [
 		'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
-	].map( ( tag ) => `.mw-parser-output ${tag}` ).join( ',' );
-	const elements = () => bodyContent.querySelectorAll( `${headingSelector}, .mw-body-content` );
+	].map( ( tag ) => `.mw-parser-output ${ tag }` ).join( ',' );
+	const elements = () => bodyContent.querySelectorAll( `${ headingSelector }, .mw-body-content` );
 
 	const sectionObserver = initSectionObserverFn( {
 		elements: elements(),
@@ -223,6 +223,10 @@ const setupTableOfContents = ( tocElement, bodyContent, initSectionObserverFn ) 
 	} );
 	mw.hook( 'wikipage.tableOfContents' ).add( function ( sections ) {
 		tableOfContents.reloadTableOfContents( sections ).then( function () {
+			/**
+			 * @stable for use in gadgets and extensions
+			 * @since 1.40
+			 */
 			mw.hook( 'wikipage.tableOfContents.vector' ).fire( sections );
 			updateElements();
 		} );
@@ -240,7 +244,7 @@ const setupTableOfContents = ( tocElement, bodyContent, initSectionObserverFn ) 
 
 		// T325086: If hash fragment is present and corresponds to a toc section,
 		// expand the section.
-		const hashSection = /** @type {HTMLElement|null} */ ( mw.util.getTargetFromFragment( `${TOC_SECTION_ID_PREFIX}${hash}` ) );
+		const hashSection = /** @type {HTMLElement|null} */ ( mw.util.getTargetFromFragment( `${ TOC_SECTION_ID_PREFIX }${ hash }` ) );
 		if ( hashSection ) {
 			tableOfContents.expandSection( hashSection.id );
 		}

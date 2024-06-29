@@ -21,13 +21,13 @@ const { TaskQueue } = require( 'mmv' );
 	QUnit.module( 'mmv.model.TaskQueue', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'TaskQueue constructor sense check', function ( assert ) {
-		var taskQueue = new TaskQueue();
+		const taskQueue = new TaskQueue();
 
 		assert.true( taskQueue instanceof TaskQueue, 'TaskQueue created successfully' );
 	} );
 
 	QUnit.test( 'Queue length check', function ( assert ) {
-		var taskQueue = new TaskQueue();
+		const taskQueue = new TaskQueue();
 
 		assert.strictEqual( taskQueue.queue.length, 0, 'queue is initially empty' );
 
@@ -37,16 +37,15 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'State check', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			task = $.Deferred(),
-			promise;
+		const taskQueue = new TaskQueue();
+		const task = $.Deferred();
 
 		taskQueue.push( () => task );
 
 		assert.strictEqual( taskQueue.state, TaskQueue.State.NOT_STARTED,
 			'state is initially NOT_STARTED' );
 
-		promise = taskQueue.execute().then( function () {
+		const promise = taskQueue.execute().then( function () {
 			assert.strictEqual( taskQueue.state, TaskQueue.State.FINISHED,
 				'state is FINISHED after execution finished' );
 		} );
@@ -60,8 +59,8 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'State check for cancellation', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			task = $.Deferred();
+		const taskQueue = new TaskQueue();
+		const task = $.Deferred();
 
 		taskQueue.push( () => task );
 		taskQueue.execute();
@@ -72,7 +71,7 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Test executing empty queue', function ( assert ) {
-		var taskQueue = new TaskQueue();
+		const taskQueue = new TaskQueue();
 
 		return taskQueue.execute().done( function () {
 			assert.true( true, 'Queue promise resolved' );
@@ -80,8 +79,8 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Simple execution test', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			called = false;
+		const taskQueue = new TaskQueue();
+		let called = false;
 
 		taskQueue.push( function () {
 			called = true;
@@ -93,15 +92,15 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Task execution order test', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			order = [];
+		const taskQueue = new TaskQueue();
+		const order = [];
 
 		taskQueue.push( function () {
 			order.push( 1 );
 		} );
 
 		taskQueue.push( function () {
-			var deferred = $.Deferred();
+			const deferred = $.Deferred();
 
 			order.push( 2 );
 
@@ -122,8 +121,8 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Double execution test', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			called = 0;
+		const taskQueue = new TaskQueue();
+		let called = 0;
 
 		taskQueue.push( function () {
 			called++;
@@ -137,8 +136,8 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Parallel execution test', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			called = 0;
+		const taskQueue = new TaskQueue();
+		let called = 0;
 
 		taskQueue.push( function () {
 			called++;
@@ -153,7 +152,7 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Test push after execute', function ( assert ) {
-		var taskQueue = new TaskQueue();
+		const taskQueue = new TaskQueue();
 
 		taskQueue.execute();
 
@@ -163,7 +162,7 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Test failed task', function ( assert ) {
-		var taskQueue = new TaskQueue();
+		const taskQueue = new TaskQueue();
 
 		taskQueue.push( function () {
 			return $.Deferred().reject();
@@ -175,12 +174,12 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Test that tasks wait for each other', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			longRunningTaskFinished = false,
-			seenFinished = false;
+		const taskQueue = new TaskQueue();
+		let longRunningTaskFinished = false;
+		let seenFinished = false;
 
 		taskQueue.push( function () {
-			var deferred = $.Deferred();
+			const deferred = $.Deferred();
 
 			setTimeout( function () {
 				longRunningTaskFinished = true;
@@ -200,11 +199,11 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Test cancellation before start', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			triggered = false,
-			verificationTask = function () {
-				triggered = true;
-			};
+		const taskQueue = new TaskQueue();
+		let triggered = false;
+		const verificationTask = function () {
+			triggered = true;
+		};
 
 		taskQueue.push( verificationTask );
 
@@ -222,11 +221,11 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Test cancellation within callback', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			triggered = false,
-			verificationTask = function () {
-				triggered = true;
-			};
+		const taskQueue = new TaskQueue();
+		let triggered = false;
+		const verificationTask = function () {
+			triggered = true;
+		};
 
 		taskQueue.push( function () {
 			taskQueue.cancel();
@@ -245,12 +244,12 @@ const { TaskQueue } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Test cancellation from task', function ( assert ) {
-		var taskQueue = new TaskQueue(),
-			triggered = false,
-			task1 = $.Deferred(),
-			verificationTask = function () {
-				triggered = true;
-			};
+		const taskQueue = new TaskQueue();
+		let triggered = false;
+		const task1 = $.Deferred();
+		const verificationTask = function () {
+			triggered = true;
+		};
 
 		taskQueue.push( function () {
 			return task1;

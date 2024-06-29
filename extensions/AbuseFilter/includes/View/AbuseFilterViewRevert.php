@@ -2,10 +2,8 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use Html;
 use HTMLForm;
 use IContextSource;
-use Linker;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\ReversibleConsequence;
@@ -15,12 +13,14 @@ use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserFactory;
 use Message;
 use PermissionsError;
-use SpecialPage;
-use TitleValue;
 use UnexpectedValueException;
 use UserBlockedError;
 use Wikimedia\Rdbms\LBFactory;

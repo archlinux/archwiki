@@ -63,7 +63,8 @@ class PopupTest extends MathWikibaseConnectorTestFactory {
 	/**
 	 * @dataProvider provideItemSetups
 	 */
-	public function testExistingId( Item $item ) {
+	public function testExistingId( bool $hasPart ) {
+		$item = $this->setupMassEnergyEquivalenceItem( $hasPart );
 		$popupHandler = $this->getPopup( null, null, $item );
 
 		$request = $this->getRequest( '1', 'en' );
@@ -134,10 +135,10 @@ class PopupTest extends MathWikibaseConnectorTestFactory {
 		return new Popup( $mathWikibaseConnectorMock, $languageFactoryMock, $languageNameUtilsMock, $titleFactoryMock );
 	}
 
-	public function provideItemSetups(): array {
+	public static function provideItemSetups(): array {
 		return [
-			[ $this->setupMassEnergyEquivalenceItem( true ) ],
-			[ $this->setupMassEnergyEquivalenceItem( false ) ],
+			[ true ],
+			[ false ],
 		];
 	}
 }

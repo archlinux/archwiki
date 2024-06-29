@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\UserEditCountUpdate;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
@@ -12,8 +15,6 @@ use MediaWiki\User\UserRigorOptions;
  * @group Database
  */
 class UserEditTrackerTest extends MediaWikiIntegrationTestCase {
-	/** @inheritDoc */
-	protected $tablesUsed = [ 'page' ];
 
 	/**
 	 * Do an edit

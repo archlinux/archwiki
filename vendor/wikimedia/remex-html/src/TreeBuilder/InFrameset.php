@@ -17,28 +17,28 @@ class InFrameset extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'html':
-			$dispatcher->inBody->startTag(
-				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'html':
+				$dispatcher->inBody->startTag(
+					$name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		case 'frameset':
-			$builder->insertElement( $name, $attrs, false, $sourceStart, $sourceLength );
-			break;
+			case 'frameset':
+				$builder->insertElement( $name, $attrs, false, $sourceStart, $sourceLength );
+				break;
 
-		case 'frame':
-			$dispatcher->ack = true;
-			$builder->insertElement( $name, $attrs, true, $sourceStart, $sourceLength );
-			break;
+			case 'frame':
+				$dispatcher->ack = true;
+				$builder->insertElement( $name, $attrs, true, $sourceStart, $sourceLength );
+				break;
 
-		case 'noframes':
-			$dispatcher->inHead->startTag(
-				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'noframes':
+				$dispatcher->inHead->startTag(
+					$name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$builder->error( "unexpected start tag in frameset, ignoring", $sourceStart );
-			return;
+			default:
+				$builder->error( "unexpected start tag in frameset, ignoring", $sourceStart );
+				return;
 		}
 	}
 
@@ -48,20 +48,20 @@ class InFrameset extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'frameset':
-			if ( $stack->current->htmlName === 'html' ) {
-				$builder->error( "unexpected </frameset> in fragment context", $sourceStart );
-				return;
-			}
-			$builder->pop( $sourceStart, $sourceLength );
-			if ( !$builder->isFragment && $stack->current !== 'frameset' ) {
-				$dispatcher->switchMode( Dispatcher::AFTER_FRAMESET );
-			}
-			break;
+			case 'frameset':
+				if ( $stack->current->htmlName === 'html' ) {
+					$builder->error( "unexpected </frameset> in fragment context", $sourceStart );
+					return;
+				}
+				$builder->pop( $sourceStart, $sourceLength );
+				if ( !$builder->isFragment && $stack->current !== 'frameset' ) {
+					$dispatcher->switchMode( Dispatcher::AFTER_FRAMESET );
+				}
+				break;
 
-		default:
-			$builder->error( "unexpected </$name> in frameset", $sourceStart );
-			return;
+			default:
+				$builder->error( "unexpected </$name> in frameset", $sourceStart );
+				return;
 		}
 	}
 

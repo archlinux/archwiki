@@ -10,12 +10,7 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 	public $currentFileInfo;
 
 	public $important;
-	public $type = 'MixinCall';
 
-	/**
-	 * less.js: tree.mixin.Call
-	 *
-	 */
 	public function __construct( $elements, $args, $index, $currentFileInfo, $important = false ) {
 		$this->selector = new Less_Tree_Selector( $elements );
 		$this->arguments = $args;
@@ -24,17 +19,14 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 		$this->important = $important;
 	}
 
-	// function accept($visitor){
-	//	$this->selector = $visitor->visit($this->selector);
-	//	$this->arguments = $visitor->visit($this->arguments);
-	//}
-
+	/**
+	 * @see less-2.5.3.js#MixinCall.prototype.eval
+	 */
 	public function compile( $env ) {
 		$rules = [];
 		$match = false;
 		$isOneFound = false;
 		$candidates = [];
-		$defaultUsed = false;
 		$conditionResult = [];
 
 		$args = [];
@@ -42,18 +34,16 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 			$args[] = [ 'name' => $a['name'], 'value' => $a['value']->compile( $env ) ];
 		}
 
+		$defNone = 0;
+		$defTrue = 1;
+		$defFalse = 2;
 		foreach ( $env->frames as $frame ) {
-
 			$mixins = $frame->find( $this->selector );
-
 			if ( !$mixins ) {
 				continue;
 			}
 
 			$isOneFound = true;
-			$defNone = 0;
-			$defTrue = 1;
-			$defFalse = 2;
 
 			// To make `default()` function independent of definition order we have two "subpasses" here.
 			// At first we evaluate each guard *twice* (with `default() == true` and `default() == false`),
@@ -113,20 +103,18 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 			}
 
 			$candidates_length = count( $candidates );
-			$length_1 = ( $candidates_length == 1 );
-
 			for ( $m = 0; $m < $candidates_length; $m++ ) {
 				$candidate = $candidates[$m]['group'];
 				if ( ( $candidate === $defNone ) || ( $candidate === $defaultResult ) ) {
-					try{
+					try {
 						$mixin = $candidates[$m]['mixin'];
 						if ( !( $mixin instanceof Less_Tree_Mixin_Definition ) ) {
+							$originalRuleset = $mixin instanceof Less_Tree_Ruleset ? $mixin->originalRuleset : $mixin;
 							$mixin = new Less_Tree_Mixin_Definition( '', [], $mixin->rules, null, false );
-							$mixin->originalRuleset = $mixins[$m]->originalRuleset;
+							$mixin->originalRuleset = $originalRuleset;
 						}
 						$rules = array_merge( $rules, $mixin->evalCall( $env, $args, $this->important )->rules );
 					} catch ( Exception $e ) {
-						// throw new Less_Exception_Compiler($e->getMessage(), $e->index, null, $this->currentFileInfo['filename']);
 						throw new Less_Exception_Compiler( $e->getMessage(), null, null, $this->currentFileInfo );
 					}
 				}
@@ -152,7 +140,6 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 
 	/**
 	 * Format the args for use in exception messages
-	 *
 	 */
 	private function Format( $args ) {
 		$message = [];

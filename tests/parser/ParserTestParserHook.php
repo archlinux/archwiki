@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Html\Html;
+use MediaWiki\Parser\Parser;
 
 /**
  * A basic extension that's used by the parser tests to test whether input and
@@ -35,6 +36,8 @@ class ParserTestParserHook {
 		$parser->setHook( 'tåg', [ __CLASS__, 'dumpHook' ] );
 		$parser->setHook( 'statictag', [ __CLASS__, 'staticTagHook' ] );
 		$parser->setHook( 'asidetag', [ __CLASS__, 'asideTagHook' ] );
+		$parser->setHook( 'pwraptest', [ __CLASS__, 'pWrapTestHook' ] );
+		$parser->setHook( 'spantag', [ __CLASS__, 'spanTagHook' ] );
 		return true;
 	}
 
@@ -51,21 +54,29 @@ class ParserTestParserHook {
 	 * @param array $argv
 	 * @param Parser $parser
 	 * @return string
-	 * @suppress PhanUndeclaredProperty static_tag_buf is deliberately dynamic
 	 * @suppress SecurityCheck-XSS
 	 * @suppress UnusedSuppression
 	 */
 	public static function staticTagHook( $in, $argv, $parser ) {
+		$KEY = 'mw:tests:static-tag-hook';
+		$po = $parser->getOutput();
 		if ( !count( $argv ) ) {
-			$parser->static_tag_buf = $in;
+			$po->appendExtensionData( $KEY, $in );
 			return '';
 		} elseif ( count( $argv ) === 1 && isset( $argv['action'] )
 			&& $argv['action'] === 'flush' && $in === null
 		) {
-			// Clear the buffer, we probably don't need to
-			$tmp = $parser->static_tag_buf ?? '';
-			$parser->static_tag_buf = null;
-			return $tmp;
+			// This pattern is deprecated, since the order of parsing will
+			// in the future not be guaranteed.  A better approach is to
+			// collect/emit the buffered content in a post-processing pass
+			// over the document after parsing of the article and all contained
+			// fragments is completed and the fragments are merged.
+			// T357838, T300979
+			$vals = $po->getExtensionData( $KEY );
+			if ( $vals === null ) {
+				return '';
+			}
+			return array_key_last( $vals );
 		} else { // wtf?
 			return "\nCall this extension as <statictag>string</statictag> or as" .
 				" <statictag action=flush/>, not in any other way.\n" .
@@ -76,5 +87,21 @@ class ParserTestParserHook {
 
 	public static function asideTagHook(): string {
 		return Html::element( 'aside', [], 'Some aside content' );
+	}
+
+	public static function pWrapTestHook(): string {
+		return '<!--CMT--><style>p{}</style>';
+	}
+
+	/**
+	 * @param string $in
+	 * @param array $argv
+	 * @param Parser $parser
+	 * @return string
+	 */
+	public static function spanTagHook( $in, $argv, $parser ): string {
+		return '<span>' .
+			Parser::stripOuterParagraph( $parser->recursiveTagParse( $in ) ) .
+			'</span>';
 	}
 }

@@ -1,6 +1,4 @@
 ( function () {
-	'use strict';
-
 	mw.thanks = {
 		// Keep track of which revisions and comments the user has already thanked for
 		thanked: {

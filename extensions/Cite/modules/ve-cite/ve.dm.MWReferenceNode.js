@@ -10,11 +10,9 @@
 /**
  * DataModel MediaWiki reference node.
  *
- * @class
- * @extends ve.dm.LeafNode
- * @mixin ve.dm.FocusableNode
- *
  * @constructor
+ * @extends ve.dm.LeafNode
+ * @mixes ve.dm.FocusableNode
  * @param {Object} [element] Reference to element in linear model
  */
 ve.dm.MWReferenceNode = function VeDmMWReferenceNode() {
@@ -67,7 +65,7 @@ ve.dm.MWReferenceNode.static.listKeyRegex = /^(auto|literal)\/([\s\S]*)$/;
 ve.dm.MWReferenceNode.static.toDataElement = function ( domElements, converter ) {
 	function getReflistItemHtml( id ) {
 		const elem = converter.getHtmlDocument().getElementById( id );
-		return elem && elem.innerHTML || '';
+		return ( elem && elem.innerHTML ) || '';
 	}
 
 	const mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' );
@@ -181,7 +179,8 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 				itemNode.getDocument().getFullData( itemNodeRange, 'roundTrip' ),
 				itemNodeWrapper
 			);
-			const itemNodeHtml = itemNodeWrapper.innerHTML; // Returns '' if itemNodeWrapper is empty
+			// Returns '' if itemNodeWrapper is empty
+			const itemNodeHtml = itemNodeWrapper.innerHTML;
 			const originalHtml = ve.getProp( mwData, 'body', 'html' ) ||
 				( ve.getProp( mwData, 'body', 'id' ) !== undefined && itemNode.getAttribute( 'originalHtml' ) ) ||
 				'';
@@ -231,7 +230,7 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 		if ( dataElement.attributes.refGroup !== '' ) {
 			ve.setProp( mwData, 'attrs', 'group', dataElement.attributes.refGroup );
 		} else if ( mwData.attrs ) {
-			delete mwData.attrs.refGroup;
+			delete mwData.attrs.group;
 		}
 	}
 
@@ -244,7 +243,8 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 
 		// Return the original DOM elements if possible
 		if ( dataElement.originalDomElementsHash !== undefined ) {
-			return ve.copyDomElements( converter.getStore().value( dataElement.originalDomElementsHash ), doc );
+			return ve.copyDomElements(
+				converter.getStore().value( dataElement.originalDomElementsHash ), doc );
 		}
 	} else {
 		el.setAttribute( 'data-mw', JSON.stringify( mwData ) );
@@ -263,7 +263,9 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 	return [ el ];
 };
 
-ve.dm.MWReferenceNode.static.remapInternalListIndexes = function ( dataElement, mapping, internalList ) {
+ve.dm.MWReferenceNode.static.remapInternalListIndexes = function (
+	dataElement, mapping, internalList
+) {
 	// Remap listIndex
 	dataElement.attributes.listIndex = mapping[ dataElement.attributes.listIndex ];
 
@@ -296,7 +298,8 @@ ve.dm.MWReferenceNode.static.remapInternalListKeys = function ( dataElement, int
 ve.dm.MWReferenceNode.static.getIndex = function ( dataElement, internalList ) {
 	const overrideIndex = ve.getProp( dataElement, 'internal', 'overrideIndex' );
 	const attrs = dataElement.attributes;
-	return overrideIndex || ( internalList.getIndexPosition( attrs.listGroup, attrs.listIndex ) + 1 );
+	return overrideIndex ||
+		( internalList.getIndexPosition( attrs.listGroup, attrs.listIndex ) + 1 );
 };
 
 /**
@@ -327,7 +330,8 @@ ve.dm.MWReferenceNode.static.getIndexLabel = function ( dataElement, internalLis
 };
 
 /**
- * @inheritdoc
+ * @override
+ * @see ve.dm.Node
  */
 ve.dm.MWReferenceNode.static.cloneElement = function () {
 	const clone = ve.dm.MWReferenceNode.super.static.cloneElement.apply( this, arguments );
@@ -341,7 +345,8 @@ ve.dm.MWReferenceNode.static.cloneElement = function () {
 };
 
 /**
- * @inheritdoc
+ * @override
+ * @see ve.dm.LeafNode
  */
 ve.dm.MWReferenceNode.static.getHashObject = function ( dataElement ) {
 	// Consider all references in the same group to be comparable:
@@ -378,7 +383,8 @@ ve.dm.MWReferenceNode.static.getInstanceHashObject = function () {
 };
 
 /**
- * @inheritdoc
+ * @override
+ * @see ve.dm.Model
  */
 ve.dm.MWReferenceNode.static.describeChange = function ( key, change ) {
 	if ( key === 'refGroup' ) {
@@ -397,7 +403,8 @@ ve.dm.MWReferenceNode.static.describeChange = function ( key, change ) {
 /**
  * Don't allow reference nodes to be edited if we can't find their contents.
  *
- * @inheritdoc
+ * @override
+ * @see ve.dm.Model
  */
 ve.dm.MWReferenceNode.prototype.isEditable = function () {
 	const internalItem = this.getInternalItem();
@@ -437,7 +444,8 @@ ve.dm.MWReferenceNode.prototype.getGroup = function () {
  * @return {string} Reference label
  */
 ve.dm.MWReferenceNode.prototype.getIndexLabel = function () {
-	return this.constructor.static.getIndexLabel( this.element, this.getDocument().getInternalList() );
+	return this.constructor.static.getIndexLabel(
+		this.element, this.getDocument().getInternalList() );
 };
 
 /**
@@ -492,6 +500,9 @@ ve.dm.MWReferenceNode.prototype.removeFromInternalList = function () {
 };
 
 ve.dm.MWReferenceNode.prototype.onAttributeChange = function ( key, from, to ) {
+	if ( key === 'placeholder' ) {
+		this.getDocument().getInternalList().markGroupAsChanged( this.registeredListGroup );
+	}
 	if (
 		( key !== 'listGroup' && key !== 'listKey' ) ||
 		( key === 'listGroup' && this.registeredListGroup === to ) ||

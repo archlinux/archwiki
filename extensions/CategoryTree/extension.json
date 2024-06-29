@@ -6,7 +6,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42"
 	},
 	"ConfigRegistry": {
 		"categorytree": "GlobalVarConfig::newInstance"
@@ -15,6 +15,7 @@
 		"CategoryTree": {
 			"class": "MediaWiki\\Extension\\CategoryTree\\CategoryTreePage",
 			"services": [
+				"DBLoadBalancerFactory",
 				"SearchEngineFactory"
 			]
 		}
@@ -26,6 +27,7 @@
 				"ConfigFactory",
 				"DBLoadBalancerFactory",
 				"LanguageConverterFactory",
+				"LinkRenderer",
 				"MainWANObjectCache"
 			]
 		}
@@ -50,17 +52,12 @@
 		"ext.categoryTree": {
 			"localBasePath": "modules/ext.categoryTree",
 			"remoteExtPath": "CategoryTree/modules/ext.categoryTree",
-			"styles": "ext.categoryTree.css",
 			"packageFiles": [
 				"ext.categoryTree.js",
 				{
 					"name": "data.json",
 					"callback": "MediaWiki\\Extension\\CategoryTree\\Hooks::getDataForJs"
 				}
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			],
 			"messages": [
 				"categorytree-collapse",
@@ -79,10 +76,6 @@
 			]
 		},
 		"ext.categoryTree.styles": {
-			"targets": [
-				"desktop",
-				"mobile"
-			],
 			"styles": "ext.categoryTree.styles.css"
 		}
 	},
@@ -95,7 +88,9 @@
 			"class": "MediaWiki\\Extension\\CategoryTree\\Hooks",
 			"services": [
 				"CategoryTree.CategoryCache",
-				"MainConfig"
+				"MainConfig",
+				"DBLoadBalancerFactory",
+				"LinkRenderer"
 			]
 		},
 		"config": {

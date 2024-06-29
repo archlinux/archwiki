@@ -8,8 +8,8 @@
 	position: relative;
 	margin: 1em 0;
 	padding: 0 1em 1em 1em;
-	background-color: @background-color-lightest;
-	border: @border-width-base @border-style-base #eaecf0;
+	background-color: var( --background-color-interactive-subtle );
+	border: @border-width-base @border-style-base var( --border-color-muted );
 	box-sizing: border-box;
 
 	// We need high specificity to override .content ul
@@ -60,7 +60,7 @@
 	top: 0;
 	right: 0;
 	height: @toc-large-icon;
-	z-index: @z-indexAboveContent;
+	z-index: @z-index-above-content;
 }
 
 // Do stuff we only need to do with JS

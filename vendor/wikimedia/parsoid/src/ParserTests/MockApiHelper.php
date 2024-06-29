@@ -496,9 +496,6 @@ class MockApiHelper extends ApiHelper {
 	/** @var string wiki prefix for which we are mocking the api access */
 	private $prefix = 'enwiki';
 
-	/**
-	 * @param ?string $prefix
-	 */
 	public function __construct( ?string $prefix = null ) {
 		if ( $prefix ) {
 			$this->prefix = $prefix;
@@ -528,10 +525,6 @@ class MockApiHelper extends ApiHelper {
 		$this->articleCache[$key] = $article;
 	}
 
-	/**
-	 * @param array $params
-	 * @return array
-	 */
 	public function makeRequest( array $params ): array {
 		switch ( $params['action'] ?? null ) {
 			case 'query':
@@ -581,30 +574,30 @@ class MockApiHelper extends ApiHelper {
 	 * @param int|float|null &$theight Thumbnail height (inout parameter)
 	 */
 	public static function transformHelper( $width, $height, &$twidth, &$theight ) {
-			if ( $theight === null ) {
-				// File::scaleHeight in PHP
-				$theight = round( $height * $twidth / $width );
-			} elseif (
-				$twidth === null ||
-				// Match checks in ImageHandler.php::normaliseParams in core
-				( $twidth * $height > $theight * $width )
-			) {
-				// MediaHandler::fitBoxWidth in PHP
-				// This is crazy!
-				$idealWidth = $width * $theight / $height;
-				$roundedUp = ceil( $idealWidth );
-				if ( round( $roundedUp * $height / $width ) > $theight ) {
-					$twidth = floor( $idealWidth );
-				} else {
-					$twidth = $roundedUp;
-				}
+		if ( $theight === null ) {
+			// File::scaleHeight in PHP
+			$theight = round( $height * $twidth / $width );
+		} elseif (
+			$twidth === null ||
+			// Match checks in ImageHandler.php::normaliseParams in core
+			( $twidth * $height > $theight * $width )
+		) {
+			// MediaHandler::fitBoxWidth in PHP
+			// This is crazy!
+			$idealWidth = $width * $theight / $height;
+			$roundedUp = ceil( $idealWidth );
+			if ( round( $roundedUp * $height / $width ) > $theight ) {
+				$twidth = floor( $idealWidth );
 			} else {
-				if ( round( $height * $twidth / $width ) > $theight ) {
-					$twidth = ceil( $width * $theight / $height );
-				} else {
-					$theight = round( $height * $twidth / $width );
-				}
+				$twidth = $roundedUp;
 			}
+		} else {
+			if ( round( $height * $twidth / $width ) > $theight ) {
+				$twidth = ceil( $width * $theight / $height );
+			} else {
+				$theight = round( $height * $twidth / $width );
+			}
+		}
 	}
 
 	/**
@@ -806,10 +799,6 @@ class MockApiHelper extends ApiHelper {
 		];
 	}
 
-	/**
-	 * @param array $params
-	 * @return array
-	 */
 	private function processQuery( array $params ): array {
 		if ( ( $params['meta'] ?? null ) === 'siteinfo' ) {
 			if ( !isset( $this->cachedConfigs[$this->prefix] ) ) {
@@ -937,11 +926,6 @@ class MockApiHelper extends ApiHelper {
 		return [ "error" => new Error( 'Uh oh!' ) ];
 	}
 
-	/**
-	 * @param string $text
-	 * @param bool $onlypst
-	 * @return array
-	 */
 	private function parse( string $text, bool $onlypst ): array {
 		// We're performing a subst
 		if ( $onlypst ) {
@@ -984,12 +968,6 @@ class MockApiHelper extends ApiHelper {
 		return [ 'parse' => $parse ];
 	}
 
-	/**
-	 * @param string $title
-	 * @param string $text
-	 * @param ?int $revid
-	 * @return ?array
-	 */
 	private function preProcess(
 		string $title, string $text, ?int $revid
 	): ?array {
@@ -1009,10 +987,6 @@ class MockApiHelper extends ApiHelper {
 		}
 	}
 
-	/**
-	 * @param array $params
-	 * @return array
-	 */
 	private function fetchTemplateData( array $params ): array {
 		return [
 			// Assumes that titles is a single title

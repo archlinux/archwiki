@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Language\RawMessage;
-use SpecialPage;
-use User;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\User;
 
 /**
  * Formatter for 'user-rights' notifications

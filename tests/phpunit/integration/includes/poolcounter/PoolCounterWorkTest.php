@@ -21,13 +21,15 @@
  * @file
  */
 
+use MediaWiki\PoolCounter\PoolCounter;
+use MediaWiki\PoolCounter\PoolCounterWork;
 use MediaWiki\Status\Status;
 use Psr\Log\LoggerInterface;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Concurrency
- * @coversDefaultClass PoolCounterWork
+ * @coversDefaultClass \MediaWiki\PoolCounter\PoolCounterWork
  */
 class PoolCounterWorkTest extends MediaWikiIntegrationTestCase {
 
@@ -50,11 +52,10 @@ class PoolCounterWorkTest extends MediaWikiIntegrationTestCase {
 		$logger = $this->createMock( LoggerInterface::class );
 		$this->configureMock( $logger, $loggerMethods );
 
-		$this->setLogger( 'poolcounter', $logger );
-
 		$poolCounter = $this->getMockBuilder( PoolCounter::class )
 			->disableOriginalConstructor()
 			->getMockForAbstractClass();
+		$poolCounter->setLogger( $logger );
 
 		$this->configureMock( $poolCounter, $poolCounterMethods );
 

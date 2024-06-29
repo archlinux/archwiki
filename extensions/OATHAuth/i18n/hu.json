@@ -2,22 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Bencoke",
+			"Dj",
 			"Hanna Tardos",
 			"Tacsipacsi",
-			"Tgr",
-			"Dj"
+			"Tgr"
 		]
 	},
 	"oathauth-desc": "Lehetővé teszi az azonosítást HMAC-alapú egyszer használatos jelszavakkal",
 	"disableoathforuser": "Kétlépcsős azonosítás kikapcsolása",
 	"verifyoathforuser": "Kétlépcsős azonosítás státuszának ellenőrzése",
 	"oath": "Kétlépcsős azonosítás (OATH)",
-	"specialpages-group-oath": "Kétlépcsős azonosítás",
 	"oathauth-account": "Fióknév:",
 	"oathauth-secret": "Kétlépcsős azonosítás titkos kulcsa:",
 	"oathauth-enable": "Kétlépcsős azonosítás engedélyezése",
+	"oathauth-recoverycodes": "A következő lista az egyszer használatos helyreállítási kódok listája. Ezek a kódok csak egyszer használhatók olyan vészhelyzetben, amikor nem férsz hozzá az eszközhöz. Kérjük, írd le ezeket, és tartsd biztonságos helyen. Javasoljuk, hogy minden kódot használtként jelöljél meg, amikor azzal bejelentkeztél. Ha elveszted az eszközt, ezek a kódok az egyetlen módja annak, hogy megmentsd fiókjódat.\n\n'''Ezek a kódok soha többé nem jelennek meg'''.",
 	"oathauth-recoverycodes-important": "Ez a lépés fontos! Ne hagyd ki ezt a lépést!",
-	"oathauth-token": "Token",
 	"oathauth-disable": "Kétlépcsős azonosítás letiltása",
 	"oathauth-validatedoath": "Kétlépcsős azonosítás engedélyezve. Mostantól csak két lépésben tudod azonosítani magad.",
 	"oathauth-noscratchforvalidation": "Helyreállítási kód nem használható a kétlépcsős hitelesítés megerősítésére. A helyreállítási kódok csak biztonsági mentésre és véletlenszerű használatra szolgálnak. Használd a kétlépcsős hitelesítési alkalmazás (pl. Google Hitelesítő) kódját.",
@@ -89,8 +88,10 @@
 	"oathauth-totp-disable-warning": "A továbbiakban nem fogod tudni használni az ehhez a fiókhoz regisztrált hitelesítő eszközt. A fiókhoz társított összes helyreállítási kód érvénytelen lesz.",
 	"oathauth-invalidrequest": "Érvénytelen kérés",
 	"notification-header-oathauth-disable": "A kétlépcsős azonosítás le lett tiltva a {{GENDER:$2|fiókodon}}.",
+	"notification-header-oathauth-remove-device": "Egy kétlépcsős hitelesítési eszköz el lett távolítva a {{GENDER:$2|fiókodból}}.",
 	"notification-body-oathauth-disable": "Ha nem {{GENDER:$2|te}} csináltad, lehetséges, hogy valaki feltörte a fiókodat.",
 	"notification-body-oathauth-disable-other": "Ha nem {{GENDER:$2|te}} kérted, {{GENDER:$2|lépj}} kapcsolatba egy adminisztrátorral.",
+	"notification-body-oathauth-disable-remaining": "Még mindig van {{PLURAL:$3|egy további|$3 további }} aktív eszköz a {{GENDER:$2| fiókodhoz}} rendelve.",
 	"oathauth-notifications-disable-help": "Segítség",
 	"oathauth-notifications-disable-primary": "Ellenőrizd a kétlépcsős azonosítási beállításaidat",
 	"notification-header-oathauth-enable": "A kétlépcsős azonosítás engedélyezve lett a {{GENDER:$2|fiókodon}}.",
@@ -101,5 +102,6 @@
 	"oathauth-verify-disabled": "$1 nem engedélyezte a kétlépcsős azonosítást.",
 	"oathauth-prefs-disabledgroups": "Letiltott {{PLURAL:$1|csoport|csoportok}}:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|A tagságod}} {{PLURAL:$1|ebben a csoportban|ezekben a csoportokban}} nem aktív, amíg nem kapcsolod be a [[Special:Manage Two-factor authentication|kétlépcsős azonosítást]].",
+	"oathauth-qrcode-alt": "A titkos kulcsot jelképező beolvasható QR-kód.",
 	"oathauth-hint": "Nincs hozzáférésed az eszközödhöz vagy alkalmazásodhoz? Ebben a mezőben megadhatsz helyreállítási tokeneket (ezek akkor jelennek meg, amikor engedélyezted a 2FA-t)."
 }

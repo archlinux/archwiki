@@ -19,10 +19,12 @@
  * @ingroup RevisionDelete
  */
 
+use MediaWiki\Cache\HTMLCacheUpdater;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Status\Status;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -34,7 +36,7 @@ class RevDelFileList extends RevDelList {
 
 	protected const SUPPRESS_BIT = File::DELETED_RESTRICTED;
 
-	/** @var HtmlCacheUpdater */
+	/** @var HTMLCacheUpdater */
 	private $htmlCacheUpdater;
 
 	/** @var RepoGroup */
@@ -54,7 +56,7 @@ class RevDelFileList extends RevDelList {
 	 * @param PageIdentity $page
 	 * @param array $ids
 	 * @param LBFactory $lbFactory
-	 * @param HtmlCacheUpdater $htmlCacheUpdater
+	 * @param HTMLCacheUpdater $htmlCacheUpdater
 	 * @param RepoGroup $repoGroup
 	 */
 	public function __construct(
@@ -62,7 +64,7 @@ class RevDelFileList extends RevDelList {
 		PageIdentity $page,
 		array $ids,
 		LBFactory $lbFactory,
-		HtmlCacheUpdater $htmlCacheUpdater,
+		HTMLCacheUpdater $htmlCacheUpdater,
 		RepoGroup $repoGroup
 	) {
 		parent::__construct( $context, $page, $ids, $lbFactory );
@@ -87,7 +89,7 @@ class RevDelFileList extends RevDelList {
 	}
 
 	/**
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @return IResultWrapper
 	 */
 	public function doQuery( $db ) {
@@ -152,7 +154,7 @@ class RevDelFileList extends RevDelList {
 
 		$this->htmlCacheUpdater->purgeUrls(
 			$purgeUrls,
-			HtmlCacheUpdater::PURGE_INTENT_TXROUND_REFLECTED
+			HTMLCacheUpdater::PURGE_INTENT_TXROUND_REFLECTED
 		);
 
 		return Status::newGood();

@@ -20,14 +20,19 @@
 
 namespace MediaWiki\Minerva\Menu\PageActions;
 
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Minerva\LanguagesHelper;
 use MediaWiki\Minerva\Menu\Entries\LanguageSelectorEntry;
 use MediaWiki\Minerva\Menu\Group;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
 use MediaWiki\Title\Title;
-use MessageLocalizer;
 
 class UserNamespaceOverflowBuilder extends DefaultOverflowBuilder {
+
+	/**
+	 * @var IContextSource
+	 */
+	private $context;
 
 	/**
 	 * @var LanguagesHelper
@@ -37,18 +42,19 @@ class UserNamespaceOverflowBuilder extends DefaultOverflowBuilder {
 	/**
 	 * Initialize the overflow menu visible on the User namespace
 	 * @param Title $title
-	 * @param MessageLocalizer $msgLocalizer
+	 * @param IContextSource $context
 	 * @param IMinervaPagePermissions $permissions
 	 * @param LanguagesHelper $languagesHelper
 	 */
 	public function __construct(
 		Title $title,
-		MessageLocalizer $msgLocalizer,
+		IContextSource $context,
 		IMinervaPagePermissions $permissions,
 		LanguagesHelper $languagesHelper
 	) {
+		$this->context = $context;
 		$this->languagesHelper = $languagesHelper;
-		parent::__construct( $title, $msgLocalizer, $permissions );
+		parent::__construct( $title, $context, $permissions );
 	}
 
 	/**
@@ -60,7 +66,10 @@ class UserNamespaceOverflowBuilder extends DefaultOverflowBuilder {
 		if ( $this->isAllowed( IMinervaPagePermissions::SWITCH_LANGUAGE ) ) {
 			$group->prependEntry( new LanguageSelectorEntry(
 				$this->getTitle(),
-				$this->languagesHelper->doesTitleHasLanguagesOrVariants( $this->getTitle() ),
+				$this->languagesHelper->doesTitleHasLanguagesOrVariants(
+					$this->context->getOutput(),
+					$this->getTitle()
+				),
 				$this->getMessageLocalizer(),
 				false,
 				// no additional classes

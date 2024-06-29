@@ -118,7 +118,7 @@ It should be impossible to roll back a follow="…", because it can't have a nam
 <li id="cite_note-b-2"><span class="mw-cite-backlink"><a href="#cite_ref-b_2-0">↑</a></span> <span class="reference-text">should be 2</span>
 </li>
 </ol></div>
-<p><span class="error mw-ext-cite-error" lang="en" dir="ltr">Cite error: Invalid <code>&lt;ref&gt;</code> tag; invalid names, e.g. too many</span>
+<p><span class="error mw-ext-cite-error" lang="en" dir="ltr">Cite error: A <code>&lt;ref follow="…"&gt;</code> tag that is the continuation of a previous one can neither be named individually nor extended</span>
 </p>
 !! end
 

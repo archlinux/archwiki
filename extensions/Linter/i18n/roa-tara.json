@@ -68,6 +68,7 @@
 	"linter-pager-tidy-whitespace-bug-details": "Probbleme de parsing cu le spazie",
 	"linter-pager-title-header": "Titole d'a vôsce",
 	"linter-pager-unclosed-quotes-in-heading-details": "Apice non achiuse addò l'effette iesse fore da l'indice",
+	"linter-pager-wikilink-in-extlink-details": "Uicchicollegaminde annidate jndr'à collegaminde de fore ca onna essere corrette",
 	"linterrors-subpage": "Errore de Lint: $1",
 	"linterrors-summary": "<strong>Note:</strong> le condegge de le errore non ge sò satte-satte, ma stimate.",
 	"multi-part-template-block": "Generate da cchiù de 'nu template",

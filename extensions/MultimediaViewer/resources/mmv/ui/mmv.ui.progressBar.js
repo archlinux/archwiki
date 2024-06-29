@@ -42,6 +42,7 @@ const UiElement = require( './mmv.ui.js' );
 				.addClass( 'mw-mmv-progress-percent' )
 				.appendTo( this.$progress );
 		}
+
 		empty() {
 			this.hide();
 		}
@@ -68,13 +69,13 @@ const UiElement = require( './mmv.ui.js' );
 				// fast to 100 and we hide the bar when the animation is done
 				// FIXME: Use CSS transition
 				// eslint-disable-next-line no-jquery/no-animate
-				this.$percent.animate( { width: `${percent}%` }, 50, 'swing', this.hide.bind( this ) );
+				this.$percent.animate( { width: `${ percent }%` }, 50, 'swing', this.hide.bind( this ) );
 			} else {
 				// When any other % update comes in, we make sure the bar is visible
 				// and we animate to the right position
 				// FIXME: Use CSS transition
 				// eslint-disable-next-line no-jquery/no-animate
-				this.$percent.animate( { width: `${percent}%` } );
+				this.$percent.animate( { width: `${ percent }%` } );
 			}
 		}
 
@@ -85,7 +86,7 @@ const UiElement = require( './mmv.ui.js' );
 		 */
 		jumpTo( percent ) {
 			this.$progress.removeClass( 'empty' );
-			this.$percent.stop().css( { width: `${percent}%` } );
+			this.$percent.stop().css( { width: `${ percent }%` } );
 		}
 	}
 

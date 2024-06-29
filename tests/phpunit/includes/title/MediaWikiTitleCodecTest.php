@@ -19,6 +19,7 @@
  * @author Daniel Kinzler
  */
 
+use MediaWiki\Cache\GenderCache;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
@@ -31,7 +32,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 
 /**
- * @covers MediaWikiTitleCodec
+ * @covers \MediaWiki\Title\MediaWikiTitleCodec
  *
  * @group Title
  * @group Database
@@ -142,9 +143,7 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 	public function testFormat( $namespace, $text, $fragment, $interwiki, $lang, $expected,
 		$normalized = null
 	) {
-		if ( $normalized === null ) {
-			$normalized = $expected;
-		}
+		$normalized ??= $expected;
 
 		$codec = $this->makeCodec( $lang );
 		$actual = $codec->formatTitle( $namespace, $text, $fragment, $interwiki );
@@ -259,7 +258,7 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 
 			[
 				new PageIdentityValue( 37, NS_MAIN, 'Foo_Bar', PageIdentity::LOCAL ),
-				'en' ,
+				'en',
 				'Foo_Bar'
 			],
 			[
@@ -279,12 +278,12 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				new PageIdentityValue( 37, NS_MAIN, 'Remote_page', PageIdentity::LOCAL ),
-				'en' ,
+				'en',
 				'Remote_page'
 			],
 			[
 				new PageIdentityValue( 37, 10000000, 'Foobar', PageIdentity::LOCAL ),
-				'en' ,
+				'en',
 				'Special:Badtitle/NS10000000:Foobar'
 			],
 		];
@@ -524,9 +523,9 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideMakeTitleValueSafe
-	 * @covers MediaWiki\Title\Title::makeTitleSafe
-	 * @covers MediaWiki\Title\Title::makeName
-	 * @covers MediaWiki\Title\Title::secureAndSplit
+	 * @covers \MediaWiki\Title\Title::makeTitleSafe
+	 * @covers \MediaWiki\Title\Title::makeName
+	 * @covers \MediaWiki\Title\Title::secureAndSplit
 	 */
 	public function testMakeTitleSafe(
 		$expected, $ns, $text, $fragment = '', $interwiki = '', $lang = 'en'

@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\Thanks;
 
 use LogFormatter;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Message;
-use User;
 
 /**
  * This class formats log entries for thanks

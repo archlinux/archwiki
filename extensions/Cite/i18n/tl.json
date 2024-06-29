@@ -22,7 +22,6 @@
 	"cite_error_included_references": "Nawawala ang pangsarang tag para sa <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "May <code>&lt;ref&gt;</code> tag na ang grupong \"$1\", pero walang nakitang <code>&lt;references group=\"$1\"/&gt;</code> tag para rito",
 	"cite_error_references_group_mismatch": "May di nagtutugmang attribute ng grupo na \"$1\" sa <code>&lt;ref&gt;</code> tag sa <code>&lt;references&gt;</code>.",
-	"cite_error_references_missing_group": "May attribute ng grupo na \"$1\" ang <code>&lt;ref&gt;</code> tag na binigyang-kahulugan sa <code>&lt;references&gt;</code>  na hindi nagpakita sa teksto.",
 	"cite_error_references_missing_key": "Di ginamit sa teksto ang <code>&lt;ref&gt;</code> tag na may pangalang \"$1\" na binigyang-kahulugan sa <code>&lt;references&gt;</code>.",
 	"cite_error_references_no_key": "Walang name attribute ang <code>&lt;ref&gt;</code> tag na binigyang-kahulugan sa <code>&lt;references&gt;</code>.",
 	"cite_error_empty_references_define": "Walang laman ang <code>&lt;ref&gt;</code> tag na binigyang-kahulugan sa <code>&lt;references&gt;</code> na may pangalang \"$1\".",

@@ -23,7 +23,6 @@ class Less_Tree_Import extends Less_Tree {
 	public $css;
 	public $skip;
 	public $root;
-	public $type = 'Import';
 
 	public function __construct( $path, $features, $options, $index, $currentFileInfo = null ) {
 		$this->options = $options;
@@ -119,7 +118,7 @@ class Less_Tree_Import extends Less_Tree {
 	}
 
 	public function compileForImport( $env ) {
-		return new Less_Tree_Import( $this->path->compile( $env ), $this->features, $this->options, $this->index, $this->currentFileInfo );
+		return new self( $this->path->compile( $env ), $this->features, $this->options, $this->index, $this->currentFileInfo );
 	}
 
 	public function compilePath( $env ) {
@@ -143,21 +142,23 @@ class Less_Tree_Import extends Less_Tree {
 		return $path;
 	}
 
+	/**
+	 * @param Less_Environment $env
+	 * @see less-2.5.3.js#Import.prototype.eval
+	 */
 	public function compile( $env ) {
 		$evald = $this->compileForImport( $env );
 
 		// get path & uri
-		$path_and_uri = null;
-		if ( is_callable( Less_Parser::$options['import_callback'] ) ) {
-			$path_and_uri = call_user_func( Less_Parser::$options['import_callback'], $evald );
-		}
+		$callback = Less_Parser::$options['import_callback'];
+		$path_and_uri = is_callable( $callback ) ? $callback( $evald ) : null;
 
 		if ( !$path_and_uri ) {
 			$path_and_uri = $evald->PathAndUri();
 		}
 
 		if ( $path_and_uri ) {
-			list( $full_path, $uri ) = $path_and_uri;
+			[ $full_path, $uri ] = $path_and_uri;
 		} else {
 			$full_path = $uri = $evald->getPath();
 		}
@@ -169,11 +170,8 @@ class Less_Tree_Import extends Less_Tree {
 		'@phan-var string $full_path';
 
 		if ( $this->options['inline'] ) {
-			// todo needs to reference css file not import
-			//$contents = new Less_Tree_Anonymous($this->root, 0, array('filename'=>$this->importedFilename), true );
-
 			Less_Parser::AddParsedFile( $full_path );
-			$contents = new Less_Tree_Anonymous( file_get_contents( $full_path ), 0, [], true );
+			$contents = new Less_Tree_Anonymous( file_get_contents( $full_path ), 0, [], true, true );
 
 			if ( $this->features ) {
 				return new Less_Tree_Media( [ $contents ], $this->features->value );
@@ -190,7 +188,7 @@ class Less_Tree_Import extends Less_Tree {
 		// css ?
 		if ( $evald->css ) {
 			$features = ( $evald->features ? $evald->features->compile( $env ) : null );
-			return new Less_Tree_Import( $this->compilePath( $env ), $features, $this->options, $this->index );
+			return new self( $this->compilePath( $env ), $features, $this->options, $this->index );
 		}
 
 		return $this->ParseImport( $full_path, $uri, $env );

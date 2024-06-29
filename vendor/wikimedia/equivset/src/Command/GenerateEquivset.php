@@ -83,7 +83,7 @@ class GenerateEquivset extends Command {
 		$exitStatus = 0;
 		$lastChar = null;
 
-		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $line = fgets( $fp ) ) !== false ) {
 			$lineNum++;
 			$line = trim( $line );

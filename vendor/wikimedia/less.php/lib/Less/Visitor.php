@@ -13,9 +13,8 @@ class Less_Visitor {
 	}
 
 	public function visitObj( $node ) {
-		$funcName = 'visit' . $node->type;
+		$funcName = 'visit' . str_replace( [ 'Less_Tree_', '_' ], '', get_class( $node ) );
 		if ( isset( $this->_visitFnCache[$funcName] ) ) {
-
 			$visitDeeper = true;
 			$this->$funcName( $node, $visitDeeper );
 

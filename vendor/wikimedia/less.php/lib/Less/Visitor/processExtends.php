@@ -98,10 +98,10 @@ class Less_Visitor_processExtends extends Less_Visitor {
 			// may no longer be needed.			$this->extendChainCount++;
 			if ( $iterationCount > 100 ) {
 
-				try{
+				try {
 					$selectorOne = $extendsToAdd[0]->selfSelectors[0]->toCSS();
 					$selectorTwo = $extendsToAdd[0]->selector->toCSS();
-				}catch ( Exception $e ) {
+				} catch ( Exception $e ) {
 					$selectorOne = "{unable to calculate}";
 					$selectorTwo = "{unable to calculate}";
 				}
@@ -264,6 +264,9 @@ class Less_Visitor_processExtends extends Less_Visitor {
 	}
 
 	/**
+	 * @param array $potentialMatch
+	 * @param Less_Tree_Element[] $needleElements
+	 * @param Less_Tree_Element $haystackElement
 	 * @param int $hackstackElementIndex
 	 */
 	private function PotentialMatch( $potentialMatch, $needleElements, $haystackElement, $hackstackElementIndex ) {
@@ -359,10 +362,17 @@ class Less_Visitor_processExtends extends Less_Visitor {
 			return true;
 		}
 
-		// @phan-suppress-next-line PhanUndeclaredProperty https://phabricator.wikimedia.org/T327082
-		$elementValue1 = ( $elementValue1->value->value ?: $elementValue1->value );
-		// @phan-suppress-next-line PhanUndeclaredProperty https://phabricator.wikimedia.org/T327082
-		$elementValue2 = ( $elementValue2->value->value ?: $elementValue2->value );
+		$elementValue1 = $elementValue1->value;
+
+		if ( $elementValue1 instanceof Less_Tree_Quoted ) {
+			$elementValue1 = $elementValue1->value;
+		}
+
+		$elementValue2 = $elementValue2->value;
+
+		if ( $elementValue2 instanceof Less_Tree_Quoted ) {
+			$elementValue2 = $elementValue2->value;
+		}
 
 		return $elementValue1 === $elementValue2;
 	}
@@ -395,7 +405,12 @@ class Less_Visitor_processExtends extends Less_Visitor {
 			}
 
 			$newElements = array_merge(
-				array_slice( $selector->elements, $currentSelectorPathElementIndex, ( $match['index'] - $currentSelectorPathElementIndex ) ), // last parameter of array_slice is different than the last parameter of javascript's slice
+				array_slice(
+					$selector->elements,
+					$currentSelectorPathElementIndex,
+					// last parameter of array_slice is different than the last parameter of javascript's slice
+					$match['index'] - $currentSelectorPathElementIndex
+				),
 				 [ $firstElement ],
 				 array_slice( $replacementSelector->elements, 1 )
 				);

@@ -39,6 +39,5 @@
 	"cite-ve-referenceslist-isempty-default": "यो सूचीमा समावेश गर्न यस पृष्ठमा कुनै सन्दर्भहरू छैनन्।",
 	"cite-ve-referenceslist-missingreflist": "यो सन्दर्भसूची ढाँचाद्वारा उत्पन्न गरिएको हो, र अहिलेको लागि मात्र स्रोत सम्पादकमा सम्पादन गर्न सकिन्छ।",
 	"cite-ve-toolbar-group-label": "उर्ध्वभरण",
-	"cite-ve-othergroup-item": "$1 सन्दर्भ",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "सन्दर्भहरू"
+	"cite-ve-othergroup-item": "$1 सन्दर्भ"
 }

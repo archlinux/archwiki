@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\ChangedTablesTracker;
 use Wikimedia\Rdbms\DatabaseMySQL;
 use Wikimedia\Rdbms\DBQueryDisconnectedError;
 use Wikimedia\Rdbms\DBQueryError;
@@ -30,10 +31,15 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		}
 
 		$this->conn = $this->newConnection();
+		// FIXME: Tables used by this test aren't parsed correctly, see T344510.
+		ChangedTablesTracker::stopTracking();
 	}
 
 	protected function tearDown(): void {
-		$this->conn->close( __METHOD__ );
+		if ( $this->conn ) {
+			$this->conn->close( __METHOD__ );
+			ChangedTablesTracker::startTracking();
+		}
 
 		parent::tearDown();
 	}
@@ -442,6 +448,58 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->dropDestTable();
 	}
 
+	/**
+	 * @coversNothing
+	 */
+	public function testAffectedRowsAfterUpdateIgnore() {
+		$sTable = $this->createSourceTable();
+
+		$rows = [ [ 'sk' => 'Luca', 'sv' => mt_rand( 1, 100 ), 'st' => time() ],
+			[ 'sk' => 'Test', 'sv' => mt_rand( 1, 100 ), 'st' => time() ] ];
+		$this->conn->insert( $sTable, $rows, __METHOD__, 'IGNORE' );
+		$this->assertSame( 2, $this->conn->affectedRows(), 'Test inserted' );
+
+		// Test changing something
+		$this->conn->update(
+			$sTable,
+			[ 'sk' => 'TestRow' ],
+			[ 'sk' => 'Test' ],
+			__METHOD__,
+			[ 'IGNORE' ]
+		);
+		$this->assertSame( 1, $this->conn->affectedRows(), 'Updated' );
+
+		// Test changing nothing
+		$this->conn->update(
+			$sTable,
+			[ 'sk' => 'TestRow' ],
+			[ 'sk' => 'TestRow' ],
+			__METHOD__,
+			[ 'IGNORE' ]
+		);
+		$this->assertSame( 1, $this->conn->affectedRows(), 'Nothing changed' );
+
+		// Test nothing found
+		$this->conn->update(
+			$sTable,
+			[ 'sk' => 'TestExistingRow' ],
+			[ 'sk' => 'TestNonexistingRow' ],
+			__METHOD__,
+			[ 'IGNORE' ]
+		);
+		$this->assertSame( 0, $this->conn->affectedRows(), 'Not found' );
+
+		// Test key conflict on the unique sk field
+		$this->conn->update(
+			$sTable,
+			[ 'sk' => 'TestRow' ],
+			[ 'sk' => 'Luca' ],
+			__METHOD__,
+			[ 'IGNORE' ]
+		);
+		$this->assertSame( 1, $this->conn->affectedRows(), 'Key conflict, nothing changed on database' );
+	}
+
 	private function createSourceTable() {
 		global $wgDBname;
 
@@ -484,5 +542,19 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		global $wgDBname;
 
 		$this->conn->query( "DROP TEMPORARY TABLE IF EXISTS `$wgDBname`.`tmp_dst_tbl`" );
+	}
+
+	/**
+	 * Insert a null value into a field that is not nullable using INSERT IGNORE
+	 *
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL::checkInsertWarnings
+	 */
+	public function testInsertIgnoreNull() {
+		$this->expectException( DBQueryError::class );
+		$this->conn->newInsertQueryBuilder()
+			->insertInto( 'log_search' )
+			->ignore()
+			->row( [ 'ls_field' => 'test', 'ls_value' => null, 'ls_log_id' => 1 ] )
+			->execute();
 	}
 }

@@ -5,5 +5,7 @@
 			"Zakawer2"
 		]
 	},
-	"apihelp-discussiontoolsedit-param-wikitext": "Wikitekst"
+	"apihelp-discussiontoolsedit-param-wikitext": "Wikitekst",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Overskrifts-hash-fragment",
+	"apihelp-discussiontoolsfindcomment-param-page": "Side som overskrifts-hash-fragmentet engang fandtes på"
 }

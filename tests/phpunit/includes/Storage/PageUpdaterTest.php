@@ -3,11 +3,12 @@
 namespace MediaWiki\Tests\Storage;
 
 use ChangeTags;
-use CommentStoreComment;
 use Content;
-use DeferredUpdates;
 use FormatJson;
 use LogicException;
+use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\RenderedRevision;
 use MediaWiki\Revision\RevisionRecord;
@@ -18,7 +19,6 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWikiIntegrationTestCase;
-use Message;
 use ParserOptions;
 use RecentChange;
 use TextContent;
@@ -51,10 +51,6 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 				true
 			);
 		}
-
-		$this->tablesUsed[] = 'logging';
-		$this->tablesUsed[] = 'recentchanges';
-		$this->tablesUsed[] = 'change_tag';
 	}
 
 	private function getDummyTitle( $method ) {
@@ -192,7 +188,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$this->assertNull( $updater->getNewRevision(), 'getNewRevision()' );
 		$this->assertFalse( $updater->wasRevisionCreated(), 'wasRevisionCreated' );
 		$this->assertTrue( $updater->wasSuccessful(), 'wasSuccessful()' );
-		$this->assertStatusWarning( 'edit-no-change', $status, 'edit-no-change' );
+		$this->assertStatusWarning( 'edit-no-change', $status );
 	}
 
 	/**
@@ -339,8 +335,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotSame( $parentId, $rev->getId(), 'new revision ID' );
 		$this->assertTrue( $updater->wasRevisionCreated(), 'wasRevisionCreated' );
 		$this->assertTrue( $updater->wasSuccessful(), 'wasSuccessful()' );
-		$this->assertStatusOK( $status, 'getStatus()->isOK()' );
-		$this->assertFalse( $status->hasMessage( 'edit-no-change' ), 'edit-no-change' );
+		$this->assertStatusGood( $status );
 		// Setting setForceEmptyRevision causes the original revision to be set.
 		$this->assertEquals( $parentId, $updater->getEditResult()->getOriginalRevisionId() );
 	}
@@ -544,9 +539,8 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 			"MultiContentSave returned false, but revision was still created." );
 
 		$status = $updater->getStatus();
-		$this->assertStatusNotOK( $status,
+		$this->assertStatusError( $expectedError, $status,
 			"MultiContentSave returned false, but Status is not fatal." );
-		$this->assertSame( $expectedError, $status->getMessage()->getKey() );
 	}
 
 	/**
@@ -780,7 +774,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$updater->updateRevision();
 
 		$status = $updater->getStatus();
-		$this->assertStatusOK( $status );
+		$this->assertStatusGood( $status );
 		$rev = $status->getNewRevision();
 		$slot = $rev->getSlot( 'derivedslot' );
 		$this->assertTrue( $slot->getContent()->equals( $content ) );

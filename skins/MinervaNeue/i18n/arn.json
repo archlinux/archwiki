@@ -3,7 +3,8 @@
 		"authors": [
 			"Fiestoforo",
 			"Manke ruLpa",
-			"Ndołkah"
+			"Ndołkah",
+			"Cuatro Remos"
 		]
 	},
 	"mobile-frontend-editor-edit": "Kümeelün",
@@ -12,6 +13,7 @@
 	"mobile-frontend-home-button": "Tuwül",
 	"mobile-frontend-language-article-heading": "Kewünh",
 	"mobile-frontend-main-menu-login": "Konkülen",
+	"mobile-frontend-main-menu-nearby": "Fülkülelu",
 	"mobile-frontend-main-menu-settings": "Trürümün",
 	"mobile-frontend-pageaction-edit-tooltip": "Kümeelün tüfachi tapülh ñi wünengechi trokiñ.",
 	"mobile-frontend-placeholder": "Kintun {{SITENAME}} mew",

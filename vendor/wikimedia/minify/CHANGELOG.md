@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.7.0 (2023-11-14)
+
+* JavaScriptMinifier: Add basic ES2017 async-await syntax support (Hannah Okwelum)
+* JavaScriptMinifier: Update debug() to remove $lastType (Timo Tijhof)
+
 ## 2.5.1 (2023-10-06)
 
 * Fix source map output for multi-line templates. (Tim Starling) [T348280](https://phabricator.wikimedia.org/T348280)

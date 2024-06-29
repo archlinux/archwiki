@@ -12,11 +12,13 @@ use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\InfoActionHook;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsLookup;
-use OutputPage;
+use MediaWiki\User\Options\UserOptionsLookup;
+use RepoGroup;
 use Skin;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @license WTFPL
@@ -58,6 +60,12 @@ class PageImages implements
 	 */
 	public const PROP_NAME_FREE = 'page_image_free';
 
+	/** @var IConnectionProvider */
+	private $dbProvider;
+
+	/** @var RepoGroup */
+	private $repoGroup;
+
 	/** @var UserOptionsLookup */
 	private $userOptionsLookup;
 
@@ -65,9 +73,29 @@ class PageImages implements
 	private static $cache = null;
 
 	/**
+	 * @return PageImages
+	 */
+	private static function factory(): self {
+		$services = MediaWikiServices::getInstance();
+		return new self(
+			$services->getDBLoadBalancerFactory(),
+			$services->getRepoGroup(),
+			$services->getUserOptionsLookup()
+		);
+	}
+
+	/**
+	 * @param IConnectionProvider $dbProvider
+	 * @param RepoGroup $repoGroup
 	 * @param UserOptionsLookup $userOptionsLookup
 	 */
-	public function __construct( UserOptionsLookup $userOptionsLookup ) {
+	public function __construct(
+		IConnectionProvider $dbProvider,
+		RepoGroup $repoGroup,
+		UserOptionsLookup $userOptionsLookup
+	) {
+		$this->dbProvider = $dbProvider;
+		$this->repoGroup = $repoGroup;
 		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
@@ -105,32 +133,43 @@ class PageImages implements
 	 * Return page image for a given title
 	 *
 	 * @param Title $title Title to get page image for
-	 * @return File|bool
+	 * @return File|false
 	 */
 	public static function getPageImage( Title $title ) {
+		// Cast any cacheable null to false
+		return self::factory()->getPageImageInternal( $title ) ?? false;
+	}
+
+	/**
+	 * Return page image for a given title
+	 *
+	 * @param Title $title Title to get page image for
+	 * @return File|null
+	 */
+	public function getPageImageInternal( Title $title ): ?File {
 		self::$cache ??= new MapCacheLRU( 100 );
 
 		$file = self::$cache->getWithSetCallback(
 			CacheKeyHelper::getKeyForPage( $title ),
-			fn() => self::fetchPageImage( $title )
+			fn () => $this->fetchPageImage( $title )
 		);
 
-		// Cast any cacheable null to false
-		return $file ?? false;
+		// Cast false to null
+		return $file ?: null;
 	}
 
 	/**
 	 * @param Title $title Title to get page image for
-	 * @return File|null|bool
+	 * @return File|null|false
 	 */
-	private static function fetchPageImage( Title $title ) {
+	private function fetchPageImage( Title $title ) {
 		if ( !$title->canExist() ) {
 			// Optimization: Do not query for special pages or other titles never in the database
 			return false;
 		}
 
 		if ( $title->inNamespace( NS_FILE ) ) {
-			return MediaWikiServices::getInstance()->getRepoGroup()->findFile( $title );
+			return $this->repoGroup->findFile( $title );
 		}
 
 		$pageId = $title->getArticleID();
@@ -140,7 +179,7 @@ class PageImages implements
 			return null;
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$fileName = $dbr->selectField( 'page_props',
 			'pp_value',
 			[
@@ -151,11 +190,11 @@ class PageImages implements
 			[ 'ORDER BY' => 'pp_propname' ]
 		);
 		if ( !$fileName ) {
-			// Allow caching, cast null to false later
+			// Return not found without caching.
 			return false;
 		}
 
-		return MediaWikiServices::getInstance()->getRepoGroup()->findFile( $fileName );
+		return $this->repoGroup->findFile( $fileName );
 	}
 
 	/**
@@ -169,7 +208,7 @@ class PageImages implements
 	public function onInfoAction( $context, &$pageInfo ) {
 		global $wgThumbLimits;
 
-		$imageFile = self::getPageImage( $context->getTitle() );
+		$imageFile = $this->getPageImageInternal( $context->getTitle() );
 		if ( !$imageFile ) {
 			// The page has no image
 			return;
@@ -260,7 +299,7 @@ class PageImages implements
 		if ( !$out->getConfig()->get( 'PageImagesOpenGraph' ) ) {
 			return;
 		}
-		$imageFile = self::getPageImage( $out->getContext()->getTitle() );
+		$imageFile = $this->getPageImageInternal( $out->getContext()->getTitle() );
 		if ( !$imageFile ) {
 			$fallback = $out->getConfig()->get( 'PageImagesOpenGraphFallbackImage' );
 			if ( $fallback ) {

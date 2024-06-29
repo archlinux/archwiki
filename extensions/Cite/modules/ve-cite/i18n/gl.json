@@ -12,9 +12,9 @@
 			"Macofe",
 			"Maria zaos",
 			"McDutchie",
+			"O Breixo",
 			"Toliño",
-			"Vivaelcelta",
-			"O Breixo"
+			"Vivaelcelta"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libro",
@@ -61,7 +61,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Esta referencia está definida nun modelo ou noutro bloque xerado e só pode previsualizarse en modo fonte.",
 	"cite-ve-referenceslist-missingreflist": "Esta referencia xérase a través dun modelo.",
 	"cite-ve-toolbar-group-label": "Citar",
-	"cite-ve-othergroup-item": "referencia $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencias",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nome do grupo de referencias: \"$1\""
+	"cite-ve-othergroup-item": "referencia $1"
 }

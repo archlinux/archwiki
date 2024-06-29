@@ -17,7 +17,6 @@
 	"vector-languages": "Լեզուներ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 լեզու}}",
 	"vector-no-language-button-label": "Ավելացնել լեզուներ",
-	"vector-language-redirect-to-top": "Այս կայքում լեզվական հղումները գտնվում են էջի վերևում՝ հոդվածի վերնագրի դիմաց։ [[#p-lang-btn|Անցնել վերև]]։",
 	"vector-action-addsection": "Ավելացնել քննարկում",
 	"vector-action-delete": "Ջնջել",
 	"vector-action-move": "Վերանվանել",
@@ -30,6 +29,11 @@
 	"vector-view-view": "Կարդալ",
 	"vector-view-viewsource": "Դիտել ելատեքստը",
 	"vector-more-actions": "Ավելին",
+	"vector-feature-limited-width-name": "Լայնք",
+	"vector-feature-custom-font-size-name": "Տեքստ",
+	"vector-feature-custom-font-size-0-label": "Փոքր",
+	"vector-feature-custom-font-size-2-label": "Մեծ",
+	"skin-night-mode-name": "Գույն",
 	"vector-intro-page": "Օգնություն:Գլխացանկ",
 	"vector-toc-label": "Բովանդակություն",
 	"vector-toc-beginning": "Ներածություն",
@@ -43,8 +47,5 @@
 	"vector-page-tools-actions-label": "Գործողություններ",
 	"vector-pin-element-label": "տեղափոխել կողագոտի",
 	"vector-unpin-element-label": "թաքցնել",
-	"tooltip-vector-anon-user-menu-title": "Այլ ընտրանքներ",
-	"vector-readability-survey-fontSize": "Տառաչափ",
-	"vector-readability-survey-lineHeight": "Տողի բարձրությունը",
-	"vector-readability-survey-share": "շարունակել"
+	"tooltip-vector-anon-user-menu-title": "Այլ ընտրանքներ"
 }

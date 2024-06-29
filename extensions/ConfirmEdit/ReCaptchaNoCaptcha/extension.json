@@ -36,11 +36,7 @@
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.reCaptchaNoCaptcha.visualEditor": {
-			"scripts": "ve-confirmedit-reCaptchaNoCaptcha/ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler.js",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"scripts": "ve-confirmedit-reCaptchaNoCaptcha/ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler.js"
 		}
 	},
 	"HookHandlers": {

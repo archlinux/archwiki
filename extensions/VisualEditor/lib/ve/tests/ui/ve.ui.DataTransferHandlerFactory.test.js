@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface DataTransferHandlerFactory tests.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 QUnit.module( 've.ui.DataTransferHandlerFactory' );
@@ -25,7 +25,9 @@ ve.test.utils.makeStubTransferItem = function ( type, kind, extension ) {
 	return {
 		type: type,
 		kind: kind,
-		getExtension: function () { return extension; }
+		getExtension: function () {
+			return extension;
+		}
 	};
 };
 

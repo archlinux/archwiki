@@ -14,10 +14,6 @@ namespace MediaWiki\Extension\VisualEditor;
 use MediaWiki\MediaWikiServices;
 
 return [
-	VisualEditorHookRunner::SERVICE_NAME => static function ( MediaWikiServices $services ): VisualEditorHookRunner {
-		return new VisualEditorHookRunner( $services->getHookContainer() );
-	},
-
 	VisualEditorParsoidClientFactory::SERVICE_NAME => static function (
 		MediaWikiServices $services
 	): VisualEditorParsoidClientFactory {

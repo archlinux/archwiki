@@ -79,8 +79,7 @@
 	 * @param {Object} response Data returned from the AJAX request
 	 */
 	function processSyntaxResult( response ) {
-		var position,
-			data = response.abusefilterchecksyntax;
+		var data = response.abusefilterchecksyntax;
 
 		if ( data.status === 'ok' ) {
 			// Successful
@@ -100,7 +99,7 @@
 			if ( useAce ) {
 				filterEditor.focus();
 				// Convert index (used in textareas) in position {row, column} for ace
-				position = filterEditor.session.getDocument().indexToPosition( data.character );
+				var position = filterEditor.session.getDocument().indexToPosition( data.character );
 				filterEditor.navigateTo( position.row, position.column );
 				filterEditor.scrollToRow( position.row );
 			} else {
@@ -235,21 +234,23 @@
 	 * @param {string} action The action the message refers to
 	 */
 	function previewMessage( action ) {
-		var api,
-			args = [
-				'<nowiki>' + $( 'input[name=wpFilterDescription]' ).val() + '</nowiki>',
-				$( '#mw-abusefilter-edit-id' ).children().last().text()
-			],
-			message = getCurrentMessage( action ),
-			// mw-abusefilter-warn-preview, mw-abusefilter-disallow-preview
-			$element = $( '#mw-abusefilter-' + action + '-preview' ),
+		// The following messages are generated here:
+		// * mw-abusefilter-warn-preview
+		// * mw-abusefilter-disallow-preview
+		var $element = $( '#mw-abusefilter-' + action + '-preview' ),
 			previewButton = action === 'warn' ? toggleWarnPreviewButton : toggleDisallowPreviewButton;
 
 		if ( $element.css( 'display' ) !== 'none' ) {
 			$element.hide();
 			previewButton.setFlags( { destructive: false, progressive: true } );
 		} else {
-			api = new mw.Api();
+			var api = new mw.Api();
+			var args = [
+				'<nowiki>' + $( 'input[name=wpFilterDescription]' ).val() + '</nowiki>',
+				$( '#mw-abusefilter-edit-id' ).children().last().text()
+			];
+			var message = getCurrentMessage( action );
+
 			api.get( {
 				action: 'query',
 				meta: 'allmessages',
@@ -297,13 +298,13 @@
 	 * @param {jQuery.Event} e The event fired when the function is called
 	 */
 	function onFilterGroupChange() {
-		var $afWarnMessageExisting, $afDisallowMessageExisting, newVal;
+		var newVal;
 
 		if (
 			!$( '#mw-abusefilter-action-checkbox-warn input' ).is( ':checked' ) &&
 			$( this ).val() in mw.config.get( 'wgAbuseFilterDefaultWarningMessage' )
 		) {
-			$afWarnMessageExisting = $( '#mw-abusefilter-warn-message-existing select' );
+			var $afWarnMessageExisting = $( '#mw-abusefilter-warn-message-existing select' );
 			newVal = mw.config.get( 'wgAbuseFilterDefaultWarningMessage' )[ $( this ).val() ];
 
 			if ( $afWarnMessageExisting.find( 'option[value=\'' + newVal + '\']' ).length ) {
@@ -319,7 +320,7 @@
 			!$( '#mw-abusefilter-action-checkbox-disallow input' ).is( ':checked' ) &&
 			$( this ).val() in mw.config.get( 'wgAbuseFilterDefaultDisallowMessage' )
 		) {
-			$afDisallowMessageExisting = $( '#mw-abusefilter-disallow-message-existing select' );
+			var $afDisallowMessageExisting = $( '#mw-abusefilter-disallow-message-existing select' );
 			newVal = mw.config.get( 'wgAbuseFilterDefaultDisallowMessage' )[ $( this ).val() ];
 
 			if ( $afDisallowMessageExisting.find( 'option[value=\'' + newVal + '\']' ).length ) {
@@ -370,11 +371,10 @@
 	 * Warn if the user changed anything and tries to leave the window
 	 */
 	function setWarnOnLeave() {
-		var warnOnLeave,
-			$form = $( '#mw-abusefilter-editing-form' ),
+		var $form = $( '#mw-abusefilter-editing-form' ),
 			origValues = $form.serialize();
 
-		warnOnLeave = mw.confirmCloseWindow( {
+		var warnOnLeave = mw.confirmCloseWindow( {
 			test: function () {
 				return $form.serialize() !== origValues;
 			},
@@ -396,10 +396,9 @@
 		// mw-abusefilter-throttle-parameters, mw-abusefilter-tag-parameters
 		var $container = $( '#mw-abusefilter-' + action + '-parameters' ),
 			// Character used to separate elements in the textarea.
-			separator = action === 'throttle' ? '\n' : ',',
-			selector, field, fieldOpts, hiddenField;
+			separator = action === 'throttle' ? '\n' : ',';
 
-		selector = new OO.ui.TagMultiselectWidget( {
+		var selector = new OO.ui.TagMultiselectWidget( {
 			inputPosition: 'outline',
 			allowArbitrary: true,
 			allowEditTags: true,
@@ -412,7 +411,7 @@
 			disabled: config.disabled
 		} );
 
-		fieldOpts = {
+		var fieldOpts = {
 			label: $( $.parseHTML( config.label ) ),
 			align: 'top'
 		};
@@ -420,10 +419,10 @@
 			fieldOpts.help = new OO.ui.HtmlSnippet( config.help );
 		}
 
-		field = new OO.ui.FieldLayout( selector, fieldOpts );
+		var field = new OO.ui.FieldLayout( selector, fieldOpts );
 
 		// mw-abusefilter-hidden-throttle-field, mw-abusefilter-hidden-tag-field
-		hiddenField = OO.ui.infuse( $( '#mw-abusefilter-hidden-' + action + '-field' ) );
+		var hiddenField = OO.ui.infuse( $( '#mw-abusefilter-hidden-' + action + '-field' ) );
 		selector.on( 'change', function () {
 			hiddenField.setValue( selector.getValue().join( separator ) );
 		} );
@@ -435,13 +434,11 @@
 
 	// On ready initialization
 	$( function () {
-		var basePath, readOnly,
-			$exportBox = $( '#mw-abusefilter-export' ),
+		var $exportBox = $( '#mw-abusefilter-export' ),
 			isFilterEditor = mw.config.get( 'isFilterEditor' ),
 			tagConfig = mw.config.get( 'tagConfig' ),
 			throttleConfig = mw.config.get( 'throttleConfig' ),
-			$switchEditorBtn = $( '#mw-abusefilter-switcheditor' ),
-			cbEnabled, cbDeleted;
+			$switchEditorBtn = $( '#mw-abusefilter-switcheditor' );
 
 		if ( isFilterEditor ) {
 			// Configure the actual editing interface
@@ -474,7 +471,7 @@
 				filterEditor.session.setMode( 'ace/mode/abusefilter' );
 
 				// Ace setup from codeEditor extension
-				basePath = mw.config.get( 'wgExtensionAssetsPath', '' );
+				var basePath = mw.config.get( 'wgExtensionAssetsPath', '' );
 				if ( basePath.slice( 0, 2 ) === '//' ) {
 					// ACE uses web workers, which have importScripts, which don't like
 					// relative links. This is a problem only when the assets are on another
@@ -484,7 +481,7 @@
 				ace.config.set( 'basePath', basePath + '/CodeEditor/modules/ace' );
 
 				// Settings for Ace editor box
-				readOnly = mw.config.get( 'aceConfig' ).aceReadOnly;
+				var readOnly = mw.config.get( 'aceConfig' ).aceReadOnly;
 
 				filterEditor.setTheme( 'ace/theme/textmate' );
 				filterEditor.setReadOnly( readOnly );
@@ -512,6 +509,7 @@
 					// Refresh Ace editor size (notably its scrollbars) when the container
 					// is resized, otherwise it would be refreshed only on window resize
 					new ResizeObserver( function () {
+						// eslint-disable-next-line es-x/no-resizable-and-growable-arraybuffers
 						filterEditor.resize();
 					} ).observe( $filterBox[ 0 ] );
 				}
@@ -535,16 +533,24 @@
 		if ( isFilterEditor ) {
 			// Add logic for flags and consequences
 			$( '#mw-abusefilter-warn-preview-button' ).on( 'click',
-				function () { previewMessage( 'warn' ); }
+				function () {
+					previewMessage( 'warn' );
+				}
 			);
 			$( '#mw-abusefilter-disallow-preview-button' ).on( 'click',
-				function () { previewMessage( 'disallow' ); }
+				function () {
+					previewMessage( 'disallow' );
+				}
 			);
 			$( '#mw-abusefilter-warn-edit-button' ).on( 'click',
-				function () { editMessage( 'warn' ); }
+				function () {
+					editMessage( 'warn' );
+				}
 			);
 			$( '#mw-abusefilter-disallow-edit-button' ).on( 'click',
-				function () { editMessage( 'disallow' ); }
+				function () {
+					editMessage( 'disallow' );
+				}
 			);
 			$( '.mw-abusefilter-action-checkbox input' ).on( 'click', hideDeselectedActions );
 			hideDeselectedActions();
@@ -552,8 +558,8 @@
 			$( '#wpFilterGlobal' ).on( 'change', toggleCustomMessages );
 			toggleCustomMessages();
 
-			cbEnabled = OO.ui.infuse( $( '#wpFilterEnabled' ) );
-			cbDeleted = OO.ui.infuse( $( '#wpFilterDeleted' ) );
+			var cbEnabled = OO.ui.infuse( $( '#wpFilterEnabled' ) );
+			var cbDeleted = OO.ui.infuse( $( '#wpFilterDeleted' ) );
 			OO.ui.infuse( $( '#wpFilterDeletedLabel' ) );
 			cbEnabled.on( 'change',
 				function () {

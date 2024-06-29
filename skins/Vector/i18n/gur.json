@@ -5,9 +5,9 @@
 			"Akandee1",
 			"Amire80",
 			"Amoramah",
+			"Atalata Gumah",
 			"Ayire Adongo",
-			"Dnshitobu",
-			"Atalata Gumah"
+			"Dnshitobu"
 		]
 	},
 	"vector-skin-desc": "Bo vector inga ɛ 2:\n*2011 - Monobuke pa'alɛ n tari nimpaala la yɛla zo'e zo'e n wan basɛ ti la kan tɔna ti nɛŋatɔlega bɔna. \n*2022 - Vɛketa la naam pa'asɛ la WMF [[mw:Desktop Improvements]] tuunɛ",
@@ -21,7 +21,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 yetɔgum|$1 yetɔgum zo'e zo'e}}",
 	"vector-no-language-button-label": "Pa'ase yeletɔgum duma",
 	"vector-no-language-button-aria-label": "Atikeli kuna bɔna la yeletɔgum kuna puan. Dikɛ atikeli la pa'ase yeletɔgum buna puan.",
-	"vector-language-redirect-to-top": "Yeletɔgum la likɛ duma la bo la pɛgerɛ la saazuo yakɛ tile la.",
 	"vector-language-variant-switcher-label": "Tee tɔgum buuri",
 	"vector-action-addsection": "Pa’asɛ sɔsezure",
 	"vector-action-delete": "Saalum",
@@ -38,8 +37,17 @@
 	"vector-jumptosearch": "So'ose paɛ saasɛ",
 	"vector-jumptocontent": "So'ose paɛ yelezuo la",
 	"vector-more-actions": "Zo'ore",
+	"vector-client-prefs-label": "Yelezuo",
 	"vector-feature-limited-width-name": "Soore la kãregɛ mɛ",
 	"vector-feature-custom-font-size-name": "Bagenɛ gelɛ",
+	"vector-feature-limited-width-0-label": "Gumpɔkɔ",
+	"vector-feature-limited-width-1-label": "Fu zelekɔ",
+	"vector-feature-custom-font-size-0-label": "Pika",
+	"vector-feature-custom-font-size-1-label": "Fu ze'eleko",
+	"vector-feature-custom-font-size-2-label": "Kãtɛ",
+	"skin-night-mode-name": "Mɔlegɔ",
+	"skin-night-mode-0-label": "Dabeserɛ",
+	"skin-night-mode-1-label": "Yu'uŋɔ",
 	"vector-search-loader": "Ba boti la pakirɛ bisega puti'irɛ",
 	"vector-searchsuggest-containing": "Ɛ pɛgesi'a n tari <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
@@ -71,13 +79,6 @@
 	"vector-toc-unpinned-popup": "Yelezuto la, ba dikɛ ba kalam mɛ.",
 	"vector-page-tools-unpinned-popup": "Lɔgerɔ zi'an la tee bɔna la kalam",
 	"vector-main-menu-unpinned-popup": "Loosego zi'an la tee bɔna la kalam",
-	"vector-readability-survey-title": "Wikimiidiya kaalegɔ lɔkɔ",
-	"vector-readability-survey-description": "Wikipiidiya gulesegɔ ani suŋa la ŋwani bo fum? Digesɛ lɔgetuna wa tee nimbia la. Zamesɛ yɛla zo'e zo'e yɛsera [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading|Accessibility for reading project]].",
-	"vector-readability-survey-fontSize": "Gulesegɔ katɛ n zuni se'em",
-	"vector-readability-survey-lineHeight": "Beene woko inŋa",
-	"vector-readability-survey-paragraphSpacing": "Putɛzure folego n wan zuna se'em",
-	"vector-readability-survey-optout": "Di'e tole nɛŋa ta dıkɛ fu maalegɔ bo to gee dıkɛ fu lebesego ta'asɛ pɛgese'ere n tagelɛ la.  [[#close-vector-survey|Remove this tool]].",
-	"vector-readability-survey-randomize": "Pɛ gaŋɛ",
-	"vector-readability-survey-reset": "Malegɛ iŋɛ",
-	"vector-readability-survey-share": "Tole nɛŋa"
+	"vector-2022-beta-preview-label": "Vector 2022 bita",
+	"vector-2022-beta-preview-description": "Diŋɛ Nyɛ 2022 Vɛketa paala naaŋɔ"
 }

@@ -47,6 +47,7 @@ const Dialog = require( './mmv.ui.dialog.js' );
 
 			this.eventPrefix = 'use-this-file';
 		}
+
 		// FIXME this should happen outside the dialog and the tabs, but we need to improve
 		initTabs() {
 			const makeTab = ( type ) => new OO.ui.MenuOptionWidget( {
@@ -54,7 +55,7 @@ const Dialog = require( './mmv.ui.dialog.js' );
 				// The following messages are used here:
 				// * multimediaviewer-embed-tab
 				// * multimediaviewer-share-tab
-				label: mw.message( `multimediaviewer-${type}-tab` ).text()
+				label: mw.message( `multimediaviewer-${ type }-tab` ).text()
 			} );
 
 			this.reuseTabs = new OO.ui.MenuSelectWidget( {
@@ -104,6 +105,7 @@ const Dialog = require( './mmv.ui.dialog.js' );
 				this.tabsSetValues = undefined;
 			}
 		}
+
 		toggleDialog() {
 			if ( this.tabs === null ) {
 				this.initTabs();
@@ -118,11 +120,9 @@ const Dialog = require( './mmv.ui.dialog.js' );
 		 * @param {OO.ui.MenuOptionWidget} option
 		 */
 		handleTabSelection( option ) {
-			let tab;
-
 			this.selectedTab = option.getData();
 
-			for ( tab in this.tabs ) {
+			for ( const tab in this.tabs ) {
 				if ( tab === this.selectedTab ) {
 					this.tabs[ tab ].show();
 				} else {
@@ -174,8 +174,6 @@ const Dialog = require( './mmv.ui.dialog.js' );
 		 * Clears listeners.
 		 */
 		unattach() {
-			let tab;
-
 			super.unattach();
 
 			if ( this.reuseTabs ) {
@@ -183,7 +181,7 @@ const Dialog = require( './mmv.ui.dialog.js' );
 			}
 
 			if ( this.tabs ) {
-				for ( tab in this.tabs ) {
+				for ( const tab in this.tabs ) {
 					this.tabs[ tab ].unattach();
 				}
 			}
@@ -215,11 +213,9 @@ const Dialog = require( './mmv.ui.dialog.js' );
 		 * @inheritdoc
 		 */
 		empty() {
-			let tab;
-
 			super.empty();
 
-			for ( tab in this.tabs ) {
+			for ( const tab in this.tabs ) {
 				this.tabs[ tab ].empty();
 			}
 		}

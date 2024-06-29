@@ -23,7 +23,7 @@ QUnit.test( '#getTimestampParser', function ( assert ) {
 		parser = new Parser( require( '../data-en.json' ) );
 
 	cases.forEach( function ( caseItem ) {
-		var tsParser = parser.getTimestampParser( 'en', caseItem.format, null, 'UTC', { UTC: 'UTC' } ),
+		var tsParser = parser.getTimestampParser( 'en', caseItem.format, caseItem.digits, 'UTC', { UTC: 'UTC' } ),
 			expectedDate = moment( caseItem.expected );
 
 		assert.true(

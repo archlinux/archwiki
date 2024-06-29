@@ -2,7 +2,7 @@
 /**
  * Implements Special:Search
  *
- * Copyright © 2004 Brion Vibber <brion@pobox.com>
+ * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +25,14 @@
 
 namespace MediaWiki\Specials;
 
-use DeferredUpdates;
 use ISearchResultSet;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Search\SearchResultThumbnailProvider;
@@ -46,8 +47,7 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserOptionsManager;
-use Message;
+use MediaWiki\User\Options\UserOptionsManager;
 use RepoGroup;
 use SearchEngine;
 use SearchEngineConfig;
@@ -386,8 +386,10 @@ class SpecialSearch extends SpecialPage {
 	private function redirectOnExactMatch() {
 		if ( !$this->getConfig()->get( MainConfigNames::SearchMatchRedirectPreference ) ) {
 			// If the preference for whether to redirect is disabled, use the default setting
-			$defaultOptions = $this->userOptionsManager->getDefaultOptions();
-			return $defaultOptions['search-match-redirect'];
+			return $this->userOptionsManager->getDefaultOption(
+				'search-match-redirect',
+				$this->getUser()
+			);
 		} else {
 			// Otherwise use the user's preference
 			return $this->userOptionsManager->getOption( $this->getUser(), 'search-match-redirect' );

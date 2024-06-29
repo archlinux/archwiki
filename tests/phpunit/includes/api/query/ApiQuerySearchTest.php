@@ -1,12 +1,19 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use ISearchResultSet;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Title\Title;
+use MockSearchEngine;
+use MockSearchResult;
+use MockSearchResultSet;
 
 /**
  * @group medium
- * @covers ApiQuerySearch
+ * @covers \ApiQuerySearch
  */
 class ApiQuerySearchTest extends ApiTestCase {
 

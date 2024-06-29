@@ -10,9 +10,9 @@ namespace MediaWiki\Extension\Math;
 
 // phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
 
-use ConfigException;
 use ExtensionRegistry;
 use Maintenance;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Hook\MaintenanceRefreshLinksInitHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Settings\SettingsBuilder;
@@ -78,6 +78,13 @@ class Hooks implements
 			}
 
 			$settings->overrideConfigValue( 'MathInternalRestbaseURL', $internalRestbaseURL );
+		}
+	}
+
+	public static function onExtensionFunctions() {
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'WikibaseClient' ) ) {
+			global $wgRestAPIAdditionalRouteFiles;
+			$wgRestAPIAdditionalRouteFiles[] = dirname( __DIR__ ) . '/popupRestRoutes.json';
 		}
 	}
 

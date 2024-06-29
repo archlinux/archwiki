@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Gunnernett",
+			"Jon Harald Søby",
 			"Njardarlogar",
-			"Ranveig",
-			"Jon Harald Søby"
+			"Ranveig"
 		]
 	},
 	"skinname-vector": "Vector, eldre (2010)",
@@ -19,7 +19,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 språk}}",
 	"vector-no-language-button-label": "Legg til språk",
 	"vector-no-language-button-aria-label": "Denne artikkelen finst berre på dette språket. Legg til artikkelen på andre språk",
-	"vector-language-redirect-to-top": "Språklenkjene er plasserte på toppen av sida, på motsett side av tittelen.",
 	"vector-language-variant-switcher-label": "Endre språkvariant",
 	"vector-action-addsection": "Nytt emne",
 	"vector-action-delete": "Slett",
@@ -36,6 +35,14 @@
 	"vector-jumptosearch": "Hopp til søk",
 	"vector-jumptocontent": "Hopp til innhald",
 	"vector-more-actions": "Meir",
+	"vector-client-prefs-label": "Utsjånad",
+	"vector-feature-limited-width-name": "Breidd",
+	"vector-feature-custom-font-size-name": "Brødtekst",
+	"vector-feature-limited-width-0-label": "Brei",
+	"vector-feature-limited-width-1-label": "Standard",
+	"vector-feature-custom-font-size-0-label": "Lita",
+	"vector-feature-custom-font-size-1-label": "Standard",
+	"vector-feature-custom-font-size-2-label": "Stor",
 	"vector-search-loader": "Hentar søkeforslag",
 	"vector-searchsuggest-containing": "Søk etter sider som inneheld <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduksjon",
@@ -63,5 +70,11 @@
 	"vector-page-tools-nav-label": "Sideverktøy",
 	"vector-prefs-limited-width": "Slå på modus med avgrensa breidd",
 	"vector-prefs-limited-width-help": "Slå på modus med avgrensa breidd for ei betra leseoppleving.",
-	"empty-language-selector-body": "Sideinnhaldet er ikkje støtta på andre språk."
+	"empty-language-selector-body": "Sideinnhaldet er ikkje støtta på andre språk.",
+	"vector-toc-unpinned-popup": "Innhaldslista har vorte flytt hit.",
+	"vector-page-tools-unpinned-popup": "Verktøymenyen har vorte flytt hit.",
+	"vector-main-menu-unpinned-popup": "Hovudmenyen har flytta hit.",
+	"vector-client-prefs-unpinned-popup": "Utsjånadsmenyen har flytta hit.",
+	"vector-2022-beta-preview-label": "Lesetilgjenge (Vector 2022)",
+	"vector-2022-beta-preview-description": "Få tidleg tilgang til nye funksjonar for lesetilgjenge, som t.d. typografiske betringar og nattmodus."
 }

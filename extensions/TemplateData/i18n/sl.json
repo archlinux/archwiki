@@ -89,6 +89,7 @@
 	"templatedata-modal-table-param-aliases": "Sopomenke",
 	"templatedata-modal-table-param-autovalue": "Samodejna vrednost",
 	"templatedata-modal-table-param-default": "Privzeto ($1)",
+	"templatedata-modal-table-param-status": "Stanje",
 	"templatedata-modal-table-param-deprecated": "Opuščeno",
 	"templatedata-modal-table-param-deprecatedValue": "Zastarela navodila",
 	"templatedata-modal-table-param-description": "Opis ($1)",

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Aefgh39622"
+			"Aefgh39622",
+			"Patsagorn Y."
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "ตรวจสอบดูว่าตัวกรองการละเมิดกฎตรงกับชุดตัวแปร การแก้ไข หรือเหตุการณ์ตัวกรองการละเมิดกฎที่ลงบันทึกไว้หรือไม่",
@@ -41,6 +42,7 @@
 	"apihelp-query+abuselog-param-prop": "คุณสมบัติที่ต้องการรับข้อมูล",
 	"apihelp-query+abuselog-example-1": "แสดงรายการปูมล่าสุด",
 	"apihelp-query+abuselog-example-2": "แสดงรายการปูมล่าสุดสำหรับ [[API]]",
+	"apihelp-abuselogprivatedetails-example-1": "ดูรายละเอียดลับสำหรับปูมการละเมิดที่มีไอดี 1 ด้วยเหตุผล \"ตัวอย่าง\"",
 	"apierror-abusefilter-canttest": "คุณไม่มีสิทธิทดสอบตัวกรองการละเมิดกฎ",
 	"apierror-abusefilter-cantcheck": "คุณไม่มีสิทธิตรวจสอบไวยากรณ์ของตัวกรองการละเมิดกฎ",
 	"apierror-abusefilter-canteval": "คุณไม่มีสิทธิประเมินนิพจน์ตัวกรองการละเมิดกฎ",

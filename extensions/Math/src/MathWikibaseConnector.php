@@ -4,11 +4,12 @@ namespace MediaWiki\Extension\Math;
 
 use DataValues\StringValue;
 use InvalidArgumentException;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Site\Site;
 use Psr\Log\LoggerInterface;
-use Site;
 use Wikibase\Client\RepoLinker;
 use Wikibase\DataModel\Entity\EntityId;
 use Wikibase\DataModel\Entity\EntityIdParser;
@@ -144,7 +145,7 @@ class MathWikibaseConnector {
 	private function loadPropertyId( string $propertyId ): ?EntityId {
 		try {
 			return $this->idParser->parse( $propertyId );
-		} catch ( \ConfigException $e ) {
+		} catch ( ConfigException $e ) {
 			return null;
 		}
 	}
@@ -334,11 +335,11 @@ class MathWikibaseConnector {
 			$entityRevision = $this->entityRevisionLookup->getEntityRevision( $entityId );
 			$innerEntity = $entityRevision->getEntity();
 			if ( $innerEntity instanceof Item ) {
-					$globalID = $this->site->getGlobalId();
-					if ( $innerEntity->hasLinkToSite( $globalID ) ) {
-						$siteLink = $innerEntity->getSiteLink( $globalID );
-						return $this->site->getPageUrl( $siteLink->getPageName() );
-					}
+				$globalID = $this->site->getGlobalId();
+				if ( $innerEntity->hasLinkToSite( $globalID ) ) {
+					$siteLink = $innerEntity->getSiteLink( $globalID );
+					return $this->site->getPageUrl( $siteLink->getPageName() );
+				}
 			}
 		} catch ( StorageException $e ) {
 			$this->logger->warning(

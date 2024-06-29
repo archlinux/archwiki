@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bashkorttan",
 			"Sagan",
 			"Азат Хәлилов",
 			"Айсар",
@@ -9,8 +10,7 @@
 			"Ләйсән",
 			"Рустам Нурыев",
 			"Танзиля Кутлугильдина",
-			"Янмурза Баки",
-			"Bashkorttan"
+			"Янмурза Баки"
 		]
 	},
 	"thanks-desc": "Мөхәррирләгән, фекер яҙған һ.б. өсөн ҡатнашыусыларға рәхмәт белдергән һылтанмалар өҫтәй.",
@@ -30,7 +30,6 @@
 	"echo-pref-subscription-edit-thank": "Үҙгәртеүем өсөн үҙемә рәхмәт",
 	"echo-pref-tooltip-edit-thank": "Эшләгән үҙгәртеүҙәрем өсөн кемдер рәхмәт әйтһә, миңә хәбәр итергә.",
 	"echo-category-title-edit-thank": "Рәхмәт!",
-	"notification-thanks-diff-link": "Һеҙҙең үҙгәртеүҙәрҙе",
 	"notification-header-rev-thank": "{{GENDER:$4|Һеҙгә}}, <strong>$3</strong> битендә яһаған үҙгәртеүегеҙ өсөн, $1 {{GENDER:$2|рәхмәт әйтте}}.",
 	"log-name-thanks": "Рәхмәт журналы",
 	"log-description-thanks": "Түбәндә башҡа ҡатнашыусыларҙан рәхмәт алған ҡатнашыусылар исемлеге бар",
@@ -41,6 +40,5 @@
 	"thanks-error-invalidpostid": "Хәбәрҙең рөхсәт ителмәгән идентификаторы.",
 	"flow-thanks-confirmation-special": "Был фекер өсөн рәхмәт әйтергә теләйһегеҙме?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Һеҙ}} $1 {{GENDER:$2|уның}} аңлатмаһы өсөн рәхмәт әйттегеҙ.",
-	"notification-flow-thanks-post-link": "Һеҙҙең комментарий",
 	"notification-header-flow-thank": "{{GENDER:$5|һеҙгә}} \"<strong>$3</strong>\" темаһындағы комментарий өсөн $1 {{GENDER:$2|рәхмәт әйтте}}."
 }

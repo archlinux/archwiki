@@ -10,7 +10,7 @@
 	"math_syntax_error": "синтаксонь эльбятькс",
 	"math_unknown_error": "аф содаф эльбятькс",
 	"math_unknown_function": "аф содаф функцие",
-	"mw_math_mathml": "MathML коса ули кода (экспериментокс)",
-	"mw_math_source": "Катк тянь кода TeX (текстонь вальманди)",
+	"mw-math-mathml": "MathML коса ули кода (экспериментокс)",
+	"mw-math-source": "Катк тянь кода TeX (текстонь вальманди)",
 	"prefs-math": "Няфтемс формулат"
 }

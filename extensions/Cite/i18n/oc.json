@@ -17,7 +17,6 @@
 	"cite_error_included_ref": "Clausura <code>&lt;/ref&gt;</code> omesa per la balisa <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "De balisas <code>&lt;ref&gt;</code> existisson per un grop nomenat « $1 », mas cap de balisa <code>&lt;references group=\"$1\"/&gt;</code> correspondenta es pas estada trobada, o alara una valisa tampanta <code>&lt;/ref&gt;</code> manca.",
 	"cite_error_references_group_mismatch": "La balisa <code>&lt;ref&gt;</code> dins <code>&lt;references&gt;</code> a l'atribut de grop « $1 » que dintra en conflicte amb lo de <code>&lt;references&gt;</code>.",
-	"cite_error_references_missing_group": "La balisa <code>&lt;ref&gt;</code> definida dins <code>&lt;references&gt;</code> a un gropat atribuit « $1 » que figura pas dins lo tèxte precedent.",
 	"cite_error_references_missing_key": "La balisa <code>&lt;ref&gt;</code> amb lo nom « $1 » definida dins <code>&lt;references&gt;</code> es pas utilizada dins lo tèxte precedent.",
 	"cite_error_references_no_key": "La balisa <code>&lt;ref&gt;</code> definida dins <code>&lt;references&gt;</code> a pas de nom d’atribut.",
 	"cite_error_empty_references_define": "La balisa <code>&lt;ref&gt;</code> definida dins <code>&lt;references&gt;</code> amb lo nom « $1 » a pas de contengut.",

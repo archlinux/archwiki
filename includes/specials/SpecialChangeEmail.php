@@ -24,9 +24,9 @@
 namespace MediaWiki\Specials;
 
 use ErrorPageError;
-use HTMLForm;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\FormSpecialPage;
@@ -188,8 +188,12 @@ class SpecialChangeEmail extends FormSpecialPage {
 
 		// To prevent spam, rate limit adding a new address, but do
 		// not rate limit removing an address.
-		if ( $newAddr !== '' && $user->pingLimiter( 'changeemail' ) ) {
-			return Status::newFatal( 'actionthrottledtext' );
+		if ( $newAddr !== '' ) {
+			// Enforce permissions, user blocks, and rate limits
+			$status = $this->authorizeAction( 'changeemail' );
+			if ( !$status->isGood() ) {
+				return Status::wrap( $status );
+			}
 		}
 
 		$userLatest = $user->getInstanceForUpdate();
@@ -222,7 +226,5 @@ class SpecialChangeEmail extends FormSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialChangeEmail::class, 'SpecialChangeEmail' );

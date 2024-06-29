@@ -335,6 +335,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Den visuellen Editor anbieten, falls möglich",
 	"visualeditor-preference-tabs-prefer-wt": "Den Quelltext-Editor anbieten",
 	"visualeditor-preference-tabs-remember-last": "Den zuletzt genutzten Editor merken und anbieten",
+	"visualeditor-preference-collab-label": "Kollaborative Bearbeitung",
+	"visualeditor-preference-collab-description": "Lade andere Benutzer ein, an deiner Bearbeitungssitzung im visuellen Editor teilzunehmen.",
 	"visualeditor-rebase-client-export": "Exportieren",
 	"visualeditor-rebase-client-export-start": "Exportieren …",
 	"visualeditor-rebase-client-import": "Importieren",

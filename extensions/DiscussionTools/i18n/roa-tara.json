@@ -40,6 +40,5 @@
 	"discussiontools-topicsubscription-notify-subscribed-title": "T'è {{GENDER:|iscritte}}!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "Non {{GENDER:|g'è}} cchiù le notifeche de commende nuéve a stu 'ngazzamende.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "E' {{GENDER:|annullate}} l'iscrizione.",
-	"minerva-talk-full-page": "Lìgge cu 'na pàgene uicchi",
 	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respunne]"
 }

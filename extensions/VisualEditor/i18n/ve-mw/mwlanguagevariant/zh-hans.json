@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Liuxinyu970226",
-			"Shizhao"
+			"Shizhao",
+			"Diskdance"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "已禁用变体转换",
@@ -24,7 +25,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-title-filter": "变体过滤器",
 	"visualeditor-mwlanguagevariantcontextitem-title-name": "语言名称",
 	"visualeditor-mwlanguagevariantcontextitem-title-oneway": "单向转换规则",
-	"visualeditor-mwlanguagevariantcontextitem-title-twoway": "语言转换规则",
+	"visualeditor-mwlanguagevariantcontextitem-title-twoway": "字词转换规则",
 	"visualeditor-mwlanguagevariantcontextitem-title-unknown": "语言变体",
 	"visualeditor-mwlanguagevariantinspector-disabled-placeholder": "文本已受变体转换保护",
 	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "语言",
@@ -39,7 +40,7 @@
 	"visualeditor-mwlanguagevariantinspector-title-filter": "变体过滤器",
 	"visualeditor-mwlanguagevariantinspector-title-name": "语言名称",
 	"visualeditor-mwlanguagevariantinspector-title-oneway": "单向转换规则",
-	"visualeditor-mwlanguagevariantinspector-title-twoway": "语言转换规则",
+	"visualeditor-mwlanguagevariantinspector-title-twoway": "字词转换规则",
 	"visualeditor-mwlanguagevariantinspector-twoway-add-button": "添加新实例",
 	"visualeditor-mwlanguagevariantinspector-twoway-clear-button": "移除实例",
 	"visualeditor-mwlanguagevariantinspector-twoway-text-placeholder": "变体文本"

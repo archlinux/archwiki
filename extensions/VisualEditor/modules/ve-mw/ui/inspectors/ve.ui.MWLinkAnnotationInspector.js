@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface LinkAnnotationInspector class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -524,11 +524,14 @@ ve.ui.MWLinkAnnotationInspector.prototype.newExternalLinkAnnotation = function (
  * @inheritdoc
  */
 ve.ui.MWLinkAnnotationInspector.prototype.getInsertionText = function () {
-	if ( this.isNew && this.isExternal() ) {
+	// Prefer user input, not normalized annotation, to preserve case
+	var label = this.labelInput.getValue().trim();
+	if ( label ) {
+		return label;
+	} else if ( this.isNew && this.isExternal() ) {
 		return '';
 	} else {
-		// Use user input, not normalized annotation, to preserve case
-		return this.labelInput.getValue().trim() || this.annotationInput.getTextInputWidget().getValue();
+		return this.annotationInput.getTextInputWidget().getValue();
 	}
 };
 
@@ -536,10 +539,10 @@ ve.ui.MWLinkAnnotationInspector.prototype.getInsertionText = function () {
  * @inheritdoc
  */
 ve.ui.MWLinkAnnotationInspector.prototype.getInsertionData = function () {
-	// If this is a new external link, insert an autonumbered link instead of a link annotation
+	// If this is a new external link with no label, insert an autonumbered link instead of a link annotation
 	// (applying the annotation on this later does nothing because of disallowedAnnotationTypes).
 	// Otherwise call parent method to figure out the text to insert and annotate.
-	if ( this.isNew && this.isExternal() ) {
+	if ( this.isNew && this.isExternal() && !this.labelInput.getValue().trim() ) {
 		return [
 			{
 				type: 'link/mwNumberedExternal',

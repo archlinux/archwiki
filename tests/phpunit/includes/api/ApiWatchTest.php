@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -8,16 +10,11 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group API
  * @group Database
  * @group medium
- * @covers ApiWatch
+ * @covers \ApiWatch
  */
 class ApiWatchTest extends ApiTestCase {
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'page', 'watchlist', 'watchlist_expiry' ]
-		);
 
 		// Fake current time to be 2019-06-05T19:50:42Z
 		ConvertibleTimestamp::setFakeTime( 1559764242 );
@@ -157,7 +154,7 @@ class ApiWatchTest extends ApiTestCase {
 			// Previous tests may insert an invalid title
 			// like ":ApiEditPageTest testNonTextEdit", which
 			// can't be cleared.
-			if ( strpos( $item['title'], ':' ) === 0 ) {
+			if ( str_starts_with( $item['title'], ':' ) ) {
 				unset( $data[0]['query']['watchlist'][$index] );
 			}
 		}

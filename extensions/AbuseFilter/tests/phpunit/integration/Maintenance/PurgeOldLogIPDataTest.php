@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
-use HashConfig;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\AbuseFilter\Maintenance\PurgeOldLogIPData;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -17,9 +17,6 @@ class PurgeOldLogIPDataTest extends MaintenanceBaseTestCase {
 
 	private const FAKE_TIME = '20200115000000';
 	private const MAX_AGE = 3600;
-
-	/** @inheritDoc */
-	protected $tablesUsed = [ 'abuse_filter_log' ];
 
 	/**
 	 * @inheritDoc

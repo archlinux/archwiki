@@ -15,7 +15,7 @@
 	"license-name": "MIT",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42.0"
 	},
 	"APIMetaModules": {
 		"notifications": {
@@ -40,6 +40,7 @@
 			"class": "MediaWiki\\Extension\\Notifications\\Api\\ApiEchoMute",
 			"services": [
 				"CentralIdLookup",
+				"LinkBatchFactory",
 				"UserOptionsManager"
 			]
 		}
@@ -48,12 +49,43 @@
 		"echo-email-frequency": 0,
 		"echo-dont-email-read-notifications": false
 	},
+	"ConditionalUserOptions": {
+		"echo-subscriptions-web-reverted": [
+			[
+				false,
+				[ "registered-after", "20240208200000" ]
+			]
+		],
+		"echo-subscriptions-web-article-linked": [
+			[
+				true,
+				[ "registered-after", "20240208200000" ]
+			]
+		],
+		"echo-subscriptions-email-mention": [
+			[
+				true,
+				[ "registered-after", "20240208200000" ]
+			]
+		],
+		"echo-subscriptions-email-article-linked": [
+			[
+				true,
+				[ "registered-after", "20240208200000" ]
+			]
+		]
+	},
 	"ExtensionFunctions": [
 		"MediaWiki\\Extension\\Notifications\\Hooks::initEchoExtension"
 	],
 	"JobClasses": {
 		"EchoNotificationJob": "MediaWiki\\Extension\\Notifications\\Jobs\\NotificationJob",
-		"EchoNotificationDeleteJob": "MediaWiki\\Extension\\Notifications\\Jobs\\NotificationDeleteJob",
+		"EchoNotificationDeleteJob": {
+			"class": "MediaWiki\\Extension\\Notifications\\Jobs\\NotificationDeleteJob",
+			"services": [
+				"JobQueueGroup"
+			]
+		},
 		"EchoPushNotificationRequest": "MediaWiki\\Extension\\Notifications\\Push\\NotificationRequestJob"
 	},
 	"SpecialPages": {
@@ -318,7 +350,7 @@
 			"dependencies": [
 				"ext.echo.api",
 				"mediawiki.jqueryMsg",
-				"mediawiki.Uri"
+				"web2017-polyfills"
 			],
 			"messages": [
 				"echo-badge-count",
@@ -448,7 +480,21 @@
 		"main": {
 			"class": "MediaWiki\\Extension\\Notifications\\Hooks",
 			"services": [
-				"MainConfig"
+				"AuthManager",
+				"CentralIdLookup",
+				"MainConfig",
+				"EchoAttributeManager",
+				"HookContainer",
+				"ContentLanguage",
+				"LinkRenderer",
+				"NamespaceInfo",
+				"PermissionManager",
+				"RevisionStore",
+				"StatsdDataFactory",
+				"TalkPageNotificationManager",
+				"UserEditTracker",
+				"UserFactory",
+				"UserOptionsManager"
 			]
 		},
 		"schema": {
@@ -1043,7 +1089,6 @@
 		"RecomputeNotifCounts": "maintenance/recomputeNotifCounts.php",
 		"RemoveInvalidNotification": "maintenance/removeInvalidNotification.php",
 		"RemoveOrphanedEvents": "maintenance/removeOrphanedEvents.php",
-		"UpdateEchoSchemaForSuppression": "maintenance/updateEchoSchemaForSuppression.php",
 		"EchoUpdatePerUserBlacklist": "maintenance/updatePerUserBlacklist.php",
 		"EchoPush\\PushNotifier": "includes/Push/PushNotifier.php",
 		"MediaWiki\\Extension\\Notifications\\Push\\PushNotifier": "includes/Push/PushNotifier.php"

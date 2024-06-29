@@ -14,6 +14,7 @@
 			"Izoozo",
 			"Karim185.3",
 			"Khaled",
+			"Lolekek",
 			"Macofe",
 			"Maroen1990",
 			"Meno25",
@@ -33,8 +34,7 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"مشعل الحربي",
-			"Lolekek"
+			"مشعل الحربي"
 		]
 	},
 	"echo-desc": "نظام لإخطار المستخدمين عن الأحداث والرسائل",
@@ -187,7 +187,7 @@
 	"notification-header-mention-status-bundle": "{{PLURAL:$3|إخطار|$3 إخطار}} حول التذكيرات {{GENDER:$2|التي قمت بها}} على صفحة النقاش <strong>$4</strong> talk page: {{PLURAL:$5|$5 لم يتم إرسالها}}، {{PLURAL:$6|$6 أرسلت}}.",
 	"notification-header-user-rights-add-only": "صلاحيات المستخدم الخاصة {{GENDER:$4|بك}} تم {{GENDER:$1|تغييرها}}. تمت إضافتك إلى: $2.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|صلاحياتك}} تم {{GENDER:$1|تغييرها}}. أنت لم تعد عضوا في: $2.",
-	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|صلاحياتك}} تم {{GENDER:$1|تغييرها}}. أنت تمت إضافتك إلى: $2. أنت لم تعد عضوا في: $4.",
+	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|غُيَّرت}} {{GENDER:$1|صلاحياتك}}. أُضيفت إلى: $2. لم تعد عضوًا في: $4.",
 	"notification-header-user-rights-expiry-change": "تاريخ انتهاء {{GENDER:$4|عضويتك}} في {{PLURAL:$3|المجموعة|المجموعات}} التالية تم {{GENDER:$1|تغييرها}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|مرحبًا بك|مرحبًا بكِ}} في {{SITENAME}}، $1! نحن سعداءُ {{GENDER:$2|بتواجدك|بتواجدكِ}} هنا.",
 	"notification-header-mention-summary": "{{GENDER:$2|ذكر|ذكرت}}{{GENDER:$3|ك}} $1 في ملخص تعديل في <strong>$4</strong>.",

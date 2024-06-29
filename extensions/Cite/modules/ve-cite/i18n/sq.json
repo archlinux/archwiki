@@ -61,7 +61,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Kjo referencë është përkufizuar në një gjedhe ose tjetër bllok të prodhuar dhe tani mund të parashihet vetëm me përpunuesin e burimit.",
 	"cite-ve-referenceslist-missingreflist": "Kjo listë referencash është prodhuar nga një gjedhe dhe tani mund të përpunohet vetëm me përpunuesin e burimit.",
 	"cite-ve-toolbar-group-label": "Citoni",
-	"cite-ve-othergroup-item": "Referencë $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenca",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Emër grupi referencash: \"$1\""
+	"cite-ve-othergroup-item": "Referencë $1"
 }

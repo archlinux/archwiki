@@ -28,7 +28,6 @@ interface DiscussionToolsAddOverflowMenuItemsHook {
 	 *   will load when adding the menu item to the overflow menu. Implementations of this hook
 	 *   would typically add at least one item to the list. Make sure to include the relevant OOUI icon
 	 *   ResourceLoader module associated with the 'icon' property of the OverflowMenuItem.
-	 * @param bool $isSectionEditable If the section is editable (only set of heading overflow menus)
 	 * @param array $threadItemData The relevant thread item for the overflow menu.
 	 * @param IContextSource $contextSource Use this to obtain Title, User, Skin, Config, etc objects as needed.
 	 * @return bool|void True or no return value to continue or false to abort
@@ -36,7 +35,6 @@ interface DiscussionToolsAddOverflowMenuItemsHook {
 	public function onDiscussionToolsAddOverflowMenuItems(
 		array &$overflowMenuItems,
 		array &$resourceLoaderModules,
-		bool $isSectionEditable,
 		array $threadItemData,
 		IContextSource $contextSource
 	);

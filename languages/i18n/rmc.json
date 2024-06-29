@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Adehertogh",
-			"Martina Horňáková"
+			"Martina Horňáková",
+			"Amire80"
 		]
 	},
 	"editfont-sansserif": "Sans-serif fontos",
@@ -138,10 +139,10 @@
 	"privacypage": "Project:Arakhiben mire udajenge",
 	"ok": "Va",
 	"retrievedfrom": "Zdrojos \"$1\"",
-	"youhavenewmessages": "{{PLURAL:$3|Hin tut}} $1 ($2)",
-	"youhavenewmessagesfromusers": "{{PLURAL:$4|Hin tut}} $1 le {{PLURAL:$3|avre redaktoristar|$3 redaktorendar}} ($2).",
-	"newmessageslinkplural": "{{PLURAL:$1|nevo hiros|999=neve hiri}}",
-	"newmessagesdifflinkplural": "čirlatuno {{PLURAL:$1|visariben|999=visaribena}}",
+	"new-messages": "{{PLURAL:$3|Hin tut}} $1 ($2)",
+	"new-messages-from-users": "{{PLURAL:$4|Hin tut}} $1 le {{PLURAL:$3|avre redaktoristar|$3 redaktorendar}} ($2).",
+	"new-messages-link-plural": "{{PLURAL:$1|nevo hiros|999=neve hiri}}",
+	"new-messages-diff-link-plural": "čirlatuno {{PLURAL:$1|visariben|999=visaribena}}",
 	"editsection": "te pikerel",
 	"editold": "te pikerel",
 	"viewsourceold": "te sikhavel o zdrojos",
@@ -224,6 +225,7 @@
 	"passwordreset-username": "Redaktoriskero nav:",
 	"passwordreset-email": "Emajlovo adresa:",
 	"changeemail-newemail": "Nevi e-mailiskeri adresa:",
+	"edit-recovery-special-edit": "te pikerel",
 	"summary": "So pikerďal:",
 	"minoredit": "Kada hin cikno pikeriben",
 	"watchthis": "Te dikhel o pikeribena pre kadi sera",
@@ -617,7 +619,7 @@
 	"imgmultigoto": "Dža andro sera $1",
 	"watchlisttools-clear": "Te čučarel o zoznamos",
 	"watchlisttools-view": "Te sikhavel o visaribena so džan kethane",
-	"watchlisttools-edit": "Te sikhavel the te prikerel o zoznamos  le dikhle serenge",
+	"watchlisttools-edit": "Te sikhavel the te prikerel o zoznamos le dikhle serenge",
 	"watchlisttools-raw": "Te prikerel e tekstovo verzija le zoznamoske",
 	"signature": "[[{{ns:user}}:$1|$2]] ([[{{ns:user_talk}}:$1|vakeriben]])",
 	"version-editors": "Redaktori",

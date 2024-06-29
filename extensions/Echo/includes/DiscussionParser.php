@@ -3,21 +3,22 @@
 namespace MediaWiki\Extension\Notifications;
 
 use Article;
+use IDBAccessObject;
 use Language;
 use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
 use ParserOptions;
 use ParserOutput;
 use RequestContext;
 use RuntimeException;
-use Sanitizer;
 use TextContent;
-use User;
 
 abstract class DiscussionParser {
 	private const HEADER_REGEX = '^(==+)\h*([^=].*)\h*\1$';
@@ -35,7 +36,7 @@ abstract class DiscussionParser {
 	protected static $revisionInterpretationCache = [];
 
 	/** @var DiffParser|null */
-	protected static $diffParser;
+	protected static $diffParser = null;
 
 	/**
 	 * Given a RevisionRecord object, generates Event objects for
@@ -55,7 +56,7 @@ abstract class DiscussionParser {
 			$title = Title::newFromID( $revision->getPageId() );
 			// use the primary database for new page
 		} else {
-			$title = Title::newFromID( $revision->getPageId(), Title::GAID_FOR_UPDATE );
+			$title = Title::newFromID( $revision->getPageId(), IDBAccessObject::READ_LATEST );
 		}
 
 		// not a valid title
@@ -662,7 +663,7 @@ abstract class DiscussionParser {
 							$sectionSpan = self::getSectionSpan( $nextSectionStart, $changes['_info']['rhs'] );
 							$nextSectionStart = $sectionSpan[1] + 1;
 							$sectionSignedUsers = self::extractSignatures( $section['content'], $title );
-							if ( !empty( $sectionSignedUsers ) ) {
+							if ( $sectionSignedUsers ) {
 								$signedSections[] = $sectionSpan;
 								if ( !$section['header'] ) {
 									$fullSection = self::getFullSection(
@@ -725,7 +726,7 @@ abstract class DiscussionParser {
 			}
 		}
 
-		if ( !empty( $signedSections ) ) {
+		if ( $signedSections ) {
 			$actions = self::convertToUnknownSignedChanges( $signedSections, $actions );
 		}
 
@@ -1011,7 +1012,7 @@ abstract class DiscussionParser {
 	 * * 'left_pos' and 'right_pos' (in lines) of the change.
 	 */
 	public static function getMachineReadableDiff( $oldText, $newText ) {
-		if ( !isset( self::$diffParser ) ) {
+		if ( self::$diffParser === null ) {
 			self::$diffParser = new DiffParser;
 		}
 

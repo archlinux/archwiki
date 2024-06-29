@@ -4,15 +4,12 @@
 			"Eduardo Addad de Oliveira",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
-			"TheGabrielZaum",
-			"Fúlvio"
+			"Fúlvio",
+			"TheGabrielZaum"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Nenhuma serialização em cache encontrada com essa chave",
 	"apierror-visualeditor-difffailed": "Diff falhou",
-	"apierror-visualeditor-docserver-http-error": "Erro ao entrar em contato com o servidor Parsoid/RESTBase: $1",
-	"apierror-visualeditor-docserver-http": "Erro ao entrar em contato com o servidor Parsoid/RESTBase (HTTP $1): $2",
-	"apierror-visualeditor-docserver": "Erro ao entrar em contato com o servidor Parsoid/RESTBase (sem resposta)",
 	"apihelp-visualeditor-param-basetimestamp": "Ao salvar, define isto à data e hora da revisão que foi editada. Usado para detectar conflitos de edição.",
 	"apihelp-visualeditor-param-badetag": "Se a consulta RESTBase devolveu uma ETag aparentemente inválida, passe-a aqui para fins de registo.",
 	"apihelp-visualeditor-param-cachekey": "Para serializar ou comparar as revisões, usa o resultado de um pedido \"serializeforcache\" anterior com esta chave. Invalida $1html.",

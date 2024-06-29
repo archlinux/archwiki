@@ -10,7 +10,8 @@
 			"Rail",
 			"Railfail536",
 			"WTM",
-			"Woytecr"
+			"Woytecr",
+			"Tsca"
 		]
 	},
 	"minerva-last-modified-date": "Ostatnio edytowano $1 o $2",
@@ -60,11 +61,18 @@
 	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "Responsywna skórka przeznaczona dla urządzeń mobilnych",
 	"skin-minerva-issue-learn-more": "Dowiedz się więcej",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekundę|$1 sekundy|$1 sekund}} temu",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 minutę|$1 minuty|$1 minut}} temu",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 godzinę|$1 godziny|$1 godzin}} temu",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 dzień|$1 dni}} temu",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 miesiąc|$1 miesiące|$1 miesięcy}} temu",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 rok|$1 lata|$1 lat}} temu",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorie",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Zobacz kategorie stron",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Ulepszone rozwiązywanie problemów ze stroną",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemy ze stroną (Szablon:ambox) będą wyświetlane wewnątrz artykułu.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Niestety, grupowanie wyników według stron nie jest dostępna w wersji mobilnej. Jeżeli chcesz korzystać z tej funkcji, przejdź do wersji standardowej strony.",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Niestety, grupowanie wyników według stron nie jest dostępne w wersji mobilnej. Jeżeli chcesz korzystać z tej funkcji, przejdź do wersji standardowej strony.",
+	"skin-minerva-night-mode-unavailable": "Ta strona jest dostępna wyłącznie w motywie „dziennym”.",
 	"minerva.css": "/* Umieszczony tutaj kod CSS zostanie załadowany przez użytkowników korzystających ze skórki MinervaNeue */",
 	"minerva.js": "/* Umieszczony tutaj kod JavaScript zostanie załadowany przez użytkowników korzystających ze skórki MinervaNeue */"
 }

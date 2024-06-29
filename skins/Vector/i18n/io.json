@@ -17,7 +17,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 Linguo|$1 Lingui}}",
 	"vector-no-language-button-label": "Adjuntez idiomi",
 	"vector-no-language-button-aria-label": "Ca artiklo existas nur en ca linguo. Ligez l'artiklo ad altra idiomi",
-	"vector-language-redirect-to-top": "En ca {{SITENAME}} la ligili ad altra idiomi esas en la supra parto di la pagino, an l'opozanta lokizo di lua titulo. [[#p-lang-btn|Irez adsupre]].",
 	"vector-language-variant-switcher-label": "Modifikar linguala varianto",
 	"vector-action-addsection": "Adjuntez temo",
 	"vector-action-delete": "Efacar",
@@ -42,9 +41,13 @@
 	"vector-anon-user-menu-pages-label": "Savez pluse pri quale redaktar",
 	"vector-main-menu-tooltip": "Chef-menuo",
 	"vector-toc-menu-tooltip": "Kontenajo-tabelo",
+	"vector-site-nav-label": "Retopagino",
 	"vector-main-menu-label": "Chef-menuo",
+	"vector-limited-width-toggle": "Modifikar la limito di larjeso di la kontenajo",
 	"vector-page-tools-label": "Utensili",
 	"vector-page-tools-general-label": "Ordinara",
+	"vector-pin-element-label": "movar a latera panelo",
 	"vector-unpin-element-label": "celez",
-	"tooltip-vector-anon-user-menu-title": "Plusa selekti"
+	"tooltip-vector-anon-user-menu-title": "Plusa selekti",
+	"vector-page-tools-nav-label": "Utensili por pagini"
 }

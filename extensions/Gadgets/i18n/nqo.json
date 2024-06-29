@@ -6,7 +6,7 @@
 		]
 	},
 	"prefs-gadgets": "ߛߙߋߓߍ",
-	"gadgets": "ߛߙߋߓߍ",
+	"special-gadgets": "ߛߙߋߓߍ",
 	"gadgetusage-gadget": "ߛߙߋߓߍ",
 	"gadgetusage-usercount": "ߟߊ߬ߓߊ߰ߙߊ߬ߟߊ ߟߎ߬ ߦߙߌߞߊ",
 	"gadgetusage-noresults": "ߛߙߋߓߍ߫ ߡߊ߫ ߛߐ߬ߘߐ߲߫.",
@@ -29,10 +29,5 @@
 	"gadgets-export-download": "ߟߊ߬ߖߌ߰ߒ߬ߞߎ߲߬ߠߌ߲",
 	"gadgets-validate-notset": "<code>$1</code> ߕߦߊ ߘߊ߲߬ߠߊߕߍ߰ߣߍ߲߫ ߕߍ߫.",
 	"gadgets-validate-wrongtype": "ߕߦߊ <code>$1</code> ߦߋ߫ ߞߍ߫ <code>$2</code> ߛߎ߯ߦߊ ߘߌ߫ ߦߊ߬ߣߴߊ߬ ߦߋ߫ ߞߍ߫ <code>$3</code> ߘߌ߫.",
-	"right-gadgets-edit": "ߛߙߋߓߍ ߖߝ߭ߊߛߌߞߙߌߕ «JavaScript» ߣߌ߫ CCS ߟߎ߫ ߞߐߜߍ ߟߎ߫ ߡߊߦߟߍ߬ߡߊ߲߫",
-	"action-gadgets-edit": "ߛߙߋߓߍ ߣߌ߲߬ ߖߝ߭ߊߛߌߞߙߌߕ ߥߟߊ߫ CCS ߟߎ߫ ߞߐߜߍ ߟߎ߬ ߡߊߦߟߍ߬ߡߊ߲߫",
-	"right-gadgets-definition-edit": "ߛߙߋߓߍ ߘߊ߲߬ߠߊ߬ߕߍ߰ߟߌ ߟߎ߬ ߡߊߦߟߍ߬ߡߊ߲߫",
-	"action-gadgets-definition-edit": "ߛߙߋߓߍ ߣߌ߲߬ ߘߊ߲߬ߠߊ߬ߕߍ߰ߟߌ ߡߊߦߟߍ߬ߡߊ߲߫",
-	"gadgets-wrong-contentmodel": "ߞߐߜߍ ߡߍ߲ ߦߋ߫ {{ns:2304}} ߕߐ߯ߛߓߍ߫ ߞߣߍ ߘߐ߫ ߸ ߏ߬ ߞߊߡߊ߲߫ ߞߊ߬ ߝߘߊ߫ ߛߙߋߓߍߘߊ߲߬ߠߊ߬ߕߍ߰ߟߌ ߞߙߊߞߏ ߞߣߐߘߐ ߟߋ߬ ߟߊ߫.",
 	"gadgets-supports-urlload": "ߛߙߋߓߍ ߣߌ߲߬ ߡߊ߬ߞߏ ߦߴߊ߬ ߟߊߦߍ߬ߟߍ ߟߊ߫ URL ߛߌߟߊ ߟߋ߬ ߡߍ߲ ߡߊߢߌ߬ߣߌ߲߬ߞߊ߬ߟߌ ߟߊ߬ߓߍ߲߬ߢߐ߲߰ߡߦߊ߬ߘߊ ߦߋ߫ <code>؟withgadget</code> ߘߌ߫."
 }

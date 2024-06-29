@@ -39,7 +39,7 @@ class TRHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function before( Element $node, Node $otherNode, SerializerState $state ): array {
-		if ( $this->trWikitextNeeded( $node,  DOMDataUtils::getDataParsoid( $node ) ) ) {
+		if ( $this->trWikitextNeeded( $node, DOMDataUtils::getDataParsoid( $node ) ) ) {
 			return [ 'min' => 1, 'max' => $this->maxNLsInTable( $node, $otherNode ) ];
 		} else {
 			return [ 'min' => 0, 'max' => $this->maxNLsInTable( $node, $otherNode ) ];
@@ -51,11 +51,6 @@ class TRHandler extends DOMHandler {
 		return [ 'min' => 0, 'max' => $this->maxNLsInTable( $node, $otherNode ) ];
 	}
 
-	/**
-	 * @param Element $node
-	 * @param DataParsoid $dp
-	 * @return bool
-	 */
 	private function trWikitextNeeded( Element $node, DataParsoid $dp ): bool {
 		// If the token has 'startTagSrc' set, it means that the tr
 		// was present in the source wikitext and we emit it -- if not,

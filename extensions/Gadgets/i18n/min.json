@@ -7,7 +7,7 @@
 	"gadgets-desc": "Mamungkinkan pangguno mamiliah [[Special:Gadgets|pakakeh CSS jo JavaScript]] malalui [[Special:Preferences#mw-prefsection-gadgets|pangaturan]]-nyo",
 	"prefs-gadgets": "Pakakeh",
 	"gadgets-prefstext": "Di bawah ko daftar pakakeh istimewa nan dapek Sanak aktipan untuak akun Sanak. Kasado pakakeh ko sabagian babasis JavaScript dek itu Sanak musti mangaktipan JavaScript pado paramban Sanak untuak dapek manjalankannyo. Paratikan kalau babagai pakakek ko indak ado pangaruahnyo pado laman pangaturan ko.\n\nSalain tu paratikan juo kalau pakakeh ko bukanlah bagian dari parangkaik lunak MediaWiki dan biasonyo dikambangkan dan dijago dek pangguno di Wikipedia. Panguruih lokal dapek manyuntiang pakakeh nan ado malalui [[MediaWiki:Gadgets-definition|laman definisinyo]] ataupun pado [[Special:Gadgets|laman katarangannyo]].",
-	"gadgets": "Pakakeh",
+	"special-gadgets": "Pakakeh",
 	"gadgetusage": "Statistik panggunoan pakakeh",
 	"gadgetusage-intro": "Tabel iko manunjuakkan jumlah pangguno nan alah mangaktipkan pakakeh pado wiki ko. Iko mungkin tamasuak jou pakakeh nan alah indak ado.",
 	"gadgets-title": "Pakakeh",

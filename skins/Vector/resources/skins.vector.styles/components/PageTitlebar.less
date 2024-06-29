@@ -5,9 +5,6 @@
 	flex-wrap: nowrap;
 	// Ensure language button or indicators are positioned to the right even when the title is hidden
 	justify-content: flex-end;
-	// Use box-shadow instead of border to allow border collapsing between titlebar and toolbar
-	// FIXME: Delete box shadow after VectorZebraDesign flag is removed
-	box-shadow: 0 1px @border-color-base;
 	align-items: center;
 
 	&-blank {
@@ -16,6 +13,7 @@
 
 	.firstHeading {
 		flex-grow: 1;
+		padding: 0;
 		border: 0;
 	}
 
@@ -40,6 +38,8 @@
 	// The language button sometimes appears as an icon only button, in which
 	// case we need to flush differently. See an empty user page for an example of
 	// where this is used.
+	// FIXME: This should be scoped to on desktop viewports only
+	// Currently the icon only language button is misaligned on smaller viewports
 	> .mw-portlet-lang-icon-only:last-child {
 		.cdx-mixin-button-layout-flush( 'end', true );
 	}

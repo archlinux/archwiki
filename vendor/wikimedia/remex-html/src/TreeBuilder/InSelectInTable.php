@@ -18,23 +18,23 @@ class InSelectInTable extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'caption':
-		case 'table':
-		case 'tbody':
-		case 'tfoot':
-		case 'thead':
-		case 'tr':
-		case 'td':
-		case 'th':
-			$builder->error( "unexpected <$name> in select in table, closing select",
-				$sourceStart );
-			$builder->popAllUpToName( 'select', $sourceStart, 0 );
-			$dispatcher->reset()
-				->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'caption':
+			case 'table':
+			case 'tbody':
+			case 'tfoot':
+			case 'thead':
+			case 'tr':
+			case 'td':
+			case 'th':
+				$builder->error( "unexpected <$name> in select in table, closing select",
+					$sourceStart );
+				$builder->popAllUpToName( 'select', $sourceStart, 0 );
+				$dispatcher->reset()
+					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$dispatcher->inSelect->startTag(
+			default:
+				$dispatcher->inSelect->startTag(
 				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
 		}
 	}
@@ -45,28 +45,28 @@ class InSelectInTable extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'caption':
-		case 'table':
-		case 'tbody':
-		case 'tfoot':
-		case 'thead':
-		case 'tr':
-		case 'td':
-		case 'th':
-			if ( !$stack->isInTableScope( $name ) ) {
-				$builder->error( "unexpected </$name> in select in table, ignoring",
+			case 'caption':
+			case 'table':
+			case 'tbody':
+			case 'tfoot':
+			case 'thead':
+			case 'tr':
+			case 'td':
+			case 'th':
+				if ( !$stack->isInTableScope( $name ) ) {
+					$builder->error( "unexpected </$name> in select in table, ignoring",
+						$sourceStart );
+					return;
+				}
+				$builder->error( "unexpected </$name> in select in table, closing select",
 					$sourceStart );
-				return;
-			}
-			$builder->error( "unexpected </$name> in select in table, closing select",
-				$sourceStart );
-			$builder->popAllUpToName( 'select', $sourceStart, 0 );
-			$dispatcher->reset()
-				->endTag( $name, $sourceStart, $sourceLength );
-			break;
+				$builder->popAllUpToName( 'select', $sourceStart, 0 );
+				$dispatcher->reset()
+					->endTag( $name, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$dispatcher->inSelect->endTag( $name, $sourceStart, $sourceLength );
+			default:
+				$dispatcher->inSelect->endTag( $name, $sourceStart, $sourceLength );
 		}
 	}
 

@@ -337,6 +337,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Завжди запускати візуальний редактор, коли це можливо",
 	"visualeditor-preference-tabs-prefer-wt": "Завжди відкривати редактор коду",
 	"visualeditor-preference-tabs-remember-last": "Пам'ятати мій останній редактор",
+	"visualeditor-preference-collab-label": "Спільне редагування",
+	"visualeditor-preference-collab-description": "Запросіть інших користувачів приєднатися до вашого сеансу редагування у візуальному редакторі.",
 	"visualeditor-rebase-client-export": "Експорт",
 	"visualeditor-rebase-client-export-start": "Експорт…",
 	"visualeditor-rebase-client-import": "Імпорт",

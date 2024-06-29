@@ -26,7 +26,6 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 		$this->setTemporaryHook(
 			'SpecialContributionsBeforeMainOutput',
 			static function () {
-				return;
 			}
 		);
 		$this->admin = new UltimateAuthority( $this->getTestSysop()->getUser() );
@@ -115,7 +114,7 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 			new FauxRequest( [
 				'year' => $year,
 				'month' => $month,
-		] ) );
+			] ) );
 		if ( $expect ) {
 			$this->assertStringContainsString( $this->pageName, $html );
 		} else {
@@ -129,12 +128,16 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 		return new SpecialContributions(
 			$services->getLinkBatchFactory(),
 			$services->getPermissionManager(),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getRevisionStore(),
 			$services->getNamespaceInfo(),
 			$services->getUserNameUtils(),
 			$services->getUserNamePrefixSearch(),
-			$services->getUserOptionsLookup()
+			$services->getUserOptionsLookup(),
+			$services->getCommentFormatter(),
+			$services->getUserFactory(),
+			$services->getUserIdentityLookup(),
+			$services->getDatabaseBlockStore()
 		);
 	}
 

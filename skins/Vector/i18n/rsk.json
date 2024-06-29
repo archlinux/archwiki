@@ -17,7 +17,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 язик|$1 язики}}",
 	"vector-no-language-button-label": "Додай язики",
 	"vector-no-language-button-aria-label": "Тота статя еґзистує лєм на тим язику. Додайце статю за други язики.",
-	"vector-language-redirect-to-top": "Язични вязи ше находза на верху бока при наслову статї.",
 	"vector-language-variant-switcher-label": "Пременїц вариянту язика",
 	"vector-action-addsection": "Додай тему",
 	"vector-action-delete": "Посцерай",

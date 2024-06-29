@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 use Language;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
-use User;
+use MediaWiki\User\User;
 
 class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 

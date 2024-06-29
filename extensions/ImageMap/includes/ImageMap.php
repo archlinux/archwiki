@@ -24,10 +24,10 @@ use DOMDocumentFragment;
 use DOMElement;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
-use OutputPage;
 use Parser;
-use Sanitizer;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Ext\WTUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -60,7 +60,7 @@ class ImageMap implements ParserFirstCallInitHook {
 	 * @return string HTML (Image map, or error message)
 	 */
 	public function render( $input, $params, Parser $parser ) {
-		global $wgUrlProtocols, $wgNoFollowLinks;
+		global $wgUrlProtocols;
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$enableLegacyMediaDOM = $config->get( 'ParserEnableLegacyMediaDOM' );
 
@@ -246,11 +246,11 @@ class ImageMap implements ParserFirstCallInitHook {
 			// Construct the area tag
 			$attribs = [];
 			if ( $externLink ) {
+				// Get the 'target' and 'rel' attributes for external link.
+				$attribs = $parser->getExternalLinkAttribs( $title );
+
 				$attribs['href'] = $title;
 				$attribs['class'] = 'plainlinks';
-				if ( $wgNoFollowLinks ) {
-					$attribs['rel'] = 'nofollow';
-				}
 			} elseif ( $title->getFragment() !== '' && $title->getPrefixedDBkey() === '' ) {
 				// XXX: kluge to handle [[#Fragment]] links, should really fix getLocalURL()
 				// in Title.php to return an empty string in this case

@@ -13,8 +13,6 @@
 	 * @cfg {boolean} [isCapped] The count for this widget is capped
 	 */
 	mw.echo.ui.PageNotificationsOptionWidget = function MwEchoUiPageNotificationsOptionWidget( config ) {
-		var countLabel, $row;
-
 		config = config || {};
 
 		// Parent constructor
@@ -28,7 +26,7 @@
 
 		this.count = config.count !== undefined ? config.count : 0;
 
-		countLabel = mw.language.convertNumber( this.count );
+		var countLabel = mw.language.convertNumber( this.count );
 		countLabel = config.isCapped ?
 			mw.msg( 'echo-badge-count', countLabel ) : countLabel;
 
@@ -37,7 +35,7 @@
 			label: countLabel
 		} );
 
-		$row = $( '<div>' )
+		var $row = $( '<div>' )
 			.addClass( 'mw-echo-ui-pageNotificationsOptionWidget-row' )
 			.append(
 				$( '<div>' )

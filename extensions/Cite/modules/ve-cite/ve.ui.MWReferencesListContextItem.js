@@ -10,10 +10,8 @@
 /**
  * Context item for a MWReferencesList.
  *
- * @class
- * @extends ve.ui.LinearContextItem
- *
  * @constructor
+ * @extends ve.ui.LinearContextItem
  * @param {ve.ui.LinearContext} context Context the item is in
  * @param {ve.dm.Model} model Model the item is related to
  * @param {Object} [config]
@@ -48,7 +46,7 @@ ve.ui.MWReferencesListContextItem.static.embeddable = false;
 /* Methods */
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferencesListContextItem.prototype.renderBody = function () {
 	this.$body.append(
@@ -64,7 +62,7 @@ ve.ui.MWReferencesListContextItem.prototype.renderBody = function () {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferencesListContextItem.prototype.getDescription = function () {
 	const group = this.model.getAttribute( 'refGroup' );

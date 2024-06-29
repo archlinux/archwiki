@@ -1,7 +1,7 @@
 /*!
  * VisualEditor Standalone Initialization Mobile Target class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -29,6 +29,8 @@ OO.inheritClass( ve.init.sa.MobileTarget, ve.init.sa.Target );
 
 ve.init.sa.MobileTarget.static.toolbarGroups = [
 	{
+		// Message visualeditor-toolbar-history exists in case we want
+		// to make this a list group in future, to expose 'redo'.
 		name: 'history',
 		include: [ 'undo' ]
 	},

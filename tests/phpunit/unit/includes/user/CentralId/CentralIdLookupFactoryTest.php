@@ -3,6 +3,7 @@
 namespace MediaWiki\Tests\User\CentralId;
 
 use InvalidArgumentException;
+use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
@@ -10,6 +11,7 @@ use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\CentralId\CentralIdLookupFactory;
 use MediaWiki\User\CentralId\LocalIdLookup;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWikiUnitTestCase;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -36,12 +38,14 @@ class CentralIdLookupFactoryTest extends MediaWikiUnitTestCase {
 				MainConfigNames::SharedTables => [],
 				MainConfigNames::LocalDatabases => [],
 			] ),
+			'HideUserUtils' => new HideUserUtils( SCHEMA_COMPAT_OLD )
 		];
 		$localIdLookupTest = [
 			'class' => LocalIdLookup::class,
 			'services' => [
 				'MainConfig',
 				'DBLoadBalancerFactory',
+				'HideUserUtils',
 			]
 		];
 		return new CentralIdLookupFactory(
@@ -59,7 +63,8 @@ class CentralIdLookupFactoryTest extends MediaWikiUnitTestCase {
 				]
 			),
 			$this->getDummyObjectFactory( $services ),
-			$this->createNoOpMock( UserIdentityLookup::class )
+			$this->createNoOpMock( UserIdentityLookup::class ),
+			$this->createNoOpMock( UserFactory::class )
 		);
 	}
 

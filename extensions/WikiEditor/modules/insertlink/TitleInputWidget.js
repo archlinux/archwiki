@@ -9,7 +9,7 @@ var InsertLinkTitleOptionWidget = require( './TitleOptionWidget.js' );
  * @constructor
  */
 function TitleInputWidget() {
-	TitleInputWidget.parent.call( this, {
+	TitleInputWidget.super.call( this, {
 		showImages: true,
 		showDescriptions: true,
 		showDisambigsLast: true,
@@ -39,7 +39,7 @@ TitleInputWidget.static.urlRegex = new RegExp( '^(' + mw.config.get( 'wgUrlProto
  * is not always available to be selected. See T291056.
  */
 TitleInputWidget.prototype.onLookupInputBlur = function () {
-	TitleInputWidget.parent.prototype.onLookupInputBlur.apply( this );
+	TitleInputWidget.super.prototype.onLookupInputBlur.apply( this );
 	this.selectFirstMatch();
 };
 
@@ -78,7 +78,7 @@ TitleInputWidget.prototype.selectFirstMatch = function () {
  * @return {Object} Data for option widget
  */
 TitleInputWidget.prototype.getOptionWidgetData = function ( title, data ) {
-	var widgetData = TitleInputWidget.parent.prototype.getOptionWidgetData.call( this, title, data );
+	var widgetData = TitleInputWidget.super.prototype.getOptionWidgetData.call( this, title, data );
 	widgetData.external = data.originalData.external;
 	return widgetData;
 };
@@ -101,7 +101,7 @@ TitleInputWidget.prototype.createOptionWidget = function ( data ) {
  * @return {Object}
  */
 TitleInputWidget.prototype.getLookupCacheDataFromResponse = function ( response ) {
-	var res = TitleInputWidget.parent.prototype.getLookupCacheDataFromResponse( response );
+	var res = TitleInputWidget.super.prototype.getLookupCacheDataFromResponse( response );
 	// Guard against zero responses.
 	if ( res.pages === undefined ) {
 		return res;
@@ -121,7 +121,7 @@ TitleInputWidget.prototype.getLookupCacheDataFromResponse = function ( response 
  * @param {OO.ui.MenuOptionWidget} item Selected item
  */
 TitleInputWidget.prototype.onLookupMenuChoose = function ( item ) {
-	TitleInputWidget.parent.prototype.onLookupMenuChoose.call( this, item );
+	TitleInputWidget.super.prototype.onLookupMenuChoose.call( this, item );
 	this.emit( 'select', item );
 };
 

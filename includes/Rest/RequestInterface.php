@@ -37,7 +37,21 @@ use Psr\Http\Message\UriInterface;
  * A request interface similar to PSR-7's ServerRequestInterface
  */
 interface RequestInterface {
-	// RequestInterface
+	/** @var string[] HTTP request methods that we expect never to have a payload */
+	public const NO_BODY_METHODS = [ 'GET', 'HEAD' ];
+
+	/** @var string[] HTTP request methods that we expect always to have a payload */
+	public const BODY_METHODS = [ 'POST', 'PUT' ];
+
+	// NOTE: per RFC 7231 (https://www.rfc-editor.org/rfc/rfc7231#section-4.3.5), sending a body
+	// with the DELETE method "has no defined semantics". We allow it, as it is useful for
+	// passing the csrf token required by some authentication methods.
+
+	/** @var string[] Content types handled via $_POST */
+	public const FORM_DATA_CONTENT_TYPES = [
+		'application/x-www-form-urlencoded',
+		'multipart/form-data',
+	];
 
 	/**
 	 * Retrieves the HTTP method of the request.
@@ -262,4 +276,55 @@ interface RequestInterface {
 	 * @return array The deserialized POST parameters
 	 */
 	public function getPostParams();
+
+	/**
+	 * Returns the parsed body as an associative array.
+	 *
+	 * If setParsedBody() was called on a given RequestInterface object,
+	 * this method must return the data passed to that call.
+	 *
+	 * If setParsedBody() was not called, implementations may return body data
+	 * they get from the runtime environment, or null.
+	 *
+	 * @since 1.42
+	 *
+	 * @return array|null
+	 */
+	public function getParsedBody(): ?array;
+
+	/**
+	 * Specify the data that subsequent calls to getParsedBody() should return.
+	 *
+	 * This is intended for use by the framework to make a parsed representation
+	 * of the body data known to request handlers.
+	 *
+	 * @since 1.42
+	 *
+	 * @param array|null $data The body data.
+	 */
+	public function setParsedBody( ?array $data );
+
+	/**
+	 * Returns the MIME type of the request body, according to the
+	 * content-type header. The value returned by this method must be
+	 * a lower-case string with no whitespace and no additional information
+	 * beyond the mime type. In particular, any "parameters" must be stripped
+	 * from the value of the content-type header. See RFC 9110 section 8.3.1.
+	 *
+	 * @since 1.42
+	 *
+	 * @return string|null The request body's mime type, or null if there is
+	 *         no request body or there the type was not specified.
+	 */
+	public function getBodyType(): ?string;
+
+	/**
+	 * Determines whether the request has body data associated with it.
+	 * Note that this method may return true even if the body is empty.
+	 *
+	 * @since 1.42
+	 *
+	 * @return bool
+	 */
+	public function hasBody(): bool;
 }

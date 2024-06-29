@@ -1,13 +1,16 @@
 <?php
 
+namespace Wikimedia\Tests\Http;
+
+use PHPUnit\Framework\TestCase;
 use Wikimedia\Http\HttpAcceptParser;
 
 /**
- * @covers Wikimedia\Http\HttpAcceptParser
+ * @covers \Wikimedia\Http\HttpAcceptParser
  *
  * @author Daniel Kinzler
  */
-class HttpAcceptParserTest extends \PHPUnit\Framework\TestCase {
+class HttpAcceptParserTest extends TestCase {
 
 	public static function provideParseWeights() {
 		return [

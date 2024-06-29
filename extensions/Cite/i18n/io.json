@@ -16,7 +16,6 @@
 	"cite_error_included_ref": "Ne trovesis <code>&lt;/ref&gt;</code> por klozar l'etiketo <code>&lt;ref&gt;</code> (Sempre ke <code>&lt;/ref&gt;</code> uzesas, <code>&lt;/ref&gt;</code> esas bezonata)",
 	"cite_error_group_refs_without_references": "Existas <code>&lt;ref&gt;</code> etiketi por la grupo nomizita \"$1\", ma nula etiketo korespondanta <code>&lt;references group=\"$1\"/&gt;</code> trovesis, o mankas la <code>&lt;/ref&gt;</code> por klozar li.",
 	"cite_error_references_group_mismatch": "Existas konflikti inter la grupala atribuo \"$1\" e <code>&lt;ref&gt;</code> pri l'etiketo <code>&lt;references&gt;</code>.",
-	"cite_error_references_missing_group": "L'etiketo <code>&lt;ref&gt;</code> definita en <code>&lt;references&gt;</code> havas atributo di grupo \"$1\", qua ne aparas en l'antea texto.",
 	"cite_error_references_missing_key": "L'etiketo <code>&lt;ref&gt;</code> nomizita \"$1\" e definita en <code>&lt;references&gt;</code> uzesis nulafoye en l'antea texto.",
 	"cite_error_empty_references_define": "Etiketo <code>&lt;ref&gt;</code> definita en la kodexo <code>&lt;references&gt;</code> e nomizita \"$1\" havas nula kontenajo.",
 	"cite-tracking-category-cite-error": "Pagini kun problemi pri referi",

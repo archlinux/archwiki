@@ -4,18 +4,6 @@
 }}
 <header class="mw-body-header vector-page-titlebar{{#is-title-blank}} vector-page-titlebar-blank{{/is-title-blank}}">
 	{{#data-toc}}
-	{{! Checkbox hack used by collapsed TOC on narrow viewports for no JS users }}
-	<label
-		id="vector-toc-collapsed-button"
-		class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet vector-button-flush-left cdx-button--icon-only"
-		for="vector-toc-collapsed-checkbox"
-		role="button"
-		aria-controls="vector-toc"
-		tabindex="0"
-		title="{{msg-vector-toc-menu-tooltip}}">
-		<span class="vector-icon mw-ui-icon-wikimedia-listBullet"></span>
-		<span>{{msg-vector-toc-collapsible-button-label}}</span>
-	</label>
 	{{! TOC is moved into this dropdown from the sidebar in stickyHeader.js. }}
 	<nav role="navigation" aria-label="{{ msg-vector-toc-label }}" class="vector-toc-landmark">
 		{{#data-page-titlebar-toc-dropdown}}{{>Dropdown/Open}}{{/data-page-titlebar-toc-dropdown}}

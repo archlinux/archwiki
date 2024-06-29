@@ -2,9 +2,6 @@
  * Number-related utilities for mediawiki.language.
  */
 ( function () {
-	/**
-	 * @class mw.language
-	 */
 
 	/**
 	 * Pad a string to guarantee that it is at least `size` length by
@@ -210,6 +207,7 @@
 		/**
 		 * Converts a number using #getDigitTransformTable.
 		 *
+		 * @memberof mw.language
 		 * @param {number} num Value to be converted
 		 * @param {boolean} [integer=false] Whether to convert the return value to an integer
 		 * @return {number|string} Formatted number
@@ -271,6 +269,7 @@
 		/**
 		 * Get the digit transform table for current UI language.
 		 *
+		 * @ignore
 		 * @return {Object|Array}
 		 */
 		getDigitTransformTable: function () {
@@ -281,6 +280,7 @@
 		/**
 		 * Get the separator transform table for current UI language.
 		 *
+		 * @ignore
 		 * @return {Object|Array}
 		 */
 		getSeparatorTransformTable: function () {

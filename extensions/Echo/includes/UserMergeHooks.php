@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use DeferredUpdates;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\UserMerge\Hooks\AccountDeleteTablesHook;
 use MediaWiki\Extension\UserMerge\Hooks\AccountFieldsHook;
 use MediaWiki\Extension\UserMerge\Hooks\MergeAccountFromToHook;
-use User;
+use MediaWiki\User\User;
 
 class UserMergeHooks implements
 	AccountFieldsHook,

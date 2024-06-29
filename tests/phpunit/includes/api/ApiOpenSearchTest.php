@@ -1,11 +1,20 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiMain;
+use ApiOpenSearch;
+use MediaWiki\Context\RequestContext;
+use MediaWikiIntegrationTestCase;
+use SearchEngine;
+use SearchEngineConfig;
+use SearchEngineFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * TODO convert to unit test, no integration is needed
  *
- * @covers ApiOpenSearch
+ * @covers \ApiOpenSearch
  */
 class ApiOpenSearchTest extends MediaWikiIntegrationTestCase {
 	public function testGetAllowedParams() {

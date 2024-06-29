@@ -1,63 +1,55 @@
 <?php
 
-namespace MediaWiki\Tests\User\TempUser;
+namespace MediaWiki\Tests\Integration\User\TempUser;
 
-use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\SimpleAuthority;
+use MediaWiki\Tests\MockDatabase;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
+use MediaWiki\User\TempUser\Pattern;
 use MediaWiki\User\UserIdentityValue;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @covers \MediaWiki\User\TempUser\RealTempUserConfig
  * @group Database
  */
 class RealTempUserConfigTest extends \MediaWikiIntegrationTestCase {
-	/** This is meant to be the default config from MainConfigSchema */
-	private const DEFAULTS = [
-		'enabled' => false,
-		'actions' => [ 'edit' ],
-		'genPattern' => '*Unregistered $1',
-		'matchPattern' => '*$1',
-		'serialProvider' => [ 'type' => 'local' ],
-		'serialMapping' => [ 'type' => 'plain-numeric' ]
-	];
+
+	use TempUserTestTrait;
 
 	public static function provideIsAutoCreateAction() {
 		return [
 			'disabled' => [
-				'config' => [
-					'enabled' => false
-				] + self::DEFAULTS,
+				'enabled' => false,
+				'configOverrides' => [],
 				'action' => 'edit',
 				'expected' => false
 			],
 			'disabled by action' => [
-				'config' => [
-					'enabled' => true,
-					'actions' => []
-				] + self::DEFAULTS,
+				'enabled' => true,
+				'configOverrides' => [ 'actions' => [] ],
 				'action' => 'edit',
 				'expected' => false
 			],
 			'enabled' => [
-				'config' => [
-					'enabled' => true,
-				] + self::DEFAULTS,
+				'enabled' => true,
+				'configOverrides' => [],
 				'action' => 'edit',
 				'expected' => true
 			],
 			// Create isn't an action in the ActionFactory sense, but is is an
 			// action in PermissionManager
 			'create' => [
-				'config' => [
-						'enabled' => true,
-					] + self::DEFAULTS,
+				'enabled' => true,
+				'configOverrides' => [],
 				'action' => 'create',
 				'expected' => true
 			],
 			'unknown action' => [
-				'config' => [
-						'enabled' => true,
-					] + self::DEFAULTS,
+				'enabled' => true,
+				'configOverrides' => [],
 				'action' => 'foo',
 				'expected' => false
 			],
@@ -66,12 +58,17 @@ class RealTempUserConfigTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsAutoCreateAction
-	 * @param array $config
+	 * @param bool $enabled
+	 * @param array $configOverrides
 	 * @param string $action
 	 * @param bool $expected
 	 */
-	public function testIsAutoCreateAction( $config, $action, $expected ) {
-		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, $config );
+	public function testIsAutoCreateAction( $enabled, $configOverrides, $action, $expected ) {
+		if ( $enabled ) {
+			$this->enableAutoCreateTempUser( $configOverrides );
+		} else {
+			$this->disableAutoCreateTempUser( $configOverrides['reservedPattern'] ?? null );
+		}
 		$tuc = $this->getServiceContainer()->getTempUserConfig();
 		$this->assertSame( $expected, $tuc->isAutoCreateAction( $action ) );
 	}
@@ -79,43 +76,35 @@ class RealTempUserConfigTest extends \MediaWikiIntegrationTestCase {
 	public static function provideShouldAutoCreate() {
 		return [
 			'enabled' => [
-				'config' => [
-						'enabled' => true
-					] + self::DEFAULTS,
+				'enabled' => true,
 				'id' => 0,
 				'rights' => [ 'createaccount' ],
 				'action' => 'edit',
 				'expected' => true
 			],
 			'disabled by config' => [
-				'config' => self::DEFAULTS,
+				'enabled' => false,
 				'id' => 0,
 				'rights' => [ 'createaccount' ],
 				'action' => 'edit',
 				'expected' => false
 			],
 			'logged in' => [
-				'config' => [
-						'enabled' => true
-					] + self::DEFAULTS,
+				'enabled' => true,
 				'id' => 1,
 				'rights' => [ 'createaccount' ],
 				'action' => 'edit',
 				'expected' => false
 			],
 			'no createaccount right' => [
-				'config' => [
-						'enabled' => true
-					] + self::DEFAULTS,
+				'enabled' => true,
 				'id' => 0,
 				'rights' => [ 'edit' ],
 				'action' => 'edit',
 				'expected' => false
 			],
 			'wrong action' => [
-				'config' => [
-						'enabled' => true
-					] + self::DEFAULTS,
+				'enabled' => true,
 				'id' => 0,
 				'rights' => [ 'createaccount' ],
 				'action' => 'upload',
@@ -126,14 +115,18 @@ class RealTempUserConfigTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideShouldAutoCreate
-	 * @param array $config
+	 * @param bool $enabled
 	 * @param int $id
 	 * @param string[] $rights
 	 * @param string $action
 	 * @param bool $expected
 	 */
-	public function testShouldAutoCreate( $config, $id, $rights, $action, $expected ) {
-		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, $config );
+	public function testShouldAutoCreate( $enabled, $id, $rights, $action, $expected ) {
+		if ( $enabled ) {
+			$this->enableAutoCreateTempUser();
+		} else {
+			$this->disableAutoCreateTempUser();
+		}
 		$tuc = $this->getServiceContainer()->getTempUserConfig();
 		$user = new SimpleAuthority(
 			new UserIdentityValue( $id, $id ? 'Test' : '127.0.0.1' ),
@@ -143,77 +136,79 @@ class RealTempUserConfigTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideIsTempName() {
-		$defaults = [
-			'enabled' => true
-		] + self::DEFAULTS;
 		return [
 			'disabled' => [
-				'config' => [
-					'enabled' => false
-				] + $defaults,
-				'name' => '*Some user',
+				'enabled' => false,
+				'name' => '~Some user',
 				'expected' => false,
 			],
 			'default mismatch' => [
-				'config' => $defaults,
+				'enabled' => true,
 				'name' => 'Test',
 				'expected' => false,
 			],
 			'default match' => [
-				'config' => $defaults,
-				'name' => '*Some user',
+				'enabled' => true,
+				'name' => '~Some user',
 				'expected' => true,
-			]
+			],
 		];
 	}
 
 	/**
 	 * @dataProvider provideIsTempName
-	 * @param array $config
+	 * @param bool $enabled
 	 * @param string $name
 	 * @param bool $expected
 	 */
-	public function testIsTempName( $config, $name, $expected ) {
-		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, $config );
+	public function testIsTempName( $enabled, $name, $expected ) {
+		if ( $enabled ) {
+			$this->enableAutoCreateTempUser();
+		} else {
+			$this->disableAutoCreateTempUser();
+		}
 		$tuc = $this->getServiceContainer()->getTempUserConfig();
 		$this->assertSame( $expected, $tuc->isTempName( $name ) );
 	}
 
-	private function getTempUserConfig() {
-		$this->overrideConfigValue(
-			MainConfigNames::AutoCreateTempUser,
-			[ 'enabled' => true ] + self::DEFAULTS
-		);
-		return $this->getServiceContainer()->getTempUserConfig();
+	/** @dataProvider provideGetPlaceholderName */
+	public function testGetPlaceholderName( $useYear, $expected ) {
+		$this->enableAutoCreateTempUser( [ 'serialProvider' => [ 'type' => 'local', 'useYear' => $useYear ] ] );
+		ConvertibleTimestamp::setFakeTime( '20210101000000' );
+		$this->assertSame( $expected, $this->getServiceContainer()->getTempUserConfig()->getPlaceholderName() );
 	}
 
-	public function testGetPlaceholderName() {
-		$this->assertSame(
-			'*Unregistered *',
-			$this->getTempUserConfig()->getPlaceholderName()
-		);
+	public static function provideGetPlaceholderName() {
+		return [
+			'no year' => [ false, '~*' ],
+			'with year' => [ true, '~2021-*' ],
+		];
 	}
 
 	public static function provideIsReservedName() {
 		return [
 			'no matchPattern when disabled' => [
-				'config' => self::DEFAULTS,
-				'name' => '*Unregistered 39',
+				'enabled' => false,
+				'configOverrides' => [],
+				'name' => '~39',
 				'expected' => false,
 			],
 			'matchPattern match' => [
-				'config' => [ 'enabled' => true ] + self::DEFAULTS,
-				'name' => '*Unregistered 39',
+				'enabled' => true,
+				'configOverrides' => [],
+				'name' => '~39',
 				'expected' => true,
 			],
 			'genPattern match' => [
-				'config' => [ 'enabled' => true, 'matchPattern' => null ] + self::DEFAULTS,
-				'name' => '*Unregistered 39',
+				'enabled' => true,
+				'configOverrides' => [ 'matchPattern' => null ],
+				'name' => '~39',
 				'expected' => true,
 			],
 			'reservedPattern match with enabled=false' => [
-				'config' => [ 'reservedPattern' => '*$1' ] + self::DEFAULTS,
-				'name' => '*Foo*',
+				'enabled' => false,
+				'configOverrides' => [ 'reservedPattern' => '~$1' ],
+				'name' => '~Foo*',
 				'expected' => true
 			]
 		];
@@ -221,13 +216,69 @@ class RealTempUserConfigTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsReservedName
-	 * @param array $config
+	 * @param bool $enabled
+	 * @param array $configOverrides
 	 * @param string $name
 	 * @param bool $expected
 	 */
-	public function testIsReservedName( $config, $name, $expected ) {
-		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, $config );
+	public function testIsReservedName( $enabled, $configOverrides, $name, $expected ) {
+		if ( $enabled ) {
+			$this->enableAutoCreateTempUser( $configOverrides );
+		} else {
+			$this->disableAutoCreateTempUser( $configOverrides['reservedPattern'] ?? null );
+		}
 		$tuc = $this->getServiceContainer()->getTempUserConfig();
 		$this->assertSame( $expected, $tuc->isReservedName( $name ) );
+	}
+
+	public function testGetMatchPatterns() {
+		$this->enableAutoCreateTempUser( [ 'matchPattern' => [ '*$1', '~$1' ] ] );
+		$tuc = $this->getServiceContainer()->getTempUserConfig();
+		$this->assertCount( 2, $tuc->getMatchPatterns() );
+		$actualPatterns = array_map( static function ( Pattern $pattern ) {
+			return TestingAccessWrapper::newFromObject( $pattern )->pattern;
+		}, $tuc->getMatchPatterns() );
+		$this->assertArrayEquals( [ '*$1', '~$1' ], $actualPatterns );
+	}
+
+	public function testGetMatchPattern() {
+		$this->hideDeprecated( 'MediaWiki\User\TempUser\RealTempUserConfig::getMatchPattern' );
+		$this->enableAutoCreateTempUser( [ 'matchPattern' => [ '*$1', '~$1' ] ] );
+		$tuc = $this->getServiceContainer()->getTempUserConfig();
+		$this->assertSame( '*$1', TestingAccessWrapper::newFromObject( $tuc->getMatchPattern() )->pattern );
+	}
+
+	public function testGetMatchCondition() {
+		$db = new MockDatabase;
+
+		$this->enableAutoCreateTempUser( [ 'matchPattern' => [ '*$1', '~$1' ] ] );
+		$tuc = $this->getServiceContainer()->getTempUserConfig();
+
+		$this->assertEquals(
+			"(foo LIKE '*%' ESCAPE '`' OR foo LIKE '~%' ESCAPE '`')",
+			$tuc->getMatchCondition( $db, 'foo', IExpression::LIKE )->toSql( $db ),
+			'LIKE allows any of the patterns'
+		);
+
+		$this->assertEquals(
+			"(foo NOT LIKE '*%' ESCAPE '`' AND foo NOT LIKE '~%' ESCAPE '`')",
+			$tuc->getMatchCondition( $db, 'foo', IExpression::NOT_LIKE )->toSql( $db ),
+			'NOT LIKE disallows all of the patterns'
+		);
+
+		$this->enableAutoCreateTempUser( [ 'matchPattern' => [ '*$1' ] ] );
+		$tuc = $this->getServiceContainer()->getTempUserConfig();
+
+		$this->assertEquals(
+			"foo LIKE '*%' ESCAPE '`'",
+			$tuc->getMatchCondition( $db, 'foo', IExpression::LIKE )->toSql( $db ),
+			'With a single pattern, parentheses are omitted'
+		);
+
+		$this->assertEquals(
+			"foo NOT LIKE '*%' ESCAPE '`'",
+			$tuc->getMatchCondition( $db, 'foo', IExpression::NOT_LIKE )->toSql( $db ),
+			'With a single pattern, parentheses are omitted'
+		);
 	}
 }

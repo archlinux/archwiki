@@ -18,6 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\PoolCounter;
+
+use InvalidArgumentException;
+
 /**
  * Convenience class for dealing with PoolCounter using callbacks
  * @since 1.22
@@ -90,3 +94,6 @@ class PoolCounterWorkViaCallback extends PoolCounterWork {
 		return false;
 	}
 }
+
+/** @deprecated class alias since 1.41 */
+class_alias( PoolCounterWorkViaCallback::class, 'PoolCounterWorkViaCallback' );

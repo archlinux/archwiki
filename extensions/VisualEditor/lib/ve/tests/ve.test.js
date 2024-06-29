@@ -1,7 +1,7 @@
 /*!
  * VisualEditor Base method tests.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 QUnit.module( 've' );
@@ -762,7 +762,9 @@ QUnit.test( 'adjacentDomPosition', function ( assert ) {
 		{
 			title: 'Simple p node',
 			html: '<p>x</p>',
-			options: { stop: function () { return true; } },
+			options: { stop: function () {
+				return true;
+			} },
 			expectedOffsetPaths: [
 				[ 0 ],
 				[ 0, 0 ],
@@ -775,7 +777,9 @@ QUnit.test( 'adjacentDomPosition', function ( assert ) {
 		{
 			title: 'Filtered descent',
 			html: '<div class="x">foo</div><div class="y">bar</div>',
-			options: { stop: function () { return true; }, noDescend: '.x' },
+			options: { stop: function () {
+				return true;
+			}, noDescend: '.x' },
 			expectedOffsetPaths: [
 				[ 0 ],
 				[ 1 ],
@@ -791,7 +795,9 @@ QUnit.test( 'adjacentDomPosition', function ( assert ) {
 		{
 			title: 'Empty tags and heavy nesting',
 			html: '<div><br/><p>foo <b>bar <i>baz</i></b></p></div>',
-			options: { stop: function () { return true; } },
+			options: { stop: function () {
+				return true;
+			} },
 			expectedOffsetPaths: [
 				[ 0 ],
 				[ 0, 0 ],

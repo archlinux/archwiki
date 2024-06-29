@@ -3,19 +3,22 @@
 namespace MediaWiki\Tests\Storage;
 
 use BagOStuff;
-use CommentStoreComment;
 use Content;
 use ContentHandler;
-use DeferredUpdates;
 use DummyContentHandlerForTesting;
 use JavaScriptContent;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Deferred\MWCallableUpdate;
+use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Parser\ParserCacheFactory;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\MutableRevisionSlots;
 use MediaWiki\Revision\RevisionRecord;
@@ -30,9 +33,7 @@ use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
-use Message;
 use MockTitleTrait;
-use MWCallableUpdate;
 use ParserOptions;
 use PHPUnit\Framework\MockObject\MockObject;
 use TextContent;
@@ -50,12 +51,6 @@ use WikitextContentHandler;
  */
 class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 	use MockTitleTrait;
-
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->tablesUsed[] = 'page';
-	}
 
 	/**
 	 * @param string $title
@@ -1054,7 +1049,6 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @throws \MWException
 	 * @covers \MediaWiki\Storage\DerivedPageDataUpdater::isCountable
 	 */
 	public function testIsCountableNoModifiedSlots() {
@@ -1255,7 +1249,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 		$services = $this->getServiceContainer();
 		$editResultCache = new EditResultCache(
 			$services->getMainObjectStash(),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			new ServiceOptions(
 				EditResultCache::CONSTRUCTOR_OPTIONS,
 				[ 'RCMaxAge' => BagOStuff::TTL_MONTH ]
@@ -1285,7 +1279,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Storage\DerivedPageDataUpdater::doParserCacheUpdate()
-	 * @covers ParsoidCachePrewarmJob::doParsoidCacheUpdate()
+	 * @covers \ParsoidCachePrewarmJob::doParsoidCacheUpdate()
 	 */
 	public function testDoParserCacheUpdate() {
 		$this->overrideConfigValue(
@@ -1340,8 +1334,9 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 		$this->assertGreaterThan( $rev->getTimestamp(), $parsoidCached->getCacheTime() );
 		$this->assertSame( $rev->getId(), $parsoidCached->getCacheRevisionId() );
 
-		// Check that getParsoidRenderID() doesn't throw, so we know that $parsoidCached is valid.
-		$this->getServiceContainer()->getParsoidOutputAccess()->getParsoidRenderID( $parsoidCached );
+		// Check that ParsoidRenderID::newFromParserOutput() doesn't throw,
+		// so we know that $parsoidCached is valid.
+		ParsoidRenderID::newFromParserOutput( $parsoidCached );
 
 		// The cached ParserOutput should not use the revision timestamp
 		// Create nwe ParserOptions object since we setUseParsoid() above
@@ -1379,7 +1374,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Storage\DerivedPageDataUpdater::doParserCacheUpdate()
-	 * @covers ParsoidCachePrewarmJob::doParsoidCacheUpdate()
+	 * @covers \ParsoidCachePrewarmJob::doParsoidCacheUpdate()
 	 */
 	public function testDoParserCacheUpdateForJavaScriptContent() {
 		$this->overrideConfigValue(
@@ -1401,7 +1396,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 		// Emulate update after edit ----------
 		$parserCacheFactory = $this->getServiceContainer()->getParserCacheFactory();
 		$parserCache = $parserCacheFactory->getParserCache( ParserCacheFactory::DEFAULT_NAME );
-		$parsoidCache = $parserCacheFactory->getParserCache( ParsoidOutputAccess::PARSOID_PARSER_CACHE_NAME );
+		$parsoidCache = $parserCacheFactory->getParserCache( ParserOutputAccess::PARSOID_PCACHE_NAME );
 
 		$parserCache->deleteOptionsKey( $page );
 		$parsoidCache->deleteOptionsKey( $page );

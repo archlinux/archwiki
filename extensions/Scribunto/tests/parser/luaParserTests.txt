@@ -173,6 +173,16 @@ function p.testFrameCaching( frame )
 	)
 end
 
+function p.testIsRedirect( frame )
+	local name = frame.args[1]
+	local title = mw.title.new( name )
+	if title.redirectTarget then
+		return string.format( "redirects to %s", title.redirectTarget.prefixedText )
+	else
+		return "not a redirect"
+	end
+end
+
 return p
 !! endarticle
 
@@ -215,6 +225,24 @@ return p
 !! endarticle
 
 !! article
+Module:Redirected
+!! text
+return require [[Module:Test]]
+!! endarticle
+
+!! article
+Module:Test "with" quotes
+!! text
+return require [[Module:Test]]
+!! endarticle
+
+!! article
+Module:Redirected "with" quotes
+!! text
+return require [[Module:Test "with" quotes]]
+!! endarticle
+
+!! article
 Template:Scribunto_all_args
 !! text
 {{#invoke:test|getParentArgs}}
@@ -236,26 +264,36 @@ Template:Scribunto_frame_caching
 Scribunto: no such module
 !! options
 parsoid={ "modes": ["wt2html","wt2wt"] }
+cat
+extension=ScribuntoErrors-5e10d413
 !! wikitext
 {{#invoke:foo|bar}}
+!! metadata
+cat=Pages_with_script_errors sort=
+extension[ScribuntoErrors-5e10d413]="<p>Script error: No such module \"foo\".</p><p>No further details are available.</p>"
 !! html/php
-<p><strong class="error"><span class="scribunto-error" id="mw-scribunto-error-0">Script error: No such module &quot;foo&quot;.</span></strong>
+<p><strong class="error"><span class="scribunto-error" id="mw-scribunto-error-5e10d413">Script error: No such module &quot;foo&quot;.</span></strong>
 </p>
 !! html/parsoid
-<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:foo","function":"invoke"},"params":{"1":{"wt":"bar"}},"i":0}}]}'><span class="scribunto-error" id="mw-scribunto-error-0">Script error: No such module <span typeof="mw:Entity">"</span>foo<span typeof="mw:Entity">"</span>.</span></strong></p>
+<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:foo","function":"invoke"},"params":{"1":{"wt":"bar"}},"i":0}}]}'><span class="scribunto-error" id="mw-scribunto-error-5e10d413">Script error: No such module <span typeof="mw:Entity">"</span>foo<span typeof="mw:Entity">"</span>.</span></strong></p>
 !! end
 
 !! test
 Scribunto: no such function
 !! options
 parsoid={ "modes": ["wt2html","wt2wt"] }
+cat
+extension=ScribuntoErrors-d64a22ba
 !! wikitext
 {{#invoke:test|blah}}
+!! metadata
+cat=Pages_with_script_errors sort=
+extension[ScribuntoErrors-d64a22ba]="<p>Script error: The function \"blah\" does not exist.</p><p>No further details are available.</p>"
 !! html/php
-<p><strong class="error"><span class="scribunto-error" id="mw-scribunto-error-0">Script error: The function &quot;blah&quot; does not exist.</span></strong>
+<p><strong class="error"><span class="scribunto-error" id="mw-scribunto-error-d64a22ba">Script error: The function &quot;blah&quot; does not exist.</span></strong>
 </p>
 !! html/parsoid
-<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"blah"}},"i":0}}]}'><span class="scribunto-error" id="mw-scribunto-error-0">Script error: The function <span typeof="mw:Entity">"</span>blah<span typeof="mw:Entity">"</span> does not exist.</span></strong></p>
+<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"blah"}},"i":0}}]}'><span class="scribunto-error" id="mw-scribunto-error-d64a22ba">Script error: The function <span typeof="mw:Entity">"</span>blah<span typeof="mw:Entity">"</span> does not exist.</span></strong></p>
 !! end
 
 !! test
@@ -266,6 +304,25 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 {{#invoke:test|hello}}
 !! html
 <p>hello
+</p>
+!! end
+
+!! test
+Scribunto: redirect to hello world
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
+!! wikitext
+{{#invoke:redirected|hello}}
+{{#invoke:redirected "with" quotes|hello}}
+{{#invoke:redirected|testIsRedirect|Module:Redirected}}
+{{#invoke:redirected "with" quotes|testIsRedirect|Module:Test "with" quotes}}
+{{#invoke:redirected "with" quotes|testIsRedirect|Module:Redirected "with" quotes}}
+!! html
+<p>hello
+hello
+redirects to Module:Test
+redirects to Module:Test
+redirects to Module:Test "with" quotes
 </p>
 !! end
 

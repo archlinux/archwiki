@@ -1,13 +1,14 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use MediaWiki\User\UserOptionsLookup;
 
 /**
  * @group Language
@@ -52,7 +53,7 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LanguageConverter::getPreferredVariant
+	 * @covers \LanguageConverter::getPreferredVariant
 	 */
 	public function testGetPreferredVariantDefaults() {
 		$this->assertEquals( 'tg', $this->lc->getPreferredVariant() );
@@ -60,8 +61,8 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetPreferredVariant
-	 * @covers LanguageConverter::getPreferredVariant
-	 * @covers LanguageConverter::getURLVariant
+	 * @covers \LanguageConverter::getPreferredVariant
+	 * @covers \LanguageConverter::getURLVariant
 	 */
 	public function testGetPreferredVariant( $requestVal, $expected ) {
 		global $wgRequest;
@@ -78,8 +79,8 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetPreferredVariantHeaders
-	 * @covers LanguageConverter::getPreferredVariant
-	 * @covers LanguageConverter::getHeaderVariant
+	 * @covers \LanguageConverter::getPreferredVariant
+	 * @covers \LanguageConverter::getHeaderVariant
 	 */
 	public function testGetPreferredVariantHeaders( $headerVal, $expected ) {
 		global $wgRequest;
@@ -98,7 +99,7 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetPreferredVariantUserOption
-	 * @covers LanguageConverter::getPreferredVariant
+	 * @covers \LanguageConverter::getPreferredVariant
 	 */
 	public function testGetPreferredVariantUserOption( $optionVal, $expected, $foreignLang ) {
 		$optionName = 'variant';
@@ -133,9 +134,9 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LanguageConverter::getPreferredVariant
-	 * @covers LanguageConverter::getUserVariant
-	 * @covers LanguageConverter::getURLVariant
+	 * @covers \LanguageConverter::getPreferredVariant
+	 * @covers \LanguageConverter::getUserVariant
+	 * @covers \LanguageConverter::getURLVariant
 	 */
 	public function testGetPreferredVariantHeaderUserVsUrl() {
 		global $wgRequest;
@@ -160,7 +161,7 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetPreferredVariantDefaultLanguageVariant
-	 * @covers LanguageConverter::getPreferredVariant
+	 * @covers \LanguageConverter::getPreferredVariant
 	 */
 	public function testGetPreferredVariantDefaultLanguageVariant( $globalVal, $expected ) {
 		$this->overrideConfigValue( MainConfigNames::DefaultLanguageVariant, $globalVal );
@@ -174,8 +175,8 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers LanguageConverter::getPreferredVariant
-	 * @covers LanguageConverter::getURLVariant
+	 * @covers \LanguageConverter::getPreferredVariant
+	 * @covers \LanguageConverter::getURLVariant
 	 */
 	public function testGetPreferredVariantDefaultLanguageVsUrlVariant() {
 		global $wgDefaultLanguageVariant, $wgRequest;
@@ -189,7 +190,7 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 	/**
 	 * Test exhausting pcre.backtrack_limit
 	 *
-	 * @covers LanguageConverter::autoConvert
+	 * @covers \LanguageConverter::autoConvert
 	 */
 	public function testAutoConvertT124404() {
 		$testString = str_repeat( 'xxx xxx xxx', 1000 );
@@ -206,7 +207,7 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideTitlesToConvert
-	 * @covers LanguageConverter::convertTitle
+	 * @covers \LanguageConverter::convertTitle
 	 *
 	 * @param LinkTarget|PageReference|callable $title title to convert
 	 * @param string $expected

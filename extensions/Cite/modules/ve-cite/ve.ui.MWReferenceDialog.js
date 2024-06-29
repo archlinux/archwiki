@@ -10,10 +10,8 @@
 /**
  * Dialog for editing MediaWiki references.
  *
- * @class
- * @extends ve.ui.NodeDialog
- *
  * @constructor
+ * @extends ve.ui.NodeDialog
  * @param {Object} [config] Configuration options
  */
 ve.ui.MWReferenceDialog = function VeUiMWReferenceDialog( config ) {
@@ -210,7 +208,7 @@ ve.ui.MWReferenceDialog.prototype.onSearchResultsChoose = function ( item ) {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferenceDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.MWReferenceDialog.super.prototype.getReadyProcess.call( this, data )
@@ -224,7 +222,7 @@ ve.ui.MWReferenceDialog.prototype.getReadyProcess = function ( data ) {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferenceDialog.prototype.getBodyHeight = function () {
 	// Clamp value to between 300 and 400px height, preferring the actual height if available
@@ -277,7 +275,7 @@ ve.ui.MWReferenceDialog.prototype.useReference = function ( ref ) {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferenceDialog.prototype.initialize = function () {
 	// Parent method
@@ -296,9 +294,8 @@ ve.ui.MWReferenceDialog.prototype.initialize = function () {
 		classes: [ 've-ui-mwReferenceDialog-reuseWarning' ]
 	} );
 
-	const citeCommands = Object.keys( ve.init.target.getSurface().commandRegistry.registry ).filter( function ( command ) {
-		return command.indexOf( 'cite-' ) !== -1;
-	} );
+	const citeCommands = Object.keys( ve.init.target.getSurface().commandRegistry.registry )
+		.filter( ( command ) => command.indexOf( 'cite-' ) !== -1 );
 	this.referenceTarget = ve.init.target.createTargetWidget(
 		{
 			includeCommands: this.constructor.static.includeCommands,
@@ -332,8 +329,11 @@ ve.ui.MWReferenceDialog.prototype.initialize = function () {
 	this.referenceTarget.connect( this, { change: 'onTargetChange' } );
 
 	// Initialization
+	this.$content.addClass( 've-ui-mwReferenceDialog' );
+
 	this.panels.addItems( [ this.editPanel, this.searchPanel ] );
-	this.editPanel.$element.append( this.reuseWarning.$element, this.contentFieldset.$element, this.optionsFieldset.$element );
+	this.editPanel.$element.append(
+		this.reuseWarning.$element, this.contentFieldset.$element, this.optionsFieldset.$element );
 	this.optionsFieldset.addItems( [ this.referenceGroupField ] );
 	this.searchPanel.$element.append( this.search.$element );
 	this.$body.append( this.panels.$element );
@@ -350,7 +350,7 @@ ve.ui.MWReferenceDialog.prototype.useExistingReference = function () {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferenceDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'insert' || action === 'done' ) {
@@ -379,7 +379,7 @@ ve.ui.MWReferenceDialog.prototype.getActionProcess = function ( action ) {
 };
 
 /**
- * @inheritdoc
+ * @override
  * @param {Object} [data] Setup data
  * @param {boolean} [data.useExistingReference] Open the dialog in "use existing reference" mode
  */
@@ -411,14 +411,15 @@ ve.ui.MWReferenceDialog.prototype.getSetupProcess = function ( data ) {
 				done: false
 			} );
 
-			this.referenceGroupInput.populateMenu( this.getFragment().getDocument().getInternalList() );
+			this.referenceGroupInput.populateMenu(
+				this.getFragment().getDocument().getInternalList() );
 
 			this.trackedInputChange = false;
 		}, this );
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferenceDialog.prototype.getTeardownProcess = function ( data ) {
 	return ve.ui.MWReferenceDialog.super.prototype.getTeardownProcess.call( this, data )

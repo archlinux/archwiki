@@ -18,6 +18,7 @@
  * @file
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
@@ -30,8 +31,11 @@ use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * Local repository that stores files in the local filesystem and registers them
@@ -87,7 +91,7 @@ class LocalRepo extends FileRepo {
 		$this->hasAccessibleSharedCache = true;
 
 		$this->hasSha1Storage = ( $info['storageLayout'] ?? null ) === 'sha1';
-		$this->dbProvider = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$this->dbProvider = MediaWikiServices::getInstance()->getConnectionProvider();
 
 		if ( $this->hasSha1Storage() ) {
 			$this->backend = new FileBackendDBRepoWrapper( [
@@ -113,7 +117,6 @@ class LocalRepo extends FileRepo {
 	}
 
 	/**
-	 * @throws MWException
 	 * @param stdClass $row
 	 * @return LocalFile
 	 */
@@ -123,7 +126,7 @@ class LocalRepo extends FileRepo {
 		} elseif ( isset( $row->oi_name ) ) {
 			return call_user_func( $this->oldFileFromRowFactory, $row, $this );
 		} else {
-			throw new MWException( __METHOD__ . ': invalid row' );
+			throw new InvalidArgumentException( __METHOD__ . ': invalid row' );
 		}
 	}
 
@@ -218,7 +221,7 @@ class LocalRepo extends FileRepo {
 			->from( 'oldimage' )
 			->where( [
 				'oi_sha1' => $sha1,
-				'oi_archive_name ' . $dbw->buildLike( $dbw->anyString(), ".$ext" ),
+				$dbw->expr( 'oi_archive_name', IExpression::LIKE, new LikeValue( $dbw->anyString(), ".$ext" ) ),
 				$dbw->bitAnd( 'oi_deleted', File::DELETED_FILE ) => File::DELETED_FILE,
 			] );
 		if ( $lock === 'lock' ) {
@@ -376,20 +379,16 @@ class LocalRepo extends FileRepo {
 		$oiConds = []; // WHERE clause array for each file
 		foreach ( $searchSet as $dbKey => $search ) {
 			if ( isset( $search['time'] ) ) {
-				$oiConds[] = $dbr->makeList(
-					[
-						'oi_name' => $this->getNameFromTitle( File::normalizeTitle( $dbKey ) ),
-						'oi_timestamp' => $dbr->timestamp( $search['time'] )
-					],
-					LIST_AND
-				);
+				$oiConds[] = $dbr
+					->expr( 'oi_name', '=', $this->getNameFromTitle( File::normalizeTitle( $dbKey ) ) )
+					->and( 'oi_timestamp', '=', $dbr->timestamp( $search['time'] ) );
 			}
 		}
 
 		if ( count( $oiConds ) ) {
 			$queryBuilder = FileSelectQueryBuilder::newForOldFile( $dbr );
 
-			$res = $queryBuilder->where( $dbr->makeList( $oiConds, LIST_OR ) )
+			$res = $queryBuilder->where( new OrExpressionGroup( ...$oiConds ) )
 				->caller( __METHOD__ )->fetchResultSet();
 			$applyMatchingFiles( $res, $searchSet, $finalFiles );
 		}
@@ -486,7 +485,8 @@ class LocalRepo extends FileRepo {
 		$dbr = $this->getReplicaDB();
 		$queryBuilder = FileSelectQueryBuilder::newForFile( $dbr );
 
-		$queryBuilder->where( 'img_name ' . $dbr->buildLike( $prefix, $dbr->anyString() ) )
+		$queryBuilder
+			->where( $dbr->expr( 'img_name', IExpression::LIKE, new LikeValue( $prefix, $dbr->anyString() ) ) )
 			->orderBy( 'img_name' )
 			->limit( intval( $limit ) );
 		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
@@ -522,8 +522,13 @@ class LocalRepo extends FileRepo {
 	 * @return Closure
 	 */
 	protected function getDBFactory() {
+		// TODO: DB_REPLICA/DB_PRIMARY shouldn't be passed around
 		return static function ( $index ) {
-			return wfGetDB( $index );
+			if ( $index === DB_PRIMARY ) {
+				return MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
+			} else {
+				return MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
+			}
 		};
 	}
 

@@ -20,7 +20,13 @@
 	"vector-view-view": "پڑھو",
 	"vector-view-viewsource": "ماخذ ݙیکھو",
 	"vector-more-actions": "ٻئے",
-	"vector-feature-custom-font-size-disabled-label": "چھوٹا",
+	"vector-client-prefs-label": "شکل و صورت",
+	"vector-feature-limited-width-name": "چوڑائی",
+	"vector-feature-limited-width-1-label": "معیار",
+	"vector-feature-custom-font-size-0-label": "چھوٹا",
+	"vector-feature-custom-font-size-2-label": "وݙا",
+	"skin-theme-name": "رنگ",
+	"skin-theme-day-label": "ݙین٘ہ",
 	"vector-intro-page": "Help:تعارف",
 	"vector-toc-label": "شامل حصے",
 	"vector-anon-user-menu-pages-learn": "ٻیا سِکھو",
@@ -32,7 +38,5 @@
 	"vector-page-tools-general-label": "عمومی",
 	"vector-page-tools-actions-label": "عمل",
 	"vector-unpin-element-label": "لُکاؤ",
-	"tooltip-vector-anon-user-menu-title": "ٻئے اختیار",
-	"vector-readability-survey-fontSize": "فونٹ سائز",
-	"vector-readability-survey-share": "جاری رکھو"
+	"tooltip-vector-anon-user-menu-title": "ٻئے اختیار"
 }

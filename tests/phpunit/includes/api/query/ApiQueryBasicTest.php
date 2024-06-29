@@ -20,13 +20,18 @@
  * @file
  */
 
+namespace MediaWiki\Tests\Api\Query;
+
+use Exception;
+use MediaWiki\Title\Title;
+
 /**
  * These tests validate basic functionality of the api query module
  *
  * @group API
  * @group Database
  * @group medium
- * @covers ApiQuery
+ * @covers \ApiQuery
  */
 class ApiQueryBasicTest extends ApiQueryTestBase {
 	protected $exceptionFromAddDBData;

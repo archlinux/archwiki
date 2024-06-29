@@ -12,9 +12,10 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\UserIdentity;
 use MediaWikiUnitTestCase;
 use StatusValue;
 use Wikimedia\Message\IMessageFormatterFactory;
@@ -125,9 +126,12 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 		$muteListOptionsLookup = $this->createMock( UserOptionsLookup::class );
 		$muteListOptionsLookup->expects( $this->atLeast( 2 ) )
 			->method( 'getOption' )
-			->willReturnCallback( static function ( $_, $option ) use ( $senderCentralID ) {
-				return $option === 'email-blacklist' ? (string)$senderCentralID : true;
-			} );
+			->willReturnCallback(
+				function ( UserIdentity $user, string $option ) use ( $validTarget, $senderCentralID ) {
+					$this->assertSame( $validTarget->getUser(), $user );
+					return $option === 'email-blacklist' ? (string)$senderCentralID : null;
+				}
+			);
 		$centralIdLookup = $this->createMock( CentralIdLookup::class );
 		$centralIdLookup->expects( $this->atLeastOnce() )
 			->method( 'centralIdFromLocalUser' )

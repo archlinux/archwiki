@@ -20,11 +20,7 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
  * @covers \Wikimedia\Parsoid\Wt2Html\PP\Processors\ComputeDSR
  */
 class ComputeDSRTest extends TestCase {
-	/**
-	 * @param string $wt
-	 * @param Element $doc
-	 * @param array $spec
-	 */
+
 	public function validateSpec( string $wt, Element $doc, array $spec ): void {
 		$elts = DOMCompat::querySelectorAll( $doc, $spec['selector'] );
 		$this->assertCount( 1, $elts,
@@ -33,10 +29,10 @@ class ComputeDSRTest extends TestCase {
 
 		$dp = DOMDataUtils::getDataParsoid( $elts[0] );
 		if ( $spec['dsrContent'] === null ) {
-			$this->assertObjectNotHasAttribute( 'dsr', $dp );
+			$this->assertObjectNotHasProperty( 'dsr', $dp );
 			return;
 		}
-		$this->assertObjectHasAttribute( 'dsr', $dp );
+		$this->assertObjectHasProperty( 'dsr', $dp );
 		$dsr = $dp->dsr;
 		$this->assertInstanceOf( DomSourceRange::class, $dsr );
 
@@ -87,11 +83,11 @@ class ComputeDSRTest extends TestCase {
 	 */
 	public function testComputeDSR( string $wt, array $specs ): void {
 		$siteConfig = new MockSiteConfig( [] );
-		$dataAccess = new MockDataAccess( [] );
+		$dataAccess = new MockDataAccess( $siteConfig, [] );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$content = new MockPageContent( [ 'main' => $wt ] );
-		$pageConfig = new MockPageConfig( [], $content );
+		$pageConfig = new MockPageConfig( $siteConfig, [], $content );
 		$html = $parsoid->wikitext2html( $pageConfig, [ "wrapSections" => false ] );
 
 		$doc = ContentUtils::createAndLoadDocument( $html );
@@ -101,14 +97,11 @@ class ComputeDSRTest extends TestCase {
 		}
 	}
 
-	/**
-	 * @return array
-	 */
 	public function provideComputeDSR(): array {
 		return [
 			// Paragraph wrapping
 			'para 1' => [
-				'wt' => 'a',    // disable first test so we can get to the juicy failure immediately.
+				'wt' => 'a', // disable first test so we can get to the juicy failure immediately.
 				'specs' => [
 					[ 'selector' => 'body > p', 'dsrContent' => [ 'a', '', '' ] ]
 				]
@@ -406,11 +399,11 @@ class ComputeDSRTest extends TestCase {
 
 			// xmlish extension tags
 			'xmlish 1' => [
-				'wt' => '<poem>Like rain gone wooden</poem>',
+				'wt' => '<pre>Like rain gone wooden</pre>',
 				'specs' => [
 					[
-						'selector' => 'div.poem',
-						'dsrContent' => [ '<poem>Like rain gone wooden</poem>', '<poem>', '</poem>' ]
+						'selector' => 'pre[typeof="mw:Extension/pre"]',
+						'dsrContent' => [ '<pre>Like rain gone wooden</pre>', '<pre>', '</pre>' ]
 					]
 				]
 			],

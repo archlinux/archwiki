@@ -20,16 +20,18 @@
 
 namespace MediaWiki\Linter;
 
-use ExtensionRegistry;
-use Html;
 use IContextSource;
 use InvalidArgumentException;
 use LinkCache;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Pager\TablePager;
 use MediaWiki\Title\Title;
-use TablePager;
-use TitleValue;
+use MediaWiki\Title\TitleValue;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class LintErrorsPager extends TablePager {
 
@@ -54,19 +56,9 @@ class LintErrorsPager extends TablePager {
 	private $linkRenderer;
 
 	/**
-	 * @var bool
+	 * @var array
 	 */
-	private $haveParserMigrationExt;
-
-	/**
-	 * @var int|null
-	 */
-	private $namespace;
-
-	/**
-	 * @var bool
-	 */
-	private $invertNamespace;
+	private $namespaces;
 
 	/**
 	 * @var bool
@@ -94,15 +86,14 @@ class LintErrorsPager extends TablePager {
 	 * @param string|null $category
 	 * @param LinkRenderer $linkRenderer
 	 * @param CategoryManager $catManager
-	 * @param int|null $namespace
-	 * @param bool $invertNamespace
+	 * @param array $namespaces
 	 * @param bool $exactMatch
 	 * @param string $title
 	 * @param string $throughTemplate
 	 * @param string $tag
 	 */
 	public function __construct( IContextSource $context, $category, LinkRenderer $linkRenderer,
-		CategoryManager $catManager, $namespace, $invertNamespace, $exactMatch, $title, $throughTemplate, $tag
+		CategoryManager $catManager, $namespaces, $exactMatch, $title, $throughTemplate, $tag
 	) {
 		$this->category = $category;
 		$this->categoryManager = $catManager;
@@ -112,82 +103,73 @@ class LintErrorsPager extends TablePager {
 			$this->categoryId = null;
 		}
 		$this->linkRenderer = $linkRenderer;
-		$this->namespace = $namespace;
-		$this->invertNamespace = $invertNamespace;
+		$this->namespaces = $namespaces;
 		$this->exactMatch = $exactMatch;
 		$this->title = $title;
-		$this->throughTemplate = $throughTemplate;
-		$this->tag = $tag;
-		$this->haveParserMigrationExt = ExtensionRegistry::getInstance()->isLoaded( 'ParserMigration' );
+		$this->throughTemplate = $throughTemplate ?: 'all';
+		$this->tag = $tag ?: 'all';
 		parent::__construct( $context );
 	}
 
-	/** @inheritDoc */
-	public function getQueryInfo() {
-		$conds = [];
+	private function fillQueryBuilder( SelectQueryBuilder $queryBuilder ): void {
+		$mainConfig = MediaWikiServices::getInstance()->getMainConfig();
+		$queryBuilder
+			->table( 'page' )
+			->join( 'linter', null, 'page_id=linter_page' )
+			->fields( LinkCache::getSelectFields() )
+			->fields( [
+				'page_namespace', 'page_title',
+				'linter_id', 'linter_params',
+				'linter_start', 'linter_end',
+				'linter_cat'
+			] );
+
 		if ( $this->categoryId !== null ) {
-			$conds[ 'linter_cat' ] = $this->categoryId;
+			$queryBuilder->where( [ 'linter_cat' => $this->categoryId ] );
 		}
-		$mwServices = MediaWikiServices::getInstance();
-		$config = $mwServices->getMainConfig();
-		$dbMaintenance = $mwServices->getDBLoadBalancer()->getMaintenanceConnectionRef( DB_REPLICA );
-		if ( $this->namespace !== null ) {
-			$comp_op = $this->invertNamespace ? '!=' : '=';
-			$enableUseNamespaceColumnStage = $config->get( 'LinterUseNamespaceColumnStage' );
-			$fieldExists = $dbMaintenance->fieldExists( 'linter', 'linter_namespace', __METHOD__ );
-			if ( !$enableUseNamespaceColumnStage || !$fieldExists ) {
-				$conds[] = "page_namespace $comp_op " . $this->mDb->addQuotes( $this->namespace );
+
+		if ( $this->title !== '' ) {
+			$namespaces = $this->namespaces ?: [ NS_MAIN ];
+			// Specify page_namespace so that the index can be used (T360865)
+			$queryBuilder->where( [ 'page_namespace' => $namespaces ] );
+			if ( $mainConfig->get( 'LinterUseNamespaceColumnStage' ) ) {
+				// Also put a condition on linter_namespace, in case the DB
+				// decides to put the linter table first
+				$queryBuilder->where( [ 'linter_namespace' => $namespaces ] );
+			}
+			if ( $this->exactMatch ) {
+				$queryBuilder->where( [
+					'page_title' => $this->title
+				] );
 			} else {
-				$conds[] = "linter_namespace $comp_op " . $this->mDb->addQuotes( $this->namespace );
+				$queryBuilder->where( $this->mDb->expr(
+					'page_title', IExpression::LIKE, new LikeValue( $this->title, $this->mDb->anyString() )
+				) );
 			}
-		}
-		if ( $this->exactMatch ) {
-			if ( $this->title !== '' ) {
-				$conds[] = "page_title = " . $this->mDb->addQuotes( $this->title );
-			}
-		} else {
-			$conds[] = 'page_title' . $this->mDb->buildLike( $this->title, $this->mDb->anyString() );
-		}
-
-		$enableUserInterfaceTagAndTemplateStage = $config->get( 'LinterUserInterfaceTagAndTemplateStage' );
-		$fieldTagExists = $dbMaintenance->fieldExists( 'linter', 'linter_tag', __METHOD__ );
-		if ( $enableUserInterfaceTagAndTemplateStage && $fieldTagExists ) {
-			switch ( $this->throughTemplate ) {
-				case 'with':
-					$conds[] = "linter_template != ''";
-					break;
-				case 'without':
-					$conds[] = "linter_template = ''";
-					break;
-				case 'all':
-				default:
-					break;
-			}
-			switch ( $this->tag ) {
-				case 'all':
-					break;
-				default:
-					$htmlTags = new HtmlTags( $this );
-					if ( $htmlTags->checkAllowedHTMLTags( $this->tag ) ) {
-						$conds[] = 'linter_tag = ' . $this->mDb->addQuotes( $this->tag );
-					}
-			}
+		} elseif ( $this->namespaces ) {
+			$namespaceCol = $mainConfig->get( 'LinterUseNamespaceColumnStage' )
+				? "linter_namespace" : "page_namespace";
+			$queryBuilder->where( [ $namespaceCol => $this->namespaces ] );
 		}
 
-		return [
-			'tables' => [ 'page', 'linter' ],
-			'fields' => array_merge(
-				LinkCache::getSelectFields(),
-				[
-					'page_namespace', 'page_title',
-					'linter_id', 'linter_params',
-					'linter_start', 'linter_end',
-					'linter_cat'
-				]
-			),
-			'conds' => $conds,
-			'join_conds' => [ 'page' => [ 'INNER JOIN', 'page_id=linter_page' ] ]
-		];
+		if ( $mainConfig->get( 'LinterUserInterfaceTagAndTemplateStage' ) ) {
+			if ( $this->throughTemplate !== 'all' ) {
+				$op = ( $this->throughTemplate === 'with' ) ? '!=' : '=';
+				$queryBuilder->where( $this->mDb->expr( 'linter_template', $op, '' ) );
+			}
+			if ( $this->tag !== 'all' && ( new HtmlTags( $this ) )->checkAllowedHTMLTags( $this->tag ) ) {
+				$queryBuilder->where( [ 'linter_tag'  => $this->tag ] );
+			}
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getQueryInfo() {
+		$queryBuilder = $this->mDb->newSelectQueryBuilder();
+		$this->fillQueryBuilder( $queryBuilder );
+		return $queryBuilder->getQueryInfo();
 	}
 
 	protected function doBatchLookups() {
@@ -226,13 +208,6 @@ class LintErrorsPager extends TablePager {
 		if ( !$lintError ) {
 			return '';
 		}
-		if ( $this->haveParserMigrationExt &&
-			$this->categoryManager->needsParserMigrationEdit( $category )
-		) {
-			$editAction = 'parsermigration-edit';
-		} else {
-			$editAction = 'edit';
-		}
 
 		switch ( $name ) {
 			case 'title':
@@ -245,7 +220,7 @@ class LintErrorsPager extends TablePager {
 					$title,
 					$this->msg( $editMsgKey )->text(),
 					[],
-					[ 'action' => $editAction, 'lintid' => $lintError->lintId, ]
+					[ 'action' => 'edit', 'lintid' => $lintError->lintId, ]
 				);
 
 				$historyLink = $this->linkRenderer->makeLink(

@@ -18,7 +18,6 @@
 	"cite_error_included_ref": "Den Tag <code>&lt;/ref&gt;</code> feelt fir den Tag <code>&lt;ref&gt;</code> zouzemaachen",
 	"cite_error_group_refs_without_references": "D'Markéierung <code>&lt;ref&gt;</code> gëtt et fir d'Grupp \"$1\", awer d'entspriechend Markéierung <code>&lt;references group=\"$1\"/&gt;</code> gouf net fonnt oder een <code>&lt;/ref&gt;</code> feelt",
 	"cite_error_references_group_mismatch": "Den <code>&lt;ref&gt;</code>-Tag an <code>&lt;references&gt;</code> huet den Attribut \"$1\" deen am Konflikt mat deem am <code>&lt;references&gt;</code> steet.",
-	"cite_error_references_missing_group": "Deen am <code>&lt;references&gt;</code> definéierten <code>&lt;ref&gt;</code>-Tag huet en Attribut \"$1\" deen am Text virdrun net dran ass.",
 	"cite_error_references_missing_key": "Deen am <code>&lt;references&gt;</code> definéierten <code>&lt;ref&gt;</code>-Tag mam Numm \"$1\" gëtt am Text virdrun net benotzt.",
 	"cite_error_references_no_key": "D'Markéierung <code>&lt;ref&gt;</code> déi an <code>&lt;references&gt;</code> definéiert ass huet keng Nummeegeschaft.",
 	"cite_error_empty_references_define": "D'Markéierung <code>&lt;ref&gt;</code> déi am <code>&lt;references&gt;</code> mat dem Numm  « $1 » definéiert ass, ass eidel.",

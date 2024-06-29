@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWMediaDialog class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -230,9 +230,12 @@ ve.ui.MWMediaDialog.prototype.initialize = function () {
 	this.captionFieldset.addItems( [ captionField ] );
 
 	// Alt text
-	this.altTextInput = new OO.ui.TextInputWidget( {
+	this.altTextInput = new OO.ui.MultilineTextInputWidget( {
 		spellcheck: true,
-		classes: [ 've-ui-mwMediaDialog-altText' ]
+		classes: [ 've-ui-mwMediaDialog-altText' ],
+		autosize: true,
+		rows: 1,
+		allowLinebreaks: false
 	} );
 	var altTextField = new OO.ui.FieldLayout( this.altTextInput, {
 		align: 'top'
@@ -1201,6 +1204,9 @@ ve.ui.MWMediaDialog.prototype.switchPanels = function ( panel, noFocus ) {
 				// Focus the caption surface
 				this.captionTarget.focus();
 			}
+			// Auto-sized alt text field is populated while hidden,
+			// so force a manual resize now.
+			this.altTextInput.adjustSize( true );
 			break;
 		case 'search':
 			this.setSize( 'larger' );

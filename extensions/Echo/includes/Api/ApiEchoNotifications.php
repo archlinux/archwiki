@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Notifications\Api;
 use ApiBase;
 use ApiQuery;
 use ApiQueryBase;
-use Config;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Bundler;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
@@ -17,8 +17,8 @@ use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\Extension\Notifications\SeenTime;
 use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
-use User;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 

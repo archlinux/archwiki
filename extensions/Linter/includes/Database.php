@@ -23,7 +23,6 @@ namespace MediaWiki\Linter;
 use FormatJson;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\WikiMap\WikiMap;
 use stdClass;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -173,7 +172,7 @@ class Database {
 	 * @param LintError $error
 	 * @return array
 	 */
-	private function serializeError( LintError $error ) {
+	private function buildErrorRow( LintError $error ) {
 		$mwServices = MediaWikiServices::getInstance();
 		$config = $mwServices->getMainConfig();
 
@@ -205,8 +204,9 @@ class Database {
 			$templateInfo = mb_strcut( $templateInfo, 0, self::MAX_TEMPLATE_LENGTH );
 			$result[ 'linter_template' ] = $templateInfo;
 
-			$error->tagInfo = mb_strcut( $error->tagInfo, 0, self::MAX_TAG_LENGTH );
-			$result[ 'linter_tag' ] = $error->tagInfo ?? '';
+			$tagInfo = $error->tagInfo ?? '';
+			$tagInfo = mb_strcut( $tagInfo, 0, self::MAX_TAG_LENGTH );
+			$result[ 'linter_tag' ] = $tagInfo;
 		}
 
 		return $result;
@@ -245,11 +245,11 @@ class Database {
 			$toInsert = array_values( $errors );
 			$toDelete = [];
 		} elseif ( $previous && !$errors ) {
-			$dbw->delete(
-				'linter',
-				[ 'linter_page' => $this->pageId ],
-				__METHOD__
-			);
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'linter' )
+				->where( [ 'linter_page' => $this->pageId ] )
+				->caller( __METHOD__ )
+				->execute();
 			return [ 'deleted' => $this->countByCat( $previous ), 'added' => [] ];
 		} else {
 			$toInsert = [];
@@ -272,35 +272,28 @@ class Database {
 					$ids[] = $lintError->lintId;
 				}
 			}
-			$dbw->delete(
-				'linter',
-				[ 'linter_id' => $ids ],
-				__METHOD__
-			);
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'linter' )
+				->where( [ 'linter_id' => $ids ] )
+				->caller( __METHOD__ )
+				->execute();
 		}
 
 		if ( $toInsert ) {
 			// Insert into db, ignoring any duplicate key errors
 			// since they're the same lint error
-			$dbw->insert(
-				'linter',
-				array_map( [ $this, 'serializeError' ], $toInsert ),
-				__METHOD__,
-				[ 'IGNORE' ]
-			);
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'linter' )
+				->ignore()
+				->rows( array_map( [ $this, 'buildErrorRow' ], $toInsert ) )
+				->caller( __METHOD__ )
+				->execute();
 		}
 
 		return [
 			'deleted' => $this->countByCat( $toDelete ),
 			'added' => $this->countByCat( $toInsert ),
 		];
-	}
-
-	/**
-	 * @return int[]
-	 */
-	public function getTotalsForPage() {
-		return $this->getTotalsAccurate( [ 'linter_page' => $this->pageId ] );
 	}
 
 	/**
@@ -314,20 +307,20 @@ class Database {
 	 * @return int
 	 */
 	private function getTotalsEstimate( $catId ) {
-		$dbr = self::getDBConnectionRef( DB_REPLICA );
+		$dbr = self::getReplicaDBConnection();
 		// First see if there are no rows, or a moderate number
 		// within the limit specified by the MAX_ACCURATE_COUNT.
 		// The distinction between 0, a few and a lot is important
 		// to determine first, as estimateRowCount seem to never
 		// return 0 or accurate low error counts.
-		$rows = $dbr->selectRowCount(
-			'linter',
-			'*',
-			[ 'linter_cat' => $catId ],
-			__METHOD__,
+		$rows = $dbr->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'linter' )
+			->where( [ 'linter_cat' => $catId ] )
 			// Select 1 more so we can see if we're over the max limit
-			[ 'LIMIT' => self::MAX_ACCURATE_COUNT + 1 ]
-		);
+			->limit( self::MAX_ACCURATE_COUNT + 1 )
+			->caller( __METHOD__ )
+			->fetchRowCount();
 		// Return an accurate count if the number of errors is
 		// below the maximum accurate count limit
 		if ( $rows <= self::MAX_ACCURATE_COUNT ) {
@@ -335,42 +328,45 @@ class Database {
 		}
 		// Now we can just estimate if the maximum accurate count limit
 		// was returned, which isn't the actual count but the limit reached
-		return $dbr->estimateRowCount(
-			'linter',
-			'*',
-			[ 'linter_cat' => $catId ],
-			__METHOD__
-		);
+		return $dbr->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'linter' )
+			->where( [ 'linter_cat' => $catId ] )
+			->caller( __METHOD__ )
+			->estimateRowCount();
 	}
 
 	/**
+	 *
 	 * This uses COUNT(*), which is accurate, but can be significantly
 	 * slower depending upon how many rows are in the database.
-	 *
-	 * @param array $conds
-	 *
 	 * @return int[]
 	 */
-	private function getTotalsAccurate( $conds = [] ) {
+	public function getTotalsForPage(): array {
 		$rows = self::getReplicaDBConnection()->newSelectQueryBuilder()
 			->select( [ 'linter_cat', 'COUNT(*) AS count' ] )
 			->from( 'linter' )
-			->where( $conds )
+			->where( [ 'linter_page' => $this->pageId ] )
 			->caller( __METHOD__ )
 			->groupBy( 'linter_cat' )
 			->fetchResultSet();
 
 		// Initialize zero values
-		$ret = array_fill_keys( $this->categoryManager->getVisibleCategories(), 0 );
+		$categories = $this->categoryManager->getVisibleCategories();
+		$ret = array_fill_keys( $categories, 0 );
 		foreach ( $rows as $row ) {
 			try {
 				$catName = $this->categoryManager->getCategoryName( $row->linter_cat );
 			} catch ( MissingCategoryException $e ) {
 				continue;
 			}
+			// Only set visible categories.  Alternatively, we could add another
+			// where clause to the selection above.
+			if ( !in_array( $catName, $categories, true ) ) {
+				continue;
+			}
 			$ret[$catName] = (int)$row->count;
 		}
-
 		return $ret;
 	}
 
@@ -385,57 +381,6 @@ class Database {
 		}
 
 		return $ret;
-	}
-
-	/**
-	 * Send stats to statsd and update totals cache
-	 *
-	 * @param array $changes
-	 */
-	public function updateStats( array $changes ) {
-		$mwServices = MediaWikiServices::getInstance();
-
-		$totalsLookup = new TotalsLookup(
-			new CategoryManager(),
-			$mwServices->getMainWANObjectCache()
-		);
-
-		$linterStatsdSampleFactor = $mwServices->getMainConfig()->get( 'LinterStatsdSampleFactor' );
-
-		if ( $linterStatsdSampleFactor === false ) {
-			// Don't send to statsd, but update cache with $changes
-			$raw = $changes['added'];
-			foreach ( $changes['deleted'] as $cat => $count ) {
-				if ( isset( $raw[$cat] ) ) {
-					$raw[$cat] -= $count;
-				} else {
-					// Negative value
-					$raw[$cat] = 0 - $count;
-				}
-			}
-
-			foreach ( $raw as $cat => $count ) {
-				if ( $count != 0 ) {
-					// There was a change in counts, invalidate the cache
-					$totalsLookup->touchCategoryCache( $cat );
-				}
-			}
-			return;
-		} elseif ( mt_rand( 1, $linterStatsdSampleFactor ) != 1 ) {
-			return;
-		}
-
-		$totals = $this->getTotals();
-		$wiki = WikiMap::getCurrentWikiId();
-
-		$stats = $mwServices->getStatsdDataFactory();
-		foreach ( $totals as $name => $count ) {
-			$stats->gauge( "linter.category.$name.$wiki", $count );
-		}
-
-		$stats->gauge( "linter.totals.$wiki", array_sum( $totals ) );
-
-		$totalsLookup->touchAllCategoriesCache();
 	}
 
 	/**
@@ -481,15 +426,16 @@ class Database {
 			// Gather some unique pageId values in linter table records into an array
 			$linterPages = [];
 
-			$queryLinterTable = new SelectQueryBuilder( $dbw );
-			$queryLinterTable
-				->select( 'DISTINCT linter_page' )
+			$result = $dbw->newSelectQueryBuilder()
+				->select( 'linter_page' )
+				->distinct()
 				->from( 'linter' )
-				->where( [ 'linter_namespace IS NULL', 'linter_page > ' . $lastElement ] )
+				->where( $dbw->expr( 'linter_page', '>', $lastElement ) )
+				->andWhere( [ 'linter_namespace' => null ] )
 				->orderBy( 'linter_page' )
 				->limit( $linterBatchSize )
-				->caller( __METHOD__ );
-			$result = $queryLinterTable->fetchResultSet();
+				->caller( __METHOD__ )
+				->fetchResultSet();
 
 			foreach ( $result as $row ) {
 				$lastElement = intval( $row->linter_page );
@@ -503,14 +449,12 @@ class Database {
 
 				if ( count( $pageIdBatch ) > 0 ) {
 
-					$queryPageTable = new SelectQueryBuilder( $dbread );
-					$queryPageTable
-						->fields( [ 'page_id', 'page_namespace' ] )
+					$pageResults = $dbread->newSelectQueryBuilder()
+						->select( [ 'page_id', 'page_namespace' ] )
 						->from( 'page' )
 						->where( [ 'page_id' => $pageIdBatch ] )
-						->caller( __METHOD__ );
-
-					$pageResults = $queryPageTable->fetchResultSet();
+						->caller( __METHOD__ )
+						->fetchResultSet();
 
 					foreach ( $pageResults as $pageRow ) {
 						$pageId = intval( $pageRow->page_id );
@@ -518,15 +462,16 @@ class Database {
 
 						// If a record about to be updated has been removed by another process,
 						// the update will not error, and continue updating the existing records.
-						$dbw->update(
-							'linter',
-							[
-								'linter_namespace' => $namespaceID
-							],
-							[ 'linter_namespace IS NULL', 'linter_page = ' . $pageId ],
-							__METHOD__
-						);
-						$updated++;
+						$dbw->newUpdateQueryBuilder()
+							->update( 'linter' )
+							->set( [ 'linter_namespace' => $namespaceID ] )
+							->where( [
+								'linter_namespace' => null,
+								'linter_page' => $pageId
+							] )
+							->caller( __METHOD__ )
+							->execute();
+						$updated += $dbw->affectedRows();
 					}
 
 					// Sleep between batches for replication to catch up
@@ -586,16 +531,18 @@ class Database {
 		$updated = 0;
 		$lastElement = 0;
 		do {
-			$queryLinterTable = new SelectQueryBuilder( $dbw );
-			$queryLinterTable
-				->table( 'linter' )
-				->fields( [ 'linter_id', 'linter_params', 'linter_template', 'linter_tag' ] )
-				->where( [ 'linter_params != \'[]\'', 'linter_params IS NOT NULL', 'linter_id > ' . $lastElement ] )
+			$results = $dbw->newSelectQueryBuilder()
+				->select( [ 'linter_id', 'linter_params', 'linter_template', 'linter_tag' ] )
+				->from( 'linter' )
+				->where( [
+					$dbw->expr( "linter_params", '!=', '[]' ),
+					$dbw->expr( "linter_params", '!=', null ),
+					$dbw->expr( "linter_id", '>', $lastElement )
+				] )
 				->orderBy( 'linter_id', selectQueryBuilder::SORT_ASC )
 				->limit( $batchSize )
-				->caller( __METHOD__ );
-			$results = $queryLinterTable->fetchResultSet();
-
+				->caller( __METHOD__ )
+				->fetchResultSet();
 			$linterBatchLength = 0;
 
 			foreach ( $results as $row ) {
@@ -625,15 +572,13 @@ class Database {
 				if ( $templateInfo != $row->linter_template || $tagInfo != $row->linter_tag ) {
 					// If the record about to be updated has been removed by another process,
 					// the update will not do anything and just return with no records updated.
-					$dbw->update(
-						'linter',
-						[
-							'linter_template' => $templateInfo, 'linter_tag' => $tagInfo
-						],
-						[ 'linter_id' => $linter_id ],
-						__METHOD__
-					);
-					$updated++;
+					$dbw->newUpdateQueryBuilder()
+						->update( 'linter' )
+						->set( [ 'linter_template' => $templateInfo, 'linter_tag' => $tagInfo, ] )
+						->where( [ 'linter_id' => $linter_id ] )
+						->caller( __METHOD__ )
+						->execute();
+					$updated += $dbw->affectedRows();
 				}
 				$linterBatchLength++;
 			}

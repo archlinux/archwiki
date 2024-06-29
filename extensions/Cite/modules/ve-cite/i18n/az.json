@@ -55,7 +55,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Bu istinad bir şablonda və ya digər yaradılan blokda təyin olunur və hələlik yalnız mənbə rejimində önizlənə bilər.",
 	"cite-ve-referenceslist-missingreflist": "Bu istinad siyahısı bir şablon tərəfindən yaradılır",
 	"cite-ve-toolbar-group-label": "İstinad",
-	"cite-ve-othergroup-item": "$1 istinad",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "İstinadlar",
-	"visualeditor-internal-list-diff-group-name-mwreference": "İstinad qrup adı: \"$1\""
+	"cite-ve-othergroup-item": "$1 istinad"
 }

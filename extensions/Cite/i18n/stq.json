@@ -16,7 +16,6 @@
 	"cite_error_included_ref": "Der failt n sluutend <code>&lt;/ref&gt;</code>",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code>-Tags existierje foar ju Gruppe „$1“, man neen deertou heerend <code>&lt;references group=„$1“/&gt;</code>-Tag wuud fuunen",
 	"cite_error_references_group_mismatch": "Dät <code>&lt;ref&gt;</code>-Tag in <code>&lt;references&gt;</code> häd dät Konfliktgruppenattribut „$1“.",
-	"cite_error_references_missing_group": "Dät <code>&lt;ref&gt;</code> Tag, as definierd in <code>&lt;references&gt;</code> häd dät Gruppenattribut \"$1\", dät nit in dän foaruutgungende Text foarkumt.",
 	"cite_error_references_missing_key": "Dät in <code>&lt;references&gt;</code> definierde <code>&lt;ref&gt;</code>-Tag mäd dän Noome „$1“ wäd in dän foaruutgungende Text nit ferwoand.",
 	"cite_error_references_no_key": "Dät in <code>&lt;references&gt;</code> definierde <code>&lt;ref&gt;</code>-Tag häd neen Noomensattribut.",
 	"cite_error_empty_references_define": "Dät in <code>&lt;references&gt;</code> definierde <code>&lt;ref&gt;</code>-Tag mäd dän Noome „$1“ wiest naan Inhoold ap."

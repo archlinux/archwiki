@@ -5,6 +5,7 @@ namespace MediaWiki\Parser\Parsoid;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -12,7 +13,6 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use ParserFactory;
 use ParserOptions;
-use ParserOutput;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Parsoid;
@@ -28,20 +28,18 @@ use WikitextContent;
  * @unstable since 1.41; see T236809 for plan.
  */
 class ParsoidParser /* eventually this will extend \Parser */ {
-	/** @var Parsoid */
-	private $parsoid;
-
-	/** @var PageConfigFactory */
-	private $pageConfigFactory;
-
-	/** @var LanguageConverterFactory */
-	private $languageConverterFactory;
-
-	/** @var ParserFactory */
-	private $legacyParserFactory;
-
-	/** @var GlobalIdGenerator */
-	private $globalIdGenerator;
+	/**
+	 * @unstable
+	 * This should not be used widely right now since this may go away.
+	 * This is being added to support DiscussionTools with Parsoid HTML
+	 * and after initial exploration, this may be implemented differently.
+	 */
+	public const PARSOID_TITLE_KEY = "parsoid:title-dbkey";
+	private Parsoid $parsoid;
+	private PageConfigFactory $pageConfigFactory;
+	private LanguageConverterFactory $languageConverterFactory;
+	private ParserFactory $legacyParserFactory;
+	private GlobalIdGenerator $globalIdGenerator;
 
 	/**
 	 * @param Parsoid $parsoid
@@ -66,17 +64,14 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 
 	/**
 	 * API users expect a ParsoidRenderID value set in the parser output's extension data.
-	 * @param int $revId
+	 * @param PageConfig $pageConfig
 	 * @param ParserOutput $parserOutput
 	 */
-	private function setParsoidRenderID( int $revId, ParserOutput $parserOutput ): void {
-		$parserOutput->setParsoidRenderId(
-			new ParsoidRenderID( $revId, $this->globalIdGenerator->newUUIDv1() )
-		);
-
-		$now = wfTimestampNow();
-		$parserOutput->setCacheRevisionId( $revId );
-		$parserOutput->setCacheTime( $now );
+	private function setParsoidRenderID( PageConfig $pageConfig, ParserOutput $parserOutput ): void {
+		$parserOutput->setRenderId( $this->globalIdGenerator->newUUIDv1() );
+		$parserOutput->setCacheRevisionId( $pageConfig->getRevisionId() );
+		$parserOutput->setRevisionTimestamp( $pageConfig->getRevisionTimestamp() );
+		$parserOutput->setCacheTime( wfTimestampNow() );
 	}
 
 	/**
@@ -91,11 +86,17 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 	): ParserOutput {
 		$parserOutput = new ParserOutput();
 
+		// Parsoid itself does not vary output by parser options right now.
+		// But, ensure that any option use by extensions, parser functions,
+		// recursive parses, or (in the unlikely future scenario) Parsoid itself
+		// are recorded as used.
+		$options->registerWatcher( [ $parserOutput, 'recordOption' ] );
+
 		// The enable/disable logic here matches that in Parser::internalParseHalfParsed(),
 		// although __NOCONTENTCONVERT__ is handled internal to Parsoid.
 		//
-		// TODO: It might be preferable to handle __NOCONTENTCONVERT__ here rather than
-		// by instpecting the DOM inside Parsoid. That will come in a separate patch.
+		// T349137: It might be preferable to handle __NOCONTENTCONVERT__ here rather than
+		// by inspecting the DOM inside Parsoid. That will come in a separate patch.
 		$htmlVariantLanguage = null;
 		if ( !( $options->getDisableContentConversion() || $options->getInterfaceMessage() ) ) {
 			// NOTES (some of these are TODOs for read views integration)
@@ -115,7 +116,7 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 			//    preferred variant and set it in ParserOptions OR the REST API will have
 			//    to set some other flag indicating that the preferred variant should not
 			//    be computed. For now, I am adding a temporary hack, but this should be
-			//    replaced with something more sensible.
+			//    replaced with something more sensible (T267067).
 			//
 			// 3. Additionally, Parsoid's callers will have to set targetLanguage in ParserOptions
 			//    to mimic the logic in Parser.php (missing right now).
@@ -130,11 +131,6 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 			}
 		}
 
-		// NOTE: This is useless until the time Parsoid uses the
-		// $options ParserOptions object. But if/when it does, this
-		// will ensure that we track used options correctly.
-		$options->registerWatcher( [ $parserOutput, 'recordOption' ] );
-
 		$defaultOptions = [
 			'pageBundle' => true,
 			'wrapSections' => true,
@@ -144,6 +140,8 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 			'offsetType' => 'byte',
 			'outputContentVersion' => Parsoid::defaultHTMLVersion()
 		];
+
+		$parserOutput->resetParseStartTime();
 
 		// This can throw ClientError or ResourceLimitExceededException.
 		// Callers are responsible for figuring out how to handle them.
@@ -155,25 +153,32 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 
 		$parserOutput = PageBundleParserOutputConverter::parserOutputFromPageBundle( $pageBundle, $parserOutput );
 
+		// Record the page title in dbkey form so that post-cache transforms
+		// have access to the title.
+		$parserOutput->setExtensionData(
+			self::PARSOID_TITLE_KEY,
+			Title::newFromLinkTarget( $pageConfig->getLinkTarget() )->getPrefixedDBkey()
+		);
+
 		// Register a watcher again because the $parserOuptut arg
 		// and $parserOutput return value above are different objects!
 		$options->registerWatcher( [ $parserOutput, 'recordOption' ] );
 
 		$revId = $pageConfig->getRevisionId();
 		if ( $revId !== null ) {
-			$this->setParsoidRenderID( $revId, $parserOutput );
+			// T350538: This shouldn't be necessary so long as ContentRenderer
+			// is involved in the call chain somewhere, and should be turned
+			// into an assertion (and ::setParsoidRenderID() removed).
+			$this->setParsoidRenderID( $pageConfig, $parserOutput );
 		}
 
-		// Copied from Parser.php::parse and should probably be abstracted
-		// into the parent base class (probably as part of T236809)
-		// Wrap non-interface parser output in a <div> so it can be targeted
-		// with CSS (T37247)
-		$class = $options->getWrapOutputClass();
-		if ( $class !== false && !$options->getInterfaceMessage() ) {
-			$parserOutput->addWrapperDivClass( $class );
-		}
+		$parserOutput->setFromParserOptions( $options );
 
+		$parserOutput->recordTimeProfile();
 		$this->makeLimitReport( $options, $parserOutput );
+
+		// Add Parsoid skinning module
+		$parserOutput->addModuleStyles( [ 'mediawiki.skinning.content.parsoid' ] );
 
 		// Record Parsoid version in extension data; this allows
 		// us to use the onRejectParserCacheValue hook to selectively
@@ -289,14 +294,14 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 	) {
 		$maxIncludeSize = $parserOptions->getMaxIncludeSize();
 
-		$cpuTime = $parserOutput->getTimeSinceStart( 'cpu' );
+		$cpuTime = $parserOutput->getTimeProfile( 'cpu' );
 		if ( $cpuTime !== null ) {
 			$parserOutput->setLimitReportData( 'limitreport-cputime',
 				sprintf( "%.3f", $cpuTime )
 			);
 		}
 
-		$wallTime = $parserOutput->getTimeSinceStart( 'wall' );
+		$wallTime = $parserOutput->getTimeProfile( 'wall' );
 		$parserOutput->setLimitReportData( 'limitreport-walltime',
 			sprintf( "%.3f", $wallTime )
 		);

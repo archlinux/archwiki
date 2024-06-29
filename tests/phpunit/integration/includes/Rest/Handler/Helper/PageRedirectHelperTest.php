@@ -10,8 +10,9 @@ use MediaWiki\Rest\Handler\Helper\PageRedirectHelper;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\ResponseFactory;
 use MediaWiki\Tests\Rest\Handler\PageHandlerTestTrait;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWikiIntegrationTestCase;
-use Title;
 
 /**
  * @covers \MediaWiki\Rest\Handler\Helper\PageRedirectHelper
@@ -20,14 +21,16 @@ use Title;
 class PageRedirectHelperTest extends MediaWikiIntegrationTestCase {
 	use PageHandlerTestTrait;
 
-	private function newRedirectHelper( $queryParams = [] ) {
-		$baseUrl = 'https://example.test/api';
-
+	private function newRedirectHelper( $queryParams = [], $headers = [] ) {
 		$services = $this->getServiceContainer();
 
 		$redirectStore = $this->createNoOpMock( RedirectStore::class, [ 'getRedirectTarget' ] );
 		$redirectStore->method( 'getRedirectTarget' )
 			->willReturnCallback( static function ( PageIdentity $page ) use ( $services ) {
+				if ( $page->getDBkey() === 'Redirect_to_self' ) {
+					return TitleValue::newFromPage( $page );
+				}
+
 				if ( str_starts_with( $page->getDBkey(), 'Redirect_to_' ) ) {
 					$titleParser = $services->getTitleParser();
 					return $titleParser->parseTitle( substr( $page->getDBkey(), 12 ), $page->getNamespace() );
@@ -38,8 +41,8 @@ class PageRedirectHelperTest extends MediaWikiIntegrationTestCase {
 
 		$responseFactory = new ResponseFactory( [] );
 
-		$router = $this->newRouter( $baseUrl );
-		$request = new RequestData( [ 'queryParams' => $queryParams ] );
+		$router = $this->newRouter( 'https://example.test', '/api' );
+		$request = new RequestData( [ 'queryParams' => $queryParams, 'headers' => $headers ] );
 
 		return new PageRedirectHelper(
 			$redirectStore,
@@ -53,31 +56,57 @@ class PageRedirectHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideGetTargetUrl() {
-		yield [ 'Föö+Bar', null, 'https://example.test/api/test/F%C3%B6%C3%B6%2BBar' ];
+		yield 'Simple' => [
+			'Föö+Bar',
+			null,
+			false,
+			'https://example.test/api/test/F%C3%B6%C3%B6%2BBar',
+		];
 
-		yield [ 'Föö+Bar', [ 'a' => 1 ], 'https://example.test/api/test/F%C3%B6%C3%B6%2BBar?a=1' ];
+		yield 'Relative' => [
+			'Föö+Bar',
+			null,
+			true,
+			'/api/test/F%C3%B6%C3%B6%2BBar',
+		];
 
-		$page = PageReferenceValue::localReference( NS_TALK, 'Q/A' );
-		yield [ $page, null, 'https://example.test/api/test/Talk%3AQ%2FA' ];
+		yield 'Query Params' => [
+			'Föö+Bar',
+			[ 'a' => 1 ],
+			true,
+			'/api/test/F%C3%B6%C3%B6%2BBar?a=1',
+		];
+
+		$page = PageReferenceValue::localReference(
+			NS_TALK,
+			'Q/A'
+		);
+		yield 'Slash Encoding' => [
+			$page,
+			null,
+			false,
+			'https://example.test/api/test/Talk%3AQ%2FA',
+		];
 	}
 
 	/**
 	 * @dataProvider provideGetTargetUrl
 	 */
-	public function testGetTargetUrl( $title, $queryParams, $expectedUrl ) {
+	public function testGetTargetUrl( $title, $queryParams, $relative, $expectedUrl ) {
 		$helper = $this->newRedirectHelper( $queryParams ?: [] );
+		$helper->setUseRelativeRedirects( $relative );
 		$this->assertSame( $expectedUrl, $helper->getTargetUrl( $title ) );
 	}
 
 	public static function provideNormalizationRedirect() {
 		$page = new PageIdentityValue( 7, NS_MAIN, 'Foo', false );
-		yield [ $page, 'foo', 'https://example.test/api/test/Foo' ];
+		yield [ $page, 'foo', '/api/test/Foo' ];
 
 		$page = new PageIdentityValue( 7, NS_MAIN, 'Foo', false );
 		yield [ $page, 'Foo', null ];
 
 		$page = new PageIdentityValue( 7, NS_TALK, 'Foo_bar/baz', false );
-		yield [ $page, 'Talk:Foo bar/baz', 'https://example.test/api/test/Talk%3AFoo_bar%2Fbaz' ];
+		yield [ $page, 'Talk:Foo bar/baz', '/api/test/Talk%3AFoo_bar%2Fbaz' ];
 
 		$page = new PageIdentityValue( 7, NS_TALK, 'Foo_bar/baz', false );
 		yield [ $page, 'Talk:Foo_bar/baz', null ];
@@ -104,12 +133,26 @@ class PageRedirectHelperTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
+	public function testNormalizationRedirect_absolute() {
+		$helper = $this->newRedirectHelper( [] );
+		$helper->setUseRelativeRedirects( false );
+
+		$page = new PageIdentityValue( 7, NS_MAIN, 'Foo', false );
+		$resp = $helper->createNormalizationRedirectResponseIfNeeded( $page, 'foo' );
+
+		$this->assertNotNull( $resp );
+		$this->assertStringStartsWith( 'https://', $resp->getHeaderLine( 'Location' ) );
+	}
+
 	public static function provideWikiRedirect() {
 		$page = new PageIdentityValue( 7, NS_MAIN, 'Redirect_to_foo', false );
-		yield [ $page, 'https://example.test/api/test/Foo' ];
+		yield 'Wiki redirect' => [ $page, '/api/test/Foo' ];
+
+		$page = new PageIdentityValue( 7, NS_MAIN, 'Redirect_to_self', false );
+		yield 'Self-redirect (T353688)' => [ $page, null ];
 
 		$page = new PageIdentityValue( 7, NS_MAIN, 'foo', false );
-		yield [ $page, null ];
+		yield 'no redirect' => [ $page, null ];
 	}
 
 	/**
@@ -155,7 +198,7 @@ class PageRedirectHelperTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertNotNull( $resp );
 		$this->assertSame(
-			'https://example.test/api/test/EsttayAgepay',
+			'/api/test/EsttayAgepay',
 			$resp->getHeaderLine( 'Location' )
 		);
 		$this->assertSame( 307, $resp->getStatusCode() );

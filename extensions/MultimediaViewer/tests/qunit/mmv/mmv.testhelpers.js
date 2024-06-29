@@ -1,7 +1,7 @@
 const { MultimediaViewer } = require( 'mmv' );
 
 ( function () {
-	var MTH = {};
+	const MTH = {};
 
 	/**
 	 * Returns the exception thrown by callback, or undefined if no exception was thrown.
@@ -10,7 +10,7 @@ const { MultimediaViewer } = require( 'mmv' );
 	 * @return {Error}
 	 */
 	MTH.getException = function ( callback ) {
-		var ex;
+		let ex;
 		try {
 			callback();
 		} catch ( e ) {
@@ -44,7 +44,7 @@ const { MultimediaViewer } = require( 'mmv' );
 	 * @return {mw.SafeStorage} Local storage-like object
 	 */
 	MTH.getDisabledLocalStorage = function () {
-		var e = function () {
+		const e = function () {
 			throw new Error( 'Error' );
 		};
 
@@ -58,17 +58,14 @@ const { MultimediaViewer } = require( 'mmv' );
 	/**
 	 * Returns a fake local storage which is not saved between reloads.
 	 *
-	 * @param {Object} [initialData]
 	 * @return {mw.SafeStorage} Local storage-like object
 	 */
-	MTH.getFakeLocalStorage = function ( initialData ) {
-		var bag = new mw.Map();
-		bag.set( initialData );
-
+	MTH.getFakeLocalStorage = function () {
+		const bag = new Map();
 		return MTH.createLocalStorage( {
-			getItem: function ( key ) { return bag.get( key ); },
-			setItem: function ( key, value ) { bag.set( key, value ); },
-			removeItem: function ( key ) { bag.set( key, null ); }
+			getItem: ( key ) => bag.get( key ) || null,
+			setItem: ( key, value ) => bag.set( key, value ),
+			removeItem: ( key ) => bag.delete( key )
 		} );
 	};
 
@@ -116,15 +113,15 @@ const { MultimediaViewer } = require( 'mmv' );
 	 * @return {Function}
 	 */
 	MTH.asyncMethod = function ( object, method, assert ) {
-		var helpers = this;
+		const helpers = this;
 		return function () {
 			// apply arguments to original promise
-			var promise = object[ method ].apply( object, arguments );
+			const promise = object[ method ].apply( object, arguments );
 
 			helpers.asyncPromises.push( promise );
 
 			if ( assert ) {
-				var done = assert.async();
+				const done = assert.async();
 				// use setTimeout to ensure `done` is not the first callback handler
 				// to execute (possibly ending the test's wait right before
 				// the result of the promise is executed)
@@ -143,7 +140,7 @@ const { MultimediaViewer } = require( 'mmv' );
 	 * @return {jQuery.Promise}
 	 */
 	MTH.waitForAsync = function () {
-		var deferred = $.Deferred();
+		const deferred = $.Deferred();
 
 		// it's possible that, before this function call, some code was executed
 		// that triggers async code that will eventually end up `asyncPromises`

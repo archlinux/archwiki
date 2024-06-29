@@ -1,7 +1,7 @@
 /*!
  * VisualEditor ContentEditable GeneratedContentNode class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -158,6 +158,12 @@ ve.ce.GeneratedContentNode.prototype.getRenderedDomElements = function ( domElem
 		);
 	} else {
 		rendering = [ document.createElement( 'span' ) ];
+	}
+
+	if ( rendering.every( ve.isVoidElement ) ) {
+		// Should contain at least one non-void element, e.g. for attaching
+		// a visibility button in ve.ce.FocusableNode#updateInvisibleIconSync
+		rendering.push( document.createElement( 'span' ) );
 	}
 
 	return rendering;

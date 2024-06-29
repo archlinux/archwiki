@@ -21,7 +21,7 @@
 namespace MediaWiki\StubObject;
 
 use Language;
-use RequestContext;
+use MediaWiki\Context\RequestContext;
 
 /**
  * Stub object for the user language. Assigned to the $wgLang global.
@@ -41,7 +41,5 @@ class StubUserLang extends StubObject {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( StubUserLang::class, 'StubUserLang' );

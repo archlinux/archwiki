@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\Notifications\Mapper;
 
-use AtomicSectionUpdate;
 use BatchRowIterator;
-use DeferredUpdates;
 use Exception;
 use InvalidArgumentException;
+use MediaWiki\Deferred\AtomicSectionUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;

@@ -5,8 +5,8 @@
 			"Cwlin0416",
 			"Kly",
 			"LNDDYL",
-			"Xiplus",
-			"SunAfterRain"
+			"SunAfterRain",
+			"Xiplus"
 		]
 	},
 	"apihelp-query+linterrors-summary": "取得 lint 錯誤的清單",

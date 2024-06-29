@@ -3,18 +3,15 @@
 namespace MediaWiki\Extension\OATHAuth\Module;
 
 use IContextSource;
-use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\Auth\TOTPSecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
 use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPDisableForm;
 use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPEnableForm;
-use MediaWiki\Extension\OATHAuth\IAuthKey;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Extension\OATHAuth\Special\OATHManage;
-use Message;
 use MWException;
 
 class TOTP implements IModule {
@@ -22,25 +19,18 @@ class TOTP implements IModule {
 		return new static();
 	}
 
-	/**
-	 * Name of the module
-	 * @return string
-	 */
+	/** @inheritDoc */
 	public function getName() {
 		return "totp";
 	}
 
-	/**
-	 * @return Message
-	 */
+	/** @inheritDoc */
 	public function getDisplayName() {
 		return wfMessage( 'oathauth-module-totp-label' );
 	}
 
 	/**
-	 *
-	 * @param array $data
-	 * @return IAuthKey
+	 * @inheritDoc
 	 * @throws MWException
 	 */
 	public function newKey( array $data ) {
@@ -55,7 +45,7 @@ class TOTP implements IModule {
 	}
 
 	/**
-	 * @return AbstractSecondaryAuthenticationProvider
+	 * @return TOTPSecondaryAuthenticationProvider
 	 */
 	public function getSecondaryAuthProvider() {
 		return new TOTPSecondaryAuthenticationProvider();
@@ -64,28 +54,37 @@ class TOTP implements IModule {
 	/**
 	 * @param OATHUser $user
 	 * @param array $data
-	 * @return bool|int
+	 * @return bool
 	 * @throws MWException
 	 */
-	public function verify( OATHUser $user, array $data ) {
+	public function verify( OATHUser $user, array $data ): bool {
 		if ( !isset( $data['token'] ) ) {
 			return false;
 		}
-		$key = $user->getFirstKey();
-		if ( !( $key instanceof TOTPKey ) ) {
-			return false;
+
+		foreach ( $user->getKeys() as $key ) {
+			if ( $key instanceof TOTPKey && $key->verify( $data, $user ) ) {
+				return true;
+			}
 		}
-		return $key->verify( $data, $user );
+
+		return false;
 	}
 
 	/**
-	 * Is this module currently enabled for the given user
+	 * Is this module currently enabled for the given user?
 	 *
 	 * @param OATHUser $user
 	 * @return bool
 	 */
-	public function isEnabled( OATHUser $user ) {
-		return $user->getFirstKey() instanceof TOTPKey;
+	public function isEnabled( OATHUser $user ): bool {
+		foreach ( $user->getKeys() as $key ) {
+			if ( $key instanceof TOTPKey ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -100,21 +99,14 @@ class TOTP implements IModule {
 		OATHUser $user,
 		OATHUserRepository $repo,
 		IContextSource $context
-	) {
-		$isEnabledForUser = $user->getModule() instanceof self;
-		if ( $action === OATHManage::ACTION_ENABLE && !$isEnabledForUser ) {
+	): ?IManageForm {
+		$hasTOTPKey = $this->isEnabled( $user );
+		if ( $action === OATHManage::ACTION_ENABLE && !$hasTOTPKey ) {
 			return new TOTPEnableForm( $user, $repo, $this, $context );
 		}
-		if ( $action === OATHManage::ACTION_DISABLE && $isEnabledForUser ) {
+		if ( $action === OATHManage::ACTION_DISABLE && $hasTOTPKey ) {
 			return new TOTPDisableForm( $user, $repo, $this, $context );
 		}
-		return null;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getConfig() {
 		return null;
 	}
 

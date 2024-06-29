@@ -24,7 +24,9 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\MediaWikiTitleCodec;
 use MediaWiki\Title\Title;
-use MediaWiki\Title\TitleArrayFromResult;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * Handles searching prefixes of titles and finding any page
@@ -187,12 +189,19 @@ abstract class PrefixSearch {
 		// Unlike SpecialPage itself, we want the canonical forms of both
 		// canonical and alias title forms...
 		$keys = [];
-		foreach ( $spFactory->getNames() as $page ) {
+		$listedPages = $spFactory->getListedPages();
+		foreach ( $listedPages as $page => $_obj ) {
 			$keys[$contLang->caseFold( $page )] = [ 'page' => $page, 'rank' => 0 ];
 		}
 
 		foreach ( $contLang->getSpecialPageAliases() as $page => $aliases ) {
-			if ( !in_array( $page, $spFactory->getNames() ) ) {# T22885
+			// Exclude localisation aliases for pages that are not defined (T22885),
+			// e.g. if an extension registers a page based on site configuration.
+			if ( !in_array( $page, $spFactory->getNames() ) ) {
+				continue;
+			}
+			// Exclude aliases for unlisted pages
+			if ( !isset( $listedPages[ $page ] ) ) {
 				continue;
 			}
 
@@ -269,27 +278,32 @@ abstract class PrefixSearch {
 			return [];
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$services = MediaWikiServices::getInstance();
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
 		// Often there is only one prefix that applies to all requested namespaces,
 		// but sometimes there are two if some namespaces do not always capitalize.
 		$conds = [];
 		foreach ( $prefixes as $prefix => $namespaces ) {
-			$condition = [ 'page_namespace' => $namespaces ];
+			$expr = $dbr->expr( 'page_namespace', '=', $namespaces );
 			if ( $prefix !== '' ) {
-				$condition[] = 'page_title' . $dbr->buildLike( $prefix, $dbr->anyString() );
+				$expr = $expr->and(
+					'page_title',
+					IExpression::LIKE,
+					new LikeValue( $prefix, $dbr->anyString() )
+				);
 			}
-			$conds[] = $dbr->makeList( $condition, LIST_AND );
+			$conds[] = $expr;
 		}
 
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_id', 'page_namespace', 'page_title' ] )
 			->from( 'page' )
-			->where( $dbr->makeList( $conds, LIST_OR ) )
+			->where( new OrExpressionGroup( ...$conds ) )
 			->orderBy( [ 'page_title', 'page_namespace' ] )
 			->limit( $limit )
 			->offset( $offset );
 		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
-		return iterator_to_array( new TitleArrayFromResult( $res ) );
+		return iterator_to_array( $services->getTitleFactory()->newTitleArrayFromResult( $res ) );
 	}
 }

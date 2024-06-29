@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.1.0
+
+Fixed:
+* Only replace spaces between HTML tags - [T348402](https://phabricator.wikimedia.org/T348402)
+* Avoid ungreedy pcre matching - [T345319](https://phabricator.wikimedia.org/T345319)
+
+Changed:
+* Use `InvalidArgumentException` instead of `Exception`
+
+Others:
+* Upgrade phpunit to 9.6.16 - [T342110](https://phabricator.wikimedia.org/T342110)
+* Upgrade mediawiki/mediawiki-phan-config to 0.14.0
+* Upgrade mediawiki/mediawiki-codesniffer to v43.0.0
+* Fix casing of MediaWiki in a comment
+
 ## 4.0.3
 
 Fixed:

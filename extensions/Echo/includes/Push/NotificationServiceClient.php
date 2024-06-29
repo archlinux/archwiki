@@ -3,10 +3,10 @@
 namespace MediaWiki\Extension\Notifications\Push;
 
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Status\Status;
 use MWHttpRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Status;
 
 class NotificationServiceClient implements LoggerAwareInterface {
 

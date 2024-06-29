@@ -23,7 +23,6 @@
 	"cite_error_included_ref": "Egy <code>&lt;ref&gt;</code> címke lezáró <code>&lt;/ref&gt;</code> része hiányzik",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> címkék léteznek a(z) „$1” csoporthoz, de nincs hozzá <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "A <code>&lt;references&gt;</code> és a benne található <code>&lt;ref&gt;</code> címke csoportattribútuma („$1”) nem egyezik meg.",
-	"cite_error_references_missing_group": "Olyan <code>&lt;ref&gt;</code> címke lett lett definiálva egy <code>&lt;references&gt;</code> címkében, amely csoportattribútuma („$1”) nem szerepel a szöveg korábbi részében.",
 	"cite_error_references_missing_key": "a <code>&lt;references&gt;</code> címkében definiált „$1” nevű <code>&lt;ref&gt;</code> címke nem szerepel a szöveg korábbi részében.",
 	"cite_error_references_no_key": "a <code>&lt;references&gt;</code> címkében definiált <code>&lt;ref&gt;</code> címkének nincs név attribútuma.",
 	"cite_error_empty_references_define": "a <code>&lt;references&gt;</code> címkében definiált „$1” <code>&lt;ref&gt;</code> címkének nincs tartalma.",

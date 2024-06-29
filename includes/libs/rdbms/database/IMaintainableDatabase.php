@@ -106,17 +106,31 @@ interface IMaintainableDatabase extends IDatabase {
 	public function dropTable( $table, $fname = __METHOD__ );
 
 	/**
+	 * Delete all data in a table and reset any sequences owned by that table
+	 *
+	 * @param string $table
+	 * @param string $fname
+	 * @throws DBError If an error occurs
+	 * @since 1.42
+	 */
+	public function truncateTable( $table, $fname = __METHOD__ );
+
+	/**
 	 * Delete all data in a table(s) and reset any sequences owned by that table(s)
 	 *
 	 * @param string|string[] $tables
 	 * @param string $fname
 	 * @throws DBError If an error occurs
 	 * @since 1.35
+	 * @deprecated Since 1.42; use truncateTable() instead
 	 */
 	public function truncate( $tables, $fname = __METHOD__ );
 
 	/**
 	 * Lists all the VIEWs in the database
+	 *
+	 * @deprecated since 1.42 This was previously used to filter views out of the return
+	 *   value of listTables(), but listTables() no longer includes views.
 	 *
 	 * @param string|null $prefix Only show VIEWs with this prefix, eg. unit_test_
 	 * @param string $fname Name of calling function
@@ -145,7 +159,9 @@ interface IMaintainableDatabase extends IDatabase {
 	);
 
 	/**
-	 * List all tables on the database
+	 * List all tables on the database.
+	 *
+	 * Since MW 1.42, this will no longer include MySQL views.
 	 *
 	 * @param string|null $prefix Only show tables with this prefix, e.g. mw_
 	 * @param string $fname Calling function name
@@ -208,8 +224,3 @@ interface IMaintainableDatabase extends IDatabase {
 	 */
 	public function tableExists( $table, $fname = __METHOD__ );
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( IMaintainableDatabase::class, 'IMaintainableDatabase' );

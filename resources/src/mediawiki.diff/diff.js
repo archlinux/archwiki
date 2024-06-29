@@ -1,6 +1,8 @@
 /*!
  * JavaScript for diff views
  */
+const inlineFormatToggle = require( './inlineFormatToggle.js' );
+
 ( function () {
 	$( function setDiffSideProtection() {
 		/**
@@ -63,5 +65,59 @@
 
 		$( document ).on( 'selectionchange', selectionHandler );
 		$( document ).on( 'mousedown', maybeClearSelectProtection );
+
+		$( document ).on(
+			'click',
+			[
+				'.mw-diff-inline-moved del',
+				'.mw-diff-inline-moved ins',
+				'.mw-diff-inline-changed del',
+				'.mw-diff-inline-changed ins',
+				'.mw-diff-inline-added ins',
+				'.mw-diff-inline-deleted del'
+			].join( ',' ),
+			/**
+			 * Shows a tooltip when added/deleted text is clicked on a tablet or mobile resolution.
+			 *
+			 * @param {Event} ev
+			 */
+			( ev ) => {
+				// Limit this behaviour to mobile.
+				const widthBreakpointTablet = 720;
+				const isTabletOrMobile = window.matchMedia( `(max-width: ${ widthBreakpointTablet }px)` );
+				if ( !isTabletOrMobile.matches ) {
+					return;
+				}
+				const contentAdded = ev.target && ev.target.matches( 'ins' );
+				const text = contentAdded ?
+					mw.msg( 'diff-inline-tooltip-ins' ) :
+					mw.msg( 'diff-inline-tooltip-del' );
+				mw.loader.using( 'oojs-ui-core' ).then( () => {
+					const popup = new OO.ui.PopupWidget( {
+						$content: $( '<p>' ).text( text ),
+						padded: true,
+						autoClose: true,
+						anchor: true,
+						align: 'center',
+						$floatableContainer: $( ev.target ),
+						position: 'below',
+						classes: [ 'mw-diff-popup' ],
+						width: 'auto'
+					} );
+					$( OO.ui.getTeleportTarget() ).append( popup.$element );
+					popup.toggle( true );
+					popup.toggleClipping( true );
+				} );
+			}
+		);
 	} );
+
+	// If there is a diff present on page, load the toggle.
+	const $inlineToggleSwitchLayout = $( '#mw-diffPage-inline-toggle-switch-layout' );
+	// Return if inline switch is not displaying.
+	if ( $inlineToggleSwitchLayout.length ) {
+		mw.loader.using( 'oojs-ui' ).then( () => {
+			inlineFormatToggle( $inlineToggleSwitchLayout );
+		} );
+	}
 }() );

@@ -30,7 +30,6 @@
 	"cite_error_included_references": "Λείπει ετικέτα κλεισίματος για <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Υπάρχουν ετικέτες <code>&lt;ref&gt;</code> για κάποια ομάδα με το όνομα «$1», αλλά δεν βρέθηκε καμία αντίστοιχη ετικέτα <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "Η ετικέτα <code>&lt;ref&gt;</code> μέσα στο <code>&lt;references&gt;</code> έρχεται σε σύγκρουση με το χαρακτηριστικό ομαδοποίησης «$1».",
-	"cite_error_references_missing_group": "Η ετικέτα <code>&lt;ref&gt;</code>  με όνομα \"$2\" που ορίζεται μέσα στο <code>&lt;references&gt;</code> έχει χαρακτηριστικό ομαδοποίησης «$1» που δεν εμφανίζεται σε προηγούμενο κείμενο.",
 	"cite_error_references_missing_key": "Η ετικέτα <code>&lt;ref&gt;</code> με όνομα «$1» που ορίζεται μέσα στο <code>&lt;references&gt;</code> δεν χρησιμοποιείται σε προηγούμενο κείμενο.",
 	"cite_error_references_no_key": "Η ετικέτα <code>&lt;ref&gt;</code> που ορίζεται μέσα στο <code>&lt;references&gt;</code> δεν έχει χαρακτηριστικό ονόματος.",
 	"cite_error_empty_references_define": "Η ετικέτα <code>&lt;ref&gt;</code> με όνομα \"$1\"που ορίζεται μέσα στην <code>&lt;references&gt;</code> ομάδα \"$2\"  δεν έχει καθόλου περιεχόμενο.",

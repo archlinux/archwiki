@@ -240,7 +240,7 @@ class lessc {
 			$out = [];
 			$out['root'] = $root;
 			$out['compiled'] = $this->compileFile( $root );
-			$out['files'] = $this->allParsedFiles();
+			$out['files'] = $this->allParsedFiles;
 			$out['updated'] = time();
 			return $out;
 		} else {

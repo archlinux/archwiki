@@ -20,11 +20,6 @@ use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 	private static $nodesToMigrateFrom;
 
-	/**
-	 * @param Node $node
-	 * @param DataParsoid $dp
-	 * @return bool
-	 */
 	private function nodeEndsLineInWT( Node $node, DataParsoid $dp ): bool {
 		// These nodes either end a line in wikitext (tr, li, dd, ol, ul, dl, caption,
 		// p) or have implicit closing tags that can leak newlines to those that end a
@@ -32,20 +27,13 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 		//
 		// SSS FIXME: Given condition 2, we may not need to check th/td anymore
 		// (if we can rely on auto inserted start/end tags being present always).
-		if ( !isset( self::$nodesToMigrateFrom ) ) {
-			self::$nodesToMigrateFrom = PHPUtils::makeSet( [
-					'pre', 'th', 'td', 'tr', 'li', 'dd', 'ol', 'ul', 'dl', 'caption', 'p'
-				]
-			);
-		}
+		self::$nodesToMigrateFrom ??= PHPUtils::makeSet( [
+			'pre', 'th', 'td', 'tr', 'li', 'dd', 'ol', 'ul', 'dl', 'caption', 'p'
+		] );
 		return isset( self::$nodesToMigrateFrom[DOMCompat::nodeName( $node )] ) &&
 			!WTUtils::hasLiteralHTMLMarker( $dp );
 	}
 
-	/**
-	 * @param Node $node
-	 * @return Node|null
-	 */
 	private function getTableParent( Node $node ): ?Node {
 		$nodeName = DOMCompat::nodeName( $node );
 		if ( in_array( $nodeName, [ 'td', 'th' ], true ) ) {
@@ -123,11 +111,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 		return $c === null;
 	}
 
-	/**
-	 * @param Node $elt
-	 * @param Env $env
-	 */
-	public function doMigrateTrailingNLs( Node $elt, Env $env ) {
+	public function doMigrateTrailingNLs( Node $elt, Env $env ): void {
 		if (
 			!( $elt instanceof Element ) &&
 			!( $elt instanceof DocumentFragment )

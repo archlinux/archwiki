@@ -49,6 +49,13 @@
 			// work
 			.css( 'display', 'none' );
 
+		// Prevent clicks on the list padding area from activating the primary link
+		this.listWidget.$element.on( 'click', function ( e ) {
+			if ( e.target.closest( 'a' ) === this.$element[ 0 ] ) {
+				e.preventDefault();
+			}
+		}.bind( this ) );
+
 		// Initialize closed
 		this.expanded = false;
 

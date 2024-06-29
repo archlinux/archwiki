@@ -24,6 +24,8 @@
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -46,12 +48,20 @@ class FixDefaultJsonContentPages extends LoggedUpdateMaintenance {
 	}
 
 	protected function doDBUpdates() {
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$namespaces = [
-			NS_MEDIAWIKI => $dbr->buildLike( $dbr->anyString(), '.json' ),
-			NS_USER => $dbr->buildLike( $dbr->anyString(), '/', $dbr->anyString(), '.json' ),
+			NS_MEDIAWIKI => $dbr->expr(
+				'page_title',
+				IExpression::LIKE,
+				new LikeValue( $dbr->anyString(), '.json' )
+			),
+			NS_USER => $dbr->expr(
+				'page_title',
+				IExpression::LIKE,
+				new LikeValue( $dbr->anyString(), '/', $dbr->anyString(), '.json' )
+			),
 		];
-		foreach ( $namespaces as $ns => $like ) {
+		foreach ( $namespaces as $ns => $likeExpr ) {
 			$lastPage = 0;
 			do {
 				$rows = $dbr->newSelectQueryBuilder()
@@ -59,8 +69,8 @@ class FixDefaultJsonContentPages extends LoggedUpdateMaintenance {
 					->from( 'page' )
 					->where( [
 						'page_namespace' => $ns,
-						'page_title ' . $like,
-						'page_id > ' . $dbr->addQuotes( $lastPage )
+						$likeExpr,
+						$dbr->expr( 'page_id', '>', $lastPage ),
 					] )
 					->orderBy( 'page_id' )
 					->limit( $this->getBatchSize() )
@@ -82,19 +92,19 @@ class FixDefaultJsonContentPages extends LoggedUpdateMaintenance {
 			->getRevisionLookup()
 			->getRevisionByTitle( $title );
 		$content = $rev->getContent( SlotRecord::MAIN, RevisionRecord::RAW );
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		if ( $content instanceof JsonContent ) {
 			if ( $content->isValid() ) {
 				// Yay, actually JSON. We need to just change the
 				// page_content_model because revision will automatically
 				// use the default, which is *now* JSON.
 				$this->output( "Setting page_content_model to json..." );
-				$dbw->update(
-					'page',
-					[ 'page_content_model' => CONTENT_MODEL_JSON ],
-					[ 'page_id' => $row->page_id ],
-					__METHOD__
-				);
+				$dbw->newUpdateQueryBuilder()
+					->update( 'page' )
+					->set( [ 'page_content_model' => CONTENT_MODEL_JSON ] )
+					->where( [ 'page_id' => $row->page_id ] )
+					->caller( __METHOD__ )->execute();
+
 				$this->output( "done.\n" );
 				$this->waitForReplication();
 			} else {
@@ -110,12 +120,12 @@ class FixDefaultJsonContentPages extends LoggedUpdateMaintenance {
 					->where( [ 'rev_page' => $row->page_id ] )
 					->caller( __METHOD__ )->fetchFieldValues();
 				foreach ( array_chunk( $ids, 50 ) as $chunk ) {
-					$dbw->update(
-						'revision',
-						[ 'rev_content_model' => CONTENT_MODEL_WIKITEXT ],
-						[ 'rev_page' => $row->page_id, 'rev_id' => $chunk ],
-						__METHOD__
-					);
+					$dbw->newUpdateQueryBuilder()
+						->update( 'revision' )
+						->set( [ 'rev_content_model' => CONTENT_MODEL_WIKITEXT ] )
+						->where( [ 'rev_page' => $row->page_id, 'rev_id' => $chunk ] )
+						->caller( __METHOD__ )->execute();
+
 					$this->waitForReplication();
 				}
 				$this->output( "done.\n" );

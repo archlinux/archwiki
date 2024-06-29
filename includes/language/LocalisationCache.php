@@ -187,6 +187,9 @@ class LocalisationCache {
 		'pluralRules', 'pluralRuleTypes', 'compiledPluralRules',
 	];
 
+	/** Keys for items which can be localized. */
+	public const ALL_ALIAS_KEYS = [ 'specialPageAliases' ];
+
 	/**
 	 * Keys for items which consist of associative arrays, which may be merged
 	 * by a fallback sequence.
@@ -290,7 +293,7 @@ class LocalisationCache {
 		} elseif ( $conf['store'] === 'array' ) {
 			$storeClass = LCStoreStaticArray::class;
 		} else {
-			throw new MWException(
+			throw new ConfigException(
 				'Please set $wgLocalisationCacheConf[\'store\'] to something sensible.'
 			);
 		}
@@ -307,6 +310,7 @@ class LocalisationCache {
 		'manualRecache',
 		MainConfigNames::ExtensionMessagesFiles,
 		MainConfigNames::MessagesDirs,
+		MainConfigNames::TranslationAliasesDirs,
 	];
 
 	/**
@@ -586,7 +590,6 @@ class LocalisationCache {
 	 * Initialise a language in this object. Rebuild the cache if necessary.
 	 *
 	 * @param string $code
-	 * @throws MWException
 	 */
 	private function initLanguage( $code ) {
 		if ( isset( $this->initialisedLangs[$code] ) ) {
@@ -607,7 +610,7 @@ class LocalisationCache {
 			if ( $this->langNameUtils->isSupportedLanguage( $code ) ) {
 				$this->recache( $code );
 			} elseif ( $code === 'en' ) {
-				throw new MWException( 'MessagesEn.php is missing.' );
+				throw new RuntimeException( 'MessagesEn.php is missing.' );
 			} else {
 				$this->initShallowFallback( $code, 'en' );
 			}
@@ -621,14 +624,14 @@ class LocalisationCache {
 			if ( $this->manualRecache ) {
 				// No Messages*.php file. Do shallow fallback to en.
 				if ( $code === 'en' ) {
-					throw new MWException( 'No localisation cache found for English. ' .
+					throw new RuntimeException( 'No localisation cache found for English. ' .
 						'Please run maintenance/rebuildLocalisationCache.php.' );
 				}
 				$this->initShallowFallback( $code, 'en' );
 
 				return;
 			} else {
-				throw new MWException( 'Invalid or missing localisation cache.' );
+				throw new RuntimeException( 'Invalid or missing localisation cache.' );
 			}
 		}
 
@@ -687,7 +690,6 @@ class LocalisationCache {
 	 *
 	 * @param string $_fileName
 	 * @param string $_fileType
-	 * @throws MWException
 	 * @return array
 	 */
 	protected function readPHPFile( $_fileName, $_fileType ) {
@@ -714,7 +716,7 @@ class LocalisationCache {
 				$data['aliases'] = $aliases;
 			}
 		} else {
-			throw new MWException( __METHOD__ . ": Invalid file type: $_fileType" );
+			throw new InvalidArgumentException( __METHOD__ . ": Invalid file type: $_fileType" );
 		}
 
 		return $data;
@@ -724,7 +726,6 @@ class LocalisationCache {
 	 * Read a JSON file containing localisation messages.
 	 *
 	 * @param string $fileName Name of file to read
-	 * @throws MWException If there is a syntax error in the JSON file
 	 * @return array Array with a 'messages' key, or empty array if the file doesn't exist
 	 */
 	private function readJSONFile( $fileName ) {
@@ -739,7 +740,7 @@ class LocalisationCache {
 
 		$data = FormatJson::decode( $json, true );
 		if ( $data === null ) {
-			throw new MWException( __METHOD__ . ": Invalid JSON file: $fileName" );
+			throw new RuntimeException( __METHOD__ . ": Invalid JSON file: $fileName" );
 		}
 
 		// Remove keys starting with '@'; they are reserved for metadata and non-message data
@@ -821,13 +822,12 @@ class LocalisationCache {
 	 * rules, and save the compiled rules in a process-local cache.
 	 *
 	 * @param string $fileName
-	 * @throws MWException
 	 */
 	private static function loadPluralFile( $fileName ) {
 		// Use file_get_contents instead of DOMDocument::load (T58439)
 		$xml = file_get_contents( $fileName );
 		if ( !$xml ) {
-			throw new MWException( "Unable to read plurals file $fileName" );
+			throw new RuntimeException( "Unable to read plurals file $fileName" );
 		}
 		$doc = new DOMDocument;
 		$doc->loadXML( $xml );
@@ -982,7 +982,7 @@ class LocalisationCache {
 	 */
 	private function loadCoreData( string $code ) {
 		if ( !$code ) {
-			throw new MWException( "Invalid language code requested" );
+			throw new InvalidArgumentException( "Invalid language code requested" );
 		}
 		if ( $this->coreDataLoaded[$code] ?? false ) {
 			return;
@@ -1061,11 +1061,10 @@ class LocalisationCache {
 	 * and save it to the persistent cache store and the process cache.
 	 *
 	 * @param string $code
-	 * @throws MWException
 	 */
 	public function recache( $code ) {
 		if ( !$code ) {
-			throw new MWException( "Invalid language code requested" );
+			throw new InvalidArgumentException( "Invalid language code requested" );
 		}
 		$this->recachedLangs[ $code ] = true;
 
@@ -1083,11 +1082,12 @@ class LocalisationCache {
 
 		$codeSequence = array_merge( [ $code ], $coreData['fallbackSequence'] );
 		$messageDirs = $this->getMessagesDirs();
+		$translationAliasesDirs = $this->options->get( MainConfigNames::TranslationAliasesDirs );
 
 		# Load non-JSON localisation data for extensions
 		$extensionData = array_fill_keys( $codeSequence, $initialData );
 		foreach ( $this->options->get( MainConfigNames::ExtensionMessagesFiles ) as $extension => $fileName ) {
-			if ( isset( $messageDirs[$extension] ) ) {
+			if ( isset( $messageDirs[$extension] ) || isset( $translationAliasesDirs[$extension] ) ) {
 				# This extension has JSON message data; skip the PHP shim
 				continue;
 			}
@@ -1131,6 +1131,35 @@ class LocalisationCache {
 						$this->sourceLanguage[$code]['messages'][$subkey] ??= $csCode;
 					}
 					$this->mergeItem( 'messages', $csData['messages'], $messages );
+
+					$deps[] = new FileDependency( $fileName );
+				}
+			}
+
+			foreach ( $translationAliasesDirs as $dirs ) {
+				foreach ( (array)$dirs as $dir ) {
+					$fileName = "$dir/$csCode.json";
+					$data = $this->readJSONFile( $fileName );
+
+					foreach ( $data as $key => $item ) {
+						// We allow the key in the JSON to be specified in PascalCase similar to key definitions in
+						// extension.json, but eventually they are stored in camelCase
+						$normalizedKey = lcfirst( $key );
+
+						if ( $normalizedKey === '@metadata' ) {
+							// Don't store @metadata information in extension data.
+							continue;
+						}
+
+						if ( !in_array( $normalizedKey, self::ALL_ALIAS_KEYS ) ) {
+							throw new UnexpectedValueException(
+								"Invalid key: \"$key\" for " . MainConfigNames::TranslationAliasesDirs . ". " .
+								'Valid keys: ' . implode( ', ', self::ALL_ALIAS_KEYS )
+							);
+						}
+
+						$this->mergeItem( $normalizedKey, $extensionData[$csCode][$normalizedKey], $item );
+					}
 
 					$deps[] = new FileDependency( $fileName );
 				}
@@ -1186,15 +1215,16 @@ class LocalisationCache {
 		}
 
 		if ( !isset( $allData['rtl'] ) ) {
-			throw new MWException( __METHOD__ . ': Localisation data failed validation check! ' .
+			throw new RuntimeException( __METHOD__ . ': Localisation data failed validation check! ' .
 				'Check that your languages/messages/MessagesEn.php file is intact.' );
 		}
 
-		# Add cache dependencies for any referenced globals
-		$deps['wgExtensionMessagesFiles'] = new GlobalDependency( 'wgExtensionMessagesFiles' );
-		// The 'MessagesDirs' config setting is used in LocalisationCache::getMessagesDirs().
-		// We use the key 'wgMessagesDirs' for historical reasons.
-		$deps['wgMessagesDirs'] = new MainConfigDependency( MainConfigNames::MessagesDirs );
+		// Add cache dependencies for any referenced configs
+		// We use the keys prefixed with 'wg' for historical reasons.
+		$deps['wgExtensionMessagesFiles'] =
+			new MainConfigDependency( MainConfigNames::ExtensionMessagesFiles );
+		$deps['wgMessagesDirs'] =
+			new MainConfigDependency( MainConfigNames::MessagesDirs );
 		$deps['version'] = new ConstantDependency( self::class . '::VERSION' );
 
 		# Add dependencies to the cache entry

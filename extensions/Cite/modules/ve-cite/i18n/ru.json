@@ -82,7 +82,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Это примечание определено в шаблоне или другом генерируемом блоке и на данный момент может быть предпросмотрено только в режиме правки вики-кода.",
 	"cite-ve-referenceslist-missingreflist": "Этот список примечаний генерируется шаблоном.",
 	"cite-ve-toolbar-group-label": "Источники",
-	"cite-ve-othergroup-item": "$1 примечание",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Сноски",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Название группы сносок: «$1»"
+	"cite-ve-othergroup-item": "$1 примечание"
 }

@@ -143,11 +143,10 @@
 	 * in the model
 	 */
 	mw.echo.ui.CrossWikiNotificationItemWidget.prototype.populateFromModel = function () {
-		var i,
-			groupWidgets = [],
+		var groupWidgets = [],
 			groups = this.model.getList().getItems();
 
-		for ( i = 0; i < groups.length; i++ ) {
+		for ( var i = 0; i < groups.length; i++ ) {
 			// Create SubGroup widgets
 			groupWidgets.push(
 				new mw.echo.ui.SubGroupListWidget(
@@ -169,14 +168,13 @@
 	 * @param {boolean} [show] Show titles
 	 */
 	mw.echo.ui.CrossWikiNotificationItemWidget.prototype.toggleTitles = function ( show ) {
-		var i,
-			items = this.getList().getItems();
+		var items = this.getList().getItems();
 
 		show = show === undefined ? !this.showTitles : show;
 
 		if ( this.showTitles !== show ) {
 			this.showTitles = show;
-			for ( i = 0; i < items.length; i++ ) {
+			for ( var i = 0; i < items.length; i++ ) {
 				items[ i ].toggleTitle( show );
 			}
 		}

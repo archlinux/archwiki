@@ -24,6 +24,7 @@
 namespace MediaWiki\SpecialPage;
 
 use Exception;
+use LogicException;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
@@ -65,7 +66,6 @@ use MediaWiki\Specials\SpecialWantedPages;
 use MediaWiki\Specials\SpecialWantedTemplates;
 use MediaWiki\Specials\SpecialWithoutInterwiki;
 use MWDebug;
-use MWException;
 use Skin;
 use stdClass;
 use Wikimedia\Rdbms\DBError;
@@ -267,13 +267,12 @@ abstract class QueryPage extends SpecialPage {
 	/**
 	 * For back-compat, subclasses may return a raw SQL query here, as a string.
 	 * @deprecated since 1.39; getQueryInfo() should be overridden instead.
-	 * @throws MWException
 	 * @return string
 	 * @suppress PhanPluginNeverReturnMethod
 	 */
 	protected function getSQL() {
 		wfDeprecated( __METHOD__, '1.39' );
-		throw new MWException( "Bug in a QueryPage: doesn't implement getQueryInfo() nor "
+		throw new LogicException( "Bug in a QueryPage: doesn't implement getQueryInfo() nor "
 			. "getQuery() properly" );
 	}
 
@@ -992,14 +991,11 @@ abstract class QueryPage extends SpecialPage {
 	 */
 	final protected function getDatabaseProvider(): IConnectionProvider {
 		if ( $this->databaseProvider === null ) {
-			$this->databaseProvider = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+			$this->databaseProvider = MediaWikiServices::getInstance()->getConnectionProvider();
 		}
 		return $this->databaseProvider;
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( QueryPage::class, 'QueryPage' );

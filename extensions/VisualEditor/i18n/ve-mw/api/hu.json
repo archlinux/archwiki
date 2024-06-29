@@ -8,7 +8,6 @@
 			"Tgr"
 		]
 	},
-	"apierror-visualeditor-docserver": "Hiba a Parsoid/RESTBase-szerverhez csatlakozáskor (nincs válasz)",
 	"apihelp-visualeditor-param-basetimestamp": "Mentésnél állítsd a szerkesztett lapváltozat időbélyegére. Szerkesztési ütközések felismerésére szolgál.",
 	"apihelp-visualeditor-param-cachekey": "A szerializáláshoz vagy a különbség megmutatásához használd az előző serializeforcache kérés eredményét ezzel a kulccsal. Felülírja a $1html eredményét.",
 	"apihelp-visualeditor-param-editintro": "Az értesítésekhez adandó figyelmeztetés (<code>editintro</code>).",

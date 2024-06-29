@@ -7,8 +7,8 @@ use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
-use User;
 
 /**
  * This is a hook runner class, see docs/Hooks.md in core.

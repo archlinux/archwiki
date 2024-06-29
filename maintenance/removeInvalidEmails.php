@@ -27,16 +27,16 @@ class RemoveInvalidEmails extends Maintenance {
 
 	public function execute() {
 		$this->commit = $this->hasOption( 'commit' );
-		$dbr = $this->getDB( DB_REPLICA );
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbr = $this->getReplicaDB();
+		$dbw = $this->getPrimaryDB();
 		$lastId = 0;
 		do {
 			$rows = $dbr->newSelectQueryBuilder()
 				->select( [ 'user_id', 'user_email' ] )
 				->from( 'user' )
 				->where( [
-					'user_id > ' . $dbr->addQuotes( $lastId ),
-					'user_email != ' . $dbr->addQuotes( '' ),
+					$dbr->expr( 'user_id', '>', $lastId ),
+					$dbr->expr( 'user_email', '!=', '' ),
 					'user_email_authenticated' => null,
 				] )
 				->limit( $this->getBatchSize() )

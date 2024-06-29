@@ -6,14 +6,11 @@ use Cite\ReferenceMessageLocalizer;
 use Language;
 
 /**
- * @coversDefaultClass \Cite\ReferenceMessageLocalizer
+ * @covers \Cite\ReferenceMessageLocalizer
+ * @license GPL-2.0-or-later
  */
 class ReferenceMessageLocalizerUnitTest extends \MediaWikiUnitTestCase {
 
-	/**
-	 * @covers ::localizeSeparators
-	 * @covers ::__construct
-	 */
 	public function testLocalizeSeparators() {
 		$mockLanguage = $this->createNoOpMock( Language::class, [ 'separatorTransformTable' ] );
 		$mockLanguage->method( 'separatorTransformTable' )->willReturn( [ '.' => ',', '0' => '' ] );
@@ -21,9 +18,6 @@ class ReferenceMessageLocalizerUnitTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( '10,0', $messageLocalizer->localizeSeparators( '10.0' ) );
 	}
 
-	/**
-	 * @covers ::localizeDigits
-	 */
 	public function testLocalizeDigits() {
 		$mockLanguage = $this->createNoOpMock( Language::class, [ 'formatNumNoSeparators' ] );
 		$mockLanguage->method( 'formatNumNoSeparators' )->willReturnArgument( 0 );

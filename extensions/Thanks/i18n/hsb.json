@@ -22,7 +22,6 @@
 	"echo-pref-subscription-edit-thank": "Dźakuje so mi za moju změnu",
 	"echo-pref-tooltip-edit-thank": "Informuj mje, hdyž něchtó dźakuje so mje za změnu, kotruž sym činił.",
 	"echo-category-title-edit-thank": "Wulki dźak",
-	"notification-thanks-diff-link": "twoju změnu",
 	"log-name-thanks": "Dźakny protokol",
 	"log-description-thanks": "Deleka je lisćina wužiwarjow, kotrymž su so druzy wužiwarjo dźakowali.",
 	"logentry-thanks-thank": "$1 je {{GENDER:$4|$3}} {{GENDER:$2|dźakował|dźakowała}}"

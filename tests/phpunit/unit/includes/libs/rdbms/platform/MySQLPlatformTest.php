@@ -18,13 +18,19 @@
  * @file
  */
 
+namespace Wikimedia\Tests\Rdbms;
+
 use MediaWiki\Tests\Unit\Libs\Rdbms\AddQuoterMock;
+use MediaWikiCoversValidator;
+use PHPUnit\Framework\TestCase;
+use Wikimedia\Rdbms\DBLanguageError;
 use Wikimedia\Rdbms\Platform\MySQLPlatform;
+use Wikimedia\Rdbms\Platform\SqlitePlatform;
 
 /**
  * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform
  */
-class MySQLPlatformTest extends PHPUnit\Framework\TestCase {
+class MySQLPlatformTest extends TestCase {
 
 	use MediaWikiCoversValidator;
 
@@ -40,6 +46,9 @@ class MySQLPlatformTest extends PHPUnit\Framework\TestCase {
 	 * @dataProvider provideDiapers
 	 */
 	public function testAddIdentifierQuotes( $expected, $in ) {
+		if ( $expected === 'yagni' ) {
+			$this->expectException( DBLanguageError::class );
+		}
 		$quoted = $this->platform->addIdentifierQuotes( $in );
 		$this->assertEquals( $expected, $quoted );
 	}
@@ -58,6 +67,8 @@ class MySQLPlatformTest extends PHPUnit\Framework\TestCase {
 	public static function provideDiapers() {
 		return [
 			// Format: expected, input
+			// If expected is "yagni" that means that you're probably not going
+			// to need the case to work correctly
 			[ '``', '' ],
 
 			// Dear codereviewer, guess what addIdentifierQuotes()
@@ -70,14 +81,14 @@ class MySQLPlatformTest extends PHPUnit\Framework\TestCase {
 			[ '`1`', 1 ],
 
 			// Whatchout! Should probably use something more meaningful
-			[ "`'`", "'" ],  # single quote
-			[ '`"`', '"' ],  # double quote
-			[ '````', '`' ], # backtick
-			[ '`’`', '’' ],  # apostrophe (look at your encyclopedia)
+			'single quote' => [ 'yagni', "'" ],
+			'double quote' => [ 'yagni', '"' ],
+			'backtick' => [ 'yagni', '`' ],
+			'apostrophe' => [ '`’`', '’' ],
 
 			// sneaky NUL bytes are lurking everywhere
-			[ '``', "\0" ],
-			[ '`xyzzy`', "\0x\0y\0z\0z\0y\0" ],
+			[ 'yagni', "\0" ],
+			[ 'yagni', "\0x\0y\0z\0z\0y\0" ],
 
 			// unicode chars
 			[
@@ -85,7 +96,7 @@ class MySQLPlatformTest extends PHPUnit\Framework\TestCase {
 				"\u{0001}a\u{FFFF}b"
 			],
 			[
-				"`\u{0001}\u{FFFF}`",
+				"yagni",
 				"\u{0001}\u{0000}\u{FFFF}\u{0000}"
 			],
 			[ '`☃`', '☃' ],
@@ -93,8 +104,8 @@ class MySQLPlatformTest extends PHPUnit\Framework\TestCase {
 			[ '`Басты_бет`', 'Басты_бет' ],
 
 			// Real world:
-			[ '`Alix`', 'Alix' ],  # while( ! $recovered ) { sleep(); }
-			[ '`Backtick: ```', 'Backtick: `' ],
+			[ '`Alix`', 'Alix' ], # while( ! $recovered ) { sleep(); }
+			[ 'yagni', 'Backtick: `' ],
 			[ '`This is a test`', 'This is a test' ],
 		];
 	}

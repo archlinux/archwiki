@@ -20,13 +20,12 @@
 
 namespace MediaWiki\User;
 
-use DBAccessObjectUtils;
-use DeferredUpdates;
 use IDBAccessObject;
 use InvalidArgumentException;
 use JobQueueGroup;
 use ManualLogEntry;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
@@ -42,6 +41,7 @@ use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\OrExpressionGroup;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -49,7 +49,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * Manages user groups.
  * @since 1.35
  */
-class UserGroupManager implements IDBAccessObject {
+class UserGroupManager {
 
 	/**
 	 * @internal For use by ServiceWiring
@@ -71,6 +71,13 @@ class UserGroupManager implements IDBAccessObject {
 		MainConfigNames::RemoveGroups,
 		MainConfigNames::PrivilegedGroups,
 	];
+
+	/**
+	 * Logical operators recognized in $wgAutopromote.
+	 *
+	 * @since 1.42
+	 */
+	public const VALID_OPS = [ '&', '|', '^', '!' ];
 
 	private ServiceOptions $options;
 	private IConnectionProvider $dbProvider;
@@ -230,7 +237,7 @@ class UserGroupManager implements IDBAccessObject {
 	public function loadGroupMembershipsFromArray(
 		UserIdentity $user,
 		array $userGroups,
-		int $queryFlags = self::READ_NORMAL
+		int $queryFlags = IDBAccessObject::READ_NORMAL
 	) {
 		$user->assertWiki( $this->wikiId );
 		$membershipGroups = [];
@@ -260,7 +267,7 @@ class UserGroupManager implements IDBAccessObject {
 	 */
 	public function getUserImplicitGroups(
 		UserIdentity $user,
-		int $queryFlags = self::READ_NORMAL,
+		int $queryFlags = IDBAccessObject::READ_NORMAL,
 		bool $recache = false
 	): array {
 		$user->assertWiki( $this->wikiId );
@@ -305,7 +312,7 @@ class UserGroupManager implements IDBAccessObject {
 	 */
 	public function getUserEffectiveGroups(
 		UserIdentity $user,
-		int $queryFlags = self::READ_NORMAL,
+		int $queryFlags = IDBAccessObject::READ_NORMAL,
 		bool $recache = false
 	): array {
 		$user->assertWiki( $this->wikiId );
@@ -349,7 +356,7 @@ class UserGroupManager implements IDBAccessObject {
 	 */
 	public function getUserFormerGroups(
 		UserIdentity $user,
-		int $queryFlags = self::READ_NORMAL
+		int $queryFlags = IDBAccessObject::READ_NORMAL
 	): array {
 		$user->assertWiki( $this->wikiId );
 		$userKey = $this->getCacheKey( $user );
@@ -471,7 +478,7 @@ class UserGroupManager implements IDBAccessObject {
 	 */
 	public function getUserPrivilegedGroups(
 		UserIdentity $user,
-		int $queryFlags = self::READ_NORMAL,
+		int $queryFlags = IDBAccessObject::READ_NORMAL,
 		bool $recache = false
 	): array {
 		$userKey = $this->getCacheKey( $user );
@@ -516,14 +523,16 @@ class UserGroupManager implements IDBAccessObject {
 	 * This function evaluates the former type recursively, and passes off to
 	 * checkCondition for evaluation of the latter type.
 	 *
+	 * If you change the logic of this method, please update
+	 * ApiQuerySiteinfo::appendAutoPromote(), as it depends on this method.
+	 *
 	 * @param mixed $cond A condition, possibly containing other conditions
 	 * @param User $user The user to check the conditions against
+	 *
 	 * @return bool Whether the condition is true
 	 */
 	private function recCheckCondition( $cond, User $user ): bool {
-		$validOps = [ '&', '|', '^', '!' ];
-
-		if ( is_array( $cond ) && count( $cond ) >= 2 && in_array( $cond[0], $validOps ) ) {
+		if ( is_array( $cond ) && count( $cond ) >= 2 && in_array( $cond[0], self::VALID_OPS ) ) {
 			// Recursive condition
 			if ( $cond[0] == '&' ) { // AND (all conds pass)
 				foreach ( array_slice( $cond, 1 ) as $subcond ) {
@@ -622,7 +631,7 @@ class UserGroupManager implements IDBAccessObject {
 				// we stop checking for ipblock-exempt via here. We do this by setting the second
 				// param to true.
 				// See T270145.
-				$block = $user->getBlock( Authority::READ_LATEST, true );
+				$block = $user->getBlock( IDBAccessObject::READ_LATEST, true );
 				return $block && $block->isSitewide();
 			case APCOND_ISBOT:
 				return in_array( 'bot', $this->groupPermissionsLookup
@@ -727,7 +736,7 @@ class UserGroupManager implements IDBAccessObject {
 	 */
 	public function getUserGroups(
 		UserIdentity $user,
-		int $queryFlags = self::READ_NORMAL
+		int $queryFlags = IDBAccessObject::READ_NORMAL
 	): array {
 		return array_keys( $this->getUserGroupMemberships( $user, $queryFlags ) );
 	}
@@ -742,7 +751,7 @@ class UserGroupManager implements IDBAccessObject {
 	 */
 	public function getUserGroupMemberships(
 		UserIdentity $user,
-		int $queryFlags = self::READ_NORMAL
+		int $queryFlags = IDBAccessObject::READ_NORMAL
 	): array {
 		$user->assertWiki( $this->wikiId );
 		$userKey = $this->getCacheKey( $user );
@@ -832,7 +841,7 @@ class UserGroupManager implements IDBAccessObject {
 			}
 		}
 
-		$oldUgms = $this->getUserGroupMemberships( $user, self::READ_LATEST );
+		$oldUgms = $this->getUserGroupMemberships( $user, IDBAccessObject::READ_LATEST );
 		$dbw = $this->dbProvider->getPrimaryDatabase( $this->wikiId );
 
 		$dbw->startAtomic( __METHOD__ );
@@ -857,11 +866,12 @@ class UserGroupManager implements IDBAccessObject {
 			if ( $allowUpdate ) {
 				// Update the current row if its expiry does not match that of the loaded row
 				$conds[] = $expiry
-					? "ug_expiry IS NULL OR ug_expiry != {$dbw->addQuotes( $dbw->timestamp( $expiry ) )}"
-					: 'ug_expiry IS NOT NULL';
+					? $dbw->expr( 'ug_expiry', '=', null )
+						  ->or( 'ug_expiry', '!=', $dbw->timestamp( $expiry ) )
+					: $dbw->expr( 'ug_expiry', '!=', null );
 			} else {
 				// Update the current row if it is expired
-				$conds[] = "ug_expiry < {$dbw->addQuotes( $dbw->timestamp() )}";
+				$conds[] = $dbw->expr( 'ug_expiry', '<', $dbw->timestamp() );
 			}
 			$dbw->newUpdateQueryBuilder()
 				->update( 'user_groups' )
@@ -879,7 +889,7 @@ class UserGroupManager implements IDBAccessObject {
 			$hasExpiredRow = (bool)$dbr->newSelectQueryBuilder()
 				->select( '1' )
 				->from( 'user_groups' )
-				->where( [ 'ug_expiry < ' . $dbr->addQuotes( $dbr->timestamp() ) ] )
+				->where( [ $dbr->expr( 'ug_expiry', '<', $dbr->timestamp() ) ] )
 				->caller( $fname )->fetchField();
 			if ( $hasExpiredRow ) {
 				$this->jobQueueGroup->push( new UserGroupExpiryJob( [] ) );
@@ -893,7 +903,7 @@ class UserGroupManager implements IDBAccessObject {
 					$this->getCacheKey( $user ),
 					self::CACHE_MEMBERSHIP,
 					$oldUgms,
-					self::READ_LATEST
+					IDBAccessObject::READ_LATEST
 				);
 				$this->clearUserCacheForKind( $user, self::CACHE_EFFECTIVE );
 			}
@@ -960,8 +970,8 @@ class UserGroupManager implements IDBAccessObject {
 			);
 		}
 
-		$oldUgms = $this->getUserGroupMemberships( $user, self::READ_LATEST );
-		$oldFormerGroups = $this->getUserFormerGroups( $user, self::READ_LATEST );
+		$oldUgms = $this->getUserGroupMemberships( $user, IDBAccessObject::READ_LATEST );
+		$oldFormerGroups = $this->getUserFormerGroups( $user, IDBAccessObject::READ_LATEST );
 		$dbw = $this->dbProvider->getPrimaryDatabase( $this->wikiId );
 		$dbw->newDeleteQueryBuilder()
 			->deleteFrom( 'user_groups' )
@@ -980,9 +990,9 @@ class UserGroupManager implements IDBAccessObject {
 
 		unset( $oldUgms[$group] );
 		$userKey = $this->getCacheKey( $user );
-		$this->setCache( $userKey, self::CACHE_MEMBERSHIP, $oldUgms, self::READ_LATEST );
+		$this->setCache( $userKey, self::CACHE_MEMBERSHIP, $oldUgms, IDBAccessObject::READ_LATEST );
 		$oldFormerGroups[] = $group;
-		$this->setCache( $userKey, self::CACHE_FORMER, $oldFormerGroups, self::READ_LATEST );
+		$this->setCache( $userKey, self::CACHE_FORMER, $oldFormerGroups, IDBAccessObject::READ_LATEST );
 		$this->clearUserCacheForKind( $user, self::CACHE_EFFECTIVE );
 		foreach ( $this->clearCacheCallbacks as $callback ) {
 			$callback( $user );
@@ -1033,7 +1043,7 @@ class UserGroupManager implements IDBAccessObject {
 		do {
 			$dbw->startAtomic( __METHOD__ );
 			$res = $this->newQueryBuilder( $dbw )
-				->where( [ 'ug_expiry < ' . $dbw->addQuotes( $dbw->timestamp( $now ) ) ] )
+				->where( [ $dbw->expr( 'ug_expiry', '<', $dbw->timestamp( $now ) ) ] )
 				->forUpdate()
 				->limit( 100 )
 				->caller( __METHOD__ )
@@ -1044,15 +1054,14 @@ class UserGroupManager implements IDBAccessObject {
 				$deleteCond = []; // array for deleting the rows that are to be moved around
 				foreach ( $res as $row ) {
 					$insertData[] = [ 'ufg_user' => $row->ug_user, 'ufg_group' => $row->ug_group ];
-					$deleteCond[] = $dbw->makeList(
-						[ 'ug_user' => $row->ug_user, 'ug_group' => $row->ug_group ],
-						$dbw::LIST_AND
-					);
+					$deleteCond[] = $dbw
+						->expr( 'ug_user', '=', $row->ug_user )
+						->and( 'ug_group', '=', $row->ug_group );
 				}
 				// Delete the rows we're about to move
 				$dbw->newDeleteQueryBuilder()
 					->deleteFrom( 'user_groups' )
-					->where( $dbw->makeList( $deleteCond, $dbw::LIST_OR ) )
+					->where( new OrExpressionGroup( ...$deleteCond ) )
 					->caller( __METHOD__ )->execute();
 				// Push the groups to user_former_groups
 				$dbw->newInsertQueryBuilder()
@@ -1127,6 +1136,7 @@ class UserGroupManager implements IDBAccessObject {
 	 *  'add-self' => [ addablegroups to self ],
 	 *  'remove-self' => [ removable groups from self ]
 	 * ]
+	 * @phan-return array{add:list<string>,remove:list<string>,add-self:list<string>,remove-self:list<string>}
 	 */
 	public function getGroupsChangeableBy( Authority $authority ): array {
 		if ( $authority->isAllowed( 'userrights' ) ) {
@@ -1207,16 +1217,14 @@ class UserGroupManager implements IDBAccessObject {
 	}
 
 	/**
-	 * @param int $queryFlags a bit field composed of READ_XXX flags
+	 * @param int $recency a bit field composed of IDBAccessObject::READ_XXX flags
 	 * @return IReadableDatabase
 	 */
-	private function getDBConnectionRefForQueryFlags( int $queryFlags ): IReadableDatabase {
-		[ $mode, ] = DBAccessObjectUtils::getDBOptions( $queryFlags );
-		if ( $mode === DB_PRIMARY ) {
+	private function getDBConnectionRefForQueryFlags( int $recency ): IReadableDatabase {
+		if ( ( IDBAccessObject::READ_LATEST & $recency ) == IDBAccessObject::READ_LATEST ) {
 			return $this->dbProvider->getPrimaryDatabase( $this->wikiId );
-		} else {
-			return $this->dbProvider->getReplicaDatabase( $this->wikiId );
 		}
+		return $this->dbProvider->getReplicaDatabase( $this->wikiId );
 	}
 
 	/**
@@ -1245,11 +1253,11 @@ class UserGroupManager implements IDBAccessObject {
 			// so $queryFlags are ignored.
 			return true;
 		}
-		if ( $queryFlags >= self::READ_LOCKING ) {
+		if ( $queryFlags >= IDBAccessObject::READ_LOCKING ) {
 			return false;
 		}
 		$userKey = $this->getCacheKey( $user );
-		$queryFlagsUsed = $this->queryFlagsUsedForCaching[$userKey][$cacheKind] ?? self::READ_NONE;
+		$queryFlagsUsed = $this->queryFlagsUsedForCaching[$userKey][$cacheKind] ?? IDBAccessObject::READ_NONE;
 		return $queryFlagsUsed >= $queryFlags;
 	}
 }

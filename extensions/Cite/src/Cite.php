@@ -24,12 +24,16 @@
 
 namespace Cite;
 
-use Html;
 use LogicException;
+use MediaWiki\Html\Html;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use Parser;
-use Sanitizer;
 use StatusValue;
 
+/**
+ * @license GPL-2.0-or-later
+ */
 class Cite {
 
 	public const DEFAULT_GROUP = '';
@@ -46,14 +50,14 @@ class Cite {
 
 	private bool $isSectionPreview;
 	private FootnoteMarkFormatter $footnoteMarkFormatter;
-	private ReferencesFormatter $referencesFormatter;
+	private ReferenceListFormatter $referenceListFormatter;
 	private ErrorReporter $errorReporter;
 
 	/**
 	 * True when a <ref> tag is being processed.
 	 * Used to avoid infinite recursion
 	 */
-	private bool $mInCite = false;
+	private bool $inRefTag = false;
 
 	/**
 	 * @var null|string The current group name while parsing nested <ref> in <references>. Null when
@@ -63,26 +67,23 @@ class Cite {
 
 	/**
 	 * Error stack used when defining refs in <references>
-	 * @var string[]
 	 */
-	private array $mReferencesErrors = [];
+	private StatusValue $mReferencesErrors;
 	private ReferenceStack $referenceStack;
 
-	/**
-	 * @param Parser $parser
-	 */
 	public function __construct( Parser $parser ) {
 		$this->isSectionPreview = $parser->getOptions()->getIsSectionPreview();
 		$messageLocalizer = new ReferenceMessageLocalizer( $parser->getContentLanguage() );
 		$this->errorReporter = new ErrorReporter( $messageLocalizer );
-		$this->referenceStack = new ReferenceStack( $this->errorReporter );
-		$anchorFormatter = new AnchorFormatter( $messageLocalizer );
+		$this->mReferencesErrors = StatusValue::newGood();
+		$this->referenceStack = new ReferenceStack();
+		$anchorFormatter = new AnchorFormatter();
 		$this->footnoteMarkFormatter = new FootnoteMarkFormatter(
 			$this->errorReporter,
 			$anchorFormatter,
 			$messageLocalizer
 		);
-		$this->referencesFormatter = new ReferencesFormatter(
+		$this->referenceListFormatter = new ReferenceListFormatter(
 			$this->errorReporter,
 			$anchorFormatter,
 			$messageLocalizer
@@ -99,171 +100,15 @@ class Cite {
 	 * @return string|null Null in case a <ref> tag is not allowed in the current context
 	 */
 	public function ref( Parser $parser, ?string $text, array $argv ): ?string {
-		if ( $this->mInCite ) {
+		if ( $this->inRefTag ) {
 			return null;
 		}
 
-		$this->mInCite = true;
+		$this->inRefTag = true;
 		$ret = $this->guardedRef( $parser, $text, $argv );
-		$this->mInCite = false;
+		$this->inRefTag = false;
 
 		return $ret;
-	}
-
-	/**
-	 * @param ?string $text
-	 * @param string $group
-	 * @param ?string $name
-	 * @param ?string $extends
-	 * @param ?string $follow
-	 * @param ?string $dir
-	 *
-	 * @return StatusValue
-	 */
-	private function validateRef(
-		?string $text,
-		string $group,
-		?string $name,
-		?string $extends,
-		?string $follow,
-		?string $dir
-	): StatusValue {
-		if ( ctype_digit( (string)$name )
-			|| ctype_digit( (string)$extends )
-			|| ctype_digit( (string)$follow )
-		) {
-			// Numeric names mess up the resulting id's, potentially producing
-			// duplicate id's in the XHTML.  The Right Thing To Do
-			// would be to mangle them, but it's not really high-priority
-			// (and would produce weird id's anyway).
-			return StatusValue::newFatal( 'cite_error_ref_numeric_key' );
-		}
-
-		if ( $extends ) {
-			// Temporary feature flag until mainstreamed, see T236255
-			global $wgCiteBookReferencing;
-			if ( !$wgCiteBookReferencing ) {
-				return StatusValue::newFatal( 'cite_error_ref_too_many_keys' );
-			}
-
-			$groupRefs = $this->referenceStack->getGroupRefs( $group );
-			if ( isset( $groupRefs[$name] ) && !isset( $groupRefs[$name]['extends'] ) ) {
-				// T242141: A top-level <ref> can't be changed into a sub-reference
-				return StatusValue::newFatal( 'cite_error_references_duplicate_key', $name );
-			} elseif ( isset( $groupRefs[$extends]['extends'] ) ) {
-				// A sub-reference can not be extended a second time (no nesting)
-				return StatusValue::newFatal( 'cite_error_ref_nested_extends', $extends,
-					$groupRefs[$extends]['extends'] );
-			}
-		}
-
-		if ( $follow && ( $name || $extends ) ) {
-			// TODO: Introduce a specific error for this case.
-			return StatusValue::newFatal( 'cite_error_ref_too_many_keys' );
-		}
-
-		if ( $dir !== null && !in_array( strtolower( $dir ), [ 'ltr', 'rtl' ], true ) ) {
-			return StatusValue::newFatal( 'cite_error_ref_invalid_dir', $dir );
-		}
-
-		return $this->inReferencesGroup === null ?
-			$this->validateRefOutsideOfReferences( $text, $name ) :
-			$this->validateRefInReferences( $text, $group, $name );
-	}
-
-	/**
-	 * @param ?string $text
-	 * @param ?string $name
-	 *
-	 * @return StatusValue
-	 */
-	private function validateRefOutsideOfReferences(
-		?string $text,
-		?string $name
-	): StatusValue {
-		if ( !$name ) {
-			if ( $text === null ) {
-				// Completely empty ref like <ref /> is forbidden.
-				return StatusValue::newFatal( 'cite_error_ref_no_key' );
-			} elseif ( trim( $text ) === '' ) {
-				// Must have content or reuse another ref by name.
-				return StatusValue::newFatal( 'cite_error_ref_no_input' );
-			}
-		}
-
-		if ( $text !== null && preg_match(
-			'/<ref(erences)?\b[^>]*+>/i',
-			preg_replace( '#<(\w++)[^>]*+>.*?</\1\s*>|<!--.*?-->#s', '', $text )
-		) ) {
-			// (bug T8199) This most likely implies that someone left off the
-			// closing </ref> tag, which will cause the entire article to be
-			// eaten up until the next <ref>.  So we bail out early instead.
-			// The fancy regex above first tries chopping out anything that
-			// looks like a comment or SGML tag, which is a crude way to avoid
-			// false alarms for <nowiki>, <pre>, etc.
-			//
-			// Possible improvement: print the warning, followed by the contents
-			// of the <ref> tag.  This way no part of the article will be eaten
-			// even temporarily.
-			return StatusValue::newFatal( 'cite_error_included_ref' );
-		}
-
-		return StatusValue::newGood();
-	}
-
-	/**
-	 * @param ?string $text
-	 * @param string $group
-	 * @param ?string $name
-	 *
-	 * @return StatusValue
-	 */
-	private function validateRefInReferences(
-		?string $text,
-		string $group,
-		?string $name
-	): StatusValue {
-		if ( $group !== $this->inReferencesGroup ) {
-			// <ref> and <references> have conflicting group attributes.
-			return StatusValue::newFatal( 'cite_error_references_group_mismatch',
-				Sanitizer::safeEncodeAttribute( $group ) );
-		}
-
-		if ( !$name ) {
-			// <ref> calls inside <references> must be named
-			return StatusValue::newFatal( 'cite_error_references_no_key' );
-		}
-
-		if ( $text === null || trim( $text ) === '' ) {
-			// <ref> called in <references> has no content.
-			return StatusValue::newFatal(
-				'cite_error_empty_references_define',
-				Sanitizer::safeEncodeAttribute( $name ),
-				Sanitizer::safeEncodeAttribute( $group )
-			);
-		}
-
-		// Section previews are exempt from some rules.
-		if ( !$this->isSectionPreview ) {
-			if ( !$this->referenceStack->hasGroup( $group ) ) {
-				// Called with group attribute not defined in text.
-				return StatusValue::newFatal(
-					'cite_error_references_missing_group',
-					Sanitizer::safeEncodeAttribute( $group ),
-					Sanitizer::safeEncodeAttribute( $name )
-				);
-			}
-
-			$groupRefs = $this->referenceStack->getGroupRefs( $group );
-
-			if ( !isset( $groupRefs[$name] ) ) {
-				// No such named ref exists in this group.
-				return StatusValue::newFatal( 'cite_error_references_missing_key',
-					Sanitizer::safeEncodeAttribute( $name ) );
-			}
-		}
-
-		return StatusValue::newGood();
 	}
 
 	/**
@@ -290,52 +135,29 @@ class Cite {
 		);
 		$arguments = $status->getValue();
 		// Use the default group, or the references group when inside one.
-		if ( $arguments['group'] === null ) {
-			$arguments['group'] = $this->inReferencesGroup ?? self::DEFAULT_GROUP;
-		}
+		$arguments['group'] ??= $this->inReferencesGroup ?? self::DEFAULT_GROUP;
 
+		$validator = new Validator(
+			$this->referenceStack,
+			$this->inReferencesGroup,
+			$this->isSectionPreview,
+			MediaWikiServices::getInstance()->getMainConfig()->get( 'CiteBookReferencing' )
+		);
 		// @phan-suppress-next-line PhanParamTooFewUnpack No good way to document it.
-		$status->merge( $this->validateRef( $text, ...array_values( $arguments ) ) );
-
-		if ( !$status->isGood() && $this->inReferencesGroup !== null ) {
-			foreach ( $status->getErrors() as $error ) {
-				$this->mReferencesErrors[] = $this->errorReporter->halfParsed(
-					$parser,
-					$error['message'],
-					...$error['params']
-				);
-			}
-			return '';
-		}
+		$status->merge( $validator->validateRef( $text, ...array_values( $arguments ) ) );
 
 		// Validation cares about the difference between null and empty, but from here on we don't
 		if ( $text !== null && trim( $text ) === '' ) {
 			$text = null;
 		}
-		[ 'group' => $group, 'name' => $name ] = $arguments;
 
 		if ( $this->inReferencesGroup !== null ) {
-			$groupRefs = $this->referenceStack->getGroupRefs( $group );
-			if ( $text === null ) {
-				return '';
-			}
-
-			if ( !isset( $groupRefs[$name]['text'] ) ) {
-				$this->referenceStack->appendText( $group, $name, $text );
-			} elseif ( $groupRefs[$name]['text'] !== $text ) {
-				// two refs with same key and different content
-				// adds error message to the original ref
-				// TODO: report these errors the same way as the others, rather than a
-				//  special case to append to the second one's content.
-				$this->referenceStack->appendText(
-					$group,
-					$name,
-					' ' . $this->errorReporter->plain(
-						$parser,
-						'cite_error_references_duplicate_key',
-						$name
-					)
-				);
+			if ( !$status->isGood() ) {
+				// We know we are in the middle of a <references> tag and can't display errors in place
+				$this->mReferencesErrors->merge( $status );
+			} elseif ( $text !== null ) {
+				// Validation made sure we always have group and name while in <references>
+				$this->referenceStack->listDefinedRef( $arguments['group'], $arguments['name'], $text );
 			}
 			return '';
 		}
@@ -346,15 +168,14 @@ class Cite {
 			// FIXME: If we ever have multiple errors, these must all be presented to the user,
 			//  so they know what to correct.
 			// TODO: Make this nicer, see T238061
-			$error = $status->getErrors()[0];
-			return $this->errorReporter->halfParsed( $parser, $error['message'], ...$error['params'] );
+			return $this->errorReporter->firstError( $parser, $status );
 		}
 
 		// @phan-suppress-next-line PhanParamTooFewUnpack No good way to document it.
 		$ref = $this->referenceStack->pushRef(
-			$parser, $parser->getStripState(), $text, $argv, ...array_values( $arguments ) );
+			$parser->getStripState(), $text, $argv, ...array_values( $arguments ) );
 		return $ref
-			? $this->footnoteMarkFormatter->linkRef( $parser, $group, $ref )
+			? $this->footnoteMarkFormatter->linkRef( $parser, $arguments['group'], $ref )
 			: '';
 	}
 
@@ -366,11 +187,16 @@ class Cite {
 	 * parsed or default values.  Missing attributes will be `null`.
 	 */
 	private function parseArguments( array $argv, array $allowedAttributes ): StatusValue {
-		$maxCount = count( $allowedAttributes );
+		$expected = count( $allowedAttributes );
 		$allValues = array_merge( array_fill_keys( $allowedAttributes, null ), $argv );
-		$status = StatusValue::newGood( array_slice( $allValues, 0, $maxCount ) );
+		if ( isset( $allValues['dir'] ) ) {
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal False positive
+			$allValues['dir'] = strtolower( $allValues['dir'] );
+		}
 
-		if ( count( $allValues ) > $maxCount ) {
+		$status = StatusValue::newGood( array_slice( $allValues, 0, $expected ) );
+
+		if ( count( $allValues ) > $expected ) {
 			// A <ref> must have a name (can be null), but <references> can't have one
 			$status->fatal( in_array( 'name', $allowedAttributes, true )
 				? 'cite_error_ref_too_many_keys'
@@ -391,71 +217,79 @@ class Cite {
 	 * @return string|null Null in case a <references> tag is not allowed in the current context
 	 */
 	public function references( Parser $parser, ?string $text, array $argv ): ?string {
-		if ( $this->mInCite || $this->inReferencesGroup !== null ) {
+		if ( $this->inRefTag || $this->inReferencesGroup !== null ) {
 			return null;
 		}
 
-		$ret = $this->guardedReferences( $parser, $text, $argv );
+		$status = $this->parseArguments( $argv, [ 'group', 'responsive' ] );
+		$arguments = $status->getValue();
+
+		$this->inReferencesGroup = $arguments['group'] ?? self::DEFAULT_GROUP;
+
+		$status->merge( $this->parseReferencesTagContent( $parser, $text ) );
+		if ( !$status->isGood() ) {
+			$ret = $this->errorReporter->firstError( $parser, $status );
+		} else {
+			$responsive = $arguments['responsive'];
+			$ret = $this->formatReferences( $parser, $this->inReferencesGroup, $responsive );
+			// Append errors collected while {@see parseReferencesTagContent} processed <ref> tags
+			// in <references>
+			$ret .= $this->formatReferencesErrors( $parser );
+		}
+
 		$this->inReferencesGroup = null;
 
 		return $ret;
 	}
 
 	/**
-	 * Must only be called from references(). Use that to prevent recursion.
-	 *
 	 * @param Parser $parser
 	 * @param ?string $text Raw, untrimmed wikitext content of the <references> tag, if any
-	 * @param string[] $argv Arguments as given in <references …>, already trimmed
 	 *
-	 * @return string HTML
+	 * @return StatusValue
 	 */
-	private function guardedReferences(
-		Parser $parser,
-		?string $text,
-		array $argv
-	): string {
-		$status = $this->parseArguments( $argv, [ 'group', 'responsive' ] );
-		[ 'group' => $group, 'responsive' => $responsive ] = $status->getValue();
-		$this->inReferencesGroup = $group ?? self::DEFAULT_GROUP;
+	private function parseReferencesTagContent( Parser $parser, ?string $text ): StatusValue {
+		// Nothing to parse in an empty <references /> tag
+		if ( $text === null || trim( $text ) === '' ) {
+			return StatusValue::newGood();
+		}
 
-		if ( $text !== null && trim( $text ) !== '' ) {
-			if ( str_contains( $text, Parser::MARKER_PREFIX . "-references-" ) ) {
-				return $this->errorReporter->halfParsed( $parser, 'cite_error_included_references' );
+		if ( preg_match( '{' . preg_quote( Parser::MARKER_PREFIX ) . '-(?i:references)-}', $text ) ) {
+			return StatusValue::newFatal( 'cite_error_included_references' );
+		}
+
+		// Detect whether we were sent already rendered <ref>s. Mostly a side effect of using
+		// {{#tag:references}}. The following assumes that the parsed <ref>s sent within the
+		// <references> block were the most recent calls to <ref>. This assumption is true for
+		// all known use cases, but not strictly enforced by the parser. It is possible that
+		// some unusual combination of #tag, <references> and conditional parser functions could
+		// be created that would lead to malformed references here.
+		preg_match_all( '{' . preg_quote( Parser::MARKER_PREFIX ) . '-(?i:ref)-}', $text, $matches );
+		$count = count( $matches[0] );
+
+		// Undo effects of calling <ref> while unaware of being contained in <references>
+		foreach ( $this->referenceStack->rollbackRefs( $count ) as $call ) {
+			// Rerun <ref> call with the <references> context now being known
+			$this->guardedRef( $parser, ...$call );
+		}
+
+		// Parse the <references> content to process any unparsed <ref> tags, but drop the resulting
+		// HTML
+		$parser->recursiveTagParse( $text );
+
+		return StatusValue::newGood();
+	}
+
+	private function formatReferencesErrors( Parser $parser ): string {
+		$html = '';
+		foreach ( $this->mReferencesErrors->getErrors() as $error ) {
+			if ( $html ) {
+				$html .= "<br />\n";
 			}
-
-			// Detect whether we were sent already rendered <ref>s. Mostly a side effect of using
-			// {{#tag:references}}. The following assumes that the parsed <ref>s sent within the
-			// <references> block were the most recent calls to <ref>. This assumption is true for
-			// all known use cases, but not strictly enforced by the parser. It is possible that
-			// some unusual combination of #tag, <references> and conditional parser functions could
-			// be created that would lead to malformed references here.
-			$count = substr_count( $text, Parser::MARKER_PREFIX . "-ref-" );
-
-			// Undo effects of calling <ref> while unaware of being contained in <references>
-			foreach ( $this->referenceStack->rollbackRefs( $count ) as $call ) {
-				// Rerun <ref> call with the <references> context now being known
-				$this->guardedRef( $parser, ...$call );
-			}
-
-			// Parse the <references> content to process any unparsed <ref> tags
-			$parser->recursiveTagParse( $text );
+			$html .= $this->errorReporter->halfParsed( $parser, $error['message'], ...$error['params'] );
 		}
-
-		if ( !$status->isGood() ) {
-			// Bail out with an error.
-			$error = $status->getErrors()[0];
-			return $this->errorReporter->halfParsed( $parser, $error['message'], ...$error['params'] );
-		}
-
-		$s = $this->formatReferences( $parser, $this->inReferencesGroup, $responsive );
-
-		// Append errors generated while processing <references>
-		if ( $this->mReferencesErrors ) {
-			$s .= "\n" . implode( "<br />\n", $this->mReferencesErrors );
-			$this->mReferencesErrors = [];
-		}
-		return $s;
+		$this->mReferencesErrors = StatusValue::newGood();
+		return $html ? "\n$html" : '';
 	}
 
 	/**
@@ -472,7 +306,7 @@ class Cite {
 	): string {
 		global $wgCiteResponsiveReferences;
 
-		return $this->referencesFormatter->formatReferences(
+		return $this->referenceListFormatter->formatReferences(
 			$parser,
 			$this->referenceStack->popGroup( $group ),
 			$responsive !== null ? $responsive !== '0' : $wgCiteResponsiveReferences,

@@ -3,7 +3,7 @@
  * Generic backend for the MediaWiki parser test suite, used by both the
  * standalone parserTests.php and the PHPUnit "parsertests" suite.
  *
- * Copyright © 2004, 2010 Brion Vibber <brion@pobox.com>
+ * Copyright © 2004, 2010 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,8 @@
  * @ingroup Testing
  */
 
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
@@ -33,6 +35,8 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -49,6 +53,7 @@ use Psr\Log\NullLogger;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
+use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 use Wikimedia\Parsoid\Core\SelserData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
@@ -75,7 +80,7 @@ use Wikimedia\TestingAccessWrapper;
 class ParserTestRunner {
 
 	/**
-	 * @var array The status of each setup function
+	 * @var array<string,bool> The status of each setup function
 	 */
 	private $setupDone = [
 		'staticSetup' => false,
@@ -91,7 +96,7 @@ class ParserTestRunner {
 	private $options;
 
 	/**
-	 * @var array set of requested test modes
+	 * @var string[] Set of requested test modes
 	 */
 	private $requestedTestModes;
 
@@ -128,7 +133,7 @@ class ParserTestRunner {
 	/**
 	 * A list of normalization functions to apply to the expected and actual
 	 * output.
-	 * @var array
+	 * @var string[]
 	 */
 	private $normalizationFunctions = [];
 
@@ -169,7 +174,7 @@ class ParserTestRunner {
 	/**
 	 * Compute the set of valid test runner modes
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function getRequestedTestModes(): array {
 		return $this->requestedTestModes;
@@ -280,8 +285,8 @@ class ParserTestRunner {
 	/**
 	 * Get list of filenames to extension and core parser tests
 	 *
-	 * @param array $dirs
-	 * @return array
+	 * @param string[] $dirs
+	 * @return string[]
 	 */
 	public static function getParserTestFiles( array $dirs = [] ): array {
 		if ( $dirs ) {
@@ -330,7 +335,7 @@ class ParserTestRunner {
 		return array_unique( $files );
 	}
 
-	public function getRecorder() {
+	public function getRecorder(): TestRecorder {
 		return $this->recorder;
 	}
 
@@ -496,19 +501,6 @@ class ParserTestRunner {
 			MediaWikiServices::getInstance()->resetServiceForTesting( 'MediaHandlerFactory' );
 		};
 
-		// SqlBagOStuff broke when using temporary tables on r40209 (T17892).
-		// It seems to have been fixed since (r55079?), but regressed at some point before r85701.
-		// This works around it for now...
-		global $wgObjectCaches;
-		$setup['wgObjectCaches'] = [ CACHE_DB => $wgObjectCaches['hash'] ] + $wgObjectCaches;
-		if ( isset( ObjectCache::$instances[CACHE_DB] ) ) {
-			$savedCache = ObjectCache::$instances[CACHE_DB];
-			ObjectCache::$instances[CACHE_DB] = new HashBagOStuff;
-			$teardown[] = static function () use ( $savedCache ) {
-				ObjectCache::$instances[CACHE_DB] = $savedCache;
-			};
-		}
-
 		$teardown[] = $this->executeSetupSnippets( $setup );
 
 		// Schedule teardown snippets in reverse order
@@ -529,8 +521,10 @@ class ParserTestRunner {
 			MediaWikiServices::getInstance()->resetServiceForTesting( 'NamespaceInfo' );
 			MediaWikiServices::getInstance()->resetServiceForTesting( 'LanguageFactory' );
 			MediaWikiServices::getInstance()->resetServiceForTesting( 'ContentLanguage' );
-			MediaWikiServices::getInstance()->resetServiceForTesting( 'LinkCache' );
 			MediaWikiServices::getInstance()->resetServiceForTesting( 'LanguageConverterFactory' );
+			// Don't destroy the link cache, because various things hold a
+			// copy of it.  Just clear it.
+			MediaWikiServices::getInstance()->getLinkCache()->clear();
 		};
 		$setup[] = $reset;
 		$teardown[] = $reset;
@@ -776,6 +770,12 @@ class ParserTestRunner {
 				'iw_url' => 'https://gerrit.wikimedia.org/$1',
 				'iw_local' => 1,
 			],
+			// Added to support T145590#8608455
+			[
+				'iw_prefix' => 'pmid',
+				'iw_url' => '//www.ncbi.nlm.nih.gov/pubmed/$1?dopt=Abstract',
+				'iw_local' => 1,
+			],
 			// Deliberately missing a $1 in the URL to exercise a common
 			// misconfiguration.
 			[
@@ -833,7 +833,7 @@ class ParserTestRunner {
 	 * @return string
 	 */
 	public static function chomp( $s ) {
-		if ( substr( $s, -1 ) === "\n" ) {
+		if ( str_ends_with( $s, "\n" ) ) {
 			return substr( $s, 0, -1 );
 		} else {
 			return $s;
@@ -860,7 +860,7 @@ class ParserTestRunner {
 	 *
 	 * Handles all setup and teardown.
 	 *
-	 * @param array $filenames Array of strings
+	 * @param string[] $filenames
 	 * @return bool True if passed all tests, false if any tests failed.
 	 */
 	public function runTestsFromFiles( $filenames ) {
@@ -875,8 +875,12 @@ class ParserTestRunner {
 		try {
 			$ok = true;
 			$inParsoidMode = $this->options['parsoid'];
-			$legacyMode = $inParsoidMode ? null : new ParserTestMode( 'legacy' );
-			$skipMode = $inParsoidMode ? new ParserTestMode( 'parsoid' ) : $legacyMode;
+			if ( $inParsoidMode ) {
+				$legacyMode = null;
+				$skipMode = new ParserTestMode( 'parsoid' );
+			} else {
+				$legacyMode = $skipMode = new ParserTestMode( 'legacy' );
+			}
 
 			foreach ( $filenames as $filename ) {
 				$this->recorder->startSuite( $filename );
@@ -959,7 +963,7 @@ class ParserTestRunner {
 	/**
 	 * Determine whether the current parser has the hooks registered in it
 	 * that are required by a file read by TestFileReader.
-	 * @param array $requirements
+	 * @param array[] $requirements
 	 * @return bool
 	 */
 	public function meetsRequirements( $requirements ) {
@@ -1089,12 +1093,12 @@ class ParserTestRunner {
 
 	/**
 	 * Compute valid test modes based on requested modes and file-enabled modes
-	 * @param array $testModes
+	 * @param string[] $testModes
 	 * @param array $fileOptions
-	 * @return array
+	 * @return string[]
 	 */
 	public function computeValidTestModes( array $testModes, array $fileOptions ): array {
-		$modeRestriction = $fileOptions['parsoid-compatible'] ?? false;
+		$modeRestriction = $fileOptions['parsoid-compatible'] ?: false;
 		if ( $modeRestriction !== false ) {
 			if ( is_string( $modeRestriction ) ) {
 				// shorthand
@@ -1274,7 +1278,8 @@ class ParserTestRunner {
 	 * @param callable(IContextSource,LinkTarget,array):ParserOptions $parserOptionsCallback A callback to create the
 	 *   initial ParserOptions object.  This allows for some minor
 	 *   differences in how the legacy Parser and Parsoid create this.
-	 * @return array<LinkTarget,ParserOptions,int> An array of LinkTarget, ParserOptions, and integer revId.
+	 * @return array<LinkTarget|ParserOptions|int> An array of LinkTarget, ParserOptions, and integer revId.
+	 * @phan-return array{0:LinkTarget,1:ParserOptions,2:int}
 	 */
 	private function setupParserOptions( ParserTest $test, callable $parserOptionsCallback ) {
 		$opts = $test->options;
@@ -1395,9 +1400,9 @@ class ParserTestRunner {
 	 *
 	 * @param ParserTest $test The test parameters
 	 * @param ParserTestMode $mode The test mode
-	 * @return ParserTestResult|false false if skipped
+	 * @return ParserTestResult
 	 */
-	public function runLegacyTest( ParserTest $test, ParserTestMode $mode ) {
+	public function runLegacyTest( ParserTest $test, ParserTestMode $mode ): ParserTestResult {
 		$desc = ( $test->comment ?? '' ) . $test->testName;
 		wfDebug( __METHOD__ . ": running $desc" );
 		$teardownGuard = $this->perTestSetup( $test );
@@ -1456,7 +1461,7 @@ class ParserTestRunner {
 					'unwrap' => !isset( $opts['wrap'] ),
 					'skin' => $this->getSkin( $opts['skin'] ?? 'fallback' ),
 				] );
-				$out = preg_replace( '/\s+$/', '', $out );
+				$out = rtrim( $out );
 			}
 		}
 
@@ -1509,13 +1514,13 @@ class ParserTestRunner {
 	 * @param string &$out The "actual" parser output
 	 * @param ParserOutput $output The "actual" parser metadata
 	 * @param array $opts Test options
-	 * @param LinkTarget $title
+	 * @param ParsoidLinkTarget $title
 	 * @param ?string $metadataExpected The contents of the !!metadata section,
 	 *   or null if it is missing
 	 * @param ?string &$metadataActual The "actual" metadata output
 	 */
 	private function addParserOutputInfo(
-		&$out, ParserOutput $output, array $opts, LinkTarget $title,
+		&$out, ParserOutput $output, array $opts, ParsoidLinkTarget $title,
 		?string $metadataExpected, ?string &$metadataActual
 	) {
 		$before = [];
@@ -1525,7 +1530,12 @@ class ParserTestRunner {
 			if ( $output->getTitleText() ) {
 				$titleText = $output->getTitleText();
 			} else {
-				$titleText = MediaWikiServices::getInstance()->getTitleFormatter()->getPrefixedText( $title );
+				// TitleFormatter doesn't (yet) take ParsoidLinkTarget
+				// (which is identical to core's LinkTarget, but phan doesn't
+				// know that), so go through TitleValue for now.
+				$titleText = MediaWikiServices::getInstance()->getTitleFormatter()->getPrefixedText(
+					TitleValue::newFromLinkTarget( $title )
+				);
 			}
 			$before[] = $titleText;
 		}
@@ -1541,8 +1551,9 @@ class ParserTestRunner {
 		}
 
 		if ( isset( $opts['cat'] ) ) {
+			$defaultSortKey = $output->getPageProperty( 'defaultsort' ) ?? '';
 			foreach ( $output->getCategoryNames() as $name ) {
-				$sortkey = $output->getCategorySortKey( $name );
+				$sortkey = $output->getCategorySortKey( $name ) ?: $defaultSortKey;
 				$after[] = "cat=$name sort=$sortkey";
 			}
 		}
@@ -1597,6 +1608,9 @@ class ParserTestRunner {
 			if ( $tocData !== null ) {
 				$after[] = $tocData->prettyPrint();
 			}
+		}
+		if ( isset( $opts['showmedia'] ) ) {
+			$after[] = 'images=' . implode( ', ', array_keys( $output->getImages() ) );
 		}
 		if ( $metadataExpected === null ) {
 			// legacy format, add $before and $after to $out
@@ -1748,7 +1762,7 @@ class ParserTestRunner {
 		$titleParser = MediaWikiServices::getInstance()->getTitleParser();
 		$this->addParserOutputInfo(
 			$origOut, $metadata, $test->options,
-			$titleParser->parseTitle( $pageConfig->getTitle() ),
+			$pageConfig->getLinkTarget(),
 			$metadataExpected, $metadataActual
 		);
 
@@ -2005,11 +2019,17 @@ class ParserTestRunner {
 	 * @return ParserTestResult|false false if skipped
 	 */
 	private function selserAutoEditComposite( Parsoid $parsoid, PageConfig $pageConfig, ParserTest $test, ParserTestMode $mode ) {
+		$html = $test->sections['html/parsoid+integrated'] ?? $test->parsoidHtml;
+		if ( $html === null ) {
+			// We currently don't run this in standalone mode.
+			// The expectation is to add html/parsoid sections
+			// if we want to run these tests.
+			return false;
+		}
 		Assert::invariant(
 			$test->wikitext !== null,
 			"All tests include a wikitext section"
 		);
-		$runnerOpts = $this->getOptions();
 
 		if ( $test->changetree ) {
 			// Apply edits to the HTML.
@@ -2024,7 +2044,8 @@ class ParserTestRunner {
 		} else {
 			// this mode is a composite of multiple selser tests
 			$mode = new ParserTestMode( "selserAutoEdits" );
-			$numChanges = $runnerOpts['numchanges'] ?? 20; // default in Parsoid
+			$runnerOpts = $this->getOptions();
+			$numChanges = $runnerOpts['numchanges'] ?: 20; // default in Parsoid
 			$bufOut = "";
 			$bufExpected = "";
 			for ( $i = 0; $i < $numChanges; $i++ ) {
@@ -2183,6 +2204,14 @@ class ParserTestRunner {
 			case 'selser-auto':
 				$test->changetree = $mode->changetree;
 				$res = $this->selserAutoEdit( $parsoid, $pageConfig, $test, $mode );
+				if ( $res === false && !$test->changetree ) {
+					// TEMPORARY HACK
+					// If we don't run any selser tests, ensure changetree is not null
+					// because we are going to call Test::isDuplicateChangeTree() on it
+					// This ensures that we continue to crash if change tree is null
+					// for any other reason!
+					$test->changetree = [];
+				}
 				// Don't reset changetree here -- it is used to detect duplicate trees
 				// and stop selser test generation in Test.php::testAllModes
 				break;
@@ -2230,8 +2259,10 @@ class ParserTestRunner {
 		// Find out values for some special options.
 		$langCode =
 			self::getOptionValue( 'language', $opts, 'en' );
-		$variant =
+		$variant = // old deprecated option name
 			self::getOptionValue( 'variant', $opts, false );
+		$variant =
+			self::getOptionValue( 'htmlVariantLanguage', $opts, $variant );
 		$maxtoclevel =
 			self::getOptionValue( 'wgMaxTocLevel', $opts, 999 );
 		$linkHolderBatchSize =
@@ -2673,7 +2704,7 @@ class ParserTestRunner {
 
 	/**
 	 * Delete the specified files and their parent directories
-	 * @param array $files File backend URIs mwstore://...
+	 * @param string[] $files File backend URIs mwstore://...
 	 */
 	private function deleteFiles( $files ) {
 		// Delete the files
@@ -2722,20 +2753,22 @@ class ParserTestRunner {
 		// Avoid reuse of lazy-loaded Title::mArticleId after page creation
 		Title::clearCaches();
 
-		// Reset the service so that any "MediaWiki:bad image list" articles
-		// added get fetched
-		$teardown[] = static function () use ( $services ) {
+		$reset = static function () use ( $services ) {
+			// Reset the service so that any "MediaWiki:bad image list" articles
+			// added get fetched
 			$services->resetServiceForTesting( 'BadFileLookup' );
 			// Depends on BadFileLookup, also reset here in case it no longer
 			// depends on the legacy ParserFactory which reset per test.
 			$services->resetServiceForTesting( 'ParsoidDataAccess' );
 		};
+		$reset();
 
-		$this->executeSetupSnippets( $teardown );
-
-		return $this->createTeardownObject( [ function () use ( $articles ) {
+		$teardown[] = $reset;
+		$teardown[] = function () use ( $articles ) {
 			$this->cleanupArticles( $articles );
-		} ], $nextTeardown );
+		};
+
+		return $this->createTeardownObject( $teardown, $nextTeardown );
 	}
 
 	/**
@@ -2798,7 +2831,7 @@ class ParserTestRunner {
 		$performer = new UltimateAuthority( new UserIdentityValue( 0, User::MAINTENANCE_SCRIPT_USER ) );
 
 		$page = $services->getWikiPageFactory()->newFromLinkTarget( $title );
-		$page->loadPageData( WikiPage::READ_LATEST );
+		$page->loadPageData( IDBAccessObject::READ_LATEST );
 		$newContent = $page->getContentHandler()->unserializeContent( $text );
 
 		if ( $page->exists() ) {
@@ -2848,7 +2881,7 @@ class ParserTestRunner {
 		}
 
 		if ( !$status->isOK() ) {
-			throw new RuntimeException( $status->getWikiText( false, false, 'en' ) );
+			throw new RuntimeException( $status->__toString() );
 		}
 
 		// an edit always attempt to purge backlink links such as history

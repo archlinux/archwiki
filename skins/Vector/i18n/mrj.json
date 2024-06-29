@@ -18,13 +18,20 @@
 	"vector-view-view": "Лыдмаш",
 	"vector-view-viewsource": "Сек пӹтӓриш кодым анжалаш",
 	"vector-more-actions": "Эче",
+	"vector-feature-limited-width-name": "Кымдык",
+	"vector-feature-custom-font-size-name": "Текст",
+	"vector-feature-limited-width-0-label": "Кымда",
+	"vector-feature-limited-width-1-label": "Стандарт",
+	"vector-feature-custom-font-size-0-label": "Изи",
+	"vector-feature-custom-font-size-1-label": "Стандартный",
+	"vector-feature-custom-font-size-2-label": "Кого",
+	"skin-theme-name": "Цӹре",
+	"skin-theme-os-label": "Автоматически",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> шамакан страницӓвлӓм кӹчӓлмӓш",
 	"vector-toc-label": "Контент",
 	"vector-toc-beginning": "Тӹнгӓлтӹш",
 	"vector-main-menu-label": "Тӹнг меню",
 	"vector-page-tools-label": "Хӓдӹрвлӓ",
 	"vector-page-tools-general-label": "Цымыр",
-	"vector-unpin-element-label": "шӹлтӓш",
-	"vector-readability-survey-fontSize": "Шрифтӹн размержӹ",
-	"vector-readability-survey-paragraphSpacing": "Абзацвлӓ лошты интервал"
+	"vector-unpin-element-label": "шӹлтӓш"
 }

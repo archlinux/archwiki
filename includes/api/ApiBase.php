@@ -23,6 +23,8 @@
 use MediaWiki\Api\ApiHookRunner;
 use MediaWiki\Api\Validator\SubmoduleDef;
 use MediaWiki\Block\Block;
+use MediaWiki\Context\ContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
@@ -259,6 +261,8 @@ abstract class ApiBase extends ContextSource {
 		'autoblockedtext' => true,
 		'systemblockedtext' => true,
 		'blockedtext-composite' => true,
+		'blockedtext-tempuser' => true,
+		'autoblockedtext-tempuser' => true,
 	];
 
 	/** @var array Map of web UI block messages to corresponding API messages and codes */
@@ -691,7 +695,7 @@ abstract class ApiBase extends ContextSource {
 	protected function getDB() {
 		if ( !isset( $this->mReplicaDB ) ) {
 			$this->mReplicaDB = MediaWikiServices::getInstance()
-				->getDBLoadBalancerFactory()
+				->getConnectionProvider()
 				->getReplicaDatabase( false, 'api' );
 		}
 
@@ -1032,6 +1036,20 @@ abstract class ApiBase extends ContextSource {
 	 * @param string $prefix Set to 'noprefix' to skip calling $this->encodeParamName()
 	 */
 	public function requirePostedParameters( $params, $prefix = 'prefix' ) {
+		if ( !$this->mustBePosted() ) {
+			// In order to allow client code to choose the correct method (GET or POST) depending *only*
+			// on mustBePosted(), make sure that the module requires posting if any of its potential
+			// parameters require posting.
+
+			// TODO: Uncomment this
+			// throw new LogicException( 'mustBePosted() must be true when using requirePostedParameters()' );
+
+			// This seems to already be the case in all modules in practice, but deprecate it first just
+			// in case.
+			wfDeprecatedMsg( 'mustBePosted() must be true when using requirePostedParameters()',
+				'1.42' );
+		}
+
 		// Skip if $wgDebugAPI is set, or if we're in internal mode
 		if ( $this->getConfig()->get( MainConfigNames::DebugAPI ) ||
 		$this->getMain()->isInternalMode() ) {
@@ -1404,7 +1422,7 @@ abstract class ApiBase extends ContextSource {
 			$max = max( $max, $row->max_id );
 		}
 		return array_filter( $ids, static function ( $id ) use ( $min, $max ) {
-			return ( is_int( $id ) && $id >= 0 || ctype_digit( (string)$id ) )
+			return ( ( is_int( $id ) && $id >= 0 ) || ctype_digit( (string)$id ) )
 				&& $id >= $min && $id <= $max;
 		} );
 	}
@@ -1542,12 +1560,13 @@ abstract class ApiBase extends ContextSource {
 	 * @return never
 	 */
 	public function dieBlocked( Block $block ) {
-		$blockErrorFormatter = MediaWikiServices::getInstance()->getBlockErrorFormatter();
+		$blockErrorFormatter = MediaWikiServices::getInstance()->getFormatterFactory()
+			->getBlockErrorFormatter( $this->getContext() );
 
 		$msg = $blockErrorFormatter->getMessage(
 			$block,
 			$this->getUser(),
-			$this->getLanguage(),
+			null,
 			$this->getRequest()->getIP()
 		);
 
@@ -1569,7 +1588,7 @@ abstract class ApiBase extends ContextSource {
 	 */
 	public function dieStatus( StatusValue $status ) {
 		if ( $status->isGood() ) {
-			throw new LogicException( 'Successful status passed to ApiBase::dieStatus' );
+			throw new InvalidArgumentException( 'Successful status passed to ApiBase::dieStatus' );
 		}
 
 		foreach ( self::MESSAGE_CODE_MAP as $msg => [ $apiMsg, $code ] ) {
@@ -1687,7 +1706,7 @@ abstract class ApiBase extends ContextSource {
 	 */
 	public function dieWithErrorOrDebug( $msg, $code = null, $data = null, $httpCode = null ) {
 		if ( $this->getConfig()->get( MainConfigNames::DebugAPI ) !== true ) {
-			$this->dieWithError( $msg, $code, $data, $httpCode );
+			$this->dieWithError( $msg, $code, $data, $httpCode ?? 0 );
 		} else {
 			$this->addWarning( $msg, $code, $data );
 		}
@@ -1753,7 +1772,6 @@ abstract class ApiBase extends ContextSource {
 	 *
 	 * @param string $method Method or function name
 	 * @param string $message Error message
-	 * @throws MWException always
 	 * @return never
 	 */
 	protected static function dieDebug( $method, $message ) {
@@ -2176,7 +2194,7 @@ abstract class ApiBase extends ContextSource {
 	 * @param string[] &$help Array of help data
 	 * @param array $options Options passed to ApiHelp::getHelp
 	 * @param array &$tocData If a TOC is being generated, this array has keys
-	 *   as anchors in the page and values as for Linker::generateTOC().
+	 *   as anchors in the page and values as for SectionMetadata::fromLegacy().
 	 */
 	public function modifyHelp( array &$help, array $options, array &$tocData ) {
 	}

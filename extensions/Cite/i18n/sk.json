@@ -21,7 +21,6 @@
 	"cite_error_included_ref": "Chýba zakončenie značky <code>&lt;ref&gt;</code> (<code>&lt;/ref&gt;</code>)",
 	"cite_error_group_refs_without_references": "Značky <code>&lt;ref&gt;</code> pre skupinu „$1“ sú prítomné, ale nebola nájdená zodpovedajúca značka  <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "Značka <code>&lt;ref&gt;</code> v <code>&lt;references&gt;</code> má konfliktný atribút skupiny „$1“.",
-	"cite_error_references_missing_group": "Značka <code>&lt;ref&gt;</code> v <code>&lt;references&gt;</code> má atribút skupiny „$1“, ktorý sa v predošlom texte nevyskytuje.",
 	"cite_error_references_missing_key": "Značka <code>&lt;ref&gt;</code> s názvom „$1“ definovaná v <code>&lt;references&gt;</code> sa v predošlom texte nevyskytuje.",
 	"cite_error_references_no_key": "Značka <code>&lt;ref&gt;</code> s definovaná v <code>&lt;references&gt;</code> nemá žiaden atribút názov.",
 	"cite_error_empty_references_define": "Značka <code>&lt;ref&gt;</code> s definovaná v <code>&lt;references&gt;</code> s názvom „$1“ nemá žiaden obsah.",

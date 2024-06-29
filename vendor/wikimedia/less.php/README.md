@@ -75,3 +75,8 @@ Less.php can be used with [Drupal's less module](https://drupal.org/project/less
 ## Credits
 
 Less.php was originally ported to PHP in 2011 by [Matt Agar](https://github.com/agar) and then updated by [Martin Jantošovič](https://github.com/Mordred) in 2012. From 2013 to 2017, [Josh Schmidt](https://github.com/oyejorge) lead development of the library. Since 2019, the library is maintained by Wikimedia Foundation.
+
+## Contribute
+
+* Issue tracker: https://phabricator.wikimedia.org/tag/less.php/
+* Source code: https://gerrit.wikimedia.org/g/mediawiki/libs/less.php ([Get started with Gerrit](https://www.mediawiki.org/wiki/Gerrit/Tutorial/tl;dr))

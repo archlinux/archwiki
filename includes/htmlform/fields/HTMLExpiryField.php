@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\HTMLForm\Field;
+
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWiki\Widget\ExpiryInputWidget;
 
 /**
@@ -66,6 +70,10 @@ class HTMLExpiryField extends HTMLFormField {
 		);
 	}
 
+	public function getInputCodex( $value, $hasErrors ) {
+		return $this->relativeField->getInputCodex( $value, $hasErrors );
+	}
+
 	/**
 	 * @inheritDoc
 	 */
@@ -91,3 +99,6 @@ class HTMLExpiryField extends HTMLFormField {
 	}
 
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( HTMLExpiryField::class, 'HTMLExpiryField' );

@@ -13,11 +13,10 @@ use MediaWiki\Rest\ResponseInterface;
 use MediaWiki\Rest\Router;
 use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\Session\Session;
+use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
-use Wikimedia\Message\ITextFormatter;
-use Wikimedia\Message\MessageValue;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Services\ServiceContainer;
 
@@ -30,19 +29,22 @@ use Wikimedia\Services\ServiceContainer;
  * @package MediaWiki\Tests\Rest\Handler
  */
 trait HandlerTestTrait {
+	use DummyServicesTrait;
 	use MockAuthorityTrait;
 	use SessionHelperTestTrait;
 
 	/**
 	 * Calls init() on the Handler, supplying a mock Router and ResponseFactory.
 	 *
-	 * @internal to the trait
 	 * @param Handler $handler
 	 * @param RequestInterface $request
 	 * @param array $config
 	 * @param HookContainer|array $hooks Hook container or array of hooks
 	 * @param Authority|null $authority
 	 * @param Session|null $session Defaults to `$this->getSession( true )`
+	 * @param Router|null $router
+	 *
+	 * @internal to the trait
 	 */
 	private function initHandler(
 		Handler $handler,
@@ -50,29 +52,38 @@ trait HandlerTestTrait {
 		$config = [],
 		$hooks = [],
 		Authority $authority = null,
-		Session $session = null
+		Session $session = null,
+		Router $router = null
 	) {
-		$formatter = new class implements ITextFormatter {
-			public function getLangCode() {
-				return 'qqx';
-			}
-
-			public function format( MessageValue $message ) {
-				return $message->dump();
-			}
-		};
+		$formatter = $this->getDummyTextFormatter( true );
 
 		/** @var ResponseFactory|MockObject $responseFactory */
 		$responseFactory = new ResponseFactory( [ 'qqx' => $formatter ] );
 
-		/** @var Router|MockObject $router */
-		$router = $this->createNoOpMock( Router::class, [ 'getRouteUrl' ] );
-		$router->method( 'getRouteUrl' )->willReturnCallback( static function ( $route, $path = [], $query = [] ) {
-			foreach ( $path as $param => $value ) {
-				$route = str_replace( '{' . $param . '}', urlencode( (string)$value ), $route );
-			}
-			return wfAppendQuery( 'https://wiki.example.com/rest' . $route, $query );
-		} );
+		if ( !$router ) {
+			/** @var Router|MockObject $router */
+			$router = $this->createNoOpMock( Router::class, [ 'getRoutePath', 'getRouteUrl' ] );
+			$router->method( 'getRoutePath' )->willReturnCallback(
+				static function ( $route, $path = [], $query = [] ) {
+					foreach ( $path as $param => $value ) {
+						$route = str_replace( '{' . $param . '}', urlencode( (string)$value ), $route );
+					}
+					return wfAppendQuery( '/rest' . $route, $query );
+				}
+			);
+			$router->method( 'getRouteUrl' )->willReturnCallback(
+				static function ( $route, $path = [], $query = [] ) use ( $router ) {
+					return 'https://wiki.example.com' . $router->getRoutePath( $route, $path, $query );
+				}
+			);
+		}
+
+		// call parseBodyData
+		if ( $request->hasBody() && !$request->getParsedBody() ) {
+			$parsedBody = $handler->parseBodyData( $request );
+			// Set the parsed body data on the request object
+			$request->setParsedBody( $parsedBody );
+		}
 
 		$authority ??= $this->mockAnonUltimateAuthority();
 		$hookContainer = $hooks instanceof HookContainer ? $hooks : $this->createHookContainer( $hooks );
@@ -128,6 +139,8 @@ trait HandlerTestTrait {
 	 * @param array $validatedBody Body params to return as already valid
 	 * @param Authority|null $authority
 	 * @param Session|null $session Defaults to `$this->getSession( true )`
+	 * @param Router|null $router
+	 *
 	 * @return ResponseInterface
 	 */
 	private function executeHandler(
@@ -138,12 +151,13 @@ trait HandlerTestTrait {
 		$validatedParams = [],
 		$validatedBody = [],
 		Authority $authority = null,
-		Session $session = null
+		Session $session = null,
+		Router $router = null
 	): ResponseInterface {
 		// supply defaults for required fields in $config
 		$config += [ 'path' => '/test' ];
 
-		$this->initHandler( $handler, $request, $config, $hooks, $authority, $session );
+		$this->initHandler( $handler, $request, $config, $hooks, $authority, $session, $router );
 		$validator = null;
 		if ( $validatedParams || $validatedBody ) {
 			/** @var Validator|MockObject $validator */

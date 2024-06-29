@@ -27,7 +27,7 @@ use MediaWiki\ResourceLoader;
  */
 class ResourceLoaderSkinModule extends ResourceLoader\SkinModule {
 	/**
-	 * @param \ResourceLoaderContext $context
+	 * @param ResourceLoader\Context $context
 	 * @return array LESS variables
 	 */
 	protected function getLessVars( ResourceLoader\Context $context ) {

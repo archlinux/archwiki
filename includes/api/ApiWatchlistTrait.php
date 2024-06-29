@@ -2,9 +2,9 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -137,8 +137,7 @@ trait ApiWatchlistTrait {
 				// If no user option was passed, use watchdefault and watchcreations
 				if ( $userOption === null ) {
 					return $this->userOptionsLookup->getBoolOption( $user, 'watchdefault' ) ||
-						$this->userOptionsLookup->getBoolOption( $user, 'watchcreations' ) &&
-						!$title->exists();
+						( $this->userOptionsLookup->getBoolOption( $user, 'watchcreations' ) && !$title->exists() );
 				}
 
 				// Watch the article based on the user preference

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
@@ -24,11 +25,6 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'change_tag', 'change_tag_def', 'logging' ]
-		);
-
 		$this->getExistingTestPage( 'ExistingPage' );
 		$this->mergeMwGlobalArrayValue( 'wgContentHandlers', [
 			'testing' => 'DummyContentHandlerForTesting',
@@ -48,7 +44,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Test that the content model needs to change
 	 *
-	 * @covers ContentModelChange::doContentModelChange
+	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testChangeNeeded() {
 		$wikipage = $this->getExistingTestPage( 'ExistingPage' );
@@ -68,16 +64,13 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 			__METHOD__ . ' comment',
 			false
 		);
-		$this->assertEquals(
-			Status::newFatal( 'apierror-nochanges' ),
-			$status
-		);
+		$this->assertStatusError( 'apierror-nochanges', $status );
 	}
 
 	/**
 	 * Test that the content needs to be valid for the requested model
 	 *
-	 * @covers ContentModelChange::doContentModelChange
+	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testInvalidContent() {
 		$invalidJSON = 'Foo\nBar\nEaster egg\nT22281';
@@ -110,7 +103,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Test the EditFilterMergedContent hook can be intercepted
 	 *
-	 * @covers ContentModelChange::doContentModelChange
+	 * @covers \ContentModelChange::doContentModelChange
 	 *
 	 * @dataProvider provideTestEditFilterMergedContent
 	 * @param string|bool $customMessage Hook message, or false
@@ -120,7 +113,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 		$wikipage = $this->getExistingTestPage( 'ExistingPage' );
 		$this->assertSame(
 			'wikitext',
-			$wikipage->getTitle()->getContentModel( Title::READ_LATEST ),
+			$wikipage->getTitle()->getContentModel( IDBAccessObject::READ_LATEST ),
 			'`ExistingPage` should be wikitext'
 		);
 
@@ -143,10 +136,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 			__METHOD__ . ' comment',
 			false
 		);
-		$this->assertEquals(
-			Status::newFatal( $expectedMessage ),
-			$status
-		);
+		$this->assertStatusError( $expectedMessage, $status );
 	}
 
 	public static function provideTestEditFilterMergedContent() {
@@ -159,7 +149,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Test the ContentModelCanBeUsedOn hook can be intercepted
 	 *
-	 * @covers ContentModelChange::doContentModelChange
+	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testContentModelCanBeUsedOn() {
 		$wikipage = $this->getExistingTestPage( 'ExistingPage' );
@@ -171,7 +161,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertSame(
 			'wikitext',
-			$wikipage->getTitle()->getContentModel( Title::READ_LATEST ),
+			$wikipage->getTitle()->getContentModel( IDBAccessObject::READ_LATEST ),
 			'`ExistingPage` should be wikitext'
 		);
 
@@ -192,20 +182,13 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 			__METHOD__ . ' comment',
 			false
 		);
-		$this->assertEquals(
-			Status::newFatal(
-				'apierror-changecontentmodel-cannotbeused',
-				'plain text',
-				Message::plaintextParam( $wikipage->getTitle()->getPrefixedText() )
-			),
-			$status
-		);
+		$this->assertStatusError( 'apierror-changecontentmodel-cannotbeused', $status );
 	}
 
 	/**
 	 * Test that content handler must support direct editing
 	 *
-	 * @covers ContentModelChange::doContentModelChange
+	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testNoDirectEditing() {
 		$title = Title::newFromText( 'Dummy:NoDirectEditing' );
@@ -220,7 +203,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertSame(
 			'testing',
-			$title->getContentModel( Title::READ_LATEST ),
+			$title->getContentModel( IDBAccessObject::READ_LATEST ),
 			'Dummy:NoDirectEditing should start with the `testing` content model'
 		);
 
@@ -234,17 +217,14 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 			__METHOD__ . ' comment',
 			false
 		);
-		$this->assertEquals(
-			Status::newFatal(
-				'apierror-changecontentmodel-nodirectediting',
-				ContentHandler::getLocalizedName( 'testing' )
-			),
+		$this->assertStatusError(
+			'apierror-changecontentmodel-nodirectediting',
 			$status
 		);
 	}
 
 	/**
-	 * @covers ContentModelChange::setTags
+	 * @covers \ContentModelChange::setTags
 	 */
 	public function testCannotApplyTags() {
 		ChangeTags::defineTag( 'edit content model tag' );
@@ -255,20 +235,20 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 			'text'
 		);
 		$status = $change->setTags( [ 'edit content model tag' ] );
-		$this->assertEquals(
-			Status::newFatal( 'tags-apply-no-permission' ),
+		$this->assertStatusError(
+			'tags-apply-no-permission',
 			$status
 		);
 	}
 
 	/**
-	 * @covers ContentModelChange::authorizeChange
-	 * @covers ContentModelChange::probablyCanChange
+	 * @covers \ContentModelChange::authorizeChange
+	 * @covers \ContentModelChange::probablyCanChange
 	 */
 	public function testCheckPermissions() {
 		$wikipage = $this->getExistingTestPage( 'ExistingPage' );
 		$title = $wikipage->getTitle();
-		$currentContentModel = $title->getContentModel( Title::READ_LATEST );
+		$currentContentModel = $title->getContentModel( IDBAccessObject::READ_LATEST );
 		$newContentModel = 'text';
 
 		$this->assertSame(
@@ -326,7 +306,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ContentModelChange::doContentModelChange
+	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testCheckPermissionsThrottle() {
 		$user = $this->getTestUser()->getUser();

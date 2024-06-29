@@ -1,7 +1,7 @@
 /*!
  * VisualEditor ContentEditable linear enter key down handler
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /* istanbul ignore next */
@@ -156,7 +156,7 @@ ve.ce.LinearEnterKeyDownHandler.static.execute = function ( surface, e ) {
 				stack.length / 2,
 				0,
 				{ type: '/' + parent.type },
-				parent.getModel().getClonedElement( true )
+				parent.getModel().getClonedElement( true, true )
 			);
 			outermostNode = parent;
 			if ( e.shiftKey ) {

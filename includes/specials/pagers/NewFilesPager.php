@@ -21,10 +21,10 @@
 
 namespace MediaWiki\Pager;
 
-use IContextSource;
 use ImageGalleryBase;
 use ImageGalleryClassNotFoundException;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Permissions\GroupPermissionsLookup;
@@ -68,7 +68,7 @@ class NewFilesPager extends RangeChronologicalPager {
 		IConnectionProvider $dbProvider,
 		FormOptions $opts
 	) {
-		// Set database before parent constructor to avoid setting it there with wfGetDB
+		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbProvider->getReplicaDatabase();
 
 		parent::__construct( $context, $linkRenderer );
@@ -114,7 +114,7 @@ class NewFilesPager extends RangeChronologicalPager {
 					[
 						'ug_group' => $groupsWithBotPermission,
 						'ug_user = actor_user',
-						'ug_expiry IS NULL OR ug_expiry >= ' . $dbr->addQuotes( $dbr->timestamp() )
+						$dbr->expr( 'ug_expiry', '=', null )->or( 'ug_expiry', '>=', $dbr->timestamp() )
 					]
 				];
 			}

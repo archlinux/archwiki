@@ -25,6 +25,8 @@
 	"apihelp-discussiontoolsedit-summary": "Publicar uma mensagem numa página de discussão.",
 	"apihelp-discussiontoolsfindcomment-summary": "Encontrar um comentário pelo seu identificador ou nome.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "Identificador ou nome do comentário",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Fragmento do resumo criptográfico do cabeçalho",
+	"apihelp-discussiontoolsfindcomment-param-page": "Página onde o fragmento do resumo criptográfico do cabeçalho já existiu",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Nomes dos tópicos a serem verificados",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Obter o estado de subscrição dos tópicos especificados.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "O número da revisão a utilizar (por omissão, a revisão mais recente).",

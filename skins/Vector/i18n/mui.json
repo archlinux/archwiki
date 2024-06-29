@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Es Krim 5 Juta Rasa",
 			"Jawadywn",
 			"Mahali syarifuddin",
 			"Masjawad99"
@@ -13,5 +14,6 @@
 	"vector-view-history": "Selék riwayat",
 	"vector-view-view": "Baco",
 	"vector-view-viewsource": "Jingok sumber",
-	"vector-more-actions": "Laénnyo"
+	"vector-more-actions": "Laénnyo",
+	"vector-feature-limited-width-1-label": "Standar"
 }

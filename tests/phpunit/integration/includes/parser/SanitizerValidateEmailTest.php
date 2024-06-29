@@ -1,9 +1,12 @@
 <?php
 
+namespace MediaWiki\Tests\Parser;
+
 use MediaWiki\Parser\Sanitizer;
+use MediaWikiIntegrationTestCase;
 
 /**
- * @covers Sanitizer::validateEmail
+ * @covers \MediaWiki\Parser\Sanitizer::validateEmail
  * @todo should be made a pure unit test once ::validateEmail is migrated to proper DI
  */
 class SanitizerValidateEmailTest extends MediaWikiIntegrationTestCase {

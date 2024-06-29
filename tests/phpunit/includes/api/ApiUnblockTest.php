@@ -1,6 +1,10 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiUsageException;
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
 /**
@@ -8,7 +12,7 @@ use MediaWiki\User\User;
  * @group Database
  * @group medium
  *
- * @covers ApiUnblock
+ * @covers \ApiUnblock
  */
 class ApiUnblockTest extends ApiTestCase {
 	/** @var User */
@@ -20,11 +24,6 @@ class ApiUnblockTest extends ApiTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'ipblocks', 'change_tag', 'change_tag_def', 'logging' ]
-		);
-
 		$this->blocker = $this->getTestSysop()->getUser();
 		$this->blockee = $this->getMutableTestUser()->getUser();
 
@@ -33,22 +32,24 @@ class ApiUnblockTest extends ApiTestCase {
 			'address' => $this->blockee->getName(),
 			'by' => $this->blocker,
 		] );
-		$result = $this->getServiceContainer()->getDatabaseBlockStore()->insertBlock( $block );
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
+		$result = $blockStore->insertBlock( $block );
 		$this->assertNotFalse( $result, 'Could not insert block' );
-		$blockFromDB = DatabaseBlock::newFromID( $result['id'] );
-		$this->assertTrue( $blockFromDB !== null, 'Could not retrieve block' );
+		$blockFromDB = $blockStore->newFromID( $result['id'] );
+		$this->assertInstanceOf( DatabaseBlock::class, $blockFromDB, 'Could not retrieve block' );
 	}
 
 	private function getBlockFromParams( array $params ) {
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 		if ( array_key_exists( 'user', $params ) ) {
-			return DatabaseBlock::newFromTarget( $params['user'] );
+			return $blockStore->newFromTarget( $params['user'] );
 		}
 		if ( array_key_exists( 'userid', $params ) ) {
-			return DatabaseBlock::newFromTarget(
+			return $blockStore->newFromTarget(
 				$this->getServiceContainer()->getUserFactory()->newFromId( $params['userid'] )
 			);
 		}
-		return DatabaseBlock::newFromID( $params['id'] );
+		return $blockStore->newFromID( $params['id'] );
 	}
 
 	/**

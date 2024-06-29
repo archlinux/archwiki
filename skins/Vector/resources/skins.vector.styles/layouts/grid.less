@@ -2,16 +2,15 @@
 // Grid layout
 //
 
-@media ( min-width: @min-width-desktop ) {
+@media ( min-width: @min-width-breakpoint-desktop ) {
 	.mw-page-container-inner {
 		display: grid;
 		column-gap: @grid-column-gap;
-		grid-template: ~'min-content min-content 1fr min-content / @{grid-template-column-desktop}';
+		grid-template: ~'min-content 1fr min-content / @{grid-template-column-desktop}';
 		// stylelint-disable-next-line stylistic/declaration-colon-space-after
 		grid-template-areas:
 			'siteNotice siteNotice'
-			'mainMenu pageContent'
-			'toc pageContent'
+			'columnStart pageContent'
 			'footer footer';
 	}
 
@@ -19,13 +18,8 @@
 		grid-area: siteNotice;
 	}
 
-	.mw-table-of-contents-container {
-		grid-area: toc;
-		overflow-anchor: none; // T330108
-	}
-
-	.vector-main-menu-container {
-		grid-area: mainMenu;
+	.vector-column-start {
+		grid-area: columnStart;
 		overflow-anchor: none; // T330108
 	}
 
@@ -36,9 +30,22 @@
 	.mw-footer-container {
 		grid-area: footer;
 	}
+
+	.vector-feature-page-tools-pinned-enabled .vector-column-end,
+	.vector-feature-client-prefs-pinned-enabled .vector-column-end {
+		width: @width-column-desktop;
+	}
+
+	// Align the pinnable header bottom border with the bottom-border of the
+	// toolbar (below the page title) by pushing down the sidebar content
+	.vector-column-start,
+	.vector-column-end {
+		margin-top: 2.8rem;
+		border-top: 1px solid transparent;
+	}
 }
 
-@media ( min-width: @min-width-desktop-wide ) {
+@media ( min-width: @min-width-breakpoint-desktop-wide ) {
 	.mw-page-container-inner {
 		grid-template-columns: @grid-template-column-desktop-wide;
 	}
@@ -57,35 +64,31 @@
 			grid-area: headerEnd;
 		}
 	}
+
+	.vector-feature-page-tools-pinned-enabled .vector-column-end,
+	.vector-feature-client-prefs-pinned-enabled .vector-column-end {
+		width: @width-column-desktop-wide;
+	}
 }
 
-&.vector-feature-limited-width-clientpref-0 .mw-content-container,
-&.vector-feature-limited-width-clientpref-0 .mw-table-of-contents-container,
-&.vector-feature-limited-width-content-disabled .mw-content-container,
-&.vector-feature-limited-width-content-disabled .mw-table-of-contents-container {
-	// Allow the max-width of content on history/special pages to be wider than
-	// the max-width of content on article pages.
-	// Note, we don't disable the max-width on .vector-page-toolbar-container intentionally
-	// to support easier navigation between tabs.
-	// See T293441 for further information on that.
-	// Both rules are !important as they are final. Max-width on a page should be restored by removing the `skin-vector-disable-max-width`,
-	// preferably by modification to the feature flag VectorMaxWidthOptions. Code should never attempt to override this rule.
-	/* stylelint-disable-next-line declaration-no-important */
-	max-width: none !important;
-	/* stylelint-disable-next-line declaration-no-important */
-	width: 100% !important;
+// Single column grid when column start is empty (i.e. no pinned ToC or pinned main menu)
+.vector-feature-main-menu-pinned-disabled.vector-toc-not-available .mw-page-container-inner,
+.vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-clientpref-0 .mw-page-container-inner {
+	grid-template-columns: @width-page-content;
+	// stylelint-disable-next-line stylistic/declaration-colon-space-after
+	grid-template-areas:
+		'siteNotice'
+		'pageContent'
+		'columnStart'
+		'footer';
+
+	// Horizontally center content when single column
+	.mw-body {
+		justify-content: center;
+	}
 }
 
-// Horizontally center content when column start is empty (i.e. no pinned ToC or pinned main menu)
-&.vector-feature-main-menu-pinned-disabled.vector-toc-not-available .mw-content-container,
-&.vector-feature-main-menu-pinned-disabled .vector-sidebar-container-no-toc ~ .mw-content-container,
-&.vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-clientpref-0 .mw-content-container {
-	grid-column: mainMenu / pageContent;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-@media ( min-width: @min-width-desktop ) {
+@media ( min-width: @min-width-breakpoint-desktop ) {
 	.mw-body {
 		display: grid;
 		grid-template: ~'min-content min-content min-content 1fr / minmax(0, @{max-width-content-container}) min-content';
@@ -119,12 +122,13 @@
 		}
 	}
 
-	&.vector-feature-page-tools-pinned-enabled .mw-body {
+	.vector-feature-page-tools-pinned-enabled .mw-body,
+	.vector-feature-client-prefs-pinned-enabled .mw-body {
 		column-gap: @grid-column-gap;
 	}
 
-	&.vector-feature-limited-width-clientpref-0 .mw-body,
-	&.vector-feature-limited-width-content-disabled .mw-body {
+	.vector-feature-limited-width-clientpref-0 .mw-body,
+	.vector-feature-limited-width-content-disabled .mw-body {
 		grid-template-columns: ~'minmax(0, 1fr) min-content';
 	}
 }

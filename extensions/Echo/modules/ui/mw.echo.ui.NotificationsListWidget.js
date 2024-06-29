@@ -86,15 +86,14 @@
 	/* Methods */
 
 	mw.echo.ui.NotificationsListWidget.prototype.onModelManagerDiscard = function ( modelName ) {
-		var i,
-			items = this.getItems();
+		var items = this.getItems();
 
 		// For the moment, this is only relevant for xwiki bundles.
 		// Local single items will not get their entire model removed, but
 		// local bundles may - when that happens, the condition below should
 		// also deal with local bundles and removing them specifically
 		if ( modelName === 'xwiki' ) {
-			for ( i = 0; i < items.length; i++ ) {
+			for ( var i = 0; i < items.length; i++ ) {
 				if ( items[ i ] instanceof mw.echo.ui.CrossWikiNotificationItemWidget ) {
 					this.removeItems( [ items[ i ] ] );
 					this.checkForEmptyNotificationsList();
@@ -116,10 +115,10 @@
 	 * @fires modified
 	 */
 	mw.echo.ui.NotificationsListWidget.prototype.resetDataFromModel = function ( models ) {
-		var i, modelId, model, subItems, subItem, widget,
-			itemWidgets = [],
+		var itemWidgets = [],
 			$elements = $();
 
+		var modelId;
 		// Detach all attached models
 		for ( modelId in this.models ) {
 			this.detachModel( modelId );
@@ -127,9 +126,10 @@
 
 		// Attach and process new models
 		for ( modelId in models ) {
-			model = models[ modelId ];
+			var model = models[ modelId ];
 			this.attachModel( modelId, model );
 
+			var widget;
 			// Build widgets based on the data in the model
 			if ( model.isGroup() ) {
 				if ( model.isForeign() ) {
@@ -157,10 +157,10 @@
 				itemWidgets.push( widget );
 				$elements = $elements.add( widget.$element );
 			} else {
-				subItems = model.getItems();
+				var subItems = model.getItems();
 				// Separate widgets per item
-				for ( i = 0; i < subItems.length; i++ ) {
-					subItem = subItems[ i ];
+				for ( var i = 0; i < subItems.length; i++ ) {
+					var subItem = subItems[ i ];
 					widget = new mw.echo.ui.SingleNotificationItemWidget(
 						this.controller,
 						subItem,
@@ -236,10 +236,9 @@
 	 * Reset the 'initiallyUnseen' state of all items
 	 */
 	mw.echo.ui.NotificationsListWidget.prototype.resetInitiallyUnseenItems = function () {
-		var i,
-			itemWidgets = this.getItems();
+		var itemWidgets = this.getItems();
 
-		for ( i = 0; i < itemWidgets.length; i++ ) {
+		for ( var i = 0; i < itemWidgets.length; i++ ) {
 			itemWidgets[ i ].resetInitiallyUnseen();
 		}
 	};

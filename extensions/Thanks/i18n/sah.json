@@ -25,7 +25,6 @@
 	"echo-pref-subscription-edit-thank": "Бэйэбэр махтал",
 	"echo-pref-tooltip-edit-thank": "Ким эмит суруйуубар махтаннаҕына миэхэ биллэрэр буолаар.",
 	"echo-category-title-edit-thank": "Махтал",
-	"notification-thanks-diff-link": "көннөрүүҥ иһин",
 	"notification-header-rev-thank": "$1 {{GENDER:$4|эйиэхэ}} '''$3''' сирэйи көннөрбүтүҥ иһин {{GENDER:$2|махтаммыт}}.",
 	"notification-compact-header-edit-thank": "$1 $3 {{GENDER:$4|кыттааччыга}} {{GENDER:$2|махтаммыт}}",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Кыттааччы|$1 people|100=99+ кыттааччылар}}  {{GENDER:$3|эйиэхэ}} <strong>$2</strong>ҥа көннөрүүн иһин махтаммыт/тар",
@@ -37,7 +36,6 @@
 	"thanks-error-invalidpostid": "Нүөмэрэ алҕастаах.",
 	"flow-thanks-confirmation-special": "Бу ырытыы иһин махтанаары гынаҕын дуо?",
 	"flow-thanks-thanked-notice": "$1 кыттааччы {{GENDER:$2|ырытыытыгар}} эйигиттэн махтал тутта.",
-	"notification-flow-thanks-post-link": "эн ырытыыҥ",
 	"notification-header-flow-thank": "$1 {{GENDER:$4|эйиэхэ}} '''$3''' сирэйи көннөрбүтүҥ иһин {{GENDER:$2|махтаммыт}}.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|кыттааччыга}} {{GENDER:$2|махтаммыт}}",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Кыттааччы|$1 people|100=99+ кыттааччылар}}  {{GENDER:$3|эйиэхэ}} <strong>$2</strong>ҥа көннөрүүн иһин махтаммыт/тар"

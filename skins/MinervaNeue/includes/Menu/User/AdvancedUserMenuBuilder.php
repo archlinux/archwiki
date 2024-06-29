@@ -23,8 +23,8 @@ use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Entries\ProfileMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Minerva\Menu\Group;
+use MediaWiki\User\User;
 use MessageLocalizer;
-use User;
 
 /**
  * Logged-in, advanced Mobile Contributions user menu config generator.

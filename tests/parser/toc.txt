@@ -90,6 +90,33 @@ Sections:
 !! end
 
 !! test
+Literal html heading from template
+!! options
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+{{1x|
+<h2>hi</h2>
+ho
+}}
+!! html/php
+<h2><span class="mw-headline" id="hi">hi</span></h2>
+<p>ho
+</p>
+!! html/parsoid
+<section data-mw-section-id="0"></section><section data-mw-section-id="-1"><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"\n&lt;h2>hi&lt;/h2>\nho\n"}},"i":0}}]}'>
+</span><h2 about="#mwt1" id="hi">hi</h2><span about="#mwt1">
+</span><p about="#mwt1">ho</p><span about="#mwt1">
+</span></section>
+!! metadata
+Sections:
+ h2 index: toclevel:1 number:1 title:NULL off:NULL anchor/linkAnchor:hi line:hi
+!! end
+
+!! test
 Duplicate headings should get unique anchors
 !! options
 nohtml
@@ -208,6 +235,20 @@ Sections:
 !! end
 
 !! test
+Ensure comments in toc lines are stripped
+!! config
+wgRawHtml=1
+!! options
+nohtml
+showtocdata
+!! wikitext
+==hi<html><!--ho--></html>==
+!! metadata/php
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:hi line:hi
+!! end
+
+!! test
 Handle links in heading content
 !! options
 nohtml
@@ -299,40 +340,6 @@ Sections:
  h2 index:T-2 toclevel:1 number:2 title:Template:1x off:NULL anchor/linkAnchor:b line:b
 !! end
 
-# FIXME:
-# 1. This potentially exposes a subtle issue in the interaction between TOC, Cite, and
-#    localization. Parsoid doesn't localize numbers in Cite (at all!) since it relies on CSS.
-#    But, with the legacy parser, a wiki with localized numbers will have an anchor
-#    based off a localized number if a <ref> is used in a heading. Parsoid won't!.
-# 2. We probably should be a bit smarter about what to strip for tags when that output
-#    comes from extensions. Below, we have stripped all extension typeofs and info.
-#    But, depends on who uses this 'line' property and how.
-
-# FIXME: test disabled because CI doesn't have the Cite extension installed
-!! test
-Handle extension content in section headers properly
-!! config
-wgFragmentMode=[ "html5", "legacy" ]
-!! options
-nohtml
-showtocdata
-parsoid={
-	"modes": [ "wt2html" ],
-	"wrapSections": true
-}
-!! wikitext
-==c<ref>d</ref>==
-!! metadata/php+disabled
-Sections:
- h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:c[1] line:c<sup>&#91;1&#93;</sup>
-!! metadata/parsoid
-Sections:
- h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:c[1] line:c<sup><span>[1]</span></sup>
-!! end
-
-# FIXME: This test shows a similar difference between legacy and
-# Parsoid output, but it may be due to a subtle difference in the
-# whitespace emitted by the parser test runner's <tag> implementation
 !! test
 Handle extension content in section headers properly (non-Cite version)
 !! config
@@ -346,10 +353,7 @@ parsoid={
 }
 !! wikitext
 ==c<tag>d</tag>==
-!! metadata/php
-Sections:
- h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:c_'d'_array_(_) line:"c\n'd'\narray (\n)"
-!! metadata/parsoid
+!! metadata
 Sections:
  h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:c'd'_array_(_) line:"c'd'\narray (\n)"
 !! end
@@ -522,7 +526,7 @@ Section headings with TOC and language conversion (T295187, T306862)
 !! config
 wgUsePigLatinVariant=true
 !! options
-language=en variant=en-x-piglatin
+language=en htmlVariantLanguage=en-x-piglatin
 !! wikitext
 ==Headline 1==
 ===Subheadline 1===
@@ -567,7 +571,7 @@ Section headings with TOC and language conversion disabled (T295187)
 !! config
 wgUsePigLatinVariant=true
 !! options
-language=en variant=en-x-piglatin
+language=en htmlVariantLanguage=en-x-piglatin
 !! wikitext
 ==Headline 1==
 ===Subheadline 1===
@@ -617,7 +621,7 @@ Section headings with TOC, language conversion rules, and displaytitle
 wgUsePigLatinVariant=true
 wgRestrictDisplayTitle=false
 !! options
-language=en variant=en-x-piglatin
+language=en htmlVariantLanguage=en-x-piglatin
 showtitle
 showtocdata
 parsoid={
@@ -1054,6 +1058,36 @@ flags=
 !! end
 
 !! test
+T352467: synthetic sections shouldn't count towards "enough" sections
+!! options
+showflags
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+<div>
+==a==
+==b==
+</div>
+==c==
+!! metadata
+flags=
+!! html/php
+<div>
+<h2><span class="mw-headline" id="a">a</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: a">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<h2><span class="mw-headline" id="b">b</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: b">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+</div>
+<h2><span class="mw-headline" id="c">c</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: c">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+!! html/parsoid
+<section data-mw-section-id="-1"></section><section data-mw-section-id="-2"><div>
+<section data-mw-section-id="1"><h2 id="a">a</h2>
+</section><section data-mw-section-id="-1"><h2 id="b">b</h2>
+</section></div>
+</section><section data-mw-section-id="3"><h2 id="c">c</h2></section>
+!! end
+
+!! test
 T307691: show-toc flag: not "enough" sections, but __FORCETOC__
 !! options
 showflags
@@ -1484,34 +1518,24 @@ __TOC__
 
 ==<span dir="rtl">זבנג!</span>==
 
-==<span style="font-style: italic">The attributes on these span tags must be deleted from the TOC</span>==
-
-==<span style="font-style: italic" dir="ltr">All attributes on these span tags must be deleted from the TOC</span>==
-
-==<span dir="ltr" style="font-style: italic">Attributes after dir on these span tags must be deleted from the TOC</span>==
+==<span style="font-style: italic" dir="ltr" title="hello">Attributes other than dir</span>==
 !! html/php
 <div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
 <ul>
 <li class="toclevel-1 tocsection-1"><a href="#C.2B.2B"><span class="tocnumber">1</span> <span class="toctext"><span dir="ltr">C++</span></span></a></li>
 <li class="toclevel-1 tocsection-2"><a href="#.D7.96.D7.91.D7.A0.D7.92.21"><span class="tocnumber">2</span> <span class="toctext"><span dir="rtl">זבנג!</span></span></a></li>
-<li class="toclevel-1 tocsection-3"><a href="#The_attributes_on_these_span_tags_must_be_deleted_from_the_TOC"><span class="tocnumber">3</span> <span class="toctext"><span>The attributes on these span tags must be deleted from the TOC</span></span></a></li>
-<li class="toclevel-1 tocsection-4"><a href="#All_attributes_on_these_span_tags_must_be_deleted_from_the_TOC"><span class="tocnumber">4</span> <span class="toctext"><span>All attributes on these span tags must be deleted from the TOC</span></span></a></li>
-<li class="toclevel-1 tocsection-5"><a href="#Attributes_after_dir_on_these_span_tags_must_be_deleted_from_the_TOC"><span class="tocnumber">5</span> <span class="toctext"><span dir="ltr">Attributes after dir on these span tags must be deleted from the TOC</span></span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Attributes_other_than_dir"><span class="tocnumber">3</span> <span class="toctext"><span dir="ltr">Attributes other than dir</span></span></a></li>
 </ul>
 </div>
 
 <h2><span class="mw-headline" id="C.2B.2B"><span dir="ltr">C++</span></span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: C++">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
 <h2><span class="mw-headline" id=".D7.96.D7.91.D7.A0.D7.92.21"><span dir="rtl">זבנג!</span></span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: זבנג!">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="The_attributes_on_these_span_tags_must_be_deleted_from_the_TOC"><span style="font-style: italic">The attributes on these span tags must be deleted from the TOC</span></span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: The attributes on these span tags must be deleted from the TOC">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="All_attributes_on_these_span_tags_must_be_deleted_from_the_TOC"><span style="font-style: italic" dir="ltr">All attributes on these span tags must be deleted from the TOC</span></span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=4" title="Edit section: All attributes on these span tags must be deleted from the TOC">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="Attributes_after_dir_on_these_span_tags_must_be_deleted_from_the_TOC"><span dir="ltr" style="font-style: italic">Attributes after dir on these span tags must be deleted from the TOC</span></span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=5" title="Edit section: Attributes after dir on these span tags must be deleted from the TOC">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<h2><span class="mw-headline" id="Attributes_other_than_dir"><span style="font-style: italic" dir="ltr" title="hello">Attributes other than dir</span></span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: Attributes other than dir">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
 !! html/parsoid
 <meta property="mw:PageProp/toc" data-parsoid='{}'/>
 <h2 id="C++" data-parsoid='{}'><span id="C.2B.2B" typeof="mw:FallbackId"></span><span dir="ltr">C++</span></h2>
 <h2 id="זבנג!"><span id=".D7.96.D7.91.D7.A0.D7.92.21" typeof="mw:FallbackId"></span><span dir="rtl">זבנג!</span></h2>
-<h2 id="The_attributes_on_these_span_tags_must_be_deleted_from_the_TOC"><span style="font-style: italic">The attributes on these span tags must be deleted from the TOC</span></h2>
-<h2 id="All_attributes_on_these_span_tags_must_be_deleted_from_the_TOC"><span style="font-style: italic" dir="ltr">All attributes on these span tags must be deleted from the TOC</span></h2>
-<h2 id="Attributes_after_dir_on_these_span_tags_must_be_deleted_from_the_TOC"><span dir="ltr" style="font-style: italic">Attributes after dir on these span tags must be deleted from the TOC</span></h2>
+<h2 id="Attributes_other_than_dir"><span style="font-style: italic" dir="ltr" title="hello">Attributes other than dir</span></h2>
 !! end
 
 !! test
@@ -1761,11 +1785,11 @@ section 6
 <div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
 <ul>
 <li class="toclevel-1 tocsection-1"><a href="#Space_between_Text"><span class="tocnumber">1</span> <span class="toctext">Space between Text</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Space-Entity_between_Text"><span class="tocnumber">2</span> <span class="toctext">Space-Entity&#32;between&#32;Text</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Space-Entity_between_Text"><span class="tocnumber">2</span> <span class="toctext">Space-Entity between Text</span></a></li>
 <li class="toclevel-1 tocsection-3"><a href="#Plus.2Bbetween.2BText"><span class="tocnumber">3</span> <span class="toctext">Plus+between+Text</span></a></li>
-<li class="toclevel-1 tocsection-4"><a href="#Plus-Entity.2Bbetween.2BText"><span class="tocnumber">4</span> <span class="toctext">Plus-Entity&#43;between&#43;Text</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Plus-Entity.2Bbetween.2BText"><span class="tocnumber">4</span> <span class="toctext">Plus-Entity+between+Text</span></a></li>
 <li class="toclevel-1 tocsection-5"><a href="#Underscore_between_Text"><span class="tocnumber">5</span> <span class="toctext">Underscore_between_Text</span></a></li>
-<li class="toclevel-1 tocsection-6"><a href="#Underscore-Entity_between_Text"><span class="tocnumber">6</span> <span class="toctext">Underscore-Entity&#95;between&#95;Text</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Underscore-Entity_between_Text"><span class="tocnumber">6</span> <span class="toctext">Underscore-Entity_between_Text</span></a></li>
 </ul>
 </div>
 
@@ -1781,7 +1805,7 @@ section 6
 <h2><span class="mw-headline" id="Plus-Entity.2Bbetween.2BText">Plus-Entity&#43;between&#43;Text</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=4" title="Edit section: Plus-Entity+between+Text">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
 <p>section 4
 </p>
-<h2><span class="mw-headline" id="Underscore_between_Text">Underscore_between_Text</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=5" title="Edit section: Underscore between Text">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<h2><span class="mw-headline" id="Underscore_between_Text">Underscore_between_Text</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=5" title="Edit section: Underscore_between_Text">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
 <p>section 5
 </p>
 <h2><span class="mw-headline" id="Underscore-Entity_between_Text">Underscore-Entity&#95;between&#95;Text</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=6" title="Edit section: Underscore-Entity_between_Text">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
@@ -1814,12 +1838,12 @@ section 6
 <h2 id="Underscore-Entity_between_Text">Underscore-Entity<span typeof="mw:Entity" data-parsoid='{"src":"&amp;#95;","srcContent":"_"}'>_</span>between<span typeof="mw:Entity" data-parsoid='{"src":"&amp;#95;","srcContent":"_"}'>_</span>Text</h2>
 <p>section 6</p>
 
-<p><a rel="mw:WikiLink" href="./Parser_test#Space_between_Text" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Space_between_Text"},"sa":{"href":"#Space between Text"}}'>#Space between Text</a>
-<a rel="mw:WikiLink" href="./Parser_test#Space-Entity_between_Text" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Space-Entity_between_Text"},"sa":{"href":"#Space-Entity&amp;#32;between&amp;#32;Text"}}'>#Space-Entity between Text</a>
-<a rel="mw:WikiLink" href="./Parser_test#Plus+between+Text" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Plus+between+Text"},"sa":{"href":"#Plus+between+Text"}}'>#Plus+between+Text</a>
-<a rel="mw:WikiLink" href="./Parser_test#Plus-Entity+between+Text" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Plus-Entity+between+Text"},"sa":{"href":"#Plus-Entity&amp;#43;between&amp;#43;Text"}}'>#Plus-Entity+between+Text</a>
-<a rel="mw:WikiLink" href="./Parser_test#Underscore_between_Text" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Underscore_between_Text"},"sa":{"href":"#Underscore_between_Text"}}'>#Underscore_between_Text</a>
-<a rel="mw:WikiLink" href="./Parser_test#Underscore-Entity_between_Text" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Underscore-Entity_between_Text"},"sa":{"href":"#Underscore-Entity&amp;#95;between&amp;#95;Text"}}'>#Underscore-Entity_between_Text</a></p>
+<p><a rel="mw:WikiLink" href="./Parser_test#Space_between_Text" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Space_between_Text"},"sa":{"href":"#Space between Text"}}'>#Space between Text</a>
+<a rel="mw:WikiLink" href="./Parser_test#Space-Entity_between_Text" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Space-Entity_between_Text"},"sa":{"href":"#Space-Entity&amp;#32;between&amp;#32;Text"}}'>#Space-Entity between Text</a>
+<a rel="mw:WikiLink" href="./Parser_test#Plus+between+Text" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Plus+between+Text"},"sa":{"href":"#Plus+between+Text"}}'>#Plus+between+Text</a>
+<a rel="mw:WikiLink" href="./Parser_test#Plus-Entity+between+Text" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Plus-Entity+between+Text"},"sa":{"href":"#Plus-Entity&amp;#43;between&amp;#43;Text"}}'>#Plus-Entity+between+Text</a>
+<a rel="mw:WikiLink" href="./Parser_test#Underscore_between_Text" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Underscore_between_Text"},"sa":{"href":"#Underscore_between_Text"}}'>#Underscore_between_Text</a>
+<a rel="mw:WikiLink" href="./Parser_test#Underscore-Entity_between_Text" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Underscore-Entity_between_Text"},"sa":{"href":"#Underscore-Entity&amp;#95;between&amp;#95;Text"}}'>#Underscore-Entity_between_Text</a></p>
 !! end
 
 # Parsoid html2wt disabled because it adds padding spaces around =
@@ -1944,4 +1968,243 @@ Out-of-order TOC heading levels
 <h1 id="1" data-parsoid="{}">1</h1>
 <h5 id="5" data-parsoid="{}">5</h5>
 <h2 id="2_2" data-parsoid="{}">2</h2>
+!! end
+
+# Note that HTML (but not wikitext) allows the trailing semicolon to
+# be omitted from an entity, so we need to escape the ampersand in
+# situations where HTML would interpret a "semicolonless" entity.
+!! test
+TOC with HTML entities which are not wikitext entities (T355386)
+!! config
+wgFragmentMode=[ "html5" ]
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+__TOC__
+== F&GT ==
+Test
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:8 anchor/linkAnchor:F&GT line:F&amp;GT
+!! end
+
+# Note that the metadata section below contains non-breaking spaces around
+# the french quotes, which also show up in the link anchor
+!! test
+TOC with french spacing (T324763)
+!! config
+wgFragmentMode=[ "html5" ]
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+__TOC__
+== Renommer la page « Informatique durable » en « Numérique responsable » ? ==
+Oui.
+!! metadata/php
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:8 anchor/linkAnchor:Renommer_la_page_«_Informatique_durable_»_en_«_Numérique_responsable_»_? line:Renommer la page « Informatique durable » en « Numérique responsable » ?
+!! metadata/parsoid
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:8 anchor/linkAnchor:Renommer_la_page_«_Informatique_durable_»_en_«_Numérique_responsable_»_? line:Renommer la page «<span> </span>Informatique durable<span> </span>» en «<span> </span>Numérique responsable<span> </span>»<span> </span>?
+!! end
+
+!! test
+1. Ensure sections in extensions are ignored + TOC is inserted outside extensions
+!! options
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+__FORCETOC__
+<spantag>
+==spantag h2==
+</spantag>
+intro
+==page h2==
+blah
+!! html/php
+<p><span>
+</span></p>
+<h2><span class="mw-headline" id="spantag_h2">spantag h2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: spantag h2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>intro
+</p>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#page_h2"><span class="tocnumber">1</span> <span class="toctext">page h2</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="page_h2">page h2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: page h2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>blah
+</p>
+!! html/parsoid
+<section data-mw-section-id="-1"><meta property="mw:PageProp/forcetoc"/> </section><section data-mw-section-id="-2"><span typeof="mw:Extension/spantag" data-mw='{"name":"spantag","attrs":{},"body":{"extsrc":"\n==spantag h2==\n"}}'>
+<section data-mw-section-id="-1"><h2 id="spantag_h2">spantag h2</h2></section></span>
+<p>intro</p>
+<meta property="mw:PageProp/toc" data-mw='{"autoGenerated":true}'/></section><section data-mw-section-id="1"><h2 id="page_h2">page h2</h2>
+<p>blah</p></section>
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:55 anchor/linkAnchor:page_h2 line:page h2
+!! end
+
+!! test
+2. Ensure sections in extensions are ignored + TOC is inserted outside extensions
+!! options
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+__FORCETOC__
+{{1x|1=foo
+<spantag>
+==spantag h2==
+</spantag>
+}}
+intro
+==page h2==
+blah
+!! html/php
+<p>foo
+<span>
+</span></p>
+<h2><span class="mw-headline" id="spantag_h2">spantag h2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: spantag h2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>intro
+</p>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#page_h2"><span class="tocnumber">1</span> <span class="toctext">page h2</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="page_h2">page h2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: page h2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>blah
+</p>
+!! html/parsoid
+<section data-mw-section-id="-1" about="#mwt4" typeof="mw:Transclusion" data-mw='{"parts":["__FORCETOC__\n",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"foo\n&lt;spantag>\n==spantag h2==\n&lt;/spantag>"}},"i":0}},"\nintro\n"]}'><meta property="mw:PageProp/forcetoc" />
+<p about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"foo\n&lt;spantag>\n==spantag h2==\n&lt;/spantag>"}},"i":0}}]}'>foo</p><span about="#mwt2">
+</span></section><section data-mw-section-id="-2" about="#mwt4"><span typeof="mw:Extension/spantag" about="#mwt2" data-mw='{"name":"spantag","attrs":{},"body":{"extsrc":"\n==spantag h2==\n"}}'>
+<section data-mw-section-id="-1"><h2 id="spantag_h2">spantag h2</h2></section></span>
+<p>intro</p>
+<meta property="mw:PageProp/toc" data-mw='{"autoGenerated":true}'/></section><section data-mw-section-id="1"><h2 id="page_h2">page h2</h2>
+<p>blah</p></section>
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:69 anchor/linkAnchor:page_h2 line:page h2
+!! end
+
+!! test
+3. Ensure sections in extensions are ignored + TOC is inserted outside extensions
+!! options
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+__FORCETOC__
+{{1x|1=<spantag>
+==spantag h2==
+</spantag>
+==template h2==
+}}
+intro
+==page h2==
+blah
+!! html/php
+<p><span>
+</span></p>
+<h2><span class="mw-headline" id="spantag_h2">spantag h2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: spantag h2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1"><a href="#template_h2"><span class="tocnumber">1</span> <span class="toctext">template h2</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#page_h2"><span class="tocnumber">2</span> <span class="toctext">page h2</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="template_h2">template h2</span></h2>
+<p>intro
+</p>
+<h2><span class="mw-headline" id="page_h2">page h2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: page h2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>blah
+</p>
+!! html/parsoid
+<section data-mw-section-id="-1"><meta property="mw:PageProp/forcetoc" data-parsoid='{"src":"__FORCETOC__","magicSrc":"__FORCETOC__"}'/>
+</section><section data-mw-section-id="-2" about="#mwt4" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;spantag>\n==spantag h2==\n&lt;/spantag>\n==template h2=="}},"i":0}},"\nintro\n"]}'><span typeof="mw:Extension/spantag mw:Transclusion" about="#mwt2" data-parsoid='{"pi":[[{"k":"1","named":true,"spc":["","","","\n"]}]],"dsr":[13,74,null,null]}' data-mw='{"name":"spantag","attrs":{},"body":{"extsrc":"\n==spantag h2==\n"},"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;spantag>\n==spantag h2==\n&lt;/spantag>\n==template h2=="}},"i":0}}]}'>
+<section data-mw-section-id="-1"><h2 id="spantag_h2">spantag h2</h2>
+</section></span><span about="#mwt2">
+</span><meta property="mw:PageProp/toc" data-mw='{"autoGenerated":true}'/></section><section data-mw-section-id="-1" about="#mwt4"><h2 about="#mwt2" id="template_h2">template h2</h2>
+<p>intro</p>
+</section><section data-mw-section-id="2"><h2 id="page_h2">page h2</h2>
+<p>blah</p></section>
+!! metadata/php
+Sections:
+ h2 index: toclevel:1 number:1 title:NULL off:NULL anchor/linkAnchor:template_h2 line:template h2
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:81 anchor/linkAnchor:page_h2 line:page h2
+!! metadata/parsoid
+Sections:
+ h2 index:T-1 toclevel:1 number:1 title:Template:1x off:NULL anchor/linkAnchor:template_h2 line:template h2
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:81 anchor/linkAnchor:page_h2 line:page h2
+!! end
+
+!! test
+TOC data when heading content is equal to an id already set on the page
+!! options
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+<span id="hiho">hiho</span>
+=== hiho ===
+!! html/php
+<p><span id="hiho">hiho</span>
+</p>
+<h3><span class="mw-headline" id="hiho">hiho</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: hiho">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+!! metadata/php
+Sections:
+ h3 index:1 toclevel:1 number:1 title:Parser_test off:28 anchor/linkAnchor:hiho line:hiho
+!! html/parsoid
+<section data-mw-section-id="0"><p><span id="hiho">hiho</span></p>
+</section><section data-mw-section-id="1"><h3 id="hiho_2">hiho</h3></section>
+!! metadata/parsoid
+Sections:
+ h3 index:1 toclevel:1 number:1 title:Parser_test off:28 anchor/linkAnchor:hiho_2 line:hiho
+!! end
+
+!! test
+TOC data when heading already has an id
+!! options
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+<h3 id="asdf">odd</h3>
+!! html/php
+<h3 id="asdf"><span class="mw-headline" id="odd">odd</span></h3>
+!! metadata/php
+Sections:
+ h3 index: toclevel:1 number:1 title:NULL off:NULL anchor/linkAnchor:odd line:odd
+!! html/parsoid
+<section data-mw-section-id="0"></section><section data-mw-section-id="-1"><h3 id="asdf" data-parsoid='{"stx":"html","reusedId":true}'>odd</h3></section>
+!! metadata/parsoid
+Sections:
+ h3 index: toclevel:1 number:1 title:NULL off:NULL anchor/linkAnchor:asdf line:odd
 !! end

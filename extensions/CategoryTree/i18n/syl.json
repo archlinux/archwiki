@@ -5,8 +5,11 @@
 			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
 		]
 	},
+	"categorytree": "ꠙꠖꠞ ꠉꠣꠍ",
 	"categorytree-portlet": "ꠙꠖꠣꠁꠘ",
+	"categorytree-legend": "ꠙꠖꠞ ꠉꠣꠍ ꠖꠦꠈꠣꠁꠘ",
 	"categorytree-category": "ꠙꠖ ꠪",
+	"categorytree-go": "ꠉꠣꠍ ꠖꠦꠈꠣꠁꠘ",
 	"categorytree-parents": "ꠃꠙꠞꠞ",
 	"categorytree-mode-label": "ꠝꠥꠒ ꠪",
 	"categorytree-mode-categories": "ꠈꠣꠟꠤ ꠙꠖꠣꠁꠘ",

@@ -4,18 +4,18 @@ namespace MediaWiki\Extension\AbuseFilter\Pager;
 
 use HtmlArmor;
 use IContextSource;
-use Linker;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilter;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Pager\TablePager;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserRigorOptions;
-use TablePager;
 use UnexpectedValueException;
 use Wikimedia\Rdbms\IResultWrapper;
 use Xml;
@@ -74,12 +74,12 @@ class AbuseFilterHistoryPager extends TablePager {
 	/**
 	 * Note: this method is called by parent::__construct
 	 * @return array
-	 * @see Pager::getFieldNames()
+	 * @see MediaWiki\Pager\Pager::getFieldNames()
 	 */
 	public function getFieldNames() {
 		static $headers = null;
 
-		if ( !empty( $headers ) ) {
+		if ( $headers !== null ) {
 			return $headers;
 		}
 

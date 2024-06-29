@@ -2,6 +2,7 @@
 
 namespace MediaWiki\RenameUser;
 
+use IDBAccessObject;
 use JobQueueGroup;
 use JobSpecification;
 use ManualLogEntry;
@@ -16,7 +17,7 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use Psr\Log\LoggerInterface;
 use RenameUserJob;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -24,35 +25,35 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  */
 class RenameuserSQL {
 	/**
-	 * The old username
+	 * The old username of the user being renamed
 	 *
 	 * @var string
 	 */
 	public $old;
 
 	/**
-	 * The new username
+	 * The new username of the user being renamed
 	 *
 	 * @var string
 	 */
 	public $new;
 
 	/**
-	 * The user ID
+	 * The user ID of the user being renamed
 	 *
 	 * @var int
 	 */
 	public $uid;
 
 	/**
-	 * The tables => fields to be updated
+	 * The [ tables => fields ] to be updated
 	 *
 	 * @var array
 	 */
 	public $tables;
 
 	/**
-	 * tables => fields to be updated in a deferred job
+	 * [ tables => fields ] to be updated in a deferred job
 	 *
 	 * @var array[]
 	 */
@@ -74,7 +75,7 @@ class RenameuserSQL {
 	private $renamer;
 
 	/**
-	 * Reason to be used in the log entry
+	 * Reason for the rename to be used in the log entry
 	 *
 	 * @var string
 	 */
@@ -95,8 +96,8 @@ class RenameuserSQL {
 	/** @var HookRunner */
 	private $hookRunner;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var IConnectionProvider */
+	private $dbProvider;
 
 	/** @var UserFactory */
 	private $userFactory;
@@ -113,6 +114,9 @@ class RenameuserSQL {
 	/** @var int */
 	private $updateRowsPerJob;
 
+	/** @var int */
+	private $blockWriteStage;
+
 	/**
 	 * Constructor
 	 *
@@ -128,12 +132,16 @@ class RenameuserSQL {
 	public function __construct( $old, $new, $uid, User $renamer, $options = [] ) {
 		$services = MediaWikiServices::getInstance();
 		$this->hookRunner = new HookRunner( $services->getHookContainer() );
-		$this->loadBalancer = $services->getDBLoadBalancer();
+		$this->dbProvider = $services->getConnectionProvider();
 		$this->userFactory = $services->getUserFactory();
 		$this->jobQueueGroup = $services->getJobQueueGroup();
 		$this->titleFactory = $services->getTitleFactory();
-		$this->updateRowsPerJob = $services->getMainConfig()->get( MainConfigNames::UpdateRowsPerJob );
 		$this->logger = LoggerFactory::getInstance( 'Renameuser' );
+
+		$config = $services->getMainConfig();
+		$this->updateRowsPerJob = $config->get( MainConfigNames::UpdateRowsPerJob );
+		$this->blockWriteStage = $config->get( MainConfigNames::BlockTargetMigrationStage )
+			& SCHEMA_COMPAT_WRITE_MASK;
 
 		$this->old = $old;
 		$this->new = $new;
@@ -171,10 +179,7 @@ class RenameuserSQL {
 	 * @return bool
 	 */
 	public function rename() {
-		// Grab the user's edit count first, used in log entry
-		$contribs = $this->userFactory->newFromId( $this->uid )->getEditCount();
-
-		$dbw = $this->loadBalancer->getConnection( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 		$atomicId = $dbw->startAtomic( __METHOD__, $dbw::ATOMIC_CANCELABLE );
 
 		$this->hookRunner->onRenameUserPreRename( $this->uid, $this->old, $this->new );
@@ -186,6 +191,9 @@ class RenameuserSQL {
 
 			return false;
 		}
+
+		// Grab the user's edit count before any updates are made; used later in a log entry
+		$contribs = $this->userFactory->newFromId( $this->uid )->getEditCount();
 
 		// Rename and touch the user before re-attributing edits to avoid users still being
 		// logged in and making new edits (under the old name) while being renamed.
@@ -205,18 +213,27 @@ class RenameuserSQL {
 		// Again, avoids user being logged in with old name.
 		$user = $this->userFactory->newFromId( $this->uid );
 
-		$user->load( User::READ_LATEST );
+		$user->load( IDBAccessObject::READ_LATEST );
 		SessionManager::singleton()->invalidateSessionsForUser( $user );
 
 		// Purge user cache
 		$user->invalidateCache();
 
-		// Update ipblock list if this user has a block in there.
-		$dbw->newUpdateQueryBuilder()
-			->update( 'ipblocks' )
-			->set( [ 'ipb_address' => $this->new ] )
-			->where( [ 'ipb_user' => $this->uid, 'ipb_address' => $this->old ] )
-			->caller( __METHOD__ )->execute();
+		// Update the ipblocks table rows if this user has a block in there.
+		if ( $this->blockWriteStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'ipblocks' )
+				->set( [ 'ipb_address' => $this->new ] )
+				->where( [ 'ipb_user' => $this->uid, 'ipb_address' => $this->old ] )
+				->caller( __METHOD__ )->execute();
+		}
+		if ( $this->blockWriteStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'block_target' )
+				->set( [ 'bt_user_text' => $this->new ] )
+				->where( [ 'bt_user' => $this->uid, 'bt_user_text' => $this->old ] )
+				->caller( __METHOD__ )->execute();
+		}
 
 		// Update this users block/rights log. Ideally, the logs would be historical,
 		// but it is really annoying when users have "clean" block logs by virtue of
@@ -238,7 +255,7 @@ class RenameuserSQL {
 			] )
 			->caller( __METHOD__ )->execute();
 
-		$this->debug( "Updating recentchanges table for {$this->old} to {$this->new}" );
+		$this->debug( "Updating recentchanges table for rename from {$this->old} to {$this->new}" );
 		$dbw->newUpdateQueryBuilder()
 			->update( 'recentchanges' )
 			->set( [ 'rc_title' => $newTitle->getDBkey() ] )
@@ -300,16 +317,16 @@ class RenameuserSQL {
 
 			// Insert jobs into queue!
 			foreach ( $res as $row ) {
-				# Since the ORDER BY is ASC, set the min timestamp with first row
+				// Since the ORDER BY is ASC, set the min timestamp with first row
 				if ( $jobParams['count'] === 0 ) {
 					$jobParams['minTimestamp'] = $row->$timestampC;
 				}
-				# Keep updating the last timestamp, so it should be correct
-				# when the last item is added.
+				// Keep updating the last timestamp, so it should be correct
+				// when the last item is added.
 				$jobParams['maxTimestamp'] = $row->$timestampC;
-				# Update row counter
+				// Update row counter
 				$jobParams['count']++;
-				# Once a job has $wgUpdateRowsPerJob rows, add it to the queue
+				// Once a job has $wgUpdateRowsPerJob rows, add it to the queue
 				if ( $jobParams['count'] >= $this->updateRowsPerJob ) {
 					$jobs[] = new JobSpecification( 'renameUser', $jobParams, [], $oldTitle );
 					$jobParams['minTimestamp'] = '0';
@@ -317,7 +334,7 @@ class RenameuserSQL {
 					$jobParams['count'] = 0;
 				}
 			}
-			# If there are any job rows left, add it to the queue as one job
+			// If there are any job rows left, add it to the queue as one job
 			if ( $jobParams['count'] > 0 ) {
 				$jobs[] = new JobSpecification( 'renameUser', $jobParams, [], $oldTitle );
 			}
@@ -341,7 +358,7 @@ class RenameuserSQL {
 		$count = count( $jobs );
 		if ( $count > 0 ) {
 			$this->jobQueueGroup->push( $jobs );
-			$this->debug( "Queued $count jobs for {$this->old} to {$this->new}" );
+			$this->debug( "Queued $count jobs for rename from {$this->old} to {$this->new}" );
 		}
 
 		// Commit the transaction
@@ -353,7 +370,7 @@ class RenameuserSQL {
 				$dbw->startAtomic( $fname );
 				// Clear caches and inform authentication plugins
 				$user = $this->userFactory->newFromId( $this->uid );
-				$user->load( User::READ_LATEST );
+				$user->load( IDBAccessObject::READ_LATEST );
 				// Trigger the UserSaveSettings hook
 				$user->saveSettings();
 				$this->hookRunner->onRenameUserComplete( $this->uid, $this->old, $this->new );
@@ -364,17 +381,17 @@ class RenameuserSQL {
 			$fname
 		);
 
-		$this->debug( "Finished rename for {$this->old} to {$this->new}" );
+		$this->debug( "Finished rename from {$this->old} to {$this->new}" );
 
 		return true;
 	}
 
 	/**
-	 * @param string $name Current wiki local user name
+	 * @param string $name Current wiki local username
 	 * @return int Returns 0 if no row was found
 	 */
 	private function lockUserAndGetId( $name ) {
-		return (int)$this->loadBalancer->getConnection( DB_PRIMARY )->newSelectQueryBuilder()
+		return (int)$this->dbProvider->getPrimaryDatabase()->newSelectQueryBuilder()
 			->select( 'user_id' )
 			->forUpdate()
 			->from( 'user' )

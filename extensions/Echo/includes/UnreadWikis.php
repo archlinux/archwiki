@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use CentralIdLookup;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\UserIdentity;
-use MWTimestamp;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
@@ -140,13 +140,14 @@ class UnreadWikis {
 			];
 
 			// when there is unread alert(s) and/or message(s), upsert the row
-			$dbw->upsert(
-				'echo_unread_wikis',
-				$conditions + $values,
-				[ [ 'euw_user', 'euw_wiki' ] ],
-				$values,
-				__METHOD__
-			);
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'echo_unread_wikis' )
+				->row( $conditions + $values )
+				->onDuplicateKeyUpdate()
+				->uniqueIndexFields( [ 'euw_user', 'euw_wiki' ] )
+				->set( $values )
+				->caller( __METHOD__ )
+				->execute();
 		} else {
 			// No unread notifications, delete the row
 			$dbw->delete(

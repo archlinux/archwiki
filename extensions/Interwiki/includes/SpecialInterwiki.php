@@ -2,17 +2,17 @@
 
 namespace MediaWiki\Extension\Interwiki;
 
-use Html;
 use HTMLForm;
 use LogPage;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
-use OutputPage;
 use PermissionsError;
 use ReadOnlyError;
-use SpecialPage;
-use Status;
 
 /**
  * Implements Special:Interwiki
@@ -188,7 +188,7 @@ class SpecialInterwiki extends SpecialPage {
 		];
 
 		if ( $action === 'edit' ) {
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 			$row = $dbr->selectRow( 'interwiki', '*', [ 'iw_prefix' => $prefix ], __METHOD__ );
 
 			$formDescriptor['prefix']['disabled'] = true;
@@ -233,6 +233,8 @@ class SpecialInterwiki extends SpecialPage {
 	}
 
 	public function onSubmit( array $data ) {
+		$services = MediaWikiServices::getInstance();
+
 		$status = Status::newGood();
 		$request = $this->getRequest();
 		$config = $this->getConfig();
@@ -250,7 +252,7 @@ class SpecialInterwiki extends SpecialPage {
 		// Disallow adding local interlanguage definitions if using global
 		$interwikiCentralInterlanguageDB = $config->get( 'InterwikiCentralInterlanguageDB' );
 		if (
-			$do === 'add' && MediaWikiServices::getInstance()->getLanguageNameUtils()->getLanguageName( $prefix )
+			$do === 'add' && $services->getLanguageNameUtils()->getLanguageName( $prefix )
 			&& $interwikiCentralInterlanguageDB !== WikiMap::getCurrentWikiId()
 			&& $interwikiCentralInterlanguageDB !== null
 		) {
@@ -259,82 +261,97 @@ class SpecialInterwiki extends SpecialPage {
 		}
 		$reason = $data['reason'];
 		$selfTitle = $this->getPageTitle();
-		$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();
-		$dbw = wfGetDB( DB_PRIMARY );
+		$lookup = $services->getInterwikiLookup();
+		$dbw = $services->getConnectionProvider()->getPrimaryDatabase();
 		switch ( $do ) {
-		case 'delete':
-			$dbw->delete( 'interwiki', [ 'iw_prefix' => $prefix ], __METHOD__ );
+			case 'delete':
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'interwiki' )
+					->where( [ 'iw_prefix' => $prefix ] )
+					->caller( __METHOD__ )
+					->execute();
 
-			if ( $dbw->affectedRows() === 0 ) {
-				$status->fatal( 'interwiki_delfailed', $prefix );
-			} else {
-				$this->getOutput()->addWikiMsg( 'interwiki_deleted', $prefix );
-				$log = new LogPage( 'interwiki' );
-				$log->addEntry(
-					'iw_delete',
-					$selfTitle,
-					$reason,
-					[ $prefix ],
-					$this->getUser()
-				);
-				$lookup->invalidateCache( $prefix );
-			}
-			break;
-		/** @noinspection PhpMissingBreakStatementInspection */
-		case 'add':
-			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
-			$prefix = $contLang->lc( $prefix );
-			// Fall through
-		case 'edit':
-			$theurl = $data['url'];
-			$api = $data['api'] ?? '';
-			$local = $data['local'] ? 1 : 0;
-			$trans = $data['trans'] ? 1 : 0;
-			$rows = [
-				'iw_prefix' => $prefix,
-				'iw_url' => $theurl,
-				'iw_api' => $api,
-				'iw_wikiid' => '',
-				'iw_local' => $local,
-				'iw_trans' => $trans
-			];
-
-			if ( $prefix === '' || $theurl === '' ) {
-				$status->fatal( 'interwiki-submit-empty' );
+				if ( $dbw->affectedRows() === 0 ) {
+					$status->fatal( 'interwiki_delfailed', $prefix );
+				} else {
+					$this->getOutput()->addWikiMsg( 'interwiki_deleted', $prefix );
+					$log = new LogPage( 'interwiki' );
+					$log->addEntry(
+						'iw_delete',
+						$selfTitle,
+						$reason,
+						[ $prefix ],
+						$this->getUser()
+					);
+					$lookup->invalidateCache( $prefix );
+				}
 				break;
-			}
+			/** @noinspection PhpMissingBreakStatementInspection */
+			case 'add':
+				$contLang = $services->getContentLanguage();
+				$prefix = $contLang->lc( $prefix );
+				// Fall through
+			case 'edit':
+				$theurl = $data['url'];
+				$api = $data['api'] ?? '';
+				$local = $data['local'] ? 1 : 0;
+				$trans = $data['trans'] ? 1 : 0;
+				$rows = [
+					'iw_prefix' => $prefix,
+					'iw_url' => $theurl,
+					'iw_api' => $api,
+					'iw_wikiid' => '',
+					'iw_local' => $local,
+					'iw_trans' => $trans
+				];
 
-			// Simple URL validation: check that the protocol is one of
-			// the supported protocols for this wiki.
-			// (bug 30600)
-			if ( !wfParseUrl( $theurl ) ) {
-				$status->fatal( 'interwiki-submit-invalidurl' );
+				if ( $prefix === '' || $theurl === '' ) {
+					$status->fatal( 'interwiki-submit-empty' );
+					break;
+				}
+
+				// Simple URL validation: check that the protocol is one of
+				// the supported protocols for this wiki.
+				// (bug 30600)
+				if ( !wfParseUrl( $theurl ) ) {
+					$status->fatal( 'interwiki-submit-invalidurl' );
+					break;
+				}
+
+				if ( $do === 'add' ) {
+					$dbw->newInsertQueryBuilder()
+						->insertInto( 'interwiki' )
+						->ignore()
+						->row( $rows )
+						->caller( __METHOD__ )
+						->execute();
+				} else { // $do === 'edit'
+					$dbw->newUpdateQueryBuilder()
+						->update( 'interwiki' )
+						->ignore()
+						->set( $rows )
+						->where( [ 'iw_prefix' => $prefix ] )
+						->caller( __METHOD__ )
+						->execute();
+				}
+
+				// used here: interwiki_addfailed, interwiki_added, interwiki_edited
+				if ( $dbw->affectedRows() === 0 ) {
+					$status->fatal( "interwiki_{$do}failed", $prefix );
+				} else {
+					$this->getOutput()->addWikiMsg( "interwiki_{$do}ed", $prefix );
+					$log = new LogPage( 'interwiki' );
+					$log->addEntry(
+						'iw_' . $do,
+						$selfTitle,
+						$reason,
+						[ $prefix, $theurl, $trans, $local ],
+						$this->getUser()
+					);
+					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
+					$lookup->invalidateCache( $prefix );
+				}
 				break;
-			}
-
-			if ( $do === 'add' ) {
-				$dbw->insert( 'interwiki', $rows, __METHOD__, [ 'IGNORE' ] );
-			} else { // $do === 'edit'
-				$dbw->update( 'interwiki', $rows, [ 'iw_prefix' => $prefix ], __METHOD__, [ 'IGNORE' ] );
-			}
-
-			// used here: interwiki_addfailed, interwiki_added, interwiki_edited
-			if ( $dbw->affectedRows() === 0 ) {
-				$status->fatal( "interwiki_{$do}failed", $prefix );
-			} else {
-				$this->getOutput()->addWikiMsg( "interwiki_{$do}ed", $prefix );
-				$log = new LogPage( 'interwiki' );
-				$log->addEntry(
-					'iw_' . $do,
-					$selfTitle,
-					$reason,
-					[ $prefix, $theurl, $trans, $local ],
-					$this->getUser()
-				);
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
-				$lookup->invalidateCache( $prefix );
-			}
-			break;
 		}
 
 		return $status;
@@ -344,16 +361,24 @@ class SpecialInterwiki extends SpecialPage {
 		$canModify = $this->canModify();
 
 		// Build lists
-		$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();
+		$services = MediaWikiServices::getInstance();
+
+		$lookup = $services->getInterwikiLookup();
 		$iwPrefixes = $lookup->getAllPrefixes( null );
 		$iwGlobalPrefixes = [];
 		$iwGlobalLanguagePrefixes = [];
+
 		$config = $this->getConfig();
 		$interwikiCentralDB = $config->get( 'InterwikiCentralDB' );
-		$languageNameUtils = MediaWikiServices::getInstance()->getLanguageNameUtils();
+
+		$languageNameUtils = $services->getLanguageNameUtils();
+
+		$connectionProvider = $services->getConnectionProvider();
+
 		if ( $interwikiCentralDB !== null && $interwikiCentralDB !== WikiMap::getCurrentWikiId() ) {
 			// Fetch list from global table
-			$dbrCentralDB = wfGetDB( DB_REPLICA, [], $interwikiCentralDB );
+			$dbrCentralDB = $connectionProvider->getReplicaDatabase( $interwikiCentralDB );
+
 			$res = $dbrCentralDB->select( 'interwiki', '*', [], __METHOD__ );
 			$retval = [];
 			foreach ( $res as $row ) {
@@ -373,7 +398,8 @@ class SpecialInterwiki extends SpecialPage {
 		$usingGlobalLanguages = $usingGlobalInterlangLinks && !$isGlobalInterlanguageDB;
 		if ( $usingGlobalLanguages ) {
 			// Fetch list from global table
-			$dbrCentralLangDB = wfGetDB( DB_REPLICA, [], $interwikiCentralInterlanguageDB );
+			$dbrCentralLangDB = $connectionProvider->getReplicaDatabase( $interwikiCentralInterlanguageDB );
+
 			$res = $dbrCentralLangDB->select( 'interwiki', '*', [], __METHOD__ );
 			$retval2 = [];
 			foreach ( $res as $row ) {

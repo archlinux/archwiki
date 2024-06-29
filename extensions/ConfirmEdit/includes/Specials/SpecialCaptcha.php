@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\ConfirmEdit\Specials;
 
 use MediaWiki\Extension\ConfirmEdit\Hooks;
-use UnlistedSpecialPage;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
 
 class SpecialCaptcha extends UnlistedSpecialPage {
 	public function __construct() {

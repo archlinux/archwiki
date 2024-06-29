@@ -1,5 +1,7 @@
 <?php
 
+namespace Wikimedia\Composer;
+
 /**
  * Reads an installed.json file and provides accessors to get what is
  * installed
@@ -25,8 +27,7 @@ class ComposerInstalled {
 	 * @return array[]
 	 */
 	public function getInstalledDependencies() {
-		// Composer version 2 provides the list of installed packages under the 'packages' key.
-		$contents = $this->contents['packages'] ?? $this->contents;
+		$contents = $this->contents['packages'];
 
 		$deps = [];
 		foreach ( $contents as $installed ) {

@@ -28,7 +28,9 @@ use MediaWiki\Content\Transform\PreloadTransformParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Revision\RevisionRecord;
@@ -43,37 +45,14 @@ use Wikimedia\UUID\GlobalIdGenerator;
  */
 class WikitextContentHandler extends TextContentHandler {
 
-	/** @var TitleFactory */
-	private $titleFactory;
+	private TitleFactory $titleFactory;
+	private ParserFactory $parserFactory;
+	private GlobalIdGenerator $globalIdGenerator;
+	private LanguageNameUtils $languageNameUtils;
+	private LinkRenderer $linkRenderer;
+	private MagicWordFactory $magicWordFactory;
+	private ParsoidParserFactory $parsoidParserFactory;
 
-	/** @var ParserFactory */
-	private $parserFactory;
-
-	/** @var GlobalIdGenerator */
-	private $globalIdGenerator;
-
-	/** @var LanguageNameUtils */
-	private $languageNameUtils;
-
-	/** @var LinkRenderer */
-	private $linkRenderer;
-
-	/** @var MagicWordFactory */
-	private $magicWordFactory;
-
-	/** @var ParsoidParserFactory */
-	private $parsoidParserFactory;
-
-	/**
-	 * @param string $modelId
-	 * @param TitleFactory $titleFactory
-	 * @param ParserFactory $parserFactory
-	 * @param GlobalIdGenerator $globalIdGenerator
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param LinkRenderer $linkRenderer
-	 * @param MagicWordFactory $magicWordFactory
-	 * @param ParsoidParserFactory $parsoidParserFactory
-	 */
 	public function __construct(
 		string $modelId,
 		TitleFactory $titleFactory,
@@ -120,9 +99,9 @@ class WikitextContentHandler extends TextContentHandler {
 		} else {
 			$iw = $destination->getInterwiki();
 			if ( $iw && $this->languageNameUtils->getLanguageName( $iw,
-						LanguageNameUtils::AUTONYMS,
-						LanguageNameUtils::DEFINED )
-			) {
+				LanguageNameUtils::AUTONYMS,
+				LanguageNameUtils::DEFINED
+			) ) {
 				$optionalColon = ':';
 			}
 		}
@@ -211,10 +190,8 @@ class WikitextContentHandler extends TextContentHandler {
 		$fields['opening_text']->setFlag(
 			SearchIndexField::FLAG_SCORING | SearchIndexField::FLAG_NO_HIGHLIGHT
 		);
-		// Until we have full first-class content handler for files, we invoke it explicitly here
-		$fields = array_merge( $fields, $this->getFileHandler()->getFieldsForSearchIndex( $engine ) );
-
-		return $fields;
+		// Until we have the full first-class content handler for files, we invoke it explicitly here
+		return array_merge( $fields, $this->getFileHandler()->getFieldsForSearchIndex( $engine ) );
 	}
 
 	public function getDataForSearchIndex(
@@ -234,10 +211,12 @@ class WikitextContentHandler extends TextContentHandler {
 		$fields['defaultsort'] = $structure->getDefaultSort();
 		$fields['file_text'] = null;
 
-		// Until we have full first-class content handler for files, we invoke it explicitly here
+		// Until we have the full first-class content handler for files, we invoke it explicitly here
 		if ( $page->getTitle()->getNamespace() === NS_FILE ) {
-			$fields = array_merge( $fields,
-					$this->getFileHandler()->getDataForSearchIndex( $page, $parserOutput, $engine, $revision ) );
+			$fields = array_merge(
+				$fields,
+				$this->getFileHandler()->getDataForSearchIndex( $page, $parserOutput, $engine, $revision )
+			);
 		}
 		return $fields;
 	}
@@ -266,18 +245,6 @@ class WikitextContentHandler extends TextContentHandler {
 		Content $content,
 		PreSaveTransformParams $pstParams
 	): Content {
-		$shouldCallDeprecatedMethod = $this->shouldCallDeprecatedContentTransformMethod(
-			$content,
-			$pstParams
-		);
-
-		if ( $shouldCallDeprecatedMethod ) {
-			return $this->callDeprecatedContentPST(
-				$content,
-				$pstParams
-			);
-		}
-
 		'@phan-var WikitextContent $content';
 		$text = $content->getText();
 
@@ -312,28 +279,15 @@ class WikitextContentHandler extends TextContentHandler {
 		Content $content,
 		PreloadTransformParams $pltParams
 	): Content {
-		$shouldCallDeprecatedMethod = $this->shouldCallDeprecatedContentTransformMethod(
-			$content,
-			$pltParams
-		);
-
-		if ( $shouldCallDeprecatedMethod ) {
-			return $this->callDeprecatedContentPLT(
-				$content,
-				$pltParams
-			);
-		}
-
 		'@phan-var WikitextContent $content';
 		$text = $content->getText();
 
-		$plt = $this->parserFactory->getInstance()
-			->getPreloadText(
-				$text,
-				$pltParams->getPage(),
-				$pltParams->getParserOptions(),
-				$pltParams->getParams()
-			);
+		$plt = $this->parserFactory->getInstance()->getPreloadText(
+			$text,
+			$pltParams->getPage(),
+			$pltParams->getParserOptions(),
+			$pltParams->getParams()
+		);
 
 		$contentClass = $this->getContentClass();
 		return new $contentClass( $plt );
@@ -416,8 +370,23 @@ class WikitextContentHandler extends TextContentHandler {
 			$text = $contentWithoutRedirect->getText();
 		}
 
+		$time = -microtime( true );
+
 		$parserOutput = $parser
 			->parse( $text, $title, $parserOptions, true, true, $revId );
+		$time += microtime( true );
+
+		// Timing hack
+		if ( $time > 3 ) {
+			// TODO: Use Parser's logger (once it has one)
+			$channel = $parserOptions->getUseParsoid() ? 'slow-parsoid' : 'slow-parse';
+			$logger = LoggerFactory::getInstance( $channel );
+			$logger->info( 'Parsing {title} was slow, took {time} seconds', [
+				'time' => number_format( $time, 2 ),
+				'title' => (string)$title,
+				'trigger' => $parserOptions->getRenderReason(),
+			] );
+		}
 
 		// T330667: Record the fact that we used the value of
 		// 'useParsoid' to influence this parse.  Note that
@@ -438,7 +407,7 @@ class WikitextContentHandler extends TextContentHandler {
 				);
 				$parserOutput->addModuleStyles( [ 'mediawiki.action.view.redirectPage' ] );
 			} else {
-				$parserOutput->setText( null );
+				$parserOutput->setRawText( null );
 			}
 		}
 

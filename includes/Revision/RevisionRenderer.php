@@ -25,9 +25,9 @@ namespace MediaWiki\Revision;
 use InvalidArgumentException;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Html\Html;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use ParserOptions;
-use ParserOutput;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -51,7 +51,7 @@ class RevisionRenderer {
 	private $loadBalancer;
 
 	/** @var SlotRoleRegistry */
-	private $roleRegistery;
+	private $roleRegistry;
 
 	/** @var ContentRenderer */
 	private $contentRenderer;
@@ -72,7 +72,7 @@ class RevisionRenderer {
 		$dbDomain = false
 	) {
 		$this->loadBalancer = $loadBalancer;
-		$this->roleRegistery = $roleRegistry;
+		$this->roleRegistry = $roleRegistry;
 		$this->contentRenderer = $contentRenderer;
 		$this->dbDomain = $dbDomain;
 		$this->saveParseLogger = new NullLogger();
@@ -160,8 +160,8 @@ class RevisionRenderer {
 			$rev,
 			$options,
 			$this->contentRenderer,
-			function ( RenderedRevision $rrev, array $hints ) {
-				return $this->combineSlotOutput( $rrev, $hints );
+			function ( RenderedRevision $rrev, array $hints ) use ( $options ) {
+				return $this->combineSlotOutput( $rrev, $options, $hints );
 			},
 			$audience,
 			$forPerformer
@@ -208,18 +208,21 @@ class RevisionRenderer {
 	 * @todo Use placement hints from SlotRoleHandlers instead of hard-coding the layout.
 	 *
 	 * @param RenderedRevision $rrev
+	 * @param ParserOptions $options
 	 * @param array $hints see RenderedRevision::getRevisionParserOutput()
 	 *
 	 * @return ParserOutput
 	 */
-	private function combineSlotOutput( RenderedRevision $rrev, array $hints = [] ) {
+	private function combineSlotOutput( RenderedRevision $rrev, ParserOptions $options, array $hints = [] ) {
 		$revision = $rrev->getRevision();
 		$slots = $revision->getSlots()->getSlots();
 
 		$withHtml = $hints['generate-html'] ?? true;
 
 		// short circuit if there is only the main slot
-		if ( array_keys( $slots ) === [ SlotRecord::MAIN ] ) {
+		// T351026 hack: if use-parsoid is set, only return main slot output for now
+		// T351113 will remove this hack.
+		if ( array_keys( $slots ) === [ SlotRecord::MAIN ] || $options->getUseParsoid() ) {
 			return $rrev->getSlotParserOutput( SlotRecord::MAIN, $hints );
 		}
 
@@ -248,7 +251,7 @@ class RevisionRenderer {
 			$first = true;
 			/** @var ParserOutput $out */
 			foreach ( $slotOutput as $role => $out ) {
-				$roleHandler = $this->roleRegistery->getRoleHandler( $role );
+				$roleHandler = $this->roleRegistry->getRoleHandler( $role );
 
 				// TODO: put more fancy layout logic here, see T200915.
 				$layout = $roleHandler->getOutputLayoutHints();
@@ -273,7 +276,7 @@ class RevisionRenderer {
 				$combinedOutput->mergeHtmlMetaDataFrom( $out );
 			}
 
-			$combinedOutput->setText( $html );
+			$combinedOutput->setRawText( $html );
 		}
 
 		$options->registerWatcher( null );

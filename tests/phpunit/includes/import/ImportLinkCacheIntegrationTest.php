@@ -1,13 +1,16 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Title\Title;
+
 /**
  * Integration test that checks import success and
  * LinkCache integration.
  *
  * @group large
  * @group Database
- * @covers ImportStreamSource
- * @covers ImportReporter
+ * @covers \ImportStreamSource
+ * @covers \ImportReporter
  *
  * @author mwjames
  */
@@ -23,7 +26,7 @@ class ImportLinkCacheIntegrationTest extends MediaWikiIntegrationTestCase {
 		$this->importStreamSource = ImportStreamSource::newFromFile( $file );
 
 		if ( !$this->importStreamSource->isGood() ) {
-			throw new Exception( "Import source for {$file} failed" );
+			$this->fail( "Import source for {$file} failed" );
 		}
 	}
 
@@ -35,14 +38,14 @@ class ImportLinkCacheIntegrationTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame(
 			$loremIpsum->getArticleID(),
-			$loremIpsum->getArticleID( Title::READ_LATEST )
+			$loremIpsum->getArticleID( IDBAccessObject::READ_LATEST )
 		);
 
 		$categoryLoremIpsum = Title::makeTitle( NS_CATEGORY, 'Lorem ipsum' );
 
 		$this->assertSame(
 			$categoryLoremIpsum->getArticleID(),
-			$categoryLoremIpsum->getArticleID( Title::READ_LATEST )
+			$categoryLoremIpsum->getArticleID( IDBAccessObject::READ_LATEST )
 		);
 	}
 
@@ -57,31 +60,31 @@ class ImportLinkCacheIntegrationTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame(
 			$loremIpsum->getArticleID(),
-			$loremIpsum->getArticleID( Title::READ_LATEST )
+			$loremIpsum->getArticleID( IDBAccessObject::READ_LATEST )
 		);
 
 		$categoryLoremIpsum = Title::makeTitle( NS_CATEGORY, 'Lorem ipsum' );
 
 		$this->assertSame(
 			$categoryLoremIpsum->getArticleID(),
-			$categoryLoremIpsum->getArticleID( Title::READ_LATEST )
+			$categoryLoremIpsum->getArticleID( IDBAccessObject::READ_LATEST )
 		);
 	}
 
 	private function doImport( $importStreamSource ) {
 		$importer = $this->getServiceContainer()
 			->getWikiImporterFactory()
-			->getWikiImporter( $importStreamSource->value );
+			->getWikiImporter( $importStreamSource->value, $this->getTestSysop()->getAuthority() );
 		$importer->setDebug( true );
 
 		$reporter = new ImportReporter(
 			$importer,
 			false,
 			'',
-			false
+			false,
+			new RequestContext()
 		);
 
-		$reporter->setContext( new RequestContext() );
 		$reporter->open();
 		$importer->doImport();
 		$this->assertStatusGood( $reporter->close() );

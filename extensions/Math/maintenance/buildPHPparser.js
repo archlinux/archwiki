@@ -8,7 +8,7 @@
  * Run it with: "$node maintenance/buildPHPparser.js <optional params>"
  *
  * Parameters can be defined over CLI parameters or by changing the
- * DEFAULT_PATH_XYZ constants in this file.
+ * defaultPathXYZ constants in this file.
  *
  * @author Johannes Stegmüller
  */
@@ -19,21 +19,28 @@ const { program } = require( 'commander' );
 const peggy = require( 'peggy' );
 const phpeggy = require( 'phpeggy' );
 const fs = require( 'fs' );
-const DEFAULT_PATH_INPUT = './src/TexVC/parser.pegjs';
-const DEFAULT_PATH_OUTPUT = './src/TexVC/Parser.php';
+const GENERATE_INTENT_PARSER = false;
+
+let defaultPathInput = './src/WikiTexVC/parser.pegjs';
+let defaultPathOutput = './src/WikiTexVC/Parser.php';
+if ( GENERATE_INTENT_PARSER ) {
+	defaultPathInput = './src/WikiTexVC/parserintent.pegjs';
+	defaultPathOutput = './src/WikiTexVC/ParserIntent.php';
+}
+
 const PHP_INSERTION_LINE = 9; // indicates where the 'use_xyz' statements are inserted
 
 program
 	.name( 'buildPHPparser' )
 	.option( '-i, --input <string>',
-		'path of input parser.pegjs file (*.pegjs)', DEFAULT_PATH_INPUT )
+		'path of input parser.pegjs file (*.pegjs)', defaultPathInput )
 	.option( '-o, --output <string>',
-		'path of generated output file (*.php)', DEFAULT_PATH_OUTPUT )
+		'path of generated output file (*.php)', defaultPathOutput )
 	.option( '-d, --debug',
 		'debug logging activated', false )
 	.description( 'Generates Parser.php as output from parser.pegjs as input. ' +
-		'This is used for for updating the parser expression grammar in TexVC ' +
-		'which is located in src/TexVC' )
+		'This is used for for updating the parser expression grammar in WikiTexVC ' +
+		'which is located in src/WikiTexVC' )
 	.version( '0.1.0' );
 
 program.parse();
@@ -48,35 +55,36 @@ let parser = peggy.generate( parserPeg, {
 	plugins: [ phpeggy ],
 	cache: true,
 	phpeggy: {
-		parserNamespace: 'MediaWiki\\Extension\\Math\\TexVC'
+		parserClassName: GENERATE_INTENT_PARSER ? 'ParserIntent' : 'Parser',
+		parserNamespace: 'MediaWiki\\Extension\\Math\\WikiTexVC'
 	}
 } );
 
 const useStatements =
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Box;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Big;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\ChemFun2u;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\ChemWord;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Curly;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Declh;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Dollar;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\DQ;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\FQ;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun1;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun1nb;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun2;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun2nb;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun2sq;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun4;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Infix;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Literal;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Lr;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Matrix;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Mhchem;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\UQ;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\TexArray;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\TexUtil;\n' +
-	'use MediaWiki\\Extension\\Math\\TexVC\\ParserUtil;';
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Box;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Big;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\ChemFun2u;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\ChemWord;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Curly;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Declh;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Dollar;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\DQ;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\FQ;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun1;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun1nb;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun2;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun2nb;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun2sq;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun4;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Infix;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Literal;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Lr;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Matrix;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Mhchem;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\UQ;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\TexArray;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\TexUtil;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\ParserUtil;';
 
 function addUseStatements( p, lineStart = PHP_INSERTION_LINE ) {
 	// Adding the specified use statements
@@ -85,7 +93,9 @@ function addUseStatements( p, lineStart = PHP_INSERTION_LINE ) {
 	return splitParser.join( '\n' );
 }
 
-parser = addUseStatements( parser );
+if ( !GENERATE_INTENT_PARSER ) {
+	parser = addUseStatements( parser );
+}
 
 /**
  * Fixing phpeggy to denote regular expressions which
@@ -97,10 +107,13 @@ const regexp = /\\x(\d\d)/g;
 if ( options.debug ) {
 	const matches = parser.match( regexp );
 	for ( const match of matches ) {
-		console.log( `Found ${match}.` );
+		console.log( `Found ${ match }.` );
 	}
 }
-const newParse = parser.replace( regexp, '\\x{00$1}' );
+parser = parser
+	.replace( regexp, '\\x{00$1}' )
+	// declare properties for the parser that were created dynamically before PHP 8.2
+	.replace( /class Parser \{/, 'class Parser {\n    private $tu;\n    private $options;' );
 
-fs.writeFileSync( options.output, newParse );
+fs.writeFileSync( options.output, parser );
 console.log( 'Generated output file at: ' + options.output );

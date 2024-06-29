@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"H78c67c"
+			"H78c67c",
+			"Winston Sung"
 		]
 	},
 	"minerva-last-modified-date": "最近編輯時間係$1 $2",
@@ -41,5 +41,11 @@
 	"minerva-page-actions-language-switcher": "話",
 	"minerva-page-actions-history": "史",
 	"skin-minerva-issue-learn-more": "知多啲",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1秒}}前",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1分鐘}}前",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1個鐘頭}}前",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1日}}前",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1個月}}前",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1年}}前",
 	"skin-minerva-mobile-option-MinervaShowCategories": "分類"
 }

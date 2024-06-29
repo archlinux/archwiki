@@ -19,9 +19,9 @@
  */
 namespace MediaWiki\Minerva;
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
-use OutputPage;
 
 /**
  * Helper class to encapsulate logic responsible for checking languages and variants for given title
@@ -29,29 +29,31 @@ use OutputPage;
  */
 class LanguagesHelper {
 
-	/**
-	 * @var bool
-	 */
-	private $hasLanguages;
+	private LanguageConverterFactory $languageConverterFactory;
 
 	/**
-	 * @param OutputPage $out Output page to fetch language links
+	 * @param LanguageConverterFactory $languageConverterFactory
 	 */
-	public function __construct( OutputPage $out ) {
-		$this->hasLanguages = !empty( $out->getLanguageLinks() );
+	public function __construct(
+		LanguageConverterFactory $languageConverterFactory
+	) {
+		$this->languageConverterFactory = $languageConverterFactory;
 	}
 
 	/**
 	 * Whether the Title is also available in other languages or variants
+	 * @param OutputPage $out Output page to fetch language links
 	 * @param Title $title
 	 * @return bool
 	 */
-	public function doesTitleHasLanguagesOrVariants( Title $title ) {
-		if ( $this->hasLanguages ) {
+	public function doesTitleHasLanguagesOrVariants(
+		OutputPage $out,
+		Title $title
+	) {
+		if ( $out->getLanguageLinks() !== [] ) {
 			return true;
 		}
-		$langConv = MediaWikiServices::getInstance()->getLanguageConverterFactory()
-			->getLanguageConverter( $title->getPageLanguage() );
+		$langConv = $this->languageConverterFactory->getLanguageConverter( $title->getPageLanguage() );
 		return $langConv->hasVariants();
 	}
 }

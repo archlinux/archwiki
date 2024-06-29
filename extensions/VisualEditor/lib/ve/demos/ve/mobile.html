@@ -4,7 +4,7 @@
 	/*!
 	 * VisualEditor standalone demo
 	 *
-	 * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+	 * @copyright See AUTHORS.txt
 	 */
 	-->
 	<head>
@@ -13,106 +13,114 @@
 		<title>VisualEditor Standalone Demo</title>
 
 		<!-- oojs-ui-wikimediaui -->
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-alerts.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-alerts.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-content.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-content.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-interactions.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-interactions.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-layout.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-layout.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-moderation.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-moderation.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-movement.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-movement.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-user.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-user.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-core.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-core.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-advanced.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-advanced.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-styling.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-styling.rtl.css" class="stylesheet-rtl stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-list.css" class="stylesheet-ltr stylesheet-read">
-		<link rel=stylesheet href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-list.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-alerts.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-alerts.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-content.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-content.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-interactions.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-interactions.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-layout.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-layout.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-moderation.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-moderation.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-movement.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-movement.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-user.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-user.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-core.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-core.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-advanced.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-advanced.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-styling.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-styling.rtl.css" class="stylesheet-rtl stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-list.css" class="stylesheet-ltr stylesheet-read">
+		<link rel="stylesheet" href="../../lib/oojs-ui/oojs-ui-wikimediaui-icons-editing-list.rtl.css" class="stylesheet-rtl stylesheet-read">
 
 		<!-- visualEditor.core.view -->
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.FocusableNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.ActiveNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.AlienNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.BranchNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.ContentBranchNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.ParagraphNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.RootNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.GeneratedContentNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.HorizontalRuleNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.CommentNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/annotations/ve.ce.LanguageAnnotation.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/annotations/ve.ce.LinkAnnotation.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.ResizableNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.SectionNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.TableCellNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/nodes/ve.ce.TableNode.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/ve.ce.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ce/styles/ve.ce.Surface.css" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.FocusableNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.ActiveNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.AlienNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.BranchNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.ContentBranchNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.ParagraphNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.RootNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.GeneratedContentNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.HorizontalRuleNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.CommentNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/annotations/ve.ce.LanguageAnnotation.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/annotations/ve.ce.LinkAnnotation.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.ResizableNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.SectionNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.TableCellNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/nodes/ve.ce.TableNode.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/ve.ce.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ce/styles/ve.ce.Surface.less" class="stylesheet-ve">
 
 		<!-- visualEditor.core.ui -->
-		<link rel=stylesheet href="../../src/ui/styles/dialogs/ve.ui.ToolbarDialog.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/dialogs/ve.ui.CommandHelpDialog.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/dialogs/ve.ui.FindAndReplaceDialog.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/dialogs/ve.ui.ProgressDialog.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/dialogs/ve.ui.SpecialCharacterDialog.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/dialogs/ve.ui.TableDialog.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/tools/ve.ui.FormatTool.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/widgets/ve.ui.LanguageInputWidget.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/widgets/ve.ui.LanguageSearchWidget.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/widgets/ve.ui.CompletionWidget.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/widgets/ve.ui.ContextOptionWidget.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/widgets/ve.ui.ContextSelectWidget.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/widgets/ve.ui.DimensionsWidget.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/widgets/ve.ui.MediaSizeWidget.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/inspectors/ve.ui.CommentInspector.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/inspectors/ve.ui.FragmentInspector.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/inspectors/ve.ui.LanguageInspector.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/ve.ui.Context.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/ve.ui.ContextItem.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/contextitems/ve.ui.LinearContextItem.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/contextitems/ve.ui.TableLineContextItem.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/contextitems/ve.ui.AlignableContextItem.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/contextitems/ve.ui.CommentContextItem.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/contextitems/ve.ui.LanguageContextItem.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/contextitems/ve.ui.LinkContextItem.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/contextitems/ve.ui.ToolContextItem.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/ve.ui.Overlay.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/ve.ui.Surface.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/widgets/ve.ui.TargetWidget.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/ve.ui.TableLineContext.css" class="stylesheet-ve">
-		<link rel=stylesheet href="../../src/ui/styles/ve.ui.Toolbar.css" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/dialogs/ve.ui.ToolbarDialog.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/dialogs/ve.ui.CommandHelpDialog.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/dialogs/ve.ui.FindAndReplaceDialog.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/dialogs/ve.ui.ProgressDialog.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/dialogs/ve.ui.SpecialCharacterDialog.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/dialogs/ve.ui.TableDialog.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/tools/ve.ui.FormatTool.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.LanguageInputWidget.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.LanguageSearchWidget.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.CompletionWidget.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.ContextOptionWidget.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.ContextSelectWidget.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.DimensionsWidget.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.MediaSizeWidget.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/inspectors/ve.ui.CommentInspector.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/inspectors/ve.ui.FragmentInspector.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/inspectors/ve.ui.LanguageInspector.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/layouts/ve.ui.SymbolListBookletLayout.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/ve.ui.Context.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/ve.ui.ContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/contextitems/ve.ui.LinearContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/contextitems/ve.ui.TableLineContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/contextitems/ve.ui.AlignableContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/contextitems/ve.ui.CommentContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/contextitems/ve.ui.LanguageContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/contextitems/ve.ui.LinkContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/contextitems/ve.ui.MergeCellsContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/contextitems/ve.ui.ToolContextItem.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/ve.ui.Overlay.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/ve.ui.Surface.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.TargetWidget.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/ve.ui.TableLineContext.less" class="stylesheet-ve">
+		<link rel="stylesheet/less" href="../../src/ui/styles/ve.ui.Toolbar.less" class="stylesheet-ve">
 
 		<!-- visualEditor.diffing -->
-		<link rel=stylesheet href="../../src/ui/styles/elements/ve.ui.DiffElement.css">
+		<link rel="stylesheet/less" href="../../src/ui/styles/elements/ve.ui.DiffElement.less">
 
 		<!-- visualEditor.standalone.build -->
-		<link rel=stylesheet href="../../src/init/sa/styles/ve.init.sa.Platform.css">
-		<link rel=stylesheet href="../../src/ui/styles/ve.ui.DebugBar.css">
+		<link rel="stylesheet/less" href="../../src/init/sa/styles/ve.init.sa.Platform.less">
+		<link rel="stylesheet/less" href="../../src/ui/styles/ve.ui.DebugBar.less">
 
 		<!-- visualEditor.mobile.build -->
-		<link rel=stylesheet href="../../src/ui/styles/ve.ui.MobileContext.css">
+		<link rel="stylesheet/less" href="../../src/ui/styles/ve.ui.MobileContext.less">
 
 		<!-- visualEditor.theme.wikimediaui -->
-		<link rel=stylesheet href="../../src/themes/wikimediaui.css">
+		<link rel="stylesheet/less" href="../../src/themes/wikimediaui.less">
 
 		<!-- visualEditor.standalone.read -->
-		<link rel=stylesheet href="../../src/init/sa/styles/ve.init.sa.css" class="stylesheet-read">
+		<link rel="stylesheet/less" href="../../src/init/sa/styles/ve.init.sa.less" class="stylesheet-read">
+
+		<!-- color-picker -->
+		<link rel="stylesheet" href="../../lib/color-picker/color-picker.css">
+
+		<!-- visualEditor.collab -->
+		<link rel="stylesheet/less" href="../../src/ui/styles/widgets/ve.ui.AuthorItemWidget.less" class="stylesheet-read">
 
 		<!-- visualEditor.standalone.demo -->
-		<link rel=stylesheet href="../../demos/ve/demo.css" class="stylesheet-read">
+		<link rel="stylesheet/less" href="../../demos/ve/demo.less" class="stylesheet-read">
 
 		<!-- visualEditor.mobile.standalone.demo -->
-		<link rel=stylesheet href="../../demos/ve/demo.mobile.css" class="stylesheet-read">
-		<link rel=stylesheet href="../../demos/ve/demo.wikimediaui.css" class="stylesheet-read">
+		<link rel="stylesheet/less" href="../../demos/ve/demo.mobile.less" class="stylesheet-read">
+		<link rel="stylesheet/less" href="../../demos/ve/demo.wikimediaui.less" class="stylesheet-read">
 
 	</head>
 	<body>
@@ -134,6 +142,9 @@
 
 		<!-- oojs-ui-wikimediaui -->
 		<script src="../../lib/oojs-ui/oojs-ui-wikimediaui.js"></script>
+
+		<!-- less -->
+		<script src="../../lib/less/less.js"></script>
 
 		<!-- CLDRPluralRuleParser -->
 		<script src="../../lib/jquery.i18n/libs/CLDRPluralRuleParser/src/CLDRPluralRuleParser.js"></script>
@@ -549,7 +560,8 @@
 		<script src="../../src/ui/inspectors/ve.ui.LinkAnnotationInspector.js"></script>
 		<script src="../../src/ui/inspectors/ve.ui.CommentInspector.js"></script>
 		<script src="../../src/ui/inspectors/ve.ui.LanguageInspector.js"></script>
-		<script src="../../src/ui/pages/ve.ui.SpecialCharacterPage.js"></script>
+		<script src="../../src/ui/layouts/ve.ui.SymbolListBookletLayout.js"></script>
+		<script src="../../src/ui/pages/ve.ui.SymbolListPage.js"></script>
 
 		<!-- treeDiffer -->
 		<script src="../../lib/treeDiffer/treeDiffer-dist.js"></script>
@@ -585,7 +597,7 @@
 				'../../i18n/',
 				'../../lib/oojs-ui/i18n/'
 			];
-			ve.availableLanguages = [ 'ace', 'acm', 'af', 'am', 'ang', 'ar', 'arc', 'arn', 'arq', 'as', 'ast', 'av', 'awa', 'az', 'azb', 'ba', 'ban', 'bcc', 'bci', 'bcl', 'be', 'be-tarask', 'bew', 'bg', 'bho', 'bjn', 'blk', 'bn', 'bqi', 'br', 'bs', 'ca', 'cdo', 'ce', 'cjy-hant', 'ckb', 'co', 'crh-cyrl', 'crh-latn', 'cs', 'cu', 'cy', 'da', 'dag', 'de', 'diq', 'dsb', 'dty', 'egl', 'el', 'eml', 'en', 'en-ca', 'eo', 'es', 'et', 'eu', 'fa', 'fat', 'fi', 'fo', 'fr', 'frp', 'frr', 'fur', 'fy', 'ga', 'gd', 'gl', 'glk', 'gn', 'gom-deva', 'gom-latn', 'gor', 'gsw', 'gu', 'guw', 'gv', 'ha', 'he', 'hi', 'hif-latn', 'hr', 'hrx', 'hsb', 'ht', 'hu', 'hu-formal', 'hy', 'hyw', 'ia', 'id', 'ie', 'ig', 'ilo', 'inh', 'io', 'is', 'it', 'ja', 'jv', 'ka', 'kaa', 'kab', 'kcg', 'khw', 'kk-cyrl', 'km', 'kn', 'ko', 'ko-kp', 'krc', 'krl', 'ks-arab', 'ksh', 'ku-latn', 'kus', 'kw', 'ky', 'la', 'lb', 'lez', 'lfn', 'li', 'lij', 'lki', 'lmo', 'lrc', 'lt', 'luz', 'lv', 'lzh', 'lzz', 'mai', 'mg', 'min', 'mk', 'ml', 'mn', 'mni', 'mr', 'mrh', 'ms', 'mt', 'my', 'myv', 'nan', 'nap', 'nb', 'nds', 'nds-nl', 'ne', 'nl', 'nn', 'nqo', 'oc', 'olo', 'om', 'or', 'os', 'pa', 'pam', 'pfl', 'pl', 'pms', 'pnb', 'ps', 'pt', 'pt-br', 'qqq', 'qu', 'rm', 'ro', 'roa-tara', 'rsk', 'ru', 'rue', 'rw', 'sa', 'sah', 'sc', 'scn', 'sco', 'sd', 'se', 'sgs', 'sh', 'sh-latn', 'shn', 'si', 'sk', 'skr-arab', 'sl', 'smn', 'sn', 'sq', 'sr-ec', 'sr-el', 'st', 'su', 'sv', 'sw', 'szy', 'ta', 'tay', 'tdd', 'te', 'tg-cyrl', 'th', 'ti', 'tk', 'tl', 'tly', 'tr', 'tt-cyrl', 'tum', 'tw', 'tyv', 'tzm', 'ug-arab', 'uk', 'ur', 'uz', 'vec', 'vep', 'vi', 'vo', 'wal', 'war', 'wuu', 'xmf', 'yi', 'yo', 'yue', 'yue-hant', 'zh-hans', 'zh-hant' ];
+			ve.availableLanguages = [ 'ace', 'acm', 'af', 'am', 'ang', 'ar', 'arc', 'arn', 'arq', 'as', 'ast', 'av', 'awa', 'az', 'azb', 'ba', 'ban', 'bcc', 'bci', 'bcl', 'be', 'be-tarask', 'bew', 'bg', 'bho', 'bjn', 'blk', 'bn', 'bqi', 'br', 'bs', 'ca', 'cdo', 'ce', 'cjy-hant', 'ckb', 'co', 'crh-cyrl', 'crh-latn', 'cs', 'cu', 'cv', 'cy', 'da', 'dag', 'de', 'dga', 'diq', 'dsb', 'dty', 'egl', 'el', 'eml', 'en', 'en-ca', 'eo', 'es', 'et', 'eu', 'fa', 'fat', 'fi', 'fo', 'fr', 'frp', 'frr', 'fur', 'fy', 'ga', 'gcf', 'gd', 'gl', 'glk', 'gn', 'gom-deva', 'gom-latn', 'gor', 'gsw', 'gu', 'gur', 'guw', 'gv', 'ha', 'he', 'hi', 'hif-latn', 'hr', 'hrx', 'hsb', 'ht', 'hu', 'hu-formal', 'hy', 'hyw', 'ia', 'id', 'ie', 'ig', 'ilo', 'inh', 'io', 'is', 'it', 'ja', 'jv', 'ka', 'kaa', 'kab', 'kcg', 'khw', 'kk-cyrl', 'km', 'kn', 'ko', 'ko-kp', 'krc', 'krl', 'ks-arab', 'ksh', 'ku-latn', 'kus', 'kw', 'ky', 'la', 'lb', 'lez', 'lfn', 'li', 'lij', 'lki', 'lmo', 'lrc', 'lt', 'luz', 'lv', 'lzh', 'lzz', 'mag', 'mai', 'mg', 'min', 'mk', 'ml', 'mn', 'mni', 'mos', 'mr', 'mrh', 'ms', 'mt', 'my', 'myv', 'nan', 'nap', 'nb', 'nds', 'nds-nl', 'ne', 'nl', 'nn', 'nqo', 'oc', 'olo', 'om', 'or', 'os', 'pa', 'pam', 'pfl', 'pl', 'pms', 'pnb', 'ps', 'pt', 'pt-br', 'qqq', 'qu', 'rm', 'ro', 'roa-tara', 'rsk', 'ru', 'rue', 'rw', 'sa', 'sah', 'sc', 'scn', 'sco', 'sd', 'se', 'sgs', 'sh-latn', 'shn', 'si', 'sk', 'skr-arab', 'sl', 'smn', 'sn', 'sq', 'sr-ec', 'sr-el', 'st', 'su', 'sv', 'sw', 'szy', 'ta', 'tay', 'tdd', 'te', 'tg-cyrl', 'th', 'ti', 'tk', 'tl', 'tly', 'tr', 'tt-cyrl', 'tum', 'tw', 'tyv', 'tzm', 'ug-arab', 'uk', 'ur', 'uz', 'vec', 'vep', 'vi', 'vo', 'wal', 'war', 'xal', 'xmf', 'yi', 'yo', 'yue-hant', 'zh-hans', 'zh-hant' ];
 			ve.demoPages = [
 				'aliens',
 				'comments',
@@ -604,6 +616,27 @@
 				'very long'
 			];
 		</script>
+
+		<!-- color-picker -->
+		<script src="../../lib/color-picker/color-picker.js"></script>
+
+		<!-- peerjs -->
+		<script src="../../lib/peerjs/peerjs.min.js"></script>
+
+		<!-- visualEditor.collab -->
+		<script src="../../rebaser/src/dm/ve.dm.RebaseDocState.js"></script>
+		<script src="../../rebaser/src/dm/ve.dm.RebaseServer.js"></script>
+		<script src="../../rebaser/src/dm/ve.dm.DocumentStore.js"></script>
+		<script src="../../rebaser/src/dm/ve.dm.ProtocolServer.js"></script>
+		<script src="../../src/dm/ve.dm.RebaseClient.js"></script>
+		<script src="../../src/dm/ve.dm.SurfaceSynchronizer.js"></script>
+		<script src="../../src/ui/widgets/ve.ui.AuthorItemWidget.js"></script>
+		<script src="../../src/ui/tools/ve.ui.AuthorListPopupTool.js"></script>
+		<script src="../../src/ve.FakePeer.js"></script>
+		<script src="../../collab/ve.collab.js"></script>
+		<script src="../../collab/ve.dm.CollabTransportServer.js"></script>
+		<script src="../../collab/ve.ui.CollabProcessDialog.js"></script>
+		<script src="../../collab/ve.ui.CollabTool.js"></script>
 
 		<!-- visualEditor.standalone.demo -->
 		<script src="../../demos/ve/ve.demo.js"></script>

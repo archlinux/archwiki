@@ -4,6 +4,8 @@ use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\SpamBlacklist\BaseBlacklist;
 use MediaWiki\Extension\SpamBlacklist\SpamBlacklist;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 
 /**
@@ -12,6 +14,9 @@ use MediaWiki\Title\Title;
  * @covers \MediaWiki\Extension\SpamBlacklist\SpamBlacklist
  */
 class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
+
+	use TempUserTestTrait;
+
 	/**
 	 * @var SpamBlacklist
 	 */
@@ -66,11 +71,35 @@ class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider spamProvider
 	 */
-	public function testSpam( $links, $expected ) {
+	public function testSpamTempAccounts( $links, $expected ) {
+		$this->enableAutoCreateTempUser();
+		$this->prepareGlobals();
+		$tempUserCreator = MediaWikiServices::getInstance()->getTempUserCreator();
+		$user = $tempUserCreator->create(
+			null,
+			new FauxRequest()
+		)->getUser();
 		$returnValue = $this->spamFilter->filter(
 			$links,
 			Title::newMainPage(),
-			$this->createMock( User::class )
+			$user
+		);
+		$this->assertEquals( $expected, $returnValue );
+	}
+
+	/**
+	 * @dataProvider spamProvider
+	 */
+	public function testSpamAnonEditing( $links, $expected ) {
+		$this->disableAutoCreateTempUser();
+		$this->prepareGlobals();
+
+		$userFactory = $this->getServiceContainer()->getUserFactory();
+		$user = $userFactory->newAnonymous();
+		$returnValue = $this->spamFilter->filter(
+			$links,
+			Title::newMainPage(),
+			$user
 		);
 		$this->assertEquals( $expected, $returnValue );
 	}
@@ -97,6 +126,7 @@ class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider spamEditProvider
 	 */
 	public function testSpamEdit( $text, $ok ) {
+		$this->prepareGlobals();
 		$fields = [
 			'wpTextbox1' => $text,
 			'wpUnicodeCheck' => EditPage::UNICODE_CHECK,
@@ -121,16 +151,14 @@ class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 
 		$status = $ep->attemptSave( $result );
 
-		$this->assertSame( $ok, $status->isOK() );
-
-		if ( !$ok ) {
-			$this->assertTrue( $status->hasMessage( 'spam-blacklisted-link' ) );
+		if ( $ok ) {
+			$this->assertStatusOK( $status );
+		} else {
+			$this->assertStatusError( 'spam-blacklisted-link', $status );
 		}
 	}
 
-	protected function setUp(): void {
-		parent::setUp();
-
+	private function prepareGlobals(): void {
 		$this->setMwGlobals( 'wgBlacklistSettings', [
 			'files' => [],
 		] );

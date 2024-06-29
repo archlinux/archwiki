@@ -3,13 +3,13 @@
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialUserRights;
+use MediaWiki\WikiMap\WikiMap;
 
 /**
  * @group Database
  * @covers \MediaWiki\Specials\SpecialUserRights
  */
 class SpecialUserRightsTest extends SpecialPageTestBase {
-	protected $tablesUsed = [ 'user', 'logging' ];
 
 	/**
 	 * @inheritDoc
@@ -78,9 +78,11 @@ class SpecialUserRightsTest extends SpecialPageTestBase {
 		);
 
 		$this->assertSame( 1, $request->getSession()->get( 'specialUserrightsSaveSuccess' ) );
+		$result = $this->getServiceContainer()->getUserGroupManager()->getUserGroups( $target );
+		sort( $result );
 		$this->assertSame(
 			[ 'bot', 'sysop' ],
-			$this->getServiceContainer()->getUserGroupManager()->getUserGroups( $target )
+			$result
 		);
 	}
 
@@ -146,9 +148,9 @@ class SpecialUserRightsTest extends SpecialPageTestBase {
 		// FIXME: This should benefit from $tablesUsed; until this is possible, purge user_groups on
 		// the other wiki.
 		$externalDbw = $this->getServiceContainer()
-			->getDBLoadBalancerFactory()
+			->getConnectionProvider()
 			->getPrimaryDatabase( $externalDBname );
-		$externalDbw->truncate( 'user_groups', __METHOD__ );
+		$externalDbw->truncateTable( 'user_groups', __METHOD__ );
 
 		// ensure using SpecialUserRights with external usernames doesn't throw (T342747, T342322)
 		$performer = $this->getTestUser( [ 'bureaucrat' ] );

@@ -48,7 +48,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Stu refèrimende jè definite jndr'à 'nu template o otre blocche generate, e pe mò pò sulamende essere 'ndrucate in andeprime jndr'à 'u mode sorgende.",
 	"cite-ve-referenceslist-missingreflist": "Stu elenghe de refèremiende jè definite jndr'à 'nu template.",
 	"cite-ve-toolbar-group-label": "Cite",
-	"cite-ve-othergroup-item": "$1 referimende",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Rifereminde",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nome gruppe de refereminde: \"$1\""
+	"cite-ve-othergroup-item": "$1 referimende"
 }

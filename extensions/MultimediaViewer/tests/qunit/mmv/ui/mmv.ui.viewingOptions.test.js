@@ -2,9 +2,9 @@ const { OptionsDialog } = require( 'mmv' );
 
 ( function () {
 	function makeDialog( initialise ) {
-		var $qf = $( '#qunit-fixture' ),
-			$button = $( '<div>' ).appendTo( $qf ),
-			dialog = new OptionsDialog( $qf, $button, { setMediaViewerEnabledOnClick: function () {} } );
+		const $qf = $( '#qunit-fixture' );
+		const $button = $( '<div>' ).appendTo( $qf );
+		const dialog = new OptionsDialog( $qf, $button, { setMediaViewerEnabledOnClick: function () {} } );
 
 		if ( initialise ) {
 			dialog.initPanel();
@@ -16,12 +16,12 @@ const { OptionsDialog } = require( 'mmv' );
 	QUnit.module( 'mmv.ui.viewingOptions', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sense test', function ( assert ) {
-		var dialog = makeDialog();
+		const dialog = makeDialog();
 		assert.true( dialog instanceof OptionsDialog, 'Dialog is created successfully' );
 	} );
 
 	QUnit.test( 'Initialisation functions', function ( assert ) {
-		var dialog = makeDialog( true );
+		const dialog = makeDialog( true );
 
 		assert.strictEqual( dialog.$disableDiv.length, 1, 'Disable div is created.' );
 		assert.strictEqual( dialog.$enableDiv.length, 1, 'Enable div is created.' );
@@ -30,10 +30,8 @@ const { OptionsDialog } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Disable', function ( assert ) {
-		var $header, $icon, $text, $textHeader, $textBody,
-			$submitButton, $cancelButton, $aboutLink,
-			dialog = makeDialog(),
-			deferred = $.Deferred();
+		const dialog = makeDialog();
+		const deferred = $.Deferred();
 
 		this.sandbox.stub( dialog.config, 'setMediaViewerEnabledOnClick', function () {
 			return deferred;
@@ -41,15 +39,15 @@ const { OptionsDialog } = require( 'mmv' );
 
 		dialog.initDisableDiv();
 
-		$header = dialog.$disableDiv.find( 'h3.mw-mmv-options-dialog-header' );
-		$icon = dialog.$disableDiv.find( 'div.mw-mmv-options-icon' );
+		const $header = dialog.$disableDiv.find( 'h3.mw-mmv-options-dialog-header' );
+		const $icon = dialog.$disableDiv.find( 'div.mw-mmv-options-icon' );
 
-		$text = dialog.$disableDiv.find( 'div.mw-mmv-options-text' );
-		$textHeader = $text.find( 'p.mw-mmv-options-text-header' );
-		$textBody = $text.find( 'p.mw-mmv-options-text-body' );
-		$aboutLink = $text.find( 'a.mw-mmv-project-info-link' );
-		$submitButton = dialog.$disableDiv.find( 'button.mw-mmv-options-submit-button' );
-		$cancelButton = dialog.$disableDiv.find( 'button.mw-mmv-options-cancel-button' );
+		const $text = dialog.$disableDiv.find( 'div.mw-mmv-options-text' );
+		const $textHeader = $text.find( 'p.mw-mmv-options-text-header' );
+		const $textBody = $text.find( 'p.mw-mmv-options-text-body' );
+		const $aboutLink = $text.find( 'a.mw-mmv-project-info-link' );
+		const $submitButton = dialog.$disableDiv.find( 'button.mw-mmv-options-submit-button' );
+		const $cancelButton = dialog.$disableDiv.find( 'button.mw-mmv-options-cancel-button' );
 
 		assert.strictEqual( $header.length, 1, 'Disable header created successfully.' );
 		assert.strictEqual( $header.text(), '(multimediaviewer-options-dialog-header)', 'Disable header has correct text (if this fails, it may be due to i18n differences)' );
@@ -87,10 +85,8 @@ const { OptionsDialog } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'Enable', function ( assert ) {
-		var $header, $icon, $text, $textHeader, $aboutLink,
-			$submitButton, $cancelButton,
-			dialog = makeDialog(),
-			deferred = $.Deferred();
+		const dialog = makeDialog();
+		const deferred = $.Deferred();
 
 		this.sandbox.stub( dialog.config, 'setMediaViewerEnabledOnClick', function () {
 			return deferred;
@@ -98,14 +94,14 @@ const { OptionsDialog } = require( 'mmv' );
 
 		dialog.initEnableDiv();
 
-		$header = dialog.$enableDiv.find( 'h3.mw-mmv-options-dialog-header' );
-		$icon = dialog.$enableDiv.find( 'div.mw-mmv-options-icon' );
+		const $header = dialog.$enableDiv.find( 'h3.mw-mmv-options-dialog-header' );
+		const $icon = dialog.$enableDiv.find( 'div.mw-mmv-options-icon' );
 
-		$text = dialog.$enableDiv.find( 'div.mw-mmv-options-text' );
-		$textHeader = $text.find( 'p.mw-mmv-options-text-header' );
-		$aboutLink = $text.find( 'a.mw-mmv-project-info-link' );
-		$submitButton = dialog.$enableDiv.find( 'button.mw-mmv-options-submit-button' );
-		$cancelButton = dialog.$enableDiv.find( 'button.mw-mmv-options-cancel-button' );
+		const $text = dialog.$enableDiv.find( 'div.mw-mmv-options-text' );
+		const $textHeader = $text.find( 'p.mw-mmv-options-text-header' );
+		const $aboutLink = $text.find( 'a.mw-mmv-project-info-link' );
+		const $submitButton = dialog.$enableDiv.find( 'button.mw-mmv-options-submit-button' );
+		const $cancelButton = dialog.$enableDiv.find( 'button.mw-mmv-options-cancel-button' );
 
 		assert.strictEqual( $header.length, 1, 'Enable header created successfully.' );
 		assert.strictEqual( $header.text(), '(multimediaviewer-enable-dialog-header)', 'Enable header has correct text (if this fails, it may be due to i18n differences)' );

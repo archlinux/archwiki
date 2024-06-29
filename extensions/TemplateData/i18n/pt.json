@@ -98,6 +98,7 @@
 	"templatedata-modal-table-param-aliases": "Nomes alternativos",
 	"templatedata-modal-table-param-autovalue": "Valor automático",
 	"templatedata-modal-table-param-default": "Padrão ($1)",
+	"templatedata-modal-table-param-status": "Estado",
 	"templatedata-modal-table-param-deprecated": "Obsoleto",
 	"templatedata-modal-table-param-deprecatedValue": "Instruções de descontinuação",
 	"templatedata-modal-table-param-description": "Descrição ($1)",

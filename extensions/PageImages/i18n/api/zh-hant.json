@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kly",
-			"Winston Sung",
-			"SunAfterRain"
+			"SunAfterRain",
+			"Winston Sung"
 		]
 	},
 	"apihelp-query+pageimages-summary": "回傳有關在頁面上圖片的資訊，例如縮圖和照片展示內容。",

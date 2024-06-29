@@ -23,8 +23,11 @@
 namespace MediaWiki\User;
 
 use InvalidArgumentException;
+use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Permissions\Authority;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
 /**
  * Handles searching prefixes of user names
@@ -43,17 +46,21 @@ class UserNamePrefixSearch {
 
 	private IConnectionProvider $dbProvider;
 	private UserNameUtils $userNameUtils;
+	private HideUserUtils $hideUserUtils;
 
 	/**
 	 * @param IConnectionProvider $dbProvider
 	 * @param UserNameUtils $userNameUtils
+	 * @param HideUserUtils $hideUserUtils
 	 */
 	public function __construct(
 		IConnectionProvider $dbProvider,
-		UserNameUtils $userNameUtils
+		UserNameUtils $userNameUtils,
+		HideUserUtils $hideUserUtils
 	) {
 		$this->dbProvider = $dbProvider;
 		$this->userNameUtils = $userNameUtils;
+		$this->hideUserUtils = $hideUserUtils;
 	}
 
 	/**
@@ -83,15 +90,14 @@ class UserNamePrefixSearch {
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( 'user_name' )
 			->from( 'user' )
-			->where( [ 'user_name ' . $dbr->buildLike( $prefix, $dbr->anyString() ) ] )
+			->where( $dbr->expr( 'user_name', IExpression::LIKE, new LikeValue( $prefix, $dbr->anyString() ) ) )
 			->orderBy( 'user_name' )
 			->limit( $limit )
 			->offset( $offset );
 
 		// Filter out hidden user names
 		if ( $audience === self::AUDIENCE_PUBLIC || !$audience->isAllowed( 'hideuser' ) ) {
-			$queryBuilder->leftJoin( 'ipblocks', null, 'user_id=ipb_user' );
-			$queryBuilder->andWhere( [ 'ipb_deleted' => [ 0, null ] ] );
+			$queryBuilder->andWhere( $this->hideUserUtils->getExpression( $dbr ) );
 		}
 
 		return $queryBuilder->caller( __METHOD__ )->fetchFieldValues();

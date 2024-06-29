@@ -22,18 +22,19 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Html\FormOptions;
+use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Navigation\PagerNavigationBuilder;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
-use Message;
 use SearchEngineFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -223,7 +224,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		$conds['redirect'] = [
 			'rd_namespace' => $target->getNamespace(),
 			'rd_title' => $target->getDBkey(),
-			'rd_interwiki' => [ '', null ],
+			'rd_interwiki' => '',
 		];
 		$conds['pagelinks'] = $this->linksMigration->getLinksConditions( 'pagelinks', $target );
 		$conds['templatelinks'] = $this->linksMigration->getLinksConditions( 'templatelinks', $target );
@@ -290,7 +291,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 				"rd_from = $fromCol",
 				'rd_title' => $target->getDBkey(),
 				'rd_namespace' => $target->getNamespace(),
-				'rd_interwiki' => [ '', null ],
+				'rd_interwiki' => '',
 			];
 			// Inner LIMIT is 2X in case of stale backlinks with wrong namespaces
 			$subQuery = $dbr->newSelectQueryBuilder()
@@ -564,9 +565,10 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 			$this->msg( 'whatlinkshere-links' )->text(),
 			$this->msg( 'editlink' )->text()
 		);
-		$wlh = Xml::wrapClass(
-			$this->msg( 'parentheses' )->rawParams( $wlhLink )->escaped(),
-			'mw-whatlinkshere-tools'
+		$wlh = Html::rawElement(
+			'span',
+			[ 'class' => 'mw-whatlinkshere-tools' ],
+			$this->msg( 'parentheses' )->rawParams( $wlhLink )->escaped()
 		);
 
 		return $notClose ?

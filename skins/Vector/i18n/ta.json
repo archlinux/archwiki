@@ -3,6 +3,7 @@
 		"authors": [
 			"Amire80",
 			"ElangoRamanujam",
+			"Fahimrazick",
 			"Jayarathina",
 			"Kaartic",
 			"Kanags",
@@ -10,8 +11,7 @@
 			"Shanmugamp7",
 			"Siddhan",
 			"Surya Prakash.S.A.",
-			"TRYPPN",
-			"Fahimrazick"
+			"TRYPPN"
 		]
 	},
 	"vector-opt-out": "பழைய பார்வைக்கு மாறு",
@@ -42,5 +42,6 @@
 	"vector-page-tools-label": "கருவிகள்",
 	"vector-page-tools-general-label": "பொது",
 	"vector-unpin-element-label": "மறை",
-	"empty-language-selector-body": "மற்ற மொழிகளில் ஆதரிக்கப்படாத பக்க உள்ளடக்கம்."
+	"empty-language-selector-body": "மற்ற மொழிகளில் ஆதரிக்கப்படாத பக்க உள்ளடக்கம்.",
+	"vector-toc-unpinned-popup": "பொருளடக்கம் இங்கு நகர்த்தப்பட்டது."
 }

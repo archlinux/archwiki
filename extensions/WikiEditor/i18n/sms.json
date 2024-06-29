@@ -10,7 +10,6 @@
 	"wikieditor-toolbar-tool-link-int": "wikisijddu",
 	"wikieditor-toolbar-tool-link-insert": "Lââʹzzet liiŋk",
 	"wikieditor-toolbar-tool-link-cancel": "Jõõsk",
-	"wikieditor-toolbar-tool-file-example": "Ouddmiârkk.jpg",
 	"wikieditor-toolbar-tool-file-title": "Lââʹzzet teâttõõzz",
 	"wikieditor-toolbar-file-target": "Teâttõsnõmm:",
 	"wikieditor-toolbar-file-caption": "Kartt- leʹbe snimldõkteʹkstt:",
@@ -29,5 +28,6 @@
 	"wikieditor-toolbar-tool-table-cancel": "Jõõsk",
 	"wikieditor-toolbar-tool-replace-title": "Ooʒʒ da koʹrvved",
 	"wikieditor-toolbar-tool-replace-search": "Ooʒʒ:",
-	"wikieditor-toolbar-section-characters": "Spesiaalmiârk"
+	"wikieditor-toolbar-section-characters": "Spesiaalmiârk",
+	"wikieditor-toolbar-help-page-link": "Liiŋk"
 }

@@ -1,18 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ayire Adongo",
 			"Akakiiri",
 			"Amoramah",
+			"Ayire Adongo",
 			"Baba Ayɛ'ɛra"
 		]
 	},
 	"cite-desc": "Pa'aseri la <code>&lt;ref&gt;</code> and <code>&lt;references&gt;</code> tags for citations",
 	"cite_error": "Tiɛ tuure: $1",
 	"cite_error_ref_invalid_dir": "Dagi ma'a <code>dir=\"$1\"</code>, must be <code>ltr</code> or <code>rtl</code>",
+	"cite_error_ref_conflicting_dir": "<code>&lt;ref&gt;</code> a yima n tari \"$1\" yu'urɛ sɛba n tari daaŋɔ tuulesum",
 	"cite_error_ref_numeric_key": "Dagi ma'a <code>&lt;ref&gt;</code> tag; name cannot be a simple integer. Use a descriptive title<code></code>",
 	"cite_error_ref_no_key": "Yu'ure la <code>&lt;ref&gt;</code> tag is malformed or has a bad name",
-	"cite_error_ref_too_many_keys": "Dagi ma'a <code>&lt;ref&gt;</code> tag; invalid names, e.g. too many",
+	"cite_error_ref_too_many_keys": "Dagi ma'a <code>&lt;ref&gt;</code> tag;",
+	"cite_error_ref_follow_conflicts": "A <code>&lt;ref follow=\"…\"&gt;</code> tagi sɛka ti ba tɔgera Mina n de bunkɛka la ka le nyaŋɛ bo e yu'urɛ a ma'a bii a yalegɛ pa'asɛ",
 	"cite_error_ref_nested_extends": "Dikera paara <code>&lt;ref&gt;</code> tags more than one level deep is not allowed",
 	"cite_error_ref_no_input": "Invalid <code>&lt;ref&gt;</code> tag; viisegɔ lɔgerɔ n tari yu'urɛ nari ti la tara yelesum",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> tags exist for a group named \"$1\", but no corresponding <code>&lt;references group=\"$1\"/&gt;</code> tag was found",

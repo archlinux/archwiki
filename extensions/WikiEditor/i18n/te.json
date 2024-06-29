@@ -17,10 +17,6 @@
 	"wikieditor-toolbar-tool-bold-example": "బొద్దు పాఠ్యం",
 	"wikieditor-toolbar-tool-italic": "వాలు",
 	"wikieditor-toolbar-tool-italic-example": "వాలు పాఠ్యం",
-	"wikieditor-toolbar-tool-ilink": "అంతర్గత లింకు",
-	"wikieditor-toolbar-tool-ilink-example": "లంకె లంకెపేరు",
-	"wikieditor-toolbar-tool-xlink": "బయటి లింకు (http:// ఉపసర్గని మరిచిపోకండి)",
-	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com లంకె లంకెపేరు",
 	"wikieditor-toolbar-tool-link": "లంకె",
 	"wikieditor-toolbar-tool-link-title": "లంకె కలుపు",
 	"wikieditor-toolbar-tool-link-int": "ఒక వికీ పేజీకి",
@@ -38,7 +34,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "తప్పుడు శీర్షిక",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "బయటి లింకు",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "అయోమయ నివృత్తి పేజీ",
-	"wikieditor-toolbar-tool-link-int-invalid": "మీరు ఇచ్చిన శీర్షిక సరైనది కాదు.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "మీరు ఇచ్చిన చిరునామాని బట్టి మీరు మరో వికీ పేజీకి లంకె చేర్చాలని ఉద్దేశించినట్టుంది. దాన్ని అంతర్గత లంకెగా మార్చాలనుకుంటున్నారా?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "అంతర్గత లంకె",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "బయటి లంకె",
@@ -76,7 +71,6 @@
 	"wikieditor-toolbar-tool-gallery-example": "Example.jpg|ఉపశీర్షిక1\nExample.jpg|ఉపశీర్షిక2",
 	"wikieditor-toolbar-tool-newline": "కొత్త లైను",
 	"wikieditor-toolbar-tool-table": "పట్టిక",
-	"wikieditor-toolbar-tool-table-example-old": "-\n! శీర్షిక 1\n! శీర్షిక 2\n! శీర్షిక 3\n|-\n| అడ్డువరుస 1, గడి 1\n| అడ్డువరుస 1, గడి 2\n| అడ్డువరుస 1, గడి 3\n|-\n| అడ్డువరుస 2, గడి 1\n| అడ్డువరుస 2, గడి 2\n| అడ్డువరుస 2, గడి 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "గడి పాఠ్యం",
 	"wikieditor-toolbar-tool-table-example-header": "శీర్షిక పాఠ్యం",
 	"wikieditor-toolbar-tool-table-title": "పట్టికని చేర్చండి",
@@ -129,7 +123,5 @@
 	"wikieditor-toolbar-help-content-signature-description": "సంతకం",
 	"wikieditor-realtimepreview-preview": "మునుజూపు",
 	"wikieditor-realtimepreview-error": "మునుజూపు లోడవడం లేదు",
-	"wikieditor-realtimepreview-reload": "తిరిగి లోడు చెయ్యి",
-	"wikieditor-realtimepreview-beta-label": "తక్షణ మునుజూపు",
-	"wikieditor-realtimepreview-beta-desc": "వికీటెక్స్టులో చేసిన మార్పులు పాఠకులకు ఎలా కనబడతాయో [[mw:Special:MyLanguage/Extension:WikiEditor|2010 ఎడిటరులో]] చూడండి."
+	"wikieditor-realtimepreview-reload": "తిరిగి లోడు చెయ్యి"
 }

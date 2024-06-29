@@ -1,11 +1,11 @@
 /**
  * Widget to select to view changes that link TO or FROM the target page
- * on Special:RecentChangesLinked (AKA Related Changes)
+ * on Special:RecentChangesLinked (AKA Related Changes).
  *
  * @class mw.rcfilters.ui.RclToOrFromWidget
+ * @ignore
  * @extends OO.ui.DropdownWidget
  *
- * @constructor
  * @param {mw.rcfilters.Controller} controller
  * @param {mw.rcfilters.dm.FilterItem} showLinkedToModel model this widget is bound to
  * @param {Object} [config] Configuration object
@@ -25,7 +25,7 @@ var RclToOrFromWidget = function MwRcfiltersUiRclToOrFromWidget(
 	} );
 
 	// Parent
-	RclToOrFromWidget.parent.call( this, $.extend( {
+	RclToOrFromWidget.super.call( this, $.extend( {
 		classes: [ 'mw-rcfilters-ui-rclToOrFromWidget' ],
 		menu: { items: [ this.showLinkedFrom, this.showLinkedTo ] }
 	}, config ) );

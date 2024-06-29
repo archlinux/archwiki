@@ -203,7 +203,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 
 		// Set up LoadMonitor
 		$loadMonitorConfig = $params['loadMonitor'] ?? [ 'class' => 'LoadMonitorNull' ];
-		$loadMonitorConfig += [ 'lagWarnThreshold' => self::MAX_LAG_DEFAULT ];
+		$loadMonitorConfig += [ 'maxConnCount' => 500 ];
 		$compat = [
 			'LoadMonitor' => LoadMonitor::class,
 			'LoadMonitorNull' => LoadMonitorNull::class
@@ -568,19 +568,34 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		try {
 			$this->waitForPos = $pos;
 
-			$ok = true;
+			$failedReplicas = [];
 			foreach ( $this->serverInfo->getStreamingReplicaIndexes() as $i ) {
 				if ( $this->serverHasLoadInAnyGroup( $i ) ) {
 					$start = microtime( true );
-					$ok = $this->awaitSessionPrimaryPos( $i, $timeout ) && $ok;
-					$timeout -= intval( microtime( true ) - $start );
-					if ( $timeout <= 0 ) {
-						break; // timeout reached
+					$ok = $this->awaitSessionPrimaryPos( $i, $timeout );
+					if ( !$ok ) {
+						$failedReplicas[] = $this->getServerName( $i );
 					}
+					$timeout -= intval( microtime( true ) - $start );
 				}
 			}
 
-			return $ok;
+			// Stop spamming logs when only one replica is lagging and we have 5+ replicas.
+			// Mediawiki automatically stops sending queries to the lagged one.
+			$failed = $failedReplicas && ( count( $failedReplicas ) > 1 || $this->getServerCount() < 5 );
+			if ( $failed ) {
+				$this->logger->error(
+					"Timed out waiting for replication to reach {raw_pos}",
+					[
+						'raw_pos' => $pos->__toString(),
+						'failed_hosts' => $failedReplicas,
+						'timeout' => $timeout,
+						'exception' => new RuntimeException()
+					]
+				);
+			}
+
+			return !$failed;
 		} finally {
 			// Restore the old position; this is used for throttling, not lag-protection
 			$this->waitForPos = $oldPos;
@@ -603,11 +618,6 @@ class LoadBalancer implements ILoadBalancerForOwner {
 
 	public function getAnyOpenConnection( $i, $flags = 0 ) {
 		$i = ( $i === self::DB_PRIMARY ) ? ServerInfo::WRITER_INDEX : $i;
-
-		// Connection handles required to be in auto-commit mode use a separate connection
-		// pool since the main pool is effected by implicit and explicit transaction rounds
-		$autoCommitOnly = self::fieldHasBit( $flags, self::CONN_TRX_AUTOCOMMIT );
-
 		$conn = false;
 		foreach ( $this->conns as $type => $poolConnsByServer ) {
 			if ( $i === self::DB_REPLICA ) {
@@ -620,7 +630,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 					: [];
 			}
 
-			$conn = $this->pickAnyOpenConnection( $applicableConnsByServer, $autoCommitOnly );
+			$conn = $this->pickAnyOpenConnection( $applicableConnsByServer );
 			if ( $conn ) {
 				$this->logger->debug( __METHOD__ . ": found '$type' connection to #$i." );
 				break;
@@ -636,10 +646,9 @@ class LoadBalancer implements ILoadBalancerForOwner {
 
 	/**
 	 * @param Database[][] $connsByServer Map of (server index => array of DB handles)
-	 * @param bool $autoCommitOnly Whether to only look for auto-commit connections
 	 * @return IDatabase|false An appropriate open connection or false if none found
 	 */
-	private function pickAnyOpenConnection( array $connsByServer, $autoCommitOnly ) {
+	private function pickAnyOpenConnection( array $connsByServer ) {
 		foreach ( $connsByServer as $i => $conns ) {
 			foreach ( $conns as $conn ) {
 				if ( !$conn->isOpen() ) {
@@ -650,26 +659,6 @@ class LoadBalancer implements ILoadBalancerForOwner {
 					);
 					continue; // some sort of error occurred?
 				}
-
-				if ( $autoCommitOnly ) {
-					if (
-						$conn->getLBInfo( self::INFO_CONN_CATEGORY ) !== self::CATEGORY_AUTOCOMMIT
-					) {
-						// Connection is aware of transaction rounds
-						continue;
-					}
-
-					if ( $conn->trxLevel() ) {
-						// Some sort of bug left a transaction open
-						$this->logger->warning(
-							__METHOD__ .
-							": pooled DB handle for {db_server} (#$i) has a pending transaction.",
-							$this->getConnLogContext( $conn )
-						);
-						continue;
-					}
-				}
-
 				return $conn;
 			}
 		}
@@ -1872,8 +1861,29 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		if ( !$this->hasReplicaServers() ) {
 			return [ ServerInfo::WRITER_INDEX => 0 ]; // no replication = no lag
 		}
-		[ $indexesWithLag, $knownLagTimes ] = $this->serverInfo->getLagTimes();
-		return $this->loadMonitor->getLagTimes( $indexesWithLag ) + $knownLagTimes;
+		return $this->wanCache->getWithSetCallback(
+			$this->wanCache->makeGlobalKey( 'rdbms-lags', $this->clusterName ?? '' ),
+			// Add jitter to avoid stampede
+			10 + mt_rand( 1, 10 ),
+			function () {
+				$lags = [];
+				foreach ( $this->serverInfo->getStreamingReplicaIndexes() as $i ) {
+					$conn = $this->getServerConnection(
+						$i,
+						self::DOMAIN_ANY,
+						self::CONN_SILENCE_ERRORS | self::CONN_UNTRACKED_GAUGE
+					);
+					if ( $conn ) {
+						$lags[$i] = $conn->getLag();
+						$conn->close();
+					} else {
+						$lags[$i] = false;
+					}
+				}
+				return $lags;
+			},
+			[ 'lockTSE' => 30 ]
+		);
 	}
 
 	public function waitForPrimaryPos( IDatabase $conn ) {
@@ -2009,9 +2019,12 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		);
 	}
 
+	/**
+	 * @param float|null &$time Mock UNIX timestamp for testing
+	 * @internal
+	 * @codeCoverageIgnore
+	 */
+	public function setMockTime( &$time ) {
+		$this->loadMonitor->setMockTime( $time );
+	}
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( LoadBalancer::class, 'LoadBalancer' );

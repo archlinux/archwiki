@@ -1,4 +1,4 @@
-var Overlay = mw.mobileFrontend.require( 'mobile.startup' ).Overlay;
+var Overlay = require( 'mobile.startup' ).Overlay;
 
 /**
  * Overlay for notifications filter
@@ -11,8 +11,6 @@ var Overlay = mw.mobileFrontend.require( 'mobile.startup' ).Overlay;
  *
  */
 function notificationsFilterOverlay( options ) {
-	var $content, overlay;
-
 	// Don't call overlay.hide(), because that doesn't invoke the onBeforeExit callback (T258954)
 	// Instead, change the hash, so that the OverlayManager hides the overlay for us
 	function hideOverlay() {
@@ -23,14 +21,14 @@ function notificationsFilterOverlay( options ) {
 	options.$crossWikiUnreadFilter.on( 'click', hideOverlay );
 	options.$notifReadState.find( '.oo-ui-buttonElement' ).on( 'click', hideOverlay );
 
-	$content = $( '<div>' ).append(
+	var $content = $( '<div>' ).append(
 		$( '<div>' )
 			.addClass( 'notifications-filter-overlay-read-state' )
 			.append( options.$notifReadState ),
 		options.$crossWikiUnreadFilter
 	);
 
-	overlay = Overlay.make( {
+	var overlay = Overlay.make( {
 		onBeforeExit: options.onBeforeExit,
 		heading: '<strong>' + mw.message( 'echo-mobile-notifications-filter-title' ).escaped() + '</strong>',
 		className: 'overlay notifications-filter-overlay notifications-overlay navigation-drawer'

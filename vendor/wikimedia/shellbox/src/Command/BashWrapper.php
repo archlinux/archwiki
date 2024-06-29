@@ -12,6 +12,12 @@ class BashWrapper extends Wrapper {
 	private $cgroup;
 
 	/**
+	 * Needs to be outside of firejail so that it can set up a cgroup. Also,
+	 * firejail may disable syscalls, breaking the bash wrapper.
+	 */
+	public const PRIORITY = 60;
+
+	/**
 	 * @param string|false $cgroup Under Linux: a cgroup directory used to constrain
 	 *   memory usage of shell commands. The directory must be writable by the
 	 *   web server. If this is false, no memory limit will be applied.
@@ -53,17 +59,7 @@ class BashWrapper extends Wrapper {
 		}
 	}
 
-	/**
-	 * If a cgroup is used, it is a system-level container. Otherwise it is
-	 * just setrlimit() and can run inside firejail etc. (T274942)
-	 *
-	 * @return int
-	 */
 	public function getPriority() {
-		if ( strlen( $this->cgroup ) ) {
-			return 60;
-		} else {
-			return 20;
-		}
+		return self::PRIORITY;
 	}
 }

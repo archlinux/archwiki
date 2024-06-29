@@ -40,9 +40,9 @@ class VisualEditorConfig {
 
 	/**
 	 * Get a full list of available languages
-	 * @return array
+	 * @return string[]
 	 */
-	private static function getPygmentsLanguages() {
+	private static function getPygmentsLanguages(): array {
 		return array_keys( require __DIR__ . '/../SyntaxHighlight.lexers.php' );
 	}
 }

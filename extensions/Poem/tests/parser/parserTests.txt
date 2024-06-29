@@ -1,4 +1,8 @@
-!! Version 2
+!! options
+version=2
+parsoid-compatible=wt2html,wt2wt,html2wt,html2html,selser
+!! end
+
 # Force the test runner to ensure the extension is loaded
 !! hooks
 poem

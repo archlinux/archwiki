@@ -17,9 +17,6 @@ use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
-use Wikimedia\Parsoid\Ext\PHPUtils;
-use Wikimedia\Parsoid\Ext\WTSUtils;
-use Wikimedia\Parsoid\Ext\WTUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
@@ -103,12 +100,12 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 		$noPrefix = false;
 		$title = $extApi->makeTitle( $oTitleStr, 0 );
-		if ( $title === null || $title->getNamespaceId() !== $fileNs ) {
+		if ( $title === null || $title->getNamespace() !== $fileNs ) {
 			// Try again, this time with a default namespace
 			$title = $extApi->makeTitle( $oTitleStr, $fileNs );
 			$noPrefix = true;
 		}
-		if ( $title === null || $title->getNamespaceId() !== $fileNs ) {
+		if ( $title === null || $title->getNamespace() !== $fileNs ) {
 			return null;
 		}
 
@@ -154,7 +151,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		}
 
 		$doc = $thumb->ownerDocument;
-		$rdfaType = $thumb->getAttribute( 'typeof' ) ?? '';
+		$rdfaType = DOMCompat::getAttribute( $thumb, 'typeof' ) ?? '';
 
 		// Detach figcaption as well
 		$figcaption = DOMCompat::querySelector( $thumb, 'figcaption' );
@@ -245,106 +242,79 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		return $domFragment;
 	}
 
-	/**
-	 * @param ParsoidExtensionAPI $extApi
-	 * @param Element $node
-	 * @return string
-	 */
 	private function contentHandler(
 		ParsoidExtensionAPI $extApi, Element $node
 	): string {
 		$content = "\n";
 		for ( $child = $node->firstChild; $child; $child = $child->nextSibling ) {
 			switch ( $child->nodeType ) {
-			case XML_ELEMENT_NODE:
-				DOMUtils::assertElt( $child );
-				// Ignore if it isn't a "gallerybox"
-				if (
+				case XML_ELEMENT_NODE:
+					DOMUtils::assertElt( $child );
+					// Ignore if it isn't a "gallerybox"
+					if (
 					DOMCompat::nodeName( $child ) !== 'li' ||
-					$child->getAttribute( 'class' ) !== 'gallerybox'
-				) {
-					break;
-				}
-				$oContent = $extApi->getOrigSrc(
+					!DOMUtils::hasClass( $child, 'gallerybox' )
+					) {
+						break;
+					}
+					$oContent = $extApi->getOrigSrc(
 					$child, false, [ DiffUtils::class, 'subtreeUnchanged' ]
-				);
-				if ( $oContent !== null ) {
-					$content .= $oContent . "\n";
-					break;
-				}
-				$thumb = DOMCompat::querySelector( $child, '.thumb' );
-				if ( !$thumb ) {
-					break;
-				}
-				$gallerytext = DOMCompat::querySelector( $child, '.gallerytext' );
-				if ( $gallerytext ) {
-					$showfilename = DOMCompat::querySelector( $gallerytext, '.galleryfilename' );
-					if ( $showfilename ) {
-						DOMCompat::remove( $showfilename ); // Destructive to the DOM!
-					}
-				}
-				$ms = MediaStructure::parse( DiffDOMUtils::firstNonSepChild( $thumb ) );
-				if ( $ms ) {
-					// FIXME: Dry all this out with T252246 / T262833
-					if ( $ms->hasResource() ) {
-						$resource = $ms->getResource();
-						$rs = WTSUtils::getShadowInfo( $ms->mediaElt, 'resource', $resource );
-						if ( $rs['fromsrc'] ) {
-							$content .= $rs['value'];
-						} else {
-							$content .= PHPUtils::stripPrefix( $resource, './' );
-						}
-						// FIXME: Serializing of these attributes should
-						// match the link handler so that values stashed in
-						// data-mw aren't ignored.
-						if ( $ms->hasAlt() ) {
-							$altOnElt = trim( $ms->getAlt() );
-							$altFromCaption = $gallerytext ?
-								trim( WTUtils::textContentFromCaption( $gallerytext ) ) : '';
-							// The first condition is to support an empty \alt=\ option
-							// when no caption is present
-							if ( !$altOnElt || ( $altOnElt !== $altFromCaption ) ) {
-								$content .= '|alt=' .
-									$extApi->escapeWikitext( $altOnElt, $child, $extApi::IN_MEDIA );
-							}
-						}
-						// FIXME: Handle missing media
-						if ( $ms->hasMediaUrl() && !$ms->isRedLink() ) {
-							$href = $ms->getMediaUrl();
-							if ( $href !== $resource ) {
-								$href = PHPUtils::stripPrefix( $href, './' );
-								$content .= '|link=' .
-									$extApi->escapeWikitext( $href, $child, $extApi::IN_MEDIA );
-							}
-						}
-					}
-				} else {
-					// TODO: Previously (<=1.5.0), we rendered valid titles
-					// returning mw:Error (apierror-filedoesnotexist) as
-					// plaintext.  Continue to serialize this content until
-					// that version is no longer supported.
-					$content .= $thumb->textContent;
-				}
-				if ( $gallerytext ) {
-					$caption = $extApi->domChildrenToWikitext(
-						$gallerytext, $extApi::IN_IMG_CAPTION
 					);
-					// Drop empty captions
-					if ( !preg_match( '/^\s*$/D', $caption ) ) {
-						// Ensure that this only takes one line since gallery
-						// tag content is split by line
-						$caption = str_replace( "\n", ' ', $caption );
-						$content .= '|' . $caption;
+					if ( $oContent !== null ) {
+						$content .= $oContent . "\n";
+						break;
 					}
-				}
-				$content .= "\n";
-				break;
-			case XML_TEXT_NODE:
-			case XML_COMMENT_NODE:
-				// Ignore it
-				break;
-			default:
-				throw new UnreachableException( 'should not be here!' );
+					$div = DOMCompat::querySelector( $child, '.thumb' );
+					if ( !$div ) {
+						break;
+					}
+					$gallerytext = DOMCompat::querySelector( $child, '.gallerytext' );
+					if ( $gallerytext ) {
+						$showfilename = DOMCompat::querySelector( $gallerytext, '.galleryfilename' );
+						if ( $showfilename ) {
+							DOMCompat::remove( $showfilename ); // Destructive to the DOM!
+						}
+					}
+					$thumb = DiffDOMUtils::firstNonSepChild( $div );
+					$ms = MediaStructure::parse( $thumb );
+					if ( $ms ) {
+						// Unlike other inline media, the caption isn't found in the data-mw
+						// of the container element.  Hopefully this won't be necessary after T268250
+						$ms->captionElt = $gallerytext;
+						// Destructive to the DOM!  But, a convenient way to get the serializer
+						// to ignore the fake dimensions that were added in pLine when parsing.
+						DOMCompat::getClassList( $ms->containerElt )->add( 'mw-default-size' );
+						[ $line, $options ] = $extApi->serializeMedia( $ms );
+						if ( $options ) {
+							$line .= '|' . $options;
+						}
+					} else {
+						// TODO: Previously (<=1.5.0), we rendered valid titles
+						// returning mw:Error (apierror-filedoesnotexist) as
+						// plaintext.  Continue to serialize this content until
+						// that version is no longer supported.
+						$line = $div->textContent;
+						if ( $gallerytext ) {
+							$caption = $extApi->domChildrenToWikitext(
+							$gallerytext, $extApi::IN_IMG_CAPTION
+							);
+							// Drop empty captions
+							if ( !preg_match( '/^\s*$/D', $caption ) ) {
+								$line .= '|' . $caption;
+							}
+						}
+					}
+					// Ensure that this only takes one line since gallery
+					// tag content is split by line
+					$line = str_replace( "\n", ' ', $line );
+					$content .= $line . "\n";
+					break;
+				case XML_TEXT_NODE:
+				case XML_COMMENT_NODE:
+					// Ignore it
+					break;
+				default:
+					throw new UnreachableException( 'should not be here!' );
 			}
 		}
 		return $content;

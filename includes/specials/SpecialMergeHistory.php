@@ -23,11 +23,11 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use LogEventsList;
 use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Page\MergeHistoryFactory;
 use MediaWiki\Pager\MergeHistoryPager;
 use MediaWiki\Revision\RevisionStore;
@@ -124,7 +124,7 @@ class SpecialMergeHistory extends SpecialPage {
 		$this->mTargetID = intval( $request->getVal( 'targetID' ) );
 		$this->mDestID = intval( $request->getVal( 'destID' ) );
 		$this->mTimestamp = $request->getVal( 'mergepoint' );
-		if ( $this->mTimestamp === null || !preg_match( '/[0-9]{14}/', $this->mTimestamp ) ) {
+		if ( $this->mTimestamp === null || !preg_match( '/[0-9]{14}(\|[0-9]+)?/', $this->mTimestamp ) ) {
 			$this->mTimestamp = '';
 		}
 		$this->mComment = $request->getText( 'wpComment' );

@@ -16,17 +16,17 @@ use MediaWiki\ResourceLoader\FileModule;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\ResourceLoader\SkinModule;
 use MediaWiki\ResourceLoader\StartUpModule;
-use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
 use NullStatsdDataFactory;
-use ResourceLoaderTestCase;
-use ResourceLoaderTestModule;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use RuntimeException;
 use UnexpectedValueException;
 use Wikimedia\Minify\IdentityMinifierState;
-use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
+ * @group ResourceLoader
  * @covers \MediaWiki\ResourceLoader\ResourceLoader
  */
 class ResourceLoaderTest extends ResourceLoaderTestCase {
@@ -35,7 +35,6 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 		parent::setUp();
 
 		$this->overrideConfigValue( MainConfigNames::ShowExceptionDetails, true );
-		$this->setService( 'DBLoadBalancer', $this->createMock( ILoadBalancer::class ) );
 	}
 
 	/**
@@ -131,7 +130,7 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 	}
 
 	public function testRegisterDuplicate() {
-		$logger = $this->createMock( \Psr\Log\LoggerInterface::class );
+		$logger = $this->createMock( LoggerInterface::class );
 		$logger->expects( $this->once() )
 			->method( 'warning' );
 		$resourceLoader = new EmptyResourceLoader( null, $logger );
@@ -294,7 +293,7 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 	/**
 	 * @dataProvider provideMediaWikiVariablesCases
 	 */
-	public function testMediawikiVariablesDefault( array $config, array $importPaths, $skin, $expectedFile ) {
+	public function testMediaWikiVariablesDefault( array $config, array $importPaths, $skin, $expectedFile ) {
 		$this->overrideConfigValues( $config );
 		$reset = ExtensionRegistry::getInstance()->setAttributeForTest( 'SkinLessImportPaths', $importPaths );
 
@@ -603,7 +602,7 @@ END
     ]
 ]);',
 			ResourceLoader::makeLoaderRegisterScript( $context, [
-				[ 'test.foo', '100' , [], null, null ],
+				[ 'test.foo', '100', [], null, null ],
 				[ 'test.bar', '200', [ 'test.unknown' ], null ],
 				[ 'test.baz', '300', [ 'test.quux', 'test.foo' ], null ],
 				[ 'test.quux', '400', [], null, null, 'return true;' ],
@@ -839,7 +838,7 @@ END
 		);
 
 		// Disable log from makeModuleResponse via outputErrorAndLog
-		$this->setLogger( 'exception', new \Psr\Log\NullLogger() );
+		$this->setLogger( 'exception', new NullLogger() );
 
 		$response = $rl->makeModuleResponse( $context, $modules );
 		$errors = $rl->getErrors();
@@ -877,7 +876,7 @@ END
 		);
 
 		// Disable log from makeModuleResponse via outputErrorAndLog
-		$this->setLogger( 'exception', new \Psr\Log\NullLogger() );
+		$this->setLogger( 'exception', new NullLogger() );
 
 		$response = $rl->makeModuleResponse( $context, $modules );
 		$errors = $rl->getErrors();
@@ -928,7 +927,7 @@ END
 		);
 
 		// Disable log from makeModuleResponse via outputErrorAndLog
-		$this->setLogger( 'exception', new \Psr\Log\NullLogger() );
+		$this->setLogger( 'exception', new NullLogger() );
 
 		$modules = [ 'startup' => $rl->getModule( 'startup' ) ];
 		$response = $rl->makeModuleResponse( $context, $modules );
@@ -1162,7 +1161,7 @@ END
 			$rl
 		);
 		// Disable logging from outputErrorAndLog
-		$this->setLogger( 'exception', new \Psr\Log\NullLogger() );
+		$this->setLogger( 'exception', new NullLogger() );
 
 		$rl->expects( $this->once() )->method( 'preloadModuleInfo' )
 			->willThrowException( new Exception( 'Preload error' ) );
@@ -1264,7 +1263,7 @@ mw.foo()
 mw.foo()
 mw.loader.state({"test1":"ready","test2":"ready"});
 JS
-	);
+		);
 		$rl->respond( $context );
 
 		$extraHeaders = TestingAccessWrapper::newFromObject( $rl )->extraHeaders;

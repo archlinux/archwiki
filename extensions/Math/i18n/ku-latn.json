@@ -16,7 +16,7 @@
 	"math-visualeditor-symbol-group-math-modular": "Arîtmetîka modûlar",
 	"math_unknown_error": "şaşbûnekî nezanîn",
 	"math_unknown_function": "fonksiyona nenas \"$1\"",
-	"mw_math_mathml": "SVG (bi riya pêveka gerokê dikarî MathMLê aktîv bikî)",
-	"mw_math_source": "Wek LaTeX nîşan bide (ji gerokên nivîsan re)",
+	"mw-math-mathml": "SVG (bi riya pêveka gerokê dikarî MathMLê aktîv bikî)",
+	"mw-math-source": "Wek LaTeX nîşan bide (ji gerokên nivîsan re)",
 	"prefs-math": "TeX"
 }

@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use Html;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Hooks as EchoHooks;
-use MediaWiki\User\UserOptionsManager;
+use MediaWiki\Html\Html;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
+use MediaWiki\User\Options\UserOptionsManager;
+use MediaWiki\User\User;
 use OOUIHTMLForm;
-use UnlistedSpecialPage;
-use User;
 
 class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	/**
@@ -268,6 +268,22 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	}
 
 	/**
+	 * View-only overrides of notification preferences for new users
+	 *
+	 * @todo (Likely) remove the underlying functionality, see
+	 * https://phabricator.wikimedia.org/T357219.
+	 * @return bool[]
+	 */
+	private static function getNewUserPreferenceOverrides(): array {
+		return [
+			'echo-subscriptions-web-reverted' => false,
+			'echo-subscriptions-web-article-linked' => true,
+			'echo-subscriptions-email-mention' => true,
+			'echo-subscriptions-email-article-linked' => true,
+		];
+	}
+
+	/**
 	 * Output which notification categories are turned on by default, for each notify type
 	 */
 	protected function outputEnabledDefault() {
@@ -305,9 +321,11 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 		);
 
 		$loggedInUser = new User;
-		// This might not catch if there are other hooks that do similar.
-		// We can't run the actual hook, to avoid side effects.
-		$overrides = EchoHooks::getNewUserPreferenceOverrides();
+
+		// NOTE: This is not reliable, and will break if other variables than those hardcoded in
+		// the method below are changed for new users, either via a hook or via conditional
+		// defaults. See T357219 for details.
+		$overrides = $this->getNewUserPreferenceOverrides();
 		foreach ( $overrides as $prefKey => $value ) {
 			$this->userOptionsManager->setOption( $loggedInUser, $prefKey, $value );
 		}

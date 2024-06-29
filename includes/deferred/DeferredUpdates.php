@@ -18,7 +18,13 @@
  * @file
  */
 
+namespace MediaWiki\Deferred;
+
+use ErrorPageError;
+use LogicException;
 use MediaWiki\Logger\LoggerFactory;
+use MWExceptionHandler;
+use Throwable;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\ScopedCallback;
 
@@ -183,7 +189,7 @@ class DeferredUpdates {
 		$type = get_class( $update )
 			. ( $update instanceof DeferrableCallback ? '_' . $update->getOrigin() : '' );
 		$updateId = spl_object_id( $update );
-		$logger->debug( __METHOD__ . ": started $type #$updateId" );
+		$logger->debug( "DeferredUpdates::run: started $type #{updateId}", [ 'updateId' => $updateId ] );
 
 		$updateException = null;
 
@@ -202,7 +208,10 @@ class DeferredUpdates {
 			self::getScopeStack()->onRunUpdateFailed( $update );
 		} finally {
 			$walltime = microtime( true ) - $startTime;
-			$logger->debug( __METHOD__ . ": ended $type #$updateId, processing time: $walltime" );
+			$logger->debug( "DeferredUpdates::run: ended $type #{updateId}, processing time: {walltime}", [
+				'updateId' => $updateId,
+				'walltime' => $walltime,
+			] );
 		}
 
 		// Try to push the update as a job so it can run later if possible
@@ -369,13 +378,27 @@ class DeferredUpdates {
 			// TODO: Do we still need this now maintenance scripts automatically call
 			// tryOpportunisticExecute from addUpdate, from every commit, and every
 			// waitForReplication call?
+			$enqueuedUpdates = [];
 			self::getScopeStack()->current()->consumeMatchingUpdates(
 				self::ALL,
 				EnqueueableDataUpdate::class,
-				static function ( EnqueueableDataUpdate $update ) {
+				static function ( EnqueueableDataUpdate $update ) use ( &$enqueuedUpdates ) {
 					self::getScopeStack()->queueDataUpdate( $update );
+					$type = get_class( $update );
+					$enqueuedUpdates[$type] ??= 0;
+					$enqueuedUpdates[$type]++;
 				}
 			);
+			if ( $enqueuedUpdates ) {
+				LoggerFactory::getInstance( 'DeferredUpdates' )->debug(
+					'Enqueued {enqueuedUpdatesCount} updates as jobs',
+					[
+						'enqueuedUpdatesCount' => array_sum( $enqueuedUpdates ),
+						'enqueuedUpdates' => implode( ', ',
+							array_map( fn ( $k, $v ) => "$k: $v", array_keys( $enqueuedUpdates ), $enqueuedUpdates ) ),
+					]
+				);
+			}
 		}
 
 		return false;
@@ -465,3 +488,6 @@ class DeferredUpdates {
 		self::getScopeStack()->onRunUpdateEnd( $update );
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( DeferredUpdates::class, 'DeferredUpdates' );

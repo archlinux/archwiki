@@ -23,15 +23,15 @@
 
 namespace MediaWiki\Title;
 
-use GenderCache;
 use InvalidArgumentException;
 use Language;
 use LogicException;
+use MediaWiki\Cache\GenderCache;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Parser\Sanitizer;
-use Message;
 use Wikimedia\IPUtils;
 
 /**
@@ -620,8 +620,5 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( MediaWikiTitleCodec::class, 'MediaWikiTitleCodec' );

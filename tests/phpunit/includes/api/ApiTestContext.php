@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
 
@@ -22,3 +26,5 @@ class ApiTestContext extends RequestContext {
 		return $context;
 	}
 }
+
+class_alias( ApiTestContext::class, 'ApiTestContext' );

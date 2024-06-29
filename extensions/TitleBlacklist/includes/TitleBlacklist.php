@@ -12,9 +12,9 @@ namespace MediaWiki\Extension\TitleBlacklist;
 use BadMethodCallException;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use ObjectCache;
 use TextContent;
-use User;
 use Wikimedia\AtEase\AtEase;
 
 /**

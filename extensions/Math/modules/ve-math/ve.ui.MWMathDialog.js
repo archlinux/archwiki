@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWMathDialog class.
  *
- * @copyright 2015 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license MIT
  */
 

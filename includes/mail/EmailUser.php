@@ -30,8 +30,8 @@ use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Preferences\MultiUsernameFilter;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserFactory;
-use MediaWiki\User\UserOptionsLookup;
 use MessageSpecifier;
 use StatusValue;
 use UnexpectedValueException;
@@ -56,24 +56,22 @@ class EmailUser {
 		MainConfigNames::UserEmailUseReplyTo,
 	];
 
-	/** @var ServiceOptions */
 	private ServiceOptions $options;
-	/** @var HookRunner */
+
 	private HookRunner $hookRunner;
-	/** @var UserOptionsLookup */
+
 	private UserOptionsLookup $userOptionsLookup;
-	/** @var CentralIdLookup */
+
 	private CentralIdLookup $centralIdLookup;
-	/** @var UserFactory */
+
 	private UserFactory $userFactory;
-	/** @var IEmailer */
+
 	private IEmailer $emailer;
-	/** @var IMessageFormatterFactory */
+
 	private IMessageFormatterFactory $messageFormatterFactory;
-	/** @var ITextFormatter */
+
 	private ITextFormatter $contLangMsgFormatter;
 
-	/** @var Authority */
 	private Authority $sender;
 
 	/** @var string Temporary property to support the deprecated EmailUserPermissionsErrors hook */

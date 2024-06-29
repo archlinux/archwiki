@@ -60,3 +60,8 @@ $specialPageAliases['ur'] = [
 $specialPageAliases['zh-hans'] = [
 	'MathStatus' => [ '数学状态' ],
 ];
+
+/** Traditional Chinese (中文（繁體）‎) */
+$specialPageAliases['zh-hant'] = [
+	'MathStatus' => [ '數學狀態' ],
+];

@@ -9,7 +9,7 @@
 	display: block;
 	width: auto;
 	right: 0;
-	box-shadow: -5px 0 0 0 @box-shadow-color-drawer;
+	box-shadow: -5px 0 0 0 var( --box-shadow-color-drawer );
 	transform: translate( 100%, 0 );
 	transition: transform @transition-duration-medium @transition-timing-function-menu;
 
@@ -19,7 +19,7 @@
 }
 
 @media all and ( min-width: @width-breakpoint-tablet ) {
-	@rightDrawerLeftOffset: 100% - @rightDrawerWidth;
+	@rightDrawerLeftOffset: 100% - @drawer-width-right;
 
 	.notifications-overlay.navigation-drawer {
 		left: @rightDrawerLeftOffset;

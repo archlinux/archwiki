@@ -21,10 +21,13 @@
 
 namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 
-use Config;
+use ExtensionRegistry;
+use MediaWiki\Config\Config;
+use MediaWiki\Extension\BetaFeatures\BetaFeatures;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
-use User;
-use WebRequest;
+use MediaWiki\User\UserIdentity;
 
 /**
  * The `OverridableConfigRequirement` allows us to define requirements that can override
@@ -63,61 +66,40 @@ use WebRequest;
  *
  * @package MediaWiki\Skins\Vector\FeatureManagement\Requirements
  */
-final class OverridableConfigRequirement implements Requirement {
+class OverridableConfigRequirement implements Requirement {
 
-	/**
-	 * @var Config
-	 */
-	private $config;
+	private Config $config;
 
-	/**
-	 * @var User
-	 */
-	private $user;
+	private UserIdentity $user;
 
-	/**
-	 * @var WebRequest
-	 */
-	private $request;
+	private string $configName;
 
-	/**
-	 * @var string
-	 */
-	private $configName;
+	private string $requirementName;
 
-	/**
-	 * @var string
-	 */
-	private $requirementName;
-
-	/**
-	 * @var string
-	 */
-	private $overrideName;
+	private OverrideableRequirementHelper $helper;
 
 	/**
 	 * This constructor accepts all dependencies needed to determine whether
 	 * the overridable config is enabled for the current user and request.
 	 *
 	 * @param Config $config
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param WebRequest $request
 	 * @param string $configName Any `Config` key. This name is used to query `$config` state.
 	 * @param string $requirementName The name of the requirement presented to FeatureManager.
 	 */
 	public function __construct(
 		Config $config,
-		User $user,
+		UserIdentity $user,
 		WebRequest $request,
 		string $configName,
 		string $requirementName
 	) {
 		$this->config = $config;
 		$this->user = $user;
-		$this->request = $request;
 		$this->configName = $configName;
 		$this->requirementName = $requirementName;
-		$this->overrideName = strtolower( $configName );
+		$this->helper = new OverrideableRequirementHelper( $request, $requirementName );
 	}
 
 	/**
@@ -135,12 +117,9 @@ final class OverridableConfigRequirement implements Requirement {
 	 * @inheritDoc
 	 */
 	public function isMet(): bool {
-		// Check query parameter.
-		if ( $this->request->getCheck( $this->overrideName ) ) {
-			return $this->request->getBool( $this->overrideName );
-		}
-		if ( $this->request->getCheck( $this->configName ) ) {
-			return $this->request->getBool( $this->configName );
+		$isMet = $this->helper->isMet();
+		if ( $isMet !== null ) {
+			return $isMet;
 		}
 
 		// If AB test is not enabled, fallback to checking config state.
@@ -151,6 +130,7 @@ final class OverridableConfigRequirement implements Requirement {
 			$thisConfig = [
 				'logged_in' => $thisConfig,
 				'logged_out' => $thisConfig,
+				'beta' => $thisConfig,
 			];
 		} elseif ( array_key_exists( 'default', $thisConfig ) ) {
 			$thisConfig = [
@@ -160,12 +140,32 @@ final class OverridableConfigRequirement implements Requirement {
 			$thisConfig = [
 				'logged_in' => $thisConfig['logged_in'] ?? false,
 				'logged_out' => $thisConfig['logged_out'] ?? false,
+				'beta' => $thisConfig['beta'] ?? false,
 			];
 		}
 
 		// Fallback to config.
-		return array_key_exists( 'default', $thisConfig ) ?
+		$userConfig = array_key_exists( 'default', $thisConfig ) ?
 			$thisConfig[ 'default' ] :
 			$thisConfig[ $this->user->isRegistered() ? 'logged_in' : 'logged_out' ];
+		// Check if use has enabled beta features
+		$betaFeatureConfig = array_key_exists( 'beta', $thisConfig ) && $thisConfig[ 'beta' ];
+		$betaFeatureEnabled = in_array( $this->configName, Constants::VECTOR_BETA_FEATURES ) &&
+			$betaFeatureConfig && $this->isVector2022BetaFeatureEnabled();
+		// If user has enabled beta features, use beta config
+		return $betaFeatureEnabled ? $betaFeatureConfig : $userConfig;
+	}
+
+	/**
+	 * Check if user has enabled the Vector 2022 beta features
+	 * @return bool
+	 */
+	public function isVector2022BetaFeatureEnabled(): bool {
+		return ExtensionRegistry::getInstance()->isLoaded( 'BetaFeatures' ) &&
+			/* @phan-suppress-next-line PhanUndeclaredClassMethod */
+			BetaFeatures::isFeatureEnabled(
+			$this->user,
+			Constants::VECTOR_2022_BETA_KEY
+		);
 	}
 }

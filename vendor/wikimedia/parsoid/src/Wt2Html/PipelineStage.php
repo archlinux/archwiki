@@ -38,40 +38,25 @@ abstract class PipelineStage {
 	/** @var Env */
 	protected $env = null;
 
-	/** @var bool */
-	protected $atTopLevel;
+	/** Defaults to false and resetState initializes it */
+	protected bool $atTopLevel = false;
 
 	/** @var Frame */
 	protected $frame;
 
-	/**
-	 * @param Env $env
-	 * @param ?PipelineStage $prevStage
-	 */
 	public function __construct( Env $env, ?PipelineStage $prevStage = null ) {
 		$this->env = $env;
 		$this->prevStage = $prevStage;
-		// Defaults to false and resetState initializes it
-		$this->atTopLevel = false;
 	}
 
-	/**
-	 * @param int $id
-	 */
 	public function setPipelineId( int $id ): void {
 		$this->pipelineId = $id;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getPipelineId(): int {
 		return $this->pipelineId;
 	}
 
-	/**
-	 * @return Env
-	 */
 	public function getEnv(): Env {
 		return $this->env;
 	}

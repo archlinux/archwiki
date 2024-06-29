@@ -19,7 +19,6 @@
 	"echo-pref-subscription-edit-thank": "as iemand u vir 'n wysiging bedank",
 	"echo-pref-tooltip-edit-thank": "Laat my weet as iemand my vir 'n wysiging bedank.",
 	"echo-category-title-edit-thank": "Dankiesê-kennisgewings",
-	"notification-thanks-diff-link": "u wysiging",
 	"log-name-thanks": "Bedankingslogboek",
 	"log-description-thanks": "Hieronder is 'n lys van gebruikers wat deur ander gebruikers bedank is.",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|het}} {{GENDER:$4|$3}} bedank",
@@ -27,6 +26,5 @@
 	"notification-link-text-view-post": "Wys opmerking",
 	"thanks-error-invalidpostid": "PosID is ongeldig",
 	"flow-thanks-confirmation-special": "Wil u vir hierdie opmerking dankie sê?",
-	"flow-thanks-thanked-notice": "$1 is laat weet dat u {{GENDER:$2|hom|haar|hom/haar}} vir {{GENDER:$2|sy|haar|sy/haar}} opmerking bedank het.",
-	"notification-flow-thanks-post-link": "U opmerking"
+	"flow-thanks-thanked-notice": "$1 is laat weet dat u {{GENDER:$2|hom|haar|hom/haar}} vir {{GENDER:$2|sy|haar|sy/haar}} opmerking bedank het."
 }

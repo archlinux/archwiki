@@ -19,7 +19,6 @@
 	"cite_error_included_ref": "Gein sjloetteike <code>&lt;/ref&gt;</code> veur de tag <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "E label <code>&lt;ref&gt;</code> veur de groep \"$1\" besitet, meh gein biebehuuerend label <code>&lt;references group=\"$1\"/&gt;</code>  is gevónje of 'n aafsloetende  <code>&lt;/ref&gt;</code> is neet dao.",
 	"cite_error_references_group_mismatch": "De tag <code>&lt;ref&gt;</code> in <code>&lt;references&gt;</code> conflicteert mit groepseigesjap \"$1\".",
-	"cite_error_references_missing_group": "De tag <code>&lt;ref&gt;</code> dae is gedefinieerd in <code>&lt;references&gt;</code> haet de groepseigesjap \"$1\" neet ierder in de tekst veurkump.",
 	"cite_error_references_missing_key": "De tag <code>&lt;ref&gt;</code> mit de naam \"$1\" gedefiniteerd in <code>&lt;references&gt;</code> weurt neet ierder in de teks gebroek.",
 	"cite_error_references_no_key": "De tag <code>&lt;ref&gt;</code> dae is gedefinieerd in <code>&lt;references&gt;</code> haet geine eigesjapsnaam.",
 	"cite_error_empty_references_define": "De tag <code>&lt;ref&gt;</code> dae is gedefinieerd in <code>&lt;references&gt;</code> mit de naam \"$1\" haet geinen inhawd.",

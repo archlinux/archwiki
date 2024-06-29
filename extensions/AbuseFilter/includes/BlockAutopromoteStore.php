@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\AbuseFilter;
 
 use BagOStuff;
 use ManualLogEntry;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
-use TitleValue;
 
 /**
  * Class responsible for storing and retrieving blockautopromote status

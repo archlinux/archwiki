@@ -2,17 +2,17 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Pager;
 
-use Linker;
 use LogicException;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewList;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
-use SpecialPage;
+use MediaWiki\Pager\TablePager;
+use MediaWiki\SpecialPage\SpecialPage;
 use stdClass;
-use TablePager;
 use UnexpectedValueException;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -148,7 +148,7 @@ class AbuseFilterPager extends TablePager {
 			return parent::reallyDoQuery( $offset, $limit, $order );
 		}
 
-		list( $tables, $fields, $conds, $fname, $options, $join_conds ) =
+		[ $tables, $fields, $conds, $fname, $options, $join_conds ] =
 			$this->buildQueryInfo( $offset, $limit, $order );
 
 		unset( $options['LIMIT'] );
@@ -196,7 +196,7 @@ class AbuseFilterPager extends TablePager {
 	/**
 	 * Note: this method is called by parent::__construct
 	 * @return array
-	 * @see Pager::getFieldNames()
+	 * @see MediaWiki\Pager\Pager::getFieldNames()
 	 */
 	public function getFieldNames() {
 		$headers = [

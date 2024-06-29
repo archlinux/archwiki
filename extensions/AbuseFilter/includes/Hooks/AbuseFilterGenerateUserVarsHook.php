@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\User\User;
 use RecentChange;
-use User;
 
 interface AbuseFilterGenerateUserVarsHook {
 	/**

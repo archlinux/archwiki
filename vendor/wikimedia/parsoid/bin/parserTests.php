@@ -2,6 +2,7 @@
 // phpcs:disable Generic.Files.LineLength.TooLong
 require_once __DIR__ . '/../tools/Maintenance.php';
 
+use MediaWiki\Settings\SettingsBuilder;
 use SebastianBergmann\Diff\Differ;
 use Wikimedia\Parsoid\ParserTests\Stats;
 use Wikimedia\Parsoid\ParserTests\Test;
@@ -28,8 +29,11 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$this->setAllowUnregisteredOptions( false );
 	}
 
-	public function finalSetup() {
-		parent::finalSetup();
+	/**
+	 * @inheritDoc
+	 */
+	public function finalSetup( SettingsBuilder $settingsBuilder = null ) {
+		parent::finalSetup( $settingsBuilder );
 		self::requireTestsAutoloader();
 	}
 
@@ -226,10 +230,6 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 	}
 
-	/**
-	 * @param \Wikimedia\Parsoid\Tools\Maintenance $script
-	 * @return array
-	 */
 	public static function processOptions( \Wikimedia\Parsoid\Tools\Maintenance $script ): array {
 		$options = $script->optionsToArray();
 
@@ -452,10 +452,6 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 	}
 
-	/**
-	 * @param ?array $iopts
-	 * @return string
-	 */
 	private static function prettyPrintIOptions(
 		?array $iopts = null
 	): string {
@@ -828,8 +824,7 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 			return;
 		}
 		print '<testsuites file="' . $file . '">';
-		for ( $i = 0;  $i < count( $modesRan );  $i++ ) {
-			$mode = $modesRan[$i];
+		foreach ( $modesRan as $mode ) {
 			print '<testsuite name="parserTests-' . $mode . '">';
 			print $stats->modes[$mode]->result;
 			print '</testsuite>';
@@ -874,12 +869,6 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 		return ScriptUtils::booleanOption( $options['knownFailures'] ?? null ) && !$expectSuccess;
 	}
 
-	/**
-	 * @param Stats $stats
-	 * @param string $mode
-	 * @param string $title
-	 * @param array $time
-	 */
 	private static function pre(
 		Stats $stats, string $mode, string $title, array $time
 	): void {
@@ -898,10 +887,6 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$stats->modes[$mode]->result .= $testcaseEle;
 	}
 
-	/**
-	 * @param Stats $stats
-	 * @param string $mode
-	 */
 	private static function post( Stats $stats, string $mode ): void {
 		$stats->modes[$mode]->result .= '</testcase>';
 	}

@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use Exception;
 use IContextSource;
+use LogicException;
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\Extension\Notifications\Services;
-use ReverseChronologicalPager;
+use MediaWiki\Pager\ReverseChronologicalPager;
 
 /**
  * This pager is used by Special:Notifications (NO-JS).
@@ -27,7 +27,7 @@ class NotificationPager extends ReverseChronologicalPager {
 
 	public function formatRow( $row ) {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod LSP violation
-		throw new Exception( "This pager does not support row formatting. " .
+		throw new LogicException( "This pager does not support row formatting. " .
 			"Use 'getNotifications()' to get a list of Notification objects." );
 	}
 

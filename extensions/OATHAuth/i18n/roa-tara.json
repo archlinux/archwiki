@@ -4,11 +4,9 @@
 			"Joetaras"
 		]
 	},
-	"specialpages-group-oath": "Autendicazione a Doje Fattore",
 	"oathauth-account": "Nome d'u cunde:",
 	"oathauth-secret": "Chiave segrete de autendicazione a Doje Fattore:",
 	"oathauth-enable": "Abbilite l'Autendicazione a Doje Fattore",
-	"oathauth-token": "Gettone",
 	"oathauth-disable": "Disabbilite l'Autendicazione a Doje Fattore",
 	"oathauth-auth-token-label": "Gettone",
 	"oathauth-ui-no-module": "None abbilitate",

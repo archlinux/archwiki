@@ -5,6 +5,7 @@
 			"Antsa",
 			"Beluga",
 			"Crt",
+			"Jack Phoenix",
 			"Kulmalukko",
 			"Kyykaarme",
 			"Linnea",
@@ -20,8 +21,7 @@
 			"Stryn",
 			"Syreeni",
 			"VezonThunder",
-			"ZeiP",
-			"Jack Phoenix"
+			"ZeiP"
 		]
 	},
 	"wikieditor": "Edistynyt wikitekstin muokkauskäyttöliittymä",
@@ -35,10 +35,6 @@
 	"wikieditor-toolbar-tool-bold-example": "Lihavoitu teksti",
 	"wikieditor-toolbar-tool-italic": "Kursivointi",
 	"wikieditor-toolbar-tool-italic-example": "Kursivoitu teksti",
-	"wikieditor-toolbar-tool-ilink": "Sisäinen linkki",
-	"wikieditor-toolbar-tool-ilink-example": "Linkin otsikko",
-	"wikieditor-toolbar-tool-xlink": "Ulkoinen linkki (muista http://-etuliite)",
-	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com linkin otsikko",
 	"wikieditor-toolbar-tool-link": "Linkki",
 	"wikieditor-toolbar-tool-link-title": "Lisää linkki",
 	"wikieditor-toolbar-tool-link-int": "Wikisivuun",
@@ -56,12 +52,10 @@
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Määrittämäsi otsikko ei kelpaa.",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ulkoinen linkki",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Tämä ei ole sisältösivu, vaan se listaa aiheita, joilla on samanlaiset nimet",
-	"wikieditor-toolbar-tool-link-int-invalid": "Antamasi otsikko on virheellinen.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL-osoite, jonka annoit näyttää siltä kuin se olisi linkki toiselle wikisivulle.\nHaluatko tehdä siitä sisäisen linkin?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Sisäinen linkki",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Ulkoinen linkki",
 	"wikieditor-toolbar-tool-file": "Kuvat ja media",
-	"wikieditor-toolbar-tool-file-example": "Esimerkki.jpg",
 	"wikieditor-toolbar-tool-file-title": "Lisää tiedosto",
 	"wikieditor-toolbar-file-target": "Tiedostonimi:",
 	"wikieditor-toolbar-file-caption": "Kuvaus:",
@@ -107,7 +101,6 @@
 	"wikieditor-toolbar-tool-gallery-example": "Esimerkki.jpg|Kuvateksti1\nEsimerkki.jpg|Kuvateksti2",
 	"wikieditor-toolbar-tool-newline": "Uusi rivi",
 	"wikieditor-toolbar-tool-table": "Taulukko",
-	"wikieditor-toolbar-tool-table-example-old": "-\n! otsikko 1\n! otsikko 2\n! otsikko 3\n|-\n| rivi 1, solu 1\n| rivi 1, solu 2\n| rivi 1, solu 3\n|-\n| rivi 2, solu 1\n| rivi 2, solu 2\n| rivi 2, solu 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Solun teksti",
 	"wikieditor-toolbar-tool-table-example-header": "Otsikkoteksti",
 	"wikieditor-toolbar-tool-table-example-caption": "Otsikko",
@@ -187,8 +180,5 @@
 	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditorilla]] (vuoden 2010 wikitekstimuokkain) tehty muokkaus",
 	"wikieditor-realtimepreview-preview": "Esikatselu",
 	"wikieditor-realtimepreview-error": "Esikatselu ei lataudu",
-	"wikieditor-realtimepreview-reload": "Lataa uudelleen",
-	"wikieditor-realtimepreview-beta-label": "Reaaliaikainen esikatselu",
-	"wikieditor-realtimepreview-onboarding-title": "Reaaliaikainen esikatselu",
-	"wikieditor-realtimepreview-onboarding-button": "Selvä"
+	"wikieditor-realtimepreview-reload": "Lataa uudelleen"
 }

@@ -1,13 +1,14 @@
 <?php
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Languages\LanguageConverterFactory;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\MainConfigNames;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group large
  * @group Language
- * @coversDefaultClass MediaWiki\Languages\LanguageConverterFactory
+ * @coversDefaultClass \MediaWiki\Languages\LanguageConverterFactory
  */
 class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 	/**
@@ -26,19 +27,19 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 		$flags,
 		$manualLevel
 	) {
-		$this->hideDeprecated( LanguageConverterFactory::class . '::isTitleConversionDisabled' );
-		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( $langCode );
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( $langCode );
 		$factory = new LanguageConverterFactory(
-			MediaWikiServices::getInstance()->getObjectFactory(),
-			false,
-			false,
-			false,
+			new ServiceOptions( LanguageConverterFactory::CONSTRUCTOR_OPTIONS, new HashConfig( [
+				MainConfigNames::UsePigLatinVariant => false,
+				MainConfigNames::DisableLangConversion => false,
+				MainConfigNames::DisableTitleConversion => false,
+			] ) ),
+			$this->getServiceContainer()->getObjectFactory(),
 			static function () use ( $lang ) {
 				return $lang;
 			}
 		);
 		$this->assertFalse( $factory->isConversionDisabled() );
-		$this->assertFalse( $factory->isTitleConversionDisabled() );
 		$this->assertFalse( $factory->isLinkConversionDisabled() );
 		$converter = $factory->getLanguageConverter( $lang );
 		$this->verifyConverter(
@@ -61,19 +62,19 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 	 * @covers ::getLanguageConverter
 	 */
 	public function testCreateFromCodeEnPigLatin() {
-		$this->hideDeprecated( LanguageConverterFactory::class . '::isTitleConversionDisabled' );
-		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$factory = new LanguageConverterFactory(
-			MediaWikiServices::getInstance()->getObjectFactory(),
-			true,
-			false,
-			false,
+			new ServiceOptions( LanguageConverterFactory::CONSTRUCTOR_OPTIONS, new HashConfig( [
+				MainConfigNames::UsePigLatinVariant => true,
+				MainConfigNames::DisableLangConversion => false,
+				MainConfigNames::DisableTitleConversion => false,
+			] ) ),
+			$this->getServiceContainer()->getObjectFactory(),
 			static function () use ( $lang ) {
 				return $lang;
 			}
 		);
 		$this->assertFalse( $factory->isConversionDisabled() );
-		$this->assertFalse( $factory->isTitleConversionDisabled() );
 		$this->assertFalse( $factory->isLinkConversionDisabled() );
 
 		$converter = $factory->getLanguageConverter( $lang );
@@ -99,13 +100,14 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 	 * @dataProvider booleanProvider
 	 */
 	public function testDisabledBooleans( $pigLatinDisabled, $conversionDisabled, $titleDisabled ) {
-		$this->hideDeprecated( LanguageConverterFactory::class . '::isTitleConversionDisabled' );
-		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$factory = new LanguageConverterFactory(
-			MediaWikiServices::getInstance()->getObjectFactory(),
-			!$pigLatinDisabled,
-			$conversionDisabled,
-			$titleDisabled,
+			new ServiceOptions( LanguageConverterFactory::CONSTRUCTOR_OPTIONS, new HashConfig( [
+				MainConfigNames::UsePigLatinVariant => !$pigLatinDisabled,
+				MainConfigNames::DisableLangConversion => $conversionDisabled,
+				MainConfigNames::DisableTitleConversion => $titleDisabled,
+			] ) ),
+			$this->getServiceContainer()->getObjectFactory(),
 			static function () use ( $lang ) {
 				return $lang;
 			}
@@ -113,7 +115,6 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 		$converter = $factory->getLanguageConverter( $lang );
 
 		$this->assertSame( $conversionDisabled, $factory->isConversionDisabled() );
-		$this->assertSame( $titleDisabled, $factory->isTitleConversionDisabled() );
 		$this->assertSame( $conversionDisabled || $titleDisabled, $factory->isLinkConversionDisabled() );
 
 		if ( $pigLatinDisabled ) {
@@ -146,19 +147,19 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 	 * @covers ::getLanguageConverter
 	 */
 	public function testDefaultContentLanguageFallback() {
-		$this->hideDeprecated( LanguageConverterFactory::class . '::isTitleConversionDisabled' );
-		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$factory = new LanguageConverterFactory(
-			MediaWikiServices::getInstance()->getObjectFactory(),
-			false,
-			false,
-			false,
+			new ServiceOptions( LanguageConverterFactory::CONSTRUCTOR_OPTIONS, new HashConfig( [
+				MainConfigNames::UsePigLatinVariant => false,
+				MainConfigNames::DisableLangConversion => false,
+				MainConfigNames::DisableTitleConversion => false,
+			] ) ),
+			$this->getServiceContainer()->getObjectFactory(),
 			static function () use ( $lang ) {
 				return $lang;
 			}
 		);
 		$this->assertFalse( $factory->isConversionDisabled() );
-		$this->assertFalse( $factory->isTitleConversionDisabled() );
 		$this->assertFalse( $factory->isLinkConversionDisabled() );
 
 		$converter = $factory->getLanguageConverter();
@@ -240,8 +241,7 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 			'hy', 'hyw', 'hz', 'ia', 'id', 'ie', 'ig', 'ii', 'ik', 'ike-cans',
 			'ike-latn', 'ilo', 'inh', 'io', 'is', 'it', 'ja', 'jam', 'jbo', 'jut',
 			'jv', 'ka', 'kaa', 'kab', 'kbd', 'kbd-cyrl', 'kbp', 'kg', 'khw', 'ki',
-			'kiu', 'kj', 'kjp', 'kk-arab', 'kk-cyrl', 'kk-latn', 'kk-cn', 'kk-kz',
-			'kk-tr', 'kl', 'km', 'kn', 'ko', 'ko-kp', 'koi', 'kr', 'krc', 'kri', 'krj',
+			'kiu', 'kj', 'kjp', 'kl', 'km', 'kn', 'ko', 'ko-kp', 'koi', 'kr', 'krc', 'kri', 'krj',
 			'krl', 'ks', 'ks-arab', 'ks-deva', 'ksh', 'ku-latn', 'ku-arab', 'kum', 'kv',
 			'kw', 'ky', 'la', 'lad', 'lb', 'lbe', 'lez', 'lfn', 'lg', 'li', 'lij', 'liv',
 			'lki', 'lmo', 'ln', 'lo', 'lrc', 'loz', 'lt', 'ltg', 'lus', 'luz', 'lv',
@@ -328,28 +328,6 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 				'iu' => 'bidirectional',
 				'ike-cans' => 'bidirectional',
 				'ike-latn' => 'bidirectional'
-			]
-		];
-
-		yield 'kk' => [
-			'kk', 'kk', KkConverter::class,
-			[ 'kk', 'kk-cyrl', 'kk-latn', 'kk-arab', 'kk-kz', 'kk-tr', 'kk-cn' ],
-			[
-				'kk' => 'kk-cyrl',
-				'kk-cyrl' => 'kk',
-				'kk-latn' => 'kk',
-				'kk-arab' => 'kk',
-				'kk-kz' => 'kk-cyrl',
-				'kk-tr' => 'kk-latn',
-				'kk-cn' => 'kk-arab'
-			], [], [], [
-				'kk' => 'bidirectional',
-				'kk-cyrl' => 'bidirectional',
-				'kk-latn' => 'bidirectional',
-				'kk-arab' => 'bidirectional',
-				'kk-kz' => 'bidirectional',
-				'kk-tr' => 'bidirectional',
-				'kk-cn' => 'bidirectional'
 			]
 		];
 

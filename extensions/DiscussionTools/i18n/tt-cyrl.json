@@ -180,7 +180,6 @@
 	"echo-category-title-dt-subscription-archiving": "Фикер алышу битләрен {{PLURAL:$1|архивлау}}",
 	"echo-pref-tooltip-dt-subscription": "Мин {{GENDER:|язылган}} темага кемдер яңа фикер өстәсә, миңа хәбәр итәргә.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Мин {{GENDER:|язылган}} тема архивланса яки биттән бетерелсә, яки бу биттәге яңа шәрехләр турындагы хәбәрнамәләр ниндидер башка сәбәпләр буенча җибәрелмәсә, миңа хәбәр итәргә.",
-	"minerva-talk-full-page": "Вики-бит буларак ачарга",
 	"discussiontools-comments-before-first-heading-category-desc": "Фикер алышу битенең беренчел бүлегендә (беренче исем алдыннан) шәрехләр бар. Бу беренчел өлештә яки шәрехләрдә, бигрәк тә мобиль версиядә һәм мобиль кушымталарда, хаталы итеп күрсәтергә мөмкин.",
 	"tag-discussiontools-added-comment-description": "Бу төзәтмәдә фикер алышу битендә хәбәр өстәлде.",
 	"tag-discussiontools-description": "Төзәтмә DiscussionTools ярдәмендә эшләнде",

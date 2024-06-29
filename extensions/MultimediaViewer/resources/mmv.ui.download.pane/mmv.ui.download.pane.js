@@ -133,6 +133,7 @@ const { EmbedFileFormatter, Utils } = require( 'mmv.ui.ondemandshareddependencie
 				.text( mw.message( 'multimediaviewer-download-preview-link-title' ).text() )
 				.appendTo( $container );
 		}
+
 		createAttributionButton( $container ) {
 			const attributionInput = new mw.widgets.CopyTextLayout( {
 				align: 'top',
@@ -278,7 +279,7 @@ const { EmbedFileFormatter, Utils } = require( 'mmv.ui.ondemandshareddependencie
 		 * @param {string} url
 		 */
 		setDownloadUrl( url ) {
-			this.$downloadButton.attr( 'href', `${url}?download` );
+			this.$downloadButton.attr( 'href', `${ url }?download` );
 			this.$previewLink.attr( 'href', url );
 
 			// Re-enable download
@@ -300,15 +301,15 @@ const { EmbedFileFormatter, Utils } = require( 'mmv.ui.ondemandshareddependencie
 			// * multimediaviewer-download-medium-button-name
 			// * multimediaviewer-download-large-button-name
 			// * multimediaviewer-download-xl-button-name
-			const sizeClassMessage = mw.message( `multimediaviewer-download-${sizeClass}-button-name` ).text();
+			const sizeClassMessage = mw.message( `multimediaviewer-download-${ sizeClass }-button-name` ).text();
 			const dimensionMessage = mw.message( 'multimediaviewer-embed-dimensions', width, height ).text();
 			const sizeMessage = mw.message( 'multimediaviewer-embed-dimensions-with-file-format',
 				dimensionMessage, extension ).text();
 
 			// Update button label and size strings to reflect new selected size
 			this.$downloadButton.html(
-				`<span class="mw-mmv-download-image-size-name">${sizeClassMessage}</span>` +
-				`<span class="mw-mmv-download-image-size">${sizeMessage}</span>`
+				`<span class="mw-mmv-download-image-size-name">${ sizeClassMessage }</span>` +
+				`<span class="mw-mmv-download-image-size">${ sizeMessage }</span>`
 			);
 		}
 

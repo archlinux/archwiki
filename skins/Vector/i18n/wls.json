@@ -22,7 +22,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 lea|lea e $1}}",
 	"vector-no-language-button-label": "Kumi he tahi lea",
 	"vector-no-language-button-aria-label": "E tohi pe te fakamatala i te lea aeni. Fakaliliu ki ni tahi 'u lea.",
-	"vector-language-redirect-to-top": "I te {{SITENAME}} e fai te fili o tau lea i te fuga pāsina i te faha'i mata'u o te higoa o te fakamatala. [[#p-lang-btn|'Alu ki 'oluga]].",
 	"vector-language-variant-switcher-label": "Fetogi te maga lea",
 	"vector-action-addsection": "Tohi he kupu",
 	"vector-action-delete": "Molehi",

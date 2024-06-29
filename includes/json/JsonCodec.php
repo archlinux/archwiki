@@ -22,8 +22,9 @@
 namespace MediaWiki\Json;
 
 use FormatJson;
-use InvalidArgumentException;
+use JsonException;
 use JsonSerializable;
+use MediaWiki\Parser\ParserOutput;
 use stdClass;
 use Wikimedia\Assert\Assert;
 
@@ -45,8 +46,7 @@ class JsonCodec implements JsonUnserializer, JsonSerializer {
 		if ( is_string( $json ) ) {
 			$jsonStatus = FormatJson::parse( $json, FormatJson::FORCE_ASSOC );
 			if ( !$jsonStatus->isGood() ) {
-				// TODO: in PHP 7.3, we can use JsonException
-				throw new InvalidArgumentException( "Bad JSON: {$jsonStatus}" );
+				throw new JsonException( "Bad JSON: {$jsonStatus}" );
 			}
 			$json = $jsonStatus->getValue();
 		}
@@ -63,20 +63,22 @@ class JsonCodec implements JsonUnserializer, JsonSerializer {
 
 		if ( !$this->canMakeNewFromValue( $json ) ) {
 			if ( $expectedClass ) {
-				throw new InvalidArgumentException( 'JSON did not have ' . JsonConstants::TYPE_ANNOTATION );
+				throw new JsonException( 'JSON did not have ' . JsonConstants::TYPE_ANNOTATION );
 			}
 			return $json;
 		}
 
 		$class = $json[JsonConstants::TYPE_ANNOTATION];
-		if ( $class !== stdClass::class &&
+		if ( $class == "ParserOutput" || $class == "MediaWiki\\Parser\\ParserOutput" ) {
+			$class = ParserOutput::class; // T353835
+		} elseif ( $class !== stdClass::class &&
 			 !( class_exists( $class ) && is_subclass_of( $class, JsonUnserializable::class ) )
 		) {
-			throw new InvalidArgumentException( "Invalid target class {$class}" );
+			throw new JsonException( "Invalid target class {$class}" );
 		}
 
 		if ( $expectedClass && $class !== $expectedClass && !is_subclass_of( $class, $expectedClass ) ) {
-			throw new InvalidArgumentException(
+			throw new JsonException(
 				"Refusing to unserialize: expected $expectedClass, got $class"
 			);
 		}
@@ -133,7 +135,7 @@ class JsonCodec implements JsonUnserializer, JsonSerializer {
 				$value[JsonConstants::COMPLEX_ANNOTATION] = true;
 			}
 		} elseif ( !is_scalar( $value ) && $value !== null ) {
-				throw new InvalidArgumentException(
+				throw new JsonException(
 					'Unable to serialize JSON.'
 				);
 		}
@@ -148,8 +150,7 @@ class JsonCodec implements JsonUnserializer, JsonSerializer {
 			$value, false, '$'
 		);
 		if ( $unserializablePath ) {
-			// TODO: Make it JsonException
-			throw new InvalidArgumentException(
+			throw new JsonException(
 				"Non-unserializable property set at {$unserializablePath}"
 			);
 		}
@@ -159,8 +160,7 @@ class JsonCodec implements JsonUnserializer, JsonSerializer {
 		// Format as JSON
 		$json = FormatJson::encode( $value, false, FormatJson::ALL_OK );
 		if ( !$json ) {
-			// TODO: make it JsonException
-			throw new InvalidArgumentException(
+			throw new JsonException(
 				'Failed to encode JSON. Error ' . json_last_error_msg()
 			);
 		}

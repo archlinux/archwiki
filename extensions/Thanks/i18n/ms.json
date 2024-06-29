@@ -6,7 +6,8 @@
 			"Aviator",
 			"Jeluang Terluang",
 			"Kurniasan",
-			"Pizza1016"
+			"Pizza1016",
+			"Hakimi97"
 		]
 	},
 	"thanks-desc": "Menambah pautan yang membolehkan pengguna mengirim ucapan terima kasih atas suntingan, ulasan, dan sebagainya.",
@@ -25,14 +26,14 @@
 	"echo-pref-subscription-edit-thank": "Berterima kasih pada saya atas suntingan saya",
 	"echo-pref-tooltip-edit-thank": "Beritahu saya apabila seseorang berterima kasih kepada saya atas suntingan saya.",
 	"echo-category-title-edit-thank": "Terima kasih",
-	"notification-thanks-diff-link": "suntingan anda",
 	"log-name-thanks": "Log ucapan terima kasih",
 	"log-description-thanks": "Yang berikut ialah senarai pengguna yang menerima ucapan terima kasih daripada pengguna lain.",
 	"logentry-thanks-thank": "$1 ucap terima kasih kepada $3",
 	"thanks-error-no-id-specified": "Anda hendaklah menyatakan ID semakan untuk mengirim ucapan terima kasih.",
+	"thanks-confirmation-special-log": "Adakah anda ingin berterima kasih secara terbuka untuk tindakan log ini?",
+	"thanks-confirmation-special-rev": "Adakah anda ingin berterima kasih secara terbuka untuk suntingan ini?",
 	"notification-link-text-view-post": "Lihat ulasan",
 	"thanks-error-invalidpostid": "ID kiriam tak sah.",
 	"flow-thanks-confirmation-special": "Adakah anda mahu mengirim ucapan terima kasih atas ulasan ini?",
-	"flow-thanks-thanked-notice": "$1 telah diberitahu bahawa anda menyukai ulasan beliau.",
-	"notification-flow-thanks-post-link": "ulasan anda"
+	"flow-thanks-thanked-notice": "$1 telah diberitahu bahawa anda menyukai ulasan beliau."
 }

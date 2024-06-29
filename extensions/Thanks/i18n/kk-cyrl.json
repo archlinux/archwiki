@@ -24,7 +24,6 @@
 	"echo-pref-subscription-edit-thank": "Менің өңдемем үшін маған рахмет айту",
 	"echo-pref-tooltip-edit-thank": "Мен жасаған өңдеме үшін әлдебіреу рахмет айтқанда маған білдір.",
 	"echo-category-title-edit-thank": "Рахмет",
-	"notification-thanks-diff-link": "өңдемеңізге",
 	"notification-header-rev-thank": "$1 {{GENDER:$4|сізге}} <strong>$3</strong> бетіндегі өңдемеңізге {{GENDER:$2|рахметін}} білдірді.",
 	"notification-compact-header-edit-thank": "$1 {{GENDER:$3|сізге}} {{GENDER:$2|рахметін}} білдірді.",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Бір адам|$1 адам|100=99+ адам}} <strong>$2</strong> бетіндегі өңдемеңіз үшін {{GENDER:$3|сізге}} рахметін білдірді.",
@@ -36,7 +35,6 @@
 	"thanks-error-invalidpostid": "Жазба ID-і жарамсыз",
 	"flow-thanks-confirmation-special": "Бұл пікірге жария түрде рахмет айтқыңыз келе ме?",
 	"flow-thanks-thanked-notice": "$1 есімді қатысушыға {{GENDER:$2|оның|оның}} пікіріне рахметіңізді білдіруіңіз жіберілді.",
-	"notification-flow-thanks-post-link": "пікіріңізге",
 	"notification-header-flow-thank": "$1 {{GENDER:$5|сізге}} \"<strong>$3</strong>\" бөліміндегі пікіріңізге {{GENDER:$2|рахметін}} білдірді.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|сізге}} {{GENDER:$2|рахметін}} білдірді.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Бір адам|$1 адам|100=99+ адам}} <strong>$2</strong> бетіндегі пікіріңіз үшін {{GENDER:$3|сізге}} рахметін білдірді."

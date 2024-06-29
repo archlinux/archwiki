@@ -13,7 +13,7 @@ use UnexpectedValueException;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers ExtensionProcessor
+ * @covers \ExtensionProcessor
  */
 class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 
@@ -945,7 +945,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 							'localBasePath' => $dir,
 							'remoteExtPath' => 'Foo',
 							'scripts' => 'bar.js',
-							'targets' => [ 'test' ],
 						],
 					],
 				],
@@ -1186,17 +1185,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 		$this->assertSame(
 			$info['requires'],
 			$processor->getRequirements( $info, true )
-		);
-	}
-
-	public function testGetExtraAutoloaderPaths() {
-		$this->hideDeprecated( 'ExtensionProcessor::getExtraAutoloaderPaths' );
-		$processor = new ExtensionProcessor();
-		$this->assertSame(
-			[ "{$this->dirname}/vendor/autoload.php" ],
-			$processor->getExtraAutoloaderPaths( $this->dirname, [
-				'load_composer_autoloader' => true,
-			] )
 		);
 	}
 

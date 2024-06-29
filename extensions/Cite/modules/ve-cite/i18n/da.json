@@ -59,7 +59,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Denne reference er defineret i en skabelon eller en anden genereret blok, og kan foreløbig kun forhåndsvises i wikikode-tilstand.",
 	"cite-ve-referenceslist-missingreflist": "Denne referenceliste genereres af en skabelon, og kan foreløbig kun redigeres i wikikode-tilstand.",
 	"cite-ve-toolbar-group-label": "Kilde",
-	"cite-ve-othergroup-item": "$1 reference",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencer",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Referencegruppenavn: \"$1\""
+	"cite-ve-othergroup-item": "$1 reference"
 }

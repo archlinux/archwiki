@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Tests\Revision;
 
-use CommentStoreComment;
 use Content;
 use Exception;
 use FallbackContent;
 use HashBagOStuff;
 use IDBAccessObject;
 use InvalidArgumentException;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -65,20 +65,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 * @var WikiPage
 	 */
 	private $testPage;
-
-	protected function setUp(): void {
-		parent::setUp();
-		$this->tablesUsed[] = 'archive';
-		$this->tablesUsed[] = 'page';
-		$this->tablesUsed[] = 'revision';
-		$this->tablesUsed[] = 'comment';
-		$this->tablesUsed[] = 'actor';
-		$this->tablesUsed[] = 'recentchanges';
-		$this->tablesUsed[] = 'content';
-		$this->tablesUsed[] = 'slots';
-		$this->tablesUsed[] = 'content_models';
-		$this->tablesUsed[] = 'slot_roles';
-	}
 
 	/**
 	 * @return Title
@@ -225,7 +211,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->getContentModelStore(),
 			$this->getServiceContainer()->getSlotRoleStore(),
 			$this->getServiceContainer()->getSlotRoleRegistry(),
-			$this->getServiceContainer()->getActorMigration(),
 			$this->getServiceContainer()->getActorStoreFactory()->getActorStore( $dbDomain ),
 			$this->getServiceContainer()->getContentHandlerFactory(),
 			$this->getServiceContainer()->getPageStore(),
@@ -943,7 +928,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$services->getContentModelStore(),
 			$services->getSlotRoleStore(),
 			$services->getSlotRoleRegistry(),
-			$services->getActorMigration(),
 			$services->getActorStoreFactory()->getActorStore( $dbDomain ),
 			$services->getContentHandlerFactory(),
 			$services->getPageStoreFactory()->getPageStore( $dbDomain ),
@@ -953,7 +937,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		);
 
 		// Redefine the DBLoadBalancer service to verify Title doesn't attempt to resolve its ID
-		// via wfGetDB()
+		// via getPrimaryDatabase() etc.
 		$localLoadBalancerMock = $this->createMock( ILoadBalancer::class );
 		$localLoadBalancerMock->expects( $this->never() )
 			->method( $this->anything() );
@@ -2285,7 +2269,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Revision\RevisionStore::getContentBlobsForBatch
-	 * @throws \MWException
 	 */
 	public function testGetContentBlobsForBatch_archive() {
 		$page1 = $this->getTestPage( __METHOD__ );
@@ -2961,7 +2944,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getExistingTestPage();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
-		$title = $store->getTitle( $page->getId(), 0, RevisionStore::READ_NORMAL );
+		$title = $store->getTitle( $page->getId(), 0, IDBAccessObject::READ_NORMAL );
 
 		$this->assertTrue( $page->isSamePageAs( $title ) );
 	}
@@ -2973,7 +2956,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getExistingTestPage();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
-		$title = $store->getTitle( 0, $page->getLatest(), RevisionStore::READ_NORMAL );
+		$title = $store->getTitle( 0, $page->getLatest(), IDBAccessObject::READ_NORMAL );
 
 		$this->assertTrue( $page->isSamePageAs( $title ) );
 	}
@@ -2985,7 +2968,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$store = $this->getServiceContainer()->getRevisionStore();
 
 		$this->expectException( RevisionAccessException::class );
-		$store->getTitle( 113349857, 897234779, RevisionStore::READ_NORMAL );
+		$store->getTitle( 113349857, 897234779, IDBAccessObject::READ_NORMAL );
 	}
 
 	/**
@@ -3057,7 +3040,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Revision\RevisionStore::getContentBlobsForBatch
-	 * @throws \MWException
 	 */
 	public function testGetContentBlobsForBatch_error() {
 		$page1 = $this->getTestPage();
@@ -3146,7 +3128,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Revision\RevisionStore::newRevisionsFromBatch
-	 * @throws \MWException
 	 */
 	public function testNewRevisionsFromBatch_error() {
 		$page = $this->getTestPage();

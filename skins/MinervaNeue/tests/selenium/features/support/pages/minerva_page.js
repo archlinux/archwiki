@@ -14,7 +14,9 @@ const { Page } = require( './mw_core_pages' );
 
 class MinervaPage extends Page {
 
-	get title() { return browser.getTitle(); }
+	get title() {
+		return browser.getTitle();
+	}
 
 	/**
 	 * Opens a page if it isn't already open.

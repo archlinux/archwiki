@@ -3,9 +3,8 @@
 namespace MediaWiki\Tests\Storage;
 
 use ChangeTags;
-use DeferredUpdates;
 use FormatJson;
-use MediaWiki\Config\HashConfig;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 use RecentChange;
@@ -21,23 +20,6 @@ use WikiPage;
  * @see RevertedTagUpdateTest for non-DB tests
  */
 class RevertedTagUpdateIntegrationTest extends MediaWikiIntegrationTestCase {
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[
-				'page',
-				'revision',
-				'comment',
-				'text',
-				'content',
-				'change_tag',
-				'objectcache',
-				'job'
-			]
-		);
-	}
 
 	/**
 	 * This test ensures the update is not performed at the end of the web request, but
@@ -190,7 +172,7 @@ class RevertedTagUpdateIntegrationTest extends MediaWikiIntegrationTestCase {
 		$num = 5;
 
 		// disable patrolling
-		$this->overrideMwServices( new HashConfig( [ MainConfigNames::UseRCPatrol => false ] ) );
+		$this->overrideConfigValues( [ MainConfigNames::UseRCPatrol => false ] );
 
 		$page = $this->getExistingTestPage();
 		$revisionIds = $this->setupEditsOnPage( $page, $num );
@@ -367,7 +349,7 @@ class RevertedTagUpdateIntegrationTest extends MediaWikiIntegrationTestCase {
 	 * @param array $revisionIds
 	 */
 	private function verifyNoRevertedTags( array $revisionIds ) {
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		foreach ( $revisionIds as $revisionId ) {
 			$this->assertNotContains(
 				'mw-reverted',
@@ -387,7 +369,7 @@ class RevertedTagUpdateIntegrationTest extends MediaWikiIntegrationTestCase {
 		array $revisionIds,
 		int $revertRevId
 	) {
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		// for each reverted revision
 		foreach ( $revisionIds as $revisionId ) {
 			$this->assertContains(

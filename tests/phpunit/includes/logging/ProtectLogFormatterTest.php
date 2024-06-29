@@ -1,12 +1,16 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Linker\LinkRendererFactory;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
 
 /**
- * @covers ProtectLogFormatter
+ * @covers \ProtectLogFormatter
  */
 class ProtectLogFormatterTest extends LogFormatterTestCase {
 
@@ -461,7 +465,7 @@ class ProtectLogFormatterTest extends LogFormatterTestCase {
 	 * @param string[] $permissions
 	 * @param bool $shouldMatch
 	 * @dataProvider provideGetActionLinks
-	 * @covers ProtectLogFormatter::getActionLinks
+	 * @covers \ProtectLogFormatter::getActionLinks
 	 */
 	public function testGetActionLinks( array $permissions, $shouldMatch ) {
 		RequestContext::resetMain();
@@ -486,7 +490,12 @@ class ProtectLogFormatterTest extends LogFormatterTestCase {
 			return $ret;
 		} );
 		$this->setService( 'TitleFactory', $titleFactory );
-		$this->setService( 'LinkCache', $this->createMock( LinkCache::class ) );
+		$formatter->setLinkRenderer( ( new LinkRendererFactory(
+			$this->getServiceContainer()->getTitleFormatter(),
+			$this->createMock( LinkCache::class ),
+			$this->getServiceContainer()->getSpecialPageFactory(),
+			$this->getServiceContainer()->getHookContainer()
+		) )->create() );
 		if ( $shouldMatch ) {
 			$this->assertStringMatchesFormat(
 				'%Aaction=protect%A', $formatter->getActionLinks() );

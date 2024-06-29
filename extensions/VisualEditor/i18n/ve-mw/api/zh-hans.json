@@ -9,15 +9,13 @@
 			"Tranve",
 			"Xzonn",
 			"Yejianfei",
+			"星海",
 			"科劳",
-			"星海"
+			"LittlePaw365"
 		]
 	},
-	"apierror-visualeditor-badcachekey": "找不到带有该关键词的已缓存序列化内容",
+	"apierror-visualeditor-badcachekey": "没有找到该键的缓存序列化",
 	"apierror-visualeditor-difffailed": "差异失败",
-	"apierror-visualeditor-docserver-http-error": "连接至Parsoid/RESTBase服务器错误：$1",
-	"apierror-visualeditor-docserver-http": "连接至Parsoid/RESTBase服务器错误（HTTP $1）：$2",
-	"apierror-visualeditor-docserver": "连接 Parsoid/RESTBase 服务器时出错（无响应）",
 	"apihelp-visualeditor-param-basetimestamp": "在保存时，将此设置为编辑该修订版本时的时间戳。用于检测编辑冲突。",
 	"apihelp-visualeditor-param-badetag": "如果RESTBase查询返回一个看似无效的ETag，请将其传递到此处以进行记录。",
 	"apihelp-visualeditor-param-cachekey": "对于序列化或版本差异，使用之前的serializeforcache请求与此密钥产生的结果。覆盖$1html。",

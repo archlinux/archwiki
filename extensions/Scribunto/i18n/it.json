@@ -12,6 +12,7 @@
 			"Sakretsu"
 		]
 	},
+	"content-model-scribunto": "Modulo Scribunto",
 	"scribunto-desc": "Framework per incorporare linguaggi di scripting in pagine MediaWiki",
 	"scribunto-line": "alla linea $1",
 	"scribunto-module-line": "in $1 alla linea $2",

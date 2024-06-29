@@ -1,7 +1,5 @@
 <?php
 /**
- * See docs/magicword.md.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,18 +16,19 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Parser
  */
 
 namespace MediaWiki\Parser;
 
 use Language;
 use MediaWiki\MediaWikiServices;
-use MWException;
 use StringUtils;
+use UnexpectedValueException;
 
 /**
  * This class encapsulates "magic words" such as "#redirect", __NOTOC__, etc.
+ *
+ * See docs/magicword.md.
  *
  * @par Usage:
  * @code
@@ -60,103 +59,104 @@ use StringUtils;
  * For magic words which name Parser magic variables, add a GetMagicVariableIDs
  * hook. Use string keys.
  *
+ * @since 1.1
  * @ingroup Parser
  */
 class MagicWord {
-	/** #@- */
 
 	/** @var string|null Potentially null for a short time before {@see load} is called */
 	public $mId;
 
 	/** @var string[] */
-	public $mSynonyms;
+	public array $mSynonyms;
 
 	/** @var bool */
 	public $mCaseSensitive;
 
 	private ?string $mBaseRegex = null;
 
-	/** @var Language */
-	private $contLang;
-
-	/** #@- */
+	private Language $contLang;
 
 	/**
-	 * Create a new MagicWord object
-	 *
-	 * Use factory instead: MagicWordFactory::get
-	 *
-	 * @param string|null $id The internal name of the magic word
-	 * @param string[]|string $syn synonyms for the magic word
+	 * @internal Use {@see MagicWordFactory::get} instead
+	 * @param string|null $id Preload internal name of the magic word
+	 * @param string[]|string $syn Preload synonyms for the magic word
 	 * @param bool $cs If magic word is case sensitive
-	 * @param Language|null $contLang Content language
+	 * @param Language|null $contentLanguage
 	 */
-	public function __construct( $id = null, $syn = [], $cs = false, Language $contLang = null ) {
+	public function __construct( $id = null, $syn = [], $cs = false, Language $contentLanguage = null ) {
 		$this->mId = $id;
 		$this->mSynonyms = (array)$syn;
 		$this->mCaseSensitive = $cs;
-		$this->contLang = $contLang ?: MediaWikiServices::getInstance()->getContentLanguage();
+		$this->contLang = $contentLanguage ?: MediaWikiServices::getInstance()->getContentLanguage();
 	}
 
 	/**
-	 * Initialises this object with an ID
+	 * Load synonym data from {@see LocalisationCache}.
 	 *
+	 * @internal For use by {@see MagicWordFactory::get} only
+	 * @since 1.1
 	 * @param string $id
-	 * @throws MWException
 	 */
-	public function load( $id ) {
+	public function load( $id ): void {
 		$this->mId = $id;
 		$this->contLang->getMagic( $this );
 		if ( !$this->mSynonyms ) {
-			throw new MWException( "Error: invalid magic word '$id'" );
+			throw new UnexpectedValueException( "Error: invalid magic word '$id'" );
 		}
 	}
 
 	/**
-	 * Gets a regex representing matching the word
+	 * Create a regex to match the magic word in wikitext
 	 *
+	 * @since 1.1
 	 * @return string
 	 */
-	public function getRegex() {
+	public function getRegex(): string {
 		return '/' . $this->getBaseRegex() . '/' . $this->getRegexCase();
 	}
 
 	/**
-	 * Gets the regexp case modifier to use, i.e. i or nothing, to be used if
-	 * one is using MagicWord::getBaseRegex(), otherwise it'll be included in
-	 * the complete expression
+	 * Get the regexp case modifier ("iu" or empty string).
 	 *
+	 * This is for building custom regexes that include {@see getBaseRegex}.
+	 * The other getter methods return complete expressions that include this already.
+	 *
+	 * @internal Exposed for {@see Parser::cleanSig} only
 	 * @return string
 	 */
-	public function getRegexCase() {
+	public function getRegexCase(): string {
 		return $this->mCaseSensitive ? '' : 'iu';
 	}
 
 	/**
-	 * Gets a regex matching the word, if it is at the string start
+	 * Create a regex to match the word at the start of a line in wikitext
 	 *
+	 * @since 1.1
 	 * @return string
 	 */
-	public function getRegexStart() {
+	public function getRegexStart(): string {
 		return '/^(?:' . $this->getBaseRegex() . ')/' . $this->getRegexCase();
 	}
 
 	/**
-	 * Gets a regex matching the word from start to end of a string
+	 * Create a regex to match the word as the only thing on a line of wikitext
 	 *
-	 * @return string
 	 * @since 1.23
+	 * @return string
 	 */
-	public function getRegexStartToEnd() {
+	public function getRegexStartToEnd(): string {
 		return '/^(?:' . $this->getBaseRegex() . ')$/' . $this->getRegexCase();
 	}
 
 	/**
-	 * regex without the slashes and what not
+	 * Get the middle of {@see getRegex}, without the surrounding slashes or modifiers
 	 *
+	 * @internal Exposed for {@see Parser::cleanSig} only
+	 * @since 1.1
 	 * @return string
 	 */
-	public function getBaseRegex() {
+	public function getBaseRegex(): string {
 		if ( $this->mBaseRegex === null ) {
 			// Sort the synonyms by length, descending, so that the longest synonym
 			// matches in precedence to the shortest
@@ -171,37 +171,38 @@ class MagicWord {
 	}
 
 	/**
-	 * Returns true if the text contains the word
+	 * Check if given wikitext contains the magic word
 	 *
+	 * @since 1.1
 	 * @param string $text
-	 *
 	 * @return bool
 	 */
-	public function match( $text ) {
+	public function match( $text ): bool {
 		return (bool)preg_match( $this->getRegex(), $text );
 	}
 
 	/**
-	 * Returns true if the text matched the word
+	 * Check if given wikitext contains the word as the only thing on a line
 	 *
 	 * @param string $text
-	 *
 	 * @return bool
 	 * @since 1.23
 	 */
-	public function matchStartToEnd( $text ) {
+	public function matchStartToEnd( $text ): bool {
 		return (bool)preg_match( $this->getRegexStartToEnd(), $text );
 	}
 
 	/**
-	 * Returns true if the text matches the word, and alters the
-	 * input string, removing all instances of the word
+	 * Remove any matches of this magic word from a given text
 	 *
+	 * Returns true if the text contains one or more matches, and alters the
+	 * input string to remove all instances of the magic word.
+	 *
+	 * @since 1.1
 	 * @param string &$text
-	 *
 	 * @return bool
 	 */
-	public function matchAndRemove( &$text ) {
+	public function matchAndRemove( &$text ): bool {
 		$text = preg_replace( $this->getRegex(), '', $text, -1, $count );
 		return (bool)$count;
 	}
@@ -210,18 +211,18 @@ class MagicWord {
 	 * @param string &$text
 	 * @return bool
 	 */
-	public function matchStartAndRemove( &$text ) {
+	public function matchStartAndRemove( &$text ): bool {
 		$text = preg_replace( $this->getRegexStart(), '', $text, -1, $count );
 		return (bool)$count;
 	}
 
 	/**
-	 * Replaces the word with something else
+	 * Replace any matches of this word with something else
 	 *
+	 * @since 1.1
 	 * @param string $replacement
 	 * @param string $subject
 	 * @param int $limit
-	 *
 	 * @return string
 	 */
 	public function replace( $replacement, $subject, $limit = -1 ) {
@@ -235,10 +236,23 @@ class MagicWord {
 	}
 
 	/**
-	 * Accesses the synonym list directly
+	 * Get one of the synonyms
 	 *
+	 * This exists primarily for calling `getSynonym( 0 )`, which is how
+	 * you can obtain the preferred name of a magic word according to the
+	 * current wiki's content language. For example, when demonstrating or
+	 * semi-automatically creating content that uses a given magic word.
+	 *
+	 * This works because {@see LocalisationCache} merges magic word data by
+	 * appending fallback languages (i.e. "en") after to the language's
+	 * own data, and each language's `Messages*.php` file lists the
+	 * preferred/canonical form as the first value.
+	 *
+	 * Calling this with a number other than 0 is unsupported and may
+	 * fail.
+	 *
+	 * @since 1.1
 	 * @param int $i
-	 *
 	 * @return string
 	 */
 	public function getSynonym( $i ) {
@@ -246,13 +260,17 @@ class MagicWord {
 	}
 
 	/**
+	 * Get full list of synonyms
+	 *
+	 * @since 1.7
 	 * @return string[]
 	 */
-	public function getSynonyms() {
+	public function getSynonyms(): array {
 		return $this->mSynonyms;
 	}
 
 	/**
+	 * @since 1.7
 	 * @return bool
 	 */
 	public function isCaseSensitive() {
@@ -261,13 +279,13 @@ class MagicWord {
 
 	/**
 	 * @return string
+	 * @deprecated since 1.42 Internal method should not be used
 	 */
 	public function getId() {
+		wfDeprecated( __METHOD__, '1.42' );
 		return $this->mId;
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( MagicWord::class, 'MagicWord' );
