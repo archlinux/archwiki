@@ -185,3 +185,104 @@ body.skin-timeless form:not( .oo-ui-layout ) {
 body.skin-timeless .wikitable {
     border-width: 1px;
 }
+
+// Use the fallback "sans-serif", "serif" and "monospace" names for the fonts
+// See also https://phabricator.wikimedia.org/T173228
+
+input {
+    font-family: sans-serif;
+}
+
+body .mw-editfont-monospace {
+    font-family: monospace, monospace;
+}
+
+body .mw-editfont-sans-serif {
+    font-family: sans-serif;
+}
+
+body .mw-editfont-serif {
+    font-family: serif;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+#p-logo-text a {
+    font-family: sans-serif;
+}
+
+.mw-editsection {
+    font-family: sans-serif;
+}
+
+.skin-timeless .monospace {
+    font-family: monospace, monospace;
+}
+
+.skin-timeless .serif {
+    font-family: serif;
+}
+
+.skin-timeless .sans-serif {
+    font-family: sans-serif;
+}
+
+.mw-body {
+    .mw-heading,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    dt {
+        font-family: serif;
+    }
+}
+
+#siteSub {
+    font-family: serif;
+}
+
+.mw-body .toctitle h2 {
+    font-family: sans-serif;
+}
+
+#mw-site-navigation,
+#mw-related-navigation {
+    h2 {
+        font-family: serif;
+    }
+}
+
+#personal h2 {
+    font-family: serif;
+}
+
+#p-variants-desktop h3 {
+    font-family: sans-serif;
+}
+
+.wikiEditor-ui-text textarea {
+    &.mw-editfont-monospace {
+        font-family: monospace, monospace !important;
+    }
+    &.mw-editfont-sans-serif {
+        font-family: sans-serif !important;
+    }
+    &.mw-editfont-serif {
+        font-family: serif !important;
+    }
+}
+
+@media screen {
+    div.CodeMirror {
+        font-family: monospace, monospace;
+    }
+}
+
+.ve-ui-mwWikitextSurface .ve-ce-attachedRootNode {
+    font-family: monospace, monospace;
+}
