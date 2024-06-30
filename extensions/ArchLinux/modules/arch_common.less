@@ -48,7 +48,8 @@ body {
 }
 
 // general content styling
-.mw-body-content {
+// (unlike mw-body-content, this class does not affect pages in the Special: namespace)
+.mw-parser-output {
     // Hide <br> elements at the start/end of paragraphs. They are produced by
     // MediaWiki parser when multiple consecutive blank lines appear in the text.
     p > br:is(:first-child, :last-child) {
