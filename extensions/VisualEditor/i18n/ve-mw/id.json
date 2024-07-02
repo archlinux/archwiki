@@ -28,7 +28,8 @@
 			"TMg",
 			"Veracious",
 			"William Surya Permana",
-			"WillsonEP09"
+			"WillsonEP09",
+			"Ezagren"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -56,6 +57,7 @@
 	"visualeditor-ca-editlocaldescriptionsource": "Sunting sumber deskripsi lokal",
 	"visualeditor-ca-editsource": "Sunting sumber",
 	"visualeditor-ca-editsource-section": "sunting sumber",
+	"visualeditor-ca-editsource-section-hint": "Sunting kode sumber bagian: $1",
 	"visualeditor-categories-tool": "Kategori",
 	"visualeditor-changedesc-mwlanguagevariant": "Markup varian bahasa diubah",
 	"visualeditor-changedesc-mwredirect": "Target peralihan berubah dari $1 menjadi $2",

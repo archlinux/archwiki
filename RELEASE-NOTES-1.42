@@ -4,6 +4,14 @@ PHP 8.1 workboard: https://phabricator.wikimedia.org/tag/php_8.1_support/
 PHP 8.2 workboard: https://phabricator.wikimedia.org/tag/php_8.2_support/
 PHP 8.3 workboard: https://phabricator.wikimedia.org/tag/php_8.3_support/
 
+== MediaWiki 1.42.1 ==
+
+This is a maintenance release of the MediaWiki 1.42 branch.
+
+=== Changes since MediaWiki 1.42.0 ===
+* Localisation updates.
+* Name the PagerTools array entries to allow hooks to unset them.
+
 == MediaWiki 1.42.0 ==
 
 === Changes since MediaWiki 1.42.0-rc.0 ===

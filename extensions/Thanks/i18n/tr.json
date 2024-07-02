@@ -37,7 +37,7 @@
 	"thanks-error-invalidrecipient-bot": "Botlara teşekkür edilemez",
 	"thanks-error-invalidrecipient-self": "Kendine teşekkür edemezsin",
 	"thanks-error-notloggedin": "Anonim kullanıcılar teşekkür gönderemez",
-	"thanks-error-ratelimited": "Gönderme limitini {{GENDER:$1|aştınız}}. Lütfen bekleyin ve tekrar deneyin.",
+	"thanks-error-ratelimited": "Gönderme sınırını {{GENDER:$1|aştınız}}. Lütfen bir süre sonra tekrar deneyin.",
 	"thanks-error-api-params": "'revid' veya 'logid' parametresi sağlanmalıdır",
 	"thanks-thank-tooltip": "Bu {{GENDER:$2|kullanıcıya}} {{GENDER:$1|teşekkürlerini}} iletin",
 	"thanks-thank-tooltip-no": "Teşekkür bildirimini {{GENDER:$1|iptal et}}",

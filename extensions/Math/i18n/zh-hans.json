@@ -109,6 +109,7 @@
 	"math_unknown_error": "未知错误",
 	"math_unknown_function": "未知函数“$1”",
 	"mw-math-latexml": "LaTeXML（试验中，使用MathML）",
+	"mw-math-mathjax": "客户端MathJax渲染（用于MathML支持有限的浏览器）",
 	"mw-math-mathml": "SVG（MathML可通过浏览器插件启用）",
 	"mw-math-native": "MathML（实验性功能且无图像）",
 	"mw-math-source": "LaTeX源（用于文字浏览器）",

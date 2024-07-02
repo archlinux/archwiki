@@ -96,6 +96,7 @@
 	"math_unknown_error": "שגיאה בלתי־ידועה",
 	"math_unknown_function": "פונקציה \"$1\" לא מוכרת",
 	"mw-math-latexml": "LaTeXML (ניסיוני; משתמש ב־MathML)",
+	"mw-math-mathjax": "עיבוד MathJax בצד הלקוח (עבור דפדפנים עם תמיכה מוגבלת ב־MathML)",
 	"mw-math-mathml": "SVG (אפשר להפעיל MathML בעזרת הרחבת דפדפן)",
 	"mw-math-native": "MathML (ניסיוני; ללא תמונות)",
 	"mw-math-source": "קוד מקור של LaTeX (לדפדפני טקסט)",
@@ -118,6 +119,5 @@
 	"math-wikibase-special-form-button": "בקשת מידע",
 	"math-wikibase-special-error-header": "שגיאה",
 	"math-wikibase-special-error-invalid-argument": "מזהה פריט הוויקיבייס אינו קיים.",
-	"math-wikibase-special-error-unknown": "אירעה שגיאה בלתי־ידועה באחזור נתונים מוויקיבייס.",
-	"math-wikibase-special-error-no-wikibase": "ההרחבה Wikibase נחוצה לשימוש בדף המיוחד הזה."
+	"math-wikibase-special-error-unknown": "אירעה שגיאה בלתי־ידועה באחזור נתונים מוויקיבייס."
 }

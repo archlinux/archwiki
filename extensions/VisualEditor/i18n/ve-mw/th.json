@@ -227,6 +227,8 @@
 	"visualeditor-mwgallerydialog-widths-input-placeholder": "ความกว้างเริ่มต้น: $1 พิกเซล",
 	"visualeditor-mwsignature-tool": "ลายเซ็นของคุณ",
 	"visualeditor-preference-visualeditor": "เปิดใช้งานการแก้ไขแบบเห็นภาพ",
+	"visualeditor-preference-newwikitexteditor-enable": "ใช้โหมดข้อความวิกิในการแก้ไขแบบเห็นภาพแทนการแก้ไขข้อความวิกิแบบอื่น",
+	"visualeditor-preference-newwikitexteditor-help": "บางครั้งนี่ถูกเรียกว่า 'ตัวแก้ไขข้อความวิกิ 2560'",
 	"visualeditor-preference-tabs": "โหมดการแก้ไข:",
 	"visualeditor-preference-tabs-multi-tab": "แสดงแท็บตัวแก้ไขทั้งสองแท็บ",
 	"visualeditor-preference-tabs-prefer-ve": "ให้ฉันใช้ตัวแก้ไขแบบเห็นภาพเสมอหากเป็นไปได้",

@@ -8,7 +8,8 @@
 			"Spiritia",
 			"StanProg",
 			"Termininja",
-			"Ted Masters"
+			"Ted Masters",
+			"Yasen igra"
 		]
 	},
 	"vector-skin-desc": "Предоставя 2 облика от тип „Вектор“:\n* 2011: „Модерна“ – версия на MonoBook с обновен дизайн и много подобрения на ползваемостта.\n* 2022: „Векторна“ – създадена като част от проекта WMF [[mw:Desktop Improvements]].",
@@ -38,6 +39,13 @@
 	"vector-jumptosearch": "Направо към търсенето",
 	"vector-jumptocontent": "Направо към съдържанието",
 	"vector-more-actions": "Още",
+	"vector-feature-limited-width-name": "Ширина",
+	"vector-feature-custom-font-size-name": "Текст",
+	"vector-feature-limited-width-0-label": "Широк",
+	"vector-feature-limited-width-1-label": "Стандартен",
+	"vector-feature-custom-font-size-0-label": "Малък",
+	"vector-feature-custom-font-size-1-label": "Стандартен",
+	"vector-feature-custom-font-size-2-label": "Голям",
 	"vector-search-loader": "Зареждане на предложенията за търсене",
 	"vector-searchsuggest-containing": "Търсене на страници съдържащи <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Въведение",
@@ -62,5 +70,6 @@
 	"tooltip-vector-anon-user-menu-title": "Допълнителни опции",
 	"vector-prefs-limited-width": "Включване на режим с ограничена ширина",
 	"vector-prefs-limited-width-help": "Включете режима с ограничена ширина за подобрено четене.",
-	"empty-language-selector-body": "Съдържанието на страницата не се поддържа на други езици."
+	"empty-language-selector-body": "Съдържанието на страницата не се поддържа на други езици.",
+	"vector-main-menu-unpinned-popup": "Главното меню е преместено тук."
 }

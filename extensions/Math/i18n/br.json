@@ -22,6 +22,7 @@
 	"math_unknown_error": "fazi dianav",
 	"math_unknown_function": "arc'hwel dianav \"$1\"",
 	"mw-math-mathml": "MathML gant kiladenn PNG (gallout a ra MathML bezañ gweredekaat gant ur plugin merdeer)",
+	"mw-math-native": "MathML (arnodel; skeudenn ebet)",
 	"mw-math-source": "Leuskel ar c'hod LaTeX orin",
 	"prefs-math": "Tres jedoniel",
 	"math-wikibase-formula-link-header": "Mammenn ar roadennoù"

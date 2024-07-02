@@ -13,7 +13,8 @@
 			"MokaAkashiyaPT",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious"
+			"Waldyrious",
+			"Jdlrobson"
 		]
 	},
 	"skinname-vector": "Vector antigo (2010)",
@@ -59,6 +60,9 @@
 	"skin-night-mode-0-label": "Dia",
 	"skin-night-mode-1-label": "Noite",
 	"skin-night-mode-2-label": "Automático",
+	"skin-theme-name": "Cor",
+	"skin-theme-description": "[Versão experimental, alta probabilidade de ter problemas] Reduz a luz emitida pelos ecrãs dos dispositivos.",
+	"skin-theme-os-label": "Automático",
 	"vector-search-loader": "A carregar sugestões de pesquisa",
 	"vector-searchsuggest-containing": "Procurar páginas que contenham <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",

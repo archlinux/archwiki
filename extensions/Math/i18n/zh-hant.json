@@ -16,7 +16,8 @@
 			"PhiLiP",
 			"Simon Shek",
 			"Winston Sung",
-			"烈羽"
+			"烈羽",
+			"Lakejason0"
 		]
 	},
 	"math-desc": "在 <code>&lt;math&gt;</code>...<code>&lt;/math&gt;</code> 標籤之間呈現數學公式",
@@ -104,6 +105,7 @@
 	"math_unknown_error": "不明錯誤",
 	"math_unknown_function": "不明函數 \"$1\"",
 	"mw-math-latexml": "LaTeXML (實驗性；使用 MathML)",
+	"mw-math-mathjax": "客戶端MathJax呈現（供MathML支援有限的瀏覽器使用）",
 	"mw-math-mathml": "SVG（MathML 可以透過瀏覽器套件來啟用）",
 	"mw-math-native": "MathML（實驗性、無圖像）",
 	"mw-math-source": "LaTeX 來源（供文字瀏覽器使用）",
@@ -127,6 +129,5 @@
 	"math-wikibase-special-form-button": "請求資訊",
 	"math-wikibase-special-error-header": "錯誤",
 	"math-wikibase-special-error-invalid-argument": "您指定的 Wikibase 項目 ID 不存在。",
-	"math-wikibase-special-error-unknown": "在索取來自 Wikibase 的資料時發生未知錯誤。",
-	"math-wikibase-special-error-no-wikibase": "要使用此特殊頁面需要 Wikibase 擴充套件。"
+	"math-wikibase-special-error-unknown": "在索取來自 Wikibase 的資料時發生未知錯誤。"
 }

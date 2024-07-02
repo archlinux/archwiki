@@ -108,6 +108,7 @@
 	"math_unknown_error": "bilinmeyen hata",
 	"math_unknown_function": "bilinmeyen işlev \"$1\"",
 	"mw-math-latexml": "LaTeXML (deneysel; MathML kullanır)",
+	"mw-math-mathjax": "İstemci tarafı MathJax işleme (sınırlı MathML desteğine sahip tarayıcılar için)",
 	"mw-math-mathml": "SVG (MathML, tarayıcı eklentisi aracılığıyla etkinleştirilebilir)",
 	"mw-math-native": "MathML (deneysel; resim yok)",
 	"mw-math-source": "LaTeX kaynağı (metin tarayıcıları için)",
@@ -130,6 +131,5 @@
 	"math-wikibase-special-form-button": "Bilgi İste",
 	"math-wikibase-special-error-header": "Hata",
 	"math-wikibase-special-error-invalid-argument": "Belirlediğiniz Wikibase öğe kimliği yok.",
-	"math-wikibase-special-error-unknown": "Wikibase'den veri alınırken bilinmeyen bir hata oluştu.",
-	"math-wikibase-special-error-no-wikibase": "Bu özel sayfayı kullanmak için Wikibase uzantısı gereklidir."
+	"math-wikibase-special-error-unknown": "Wikibase'den veri alınırken bilinmeyen bir hata oluştu."
 }

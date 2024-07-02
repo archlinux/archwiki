@@ -10,7 +10,8 @@
 			"Manvydasz",
 			"Nokeoo",
 			"Tomasdd",
-			"Zygimantus"
+			"Zygimantus",
+			"TMg"
 		]
 	},
 	"echo-desc": "Sistema, skirta naudotojų informavimui apie įvykius ir žinutes",
@@ -131,7 +132,7 @@
 	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$2|paliko}} {{GENDER:$3|jums}} žinutę „<strong>$4</strong>“.",
 	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "Buvo sukurta nuoroda iš <strong>$4</strong> į <strong>$3</strong>.",
-	"notification-bundle-header-page-linked": "$4 ir $5 kiti {{PLURAL:$6|puslapis|puslapiai}} dabar nurodo į $3.",
+	"notification-bundle-header-page-linked": "$4 ir $5 kiti {{PLURAL:$5|puslapis|puslapiai}} dabar nurodo į $3.",
 	"notification-header-article-reminder": "Puslapis, apie kurį {{GENDER:$2|jūs}} prašėte priminimų, yra <strong>$3</strong>",
 	"notification-link-text-what-links-here": "Visos nuorodos į šį puslapį",
 	"notification-header-mention-other": "$1 {{GENDER:$3|jus}} {{GENDER:$2|paminėjo}} <strong>$4</strong>, „<strong>$5</strong>“.",

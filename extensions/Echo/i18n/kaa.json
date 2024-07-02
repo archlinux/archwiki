@@ -30,6 +30,7 @@
 	"echo-category-title-reverted": "{{PLURAL:$1|Artqa qaytarılǵan ózgerisler|Artqa qaytarılǵan ózgerisler}}",
 	"echo-category-title-mention": "{{PLURAL:$1|Esletiw|Esletiw}}",
 	"echo-category-title-other": "{{PLURAL:$1|Basqa}}",
+	"echo-category-title-system": "{{PLURAL:$1|Sistema}}",
 	"echo-category-title-user-rights": "{{PLURAL:$1|Paydalanıwshı huqıqları ózgerisleri|Paydalanıwshı huqıqları ózgerisleri}}",
 	"echo-category-title-emailuser": "{{PLURAL:$1|Basqa paydalanıwshılardan kelgen elektron xatlar|Basqa paydalanıwshılardan kelgen elektron xatlar}}",
 	"echo-pref-tooltip-edit-user-talk": "Birew talqılaw betime jazsa maeni xabarlandırıw.",

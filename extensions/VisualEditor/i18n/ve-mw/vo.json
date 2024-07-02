@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Malafaya"
+			"Malafaya",
+			"Morozof"
 		]
 	},
 	"tooltip-ca-ve-edit": "Redakön padi at me RedakanLogedik",
+	"visualeditor-ca-createlocaldescriptionsource": "Läükön bepenoti pro pükaziläk olik",
 	"visualeditor-ca-createsource": "Jafön fonäti",
 	"visualeditor-ca-editsource": "Redakön fonäti",
 	"visualeditor-ca-editsource-section": "redakön fonäti",

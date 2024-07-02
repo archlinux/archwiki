@@ -29,7 +29,8 @@
 			"Vitorvicentevalente",
 			"Waldir",
 			"Waldyrious",
-			555
+			555,
+			"Vinickw"
 		]
 	},
 	"abusefilter-desc": "Aplica heurísticas automáticas às edições.",
@@ -56,7 +57,7 @@
 	"right-abusefilter-modify-restricted": "Modificar filtros de abuso com ações restritas",
 	"right-abusefilter-revert": "Reverter todas as alterações feitas por um dado filtro de abuso",
 	"right-abusefilter-view-private": "Ver filtros de abuso marcados como privados",
-	"right-abusefilter-log-private": "Mostrar entradas de registo de filtros de abuso marcados como privados",
+	"right-abusefilter-log-private": "Ver entradas de registo de filtros de abuso marcados como privados",
 	"right-abusefilter-hide-log": "Ocultar entradas do filtro de abusos",
 	"right-abusefilter-hidden-log": "Ver entradas ocultadas do registo de abusos",
 	"right-abusefilter-modify-global": "Criar ou modificar os filtros globais de abusos",
