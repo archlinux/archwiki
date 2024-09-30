@@ -8,6 +8,7 @@
 			"Malafaya"
 		]
 	},
+	"wikieditor": "Avancata interfacio* por redaktar wikitexti",
 	"wikieditor-wikitext-tab": "Wikitexto",
 	"wikieditor-toolbar-preference": "Habilitar utensilo-stango (editing toolbar)",
 	"wikieditor-toolbar-tool-bold-example": "Dika literi",
@@ -27,7 +28,9 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Extera ligilo",
 	"wikieditor-toolbar-tool-file": "Imaji e 'media'",
 	"wikieditor-toolbar-tool-file-title": "Inkluzar arkivo",
+	"wikieditor-toolbar-file-target": "Nomo dil arkivo:",
 	"wikieditor-toolbar-file-caption": "Deskripto-texto:",
+	"wikieditor-toolbar-file-alt": "Alternativa texto:",
 	"wikieditor-toolbar-file-size": "Grandeso:",
 	"wikieditor-toolbar-file-float": "Aliniar:",
 	"wikieditor-toolbar-file-default": "(ordinara)",

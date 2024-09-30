@@ -1,8 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Vago"
+			"Vago",
+			"Nemoralis"
 		]
 	},
-	"imagemap_desc_types": "yuxarı-sağ, aşağı-sağ, aşağı-sol, yuxarı-sol, heç nə"
+	"imagemap_desc": "<code>&lt;imagemap&gt;</code> teqindən istifadə edərək müştəri tərəfindən kliklənə bilən şəkil xəritələri yaratmağa icazə verir",
+	"imagemap_no_image": "Xəta: Birinci sətirdə şəkil göstərilməlidir.",
+	"imagemap_invalid_image": "Xəta: Şəkil etibarsızdır və ya mövcud deyil.",
+	"imagemap_bad_image": "Xəta: Bu səhifədə şəkilə icazə verilmir.",
+	"imagemap_no_link": "Xəta: $1 sətirinin sonunda etibarlı keçid tapılmadı.",
+	"imagemap_invalid_title": "Xəta: $1 sətirindəki keçiddə yanlış başlıq.",
+	"imagemap_missing_coord": "Xəta: $1 sətirində forma üçün kifayət qədər koordinat yoxdur.",
+	"imagemap_unrecognised_shape": "Xəta: $1 sətirində tanınmayan fiqur, hər sətir bunlardan biri ilə başlamalıdır: <code>default</code>, <code>rect</code> , <code>circle</code> və ya <code>poly</code>.",
+	"imagemap_invalid_coord": "Xəta: $1 sətirində yanlış koordinat, rəqəm olmalıdır.",
+	"imagemap_invalid_desc": "Xəta: Yanlış təsvir spesifikasiyası, bunlardan biri olmalıdır: <code>$1</code>.",
+	"imagemap_description": "Bu şəkil haqqında",
+	"imagemap_desc_types": "yuxarı-sağ, aşağı-sağ, aşağı-sol, yuxarı-sol, heç nə",
+	"imagemap_poly_odd": "Xəta: $1 sətirində tək sayda koordinatları olan poly tapıldı"
 }

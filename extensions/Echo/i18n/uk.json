@@ -21,7 +21,8 @@
 			"SteveR",
 			"Vlad5250",
 			"Ата",
-			"Максим Підліснюк"
+			"Максим Підліснюк",
+			"Ignatgg"
 		]
 	},
 	"echo-desc": "Система сповіщення користувачів про події і повідомлення",
@@ -251,8 +252,8 @@
 	"notification-header-foreign-all": "Більше сповіщень з {{PLURAL:$5|іншої вікі|$5 інших вікі}}",
 	"echo-foreign-wiki-lang": "$1 - $2",
 	"echo-badge-count": "{{PLURAL:$1|$1|100={{formatnum:99}}+}}",
-	"right-manage-all-push-subscriptions": "Керувати всіма push-підписками",
-	"action-manage-all-push-subscriptions": "керувати всіма push-підписками",
+	"right-manage-all-push-subscriptions": "Керування всіма push-підписками",
+	"action-manage-all-push-subscriptions": "керування всіма push-підписками",
 	"group-push-subscription-manager": "Керівники push-підписками",
 	"group-push-subscription-manager-member": "{{GENDER:$1|керівник|керівниця}} push-підписками",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Керівники push-підписками"

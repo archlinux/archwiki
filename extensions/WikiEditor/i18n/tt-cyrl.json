@@ -7,7 +7,8 @@
 			"Ерней",
 			"З. ӘЙЛЕ",
 			"Ильнар",
-			"Рашат Якупов"
+			"Рашат Якупов",
+			"Don Alessandro"
 		]
 	},
 	"wikieditor": "Викитекстны үзгәртү буенча киңәйтелгән интерфейс",
@@ -66,7 +67,7 @@
 	"wikieditor-toolbar-tool-ulist-example": "Тамгалы исемлекнең элементы",
 	"wikieditor-toolbar-tool-olist": "Санлы исемлек",
 	"wikieditor-toolbar-tool-olist-example": "Санлы исемлекнең элементы",
-	"wikieditor-toolbar-tool-nowiki": "Вики-форматлауны исәпкә алмаска",
+	"wikieditor-toolbar-tool-nowiki": "Вики-форматлауны исәпкә алмау",
 	"wikieditor-toolbar-tool-nowiki-example": "Форматланмаган текстны монда өстәгез",
 	"wikieditor-toolbar-tool-redirect": "Күчерү",
 	"wikieditor-toolbar-tool-redirect-example": "Битнең исеме",
@@ -103,7 +104,7 @@
 	"wikieditor-toolbar-tool-replace-search": "Эзләү:",
 	"wikieditor-toolbar-tool-replace-replace": "Алмаштыру:",
 	"wikieditor-toolbar-tool-replace-case": "Зурлыкны исәпләү",
-	"wikieditor-toolbar-tool-replace-regex": "Эзләү тасмасын гади иттереп билгеләргә",
+	"wikieditor-toolbar-tool-replace-regex": "Эзләү тасмасын гади иттереп билгеләү",
 	"wikieditor-toolbar-tool-replace-button-findnext": "Табу >>>",
 	"wikieditor-toolbar-tool-replace-button-replace": "Алмаштыру",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Барысын да алмаштыру",

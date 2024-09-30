@@ -6,6 +6,7 @@
 			"Ranveig"
 		]
 	},
+	"popups-settings-option-math-tooltip": "Forklar matematiske formlar når musepeikaren er over dei.",
 	"math_failure": "Klarte ikkje å tolke formelen",
 	"math_syntax_error": "syntaksfeil",
 	"math-tracking-category-texvc-deprecation": "Sider som bruker eit utdatert format for mattetaggar",

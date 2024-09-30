@@ -16,12 +16,12 @@
 	"editcheck-dialog-addref-success-notify": "Дякуємо, що вказали джерело!",
 	"editcheck-dialog-addref-title": "Додати джерело",
 	"editcheck-dialog-title": "Перед публікацією",
-	"tag-editcheck-reference-decline-common-knowledge": "Перевірку редагування (посилання) відхилено (загальновідомо)",
-	"tag-editcheck-reference-decline-common-knowledge-description": "Підказку додати посилання відхилено через загальновідомість",
-	"tag-editcheck-reference-decline-irrelevant": "Перевірку редагування (посилання) відхилено (не має значення)",
-	"tag-editcheck-reference-decline-irrelevant-description": "Підказку додати посилання відхилено як неважливу",
-	"tag-editcheck-reference-decline-other": "Перевірку редагування (посилання) відхилено (інше)",
-	"tag-editcheck-reference-decline-other-description": "Підказку додати посилання відхилено з невказаної причини",
-	"tag-editcheck-reference-decline-uncertain": "Перевірку редагування (посилання) відхилено (невизначено)",
-	"tag-editcheck-reference-decline-uncertain-description": "Підказку додати посилання відхилено через непевність"
+	"tag-editcheck-reference-decline-common-knowledge": "Підказку додати посилання відхилено через загальновідомість",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Підказку додати примітку на джерело відхилено через загальновідомість",
+	"tag-editcheck-reference-decline-irrelevant": "Підказку додати примітку на джерело відхилено («не стосується»)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Підказку додати примітку з джерелом відхилено як неважливу",
+	"tag-editcheck-reference-decline-other": "Підказку додати примітку на джерело відхилено (інше)",
+	"tag-editcheck-reference-decline-other-description": "Підказку додати примітку з джерелом відхилено з невказаної причини",
+	"tag-editcheck-reference-decline-uncertain": "Підказку додати примітку на джерело відхилено («не знаю, яке»)",
+	"tag-editcheck-reference-decline-uncertain-description": "Підказку додати примітку з джерелом відхилено через непевність"
 }

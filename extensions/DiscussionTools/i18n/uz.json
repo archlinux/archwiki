@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Malikxan",
-			"Zafar Shamsiddinov"
+			"Zafar Shamsiddinov",
+			"Nataev"
 		]
 	},
 	"discussiontools": "Munozara asboblari",
@@ -28,7 +29,7 @@
 	"discussiontools-newtopic-placeholder-title": "Mavzu",
 	"discussiontools-notification-removed-topic-view": "Sahifani koʻrish",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 nomli foydalanuvchi „<strong>$4</strong>“ mavzusida {{GENDER:$2|javob qoldirdi}}.",
-	"discussiontools-notification-subscribed-new-comment-header-bundled": "„<strong>$3</strong>“ mavzusida {{PLURAL:$1|bitta yangi javob|$1 ta yangi javov|100=99+ ta yangi javob}} qoldirilgan",
+	"discussiontools-notification-subscribed-new-comment-header-bundled": "„<strong>$3</strong>“ mavzusida {{PLURAL:$1|bitta yangi javob|$1 ta yangi javob|100=99+ ta yangi javob}} qoldirilgan",
 	"discussiontools-notification-subscribed-new-comment-view": "Izohni koʻrish",
 	"discussiontools-pageframe-latestcomment": "Eng oxirgi fikr: $1 ($2 tomonidan „$3“ mavzusida)",
 	"discussiontools-pageframe-latestcomment-notopic": "Eng oxirgi fikr: $1 ($2 tomonidan)",

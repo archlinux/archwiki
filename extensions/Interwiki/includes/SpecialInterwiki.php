@@ -292,8 +292,10 @@ class SpecialInterwiki extends SpecialPage {
 				$prefix = $contLang->lc( $prefix );
 				// Fall through
 			case 'edit':
-				$theurl = $data['url'];
-				$api = $data['api'] ?? '';
+				// T374771: Trim the URL and API URLs to reduce confusion when
+				// the URLs are accidentally provided with extra whitespace
+				$theurl = trim( $data['url'] );
+				$api = trim( $data['api'] ?? '' );
 				$local = $data['local'] ? 1 : 0;
 				$trans = $data['trans'] ? 1 : 0;
 				$rows = [

@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Abbas dhothar",
-			"Khalid Mahmood"
+			"Khalid Mahmood",
+			"Bgo eiu"
 		]
 	},
 	"cite-desc": "جوڑو <code>&lt;ref[ name=id]&gt;</code> تے <code>&lt;references/&gt;</code> ٹیگ اتے پتے لئی۔",
-	"cite_error": "سائیٹ غلطی:{{lang|ur|$1}}",
+	"cite_error": "سائیٹ غلطی: $1",
 	"cite_error_ref_numeric_key": "ناں منیا جان والا <code>&lt;ref&gt;</code> ٹیگ؛\nناں اک سادہ انٹیجر نئیں ہوسکدا۔ کوئی ہور دسن والا سرناواں دسو۔",
 	"cite_error_ref_no_key": "نا منیا جان والا <code>&lt;ref&gt;</code> ٹیگ؛\nاتے پتے جہدے وچ کوئی شے نا ہووے لازمی نا ہووے۔",
 	"cite_error_ref_too_many_keys": "نا منیا جان والا <code>&lt;ref&gt;</code> ٹیگ؛\nنا منے جان والے ناں",

@@ -7,7 +7,12 @@
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|شكر}}}}",
+	"thanks-error-notloggedin": "لخدايميا لمجهولين مايمكنش ليهوم يصيفطو شكر",
 	"thanks-thank-tooltip": "{{GENDER:$1|صيفط|صيفطي}} إشعار شكر ل{{GENDER:$2|هاد لخدايمي|هاد لخدايمية}}",
+	"thanks-confirmation2": "{{GENDER:$1|لمصيفطة}} د شكر ب لعلالي؟",
+	"thanks-thanked-notice": "{{GENDER:$3|راك|راكي}} شكرتي {{GENDER:$2|$1}}.",
+	"thanks": "مصيفطة د شكر",
 	"notification-header-rev-thank": "$1 شكر{{GENDER:$2||ات}}ك على {{GENDER:$4|تبديل ديالك}} ف <strong>$3</strong>.",
+	"flow-thanks-thanked-notice": "{{GENDER:$3|راك|راكي}} شكرتي $1 على التعليق {{GENDER:$2|ديالو|ديالها}}.",
 	"notification-header-flow-thank": "{{GENDER:$2|شكرك|شكراتك}} $1 على {{GENDER:$5|تعليق ديالك}} ف \"<strong>$3</strong>\"."
 }

@@ -21,7 +21,8 @@
 			"Raynasution",
 			"Rv77ax",
 			"Veracious",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Leapofod"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buku",
@@ -65,7 +66,7 @@
 	"cite-ve-referenceslist-isempty-default": "Tidak ada referensi pada halaman ini yang dapat disertakan dalam daftar ini.",
 	"cite-ve-referenceslist-missingref": "Referensi ini didefinisikan dalam templat atau blok lain, dan saat ini hanya dapat disunting dalam mode sumber.",
 	"cite-ve-referenceslist-missingref-in-list": "Referensi ini didefinisikan dalam templat atau blok lain, dan saat ini hanya dapat dipratinjau dalam mode sumber.",
-	"cite-ve-referenceslist-missingreflist": "Daftar referensi ini dihasilkan oleh templat, dan saat ini hanya dapat disunting dalam mode sumber.",
+	"cite-ve-referenceslist-missingreflist": "Daftar referensi ini dihasilkan oleh templat.",
 	"cite-ve-toolbar-group-label": "Kutip",
 	"cite-ve-othergroup-item": "$1 referensi"
 }

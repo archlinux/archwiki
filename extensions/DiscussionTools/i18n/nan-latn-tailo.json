@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"SupaplexTW"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Huê-hok",
+	"discussiontools-replylink": "{{GENDER:|Huê-hok}}",
+	"discussiontools-replywidget-advanced": "tsìn-tsi̍t-pōo",
+	"discussiontools-replywidget-cancel": "Tshú-siau",
+	"discussiontools-replywidget-mode-source": "Tshut-tshù",
+	"discussiontools-replywidget-mode-visual": "視覺化",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Huê-hok}} hōo {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Sing khuànn-māi",
+	"discussiontools-replywidget-reply": "{{GENDER:|Huê-hok}}",
+	"discussiontools-replywidget-summary": "Khài-iàu",
+	"discussiontools-replywidget-watchthis": "Kā tsi̍t ia̍h ka-thiam kàu lí ê [[Special:Watchlist|kàm-sī-tuann]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1| ê lâng}} ka-ji̍p thó-lūn",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1| ê lâu-uē}}",
+	"discussiontools-topicheader-latestcomment": "Siōng-sin lâu-uē: $1",
+	"discussiontools-topicsubscription-button-subscribe": "tīng-ua̍t",
+	"discussiontools-topicsubscription-button-subscribe-label": "Tīng-ua̍t",
+	"discussiontools-topicsubscription-button-unsubscribe": "Tshú-siau tīng-ua̍t",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Tshú-siau tīng-ua̍t",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Lí}} ē siu-tio̍h tsit-ê tsú-tê sin lâu-uē ê thong-ti.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Lí}} í-king tīng-ua̍t ah!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Lí}} buē siu-tio̍h tsit-ê uē-tê ê sin lâu-uē thong-ti.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Lí}} í-king tshú-siau tīng-ua̍t."
+}

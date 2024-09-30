@@ -1,14 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Murasaki"
+			"Murasaki",
+			"Mbee-wiki"
 		]
 	},
 	"mobile-frontend-history": "Lia depe riwayat tampa da edit ini.",
 	"mobile-frontend-home-button": "Beranda",
 	"mobile-frontend-language-article-heading": "Bahasa",
 	"mobile-frontend-main-menu-login": "Maso log",
+	"mobile-frontend-main-menu-nearby": "Ngana pe skitar",
 	"mobile-frontend-main-menu-settings": "Ator",
 	"mobile-frontend-placeholder": "Cari di {{SITENAME}}",
-	"mobile-frontend-random-button": "Acak"
+	"mobile-frontend-random-button": "Sambarang"
 }

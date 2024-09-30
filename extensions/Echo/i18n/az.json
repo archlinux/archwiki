@@ -241,7 +241,7 @@
 	"notification-header-foreign-all": "Digər {{PLURAL:$5|vikidən|$5 vikidən}} bildirişlər",
 	"echo-foreign-wiki-lang": "$1 - $2",
 	"echo-badge-count": "{{PLURAL:$1| $1 |100={{formatnum:99}}+}}",
-	"right-manage-all-push-subscriptions": "Bütün push abunəliklərini idarə edin",
+	"right-manage-all-push-subscriptions": "Bütün push abunəliklərini idarə etmək",
 	"action-manage-all-push-subscriptions": "bütün push abunəliklərini idarə etmək",
 	"group-push-subscription-manager": "Push abunə menecerləri",
 	"group-push-subscription-manager-member": "{{GENDER:$1|Push abunə meneceri}}",

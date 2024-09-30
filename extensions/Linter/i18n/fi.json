@@ -11,11 +11,12 @@
 			"Silvonen",
 			"Valtlait",
 			"Yupik",
-			"Majavah"
+			"Majavah",
+			"Samoasambia"
 		]
 	},
 	"linterrors": "Lint-virheet",
-	"linter-category-deletable-table-tag": "Table-tagi, joka pitäisi poistaa",
+	"linter-category-deletable-table-tag": "Table-elementti, joka tulisi poistaa",
 	"linter-category-deletable-table-tag-desc": "Näillä sivuilla on table-tagi, joka pitäisi poistaa.",
 	"linter-category-misc-tidy-replacement-issues": "Sekalaiset ongelmat",
 	"linter-category-missing-end-tag": "Missing end tag",
@@ -29,7 +30,7 @@
 	"linter-page-history": "historia",
 	"linter-page-viewsource": "näytä wikiteksti",
 	"linter-pager-category-header": "Luokka",
-	"linter-pager-deletable-table-tag-details": "Table-tagi, joka pitäisi poistaa",
+	"linter-pager-deletable-table-tag-details": "Table-elementti, joka tulisi poistaa",
 	"linter-pager-details-header": "Lisätiedot",
 	"linter-pager-inline-media-caption-details": "Näkymätön kuvateksti",
 	"linter-pager-misc-tidy-replacement-issues-details": "Muut syntaksivirheet",

@@ -4,12 +4,13 @@
 			"Ilnur efende",
 			"Macofe",
 			"Ерней",
-			"Ильнар"
+			"Ильнар",
+			"Don Alessandro"
 		]
 	},
 	"prefs-echo": "Белдермәләр",
 	"prefs-emailsettings": "Электрон почта көйләнмәләре",
-	"prefs-echosubscriptions": "Миңа бу вакыйгалар турында хәбәр итәргә",
+	"prefs-echosubscriptions": "Бу вакыйгалар турында миңа хәбәр ителсен",
 	"prefs-echocrosswiki": "Кросс-вики хәбәрнамәләр",
 	"echo-pref-send-me": "Миңа җибәрү:",
 	"echo-pref-send-to": "Җибәрер өчен:",
@@ -18,7 +19,7 @@
 	"echo-pref-email": "Электрон почта",
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Гади текст",
-	"echo-pref-cross-wiki-notifications": "Бүтән викилардагы белдерүләрне күрсәтергә",
+	"echo-pref-cross-wiki-notifications": "Башка викилардагы белдерүләрне күрсәтү",
 	"echo-learn-more": "Күбрәк белү",
 	"echo-log": "Һәркемгә ачык көндәлек",
 	"echo-new-messages": "Сезнең яңа хатларыгыз бар",
@@ -35,7 +36,7 @@
 	"tooltip-pt-notifications-notice": "{{GENDER:|Сезнең}} хәбәрнамәләр",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Яңа кулланучылар",
 	"echo-specialpage": "Белдермәләр",
-	"echo-specialpage-section-markread": "Тупламны укылган дип билгеләргә",
+	"echo-specialpage-section-markread": "Тупламны укылган дип билгеләү",
 	"echo-specialpage-pagination-numnotifications": "$1 {{PLURAL:$1|белдермә}}",
 	"echo-specialpage-pagefilters-title": "Соңгы гамәлләр",
 	"echo-specialpage-pagefilters-subtitle": "Каралмаган белдерүле битләр",

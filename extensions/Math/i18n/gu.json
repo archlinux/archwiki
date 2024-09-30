@@ -6,11 +6,21 @@
 			"Macofe",
 			"Mohit.dalal",
 			"NehalDaveND",
-			"Sushant savla"
+			"Sushant savla",
+			"CptViraj"
 		]
 	},
-	"math-visualeditor-mwlatexinspector-display-block": "પ્રતિબંધ",
+	"math-visualeditor-mwlatexdialog-card-formula": "સૂત્ર",
+	"math-visualeditor-mwlatexdialog-card-options": "વિકલ્પો",
+	"math-visualeditor-mwlatexinspector-display-block": "અવરોધ",
 	"math-visualeditor-mwlatexinspector-display-default": "મૂળભૂત",
+	"math-visualeditor-symbol-group-chem-charges": "વિદ્યુતભાર",
+	"math-visualeditor-symbol-group-chem-equations": "રાસાયણિક સમીકરણો",
+	"math-visualeditor-symbol-group-chem-greek": "ગ્રીક અક્ષરો",
+	"math-visualeditor-symbol-group-math-greek": "ગ્રીક મૂળાક્ષર",
+	"math-visualeditor-symbol-group-math-matrices": "શ્રેણીકો",
+	"math-visualeditor-symbol-group-math-relations": "સંબંધો",
+	"math-visualeditor-symbol-group-math-sets": "ગણો",
 	"math_failure": "પદચ્છેદ અસફળ",
 	"math_invalidjson": "$1 સર્વર પ્રતિભાવ અમાન્ય JSON છે.",
 	"math_invalidxml": " MathML કે SVG અમાન્ય XML છે.",
@@ -20,5 +30,9 @@
 	"mw-math-latexml": "LaTeXML (પ્રાયોગીક; MathML વાપરે છે)",
 	"mw-math-mathml": " MathML શક્ય હોય તો  (પ્રયોગાત્મક)",
 	"mw-math-source": "LaTeX સ્રોત (ટેક્સ્ટ બ્રાઉઝરો માટે)",
-	"prefs-math": "ગણિત"
+	"prefs-math": "ગણિત",
+	"math-wikibase-formula": "સૂત્ર",
+	"math-wikibase-formula-name": "નામ",
+	"math-wikibase-formula-type": "પ્રકાર",
+	"math-wikibase-formula-description": "વર્ણન"
 }

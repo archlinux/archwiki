@@ -2,9 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Ykhwong",
-			"Markingdots"
+			"Markingdots",
+			"밥풀떼기"
 		]
 	},
+	"editcheck-dialog-addref-reject-question": "인용을 추가하지 않으신 이유는 무엇인가요?",
+	"editcheck-dialog-addref-reject-description": "출처 인용이 누락된 이유를 다른 편집자들이 알 수 있도록 알려주세요.",
+	"editcheck-dialog-addref-reject-irrelevant": "출처 인용과는 관련 없는 편집입니다",
+	"editcheck-dialog-addref-reject-common-knowledge": "이미 많은 사람들이 알고 있는 상식이라서요",
+	"editcheck-dialog-addref-reject-uncertain": "무엇을 인용해야 할 지 잘 모르겠습니다",
+	"editcheck-dialog-addref-reject-other": "그 외",
 	"editcheck-dialog-addref-success-notify": "인용 추가해주셔서 감사합니다!",
 	"editcheck-dialog-addref-title": "인용 추가",
 	"tag-editcheck-reference-decline-common-knowledge": "편집 검사(출처)를 거부함 (상식)",

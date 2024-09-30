@@ -3,7 +3,8 @@
 		"authors": [
 			"Joedalton",
 			"Saederup92",
-			"Sarrus"
+			"Sarrus",
+			"Jack Phoenix"
 		]
 	},
 	"timeless-desc": "Et tidsløst tema designet efter Winterprototypen af Brando Harris, og diverse stil af Wikimedia Foundation.",
@@ -18,6 +19,7 @@
 	"timeless-pageactions": "Sideværktøjer",
 	"timeless-userpagetools": "Brugersideværktøjer",
 	"timeless-action-addsection": "Nyt emne",
+	"timeless-view-view": "Læs",
 	"timeless-pagemisc": "Mere",
 	"timeless-namespaces": "Navnerum",
 	"timeless-pagetools": "Sidehandlinger",

@@ -7,7 +7,7 @@
 		]
 	},
 	"vector-languages": "Püks",
-	"vector-language-button-label": "{{PLURAL:$1|$1 pük|$1 püks}}",
+	"vector-language-button-label": "{{PLURAL:$1|pük $1|püks $1}}",
 	"vector-no-language-button-label": "Läükön pükis",
 	"vector-action-addsection": "Lüükön yegädi",
 	"vector-action-delete": "Moükön",

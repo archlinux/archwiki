@@ -3,7 +3,8 @@
 		"authors": [
 			"Ajdar",
 			"Ерней",
-			"Ильнар"
+			"Ильнар",
+			"Don Alessandro"
 		]
 	},
 	"interwiki": "Интервики көйләнмәләрен карау һәм үзгәртү",
@@ -21,5 +22,5 @@
 	"interwiki_edit": "Үзгәртү",
 	"interwiki_reasonfield": "Сәбәп:",
 	"interwiki-logtext": "Көндәлекне карау",
-	"interwiki_addbutton": "Өстәргә"
+	"interwiki_addbutton": "Өстәү"
 }

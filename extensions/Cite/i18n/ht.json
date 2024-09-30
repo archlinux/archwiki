@@ -13,7 +13,7 @@
 	"cite_error_ref_numeric_key": "Baliz <code><ref></code> ki pa valab; non pa kapab yon nonb antye ki senp. Sèvi ak yon tit deskriptif",
 	"cite_error_ref_no_key": "Baliz ouvè <code><ref></code> mal fòme oswa li gen yon move non",
 	"cite_error_ref_too_many_keys": "Baliz <code><ref></code> pa valab; non envalid, pa egzanp yo twòp",
-	"cite_error_ref_nested_extends": "Pwolonje Baliz yo <code><ref></code> plis pase yon nivo pwofon pa otorize",
+	"cite_error_ref_nested_extends": "Pwolonje baliz yo <code>&lt;ref&gt;</code> plis pase yon nivo pwofon pa otorize",
 	"cite_error_ref_no_input": "Baliz <code>&lt;ref&gt;</code> pa valab ; ref yo ki pa gen yon non dwe gen kontni nan yo",
 	"cite_error_references_duplicate_key": "Baliz <code>&lt;ref&gt;</code> pa valab ; yo defini non « $1 » plizyè fwa ak kontni diferan",
 	"cite_error_references_invalid_parameters": "Paramèt ki pa valab nan baliz <code>&lt;references&gt;</code>",

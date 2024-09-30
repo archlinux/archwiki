@@ -41,6 +41,7 @@
 	"notification-link-text-view-changes": "ସମସ୍ତ ବଦଳ ଦେଖନ୍ତୁ",
 	"notification-link-text-view-page": "ପୃଷ୍ଠା ଦେଖନ୍ତୁ",
 	"notification-link-text-view-edit": "ସମ୍ପାଦନା ଦେଖନ୍ତୁ",
+	"notification-timestamp-ago-days": "{{PLURAL:$1|$1 ଦିନ}}",
 	"echo-notification-notice-text-only": "ଘୋଷଣା",
 	"echo-overlay-link": "ସମସ୍ତ ସୂଚନା",
 	"echo-overlay-title": "<b>ସୂଚନାବଳୀ</b>",

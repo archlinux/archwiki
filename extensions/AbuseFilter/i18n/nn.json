@@ -378,6 +378,7 @@
 	"abusefilter-test-page": "Endringar gjorde på side:",
 	"abusefilter-test-shownegative": "Vis endringar som ikkje passar med filteret",
 	"abusefilter-test-syntaxerr": "Du skreiv inn eit filter som inneheld ein syntaksfeil.\nDu kan sjå ei utførleg skildring ved å klikka på «{{int:abusefilter-edit-check}}»-knappen.",
+	"abusefilter-test-search-type-edit": "Endringar",
 	"abusefilter-test-search-type-createaccount": "Kontoopprettingar",
 	"abusefilter-changeslist-examine": "undersøk",
 	"abusefilter-examine": "Gransk einskildendringar",

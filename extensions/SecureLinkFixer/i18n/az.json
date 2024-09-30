@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nemoralis"
+		]
+	},
+	"securelinkfixer-desc": "Domen həmişə HTTPS tələb edirsə, URL-ləri HTTPS-ə çevirir"
+}

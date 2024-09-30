@@ -2,11 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Coldfact",
-			"Tšepo"
+			"Tšepo",
+			"Maryam AlAkini"
 		]
 	},
 	"mobile-frontend-history": "Sheba nalane ea ho fetola leqephe lena.",
 	"mobile-frontend-home-button": "Hae",
 	"mobile-frontend-language-article-heading": "Puo",
-	"mobile-frontend-main-menu-login": "Kena"
+	"mobile-frontend-main-menu-login": "Kena",
+	"mobile-frontend-main-menu-nearby": "Haufi",
+	"mobile-frontend-main-menu-settings": "Litlhophiso",
+	"mobile-frontend-placeholder": "Batla\n {{SITENAME}}",
+	"mobile-frontend-random-button": "Ka tšohanyetso"
 }

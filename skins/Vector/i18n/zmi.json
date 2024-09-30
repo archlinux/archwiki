@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Zahirulnukman"
+		]
+	},
+	"vector-languages": "Bahaso",
+	"vector-language-button-label": "{{PLURAL:$1|bahaso-bahaso $1}}",
+	"vector-no-language-button-label": "Tambah bahaso",
+	"vector-view-create": "Buek",
+	"vector-main-menu-label": "Menu utamo",
+	"vector-page-tools-label": "Pokakas",
+	"vector-page-tools-general-label": "Umum"
+}

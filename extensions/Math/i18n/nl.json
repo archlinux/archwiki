@@ -102,6 +102,7 @@
 	"math_unknown_error": "onbekende fout",
 	"math_unknown_function": "onbekende functie \"$1\"",
 	"mw-math-latexml": "LaTeXML (experimenteel; gebruikt MathML)",
+	"mw-math-mathjax": "MathJax-weergave aan browserkant (voor browsers met beperkte MathML-ondersteuning)",
 	"mw-math-mathml": "SVG (MathML kan worden gebruikt via een browserplugin)",
 	"mw-math-native": "MathML (experimenteel; geen afbeeldingen)",
 	"mw-math-source": "LaTeX-bron (voor tekstbrowsers)",

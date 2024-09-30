@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Morozof"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Gespik",
+	"discussiontools-replylink": "{{GENDER:|gespikön}}",
+	"discussiontools-replywidget-advanced": "Zuikos",
+	"discussiontools-replywidget-cancel": "Sädunön",
+	"discussiontools-replywidget-mode-source": "Fonätajüf",
+	"discussiontools-replywidget-mode-visual": "Nemedik",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Gespikon}} ele {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Joned büfik",
+	"discussiontools-replywidget-reply": "{{GENDER:|Gespik}}",
+	"discussiontools-replywidget-summary": "Naböfodönuam",
+	"discussiontools-replywidget-watchthis": "Läükön padi at lä [[Special:Watchlist|dalogamalised olik]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|pösod|pösods}} pö bespik",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|gespik|gespiks}}",
+	"discussiontools-topicheader-latestcomment": "Gespik lätik: $1",
+	"discussiontools-topicsubscription-button-subscribe": "nunet",
+	"discussiontools-topicsubscription-button-subscribe-label": "Nunet",
+	"discussiontools-topicsubscription-button-unsubscribe": "nunetiklem",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Nunetiklem",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Ogetol}} nunapenedi dö gespiks nulik tefü yegäd at.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Egetol}} nuneti!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|No plu}} ogetol nunapenedis dö gespiks nulik tefü yegäd at.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Eklemol}} nuneti."
+}

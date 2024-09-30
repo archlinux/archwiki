@@ -17,7 +17,11 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"Hubaishan"
+			"Hubaishan",
+			"Mohanad",
+			"Mohanad Kh",
+			"NEHAOUA",
+			"Tar Lócesilion"
 		]
 	},
 	"minerva-last-modified-date": "آخر تعديل بتاريخ $1، في $2",
@@ -77,7 +81,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "عرض تصنيفات الصفحات",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "تم تحسين معالجة مشاكل الصفحة",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "سيتم تضمين موضوعات الصفحة (قالب:صندوق رسالة مقالة) في المقالة.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "لسوء الحظ، تجميع النتائج حسب الصفحة غير متاح على الجوال، إذا كنت ترغب في استخدام ميزة المجموعة حسب الصفحة فتُرجَى زيارة موقع سطح المكتب.",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "للأسف، تجميع النتائج بحسب الصفحة غير متاح على الهاتف المحمول. إن كنت راغبًا في استعمال الميزة تفضّل بزيارة واجهة سطح المكتب.",
 	"skin-minerva-night-mode-unavailable": "الصفحة متوفرة في سمة المظهر \"الفاتح\" فقط.",
 	"minerva.css": "/ * سيتم تحميل جميع CSS هنا لمستخدمي MinervaNeue skin * /",
 	"minerva.js": "/ * سيتم تحميل جميع JavaScript هنا لمستخدمي MinervaNeue skin * /"

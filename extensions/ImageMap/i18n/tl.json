@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"AnakngAraw"
+			"AnakngAraw",
+			"Qwrop"
 		]
 	},
 	"imagemap_desc": "Nagpapahintulot ng napipindot na mga larawang mapa sa panig ng mga kliyente na ginagamitan ng tatak na <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Kamalian: dapat tumukoy ng isang larawan sa unang guhit/hanay",
 	"imagemap_invalid_image": "Kamalian: hindi tanggap o hindi umiiral ang isang larawan",
-	"imagemap_bad_image": "Kamalian: ipinagbabawal (nasa \"itim na talaan\") sa pahinang ito ang larawan",
+	"imagemap_bad_image": "Kamalian: hindi pinapayagan ang larawan sa pahinang ito",
 	"imagemap_no_link": "Kamalian: walang natagpuang tanggap na kawing sa hulihan ng guhit/hanay na $1",
 	"imagemap_invalid_title": "Kamalian: may hindi tanggap na pamagat sa kawing sa guhit/hanay na $1",
 	"imagemap_missing_coord": "Kamalian: walang sapat na tugmaang pampook para sa hugis sa guhit/hanay na $1",

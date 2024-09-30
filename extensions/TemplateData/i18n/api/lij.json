@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"N. Longo"
+		]
+	},
+	"apihelp-templatedata-summary": "Repigiâ i dæti archiviæ da l'estensción TemplateData.",
+	"apihelp-templatedata-example-1": "O restitoìsce o TemplateData pe [[Template:Foobar]], con di rizultâti se o paràmetro o no l'exìste ò se o l'exìste ma o no gh'à de TemplateData",
+	"apihelp-templatedata-example-2": "O restitoìsce o TemplateData pe [[Template:Phabricator]], con nisciùn rizultâto se o paràmetro o no l'exìste ò se o l'exìste ma o no gh'à de TemplateData",
+	"apihelp-templatedata-param-includeMissingTitles": "O restitoìsce i dæti in scî tìtoli ànche se pèrsci ò se màncan de TemplateData. De default i tìtoli són restitoîi sôlo se exìstan e gh'àn de TemplateData.",
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "O restitoìsce i dæti in scî tìtoli ànche se pèrsci ò se màncan de TemplateData. De default (pe retroconpatibilitæ) i tìtoli són restitoîi sôlo se exìstan e gh'àn de TemplateData.",
+	"apihelp-templatedata-param-lang": "O restitoìsce i valoî localizæ inte sta léngoa chi. Pe çèrnia predefinîa, l'é mostròu tùtte e traduçioìn a dispoxiçión.",
+	"apierror-templatedata-corrupt": "A pàgina TemplateData $1 a contêgne di dæti no vàlidi: $2",
+	"apiwarn-templatedata-deprecation-format": "O formâto predefinîo di rizulâti o cangiâ in futûro a <kbd>jsonfm</kbd>. Pe piâxéi, specificâ in mòddo ciæo <kbd>format=json</kbd>."
+}

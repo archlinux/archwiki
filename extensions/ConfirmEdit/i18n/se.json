@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ante75",
-			"Kimberli Mäkäräinen (WMNO)"
+			"Kimberli Mäkäräinen (WMNO)",
+			"WMNO sámeprošeakta"
 		]
 	},
 	"captcha-edit": "Jus áiggut rievdadit dán siiddu, čoavdde mat álggos bihttá dás vuollelis ja čále vástádusa ruvttu sisa ([[Special:Captcha/help|lassedieđut]]):",
@@ -23,9 +24,13 @@
 	"captcha-error": "CAPTCHA duođašteapmi ii menestuvvan siskkáldas boasttuvuođa dihte: $1",
 	"captchahelp-title": "CAPTCHA-rávvagat",
 	"captchahelp-cookies-needed": "Dus ferte diehtočoahkku leat rabas du neahttalohkkis dán bargui.",
+	"captchahelp-text": "Interneahttasiiddut maid buohkat sáhttet rievdadit, nu go dát wiki, dávjá boasttugeavahuvvojit spammariin mat geavahit robohtaid postendihte hirbmat ollu liŋkkaid. Vaikko dakkár spamliŋkkat sáhttet ge sihkkojuvvot, de dat leat suhttadahttit.\nMuhtomin, erenoamážit jus áiggut lasihit ođđa interneahttaliŋkkaid muhtun siidui, de sáhttá dat wiki čájehit dutnje gova muhtun ivnnis dahje seađas čállosis ja sihtat du čállit daid sániid mat čájehuvvojit. Dan dihte go lea váttis automatiseret dán barggu, de dat doaibma luoitá eanas albma olbmuid čađa, muhto bisseha spammariid. \n\nDađi bahábut eai gávdno juste dál audiomolssaeavttut geavaheddjiide geain lea heittot oaidnu, mat geavahit teaksta- dahje hupmanvuođđuduvvon neahttalohkkiid. Váldde oktavuođa [[Special:ListAdmins|hálddašeddjiiguin]] jus dát doaibma hehtte du dahkamis lobálaš rievdadusaid. \n\nDeaddil «ruovttoluotta»-boalu máhccandihte fas rievdadansiidui.",
+	"captcha-addurl-whitelist": " #<!-- leave this line exactly as it is --> <pre>\n# Syntáksa lea čuovvovaš:\n#  * Visot linnját mat álget dáinna «#» leat kommentárat\n#  * Visot linnját mat eai leat guoros leat oasážat dábálaš cealkagiin mat isket verddiid URL:iin\n  #</pre> <!-- leave this line exactly as it is -->",
+	"right-skipcaptcha": "Čađahit doaimmaid mat dábálaččat gáibidit CAPTCHA-nannema almmá CAPTCHA geavaheami haga",
 	"confirmedit-preview-line": "Gurgadasa nummir",
 	"confirmedit-preview-content": "Sisdoallu",
 	"confirmedit-preview-validity": "Dohkálašvuohta",
 	"confirmedit-preview-valid": "dohkálaš",
-	"confirmedit-preview-invalid": "boastu IP-čujuhus"
+	"confirmedit-preview-invalid": "boastu IP-čujuhus",
+	"confirmedit-preview-description": "Čuovvovaš tabealla čájeha listtu mas leat dán siiddu linnját, ja dan ahte lea go gustovaš IP-čujuhus dahje IP-blohkka. Jus linnjás lea gustovaš IP-čujuhus dahje IP-blohkka, de dat lihccojuvvo CAPTCHA-iskamis, muhto dohkkemeahttumis linnját eai gieđahallojuvvo. Okta ovdamearka gustovaš IP-blohkas sáhttá leat: 69.208.0.0/16, mii manná 69.208.0.0 gitta 69.208.255.255 rádjái. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Eanet dieđut] IP-blohka rehkenastimis."
 }

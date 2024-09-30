@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"apihelp-flowthank-summary": "Odpraviti publično poblagodarjenje za Flow-komentar.",
+	"apihelp-flowthank-param-postid": "UUID zapisa, za ktory vy hočete poblagodariti.",
+	"apihelp-flowthank-example-1": "Odpraviti blagodarnost za komentar s <kbd>UUID xyz789</kbd>",
+	"apihelp-thank-summary": "Odpraviti redaktoru uvědomjenje blagodarnosti.",
+	"apihelp-thank-param-rev": "Identifikator versije, za ktoru hočete poblagodariti někogo. Trěba ukazati ili toj identifikator ili parametr «log».",
+	"apihelp-thank-param-log": "Identifikator zapisa v dnevniku, za ktory hočete poblagodariti někogo. Trěba ukazati ili toj identifikator ili parametr «rev».",
+	"apihelp-thank-param-source": "Kratky redok s opisom izvora zapyta, napr. <kbd>diff</kbd> ili <kbd>history</kbd>.",
+	"apihelp-thank-example-1": "Odpraviti blagodarnost za versiju <kbd>ID 456</kbd>, ukazyvajuči stranicu s sravnjenjem medžu versijami kako izvor"
+}

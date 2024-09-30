@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"MinecraftAustralia"
+			"MinecraftAustralia",
+			"Kscanne"
 		]
 	},
-	"fancycaptcha-accountcreate": "Mar chosaint in éadan cuntais a chruthaítear go huathoibríoch, ionchuir na focail a thaispeántar san íomhá seo thíos: <br />([[Special:Captcha/help|tuilleadh eolais]])"
+	"fancycaptcha-captcha": "Seiceáil slándála",
+	"fancycaptcha-accountcreate": "Mar chosaint in éadan cuntais a chruthaítear go huathoibríoch, ionchuir na focail a thaispeántar san íomhá seo thíos: <br />([[Special:Captcha/help|tuilleadh eolais]])",
+	"fancycaptcha-imgcaptcha-ph": "Cuir isteach an téacs a fheiceann tú san íomhá",
+	"fancycaptcha-reload-text": "Athlódáil"
 }

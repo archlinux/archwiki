@@ -7,6 +7,7 @@
 			"Туяна Балданова"
 		]
 	},
+	"vector-opt-out": "Хуушан харагдасада шэлжэхэ",
 	"vector-languages": "Хэлэнүүд",
 	"vector-language-button-label": "{{PLURAL:$1|$1 хэлэн|$1 хэлые $1 хэлэнүүдые}}",
 	"vector-no-language-button-label": "Хэлэнүүдые нэмэхэ",
@@ -20,6 +21,15 @@
 	"vector-view-view": "Уншаха",
 	"vector-view-viewsource": "эшэ үндэһэндэнь хандаха",
 	"vector-more-actions": "Үшөө",
+	"vector-feature-limited-width-name": "Үргэниинь",
+	"vector-feature-custom-font-size-name": "Текст",
+	"vector-feature-limited-width-0-label": "Үргэн",
+	"vector-feature-limited-width-1-label": "Юрын",
+	"vector-feature-custom-font-size-0-label": "Бага",
+	"vector-feature-custom-font-size-1-label": "Юрын",
+	"vector-feature-custom-font-size-2-label": "Ехэ",
+	"skin-theme-name": "Үнгэ",
+	"skin-theme-os-label": "Өөрөө мэдэнгүй",
 	"vector-searchsuggest-containing": "Search for pages containing <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> бэшэгдэнхэй хуудаһануудые бэдэрэлгэ",
 	"vector-toc-label": "Гаршаг",
 	"vector-toc-beginning": "Эхин",

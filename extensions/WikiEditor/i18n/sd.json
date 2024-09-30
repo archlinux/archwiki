@@ -108,7 +108,7 @@
 	"wikieditor-toolbar-tool-replace-button-replace": "مٽايو",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "سڀ مٽايو",
 	"wikieditor-toolbar-tool-replace-close": "بند ڪريو",
-	"wikieditor-toolbar-tool-replace-nomatch": "توھان جي ڳولا ڪنھن-شيءِ سان نہ ملي.",
+	"wikieditor-toolbar-tool-replace-nomatch": "توھان جي ڳولا ڪنھن بہ شيءِ سان نہ ملي.",
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|مٽاءُ|مٽاءَ}} ڪيل.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "توھان ڳولڻ لاءِ ڪجهہ بہ داخل نہ ڪيو.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "توهان جو داخل ڪيل باقاعده اظھار غلط آهي: $1",

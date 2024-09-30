@@ -3,14 +3,15 @@
 		"authors": [
 			"Sebranik",
 			"Игорь Бродский",
-			"Лариса Чиркова"
+			"Лариса Чиркова",
+			"Ростислав Мельников"
 		]
 	},
 	"tooltip-ca-ve-edit": "Sab redaktiruida necidä lehtpol't.",
-	"visualeditor-ca-createlocaldescriptionsource": "Ližada penen kirjutusen tekst",
+	"visualeditor-ca-createlocaldescriptionsource": "Ližada sijaližen kuvadandan lähtetekst",
 	"visualeditor-ca-createsource": "Tege tekst",
-	"visualeditor-ca-editsource": "Vajehta tekst",
-	"visualeditor-ca-editsource-section": "vajehtada tekst",
+	"visualeditor-ca-editsource": "Vajehta lähtetekst",
+	"visualeditor-ca-editsource-section": "vajehtada lähtetekst",
 	"visualeditor-descriptionpagelink": "Project:Vizualine toimitai",
 	"visualeditor-dialog-meta-languages-label": "Keled",
 	"visualeditor-dialog-meta-languages-section": "Keled",

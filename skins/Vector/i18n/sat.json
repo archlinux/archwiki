@@ -7,10 +7,13 @@
 			"Ramjit Tudu",
 			"Rocky 734",
 			"Samar88",
-			"Srabony90"
+			"Srabony90",
+			"ᱢᱩᱨᱢᱩ",
+			"ᱤᱧ ᱢᱟᱛᱟᱞ"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 ᱯᱟᱹᱨᱥᱤ|$1 ᱯᱟᱹᱨᱥᱤ ᱠᱚ}}",
+	"vector-no-language-button-label": "ᱯᱟᱹᱨᱥᱤ ᱥᱮᱞᱮᱫ",
 	"vector-action-addsection": "ᱥᱟᱛᱚᱢ ᱥᱮᱞᱮᱫ",
 	"vector-action-delete": "ᱜᱮᱫ ᱜᱤᱰᱤ",
 	"vector-action-move": "ᱩᱪᱟᱹᱲ",
@@ -22,5 +25,16 @@
 	"vector-view-history": "ᱱᱟᱜᱟᱢ ᱧᱮᱞᱢᱮ",
 	"vector-view-view": "ᱯᱟᱲᱦᱟᱣᱢᱮ",
 	"vector-view-viewsource": "ᱯᱷᱮᱰᱟᱛ ᱧᱮᱞᱢᱮ",
-	"vector-more-actions": "ᱵᱟᱹᱲᱛᱤ"
+	"vector-more-actions": "ᱵᱟᱹᱲᱛᱤ",
+	"vector-feature-limited-width-name": "ᱪᱳᱣᱲᱟ",
+	"vector-feature-custom-font-size-name": "ᱢᱩᱬ ᱠᱟᱛᱷᱟ",
+	"vector-feature-limited-width-0-label": "ᱚᱥᱟᱨ",
+	"vector-feature-limited-width-1-label": "ᱢᱟᱹᱱ",
+	"vector-feature-custom-font-size-0-label": "ᱦᱩᱰᱤᱧ",
+	"vector-feature-custom-font-size-1-label": "ᱢᱟᱹᱱ",
+	"vector-feature-custom-font-size-2-label": "ᱢᱟᱨᱟᱝ",
+	"skin-theme-name": "ᱨᱚᱝ",
+	"vector-page-tools-label": "ᱥᱟᱯᱟᱯᱠᱚ",
+	"vector-page-tools-general-label": "ᱥᱟᱫᱷᱟᱨᱚᱱ",
+	"vector-unpin-element-label": "ᱫᱟᱱᱟᱝ"
 }

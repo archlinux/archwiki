@@ -8,7 +8,8 @@
 			"NGC 54",
 			"Stelistcristi",
 			"Strainu",
-			"아라"
+			"아라",
+			"Paloi Sciurala"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editare vizuală]]",
@@ -28,5 +29,5 @@
 	"visualeditor-welcomedialog-content-thanks": "Vă mulțumim că ajutați omenirea să descopere lucruri noi!",
 	"visualeditor-welcomedialog-switch": "Comută la editorul de cod sursă",
 	"visualeditor-welcomedialog-switch-ve": "Comută la editorul vizual",
-	"visualeditor-welcomedialog-title": "{{GENDER:$1|Bun venit}} la $2"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Bun-venit}} la $2"
 }

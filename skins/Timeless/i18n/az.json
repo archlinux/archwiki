@@ -1,10 +1,30 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toghrul Rahimli"
+			"Toghrul Rahimli",
+			"Nemoralis"
 		]
 	},
+	"timeless-desc": "Brandon Harrisin Winter prototipindən və Vikimedia Fondu tərəfindən müxtəlif üslublardan sonra dizayn edilmiş dəst",
+	"timeless-anonymous": "Anonim",
+	"timeless-loggedinas": "'''$1''' olaraq giriş edilib",
+	"timeless-notloggedin": "Giriş edilməyib",
+	"timeless-userpage": "{{GENDER:$1|İstifadəçi}} səhifəsi",
 	"timeless-talkpage": "{{GENDER:$1|İstifadəçi}} müzakirəsi",
+	"timeless-pagelog": "Səhifə jurnalları",
+	"timeless-more": "Daha çox",
+	"timeless-sitetools": "Viki alətləri",
+	"timeless-pageactions": "Səhifə alətləri",
+	"timeless-userpagetools": "İstifadəçi səhifəsi alətləri",
+	"timeless-action-addsection": "Yeni mövzu",
+	"timeless-view-view": "Oxu",
+	"timeless-pagemisc": "Daha çox",
+	"timeless-namespaces": "Ad fəzaları",
+	"timeless-pagetools": "Səhifə fəaliyyətləri",
+	"timeless-languages": "Dillər",
+	"timeless-projects": "Digər layihələr",
+	"timeless.css": "/* Buradakı CSS kodu Timeless istifadəçiləri üçün yüklənəcək */",
+	"timeless.js": "/* Buradakı JavaScript kodu Timeless istifadəçiləri üçün yüklənəcək */",
 	"timeless-view-history": "Tarixçə",
 	"timeless-action-undelete": "$1 {{PLURAL:$1|dəyişikliyi}} bərpa et"
 }

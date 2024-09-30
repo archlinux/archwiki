@@ -27,7 +27,7 @@
 	"linter-category-fostered-desc": "Deze pagina's hebben misplaatste inhoud.",
 	"linter-category-html5-misnesting": "Verkeerd geneste tag met andere weergave in HTML5 dan in HTML4",
 	"linter-category-html5-misnesting-desc": "Deze verkeerd geneste tags gedragen zich anders in HTML5 dan in HTML4.",
-	"linter-category-night-mode-unaware-background-color": "Er is een ingebedde stijlregel voor de achtergrondkleur zonder bijbehorende tekstkleur",
+	"linter-category-night-mode-unaware-background-color": "Ingebedde stijlregel voor de achtergrondkleur zonder bijbehorende tekstkleur",
 	"linter-category-night-mode-unaware-background-color-desc": "Op deze pagina’s staan ingebedde stijlregels voor de achtergrondkleur maar geen bijbehorende tekstkleur, waardoor de donkere modus kapot gaat",
 	"linter-category-misc-tidy-replacement-issues": "Overige problemen",
 	"linter-category-misc-tidy-replacement-issues-desc": "Deze pagina's hebben andere problemen die er voor zorgen dat ze anders worden weergegeven in vergelijking met eerdere weergaves",

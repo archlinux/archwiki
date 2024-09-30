@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toliño"
+		]
+	},
+	"action-tboverride": "ignorar a lista de títulos ou nomes de usuario non permitidos",
+	"action-tboverride-account": "ignorar a lista de nomes de usuario non permitidos",
+	"action-titleblacklistlog": "ver o rexistro da lista de títulos non permitidos",
+	"log-name-titleblacklist": "Rexistro da lista de títulos non permitidos",
+	"log-description-titleblacklist": "Este rexistro fai un seguimento das coincidencias coa lista de títulos non permitidos.",
+	"logentry-titleblacklist-hit-username": "$1 {{GENDER:$2|provocou}} unha coincidencia coa lista de títulos non permitidos cando intentaba crear a conta $3 correspondente a $4.",
+	"titleblacklist-desc": "Permítelle aos administradores prohibir a creación de páxinas e contas de usuario grazas a unha lista de títulos [[MediaWiki:Titleblacklist|non permitidos]] e mais unha lista de títulos [[MediaWiki:Titlewhitelist|permitidos]]",
+	"titleblacklist": "# Esta é unha lista de títulos non permitidos. Non se pode crear ningún título ou usuario que coincida cunha destas expresións regulares.\n# Usa \"#\" para os comentarios.\n# Por defecto, diferencia entre maiúsculas e minúsculas",
+	"titlewhitelist": "# Esta é unha lista de título permitidos. Usa \"#\" para os comentarios.\n# Por defecto, diferencia entre maiúsculas e minúsculas",
+	"titleblacklist-forbidden-edit": "O título \"$2\" está protexido fronte á creación.\nCoincide coa seguinte entrada da lista de títulos non permitidos: <code>$1</code>",
+	"titleblacklist-forbidden-move": "\"$2\" non se pode mover a \"$3\" porque o título \"$3\" está protexido fronte á creación.\nCoincide coa seguinte entrada da lista de títulos non permitidos: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "O nome de ficheiro \"$2\" está protexido fronte á creación.\nCoincide coa seguinte entrada da lista de títulos non permitidos: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "O nome de usuario \"$2\" está protexido fronte á creación.\nCoincide coa seguinte entrada da lista de títulos non permitidos: <code>$1</code>",
+	"titleblacklist-invalid": "{{PLURAL:$1|A seguinte liña|As seguintes liñas}} da lista de títulos non permitidos non {{PLURAL:$1|é válida|son válidas}}; {{PLURAL:$1|corríxaa|corríxaas}} antes de gardar:",
+	"titleblacklist-override": "Ignorar a lista de títulos non permitidos se existe algunha coincidencia",
+	"titleblacklist-override-help": "Os usuarios con privilexios suficientes poden configurar isto para ignoraren as comprobacións da lista de títulos non permitidos.",
+	"titleblacklist-warning": "<strong>Aviso: Só os administradores e os usuarios co privilexio <code>tboverride</code> poden editar esta páxina porque coincide coa seguinte entrada da lista de títulos non permitidos:</strong><br /><code>$1</code>",
+	"right-tboverride": "Ignorar a lista de títulos ou nomes de usuario non permitidos",
+	"right-tboverride-account": "Ignorar a lista de nomes de usuario non permitidos",
+	"right-titleblacklistlog": "Ver o rexistro da lista de títulos non permitidos"
+}

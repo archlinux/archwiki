@@ -1,11 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"SupaplexTW"
 		]
 	},
+	"mobile-frontend-history": "看這頁的修改歷史。",
 	"mobile-frontend-home-button": "頭頁",
 	"mobile-frontend-language-article-heading": "語言",
+	"mobile-frontend-main-menu-login": "登入",
+	"mobile-frontend-main-menu-nearby": "附近",
 	"mobile-frontend-main-menu-settings": "設定",
 	"mobile-frontend-placeholder": "佇{{SITENAME}}揣",
 	"mobile-frontend-random-button": "隨機"

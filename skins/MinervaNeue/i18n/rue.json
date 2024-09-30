@@ -5,13 +5,16 @@
 			"Gazeb",
 			"Gramo6",
 			"KHMELNYTSKYIA",
-			"Vlad5250"
+			"Vlad5250",
+			"Constraque"
 		]
 	},
 	"mobile-frontend-editor-edit": "Редагувати",
+	"mobile-frontend-editor-redlink-explain": "Тоту сторінку іщі не было вытворено.",
 	"mobile-frontend-history": "Зобразити історію едітовань той сторінкы.",
 	"mobile-frontend-home-button": "Домів",
 	"mobile-frontend-language-article-heading": "Бесїда",
+	"mobile-frontend-languages-not-available": "Тота сторінка недоступна на іншых языках.",
 	"mobile-frontend-main-menu-button-tooltip": "Відкрити головне меню",
 	"mobile-frontend-main-menu-login": "Приголосити ся",
 	"mobile-frontend-main-menu-nearby": "Наблизко",
@@ -19,5 +22,7 @@
 	"mobile-frontend-main-menu-watchlist": "Слїдованы сторінкы",
 	"mobile-frontend-pageaction-edit-tooltip": "Редагувати основну ділянку цієї сторінки.",
 	"mobile-frontend-placeholder": "Глядати {{SITENAME}}",
-	"mobile-frontend-random-button": "Трафункова"
+	"mobile-frontend-random-button": "Трафункова",
+	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Припоїв ся|Припоїла ся}} $1",
+	"minerva-page-actions-editfull": "Едітовати цїлу сторінку"
 }

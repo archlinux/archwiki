@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Arystanbek"
+			"Arystanbek",
+			"Casserium"
 		]
 	},
 	"categorytree": "Санат бұтақтары",
@@ -16,8 +17,8 @@
 	"categorytree-mode-categories": "тек санаттар",
 	"categorytree-mode-pages": "беттер (суреттерді санамай)",
 	"categorytree-mode-all": "барлық беттер",
-	"categorytree-collapse": "тарылту",
-	"categorytree-expand": "кеңейту",
+	"categorytree-collapse": "жиыру",
+	"categorytree-expand": "жаю",
 	"categorytree-member-counts": "Қамтылғандар {{PLURAL:$1|1 санатша|$1 санатша}}, {{PLURAL:$2|1 бет|$2 бет}}, және {{PLURAL:$3|1 файл|$3 файл}}",
 	"categorytree-num-categories": "$1 санатша",
 	"categorytree-num-pages": "$1 бет",

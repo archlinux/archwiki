@@ -10,7 +10,9 @@
 			"Iwan Novirion",
 			"Rex",
 			"Sumbukompor",
-			"Veracious"
+			"Veracious",
+			"Bagas Chrisara",
+			"Leapofod"
 		]
 	},
 	"cite-desc": "Menambahkan tag <code>&lt;ref&gt;</code> dan <code>&lt;references&gt;</code> untuk kutipan",
@@ -18,7 +20,7 @@
 	"cite_error_ref_invalid_dir": "<code>dir=\"$1\"</code> tidak sah, harusnya <code>ltr</code> atau <code>rtl</code>",
 	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> tidak sah; \nnama tidak boleh integer sederhana.\nGunakan nama deskriptif",
 	"cite_error_ref_no_key": "Tag <code>&lt;ref&gt;</code> tidak sah atau memiliki nama yang salah.",
-	"cite_error_ref_too_many_keys": "Tag <code>&lt;ref&gt;</code> tidak sah;\nnama tidak sah; misalnya, terlalu banyak",
+	"cite_error_ref_too_many_keys": "Parameter dalam tag <code>&lt;ref&gt;</code> tidak sah;",
 	"cite_error_ref_nested_extends": "Memperluas tag <code>&lt;ref&gt;</code> lebih dari satu tingkat tidak dibolehkan",
 	"cite_error_ref_no_input": "Tag <code>&lt;ref&gt;</code> tidak sah;\nreferensi tanpa nama harus memiliki isi",
 	"cite_error_references_duplicate_key": "Tanda <code>&lt;ref&gt;</code> tidak sah; nama \"$1\" didefinisikan berulang dengan isi berbeda",
@@ -47,5 +49,6 @@
 	"cite-wikieditor-help-content-named-reference-description": "Referensi bernama",
 	"cite-wikieditor-help-content-rereference-description": "Penggunaan kembali referensi yang sama",
 	"cite-wikieditor-help-content-showreferences-description": "Menampilkan referensi",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Teks pranala], teks tambahan.",
 	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teks pranala]"
 }

@@ -17,7 +17,7 @@
 	"discussiontoolsdebug-pagetitle": "Titl ar bajenn",
 	"discussiontoolsdebug-intro": "Diskouez a ra ar bajenn-mañ penaos e anavez an [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:DiscussionTools astenn Benvegioù Kaozeal] ar gaozeadennoù hag evezhiadennoù a zo e pajenn '''[[:$1]]'''. Marteze e kavoc’h anezhi talvoudus evit diskoulmañ kudennoù gant an astenn pe kompren penaos ez a en-dro. Kavet a vo ar memes titouroù en [[$2|discussiontoolspageinfo API]].",
 	"discussiontools-desc": "Benvegoù da wellaat pajennoù kaozeal.",
-	"discussiontools-emptystate-button": "Digeriñ ur gaoz nevez",
+	"discussiontools-emptystate-button": "Boulc’hañ ur gaozeadenn",
 	"discussiontools-emptystate-desc": "E [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|pajennoù kaozeal]] e komzer diwar-benn an tu gwellañ da aozañ endalc’h war {{SITENAME}}. Gallout a {{GENDER:|rit}} boulc’hañ ur gaozeadenn nevez er bajenn-mañ evit divizout gant re all penoas gwellaat [[:{{SUBJECTPAGENAME}}]].",
 	"discussiontools-emptystate-desc-self": "Gallout a ra tud e {{SITENAME}} ober gant ar [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|bajenn gaozeal]]-mañ evit embann ur gemennadenn evidoc’h ha kemennet e vioc’h pa raint.",
 	"discussiontools-emptystate-desc-self-anon": "Gant ar [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|bajenn gaozeal]]-mañ e c’hell tud {{SITENAME}} skrivañ ur gemennadenn foran a-zivout kemmoù graet eus ar chomlec’h IP {{GENDER:|emaoc’h}} oc’h ober gantañ.\n\nLod eus ar chomlec’hioù IP a cheñch bep ar mare, hag alies e ra meur a zen ganto. Gallout a rit [$1 krouiñ ur gont] pe [$2 kevreañ] kuit da vezañ drougvesket gant implijerien digevreet all. Kuzhat a raio ho chomlec’h IP ivez.",

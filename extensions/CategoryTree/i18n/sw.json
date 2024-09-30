@@ -12,7 +12,7 @@
 	"categorytree-portlet": "Jamii",
 	"categorytree-legend": "Onyesha mfumo wa jamii",
 	"categorytree-desc": "Chungulia kwenye [[Special:CategoryTree|mfumo wa jamii]]",
-	"categorytree-header": "Ingiza jina la jamii ili kuona yaliyomo kwenye mfumo wa jamii. '''Ilani''': hii itahitaji JavaScript ya kisasa ijulilkanayo kwa jina la AJAX. Endapo utakuwa na ya zamani, au JavaScript yako imezimwa, basi hii hatofanya kazi kabisa.",
+	"categorytree-header": "Ingiza jina la jamii ili kuona yaliyomo kwenye mfumo wa jamii. '''Ilani''': hii itahitaji JavaScript ya kisasa ijulilkanayo kwa jina la AJAX. Endapo utakuwa na ya zamani, au JavaScript yako imezimwa, basi hii haitafanya kazi kabisa.",
 	"categorytree-category": "Jamii:",
 	"categorytree-go": "Onyesha mfumo",
 	"categorytree-parents": "Kuu",

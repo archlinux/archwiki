@@ -23,7 +23,8 @@
 			"زكريا",
 			"فلورانس",
 			"محمد أحمد عبد الفتاح",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"Mohammed Qays"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "كتاب",
@@ -68,7 +69,7 @@
 	"cite-ve-referenceslist-isempty-default": "ما من مراجع على هذه الصفحة لتضمينها في هذه القائمة.",
 	"cite-ve-referenceslist-missingref": "هذا المرجع موجود في قالب أو نحوه ولا يمكن تعديله حاليا إلا من المصدر.",
 	"cite-ve-referenceslist-missingref-in-list": "يتم تعريف هذا المرجع في قالب أو كتلة أخرى تم إنشاؤها، ويمكن الآن معاينته فقط في وضع المصدر.",
-	"cite-ve-referenceslist-missingreflist": "قائمة المراجع هذه مولدة بواسطة قالب، وحاليا يمكن تعديلها فقط في نمط المصدر.",
+	"cite-ve-referenceslist-missingreflist": "قائمة المراجع هذه مولدة بواسطة قالب، وحالياً يمكن تعديلها فقط في التعديل المصدري.",
 	"cite-ve-toolbar-group-label": "مرجع",
 	"cite-ve-othergroup-item": "استشهاد $1"
 }

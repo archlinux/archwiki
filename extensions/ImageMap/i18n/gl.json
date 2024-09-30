@@ -9,7 +9,7 @@
 	"imagemap_desc": "Permite mapas de imaxe nos que se pode facer clic usando a etiqueta <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Erro: Cómpre especificar unha imaxe na primeira liña.",
 	"imagemap_invalid_image": "Erro: A imaxe non é válida ou non existe.",
-	"imagemap_bad_image": "Erro: A imaxe atópase na lista negra desta páxina.",
+	"imagemap_bad_image": "Erro: Non se permite a imaxe nesta páxina.",
 	"imagemap_no_link": "Erro: Non se atopou ningunha ligazón válida ao final da liña $1.",
 	"imagemap_invalid_title": "Erro: Título incorrecto na ligazón da liña $1.",
 	"imagemap_missing_coord": "Erro: Non abondan as coordenadas para a forma na liña $1.",

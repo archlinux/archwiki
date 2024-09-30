@@ -197,7 +197,7 @@
 	"notification-compact-header-page-linked": "在<strong>$1</strong>被人链接。",
 	"notification-bundle-header-page-linked": "您创建的<strong>$3</strong>页面在{{PLURAL:$5||$5个页面|100=99+个页面}}被人链接。",
 	"notification-header-article-reminder": "按{{GENDER:$2|您}}的要求提醒您查看<strong>$3</strong>页面",
-	"notification-link-text-what-links-here": "指向本页的链接",
+	"notification-link-text-what-links-here": "查看链入页面",
 	"notification-header-mention-other": "$1在<strong>$4</strong>页面的“<strong>$5</strong>”章节{{GENDER:$2|提及}}了{{GENDER:$3|您}}。",
 	"notification-header-mention-other-nosection": "$1在<strong>$4</strong>页面{{GENDER:$2|提及}}了{{GENDER:$3|您}}。",
 	"notification-header-mention-user-talkpage-v2": "$1在<strong>$4{{GENDER:$5|的}}用户讨论页</strong>的“<strong>$6</strong>”章节{{GENDER:$2|提及}}了{{GENDER:$3|您}}。",

@@ -17,7 +17,7 @@
 	"categorytree-mode-categories": "categorïau yn unig",
 	"categorytree-mode-pages": "tudalennau ag eithrio ffeiliau",
 	"categorytree-mode-all": "pob tudalen",
-	"categorytree-collapse": "crebachu",
+	"categorytree-collapse": "lleihau",
 	"categorytree-expand": "ehangu",
 	"categorytree-member-counts": "yn cynnwys y canlynol: {{PLURAL:$1|$1 is-gategori}}, $2 {{PLURAL:$2|tudalen|dudalen|dudalen|tudalen|thudalen|tudalen}}, {{PLURAL:$3|$3 ffeil}}",
 	"categorytree-num-categories": "$1 Cat",

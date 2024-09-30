@@ -5,5 +5,10 @@
 			"J Subhi"
 		]
 	},
+	"popups-settings-option-math-tooltip": "Manjalasakan rumus matamatika wayah mamaraakan kursor.",
+	"mw-math-mathjax": "Rendering MathJax sisi klién (gasan paramban lawan dukungan MathML tawatas)",
+	"mw-math-mathml": "SVG (MathML kawa dinyalaakan liwat plugin paramban)",
+	"mw-math-native": "MathML (ékspériméntal; kada pakai gambar)",
+	"mw-math-source": "Asal-mula LaTeX (gasan paramban téks)",
 	"prefs-math": "Matik"
 }

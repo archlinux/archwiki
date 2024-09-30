@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Winston Sung"
+		]
+	},
+	"categorytree-member-counts": "包括{{PLURAL:$1|个下分類}}、{{PLURAL:$2|个頁}}佮 {{PLURAL:$3|个檔案}}",
+	"categorytree-num-categories": "$1 分類",
+	"categorytree-num-files": "$1檔"
+}

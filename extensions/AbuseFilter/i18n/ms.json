@@ -423,7 +423,7 @@
 	"abusefilter-diff-info": "Maklumat asas",
 	"abusefilter-diff-pattern": "Syarat penapis",
 	"abusefilter-diff-invalid": "Versi yang dimohon tidak dapat diambil",
-	"abusefilter-diff-backhistory": "Kembali ke sejarah penapis",
+	"abusefilter-diff-backhistory": "Sejarah penapis",
 	"abusefilter-diff-prev": "Suntingan sebelumnya",
 	"abusefilter-diff-next": "Suntingan berikutnya",
 	"abusefilter-import-intro": "Anda boleh menggunakan antara muka ini untuk mengimport penapis dari wiki lain.\nDalam wiki sumber, klik \"{{int:abusefilter-edit-export}}\" di bawah \"{{int:abusefilter-edit-tools}}\" di antara muka penyuntingan.\nSalin dari ruangan teks yang muncul, kemudian tampalkannya ke dalam ruangan teks ini, kemudian klik \"{{int:abusefilter-import-submit}}\".",

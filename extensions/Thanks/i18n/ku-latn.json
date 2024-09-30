@@ -7,6 +7,7 @@
 			"Ghybu"
 		]
 	},
+	"thanks-desc": "Ji bo guhartin, şirove û hwd. lînkeke spaskirinê lê zêde bike.",
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|spas}}}}",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|hate spaskirin}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Spas}}}}",
@@ -14,7 +15,19 @@
 	"thanks-button-action-queued": "$1 {{GENDER:$1|{{GENDER:$2|tê spaskirin}}}}…",
 	"thanks-button-action-cancel": "Betal bike",
 	"thanks-button-action-completed": "Te $1 {{GENDER:$1|{{GENDER:$2|spas kir}}}}",
+	"thanks-error-undefined": "Şandina spasiyê têk çû (koda xeletiyê: $1). Ji kerema xwe re dîsa biceribîne.",
+	"thanks-error-invalid-log-id": "Qeyd nehat dîtin",
+	"thanks-error-notloggedin": "Bikarhênerên anonîm nikarin spasî bişînin",
 	"thanks-thank-tooltip": "Ji {{GENDER:$2|vî bikarhênerî|vê bikarhênerê}} re danezaneke sipasiyê {{GENDER:$1|bişîne}}",
+	"thanks-confirmation2": "Bi eşkereyî {{GENDER:$1|spas bike}}?",
+	"thanks-thanked-notice": "{{GENDER:$3|Te}} spasî {{GENDER:$2|$1(y)î|$1(y)ê|$1(y)î}} kir.",
+	"thanks": "Spas bike",
+	"thanks-submit": "Spas bike",
+	"echo-pref-subscription-edit-thank": "Kesek bo guhartina min spas bike",
 	"echo-category-title-edit-thank": "Spas",
-	"notification-header-rev-thank": "$1 ji bo guhartina te ya <strong>$3</strong> li {{GENDER:$4|te}} spas {{GENDER:$2|kir}}."
+	"notification-header-rev-thank": "$1 ji bo guhartina te ya <strong>$3</strong> li {{GENDER:$4|te}} spas {{GENDER:$2|kir}}.",
+	"thanks-confirmation-special-log": "Ji bo vê aksiyona qeydê dixwazî bi eşkereyî spasî bişînî?",
+	"thanks-confirmation-special-rev": "Ji bo vê guhartinê dixwazî bi eşkereyî spasî bişînî?",
+	"notification-link-text-view-post": "Şiroveyê bibîne",
+	"ipb-action-thanks": "Spasî tê şandin"
 }

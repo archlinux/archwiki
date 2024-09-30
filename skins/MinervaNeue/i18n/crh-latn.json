@@ -7,19 +7,20 @@
 		]
 	},
 	"mobile-frontend-editor-edit": "Deñiştir",
-	"mobile-frontend-editor-redlink-leave": "Yoq, teşekkürler.",
+	"mobile-frontend-editor-redlink-leave": "Yoq, sağ oluñız.",
 	"mobile-frontend-history": "Bu saifeniñ deñiştirilme tarihını köster.",
 	"mobile-frontend-home-button": "Baş Saife",
 	"mobile-frontend-language-article-heading": "Til",
-	"mobile-frontend-languages-not-available": "Bu saife başqa tilde tapılmay.",
+	"mobile-frontend-languages-not-available": "Bu saife başqa tillerde yoq.",
 	"mobile-frontend-main-menu-login": "Kiriş",
 	"mobile-frontend-main-menu-nearby": "Yaqında",
 	"mobile-frontend-main-menu-settings": "Sazlamalar",
 	"mobile-frontend-placeholder": "{{SITENAME}} içinde qıdır",
-	"mobile-frontend-random-button": "Rastkele",
-	"mobile-frontend-redirected-from": "\"[[$1]]\" saifesinden ciberildi",
-	"mobile-frontend-talk-back-to-filepage": "\"$1\" adlı faylğa keri qayt.",
-	"mobile-frontend-talk-back-to-page": "\"$1\" saifesine keri qayt.",
-	"mobile-frontend-talk-back-to-userpage": "\"{{GENDER:$1|$1}}\" kişisiniñ qullanıcı saifesine keri qayt.",
-	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Qatılğan vaqıtı}} $1"
+	"mobile-frontend-random-button": "Tesadüfiy",
+	"mobile-frontend-redirected-from": "“[[$1]]” saifesinden yollandı",
+	"mobile-frontend-talk-back-to-filepage": "“$1” faylına keri qayt.",
+	"mobile-frontend-talk-back-to-page": "“$1” saifesine keri qayt.",
+	"mobile-frontend-talk-back-to-userpage": "“{{GENDER:$1|$1}}” qullanıcı saifesine keri qayt.",
+	"mobile-frontend-user-page-member-since": "$1 {{GENDER:$2|qoşuldı}}",
+	"minerva-page-actions-editfull": "Bütün saifeni deñiştir"
 }

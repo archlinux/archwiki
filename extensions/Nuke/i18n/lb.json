@@ -3,7 +3,8 @@
 		"authors": [
 			"Les Meloures",
 			"Robby",
-			"Soued031"
+			"Soued031",
+			"Volvox"
 		]
 	},
 	"nuke": "Masseläschung",
@@ -13,7 +14,7 @@
 	"nuke-list": "Dës Säite goufe viru kuerzem vum [[Special:Contributions/$1|{{GENDER:$1|$1}}]] nei ugeluecht; gitt wgl. eng Bemierkung an, an dréckt op de Knäppche Läschen.",
 	"nuke-list-multiple": "Dës Säite goufe rezent gemaach;\nsetzt eng Bemierkung dobäi a klickt op de Knäppche fir se ze läschen.",
 	"nuke-defaultreason": "Masseläschung vu Säiten, déi vum [[Special:Contributions/$1|{{GENDER:$1|$1}}]] ugefaang goufen",
-	"nuke-multiplepeople": "Masse-Läschung vu Säiten déi rezent dobäigesat goufen",
+	"nuke-multiplepeople": "Masse-Läschung vu Säiten, déi rezent dobäigesat goufen",
 	"nuke-tools": "Dësen Tool erlaabt vill Säite mateneen ze läschen, déi vun engem Benotzer oder vun enger IP-Adress ugeluecht goufen.\nGitt wgl. d'IP-Adress respektiv de Benotzer u fir eng Lëscht vun de Säiten ze kréien déi geläscht solle ginn, oder loosst et eidel fir all Benotzer.",
 	"nuke-submit-user": "Säiten oplëschten",
 	"nuke-submit-delete": "Ugewielt läschen",

@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku"
+			"Tofeiku",
+			"Syafiq.y"
 		]
 	},
 	"fancycaptcha-captcha": "Merikso keselamatan",
+	"fancycaptcha-accountcreate": "Ngejogo wiki tu lua' muka' akaun otomitikni, muun kami engkam ngisi tuturan-tuturan mediam kutak sinedio ([[Special:Captcha/help|more info]]):",
 	"fancycaptcha-imgcaptcha-ph": "Pesukin teturan yang tekilo nu ta’ gambar",
 	"fancycaptcha-reload-text": "Pinetarang"
 }

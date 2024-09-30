@@ -58,6 +58,7 @@
 	"skin-night-mode-name": "Barva",
 	"skin-night-mode-2-label": "Automaticky",
 	"skin-theme-name": "Barva",
+	"skin-theme-description": "[Experimentální verze, vysoká pravděpodobnost problémů] Snižuje světlo vyzařované obrazovkami zařízení.",
 	"skin-theme-os-label": "Automaticky",
 	"vector-search-loader": "Načítají se návrhy pro hledání",
 	"vector-searchsuggest-containing": "Vyhledat stránky obsahující „<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>“",
@@ -83,10 +84,12 @@
 	"vector-unpin-element-label": "skrýt",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Diskuse]]",
 	"tooltip-vector-anon-user-menu-title": "Další možnosti",
+	"vector-page-tools-nav-label": "Nástroje ke stránce",
 	"vector-prefs-limited-width": "Zapnout režim omezené šířky",
 	"vector-prefs-limited-width-help": "Zapnout režim omezené šířky pro lepší zážitek ze čtení.",
 	"empty-language-selector-body": "Obsah stránky není podporován v jiných jazycích.",
-	"vector-toc-unpinned-popup": "Obsah byl přesunut sem.",
-	"vector-page-tools-unpinned-popup": "Nástroje byly přesunuty sem.",
-	"vector-main-menu-unpinned-popup": "Hlavní menu bylo přesunuto sem."
+	"vector-toc-unpinned-popup": "Obsah se přesunul sem.",
+	"vector-page-tools-unpinned-popup": "Nástroje se přesunuly sem.",
+	"vector-main-menu-unpinned-popup": "Hlavní menu se přesunulo sem.",
+	"vector-2022-beta-preview-label": "Přístupnost pro čtení (Vektor 2022)"
 }

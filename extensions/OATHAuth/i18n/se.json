@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kimberli Mäkäräinen (WMNO)"
+			"Kimberli Mäkäräinen (WMNO)",
+			"Yupik"
 		]
 	},
 	"disableoathforuser": "Váldde geavaheaddji guovtteceahkat autentiserema eret anus",
@@ -29,7 +30,7 @@
 	"oathauth-user-not-does-not-have-oath-enabled": "Geavaheaddji ii leat váldán guovtteceahkat autentiserema atnui, nappo ii leat vejolaš váldit dan eret anus.",
 	"right-oathauth-enable": "Váldit guovtteceahkat autentiserema atnui",
 	"action-oathauth-enable": "váldit guovtteceahkat autentiserema atnui",
-	"oathauth-auth-token-label": "Čoavdda",
+	"oathauth-auth-token-label": "Guovtteceahkat čoavdda dahje ođastankoda",
 	"oathauth-auth-token-help": "Háválas beassansátni, mii geavahuvvo guovtteceahkat autentiserema nuppi ceahkis:",
 	"oathauth-login-failed": "Duođašteapmi ii lihkostuvvan.",
 	"oathauth-describe-provider": "Guovtteceahkat autentiseren (OATH).",

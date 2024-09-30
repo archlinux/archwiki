@@ -14,7 +14,8 @@
 			"Vitorvicentevalente",
 			"Waldir",
 			"Waldyrious",
-			"Jdlrobson"
+			"Jdlrobson",
+			"Qgustavor"
 		]
 	},
 	"skinname-vector": "Vector antigo (2010)",
@@ -50,7 +51,7 @@
 	"vector-client-prefs-label": "Aspeto",
 	"vector-feature-limited-width-name": "Largura",
 	"vector-feature-custom-font-size-name": "Texto",
-	"vector-feature-limited-width-0-label": "Largura",
+	"vector-feature-limited-width-0-label": "Largo",
 	"vector-feature-limited-width-1-label": "Padrão",
 	"vector-feature-custom-font-size-0-label": "Pequeno",
 	"vector-feature-custom-font-size-1-label": "Padrão",

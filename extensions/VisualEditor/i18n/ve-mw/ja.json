@@ -46,7 +46,8 @@
 			"Yusuke1109",
 			"しぃ",
 			"ネイ",
-			"春春眠眠"
+			"春春眠眠",
+			"FlatLanguage"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -358,7 +359,7 @@
 	"visualeditor-recreate": "このページはあなたが編集を始めた後に削除されました。もう一度作成するには「$1」を押してください。",
 	"visualeditor-redirect-description": "$1 へのリダイレクト",
 	"visualeditor-savedialog-identify-anon": "代わりに匿名利用者としてこのページに保存しますか? このページの編集履歴にあなたの IP アドレスが記録されます。",
-	"visualeditor-savedialog-identify-user": "[[User:$1|$1]] としてログインしています。この編集内容を保存すると、編集内容はこのアカウントと関連付けられます。",
+	"visualeditor-savedialog-identify-user": "あなたは現在[[User:$1|$1]]としてログインしています。この編集を保存すると、編集内容はこのアカウントと関連付けられます。",
 	"visualeditor-savedialog-keyboard-shortcut-submit": "$1 を押すと編集を保存できます",
 	"visualeditor-savedialog-label-publish-short": "投稿",
 	"visualeditor-savedialog-label-publish-short-start": "公開…",

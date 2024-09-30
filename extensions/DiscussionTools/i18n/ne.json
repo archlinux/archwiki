@@ -16,6 +16,7 @@
 	"discussiontools-autotopicsubpopup-preferences": "अभिरुचिहरू सम्पादन गर्नुहोस्",
 	"discussiontools-autotopicsubpopup-title": "तपाईंले सदस्यता लिनुभएको छ",
 	"discussiontools-defaultsummary-reply": "टिप्पणी",
+	"discussiontoolsdebug-title": "छलफल उपकरण डेटा संरचना",
 	"discussiontools-desc": "वार्तालाप पृष्ठहरू बढाउनका लागि प्रयाेग गरिने उपकरणहरू",
 	"discussiontools-emptystate-button": "छलफल सुरु गर्नुहोस्",
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|वार्तालाप पृष्ठ]]मा प्रयोगकर्ताहरूले {{SITENAME}}मा भयेको सामग्रीलाई सबैभन्दा राम्रो कसरी बनाउने बारेमा छलफल गर्दछन्। तपाईंले यो पृष्ठमा [[:{{SUBJECTPAGENAME}}]]लाइ कसरी सुधार गर्ने बारेमा छलफल गर्न सक्नुहुन्छ।",

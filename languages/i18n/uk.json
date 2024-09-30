@@ -95,7 +95,8 @@
 			"Тест",
 			"Чорний Кіт",
 			"아라",
-			"Keneris"
+			"Keneris",
+			"Ignatgg"
 		]
 	},
 	"tog-underline": "Підкреслювання посилань:",
@@ -313,7 +314,7 @@
 	"copyright": "Вміст доступний на умовах $1, якщо не вказано інше.",
 	"copyrightpage": "{{ns:project}}:Авторське право",
 	"currentevents": "Поточні події",
-	"currentevents-url": "Портал:Поточні події",
+	"currentevents-url": "Project:Поточні події",
 	"disclaimers": "Відмова від відповідальності",
 	"disclaimerpage": "Project:Відмова від відповідальності",
 	"edithelp": "Довідка про редагування",
@@ -1248,6 +1249,7 @@
 	"badsiglinebreak": "Ваш підпис повинен бути єдиним рядком вікітексту.",
 	"linterror-bogus-image-options": "Фальшива опція файлу",
 	"linterror-deletable-table-tag": "Тег таблиці, який слід вилучити",
+	"linterror-fostered": "Присвоєний контент",
 	"linterror-html5-misnesting": "Неправильне вкладення (тепер зламано)",
 	"linterror-inline-media-caption": "Невидимий підпис",
 	"linterror-large-tables": "Великі таблиці, які ламають відображення на мобільних пристроях",
@@ -2375,8 +2377,8 @@
 	"listgrouprights-members": "(список членів)",
 	"listgrouprights-right-display": "<span class=\"listgrouprights-granted\">$1 <code>($2)</code></span>",
 	"listgrouprights-right-revoked": "<span class=\"listgrouprights-revoked\">$1 <code>($2)</code></span>",
-	"listgrouprights-addgroup": "можливість додавати в {{PLURAL:$2|1=групу|групи}}: $1",
-	"listgrouprights-removegroup": "можливість виключати з {{PLURAL:$2|1=групи|груп}}: $1",
+	"listgrouprights-addgroup": "Можливість додавати в {{PLURAL:$2|1=групу|групи}}: $1",
+	"listgrouprights-removegroup": "Можливість виключати з {{PLURAL:$2|1=групи|груп}}: $1",
 	"listgrouprights-addgroup-all": "можливість додавати до всіх груп",
 	"listgrouprights-removegroup-all": "можливість виключати з усіх груп",
 	"listgrouprights-addgroup-self": "може додавати {{PLURAL:$2|1=групу|групи}} до свого облікового запису: $1",

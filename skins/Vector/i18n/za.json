@@ -2,14 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"Biŋhai",
-			"唐吉訶德的侍從"
+			"唐吉訶德的侍從",
+			"Midleading"
 		]
 	},
+	"vector-languages": "Vah",
 	"vector-action-delete": "Ca",
 	"vector-action-move": "Daen",
 	"vector-action-protect": "Bauj",
 	"vector-view-create": "Laeb",
 	"vector-view-edit": "gaij",
 	"vector-view-history": "Cazyawj lizsij",
-	"vector-view-view": "Doeg"
+	"vector-view-view": "Doeg",
+	"vector-feature-limited-width-0-label": "Gvangq",
+	"vector-feature-custom-font-size-0-label": "Leg",
+	"vector-feature-custom-font-size-2-label": "Hung",
+	"skin-theme-name": "Saek",
+	"vector-page-tools-label": "Loengx",
+	"vector-unpin-element-label": "cangz"
 }

@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Muisha wiki hke"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Xubitsa",
+	"discussiontools-replylink": "{{GENDER:|xubitsa}}",
+	"discussiontools-replywidget-advanced": "Ixondwere",
+	"discussiontools-replywidget-cancel": "Fuluka",
+	"discussiontools-replywidget-mode-source": "Xoko",
+	"discussiontools-replywidget-mode-visual": "Mu biteo",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Xubitsa}} {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Nshondotsi",
+	"discussiontools-replywidget-reply": "{{GENDER:|Xubitsa}}",
+	"discussiontools-replywidget-summary": "Kaleke",
+	"discussiontools-replywidget-watchthis": "Ongerera akashashali kano kwa [[Special:Watchlist|Mutondeko wa byonikakulikira]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|mundu yakubisa|bandu babakubisa}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|muanikire|mianikire}}",
+	"discussiontools-topicheader-latestcomment": "Mianikire yoyameletwa hake: $1",
+	"discussiontools-topicsubscription-button-subscribe": "iandikise",
+	"discussiontools-topicsubscription-button-subscribe-label": "Iandikise",
+	"discussiontools-topicsubscription-button-unsubscribe": "tsimya aretsina rawe",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Tsimya aretsina rawe",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|}}Ukaangirira mwatsi kuluenda mianikire mihya kwa kishambalo kino.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Uhara uiandikirwe{{GENDER:|}}!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Utikibaangirire}} myatsi kuluenda mianikire mihyakwa kishambalo kino.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Wameitengya}}."
+}

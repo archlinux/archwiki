@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Lifeway",
-			"Валентина Семёнова"
+			"Валентина Семёнова",
+			"Mxalexandrov86"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Книга",
@@ -15,19 +16,35 @@
 	"cite-ve-changedesc-reflist-group-both": "Ссылке-влакын списке тӱшкаже \"$1\" гыч \"$2\" марте вашталтын",
 	"cite-ve-changedesc-reflist-group-from": "Ссылке-влакын списке тӱшкаже \"$1\" гыч чумыр тӱшка марте вашталтын",
 	"cite-ve-changedesc-reflist-group-to": "Ссылке-влакын списке тӱшкаже чумыр тӱшка гыч \"$1\" марте вашталтын",
+	"cite-ve-changedesc-reflist-responsive-set": "Палемдымаш списке келыштарыме колонкым ончыктымашлан вашталтыме",
+	"cite-ve-changedesc-reflist-responsive-unset": "Палемдымаш спискым лач ик колонкым гына ончыктымашлан вашталтыме",
 	"cite-ve-citationneeded-button": "Цитатым ешараш",
 	"cite-ve-citationneeded-reason": "Ончыктымо амал:",
 	"cite-ve-citationneeded-title": "Важыш кылвер кӱлеш",
+	"cite-ve-dialog-reference-editing-extends": "Тиде вес кылверым шуйымаш.",
+	"cite-ve-dialog-reference-editing-extends-long": "Тиде вес \"$1\" кылверым шуйымаш",
 	"cite-ve-dialog-reference-options-group-label": "Тиде тӱшкам кучылташ",
+	"cite-ve-dialog-reference-options-group-placeholder": "Тӱҥ кылвер-влак",
+	"cite-ve-dialog-reference-options-name-label": "Тиде лӱм дене угыч кучылтмаш",
+	"cite-ve-dialog-reference-options-responsive-label": "Келыштарыме столбец макетым кучылташ",
 	"cite-ve-dialog-reference-options-section": "Параметр-влак",
 	"cite-ve-dialog-reference-title": "Палемдымаш",
 	"cite-ve-dialog-reference-useexisting-tool": "Уэш кучылтмаш",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "Тӱҥ кылвер-влак списке",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "\"$1\" тӱшкалан палемдымаш списке",
 	"cite-ve-dialog-referenceslist-title": "Палемдымаш списке",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Информаций важым ешарен, контентым саемде. Тый книгам, газетым да сайт-влакым кучылт кертат.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Важ",
 	"cite-ve-dialogbutton-reference-full-label": "Тыглай",
 	"cite-ve-dialogbutton-reference-title": "Палемдымаш",
 	"cite-ve-dialogbutton-reference-tooltip": "Тыглай",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Палемдымаш списке",
+	"cite-ve-reference-input-placeholder": "Кызытсе шомаклаште кычалмаш",
+	"cite-ve-referenceslist-isempty": "Тиде спискыш пурташлан велыжыште \"$1\" тӱшка дене кылвер уке.",
+	"cite-ve-referenceslist-isempty-default": "Тиде велыжыште спискыш пурташ кылвер уке.",
+	"cite-ve-referenceslist-missingref": "Тиде сноско шаблонышто але вес ыштыме блокышто палемдыме, кызыт тудым тӱҥалтыш текст тӧрлымӧ режимыште гына тӧрлаташ лиеш.",
+	"cite-ve-referenceslist-missingref-in-list": "Тиде палемдымаш шаблонышто але вес ышталтше блокышто рашемдыме, кызыт тудым вики-код тӧрлымӧ режимыште гына ончылгоч ужаш лиеш.",
+	"cite-ve-referenceslist-missingreflist": "Тиде палемдымаш списке шаблон дене ышталтеш",
 	"cite-ve-toolbar-group-label": "Важ",
 	"cite-ve-othergroup-item": "$1 палемдымаш"
 }

@@ -3,7 +3,8 @@
 		"authors": [
 			"Jeblad",
 			"Jon Harald Søby",
-			"Njardarlogar"
+			"Njardarlogar",
+			"Ranveig"
 		]
 	},
 	"linterrors": "Lint-feil",
@@ -16,7 +17,7 @@
 	"linter-category-fostered": "Fostret innhold",
 	"linter-category-fostered-desc": "Disse sidene har fostret innhold.",
 	"linter-category-html5-misnesting": "Feilnøstede tagger med forskjellig gjengivelse i HTML5 og HTML4",
-	"linter-category-html5-misnesting-desc": "Disse feilnøstede taggene vil oppføre seg forskjellig i HTML5 sammenlifnet med HTML4.",
+	"linter-category-html5-misnesting-desc": "Disse feilnøstede taggene vil oppføre seg forskjellig i HTML5 sammenlignet med HTML4.",
 	"linter-category-night-mode-unaware-background-color": "Inlinestil for bakgrunnsfarge eksisterer uten tilsvarende tekstfarge",
 	"linter-category-night-mode-unaware-background-color-desc": "Disse sidene har inlinestiling for bakgrunnsfarge uten å også sette tekstfarge, noe som ødelegger for mørk modus",
 	"linter-category-misc-tidy-replacement-issues": "Diverse problemer",
@@ -46,7 +47,7 @@
 	"linter-category-tidy-whitespace-bug": "Tomromstolkingsfeil",
 	"linter-category-tidy-whitespace-bug-desc": "Disse sidene utløste en tomromsfeil ved tolking som bør gjøres om på.",
 	"linter-category-unclosed-quotes-in-heading": "Ikke-lukket sitattegn i overskrift",
-	"linter-category-unclosed-quotes-in-heading-desc": "Disse sidene har et ikke-lukket sitattegn i en oversikrift, som deretter lekker ut av innholdsfortegnelsen.",
+	"linter-category-unclosed-quotes-in-heading-desc": "Disse sidene har et ikke-lukket sitattegn i en overskrift, som deretter lekker ut av innholdsfortegnelsen.",
 	"linter-category-wikilink-in-extlink": "Lenker i lenker",
 	"linter-category-wikilink-in-extlink-desc": "Disse sidene har wikilenker i eksterne lenker som bør fikses",
 	"linter-desc": "Spor lint-feil fra en ekstern tjeneste og vis dem for brukerne",
@@ -97,7 +98,7 @@
 	"linter-pager-title-header": "Sidetittel",
 	"linter-pager-unclosed-quotes-in-heading-details": "Ikke-lukket sitattegn som lekker ut av innholdsfortegnelsen",
 	"linter-pager-wikilink-in-extlink-details": "Lenker i lenker",
-	"linter-prefix-search-subpage": "Sidre med lint-feil som matcher tittelprefiks eller komplett tittel: $1",
+	"linter-prefix-search-subpage": "Sider med lint-feil som matcher tittelprefiks eller komplett tittel: $1",
 	"linterrors-subpage": "Lint-feil: $1",
 	"linterrors-summary": "<strong>Merk:</strong> Antallet i kategoriene er ikke nøyaktige, men basert på estimater.",
 	"multi-part-template-block": "Resultatet kommer ikke fra en enkelt mal",

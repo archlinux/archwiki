@@ -78,7 +78,7 @@
 	"echo-notification-markasread-tooltip": "Marcio fel wedi'i ddarllen",
 	"echo-notification-more-options-tooltip": "Rhagor o opsiynau",
 	"notification-link-text-expand-all": "Ehangu",
-	"notification-link-text-collapse-all": "Crebachu",
+	"notification-link-text-collapse-all": "Lleihau",
 	"notification-link-text-view-message": "Gweld y neges",
 	"notification-link-text-view-mention": "Gweld y crybwyll",
 	"notification-link-text-view-mention-failure": "{{PLURAL:$1|Gweld crybwyll|Gweld crybwylliadau}}",

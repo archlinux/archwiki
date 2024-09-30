@@ -4,7 +4,8 @@
 			"BHARATHESHA ALASANDEMAJALU",
 			"ChiK",
 			"Chidananda Kampa",
-			"Vishwanatha Badikana"
+			"Vishwanatha Badikana",
+			"Mahaveer Indra"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "ಪ್ರತಿಕ್ರಿಯೆ",
@@ -17,7 +18,7 @@
 	"discussiontools-replywidget-preview": "ಮುನ್ನೋಟೊ",
 	"discussiontools-replywidget-reply": "{{GENDER:|ಉತ್ತರೊ}}",
 	"discussiontools-replywidget-summary": "ಸಾರಾಂಸೊ",
-	"discussiontools-replywidget-watchthis": "ಈ ಪುಟೊನು ಈರೆನ [[Special:ವೀಕ್ಷಣಾಪಟ್ಟಿ|ವೀಕ್ಷಣೆದ ಪಟ್ಟಿ]]ಗ್ ಸೇರಲೆ",
+	"discussiontools-replywidget-watchthis": "ಈ ಪುಟೊನು ಈರೆನ [[Special:Watchlist|ವೀಕ್ಷಣೆದ ಪಟ್ಟಿ]]ಗ್ ಸೇರಾಲೆ",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ವ್ಯಕ್ತಿ|ಜನೊ}} ಚರ್ಚೆಡುಲ್ಲೆರ್",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ಪ್ರತಿಕ್ರಿಯೆ|ಪ್ರತಿಕ್ರಿಯೆಲು}}",
 	"discussiontools-topicheader-latestcomment": "ಇಂಚಿಪದ ಪ್ರತಿಕ್ರಿಯೆ: $1",

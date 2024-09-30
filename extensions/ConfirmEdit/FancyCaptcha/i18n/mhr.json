@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lifeway"
+			"Lifeway",
+			"Mxalexandrov86"
 		]
 	},
 	"fancycaptcha-captcha": "Лӱдыкшыдымылыкым тергымаш",
 	"fancycaptcha-accountcreate": "Вигак аккаунтлам ыштедылмым чараш манын, тыйым ӱлнӧ ([[Special:Captcha/help|кумданрак]]) рамкыште ончыктымо мут-влакым пурташ йодына:",
+	"fancycaptcha-create": "Велыжым ыштынет гын, поро лий, ӱлыл кышкарыште улшо мут -влакым пурто ([[Special:Captcha/help|more info]]):",
 	"fancycaptcha-imgcaptcha-ph": "Сӱретыште ужмо текстым пурто",
 	"fancycaptcha-reload-text": "Уэмдаш"
 }

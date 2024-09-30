@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toliño"
+		]
+	},
+	"spam-blacklist": " #<!-- Deixa esta liña tal e como está --> <pre>\n# As ligazóns externas que coincidan na súa totalidade ou en parte con algún rexistro desta lista serán bloqueadas cando se intenten engadir a unha páxina.\n# Esta lista afecta unicamente a este wiki; tamén existe unha lista de bloqueo global.\n# Para obter máis documentación vai a https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# A sintaxe é a seguinte:\n#   * Todo o que vaia despois dun carácter \"#\" ata o final da liña é un comentario\n#   * Toda liña que non estea en branco é un fragmento de expresión regular que só coincide con dominios dentro de enderezos URL\n\n #</pre> <!-- Deixa esta liña tal e como está -->",
+	"spam-whitelist": " #<!-- Deixa esta liña tal e como está --> <pre>\n# As ligazóns externas que coincidan con esta lista *non* serán bloqueadas,\n# mesmo se foron bloqueadas mediante entradas na lista de bloqueo.\n#\n# A sintaxe é a seguinte:\n#   * Todo o que vaia despois dun carácter \"#\" ata o final da liña é un comentario\n#   * Toda liña que non estea en branco é un fragmento de expresión regular que só coincide con dominios dentro de enderezos URL\n\n #</pre> <!-- Deixa esta liña tal e como está -->",
+	"email-blacklist": " #<!-- Deixa esta liña tal e como está --> <pre>\n# Os enderezos de correo electrónico que coincidan na súa totalidade ou en parte con algún rexistro desta lista serán bloqueados cando se intenten rexistrar ou se intente enviar un correo desde eles.\n# Esta lista afecta unicamente a este wiki; tamén existe unha lista de bloqueo global.\n# Para obter máis documentación vai a https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# A sintaxe é a seguinte:\n#   * Todo o que vaia despois dun carácter \"#\" ata o final da liña é un comentario\n#   * Toda liña que non estea en branco é un fragmento de expresión regular que só coincide con dominios dentro de enderezos de correo electrónico\n\n #</pre> <!-- Deixa esta liña tal e como está -->",
+	"email-whitelist": " #<!-- Deixa esta liña tal e como está --> <pre>\n# Os enderezos de correo electrónico que coincidan con algún desta lista *non* serán bloqueados,\n# mesmo se foron bloqueados por entradas na lista de bloqueo.\n#\n# A sintaxe é a seguinte:\n#   * Todo o que vaia despois dun carácter \"#\" ata o final da liña é un comentario\n#   * Toda liña que non estea en branco é un fragmento de expresión regular que só coincide con dominios dentro de enderezos de correo electrónico\n\n #</pre> <!-- Deixa esta liña tal e como está -->",
+	"spam-blacklisted-email": "Enderezo de correo electrónico prohibido",
+	"spam-blacklisted-email-text": "O teu enderezo de correo electrónico ten prohibido enviar correos electrónicos a outros usuarios.",
+	"spam-blacklisted-email-signup": "O enderezo de correo electrónico indicado está prohibido e non se pode empregar.",
+	"spam-invalid-lines": "{{PLURAL:$1|A seguinte liña|As seguintes liñas}} da lista de bloqueo de spam {{PLURAL:$1|é unha expresión regular non válida|son expresións regulares non válidas}} e cómpre {{PLURAL:$1|corrixila|corrixilas}} antes de gardar a páxina:",
+	"spam-blacklist-desc": "Ferramenta antispam baseada en expresións regulares que permite incluír enderezos URL e enderezos de correo electrónico nunha lista de bloqueo para os usuarios rexistrados",
+	"log-name-spamblacklist": "Rexistro da lista de bloqueo de spam",
+	"log-description-spamblacklist": "Este rexistro fai un seguimento das coincidencias coa lista de bloqueo de spam.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} provocou a activación da lista de bloqueo de spam en \"$3\" ao intentar engadir $4.",
+	"right-spamblacklistlog": "Ver o rexistro da lista de bloqueo de spam",
+	"action-spamblacklistlog": "ver o rexistro da lista de bloqueo de spam",
+	"right-sboverride": "Ignorar a lista de bloqueo de spam",
+	"action-sboverride": "ignorar a lista de bloqueo de spam"
+}

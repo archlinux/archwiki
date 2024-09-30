@@ -45,15 +45,15 @@ class Less_Tree_Media extends Less_Tree {
 		$media = new self( [], [], $this->index, $this->currentFileInfo );
 
 		$strictMathBypass = false;
-		if ( Less_Parser::$options['strictMath'] === false ) {
+		if ( !$env->strictMath ) {
 			$strictMathBypass = true;
-			Less_Parser::$options['strictMath'] = true;
+			$env->strictMath = true;
 		}
 
 		$media->features = $this->features->compile( $env );
 
 		if ( $strictMathBypass ) {
-			Less_Parser::$options['strictMath'] = false;
+			$env->strictMath = false;
 		}
 
 		$env->mediaPath[] = $media;

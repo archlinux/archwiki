@@ -59,7 +59,7 @@ file(s) and any direct and indirect imports.
 $parser = new Less_Parser();
 $parser->parseFile( '/var/www/mysite/bootstrap.less', '/mysite/' );
 $css = $parser->getCss();
-$files = $parser->AllParsedFiles();
+$files = $parser->getParsedFiles();
 ```
 
 #### Compress output

@@ -19,7 +19,7 @@
 	"replacetext_prefixsearch": "Ersetz nëmmen a Säite mam Prefix:",
 	"replacetext_editpages": "Den Text a Säiteninhalter ersetzen",
 	"replacetext_movepages": "Text an den Titele vun de Säiten ersetzen, wa méiglech",
-	"replacetext_givetarget": "Dir musst déi Zeechen uginn déi ersat solle ginn.",
+	"replacetext_givetarget": "Dir musst déi Zeechen uginn, déi ersat solle ginn.",
 	"replacetext_nonamespace": "Dir musst mindestens een Nummraum eraussichen.",
 	"replacetext_editormove": "Dir musst mindestens eng vun den Optioune vum Ersetzen eraussichen.",
 	"replacetext_choosepagesforedit": "Wielt wgl. d'{{PLURAL:$3|Säit op där|Säiten op deenen}} Dir \"$1\" duerch \"$2\" ersetze wëllt:",

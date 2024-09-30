@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"categorytree": "Drěvo kategorij",
+	"categorytree-portlet": "Kategorije",
+	"categorytree-legend": "Pokazati drěvo kategorij",
+	"categorytree-desc": "Dinamična navigacija po [[Special:CategoryTree|strukturě kategorij]]",
+	"categorytree-header": "Vvedite nazvu kategorije, da byste uviděli jejno sodržanje v formě drěva (potrěbny JavaScript).",
+	"categorytree-category": "Kategorija:",
+	"categorytree-go": "Pokazati drěvo",
+	"categorytree-parents": "Nadredne kategorije",
+	"categorytree-mode-label": "Režim:",
+	"categorytree-mode-categories": "samo kategorije",
+	"categorytree-mode-pages": "stranice kromě fajlov",
+	"categorytree-mode-all": "vse stranice",
+	"categorytree-collapse": "svinuti",
+	"categorytree-expand": "razvinuti",
+	"categorytree-member-counts": "Sodrživaje {{PLURAL:$1|1 podkategoriju|$1 podkategorije|$1 podkategorij}}, {{PLURAL:$2|1 stranicu|$2 stranice|$2 stranic}} i {{PLURAL:$3|1 fajl|$3 fajly|$3 fajlov}}",
+	"categorytree-num-categories": "$1 kat.",
+	"categorytree-num-pages": "$1 str.",
+	"categorytree-num-files": "$1 f.",
+	"categorytree-num-empty": "prazdna",
+	"categorytree-load": "včitati",
+	"categorytree-loading": "včityvanje...",
+	"categorytree-nothing-found": "ničto ne najdeno",
+	"categorytree-no-subcategories": "nemaje podkategorij",
+	"categorytree-no-parent-categories": "nemaje nadrednyh kategorij",
+	"categorytree-no-pages": "nemaje stranic i podkategorij",
+	"categorytree-not-found": "Kategorija <i>$1</i> ne najdena",
+	"categorytree-error": "Problem s včityvanjem danyh.",
+	"categorytree-retry": "Prosimo, počekajte i poprobujte ješče raz."
+}

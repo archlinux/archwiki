@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"SupaplexTW"
+		]
+	},
+	"mobile-frontend-history": "看这页的修改历史。",
+	"mobile-frontend-home-button": "头页",
+	"mobile-frontend-language-article-heading": "语言",
+	"mobile-frontend-main-menu-login": "登入",
+	"mobile-frontend-main-menu-nearby": "附近",
+	"mobile-frontend-main-menu-settings": "设定",
+	"mobile-frontend-placeholder": "佇{{SITENAME}}揣",
+	"mobile-frontend-random-button": "随在"
+}

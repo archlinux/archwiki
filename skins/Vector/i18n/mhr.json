@@ -8,7 +8,8 @@
 			"Валентина Семёнова",
 			"Венина Наталья Константиновна",
 			"Сай",
-			"Санюн Вадик"
+			"Санюн Вадик",
+			"Mxalexandrov86"
 		]
 	},
 	"vector-skin-desc": "Сӧрастарашлан кок векторан темым пуа:\n*2011:\"Кызытсе\" — уэмдыме сӧрастарымаш да пайдаланыме опытым шукемдымаш дене MonoBook версий.\n*2022: \"Векторан\" — «[[mw:Desktop Improvements]]» Википедий Фондын проект дене келшышын ыштыме.",
@@ -38,6 +39,12 @@
 	"vector-jumptosearch": "Кычалмашыш куснаш",
 	"vector-jumptocontent": "Содержанийышке куснаш",
 	"vector-more-actions": "Эше",
+	"vector-feature-custom-font-size-name": "Текст",
+	"vector-feature-custom-font-size-0-label": "Изи",
+	"vector-feature-custom-font-size-1-label": "Стандарт",
+	"vector-feature-custom-font-size-2-label": "Кугу",
+	"skin-theme-name": "Тӱс",
+	"skin-theme-os-label": "Автоматически",
 	"vector-search-loader": "Кычалме ойлончо-влак шупшын налалтыт",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> мутан лаштыклам кычалмаш",
 	"vector-intro-page": "Help:Палдарымаш",

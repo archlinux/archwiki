@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tofeiku"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Jawab",
+	"discussiontools-replylink": "{{GENDER:|jawab}}",
+	"discussiontools-replywidget-advanced": "Dapan",
+	"discussiontools-replywidget-cancel": "Kinsil",
+	"discussiontools-replywidget-mode-source": "Sumber",
+	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-reply": "{{GENDER:|Jawab}}",
+	"discussiontools-replywidget-summary": "Singkatan",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|urang}} berbincang",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komen}}"
+}

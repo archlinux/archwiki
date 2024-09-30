@@ -15,7 +15,7 @@
 	"tag-editcheck-newreference-description": "Rujukan telah ditambahkan pada halaman",
 	"tag-editcheck-references-description": "EditCheck berpendapat rujukan mungkin diperlukan",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Suntingan visual]]",
-	"tag-visualeditor-description": "Disunting dengan menggunakan [[{{MediaWiki:visualeditor-descriptionpagelink}}|suntingan visual]]",
+	"tag-visualeditor-description": "Disunting menggunakan [[{{MediaWiki:visualeditor-descriptionpagelink}}|alat sunting visual]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Suntingan visual: Semak]]",
 	"tag-visualeditor-needcheck-description": "Suntingan dilakukan dengan menggunakan [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]] di mana sistem telah mengesan wikiteks yang mungkin mengalami perubahan yang tidak diingini.",
 	"tag-visualeditor-wikitext": "Suntingan sumber 2017",

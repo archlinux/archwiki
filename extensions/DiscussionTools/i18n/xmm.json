@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mbee-wiki"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Balasan",
+	"discussiontools-replylink": "{{GENDER:|kase balas}}",
+	"discussiontools-replywidget-cancel": "Kase batal",
+	"discussiontools-replywidget-mode-source": "Sumber",
+	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Babalas}} pa {{BIDI:$1}}",
+	"discussiontools-replywidget-reply": "{{GENDER:|Kase balas}}",
+	"discussiontools-replywidget-watchthis": "Kase tamba akang ini halaman pa ngana pe [[Special:Watchlist|daftar pantauan]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|orang}} dalang ini diskusi",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komen}}",
+	"discussiontools-topicheader-latestcomment": "Komen yang paling baru: $1",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Ngana}} mo tarima notif kalu nanti ada komen baru di topik ini."
+}

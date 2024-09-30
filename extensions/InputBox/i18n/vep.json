@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Игорь Бродский",
-			"Лариса Чиркова"
+			"Лариса Чиркова",
+			"Ростислав Мельников"
 		]
 	},
-	"inputbox-tryexact": "Löuda ühthižuz'",
+	"inputbox-tryexact": "Löuda ühthižuz’",
 	"inputbox-searchfulltext": "Ectä täudes tekstas",
 	"inputbox-createarticle": "Säta lehtpol'",
 	"inputbox-ns-main": "Pänimiavaruz"

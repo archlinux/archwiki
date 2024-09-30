@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Zolgoyo"
+		]
+	},
+	"categorytree": "Ulam agaşî",
+	"categorytree-portlet": "Ulamlar",
+	"categorytree-legend": "Ulam agaşînî kórsetúw",
+	"categorytree-category": "Ulam:",
+	"categorytree-num-categories": "$1 U",
+	"categorytree-num-pages": "$1 B",
+	"categorytree-num-files": "$1 D",
+	"categorytree-num-empty": "boş",
+	"categorytree-load": "ğúkle",
+	"categorytree-loading": "ğúklene...",
+	"categorytree-nothing-found": "bírşiy tapîlamadî",
+	"categorytree-no-subcategories": "alt ulam yok"
+}

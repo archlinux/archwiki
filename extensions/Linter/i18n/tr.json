@@ -26,6 +26,7 @@
 	"linter-category-fostered-desc": "Bu sayfaların içeriği teşvik edilmiştir.",
 	"linter-category-html5-misnesting": "HTML5 ve HTML4'te farklı oluşturmaya sahip yanlış iç içe geçmiş etiket",
 	"linter-category-html5-misnesting-desc": "Bu yanlış yönlendirilmiş etiketler HTML5'te HTML4'e göre farklı şekilde davranacaktır.",
+	"linter-category-night-mode-unaware-background-color": "Karşılık gelen bir metin rengi olmayan bir satır içi arka plan rengi biçem kuralı var",
 	"linter-category-misc-tidy-replacement-issues": "Çeşitli sorunlar",
 	"linter-category-misc-tidy-replacement-issues-desc": "Bu sayfaların, daha önce göründüklerinden farklı oluşturulmalarına neden olan başka sorunları var",
 	"linter-category-misnested-tag": "Yanlış iç içe geçmiş etiketler",
@@ -104,6 +105,7 @@
 	"linter-prefix-search-subpage": "Başlık öneki veya tam başlıkla eşleşen lint hatası olan sayfalar: $1",
 	"linterrors-subpage": "Lint hataları: $1",
 	"linterrors-summary": "<strong>Not:</strong> Kategorilerde gösterilen sayımlar tam değildir, tahmine dayalıdır.",
-	"multi-part-template-block": "Tek bir şablondan çıkış değil",
-	"pageinfo-linter": "Lint hataları"
+	"multi-part-template-block": "Çıktı tek bir şablondan değil",
+	"pageinfo-linter": "Lint hataları",
+	"pageinfo-linter-moreinfo": "Lint hataları hakkında ayrıntılı bilgiye ulaşın."
 }

@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bbeshir"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "በሊስ",
+	"discussiontools-replylink": "{{GENDER:|ብለስ}}",
+	"discussiontools-replywidget-advanced": "ለትቀደማ",
+	"discussiontools-replywidget-cancel": "ኣትርፍ",
+	"discussiontools-replywidget-mode-source": "መስደር",
+	"discussiontools-replywidget-reply": "{{GENDER:|ብለስ}}",
+	"discussiontools-replywidget-summary": "ሙለኸስ",
+	"discussiontools-topicheader-latestcomment": "ላሓደሳ ታዕሊቅ: $1",
+	"discussiontools-topicsubscription-button-subscribe": "መዝገብ",
+	"discussiontools-topicsubscription-button-subscribe-label": "መዝገብ",
+	"discussiontools-topicsubscription-button-unsubscribe": "መዝገባ ወርከዮት",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "መዝገባ ወርከዮት"
+}

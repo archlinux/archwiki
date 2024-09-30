@@ -15,7 +15,8 @@
 			"Robifr",
 			"Veracious",
 			"William Surya Permana",
-			"ID Owly01"
+			"ID Owly01",
+			"Beeyan"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -89,6 +90,6 @@
 	"vector-page-tools-unpinned-popup": "Menu perkakas telah dipindahkan ke sini.",
 	"vector-main-menu-unpinned-popup": "Menu utama telah dipindahkan ke sini.",
 	"vector-client-prefs-unpinned-popup": "Menu tampilan telah dipindahkan ke sini.",
-	"vector-2022-beta-preview-label": "Aksesibilitas untuk Membaca (Vektor 2022)",
+	"vector-2022-beta-preview-label": "Keteraksesan Fitur Baca (Vektor 2022)",
 	"vector-2022-beta-preview-description": "Dapatkan akses awal ke fitur aksesibilitas membaca yang baru, seperti penyempurnaan tipografi dan mode malam."
 }

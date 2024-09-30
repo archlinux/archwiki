@@ -10,7 +10,10 @@
 			"Fúlvio",
 			"Giro720",
 			"Glaucia Japui Gonçalves",
-			555
+			555,
+			"Mariagarbin",
+			"Marinaazev",
+			"TheEduGobi"
 		]
 	},
 	"cite-desc": "Adiciona elementos <code>&lt;ref&gt;</code> e <code>&lt;references&gt;</code> para uso em citações",
@@ -39,7 +42,7 @@
 	"cite_references_link_many_accessibility_label": "Ir para:",
 	"cite_references_link_accessibility_back_label": "Voltar acima",
 	"cite_section_preview_references": "Pré-visualização das referências",
-	"cite_warning": "Citar aviso: $1",
+	"cite_warning": "Aviso de citação: $1",
 	"cite_warning_sectionpreview_no_text": "A tag <code>&lt;ref&gt;</code> com o nome <code>$1</code> não pode ser visualizada porque está definida fora da seção atual ou não definida.",
 	"cite-wikieditor-tool-reference": "Referência",
 	"cite-wikieditor-help-page-references": "Referências",

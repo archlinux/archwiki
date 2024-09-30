@@ -129,8 +129,7 @@ class lessc {
 		$parser->parse( $string );
 		$out = $parser->getCss();
 
-		$parsed = Less_Parser::AllParsedFiles();
-		foreach ( $parsed as $file ) {
+		foreach ( $parser->getParsedFiles() as $file ) {
 			$this->addParsedFile( $file );
 		}
 
@@ -165,8 +164,7 @@ class lessc {
 		$parser->parseFile( $fname );
 		$out = $parser->getCss();
 
-		$parsed = Less_Parser::AllParsedFiles();
-		foreach ( $parsed as $file ) {
+		foreach ( $parser->getParsedFiles() as $file ) {
 			$this->addParsedFile( $file );
 		}
 

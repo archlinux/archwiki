@@ -5,10 +5,20 @@
 			"Умар"
 		]
 	},
-	"syntaxhighlight-desc": "Таро хуьлуьйту тег <code>&lt;syntaxhighlight&gt;</code> лело [http://pygments.org/ Pygments] гӀоьнца синтаксисан бос хилийта",
+	"syntaxhighlight-desc": "Латто <code>&lt;syntaxhighlight&gt;</code> синтаксис серлайаккхар [http://pygments.org/ Pygments — Python-на синтаксис серлайаккхаран гӀирсийн] гӀоьнца",
+	"syntaxhighlight-error-category": "Синтаксис серлайаккхаран гӀалаташ долу агӀонаш",
+	"syntaxhighlight-error-category-desc": "ГӀалат даьлла агӀонан тӀехь йолу код серлайаккха гӀерташ.",
+	"syntaxhighlight-enclose-category": "«enclose» синтаксис серлайаккхаран ширйелла атрибут йолу агӀонаш",
+	"syntaxhighlight-enclose-category-desc": "АгӀонан тӀехь синтаксис серлайаккхарехь лелайо ширйелла синтаксис.",
 	"syntaxhighlight-source-category": "Ширйелла source тег лелош йолу агӀонаш",
+	"syntaxhighlight-source-category-desc": "ХӀокху агӀонан тӀехь синтаксис серлайаккхарехь лелайо хьостан ширйелла тегаш.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Код",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Мотт",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(хӀума а)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "МогӀанийн лоьмарш гайта",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "могӀанан дӀадолоран лоьмар",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Кодан блок",
-	"syntaxhighlight-error-unknown-language": "Боьвзуш боцу мотт \"$1\""
+	"syntaxhighlight-error-pygments-invocation-failure": "Pygments кхойкхучу хенахь галйалар",
+	"syntaxhighlight-error-unknown-language": "Боьвзуш боцу мотт \"$1\"",
+	"syntaxhighlight-error-exceeds-size-limit": "Кодан барам ($1 {{PLURAL:$1|байтал}}) совбаьлла магийначу лимитал $2 {{PLURAL:$2|байт}}."
 }

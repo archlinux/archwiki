@@ -4,11 +4,12 @@
 			"Salvemm el lombard"
 		]
 	},
+	"linter-category-misnested-tag": "Tag nihasciad minga ben",
 	"linter-pager-bogus-image-options-details": "Parametro de failː insesistent",
 	"linter-pager-deletable-table-tag-details": "L'eticheta de la tavola la gh'avariss de vesser scancelada",
-	"linter-pager-html5-misnesting-details": "Nisciad minga ben (adess rot)",
+	"linter-pager-html5-misnesting-details": "Nihasciad minga ben (adess rot)",
 	"linter-pager-misc-tidy-replacement-issues-details": "Eror de segnadura de varia natura",
-	"linter-pager-misnested-tag-details": "Eticheta niascada minga ben che la gh'avaria de vesser niasciada a la giusta manera",
+	"linter-pager-misnested-tag-details": "Eticheta nihascada minga ben che la gh'avaria de vesser nihasciada polit",
 	"linter-pager-missing-end-tag-details": "Eticheta de saradura mancanta",
 	"linter-pager-multi-colon-escape-details": "Mancanza de pussee de du pont",
 	"linter-pager-multiline-html-table-in-list-details": "Tabella HTML5 multilinea dent a 'na lista",
@@ -17,6 +18,7 @@
 	"linter-pager-pwrap-bug-workaround-details": "Eror de paragraf ch'a se po giragh intorna",
 	"linter-pager-self-closed-tag-details": "Eticheta sarada deperlee",
 	"linter-pager-stripped-tag-details": "Eticheta descompagnada",
+	"linter-pager-template-header": "A travers d'on modell?",
 	"linter-pager-tidy-font-bug-details": "El tag font el prova a cambiagh el color a 'n conligament",
 	"linter-pager-tidy-whitespace-bug-details": "Problema de parsing cont i spazzi",
 	"linter-pager-unclosed-quotes-in-heading-details": "Virgolete minga sarade ch' i sortissen foeura de la tabella di contegnud"

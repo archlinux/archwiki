@@ -19,6 +19,8 @@
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Tiiláá",
 	"discussiontools-notification-removed-topic-view": "Čääiti siijđo",
 	"discussiontools-notification-subscribed-new-comment-view": "Čääiti komment",
+	"discussiontools-pageframe-latestcomment": "Uđđâsumos komment fáádást $3 čaalij kevttee $2 $1",
+	"discussiontools-pageframe-latestcomment-notopic": "Uđđâsumos komment čaalij kevttee $2 $1",
 	"discussiontools-preference-autotopicsub": "Tiiláá fáádáid automaatlávt",
 	"discussiontools-replybutton": "{{GENDER:|Västid}}",
 	"discussiontools-replylink": "{{GENDER:|västid}}",

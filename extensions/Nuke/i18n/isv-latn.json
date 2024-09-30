@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"nuke": "Masovo odstranjenje",
+	"action-nuke": "masovo odstranjenje stranic",
+	"nuke-desc": "Davaje administratorom možnost [[Special:Nuke|masovogo odstranjenja]] stranic",
+	"nuke-nopages": "Srěd nedavnyh izměn nemaje novyh stranic stvorjenyh {{GENDER:$1|koristnikom|koristniceju}} [[Special:Contributions/$1|$1]].",
+	"nuke-defaultreason": "Masovo odstranjenje stranic dodanyh {{GENDER:$1|koristnikom|koristniceju}} [[Special:Contributions/$1|$1]]",
+	"nuke-multiplepeople": "Masovo odstranjenje nedavno dodanyh stranic",
+	"nuke-tools": "Tuto orudje umožnjaje masovo odstranjenje stranic nedavno dodanyh oprěděljenym koristnikom ili IP-adresom.\nVvedite koristničsko ime ili IP-adres za spisok stranic, ktore možete odstraniti, ili odstavite to polje prazdnym, ako hočete izbrati vsih koristnikov.",
+	"nuke-submit-user": "Pokazati spisok stranic",
+	"nuke-submit-delete": "Odstraniti izbrane",
+	"right-nuke": "Masovo odstranjenje stranic",
+	"nuke-userorip": "Koristničsko ime ili IP-adres (tuto polje možete ostaviti prazdnym):",
+	"nuke-deleted": "Stranica '''$1''' jest odstranjena.",
+	"nuke-deletion-queued": "Stranica '''$1''' čekaje na odstranjenje.",
+	"nuke-not-deleted": "Odstranjenje stranice [[:$1]] '''ne udalo se'''.",
+	"nuke-delete-more": "[[Special:Nuke|Odstraniti veče stranic]]",
+	"nuke-pattern": "SQL-vzor LIKE (napr. %) za nazvu stranice:",
+	"nuke-nopages-global": "Nemaje nazv stranic odpovědajučih vašemu zapytu.",
+	"nuke-namespace": "Ograničiti na imenno prostor:",
+	"nuke-linkoncontribs": "masovo odstranjenje",
+	"nuke-linkoncontribs-text": "Masovo odstraniti stranice, čijih jediny avtor jest {{GENDER:$1|tutoj koristnik|tuta koristnica}}",
+	"nuke-confirm": "Vy sbirajete se k odstranjenju {{PLURAL:$1|jednoj stranice|$1 stranic}}. Jeste li uvěrjeni, že hočete to sdělati?"
+}

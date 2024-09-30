@@ -16,7 +16,7 @@
 	"categorytree-go": "Tampaiakan puhun",
 	"categorytree-parents": "Kuitan",
 	"categorytree-mode-categories": "Tutumbung haja",
-	"categorytree-mode-pages": "tutungkaran kacuali barakas",
+	"categorytree-mode-pages": "laman kacuali barakas",
 	"categorytree-mode-all": "samunyaan tutungkaran",
 	"categorytree-collapse": "tutup",
 	"categorytree-expand": "singkai",
@@ -30,7 +30,7 @@
 	"categorytree-nothing-found": "Kada taugai",
 	"categorytree-no-subcategories": "kada sub-tutumbung",
 	"categorytree-no-parent-categories": "kada kuitan tutumbung",
-	"categorytree-no-pages": "kadada tutungkaran atawa sub-tutumbung",
+	"categorytree-no-pages": "kadada laman atawa subtumbung",
 	"categorytree-not-found": "Tumbung <i>$1</i> kada taugai",
 	"categorytree-error": "Masalah mamuat data.",
 	"categorytree-retry": "Muhun hadangi satumat wan cubai pulang."

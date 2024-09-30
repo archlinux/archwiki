@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Muisha wiki hke"
+		]
+	},
+	"vector-languages": "Mineenere",
+	"vector-language-button-label": "{{PLURAL:$1|$1 muneenere|$1 mineenere}}",
+	"vector-no-language-button-label": "Ongerera mineenere",
+	"vector-action-addsection": "Ongerera mushambalo",
+	"vector-action-delete": "Tsimya",
+	"vector-action-move": "Hira byo handi",
+	"vector-action-protect": "Kikiritsa",
+	"vector-view-create": "Hanga",
+	"vector-view-history": "Lola ku byobyakindire ikolwa",
+	"vector-more-actions": "Nakandi",
+	"vector-feature-limited-width-name": "Bunene??",
+	"vector-feature-custom-font-size-name": "Bunene bw'amaandiko",
+	"vector-feature-limited-width-0-label": "Ngǎli",
+	"vector-feature-limited-width-1-label": "Ndáhínga",
+	"vector-feature-custom-font-size-0-label": "Maandiko makemake",
+	"vector-feature-custom-font-size-1-label": "Ndáhínga",
+	"vector-feature-custom-font-size-2-label": "Maandiko manenemanene",
+	"skin-theme-name": "Rangi",
+	"skin-theme-os-label": "Otomatiki",
+	"vector-searchsuggest-containing": "Xonda tushashali totuli ko <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Byobirimo",
+	"vector-toc-beginning": "Ndangiro",
+	"vector-main-menu-label": "Ndangiriro",
+	"vector-page-tools-label": "Bindu bye kolesa",
+	"vector-page-tools-general-label": "Ngulukulu",
+	"vector-unpin-element-label": "bisha"
+}

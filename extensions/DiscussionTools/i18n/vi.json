@@ -12,15 +12,19 @@
 			"NguoiDungKhongDinhDanh",
 			"Phjtieudoc",
 			"Pisceskaze",
-			"Vinhtantran"
+			"Vinhtantran",
+			"SongNgu.xyz"
 		]
 	},
 	"discussiontools": "Công cụ thảo luận",
-	"discussiontools-autotopicsubpopup-body": "Bạn sẽ nhận được thông báo khi có người đăng bình luận mới trong chủ đề này. Bạn có thể điều chỉnh cài đặt thông báo của mình trong tùy chọn.",
+	"discussiontools-autotopicsubpopup-body": "{{GENDER:|}}Bạn sẽ nhận được thông báo khi có người đăng bình luận mới trong chủ đề này. Bạn có thể điều chỉnh cài đặt thông báo của mình trong tùy chọn.",
 	"discussiontools-autotopicsubpopup-dismiss": "Đã hiểu",
 	"discussiontools-autotopicsubpopup-preferences": "Thay đổi tùy chọn",
-	"discussiontools-autotopicsubpopup-title": "Bạn đã theo dõi",
+	"discussiontools-autotopicsubpopup-title": "{{GENDER:|}}Bạn đã theo dõi",
 	"discussiontools-defaultsummary-reply": "Trả lời",
+	"discussiontoolsdebug-title": "Cấu trúc dữ liệu của công cụ thảo luận",
+	"discussiontoolsdebug-pagetitle": "Tên trang",
+	"discussiontoolsdebug-intro": "Trang này trình bày cách [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:DiscussionTools tiện ích mở rộng DiscussionTools] nhận dạng các luồng và bình luận có trên trang '''[[:$1]]'''. Bạn có thể thấy nó hữu ích trong việc gỡ lỗi các vấn đề với tiện ích mở rộng hoặc hiểu cách thức hoạt động của nó. Thông tin tương tự có sẵn trong [[$2|API discussiontoolspageinfo]].",
 	"discussiontools-desc": "Công cụ để cải tiến trang thảo luận.",
 	"discussiontools-emptystate-button": "Bắt đầu cuộc thảo luận",
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Trang thảo luận]] là nơi để mọi người cùng nhau thảo luận để giúp nội dung trên {{SITENAME}} trở nên tốt nhất có thể. Bạn có thể sử dụng trang này để trò chuyện với người khác về cách cải thiện [[:{{SUBJECTPAGENAME}}]].",

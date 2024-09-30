@@ -60,7 +60,7 @@
 	"vector-searchsuggest-containing": "Søgning for sider der indeholder <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduktion",
 	"vector-toc-label": "Indhold",
-	"vector-toc-beginning": "Starten",
+	"vector-toc-beginning": "Indledning",
 	"vector-toc-toggle-button-label": "Vis/skjul underafsnit $1",
 	"vector-anon-user-menu-pages": "Sider for redaktører som er logget ud",
 	"vector-anon-user-menu-pages-learn": "lær mere",

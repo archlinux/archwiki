@@ -7,6 +7,7 @@
 			"咽頭べさ"
 		]
 	},
+	"vector-opt-out": "ခြုဲင်းချာပုင်ႏစံႏအလီꩻ",
 	"vector-languages": "ဘာႏသာႏငဝ်းငွါဖုံႏ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ဘာႏသာႏငဝ်းငွါ|$1 ဘာႏသာႏငဝ်းငွါဖိုင်ႏ}}",
 	"vector-no-language-button-label": "ထဲမ်သော့ꩻဘာႏသာႏငဝ်းငွါဖိုင်ႏ",
@@ -22,14 +23,24 @@
 	"vector-view-view": "ဟော်ꩻ",
 	"vector-view-viewsource": "ထွားအရွီးအခိုႏ",
 	"vector-more-actions": "ထဲင်းယင်း",
+	"vector-feature-limited-width-name": "အလုဲင်း",
+	"vector-feature-custom-font-size-name": "လိတ်ယာႏ",
+	"vector-feature-limited-width-1-label": "ပုင်ႏမဲဉ်ႏ",
+	"vector-feature-custom-font-size-0-label": "အပေႏ",
+	"vector-feature-custom-font-size-1-label": "ပုင်ႏမဲဉ်ႏ",
+	"vector-feature-custom-font-size-2-label": "အတန်",
+	"skin-theme-os-label": "အဝ်ႏလွိုႏကာႏကာႏ",
 	"vector-searchsuggest-containing": "ထိုမ်ႏသွော့ ကပါသော့ꩻ လိတ်မဲ့ငါဖုံႏယို။ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:ငဝ်းတယ်ႏအွဉ်",
 	"vector-toc-label": "ဟော်ꩻထွားရီးတာႏ",
 	"vector-toc-beginning": "အစ",
 	"vector-anon-user-menu-pages-learn": "လွူꩻထွားထဲင်းအသွုပ်",
 	"vector-anon-user-menu-pages-label": "လွူꩻထွားထဲင်း မွဉ်းဖျင်ခရာႏအထဲင်း",
+	"vector-toc-menu-tooltip": "ဟော်ꩻထွားရီးတာႏ",
 	"vector-page-tools-label": "ကိရိယာႏဖိုင်ႏ",
 	"vector-page-tools-general-label": "အစွိုးစွိုးအဒဝ်ႏဒဝ်ႏ",
+	"vector-page-tools-actions-label": "ခွုမ်မာꩻချက်ဖိုင်ႏ",
 	"vector-unpin-element-label": "အွဉ်ႏပလို့ꩻ",
-	"tooltip-vector-anon-user-menu-title": "လွိုက်ခရာႏအထဲင်းဖိုင်ႏ"
+	"tooltip-vector-anon-user-menu-title": "လွိုက်ခရာႏအထဲင်းဖိုင်ႏ",
+	"vector-page-tools-nav-label": "လိတ်မဲ့ငါ ကိရိယာႏ"
 }

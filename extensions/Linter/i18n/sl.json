@@ -17,6 +17,7 @@
 	"linter-category-fostered-desc": "Te strani vsebujejo posvojeno vsebino.",
 	"linter-category-html5-misnesting": "Napačno gnezdena značka z drugačnim prikazom v HTML5 kot v HTML4",
 	"linter-category-html5-misnesting-desc": "Te napačno gnezdene značke se v HTML5 vedejo drugače kot v HTML4.",
+	"linter-category-night-mode-unaware-background-color-desc": "Te strani imajo slogovna pravila za barvo ozadja vrstic, vendar nimajo ustrezne barve besedila, kar onemogoča temni način.",
 	"linter-category-misc-tidy-replacement-issues": "Razne napake",
 	"linter-category-misc-tidy-replacement-issues-desc": "Te strani imajo druge težave, zaradi katerih so upodobljene drugače kot so bile videti prej",
 	"linter-category-misnested-tag": "Napačno gnezdene značke",

@@ -15,9 +15,11 @@
 			"Urhixidur",
 			"Verdy p",
 			"Wladek92",
-			"Wyz"
+			"Wyz",
+			"Qwrop"
 		]
 	},
+	"content-model-scribunto": "module Scribunto",
 	"scribunto-desc": "Framework pour l'intégration de langages de script dans les pages MediaWiki",
 	"scribunto-line": "à la ligne $1",
 	"scribunto-module-line": "dans $1 à la ligne $2",

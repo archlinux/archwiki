@@ -31,14 +31,24 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 
 		$args = [];
 		foreach ( $this->arguments as $a ) {
-			$args[] = [ 'name' => $a['name'], 'value' => $a['value']->compile( $env ) ];
+			$argValue = $a['value']->compile( $env );
+			if ( !empty( $a['expand'] ) && is_array( $argValue->value ) ) {
+				foreach ( $argValue->value as $value ) {
+					$args[] = [ 'name' => null, 'value' => $value ];
+				}
+			} else {
+				$args[] = [ 'name' => $a['name'], 'value' => $argValue ];
+			}
 		}
 
 		$defNone = 0;
 		$defTrue = 1;
 		$defFalse = 2;
 		foreach ( $env->frames as $frame ) {
-			$mixins = $frame->find( $this->selector );
+			$noArgumentsFilter = static function ( $rule ) use ( $env ) {
+				return $rule->matchArgs( [], $env );
+			};
+			$mixins = $frame->find( $this->selector, null, $noArgumentsFilter );
 			if ( !$mixins ) {
 				continue;
 			}
@@ -52,7 +62,8 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 
 			$mixins_len = count( $mixins );
 			for ( $m = 0; $m < $mixins_len; $m++ ) {
-				$mixin = $mixins[$m];
+				$mixin = $mixins[$m]["rule"];
+				$mixinPath = $mixins[$m]["path"];
 
 				if ( $this->IsRecursive( $env, $mixin ) ) {
 					continue;
@@ -60,25 +71,36 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 
 				if ( $mixin->matchArgs( $args, $env ) ) {
 
-					$candidate = [ 'mixin' => $mixin, 'group' => $defNone ];
-
-					if ( $mixin instanceof Less_Tree_Ruleset ) {
-						for ( $f = 0; $f < 2; $f++ ) {
-							Less_Tree_DefaultFunc::value( $f );
-							$conditionResult[$f] = $mixin->matchCondition( $args, $env );
-						}
-
-						// PhanTypeInvalidDimOffset -- False positive
-						'@phan-var array{0:bool,1:bool} $conditionResult';
-
-						if ( $conditionResult[0] || $conditionResult[1] ) {
-							if ( $conditionResult[0] != $conditionResult[1] ) {
-								$candidate['group'] = $conditionResult[1] ? $defTrue : $defFalse;
+					// less-2.5.3.js#MixinCall calcDefGroup()
+					$group = -1;
+					for ( $f = 0; $f < 2; $f++ ) {
+						$conditionResult[$f] = true;
+						Less_Tree_DefaultFunc::value( $f );
+						for ( $p = 0; $p < count( $mixinPath ) && $conditionResult[$f]; $p++ ) {
+							$namespace = $mixinPath[$p] ?? null;
+							if ( isset( $namespace ) && method_exists( $namespace, "matchCondition" ) ) {
+								$conditionResult[$f] = $conditionResult[$f] && $namespace->matchCondition( null, $env );
 							}
-
-							$candidates[] = $candidate;
 						}
-					} else {
+						if ( method_exists( $mixin, "matchCondition" ) ) {
+							$conditionResult[$f] = $conditionResult[$f] && $mixin->matchCondition( $args, $env );
+						}
+					}
+					// PhanTypeInvalidDimOffset -- False positive
+					'@phan-var array{0:bool,1:bool} $conditionResult';
+					if ( $conditionResult[0] || $conditionResult[1] ) {
+						if ( $conditionResult[0] != $conditionResult[1] ) {
+							$group = $conditionResult[1] ?
+								$defTrue : $defFalse;
+						} else {
+							$group = $defNone;
+						}
+
+					}
+
+					$candidate = [ 'mixin' => $mixin, 'group' => $group ];
+
+					if ( $candidate["group"] !== -1 ) {
 						$candidates[] = $candidate;
 					}
 

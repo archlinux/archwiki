@@ -21,13 +21,15 @@
 			"Silviubogan",
 			"Stelistcristi",
 			"Strainu",
-			"WebSourceContentRO"
+			"WebSourceContentRO",
+			"Amire80",
+			"Paloi Sciurala"
 		]
 	},
 	"abusefilter-desc": "Aplică euristici automate modificărilor.",
 	"abusefilter": "Administrare filtru abuz",
 	"abuselog": "Jurnal filtru abuz",
-	"abusefilter-intro": "Bun venit la interfața de gestionare a filtrului de abuzuri.\nFiltrul de abuzuri este un mecanism software automat care aplică euristici automate tuturor acțiunilor.\nAceastă interfață afișează o listă de filtre definite și permite modificarea acestora.",
+	"abusefilter-intro": "Bun-venit la interfața de gestionare a filtrului de abuzuri.\nFiltrul de abuzuri este un mecanism software automat care aplică euristici automate tuturor acțiunilor.\nAceastă interfață afișează o listă de filtre definite și permite modificarea acestora.",
 	"abusefilter-mustviewprivateoredit": "Din motive de securitate, numai utilizatorii cu dreptul de a vedea filtrele private de abuz sau de a modifica filtre pot folosi această interfață.",
 	"abusefilter-warning": "'''Atenție:''' Această acțiune a fost identificată în mod automat ca fiind periculoasă.\nModificările neconstructive vor fi rapid înlăturate, iar acțiunile evident neconstructive și repetate vor avea ca efect blocarea contului sau adresei IP de la care vă conectați.\nDacă într-adevăr credeți că această acțiune este constructivă, o puteți retrimite pentru a o confirma.\nO descriere sumară a regulii abuzului care se potrivește acțiunii dumneavoastră este: $1",
 	"abusefilter-disallowed": "Această acțiune a fost identificată în mod automat ca fiind periculoasă, din acest motiv fiind refuzată.\nDacă într-adevăr credeți că acțiunea dumneavoastră a fost constructivă, vă rugăm să contactați un administrator și să-l informați despre ceea ce doriți să întreprindeți.\nO descriere sumară a regulii abuzului care se potrivește acțiunii dumneavoastră este: $1",

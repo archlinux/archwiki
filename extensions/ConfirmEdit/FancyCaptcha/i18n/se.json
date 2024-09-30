@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Kimberli Mäkäräinen (WMNO)",
-			"Lea-Christine Sara"
+			"Lea-Christine Sara",
+			"WMNO sámeprošeakta"
 		]
 	},
+	"fancycaptcha-desc": "«Confirm Edit» CAPTCHA-generáhtor",
 	"fancycaptcha-addurl": "Du rievdadusat sisttisdollet ođđa olgguldas liŋkkaid. Várjalan dihte dan wiki automatiserejuvvon ruskaboasttas, bivdit du čállit sániid mat ihtet das vuolábealde lođá sisa ([[Special:Captcha/help|eambbo dieđut]]):",
 	"fancycaptcha-badlogin": "Várjalan dihte dán wiki automatiserejuvvon beassansátnesuollagiid vuostá, bivdit du čállit sániid mat ihtet vuolábealde lođá sisa ([[Special:Captcha/help|eambbo dieđut]]):",
 	"fancycaptcha-captcha": "Sihkarvuođa dárkkástus",

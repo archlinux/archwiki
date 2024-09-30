@@ -36,6 +36,10 @@ class Less_Tree_Quoted extends Less_Tree implements Less_Tree_HasValueProperty {
 		}
 	}
 
+	public function containsVariables() {
+		return preg_match( '/(`([^`]+)`)|@\{([\w-]+)\}/', $this->value );
+	}
+
 	public function compile( $env ) {
 		$value = $this->value;
 		if ( preg_match_all( '/`([^`]+)`/', $this->value, $matches ) ) {

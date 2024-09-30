@@ -28,7 +28,7 @@
 	"linter-category-night-mode-unaware-background-color": "存在行內樣式背景顏色規則，但沒有對應的文字顏色",
 	"linter-category-night-mode-unaware-background-color-desc": "這些頁面有行內樣式背景顏色規則，但沒有對應的文字顏色，破壞了深色模式的顯示",
 	"linter-category-misc-tidy-replacement-issues": "各項問題",
-	"linter-category-misc-tidy-replacement-issues-desc": "這些頁面還有其它問題，導致呈現出與之前顯示不同的情況",
+	"linter-category-misc-tidy-replacement-issues-desc": "這些頁面還有其它問題，導致渲染出與之前顯示不同的情況",
 	"linter-category-misnested-tag": "錯誤嵌套標籤",
 	"linter-category-misnested-tag-desc": "這些頁面存在可以修復的錯誤嵌套標籤。",
 	"linter-category-missing-end-tag": "缺少結束標籤",

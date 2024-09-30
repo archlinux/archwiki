@@ -9,7 +9,7 @@
 	"discussiontools-defaultsummary-reply": "جواب",
 	"discussiontoolsdebug-pagetitle": "ورقہ عنوان",
 	"discussiontools-emptystate-button": "بحت شروع کرو",
-	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|ڳالھ مہاڑ ورقے]] تے {{SITENAME}} تے مواد کوں ممکن حد تائیں بہتر بݨاوݨ کیتے لوک بحث کریندے ہن۔ {{GENDER:|تساں}}ایں ورقے تے [[:{{SUBJECTPAGENAME}}]] کوں چنگا بݨاوݨ دے طریقے بارے ٻیاں نال بحث  شروع کر سڳدے ہو۔",
+	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|ڳالھ مہاڑ ورقے]] تے {{SITENAME}} تے مواد کوں ممکن حد تائیں بہتر بݨاوݨ کیتے لوک بحث کریندے ہن۔ {{GENDER:|تساں}} ایں ورقے تے [[:{{SUBJECTPAGENAME}}]] کوں چنگا بݨاوݨ دے طریقے بارے ٻیاں نال بحث  شروع کر سڳدے ہو۔",
 	"discussiontools-error-noswitchtove-table": "نحوی ٹیبل",
 	"discussiontools-error-noswitchtove-template": "نحوی سانچہ",
 	"discussiontools-findcomment-label-search": "ڳولو",

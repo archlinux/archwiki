@@ -13,16 +13,22 @@ class Less_Visitor {
 	}
 
 	public function visitObj( $node ) {
+		if ( !$node || !is_object( $node ) ) {
+			return $node;
+		}
 		$funcName = 'visit' . str_replace( [ 'Less_Tree_', '_' ], '', get_class( $node ) );
 		if ( isset( $this->_visitFnCache[$funcName] ) ) {
 			$visitDeeper = true;
-			$this->$funcName( $node, $visitDeeper );
+			$newNode = $this->$funcName( $node, $visitDeeper );
+			if ( $this instanceof Less_VisitorReplacing ) {
+				$node = $newNode;
+			}
 
-			if ( $visitDeeper ) {
+			if ( $visitDeeper && is_object( $node ) ) {
 				$node->accept( $this );
 			}
 
-			$funcName .= "Out";
+			$funcName .= 'Out';
 			if ( isset( $this->_visitFnCache[$funcName] ) ) {
 				$this->$funcName( $node );
 			}
@@ -34,8 +40,11 @@ class Less_Visitor {
 		return $node;
 	}
 
-	public function visitArray( $nodes ) {
-		foreach ( $nodes as $node ) {
+	public function visitArray( &$nodes ) {
+		// NOTE: The use of by-ref in a normal (non-replacing) Visitor may be surprising,
+		// but upstream relies on this for Less_ImportVisitor, which modifies values of
+		// `$importParent->rules` yet is not a replacing visitor.
+		foreach ( $nodes as &$node ) {
 			$this->visitObj( $node );
 		}
 		return $nodes;

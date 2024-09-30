@@ -7,7 +7,8 @@
 			"Tar Lócesilion",
 			"გიორგიმელა",
 			"Გიო ოქრო",
-			"Იო ოქრო"
+			"Იო ოქრო",
+			"Mehman (WMF)"
 		]
 	},
 	"skinname-vector": "ვექტორული (2010)",
@@ -53,10 +54,11 @@
 	"skin-night-mode-name": "ფერი",
 	"skin-night-mode-2-label": "ავტომატური",
 	"skin-theme-name": "ფერი",
+	"skin-theme-description": "[სატესტო ვერსია, რაც შესაძლოა პრობლემებით იყოს] ამცირებს მოწყობილობის ეკრანიდან გამოსხივებულ ნათებას.",
 	"skin-theme-os-label": "ავტომატური",
 	"vector-search-loader": "იტვირთვება ძიების შეთავაზებები",
 	"vector-searchsuggest-containing": "იმ გვერდების მოძებნა, რომლებიც შეიცავენ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>-ს",
-	"vector-intro-page": "ვიკიპედია:კეთილი იყოს თქვენი მობრძანება",
+	"vector-intro-page": "ვიკიპედია:დახმარება",
 	"vector-toc-label": "სარჩევი",
 	"vector-toc-beginning": "შესავალი",
 	"vector-toc-toggle-button-label": "სექცია „$1“-ის გაშლა/ჩაკეცვა",

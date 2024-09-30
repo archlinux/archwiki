@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"SupaplexTW"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|多谢}}}}"
+}

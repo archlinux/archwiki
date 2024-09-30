@@ -4,14 +4,14 @@
 			"Ponor"
 		]
 	},
-	"editcheck-dialog-action-no": "Ne",
-	"editcheck-dialog-action-yes": "Da",
+	"editcheck-dialog-action-no": "Zanemari",
+	"editcheck-dialog-action-yes": "Dodajmo izvor",
 	"editcheck-dialog-addref-description": "Dodavanjem citata pomozite čitateljima razumjeti odakle informacije dolaze.",
 	"editcheck-dialog-addref-reject-question": "Zašto ne želite dodati referenciju?",
 	"editcheck-dialog-addref-reject-description": "Ostali urednici rado bi znali zašto ste odlučili ne dodati citat.",
 	"editcheck-dialog-addref-reject-irrelevant": "Ne mislim da su izvori važni za promjenu koju radim",
 	"editcheck-dialog-addref-reject-common-knowledge": "Informacije koje dodajem svima su poznate",
-	"editcheck-dialog-addref-reject-uncertain": "Ne mogu odlučiti koji izvor dodati",
+	"editcheck-dialog-addref-reject-uncertain": "Ne znam koji izvor dodati",
 	"editcheck-dialog-addref-reject-other": "Ostalo",
 	"editcheck-dialog-addref-success-notify": "Hvala što ste dodali izvor!",
 	"editcheck-dialog-addref-title": "Dodavanje izvora",

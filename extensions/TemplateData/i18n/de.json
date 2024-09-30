@@ -6,7 +6,8 @@
 			"Kghbln",
 			"Metalhead64",
 			"TMg",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Sn KGS"
 		]
 	},
 	"templatedata-desc": "Ermöglicht die Festlegung von Vorlagenparametern im JSON-Format",
@@ -87,7 +88,7 @@
 	"templatedata-modal-placeholder-add-new-map-input": "Hinzufügen neuer Zuordnung …",
 	"templatedata-modal-placeholder-paramkey": "Name des Parameters",
 	"templatedata-modal-placeholder-mapinfo": "Diese Vorlage hat keine Zuordnungs-Objekte",
-	"templatedata-modal-placeholder-prompt-map-name": "Eingeben der Namens der Zuordnung",
+	"templatedata-modal-placeholder-prompt-map-name": "Namen der Zuordnung eingeben",
 	"templatedata-modal-search-input-placeholder": "Nach Sprachnamen oder Sprachcode suchen",
 	"templatedata-modal-table-param-aliases": "Aliasse",
 	"templatedata-modal-table-param-autovalue": "Autowert",
@@ -104,7 +105,7 @@
 	"templatedata-modal-table-param-required": "Erforderlich",
 	"templatedata-modal-table-param-suggested": "Vorgeschlagen",
 	"templatedata-modal-table-param-suggestedvalues": "Vorgeschlagene Werte",
-	"templatedata-modal-placeholder-multiselect": "Wert hinzügen …",
+	"templatedata-modal-placeholder-multiselect": "Wert hinzufügen …",
 	"templatedata-modal-table-param-type": "Typ",
 	"templatedata-modal-title": "Vorlagendaten-Editor",
 	"templatedata-modal-title-addparam": "Neuen Parameter hinzufügen",

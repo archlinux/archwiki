@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tofeiku"
+		]
+	},
+	"vector-languages": "Bahasa",
+	"vector-language-button-label": "{{PLURAL:$1|$1 bahasa}}",
+	"vector-no-language-button-label": "Tambah bahasa",
+	"vector-action-addsection": "Tambah topik",
+	"vector-action-delete": "Padam",
+	"vector-action-move": "Pindah",
+	"vector-action-protect": "Salamat",
+	"vector-view-create": "Buat",
+	"vector-view-history": "Nampak sajarah",
+	"vector-more-actions": "Lagi",
+	"vector-feature-limited-width-name": "Lebar",
+	"vector-feature-custom-font-size-name": "Tulisan",
+	"vector-feature-limited-width-0-label": "Luas",
+	"vector-feature-limited-width-1-label": "Biasa",
+	"vector-feature-custom-font-size-0-label": "Kicil",
+	"vector-feature-custom-font-size-1-label": "Biasa",
+	"vector-feature-custom-font-size-2-label": "Basar",
+	"skin-theme-name": "Warna",
+	"skin-theme-os-label": "Sendiri",
+	"vector-searchsuggest-containing": "Cari laman yang ada <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Isi",
+	"vector-toc-beginning": "Mula",
+	"vector-main-menu-label": "Menu basar",
+	"vector-page-tools-label": "Alat",
+	"vector-page-tools-general-label": "Biasa",
+	"vector-unpin-element-label": "tapuk"
+}

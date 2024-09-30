@@ -3,7 +3,8 @@
 		"authors": [
 			"Macofe",
 			"Tokvo",
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"echo-desc": "Sistema p'avisar a los usuarios sobre actividaes y mensaxes",
@@ -72,7 +73,7 @@
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Métodos de notificación riquíos",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Cuálos métodos de notificación son obligatorios pa cada categoría",
 	"echo-specialpage": "Avisos",
-	"echo-specialpage-section-markread": "Marca el grupu como lleíu",
+	"echo-specialpage-section-markread": "Marca'l grupu como lleíu",
 	"echo-specialpage-markasread": "Notificación: marcar como lleída",
 	"echo-specialpage-markasread-invalid-id": "ID de socesu inválidu",
 	"echo-specialpage-pagination-numnotifications": "$1 {{PLURAL:$1|avisu|avisos}}",

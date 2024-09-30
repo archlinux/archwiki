@@ -61,7 +61,7 @@
 	"multimediaviewer-optin-mmv": "MediaViewer inschakelen",
 	"multimediaviewer-optout-pending-mmv": "MediaViewer uitschakelen",
 	"multimediaviewer-optin-pending-mmv": "MediaViewer inschakelen",
-	"multimediaviewer-optout-help": "Media Viewer wordt niet meer gebruikt om afbeeldingen te tonen. Om Media Viewer opnieuw te gebruiken, klikt u op de knop “{{int:multimediaviewer-view-expanded}}” naast een afbeelding. Klik vervolgens op “{{int:multimediaviewer-optin-mmv}}”.",
+	"multimediaviewer-optout-help": "Media Viewer wordt niet meer gebruikt om afbeeldingen weer te geven. Om Media Viewer opnieuw te gebruiken, klikt u op de knop “{{int:multimediaviewer-view-expanded}}” naast een afbeelding. Klik vervolgens op “{{int:multimediaviewer-optin-mmv}}”.",
 	"multimediaviewer-optin-help": "De MediaViewer wordt gebruikt voor het weergeven van afbeeldingen.",
 	"multimediaviewer-geoloc-north": "NB",
 	"multimediaviewer-geoloc-east": "OL",

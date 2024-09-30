@@ -73,5 +73,5 @@
 	"notification-header-flow-thank": "{{GENDER:$2|شكرك|شكرتك}} $1 {{GENDER:$5|لتعليقك}} على \"<strong>$3</strong>\".",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|شكر}}{{GENDER:$3|ك}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|شخص واحد|$1 شخص|100=99+ شخص}} {{GENDER:$3|شكرك}} على تعليقك في \"<strong>$2</strong>\".",
-	"ipb-action-thanks": "جارٍ إرسال الشكر"
+	"ipb-action-thanks": "إرسال شكر"
 }

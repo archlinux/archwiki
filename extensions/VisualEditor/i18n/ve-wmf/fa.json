@@ -19,9 +19,16 @@
 			"Reza1615",
 			"Taha",
 			"درفش کاویانی",
-			"아라"
+			"아라",
+			"Ebrahim",
+			"Jeeputer"
 		]
 	},
+	"tag-editcheck-newcontent-description": "بررسی ویرایش فکر می‌کند که محتوای جدیدی به صفحه افزوده شده است",
+	"tag-editcheck-newreference-description": "ارجاعی به صفحه افزوده شد",
+	"tag-editcheck-references-description": "بررسی ویرایش فکر می‌کند که ممکن است به ارجاع نیاز بوده باشد",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|بررسی ویرایش (ارجاعات) فعال شد]]",
+	"tag-editcheck-references-activated-description": "بررسی ویرایش فکر می‌کند که ممکن است به ارجاع نیاز باشد و رابط کاربری آن نمایش یافته است",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویرایشگر دیداری]]",
 	"tag-visualeditor-description": "ویرایش توسط [[{{MediaWiki:visualeditor-descriptionpagelink}}|ویرایشگر دیداری]] انجام شده است.",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویرایشگر دیداری: بررسی]]",

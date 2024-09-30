@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Beta16"
+			"Beta16",
+			"Pierpao"
 		]
 	},
 	"editcheck-dialog-action-no": "No",
-	"editcheck-dialog-action-yes": "Sì"
+	"editcheck-dialog-action-yes": "Sì",
+	"tag-editcheck-reference-decline-other": "Edit Check (citazioni) rifiutato (altro)"
 }

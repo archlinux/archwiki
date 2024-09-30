@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Winston Sung"
+		]
+	},
+	"vector-languages": "Gú-giân",
+	"vector-language-button-label": "{{PLURAL:$1|$1 chióng gú-giân}}",
+	"vector-action-addsection": "Ke chi̍t-ê toān-lo̍h",
+	"vector-action-delete": "Thâi",
+	"vector-action-move": "Sóa khì",
+	"vector-action-protect": "Pó-hō͘",
+	"vector-action-undelete": "chhú-siau thâi tiàu",
+	"vector-action-unprotect": "kái pó-hō·",
+	"vector-view-create": "Khai-sí siá",
+	"vector-view-edit": "Siu-kái",
+	"vector-view-history": "khoàⁿ le̍k-sú",
+	"vector-view-view": "Tha̍k",
+	"vector-view-viewsource": "Khoàⁿ goân-sí lōe-iông",
+	"vector-more-actions": "Koh khoàⁿ",
+	"vector-searchsuggest-containing": "Chhiau-chhē ū <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ê ia̍h",
+	"vector-page-tools-label": "Ke-si"
+}

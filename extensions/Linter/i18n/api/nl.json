@@ -4,13 +4,14 @@
 			"Mainframe98",
 			"Mar(c)",
 			"McDutchie",
-			"Romaine"
+			"Romaine",
+			"Siebrand"
 		]
 	},
 	"apihelp-query+linterrors-summary": "Een lijst van lintfouten opvragen.",
 	"apihelp-query+linterrors-param-categories": "Lintfoutcategorieën.",
 	"apihelp-query+linterrors-param-invisible-categories": "Onzichtbare categorieën met lintfouten",
-	"apihelp-query+linterrors-param-limit": "Aantal resultaten om te tonen",
+	"apihelp-query+linterrors-param-limit": "Aantal resultaten om weer te geven",
 	"apihelp-query+linterrors-param-from": "Lint-ID van waaruit de aanvraag moet worden gestart",
 	"apihelp-query+linterrors-param-namespace": "Alleen lintfouten in de opgegeven naamruimten opnemen.",
 	"apihelp-query+linterrors-param-pageid": "Alleen lintfouten van de opgegeven paginatitel opnemen",

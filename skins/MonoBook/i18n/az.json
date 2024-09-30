@@ -2,12 +2,23 @@
 	"@metadata": {
 		"authors": [
 			"Vago",
-			"Vugar 1981"
+			"Vugar 1981",
+			"Nemoralis"
 		]
 	},
 	"skinname-monobook": "MonoBook",
+	"monobook-desc": "2004-cü ildən bəri klassik MediaWiki dizaynı, səhifənin fonunda bir kitabın ağ-qara şəklinə görə adlandırılıb.",
 	"monobook.css": "/* Burada yerləşən CSS Monobook skin istifadəçilərinə tətbiq olunur */",
 	"monobook.js": "/* Burada MonoBook skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */",
+	"monobook-jumptotop": "yuxarıya qayıt",
+	"monobook-jumptopersonal": "istifadəçi alətləri",
+	"monobook-jumptonavigation": "Naviqasiyaya keç",
+	"monobook-jumptosearch": "Axtarışa keç",
+	"monobook-more-actions": "Daha çox",
+	"cactions-mobile": "Səhifə fəaliyyətləri",
+	"monobook-cactions-label": "Səhifə fəaliyyətləri",
+	"monobook-notifications-link": "Bildirişlər ($1)",
+	"monobook-notifications-link-none": "Bildirişlər",
 	"monobook-view-history": "Tarixçə",
 	"monobook-action-undelete": "$1 {{PLURAL:$1|dəyişikliyi}} bərpa et"
 }

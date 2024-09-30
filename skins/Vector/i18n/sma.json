@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Trondtr"
+			"Trondtr",
+			"Yupik"
 		]
 	},
-	"vector-view-history": "Vuesieh histovrijem"
+	"vector-view-history": "Vuesieh histovrijem",
+	"vector-view-view": "Lohkh"
 }

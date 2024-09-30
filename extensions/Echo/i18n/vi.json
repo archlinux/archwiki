@@ -46,6 +46,7 @@
 	"echo-log": "Nhật trình công khai",
 	"echo-new-messages": "Bạn có tin nhắn mới",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1}}Tin nhắn thảo luận",
+	"echo-category-title-edit-user-page": "{{PLURAL:$1|Sửa đổi|Các sửa đổi}} trang thành viên của tôi",
 	"echo-category-title-article-linked": "{{PLURAL:$1}}Liên kết đến trang",
 	"echo-category-title-reverted": "Sửa đổi {{PLURAL:$1|lùi sửa}}",
 	"echo-category-title-mention": "{{PLURAL:$1}}Được nhắc đến",

@@ -21,6 +21,7 @@
 	"nuke-maxpages": "АгӀонийн максимум дукхалла:",
 	"nuke-editby": "Кхоьллина {{GENDER:$1|декъашхочо}} [[Special:Contributions/$1|$1]]",
 	"nuke-deleted": "'''$1''' агӀо дӀайаьккхина.",
+	"nuke-deletion-queued": "'''«$1»''' агӀо дӀайаккхаран рогӀе йиллина.",
 	"nuke-not-deleted": "[[:$1]] агӀо дӀайоккхила '''дац'''.",
 	"nuke-delete-more": "[[Special:Nuke|Дукха агӀонаш дӀайахар]]",
 	"nuke-pattern": "SQL LIKE кеп (масал., %) агӀонан цӀеран:",

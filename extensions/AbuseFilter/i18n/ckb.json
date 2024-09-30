@@ -70,6 +70,8 @@
 	"abusefilter-log-hide-legend": "بەرچاوی بگۆڕە",
 	"abusefilter-log-hide-reason": "هۆکار:",
 	"abusefilter-log-hide-forbidden": "ناتوانی بابەتەکانی لۆگی کەڵکاوەژوو بشارییەوە.",
+	"abusefilter-log-hide-show": "نیشان بدە",
+	"abusefilter-log-hide-hide": "بشارەوە",
 	"logentry-abusefilter-hit": "$1 $4ی چالاککرد، خەریکی کردەوەی «$5» لەسەر $3 بوو. کردەوەی بەڕێوەچوو: $6 ($7)",
 	"abusefilter-list": "ھەموو پاڵوێنەکان",
 	"abusefilter-list-id": "پێناسەی پاڵوێنە",

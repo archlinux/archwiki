@@ -51,7 +51,9 @@
 			"Zhxy 519",
 			"捍粵者",
 			"逆襲的天邪鬼",
-			"Cookai1205"
+			"Cookai1205",
+			"Anterdc99",
+			"WiiUf"
 		]
 	},
 	"abusefilter-desc": "自動條件判定編輯行為",
@@ -620,8 +622,8 @@
 	"abusefilter-log-details-id": "日誌ID",
 	"abusefilter-invalid-request": "無效請求！您必須透過[[Special:AbuseLog/$1]]上的表單提供原因後才能存取非公開日誌詳細資料。",
 	"abusefilter-invalid-request-noid": "無效請求！您必須透過在濫用日誌詳細資料上的表單提供原因後才能訪問非公開日誌詳細資料。",
-	"blockedexternaldomains": "封鎖的外部網域",
-	"abusefilter-blocked-domains-title": "封鎖的外部網域",
+	"blockedexternaldomains": "已封鎖的外部網域",
+	"abusefilter-blocked-domains-title": "已封鎖的外部網域",
 	"abusefilter-blocked-domains-intro": "加入符合此清單的外部連結到頁面時會被禁止。這些網域存儲在[[MediaWiki:BlockedExternalDomains.json]]中。",
 	"abusefilter-blocked-domains-add-heading": "加入新的封鎖網域",
 	"abusefilter-blocked-domains-add-explanation": "在此您可以將網域加入到封鎖網域清單裡。",

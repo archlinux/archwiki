@@ -14,7 +14,8 @@
 			"Siebrand",
 			"Toghrul Rahimli",
 			"Umherirrender",
-			"Verdy p"
+			"Verdy p",
+			"No se"
 		]
 	},
 	"thanks-desc": "{{desc|name=Thanks|url=https://www.mediawiki.org/wiki/Extension:Thanks}}",
@@ -56,7 +57,7 @@
 	"notification-bundle-header-log-thank": "Bundle header text for a notification when a user is thanked for a log entry. Parameters:\n* $1 is the number of users who sent thanks for the same edit. When used with PLURAL, the value 100 represents more than 99.\n* $2 is the title of the page that is the target of the log entry.\n* $3 is the username of the user being thanked, for use in GENDER.\n{{Related|Notification-bundle}}",
 	"log-name-thanks": "Name of log that appears on [[Special:Log]].",
 	"log-description-thanks": "Description of thanks log",
-	"logentry-thanks-thank": "Log entry that is created when a user thanks another user for an edit. Parameters:\n* $1 is a user link, for example \"Jane Doe (Talk | contribs)\"\n* $2 is a username. Can be used for GENDER.\n* $3 is a user link, for example \"John Doe (Talk | contribs)\n* $4 is the username of the recipient. Can be used for GENDER.\n{{Identical|Thanked}}",
+	"logentry-thanks-thank": "Log entry that is created when a user thanks another user for an edit. Parameters:\n* $1 is a user link, for example \"Jane Doe (Talk | contribs)\"\n* $2 is a username. Can be used for GENDER.\n* $3 is a user link of the recipient, for example \"John Doe (Talk | contribs)\"\n* $4 is the username of the recipient. Can be used for GENDER.\n{{Identical|Thanked}}",
 	"logeventslist-thanks-log": "Thanks log option label on [[Special:Log]]",
 	"thanks-error-no-id-specified": "Error message shown to the user when they visit Special:Thanks without specifying a revision ID",
 	"thanks-confirmation-special-log": "A confirmation message shown on [[Special:Thanks]] to make sure the user wants to send thanks for a log action (publicly).\n\nSee also:\n* {{msg-mw|Thanks-confirmation-special-rev}}\n* {{msg-mw|Flow-thanks-confirmation-special}}\n* {{msg-mw|Thanks-confirmation2}}",

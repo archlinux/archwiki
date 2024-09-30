@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dbsnp"
+			"Dbsnp",
+			"ZebaX2010"
 		]
 	},
 	"editcheck-dialog-action-no": "No",
@@ -9,6 +10,8 @@
 	"editcheck-dialog-addref-description": "Ayuda a que los lectores entiendan de dónde proviene esta información agregando una cita.",
 	"editcheck-dialog-addref-reject-question": "¿Por qué no añades una cita?",
 	"editcheck-dialog-addref-reject-description": "Otros editores desearían saber más sobre tu decisión de descartar la cita.",
+	"editcheck-dialog-addref-reject-irrelevant": "No creo que las citas sean relevantes para el cambio que estoy realizando.",
+	"editcheck-dialog-addref-reject-common-knowledge": "La información que añado es ampliamente conocida.",
 	"editcheck-dialog-addref-reject-uncertain": "No estoy seguro de qué cita añadir",
 	"editcheck-dialog-addref-reject-other": "Otro",
 	"editcheck-dialog-addref-success-notify": "¡Gracias por añadir una cita!",

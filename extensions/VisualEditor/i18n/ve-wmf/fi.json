@@ -19,14 +19,17 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "Muokkaustarkistimen mukaan uutta sisältöä lisättiin sivulle",
 	"tag-editcheck-newreference-description": "Lähde lisättiin tälle sivulle",
+	"tag-editcheck-references-description": "Muokkaustarkistimen mukaan lähde olisi ehkä ollut tarpeen",
 	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Muokkaustarkistin (lähteet) aktivoitu]]",
+	"tag-editcheck-references-activated-description": "Muokkaustarkistimen mukaan lähde olisi ehkä ollut tarpeen, ja käyttöliittymä näytettiin",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaalinen muokkaus]]",
 	"tag-visualeditor-description": "Muutos tehtiin [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuaalisella muokkaimella]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaalinen muokkaus: Tarkista]]",
 	"tag-visualeditor-needcheck-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaalisella muokkaimella]] tehty muokkaus, jossa järjestelmä havaitsi wikitekstissä mahdollisesti olevan tahattomia muutoksia.",
-	"tag-visualeditor-wikitext": "2017 wikitekstin muokkaus",
-	"tag-visualeditor-wikitext-description": "Muokattu wikitekstin muokkausohjelmalla 2017",
+	"tag-visualeditor-wikitext": "wikitekstimuokkaus 2017",
+	"tag-visualeditor-wikitext-description": "Vuoden 2017 wikitekstimuokkaimella tehty muokkaus",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaalinen muokkaus: vaihdettu]]",
 	"tag-visualeditor-switched-description": "Käyttäjä aloitti muokkaamisen visuaalisella muokkaimella; sen jälkeen vaihtoi wikitekstin muokkaustilaan.",
 	"visualeditor-feedback-link": "Project:Visuaalinen muokkain/Palaute",
@@ -38,5 +41,5 @@
 	"visualeditor-welcomedialog-content-thanks": "Kiitos, että autat maailmaa löytämään enemmän!",
 	"visualeditor-welcomedialog-switch": "Vaihda wikitekstimuokkaimeen",
 	"visualeditor-welcomedialog-switch-ve": "Vaihda visuaaliseen muokkaimeen",
-	"visualeditor-welcomedialog-title": "{{GENDER:$1|Tervetuloa}} sivustolle $2"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Tervetuloa}} {{GRAMMAR:illative|$2}}"
 }

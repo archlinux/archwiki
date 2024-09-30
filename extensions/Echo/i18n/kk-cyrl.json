@@ -4,7 +4,8 @@
 			"Arystanbek",
 			"Batyrbek.kz",
 			"Macofe",
-			"СеніңШешең"
+			"СеніңШешең",
+			"Casserium"
 		]
 	},
 	"echo-desc": "Оқиғалар мен хабарламалар туралы қатысушыларға ескерту \nжүйесі",
@@ -56,7 +57,7 @@
 	"echo-notification-markasread": "Оқылды деп белгілеу",
 	"echo-notification-markasunread": "Оқылмаған деп белгілеу",
 	"echo-notification-markasread-tooltip": "Оқылды деп белгілеу",
-	"notification-link-text-expand-all": "Барлығын көру",
+	"notification-link-text-expand-all": "Жаю",
 	"notification-link-text-expand-alert-count": "{{PLURAL:$1|$1 Дабылды|$1 Дабылды}} көру",
 	"notification-link-text-expand-all-count": "{{PLURAL:$1|$1 ескертпені|$1 ескертпені}} көру",
 	"notification-link-text-collapse-all": "Жиыру",

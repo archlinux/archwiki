@@ -9,6 +9,8 @@
 		]
 	},
 	"skinname-vector": "Veicteoir",
+	"vector-languages": "Teangacha",
+	"vector-no-language-button-label": "Cuir teangacha leis",
 	"vector-action-addsection": "Cuir topaic leis",
 	"vector-action-delete": "Scrios",
 	"vector-action-move": "Athainmnigh",
@@ -21,5 +23,20 @@
 	"vector-view-view": "Léigh",
 	"vector-view-viewsource": "Féach ar fhoinse",
 	"vector-more-actions": "Tuilleadh",
-	"vector-searchsuggest-containing": "Cuardaigh leathanaigh ina bhfuil <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-feature-limited-width-name": "Leithead",
+	"vector-feature-custom-font-size-name": "Téacs",
+	"vector-feature-limited-width-0-label": "Leathan",
+	"vector-feature-limited-width-1-label": "Gnáthleithead",
+	"vector-feature-custom-font-size-0-label": "Beag",
+	"vector-feature-custom-font-size-1-label": "Gnáthmhéid",
+	"vector-feature-custom-font-size-2-label": "Mór",
+	"skin-theme-name": "Dath",
+	"skin-theme-os-label": "Uathoibríoch",
+	"vector-searchsuggest-containing": "Cuardaigh leathanaigh ina bhfuil <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Clár ábhair",
+	"vector-toc-beginning": "Tús",
+	"vector-main-menu-label": "Príomh-roghchlár",
+	"vector-page-tools-label": "Uirlisí",
+	"vector-page-tools-general-label": "Ginearálta",
+	"vector-unpin-element-label": "folaigh"
 }

@@ -43,10 +43,11 @@ _See also [SECURITY](./SECURITY.md)._
 ## Who uses Less.php?
 
 * **[Wikipedia](https://en.wikipedia.org/wiki/MediaWiki)** and the MediaWiki platform ([docs](https://www.mediawiki.org/wiki/ResourceLoader/Architecture#Resource:_Styles)).
-* **[Matomo](https://en.wikipedia.org/wiki/Matomo_(software))** ([docs](https://devdocs.magento.com/guides/v2.4/frontend-dev-guide/css-topics/custom_preprocess.html)).
-* **[Magento](https://en.wikipedia.org/wiki/Magento)** as part of Adobe Commerce ([docs](https://developer.matomo.org/guides/asset-pipeline#vanilla-javascript-css-and-less-files)).
+* **[Matomo](https://en.wikipedia.org/wiki/Matomo_(software))** ([docs](https://developer.matomo.org/guides/asset-pipeline#vanilla-javascript-css-and-less-files)).
+* **[Magento](https://en.wikipedia.org/wiki/Magento)** as part of Adobe Commerce ([docs](https://developer.adobe.com/commerce/frontend-core/guide/css/preprocess/)).
 * **[Icinga](https://en.wikipedia.org/wiki/Icinga)** in Icinga Web ([docs](https://github.com/Icinga/icingaweb2)).
 * **[Shopware](https://de.wikipedia.org/wiki/Shopware)** ([docs](https://developers.shopware.com/designers-guide/less/)).
+* **[Winter CMS](https://wintercms.com/)** ([docs](https://wintercms.com/docs/v1.2/docs/themes/development))
 
 ## Integrations
 

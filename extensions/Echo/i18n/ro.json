@@ -14,7 +14,8 @@
 			"Stelistcristi",
 			"Strainu",
 			"WebSourceContentRO",
-			"Wintereu"
+			"Wintereu",
+			"Paloi Sciurala"
 		]
 	},
 	"echo-desc": "Sistem de notificare a utilizatorilor cu privire la evenimente și mesaje",
@@ -168,7 +169,7 @@
 	"notification-header-user-rights-remove-only": "Drepturile {{GENDER:$4|dumneavoastră}} de utilizator au fost {{GENDER:$1|schimbate}}. Nu mai sunteți {{GENDER:$4|un membru|o membră|un membru}} al: $2.",
 	"notification-header-user-rights-add-and-remove": "Drepturile {{GENDER:$6|dumneavoastră}} de utilizator au fost {{GENDER:$1|schimbate}}. Ați fost {{GENDER:$4|adăugat|adăugată|adăugat}} la: $2. Nu mai sunteți {{GENDER:$4|un membru|o membră|un membru}} al: $4.",
 	"notification-header-user-rights-expiry-change": "Termenul de expirare a apartenenței {{GENDER:$4|dvs.}} în {{PLURAL:$3|următorul grup|următoarele grupuri}} a fost {{GENDER:$1|schimbat}}: $2.",
-	"notification-header-welcome": "{{GENDER:$2|Bun venit}} la {{SITENAME}}, $1! Ne bucurăm să {{GENDER:$2|vă avem}} printre noi.",
+	"notification-header-welcome": "{{GENDER:$2|Bun-venit}} la {{SITENAME}}, $1! Ne bucurăm să {{GENDER:$2|vă}} avem printre noi.",
 	"notification-header-mention-summary": "$1 {{GENDER:$3|v-a}}{{GENDER:$2|menționat}} într-o descriere a modificării la <strong>$4</strong>.",
 	"notification-header-watchlist-changed": "$1 {{GENDER:$2|a schimbat}} <strong>$3</strong>, o pagină aflată pe lista dvs. de {{GENDER:$4|pagini urmărite}}{{PLURAL:$5||, de $5 ori}}.",
 	"notification-header-watchlist-created": "$1 {{GENDER:$2|a creat}} <strong>$3</strong>, o pagină aflată pe lista dvs. de {{GENDER:$4|pagini urmărite}}{{PLURAL:$5||, de $5 ori}}.",
@@ -181,7 +182,7 @@
 	"notification-header-watchlist-multiuser-moved": "<strong>$1</strong>, o pagină aflată pe lista dvs. de {{GENDER:$2|pagini urmărite}}, a fost mutată {{PLURAL:$3|o dată|de $3 ori}}",
 	"notification-header-watchlist-multiuser-restored": "<strong>$1</strong>, o pagină aflată pe lista dvs. de {{GENDER:$2|pagini urmărite}}, a fost restaurată {{PLURAL:$3|o dată|de $3 ori}}",
 	"notification-body-watchlist-once": "Nu vor exista alte notificări prin e-mail în cazul unei activități ulterioare decât dacă vizitați această pagină în timp ce sunteți {{GENDER:$1|autentificat|autentificată}}.",
-	"notification-welcome-linktext": "Bun venit",
+	"notification-welcome-linktext": "Bun-venit",
 	"notification-header-thank-you-1-edit": "Tocmai {{GENDER:$2|ați}} făcut prima {{GENDER:$2|dumneavoastră}} modificare; {{GENDER:$2|vă}} mulțumim și bine ați venit!",
 	"notification-header-thank-you-10-edit": "Tocmai {{GENDER:$2|ați}} făcut a zecea {{GENDER:$2|dumneavoastră}} modificare; {{GENDER:$2|vă}} mulțumim și vă rugăm să continuați!",
 	"notification-header-thank-you-100-edit": "Tocmai {{GENDER:$2|ați}} făcut a o suta {{GENDER:$2|modificare}}; {{GENDER:$2|vă}} mulțumim foarte mult!",

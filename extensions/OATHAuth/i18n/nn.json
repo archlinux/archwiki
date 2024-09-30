@@ -4,6 +4,23 @@
 			"Njardarlogar"
 		]
 	},
+	"oathauth-account": "Kontonamn:",
+	"oathauth-secret": "Hemmeleg nykel for tofaktorautentisering:",
+	"oathauth-recoverycodes-important": "Dette steget er viktig! Ikkje hopp over det!",
+	"oathauth-validatedoath": "Innlogginsdetaljar for tofaktorautentisering var gyldige. Tofaktorautentisering er no påkravd på kontoen.",
 	"oathauth-prefs-label": "Tofaktor-autentisering:",
-	"oathauth-ui-manage": "Handsam"
+	"oathauth-step1": "Steg 1: Last ned eit program for tofaktorautentisering",
+	"oathauth-step2": "Steg 2: Skann QR-koden",
+	"oathauth-step2alt": "Får du ikkje til å skanna QR-koden, skriv inn den hemmelege nykelen og kontonamnet manuelt:",
+	"oathauth-step3": "Steg 3: Skriv ned attopprettingskodane",
+	"oathauth-step4": "Steg 4: Stadfesting",
+	"oathauth-entertoken": "Skriv inn ein kode frå autentiseringseininga di for å stadfesta:",
+	"oathauth-module-totp-label": "TOTP (eingongsnykel)",
+	"oathauth-ui-manage": "Handsam",
+	"oathmanage": "Handsam tofaktorautentisering",
+	"oathauth-ui-not-enabled-modules": "Byt til annan metode",
+	"oathauth-ui-enabled-module": "Påslege autentiseringsmetode",
+	"oathauth-ui-available-modules": "Tilgjengelege metodar",
+	"notification-header-oathauth-enable": "Tofaktorautentisering er påslege på kontoen {{GENDER:$2|din}}.",
+	"notification-body-oathauth-enable": "Var det ikkje {{GENDER:$2|du}} som gjorde dette kan andre ha tilgang til kontoen din."
 }

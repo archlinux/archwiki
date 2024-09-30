@@ -3,7 +3,8 @@
 		"authors": [
 			"Rkupsala",
 			"Bergerdias",
-			"Cgmbo"
+			"Cgmbo",
+			"CapitainAfrika"
 		]
 	},
 	"vector-languages": "Bandinga",
@@ -17,6 +18,7 @@
 	"vector-view-history": "Tala bansoba",
 	"vector-view-view": "Tânga",
 	"vector-more-actions": "Ya nkaka",
+	"skin-theme-name": "Lângi",
 	"vector-searchsuggest-containing": "Sosa balutiti ya kele ti <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-page-tools-label": "Bisadilu",
 	"vector-unpin-element-label": "bumba"

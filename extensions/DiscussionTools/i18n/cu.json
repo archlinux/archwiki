@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"NR Deblocked"
+			"NR Deblocked",
+			"Некто участник"
 		]
 	},
 	"discussiontools-emptystate-desc": "​вы̀​ мо́жете использовать ​этꙋ​ страни́цꙋ ѻбсꙋжденїѧ что́бы ​начать​ ѻбсꙋжденїе съ дрꙋги́ми ​ѻ҆​ то́мъ ка́къ ᲂулꙋчшить [[:{{SUBJECTPAGENAME}}]]. [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Learn more about how these pages are used]].",
@@ -10,6 +11,7 @@
 	"discussiontools-preference-replytool-help": "Это пока́жетъ ва́мъ ссылкꙋ ​длѧ​ ѿвѣ́та на комментарїи на страни́цѣ ѻбсꙋжденїѧ ​ѻднимъ​ щелчкомъ мы́ши.",
 	"discussiontools-preference-summary": "​вы̀​ мо́жете ᲂу҆зна́ть бо́льше ​ѡ҆бꙿ​ ​этихъ​ фꙋнкцїѧхъ прочита́въ [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary feature summary].",
 	"discussiontools-preference-topicsubscription-help": "Это позволитъ ва́мъ подписатьсѧ на полꙋче́нїе ᲂуведомленїй ​ѻ҆​ комментарїѧхъ по ѻтдельнымъ ​темамъ​.",
+	"discussiontools-replywidget-cancel": "Отъмѣтаниѥ",
 	"discussiontools-replywidget-preferences": "строи",
 	"echo-category-title-dt-subscription": " Страни́ца ѻбсꙋжденїѧ {{PLURAL:$1|Комментарїй|Комментарїи}}",
 	"echo-pref-tooltip-dt-subscription": "Оуведомлѧть ​менѧ​ когда̀ кто̀-​то̀​ пꙋбликꙋетъ но́вый комментарїй ​въ​ ​теме​ на кото́рꙋю ​а҆́зъ​ подпи́санъ.",

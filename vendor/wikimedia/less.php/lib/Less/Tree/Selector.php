@@ -101,12 +101,16 @@ class Less_Tree_Selector extends Less_Tree {
 				$css .= $v->value;
 				continue;
 			}
+
+			if ( isset( $v->value->value ) && !is_object( $v->value->value ) ) {
+				$css .= $v->value->value;
+				continue;
+			}
+
 			if ( ( $v->value instanceof Less_Tree_Selector || $v->value instanceof Less_Tree_Variable )
 				|| !is_string( $v->value->value ) ) {
 				$this->cacheable = false;
-			}
-			if ( isset( $v->value->value ) && !is_object( $v->value->value ) ) {
-				$css .= $v->value->value;
+				return;
 			}
 		}
 

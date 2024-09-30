@@ -14,41 +14,11 @@ class Less_Functions {
 		$this->currentFileInfo = $currentFileInfo;
 	}
 
-	/**
-	 * @param string $op
-	 * @param float $a
-	 * @param float $b
-	 */
-	public static function operate( $op, $a, $b ) {
-		switch ( $op ) {
-			case '+':
-				return $a + $b;
-			case '-':
-				return $a - $b;
-			case '*':
-				return $a * $b;
-			case '/':
-				return $a / $b;
-		}
-	}
-
-	public static function clamp( $val, $max = 1 ) {
+	private static function _clamp( $val, $max = 1 ) {
 		return min( max( $val, 0 ), $max );
 	}
 
-	public static function fround( $value ) {
-		if ( $value === 0 ) {
-			return $value;
-		}
-
-		if ( Less_Parser::$options['numPrecision'] ) {
-			$p = pow( 10, Less_Parser::$options['numPrecision'] );
-			return round( $value * $p ) / $p;
-		}
-		return $value;
-	}
-
-	public static function number( $n ) {
+	private static function _number( $n ) {
 		if ( $n instanceof Less_Tree_Dimension ) {
 			return floatval( $n->unit->is( '%' ) ? $n->value / 100 : $n->value );
 		} elseif ( is_numeric( $n ) ) {
@@ -58,11 +28,11 @@ class Less_Functions {
 		}
 	}
 
-	public static function scaled( $n, $size = 255 ) {
+	private static function _scaled( $n, $size = 255 ) {
 		if ( $n instanceof Less_Tree_Dimension && $n->unit->is( '%' ) ) {
 			return (float)$n->value * $size / 100;
 		} else {
-			return self::number( $n );
+			return self::_number( $n );
 		}
 	}
 
@@ -74,10 +44,13 @@ class Less_Functions {
 	}
 
 	public function rgba( $r = null, $g = null, $b = null, $a = null ) {
-		$rgb = [ $r, $g, $b ];
-		$rgb = array_map( [ __CLASS__, 'scaled' ], $rgb );
+		$rgb = [
+			self::_scaled( $r ),
+			self::_scaled( $g ),
+			self::_scaled( $b )
+		];
 
-		$a = self::number( $a );
+		$a = self::_number( $a );
 		return new Less_Tree_Color( $rgb, $a );
 	}
 
@@ -86,10 +59,10 @@ class Less_Functions {
 	}
 
 	public function hsla( $h, $s, $l, $a ) {
-		$h = fmod( self::number( $h ), 360 ) / 360; // Classic % operator will change float to int
-		$s = self::clamp( self::number( $s ) );
-		$l = self::clamp( self::number( $l ) );
-		$a = self::clamp( self::number( $a ) );
+		$h = fmod( self::_number( $h ), 360 ) / 360; // Classic % operator will change float to int
+		$s = self::_clamp( self::_number( $s ) );
+		$l = self::_clamp( self::_number( $l ) );
+		$a = self::_clamp( self::_number( $a ) );
 
 		$m2 = $l <= 0.5 ? $l * ( $s + 1 ) : $l + $s - $l * $s;
 
@@ -132,10 +105,10 @@ class Less_Functions {
 	 * @param float $a
 	 */
 	public function hsva( $h, $s, $v, $a ) {
-		$h = ( ( self::number( $h ) % 360 ) / 360 ) * 360;
-		$s = self::number( $s );
-		$v = self::number( $v );
-		$a = self::number( $a );
+		$h = ( ( self::_number( $h ) % 360 ) / 360 ) * 360;
+		$s = self::_number( $s );
+		$v = self::_number( $v );
+		$a = self::_number( $a );
 
 		$i = (int)floor( (int)( $h / 60 ) % 6 );
 		$f = ( $h / 60 ) - $i;
@@ -292,7 +265,7 @@ class Less_Functions {
 			$hsl['s'] += $hsl['s'] * $amount->value / 100;
 		} else {
 			$hsl['s'] += $amount->value / 100;
-		}		$hsl['s'] = self::clamp( $hsl['s'] );
+		}		$hsl['s'] = self::_clamp( $hsl['s'] );
 
 		return $this->hsla( $hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] );
 	}
@@ -317,7 +290,7 @@ class Less_Functions {
 			$hsl['s'] -= $amount->value / 100;
 		}
 
-		$hsl['s'] = self::clamp( $hsl['s'] );
+		$hsl['s'] = self::_clamp( $hsl['s'] );
 
 		return $this->hsla( $hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] );
 	}
@@ -338,7 +311,7 @@ class Less_Functions {
 			$hsl['l'] += $amount->value / 100;
 		}
 
-		$hsl['l'] = self::clamp( $hsl['l'] );
+		$hsl['l'] = self::_clamp( $hsl['l'] );
 
 		return $this->hsla( $hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] );
 	}
@@ -357,7 +330,7 @@ class Less_Functions {
 		} else {
 			$hsl['l'] -= $amount->value / 100;
 		}
-		$hsl['l'] = self::clamp( $hsl['l'] );
+		$hsl['l'] = self::_clamp( $hsl['l'] );
 
 		return $this->hsla( $hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] );
 	}
@@ -378,7 +351,7 @@ class Less_Functions {
 			$hsl['a'] += $amount->value / 100;
 		}
 
-		$hsl['a'] = self::clamp( $hsl['a'] );
+		$hsl['a'] = self::_clamp( $hsl['a'] );
 		return $this->hsla( $hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] );
 	}
 
@@ -398,7 +371,7 @@ class Less_Functions {
 			$hsl['a'] -= $amount->value / 100;
 		}
 
-		$hsl['a'] = self::clamp( $hsl['a'] );
+		$hsl['a'] = self::_clamp( $hsl['a'] );
 		return $this->hsla( $hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] );
 	}
 
@@ -413,7 +386,7 @@ class Less_Functions {
 		$hsl = $color->toHSL();
 
 		$hsl['a'] = $amount->value / 100;
-		$hsl['a'] = self::clamp( $hsl['a'] );
+		$hsl['a'] = self::_clamp( $hsl['a'] );
 		return $this->hsla( $hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] );
 	}
 
@@ -445,16 +418,19 @@ class Less_Functions {
 	 */
 	public function mix( $color1 = null, $color2 = null, $weight = null ) {
 		if ( !$color1 instanceof Less_Tree_Color ) {
-			throw new Less_Exception_Compiler( 'The first argument to mix must be a color' . ( $color1 instanceof Less_Tree_Expression ? ' (did you forgot commas?)' : '' ) );
+			$type = is_object( $color1 ) ? get_class( $color1 ) : gettype( $color1 );
+			throw new Less_Exception_Compiler( "The first argument must be a color, $type given" . ( $color1 instanceof Less_Tree_Expression ? ' (did you forgot commas?)' : '' ) );
 		}
 		if ( !$color2 instanceof Less_Tree_Color ) {
-			throw new Less_Exception_Compiler( 'The second argument to mix must be a color' . ( $color2 instanceof Less_Tree_Expression ? ' (did you forgot commas?)' : '' ) );
+			$type = is_object( $color2 ) ? get_class( $color2 ) : gettype( $color2 );
+			throw new Less_Exception_Compiler( "The second argument must be a color, $type given" . ( $color2 instanceof Less_Tree_Expression ? ' (did you forgot commas?)' : '' ) );
 		}
 		if ( !$weight ) {
 			$weight = new Less_Tree_Dimension( '50', '%' );
 		}
 		if ( !$weight instanceof Less_Tree_Dimension ) {
-			throw new Less_Exception_Compiler( 'The third argument to contrast must be a percentage' . ( $weight instanceof Less_Tree_Expression ? ' (did you forgot commas?)' : '' ) );
+			$type = is_object( $weight ) ? get_class( $weight ) : gettype( $weight );
+			throw new Less_Exception_Compiler( "The third argument must be a percentage, $type given" . ( $weight instanceof Less_Tree_Expression ? ' (did you forgot commas?)' : '' ) );
 		}
 
 		$p = $weight->value / 100.0;
@@ -510,7 +486,7 @@ class Less_Functions {
 		if ( !$threshold ) {
 			$threshold = 0.43;
 		} else {
-			$threshold = self::number( $threshold );
+			$threshold = self::_number( $threshold );
 		}
 
 		if ( $color->luma() < $threshold ) {
@@ -547,10 +523,10 @@ class Less_Functions {
 		$replacement = ( $replacement instanceof Less_Tree_Quoted ) ?
 			$replacement->value : $replacement->toCSS();
 
-		$result = preg_replace( $expr, $replacement, $result, 1 );
-
 		if ( $flags && $flags->value && preg_match( '/g/', $flags->value ) ) {
 			$result = preg_replace( $expr, $replacement, $result );
+		} else {
+			$result = preg_replace( $expr, $replacement, $result, 1 );
 		}
 
 		if ( $string instanceof Less_Tree_Quoted ) {
@@ -559,7 +535,7 @@ class Less_Functions {
 		return new Less_Tree_Quoted( '', $result );
 	}
 
-	public static function replace_flags( $flags ) {
+	private static function replace_flags( $flags ) {
 		return str_replace( [ 'e', 'g' ], '', $flags );
 	}
 
@@ -693,8 +669,9 @@ class Less_Functions {
 	/**
 	 * @param bool $isMin
 	 * @param array<Less_Tree> $args
+	 * @see less-2.5.3.js#minMax
 	 */
-	private function _minmax( $isMin, $args ) {
+	private function _minMax( $isMin, $args ) {
 		$arg_count = count( $args );
 
 		if ( $arg_count < 1 ) {
@@ -779,11 +756,11 @@ class Less_Functions {
 	}
 
 	public function min( ...$args ) {
-		return $this->_minmax( true, $args );
+		return $this->_minMax( true, $args );
 	}
 
 	public function max( ...$args ) {
-		return $this->_minmax( false, $args );
+		return $this->_minMax( false, $args );
 	}
 
 	public function getunit( $n ) {
@@ -814,6 +791,7 @@ class Less_Functions {
 			return new Less_Tree_Color( substr( $c->value, 1 ) );
 		}
 
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition
 		if ( ( $c instanceof Less_Tree_Color ) || ( $c = Less_Tree_Color::fromKeyword( $c->value ) ) ) {
 			$c->value = null;
 			return $c;
@@ -901,49 +879,39 @@ class Less_Functions {
 		return new Less_Tree_Dimension( $n );
 	}
 
+	/**
+	 * @see less-2.5.3.js#data-uri
+	 */
 	public function datauri( $mimetypeNode, $filePathNode = null ) {
-		$filePath = ( $filePathNode ? $filePathNode->value : null );
-		$mimetype = $mimetypeNode->value;
-
-		$args = 2;
-		if ( !$filePath ) {
-			$filePath = $mimetype;
-			$args = 1;
+		if ( !$filePathNode ) {
+			$filePathNode = $mimetypeNode;
+			$mimetypeNode = null;
 		}
+
+		$filePath = $filePathNode->value;
+		$mimetype = ( $mimetypeNode ? $mimetypeNode->value : null );
 
 		$filePath = str_replace( '\\', '/', $filePath );
-		if ( Less_Environment::isPathRelative( $filePath ) ) {
-			$currentFileInfo = $this->currentFileInfo;
-			'@phan-var array $currentFileInfo';
-			if ( Less_Parser::$options['relativeUrls'] ) {
-				$temp = $currentFileInfo['currentDirectory'];
-			} else {
-				$temp = $currentFileInfo['entryPath'];
-			}
-
-			if ( !empty( $temp ) ) {
-				$filePath = Less_Environment::normalizePath( rtrim( $temp, '/' ) . '/' . $filePath );
-			}
-
+		$fragmentStart = strpos( $filePath, '#' );
+		$fragment = '';
+		if ( $fragmentStart !== false ) {
+			$fragment = substr( $filePath, $fragmentStart );
+			$filePath = substr( $filePath, 0, $fragmentStart );
 		}
 
+		[ $filePath ] = Less_FileManager::getFilePath( $filePath, $this->currentFileInfo );
+
 		// detect the mimetype if not given
-		if ( $args < 2 ) {
-
-			/* incomplete
-			$mime = require('mime');
-			mimetype = mime.lookup(path);
-
-			// use base 64 unless it's an ASCII or UTF-8 format
-			var charset = mime.charsets.lookup(mimetype);
-			useBase64 = ['US-ASCII', 'UTF-8'].indexOf(charset) < 0;
-			if (useBase64) mimetype += ';base64';
-			*/
+		if ( !$mimetype ) {
 
 			$mimetype = Less_Mime::lookup( $filePath );
 
-			$charset = Less_Mime::charsets_lookup( $mimetype );
-			$useBase64 = !in_array( $charset, [ 'US-ASCII', 'UTF-8' ] );
+			if ( $mimetype === "image/svg+xml" ) {
+				$useBase64 = false;
+			} else {
+				$charset = Less_Mime::charsets_lookup( $mimetype );
+				$useBase64 = !in_array( $charset, [ 'US-ASCII', 'UTF-8' ] );
+			}
 			if ( $useBase64 ) {
 				$mimetype .= ';base64';
 			}
@@ -952,27 +920,26 @@ class Less_Functions {
 			$useBase64 = preg_match( '/;base64$/', $mimetype );
 		}
 
-		if ( file_exists( $filePath ) ) {
-			$buf = @file_get_contents( $filePath );
-		} else {
-			$buf = false;
+		if ( !file_exists( $filePath ) ) {
+			$fallback = new Less_Tree_Url( ( $filePathNode ?: $mimetypeNode ), $this->currentFileInfo );
+			return $fallback->compile( $this->env );
 		}
+		$buf = @file_get_contents( $filePath );
+
+		$buf = $useBase64 ? base64_encode( $buf ) : rawurlencode( $buf );
+		$url = "data:" . $mimetype . ',' . $buf . $fragment;
 
 		// IE8 cannot handle a data-uri larger than 32KB. If this is exceeded
 		// and the --ieCompat flag is enabled, return a normal url() instead.
-		$DATA_URI_MAX_KB = 32;
-		$fileSizeInKB = round( strlen( $buf ) / 1024 );
-		if ( $fileSizeInKB >= $DATA_URI_MAX_KB ) {
-			$url = new Less_Tree_Url( ( $filePathNode ?: $mimetypeNode ), $this->currentFileInfo );
-			return $url->compile( $this->env );
+		$DATA_URI_MAX_KB = 32768;
+		if ( strlen( $buf ) >= $DATA_URI_MAX_KB ) {
+			// NOTE: Less.js checks for ieCompat here (true by default).
+			// For Less.php, ieCompat is not configurable, and always true.
+			$fallback = new Less_Tree_Url( ( $filePathNode ?: $mimetypeNode ), $this->currentFileInfo );
+			return $fallback->compile( $this->env );
 		}
 
-		if ( $buf ) {
-			$buf = $useBase64 ? base64_encode( $buf ) : rawurlencode( $buf );
-			$filePath = '"data:' . $mimetype . ',' . $buf . '"';
-		}
-
-		return new Less_Tree_Url( new Less_Tree_Anonymous( $filePath ) );
+		return new Less_Tree_Url( new Less_Tree_Quoted( '"' . $url . '"', $url, false ) );
 	}
 
 	// svg-gradient
@@ -985,7 +952,6 @@ class Less_Functions {
 
 		$gradientType = 'linear';
 		$rectangleDimension = 'x="0" y="0" width="1" height="1"';
-		$useBase64 = true;
 		$directionValue = $direction->toCSS();
 
 		switch ( $directionValue ) {
@@ -1041,24 +1007,63 @@ class Less_Functions {
 
 		$returner .= '</' . $gradientType . 'Gradient><rect ' . $rectangleDimension . ' fill="url(#gradient)" /></svg>';
 
-		if ( $useBase64 ) {
-			$returner = "'data:image/svg+xml;base64," . base64_encode( $returner ) . "'";
-		} else {
-			$returner = "'data:image/svg+xml," . $returner . "'";
-		}
+		$revert = [ '%21' => '!', '%2A' => '*', '%27' => "'", '%26' => '&', '%2C' => ',', '%40' => '@', '%2B' => '+', '%24' => '$', '%28' => '(', '%29' => ')' ];
+		$returner = strtr( rawurlencode( $returner ), $revert );
 
-		return new Less_Tree_Url( new Less_Tree_Anonymous( $returner ) );
+		$returner = "data:image/svg+xml," . $returner;
+
+		return new Less_Tree_Url( new Less_Tree_Quoted( "'" . $returner . "'", $returner, false ) );
 	}
 
 	/**
-	 * Php version of javascript's `encodeURIComponent` function
-	 *
-	 * @param string $string The string to encode
-	 * @return string The encoded string
+	 * @see https://github.com/less/less.js/blob/v2.5.3/lib/less-node/image-size.js
 	 */
-	public static function encodeURIComponent( $string ) {
-		$revert = [ '%21' => '!', '%2A' => '*', '%27' => "'", '%28' => '(', '%29' => ')' ];
-		return strtr( rawurlencode( $string ), $revert );
+	private function getImageSize( $filePathNode ) {
+		$filePath = $filePathNode->value;
+
+		$filePath = str_replace( '\\', '/', $filePath );
+
+		[ $filePath ] = Less_FileManager::getFilePath( $filePath, $this->currentFileInfo );
+
+		$mimetype = Less_Mime::lookup( $filePath );
+
+		if ( $mimetype === "image/svg+xml" ) {
+			return $this->getSvgSize( $filePath );
+		}
+
+		[ $imagewidth, $imageheight ] = getimagesize( $filePath );
+
+		return [ "width" => $imagewidth, "height" => $imageheight ];
+	}
+
+	/**
+	 * @see https://github.com/image-size/image-size/blob/main/lib/types/svg.ts
+	 */
+	private function getSvgSize( string $filePathNode ) {
+		$xml     = simplexml_load_string( file_get_contents( $filePathNode ) );
+		$attributes = $xml->attributes();
+		$width          = (string)$attributes->width;
+		$height         = (string)$attributes->height;
+
+		return [ "width" => $width, "height" => $height ];
+	}
+
+	public function imagesize( $filePathNode = null ) {
+		$imagesize = $this->getImageSize( $filePathNode );
+		return new Less_Tree_Expression( [
+			new Less_Tree_Dimension( $imagesize["width"], "px" ),
+			new Less_Tree_Dimension( $imagesize["height"], "px" )
+		] );
+	}
+
+	public function imagewidth( $filePathNode = null ) {
+		$imagesize = $this->getImageSize( $filePathNode );
+		return new Less_Tree_Dimension( $imagesize["width"], "px" );
+	}
+
+	public function imageheight( $filePathNode = null ) {
+		$imagesize = $this->getImageSize( $filePathNode );
+		return new Less_Tree_Dimension( $imagesize["height"], "px" );
 	}
 
 	// Color Blending
@@ -1211,7 +1216,7 @@ class Less_Functions {
 	}
 
 	// non-w3c functions:
-	public function colorBlendAverage( $cb, $cs ) {
+	private function colorBlendAverage( $cb, $cs ) {
 		return ( $cb + $cs ) / 2;
 	}
 
@@ -1226,7 +1231,7 @@ class Less_Functions {
 		return $this->colorBlend( [ $this, 'colorBlendNegation' ], $color1, $color2 );
 	}
 
-	public function colorBlendNegation( $cb, $cs ) {
+	private function colorBlendNegation( $cb, $cs ) {
 		return 1 - abs( $cb + $cs - 1 );
 	}
 

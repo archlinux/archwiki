@@ -5,9 +5,9 @@
 		]
 	},
 	"pdf-desc": "Şəkil rejimində PDF fayllarına baxmaq üçün işləyici",
-	"pdf-file-page-warning": "PDF bəzi hallarda bəzi şəxsi məlumatlarınızı ifşa edə bilən mürəkkəb formatdır. PDF oxucusunu təhlükəsiz şəkildə konfiqurasiya etdiyinizə əmin olun.",
-	"pdf-file-page-warning-header": "Məxfilik mülahizələri",
-	"pdf-file-page-warning-footer": "Bu problem bu xüsusi fayla aid deyil, PDF formatı ilə bağlı ümumi problemdir.",
+	"pdf-file-page-warning": "PDF bəzi hallarda bəzi şəxsi məlumatlarınızı ifşa edə bilən mürəkkəb formatdır. PDF oxuyucusunu təhlükəsiz şəkildə konfiqurasiya etdiyinizə əmin olun.",
+	"pdf-file-page-warning-header": "Məxfilik ilə əlaqəli",
+	"pdf-file-page-warning-footer": "Bu problem xüsusi olaraq bu fayla aid deyil, PDF formatı ilə bağlı ümumi problemdir.",
 	"pdf-file-page-warning-info": "Bu məsələ haqqında ətraflı məlumat əldə edin.",
 	"pdf_no_metadata": "PDF-dən metadata əldə etmək mümkün deyil.",
 	"pdf_page_error": "Səhifə nömrəsi diapazonda deyil.",

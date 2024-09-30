@@ -3,13 +3,14 @@
 		"authors": [
 			"Sebranik",
 			"Игорь Бродский",
-			"Лариса Чиркова"
+			"Лариса Чиркова",
+			"Ростислав Мельников"
 		]
 	},
 	"mobile-frontend-editor-edit": "Redaktiruida",
 	"mobile-frontend-history": "Kacu necen lehtpolen vajehtusiden istorii.",
 	"mobile-frontend-home-button": "Pälehtpolele",
-	"mobile-frontend-language-article-heading": "Kel'",
+	"mobile-frontend-language-article-heading": "Kel’",
 	"mobile-frontend-main-menu-button-tooltip": "Avaita pämenü",
 	"mobile-frontend-main-menu-login": "Tulend",
 	"mobile-frontend-main-menu-logout": "Lähtta",

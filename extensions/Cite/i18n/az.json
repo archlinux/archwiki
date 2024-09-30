@@ -6,7 +6,8 @@
 			"Serkanland",
 			"Toghrul Rahimli",
 			"Vago",
-			"Wertuose"
+			"Wertuose",
+			"Nemoralis"
 		]
 	},
 	"cite-desc": "Sitatlar üçün<code>&lt;ref&gt;</code> və <code>&lt;references&gt;</code> teqləri əlavə edir",
@@ -27,7 +28,10 @@
 	"cite_error_included_ref": "<code>&lt;/ref&gt;</code> teqi üçün bağlanma <code>&lt;ref&gt;</code> yoxdur",
 	"cite_error_included_references": "<code>&lt;references&gt;</code> üçün bağlanma teqi yoxdur",
 	"cite_error_group_refs_without_references": "\" $1 \" adlı qrup üçün <code>&lt;ref&gt;</code> teqləri mövcuddur, lakin müvafiq <code>&lt;references group=\"$1\"/&gt;</code> teq tapılmadı",
+	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code> daxilindəki <code>&lt;ref&gt;</code> teqininin toqquşan \"$1\" qrup atributu var.",
 	"cite_error_references_missing_key": "<references> daxilindəki \"$1\" adlı <ref> teqi əvvəlki mətndə istifadə olunmur",
+	"cite_error_references_no_key": "<code>&lt;references&gt;</code> daxilindəki <code>&lt;ref&gt;</code> teqinin ad atributu yoxdur.",
+	"cite_error_empty_references_define": "\"$2\" <code><references></code> qrupu daxilində müəyyən edilmiş \"$1\" adlı <code><ref></code> teqi məzmuna malik deyil.",
 	"cite-tracking-category-cite-error": "İstinad xətası olan səhifələr",
 	"cite-tracking-category-cite-error-desc": "Bu kateqoriyadakı səhifələrdə istinad teqlərinin istifadəsində səhvlər var.",
 	"cite_references_link_accessibility_label": "Yuxarı get",

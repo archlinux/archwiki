@@ -4,10 +4,13 @@
 			"Amire80",
 			"Anjoeli9806",
 			"Kai theos en ho logos",
-			"Redhotchili23"
+			"Redhotchili23",
+			"Billie bb"
 		]
 	},
+	"vector-languages": "Mga Lenguahe",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ka pinulongan|$1 ka mga pinulongan}}",
+	"vector-no-language-button-label": "Magdugang sang mga lenguahe",
 	"vector-action-addsection": "Magdugang sing topiko",
 	"vector-action-delete": "Panason",
 	"vector-action-move": "Saylohon",
@@ -20,5 +23,15 @@
 	"vector-view-view": "Magbasa",
 	"vector-view-viewsource": "Lantawon ang ginhalinan",
 	"vector-more-actions": "Dugang Pa",
-	"vector-searchsuggest-containing": "Mangita sang mga panid nga nagasulod sang <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-feature-custom-font-size-name": "Teks",
+	"vector-feature-custom-font-size-0-label": "Magamay",
+	"vector-feature-custom-font-size-1-label": "Istandard",
+	"vector-feature-custom-font-size-2-label": "Dako",
+	"skin-theme-name": "Kolor",
+	"skin-theme-os-label": "Awtomatiko",
+	"vector-searchsuggest-containing": "Mangita sang mga panid nga nagasulod sang <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-main-menu-label": "Panguna nga menu",
+	"vector-page-tools-label": "Gamit",
+	"vector-page-tools-general-label": "Kabilogan",
+	"vector-unpin-element-label": "panago"
 }

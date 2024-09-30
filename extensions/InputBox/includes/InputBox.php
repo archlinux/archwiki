@@ -292,7 +292,7 @@ class InputBox {
 				} else {
 					// Checkbox
 					$htmlOut .= $this->buildCheckboxInput(
-						'ns' . $i, 'mw-inputbox-ns' . $i . $idRandStr, "1", $checked
+						$name, 'ns' . $i, 'mw-inputbox-ns' . $i . $idRandStr, "1", $checked
 					);
 				}
 			}
@@ -762,13 +762,14 @@ REGEX;
 	/**
 	 * Factory method to help build checkbox input.
 	 *
+	 * @param string $label text displayed next to checkbox (label)
 	 * @param string $name name of input
 	 * @param string $id id of input
 	 * @param string $value value of input
 	 * @param array $defaultAttr (optional)
 	 * @return string
 	 */
-	private function buildCheckboxInput( $name, $id, $value, $defaultAttr = [] ) {
+	private function buildCheckboxInput( $label, $name, $id, $value, $defaultAttr = [] ) {
 		$htmlOut = ' <div class="mw-inputbox-element mw-ui-checkbox">';
 		$htmlOut .= Xml::element( 'input',
 			[
@@ -779,7 +780,7 @@ REGEX;
 			] + $defaultAttr
 		);
 		// Label
-		$htmlOut .= Xml::label( $name, $id );
+		$htmlOut .= Xml::label( $label, $id );
 		$htmlOut .= '</div> ';
 		return $htmlOut;
 	}

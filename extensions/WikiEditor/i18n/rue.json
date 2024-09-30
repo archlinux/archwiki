@@ -3,7 +3,8 @@
 		"authors": [
 			"Gazeb",
 			"Macofe",
-			"Tkalyn"
+			"Tkalyn",
+			"Constraque"
 		]
 	},
 	"wikieditor": "Розшыреный інтерфейс едітованя вікітексту",
@@ -110,7 +111,7 @@
 	"wikieditor-toolbar-help-page-heading": "Надписы",
 	"wikieditor-toolbar-help-page-list": "Спискы",
 	"wikieditor-toolbar-help-page-file": "Файлы",
-	"wikieditor-toolbar-help-page-discussion": "Діскузія",
+	"wikieditor-toolbar-help-page-discussion": "Діскусія",
 	"wikieditor-toolbar-help-content-italic-description": "Курзіва",
 	"wikieditor-toolbar-help-content-italic-example": "Текст курзівов",
 	"wikieditor-toolbar-help-content-bold-description": "Тучне",

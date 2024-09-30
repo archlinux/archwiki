@@ -7,6 +7,7 @@
 	},
 	"inputbox-desc": "Аьтту хуьлуьйту хьалхе билгалйина HTML-формаш лато",
 	"inputbox-error-no-type": "Ахьа кхоллуш йолу лоьху меттиган тайпа билгалйина йац.",
+	"inputbox-error-bad-type": "Йаздечу меттиган ца девза тайпа \"$1\".\nДехар до, нийсачу тайпанех цхьаъ билгалдаккха: «create», «comment», «search», «search2» йа «fulltext».",
 	"inputbox-tryexact": "Леррина лахар",
 	"inputbox-searchfulltext": "Дуьззина йозанца лахар",
 	"inputbox-createarticle": "АгӀо кхолла",

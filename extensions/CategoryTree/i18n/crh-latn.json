@@ -4,11 +4,32 @@
 			"Don Alessandro"
 		]
 	},
+	"categorytree": "Kategoriya şeceresi",
+	"categorytree-portlet": "Kategoriyalar",
+	"categorytree-legend": "Kategoriya şeceresini köster",
+	"categorytree-desc": "[[Special:CategoryTree|Kategoriya stukturasını]] dinamik olaraq navigatsiya et",
+	"categorytree-header": "İçindekisini bir şecere olaraq körmek içün bir kategoriya adını yazıñız. (JavaScript kerek)",
+	"categorytree-category": "Kategoriya:",
+	"categorytree-go": "Şeceresini köster",
+	"categorytree-parents": "Üst kategoriyalar",
+	"categorytree-mode-label": "Rejim:",
+	"categorytree-mode-categories": "tek kategoriyalar",
+	"categorytree-mode-pages": "fayllardan ğayrı saifeler",
 	"categorytree-mode-all": "saifelerniñ episi",
+	"categorytree-collapse": "tarlat",
 	"categorytree-expand": "kenişlet",
 	"categorytree-member-counts": "İçinde {{PLURAL:$1|1 altkategoriya|$1 altkategoriya}}, {{PLURAL:$2|1 saife|$2 saife}}, ve {{PLURAL:$3|1 fayl|$3 fayl}} bar",
 	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 S",
+	"categorytree-num-files": "$1 F",
+	"categorytree-num-empty": "boş",
+	"categorytree-load": "yükle",
+	"categorytree-loading": "yüklene...",
+	"categorytree-nothing-found": "iç bir şey tapılıp olamadı",
+	"categorytree-no-subcategories": "alt kategoriya yoq",
 	"categorytree-no-parent-categories": "üst kategoriya yoq",
-	"categorytree-error": "Malümat yüklenmesi hatası."
+	"categorytree-no-pages": "alt kategoriya ve ya maqale yoq",
+	"categorytree-not-found": "<i>$1</i> kategoriyası tapılmadı",
+	"categorytree-error": "Malümat yüklenmesi hatası.",
+	"categorytree-retry": "Lütfen biraz beklep bir daa yapıp baqıñız."
 }

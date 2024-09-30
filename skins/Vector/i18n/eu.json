@@ -6,7 +6,8 @@
 			"Subi",
 			"Theklan",
 			"Unai Fdz. de Betoño",
-			"Xabier Armendaritz"
+			"Xabier Armendaritz",
+			"Laquin"
 		]
 	},
 	"skinname-vector": "Vector zaharra (2010)",
@@ -39,6 +40,15 @@
 	"vector-jumptosearch": "Bilaketara joan",
 	"vector-jumptocontent": "Edukira joan",
 	"vector-more-actions": "Gehiago",
+	"vector-feature-limited-width-name": "Zabalera",
+	"vector-feature-custom-font-size-name": "Testua",
+	"vector-feature-limited-width-0-label": "Zabala",
+	"vector-feature-limited-width-1-label": "Arrunta",
+	"vector-feature-custom-font-size-0-label": "Txikia",
+	"vector-feature-custom-font-size-1-label": "Arrunta",
+	"vector-feature-custom-font-size-2-label": "Handia",
+	"skin-theme-name": "Kolorea",
+	"skin-theme-os-label": "Automatikoa",
 	"vector-search-loader": "Bilaketa gomendioak kargatzen",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> duten orrialdeak bilatu",
 	"vector-intro-page": "Laguntza:Sarrera",

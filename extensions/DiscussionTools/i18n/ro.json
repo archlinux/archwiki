@@ -5,7 +5,10 @@
 			"Cezar",
 			"Matma Rex",
 			"NGC 54",
-			"Turbojet"
+			"Turbojet",
+			"Firilacroco",
+			"Paloi Sciurala",
+			"Strainu"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Veți}} primi o notificare când cineva publică un nou comentariu în această discuție. Vă puteți ajusta setările de notificări în preferințe.",
@@ -26,11 +29,11 @@
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|Paginile de discuție]] sunt locul unde oamenii discută despre cum să facă conținutul de pe {{SITENAME}} să fie cât se poate de bun. Utilizați această pagină de discuție pentru a începe o discuție despre editările făcute de la această adresă IP. Ceea ce spuneți aici va fi public pentru alții ca să poată vedea. Multe adrese IP se schimbă periodic și sunt adesea folosite de mai multe {{GENDER:|persoane}}.",
 	"discussiontools-emptystate-desc-user-temp": "Folosește această [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|pagină de discuție]] pentru a începe o discuție {{GENDER:{{PAGENAME}}|cu}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] despre cum să se îmbunătățească {{SITENAME}}. Ceea ce spuneți aici va fi public pentru alții ca să poată {{GENDER:|vedea}}. Din moment ce [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] este un [[{{MediaWiki:tempuser-helppage}}|cont temporar]], această pagină de discuție va expira în cele din urmă. [[{{MediaWiki:tempuser-helppage}}|Aflați mai multe]].",
 	"discussiontools-emptystate-title": "Începeți o discuție despre {{SUBJECTPAGENAME}}",
-	"discussiontools-emptystate-title-self": "Bun venit la pagina dvs. de {{GENDER:|discuție}}",
-	"discussiontools-emptystate-title-self-anon": "Bun venit la această pagină de {{GENDER:|discuție}}",
-	"discussiontools-emptystate-title-self-temp": "Bun venit la pagina temporară de {{GENDER:|discuție}} a dvs.",
+	"discussiontools-emptystate-title-self": "{{GENDER:|Bun-venit}} la pagina dvs. de discuție",
+	"discussiontools-emptystate-title-self-anon": "{{GENDER:|Bun-venit}} la această pagină de discuție",
+	"discussiontools-emptystate-title-self-temp": "{{GENDER:|Bun-venit}} la pagina dvs. temporară de discuții",
 	"discussiontools-emptystate-title-user": "Începeți o discuție {{GENDER:{{PAGENAME}}|cu}} {{PAGENAME}}",
-	"discussiontools-emptystate-title-user-anon": "Bun venit la această pagină de {{GENDER:|discuție}}",
+	"discussiontools-emptystate-title-user-anon": "{{GENDER:|Bun-venit}} la această pagină de discuție",
 	"discussiontools-emptystate-title-user-temp": "Începeți o discuție {{GENDER:{{PAGENAME}}|cu}} {{PAGENAME}}",
 	"discussiontools-error-comment-conflict": "{{GENDER:|Comentariul}} dvs. nu a putut fi salvat, deoarece altcineva a comentat în același timp cu dvs. Vă rugăm să încercați din nou, sau reîncărcați pagina pentru a vedea ultimele comentarii.",
 	"discussiontools-error-comment-disappeared": "{{GENDER:|Nu}} se poate găsi comentariul căruia îi răspundeți pe pagină. Se poate să fi fost șters sau mutat pe altă pagină.",

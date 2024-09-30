@@ -49,5 +49,6 @@
 	"vector-pin-element-label": "movar a latera panelo",
 	"vector-unpin-element-label": "celez",
 	"tooltip-vector-anon-user-menu-title": "Plusa selekti",
-	"vector-page-tools-nav-label": "Utensili por pagini"
+	"vector-page-tools-nav-label": "Utensili por pagini",
+	"vector-prefs-limited-width-help": "Kapabligar la limitizo di larjeso, por plubonigar la lektebleso."
 }

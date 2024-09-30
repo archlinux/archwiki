@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"BadDog"
 		]
 	},
 	"citethispage": "Citiraj",
 	"citethispage-desc": "Dodaje posebnu stranicu za [[Special:CiteThisPage|citiranje]] i link do alatnika",
 	"citethispage-link": "Citiraj stranicu",
-	"tooltip-citethispage": "Informacije kako citirati ovu stranicu",
+	"tooltip-citethispage": "Saznajte kako da citirate ovu stranicu",
 	"citethispage-change-submit": "Citiraj",
 	"citethispage-change-target": "Stranica:",
 	"citethispage-badrevision": "Greška: nisam pronašao reviziju s naznakom $2 za stranicu \"$1\"."

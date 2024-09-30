@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Rooiratel"
+		]
+	},
+	"editcheck-dialog-action-no": "Nee",
+	"editcheck-dialog-action-yes": "Ja",
+	"editcheck-dialog-addref-description": "Help lesers om te verstaan waar hierdie inligting vandaan kom deur 'n verwysing by te voeg.",
+	"editcheck-dialog-addref-reject-question": "Hoekom voeg jy nie 'n verwysing by nie?",
+	"editcheck-dialog-addref-reject-description": "Ander redakteurs sal waardeer om meer te leer oor jou besluit om die verwysing af te wys.",
+	"editcheck-dialog-addref-reject-irrelevant": "Ek dink nie verwysings is relevant vir die verandering wat ek maak nie",
+	"editcheck-dialog-addref-reject-common-knowledge": "Die inligting wat ek byvoeg is algemeen bekend",
+	"editcheck-dialog-addref-reject-uncertain": "Ek is nie seker watter verwysing om by te voeg nie",
+	"editcheck-dialog-addref-reject-other": "Ander",
+	"editcheck-dialog-addref-success-notify": "Dankie dat jy 'n verwysing bygevoeg het!",
+	"editcheck-dialog-addref-title": "Voeg 'n verwysing by",
+	"editcheck-dialog-title": "Voor die publikasie",
+	"tag-editcheck-reference-decline-common-knowledge": "Wysiging Kontroleer (verwysings) afgewys (algemene kennis)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "WysigingKontroleer verwysing is verwerp as algemene kennis",
+	"tag-editcheck-reference-decline-irrelevant": "Wysiging Kontroleer (verwysings) afgekeur (irrelevant)",
+	"tag-editcheck-reference-decline-irrelevant-description": "WysigingKontroleer verwysing is verwerp as irrelevant",
+	"tag-editcheck-reference-decline-other": "Wysiging Kontroleer (verwysings) afgekeur (ander)",
+	"tag-editcheck-reference-decline-other-description": "WysigingKontroleer-verwysing is vir 'n ongelyste rede afgekeur",
+	"tag-editcheck-reference-decline-uncertain": "Wysiging Kontroleer (verwysings) afgekeur (onseker)",
+	"tag-editcheck-reference-decline-uncertain-description": "WysigingKontroleer verwysing is verwerp as onduidelik"
+}

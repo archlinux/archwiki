@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"abusefilter": "Upravjenje filtrom zloupotrěbjenij",
+	"abuselog": "Dnevnik filtra zloupotrěbjenij",
+	"abusefilter-warning": "'''Ostrěženje:''' tuto dějanje bylo avtomatično poznano kako vrědno.\nNekonstruktivne dějanja budut brzo odstranjene, \ni vslěd ponovnyh nekonstruktivnyh izměn vaše konto ili IP-adres mogut byti zablokovane.\nAko vy věrite, čto tuto dějanje jest konstruktivno, vy možete go izpolniti ješče raz, da byste to potvrdili. \nKratky opis vrědnogo pravila, s ktorym sběglo se vaše dějanje: $1",
+	"abusefilter-disallowed": "Tuto dějanje bylo avtomatično poznano kako vrědno, i tomu zabranjeno. \nAko myslite, že vaše dějańje bylo konstruktivno, prosimo, uvědomite administratorov o tom, čto vy hotěli sdělati. \nKratky opis vrědnogo pravila, s ktorym sběglo se vaše dějańje: $1",
+	"abusefilter-blocker": "Filtr zloupotrěbjenij",
+	"right-abusefilter-modify": "Tvorjenje ili izměnjanje filtrov zloupotrěbjenij",
+	"right-abusefilter-view": "Prěgledanje filtrov zloupotrěbjenij",
+	"right-abusefilter-modify-global": "Tvorjenje ili izměnjanje globalnyh filtrov zloupotrěbjenij",
+	"action-abusefilter-modify": "Izměnjenje filtrov zloupotrěbjenij",
+	"action-abusefilter-view": "Prěgledanje filtrov zloupotrěbjenij"
+}

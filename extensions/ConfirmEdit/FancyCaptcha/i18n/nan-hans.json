@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"SupaplexTW"
+		]
+	},
+	"fancycaptcha-captcha": "安全检查",
+	"fancycaptcha-accountcreate": "为着阻止自动注文程序，咱爱麻烦你输入下跤箍显示的字句([[Special:Captcha/help|more info]])：",
+	"fancycaptcha-imgcaptcha-ph": "输入图顶悬看着的文字",
+	"fancycaptcha-reload-text": "重新整理"
+}

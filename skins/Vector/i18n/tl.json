@@ -6,7 +6,8 @@
 			"GinawaSaHapon",
 			"Ianlopez1115",
 			"Jojit fb",
-			"Sky Harbor"
+			"Sky Harbor",
+			"Qwrop"
 		]
 	},
 	"skinname-vector": "Legacy na Vector (2010)",
@@ -41,6 +42,15 @@
 	"vector-jumptosearch": "Pumunta sa paghahanap",
 	"vector-jumptocontent": "Pumunta sa nilalaman",
 	"vector-more-actions": "Higit pa",
+	"vector-feature-limited-width-name": "Lapad",
+	"vector-feature-custom-font-size-name": "Teksto",
+	"vector-feature-limited-width-0-label": "Malawak",
+	"vector-feature-limited-width-1-label": "Katamtaman",
+	"vector-feature-custom-font-size-0-label": "Maliit",
+	"vector-feature-custom-font-size-1-label": "Katamtaman",
+	"vector-feature-custom-font-size-2-label": "Malaki",
+	"skin-theme-name": "Kulay",
+	"skin-theme-os-label": "Automatiko",
 	"vector-search-loader": "Kinakarga ang mga minunungkahing mahahanap",
 	"vector-searchsuggest-containing": "Maghanap ng mga pahinang may <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Wikipedia:Maligayang pagdating!",

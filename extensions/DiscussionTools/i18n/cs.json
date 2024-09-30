@@ -179,6 +179,7 @@
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|archivaci}} diskusní stránky",
 	"echo-pref-tooltip-dt-subscription": "Upozorněte mě, když někdo přidá nový komentář v tématu, které odebírám.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Upozorněte mě, když je téma, které odebírám, archivováno nebo odstraněno ze stránky, nebo když oznámení o nových komentářích zveřejněných v daném tématu nelze odeslat z jiných důvodů.",
+	"discussiontools-comments-before-first-heading-category-desc": "Diskusní stránka obsahuje komentáře v úvodní sekci (před prvním nadpisem). To může způsobit, že se úvodní sekce nebo komentáře zobrazí chybně, zejména v mobilní verzi a v mobilních aplikacích.",
 	"tag-discussiontools-added-comment-description": "V této editaci byl přidán komentář na diskusní stránku",
 	"tag-discussiontools-description": "Editace provedená pomocí Diskusních nástrojů",
 	"tag-discussiontools-edit": "editace komentáře",

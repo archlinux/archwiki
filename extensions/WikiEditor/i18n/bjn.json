@@ -9,6 +9,8 @@
 	},
 	"wikieditor-wikitext-tab": "NaskahWiki",
 	"wikieditor-toolbar": "Kukuar pakakas mambabak",
+	"wikieditor-toolbar-preference": "Nyalaakan bilah pakakas pambabakan",
+	"wikieditor-toolbar-preference-help": "Ini bahanu disambat 'pambabak naskah wiki 2010'.",
 	"wikieditor-toolbar-tool-bold": "Kandal",
 	"wikieditor-toolbar-tool-bold-example": "Naskah kandal",
 	"wikieditor-toolbar-tool-italic": "Hiring",
@@ -119,5 +121,6 @@
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Cuntuh.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Tandatangan lawan waktu",
 	"wikieditor-toolbar-help-content-signature-description": "Tandatangan",
-	"wikieditor-toolbar-help-content-indent-description": "Inden"
+	"wikieditor-toolbar-help-content-indent-description": "Inden",
+	"tag-wikieditor-description": "Babakan diulah mamakai [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (éditor naskah wiki 2010)"
 }

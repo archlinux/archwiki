@@ -7,13 +7,14 @@
 			"Julián L",
 			"Macofe",
 			"MarcoAurelio",
-			"SinNovedades"
+			"SinNovedades",
+			"Qwrop"
 		]
 	},
-	"timeless-desc": "Una apariencia atemporal, diseñada por Brandon Harris en base al prototipo Winter y a varios estilos de la Fundación Wikimedia.",
+	"timeless-desc": "Una apariencia atemporal, diseñada por Brandon Harris en base al prototipo Winter y a varios estilos de la Fundación Wikimedia",
 	"timeless-anonymous": "Anónimo",
 	"timeless-loggedinas": "Sesión iniciada como '''$1'''",
-	"timeless-notloggedin": "No has accedido",
+	"timeless-notloggedin": "No estás accedido",
 	"timeless-userpage": "Página de {{GENDER:$1|usuario|usuaria}}",
 	"timeless-talkpage": "Discusión de {{GENDER:$1|usuario|usuaria}}",
 	"timeless-pagelog": "Registros de página",

@@ -72,7 +72,8 @@
 			"Александр Сигачёв",
 			"ЛингвоЧел",
 			"Сrower",
-			"Туллук"
+			"Туллук",
+			"Умар"
 		]
 	},
 	"abusefilter-desc": "Позволяет применять автоматические эвристические фильтры к правкам",
@@ -627,7 +628,7 @@
 	"abusefilter-diff-info": "Основные сведения",
 	"abusefilter-diff-pattern": "Условия фильтрации",
 	"abusefilter-diff-invalid": "Не удаётся получить запрошенные версии",
-	"abusefilter-diff-backhistory": "История файла",
+	"abusefilter-diff-backhistory": "История фильтра",
 	"abusefilter-diff-prev": "Предыдущая правка",
 	"abusefilter-diff-next": "Следующая правка",
 	"abusefilter-import-intro": "Вы можете использовать этот интерфейс для импорта фильтров из других вики.\nВ исходной вики, нажмите «{{int:abusefilter-edit-export}}» в разделе «{{int:abusefilter-edit-tools}}» интерфейса редактирования.\nСкопируйте содержание текстового поля, вставьте его на эту страницу и нажмите «{{int:abusefilter-import-submit}}».",
@@ -671,7 +672,7 @@
 	"tag-abusefilter-condition-limit": "предел условия достигнут",
 	"tag-abusefilter-condition-limit-description": "Правки или другие действия, которые не могут быть проверены всеми активными [[Special:AbuseFilter|фильтрами злоупотреблений]] ([[mw:Extension:AbuseFilter/Conditions|справка]]).",
 	"notification-header-throttle-filter": "Фильтр злоупотреблений $2, который {{GENDER:$1|вы}} недавно редактировали, был ограничен.",
-	"notification-header-throttle-filter-actions": "Фильтр злоупотреблений $2 недавно отредактированный {{GENDER:$1|you}} имел высокий процент совпадений, а следующие {{PLURAL:$4|действие было|действия были}} автоматически отключены: $3.",
+	"notification-header-throttle-filter-actions": "Фильтр злоупотреблений $2 недавно отредактированный {{GENDER:$1|вами}} имел высокий процент совпадений, а следующие {{PLURAL:$4|действие было|действия были}} автоматически отключены: $3.",
 	"notification-header-throttle-filter-no-actions": "Фильтр злоупотреблений $2, который {{GENDER:$1|вы}} недавно редактировали, имел высокий уровень совпадений, но никакие действия не были автоматически отключены.",
 	"notification-subject-throttle-filter": "Отредактированный{{GENDER:$1|вами}} фильтр злоупотреблений был заблокирован на сайте {{SITENAME}}",
 	"notification-link-text-show-filter": "Показать фильтр",

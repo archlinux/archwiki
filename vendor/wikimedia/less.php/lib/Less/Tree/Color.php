@@ -55,7 +55,7 @@ class Less_Tree_Color extends Less_Tree {
 
 	public function toCSS( $doNotCompress = false ) {
 		$compress = Less_Parser::$options['compress'] && !$doNotCompress;
-		$alpha = Less_Functions::fround( $this->alpha );
+		$alpha = $this->fround( $this->alpha );
 		if ( $this->value ) {
 			return $this->value;
 		}
@@ -72,7 +72,7 @@ class Less_Tree_Color extends Less_Tree {
 
 			$values = [];
 			foreach ( $this->rgb as $c ) {
-				$values[] = Less_Functions::clamp( round( $c ), 255 );
+				$values[] = $this->clamp( round( $c ), 255 );
 			}
 			$values[] = $alpha;
 
@@ -109,7 +109,7 @@ class Less_Tree_Color extends Less_Tree {
 		$rgb = [];
 		$alpha = $this->alpha * ( 1 - $other->alpha ) + $other->alpha;
 		for ( $c = 0; $c < 3; $c++ ) {
-			$rgb[$c] = Less_Functions::operate( $op, $this->rgb[$c], $other->rgb[$c] );
+			$rgb[$c] = $this->_operate( $op, $this->rgb[$c], $other->rgb[$c] );
 		}
 		return new self( $rgb, $alpha );
 	}
@@ -207,10 +207,20 @@ class Less_Tree_Color extends Less_Tree {
 			$x->alpha === $this->alpha ) ? 0 : null;
 	}
 
+	/**
+	 * @param int|float $val
+	 * @param int $max
+	 * @return int|float
+	 * @see less-2.5.3.js#Color.prototype
+	 */
+	private function clamp( $val, $max ) {
+		return min( max( $val, 0 ), $max );
+	}
+
 	public function toHex( $v ) {
 		$ret = '#';
 		foreach ( $v as $c ) {
-			$c = Less_Functions::clamp( Less_Parser::round( $c ), 255 );
+			$c = $this->clamp( Less_Parser::round( $c ), 255 );
 			if ( $c < 16 ) {
 				$ret .= '0';
 			}

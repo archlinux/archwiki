@@ -24,15 +24,20 @@
 			"Remember the dot",
 			"Sanbec",
 			"Tiberius1701",
-			"Translationista"
+			"Translationista",
+			"Adamw",
+			"DiegoAmbrocio",
+			"Eulalio",
+			"Francodiaz7"
 		]
 	},
 	"cite-desc": "Añade las etiquetas <code>&lt;ref&gt;</code> y <code>&lt;references&gt;</code> para citas.",
 	"cite_error": "Error en la cita: $1",
 	"cite_error_ref_invalid_dir": "<code>dir=\"$1\"</code> no es válido; debe ser <code>ltr</code> o <code>rtl</code>",
+	"cite_error_ref_conflicting_dir": "Una de las etiquetas <code>&lt;ref&gt;</code> con el nombre \"$1\" tiene un atributo <code>dir</code> contradictorio.",
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> no válida; el nombre no puede ser un número entero. Usa un título descriptivo",
 	"cite_error_ref_no_key": "La etiqueta de apertura <code>&lt;ref&gt;</code> es incorrecta o tiene el nombre mal",
-	"cite_error_ref_too_many_keys": "Etiqueta <code>&lt;ref&gt;</code> no válida; nombres no válidos, p. ej. demasiados",
+	"cite_error_ref_too_many_keys": "Parámetro inválido en la etiqueta <code>&lt;ref&gt;</code>",
 	"cite_error_ref_no_input": "Etiqueta <code>&lt;ref&gt;</code> no válida; las referencias sin nombre deben tener contenido",
 	"cite_error_references_duplicate_key": "Etiqueta <code>&lt;ref&gt;</code> no válida; el nombre «$1» está definido varias veces con contenidos diferentes",
 	"cite_error_references_invalid_parameters": "Parámetro no válido en la etiqueta de <code>&lt;references&gt;</code>",

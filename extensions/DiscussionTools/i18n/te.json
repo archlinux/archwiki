@@ -96,6 +96,7 @@
 	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "ఈ వ్యాఖ్య కనబడలేదు. దాన్ని తొలగించడమో, తరలించడమో చేసి ఉండవచ్చు.",
 	"discussiontools-target-comments-missing": "కొత్త వ్యాఖ్యలు కనబడలేదు. వాటిని తొలగించడమో, తరలించడమో చేసి ఉండవచ్చు.",
+	"discussiontools-topicheader-authorcount": "చర్చలో $1 {{PLURAL:$1|వ్యక్తి|మంది వ్యక్తులు}} ఉన్నారు",
 	"discussiontools-topicheader-latestcomment": "తాజా వ్యాఖ్య: $1",
 	"discussiontools-topicsubscription-button-subscribe": "సభ్యత్వం",
 	"discussiontools-topicsubscription-button-subscribe-label": "సభ్యత్వం",

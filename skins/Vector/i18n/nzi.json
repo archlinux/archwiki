@@ -1,15 +1,40 @@
 {
 	"@metadata": {
 		"authors": [
-			"Valentine Badu"
+			"Valentine Badu",
+			"Elliot one",
+			"ANNAN JEREMIAH SELBY",
+			"Amire80",
+			"Cyprex",
+			"Mis delay",
+			"Ruth Alhassan"
 		]
 	},
+	"vector-languages": "Aneɛ",
+	"vector-language-button-label": "aneɛ-aneɛ aneɛ $1",
+	"vector-no-language-button-label": "Fa aneɛ ngakyile boka nwolɛ",
 	"vector-action-addsection": "Fa tidwɛkɛ boka nwo",
 	"vector-action-delete": "Twikyi",
 	"vector-action-move": "Fa kɔ",
 	"vector-action-protect": "Gyima",
 	"vector-view-create": "Buke",
 	"vector-view-edit": "Sa nu",
+	"vector-view-history": "Nea tete dwɛkɛ ne",
 	"vector-more-actions": "Kpondɛ dɔɔnwo",
+	"vector-feature-limited-width-name": "Ye tendenle",
+	"vector-feature-custom-font-size-name": "Ɛhɛlɛlɛ",
+	"vector-feature-limited-width-0-label": "Ye tɛtɛlɛ nu",
+	"vector-feature-limited-width-1-label": "Mɔɔ kɔtɔ ɛlie ɛdo nu la",
+	"vector-feature-custom-font-size-0-label": "Ekyi",
+	"vector-feature-custom-font-size-1-label": "Titili",
+	"vector-feature-custom-font-size-2-label": "Tɛtɛlɛ",
+	"skin-theme-name": "Kɔla",
+	"skin-theme-os-label": "Ɔtomatike",
+	"vector-searchsuggest-containing": "Kpondɛ mɛ wɔ peegi ne anu la",
+	"vector-toc-label": "Nu ninyɛne ne mɔ",
+	"vector-toc-beginning": "Mɔlebɛbo",
+	"vector-main-menu-label": "Mɛnu mumua ne ɛhakyilɛ",
+	"vector-page-tools-label": "Gyimalilɛ ninyɛne",
+	"vector-page-tools-general-label": "Ɛleka biala",
 	"vector-unpin-element-label": "Fa fia"
 }

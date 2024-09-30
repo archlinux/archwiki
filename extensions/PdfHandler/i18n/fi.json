@@ -5,11 +5,16 @@
 			"Kulmalukko",
 			"Nike",
 			"VezonThunder",
-			"Vililikku"
+			"Vililikku",
+			"Samoasambia"
 		]
 	},
-	"pdf-desc": "Käsittelijä PDF-tiedostojen katsomiseen kuvatilassa.",
-	"pdf_no_metadata": "Metatietojen hakeminen PDF-tiedostosta epäonnistui",
+	"pdf-desc": "Käsittelijä PDF-tiedostojen katsomiseen kuvatilassa",
+	"pdf-file-page-warning": "PDF on monimutkainen tiedostomuoto, joka saattaa joissakin tapauksissa paljastaa joitain henkilötietojasi. Varmista, että määrität PDF-katseluohjelmasi turvalliseksi.",
+	"pdf-file-page-warning-header": "Tietosuojanäkökohdat",
+	"pdf-file-page-warning-footer": "Tämä ongelma ei liity erityisesti tähän tiedostoon, vaan se on yleinen PDF-tiedostomuotoon liittyvä ongelma.",
+	"pdf-file-page-warning-info": "Lisätietoja tästä ongelmasta.",
+	"pdf_no_metadata": "Metatietojen hakeminen PDF-tiedostosta epäonnistui.",
 	"pdf_page_error": "Sivunumero ei ole alueella.",
 	"exif-pdf-producer": "Muunto-ohjelma",
 	"exif-pdf-version": "PDF-muodon versio",
