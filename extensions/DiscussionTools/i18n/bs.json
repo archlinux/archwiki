@@ -117,5 +117,6 @@
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "Izmijeni praćenja",
 	"echo-category-title-dt-subscription": "Praćene {{PLURAL:$1|stranice}} za razgovor",
 	"echo-pref-tooltip-dt-subscription": "Obavijesti me kad neko odgovori na temu koju {{GENDER:|pratim}}.",
-	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nova tema]"
+	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} nova tema]",
+	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} odgovor]"
 }

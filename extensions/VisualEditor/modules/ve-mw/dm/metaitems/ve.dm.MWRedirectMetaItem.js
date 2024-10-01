@@ -35,7 +35,9 @@ ve.dm.MWRedirectMetaItem.static.matchRdfaTypes = [ 'mw:PageProp/redirect' ];
 ve.dm.MWRedirectMetaItem.static.toDataElement = function ( domElements, converter ) {
 	// HACK piggy-back on MWInternalLinkAnnotation's ./ stripping logic
 	var linkData = ve.dm.MWInternalLinkAnnotation.static.toDataElement( domElements, converter );
-	linkData.type = this.name;
+	if ( linkData ) {
+		linkData.type = this.name;
+	}
 	return linkData;
 };
 

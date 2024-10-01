@@ -60,7 +60,7 @@
 	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|বাইট}}",
 	"scribunto-limitreport-profile": "লুয়া বৃত্তান্ত",
 	"scribunto-limitreport-profile-ms": "$1 মি.সে.",
-	"scribunto-limitreport-logs": "লুয়া লোগোগুলি",
+	"scribunto-limitreport-logs": "লুয়া লগ",
 	"nstab-module": "মডিউল",
 	"tooltip-ca-nstab-module": "মডিউল পাতাটি দেখুন"
 }

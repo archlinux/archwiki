@@ -2,8 +2,30 @@
 	"@metadata": {
 		"authors": [
 			"Dovud",
-			"ToJack"
+			"ToJack",
+			"Farorud"
 		]
 	},
-	"discussiontools-replywidget-mode-source": "Манбаъ"
+	"discussiontools-defaultsummary-reply": "Посух додан",
+	"discussiontools-replylink": "{{GENDER:|ҷавоб додан}}",
+	"discussiontools-replywidget-advanced": "Пешрафта",
+	"discussiontools-replywidget-cancel": "Лағв",
+	"discussiontools-replywidget-mode-source": "Манбаъ",
+	"discussiontools-replywidget-mode-visual": "Дидорӣ",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Ҷавоб додан}} ба {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Пешнамоиш",
+	"discussiontools-replywidget-reply": "{{GENDER:|Ҷавоб додан}}",
+	"discussiontools-replywidget-summary": "Хулоса",
+	"discussiontools-replywidget-watchthis": "Ин саҳифаро ба [[Special:Watchlist|феҳристи назарот]] ворид кардан",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|нафар}} дар баҳс",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|паём}}",
+	"discussiontools-topicheader-latestcomment": "Паёми охирин: $1",
+	"discussiontools-topicsubscription-button-subscribe": "обуна шудан",
+	"discussiontools-topicsubscription-button-subscribe-label": "Обунашавӣ",
+	"discussiontools-topicsubscription-button-unsubscribe": "лағви обуна",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Лағви обуна",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Шумо}} огаҳӣ хоҳед гирифт аз паёмҳои нав дар ин баҳс.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Шумо}} пайгирӣ кардед!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Шумо}} дигар огаҳӣ дар бораи паёмҳои нав дар ин баҳс нахоҳед гирифт.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Обунаи {{GENDER:|Шумо}} қатъ шуд."
 }

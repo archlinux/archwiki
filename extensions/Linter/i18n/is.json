@@ -2,15 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"MyraMidnight",
-			"Sveinn í Felli"
+			"Sveinn í Felli",
+			"Stefán Örvar Sigmundsson"
 		]
 	},
+	"linterrors": "Lóarvillur",
 	"linter-form-namespace": "Nafnrými:",
-	"linter-heading-high-priority": "Mikinn forgang",
-	"linter-heading-low-priority": "Lítinn forgang",
+	"linter-heading-high-priority": "Mikill forgangur",
+	"linter-heading-low-priority": "Lítill forgangur",
 	"linter-heading-medium-priority": "Miðlungs forgangur",
 	"linter-page-edit": "breyta",
 	"linter-page-history": "breytingaskrá",
 	"linter-page-viewsource": "skoða efni",
-	"linter-pager-title-header": "Titill síðu"
+	"linter-pager-title-header": "Titill síðu",
+	"linterrors-summary": "<strong>Athugaðu:</strong> Talningar fyrir flokka eru ekki nákvæmar talningar heldur eru þær byggðar á áætlunum."
 }

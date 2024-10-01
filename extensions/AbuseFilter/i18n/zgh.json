@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Hakim1bal",
-			"Mdb897"
+			"Mdb897",
+			"Lhoussine AIT TAYFST"
 		]
 	},
 	"abusefilter-log-search-title": "ⴰⵣⵡⵍ:",
@@ -12,5 +13,6 @@
 	"abusefilter-list-options-deleted": "ⵉⵙⵜⵜⴰⵢⵏ ⵉⵜⵜⵡⴰⴽⴽⵙⵏ:",
 	"abusefilter-history-deleted": "ⵉⵜⵜⵡⴰⴽⴽⵙ",
 	"abusefilter-action-degroup": "ⵙⵉⵜⵜⵢ ⵙⴳ ⵜⵔⵓⴱⴱⴰ",
+	"abusefilter-test-nobots": "ⵙⵙⵏⴼⵉ ⵉⵙⵏⴼⴰⵍ ⵏ ⵓⴱⵓⵜ",
 	"abusefilter-test-search-type-edit": "ⵉⵙⵏⴼⵍⵏ"
 }

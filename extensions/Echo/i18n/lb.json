@@ -162,7 +162,7 @@
 	"notification-header-reverted": "Är {{PLURAL:$4|Ännerung op <strong>$3</strong> gouf|Ännerungen op <strong>$3</strong> goufen}} {{GENDER:$2|zréckgesat}}.",
 	"notification-header-emailuser": "$1 huet {{GENDER:$2|Iech}} eng E-Mail geschéckt.",
 	"notification-edit-talk-page-email-subject2": "$1 {{GENDER:$2|huet}} Iech en neie Message op Ärer Diskussiounssäit op {{SITENAME}} hannerlooss",
-	"notification-page-linked-email-subject": "Eng Säit déi {{GENDER:$3|Dir}} op {{SITENAME}} ugeluecht hutt gouf verlinkt",
+	"notification-page-linked-email-subject": "Eng Säit, déi {{GENDER:$3|Dir}} op {{SITENAME}} ugeluecht hutt, gouf verlinkt",
 	"notification-reverted-email-subject2": "{{GENDER:$3|Är}} {{PLURAL:$4|Ännerung|Ännerungen}} op {{SITENAME}} {{PLURAL:$4|gouf|goufen}} {{GENDER:$2|zréckgesat}}",
 	"notification-mention-email-subject": "$1 {{GENDER:$2|huet}} {{GENDER:$3|Iech}} op {{SITENAME}} ernimmt",
 	"notification-user-rights-email-subject": "{{GENDER:$3|Är}} Benotzerrechter op {{SITENAME}} hu geännert",

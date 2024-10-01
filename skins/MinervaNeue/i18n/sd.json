@@ -5,7 +5,8 @@
 			"Kaleem Bhatti",
 			"Mehtab ahmed",
 			"Sindhu",
-			"Tweety"
+			"Tweety",
+			"Charoo"
 		]
 	},
 	"minerva-last-modified-date": "آخري ڀيرو $1 تي، $2 وڳي سنواريو ويو",
@@ -33,7 +34,7 @@
 	"minerva-meta-data-issues-section-header": "ڀاڱي جا مسئلا",
 	"mobile-frontend-notifications-filter": "ڇاڻي",
 	"mobile-frontend-pageaction-edit-tooltip": "ھن صفحي جي نمائنده سيڪشن کي سنواريو",
-	"mobile-frontend-placeholder": "{{SITENAME}} ڳوليو",
+	"mobile-frontend-placeholder": "{{SITENAME}} ۾ ڳوليو",
 	"mobile-frontend-random-button": "بلاترتيب",
 	"mobile-frontend-redirected-from": "\"[[$1]]\" کان چوريل",
 	"mobile-frontend-talk-back-to-filepage": "فائيل \"$1\" ڏانھن واپس وڃو.",

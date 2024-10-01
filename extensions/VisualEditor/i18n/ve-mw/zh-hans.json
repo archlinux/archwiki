@@ -54,7 +54,8 @@
 			"沈澄心",
 			"神樂坂秀吉",
 			"铁桶",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"Anterdc99"
 		]
 	},
 	"collabpad-doctitle": "协作板：$1",
@@ -274,7 +275,7 @@
 	"visualeditor-editingtabdialog-ok": "使用我在上次编辑时用的编辑器",
 	"visualeditor-editingtabdialog-title": "编辑标签",
 	"visualeditor-editnotices-tool": "$1{{PLURAL:$1|个通知}}",
-	"visualeditor-editnotices-tooltip": "编辑告示",
+	"visualeditor-editnotices-tooltip": "编辑提示",
 	"visualeditor-editsummary": "描述您的更改",
 	"visualeditor-editsummary-characters-remaining": "剩余字符数",
 	"visualeditor-educationpopup-dismiss": "好的，明白了",

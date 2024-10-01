@@ -5,10 +5,17 @@
 			"咽頭べさ"
 		]
 	},
+	"discussiontools": "ကရိယာသဳကၠဳမချပ်ဗ္စာရဏာဂမၠိုၚ်",
+	"discussiontools-autotopicsubpopup-dismiss": "အဝ်ခေ၊ ကၠိုဟ်ယျ",
+	"discussiontools-autotopicsubpopup-preferences": "မပလေဝ်ဒါန်သ္ဍိုက်မၠိုက်ဂမၠိုၚ်",
+	"discussiontools-autotopicsubpopup-title": "{{GENDER:|ဇကု}} မစုတ်လဝ်စရၚ်နွံတုဲအိုတ်ယျ",
 	"discussiontools-defaultsummary-reply": "ကလေၚ်",
+	"discussiontoolsdebug-title": "ဗီုခၞံပတန်လဝ်ဒေတာကိရိယာသဳကၠဳမချပ်ဗ္စာရဏာဂမၠိုၚ်",
+	"discussiontoolsdebug-pagetitle": "က္ဍိုပ်မုက်လိက်",
 	"discussiontools-emptystate-button": "စကၠောန်ဓရီုကျာချပ်ဗ္စာရဏာမွဲ",
 	"discussiontools-emptystate-desc": "ဓမံက်ထ္ၜးကဵုကသပ်ဗ္စာရဏာမဆေၚ်စပ်ကဵုမုက်လိက်ဓရီုကျာ၊ {{PAGENAME}} မဒှ်ယၟုမုက်လိက်။\nလ္ပကၠာဲမဆေၚ်စပ်ကဵုဝေါဟာမှဝ်ဏအ်နကဵုပ္ဍဲမာတ်သေတ်ဏံဂှ်:\n* {{SUBJECTPAGENAME}}\n* {{PAGENAME}}\n* {{MediaWiki:discussiontools-emptystate-link-talkpages}}",
 	"discussiontools-emptystate-title": "စကၠောန်ဓရီုကျာချပ်ဗ္စာရဏာပရောဟိုတ် {{SUBJECTPAGENAME}}",
+	"discussiontools-emptystate-title-self": "{{GENDER:|ဒုၚ်တၠုၚ်ဏာ}} နူကဵုမုက်လိက် ဓရီုကျာနကဵုဇကုရအဴ",
 	"discussiontools-emptystate-title-user": "က္ဍိုပ်လိက်ပရောဟိုတ်လ္တူထ္ၜးလဝ်နကဵုမုက်လိက်ဓရီုကျာညးမသုၚ်စောဲမသၠးမံၚ်။ {{PAGENAME}} မဒှ်ယၟုညးမသုၚ်စောဲ။\nလ္ပကၠာဲမဆေၚ်စပ်ကဵုဝေါဟာမှဝ်ဏအ်နကဵုပ္ဍဲမာတ်သေတ်ဏံဂှ်:\n* {{PAGENAME}}",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "ပါဲထောံနူစရၚ်စုတ်လဝ်",
 	"discussiontools-replylink": "{{GENDER:|ကလေင်လိက်}}",

@@ -8,12 +8,17 @@
 			"OsamaK",
 			"ديفيد",
 			"زكريا",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Michel Bakni",
+			"Mohammed Qays",
+			"Mohanad",
+			"Mohanad Kh"
 		]
 	},
 	"cite-desc": "يضيف وسمي <code>&lt;ref&gt;</code> و<code>&lt;references&gt;</code> للاستشهادات",
 	"cite_error": "خطأ استشهاد: $1",
 	"cite_error_ref_invalid_dir": "<code>dir=\"$1\"</code> غير صالح؛ يجب أن يكون <code>ltr</code> أو <code>rtl</code>",
+	"cite_error_ref_conflicting_dir": "تحتوي إحدى علامات <code>&lt;ref&gt;</code> التي تحمل الاسم \"$1\" على خاصية dir متداخلة.",
 	"cite_error_ref_numeric_key": "وسم <code>&lt;ref&gt;</code> غير صحيح؛ الاسم لا يمكن أن يكون عددا صحيحا بسيطا. استخدم عنوانا وصفيا",
 	"cite_error_ref_no_key": "وسم الفتح <code>&lt;ref&gt;</code> غير صحيح أو له اسم سييء.",
 	"cite_error_ref_too_many_keys": "وسم <code>&lt;ref&gt;</code> غير صحيح؛ أسماء غير صحيحة، على سبيل المثال كثيرة جدا",
@@ -46,5 +51,8 @@
 	"cite-wikieditor-help-content-reference-description": "مرجع",
 	"cite-wikieditor-help-content-named-reference-description": "مرجع مسمى",
 	"cite-wikieditor-help-content-rereference-description": "استخدام نفس المرجع مرة أخرى",
-	"cite-wikieditor-help-content-showreferences-description": "اعرض المراجع"
+	"cite-wikieditor-help-content-showreferences-description": "اعرض المراجع",
+	"cite-wikieditor-help-content-reference-example-text1": "نص الصفحة. $1",
+	"cite-wikieditor-help-content-reference-example-text2": "[ $1 نص الرابط]، نص إضافي.",
+	"cite-wikieditor-help-content-reference-example-text3": "[ نص الرابط $1 ]"
 }

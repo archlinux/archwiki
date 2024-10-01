@@ -9,7 +9,8 @@
 			"YaronSh",
 			"Yona b",
 			"לואיקה",
-			"עמד"
+			"עמד",
+			"מקף"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|תקבל|תקבלי}} התראה כשמישהו כותב תגובה חדשה בדיון הזה. {{GENDER:|אתה יכול|את יכולה}} לכוונן את הגדרות ההתראות שלך בהעדפות.",
@@ -25,10 +26,10 @@
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|דפי שיחה]] הם המקום שבו אנשים דנים איך לגרום לתוכן באתר {{SITENAME}} להיות הכי טוב שהוא יכול. {{GENDER:|אתה יכול|את יכולה}} להשתמש בדף השיחה הזה כדי להתחיל דיון עם אחרים על איך לשפר את הדף [[:{{SUBJECTPAGENAME}}]].",
 	"discussiontools-emptystate-desc-self": "אנשים באתר {{SITENAME}} יכולים להשתמש ב[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|דף השיחה]] הזה לשליחת הודעה ציבורית בשבילך, {{GENDER:|ותקבל|ותקבלי|ותישלח לך}} התראה כשזה יקרה.",
 	"discussiontools-emptystate-desc-self-anon": "אנשים באתר {{SITENAME}} יכולים להשתמש ב[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|דף השיחה]] הזה כדי לפרסם הודעה ציבורים על עריכות שנעשו מכתובת ה־IP {{GENDER:|שהתחברת}} דרכה עכשיו.\n\nכתובות IP רבות משתנות לעיתים קרובות, ולפעמים משמשות כמה אנשים. באפשרותך [$1 ליצור חשבון] או [$2 להיכנס לחשבון] כדי להימנע מבלבול עתידי עם משתמשים אחרים שלא נכנסו. יצירת חשבון גם מסתירה את כתובת ה־IP שלך.",
-	"discussiontools-emptystate-desc-self-temp": "אנשים באתר {{SITENAME}} יכולים להשתמש ב[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|דף השיחה]] הזה כדי לפרסם הודעה ציבורית {{GENDER:|אליך|אלייך}}.\n\nבסוף, [[{{MediaWiki:tempuser-helppage}}|הדף הזה יפוג]]. כדי להמשיך לקבל התראות ולקלל גישה לאפשרויות אחרות, [$1 {{GENDER:|צור|צרי}} חשבון] או [$2 {{GENDER:|היכנס|היכנסי}}].",
+	"discussiontools-emptystate-desc-self-temp": "אנשים באתר {{SITENAME}} יכולים להשתמש ב[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|דף השיחה]] הזה כדי לפרסם הודעה ציבורית {{GENDER:|אליך|אלייך}}.\n\nבסוף, [[{{MediaWiki:tempuser-helppage}}|הדף הזה יפוג]]. כדי להמשיך לקבל התראות ולקבל גישה לאפשרויות אחרות, יש [$1 ליצור חשבון] או [$2 להיכנס].",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|דפי שיחה]] הם המקום שבו אנשים דנים איך לגרום לתוכן באתר {{SITENAME}} להיות הכי טוב שהוא יכול. {{GENDER:|תתחיל|תתחילי}} להשתמש בדף השיחה הזה כדי ליצור קשר עם [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] ולשתף פעולה {{GENDER:{{PAGENAME}}|איתו|איתה}}. מה {{GENDER:|שתגיד|שתגידי}} כאן יהיה ציבורי ואחרים יראו את זה.",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|דפי שיחה]] הם המקום שבו אנשים דנים איך לגרום לתוכן באתר {{SITENAME}} להיות הכי טוב שהוא יכול. {{GENDER:|אתה יכול|את יכולה}} להשתמש בדף הזה כדי להתחיל דיון על עריכות שנעשו מכתובות ה־IP הזאת. מה {{GENDER:|שתגיד|שתגידי}} כאן יהיה ציבורי ואחרים יראו את זה. כתובות IP רבות משתנות לעיתים קרובות, ולפעמים משמשות כמה אנשים.",
-	"discussiontools-emptystate-desc-user-temp": "{{GENDER:|השתמש|השתמשי}} ב[[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|דף השיחה]] הזה כדי להתחיל דיון {{GENDER:{{PAGENAME}}|עם}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] על איך לשפר את {{SITENAME}}. מה {{GENDER:|שאתה אומר|שאת אומרת}} יהיה גלוי לציבור ואנשים אחרים יראו את זה. [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] הוא [[{{MediaWiki:tempuser-helppage}}|חשבון זמני]] ולכן בסופו של דבר דף השיחה הזה יפוג. [[{{MediaWiki:tempuser-helppage}}|למידע נוסף]].",
+	"discussiontools-emptystate-desc-user-temp": "{{GENDER:|השתמש|השתמשי}} ב[[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|דף השיחה]] הזה כדי להתחיל דיון {{GENDER:{{PAGENAME}}|עם}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] על איך לשפר את {{SITENAME}}. מה {{GENDER:|שאתה אומר|שאת אומרת}} יהיה גלוי לציבור ואנשים אחרים יראו את זה. [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] הוא [[{{MediaWiki:tempuser-helppage}}|חשבון חולף]] ולכן בסופו של דבר דף השיחה הזה יחלוף. [[{{MediaWiki:tempuser-helppage}}|למידע נוסף]].",
 	"discussiontools-emptystate-title": "להתחיל דיון על {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "{{GENDER:|ברוך הבא|ברוכה הבאה|ברוך בואך}} לדף השיחה שלך",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|ברוך הבא|ברוכה הבאה|ברוך בואך}} לדף השיחה הזה",
@@ -122,7 +123,7 @@
 	"discussiontools-replywidget-abandontopic-keep": "להמשיך לכתוב",
 	"discussiontools-replywidget-advanced": "מתקדם",
 	"discussiontools-replywidget-anon-warning": "<strong>לא נכנסת לחשבון.</strong> כדי לקבל התראה כשמישהו מגיב ולקבל ייחוס עם שמך ולא עם כתובת ה־IP שלך, אפשר [$1 להיכנס] או [$2 ליצור חשבון].",
-	"discussiontools-replywidget-autocreate-warning": "<strong>לא נכנסת לחשבון.</strong> לאחר עריכה, ייווצר בשבילך חשבון זמני. אפשר לקרוא על זה [[$3|מידע נוסף]]. יש [$1 להיכנס לחשבון] או [$2 ליצור חשבון] כדי לקבל התראה כשמישהו משיב לאחר שהחשבון הזה פג, וכדי לגשת לתכונות אחרות.",
+	"discussiontools-replywidget-autocreate-warning": "<strong>לא נכנסת לחשבון.</strong> לאחר עריכה, ייווצר בשבילך חשבון חולף. אפשר לקרוא על זה [[$3|מידע נוסף]]. יש [$1 להיכנס לחשבון] או [$2 ליצור חשבון] כדי לקבל התראה כשמישהו משיב לאחר שהחשבון הזה חולף, וכדי לגשת לתכונות אחרות.",
 	"discussiontools-replywidget-cancel": "ביטול",
 	"discussiontools-replywidget-feedback": "{{GENDER:|שתף|שתפי|לשתף}} איתנו משוב על התכונה הזאת",
 	"discussiontools-replywidget-keyboard-shortcut-submit": "אפשר ללחוץ על $1 כדי לשלוח את התגובה שלך",

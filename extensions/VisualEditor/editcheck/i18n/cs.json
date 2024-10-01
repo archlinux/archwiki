@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Martin Urbanec",
+			"Matěj Suchánek"
+		]
+	},
+	"editcheck-dialog-action-no": "Ne",
+	"editcheck-dialog-action-yes": "Ano",
+	"editcheck-dialog-addref-description": "Pomozte čtenářům pochopit, odkud vámi přidaná informace pochází tím, že přidáte referenci.",
+	"editcheck-dialog-addref-reject-question": "Z jakého důvodu nepřidáváte žádnou referenci?",
+	"editcheck-dialog-addref-reject-description": "Ostatní wikipedisté by rádi věděli více o tom, proč jste se {{GENDER:|rozhodl|rozhodla|rozhodl(a)}} nepřidat žádnou referenci.",
+	"editcheck-dialog-addref-reject-irrelevant": "Nemyslím si, že reference je pro mou změnu relevantní",
+	"editcheck-dialog-addref-reject-common-knowledge": "Informace, kterou jsem {{GENDER:|přidal|přidala|přidal(a)}}, je všeobecně známá.",
+	"editcheck-dialog-addref-reject-uncertain": "Nejsem si {{GENDER:|jistý|jistá|jist(a)}}, jakou referenci přidat",
+	"editcheck-dialog-addref-reject-other": "Jiné",
+	"editcheck-dialog-addref-success-notify": "Děkujeme za přidání reference!",
+	"editcheck-dialog-addref-title": "Přidat referenci",
+	"editcheck-dialog-title": "Před zveřejněním",
+	"tag-editcheck-reference-decline-common-knowledge": "Kontrola editace (reference) odmítnuta (všeobecné znalosti)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Kontrola editace (reference) odmítnuta jako všeobecná znalost",
+	"tag-editcheck-reference-decline-irrelevant": "Kontrola editace (reference) odmítnuta (irelevantní)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Kontrola editace (reference) odmítnuta jako irelevantní",
+	"tag-editcheck-reference-decline-other": "Kontrola editace (reference) odmítnuta (jiné)",
+	"tag-editcheck-reference-decline-other-description": "Kontrola editace (reference) odmítnuta z jiného důvodu",
+	"tag-editcheck-reference-decline-uncertain": "Kontrola editace (reference) odmítnuta (nejistota)",
+	"tag-editcheck-reference-decline-uncertain-description": "Kontrola editace (reference) odmítnuta, protože si uživatel není jistý, jakou referenci by měl přidat."
+}

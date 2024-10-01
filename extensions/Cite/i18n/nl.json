@@ -10,7 +10,9 @@
 			"Niels",
 			"PiefPafPier",
 			"Romaine",
-			"Siebrand"
+			"Siebrand",
+			"Amire80",
+			"Ciell"
 		]
 	},
 	"cite-desc": "Voegt <code>&lt;ref&gt;</code>- en <code>&lt;references&gt;</code>-labels toe voor citaten",
@@ -21,7 +23,7 @@
 	"cite_error_ref_no_key": "Het openingslabel <code>&lt;ref&gt;</code> is onjuist opgemaakt of heeft een verkeerde naam.",
 	"cite_error_ref_too_many_keys": "Onjuiste parameter in de tag <code>&lt;ref&gt;</code>",
 	"cite_error_ref_follow_conflicts": "Een <code>&lt;ref follow=\"…\"&gt;</code>-tag die de voortzetting is van een vorige, kan niet ook afzonderlijk worden genoemd (name=\"…\") of worden uitgebreid (extends=\"…\").",
-	"cite_error_ref_nested_extends": "Het uitbreiden van <code><ref></code>-tags tot meer dan één niveau diep is niet toegestaan",
+	"cite_error_ref_nested_extends": "Het uitbreiden van <code>&lt;ref&gt;</code>-tags tot meer dan één niveau diep is niet toegestaan",
 	"cite_error_ref_no_input": "Onjuist label <code>&lt;ref&gt;</code>; refs zonder naam moeten inhoud hebben",
 	"cite_error_references_duplicate_key": "Ongeldig label <code>&lt;ref&gt;</code>; de naam \"$1\" wordt meerdere keren met andere inhoud gedefinieerd.",
 	"cite_error_references_invalid_parameters": "Onjuiste parameter in <code>&lt;references&gt;</code>-tag",

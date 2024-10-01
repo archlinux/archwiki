@@ -46,6 +46,7 @@
 	"action-oathauth-api-all": "verificar o estado de OATH",
 	"oathauth-user-not-found": "Non se atopou ningunha conta de usuario co nome especificado",
 	"oath-log-name": "Rexistro de autenticación de dous factores",
+	"oathauth-ui-no-module": "Ningunha activada",
 	"oathauth-module-totp-label": "TOTP (identificador de uso único)",
 	"oathauth-ui-manage": "Xestionar",
 	"oathmanage": "Xestionar autenticación de dous factores",
@@ -60,5 +61,7 @@
 	"oathauth-totp-description": "O algoritmo TOTP (Time-based One-Time Password) é unha extensión do algoritmo HOTP (HMAC-based One-time Password) xerando un contrasinal de uso único tomando como unicidade a hora actual.",
 	"oathauth-disable-method-warning-header": "Confirmar desactivación do método de autenticación",
 	"oathauth-disable-method-warning-button-label": "Confirmar e continuar",
-	"oathauth-invalidrequest": "Solicitude non válida"
+	"oathauth-invalidrequest": "Solicitude non válida",
+	"oathauth-notifications-disable-help": "Axuda",
+	"oathauth-notifications-enable-help": "Axuda"
 }

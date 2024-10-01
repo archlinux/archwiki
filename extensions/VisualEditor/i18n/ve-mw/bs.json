@@ -93,7 +93,7 @@
 	"visualeditor-dialog-meta-settings-displaytitle": "Naslov za prikaz",
 	"visualeditor-dialog-meta-settings-displaytitle-help": "Možete postaviti prikaz drukčijeg naslova stranice od samog naziva stranice.",
 	"visualeditor-dialog-meta-settings-hiddencat-help": "Možete spriječiti da se ova kategorija pojavi u spisku kategorija na stranicama na kojima se nalazi. Ovo je korisno za kategorije koje su zanimljive urednicima ali ne i većini čitaoca, kao naprimjer stranice koje trebaju sliku.",
-	"visualeditor-dialog-meta-settings-hiddencat-label": "Skrivena kategorija",
+	"visualeditor-dialog-meta-settings-hiddencat-label": "Sakrivena kategorija",
 	"visualeditor-dialog-meta-settings-index-default": "Predodređeno",
 	"visualeditor-dialog-meta-settings-index-disable": "Ne",
 	"visualeditor-dialog-meta-settings-index-force": "Da",

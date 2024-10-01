@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ykhwong"
+			"Ykhwong",
+			"Pikakapi"
 		]
 	},
 	"apihelp-templatedata-summary": "TemplateData 확장 기능에 의해 저장된 데이터를 가져옵니다.",
-	"apihelp-templatedata-example-1": "[[Template:Stub]]과 [[Template:Example]]의 틀데이터를 반환하지만, 틀이 존재하지 않는다든지, 아니면 틀이 있더라도 틀데이터가 없을 경우에도 결과를 반환합니다.",
-	"apihelp-templatedata-example-2": "[[Template:Stub]]과 [[Template:Example]]의 틀데이터를 반환하지만, 틀이 존재하지 않는다든지, 아니면 틀이 있더라도 틀데이터가 없을 경우 결과를 반환하지 않습니다.",
+	"apihelp-templatedata-example-1": "[[틀:Foobar]]의 틀 데이터를 반환하지만, 해당 틀이 없거나 틀이 있어도 틀데이터가 없다면 결과를 반환하지 않습니다.",
+	"apihelp-templatedata-example-2": "[[틀:Phabricator]]의 틀 데이터를 반환하지만, 해당 틀이 없거나 틀이 있어도 틀데이터가 없다면 결과를 반환하지 않습니다.",
 	"apihelp-templatedata-param-includeMissingTitles": "틀데이터가 없거나 부족한 경우에도 제목에 대한 데이터를 반환합니다. 기본적으로 제목이 존재하고 틀데이터가 있는 경우에만 제목이 반환됩니다.",
 	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "틀데이터가 없거나 부실한 경우에도 제목에 대한 데이터를 반환합니다. 기본적으로 (하위 호환을 위해) 이들이 존재하고 틀데이터를 보유하고 있는 경우 제목만 반환됩니다.",
 	"apihelp-templatedata-param-lang": "이 언어로 지역화된 값을 반환합니다. 기본적으로 사용 가능한 모든 번역이 반환됩니다.",

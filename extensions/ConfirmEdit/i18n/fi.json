@@ -16,7 +16,8 @@
 			"Pyscowicz",
 			"Stryn",
 			"Syreeni",
-			"Varusmies"
+			"Varusmies",
+			"Samoasambia"
 		]
 	},
 	"captcha-edit": "Ratkaise alla oleva laskutoimitus muokataksesi tätä sivua ([[Special:Captcha/help|lisätietoja]]):",
@@ -45,5 +46,6 @@
 	"confirmedit-preview-content": "Sisältö",
 	"confirmedit-preview-validity": "Kelpoisuus",
 	"confirmedit-preview-valid": "kelvollinen",
-	"confirmedit-preview-invalid": "kelpaamaton"
+	"confirmedit-preview-invalid": "kelpaamaton",
+	"confirmedit-preview-description": "Seuraava taulukko näyttää listan tämän sivun riveistä ja mikäli se on pätevä IP-osoite tai IP-alue. Jos rivi on pätevä IP-osoite tai IP-alue, se tullaan jättämään CAPTCHA-varmennusten ulkopuolelle, mutta virheelliset rivit sivuutetaan. Esimerkki pätevästä IP-alueesta on: 69.208.0.0/16, joka pätee välille 69.208.0.0 – 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Lisätietoja] IP-alueiden laskemisesta."
 }

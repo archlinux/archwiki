@@ -1,6 +1,7 @@
 <?php
 /**
  * @private
+ * @see less-2.5.3.js#Dimension.prototype
  */
 class Less_Tree_Dimension extends Less_Tree implements Less_Tree_HasValueProperty {
 
@@ -36,7 +37,7 @@ class Less_Tree_Dimension extends Less_Tree implements Less_Tree_HasValuePropert
 			throw new Less_Exception_Compiler( "Multiple units in dimension. Correct the units or use the unit function. Bad unit: " . $this->unit->toString() );
 		}
 
-		$value = Less_Functions::fround( $this->value );
+		$value = $this->fround( $this->value );
 		$strValue = (string)$value;
 
 		if ( $value !== 0 && $value < 0.000001 && $value > -0.000001 ) {
@@ -75,14 +76,15 @@ class Less_Tree_Dimension extends Less_Tree implements Less_Tree_HasValuePropert
 	 * @param self $other
 	 */
 	public function operate( $op, $other ) {
-		$value = Less_Functions::operate( $op, $this->value, $other->value );
-		$unit = clone $this->unit;
+		$value = $this->_operate( $op, $this->value, $other->value );
+		$unit = $this->unit->clone();
 
 		if ( $op === '+' || $op === '-' ) {
-
 			if ( !$unit->numerator && !$unit->denominator ) {
-				$unit->numerator = $other->unit->numerator;
-				$unit->denominator = $other->unit->denominator;
+				$unit = $other->unit->clone();
+				if ( $this->unit->backupUnit ) {
+					$unit->backupUnit = $this->unit->backupUnit;
+				}
 			} elseif ( !$other->unit->numerator && !$other->unit->denominator ) {
 				// do nothing
 			} else {
@@ -92,7 +94,7 @@ class Less_Tree_Dimension extends Less_Tree implements Less_Tree_HasValuePropert
 					throw new Less_Exception_Compiler( "Incompatible units. Change the units or use the unit function. Bad units: '" . $unit->toString() . "' and " . $other->unit->toString() . "'." );
 				}
 
-				$value = Less_Functions::operate( $op, $this->value, $other->value );
+				$value = $this->_operate( $op, $this->value, $other->value );
 			}
 		} elseif ( $op === '*' ) {
 			$unit->numerator = array_merge( $unit->numerator, $other->unit->numerator );
@@ -140,7 +142,7 @@ class Less_Tree_Dimension extends Less_Tree implements Less_Tree_HasValuePropert
 
 	public function convertTo( $conversions ) {
 		$value = $this->value;
-		$unit = clone $this->unit;
+		$unit = $this->unit->clone();
 
 		if ( is_string( $conversions ) ) {
 			$derivedConversions = [];

@@ -16,7 +16,8 @@
 			"Siebrand",
 			"The Evil IP address",
 			"Umherirrender",
-			"Xiplus"
+			"Xiplus",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
 	"cite-desc": "{{desc|name=Cite|url=https://www.mediawiki.org/wiki/Extension:Cite}}",
@@ -26,8 +27,8 @@
 	"cite_error_ref_numeric_key": "Error message shown if the name of a ref tag only contains digits. Examples that cause this error are <code>&lt;ref name=\"123\"/&gt;</code> or <code>&lt;ref name=\"456\">input</ref&gt;</code>",
 	"cite_error_ref_no_key": "Error message shown when ref tags without any content (that is <code>&lt;ref/&gt;</code>) are used without a name.",
 	"cite_error_ref_too_many_keys": "Generic error message shown when unknown, unsupported parameters are used in a <code>&lt;ref&gt;</code> tag. This can happen when there is a mistake in a parameter name, or a parameter exclusive to the <code>&lt;references&gt;</code> tag is used in a <code>&lt;ref&gt;</code> tag. This and [[MediaWiki:Cite error references invalid parameters]] form a pair and should be worded similarly.",
-	"cite_error_ref_follow_conflicts": "Error message shown when a ref tag with the Wikisource-specific <code>follow=\"…\"</code> feature also tries to use a <code>name=\"…\"</code> and/or <code>extends=\"…\"</code> parameter.",
-	"cite_error_ref_nested_extends": "Error message shown when a ref tag tries to extend another ref tag that's already extended, i.e. nesting sub-refs is not allowed.\n\nParameters:\n* $1 - Name of the invalid ref\n* $2 - Name of the previous, conflicting ref",
+	"cite_error_ref_follow_conflicts": "Error message shown when a ref tag with the <code>follow=\"...\"</code> feature, which is intended for sites like Wikisource, also tries to use a <code>name=\"...\"</code> or <code>extends=\"...\"</code> parameter.",
+	"cite_error_ref_nested_extends": "\"Extending\" refers to using the <code>extends</code> attribute on a <code>&lt;ref&gt;</code> tag. Error message shown when a ref tag tries to extend another ref tag that's already extended, i.e. nesting sub-refs is not allowed.\n\nParameters:\n* $1 - Name of the invalid ref\n* $2 - Name of the previous, conflicting ref",
 	"cite_error_ref_no_input": "Error message shown when ref tags without names have no content. An example that cause this error is <code>&lt;ref></ref&gt;</code>",
 	"cite_error_references_duplicate_key": "Error message shown when multiple refs with same name exist but with different content",
 	"cite_error_references_invalid_parameters": "Generic error message shown when unknown, unsupported parameters are used in a <code>&lt;references&gt;</code> tag. This can happen when there is a mistake in a parameter name, or a parameter exclusive to the <code>&lt;ref&gt;</code> tag is used in a <code>&lt;references&gt;</code> tag. This and [[MediaWiki:Cite error ref too many keys]] form a pair and should be worded similarly.",
@@ -47,8 +48,8 @@
 	"cite_reference_link": "{{notranslate}}\n\nParameters:\n* $1 - ref key\n* $2 - references key\n* $3 - link label",
 	"cite_references_link_one": "{{notranslate}}\n\nParameters:\n* $1 - references key\n* $2 - ref key\n* $3 - reference text\n* $4 - optional CSS class for direction",
 	"cite_references_link_many": "{{notranslate}}\n\nParameters:\n* $1 - references key\n* $2 - list of links\n* $3 - reference text\n* $4 - optional CSS class for direction",
-	"cite_references_link_many_format": "{{notranslate}}\n\nParameters:\n* $1 - reference key\n* $2 - canonical numeric backlink label for the link, always in the form \"1.2\"\n* $3 - optional alternate backlink label as defined via [[MediaWiki:cite_references_link_many_format_backlink_labels]]",
-	"cite_references_link_many_format_backlink_labels": "{{Optional}}",
+	"cite_references_link_many_format": "{{notranslate}}\n\nParameters:\n* $1 - Reference key\n* $2 - Canonical numerical label for the backlink, always in the form \"1.1\", \"1.2\", and so on.\n* $3 - Alternative alphabetic label for the backlink as defined via [[MediaWiki:cite_references_link_many_format_backlink_labels]], typically \"a\", \"b\", and so on.",
+	"cite_references_link_many_format_backlink_labels": "{{optional}}\nAlternative alphabetic backlink labels for use in the [[MediaWiki:cite_references_link_many_format]] message as parameter $3. Should only be customized when the alphabet is not identical to the 26 basic Latin characters \"a\" to \"z\". Make sure to include at least as many labels as in the default sequence \"a\" to \"zz\" (702 labels), possibly even more. E.g. adding \"aaa\" to \"azz\" gives 1378 total. This message can be disabled if not needed.",
 	"cite_references_link_many_sep": "{{notranslate}}",
 	"cite_references_link_many_and": "{{optional}}",
 	"cite_references_link_accessibility_label": "Text for screen readers to describe the jump to citation link (\"↑\").\n\nSee also:\n* {{msg-mw|Cite references link many accessibility label}} - if the citation is used multiple times",

@@ -4,5 +4,8 @@
 			"Song GK"
 		]
 	},
-	"fancycaptcha-captcha": "Pansik pengelikun"
+	"fancycaptcha-captcha": "Pansik pengelikun",
+	"fancycaptcha-accountcreate": "Kena ngelindung wiki ari pengawa ngaga akaun automatik, kami minta nuan masukka leka jaku ti ayan ba baruh tu dalam kutak ([[Special:Captcha/help|info ti silik agi]]):",
+	"fancycaptcha-imgcaptcha-ph": "Masukka teks ti dipeda nuan ba gambar .",
+	"fancycaptcha-reload-text": "Segarka"
 }

@@ -1,9 +1,24 @@
 {
 	"@metadata": {
 		"authors": [
-			"Valentine Badu"
+			"Valentine Badu",
+			"Amire80",
+			"Ruth Alhassan"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Mualɛ",
+	"discussiontools-replywidget-advanced": "Ɔkɔ ɔnwunlu",
+	"discussiontools-replywidget-cancel": "Pɛnu",
 	"discussiontools-replywidget-mode-source": "sᴐso",
-	"discussiontools-replywidget-summary": "Sinlipɛlɛ"
+	"discussiontools-replywidget-mode-visual": "Mɔ ɛnye nwu ye",
+	"discussiontools-replywidget-preview": "Yeyenu",
+	"discussiontools-replywidget-summary": "Sinlipɛlɛ",
+	"discussiontools-replywidget-watchthis": "fa ɛhye boka wɔ deɛ kpaɛ",
+	"discussiontools-topicheader-authorcount": "sonla menli wɔ adawubolɛ nu",
+	"discussiontools-topicheader-commentcount": "$1{{PLURAL:$1|kanwole bie}}",
+	"discussiontools-topicheader-latestcomment": "Nyelebɛnloa $1",
+	"discussiontools-topicsubscription-button-subscribe-label": "Ɛdi bɛnzi",
+	"discussiontools-topicsubscription-button-unsubscribe": "Ɛye ɛnwo",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Ɛye ɛnwo",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Ekpunli"
 }

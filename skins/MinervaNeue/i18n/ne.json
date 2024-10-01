@@ -19,7 +19,7 @@
 	"minerva-watchlist-cta": "यो पृष्ठ र यसमा भएका सबै परिवर्तनहरूको अवलोकन गर्नुहोस्।",
 	"mobile-frontend-cookies-required": "दृश्य मोडहरू स्विच गर्न कुकीहरू आवश्यक छन्। कृपया तिनीहरूलाई सक्षम पार्नुहोस् र पुन: प्रयास गर्नुहोस्।",
 	"mobile-frontend-editor-edit": "सम्पादन",
-	"minerva-download": "पिडिएफकाे रूपमा डाउनलोड गरिएकाे",
+	"minerva-download": "पिडिएफकाे डाउनलोड गर्नुहोस्",
 	"mobile-frontend-editor-redlink-create": "लेख सृजना गर्नुहोस्",
 	"mobile-frontend-editor-redlink-explain": "यो पृष्ठ हालसम्म सृजना गरिएको छैन।",
 	"mobile-frontend-editor-redlink-leave": "पर्दैन, धन्यवाद",
@@ -59,6 +59,12 @@
 	"minerva-page-actions-language-switcher": "भाषाहरू",
 	"minerva-page-actions-history": "इतिहास",
 	"skin-minerva-issue-learn-more": "थप जान्नुहोस्",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 सेकेन्ड|$1 सेकेन्डहरू}} पहिले",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 मिनेट|$1 मिनेटहरू}} पहिले",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 घण्टा|$1 घण्टाहरू}} पहिले",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 दिन|$1 दिनहरू}} पहिले",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 महिना|$1 महिनाहरू}} पहिले",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 वर्ष|$1 वर्षहरू}} पहिले",
 	"skin-minerva-mobile-option-MinervaShowCategories": "श्रेणीहरू",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "पृष्ठहरूको श्रेणीहरू हेर्नुहोस्"
 }

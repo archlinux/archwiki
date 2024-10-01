@@ -4,7 +4,18 @@
 			"Умар"
 		]
 	},
-	"codeeditor-desc": "Синтаксисан беснашца тадар JavaScript and CSSн [https://ace.c9.io/ Ace тадаран] гӀоьнца",
+	"codeeditor-desc": "JavaScript а, CSS а агӀонашна синтаксисан билгалдаккхарца хийцамаш бар [https://ace.c9.io/ Ace редакторца].",
+	"codeeditor-next-annotation": "РогӀера аннотацин тӀе гӀо",
 	"codeeditor-toolbar-toggle": "Кодан редактор кхечутӀейерзор",
-	"codeeditor-save-with-errors": "Документан чохь гӀалаташ ду. Лаьий хьуна и дӀайаздан?"
+	"codeeditor-save-with-errors": "Документан чохь гӀалаташ ду. Лаьий хьуна и дӀайаздан?",
+	"codeeditor-invisibleChars-toggle": "Гуш доцу хьаьркаш гайтар",
+	"codeeditor-lineWrapping-toggle": "МогӀанаш йуьстахбаккхар хийцар",
+	"codeeditor-searchReplace-toggle": "Текст лаха а, хийца а диалоган гайтам хийца",
+	"codeeditor-gotoline": "МогӀанан лоьмар тӀе гӀо...",
+	"codeeditor-gotoline-placeholder": "могӀа[:богӀамалг]",
+	"codeeditor-gotoline-prompt": "МогӀанан лоьмар йазйе",
+	"codeeditor-indent": "ГӀулчиг",
+	"codeeditor-outdent": "Аьтту агӀор хийца",
+	"codeeditor-error-title": "Дозуш хиларан доьхна",
+	"codeeditor-error-message": "CodeEditor-на оьшу WikiEditor чуйаккха."
 }

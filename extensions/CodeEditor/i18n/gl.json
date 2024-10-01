@@ -19,8 +19,8 @@
 	"codeeditor-gotoline": "Ir á liña número...",
 	"codeeditor-gotoline-placeholder": "liña[:columna]",
 	"codeeditor-gotoline-prompt": "Introduce un número de liña",
-	"codeeditor-indent": "Engadir sangría",
-	"codeeditor-outdent": "Anular sangría",
+	"codeeditor-indent": "Engadir sangrado",
+	"codeeditor-outdent": "Anular sangrado",
 	"codeeditor-error-title": "Erro na dependencia",
 	"codeeditor-error-message": "O CodeEditor necesita o WikiEditor para cargarse."
 }

@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
-			"Nullzero"
+			"Nullzero",
+			"Ekminarin"
 		]
 	},
-	"imagemap_desc": "อนุญาตแผนที่ภาพที่สามารถคลิกได้สำหรับฝั่งไคลเอนต์โดยใช้ป้ายกำกับ <code>&lt;imagemap&gt;</code>",
+	"imagemap_desc": "อนุญาตแผนที่ภาพที่สามารถกดได้สำหรับฝั่งไคลเอนต์โดยใช้ป้ายระบุ <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "ข้อผิดพลาด: ต้องระบุภาพในบรรทัดแรก",
 	"imagemap_invalid_image": "ข้อผิดพลาด: ภาพไม่ถูกต้องหรือไม่มีอยู่",
 	"imagemap_bad_image": "ข้อผิดพลาด: ภาพถูกขึ้นบัญชีดำบนหน้านี้",

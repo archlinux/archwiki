@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"apihelp-categorytree-summary": "Vnutrišnja modula za razširjenje «Drěvo kategorij».",
+	"apihelp-categorytree-param-category": "Nazva s imennym prostoru kategorij, prědstavka bude ignorovana ako podana.",
+	"apihelp-categorytree-param-options": "Opcije za konstruktor «Drěvo kategorij» kako JSON-objekt. Parametr <var>depth</var> (glubina) imaje standardno značenje <kbd>1</kbd>.",
+	"apierror-categorytree-invalidjson": "Opcije povinne sut byti pravilny JSON-objekt.",
+	"apierror-categorytree-invalidjson-option": "Opcija «$1» sodrživaje nepravilno značenje."
+}

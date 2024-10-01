@@ -10,7 +10,8 @@
 			"Paucabot",
 			"SMP",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Lluis Cat"
 		]
 	},
 	"gadgets-desc": "Permet als usuaris personalitzar [[Special:Gadgets|ginys CSS i JavaScript]] a les seves [[Special:Preferences#mw-prefsection-gadgets|preferències]]",
@@ -27,7 +28,7 @@
 	"gadgets-title": "Ginys",
 	"gadgets-pagetext": "A continuació teniu una llista de ginys especials que els usuaris poden activar a la seva [[Special:Preferences#mw-prefsection-gadgets|pàgina de preferències]], segons les [[MediaWiki:Gadgets-definition|seves definicions]].\nAquesta llista permet un fàcil accés a les pàgines del sistema que defineixen la descripció i el codi de cada giny.",
 	"gadgets-uses": "Usa",
-	"gadgets-required-rights": "{{PLURAL:$2|Es necessita el dret següent|Es necessiten els drets següents}}:\n\n$1",
+	"gadgets-required-rights": "{{PLURAL:$2|Es necessita el dret següent|Es necessiten els drets següents}}: $1.",
 	"gadgets-required-skins": "Disponible a la  {{PLURAL:$2|   $1  skin|following skins:  $1 }}.",
 	"gadgets-default": "Habilitat per a tothom per defecte.",
 	"gadgets-export": "Exporta",

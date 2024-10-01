@@ -12,7 +12,7 @@
 	"spam-blacklisted-email-text": "El to adress de posta eletronica adess l'è blocad quant al mandà di messagg de posta eletronica a di alter utent.",
 	"spam-blacklisted-email-signup": "L'adress de posta eletronica indicad, al moment l'è blocad.",
 	"spam-invalid-lines": "{{PLURAL:$1|Quella riga chì|Queste righe chì}} de la lista negra del ruf {{PLURAL:$1|a l'è una'espression regolar minga valida|a inn di espression regolar minga valide}}; a gh'è besogn de corrensger {{PLURAL:$1|l'eror|i eror}} inanz de salvà la pagina.",
-	"spam-blacklist-desc": "Istrument contra del ruf fondad sora i espression regolar per blocà i URL e i adress de posta eletronica di utent registrad",
+	"spam-blacklist-desc": "Arnes contra 'l ruf fondad sora i espression regolar per blocà i URL e i adress de posta eletronica di utent registrad",
 	"log-name-spamblacklist": "Register de la lista negra del ruf",
 	"log-description-spamblacklist": "'Sti aveniment chì i lassen sgiò di segn di ativazzion de la lista negra del ruf.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|El $1|La $1|El/La $1}}  l'hà caosad l'ativazzion de la lista negra del ruf in su $3 a tentà de sgiontà $4.",

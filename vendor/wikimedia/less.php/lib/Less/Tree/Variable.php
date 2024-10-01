@@ -21,7 +21,7 @@ class Less_Tree_Variable extends Less_Tree {
 	/**
 	 * @param Less_Environment $env
 	 * @return Less_Tree|Less_Tree_Keyword|Less_Tree_Quoted
-	 * @see less-2.5.3.js#Ruleset.prototype.eval
+	 * @see less-2.5.3.js#Variable.prototype.eval
 	 */
 	public function compile( $env ) {
 		if ( $this->name[1] === '@' ) {
@@ -40,7 +40,12 @@ class Less_Tree_Variable extends Less_Tree {
 		$this->evaluating = true;
 
 		foreach ( $env->frames as $frame ) {
-			if ( $v = $frame->variable( $name ) ) {
+			$v = $frame->variable( $name );
+			if ( $v ) {
+				if ( isset( $v->important ) && $v->important ) {
+					$importantScopeLength = count( $env->importantScope );
+					$env->importantScope[ $importantScopeLength - 1 ]['important'] = $v->important;
+				}
 				$r = $v->value->compile( $env );
 				$this->evaluating = false;
 				return $r;

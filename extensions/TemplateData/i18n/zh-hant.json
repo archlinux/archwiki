@@ -100,6 +100,7 @@
 	"templatedata-modal-table-param-aliases": "別名",
 	"templatedata-modal-table-param-autovalue": "自動值",
 	"templatedata-modal-table-param-default": "預設值 ($1)",
+	"templatedata-modal-table-param-status": "狀態",
 	"templatedata-modal-table-param-deprecated": "不建議使用",
 	"templatedata-modal-table-param-deprecatedValue": "已停用的指導",
 	"templatedata-modal-table-param-description": "描述 ($1)",

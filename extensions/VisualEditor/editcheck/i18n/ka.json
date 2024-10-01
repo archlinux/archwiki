@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Გიო ოქრო"
+		]
+	},
+	"editcheck-dialog-action-no": "არა",
+	"editcheck-dialog-action-yes": "დიახ",
+	"editcheck-dialog-addref-description": "დამოწმების დამატებით დაეხმარეთ მკითხველებს გაიგონ, საიდან მოდის ეს ინფორმაცია.",
+	"editcheck-dialog-addref-reject-question": "დამოწმებას რატომ არ ამატებთ?"
+}

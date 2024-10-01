@@ -4,7 +4,8 @@
 			"J budissin",
 			"Macofe",
 			"Michawiki",
-			"Mikławš"
+			"Mikławš",
+			"Sławobóg"
 		]
 	},
 	"wikieditor": "Rozšěrjeny powjerch za wobdźěłowanje wikiteksta",
@@ -148,5 +149,9 @@
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Signatura z časowym kołkom",
 	"wikieditor-toolbar-help-content-signature-description": "Signatura",
-	"wikieditor-toolbar-help-content-indent-description": "Zasunjenje"
+	"wikieditor-toolbar-help-content-indent-description": "Zasunjenje",
+	"wikieditor-realtimepreview-preview": "Přehlad",
+	"wikieditor-realtimepreview-error": "Přehlad njebu začitany",
+	"wikieditor-realtimepreview-reload": "Wobnowić",
+	"wikieditor-realtimepreview-reload-title": "Wokno woprawdźiteho časa začitać"
 }

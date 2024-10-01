@@ -21,7 +21,8 @@
 			"ערן",
 			"פוילישער",
 			"קיפודנחש",
-			"תומר ט"
+			"תומר ט",
+			"מקף"
 		]
 	},
 	"collabpad-doctitle": "פנקס שיתופי: $1",
@@ -340,7 +341,7 @@
 	"visualeditor-recreate": "הדף הזה נמחק מאז שהתחלת לערוך. לחיצה על \"$1\" תיצור את הדף מחדש.",
 	"visualeditor-redirect-description": "הפניה ל{{GRAMMAR:תחילית|$1}}",
 	"visualeditor-savedialog-identify-anon": "אינך בחשבון. המשך הפעולה יגרום לכך ש<strong>כתובת ה־IP שלך תירשם</strong> בהיסטוריית העריכה של הדף הזה.",
-	"visualeditor-savedialog-identify-temp": "המחשב הזה מחובר בשם המשתמש הזמני <strong>$1</strong>. המשך הפעולה יגרום לכך שהעריכה שלך תשויך לשם המשתמש הזה.",
+	"visualeditor-savedialog-identify-temp": "מכשירך מחובר לשם החשבון החולף <strong>$1</strong>. המשך הפעולה יגרום לכך שהעריכה שלך תשויך לשם החשבון הזה.",
 	"visualeditor-savedialog-identify-user": "נכנסת למערכת בשם <strong>[[User:$1|$1]]</strong>. המשך הפעולה יגרום לכך שהעריכה שלך תשויך לשם המשתמש הזה.",
 	"visualeditor-savedialog-keyboard-shortcut-submit": "באפשרותך ללחוץ $1 כדי לשמור את העריכה שלך.",
 	"visualeditor-savedialog-label-publish-short": "פרסום",

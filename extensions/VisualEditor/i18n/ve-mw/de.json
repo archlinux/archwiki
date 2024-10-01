@@ -26,7 +26,8 @@
 			"Tomabrafix",
 			"Umherirrender",
 			"Wnme",
-			"XanonymusX"
+			"XanonymusX",
+			"Elya"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -112,7 +113,7 @@
 	"visualeditor-dialog-meta-categories-addcategory-label": "Eine Kategorie zu dieser Seite hinzufügen",
 	"visualeditor-dialog-meta-categories-category": "Kategorie",
 	"visualeditor-dialog-meta-categories-data-label": "Kategorien",
-	"visualeditor-dialog-meta-categories-defaultsort-help": "Du kannst überschreiben, wie diese Seite innerhalb einer Kategorie sortiert wird durch Festlegen eines anderen zu sortierenden Indexes. Dies wird oft verwendet, um Seiten über Personen nach ihrem Nachnamen anzuzeigen, jedoch wird der Vorname zuerst angezeigt.",
+	"visualeditor-dialog-meta-categories-defaultsort-help": "Um eine Seite innerhalb einer Kategorie anders als nach dem Anfangsbuchstaben (Sortierindex) zu sortieren, kannst du hier einen anderen Index festlegen. Damit überschreibst du den Standard. Das wird meist verwendet, wenn Seiten über Personen nach ihrem Nachnamen sortiert werden sollen, obwohl der Artikel mit dem Vornamen beginnt.",
 	"visualeditor-dialog-meta-categories-defaultsort-label": "Diese Seite standardmäßig sortieren als",
 	"visualeditor-dialog-meta-categories-hidden": "Diese Kategorie wird nicht auf Seiten angezeigt, auf denen sie hinzugefügt wurde.",
 	"visualeditor-dialog-meta-categories-input-hiddencategorieslabel": "Versteckte Kategorien",

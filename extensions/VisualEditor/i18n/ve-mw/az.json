@@ -11,7 +11,8 @@
 			"Toghrul Rahimli",
 			"Vesely35",
 			"Wertuose",
-			"Şeyx Şamil"
+			"Şeyx Şamil",
+			"Nemoralis"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -163,11 +164,11 @@
 	"visualeditor-dialog-transclusion-template-widget-aria-selected": "Şablonu, onun parametrlərini və dəyərlərini silmək üçün Ctrl+Del düymələrinə basın. Şablonu yuxarı və ya aşağı hərəkət etdirmək üçün Ctrl+Shift+Oxlara basın.",
 	"visualeditor-dialog-transclusion-template-widget-aria-selected-single": "Şablonu, onun parametrlərini və dəyərlərini silmək üçün Ctrl+Del düymələrinə basın.",
 	"visualeditor-dialog-transclusion-add-wikitext": "Vikimətn əlavə et",
-	"visualeditor-dialog-transclusion-add-param-error-alias": "\"$1\" onsuz da \"$2\" olaraq əlavə olunub. Zəhmət olmasa yan çubuqdakı parametrləri yoxlayın. Bu [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#aliases alternativlər] və ya [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#label başlıqlar] istifadə edildiyi üçün ola bilər.",
+	"visualeditor-dialog-transclusion-add-param-error-alias": "\"$1\" onsuz da \"$2\" olaraq əlavə olunub. Zəhmət olmasa, yan çubuqdakı parametrləri yoxlayın. Bu [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#aliases alternativlər] və ya [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#label başlıqlar] istifadə edildiyi üçün ola bilər.",
 	"visualeditor-dialog-transclusion-add-param-error-deprecated": "\"$1\" əlavə edilə bilməz çünki bu parametr [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#deprecated köhnəlmiş] olaraq işarələnib.",
 	"visualeditor-dialog-transclusion-add-param-error-exists-selected": "\"$2\" parametrini iki dəfə əlavə etmək mümkün deyil.",
 	"visualeditor-dialog-transclusion-add-param-error-exists-unselected": "\"$2\" parametri artıq istifadə üçün əlçatandır. Yan paneldəki seçimləri yoxlayın.",
-	"visualeditor-dialog-transclusion-add-param-error-forbidden-char": "$1 qadağan edilmiş simvoldur. Parametri əlavə etmək üçün zəhmət olmasa onu silin.",
+	"visualeditor-dialog-transclusion-add-param-error-forbidden-char": "$1 qadağan edilmiş simvoldur. Parametri əlavə etmək üçün zəhmət olmasa, onu silin.",
 	"visualeditor-dialog-transclusion-add-param-help": "Əgər bilirsinizsə, [//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide#Adding_undocumented_parameters sənədləşdirilməmiş parametr adlarını] daxil edin. Yalnız şablon tərəfindən tanınan parametrlərin işləyəcəyini unutmayın. [[$1|Şablonun səhifəsində]] mövcud parametrlər haqqında məlumat tapa bilərsiniz.",
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Parametrin adı",
 	"visualeditor-dialog-transclusion-add-param-save": "Əlavə et",

@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"WMNO sámeprošeakta"
+		]
+	},
+	"pfunc_desc": "Viiddit dulkoma logalaš doaimmaiguin",
+	"pfunc_time_error": "Meattáhus: Dohkkemeahttumis áigi",
+	"pfunc_time_too_long": "Meattáhus: #time beare máŋgii geavahuvvon",
+	"pfunc_time_too_big": "Meattáhus: #diibmu doarju dušše jagiid gitta 9999",
+	"pfunc_time_too_small": "Meattáhus: #time doarju dušše jagiid 0 rájes.",
+	"pfunc_rel2abs_invalid_depth": "Meattáhus: Bálgá čikŋodat ii gusto: «$1» (geahččalii oažžut beassanlobi ovtta nodii bajábealde ruohtasnoda)",
+	"pfunc_expr_stack_exhausted": "Čájáhusmeattáhus: Stahkka gollan",
+	"pfunc_expr_unexpected_number": "Čájáhusmeattáhus: Vuorddekeahtes nummár",
+	"pfunc_expr_preg_match_failure": "Čájáhusmeattáhus: Vuordemeahttun preg_match-meattáhus",
+	"pfunc_expr_unrecognised_word": "Čájáhusmeattáhus: Dovdameahttun sátni «$1»",
+	"pfunc_expr_unexpected_operator": "Čájáhusmeattáhus: Vuorddekeahtes $1-operatevra",
+	"pfunc_expr_missing_operand": "Čájáhusmeattáhus: $1:ii váilu operanda",
+	"pfunc_expr_unexpected_closing_bracket": "Čájáhusmeattáhus: Vuordemeahttun giddejeaddji dávgeruohtu",
+	"pfunc_expr_unrecognised_punctuation": "Čájáhusmeattáhus: Dovdameahttun earromearka «$1»",
+	"pfunc_expr_unclosed_bracket": "Čájáhusmeattáhus: Raba dávgeruođu",
+	"pfunc_expr_division_by_zero": "Juhkkojuvvo nullii",
+	"pfunc_expr_invalid_argument": "Dohkkemeahttumis ákkastallan $1:ii: unnit go -1 dahje stuorát go 1",
+	"pfunc_expr_invalid_argument_ln": "Dohkkemeahttumis ákkastallan ln:i: unnit dahje seamma go 0",
+	"pfunc_expr_unknown_error": "Čájáhusmeattáhus: Dovdameahttun meattáhus ($1)",
+	"pfunc_expr_not_a_number": "I $1: boađus ii leat nummár",
+	"pfunc_string_too_long": "Meattáhus: Streaŋga rasttilda ráji mii lea $1 mearkka"
+}

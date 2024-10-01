@@ -10,6 +10,9 @@
 			"Араси"
 		]
 	},
+	"vector-languages": "gisun",
+	"vector-language-button-label": "{{PLURAL:$1|$1 gisun}}",
+	"vector-no-language-button-label": "gisun be nonggimbi",
 	"vector-action-addsection": "Nogila joringga",
 	"vector-action-delete": "Dabgire",
 	"vector-action-move": "Guribure",
@@ -19,5 +22,21 @@
 	"vector-view-history": "Ere xu fiyelen i suduri be baicara",
 	"vector-view-view": "Hvlara",
 	"vector-view-viewsource": "Da šu wen be baicara",
-	"vector-more-actions": "Ele lbdu tuwanaki"
+	"vector-more-actions": "Ele lbdu tuwanaki",
+	"vector-feature-limited-width-name": "leli",
+	"vector-feature-custom-font-size-name": "text",
+	"vector-feature-limited-width-0-label": "leli",
+	"vector-feature-limited-width-1-label": "uhe",
+	"vector-feature-custom-font-size-0-label": "ajige",
+	"vector-feature-custom-font-size-1-label": "uhe",
+	"vector-feature-custom-font-size-2-label": "amba",
+	"skin-theme-name": "boco",
+	"skin-theme-os-label": "cisui",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> be baktara justan be tuwambi",
+	"vector-toc-label": "baktambun",
+	"vector-toc-beginning": "deribun",
+	"vector-main-menu-label": "main menu",
+	"vector-page-tools-label": "agūra",
+	"vector-page-tools-general-label": "kemuni",
+	"vector-unpin-element-label": "burumbi"
 }

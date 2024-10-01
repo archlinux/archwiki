@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"AnakngAraw",
-			"GinawaSaHapon"
+			"GinawaSaHapon",
+			"Qwrop"
 		]
 	},
 	"cite-desc": "Dinadagdag ang  <code>&lt;ref&gt;</code> at <code>&lt;references&gt;</code> na tag para sa pagsipi",
@@ -36,6 +37,7 @@
 	"cite-wikieditor-tool-reference": "Sanggunian",
 	"cite-wikieditor-help-page-references": "Mga sanggunian",
 	"cite-wikieditor-help-content-reference-description": "Sanggunian",
+	"cite-wikieditor-help-content-named-reference-description": "Pinangalanang sanggunian",
 	"cite-wikieditor-help-content-rereference-description": "Karagdagang paggamit na gayun ding sanggunian",
 	"cite-wikieditor-help-content-showreferences-description": "Ipakita ang mga sanggunian"
 }

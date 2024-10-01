@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"apihelp-query+oath-summary": "Prověrite, jest li dvufaktorna avtentifikacija (OATH) vključena za koristnika.",
+	"apihelp-query+oath-param-user": "Koristnik, o ktorom iščete informaciju. Standardno nyněšnji koristnik.",
+	"apihelp-query+oath-param-reason": "Pričina zapyta o OATH-statusu.",
+	"apihelp-query+oath-example-1": "Dostati informaciju o nyněšnjem koristniku",
+	"apihelp-query+oath-example-2": "Dostati informaciju o koristniku <kbd>Example</kbd>",
+	"apihelp-oathvalidate-summary": "Prověriti token dvufaktornoj avtentifikacije (OATH).",
+	"apihelp-oathvalidate-param-user": "Koristnik, čij token trěba prověriti. Standardno nyněšnji koristnik.",
+	"apihelp-oathvalidate-example-1": "Prověriti JSON-dane za nyněšnjego koristnika",
+	"apihelp-oathvalidate-example-3": "Prověriti JSON-dane za koristnika <kbd>Example</kbd>",
+	"apihelp-oathvalidate-param-data": "Dane v JSON-formatu očekyvane nyně aktivovanym modulom za koristnika v tečenju avtentifikacije"
+}

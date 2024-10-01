@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Robby",
-			"Soued031"
+			"Soued031",
+			"Volvox"
 		]
 	},
 	"multimediaviewer-optin-pref": "De <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span> aktivéieren",
@@ -71,7 +72,7 @@
 	"multimediaviewer-next-image-alt-text": "Nächst Bild weisen",
 	"multimediaviewer-prev-image-alt-text": "Viregt Bild weisen",
 	"multimediaviewer-title-popup-text": "Beschreiwung",
-	"multimediaviewer-credit-popup-text": "Informatioun iwwer den Auteur an d'Quell",
+	"multimediaviewer-credit-popup-text": "Informatiounen iwwer den Auteur an d'Quell",
 	"multimediaviewer-title-popup-text-more": "Kompletten Beschreiwung weisen",
 	"multimediaviewer-credit-popup-text-more": "Weist all Informatiounen iwwer den Auteur an d'Quell",
 	"multimediaviewer-download-attribution-cta-header": "Dir musst eng Referenz op den Auteur maachen",

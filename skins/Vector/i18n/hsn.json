@@ -2,10 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"SolidBlock",
-			"YulouCN"
+			"YulouCN",
+			"孟天皓"
 		]
 	},
 	"vector-skin-desc": "给杂清新的样子再加上好多吧多可用性的新MonoBook",
+	"vector-languages": "言语",
+	"vector-language-button-label": "{{PLURAL:$1|$1}} 種語言",
+	"vector-no-language-button-label": "新增語言",
 	"vector-action-addsection": "搞杂话题",
 	"vector-action-delete": "消嘎",
 	"vector-action-move": "移走",
@@ -17,5 +21,20 @@
 	"vector-view-history": "履歷",
 	"vector-view-view": "讀",
 	"vector-view-viewsource": "望下代碼",
-	"vector-more-actions": "更多"
+	"vector-more-actions": "更多",
+	"vector-feature-limited-width-name": "寬度",
+	"vector-feature-custom-font-size-name": "文本",
+	"vector-feature-limited-width-0-label": "寬",
+	"vector-feature-limited-width-1-label": "標準",
+	"vector-feature-custom-font-size-0-label": "小",
+	"vector-feature-custom-font-size-1-label": "標準",
+	"vector-feature-custom-font-size-2-label": "大",
+	"skin-theme-os-label": "自動",
+	"vector-searchsuggest-containing": "搜尋包含 <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> 亇頁面",
+	"vector-toc-label": "目次",
+	"vector-toc-beginning": "序言",
+	"vector-main-menu-label": "主選單",
+	"vector-page-tools-label": "工具",
+	"vector-page-tools-general-label": "一般",
+	"vector-unpin-element-label": "唔要看"
 }

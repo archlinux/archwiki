@@ -4,19 +4,23 @@
 			"Bugoslav",
 			"Neptune, the Mystic",
 			"Ponor",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"MaGa"
 		]
 	},
-	"linterrors": "Pročišćivač pogrješčica",
+	"linterrors": "Sintaksne greške",
 	"linter-category-bogus-image-options": "Pogrješke mogućnosti prikaza datoteka",
-	"linter-category-misnested-tag": "Nepravilno ugniježđeni tagovi",
+	"linter-category-misnested-tag": "Nepravilno ugniježđene oznake",
 	"linter-category-missing-end-tag": "Nedostaje zatvarajuća oznaka",
 	"linter-category-missing-end-tag-desc": "Na sljedećim stranicama nedostaju zatvarajuće HTML oznake.",
+	"linter-category-missing-end-tag-in-heading": "Nedostaje zatvarajuća oznaka u zaglavlju",
 	"linter-category-obsolete-tag": "Zastarjele HTML oznake",
 	"linter-category-obsolete-tag-desc": "Sljedeće stranice rabe zastarjele HTML oznake.",
-	"linter-category-self-closed-tag": "Samozatvoreni tagovi",
+	"linter-category-self-closed-tag": "Samozatvorene oznake",
 	"linter-category-stripped-tag": "Nedostajući tagovi",
 	"linter-form-namespace": "Imenski prostor:",
+	"linter-form-template-option-with": "S predlošcima",
+	"linter-form-template-option-without": "Bez predložaka",
 	"linter-heading-high-priority": "Iznimna važnost",
 	"linter-heading-low-priority": "Mala važnost",
 	"linter-heading-medium-priority": "Srednja važnost",
@@ -25,6 +29,7 @@
 	"linter-page-history": "stare izmjene",
 	"linter-page-viewsource": "vidi kôd",
 	"linter-pager-bogus-image-options-details": "Netočna opcija za prikaz datoteke",
+	"linter-pager-category-header": "Kategorija",
 	"linter-pager-deletable-table-tag-details": "Tablična oznaka koju bi trebalo ukloniti",
 	"linter-pager-html5-misnesting-details": "Pogrešno gniježđenje (sada neispravno)",
 	"linter-pager-misc-tidy-replacement-issues-details": "Razne pogreške u sintaksi",
@@ -38,5 +43,6 @@
 	"linterrors-subpage": "Pročišćivač pogrješčica: $1",
 	"linterrors-summary": "<strong>Napomena:</strong> Brojevi pogrešaka po kategorijama samo su procijenjeni i nisu potpuno točni.",
 	"multi-part-template-block": "Proizlazi iz više od jednog predloška",
-	"pageinfo-linter": "Pročišćivač pogrješčica"
+	"pageinfo-linter": "Pročišćivač pogrješčica",
+	"pageinfo-linter-moreinfo": "Detaljne informacije o sintaksnim greškama."
 }

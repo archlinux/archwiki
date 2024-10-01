@@ -61,7 +61,7 @@
 	"notification-inbox-filter-unread": "Á̱ ka̱n fang bah",
 	"notification-inbox-filter-all": "A̱mgba̱m",
 	"echo-notification-alert-text-only": "A̱yaalama",
-	"echo-mark-wiki-as-read": "Cak a̱mgba̱m nang á̱si̱ nang á̱ ka̱n fang a̱ni mi̱ wuki nang á̱ khai a̱ni: $1",
+	"echo-mark-wiki-as-read": "Cak {{PLURAL:$2|a̱mgba̱m}} nang si̱ nji nang á̱ ku fang a̱ni di̱ ngwuki na nang á̱ khai a̱ni: $1",
 	"echo-displaysnippet-title": "Shei li̱lak fai",
 	"echo-date-today": "A̱fwun",
 	"echo-date-yesterday": "Lyuo",

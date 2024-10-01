@@ -5,19 +5,24 @@
 			"Merrahtar"
 		]
 	},
-	"tooltip-ca-ve-edit": "Вуайхэ тэнн лыст",
+	"tooltip-ca-ve-edit": "Воа̄йхэ тэнн лыст",
+	"visualeditor-advancedsettings-tool": "Лашшь оа̄ссмуж",
 	"visualeditor-autosave-modified-prompt-accept": "Ю̄ттҍкэ вуайхэмуж",
 	"visualeditor-ca-createsource": "Лыһкэ викитекст",
 	"visualeditor-ca-editsource": "Воа̄йхэ ко̄д",
 	"visualeditor-ca-editsource-section": "воа̄йхэ ко̄д",
 	"visualeditor-dialog-meta-settings-hiddencat-label": "Пя̄ҋҋтма категорья",
-	"visualeditor-dialog-transclusion-confirmation-discard": "Вуэлльктэ вуайхэзэтҍ",
+	"visualeditor-dialog-meta-title": "Оа̄ссмуж",
+	"visualeditor-dialog-transclusion-confirmation-discard": "Вуэлльктэ воа̄йхэзэтҍ",
 	"visualeditor-dialog-transclusion-title-insert-known-template": "Лажьхэ: $1",
+	"visualeditor-dialog-transclusion-wikitext": "Викитекст",
 	"visualeditor-dialogbutton-media-tooltip": "Ка̄вь я ме̄дьяфа̄йял",
 	"visualeditor-editsummary": "Моа̄йнэсьт, мэ̄нн то̄нн воа̄йхэкь",
+	"visualeditor-linkinspector-button-link-external": "Оаклма са̄ййт",
+	"visualeditor-linkinspector-invalid-external": "Пый о̄ммп URL, https://example.org<nowiki>-налшэм</nowiki>",
 	"visualeditor-mweditmodesource-tool-current": "Ко̄д воа̄йхэмушш",
 	"visualeditor-mweditmodeve-tool-current": "Визуальнэ воа̄йхэмушш",
-	"visualeditor-savedialog-review-nosummary": "Нимэ̄нн элля вуайхэзэ баяс кырьйха",
+	"visualeditor-savedialog-review-nosummary": "Нимӣ элля воа̄йхэз баяс кырьйха",
 	"visualeditor-savedialog-review-visual": "Визуальнэ",
 	"visualeditor-savedialog-title-save": "Пынь ӣжянт воа̄йхэзэтҍ"
 }

@@ -14,7 +14,7 @@
 	"discussiontoolsdebug-pagetitle": "ხასჷლაშ დუდჯოხო",
 	"discussiontools-desc": "სხუნუაშ ხასჷლეფიშ გაუჯგუშაფალი ხეჭკუდეფი.",
 	"discussiontools-emptystate-button": "სხუნუაშ დოჭყაფა",
-	"discussiontools-emptystate-desc": "სხუნუაშ ხასჷლა რე აბანი, სოდე ჯარალუა გჷთმოსხუნუნს შხვადოშხვა ოკითხირეეფს, ნამუთ საიტიშ „{{SITENAME}}“ დინორეშ გაუჯგუშაფაშ გეშა რენ. ათე ხასჷლაშ გჷმორინაფა შეილებჷმა შხვა მახვარებუეფწკჷმა დისკუსიაშო, თიშ გეშა, ნამჷ-და გაუჯგუშათ ხასჷლა[[:{{SUBJECTPAGENAME}}]]. [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|ქეგეგით უმოსი]].",
+	"discussiontools-emptystate-desc": "სხუნუაშ ხასჷლა რე აბანი, სოდე ჯარალუა გჷთმოსხუნუნს შხვადოშხვა ოკითხირეეფს, ნამუთ საიტიშ „{{SITENAME}}“ დინორეშ გაუჯგუშებას ოინალჷნ. ათე ხასჷლაშ გჷმორინაფა {{GENDER:|შეილებჷნა}} შხვა მახვარებუეფწკჷმა დისკუსიაშო, თიშ გეშა, ნამჷ-და გაუჯგუშათ ხასჷლა[[:{{SUBJECTPAGENAME}}]]. [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|ქეგეგით უმოსი]].",
 	"discussiontools-emptystate-title": "{{SUBJECTPAGENAME}}-შ გეშა დისკუსიაშ დოჭყაფა",
 	"discussiontools-emptystate-title-self": "მოზოჯით თქვან სხუნუაშ ხასჷლაშა",
 	"discussiontools-emptystate-title-self-anon": "მოზოჯით ათე სხუნუაშ ხასჷლაშა",

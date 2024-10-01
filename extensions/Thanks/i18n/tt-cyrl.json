@@ -5,11 +5,12 @@
 			"Ilnur efende",
 			"Ерней",
 			"З. ӘЙЛЕ",
-			"Ильнар"
+			"Ильнар",
+			"Don Alessandro"
 		]
 	},
 	"thanks-desc": "Кулланучыларга төзәтмәләр, шәрехләр һ.б. өчен рәхмәт әйтергә сылтамаларны өсти",
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|рәхмәт әйтергә}}}}",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|рәхмәт әйтү}}}}",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|рәхмәт әйтелде}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Рәхмәт әйтү}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Рәхмәт әйтелде}}}}",
@@ -17,7 +18,7 @@
 	"thanks-button-action-cancel": "Кире алу",
 	"thanks-button-action-completed": "Сез  $1 кулланучыга {{GENDER:$1|{{GENDER:$2|рәхмәт әйтегез}}}}",
 	"thanks-thank-tooltip": "Бу {{GENDER:$2|кулланучыга}} рәхмәт хаты {{GENDER:$1|җибәрү}}",
-	"thanks-confirmation2": "Халык алдында рәхмәт {{GENDER:$1|әйтергәме}}?",
+	"thanks-confirmation2": "Халык алдында рәхмәт {{GENDER:$1|әйтергә}} телисезме?",
 	"thanks": "Рәхмәт белдерү",
 	"thanks-submit": "Рәхмәт белдерү",
 	"echo-category-title-edit-thank": "Рәхмәтләр",

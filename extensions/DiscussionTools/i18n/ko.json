@@ -138,6 +138,7 @@
 	"discussiontools-target-comment-missing": "이 댓글을 찾을 수 없습니다. 삭제되거나 이동되었을 수 있습니다.",
 	"discussiontools-target-comments-missing": "새 댓글을 찾을 수 없습니다. 삭제되거나 이동되었을 수 있습니다.",
 	"discussiontools-target-heading-missing": "이 주제를 찾을 수 없습니다. 삭제되거나 이동되었을 수 있습니다.",
+	"discussiontools-target-comment-found-moved": "이 의견은 이 문서에서 찾을 수 없으나 다음 {{PLURAL:$1|문서}}에 존재합니다:",
 	"discussiontools-target-heading-found-moved": "이 주제는 이 문서에서 찾을 수 없으나 다음 {{PLURAL:$1|문서}}에 존재합니다:",
 	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|인원}} $1명이 토론 중",
 	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|댓글}} $1개",

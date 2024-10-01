@@ -13,7 +13,8 @@
 			"Matma Rex",
 			"Mohammad ebz",
 			"Reza koulivand",
-			"Rulebased"
+			"Rulebased",
+			"Ebrahim"
 		]
 	},
 	"discussiontools": "Discussion tools",
@@ -44,8 +45,8 @@
 	"discussiontools-error-comment-conflict": "نظر {{GENDER:|شما}} نمی‌تواند ذخیره شود؛ چون شخص دیگر همزمان با شما نظری فرستاده است. لطفاً دوباره تلاش کنید یا برای مشاهدهٔ آخرین نظرها، صفحه را تازه‌سازی کنید.",
 	"discussiontools-error-comment-disappeared": "نظری که {{GENDER:|شما}} در حال پاسخ به آن بودید در صفحه یافت نشد. آن نظر ممکن است حذف شده یا به صفحهٔ دیگری منتقل شده باشد.",
 	"discussiontools-error-comment-disappeared-reload": "لطفاً صفحه را تازه‌سازی کرده و دوباره تلاش {{GENDER:|کنید}}.",
-	"discussiontools-error-comment-is-transcluded": "پیوند «{{int:discussiontools-replylink}}» را نمی‌توان برای پاسخ به این پیام استفاده کرد. برای پاسخ‌دادن، لطفاً با کلیک بر روی «$1» از ویرایشگر کامل صفحه {{GENDER:|استفاده کنید}}.",
-	"discussiontools-error-comment-is-transcluded-title": "پیوند «{{int:discussiontools-replylink}}» را نمی‌توان برای پاسخ به این پیام استفاده کرد، زیرا این پیام از صفحه‌ای دیگر بارگیری شده است. برای پاسخ‌دادن، لطفاً به [[$1]] {{GENDER:|بروید}}.",
+	"discussiontools-error-comment-is-transcluded": "پیوند «{{int:discussiontools-replylink}}» را نمی‌توان برای پاسخ به این پیام استفاده کرد. برای پاسخ دادن، لطفاً با کلیک بر روی «$1» از ویرایشگر کامل صفحه {{GENDER:|استفاده کنید}}.",
+	"discussiontools-error-comment-is-transcluded-title": "پیوند «{{int:discussiontools-replylink}}» را نمی‌توان برای پاسخ به این پیام استفاده کرد، زیرا این پیام از صفحه‌ای دیگر بارگیری شده است. برای پاسخ دادن، لطفاً به [[$1]] {{GENDER:|بروید}}.",
 	"discussiontools-error-comment-not-saved": "نمی‌توان پیام {{GENDER:|شما}} را در آخرین نسخهٔ صفحه منتشر کرد. برای مشاهدهٔ آخرین تغییرات، پیش‌نویس پیام خود را کپی کنید و سپس صفحه را با کمک مرورگر خود تازه‌سازی کنید.",
 	"discussiontools-error-lint": "به‌دلیل وجود یک خطا در ویکی‌متن، نمی‌توان به پیام‌های موجود در این صفحه پاسخ داد. {{GENDER:|می‌توانید}} با [$1 مطالعهٔ مستندات] در خصوص این خطا اطلاعات بیشتری کسب کنید. با [$2 ارسال پیام در اینجا] درخواست کمک کنید یا با [$3 باز کردن ویرایشگر کامل صفحه]، خطای ویکی‌متن را رفع کنید.",
 	"discussiontools-error-noswitchtove": "متأسفیم، به دلیل شناسایی <b>$1</b> در پیامی که نوشته‌اید، تغییر به حالت دیداری غیرفعال شده است. {{GENDER:|می‌توانید}} در این مورد [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:DiscussionTools/Reply_tool_visual_mode_limitations اطلاعات بیشتری کسب کنید].",
@@ -95,7 +96,7 @@
 	"discussiontools-pageframe-latestcomment": "آخرین نظر: $1 توسط $2 در مبحث $3",
 	"discussiontools-pageframe-latestcomment-notopic": "آخرین نظر: $1 توسط $2",
 	"discussiontools-pagetitle-newtopic": "آغاز مبحث تازه در $1",
-	"discussiontools-pagetitle-reply": "پاسخ‌دادن در $1",
+	"discussiontools-pagetitle-reply": "پاسخ دادن در $1",
 	"discussiontools-permalink-comment-copied": "پیوند به نظر به بریده‌دان منتقل شد.",
 	"discussiontools-postedit-confirmation-published": "نظر شما منتشر شد.",
 	"discussiontools-postedit-confirmation-topicadded": "مبحث شما افزوده شد.",

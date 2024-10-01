@@ -24,6 +24,7 @@
 	"cite_error_ref_numeric_key": "無效的 <code>&lt;ref&gt;</code> 標籤，name 屬性不能使用數字，請使用可描述內容的標題",
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> 標籤開頭格式錯誤或名稱不正確",
 	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code>標籤內有無效參數",
+	"cite_error_ref_follow_conflicts": "作為前一個延續的 <code>&lt;ref follow=\"…\"&gt;</code> 標籤不能單獨命名或擴充",
 	"cite_error_ref_nested_extends": "不允許超出一個層級深度的擴充 <code>&lt;ref&gt;</code> 標籤",
 	"cite_error_ref_no_input": "無效的 <code>&lt;ref&gt;</code> 標籤，沒有名稱的參考必須要有內容",
 	"cite_error_references_duplicate_key": "無效的<code>&lt;ref&gt;</code>標籤；name屬性“$1”使用不同內容定義了多次",

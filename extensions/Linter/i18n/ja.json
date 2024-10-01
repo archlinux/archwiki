@@ -30,7 +30,7 @@
 	"linter-category-html5-misnesting-desc": "ここに上げるタグの入れ子のエラーは、HTML4とHTML5で挙動が異なります。",
 	"linter-category-misc-tidy-replacement-issues": "その他の問題点",
 	"linter-category-misc-tidy-replacement-issues-desc": "これらのページには、以前の表示方法とは異なる方法でレンダリングされる問題があります。",
-	"linter-category-misnested-tag": "タグの入れ子のエラー",
+	"linter-category-misnested-tag": "タグの入れ子構造の誤り",
 	"linter-category-misnested-tag-desc": "修正可能なタグの入れ子のエラーを含むページ。",
 	"linter-category-missing-end-tag": "終了タグの不足",
 	"linter-category-missing-end-tag-desc": "これらのページでは終了タグが不足しています。",

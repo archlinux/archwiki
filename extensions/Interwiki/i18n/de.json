@@ -17,7 +17,7 @@
 	"interwiki": "Interwikidaten verwalten",
 	"interwiki-title-norights": "Interwikidaten ansehen",
 	"interwiki-desc": "Erweitert das Wiki um eine [[Special:Interwiki|Spezialseite]] zur Pflege von Interwikidaten",
-	"interwiki_intro": "Diese Seite bietet einen Überblick des Inhalts der Interwikitabelle dieses Wikis, die die verwendeten Präfixkürzel zur schnellen Verlinkung auf unterschiedliche Wikis und andere externe Websites definiert. Zur empfohlenen Verwendung siehe bitte [https://www.mediawiki.org/wiki/Special:MyLanguag/Extension:Interwiki das Handbuch auf MediaWiki.org].",
+	"interwiki_intro": "Diese Seite bietet einen Überblick des Inhalts der Interwikitabelle dieses Wikis, die die verwendeten Präfixe zur schnellen Verlinkung auf unterschiedliche Wikis und andere externe Websites definiert. Siehe [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki die Dokumentation auf MediaWiki.org] für Empfehlungen zum Verwenden von Interwiki-Präfixen.",
 	"interwiki-legend-label": "Legende",
 	"interwiki_prefix": "Präfix",
 	"interwiki-prefix-label": "Präfix:",

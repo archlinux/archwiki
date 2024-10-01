@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Attah Mohammed"
+			"Attah Mohammed",
+			"Alhassan Abdul-Manan"
 		]
 	},
 	"prefs-echo": "Lahibali teera",
@@ -41,7 +42,7 @@
 	"echo-pref-tooltip-minor-watchlist": "Teemi ma so yi ti niŋ maliniŋ din dii bi yaɣi lala m peeji yuunili maa ni.",
 	"notifications": "Tibili dimsibu lahabaya",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Your}} teera",
-	"tooltip-pt-notifications-notice": "{{GENDER:|Your}} lahibaya",
+	"tooltip-pt-notifications-notice": "{{GENDER:|A}} teera",
 	"echo-displaynotificationsconfiguration-sorting-by-section-header": "Balibu mali sɔŋ",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Ninvuɣ' pala",
 	"echo-specialpage": "Lahibali teera",

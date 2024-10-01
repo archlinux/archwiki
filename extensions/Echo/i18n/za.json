@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"唐吉訶德的侍從"
+			"唐吉訶德的侍從",
+			"Midleading"
 		]
 	},
+	"echo-pref-email-format-html": "HTML",
 	"notification-link-text-expand-all": "Mbe",
 	"notification-link-text-collapse-all": "Rwt"
 }

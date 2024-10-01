@@ -16,5 +16,6 @@
 	"oathauth-disabledoath": "Penentusahan dwifaktor dimatikan.",
 	"oathauth-prefs-label": "Penentusahan dwifaktor:",
 	"right-oathauth-view-log": "Mengakses log perubahan penyahihan dua-faktor",
-	"action-oathauth-view-log": "mengakses log perubahan penyahihan dua-faktor"
+	"action-oathauth-view-log": "mengakses log perubahan penyahihan dua-faktor",
+	"oathauth-module-totp-label": "TOTP (token guna sekali)"
 }

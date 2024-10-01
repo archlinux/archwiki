@@ -16,7 +16,8 @@
 			"Shirayuki",
 			"Siebrand",
 			"The Evil IP address",
-			"Umherirrender"
+			"Umherirrender",
+			"Pppery"
 		]
 	},
 	"gadgets-desc": "{{desc|name=Gadgets|url=https://www.mediawiki.org/wiki/Extension:Gadgets}}",
@@ -38,7 +39,7 @@
 	"gadgets-pagetext": "Used as intro text in [[Special:Gadgets]].",
 	"gadgets-editdescription": "Link for editing the gadget description shown in Special:Preferences. Used on [[Special:Gadgets]].",
 	"gadgets-viewdescription": "Link for viewing the gadget description shown in Special:Preferences. Used on [[Special:Gadgets]] instead of {{msg-mw|Gadgets-editdescription}} when the user does not have permissions to edit.",
-	"gadgets-uses": "This is used as a verb in third-person singular. It appears in front of a script name. Example: \"''Uses: Gadget-UTCLiveClock.js''\"\n\nSee [[meta:Special:Gadgets|Gadgets page in meta.wikimedia.org]]\n{{Identical|Use}}",
+	"gadgets-uses": "This is used as a verb in third-person singular. It appears in front of a script name. Example: \"''Uses: Gadget-UTCLiveClock.js''\"\n\nSee [[mw:Special:Gadgets|Gadgets page in mediawiki.org]]\n{{Identical|Use}}",
 	"gadgets-required-rights": "Parameters:\n* $1 - a comma-separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
 	"gadgets-required-skins": "Parameters:\n* $1 - a comma-separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
 	"gadgets-required-actions": "{{doc-important|The difference here is between specifically one action and more than one action. In languages that use the singular form for numbers other than 1 (for example, for 21), use <nowiki>{{PLURAL:$2|1=}}</nowiki>.}}\nParameters:\n* $1 - a comma-separated list.\n* $2 - the number of items in list $1 for PLURAL use.",

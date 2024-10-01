@@ -47,7 +47,8 @@
 			"Лилиә",
 			"ЛосЯш",
 			"Умар",
-			"Чаховіч Уладзіслаў"
+			"Чаховіч Уладзіслаў",
+			"Vcohen"
 		]
 	},
 	"echo-desc": "Система уведомления участников о событиях и сообщениях",
@@ -74,7 +75,7 @@
 	"echo-pref-email-frequency-weekly": "Еженедельная сводка уведомлений",
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Простой текст",
-	"echo-pref-cross-wiki-notifications": "Показывать уведомления с других вики",
+	"echo-pref-cross-wiki-notifications": "Показывать уведомления из других вики",
 	"echo-pref-notifications-blacklist": "Не показывать уведомления от этих участников ([[mw:Special:MyLanguage/Help:Notifications#mute|узнать больше]]):",
 	"echo-pref-notifications-page-linked-title-muted-list": "Не показывать уведомления «Ссылка на странице» для следующих страниц. ([[mw:Special:MyLanguage/Help:Notifications#mute|узнать больше]])",
 	"echo-pref-dont-email-read-notifications": "Не включать в рассылку сводок уведомления, отмеченные как прочитанные",
@@ -204,7 +205,7 @@
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|Ваши}} права участника были {{GENDER:$1|изменены}}. Вы были добавлены в: $2. Вы больше не входите в: $4.",
 	"notification-header-user-rights-expiry-change": "Время истечения {{GENDER:$4|вашего}} членства в {{PLURAL:$3|следующей группе|следующих группах}} {{GENDER:$1|изменено}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|Добро пожаловать}} на сайт {{SITENAME}}, $1! Рады {{GENDER:$2|вас}} здесь видеть.",
-	"notification-header-mention-summary": "$1 упомянул{{GENDER:$2||а}} {{GENDER:$3|вас}} в описании <strong>$4</strong>.",
+	"notification-header-mention-summary": "$1 упомянул{{GENDER:$2||а}} {{GENDER:$3|вас}} в описании правки на странице <strong>$4</strong>.",
 	"notification-header-watchlist-changed": "$1 {{GENDER:$2|изменил|изменила}} <strong>$3</strong>, страницу из {{GENDER:$4|вашего}} списка наблюдени{{PLURAL:$5|й $5 раз|й $5 раза|й $5 раз|1=}}.",
 	"notification-header-watchlist-created": "$1 {{GENDER:$2|создал|создала}} <strong>$3</strong>, страницу из {{GENDER:$4|вашего}} списка наблюдени{{PLURAL:$5|й $5 раз|й $5 раза|й $5 раз|1=}}.",
 	"notification-header-watchlist-deleted": "$1 {{GENDER:$2|удалил|удалила}} <strong>$3</strong>, страницу из {{GENDER:$4|вашего}} списка наблюдени{{PLURAL:$5|й $5 раз|й $5 раза|й $5 раз|1=}}.",

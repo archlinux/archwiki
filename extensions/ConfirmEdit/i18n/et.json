@@ -22,5 +22,12 @@
 	"captchahelp-cookies-needed": "Selle toimimiseks peab brauser lubama küpsiseid.",
 	"captchahelp-text": "Võrgukohti, mis lubavad külastajatel sisu muuta, nagu ka see viki, kasutavad sageli rämpsposti levitajad, kes lisavad lehekülgedele näiteks reklaamlinke. Kuigi neid linke saab eemaldada, on nad siiski tülikad.\n\nKui registreerid kasutajakonto või lisad mõnele leheküljele uusi veebilinke, näidatakse sulle värvilise või moonutatud tekstiga pilti ning palutakse sisestada sellel kuvatud sõnad. Kuna arvutil on raske pildilt teksti välja lugeda, on see tõhusaks kaitseks rämpspostirobotite vastu ja lubab samas tavakasutajatel rahus muudatusi teha.\n\nKahjuks võib see tekitada ebamugavusi nägemisraskustega inimestele või neile, kes kasutavad tehiskõneseadet või tekstipõhist brauserit. Hetkel pole meil helipõhist alternatiivi.\nKui sul tekib raskusi muudatuste tegemisel, võta palun ühendust selle võrgukoha [[Special:ListAdmins|administraatoritega]].\n\nKonto registreerimise lehele või redigeerimislehele naasmiseks klõpsa brauseri ''tagasi''-nuppu.",
 	"captcha-addurl-whitelist": "  #<!-- Jäta see rida muutmata kujule. --> <pre>\n# Süntaks:\n#  * Kõik alates märgist \"#\" kuni rea lõpuni on kommentaar\n#  * Iga rida, mis ei ole tühi, on regulaaravaldise osa, milleks sobib internetiaadressi osadest ainult hostinimi\n  #</pre> <!-- Jäta see rida muutmata kujule. -->",
-	"right-skipcaptcha": "Sooritada robotilõksu vallapäästvaid toiminguid testi läbimata"
+	"right-skipcaptcha": "Sooritada robotilõksu vallapäästvaid toiminguid testi läbimata",
+	"action-skipcaptcha": "sooritada robotilõksu vallapäästvaid toiminguid testi läbimata",
+	"confirmedit-preview-line": "Reanumber",
+	"confirmedit-preview-content": "Sisu",
+	"confirmedit-preview-validity": "Kehtivus",
+	"confirmedit-preview-valid": "kehtiv",
+	"confirmedit-preview-invalid": "vigane",
+	"confirmedit-preview-description": "Järgnev tabel näitab selle lehekülje ridu ja kas need on kehtivad IP-aadressid või IP-aadresside vahemikud. Kui real on kehtiv IP-aadress või IP-aadresside vahemik, siis selle suhtes robotilõksu ei rakendata. Vigaseid ridu eiratakse. Kehtiva IP-aadresside vahemiku näide on 69.208.0.0/16, mis algab aadressiga 69.208.0.0 ja lõpeb aadressiga 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Lisateave] IP-aadresside vahemiku arvestamise kohta."
 }

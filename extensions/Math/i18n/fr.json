@@ -20,10 +20,12 @@
 			"Wyz",
 			"Yona b",
 			"Zebulon84",
-			"SleaY"
+			"SleaY",
+			"Goombiis"
 		]
 	},
 	"math-desc": "Restitue les formules mathématiques entre les balises <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"popups-settings-option-math": "Maths",
 	"popups-settings-option-math-tooltip": "Expliquer les formules mathématiques au survol.",
 	"math-visualeditor-mwchemdialog-title": "Formule chimique",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Modification rapide",
@@ -74,6 +76,11 @@
 	"math-visualeditor-symbol-group-math-symbols": "Symboles et constantes",
 	"math-visualeditor-symbol-group-math-typefaces": "Polices de caractère",
 	"math-visualeditor-symbol-group-math-unsorted": "Non trié",
+	"math-form-tex-label": "Entrée TeX personnalisée",
+	"math-form-type-label": "Type de l'entrée",
+	"math-form-type-tex": "tex (entrée normale)",
+	"math-form-display-label": "Mode d'affichage mathématique",
+	"math-helppage": "Help:Affichage d'une formule",
 	"math_failure": "Échec de l’analyse",
 	"math_invalidjson": "La réponse du serveur $1 est un JSON invalide",
 	"math_invalidresponse": "$1 : réponse non valide(« $3 ») du serveur « $2 » :",

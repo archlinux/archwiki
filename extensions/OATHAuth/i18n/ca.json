@@ -3,12 +3,13 @@
 		"authors": [
 			"Fitoschido",
 			"Paucabot",
-			"SMP"
+			"SMP",
+			"Lluis Cat"
 		]
 	},
 	"right-oathauth-view-log": "Accedir al registre de canvis de l'autenticació de doble factor",
 	"right-oathauth-enable": "Activar l'autenticació de dos factors",
-	"oathauth-auth-ui": "Introduïu un codi de verificació provinent del vostre dispositiu d’autenticació.",
+	"oathauth-auth-ui": "Introduïu un codi de verificació provinent de la vostra aplicació d’autenticació (com per exemple Google Authenticator).",
 	"oathauth-ui-no-module": "No se n’ha habilitat cap",
 	"oathauth-module-totp-label": "TOTP (testimoni d’un sol ús)",
 	"oathauth-ui-manage": "Gestiona",

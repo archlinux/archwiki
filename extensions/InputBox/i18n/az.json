@@ -5,9 +5,12 @@
 			"NMW03",
 			"Toghrul Rahimli",
 			"Vugar 1981",
-			"Wertuose"
+			"Wertuose",
+			"Nemoralis"
 		]
 	},
+	"inputbox-desc": "Əvvəlcədən təyin edilmiş HTML formalarının daxil edilməsinə icazə verir",
+	"inputbox-error-no-type": "Siz yaratmaq üçün giriş qutusunun növünü təyin etməmisiniz.",
 	"inputbox-tryexact": "Tam uyğunluğu sınayın",
 	"inputbox-searchfulltext": "Yaxşı mətni axtar",
 	"inputbox-createarticle": "Məqalə yarat",

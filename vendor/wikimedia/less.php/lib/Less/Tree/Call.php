@@ -25,6 +25,27 @@ class Less_Tree_Call extends Less_Tree implements Less_Tree_HasValueProperty {
 		$this->args = $visitor->visitArray( $this->args );
 	}
 
+	/**
+	 * @see less-2.5.3.js#functionCaller.prototype.call
+	 */
+	private function functionCaller( $function, array $arguments ) {
+		// This code is terrible and should be replaced as per this issue...
+		// https://github.com/less/less.js/issues/2477
+		$filtered = [];
+		foreach ( $arguments as $argument ) {
+			if ( $argument instanceof Less_Tree_Comment ) {
+				continue;
+			}
+			$filtered[] = $argument;
+		}
+		foreach ( $filtered as $index => $argument ) {
+			if ( $argument instanceof Less_Tree_Expression ) {
+				$filtered[$index] = $argument->mapToFunctionCallArgument();
+			}
+		}
+		return $function( ...$filtered );
+	}
+
 	//
 	// When evaluating a function call,
 	// we either find the function in Less_Functions,
@@ -36,28 +57,17 @@ class Less_Tree_Call extends Less_Tree implements Less_Tree_HasValueProperty {
 	// like: `saturate(@mycolor)`.
 	// The function should receive the value, not the variable.
 	//
-	public function compile( $env = null ) {
+	public function compile( $env ) {
 		// Turn off math for calc(). https://phabricator.wikimedia.org/T331688
-		$currentMathContext = Less_Environment::$mathOn;
-		Less_Environment::$mathOn = $this->mathOn;
+		$currentMathContext = $env->strictMath;
+		$env->strictMath = !$this->mathOn;
 
 		$args = [];
 		foreach ( $this->args as $a ) {
 			$args[] = $a->compile( $env );
 		}
 
-		foreach ( $args as $key => $arg ) {
-			if ( $arg instanceof Less_Tree_Expression ) {
-				$arg->throwAwayComments();
-
-				if ( count( $arg->value ) === 1 ) {
-					$subNode = $arg->value[0];
-					array_splice( $args, $key, 1, [ $subNode ] );
-				}
-			}
-		}
-
-		Less_Environment::$mathOn = $currentMathContext;
+		$env->strictMath = $currentMathContext;
 
 		$nameLC = strtolower( $this->name );
 		switch ( $nameLC ) {
@@ -76,6 +86,15 @@ class Less_Tree_Call extends Less_Tree implements Less_Tree_HasValueProperty {
 			case 'svg-gradient':
 				$nameLC = 'svggradient';
 				break;
+			case 'image-size':
+				$nameLC = 'imagesize';
+				break;
+			case 'image-width':
+				$nameLC = 'imagewidth';
+				break;
+			case 'image-height':
+				$nameLC = 'imageheight';
+				break;
 		}
 
 		$result = null;
@@ -83,16 +102,18 @@ class Less_Tree_Call extends Less_Tree implements Less_Tree_HasValueProperty {
 			$result = Less_Tree_DefaultFunc::compile();
 		} else {
 			$func = null;
-			if ( method_exists( Less_Functions::class, $nameLC ) ) {
-				$functions = new Less_Functions( $env, $this->currentFileInfo );
-				$func = [ $functions, $nameLC ];
+			$functions = new Less_Functions( $env, $this->currentFileInfo );
+			$funcBuiltin = [ $functions, $nameLC ];
+			// Avoid method_exists() as that considers private utility functions too
+			if ( is_callable( $funcBuiltin ) ) {
+				$func = $funcBuiltin;
 			} elseif ( isset( $env->functions[$nameLC] ) && is_callable( $env->functions[$nameLC] ) ) {
 				$func = $env->functions[$nameLC];
 			}
 			// If the function name isn't known to LESS, output it unchanged as CSS.
 			if ( $func ) {
 				try {
-					$result = $func( ...$args );
+					$result = $this->functionCaller( $func, $args );
 				} catch ( Exception $e ) {
 					// Preserve original trace, especially from custom functions.
 					// https://github.com/wikimedia/less.php/issues/38
@@ -127,9 +148,5 @@ class Less_Tree_Call extends Less_Tree implements Less_Tree_HasValueProperty {
 
 		$output->add( ')' );
 	}
-
-	// public function toCSS(){
-	//    return $this->compile()->toCSS();
-	//}
 
 }

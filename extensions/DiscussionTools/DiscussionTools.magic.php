@@ -18,3 +18,9 @@ $magicWords['pl'] = [
 	'archivedtalk' => [ 0, '__ARCHIWALNADYSKUSJA__' ],
 	'notalk' => [ 0, '__NIEDYSKUSJA__' ],
 ];
+
+/** Simplified Chinese (中文（简体）) */
+$magicWords['zh-hans'] = [
+	'archivedtalk' => [ 0, '__已存档讨论__' ],
+	'notalk' => [ 0, '__禁用讨论__' ],
+];

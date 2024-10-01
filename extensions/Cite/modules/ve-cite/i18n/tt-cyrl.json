@@ -5,7 +5,8 @@
 			"Derslek",
 			"Ерней",
 			"Ильгиз",
-			"Ильнар"
+			"Ильнар",
+			"Don Alessandro"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Китап",
@@ -15,9 +16,9 @@
 	"cite-ve-changedesc-ref-group-both": "Референс төркем \"$1\"дән \"$2\"гә үзгәртелде",
 	"cite-ve-citationneeded-button": "Чыганакка сылтама өстәү",
 	"cite-ve-dialog-reference-editing-reused": "Әлеге сылтама бу биттә $1 {{PLURAL:$1|$1 тапкыр}} кулланыла.",
-	"cite-ve-dialog-reference-options-group-label": "Бу тупламны кулланырга",
+	"cite-ve-dialog-reference-options-group-label": "Бу тупламны куллану",
 	"cite-ve-dialog-reference-options-group-placeholder": "Гомуми сылтамалар",
-	"cite-ve-dialog-reference-options-name-label": "Кабаттан шушы исем белән кулланырга",
+	"cite-ve-dialog-reference-options-name-label": "Кабаттан шушы исем белән куллану",
 	"cite-ve-dialog-reference-options-section": "Көйләнмәләр",
 	"cite-ve-dialog-reference-title": "Искәрмә",
 	"cite-ve-dialog-reference-useexisting-tool": "Яңадан куллану",

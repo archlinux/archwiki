@@ -1,11 +1,28 @@
 {
 	"@metadata": {
 		"authors": [
-			"Adriendelucca"
+			"Adriendelucca",
+			"Huñvreüs"
 		]
 	},
 	"editcheck-dialog-action-no": "Ket",
 	"editcheck-dialog-action-yes": "Ya",
+	"editcheck-dialog-addref-description": "Menegit un dave evit skoazellañ lennerien da gompren eus pelec’h e teu an titouroù-mañ.",
+	"editcheck-dialog-addref-reject-question": "Perak ne lakait ket un daveen ?",
+	"editcheck-dialog-addref-reject-description": "Fellout a rafe da aozerien all gouzout hiroc’h a-zivout ho tiviz chom hep menegiñ un dave.",
+	"editcheck-dialog-addref-reject-irrelevant": "Ne gredan ket ez eo daveoù dereat d’ar c’hemm emaon o tegas",
+	"editcheck-dialog-addref-reject-common-knowledge": "Brudet-kenañ eo an titouroù emaon o tegas",
+	"editcheck-dialog-addref-reject-uncertain": "N’on ket sur peseurt dave menegiñ",
 	"editcheck-dialog-addref-reject-other": "All",
-	"editcheck-dialog-title": "A-raok embann"
+	"editcheck-dialog-addref-success-notify": "Trugarez eus bezañ meneget un daveǃ",
+	"editcheck-dialog-addref-title": "Menegiñ un dave",
+	"editcheck-dialog-title": "A-raok embann",
+	"tag-editcheck-reference-decline-common-knowledge": "Gwiriañ Kemm (daveoù) nac’het (gouiziegezh voutin)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Nac’het eo bet dave Gwiriañ Kemm evel gouiziegezh voutin",
+	"tag-editcheck-reference-decline-irrelevant": "Gwiriañ Kemm (daveoù) nac’het (dizereat)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Nac’het eo bet dave Gwiriañ Kemm evel dizereat",
+	"tag-editcheck-reference-decline-other": "Gwiriañ Kemm (daveoù) nac’het (arall)",
+	"tag-editcheck-reference-decline-other-description": "Na’chet eo bet dave Gwiriañ Kemm evit un abeg n’emañ ket er roll",
+	"tag-editcheck-reference-decline-uncertain": "Gwiriañ Kemm (daveoù) nac’het (diasur)",
+	"tag-editcheck-reference-decline-uncertain-description": "Nac’het eo bet an dave Gwiriañ Kemm evel diasur"
 }

@@ -4,6 +4,7 @@
 			"Pikne"
 		]
 	},
+	"timeless-prefs-talkpage": "[[mw:Skin talk:Timeless|arutelu]]",
 	"timeless-desc": "Ajatu kujundus, põhineb Brandon Harrise loodud prototüübil Winter ja Wikimedia Foundationi eri kujunduselementidel",
 	"timeless-anonymous": "Anonüümne",
 	"timeless-loggedinas": "Sisse logitud ('''$1''')",
@@ -18,6 +19,9 @@
 	"timeless-action-addsection": "Uus teema",
 	"timeless-view-view": "Loe",
 	"timeless-pagemisc": "Veel",
+	"timeless-namespaces": "Nimeruumid",
+	"timeless-pagetools": "Lehekülje toimingud",
+	"timeless-languages": "Keeled",
 	"timeless-projects": "Teistes projektides",
 	"timeless.css": "/* Siin asuv kaskaadilaadistik laaditakse kõigi kujunduse Timeless kasutajate jaoks. */",
 	"timeless.js": "/* Siin asuv JavaScript laaditakse kõigi kujunduse Timeless kasutajate jaoks. */",

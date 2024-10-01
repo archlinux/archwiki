@@ -72,3 +72,11 @@ $specialPageAliases['ur'] = [
 	'GoToComment' => [ 'تبصرہ_پر_جائیں' ],
 	'DiscussionToolsDebug' => [ 'آلات_گفتگو_کی_خرابی_کا_ازالہ' ],
 ];
+
+/** Simplified Chinese (中文（简体）) */
+$specialPageAliases['zh-hans'] = [
+	'TopicSubscriptions' => [ '话题订阅' ],
+	'FindComment' => [ '查找留言' ],
+	'GoToComment' => [ '转到留言' ],
+	'DiscussionToolsDebug' => [ '讨论工具调试' ],
+];

@@ -33,7 +33,7 @@
 	"apihelp-echopushsubscriptions+delete-param-centraluserid": "Централната корисничка назнака поврзана со претплатата што треба да се отпријави.",
 	"apihelp-echopushsubscriptions+delete-example": "Отпријави претплата на наметнувања за тековниот корисинк.",
 	"apihelp-query+notifications-summary": "Дај ги известувањата што го исчекуваат тековниот корисник.",
-	"apihelp-query+notifications-param-prop": "Подробности што треба да се побараат.",
+	"apihelp-query+notifications-param-prop": "Поединости што треба да се побараат.",
 	"apihelp-query+notifications-param-sections": "Известителните оддели што треба да се побараат (т.е. некоја комбинација од „alert“ и „message“).",
 	"apihelp-query+notifications-param-groupbysection": "Дали да се групира исходот по оддели. Ако е зададено, секој оддел се дава посебно.",
 	"apihelp-query+notifications-param-filter": "Филтрирај ги известувањата во исходот.",

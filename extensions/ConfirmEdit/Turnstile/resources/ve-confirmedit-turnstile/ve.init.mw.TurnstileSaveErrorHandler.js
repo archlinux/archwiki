@@ -41,7 +41,7 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 			// Register extra fields
 			target.saveFields.wpCaptchaWord = function () {
 				// eslint-disable-next-line no-jquery/no-global-selector
-				return $( '#cf-turnstile-response' ).val();
+				return $( 'input[ name="cf-turnstile-response" ]' ).val();
 			};
 
 			this.getReadyPromise()

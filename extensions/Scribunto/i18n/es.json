@@ -14,10 +14,11 @@
 			"Peter Bowman",
 			"Ryo567",
 			"Vfrico",
-			"No se"
+			"No se",
+			"Qwrop"
 		]
 	},
-	"content-model-scribunto": "Módulo scribunto",
+	"content-model-scribunto": "Módulo Scribunto",
 	"scribunto-desc": "Marco para la incorporación de lenguajes de script en páginas de MediaWiki",
 	"scribunto-line": "en la línea $1",
 	"scribunto-module-line": "en $1 en la línea $2",
@@ -65,6 +66,7 @@
 	"scribunto-limitreport-timeusage": "Tiempo de uso de Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 segundos",
 	"scribunto-limitreport-virtmemusage": "Tamaño virtual de Lua",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|byte|bytes}}",
 	"scribunto-limitreport-estmemusage": "Uso estimado de memoria de Lua",
 	"scribunto-limitreport-memusage": "Uso de memoria de Lua",
 	"scribunto-limitreport-profile": "Perfil de Lua",

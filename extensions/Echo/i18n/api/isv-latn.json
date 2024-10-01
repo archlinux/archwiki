@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"apihelp-echomarkread-summary": "Označiti uvědomjenja kako pročitane za nyněšnjego koristnika.",
+	"apihelp-echomarkread-param-list": "Spisok identifikatorov uvědomjenij, ktore trěba označiti kako pročitane.",
+	"apihelp-echomarkread-param-unreadlist": "Spisok identifikatorov uvědomjenij, ktore trěba označiti kako nepročitane.",
+	"apihelp-echomarkread-param-all": "Ako ustanovjeno, označiti vse uvědomjenja koristnika kako pročitane.",
+	"apihelp-echomarkread-param-sections": "Spisok razdělov, ktore trěba označiti kako pročitane.",
+	"apihelp-echomarkread-param-wikis": "Spisok viki, iz ktoryh uvědomjenja trěba označiti kako pročitane (standardno samo nyněšnja viki).",
+	"apihelp-echomarkread-example-1": "Označiti uvědomjenje 8 kako pročitano",
+	"apihelp-echomarkread-example-2": "Označiti vse uvědomjenja kako pročitane",
+	"apihelp-echomarkread-example-3": "Označiti uvědomjenje 1 kako pročitano",
+	"apihelp-echomarkseen-summary": "Označiti uvědomjenja kako pročitane za nyněšnjego koristnika.",
+	"apihelp-echomarkseen-example-1": "Označiti uvědomjenja vsih tipov kako pročitane",
+	"apihelp-echomarkseen-param-type": "Tip uvědomjenij, ktore trěba označiti kako pročitane: «alert», «message» ili «all»."
+}

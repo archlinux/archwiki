@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"SupaplexTW"
+		]
+	},
+	"vector-languages": "语言",
+	"vector-language-button-label": "{{PLURAL:$1|$1 种语言}}",
+	"vector-no-language-button-label": "加添语言",
+	"vector-action-addsection": "加一个段落",
+	"vector-view-create": "开新页",
+	"vector-view-history": "看历史",
+	"vector-more-actions": "阁看",
+	"vector-feature-limited-width-name": "宽度",
+	"vector-feature-custom-font-size-name": "文本",
+	"vector-feature-limited-width-0-label": "阔",
+	"vector-feature-limited-width-1-label": "标准",
+	"vector-feature-custom-font-size-0-label": "细",
+	"vector-feature-custom-font-size-1-label": "标准",
+	"vector-feature-custom-font-size-2-label": "大",
+	"skin-theme-name": "色水",
+	"skin-theme-os-label": "自动",
+	"vector-searchsuggest-containing": "搜揣有<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>的页",
+	"vector-toc-label": "目录",
+	"vector-toc-beginning": "序言",
+	"vector-main-menu-label": "主选单",
+	"vector-page-tools-label": "家私",
+	"vector-page-tools-general-label": "一般",
+	"vector-unpin-element-label": "覕"
+}

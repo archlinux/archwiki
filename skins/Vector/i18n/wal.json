@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Ella Lachow"
+			"Ella Lachow",
+			"Malaalaa"
 		]
 	},
 	"vector-opt-out": "Gal\"a be'uwaassi zaara",
@@ -16,7 +17,7 @@
 	"vector-action-undelete": "Xayssoppa",
 	"vector-action-unprotect": "Naaguwaa laamma",
 	"vector-view-create": "Medha",
-	"vector-view-edit": "Giigissa",
+	"vector-view-edit": "Goyda",
 	"vector-view-history": "Haydaa be'a",
 	"vector-view-view": "Nabbaba",
 	"vector-view-viewsource": "Man\"iyaa be'a",
@@ -24,8 +25,17 @@
 	"vector-jumptosearch": "Koyyiyoosaakko xaalla",
 	"vector-jumptocontent": "Kesuwaakko xaalla",
 	"vector-more-actions": "Aaruwassi",
+	"vector-feature-limited-width-name": "Aahotettaa",
+	"vector-feature-custom-font-size-name": "Xuufiya",
+	"vector-feature-limited-width-0-label": "Aaho",
+	"vector-feature-limited-width-1-label": "Gophphiya",
+	"vector-feature-custom-font-size-0-label": "Qeera",
+	"vector-feature-custom-font-size-1-label": "Gophphiya",
+	"vector-feature-custom-font-size-2-label": "Gita",
+	"skin-theme-name": "Meraa",
+	"skin-theme-os-label": "Awutomaatikiya",
 	"vector-search-loader": "Koshshaa zoreta ehiidi de'ees",
-	"vector-searchsuggest-containing": "Oyqqida sinttata koyya <strong class=\"cdx-typeahead-search_search-footer_query\">$1</strong>",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search_search-footer_query\">$1</strong> oyqqida sinttata koyya",
 	"vector-intro-page": "Help:Geluwaa",
 	"vector-toc-label": "Kesota",
 	"vector-toc-beginning": "Doomettaa",

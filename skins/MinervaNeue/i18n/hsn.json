@@ -1,9 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"ChoiChong"
+			"ChoiChong",
+			"孟天皓"
 		]
 	},
+	"mobile-frontend-history": "檢視此頁面亇編輯歷史。",
+	"mobile-frontend-home-button": "首頁",
 	"mobile-frontend-language-article-heading": "言语",
-	"mobile-frontend-placeholder": "去寻{{SITENAME}}"
+	"mobile-frontend-main-menu-login": "登入",
+	"mobile-frontend-main-menu-nearby": "附近",
+	"mobile-frontend-main-menu-settings": "設定",
+	"mobile-frontend-placeholder": "去寻{{SITENAME}}",
+	"mobile-frontend-random-button": "隨機"
 }

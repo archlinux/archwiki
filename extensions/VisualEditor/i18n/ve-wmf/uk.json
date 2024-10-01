@@ -21,11 +21,11 @@
 			"아라"
 		]
 	},
-	"tag-editcheck-newcontent-description": "EditCheck вважає, що на сторінку додано новий вміст",
+	"tag-editcheck-newcontent-description": "Звіряння редагування показало, що на сторінку додано новий вміст",
 	"tag-editcheck-newreference-description": "На сторінку додано примітку",
-	"tag-editcheck-references-description": "EditCheck вважає, що варто додати посилання на джерело",
-	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Перевірку редагування (посилання на джерела) активовано]]",
-	"tag-editcheck-references-activated-description": "EditCheck вважає, що варто додати посилання на джерело, і показано інтерфейс користувача для цього",
+	"tag-editcheck-references-description": "Звіряння редагування показало, що варто додати посилання на джерело",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Звіряння редагувань (посилання на джерела) активовано]]",
+	"tag-editcheck-references-activated-description": "Звіряння редагування показало, що варто додати посилання на джерело, і показано інтерфейс користувача для цього",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Візуальний редактор]]",
 	"tag-visualeditor-description": "Редагування виконано з використанням [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуального редактора]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Візуальний редактор: Перевірити]]",

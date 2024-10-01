@@ -10,6 +10,8 @@
 	"math-visualeditor-mwchemdialog-title": "Kemihkalaš formel",
 	"math-visualeditor-mwlatexinspector-display-inline": "Linjá nalde",
 	"math-visualeditor-mwmathdialog-title": "Matemahtihkka",
+	"math-visualeditor-symbol-group-chem-brackets": "Dávge-, roahkke- ja bárroruođut",
+	"math-visualeditor-symbol-group-math-parentheses": "Dávgeruođut",
 	"math_syntax_error": "syntáksameattáhus",
 	"math_unknown_error": "dovdameahttun meattáhus",
 	"math_unknown_function": "dovdameahttun funkšuvdna \"$1\"",

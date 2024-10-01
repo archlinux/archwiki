@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kambai Akau",
+			"Kuzayet"
+		]
+	},
+	"vector-languages": "A̱ru̱ryem",
+	"vector-language-button-label": "{{PLURAL:$1|duryem $1|a̱ruryem $1}}",
+	"vector-no-language-button-label": "mbrang nwap",
+	"vector-view-create": "yya",
+	"vector-view-history": "Tyyei nkkang",
+	"vector-more-actions": "Mbrang",
+	"vector-feature-limited-width-name": "Gbang",
+	"vector-feature-custom-font-size-name": "Du̱jem",
+	"vector-feature-limited-width-0-label": "Byimbyai",
+	"vector-feature-limited-width-1-label": "Kidee",
+	"vector-feature-custom-font-size-0-label": "Chunchong",
+	"vector-feature-custom-font-size-1-label": "Kidee",
+	"vector-feature-custom-font-size-2-label": "A̱gbadang",
+	"skin-theme-name": "Du̱suuk",
+	"skin-theme-os-label": "Yyit banying",
+	"vector-searchsuggest-containing": "Zop u̱ nazzu̱ na a̱kok ni for <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Nkyang a",
+	"vector-toc-beginning": "Ka̱tsu̱tsrang",
+	"vector-main-menu-label": "A̱gbadang a̱mainu",
+	"vector-page-tools-label": "Nkyang pfwong",
+	"vector-page-tools-general-label": "Sarei kozankyai",
+	"vector-unpin-element-label": "Nyyat"
+}

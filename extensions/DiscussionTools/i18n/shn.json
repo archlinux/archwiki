@@ -28,5 +28,6 @@
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|ၸဝ်ႈၵဝ်ႇ}} တေႁပ်ႉလႆႈ ၶေႃႈၸႅင်ႈတိုၼ်ႇ ဢၼ်ၵဵဝ်ႇၵပ်းလူၺ်ႈ ၶွမ်းမႅၼ်ႉ တီႈၼႂ်းႁူဝ်ၶေႃႈၼႆႉ။",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|ၸဝ်ႈၵဝ်ႇ}} တိတ်းတၢမ်းဝႆႉယဝ်ႉ!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|ၸဝ်ႈၵဝ်ႇ}} တေဢမ်ႇသိုပ်ႇႁပ်ႉလႆႈ ၶေႃႈၸႅင်ႈတိုၼ်ႇ ဢၼ်ၵဵဝ်ႇၵပ်းလူၺ်ႈ ၶွမ်းမႅၼ်ႉ တီႈၼႂ်းႁူဝ်ၶေႃႈဢၼ်ၼႆႉ။",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|ၸဝ်ႈၵဝ်ႇ}} ဢမ်ႇလႆႈ တိတ်းတၢမ်းဝႆႉယဝ်ႉ။"
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|ၸဝ်ႈၵဝ်ႇ}} ဢမ်ႇလႆႈ တိတ်းတၢမ်းဝႆႉယဝ်ႉ။",
+	"discussiontools-topicsubscription-pager-actions": "လွင်ႈႁဵတ်းသၢင်ႈ"
 }

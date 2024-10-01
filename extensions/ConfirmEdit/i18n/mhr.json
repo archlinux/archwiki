@@ -1,10 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lifeway"
+			"Lifeway",
+			"Mxalexandrov86"
 		]
 	},
 	"captcha-id-label": "CAPTCHA ID",
+	"captcha-id-help": "Тиды кугытым мӧҥгеш вашталтыш деч посна колтыман.",
+	"captchahelp-title": "CAPTCHA полыш",
+	"captchahelp-cookies-needed": "Тиде функций пашам ыштыже манын тыланет cookies манмым чӱкташ кӱлеш.",
 	"confirmedit-preview-line": "Корно номер",
 	"confirmedit-preview-content": "Контент",
 	"confirmedit-preview-validity": "Чынлык",

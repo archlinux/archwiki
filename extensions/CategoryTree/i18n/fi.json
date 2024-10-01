@@ -8,7 +8,8 @@
 			"Nedergard",
 			"Nike",
 			"Pyscowicz",
-			"Str4nd"
+			"Str4nd",
+			"Samoasambia"
 		]
 	},
 	"categorytree": "Luokkapuu",
@@ -23,7 +24,7 @@
 	"categorytree-mode-categories": "vain luokat",
 	"categorytree-mode-pages": "kaikki sivut tiedostoja lukuun ottamatta",
 	"categorytree-mode-all": "kaikki sivut",
-	"categorytree-collapse": "piilota",
+	"categorytree-collapse": "tiivistä",
 	"categorytree-expand": "näytä",
 	"categorytree-member-counts": "sisältää {{PLURAL:$1|1 alaluokan|$1 alaluokkaa}}, {{PLURAL:$2|1 sivun|$2 sivua}} ja {{PLURAL:$3|1 tiedoston|$3 tiedostoa}}",
 	"categorytree-num-categories": "$1 L",

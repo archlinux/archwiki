@@ -123,18 +123,25 @@ def gen_captcha(text, fontname, fontsize, file_name):
         offset -= random.uniform(5, 6)
 
     for i in range(10):
+        x0 = int(
+            offset * ((i / 2) - 1) / 5
+            + x / 2
+            - dim[0] / 2
+            + random.uniform(0, 10)
+        )
+        y0 = int(y / 2 - dim[1] + 30 + random.uniform(-10, 15))
+
+        x1 = int(offset * i / 7 + x / 2 - dim[0] / 2 + random.uniform(-5, 5))
+        y1 = int(y / 2 - dim[1] + 30 + random.uniform(-10, 30))
+
+        if x1 < x0:
+            x0, x1 = x1, x0
+
+        if y1 < y0:
+            y0, y1 = y1, y0
+
         d.arc(
-            (
-                int(
-                    offset * ((i / 2) - 1) / 5
-                    + x / 2
-                    - dim[0] / 2
-                    + random.uniform(0, 10)
-                ),
-                int(y / 2 - dim[1] + 30 + random.uniform(-10, 15)),
-                int(offset * i / 7 + x / 2 - dim[0] / 2 + random.uniform(-5, 5)),
-                int(y / 2 - dim[1] + 30 + random.uniform(-10, 30)),
-            ),
+            (x0, y0, x1, y1),
             int(random.uniform(-30, 30)),
             int(random.uniform(160, 300)),
             fill=fgcolor,

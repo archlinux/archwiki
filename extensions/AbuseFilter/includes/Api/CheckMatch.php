@@ -10,6 +10,7 @@ use LogEventsList;
 use LogicException;
 use LogPage;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
@@ -111,6 +112,15 @@ class CheckMatch extends ApiBase {
 
 			if ( !$row ) {
 				$this->dieWithError( [ 'apierror-abusefilter-nosuchlogid', $params['logid'] ], 'nosuchlogid' );
+			}
+
+			// TODO: Replace with dependency injection once security patch is uploaded publicly.
+			$afFilterLookup = AbuseFilterServices::getFilterLookup();
+			$hidden = $afFilterLookup->getFilter( $row->afl_filter_id, $row->afl_global )
+				->isHidden();
+			$canSeeDetails = $this->afPermManager->canSeeLogDetailsForFilter( $performer, $hidden );
+			if ( !$canSeeDetails ) {
+				$this->dieWithError( 'apierror-permissiondenied-generic', 'cannotseedetails' );
 			}
 
 			$visibility = SpecialAbuseLog::getEntryVisibilityForUser( $row, $performer, $this->afPermManager );

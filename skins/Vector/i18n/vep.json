@@ -3,11 +3,12 @@
 		"authors": [
 			"Sebranik",
 			"Игорь Бродский",
-			"Лариса Чиркова"
+			"Лариса Чиркова",
+			"Ростислав Мельников"
 		]
 	},
 	"vector-languages": "Keled",
-	"vector-language-button-label": "{{PLURAL:$1|$1 kel'|$1 keled}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 kel’|$1 keled}}",
 	"vector-no-language-button-label": "Ližada keled",
 	"vector-action-addsection": "Ližada tem",
 	"vector-action-delete": "Heitä",
@@ -21,8 +22,17 @@
 	"vector-view-view": "Lugeda",
 	"vector-view-viewsource": "Kacta purtkehe",
 	"vector-more-actions": "Enamba",
+	"vector-feature-limited-width-name": "Leveduz",
+	"vector-feature-custom-font-size-name": "Tekst",
+	"vector-feature-limited-width-0-label": "Leved",
+	"vector-feature-limited-width-1-label": "Standartine",
+	"vector-feature-custom-font-size-0-label": "Pen’",
+	"vector-feature-custom-font-size-1-label": "Standartine",
+	"vector-feature-custom-font-size-2-label": "Sur’",
+	"skin-theme-name": "Muju",
+	"skin-theme-os-label": "Automatine",
 	"vector-searchsuggest-containing": "Eci lehtpoled, miččiš om <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-label": "Südäimist",
+	"vector-toc-label": "Südäimišt",
 	"vector-toc-beginning": "Augotiž",
 	"vector-main-menu-label": "Pämenü",
 	"vector-page-tools-label": "Instrumentad",

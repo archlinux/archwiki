@@ -24,7 +24,8 @@
 			"Windes",
 			"Wladek92",
 			"Zcqsc06",
-			"Zetud"
+			"Zetud",
+			"SleaY"
 		]
 	},
 	"gadgets-desc": "Permet aux utilisateurs de choisir des [[Special:Gadgets|gadgets CSS et Javascripts]] personnalisés dans leurs [[Special:Preferences#mw-prefsection-gadgets|préférences]]",
@@ -62,5 +63,7 @@
 	"gadgets-requires-es6": "Ce gadget n’est pris en charge que sur les navigateurs dont le moteur JavaScript est compatible avec la spécification ES6 (ECMAScript 6).",
 	"gadgets-validate-notset": "La propriété <code>$1</code> n’est pas définie.",
 	"gadgets-validate-wrongtype": "La propriété <code>$1</code> doit être <code>$2</code> plutôt que <code>$3</code>.",
+	"gadgets-validate-invalidtitle": "Le titre de la page « $1 » n'est pas valide",
+	"gadgets-validate-nopage": "La page « $1 » n’existe pas.",
 	"gadgets-supports-urlload": "Ce gadget prend en charge le chargement via URL avec le paramètre de requête <code>?withgadget</code>."
 }

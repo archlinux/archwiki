@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hakimi97"
+		]
+	},
+	"editcheck-dialog-action-no": "Tidak",
+	"editcheck-dialog-action-yes": "Ya",
+	"editcheck-dialog-addref-description": "Bantu pembaca memahami dari mana maklumat ini datang dengan menambahkan petikan.",
+	"editcheck-dialog-addref-reject-question": "Kenapa anda tidak menambah sumber rujukan?",
+	"editcheck-dialog-addref-reject-description": "Penyunting akan menilai dan mengetahui tentang keputusan anda untuk menggugurkan rujukan dengan lebih lanjut.",
+	"editcheck-dialog-addref-reject-irrelevant": "Saya rasa penambahan rujukan tidak relevan dengan perubahan yang saya sedang lakukan",
+	"editcheck-dialog-addref-reject-common-knowledge": "Maklumat yang saya sedang tambah ini telah diketahui secara meluas",
+	"editcheck-dialog-addref-reject-uncertain": "Saya tidak pasti sumber rujukan apa yang hendak ditambah",
+	"editcheck-dialog-addref-reject-other": "Lain-lain",
+	"editcheck-dialog-addref-success-notify": "Terima kasih kerana menambah sumber rujukan!",
+	"editcheck-dialog-addref-title": "Tambah sumber rujukan",
+	"editcheck-dialog-title": "Sebelum diterbitkan",
+	"tag-editcheck-reference-decline-common-knowledge": "Semak Suntingan (rujukan) ditolak (pengetahuan umum)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Sumber rujukan SemakSuntingan ditolak kerana ia merupakan pengetahuan am",
+	"tag-editcheck-reference-decline-irrelevant": "Semak Suntingan (rujukan) ditolak (tidak berkaitan)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Rujukan SemakSuntingan ditolak kerana tidak berkaitan",
+	"tag-editcheck-reference-decline-other": "Semak Suntingan (rujukan) ditolak (sebab lain)",
+	"tag-editcheck-reference-decline-other-description": "Rujukan SemakSuntingan ditolak disebabkan oleh sebab yang tidak dinyatakan",
+	"tag-editcheck-reference-decline-uncertain": "Semak Suntingan (rujukan) ditolak (kurang kepastian)",
+	"tag-editcheck-reference-decline-uncertain-description": "SemakSuntingan rujukan ditolak kerana kurang pasti akan rujukan yang ingin ditambah"
+}

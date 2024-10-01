@@ -6,9 +6,12 @@
 			"Kimberli Mäkäräinen (WMNO)",
 			"Lea-Christine Sara",
 			"Trondtr",
-			"Tynnoel"
+			"Tynnoel",
+			"Yupik",
+			"WMNO sámeprošeakta"
 		]
 	},
+	"skinname-vector": "Vector (2010)",
 	"vector-skin-desc": "Addá 2 Vector hámi:\n* 2011 - Ođđaáigásaš veršuvdna Monobookas, ođđa hápmi ja ollu buoriduvvon bealit.\n* 2022 - Vector mii lea WMFas huksejuvvon [[mw:Desktop Improvements|Desktop Improvements]] -prošeavtta áigge.",
 	"prefs-vector-enable-vector-1-label": "Ane klassihkalaš Vectora",
 	"prefs-vector-enable-vector-1-help": "Daid boahttevaš jagiid mii áigot ceahkkálaga ođasmahttit Vector hámi. Klassihkalaš Vector čájeha dutnje dan boares Vector veršuvnna (juovlamánnu 2019) Deaddil [[mw:Reading/Web/Desktop_Improvements|project page]] vai oahpat eambbo.",
@@ -21,7 +24,7 @@
 	"vector-no-language-button-label": "Lasit gielaid",
 	"vector-no-language-button-aria-label": "Dát artihkkal gávdno dušše dán gillii. Ráhkat artihkkala eará gielaide.",
 	"vector-language-variant-switcher-label": "Lonut giellavariánta",
-	"vector-action-addsection": "Lasit fáttá",
+	"vector-action-addsection": "lasit fáttá",
 	"vector-action-delete": "Sihko",
 	"vector-action-move": "Sirdde",
 	"vector-action-protect": "Suodjal",
@@ -47,6 +50,7 @@
 	"skin-night-mode-name": "Ivdni",
 	"skin-night-mode-2-label": "Automáhtalaš",
 	"skin-theme-name": "Ivdni",
+	"skin-theme-description": "[Geahččalanveršuvdna, hui sihkkarit leat váttisvuođat] Unnit čuovgga mii boahtá ovttadaga šearpmas.",
 	"skin-theme-os-label": "Automáhtalaš",
 	"vector-search-loader": "Viežžamin ohcanevttohusaid",
 	"vector-searchsuggest-containing": "Oza siidduid main lea <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",

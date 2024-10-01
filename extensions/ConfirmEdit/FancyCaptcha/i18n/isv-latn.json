@@ -4,8 +4,14 @@
 			"IJzeren Jan"
 		]
 	},
+	"fancycaptcha-desc": "Lěpy CAPTCHA-generator za utvrdženje pravok",
+	"fancycaptcha-addurl": "Vaša pravka sodrživaje nove vněšnje linky.\nV cěljah ohrany našej viki protiv avtomatičnomu spamu prosimo, že vpišete te slova, ktore vidite niže na obrazku, v slědujuče polje ([[Special:Captcha/help|podrobnosti]]):",
+	"fancycaptcha-badlogin": "V cěljah ohrany našej viki protiv avtomatičnomu lomjenju parol prosimo, že vpišete te slova, ktore vidite niže na obrazku, v slědujuče polje ([[Special:Captcha/help|podrobnosti]]):",
 	"fancycaptcha-captcha": "Prověrka bezpečnosti",
-	"fancycaptcha-accountcreate": "Da byste pomogli ohraniti našu viki protiv avtomatičnomu tvorjenju kont, prosimo vpisati v polje te slova, ktore vidite poniže ([[Special:Captcha/help|podrobnosti]]):",
+	"fancycaptcha-accountcreate": "V cěljah ohrany našej viki protiv avtomatičnomu tvorjenju kont prosimo, že vpišete te slova, ktore vidite niže na obrazku, v slědujuče polje ([[Special:Captcha/help|podrobnosti]]):",
+	"fancycaptcha-create": "Za stvorjenje stranice prosimo, že vpišete te slova, ktore vidite niže na obrazku, v slědujuče polje ([[Special:Captcha/help|podrobnosti]]):",
+	"fancycaptcha-edit": "Za pravjenje tutoj stranice prosimo, že vpišete te slova, ktore vidite niže na obrazku, v slědujuče polje ([[Special:Captcha/help|podrobnosti]]):",
 	"fancycaptcha-imgcaptcha-ph": "Vpišite tekst, ktory vidite na obrazku",
+	"fancycaptcha-sendemail": "V cěljah ohrany našej viki protiv avtomatičnomu spamu prosimo, že vpišete te slova, ktore vidite niže na obrazku, v slědujuče polje ([[Special:Captcha/help|podrobnosti]]):",
 	"fancycaptcha-reload-text": "Osvěžiti"
 }

@@ -11,6 +11,7 @@ class Less_Tree_Anonymous extends Less_Tree implements Less_Tree_HasValuePropert
 	public $currentFileInfo;
 	/** @var bool */
 	public $rulesetLike;
+	public $isReferenced;
 
 	/**
 	 * @param string $value
@@ -18,17 +19,19 @@ class Less_Tree_Anonymous extends Less_Tree implements Less_Tree_HasValuePropert
 	 * @param array|null $currentFileInfo
 	 * @param bool|null $mapLines
 	 * @param bool $rulesetLike
+	 * @param bool $referenced
 	 */
-	public function __construct( $value, $index = null, $currentFileInfo = null, $mapLines = null, $rulesetLike = false ) {
+	public function __construct( $value, $index = null, $currentFileInfo = null, $mapLines = null, $rulesetLike = false, $referenced = false ) {
 		$this->value = $value;
 		$this->index = $index;
 		$this->mapLines = $mapLines;
 		$this->currentFileInfo = $currentFileInfo;
 		$this->rulesetLike = $rulesetLike;
+		$this->isReferenced = $referenced;
 	}
 
 	public function compile( $env ) {
-		return new self( $this->value, $this->index, $this->currentFileInfo, $this->mapLines );
+		return new self( $this->value, $this->index, $this->currentFileInfo, $this->mapLines, $this->rulesetLike, $this->isReferenced );
 	}
 
 	/**
@@ -44,15 +47,15 @@ class Less_Tree_Anonymous extends Less_Tree implements Less_Tree_HasValuePropert
 		return $this->rulesetLike;
 	}
 
-	/**
-	 * @see Less_Tree::genCSS
-	 */
 	public function genCSS( $output ) {
 		$output->add( $this->value, $this->currentFileInfo, $this->index, $this->mapLines );
 	}
 
-	public function toCSS() {
-		return $this->value;
+	public function markReferenced() {
+		$this->isReferenced = true;
 	}
 
+	public function getIsReferenced() {
+		return !isset( $this->currentFileInfo['reference'] ) || !$this->currentFileInfo['reference'] || $this->isReferenced;
+	}
 }

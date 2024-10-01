@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"ОйЛ"
+			"ОйЛ",
+			"Некто участник"
 		]
 	},
 	"mobile-frontend-editor-edit": "исправлѥниѥ",
+	"mobile-frontend-history": "оузрѣти їсторїѩ члѣна",
 	"mobile-frontend-home-button": "главьна страница",
-	"mobile-frontend-language-article-heading": "дроугꙑ ѩꙁꙑкꙑ",
+	"mobile-frontend-language-article-heading": "ѩꙁꙑкъ",
 	"mobile-frontend-main-menu-login": "въниди",
 	"mobile-frontend-main-menu-logout": "ис̾ходъ",
 	"mobile-frontend-main-menu-nearby": "блиꙁъ",

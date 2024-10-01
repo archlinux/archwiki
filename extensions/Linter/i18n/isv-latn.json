@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"linterrors": "Pogrěšky v sintaksě koda",
+	"linter-category-bogus-image-options": "Ložne opcije fajla",
+	"linter-category-bogus-image-options-desc": "Tute stranice sodrživajut fajly s ložnymi opcijami.",
+	"linter-category-large-tables": "Velike tabely, ktore težko prěgledajut se na mobilnyh telefonah",
+	"linter-category-large-tables-desc": "Tute stranice sodrživajut tabely, ktore težko prěgledajut se na mobilnyh telefonah",
+	"linter-category-deletable-table-tag": "Tag tabely, ktory trěba odstraniti",
+	"linter-category-deletable-table-tag-desc": "Tute stranice sodrživajut tagy tabelov, ktore trěba odstraniti.",
+	"linter-category-fostered": "Pogrěšno uměščeno sodržanje",
+	"linter-heading-high-priority": "Vysoky prioritet",
+	"linter-heading-low-priority": "Nizky prioritet",
+	"linter-heading-medium-priority": "Srědnji prioritet"
+}

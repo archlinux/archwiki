@@ -6,7 +6,15 @@
 	},
 	"visualeditor-ca-createlocaldescriptionsource": "ᨲᩮᩬᩥ᩵ᨾᨣᩤᩴᨧᩣᨡᩱᨩᩪᨴᩦ᩵",
 	"visualeditor-ca-createsource": "ᨸᩖᩯᨦᨨᨷᩢ᩠ᨷᨣᩮᩢ᩶ᩣ",
-	"visualeditor-ca-editsource": "ᨠᩯ᩶ᨨᨷᩢ᩠ᨷᨣᩮᩢ᩶ᩣ",
+	"visualeditor-ca-editsource": "ᨠᩯ᩶​ᨨᨷᩢ᩠ᨷ​ᨣᩮᩢ᩶ᩣ",
 	"visualeditor-ca-editsource-section": "ᨠᩯ᩶ᨨᨷᩢ᩠ᨷᨣᩮᩢ᩶ᩣ",
-	"visualeditor-descriptionpagelink": "Project:ᨣᩕᩮᩬᩥ᩵ᨦᨾᩨᨠᩯ᩶ᨡᩱᩀ᩵ᩣ᩠ᨦᩉᩢ᩠ᨶᨽᩣ᩠ᨻ"
+	"visualeditor-descriptionpagelink": "Project:ᨣᩕᩮᩬᩥ᩵ᨦᨾᩨᨠᩯ᩶ᨡᩱᩀ᩵ᩣ᩠ᨦᩉᩢ᩠ᨶᨽᩣ᩠ᨻ",
+	"visualeditor-dialog-meta-languages-name-label": "ᨽᩣᩈᩣ",
+	"visualeditor-dialog-meta-languages-section": "ᨽᩣᩈᩣ",
+	"visualeditor-dialog-meta-settings-index-default": "ᨣ᩵ᩤ​ᨣᩮᩢ᩶ᩣᨯᩮᩥ᩠ᨾ",
+	"visualeditor-dialog-meta-settings-index-disable": "ᨷᩴᨾᩯ᩠᩵ᨶ",
+	"visualeditor-dialog-meta-settings-index-force": "ᨾᩯ᩠ᨶ᩵",
+	"visualeditor-dialog-meta-settings-newsectioneditlink-default": "ᨣ᩵ᩤ​ᨣᩮᩢ᩶ᩣᨯᩮᩥ᩠ᨾ",
+	"visualeditor-dialog-meta-settings-newsectioneditlink-disable": "ᨷᩴᨾᩯ᩠ᨶ᩵",
+	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "ᨾᩯ᩠ᨶ᩵"
 }

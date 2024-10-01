@@ -4,7 +4,8 @@
 			"AnakngAraw",
 			"GinawaSaHapon",
 			"Sky Harbor",
-			"Yivan000"
+			"Yivan000",
+			"Qwrop"
 		]
 	},
 	"scribunto-desc": "Baskagan para sa pagbabaon ng mga wikang pampagpapanitik papaloob sa mga pahina ng MediaWiki",
@@ -23,9 +24,10 @@
 	"scribunto-console-clear": "Hawiin",
 	"scribunto-console-cleared": "Hinawi ang katayuan ng kahang pantaban dahil isinapanahon ang modyul.",
 	"scribunto-common-error-category": "Mga pahinang may kamalian sa iskrip",
-	"scribunto-common-nosuchmodule": "Kamalian sa panitik: Walang ganyang modulo",
+	"scribunto-common-nosuchmodule": "Kamalian sa iskrip: Walang ganyang modulo na \"$2\".",
 	"scribunto-common-nofunction": "Kamalian sa panitik: Dapat kang magtukoy ng isang tungkuling tatawagin.",
 	"scribunto-common-nosuchfunction": "Kamalian sa panitik: Ang tinukoy mong tungkulin ay hindi umiiral.",
+	"scribunto-common-notafunction": "Kamalian sa iskrip: Ang \"$2\" ay hindi isang tungkulin.",
 	"scribunto-common-timeout": "Ang panahong inilaan para sa pagpapatakbo ng mga panitik ay lipas na.",
 	"scribunto-common-oom": "Ang dami ng pinahintulutang alaala para sa pagpapatakbo ng mga panitik ay nalampasan na.",
 	"scribunto-common-backtrace": "Paurong na pagbabakas:",
@@ -33,7 +35,7 @@
 	"scribunto-lua-in-main": "sa loob ng pangunahing tipak",
 	"scribunto-lua-in-function-at": "sa loob ng tungkuling nasa $1:$2",
 	"scribunto-lua-backtrace-line": "$1: $2",
-	"scribunto-lua-error-location": "Kamalian ng lua na $1: $2",
+	"scribunto-lua-error-location": "Kamalian ng Lua na $1: $2.",
 	"scribunto-lua-error": "Error sa Lua: $2",
 	"scribunto-lua-notarrayreturn": "Kamalian sa panitik: Ang modulo ay nagbalik ng isang bagay na bukod sa isang talahanayan, dapat itong magbalik ng isang talahanayan ng pag-aangkat.",
 	"scribunto-luastandalone-proc-error": "Kamalian ng lua: hindi malikha ang proseso",
@@ -43,6 +45,7 @@
 	"scribunto-luastandalone-gone": "Kamalian sa lua: panloob na kamalian: lumabas na ang tagapagpaunawa",
 	"scribunto-luastandalone-signal": "Kamalian sa lua: panloob na kamalian: huminto ang tagapagpaliwanag na mayroong senyas na \"$2\"",
 	"scribunto-luastandalone-exited": "Kamalian sa lua: panloob na kamalian: ang tagapagpaunawa ay lumabas na mayroong katayuang $2",
+	"scribunto-limitreport-profile-ms": "$1 ms",
 	"nstab-module": "Modyul",
 	"tooltip-ca-nstab-module": "Tignan ang pahinang modyul"
 }

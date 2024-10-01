@@ -21,7 +21,8 @@
 			"YahyA",
 			"Yahya",
 			"আজিজ",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"RiazACU"
 		]
 	},
 	"collabpad-doctitle": "কোলাবপ্যাড: $1",
@@ -36,6 +37,9 @@
 	"tooltip-ca-createsource": "এই পাতার উৎস কোড তৈরি করুন",
 	"tooltip-ca-createsource-local": "স্থানীয় বিবরণ পাতার উৎস কোড তৈরি করুন",
 	"visualeditor-advancedsettings-tool": "উন্নত সেটিং",
+	"visualeditor-annotations-default-description": "পাতার এই অংশটি একটি টীকাযুক্ত পরিসরের অংশ।",
+	"visualeditor-annotations-default-end": "টীকাযুক্ত পরিসরের সমাপ্তি",
+	"visualeditor-annotations-default-start": "টীকাযুক্ত পরিসরের শুরু",
 	"visualeditor-autosave-modified-prompt-accept": "সম্পাদনা পুনরারম্ভ করুন",
 	"visualeditor-autosave-modified-prompt-message": "আপনার লোড করার পর থেকে এই পাতাটি সম্পাদিত হয়েছে। আপনি কি পুরাতন সংস্করণটিসহ সম্পাদনা পুনরারম্ভ করতে চান, নাকি সর্বশেষ সংস্করণটিসহ নতুন করে সম্পাদনা শুরু করতে চান?",
 	"visualeditor-autosave-modified-prompt-reject": "একটি নতুন সম্পাদনা শুরু করুন",

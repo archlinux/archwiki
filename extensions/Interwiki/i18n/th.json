@@ -7,9 +7,9 @@
 			"Passawuth"
 		]
 	},
-	"interwiki": "ดูและแก้ไขข้อมูลอินเตอร์วิกิ",
-	"interwiki-title-norights": "ดูข้อมูลอินเตอร์วิกิ",
-	"interwiki-desc": "เพิ่ม[[Special:Interwiki|หน้าพิเศษ]]เพื่อดูและแก้ไขตารางอินเตอร์วิกิ",
+	"interwiki": "ดูและแก้ไขข้อมูลอินเทอร์วิกิ",
+	"interwiki-title-norights": "ดูข้อมูลอินเทอร์วิกิ",
+	"interwiki-desc": "เพิ่ม[[Special:Interwiki|หน้าพิเศษ]]เพื่อดูและแก้ไขตารางอินเทอร์วิกิ",
 	"interwiki_prefix": "คำนำหน้า",
 	"interwiki-prefix-label": "คำนำหน้า:",
 	"interwiki_url": "ยูอาร์แอล",
@@ -24,7 +24,7 @@
 	"interwiki_deleting": "คุณกำลังจะลบคำนำหน้า \"$1\"",
 	"interwiki-logtext": "ดูปูม",
 	"interwiki_addbutton": "เพิ่ม",
-	"interwiki_edittext": "แก้ไขคำนำหน้าอินเตอร์วิกิ",
-	"right-interwiki": "แก้ไขข้อมูลอินเตอร์วิกิ",
-	"action-interwiki": "เปลี่ยนแปลงรายการอินเตอร์วิกินี้"
+	"interwiki_edittext": "แก้ไขคำนำหน้าอินเทอร์วิกิ",
+	"right-interwiki": "แก้ไขข้อมูลอินเทอร์วิกิ",
+	"action-interwiki": "เปลี่ยนแปลงรายการอินเทอร์วิกินี้"
 }

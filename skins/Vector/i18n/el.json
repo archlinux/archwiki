@@ -13,7 +13,8 @@
 			"Omnipaedista",
 			"Protnet",
 			"ZaDiak",
-			"Αντιγόνη"
+			"Αντιγόνη",
+			"KonVog"
 		]
 	},
 	"vector-skin-desc": "Παρέχει 2 Vector θέματα:\n* 2011 - Τη σύγχρονη έκδοση του MonoBook με φρέσκια εμφάνιση και πολλές βελτιώσεις στη χρηστικότητα.\n* 2022 - Το Vector που δημιουργήθηκε ως μέρος του έργου [[mw:Desktop Improvements]] του WMF.",
@@ -45,6 +46,16 @@
 	"vector-jumptosearch": "Πήδηση στην αναζήτηση",
 	"vector-jumptocontent": "Μετάβαση στο περιεχόμενο",
 	"vector-more-actions": "Περισσότερα",
+	"vector-feature-limited-width-name": "Πλάτος",
+	"vector-feature-custom-font-size-name": "Κείμενο",
+	"vector-feature-limited-width-0-label": "Πλατύ",
+	"vector-feature-limited-width-1-label": "Κανονικό",
+	"vector-feature-custom-font-size-0-label": "Μικρό",
+	"vector-feature-custom-font-size-1-label": "Κανονικό",
+	"vector-feature-custom-font-size-2-label": "Μεγάλο",
+	"skin-theme-name": "Χρώμα",
+	"skin-theme-description": "[Πειραματική έκδοση, υψηλή πιθανότητα εμφάνισης προβλημάτων] Μειώνει το φως που εκπέμπεται από τις οθόνες.",
+	"skin-theme-os-label": "Αυτόματο",
 	"vector-search-loader": "Φόρτωση προτάσεων αναζήτησης",
 	"vector-searchsuggest-containing": "Αναζητήστε σελίδες που περιέχουν <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Εισαγωγή",
@@ -69,10 +80,12 @@
 	"vector-unpin-element-label": "απόκρυψη",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Συζήτηση]]",
 	"tooltip-vector-anon-user-menu-title": "Περισσότερες επιλογές",
+	"vector-page-tools-nav-label": "Εργαλεία σελίδων",
 	"vector-prefs-limited-width": "Ενεργοποίηση λειτουργίας περιορισμένου πλάτους",
 	"vector-prefs-limited-width-help": "Ενεργοποίηση λειτουργίας περιορισμένου πλάτους για βελτιωμένη εμπειρία ανάγνωσης.",
 	"empty-language-selector-body": "Τα περιεχόμενα της σελίδας δεν υποστηρίζονται σε άλλες γλώσσες.",
 	"vector-toc-unpinned-popup": "Ο πίνακας περιεχομένων έχει μεταφερθεί εδώ.",
 	"vector-page-tools-unpinned-popup": "Το μενού εργαλείων έχει μεταφερθεί εδώ.",
-	"vector-main-menu-unpinned-popup": "Το κύριο μενού έχει μεταφερθεί εδώ."
+	"vector-main-menu-unpinned-popup": "Το κύριο μενού έχει μεταφερθεί εδώ.",
+	"vector-2022-beta-preview-label": "Προσβασιμότητα Ανάγνωσης (Vector 2022)"
 }

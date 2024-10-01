@@ -531,10 +531,12 @@ $specialPageAliases['yue'] = [
 $specialPageAliases['zh-hans'] = [
 	'AbuseLog' => [ '滥用日志', '过滤日志' ],
 	'AbuseFilter' => [ '滥用过滤器', '防滥用过滤器' ],
+	'BlockedExternalDomains' => [ '已封禁的外部域名' ],
 ];
 
 /** Traditional Chinese (中文（繁體）‎) */
 $specialPageAliases['zh-hant'] = [
 	'AbuseLog' => [ '濫用日誌' ],
 	'AbuseFilter' => [ '濫用過濾器' ],
+	'BlockedExternalDomains' => [ '已封鎖的外部網域' ],
 ];

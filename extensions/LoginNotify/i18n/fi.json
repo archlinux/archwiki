@@ -4,17 +4,20 @@
 			"Nike",
 			"Pxos",
 			"Pyscowicz",
-			"Stryn"
+			"Stryn",
+			"Samoasambia"
 		]
 	},
 	"loginnotify-desc": "Ilmoittaa käyttäjille epäilyttävistä kirjautumisista tuntemattomilta laitteilta ja/tai IP-osoitteista",
 	"echo-category-title-login-fail": "Epäonnistuneet kirjautumisyritykset",
 	"echo-pref-tooltip-login-fail": "Ilmoita minulle, kun tunnuksellani on yritetty epäonnistuneesti kirjautua.",
 	"echo-category-title-login-success": "Kirjautuminen tuntemattomalta laitteelta",
-	"echo-pref-tooltip-login-success": "Ilmoita minulle, kun tunnukselleni kirjaudutaan tuntemattomalta laitteelta ja IP-osoitteesta.",
+	"echo-pref-tooltip-login-success": "Ilmoita, kun tunnukselleni kirjaudutaan tuntemattomalta laitteelta ja IP-osoitteesta.",
 	"loginnotify-primary-link": "Ohje",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Epäonnistunut yritys|Epäonnistuneita yrityksiä}} kirjautua sisään {{GRAMMAR:illative|{{SITENAME}}}} tunnuksella $1",
 	"notification-loginnotify-login-success-email-subject": "Kirjautuminen {{GRAMMAR:illative|{{SITENAME}}}} käyttäjänä $1 laitteesta, jota et ole viime aikoina käyttänyt",
 	"notification-header-login-success": "Joku (luultavasti {{GENDER:$1|sinä}}) kirjautui hiljattain sisään tunnuksellasi uudelta laitteelta. Jos tämä olit sinä, voit jättää tämän viestin huomioimatta. Jos se et ollut sinä, on suositeltavaa, että vaihdat salasanasi ja tarkistat tunnuksesi toiminnan.",
+	"notification-new-bundled-header-login-fail": "{{PLURAL:$1|Yksi '''epäonnistunut yritys'''|'''Useita epäonnistuneita yrityksiä'''}} kirjautua tunnuksellasi uudelta laitteelta on havaittu sen jälkeen, kun viimeksi kirjauduit sisään. Jos se et ollut sinä, varmista, että tunnuksellasi on vahva salasana.",
+	"notification-known-header-login-fail": "{{PLURAL:$1|Yksi '''epäonnistunut yritys'''|'''Useita epäonnistuneita yrityksiä'''}} kirjautua tunnuksellasi on havaittu sen jälkeen, kun viimeksi kirjauduit sisään. Jos se et ollut sinä, varmista, että tunnuksellasi on vahva salasana.",
 	"notification-new-unbundled-header-login-fail": "{{PLURAL:$1|Yksi '''epäonnistunut yritys'''|'''Useita epäonnistuneita yrityksiä'''}} kirjautua tunnuksellasi uudelta laitteelta on havaittu. Varmista, että tunnuksellasi on vahva salasana."
 }

@@ -21,6 +21,7 @@
 	"oathauth-secret": "Tajny klucz uwierzytelniania dwuskładnikowego:",
 	"oathauth-enable": "Włączanie uwierzytelniania dwuskładnikowego",
 	"oathauth-recoverycodes": "Poniżej znajduje się lista jednorazowych kodów zapasowych. Te kody będą mogły być użyte tylko raz w sytuacjach awaryjnych gdy nie masz dostępu do swojego urządzania. Zapisz je i przechowuj w bezpiecznym miejscu. Zalecamy, byś {{GENDER:|oznaczał|oznaczała}} sobie poszczególne kody jako wykorzystane, kiedy zalogujesz się za ich pomocą. Jeżeli zgubisz swoje urządzenie, będą one jedynym sposobem na odzyskanie konta.\n\n'''Kody nie zostaną wyświetlone ponownie'''.",
+	"oathauth-recoverycodes-important": "Ten krok jest bardzo ważny! Nie pomijaj go!",
 	"oathauth-disable": "Wyłączanie uwierzytelniania dwuskładnikowego",
 	"oathauth-validatedoath": "Poświadczono urządzenie uwierzytelniające. Uwierzytelnianie dwuskładnikowe będzie teraz wymagane podczas logowania.",
 	"oathauth-noscratchforvalidation": "Do potwierdzenia uwierzytelniania dwuskładnikowego nie możesz użyć zapasowego kodu jednorazowego. Kody te służą tylko do odzyskiwania dostępu do konta w sytuacjach kryzysowych. Użyj kodu uwierzytelniającego ze swojej aplikacji do uwierzytelniania dwuskładnikowego (takiej jak Google Authenticator).",
@@ -92,8 +93,10 @@
 	"oathauth-totp-disable-warning": "Nie będziesz {{GENDER:|mógł|mogła}} więcej korzystać z urządzenia uwierzytelniającego zarejestrowanego dla tego konta. Wszystkie kody zapasowe powiązane z tym kontem zostaną unieważnione.",
 	"oathauth-invalidrequest": "Nieprawidłowe żądanie",
 	"notification-header-oathauth-disable": "Uwierzytelnianie dwuskładnikowe dla {{GENDER:$2|twojego konta}} zostało wyłączone.",
+	"notification-header-oathauth-remove-device": "Urządzenie uwierzytelniające zostało odłączone od {{GENDER:$2|twojego konta}}.",
 	"notification-body-oathauth-disable": "Jeśli to nie ty to {{GENDER:$2|zrobiłeś|zrobiłaś}}, twoje konto mogło zostać przejęte.",
 	"notification-body-oathauth-disable-other": "Jeśli nie {{GENDER:$2|wnioskowałeś|wnioskowałaś}} o to, {{GENDER:$2|powinieneś|powinnaś}} skontaktować się z administratorem.",
+	"notification-body-oathauth-disable-remaining": "Nadal {{PLURAL:$3|dostępne jest dodatkowe urządzenie|dostępne są dodatkowe urządzenia}}, aktywne na {{GENDER:$2|twoim koncie}}.",
 	"oathauth-notifications-disable-help": "Pomoc",
 	"oathauth-notifications-disable-primary": "Sprawdź swoje ustawienia uwierzytelniania dwuskładnikowego",
 	"notification-header-oathauth-enable": "Uwierzytelnianie dwuskładnikowe dla {{GENDER:$2|twojego konta}} zostało włączone.",
@@ -104,5 +107,6 @@
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nie ma włączonego uwierzytelniania dwuskładnikowego.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Zawieszona grupa|Zawieszone grupy}}:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Twoja przynależność}} do {{PLURAL:$1|tej grupy|tych grup}} została zawieszona do czasu, aż włączysz [[Special:Manage Two-factor authentication|uwierzytelnianie dwuskładnikowe]].",
-	"oathauth-qrcode-alt": "Kod QR zawierający tajny klucz do zeskanowania."
+	"oathauth-qrcode-alt": "Kod QR zawierający tajny klucz do zeskanowania.",
+	"oathauth-hint": "Nie masz dostępu do urządzenia lub aplikacji do uwierzytelniania? W tym polu możesz wpisać któryś z kodów zapasowych (które zostały pokazane po aktywacji uwierzytelniania dwuskładnikowego)."
 }

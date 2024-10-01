@@ -2,13 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Azniv Stepanian",
-			"Kareyac"
+			"Kareyac",
+			"Շահէն"
 		]
 	},
 	"mobile-frontend-editor-edit": "Խմբագրել",
+	"mobile-frontend-history": "Տեսնել այս էջի պատմութիւնը։",
+	"mobile-frontend-home-button": "Տուն",
 	"mobile-frontend-language-article-heading": "Լեզու",
+	"mobile-frontend-main-menu-login": "Մուտք գործել",
 	"mobile-frontend-main-menu-logout": "Դուրս գալ",
+	"mobile-frontend-main-menu-nearby": "Մօտիկ",
+	"mobile-frontend-main-menu-settings": "Կարգաւորումներ",
 	"mobile-frontend-main-menu-watchlist": "Հսկողութեան ցանկ",
+	"mobile-frontend-placeholder": "Որոնել {{SITENAME}} կայքին մէջ",
+	"mobile-frontend-random-button": "Պատահական",
 	"minerva-page-actions-overflow": "Աւելի",
 	"minerva-page-actions-language-switcher": "Լեզուներ",
 	"minerva-page-actions-history": "Պատմութիւն"

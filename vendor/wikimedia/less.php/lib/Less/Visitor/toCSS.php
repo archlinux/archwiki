@@ -52,26 +52,46 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 		return $mediaNode;
 	}
 
-	public function visitDirective( $directiveNode ) {
-		if ( isset( $directiveNode->currentFileInfo['reference'] ) && ( !property_exists( $directiveNode, 'isReferenced' ) || !$directiveNode->isReferenced ) ) {
-			return [];
-		}
+	public function visitDirective( $directiveNode, &$visitDeeper ) {
 		if ( $directiveNode->name === '@charset' ) {
-			// Only output the debug info together with subsequent @charset definitions
-			// a comment (or @media statement) before the actual @charset directive would
-			// be considered illegal css as it has to be on the first line
+			if ( !$directiveNode->getIsReferenced() ) {
+				return;
+			}
 			if ( isset( $this->charset ) && $this->charset ) {
-
-				// if( $directiveNode->debugInfo ){
-				//	$comment = new Less_Tree_Comment('/* ' . str_replace("\n",'',$directiveNode->toCSS())." */\n");
-				//	$comment->debugInfo = $directiveNode->debugInfo;
-				//	return $this->visit($comment);
-				//}
-
-				return [];
+				// NOTE: Skip debugInfo handling (not implemented)
+				return;
 			}
 			$this->charset = true;
 		}
+
+		if ( $directiveNode->rules ) {
+			$this->_mergeRules( $directiveNode->rules[0]->rules );
+			// process childs
+			$directiveNode->accept( $this );
+			$visitDeeper = false;
+
+			// the directive was directly referenced and therefore needs to be shown in the output
+			if ( $directiveNode->getIsReferenced() ) {
+				return $directiveNode;
+			}
+
+			if ( !$directiveNode->rules ) {
+				return;
+			}
+			if ( $this->hasVisibleChild( $directiveNode ) ) {
+				// marking as referenced in case the directive is stored inside another directive
+				$directiveNode->markReferenced();
+				return $directiveNode;
+			}
+				// The directive was not directly referenced and does not contain anything that
+				//was referenced. Therefore it must not be shown in output.
+				return;
+		} else {
+			if ( !$directiveNode->getIsReferenced() ) {
+				return;
+			}
+		}
+
 		return $directiveNode;
 	}
 
@@ -141,6 +161,22 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 			return $rulesets[0];
 		}
 		return $rulesets;
+	}
+
+	public function visitAnonymous( $anonymousNode ) {
+		if ( !$anonymousNode->getIsReferenced() ) {
+			return;
+		}
+
+		$anonymousNode->accept( $this );
+		return $anonymousNode;
+	}
+
+	public function visitImport( $importNode ) {
+		if ( isset( $importNode->path->currentFileInfo["reference"] ) && $importNode->css ) {
+			return;
+		}
+		return $importNode;
 	}
 
 	/**
@@ -272,5 +308,24 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 			$mapped[] = $p;
 		}
 		return new Less_Tree_Value( $mapped );
+	}
+
+	public function hasVisibleChild( $directiveNode ) {
+		// prepare list of childs
+		$rule = $bodyRules = $directiveNode->rules;
+		// if there is only one nested ruleset and that one has no path, then it is
+		//just fake ruleset that got not replaced and we need to look inside it to
+		//get real childs
+		if ( count( $bodyRules ) === 1 && ( !$bodyRules[0]->paths || count( $bodyRules[0]->paths ) === 0 ) ) {
+			$bodyRules = $bodyRules[0]->rules;
+		}
+		foreach ( $bodyRules as $rule ) {
+			if ( method_exists( $rule, 'getIsReferenced' ) && $rule->getIsReferenced() ) {
+				// the directive contains something that was referenced (likely by extend)
+				//therefore it needs to be shown in output too
+				return true;
+			}
+		}
+		return false;
 	}
 }

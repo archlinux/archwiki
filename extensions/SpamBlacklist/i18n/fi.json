@@ -11,21 +11,24 @@
 			"Pxos",
 			"Pyscowicz",
 			"Valtlait",
-			"Zoranzoki21"
+			"Zoranzoki21",
+			"Samoasambia"
 		]
 	},
-	"spam-blacklist": " #<!-- älä koske tähän riviin lainkaan --> <pre>\n# Tämän listan säännöillä voi estää ulkopuolisiin sivustoihin viittaavien osoitteiden lisäämisen.\n# Tämä lista koskee vain tätä wikiä. Tutustu myös järjestelmänlaajuiseen mustaan listaan.\n# Lisätietoja on osoitteessa https://www.mediawiki.org/wiki/Special:MyLanguageExtension:SpamBlacklist\n#<!-- Älä koske tähän riviin lainkaan --> <pre>\n#\n# Syntaksi on seuraavanlainen:\n#   * Kaikki #-merkistä lähtien rivin loppuun asti on kommenttia.\n#   * Jokainen epätyhjä rivi on säännöllisen lausekkeen osa, joka tunnistaa vain osoitteissa olevat verkkotunnukset.\n\n #</pre> <!-- älä koske tähän riviin lainkaan -->",
-	"spam-whitelist": "  #<!-- älä koske tähän riviin --> <pre>\n # Tällä sivulla on säännöt, joihin osuvia ulkoisia osoitteita ei estetä, vaikka ne olisivat mustalla listalla.\n#\n# Syntaksi on seuraava:\n#  * Kommentti alkaa #-merkistä ja jatkuu rivin loppuun\n#  * Muut ei-tyhjät rivit tulkitaan säännöllisen lausekkeen osaksi, joka tutkii vain osoitteissa olevia verkko-osoitteita.\n\n #</pre> <!-- älä koske tähän riviin -->",
-	"email-blacklist": " #<!-- älä koske tähän riviin lainkaan --> <pre> \n# Tällä listalla olevia sähköpostiosoitteita estetään rekisteröitymästä tai lähettämästä sähköpostia.\n# Tämä lista koskee vain tätä wikiä. Tutustu myös järjestelmänlaajuiseen mustaan listaan.\n# Lisätietoja on osoitteessa https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Syntaksi on seuraavanlainen:\n#   * Kaikki #-merkistä lähtien rivin loppuun asti on kommenttia.\n#   * Jokainen epätyhjä rivi on säännöllisen lausekkeen osa, joka tunnistaa vain sähköpostiosoitteissa olevat verkkotunnukset.\n\n #</pre> <!-- älä koske tähän riviin lainkaan -->",
-	"email-whitelist": " #<!-- älä koske tähän riviin --> <pre>\n# Tätä luetteloa vastaavia sähköpostiosoitteita *ei* estetä, vaikka \n# musta lista estäisi ne.\n#\n# Syntaksi on seuraava:\n#   * Kommentti alkaa #-merkistä ja jatkuu rivin loppuun\n#   * Muut ei-tyhjät rivit tulkitaan säännöllisen lausekkeen osaksi, joka tutkii vain sähköpostiosoitteita\n\n #</pre> <!-- älä koske tähän riviin -->",
+	"spam-blacklist": " #<!-- älä koske tähän riviin lainkaan --> <pre>\n# Tämän listan säännöillä voi estää ulkopuolisiin sivustoihin viittaavien osoitteiden lisäämisen.\n# Tämä lista koskee vain tätä wikiä. Tutustu myös järjestelmänlaajuiseen torjuntalistaan.\n# Lisätietoja on osoitteessa https://www.mediawiki.org/wiki/Special:MyLanguageExtension:SpamBlacklist\n#\n# Syntaksi on seuraavanlainen:\n#   * Kaikki #-merkistä lähtien rivin loppuun asti on kommenttia.\n#   * Jokainen epätyhjä rivi on säännöllisen lausekkeen osa, joka tunnistaa vain osoitteissa olevat verkkotunnukset.\n\n #</pre> <!-- älä koske tähän riviin lainkaan -->",
+	"spam-whitelist": "  #<!-- älä koske tähän riviin --> <pre>\n # Tällä sivulla on säännöt, joihin osuvia ulkoisia osoitteita ei estetä, vaikka ne olisivat torjuntalistalla.\n#\n# Syntaksi on seuraava:\n#  * Kommentti alkaa #-merkistä ja jatkuu rivin loppuun\n#  * Muut ei-tyhjät rivit tulkitaan säännöllisen lausekkeen osaksi, joka tutkii vain osoitteissa olevia verkko-osoitteita.\n\n #</pre> <!-- älä koske tähän riviin -->",
+	"email-blacklist": " #<!-- älä koske tähän riviin lainkaan --> <pre> \n# Tällä listalla olevia sähköpostiosoitteita estetään rekisteröitymästä tai lähettämästä sähköpostia.\n# Tämä lista koskee vain tätä wikiä. Tutustu myös järjestelmänlaajuiseen torjuntalistaan.\n# Lisätietoja on osoitteessa https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Syntaksi on seuraavanlainen:\n#   * Kaikki #-merkistä lähtien rivin loppuun asti on kommenttia.\n#   * Jokainen epätyhjä rivi on säännöllisen lausekkeen osa, joka tunnistaa vain sähköpostiosoitteissa olevat verkkotunnukset.\n\n #</pre> <!-- älä koske tähän riviin lainkaan -->",
+	"email-whitelist": " #<!-- älä koske tähän riviin --> <pre>\n# Tätä luetteloa vastaavia sähköpostiosoitteita *ei* estetä, vaikka \n# torjuntalista estäisi ne.\n#\n# Syntaksi on seuraava:\n#   * Kommentti alkaa #-merkistä ja jatkuu rivin loppuun\n#   * Muut ei-tyhjät rivit tulkitaan säännöllisen lausekkeen osaksi, joka tutkii vain sähköpostiosoitteita\n\n #</pre> <!-- älä koske tähän riviin -->",
 	"spam-blacklisted-email": "Kielletty sähköpostiosoite",
 	"spam-blacklisted-email-text": "Sähköpostiosoitteesi on estetty lähettämästä sähköpostia muille käyttäjille.",
 	"spam-blacklisted-email-signup": "Annetun sähköpostiosoitteen käyttö on tällä hetkellä kielletty.",
-	"spam-invalid-lines": "Listalla on {{PLURAL:$1|seuraava virheellinen säännöllinen lauseke, joka|seuraavat virheelliset säännölliset lausekkeet, jotka}} on korjattava ennen tallentamista:",
+	"spam-invalid-lines": "{{PLURAL:$1|Seuraavalla|Seuraavilla}} roskalinkkien torjuntalistan {{PLURAL:$1|rivillä|riveillä}} on {{PLURAL:$1|virheellinen säännöllinen lauseke, joka|virheelliset säännölliset lausekkeet, jotka}} on korjattava ennen tallentamista:",
 	"spam-blacklist-desc": "Säännöllisiä lausekkeita (reg-ex) tukeva roskalinkkejä torjuva työkalu, jonka avulla internet-osoitteita (URL) sivuilla ja rekisteröityneiden käyttäjien sähköpostiosoitteissa voidaan kieltää",
 	"log-name-spamblacklist": "Roskalinkkien torjuntalistan loki",
 	"log-description-spamblacklist": "Nämä tapahtumat ovat osumia roskalinkkien torjuntalistalla.",
-	"logentry-spamblacklist-hit": "$1 sai aikaan osuman roskalinkkien torjuntalistalla kohteessa $3 yrittäessään lisätä $4",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} sai aikaan osuman roskalinkkien torjuntalistalla sivulla $3 yrittäessään lisätä $4.",
 	"right-spamblacklistlog": "Tarkastella roskalinkkien torjuntalistan lokia",
-	"action-spamblacklistlog": "tarkastella roskalinkkien torjuntalistan lokia"
+	"action-spamblacklistlog": "tarkastella roskalinkkien torjuntalistan lokia",
+	"right-sboverride": "Ohittaa roskalinkkien torjuntalista",
+	"action-sboverride": "ohittaa roskalinkkien torjuntalista"
 }

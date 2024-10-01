@@ -82,5 +82,6 @@
 	"linterrors-subpage": "Σφάλματα σύνταξης: $1",
 	"linterrors-summary": "<strong>Σημείωση:</strong> Οι μετρήσεις για τις κατηγορίες δεν είναι ακριβείς μετρήσεις αλλά βασίζονται σε εκτιμήσεις.",
 	"multi-part-template-block": "Αποτέλεσμα όχι από μόνο ένα πρότυπο",
-	"pageinfo-linter": "Σφάλματα Lint"
+	"pageinfo-linter": "Σφάλματα Lint",
+	"pageinfo-linter-moreinfo": "Δείτε λεπτομερείς πληροφορίες για τα σφάλματα σύνταξης."
 }

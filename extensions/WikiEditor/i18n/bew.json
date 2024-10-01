@@ -112,7 +112,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|penggantian}} dikeja.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Lu kaga' masupin apa-apa bakal dicari.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Haturan biasa lu punya masupin kaga' aci: $1",
-	"wikieditor-toolbar-tool-replace-word": "Cocokin seruruh kata",
+	"wikieditor-toolbar-tool-replace-word": "Cocokin kata kabèhannya",
 	"wikieditor-toolbar-section-characters": "Lèter kusus",
 	"wikieditor-toolbar-section-help": "Pertulungan",
 	"wikieditor-toolbar-help-heading-description": "Jabaran",

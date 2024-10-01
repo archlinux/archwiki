@@ -23,8 +23,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Erro de expresión: Descoñécese o signo de puntuación \"$1\".",
 	"pfunc_expr_unclosed_bracket": "Erro de expresión: Paréntese sen pechar.",
 	"pfunc_expr_division_by_zero": "División por cero.",
-	"pfunc_expr_invalid_argument": "Argumento inválido para $1: < -1 ou > 1.",
-	"pfunc_expr_invalid_argument_ln": "Argumento inválido para ln: <= 0.",
+	"pfunc_expr_invalid_argument": "Argumento non válido para $1: menor que -1 ou maior que 1.",
+	"pfunc_expr_invalid_argument_ln": "Argumento inválido para ln: menor ou igual que 0.",
 	"pfunc_expr_unknown_error": "Erro de expresión: Erro descoñecido ($1).",
 	"pfunc_expr_not_a_number": "En $1: O resultado non é un número.",
 	"pfunc_string_too_long": "Erro: A cadea excede o límite de $1 caracteres."

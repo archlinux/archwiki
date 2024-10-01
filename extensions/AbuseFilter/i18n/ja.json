@@ -122,7 +122,7 @@
 	"abusefilter-log-search-submit": "検索",
 	"abusefilter-log-entry": "$1: $2 が $4 で「$3」操作を{{GENDER:$8|行い}}不正利用フィルターが発動しました。\n対処操作: $5、\nフィルター解説: $6",
 	"abusefilter-log-entry-withdiff": "$1: $2 が $4 で「$3」操作を{{GENDER:$8|行い}}不正利用フィルターが発動しました。\n対処操作: $5、\nフィルター解説: $6 ($7)",
-	"abusefilter-log-detailedentry-meta": "$1に$2が$5で「$4」操作を{{GENDER:$9|行い}}、$3が発動しました。\n対処操作: $6\nフィルター解説: $7 ($8)",
+	"abusefilter-log-detailedentry-meta": "$1: $2 が$5で「$4」操作を{{GENDER:$9|行い}}、$3が発動しました。\n対処操作: $6\nフィルター解説: $7 ($8)",
 	"abusefilter-log-detailedentry-global": "グローバルフィルター $1",
 	"abusefilter-log-detailedentry-local": "フィルター $1",
 	"abusefilter-log-detailslink": "詳細",

@@ -8,7 +8,8 @@
 			"Mads Haupt",
 			"Saederup92",
 			"Tjernobyl",
-			"Weblars"
+			"Weblars",
+			"Dipsacus fullonum"
 		]
 	},
 	"minerva-last-modified-date": "Sidst redigeret den $1, klokken $2",
@@ -49,6 +50,7 @@
 	"mobile-frontend-user-page-talk": "Diskussion",
 	"minerva-user-menu-button": "Brugermenu",
 	"minerva-user-navigation": "Brugernavigation",
+	"minerva-page-actions-editfull": "Redigér hele siden",
 	"minerva-page-actions-overflow": "Mere",
 	"minerva-page-actions-language-switcher": "Sprog",
 	"minerva-page-actions-history": "Historik",

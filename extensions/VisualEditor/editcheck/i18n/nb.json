@@ -1,11 +1,28 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jon Harald Søby"
+			"Jon Harald Søby",
+			"EdoAug"
 		]
 	},
 	"editcheck-dialog-action-no": "Nei",
 	"editcheck-dialog-action-yes": "Ja",
 	"editcheck-dialog-addref-description": "Hjelp leserne med å forstå hvor denne informasjonen kommer fra ved å legge til en referanse.",
-	"editcheck-dialog-addref-reject-question": "Hvorfor legger du ikke til en referanse?"
+	"editcheck-dialog-addref-reject-question": "Hvorfor legger du ikke til en referanse?",
+	"editcheck-dialog-addref-reject-description": "Andre bidragsytere vil sette pris på å lære mer om hvorfor du ikke legger til en referanse.",
+	"editcheck-dialog-addref-reject-irrelevant": "Jeg tror ikke referanser er relevante til endringen jeg gjør",
+	"editcheck-dialog-addref-reject-common-knowledge": "Informasjonen jeg legger til er allmennkunnskap",
+	"editcheck-dialog-addref-reject-uncertain": "Jeg er ikke sikker på hvilken referanse jeg skal legge til",
+	"editcheck-dialog-addref-reject-other": "Annet",
+	"editcheck-dialog-addref-success-notify": "Takk for at du la til en referanse!",
+	"editcheck-dialog-addref-title": "Legg til en referanse",
+	"editcheck-dialog-title": "Før publisering",
+	"tag-editcheck-reference-decline-common-knowledge": "Redigeringssjekk (referanser) avvist (allmennkunnskap)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Redigeringssjekk for referanser ble avvist som allmennkunnskap",
+	"tag-editcheck-reference-decline-irrelevant": "Redigeringssjekk (referanser) avvist (irrelevant)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Redigeringssjekk for referanser ble avvist som irrelevant",
+	"tag-editcheck-reference-decline-other": "Redigeringssjekk (referanser) avvist (annet)",
+	"tag-editcheck-reference-decline-other-description": "Redigeringssjekk for referanser ble avvist på grunn av en ikke-oppført årsak",
+	"tag-editcheck-reference-decline-uncertain": "Redigeringssjekk (referanser) avvist (usikker)",
+	"tag-editcheck-reference-decline-uncertain-description": "Redigeringssjekk for referanser ble avvist på grunn av usikkerhet"
 }

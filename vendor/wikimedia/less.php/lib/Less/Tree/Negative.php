@@ -10,10 +10,6 @@ class Less_Tree_Negative extends Less_Tree implements Less_Tree_HasValueProperty
 		$this->value = $node;
 	}
 
-	// function accept($visitor) {
-	//	$this->value = $visitor->visit($this->value);
-	//}
-
 	/**
 	 * @see Less_Tree::genCSS
 	 */
@@ -23,7 +19,7 @@ class Less_Tree_Negative extends Less_Tree implements Less_Tree_HasValueProperty
 	}
 
 	public function compile( $env ) {
-		if ( Less_Environment::isMathOn() ) {
+		if ( $env->isMathOn() ) {
 			$ret = new Less_Tree_Operation( '*', [ new Less_Tree_Dimension( -1 ), $this->value ] );
 			return $ret->compile( $env );
 		}

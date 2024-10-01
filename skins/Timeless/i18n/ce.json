@@ -15,10 +15,13 @@
 	"timeless-sitetools": "Вики-гӀирсаш",
 	"timeless-pageactions": "ГӀирсаш агӀонашна",
 	"timeless-userpagetools": "Декъашхочун агӀонан гӀирсаш",
+	"timeless-action-addsection": "Керла тема",
+	"timeless-view-view": "Йеша",
 	"timeless-pagemisc": "Кхин а",
 	"timeless-namespaces": "ЦӀерийн меттигаш",
 	"timeless-pagetools": "АгӀонгахь дийриш",
 	"timeless-languages": "Меттанаш",
+	"timeless-projects": "Кхин проекташ",
 	"timeless.js": "/* Кху чуйиллина йолу JavaScript код чуйоккхура йу, Timeless кечйаран тема лелош йолучу декъашхошна*/",
 	"timeless-view-history": "Истори",
 	"timeless-action-undelete": "МеттахӀоттайé $1 {{PLURAL:$1|нисйинарг|нисйинарш}}"

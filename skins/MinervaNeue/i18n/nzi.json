@@ -1,13 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Valentine Badu"
+			"Valentine Badu",
+			"Elliot one"
 		]
 	},
 	"mobile-frontend-history": "Nea mukeleka ne ɛzalɛ nwo edwɛkɛ",
 	"mobile-frontend-home-button": "Mɔlebɛbo",
 	"mobile-frontend-language-article-heading": "Aneɛ",
 	"mobile-frontend-main-menu-login": "Kɔ nu",
+	"mobile-frontend-main-menu-nearby": "Ɔbikye",
 	"mobile-frontend-main-menu-settings": "Kakyideɛ",
 	"mobile-frontend-placeholder": "Kpondɛ {{SITENAME}}",
 	"mobile-frontend-random-button": "Kpondɛ ye biala"

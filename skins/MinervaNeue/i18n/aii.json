@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"ColumbaBush",
+			"ܐܢܐ"
+		]
+	},
+	"mobile-frontend-history": "ܚܙܝ ܬܫܥܝܬܐ ܕܗܕܐ ܦܐܬܐ",
+	"mobile-frontend-home-button": "ܒܝܬܐ",
+	"mobile-frontend-language-article-heading": "ܠܫܢܐ",
+	"mobile-frontend-main-menu-nearby": "ܠܩܘܪܒܐ",
+	"mobile-frontend-main-menu-settings": "ܩܒܝܥܘܬܐ",
+	"mobile-frontend-placeholder": "ܒܨܝ {{SITENAME}}",
+	"mobile-frontend-random-button": "ܚܒܘܟ"
+}

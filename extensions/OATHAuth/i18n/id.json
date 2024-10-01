@@ -5,7 +5,8 @@
 			"Iwan Novirion",
 			"Rachmat.Wahidi",
 			"Rachmat04",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Ezagren"
 		]
 	},
 	"oathauth-desc": "Memberikan dukungan otentikasi menggunakan kata sandi sekali-pakai berbasis HMAC",
@@ -16,6 +17,7 @@
 	"oathauth-secret": "Kunci rahasia otentikasi dua faktor",
 	"oathauth-enable": "Aktifkan otentikasi dua faktor",
 	"oathauth-recoverycodes": "Daftar berikut adalah daftar kode token sekali pakai. Kode token hanya dapat digunakan sekali, dan untuk penggunaan darurat. Harap ditulis dan simpan di lokasi yang aman. Jika Anda kehilangan ponsel, token ini adalah satu-satunya cara untuk memulihkan akun Anda. '''Token ini tidak akan pernah ditampilkan lagi'''.",
+	"oathauth-recoverycodes-important": "Langkah ini penting! Jangan lewatkan langkah ini!",
 	"oathauth-disable": "Nonaktifkan otentikasi dua faktor",
 	"oathauth-validatedoath": "Validasi kredensial dua faktor. Otentikasi dua faktor sekarang akan diberlakukan.",
 	"oathauth-noscratchforvalidation": "Anda tidak dapat menggunakan kode token untuk mengonfirmasi otentikasi dua faktor. Kode token hanya untuk cadangan dan penggunaan darurat. Silakan gunakan kode verifikasi dari aplikasi otentikator Anda.",
@@ -23,9 +25,10 @@
 	"oathauth-disabledoath": "Nonaktifkan otentikasi dua faktor.",
 	"oathauth-prefs-label": "Otentikasi dua faktor:",
 	"oathauth-step1": "Langkah 1: Unduh aplikasi otentikasi dua faktor",
-	"oathauth-step1-test": "Unduh aplikasi otentikasi dua faktor. Bisa berupa aplikasi ponsel (misalnya Google Authenticator) atau aplikasi komputer.",
+	"oathauth-step1-test": "Unduh program untuk autentikasi dua faktor. Bisa berupa aplikasi seluler atau desktop, seperti [https://authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator] atau [https://www.microsoft.com/en-us/account/authenticator/ Microsoft Authenticator]. Ekstensi peramban. Atau pengelola kata sandi seperti [https://1password.com/ 1Password].",
 	"oathauth-step2": "Langkah 2: Scan kode QR",
-	"oathauth-step2alt": "Atau masukkan kunci rahasia secara manual:",
+	"oathauth-step2-qrcode": "Pindai kode QR menggunakan aplikasi atau ekstensi peramban yang Anda unduh pada langkah 1 untuk autentikasi dua faktor.",
+	"oathauth-step2alt": "Jika Anda tidak dapat memindai kode QR, masukkan kunci rahasia dan nama akun secara manual:",
 	"oathauth-step3": "Langkah 3: Tulis kode token di kertas dan simpan baik-baik",
 	"oathauth-step4": "Langkah 4: Verifikasi",
 	"oathauth-entertoken": "Ketik kode dari aplikasi otentikasi Anda untuk diverifikasi:",

@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"AnakngAraw",
-			"GinawaSaHapon"
+			"GinawaSaHapon",
+			"Qwrop"
 		]
 	},
 	"pfunc_desc": "Pagibayuhin ang katangian ng banghay na may mga tungkuling makatwiran (may lohika)",
 	"pfunc_time_error": "Error: Invalid na oras.",
-	"pfunc_time_too_long": "Kamalian: napakaraming mga pagtawag sa #oras",
+	"pfunc_time_too_long": "Error: Napakaraming tawag sa #time.",
 	"pfunc_rel2abs_invalid_depth": "Kamalian: Hindi tanggap na sukat ng lalim sa daanan: \"$1\" (sinubok na puntahan ang isang alimpusong nasa itaas ng bugkol ng ugat)",
 	"pfunc_expr_stack_exhausted": "Kamalian sa pagpapahayag: Naubos na ang salansan",
 	"pfunc_expr_unexpected_number": "Kamalian sa pagpapahayag: Hindi inaasahang bilang",

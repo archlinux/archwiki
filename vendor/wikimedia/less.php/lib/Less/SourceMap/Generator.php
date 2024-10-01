@@ -96,6 +96,17 @@ class Less_SourceMap_Generator extends Less_Configurable {
 	}
 
 	/**
+	 * PHP version of JavaScript's `encodeURIComponent` function
+	 *
+	 * @param string $string The string to encode
+	 * @return string The encoded string
+	 */
+	private static function encodeURIComponent( $string ) {
+		$revert = [ '%21' => '!', '%2A' => '*', '%27' => "'", '%28' => '(', '%29' => ')' ];
+		return strtr( rawurlencode( $string ), $revert );
+	}
+
+	/**
 	 * Generates the CSS
 	 *
 	 * @return string
@@ -122,7 +133,7 @@ class Less_SourceMap_Generator extends Less_Configurable {
 
 		// inline the map
 		if ( !$sourceMapUrl ) {
-			$sourceMapUrl = sprintf( 'data:application/json,%s', Less_Functions::encodeURIComponent( $sourceMapContent ) );
+			$sourceMapUrl = sprintf( 'data:application/json,%s', self::encodeURIComponent( $sourceMapContent ) );
 		}
 
 		if ( $sourceMapUrl ) {

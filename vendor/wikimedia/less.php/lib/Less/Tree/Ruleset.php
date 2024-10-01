@@ -300,13 +300,26 @@ class Less_Tree_Ruleset extends Less_Tree {
 		$this->lookups = [];
 	}
 
+	/**
+	 * @see less-2.5.3.js#Ruleset.prototype.variables
+	 */
 	public function variables() {
 		$this->_variables = [];
 		foreach ( $this->rules as $r ) {
 			if ( $r instanceof Less_Tree_Rule && $r->variable === true ) {
 				$this->_variables[$r->name] = $r;
 			}
+			// when evaluating variables in an import statement, imports have not been eval'd
+			// so we need to go inside import statements.
+			// guard against root being a string (in the case of inlined less)
+			if ( $r instanceof Less_Tree_Import && $r->root instanceof Less_Tree_Ruleset ) {
+				$vars = $r->root->variables();
+				foreach ( $vars as $key => $name ) {
+					$this->_variables[$key] = $name;
+				}
+			}
 		}
+		return $this->_variables;
 	}
 
 	/**
@@ -320,7 +333,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 		return $this->_variables[$name] ?? null;
 	}
 
-	public function find( $selector, $self = null ) {
+	public function find( $selector, $self = null, $filter = null ) {
 		$key = implode( ' ', $selector->_oelements );
 
 		if ( !isset( $this->lookups[$key] ) ) {
@@ -342,9 +355,15 @@ class Less_Tree_Ruleset extends Less_Tree {
 							$match = $selector->match( $ruleSelector );
 							if ( $match ) {
 								if ( $selector->elements_len > $match ) {
-									$this->lookups[$key] = array_merge( $this->lookups[$key], $rule->find( new Less_Tree_Selector( array_slice( $selector->elements, $match ) ), $self ) );
+									if ( !$filter || $filter( $rule ) ) {
+										$foundMixins = $rule->find( new Less_Tree_Selector( array_slice( $selector->elements, $match ) ), $self, $filter );
+										for ( $i = 0; $i < count( $foundMixins ); ++$i ) {
+											$foundMixins[$i]["path"][] = $rule;
+										}
+										$this->lookups[$key] = array_merge( $this->lookups[$key], $foundMixins );
+									}
 								} else {
-									$this->lookups[$key][] = $rule;
+									$this->lookups[$key][] = [ "rule" => $rule, "path" => [] ];
 								}
 								break;
 							}
@@ -352,6 +371,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 					}
 				}
 			}
+
 		}
 
 		return $this->lookups[$key];
@@ -473,12 +493,41 @@ class Less_Tree_Ruleset extends Less_Tree {
 	}
 
 	public function markReferenced() {
-		if ( !$this->selectors ) {
-			return;
+		if ( $this->selectors !== null ) {
+			foreach ( $this->selectors as $selector ) {
+				$selector->markReferenced();
+			}
 		}
-		foreach ( $this->selectors as $selector ) {
-			$selector->markReferenced();
+
+		if ( $this->rules ) {
+			foreach ( $this->rules as $rule ) {
+				if ( method_exists( $rule, 'markReferenced' ) ) {
+					$rule->markReferenced();
+				}
+			}
 		}
+	}
+
+	public function getIsReferenced() {
+		if ( $this->paths ) {
+			foreach ( $this->paths as $path ) {
+				foreach ( $path as $p ) {
+					if ( method_exists( $p, 'getIsReferenced' ) && $p->getIsReferenced() ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		if ( $this->selectors ) {
+			foreach ( $this->selectors as $selector ) {
+				if ( method_exists( $selector, 'getIsReferenced' ) && $selector->getIsReferenced() ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**

@@ -30,7 +30,8 @@
 			"Toniher",
 			"Townie",
 			"Vfc",
-			"Vriullop"
+			"Vriullop",
+			"Lluis Cat"
 		]
 	},
 	"abusefilter-desc": "Aplica heurística automàtica a les edicions",
@@ -48,7 +49,7 @@
 	"abusefilter-accountreserved": "Aquest compte està reservat per al seu ús pel filtre d'abús.",
 	"right-abusefilter-modify": "Crear o modificar filtres antiabusos",
 	"right-abusefilter-view": "Veure filtres d'abús",
-	"right-abusefilter-log": "Veure el registre d'abusos",
+	"right-abusefilter-log": "Visualitza el registre d'abusos",
 	"right-abusefilter-log-detail": "Veure entrades detallades del registre d'abusos",
 	"right-abusefilter-privatedetails": "Veure dades privades al registre d'abusos",
 	"right-abusefilter-privatedetails-log": "Veure el registre d'accés als detalls privats d'AbuseFilter",
@@ -61,7 +62,7 @@
 	"right-abusefilter-modify-global": "Crear o modificar filtres d'abusos global",
 	"action-abusefilter-modify": "modificar els filtres d'abús",
 	"action-abusefilter-view": "veure filtres d'abús",
-	"action-abusefilter-log": "veure el registre d'abusos",
+	"action-abusefilter-log": "visualitza el registre d'abusos",
 	"action-abusefilter-log-detail": "veure entrades detallades del registre d'abusos",
 	"action-abusefilter-privatedetails": "veure dades privades al registre d'abusos",
 	"action-abusefilter-modify-restricted": "modificar els filtres d'abús amb accions restringides",
@@ -111,7 +112,7 @@
 	"abusefilter-log-details-diff": "Canvis fets en l'edició",
 	"abusefilter-log-linkoncontribs": "registre d'abusos",
 	"abusefilter-log-linkoncontribs-text": "Registre d'abusos d'{{GENDER:$1|aquest usuari|aquesta usuària}}",
-	"abusefilter-log-linkonhistory": "veure el registre d'abusos",
+	"abusefilter-log-linkonhistory": "visualitza el registre d'abusos",
 	"abusefilter-log-linkonhistory-text": "Mostra el registre d'abusos d'aquesta pàgina",
 	"abusefilter-log-linkonundelete": "mostra el registre d'abusos",
 	"abusefilter-log-linkonundelete-text": "Mostra el registre d'abusos d'aquesta pàgina",

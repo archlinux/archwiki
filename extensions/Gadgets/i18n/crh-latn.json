@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Don Alessandro"
+		]
+	},
+	"gadgets-required-categories": "{{PLURAL:$2|$1 kategoriyasınen|$1 kategoriyalarınen}} sıñırlıdır."
+}

@@ -4,7 +4,8 @@
 			"Dağlı95",
 			"NMW03",
 			"Serkanland",
-			"Vugar 1981"
+			"Vugar 1981",
+			"Nemoralis"
 		]
 	},
 	"captcha-edit": "Bu səhifəni redaktə etmək üçün sizdən aşağıdakı tapşırığı həll etməyinizi və cavabını qutuya yazmağınızı xahiş edirik ([[Special:Captcha/help|daha ətraflı]]):",
@@ -27,7 +28,7 @@
 	"captchahelp-cookies-needed": "Bunun işləməsi üçün brauzerinizdə kukilər aktivləşdirilməlidir.",
 	"captchahelp-text": "Hər bir kəsin məlumat yerləşdirməsinə imkan verən Vikipediya və buna bənzər saytlar tez-tez avtomatlaşdırılmış proqramların köməyi ilə link əlavə edən spamerlərin hədəfinə çevrilir. \nBelə linkləri sonradan məzmundan silmək mümkün olsa da, hər halda bu cür spam fəaliyyəti əhəmiyyətli dərəcədə narahatçılıq yaradır.\n\nBu narahatçılığı azaltmaq və müəyyən dərəcədə aradan qaldırmaq üçün Vikipediya sizə qeydiyyatdan keçərkən, eləcə də burada fəaliyyət göstərərkən rəngli və ya \"kələ-kötür\" simvollar göstərə və sizdən bu simvolları müəyyən xanalara daxil etməyinizi istəyə bilər. Bunun əsas səbəbi - bu əməliyyatın avtomatlaşdırılmasının xeyli çətin olması və əksər insanların bu əmrləri avtomatlaşdırılmış proqramlardan daha dəqiq yerinə yetirə bilməsidir.\n\nTəəssüf ki, bu, görmə qabiliyyəti zəif olanlar və ya yalnız oxumaq üçün nəzərdə tutulan brouzerdən istifadə edənlər üçün problemlər yaradır. Əgər siz bu cür problemlərlə üzləşmisinizsə, çəkinmədən [[Special:ListAdmins|inzibatçılara]] müraciət edə və onlardan kömək istəyə bilərsiniz.\n\nBrauzerinizdə \"Geri\" düyməsini basaraq redaktə səhifəsinə qayıda bilərsiniz.",
 	"captcha-addurl-whitelist": " #<!-- bu sətrə əl vurmayın--> <pre>\n# Sintaks aşağıdakı kimidir:\n#   * \"#\" simvolundan sətrin sonuna kimi hər şey rəydir.\n#   * Boş olmayan hər bir sətir URL-lərdəki hostlarla uyğunlaşacaq regex fraqmentidir.\n #</pre> <!-- bu sətrə əl vurmayın -->",
-	"right-skipcaptcha": "CAPTCHA-dan keçmədən CAPTCHA-ya səbəb olan hərəkətləri yerinə yetirin",
+	"right-skipcaptcha": "CAPTCHA-dan keçmədən CAPTCHA-ya səbəb olan hərəkətləri yerinə yetirmək",
 	"action-skipcaptcha": "CAPTCHA-dan keçmədən CAPTCHA-ya səbəb olan hərəkətləri yerinə yetirmək",
 	"confirmedit-preview-line": "Sətir nömrəsi",
 	"confirmedit-preview-content": "Məzmun",

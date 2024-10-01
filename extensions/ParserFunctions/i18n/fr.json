@@ -32,7 +32,7 @@
 	"pfunc_expr_unrecognised_punctuation": "Erreur d’expression : caractère de ponctuation « $1 » non reconnu.",
 	"pfunc_expr_unclosed_bracket": "Erreur d’expression : parenthèse non fermée.",
 	"pfunc_expr_division_by_zero": "Division par zéro.",
-	"pfunc_expr_invalid_argument": "Paramètre incorrect pour <b>$1</b> : valeur absolue supérieure à 1.",
+	"pfunc_expr_invalid_argument": "Paramètre incorrect pour <b>$1</b> : inférieur à -1 ou supérieur à 1.",
 	"pfunc_expr_invalid_argument_ln": "Paramètre incorrect pour ln : négatif ou nul.",
 	"pfunc_expr_unknown_error": "Erreur d’expression : erreur inconnue ($1).",
 	"pfunc_expr_not_a_number": "Dans <b>$1</b> : le résultat n’est pas un nombre.",

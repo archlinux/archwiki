@@ -5,7 +5,8 @@
 			"Aviator",
 			"CyberTroopers",
 			"Izzudin",
-			"Hakimi97"
+			"Hakimi97",
+			"Tofeiku"
 		]
 	},
 	"cite-desc": "Menambah tag <code>&lt;ref&gt;</code> and <code>&lt;references&gt;</code> untuk pemetikan",
@@ -35,7 +36,7 @@
 	"cite_references_link_accessibility_label": "Panjat",
 	"cite_references_link_many_accessibility_label": "Panjat ke:",
 	"cite_references_link_accessibility_back_label": "Kembali ke atas",
-	"cite_section_preview_references": "Pratayang rujukan",
+	"cite_section_preview_references": "Pralihat rujukan",
 	"cite_warning": "Petik amaran: $1",
 	"cite_warning_sectionpreview_no_text": "Tag <code>&lt;ref&gt;</code> dengan nama <code>$1</code> tidak dapat dipratayang kerana ia ditakrifkan di luar bahagian semasa atau tidak ditakrifkan sama sekali.",
 	"cite-wikieditor-tool-reference": "Rujukan",

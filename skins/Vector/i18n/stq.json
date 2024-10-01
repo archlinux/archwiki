@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Pyt"
+			"Pyt",
+			"Murma174"
 		]
 	},
+	"vector-languages": "Sproaken",
+	"vector-language-button-label": "{{PLURAL:$1|$1 Sproake|$1 Sproaken}}",
 	"vector-action-addsection": "Ousnit bietouföigje",
 	"vector-action-delete": "Läskje",
 	"vector-action-move": "Ferskuuwe",

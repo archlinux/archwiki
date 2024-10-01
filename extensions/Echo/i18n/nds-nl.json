@@ -6,6 +6,7 @@
 	},
 	"echo-desc": "Systeem vöär et informeren van gebrukers oaver evenementen en berichten",
 	"prefs-echo": "Meldingen",
+	"prefs-description-echo": "Kees welke meldingen {{GENDER:|jy}} untvangen willet en up welke manere.",
 	"prefs-emailsettings": "Netpostinstellingen",
 	"prefs-echosubscriptions": "Stel mien op de heugte van disse gebeurtenissen",
 	"prefs-echocrosswiki": "Meldingen van aandere wiki's",

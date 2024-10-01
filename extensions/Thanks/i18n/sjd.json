@@ -9,5 +9,6 @@
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Па̄ссьпушшэ}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|па̄ссьпушшма}}}}",
 	"notification-compact-header-edit-thank": "$1 {{GENDER:$2|па̄ссьпужэ}} {{GENDER:$3|то̄н}}.",
+	"notification-header-flow-thank": "$1 {{GENDER:$2|па̄ссьпужэ}} {{GENDER:$5|тоннӭ}} коамментарьесант те̄масьт «<strong>$3</strong>».",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|па̄ссьпужэ}} {{GENDER:$3|то̄н}}."
 }

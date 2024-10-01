@@ -12,7 +12,8 @@
 			"Kalakpagh",
 			"Masssly",
 			"Musahfm",
-			"Ruky Wunpini"
+			"Ruky Wunpini",
+			"Alhassan Abdul-Manan"
 		]
 	},
 	"vector-skin-desc": "Bɔmi 2 Vector niŋgbuna\n \n* 2011- monobook taɣibu din daa kana la daa mali nina polo taɣibu pam ni di zaŋ tum tuma. \n\n* 2022 Vector daa mɛ mi pahi WMF [[mw:Desktop Improvements]] tumanima .",
@@ -55,6 +56,8 @@
 	"skin-night-mode-0-label": "Biɛɣu",
 	"skin-night-mode-1-label": "Yuŋ",
 	"skin-night-mode-2-label": "Dintoli",
+	"skin-theme-name": "Kom",
+	"skin-theme-os-label": "Tolitoli",
 	"vector-search-loader": "Vihigu yoobu buɣisibu",
 	"vector-searchsuggest-containing": "Yuli bo yaɣ'shɛŋa din mali <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Sɔŋsim:Piligu",

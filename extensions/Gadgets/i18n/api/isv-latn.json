@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"apihelp-query+gadgetcategories-summary": "Vračaje spisok kategorij gadžetov.",
+	"apihelp-query+gadgetcategories-param-prop": "Kake informacije o kategorijah gadžetov trěba dobyti:",
+	"apihelp-query+gadgetcategories-paramvalue-prop-name": "Vnutrišnja nazva kategorije.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "Nazva kategorije.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "Kolikost gadžetov v kategoriji.",
+	"apihelp-query+gadgetcategories-param-names": "Nazvy kategorij za dobytje.",
+	"apihelp-query+gadgetcategories-example-1": "Dobyti spisok jestvujučih kategorij gadžetov",
+	"apihelp-query+gadgetcategories-example-2": "Dobyti vse informacije o kategorijah s nazvami «foo» i «bar»",
+	"apihelp-query+gadgets-summary": "Vračaje spisok gadžetov upotrěbjajemyh v tutoj viki.",
+	"apihelp-query+gadgets-param-prop": "Kake informacije trěba dobyti:",
+	"apihelp-query+gadgets-paramvalue-prop-id": "Vnutrišnji identifikator gadžeta.",
+	"apihelp-query+gadgets-paramvalue-prop-metadata": "Metadane gadžeta.",
+	"apihelp-query+gadgets-paramvalue-prop-desc": "Opis gadžet prěobraženy v HTML (može byti medlo; upotrěbite samo, kogda to jest zaisto potrěbno).",
+	"apihelp-query+gadgets-param-categories": "Iz kojih kategorij trěba dobyti gadžety.",
+	"apihelp-query+gadgets-param-ids": "Identifikatory gadžetov za dobytje.",
+	"apihelp-query+gadgets-param-allowedonly": "Samo pokazati gadžety dozvoljene nyněšnjemu koristniku.",
+	"apihelp-query+gadgets-param-enabledonly": "Samo pokazati gadžety vključene nyněšnjim koristnikom.",
+	"apihelp-query+gadgets-example-1": "Dobyti spisok gadžetov zajedno s jihnymi opisami",
+	"apihelp-query+gadgets-example-2": "Dobyti spisok gadžetov so vsimi možnymi svojstvami",
+	"apihelp-query+gadgets-example-3": "Dobyti spisok gadžetov naležečih do kategorije «foo»",
+	"apihelp-query+gadgets-example-4": "Dobyti informacije o gadžetah «foo» i «bar»",
+	"apihelp-query+gadgets-example-5": "Dobyti spisok gadžetov vključenyh nyněšnjim koristnikom."
+}

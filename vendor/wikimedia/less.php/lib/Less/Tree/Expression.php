@@ -54,7 +54,7 @@ class Less_Tree_Expression extends Less_Tree implements Less_Tree_HasValueProper
 			if ( !$this->parensInOp ) {
 				Less_Environment::$parensStack--;
 
-			} elseif ( !Less_Environment::isMathOn() && !$doubleParen ) {
+			} elseif ( !$env->isMathOn() && !$doubleParen ) {
 				$returnValue = new Less_Tree_Paren( $returnValue );
 
 			}
@@ -86,5 +86,35 @@ class Less_Tree_Expression extends Less_Tree implements Less_Tree_HasValueProper
 			}
 			$this->value = $new_value;
 		}
+	}
+
+	public function markReferenced() {
+		if ( is_array( $this->value ) ) {
+			foreach ( $this->value as $v ) {
+				if ( method_exists( $v, 'markReferenced' ) ) {
+					$v->markReferenced();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Should be used only in Less_Tree_Call::functionCaller()
+	 * to retrieve expression without comments
+	 * @internal
+	 */
+	public function mapToFunctionCallArgument() {
+		if ( is_array( $this->value ) ) {
+			$subNodes = [];
+			foreach ( $this->value as $subNode ) {
+				if ( !( $subNode instanceof Less_Tree_Comment ) ) {
+					$subNodes[] = $subNode;
+				}
+			}
+			return count( $subNodes ) === 1
+				? $subNodes[0]
+				: new Less_Tree_Expression( $subNodes );
+		}
+		return $this;
 	}
 }

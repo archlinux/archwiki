@@ -1,13 +1,33 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gramo6"
+			"Gramo6",
+			"Constraque"
 		]
 	},
+	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Вы}} будете ознамены, кедь хтось напише повідомлїня в той діскусії. Вы можете змінити параметры своїх ознамінь в наставлїнях.",
+	"discussiontools-autotopicsubpopup-dismiss": "Добре, зрозуміло",
+	"discussiontools-autotopicsubpopup-preferences": "Едітовати наставлїня",
+	"discussiontools-emptystate-button": "Зачати діскусію",
+	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Діскусна сторінка]] — суть сторінка, де люде ведуть діскусію, як вытворити обсяг {{GRAMMAR:genitive|{{SITENAME}}}} як найлїпше. {{GENDER:|Вы}} можете поужыти тоту сторінку, жебы зачати діскусію з іншыма про те, як полїпшыти сітуацію з сторінков [[:{{SUBJECTPAGENAME}}]].",
+	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|Діскусна сторінка]] — суть сторінка, де люде ведуть діскусію, як вытворити обсяг {{Grammar:genitive|{{SITENAME}}}} як найлїпше. Вы можете поужыти тоту сторінку, жебы зачати діскусію з іншыма, выробеных з той IP адресы. То, же {{GENDER:|вы}} ту говорите, буде публічным, і ёго увідять іншы. Многы IP адресы ся періодічно міняють, і часто їх хосновають мала часть людей.",
+	"discussiontools-emptystate-title": "Зачати діскусію о {{SUBJECTPAGENAME}}",
+	"discussiontools-emptystate-title-user-anon": "Вітайте на діскусній сторінцї",
+	"discussiontools-findcomment-label-search": "Глядати",
+	"discussiontools-findcomment-noresults": "Нїт резултатів.",
+	"discussiontools-notification-subscribed-new-comment-view": "Зобразити повідомлїня",
+	"discussiontools-pageframe-latestcomment": "Послїдне повідомлїня: $1 од $2 в темі $3",
+	"discussiontools-pageframe-latestcomment-notopic": "Послїдне повідомлїня: $1 од $2",
+	"discussiontools-pagetitle-newtopic": "Заложіня новой темы на $1",
+	"discussiontools-pagetitle-reply": "Одповідь на $1",
+	"discussiontools-permalink-comment-copied": "Одказы на повідомлїня копіровано в кліпборд.",
+	"discussiontools-replybutton": "{{GENDER:|Одповісти}}",
 	"discussiontools-replylink": "одповісти",
 	"discussiontools-replywidget-cancel": "Зрушыти",
 	"discussiontools-replywidget-mode-source": "Жерело",
 	"discussiontools-replywidget-mode-visual": "Візуал",
 	"discussiontools-replywidget-placeholder-reply": "Одповідь {{BIDI:$1}}",
-	"discussiontools-replywidget-reply": "Одповісти"
+	"discussiontools-replywidget-reply": "{{GENDER:|Одповісти}}",
+	"discussiontools-topicheader-latestcomment": "Послїднє повідомлїня: $1",
+	"discussiontools-topicsubscription-button-subscribe": "підписати ся"
 }

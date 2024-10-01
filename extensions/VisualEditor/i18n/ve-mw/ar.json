@@ -35,13 +35,16 @@
 			"فلورانس",
 			"محمد أحمد عبد الفتاح",
 			"محمد عصام",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"Mohammed Qays"
 		]
 	},
 	"collabpad-doctitle": "كولاب باد: $1",
 	"collabpad-import-subtitle": "مستورد من $1",
 	"collabpad": "كولاب باد",
 	"tooltip-ca-ve-edit": "عدل هذه الصفحة",
+	"tooltip-ca-ve-create": "أنشئ صفحة بهذا العنوان",
+	"tooltip-ca-ve-create-local": "أنشئ صفحة الوصف المحلية",
 	"tooltip-ca-editsource": "عدل الكود المصدري لهذه الصفحة",
 	"tooltip-ca-createsource": "إنشاء الكود المصدري لهذه الصفحة",
 	"visualeditor-advancedsettings-tool": "إعدادات متقدمة",

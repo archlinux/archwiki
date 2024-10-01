@@ -1,11 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Okras"
+			"Okras",
+			"Facenapalm"
 		]
 	},
+	"apihelp-query+extracts-summary": "Возвращает фрагменты указанных страниц в виде обычного текста или ограниченного HTML.",
 	"apihelp-query+extracts-param-chars": "Сколько символов возвращать. Возвращаемый в действительности текст может быть немного длиннее.",
 	"apihelp-query+extracts-param-sentences": "Сколько предложений возвращать.",
+	"apihelp-query+extracts-param-limit": "Сколько фрагментов возвращать. (Несколько фрагментов можно запрашивать только в том случае, если для exintro установлено значение true)",
 	"apihelp-query+extracts-param-intro": "Возвращаться только содержимое, идущее до первого раздела.",
-	"apihelp-query+extracts-example-1": "Получить 175-символьный фрагмент"
+	"apihelp-query+extracts-param-plaintext": "Возвращать фрагменты в виде обычного текста вместо ограниченного HTML.",
+	"apihelp-query+extracts-param-sectionformat": "Как форматировать секции в режиме обычного текста:",
+	"apihelp-query+extracts-paramvalue-sectionformat-plain": "Без форматирования.",
+	"apihelp-query+extracts-paramvalue-sectionformat-wiki": "Вики-текстовое форматрирование (== вот так ==).",
+	"apihelp-query+extracts-paramvalue-sectionformat-raw": "Внутреннее представление данного модуля (перед названием секций будет &lt;ASCII 1&gt;&lt;ASCII 2&gt;&lt;уровень секции&gt;&lt;ASCII 2&gt;&lt;ASCII 1&gt;).",
+	"apihelp-query+extracts-example-1": "Получить 175-символьный фрагмент",
+	"apiwarn-textextracts-limit": "<var>exlimit</var> был слишком велик для запроса фрагмента всей статьи, поэтому он был снижен до $1.",
+	"apiwarn-textextracts-unsupportedmodel": "Модель содержимого $2, установленная для странице $1, не поддерживается; возвращён пустой фрагмент."
 }

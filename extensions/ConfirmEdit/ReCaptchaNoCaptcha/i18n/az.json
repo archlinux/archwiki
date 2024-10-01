@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nemoralis"
+		]
+	},
+	"renocaptcha-desc": "Confirm Edit üçün reCAPTCHA NoCAPTCHA modulu",
+	"renocaptcha-edit": "Vikini avtomatik redaktə spamından qorumaq üçün sizdən aşağıdakı CAPTCHA-nı həll etməyinizi xahiş edirik:",
+	"renocaptcha-addurl": "Redaktəniz yeni xarici keçidlər ehtiva edir. Vikini avtomatlaşdırılmış spamdan qorumaq üçün sizdən aşağıdakı CAPTCHA-nı həll etməyinizi xahiş edirik:",
+	"renocaptcha-badlogin": "Vikini avtomatlaşdırılmış parol sındırmadan qorumaq üçün sizdən aşağıdakı CAPTCHA-nı həll etməyinizi xahiş edirik:",
+	"renocaptcha-createaccount": "Vikini avtomatlaşdırılmış hesab yaradılmasından qorumaq üçün sizdən aşağıdakı CAPTCHA-nı həll etməyinizi xahiş edirik:",
+	"renocaptcha-createaccount-fail": "Deyəsən, siz CAPTCHA-nı həll etməmisiniz.",
+	"renocaptcha-create": "Vikini avtomatlaşdırılmış səhifə yaradılmasından qorumaq üçün sizdən aşağıdakı CAPTCHA-nı həll etməyinizi xahiş edirik:",
+	"renocaptcha-noscript": "Təəssüf ki, siz JavaScript-i deaktiv etmisiniz, ona görə də sizin insan olub-olmamağınızı avtomatik olaraq başa düşə bilmərik. Zəhmət olmasa yuxarıdakı CAPTCHA-nı həll edin və yaranan mətni aşağıdakı mətn sahəsinə köçürün:",
+	"renocaptcha-help": "Zəhmət olmasa, ReCaptcha NoCaptcha problemini həll edin və cavab dəyərini captchaWord olaraq qaytarın."
+}

@@ -5,18 +5,18 @@
 			"Zolgoyo"
 		]
 	},
-	"vector-languages": "Tĭller",
-	"vector-language-button-label": "{{PLURAL:$1|$1 tĭl}}",
-	"vector-no-language-button-label": "Tĭl qoş",
-	"vector-action-addsection": "Mewzu qoş",
-	"vector-action-delete": "Sĭl",
-	"vector-action-move": "Atını deñĭştĭr",
-	"vector-action-protect": "Qolla",
+	"vector-languages": "Tíller",
+	"vector-language-button-label": "{{PLURAL:$1|$1 tíl}}",
+	"vector-no-language-button-label": "Tíl koş",
+	"vector-action-addsection": "Mewzu koş",
+	"vector-action-delete": "Síl",
+	"vector-action-move": "Atînî deñíştír",
+	"vector-action-protect": "Kolla",
 	"vector-view-create": "Yasa",
-	"vector-view-history": "Keşmĭş",
-	"vector-more-actions": "Taa köp",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ĭşergen betlerdĭ qıdır",
+	"vector-view-history": "Keşmíş",
+	"vector-more-actions": "Taa kóp",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> íşergen betlerdí kîdîr",
 	"vector-page-tools-label": "Aletler",
 	"vector-page-tools-general-label": "Genel",
-	"vector-unpin-element-label": "saqlaw"
+	"vector-unpin-element-label": "saklaw"
 }

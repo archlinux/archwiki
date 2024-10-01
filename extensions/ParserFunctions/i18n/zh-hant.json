@@ -9,7 +9,8 @@
 			"Mark85296341",
 			"Shinjiman",
 			"Simon Shek",
-			"Waihorace"
+			"Waihorace",
+			"Kly"
 		]
 	},
 	"pfunc_desc": "加強解析器，提供邏輯函數功能",
@@ -28,8 +29,8 @@
 	"pfunc_expr_unrecognised_punctuation": "表達式錯誤：無法識別的標點符號 \"$1\"。",
 	"pfunc_expr_unclosed_bracket": "表達式錯誤：未結束的括號。",
 	"pfunc_expr_division_by_zero": "除數為零。",
-	"pfunc_expr_invalid_argument": "$1 的參數無效：< -1 或 > 1。",
-	"pfunc_expr_invalid_argument_ln": "ln 的參數無效：<= 0。",
+	"pfunc_expr_invalid_argument": "$1 的參數無效：小於 -1 或大於 1。",
+	"pfunc_expr_invalid_argument_ln": "ln 的參數無效：小於或等於 0。",
 	"pfunc_expr_unknown_error": "表達式錯誤：未知錯誤 ($1)。",
 	"pfunc_expr_not_a_number": "於 $1 中：結果不為數字。",
 	"pfunc_string_too_long": "錯誤：字串超過 $1 字元限制。"
