@@ -101,5 +101,3 @@ update version:
 	git add -u
 	git add .
 	git commit -am"Update to MediaWiki {{version}}"
-
-# vim: set ft=make :
