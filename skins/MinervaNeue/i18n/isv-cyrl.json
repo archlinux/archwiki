@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Qiorly"
+			"Qiorly",
+			"Danvintius Bookix"
 		]
 	},
 	"mobile-frontend-history": "Позрєти хисторију ревизиј тутой странице.",
@@ -11,5 +12,6 @@
 	"mobile-frontend-main-menu-nearby": "Поблизу",
 	"mobile-frontend-main-menu-settings": "Наставјенја",
 	"mobile-frontend-placeholder": "Искати в {{GRAMMAR:locative|{{SITENAME}}}}",
-	"mobile-frontend-random-button": "Случајна страница"
+	"mobile-frontend-random-button": "Случајна страница",
+	"minerva-page-actions-overflow": "Вече"
 }

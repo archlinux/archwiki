@@ -111,6 +111,5 @@
 	"math-wikibase-special-form-button": "Запытаць звесткі",
 	"math-wikibase-special-error-header": "Памылка",
 	"math-wikibase-special-error-invalid-argument": "Указаны вамі ідэнтыфікатар элемента Wikibase не існуе.",
-	"math-wikibase-special-error-unknown": "Невядомая памылка адбылася пры атрыманні дадзеных з Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "Для выкарыстання гэтай адмысловай старонкі патрабуецца пашырэнне Wikibase."
+	"math-wikibase-special-error-unknown": "Невядомая памылка адбылася пры атрыманні дадзеных з Wikibase."
 }

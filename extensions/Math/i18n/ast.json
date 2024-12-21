@@ -100,6 +100,5 @@
 	"math-wikibase-special-form-button": "Solicitar información",
 	"math-wikibase-special-error-header": "Error",
 	"math-wikibase-special-error-invalid-argument": "L'ID d'elementu de Wikibase qu'especificasti nun esiste.",
-	"math-wikibase-special-error-unknown": "Asocedió un error desconocíu al recuperar datos de Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "Ríquese la estensión Wikibase pa utilizar esta páxina especial."
+	"math-wikibase-special-error-unknown": "Asocedió un error desconocíu al recuperar datos de Wikibase."
 }

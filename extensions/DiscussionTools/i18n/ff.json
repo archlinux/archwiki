@@ -1,11 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Musaddam Idriss"
 		]
 	},
-	"discussiontools-replylink": "jaabawol",
+	"discussiontools-replylink": "{{GENDER:|jaabawol}}",
 	"discussiontools-replywidget-cancel": "Accitinde",
 	"discussiontools-replywidget-mode-source": "Ɗaɗol",
 	"discussiontools-replywidget-mode-visual": "Yiide",

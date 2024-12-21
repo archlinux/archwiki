@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"FunLater"
+			"FunLater",
+			"HitomiAkane"
 		]
 	},
 	"vector-languages": "لغات",
-	"vector-language-button-label": "لغات: $1",
+	"vector-language-button-label": "{{PLURAL:$1|$1 لغة|$1 لغات}}",
 	"vector-no-language-button-label": "زيد لغات",
 	"vector-action-addsection": "زيد موضوع",
 	"vector-action-delete": "حذف",
@@ -14,11 +15,21 @@
 	"vector-view-create": "عمول",
 	"vector-view-history": "شوف التاريخ",
 	"vector-more-actions": "أكتر",
+	"vector-feature-limited-width-name": "العرض",
+	"vector-feature-custom-font-size-name": "النص",
+	"vector-feature-limited-width-0-label": "عريض",
+	"vector-feature-limited-width-1-label": "قياسي",
+	"vector-feature-custom-font-size-0-label": "صغير",
+	"vector-feature-custom-font-size-1-label": "قياسي",
+	"vector-feature-custom-font-size-2-label": "كبير",
+	"skin-theme-name": "اللون",
+	"skin-theme-os-label": "أوتوماتيكي",
 	"vector-searchsuggest-containing": "نبّش ع صفحات بتحتوى ع <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "المحتوى",
 	"vector-toc-beginning": "المقدمة",
 	"vector-main-menu-label": "المنيو الرئيسية",
 	"vector-page-tools-label": "أدوات",
 	"vector-page-tools-general-label": "عام",
+	"vector-page-tools-actions-label": "إجراءات",
 	"vector-unpin-element-label": "خبي"
 }

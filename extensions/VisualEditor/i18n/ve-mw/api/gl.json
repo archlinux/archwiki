@@ -4,7 +4,8 @@
 			"Banjo",
 			"Elisardojm",
 			"Matma Rex",
-			"Toliño"
+			"Toliño",
+			"McDutchie"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Non foi atopada ningunha serialización en caché con esa chave",
@@ -30,7 +31,7 @@
 	"apihelp-visualeditoredit-param-basetimestamp": "Ao gardar, definir coa data e hora da revisión que foi editada. Úsase para detectar conflitos de edición.",
 	"apihelp-visualeditoredit-param-cachekey": "Utilícese o resultado dunha petición serializeforcache anterior con esta clave. Invalida $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Identificador do captcha (ao gardar cunha resposta do captcha).",
-	"apihelp-visualeditoredit-param-captchaword": "Resposta ao captcha (ao gardar cunha resposta do captcha).",
+	"apihelp-visualeditoredit-param-captchaword": "Resposta ao captcha (ao gardar cunha resposta ao captcha).",
 	"apihelp-visualeditoredit-param-nocontent": "Omitir o contido HTML da nova revisión na resposta.",
 	"apihelp-visualeditoredit-param-plugins": "Complementos asociados á solicitude da API.",
 	"apihelp-visualeditoredit-param-data-{plugin}": "Datos arbitrarios enviados por un complemento coa solicitude da API.",
@@ -45,7 +46,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "Título para a nova sección.",
 	"apihelp-visualeditoredit-param-starttimestamp": "Ao gardar, definir coa data e hora de cando se cargou a páxina. Úsase para detectar conflitos de edición.",
 	"apihelp-visualeditoredit-param-summary": "Resumo de edición.",
-	"apihelp-visualeditoredit-param-tags": "Cambiar as etiquetas a aplicar á edición.",
+	"apihelp-visualeditoredit-param-tags": "As etiquetas de cambio que se aplicarán á edición.",
 	"apihelp-visualeditoredit-param-wikitext": "O texto wiki co que traballar.",
 	"apihelp-visualeditoredit-summary": "Gardar unha páxina HTML5 en MediaWiki (convertida en texto wiki mediante o servizo do Parsoid)."
 }

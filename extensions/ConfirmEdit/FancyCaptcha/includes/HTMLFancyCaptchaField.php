@@ -92,8 +92,8 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 	public function getLabel() {
 		// slight abuse of what getLabel() should mean; $mLabel is used for the pre-label text
 		// as the actual label is always the same
-		return $this->mParent->msg( 'captcha-label' )->text() . ' '
-			. $this->mParent->msg( 'fancycaptcha-captcha' )->text();
+		return $this->mParent->msg( 'captcha-label' )->escaped() . ' '
+			. $this->mParent->msg( 'fancycaptcha-captcha' )->escaped();
 	}
 
 	/**

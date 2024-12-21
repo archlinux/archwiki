@@ -4,5 +4,10 @@
 			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
 		]
 	},
-	"visualeditor-welcomedialog-action": "ꠟꠦꠈꠣ ꠡꠥꠞꠥ ꠇꠞꠂꠘ"
+	"tag-visualeditor-wikitext": "2017 ꠎꠠꠞ ꠛꠣꠇ ꠇꠞꠣꠔꠣ",
+	"visualeditor-help-label": "ꠛꠦꠛꠀꠞꠇꠞ꠆ꠞꠣꠞ ꠉꠣꠁꠒ ꠙꠠꠃꠇ꠆ꠇꠣ",
+	"visualeditor-welcomedialog-action": "ꠟꠦꠈꠣ ꠡꠥꠞꠥ ꠇꠞꠂꠘ",
+	"visualeditor-welcomedialog-switch": "ꠎꠠ ꠛꠣꠇ ꠇꠞꠃꠇ꠆ꠇꠣ",
+	"visualeditor-welcomedialog-switch-ve": "ꠖꠦꠈꠤ ꠖꠦꠈꠤ ꠛꠣꠇ ꠇꠞꠃꠇ꠆ꠇꠣ",
+	"visualeditor-welcomedialog-title": "$2 ꠅ {{GENDER:$1|ꠀꠃꠇ꠆ꠇꠣ}}"
 }

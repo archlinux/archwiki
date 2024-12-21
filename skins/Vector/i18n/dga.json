@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"ANTHONY DERY",
-			"Amire80",
 			"Joachim Yirkang",
 			"Linus Konkor",
 			"Yirkang",
@@ -45,7 +44,7 @@
 	"vector-feature-custom-font-size-1-label": "Kpeɛõ vuo",
 	"vector-feature-custom-font-size-2-label": "Kpoŋ",
 	"vector-search-loader": "Naŋ loodo la weɛroo teɛrɛ",
-	"vector-searchsuggest-containing": "Bɔ pɛllɛ naŋ taa <strong class=\"cdx-sɛgebozu-search__search-footer__query\">$1</strong>",
+	"vector-searchsuggest-containing": "Bɔ pɛllɛ naŋ taa <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:kyɛyuobo",
 	"vector-toc-label": "Yelbulo",
 	"vector-toc-beginning": "Piiluu",

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Keresturec",
-			"Vlad5250"
+			"Vlad5250",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Ви}} достанєце обвисценє кед дахто обяви нови коментар у тей дискусиї. Ви можеце намесциц параметри за обвисцованє у часци за намесцанє опцийох.",
@@ -12,20 +13,20 @@
 	"discussiontools-defaultsummary-reply": "Одвит",
 	"discussiontoolsdebug-title": "Структура податкох алата за дискусию",
 	"discussiontoolsdebug-pagetitle": "Наслов бока",
-	"discussiontoolsdebug-intro": "На тим боку ше демонструє на яки способ [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:DiscussionTools преширенє DiscussionTools] препознава теми и коментари хтори присутни на боку '''[[:$1]]'''. Можебуц вам тото  будзе хасновите у одстраньованю гришкох зоз екстензию або у розуменю як вона функционує. Тота информация доступна у [[$2|discussiontoolspageinfo API]].",
+	"discussiontoolsdebug-intro": "На тим боку ше демонструє на яки способ екстенизия [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:DiscussionTools DiscussionTools] препознава теми и коментари хтори присутни на боку '''[[:$1]]'''. Можебуц вам тото  будзе хасновите у одстраньованю гришкох зоз екстензиї або у розуменю як вона функционує. Тота информация доступна у [[$2|discussiontoolspageinfo API]].",
 	"discussiontools-desc": "Инструменти за олєгчованє комуникациї на  бокох за розгварку.",
 	"discussiontools-emptystate-button": "Почац дискусию",
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Боки за розгварку]] то места на хторих редакторе дискутую о змисту на Википедию. На тим боку можеце розпочац дискусию о змисту бока [[:{{SUBJECTPAGENAME}}]] и як то унапредзиц.",
 	"discussiontools-emptystate-desc-self": "Людзе на сайту {{SITENAME}} можу хасновац тот [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|talk page]] же би обявели явну поруку {{GENDER:|за вас}} и ви будзеце о тим обвисцени.",
 	"discussiontools-emptystate-desc-self-anon": "Людзе на {{SITENAME}} можу  хасновац тот [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|бок за розгварку]] же би поставели явну поруку о вименкох хтори направени зоз тей IP адреси {{GENDER:|хтору ви}} у тей хвильки хаснуєце.\n\nВелї IP адреси ше периодично меняю, и часто их шераю медзи собу вецей особи. Ви можеце [$1 креировац налоґ] або [$2 ше приявиц] же би нє пришло убудуце до даяких нєрозуменьох зоз другима одявенима хаснователями. Креированє налоґу, тиж, скрива вашу IP адресу.",
-	"discussiontools-emptystate-desc-self-temp": "Людзе {{SITENAME}} ,пжу хасновац тот [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|бок за розгварку]] же би {{GENDER:|you}} написали поруку, и ви будзеце обвисцени кед вони то зробя.\n\nВи у тей хвильки хаснуєце [[{{MediaWiki:tempuser-helppage}}|дочасови налоґ]] зоз автоматично ґенерованим меном. Же бисце мали назву налоґу по вашим смаку и же бисце достали вецей можлївосци, [$1 креируйце ваш налоґ] або ше [$2 улоґуйце].",
+	"discussiontools-emptystate-desc-self-temp": "Людзе {{SITENAME}} можу хасновац тот [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|бок за розгварку]] же би Вам охабяли явно видлїве {{GENDER:|порученє}}.\n\nНа концу [[{{MediaWiki:tempuser-helppage}}|тот бок нєстанє]]. Же бисце предлужели примац обвисценя и приступац ґу другим бенефитом [$1 креируйце ваш налоґ] або ше [$2 улоґуйце].",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Боки за розгварку]] то боки на хторих людзе дискутую же як би ше могло направиц змист на {{SITENAME}} же би бул цо лєпши. Почнїце нову дискусию же бисце ше повязяли и сотрудзовали{{GENDER:{{PAGENAME}}|зоз}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Тото цо ту повеце будзе явне и годни го и други видзиц.",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|Боки за розгварку]] то боки на хторих людзе дискутую же як би ше могло направиц змист на {{SITENAME}} же би бул цо лєпши. Хаснуйце тот бок же бисце розпочали дискусию о пременкох хтори направени зоз тей IP адреси. Тото цо {{GENDER:|ви}} ту повеце будзе явне же би го и други видзели. Велї IP адреси ше з часу на час меняю и часто их вичерую вецей особи.",
-	"discussiontools-emptystate-desc-user-temp": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|Боки за розгварку]] то место дзе ше людзе радза як направиц змист боку {{SITENAME}} як то лєм найлєпше мож. Почнїце нову дискусию же би сце ше уключели и сотрудзовал {{GENDER:{{PAGENAME}}|зоз}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Тото цо {{GENDER:|ви}} ту напишеце други годни видзиц. Тот бок припада [[{{MediaWiki:tempuser-helppage}}|дочасово приявеному налоґу]], и його власнїк можебуц вецей нє будзе мац приступ на ньго.",
+	"discussiontools-emptystate-desc-user-temp": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|Боки за розгварку]] то место дзе ше людзе радза як направиц змист боку {{SITENAME}} як то лєм найлєпше мож. Почнїце нову дискусию же би сце ше уключели и сотрудзовал {{GENDER:{{PAGENAME}}|зоз}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. {{GENDER:|Тото цо ви}} ту напишеце други годни видзиц. Тот бок припада [[{{MediaWiki:tempuser-helppage}}|дочасово приявеному налогу]], и його власнїк вироятно вецей нє ма приступ на ньго.",
 	"discussiontools-emptystate-title": "Розпочац дискусию о {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "{{GENDER:|Витайце}} на вашим боку за розгварку",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|Витайце}} на тим боку за розгварку",
-	"discussiontools-emptystate-title-self-temp": "{{GENDER:|Витайце}} на вашим боку за розгварку",
+	"discussiontools-emptystate-title-self-temp": "{{GENDER:|Витайце}} на вашим дочасовим боку за розгварку",
 	"discussiontools-emptystate-title-user": "Почац дискусию {{GENDER:{{PAGENAME}}|зоз}} {{PAGENAME}}",
 	"discussiontools-emptystate-title-user-anon": "{{GENDER:|Витайце}} на тим боку за розгварку",
 	"discussiontools-emptystate-title-user-temp": "Почац дискусию {{GENDER:{{PAGENAME}}|зоз}} {{PAGENAME}}",
@@ -114,7 +115,7 @@
 	"discussiontools-replywidget-abandontopic-keep": "Предлужце писац",
 	"discussiontools-replywidget-advanced": "Напредно",
 	"discussiontools-replywidget-anon-warning": "<strong>Ви нє приявени.</strong> Же бисце були информовани кед дахто одвитує або приме атрибуцию зоз вашим меном место вашей IP адреси, можеце ше [$1 приявиц] або [$2 креировац налоґ].",
-	"discussiontools-replywidget-autocreate-warning": "<strong>Ви нє приявени.</strong> Же бисце були информовани кед вам дахто одвитує або приме атрибуцию зоз вашим меном место [[$3|автоматично ґенерованого мена]], можеце ше [$1 приявиц] або [$2 креировац налоґ].",
+	"discussiontools-replywidget-autocreate-warning": "<strong>Ви нє приявени.</strong> Ваша пременка будзе приписана аутоматски ґенерованом мену. [[$3|Дознайце вецей]]. [$1 Приявце ше] або [$2 отворце налог] же бисце мали приступ ґу другим бенефитом.",
 	"discussiontools-replywidget-cancel": "Одкаж",
 	"discussiontools-replywidget-feedback": "{{GENDER:|Ви можеце вичерац}} свой упечаток о тей функциї",
 	"discussiontools-replywidget-loading": "Учитованє...",

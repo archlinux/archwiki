@@ -21,7 +21,7 @@
 	"vector-view-view": "Кæсын",
 	"vector-view-viewsource": "Код кæсын",
 	"vector-more-actions": "Фылдæр",
-	"vector-searchsuggest-containing": "Агур фæрстæ, кæцыты ис <strong class=\"cdx-typeahead-search__search-footer__query\"></strong>",
+	"vector-searchsuggest-containing": "Агур фæрстæ, кæцыты ис <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-page-tools-label": "Фæрæзтæ",
 	"vector-page-tools-general-label": "Иумæйаг",
 	"vector-unpin-element-label": "бамбæхс"

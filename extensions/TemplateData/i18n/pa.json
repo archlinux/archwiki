@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Babanwalia"
+			"Babanwalia",
+			"Cabal"
 		]
 	},
 	"templatedata-doc-param-default": "ਮੂਲ ਰੂਪ",
@@ -9,8 +10,10 @@
 	"templatedata-doc-param-name": "ਮਾਪਦੰਡ",
 	"templatedata-doc-param-status": "ਦਰਜਾ",
 	"templatedata-doc-param-type": "ਕਿਸਮ",
+	"templatedata-doc-param-type-wiki-user-name": "ਵਰਤੋਂਕਾਰ",
 	"templatedata-doc-params": "ਫਰਮੇ ਦੇ ਮਾਪਦੰਡ",
 	"templatedata-invalid-missing": "ਲੋੜੀਂਦਾ ਮਲਕੀਅਤ \"$1\" ਨਹੀਂ ਲੱਭੀ।",
 	"templatedata-invalid-parse": "JSON ਵਿਚ ਵਾਕ-ਰਚਨਾ ਦੋਸ਼",
-	"templatedata-invalid-value": "\"$1\" ਮਲਕੀਅਤ ਲਈ ਗ਼ਲਤ ਮੁੱਲ"
+	"templatedata-invalid-value": "\"$1\" ਮਲਕੀਅਤ ਲਈ ਗ਼ਲਤ ਮੁੱਲ",
+	"templatedata-modal-button-changelang": "ਭਾਸ਼ਾ ਬਦਲੋ"
 }

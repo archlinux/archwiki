@@ -19,8 +19,6 @@
 		]
 	},
 	"math-desc": "Відображає математичні формули у тегах <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
-	"popups-settings-option-math": "Математика",
-	"popups-settings-option-math-description": "Поясніть математичні формули.",
 	"popups-settings-option-math-tooltip": "Пояснювати математичні формули при наведенні",
 	"math-visualeditor-mwchemdialog-title": "Хімічна формула",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Швидке редагування",
@@ -71,8 +69,6 @@
 	"math-visualeditor-symbol-group-math-symbols": "Символи та константи",
 	"math-visualeditor-symbol-group-math-typefaces": "Гарнітури",
 	"math-visualeditor-symbol-group-math-unsorted": "Інше",
-	"math-form-tex-label": "Спеціальний ввід TeX",
-	"math-form-tex-help": "Перевірте за допомогою власного введення TeX. Перегляньте [[{{int:math-helppage}}|сторінку довідки для математичних формул]] для отримання додаткової допомоги.",
 	"math_failure": "Неможливо розібрати вираз",
 	"math_invalidjson": "$1 відповідь сервера є недійсним JSON.",
 	"math_invalidresponse": "$1: Недійсна відповідь («$3») від сервера «$2»:",

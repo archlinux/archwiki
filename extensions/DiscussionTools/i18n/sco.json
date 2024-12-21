@@ -6,7 +6,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Replie",
-	"discussiontools-replylink": "Replie",
+	"discussiontools-replylink": "{{GENDER:|replie}}",
 	"discussiontools-replywidget-cancel": "Cancel",
 	"discussiontools-replywidget-loading": "Laidin...",
 	"discussiontools-replywidget-mode-source": "Soorce",

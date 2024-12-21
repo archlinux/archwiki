@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Boulaur",
 			"BrennodAloisi",
 			"COMISSIONTOPOC",
@@ -266,7 +265,7 @@
 	"new-messages-from-users": "Avètz $1 {{PLURAL:$3|d'un autre utilizaire|de $3 autres utilizaires}} ($2).",
 	"new-messages-from-many-users": "Avètz $1 de fòrça utilizaires ($2).",
 	"new-messages-link-plural": "{{PLURAL:$1|un novèl messatge|de novèls messatges}}",
-	"new-messages-diff-link-plural": "{{PLURAL:$1|darrièr cambiament|darrièrs cambiaments}}",
+	"new-messages-diff-link-plural": "{{PLURAL:$1|darrièr cambiament|999=darrièrs cambiaments}}",
 	"editsection": "modificar",
 	"editold": "Modificar",
 	"viewsourceold": "veire la font",
@@ -3234,7 +3233,7 @@
 	"duration-seconds": "$1 segonda{{PLURAL:$1||s}}",
 	"duration-minutes": "$1 minuta{{PLURAL:$1||s}}",
 	"duration-hours": "$1 ora{{PLURAL:$1||s}}",
-	"duration-days": "$1 jorn{{PLURAL:$1||s}}",
+	"duration-days": "$1 {{PLURAL:$1|jorn|jorns}}",
 	"duration-weeks": "$1 setmana{{PLURAL:$1||s}}",
 	"duration-years": "$1 annada{{PLURAL:$1||s}}",
 	"duration-decades": "$1 decenni{{PLURAL:$1||s}}",

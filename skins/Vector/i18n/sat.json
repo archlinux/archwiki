@@ -2,16 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Albinus",
-			"Amire80",
 			"Manik Soren",
 			"Ramjit Tudu",
 			"Rocky 734",
 			"Samar88",
 			"Srabony90",
 			"ᱢᱩᱨᱢᱩ",
-			"ᱤᱧ ᱢᱟᱛᱟᱞ"
+			"ᱤᱧ ᱢᱟᱛᱟᱞ",
+			"ᱯᱨᱚᱯᱷᱮᱥᱥᱚᱨ"
 		]
 	},
+	"vector-languages": "ᱯᱟᱹᱨᱥᱤᱠᱚ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ᱯᱟᱹᱨᱥᱤ|$1 ᱯᱟᱹᱨᱥᱤ ᱠᱚ}}",
 	"vector-no-language-button-label": "ᱯᱟᱹᱨᱥᱤ ᱥᱮᱞᱮᱫ",
 	"vector-action-addsection": "ᱥᱟᱛᱚᱢ ᱥᱮᱞᱮᱫ",
@@ -34,7 +35,13 @@
 	"vector-feature-custom-font-size-1-label": "ᱢᱟᱹᱱ",
 	"vector-feature-custom-font-size-2-label": "ᱢᱟᱨᱟᱝ",
 	"skin-theme-name": "ᱨᱚᱝ",
+	"skin-theme-os-label": "ᱟᱡᱛᱮ",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ᱠᱚᱭ ᱫᱤᱯᱤᱞᱟᱠᱟᱫ ᱥᱟᱦᱴᱟᱠᱚ ᱥᱮᱸᱫᱽᱨᱟ",
+	"vector-toc-label": "ᱡᱤᱱᱤᱥᱠᱚ",
+	"vector-toc-beginning": "ᱮᱛᱚᱦᱚᱵ",
+	"vector-main-menu-label": "ᱢᱩᱬ ᱢᱮᱱᱩ",
 	"vector-page-tools-label": "ᱥᱟᱯᱟᱯᱠᱚ",
 	"vector-page-tools-general-label": "ᱥᱟᱫᱷᱟᱨᱚᱱ",
+	"vector-page-tools-actions-label": "ᱠᱟᱹᱢᱤᱠᱚ",
 	"vector-unpin-element-label": "ᱫᱟᱱᱟᱝ"
 }

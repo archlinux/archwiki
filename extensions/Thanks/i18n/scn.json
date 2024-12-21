@@ -26,6 +26,7 @@
 	"echo-pref-subscription-edit-thank": "Mi ringrazzia p'un mè canciamentu",
 	"echo-pref-tooltip-edit-thank": "Avvìsami quannu quarchidunu mi ringrazzia p'un canciamentu ca fici.",
 	"echo-category-title-edit-thank": "Ringrazziamenti",
+	"notification-header-creation-thank": "$1 ti ringrazziau pi aviri criatu la pàggina <strong>$3</strong>.",
 	"log-name-thanks": "Riggistru dî ringrazziamenti",
 	"log-description-thanks": "Ccassutta c'è na lista di l'utenti chi foru ringrazziati di àutri utenti.",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|ringrazziau}} a {{GENDER:$4|$3}}",

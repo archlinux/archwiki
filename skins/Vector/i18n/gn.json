@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Hugo.arg",
 			"P. S. F. Freitas"
 		]
@@ -33,6 +32,15 @@
 	"vector-jumptosearch": "Eho eheka hag̃ua",
 	"vector-jumptocontent": "Eho kuatia retepýpe",
 	"vector-more-actions": "Ve",
+	"vector-feature-limited-width-name": "Ipekue",
+	"vector-feature-custom-font-size-name": "Jehaipy",
+	"vector-feature-limited-width-0-label": "Tuicha",
+	"vector-feature-limited-width-1-label": "Jepivegua",
+	"vector-feature-custom-font-size-0-label": "Michĩ",
+	"vector-feature-custom-font-size-1-label": "Jepivegua",
+	"vector-feature-custom-font-size-2-label": "Tuicha",
+	"skin-theme-name": "Sa'y",
+	"skin-theme-os-label": "Ijeheguíva",
 	"vector-search-loader": "Oheka hína marandu",
 	"vector-searchsuggest-containing": "Eheka umi kuatia oguerekóva <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Ñepyrũrã",

@@ -29,7 +29,7 @@
 		]
 	},
 	"thanks-desc": "Ajoute des liens pour remercier les utilisateurs pour des modifications, des commentaires, etc.",
-	"thanks-thank": "{{GENDER:$1|}}remercier{{GENDER:$2|}}",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|remercier}}}}",
 	"thanks-thanked": "{{GENDER:$1|}}remercié{{GENDER:$2||e|(e)}}",
 	"thanks-button-thank": "{{GENDER:$1|}}Remercier{{GENDER:$2|}}",
 	"thanks-button-thanked": "{{GENDER:$1|}}Remercié{{GENDER:$2||e|(e)}}",

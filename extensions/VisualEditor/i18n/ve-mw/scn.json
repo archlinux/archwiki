@@ -9,7 +9,8 @@
 			"Gmelfi",
 			"HalanTul",
 			"Pippinu",
-			"Sarvaturi"
+			"Sarvaturi",
+			"GianAntonucci"
 		]
 	},
 	"tooltip-ca-ve-edit": "Cancia sta pàggina",
@@ -21,8 +22,8 @@
 	"visualeditor-browserwarning": "Stai usannu nu browser ca nun è suppurtatu ufficiarmenti di VisualEditor.",
 	"visualeditor-ca-createlocaldescriptionsource": "Agghiunci na discrizzioni lucali tràmiti surgenti",
 	"visualeditor-ca-createsource": "Crea surgenti",
-	"visualeditor-ca-editsource": "Cancia surgenti",
-	"visualeditor-ca-editsource-section": "cancia la surgenti",
+	"visualeditor-ca-editsource": "Cancia lu còdici",
+	"visualeditor-ca-editsource-section": "cancia lu còdici",
 	"visualeditor-categories-tool": "Catigurìi",
 	"visualeditor-desc": "Editor visivu pi MediaWiki",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
@@ -131,7 +132,7 @@
 	"visualeditor-mwgallerydialog-search-button-label": "Agghiunci na NOVA mmàggini",
 	"visualeditor-mwgallerydialog-show-filename-field-label": "Ammustra li nomi dî file",
 	"visualeditor-mwgallerydialog-styles-field-label": "Stili CSS",
-	"visualeditor-mwgallerydialog-widths-field-label": "Larghizza dâ mmàggini",
+	"visualeditor-mwgallerydialog-widths-field-label": "Larichizza dâ mmàggini",
 	"visualeditor-mwsignature-tool": "La tò firma",
 	"visualeditor-rebase-client-import-name": "Tìtulu dâ pàggina",
 	"visualeditor-savedialog-identify-anon": "Vuoi sarbari sta pàggina comu utilizzaturi anonimu? Lu tò nnirirzzu IP veni arriggistratu ntê crunuluggìa dâ pàggina.",

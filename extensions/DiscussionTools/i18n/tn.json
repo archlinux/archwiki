@@ -4,7 +4,7 @@
 			"Rebelagent"
 		]
 	},
-	"discussiontools-replylink": "araba",
+	"discussiontools-replylink": "{{GENDER:|araba}}",
 	"discussiontools-replywidget-cancel": "Tlogela",
 	"discussiontools-replywidget-mode-source": "Motswedi",
 	"discussiontools-replywidget-mode-visual": "Tebego",

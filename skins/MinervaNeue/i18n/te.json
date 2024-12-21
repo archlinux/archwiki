@@ -21,5 +21,6 @@
 	"mobile-frontend-meta-data-issues-categories": "ఈ వర్గం గురించి",
 	"mobile-frontend-pageaction-edit-tooltip": "ఈ పేజీ శీర్ష భాగాన్ని సవరించండి",
 	"mobile-frontend-placeholder": "{{SITENAME}}‌లో వెతకండి",
-	"mobile-frontend-random-button": "యాదృచ్చికం"
+	"mobile-frontend-random-button": "యాదృచ్చికం",
+	"minerva-page-actions-overflow": "మరిన్ని"
 }

@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kly"
+		]
+	},
+	"turnstile-desc": "為 ConfirmEdit 新增對 Cloudflare Turnstile 的支援",
+	"turnstile-edit": "為防止 wiki 遭受自動化編輯垃圾訊息，請完成以下驗證碼：",
+	"turnstile-addurl": "您的編輯內容裡有新的外部連結。為防止 wiki 遭受自動化垃圾內容攻擊，請完成以下驗證碼：",
+	"turnstile-badlogin": "為防止 wiki 遭受自動化密碼攻擊，請完成以下驗證碼：",
+	"turnstile-createaccount": "為防止 wiki 遭受自動化帳號建立，請完成以下驗證碼：",
+	"turnstile-createaccount-fail": "您的驗證碼似乎不正確。",
+	"turnstile-create": "為防止 wiki 遭受自動化頁面建立，請完成以下驗證碼：",
+	"turnstile-help": "請完成 Turnstile 測試，並回傳作為驗證碼文字的回應值。"
+}

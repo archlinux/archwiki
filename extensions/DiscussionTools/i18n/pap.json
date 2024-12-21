@@ -4,7 +4,7 @@
 			"ObaTango"
 		]
 	},
-	"discussiontools-replylink": "kontestá",
+	"discussiontools-replylink": "{{GENDER:|kontestá}}",
 	"discussiontools-replywidget-cancel": "Kanselá",
 	"discussiontools-replywidget-mode-source": "Fuente",
 	"discussiontools-replywidget-mode-visual": "Visual",

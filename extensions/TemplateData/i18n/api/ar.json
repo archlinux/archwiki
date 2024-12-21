@@ -6,8 +6,8 @@
 		]
 	},
 	"apihelp-templatedata-summary": "اجلب البيانات المخزنة بواسطة الامتداد TemplateData.",
-	"apihelp-templatedata-example-1": "إرجاع بيانات القالب ل[[Template:Stub]] و [[Template:Example]]، مع النتائج لو كان القالبان غير موجودين أو موجودين لكن بدون بيانات قالب.",
-	"apihelp-templatedata-example-2": "يرجع بيانات القالب ل[[Template:Stub]] و [[Template:Example]]، بدون نتائج لو كان القالبان غير موجودين أو موجودين لكن بدون بيانات قالب",
+	"apihelp-templatedata-example-1": "إرجاع TemplateData لـ [[Template:Foobar]]، مع النتائج إذا لم يكن القالب موجودًا أو موجودًا ولكن لا يحتوي على TemplateData",
+	"apihelp-templatedata-example-2": "إرجاع TemplateData لـ [[Template:Phabricator]]، بدون نتائج إذا لم يكن القالب موجودًا أو موجودًا ولكن لا يحتوي على TemplateData",
 	"apihelp-templatedata-param-includeMissingTitles": "يرجع البيانات حول العناوين حتى إذا كانت مفقودة أو تفتقر إلى TemplateData، يتم إرجاع العناوين الافتراضية فقط إذا كانت موجودة ولها TemplateData.",
 	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "يرجع البيانات حول العناوين حتى لو كانت مفقودة أو تفتقد بيانات القالب. افتراضيا (للتوافق مع الإصدار القديم) فالعناوين يتم إرجاعها فقط لو كانت موجودة وتمتلك بيانات قالب.",
 	"apihelp-templatedata-param-lang": "أرجع قيم مترجمة بهذه اللغة. افتراضيا كل الترجمات المتوفرة يتم إرجاعها.",

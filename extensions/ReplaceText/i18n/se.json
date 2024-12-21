@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kimberli Mäkäräinen (WMNO)"
+			"Kimberli Mäkäräinen (WMNO)",
+			"Yupik"
 		]
 	},
-	"replacetext": "Buhtte teavstta"
+	"replacetext": "Buhtte teavstta",
+	"replacetext_continue": "Joatkke"
 }

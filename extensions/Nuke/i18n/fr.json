@@ -15,7 +15,9 @@
 			"Verdy p",
 			"Wladek92",
 			"Wyz",
-			"Zetud"
+			"Zetud",
+			"Mahabarata",
+			"SleaY"
 		]
 	},
 	"nuke": "Suppression en masse",
@@ -34,14 +36,14 @@
 	"nuke-maxpages": "Nombre maximal de pages :",
 	"nuke-editby": "Créé par [[Special:Contributions/$1|{{GENDER:$1|}}$1]]",
 	"nuke-deleted": "La page '''$1''' a été supprimée.",
-	"nuke-deletion-queued": "La page '''$1''' a été mise en file pour suppression.",
+	"nuke-deletion-queued": "La page '''$1''' a été mise en file d'attente pour suppression.",
 	"nuke-not-deleted": "La page [[:$1]] '''n’a pas pu''' être supprimée.",
 	"nuke-delete-more": "[[Special:Nuke|Supprimer plus de pages]]",
 	"nuke-pattern": "Patron au format SQL LIKE (par ex. %) pour le nom de page :",
 	"nuke-nopages-global": "Il n’y a aucun titre de page correspondant à votre recherche.",
 	"nuke-viewchanges": "voir les modifications",
 	"nuke-namespace": "Se limiter à l’espace de noms :",
-	"nuke-linkoncontribs": "suppression de masse",
+	"nuke-linkoncontribs": "suppression en masse",
 	"nuke-linkoncontribs-text": "Suppression de pages en masse pour lesquelles {{GENDER:$1|cet utilisateur|cette utilisatrice}} est l’unique auteur",
 	"nuke-confirm": "Vous allez supprimer {{PLURAL:$1|une|$1}} page{{PLURAL:$1||s}}. Êtes-vous sûr{{GENDER:||e}} de vouloir l{{PLURAL:$1|a|es}} supprimer ?"
 }

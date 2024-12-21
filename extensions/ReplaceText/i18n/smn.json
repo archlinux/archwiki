@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Seipinne"
+			"Seipinne",
+			"Yupik"
 		]
 	},
-	"replacetext_watchmovedpages": "Tarkkuu taid siijđoid"
+	"replacetext_watchmovedpages": "Tarkkuu taid siijđoid",
+	"replacetext_continue": "Juáđhi"
 }

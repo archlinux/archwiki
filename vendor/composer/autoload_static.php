@@ -11,7 +11,6 @@ class ComposerStaticInit_mediawiki_vendor
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
-        'eccc0347283a01e62f5536bcf76b6e62' => __DIR__ . '/..' . '/wikimedia/at-ease/src/Wikimedia/Functions.php',
         'c3f7f0e81464740a933532e81fa26cc7' => __DIR__ . '/..' . '/wikimedia/base-convert/src/Functions.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'c50606d667a3fde2b80a955639479d3d' => __DIR__ . '/..' . '/wikimedia/timestamp/src/defines.php',
@@ -191,7 +190,7 @@ class ComposerStaticInit_mediawiki_vendor
         ),
         'Wikimedia\\AtEase\\' => 
         array (
-            0 => __DIR__ . '/..' . '/wikimedia/at-ease/src/Wikimedia/AtEase',
+            0 => __DIR__ . '/..' . '/wikimedia/at-ease/src',
         ),
         'Wikimedia\\Assert\\' => 
         array (
@@ -200,11 +199,12 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\' => 
         array (
             0 => __DIR__ . '/..' . '/wikimedia/ip-utils/src',
-            1 => __DIR__ . '/..' . '/wikimedia/relpath/src',
-            2 => __DIR__ . '/..' . '/wikimedia/running-stat/src',
-            3 => __DIR__ . '/..' . '/wikimedia/scoped-callback/src',
-            4 => __DIR__ . '/..' . '/wikimedia/wait-condition-loop/src',
-            5 => __DIR__ . '/..' . '/wikimedia/wrappedstring/src',
+            1 => __DIR__ . '/..' . '/wikimedia/php-session-serializer/src',
+            2 => __DIR__ . '/..' . '/wikimedia/relpath/src',
+            3 => __DIR__ . '/..' . '/wikimedia/running-stat/src',
+            4 => __DIR__ . '/..' . '/wikimedia/scoped-callback/src',
+            5 => __DIR__ . '/..' . '/wikimedia/wait-condition-loop/src',
+            6 => __DIR__ . '/..' . '/wikimedia/wrappedstring/src',
         ),
         'Symfony\\Polyfill\\Php83\\' => 
         array (
@@ -1225,7 +1225,7 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\Assert\\PostconditionException' => __DIR__ . '/..' . '/wikimedia/assert/src/PostconditionException.php',
         'Wikimedia\\Assert\\PreconditionException' => __DIR__ . '/..' . '/wikimedia/assert/src/PreconditionException.php',
         'Wikimedia\\Assert\\UnreachableException' => __DIR__ . '/..' . '/wikimedia/assert/src/UnreachableException.php',
-        'Wikimedia\\AtEase\\AtEase' => __DIR__ . '/..' . '/wikimedia/at-ease/src/Wikimedia/AtEase/AtEase.php',
+        'Wikimedia\\AtEase\\AtEase' => __DIR__ . '/..' . '/wikimedia/at-ease/src/AtEase.php',
         'Wikimedia\\Bcp47Code\\Bcp47Code' => __DIR__ . '/..' . '/wikimedia/bcp-47-code/src/Bcp47Code.php',
         'Wikimedia\\Bcp47Code\\Bcp47CodeValue' => __DIR__ . '/..' . '/wikimedia/bcp-47-code/src/Bcp47CodeValue.php',
         'Wikimedia\\CommonPasswords\\CommonPasswords' => __DIR__ . '/..' . '/wikimedia/common-passwords/src/CommonPasswords.php',
@@ -2119,7 +2119,7 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\Parsoid\\Wt2Html\\TreeBuilder\\TreeMutationRelay' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/TreeBuilder/TreeMutationRelay.php',
         'Wikimedia\\Parsoid\\Wt2Html\\Wt2HtmlDOMProcessor' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/Wt2HtmlDOMProcessor.php',
         'Wikimedia\\Parsoid\\Wt2Html\\XMLSerializer' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/XMLSerializer.php',
-        'Wikimedia\\PhpSessionSerializer' => __DIR__ . '/..' . '/wikimedia/php-session-serializer/src/Wikimedia/PhpSessionSerializer.php',
+        'Wikimedia\\PhpSessionSerializer' => __DIR__ . '/..' . '/wikimedia/php-session-serializer/src/PhpSessionSerializer.php',
         'Wikimedia\\Purtle\\BNodeLabeler' => __DIR__ . '/..' . '/wikimedia/purtle/src/BNodeLabeler.php',
         'Wikimedia\\Purtle\\JsonLdRdfWriter' => __DIR__ . '/..' . '/wikimedia/purtle/src/JsonLdRdfWriter.php',
         'Wikimedia\\Purtle\\N3Quoter' => __DIR__ . '/..' . '/wikimedia/purtle/src/N3Quoter.php',

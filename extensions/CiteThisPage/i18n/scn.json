@@ -4,12 +4,13 @@
 			"Gmelfi",
 			"Pippinu",
 			"Santu",
-			"Sarvaturi"
+			"Sarvaturi",
+			"GianAntonucci"
 		]
 	},
 	"citethispage": "Ammintua sta pàggina",
 	"citethispage-desc": "Agghiunci na pàggina spiciali pî [[Special:CiteThisPage|citazzioni]] e na lijami ntâ sbarra dî strummenti",
-	"citethispage-link": "Mintua sta pàggina",
+	"citethispage-link": "Mìntuva sta pàggina",
 	"tooltip-citethispage": "Nfurmazzioni pi comu citari sta pàggina",
 	"citethispage-change-submit": "Crea la citazzioni",
 	"citethispage-change-target": "Pàggina:",

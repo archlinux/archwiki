@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"FunLater"
+			"FunLater",
+			"HitomiAkane"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "ردّ",
@@ -15,8 +16,8 @@
 	"discussiontools-replywidget-reply": "{{GENDER:|ردّ|ردّي}}",
 	"discussiontools-replywidget-summary": "تلخيص",
 	"discussiontools-replywidget-watchthis": "زيد هيدي الصفحة ع [[Special:Watchlist|لايحة المراقبة]]",
-	"discussiontools-topicheader-authorcount": "عدد المستخدمين يلى عم تتناقش: $1",
-	"discussiontools-topicheader-commentcount": "عدد التعليقات: $1",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|شخص|أشخاص}} بالنقاش",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|تعليق|تعليقات}}",
 	"discussiontools-topicheader-latestcomment": "آخر تعليق: $1",
 	"discussiontools-topicsubscription-button-subscribe": "شترك",
 	"discussiontools-topicsubscription-button-subscribe-label": "شترك",

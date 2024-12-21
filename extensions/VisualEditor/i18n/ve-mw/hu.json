@@ -14,7 +14,8 @@
 			"Tacsipacsi",
 			"Teemeah",
 			"Tgr",
-			"ViDam"
+			"ViDam",
+			"Ewithu"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -29,6 +30,9 @@
 	"tooltip-ca-createsource": "Az oldal forráskódjának létrehozása",
 	"tooltip-ca-createsource-local": "A helyi leírólap forráskódjának létrehozása",
 	"visualeditor-advancedsettings-tool": "Haladó beállítások",
+	"visualeditor-annotations-default-description": "Ez a lap hozzátartozik egy jegyzeti tartományhoz.",
+	"visualeditor-annotations-default-end": "A jegyzett tartomány vége",
+	"visualeditor-annotations-default-start": "A jegyzett tartomány kezdése",
 	"visualeditor-autosave-modified-prompt-accept": "Szerkesztés folytatása",
 	"visualeditor-autosave-modified-prompt-message": "Valaki megváltoztatta a lapot, mióta elkezdted szerkeszteni. Szeretnéd folytatni a régi változat szerkesztését, vagy szeretnél új szerkesztést kezdeni a legújabb változat alapján?",
 	"visualeditor-autosave-modified-prompt-reject": "Új szerkesztés kezdése",

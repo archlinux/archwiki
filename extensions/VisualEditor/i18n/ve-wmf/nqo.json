@@ -4,7 +4,11 @@
 			"Lancine.kounfantoh.fofana"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck ߦߴߊ߬ ߖߌ߰ ߟߊ߫ ߞߏ߫ ߞߣߐߘߐ߫ ߞߎߘߊ߫ ߓߘߊ߫ ߞߊ߬ߝߏ߬ ߞߣߐߘߐ ߡߊ߬",
+	"tag-editcheck-newreference-description": "ߦߟߌߡߊߛߙߋ ߘߏ߫ ߓߘߊ߫ ߝߙߊ߬ ߞߐߜߍ ߟߊ߫",
 	"tag-editcheck-references-description": "EditCheck ߦߴߊ߬ ߖߊ߬ߕߋ߬ ߟߊ߫ ߟߋ߬ ߞߏ߫ ߡߊ߬ߞߏ ߘߌ߫ ߞߍ߫ ߦߟߌߡߊߛߙߋ ߘߏ߫ ߟߊ߫ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߣߌ߲߬ ߘߐ߫",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}| ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߝߛߍ߬ߝߛߍ߬ߟߌ (ߦߟߌߡߊߛߙߋ ߟߎ߬) ߓߘߊ߫ ߟߊߞߎߣߎ߲߫]]",
+	"tag-editcheck-references-activated-description": "EdidCheck ߦߴߊ߬ ߖߌ߰ ߟߊ߫ ߞߏ߫ ߡߊ߬ߞߏ ߘߌ߫ ߞߍ߫ ߦߟߌߡߊߛߙߋ ߘߏ߫ ߟߊ߫، ߊ߬ ߘߏ߲߬ UI ߓߘߊ߫ ߦߌ߬ߘߊ߬.",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ߦߋߢߊ ߡߊߦߟߍ߬ߡߊ߲]]",
 	"tag-visualeditor-description": "ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߡߍ߲ ߠߎ߬ ߛߌ߲ߘߌߣߍ߲߫ ߦߋ߫ [[{{MediaWiki:visualeditor-descriptionpagelink}}|ߦߋߗߏ߯ ߡߊߦߟߍߡߊ߲]] ߘߐ߫",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ߦߋߢߊ ߡߊߦߟߍ߬ߡߊ߲:ߝߛߍ߬ߝߛߍ߬ߟߌ]]",

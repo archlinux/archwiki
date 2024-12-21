@@ -7,6 +7,7 @@
 			"Mormegil"
 		]
 	},
+	"content-model-scribunto": "Modul Scribunto",
 	"scribunto-desc": "Framework pro vkládání skriptovacích jazyků do stránek MediaWiki",
 	"scribunto-line": "na řádku $1",
 	"scribunto-module-line": "v modulu $1 na řádku $2",
@@ -39,6 +40,7 @@
 	"scribunto-lua-error-location": "Chyba Lua $1: $2.",
 	"scribunto-lua-error": "Chyba Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Chyba skriptu: Modul vrátil hodnotu typu $2. Měl by vrátit tabulku exportů.",
+	"scribunto-lua-warning": "Upozornění skriptu: $1",
 	"scribunto-luastandalone-proc-error": "Chyba Lua: Nelze vytvořit proces.",
 	"scribunto-luastandalone-proc-error-msg": "Chyba Lua: Nelze vytvořit proces: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Chyba Lua: Nelze vytvořit proces: Není k dispozici proc_open. Zkontrolujte direktivu „disable_functions“ v konfiguraci PHP.",

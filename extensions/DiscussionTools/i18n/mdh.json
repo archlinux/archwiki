@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bangsa Manusia"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Sawalan",
+	"discussiontools-replylink": "{{GENDER:|sawalan}}",
+	"discussiontools-replywidget-advanced": "Kaped pan",
+	"discussiontools-replywidget-cancel": "Batal",
+	"discussiontools-replywidget-mode-source": "Ebpunan",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Sumpat}} kani {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Papedsiling",
+	"discussiontools-replywidget-reply": "{{GENDER:|Sawalan}}",
+	"discussiontools-replywidget-summary": "Kapantekan",
+	"discussiontools-replywidget-watchthis": "Iuman inia a salekat sa [[Special:Watchlist|watchlist]] nengka",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|taw|manga taw}} sa pembitialan",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|bitiala|manga bitiala}}",
+	"discussiontools-topicheader-latestcomment": "Sangat a bagu a bitiala: $1",
+	"discussiontools-topicsubscription-button-subscribe": "edsubskrayb",
+	"discussiontools-topicsubscription-button-subscribe-label": "Edsubskrayb",
+	"discussiontools-topicsubscription-button-unsubscribe": "Di edsubskrayb",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Di edsubskrayb",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Seka}} na di den makatalima sa payagan pantag sa manga bagu a bitiala sa inia pembitialan.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Seka}} na nakasubskrayb!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Seka}} na di den makatalima sa payagan pantag sa manga bagu a bitiala sa inia pembitialan.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Seka}} na kena den nakasubskrayb!"
+}

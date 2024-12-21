@@ -1,15 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Flixtey",
 			"Gkbediako",
 			"Mybluberet",
-			"Owula kpakpo"
+			"Owula kpakpo",
+			"NanaYawBotar"
 		]
 	},
 	"vector-languages": "Wiemɔi",
 	"vector-language-button-label": "{{PLURAL:$1|$1 wiemɔ|$1 wiemɔi}}",
+	"vector-no-language-button-label": "Okɛ wiemɔi afata he",
 	"vector-action-addsection": "Kɛ mlijaa yitso afata he",
 	"vector-action-delete": "Jiemɔ",
 	"vector-action-move": "Tsi",
@@ -19,6 +20,21 @@
 	"vector-view-history": "Kwɛmɔ nibii ni eho",
 	"vector-view-view": "Kanemɔ",
 	"vector-more-actions": "Pii",
+	"vector-feature-limited-width-name": "Dalɛ",
+	"vector-feature-custom-font-size-name": "niŋmaa",
+	"vector-feature-limited-width-0-label": "Lɛɛ",
+	"vector-feature-limited-width-1-label": "Bɛ ni sa",
+	"vector-feature-custom-font-size-0-label": "Bibioo",
+	"vector-feature-custom-font-size-1-label": "Bɛ ni sa",
+	"vector-feature-custom-font-size-2-label": "Eda",
+	"skin-theme-name": "Su",
+	"skin-theme-os-label": "Otomatik",
+	"vector-searchsuggest-containing": "Taomɔ baafai ni yɔɔ<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Mlinii",
+	"vector-toc-beginning": "Shishijee",
+	"vector-main-menu-label": "Menu titri",
 	"vector-page-tools-label": "Nitsumɔ he dadei",
+	"vector-page-tools-general-label": "Hefee he",
+	"vector-page-tools-actions-label": "Nifeemɔi",
 	"vector-unpin-element-label": "kɛto"
 }

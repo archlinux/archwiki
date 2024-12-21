@@ -3,7 +3,8 @@
 		"authors": [
 			"Joachim Mos",
 			"Servien",
-			"Wikiundeplattsnacker"
+			"Wikiundeplattsnacker",
+			"Ameisenigel"
 		]
 	},
 	"mobile-frontend-editor-edit": "Ännern",
@@ -12,8 +13,10 @@
 	"mobile-frontend-language-article-heading": "Spraak",
 	"mobile-frontend-main-menu-login": "Anmellen",
 	"mobile-frontend-main-menu-logout": "Afmellen",
+	"mobile-frontend-main-menu-nearby": "In de Neegd",
 	"mobile-frontend-main-menu-settings": "Instellungen",
 	"mobile-frontend-main-menu-watchlist": "Oppasslist",
 	"mobile-frontend-placeholder": "{{SITENAME}} dörsöken",
-	"mobile-frontend-random-button": "Tofällige Siet"
+	"mobile-frontend-random-button": "Tofällige Siet",
+	"minerva-page-actions-overflow": "Mehr"
 }

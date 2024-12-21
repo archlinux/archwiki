@@ -4,15 +4,20 @@
 			"Gtbot2007",
 			"LesVisages",
 			"Robin van der Vliet",
-			"Tbodt"
+			"Tbodt",
+			"Tamzin",
+			".hecko",
+			"Juwan"
 		]
 	},
 	"mobile-frontend-editor-edit": "o ante",
 	"mobile-frontend-history": "o lukin e ante pi lipu ni tan tenpo pini.",
-	"mobile-frontend-home-button": "lipu tomo",
+	"mobile-frontend-home-button": "lipu open",
 	"mobile-frontend-language-article-heading": "toki",
-	"mobile-frontend-main-menu-login": "o open e sinpin",
+	"mobile-frontend-main-menu-login": "o lon sijelo",
+	"mobile-frontend-main-menu-nearby": "poka",
 	"mobile-frontend-main-menu-settings": "ante",
-	"mobile-frontend-placeholder": "o alasa e {{SITENAME}}",
-	"mobile-frontend-random-button": "lipu ante"
+	"mobile-frontend-placeholder": "o alasa lon lipu {{SITENAME}}",
+	"mobile-frontend-random-button": "lipu ante",
+	"minerva-page-actions-overflow": "ante"
 }

@@ -170,7 +170,7 @@
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|Ваша}} корисничка права су {{GENDER:$1|промењена}}. Више нисте члан следећих група: $2.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|Ваша}} корисничка права су {{GENDER:$1|промењена}}. Додати сте у следеће групе: $2. Више нисте члан следећих група: $4.",
 	"notification-header-user-rights-expiry-change": "Истек {{GENDER:$4|вашег}} чланства у {{PLURAL:$3|следећој групи|следећим групама}} је {{GENDER:$1|промењен}}: $2.",
-	"notification-header-welcome": "{{GENDER:$2|Добро дошли}} на {{GRAMMAR:акузатив|{{SITENAME}}}}, $1! Драго нам што {{GENDER:$2|сте}} овде.",
+	"notification-header-welcome": "{{GENDER:$2|Добро дошли}} на {{GRAMMAR:акузатив|{{SITENAME}}}}, $1! Драго нам је што {{GENDER:$2|сте}} овде.",
 	"notification-header-mention-summary": "$1 {{GENDER:$3|Вас}} је {{GENDER:$2|поменуо|поменула}} у опису измене на страници <strong>$4</strong>.",
 	"notification-header-watchlist-changed": "$1 је {{GENDER:$2|променио|променила}} страницу <strong>$3</strong>, страницу на {{GENDER:$4|вашем}} списку надгледања{{PLURAL:$5||, $5 пута}}.",
 	"notification-header-watchlist-created": "$1 је {{GENDER:$2|направио|направила}} страницу <strong>$3</strong>, страницу на {{GENDER:$4|Вашем}} списку надгледања{{PLURAL:$5||, $5 пута}}.",
@@ -240,5 +240,7 @@
 	"notification-header-foreign-alert": "Обавештења са {{PLURAL:$5|другог викија|$5 друга викија|$5 других викија}}",
 	"notification-header-foreign-notice": "Обавештења са {{PLURAL:$5|другог викија|$5 друга викија|$5 других викија}}",
 	"notification-header-foreign-all": "Обавештења са {{PLURAL:$5|другог викија|$5 друга викија|$5 других викија}}",
-	"echo-foreign-wiki-lang": "$1 — $2"
+	"echo-foreign-wiki-lang": "$1 — $2",
+	"group-push-subscription-manager": "Менаџери претплата за обавештења",
+	"group-push-subscription-manager-member": "{{GENDER:$1|менаџер претплата за обавештења}}"
 }

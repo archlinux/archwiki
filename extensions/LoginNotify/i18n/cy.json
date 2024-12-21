@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Afalau"
+			"Afalau",
+			"Ceirios"
 		]
 	},
 	"echo-category-title-login-fail": "Ymdrechion mewngofnodi sydd wedi methu",

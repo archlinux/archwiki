@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"EbelleMarcel"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Jalabɛ",
+	"discussiontools-replylink": "{{GENDER:|alabɛ}}",
+	"discussiontools-replywidget-advanced": "Pótísɛ muwasó",
+	"discussiontools-replywidget-cancel": "Ɓáŋga",
+	"discussiontools-replywidget-mode-source": "Tongo",
+	"discussiontools-replywidget-mode-visual": "Jɛnɛ",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Alabɛ}} {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Sɛlɛ jɛnɛ",
+	"discussiontools-replywidget-reply": "{{GENDER:|Alabɛ}}",
+	"discussiontools-replywidget-summary": "O patápɛm",
+	"discussiontools-replywidget-watchthis": "Ɓatá di dipapá o [[Special:Watchlist|liste de suivi]]",
+	"discussiontools-topicheader-authorcount": "$1 bató be ó ikwali",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|jalabɛ|malabɛ}}",
+	"discussiontools-topicheader-latestcomment": "Jalabɛ disukan : $1",
+	"discussiontools-topicsubscription-button-subscribe": "tidisɛ dina",
+	"discussiontools-topicsubscription-button-subscribe-label": "Tidisɛ dina",
+	"discussiontools-topicsubscription-button-unsubscribe": "sumwá la diná",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Sumwa lá diná",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Wa}} kusá mibia o bekwali ba peńá tegɛnɛ mu mwendi.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Wa tidisɛ dina !",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|O}} makusá pɛ mibia o bekwali ba peńá tegɛnɛ mu mwendi.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Wa}} sumwa diná !"
+}

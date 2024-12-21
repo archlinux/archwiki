@@ -10,7 +10,7 @@
 	"cite_error": "المرجع غلط: $1",
 	"cite_error_ref_numeric_key": "التاج <code>&lt;ref&gt;</code> مش صحيح؛\nالاسم ماينفعش يكون عدد صحيح بسيط. استخدم عنوان بيوصف",
 	"cite_error_ref_no_key": "التاج <code>&lt;ref&gt;</code> مش صحيح؛\nالمراجع اللى من غير محتوى لازميكون ليها اسم",
-	"cite_error_ref_too_many_keys": "التاج <code>&lt;ref&gt;</code> مش صحيح؛\nأسامى مش صحيحة، يعنى مثلا: كتير قوي",
+	"cite_error_ref_too_many_keys": "المعلم غير صالح في علامة <code>&lt;ref&gt;</code>",
 	"cite_error_ref_no_input": "تاج <code>&lt;ref&gt;</code> مش صحيح؛\nالمراجع اللى من غير اسم لازم يكون ليها محتوى",
 	"cite_error_references_invalid_parameters": "مش صحيح <code>&lt;references&gt;</code> تاج;\nمافيش محددات مسموح بيها.\nاستخدم <code>&lt;references /&gt;</code>",
 	"cite_error_references_no_backlink_label": "علامات الوصلات الراجعة المخصصة خلصت. عرف اكتر فى رسالة [[MediaWiki:Cite references link many format backlink labels]]",

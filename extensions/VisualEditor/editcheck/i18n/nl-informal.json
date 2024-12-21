@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jeroen N"
+		]
+	},
+	"editcheck-dialog-action-no": "Nee",
+	"editcheck-dialog-action-yes": "Ja",
+	"editcheck-dialog-addref-description": "Help lezers begrijpen waar deze informatie vandaan komt door een bron toe te voegen.",
+	"editcheck-dialog-addref-reject-question": "Waarom voeg je geen bron toe?",
+	"editcheck-dialog-addref-reject-description": "Andere redacteuren willen graag weten waarom je besloten hebt geen bron toe te voegen.",
+	"editcheck-dialog-addref-reject-irrelevant": "Ik denk niet dat bronnen relevant zijn voor mijn bewerking",
+	"editcheck-dialog-addref-reject-common-knowledge": "De informatie die ik toevoeg, is algemeen bekend",
+	"editcheck-dialog-addref-reject-uncertain": "Ik weet niet zeker welke bron ik moet toevoegen",
+	"editcheck-dialog-addref-reject-other": "Anders",
+	"editcheck-dialog-addref-success-notify": "Dankjewel voor het toevoegen van een bron!",
+	"editcheck-dialog-addref-title": "Bron toevoegen",
+	"editcheck-dialog-title": "Voor je dit publiceert"
+}

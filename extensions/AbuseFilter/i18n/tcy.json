@@ -2,7 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Ravi Mundkur",
-			"VASANTH S.N."
+			"VASANTH S.N.",
+			"ChiK",
+			"Pragathi. BH",
+			"Vinoda mamatharai"
 		]
 	},
 	"abusefilter-log-search-user": "ಬಳಕೆದಾರೆರ್:",
@@ -15,7 +18,7 @@
 	"abusefilter-log-hidelink": "ನೋಟ ಹೊಂದಿಸಾಲೆ",
 	"abusefilter-log-details-val": "ಮೌಲ್ಯ",
 	"abusefilter-log-details-vars": "ಕಾರ್ಯದ ಪರಿಮಿತಿಲು",
-	"abusefilter-log-details-privatedetails": "ಖಾಸಗಿ ದತ್ತಾಂಶ",
+	"abusefilter-log-details-privatedetails": "ಖಾಸಗಿ ಲಾಗ್ ವಿವರೊಲು",
 	"abusefilter-log-details-diff": "ಸಂಪಾದನೆಡ್ ಮಲ್ತಿನ ಬದಲಾವಣೆಲು",
 	"abusefilter-log-linkoncontribs": "ದುರುಪಯೋಗದ ಅನುಕ್ರಮಣಿಕೆ",
 	"abusefilter-log-hide-reason": "ಕಾರಣ:",
@@ -32,7 +35,7 @@
 	"abusefilter-deleted": "ಮಾಜಾಯಿನ",
 	"abusefilter-disabled": "ನಿಷ್ಕ್ರಿಯ ಮಲ್ತಿನ",
 	"abusefilter-status-global": "ಜಾಗತಿಕ",
-	"abusefilter-list-options": "ಆಯ್ಕೆಲು",
+	"abusefilter-list-options": "ನಾಡುನ ಆಯ್ಕೆಲು",
 	"abusefilter-list-options-deleted": "ಮಾಜಾಯಿ ಅರಿಪೆಲು:",
 	"abusefilter-list-options-deleted-only": "ಮಾಜಾಯಿ ಅರಿಪೆಲೆನ್ ಮಾತ್ರಾ ತೋಜಾಲೆ",
 	"abusefilter-list-options-deleted-hide": "ಮಾಜಾಯಿ ಅರಿಪೆಲೆನ್ ದೆಂಗಾಲೆ",
@@ -91,7 +94,7 @@
 	"abusefilter-history-filterid": "ಅರಿಪೆಲು",
 	"abusefilter-history-select-user": "ಬಳಕೆದಾರೆರ್:",
 	"abusefilter-history-diff": "ಬದಲಾವಣೆಲು",
-	"abusefilter-revert-filter": "ಅರಿಪೆಲು:",
+	"abusefilter-revert-filter": "ಅರಿಪೆದ ಐಡಿ:",
 	"abusefilter-revert-confirm": "ಗಟ್ಟಿಮಲ್ಪುಲೆ",
 	"abusefilter-revert-reasonfield": "ಕಾರಣೊ:",
 	"abusefilter-test-submit": "ಪರೀಕ್ಷೆ",

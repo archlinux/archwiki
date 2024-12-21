@@ -4,7 +4,7 @@
 			"Marwan Mohamad"
 		]
 	},
-	"mobile-frontend-editor-edit": "Boli'o",
+	"mobile-frontend-editor-edit": "Boli'a",
 	"mobile-frontend-history": "Bilohi riwayati lo halaman botiya",
 	"mobile-frontend-home-button": "Palepelo",
 	"mobile-frontend-language-article-heading": "Bahasa",
@@ -15,5 +15,6 @@
 	"mobile-frontend-main-menu-watchlist": "Daputari he'awasiyalo",
 	"mobile-frontend-pageaction-edit-tooltip": "Boli'a tayadu bungaliyo lo halaman botiye.",
 	"mobile-frontend-placeholder": "Lolohe {{SITENAME}}",
-	"mobile-frontend-random-button": "Totoonula"
+	"mobile-frontend-random-button": "Totoonula",
+	"minerva-page-actions-overflow": "Uwewoliyo"
 }

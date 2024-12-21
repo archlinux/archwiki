@@ -112,6 +112,5 @@
 	"math-wikibase-special-form-button": "Αίτημα Πληροφοριών",
 	"math-wikibase-special-error-header": "Σφάλμα",
 	"math-wikibase-special-error-invalid-argument": "Το ID αντικειμένου Wikibase που ορίσατε δεν υπάρχει.",
-	"math-wikibase-special-error-unknown": "Ένα άγνωστο λάθος εμφανίστηκε κατά την ανάκτηση δεδομένων από το Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "Η επέκταση του Wikibase είναι απαραίτητη για τη χρήση αυτής της ειδκικής σελίδας."
+	"math-wikibase-special-error-unknown": "Ένα άγνωστο λάθος εμφανίστηκε κατά την ανάκτηση δεδομένων από το Wikibase."
 }

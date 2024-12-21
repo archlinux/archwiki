@@ -3,7 +3,9 @@
 		"authors": [
 			"H78c67c",
 			"Ktchankt",
-			"Winston Sung"
+			"Winston Sung",
+			"SCP-2000",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "傾嘢工具",
@@ -33,7 +35,7 @@
 	"discussiontools-preference-label": "討論工具",
 	"discussiontools-preference-replytool": "開著快速回覆",
 	"discussiontools-preference-topicsubscription": "開着討論留名",
-	"discussiontools-replybutton": "回覆",
+	"discussiontools-replybutton": "{{GENDER:|回覆}}",
 	"discussiontools-replylink": "{{GENDER:|回覆}}",
 	"discussiontools-replywidget-abandon": "你係咪肯定想放棄你而家寫緊嘅留言？",
 	"discussiontools-replywidget-abandon-discard": "放棄留言",
@@ -42,6 +44,7 @@
 	"discussiontools-replywidget-abandontopic-discard": "放棄主題",
 	"discussiontools-replywidget-abandontopic-keep": "繼續寫",
 	"discussiontools-replywidget-advanced": "進階",
+	"discussiontools-replywidget-autocreate-warning": "<strong>你冇登入到。</strong>當你一作出修改，系統會開個臨時戶口畀你。[[$3|知多啲]]。想喺呢個戶口過期之後繼續收到其他人回覆嘅通知，並解鎖更多功能嘅話，請[$1 登入]或[$2 開返個戶口]。",
 	"discussiontools-replywidget-cancel": "取消",
 	"discussiontools-replywidget-feedback": "分享對呢個功能嘅意見",
 	"discussiontools-replywidget-loading": "載入緊…",

@@ -4,7 +4,7 @@
 			"ChoiChong"
 		]
 	},
-	"discussiontools-replylink": "応(いれー)いん",
+	"discussiontools-replylink": "{{GENDER:|応(いれー)いん}}",
 	"discussiontools-replywidget-cancel": "とぅりちゃーすん",
 	"discussiontools-replywidget-mode-source": "原典",
 	"discussiontools-replywidget-mode-visual": "ビジュアル",

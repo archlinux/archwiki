@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
-			"Chulsu463"
+			"Chulsu463",
+			"MiiCii"
 		]
 	},
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|baniha}}}}",
-	"thanks-thank-tooltip": "{{GENDER:$1|Ulambi}} emke baniha sinde mejige {{GENDER:$2|baitalasi}}"
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|banihalambi}}}}",
+	"thanks-thank-tooltip": "Banihalara mejige be ere {{GENDER:$2|baitalasi}} de {{GENDER:$1|benjire}}"
 }

@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Abijeet Patro",
-			"Amire80",
 			"AnupamM",
 			"Saurmandal",
 			"Sfic",
@@ -10,7 +9,8 @@
 			"ThisIsACreeper0101",
 			"आलोक",
 			"भारत्पराक्रमि",
-			"रोहित रावत"
+			"रोहित रावत",
+			"Srishakatux"
 		]
 	},
 	"skinname-vector": "Vector विरासती (2010)",
@@ -44,10 +44,10 @@
 	"vector-jumptocontent": "सामग्री पर जाएँ",
 	"vector-more-actions": "अधिक",
 	"vector-client-prefs-label": "पठन सेटिंग्स",
-	"vector-feature-limited-width-name": "कॉलम की चौड़ाई",
-	"vector-feature-custom-font-size-name": "फ़ॉ्ट का आकार",
-	"vector-feature-limited-width-0-label": "पूरी चौड़ाई",
-	"vector-feature-limited-width-1-label": "सीमित चौड़ाई",
+	"vector-feature-limited-width-name": "चौड़ाई",
+	"vector-feature-custom-font-size-name": "टेक्स्ट",
+	"vector-feature-limited-width-0-label": "चौड़ा",
+	"vector-feature-limited-width-1-label": "मानक",
 	"vector-feature-custom-font-size-0-label": "छोटा",
 	"vector-feature-custom-font-size-1-label": "मानक",
 	"vector-feature-custom-font-size-2-label": "बड़ा",

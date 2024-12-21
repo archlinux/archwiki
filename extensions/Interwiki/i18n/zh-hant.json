@@ -16,7 +16,9 @@
 			"Waihorace",
 			"Winston Sung",
 			"Wrightbus",
-			"Xiplus"
+			"Xiplus",
+			"Cookai1205",
+			"優枰"
 		]
 	},
 	"interwiki": "檢視並編輯跨wiki資料",
@@ -75,10 +77,10 @@
 	"interwiki-global-links": "全域跨wiki前綴",
 	"interwiki-global-description": "這些前綴均繼承自全域設定，且僅可於來源wiki編輯。",
 	"interwiki-local-links": "本地跨wiki前綴",
-	"interwiki-local-description": "這些前綴均存於本地，任何與全域設定重複的部份會使用全域的設定值覆蓋。",
+	"interwiki-local-description": "這些前綴均存於本地，任何與全域設定重複的部份會覆蓋全域的設定值。",
 	"interwiki-links": "跨wiki前綴",
 	"interwiki-language-links": "跨語言前綴",
-	"interwiki-language-description": "這些前綴符合已定義的語言代碼，當加入至頁面時會被用來建立 「{{int:otherlanguages}}」清單。",
+	"interwiki-language-description": "這些前綴符合已定義的語言代碼，當加入至頁面時會被用來建立「{{int:otherlanguages}}」清單。",
 	"interwiki-global-language-links": "全域跨語言前綴",
 	"interwiki-global-language-description": "這些前綴符合已定義的語言代碼，並會在加入頁面時用來建立「{{int:otherlanguages}}」清單。由於其繼承自全域設定，僅能在來源wiki上編輯。全域跨語言定義不能被本地內容覆蓋。"
 }

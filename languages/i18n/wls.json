@@ -3,8 +3,7 @@
 		"authors": [
 			"Lea.Fakauvea",
 			"Lea.fakauvea",
-			"Skimel",
-			"Amire80"
+			"Skimel"
 		]
 	},
 	"tog-underline": "Fakama'uhiga te 'u laini tapiki:",
@@ -550,7 +549,7 @@
 	"pageinfo-recent-edits": "Fetogi fo'ou e fiā (i te $1 kua osi)",
 	"pageinfo-recent-authors": "Kaiga kehekehe e fiā e faitohi",
 	"pageinfo-magic-words": "{{PLURAL:$1|kupu}} 'iloga kehe ($1)",
-	"pageinfo-hidden-categories": "{{PLURAL:$1|fa'ahiga}} fufū($1)",
+	"pageinfo-hidden-categories": "{{PLURAL:$1|Fa'ahiga}} fufū ($1)",
 	"pageinfo-templates": "{{PLURAL:$1|Kupesi}} e kau ai ($1)",
 	"pageinfo-toolboxlink": "O 'uhiga mo te pāsina",
 	"pageinfo-contentpage": "Pāsina kua tohi",

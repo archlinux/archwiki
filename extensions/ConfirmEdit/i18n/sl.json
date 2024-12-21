@@ -3,7 +3,8 @@
 		"authors": [
 			"BrokenArrow",
 			"Dbc334",
-			"Eleassar"
+			"Eleassar",
+			"A09"
 		]
 	},
 	"captcha-edit": "Če želite urejati stran, prosimo rešite spodnjo nalogo in odgovor vpišite v polje ([[Special:Captcha/help|več informacij]]):",
@@ -24,7 +25,7 @@
 	"captcha-error": "Preverjanje rešitve uganke CAPTCHA je spodletelo zaradi notranje napake: $1",
 	"captchahelp-title": "Pomoč za captcha",
 	"captchahelp-cookies-needed": "Če želite, da to deluje, boste morali v brskalniku omogočiti piškotke.",
-	"captchahelp-text": "Spletna mesta, ki omogočajo objavljanje širši javnosti, kot na primer ta viki, pogosto zlorabljajo smetilci, ki za objavo svojih povezav na številne strani uporabljajo avtomatizirana orodja.\nČeprav je neželene povezave mogoče odstraniti, so precejšnja nadloga.\n\nVčasih, zlasti pri dodajanju novih spletnih povezav na stran, vam bo viki morda prikazal sliko obarvanega ali popačenega besedila in zahteval vpis prikazanih besed.\nKer je to opravilo težko avtomatizirati, bo s tem večini ljudi objavljanje dovoljeno, smetilci in drugi robotski napadalci pa bodo ustavljeni.\n\nŽal lahko to povzroči nevšečnosti uporabnikom s slabim vidom in tistim, ki uporabljajo besedilne ali govorne brskalnike.\nGlasovna možnost trenutno še ni na voljo.\nČe vam to nepričakovano preprečuje legitimno objavo, prosimo, da se obrnete na [[Special:ListAdmins|administratorje projekta]].\n\nZa vrnitev v urejevalnik v brskalniku izberite gumb »nazaj«.",
+	"captchahelp-text": "Spletna mesta, ki omogočajo objavljanje širši javnosti, kot na primer ta viki, pogosto zlorabljajo smetilci, ki za objavo svojih povezav na številne strani uporabljajo avtomatizirana orodja.\nČeprav je neželene povezave mogoče odstraniti, so precejšnja nadloga.\n\nVčasih, zlasti pri dodajanju novih spletnih povezav na stran, vam bo viki morda prikazal sliko obarvanega ali popačenega besedila in zahteval vpis prikazanih besed.\nKer je to opravilo težko avtomatizirati, bo s tem večini ljudi objavljanje dovoljeno, smetilci in drugi robotski napadalci pa bodo ustavljeni.\n\nŽal lahko to povzroči nevšečnosti uporabnikom s slabim vidom in tistim, ki uporabljajo besedilne ali govorne brskalnike.\nGlasovna možnost trenutno še ni na voljo.\nČe vam to nepričakovano preprečuje legitimno objavo, prosimo, da se obrnete na [[{{int:grouppage-sysop}}|administratorje projekta]].\n\nZa vrnitev v urejevalnik v brskalniku izberite gumb »nazaj«.",
 	"captcha-addurl-whitelist": " #<!-- pustite to vrstico točno takšno, kakršna je --> <pre>\n# Skladnja je naslednja:\n#   * Vse od znaka »#« do konca vrstice je komentar\n#   * Vsaka neprazna vrstica je delec regularnega izraza, ki se bo ujemal samo z gostitelji v URL-jih\n #</pre> <!-- pustite to vrstico točno takšno, kakršna je -->",
 	"right-skipcaptcha": "Izvajanje dejanj, ki sprožijo preverjanje CAPTCHA, ne da bi bilo treba opraviti preverjanje CAPTCHA",
 	"action-skipcaptcha": "izvajanje dejanj, ki sprožijo CAPTCHA, ne da bi bilo treba reševati CAPTCHA",

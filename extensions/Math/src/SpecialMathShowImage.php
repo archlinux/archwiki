@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Math;
 
+use InvalidArgumentException;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\SpecialPage\SpecialPage;
 
@@ -79,39 +80,46 @@ class SpecialMathShowImage extends SpecialPage {
 		if ( $hash === '' && $tex === '' && $asciimath === '' ) {
 			$this->setHeaders( false );
 			echo $this->printSvgError( 'No Inputhash specified' );
-		} else {
-			if ( $tex === '' && $asciimath === '' ) {
+			return;
+		}
+
+		if ( $tex === '' && $asciimath === '' ) {
+			try {
 				$this->renderer = $this->rendererFactory->getFromHash( $hash );
-				$this->noRender = $request->getBool( 'noRender', false );
-				$isInDatabase = $this->renderer->readFromCache();
-				if ( $isInDatabase || $this->noRender ) {
-					$success = $isInDatabase;
-				} else {
-					$success = $this->renderer->render();
-				}
-			} elseif ( $asciimath === '' ) {
-				$this->renderer = $this->rendererFactory->getRenderer( $tex, [], $this->mode );
-				$success = $this->renderer->render();
+			} catch ( InvalidArgumentException $exception ) {
+				$this->setHeaders( false );
+				echo $this->printSvgError( $exception->getMessage() );
+				return;
+			}
+			$this->noRender = $request->getBool( 'noRender', false );
+			$isInDatabase = $this->renderer->readFromCache();
+			if ( $isInDatabase || $this->noRender ) {
+				$success = $isInDatabase;
 			} else {
-				$this->renderer = $this->rendererFactory->getRenderer(
-					$asciimath, [ 'type' => 'ascii' ], $this->mode
-				);
 				$success = $this->renderer->render();
 			}
-			if ( $success ) {
-				$output = $this->renderer->getSvg();
-			} else {
-				$output = $this->printSvgError( $this->renderer->getLastError() );
-			}
-			if ( $output == "" ) {
-				$output = $this->printSvgError( 'No Output produced' );
-				$success = false;
-			}
-			$this->setHeaders( $success );
-			echo $output;
-			if ( $success ) {
-				$this->renderer->writeCache();
-			}
+		} elseif ( $asciimath === '' ) {
+			$this->renderer = $this->rendererFactory->getRenderer( $tex, [], $this->mode );
+			$success = $this->renderer->render();
+		} else {
+			$this->renderer = $this->rendererFactory->getRenderer(
+				$asciimath, [ 'type' => 'ascii' ], $this->mode
+			);
+			$success = $this->renderer->render();
+		}
+		if ( $success ) {
+			$output = $this->renderer->getSvg();
+		} else {
+			$output = $this->printSvgError( $this->renderer->getLastError() );
+		}
+		if ( $output == "" ) {
+			$output = $this->printSvgError( 'No Output produced' );
+			$success = false;
+		}
+		$this->setHeaders( $success );
+		echo $output;
+		if ( $success ) {
+			$this->renderer->writeCache();
 		}
 	}
 

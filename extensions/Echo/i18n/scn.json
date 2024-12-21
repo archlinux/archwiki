@@ -4,7 +4,8 @@
 			"Ajeje Brazorf",
 			"Gmelfi",
 			"Pippinu",
-			"Sarvaturi"
+			"Sarvaturi",
+			"GianAntonucci"
 		]
 	},
 	"echo-desc": "Sistema pi nutificari a l'utenti eventi e missaggi",
@@ -23,7 +24,7 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Testu nurmali",
 	"echo-learn-more": "Pi sapìrinni cchiossai",
-	"echo-new-messages": "Vossìa havi missaggi novi",
+	"echo-new-messages": "Ài un missaggiu novu",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Canciamentu|Canciamenti}} supra la mè pàggina di discussioni",
 	"echo-category-title-edit-user-page": "{{PLURAL:$1|Canciamentu|Canciamenti}} supra â mè pàggina utenti",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Liami|Liama}} a na pàggina",
@@ -94,10 +95,10 @@
 	"echo-date-today": "Oi",
 	"echo-date-yesterday": "Aieri",
 	"notification-bundle-header-edit-user-talk-v2": "{{PLURAL:$1|Nu missaggiu novu|$1 missaggi novi|100=Cchiù di 99 missaggi novi}} supra la <strong>{{GENDER:$3|tò}} pàggina di discussioni</strong>.",
-	"echo-email-batch-subject-daily": "Vossia havi {{PLURAL:$2|na nutìfica nova|nutìfichi novi}} supra {{SITENAME}}",
-	"echo-email-batch-subject-weekly": "Vossia havi {{PLURAL:$2|na nutìfica nova|nutìfichi novi}} supra {{SITENAME}} sta simana",
-	"echo-email-batch-body-intro-daily": "Assabbinidica $1,\neccu na sìntisi di l'attivitati d'oi supra {{SITENAME}} pi vossìa",
-	"echo-email-batch-body-intro-weekly": "Sabbinirica $1,\neccu na sìntisi di l'attivitati di sta siamana supra {{SITENAME}} pi Vossia",
+	"echo-email-batch-subject-daily": "À' {{PLURAL:$2|na nutìfica nova|nutìfichi novi}} nna {{SITENAME}}",
+	"echo-email-batch-subject-weekly": "À' {{PLURAL:$2|na nutìfica nova|nutìfichi novi}} nna {{SITENAME}} sta simana",
+	"echo-email-batch-body-intro-daily": "Salutamu $1,\nCca pi tia cc'è un suntu di l'attività di oji nna {{SITENAME}}.",
+	"echo-email-batch-body-intro-weekly": "Salutamu $1,\nCca pi tia cc'è un suntu di l'attività di sta simana nna {{SITENAME}}.",
 	"echo-email-batch-link-text-view-all-notifications": "Talìa tutti li canciamenti",
 	"notification-header-foreign-notice": "Àutri nutizzî {{PLURAL:$5|di n'àutru wiki|d'àutri $5 wiki}}",
 	"notification-header-foreign-all": "Àutri nutìfichi {{PLURAL:$5|di n'àutru wiki|d'àutri $5 wiki}}"

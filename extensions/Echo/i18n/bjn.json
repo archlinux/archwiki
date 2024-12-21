@@ -60,7 +60,7 @@
 	"echo-pref-tooltip-mention-success": "Padahi ulun wayah mangirimakan sambatan ka sasaurang.",
 	"echo-pref-tooltip-user-rights": "Padahi ulun wayah sasaurang maubah hak pamakai ulun.",
 	"echo-pref-tooltip-emailuser": "Padahi ulun amun sasaurang mangirim ulun surél.",
-	"echo-pref-tooltip-article-reminder": "Padahi ulun pasal laman ngini amun ulun minta.",
+	"echo-pref-tooltip-article-reminder": "Padahi ulun hiwal laman ngini amun ulun minta.",
 	"echo-pref-tooltip-thank-you-edit": "Padahi ulun lamun ulun sudah mancapai babakan ka-1, ka-10, ka-100...",
 	"echo-pref-tooltip-watchlist": "Padahi ulun lamun ada urang nang maulah sabuting babakan (non-halus) pada laman dalam daptar itihan ulun.",
 	"echo-pref-tooltip-minor-watchlist": "Padahi ulun lamun ada urang nang maulah sabuting babakan kilui ka laman dalam daptar itihan ulun.",
@@ -109,6 +109,9 @@
 	"notification-link-text-view-page": "Janaki laman",
 	"notification-header-edit-user-page": "$1 {{GENDER:$2|mambabak}} <strong>laman pamakai {{GENDER:$3|Pian}}</strong>.",
 	"notification-header-edit-user-talk": "$1 {{GENDER:$2|maninggalakan}} sabuting pasan di <strong>laman pamandiran {{GENDER:$3|Pian}}</strong>.",
+	"echo-notification-notice": "{{PLURAL:$1|Pamadahan ($1)|100=Pamadahan (99+)}}",
+	"echo-notification-notice-text-only": "Pamadahan",
 	"echo-overlay-link": "Samunyaan pamadahan",
+	"echo-mark-all-as-read": "Tandai {{PLURAL:$1|samunyaan}} sudah dibaca",
 	"group-push-subscription-manager": "Pangalula langganan tunjul"
 }

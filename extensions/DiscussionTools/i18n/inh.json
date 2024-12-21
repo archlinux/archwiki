@@ -11,6 +11,8 @@
 	"discussiontools-emptystate-title-self": "{{GENDER:|Марша воагӀалва|Марша йоагӀийла|Марша доагӀалда}}! Ер хьа къамаьл-оагӀув я.",
 	"discussiontools-emptystate-title-user": "Доладе {{PAGENAME}} {{GENDER:{{PAGENAME}}|яхачунца}} къамаьл",
 	"discussiontools-emptystate-title-user-temp": "Доладе {{PAGENAME}} {{GENDER:{{PAGENAME}}|яхачунца}} къамаьл",
+	"discussiontools-pageframe-latestcomment": "ТӀеххьара хоам: $1 язбаьб $2 яхачо укх тема чу «$3»",
+	"discussiontools-pageframe-latestcomment-notopic": "ТӀеххьара хоам: $1 $2 яхачунгара",
 	"discussiontools-replylink": "{{GENDER:|жоп ле}}",
 	"discussiontools-replywidget-advanced": "Кхы а",
 	"discussiontools-replywidget-cancel": "Эшац",

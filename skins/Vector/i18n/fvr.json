@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dinkawiki"
+		]
+	},
+	"vector-languages": "Beléŋá",
+	"vector-language-button-label": "{{PLURAL:$1|$1 belé|$1 beléŋá}}",
+	"vector-no-language-button-label": "Beléŋás jányi",
+	"vector-action-addsection": "Belêŋta̠bʉs jányi",
+	"vector-action-delete": "Jááso",
+	"vector-action-move": "Ja̠wnyɨ́ŋɨ́s",
+	"vector-action-protect": "Jaáno",
+	"vector-view-create": "Jetéré",
+	"vector-view-history": "Sime ja̠gɨ́l",
+	"vector-more-actions": "Kerŋa",
+	"vector-feature-limited-width-name": "Wa̠ssɨŋ",
+	"vector-feature-custom-font-size-name": "Rim",
+	"vector-feature-limited-width-0-label": "Wa̠ssɨ́e",
+	"vector-feature-limited-width-1-label": "Taraas",
+	"vector-feature-custom-font-size-0-label": "Ittî",
+	"vector-feature-custom-font-size-1-label": "Taraas",
+	"vector-feature-custom-font-size-2-label": "Appâ",
+	"skin-theme-name": "Ǔlu",
+	"skin-theme-os-label": "Dítíŋtáárípii",
+	"vector-searchsuggest-containing": "Saŋgala kila jʉrgʉ́ló asá <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>-sí ka̱ɨŋ.",
+	"vector-toc-label": "Ótá",
+	"vector-toc-beginning": "Juuŋ",
+	"vector-main-menu-label": "Beera appâkʉŋo",
+	"vector-page-tools-label": "Táárí'ŋ ótá",
+	"vector-page-tools-general-label": "Nyéttiŋ",
+	"vector-page-tools-actions-label": "Ájíŋá",
+	"vector-unpin-element-label": "jʉʉl-si"
+}

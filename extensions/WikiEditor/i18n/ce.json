@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Sasan700",
 			"Исмаил Садуев",
 			"Умар"
@@ -117,7 +116,7 @@
 	"wikieditor-toolbar-tool-replace-word": "Дуьззина дешнаш бен",
 	"wikieditor-toolbar-section-characters": "Леррина хьаьркаш",
 	"wikieditor-toolbar-section-help": "ГӀо",
-	"wikieditor-toolbar-help-heading-description": "Цунах лаьцна",
+	"wikieditor-toolbar-help-heading-description": "Цуьнах лаьцна",
 	"wikieditor-toolbar-help-heading-syntax": "Хlу йуьллу ахьа",
 	"wikieditor-toolbar-help-heading-result": "Хlу хуьлу хьуна",
 	"wikieditor-toolbar-help-page-format": "Бáрамхlоттор",

@@ -1,10 +1,23 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dowlinme"
+			"Dowlinme",
+			"Kscanne"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Freagra",
 	"discussiontools-preference-newtopictool-createpage": "Nuair a thugaim cuairt ar leathanach plé nach bhfuil cruthuithe go fóill:",
 	"discussiontools-preference-newtopictool-createpage-editor": "Oscail an eagarthóir vicíthéacs",
-	"discussiontools-preference-newtopictool-createpage-newtopictool": "Ofráil topaic nua a chur leis"
+	"discussiontools-preference-newtopictool-createpage-newtopictool": "Ofráil topaic nua a chur leis",
+	"discussiontools-replywidget-advanced": "Casta",
+	"discussiontools-replywidget-cancel": "Cealaigh",
+	"discussiontools-replywidget-mode-source": "Foinse",
+	"discussiontools-replywidget-preview": "Réamhamharc",
+	"discussiontools-replywidget-summary": "Achoimre",
+	"discussiontools-replywidget-watchthis": "Cuir an leathanach seo ar do [[Special:Watchlist|liosta faire]]",
+	"discussiontools-topicheader-latestcomment": "An nóta tráchta is déanaí: $1",
+	"discussiontools-topicsubscription-button-subscribe": "liostáil",
+	"discussiontools-topicsubscription-button-subscribe-label": "Liostáil",
+	"discussiontools-topicsubscription-button-unsubscribe": "díliostáil",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Díliostáil"
 }

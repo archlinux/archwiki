@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"The Discoverer"
+			"The Discoverer",
+			"Woytecr"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "जबाब",
 	"discussiontools-newtopic-placeholder-title": "माथाळो",
-	"discussiontools-replylink": "जबाब",
+	"discussiontools-replylink": "{{GENDER:|जबाब}}",
 	"discussiontools-replywidget-abandon-keep": "बरवपाचे चालू दवर",
 	"discussiontools-replywidget-abandontopic-keep": "बरवपाचे चालू दवर",
 	"discussiontools-replywidget-advanced": "सुदारित",

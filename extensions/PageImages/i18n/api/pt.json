@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Athena in Wonderland",
-			"Hamilton Abreu"
+			"Hamilton Abreu",
+			"Mbs262"
 		]
 	},
 	"apihelp-query+pageimages-summary": "Devolve informação sobre as imagens de uma página, tais como miniaturas e a presença de fotografias.",
@@ -12,6 +13,6 @@
 	"apihelp-query+pageimages-param-langcode": "Código da língua em que será feita a composição gráfica da imagem se forem suportadas várias línguas",
 	"apihelp-query+pageimages-param-limit": "Devolver as propriedades de quantas imagens.",
 	"apihelp-query+pageimages-param-license": "Limitar as imagens da página às que tenham um certo tipo de licença",
-	"apihelp-query+pageimages-paramvalue-license-free": "só imagens livres",
+	"apihelp-query+pageimages-paramvalue-license-free": "Só imagens livres.",
 	"apihelp-query+pageimages-paramvalue-license-any": "a melhor imagem, seja livre ou não."
 }

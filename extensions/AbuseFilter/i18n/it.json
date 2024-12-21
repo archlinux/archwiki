@@ -28,7 +28,8 @@
 			"Titore",
 			"Valepert",
 			"Wim b",
-			"Ximo17"
+			"Ximo17",
+			"Egidio24"
 		]
 	},
 	"abusefilter-desc": "Applica un'euristica automatica alle modifiche.",
@@ -131,7 +132,7 @@
 	"abusefilter-log-private-not-included": "Uno o più ID filtro che hai indicato sono privati. Poiché non puoi visualizzare i dettagli dei filtri privati, questi filtri non sono stati cercati.",
 	"abusefilter-log-hide-no-selected": "Nessuna voce selezionata",
 	"abusefilter-log-hide-selected": "{{PLURAL:$1|Voce del registro abusi selezionata|Voci del registro abusi selezionate}}:",
-	"abusefilter-log-hide-legend": "Cambia visibilità",
+	"abusefilter-log-hide-legend": "Modifica visibilità",
 	"abusefilter-log-hide-set-visibility": "Imposta visibilità per le voci selezionate:",
 	"abusefilter-log-hide-reason": "Motivo:",
 	"abusefilter-log-hide-reason-other": "Altri motivi/dettagli:",
@@ -596,7 +597,7 @@
 	"abusefilter-invalid-request-noid": "Richiesta non valida! È necessario accedere ai dettagli privati del registro attraverso il modulo sulla pagina dei dettagli del registro abusi fornendo una motivazione.",
 	"blockedexternaldomains": "Domini esterni bloccati",
 	"abusefilter-blocked-domains-title": "Domini esterni bloccati",
-	"abusefilter-blocked-domains-intro": "I collegamenti esterni presenti in questa lista non possono essere aggiunti in alcuna pagina. I domini sono salvati in [[MediaWiki:BlockedExternalDomains.json]].",
+	"abusefilter-blocked-domains-intro": "I collegamenti esterni presenti in questa lista non possono essere aggiunti in alcuna pagina. I domini sono salvati in [[MediaWiki:BlockedExternalDomains.json]]. I tentativi di aggiungere collegamenti bloccati vengono registrati in [[Special:Log/abusefilterblockeddomainhit]].",
 	"abusefilter-blocked-domains-add-heading": "Aggiungi un nuovo dominio da bloccare",
 	"abusefilter-blocked-domains-add-explanation": "Da qui è possibile aggiungere un dominio alla lista dei domini bloccati.",
 	"abusefilter-blocked-domains-domain": "Dominio da bloccare, per esempio wikipedia.org",
@@ -617,7 +618,7 @@
 	"abusefilter-blocked-domains-domain-added-comment": "Aggiunto $1 ai domini esterni bloccati con le seguenti note: $2",
 	"abusefilter-blocked-domains-domain-removed-comment": "Rimosso $1 dai domini esterni bloccati con le seguenti note: $2",
 	"log-description-abusefilterprivatedetails": "Questo registro contiene un elenco di accessi ai dettagli privati del registro abusi.",
-	"log-description-abusefilterblockeddomainhit": "Questi eventi tengono traccia dei tentativi di inserimento di domini bloccati.",
+	"log-description-abusefilterblockeddomainhit": "Questi eventi tengono traccia dei tentativi di inserimento di [[Special:BlockedExternalDomains|domini bloccati]].",
 	"abusefilter-noreason": "Avviso: per vedere i dettagli privati di questo registro, devi fornire una motivazione.",
 	"abusefilter-log-ip-not-available": "Non disponibile",
 	"abusefilter-tag-reserved": "L'etichetta <code>abusefilter-condition-limit</code> è riservata per utilizzo interno da parte del filtro anti abusi.",

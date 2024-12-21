@@ -3,7 +3,8 @@
 		"authors": [
 			"Malikxan",
 			"Zafar Shamsiddinov",
-			"Nataev"
+			"Nataev",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Munozara asboblari",
@@ -42,8 +43,8 @@
 	"discussiontools-preference-newtopictool-createpage-editor": "Vikimatn tahrirlagichi ochilsin",
 	"discussiontools-preference-newtopictool-createpage-newtopictool": "Yangi mavzu qoʻshish taklif etilsin",
 	"discussiontools-preference-summary": "Ushbu funksiyalar bilan [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary mana bu sahifa] orqali batafsil tanishishingiz mumkin.",
-	"discussiontools-replybutton": "Javob berish",
-	"discussiontools-replylink": "javob berish",
+	"discussiontools-replybutton": "{{GENDER:|Javob berish}}",
+	"discussiontools-replylink": "{{GENDER:|javob berish}}",
 	"discussiontools-replywidget-abandon": "Yozayotgan fikringizni bekor qilmoqchi ekanligingizga aminmisiz?",
 	"discussiontools-replywidget-abandon-discard": "Fikrni bekor qilish",
 	"discussiontools-replywidget-abandon-keep": "Yozishni davom ettirish",

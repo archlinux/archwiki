@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Chulsu463",
-			"Foavi33"
+			"Foavi33",
+			"MiiCii"
 		]
 	},
-	"fancycaptcha-captcha": "Elhe kimcimbi",
-	"fancycaptcha-accountcreate": "Ere wiki be cisui arara beje ci karmara jalin, be sinde fejergi i tuwabure kuwangse de gisun be anaragge be fonjimbi\n([[Special:Captcha/help|medege be tuwambi]]):",
-	"fancycaptcha-imgcaptcha-ph": "Si tuwara nirugan be anambi",
-	"fancycaptcha-reload-text": "Icemlembi"
+	"fancycaptcha-captcha": "Yooni taifin be baicara",
+	"fancycaptcha-accountcreate": "Ere Uiki be beyei aššara dangse fukjileme ilibureci karmara jalin, fejergingge hošonggo kuwangse de iletulebuhe hergen be dosimbuki.\n([[Special:Captcha/help|Elei labdu mejige be ubade tuwaki]]):",
+	"fancycaptcha-imgcaptcha-ph": "Bairengge sini ere nirugan de sabuha fiyelen (tekst) be dosimbuki.",
+	"fancycaptcha-reload-text": "Icemlere"
 }

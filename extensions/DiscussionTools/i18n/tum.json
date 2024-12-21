@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
-			"Tumbuka Arch"
+			"Tumbuka Arch",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Mupokelenge chimanyisko usange munyake wapelekapo maganizo ghake pa nkhani ino. Mungasintha kuma malungisilo.",
@@ -40,7 +40,7 @@
 	"discussiontools-postedit-confirmation-topicadded": "Mutu winu wasazgika.",
 	"discussiontools-preference-autotopicsub": "Kulondezga nkhani kwakukwekha",
 	"discussiontools-preference-autotopicsub-help": "Pala mwayamba nkhani iphya panji ganizo pa ntchezgo iyo ilopo kale, muzamumanyiskika pala ŵanji walembapo maganizo ghaŵo.",
-	"discussiontools-replylink": "zgola",
+	"discussiontools-replylink": "{{GENDER:|zgolo}}",
 	"discussiontools-replywidget-abandon-keep": "Pitilizga kulemba",
 	"discussiontools-replywidget-abandontopic-discard": "Kuuleka mutu",
 	"discussiontools-replywidget-abandontopic-keep": "Pitilizga kulemba",

@@ -1,11 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Kommentar mat der ID '$1' gouf net fonnt.",
+	"apierror-discussiontools-commentname-notfound": "Kommentar mam Numm „$1“ net fonnt.",
 	"apierror-discussiontools-formtoken-used": "Bemierkung gouf scho publizéiert. Lued d'Säit nei fir se ze gesinn.",
+	"apierror-discussiontools-subscription-failed-add": "Dëse Sujet konnt net abonéiert ginn.",
+	"apierror-discussiontools-subscription-failed-remove": "Dëse Sujet konnt net ofbestallt ginn.",
 	"apihelp-discussiontoolsedit-param-commentid": "Bemierkung ID.",
-	"apihelp-discussiontoolsedit-param-wikitext": "Wikitext"
+	"apihelp-discussiontoolsedit-param-wikitext": "Wikitext",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "Kommentar-ID oder -Numm"
 }

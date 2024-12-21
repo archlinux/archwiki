@@ -47,7 +47,7 @@
 	"cite-ve-referenceslist-isempty-default": "На тим боку нєт анї єдней референци хтору бисце могли уключиц до того списку.",
 	"cite-ve-referenceslist-missingref": "Тота референца дефинована у шаблону або у иншаким ґенерованим блоку и затераз ю мож ушорйовац лєм у жридловим режиму.",
 	"cite-ve-referenceslist-missingref-in-list": "Тота референца дефинована у шаблону або у иншаким ґенерованим блоку и затераз ю мож опатрац лєм у жридловим режиму.",
-	"cite-ve-referenceslist-missingreflist": "Тот список референцох ґенеровал шаблон и затераз ше го може ушорйовац лєм у жридловим режиму.",
+	"cite-ve-referenceslist-missingreflist": "Тот список референцох ґенеровал шаблон.",
 	"cite-ve-toolbar-group-label": "Референца",
 	"cite-ve-othergroup-item": "$1 референца"
 }

@@ -4,7 +4,8 @@
 			"ImGelu",
 			"Minisarm",
 			"NGC 54",
-			"XXN"
+			"XXN",
+			"Paloi Sciurala"
 		]
 	},
 	"templatedata-desc": "Implementează datele stocate pentru parametrii formatelor (folosind JSON)",

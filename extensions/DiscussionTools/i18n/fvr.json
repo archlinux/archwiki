@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dinkawiki"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Jawí",
+	"discussiontools-replylink": "{{GENDER:|Jawí}}",
+	"discussiontools-replywidget-advanced": "Irikwaŋ",
+	"discussiontools-replywidget-cancel": "Báásjáa",
+	"discussiontools-replywidget-mode-source": "Ka̠rɨŋa",
+	"discussiontools-replywidget-mode-visual": "Ja̱gɨl'íŋ",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} sí {{GENDER:|jawí}}",
+	"discussiontools-replywidget-preview": "Jalŋolawaarkwaŋ",
+	"discussiontools-replywidget-reply": "{{GENDER:|Jawí}}",
+	"discussiontools-replywidget-summary": "Bʉddejawí",
+	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|dʉó|kwa}} jírsíŋo-lé",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ʉdóŋja̠bɨ́|ʉdóŋja̠bɨ́ŋá}}",
+	"discussiontools-topicheader-latestcomment": "Naadákkin'íŋ ʉdóŋja̠bɨ́: $1",
+	"discussiontools-topicsubscription-button-subscribe": "daara-lé jeeŋ",
+	"discussiontools-topicsubscription-button-subscribe-label": "Daara-lé jeeŋ",
+	"discussiontools-topicsubscription-button-unsubscribe": "daara-lé juró",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Daara-lé juró",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Jɨ́}} daara-lé jeŋa!",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Jɨ́}} daara-lé juro."
+}

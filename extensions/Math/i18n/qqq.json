@@ -14,7 +14,8 @@
 			"Robby",
 			"Shirayuki",
 			"Siebrand",
-			"Umherirrender"
+			"Umherirrender",
+			"Pikne"
 		]
 	},
 	"math-desc": "{{desc|name=Math|url=https://www.mediawiki.org/wiki/Extension:Math}}",
@@ -101,11 +102,11 @@
 	"math-tracking-category-render-error-desc": "Tracking category description.",
 	"math_unknown_error": "Used as error message for unknown texvc error.\n\nThis message follows the message {{msg-mw|Math failure}}.\n{{Identical|Unknown error}}",
 	"math_unknown_function": "Used as error message when texvc encounters an unknown function.\n\nPreceded by the message {{msg-mw|Math failure}}.\n\nParameters:\n* $1 - name of unknown function",
-	"mw-math-latexml": "Used as label for latexml radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}",
-	"mw-math-mathjax": "Used as label for MathML radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}\n* {{msg-mw|Mw math latexml}}",
-	"mw-math-mathml": "Used as label for MathML radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}\n* {{msg-mw|Mw math latexml}}",
-	"mw-math-native": "Used as label for native MathML radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}\n* {{msg-mw|Mw math latexml}}",
-	"mw-math-source": "In user preferences (math). All mw_math_* messages MUST be different, things will break otherwise!\n\nUsed as label for source radio button.\n\nSee also:\n* {{msg-mw|Mw math latexml}}",
+	"mw-math-latexml": "Used as label for latexml radio button.\n\nSee also:\n* {{msg-mw|Mw-math-source}}",
+	"mw-math-mathjax": "Used as label for MathML radio button.\n\nSee also:\n* {{msg-mw|Mw-math-source}}\n* {{msg-mw|Mw-math-latexml}}",
+	"mw-math-mathml": "Used as label for MathML radio button.\n\nSee also:\n* {{msg-mw|Mw-math-source}}\n* {{msg-mw|Mw-math-latexml}}",
+	"mw-math-native": "Used as label for native MathML radio button.\n\nSee also:\n* {{msg-mw|Mw-math-source}}\n* {{msg-mw|Mw-math-latexml}}",
+	"mw-math-source": "In user preferences (math). All mw_math_* messages MUST be different, things will break otherwise!\n\nUsed as label for source radio button.\n\nSee also:\n* {{msg-mw|Mw-math-latexml}}",
 	"prefs-math": "Used in user preferences as a section heading.\n{{Identical|Math}}",
 	"mathstatus": "Title of a special page that displays information about the enabled math rendering modes.",
 	"mathwikibase": "Title of a special page that displays information about a mathematical Wikibase item.",

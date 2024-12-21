@@ -109,6 +109,5 @@
 	"math-wikibase-special-form-button": "Yêu cầu thông tin",
 	"math-wikibase-special-error-header": "Lỗi",
 	"math-wikibase-special-error-invalid-argument": "Bạn đã ghi một mã khoản mục Wikibase không tồn tại.",
-	"math-wikibase-special-error-unknown": "Có lỗi không rõ xảy ra khi truy xuất dữ liệu từ Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "Cần phải có bộ mở rộng Wikibase để sử dụng trang đặc biệt này."
+	"math-wikibase-special-error-unknown": "Có lỗi không rõ xảy ra khi truy xuất dữ liệu từ Wikibase."
 }

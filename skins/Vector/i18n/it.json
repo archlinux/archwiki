@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Ajeje Brazorf",
-			"Amire80",
 			"Beta16",
 			"Darth Kule",
 			"Elitre",
@@ -16,7 +15,10 @@
 			"Pietrodn",
 			"Sakretsu",
 			"Scompo",
-			"ValterVB"
+			"ValterVB",
+			"ValeJappo",
+			"Valepert",
+			"ZandDev"
 		]
 	},
 	"vector-skin-desc": "Fornisce 2 temi Vector\n* 2011 - La versione moderna del MonoBook con un aspetto rinnovato e molti miglioramenti dell'usabilità\n* 2022 - Vector realizzata nell'ambito del progetto WMF [[mw:Desktop Improvements]]",
@@ -74,8 +76,10 @@
 	"vector-toc-toggle-button-label": "Attiva/disattiva la sottosezione $1",
 	"vector-anon-user-menu-pages": "Pagine per utenti anonimi",
 	"vector-anon-user-menu-pages-learn": "ulteriori informazioni",
+	"vector-anon-user-menu-pages-label": "Ulteriori informazioni sulla contribuzione",
 	"vector-main-menu-tooltip": "Menu principale",
 	"vector-toc-menu-tooltip": "Indice",
+	"vector-toc-collapsible-button-label": "Mostra/Nascondi l'indice",
 	"vector-site-nav-label": "Sito",
 	"vector-main-menu-label": "Menu principale",
 	"vector-limited-width-toggle-on-popup": "Hai attivato la modalità a schermo intero. Per tornare alla larghezza ridotta premi questo pulsante.",

@@ -9,7 +9,8 @@
 			"SiGNOUT",
 			"Steenth",
 			"Weblars",
-			"Zakawer2"
+			"Zakawer2",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Discussion tools",
@@ -97,6 +98,8 @@
 	"discussiontools-replywidget-preferences": "Indstillinger",
 	"discussiontools-replywidget-preview": "Forhåndsvisning",
 	"discussiontools-replywidget-reply": "{{GENDER:|Svar}}",
+	"discussiontools-replywidget-return-to-newtopic": "Gå tilbage til nyt emne",
+	"discussiontools-replywidget-return-to-reply": "Gå tilbage til svar",
 	"discussiontools-replywidget-summary": "Redigeringsbeskrivelse",
 	"discussiontools-replywidget-terms-click": "Ved at klikke på \"$1\" accepterer {{GENDER:|du}} brugsbetingelserne for denne wiki.",
 	"discussiontools-replywidget-watchthis": "Tilføj denne side til din [[Special:Watchlist|overvågningsliste]]",

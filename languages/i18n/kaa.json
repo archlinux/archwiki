@@ -3,7 +3,6 @@
 		"authors": [
 			"Ajiniyaz Nurniyazov",
 			"AlefZet",
-			"Amire80",
 			"Atabek",
 			"CoderSI",
 			"DannyS712",
@@ -1726,7 +1725,7 @@
 	"restriction-level-all": "hárqanday dáreje",
 	"undelete": "Óshirilgen betlerdi kóriw",
 	"undeletepage": "Óshirilgen betlerdi kóriw hám qayta tiklew",
-	"undeletepagetitle": "<strong>Tómendegi dizim [[:$1|$1]] betiniń óshirilgen ózgerislerinen ibarat<strong>.",
+	"undeletepagetitle": "<strong>Tómendegi dizim [[:$1|$1]] betiniń óshirilgen ózgerislerinen ibarat</strong>.",
 	"viewdeletedpage": "Óshirilgen betlerdi kóriw",
 	"skin-action-viewdeleted": "$1 kóresizbe?",
 	"undelete-fieldset-title": "Óshirilgen ózgerislerdi qayta tiklew",

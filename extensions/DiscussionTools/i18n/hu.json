@@ -8,7 +8,8 @@
 			"Misibacsi",
 			"Samat",
 			"Tacsipacsi",
-			"Tgr"
+			"Tgr",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Vitalapi eszközök",
@@ -109,8 +110,8 @@
 	"discussiontools-preference-topicsubscription-help": "Lehetővé teszi, hogy kézzel feliratkozz egyes vitalapi témákra az adott témában érkező válaszokról szóló értesítésekért.",
 	"discussiontools-preference-visualenhancements": "Vitalapi aktivitás megjelenítése",
 	"discussiontools-preference-visualenhancements-help": "Új vitalap-megjelenés, ami tartalmaz információkat az egyes témák aktivitásáról.",
-	"discussiontools-replybutton": "Válasz",
-	"discussiontools-replylink": "válasz",
+	"discussiontools-replybutton": "{{GENDER:|Válasz}}",
+	"discussiontools-replylink": "{{GENDER:|válasz}}",
 	"discussiontools-replywidget-abandon": "Biztosan el akarod vetni az éppen írt hozzászólást?",
 	"discussiontools-replywidget-abandon-discard": "Hozzászólás elvetése",
 	"discussiontools-replywidget-abandon-keep": "Írás folytatása",

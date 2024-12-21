@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Geitost",
-			"Umherirrender"
+			"Umherirrender",
+			"Filzstift"
 		]
 	},
 	"cite_error_references_invalid_parameters": "Ungültige <tt>&lt;references&gt;</tt>-Verwendung: Es sind keine zusätzlichen Parameter erlaubt, verwende ausschliesslich <tt><nowiki><references /></nowiki></tt>.",

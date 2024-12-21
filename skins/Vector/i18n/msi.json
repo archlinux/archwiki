@@ -26,8 +26,10 @@
 	"vector-searchsuggest-containing": "Cari laman yang ada <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Isi",
 	"vector-toc-beginning": "Mula",
+	"vector-anon-user-menu-pages": "Laman untuk pengidit yang dikasih log keluar",
 	"vector-main-menu-label": "Menu basar",
 	"vector-page-tools-label": "Alat",
 	"vector-page-tools-general-label": "Biasa",
+	"vector-page-tools-actions-label": "Buat",
 	"vector-unpin-element-label": "tapuk"
 }

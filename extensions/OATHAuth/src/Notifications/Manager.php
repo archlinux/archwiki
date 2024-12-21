@@ -80,4 +80,26 @@ class Manager {
 			],
 		] );
 	}
+
+	/**
+	 * Send a notification that the user has $tokenCount recovery tokens left
+	 *
+	 * @param OATHUser $oUser
+	 * @param int $tokenCount
+	 * @param int $generatedCount
+	 */
+	public static function notifyRecoveryTokensRemaining( OATHUser $oUser, int $tokenCount, int $generatedCount ) {
+		if ( !self::isEnabled() ) {
+			return;
+		}
+		Event::create( [
+			// message used: notification-header-oathauth-recoverycodes-count
+			'type' => 'oathauth-recoverycodes-count',
+			'agent' => $oUser->getUser(),
+			'extra' => [
+				'codeCount' => $tokenCount,
+				'generatedCount' => $generatedCount,
+			],
+		] );
+	}
 }

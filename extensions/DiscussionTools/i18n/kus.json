@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Akudugu",
-			"Amire80",
 			"Awinimi",
 			"Bugirbiig",
 			"Mozanky",
 			"Musahfm",
 			"Poasana Anabah",
-			"WINDOL"
+			"WINDOL",
+			"Matma Rex",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|fʋ}} na paam tiɛnr labaar saŋa kanɛ ka sɔ' zaŋ labapaal niŋ sɔnsʋg kaŋa ni. Fʋ tʋn'e maali fʋ tiɛnr labaar la zi'esim fʋ bɔɔdim pʋʋgin",
@@ -38,7 +39,7 @@
 	"discussiontools-error-comment-conflict": "{{GENDER:|your}} lɛbisʋg la pʋ nyaŋi ziennɛ, bɔzugɔ sɔ' mɛn lɛbis ya fʋ saŋa la mɛn nɔɔ. Maalim suguru kpɛ'ɛŋim ya'as bɛɛ maligim vɛ'ɛg lakir la n gɔs nananna lɛbisa.",
 	"discussiontools-error-comment-disappeared": "Pʋ nyaŋi nye lɛbisʋg la {{GENDER:|you're}} lɛbisid lakir la nii. Li tɔn'ɛ saae bɛɛ tɔlisi keŋ lakir sia ni.",
 	"discussiontools-error-comment-disappeared-reload": "Bɛllimnɛ maligim din'lɛm maki gɔs la",
-	"discussiontools-error-comment-is-transcluded": " \"{{int:discussiontools-replylink}}\" la, nwiig kʋ nyaŋi tʋmi an lɛbisʋgi tis lɛbisʋg nwa. Fʋ ya'a ye fʋ lɛbisɛ, maalim suguru  {{GENDER:|use}} lakir la wusa dɛmisʋg diim \"$1\".",
+	"discussiontools-error-comment-is-transcluded": "\"{{int:discussiontools-replylink}}\" la, nwiig kʋ nyaŋi tʋmi an lɛbisʋgi tis lɛbisʋg nwa. Fʋ ya'a ye fʋ lɛbisɛ, maalim suguru  {{GENDER:|use}} lakir la wusa dɛmisʋg diim \"$1\".",
 	"discussiontools-error-comment-is-transcluded-title": "\"{{int:discussiontools-replylink}}\" la, nwiig kʋ nyaŋi nɔki lɛbis lɔk lɛbisʋg nwa bɔzugɔ li vɛ'ɛgidnɛ yit lakir ayinne ni na. Fʋ ya'a ye fʋ lɛbisɛ, maalim suguru {{GENDER:|go}} kpala: [[$1]].",
 	"discussiontools-error-comment-not-saved": "{{GENDER:|your}} lɛbisʋg pʋ nyaŋi niŋ paalʋ tis nananna lakir ziesim. Fʋ ya'a bɔɔd ye nananna tiasa, gbɛ'ɛmi fʋ lɛbisʋg gʋlʋsʋg ka yʋn tʋm nɛ fʋ sinlinsipaanliŋ la vɛɛg lakir la.",
 	"discussiontools-error-lint": "Pian'ad lɛbisʋg lakir nwa ni kʋ nye lɛbisʋgɔ ka li anɛ gbɛliŋi bɛ wikitext ni. {{GENDER:|You}} tɔn'ɛ zamisi zaŋi ken gbɛliŋ kanɛ nyi [$1 reading the documentation], ieɛm sʋŋiri nyi [$2 posting here] bɛɛ maalim gbɛliŋ la nyi [$3 opening the full page editor].",
@@ -111,8 +112,7 @@
 	"discussiontools-preference-topicsubscription-help": "Nwa na tisif suor ka fʋ si'aki kpe' ye fʋ di'e tɛn'ɛsa zaŋi keŋ lɛbisa zaŋi keŋ nidid wusa yɛlzutin.",
 	"discussiontools-preference-visualenhancements": "Bigisim sɔsʋg tʋʋma",
 	"discussiontools-preference-visualenhancements-help": "Nwa na sʋŋ lakir pian'ad paal nɛɛnsim linɛ na paas labaar zaŋi tʋʋma sɔnsʋg wusa pʋʋgin",
-	"discussiontools-replybutton": "{{GENDER:|Reply}}",
-	"discussiontools-replylink": "lɛbsim",
+	"discussiontools-replylink": "{{GENDER:|lɛbsim}}",
 	"discussiontools-replywidget-abandon": "Fʋ {{GENDER:|you}} tis sida ye fʋ bɔɔd ye fʋ bas lɛbisʋg la ka fʋ gʋlisid la?",
 	"discussiontools-replywidget-abandon-discard": "Basim lɛbisʋg",
 	"discussiontools-replywidget-abandon-keep": "Kem tuoni gʋlisid",

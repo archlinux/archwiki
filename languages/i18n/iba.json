@@ -1,8 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
-			"Song GK",
-			"Amire80"
+			"Song GK"
 		]
 	},
 	"sunday": "Hari Minggu",
@@ -245,6 +244,7 @@
 	"databaseerror-error": "Penyalah: $1",
 	"transaction-duration-limit-exceeded": "Dikena nyeliahka diri ari ngaga lag replikasyen ti tinggi, transaksyen tu dibuai laban timpuh nulis ($1) ngelui ari $2 sekat saat.\nEnti nuan nukar mayuh utai sekali, uji ngereja mayuh operasyen ti mit agi nganti nya.",
 	"transaction-max-statement-time-exceeded": "Dikena nyeliahka diri ari ngaga beban pangkalan data ti tinggi, tanya tu dibuai laban timpuh ngelui ari sekat.\nEnti nuan macha mayuh item sekali, uji ngereja mayuh operasyen ti mit agi nganti nya.",
+	"laggedreplicamode": "<strong>Jaku tangkan:</strong> Laman engka nadai ngundan pemadah ti baru.",
 	"readonly": "Pengakalan data dikunchi",
 	"enterlockreason": "Padah siti kebuah pengunchi, nyengkaum anggar kemaya kunchi tu deka dibuka baru",
 	"internalerror": "Penyalah ba dalam",
@@ -404,6 +404,7 @@
 	"summary-preview": "Prapeda simpul edit:",
 	"blockedtitle": "Orang ngena udah dialit",
 	"blockedtext": "<strong>Nama user tauka adreaa IP nuan udah disekat.</strong>\n\n{{int:blockedtext-made-by|$1}}\n{{int:blockedtext-reason-comment|$2}}.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin| $1 }}\nAnda dapat menggunakan fitur \"{{int:emailuser}}\" jika ada alamat surel sah yang ditentukan di [[Special:Preferences|preferensi]] Anda, dan tidak diblokir penggunaannya.\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
+	"blockednoreason": "nadai kebuah diberi",
 	"loginreqlink": "log tama",
 	"newarticletext": "Nuan udah nitihka link ngagai siti page ti bedau bisi.\nKena ngaga lambar tu, berengkah naip ba kutak di baruh tu (peda [$1 lambar bantu] ngambika nemu enggau silik agi).\nEnti nuan salah datai ditu, klik butang <strong>back</strong> browser nuan.",
 	"anontalkpagetext": "----\n<em>Tu lambar randau ngagai penguna ti enda dikelala nama ti bedau ngaga akaun, tauka ti bedau ngena iya.</em>\nNya alai kitai patut ngena alamat IP ti beangka dikena ngelala sida.\nIP address ti baka tu ulih dikunsi beberapa iku pengguna.\nEnti nuan penguna ti enda dikelala nama lalu ngasaika komen ti enda relevan udah dituju ngagai nuan, sila [[Special:CreateAccount|ngaga akaun]] tauka [[Special:UserLogin|log tama]] dikena nyeliahka saru penemu dudi hari enggau penguna bukai ti enda dikelala nama.",
@@ -431,12 +432,12 @@
 	"content-json-empty-array": "Array puang",
 	"undo-failure": "Edit tu enda ulih dipulai baru laban bisi konfliks edit entara dua-dua edit nya.",
 	"viewpagelogs": "Peda log lambar tu",
-	"currentrev-asof": "Revisyen ke maya $1",
+	"currentrev-asof": "Revisyen kemaya tu naka $1",
 	"revisionasof": "Revisyen maya $1",
 	"revision-info": "Revisyen ari $1 digaga {{GENDER:$6|$2}}$7",
 	"previousrevision": "← Revisyen ke lama",
 	"nextrevision": "Revisyen ke baru →",
-	"currentrevisionlink": "Revisyen ke maya tu",
+	"currentrevisionlink": "Revisyen kemaya tu",
 	"cur": "dia",
 	"last": "sbdau",
 	"histlegend": "Pemilih: Tanda butang radio revision ti deka dibandingka lalu tekan enter tauka butang ba baruh.<br />\nIring: <strong>({{int:cur}})</strong> = bida enggau ubah ti pemadu baru, <strong>({{int:penudi}})</strong> = bida enggau ubah ti dulu ari nya, <strong>{{int:minoreditletter}}</strong> = ubah mit.",
@@ -487,10 +488,10 @@
 	"right-unwatchedpages": "Peda ripih lambar ke enda diibun",
 	"rightslog": "Log hak user",
 	"action-edit": "edit lambar tu",
-	"action-createaccount": "Gaga akaun penggena tu",
+	"action-createaccount": "Gaga akaun pengena tu",
 	"action-unwatchedpages": "peda ripih ke enda diibun",
 	"enhancedrc-history": "sejarah",
-	"recentchanges": "Ubah ke maya tu",
+	"recentchanges": "Ubah ti baru",
 	"recentchanges-summary": "Sidi ubah ti pemadu baru ba wiki ba lambar tu.",
 	"recentchanges-noresult": "Nadai ubah dalam timpuh ti diberi nya setipak enggau kriteria tu.",
 	"recentchanges-label-plusminus": "Saiz lambar tu diubah sepemayuh nyampau bait tu",
@@ -654,7 +655,7 @@
 	"whatlinkshere-title": "Laman ti bisi paut ngagai \"$1\"",
 	"whatlinkshere-page": "Lambar:",
 	"linkshere": "Laman ti diberi tu bisi link ngagai <strong>$2</strong>:",
-	"nolinkshere": "Nadai lambar ke ngembuan link ngagai <strong>$2<strong>",
+	"nolinkshere": "Nadai lambar ke ngembuan link ngagai <strong>$2</strong>.",
 	"isredirect": "lambar kalih",
 	"istemplate": "transklusyen",
 	"isimage": "link fail",
@@ -714,6 +715,6 @@
 	"blockedtext-expiration-time": "Pengujung alit: $1",
 	"blockedtext-intended-blockee": "Orang tagat alit: $1",
 	"blockedtext-contact-blocker-admin": "Nuan ulih kontak $1 tauka [[{{MediaWiki:Grouppage-sysop}}|pengatur]] kena berandau pasal alit tu.",
-	"blockedtext-block-ip": "Address IP nuan ke maya tu nya $1",
+	"blockedtext-block-ip": "Address IP nuan kemaya tu nya $1",
 	"blockedtext-include-details-queries": "Minta nuan nyengkaum semua penerang di atas dalam sebarang tanya ti digaga nuan."
 }

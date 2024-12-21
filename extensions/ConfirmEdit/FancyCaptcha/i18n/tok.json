@@ -2,10 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"20kdc",
-			"שוקו מוקה"
+			"שוקו מוקה",
+			"Tamzin",
+			".hecko",
+			"Juwan"
 		]
 	},
-	"fancycaptcha-accountcreate": "mi kulupu toki e ni tan awen kulupu ni tan kama ilo jan: sina o sitelen lon supa anpa e sitelen ni ([[Special:Captcha/help|sona sin]]):",
-	"fancycaptcha-imgcaptcha-ph": "sina lukin e sitelen la sitelen lon e ni",
-	"fancycaptcha-reload-text": "o kama sin"
+	"fancycaptcha-captcha": "awen",
+	"fancycaptcha-accountcreate": "mi wile awen e kulupu tan kama ilo jan. ni la o lukin e nimi, o sitelen e ona lon poki anpa ([[Special:Captcha/help|o sona mute]]):",
+	"fancycaptcha-imgcaptcha-ph": "o pana e nimi tan sitelen ni",
+	"fancycaptcha-reload-text": "o sin e sitelen"
 }

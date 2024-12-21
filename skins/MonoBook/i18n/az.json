@@ -8,7 +8,7 @@
 	},
 	"skinname-monobook": "MonoBook",
 	"monobook-desc": "2004-cü ildən bəri klassik MediaWiki dizaynı, səhifənin fonunda bir kitabın ağ-qara şəklinə görə adlandırılıb.",
-	"monobook.css": "/* Burada yerləşən CSS Monobook skin istifadəçilərinə tətbiq olunur */",
+	"monobook.css": "/* Burada yerləşən CSS MonoBook skin istifadəçilərinə tətbiq olunur */",
 	"monobook.js": "/* Burada MonoBook skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */",
 	"monobook-jumptotop": "yuxarıya qayıt",
 	"monobook-jumptopersonal": "istifadəçi alətləri",

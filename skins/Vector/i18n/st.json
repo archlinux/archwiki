@@ -1,36 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Coldfact",
 			"Gustave London",
 			"Tšepo",
 			"Maryam AlAkini"
 		]
 	},
-	"vector-languages": "Lipuo",
 	"vector-language-button-label": "{{PLURAL:$1|$1 puo|$1 lipuo}}",
-	"vector-no-language-button-label": "Kenya lipuo",
-	"vector-action-addsection": "Eketsa sehlooho",
-	"vector-view-create": "Theha",
 	"vector-view-edit": "Fetola",
 	"vector-view-history": "Sheba histori",
 	"vector-view-view": "Bala",
 	"vector-more-actions": "Tse ling",
-	"vector-feature-limited-width-name": "Bophara",
-	"vector-feature-custom-font-size-name": "Mongolo",
-	"vector-feature-limited-width-0-label": "Ka bophara",
-	"vector-feature-limited-width-1-label": "Standard.",
-	"vector-feature-custom-font-size-0-label": "Nyenyane",
-	"vector-feature-custom-font-size-1-label": "Standard",
-	"vector-feature-custom-font-size-2-label": "E kgolohadi",
-	"skin-theme-name": "Mmala",
-	"skin-theme-os-label": "Ka ho iketsa",
-	"vector-searchsuggest-containing": "Batla maqephe a nang le <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-label": "Litaba",
-	"vector-toc-beginning": "Ho qala",
-	"vector-main-menu-label": "Lenane la mantlha",
-	"vector-page-tools-label": "Lisebelisoa",
-	"vector-page-tools-general-label": "Kakaretso",
-	"vector-unpin-element-label": "pata."
+	"vector-searchsuggest-containing": "Batla maqephe a nang le <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

@@ -12,7 +12,9 @@
 			"Mglaser",
 			"Tobi 406",
 			"TomatoCake",
-			"Umherirrender"
+			"Umherirrender",
+			"Kallichore",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Diskussions-Werkzeuge",
@@ -45,7 +47,7 @@
 	"discussiontools-error-comment-disappeared-reload": "Bitte lade die Seite neu und versuche es erneut.",
 	"discussiontools-error-comment-is-transcluded": "Der Link „{{int:discussiontools-replylink}}“ kann nicht verwendet werden, um auf diesen Kommentar zu antworten. Um zu antworten, benutze bitte den Ganzseiten-Editor, indem du auf „$1“ klickst.",
 	"discussiontools-error-comment-is-transcluded-title": "Der Link „{{int:discussiontools-replylink}}“ kann nicht verwendet werden, um auf den Kommentar zu antworten, da er von einer anderen Seite geladen wird. Um zu antworten, gehe bitte auf [[$1]].",
-	"discussiontools-error-comment-not-saved": "Dein Kommentar konnte nicht in der aktuellsten Version der Seite veröffentlicht werden. Um die neuesten Änderungen zu sehen, kopiere deinen Kommenrtar-Entwurf und lade dann die Seite mit deinem Browser neu.",
+	"discussiontools-error-comment-not-saved": "Dein Kommentar konnte nicht in der aktuellsten Version der Seite veröffentlicht werden. Um die neuesten Änderungen zu sehen, kopiere deinen Kommentar-Entwurf und lade dann die Seite mit deinem Browser neu.",
 	"discussiontools-error-lint": "Auf Kommentare auf dieser Seite kann wegen eines Fehlers im Wikitext nicht geantwortet werden. Du kannst dich über diesen Fehler informieren, indem du [$1 die Dokumentation liest], um Hilfe bittest, indem du [$2 hier schreibst] oder den Fehler behebst, indem du [$3 den Ganzseiten-Editor öffnest].",
 	"discussiontools-error-noswitchtove": "Entschuldigung, das Umschalten in den visuellen Modus ist deaktiviert, weil <b>$1</b> im Kommentar, den du geschrieben hast, erkannt wurde. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:DiscussionTools/Reply_tool_visual_mode_limitations Weitere Informationen].",
 	"discussiontools-error-noswitchtove-extension": "Erweiterung oder Einzelnachweis-Syntax",
@@ -116,8 +118,8 @@
 	"discussiontools-preference-topicsubscription-help": "Ermöglicht es dir, Benachrichtigungen über neue Kommentare zu einzelnen Abschnitten zu erhalten.",
 	"discussiontools-preference-visualenhancements": "Diskussionsaktivität anzeigen",
 	"discussiontools-preference-visualenhancements-help": "Aktiviert ein verändertes Aussehen von Diskussionsseiten inklusive zusätzlicher Informationen über die Aktivitäten in jedem Abschnitt.",
-	"discussiontools-replybutton": "Beantworten",
-	"discussiontools-replylink": "Beantworten",
+	"discussiontools-replybutton": "{{GENDER:|Beantworten}}",
+	"discussiontools-replylink": "{{GENDER:|Beantworten}}",
 	"discussiontools-replywidget-abandon": "Bist du sicher, dass du den Kommentar, den du schreibst, verwerfen willst?",
 	"discussiontools-replywidget-abandon-discard": "Kommentar verwerfen",
 	"discussiontools-replywidget-abandon-keep": "Weiter schreiben",

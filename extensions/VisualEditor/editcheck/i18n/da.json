@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Steenth"
+		]
+	},
+	"editcheck-dialog-action-no": "Nej",
+	"editcheck-dialog-action-yes": "Ja",
+	"editcheck-dialog-addref-description": "Hjælp læserne med at forstå, hvor disse oplysninger kommer fra, ved at tilføje et reference.",
+	"editcheck-dialog-addref-reject-question": "Hvorfor tilføjer du ikke et reference?",
+	"editcheck-dialog-addref-reject-description": "Andre bidragsydere ville værdsætte at lære mere om din beslutning om at afvise referencen.",
+	"editcheck-dialog-addref-reject-irrelevant": "Jeg tror ikke, at referencer er relevante for den ændring, jeg laver",
+	"editcheck-dialog-addref-reject-common-knowledge": "De oplysninger, jeg tilføjer, er almindeligt kendte",
+	"editcheck-dialog-addref-reject-uncertain": "Jeg er ikke sikker på, hvilket reference jeg skal tilføje",
+	"editcheck-dialog-addref-reject-other": "Andet",
+	"editcheck-dialog-addref-success-notify": "Tak fordi du tilføjede en reference!",
+	"editcheck-dialog-addref-title": "Tilføj en reference",
+	"editcheck-dialog-title": "Før offentliggørelse",
+	"tag-editcheck-reference-decline-common-knowledge": "Redigeringstjek (referencer) afvist (almindelig viden)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Redigeringstjek-reference blev afvist som almindelig viden",
+	"tag-editcheck-reference-decline-irrelevant": "Redigeringstjek (referencer) afvist (irrelevant)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Redigeringstjek-reference blev afvist som irrelevant",
+	"tag-editcheck-reference-decline-other": "Redigeringstjek (referencer) afvist (andet)",
+	"tag-editcheck-reference-decline-other-description": "EditCheck-reference blev afvist af en ikke-opført grund",
+	"tag-editcheck-reference-decline-uncertain": "Redigeringstjek (referencer) afvist (usikker)",
+	"tag-editcheck-reference-decline-uncertain-description": "Redigeringstjek-reference blev afvist som værende usikker"
+}

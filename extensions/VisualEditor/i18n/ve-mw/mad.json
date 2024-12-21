@@ -3,7 +3,8 @@
 		"authors": [
 			"Abdiafrizal",
 			"Boesenbergia",
-			"NoiX180"
+			"NoiX180",
+			"Munajad.MH"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -23,15 +24,15 @@
 	"visualeditor-autosave-recovered-title": "Obâ'ân èpabâli",
 	"visualeditor-backbutton-tooltip": "Abâli",
 	"visualeditor-browserwarning": "Dhika ngangghuy palalana sè ta' ètonjhâng bi' pameccè'an arèya.",
-	"visualeditor-ca-createlocaldescriptionsource": "Tambâ'aghi jhâjhârbâ'ân lokal",
+	"visualeditor-ca-createlocaldescriptionsource": "Tambâ sombher jhâjhârbâ'ân lokal",
 	"visualeditor-ca-createsource": "Ghâbây sombher",
-	"visualeditor-ca-editlocaldescriptionsource": "Beccè' sombher ḍèskripsi lokal",
+	"visualeditor-ca-editlocaldescriptionsource": "Beccè' sombher jhâjhârbâ'ân lokal",
 	"visualeditor-ca-editsource": "Beccè' sombher",
 	"visualeditor-ca-editsource-section": "beccè' sombher",
 	"visualeditor-categories-tool": "Bhângsa",
 	"visualeditor-changedesc-mwlanguagevariant": "Markup varian bhâsa èyobâ",
 	"visualeditor-changedesc-mwredirect": "Sekkèp pangallèyan aobâ ḍâri $1 dhâddhi $2",
-	"visualeditor-changedesc-mwtransclusion": "Paramèter cètha'an èyobâ",
+	"visualeditor-changedesc-mwtransclusion": "Paramèter cèṭa'an èyobâ",
 	"visualeditor-desc": "Pameccè'an visual ka'angghuy MediaWiki",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
 	"visualeditor-dialog-media-alttext-section": "Tèks alternatif",

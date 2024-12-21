@@ -4,7 +4,7 @@
 			"Als-Holder"
 		]
 	},
-	"discussiontools-replylink": "Antwort gee",
+	"discussiontools-replylink": "{{GENDER:|Antwort gee}}",
 	"discussiontools-replywidget-cancel": "Abbräche",
 	"discussiontools-replywidget-mode-source": "Quälltäxt",
 	"discussiontools-replywidget-mode-visual": "Visuäll",

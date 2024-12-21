@@ -54,7 +54,7 @@
 		"symfony/polyfill-php83": "1.29.0",
 		"symfony/yaml": "5.4.35",
 		"wikimedia/assert": "0.5.1",
-		"wikimedia/at-ease": "2.1.0",
+		"wikimedia/at-ease": "3.0.0",
 		"wikimedia/base-convert": "2.0.2",
 		"wikimedia/bcp-47-code": "2.0.0",
 		"wikimedia/cdb": "3.0.0",
@@ -69,7 +69,7 @@
 		"wikimedia/normalized-exception": "1.0.1",
 		"wikimedia/object-factory": "5.0.1",
 		"wikimedia/parsoid": "0.19.0",
-		"wikimedia/php-session-serializer": "2.0.1",
+		"wikimedia/php-session-serializer": "3.0.0",
 		"wikimedia/purtle": "1.0.8",
 		"wikimedia/relpath": "4.0.0",
 		"wikimedia/remex-html": "4.1.0",
@@ -82,7 +82,7 @@
 		"wikimedia/timestamp": "4.1.1",
 		"wikimedia/wait-condition-loop": "2.0.2",
 		"wikimedia/wrappedstring": "4.0.1",
-		"wikimedia/xmp-reader": "0.9.1",
+		"wikimedia/xmp-reader": "0.9.2",
 		"zordius/lightncandy": "1.2.6"
 	},
 	"require-dev": {

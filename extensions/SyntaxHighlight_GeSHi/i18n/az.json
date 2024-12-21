@@ -2,10 +2,24 @@
 	"@metadata": {
 		"authors": [
 			"Serkanland",
-			"Wertuose"
+			"Wertuose",
+			"Nemoralis"
 		]
 	},
+	"syntaxhighlight-desc": "[http://pygments.org/ Pygments - Python syntax highlighter] istifadə edərək <code>&lt;syntaxhighlight&gt;</code> kodu ilə sintaksis vurğulanması təqdim edir",
 	"syntaxhighlight-error-category": "Kodlaşdırma haylaytinqi xətası olan səhifələr",
+	"syntaxhighlight-error-category-desc": "Səhifəyə daxil edilmiş kodu vurğulamaq istəyərkən xəta baş verdi.",
+	"syntaxhighlight-enclose-category": "Köhnəlmiş enclose atributlarından istifadə edən səhifələr",
+	"syntaxhighlight-enclose-category-desc": "Səhifədəki sintaksis vurğulanması köhnəlmiş enclose sintaksisdən istifadə edir.",
+	"syntaxhighlight-source-category": "Köhnəlmiş source teqlərindən istifadə edən səhifələr",
+	"syntaxhighlight-source-category-desc": "Səhifədəki sintaksis vurğulanması köhnəlmiş source teqindən istifadə edir.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kod",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Dil",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(heç biri)",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Kodlaşdırma fraqmenti"
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Sətir nömrələrini göstər",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Başlanğıc sətir nömrəsi",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Kodlaşdırma fraqmenti",
+	"syntaxhighlight-error-pygments-invocation-failure": "Pygments-i işə salmaq alınmadı",
+	"syntaxhighlight-error-unknown-language": "Naməlum \"$1\" dili",
+	"syntaxhighlight-error-exceeds-size-limit": "$1 {{PLURAL:$1|bayt}} olan cari kod ölçüsü maksimum limit olan $2 {{PLURAL:$2|bayt}}ı keçir"
 }

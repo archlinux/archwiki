@@ -85,6 +85,7 @@ class HookHandler implements
 			'persistent' => false,
 			'autocomplete' => 'one-time-code',
 			'spellcheck' => false,
+			'help-message' => 'oathauth-auth-token-help-ui',
 		];
 		return true;
 	}

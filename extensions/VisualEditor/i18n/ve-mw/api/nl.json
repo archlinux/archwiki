@@ -43,7 +43,7 @@
 	"apihelp-visualeditoredit-param-needcheck": "Stel deze parameter in tijdens het opslaan als de versie mogelijk roundtripproblemen heeft. Dit resulteert in het labelen van de bewerking.",
 	"apihelp-visualeditoredit-param-oldid": "Het te gebruiken versienummer. Standaard de laatste versie.",
 	"apihelp-visualeditoredit-param-paction": "De te verrichten handeling.",
-	"apihelp-visualeditoredit-param-page": "De pagina waarop handelingen worden uitgevoerd.",
+	"apihelp-visualeditoredit-param-page": "De pagina om de handelingen op te verrichten.",
 	"apihelp-visualeditoredit-param-section": "De te behandelen sectie.",
 	"apihelp-visualeditoredit-param-sectiontitle": "De naam van de nieuw kopje.",
 	"apihelp-visualeditoredit-param-starttimestamp": "Stel dit tijdens het opslaan in op de tijd waarop de pagina is geladen. Wordt gebruikt om bewerkingsconflicten te detecteren.",

@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Abdeaitali",
-			"Amire80",
 			"Enzoreg",
 			"Ideophagous",
 			"Reda Benkhadra",
@@ -44,6 +43,7 @@
 	"vector-main-menu-label": "الليستة الرئيسية",
 	"vector-page-tools-label": "أدوات",
 	"vector-page-tools-general-label": "عامّ",
+	"vector-page-tools-actions-label": "أفعال",
 	"vector-pin-element-label": "حوّل ل لبانضة د الجنب",
 	"vector-unpin-element-label": "خبّي"
 }

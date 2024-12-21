@@ -26,7 +26,9 @@
 			"Rodney Araujo",
 			"Themasterriot",
 			"ZealousBlaze",
-			"ZebaX2010"
+			"ZebaX2010",
+			"Qwrop",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Herramientas de discusión",
@@ -130,8 +132,8 @@
 	"discussiontools-preference-topicsubscription-help": "Esto te permitirá suscribirte para recibir notificaciones sobre comentarios en temas individuales.",
 	"discussiontools-preference-visualenhancements": "Mostrar actividad de la discusión",
 	"discussiontools-preference-visualenhancements-help": "Esto habilitará una nueva apariencia en las páginas de discusión que incluye información sobre la actividad dentro de cada discusión.",
-	"discussiontools-replybutton": "Responder",
-	"discussiontools-replylink": "responder",
+	"discussiontools-replybutton": "{{GENDER:|Responder}}",
+	"discussiontools-replylink": "{{GENDER:|responder}}",
 	"discussiontools-replywidget-abandon": "¿Confirmas que quieres descartar el comentario que escribes?",
 	"discussiontools-replywidget-abandon-discard": "Descartar comentario",
 	"discussiontools-replywidget-abandon-keep": "Continuar escribiendo",

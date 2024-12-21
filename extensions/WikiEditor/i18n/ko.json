@@ -143,7 +143,7 @@
 	"wikieditor-toolbar-help-content-italic-example": "기울인 글씨",
 	"wikieditor-toolbar-help-content-bold-description": "굵게",
 	"wikieditor-toolbar-help-content-bold-example": "굵은 글씨",
-	"wikieditor-toolbar-help-content-bolditalic-description": "굵고 기울인 글씨",
+	"wikieditor-toolbar-help-content-bolditalic-description": "굵은 글씨와 기울인 글씨",
 	"wikieditor-toolbar-help-content-bolditalic-example": "굵고 기울인 글씨",
 	"wikieditor-toolbar-help-content-ilink-description": "내부 링크",
 	"wikieditor-toolbar-help-content-ilink-example": "[[문서 이름]]\n[[문서 이름|다른 이름]]",

@@ -24,6 +24,7 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Sambaluk",
 	"discussiontools-topicsubscription-button-unsubscribe": "ammari assambaluk",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Ammari assambaluk",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|I Katte}} sallang lannarimakik pabburittáng angkana komentarak berua ri anne topika.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Katte}} assambalukmakik!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Katte}} tenamo nitarima pappiassengang ri komentarak beru ri anne topika.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Katte}} ammarimakik assambaluk"

@@ -15,7 +15,8 @@
 			"McDutchie",
 			"MuratTheTurkish",
 			"No se",
-			"PoLuX124"
+			"PoLuX124",
+			"Eulalio"
 		]
 	},
 	"oathauth-desc": "Proporciona compatibilidad con la autenticación mediante contraseñas en HMAC de un solo uso",
@@ -26,6 +27,7 @@
 	"oathauth-enable": "Activar la autenticación en dos pasos",
 	"oathauth-recoverycodes": "La lista siguiente es una lista de claves de un solo uso. Estas claves solo pueden utilizarse una vez y son para usar en caso de emergencia. Por favor, anótalas y mantenlas en un lugar seguro. Si pierdes el teléfono, estas claves son la única manera de recuperar tu cuenta. '''Estas claves nunca se mostrarán una segunda vez'''.",
 	"oathauth-recoverycodes-important": "¡Este paso es importante! ¡No te saltes este paso!",
+	"oathauth-recoverycodes-download": "Descargar códigos de recuperación",
 	"oathauth-disable": "Desactivar la autenticación en dos pasos",
 	"oathauth-validatedoath": "Se han validado las credenciales en dos pasos. Ahora se aplicará la autenticación en dos pasos.",
 	"oathauth-noscratchforvalidation": "No puedes utilizar códigos predefinidos para confirmar la autenticación de dos pasos. Tales códigos solo sirven como respaldo y para uso ocasional accesorio. Utiliza un código de verificación proveniente de un generador de códigos.",

@@ -12,7 +12,8 @@
 			"Mormegil",
 			"Patriccck",
 			"Patrik L.",
-			"Robins7"
+			"Robins7",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Diskusní nástroje",
@@ -105,8 +106,8 @@
 	"discussiontools-preference-topicsubscription-help": "Tato funkce umožní přihlásit se k odběru a dostávat oznámení o komentářích k jednotlivým tématům.",
 	"discussiontools-preference-visualenhancements": "Zobrazit diskusní aktivitu",
 	"discussiontools-preference-visualenhancements-help": "Tato funkce umožní zobrazit nový vzhled diskusních stránek, který obsahuje informace o aktivitě v rámci každé diskuse.",
-	"discussiontools-replybutton": "Odpovědět",
-	"discussiontools-replylink": "odpovědět",
+	"discussiontools-replybutton": "{{GENDER:|Odpovědět}}",
+	"discussiontools-replylink": "{{GENDER:|odpovědět}}",
 	"discussiontools-replywidget-abandon": "Jste si {{GENDER:|jist|jista|jisti}}, že chcete zahodit vámi psaný komentář?",
 	"discussiontools-replywidget-abandon-discard": "Zahodit komentář",
 	"discussiontools-replywidget-abandon-keep": "Pokračovat v psaní",

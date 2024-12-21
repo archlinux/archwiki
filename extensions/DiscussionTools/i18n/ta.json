@@ -6,7 +6,7 @@
 			"Siddhan"
 		]
 	},
-	"discussiontools-replylink": "பதிலளி",
+	"discussiontools-replylink": "{{GENDER:|பதிலளி}}",
 	"discussiontools-replywidget-cancel": "கைவிடு",
 	"discussiontools-replywidget-mode-source": "மூலம்",
 	"discussiontools-replywidget-mode-visual": "காட்சி",

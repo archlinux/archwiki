@@ -13,5 +13,6 @@
 	"nuke-tools": "呢個工具容許之前提供咗嘅用戶或者IP加入嘅頁。輸入用戶名或者IP去拎頁一覽去刪除:",
 	"nuke-submit-user": "列出頁面",
 	"nuke-submit-delete": "刪除㨂咗嘅",
-	"right-nuke": "大量刪頁"
+	"right-nuke": "大量刪頁",
+	"nuke-linkoncontribs": "大量刪除"
 }

@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Adam-Yourist",
-			"Amire80",
 			"Sapral Mikail",
 			"Умар"
 		]
@@ -20,6 +19,7 @@
 	"abusefilter-log-linkonhistory": "харцахьа леладаьча хӀамай тептарага хьажар",
 	"abusefilter-log-linkonundelete": "зуламий тептарага хьажар",
 	"abusefilter-log-hide-reason": "Бахьан:",
+	"abusefilter-log-hide-show": "Хьагойта",
 	"abusefilter-log-hide-hide": "Къовла",
 	"abusefilter-list-lastmodified": "ТӀеххьара хувцам",
 	"abusefilter-tools-reautoconfirm-user": "Доакъашхо:",

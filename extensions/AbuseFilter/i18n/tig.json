@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bbeshir"
+		]
+	},
+	"abusefilter-log-search-user": "መትነፍዓይ:",
+	"abusefilter-log-search-group-any": "ላጋኣ",
+	"abusefilter-log-search-title": "ኣርእስ",
+	"abusefilter-log-search-wiki": "ዊኪ:",
+	"abusefilter-log-search-impact": "ታእሲር:",
+	"abusefilter-log-search-impact-all": "ኩሉ ኣፍዓለ",
+	"abusefilter-log-search-action-any": "ላጋኣ",
+	"abusefilter-log-search-action-taken-any": "ላጋኣ",
+	"abusefilter-log-search-submit": "ሕዘው",
+	"abusefilter-log-detailslink": "ተፋሲል",
+	"abusefilter-log-diff": "ፈርግ"
+}

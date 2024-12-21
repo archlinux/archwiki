@@ -6,7 +6,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "جواب",
-	"discussiontools-replylink": "جواب",
+	"discussiontools-replylink": "{{GENDER:|جواب}}",
 	"discussiontools-replywidget-advanced": "اضافی",
 	"discussiontools-replywidget-cancel": "رد کرو",
 	"discussiontools-replywidget-mode-source": "سروت",

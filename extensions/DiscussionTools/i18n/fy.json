@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Matma Rex",
-			"PiefPafPier"
+			"PiefPafPier",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Diskusje-ark",
@@ -85,8 +86,8 @@
 	"discussiontools-preference-topicsubscription-help": "Dit makket abonnearjen mooglik, om meldingen te krijen oer reäksjes by losse ûnderwerpen.",
 	"discussiontools-preference-visualenhancements": "Oerlisaktivens werjaan",
 	"discussiontools-preference-visualenhancements-help": "Dit skeakelet in nije sideyndieling yn, dy't ynformaasje befettet oer de aktivens binnen de oerlisûnderwerpen.",
-	"discussiontools-replybutton": "Beäntwurdzje",
-	"discussiontools-replylink": "beäntwurdzje",
+	"discussiontools-replybutton": "{{GENDER:|Beäntwurdzje}}",
+	"discussiontools-replylink": "{{GENDER:|beäntwurdzje}}",
 	"discussiontools-replywidget-abandon": "Wolle jo wier de reäksje dy't jo skriuwe fuortsmite?",
 	"discussiontools-replywidget-abandon-discard": "Reäksje fuortsmite",
 	"discussiontools-replywidget-abandon-keep": "Fierder skriuwe",

@@ -137,10 +137,11 @@ class MathMathML extends MathRenderer {
 	}
 
 	public function render() {
-		global $wgMathFullRestbaseURL;
+		global $wgMathFullRestbaseURL, $wgMathSvgRenderer;
 		try {
-			if ( in_array( $this->inputType, $this->restbaseInputTypes, true ) &&
-				 in_array( $this->mode, $this->restbaseRenderingModes, true )
+			if ( $wgMathSvgRenderer === 'restbase' &&
+				in_array( $this->inputType, $this->restbaseInputTypes, true ) &&
+				in_array( $this->mode, $this->restbaseRenderingModes, true )
 			) {
 				if ( !$this->rbi ) {
 					$this->rbi =

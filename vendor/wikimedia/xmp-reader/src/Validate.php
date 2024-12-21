@@ -54,7 +54,7 @@ class Validate implements LoggerAwareInterface {
 	use LoggerAwareTrait;
 
 	/**
-	 * Create new instance, with a logger
+	 * Creates a new instance, with a logger
 	 *
 	 * @param LoggerInterface $logger
 	 */
@@ -105,7 +105,7 @@ class Validate implements LoggerAwareInterface {
 	/**
 	 * function to validate rating properties -1, 0-5
 	 *
-	 * if its outside of range put it into range.
+	 * if its outside of range, put it into range.
 	 *
 	 * @see MWG spec
 	 * @param array $info Information about current property

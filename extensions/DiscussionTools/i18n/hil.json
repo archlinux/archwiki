@@ -4,7 +4,7 @@
 			"Kai theos en ho logos"
 		]
 	},
-	"discussiontools-replylink": "sabat",
+	"discussiontools-replylink": "{{GENDER:|sabat}}",
 	"discussiontools-replywidget-cancel": "Kanselahon",
 	"discussiontools-replywidget-mode-source": "Ginhalinan",
 	"discussiontools-replywidget-mode-visual": "Biswal",

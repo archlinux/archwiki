@@ -7,6 +7,7 @@
 	"oathauth-account": "Kontonamn:",
 	"oathauth-secret": "Hemmeleg nykel for tofaktorautentisering:",
 	"oathauth-recoverycodes-important": "Dette steget er viktig! Ikkje hopp over det!",
+	"oathauth-recoverycodes-download": "Last ned attopprettingskodar",
 	"oathauth-validatedoath": "Innlogginsdetaljar for tofaktorautentisering var gyldige. Tofaktorautentisering er no påkravd på kontoen.",
 	"oathauth-prefs-label": "Tofaktor-autentisering:",
 	"oathauth-step1": "Steg 1: Last ned eit program for tofaktorautentisering",

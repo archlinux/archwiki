@@ -1,8 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
-			"AgnesAbah",
-			"Amire80"
+			"AgnesAbah"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "É na gbí inabali ché ewn kó né kola tí ogbá ólúka í. É né ké fí Chettins wé ché nyo’nyo éfù prefrensì",
@@ -30,7 +29,7 @@
 	"discussiontools-pagetitle-reply": "É dóyí ojí $1",
 	"discussiontools-postedit-confirmation-published": "Ma mí ukomu óla wé dù té",
 	"discussiontools-postedit-confirmation-topicadded": "Ojí óla wé ma mudù manwù",
-	"discussiontools-replybutton": "Oyí",
+	"discussiontools-replybutton": "{{GENDER:|Oyí}}",
 	"discussiontools-replylink": "{{GENDER:|oyí}}",
 	"discussiontools-replywidget-abandon-keep": "Nà kò",
 	"discussiontools-replywidget-abandontopic-keep": "Nà kò",

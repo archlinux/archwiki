@@ -28,7 +28,7 @@
 	"math-desc": "渲染<code>&lt;math&gt;</code>...<code>&lt;/math&gt;</code>标签间的数学公式",
 	"popups-settings-option-math": "数学",
 	"popups-settings-option-math-description": "解释数学公式。",
-	"popups-settings-option-math-tooltip": "解释鼠标悬停的数学公式。",
+	"popups-settings-option-math-tooltip": "在光标悬停时解释数学公式。",
 	"math-visualeditor-mwchemdialog-title": "化学式",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "快速编辑",
 	"math-visualeditor-mwlatexdialog-card-formula": "公式",

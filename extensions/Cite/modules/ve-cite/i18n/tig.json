@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bbeshir"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "ክታብ",
+	"visualeditor-cite-tool-name-journal": "ጁርናል",
+	"visualeditor-cite-tool-name-news": "ኣክባር",
+	"cite-ve-citationneeded-reason": "ለትሃየባ ምስምሳ:",
+	"cite-ve-dialog-reference-options-section": "ሓረዮት",
+	"cite-ve-dialog-reference-title": "መርጃዕ",
+	"cite-ve-dialog-referenceslist-title": "ሊስተት መራጄዕ",
+	"cite-ve-dialogbutton-reference-full-label": "ኣሳሲ",
+	"cite-ve-dialogbutton-reference-title": "መራጄዕ",
+	"cite-ve-dialogbutton-reference-tooltip": "ኣሳሲ",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "ሊስተት መራጄዕ",
+	"cite-ve-othergroup-item": "መርጃዕ $1"
+}

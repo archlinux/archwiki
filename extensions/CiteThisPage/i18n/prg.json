@@ -1,8 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nērtiks Jōrgesuns"
+			"Nērtiks Jōrgesuns",
+			"Kxeo"
 		]
 	},
-	"citethispage-link": "Citīs šan pāusan"
+	"citethispage": "Citīs šan pāusan",
+	"citethispage-desc": "Preidāis [[Special:CiteThisPage|citisnā]] be autengīnsna ēn pagaptins.",
+	"citethispage-link": "Citīs šan pāusan",
+	"tooltip-citethispage": "Infōrmācija ezze kāigi citītun šan pāusan",
+	"citethispage-change-submit": "Citīs",
+	"citethispage-change-target": "Pāusan:",
+	"citethispage-badrevision": "Blāndan: ni mazzi aupalla niaīns wersiōnins stesse pāusan „$1“ sen ID $2."
 }

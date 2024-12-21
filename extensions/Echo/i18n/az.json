@@ -11,7 +11,8 @@
 			"Vesely35",
 			"Wertuose",
 			"Zoranzoki21",
-			"Nemoralis"
+			"Nemoralis",
+			"Əkrəm Cəfər"
 		]
 	},
 	"echo-desc": "İstifadəçilərə hadisələr və mesajlar barədə məlumat vermə sistemi",
@@ -138,8 +139,8 @@
 	"notification-header-edit-user-talk": "$1 <strong>müzakirə {{GENDER:$3|səhifənizə}}</strong> mesaj {{GENDER:$2|qoyub}}.",
 	"notification-header-edit-user-talk-with-section": "$1 <strong>müzakirə {{GENDER:$3|səhifənizdə}}</strong> \"<strong>$4</strong>\" bölməsində bir mesaj {{GENDER:$2|yazıb}}.",
 	"notification-compact-header-edit-user-page": "$1 {{GENDER:$3|sizin}} istifadəçi səhifənizi {{GENDER:$2|redaktə etdi}}.",
-	"notification-compact-header-edit-user-talk": "$1 {{GENDER:$3|sənə}} mesaj {{GENDER:$2|yazıb.}}",
-	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$3|sənə}} \"<strong>$4</strong>\" adlı yerdə mesaj {{GENDER:$2|yazıb.}}",
+	"notification-compact-header-edit-user-talk": "$1 {{GENDER:$3|sizə}} mesaj {{GENDER:$2|yazıb.}}",
+	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$3|sizə}} \"<strong>$4</strong>\" bölməsində mesaj {{GENDER:$2|yazıb.}}",
 	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "<strong>$4</strong> səhifəsindən <strong>$3</strong> səhifəsinə keçid verildi.",
 	"notification-compact-header-page-linked": "<strong>$1</strong> səhifəsindən keçid verilib.",
@@ -196,7 +197,7 @@
 	"notification-header-reverted": "{{PLURAL:$4|<strong>$3</strong> səhifəsində olan redaktəniz|<strong>$3</strong> səhifəsində olan redaktələriniz}} {{GENDER:$2|geri qaytarılıb}}.",
 	"notification-header-emailuser": "$1 {{GENDER:$2|sizə}} e-poçt göndərib.",
 	"notification-edit-user-page-email-subject": "$1 sizin {{SITENAME}} saytındakı istifadəçi {{GENDER:$3|səhifənizi}} {{GENDER:$2|redaktə etdi.}}",
-	"notification-edit-talk-page-email-subject2": "$1 {{GENDER:$3|sənə}} {{SITENAME}} saytında mesaj {{GENDER:$2|yazıb.}}",
+	"notification-edit-talk-page-email-subject2": "$1 {{GENDER:$3|sizə}} {{SITENAME}} saytında mesaj {{GENDER:$2|yazıb.}}",
 	"notification-page-linked-email-subject": "{{SITENAME}} saytında {{GENDER:$3|yaratdığınız}} səhifə əlaqələndirilib.",
 	"notification-reverted-email-subject2": "{{SITENAME}} saytında {{GENDER:$3|etdiyiniz}} {{GENDER:$3|}}{{PLURAL:$4|redaktə|redaktələr}} {{GENDER:$2|geri qaytarılıb}}",
 	"notification-mention-email-subject": "$1 {{GENDER:$3|sizi}} {{SITENAME}} saytında {{GENDER:$2|qeyd etdi}}.",

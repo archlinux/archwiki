@@ -247,7 +247,7 @@
 	"echo-overlay-title": "<b>إشعارات</b>",
 	"echo-mark-all-as-read": "اعتبرها {{PLURAL:$1|كلها}} مقروءة",
 	"echo-mark-all-as-read-confirmation": "$1 {{PLURAL:$1|إخطار وحيد عُلِّم بصفة مقروء|إخطارات عُلِّمت بصفة مقروءة}}",
-	"echo-mark-wiki-as-read": "علّم الكل كمقروء في الويكي المحددة: $1",
+	"echo-mark-wiki-as-read": "علّم {{PLURAL:$2|الكل}} كمقروء في الويكي المحددة: $1",
 	"echo-displaysnippet-title": "إشعار جديد",
 	"echo-date-today": "اليوم",
 	"echo-date-yesterday": "أمس",

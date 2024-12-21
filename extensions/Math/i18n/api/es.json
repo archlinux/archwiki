@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Fitoschido"
+			"Fitoschido",
+			"Dgstranz"
 		]
 	},
 	"apihelp-query+mathwbextracts-example-1": "Solicita un resumen de elementos matemáticos de Wikibase.",
-	"apihelp-query+mathwbextracts-summary": "Devuelve un resumen de un elemento matemático de Wikibase en HTML."
+	"apihelp-query+mathwbextracts-summary": "Devuelve un resumen de un elemento matemático de Wikibase en HTML.",
+	"apihelp-query+mathwbextracts-param-qid": "El QID del elemento de Wikibase que se va a solicitar.",
+	"apihelp-query+mathwbextracts-param-uselang": "El idioma que debe solicitarse para el elemento de Wikibase. El inglés es el idioma predeterminado."
 }

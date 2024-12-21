@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku"
+			"Tofeiku",
+			"Hakimi97"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Ulasan dengan ID '$1' tidak dijumpai.",
+	"apierror-discussiontools-commentname-ambiguous": "Komen berbilang dengan nama '$1' ditemui, <var>commentid</var> diperlukan.",
 	"apierror-discussiontools-commentname-notfound": "Ulasan dengan nama '$1' tidak dijumpai.",
 	"apihelp-discussiontoolsedit-param-wikitext": "Wikiteks"
 }

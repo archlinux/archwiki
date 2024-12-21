@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"3atbulletz",
-			"Amire80",
 			"Deborahjay",
 			"Fwolff",
 			"INgobemnyama",
@@ -336,7 +335,6 @@
 	"mycontris": "Iminikelo yami",
 	"anoncontribs": "Iminikelo",
 	"uctop": "Njengamanje",
-	"sp-contributions-blocklog": "block log",
 	"sp-contributions-talk": "Inkulumo",
 	"sp-contributions-blocked-notice": "Lo msebenzisi okwamanje ivinjiwe.\nThe latest block okufakwayo kwelogi kunikwe ngezansi ukuze uthole inkomba:",
 	"sp-contributions-blocked-notice-anon": "Leli kheli le-IP ivinjelwe.\nThe latest block okufakwayo kwelogi kunikwe ngezansi ukuze uthole inkomba:",
@@ -379,7 +377,7 @@
 	"createaccountblock": "Ukudala kwekhawundi kuvimbelwa",
 	"ipblocklist-empty": "Lolu hlu block ayinalutho.",
 	"ipblocklist-no-results": "I eceliwe Ikheli le-IP noma igama lomsebenzisi is hhayi ivinjiwe.",
-	"blocklink": "Vimba",
+	"blocklink": "vimba",
 	"change-blocklink": "ushintsho block",
 	"contribslink": "iminikelo",
 	"autoblocker": "Autoblocked ngoba ikheli lakho le-IP isanda ezisetshenziswa yilo \"[[User:$1|$1]]\".\nIsizathu esinikeziwe for $1 sika block kuyinto \"$2\"",

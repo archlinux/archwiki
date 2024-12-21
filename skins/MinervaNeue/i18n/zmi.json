@@ -4,8 +4,13 @@
 			"Zahirulnukman"
 		]
 	},
+	"mobile-frontend-history": "Tengok sojarah sunting muko ini",
+	"mobile-frontend-home-button": "Beranda",
 	"mobile-frontend-language-article-heading": "Bahaso",
 	"mobile-frontend-main-menu-login": "Log masuk",
 	"mobile-frontend-main-menu-nearby": "Bodokatan",
-	"mobile-frontend-main-menu-settings": "Totapan"
+	"mobile-frontend-main-menu-settings": "Totapan",
+	"mobile-frontend-placeholder": "Cari {{SITENAME}}",
+	"mobile-frontend-random-button": "Sobarang",
+	"minerva-page-actions-overflow": "Lagi"
 }

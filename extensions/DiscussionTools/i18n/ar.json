@@ -15,7 +15,10 @@
 			"أيوب",
 			"ديفيد",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Mohanad",
+			"Mohanad Kh",
+			"Matma Rex"
 		]
 	},
 	"discussiontools": "أدوات النقاش",
@@ -123,7 +126,7 @@
 	"discussiontools-preference-topicsubscription-help": "سيمكّنك تفعيل الأداة من المتابعة لتلقّي إخطارات حول تعليقات في مواضيع منفصلة.",
 	"discussiontools-preference-visualenhancements": "إظهار نشاط المناقشة",
 	"discussiontools-preference-visualenhancements-help": "سيمكّن هذا إلى إظهار صفحة نقاش جديدة تتضمن معلومات حول النشاط في كل مناقشة.",
-	"discussiontools-replybutton": "ردّ",
+	"discussiontools-replybutton": "{{GENDER:|ردّ|ردت}}",
 	"discussiontools-replylink": "{{GENDER:|ردّ|ردّي}}",
 	"discussiontools-replywidget-abandon": "هل أنت {{GENDER:|متأكّد|متاكّدة}} من إلغاء التعليق الذي كنت بصدد كتابته؟",
 	"discussiontools-replywidget-abandon-discard": "التخلُّص من التعليق",
@@ -190,7 +193,7 @@
 	"discussiontools-topicsubscription-pager-created": "أول {{GENDER:|مشترك|مشتركة}}",
 	"discussiontools-topicsubscription-pager-newtopics-label": "موضوع جديد",
 	"discussiontools-topicsubscription-pager-notified": "أحدث إخطار",
-	"discussiontools-topicsubscription-pager-notified-never": "أبدًا",
+	"discussiontools-topicsubscription-pager-notified-never": "أبدا",
 	"discussiontools-topicsubscription-pager-page": "الصفحة",
 	"discussiontools-topicsubscription-pager-topic": "الموضوع",
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "إلغاء الاشتراك",

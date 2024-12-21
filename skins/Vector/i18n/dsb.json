@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Michawiki",
-			"Vlad5250"
+			"Vlad5250",
+			"Sławobóg"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 rěc|$1 rěcy|$1 rěcy|$1 rěcow}}",
 	"vector-action-addsection": "Temu pśidaś",
 	"vector-action-delete": "Wulašowaś",
 	"vector-action-move": "Pśesunuś",

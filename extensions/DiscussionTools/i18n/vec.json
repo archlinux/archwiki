@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Fierodelveneto"
+			"Fierodelveneto",
+			"Woytecr"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Resposta",
@@ -33,7 +34,7 @@
 	"discussiontools-preference-sourcemodetoolbar": "Abìłita instruminti sperimentałi inte łe modałità de resposta ràpida e inte łe zonte ràpide de argomentasion.",
 	"discussiontools-preference-topicsubscription": "Abìłita l'iscrision a l'argomentasion",
 	"discussiontools-preference-topicsubscription-help": "Sto cuà el te consentarà de risévar na notìfega so cominti o sìngułi argomentasion. Par savèrghene de pì védarse: [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary resunto de łe funsionałità].",
-	"discussiontools-replylink": "respondi",
+	"discussiontools-replylink": "{{GENDER:|respondi}}",
 	"discussiontools-replywidget-abandon": "Seguro de vołer sbandonar el comento sensa inviar?",
 	"discussiontools-replywidget-abandon-discard": "Sbandona comento",
 	"discussiontools-replywidget-abandon-keep": "Sèvita scrìvar",

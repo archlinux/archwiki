@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aliyu shaba",
+			"Mohammedbama123",
+			"Umargana1"
+		]
+	},
+	"vector-languages": "Tǝlam",
+	"vector-language-button-label": "{{PLURAL:$1|$1 telam|$1 telam wa gade}}",
+	"vector-no-language-button-label": "Tǝlam yira",
+	"vector-action-addsection": "Bayin yukko",
+	"vector-action-delete": "Chinta",
+	"vector-action-move": "Huutu",
+	"vector-action-protect": "Teliwune",
+	"vector-view-create": "Awo kelta",
+	"vector-view-edit": "Yasa",
+	"vector-view-history": "Gargam kuru",
+	"vector-view-view": "Qra",
+	"vector-more-actions": "Gadǝ yira",
+	"vector-feature-limited-width-name": "Farak",
+	"vector-feature-custom-font-size-name": "Ruwo",
+	"vector-feature-limited-width-0-label": "Farak",
+	"vector-feature-limited-width-1-label": "Kǝrtǝna",
+	"vector-feature-custom-font-size-0-label": "Gana",
+	"vector-feature-custom-font-size-1-label": "Kǝrtǝna",
+	"vector-feature-custom-font-size-2-label": "Kura",
+	"skin-theme-name": "Kala",
+	"skin-theme-os-label": "Kǝlan nzǝn diyoma",
+	"vector-searchsuggest-containing": "Na awoodoyə gnazanama mata <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Bayin awo be",
+	"vector-toc-beginning": "Burotǝ",
+	"vector-main-menu-label": "Menu kura",
+	"vector-page-tools-label": "Awoo ciddaye",
+	"vector-page-tools-general-label": "Samma",
+	"vector-page-tools-actions-label": "Cida",
+	"vector-unpin-element-label": "Grane"
+}

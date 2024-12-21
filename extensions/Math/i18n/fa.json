@@ -18,7 +18,8 @@
 			"Mjbmr",
 			"Omidh",
 			"Reza1615",
-			"ZxxZxxZ"
+			"ZxxZxxZ",
+			"Ebrahim"
 		]
 	},
 	"math-desc": "فرمول‌های ریاضی میان برچسب‌های <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> را رندر می‌کند",
@@ -116,6 +117,5 @@
 	"math-wikibase-special-form-button": "درخواست اطلاعات",
 	"math-wikibase-special-error-header": "خطا",
 	"math-wikibase-special-error-invalid-argument": "شناسه‌ای که برای مورد ویکی‌پایگاه مشخص کردید موجود نیست.",
-	"math-wikibase-special-error-unknown": "خطای ناشناخته‌ای در زمان واکشی داده از ویکی‌پایگاه رخ داد.",
-	"math-wikibase-special-error-no-wikibase": "برای استفاده از این صفحهٔ ویژه به افزونهٔ ویکی‌پایگاه نیاز است."
+	"math-wikibase-special-error-unknown": "خطای ناشناخته‌ای در زمان واکشی داده از ویکی‌پایگاه رخ داد."
 }

@@ -1,15 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Nertiks",
 			"Nērtiks Jōrgesuns",
 			"Peteris",
-			"Tīgelika"
+			"Tīgelika",
+			"Kxeo"
 		]
 	},
+	"vector-languages": "Billas",
 	"vector-language-button-aria-label": "Jaīs en artīkelin pra kittan billin. Preiēiminan en {{PLURAL:$1|$1 bilāmans|$1 billai|$1 bilāmans}}",
 	"vector-language-button-label": "$1 {{PLURAL:$1|billas|bilā|billas}}",
+	"vector-no-language-button-label": "Preidātun billas",
 	"vector-language-variant-switcher-label": "Kitawīdinais billas wariāntin",
 	"vector-action-addsection": "Preidāis tēman",
 	"vector-action-delete": "Āupausinais",
@@ -22,5 +24,10 @@
 	"vector-view-view": "Skaitāis",
 	"vector-view-viewsource": "Wīdais appun",
 	"vector-more-actions": "Tūls",
-	"vector-searchsuggest-containing": "Laukīs pāusans turīnts <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Laukīs pāusans turīnts <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-main-menu-label": "Galwas menjū",
+	"vector-page-tools-label": "Pagaptis",
+	"vector-page-tools-general-label": "Generāls",
+	"vector-page-tools-actions-label": "Dīlasenei",
+	"vector-unpin-element-label": "kliptinais"
 }

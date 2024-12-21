@@ -121,8 +121,12 @@ class RendererFactory {
 		return $renderer;
 	}
 
-	public function getFromHash( $hash ) {
-		$rpage = $this->cache->get( $hash );
+	public function getFromHash( $inputHash ): MathRenderer {
+		$key = $this->cache->makeGlobalKey(
+			MathRenderer::class,
+			$inputHash
+		);
+		$rpage = $this->cache->get( $key );
 		if ( $rpage === false ) {
 			throw new InvalidArgumentException( 'Cache key is invalid' );
 		}

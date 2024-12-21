@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Gnangbade",
 			"MF-Warburg",
 			"Stephanecbisson"
@@ -110,7 +109,7 @@
 	"pagecategories": "{{PLURAL:$1|Pɩlɩʋ|Pɩlɩŋ}}",
 	"category_header": "Pɩlɩʋ « $1 » takayɩhatʋ",
 	"subcategories": "Pɩlɩŋ kɩtɛyɩŋ",
-	"category-media-header": "\\ $1 \\ pɩlɩʋ taa mediyaa",
+	"category-media-header": "\"$1\" pɩlɩʋ taa mediyaa",
 	"category-empty": "<em>Pɩlɩʋ kɩnɛ kɩ-taa fɛyɩ takayɩhayʋʋ nakʋyʋ yaa multimediya takayaɣ nakɛyɛ kɛ nɔnɔɔ</em>",
 	"hidden-categories": "{{PLURAL:$1|Pɩlɩʋ kɩmɛlʋʋ|Pɩlɩŋ kɩmɛlɩŋ}}",
 	"hidden-category-category": "Pɩlɩŋ kɩmɛsɩŋ",
@@ -127,7 +126,7 @@
 	"article": "Takayɩhayʋʋ ŋgʋ kɩ-taa wɛ tɔm yɔ",
 	"newwindow": "(tʋlɩ mondoɖe kɩfaɖɛ taa)",
 	"cancel": "Ɖɩzɩ",
-	"moredotdotdot": "Tasʋʋ…",
+	"moredotdotdot": "Tasʋʋ...",
 	"morenotlisted": "Lolaɣ kanɛ kapɩzɩɣ kaatɛŋ.",
 	"mypage": "Takayɩhayʋʋ",
 	"mytalk": "Ndɔncɔɔlɩyɛ",

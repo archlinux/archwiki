@@ -8,7 +8,8 @@
 			"Jduranboger",
 			"NMW03",
 			"Toghrul Rahimli",
-			"Wertuose"
+			"Wertuose",
+			"Nemoralis"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Kitab",
@@ -24,7 +25,7 @@
 	"cite-ve-changedesc-reflist-responsive-set": "İstinadlar siyahısı responsiv sütunlarda göstərilmək üçün dəyişdirildi",
 	"cite-ve-changedesc-reflist-responsive-unset": "İstinad siyahısı yalnızca bir sütunda göstərilmək üçün dəyişdirildi",
 	"cite-ve-citationneeded-button": "İstinad əlavə et",
-	"cite-ve-citationneeded-description": "Bir istifadəçi bu iddianın etibarlı bir mənbəyə istinad edilməsinə ehtiyac olduğunu bildirib.",
+	"cite-ve-citationneeded-description": "Redaktorlardan biri, bu iddianın etibarlı bir mənbəyə istinad edilməsinə ehtiyac olduğunu bildirib.",
 	"cite-ve-citationneeded-reason": "Verilmiş səbəb:",
 	"cite-ve-citationneeded-title": "İstinad lazımdır",
 	"cite-ve-dialog-reference-editing-reused": "Bu istinad bu səhifədə {{PLURAL:$1|1 dəfə|2=2 dəfə|$1 dəfə}} istifadə edilib.",
@@ -35,8 +36,8 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "Ümumi istinadlar",
 	"cite-ve-dialog-reference-options-name-label": "Təkrar olaraq bu ad altında istifadə et",
 	"cite-ve-dialog-reference-options-responsive-label": "Responsiv sütun dizaynını istifadə et",
-	"cite-ve-dialog-reference-options-section": "Nizamlamalar",
-	"cite-ve-dialog-reference-placeholder": "Əlavə etmək istədiyiniz mənbəni qeyd edin və ya istinad şablonu daxil edin.",
+	"cite-ve-dialog-reference-options-section": "Seçimlər",
+	"cite-ve-dialog-reference-placeholder": "Əlavə etmək istədiyiniz mənbəni əlavə edin və ya istinad şablonu daxil edin.",
 	"cite-ve-dialog-reference-title": "İstinadlar",
 	"cite-ve-dialog-reference-useexisting-tool": "Təkrar istifadə",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Əsas istinadların siyahısı",

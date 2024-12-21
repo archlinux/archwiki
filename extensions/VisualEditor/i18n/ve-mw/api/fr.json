@@ -13,7 +13,8 @@
 			"Urhixidur",
 			"Verdy p",
 			"Wladek92",
-			"Zetud"
+			"Zetud",
+			"McDutchie"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Pas de mise en cache de sérialisation trouvée avec cette clé",
@@ -54,7 +55,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "Titre de la nouvelle section.",
 	"apihelp-visualeditoredit-param-starttimestamp": "Lors de l’enregistrement, règle ceci avec l’horodatage du moment où la page a été chargée. Utilisé pour détecter les conflits d’édition.",
 	"apihelp-visualeditoredit-param-summary": "Modifier le résumé.",
-	"apihelp-visualeditoredit-param-tags": "Modifier les balises à appliquer à la modification.",
+	"apihelp-visualeditoredit-param-tags": "Les balises de modification à appliquer à la version.",
 	"apihelp-visualeditoredit-param-wikitext": "Le wikicode avec lequel agir.",
 	"apihelp-visualeditoredit-summary": "Enregistrer une page HTML5 en MediaWiki (convertie en wikicode via le service Parsoid)."
 }

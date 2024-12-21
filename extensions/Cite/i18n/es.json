@@ -28,7 +28,9 @@
 			"Adamw",
 			"DiegoAmbrocio",
 			"Eulalio",
-			"Francodiaz7"
+			"Francodiaz7",
+			"Jakeukalane",
+			"Josuert"
 		]
 	},
 	"cite-desc": "Añade las etiquetas <code>&lt;ref&gt;</code> y <code>&lt;references&gt;</code> para citas.",
@@ -38,6 +40,8 @@
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> no válida; el nombre no puede ser un número entero. Usa un título descriptivo",
 	"cite_error_ref_no_key": "La etiqueta de apertura <code>&lt;ref&gt;</code> es incorrecta o tiene el nombre mal",
 	"cite_error_ref_too_many_keys": "Parámetro inválido en la etiqueta <code>&lt;ref&gt;</code>",
+	"cite_error_ref_follow_conflicts": "Una etiqueta <code>&lt;ref follow=\"…\"&gt;</code> que es la continuación de una anterior no puede ni nombrarse individualmente ni extenderse.",
+	"cite_error_ref_nested_extends": "No se permite extender las etiquetas <code>&lt;ref&gt;</code> más allá de un nivel de profundidad",
 	"cite_error_ref_no_input": "Etiqueta <code>&lt;ref&gt;</code> no válida; las referencias sin nombre deben tener contenido",
 	"cite_error_references_duplicate_key": "Etiqueta <code>&lt;ref&gt;</code> no válida; el nombre «$1» está definido varias veces con contenidos diferentes",
 	"cite_error_references_invalid_parameters": "Parámetro no válido en la etiqueta de <code>&lt;references&gt;</code>",
@@ -45,6 +49,7 @@
 	"cite_error_no_link_label_group": "Se han acabado las etiquetas personalizadas para vínculos del grupo \"$1\". Define más en el mensaje [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Etiqueta <code>&lt;ref&gt;</code> no válida; no se ha definido el contenido de las referencias llamadas <code>$1</code>",
 	"cite_error_included_ref": "Etiqueta de apertura <code>&lt;ref&gt;</code> sin su correspondiente cierre <code>&lt;/ref&gt;</code>",
+	"cite_error_included_references": "Falta la etiqueta de cierra de <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Existen etiquetas <code>&lt;ref&gt;</code> para un grupo llamado «$1», pero no se encontró la etiqueta <code>&lt;references group=\"$1\"/&gt;</code> correspondiente.",
 	"cite_error_references_group_mismatch": "La etiqueta <code>&lt;ref&gt;</code> en las <code>&lt;references&gt;</code> tiene un conflicto con el grupo «$1».",
 	"cite_error_references_missing_key": "La etiqueta <code>&lt;ref&gt;</code> definida en las <code>&lt;references&gt;</code> con nombre «$1» no se utiliza en el texto anterior.",
@@ -64,6 +69,8 @@
 	"cite-wikieditor-help-content-named-reference-description": "Referencia nombrada",
 	"cite-wikieditor-help-content-rereference-description": "Uso adicional de la misma referencia",
 	"cite-wikieditor-help-content-showreferences-description": "Mostrar referencias",
+	"cite-wikieditor-help-content-reference-example-text1": "Texto de la página.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Texto del enlace], texto adicional.",
 	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto del enlace]",
 	"cite-wikieditor-help-content-reference-example-ref-id": "prueba"
 }

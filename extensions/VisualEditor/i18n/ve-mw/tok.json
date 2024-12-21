@@ -3,9 +3,12 @@
 		"authors": [
 			"LesVisages",
 			"Robin van der Vliet",
-			"Tbodt"
+			"Tbodt",
+			"Tamzin"
 		]
 	},
+	"visualeditor-ca-createlocaldescriptionsource": "lipu ni la o pana e lipu sona kepeken toki ilo",
+	"visualeditor-ca-createsource": "o pali e toki ilo",
 	"visualeditor-ca-editsource": "o ante e toki ilo",
 	"visualeditor-ca-editsource-section": "o ante e toki ilo",
 	"visualeditor-dialog-meta-languages-name-label": "toki"

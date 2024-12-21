@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Matma Rex",
 			"Meno25",
 			"ديفيد",
@@ -33,6 +32,7 @@
 	"apihelp-visualeditoredit-param-cachekey": "استخدام نتيجة لتسلسل السابق لطلب مخبأ مع هذا المفتاح.\nيتجاوز $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "CAPTCHA ID (عندما تحفظ مع استجابة CAPTCHA).",
 	"apihelp-visualeditoredit-param-captchaword": "الإجابة على اختبار CAPTCHA (عندما الادخار مع استجابة CAPTCHA).",
+	"apihelp-visualeditoredit-param-nocontent": "احذف محتوى HTML الخاص بالإصدار الجديد في الاستجابة.",
 	"apihelp-visualeditoredit-param-plugins": "الإضافات المرتبطة بطلب API.",
 	"apihelp-visualeditoredit-param-data-{plugin}": "تم إرسال البيانات التعسفية بواسطة مكون إضافي مع طلب واجهة برمجة التطبيقات.",
 	"apihelp-visualeditoredit-param-etag": "ETag للإرسال.",

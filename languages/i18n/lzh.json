@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"A2093064",
-			"Amire80",
 			"Base",
 			"Bowleerin",
 			"C933103",
@@ -48,7 +47,9 @@
 			"飞舞回堂前",
 			"아라",
 			"Cookai1205",
-			"物灵"
+			"物灵",
+			"Dimension",
+			"Kizule"
 		]
 	},
 	"tog-underline": "以底線識鏈接：",
@@ -669,7 +670,7 @@
 	"revdelete-hide-comment": "纂摘",
 	"revdelete-hide-user": "簿、IP址",
 	"revdelete-hide-restricted": "廢有秩與簿之事",
-	"revdelete-radio-same": "（無改）",
+	"revdelete-radio-same": "無改",
 	"revdelete-radio-set": "藏",
 	"revdelete-radio-unset": "現",
 	"revdelete-suppress": "廢有秩與簿之事",

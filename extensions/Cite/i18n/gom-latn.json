@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"The Discoverer"
+			"The Discoverer",
+			"QW90"
 		]
 	},
 	"cite_error": "Ul'lekh chuk: $1",
-	"cite-wikieditor-tool-reference": "Sondorbh"
+	"cite-wikieditor-tool-reference": "Sondorbh",
+	"cite-wikieditor-help-page-references": "Sondorbh"
 }

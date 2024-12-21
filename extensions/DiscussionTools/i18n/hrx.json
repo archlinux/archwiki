@@ -5,7 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Antwort",
-	"discussiontools-replylink": "beantworte",
+	"discussiontools-replylink": "{{GENDER:|beantworte}}",
 	"discussiontools-replywidget-advanced": "Erweiderd",
 	"discussiontools-replywidget-cancel": "Abbreche",
 	"discussiontools-replywidget-mode-source": "Quell",

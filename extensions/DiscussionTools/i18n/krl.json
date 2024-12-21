@@ -5,7 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Vaštua",
-	"discussiontools-replylink": "vaštua",
+	"discussiontools-replylink": "{{GENDER:|vaštua}}",
 	"discussiontools-replywidget-advanced": "Levennetty",
 	"discussiontools-replywidget-cancel": "Keškeytä",
 	"discussiontools-replywidget-mode-source": "Lähteh",

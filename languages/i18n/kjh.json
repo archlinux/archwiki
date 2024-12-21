@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"AlexandrL714",
-			"Amire80",
 			"Ayas7",
 			"BaRaN6161 TURK",
 			"HalanTul",
@@ -11,7 +10,8 @@
 			"Oxianboal",
 			"Sibday",
 			"Андрей Саг.",
-			"Matma Rex"
+			"Matma Rex",
+			"Köpleres"
 		]
 	},
 	"tog-underline": "Ссылкаларны сиирi:",
@@ -250,7 +250,7 @@
 	"new-messages-from-users": "{{PLURAL:$4|Сiрер}} $1 {{PLURAL:$3|пасха араласчыдаң|$3 араласчыдаң}} ($2) алғазар.",
 	"new-messages-from-many-users": "Сiрер кӧп араласчыдаң ($2) $1 алғазар.",
 	"new-messages-link-plural": "{{PLURAL:$1|наа искiрiг}}",
-	"new-messages-diff-link-plural": "Халғанҷы {{PLURAL:$1|алызығ|999=алызығ}}",
+	"new-messages-diff-link-plural": "Халғанҷы {{PLURAL:$1|алызығ}}",
 	"editsection": "тӱзедерге",
 	"editold": "тӱзедерге",
 	"viewsourceold": "пастағы кодты кӧрерге",
@@ -685,7 +685,7 @@
 	"anontalkpagetext": "<em>Пу пос аккаунтын иткелек алай анынаң тузаланминчатхан ады чох араласчының ӱзӱрiг страницазы.</em>\nАннаңар піс аның IP-адрезінең тузаланчабыс. Анынаң пасха даа араласчылар тузаланар оңдайлығлар.\nСiрер ады чох араласчы ползар, пасха араласчыларға ызылған искіріглернi албас ӱчӱн, [[Special:CreateAccount|аккаунт ит салыңар]] алай [[Special:UserLogin|системаа адыңарны кӧзіт пиріңер]].\n|",
 	"noarticletext": "Сағам пу страницада текст чоғыл.\nСірер [[Special:Search/{{PAGENAME}}|пу аттаңар]]  пасха страницаларда пiлiп аларзар,\n<span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} журналлардағы килістіре искiрiглернi таап аларзар],\nалай [{{fullurl:{{FULLPAGENAME}}|action=edit}} андағ аттығ страница ит поларзар]</span>.",
 	"noarticletext-nopermission": "Сағам пу страницада текст чоғыл.\nСірерге [[Special:Search/{{PAGENAME}}|пу аттаңар піліп аларға]] чарир пасха страницаларда,\nалай <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} журналлардағы килістіре искiрiглернi табарға] чарир.</span> Пу страницаны сірерге идерге чарадылбинча.",
-	"missing-revision-permission": "#$1 версия чох идiлген страницаа кiрче. Сiрерге  [{{fullurl:{{#Special:Undelete}}|target=$3&timestamp=$2&diff=prev}} аны кӧрерге] чарир; толдыразынаң піліп аларзар [{{fullurl:{{#Special:Log}}/delete|page=$3}} чох иділгенiн таныхтапчатхан журналда].",
+	"missing-revision-permission": "<nowiki>#</nowiki>$1 версия чох идiлген страницаа кiрче. Сiрерге  [{{fullurl:{{#Special:Undelete}}|target=$3&timestamp=$2&diff=prev}} аны кӧрерге] чарир; толдыразынаң піліп аларзар [{{fullurl:{{#Special:Log}}/delete|page=$3}} чох иділгенiн таныхтапчатхан журналда].",
 	"missing-revision": "«{{FULLPAGENAME}}» страницаның $1 версиязы чоғыл.  Чох иділген страницаа иргі ссылкаҷа иртсе, андағ ниме пол парадыр. Аннаңар толдыразынаң піліп аларзар [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} чох иділгенiн таныхтапчатхан журналда].",
 	"missing-revision-content": "«$2» страницадағы #$1 версияның толдырылғанын тартып аларға киліспеді.",
 	"userpage-userdoesnotexist": "Пу викиде «$1» аккаунт чоғыл. \nСірер сынап пу страницаны тимнирге алай тӱзедерге сағынчазар ба?",

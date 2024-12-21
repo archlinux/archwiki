@@ -1,8 +1,45 @@
 {
 	"@metadata": {
 		"authors": [
-			"Chulsu463"
+			"Chulsu463",
+			"MiiCii"
 		]
 	},
-	"discussiontools-defaultsummary-reply": "jabumbi"
+	"discussiontools-autotopicsubpopup-body": "Gūwa niyalma ere leolen de ice mejige be selgiyerede, {{GENDER:|si}} medege be bargiyara. Si adabure ton -i sindabun -i dorgi mejige -i sindabun be dasatabuci ombi.",
+	"discussiontools-autotopicsubpopup-dismiss": "OK, bi saha.",
+	"discussiontools-autotopicsubpopup-preferences": "Adabure ton -i sindabun be banjibure",
+	"discussiontools-autotopicsubpopup-title": "{{GENDER:|Si}} emgeri toktobume hūlahabi!",
+	"discussiontools-defaultsummary-reply": "Jabun",
+	"discussiontoolsdebug-title": "Agūra hajun -i deta -i šanggasun be leolere",
+	"discussiontoolsdebug-pagetitle": "Afaha -i joringga",
+	"discussiontoolsdebug-intro": "Ere afaha [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:DiscussionTools leolere agūra hajun -i saniyabun] adarame '''[[:$1]]''' -i afahari jai medege be ilgabure be durun sindambi. Giyanakū ere saniyabun -i fonjin be acabume cendere eici ini weilere arga be getuken -i sara de tusangga. Adalingga mejige be geli [[$2|discussiontoolspageinfo API]] de alibuhabi.",
+	"discussiontools-desc": "Afaha be leolere be nonggibuci ojoro agūra hajun",
+	"discussiontools-emptystate-button": "Leolen be deribure",
+	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Leolere afaha]] oci geren adarame {{SITENAME}} -i baktambun be muyahūn sain ojoro be hebešere ba. {{GENDER:|Si}} ere afaha be baitalame adarame [[:{{SUBJECTPAGENAME}}]] be halame ibebure de daljingga leolen be deribubuci ombi.",
+	"discussiontools-emptystate-desc-self": "{{SITENAME}} de bisire niyalma ere [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|leolere afaha]] be baitalame {{GENDER:|sinde}} iletu medege be selgiyeci ojorongge. ceni medege be selgiyehe manggi, si medege be alibure.",
+	"discussiontools-emptystate-desc-self-anon": "{{SITENAME}} de bisire niyalma ere [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|leolere afaha]] be baitalame {{GENDER:|sini}} ineku baitalamaha IP tehe ba -i araha banjibun de daljingga iletu mejige be selgiyeci ojorongge. \n\nMujaku labdu IP tehe ba be toktoho bilagan de halabure, daruhai gūwa niyalmai emgi baitalarangge. [$1 Dangse be fukjileme ilibure] eici [$2 oron de dosifi] jidere erin de gūwa oron de dosire undengge de ilgaburebe jailaci ojoro. Dangse be fukjileme ilici, sini IP tehe ba be somibuci ojoro.",
+	"discussiontools-emptystate-desc-self-temp": "{{SITENAME}} de bisire niyalma [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|leolere afaha]] be baitalafi {{GENDER:|sinde}} iletu mejige selgiyeci ojoro. \n\n[[{{MediaWiki:tempuser-helppage}}|Ere afaha dubentele elen isinafi tusa akū ojoro]]. Mejige be sirame bargiyaci eici gūwa muten be baitalaki seci, bairengge [$1 dangse be fukjileme ilibure] eici [$2 oron de dosiki].",
+	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Leolere afaha]] oci geren adarame {{SITENAME}} -i baktambun be muyahūn sain ojoro be hebešere ba. Ice leolen be deribufi {{GENDER:{{PAGENAME}}|-i emgi}}[[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] ishunde hebdere jai acabume arara. {{GENDER:|Sini}} ubade selgiyehe mejige weri de iletu ojoro.",
+	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Leolere afaha]] oci geren adarame {{SITENAME}} -i baktambun be muyahūn sain ojoro be hebešere ba. Ere afaha eb baitalame ere IP tehe ba de daljingga banjibun -i leolen be dekedere. {{GENDER:|Sini}} ubade selgiyehe mejige be weri de iletu ojoro. Mujakū labdu IP tehe ba toktoho bilagan -i halabure, daruhai gūwa niyalmai emgi baitalarangge.",
+	"discussiontools-replylink": "{{GENDER:|Jabumbi}}",
+	"discussiontools-replywidget-advanced": "Den jergi",
+	"discussiontools-replywidget-cancel": "Argiyambi",
+	"discussiontools-replywidget-mode-source": "Sekiyen kode",
+	"discussiontools-replywidget-mode-visual": "Tuwabume mutebure",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} de {{GENDER:|jabure}}",
+	"discussiontools-replywidget-preview": "Doigimšome tuwara",
+	"discussiontools-replywidget-reply": "{{GENDER:|Jabun}}",
+	"discussiontools-replywidget-summary": "Šošon",
+	"discussiontools-replywidget-watchthis": "Ere afaha be sini [[Special:Watchlist|tuwakiyara afaha -i iletun]] de nonggibure.",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|niyalma}} leolen de adanahabi",
+	"discussiontools-topicheader-commentcount": "$1{{PLURAL:$1|justan -i werihe medege}}",
+	"discussiontools-topicheader-latestcomment": "Hanciki werihe medege: $1 de selgiyehebi",
+	"discussiontools-topicsubscription-button-subscribe": "Toktobume hūlambi",
+	"discussiontools-topicsubscription-button-subscribe-label": "Toktobume hūlambi",
+	"discussiontools-topicsubscription-button-unsubscribe": "Toktobume hūlara be nakambi",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Toktobume hūlara be nakambi",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|You}} ereci amasi ere jorin de daljingga ice medege be bargiyambi.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Si}} emgeri toktobume hūlahabi!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|You}} ereci amasi ere jorin de daljingga ice medege be bargiyarakū.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|You}} emgeri toktobume hūlara be nakahabi."
 }

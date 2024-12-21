@@ -6,7 +6,8 @@
 			"Batyrbek.kz",
 			"Hedeyohu22",
 			"СеніңШешең",
-			"Casserium"
+			"Casserium",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Талқылау құралдары",
@@ -104,8 +105,8 @@
 	"discussiontools-preference-topicsubscription-help": "Бұл сізге жеке тақырыптардағы пікірлер туралы ескертпелер алуға жазылуға мүмкіндік береді.",
 	"discussiontools-preference-visualenhancements": "Талқылау белсенділіктерін көрсету",
 	"discussiontools-preference-visualenhancements-help": "Бұл жаңа әрбір талқылау белсенділіктері туралы ақпарат қамтылған талқылау беті көрінісін қосады.",
-	"discussiontools-replybutton": "Жауап беру",
-	"discussiontools-replylink": "жауап беру",
+	"discussiontools-replybutton": "{{GENDER:|Жауап беру}}",
+	"discussiontools-replylink": "{{GENDER:|жауап беру}}",
 	"discussiontools-replywidget-abandon": "Жазып жатқан пікіріңізді тастап кететініңізге сенімдісіз бе?",
 	"discussiontools-replywidget-abandon-discard": "Пікірді өшіру",
 	"discussiontools-replywidget-abandon-keep": "Жазуды жалғастыру",
@@ -132,7 +133,7 @@
 	"discussiontools-replywidget-reply": "Жауап беру",
 	"discussiontools-replywidget-return-to-newtopic": "Жаңа тақырыпқа қайту",
 	"discussiontools-replywidget-return-to-reply": "Жауапқа қайту",
-	"discussiontools-replywidget-signature-body": "$1 сіздің қолтаңбаңызға түрленеді. Бұны болдырмау үшін $2 теріңіз. Бұл құралмен пікірге қол қоюды қажет етпейтінін ескеріңіз. Сіздің қолтаңбаңыз өздікті түрде қойылады.",
+	"discussiontools-replywidget-signature-body": "$1 сіздің қолтаңбаңызға түрленеді. Бұны болдырмау үшін $2 теріңіз. Бұл құралмен пікірге қол қоюды қажет етпейтінін ескеріңіз. Сіздің қолтаңбаңыз өздігінен қойылады.",
 	"discussiontools-replywidget-signature-title": "Қолтаңба белгілеуі анықталды",
 	"discussiontools-replywidget-summary": "Түйіндемесі",
 	"discussiontools-replywidget-terms-click": "\"$1\" басу арқылы сіз осы уикидің қолдану шарттарымен келісесіз.",

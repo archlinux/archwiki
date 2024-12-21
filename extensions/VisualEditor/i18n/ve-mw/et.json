@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Adeliine",
-			"Amire80",
 			"Avjoska",
 			"Boxmein",
 			"Cumbril",
@@ -146,6 +145,7 @@
 	"visualeditor-dialog-template-title": "Mall",
 	"visualeditor-dialog-transclusion-action-save": "Salvesta",
 	"visualeditor-dialog-transclusion-template-title-nonexistent": "Seda malli pole olemas.",
+	"visualeditor-dialog-transclusion-template-title-modifier": "Malli dokumentatsioon ja [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Glossary#Parameter parameetrite] nimed (kui neid on) ei ole saadaval, kui malli muutmisel kasutada pesastatud süntaksit või muutefunktsioone nagu [//www.mediawiki.org/wiki/Special:MyLanguage/Help:Substitution subst].",
 	"visualeditor-dialog-transclusion-add-wikitext": "Lisa vikitekst",
 	"visualeditor-dialog-transclusion-add-param-error-alias": "\"$1\" on juba lisatud nimega \"$2\". Palun vaata parameetreid vasakul külgpaanil. See tuleb sellest, et kasutusel on kas [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#aliases rööpkujud] või [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#label sildid].",
 	"visualeditor-dialog-transclusion-add-param-error-deprecated": "Parameetrit \"$1\" ei saa lisada, sest see on märgitud [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#deprecated vananenuks].",

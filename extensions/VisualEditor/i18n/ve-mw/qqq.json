@@ -36,7 +36,8 @@
 			"Yejianfei",
 			"Zoranzoki21",
 			"Ата",
-			"Jack who built the house"
+			"Jack who built the house",
+			"Stjn"
 		]
 	},
 	"accesskey-ca-ve-edit": "{{doc-accesskey}}",
@@ -283,7 +284,7 @@
 	"visualeditor-includes-onlyinclude-start": "Label of the context item for an opening <code>&lt;onlyinclude></code> tag.",
 	"visualeditor-includes-onlyinclude-end": "Label of the context item for a closing <code><nowiki>&lt;/onlyinclude></nowiki></code> tag.",
 	"visualeditor-includes-includeonly": "Label of the context item for a pair of <code>&lt;includeonly>&lt;/includeonly></code> tags.",
-	"visualeditor-includes-noinclude-description": "Additional explanation for an opening <code>;lt&noinclude></code> tag.",
+	"visualeditor-includes-noinclude-description": "Additional explanation for an opening <code>&lt;noinclude></code> tag.",
 	"visualeditor-includes-onlyinclude-description": "Additional explanation for an opening <code>&lt;onlyinclude></code> tag.",
 	"visualeditor-includes-includeonly-description": "Additional explanation for a pair of <code>&lt;includeonly>&lt;/includeonly></code> tags. This is followed by the content of the tags.",
 	"visualeditor-includes-documentation": "Link to documentation displayed below each of these messages:\n* {{msg-mw|visualeditor-includes-noinclude-description}}\n* {{msg-mw|visualeditor-includes-onlyinclude-description}}\n* {{msg-mw|visualeditor-includes-includeonly-description}}",

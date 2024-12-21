@@ -1,8 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Bbeshir"
+			"Bbeshir",
+			"IdrisSeid",
+			"Kassala"
 		]
 	},
+	"fancycaptcha-captcha": "ተእኪደት አምን",
+	"fancycaptcha-accountcreate": "ዊኪ ግል ንሕገብ ምን እብ ኣውቶመቲክ ገበይ ሕሳብ ክፍተት , ለ ቀላት ተሐት ልትርኤ ለሀላ እተ ሰንዱቅ ግል ትአተ እብ ሕሽመት ንሰአል ([[Special:Captcha/help|ወሰክ ሐብሬ]]):",
+	"fancycaptcha-imgcaptcha-ph": "ለድባ ሱረት ትርእዩ ክቱብ ኣቴ።",
 	"fancycaptcha-reload-text": "ኣሓድስ"
 }

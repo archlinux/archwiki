@@ -115,6 +115,5 @@
 	"math-wikibase-special-form-button": "Efterfråga Information",
 	"math-wikibase-special-error-header": "Fel",
 	"math-wikibase-special-error-invalid-argument": "Det angivna Wikibase-element-ID:t finns inte.",
-	"math-wikibase-special-error-unknown": "Ett okänt fel uppstod vid hämtning av data från Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "Wikibase-tillägget krävs för att använda denna specialsida"
+	"math-wikibase-special-error-unknown": "Ett okänt fel uppstod vid hämtning av data från Wikibase."
 }

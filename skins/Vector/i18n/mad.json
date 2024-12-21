@@ -3,7 +3,8 @@
 		"authors": [
 			"Abdiafrizal",
 			"Boesenbergia",
-			"NoiX180"
+			"NoiX180",
+			"Munajad.MH"
 		]
 	},
 	"vector-languages": "Bhâsa",
@@ -33,5 +34,6 @@
 	"vector-main-menu-label": "Menu otama",
 	"vector-page-tools-label": "Pakakas",
 	"vector-page-tools-general-label": "Lomra",
+	"vector-page-tools-actions-label": "Tèngka",
 	"vector-unpin-element-label": "pangètek"
 }

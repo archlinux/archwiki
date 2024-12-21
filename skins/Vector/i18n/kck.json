@@ -11,7 +11,7 @@
 	"vector-view-create": "Bumba",
 	"vector-view-history": "Linga kwakapinda",
 	"vector-more-actions": "Kumwe",
-	"vector-searchsuggest-containing": "Haka mapheji ana <strong class=\"cdx-typeahead-search_serach-footer_query\">$1</strong>",
+	"vector-searchsuggest-containing": "Haka mapheji ana <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Zwiyapo",
 	"vector-toc-beginning": "Kutanga",
 	"vector-main-menu-label": "Menyu whulu",

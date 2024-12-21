@@ -5,7 +5,8 @@
 			"Fagunkoyel Hansdah",
 			"Manik Soren",
 			"Ramjit Tudu",
-			"ᱥᱟᱹᱜᱩᱱ ᱗"
+			"ᱥᱟᱹᱜᱩᱱ ᱗",
+			"ᱯᱨᱚᱯᱷᱮᱥᱥᱚᱨ"
 		]
 	},
 	"minerva-last-modified-date": "ᱢᱩᱪᱟᱹᱫ ᱥᱟᱯᱲᱟᱣ ᱟᱠᱟᱱ $1, $2 ᱨᱮ",
@@ -35,5 +36,6 @@
 	"mobile-frontend-redirected-from": "\"[[$1]]\" ᱠᱷᱚᱱ ᱧᱟᱢ ᱟᱹᱜᱩᱭ",
 	"mobile-frontend-user-newmessages": "ᱟᱢᱟᱜ ᱨᱚᱲ ᱥᱟᱦᱴᱟᱨᱮ ᱱᱟᱣᱟ ᱠᱷᱚᱵᱚᱨ ᱦᱮᱡ ᱟᱠᱟᱱᱟ",
 	"mobile-frontend-user-page-contributions": "ᱮᱱᱮᱢᱠᱩ",
-	"mobile-frontend-user-page-talk": "ᱨᱚᱲ"
+	"mobile-frontend-user-page-talk": "ᱨᱚᱲ",
+	"minerva-page-actions-overflow": "ᱟᱨᱦᱚᱸ"
 }

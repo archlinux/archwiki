@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Agonqurdina",
-			"Amire80",
 			"Ammartivari",
 			"Arianit",
 			"Besnik b",
@@ -20,7 +19,7 @@
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libër",
-	"visualeditor-cite-tool-name-journal": "Gazetë",
+	"visualeditor-cite-tool-name-journal": "Revistë shkencore",
 	"visualeditor-cite-tool-name-news": "Lajm",
 	"visualeditor-cite-tool-name-web": "Faqe rrjeti",
 	"cite-ve-changedesc-ref-group-both": "Grupi i referencës u ndryshua nga \"$1\" në \"$2\"",

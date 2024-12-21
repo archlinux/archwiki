@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tshering Nidup"
+			"Tshering Nidup",
+			"Sonamdargay"
 		]
 	},
-	"vector-view-view": "ལྷག"
+	"vector-view-view": "ལྷག",
+	"vector-more-actions": "དེ་ལས་མང་བ།",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ཡོད་པའི་ཤོག་ལེབ་འཚོལ་ཞིབ་འབད།",
+	"vector-page-tools-actions-label": "ལས་སྣ་ཚུ་"
 }

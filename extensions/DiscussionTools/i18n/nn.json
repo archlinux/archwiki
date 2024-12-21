@@ -3,7 +3,8 @@
 		"authors": [
 			"Jon Harald Søby",
 			"Njardarlogar",
-			"Ranveig"
+			"Ranveig",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Diskusjonsverktøy",
@@ -95,7 +96,7 @@
 	"discussiontools-preference-replytool": "Slå på raske svar",
 	"discussiontools-preference-replytool-help": "Dette vil visa deg ei lenke for å svara på diskusjonssidekommentarar med eitt klikk.",
 	"discussiontools-preference-sourcemodetoolbar": "Slå på endringsverktøy i kjeldemodus",
-	"discussiontools-replybutton": "Svar",
+	"discussiontools-replybutton": "{{GENDER:|Svar}}",
 	"discussiontools-replylink": "{{GENDER:|svar}}",
 	"discussiontools-replywidget-abandon": "Er du viss på at du vil kasta kommentaren du skriv på?",
 	"discussiontools-replywidget-abandon-discard": "Forkast kommentaren",

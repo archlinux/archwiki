@@ -8,7 +8,9 @@
 	"mobile-frontend-home-button": "Olayama",
 	"mobile-frontend-language-article-heading": "Li",
 	"mobile-frontend-main-menu-login": "Ae bakha",
+	"mobile-frontend-main-menu-nearby": "Sifasui sahatö",
 	"mobile-frontend-main-menu-settings": "Setelan",
 	"mobile-frontend-placeholder": "Alui {{SITENAME}}",
-	"mobile-frontend-random-button": "Gofu nga'örö"
+	"mobile-frontend-random-button": "Gofu nga'örö",
+	"minerva-page-actions-overflow": "Tohu-tohunia"
 }

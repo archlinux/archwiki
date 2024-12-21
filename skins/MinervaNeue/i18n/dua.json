@@ -1,15 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Olivier Moukodi"
+			"Olivier Moukodi",
+			"EbelleMarcel",
+			"NdumbèNdumbè"
 		]
 	},
-	"mobile-frontend-history": "Jombwa ɓetukwédi ɓa dipapá",
+	"mobile-frontend-history": "Jombwa ɓetukwédi ɓa dipapá.",
 	"mobile-frontend-home-button": "Ɓeɓótedi",
 	"mobile-frontend-language-article-heading": "Bwambo",
 	"mobile-frontend-main-menu-login": "Ɓetiŋgédi",
 	"mobile-frontend-main-menu-nearby": "O mbásan",
 	"mobile-frontend-main-menu-settings": "Poŋgilanɛ",
-	"mobile-frontend-placeholder": "Muwasó",
-	"mobile-frontend-random-button": "O mbaŋgisan"
+	"mobile-frontend-placeholder": "Muwasó {{SITENAME}}",
+	"mobile-frontend-random-button": "O mbaŋgisan",
+	"minerva-page-actions-overflow": "Pètè"
 }

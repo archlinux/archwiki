@@ -2,11 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Facenapalm",
-			"Kareyac"
+			"Kareyac",
+			"Stjn"
 		]
 	},
 	"apihelp-query+linterrors-summary": "Получение списка ошибок статического анализатора",
 	"apihelp-query+linterrors-param-categories": "Категории ошибок статического анализатора",
+	"apihelp-query+linterrors-param-invisible-categories": "Невидимые категории ошибок линтера",
 	"apihelp-query+linterrors-param-limit": "Количество возвращаемых результатов",
 	"apihelp-query+linterrors-param-from": "Идентификатор ошибки, с которой начать запрос",
 	"apihelp-query+linterrors-param-namespace": "Включать только ошибки из указанных пространств имён",

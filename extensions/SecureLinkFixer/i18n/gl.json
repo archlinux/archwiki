@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toliño"
+		]
+	},
+	"securelinkfixer-desc": "Reescribe os enderezos URL en HTTPS se o dominio sempre require HTTPS"
+}

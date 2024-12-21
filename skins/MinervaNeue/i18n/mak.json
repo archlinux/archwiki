@@ -8,7 +8,9 @@
 	"mobile-frontend-home-button": "Paladang",
 	"mobile-frontend-language-article-heading": "Basa",
 	"mobile-frontend-main-menu-login": "Antama log",
+	"mobile-frontend-main-menu-nearby": "Ri ampika",
 	"mobile-frontend-main-menu-settings": "Panngatorang",
 	"mobile-frontend-placeholder": "Boya ri {{SITENAME}}",
-	"mobile-frontend-random-button": "Sambarang"
+	"mobile-frontend-random-button": "Sambarang",
+	"minerva-page-actions-overflow": "Maraengangna"
 }

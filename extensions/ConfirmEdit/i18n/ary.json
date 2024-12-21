@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"SADIQUI"
+			"SADIQUI",
+			"Ideophagous"
 		]
 	},
-	"captcha-label": "كابتشا"
+	"captcha-label": "كاپتشا",
+	"captcha-createaccount-fail": "كاپتشا ماشي صحيحة ولّا ماكايناش.",
+	"captcha-sendemail-fail": "كاپتشا ماشي صحيحة ولّا ماكايناش."
 }

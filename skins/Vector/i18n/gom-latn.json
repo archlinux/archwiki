@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Isidore Dantas",
-			"The Discoverer"
+			"The Discoverer",
+			"QW90"
 		]
 	},
 	"vector-opt-out": "Adlea sworupant porot voch",
@@ -30,14 +31,20 @@
 	"vector-feature-limited-width-name": "Rundai",
 	"vector-feature-custom-font-size-name": "Mozkur",
 	"vector-feature-limited-width-0-label": "Rund",
+	"vector-feature-limited-width-1-label": "Sadharonn",
 	"vector-feature-custom-font-size-0-label": "Lhan",
+	"vector-feature-custom-font-size-1-label": "Sadharonn",
 	"vector-feature-custom-font-size-2-label": "Vhoddlo",
 	"skin-night-mode-name": "Rong",
 	"skin-night-mode-0-label": "Dis",
 	"skin-night-mode-1-label": "Rat",
+	"skin-theme-name": "Rong",
+	"skin-theme-os-label": "Apoap",
+	"vector-search-loader": "Sodache suchovnio load zatat",
 	"vector-toc-label": "Vixoi suchi",
 	"vector-toc-beginning": "Survat",
 	"vector-toc-toggle-button-label": "$1 upvibhag dakhoi / lipoi",
+	"vector-anon-user-menu-pages": "Sotrarombhit naslele sompadokam khatir panam",
 	"vector-anon-user-menu-pages-learn": "odik xikun ghe",
 	"vector-anon-user-menu-pages-label": "Sompadona vixim odik xikun ghe",
 	"vector-main-menu-tooltip": "Mukhel volleri",
@@ -54,5 +61,8 @@
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Bhasabhas]]",
 	"tooltip-vector-anon-user-menu-title": "Anik poryay",
 	"vector-page-tools-nav-label": "Panachin avtam",
-	"empty-language-selector-body": "Panacho mozkur her bhasani somorthit na."
+	"empty-language-selector-body": "Panacho mozkur her bhasani somorthit na.",
+	"vector-toc-unpinned-popup": "Vixoi suchi hanga hallun ailam.",
+	"vector-page-tools-unpinned-popup": "Avtam volleri hanga hallun ailam.",
+	"vector-main-menu-unpinned-popup": "Mukhel volleri hanga hallun ailam."
 }

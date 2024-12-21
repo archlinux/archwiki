@@ -7,7 +7,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Джевап бер",
-	"discussiontools-replylink": "джевап бер",
+	"discussiontools-replylink": "{{GENDER:|джевап бер}}",
 	"discussiontools-replywidget-cancel": "Бас тартув",
 	"discussiontools-replywidget-mode-source": "Излев",
 	"discussiontools-replywidget-mode-visual": "Коьрсел",

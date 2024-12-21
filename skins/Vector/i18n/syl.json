@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"এম আবু সাঈদ",
 			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
 		]
@@ -30,8 +29,10 @@
 	"vector-searchsuggest-containing": "ꠚꠣꠔꠣ ꠕꠥꠇꠣꠃꠇ꠆ꠇꠣ ꠎꠦꠘꠅ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "ꠎꠤꠘꠤꠡꠣꠁꠘ",
 	"vector-toc-beginning": "ꠀꠞꠝ꠆ꠛꠅ",
+	"vector-anon-user-menu-pages": "ꠛꠣꠞꠂꠎꠣꠅꠀ ꠟꠦꠈꠞꠣꠁꠘ꠆ꠔꠞ ꠟꠣꠉꠤ ꠙꠣꠔꠣꠁꠘ",
 	"vector-main-menu-label": "ꠀꠡꠟ ꠝꠦꠘꠥ",
 	"vector-page-tools-label": "ꠎꠤꠘꠤꠡꠣꠁꠘ",
 	"vector-page-tools-general-label": "ꠡꠣꠗꠣꠞꠘ",
+	"vector-page-tools-actions-label": "ꠄꠇꠡꠘꠣꠁꠘ",
 	"vector-unpin-element-label": "ꠟꠥꠇꠣꠁꠘ"
 }

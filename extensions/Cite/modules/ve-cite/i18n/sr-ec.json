@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Acamicamacaraca",
-			"Amire80",
 			"BadDog",
 			"Kizule",
 			"Milicevic01",
@@ -46,7 +45,7 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Списак општих референци",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Списак референци за групу: „$1”",
 	"cite-ve-dialog-referenceslist-title": "Списак референци",
-	"cite-ve-dialogbutton-citation-educationpopup-text": "Побољшајте садржај чланка додавањем извора информација. Наводите веб-сајтове, књиге, новине и часописе.",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Побољшајте веродостојност чланка додавањем извора информација. Наводите веб-сајтове, књиге, новине и часописе.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Референце",
 	"cite-ve-dialogbutton-reference-full-label": "Основна",
 	"cite-ve-dialogbutton-reference-title": "Референца",

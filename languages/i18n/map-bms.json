@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Bawoor",
 			"Bennylin",
 			"DannyS712",
@@ -241,7 +240,7 @@
 	"new-messages-from-users": "Rika nduwe $1 sekang {{PLURAL:$3|panganggo liya|$3 panganggo}} ($2).",
 	"new-messages-from-many-users": "Rika nduwe $1 sekang akeh panganggo ($2).",
 	"new-messages-link-plural": "{{PLURAL:$1|pesen anyar|999=pesen anyar}}",
-	"new-messages-diff-link-plural": "{{PLURAL:$1|owahan|999=owahan}} pungkasan",
+	"new-messages-diff-link-plural": "{{PLURAL:$1|owahan}} pungkasan",
 	"editsection": "sunting",
 	"editold": "sunting",
 	"viewsourceold": "deleng sumbere",
@@ -262,7 +261,6 @@
 	"feed-invalid": "Tipe penjalukan umpan ora bener.",
 	"feed-unavailable": "Umpan sindikasi (''syndication feeds'') ora disediakna",
 	"site-rss-feed": "$1 ''RSS Feed''",
-	"site-atom-feed": "$1 Atom feed",
 	"page-rss-feed": "\"$1\" ''RSS Feed''",
 	"page-atom-feed": "\"$1\" ''Atom Feed''",
 	"red-link-title": "$1 (kaca ora ana)",
@@ -601,7 +599,7 @@
 	"currentrev-asof": "Revisi paling anyar nang tanggal $1",
 	"revisionasof": "Revisi per $1",
 	"revision-info": "Revisi per $1; $2",
-	"previousrevision": "Revisi sedurunge",
+	"previousrevision": "← Revisi sedurunge",
 	"nextrevision": "Revisi lewih anyar",
 	"currentrevisionlink": "Revisi sekiyé",
 	"cur": "siki",

@@ -100,6 +100,5 @@
 	"math-wikibase-special-form-button": "Domanda di informazzion",
 	"math-wikibase-special-error-header": "Eror",
 	"math-wikibase-special-error-invalid-argument": "L'ID de l'oget Wikibase specifegad a l'esist minga.",
-	"math-wikibase-special-error-unknown": "In del cors del recuper di dati de Wikibase l'è capitad un eror minga conossud.",
-	"math-wikibase-special-error-no-wikibase": "A gh'è besogn de l'estesion Wikibase al fin de drovà quella pagina special chì."
+	"math-wikibase-special-error-unknown": "In del cors del recuper di dati de Wikibase l'è capitad un eror minga conossud."
 }

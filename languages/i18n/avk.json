@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"1233qwer1234qwer4",
-			"Amire80",
 			"Axel xadolik",
 			"DannyS712",
 			"Kaganer",
@@ -13,7 +12,9 @@
 			"Vlad5250",
 			"Wikimistusik",
 			"Zetud",
-			"아라"
+			"아라",
+			"Angularis",
+			"Kizule"
 		]
 	},
 	"tog-underline": "Levconyana gluyaxa",
@@ -157,6 +158,7 @@
 	"permalink": "Elupkafa gluyaxa",
 	"print": "Rubiara",
 	"view": "Wira",
+	"viewcontribs": "Va webekseem wí",
 	"skin-view-view": "Belira",
 	"skin-view-foreign": "Va $1 nedil",
 	"edit": "Betara",

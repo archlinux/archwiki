@@ -10,7 +10,8 @@
 			"Vago",
 			"Vugar 1981",
 			"Wertuose",
-			"Nemoralis"
+			"Nemoralis",
+			"Əkrəm Cəfər"
 		]
 	},
 	"skinname-vector": "Köhnə Vektor (2010)",
@@ -48,7 +49,7 @@
 	"vector-client-prefs-label": "Görünüş",
 	"vector-feature-limited-width-name": "Genişlik",
 	"vector-feature-custom-font-size-name": "Mətn",
-	"vector-feature-limited-width-0-label": "Sıx",
+	"vector-feature-limited-width-0-label": "Enli",
 	"vector-feature-limited-width-1-label": "Standart",
 	"vector-feature-custom-font-size-0-label": "Kiçik",
 	"vector-feature-custom-font-size-1-label": "Standart",

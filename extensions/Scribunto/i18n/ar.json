@@ -12,6 +12,7 @@
 			"زكريا"
 		]
 	},
+	"content-model-scribunto": "وحدة سكريبنتو",
 	"scribunto-desc": "إطار عمل لتضمين لغات البرمجة النصية في صفحات ميدياويكي",
 	"scribunto-line": "في السطر $1",
 	"scribunto-module-line": "في $1 على السطر $2",

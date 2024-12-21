@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Ilham",
 			"Lukman Tomayahu",
 			"Marwan Mohamad",
@@ -718,7 +717,7 @@
 	"currentrev-asof": "Biloli'o pulitiyo to $1",
 	"revisionasof": "Biloli'o to $1",
 	"revision-info": "Biloli'o per $1 oleh {{GENDER:$6|$2}}$7",
-	"previousrevision": "Biloli'o yilaluma'o",
+	"previousrevision": "← Biloli'o yilaluma'o",
 	"nextrevision": "Biloli'o lapatiyoma'o →",
 	"currentrevisionlink": "Biloli'o pulitiyo",
 	"cur": "mst",
@@ -1307,5 +1306,10 @@
 	"skin-view-edit-local": "Boli'a deskripsi lokal.",
 	"skin-action-protect": "Dahawa",
 	"skin-action-delete": "Luluta",
-	"skin-action-move": "Heyiya"
+	"skin-action-move": "Heyiya",
+	"blockedtext-made-by": "Lomubulo kilaraja lo $1",
+	"blockedtext-start-time": "Tilumula lomubulo: $1",
+	"blockedtext-expiration-time": "Pulitiyo lomubulo: $1",
+	"blockedtext-intended-blockee": "Taa bubulalo: $1",
+	"blockedtext-block-ip": "Alamat IP ulemu sa'ati botiya $1"
 }

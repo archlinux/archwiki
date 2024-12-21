@@ -20,6 +20,7 @@
 	"linter-category-fostered-desc": "Ці сторінки містять присвоєний контент.",
 	"linter-category-html5-misnesting": "Неправильно вкладений тег з різним відтворенням в HTML5 та HTML4",
 	"linter-category-html5-misnesting-desc": "Ці неправильно вкладені теги в HTML5 поводитимуться по-іншому, ніж в HTML4.",
+	"linter-category-night-mode-unaware-background-color": "Вказано колір тла, але не вказано відповідного кольору тексту",
 	"linter-category-misc-tidy-replacement-issues": "Різні проблеми",
 	"linter-category-misc-tidy-replacement-issues-desc": "Ці сторінки мають інші проблеми, через які вони відтворюються інакше й мають інший вигляд, ніж раніше",
 	"linter-category-misnested-tag": "Неправильно вкладені теги",

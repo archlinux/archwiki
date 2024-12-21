@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Ezagren",
-			"Mnam23"
+			"Mnam23",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Pakakas bacangkurah",
-	"discussiontools-autotopicsubpopup-body": "{{GENDER:|You}} pacangan manarima pamadahan wayah sasaurang mangirim kumintar hanyar di cangkurah ngini. Pian kawa marasukakan pangaturan pamadahan Pian di kakatujuan.",
+	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Pian}} pacangan manarima pamadahan wayah urang mangirim kumintar hanyar di cangkurah ngini. Pian kawa marasukakan pangaturan pamadahan Pian di kakatujuan.",
 	"discussiontools-autotopicsubpopup-dismiss": "Inggih, ulun paham",
 	"discussiontools-autotopicsubpopup-preferences": "Babak kakatujuan",
 	"discussiontools-autotopicsubpopup-title": "{{GENDER:|Pian}} sudah balangganan",
@@ -20,7 +21,7 @@
 	"discussiontools-emptystate-desc-self": "Urang-urang di {{SITENAME}} kawa mamakai [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|laman pamandiran]] ngini mangirimakan pasan publik gasan {{GENDER:|Pian}}, wan Pian pacangan dipadahi wayah bubuhannya manggawi.",
 	"discussiontools-emptystate-desc-self-anon": "Urang-urang di {{SITENAME}} kawa mamakai [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|laman pamandiran]] ngini mangirimakan pasan publik sual pambabakan nang digawi di alamat IP {{GENDER:|Pian}} rahatan dipakai.\n\nBanyak alamat IP nang baubah baimbal, wan rancak dipakai baimbai ulih babarapa urang. Pian kawa [$1 maulah akun] atawa [$2 babuat log] gasan mahindari kabingungan di masa kaina lawan pamakai lain nang sudah kaluar log. Maulah akun jua manyuhukakan alamat IP Pian.",
 	"discussiontools-emptystate-desc-self-temp": "Urang di {{SITENAME}} kawa mamakai [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|laman pamandiran]] ini gasan mangirim pasan umum ka {{GENDER:|Pian}}.\n\nAyungannya, [[{{MediaWiki:tempuser-helppage}}|laman ini pacangan kadaluarsa]]. Supaya kawa tarus manarima pamadahan, wan mamasuki fitur lainnya, [$1 ulah akun] atawa [$2 babuat log].",
-	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Laman pamandiran]] jadi wadah urang-urang bacangkurah nangkaya mana cara maulah kontén {{SITENAME}} manjadi isi nang baik wan bujur. Silakan mulai bacangkurah agar tahubung wan bagawi baimbai {{GENDER:{{PAGENAME}}|lawan}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Apa nang {{GENDER:|Pian}} pandirakan di sini pacangan kawa dijanaki ulih siapa haja.",
+	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Laman pamandiran]] jadi wadah urang-urang bacangkurah nangkaya apa cara maulah kontén {{SITENAME}} manjadi isi nang baik wan bujur. Mulaakan bacangkurah supaya tahubung wan gawi baimbai {{GENDER:{{PAGENAME}}|lawan}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Apa nang {{GENDER:|Pian}} pandirakan di sini pacangan kawa dijanaki lawan siapa haja.",
 	"discussiontools-emptystate-title": "Mulai bacangkurah sual {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "{{GENDER:|Salamat datang}} di laman pamandiran Pian",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|Salamat datang}} di laman pamandiran ini",
@@ -95,9 +96,9 @@
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Ampih balangganan",
 	"discussiontools-topicsubscription-button-unsubscribe-tooltip": "{{GENDER:|Ampih balangganan}} gasan ampih manarima pamadahan.",
 	"discussiontools-topicsubscription-error-not-found-title": "Langganan kada ditamui",
-	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Pian}} pacangan manarima pamadahan pasal kumintar hanyar di tupik ngini.",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Pian}} pacangan manarima pamadahan hiwal kumintar hanyar di tupik ngini.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Pian}} sudah balangganan!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Pian}} kada lagi manarima pamadahan pasal kumintar hanyar di tupik ngini.",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Pian}} kada lagi manarima pamadahan hiwal kumintar hanyar di tupik ngini.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Pian}} sudah ampih balangganan.",
 	"discussiontools-topicsubscription-pager-actions": "Tindakan",
 	"discussiontools-topicsubscription-pager-created": "Panambaian {{GENDER:|balangganan}}",
@@ -108,7 +109,7 @@
 	"discussiontools-topicsubscription-pager-topic": "Tupik",
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "Ampih balangganan",
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "Ubah langganan",
-	"discussiontools-topicsubscription-special-intro": "Balangganan pinanya kawa manjadiakan {{GENDER:|Pian}} maumpati suatu tupik di laman pamandiran. Wayah sasaurang mambalas di tupik itu, Pian pacangan manarima pamadahan.\n\nRasukakan nangkaya apa wan di mana Pian manarima pamadahan itu di [[Special:Preferences#mw-prefsection-echo|kakatujuan Pian]].",
+	"discussiontools-topicsubscription-special-intro": "Balangganan pinanya kawa manjadiakan {{GENDER:|Pian}} maumpati suatu tupik di laman pamandiran. Wayah urang mambalas di tupik itu, Pian pacangan manarima pamadahan.\n\nRasukakan nangkaya apa wan di mana Pian manarima pamadahan itu di [[Special:Preferences#mw-prefsection-echo|kakatujuan Pian]].",
 	"discussiontools-topicsubscription-special-title": "Langganan tupik",
 	"echo-category-title-dt-subscription": "{{PLURAL:$1|Langganan}} laman pamandiran",
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Paarsipan}} laman pamandiran",

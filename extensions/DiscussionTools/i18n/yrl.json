@@ -18,7 +18,7 @@
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|mukũiwara|mukũiwara'etá}}",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Yepé çuaxara piçaçú|$1 çuaxara'etá piçaçú|100=99+ çuaxara'etá piçaçú}} \"<strong>$3</strong>\" upé.",
 	"discussiontools-preference-label": "Murũgitaçawa murakimae'etá",
-	"discussiontools-replylink": "uçuaxara",
+	"discussiontools-replylink": "{{GENDER:|uçuaxara}}",
 	"discussiontools-replywidget-advanced": "Sotenũdewa",
 	"discussiontools-replywidget-cancel": "Umuamunika",
 	"discussiontools-replywidget-mention-tool-header": "Uwaçẽmu puruçara: $1",

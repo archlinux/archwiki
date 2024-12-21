@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"The Discoverer"
+			"The Discoverer",
+			"QW90"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Dixtti sompadon]]",
@@ -12,5 +13,7 @@
 	"tag-visualeditor-wikitext-description": "2017 wikimozkur sompadoka vorvim kel'lem sompadon",
 	"tag-visualeditor-switched-description": "Vaporpi dixtti sompadokacho vapor korun sompadon kortalo, uprant wikimozkur sompadok vaprunk laglo.",
 	"visualeditor-welcomedialog-action": "Sompadon chalu kor",
+	"visualeditor-welcomedialog-switch": "Mull sompadokacher voch",
+	"visualeditor-welcomedialog-switch-ve": "Dixtti sompadokacher voch",
 	"visualeditor-welcomedialog-title": "$2 -ant {{GENDER:$1|ievkar}}"
 }

@@ -83,6 +83,5 @@
 	"math-wikibase-special-form-placeholder": "ชื่อสูตร",
 	"math-wikibase-special-form-button": "ขอข้อมูล",
 	"math-wikibase-special-error-header": "เกิดข้อผิดพลาด",
-	"math-wikibase-special-error-unknown": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุขณะดึงข้อมูลจากวิกิเบส",
-	"math-wikibase-special-error-no-wikibase": "จำเป็นต้องมีส่วนขยายวิกิเบสเพื่อที่จะใช้หน้าพิเศษนี้"
+	"math-wikibase-special-error-unknown": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุขณะดึงข้อมูลจากวิกิเบส"
 }

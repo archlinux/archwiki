@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"NMW03"
+			"NMW03",
+			"Nemoralis"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Bu açarla heç bir keş yaddaşa alınmış serializasiya tapılmadı",

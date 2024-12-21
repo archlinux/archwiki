@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Winston Sung"
+		]
+	},
+	"scribunto-common-error-category": "Script ô dâng gì hiĕk",
+	"scribunto-lua-error": "Lua chó̤-nguô: $2."
+}

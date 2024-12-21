@@ -11,7 +11,8 @@
 			"Shirayuki",
 			"The Evil IP address",
 			"Umherirrender",
-			"Verdy p"
+			"Verdy p",
+			"Nemoralis"
 		]
 	},
 	"syntaxhighlight-desc": "{{desc|name=Syntax Highlight GeSHi|url=https://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi}}",
@@ -19,7 +20,7 @@
 	"syntaxhighlight-error-category-desc": "Description on [[Special:TrackingCategories]] for the {{msg-mw|syntaxhighlight-error-category}} tracking category.",
 	"syntaxhighlight-enclose-category": "{{doc-important|Do not translate the word \"<code>enclose</code>\".}}\n{{tracking category name}}\nTracking category for pages using the deprecated \"enclose\" attribute.",
 	"syntaxhighlight-enclose-category-desc": "{{doc-important|Do not translate the word \"<code>enclose</code>\".}}\nDescription on [[Special:TrackingCategories]] for the {{msg-mw|syntaxhighlight-enclose-category}} tracking category.",
-	"syntaxhighlight-source-category": "{{tracking category name}}\nTracking category for pages using the deprecated &lt;source&gt; tags.\n\nDo not translate the word \"source\".",
+	"syntaxhighlight-source-category": "{{doc-important|Do not translate the word \"<code>source</code>\".}}\n{{tracking category name}}\nTracking category for pages using the deprecated &lt;source&gt; tags.",
 	"syntaxhighlight-source-category-desc": "Description on [[Special:TrackingCategories]] for the {{msg-mw|syntaxhighlight-source-category}} tracking category.\n\nDo not translate the word \"source\".",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Label for the code input field\n{{Identical|Code}}",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Label for the programming language field (not a natural human language)\n{{Identical|Language}}",

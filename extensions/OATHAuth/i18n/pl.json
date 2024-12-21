@@ -22,6 +22,7 @@
 	"oathauth-enable": "Włączanie uwierzytelniania dwuskładnikowego",
 	"oathauth-recoverycodes": "Poniżej znajduje się lista jednorazowych kodów zapasowych. Te kody będą mogły być użyte tylko raz w sytuacjach awaryjnych gdy nie masz dostępu do swojego urządzania. Zapisz je i przechowuj w bezpiecznym miejscu. Zalecamy, byś {{GENDER:|oznaczał|oznaczała}} sobie poszczególne kody jako wykorzystane, kiedy zalogujesz się za ich pomocą. Jeżeli zgubisz swoje urządzenie, będą one jedynym sposobem na odzyskanie konta.\n\n'''Kody nie zostaną wyświetlone ponownie'''.",
 	"oathauth-recoverycodes-important": "Ten krok jest bardzo ważny! Nie pomijaj go!",
+	"oathauth-recoverycodes-download": "Pobierz kody zapasowe",
 	"oathauth-disable": "Wyłączanie uwierzytelniania dwuskładnikowego",
 	"oathauth-validatedoath": "Poświadczono urządzenie uwierzytelniające. Uwierzytelnianie dwuskładnikowe będzie teraz wymagane podczas logowania.",
 	"oathauth-noscratchforvalidation": "Do potwierdzenia uwierzytelniania dwuskładnikowego nie możesz użyć zapasowego kodu jednorazowego. Kody te służą tylko do odzyskiwania dostępu do konta w sytuacjach kryzysowych. Użyj kodu uwierzytelniającego ze swojej aplikacji do uwierzytelniania dwuskładnikowego (takiej jak Google Authenticator).",

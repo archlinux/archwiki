@@ -4,7 +4,16 @@
 			"Midleading"
 		]
 	},
+	"mobile-frontend-editor-edit": "Gaij",
 	"mobile-frontend-home-button": "Yiebdaeuz",
 	"mobile-frontend-language-article-heading": "Vah",
-	"mobile-frontend-main-menu-login": "Dwnghluz"
+	"mobile-frontend-main-menu-contributions": "Haej",
+	"mobile-frontend-main-menu-login": "Dwnghluz",
+	"mobile-frontend-main-menu-logout": "Doiq ok",
+	"mobile-frontend-placeholder": "Ra {{SITENAME}}",
+	"mobile-frontend-user-page-contributions": "Haej",
+	"mobile-frontend-user-page-talk": "Daujlun",
+	"minerva-page-actions-language-switcher": "Vah",
+	"minerva-page-actions-history": "Lizsij",
+	"skin-minerva-mobile-option-MinervaShowCategories": "Faendingz"
 }

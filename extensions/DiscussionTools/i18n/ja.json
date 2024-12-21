@@ -33,7 +33,8 @@
 			"Waki285",
 			"Amayus",
 			"Ant176",
-			"Dragoniez"
+			"Dragoniez",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "議論ツール",
@@ -218,7 +219,7 @@
 	"echo-category-title-dt-subscription-archiving": "トークページの{{PLURAL:$1|アーカイブ化}}",
 	"echo-pref-tooltip-dt-subscription": "{{GENDER:|購読}}中の話題に誰かが新しいコメントを投稿したときに通知する。",
 	"echo-pref-tooltip-dt-subscription-archiving": "{{GENDER:|購読}}している話題がページから過去ログ化または除去されたとき、あるいはその話題に新しく投稿されたコメントに関する通知がその他の理由により送信できなくなった場合に通知する。",
-	"discussiontools-comments-before-first-heading-category-desc": "ディスカッション ページにはリード節 (最初の見出しの前) にコメントが含まれています。これにより、特にモバイル バージョンやモバイル アプリではリードまたはコメントが正しく表示されない可能性があります。",
+	"discussiontools-comments-before-first-heading-category-desc": "議論ページには冒頭節 (最初の見出しの前) にコメントが含まれています。これにより、特にモバイル版やモバイルアプリでは冒頭文またはコメントが正しく表示されない可能性があります。",
 	"tag-discussiontools-added-comment-description": "この編集でトークページにコメントが投稿されました",
 	"tag-discussiontools-description": "議論ツールを使って編集",
 	"tag-discussiontools-edit": "編集済みのコメント",

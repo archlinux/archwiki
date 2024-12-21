@@ -121,6 +121,10 @@
 			"description": "Determine which TexVC variant is used, currently available: 'mathoid', 'restbase' (default) and 'local'.",
 			"value": "restbase"
 		},
+		"MathSvgRenderer": {
+			"description": "Determine which SVG rendering service is used. Currently available 'mathoid', 'restbase'.",
+			"value": "restbase"
+		},
 		"MathLaTeXMLTimeout": {
 			"value": 240
 		},
@@ -232,6 +236,7 @@
 				"popups-settings-option-math-description"
 			],
 			"dependencies": [
+				"mediawiki.user",
 				"mediawiki.ForeignApi"
 			]
 		},

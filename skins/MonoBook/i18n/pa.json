@@ -1,8 +1,17 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Cabal"
+		]
 	},
 	"skinname-monobook": "ਮੋਨੋਬੁੱਕ",
+	"monobook-jumptotop": "ਸਿਖਰ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+	"monobook-jumptopersonal": "ਵਰਤੋਂਕਾਰ ਸੰਦ",
+	"monobook-more-actions": "ਹੋਰ",
+	"cactions-mobile": "ਸਫ਼ੇ ਦੀਆਂ ਕਾਰਵਾਈਆਂ",
+	"monobook-cactions-label": "ਸਫ਼ੇ ਦੀਆਂ ਕਾਰਵਾਈਆਂ",
+	"monobook-notifications-link": "ਸੂਚਨਾਵਾਂ ($1)",
+	"monobook-notifications-link-none": "ਸੂਚਨਾਵਾਂ",
 	"monobook-view-history": "ਅਤੀਤ",
 	"monobook-action-undelete": "{{PLURAL:$1|ਇੱਕ ਸੋਧ|$1 ਸੋਧਾਂ}} ਹਟਾਉਣਾ-ਵਾਪਸ"
 }

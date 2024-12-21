@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sonamdargay"
+		]
+	},
+	"mobile-frontend-history": "ཤོག་ལེབ་འདི་གི་ཞུན་དག་བྱུང་རབས་བལྟ།",
+	"mobile-frontend-home-button": "མ་ངོས།",
+	"mobile-frontend-language-article-heading": "སྐད༌ཡིག",
+	"mobile-frontend-main-menu-login": "ནང་བསྐྱོད།",
+	"mobile-frontend-main-menu-nearby": "ཉེ་འདབས་ལུ་",
+	"mobile-frontend-main-menu-settings": "སྒྲིག་སྟངས་ཚུ།",
+	"mobile-frontend-placeholder": "{{SITENAME}} འཚོལ་ཞིབ་འབད།",
+	"mobile-frontend-random-button": "རིམ༌བྲལ",
+	"minerva-page-actions-overflow": "ལྷག་མ་"
+}

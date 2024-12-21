@@ -4,7 +4,8 @@
 			"Kareyac",
 			"Kasey",
 			"StanProg",
-			"Ted Masters"
+			"Ted Masters",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Дискусионни инструменти",
@@ -85,7 +86,7 @@
 	"discussiontools-replywidget-mention-tool-header": "Намиране на потребител: $1",
 	"discussiontools-replywidget-mention-tool-title": "Споменаване на потребител",
 	"discussiontools-replywidget-mode-source": "Код",
-	"discussiontools-replywidget-mode-visual": "Визуално",
+	"discussiontools-replywidget-mode-visual": "Визуален",
 	"discussiontools-replywidget-newcomments-button": "Показване на $1 {{PLURAL:$1|нов коментар|нови коментара}}",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|Добавяне}} на тема",
 	"discussiontools-replywidget-placeholder-newtopic": "Описание",

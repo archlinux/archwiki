@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"122112ê",
-			"Amire80",
 			"Jose77",
 			"Meno25",
 			"Nemo bis",
@@ -192,7 +191,7 @@
 	"ok": "OK",
 	"retrievedfrom": "Dèn dòn ritriv am na\"$1\"",
 	"new-messages": "{{PLURAL:$3|Yu gèt}} $1 ($2).",
-	"new-messages-diff-link-plural": "las {{PLURAL:$1| chenj|999=chenj dɛm}}",
+	"new-messages-diff-link-plural": "las {{PLURAL:$1|chenj|999=chenj dɛm}}",
 	"editsection": "chenj",
 	"editold": "èdit",
 	"viewsourceold": "Luk dhi sòrs",
@@ -346,7 +345,7 @@
 	"currentrev-asof": "Latest rivishɔn as of $1",
 	"revisionasof": "Rivishɔn as fɔ $1",
 	"revision-info": "Rivishɔn as fɔ $1 bay {{GENDER:$6|$2}}$7",
-	"previousrevision": "pass ol vèrsiòn",
+	"previousrevision": "← Pass ol vèrsiòn",
 	"nextrevision": "Nyu rivishɔn →",
 	"currentrevisionlink": "Di las rivishɔn",
 	"cur": "kùr",
@@ -445,7 +444,6 @@
 	"rcshowhideanons-hide": "Haid",
 	"rcshowhidepatr": "$1 patrul ɛdit dɛn",
 	"rcshowhidemine": "$1 mi èditdèm",
-	"rcshowhidemine-show": "Show",
 	"rcshowhidemine-hide": "Haid",
 	"rclinks": "Sho las $1 chenj dɛn insay las $2 dez",
 	"diff": "diff",

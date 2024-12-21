@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"唐吉訶德的侍從"
+			"唐吉訶德的侍從",
+			"Midleading"
 		]
 	},
+	"categorytree-portlet": "Faendingz",
+	"categorytree-category": "Faendingz:",
 	"categorytree-collapse": "rwt",
 	"categorytree-expand": "mbe"
 }

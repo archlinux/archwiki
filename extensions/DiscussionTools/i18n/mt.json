@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Chrisportelli",
-			"ToniSant"
+			"ToniSant",
+			"Woytecr"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Tweġiba",
@@ -18,8 +19,8 @@
 	"discussiontools-preference-replytool": "Attiva r-risposti veloċi",
 	"discussiontools-preference-replytool-help": "Din turik ħolqa biex tirrispondi lill-kummenti fuq paġna ta' diskussjoni bi klikk waħda.",
 	"discussiontools-preference-sourcemodetoolbar": "Ippermetti għodda tal-editjar fil-modalità tas-sors",
-	"discussiontools-replybutton": "Wieġeb",
-	"discussiontools-replylink": "wieġeb",
+	"discussiontools-replybutton": "{{GENDER:|Wieġeb}}",
+	"discussiontools-replylink": "{{GENDER:|wieġeb}}",
 	"discussiontools-replywidget-advanced": "Avvanzati",
 	"discussiontools-replywidget-anon-warning": "<strong>Bħalissa m'intix fil-kont tiegħek.</strong> Sabiex tirċievi l-attribuzzjoni b'ismek minflok l-indirizz IP tiegħek, tista' [$1 tidħol] jew [$2 toħloq kont].",
 	"discussiontools-replywidget-mode-source": "Sors",

@@ -21,7 +21,8 @@
 			"SPQRobin",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan"
+			"Southparkfan",
+			"McDutchie"
 		]
 	},
 	"thanks-desc": "Voegt koppelingen toe voor het bedanken van gebruikers voor bewerkingen, reacties, enzovoort.",
@@ -43,7 +44,7 @@
 	"thanks-error-invalidrecipient-bot": "Bots kunnen geen bedankjes ontvangen",
 	"thanks-error-invalidrecipient-self": "U kunt niet uzelf bedanken",
 	"thanks-error-notloggedin": "Anonieme gebruikers kunnen geen bedankjes versturen",
-	"thanks-error-ratelimited": "{{GENDER:$1|U}} hebt uw limiet voor bedankjes overschreden. Wacht even en probeer het dan opnieuw.",
+	"thanks-error-ratelimited": "{{GENDER:$1|U}} hebt uw tempobeperking overschreden. Wacht een tijdje en probeer het dan nog eens.",
 	"thanks-error-api-params": "De 'revid' of de 'logid' parameter is verplicht",
 	"thanks-thank-tooltip": "Deze {{GENDER:$2|gebruiker}} een bedankje {{GENDER:$1|sturen}}",
 	"thanks-thank-tooltip-no": "Bedankje {{GENDER:$1|annuleren}}",

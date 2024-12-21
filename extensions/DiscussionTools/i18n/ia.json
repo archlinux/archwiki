@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"McDutchie"
+			"McDutchie",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Tu recipera un notification quando alcuno invia un nove commento in iste discussion. Tu pote adjustar tu parametros de notification in le preferentias.",
@@ -104,8 +105,8 @@
 	"discussiontools-preference-topicsubscription-help": "Isto te permittera de subscriber te pro reciper notificationes de commentos sur topicos individual.",
 	"discussiontools-preference-visualenhancements": "Monstrar le activitate del discussion",
 	"discussiontools-preference-visualenhancements-help": "Isto activara un nove apparentia de paginas de discussion que include information sur le activitate in cata discussion.",
-	"discussiontools-replybutton": "Responder",
-	"discussiontools-replylink": "responder",
+	"discussiontools-replybutton": "{{GENDER:|Responder}}",
+	"discussiontools-replylink": "{{GENDER:|responder}}",
 	"discussiontools-replywidget-abandon": "Es tu secur de voler abandonar le commento que tu scribe?",
 	"discussiontools-replywidget-abandon-discard": "Abandonar commento",
 	"discussiontools-replywidget-abandon-keep": "Continuar a scriber",

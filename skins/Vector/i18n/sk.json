@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Helix84",
 			"KuboF",
 			"Luky001",
@@ -42,6 +41,16 @@
 	"vector-jumptosearch": "Prejsť na vyhľadávanie",
 	"vector-jumptocontent": "Preskočiť na obsah",
 	"vector-more-actions": "Viac",
+	"vector-feature-limited-width-name": "Šírka",
+	"vector-feature-custom-font-size-name": "Písmo",
+	"vector-feature-limited-width-0-label": "Široká",
+	"vector-feature-limited-width-1-label": "Štandardná",
+	"vector-feature-custom-font-size-0-label": "Malé",
+	"vector-feature-custom-font-size-1-label": "Štandardné",
+	"vector-feature-custom-font-size-2-label": "Veľké",
+	"skin-theme-name": "Farba",
+	"skin-theme-description": "[Experimentálna verzia, vysoká pravdepodobnosť problémov] Znižuje svetlo vyžarované obrazovkami zariadení.",
+	"skin-theme-os-label": "Automaticky",
 	"vector-search-loader": "Načítavajú sa návrhy pre vyhľadávanie",
 	"vector-searchsuggest-containing": "Hľadať stránky obsahujúce <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Obsah",
@@ -55,11 +64,15 @@
 	"vector-main-menu-label": "Hlavné menu",
 	"vector-page-tools-label": "Nástroje",
 	"vector-page-tools-general-label": "Všeobecné",
+	"vector-page-tools-actions-label": "Akcie",
 	"vector-pin-element-label": "presunúť do postranného panelu",
 	"vector-unpin-element-label": "skryť",
 	"tooltip-vector-anon-user-menu-title": "Ďalšie možnosti",
+	"vector-page-tools-nav-label": "Nástroje stránky",
 	"vector-prefs-limited-width": "Povoliť režim obmedzenej šírky",
 	"vector-prefs-limited-width-help": "Povoliť režim obmedzenej šírky pre lepšiu čitateľnosť.",
+	"empty-language-selector-body": "Obsah stránky nie je podporovaný v iných jazykoch.",
 	"vector-toc-unpinned-popup": "Obsah bol presunutý sem.",
+	"vector-page-tools-unpinned-popup": "Menu nástrojov sa presunulo sem.",
 	"vector-main-menu-unpinned-popup": "Hlavné menu bolo presunuté sem."
 }

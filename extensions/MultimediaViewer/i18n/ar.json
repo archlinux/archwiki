@@ -11,7 +11,8 @@
 			"ديفيد",
 			"زكريا",
 			"محمد أحمد عبد الفتاح",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"NEHAOUA"
 		]
 	},
 	"multimediaviewer-desc": "زيادة حجم الصور المصغرة في واجهة ملء الشاشة.",
@@ -86,7 +87,7 @@
 	"multimediaviewer-text-embed-credit-text-b": "بواسطة $1 و$2",
 	"multimediaviewer-html-embed-credit-text-bl": "بواسطة $1 و$2 و$3",
 	"multimediaviewer-html-embed-credit-text-b": "بواسطة $1 و$2",
-	"multimediaviewer-html-embed-credit-link-text": "رابط",
+	"multimediaviewer-html-embed-credit-link-text": "وصلة",
 	"multimediaviewer-embed-byline": "صاحب العمل: $1",
 	"multimediaviewer-embed-license": "الترخيص: $1",
 	"multimediaviewer-embed-via": "المصدر: $1",

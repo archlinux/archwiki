@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Htawmonzel"
+			"Htawmonzel",
+			"咽頭べさ"
 		]
 	},
-	"inputbox-tryexact": "ပကိတ် ညံင်ဂွံကိတ်ညဳ"
+	"inputbox-tryexact": "ပကိတ် ညံင်ဂွံကိတ်ညဳ",
+	"inputbox-postcomment": "ဒကုတ်တၟိ",
+	"inputbox-postcommenttitle": "ဒကုတ်တၟိ"
 }

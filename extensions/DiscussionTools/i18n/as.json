@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Simbu123"
+			"Simbu123",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "আলোচনা সঁজুলি",
@@ -53,8 +54,8 @@
 	"discussiontools-preference-replytool": "দ্ৰুত উত্তৰ দিয়া সক্ৰিয় কৰক",
 	"discussiontools-preference-replytool-help": "ই আপোনাক এটা ক্লিকত আলোচনা পৃষ্ঠাৰ মন্তব্যৰ উত্তৰ দিবলৈ এটা লিংক দেখুৱাব।",
 	"discussiontools-preference-sourcemodetoolbar": "উৎস ম'ডত সম্পাদনা সঁজুলিবোৰ সক্ৰিয় কৰক",
-	"discussiontools-replybutton": "উত্তৰ দিয়ক",
-	"discussiontools-replylink": "উত্তৰ দিয়ক",
+	"discussiontools-replybutton": "{{GENDER:|উত্তৰ দিয়ক}}",
+	"discussiontools-replylink": "{{GENDER:|উত্তৰ দিয়ক}}",
 	"discussiontools-replywidget-abandon": "আপুনি লিখি থকা মন্তব্যটো আপুনি সঁচাই বৰ্জন কৰিব বিচাৰেনে?",
 	"discussiontools-replywidget-abandon-discard": "মন্তব্য বৰ্জন কৰক",
 	"discussiontools-replywidget-abandon-keep": "লিখা অব্যাহত ৰাখক",

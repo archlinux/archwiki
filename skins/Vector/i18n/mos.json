@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Abdul Fatawu 352",
-			"Amire80",
 			"Hasslaebetch",
 			"Raizkgh",
 			"Soumaya"
@@ -44,7 +43,7 @@
 	"vector-feature-custom-font-size-1-label": "A sẽn yaa bilfã",
 	"vector-feature-custom-font-size-2-label": "Bedré",
 	"vector-search-loader": "Sõng-y n ges-y bũmb nins y sẽn dat n maan n bao n bãng bũmb ningã",
-	"vector-searchsuggest-containing": "Bao nemse n tar <strong class=\"cdx-typeahead-search_search-footer_query\">$1</strong>",
+	"vector-searchsuggest-containing": "Bao nemse n tar <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
 	"vector-toc-label": "Sõng sẽn be pʋgẽ",
 	"vector-toc-beginning": "Sɩngr",

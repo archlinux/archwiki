@@ -84,6 +84,5 @@
 	"math-wikibase-special-form-button": "വിവരം അഭ്യർത്ഥിക്കു",
 	"math-wikibase-special-error-header": "പിഴവ്",
 	"math-wikibase-special-error-invalid-argument": "താങ്കൾ നൽകിയ വിക്കിബേസ് ഇനത്തിന്റെ ഐഡി നിലവിലില്ല.",
-	"math-wikibase-special-error-unknown": "വിക്കിബേസിൽ നിന്ന് ഡേറ്റ എടുക്കുമ്പോൾ ഒരു അജ്ഞാത പിഴവ് സംഭവിച്ചു.",
-	"math-wikibase-special-error-no-wikibase": "ഈ പ്രത്യേക താൾ ഉപയോഗിക്കുന്നതിന് വിക്കിബേസ് അനുബന്ധം ആവശ്യമാണ്."
+	"math-wikibase-special-error-unknown": "വിക്കിബേസിൽ നിന്ന് ഡേറ്റ എടുക്കുമ്പോൾ ഒരു അജ്ഞാത പിഴവ് സംഭവിച്ചു."
 }

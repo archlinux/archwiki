@@ -21,7 +21,8 @@
 			"Stryn",
 			"Syreeni",
 			"VezonThunder",
-			"ZeiP"
+			"ZeiP",
+			"Samoasambia"
 		]
 	},
 	"wikieditor": "Edistynyt wikitekstin muokkauskäyttöliittymä",
@@ -30,7 +31,7 @@
 	"wikieditor-toolbar": "Työkalupalkki muokkaukseen",
 	"wikieditor-toolbar-desc": "Muokkaussivun työkalupalkki paremmalla käytettävyydellä.",
 	"wikieditor-toolbar-preference": "Ota käyttöön työkalupalkki muokkauksissa",
-	"wikieditor-toolbar-preference-help": "Tätä kutsutaan joskus '2010 wikitekstimuokkaimeksi'.",
+	"wikieditor-toolbar-preference-help": "Tätä kutsutaan joskus ”wikitekstimuokkaimeksi 2010”.",
 	"wikieditor-toolbar-tool-bold": "Lihavointi",
 	"wikieditor-toolbar-tool-bold-example": "Lihavoitu teksti",
 	"wikieditor-toolbar-tool-italic": "Kursivointi",

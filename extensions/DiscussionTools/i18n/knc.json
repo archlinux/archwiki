@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mohammedbama123",
+			"Umargana1"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Kalak ne",
+	"discussiontools-replylink": "{{GENDER:|kalakne}}",
+	"discussiontools-replywidget-advanced": "Huutu",
+	"discussiontools-replywidget-cancel": "Kwaltǝ",
+	"discussiontools-replywidget-mode-source": "Usulu",
+	"discussiontools-replywidget-mode-visual": "Kuru ye",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Kalakne}} to {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Rumin",
+	"discussiontools-replywidget-reply": "{{GENDER:|Kalakne}}",
+	"discussiontools-replywidget-summary": "Kasartǝ",
+	"discussiontools-replywidget-watchthis": "Shafi ade kǝllune [[Special:Watchlist|kuru num]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|kam fal|am nguu}} manazan",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|mana|mana ngwu}}",
+	"discussiontools-topicheader-latestcomment": "Mana kǝrmaye: $1",
+	"discussiontools-topicsubscription-button-subscribe": "yuwo",
+	"discussiontools-topicsubscription-button-subscribe-label": "Yuwo",
+	"discussiontools-topicsubscription-button-unsubscribe": "yuumi",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Yuumi",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Nyi}} notǝ fandimin kela mana adeyen.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Nyi}} yuumi!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Nyi}} gadero notu fandumba kla mana attǝyǝn.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Nyi}} yuumi."
+}

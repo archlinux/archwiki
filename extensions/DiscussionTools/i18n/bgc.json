@@ -5,7 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "जवाब",
-	"discussiontools-replylink": "उत्तर",
+	"discussiontools-replylink": "{{GENDER:|उत्तर}}",
 	"discussiontools-replywidget-advanced": "अग्रगत",
 	"discussiontools-replywidget-cancel": "रद्द करैं",
 	"discussiontools-replywidget-mode-source": "स्रोत",

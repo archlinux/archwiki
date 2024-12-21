@@ -5,10 +5,14 @@
 			"Snævar",
 			"Stefán Örvar Sigmundsson",
 			"Sveinn í Felli",
-			"Þjarkur"
+			"Þjarkur",
+			"Bjarki S",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Þú munt fá tilkynningu þegar einhver skrifar nýtt svar í þessari umræðu. Þú getur breytt tilkynninga stillingunum þínum í stillingunum.",
+	"discussiontools-autotopicsubpopup-dismiss": "Ég náði því",
+	"discussiontools-autotopicsubpopup-preferences": "Breyta kjörstillingum",
 	"discussiontools-defaultsummary-reply": "Svar",
 	"discussiontoolsdebug-pagetitle": "Síðutitill",
 	"discussiontools-emptystate-button": "Byrja nýja umræðu",
@@ -23,6 +27,8 @@
 	"discussiontools-findcomment-results-transcluded": "(innifalið frá öðrum síðum)",
 	"discussiontools-findcomment-title": "Finna athugasemd",
 	"discussiontools-newtopic-missing-title": "Vinsamlegast tilgreindu titil fyrir umræðuefnið. Ef þú smellir á \"{{int:discussiontools-replywidget-newtopic}}\", þá verður umræðuefninu þínu bætt við án titils.",
+	"discussiontools-newtopic-placeholder-title": "Fyrirsögn",
+	"discussiontools-pagetitle-newtopic": "Hefja nýja umræðu á $1",
 	"discussiontools-preference-newtopictool": "Virkja flýtiviðbót umræðuefna",
 	"discussiontools-preference-replytool": "Virkja snöggan svarmöguleika",
 	"discussiontools-preference-replytool-help": "Þetta gerir þér kleift að svara umræðum á spjallsíðum með einum smelli.",

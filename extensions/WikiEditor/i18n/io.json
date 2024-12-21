@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"JSantos",
 			"Joao Xavier",
 			"Lakaoso",
@@ -76,5 +75,6 @@
 	"wikieditor-toolbar-help-content-ilink-description": "Interna ligilo",
 	"wikieditor-toolbar-help-content-xlink-description": "Extera ligilo",
 	"wikieditor-toolbar-help-content-signature-description": "Signaturo",
+	"wikieditor-realtimepreview-preview": "Previdado",
 	"wikieditor-realtimepreview-manual": "Kliktez nun, por previdar la rezulto di vua redakturi."
 }

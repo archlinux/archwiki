@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Ajeje Brazorf",
-			"Amire80",
 			"Constructeur",
 			"Djiboun",
 			"Gomoko",
@@ -21,11 +20,13 @@
 			"Yona b",
 			"Zebulon84",
 			"SleaY",
-			"Goombiis"
+			"Goombiis",
+			"Mahabarata"
 		]
 	},
 	"math-desc": "Restitue les formules mathématiques entre les balises <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
 	"popups-settings-option-math": "Maths",
+	"popups-settings-option-math-description": "Expliquer les formules mathématiques.",
 	"popups-settings-option-math-tooltip": "Expliquer les formules mathématiques au survol.",
 	"math-visualeditor-mwchemdialog-title": "Formule chimique",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Modification rapide",
@@ -77,8 +78,10 @@
 	"math-visualeditor-symbol-group-math-typefaces": "Polices de caractère",
 	"math-visualeditor-symbol-group-math-unsorted": "Non trié",
 	"math-form-tex-label": "Entrée TeX personnalisée",
+	"math-form-tex-help": "Testez avec votre propre entrée TeX. Voir la [[{{int:math-helppage}}|page d'aide pour les formules mathématiques]] pour plus d'aide.",
 	"math-form-type-label": "Type de l'entrée",
 	"math-form-type-tex": "tex (entrée normale)",
+	"math-form-type-chem": "chem (entrée pour un support chimique, par exemple <code dir=\"ltr\">\\ce{H2O}</code> pour l'eau)",
 	"math-form-display-label": "Mode d'affichage mathématique",
 	"math-helppage": "Help:Affichage d'une formule",
 	"math_failure": "Échec de l’analyse",

@@ -140,7 +140,7 @@
 	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "V članku <strong>$4</strong> je bila ustvarjena povezava na članek <strong>$3</strong>.",
 	"notification-compact-header-page-linked": "Povezava s strani <strong>$1</strong>.",
-	"notification-bundle-header-page-linked": "{{PLURAL:$5|Z $5 strani je bila ustvarjena povezava na <strong>$3</strong>|Z $5 strani sta bili ustvarjeni povezavi na <strong>$3</strong>|S $5 strani so bile ustvarjene povezave na <strong>$3</strong>|Z $5 strani so bile ustvarjene povezave na <strong>$3</strong>|100=S 100 ali več strani so bile ustvarjene povezave na <strong>$3</strong>}}.",
+	"notification-bundle-header-page-linked": "{{PLURAL:$5|Na $5 strani je bila ustvarjena povezava na <strong>$3</strong>|Na $5 straneh sta bili ustvarjeni povezavi na <strong>$3</strong>|Na $5 straneh so bile ustvarjene povezave na <strong>$3</strong>|Na $5 strani so bile ustvarjene povezave na <strong>$3</strong>|100=Na 100 ali več straneh so bile ustvarjene povezave na <strong>$3</strong>}}.",
 	"notification-header-article-reminder": "Stran, na katero {{GENDER:$2|ste}} si želeli biti spomenjeni, je na naslovu <strong>$3</strong>",
 	"notification-link-text-what-links-here": "Vse povezave na to stran",
 	"notification-header-mention-other": "$1 {{GENDER:$3|vas}} je {{GENDER:$2|omenil|omenila|omenil_a}} na strani <strong>$4</strong> v razdelku »<strong>$5</strong>«.",

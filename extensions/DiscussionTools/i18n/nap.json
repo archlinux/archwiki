@@ -5,7 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Rispunne",
-	"discussiontools-replylink": "rispunne",
+	"discussiontools-replylink": "{{GENDER:|rispunne}}",
 	"discussiontools-replywidget-advanced": "Avanzate",
 	"discussiontools-replywidget-cancel": "Scancella",
 	"discussiontools-replywidget-mode-source": "Origgene",

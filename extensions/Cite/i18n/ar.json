@@ -12,7 +12,9 @@
 			"Michel Bakni",
 			"Mohammed Qays",
 			"Mohanad",
-			"Mohanad Kh"
+			"Mohanad Kh",
+			"Hubaishan",
+			"Mr. Ibrahem"
 		]
 	},
 	"cite-desc": "يضيف وسمي <code>&lt;ref&gt;</code> و<code>&lt;references&gt;</code> للاستشهادات",
@@ -21,7 +23,7 @@
 	"cite_error_ref_conflicting_dir": "تحتوي إحدى علامات <code>&lt;ref&gt;</code> التي تحمل الاسم \"$1\" على خاصية dir متداخلة.",
 	"cite_error_ref_numeric_key": "وسم <code>&lt;ref&gt;</code> غير صحيح؛ الاسم لا يمكن أن يكون عددا صحيحا بسيطا. استخدم عنوانا وصفيا",
 	"cite_error_ref_no_key": "وسم الفتح <code>&lt;ref&gt;</code> غير صحيح أو له اسم سييء.",
-	"cite_error_ref_too_many_keys": "وسم <code>&lt;ref&gt;</code> غير صحيح؛ أسماء غير صحيحة، على سبيل المثال كثيرة جدا",
+	"cite_error_ref_too_many_keys": "معلمة غير صالحة في العلامة <code><ref></code>",
 	"cite_error_ref_follow_conflicts": "يتبع <code>&lt;ref \nعلامة =\"…\"&gt;</code>  التي تعد استمرارًا للعلامة السابقة لا يمكن تسميتها بشكل فردي أو ذات صلة",
 	"cite_error_ref_nested_extends": "تمديد وسوم <code>&lt;ref&gt;</code> لعمق أكثر من مستوى واحد غير مسموح به",
 	"cite_error_ref_no_input": "وسم <code>&lt;ref&gt;</code> غير صحيح؛ المراجع غير ذات الاسم يجب أن تمتلك محتوى",

@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bloomaround"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Ⲫⲃⲱϩⲉⲙ",
+	"discussiontools-replylink": "{{GENDER:|ⲃⲱϩⲉⲙ}}",
+	"discussiontools-replywidget-advanced": "Ⲛⲏ ⲉⲧϭⲟⲥⲓ",
+	"discussiontools-replywidget-cancel": "Ⲕⲱⲣϥ",
+	"discussiontools-replywidget-mode-source": "Ⲫⲁⲕⲱⲇⲓⲝ",
+	"discussiontools-replywidget-mode-visual": "Ⲫⲁⲛⲁⲩ",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Ⲃⲱϩⲉⲙ}} ⲉ̀{{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Ⲫⲡⲣⲟⲛⲓⲁ",
+	"discussiontools-replywidget-reply": "{{GENDER:|Ⲃⲱϩⲉⲙ}}",
+	"discussiontools-replywidget-summary": "Ⲧⲡⲁⲣⲁⲫⲣⲁⲥⲓⲥ",
+	"discussiontools-replywidget-watchthis": "Ⲧⲟⲩϩⲟ ⲙ̀ⲡⲁⲓϩⲟ ⲉ̀ⲡⲉⲧⲉⲛ[[Special:Watchlist|cϧⲓ ⲛ̀ϫⲓϫ ⲛ̀ⲣⲱⲓⲥ]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ⲛ̀ⲣⲱⲙⲓ}} ϧⲉⲛⲧϩⲟⲙⲓⲗⲓⲁ̀",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ⲙ̀ⲡⲁⲣⲁⲅⲣⲁⲫⲏ}}",
+	"discussiontools-topicheader-latestcomment": "Ⲧⲡⲁⲣⲁⲅⲣⲁⲫⲏ ⲛ̀ϧⲁⲓⲏ: $1",
+	"discussiontools-topicsubscription-button-subscribe": "ϩⲩⲡⲟⲅⲣⲁⲫⲓⲛ",
+	"discussiontools-topicsubscription-button-subscribe-label": "Ϩⲩⲡⲟⲅⲣⲁⲫⲓⲛ",
+	"discussiontools-topicsubscription-button-unsubscribe": "ⲕⲱⲣϥ ⲛ̀ϩⲩⲡⲟⲅⲣⲁⲫⲏ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Ⲕⲱⲣϥ ⲛ̀ϩⲩⲡⲟⲅⲣⲁⲫⲏ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Ⲭⲛⲁϭⲓ|Ⲧⲉⲣⲁϭⲓ}} ⲛ̀ϩⲁⲛϫⲓⲛϭⲓⲡⲟⲩⲱ̀ ⲉⲑⲃⲉϩⲁⲛⲡⲁⲣⲁⲅⲣⲁⲫⲱⲟⲩⲓ̀ ⲙ̀ⲃⲉⲣⲓ ϧⲉⲛⲧⲁⲓϩⲩⲡⲟⲑⲉⲥⲓⲥ.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Ⲛ̀ⲑⲟⲕ ⲁⲕϩⲩⲡⲟⲅⲣⲁⲫⲓⲛ|Ⲛ̀ⲑⲟ ⲁ̀ⲣⲉϩⲩⲡⲟⲅⲣⲁⲫⲓⲛ}}!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Ⲛ̀ⲛⲉⲕϭⲓ|Ⲛ̀ⲛⲉϭⲓ}} ⲛ̀ϩⲁⲛϫⲓⲛϭⲓⲡⲟⲩⲱ̀ ⲉⲑⲃⲉϩⲁⲛⲡⲁⲣⲁⲅⲣⲁⲫⲱⲟⲩⲓ̀ ⲙ̀ⲃⲉⲣⲓ ϧⲉⲛⲧⲁⲓϩⲩⲡⲟⲑⲉⲥⲓⲥ.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Ⲛ̀ⲑⲟⲕ ⲁⲭⲕⲱⲣϥ|Ⲛ̀ⲑⲟ ⲁ̀ⲣⲉⲕⲱⲣϥ}} ⲛ̀ϩⲩⲡⲟⲅⲣⲁⲫⲏ."
+}

@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Chrisdanielkazadi"
+			"Chrisdanielkazadi",
+			"Matma Rex"
 		]
 	},
-	"thanks-thank": "{{GENRE:$1|{{GENRE:$2|kuela tuasakidila}}}}"
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|kuela tuasakidila}}}}"
 }

@@ -2497,39 +2497,37 @@
         },
         {
             "name": "wikimedia/at-ease",
-            "version": "v2.1.0",
-            "version_normalized": "2.1.0.0",
+            "version": "v3.0.0",
+            "version_normalized": "3.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/at-ease.git",
-                "reference": "e8ebaa7bb7c8a8395481a05f6dc4deaceab11c33"
+                "reference": "89f2ec17fd99f551d4f61db59ac60d9a8e3bbc34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/at-ease/zipball/e8ebaa7bb7c8a8395481a05f6dc4deaceab11c33",
-                "reference": "e8ebaa7bb7c8a8395481a05f6dc4deaceab11c33",
+                "url": "https://api.github.com/repos/wikimedia/at-ease/zipball/89f2ec17fd99f551d4f61db59ac60d9a8e3bbc34",
+                "reference": "89f2ec17fd99f551d4f61db59ac60d9a8e3bbc34",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.9"
+                "php": ">=7.4"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "35.0.0",
-                "mediawiki/minus-x": "1.1.1",
-                "ockcyp/covers-validator": "1.3.3",
-                "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
-                "phpunit/phpunit": "^8.5"
+                "mediawiki/mediawiki-codesniffer": "44.0.0",
+                "mediawiki/mediawiki-phan-config": "0.14.0",
+                "mediawiki/minus-x": "1.1.3",
+                "ockcyp/covers-validator": "1.6.0",
+                "php-parallel-lint/php-console-highlighter": "1.0.0",
+                "php-parallel-lint/php-parallel-lint": "1.4.0",
+                "phpunit/phpunit": "9.6.16"
             },
-            "time": "2021-02-27T15:53:37+00:00",
+            "time": "2024-10-15T12:55:13+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
-                "files": [
-                    "src/Wikimedia/Functions.php"
-                ],
                 "psr-4": {
-                    "Wikimedia\\AtEase\\": "src/Wikimedia/AtEase/"
+                    "Wikimedia\\AtEase\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2549,7 +2547,7 @@
             "description": "Safe replacement to @ for suppressing warnings.",
             "homepage": "https://www.mediawiki.org/wiki/at-ease",
             "support": {
-                "source": "https://github.com/wikimedia/at-ease/tree/v2.1.0"
+                "source": "https://github.com/wikimedia/at-ease/tree/v3.0.0"
             },
             "install-path": "../wikimedia/at-ease"
         },
@@ -3441,17 +3439,17 @@
         },
         {
             "name": "wikimedia/parsoid",
-            "version": "v0.19.0",
-            "version_normalized": "0.19.0.0",
+            "version": "v0.19.1",
+            "version_normalized": "0.19.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/mediawiki-services-parsoid.git",
-                "reference": "c0657fb6c219ab336fdd95bc7876f697cbb34492"
+                "reference": "6beabf7b042b17a07f1024681d13940c94641b69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/mediawiki-services-parsoid/zipball/c0657fb6c219ab336fdd95bc7876f697cbb34492",
-                "reference": "c0657fb6c219ab336fdd95bc7876f697cbb34492",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-services-parsoid/zipball/6beabf7b042b17a07f1024681d13940c94641b69",
+                "reference": "6beabf7b042b17a07f1024681d13940c94641b69",
                 "shasum": ""
             },
             "require": {
@@ -3497,7 +3495,7 @@
             "suggest": {
                 "wikimedia/langconv": "Provides script conversion support"
             },
-            "time": "2024-04-19T20:23:05+00:00",
+            "time": "2024-10-17T22:40:59+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3523,46 +3521,46 @@
             ],
             "support": {
                 "irc": "irc://irc.libera.chat/mediawiki-parsoid",
-                "source": "https://github.com/wikimedia/mediawiki-services-parsoid/tree/v0.19.0",
+                "source": "https://github.com/wikimedia/mediawiki-services-parsoid/tree/v0.19.1",
                 "wiki": "https://www.mediawiki.org/wiki/Parsoid"
             },
             "install-path": "../wikimedia/parsoid"
         },
         {
             "name": "wikimedia/php-session-serializer",
-            "version": "v2.0.1",
-            "version_normalized": "2.0.1.0",
+            "version": "v3.0.0",
+            "version_normalized": "3.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/php-session-serializer.git",
-                "reference": "40c9761329415ada958688d43ba4b8a447aa3037"
+                "reference": "9d52c57064a1db78cd494a70ec316e1952cf7f1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/php-session-serializer/zipball/40c9761329415ada958688d43ba4b8a447aa3037",
-                "reference": "40c9761329415ada958688d43ba4b8a447aa3037",
+                "url": "https://api.github.com/repos/wikimedia/php-session-serializer/zipball/9d52c57064a1db78cd494a70ec316e1952cf7f1a",
+                "reference": "9d52c57064a1db78cd494a70ec316e1952cf7f1a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.9",
-                "psr/log": "^1.0",
-                "wikimedia/at-ease": "^2.0.0"
+                "php": ">=7.4.0",
+                "psr/log": "^1.0"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "39.0.0",
-                "mediawiki/mediawiki-phan-config": "0.11.1",
-                "mediawiki/minus-x": "1.1.1",
+                "mediawiki/mediawiki-codesniffer": "44.0.0",
+                "mediawiki/mediawiki-phan-config": "0.14.0",
+                "mediawiki/minus-x": "1.1.3",
+                "ockcyp/covers-validator": "1.6.0",
                 "php-parallel-lint/php-console-highlighter": "1.0.0",
-                "php-parallel-lint/php-parallel-lint": "1.3.2",
-                "phpunit/phpunit": "^8.5"
+                "php-parallel-lint/php-parallel-lint": "1.4.0",
+                "phpunit/phpunit": "9.6.16"
             },
-            "time": "2022-05-21T19:23:07+00:00",
+            "time": "2024-08-13T06:23:24+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
-                "classmap": [
-                    "src/"
-                ]
+                "psr-4": {
+                    "Wikimedia\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -3577,7 +3575,7 @@
             "description": "Provides methods like PHP's session_encode and session_decode that don't mess with $_SESSION",
             "homepage": "https://www.mediawiki.org/wiki/Php-session-serializer",
             "support": {
-                "source": "https://github.com/wikimedia/php-session-serializer/tree/v2.0.1"
+                "source": "https://github.com/wikimedia/php-session-serializer/tree/v3.0.0"
             },
             "install-path": "../wikimedia/php-session-serializer"
         },
@@ -4317,17 +4315,17 @@
         },
         {
             "name": "wikimedia/xmp-reader",
-            "version": "0.9.1",
-            "version_normalized": "0.9.1.0",
+            "version": "0.9.2",
+            "version_normalized": "0.9.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/wikimedia/xmp-reader.git",
-                "reference": "8338d6796984d747559dd3c8b5272608d8a665d2"
+                "url": "https://github.com/wikimedia/mediawiki-libs-XMPReader.git",
+                "reference": "cc1c372108fa088ba6f37a11480e7d2c3c98da67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/xmp-reader/zipball/8338d6796984d747559dd3c8b5272608d8a665d2",
-                "reference": "8338d6796984d747559dd3c8b5272608d8a665d2",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-XMPReader/zipball/cc1c372108fa088ba6f37a11480e7d2c3c98da67",
+                "reference": "cc1c372108fa088ba6f37a11480e7d2c3c98da67",
                 "shasum": ""
             },
             "require": {
@@ -4337,21 +4335,20 @@
                 "ext-xmlreader": "*",
                 "php": ">=7.4.3",
                 "psr/log": "^1.0",
-                "wikimedia/at-ease": "^2.0.0",
                 "wikimedia/scoped-callback": "^1.0 || ^2.0 || ^3.0 || ^4.0",
                 "wikimedia/timestamp": "^1.0 || ^2.0 || ^3.0 || ^4.0"
             },
             "require-dev": {
                 "ext-exif": "*",
-                "mediawiki/mediawiki-codesniffer": "40.0.1",
-                "mediawiki/mediawiki-phan-config": "0.12.0",
-                "mediawiki/minus-x": "1.1.1",
+                "mediawiki/mediawiki-codesniffer": "44.0.0",
+                "mediawiki/mediawiki-phan-config": "0.14.0",
+                "mediawiki/minus-x": "1.1.3",
                 "ockcyp/covers-validator": "1.6.0",
                 "php-parallel-lint/php-console-highlighter": "1.0.0",
-                "php-parallel-lint/php-parallel-lint": "1.3.2",
-                "phpunit/phpunit": "^9.5"
+                "php-parallel-lint/php-parallel-lint": "1.4.0",
+                "phpunit/phpunit": "9.6.16"
             },
-            "time": "2022-11-17T03:30:20+00:00",
+            "time": "2024-08-12T05:55:11+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -4379,7 +4376,7 @@
                 "xmp"
             ],
             "support": {
-                "source": "https://github.com/wikimedia/xmp-reader/tree/0.9.1"
+                "source": "https://github.com/wikimedia/mediawiki-libs-XMPReader/tree/0.9.2"
             },
             "install-path": "../wikimedia/xmp-reader"
         },

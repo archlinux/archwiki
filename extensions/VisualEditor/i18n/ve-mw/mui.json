@@ -6,7 +6,9 @@
 		]
 	},
 	"tooltip-ca-ve-edit": "Robah laman ni",
-	"visualeditor-ca-editsource": "Robah sumber",
-	"visualeditor-ca-editsource-section": "robah sumber",
+	"visualeditor-ca-createlocaldescriptionsource": "Tamba sumber keterangan sinila",
+	"visualeditor-ca-createsource": "Gawé' sumber",
+	"visualeditor-ca-editsource": "Dandani sumber",
+	"visualeditor-ca-editsource-section": "dandani sumber",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"
 }

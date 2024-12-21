@@ -7,6 +7,7 @@
 	},
 	"apihelp-query+linterrors-summary": "Ottieni lista di errori di Lint",
 	"apihelp-query+linterrors-param-categories": "Categorie di errori di Lint",
+	"apihelp-query+linterrors-param-invisible-categories": "Categorie invisibili di errori di Lint",
 	"apihelp-query+linterrors-param-limit": "Numero risultati da richiedere",
 	"apihelp-query+linterrors-param-from": "ID Lint da cui iniziare la ricerca",
 	"apihelp-query+linterrors-param-namespace": "Includi solo errori di Lint dai namespace specificati",

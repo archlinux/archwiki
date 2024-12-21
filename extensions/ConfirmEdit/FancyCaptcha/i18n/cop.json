@@ -4,7 +4,8 @@
 			"Bloomaround"
 		]
 	},
-	"fancycaptcha-captcha": "ⲟⲩⲙⲟⲩϣⲧ ⲙ̀ⲡⲓⲉⲛⲉⲭⲉⲣⲟⲛ",
-	"fancycaptcha-imgcaptcha-ph": "ⲥϧⲉ ⲡⲓⲥϧⲁⲓ ⲉⲧⲉⲧⲉⲛⲓⲱⲣϩ ϧⲉⲛ ⲡⲓⲗⲓⲙⲏⲛ",
-	"fancycaptcha-reload-text": "ⲓⲣⲓ ⲙ̀ⲃⲉⲣⲓ"
+	"fancycaptcha-captcha": "Ⲧⲉⲝⲉⲧⲁⲥⲓⲥ ⲙ̀ⲡⲧⲟⲩϫⲟ",
+	"fancycaptcha-accountcreate": "Ⲉⲑⲣⲉⲧⲉⲛⲁⲣⲉϩ ⲉ̀ϯⲞⲩⲓⲕⲓ ⲉ̀ⲃⲟⲗ ϩⲁⲛⲡⲣⲟⲥⲧⲁⲅⲙⲁ ⲉⲧⲑⲁⲙⲓⲟ ⲛ̀ⲟⲩⲁⲧⲟⲩ ⲁⲣⲓⲟⲩⲛⲁⲓ ⲉ̀ⲛⲟⲩϫ ⲉϧⲟⲩⲛ ⲛ̀ⲛⲓⲥⲁϫⲓ ⲉⲧⲟⲩⲟⲛϩ ⲉ̀ⲃⲟⲗ ⲥⲁⲡⲉⲥⲏⲧ ϧⲉⲛⲡⲓⲑⲉⲃⲓ ([[Special:Captcha/help|more info]]):",
+	"fancycaptcha-imgcaptcha-ph": "Ⲛⲟⲩϫ ⲉ̀ϧⲟⲩⲛ ⲛ̀ϯⲅⲣⲁⲫⲏ ⲉⲧⲉⲧⲉⲛⲛⲁⲩ ⲉ̀ⲣⲟⲥ ϧⲉⲛⲡⲓⲗⲓⲙⲏⲛ",
+	"fancycaptcha-reload-text": "Ⲟⲩⲁϩⲙⲱⲃⲧ"
 }

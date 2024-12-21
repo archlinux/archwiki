@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"ChoiChong",
 			"Chulsu463",
-			"Foavi33"
+			"Foavi33",
+			"MiiCii"
 		]
 	},
 	"categorytree-expand": "nerkimbi",
-	"categorytree-member-counts": "{{PLURAL:$1|Fejergi duwalibun}}, {{PLURAL:$2|fiyelen}}, {{PLURAL:$3|dangse}} baktambi",
-	"categorytree-num-categories": "$1 D",
-	"categorytree-num-pages": "$1 A",
-	"categorytree-num-files": "$1 B"
+	"categorytree-member-counts": "{{PLURAL:$1|Ilhi duwalibun}}, {{PLURAL:$2|afaha}}, {{PLURAL:$3|bithe}} be baktambumbi",
+	"categorytree-num-categories": "$1 Duwalibun",
+	"categorytree-num-pages": "$1 Afaha",
+	"categorytree-num-files": "$1 Bithe"
 }

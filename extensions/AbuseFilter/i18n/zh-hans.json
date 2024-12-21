@@ -86,10 +86,10 @@
 			"铁桶",
 			"飞小RAN",
 			"飞舞回堂前",
-			"Amire80",
 			"Kichin",
 			"Key0121",
-			"列维劳德"
+			"列维劳德",
+			"Midleading"
 		]
 	},
 	"abusefilter-desc": "对编辑行为进行自动化条件判定",
@@ -660,7 +660,7 @@
 	"abusefilter-invalid-request-noid": "无效请求！您必须通过在滥用日志详情上的表单提供原因后才能访问非公开日志详情。",
 	"blockedexternaldomains": "已封禁的外部域名",
 	"abusefilter-blocked-domains-title": "已封禁的外部域名",
-	"abusefilter-blocked-domains-intro": "匹配此列表的外部链接不被允许添加到页面。下述域名存储于[[MediaWiki:BlockedExternalDomains.json]]。",
+	"abusefilter-blocked-domains-intro": "匹配此列表的外部链接不被允许添加到页面。下述域名存储于[[MediaWiki:BlockedExternalDomains.json]]。尝试添加被封锁的链接会记录在[[Special:Log/abusefilterblockeddomainhit]]中。",
 	"abusefilter-blocked-domains-add-heading": "添加新的封禁域",
 	"abusefilter-blocked-domains-add-explanation": "您可以在此处将域添加到封禁域名列表中。",
 	"abusefilter-blocked-domains-domain": "要封禁的域名，例如 wikipedia.org",
@@ -681,7 +681,7 @@
 	"abusefilter-blocked-domains-domain-added-comment": "添加对外部域名$1的封禁并附上说明：$2",
 	"abusefilter-blocked-domains-domain-removed-comment": "移除对$1的外部域名封禁，附言：$2",
 	"log-description-abusefilterprivatedetails": "此日志显示用户访问非公开滥用日志详情的时间列表。",
-	"log-description-abusefilterblockeddomainhit": "这些事件追踪对封锁域名的点击情况",
+	"log-description-abusefilterblockeddomainhit": "这些事件追踪对[[Special:BlockedExternalDomains|封锁域名]]的点击情况。",
 	"abusefilter-noreason": "警告：要查看此日志的非公开详情，您必须提供原因。",
 	"abusefilter-log-ip-not-available": "不可用",
 	"abusefilter-tag-reserved": "<code>abusefilter-condition-limit</code>标签由滥用过滤器保留作内部使用。",

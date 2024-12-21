@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"IdrisSeid"
+			"IdrisSeid",
+			"Bbeshir"
 		]
 	},
-	"citethispage-link": "እሊ ገጽ ክም ዒን ትነፈዕቡ።"
+	"citethispage-link": "እሊ ገጽ ክም ዒን ትነፈዕቡ።",
+	"citethispage-change-target": "ገጽ:"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Al Riaz Uddin Ripon"
+			"Al Riaz Uddin Ripon",
+			"RiazACU"
 		]
 	},
 	"apihelp-query+gadgetcategories-summary": "গ্যাজেট বিষয়শ্রেণীর তালিকা ফিরিয়ে দেয়।",

@@ -9,12 +9,16 @@
 			"Morten LJ",
 			"Peter Alberti",
 			"Saederup92",
-			"Zakawer2"
+			"Zakawer2",
+			"Dipsacus fullonum",
+			"Steenth"
 		]
 	},
-	"cite-desc": "Tilføjer <code>&lt;ref[ name=id]&gt;</code> og <code>&lt;references/&gt;</code>-elementer til referencer.",
+	"cite-desc": "Tilføjer <code>&lt;ref&gt</code> og <code>&lt;references&gt;</code>-elementer til referencer.",
 	"cite_error": "Referencefejl: $1",
-	"cite_error_ref_numeric_key": "Ugyldigt <code>&lt;ref&gt;</code>-tag; \"name\" kan ikke være et simpelt heltal, brug en beskrivende titel",
+	"cite_error_ref_invalid_dir": "Ugyldig <code>dir=\"$1\"</code>, skal være <code>ltr</code> eller <code>rtl</code>",
+	"cite_error_ref_conflicting_dir": "En af <code>&lt;ref&gt;</code>-taggene med navnet \"$1\" har et modstridende dir-attribut.",
+	"cite_error_ref_numeric_key": "Ugyldigt <code>&lt;ref&gt;</code>-tag; \"name\" kan ikke være et simpelt heltal. Brug en beskrivende titel",
 	"cite_error_ref_no_key": "Det indledende <code>&lt;ref&gt;</code>-tag har en forkert form eller har et ugyldigt navn",
 	"cite_error_ref_too_many_keys": "Ugyldig parameter i <code>&lt;references&gt;</code>-tag",
 	"cite_error_ref_follow_conflicts": "Et <code><ref follow=\"…\"></code>-tag som er fortsættelse af et tidligere tag kan hverken navngives individuelt eller udvides",

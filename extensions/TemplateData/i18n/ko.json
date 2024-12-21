@@ -16,7 +16,8 @@
 			"아라",
 			"Markingdots",
 			"Pikakapi",
-			"이강철"
+			"이강철",
+			"Suleiman the Magnificent Television"
 		]
 	},
 	"templatedata-desc": "(JSON을 사용하여) 틀 변수에 대한 데이터 저장소를 구현합니다",
@@ -107,7 +108,7 @@
 	"templatedata-modal-table-param-deprecatedValue": "더 이상 사용되지 않는 지침",
 	"templatedata-modal-table-param-description": "설명 ($1)",
 	"templatedata-modal-table-param-example": "예시 ($1)",
-	"templatedata-modal-table-param-importoption": "$1를 권장 변수로 추가하기",
+	"templatedata-modal-table-param-importoption": "권장 {{PLURAL:$1|매개 변수}} $1개 추가",
 	"templatedata-modal-table-param-importoption-subtitle": "다음 포함: $1",
 	"templatedata-modal-table-param-label": "레이블 ($1)",
 	"templatedata-modal-table-param-name": "이름",

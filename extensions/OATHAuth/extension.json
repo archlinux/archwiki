@@ -102,8 +102,14 @@
 	},
 	"ResourceModules": {
 		"ext.oath.totp.showqrcode.styles": {
+			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"styles": [
-				"totp/ext.oath.showqrcode.styles.css"
+				"totp/ext.oath.showqrcode.styles.less"
+			],
+			"codexStyleOnly": "true",
+			"codexComponents": [
+				"CdxButton",
+				"CdxIcon"
 			]
 		}
 	},

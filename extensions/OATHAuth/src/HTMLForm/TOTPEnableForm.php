@@ -105,7 +105,8 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 				'default' =>
 					'<strong>' . $this->msg( 'oathauth-recoverycodes-important' )->escaped() . '</strong><br/>'
 					. $this->msg( 'oathauth-recoverycodes' )->parse()
-					. $this->createResourceList( $this->getScratchTokensForDisplay( $key ) ),
+					. $this->createResourceList( $this->getScratchTokensForDisplay( $key ) )
+					. $this->createDownloadLink( $this->getScratchTokensForDisplay( $key ) ),
 				'raw' => true,
 				'section' => 'step3',
 			],
@@ -132,6 +133,27 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 			$resourceList .= Html::rawElement( 'li', [], Html::rawElement( 'kbd', [], $resource ) );
 		}
 		return Html::rawElement( 'ul', [], $resourceList );
+	}
+
+	private function createDownloadLink( array $scratchTokensForDisplay ): string {
+		$icon = Html::element( 'span', [
+			'class' => [ 'mw-oathauth-recoverycodes-download-icon', 'cdx-button__icon' ],
+			'aria-hidden' => 'true',
+		] );
+		return Html::rawElement(
+			'a',
+			[
+				'href' => 'data:text/plain;charset=utf-8,'
+					// https://bugzilla.mozilla.org/show_bug.cgi?id=1895687
+					. rawurlencode( implode( PHP_EOL, $scratchTokensForDisplay ) ),
+				'download' => 'recovery-codes.txt',
+				'class' => [
+					'mw-oathauth-recoverycodes-download',
+					'cdx-button', 'cdx-button--fake-button', 'cdx-button--fake-button--enabled',
+				],
+			],
+			$icon . $this->msg( 'oathauth-recoverycodes-download' )->escaped()
+		);
 	}
 
 	/**

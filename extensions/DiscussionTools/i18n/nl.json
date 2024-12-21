@@ -16,7 +16,8 @@
 			"Robin van der Vliet",
 			"Romaine",
 			"Sjoerddebruin",
-			"Siebrand"
+			"Siebrand",
+			"Jeroen N"
 		]
 	},
 	"discussiontools": "Overleghulpmiddelen",
@@ -123,7 +124,7 @@
 	"discussiontools-replybutton": "{{GENDER:|Reageren}}",
 	"discussiontools-replylink": "{{GENDER:|reageren}}",
 	"discussiontools-replywidget-abandon": "Weet {{GENDER:|u}} zeker dat u de reactie die u aan het schrijven bent, wilt verwijderen?",
-	"discussiontools-replywidget-abandon-discard": "Reactie negeren",
+	"discussiontools-replywidget-abandon-discard": "Reactie verwijderen",
 	"discussiontools-replywidget-abandon-keep": "Doorgaan met schrijven",
 	"discussiontools-replywidget-abandontopic": "Weet {{GENDER:|u}} zeker dat u het ontwerp dat u aan het schrijven bent wilt verwijderen?",
 	"discussiontools-replywidget-abandontopic-discard": "Onderwerp negeren",

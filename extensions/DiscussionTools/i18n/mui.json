@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jawadywn"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Simbatan",
+	"discussiontools-replylink": "{{GENDER:|simbat}}",
+	"discussiontools-replywidget-advanced": "Déwo",
+	"discussiontools-replywidget-cancel": "Urung",
+	"discussiontools-replywidget-mode-source": "Sumber",
+	"discussiontools-replywidget-mode-visual": "Pisual",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Simbati}} {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Terawangan",
+	"discussiontools-replywidget-reply": "{{GENDER:|Simbat}}",
+	"discussiontools-replywidget-summary": "Ringkesan",
+	"discussiontools-replywidget-watchthis": "Tambake laman ni ke [[Special:Watchlist|lis pasatan]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|wong}} bekelakar",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|tanggepan}}",
+	"discussiontools-topicheader-latestcomment": "Tanggepan buncitan: $1",
+	"discussiontools-topicsubscription-button-subscribe": "langganan",
+	"discussiontools-topicsubscription-button-subscribe-label": "Langganan",
+	"discussiontools-topicsubscription-button-unsubscribe": "berenti belangganan",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Berenti belangganan",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Dulur}} kagé' dapet ma'lumat pekaro tanggepan-tanggepan anyar di bagian ni.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Dulur}} la belangganan!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Dulur}} kagé' da'do lagi dapet ma'lumat pekaro tanggepan-tanggepan anyar di bagian ni.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Dulur}} la da' belangganan."
+}

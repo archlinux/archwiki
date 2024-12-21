@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bbeshir"
+		]
+	},
+	"categorytree-portlet": "ክፋላት",
+	"categorytree-category": "ከረርም",
+	"categorytree-mode-all": "ኩለን አግጸት",
+	"categorytree-collapse": "ኣክብ",
+	"categorytree-expand": "ምደድ",
+	"categorytree-num-categories": "$1 ም",
+	"categorytree-num-pages": "$1 ም",
+	"categorytree-num-files": "$1 ም",
+	"categorytree-load": "ጸዓን",
+	"categorytree-loading": "ጸዕን ህላ..."
+}

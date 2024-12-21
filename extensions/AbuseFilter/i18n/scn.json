@@ -6,7 +6,8 @@
 			"Fitoschido",
 			"Gmelfi",
 			"Pippinu",
-			"Sarvaturi"
+			"Sarvaturi",
+			"GianAntonucci"
 		]
 	},
 	"abusefilter-desc": "Fa' cuntrolli autumàtici di tipu eurìsticu supra dî canciamenti",
@@ -431,7 +432,7 @@
 	"abusefilter-examine-incompatible": "Lu canciamentu ca spicificasti nun è suppurtatu dû filtru anti-abbusi.",
 	"abusefilter-examine-noresults": "Nun fu attruvatu nuḍḍu risurtatu chî paràmitri d’arricerca ca furnisti.",
 	"abusefilter-topnav": "'''Navigazzioni ntô filtru anti-abbusi'''",
-	"abusefilter-topnav-home": "Pàggina principali",
+	"abusefilter-topnav-home": "Pàggina mastra",
 	"abusefilter-topnav-recentchanges": "Ùrtimi canciamenti ê filtri",
 	"abusefilter-topnav-test": "Virìfica massizza",
 	"abusefilter-topnav-examine": "Esàmina li canciamenti passati",

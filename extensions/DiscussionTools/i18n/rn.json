@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Ferdinand IF99",
 			"Gilbert Ndihokubwayo"
 		]
@@ -9,7 +8,7 @@
 	"discussiontools-autotopicsubpopup-body": "Uzomenyeshwa nihagira uwugira ico avuze muri iki kiganiro. Urashobora guhinyanyura uburyo ushaka kumenyeshwa.",
 	"discussiontools-autotopicsubpopup-dismiss": "Niko, vyanshikiye.",
 	"discussiontools-defaultsummary-reply": "Ishura",
-	"discussiontools-replylink": "kwishura",
+	"discussiontools-replylink": "{{GENDER:|kwishura}}",
 	"discussiontools-replywidget-advanced": "Biteye imbere",
 	"discussiontools-replywidget-cancel": "Futa",
 	"discussiontools-replywidget-mode-source": "Inkomoko",

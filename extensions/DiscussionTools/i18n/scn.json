@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ajeje Brazorf"
+			"Ajeje Brazorf",
+			"GianAntonucci"
 		]
 	},
 	"discussiontools-autotopicsubpopup-dismiss": "OK, haiu caputu",
@@ -31,8 +32,9 @@
 	"discussiontools-postedit-confirmation-topicadded": "Lu tò argumentu fu agghiunciutu.",
 	"discussiontools-preference-label": "Strummenta di discussioni",
 	"discussiontools-replylink": "{{GENDER:|rispunni}}",
-	"discussiontools-replywidget-cancel": "Annulla",
-	"discussiontools-replywidget-mode-source": "Surgenti",
+	"discussiontools-replywidget-advanced": "Avanzati",
+	"discussiontools-replywidget-cancel": "Sfai",
+	"discussiontools-replywidget-mode-source": "Còdici",
 	"discussiontools-replywidget-mode-visual": "Visuali",
 	"discussiontools-replywidget-newtopic": "Agghiunci argumentu",
 	"discussiontools-replywidget-placeholder-newtopic": "Discrizzioni",
@@ -41,10 +43,18 @@
 	"discussiontools-replywidget-preview": "Antiprima",
 	"discussiontools-replywidget-reply": "{{GENDER:|Rispunni}}",
 	"discussiontools-replywidget-summary": "Uggettu",
-	"discussiontools-replywidget-watchthis": "Agghiunci sta pàggina â tò [[Special:Watchlist|Lista taliata]]",
-	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|pirsuna|pirsuni}} ntâ discussioni",
+	"discussiontools-replywidget-watchthis": "Agghiunci sta pàggina â to [[Special:Watchlist|lista dî pàggini taliati]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|participanti}} â discurruta",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|cummentu|cummenti}}",
 	"discussiontools-topicheader-latestcomment": "Ùrtimu cummentu: $1",
+	"discussiontools-topicsubscription-button-subscribe": "scrìviti",
+	"discussiontools-topicsubscription-button-subscribe-label": "Scrìviti",
+	"discussiontools-topicsubscription-button-unsubscribe": "sdiscrìviti",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Sdiscrìviti",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Di cca 'n avanti ricivi i nutìfichi dî cummenti novi ncapu a stu tema.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Ti scrivisti!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Di cca 'n avanti nun ricivi cchiù i nutìfichi dî cummenti novi ncapu a stu tema.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Ti sdiscrivisti.",
 	"discussiontools-topicsubscription-pager-actions": "Azzioni",
 	"discussiontools-topicsubscription-pager-notified-never": "mai",
 	"discussiontools-topicsubscription-pager-page": "Pàggina",

@@ -4,7 +4,8 @@
 			"Matma Rex",
 			"Саид Мисарбиев",
 			"Умар",
-			"Исмаил Садуев"
+			"Исмаил Садуев",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Дийцарийн гӀирсаш",
@@ -141,7 +142,7 @@
 	"discussiontools-replywidget-return-to-reply": "Жоьпе хьажа",
 	"discussiontools-replywidget-signature-body": "$1 хьан куьг дина. Иза дӀадаккха дезахь, $2 тӀетаӀайe. Дагахь дина, хӀара гӀирс лелош комментан куьг теӀо цаоьшу. Хьан куьг ша тӀетухура ду.",
 	"discussiontools-replywidget-signature-title": "Карийна куьг",
-	"discussiontools-replywidget-summary": "Цунах лаьцна",
+	"discussiontools-replywidget-summary": "Цуьнах лаьцна",
 	"discussiontools-replywidget-terms-click": "$1 тӀетаӀийна, хьо реза хьуьллу викис тӀедожош долу хьолашца.",
 	"discussiontools-replywidget-transcluded": "Хьан коммент [[$1]] тӀехь дӀайазйира йу.",
 	"discussiontools-replywidget-watchthis": "ТӀетоха хӀара агӀо сан [[Special:Watchlist|тергаме могӀанан]] йукъа",

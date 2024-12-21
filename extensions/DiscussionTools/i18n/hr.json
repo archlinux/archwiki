@@ -7,7 +7,8 @@
 			"MaGa",
 			"Matma Rex",
 			"Neptune, the Mystic",
-			"Ponor"
+			"Ponor",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Alati za raspravu",
@@ -96,8 +97,8 @@
 	"discussiontools-preference-topicsubscription-help": "Ovo će Vam omogućiti praćenje tema i primanje obavijesti o novim komentarima na stranicama za razgovor",
 	"discussiontools-preference-visualenhancements": "Prikaži aktivnost rasprave",
 	"discussiontools-preference-visualenhancements-help": "Ovo će omogućiti novi izgled stranice za razgovor koji uključuje informacije o aktivnostima unutar svake rasprave.",
-	"discussiontools-replybutton": "Odgovor",
-	"discussiontools-replylink": "odgovori",
+	"discussiontools-replybutton": "{{GENDER:|Odgovor}}",
+	"discussiontools-replylink": "{{GENDER:|odgovori}}",
 	"discussiontools-replywidget-abandon": "Jeste li sigurni da želite odustati od komentara koji ste započeli pisati?",
 	"discussiontools-replywidget-abandon-discard": "Odustani od komentara",
 	"discussiontools-replywidget-abandon-keep": "Nastavi pisati komentar",

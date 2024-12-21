@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Kambai Akau"
 		]
 	},
@@ -36,5 +35,6 @@
 	"vector-main-menu-label": "A̱tsak meniu",
 	"vector-page-tools-label": "Nkyangta̱m",
 	"vector-page-tools-general-label": "Kuzangka̱i",
+	"vector-page-tools-actions-label": "Nta̱m",
 	"vector-unpin-element-label": "ta̱kup"
 }

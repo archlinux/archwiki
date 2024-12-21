@@ -6,7 +6,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Respogn",
-	"discussiontools-replylink": "respogn",
+	"discussiontools-replylink": "{{GENDER:|respogn}}",
 	"discussiontools-replywidget-advanced": "Avanzà",
 	"discussiontools-replywidget-cancel": "Scancelea",
 	"discussiontools-replywidget-mode-source": "Funtana",

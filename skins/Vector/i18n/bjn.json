@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Arcuscloud",
 			"Ezagren",
 			"J Subhi",
@@ -53,7 +52,7 @@
 	"vector-toc-toggle-button-label": "Gulingakan subbagian $1",
 	"vector-anon-user-menu-pages": "Laman pambabak nang sudah kaluar log",
 	"vector-anon-user-menu-pages-learn": "palajari labih lanjut",
-	"vector-anon-user-menu-pages-label": "Palajari labih lanjut pasal mambabak",
+	"vector-anon-user-menu-pages-label": "Palajari labih lanjut hiwal mambabak",
 	"vector-main-menu-tooltip": "Ménu utama",
 	"vector-toc-menu-tooltip": "Daptar Isi",
 	"vector-toc-collapsible-button-label": "Gulingakan daptar isi",

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Matma Rex",
-			"Sumbukompor"
+			"Sumbukompor",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Piranti parembugan",
@@ -58,8 +59,8 @@
 	"discussiontools-preference-label": "Piranti parembugan",
 	"discussiontools-preference-replytool": "Urubaké wangsulan gelis",
 	"discussiontools-preference-replytool-help": "Iki bakal nuduhaké sawiji pranala kanggo mangsuli tanggepan kaca parembugan mawa sak klikan. Kowé bisa nyinaoni luwih jangkep bab fitur iki kanthi maca [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary ringkesan fitur].",
-	"discussiontools-replybutton": "Wangsuli",
-	"discussiontools-replylink": "wangsuli",
+	"discussiontools-replybutton": "{{GENDER:|Wangsuli}}",
+	"discussiontools-replylink": "{{GENDER:|wangsuli}}",
 	"discussiontools-replywidget-abandon": "Apa kowé temenan péngin mbuwang tanggepan sing kotulis?",
 	"discussiontools-replywidget-abandon-discard": "Buwang tanggepan",
 	"discussiontools-replywidget-abandon-keep": "Bacutaké nulis",

@@ -16,6 +16,7 @@
 	"oathauth-enable": "Ativar a autenticação de dois fatores",
 	"oathauth-recoverycodes": "A seguinte é uma lista de códigos de recuperação de uso único. Estes códigos só podem ser usados uma vez e são para casos de emergência quando não tem acesso ao seu dispositivo. Anote-os, por favor, e guarde-os num local seguro. É recomendado que marque cada código como usado quando tiver iniciado uma sessão usando-o. Se perder o seu dispositivo, os códigos são a única forma de recuperar a sua conta. '''Estes códigos não voltarão a ser mostrados'''.",
 	"oathauth-recoverycodes-important": "Este passo é importante! Não salte este passo!",
+	"oathauth-recoverycodes-download": "Descarregar códigos de recuperação",
 	"oathauth-disable": "Desativar a autenticação de dois fatores",
 	"oathauth-validatedoath": "As credenciais de dois fatores foram validadas. A autenticação de dois fatores será agora aplicada.",
 	"oathauth-noscratchforvalidation": "Não pode usar um código de recuperação para confirmar a autenticação de dois fatores. Os códigos de recuperação só servem como reserva para uso ocasional. Use um código da sua aplicação de autenticação de dois fatores (como o Google Authenticator), por favor.",

@@ -3,7 +3,8 @@
 		"authors": [
 			"ChiK",
 			"Ravi Mundkur",
-			"Vishwanatha Badikana"
+			"Vishwanatha Badikana",
+			"Vinoda mamatharai"
 		]
 	},
 	"oathauth-step2alt": "ಈರೆಗ್ ಕ್ಯೂಆರ್ ಕೋಡ್‌ನ್ ಸ್ಕ್ಯಾನ್ ಮಾಲ್ಪೆರೆ ಸಾದ್ಯ ಆಯಿಜಿಂಡ, ರಹಸ್ಯೊ ಕೀ ಬುಕ್ಕೊ ಕಾತೆದ ಪುದರ್‌ನ್ ಕೈಟೇ ನಮೂದಿಸಲೆ:",
@@ -12,5 +13,6 @@
 	"oathauth-disable-intro": "ಮಲ್ಲ ಅಧಿಕಾರದೊಟ್ಟುಗು ಮಲ್ಲ ಜವಾಬ್ದಾರಿಲಾ ಬರ್ಪುಂಡು.",
 	"oathauth-enteruser": "ಬಳಕೆದಾರೆಪುದರು:",
 	"oathauth-notifications-disable-help": "ಸಕಾಯೊ",
+	"oathauth-notifications-recoverycodesleft-help": "ಸಕಾಯೊ",
 	"oathauth-qrcode-alt": "ರಹಸ್ಯೊ ಕೀನ್ ಪ್ರತಿನಿದಿಸವುನ ಸ್ಕ್ಯಾನ್ ಮಾಲ್ಪೊಡಾಯಿನ ಕ್ಯೂಆರ್ ಕೋಡ್."
 }

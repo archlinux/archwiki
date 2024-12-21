@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Automatik",
 			"Benoit Rochon",
 			"Boniface",
@@ -59,7 +58,8 @@
 			"Zarisi",
 			"Zebulon84",
 			"Zetud",
-			"Lofhi"
+			"Lofhi",
+			"Pyb"
 		]
 	},
 	"collabpad-doctitle": "CollabPad : $1",

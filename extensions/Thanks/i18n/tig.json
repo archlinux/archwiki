@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"IdrisSeid"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ሐምድ|ሐምዴ}}}}"
+}

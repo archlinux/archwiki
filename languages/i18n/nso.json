@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Kaganer",
 			"Macofe",
 			"Mohau",
@@ -179,7 +178,7 @@
 	"versionrequiredtext": "Version $1 ya MediaWiki ea hlokega go šomiša letlakala le. Lebelela [[Special:Version|letlakala la version]].",
 	"retrievedfrom": "Le tšwa go \"$1\"",
 	"new-messages": "O na le $1 ($2).",
-	"new-messages-diff-link-plural": "{{PLURAL:$1|Phetogo tša|Diphetogo ya}} go feta",
+	"new-messages-diff-link-plural": "{{PLURAL:$1|phetogo tša|999=diphetogo ya}} go feta",
 	"editsection": "lokiša",
 	"editold": "fetola",
 	"viewsourceold": "nyakorela mothopo",
@@ -197,7 +196,6 @@
 	"site-rss-feed": "$1 RSS Feed",
 	"site-atom-feed": "$1 Atom Feed",
 	"page-rss-feed": "\"$1\" RSS Feed",
-	"page-atom-feed": "\"$1\" Atom feed",
 	"red-link-title": "$1 (ga e hwetšagale)",
 	"nstab-main": "Letlakala",
 	"nstab-user": "Letlakala la mošomiši",
@@ -205,7 +203,6 @@
 	"nstab-project": "Letlakala la tirotherwa",
 	"nstab-image": "Faele",
 	"nstab-mediawiki": "Molaetša",
-	"nstab-template": "Template",
 	"nstab-help": "Letlakala la thuso",
 	"nstab-category": "Sehlopha",
 	"nosuchspecialpage": "Gago letlaka le itšego le bjalo",
@@ -542,7 +539,6 @@
 	"withoutinterwiki": "Matlakala a senago dihlomaganyo tša dipolelo",
 	"withoutinterwiki-submit": "Bontšha",
 	"fewestrevisions": "Matlakala a goba le diphetogo tše nnyenyane",
-	"nbytes": "$1 {{PLURAL:$1|byte|bytes}}",
 	"nlinks": "$1 {{PLURAL:$1|hlomaganyo|dihlomaganyo}}",
 	"nmembers": "$1 {{PLURAL:$1|leloko|maloko}}",
 	"nrevisions": "$1 {{PLURAL:$1|poeletšo|dipoeletšo}}",

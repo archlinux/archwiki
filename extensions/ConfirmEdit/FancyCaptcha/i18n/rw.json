@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Rodrigue"
+			"Rodrigue",
+			"RebeccaRwanda"
 		]
 	},
-	"fancycaptcha-accountcreate": "Mu rwego rwo kurinda Wiki konti zabaringa, turagusaba ko winjiza amagambo agaragara hepfo mu kazu ([[Special:Captcha/help|andi makuru]]):"
+	"fancycaptcha-captcha": "Gusuzuma umutekano",
+	"fancycaptcha-accountcreate": "Mu rwego rwo kurinda Wiki konti zabaringa, turagusaba ko winjiza amagambo agaragara hepfo mu kazu ([[Special:Captcha/help|andi makuru]]):",
+	"fancycaptcha-imgcaptcha-ph": "Shyiramo ubutumwa ubonye ku ishusho"
 }

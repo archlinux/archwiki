@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Adam-Yourist",
-			"Amire80",
 			"ElizaMag",
 			"Sapral Mikail",
 			"Умар"
@@ -77,7 +76,7 @@
 	"wikieditor-toolbar-tool-replace-button-replaceall": "ДӀахувца дерригаш",
 	"wikieditor-toolbar-tool-replace-close": "ДӀакъовла",
 	"wikieditor-toolbar-tool-replace-word": "Алхха бӀарчча дешаш",
-	"wikieditor-toolbar-section-characters": "ЛаьрххIа дола хьаракаш",
+	"wikieditor-toolbar-section-characters": "ЛаьрххӀа дола хьаракаш",
 	"wikieditor-toolbar-section-help": "Новкъoстал",
 	"wikieditor-toolbar-help-page-link": "Тӏатовжамаш"
 }

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Salifu Ramatu"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Bonu",
+	"discussiontools-replywidget-cancel": "Kpiɛnu",
+	"discussiontools-topicheader-commentcount": "Jôlêm {{PLURAL:$1||.}}",
+	"discussiontools-topicheader-latestcomment": "Jôlê bé  i ba kassiein: $1",
+	"discussiontools-topicsubscription-button-subscribe": "klè ô douman na a sou yê su",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|a}} nounnouka wua fètê yɛ sou."
+}

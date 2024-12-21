@@ -45,11 +45,14 @@
 			"Toa",
 			"Una giornata uggiosa '94",
 			"Vivbod",
-			"Wikitoni"
+			"Wikitoni",
+			"Valepert",
+			"ZandDev"
 		]
 	},
 	"collabpad-import-subtitle": "Importato da $1",
 	"tooltip-ca-ve-edit": "Modifica questa pagina",
+	"tooltip-ca-ve-create": "Crea questa pagina",
 	"tooltip-ca-editsource": "Modifica il wikitesto di questa pagina",
 	"tooltip-ca-createsource": "Crea il codice sorgente di questa pagina",
 	"visualeditor-advancedsettings-tool": "Impostazioni avanzate",
@@ -57,6 +60,7 @@
 	"visualeditor-autosave-modified-prompt-message": "Questa pagina è stata modificata dopo che l'hai caricata. {{GENDER:|Vuoi}} riprendere la modifica della vecchia versione o iniziare una nuova modifica dell'ultima versione della pagina?",
 	"visualeditor-autosave-modified-prompt-reject": "Inizia una nuova modifica",
 	"visualeditor-autosave-modified-prompt-title": "Riprendere la {{GENDER:|tua}} modifica?",
+	"visualeditor-autosave-not-recovered-text": "Le tue modifiche non salvate non possono essere recuperate.",
 	"visualeditor-autosave-recovered-text": "Le tue modifiche non salvate sono state automaticamente ripristinate.",
 	"visualeditor-autosave-recovered-title": "Modifiche ripristinate",
 	"visualeditor-backbutton-tooltip": "Indietro",
@@ -177,6 +181,7 @@
 	"visualeditor-dialog-transclusion-template-widget-aria": "Premi Spazio per selezionare il template.",
 	"visualeditor-dialog-transclusion-add-wikitext": "Aggiungi wikitesto",
 	"visualeditor-dialog-transclusion-add-param-error-exists-selected": "Impossibile aggiungere il parametro \"$2\" due volte.",
+	"visualeditor-dialog-transclusion-add-param-help": "Se ne sei a conoscenza, puoi inserire nomi di [//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide#Adding_undocumented_parameters parametri non documentati]. Nota che solamente i parametri previsti dal template avranno effetto. Puoi trovare informazioni sui parametri previsti nella [[$1|pagina del template]].",
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Nome del parametro",
 	"visualeditor-dialog-transclusion-add-param-save": "Aggiungi",
 	"visualeditor-dialog-transclusion-add-template": "Aggiungi template",

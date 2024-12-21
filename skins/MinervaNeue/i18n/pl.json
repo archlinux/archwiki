@@ -11,7 +11,8 @@
 			"Railfail536",
 			"WTM",
 			"Woytecr",
-			"Tsca"
+			"Tsca",
+			"Tar Lócesilion"
 		]
 	},
 	"minerva-last-modified-date": "Ostatnio edytowano $1 o $2",
@@ -58,7 +59,6 @@
 	"minerva-page-actions-language-switcher": "Języki",
 	"minerva-page-actions-history": "Historia",
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|dyskusja]]",
-	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "Responsywna skórka przeznaczona dla urządzeń mobilnych",
 	"skin-minerva-issue-learn-more": "Dowiedz się więcej",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekundę|$1 sekundy|$1 sekund}} temu",

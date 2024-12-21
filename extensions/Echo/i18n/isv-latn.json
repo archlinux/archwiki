@@ -116,7 +116,7 @@
 	"notification-link-text-collapse-all": "Svinuti",
 	"notification-link-text-view-message": "Pokazati soobčenje",
 	"notification-link-text-view-mention": "Pokazati spomněnje",
-	"notification-link-text-view-mention-failure": "Pokazati {{PLURAL:$1|spomněnje|spomněnja|spomněnja}}",
+	"notification-link-text-view-mention-failure": "Pokazati {{PLURAL:$1|spomněnje|spomněnja}}",
 	"notification-link-text-view-changes": "{{GENDER:$1|Pokazati}} izměny",
 	"notification-link-text-view-page": "Prěgled stranice",
 	"notification-header-edit-user-page": "$1 izměnil{{GENDER:$2||a}} <strong>{{GENDER:$3|vašu}} koristničsku stranicu</strong>.",

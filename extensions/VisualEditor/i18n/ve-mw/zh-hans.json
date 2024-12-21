@@ -55,7 +55,8 @@
 			"神樂坂秀吉",
 			"铁桶",
 			"飞舞回堂前",
-			"Anterdc99"
+			"Anterdc99",
+			"Huajing"
 		]
 	},
 	"collabpad-doctitle": "协作板：$1",
@@ -360,7 +361,7 @@
 	"visualeditor-mwsignature-tool": "您的签名",
 	"visualeditor-preference-visualeditor": "启用可视化编辑器",
 	"visualeditor-preference-newwikitexteditor-enable": "使用可视化编辑器内置的wikitext模式，而不是其他wikitext编辑器",
-	"visualeditor-preference-newwikitexteditor-help": "此功能有时称作“2017版wikitext编辑器”。",
+	"visualeditor-preference-newwikitexteditor-help": "此功能有时称作“2017年版wikitext编辑器”。",
 	"visualeditor-preference-tabs": "编辑模式：",
 	"visualeditor-preference-tabs-multi-tab": "向我显示两个编辑器标签",
 	"visualeditor-preference-tabs-prefer-ve": "如果可能，总是让我使用可视化编辑器",

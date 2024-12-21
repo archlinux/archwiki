@@ -5,7 +5,8 @@
 			"Hanna Tardos",
 			"Hunyadym",
 			"Rodrigo",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Ewithu"
 		]
 	},
 	"minerva-last-modified-date": "Utoljára szerkesztve $1, $2-kor",
@@ -15,7 +16,7 @@
 	"minerva-download": "Letöltés PDF-ben",
 	"mobile-frontend-editor-redlink-create": "Lap létrehozása",
 	"mobile-frontend-editor-redlink-explain": "Ezt a lapot még nem hozták létre.",
-	"mobile-frontend-editor-redlink-leave": "Nem, köszönöm.",
+	"mobile-frontend-editor-redlink-leave": "Köszönöm, nem.",
 	"mobile-frontend-history": "A lap szerkesztési előzményeinek megtekintése.",
 	"mobile-frontend-home-button": "Kezdőlap",
 	"mobile-frontend-language-article-heading": "Nyelv",
@@ -47,13 +48,21 @@
 	"mobile-frontend-user-page-talk": "Vitalap",
 	"minerva-user-menu-button": "Felhasználói menü",
 	"minerva-user-navigation": "Felhasználói navigáció",
+	"minerva-page-actions-editfull": "Teljes lap szerkesztése",
 	"minerva-page-actions-overflow": "Több",
 	"minerva-page-actions-language-switcher": "Nyelvek",
 	"minerva-page-actions-history": "Laptörténet",
 	"minerva-skin-desc": "Egy alkalmazkodó, mobilra fókuszáló felület",
 	"skin-minerva-issue-learn-more": "További információk",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|Egy|$1}} másodperce",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|Egy|$1}} perce",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|Egy|$1}} órája",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|Egy|$1}} napja",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|Egy|$1}} hónapja",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|Egy|$1}} éve",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategóriák",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "A lapok kategóriáinak megjelenítése",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Fejlesztett lapprobléma-kezelés",
+	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "A lapok problémajelzései (Sablon:ambox) be a szócikk tartalmának szerves részeként fognak megjelenni.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sajnos az eredmények oldal szerinti csoportosítása nem érhető el mobilon. Ha szeretnéd használni a szerkesztések csoportosítása oldal szerint funkciót, kérjük, látogasd meg az asztali változatot."
 }

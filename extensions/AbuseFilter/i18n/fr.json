@@ -59,7 +59,9 @@
 			"LD",
 			"Qwrop",
 			"SleaY",
-			"Jules*"
+			"Jules*",
+			"Mahabarata",
+			"Terio legale"
 		]
 	},
 	"abusefilter-desc": "Applique des heuristiques automatiques aux modifications",
@@ -311,7 +313,7 @@
 	"abusefilter-edit-disallow-other-label": "Nom de la page d’un autre message :\n: ''(sans le préfixe « MediaWiki: »)''",
 	"abusefilter-edit-disallow-actions": "Actions :",
 	"abusefilter-edit-disallow-preview": "Afficher/masquer l’aperçu du message sélectionné",
-	"abusefilter-edit-disallow-edit": "Créer/Modifier le message sélectionné",
+	"abusefilter-edit-disallow-edit": "Créer/modifier le message sélectionné",
 	"abusefilter-edit-tag-tag": "[[Special:Tags|Balises]] à appliquer :",
 	"abusefilter-edit-tag-placeholder": "Ajouter des balises (une par une ou séparées par une virgule)",
 	"abusefilter-edit-tag-hidden-placeholder": "Ajouter des balises (séparées par des virgules)",
@@ -630,7 +632,7 @@
 	"abusefilter-invalid-request-noid": "Demande non valide ! Vous devez accéder aux détails confidentiels du journal via le formulaire sur la page de détails du journal des abus et indiquer un motif.",
 	"blockedexternaldomains": "Domaines externes bloqués",
 	"abusefilter-blocked-domains-title": "Domaines externes bloqués",
-	"abusefilter-blocked-domains-intro": "Les liens externes correspondant à cette liste seront bloqués quand ils seront ajoutés à une page. Ces domaines sont stockés dans [[MediaWiki:BlockedExternalDomains.json]].",
+	"abusefilter-blocked-domains-intro": "Les liens externes correspondant à cette liste seront bloqués quand ils seront ajoutés à une page. Ces domaines sont stockés dans [[MediaWiki:BlockedExternalDomains.json]]. Les tentatives d'ajout de liens bloqués sont enregistrées dans [[Special:Log/abusefilterblockeddomainhit]].",
 	"abusefilter-blocked-domains-add-heading": "Ajouter un nouveau domaine bloqué",
 	"abusefilter-blocked-domains-add-explanation": "Ici, vous pouvez ajouter un domaine à la liste des domaines bloqués.",
 	"abusefilter-blocked-domains-domain": "Domaine à bloquer, comme wikipedia.org",
@@ -651,7 +653,7 @@
 	"abusefilter-blocked-domains-domain-added-comment": "Ajouté un domaine externe bloqué $1 avec comme notes : $2",
 	"abusefilter-blocked-domains-domain-removed-comment": "Retirer le domaine externe bloqué $1 avec des notes : $2",
 	"log-description-abusefilterprivatedetails": "Ce journal affiche une liste des dates et heures où un utilisateur a accédé aux détails confidentiels d’un journal d’abus.",
-	"log-description-abusefilterblockeddomainhit": "Ces événements suivent les correspondances avec la liste des domaines bloqués.",
+	"log-description-abusefilterblockeddomainhit": "Ces événements suivent les accès aux [[Special:BlockedExternalDomains|domaines bloqués]].",
 	"abusefilter-noreason": "Avertissement : pour voir les détails confidentiels de ce journal, vous devez indiquer un motif.",
 	"abusefilter-log-ip-not-available": "Non disponible",
 	"abusefilter-tag-reserved": "La balise <code>abusefilter-condition-limit</code> est réservée à l’usage interne du filtre anti-abus.",

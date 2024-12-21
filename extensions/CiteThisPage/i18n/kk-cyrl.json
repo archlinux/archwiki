@@ -2,12 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Kaztrans",
-			"Mirgulkali"
+			"Mirgulkali",
+			"Casserium"
 		]
 	},
 	"citethispage": "Дәйексөз алу",
 	"citethispage-desc": "[[Special:Cite|Дәйексөз]] арнайы бетін және құрал сілтемесін қосады",
 	"citethispage-link": "Беттен дәйексөз алу",
+	"tooltip-citethispage": "Бұл беттен қалай дәйексөз алуға болатыны туралы мәлімет",
 	"citethispage-change-submit": "Дәйексөз ал!",
 	"citethispage-change-target": "Бет атауы:",
 	"citethispage-badrevision": "Қате: \"$1\" беті үшін $2 болып белгіленген өзгеріс табылмады.",

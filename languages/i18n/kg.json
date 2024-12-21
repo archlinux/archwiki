@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"DannyS712",
 			"Irus",
 			"Mouse21",
@@ -65,6 +64,7 @@
 	"oct": "ng10",
 	"nov": "ng11",
 	"dec": "ng12",
+	"period-am": "KELE",
 	"pagecategories": "{{PLURAL:$1|Mutîndu|Mitindu}}",
 	"category_header": "Mikânda na mutîndu \"$1\"",
 	"category-media-header": "Media na mutîndu \"$1\"",
@@ -161,7 +161,6 @@
 	"nstab-project": "Mukânda ya lukanu",
 	"nstab-image": "Fisyé",
 	"nstab-mediawiki": "Nsangu",
-	"nstab-template": "Template",
 	"nstab-help": "Mukânda ya lusadisu",
 	"nstab-category": "Mutîndu",
 	"mainpage-nstab": "Lutiti ya Nene",

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Muhammad Shuaib",
-			"TheAafi"
+			"TheAafi",
+			"Aafi"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "آئی ڈی '$1' کے ساتھ تبصرہ نہیں ملا۔",

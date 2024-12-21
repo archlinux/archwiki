@@ -25,6 +25,7 @@ use EmptyBagOStuff;
 use Exception;
 use jakobo\HOTP\HOTP;
 use MediaWiki\Extension\OATHAuth\IAuthKey;
+use MediaWiki\Extension\OATHAuth\Notifications\Manager;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Logger\LoggerFactory;
@@ -49,6 +50,21 @@ class TOTPKey implements IAuthKey {
 
 	/** @var string[] List of recovery codes */
 	private $recoveryCodes = [];
+
+	/**
+	 * The upper threshold number of recovery codes that if a user has less than, we'll try and notify them...
+	 */
+	private const RECOVERY_CODES_NOTIFICATION_NUMBER = 2;
+
+	/**
+	 * Number of recovery codes to be generated
+	 */
+	public const RECOVERY_CODES_COUNT = 10;
+
+	/**
+	 * Length (in bytes) that recovery codes should be
+	 */
+	private const RECOVERY_CODE_LENGTH = 10;
 
 	/**
 	 * @return TOTPKey
@@ -184,6 +200,18 @@ class TOTPKey implements IAuthKey {
 				// This is saved below via OATHUserRepository::persist
 				array_splice( $this->recoveryCodes, $i, 1 );
 
+				// TODO: Probably a better home for this...
+				// It could go in OATHUserRepository::persist(), but then we start having to hard code checks
+				// for Keys being TOTPKey...
+				// And eventually we want to do T232336 to split them to their own 2FA method...
+				if ( count( $this->recoveryCodes ) <= self::RECOVERY_CODES_NOTIFICATION_NUMBER ) {
+					Manager::notifyRecoveryTokensRemaining(
+						$user,
+						self::RECOVERY_CODES_NOTIFICATION_NUMBER,
+						self::RECOVERY_CODES_COUNT
+					);
+				}
+
 				$logger->info( 'OATHAuth user {user} used a recovery token from {clientip}', [
 					'user' => $user->getAccount(),
 					'clientip' => $clientIP,
@@ -200,11 +228,11 @@ class TOTPKey implements IAuthKey {
 	}
 
 	public function regenerateScratchTokens() {
-		$scratchTokens = [];
-		for ( $i = 0; $i < 10; $i++ ) {
-			$scratchTokens[] = Base32::encode( random_bytes( 10 ) );
+		$codes = [];
+		for ( $i = 0; $i < self::RECOVERY_CODES_COUNT; $i++ ) {
+			$codes[] = Base32::encode( random_bytes( self::RECOVERY_CODE_LENGTH ) );
 		}
-		$this->recoveryCodes = $scratchTokens;
+		$this->recoveryCodes = $codes;
 	}
 
 	/**

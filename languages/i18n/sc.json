@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Andria",
 			"DannyS712",
 			"L2212",
@@ -138,7 +137,7 @@
 	"article": "Artìculu",
 	"newwindow": "(aberret in una bentana noa)",
 	"cancel": "Burra",
-	"moredotdotdot": "Àteru…",
+	"moredotdotdot": "Àteru...",
 	"morenotlisted": "Custa lista podet èssere incumprida.",
 	"mypage": "Pàgina",
 	"mytalk": "Cuntierras meas",
@@ -1053,7 +1052,6 @@
 	"newpages": "Pàginas noas",
 	"newpages-username": "Nùmene impitadore:",
 	"ancientpages": "Pàginas prus betzas",
-	"move": "Move",
 	"movethispage": "Move custa pàgina (càmbia su tìtulu)",
 	"unusedimagestext": "Is documentos chi sighint sunt istados carrigados ma non sunt impreados.\nDia podent èssere immàgines impreadas dae àteros giassos cun unu ligòngiu diretu, e tando podent èssere listados inoghe comente usu ativu.",
 	"notargettitle": "Perunu obietivu",

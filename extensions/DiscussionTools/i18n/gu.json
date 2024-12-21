@@ -40,7 +40,7 @@
 	"discussiontools-preference-newtopictool-createpage-newtopictool": "નવો વિષય ઉમેરવાની સગવડ આપો",
 	"discussiontools-preference-replytool": "ઝડપી ઉત્તર આપવાનું સક્ષમ કરો",
 	"discussiontools-preference-visualenhancements": "ચર્ચા ક્રિયાઓ બતાવો",
-	"discussiontools-replybutton": "ઉત્તર",
+	"discussiontools-replybutton": "{{GENDER:|ઉત્તર}}",
 	"discussiontools-replylink": "{{GENDER:|ઉત્તર}}",
 	"discussiontools-replywidget-abandon-discard": "ટિપ્પણી કાઢી નાખો",
 	"discussiontools-replywidget-abandon-keep": "લખવાનું ચાલુ રાખો",

@@ -6,7 +6,8 @@
 			"Melos",
 			"Pippinu",
 			"Santu",
-			"Sarvaturi"
+			"Sarvaturi",
+			"GianAntonucci"
 		]
 	},
 	"captcha-edit": "Pi putiri canciari sta pàggina, pi favuri arrisorvi la summa fàcili ca c'è ccassutta e scrivi lu risurtatu ntâ casedda\n([[Special:Captcha/help|àutri nfurmazzioni]]):",
@@ -21,7 +22,7 @@
 	"captcha-disabledinapi": "St’azzioni addumanna nu CAPTCHA, dunca nun si pò esèguiri pi menzu di l'API.",
 	"captchahelp-title": "Guida pî CAPTCHA",
 	"captchahelp-cookies-needed": "S’hannu a attivari li cookie ntô browser pi fari funziunari stu miccanismu.",
-	"captchahelp-text": "Quannu li siti Web accèttanu cuntinuti dû pùbblicu, comu fa sta wiki, ammatti spissu ca vèninu sfruttati di malintinziunati ch'adòpiranu strummenti autumatizzati pi carricari liami versu li sò siti.\nCu tuttu ca sti liami si ponnu livari, sunnu sempri na siccatura.\n\nCerti voti, spicialmenti quannu s'agghiùncinu liami novi nta na pàggina, la wiki pò ammustrari na mmàggini cûn testu culuratu o sdillabbratu, e t'addumanna di scrìviri li palori ca cunteni.\nComu chi è diffìcili fari st'azzioni di manera autumàtica, stu miccanismu cunzenti ê cristiani di pubblicari li sò cuntinuti, ô tempu stissu bluccannu la maiur parti dî spammer e di bot ca fannu dammaggi.\n\nPurtroppu, chistu pò dari prubblemi a l'utenti ca nun vìdinu bonu o a chiddi ca adòpiranu browser tistuali o sintitizzatura vucali.\nComu a ora nun avemu n'altirnativa àudiu a dispusizzioni. Si nun s'arrinesci a purtari a tèrmini n'opirazzioni liggìttima, cuntattari pi favuri [[Special:ListAdmins|l'amministratura dû situ]] e addumannari assistenza.\n\nCarcari lu buttuni «arreri» dû browser pi turnari â pàggina di canciamentu.",
+	"captchahelp-text": "Quannu li siti web accèttanu cuntinuti dû pùbblicu, comu fa sta wiki, mmatti spissu ca su’ abbusati dî maluntinziunati chi ùsanu stigghi autumatizzati pi pubblicari li so lijami nna tanti siti.\nCu tuttu ca sti lijami si ponnu livari, sunnu sempri n’abbuttamentu di testa.\n\nÊ voti, speci quannu metti lijami novi nna na pàggina, la wiki po fari vìdiri na mmàggini c’un testu culuratu o tortu e t’addumanna di scrìviri li palori chi fa vìdiri.\nSiccomu è diffìcili fari st’azzioni di manera autumàtica, stu miccanìsimu cunzenti â majurìa dî cristiani di pubblicari li so cuntinuti, nnô mentri ca blocca â majurìa dî maluntinziunati e a l'autri dammaggeri rubbòtici.\n\nPurtroppu, chistu ci po dari prubblemi a l'utenti ca nun cci vìdinu bonu o a chiddi ca ùsanu browser cu sulu testu o cu sulu vuci.\nCamora nun avemu n’autra manera cu missaggi audiu. Si nun rinesci a cumplitari n'upirazzioni liggìttima, pi favuri cuntatta ê [[{{int:grouppage-sysop}}|manijatura dû situ]] e addumànnaci ajutu.\n\nAmmacca lu buttuni «arreri» dû browser pi turnari â pàggina di canciu.",
 	"captcha-addurl-whitelist": " #<!-- lassari sta riga pricisa pi com'è --> <pre>\n# La sintassi è chista:\n#   * Tuttu chiddu ca c'è d'un caràttiri \"#\" fina â fini dâ riga è nu cummentu\n#   * Ogni riga nun vacanti è nu frammentu di sprissioni rigulari ca havi a currispùnniri ô sulu host di l'URL\n #</pre> <!-- lassari sta riga pricisa pi com'è -->",
 	"right-skipcaptcha": "Esiguiri l'azzioni c'addumànnanu nu CAPTCHA senza aviri a passari pû CAPTCHA",
 	"confirmedit-preview-content": "Cuntinutu",

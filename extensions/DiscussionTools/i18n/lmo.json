@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Salvemm el lombard"
+			"Salvemm el lombard",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Te ricevareet ona notifega quand che on quaivun el taca foeura on coment noeuv in questa discussion chì. Te podet sgiustà i to impostazzion de notifega in di preferenze.",
@@ -71,8 +72,8 @@
 	"discussiontools-preference-topicsubscription-help": "Chesschì el te permetarà de ricever di notifega di coment sora di argoment specifegh.",
 	"discussiontools-preference-visualenhancements": "Fà vedé l'atività de ciciarada",
 	"discussiontools-preference-visualenhancements-help": "Quest el pizzarà on noeuv vedé de la pagina de ciciarada che 'l tira dent di informazzion sora l'atività dedent d'ogni ciciarada.",
-	"discussiontools-replybutton": "Respond",
-	"discussiontools-replylink": "rispond",
+	"discussiontools-replybutton": "{{GENDER:|Respond}}",
+	"discussiontools-replylink": "{{GENDER:|rispond}}",
 	"discussiontools-replywidget-abandon": "Te see sicur che te voeuret trà via el coment che te see 'dree a scriver?",
 	"discussiontools-replywidget-abandon-discard": "Trà via el coment",
 	"discussiontools-replywidget-abandon-keep": "Và adree a scriver",

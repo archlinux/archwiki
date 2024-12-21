@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-dismiss": "Äʹšš lij seʹlvv.",
@@ -12,11 +13,11 @@
 	"discussiontools-findcomment-title": "Ooʒʒ kommeeʹnt",
 	"discussiontools-ledesection-button": "Lââʹssteâđ tän seeidast",
 	"discussiontools-ledesection-title": "Lââʹssteâđ tän saǥstõõllâmsseeidast",
-	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekuntt|sekuunt|sekunttâd}}",
+	"discussiontools-limitreport-timeusage-value": "{{PLURAL:$1|$1 sekunttâd|1=sekuntt|2=2 sekuunt|3=3 sekuunt|4=4 sekuunt|5=5 sekuunt|6=6 sekuunt}}",
 	"discussiontools-newtopic-placeholder-title": "Äʹšš",
 	"discussiontools-notification-added-topic-view": "Čuäʹjet ääʹšš",
 	"discussiontools-notification-removed-topic-view": "Čuäʹjet seeid",
-	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Õhtt ođđ vasttõs|$1 ođđ vasttõõzz|$1 ođđ vasttõssâd|100=99+ ođđ replies}} teeʹmest \"<strong>$3</strong>\".",
+	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|ođđ vasttõssâd|1=Õhtt ođđ vasttõs|2=ođđ vasttõõzz|3=ođđ vasttõõzz|4=ođđ vasttõõzz|5=ođđ vasttõõzz|6=ođđ vasttõõzz|100=99+ ođđ vasttõssâd}} teeʹmest \"<strong>$3</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-view": "Čuäʹjet kommeeʹnt",
 	"discussiontools-pageframe-latestcomment": "Ođđsumus kommeeʹnt ǩeeʹrjti õõʹnni $2 ääʹššest $3 $1",
 	"discussiontools-pageframe-latestcomment-notopic": "Ođđsumus kommeeʹnt ǩeeʹrjti õõʹnni $2 $1",
@@ -38,7 +39,7 @@
 	"discussiontools-replywidget-reply": "{{GENDER:|Vaʹstted}}",
 	"discussiontools-replywidget-summary": "Õʹhtteǩeässmõš",
 	"discussiontools-replywidget-watchthis": "Lââʹzzet tän seeid tuu [[Special:Watchlist|valvvâmliʹstte]]",
-	"discussiontools-topicheader-authorcount": "Saǥstõõllmõõžžâst {{PLURAL:$1|lie $1 ooumžed|0=ij leäkku ni õhtt ooumaž|1=lij 1 ooumaž|2=lie 2 oummu|3=lie 3 oummu|4=lie 4 oummu|5=lie 5 oummu|6=lie 6 oummu}}.",
+	"discussiontools-topicheader-authorcount": "Saǥstõõllmõõžžâst {{PLURAL:$1|lie $1 ooumžed|0=ij leäkku ni õhtt ooumaž|1=lij õhtt ooumaž|2=lie 2 oummu|3=lie 3 oummu|4=lie 4 oummu|5=lie 5 oummu|6=lie 6 oummu}}.",
 	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|$1 kommeʹntted|1=Õhtt kommeʹntt|2=2 kommeeʹnt|3=3 kommeeʹnt|4=4 kommeeʹnt|5=5 kommeeʹnt|6=6 kommeeʹnt}}",
 	"discussiontools-topicheader-latestcomment": "Ođđsumus kommeʹntt: $1",
 	"discussiontools-topicsubscription-action-subscribe-button": "Tiʹlle",

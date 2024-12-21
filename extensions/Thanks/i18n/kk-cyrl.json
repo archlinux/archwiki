@@ -3,7 +3,8 @@
 		"authors": [
 			"Arystanbek",
 			"Macofe",
-			"СеніңШешең"
+			"СеніңШешең",
+			"Casserium"
 		]
 	},
 	"thanks-desc": "Қатысушылардың өңдемелеріне, пікірлеріне және тағы басқаларға рахмет айту үшін сілтемелерді қосу",
@@ -27,9 +28,10 @@
 	"notification-header-rev-thank": "$1 {{GENDER:$4|сізге}} <strong>$3</strong> бетіндегі өңдемеңізге {{GENDER:$2|рахметін}} білдірді.",
 	"notification-compact-header-edit-thank": "$1 {{GENDER:$3|сізге}} {{GENDER:$2|рахметін}} білдірді.",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Бір адам|$1 адам|100=99+ адам}} <strong>$2</strong> бетіндегі өңдемеңіз үшін {{GENDER:$3|сізге}} рахметін білдірді.",
-	"log-name-thanks": "Рахмет білдіру журналы",
+	"log-name-thanks": "Алғыс білдіру журналы",
 	"log-description-thanks": "Төменде басқа қатысушылардан рахмет айтылған қатысушылар тізімі берілген.",
 	"logentry-thanks-thank": "$1 {{GENDER:$4|$3}} есімді қатысушыға {{GENDER:$2|рахметін}} білдірді.",
+	"logeventslist-thanks-log": "Алғыс білдіру журналы",
 	"thanks-error-no-id-specified": "Рахметті жөнелту үшін нұсқа ID-ін көрсетуіңіз керек.",
 	"notification-link-text-view-post": "Пікірді көру",
 	"thanks-error-invalidpostid": "Жазба ID-і жарамсыз",

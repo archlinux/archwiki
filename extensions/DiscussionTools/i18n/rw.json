@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Germain92",
-			"Rodrigue"
+			"Rodrigue",
+			"RebeccaRwanda",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Uramenyeshwa iyo hagize ugira icyo avuga kuri iki kiganiro. Ushobora guhitamo guhindura ibyo umenyeshwa uko ubishaka.",
@@ -58,7 +59,7 @@
 	"discussiontools-preference-summary": "Ushobora kwiga byinshi kuriyi ngingo usoma [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary feature summary].",
 	"discussiontools-preference-topicsubscription": "Gushoboza abiyandikisha",
 	"discussiontools-preference-topicsubscription-help": "Ibi bizagufasha kwiyandikisha kugirango wakire imenyesha kubyerekeye ibitrekerezo ku ngingo zitandukanye.",
-	"discussiontools-replylink": "subiza",
+	"discussiontools-replylink": "{{GENDER:|subiza}}",
 	"discussiontools-replywidget-abandon": "Uzi neza ko ushaka kureka kureka igitekerezo wanditse?",
 	"discussiontools-replywidget-abandon-discard": "Hagarika igitekerezo",
 	"discussiontools-replywidget-abandon-keep": "Komeza wandike",
@@ -77,10 +78,10 @@
 	"discussiontools-replywidget-newcomments-button": "Erekana $1 igitekerezo gishya {{PLURAL:$1|ibitekerezo}}",
 	"discussiontools-replywidget-newtopic": "Ongeraho ingingo",
 	"discussiontools-replywidget-placeholder-newtopic": "Ibisobanuro",
-	"discussiontools-replywidget-placeholder-reply": "Subiza kuri{{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Subiza}} kuri {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Ibyifuzo",
 	"discussiontools-replywidget-preview": "Imbere",
-	"discussiontools-replywidget-reply": "Subiza",
+	"discussiontools-replywidget-reply": "{{GENDER:|Subiza}}",
 	"discussiontools-replywidget-signature-body": "$1 byahinduwe muri sinye yawe. Guhindura andika $2. Menya ko udakeneye gusinya ibitekerezo hamwe niki gikoresho. Umukono wawe uzingerwaho byikora.",
 	"discussiontools-replywidget-signature-title": "Ikimenyetso cyumukono cyagaragaye",
 	"discussiontools-replywidget-summary": "Incamake",
@@ -97,9 +98,9 @@
 	"discussiontools-topicsubscription-button-unsubscribe-tooltip": "Iyandukuze kugirango uhagarike kwakira amatangaza.",
 	"discussiontools-topicsubscription-error-not-found-body": "Kwiyandikisha byerekanwe muri URL ntibyabonetse.",
 	"discussiontools-topicsubscription-error-not-found-title": "Kwiyandikisha ntibyabonetse",
-	"discussiontools-topicsubscription-notify-subscribed-body": "Uzakira amatangazo kubyerekeye ibitekerezo bishya muriyi ngingo.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "Wiyandikishije!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "Ntuzongera kwakira amatangazo kubyerekeye ibitekerezo bishya muriyi ngingo.",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Wowe}} Uzakira amatangazo kubyerekeye ibitekerezo bishya kuri iyi ngingo.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Wowe}} Wiyandikishije!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Wowe}} Ntuzongera kwakira amatangazo kubyerekeye ibitekerezo bishya kuri iyi ngingo.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "Wiyandukuje.",
 	"discussiontools-topicsubscription-pager-actions": "Ibikorwa",
 	"discussiontools-topicsubscription-pager-page": "Urubuga",

@@ -2,14 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Nertiks",
-			"Nērtiks Jōrgesuns"
+			"Nērtiks Jōrgesuns",
+			"Kxeo"
 		]
 	},
 	"mobile-frontend-history": "Waidinnais šisse pāusas redigīsnas istōrijan.",
 	"mobile-frontend-home-button": "Galwas pāusan",
 	"mobile-frontend-language-article-heading": "Bilā",
 	"mobile-frontend-main-menu-login": "Enjaīs",
+	"mobile-frontend-main-menu-nearby": "Taūwu",
 	"mobile-frontend-main-menu-settings": "Ensadīnsenei",
 	"mobile-frontend-placeholder": "Laukīs en {{SITENAME}}",
-	"mobile-frontend-random-button": "Dallas"
+	"mobile-frontend-random-button": "Dallas",
+	"minerva-page-actions-overflow": "Tūls"
 }

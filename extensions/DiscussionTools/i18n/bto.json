@@ -5,7 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Simbag",
-	"discussiontools-replylink": "simbag",
+	"discussiontools-replylink": "{{GENDER:|simbag}}",
 	"discussiontools-replywidget-advanced": "Abante",
 	"discussiontools-replywidget-cancel": "Galinon",
 	"discussiontools-replywidget-mode-source": "Ginikanan",

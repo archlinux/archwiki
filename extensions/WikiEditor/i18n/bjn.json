@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Ezagren",
 			"J Subhi",
 			"Macofe"
@@ -17,12 +16,12 @@
 	"wikieditor-toolbar-tool-italic-example": "Naskah hiring",
 	"wikieditor-toolbar-tool-link": "Tautan",
 	"wikieditor-toolbar-tool-link-title": "Buati tautan",
-	"wikieditor-toolbar-tool-link-int": "Ka sabuah tungkaran wiki",
+	"wikieditor-toolbar-tool-link-int": "Ka sabuting laman wiki",
 	"wikieditor-toolbar-tool-link-int-target": "Tungkaran nang dituju atawa URL:",
-	"wikieditor-toolbar-tool-link-int-target-tooltip": "Judul tungkaran atawa URL",
+	"wikieditor-toolbar-tool-link-int-target-tooltip": "Judul laman atawa URL",
 	"wikieditor-toolbar-tool-link-int-text": "Naskah gasan tampilan:",
 	"wikieditor-toolbar-tool-link-int-text-tooltip": "Naskah gasan ditampilakan",
-	"wikieditor-toolbar-tool-link-ext": "Ka sabuah tungkaran web luar",
+	"wikieditor-toolbar-tool-link-ext": "Ka sabuting laman wéb luar",
 	"wikieditor-toolbar-tool-link-ext-target": "URL tautan:",
 	"wikieditor-toolbar-tool-link-ext-text": "Naskah tautan:",
 	"wikieditor-toolbar-tool-link-insert": "Buati tautan",
@@ -52,7 +51,7 @@
 	"wikieditor-toolbar-tool-nowiki": "Kadada pambantukan wiki",
 	"wikieditor-toolbar-tool-nowiki-example": "Masukakan naskah kada babantuk di sia",
 	"wikieditor-toolbar-tool-redirect": "Paugahan",
-	"wikieditor-toolbar-tool-redirect-example": "Ngaran tungkaran tujuan",
+	"wikieditor-toolbar-tool-redirect-example": "Ngaran laman tujuan",
 	"wikieditor-toolbar-tool-big": "Ganal",
 	"wikieditor-toolbar-tool-big-example": "Naskah ganal",
 	"wikieditor-toolbar-tool-small": "Halus",

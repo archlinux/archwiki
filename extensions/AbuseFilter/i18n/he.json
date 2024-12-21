@@ -20,7 +20,8 @@
 			"דולב",
 			"חיים",
 			"ערן",
-			"פוילישער"
+			"פוילישער",
+			"מקף"
 		]
 	},
 	"abusefilter-desc": "החלת בדיקות אוטומטיות על עריכות",
@@ -590,7 +591,7 @@
 	"abusefilter-invalid-request-noid": "בקשה בלתי־תקינה! יש לגשת לנתוני היומן הפרטיים באמצעות הטופס שבדף הנתונים של יומן ההשחתות ולהקליד סיבה.",
 	"blockedexternaldomains": "תחומים חיצוניים חסומים",
 	"abusefilter-blocked-domains-title": "תחומים חיצוניים חסומים",
-	"abusefilter-blocked-domains-intro": "קישורים חיצוניים התואמים לרשימה הזאת ייחסמו כאשר יתווספו לדף. התחומים האלה מאוחסנים בדף [[MediaWiki:BlockedExternalDomains.json]].",
+	"abusefilter-blocked-domains-intro": "קישורים חיצוניים התואמים לרשימה הזאת ייחסמו כאשר יתווספו לדף. התחומים האלה מאוחסנים בדף [[MediaWiki:BlockedExternalDomains.json]]. ניסיונות להוסיף לכאן קישורים חסומים נרשמים ביומן [[Special:Log/abusefilterblockeddomainhit]]",
 	"abusefilter-blocked-domains-add-heading": "הוספת תחום חסום חדש",
 	"abusefilter-blocked-domains-add-explanation": "כאן אפשר להוסיף תחום לרשימת התחומים החסומים.",
 	"abusefilter-blocked-domains-domain": "תחום לחסימה, כגון wikipedia.org",
@@ -611,7 +612,7 @@
 	"abusefilter-blocked-domains-domain-added-comment": "הוספת תחום חיצוני חסום $1 עם הערות: $2",
 	"abusefilter-blocked-domains-domain-removed-comment": "הסרת תחום חיצוני חסום $1 עם הערות: $2",
 	"log-description-abusefilterprivatedetails": "היומן הזה מציגה רשימה של הפעמים שבהן משתמש ניגש לנתונים פרטיים של יומן ההשחתות.",
-	"log-description-abusefilterblockeddomainhit": "האירועים האלה עוקבים אחר פעולות צפייה בתחום חסום.",
+	"log-description-abusefilterblockeddomainhit": "האירועים האלה עוקבים אחר פעולות הוספת קישורים ב[[Special:BlockedExternalDomains|לתחומים חסומים]].",
 	"abusefilter-noreason": "אזהרה: כדי לצפות בנתונים פרטיים ביומן הזה, יש להקליד סיבה.",
 	"abusefilter-log-ip-not-available": "לא זמין",
 	"abusefilter-tag-reserved": "התגית <code>abusefilter-condition-limit</code> שמורה לשימוש פנימי של מסנן ההשחתות.",

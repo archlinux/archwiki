@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Chinneeb",
 			"Enkhsaihan2005",
 			"Sembuk",
@@ -20,5 +19,6 @@
 	"mobile-frontend-pageaction-edit-tooltip": "Хуудасны толгой хэсгийг засварлах",
 	"mobile-frontend-placeholder": "{{SITENAME}}-с хайх",
 	"mobile-frontend-random-button": "Санамсаргүй",
-	"mobile-frontend-user-newmessages": "Өөрийн тань ярианд шинэ мэдээ ирлээ"
+	"mobile-frontend-user-newmessages": "Өөрийн тань ярианд шинэ мэдээ ирлээ",
+	"minerva-page-actions-overflow": "Илүү"
 }

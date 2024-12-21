@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Bennylin",
 			"Marwan Mohamad",
 			"Veracious"
@@ -19,11 +18,21 @@
 	"vector-view-history": "Bilohi riwayati",
 	"vector-view-view": "Baca",
 	"vector-more-actions": "Uweewo",
+	"vector-feature-limited-width-name": "Tanggalo",
+	"vector-feature-custom-font-size-name": "Hurupu",
+	"vector-feature-limited-width-0-label": "Tanggalo",
+	"vector-feature-limited-width-1-label": "Standar",
+	"vector-feature-custom-font-size-0-label": "Kiki'o",
+	"vector-feature-custom-font-size-1-label": "Standar",
+	"vector-feature-custom-font-size-2-label": "Damango",
+	"skin-theme-name": "Laku",
+	"skin-theme-os-label": "Otomatis",
 	"vector-searchsuggest-containing": "Lolohe halaman otuwa <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Tuwango",
 	"vector-toc-beginning": "Awali",
 	"vector-main-menu-label": "Menu uda'a",
 	"vector-page-tools-label": "Pilākasi",
 	"vector-page-tools-general-label": "Umum",
+	"vector-page-tools-actions-label": "Huhutu",
 	"vector-unpin-element-label": "wanto'a"
 }

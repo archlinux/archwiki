@@ -90,6 +90,7 @@
 	"math-tracking-category-render-error-desc": "Selles kategoorias on leheküljed, kus matemaatiliste siltide viimistluses on tõrkeid.",
 	"math_unknown_error": "Tundmatu viga",
 	"math_unknown_function": "tundmatu funktsioon '$1'",
+	"mw-math-mathjax": "Kliendipoolne MathJaxi viimistlus (brauseritele, mille MathML-i tugi on piiratud)",
 	"mw-math-mathml": "SVG (MathML-i saab lubada brauseri lisa abil)",
 	"mw-math-native": "MathML (katseline; ilma piltideta)",
 	"mw-math-source": "LaTeX-lähtetekst (tekstibrauserites)",

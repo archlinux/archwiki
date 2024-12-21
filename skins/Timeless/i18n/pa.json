@@ -1,15 +1,27 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tow"
+			"Tow",
+			"Cabal"
 		]
 	},
 	"timeless-anonymous": "ਬੇਪਛਾਣ",
 	"timeless-loggedinas": "'''$1''' ਵਜੋਂ ਦਾਖ਼ਲ",
+	"timeless-notloggedin": "ਦਾਖ਼ਲ ਨਹੀਂ ਹੋ",
+	"timeless-userpage": "{{GENDER:$1|ਵਰਤੋਂਕਾਰ}} ਸਫ਼ਾ",
+	"timeless-talkpage": "{{GENDER:$1| ਵਰਤੋਂਕਾਰ}} ਗੱਲਬਾਤ",
+	"timeless-pagelog": "ਸਫ਼ੇ ਦੇ ਚਿੱਠੇ",
 	"timeless-more": "ਹੋਰ",
+	"timeless-sitetools": "ਵਿਕੀ ਸੰਦ",
 	"timeless-pageactions": "ਸਫ਼ੇ ਦੇ ਸੰਦ",
+	"timeless-userpagetools": "ਵਰਤੋਂਕਾਰ ਸਫ਼ਾ ਸੰਦ",
+	"timeless-action-addsection": "ਨਵਾਂ ਵਿਸ਼ਾ",
+	"timeless-view-view": "ਪੜ੍ਹੋ",
 	"timeless-pagemisc": "ਹੋਰ",
+	"timeless-namespaces": "ਨਾਂ-ਥਾਂ",
+	"timeless-pagetools": "ਸਫ਼ੇ ਦੀਆਂ ਕਾਰਵਾਈਆਂ",
 	"timeless-languages": "ਭਾਸ਼ਾਵਾਂ",
+	"timeless-projects": "ਹੋਰ ਪ੍ਰੋਜੈਕਟ",
 	"timeless-view-history": "ਅਤੀਤ",
 	"timeless-action-undelete": "{{PLURAL:$1|ਇੱਕ ਸੋਧ|$1 ਸੋਧਾਂ}} ਹਟਾਉਣਾ-ਵਾਪਸ"
 }

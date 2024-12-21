@@ -8,8 +8,10 @@
 	"mobile-frontend-history": "ܚܙܝ ܬܫܥܝܬܐ ܕܗܕܐ ܦܐܬܐ",
 	"mobile-frontend-home-button": "ܒܝܬܐ",
 	"mobile-frontend-language-article-heading": "ܠܫܢܐ",
+	"mobile-frontend-main-menu-login": "ܥܠܠܐ",
 	"mobile-frontend-main-menu-nearby": "ܠܩܘܪܒܐ",
 	"mobile-frontend-main-menu-settings": "ܩܒܝܥܘܬܐ",
 	"mobile-frontend-placeholder": "ܒܨܝ {{SITENAME}}",
-	"mobile-frontend-random-button": "ܚܒܘܟ"
+	"mobile-frontend-random-button": "ܚܒܘܟ",
+	"minerva-page-actions-overflow": "ܝܬܝܪ"
 }

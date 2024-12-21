@@ -26,7 +26,8 @@
 			"もなー(偽物)",
 			"ネイ",
 			"バレロン",
-			"青子守歌"
+			"青子守歌",
+			"シェン,アーナリー,ン,アーバァ."
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> タグで囲まれた数式をレンダリング",
@@ -110,6 +111,7 @@
 	"wikibase-listdatatypes-math-head": "数式",
 	"wikibase-listdatatypes-math-body": "LaTeXで表現された方程式や公式など数式のリテラルデータ。",
 	"math-wikibase-header": "数学項目の情報",
+	"math-wikibase-formula-type": "種類",
 	"math-wikibase-formula-description": "説明",
 	"math-wikibase-formula-link-header": "情報源",
 	"math-wikibase-special-error-header": "エラー",

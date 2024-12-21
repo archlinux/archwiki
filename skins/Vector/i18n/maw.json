@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Christian Yakubu"
+		]
+	},
+	"vector-languages": "Bula",
+	"vector-language-button-label": "{{PLURAL:$1|$1 Bulli|$1 Bula}}",
+	"vector-no-language-button-label": "Zaŋ bula paasi",
+	"vector-action-addsection": "Zaŋin yaɣli paali ŋpaasi",
+	"vector-action-delete": "Nyesi",
+	"vector-action-move": "Vuuma",
+	"vector-action-protect": "Gur",
+	"vector-view-create": "Namma",
+	"vector-more-actions": "Din pasi",
+	"vector-feature-custom-font-size-name": "Sɔbbu",
+	"vector-feature-limited-width-0-label": "Yɛlima",
+	"vector-feature-limited-width-1-label": "Din sumsi sheem",
+	"vector-feature-custom-font-size-0-label": "Beela",
+	"vector-feature-custom-font-size-1-label": "Din sumsi sheem",
+	"vector-feature-custom-font-size-2-label": "Din yɛlima",
+	"vector-searchsuggest-containing": "Guan bɔa yaɣshela din Mari<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Din be di puuni",
+	"vector-toc-beginning": "Di Piligu",
+	"vector-main-menu-label": "Yiŋni dundɔŋi",
+	"vector-page-tools-label": "Kpatuɣa dima",
+	"vector-page-tools-general-label": "Di kolin vaai",
+	"vector-page-tools-actions-label": "Tuuma",
+	"vector-unpin-element-label": "Zaŋ suaɣ"
+}

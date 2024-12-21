@@ -11,7 +11,9 @@
 	"mobile-frontend-home-button": "Ñepyrũ",
 	"mobile-frontend-language-article-heading": "Ñe’ẽ",
 	"mobile-frontend-main-menu-login": "Eike",
+	"mobile-frontend-main-menu-nearby": "Ag̃uiva",
 	"mobile-frontend-main-menu-settings": "Ñemyatyrõ",
 	"mobile-frontend-placeholder": "Eheka {{SITENAME}} rendápe",
-	"mobile-frontend-random-button": "Oimeraẽva"
+	"mobile-frontend-random-button": "Oimeraẽva",
+	"minerva-page-actions-overflow": "Ehechave"
 }

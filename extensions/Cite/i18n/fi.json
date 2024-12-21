@@ -27,6 +27,7 @@
 	"cite_error_ref_numeric_key": "Virheellinen <code>&lt;ref&gt;</code>-elementti; nimi ei voi olla luku. Käytä kuvaavampaa nimeä",
 	"cite_error_ref_no_key": "Avaava <code>&lt;ref&gt;</code>-elementti on väärän muotoinen tai sillä on virheellinen nimi",
 	"cite_error_ref_too_many_keys": "Virheellinen parametri <code>&lt;ref&gt;</code>-elementissä",
+	"cite_error_ref_follow_conflicts": "<code>&lt;ref follow=\"…\"&gt;</code> -elementtiä, joka on edeltävän viitteen jatke, ei voi nimitä yksilöllisesti eikä jatkaa.",
 	"cite_error_ref_nested_extends": "<code>&lt;ref&gt;</code>-elementtien jatkaminen yli yhden tason syvyyteen ei ole sallittua",
 	"cite_error_ref_no_input": "Virheellinen <code>&lt;ref&gt;</code>-elementti; viitteillä ilman nimiä täytyy olla sisältöä",
 	"cite_error_references_duplicate_key": "Virheellinen <code>&lt;ref&gt;</code>-elementti; nimi ”$1” on määritetty usean kerran eri sisällöillä",

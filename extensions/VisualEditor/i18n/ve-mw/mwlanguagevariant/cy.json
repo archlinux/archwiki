@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Afalau"
+			"Afalau",
+			"Ceirios"
 		]
 	},
 	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Invalid>",

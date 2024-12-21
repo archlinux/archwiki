@@ -2,7 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Cgmbo",
-			"Amire80"
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Bisadilu ya kusolula",
@@ -47,7 +47,7 @@
 	"discussiontools-preference-summary": "Nge lenda longuka mambu mingi ya me tala bima yai kana nge tanga [https://www.mediawiki.org/wiki/Special:Ndinganamu/Disolo_balutiti_kisalu/Kima_bunkufi kima ya bunkufi].",
 	"discussiontools-preference-topicsubscription": "Pesa nzila na souscription na masolo",
 	"discussiontools-preference-topicsubscription-help": "Yo ta pesa nge nzila na kusonikisa zina na kubaka bansangu ya me tala bakomantere ya bantu ke sala na masolo.",
-	"discussiontools-replylink": "mvutu",
+	"discussiontools-replylink": "{{GENDER:|mvutu}}",
 	"discussiontools-replywidget-abandon": "Keti nge ke ndima nde kuvwansa komantere yina nge ke na kusonika?",
 	"discussiontools-replywidget-abandon-discard": "Vwansa komantere",
 	"discussiontools-replywidget-abandon-keep": "Landa kusonika",

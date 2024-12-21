@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Kscanne",
 			"Kwekubo",
 			"Moydow",
@@ -38,5 +37,6 @@
 	"vector-main-menu-label": "Príomh-roghchlár",
 	"vector-page-tools-label": "Uirlisí",
 	"vector-page-tools-general-label": "Ginearálta",
+	"vector-page-tools-actions-label": "Gníomhartha",
 	"vector-unpin-element-label": "folaigh"
 }

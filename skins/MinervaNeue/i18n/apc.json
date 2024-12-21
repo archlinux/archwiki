@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"FunLater"
+			"FunLater",
+			"HitomiAkane"
 		]
 	},
 	"mobile-frontend-history": "شوف تاريخ تحريرات الصفحة.",
@@ -11,5 +12,6 @@
 	"mobile-frontend-main-menu-nearby": "قريب منّي",
 	"mobile-frontend-main-menu-settings": "الإعدادات",
 	"mobile-frontend-placeholder": "نبّش  بـ{{SITENAME}}",
-	"mobile-frontend-random-button": "عشوائية"
+	"mobile-frontend-random-button": "عشوائية",
+	"minerva-page-actions-overflow": "أكتر"
 }

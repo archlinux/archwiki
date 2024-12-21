@@ -7,5 +7,15 @@
 	},
 	"editcheck-dialog-action-no": "No",
 	"editcheck-dialog-action-yes": "Sì",
+	"editcheck-dialog-addref-description": "Aiuta i lettori a capire da dove provengono queste informazioni aggiungendo una fonte.",
+	"editcheck-dialog-addref-reject-question": "Perché non aggiungi una fonte?",
+	"editcheck-dialog-addref-reject-description": "Altri editori apprezzerebbero saperne di più sulla tua decisione di non inserire la fonte.",
+	"editcheck-dialog-addref-reject-irrelevant": "Non credo che le fonti siano rilevanti per la modifica che sto apportando",
+	"editcheck-dialog-addref-reject-common-knowledge": "Le informazioni che sto aggiungendo sono ampiamente conosciute.",
+	"editcheck-dialog-addref-reject-uncertain": "Non sono sicuro di quale fonte aggiungere",
+	"editcheck-dialog-addref-reject-other": "Altro",
+	"editcheck-dialog-addref-success-notify": "Grazie per aver aggiunto una fonte!",
+	"editcheck-dialog-addref-title": "Aggiungi una fonte",
+	"editcheck-dialog-title": "Prima della pubblicazione",
 	"tag-editcheck-reference-decline-other": "Edit Check (citazioni) rifiutato (altro)"
 }

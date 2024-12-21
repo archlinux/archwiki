@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Athena in Wonderland",
 			"Cainamarques",
 			"Diniscoelho",
@@ -25,7 +24,8 @@
 			"SandroHc",
 			"TMg",
 			"Toliño",
-			"Vitorvicentevalente"
+			"Vitorvicentevalente",
+			"Mbs262"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -336,6 +336,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Usar sempre que possível o editor visual",
 	"visualeditor-preference-tabs-prefer-wt": "Usar sempre o editor de código-fonte",
 	"visualeditor-preference-tabs-remember-last": "Relembrar o meu último editor",
+	"visualeditor-preference-collab-label": "Edição colaborativa",
+	"visualeditor-preference-collab-description": "Convide outros utilizadores para participar na sua sessão de edição no editor visual.",
 	"visualeditor-rebase-client-export": "Exportar",
 	"visualeditor-rebase-client-export-start": "Exportar...",
 	"visualeditor-rebase-client-import": "Importar",

@@ -10,8 +10,20 @@
 	"discussiontools-replywidget-cancel": "Kinsil",
 	"discussiontools-replywidget-mode-source": "Sumber",
 	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Jawab}} {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Nampak dulu",
 	"discussiontools-replywidget-reply": "{{GENDER:|Jawab}}",
 	"discussiontools-replywidget-summary": "Singkatan",
+	"discussiontools-replywidget-watchthis": "Tambah laman ni ke [[Special:Watchlist|sanarai pantau]]",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|urang}} berbincang",
-	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komen}}"
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komen}}",
+	"discussiontools-topicheader-latestcomment": "Komen paling akir: $1",
+	"discussiontools-topicsubscription-button-subscribe": "langgan",
+	"discussiontools-topicsubscription-button-subscribe-label": "Langgan",
+	"discussiontools-topicsubscription-button-unsubscribe": "buang langgan",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Buang langgan",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Kita}} akan dapat pemberitahuan tentang komen baru dalam tajuk ni.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Kita}} sudah langgan!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Kita}} ndak akan dapat bagitau tentang komen baru dalam topik ni.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Kita}} sudah buang langgan."
 }

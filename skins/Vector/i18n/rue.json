@@ -4,7 +4,8 @@
 			"Gazeb",
 			"KHMELNYTSKYIA",
 			"Tkalyn",
-			"Gramo Džukić"
+			"Gramo Džukić",
+			"Constraque"
 		]
 	},
 	"skinname-vector": "Старый Вектор (2010)",
@@ -32,7 +33,7 @@
 	"vector-feature-limited-width-0-label": "Шыроко",
 	"vector-feature-limited-width-1-label": "Стандардно",
 	"vector-feature-custom-font-size-0-label": "Друбный",
-	"vector-feature-custom-font-size-1-label": "Стандардный",
+	"vector-feature-custom-font-size-1-label": "Штандартный",
 	"vector-feature-custom-font-size-2-label": "Грубый",
 	"skin-theme-name": "Цвіт",
 	"skin-theme-os-label": "Автоматично",

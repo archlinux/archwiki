@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"ANTHONY DERY",
-			"Amire80",
 			"Joachim Yirkang",
 			"Linus Konkor",
 			"NgmenRaphael",
 			"Yirkang",
-			"Zakaria Tunsung"
+			"Zakaria Tunsung",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Fo}} na nyɛ la duoro ka neɛ kaŋa wa wa di dɛmo paalaa a dɛmo a dɛmmo diibo zie ŋa. Fo na toɔŋ leɛre la fo duori danworo waaloŋ a yi a pɛrɛfɛrɛnsere zieŋ.",
@@ -110,7 +110,7 @@
 	"discussiontools-preference-topicsubscription-help": "Ŋaa na vɛŋɛɛ la ka fo kpɛ a nyɛrɛ teɛrema yineŋ yelteɛre a yelzuri zaa poɔ.",
 	"discussiontools-preference-visualenhancements": "Wuli a dɛmmo yeltare",
 	"discussiontools-preference-visualenhancements-help": "Ŋaa na yuo la yelI paala gampɛle waaloŋ naŋ paale yɛlɛ mine a dɛmmo kaŋa zaa diibu poɔ.",
-	"discussiontools-replybutton": "\n{{GENDER\n:|nɔ-iri}}",
+	"discussiontools-replybutton": "{{GENDER:|nɔ-iri}}",
 	"discussiontools-replylink": "{{GENDER:|sagebo}}",
 	"discussiontools-replywidget-abandon": "A\n {{GENDER:|fo}} sereŋ boɔrɔ ka fo meele a yelteɛma fo naŋ sɛgerɛ?",
 	"discussiontools-replywidget-abandon-discard": "meele bare a yelteɛre",

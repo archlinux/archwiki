@@ -3,7 +3,8 @@
 		"authors": [
 			"Les Meloures",
 			"Robby",
-			"Soued031"
+			"Soued031",
+			"Volvox"
 		]
 	},
 	"cite-desc": "Setzt <code>&lt;ref[ name=id]&gt;</code> an <code>&lt;references/&gt;</code> Tagge fir Referenzen derbäi.",

@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"The Discoverer"
+			"The Discoverer",
+			"QW90"
 		]
 	},
+	"citethispage": "Hea Panacho Utalo Di",
 	"citethispage-link": "Hea panacho ul'lekh kor",
 	"tooltip-citethispage": "Hea panacho ul'lekh korche khatir mahiti",
 	"citethispage-change-submit": "Utaro di",

@@ -12,6 +12,7 @@
 	},
 	"apihelp-query+linterrors-summary": "احصل على قائمة بأخطاء لنت",
 	"apihelp-query+linterrors-param-categories": "تصنيفات أخطاء لنت",
+	"apihelp-query+linterrors-param-invisible-categories": "فئات غير مرئية من أخطاء الوبر",
 	"apihelp-query+linterrors-param-limit": "عدد النتائج للاستعلام",
 	"apihelp-query+linterrors-param-from": "معرف Lint لبدء الاستعلام منه",
 	"apihelp-query+linterrors-param-namespace": "قم بتضمين أخطاء lint من النطاقات المحددة فقط",

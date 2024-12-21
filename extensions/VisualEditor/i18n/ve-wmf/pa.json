@@ -6,7 +6,8 @@
 			"Bouron",
 			"Kuldeepburjbhalaike",
 			"Nasir8891",
-			"Satdeep gill"
+			"Satdeep gill",
+			"Cabal"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ਵਿਜ਼ੁਅਲ ਐਡਿਟ]]",
@@ -15,7 +16,7 @@
 	"tag-visualeditor-needcheck-description": "Edit made using the [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]] where the system detected the wikitext possibly having unintended changes.",
 	"visualeditor-feedback-link": "ਪਰੋਜੈਕਟ:ਵਿਜ਼ੂਅਲਐਡੀਟਰ/ਇਸ ਬਾਰੇ ਤੁਹਾਡੇ ਵਿਚਾਰ",
 	"visualeditor-feedback-tool": "ਇਸ ਸਾਫ਼ਟਵੇਅਰ ਬਾਰੇ ਆਪਣੇ ਵਿਚਾਰ ਸਾਂਝੇ ਕਰੋ",
-	"visualeditor-help-label": "ਵਰਤੋਂਕਾਰ ਗਾਈਡ ਪੜ੍ਹੋ",
+	"visualeditor-help-label": "ਵਰਤੋਂਕਾਰ ਦਸਤੀ ਪੜ੍ਹੋ",
 	"visualeditor-welcomedialog-action": "ਸੋਧ ਸ਼ੁਰੂ ਕਰੋ",
-	"visualeditor-welcomedialog-title": "$2 ਉੱਤੇ {{GENDER:$1|ਸਵਾਗਤ}}"
+	"visualeditor-welcomedialog-title": "$2 ਉੱਤੇ {{GENDER:$1|ਜੀ ਆਇਆਂ ਨੂੰ}}"
 }

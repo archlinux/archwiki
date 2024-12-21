@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"AC Krah",
-			"Amire80",
 			"Amoarich",
 			"Lee Gyamfi",
 			"Merlin266",
@@ -34,7 +33,7 @@
 	"discussiontools-newtopic-placeholder-title": "Atifi asɛm",
 	"discussiontools-preference-autotopicsub-help": "Sɛ wohyɛ nkɔmɔdi foforɔ ase anaa sɛ woka biribi fa nkɔmɔdi bi a ɛwɔ hɔ dada ho a, sɛ afoforɔ ka nsɛm foforɔ fa ho a wɔ aberɛ a w'ani nna woho so no wobɛnya nkaebɔ",
 	"discussiontools-preference-label": "Nkitahodeɛ mfidie",
-	"discussiontools-replylink": "mmuaeɛ",
+	"discussiontools-replylink": "{{GENDER:|mmuaeɛ}}",
 	"discussiontools-replywidget-abandontopic-keep": "Toa so twerɛ",
 	"discussiontools-replywidget-advanced": "Nea ɛwɔ n'anim",
 	"discussiontools-replywidget-cancel": "Twa mu",

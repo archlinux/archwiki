@@ -5,7 +5,8 @@
 			"Kimberli Mäkäräinen (WMNO)",
 			"Lea-Christine Sara",
 			"Trondtr",
-			"Yupik"
+			"Yupik",
+			"WMNO sámeprošeakta"
 		]
 	},
 	"minerva-last-modified-date": "Maŋemus rievdaduvvon $1, diibmu $2",
@@ -52,7 +53,6 @@
 	"minerva-page-actions-language-switcher": "Gielat",
 	"minerva-page-actions-history": "Historjá",
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Ságastallan]]",
-	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "Dohkálaš olggosoainnihahte telefovdna ",
 	"skin-minerva-issue-learn-more": "Oahpa eambbo",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekunda|$1 sekundda}} áigi",

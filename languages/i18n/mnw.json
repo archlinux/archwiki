@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Aue Nai",
 			"DannyS712",
 			"Dr Lotus Black",
@@ -569,6 +568,7 @@
 	"content-model-wikitext": "ဖျုန်လိက်ဝဳကဳ",
 	"content-model-text": "လိက်ပလး",
 	"content-json-empty-object": "ဟွံမွဲကဵု ကပေါတ်",
+	"duplicate-args-category": "မုက်လိက်မရပ်စပ်သုၚ်စောဲဓမံက်ထ္ၜးလှံက်မထပ်မံၚ်အပ္ဍဲမကော်ခဴထာမ်ပလိက်ဂမၠိုၚ်",
 	"undo-failure": "ပရေင်ပလေဝ်ဒါန်ဂှ် ပတုဲဟွံဂွံ ဟိုတ်တုန် ဒၟာနူ မၞုံ ကုအခက်အခုဲ ပရေင်ပလေဝ်ဒါန် ဗွဲအပ္ဍဲ၊၊",
 	"undo-summary": "မကလေၚ်ပလီုထောံ[[Special:Diff/$1|$1]]နူကဵု[[Special:Contributions/$2|$2]] ([[User talk:$2|ဓရီုကျာ]])မပလေဝ်ဒါန်လဝ်",
 	"viewpagelogs": "ဗဵု တင်စၟတ်သမ္တီ မုက်လိက်ဏအ်",
@@ -939,6 +939,7 @@
 	"newpageletter": "တၟိ",
 	"boteditletter": "စက် နကဵုဗတ်",
 	"rc-change-size-new": "$1 {{PLURAL:$1|byte|bytes}} ကြဴနူ ပြံင်ထောအ်တုဲ",
+	"newsectionsummary": "/* $1 */ ဒကုတ်တၟိ",
 	"rc-old-title": "တမ်မူလဂှ် ခၞံကၠောန်လဝ် နကဵုယၟု \"$1\"",
 	"recentchangeslinked": "အရာမဆက်စပ် ကု အပြံင်အလှာဲ",
 	"recentchangeslinked-feed": "တြးပတိတ် အပြံင်အလှာဲ",
@@ -1051,7 +1052,6 @@
 	"brokenredirects-edit": "ပလေဝ်ဒါန်",
 	"brokenredirects-delete": "ပလီု",
 	"withoutinterwiki-submit": "ထ္ၜး",
-	"nbytes": "$1 {{PLURAL:$1|byte|bytes}}",
 	"ncategories": "$1{{PLURAL:$1|ကဏ္ဍ|ကဏ္ဍဂမၠိုင်}}",
 	"ninterwikis": "$1 {{PLURAL:$1|အေန်တာဝဳကဳ|အေန်တာဝဳကဳဂမၠိုၚ်}}",
 	"nlinks": "$1 {{PLURAL:$1|link|links}}",
@@ -1172,7 +1172,7 @@
 	"watch": "မင်မဲ",
 	"watchthispage": "မင်မဲ မုက်လိက်ဏအ်",
 	"unwatch": "ဟွံမင်မဲ",
-	"watchlist-details": "{{PLURAL:$1|$1 မုက်လိက်ဂှ် နွံ|$1 မုက်လိက်တအ်ဂှ် နွံ}} ပ္ဍဲ စရင်မမင်မဲ မၞး (သီုကဵု မုက်လိက် ဓရီုကျာဂမၠိုင်).",
+	"watchlist-details": "{{PLURAL:$1|$1 မုက်လိက်ဂှ် နွံ|$1 မုက်လိက်တအ်ဂှ် နွံ}} ပ္ဍဲ စရင်မမင်မဲ မၞး (သီုကဵု မုက်လိက် ဓရီုကျာဂမၠိုင်)။",
 	"wlheader-enotif": "မပံက်လဝ် အဳမေလ် မကဵုစၟတ်သမ္တီ။",
 	"wlheader-showupdated": "မုက်လိက် မပြံင်လှာဲလဝ် ကြဴနူ မၞးမလုပ်ဝေင်လဝ်တုဲတအ်ဂှ် ထ္ၜးလဝ် နကဵု <strong>အက္ခရ်တီုတီု</strong>.",
 	"wlnote": "ဗွဲသၟဝ်ဝွံ {{PLURAL:$1|ဒှ် အရာ မပြံင်လှာဲလဝ် လက္ကရဴအိုတ်ရ၊၊| ဒှ် အရာ မပြံင်လှာဲလဝ် လက္ကရဴအိုတ်ဂမၠိုင်ရ၊၊ <strong>$1</strong> အပြံင်အလှာဲ}} ပ္ဍဲအခိင် မအောန် နူ {{PLURAL:$2|နာဍဳ|<strong>$2</strong> နာဍဳ}}, ကု $3, $4.",
@@ -1602,6 +1602,7 @@
 	"tags-edit-reason": "ဟိုတ်:",
 	"compare-page1": "မုက်လိက် 1",
 	"compare-page2": "မုက်လိက် 2",
+	"newsection": "ဒကုတ်တၟိ",
 	"deletepage": "မုက်မပလီု",
 	"htmlform-submit": "ဗပေင်",
 	"htmlform-selectorother-other": "တၞဟ်",

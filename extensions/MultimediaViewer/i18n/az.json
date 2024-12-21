@@ -5,7 +5,8 @@
 			"Serkanland",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"Nemoralis"
+			"Nemoralis",
+			"Əkrəm Cəfər"
 		]
 	},
 	"multimediaviewer-desc": "Tam ekran interfeysində kiçik şəkilləri daha böyük ölçüdə genişləndirin",
@@ -80,7 +81,7 @@
 	"multimediaviewer-embed-byline": "$1 tərəfindən",
 	"multimediaviewer-embed-license": "$1 ilə lisenziyalaşdırılıb",
 	"multimediaviewer-embed-via": "$1 vasitəsilə.",
-	"multimediaviewer-default-embed-dimensions": "Susmaya görə eskiz ölçüsü",
+	"multimediaviewer-default-embed-dimensions": "Defolt miniatür ölçüsü",
 	"multimediaviewer-original-embed-dimensions": "Orijinal fayl $1",
 	"multimediaviewer-xl-embed-dimensions": "Çox böyük $1",
 	"multimediaviewer-large-embed-dimensions": "Böyük $1",
@@ -120,7 +121,7 @@
 	"multimediaviewer-disable-confirmation-header": "\"Media nümayişetdiricisi\" deaktiv edildi",
 	"multimediaviewer-disable-confirmation-text": "Növbəti dəfə $1 saytında faylın miniatürünə kliklədikdə birbaşa fayl haqqındakı bütün məlumatlar göstəriləcəkdir.",
 	"multimediaviewer-enable-dialog-header": "Media Nümayişetdiricisi aktiv edilsin?",
-	"multimediaviewer-enable-text-header": "Bu funksiyanı susmaya görə bütün fayllar üçün aktivləşdirin.",
+	"multimediaviewer-enable-text-header": "Bu baxış funksiyasını defolt olaraq bütün fayllar üçün aktivləşdir.",
 	"multimediaviewer-enable-submit-button": "Aktivləşdir",
 	"multimediaviewer-enable-confirmation-header": "\"Media nümayişetdiricisi\"ni bütün fayllar üçün aktivləşdirdiniz",
 	"multimediaviewer-enable-confirmation-text": "Növbəti dəfə $1 saytında faylın miniatürünə kliklədikdə \"Media nümayişetdiricisi\" istifadə olunacaqdır.",

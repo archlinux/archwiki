@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mybluberet"
+			"Mybluberet",
+			"NanaYawBotar"
 		]
 	},
+	"fancycaptcha-captcha": "Shweshweeshwefeemɔ mlipɛimɔ",
+	"fancycaptcha-accountcreate": "Bɔni afee ni obu wiki lɛ he kɛjɛ akauntu ni afee lɛ diɛŋtsɛ he lɛ, wɔmiibi bo ni okɛ wiemɔi ni jeɔ kpo yɛ shishigbɛ lɛ awo adeka lɛ mli ([[Special:Captcha/help|saji krokomɛi]]):",
 	"fancycaptcha-imgcaptcha-ph": "Ŋmaa niŋmaa ni onaa yɛ mfoniri lɛ nɔ",
 	"fancycaptcha-reload-text": "Feemɔ ehee"
 }

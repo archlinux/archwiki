@@ -4,7 +4,8 @@
 			"Cumbril",
 			"Matma Rex",
 			"Pikne",
-			"Castellum"
+			"Castellum",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Saad teavituse, kui keegi postitab sellesse arutelusse kommentaari. Saad eelistustes enda teavituste sätteid muuta.",
@@ -107,8 +108,8 @@
 	"discussiontools-preference-topicsubscription-help": "See võimaldab tellida teavitusi kommentaaride kohta kindlas teemas.",
 	"discussiontools-preference-visualenhancements": "Näita arutelu käiku",
 	"discussiontools-preference-visualenhancements-help": "Sellega lubad arutelulehekülje uue ilme, millega kaasneb ülevaade iga arutelu käigust.",
-	"discussiontools-replybutton": "Vasta",
-	"discussiontools-replylink": "vasta",
+	"discussiontools-replybutton": "{{GENDER:|Vasta}}",
+	"discussiontools-replylink": "{{GENDER:|vasta}}",
 	"discussiontools-replywidget-abandon": "Kas oled kindel, et tahad hüljata kommentaari, mida kirjutad?",
 	"discussiontools-replywidget-abandon-discard": "Hülga kommentaar",
 	"discussiontools-replywidget-abandon-keep": "Jätka kirjutamist",

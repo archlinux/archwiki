@@ -20,8 +20,8 @@
 	"pfunc_expr_unrecognised_punctuation": "غلط تعبيري:علامة الترقيم \"$1\" مش متعرف عليها",
 	"pfunc_expr_unclosed_bracket": "غلط تعبيري:قوس مش مقفول",
 	"pfunc_expr_division_by_zero": "القسمه على صفر",
-	"pfunc_expr_invalid_argument": "مدخلة مش صحيحة لـ $1: < -1 or > 1",
-	"pfunc_expr_invalid_argument_ln": "مدخلة مش صحيحة لـ ln: <= 0",
+	"pfunc_expr_invalid_argument": "دليل غير صالح ل$1: أقل من -1 أو أكبر من 1.",
+	"pfunc_expr_invalid_argument_ln": "دليل غير صالح لـ ln: أقل من أو يساوي 0.",
 	"pfunc_expr_unknown_error": "($1)غلط تعبيري: غلط مش معروف",
 	"pfunc_expr_not_a_number": "فى $1: النتيجه مش رقم"
 }

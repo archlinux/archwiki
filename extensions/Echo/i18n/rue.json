@@ -6,5 +6,12 @@
 	},
 	"notifications": "Ознаміня",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Вашы}} ознаміня",
+	"notification-header-thank-you-1-edit": "{{GENDER:$2|Вы}} лемже зробили {{GENDER:$2|своє}} перше едітованя; дякуєме і вітаме {{GENDER:$2|Вас}}!",
+	"notification-header-thank-you-10-edit": "{{GENDER:$2|Вы}} лемже зробили {{GENDER:$2|своє}} десяте едітованя; дякуєме {{GENDER:$2|Вам}}, і просиме, продовжуйте!",
+	"notification-header-thank-you-100-edit": "{{GENDER:$2|Вы}} лемже зробили {{GENDER:$2|своє}} стоцяте едітованя; дякуєме {{GENDER:$2|Вам}} дуже красно!",
+	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Вы}} лемже зробили {{GENDER:$2|своє}} тісячне едітованя; дякуєме {{GENDER:$2|Вам}} за ваш великый вклад!",
+	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Вы}} лемже зробили {{GENDER:$2|своє}} десятьтісячне едітованя; дякуєме {{GENDER:$2|Вам}} дуже красно!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Вы}} лемже зробили {{GENDER:$2|своє}} стотісячне едітованя; дякуєме {{GENDER:$2|Вам}} за ваш прекрасный вклад!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Вы}} лемже зробили {{GENDER:$2|своє}} міліоне едітованя; дякуєме {{GENDER:$2|Вам}} за ваш прекрасный вклад!",
 	"echo-overlay-link": "Вшыткы ознаміня"
 }

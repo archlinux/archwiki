@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Acamicamacaraca",
-			"Amire80",
 			"BadDog",
 			"Kizule",
 			"Milicevic01",
@@ -66,6 +65,7 @@
 	"skin-theme-os-label": "Аутоматски",
 	"vector-search-loader": "Учитавам предлоге претраге",
 	"vector-searchsuggest-containing": "Претражи странице које садрже <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-intro-page": "Help:Introduction",
 	"vector-toc-label": "Садржај",
 	"vector-toc-beginning": "Почетак",
 	"vector-toc-toggle-button-label": "Садржај одељка $1",

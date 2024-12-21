@@ -12,7 +12,8 @@
 			"Railfail536",
 			"Sp5uhe",
 			"WTM",
-			"Woytecr"
+			"Woytecr",
+			"Msz2001"
 		]
 	},
 	"captcha-edit": "Aby edytować tę stronę, najpierw musisz rozwiązać poniższe zadanie i wpisać odpowiedź do pola tekstowego ([[Special:Captcha/help|więcej informacji]]):",
@@ -33,7 +34,7 @@
 	"captcha-error": "Weryfikacja CAPTCHA nie powiodła się z powodu wewnętrznego błędu: $1",
 	"captchahelp-title": "Pomoc dla ochrony antyspamowej",
 	"captchahelp-cookies-needed": "Aby ta opcja działała, ciasteczka (cookies) muszą być włączone w Twojej przeglądarce.",
-	"captchahelp-text": "Strony internetowe akceptujące edycje dokonywane przez każdego, tak jak ta wiki, są często atakowane przez spamerów, którzy używają automatycznych narzędzi, aby dodawać linki prowadzące do ich stron.\nChoć linki te mogą zostać usunięte, jest to uciążliwe.\n\nCzasami, zwłaszcza przy dodawaniu nowych linków do strony albo przy rejestracji, wiki może pokazać obrazek z kolorowym lub zniekształconym tekstem i poprosić Cię o przepisanie zamieszczonego na nim wyrazu.\nPonieważ są to zadania trudne do zautomatyzowania, takie zabezpieczenia umożliwia ludziom dokonywania edycji, jednocześnie skutecznie powstrzymując większość spamerów i inne automatyczne ataki.\n\nNiestety, może być to niewygodne dla użytkowników z wadą wzroku lub używających przeglądarek tekstowych, lub głosowych.\nObecnie nie mamy alternatywnego rozwiązania audio.\nSkontaktuj się z [[Special:ListAdmins|administratorami strony]], by uzyskać pomoc, jeśli nie możesz z tego powodu dokonywać uprawnionych edycji.\n\nWciśnij przycisk „wstecz” w przeglądarce, by powrócić do edycji strony.",
+	"captchahelp-text": "Strony internetowe akceptujące edycje dokonywane przez każdego, tak jak ta wiki, są często atakowane przez spamerów, którzy używają automatycznych narzędzi, aby dodawać linki prowadzące do ich stron.\nChoć linki te mogą zostać usunięte, jest to uciążliwe.\n\nCzasami, zwłaszcza przy dodawaniu nowych linków do strony albo przy rejestracji, wiki może pokazać obrazek z kolorowym lub zniekształconym tekstem i poprosić Cię o przepisanie zamieszczonego na nim wyrazu.\nPonieważ są to zadania trudne do zautomatyzowania, takie zabezpieczenia umożliwia ludziom dokonywania edycji, jednocześnie skutecznie powstrzymując większość spamerów i inne automatyczne ataki.\n\nNiestety, może być to niewygodne dla użytkowników z wadą wzroku lub używających przeglądarek tekstowych, lub głosowych.\nObecnie nie mamy alternatywnego rozwiązania audio.\nSkontaktuj się z [[{{int:grouppage-sysop}}|administratorami strony]], by uzyskać pomoc, jeśli nie możesz z tego powodu dokonywać uprawnionych edycji.\n\nWciśnij przycisk „wstecz” w przeglądarce, by powrócić do edycji strony.",
 	"captcha-addurl-whitelist": " #<!-- nie modyfikuj tej linii --> <pre>\n# Składnia jest następująca:\n#   * Linie zaczynające się od znaku „#” są komentarzami\n#   * Każda linia, która nie jest pusta, jest wyrażeniem regularnym, które ma pasować do adresu serwera (fragmentu URL)\n  #</pre> <!-- nie modyfikuj tej linii -->",
 	"right-skipcaptcha": "Wykonywanie operacji objętych CAPTCHA bez konieczności jego przechodzenia",
 	"action-skipcaptcha": "wykonywania operacji wywołujących CAPTCHA bez konieczności przechodzenia CAPTCHA",

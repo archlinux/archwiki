@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Boesenbergia"
+			"Boesenbergia",
+			"Munajad.MH"
 		]
 	},
 	"mobile-frontend-history": "Tèngghu riwâyât beccè'anna kaca rèya.",
@@ -11,5 +12,6 @@
 	"mobile-frontend-main-menu-nearby": "Sakalènglèngan",
 	"mobile-frontend-main-menu-settings": "Pangatoran",
 	"mobile-frontend-placeholder": "Sarè è {{SITENAME}}",
-	"mobile-frontend-random-button": "Sabhârâng"
+	"mobile-frontend-random-button": "Sabhârâng",
+	"minerva-page-actions-overflow": "Praghi"
 }

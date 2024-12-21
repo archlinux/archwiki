@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Christian Yakubu",
+			"Woytecr"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Labsigu",
+	"discussiontools-replybutton": "{{GENDER:|Labsigu}}",
+	"discussiontools-replylink": "{{GENDER:|labsigu}}",
+	"discussiontools-replywidget-advanced": "Chaŋi tooni",
+	"discussiontools-replywidget-cancel": "Nyesima",
+	"discussiontools-replywidget-mode-source": "Din yi shela",
+	"discussiontools-replywidget-mode-visual": "Paalo ni",
+	"discussiontools-replywidget-preview": "Daŋi nya",
+	"discussiontools-replywidget-reply": "{{GENDER:|Labsigu}}",
+	"discussiontools-replywidget-summary": "Kolinvaai",
+	"discussiontools-replywidget-watchthis": "Zanŋi Yaɣli ŋun pasi e [[Special:Watchlist|watchlist]]",
+	"discussiontools-topicsubscription-button-subscribe": "Zaŋmi manŋa n-kpɛsi",
+	"discussiontools-topicsubscription-button-subscribe-label": "Zaŋmi manŋa n-kpɛsi",
+	"discussiontools-topicsubscription-button-unsubscribe": "Yisimi manŋa",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Yisimi manŋa",
+	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Labsigu]"
+}

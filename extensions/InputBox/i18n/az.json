@@ -11,9 +11,11 @@
 	},
 	"inputbox-desc": "Əvvəlcədən təyin edilmiş HTML formalarının daxil edilməsinə icazə verir",
 	"inputbox-error-no-type": "Siz yaratmaq üçün giriş qutusunun növünü təyin etməmisiniz.",
+	"inputbox-error-bad-type": "\"$1\" daxiletmə qutusu növü tanınmadı.\nZəhmət olmasa, \"create\", \"comment\", \"search\", \"search2\" və ya \"fulltext\" növlərindən birini qeyd edin.",
 	"inputbox-tryexact": "Tam uyğunluğu sınayın",
 	"inputbox-searchfulltext": "Yaxşı mətni axtar",
 	"inputbox-createarticle": "Məqalə yarat",
+	"inputbox-movearticle": "Səhifəni köçür",
 	"inputbox-postcomment": "Yeni bölmə",
 	"inputbox-postcommenttitle": "Yeni bölmə",
 	"inputbox-ns-main": "Əsas"

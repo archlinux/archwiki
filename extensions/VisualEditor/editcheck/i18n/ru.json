@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Stjn"
+		]
+	},
+	"editcheck-dialog-action-no": "Нет",
+	"editcheck-dialog-action-yes": "Да",
+	"editcheck-dialog-addref-description": "Добавьте источник, чтобы помочь читателям понять, откуда взята эта информация.",
+	"editcheck-dialog-addref-reject-question": "Почему вы не добавили источник?",
+	"editcheck-dialog-addref-reject-description": "Другим редакторам будет полезно узнать, почему вы решили не добавлять источник.",
+	"editcheck-dialog-addref-reject-irrelevant": "Мне не кажется, что источники имеют отношение к совершаемому мной изменению",
+	"editcheck-dialog-addref-reject-common-knowledge": "Добавленная мной информация широко известна",
+	"editcheck-dialog-addref-reject-uncertain": "Не знаю точно, какой источник добавить",
+	"editcheck-dialog-addref-reject-other": "Другое",
+	"editcheck-dialog-addref-success-notify": "Спасибо за добавление источника!",
+	"editcheck-dialog-addref-title": "Добавить источник",
+	"editcheck-dialog-title": "До публикации",
+	"tag-editcheck-reference-decline-common-knowledge": "Проверка правок (источники) отклонена (общеизвестно)",
+	"tag-editcheck-reference-decline-irrelevant": "Проверка правок (источники) отклонена (неуместно)",
+	"tag-editcheck-reference-decline-other": "Проверка правок (источники) отклонена (другое)",
+	"tag-editcheck-reference-decline-uncertain": "Проверка правок (источники) отклонена (неясно)"
+}

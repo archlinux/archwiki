@@ -10,7 +10,7 @@
 			"Cabal"
 		]
 	},
-	"thanks-desc": "ਵਰਤੋਂਕਾਰਾਂ ਦੀਆਂ ਸੋਧਾਂ, ਟਿੱਪਣੀਆਂ ਆਦਿ ਲਈ ਧੰਨਵਾਦ ਕਰਨ ਲਈ ਧੰਨਵਾਦੀ ਲਿੰਕ ਜੋੜਦਾ ਹੈ",
+	"thanks-desc": "ਵਰਤੋਂਕਾਰਾਂ ਦੀਆਂ ਸੋਧਾਂ, ਟਿੱਪਣੀਆਂ ਆਦਿ ਲਈ ਧੰਨਵਾਦ ਕਰਨ ਲਈ ਧੰਨਵਾਦੀ ਕੜੀ ਜੋੜਦਾ ਹੈ",
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ਧੰਨਵਾਦ ਕਹੋ}}}}",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|ਧੰਨਵਾਦ ਕੀਤਾ}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|ਧੰਨਵਾਦ}}}}",
@@ -39,7 +39,7 @@
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|ਇੱਕ ਵਿਅਕਤੀ|$1 ਲੋਕਾਂ|100=99+ ਲੋਕਾਂ}} ਨੇ <strong>$2</strong> ਉੱਤੇ ਤੁਹਾਡੀ ਸੋਧ ਲਈ {{GENDER:$3|ਤੁਹਾਡਾ}} ਧੰਨਵਾਦ ਕੀਤਾ ਹੈ।",
 	"notification-bundle-header-log-thank": "{{PLURAL:$1|ਇੱਕ ਵਿਅਕਤੀ|$1 ਲੋਕਾਂ|100=99+ ਲੋਕਾਂ}} ਨੇ <strong>$2</strong> ਨਾਲ ਸਬੰਧਤ ਤੁਹਾਡੀ ਕਾਰਵਾਈ ਲਈ {{GENDER:$3|ਤੁਹਾਡਾ}} ਧੰਨਵਾਦ ਕੀਤਾ ਹੈ।",
 	"log-name-thanks": "ਧੰਨਵਾਦ ਇੰਦਰਾਜ",
-	"log-description-thanks": "ਹੇਠਾਂ ਦੂਜੇ ਵਰਤੋਂਕਾਰਾਂ ਦੁਆਰਾ ਧੰਨਵਾਦ ਕੀਤੇ ਵਰਤੋਂਕਾਰਾਂ ਦੀ ਇੱਕ ਲਿਸਟ ਹੈ।",
+	"log-description-thanks": "ਹੇਠਾਂ ਦੂਜੇ ਵਰਤੋਂਕਾਰਾਂ ਵੱਲੋਂ ਧੰਨਵਾਦ ਕੀਤੇ ਵਰਤੋਂਕਾਰਾਂ ਦੀ ਇੱਕ ਸੂਚੀ ਹੈ।",
 	"logentry-thanks-thank": "$1 ਨੇ {{GENDER:$4|$3}} ਦਾ {{GENDER:$2|ਧੰਨਵਾਦ}} ਕੀਤਾ ਹੈ",
 	"logeventslist-thanks-log": "ਧੰਨਵਾਦ ਇੰਦਰਾਜ",
 	"thanks-confirmation-special-rev": "ਕੀ ਤੁਸੀਂ ਇਸ ਸੋਧ ਲਈ ਜਨਤਕ ਤੌਰ 'ਤੇ ਧੰਨਵਾਦ ਭੇਜਣਾ ਚਾਹੁੰਦੇ ਹੋ?",

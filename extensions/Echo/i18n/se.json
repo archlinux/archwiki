@@ -160,7 +160,7 @@
 	"notification-header-watchlist-moved": "Geavaheaddji $1 {{GENDER:$2|sirddii}} {{PLURAL:$5||1=oktii|2=guovtte geardde|3=golmma geardde|4=njeallje geardde|5=viđa geardde|6=guđa geardde|7=čieža geardde|8=gávcce geardde|9=ovcce geardde|$5 geardde}} siiddu <strong>$3</strong>, mii lea {{GENDER:$4|du}} čuovvunlisttus.",
 	"notification-header-watchlist-restored": "Geavaheaddji $1 {{GENDER:$2|máhcahii}} fas  {{PLURAL:$5||1=oktii|2=guovtte geardde|3=golmma geardde|4=njeallje geardde|5=viđa geardde|6=guđa geardde|7=čieža geardde|8=gávcce geardde|9=ovcce geardde|$5 geardde}} siiddu <strong>$3</strong>, mii lea {{GENDER:$4|du}} čuovvunlisttus.",
 	"notification-header-watchlist-multiuser-changed": "<strong>$1</strong>, okta siidu {{GENDER:$2|du}} čuovvunlisttus, rievdaduvvui {{PLURAL:$3|$3 geardde|$3 geardde}}.",
-	"notification-header-watchlist-multiuser-created": "<strong>$1<strong>, okta siidu {{GENDER:$2|du}} čuovvunlisttus, ásahuvvui $3 {{PLURAL:$3|geardde| geardde}}.",
+	"notification-header-watchlist-multiuser-created": "<strong>$1</strong>, okta siidu {{GENDER:$2|du}} čuovvunlisttus, ásahuvvui $3 {{PLURAL:$3|geardde}}.",
 	"notification-header-watchlist-multiuser-deleted": "<strong>$1</strong>, okta siidu {{GENDER:$2|du}} čuovvunlisttus, sihkkojuvvui $3 {{PLURAL:$3|geardde| geardde}}.",
 	"notification-header-watchlist-multiuser-moved": "<strong>$1</strong>, okta siidu {{GENDER:$2|du}} čuovvunlisttus, sirdojuvvui $3 {{PLURAL:$3|geardde| geardde}}.",
 	"notification-header-watchlist-multiuser-restored": "<strong>$1</strong>, okta siidu {{GENDER:$2|du}} čuovvunlisttus, ođđasitásahuvvojt $3 {{PLURAL:$3|geardde|geardde}}.",

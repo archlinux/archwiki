@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Rebelagent",
-			"Sekhomba"
+			"Sekhomba",
+			"Rosy Cleopatra"
 		]
 	},
 	"vector-languages": "Diteme",
@@ -17,11 +18,19 @@
 	"vector-view-history": "Bona Segologolo",
 	"vector-view-view": "Bala",
 	"vector-more-actions": "Bontsi",
+	"vector-feature-limited-width-name": "Bophara",
+	"vector-feature-custom-font-size-name": "Mokwalo",
+	"vector-feature-custom-font-size-0-label": "Tse Dinnye",
+	"vector-feature-custom-font-size-1-label": "Se se Tlwaelegileng",
+	"vector-feature-custom-font-size-2-label": "Kgolo",
+	"skin-theme-name": "Mmala",
+	"skin-theme-os-label": "E itiragalelang",
 	"vector-searchsuggest-containing": "Batla ditsebe tse di naleng <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Diteng",
 	"vector-toc-beginning": "Tshimologo",
 	"vector-main-menu-label": "Dintlha tsa konokono",
 	"vector-page-tools-label": "Didirisiwa",
 	"vector-page-tools-general-label": "Kakaretso",
+	"vector-page-tools-actions-label": "Dikgato",
 	"vector-unpin-element-label": "fitlha"
 }

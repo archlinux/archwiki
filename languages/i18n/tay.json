@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Akamycoco",
-			"Amire80",
 			"Corainn",
 			"DannyS712",
 			"Hitaypayan",
@@ -163,7 +162,7 @@
 	"new-messages": "kya $1 ($2){{PLURAL:$3|su’}}",
 	"new-messages-from-users": "{{PLURAL:$4|isu’}}kya kahul sa　{{PLURAL:$3|bzinah qutux na pptzyuwaw|$3 hi’ ptzyuwaw}} hya’ $1 ($2).",
 	"new-messages-link-plural": "{{PLURAL:$1|giqas na pintkaykay|999=giqas na pintkaykay}}",
-	"new-messages-diff-link-plural": "misuw qaniy{{PLURAL:$1|pinsbah}}",
+	"new-messages-diff-link-plural": "misuw qaniy {{PLURAL:$1|pinsbah}}",
 	"editsection": "smr’zyut miru’",
 	"editold": "Smr’zyut miru’",
 	"viewsourceold": "Kta quw llpgan aring sa cin’ringan",
@@ -341,7 +340,7 @@
 	"currentrev-asof": "Spzyang balay giqas sinbahan squw  $1",
 	"revisionasof": "Gaga’ na pptzyuwaw sa qutux qutux binkgan gaga’",
 	"revision-info": "Nanu’ squ $1 kahul sa {{GENDER:$6|$2}} smnbah squ $7",
-	"previousrevision": "Sinbahan tay glaing",
+	"previousrevision": "← Sinbahan tay glaing",
 	"nextrevision": "Ssbahun babaw nya’→",
 	"currentrevisionlink": "Pzyang giqas na sinhzi’",
 	"cur": "misuw qaniy ga",
@@ -1134,7 +1133,6 @@
 	"pageinfo-robot-policy": "Yaquw squliq kikay quw ps’rux sa ppglaing sa awsa’ mita’ qsahuy na biru’.",
 	"pageinfo-robot-index": "Snwalan",
 	"pageinfo-robot-noindex": "Laxiy swaliy",
-	"pageinfo-watchers": "Number of page watchers",
 	"pageinfo-few-watchers": "Ka pklahang mita’ $1 ga{{PLURAL:$1| ini’ tayhuk na’ squliq niya’}}",
 	"pageinfo-redirects-name": "Pskura’ squw t’aring pglaing paskura’ sa kinpzyux na zngazyan na zngazyan qaniy",
 	"pageinfo-subpages-name": "Kinpzyux uzyuk na zngazyan nquwzngazyan qaniy.",

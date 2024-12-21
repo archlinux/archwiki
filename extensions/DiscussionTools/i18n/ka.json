@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"David1010",
 			"Matma Rex",
 			"Mehman97",
 			"Otogi",
 			"Გიო ოქრო",
-			"Იო ოქრო"
+			"Იო ოქრო",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "განხილვის ხელსაწყოები",
@@ -61,7 +61,7 @@
 	"discussiontools-preference-replytool": "სწრაფი პასუხის ხელსაწყოს ჩართვა",
 	"discussiontools-preference-replytool-help": "ეს ხელსაწყო განხილვის გვერდზე გამოაჩენს პასუხის გასაცემ ბმულს, რომელზეც ერთი დაწკაპუნების შედეგად შეძლებთ კომენტარის დატოვებას (პასუხის გაცემას). ამ შესაძლებლობის შესახებ მეტის გაგებას შეძლებთ [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary მის საინფორმაციო გვერდზე].",
 	"discussiontools-preference-summary": "ამ ფუნქციის შესახებ უფრო მეტის გასაგებად იხილეთ [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary ფუნქციის რეზიუმე].",
-	"discussiontools-replybutton": "პასუხი",
+	"discussiontools-replybutton": "{{GENDER:|პასუხი}}",
 	"discussiontools-replylink": "{{GENDER:|უპასუხე}}",
 	"discussiontools-replywidget-abandon": "დარწმუნებული ხართ, რომ გსურთ უარი თქვათ დაწერილ კომენტარზე?",
 	"discussiontools-replywidget-abandon-discard": "კომენტარის გაუქმება",

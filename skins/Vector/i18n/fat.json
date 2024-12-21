@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Ebenoffen1",
 			"Gregorynelsonmensah1",
-			"Leonard Nketsia"
+			"Leonard Nketsia",
+			"Assilidjoe"
 		]
 	},
 	"vector-languages": "Kasahorow",
@@ -19,10 +19,20 @@
 	"vector-view-history": "Hwɛ abakɔsɛm",
 	"vector-view-view": "Kenkan",
 	"vector-more-actions": "Pii",
+	"vector-feature-limited-width-name": "Tɛtɛr mu",
+	"vector-feature-custom-font-size-name": "Akyerɛwsɛm",
+	"vector-feature-limited-width-0-label": "Kɛse",
+	"vector-feature-limited-width-1-label": "Pɛpɛɛpɛryɛ",
+	"vector-feature-custom-font-size-0-label": "Kakraba",
+	"vector-feature-custom-font-size-2-label": "Kɛse",
+	"skin-theme-name": "Ahosu",
+	"skin-theme-os-label": "Otomateke",
 	"vector-searchsuggest-containing": "Hwehwɛ nkrataafa a <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> wɔ mu",
 	"vector-toc-label": "Dza ɔwɔ mu",
 	"vector-toc-beginning": "Ahyɛase",
+	"vector-main-menu-label": "Krataafa tsitsir",
 	"vector-page-tools-label": "Edwumadze",
 	"vector-page-tools-general-label": "Kɛsemu",
+	"vector-page-tools-actions-label": "Ndzeyɛɛ",
 	"vector-unpin-element-label": "fa suma"
 }

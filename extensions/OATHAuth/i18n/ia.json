@@ -13,6 +13,7 @@
 	"oathauth-enable": "Activar authentication bifactorial",
 	"oathauth-recoverycodes": "Le sequente lista contine codices de recuperation a uso unic. Iste codices pote esser usate un sol vice e es pro casos de emergentia in le quales tu non ha accesso a tu apparato. Per favor nota los e guarda los in un loco secur. Es recommendate marcar cata codice como usate post haber aperite session con illo. Si tu perde tu apparato, iste codices es le unic maniera de recuperar le accesso a tu conto.\n\n'''Iste codices nunquam essera monstrate un altere vice.'''",
 	"oathauth-recoverycodes-important": "Iste passo es importante! Non salta iste passo!",
+	"oathauth-recoverycodes-download": "Discargar codices de recuperation",
 	"oathauth-disable": "Disactivar authentication bifactorial",
 	"oathauth-validatedoath": "Le credentiales bifactorial ha essite validate. Le authentication bifactorial essera applicate desde ora.",
 	"oathauth-noscratchforvalidation": "Tu non pote usar un codice de recuperation pro confirmar le authentication bifactorial. Le codices de recuperation se usa solmente como reserva pro incidentes. Per favor usa un codice de tu application de authentication bifactorial (p.ex. Google Authenticator).",

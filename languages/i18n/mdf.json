@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"DannyS712",
 			"Elenrm",
 			"Fitoschido",
@@ -15,7 +14,8 @@
 			"Reedy",
 			"Vlad5250",
 			"Валгриш",
-			"아라"
+			"아라",
+			"Matma Rex"
 		]
 	},
 	"tog-underline": "Ссылкань китькстамась:",
@@ -255,7 +255,7 @@
 	"new-messages-from-users": "{{PLURAL:$4|Тееть сась}} $1 лия {{PLURAL:$3|$3 сувайть эзда|$3 сувайхнень эзда|1 = лия сувайть эзда}} ($2).",
 	"new-messages-from-many-users": "$1 тееть сась  ($2) лама тиихнень эзда.",
 	"new-messages-link-plural": "{{PLURAL:$1|1= од нюрьхкяня сёрма|999=од нюрьхкяня сёрмат}}",
-	"new-messages-diff-link-plural": "мекольце {{PLURAL:$1|1= полафнемась|999=полафнематне}}",
+	"new-messages-diff-link-plural": "мекольце {{PLURAL:$1|полафнемась|999=полафнематне}}",
 	"editsection": "петнемс",
 	"editold": "петнемс",
 	"viewsourceold": "ваномс унксть",
@@ -692,7 +692,7 @@
 	"anontalkpagetext": "<em>Тя корхтамань лопац лемфтома тиить, конац изь тие учётонь сёрматфксонц эли сонь тевс аф нолнесы.</em>\nСяс мес тя тиить кемокснеманц инкса сави нолдамс тевс цифрань IP-вастонц.\nСя вастть ули кода нолдавомс тевс мзярошка тиихненди.\nКда тон лемфтома суват ди арьсят, саф сёрматне кучфольхть аф тееть, эста, эняльттяма, [[Special:CreateAccount|сёрматфтт]] эли [[Special:UserLogin|сувак эсь сёрматфксцень вельде]] сяда тов аф тонь аф шорсемс иля лемфтома тиихнень мархта.",
 	"noarticletext": "Тяни тя лопаса сёрматфкс аш.\nТейть ули кода [[Special:Search/{{PAGENAME}}|вешендемс тя лемть]] иля лопаса,\n<span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} вешендемс эрявикс лувомаса],\nэли [{{fullurl:{{FULLPAGENAME}}|action=edit}} тиемс стама лем мархта лопа ]</span>.",
 	"noarticletext-nopermission": "Тяни тя лопаса сёрматфкс аш.\nТейть ули кода [[Special:Search/{{PAGENAME}}|вешендемс тя лемть ]] иля лопаса эли <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} вешендемс эрявикс лувомаса]</span> аньцек тейть аф мярьгеви ушедомс тя лопать тиемонза.",
-	"missing-revision-permission": "#$1 версиясь кандови нардаф лопати. Тееть мярьгови [{{fullurl:{{#Special:Undelete}}|target=$3&timestamp=$2&diff=prev}} ваномс сонь]; сяда крхкаста колганза  азондомась муви [{{fullurl:{{#Special:Log}}/delete|page=$3}} нартцеви журналста].",
+	"missing-revision-permission": "<nowiki>#</nowiki>$1 версиясь кандови нардаф лопати. Тееть мярьгови [{{fullurl:{{#Special:Undelete}}|target=$3&timestamp=$2&diff=prev}} ваномс сонь]; сяда крхкаста колганза  азондомась муви [{{fullurl:{{#Special:Log}}/delete|page=$3}} нартцеви журналста].",
 	"missing-revision": "$1 версиясь «{{FULLPAGENAME}}» лопаса аш.\n\nКода фалу тя эрси, кда ётамс  ташта сылкать эзга нардаф лопать лангс.\nСяда крхкаста сембось [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} нардамань журналса].",
 	"missing-revision-content": "Изь лисе сувафтомс-путомс «$2» лопаса #$1 версиять уликсоц.",
 	"userpage-userdoesnotexist": "Тя викиса «$1» учётонь сёрматфкссь аш. Лацкас арьсек, тон афкукс ёрат тиемс или полафтомс тя лопать.",

@@ -122,7 +122,7 @@
 	"discussiontools-preference-visualenhancements": "نمایش فعالیت در گفتگو",
 	"discussiontools-preference-visualenhancements-help": "این گزینه، ظاهری جدید را برای صفحه‌های بحث فعال می‌کند که حاوی اطلاعاتی پیرامون فعالیت‌ها در هر یک از مبحث‌ها است.",
 	"discussiontools-replybutton": "{{GENDER:|پاسخ}}",
-	"discussiontools-replylink": "پاسخ",
+	"discussiontools-replylink": "{{GENDER:|پاسخ}}",
 	"discussiontools-replywidget-abandon": "آیا از دور انداختن پیامی که در حال نوشتنش هستید اطمینان {{GENDER:|دارید}}؟",
 	"discussiontools-replywidget-abandon-discard": "چشم‌پوشی از نظر",
 	"discussiontools-replywidget-abandon-keep": "ادامه نگارش",

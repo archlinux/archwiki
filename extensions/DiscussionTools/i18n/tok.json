@@ -2,9 +2,31 @@
 	"@metadata": {
 		"authors": [
 			"20kdc",
-			"Keenan Pepper"
+			"Keenan Pepper",
+			"Juwan",
+			"Tamzin"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "toki sin",
-	"discussiontools-replywidget-watchthis": "o pana e lipu ni tawa [[Special:Watchlist|lipu lukin mi]]"
+	"discussiontools-replylink": "{{GENDER:|o toki}}",
+	"discussiontools-replywidget-advanced": "namako",
+	"discussiontools-replywidget-cancel": "o toki ala",
+	"discussiontools-replywidget-mode-source": "toki ilo",
+	"discussiontools-replywidget-mode-visual": "toki lukin",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|o toki}} tawa jan {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "toki ken",
+	"discussiontools-replywidget-reply": "{{GENDER:|o toki}}",
+	"discussiontools-replywidget-summary": "toki toki",
+	"discussiontools-replywidget-watchthis": "o pana e lipu ni tawa [[Special:Watchlist|lipu lukin sina]]",
+	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|jan}} $1 li toki",
+	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|toki}} $1",
+	"discussiontools-topicheader-latestcomment": "toki sin poka: $1",
+	"discussiontools-topicsubscription-button-subscribe": "o sona e toki sin",
+	"discussiontools-topicsubscription-button-subscribe-label": "o sona e toki sin",
+	"discussiontools-topicsubscription-button-unsubscribe": "o sona ala e toki sin",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "o sona ala e toki sin",
+	"discussiontools-topicsubscription-notify-subscribed-body": "toki sin pi kipisi ni la {{GENDER:|sina}} kama sona.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|sina}} kama sona!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "toki sin pi kipisi ni la {{GENDER:|sina}} kama ala sona.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|sina}} kama ala sona."
 }

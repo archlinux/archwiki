@@ -111,6 +111,5 @@
 	"math-wikibase-special-form-placeholder": "Título de la fórmula",
 	"math-wikibase-special-form-button": "Solicitar información",
 	"math-wikibase-special-error-header": "Error",
-	"math-wikibase-special-error-unknown": "Se produjo un error desconocido al recuperar datos de Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "Es necesaria la extensión Wikibase para utilizar esta página especial."
+	"math-wikibase-special-error-unknown": "Se produjo un error desconocido al recuperar datos de Wikibase."
 }

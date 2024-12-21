@@ -3,7 +3,8 @@
 		"authors": [
 			"Ante75",
 			"Kimberli Mäkäräinen (WMNO)",
-			"WMNO sámeprošeakta"
+			"WMNO sámeprošeakta",
+			"Jon Harald Søby"
 		]
 	},
 	"captcha-edit": "Jus áiggut rievdadit dán siiddu, čoavdde mat álggos bihttá dás vuollelis ja čále vástádusa ruvttu sisa ([[Special:Captcha/help|lassedieđut]]):",
@@ -24,7 +25,7 @@
 	"captcha-error": "CAPTCHA duođašteapmi ii menestuvvan siskkáldas boasttuvuođa dihte: $1",
 	"captchahelp-title": "CAPTCHA-rávvagat",
 	"captchahelp-cookies-needed": "Dus ferte diehtočoahkku leat rabas du neahttalohkkis dán bargui.",
-	"captchahelp-text": "Interneahttasiiddut maid buohkat sáhttet rievdadit, nu go dát wiki, dávjá boasttugeavahuvvojit spammariin mat geavahit robohtaid postendihte hirbmat ollu liŋkkaid. Vaikko dakkár spamliŋkkat sáhttet ge sihkkojuvvot, de dat leat suhttadahttit.\nMuhtomin, erenoamážit jus áiggut lasihit ođđa interneahttaliŋkkaid muhtun siidui, de sáhttá dat wiki čájehit dutnje gova muhtun ivnnis dahje seađas čállosis ja sihtat du čállit daid sániid mat čájehuvvojit. Dan dihte go lea váttis automatiseret dán barggu, de dat doaibma luoitá eanas albma olbmuid čađa, muhto bisseha spammariid. \n\nDađi bahábut eai gávdno juste dál audiomolssaeavttut geavaheddjiide geain lea heittot oaidnu, mat geavahit teaksta- dahje hupmanvuođđuduvvon neahttalohkkiid. Váldde oktavuođa [[Special:ListAdmins|hálddašeddjiiguin]] jus dát doaibma hehtte du dahkamis lobálaš rievdadusaid. \n\nDeaddil «ruovttoluotta»-boalu máhccandihte fas rievdadansiidui.",
+	"captchahelp-text": "Interneahttasiiddut maid buohkat sáhttet rievdadit, nu go dát wiki, dávjá boasttugeavahuvvojit spammariin mat geavahit robohtaid postendihte hirbmat ollu liŋkkaid. Vaikko dakkár spamliŋkkat sáhttet ge sihkkojuvvot, de dat leat suhttadahttit.\nMuhtomin, erenoamážit jus áiggut lasihit ođđa interneahttaliŋkkaid muhtun siidui, de sáhttá dat wiki čájehit dutnje gova muhtun ivnnis dahje seađas čállosis ja sihtat du čállit daid sániid mat čájehuvvojit. Dan dihte go lea váttis automatiseret dán barggu, de dat doaibma luoitá eanas albma olbmuid čađa, muhto bisseha spammariid. \n\nDađi bahábut eai gávdno juste dál audiomolssaeavttut geavaheddjiide geain lea heittot oaidnu, mat geavahit teaksta- dahje hupmanvuođđuduvvon neahttalohkkiid. Váldde oktavuođa [[{{int:grouppage-sysop}}|hálddašeddjiiguin]] jus dát doaibma hehtte du dahkamis lobálaš rievdadusaid. \n\nDeaddil «ruovttoluotta»-boalu máhccandihte fas rievdadansiidui.",
 	"captcha-addurl-whitelist": " #<!-- leave this line exactly as it is --> <pre>\n# Syntáksa lea čuovvovaš:\n#  * Visot linnját mat álget dáinna «#» leat kommentárat\n#  * Visot linnját mat eai leat guoros leat oasážat dábálaš cealkagiin mat isket verddiid URL:iin\n  #</pre> <!-- leave this line exactly as it is -->",
 	"right-skipcaptcha": "Čađahit doaimmaid mat dábálaččat gáibidit CAPTCHA-nannema almmá CAPTCHA geavaheami haga",
 	"confirmedit-preview-line": "Gurgadasa nummir",

@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"DannyS712",
 			"Fitoschido",
 			"Kaganer",
@@ -17,7 +16,8 @@
 			"Reedy",
 			"Urhixidur",
 			"Vlad5250",
-			"아라"
+			"아라",
+			"Juwan"
 		]
 	},
 	"tog-underline": "Ferwiese unnerstriekje:",
@@ -244,7 +244,7 @@
 	"sort-descending": "Oustiegend sortierje",
 	"sort-ascending": "Apstiegend sortierje",
 	"nstab-main": "Siede",
-	"nstab-user": "{{GENDER:$1|}}Benutsersiede",
+	"nstab-user": "{{GENDER:$1|Benutsersiede}}",
 	"nstab-media": "Media",
 	"nstab-special": "Spezioalsiede",
 	"nstab-project": "Projektsiede",
@@ -911,7 +911,7 @@
 	"minoreditletter": "L",
 	"newpageletter": "Näi",
 	"boteditletter": "B",
-	"rc-change-size": "$1 {{PLURAL:$1|Byte|Bytes}}",
+	"rc-change-size": "$1",
 	"newsectionsummary": "Näie Apsats /* $1 */",
 	"recentchangeslinked": "Annerengen an ferlinkede Sieden",
 	"recentchangeslinked-feed": "Annerengen an ferlinkede Sieden",

@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Babamamadidiane",
 			"Babamamadidianee",
 			"Lancine.kounfantoh.fofana",
@@ -13,8 +12,13 @@
 	"collabpad-import-subtitle": "ߊ߬ ߟߊߛߣߍߣߍ߲߫ ߞߊ߬ ߓߐ߫ $1 ߟߋ߬",
 	"collabpad": "ߞߏߟߊߓߑߔߊߘ",
 	"tooltip-ca-ve-edit": "ߞߐߜߍ ߣߌ߲߬ ߡߊߦߟߍ߬ߡߊ߲߬",
+	"tooltip-ca-ve-edit-local": "ߕߌ߲߬ߞߎߘߎ߲ ߕߐ߯ߛߓߍߟߌ߫ ߞߐߜߍ ߡߊߦߟߍ߬ߡߊ߲߫",
+	"tooltip-ca-ve-create": "ߞߐߜߍ ߣߌ߲߬ ߛߌ߲ߘߌ߫",
+	"tooltip-ca-ve-create-local": "ߕߌ߲߬ߞߎߘߎ߲ ߕߐ߯ߛߓߍߟߌ߫ ߞߐߜߍ ߡߊߦߟߍ߬ߡߊ߲߫",
 	"tooltip-ca-editsource": "ߞߐߜߍ ߣߌ߲߬ ߘߏߝߙߍߕߍ ߛߎ߲ ߡߊߦߟߍ߬ߡߊ߲߫",
+	"tooltip-ca-editsource-local": "ߕߌ߲߬ߞߎߘߎ߲ ߕߐ߯ߛߓߍߟߌ߫ ߞߐߜߍ ߓߐߖߎ ߘߏߝߙߍߕߍ ߡߊߦߟߍ߬ߡߊ߲߫",
 	"tooltip-ca-createsource": "ߞߐߜߍ ߣߌ߲߬ ߘߏߝߙߍߕߍ ߛߎ߲ ߛߌ߲ߘߌ߫",
+	"tooltip-ca-createsource-local": "ߕߌ߲߬ߞߎߘߎ߲ ߕߐ߯ߛߓߌߟߌ߫ ߞߐߜߍ ߘߏߝߙߍߕߍ ߓߐߖߎ ߡߊߦߟߍ߬ߡߊ߲߫",
 	"visualeditor-advancedsettings-tool": "ߟߊ߬ߓߍ߲߬ߢߐ߲߰ߡߦߊ߬ߘߊ ߖߊ߲߬ߝߊ߬ߣߍ߲ ߠߎ߬",
 	"visualeditor-autosave-modified-prompt-accept": "ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߠߊߘߛߏ߫",
 	"visualeditor-autosave-modified-prompt-message": "ߞߐߜߍ ߣߌ߲߬ ߓߘߊ߫ ߡߊߦߟߍ߬ߡߊ߲߫ ߞߊ߬ߦߌ߯ ߊ߬ ߟߊߦߟߍ߬ ߟߊ߬ߓߊ߲ ߡߍ߲ ߞߍ߫ ߘߴߌ ߓߟߏ߫. ߊ߬ ߞߊߘߌ߫ {{GENDER:|ߌ}} ߢߍ߫ ߓߊ߬ ߞߊ߬ {{GENDER:|ߌ ߟߊ߫}} ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߠߎ߬ ߟߊߘߛߏ߫ ߦߌߟߡߊ ߞߘߐ߬ߡߊ߲ ߘߐ߫߸ ߤߊߡߊ߲ߕߍ߫ ߞߊ߬ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲߬ ߞߎߘߊ ߘߊߡߌ߬ߣߊ߬ ߦߌߟߡߊ߫ ߞߐ߯ߟߕߊ ߡߊ߬؟",
@@ -31,7 +35,10 @@
 	"visualeditor-ca-editlocaldescriptionsource": "ߕߌ߲߬ߞߎߘߎ߲ ߞߊ߲߬ߛߓߍ߬ߟߌ ߛߎ߲ ߡߊߦߟߍ߬ߡߊ߲߫",
 	"visualeditor-ca-editsource": "ߊ߬ ߛߎ߲ ߡߊߦߟߍ߬ߡߊ߲߬",
 	"visualeditor-ca-editsource-section": "ߊ߬ ߛߎ߲ ߡߊߦߟߍ߬ߡߊ߲߬",
+	"visualeditor-ca-editsource-section-hint": "ߕߍߕߍ߮ ߓߐߖߎ ߘߏߝߙߍߕߍ ߡߊߦߟߍ߬ߡߊ߲߫: $1",
 	"visualeditor-categories-tool": "ߦߌߟߡߊ ߟߎ߬",
+	"visualeditor-changedesc-mwcategory-sortkey-changed": "ߢߣߊߕߐߡߐ߲ߠߌ߲ ߢߌ߲ ߓߘߊ߫ ߡߊߝߊ߬ߟߋ߲߬ ߞߊ߬ ߓߐ߫ $1 ߞߊ߬ ߕߊ߯ $2 ߘߐ߫",
+	"visualeditor-changedesc-mwcategory-sortkey-set": "ߢߣߊߕߐߡߐ߲ߠߌ߲ ߢߌ߲ $1 ߓߘߊ߫ ߘߐߛߌ߰",
 	"visualeditor-changedesc-mwlanguagevariant": "ߞߊ߲ ߓߐߢߐ߲߯ߞߘߐ ߣߐ߬ߣߐ߬ߟߌ ߓߘߊ߫ ߡߊߝߊ߬ߟߋ߲߫",
 	"visualeditor-changedesc-mwredirect": "ߟߊ߬ߞߎ߲߬ߛߌ߲߬ߠߌ߲ ߕߊ߯ߦߙߐ ߓߘߊ߫ ߡߊߝߊ߬ߟߋ߲߬ ߞߊ߬ ߓߐ߫ $1 ߞߊ߬ ߕߊ߯ $2",
 	"visualeditor-changedesc-mwtransclusion": "ߞߙߊߞߏ ߟߊ߬ߓߍ߲߬ߢߐ߲߰ߡߦߊ߬ߘߊ ߟߎ߬ ߓߘߊ߫ ߡߊߝߊ߬ߟߋ߲߫",

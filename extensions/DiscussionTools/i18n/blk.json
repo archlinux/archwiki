@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Khun Kt",
-			"咽頭べさ"
+			"咽頭べさ",
+			"Matma Rex"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "လိုꩻလင်တဖြာꩻ မိဉ်ႏတဲမ်းသော့ꩻတောင်ꩻသေꩻတသာတဗာႏ အိုင်ကိုမ်ချက်ကိုယိုခိင်ႏနဝ်ꩻ နာꩻအီႏလက်ခံႏလꩻ ဖေႏသေချက်နဝ်ꩻသွူ။ နာꩻခိဉ်ႏထူႏနွောင်ꩻဒျာႏ ဖေႏသေချက် အပွိုင်အဆေင်ဖိုင်ႏ လွိုက်ခရာႏကိုသွူ။",
@@ -42,7 +43,7 @@
 	"discussiontools-preference-replytool-help": "ယိုကိုနဝ်ꩻ အိုင်ကိုမ်ချက်လိတ်မဲ့ငါ သုင်ꩻသပ်ချက်ယို နျꩻငါကလစ်တဆင်ႏငါတဲ့ အီႏအွောန်ႏနယ်ဖေႏ လဝ်းပြန်ႏချာနွောင်ꩻဒါႏ လိဉ့်တဗာႏနဝ်ꩻသွူ။",
 	"discussiontools-preference-summary": "[https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary အပုင်ႏအငုဲင်ꩻ အအဲဉ်ႏချုတ်] ယိုတဲင် အီႏထောင်လွူꩻထွားသွောန်ထူႏနွောင်ꩻထဲင်း အပုင်ႏအငုဲင်ꩻအခရာႏယိုသွူ။",
 	"discussiontools-preference-topicsubscription": "ဗွောင် ဒင်ႏသွင်ꩻအကျောင်ꩻခရာႏစာႏရင်ꩻ",
-	"discussiontools-replylink": "လဝ်းပြန်ႏချာ",
+	"discussiontools-replylink": "{{GENDER:|လဝ်းပြန်ႏချာ}}",
 	"discussiontools-replywidget-abandon": "နာꩻကတဲမ်းခါꩻဒါႏ သုင်ꩻသပ်ချက်ယို အီႏယားကုဲင်ချာသွူနဝ်ꩻ မွေးဒျာႏနဲ့?",
 	"discussiontools-replywidget-abandon-discard": "ယားကုဲင် သုင်ꩻသပ်ချက်",
 	"discussiontools-replywidget-abandon-keep": "တဲမ်းသွုပ်ထဲင်း",

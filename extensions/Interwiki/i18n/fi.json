@@ -13,7 +13,8 @@
 			"Valtlai",
 			"Valtlait",
 			"Veikk0.ma",
-			"VezonThunder"
+			"VezonThunder",
+			"Samoasambia"
 		]
 	},
 	"interwiki": "Wikienväliset linkit",
@@ -45,6 +46,8 @@
 	"interwiki-logtext": "Tarkastele lokia",
 	"interwiki_addtext": "Lisää wikien- tai kieltenvälinen etuliite",
 	"interwiki-addtext-local": "Lisää paikallinen wikienvälinen tai kieltenvälinen etuliite",
+	"interwiki-addtext-nolang": "Lisää kieltenvälinen etuliite",
+	"interwiki-addtext-local-nolang": "Lisää paikallinen kieltenvälinen etuliite",
 	"interwiki_addintro": "Olet lisäämässä uutta wikienvälistä etuliitettä. Se ei voi sisältää välilyöntejä ( ), kaksoispisteitä (:), et-merkkejä (&), tai yhtäsuuruusmerkkejä (=).",
 	"interwiki_addbutton": "Lisää",
 	"interwiki_added": "Etuliite ”$1” lisättiin interwiki-tauluun.",
@@ -69,5 +72,6 @@
 	"interwiki-local-description": "Nämä etuliitteet ovat olemassa paikallisesti. Kaikki päällekkäisyydet järjestelmänlaajuisten asetusten kanssa syrjäyttävät järjestelmänlaajuiset asetukset.",
 	"interwiki-links": "Wikienväliset etuliitteet",
 	"interwiki-language-links": "Kieltenväliset etuliitteet",
-	"interwiki-language-description": "Nämä etuliitteet vastaavat määritettyjä kielitunnuksia, ja niitä käytetään luomaan luettelo ”{{int:otherlanguages}}” lisättynä sivulle."
+	"interwiki-language-description": "Nämä etuliitteet vastaavat määritettyjä kielitunnuksia, ja niitä käytetään luomaan luettelo ”{{int:otherlanguages}}” lisättynä sivulle.",
+	"interwiki-global-language-links": "Järjestelmänlaajuiset kieltenväliset etuliitteet"
 }

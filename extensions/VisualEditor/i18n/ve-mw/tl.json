@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"AnakngAraw",
 			"Emem.calist",
 			"GinawaSaHapon",
@@ -114,7 +113,7 @@
 	"visualeditor-formatdropdown-format-mw-heading5": "Sub-pamuhatan 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Sub-pamuhatan 4",
 	"visualeditor-languages-tool": "Mga wika",
-	"visualeditor-linkinspector-button-link-external": "Kawing panlabas",
+	"visualeditor-linkinspector-button-link-external": "Panlabas na link",
 	"visualeditor-linkinspector-button-link-internal": "Hanapin sa mga pahina",
 	"visualeditor-linkinspector-illegal-title": "Walang-saysay na pamagat ng pahina",
 	"visualeditor-linknodeinspector-add-label": "Magdagdag ng etiketa",

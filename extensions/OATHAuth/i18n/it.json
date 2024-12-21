@@ -16,6 +16,7 @@
 	"oathauth-secret": "Chiave segreta per l'autenticazione a due fattori:",
 	"oathauth-enable": "Abilita autenticazione a due fattori",
 	"oathauth-recoverycodes": "Il seguente è un elenco di codici di ripristino monouso. Questi codici possono essere utilizzati solo una volta e sono per casi di emergenza quando non hai accesso al tuo dispositivo. Sei pregato di annotarteli e tenerli in un luogo sicuro. Si consiglia di contrassegnare ciascun codice come utilizzato una volta effettuato l'accesso utilizzandolo. Se perdi il tuo dispositivo, questi codici sono l'unico modo per recuperare l'accesso al tuo account.\n\n'''Questi codici non saranno mostrati mai più.'''",
+	"oathauth-recoverycodes-download": "Scarica codici di recupero",
 	"oathauth-disable": "Disabilita autenticazione a due fattori",
 	"oathauth-validatedoath": "Convalidate le credenziali a due fattori. D'ora in poi sarà applicata l'autenticazione a due fattori.",
 	"oathauth-failedtovalidateoath": "Impossibile convalidare le credenziali a due fattori",

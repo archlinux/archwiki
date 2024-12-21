@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Bugoslav",
 			"Dalibor Bosits",
 			"Ex13",
@@ -209,7 +208,7 @@
 	"abusefilter-edit-action-disallow": "Spriječi suradnika u izvršavanju predmetne akcije",
 	"abusefilter-edit-action-blockautopromote": "Opozovi status automatski potvrđenoga suradnika",
 	"abusefilter-edit-action-degroup": "Ukloni suradnika iz svih privilegiranih skupina",
-	"abusefilter-edit-action-block": "Blokirajte suradnika i/ili IP adrese (onemogući im uređivanje)",
+	"abusefilter-edit-action-block": "Blokiraj suradnika ili IP adrese",
 	"abusefilter-edit-action-blocktalk": "Spriječi uređivanje vlastite stranice za razgovor",
 	"abusefilter-edit-action-throttle": "Pokreni akcije samo ako je suradnik prešao granicu",
 	"abusefilter-edit-action-rangeblock": "Blokiraj raspon suradnikovih IP adresa",
@@ -264,7 +263,7 @@
 	"abusefilter-edit-badfilter": "Filtar koji ste naveli ne postoji",
 	"abusefilter-edit-revert": "Ukloni akcije ovog filtra",
 	"abusefilter-edit-tools": "Alati:",
-	"abusefilter-edit-test-link": "Testiraj ovaj filtar s nedavnim izmjenama na projektu",
+	"abusefilter-edit-test-link": "Testiraj ovaj filtar na nedavnim izmjenama na projektu",
 	"abusefilter-edit-export": "Izvezi ovaj filtar na neki drugi wiki",
 	"abusefilter-edit-syntaxok": "Nema sintaksnih pogrešaka.",
 	"abusefilter-edit-syntaxerr": "Sintaktička pogreška: $1",

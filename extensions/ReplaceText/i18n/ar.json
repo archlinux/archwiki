@@ -19,6 +19,7 @@
 	"replacetext_optionalfilters": "مرشحات اختيارية:",
 	"replacetext_categorysearch": "استبدل فقط في التصنيف:",
 	"replacetext_prefixsearch": "استبدل فقط في الصفحات ذات البادئة:",
+	"replacetext_pagelimit": "الحد الأقصى لعدد الصفحات التي سيتم إرجاعها من البحث:",
 	"replacetext_editpages": "استبدل النص في محتويات الصفحة",
 	"replacetext_movepages": "استبدل النص في عناوين الصفحات إن أمكن",
 	"replacetext_givetarget": "لابد من تحديد النصّ الذي تريد استبداله",
@@ -27,6 +28,7 @@
 	"replacetext_choosepagesforedit": "استبدال النصّ '$1' بالنصّ '$2' في محتوى {{PLURAL:$3||الصفحة التالية|الصفحتين التاليتين|الصفحات التالية}}:",
 	"replacetext_choosepagesformove": "استبدل النصّ \"$1\" بالنصّ \"$2\" في {{PLURAL:$3||عنوان الصفحة التالية|عنواني الصفحتين التاليتين|عناوين الصفحات التالية}}:",
 	"replacetext_cannotmove": "لا يمكن نقل {{PLURAL:$1||الصفحة التالية|الصفحتين التاليتين|الصفحات التالية}}:",
+	"replacetext_cannotedit": "لا يمكن تحرير {{PLURAL:$1|الصفحة|ال$1 صفحة}} التالية:",
 	"replacetext_formovedpages": "للصفحات المنقولة:",
 	"replacetext_savemovedpages": "حفظ العناوين القديمة كتحويلات إلى العناوين الجديدة",
 	"replacetext_watchmovedpages": "راقب هذه الصفحات",
@@ -40,11 +42,12 @@
 	"replacetext_warning": "'''تحذير''': توجد {{PLURAL:$1||صفحة واحدة تحتوي|صفحتان تحتويان|$1 صفحات تحتوي|$1 صفحة تحتوي}} بالفعل على نصّ الاستبدال '$2'. إذا أجريت هذا الاستبدال فلن تصبح قادرًا على تمييز استبدالاتك من تلك النصوص.",
 	"replacetext_blankwarning": "سلسلة الاستبدال فارغة لذا فلن تكون هذه العملية عكسية.",
 	"replacetext_continue": "استمرار",
+	"replacetext_botedit": "وضع علامة على التغييرات باعتبارها تعديلات روبوتية",
 	"replacetext_editsummary": "استبدال النص - '$1' ب'$2'",
 	"replacetext_reminder": "لتعديل الروابط إلى هذه الصفحة في صفحات أخرى; انتقل إلى $1.",
 	"replacetext_cfg_error": "خطأ في تكوين ReplaceText",
 	"replacetext_no_compress": "لن يعمل موقع wiki الخاص بك مع ReplaceText: لا يمكن تشغيل عمليات استبدال النص إذا تم تعيين $ wgCompressRevisions على \"true\".",
 	"replacetext_no_external_stores": "لن يعمل موقع wiki الخاص بك مع ReplaceText: لا يمكن تشغيل عمليات استبدال النص إذا كان $ wgExternalStores غير فارغ.",
 	"right-replacetext": "أجرِ استبدال النصّ في الويكي بأكملها",
-	"action-replacetext": "أجرِ استبدال النصّ في الويكي بأكملها"
+	"action-replacetext": "أجرِ استبدال النص في الويكي بأكملها"
 }

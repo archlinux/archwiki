@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bangsa Manusia"
+		]
+	},
+	"prefs-vector-enable-vector-1-label": "Enggunan su Ligasi Biktur",
+	"vector-opt-out": "Embalingan sa andang a palas",
+	"vector-languages": "Manga basa",
+	"vector-language-button-label": "{{PLURAL:$1|$1 basa|$1 manga basa}}",
+	"vector-no-language-button-label": "Muman sa basa",
+	"vector-action-addsection": "muman sa kambitialan",
+	"vector-action-delete": "Iawa",
+	"vector-action-move": "Iiseg",
+	"vector-action-protect": "Lindungen",
+	"vector-action-unprotect": "Sambian sa kapelindung",
+	"vector-view-create": "Mumbal",
+	"vector-view-edit": "Umbayan",
+	"vector-view-history": "Ilayn i hikayat",
+	"vector-view-view": "Batia",
+	"vector-view-viewsource": "Ilayn i ebpunan",
+	"vector-more-actions": "madakel pan",
+	"vector-feature-limited-width-name": "Luwag",
+	"vector-feature-custom-font-size-name": "Teks",
+	"vector-feature-limited-width-0-label": "Maluwag",
+	"vector-feature-limited-width-1-label": "Nasasangan",
+	"vector-feature-custom-font-size-0-label": "Madidu",
+	"vector-feature-custom-font-size-1-label": "Nasasangan",
+	"vector-feature-custom-font-size-2-label": "Masela",
+	"skin-theme-name": "Warna",
+	"skin-theme-os-label": "Awtumatik",
+	"vector-searchsuggest-containing": "Mangilay sa manga salekat a aden dalem nin a <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Dalem",
+	"vector-toc-beginning": "Ebpunan",
+	"vector-site-nav-label": "Sayt",
+	"vector-main-menu-label": "Unan a pebpilian",
+	"vector-page-tools-label": "Manga perkakas",
+	"vector-page-tools-general-label": "Kalangunan",
+	"vector-page-tools-actions-label": "Manga galebekan",
+	"vector-unpin-element-label": "ipagena"
+}

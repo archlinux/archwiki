@@ -8,7 +8,7 @@
 	"discussiontools-defaultsummary-reply": "Ántwort",
 	"discussiontools-desc": "Werkzeig zua Vabessarung d Diskussionsseitn",
 	"discussiontools-preference-label": "Diskussions-Werkzeig",
-	"discussiontools-replylink": "Antwort",
+	"discussiontools-replylink": "{{GENDER:|Antwort}}",
 	"discussiontools-replywidget-abandon-discard": "Kommentar vawerfa",
 	"discussiontools-replywidget-abandon-keep": "Weida schreim",
 	"discussiontools-replywidget-cancel": "Obbrecha",

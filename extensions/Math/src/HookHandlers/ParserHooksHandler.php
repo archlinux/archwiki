@@ -77,6 +77,7 @@ class ParserHooksHandler implements
 	 * @return array|string
 	 */
 	public function mathTagHook( ?string $content, array $attributes, Parser $parser ) {
+		global $wgMathSvgRenderer;
 		$mode = $parser->getOptions()->getOption( 'math' );
 		if ( $mode === MathConfig::MODE_NATIVE_JAX ) {
 			$parser->getOutput()->addModules( [ 'ext.math.mathjax' ] );
@@ -88,7 +89,7 @@ class ParserHooksHandler implements
 		if ( array_key_exists( "qid", $attributes ) ) {
 			$parser->getOutput()->addModules( [ 'ext.math.popup' ] );
 		}
-		if ( $mode == MathConfig::MODE_MATHML ) {
+		if ( $wgMathSvgRenderer === 'restbase' && $mode == MathConfig::MODE_MATHML ) {
 			$marker = Parser::MARKER_PREFIX .
 				'-postMath-' . sprintf( '%08X', $this->mathTagCounter++ ) .
 				Parser::MARKER_SUFFIX;

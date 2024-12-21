@@ -22,6 +22,7 @@
 		]
 	},
 	"math-desc": "حوِّل الصيغ الرياضية بين وسمي <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"popups-settings-option-math": "رياضيات",
 	"popups-settings-option-math-description": "شرح الصيغ الرياضية.",
 	"popups-settings-option-math-tooltip": "شرح الصيغ الرياضية عند التمرير عليها.",
 	"math-visualeditor-mwchemdialog-title": "معادلة كيميائية",
@@ -73,6 +74,12 @@
 	"math-visualeditor-symbol-group-math-symbols": "الرموز والثوابت",
 	"math-visualeditor-symbol-group-math-typefaces": "أشكال الكتابة",
 	"math-visualeditor-symbol-group-math-unsorted": "غير مرتب",
+	"math-form-tex-label": "إدخال TeX مخصص",
+	"math-form-tex-help": "اختبر باستخدام مدخلات TeX الخاصة بك. راجع [[{{int:math-helppage}}|صفحة المساعدة لصيغ الرياضيات]] لمزيد من المساعدة.",
+	"math-form-type-label": "نوع المدخلات",
+	"math-form-type-tex": "tex (إدخال عادي)",
+	"math-form-display-label": "وضع عرض الرياضيات",
+	"math-helppage": "Help:عرض صيغة رياضية",
 	"math_failure": "خطأ رياضيات",
 	"math_invalidjson": "$1 استجابة الخادم هو JSON غير صحيح.",
 	"math_invalidresponse": "$1: رد غير صحيح (\"$3\") من الخادم \"$2\":",
@@ -82,9 +89,9 @@
 	"math_syntax_error": "خطأ في الصياغة",
 	"math_timeout": "$1 انتهاء الوقت من \"$2\".",
 	"math-test-end": "النتائج في الخلفية لوضع التقديم ''$1'' اكتملت.",
-	"math-test-fail": "الاختبار ''$1'' ''فشل''.",
+	"math-test-fail": "فشل الاختبار ''$1''.",
 	"math-test-start": "جارٍ تشغيل الاختبارات في الخلفية لوضع الاظهار ''$1''.",
-	"math-test-success": "الاختبار ''$1'' ''نجح''.",
+	"math-test-success": "الاختبار ''$1'' نجح.",
 	"math-test-contains-diff": "سلسلة الحروف التي تم إرجاعها $1 لا تحتوي على سلسلة الحروف المتوقعة $2.",
 	"math-test-equals-diff": "سلسلة الحروف التي تم إرجاعها $1 مختلفة عن سلسلة الحروف المتوقعة $2.",
 	"math-tracking-category-error": "صفحات بها أخطاء رياضيات",
@@ -98,6 +105,7 @@
 	"math_unknown_error": "خطأ غير معروف",
 	"math_unknown_function": "وظيفة غير معروفة «$1»",
 	"mw-math-latexml": "LaTeXML (تجريبي؛ يستخدم MathML)",
+	"mw-math-mathjax": "عرض MathJax من جانب العميل (للمتصفحات ذات دعم MathML المحدود)",
 	"mw-math-mathml": "SVG (يمكن تمكين MathML عبر البرنامج المساعد للمتصفح)",
 	"mw-math-native": "MathML (تجريبي ؛ لا توجد صور)",
 	"mw-math-source": "اعرض على هيئة LaTeX (للمتصفحات النصية)",
@@ -120,6 +128,5 @@
 	"math-wikibase-special-form-button": "طلب معلومات",
 	"math-wikibase-special-error-header": "خطأ",
 	"math-wikibase-special-error-invalid-argument": "معرف عنصر قاعدة الويكي المحدد غير موجود.",
-	"math-wikibase-special-error-unknown": "حدث خطأ غير معروف أثناء جلب البيانات من ويكي.",
-	"math-wikibase-special-error-no-wikibase": "ملحق قاعدة الويكي مطلوب من أجل استخدام هذه الصفحة الخاصة."
+	"math-wikibase-special-error-unknown": "حدث خطأ غير معروف أثناء جلب البيانات من ويكي."
 }

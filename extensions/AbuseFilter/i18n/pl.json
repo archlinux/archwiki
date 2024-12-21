@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": [
 			"Airwolf",
-			"Amire80",
 			"Ankam",
 			"Beau",
 			"BeginaFelicysym",
@@ -607,7 +606,7 @@
 	"abusefilter-invalid-request-noid": "Niewłaściwe żądanie! Musisz wejść w szczegóły prywatnego rejestru za pośrednictwem formularza na stronie szczegółów filtra nadużyć i wprowadzić powód.",
 	"blockedexternaldomains": "Zablokowane zewnętrzne domeny",
 	"abusefilter-blocked-domains-title": "Zablokowane zewnętrzne domeny",
-	"abusefilter-blocked-domains-intro": "Linki zewnętrzne pasujące do domen z tej listy zostaną zablokowane po dodaniu do strony. Domeny te zapisywane są na [[MediaWiki:BlockedExternalDomains.json]].",
+	"abusefilter-blocked-domains-intro": "Linki zewnętrzne pasujące do domen z tej listy zostaną zablokowane po dodaniu do strony. Domeny te zapisywane są na [[MediaWiki:BlockedExternalDomains.json]]. Próby dodania zablokowanych linków są rejestrowane w [[Special:Log/abusefilterblockeddomainhit|rejestrze]].",
 	"abusefilter-blocked-domains-add-heading": "Dodaj nową domenę",
 	"abusefilter-blocked-domains-add-explanation": "Możesz tu dodać domenę do listy zablokowanych domen.",
 	"abusefilter-blocked-domains-domain": "Domena do zablokowania, np. wikipedia.org",
@@ -628,7 +627,7 @@
 	"abusefilter-blocked-domains-domain-added-comment": "Dodanie blokady zewnętrznej domeny $1 z powodem: $2",
 	"abusefilter-blocked-domains-domain-removed-comment": "Usunięcie blokady zewnętrznej domeny $1 z powodem: $2",
 	"log-description-abusefilterprivatedetails": "Ten rejestr przedstawia listę dostępów do prywatnych szczegółów filtru nadużyć.",
-	"log-description-abusefilterblockeddomainhit": "Ten rejestr śledzi trafienia zablokowanych domen.",
+	"log-description-abusefilterblockeddomainhit": "Ten rejestr śledzi trafienia [[Special:BlockedExternalDomains|zablokowanych domen]].",
 	"abusefilter-noreason": "Uwaga: aby podejrzeć poufne szczegóły tego rejestru, musisz podać powód.",
 	"abusefilter-log-ip-not-available": "Niedostępne",
 	"abusefilter-tag-reserved": "Tag <code>abusefilter-condition-limit</code> jest zarezerwowany dla wewnętrznego użytku przez Filtr nadużyć.",

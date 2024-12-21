@@ -5,10 +5,12 @@
 			"Gott wisst",
 			"Heahwrita",
 			"JJohnson1701",
-			"Pyscowicz"
+			"Pyscowicz",
+			"Rocioun"
 		]
 	},
 	"mobile-frontend-editor-edit": "Adiht",
+	"mobile-frontend-history": "Locian cranic wendinga þæs trametes.",
 	"mobile-frontend-home-button": "Ham",
 	"mobile-frontend-language-article-heading": "Spræc",
 	"mobile-frontend-main-menu-button-tooltip": "Opena heafodlic getæl",
@@ -19,5 +21,6 @@
 	"mobile-frontend-main-menu-watchlist": "Behealdunggetæl",
 	"mobile-frontend-pageaction-edit-tooltip": "Adiht þone forman dæl þisses trametes",
 	"mobile-frontend-placeholder": "Sec on {{SITENAME}}",
-	"mobile-frontend-random-button": "Weasgelimplic"
+	"mobile-frontend-random-button": "Weasgelimplic",
+	"minerva-page-actions-overflow": "Ma"
 }

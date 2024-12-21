@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguyenHung"
 		]
 	},
 	"citethispage": "Trích dẫn",
-	"citethispage-desc": "Thêm trang đặc biệt để [[Special:Cite|trích dẫn bài viết]] và đặt liên kết trong thanh công cụ",
+	"citethispage-desc": "Thêm trang đặc biệt để [[Special:CiteThisPage|trích dẫn bài viết]] và đặt liên kết trong thanh công cụ",
 	"citethispage-link": "Trích dẫn trang này",
 	"tooltip-citethispage": "Hướng dẫn cách trích dẫn trang này",
 	"citethispage-change-submit": "Trích dẫn",

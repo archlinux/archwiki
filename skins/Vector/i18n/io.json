@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Joao Xavier",
 			"Lakaoso",
 			"Malafaya"
@@ -33,6 +32,15 @@
 	"vector-jumptosearch": "Irez a serchilo",
 	"vector-jumptocontent": "Irez a kontenajo",
 	"vector-more-actions": "Pluse",
+	"vector-feature-limited-width-name": "Longeso",
+	"vector-feature-custom-font-size-name": "Texto",
+	"vector-feature-limited-width-0-label": "Larjeso",
+	"vector-feature-limited-width-1-label": "Normala",
+	"vector-feature-custom-font-size-0-label": "Mikra",
+	"vector-feature-custom-font-size-1-label": "Normala",
+	"vector-feature-custom-font-size-2-label": "Larja",
+	"skin-theme-name": "Koloro",
+	"skin-theme-os-label": "Automata",
 	"vector-searchsuggest-containing": "Serchar pagini kontenanta <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Kontenajo",
 	"vector-toc-beginning": "Komenco dil artiklo",
@@ -46,6 +54,7 @@
 	"vector-limited-width-toggle": "Modifikar la limito di larjeso di la kontenajo",
 	"vector-page-tools-label": "Utensili",
 	"vector-page-tools-general-label": "Ordinara",
+	"vector-page-tools-actions-label": "Agadi",
 	"vector-pin-element-label": "movar a latera panelo",
 	"vector-unpin-element-label": "celez",
 	"tooltip-vector-anon-user-menu-title": "Plusa selekti",

@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Anass Sedrati",
 			"Ideophagous",
 			"Meno25",
@@ -204,8 +203,8 @@
 	"exif-gpsspeed-m": "mil f saa",
 	"exif-gpsspeed-n": "aqd",
 	"exif-gpsdestdistance-k": "kilometrat",
-	"exif-gpsdestdistance-m": "mial",
-	"exif-gpsdestdistance-n": "mial ḅḫriyya",
+	"exif-gpsdestdistance-m": "ميال",
+	"exif-gpsdestdistance-n": "ميال بحرية",
 	"exif-gpsdop-excellent": "ناضي($1)",
 	"exif-gpsdop-good": "مزيان ($1)",
 	"exif-gpsdop-moderate": "بين و بين ($1)",

@@ -8,7 +8,17 @@
 	"vector-language-button-label": "{{PLURAL:$1|bahaso-bahaso $1}}",
 	"vector-no-language-button-label": "Tambah bahaso",
 	"vector-view-create": "Buek",
+	"vector-view-history": "Tengok sojarah",
+	"vector-more-actions": "Lagi",
+	"vector-feature-custom-font-size-name": "Teks",
+	"vector-feature-custom-font-size-0-label": "Kocik",
+	"vector-feature-custom-font-size-1-label": "Biaso",
+	"vector-feature-custom-font-size-2-label": "Bosa",
+	"skin-theme-name": "Warno",
+	"skin-theme-os-label": "Automatik",
+	"vector-searchsuggest-containing": "Cari laman yang ado <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-main-menu-label": "Menu utamo",
 	"vector-page-tools-label": "Pokakas",
-	"vector-page-tools-general-label": "Umum"
+	"vector-page-tools-general-label": "Umum",
+	"vector-page-tools-actions-label": "Tingkah"
 }

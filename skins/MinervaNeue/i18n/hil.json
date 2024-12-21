@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Kai theos en ho logos",
-			"Redhotchili23"
+			"Redhotchili23",
+			"Billie bb",
+			"Ultron90"
 		]
 	},
 	"mobile-frontend-editor-edit": "Liwaton",
@@ -15,5 +17,6 @@
 	"mobile-frontend-main-menu-settings": "Pagkay-o",
 	"mobile-frontend-main-menu-watchlist": "Balantayan",
 	"mobile-frontend-placeholder": "Pangitaa ang {{SITENAME}}",
-	"mobile-frontend-random-button": "Pal-ákpál-ak"
+	"mobile-frontend-random-button": "Pal-ákpál-ak",
+	"minerva-page-actions-overflow": "Dugang Pa"
 }

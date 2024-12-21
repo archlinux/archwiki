@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Ghaly",
 			"Matma Rex",
 			"Meno25",
@@ -253,7 +252,7 @@
 	"abusefilter-history-filter": "قاعده المرشح",
 	"abusefilter-history-comments": "تعليقات",
 	"abusefilter-history-actions": "أفعال",
-	"abusefilter-history-backedit": "رجوع إلى محرر المرشح",
+	"abusefilter-history-backedit": "محرر الفلتر",
 	"abusefilter-history-deleted": "محذوف",
 	"abusefilter-history-filterid": "مرشح",
 	"abusefilter-history-select-legend": "تصفيه البحث",
@@ -337,7 +336,7 @@
 	"abusefilter-diff-info": "معلومات أساسية",
 	"abusefilter-diff-pattern": "شروط المرشح",
 	"abusefilter-diff-invalid": "ليس بالإمكان إحضار النسخ المطلوبة",
-	"abusefilter-diff-backhistory": "عوده إلى تاريخ المرشح",
+	"abusefilter-diff-backhistory": "تاريخ التصفية",
 	"abusefilter-import-intro": "يمكنك استخدام هذه الواجهه لاستيراد المرشحات من الويكيات الأخرى.\nفى الويكى المصدر، اضغط \"{{int:abusefilter-edit-export}}\" تحت \"{{int:abusefilter-edit-tools}}\" فى واجهه التعديل.\nانسخ من صندوق النص الذى سيظهر، والصقه إلى صندوق النص هذا، ثم اضغط \"{{int:abusefilter-import-submit}}\",",
 	"abusefilter-import-submit": "استيراد البيانات"
 }

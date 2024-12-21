@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Misbahu umar",
-			"Umar Ahmad2345"
+			"Umar Ahmad2345",
+			"787IYO"
 		]
 	},
 	"vector-languages": "Ezhimizhi",
@@ -16,11 +16,22 @@
 	"vector-view-create": "Te",
 	"vector-view-history": "Chin etan le",
 	"vector-more-actions": "Ndocizhi",
+	"vector-feature-limited-width-name": "Epede",
+	"vector-feature-custom-font-size-name": "Enyakikaci",
+	"vector-feature-limited-width-0-label": "Epe",
+	"vector-feature-limited-width-1-label": "Kinigi",
+	"vector-feature-custom-font-size-0-label": "Tetengi",
+	"vector-feature-custom-font-size-1-label": "Kinigi",
+	"vector-feature-custom-font-size-2-label": "Wunciko",
+	"skin-theme-name": "Kwege",
+	"skin-theme-os-label": "Tsutsoci",
 	"vector-searchsuggest-containing": " Wiwaza feregi nan fibo nan<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Enyanzhi",
 	"vector-toc-beginning": "Chaba",
+	"vector-anon-user-menu-pages": "Eyegizhi nya lilatinya edzuntazhi",
 	"vector-main-menu-label": "fere gboko",
 	"vector-page-tools-label": "Nyangagi tunzhi",
 	"vector-page-tools-general-label": "Kpata",
+	"vector-page-tools-actions-label": "Jinjin",
 	"vector-unpin-element-label": "so"
 }

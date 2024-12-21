@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Bluehamed",
 			"Bonevarluri",
 			"Hosseinblue",
@@ -299,7 +298,6 @@
 	"badarticleerror": "ای عمل نیوا ری ای بلگه اجرا وابی.",
 	"cannotdelete-title": "نیوا بلگنه حذف کی \"$1\"",
 	"badtitle": "عنۉان بد",
-	"badtitletext": "The requested page title was invalid, empty, or an incorrectly linked inter-language or inter-wiki title.\nIt may contain one or more characters that cannot be used in titles.",
 	"viewsource": "دیڌٱن سٱرچاٛشمٱ",
 	"skin-action-viewsource": "دی‌ڍةن سةرچەشمة",
 	"viewsource-title": "دیئن منبع سی $1",
@@ -441,8 +439,8 @@
 	"currentrev-asof": "آخرین نوسخٱ تا $1",
 	"revisionasof": "ئیصلاح $1",
 	"revision-info": "ۉرژن $1 تۉسط {{GENDER:$6|$2}}$7",
-	"previousrevision": "← ئیصلاح قأبلی",
-	"nextrevision": "نوسخاٛی نۊتٱر →",
+	"previousrevision": "→ ئیصلاح قأبلی",
+	"nextrevision": "نوسخاٛی نۊتٱر ←",
 	"currentrevisionlink": "نوسخاٛی دیندائی",
 	"cur": "ایسنی",
 	"last": "نهاتٱری",

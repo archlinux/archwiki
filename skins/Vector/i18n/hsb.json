@@ -11,7 +11,7 @@
 	"vector-action-toggle-sidebar": "Bóčnicu přešaltować",
 	"vector-languages": "Rěče",
 	"vector-language-button-aria-label": "K zapiskej w druhej rěči hić. Přistupny w {{PLURAL:$1|$1 rěči|$1 rěčomaj|$1 rěčach|$1 rěčach}}",
-	"vector-language-button-label": "{{PLURAL:$1|$ rěč|$1 rěči|$1 rěče|$1 rěčow}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 rěč|$1 rěči|$1 rěče|$1 rěčow}}",
 	"vector-no-language-button-label": "Rěče dodać",
 	"vector-no-language-button-aria-label": "Tutón zapisk eksistuje jenož w tutej rěči. Dodaj zapisk za druhe rěče",
 	"vector-language-variant-switcher-label": "Rěčnu wariantu změnić",

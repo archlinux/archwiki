@@ -1,9 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robin van der Vliet"
+			"Robin van der Vliet",
+			"Elefentiste"
 		]
 	},
+	"visualeditor-cite-tool-name-book": "Libro",
+	"visualeditor-cite-tool-name-news": "Novas",
+	"cite-ve-citationneeded-button": "Ajunta un sita",
+	"cite-ve-citationneeded-title": "Sita nesesada",
+	"cite-ve-dialog-reference-options-group-label": "Usa esta grupo",
 	"cite-ve-dialog-reference-title": "Refere",
-	"cite-ve-dialogbutton-reference-title": "Refere"
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Sitas",
+	"cite-ve-dialogbutton-reference-title": "Refere",
+	"cite-ve-toolbar-group-label": "Sita"
 }

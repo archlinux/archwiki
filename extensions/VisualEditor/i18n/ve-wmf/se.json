@@ -5,14 +5,15 @@
 			"Kimberli Mäkäräinen (WMNO)",
 			"Lea-Christine Sara",
 			"Ed g2s",
-			"WMNO sámeprošeakta"
+			"WMNO sámeprošeakta",
+			"Yupik"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck doaivu ahte ođđa sisdoallu lea lasihuvvon siidui",
 	"tag-editcheck-newreference-description": "Siidui lasihuvvui gáldu",
 	"tag-editcheck-references-description": "EditCheck doaivu ahte okta referánsa sáhttá leamáš dárbbašlaš",
 	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Rievdadaniskkus (gáldut) biddjojuvvon johtui]]",
-	"tag-editcheck-references-activated-description": "Rievdadandárkkisteapmi doaivu dan ahte gáldu soaitá leamaš dárbbašlaš, ja geavaheaddjelakta dása čájehuvvui",
+	"tag-editcheck-references-activated-description": "Rievdadandárkkisteami mielde gáldu soaittášii leamaš dárbbašlaš, manin geavahanlakta čájehuvvui",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Rievdaduvvon visuála rievdadanprográmmain]]",
 	"tag-visualeditor-description": "Rievdadus dahkkon [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuála rievdadanprográmmain]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Rievdaduvvon visuála rievdadanprográmmain: Dárkkis]]",

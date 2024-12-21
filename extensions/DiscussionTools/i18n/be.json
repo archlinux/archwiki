@@ -9,7 +9,8 @@
 			"Plaga med",
 			"Tomato Cream",
 			"Tīgelika",
-			"ZlyiLev"
+			"ZlyiLev",
+			"Woytecr"
 		]
 	},
 	"discussiontools": "Інструменты абмеркаванняў",
@@ -112,8 +113,8 @@
 	"discussiontools-preference-topicsubscription-help": "Гэта функцыя дазволіць падпісацца на атрыманне апавяшчэнняў пра каментарыі ў абраных тэмах.",
 	"discussiontools-preference-visualenhancements": "Паказваць звесткі аб дзейнасці размовы",
 	"discussiontools-preference-visualenhancements-help": "Гэта ўключыць новы выгляд старонкі размоў, які паказвае звесткі аб дзейнасці ў кожным абмеркаванні.",
-	"discussiontools-replybutton": "Адказаць",
-	"discussiontools-replylink": "адказаць",
+	"discussiontools-replybutton": "{{GENDER:|Адказаць}}",
+	"discussiontools-replylink": "{{GENDER:|адказаць}}",
 	"discussiontools-replywidget-abandon": "Вы ўпэўнены, што хочаце адмяніць напісаны вамі каментарый?",
 	"discussiontools-replywidget-abandon-discard": "Адмяніць каментарый",
 	"discussiontools-replywidget-abandon-keep": "Працягнуць пісаць",

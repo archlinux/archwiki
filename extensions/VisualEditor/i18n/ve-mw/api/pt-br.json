@@ -5,7 +5,8 @@
 			"Eduardoaddad",
 			"Felipe L. Ewald",
 			"Fúlvio",
-			"TheGabrielZaum"
+			"TheGabrielZaum",
+			"McDutchie"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Nenhuma serialização em cache encontrada com essa chave",
@@ -46,7 +47,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "Título para nova seção.",
 	"apihelp-visualeditoredit-param-starttimestamp": "Ao salvar, define isto à data e hora de quando a página foi carregada. Usado para detectar conflitos de edição.",
 	"apihelp-visualeditoredit-param-summary": "Sumário de edição.",
-	"apihelp-visualeditoredit-param-tags": "Altere as etiquetas para aplicar à edição.",
+	"apihelp-visualeditoredit-param-tags": "As tags de alteração a serem aplicadas à edição.",
 	"apihelp-visualeditoredit-param-wikitext": "O texto wiki para ser utilizado.",
 	"apihelp-visualeditoredit-summary": "Salva uma página HTML5 em MediaWiki (convertida para texto wiki através do serviço Parsoid)."
 }

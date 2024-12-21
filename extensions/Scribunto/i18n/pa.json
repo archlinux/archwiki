@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Babanwalia"
+			"Babanwalia",
+			"Cabal"
 		]
 	},
-	"scribunto-lua-error": "ਲੂਆ ਗ਼ਲਤੀ: $2।"
+	"scribunto-lua-in-main": "ਮੁੱਢ ਹਿੱਸੇ ਵਿੱਚ",
+	"scribunto-lua-error": "ਲੂਆ ਗ਼ਲਤੀ: $2।",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|ਬਾਈਟ|ਬਾਈਟਾਂ}}"
 }

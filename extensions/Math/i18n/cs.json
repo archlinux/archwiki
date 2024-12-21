@@ -94,6 +94,7 @@
 	"math_unknown_error": "neznámá chyba",
 	"math_unknown_function": "neznámá funkce „$1“",
 	"mw-math-latexml": "LaTeXML (experimentální; používá MathML)",
+	"mw-math-mathjax": "Vykreslování MathJax na klientské straně (pro prohlížeče s omezenou podporou MathML)",
 	"mw-math-mathml": "SVG (MathML lze aktivovat pomocí doplňku prohlížeče)",
 	"mw-math-native": "MathML (experimentální; bez obrázků)",
 	"mw-math-source": "Zdrojový kód LaTeX (pro textové prohlížeče)",
@@ -116,6 +117,5 @@
 	"math-wikibase-special-form-button": "Vyžádat informace",
 	"math-wikibase-special-error-header": "Chyba",
 	"math-wikibase-special-error-invalid-argument": "Uvedené ID položky Wikibase neexistuje.",
-	"math-wikibase-special-error-unknown": "Při načítání dat z Wikibase došlo k neznámé chybě.",
-	"math-wikibase-special-error-no-wikibase": "Pro užití této speciální stránky je potřeba rozšíření Wikibase."
+	"math-wikibase-special-error-unknown": "Při načítání dat z Wikibase došlo k neznámé chybě."
 }

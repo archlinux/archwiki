@@ -10,7 +10,8 @@
 			"Jeeputer",
 			"Ladsgroup",
 			"Reza1615",
-			"درفش کاویانی"
+			"درفش کاویانی",
+			"Ebrahim"
 		]
 	},
 	"oathauth-desc": "پشتیبانی از تأیید اعتبار با استفاده از رمزهای عبور یکبار مصرف HMAC را فراهم می‌کند",
@@ -47,8 +48,9 @@
 	"oathauth-user-not-does-not-have-oath-enabled": "کاربر اصالت‌سنجی دومرحله‌ای را فعال نکرده است، پس چیزی برای غیرفعال‌سازی موجود نیست",
 	"right-oathauth-enable": "فعال‌سازی اصالت‌سنجی دومرحله‌ای",
 	"action-oathauth-enable": "فعال‌سازی اصالت‌سنجی دومرحله‌ای",
-	"oathauth-auth-token-label": "بلیط",
+	"oathauth-auth-token-label": "بلیط اعتبارسنجی دومرحله‌ای یا کد بازیابی",
 	"oathauth-auth-token-help": "رمز عبور یکبار مصرف قابل استفاده به عنوان عامل دوم در اصالت‌سنجی دومرحله‌ای",
+	"oathauth-auth-token-help-ui": "از دستگاه اصالت‌سنجی خود یک کد وارد کنید، یا یک کد بازیابی را وارد کنید",
 	"oathauth-auth-ui": "لطفاً یک کد تأیید را از دستگاه تأیید اعتبار خودتان وارد کنید.",
 	"oathauth-throttled": "تعداد تلاش‌ها برای تأیید بیش از حد مجاز بود! لطفاً $1 صبر کنید.",
 	"oathauth-login-failed": "تأیید شکست خورد.",
@@ -64,7 +66,7 @@
 	"logentry-oath-verify": "$1 فعال بودن تأیید اعتبار دومرحله‌ای برای $3 را {{GENDER:$2|بررسی کرد}}",
 	"oathauth-ui-no-module": "هیچ پودمانی فعال نیست",
 	"oathauth-module-invalid": "پودمان OATHAuth که کاربر ثبت کرده است نامعتبر است.",
-	"oathauth-module-totp-label": "تی‌اوتی‌پی (بلیط‌های یک‌بارمصرف)",
+	"oathauth-module-totp-label": "تی‌اوتی‌پی (بلیط یک‌بارمصرف)",
 	"oathauth-ui-manage": "مدیریت",
 	"oathmanage": "مدیریت اصالت‌سنجی دومرحله‌ای",
 	"oathauth-ui-not-enabled-modules": "تغییر به یک روش جایگزین",

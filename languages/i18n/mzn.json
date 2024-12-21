@@ -3,7 +3,6 @@
 		"authors": [
 			"Ali1986",
 			"Alirezaaa",
-			"Amire80",
 			"DannyS712",
 			"Ebraminio",
 			"Firuz",
@@ -16,7 +15,8 @@
 			"Spacebirdy",
 			"فیروز",
 			"محک",
-			"아라"
+			"아라",
+			"Ebrahim"
 		]
 	},
 	"tog-underline": "پیوندون زیر خط دکشی بواشه",
@@ -981,7 +981,7 @@
 	"tooltip-summary": "خلاصه بنویسین",
 	"siteusers": "$1، {{PLURAL:$2|کارور|کارورون}} {{SITENAME}}",
 	"simpleantispam-label": "آنتی‌اسپم ره چک‌هاکردن.\nاین قسمت ره پـِر <strong>نکان!</strong>",
-	"pageinfo-hidden-categories": "پنهون ِ{{PLURAL:$1|رج|رج}} پنهان ( $1 )",
+	"pageinfo-hidden-categories": "پنهون ِ{{PLURAL:$1|رج}} پنهان ($1)",
 	"pageinfo-toolboxlink": "صفحه‌ی ِاطلاعات",
 	"patrol-log-page": "پاسبونی سیاهه",
 	"previousdiff": "قدیمی‌ته دچی‌یه ←",

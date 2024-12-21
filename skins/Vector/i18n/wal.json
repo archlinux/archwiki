@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Ella Lachow",
 			"Malaalaa"
 		]
@@ -35,7 +34,7 @@
 	"skin-theme-name": "Meraa",
 	"skin-theme-os-label": "Awutomaatikiya",
 	"vector-search-loader": "Koshshaa zoreta ehiidi de'ees",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search_search-footer_query\">$1</strong> oyqqida sinttata koyya",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> oyqqida sinttata koyya",
 	"vector-intro-page": "Help:Geluwaa",
 	"vector-toc-label": "Kesota",
 	"vector-toc-beginning": "Doomettaa",

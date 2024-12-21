@@ -1,14 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Mybluberet",
-			"Owula kpakpo"
+			"Owula kpakpo",
+			"NanaYawBotar"
 		]
 	},
+	"mobile-frontend-history": "Kwɛmɔ baafa nɛɛ tsakemɔ yinɔsane.",
 	"mobile-frontend-home-button": "shia",
 	"mobile-frontend-language-article-heading": "Wiemɔ",
 	"mobile-frontend-main-menu-login": "Yaa mli",
+	"mobile-frontend-main-menu-nearby": "ebɛŋkɛ",
 	"mobile-frontend-placeholder": "Taomɔ {{SITENAME}}",
-	"mobile-frontend-random-button": "trukaa"
+	"mobile-frontend-random-button": "trukaa",
+	"minerva-page-actions-overflow": "Pii"
 }

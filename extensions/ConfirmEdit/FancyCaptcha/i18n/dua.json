@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"EbelleMarcel"
+			"EbelleMarcel",
+			"Olivier Moukodi"
 		]
 	},
+	"fancycaptcha-captcha": "Tatá nyá mbáki",
+	"fancycaptcha-accountcreate": "O ɓoŋgwa la wiki ná ɓewɛkedi ɓá robot, dima báisɛ binyɔ ná lo soisɛ bialá ɓena ɓe o yen ekwɛm ([[Special:Captcha/help|jita la ɓobiá]]):",
 	"fancycaptcha-imgcaptcha-ph": "Ingɛlɛ ɓetilɛdí bena weno jɛnɛ o maduta",
 	"fancycaptcha-reload-text": "Tɛsɛ ó búnyá"
 }

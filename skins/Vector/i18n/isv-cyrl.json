@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Qiorly"
+			"Qiorly",
+			"Danvintius Bookix"
 		]
 	},
 	"vector-languages": "Језыкы",
@@ -29,5 +30,6 @@
 	"vector-main-menu-label": "Главно менју",
 	"vector-page-tools-label": "Орудја",
 	"vector-page-tools-general-label": "Обче",
+	"vector-page-tools-actions-label": "Дєјанја",
 	"vector-unpin-element-label": "скрыти"
 }

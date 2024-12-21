@@ -5,7 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Oonswaar",
-	"discussiontools-replylink": "Swaare",
+	"discussiontools-replylink": "{{GENDER:|Swaare}}",
 	"discussiontools-replywidget-advanced": "Ütjwidjet",
 	"discussiontools-replywidget-cancel": "Ufbreeg",
 	"discussiontools-replywidget-mode-source": "Kwel",

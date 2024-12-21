@@ -4,7 +4,8 @@
 			"Ioe2015",
 			"Minh Nguyen",
 			"Nguyên Lê",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguyenHung"
 		]
 	},
 	"captcha-edit": "Để sửa đổi trang này, xin hãy giải phép toán dưới đây và gõ câu trả lời vào ô ([[Special:Captcha/help|thông tin thêm]]):",
@@ -23,7 +24,7 @@
 	"captcha-error": "Thất bại khi xác minh CAPTCHA vì lỗi nội bộ: $1",
 	"captchahelp-title": "Trợ giúp Captcha",
 	"captchahelp-cookies-needed": "Bạn cần phải bật cookie trong trình duyệt để chức năng này hoạt động được.",
-	"captchahelp-text": "Những website cho phép bất kỳ ai cũng có thể gửi thông tin, như wiki này, thường bị các tay spam dùng công cụ tự động để gửi các liên kết của họ tới rất nhiều trang.\nTuy chúng ta có thể xóa các liên kết này khỏi trang, chúng vẫn gây nhiều phiền toái.\n\nĐôi khi, nhất là khi bạn bổ sung liên kết mới vào trang, wiki có thể hiển thị một hình có chữ dạng màu mè và méo mó rồi yêu cầu bạn gõ lại các chữ trong hình này.\nDo các phần mềm tự động khó đọc những hình này, nên mọi người bình thường có thể tiếp tục gửi thông tin, mà vẫn chặn được các spam và robot phá hoại.\n\nTuy vậy, tính năng này có thể bất tiện đối với những độc giả có thị giác yếu hay đang sử dụng trình duyệt bằng văn bản thuần hay trình duyệt bằng tiếng nói.\nHiện tại chúng tôi chưa có chức năng phát âm thay thế.\nXin hãy liên lạc với [[Special:ListAdmins|người quản trị trang web]] để được trợ giúp nếu điều này vô tình ngăn cản bạn đóng góp nội dung tốt.\n\nNhấn chuột vào nút “Back” của trình duyệt để trở lại trang soạn thảo.",
+	"captchahelp-text": "Những website cho phép bất kỳ ai cũng có thể gửi thông tin, như wiki này, thường bị các tay spam dùng công cụ tự động để gửi các liên kết của họ tới rất nhiều trang.\nTuy chúng ta có thể xóa các liên kết này khỏi trang, chúng vẫn gây nhiều phiền toái.\n\nĐôi khi, nhất là khi bạn bổ sung liên kết mới vào trang, wiki có thể hiển thị một hình có chữ dạng màu mè và méo mó rồi yêu cầu bạn gõ lại các chữ trong hình này.\nDo các phần mềm tự động khó đọc những hình này, nên mọi người bình thường có thể tiếp tục gửi thông tin, mà vẫn chặn được các spam và robot phá hoại.\n\nTuy vậy, tính năng này có thể bất tiện đối với những độc giả có thị giác yếu hay đang sử dụng trình duyệt bằng văn bản thuần hay trình duyệt bằng tiếng nói.\nHiện tại chúng tôi chưa có chức năng phát âm thay thế.\nXin hãy liên lạc với [[{{int:grouppage-sysop}}|người quản trị trang web]] để được trợ giúp nếu điều này vô tình ngăn cản bạn đóng góp nội dung tốt.\n\nNhấn chuột vào nút “Back” của trình duyệt để trở lại trang soạn thảo.",
 	"captcha-addurl-whitelist": " #<!-- xin để dòng này đừng thay đổi --> <pre>\n# Cú pháp như sau:\n#   * Mọi thứ bắt đầu bằng ký tự “#” là lời chú thích\n#   * Mọi hàng không trắng là một đoạn biểu thức chính quy (regex) sẽ chỉ được so trùng với tên máy chủ trong URL\n  #</pre> <!-- xin để dòng này đừng thay đổi -->",
 	"right-skipcaptcha": "Cho phép bỏ qua các hình CAPTCHA",
 	"confirmedit-preview-line": "Số dòng",

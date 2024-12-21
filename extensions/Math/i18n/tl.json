@@ -102,6 +102,5 @@
 	"math-wikibase-special-form-button": "Impormasyon ng hiling",
 	"math-wikibase-special-error-header": "Error",
 	"math-wikibase-special-error-invalid-argument": "Walang Wikibase item ID na kapareho ng tinukoy mo.",
-	"math-wikibase-special-error-unknown": "Nagka-error habang kinukuha ang data mula sa Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "Kailangan ang Wikibase extension para magamit ang natatanging pahinang ito."
+	"math-wikibase-special-error-unknown": "Nagka-error habang kinukuha ang data mula sa Wikibase."
 }

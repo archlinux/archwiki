@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Умар"
+			"Умар",
+			"Исмаил Садуев"
 		]
 	},
 	"templatedata-desc": "Кепан парамнтраш лато меттиг кечйо (JSON гӀоьнца)",
-	"templatedata-doc-desc-empty": "Цуьнах лаьцна хӀума дац.",
+	"templatedata-doc-desc-empty": "Цунах лаьцна хӀумма а дац.",
 	"templatedata-doc-format-block": "Кепо лелош йу параметрийн блокийн формат.",
 	"templatedata-doc-format-custom": "Кепо лелош йу параметрийн шен формат.",
 	"templatedata-doc-format-inline": "Кепо лелош йу параметрийн могӀанийн формат.",
@@ -14,7 +15,7 @@
 	"templatedata-doc-param-default": "Ӏадйитаран кеп",
 	"templatedata-doc-param-example": "Масала",
 	"templatedata-doc-param-desc": "Цуьнах лаьцна",
-	"templatedata-doc-param-desc-empty": "цуьнах лаьцна хӀума дац",
+	"templatedata-doc-param-desc-empty": "цунах лаьцна хӀумма а дац",
 	"templatedata-doc-param-name": "Параметр",
 	"templatedata-doc-param-status": "Статус",
 	"templatedata-doc-param-status-deprecated": "ширйелла",

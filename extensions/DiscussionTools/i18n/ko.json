@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Bluehill",
 			"DDY",
 			"Dr1t jg",
@@ -113,7 +112,7 @@
 	"discussiontools-replywidget-advanced": "고급",
 	"discussiontools-replywidget-anon-warning": "<strong>로그인하고 있지 않습니다.</strong> 누군가가 답변을 할 때 알림을 받고 IP 주소 대신에 당신의 이름으로 표시하려면, [$1 로그인]하거나 [$2 계정을 만들] 수 있습니다.",
 	"discussiontools-replywidget-cancel": "취소",
-	"discussiontools-replywidget-feedback": "이 기능에 대한 피드백 나누기",
+	"discussiontools-replywidget-feedback": "이 기능에 대한 {{GENDER:|피드백 공유}}",
 	"discussiontools-replywidget-keyboard-shortcut-submit": "$1를 누르면 댓글을 제출할 수 있습니다",
 	"discussiontools-replywidget-loading": "불러오는 중...",
 	"discussiontools-replywidget-mention-tool-header": "사용자 찾기: $1",

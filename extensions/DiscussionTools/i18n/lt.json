@@ -6,7 +6,8 @@
 			"Hugo.arg",
 			"Nokeoo",
 			"Pavel1513",
-			"Tomasdd"
+			"Tomasdd",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Kai kas nors šiame aptarime paskelbs naują komentarą, {{GENDER:|jūs}} gausite pranešimą. Pranešimų parametrus galite pakoreguoti nustatymų puslapyje.",
@@ -98,7 +99,7 @@
 	"discussiontools-preference-visualenhancements": "Rodyti diskusijų veiklą",
 	"discussiontools-preference-visualenhancements-help": "Tai įgalins naują aptarimo puslapio išvaizdą, kurioje bus informacija apie kiekvienos diskusijos veiklą.",
 	"discussiontools-replybutton": "{{GENDER:|Atsakyti}}",
-	"discussiontools-replylink": "atsakyti",
+	"discussiontools-replylink": "{{GENDER:|atsakyti}}",
 	"discussiontools-replywidget-abandon": "Ar {{GENDER:|jūs}} tikrai norite atsisakyti rašomo komentaro?",
 	"discussiontools-replywidget-abandon-discard": "Atmesti komentarą",
 	"discussiontools-replywidget-abandon-keep": "Tęsti redagavimą",

@@ -5,5 +5,6 @@
 		]
 	},
 	"echo-category-title-login-fail": "Ne povis facar 'log in'",
-	"echo-category-title-login-success": "Eniro per nekonocata aparato"
+	"echo-category-title-login-success": "Eniro per nekonocata aparato",
+	"notification-header-login-success": "Ulu (probable {{GENDER:$1|vu}}) recente eniris en vua konto de nova aparato (komputero, smartfono...). Se esis vu qua facis to, obliviez ca mesajo. Se ne esis vu, ni konsilas ke tu chanjez tua pasovorto, e verifikez l'agado en vua konto."
 }

@@ -16,7 +16,7 @@
 	"nuke-list-multiple": "Eftirfarandi síður voru nýlega búnar til;\ntilgreindu athugasemd og smelltu á hnappinn til að eyða þeim.",
 	"nuke-defaultreason": "Fjöldaeyðing síðna sem búnar voru til af [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Fjöldaeyðing nýjustu greina",
-	"nuke-tools": "Þetta verkfæri heimilar fjöldaeyðingu síðna sem nýlega voru bættar við af gefnum notanda eða IP-staðfangi.\nSettu inn notandanafnið eða IP-staðfangið til að fá lista síðna til eyðingar eða skildu eftir autt fyrir alla notendur.",
+	"nuke-tools": "Þetta verkfæri heimilar fjöldaeyðingu síðna sem nýlega voru bættar við af gefnum notanda eða IP-staðfangi.\nSettu inn notandanafn eða IP-staðfang til að fá lista síðna til eyðingar eða skildu eftir autt fyrir alla notendur.",
 	"nuke-submit-user": "Lista síður",
 	"nuke-submit-delete": "Eyða völdum síðum",
 	"right-nuke": "Fjöldaeyða síðum",
@@ -24,10 +24,14 @@
 	"nuke-maxpages": "Hámarksfjöldi síðna:",
 	"nuke-editby": "Búnar til af [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "'''$1''' hefur verið eytt.",
+	"nuke-deletion-queued": "Síðan '''$1''' hefur verið sett á biðlista fyrir eyðingu.",
 	"nuke-not-deleted": "Mistök við eyðingu síðunnar [[:$1]].",
 	"nuke-delete-more": "[[Special:Nuke|Fjöldaeyða fleiri skrám]]",
 	"nuke-pattern": "SQL-LÍKT mynstur (t.d. %) fyrir nafn á síðuna:",
 	"nuke-nopages-global": "Það eru engir síðutitlar samsvarandi leitinni þinni.",
 	"nuke-viewchanges": "skoða breytingar",
-	"nuke-linkoncontribs": "fjöldaeyða"
+	"nuke-namespace": "Takmarka við nafnrými:",
+	"nuke-linkoncontribs": "fjöldaeyða",
+	"nuke-linkoncontribs-text": "Fjöldaeyða síðum þegar {{GENDER:$1|þessi notandi}} er eini höfundurinn",
+	"nuke-confirm": "Þú ert í þann mund að eyða $1 {{PLURAL:$1|síðu|síðum}}. Ertu viss um að þú viljir gera það?"
 }

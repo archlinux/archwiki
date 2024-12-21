@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Elefentiste"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Responde",
+	"discussiontools-replylink": "{{GENDER:|responde}}",
+	"discussiontools-replywidget-advanced": "Avansada",
+	"discussiontools-replywidget-cancel": "Cansela",
+	"discussiontools-replywidget-mode-source": "Fonte",
+	"discussiontools-replywidget-mode-visual": "Vidal",
+	"discussiontools-replywidget-preview": "Previde",
+	"discussiontools-replywidget-reply": "{{GENDER:|Responde}}",
+	"discussiontools-replywidget-summary": "Resoma",
+	"discussiontools-replywidget-watchthis": "Ajunta esta paje a tua [[Special:Watchlist|pajes monitorida]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|person|persones}} en discute",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|comenta|comentas}}",
+	"discussiontools-topicsubscription-button-subscribe": "enscrive",
+	"discussiontools-topicsubscription-button-subscribe-label": "Enscrive",
+	"discussiontools-topicsubscription-button-unsubscribe": "desenscrive",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Desenscrive",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Tu}} va reseta avisa sur comentas nova en esta tema.",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Tu}} va reseta no plu avisas sur comentas nova en esta tema."
+}

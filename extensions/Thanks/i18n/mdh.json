@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bangsa Manusia"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|sukran}}}}"
+}

@@ -1,13 +1,31 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
-			"Jwale2"
+			"Jwale2",
+			"NanaYawBotar",
+			"Robertjamal12"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Hetoo",
 	"discussiontools-replylink": "{{GENDER:|hetoo}}",
+	"discussiontools-replywidget-advanced": "Nɔ ni yɛ hiɛ",
 	"discussiontools-replywidget-cancel": "Foo mli",
+	"discussiontools-replywidget-mode-source": "He ni ejɛ",
+	"discussiontools-replywidget-mode-visual": "Mfoniri",
+	"discussiontools-replywidget-placeholder-reply": "{{Hii kɛ yei:|Hetoo}} kɛya {{BIDI: $1 }}",
 	"discussiontools-replywidget-preview": "Kwɛmɔ shi kome daŋ",
 	"discussiontools-replywidget-reply": "{{GENDER:|Hetoo}}",
-	"discussiontools-replywidget-summary": "Sanenaabuamɔ"
+	"discussiontools-replywidget-summary": "Sanenaabuamɔ",
+	"discussiontools-replywidget-watchthis": "Kɛ baafa nɛɛ afata o [[Special:Watchlist|kwɛmɔ gbɛi]] lɛ he.",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1| gbɔmɔ|mɛi}} yɛ sanegbaa mli",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|comment|wiemɔi}}",
+	"discussiontools-topicheader-latestcomment": "Wiemɔ hee: $1",
+	"discussiontools-topicsubscription-button-subscribe": "kɛ ohe ewo mli!",
+	"discussiontools-topicsubscription-button-subscribe-label": "kɛ ohe ewo mli!",
+	"discussiontools-topicsubscription-button-unsubscribe": "jiemɔ ohe kɛjɛ mli",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "jiemɔ ohe kɛjɛ mli",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Bo}} baa na adafitswaa yɛ wiemɔi heei ni yɔɔ saneyitso nɛɛ mli lɛ he.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Bo}} kɛ ohe ewo mli!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Bo}} naaa adafitswaa yɛ wiemɔi heei ni yɔɔ saneyitso nɛɛ mli lɛ he dɔŋŋ.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Bo}} ojie ohe kɛjɛ mli."
 }

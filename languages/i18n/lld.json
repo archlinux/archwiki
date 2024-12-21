@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Asenoner",
 			"Fierodelveneto",
 			"JuaFlick",
@@ -243,7 +242,7 @@
 	"new-messages-from-users": "{{PLURAL:$4|Tö as}} $1 da {{PLURAL:$3|n ater utënt|$3 utënc}} ($2).",
 	"new-messages-from-many-users": "As $1 da tröc utënc ($2).",
 	"new-messages-link-plural": "{{PLURAL:$1|n messaje nü|999=messaji nüs}}",
-	"new-messages-diff-link-plural": "ultima{{PLURAL:$1|mudaziun|999=mudaziuns}}",
+	"new-messages-diff-link-plural": "ultima {{PLURAL:$1|mudaziun|999=mudaziuns}}",
 	"editsection": "mudé",
 	"editold": "muda",
 	"viewsourceold": "Mostra la funtana",
@@ -503,7 +502,7 @@
 	"currentrev-asof": "Verjiun atuala dles $1",
 	"revisionasof": "Reviscion de i $1",
 	"revision-info": "Verjiun de $1 di {{GENDER:$6|$2}}$7",
-	"previousrevision": "Verscion plu vedla",
+	"previousrevision": "← Verscion plu vedla",
 	"nextrevision": "Verjiun plü atuala →",
 	"currentrevisionlink": "Verjiun atuala",
 	"cur": "at",

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Misbahu umar"
+			"Misbahu umar",
+			"787IYO"
 		]
 	},
 	"mobile-frontend-history": "cinle be yiyejin etan feregi nana'e",
@@ -11,5 +12,6 @@
 	"mobile-frontend-main-menu-nearby": "tsoba",
 	"mobile-frontend-main-menu-settings": "yiyejin",
 	"mobile-frontend-placeholder": "waza {{SITENAME}}",
-	"mobile-frontend-random-button": "eye kaman"
+	"mobile-frontend-random-button": "eye kaman",
+	"minerva-page-actions-overflow": "So"
 }

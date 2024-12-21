@@ -17,6 +17,7 @@
 	"oathauth-enable": "Xác thực dùng hai nhân tố",
 	"oathauth-recoverycodes": "Dưới đây là danh sách các mã khôi phục dùng một lần. Các mã này chỉ có thể dùng một lần trong trường hợp khẩn cấp, khi bạn không dùng được thiết bị của mình. Xin hãy ghi xuống các mã này và giữ chúng ở một nơi an toàn. Chúng tôi khuyên bạn dùng xong mã nào thì đánh dấu nó là đã dùng rồi. Nếu bạn mất thiết bị của mình, các mã này là cách duy nhất để cứu tài khoản của bạn.\n\n'''Các mã này sẽ không bao giờ hiển thị lần nữa'''.",
 	"oathauth-recoverycodes-important": "Bước này rất quan trọng! Đừng bỏ qua nó!",
+	"oathauth-recoverycodes-download": "Tải xuống mã khôi phục",
 	"oathauth-disable": "Tắt xác thực dùng hai nhân tố",
 	"oathauth-validatedoath": "Đã xác nhận thông tin xác thực dùng hai nhân tố. Từ nay sẽ áp dụng việc xác thực dùng hai nhân tố.",
 	"oathauth-noscratchforvalidation": "Bạn không thể sử dụng mã khôi phục để xác thực dùng hai nhân tố. Các mã khôi phục chỉ để sao lưu hoặc sử dụng tình cờ. Xin hãy nhập mã từ trình xác thực dùng hai nhân tố của bạn (như Google Authenticator).",

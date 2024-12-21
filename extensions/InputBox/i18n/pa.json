@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Satdeep gill"
+			"Satdeep gill",
+			"Cabal",
+			"Kuldeepburjbhalaike"
 		]
 	},
-	"inputbox-tryexact": "ਹੂਬਹੂ ਲਿਖਤ ਨਾਲ ਕਰੋ"
+	"inputbox-tryexact": "ਹੂਬਹੂ ਲਿਖਤ ਨਾਲ ਕਰੋ",
+	"inputbox-ns-main": "ਮੁੱਖ"
 }

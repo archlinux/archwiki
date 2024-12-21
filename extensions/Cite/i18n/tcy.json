@@ -3,8 +3,13 @@
 		"authors": [
 			"BHARATHESHA ALASANDEMAJALU",
 			"VASANTH S.N.",
-			"Vishwanatha Badikana"
+			"Vishwanatha Badikana",
+			"ChiK"
 		]
 	},
-	"cite_error": "ಉಲ್ಲೇಕೊ ದೋಸೊ: $1"
+	"cite_error": "ಉಲ್ಲೇಕೊ ದೋಸೊ: $1",
+	"cite-wikieditor-tool-reference": "ಉಲ್ಲೆಕೊ",
+	"cite-wikieditor-help-page-references": "ಉಲ್ಲೆಕೊಲು",
+	"cite-wikieditor-help-content-reference-description": "ಉಲ್ಲೆಕೊ",
+	"cite-wikieditor-help-content-showreferences-description": "ಉಲ್ಲೆಕೊಲೆನು ತೊಜಾಲೆ"
 }

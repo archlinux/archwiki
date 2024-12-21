@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Kitanago"
+			"Kitanago",
+			"Woytecr"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Ou pral resevwa yon notifikasyon lè yon moun poste yon nouvo kòmantè nan diskisyon sa a. Ou ka ajiste konfigirasyon notifikasyon ou nan preferans ou.",
@@ -48,8 +49,8 @@
 	"discussiontools-preference-newtopictool-help": "Sa a pral montre w yon fòm nan sen paj pou ajoute nouvo sijè.",
 	"discussiontools-preference-replytool": "Aktive repons rapid",
 	"discussiontools-preference-replytool-help": "Sa a pral montre w yon lyen pou reponn nan kòmantè paj diskisyon yo nan yon sèl klik.",
-	"discussiontools-replybutton": "Reponn",
-	"discussiontools-replylink": "reponn",
+	"discussiontools-replybutton": "{{GENDER:|Reponn}}",
+	"discussiontools-replylink": "{{GENDER:|reponn}}",
 	"discussiontools-replywidget-abandon-keep": "Kontinye ekri",
 	"discussiontools-replywidget-abandontopic-discard": "Jete sijè",
 	"discussiontools-replywidget-abandontopic-keep": "Kontinye ekri",

@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Ernác",
 			"Iltever",
 			"Macofe",
@@ -70,7 +69,7 @@
 	"wikieditor-toolbar-tool-olist-example": "Номерли тизимни элементи",
 	"wikieditor-toolbar-tool-nowiki": "Вики-формат этиуню игнор эт",
 	"wikieditor-toolbar-tool-nowiki-example": "Формат этилинмеген текстни бери салыгъыз",
-	"wikieditor-toolbar-tool-redirect": "Джангыдан джибериу",
+	"wikieditor-toolbar-tool-redirect": "Джолландыр",
 	"wikieditor-toolbar-tool-redirect-example": "Нюзюр бетни аты",
 	"wikieditor-toolbar-tool-big": "Уллу",
 	"wikieditor-toolbar-tool-big-example": "Уллу текст",

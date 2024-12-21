@@ -2,15 +2,40 @@
 	"@metadata": {
 		"authors": [
 			"Bbeshir",
-			"IdrisSeid"
+			"IdrisSeid",
+			"Kassala"
 		]
 	},
+	"mobile-frontend-editor-edit": "አስነ",
+	"minerva-download": "ፔ.ዲ.ኤፍ. ክሬ",
 	"mobile-frontend-history": "ታሪክ ተዕዲል እላ ገጽ አርኤ",
 	"mobile-frontend-home-button": "መበገሲ",
-	"mobile-frontend-language-article-heading": "ሉቀት",
+	"mobile-frontend-language-article-heading": "ንሳል ውክ ህግየ",
+	"mobile-frontend-main-menu-contributions": "ሙሳሃማት",
 	"mobile-frontend-main-menu-login": "እብ መንጋኣት እተው",
+	"mobile-frontend-main-menu-logout": "ፈግረት",
 	"mobile-frontend-main-menu-nearby": "ስምጥ",
 	"mobile-frontend-main-menu-settings": "ቃነዮት",
-	"mobile-frontend-placeholder": "ዲብ {{SITENAME}} ሕዛው",
-	"mobile-frontend-random-button": "ስድፋ"
+	"mobile-frontend-main-menu-watchlist": "ሊስተት ሙራቀበት",
+	"mobile-frontend-meta-data-issues": "መጻግም ገጽ",
+	"mobile-frontend-meta-data-issues-header": "መጻግም ገጽ",
+	"minerva-meta-data-issues-section-header": "መጻግም ክፋል",
+	"mobile-frontend-placeholder": "{{SITENAME}} ሕዘው",
+	"mobile-frontend-random-button": "ስድፋ",
+	"mobile-frontend-redirected-from": "ምን \"[[$1]]\" ለትውጃሃት",
+	"mobile-frontend-talk-back-to-filepage": "ኣቅብል ዲብ ፋይል \"$1\".",
+	"mobile-frontend-talk-back-to-page": "ኣቅብል ዲብ ገጽ \"$1\".",
+	"mobile-frontend-user-page-contributions": "ሙሳሃማት",
+	"mobile-frontend-user-page-talk": "ህድግ",
+	"minerva-page-actions-overflow": "ወሰክ",
+	"minerva-page-actions-language-switcher": "ሉቃት",
+	"minerva-page-actions-history": "ታሪኽ",
+	"skin-minerva-issue-learn-more": "ዝያዳ ተዓለም",
+	"skin-minerva-time-ago-seconds": "ቀደም {{PLURAL:$1|$1 ሰንየት|$1 ሳንየት }}",
+	"skin-minerva-time-ago-minutes": "ቀደም {{PLURAL:$1|$1 ደቂቀት|$1 ደቃይቅ}}",
+	"skin-minerva-time-ago-hours": "ቀደም {{PLURAL:$1|$1 ስዓት|$1 ሳዓት}}",
+	"skin-minerva-time-ago-days": "ቀደም {{PLURAL:$1|$1 መዓል|$1 አምዕል}}",
+	"skin-minerva-time-ago-months": "ቀደም {{PLURAL:$1|$1 ወረሕ |$1 ኣዋርሕ}}",
+	"skin-minerva-time-ago-years": "ቀደም {{PLURAL:$1|$1  ሰነት|$1 ስኒን}}",
+	"skin-minerva-mobile-option-MinervaShowCategories": "ሐሽምት"
 }

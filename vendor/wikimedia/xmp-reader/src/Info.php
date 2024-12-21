@@ -32,7 +32,7 @@ namespace Wikimedia\XMPReader;
  */
 class Info {
 	/**
-	 * Get the items array
+	 * Get the item array
 	 * @return array XMP item configuration array.
 	 */
 	public static function getItems(): array {
