@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\DiscussionTools\OverflowMenuItem;
 
 /**

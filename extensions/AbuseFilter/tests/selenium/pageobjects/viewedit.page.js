@@ -50,11 +50,11 @@ class ViewEditPage extends Page {
 	}
 
 	get error() {
-		return $( '.mw-message-box-error' );
+		return $( '.cdx-message--error' );
 	}
 
 	get warning() {
-		return $( '.mw-message-box-warning' );
+		return $( '.cdx-message--warning' );
 	}
 
 	async submit() {

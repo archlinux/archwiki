@@ -2,109 +2,33 @@
  * Live edit preview.
  */
 ( function () {
+	'use strict';
 
-	var parsedMessages = require( './mediawiki.action.edit.preview.parsedMessages.json' ),
-		api = new mw.Api(),
-		$diffNode;
-
-	/**
-	 * Parse preview response
-	 *
-	 * @ignore
-	 * @param {Object} response Response data
-	 */
-	function showPreviewNotes( response ) {
-		var arrow, $previewHeader, $editform;
-
-		$editform = $( '#editform' );
-
-		arrow = $( document.body ).css( 'direction' ) === 'rtl' ? '←' : '→';
-		$previewHeader = $( '<div>' )
-			.addClass( 'previewnote' )
-			.append( $( '<h2>' )
-				.attr( 'id', 'mw-previewheader' )
-				.text( mw.msg( 'preview' ) )
-			)
-			.append( $( '<div>' )
-				.addClass( 'mw-message-box-warning mw-message-box' )
-				.html( parsedMessages.previewnote )
-				.append( ' ' )
-				.append( $( '<span>' )
-					.addClass( 'mw-continue-editing' )
-					.append( $( '<a>' )
-						.attr( 'href', '#' + $editform.attr( 'id' ) )
-						.text( arrow + ' ' + mw.msg( 'continue-editing' ) )
-					)
-				)
-			);
-		response.parse.parsewarningshtml.forEach( function ( warning ) {
-			$previewHeader.find( '.mw-message-box-warning' ).append( $( '<p>' ).append( warning ) );
-		} );
-
-		$( '#wikiPreview' ).prepend( $previewHeader );
-	}
+	const parsedMessages = require( './mediawiki.action.edit.preview.parsedMessages.json' );
 
 	/**
 	 * @ignore
 	 * @param {jQuery.Event} e
 	 */
 	function doLivePreview( e ) {
-		var isDiff, $editform, $textbox, preview, $wikiPreview;
+		const promise = require( 'mediawiki.page.preview' ).doPreview( {
+			showDiff: e.target.name === 'wpDiff',
+			isLivePreview: true,
+			previewHeader: mw.msg( 'preview' ),
+			previewNote: parsedMessages.previewnote,
+			createSpinner: true
+		} );
 
-		preview = require( 'mediawiki.page.preview' );
-		isDiff = ( e.target.name === 'wpDiff' );
-		$wikiPreview = $( '#wikiPreview' );
-		$editform = $( '#editform' );
-		$textbox = $editform.find( '#wpTextbox1' );
-
-		if ( $textbox.length === 0 ) {
+		if ( !promise ) {
+			// Something has gone wrong, so submit the form the normal way.
 			return;
 		}
 
 		e.preventDefault();
-
-		// Not shown during normal preview, to be removed if present
-		$( '.mw-newarticletext, .mw-message-box-error' ).remove();
-
-		// Show #wikiPreview if it's hidden to be able to scroll to it.
-		// (If it is hidden, it's also empty, so nothing changes in the rendering.)
-		$wikiPreview.show();
-
-		// Jump to where the preview will appear
-		$wikiPreview[ 0 ].scrollIntoView();
-
-		var $spinner = $( '.mw-spinner-preview' );
-		if ( $spinner.length === 0 ) {
-			$spinner = $.createSpinner( {
-				size: 'large',
-				type: 'block'
-			} )
-				.addClass( 'mw-spinner-preview' )
-				.css( 'margin-top', '1em' );
-			$wikiPreview.before( $spinner );
-		}
-
-		preview.doPreview( {
-			showDiff: isDiff,
-			spinnerNode: $spinner
-		} ).done( function ( response ) {
-			if ( !isDiff ) {
-				showPreviewNotes( response[ 0 ] );
-			}
-		} ).fail( function ( code, result ) {
-			// This just shows the error for whatever request failed first
-			var $errorMsg = api.getErrorMessage( result ),
-				$errorBox = $( '<div>' )
-					.addClass( 'mw-message-box-error mw-message-box' )
-					.append( $( '<strong>' ).text( mw.msg( 'previewerrortext' ) ) )
-					.append( $errorMsg );
-			$wikiPreview.hide().before( $errorBox );
-			$diffNode.hide();
-		} );
 	}
 
-	$( function () {
-		var selector;
+	$( () => {
+		let selector;
 
 		// Enable only live diff on user .js/.css pages, as there's no sensible way of
 		// "previewing" the scripts or styles without reloading the page.
@@ -154,46 +78,6 @@
 			$( '#wpSummaryWidget' ).after(
 				$( '<div>' ).addClass( 'mw-summary-preview' )
 			);
-		}
-
-		if ( !document.getElementById( 'wikiDiff' ) && document.getElementById( 'wikiPreview' ) ) {
-			var alignStart, rtlDir;
-			rtlDir = $( '#wpTextbox1' ).attr( 'dir' ) === 'rtl';
-			alignStart = rtlDir ? 'right' : 'left';
-			$diffNode = $( '<div>' )
-				.hide()
-				.attr( 'id', 'wikiDiff' )
-				// The following classes are used here:
-				// * diff-editfont-monospace
-				// * diff-editfont-sans-serif
-				// * diff-editfont-serif
-				.addClass( 'diff-editfont-' + mw.user.options.get( 'editfont' ) )
-				// The following classes are used here:
-				// * diff-contentalign-left
-				// * diff-contentalign-right
-				.addClass( 'diff-contentalign-' + alignStart )
-				.append(
-					$( '<table>' ).addClass( 'diff' ).append(
-						$( '<col>' ).addClass( 'diff-marker' ),
-						$( '<col>' ).addClass( 'diff-content' ),
-						$( '<col>' ).addClass( 'diff-marker' ),
-						$( '<col>' ).addClass( 'diff-content' ),
-						$( '<thead>' ).append(
-							$( '<tr>' ).addClass( 'diff-title' ).append(
-								$( '<td>' )
-									.attr( 'colspan', 2 )
-									.addClass( 'diff-otitle diff-side-deleted' )
-									.text( mw.msg( 'currentrev' ) ),
-								$( '<td>' )
-									.attr( 'colspan', 2 )
-									.addClass( 'diff-ntitle diff-side-added' )
-									.text( mw.msg( 'yourtext' ) )
-							)
-						),
-						$( '<tbody>' )
-					)
-				);
-			$( '#wikiPreview' ).after( $diffNode );
 		}
 
 		// This should be moved down to '#editform', but is kept on the body for now

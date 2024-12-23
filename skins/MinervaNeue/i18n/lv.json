@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Par šo kategoriju",
 	"mobile-frontend-meta-data-issues-header": "Lapas problēmas",
 	"minerva-meta-data-issues-section-header": "Sadaļas problēmas",
-	"mobile-frontend-notifications-filter": "Filtrs",
 	"mobile-frontend-pageaction-edit-tooltip": "Labot šīs lapas ievadsadaļu",
 	"mobile-frontend-placeholder": "Meklēt {{SITENAME}}",
 	"mobile-frontend-random-button": "Nejaušs raksts",
@@ -59,8 +58,6 @@
 	"skin-minerva-time-ago-years": "pirms $1 {{PLURAL:$1|gadiem|gada|gadiem}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorijas",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Skatīt lapu kategorijas",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Uzlabota lapas problēmu attēlošana",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Lapas problēmas (Veidne:ambox) tiks iekļautas rakstā.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Diemžēl, rezultātu grupēšana pēc lapas nav pieejama mobilajā skatā. Ja tu vēlies lietot grupēšanu pēc lapas, lūdzu, izmanto darbvirsmas skatu.",
 	"skin-minerva-night-mode-unavailable": "Lapa pieejama tikai krāsu motīvā \"Diena\"."
 }

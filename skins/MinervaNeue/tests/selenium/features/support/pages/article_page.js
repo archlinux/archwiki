@@ -40,7 +40,7 @@ class ArticlePage extends MinervaPage {
 	}
 
 	get watched_element() {
-		return $( '.minerva-icon--unStar-progressive' );
+		return $( '.minerva-icon--unStar' );
 	}
 
 	get menu_button_element() {

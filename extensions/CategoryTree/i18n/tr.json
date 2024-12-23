@@ -42,5 +42,9 @@
 	"categorytree-no-pages": "alt kategori veya madde yok",
 	"categorytree-not-found": "<i>$1</i> kategorisi bulunamadı",
 	"categorytree-error": "Veri yükleme sorunu.",
-	"categorytree-retry": "Lütfen biraz bekleyin ve tekrar deneyin."
+	"categorytree-retry": "Lütfen biraz bekleyin ve tekrar deneyin.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: <code>onlyroot</code> değişkeni kullanımdan kaldırıldı. Bunun yerine <code>depth=\"0\"</code> kullanın.",
+	"categorytree-deprecation-warning": "'''Uyarı:''' Bu sayfa kullanımdan kaldırılmış değişken içeren <code>&lt;categorytree&gt;</code> kullanıyor.",
+	"categorytree-deprecation-category": "Kullanımdan kaldırılmış categorytree değişkeni kullanan sayfalar",
+	"categorytree-deprecation-category-desc": "Sayfa, <code>onlyroot</code> gibi kullanımdan kaldırılmış categorytree değişkeni kullanıyor."
 }

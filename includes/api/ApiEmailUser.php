@@ -20,9 +20,12 @@
  * @file
  */
 
-use MediaWiki\Specials\SpecialEmailUser;
+namespace MediaWiki\Api;
+
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Mail\EmailUserFactory;
 use MediaWiki\Status\Status;
-use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -31,48 +34,51 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class ApiEmailUser extends ApiBase {
 
+	private EmailUserFactory $emailUserFactory;
+	private UserFactory $userFactory;
+
+	public function __construct( ApiMain $mainModule, string $moduleName,
+		EmailUserFactory $emailUserFactory, UserFactory $userFactory ) {
+		parent::__construct( $mainModule, $moduleName );
+
+		$this->emailUserFactory = $emailUserFactory;
+		$this->userFactory = $userFactory;
+	}
+
 	public function execute() {
 		$params = $this->extractRequestParams();
 
-		// Validate target
-		$targetUser = SpecialEmailUser::getTarget( $params['target'], $this->getUser() );
-		if ( !( $targetUser instanceof User ) ) {
-			switch ( $targetUser ) {
-				case 'notarget':
-					$this->dieWithError( 'apierror-notarget' );
-					// dieWithError prevents continuation
+		$emailUser = $this->emailUserFactory->newEmailUser( RequestContext::getMain()->getAuthority() );
+		$targetUser = $this->userFactory->newFromName( $params['target'] );
 
-				case 'noemail':
-					$this->dieWithError( [ 'noemail', $params['target'] ] );
-					// dieWithError prevents continuation
+		if ( $targetUser === null ) {
+			$this->dieWithError(
+				[ 'apierror-baduser', 'target', wfEscapeWikiText( $params['target'] ) ],
+				"baduser_target"
+			);
+		}
 
-				case 'nowikiemail':
-					$this->dieWithError( 'nowikiemailtext', 'nowikiemail' );
-					// dieWithError prevents continuation
+		$status = $emailUser->validateTarget( $targetUser );
 
-				default:
-					$this->dieWithError( [ 'apierror-unknownerror', $targetUser ] );
-			}
+		if ( !$status->isOK() ) {
+			$this->dieStatus( $status );
 		}
 
 		// Check permissions and errors
-		$error = SpecialEmailUser::getPermissionsError(
-			$this->getUser(),
-			$params['token'],
-			$this->getConfig(),
-			true // authorize!
-		);
-		if ( $error ) {
-			$this->dieWithError( $error );
+		$error = $emailUser->canSend();
+
+		if ( !$error->isGood() ) {
+			$this->dieStatus( $error );
 		}
 
-		$data = [
-			'Target' => $targetUser->getName(),
-			'Text' => $params['text'],
-			'Subject' => $params['subject'],
-			'CCMe' => $params['ccme'],
-		];
-		$retval = SpecialEmailUser::submit( $data, $this->getContext() );
+		$retval = $emailUser->sendEmailUnsafe(
+			$targetUser,
+			$params['subject'],
+			$params['text'],
+			$params['ccme'],
+			$this->getLanguage()->getCode()
+		);
+
 		if ( !$retval instanceof Status ) {
 			// This is probably the reason
 			$retval = Status::newFatal( 'hookaborted' );
@@ -128,3 +134,6 @@ class ApiEmailUser extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Email';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiEmailUser::class, 'ApiEmailUser' );

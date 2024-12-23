@@ -1,10 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
-			"Silovan",
-			"Narazeni"
+			"Narazeni",
+			"Silovan"
 		]
 	},
 	"cite_error": "ციტირაფაშ ჩილათა $1",
-	"cite-wikieditor-tool-reference": "სქოლიო"
+	"cite-reference-previews-reference": "სქოლიო",
+	"cite-reference-previews-book": "სქოლიო კჷრიბიშე",
+	"cite-reference-previews-journal": "სქოლიო ჟურნალ-გაზეთიშე",
+	"cite-reference-previews-news": "სქოლიო ახალი ამბეეფშე",
+	"cite-reference-previews-note": "ხვილაფა",
+	"cite-reference-previews-web": "ინტერნეტსქოლიო",
+	"cite-reference-previews-collapsible-placeholder": "ათე სქოლიოს რე ელემენტი, ნამუთ ათაქ ვენმინტირენ.",
+	"cite-wikieditor-tool-reference": "სქოლიო",
+	"popups-prefs-navpopups-gadget-conflict-info": "თქვა ჩართებული გიღჷნა გაჯეტი [[$1|ნავიგაციაშ ეშმასხაპალი ოსინთე]], თეშ გეშა თქვა ვა ძირჷნთ გიწოთოლორაფაშ ოსინთეს, ნამუთ ათე ფუნქციაშო გიმირინუაფჷნ . თქვანი ვიკიშ მეჯინათ, გაჯეტის შილებე ონდეთ გინორთელი, შხვა ჯოხოდვალა უღუდასჷნ. დო მუთუნი პრობლემაქ ქუგაშუეს-და, ქორთხინთ, გეგნაჯინით თქვანი გაჯეტეფს დო ომახვარებე სკრიპტეფს, გლობალურიშამო.",
+	"popups-refpreview-user-preference-label": "სქოლიოშ გიწოთოლორაფაშ ჩართება (უწაიათ ოძირანს სქოლიოშ გიწოთოლორაფას ხასჷლაშ კითხირიშის)"
 }

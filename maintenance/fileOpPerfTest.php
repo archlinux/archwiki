@@ -21,7 +21,11 @@
  * @ingroup Maintenance
  */
 
+use Wikimedia\FileBackend\FileBackend;
+
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to test fileop performance.
@@ -67,6 +71,7 @@ class FileOpPerfTest extends Maintenance {
 			return;
 		}
 
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $file = readdir( $dir ) ) !== false ) {
 			if ( $file[0] != '.' ) {
 				$this->output( "Using '$dirname/$file' in operations.\n" );
@@ -97,49 +102,51 @@ class FileOpPerfTest extends Maintenance {
 		$start = microtime( true );
 		$status = $backend->$method( $ops1, $opts );
 		$e = ( microtime( true ) - $start ) * 1000;
-		if ( $status->getErrorsArray() ) {
-			print_r( $status->getErrorsArray() );
+		if ( !$status->isGood() ) {
+			$this->error( $status );
 			return;
 		}
 		$this->output( $backend->getName() . ": Stored " . count( $ops1 ) . " files in $e ms.\n" );
 
 		$start = microtime( true );
-		$backend->$method( $ops2, $opts );
+		$status = $backend->$method( $ops2, $opts );
 		$e = ( microtime( true ) - $start ) * 1000;
-		if ( $status->getErrorsArray() ) {
-			print_r( $status->getErrorsArray() );
+		if ( !$status->isGood() ) {
+			$this->error( $status );
 			return;
 		}
 		$this->output( $backend->getName() . ": Copied " . count( $ops2 ) . " files in $e ms.\n" );
 
 		$start = microtime( true );
-		$backend->$method( $ops3, $opts );
+		$status = $backend->$method( $ops3, $opts );
 		$e = ( microtime( true ) - $start ) * 1000;
-		if ( $status->getErrorsArray() ) {
-			print_r( $status->getErrorsArray() );
+		if ( !$status->isGood() ) {
+			$this->error( $status );
 			return;
 		}
 		$this->output( $backend->getName() . ": Moved " . count( $ops3 ) . " files in $e ms.\n" );
 
 		$start = microtime( true );
-		$backend->$method( $ops4, $opts );
+		$status = $backend->$method( $ops4, $opts );
 		$e = ( microtime( true ) - $start ) * 1000;
-		if ( $status->getErrorsArray() ) {
-			print_r( $status->getErrorsArray() );
+		if ( !$status->isGood() ) {
+			$this->error( $status );
 			return;
 		}
 		$this->output( $backend->getName() . ": Deleted " . count( $ops4 ) . " files in $e ms.\n" );
 
 		$start = microtime( true );
-		$backend->$method( $ops5, $opts );
+		$status = $backend->$method( $ops5, $opts );
 		$e = ( microtime( true ) - $start ) * 1000;
-		if ( $status->getErrorsArray() ) {
-			print_r( $status->getErrorsArray() );
+		if ( !$status->isGood() ) {
+			$this->error( $status );
 			return;
 		}
 		$this->output( $backend->getName() . ": Deleted " . count( $ops5 ) . " files in $e ms.\n" );
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = FileOpPerfTest::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -1,17 +1,18 @@
 @import 'mediawiki.mixins';
+@import 'mediawiki.skin.variables.less';
 
 /**
  * CSS for WikiEditor Toolbar jQuery plugin
  */
 
 .wikiEditor-ui-toolbar {
-	background-color: #f8f9fa;
+	background-color: @background-color-neutral-subtle;
 	box-shadow: 0 2px 1px 0 rgba( 0, 0, 0, 0.1 );
 
 	/* Groups */
 	.group,
 	.section-secondary .group {
-		border-color: #eaecf0;
+		border-color: @border-color-muted;
 	}
 
 	.group {
@@ -48,7 +49,7 @@
 				box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.25 );
 
 				.option:hover {
-					background-color: #eaecf0;
+					background-color: @background-color-interactive;
 				}
 			}
 		}
@@ -58,12 +59,12 @@
 	.booklet {
 		> .index {
 			> :hover {
-				background-color: #eaecf0;
+				background-color: @background-color-interactive;
 			}
 
 			> .current {
-				background-color: #eaf3ff;
-				color: #36c;
+				background-color: @background-color-progressive-subtle;
+				color: @color-progressive;
 			}
 		}
 	}

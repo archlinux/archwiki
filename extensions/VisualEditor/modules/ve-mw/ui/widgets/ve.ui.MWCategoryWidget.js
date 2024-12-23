@@ -11,12 +11,12 @@
  * @class
  * @abstract
  * @extends OO.ui.Widget
- * @mixins OO.ui.mixin.GroupElement
- * @mixins OO.ui.mixin.DraggableGroupElement
+ * @mixes OO.ui.mixin.GroupElement
+ * @mixes OO.ui.mixin.DraggableGroupElement
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
+ * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
  */
 ve.ui.MWCategoryWidget = function VeUiMWCategoryWidget( config ) {
 	// Config initialization
@@ -29,7 +29,7 @@ ve.ui.MWCategoryWidget = function VeUiMWCategoryWidget( config ) {
 	OO.ui.mixin.GroupElement.call( this, config );
 	OO.ui.mixin.DraggableGroupElement.call( this, ve.extendObject( {}, config, { orientation: 'horizontal' } ) );
 
-	var categoryNamespace = mw.config.get( 'wgNamespaceIds' ).category;
+	const categoryNamespace = mw.config.get( 'wgNamespaceIds' ).category;
 	// Properties
 	this.fragment = null;
 	this.categories = {};
@@ -76,7 +76,7 @@ OO.mixinClass( ve.ui.MWCategoryWidget, OO.ui.mixin.DraggableGroupElement );
 /* Events */
 
 /**
- * @event newCategory
+ * @event ve.ui.MWCategoryWidget#newCategory
  * @param {Object} item Category item
  * @param {string} item.name Fully prefixed category name
  * @param {string} item.value Category value (name without prefix)
@@ -85,7 +85,7 @@ OO.mixinClass( ve.ui.MWCategoryWidget, OO.ui.mixin.DraggableGroupElement );
  */
 
 /**
- * @event updateSortkey
+ * @event ve.ui.MWCategoryWidget#updateSortkey
  * @param {Object} item Category item
  * @param {string} item.name Fully prefixed category name
  * @param {string} item.value Category value (name without prefix)
@@ -109,20 +109,19 @@ ve.ui.MWCategoryWidget.prototype.setFragment = function ( fragment ) {
  * @param {OO.ui.MenuOptionWidget} item Selected item
  */
 ve.ui.MWCategoryWidget.prototype.onInputChoose = function ( item ) {
-	var value = item.getData(),
-		widget = this;
+	const value = item.getData();
 
 	if ( value && value !== '' ) {
 		// Add new item
-		var categoryItem = this.getCategoryItemFromValue( value );
-		this.queryCategoryStatus( [ categoryItem.name ] ).done( function () {
+		const categoryItem = this.getCategoryItemFromValue( value );
+		this.queryCategoryStatus( [ categoryItem.name ] ).done( () => {
 			// Remove existing items by name
-			var toRemove = mw.Title.newFromText( categoryItem.name ).getMainText();
-			if ( Object.prototype.hasOwnProperty.call( widget.categories, toRemove ) ) {
-				widget.fragment.removeMeta( widget.categories[ toRemove ].metaItem );
+			const toRemove = mw.Title.newFromText( categoryItem.name ).getMainText();
+			if ( Object.prototype.hasOwnProperty.call( this.categories, toRemove ) ) {
+				this.fragment.removeMeta( this.categories[ toRemove ].metaItem );
 			}
-			categoryItem.name = widget.normalizedTitles[ categoryItem.name ];
-			widget.emit( 'newCategory', categoryItem );
+			categoryItem.name = this.normalizedTitles[ categoryItem.name ];
+			this.emit( 'newCategory', categoryItem );
 		} );
 	}
 };
@@ -150,7 +149,7 @@ ve.ui.MWCategoryWidget.prototype.onPopupClosing = function () {
  */
 ve.ui.MWCategoryWidget.prototype.getCategoryItemFromValue = function ( value ) {
 	// Normalize
-	var title = mw.Title.newFromText( this.categoryPrefix + value );
+	const title = mw.Title.newFromText( this.categoryPrefix + value );
 	if ( title ) {
 		return {
 			name: title.getPrefixedText(),
@@ -187,12 +186,12 @@ ve.ui.MWCategoryWidget.prototype.onDrag = function () {
 
 /**
  * @inheritdoc OO.ui.mixin.DraggableGroupElement
- * @fires newCategory
+ * @fires ve.ui.MWCategoryWidget#newCategory
  */
 ve.ui.MWCategoryWidget.prototype.reorder = function ( item, newIndex ) {
 	// Compute beforeCategory before removing, otherwise newIndex
 	// could be off by one
-	var beforeCategory = this.items[ newIndex ] && this.items[ newIndex ].metaItem;
+	const beforeCategory = this.items[ newIndex ] && this.items[ newIndex ].metaItem;
 	if ( Object.prototype.hasOwnProperty.call( this.categories, item.value ) ) {
 		this.fragment.removeMeta( this.categories[ item.value ].metaItem );
 	}
@@ -215,7 +214,7 @@ ve.ui.MWCategoryWidget.prototype.onRemoveCategory = function ( name ) {
  *
  * @param {string} name
  * @param {string} value
- * @fires updateSortkey
+ * @fires ve.ui.MWCategoryWidget#updateSortkey
  */
 ve.ui.MWCategoryWidget.prototype.onUpdateSortkey = function ( name, value ) {
 	this.categories[ name ].sortKey = value;
@@ -267,13 +266,13 @@ ve.ui.MWCategoryWidget.prototype.setDisabled = function () {
 	// Parent method
 	ve.ui.MWCategoryWidget.super.prototype.setDisabled.apply( this, arguments );
 
-	var isDisabled = this.isDisabled();
+	const isDisabled = this.isDisabled();
 
 	if ( this.input ) {
 		this.input.setDisabled( isDisabled );
 	}
 	if ( this.items ) {
-		this.items.forEach( function ( item ) {
+		this.items.forEach( ( item ) => {
 			item.setDisabled( isDisabled );
 		} );
 	}
@@ -299,19 +298,16 @@ ve.ui.MWCategoryWidget.prototype.getCategories = function () {
  * @return {jQuery.Promise}
  */
 ve.ui.MWCategoryWidget.prototype.queryCategoryStatus = function ( categoryNames ) {
-	var widget = this;
-
 	// Get rid of any we already know the hidden status of, or have an entry
 	// if normalizedTitles (i.e. have been fetched before)
-	var categoryNamesToQuery = categoryNames.filter( function ( name ) {
-		var cacheEntry;
-		if ( widget.normalizedTitles[ name ] ) {
+	const categoryNamesToQuery = categoryNames.filter( ( name ) => {
+		if ( this.normalizedTitles[ name ] ) {
 			return false;
 		}
-		cacheEntry = ve.init.platform.linkCache.getCached( name );
+		const cacheEntry = ve.init.platform.linkCache.getCached( name );
 		if ( cacheEntry && cacheEntry.hidden ) {
 			// As we aren't doing an API request for this category, mark it in the cache.
-			widget.normalizedTitles[ name ] = name;
+			this.normalizedTitles[ name ] = name;
 			return false;
 		}
 		return true;
@@ -321,7 +317,8 @@ ve.ui.MWCategoryWidget.prototype.queryCategoryStatus = function ( categoryNames 
 		return ve.createDeferred().resolve( {} ).promise();
 	}
 
-	var index = 0, batchSize = 50, promises = [];
+	let index = 0;
+	const batchSize = 50, promises = [];
 	// Batch this up into groups of 50
 	while ( index < categoryNamesToQuery.length ) {
 		promises.push( ve.init.target.getContentApi().get( {
@@ -330,11 +327,11 @@ ve.ui.MWCategoryWidget.prototype.queryCategoryStatus = function ( categoryNames 
 			titles: categoryNamesToQuery.slice( index, index + batchSize ),
 			ppprop: 'hiddencat',
 			redirects: ''
-		} ).then( function ( result ) {
-			var linkCacheUpdate = {},
+		} ).then( ( result ) => {
+			const linkCacheUpdate = {},
 				normalizedTitles = {};
 			if ( result && result.query && result.query.pages ) {
-				result.query.pages.forEach( function ( pageInfo ) {
+				result.query.pages.forEach( ( pageInfo ) => {
 					linkCacheUpdate[ pageInfo.title ] = {
 						missing: Object.prototype.hasOwnProperty.call( pageInfo, 'missing' ),
 						hidden: pageInfo.pageprops &&
@@ -343,20 +340,20 @@ ve.ui.MWCategoryWidget.prototype.queryCategoryStatus = function ( categoryNames 
 				} );
 			}
 			if ( result && result.query && result.query.redirects ) {
-				result.query.redirects.forEach( function ( redirectInfo ) {
-					widget.categoryRedirects[ redirectInfo.from ] = redirectInfo.to;
+				result.query.redirects.forEach( ( redirectInfo ) => {
+					this.categoryRedirects[ redirectInfo.from ] = redirectInfo.to;
 				} );
 			}
 			ve.init.platform.linkCache.set( linkCacheUpdate );
 
 			if ( result.query && result.query.normalized ) {
-				result.query.normalized.forEach( function ( normalisation ) {
+				result.query.normalized.forEach( ( normalisation ) => {
 					normalizedTitles[ normalisation.from ] = normalisation.to;
 				} );
 			}
 
-			categoryNames.forEach( function ( name ) {
-				widget.normalizedTitles[ name ] = normalizedTitles[ name ] || name;
+			categoryNames.forEach( ( name ) => {
+				this.normalizedTitles[ name ] = normalizedTitles[ name ] || name;
 			} );
 		} ) );
 		index += batchSize;
@@ -373,69 +370,65 @@ ve.ui.MWCategoryWidget.prototype.queryCategoryStatus = function ( categoryNames 
  * @return {jQuery.Promise}
  */
 ve.ui.MWCategoryWidget.prototype.addItems = function ( items, index ) {
-	var categoryItems = [],
-		existingCategoryItems = [],
+	const categoryItems = [],
 		// eslint-disable-next-line no-jquery/no-map-util
-		categoryNames = $.map( items, function ( item ) {
-			return item.name;
-		} ),
-		widget = this;
+		categoryNames = $.map( items, ( item ) => item.name );
 
-	return this.queryCategoryStatus( categoryNames ).then( function () {
-		var config;
-		var checkValueMatches = function ( existingCategoryItem ) {
+	return this.queryCategoryStatus( categoryNames ).then( () => {
+		let config;
+		const checkValueMatches = function ( existingCategoryItem ) {
 			return config.item.value === existingCategoryItem.value;
 		};
 
-		items.forEach( function ( item ) {
-			item.name = widget.normalizedTitles[ item.name ];
+		items.forEach( ( item ) => {
+			item.name = this.normalizedTitles[ item.name ];
 
-			var itemTitle = new mw.Title( item.name, mw.config.get( 'wgNamespaceIds' ).category );
+			const itemTitle = new mw.Title( item.name, mw.config.get( 'wgNamespaceIds' ).category );
 			// Create a widget using the item data
 			config = {
 				item: item
 			};
-			var cachedData;
-			if ( Object.prototype.hasOwnProperty.call( widget.categoryRedirects, itemTitle.getPrefixedText() ) ) {
+			let cachedData;
+			if ( Object.prototype.hasOwnProperty.call( this.categoryRedirects, itemTitle.getPrefixedText() ) ) {
 				config.redirectTo = new mw.Title(
-					widget.categoryRedirects[ itemTitle.getPrefixedText() ],
+					this.categoryRedirects[ itemTitle.getPrefixedText() ],
 					mw.config.get( 'wgNamespaceIds' ).category
 				).getMainText();
-				cachedData = ve.init.platform.linkCache.getCached( widget.categoryRedirects[ itemTitle.getPrefixedText() ] );
+				cachedData = ve.init.platform.linkCache.getCached( this.categoryRedirects[ itemTitle.getPrefixedText() ] );
 			} else {
 				cachedData = ve.init.platform.linkCache.getCached( item.name );
 			}
 			config.hidden = cachedData.hidden;
 			config.missing = cachedData.missing;
-			config.disabled = widget.disabled;
+			config.disabled = this.disabled;
 
-			var categoryItem = new ve.ui.MWCategoryItemWidget( config );
-			categoryItem.connect( widget, {
+			const categoryItem = new ve.ui.MWCategoryItemWidget( config );
+			categoryItem.connect( this, {
 				togglePopupMenu: 'onTogglePopupMenu'
 			} );
 
 			// Index item
-			widget.categories[ itemTitle.getMainText() ] = categoryItem;
+			this.categories[ itemTitle.getMainText() ] = categoryItem;
 			// Copy sortKey from old item when "moving"
-			existingCategoryItems = widget.items.filter( checkValueMatches );
+			const existingCategoryItems = this.items.filter( checkValueMatches );
 			if ( existingCategoryItems.length ) {
 				// There should only be one element in existingCategoryItems
 				categoryItem.sortKey = existingCategoryItems[ 0 ].sortKey;
-				widget.removeItems( [ existingCategoryItems[ 0 ] ] );
+				this.removeItems( [ existingCategoryItems[ 0 ] ] );
 			}
 
 			categoryItems.push( categoryItem );
 		} );
 
-		OO.ui.mixin.DraggableGroupElement.prototype.addItems.call( widget, categoryItems, index );
+		OO.ui.mixin.DraggableGroupElement.prototype.addItems.call( this, categoryItems, index );
 
 		// Ensure the input remains the last item in the list, and preserve focus
-		var hadFocus = widget.getElementDocument().activeElement === widget.input.$input[ 0 ];
-		widget.$group.append( widget.input.$element );
+		const hadFocus = this.getElementDocument().activeElement === this.input.$input[ 0 ];
+		this.$group.append( this.input.$element );
 		if ( hadFocus ) {
-			widget.input.$input[ 0 ].focus();
+			this.input.$input[ 0 ].focus();
 		}
-		widget.fitInput();
+		this.fitInput();
 	} );
 };
 
@@ -443,8 +436,8 @@ ve.ui.MWCategoryWidget.prototype.addItems = function ( items, index ) {
  * @inheritdoc
  */
 ve.ui.MWCategoryWidget.prototype.removeItems = function ( items ) {
-	for ( var i = 0, len = items.length; i < len; i++ ) {
-		var categoryItem = items[ i ];
+	for ( let i = 0, len = items.length; i < len; i++ ) {
+		const categoryItem = items[ i ];
 		if ( categoryItem ) {
 			categoryItem.disconnect( this );
 			items.push( categoryItem );
@@ -461,7 +454,7 @@ ve.ui.MWCategoryWidget.prototype.removeItems = function ( items ) {
  * Auto-fit the input.
  */
 ve.ui.MWCategoryWidget.prototype.fitInput = function () {
-	var $input = this.input.$element;
+	const $input = this.input.$element;
 
 	// eslint-disable-next-line no-jquery/no-sizzle
 	if ( !this.items.length || !$input.is( ':visible' ) ) {
@@ -470,13 +463,13 @@ ve.ui.MWCategoryWidget.prototype.fitInput = function () {
 
 	// Measure the input's natural size
 	$input.css( 'width', '' );
-	var inputWidth = $input.outerWidth( true );
+	const inputWidth = $input.outerWidth( true );
 
 	// this.items hasn't been updated if this was triggered by a drag event,
 	// so look at document order
-	var $lastItem = this.$group.find( '.ve-ui-mwCategoryItemWidget' ).last();
+	const $lastItem = this.$group.find( '.ve-ui-mwCategoryItemWidget' ).last();
 	// Try to fit to the right of the last item
-	var availableSpace = Math.floor( this.$group.width() - ( $lastItem.position().left + $lastItem.outerWidth( true ) ) );
+	const availableSpace = Math.floor( this.$group.width() - ( $lastItem.position().left + $lastItem.outerWidth( true ) ) );
 	if ( availableSpace > inputWidth ) {
 		$input.css( 'width', availableSpace );
 	}

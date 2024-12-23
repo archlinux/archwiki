@@ -6,7 +6,7 @@
  * @param {boolean} [config.isEW] Orientation of the drag bar, East-West (true) or North-South (false).
  */
 function ResizingDragBar( config ) {
-	config = $.extend( {}, {
+	config = Object.assign( {}, {
 		isEW: true,
 		classes: [ 'ext-WikiEditor-ResizingDragBar' ]
 	}, config );

@@ -7,10 +7,10 @@ use InvalidArgumentException;
 use MediaWiki\Extension\Math\Widget\WikibaseEntitySelector;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\SpecialPage\SpecialPage;
-use Message;
 use OOUI\ButtonInputWidget;
 use OOUI\FormLayout;
 
@@ -23,16 +23,19 @@ class SpecialMathWikibase extends SpecialPage {
 	/**
 	 * @var MathWikibaseConnector Wikibase connection
 	 */
-	private $wikibase;
+	private MathWikibaseConnector $wikibase;
 
 	/**
 	 * @var \Psr\Log\LoggerInterface
 	 */
 	private $logger;
 
-	public function __construct() {
+	public function __construct(
+		MathWikibaseConnector $wikibase
+	) {
 		parent::__construct( 'MathWikibase' );
 
+		$this->wikibase = $wikibase;
 		$this->logger = LoggerFactory::getInstance( 'Math' );
 	}
 
@@ -40,10 +43,6 @@ class SpecialMathWikibase extends SpecialPage {
 	 * @inheritDoc
 	 */
 	public function execute( $par ) {
-		global $wgLanguageCode;
-
-		$this->wikibase = MediaWikiServices::getInstance()->get( 'Math.WikibaseConnector' );
-
 		$request = $this->getRequest();
 		$output = $this->getOutput();
 		$output->enableOOUI();
@@ -63,8 +62,9 @@ class SpecialMathWikibase extends SpecialPage {
 			$this->showForm();
 		} else {
 			$this->logger->debug( "Request qID: " . $requestId );
+			$languageCode = $this->getConfig()->get( MainConfigNames::LanguageCode );
 			try {
-				$info = $this->wikibase->fetchWikibaseFromId( $requestId, $wgLanguageCode );
+				$info = $this->wikibase->fetchWikibaseFromId( $requestId, $languageCode );
 				$this->logger->debug( "Successfully fetched information for qID: " . $requestId );
 				$this->buildPageRepresentation( $info, $requestId, $output );
 			} catch ( Exception $e ) {

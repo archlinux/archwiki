@@ -48,7 +48,7 @@ class CommentFormatter {
 	 *   wiki), as used by WikiMap.
 	 * @return string
 	 */
-	public function format( string $comment, LinkTarget $selfLinkTarget = null,
+	public function format( string $comment, ?LinkTarget $selfLinkTarget = null,
 		$samePage = false, $wikiId = false
 	) {
 		return $this->formatInternal( $comment, true, false, false,
@@ -69,7 +69,7 @@ class CommentFormatter {
 	 * @param bool $useParentheses
 	 * @return string
 	 */
-	public function formatBlock( string $comment, LinkTarget $selfLinkTarget = null,
+	public function formatBlock( string $comment, ?LinkTarget $selfLinkTarget = null,
 		$samePage = false, $wikiId = false, $useParentheses = true
 	) {
 		return $this->formatInternal( $comment, true, true, $useParentheses,
@@ -94,7 +94,7 @@ class CommentFormatter {
 	 *   wiki), as used by WikiMap.
 	 * @return string
 	 */
-	public function formatLinksUnsafe( string $comment, LinkTarget $selfLinkTarget = null,
+	public function formatLinksUnsafe( string $comment, ?LinkTarget $selfLinkTarget = null,
 		$samePage = false, $wikiId = false
 	) {
 		$parser = $this->parserFactory->create();
@@ -115,7 +115,7 @@ class CommentFormatter {
 	 *   wiki), as used by WikiMap.
 	 * @return string
 	 */
-	public function formatLinks( string $comment, LinkTarget $selfLinkTarget = null,
+	public function formatLinks( string $comment, ?LinkTarget $selfLinkTarget = null,
 		$samePage = false, $wikiId = false
 	) {
 		return $this->formatInternal( $comment, false, false, false,
@@ -165,43 +165,13 @@ class CommentFormatter {
 	 *   wiki), as used by WikiMap.
 	 * @return string[]
 	 */
-	public function formatStrings( $strings, LinkTarget $selfLinkTarget = null,
+	public function formatStrings( $strings, ?LinkTarget $selfLinkTarget = null,
 		$samePage = false, $wikiId = false
 	) {
 		$parser = $this->parserFactory->create();
 		$outputs = [];
 		foreach ( $strings as $i => $comment ) {
 			$outputs[$i] = $parser->preprocess( $comment, $selfLinkTarget, $samePage, $wikiId );
-		}
-		return $parser->finalize( $outputs );
-	}
-
-	/**
-	 * Given an array of comments as strings which all have the same self link
-	 * target, format the comments and wrap them in standard punctuation and
-	 * formatting.
-	 *
-	 * If you need a different title for each comment, use createBatch().
-	 *
-	 * @param string[] $strings
-	 * @param LinkTarget|null $selfLinkTarget The title used for fragment-only
-	 *   and section links, formerly $title.
-	 * @param bool $samePage If true, self links are rendered with a fragment-
-	 *   only URL. Formerly $local.
-	 * @param string|false|null $wikiId ID of the wiki to link to (if not the local
-	 *   wiki), as used by WikiMap.
-	 * @param bool $useParentheses
-	 * @return string[]
-	 */
-	public function formatStringsAsBlock( $strings, LinkTarget $selfLinkTarget = null,
-		$samePage = false, $wikiId = false, $useParentheses = true
-	) {
-		$parser = $this->parserFactory->create();
-		$outputs = [];
-		foreach ( $strings as $i => $comment ) {
-			$outputs[$i] = $this->wrapCommentWithBlock(
-				$parser->preprocess( $comment, $selfLinkTarget, $samePage, $wikiId ),
-				$useParentheses );
 		}
 		return $parser->finalize( $outputs );
 	}

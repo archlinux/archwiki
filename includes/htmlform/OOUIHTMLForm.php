@@ -35,7 +35,9 @@ use MediaWiki\Status\Status;
  * @stable to extend
  */
 class OOUIHTMLForm extends HTMLForm {
+	/** @var array */
 	private $oouiErrors;
+	/** @var array */
 	private $oouiWarnings;
 
 	/**
@@ -48,10 +50,11 @@ class OOUIHTMLForm extends HTMLForm {
 		$this->getOutput()->addModuleStyles( 'mediawiki.htmlform.ooui.styles' );
 	}
 
+	/** @inheritDoc */
 	protected $displayFormat = 'ooui';
 
 	public static function loadInputFromParameters( $fieldname, $descriptor,
-		HTMLForm $parent = null
+		?HTMLForm $parent = null
 	) {
 		$field = parent::loadInputFromParameters( $fieldname, $descriptor, $parent );
 		$field->setShowEmptyLabel( false );
@@ -87,13 +90,6 @@ class OOUIHTMLForm extends HTMLForm {
 			}
 
 			$buttons .= new \OOUI\ButtonInputWidget( $attribs );
-		}
-
-		if ( $this->mShowReset ) {
-			$buttons .= new \OOUI\ButtonInputWidget( [
-				'type' => 'reset',
-				'label' => $this->msg( 'htmlform-reset' )->text(),
-			] );
 		}
 
 		if ( $this->mShowCancel ) {
@@ -223,9 +219,8 @@ class OOUIHTMLForm extends HTMLForm {
 		$errors = [];
 		if ( $elements instanceof Status ) {
 			if ( !$elements->isGood() ) {
-				$errors = $elements->getErrorsByType( $elementsType );
-				foreach ( $errors as &$error ) {
-					$error = $this->getMessage( [ $error['message'], ...$error['params'] ] )->parse();
+				foreach ( $elements->getMessages( $elementsType ) as $msg ) {
+					$errors[] = $this->getMessage( $msg )->parse();
 				}
 			}
 		} elseif ( $elementsType === 'error' ) {

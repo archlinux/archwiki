@@ -68,7 +68,6 @@
 	"templatedata-modal-button-delparam": "Paraméterinformáció eltávolítása",
 	"templatedata-modal-button-done": "Kész",
 	"templatedata-modal-button-importParams": "Paraméterek importálása",
-	"templatedata-modal-button-restoreparam": "Paraméter visszaállítása",
 	"templatedata-modal-button-saveparam": "Mentés",
 	"templatedata-modal-confirmcancel": "Biztosan el akarod vetni a változtatásaidat?",
 	"templatedata-modal-current-language": "Aktuális nyelv: $1",

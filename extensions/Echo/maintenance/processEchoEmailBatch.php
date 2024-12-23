@@ -2,6 +2,7 @@
 
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\EmailBatch;
+use MediaWiki\Maintenance\Maintenance;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {

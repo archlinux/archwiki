@@ -2,11 +2,15 @@
 
 namespace MediaWiki\OutputTransform\Stages;
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Html\HtmlHelper;
 use MediaWiki\OutputTransform\ContentTextTransformStage;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
-use ParserOptions;
+use MediaWiki\Parser\Parsoid\ParsoidParser;
+use MediaWiki\Utils\UrlUtils;
+use Psr\Log\LoggerInterface;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
 
 /**
@@ -14,6 +18,21 @@ use Wikimedia\RemexHtml\Serializer\SerializerNode;
  * @internal
  */
 class ExtractBody extends ContentTextTransformStage {
+
+	private UrlUtils $urlUtils;
+
+	// @phan-suppress-next-line PhanUndeclaredTypeProperty
+	private ?\MobileContext $mobileContext;
+
+	public function __construct(
+		ServiceOptions $options, LoggerInterface $logger, UrlUtils $urlUtils,
+		// @phan-suppress-next-line PhanUndeclaredTypeParameter
+		?\MobileContext $mobileContext
+	) {
+		parent::__construct( $options, $logger );
+		$this->urlUtils = $urlUtils;
+		$this->mobileContext = $mobileContext;
+	}
 
 	public function shouldRun( ParserOutput $po, ?ParserOptions $popts, array $options = [] ): bool {
 		return ( $options['isParsoidContent'] ?? false );
@@ -23,7 +42,12 @@ class ExtractBody extends ContentTextTransformStage {
 		'a' => true, 'img' => true, 'video' => true, 'audio' => true,
 	];
 
-	private static function expandRelativeAttrs( string $text, string $baseHref ): string {
+	private static function expandRelativeAttrs(
+		string $text,
+		string $baseHref,
+		string $pageFragmentPrefix,
+		UrlUtils $urlUtils
+	): string {
 		// T350952: Expand relative links
 		// What we should be doing here is parsing as a title and then
 		// using Title::getLocalURL()
@@ -36,11 +60,19 @@ class ExtractBody extends ContentTextTransformStage {
 				$attr = $node->name === 'a' ? 'href' : 'resource';
 				return str_starts_with( $node->attrs[$attr] ?? '', './' );
 			},
-			static function ( SerializerNode $node ) use ( $baseHref ): SerializerNode {
+			static function ( SerializerNode $node ) use ( $baseHref, $pageFragmentPrefix, $urlUtils ): SerializerNode {
 				$attr = $node->name === 'a' ? 'href' : 'resource';
-				$href = $baseHref . $node->attrs[$attr];
-				$node->attrs[$attr] =
-					wfExpandUrl( $href, PROTO_RELATIVE );
+				$href = $node->attrs[$attr];
+				// Convert page fragment urls to true fragment urls
+				// This ensures that those fragments include any URL query params
+				// and resolve internally. (Ex: on pages with ?useparsoid=1,
+				// cite link fragments should not take you to a different page).
+				if ( $pageFragmentPrefix && str_starts_with( $href, $pageFragmentPrefix ) ) {
+					$node->attrs[$attr] = substr( $href, strlen( $pageFragmentPrefix ) - 1 );
+				} else {
+					$href = $baseHref . $href;
+					$node->attrs[$attr] = $urlUtils->expand( $href, PROTO_RELATIVE ) ?? false;
+				}
 				return $node;
 			}
 		);
@@ -52,11 +84,28 @@ class ExtractBody extends ContentTextTransformStage {
 		$baseHref = '';
 		if ( preg_match( '{<base href=["\']([^"\']+)["\'][^>]+>}', $text, $matches ) === 1 ) {
 			$baseHref = $matches[1];
+			// @phan-suppress-next-line PhanUndeclaredClassMethod
+			if ( $this->mobileContext !== null && $this->mobileContext->usingMobileDomain() ) {
+				// @phan-suppress-next-line PhanUndeclaredClassMethod
+				$mobileUrl = $this->mobileContext->getMobileUrl( $baseHref );
+				if ( $mobileUrl !== false ) {
+					$baseHref = $mobileUrl;
+				}
+			}
 		}
+		$title = $po->getExtensionData( ParsoidParser::PARSOID_TITLE_KEY );
+		if ( !$title ) {
+			// We don't think this should ever trigger, but being conservative
+			$this->logger->error( __METHOD__ . ": Missing title information in ParserOutput" );
+		}
+		$pageFragmentPrefix = "./" . $title . "#";
 		foreach ( $po->getIndicators() as $name => $html ) {
-			$po->setIndicator( $name, self::expandRelativeAttrs( $html, $baseHref ) );
+			$po->setIndicator(
+				$name,
+				self::expandRelativeAttrs( $html, $baseHref, $pageFragmentPrefix, $this->urlUtils )
+			);
 		}
 		$text = Parser::extractBody( $text );
-		return self::expandRelativeAttrs( $text, $baseHref );
+		return self::expandRelativeAttrs( $text, $baseHref, $pageFragmentPrefix, $this->urlUtils );
 	}
 }

@@ -5,6 +5,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Maintenance\DumpAsserter;
 use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -34,7 +35,7 @@ class ImportExportTest extends MediaWikiLangTestCase {
 	private function getExporter( string $schemaVersion ) {
 		$exporter = $this->getServiceContainer()
 			->getWikiExporterFactory()
-			->getWikiExporter( $this->db, WikiExporter::FULL );
+			->getWikiExporter( $this->getDb(), WikiExporter::FULL );
 		$exporter->setSchemaVersion( $schemaVersion );
 		return $exporter;
 	}
@@ -125,7 +126,7 @@ class ImportExportTest extends MediaWikiLangTestCase {
 	 */
 	private function getRevisions( Title $title ) {
 		$store = $this->getServiceContainer()->getRevisionStore();
-		$queryBuilder = $store->newSelectQueryBuilder( $this->db )
+		$queryBuilder = $store->newSelectQueryBuilder( $this->getDb() )
 			->joinComment()
 			->where( [ 'rev_page' => $title->getArticleID() ] )
 			->orderBy( 'rev_id', SelectQueryBuilder::SORT_ASC );

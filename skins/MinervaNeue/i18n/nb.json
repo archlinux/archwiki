@@ -33,7 +33,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Om denne kategorien",
 	"mobile-frontend-meta-data-issues-header": "Problemer med siden",
 	"minerva-meta-data-issues-section-header": "Seksjonsproblemer",
-	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "Rediger innledningen til denne siden.",
 	"mobile-frontend-placeholder": "Søk i {{SITENAME}}",
 	"mobile-frontend-random-button": "Tilfeldig side",
@@ -53,7 +52,7 @@
 	"minerva-page-actions-overflow": "Mer",
 	"minerva-page-actions-language-switcher": "Språk",
 	"minerva-page-actions-history": "Historikk",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Diskusjon]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Diskusjon]",
 	"minerva-skin-desc": "Ei responsiv drakt for mobil-først.",
 	"skin-minerva-issue-learn-more": "Lær mer",
 	"skin-minerva-time-ago-seconds": "for $1 {{PLURAL:$1|sekund|sekunder}} siden",
@@ -64,10 +63,8 @@
 	"skin-minerva-time-ago-years": "for $1 {{PLURAL:$1|år}} siden",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorier",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vis kategoriene til sider",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Forbedret behandling av sideproblemer",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Sideproblemer (Mal:ambox) vises i artikkelteksten.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Dessverre er ikke gruppering av resultater tilgjengelig på mobil. Om du ønsker å bruke denne funksjonen, besøk datamaskinversjonen av nettstedet.",
-	"skin-minerva-night-mode-unavailable": "Siden er kun tilgjengelig med fargetemaet «Dag».",
+	"skin-minerva-night-mode-unavailable": "Siden er kun tilgjengelig med fargetemaet «Lys».",
 	"minerva.css": "/* CSS i denne fila vil gjelde alle som bruker drakta MinervaNeue */",
 	"minerva.js": "/* Javascript i denne fila vil gjelde for brukere av drakta MinervaNeue */"
 }

@@ -26,19 +26,18 @@
 namespace MediaWiki\Storage;
 
 use AppendIterator;
-use DBAccessObjectUtils;
 use ExternalStoreAccess;
 use ExternalStoreException;
 use HistoryBlobUtils;
-use IDBAccessObject;
 use InvalidArgumentException;
 use StatusValue;
-use WANObjectCache;
 use Wikimedia\Assert\Assert;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Rdbms\DBAccessObjectUtils;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILoadBalancer;
-use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Service for storing and loading Content objects representing revision data blobs.
@@ -195,7 +194,7 @@ class SqlBlobStore implements BlobStore {
 	 */
 	private function getDBConnection( $index ) {
 		$lb = $this->getDBLoadBalancer();
-		return $lb->getConnectionRef( $index, [], $this->dbDomain );
+		return $lb->getConnection( $index, [], $this->dbDomain );
 	}
 
 	/**
@@ -223,25 +222,22 @@ class SqlBlobStore implements BlobStore {
 				throw new BlobAccessException( "Failed to store text to external storage" );
 			}
 			if ( $flags ) {
-				$flags .= ',';
+				return 'es:' . $data . '?flags=' . $flags;
+			} else {
+				return 'es:' . $data;
 			}
-			$flags .= 'external';
+		} else {
+			$dbw = $this->getDBConnection( DB_PRIMARY );
 
-			// TODO: we could also return an address for the external store directly here.
-			// That would mean bypassing the text table entirely when the external store is
-			// used. We'll need to assess expected fallout before doing that.
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'text' )
+				->row( [ 'old_text' => $data, 'old_flags' => $flags ] )
+				->caller( __METHOD__ )->execute();
+
+			$textId = $dbw->insertId();
+
+			return self::makeAddressFromTextId( $textId );
 		}
-
-		$dbw = $this->getDBConnection( DB_PRIMARY );
-
-		$dbw->newInsertQueryBuilder()
-			->insertInto( 'text' )
-			->row( [ 'old_text' => $data, 'old_flags' => $flags ] )
-			->caller( __METHOD__ )->execute();
-
-		$textId = $dbw->insertId();
-
-		return self::makeAddressFromTextId( $textId );
 	}
 
 	/**
@@ -338,7 +334,7 @@ class SqlBlobStore implements BlobStore {
 		$errors = [];
 		foreach ( $blobAddresses as $blobAddress ) {
 			try {
-				[ $schema, $id ] = self::splitBlobAddress( $blobAddress );
+				[ $schema, $id, $params ] = self::splitBlobAddress( $blobAddress );
 			} catch ( InvalidArgumentException $ex ) {
 				throw new BlobAccessException(
 					$ex->getMessage() . '. Use findBadBlobs.php to remedy.',
@@ -347,8 +343,21 @@ class SqlBlobStore implements BlobStore {
 				);
 			}
 
-			// TODO: MCR: also support 'ex' schema with ExternalStore URLs, plus flags encoded in the URL!
-			if ( $schema === 'bad' ) {
+			if ( $schema === 'es' ) {
+				if ( $params && isset( $params['flags'] ) ) {
+					$blob = $this->expandBlob( $id, $params['flags'] . ',external', $blobAddress );
+				} else {
+					$blob = $this->expandBlob( $id, 'external', $blobAddress );
+				}
+
+				if ( $blob === false ) {
+					$errors[$blobAddress] = [
+						'internalerror',
+						"Bad data in external store address $id. Use findBadBlobs.php to remedy."
+					];
+				}
+				$result[$blobAddress] = $blob;
+			} elseif ( $schema === 'bad' ) {
 				// Database row was marked as "known bad"
 				wfDebug(
 					__METHOD__
@@ -399,10 +408,7 @@ class SqlBlobStore implements BlobStore {
 			->where( [ 'old_id' => $textIds ] )
 			->options( $options )
 			->caller( __METHOD__ )->fetchResultSet();
-		$numRows = 0;
-		if ( $rows instanceof IResultWrapper ) {
-			$numRows = $rows->numRows();
-		}
+		$numRows = $rows->numRows();
 
 		// Fallback to DB_PRIMARY in some cases if not all the rows were found, using the appropriate
 		// options, such as FOR UPDATE to avoid missing rows due to REPEATABLE-READ.
@@ -771,7 +777,6 @@ class SqlBlobStore implements BlobStore {
 	 *
 	 * @param string $address
 	 *
-	 * @throws InvalidArgumentException
 	 * @return array [ $schema, $id, $parameters ], with $parameters being an assoc array.
 	 */
 	public static function splitBlobAddress( $address ) {

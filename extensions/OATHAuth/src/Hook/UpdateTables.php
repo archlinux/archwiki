@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\OATHAuth\Hook;
 
-use DatabaseUpdater;
 use MediaWiki\Extension\OATHAuth\Maintenance\UpdateForMultipleDevicesSupport;
 use MediaWiki\Extension\OATHAuth\Maintenance\UpdateTOTPScratchTokensToArray;
+use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 
 class UpdateTables implements LoadExtensionSchemaUpdatesHook {
@@ -31,7 +31,6 @@ class UpdateTables implements LoadExtensionSchemaUpdatesHook {
 					$updater->addExtensionUpdate( [
 						'runMaintenance',
 						UpdateTOTPScratchTokensToArray::class,
-						"$baseDir/maintenance/updateTOTPScratchTokensToArray.php"
 					] );
 					break;
 
@@ -51,7 +50,6 @@ class UpdateTables implements LoadExtensionSchemaUpdatesHook {
 			$updater->addExtensionUpdate( [
 				'runMaintenance',
 				UpdateForMultipleDevicesSupport::class,
-				"$baseDir/maintenance/UpdateForMultipleDevicesSupport.php"
 			] );
 			$updater->addExtensionUpdateOnVirtualDomain( [ 'virtual-oathauth', 'dropTable', 'oathauth_users' ] );
 		}

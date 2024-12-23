@@ -2,10 +2,12 @@
 
 namespace MediaWiki\Skins\Vector;
 
-use ExtensionRegistry;
+use MediaWiki\Html\Html;
+use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Skins\Vector\Components\VectorComponentAppearance;
 use MediaWiki\Skins\Vector\Components\VectorComponentButton;
-use MediaWiki\Skins\Vector\Components\VectorComponentClientPrefs;
 use MediaWiki\Skins\Vector\Components\VectorComponentDropdown;
 use MediaWiki\Skins\Vector\Components\VectorComponentLanguageDropdown;
 use MediaWiki\Skins\Vector\Components\VectorComponentMainMenu;
@@ -32,15 +34,17 @@ class SkinVector22 extends SkinMustache {
 	/** @var null|array for caching purposes */
 	private $languages;
 
+	private LanguageConverterFactory $languageConverterFactory;
 	private FeatureManagerFactory $featureManagerFactory;
 	private ?FeatureManager $featureManager = null;
 
 	public function __construct(
+		LanguageConverterFactory $languageConverterFactory,
 		FeatureManagerFactory $featureManagerFactory,
 		array $options
 	) {
 		parent::__construct( $options );
-
+		$this->languageConverterFactory = $languageConverterFactory;
 		// Cannot use the context in the constructor, setContext is called after construction
 		$this->featureManagerFactory = $featureManagerFactory;
 	}
@@ -98,11 +102,9 @@ class SkinVector22 extends SkinMustache {
 		}
 
 		$title = $this->getTitle();
-		// Defensive programming - if a special page has added languages explicitly, best to show it.
-		if ( $title && $title->isSpecialPage() && $this->getLanguagesCached() === [] ) {
-			return false;
-		}
-		return true;
+		return !$title || !$title->isSpecialPage()
+			// Defensive programming - if a special page has added languages explicitly, best to show it.
+			|| $this->getLanguagesCached();
 	}
 
 	/**
@@ -396,9 +398,6 @@ class SkinVector22 extends SkinMustache {
 
 		$isRegistered = $user->isRegistered();
 		$userPage = $isRegistered ? $this->buildPersonalPageItem() : [];
-		$isClientPreferencesEnabled = $featureManager->isFeatureEnabled(
-			Constants::FEATURE_CLIENT_PREFERENCES,
-		);
 
 		$components = $tocComponents + [
 			'data-add-topic-button' => $hasAddTopicButton ? new VectorComponentButton(
@@ -413,6 +412,7 @@ class SkinVector22 extends SkinMustache {
 				$title->getLocalURL( [ 'action' => 'edit', 'section' => 'new' ] )
 			) : null,
 			'data-variants' => new VectorComponentVariants(
+				$this->languageConverterFactory,
 				$portlets['data-variants'],
 				$title->getPageLanguage(),
 				$this->msg( 'vector-language-variant-switcher-label' )
@@ -469,15 +469,16 @@ class SkinVector22 extends SkinMustache {
 				$this->msg( 'toolbox' )->text(),
 				VectorComponentPageTools::ID . '-dropdown',
 			),
-			'data-client-prefs' => $isClientPreferencesEnabled ?
-				new VectorComponentClientPrefs( $localizer, $featureManager ) : null,
-			'data-client-prefs-dropdown' => $isClientPreferencesEnabled ? new VectorComponentDropdown(
-				'vector-client-prefs-dropdown',
-				$this->msg( 'vector-client-prefs-label' )->text(),
+			'data-appearance' => new VectorComponentAppearance( $localizer, $featureManager ),
+			'data-appearance-dropdown' => new VectorComponentDropdown(
+				'vector-appearance-dropdown',
+				$this->msg( 'vector-appearance-label' )->text(),
 				'',
-				// @todo: Use new theme icon (T351142)
-				'appearance'
-			) : null,
+				'appearance',
+				Html::expandAttributes( [
+					'title' => $this->msg( 'vector-appearance-tooltip' ),
+				] )
+			),
 			'data-vector-sticky-header' => $featureManager->isFeatureEnabled(
 				Constants::FEATURE_STICKY_HEADER
 			) ? new VectorComponentStickyHeader(
@@ -508,20 +509,6 @@ class SkinVector22 extends SkinMustache {
 					) : null,
 				$this->isVisualEditorTabPositionFirst( $portlets[ 'data-views' ] )
 			) : null,
-			'data-vector-settings-button' => $featureManager->isFeatureEnabled(
-				Constants::FEATURE_CLIENT_PREFERENCES,
-			) ? null : new VectorComponentButton(
-				$this->msg( 'vector-limited-width-toggle' ),
-				$featureManager->isFeatureEnabled(
-					Constants::FEATURE_LIMITED_WIDTH
-				) ? 'fullScreen' : 'exitFullscreen',
-				'',
-				'vector-limited-width-toggle',
-				[],
-				'normal',
-				'default',
-				true
-			)
 		];
 
 		foreach ( $components as $key => $component ) {

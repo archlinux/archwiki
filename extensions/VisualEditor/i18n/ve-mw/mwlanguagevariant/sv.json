@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Bengtsson96",
 			"WikiPhoenix"
 		]
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Detta är en dold regel.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Denna regel påverkar sidtiteln.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Språkkod",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Ogiltig>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Ogiltig</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Språk",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Källa",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destination",

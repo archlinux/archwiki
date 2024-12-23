@@ -413,7 +413,7 @@
 	"abusefilter-edit-builder-vars-movedto-restrictions-upload": "Zaštita postavljanja odredišne stranice",
 	"abusefilter-edit-builder-vars-movedto-recent-contributors": "Posljednjih deset doprinositelja u odredišnoj stranici",
 	"abusefilter-edit-builder-vars-movedto-first-contributor": "Prvi doprinositelj u odredišnoj stranici",
-	"abusefilter-edit-builder-vars-old-links": "Linkovi na ovoj stranici, prije uređivanja",
+	"abusefilter-edit-builder-vars-old-links": "Veze na stranici, prije izmjene ($1)",
 	"abusefilter-edit-builder-vars-file-sha1": "SHA1-taraba sadržaja datoteke",
 	"abusefilter-edit-builder-vars-file-size": "Veličina datoteke u bajtovima",
 	"abusefilter-edit-builder-vars-file-mime": "MIME-tip datoteke",

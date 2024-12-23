@@ -24,22 +24,19 @@
 
 namespace MediaWiki\Title;
 
-use DBAccessObjectUtils;
 use HTMLCacheUpdateJob;
-use IDBAccessObject;
-use ILanguageConverter;
 use InvalidArgumentException;
-use Language;
 use MapCacheLRU;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\DAO\WikiAwareEntityTrait;
-use MediaWiki\Deferred\AtomicSectionUpdate;
 use MediaWiki\Deferred\AutoCommitUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\InterwikiLookup;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -59,12 +56,15 @@ use MessageLocalizer;
 use MWException;
 use RuntimeException;
 use stdClass;
+use Stringable;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 use Wikimedia\Parsoid\Core\LinkTargetTrait;
+use Wikimedia\Rdbms\DBAccessObjectUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use WikiPage;
 
 /**
@@ -75,7 +75,7 @@ use WikiPage;
  * @note Consider using a TitleValue object instead. TitleValue is more lightweight
  *       and does not rely on global state or the database.
  */
-class Title implements LinkTarget, PageIdentity {
+class Title implements Stringable, LinkTarget, PageIdentity {
 	use WikiAwareEntityTrait;
 	use LinkTargetTrait;
 
@@ -387,7 +387,6 @@ class Title implements LinkTarget, PageIdentity {
 	 *   by a prefix.  If you want to force a specific namespace even if
 	 *   $text might begin with a namespace prefix, use makeTitle() or
 	 *   makeTitleSafe().
-	 * @throws InvalidArgumentException
 	 * @return Title|null Title or null if the Title could not be parsed because
 	 *         it is invalid.
 	 */
@@ -679,7 +678,7 @@ class Title implements LinkTarget, PageIdentity {
 	 * @param MessageLocalizer|null $localizer An optional context to use (since 1.34)
 	 * @return Title
 	 */
-	public static function newMainPage( MessageLocalizer $localizer = null ) {
+	public static function newMainPage( ?MessageLocalizer $localizer = null ) {
 		static $recursionGuard = false;
 
 		$title = null;
@@ -1386,9 +1385,7 @@ class Title implements LinkTarget, PageIdentity {
 	public function isMainPage() {
 		/** @var Title|null */
 		static $cachedMainPage;
-		if ( $cachedMainPage === null ) {
-			$cachedMainPage = self::newMainPage();
-		}
+		$cachedMainPage ??= self::newMainPage();
 		return $this->equals( $cachedMainPage );
 	}
 
@@ -1449,7 +1446,7 @@ class Title implements LinkTarget, PageIdentity {
 	}
 
 	/**
-	 * Is this a "config" (.css, .json, or .js) sub-page of a user page?
+	 * Is this a "config" (.css, .json, or .js) subpage of a user page?
 	 *
 	 * @return bool
 	 * @since 1.31
@@ -1484,7 +1481,7 @@ class Title implements LinkTarget, PageIdentity {
 	}
 
 	/**
-	 * Is this a CSS "config" sub-page of a user page?
+	 * Is this a CSS "config" subpage of a user page?
 	 *
 	 * @return bool
 	 * @since 1.31
@@ -1498,7 +1495,7 @@ class Title implements LinkTarget, PageIdentity {
 	}
 
 	/**
-	 * Is this a JSON "config" sub-page of a user page?
+	 * Is this a JSON "config" subpage of a user page?
 	 *
 	 * @return bool
 	 * @since 1.31
@@ -1512,7 +1509,7 @@ class Title implements LinkTarget, PageIdentity {
 	}
 
 	/**
-	 * Is this a JS "config" sub-page of a user page?
+	 * Is this a JS "config" subpage of a user page?
 	 *
 	 * @return bool
 	 * @since 1.31
@@ -2369,12 +2366,14 @@ class Title implements LinkTarget, PageIdentity {
 	 * Is this title subject to title protection?
 	 * Title protection is the one applied against creation of such title.
 	 *
-	 * @deprecated since 1.37, use RestrictionStore::getCreateProtection() instead
+	 * @deprecated since 1.37, use RestrictionStore::getCreateProtection() instead;
+	 *   hard-deprecated since 1.43
 	 *
 	 * @return array|bool An associative array representing any existent title
 	 *   protection, or false if there's none.
 	 */
 	public function getTitleProtection() {
+		wfDeprecated( __METHOD__, '1.37' );
 		return MediaWikiServices::getInstance()->getRestrictionStore()->getCreateProtection( $this )
 			?: false;
 	}
@@ -2391,12 +2390,13 @@ class Title implements LinkTarget, PageIdentity {
 	/**
 	 * Load restrictions from the page_restrictions table
 	 *
-	 * @deprecated since 1.37, no public replacement
+	 * @deprecated since 1.37, no public replacement; hard-deprecated since 1.43
 	 *
 	 * @param int $flags A bit field. If IDBAccessObject::READ_LATEST is set, skip replicas and read
 	 *  from the primary DB.
 	 */
 	public function loadRestrictions( $flags = 0 ) {
+		wfDeprecated( __METHOD__, '1.37' );
 		MediaWikiServices::getInstance()->getRestrictionStore()->loadRestrictions( $this, $flags );
 	}
 
@@ -2404,9 +2404,10 @@ class Title implements LinkTarget, PageIdentity {
 	 * Flush the protection cache in this object and force reload from the database.
 	 * This is used when updating protection from WikiPage::doUpdateRestrictions().
 	 *
-	 * @deprecated since 1.37, now internal
+	 * @deprecated since 1.37, now internal; hard-deprecated since 1.43
 	 */
 	public function flushRestrictions() {
+		wfDeprecated( __METHOD__, '1.37' );
 		MediaWikiServices::getInstance()->getRestrictionStore()->flushRestrictions( $this );
 	}
 
@@ -2420,7 +2421,7 @@ class Title implements LinkTarget, PageIdentity {
 			return;
 		}
 
-		DeferredUpdates::addUpdate( new AtomicSectionUpdate(
+		DeferredUpdates::addUpdate( new AutoCommitUpdate(
 			MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase(),
 			__METHOD__,
 			static function ( IDatabase $dbw, $fname ) {
@@ -2437,13 +2438,7 @@ class Title implements LinkTarget, PageIdentity {
 						->where( [ 'pr_id' => $ids ] )
 						->caller( $fname )->execute();
 				}
-			}
-		) );
 
-		DeferredUpdates::addUpdate( new AtomicSectionUpdate(
-			MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase(),
-			__METHOD__,
-			static function ( IDatabase $dbw, $fname ) {
 				$dbw->newDeleteQueryBuilder()
 					->deleteFrom( 'protected_titles' )
 					->where( $dbw->expr( 'pt_expiry', '<', $dbw->timestamp() ) )
@@ -2493,19 +2488,16 @@ class Title implements LinkTarget, PageIdentity {
 			return [];
 		}
 
-		$options = [];
-		if ( $limit > -1 ) {
-			$options['LIMIT'] = $limit;
-		}
-
 		$services = MediaWikiServices::getInstance();
 		$pageStore = $services->getPageStore();
 		$titleFactory = $services->getTitleFactory();
 		$query = $pageStore->newSelectQueryBuilder()
 			->fields( $pageStore->getSelectFields() )
 			->whereTitlePrefix( $this->getNamespace(), $this->getDBkey() . '/' )
-			->options( $options )
 			->caller( __METHOD__ );
+		if ( $limit > -1 ) {
+			$query->limit( $limit );
+		}
 
 		return $titleFactory->newTitleArrayFromResult( $query->fetchResultSet() );
 	}
@@ -2738,9 +2730,7 @@ class Title implements LinkTarget, PageIdentity {
 	 * @throws MalformedTitleException On malformed titles
 	 */
 	private function secureAndSplit( $text, $defaultNamespace = null ) {
-		if ( $defaultNamespace === null ) {
-			$defaultNamespace = self::DEFAULT_NAMESPACE;
-		}
+		$defaultNamespace ??= self::DEFAULT_NAMESPACE;
 
 		// @note: splitTitleString() is a temporary hack to allow MediaWikiTitleCodec to share
 		//        the parsing code with Title, while avoiding massive refactoring.
@@ -2861,35 +2851,26 @@ class Title implements LinkTarget, PageIdentity {
 		$db = $this->getDbProvider()->getReplicaDatabase();
 		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
 
+		$queryBuilder = $db->newSelectQueryBuilder();
 		if ( isset( $linksMigration::$mapping[$table] ) ) {
 			[ $blNamespace, $blTitle ] = $linksMigration->getTitleFields( $table );
 			$linktargetQueryInfo = $linksMigration->getQueryInfo( $table );
-			$fields = $linktargetQueryInfo['fields'];
-			$tables = $linktargetQueryInfo['tables'];
-			$joins = $linktargetQueryInfo['joins'];
+			$queryBuilder->queryInfo( $linktargetQueryInfo );
 		} else {
 			$blNamespace = "{$prefix}_namespace";
 			$blTitle = "{$prefix}_title";
-			$fields = [ $blNamespace, $blTitle ];
-			$tables = [ $table ];
-			$joins = [];
+			$queryBuilder->select( [ $blNamespace, $blTitle ] )
+				->from( $table );
 		}
 
 		$pageQuery = WikiPage::getQueryInfo();
-		$res = $db->select(
-			array_merge( $tables, [ 'nestpage' => $pageQuery['tables'] ] ),
-			array_merge(
-				$fields,
-				$pageQuery['fields']
-			),
-			[ "{$prefix}_from" => $id ],
-			__METHOD__,
-			$options,
-			[ 'nestpage' => [
-				'LEFT JOIN',
-				[ "page_namespace=$blNamespace", "page_title=$blTitle" ]
-			] ] + $pageQuery['joins'] + $joins
-		);
+		$res = $queryBuilder
+			->where( [ "{$prefix}_from" => $id ] )
+			->leftJoin( 'page', null, [ "page_namespace=$blNamespace", "page_title=$blTitle" ] )
+			->fields( $pageQuery['fields'] )
+			->options( $options )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$retVal = [];
 		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
@@ -2921,56 +2902,6 @@ class Title implements LinkTarget, PageIdentity {
 	}
 
 	/**
-	 * Get an array of Title objects referring to non-existent articles linked
-	 * from this page.
-	 *
-	 * @return Title[]
-	 */
-	public function getBrokenLinksFrom() {
-		wfDeprecated( __METHOD__, '1.42' );
-		if ( $this->getArticleID() == 0 ) {
-			# All links from article ID 0 are false positives
-			return [];
-		}
-
-		$dbr = $this->getDbProvider()->getReplicaDatabase();
-		$res = $dbr->newSelectQueryBuilder()
-			->select( [ 'pl_namespace', 'pl_title' ] )
-			->from( 'pagelinks' )
-			->leftJoin( 'page', null, [ 'pl_namespace=page_namespace', 'pl_title=page_title' ] )
-			->where( [ 'pl_from' => $this->getArticleID(), 'page_namespace' => null ] )
-			->caller( __METHOD__ )->fetchResultSet();
-
-		$retVal = [];
-		foreach ( $res as $row ) {
-			$retVal[] = self::makeTitle( $row->pl_namespace, $row->pl_title );
-		}
-		return $retVal;
-	}
-
-	/**
-	 * Get a list of URLs to purge from the CDN cache when this page changes.
-	 *
-	 * @deprecated since 1.35 Use HTMLCacheUpdater; hard-deprecated in 1.42
-	 * @return string[]
-	 */
-	public function getCdnUrls() {
-		wfDeprecated( __METHOD__, '1.35' );
-		$htmlCache = MediaWikiServices::getInstance()->getHtmlCacheUpdater();
-		return $htmlCache->getUrls( $this );
-	}
-
-	/**
-	 * Purge all applicable CDN URLs
-	 * @deprecated since 1.35 Use HTMLCacheUpdater; hard-deprecated in 1.42
-	 */
-	public function purgeSquid() {
-		wfDeprecated( __METHOD__, '1.35' );
-		$htmlCache = MediaWikiServices::getInstance()->getHtmlCacheUpdater();
-		$htmlCache->purgeTitleUrls( $this, $htmlCache::PURGE_INTENT_TXROUND_REFLECTED );
-	}
-
-	/**
 	 * Locks the page row and check if this page is single revision redirect
 	 *
 	 * This updates the cached fields of this instance via Title::loadFromRow()
@@ -2995,7 +2926,7 @@ class Title implements LinkTarget, PageIdentity {
 				->select( '1' )
 				->forUpdate()
 				->from( 'revision' )
-				->where( [ 'rev_page' => $this->mArticleID, 'rev_id != ' . (int)$this->mLatestID ] )
+				->where( [ 'rev_page' => $this->mArticleID, $dbw->expr( 'rev_id', '!=', (int)$this->mLatestID ) ] )
 				->caller( __METHOD__ )->fetchField();
 		} else {
 			$isSingleRevRedirect = false;
@@ -3136,8 +3067,12 @@ class Title implements LinkTarget, PageIdentity {
 
 		if ( $this->mEstimateRevisions === null ) {
 			$dbr = $this->getDbProvider()->getReplicaDatabase();
-			$this->mEstimateRevisions = $dbr->estimateRowCount( 'revision', '*',
-				[ 'rev_page' => $this->getArticleID() ], __METHOD__ );
+			$this->mEstimateRevisions = $dbr->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'revision' )
+				->where( [ 'rev_page' => $this->getArticleID() ] )
+				->caller( __METHOD__ )
+				->estimateRowCount();
 		}
 
 		return $this->mEstimateRevisions;
@@ -3226,16 +3161,6 @@ class Title implements LinkTarget, PageIdentity {
 		$isKnown = null;
 
 		$services = MediaWikiServices::getInstance();
-		/**
-		 * Allows overriding default behavior for determining if a page exists.
-		 * If $isKnown is kept as null, regular checks happen. If it's
-		 * a boolean, this value is returned by the isKnown method.
-		 *
-		 * @since 1.20
-		 *
-		 * @param Title $title
-		 * @param bool|null $isKnown
-		 */
 		( new HookRunner( $services->getHookContainer() ) )->onTitleIsAlwaysKnown( $this, $isKnown );
 
 		if ( $isKnown !== null ) {
@@ -3334,7 +3259,7 @@ class Title implements LinkTarget, PageIdentity {
 	 *    - Disallowing a save. When attempting to create a MediaWiki-namespace
 	 *      page with the proposed content matching the interface message default,
 	 *      the save is rejected, the same way we disallow blank pages from being
-	 *      created. (EditPage::internalAttemptSave)
+	 *      created. (EditPage using DefaultTextConstraint)
 	 *
 	 * - ApiEditPage:
 	 *    - Default content, when using the 'prepend' or 'append' feature.
@@ -3673,10 +3598,12 @@ class Title implements LinkTarget, PageIdentity {
 	 * e.g. the user language (such as special pages).
 	 *
 	 * @deprecated since 1.42 Use ParserOutput::getLanguage instead. See also OutputPage::getContLangForJS.
+	 *   Hard-deprecated since 1.43.
 	 * @since 1.20
 	 * @return Language
 	 */
 	public function getPageViewLanguage() {
+		wfDeprecated( __METHOD__, '1.42' );
 		$services = MediaWikiServices::getInstance();
 
 		if ( $this->isSpecialPage() ) {

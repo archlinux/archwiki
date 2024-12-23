@@ -1,11 +1,12 @@
 /**
  * @class Dialog
- * @classdesc FeedbackDialog for use within the context mw.Feedback. Typically
+ * @classdesc Feedback dialog for use within the context mw.Feedback. Typically
  * constructed using {@link mw.Feedback#launch} instead of directly using the constructor.
  * @memberof mw.Feedback
  * @extends OO.ui.ProcessDialog
  *
  * @constructor
+ * @description Create an instance of `mw.Feedback.Dialog`.
  * @param {Object} config Configuration object
  */
 function FeedbackDialog( config ) {
@@ -49,9 +50,6 @@ FeedbackDialog.static.actions = [
  * @inheritdoc
  */
 FeedbackDialog.prototype.initialize = function () {
-	var feedbackSubjectFieldLayout, feedbackMessageFieldLayout,
-		feedbackFieldsetLayout, termsOfUseLabel;
-
 	// Parent method
 	FeedbackDialog.super.prototype.initialize.call( this );
 
@@ -71,13 +69,13 @@ FeedbackDialog.prototype.initialize = function () {
 	this.feedbackMessageInput = new OO.ui.MultilineTextInputWidget( {
 		autosize: true
 	} );
-	feedbackSubjectFieldLayout = new OO.ui.FieldLayout( this.feedbackSubjectInput, {
+	const feedbackSubjectFieldLayout = new OO.ui.FieldLayout( this.feedbackSubjectInput, {
 		label: mw.msg( 'feedback-subject' )
 	} );
-	feedbackMessageFieldLayout = new OO.ui.FieldLayout( this.feedbackMessageInput, {
+	const feedbackMessageFieldLayout = new OO.ui.FieldLayout( this.feedbackMessageInput, {
 		label: mw.msg( 'feedback-message' )
 	} );
-	feedbackFieldsetLayout = new OO.ui.FieldsetLayout( {
+	const feedbackFieldsetLayout = new OO.ui.FieldsetLayout( {
 		items: [ feedbackSubjectFieldLayout, feedbackMessageFieldLayout ],
 		classes: [ 'mw-feedbackDialog-feedback-form' ]
 	} );
@@ -89,9 +87,9 @@ FeedbackDialog.prototype.initialize = function () {
 		align: 'inline'
 	} );
 
-	var $termsOfUseLabelText = $( '<p>' ).append( mw.message( 'feedback-termsofuse' ).parseDom() );
+	const $termsOfUseLabelText = $( '<p>' ).append( mw.message( 'feedback-termsofuse' ).parseDom() );
 	$termsOfUseLabelText.find( 'a' ).attr( 'target', '_blank' );
-	termsOfUseLabel = new OO.ui.LabelWidget( {
+	const termsOfUseLabel = new OO.ui.LabelWidget( {
 		classes: [ 'mw-feedbackDialog-feedback-termsofuse' ],
 		label: $termsOfUseLabelText
 	} );
@@ -119,7 +117,7 @@ FeedbackDialog.prototype.initialize = function () {
  * @memberof mw.Feedback.Dialog
  */
 FeedbackDialog.prototype.validateFeedbackForm = function () {
-	var isValid = (
+	const isValid = (
 		(
 			!this.useragentMandatory ||
 			this.useragentCheckbox.isSelected()
@@ -147,7 +145,7 @@ FeedbackDialog.prototype.getSetupProcess = function ( data ) {
 		.next( function () {
 			// Get the URL of the target page, we want to use that in links in the intro
 			// and in the success dialog
-			var dialog = this;
+			const dialog = this;
 			if ( data.foreignApi ) {
 				return data.foreignApi.get( {
 					action: 'query',
@@ -155,7 +153,7 @@ FeedbackDialog.prototype.getSetupProcess = function ( data ) {
 					inprop: 'url',
 					formatversion: 2,
 					titles: data.settings.title.getPrefixedText()
-				} ).then( function ( response ) {
+				} ).then( ( response ) => {
 					dialog.feedbackPageUrl = OO.getProp( response, 'query', 'pages', 0, 'canonicalurl' );
 				} );
 			} else {
@@ -163,8 +161,7 @@ FeedbackDialog.prototype.getSetupProcess = function ( data ) {
 			}
 		}, this )
 		.next( function () {
-			var $link,
-				settings = data.settings;
+			const settings = data.settings;
 			data.contents = data.contents || {};
 
 			// Prefill subject/message
@@ -185,7 +182,7 @@ FeedbackDialog.prototype.getSetupProcess = function ( data ) {
 			this.useragentMandatory = settings.useragentCheckbox.mandatory;
 			this.useragentFieldLayout.toggle( settings.useragentCheckbox.show );
 
-			$link = $( '<a>' )
+			const $link = $( '<a>' )
 				.attr( 'href', this.feedbackPageUrl )
 				.attr( 'target', '_blank' )
 				.text( this.feedbackPageName );
@@ -226,15 +223,15 @@ FeedbackDialog.prototype.getActionProcess = function ( action ) {
 		}, this );
 	} else if ( action === 'submit' ) {
 		return new OO.ui.Process( function () {
-			var fb = this,
+			const fb = this,
 				userAgentMessage = ':' +
 					'<small>' +
 					mw.msg( 'feedback-useragent' ) +
 					' ' +
 					mw.html.escape( navigator.userAgent ) +
 					'</small>\n\n',
-				subject = this.feedbackSubjectInput.getValue(),
-				message = this.feedbackMessageInput.getValue();
+				subject = this.feedbackSubjectInput.getValue();
+			let message = this.feedbackMessageInput.getValue();
 
 			// Add user agent if checkbox is selected
 			if ( this.useragentCheckbox.isSelected() ) {
@@ -242,16 +239,12 @@ FeedbackDialog.prototype.getActionProcess = function ( action ) {
 			}
 
 			// Post the message
-			return this.messagePosterPromise.then( function ( poster ) {
-				return fb.postMessage( poster, subject, message );
-			}, function () {
+			return this.messagePosterPromise.then( ( poster ) => fb.postMessage( poster, subject, message ), () => {
 				fb.status = 'error4';
 				mw.log.warn( 'Feedback report failed because MessagePoster could not be fetched' );
-			} ).then( function () {
+			} ).then( () => {
 				fb.close();
-			}, function () {
-				return fb.getErrorMessage();
-			} );
+			}, () => fb.getErrorMessage() );
 		}, this );
 	}
 	// Fallback to parent handler
@@ -286,14 +279,14 @@ FeedbackDialog.prototype.getErrorMessage = function () {
  * @return {jQuery.Promise} Promise representing success of message posting action
  */
 FeedbackDialog.prototype.postMessage = function ( poster, subject, message ) {
-	var fb = this;
+	const fb = this;
 
 	return poster.post(
 		subject,
 		message
-	).then( function () {
+	).then( () => {
 		fb.status = 'submitted';
-	}, function ( mainCode, secondaryCode, details ) {
+	}, ( mainCode, secondaryCode, details ) => {
 		if ( mainCode === 'api-fail' ) {
 			if ( secondaryCode === 'http' ) {
 				fb.status = 'error3';

@@ -6,8 +6,6 @@
 /**
  * jQuery plugin to fade or snap to visible state.
  *
- * @memberof jQueryPlugins
- * @method goIn
  * @param {boolean} [instantToggle=false]
  * @return {jQuery}
  */
@@ -21,8 +19,6 @@ $.fn.goIn = function ( instantToggle ) {
 /**
  * jQuery plugin to fade or snap to hiding state.
  *
- * @memberof jQueryPlugins
- * @method goOut
  * @param {boolean} [instantToggle=false]
  * @return {jQuery}
  */
@@ -33,14 +29,14 @@ $.fn.goOut = function ( instantToggle ) {
 	return this.stop( true, true ).fadeOut();
 };
 
-mw.hook( 'htmlform.enhance' ).add( function ( $root ) {
+mw.hook( 'htmlform.enhance' ).add( ( $root ) => {
 	/**
 	 * @ignore
 	 * @param {boolean|jQuery.Event} instant
 	 */
 	function handleSelectOrOther( instant ) {
-		var $select = $( this ).find( 'select' ),
-			$other = $( this ).find( 'input' );
+		const $select = $( this ).find( 'select' );
+		let $other = $( this ).find( 'input' );
 		$other = $other.add( $other.siblings( 'br' ) );
 		if ( $select.val() === 'other' ) {
 			$other.goIn( instant );

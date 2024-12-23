@@ -21,9 +21,11 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
-use ContentHandler;
 use Job as JobParent;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
@@ -31,8 +33,6 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 use MediaWiki\Watchlist\WatchlistManager;
 use RecentChange;
-use RequestContext;
-use TextContent;
 use Wikimedia\ScopedCallback;
 
 /**

@@ -3,8 +3,8 @@
 namespace Cite\Tests\Unit;
 
 use Cite\ResourceLoader\CitationToolDefinition;
+use MediaWiki\Message\Message;
 use MediaWiki\ResourceLoader\Context;
-use Message;
 
 /**
  * @covers \Cite\ResourceLoader\CitationToolDefinition

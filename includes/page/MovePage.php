@@ -21,15 +21,15 @@
 namespace MediaWiki\Page;
 
 use ChangeTags;
-use ContentHandler;
 use File;
-use IDBAccessObject;
-use LogFormatter;
+use LogFormatterFactory;
 use ManualLogEntry;
 use MediaWiki\Collation\CollationFactory;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\AtomicSectionUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
@@ -49,14 +49,14 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use RepoGroup;
-use RuntimeException;
 use StringUtils;
-use WatchedItemStoreInterface;
+use Wikimedia\NormalizedException\NormalizedException;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use WikiPage;
-use WikitextContent;
 
 /**
  * Handles the backend logic of moving a page from one title
@@ -66,85 +66,26 @@ use WikitextContent;
  */
 class MovePage {
 
-	/**
-	 * @var Title
-	 */
-	protected $oldTitle;
-
-	/**
-	 * @var Title
-	 */
-	protected $newTitle;
-
-	/**
-	 * @var ServiceOptions
-	 */
-	protected $options;
-
-	/**
-	 * @var IConnectionProvider
-	 */
-	protected $dbProvider;
-
-	/**
-	 * @var NamespaceInfo
-	 */
-	protected $nsInfo;
-
-	/**
-	 * @var WatchedItemStoreInterface
-	 */
-	protected $watchedItems;
-
-	/**
-	 * @var RepoGroup
-	 */
-	protected $repoGroup;
-
-	/**
-	 * @var IContentHandlerFactory
-	 */
-	private $contentHandlerFactory;
-
-	/**
-	 * @var RevisionStore
-	 */
-	private $revisionStore;
-
-	/**
-	 * @var SpamChecker
-	 */
-	private $spamChecker;
-
-	/**
-	 * @var HookRunner
-	 */
-	private $hookRunner;
-
-	/**
-	 * @var WikiPageFactory
-	 */
-	private $wikiPageFactory;
-
-	/**
-	 * @var UserFactory
-	 */
-	private $userFactory;
-
-	/** @var UserEditTracker */
-	private $userEditTracker;
-
-	/** @var MovePageFactory */
-	private $movePageFactory;
-
-	/** @var CollationFactory */
-	public $collationFactory;
-
-	/** @var PageUpdaterFactory */
-	private $pageUpdaterFactory;
-
-	/** @var RestrictionStore */
-	private $restrictionStore;
+	protected Title $oldTitle;
+	protected Title $newTitle;
+	protected ServiceOptions $options;
+	protected IConnectionProvider $dbProvider;
+	protected NamespaceInfo $nsInfo;
+	protected WatchedItemStoreInterface $watchedItems;
+	protected RepoGroup $repoGroup;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private RevisionStore $revisionStore;
+	private SpamChecker $spamChecker;
+	private HookRunner $hookRunner;
+	private WikiPageFactory $wikiPageFactory;
+	private UserFactory $userFactory;
+	private UserEditTracker $userEditTracker;
+	private MovePageFactory $movePageFactory;
+	public CollationFactory $collationFactory;
+	private PageUpdaterFactory $pageUpdaterFactory;
+	private RestrictionStore $restrictionStore;
+	private DeletePageFactory $deletePageFactory;
+	private LogFormatterFactory $logFormatterFactory;
 
 	/** @var int */
 	private $maximumMovedPages;
@@ -159,25 +100,6 @@ class MovePage {
 
 	/**
 	 * @see MovePageFactory
-	 *
-	 * @param Title $oldTitle
-	 * @param Title $newTitle
-	 * @param ServiceOptions $options
-	 * @param IConnectionProvider $dbProvider
-	 * @param NamespaceInfo $nsInfo
-	 * @param WatchedItemStoreInterface $watchedItems
-	 * @param RepoGroup $repoGroup
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param RevisionStore $revisionStore
-	 * @param SpamChecker $spamChecker
-	 * @param HookContainer $hookContainer
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param UserFactory $userFactory
-	 * @param UserEditTracker $userEditTracker
-	 * @param MovePageFactory $movePageFactory
-	 * @param CollationFactory $collationFactory
-	 * @param PageUpdaterFactory $pageUpdaterFactory
-	 * @param RestrictionStore $restrictionStore
 	 */
 	public function __construct(
 		Title $oldTitle,
@@ -197,7 +119,9 @@ class MovePage {
 		MovePageFactory $movePageFactory,
 		CollationFactory $collationFactory,
 		PageUpdaterFactory $pageUpdaterFactory,
-		RestrictionStore $restrictionStore
+		RestrictionStore $restrictionStore,
+		DeletePageFactory $deletePageFactory,
+		LogFormatterFactory $logFormatterFactory
 	) {
 		$this->oldTitle = $oldTitle;
 		$this->newTitle = $newTitle;
@@ -218,6 +142,8 @@ class MovePage {
 		$this->collationFactory = $collationFactory;
 		$this->pageUpdaterFactory = $pageUpdaterFactory;
 		$this->restrictionStore = $restrictionStore;
+		$this->deletePageFactory = $deletePageFactory;
+		$this->logFormatterFactory = $logFormatterFactory;
 
 		$this->maximumMovedPages = $this->options->get( MainConfigNames::MaximumMovedPages );
 	}
@@ -254,7 +180,7 @@ class MovePage {
 			$status->fatal( 'spamprotectiontext' );
 		}
 
-		$tp = $this->newTitle->getTitleProtection();
+		$tp = $this->restrictionStore->getCreateProtection( $this->newTitle ) ?: false;
 		if ( $tp !== false && !$performer->isAllowed( $tp['permission'] ) ) {
 			$status->fatal( 'cantmove-titleprotected' );
 		}
@@ -266,8 +192,8 @@ class MovePage {
 			$this->oldTitle, $this->newTitle, $user, $reason, $status );
 		// TODO: remove conversion code after hook signature is changed.
 		$permissionStatus = PermissionStatus::newEmpty();
-		foreach ( $status->getErrorsArray() as $error ) {
-			$permissionStatus->fatal( ...$error );
+		foreach ( $status->getMessages() as $msg ) {
+			$permissionStatus->fatal( $msg );
 		}
 		return $permissionStatus;
 	}
@@ -283,7 +209,7 @@ class MovePage {
 	 * @param string|null $reason
 	 * @return PermissionStatus
 	 */
-	public function probablyCanMove( Authority $performer, string $reason = null ): PermissionStatus {
+	public function probablyCanMove( Authority $performer, ?string $reason = null ): PermissionStatus {
 		return $this->authorizeInternal(
 			static function ( string $action, PageIdentity $target, PermissionStatus $status ) use ( $performer ) {
 				return $performer->probablyCan( $action, $target, $status );
@@ -304,7 +230,7 @@ class MovePage {
 	 * @param string|null $reason
 	 * @return PermissionStatus
 	 */
-	public function authorizeMove( Authority $performer, string $reason = null ): PermissionStatus {
+	public function authorizeMove( Authority $performer, ?string $reason = null ): PermissionStatus {
 		return $this->authorizeInternal(
 			static function ( string $action, PageIdentity $target, PermissionStatus $status ) use ( $performer ) {
 				return $performer->authorizeWrite( $action, $target, $status );
@@ -896,17 +822,18 @@ class MovePage {
 					$this->oldTitle->getPrefixedText()
 				)->inContentLanguage()->text();
 			$newpage = $this->wikiPageFactory->newFromTitle( $nt );
-			$errs = [];
-			$status = $newpage->doDeleteArticleReal(
-				$overwriteMessage,
-				$user,
-				/* $suppress */ false,
-				/* unused */ null,
-				$errs,
-				/* unused */ null,
-				$changeTags,
-				'delete_redir'
-			);
+			// TODO The public methods of this class should take an Authority.
+			$moverAuthority = $this->userFactory->newFromUserIdentity( $user );
+			$deletePage = $this->deletePageFactory->newDeletePage( $newpage, $moverAuthority );
+			$status = $deletePage
+				->setTags( $changeTags )
+				->setLogSubtype( 'delete_redir' )
+				->deleteUnsafe( $overwriteMessage );
+			if ( $status->isGood() && $deletePage->deletionsWereScheduled()[DeletePage::PAGE_BASE] ) {
+				// FIXME Scheduled deletion not properly handled here -- it should probably either ensure an
+				// immediate deletion or not fail if it was scheduled.
+				$status->warning( 'delete-scheduled', wfEscapeWikiText( $nt->getPrefixedText() ) );
+			}
 
 			if ( !$status->isGood() ) {
 				return $status;
@@ -949,7 +876,7 @@ class MovePage {
 			'5::noredir' => $redirectContent ? '0' : '1',
 		] );
 
-		$formatter = LogFormatter::newFromEntry( $logEntry );
+		$formatter = $this->logFormatterFactory->newFromEntry( $logEntry );
 		$formatter->setContext( RequestContext::newExtraneousContext( $this->oldTitle ) );
 		$comment = $formatter->getPlainActionText();
 		if ( $reason ) {
@@ -988,11 +915,15 @@ class MovePage {
 		);
 		if ( $nullRevision === null ) {
 			$id = $nt->getArticleID( IDBAccessObject::READ_EXCLUSIVE );
-			$msg = 'Failed to create null revision while moving page ID ' .
-				$oldid . ' to ' . $nt->getPrefixedDBkey() . " (page ID $id)";
-
 			// XXX This should be handled more gracefully
-			throw new RuntimeException( $msg );
+			throw new NormalizedException( 'Failed to create null revision while ' .
+				'moving page ID {oldId} to {prefixedDBkey} (page ID {id})',
+				[
+					'oldId' => $oldid,
+					'prefixedDBkey' => $nt->getPrefixedDBkey(),
+					'id' => $id,
+				]
+			);
 		}
 
 		$nullRevision = $this->revisionStore->insertRevisionOn( $nullRevision, $dbw );

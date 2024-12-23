@@ -14,11 +14,9 @@ ve.dm.mwExample = {};
 
 ve.dm.mwExample.baseUri = 'http://example.com/wiki/';
 
-ve.dm.mwExample.createExampleDocument = ( name, store, base ) =>
-	ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.mwExample, base || ve.dm.mwExample.baseUri );
+ve.dm.mwExample.createExampleDocument = ( name, store, base ) => ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.mwExample, base || ve.dm.mwExample.baseUri );
 
-ve.dm.mwExample.createExampleDocumentFromData = ( data, store, base ) =>
-	ve.dm.example.createExampleDocumentFromData( data, store, base || ve.dm.mwExample.baseUri );
+ve.dm.mwExample.createExampleDocumentFromData = ( data, store, base ) => ve.dm.example.createExampleDocumentFromData( data, store, base || ve.dm.mwExample.baseUri );
 
 ve.dm.mwExample.MWTransclusion = {
 	blockOpen: ve.dm.example.singleLine`
@@ -319,7 +317,7 @@ ve.dm.mwExample.MWBlockImage = {
 		},
 		{ type: 'mwImageCaption' },
 		{ type: 'paragraph', internal: { generated: 'wrapper' } },
-		'a', 'b', 'c',
+		...'abc',
 		{ type: '/paragraph' },
 		{ type: '/mwImageCaption' },
 		{ type: '/mwBlockImage' }
@@ -402,7 +400,7 @@ ve.dm.mwExample.mwNowikiAnnotation = {
 
 ve.dm.mwExample.mwNowiki = [
 	{ type: 'paragraph' },
-	'F', 'o', 'o',
+	...'Foo',
 	[ '[', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
 	[ '[', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
 	[ 'B', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
@@ -410,7 +408,7 @@ ve.dm.mwExample.mwNowiki = [
 	[ 'r', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
 	[ ']', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
 	[ ']', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
-	'B', 'a', 'z',
+	...'Baz',
 	{ type: '/paragraph' },
 	{ type: 'internalList' },
 	{ type: '/internalList' }
@@ -441,9 +439,7 @@ ve.dm.mwExample.withMeta = [
 	},
 	{ type: '/mwAlienMeta' },
 	{ type: 'paragraph' },
-	'F',
-	'o',
-	'o',
+	...'Foo',
 	{
 		type: 'mwCategory',
 		attributes: {
@@ -452,16 +448,13 @@ ve.dm.mwExample.withMeta = [
 		}
 	},
 	{ type: '/mwCategory' },
-	'B',
-	'a',
-	'r',
+	...'Bar',
 	{
 		type: 'mwAlienMeta',
 		originalDomElements: $.parseHTML( '<meta property="mw:foo" content="bar" />' )
 	},
 	{ type: '/mwAlienMeta' },
-	'B',
-	'a',
+	...'Ba',
 	{
 		type: 'comment',
 		attributes: {
@@ -528,14 +521,7 @@ ve.dm.mwExample.withMetaRealData = [
 	},
 	{ type: '/mwAlienMeta' },
 	{ type: 'paragraph' },
-	'F',
-	'o',
-	'o',
-	'B',
-	'a',
-	'r',
-	'B',
-	'a',
+	...'FooBarBa',
 	{
 		type: 'comment',
 		attributes: {
@@ -860,10 +846,10 @@ ve.dm.mwExample.domToDataCases = {
 					level: 2
 				}
 			},
-			'F', 'o', 'o',
+			...'Foo',
 			{ type: '/mwHeading' },
 			{ type: 'mwPreformatted' },
-			'B', 'a', 'r',
+			...'Bar',
 			{ type: '/mwPreformatted' },
 			{ type: 'internalList' },
 			{ type: '/internalList' }
@@ -886,7 +872,7 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'tableRow' },
 			{ type: 'tableCell', attributes: { style: 'data' } },
 			{ type: 'paragraph', internal: { generated: 'wrapper' } },
-			'F', 'o', 'o',
+			...'Foo',
 			{ type: '/paragraph' },
 			{ type: '/tableCell' },
 			{ type: '/tableRow' },
@@ -1119,7 +1105,7 @@ ve.dm.mwExample.domToDataCases = {
 					generated: 'wrapper'
 				}
 			},
-			'C', 'a', 'p', 't', 'i', 'o', 'n',
+			...'Caption',
 			{ type: '/paragraph' },
 			{ type: '/mwGalleryImageCaption' },
 			{ type: '/mwGalleryImage' },
@@ -1381,7 +1367,7 @@ ve.dm.mwExample.domToDataCases = {
 					generated: 'wrapper'
 				}
 			},
-			'C', 'a', 'p', 't', 'i', 'o', 'n',
+			...'Caption',
 			{ type: '/paragraph' },
 			{ type: '/mwImageCaption' },
 			{ type: '/mwBlockImage' },
@@ -1890,7 +1876,7 @@ ve.dm.mwExample.domToDataCases = {
 		body: '<p>Foo<a rel="mw:ExtLink" href="http://www.example.com"></a>Bar</p>',
 		data: [
 			{ type: 'paragraph' },
-			'F', 'o', 'o',
+			...'Foo',
 			{
 				type: 'link/mwNumberedExternal',
 				attributes: {
@@ -1898,7 +1884,7 @@ ve.dm.mwExample.domToDataCases = {
 				}
 			},
 			{ type: '/link/mwNumberedExternal' },
-			'B', 'a', 'r',
+			...'Bar',
 			{ type: '/paragraph' },
 			{ type: 'internalList' },
 			{ type: '/internalList' }
@@ -1909,7 +1895,7 @@ ve.dm.mwExample.domToDataCases = {
 		body: '<p>Foo<a rel="ve:NumberedLink" href="http://www.example.com">[1]</a>Bar</p>',
 		data: [
 			{ type: 'paragraph' },
-			'F', 'o', 'o',
+			...'Foo',
 			{
 				type: 'link/mwNumberedExternal',
 				attributes: {
@@ -1917,7 +1903,7 @@ ve.dm.mwExample.domToDataCases = {
 				}
 			},
 			{ type: '/link/mwNumberedExternal' },
-			'B', 'a', 'r',
+			...'Bar',
 			{ type: '/paragraph' },
 			{ type: 'internalList' },
 			{ type: '/internalList' }
@@ -1991,9 +1977,7 @@ ve.dm.mwExample.domToDataCases = {
 					whitespace: [ undefined, undefined, undefined, '\n' ]
 				}
 			},
-			'F',
-			'o',
-			'o',
+			...'Foo',
 			{ type: '/paragraph' },
 			{
 				type: 'mwLanguage',
@@ -2125,9 +2109,7 @@ ve.dm.mwExample.domToDataCases = {
 				}
 			},
 			{ type: '/mwEntity' },
-			':',
-			' ',
-			'b',
+			...': b',
 			{ type: '/paragraph' },
 			{ type: 'internalList' },
 			{ type: '/internalList' }
@@ -2163,22 +2145,13 @@ ve.dm.mwExample.domToDataCases = {
 		body: '<p> a  <span typeof="mw:Entity"> </span>   b    <span typeof="mw:Entity">¥</span>\t<span typeof="mw:Entity">™</span></p>',
 		data: [
 			{ type: 'paragraph', internal: { whitespace: [ undefined, ' ' ] } },
-			'a',
-			' ',
-			' ',
+			...'a  ',
 			{
 				type: 'mwEntity',
 				attributes: { character: ' ' }
 			},
 			{ type: '/mwEntity' },
-			' ',
-			' ',
-			' ',
-			'b',
-			' ',
-			' ',
-			' ',
-			' ',
+			...'   b    ',
 			{
 				type: 'mwEntity',
 				attributes: { character: '¥' }
@@ -2214,10 +2187,11 @@ ve.dm.mwExample.domToDataCases = {
 	},
 	'thumb image': {
 		body: ve.dm.mwExample.MWBlockImage.html,
-		data: ve.dm.mwExample.MWBlockImage.data.concat( [
+		data: [
+			...ve.dm.mwExample.MWBlockImage.data,
 			{ type: 'internalList' },
 			{ type: '/internalList' }
-		] ),
+		],
 		storeItems: ve.dm.mwExample.MWBlockImage.storeItems
 	},
 	'broken block image': {
@@ -2262,7 +2236,7 @@ ve.dm.mwExample.domToDataCases = {
 			},
 			{ type: 'mwImageCaption' },
 			{ type: 'paragraph', internal: { generated: 'wrapper' } },
-			'a', 'b', 'c',
+			...'abc',
 			{ type: '/paragraph' },
 			{ type: '/mwImageCaption' },
 			{ type: '/mwBlockImage' },
@@ -2377,7 +2351,7 @@ ve.dm.mwExample.domToDataCases = {
 			},
 			{ type: 'mwImageCaption', internal: { whitespace: [ undefined, ' ' ] } },
 			{ type: 'paragraph', internal: { generated: 'wrapper', whitespace: [ ' ' ] } },
-			'f', 'o', 'o', ' ',
+			...'foo ',
 			[
 				'b',
 				[ {
@@ -2411,7 +2385,7 @@ ve.dm.mwExample.domToDataCases = {
 					}
 				} ]
 			],
-			' ', 'b', 'a', 'z',
+			...' baz',
 			{ type: '/paragraph' },
 			{ type: '/mwImageCaption' },
 			{ type: '/mwBlockImage' },

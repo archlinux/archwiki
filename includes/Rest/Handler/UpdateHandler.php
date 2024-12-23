@@ -2,13 +2,14 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use FormatJson;
-use IApiMessage;
+use MediaWiki\Api\IApiMessage;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\ParamValidator\TypeDef\ArrayDef;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Utils\MWTimestamp;
-use TextContent;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -48,6 +49,14 @@ class UpdateHandler extends EditHandler {
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
 			],
+		] + parent::getParamSettings();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getBodyParamSettings(): array {
+		return [
 			'source' => [
 				self::PARAM_SOURCE => 'body',
 				ParamValidator::PARAM_TYPE => 'string',
@@ -67,11 +76,12 @@ class UpdateHandler extends EditHandler {
 				self::PARAM_SOURCE => 'body',
 				ParamValidator::PARAM_TYPE => 'array',
 				ParamValidator::PARAM_REQUIRED => false,
+				ArrayDef::PARAM_SCHEMA => ArrayDef::makeObjectSchema(
+					[ 'id' => 'integer' ],
+					[ 'timestamp' => 'string' ], // from GET response, will be ignored
+				),
 			],
-
-		]
-			+ $this->getTokenParamDefinition()
-			+ parent::getParamSettings();
+		] + $this->getTokenParamDefinition();
 	}
 
 	/**

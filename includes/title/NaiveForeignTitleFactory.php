@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Title;
 
-use Language;
+use MediaWiki\Language\Language;
 
 /**
  * A parser that translates page titles on a foreign wiki into ForeignTitle
@@ -28,12 +28,8 @@ use Language;
  */
 class NaiveForeignTitleFactory implements ForeignTitleFactory {
 
-	/** @var Language */
-	private $contentLanguage;
+	private Language $contentLanguage;
 
-	/**
-	 * @param Language $contentLanguage
-	 */
 	public function __construct( Language $contentLanguage ) {
 		$this->contentLanguage = $contentLanguage;
 	}

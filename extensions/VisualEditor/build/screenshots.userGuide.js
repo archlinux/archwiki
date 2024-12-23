@@ -11,7 +11,7 @@ function runTests( lang ) {
 
 	test.describe( 'Screenshots: ' + lang, function () {
 		this.lang = lang;
-		test.it( 'Screenshots', function () {
+		test.it( 'Screenshots', () => {
 
 			// Toolbar & action tools
 			runLang( 'VisualEditor_toolbar', userGuide.toolbar, 0 );
@@ -57,6 +57,6 @@ function runTests( lang ) {
 	} );
 }
 
-langs.forEach( function ( lang ) {
+langs.forEach( ( lang ) => {
 	runTests( lang );
 } );

@@ -17,7 +17,6 @@ use Psr\Log\NullLogger;
  * subclasses of MediaWikiIntegrationTestCase or MediaWikiUnitTestCase.
  *
  * @stable to use
- * @package MediaWiki\Tests\Unit\Auth
  */
 
 trait AuthenticationProviderTestTrait {
@@ -34,11 +33,11 @@ trait AuthenticationProviderTestTrait {
 	 */
 	private function initProvider(
 		AbstractAuthenticationProvider $provider,
-		Config $config = null,
-		LoggerInterface $logger = null,
-		AuthManager $manager = null,
-		HookContainer $hookContainer = null,
-		UserNameUtils $userNameUtils = null
+		?Config $config = null,
+		?LoggerInterface $logger = null,
+		?AuthManager $manager = null,
+		?HookContainer $hookContainer = null,
+		?UserNameUtils $userNameUtils = null
 	) {
 		$provider->init(
 			$logger ?? new NullLogger(),

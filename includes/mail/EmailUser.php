@@ -32,17 +32,22 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserFactory;
-use MessageSpecifier;
 use StatusValue;
 use UnexpectedValueException;
 use Wikimedia\Message\IMessageFormatterFactory;
 use Wikimedia\Message\ITextFormatter;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Message\MessageValue;
 
 /**
- * Command for sending emails to users. This class is stateless and can be used for multiple sends.
+ * Send email between two wiki users.
+ *
+ * Obtain via EmailUserFactory
+ *
+ * This class is stateless and can be used for multiple sends.
  *
  * @since 1.40
+ * @ingroup Mail
  */
 class EmailUser {
 	/**
@@ -57,27 +62,21 @@ class EmailUser {
 	];
 
 	private ServiceOptions $options;
-
 	private HookRunner $hookRunner;
-
 	private UserOptionsLookup $userOptionsLookup;
-
 	private CentralIdLookup $centralIdLookup;
-
 	private UserFactory $userFactory;
-
 	private IEmailer $emailer;
-
 	private IMessageFormatterFactory $messageFormatterFactory;
-
 	private ITextFormatter $contLangMsgFormatter;
-
 	private Authority $sender;
 
 	/** @var string Temporary property to support the deprecated EmailUserPermissionsErrors hook */
 	private string $editToken = '';
 
 	/**
+	 * @internal For use by EmailUserFactory.
+	 *
 	 * @param ServiceOptions $options
 	 * @param HookContainer $hookContainer
 	 * @param UserOptionsLookup $userOptionsLookup
@@ -295,7 +294,7 @@ class EmailUser {
 			} else {
 				// Setting $error to something else was deprecated in 1.29 and
 				// removed in 1.36, and so an exception is now thrown
-				$type = is_object( $error ) ? get_class( $error ) : gettype( $error );
+				$type = get_debug_type( $error );
 				throw new UnexpectedValueException(
 					'EmailUser hook set $error to unsupported type ' . $type
 				);

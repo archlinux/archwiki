@@ -1,10 +1,14 @@
 <?php
 
 use MediaWiki\Json\JsonCodec;
+use MediaWiki\Parser\ParserCache;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\PoolCounter\PoolWorkArticleViewCurrent;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use Psr\Log\NullLogger;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
@@ -27,7 +31,7 @@ class PoolWorkArticleViewCurrentTest extends PoolWorkArticleViewTest {
 	 */
 	protected function newPoolWorkArticleView(
 		WikiPage $page,
-		RevisionRecord $rev = null,
+		?RevisionRecord $rev = null,
 		$options = null
 	) {
 		if ( !$options ) {
@@ -85,7 +89,7 @@ class PoolWorkArticleViewCurrentTest extends PoolWorkArticleViewTest {
 
 		$cachedOutput = $parserCache->get( $page, $options );
 		$this->assertNotEmpty( $cachedOutput );
-		$this->assertSame( $status->getValue()->getText(), $cachedOutput->getText() );
+		$this->assertSame( $status->getValue()->getRawText(), $cachedOutput->getRawText() );
 	}
 
 	/**

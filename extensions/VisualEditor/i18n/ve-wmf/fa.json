@@ -6,11 +6,13 @@
 			"Beginneruser",
 			"Dalba",
 			"Darafsh",
+			"Ebrahim",
 			"Ebraminio",
 			"FarsiNevis",
 			"Huji",
 			"Iriman",
 			"Jdforrester",
+			"Jeeputer",
 			"Ladsgroup",
 			"Leyth",
 			"Mjbmr",
@@ -18,9 +20,7 @@
 			"Reza1615",
 			"Taha",
 			"درفش کاویانی",
-			"아라",
-			"Ebrahim",
-			"Jeeputer"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "بررسی ویرایش فکر می‌کند که محتوای جدیدی به صفحه افزوده شده است",
@@ -39,7 +39,6 @@
 	"visualeditor-feedback-link": "Project:ویرایشگر دیداری/بازخورد",
 	"visualeditor-feedback-tool": "گذاشتن بازخورد در مورد این نرم‌افزار",
 	"visualeditor-help-label": "راهنمای کاربر را بخوانید.",
-	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
 	"visualeditor-welcomedialog-action": "ویرایش را آغاز کنید",
 	"visualeditor-welcomedialog-content": "همه می‌توانند ویرایش و کمک کنند.",
 	"visualeditor-welcomedialog-content-thanks": "سپاس از شما بابت کمک به شناخت بهتر جهان!",

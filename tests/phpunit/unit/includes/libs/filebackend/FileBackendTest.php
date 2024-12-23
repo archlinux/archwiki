@@ -5,7 +5,6 @@ declare( strict_types = 1 );
 namespace Wikimedia\Tests\FileBackend;
 
 use Closure;
-use FileBackend;
 use InvalidArgumentException;
 use LockManager;
 use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
@@ -14,11 +13,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\NullLogger;
 use ScopedLock;
 use StatusValue;
+use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \FileBackend
+ * @covers \Wikimedia\FileBackend\FileBackend
  */
 class FileBackendTest extends MediaWikiUnitTestCase {
 	/**
@@ -245,21 +245,21 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 			'concurrency null' => [ 'concurrency', 50, [ 'concurrency' => null ] ],
 			'concurrency cast to int' => [ 'concurrency', 51, [ 'concurrency' => '51x' ] ],
 
-			'obResetFunc default value' => [ 'obResetFunc',
-				// I'd've thought the return type should be 'callable', but apparently protected
-				// methods aren't callable.
-				static function ( FileBackend $backend ): array {
-					return [ $backend, 'resetOutputBuffer' ];
-				} ],
-			'obResetFunc null' => [ 'obResetFunc',
-				static function ( FileBackend $backend ): array {
-					return [ $backend, 'resetOutputBuffer' ];
-				} ],
-			'obResetFunc set' => [ 'obResetFunc', 'wfSomeImaginaryFunction',
-				[ 'obResetFunc' => 'wfSomeImaginaryFunction' ] ],
+			'obResetFunc default value' =>
+				[ 'obResetFunc', [ FileBackend::class, 'resetOutputBufferTheDefaultWay' ] ],
+			'obResetFunc null' => [
+				'obResetFunc',
+				[ FileBackend::class, 'resetOutputBufferTheDefaultWay' ],
+				[ 'obResetFunc' => null ]
+			],
+			'obResetFunc set' => [
+				'obResetFunc',
+				'wfSomeImaginaryFunction',
+				[ 'obResetFunc' => 'wfSomeImaginaryFunction' ]
+			],
 
-			'streamMimeFunc default value' => [ 'streamMimeFunc', null ],
-			'streamMimeFunc set' => [ 'streamMimeFunc', 'smf', [ 'streamMimeFunc' => 'smf' ] ],
+			'headerFunc default value' => [ 'headerFunc', 'header' ],
+			'headerFunc set' => [ 'headerFunc', 'myHeaderFunc', [ 'headerFunc' => 'myHeaderFunc' ] ],
 
 			'profiler default value' => [ 'profiler', null ],
 			'profiler not callable' => [ 'profiler', null, [ 'profiler' => '!' ] ],
@@ -643,7 +643,7 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 
 		$this->assertStatusValue( 'myvalue', $status );
 		$this->assertSame( $lockStatus->isOK(), $status->isOK() );
-		$this->assertSame( $lockStatus->getErrors(), $status->getErrors() );
+		$this->assertStatusMessagesExactly( $lockStatus, $status );
 
 		if ( !$lockStatus->isOK() ) {
 			$this->assertNull( $scopedLock );
@@ -655,8 +655,7 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 
 		$this->assertStatusValue( 'myvalue', $status );
 		$this->assertSame( $lockStatus->isOK(), $status->isOK() );
-		$this->assertSame( array_merge( $lockStatus->getErrors(), $unlockStatus->getErrors() ),
-			$status->getErrors() );
+		$this->assertStatusMessagesExactly( $lockStatus->merge( $unlockStatus ), $status );
 	}
 
 	public static function provideGetScopedFileLocks(): array {

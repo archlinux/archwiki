@@ -68,7 +68,6 @@
 	"templatedata-modal-button-map": "მაპინგების რედაქტირება",
 	"templatedata-modal-button-importParams": "პარამეტრების იმპორტირება",
 	"templatedata-modal-button-removemap": "მაპინგის ამოშლა",
-	"templatedata-modal-button-restoreparam": "პარამეტრების აღდგენა",
 	"templatedata-modal-button-saveparam": "შენახვა",
 	"templatedata-modal-confirmcancel": "დარწმუნებული ხართ, რომ შეტანილი ცვლილებების უარყოფა გსურთ?",
 	"templatedata-modal-current-language": "ამჟამინდელი ენა: $1",

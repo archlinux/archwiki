@@ -1,8 +1,5 @@
 <?php
 
-use PHPUnit\Framework\DataProviderTestSuite;
-use PHPUnit\Framework\Error\Error;
-
 /**
  * AutoLoader for the testing suite.
  *
@@ -56,6 +53,7 @@ $wgAutoloadClasses += [
 	# tests/phpunit
 	'DynamicPropertyTestHelper' => "$testDir/phpunit/DynamicPropertyTestHelper.php",
 	'EmptyResourceLoader' => "$testDir/phpunit/ResourceLoaderTestCase.php",
+	'JsonSchemaAssertionTrait' => "$testDir/phpunit/JsonSchemaAssertionTrait.php",
 	'MediaWiki\\Tests\\ResourceLoader\\EmptyResourceLoader' => "$testDir/phpunit/ResourceLoaderTestCase.php",
 	'HamcrestPHPUnitIntegration' => "$testDir/phpunit/HamcrestPHPUnitIntegration.php",
 	'MediaWikiCoversValidator' => "$testDir/phpunit/MediaWikiCoversValidator.php",
@@ -114,8 +112,8 @@ $wgAutoloadClasses += [
 	# tests/phpunit/includes/cache
 	'LinkCacheTestTrait' => "$testDir/phpunit/includes/cache/LinkCacheTestTrait.php",
 
-	# tests/phpunit/includes/changes
-	'TestRecentChangesHelper' => "$testDir/phpunit/includes/changes/TestRecentChangesHelper.php",
+	# tests/phpunit/includes/recentchanges
+	'TestRecentChangesHelper' => "$testDir/phpunit/includes/recentchanges/TestRecentChangesHelper.php",
 
 	# tests/phpunit/includes/config
 	'TestAllServiceOptionsUsed' => "$testDir/phpunit/includes/config/TestAllServiceOptionsUsed.php",
@@ -132,6 +130,7 @@ $wgAutoloadClasses += [
 	'TextContentTest' => "$testDir/phpunit/includes/content/TextContentTest.php",
 	'TextContentHandlerIntegrationTest' => "$testDir/phpunit/includes/content/TextContentHandlerIntegrationTest.php",
 	'WikitextContentTest' => "$testDir/phpunit/includes/content/WikitextContentTest.php",
+	'JavaScriptContentHandlerTest' => "$testDir/phpunit/includes/content/JavaScriptContentHandlerTest.php",
 
 	# tests/phpunit/includes/db
 	'DatabaseTestHelper' => "$testDir/phpunit/includes/db/DatabaseTestHelper.php",
@@ -151,10 +150,13 @@ $wgAutoloadClasses += [
 	'LogFormatterTestCase' => "$testDir/phpunit/includes/logging/LogFormatterTestCase.php",
 
 	# tests/phpunit/includes/OutputTransform
+	'MediaWiki\\Tests\\OutputTransform\\DummyDOMTransformStage' => "$testDir/phpunit/includes/OutputTransform/DummyDOMTransformStage.php",
 	'MediaWiki\\Tests\\OutputTransform\\TestUtils' => "$testDir/phpunit/includes/OutputTransform/TestUtils.php",
 	'MediaWiki\\Tests\\OutputTransform\\OutputTransformStageTestBase' => "$testDir/phpunit/includes/OutputTransform/OutputTransformStageTestBase.php",
 
 	# tests/phpunit/includes/parser
+	'MediaWiki\\Tests\\Parser\\CacheTimeTest' => "$testDir/phpunit/includes/parser/CacheTimeTest.php",
+	'MediaWiki\\Tests\\Parser\\ParserOutputTest' => "$testDir/phpunit/includes/parser/ParserOutputTest.php",
 	'ParserIntegrationTest' => "$testDir/phpunit/suites/ParserIntegrationTest.php",
 	'MediaWiki\\Tests\\Parser\\ParserCacheSerializationTestCases' =>
 		"$testDir/phpunit/includes/parser/ParserCacheSerializationTestCases.php",
@@ -234,6 +236,7 @@ $wgAutoloadClasses += [
 	'MediaWiki\\Tests\\Unit\\FakeQqxMessageLocalizer' => "$testDir/phpunit/mocks/FakeQqxMessageLocalizer.php",
 	'MediaWiki\\Tests\\Unit\\MockBlockTrait' => "$testDir/phpunit/mocks/MockBlockTrait.php",
 	'MediaWiki\\Tests\\Unit\\MockServiceDependenciesTrait' => "$testDir/phpunit/mocks/MockServiceDependenciesTrait.php",
+	'MediaWiki\\Tests\\Language\\MockLocalisationCacheTrait' => "$testDir/phpunit/mocks/languages/MockLocalisationCacheTrait.php",
 	'MockBitmapHandler' => "$testDir/phpunit/mocks/media/MockBitmapHandler.php",
 	'MockChangesListFilter' => "$testDir/phpunit/mocks/MockChangesListFilter.php",
 	'MockChangesListFilterGroup' => "$testDir/phpunit/mocks/MockChangesListFilterGroup.php",
@@ -278,8 +281,14 @@ $wgAutoloadClasses += [
 	'MediaWiki\\Tests\\HookContainer\\HookRunnerTestBase' => "$testDir/phpunit/unit/includes/HookContainer/HookRunnerTestBase.php",
 
 	# tests/phpunit/unit/includes/json
-	'MediaWiki\\Tests\\Json\\JsonUnserializableSuperClass' => "$testDir/phpunit/mocks/json/JsonUnserializableSuperClass.php",
-	'MediaWiki\\Tests\\Json\\JsonUnserializableSubClass' => "$testDir/phpunit/mocks/json/JsonUnserializableSubClass.php",
+	'MediaWiki\\Tests\\Json\\JsonDeserializableSubClass' => "$testDir/phpunit/mocks/json/JsonDeserializableSubClass.php",
+	'MediaWiki\\Tests\\Json\\JsonDeserializableSubClassAlias' => "$testDir/phpunit/mocks/json/JsonDeserializableSubClass.php",
+	'MediaWiki\\Tests\\Json\\JsonDeserializableSuperClass' => "$testDir/phpunit/mocks/json/JsonDeserializableSuperClass.php",
+	'MediaWiki\\Tests\\Json\\ManagedObject' => "$testDir/phpunit/mocks/json/ManagedObject.php",
+	'MediaWiki\\Tests\\Json\\ManagedObjectFactory' => "$testDir/phpunit/mocks/json/ManagedObjectFactory.php",
+	'MediaWiki\\Tests\\Json\\SampleContainerObject' => "$testDir/phpunit/mocks/json/SampleContainerObject.php",
+	'MediaWiki\\Tests\\Json\\SampleObject' => "$testDir/phpunit/mocks/json/SampleObject.php",
+	'MediaWiki\\Tests\\Json\\SampleObjectAlias' => "$testDir/phpunit/mocks/json/SampleObject.php",
 
 	# tests/phpunit/unit/includes/language
 	'LanguageCodeTest' => "$testDir/phpunit/unit/includes/language/LanguageCodeTest.php",
@@ -292,6 +301,15 @@ $wgAutoloadClasses += [
 	# tests/phpunit/unit/includes/libs/filebackend/fsfile
 	'MediaWiki\\Tests\\Unit\\Libs\\Rdbms\\AddQuoterMock' => "$testDir/phpunit/unit/includes/libs/rdbms/AddQuoterMock.php",
 	'MediaWiki\\Tests\\Unit\\Libs\\Rdbms\\SQLPlatformTestHelper' => "$testDir/phpunit/unit/includes/libs/rdbms/SQLPlatformTestHelper.php",
+
+	# tests/phpunit/unit/includes/libs/Message
+	'Wikimedia\\Tests\\Message\\DataMessageValueTest' => "$testDir/phpunit/unit/includes/libs/Message/DataMessageValueTest.php",
+	'Wikimedia\\Tests\\Message\\ListParamTest' => "$testDir/phpunit/unit/includes/libs/Message/ListParamTest.php",
+	'Wikimedia\\Tests\\Message\\MessageParamTest' => "$testDir/phpunit/unit/includes/libs/Message/MessageParamTest.php",
+	'Wikimedia\\Tests\\Message\\MessageSerializationTestTrait' => "$testDir/phpunit/unit/includes/libs/Message/MessageSerializationTestTrait.php",
+	'Wikimedia\\Tests\\Message\\MessageValueTest' => "$testDir/phpunit/unit/includes/libs/Message/MessageValueTest.php",
+	'Wikimedia\\Tests\\Message\\ScalarParamTest' => "$testDir/phpunit/unit/includes/libs/Message/ScalarParamTest.php",
+	'Wikimedia\\Tests\\Message\\T377912TestCase' => "$testDir/phpunit/unit/includes/libs/Message/T377912TestCase.php",
 
 	# tests/phpunit/unit/includes/utils
 	'UrlUtilsProviders' => "$testDir/phpunit/unit/includes/utils/UrlUtilsProviders.php",
@@ -307,6 +325,9 @@ $wgAutoloadClasses += [
 	# tests/phpunit/integration/includes/HTMLForm
 	'MediaWiki\\Tests\\Integration\\HTMLForm\\HTMLFormFieldTestCase' => "$testDir/phpunit/integration/includes/HTMLForm/HTMLFormFieldTestCase.php",
 
+	# tests/phpunit/integration/includes/libs
+	'LockManagerIntegrationTestBase' => "$testDir/phpunit/integration/includes/libs/lockmanager/LockManagerIntegrationTestBase.php",
+
 	# tests/phpunit/integration/includes/user
 	'MediaWiki\\Tests\\User\\ActorStoreTestBase' => "$testDir/phpunit/integration/includes/user/ActorStoreTestBase.php",
 
@@ -318,6 +339,7 @@ $wgAutoloadClasses += [
 	'MediaWiki\\Tests\\Structure\\BundleSizeTestBase' => "$testDir/phpunit/structure/BundleSizeTestBase.php",
 
 	# tests/phpunit/unit/includes/Rest
+	'MediaWiki\Tests\Rest\MockHandlerFactory' => "$testDir/phpunit/unit/includes/Rest/MockHandlerFactory.php",
 	'MediaWiki\\Tests\\Rest\\RestTestTrait' => "$testDir/phpunit/unit/includes/Rest/RestTestTrait.php",
 	'MediaWiki\\Tests\\Rest\\Handler\\SessionHelperTestTrait' => "$testDir/phpunit/unit/includes/Rest/SessionHelperTestTrait.php",
 
@@ -352,32 +374,3 @@ $wgAutoloadClasses += [
 	'SuiteEventsTrait' => "$testDir/phpunit/suites/SuiteEventsTrait.php",
 ];
 // phpcs:enable
-
-/**
- * Alias any PHPUnit 4 era PHPUnit_... class
- * to its PHPUnit 6 replacement. For most classes
- * this is a direct _ -> \ replacement, but for
- * some others we might need to maintain a manual
- * mapping. Once we drop support for PHPUnit 4 this
- * should be considered deprecated and eventually removed.
- */
-spl_autoload_register( static function ( $class ) {
-	if ( !str_starts_with( $class, 'PHPUnit_' ) ) {
-		// Skip if it doesn't start with the old prefix
-		return;
-	}
-
-	// Classes that don't map 100%
-	$map = [
-		'PHPUnit_Framework_TestSuite_DataProvider' => DataProviderTestSuite::class,
-		'PHPUnit_Framework_Error' => Error::class,
-	];
-
-	$newForm = $map[$class] ?? str_replace( '_', '\\', $class );
-
-	if ( class_exists( $newForm ) || interface_exists( $newForm ) ) {
-		// If the new class name exists, alias
-		// the old name to it.
-		class_alias( $newForm, $class );
-	}
-} );

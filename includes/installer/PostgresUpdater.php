@@ -24,6 +24,7 @@
 namespace MediaWiki\Installer;
 
 use FixInconsistentRedirects;
+use MediaWiki\Maintenance\FixAutoblockLogTitles;
 use MigrateExternallinks;
 use MigrateRevisionActorTemp;
 use MigrateRevisionCommentTemp;
@@ -49,52 +50,11 @@ class PostgresUpdater extends DatabaseUpdater {
 	 */
 	protected function getCoreUpdateList() {
 		return [
-			// 1.35 but must come first
-			[ 'addPgField', 'revision', 'rev_actor', 'INTEGER NOT NULL DEFAULT 0' ],
-			[ 'addPgIndex', 'revision', 'rev_actor_timestamp', '(rev_actor,rev_timestamp,rev_id)' ],
-			[ 'addPgIndex', 'revision', 'rev_page_actor_timestamp', '(rev_page,rev_actor,rev_timestamp)' ],
-
 			// Exception to the sequential updates. Renaming pagecontent and mwuser.
 			// Introduced in 1.36.
 			[ 'renameTable', 'pagecontent', 'text' ],
 			// Introduced in 1.37.
 			[ 'renameTable', 'mwuser', 'user' ],
-
-			// 1.35
-			[ 'addIndex', 'redirect', 'redirect_pkey', 'patch-redirect-pk.sql' ],
-			[ 'addTable', 'watchlist_expiry', 'patch-watchlist_expiry.sql' ],
-			[ 'setSequenceOwner', 'watchlist_expiry', 'we_item', 'watchlist_expiry_we_item_seq' ],
-			[ 'setDefault', 'user_newtalk', 'user_ip', '' ],
-			[ 'changeNullableField', 'user_newtalk', 'user_ip', 'NOT NULL', true ],
-			[ 'setDefault', 'user_newtalk', 'user_id', 0 ],
-			[ 'dropPgIndex', 'revision', 'rev_user_idx' ],
-			[ 'dropPgIndex', 'revision', 'rev_user_text_idx' ],
-			[ 'dropPgIndex', 'revision', 'rev_text_id_idx' ],
-			[ 'dropPgField', 'revision', 'rev_user' ],
-			[ 'dropPgField', 'revision', 'rev_user_text' ],
-			[ 'dropPgField', 'revision', 'rev_comment' ],
-			[ 'dropPgField', 'revision', 'rev_text_id' ],
-			[ 'dropPgField', 'revision', 'rev_content_model' ],
-			[ 'dropPgField', 'revision', 'rev_content_format' ],
-			[ 'addPgField', 'revision', 'rev_comment_id', 'INTEGER NOT NULL DEFAULT 0' ],
-			[ 'dropPgField', 'archive', 'ar_text_id' ],
-			[ 'dropPgField', 'archive', 'ar_content_model' ],
-			[ 'dropPgField', 'archive', 'ar_content_format' ],
-			[ 'changeField', 'updatelog', 'ul_key', 'varchar(255)', '' ],
-			[ 'changeField', 'updatelog', 'ul_value', 'TEXT', '' ],
-			[ 'changeField', 'site_identifiers', 'si_type', 'TEXT', '' ],
-			[ 'changeField', 'site_identifiers', 'si_key', 'TEXT', '' ],
-			[ 'changeField', 'actor', 'actor_id', 'BIGINT', '' ],
-			[ 'changeField', 'actor', 'actor_name', 'TEXT', '' ],
-			[ 'changeField', 'user_former_groups', 'ufg_group', 'TEXT', '' ],
-			[ 'dropFkey', 'user_former_groups', 'ufg_user' ],
-			[ 'checkIndex', 'ipb_address_unique', [
-					[ 'ipb_address', 'text_ops', 'btree', 0 ],
-					[ 'ipb_user', 'int4_ops', 'btree', 0 ],
-					[ 'ipb_auto', 'int2_ops', 'btree', 0 ],
-				],
-				'CREATE UNIQUE INDEX ipb_address_unique ON ipblocks (ipb_address,ipb_user,ipb_auto)'
-			],
 
 			// 1.36
 			[ 'setDefault', 'bot_passwords', 'bp_token', '' ],
@@ -122,11 +82,6 @@ class PostgresUpdater extends DatabaseUpdater {
 			[ 'dropFkey', 'redirect', 'rd_from' ],
 			[ 'changeField', 'redirect', 'rd_interwiki', 'VARCHAR(32)', '' ],
 			[ 'dropFkey', 'pagelinks', 'pl_from' ],
-			[ 'changeField', 'pagelinks', 'pl_namespace', 'INT', 'pl_namespace::INT DEFAULT 0' ],
-			[ 'setDefault', 'pagelinks', 'pl_title', '' ],
-			[ 'addPgIndex', 'pagelinks', 'pl_namespace', '(pl_namespace,pl_title,pl_from)' ],
-			[ 'addPgIndex', 'pagelinks', 'pl_backlinks_namespace',
-				'(pl_from_namespace,pl_namespace,pl_title,pl_from)' ],
 			[ 'dropPgIndex', 'pagelinks', 'pagelink_unique' ],
 			[ 'dropPgIndex', 'pagelinks', 'pagelinks_title' ],
 			[ 'dropFkey', 'templatelinks', 'tl_from' ],
@@ -440,9 +395,9 @@ class PostgresUpdater extends DatabaseUpdater {
 
 			// 1.39
 			[ 'addTable', 'user_autocreate_serial', 'patch-user_autocreate_serial.sql' ],
-			[ 'runMaintenance', MigrateRevisionActorTemp::class, 'maintenance/migrateRevisionActorTemp.php' ],
+			[ 'runMaintenance', MigrateRevisionActorTemp::class ],
 			[ 'dropTable', 'revision_actor_temp' ],
-			[ 'runMaintenance', UpdateRestrictions::class, 'maintenance/updateRestrictions.php' ],
+			[ 'runMaintenance', UpdateRestrictions::class ],
 			[ 'dropPgField', 'page', 'page_restrictions' ],
 			[ 'migrateTemplatelinks' ],
 			[ 'changeNullableField', 'templatelinks', 'tl_target_id', 'NOT NULL', true ],
@@ -454,13 +409,13 @@ class PostgresUpdater extends DatabaseUpdater {
 
 			// 1.41
 			[ 'addField', 'user', 'user_is_temp', 'patch-user-user_is_temp.sql' ],
-			[ 'runMaintenance', MigrateRevisionCommentTemp::class, 'maintenance/migrateRevisionCommentTemp.php' ],
+			[ 'runMaintenance', MigrateRevisionCommentTemp::class ],
 			[ 'dropTable', 'revision_comment_temp' ],
-			[ 'runMaintenance', MigrateExternallinks::class, 'maintenance/migrateExternallinks.php' ],
+			[ 'runMaintenance', MigrateExternallinks::class ],
 			[ 'modifyField', 'externallinks', 'el_to', 'patch-externallinks-el_to_default.sql' ],
 			[ 'addField', 'pagelinks', 'pl_target_id', 'patch-pagelinks-target_id.sql' ],
 			[ 'dropField', 'externallinks', 'el_to', 'patch-externallinks-drop-el_to.sql' ],
-			[ 'runMaintenance', FixInconsistentRedirects::class, 'maintenance/fixInconsistentRedirects.php' ],
+			[ 'runMaintenance', FixInconsistentRedirects::class ],
 			[ 'modifyField', 'image', 'img_size', 'patch-image-img_size_to_bigint.sql' ],
 			[ 'modifyField', 'filearchive', 'fa_size', 'patch-filearchive-fa_size_to_bigint.sql' ],
 			[ 'modifyField', 'oldimage', 'oi_size', 'patch-oldimage-oi_size_to_bigint.sql' ],
@@ -470,9 +425,34 @@ class PostgresUpdater extends DatabaseUpdater {
 			[ 'addField', 'user_autocreate_serial', 'uas_year', 'patch-user_autocreate_serial-uas_year.sql' ],
 			[ 'addTable', 'block_target', 'patch-block_target.sql' ],
 			[ 'dropIndex', 'categorylinks', 'cl_collation_ext', 'patch-drop-cl_collation_ext.sql' ],
-			[ 'runMaintenance', PopulateUserIsTemp::class, 'maintenance/populateUserIsTemp.php' ],
+			[ 'runMaintenance', PopulateUserIsTemp::class ],
 			[ 'dropIndex', 'sites', 'site_type', 'patch-sites-drop_indexes.sql' ],
 			[ 'dropIndex', 'iwlinks', 'iwl_prefix_from_title', 'patch-iwlinks-drop-iwl_prefix_from_title.sql' ],
+
+			// 1.43
+			[ 'migratePagelinks' ],
+			[ 'dropDefault', 'revision', 'rev_actor' ],
+			[ 'dropDefault', 'revision', 'rev_comment_id' ],
+			[ 'changeField', 'revision', 'rev_id', 'BIGINT', '' ],
+			[ 'changeField', 'revision', 'rev_parent_id', 'BIGINT', '' ],
+			[ 'changeField', 'recentchanges', 'rc_id', 'BIGINT', '' ],
+			[ 'changeField', 'change_tag', 'ct_rc_id', 'BIGINT', '' ],
+			[ 'runMaintenance', \MigrateBlocks::class ],
+			[ 'dropTable', 'ipblocks' ],
+			[ 'dropField', 'pagelinks', 'pl_title', 'patch-pagelinks-drop-pl_title.sql' ],
+			[ 'addPostDatabaseUpdateMaintenance', FixAutoblockLogTitles::class ],
+			[ 'migrateSearchindex' ],
+		];
+	}
+
+	protected function getInitialUpdateKeys() {
+		return [
+			'filearchive-fa_major_mime-patch-fa_major_mime-chemical.sql',
+			'image-img_major_mime-patch-img_major_mime-chemical.sql',
+			'oldimage-oi_major_mime-patch-oi_major_mime-chemical.sql',
+			'user_groups-ug_group-patch-ug_group-length-increase-255.sql',
+			'user_former_groups-ufg_group-patch-ufg_group-length-increase-255.sql',
+			'user_properties-up_property-patch-up_property.sql',
 		];
 	}
 
@@ -711,6 +691,10 @@ END;
 	}
 
 	protected function changeField( $table, $field, $newtype, $default ) {
+		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
+			$this->output( "...$table table does not exist, skipping default change.\n" );
+			return;
+		}
 		$fi = $this->db->fieldInfo( $table, $field );
 		if ( $fi === null ) {
 			$this->output( "...ERROR: expected column $table.$field to exist\n" );
@@ -767,6 +751,10 @@ END;
 	}
 
 	protected function setDefault( $table, $field, $default ) {
+		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
+			$this->output( "...$table table does not exist, skipping default change.\n" );
+			return;
+		}
 		$info = $this->db->fieldInfo( $table, $field );
 		if ( $info && $info->defaultValue() !== $default ) {
 			$this->output( "Changing '$table.$field' default value\n" );
@@ -821,7 +809,9 @@ END;
 	}
 
 	protected function addPgIndex( $table, $index, $type, $unique = false ) {
-		if ( $this->db->indexExists( $table, $index, __METHOD__ ) ) {
+		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
+			$this->output( "...$table table does not exist, skipping index.\n" );
+		} elseif ( $this->db->indexExists( $table, $index, __METHOD__ ) ) {
 			$this->output( "...index '$index' on table '$table' already exists\n" );
 		} else {
 			$this->output( "Creating index '$index' on table '$table' $type\n" );
@@ -844,6 +834,10 @@ END;
 	}
 
 	protected function dropFkey( $table, $field ) {
+		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
+			$this->output( "...$table table does not exist, skipping constraint change.\n" );
+			return;
+		}
 		$fi = $this->db->fieldInfo( $table, $field );
 		if ( $fi === null ) {
 			$this->output( "WARNING! Column '$table.$field' does not exist but it should! " .
@@ -974,5 +968,33 @@ END;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Replaces unique index with primary key,modifies si_title length
+	 *
+	 * @since 1.43
+	 * @return void
+	 */
+	protected function migrateSearchindex() {
+		$updateKey = 'searchindex-pk-titlelength';
+		if ( !$this->tableExists( 'searchindex' ) ) {
+			return;
+		}
+
+		$primaryIndexExists = $this->db->indexExists( 'searchindex', 'searchindex_pkey' );
+		if ( $this->updateRowExists( $updateKey ) || ( $primaryIndexExists ) ) {
+			$this->output( "...searchindex table has already been migrated.\n" );
+			if ( !$this->updateRowExists( $updateKey ) ) {
+				$this->insertUpdateRow( $updateKey );
+			}
+			return;
+		}
+
+		$apply = $this->applyPatch( 'patch-searchindex-pk-titlelength.sql', false, '...migrating searchindex table' );
+
+		if ( $apply ) {
+			$this->insertUpdateRow( $updateKey );
+		}
 	}
 }

@@ -37,7 +37,6 @@
 	"mobile-frontend-meta-data-issues-categories": "O této kategorii",
 	"mobile-frontend-meta-data-issues-header": "Nedostatky stránky",
 	"minerva-meta-data-issues-section-header": "Problémy sekce",
-	"mobile-frontend-notifications-filter": "Filtr",
 	"mobile-frontend-pageaction-edit-tooltip": "Editovat úvodní sekci této stránky",
 	"mobile-frontend-placeholder": "Hledání na {{grammar:6sg|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Náhodně",
@@ -57,7 +56,7 @@
 	"minerva-page-actions-overflow": "Více",
 	"minerva-page-actions-language-switcher": "Jazyky",
 	"minerva-page-actions-history": "Historie",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Diskuse]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Diskuse]",
 	"skinname-minerva": "Nová minerva",
 	"minerva-skin-desc": "Responzivní vzhled navržený pro mobily",
 	"skin-minerva-issue-learn-more": "Další informace",
@@ -69,9 +68,8 @@
 	"skin-minerva-time-ago-years": "před $1 {{PLURAL:$1|rokem|lety}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorie",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Zobrazit kategorie stránek",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Vylepšené zpracování problémů stránky",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problémy stránky (Šablona:Cedule) budou zobrazeny uvnitř článku.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Seskupování výsledků podle stránky bohužel v mobilní verzi není k dispozici. Pokud chcete použít funkci seskupování podle stránky, navštivte webovou stránku pro počítače.",
+	"skin-minerva-night-mode-unavailable": "Stránka je dostupná jen v barvě „Světlá“.",
 	"minerva.css": "/* Veškeré zde uvedené CSS bude načítáno uživatelům vzhledu „MinervaNeue“ */",
 	"minerva.js": "/* Veškerý zde uvedený JavaScript bude načítán uživatelům vzhledu „MinervaNeue“ */"
 }

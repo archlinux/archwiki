@@ -5,13 +5,14 @@ namespace MediaWiki\Tests\Storage;
 use ConcatenatedGzipHistoryBlob;
 use ExternalStoreAccess;
 use ExternalStoreFactory;
-use HashBagOStuff;
 use InvalidArgumentException;
 use MediaWiki\Storage\BadBlobException;
 use MediaWiki\Storage\BlobAccessException;
 use MediaWiki\Storage\SqlBlobStore;
 use MediaWikiIntegrationTestCase;
-use WANObjectCache;
+use StatusValue;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\LoadBalancer;
 
 /**
@@ -26,8 +27,8 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 	 * @return SqlBlobStore
 	 */
 	public function getBlobStore(
-		WANObjectCache $cache = null,
-		ExternalStoreAccess $extStore = null
+		?WANObjectCache $cache = null,
+		?ExternalStoreAccess $extStore = null
 	) {
 		$services = $this->getServiceContainer();
 
@@ -298,43 +299,15 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 		ksort( $resultBlobs );
 		$this->assertSame( $expected, $resultBlobs );
 
-		$this->assertSame( [
-			[
-				'type' => 'warning',
-				'message' => 'internalerror',
-				'params' => [
-					'Bad blob address: tt:this_will_not_exist. Use findBadBlobs.php to remedy.'
-				]
-			],
-			[
-				'type' => 'warning',
-				'message' => 'internalerror',
-				'params' => [
-					'Bad blob address: tt:0. Use findBadBlobs.php to remedy.'
-				]
-			],
-			[
-				'type' => 'warning',
-				'message' => 'internalerror',
-				'params' => [
-					'Bad blob address: tt:-1. Use findBadBlobs.php to remedy.'
-				]
-			],
-			[
-				'type' => 'warning',
-				'message' => 'internalerror',
-				'params' => [
-					'Unknown blob address schema: bla. Use findBadBlobs.php to remedy.'
-				]
-			],
-			[
-				'type' => 'warning',
-				'message' => 'internalerror',
-				'params' => [
-					'Unable to fetch blob at tt:10000. Use findBadBlobs.php to remedy.'
-				]
-			]
-		], $result->getErrors() );
+		$this->assertStatusMessagesExactly(
+			StatusValue::newGood()
+				->warning( 'internalerror', 'Bad blob address: tt:this_will_not_exist. Use findBadBlobs.php to remedy.' )
+				->warning( 'internalerror', 'Bad blob address: tt:0. Use findBadBlobs.php to remedy.' )
+				->warning( 'internalerror', 'Bad blob address: tt:-1. Use findBadBlobs.php to remedy.' )
+				->warning( 'internalerror', 'Unknown blob address schema: bla. Use findBadBlobs.php to remedy.' )
+				->warning( 'internalerror', 'Unable to fetch blob at tt:10000. Use findBadBlobs.php to remedy.' ),
+			$result
+		);
 	}
 
 	public function testSimpleStoragePartialNonExistentBlobBatch() {
@@ -350,15 +323,11 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 		ksort( $expected );
 		ksort( $resultBlobs );
 		$this->assertSame( $expected, $resultBlobs );
-		$this->assertSame( [
-			[
-				'type' => 'warning',
-				'message' => 'internalerror',
-				'params' => [
-					'Bad blob address: tt:this_will_not_exist_too. Use findBadBlobs.php to remedy.'
-				]
-			],
-		], $result->getErrors() );
+		$this->assertStatusMessagesExactly(
+			StatusValue::newGood()
+				->warning( 'internalerror', 'Bad blob address: tt:this_will_not_exist_too. Use findBadBlobs.php to remedy.' ),
+			$result
+		);
 	}
 
 	/**
@@ -648,4 +617,70 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'AAAABBAAA', $cache->get( $cacheKey ) );
 	}
 
+	public function testGetRevisionText_external_oldId_direct_access() {
+		$cache = $this->getWANObjectCache();
+		$this->setService( 'MainWANObjectCache', $cache );
+
+		$this->setService(
+			'ExternalStoreFactory',
+			new ExternalStoreFactory( [ 'ForTesting' ], [ 'ForTesting://cluster1' ], 'test-id' )
+		);
+
+		$lb = $this->createMock( LoadBalancer::class );
+		$access = $this->getServiceContainer()->getExternalStoreAccess();
+
+		$blobStore = new SqlBlobStore( $lb, $access, $cache );
+
+		$this->assertSame(
+			'AAAABBAAA',
+			$blobStore->getBlob( 'es:ForTesting://cluster1/12345?flags=external,gzip' )
+		);
+
+		$cacheKey = $cache->makeGlobalKey(
+			'SqlBlobStore-blob',
+			$lb->getLocalDomainID(),
+			// See ExternalStoreForTesting for the path
+			'es:ForTesting://cluster1/12345?flags=external,gzip'
+		);
+		$this->assertSame( 'AAAABBAAA', $cache->get( $cacheKey ) );
+	}
+
+	public static function provideTestGetRevisionText_external_oldId_direct_store() {
+		yield 'no compression' => [ false ];
+		yield 'compression' => [ true ];
+	}
+
+	/**
+	 * @dataProvider provideTestGetRevisionText_external_oldId_direct_store
+	 */
+	public function testGetRevisionText_external_oldId_direct_store( bool $compression ) {
+		$cache = $this->getWANObjectCache();
+		$this->setService( 'MainWANObjectCache', $cache );
+
+		$this->setService(
+			'ExternalStoreFactory',
+			new ExternalStoreFactory( [ 'ForTesting' ], [ 'ForTesting://cluster1' ], 'test-id' )
+		);
+
+		$lb = $this->createMock( LoadBalancer::class );
+		$access = $this->getServiceContainer()->getExternalStoreAccess();
+
+		$blobStore = new SqlBlobStore( $lb, $access, $cache );
+		$blobStore->setUseExternalStore( true );
+		$blobStore->setCompressBlobs( $compression );
+		$id = $blobStore->storeBlob( 'A very unique text' );
+		$this->assertStringStartsWith( 'es:ForTesting://cluster1/', $id );
+
+		$this->assertSame(
+			'A very unique text',
+			$blobStore->getBlob( $id )
+		);
+
+		$cacheKey = $cache->makeGlobalKey(
+			'SqlBlobStore-blob',
+			$lb->getLocalDomainID(),
+			$id
+		);
+		$this->assertSame( 'A very unique text', $cache->get( $cacheKey ) );
+	}
 }

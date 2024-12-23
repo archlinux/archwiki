@@ -2,15 +2,14 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
-use FormatJson;
-use GenderCache;
-use MediaWiki\Config\Config;
+use MediaWiki\Cache\GenderCache;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use ParserOutput;
 use Skin;
 use Wikimedia\TestingAccessWrapper;
 
@@ -26,7 +25,7 @@ class CommentFormatterTest extends IntegrationTestCase {
 	public function testIsLanguageRequiringReplyIcon(
 		string $langCode, bool $expected, ?array $config = null
 	): void {
-		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( $langCode );
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( $langCode );
 		if ( $config ) {
 			$this->overrideConfigValues( [
 				'DiscussionTools_visualenhancements_reply_icon_languages' => $config
@@ -55,7 +54,7 @@ class CommentFormatterTest extends IntegrationTestCase {
 		string $name, string $titleText, string $dom, string $expected, string $config, string $data,
 		bool $isMobile, bool $useButtons
 	): void {
-		$this->setService( 'GenderCache', $this->createMock( GenderCache::class ) );
+		$this->setService( 'GenderCache', $this->createNoOpMock( GenderCache::class ) );
 		$dom = static::getHtml( $dom );
 		$expectedPath = $expected;
 		$expected = static::getText( $expectedPath );
@@ -74,11 +73,10 @@ class CommentFormatterTest extends IntegrationTestCase {
 		$title = Title::newFromText( $titleText );
 		$subscriptionStore = new MockSubscriptionStore();
 		$user = $this->createMock( User::class );
-		$qqxLang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'qqx' );
+		$qqxLang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'qqx' );
 		$skin = $this->createMock( Skin::class );
 		$skin->method( 'getSkinName' )->willReturn( 'minerva' );
-		$outputPage = $this->createMock( OutputPage::class );
-		$outputPage->method( 'getConfig' )->willReturn( $this->createMock( Config::class ) );
+		$outputPage = $this->createMock( IContextSource::class );
 		$outputPage->method( 'getTitle' )->willReturn( $title );
 		$outputPage->method( 'getUser' )->willReturn( $user );
 		$outputPage->method( 'getLanguage' )->willReturn( $qqxLang );

@@ -67,7 +67,7 @@ ve.ui.LanguageSearchDialog.prototype.initialize = function () {
  * @param {ve.ui.LanguageResultWidget} item Chosen item
  */
 ve.ui.LanguageSearchDialog.prototype.onSearchResultsChoose = function ( item ) {
-	var data = item.getData();
+	const data = item.getData();
 	this.close( {
 		action: 'done',
 		lang: data.code,
@@ -80,10 +80,10 @@ ve.ui.LanguageSearchDialog.prototype.onSearchResultsChoose = function ( item ) {
  */
 ve.ui.LanguageSearchDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.LanguageSearchDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.searchWidget.setAvailableLanguages( data.availableLanguages );
 			this.searchWidget.addResults();
-		}, this );
+		} );
 };
 
 /**
@@ -91,9 +91,9 @@ ve.ui.LanguageSearchDialog.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.LanguageSearchDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.LanguageSearchDialog.super.prototype.getReadyProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.searchWidget.getQuery().focus();
-		}, this );
+		} );
 };
 
 /**
@@ -101,9 +101,9 @@ ve.ui.LanguageSearchDialog.prototype.getReadyProcess = function ( data ) {
  */
 ve.ui.LanguageSearchDialog.prototype.getTeardownProcess = function ( data ) {
 	return ve.ui.LanguageSearchDialog.super.prototype.getTeardownProcess.call( this, data )
-		.first( function () {
+		.first( () => {
 			this.searchWidget.getQuery().setValue( '' );
-		}, this );
+		} );
 };
 
 /**

@@ -1,7 +1,7 @@
 <?php
 
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Extension\AbuseFilter\AbuseFilterActorMigration;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager as PermManager;
 use MediaWiki\Extension\AbuseFilter\AbuseLogger;
 use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
@@ -44,6 +44,7 @@ use MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher;
 use MediaWiki\Extension\AbuseFilter\Watcher\UpdateHitCountWatcher;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Equivset\Equivset;
 
@@ -71,8 +72,14 @@ return [
 		);
 	},
 	PermManager::SERVICE_NAME => static function ( MediaWikiServices $services ): PermManager {
-		// No longer has any dependencies
-		return new PermManager();
+		return new PermManager(
+			new ServiceOptions(
+				PermManager::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig(),
+				[ 'AbuseFilterProtectedVariables' => [] ]
+			),
+			$services->getUserOptionsLookup()
+		);
 	},
 	ChangeTagger::SERVICE_NAME => static function ( MediaWikiServices $services ): ChangeTagger {
 		return new ChangeTagger(
@@ -118,8 +125,7 @@ return [
 	RuleCheckerFactory::SERVICE_NAME => static function ( MediaWikiServices $services ): RuleCheckerFactory {
 		return new RuleCheckerFactory(
 			$services->getContentLanguage(),
-			// We could use $services here, but we need the fallback
-			ObjectCache::getLocalServerInstance( CACHE_HASH ),
+			$services->getObjectCacheFactory()->getLocalServerInstance( CACHE_HASH ),
 			LoggerFactory::getInstance( 'AbuseFilter' ),
 			$services->getService( KeywordsManager::SERVICE_NAME ),
 			$services->get( VariablesManager::SERVICE_NAME ),
@@ -167,7 +173,8 @@ return [
 			$services->get( PermManager::SERVICE_NAME ),
 			new ServiceOptions(
 				FilterValidator::CONSTRUCTOR_OPTIONS,
-				$services->getMainConfig()
+				$services->getMainConfig(),
+				[ 'AbuseFilterProtectedVariables' => [] ]
 			)
 		);
 	},
@@ -189,13 +196,13 @@ return [
 		return new FilterStore(
 			$services->get( ConsequencesRegistry::SERVICE_NAME ),
 			$services->getDBLoadBalancerFactory(),
+			$services->getActorNormalization(),
 			$services->get( FilterProfiler::SERVICE_NAME ),
 			$services->get( FilterLookup::SERVICE_NAME ),
 			$services->get( ChangeTagsManager::SERVICE_NAME ),
 			$services->get( FilterValidator::SERVICE_NAME ),
 			$services->get( FilterCompare::SERVICE_NAME ),
-			$services->get( EmergencyCache::SERVICE_NAME ),
-			$services->get( AbuseFilterActorMigration::SERVICE_NAME )
+			$services->get( EmergencyCache::SERVICE_NAME )
 		);
 	},
 	ConsequencesFactory::SERVICE_NAME => static function ( MediaWikiServices $services ): ConsequencesFactory {
@@ -248,12 +255,14 @@ return [
 			$services->get( VariablesManager::SERVICE_NAME ),
 			$services->get( EditRevUpdater::SERVICE_NAME ),
 			$services->getDBLoadBalancerFactory(),
+			$services->getActorStore(),
 			new ServiceOptions(
 				AbuseLogger::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()
 			),
 			WikiMap::getCurrentWikiDbDomain()->getId(),
-			RequestContext::getMain()->getRequest()->getIP()
+			RequestContext::getMain()->getRequest()->getIP(),
+			LoggerFactory::getInstance( 'AbuseFilter' )
 		);
 	},
 	UpdateHitCountWatcher::SERVICE_NAME => static function ( MediaWikiServices $services ): UpdateHitCountWatcher {
@@ -298,7 +307,7 @@ return [
 			$services->get( EmergencyCache::SERVICE_NAME ),
 			$services->get( UpdateHitCountWatcher::SERVICE_NAME ),
 			$services->get( EmergencyWatcher::SERVICE_NAME ),
-			ObjectCache::getLocalClusterInstance(),
+			$services->getObjectCacheFactory()->getLocalClusterInstance(),
 			LoggerFactory::getInstance( 'AbuseFilter' ),
 			LoggerFactory::getInstance( 'StashEdit' ),
 			$services->getStatsdDataFactory(),
@@ -368,14 +377,6 @@ return [
 			$services->getRevisionLookup(),
 			$services->getDBLoadBalancerFactory(),
 			WikiMap::getCurrentWikiDbDomain()->getId()
-		);
-	},
-	AbuseFilterActorMigration::SERVICE_NAME => static function (
-		MediaWikiServices $services
-	): AbuseFilterActorMigration {
-		return new AbuseFilterActorMigration(
-			$services->getMainConfig()->get( 'AbuseFilterActorTableSchemaMigrationStage' ),
-			$services->getActorStoreFactory(),
 		);
 	},
 	BlockedDomainStorage::SERVICE_NAME => static function (

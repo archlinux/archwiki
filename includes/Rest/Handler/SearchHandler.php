@@ -33,26 +33,13 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 class SearchHandler extends Handler {
 	use RestStatusTrait;
 
-	/** @var SearchEngineFactory */
-	private $searchEngineFactory;
-
-	/** @var SearchEngineConfig */
-	private $searchEngineConfig;
-
-	/** @var SearchResultThumbnailProvider */
-	private $searchResultThumbnailProvider;
-
-	/** @var PermissionManager */
-	private $permissionManager;
-
-	/** @var RedirectLookup */
-	private $redirectLookup;
-
-	/** @var PageStore */
-	private $pageStore;
-
-	/** @var TitleFormatter */
-	private $titleFormatter;
+	private SearchEngineFactory $searchEngineFactory;
+	private SearchEngineConfig $searchEngineConfig;
+	private SearchResultThumbnailProvider $searchResultThumbnailProvider;
+	private PermissionManager $permissionManager;
+	private RedirectLookup $redirectLookup;
+	private PageStore $pageStore;
+	private TitleFormatter $titleFormatter;
 
 	/**
 	 * Search page body and titles.
@@ -74,7 +61,7 @@ class SearchHandler extends Handler {
 	 */
 	private $mode = null;
 
-	/** Limit results to 50 pages per default */
+	/** Limit results to 50 pages by default */
 	private const LIMIT = 50;
 
 	/** Hard limit results to 100 pages */
@@ -91,16 +78,6 @@ class SearchHandler extends Handler {
 	 */
 	private $completionCacheExpiry;
 
-	/**
-	 * @param Config $config
-	 * @param SearchEngineFactory $searchEngineFactory
-	 * @param SearchEngineConfig $searchEngineConfig
-	 * @param SearchResultThumbnailProvider $searchResultThumbnailProvider
-	 * @param PermissionManager $permissionManager
-	 * @param RedirectLookup $redirectLookup
-	 * @param PageStore $pageStore
-	 * @param TitleFormatter $titleFormatter
-	 */
 	public function __construct(
 		Config $config,
 		SearchEngineFactory $searchEngineFactory,
@@ -161,8 +138,7 @@ class SearchHandler extends Handler {
 			if ( $results instanceof StatusValue ) {
 				$status = $results;
 				if ( !$status->isOK() ) {
-					[ $error ] = $status->splitByErrorType();
-					if ( $error->getErrors() ) { // Only throw for errors, suppress warnings (for now)
+					if ( $status->getMessages( 'error' ) ) { // Only throw for errors, suppress warnings (for now)
 						$this->throwExceptionForStatus( $status, 'rest-search-error', 500 );
 					}
 				}

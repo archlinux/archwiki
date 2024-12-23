@@ -3,12 +3,13 @@
 namespace MediaWiki\Extension\AbuseFilter;
 
 use HtmlArmor;
-use IContextSource;
 use LogFormatter;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\TitleValue;
 use OldChangesList;
 use RecentChange;
 
@@ -121,14 +122,17 @@ class AbuseFilterChangesList extends OldChangesList {
 			if ( $this->userCan( $rc, RevisionRecord::DELETED_COMMENT ) ) {
 				return ' <span class="history-deleted">' .
 					MediaWikiServices::getInstance()->getCommentFormatter()
-						->formatBlock( $rc->getAttribute( 'rc_comment' ), $rc->getTitle() ) . '</span>';
+						->formatBlock(
+							$rc->getAttribute( 'rc_comment' ),
+							TitleValue::castPageToLinkTarget( $rc->getPage() )
+						) . '</span>';
 			} else {
 				return ' <span class="history-deleted">' .
 					$this->msg( 'rev-deleted-comment' )->escaped() . '</span>';
 			}
 		} else {
 			return MediaWikiServices::getInstance()->getCommentFormatter()
-				->formatBlock( $rc->getAttribute( 'rc_comment' ), $rc->getTitle() );
+				->formatBlock( $rc->getAttribute( 'rc_comment' ), TitleValue::castPageToLinkTarget( $rc->getPage() ) );
 		}
 	}
 
@@ -139,7 +143,7 @@ class AbuseFilterChangesList extends OldChangesList {
 	 * @return string
 	 */
 	public function insertLogEntry( $rc ) {
-		$formatter = LogFormatter::newFromRow( $rc->getAttributes() );
+		$formatter = MediaWikiServices::getInstance()->getLogFormatterFactory()->newFromRow( $rc->getAttributes() );
 		$formatter->setContext( $this->getContext() );
 		$formatter->setAudience( LogFormatter::FOR_THIS_USER );
 		$formatter->setShowUserToolLinks( true );

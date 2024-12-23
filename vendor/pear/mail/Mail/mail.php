@@ -76,16 +76,6 @@ class Mail_mail extends Mail {
         } else {
             $this->_params = $params;
         }
-
-        /* Because the mail() function may pass headers as command
-         * line arguments, we can't guarantee the use of the standard
-         * "\r\n" separator.  Instead, we use the system's native line
-         * separator. */
-        if (defined('PHP_EOL')) {
-            $this->sep = PHP_EOL;
-        } else {
-            $this->sep = (strpos(PHP_OS, 'WIN') === false) ? "\n" : "\r\n";
-        }
     }
 
     /**

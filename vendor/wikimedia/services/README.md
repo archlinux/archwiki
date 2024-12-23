@@ -15,7 +15,7 @@ $services = new ServiceContainer();
 
 $services->defineService(
     'MyService',
-    function ( ServiceContainer $services ) {
+    static function ( ServiceContainer $services ): MyService {
         return new MyService();
     }
 );
@@ -30,7 +30,7 @@ Where `ServiceWiring.php` looks like this:
 ```php
 return [
 
-    'MyOtherService' => function ( ServiceContainer $services ) {
+    'MyOtherService' => static function ( ServiceContainer $services ): MyOtherService {
         return new MyOtherService( $services->get( 'MyService' ) );
     },
 
@@ -63,7 +63,7 @@ class MyServiceContainer extends ServiceContainer {
 // ServiceWiring.php
 return [
 
-    'MyOtherService' => function ( MyServiceContainer $services ) {
+    'MyOtherService' => static function ( MyServiceContainer $services ): MyOtherService {
         return new MyOtherService( $services->getMyService() );
     },
 

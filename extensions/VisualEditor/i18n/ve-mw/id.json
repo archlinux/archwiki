@@ -7,6 +7,7 @@
 			"Chinamoonroll",
 			"Daud I.F. Argana",
 			"EkoITS94",
+			"Ezagren",
 			"Farras",
 			"Gombang",
 			"Hysocc",
@@ -27,8 +28,7 @@
 			"TMg",
 			"Veracious",
 			"William Surya Permana",
-			"WillsonEP09",
-			"Ezagren"
+			"WillsonEP09"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -50,7 +50,6 @@
 	"visualeditor-autosave-recovered-text": "Perubahan Anda yang belum disimpan telah otomatis dipulihkan.",
 	"visualeditor-autosave-recovered-title": "Perubahan dipulihkan",
 	"visualeditor-backbutton-tooltip": "Kembali",
-	"visualeditor-browserwarning": "Anda menggunakan peramban web yang tidak didukung oleh penyunting ini.",
 	"visualeditor-ca-createlocaldescriptionsource": "Tambah sumber deskripsi lokal",
 	"visualeditor-ca-createsource": "Buat (teks wiki)",
 	"visualeditor-ca-editlocaldescriptionsource": "Sunting sumber deskripsi lokal",

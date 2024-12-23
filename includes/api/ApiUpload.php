@@ -20,20 +20,44 @@
  * @file
  */
 
- /**
-  * @todo: create a UploadCommandFactory and UploadComand classes to share logic with Special:Upload
-  * @todo: split the different cases of upload in subclasses or submethods.
-  */
+/**
+ * @todo: create a UploadCommandFactory and UploadComand classes to share logic with Special:Upload
+ * @todo: split the different cases of upload in subclasses or submethods.
+ */
 
+namespace MediaWiki\Api;
+
+use AssembleUploadChunksJob;
+use ChangeTags;
+use Exception;
+use JobQueueGroup;
 use MediaWiki\Config\Config;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Status\Status;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\Watchlist\WatchlistManager;
 use Psr\Log\LoggerInterface;
+use PublishStashedFileJob;
+use StatusValue;
+use UploadBase;
+use UploadFromChunks;
+use UploadFromFile;
+use UploadFromStash;
+use UploadFromUrl;
+use UploadFromUrlJob;
+use UploadStashBadPathException;
+use UploadStashException;
+use UploadStashFileException;
+use UploadStashFileNotFoundException;
+use UploadStashNoSuchKeyException;
+use UploadStashNotLoggedInException;
+use UploadStashWrongOwnerException;
+use UploadStashZeroLengthFileException;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -47,22 +71,16 @@ class ApiUpload extends ApiBase {
 	/** @var UploadBase|UploadFromChunks */
 	protected $mUpload = null;
 
+	/** @var array */
 	protected $mParams;
 
 	private JobQueueGroup $jobQueueGroup;
 
 	private LoggerInterface $log;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param JobQueueGroup $jobQueueGroup
-	 * @param WatchlistManager $watchlistManager
-	 * @param UserOptionsLookup $userOptionsLookup
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		JobQueueGroup $jobQueueGroup,
 		WatchlistManager $watchlistManager,
 		UserOptionsLookup $userOptionsLookup
@@ -89,13 +107,9 @@ class ApiUpload extends ApiBase {
 
 		// Parameter handling
 		$this->mParams = $this->extractRequestParams();
-		$request = $this->getMain()->getRequest();
 		// Check if async mode is actually supported (jobs done in cli mode)
 		$this->mParams['async'] = ( $this->mParams['async'] &&
 			$this->getConfig()->get( MainConfigNames::EnableAsyncUploads ) );
-		// Add the uploaded file to the params array
-		$this->mParams['file'] = $request->getFileName( 'file' );
-		$this->mParams['chunk'] = $request->getFileName( 'chunk' );
 
 		// Copy the session key to the file key, for backward compatibility.
 		if ( !$this->mParams['filekey'] && $this->mParams['sessionkey'] ) {
@@ -322,9 +336,9 @@ class ApiUpload extends ApiBase {
 			$result['warnings'] = $warnings;
 		}
 
-		$request = $this->getMain()->getRequest();
-		$chunkPath = $request->getFileTempname( 'chunk' );
-		$chunkSize = $request->getUpload( 'chunk' )->getSize();
+		$chunkUpload = $this->getMain()->getUpload( 'chunk' );
+		$chunkPath = $chunkUpload->getTempName();
+		$chunkSize = $chunkUpload->getSize();
 		$totalSoFar = $this->mParams['offset'] + $chunkSize;
 		$minChunkSize = self::getMinUploadChunkSize( $this->getConfig() );
 
@@ -609,7 +623,7 @@ class ApiUpload extends ApiBase {
 	 */
 	public function dieStatusWithCode( $status, $overrideCode, $moreExtraData = null ) {
 		$sv = StatusValue::newGood();
-		foreach ( $status->getErrors() as $error ) {
+		foreach ( $status->getMessages() as $error ) {
 			$msg = ApiMessage::create( $error, $overrideCode );
 			if ( $moreExtraData ) {
 				$msg->setApiData( $msg->getApiData() + $moreExtraData );
@@ -627,8 +641,6 @@ class ApiUpload extends ApiBase {
 	 * @return bool
 	 */
 	protected function selectUploadModule() {
-		$request = $this->getMain()->getRequest();
-
 		// chunk or one and only one of the following parameters is needed
 		if ( !$this->mParams['chunk'] ) {
 			$this->requireOnlyOneParameter( $this->mParams,
@@ -694,7 +706,7 @@ class ApiUpload extends ApiBase {
 				$this->mUpload->continueChunks(
 					$this->mParams['filename'],
 					$this->mParams['filekey'],
-					$request->getUpload( 'chunk' )
+					$this->getMain()->getUpload( 'chunk' )
 				);
 			} else {
 				if ( $this->mParams['offset'] !== 0 ) {
@@ -704,7 +716,7 @@ class ApiUpload extends ApiBase {
 				// handle first chunk
 				$this->mUpload->initialize(
 					$this->mParams['filename'],
-					$request->getUpload( 'chunk' )
+					$this->getMain()->getUpload( 'chunk' )
 				);
 			}
 		} elseif ( isset( $this->mParams['filekey'] ) ) {
@@ -730,7 +742,7 @@ class ApiUpload extends ApiBase {
 			$this->mUpload = new UploadFromFile();
 			$this->mUpload->initialize(
 				$this->mParams['filename'],
-				$request->getUpload( 'file' )
+				$this->getMain()->getUpload( 'file' )
 			);
 		} elseif ( isset( $this->mParams['url'] ) ) {
 			// Make sure upload by URL is enabled:
@@ -901,7 +913,6 @@ class ApiUpload extends ApiBase {
 				}
 				ApiResult::setIndexedTagName( $details, 'detail' );
 				$msg->setApiData( $msg->getApiData() + [ 'details' => $details ] );
-				// @phan-suppress-next-line PhanTypeMismatchArgument
 				$this->dieWithError( $msg );
 				// dieWithError prevents continuation
 
@@ -1152,7 +1163,7 @@ class ApiUpload extends ApiBase {
 						'status' => (string)$status
 					]
 				);
-				$this->dieRecoverableError( $status->getErrors() );
+				$this->dieRecoverableError( $status->getMessages() );
 			}
 			$result['result'] = 'Success';
 		}
@@ -1252,3 +1263,6 @@ class ApiUpload extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Upload';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiUpload::class, 'ApiUpload' );

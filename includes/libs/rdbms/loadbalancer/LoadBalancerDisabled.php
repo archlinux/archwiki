@@ -22,12 +22,11 @@ namespace Wikimedia\Rdbms;
 use RuntimeException;
 
 /**
- * Trivial LoadBalancer that always fails.
- * Useful when running code with no config file present,
- * e.g. during the installation process.
+ * Placeholder LoadBalancer that throws an error upon attempts to access connections
+ *
+ * This is useful when running code with no config file present, e.g. during installation.
  *
  * @since 1.40
- *
  * @ingroup Database
  */
 class LoadBalancerDisabled extends LoadBalancer {
@@ -92,7 +91,7 @@ class LoadBalancerDisabled extends LoadBalancer {
 	 *
 	 * @return never
 	 */
-	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): IDatabase {
+	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef {
 		throw new RuntimeException( 'Database backend disabled' );
 	}
 
@@ -106,10 +105,6 @@ class LoadBalancerDisabled extends LoadBalancer {
 	 */
 	public function getMaintenanceConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef {
 		throw new RuntimeException( 'Database backend disabled' );
-	}
-
-	public function reuseConnection( IDatabase $conn ) {
-		// noop
 	}
 
 }

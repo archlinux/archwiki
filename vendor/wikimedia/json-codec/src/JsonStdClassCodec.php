@@ -66,7 +66,7 @@ class JsonStdClassCodec implements JsonClassCodec {
 	 * @param string $keyName
 	 * @return null Always returns null
 	 */
-	public function jsonClassHintFor( string $className, string $keyName ): ?string {
+	public function jsonClassHintFor( string $className, string $keyName ) {
 		return null;
 	}
 

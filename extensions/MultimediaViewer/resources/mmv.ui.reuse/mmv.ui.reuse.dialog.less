@@ -1,0 +1,24 @@
+@import 'mediawiki.skin.variables.less';
+@import '../mmv/mmv.variables.less';
+@import '../mmv/mmv.mixins.less';
+
+.mw-mmv-reuse-dialog {
+	// resetting height (to overwrite .mw-mmv-dialog's bigger height), since the
+	// height may have to change for warnings being added
+	height: initial;
+	// set a standard min-height that should be larger than both panels in
+	// normal circumstances (without warnings) so that the height of the dialog
+	// doesn't change when switching tabs
+	min-height: 300px;
+	// positioned relative to the reuse button
+	@bottom-offset: @metadatabar-above-fold-height + @buttons-offset-edge;
+	bottom: @bottom-offset - 5px;
+
+	.mw-mmv-dialog-down-arrow {
+		bottom: @bottom-offset + ( @buttons-size / 2 ) - ( @arrow-size / 2 );
+	}
+
+	.mw-mmv-dialog-warning {
+		padding: 15px 30px;
+	}
+}

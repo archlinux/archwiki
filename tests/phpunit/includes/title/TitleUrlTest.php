@@ -36,7 +36,6 @@ class TitleUrlTest extends MediaWikiLangTestCase {
 		] );
 
 		// Some tests use interwikis - define valid prefixes and their configuration
-		// DummyServicesTrait::getDummyInterwikiLookup
 		$interwikiLookup = $this->getDummyInterwikiLookup( [
 			[ 'iw_prefix' => 'acme', 'iw_url' => 'https://acme.test/$1' ],
 			[ 'iw_prefix' => 'yy', 'iw_url' => '//yy.wiki.test/wiki/$1', 'iw_local' => true ]
@@ -110,7 +109,7 @@ class TitleUrlTest extends MediaWikiLangTestCase {
 		);
 
 		// Test getFullUrlForRedirect()
-		// Note that it uses PROTO_CURRENT per default, which is 'http' for tests
+		// Note that it uses PROTO_CURRENT by default, which is 'http' for tests
 		$this->assertSame(
 			'http://m.xx.wiki.test/wiki/' . $name,
 			$title->getFullUrlForRedirect(),
@@ -247,7 +246,7 @@ class TitleUrlTest extends MediaWikiLangTestCase {
 		);
 
 		// Test getFullUrlForRedirect()
-		// Note that it uses PROTO_CURRENT per default, which is 'http' for tests
+		// Note that it uses PROTO_CURRENT by default, which is 'http' for tests
 		$this->assertSame(
 			'http://m.xx.wiki.test/m/edit/' . $name . '?' . $queryString,
 			$title->getFullUrlForRedirect( $query1 + $query2 ),
@@ -304,7 +303,7 @@ class TitleUrlTest extends MediaWikiLangTestCase {
 		);
 
 		// Test getFullUrlForRedirect()
-		// Note that it uses PROTO_CURRENT per default, which is 'http' for tests
+		// Note that it uses PROTO_CURRENT by default, which is 'http' for tests
 		$this->assertSame(
 			'http://m.xx.wiki.test/en-x-piglatin/' . $name,
 			$title->getFullUrlForRedirect( $query1 ),
@@ -365,7 +364,7 @@ class TitleUrlTest extends MediaWikiLangTestCase {
 		);
 
 		// Test getFullUrlForRedirect()
-		// Note that it uses PROTO_CURRENT per default, which is 'http' for tests
+		// Note that it uses PROTO_CURRENT by default, which is 'http' for tests
 		$this->assertSame(
 			'http://m.xx.wiki.test/',
 			$title->getFullUrlForRedirect(),
@@ -663,7 +662,7 @@ class TitleUrlTest extends MediaWikiLangTestCase {
 		);
 
 		// Test getFullUrlForRedirect()
-		// Note that it uses PROTO_CURRENT per default, which is 'http' for tests
+		// Note that it uses PROTO_CURRENT by default, which is 'http' for tests
 		$this->assertSame(
 			'http://m.xx.wiki.test/wiki/Special:GoToInterwiki/' . $name,
 			$title->getFullUrlForRedirect(),
@@ -759,7 +758,7 @@ class TitleUrlTest extends MediaWikiLangTestCase {
 		);
 
 		// Test getFullUrlForRedirect()
-		// Note that it uses PROTO_CURRENT per default, which is 'http' for tests
+		// Note that it uses PROTO_CURRENT by default, which is 'http' for tests
 		$this->assertSame(
 			'http://m.xx.wiki.test/wiki/Special:GoToInterwiki/acme:' . $name,
 			$title->getFullUrlForRedirect(),
@@ -888,7 +887,7 @@ class TitleUrlTest extends MediaWikiLangTestCase {
 		);
 
 		// Test getFullUrlForRedirect()
-		// Note that it uses PROTO_CURRENT per default, which is 'http' for tests
+		// Note that it uses PROTO_CURRENT by default, which is 'http' for tests
 		$this->assertSame(
 			'http://m.xx.wiki.test/wiki/Special:GoToInterwiki/yy:' . $name,
 			$title->getFullUrlForRedirect(),

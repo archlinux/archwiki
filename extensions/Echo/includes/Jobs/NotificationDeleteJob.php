@@ -23,11 +23,6 @@ use MediaWiki\User\User;
 class NotificationDeleteJob extends Job {
 	private JobQueueGroup $jobQueueGroup;
 
-	/**
-	 * @param Title $title
-	 * @param array $params
-	 * @param JobQueueGroup $jobQueueGroup
-	 */
 	public function __construct(
 		Title $title,
 		array $params,

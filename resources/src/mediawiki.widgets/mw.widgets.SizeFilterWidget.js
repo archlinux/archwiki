@@ -7,11 +7,11 @@
 ( function () {
 
 	/**
-	 * RadioSelectInputWidget and a TextInputWidget to set minimum or maximum byte size.
+	 * @classdesc Size filter widget.
 	 *
 	 * @example
 	 * mw.loader.using( 'mediawiki.widgets.SizeFilterWidget', function () {
-	 *   var sf = new mw.widgets.SizeFilterWidget();
+	 *   let sf = new mw.widgets.SizeFilterWidget();
 	 *   $( document.body ).append( sf.$element );
 	 * } );
 	 *
@@ -21,6 +21,7 @@
 	 * @uses OO.ui.TextInputWidget
 	 *
 	 * @constructor
+	 * @description Use a RadioSelectInputWidget and a TextInputWidget to set minimum or maximum byte size.
 	 * @param {Object} [config] Configuration options
 	 * @param {Object} [config.radioselectinput] Config for the radio select input
 	 * @param {Object} [config.textinput] Config for the text input
@@ -28,11 +29,11 @@
 	 */
 	mw.widgets.SizeFilterWidget = function MwWidgetsSizeFilterWidget( config ) {
 		// Config initialization
-		config = $.extend( { selectMin: true }, config );
-		config.textinput = $.extend( {
+		config = Object.assign( { selectMin: true }, config );
+		config.textinput = Object.assign( {
 			type: 'number'
 		}, config.textinput );
-		config.radioselectinput = $.extend( {
+		config.radioselectinput = Object.assign( {
 			options: [
 				{ data: 'min', label: mw.msg( 'minimum-size' ) },
 				{ data: 'max', label: mw.msg( 'maximum-size' ) }
@@ -83,7 +84,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.SizeFilterWidget.static.gatherPreInfuseState = function ( node, config ) {
-		var state = mw.widgets.SizeFilterWidget.super.static.gatherPreInfuseState( node, config );
+		const state = mw.widgets.SizeFilterWidget.super.static.gatherPreInfuseState( node, config );
 		state.radioselectinput = OO.ui.RadioSelectInputWidget.static.gatherPreInfuseState(
 			$( node ).find( '.oo-ui-radioSelectInputWidget' ),
 			config.radioselectinput

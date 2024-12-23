@@ -20,9 +20,12 @@
  * @file
  * @ingroup Parser
  */
+
+namespace MediaWiki\Parser;
+
+use DateTime;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Parser\Parser;
 use MediaWiki\Specials\SpecialVersion;
 use MediaWiki\Utils\MWTimestamp;
 use Psr\Log\LoggerInterface;
@@ -300,6 +303,17 @@ class CoreMagicVariables {
 				return $parser->getContentLanguage()->getCode();
 			case 'pagelanguage':
 				return $pageLang->getCode();
+			case 'userlanguage':
+				if ( $svcOptions->get( MainConfigNames::ParserEnableUserLanguage ) ) {
+					return $parser->getOptions()->getUserLang();
+				} else {
+					return $pageLang->getCode();
+				}
+			case 'bcp47':
+			case 'dir':
+			case 'language':
+				# magic variables are the same as empty/default first argument
+				return CoreParserFunctions::$id( $parser );
 			default:
 				// This is not one of the core magic variables
 				return null;
@@ -346,8 +360,11 @@ class CoreMagicVariables {
 
 		$ttl = max( $deadlineUnix - $tsUnix, self::MIN_DEADLINE_TTL );
 		$ttl += self::DEADLINE_TTL_CLOCK_FUDGE;
-		$ttl += ( $deadlineUnix % self::DEADLINE_TTL_STAGGER_MAX );
+		$ttl += ( $tsUnix % self::DEADLINE_TTL_STAGGER_MAX );
 
 		$parser->getOutput()->updateCacheExpiry( $ttl );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( CoreMagicVariables::class, 'CoreMagicVariables' );

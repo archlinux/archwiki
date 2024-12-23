@@ -6,12 +6,15 @@ use Shellbox\FileUtils;
 
 /**
  * Encapsulation of an input file that comes from a string
- * @internal
  */
-class InputFileFromString extends InputFile {
+class InputFileFromString extends InputFileWithContents {
 	/** @var string */
 	private $contents;
 
+	/**
+	 * @internal
+	 * @param string $contents
+	 */
 	public function __construct( string $contents ) {
 		$this->contents = $contents;
 	}

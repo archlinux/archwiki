@@ -43,7 +43,11 @@ class EchoForeignPresentationModel extends EchoEventPresentationModel {
 		return $msg;
 	}
 
-	protected function getWikiNames( array $wikis ) {
+	/**
+	 * @param string[] $wikis
+	 * @return string[]
+	 */
+	protected function getWikiNames( array $wikis ): array {
 		$data = ForeignNotifications::getApiEndpoints( $wikis );
 		$names = [];
 		foreach ( $wikis as $wiki ) {

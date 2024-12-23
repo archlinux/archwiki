@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Sureshkhole",
 			"V.narsikar"
 		]
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "हा लपविलेला नियम आहे.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "या नियमाचा पान शीर्षकावर प्रभाव पडतो.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "भाषा संकेत (कोड)",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<अवैध>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>अवैध</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "भाषा",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "स्रोत",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "गंतव्य",

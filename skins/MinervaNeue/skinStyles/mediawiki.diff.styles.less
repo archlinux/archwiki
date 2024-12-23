@@ -1,14 +1,6 @@
 /* stylelint-disable selector-max-id */
 @import '../minerva.less/minerva.variables.less';
 
-// Override MobileFrontend styles (can be weakened/removed when MobileDiff no longer exists)
-#mw-mf-diffview .mw-diff-empty-line {
-	del,
-	ins {
-		width: 100%;
-	}
-}
-
 // By default a pseudo element is used for skins like Vector. We don't want this on Minerva.
 .mw-diff-movedpara-right,
 .mw-diff-movedpara-left,
@@ -16,35 +8,6 @@
 .rtl .mw-diff-movedpara-right {
 	&::after {
 		content: none;
-	}
-}
-
-.mw-special-MobileDiff {
-	#mw-mf-diffarea {
-		padding-left: 0;
-		padding-right: 0;
-	}
-
-	// T350440: Hide desktop history links on Special:MobileDiff
-	// to avoid duplicate sets of links.
-	.mw-diff-revision-history-links {
-		display: none;
-	}
-}
-
-@media all and ( max-width: @width-breakpoint-tablet ) {
-	.mw-special-MobileDiff {
-		.content-unstyled {
-			margin: 0 @margin-content;
-		}
-	}
-}
-
-@media all and ( max-width: @width-breakpoint-tablet ) {
-	// T233151: Remove post-content margin on mobile diff page drawer
-	// .post-content margin
-	#mw-mf-userinfo .post-content {
-		margin: 0;
 	}
 }
 
@@ -56,13 +19,13 @@
 
 .minoredit {
 	margin-right: 8px;
-	background: var( --background-color-interactive );
+	background: @background-color-interactive;
 	border-radius: 2px;
 	font-size: 0.9em;
 	padding: 0 6px 1px;
 }
 
-@media all and ( max-width: @width-breakpoint-tablet ) {
+@media all and ( max-width: @max-width-breakpoint-mobile ) {
 	//
 	// Navigation links
 	//Reveal the previous and next navigation links
@@ -121,10 +84,12 @@
 	//
 	// Diff
 	//
-	table.diff {
+	.content table.diff {
 		display: block;
 
-		tbody, tr, td {
+		tbody,
+		tr,
+		td {
 			display: block;
 			padding: 0;
 		}
@@ -142,8 +107,8 @@
 		position: fixed;
 		height: 8em;
 		padding: 1em;
-		background-color: #f8f9fa;
-		border-top: 1px solid #c8ccd1;
+		background-color: @background-color-interactive-subtle;
+		border-top: 1px solid @border-color-subtle;
 		bottom: 0;
 		left: 0;
 		right: 0;
@@ -157,7 +122,7 @@
 		right: 8px;
 
 		.jquery-confirmable-interface {
-			background-color: var( --background-color-interactive-subtle );
+			background-color: @background-color-interactive-subtle;
 			border: @border-subtle;
 			padding: @spacing-50;
 		}
@@ -179,11 +144,11 @@
 		&::before {
 			content: '';
 			margin-right: 8px;
-			.cdx-mixin-css-icon( @cdx-icon-user-avatar, var(--color-subtle) );
+			.cdx-mixin-css-icon( @cdx-icon-user-avatar, @color-subtle);
 		}
 
 		&.mw-anonuserlink::before {
-			.cdx-mixin-css-icon( @cdx-icon-user-anonymous, var(--color-subtle) );
+			.cdx-mixin-css-icon( @cdx-icon-user-anonymous, @color-subtle);
 		}
 	}
 
@@ -202,7 +167,7 @@
 		span {
 			text-align: center;
 			font-size: 1.85em;
-			color: #72777d;
+			color: @color-subtle;
 			display: block;
 			line-height: 20px;
 		}

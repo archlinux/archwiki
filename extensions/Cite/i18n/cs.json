@@ -7,8 +7,8 @@
 			"Matěj Grabovský",
 			"Matěj Suchánek",
 			"Mormegil",
-			"Sp5uhe",
-			"Patrik L."
+			"Patrik L.",
+			"Sp5uhe"
 		]
 	},
 	"cite-desc": "Přidává značky <code>&lt;ref&gt;</code> a&nbsp;<code>&lt;references/&gt;</code> na označení citací",
@@ -33,6 +33,13 @@
 	"cite_error_empty_references_define": "U značky <code>&lt;ref&gt;</code> s názvem „$1“ definované uvnitř <code>&lt;references&gt;</code> chybí obsah.",
 	"cite-tracking-category-cite-error": "Stránky s chybami v referencích",
 	"cite-tracking-category-cite-error-desc": "Stránky v této kategorii obsahují chyby v použití značek pro reference.",
+	"cite-reference-previews-reference": "Reference",
+	"cite-reference-previews-book": "Knižní reference",
+	"cite-reference-previews-journal": "Časopisová reference",
+	"cite-reference-previews-news": "Zpravodajská reference",
+	"cite-reference-previews-note": "Poznámka",
+	"cite-reference-previews-web": "Webová reference",
+	"cite-reference-previews-collapsible-placeholder": "Tato reference obsahuje prvek, který se do náhledu nevejde.",
 	"cite_references_link_accessibility_label": "Skočit nahoru",
 	"cite_references_link_many_accessibility_label": "Skočit nahoru k:",
 	"cite_references_link_accessibility_back_label": "Skočit zpátky nahoru",
@@ -47,5 +54,7 @@
 	"cite-wikieditor-help-content-showreferences-description": "Zobrazení referencí",
 	"cite-wikieditor-help-content-reference-example-text1": "Text článku.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Text odkazu], další text.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Text odkazu]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Text odkazu]",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Máte zapnuté udělátko [[$1|Vyskakovací reference]], takže neuvidíte náhledy referencí, ale i tak uvidíte náhledy stránek. V závislosti na vaší wiki se může udělátko jmenovat i mírně jinak. Pokud budete mít i nadále problémy, zkontrolujte prosím svá udělátka a uživatelské skripty včetně těch globálních.",
+	"popups-refpreview-user-preference-label": "Zapnout náhledy referencí (při čtení stránky poskytne rychlé náhledy referencí)"
 }

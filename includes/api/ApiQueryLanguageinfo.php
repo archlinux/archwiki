@@ -18,10 +18,14 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageFallback;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Message\Message;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -48,17 +52,9 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 	private LanguageFallback $languageFallback;
 	private LanguageConverterFactory $languageConverterFactory;
 
-	/**
-	 * @param ApiQuery $queryModule
-	 * @param string $moduleName
-	 * @param LanguageFactory $languageFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param LanguageFallback $languageFallback
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 */
 	public function __construct(
 		ApiQuery $queryModule,
-		$moduleName,
+		string $moduleName,
 		LanguageFactory $languageFactory,
 		LanguageNameUtils $languageNameUtils,
 		LanguageFallback $languageFallback,
@@ -260,3 +256,6 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 	}
 
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryLanguageinfo::class, 'ApiQueryLanguageinfo' );

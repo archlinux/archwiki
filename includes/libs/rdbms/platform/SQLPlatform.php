@@ -33,6 +33,7 @@ use Wikimedia\Rdbms\LikeMatch;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Rdbms\Query;
 use Wikimedia\Rdbms\QueryBuilderFromRawSql;
+use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\Subquery;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -61,8 +62,8 @@ class SQLPlatform implements ISQLPlatform {
 
 	public function __construct(
 		DbQuoter $quoter,
-		LoggerInterface $logger = null,
-		DatabaseDomain $currentDomain = null,
+		?LoggerInterface $logger = null,
+		?DatabaseDomain $currentDomain = null,
 		$errorLogger = null
 
 	) {
@@ -210,6 +211,7 @@ class SQLPlatform implements ISQLPlatform {
 	public function makeList( array $a, $mode = self::LIST_COMMA ) {
 		$first = true;
 		$list = '';
+		$keyWarning = null;
 
 		foreach ( $a as $field => $value ) {
 			if ( $first ) {
@@ -227,8 +229,18 @@ class SQLPlatform implements ISQLPlatform {
 			if ( ( $mode == self::LIST_AND || $mode == self::LIST_OR ) && is_numeric( $field ) ) {
 				if ( $value instanceof IExpression ) {
 					$list .= "(" . $value->toSql( $this->quoter ) . ")";
+				} elseif ( is_array( $value ) ) {
+					throw new InvalidArgumentException( __METHOD__ . ": unexpected array value without key" );
+				} elseif ( $value instanceof RawSQLValue ) {
+					throw new InvalidArgumentException( __METHOD__ . ": unexpected raw value without key" );
 				} else {
 					$list .= "($value)";
+				}
+			} elseif ( $value instanceof IExpression ) {
+				if ( $mode == self::LIST_AND || $mode == self::LIST_OR ) {
+					throw new InvalidArgumentException( __METHOD__ . ": unexpected key $field for IExpression value" );
+				} else {
+					throw new InvalidArgumentException( __METHOD__ . ": unexpected IExpression outside WHERE clause" );
 				}
 			} elseif ( $mode == self::LIST_SET && is_numeric( $field ) ) {
 				$list .= "$value";
@@ -255,10 +267,8 @@ class SQLPlatform implements ISQLPlatform {
 					}
 					if ( count( $value ) == 1 ) {
 						// Special-case single values, as IN isn't terribly efficient
-						// Don't necessarily assume the single key is 0; we don't
-						// enforce linear numeric ordering on other arrays here.
-						$value = array_values( $value )[0];
-						$list .= $field . " = " . $this->quoter->addQuotes( $value );
+						// (but call makeList() so that warnings are emitted if needed)
+						$list .= $field . " = " . $this->makeList( $value );
 					} else {
 						$list .= $field . " IN (" . $this->makeList( $value ) . ") ";
 					}
@@ -267,11 +277,23 @@ class SQLPlatform implements ISQLPlatform {
 						$list .= " OR $field IS NULL)";
 					}
 				}
+			} elseif ( is_array( $value ) ) {
+				throw new InvalidArgumentException( __METHOD__ . ": unexpected nested array" );
 			} elseif ( $value === null ) {
 				if ( $mode == self::LIST_AND || $mode == self::LIST_OR ) {
 					$list .= "$field IS ";
 				} elseif ( $mode == self::LIST_SET ) {
 					$list .= "$field = ";
+				} elseif ( $mode === self::LIST_COMMA && !is_numeric( $field ) ) {
+					$keyWarning ??= [
+						__METHOD__ . ": array key {key} in list of values ignored",
+						[ 'key' => $field, 'exception' => new RuntimeException() ]
+					];
+				} elseif ( $mode === self::LIST_NAMES && !is_numeric( $field ) ) {
+					$keyWarning ??= [
+						__METHOD__ . ": array key {key} in list of fields ignored",
+						[ 'key' => $field, 'exception' => new RuntimeException() ]
+					];
 				}
 				$list .= 'NULL';
 			} else {
@@ -279,9 +301,25 @@ class SQLPlatform implements ISQLPlatform {
 					$mode == self::LIST_AND || $mode == self::LIST_OR || $mode == self::LIST_SET
 				) {
 					$list .= "$field = ";
+				} elseif ( $mode === self::LIST_COMMA && !is_numeric( $field ) ) {
+					$keyWarning ??= [
+						__METHOD__ . ": array key {key} in list of values ignored",
+						[ 'key' => $field, 'exception' => new RuntimeException() ]
+					];
+				} elseif ( $mode === self::LIST_NAMES && !is_numeric( $field ) ) {
+					$keyWarning ??= [
+						__METHOD__ . ": array key {key} in list of fields ignored",
+						[ 'key' => $field, 'exception' => new RuntimeException() ]
+					];
 				}
 				$list .= $mode == self::LIST_NAMES ? $value : $this->quoter->addQuotes( $value );
 			}
+		}
+
+		if ( $keyWarning ) {
+			// Only log one warning about this per function call, to reduce log spam when a dynamically
+			// generated associative array is passed
+			$this->logger->warning( ...$keyWarning );
 		}
 
 		return $list;
@@ -609,17 +647,25 @@ class SQLPlatform implements ISQLPlatform {
 		$this->currentDomain = $currentDomain;
 	}
 
+	/**
+	 * @internal For use by tests
+	 * @return DatabaseDomain
+	 */
+	public function getCurrentDomain() {
+		return $this->currentDomain;
+	}
+
 	public function selectSQLText(
-		$table, $vars, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
+		$tables, $vars, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
 	) {
-		if ( is_array( $table ) ) {
-			$tables = $table;
-		} elseif ( $table === '' || $table === null || $table === false ) {
-			$tables = [];
-		} elseif ( is_string( $table ) ) {
-			$tables = [ $table ];
-		} else {
-			throw new DBLanguageError( __METHOD__ . ' called with incorrect table parameter' );
+		if ( !is_array( $tables ) ) {
+			if ( $tables === '' || $tables === null || $tables === false ) {
+				$tables = [];
+			} elseif ( is_string( $tables ) ) {
+				$tables = [ $tables ];
+			} else {
+				throw new DBLanguageError( __METHOD__ . ' called with incorrect table parameter' );
+			}
 		}
 
 		if ( is_array( $vars ) ) {
@@ -709,6 +755,47 @@ class SQLPlatform implements ISQLPlatform {
 			$sql = 'EXPLAIN ' . $sql;
 		}
 
+		if (
+			$fname === static::CALLER_UNKNOWN ||
+			str_starts_with( $fname, 'Wikimedia\\Rdbms\\' ) ||
+			$fname === '{closure}'
+		) {
+			$exception = new RuntimeException();
+
+			// Try to figure out and report the real caller
+			$caller = '';
+			foreach ( $exception->getTrace() as $call ) {
+				if ( str_ends_with( $call['file'] ?? '', 'Test.php' ) ) {
+					// Don't warn when called directly by test code, adding callers there is pointless
+					break;
+				} elseif ( str_starts_with( $call['class'] ?? '', 'Wikimedia\\Rdbms\\' ) ) {
+					// Keep looking for the caller of a rdbms method
+				} elseif ( str_ends_with( $call['class'] ?? '', 'SelectQueryBuilder' ) ) {
+					// Keep looking for the caller of any custom SelectQueryBuilder
+				} else {
+					// Warn about the external caller we found
+					$caller = implode( '::', array_filter( [ $call['class'] ?? null, $call['function'] ] ) );
+					break;
+				}
+			}
+
+			if ( $fname === '{closure}' ) {
+				// Someone did ->caller( __METHOD__ ) in a local function, e.g. in a callback to
+				// getWithSetCallback(), MWCallableUpdate or doAtomicSection(). That's not very helpful.
+				// Provide a more specific message. The caller has to be provided like this:
+				//   $method = __METHOD__;
+				//   function ( ... ) use ( $method ) { ... }
+				$warning = "SQL query with incorrect caller (__METHOD__ used inside a closure: {caller}): {sql}";
+			} else {
+				$warning = "SQL query did not specify the caller (guessed caller: {caller}): {sql}";
+			}
+
+			$this->logger->warning(
+				$warning,
+				[ 'sql' => $sql, 'caller' => $caller, 'exception' => $exception ]
+			);
+		}
+
 		return $sql;
 	}
 
@@ -794,7 +881,7 @@ class SQLPlatform implements ISQLPlatform {
 	 * Get the aliased table name clause for a FROM clause
 	 * which might have a JOIN and/or USE INDEX or IGNORE INDEX clause
 	 *
-	 * @param array $tables ( [alias] => table )
+	 * @param array $tables Array of ([alias] => table reference)
 	 * @param array $use_index Same as for select()
 	 * @param array $ignore_index Same as for select()
 	 * @param array $join_conds Same as for select()
@@ -927,7 +1014,7 @@ class SQLPlatform implements ISQLPlatform {
 	 * and "(SELECT * from tableA) newTablename" for subqueries (e.g. derived tables)
 	 *
 	 * @see Database::tableName()
-	 * @param string|Subquery $table Table name or object with a 'sql' field
+	 * @param string|Subquery $table The unqualified name of a table, or Subquery
 	 * @param string|false $alias Table alias (optional)
 	 * @return string SQL name for aliased table. Will not alias a table to its own name
 	 */
@@ -952,6 +1039,22 @@ class SQLPlatform implements ISQLPlatform {
 	}
 
 	public function tableName( string $name, $format = 'quoted' ) {
+		$prefix = $this->currentDomain->getTablePrefix();
+
+		// Warn about table names that look qualified
+		if (
+			(
+				str_contains( $name, '.' ) &&
+				!preg_match( '/^information_schema\.[a-z_0-9]+$/', $name )
+			) ||
+			( $prefix !== '' && str_starts_with( $name, $prefix ) )
+		) {
+			$this->logger->warning(
+				__METHOD__ . ' called with qualified table ' . $name,
+				[ 'db_log_category' => 'sql' ]
+			);
+		}
+
 		// Extract necessary database, schema, table identifiers and quote them as needed
 		$formattedComponents = [];
 		foreach ( $this->qualifiedTableComponents( $name ) as $component ) {
@@ -1057,6 +1160,43 @@ class SQLPlatform implements ISQLPlatform {
 	}
 
 	/**
+	 * Get the database identifer and prefixed table name identifier for a table
+	 *
+	 * The table name is assumed to be relative to the current DB domain
+	 *
+	 * This method is useful for TEMPORARY table tracking. In MySQL, temp tables with identical
+	 * names can co-exist on different databases, which can be done via CREATE and USE. Note
+	 * that SQLite/PostgreSQL do not allow changing the database within a session. This method
+	 * omits the schema identifier for several reasons:
+	 *   - MySQL/MariaDB do not support schemas at all.
+	 *   - SQLite/PostgreSQL put all TEMPORARY tables in the same schema (TEMP and pgtemp,
+	 *     respectively). When these engines resolve a table reference, they first check for
+	 *     a matching table in the temp schema, before checking the current DB domain schema.
+	 *     Note that this breaks table segregation based on the schema component of the DB
+	 *     domain, e.g. a temp table with unqualified name "x" resolves to the same underlying
+	 *     table whether the current DB domain is "my_db-schema1-mw_" or "my_db-schema2-mw_".
+	 *     By ignoring the schema, we can at least account for this.
+	 *   - Exposing the the TEMP/pg_temp schema here would be too leaky of an abstraction,
+	 *     running the risk of unexpected results, such as identifiers that don't match. It is
+	 *     easier to just avoid creating identically-named TEMPORARY tables on different schemas.
+	 *
+	 * @internal only to be used inside rdbms library
+	 * @param string $table Table name
+	 * @return array{0:string|null,1:string} (unquoted database name, unquoted prefixed table name)
+	 */
+	public function getDatabaseAndTableIdentifier( string $table ) {
+		$components = $this->qualifiedTableComponents( $table );
+		switch ( count( $components ) ) {
+			case 1:
+				return [ $this->currentDomain->getDatabase(), $components[0] ];
+			case 2:
+				return $components;
+			default:
+				throw new DBLanguageError( 'Too many table components' );
+		}
+	}
+
+	/**
 	 * @stable to override
 	 * @return string|null Schema to use to qualify relations in queries
 	 */
@@ -1064,7 +1204,12 @@ class SQLPlatform implements ISQLPlatform {
 		return $this->currentDomain->getSchema();
 	}
 
+	/**
+	 * @deprecated since 1.39.
+	 */
 	public function tableNames( ...$tables ) {
+		wfDeprecated( __METHOD__, '1.39' );
+
 		$retVal = [];
 
 		foreach ( $tables as $name ) {
@@ -1237,19 +1382,19 @@ class SQLPlatform implements ISQLPlatform {
 	}
 
 	public function buildGroupConcatField(
-		$delim, $table, $field, $conds = '', $join_conds = []
+		$delim, $tables, $field, $conds = '', $join_conds = []
 	) {
 		$fld = "GROUP_CONCAT($field SEPARATOR " . $this->quoter->addQuotes( $delim ) . ')';
 
-		return '(' . $this->selectSQLText( $table, $fld, $conds, __METHOD__, [], $join_conds ) . ')';
+		return '(' . $this->selectSQLText( $tables, $fld, $conds, static::CALLER_SUBQUERY, [], $join_conds ) . ')';
 	}
 
 	public function buildSelectSubquery(
-		$table, $vars, $conds = '', $fname = __METHOD__,
+		$tables, $vars, $conds = '', $fname = __METHOD__,
 		$options = [], $join_conds = []
 	) {
 		return new Subquery(
-			$this->selectSQLText( $table, $vars, $conds, $fname, $options, $join_conds )
+			$this->selectSQLText( $tables, $vars, $conds, $fname, $options, $join_conds )
 		);
 	}
 
@@ -1294,7 +1439,7 @@ class SQLPlatform implements ISQLPlatform {
 				);
 			}
 			// Make the value tuple that defines this row
-			$valueTuples[] = '(' . $this->makeList( $row, self::LIST_COMMA ) . ')';
+			$valueTuples[] = '(' . $this->makeList( array_values( $row ), self::LIST_COMMA ) . ')';
 		}
 
 		$magicAliasFields = [];
@@ -1432,7 +1577,7 @@ class SQLPlatform implements ISQLPlatform {
 	}
 
 	/**
-	 * @param string $table
+	 * @param string $table The unqualified name of a table
 	 * @param string|array $conds
 	 * @return Query
 	 */

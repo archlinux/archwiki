@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toniher",
-			"Amire80"
+			"Amire80",
+			"Toniher"
 		]
 	},
 	"visualeditor-mwlanguagevariant-name": "Nom de la llengua: $1",
@@ -10,7 +10,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-describe": "Aquesta és una regla descrita.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Aquesta és una regla oculta.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Codi de llengua",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<no vàlid>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>No vàlid</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Llengua",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Font",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destinació",

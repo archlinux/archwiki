@@ -62,3 +62,48 @@ div.mwe-math-element {
 	overflow-x: auto;
 	max-width: 100%;
 }
+
+/* Polyfill for MathML matrix elements with menclose https://github.com/w3c/mathml-core/issues/245 */
+mtd.mwe-math-matrix-top {
+	border-top: 0.06em solid;
+}
+
+mtd.mwe-math-matrix-bottom {
+	border-bottom: 0.06em solid;
+}
+
+mtd.mwe-math-matrix-left {
+	border-left: 0.06em solid;
+}
+
+mtd.mwe-math-matrix-right {
+	border-right: 0.06em solid;
+}
+
+/* see https://github.com/w3c/mathml-core/issues/245#issuecomment-2410676518 */
+menclose.menclose {
+	position: relative;
+	padding: 0.5ex 0;
+}
+
+mrow.menclose-updiagonalstrike {
+	display: inline-block;
+	position: absolute;
+	left: 0.5px;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background-color: currentcolor;
+	clip-path: polygon( 0.05em 100%, 0 calc( 100% - 0.05em ), calc( 100% - 0.05em ) 0, 100% 0.05em );
+}
+
+mrow.menclose-downdiagonalstrike {
+	display: inline-block;
+	position: absolute;
+	left: 0.5px;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background-color: currentcolor;
+	clip-path: polygon( 0 0, 0.05em 0, 100% 100%, calc( 100% - 0.05em ) 100% );
+}

@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\Thanks;
 
-use EchoAttributeManager;
-use EchoUserLocator;
-use ExtensionRegistry;
+use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Hooks\BeforeCreateEchoEventHook;
 use MediaWiki\Extension\Notifications\Hooks\EchoGetBundleRulesHook;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Extension\Notifications\UserLocator;
+use MediaWiki\Registration\ExtensionRegistry;
 
 /**
  * Hooks for Thanks extension
@@ -43,9 +43,9 @@ class EchoHooks implements BeforeCreateEchoEventHook, EchoGetBundleRulesHook {
 				'web' => true,
 				'expandable' => true,
 			],
-			EchoAttributeManager::ATTR_LOCATORS => [
+			AttributeManager::ATTR_LOCATORS => [
 				[
-					[ EchoUserLocator::class, 'locateFromEventExtra' ],
+					[ UserLocator::class, 'locateFromEventExtra' ],
 					[ 'thanked-user-id' ]
 				],
 			],
@@ -61,9 +61,9 @@ class EchoHooks implements BeforeCreateEchoEventHook, EchoGetBundleRulesHook {
 					'web' => true,
 					'expandable' => true,
 				],
-				EchoAttributeManager::ATTR_LOCATORS => [
+				AttributeManager::ATTR_LOCATORS => [
 					[
-						[ EchoUserLocator::class, 'locateFromEventExtra' ],
+						[ UserLocator::class, 'locateFromEventExtra' ],
 						[ 'thanked-user-id' ]
 					],
 				],

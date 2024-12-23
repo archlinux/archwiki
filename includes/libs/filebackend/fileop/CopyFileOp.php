@@ -21,6 +21,11 @@
  * @ingroup FileBackend
  */
 
+namespace Wikimedia\FileBackend\FileOps;
+
+use StatusValue;
+use Wikimedia\FileBackend\FileBackend;
+
 /**
  * Copy a file from one storage path to another in the backend.
  * Parameters for this operation are outlined in FileBackend::doOperations().
@@ -106,3 +111,6 @@ class CopyFileOp extends FileOp {
 		return [ $this->params['dst'] ];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( CopyFileOp::class, 'CopyFileOp' );

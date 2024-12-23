@@ -1,7 +1,9 @@
 <?php
 
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Logger\Spi as LoggerSpi;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\PoolCounter\PoolWorkArticleView;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -22,9 +24,8 @@ class PoolWorkArticleViewTest extends MediaWikiIntegrationTestCase {
 	 * @return LoggerSpi
 	 */
 	protected function getLoggerSpi( $logger = null ) {
-		$logger = $logger ?: new NullLogger();
 		$spi = $this->createNoOpMock( LoggerSpi::class, [ 'getLogger' ] );
-		$spi->method( 'getLogger' )->willReturn( $logger );
+		$spi->method( 'getLogger' )->willReturn( $logger ?? new NullLogger() );
 		return $spi;
 	}
 
@@ -37,7 +38,7 @@ class PoolWorkArticleViewTest extends MediaWikiIntegrationTestCase {
 	 */
 	protected function newPoolWorkArticleView(
 		WikiPage $page,
-		RevisionRecord $rev = null,
+		?RevisionRecord $rev = null,
 		$options = null
 	) {
 		if ( !$options ) {
@@ -98,7 +99,7 @@ class PoolWorkArticleViewTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertNotNull( $out );
 		$this->assertNotFalse( $out );
-		$this->assertStringContainsString( 'First', $out->getText() );
+		$this->assertStringContainsString( 'First', $out->getRawText() );
 	}
 
 	public function testDoWorkWithFakeRevision() {

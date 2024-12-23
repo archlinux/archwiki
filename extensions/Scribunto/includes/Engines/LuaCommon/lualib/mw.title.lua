@@ -168,6 +168,7 @@ local function makeTitleObject( data )
 	end
 
 	function data:getContent()
+		-- deprecated: should use `title.content` instead
 		checkSelf( self, 'getContent' )
 		local content = php.getContent( self.fullText )
 		data.getContent = function ( self )
@@ -300,6 +301,18 @@ local function makeTitleObject( data )
 					data.redirectTarget = makeTitleObject( php.redirectTarget( data.prefixedText ) ) or false
 				end
 				return data.redirectTarget
+			end
+			if k == 'content' then
+				if data.content == nil then
+					data.content = php.getContent( data.prefixedText ) or false
+				end
+				return data.content
+			end
+			if k == 'categories' then
+				if data.categories == nil then
+					data.categories = php.getCategories( data.prefixedText )
+				end
+				return data.categories
 			end
 
 			return data[k]

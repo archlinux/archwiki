@@ -4,7 +4,7 @@
 		"Max Semenik"
 	],
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"url": "https://www.mediawiki.org/wiki/Extension:TextExtracts",
 	"descriptionmsg": "textextracts-desc",
@@ -15,12 +15,13 @@
 	},
 	"APIPropModules": {
 		"extracts": {
-			"class": "TextExtracts\\ApiQueryExtracts",
+			"class": "MediaWiki\\Extension\\TextExtracts\\ApiQueryExtracts",
 			"services": [
 				"ConfigFactory",
 				"MainWANObjectCache",
 				"LanguageConverterFactory",
-				"WikiPageFactory"
+				"WikiPageFactory",
+				"TitleFormatter"
 			]
 		}
 	},
@@ -31,14 +32,18 @@
 		]
 	},
 	"AutoloadNamespaces": {
-		"TextExtracts\\": "includes/"
+		"MediaWiki\\Extension\\TextExtracts\\": "includes/"
 	},
 	"Hooks": {
-		"ApiOpenSearchSuggest": "main"
+		"ApiOpenSearchSuggest": "main",
+		"SearchResultProvideDescription": "main"
 	},
 	"HookHandlers": {
 		"main": {
-			"class": "TextExtracts\\Hooks"
+			"class": "MediaWiki\\Extension\\TextExtracts\\Hooks",
+			"services": [
+				"ConfigFactory"
+			]
 		}
 	},
 	"config": {
@@ -62,6 +67,9 @@
 			]
 		},
 		"ExtractsExtendOpenSearchXml": {
+			"value": false
+		},
+		"ExtractsExtendRestSearch": {
 			"value": false
 		}
 	},

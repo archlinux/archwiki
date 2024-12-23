@@ -1,26 +1,25 @@
 // Adapted from ve.ui.MWWikitextDataTransferHandlerFactory
 function importRegistry( parent, child ) {
-	var name;
 	// Copy existing items
-	for ( name in parent.registry ) {
+	for ( const name in parent.registry ) {
 		child.register( parent.registry[ name ] );
 	}
 	// Copy any new items when they're added
-	parent.on( 'register', function ( n, data ) {
+	parent.on( 'register', ( n, data ) => {
 		child.register( data );
 	} );
 }
 
 // Create new registries so that we can override the behavior for signatures
 // without affecting normal VisualEditor.
-var commandRegistry = new ve.ui.CommandRegistry();
+const commandRegistry = new ve.ui.CommandRegistry();
 importRegistry( ve.ui.commandRegistry, commandRegistry );
-var sequenceRegistry = new ve.ui.SequenceRegistry();
+const sequenceRegistry = new ve.ui.SequenceRegistry();
 importRegistry( ve.ui.sequenceRegistry, sequenceRegistry );
 
-var wikitextCommandRegistry = new ve.ui.MWWikitextCommandRegistry( commandRegistry );
+const wikitextCommandRegistry = new ve.ui.MWWikitextCommandRegistry( commandRegistry );
 importRegistry( ve.ui.wikitextCommandRegistry, wikitextCommandRegistry );
-var wikitextSequenceRegistry = new ve.ui.SequenceRegistry();
+const wikitextSequenceRegistry = new ve.ui.SequenceRegistry();
 importRegistry( ve.ui.wikitextSequenceRegistry, wikitextSequenceRegistry );
 
 // Disable find-and-replace (T263570)
@@ -58,7 +57,7 @@ sequenceRegistry.register(
 // TODO: Show a warning when typing ~~~~ in wikitext mode?
 
 // Show wikitext warnings for disabled sequences (disabled via excludeCommands):
-var sequenceRegistryForReplyTool = new ve.ui.SequenceRegistry();
+const sequenceRegistryForReplyTool = new ve.ui.SequenceRegistry();
 importRegistry( sequenceRegistry, sequenceRegistryForReplyTool );
 
 // insertTable

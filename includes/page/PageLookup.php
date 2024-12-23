@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Page;
 
-use IDBAccessObject;
 use InvalidArgumentException;
 use MediaWiki\Linker\LinkTarget;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Service for looking up information about wiki pages.
@@ -72,7 +72,7 @@ interface PageLookup {
 	 * @since 1.37
 	 *
 	 * @param string $text
-	 * @param int $defaultNamespace Namespace to assume per default (usually NS_MAIN)
+	 * @param int $defaultNamespace Namespace to assume by default (usually NS_MAIN)
 	 * @param int $queryFlags
 	 *
 	 * @return ProperPageIdentity|null
@@ -92,7 +92,7 @@ interface PageLookup {
 	 * @since 1.37
 	 *
 	 * @param string $text
-	 * @param int $defaultNamespace Namespace to assume per default (usually NS_MAIN)
+	 * @param int $defaultNamespace Namespace to assume by default (usually NS_MAIN)
 	 * @param int $queryFlags
 	 *
 	 * @return ExistingPageRecord|null

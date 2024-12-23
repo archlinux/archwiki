@@ -4,8 +4,8 @@
 	 *
 	 * @class
 	 * @abstract
-	 * @mixins OO.EventEmitter
-	 * @mixins OO.SortedEmitterList
+	 * @mixes OO.EventEmitter
+	 * @mixes OO.SortedEmitterList
 	 *
 	 * @constructor
 	 */

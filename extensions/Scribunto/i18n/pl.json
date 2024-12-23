@@ -6,13 +6,13 @@
 			"Darellur",
 			"Jacenty359",
 			"Matma Rex",
+			"Msz2001",
 			"Pio387",
 			"Rail",
 			"Railfail536",
 			"The Polish",
 			"WTM",
-			"Woytecr",
-			"Msz2001"
+			"Woytecr"
 		]
 	},
 	"content-model-scribunto": "Moduł Scribunto",
@@ -72,5 +72,7 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Rejestry Lua",
 	"nstab-module": "Moduł",
-	"tooltip-ca-nstab-module": "Zobacz stronę modułu"
+	"tooltip-ca-nstab-module": "Zobacz stronę modułu",
+	"namespaceinfo-description-ns828": "Przestrzeń nazw dla modułów kodu Lua, które mogą być wywoływane ze stron wiki, oraz ich stron dokumentacji",
+	"namespaceinfo-description-ns829": "Strony dyskusji dla modułów i dokumentacji"
 }

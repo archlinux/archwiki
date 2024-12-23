@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Lifeway",
+			"Mxalexandrov86",
 			"Валентина Семёнова",
-			"Венина Наталья Константиновна",
-			"Mxalexandrov86"
+			"Венина Наталья Константиновна"
 		]
 	},
 	"cite_error": "$1 - тыште йоҥылыш",
@@ -23,6 +23,14 @@
 	"cite_error_included_references": "Петырыше тег уке <code>&lt;references&gt;</code>",
 	"cite-tracking-category-cite-error": "Палемдымаште йоҥылыш дене велыж-влак",
 	"cite-tracking-category-cite-error-desc": "Тиде категорий велыж-влак кылвер тег кучылтмаште йоҥылышан улыт.",
+	"cite-tracking-category-ref-extends": "Кумдаҥдыме кылверан велыж-влак",
+	"cite-reference-previews-reference": "Кылвер",
+	"cite-reference-previews-book": "Книгалан кылвер",
+	"cite-reference-previews-journal": "Журналлан кылвер",
+	"cite-reference-previews-news": "Увер кылвер",
+	"cite-reference-previews-note": "Палемдымаш",
+	"cite-reference-previews-web": "Веб-кылвер",
+	"cite-reference-previews-collapsible-placeholder": "Тиде кылверыште превьюш шыҥыдыме сӱрет уло",
 	"cite_references_link_accessibility_label": "Мӧҥгеш текст деке",
 	"cite_references_link_many_accessibility_label": "Мӧҥгеш куснаш:",
 	"cite_references_link_accessibility_back_label": "Мӧҥгеш текст деке",
@@ -36,5 +44,6 @@
 	"cite-wikieditor-help-content-showreferences-description": "Ссылке-влакым ончыкташ",
 	"cite-wikieditor-help-content-reference-example-text1": "Лаштыкын текстше.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Link text], ешартыш текст.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Текст ссылке]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Текст ссылке]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Ешартыш рашемдымаш-влак"
 }

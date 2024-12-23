@@ -27,20 +27,9 @@ use MessageLocalizer;
  */
 final class PageActionsDirector {
 
-	/**
-	 * @var ToolbarBuilder
-	 */
-	private $toolbarBuilder;
-
-	/**
-	 * @var IOverflowBuilder
-	 */
-	private $overflowBuilder;
-
-	/**
-	 * @var MessageLocalizer
-	 */
-	private $messageLocalizer;
+	private ToolbarBuilder $toolbarBuilder;
+	private IOverflowBuilder $overflowBuilder;
+	private MessageLocalizer $messageLocalizer;
 
 	/**
 	 * Director responsible for Page Actions menu building

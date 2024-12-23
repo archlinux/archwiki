@@ -35,12 +35,12 @@
 <div class="mw-page-container">
 	<div class="mw-page-container-inner">
 		<div class="vector-sitenotice-container">
-			<div id="siteNotice">{{{html-site-notice}}}</div>
+			{{{html-site-notice}}}
 		</div>
 		{{>ColumnStart}}
 		<div class="mw-content-container">
 			{{! `role` is unnecessary but kept to support selectors in any gadgets or user styles. }}
-			<main id="content" class="mw-body" role="main">
+			<main id="content" class="mw-body">
 				{{>PageTitlebar}}
 				{{>PageToolbar}}
 				{{>ColumnEnd}}
@@ -71,8 +71,5 @@
 </div>
 {{/data-vector-sticky-header}}
 <div class="vector-settings" id="p-dock-bottom">
-	<ul>
-		<li>
-		{{#data-vector-settings-button}}{{>Button}}{{/data-vector-settings-button}}</li>
-	</ul>
+	<ul></ul>
 </div>

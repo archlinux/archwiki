@@ -3,8 +3,10 @@
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\ParserOutputAccess;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -20,7 +22,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	 *
 	 * @return Article
 	 */
-	private function newArticle( Title $title, User $user = null ): Article {
+	private function newArticle( Title $title, ?User $user = null ): Article {
 		if ( !$user ) {
 			$user = $this->getTestUser()->getUser();
 		}
@@ -152,10 +154,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 		$parserOutputAccess->method( 'getCachedParserOutput' )
 			->willReturn( new ParserOutput( 'Kittens' ) );
 
-		$parsoidOutputAccess = $this->createNoOpMock( ParsoidOutputAccess::class );
-
 		$this->setService( 'ParserOutputAccess', $parserOutputAccess );
-		$this->setService( 'ParsoidOutputAccess', $parsoidOutputAccess );
 
 		$article = $this->newArticle( $title );
 		$article->view();
@@ -177,6 +176,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 		// Run any jobs enqueued by the creation of the test page
 		$this->runJobs( [ 'minJobs' => 0 ] );
 
+		$beforePreWarm = true;
 		$parserOutputAccess = $this->createNoOpMock(
 			ParserOutputAccess::class,
 			[ 'getCachedParserOutput', 'getParserOutput', ]
@@ -184,46 +184,93 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 		$parserOutputAccess->method( 'getCachedParserOutput' )
 			->willReturn( null );
 		$parserOutputAccess
-			->expects( $this->once() ) // This is the key assertion in this test case.
+			->expects( $this->exactly( 2 ) ) // This is the key assertion in this test case.
 			->method( 'getParserOutput' )
 			->with(
 				$this->anything(),
-				$this->callback( function ( ParserOptions $parserOptions ) {
-					$this->assertSame( 'page-view', $parserOptions->getRenderReason() );
+				$this->callback( function ( ParserOptions $parserOptions ) use ( &$beforePreWarm ) {
+					$expectedReason = $beforePreWarm ? 'page-view' : 'view';
+					$this->assertSame( $expectedReason, $parserOptions->getRenderReason() );
 					return true;
 				} ),
 				$this->anything(),
-				$this->callback( function ( $options ) {
-					$this->assertTrue( (bool)( $options & ParserOutputAccess::OPT_NO_CHECK_CACHE ),
-						"The cache is not checked again" );
-					$this->assertTrue( (bool)( $options & ParserOutputAccess::OPT_LINKS_UPDATE ),
-						"WikiPage::triggerOpportunisticLinksUpdate is attempted" );
+				$this->callback( function ( $options ) use ( &$beforePreWarm ) {
+					if ( $beforePreWarm ) {
+						$this->assertTrue( (bool)( $options & ParserOutputAccess::OPT_NO_CHECK_CACHE ),
+							"The cache is not checked again" );
+						$this->assertTrue( (bool)( $options & ParserOutputAccess::OPT_LINKS_UPDATE ),
+							"WikiPage::triggerOpportunisticLinksUpdate is attempted" );
+					}
 					return true;
 				} )
 			)
-			->willReturn( Status::newGood( new ParserOutput( 'Old Kittens' ) ) );
-
-		$parsoidOutputAccess = $this->createNoOpMock(
-			ParsoidOutputAccess::class,
-			[ 'getParserOutput', 'supportsContentModel' ]
-		);
-		$parsoidOutputAccess->method( 'supportsContentModel' )
-			->willReturn( true );
-		$parsoidOutputAccess
-			->expects( $this->once() ) // This is the key assertion in this test case.
-			->method( 'getParserOutput' )
-			->willReturn( Status::newGood( new ParserOutput( 'New Kittens' ) ) );
+			->willReturnCallback( static function ( $page, $parserOptions, $revision, $options ) use ( &$beforePreWarm ) {
+				$content = $beforePreWarm ? 'Old Kittens' : 'New Kittens';
+				return Status::newGood( new ParserOutput( $content ) );
+			} );
 
 		$this->setService( 'ParserOutputAccess', $parserOutputAccess );
-		$this->setService( 'ParsoidOutputAccess', $parsoidOutputAccess );
 
 		$article = $this->newArticle( $title );
 		$article->view();
 
+		$beforePreWarm = false;
 		$this->runJobs( [ 'minJobs' => 1, 'maxJobs' => 1 ], [ 'type' => 'parsoidCachePrewarm' ] );
 
 		// This is just a sanity check, not the key assertion.
 		$this->assertStringContainsString( 'Old Kittens', $article->getContext()->getOutput()->getHTML() );
 	}
 
+	/**
+	 * Ensure that protection indicators are shown when the page is protected.
+	 * @covers \Article::showProtectionIndicator
+	 */
+	public function testShowProtectionIndicator() {
+		$this->overrideConfigValue(
+			MainConfigNames::EnableProtectionIndicators,
+			true
+		);
+		$title = $this->getExistingTestPage()->getTitle();
+		$article = $this->newArticle( $title );
+
+		$wikiPage = new WikiPage( $title );
+		$cascade = false;
+		$wikiPage->doUpdateRestrictions( [
+				'edit' => 'autoconfirmed',
+			],
+			[ 'edit' => 'infinity' ],
+			$cascade,
+			'Test reason',
+			$this->getTestSysop()->getUser()
+		);
+
+		$article->showProtectionIndicator();
+		$output = $article->getContext()->getOutput();
+		$this->assertArrayHasKey( 'protection-autoconfirmed', $output->getIndicators(), 'Protection indicators are shown when a page is protected' );
+
+		$templateTitle = Title::newFromText( 'CascadeProtectionTest', NS_TEMPLATE );
+		$this->editPage( $templateTitle, 'Some text here', 'Test', NS_TEMPLATE, $this->getTestSysop()->getUser() );
+		$articleTitle = $this->getExistingTestPage()->getTitle();
+		$this->editPage( $articleTitle, '{{CascadeProtectionTest}}', 'Test', NS_MAIN, $this->getTestSysop()->getUser() );
+		$wikiPage = new WikiPage( $articleTitle );
+		$cascade = true;
+		$wikiPage->doUpdateRestrictions( [
+				'edit' => 'sysop',
+			],
+			[ 'edit' => 'infinity' ],
+			$cascade,
+			'Test reason',
+			$this->getTestSysop()->getUser()
+		);
+
+		$template = $this->newArticle( $templateTitle );
+
+		$template->showProtectionIndicator();
+		$output = $template->getContext()->getOutput();
+		$this->assertArrayHasKey(
+			'protection-sysop-cascade',
+			$output->getIndicators(),
+			'Protection indicators are shown when a page protected using cascade protection'
+		);
+	}
 }

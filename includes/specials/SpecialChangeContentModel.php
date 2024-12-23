@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Specials;
 
-use ContentHandler;
 use ErrorPageError;
 use LogEventsList;
 use LogPage;
 use MediaWiki\Collation\CollationFactory;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\HTMLForm\HTMLForm;
@@ -20,9 +20,12 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\Xml\Xml;
 use SearchEngineFactory;
-use Xml;
 
+/**
+ * @ingroup SpecialPage
+ */
 class SpecialChangeContentModel extends FormSpecialPage {
 
 	private IContentHandlerFactory $contentHandlerFactory;
@@ -201,7 +204,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	 * correspond to the human readable text in the drop-down list. The array values
 	 * correspond to the <option value="">.
 	 */
-	private function getOptionsForTitle( Title $title = null ) {
+	private function getOptionsForTitle( ?Title $title = null ) {
 		$models = $this->contentHandlerFactory->getContentModels();
 		$options = [];
 		foreach ( $models as $model ) {

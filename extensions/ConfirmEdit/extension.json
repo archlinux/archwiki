@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"GroupPermissions": {
 		"*": {
@@ -90,7 +90,16 @@
 	},
 	"HookHandlers": {
 		"ConfirmEditHooks": {
-			"class": "MediaWiki\\Extension\\ConfirmEdit\\Hooks"
+			"class": "MediaWiki\\Extension\\ConfirmEdit\\Hooks",
+			"services": [
+				"MainWANObjectCache"
+			]
+		},
+		"AbuseFilterHooks": {
+			"class": "MediaWiki\\Extension\\ConfirmEdit\\AbuseFilterHooks",
+			"services": [
+				"MainConfig"
+			]
 		}
 	},
 	"Hooks": {
@@ -104,7 +113,8 @@
 		"EditPage::showEditForm:fields": "ConfirmEditHooks",
 		"EditFilterMergedContent": "ConfirmEditHooks",
 		"APIGetAllowedParams": "ConfirmEditHooks",
-		"AuthChangeFormFields": "ConfirmEditHooks"
+		"AuthChangeFormFields": "ConfirmEditHooks",
+		"AbuseFilterCustomActions": "AbuseFilterHooks"
 	},
 	"AuthManagerAutoConfig": {
 		"preauth": {
@@ -162,6 +172,10 @@
 			"value": false
 		},
 		"CaptchaRegexes": {
+			"value": []
+		},
+		"ConfirmEditEnabledAbuseFilterCustomActions": {
+			"description": "Feature flag to toggle list of available custom actions to enable in AbuseFilter. See AbuseFilterHooks::onAbuseFilterCustomActions",
 			"value": []
 		}
 	},

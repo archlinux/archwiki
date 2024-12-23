@@ -51,7 +51,7 @@ ve.ui.MWAnnotationContextItem.static.modelClasses = [
 ve.ui.MWAnnotationContextItem.prototype.renderBody = function () {
 	this.$body.empty();
 
-	var $desc = this.getDescriptionMessage();
+	const $desc = this.getDescriptionMessage();
 	if ( $desc ) {
 		this.$body.append( $desc, $( document.createTextNode( mw.msg( 'word-separator' ) ) ) );
 	}

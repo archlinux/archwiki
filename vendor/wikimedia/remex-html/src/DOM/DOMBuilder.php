@@ -152,9 +152,9 @@ class DOMBuilder implements TreeHandler {
 	 *   Null args to DOMImplementation::createDocument
 	 */
 	protected function createDocument(
-		string $doctypeName = null,
-		string $public = null,
-		string $system = null
+		?string $doctypeName = null,
+		?string $public = null,
+		?string $system = null
 	) {
 		$impl = $this->domImplementation;
 		if ( $doctypeName === '' ) {

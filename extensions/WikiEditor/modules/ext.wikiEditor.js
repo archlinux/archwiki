@@ -2,6 +2,10 @@
  * JavaScript for WikiEditor
  */
 
+/**
+ * @module module:ext.wikiEditor
+ */
+
 var editingSessionId;
 
 // This sets $.wikiEditor and $.fn.wikiEditor
@@ -14,7 +18,7 @@ function logEditEvent( data ) {
 		// these cases, don't log anything.
 		return;
 	}
-	mw.track( 'editAttemptStep', $.extend( {
+	mw.track( 'editAttemptStep', Object.assign( {
 		// eslint-disable-next-line camelcase
 		editor_interface: 'wikitext',
 		platform: 'desktop', // FIXME T249944

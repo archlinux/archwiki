@@ -2,8 +2,10 @@
 
 namespace MediaWiki\OutputTransform;
 
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
-use ParserOptions;
+use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 
 /**
  * @unstable
@@ -22,13 +24,13 @@ class OutputTransformPipeline {
 	 * Runs the pipeline on the ParserOutput, yielding a transformed ParserOutput.
 	 * @param ParserOutput $in Parser output to which the transformations are
 	 * 	applied. It is typically copied before applying transformations and is
-	 * hence not mutated by this method, but if $options['suppressClone'] is
-	 * set it WILL be mutated!
+	 * hence not mutated by this method, but if $options['allowClone'] is
+	 * set it to false WILL be mutated!
 	 * @param ?ParserOptions $popts - will eventually replace options as container
 	 *    for transformation options
 	 * @param array $options Transformations to apply to the HTML
-	 *  - suppressClone: (bool) Whether to clone the ParserOutput before
-	 *     applying transformations. Default is false.
+	 *  - allowClone: (bool) Whether to clone the ParserOutput before
+	 *     applying transformations. Default is true.
 	 *  - allowTOC: (bool) Show the TOC, assuming there were enough headings
 	 *     to generate one and `__NOTOC__` wasn't used. Default is true,
 	 *     but might be statefully overridden.
@@ -59,12 +61,18 @@ class OutputTransformPipeline {
 	 *  - includeDebugInfo: (bool) render PP limit report in HTML. Default: false
 	 */
 	public function run( ParserOutput $in, ?ParserOptions $popts, array $options ): ParserOutput {
-		if ( $options['suppressClone'] ?? false ) {
+		// Initialize some $options from the ParserOutput
+		$options += [
+			'enableSectionEditLinks' => !$in->getOutputFlag( ParserOutputFlags::NO_SECTION_EDIT_LINKS ),
+			'wrapperDivClass' => $in->getWrapperDivClass(),
+			'isParsoidContent' => PageBundleParserOutputConverter::hasPageBundle( $in ),
+		];
+		if ( $options['allowClone'] ?? true ) {
+			$out = clone $in;
+		} else {
 			// T353257: This should be a clone, but we've need to suppress it
 			// for some legacy codepaths.
 			$out = $in;
-		} else {
-			$out = clone $in;
 		}
 		foreach ( $this->stages as $stage ) {
 			if ( $stage->shouldRun( $out, $popts, $options ) ) {

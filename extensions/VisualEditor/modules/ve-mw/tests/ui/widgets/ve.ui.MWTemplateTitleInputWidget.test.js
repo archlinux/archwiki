@@ -1,32 +1,26 @@
 {
-	const toggleCirrusSearchLookup = ( enabled ) =>
-		mw.config.set( 'wgVisualEditorConfig', ve.extendObject( {}, mw.config.get( 'wgVisualEditorConfig' ), {
+	const toggleCirrusSearchLookup = ( enabled ) => mw.config.set( 'wgVisualEditorConfig', ve.extendObject( {}, mw.config.get( 'wgVisualEditorConfig' ), {
 			cirrusSearchLookup: enabled !== false
 		} ) );
 
-	const makeFakeApi = () => {
-		return {
-			defaults: { parameters: {} },
-			get: () => {
-				return {
-					abort: { bind: () => {} },
-					then: () => {}
-				};
-			}
-		};
-	};
-
 	QUnit.module( 've.ui.MWTemplateTitleInputWidget', ve.test.utils.newMwEnvironment( {
+		messages: {
+			// Force `templateDataInstalled` condition
+			'templatedata-doc-subpage': '(templatedata-doc-subpage)'
+		},
 		// Config will be reset by newMwEnvironment's teardown
-		beforeEach: toggleCirrusSearchLookup
+		beforeEach: function () {
+			this.server = this.sandbox.useFakeServer();
+			toggleCirrusSearchLookup();
+		}
 	} ) );
 
 	QUnit.test( 'default prefixsearch', ( assert ) => {
 		toggleCirrusSearchLookup( false );
 
-		const widget = new ve.ui.MWTemplateTitleInputWidget(),
-			query = 'a',
-			apiParams = widget.getApiParams( query );
+		const widget = new ve.ui.MWTemplateTitleInputWidget();
+		const query = 'a';
+		const apiParams = widget.getApiParams( query );
 
 		assert.deepEqual( apiParams, {
 			action: 'query',
@@ -41,9 +35,9 @@
 	} );
 
 	QUnit.test( 'CirrusSearch: all API parameters', ( assert ) => {
-		const widget = new ve.ui.MWTemplateTitleInputWidget(),
-			query = 'a',
-			apiParams = widget.getApiParams( query );
+		const widget = new ve.ui.MWTemplateTitleInputWidget();
+		const query = 'a';
+		const apiParams = widget.getApiParams( query );
 
 		assert.deepEqual( apiParams, {
 			action: 'query',
@@ -65,104 +59,100 @@
 		assert.false( 'gsrprop' in apiParams );
 	} );
 
-	QUnit.test( 'CirrusSearch: prefixsearch behavior', ( assert ) => {
+	QUnit.test.each( 'CirrusSearch: prefixsearch behavior', [
+		{
+			query: 'a',
+			expected: 'a*'
+		},
+		{
+			query: 'a ',
+			expected: 'a '
+		},
+		{
+			query: 'ü',
+			expected: 'ü*'
+		},
+		{
+			query: '3',
+			expected: '3*'
+		},
+		{
+			query: '!!',
+			expected: '!!'
+		},
+		{
+			query: 'Foo:',
+			expected: 'Foo:'
+		},
+		{
+			query: 'Foo:Bar',
+			expected: 'Foo:Bar*'
+		},
+		{
+			query: 'foo_',
+			expected: 'foo_'
+		},
+		{
+			query: 'foo-',
+			expected: 'foo-'
+		},
+		{
+			query: 'foo+',
+			expected: 'foo+'
+		},
+		{
+			query: 'foo/',
+			expected: 'foo/'
+		},
+		{
+			query: 'foo~',
+			expected: 'foo~'
+		},
+		{
+			query: 'foo*',
+			expected: 'foo*'
+		},
+		{
+			query: '(foo)',
+			expected: '(foo)'
+		},
+		{
+			query: '[foo]',
+			expected: '[foo]'
+		},
+		{
+			query: '{foo}',
+			expected: '{foo}'
+		},
+		{
+			query: '"foo"',
+			expected: '"foo"'
+		},
+		{
+			query: 'foß',
+			expected: 'foß*'
+		},
+		{
+			query: '中文字',
+			expected: '中文字*'
+		},
+		{
+			query: 'zhōngwénzì',
+			expected: 'zhōngwénzì*'
+		}
+	], ( assert, data ) => {
 		const widget = new ve.ui.MWTemplateTitleInputWidget();
+		const apiParams = widget.getApiParams( data.query );
 
-		[
-			{
-				query: 'a',
-				expected: 'a*'
-			},
-			{
-				query: 'a ',
-				expected: 'a '
-			},
-			{
-				query: 'ü',
-				expected: 'ü*'
-			},
-			{
-				query: '3',
-				expected: '3*'
-			},
-			{
-				query: '!!',
-				expected: '!!'
-			},
-			{
-				query: 'Foo:',
-				expected: 'Foo:'
-			},
-			{
-				query: 'Foo:Bar',
-				expected: 'Foo:Bar*'
-			},
-			{
-				query: 'foo_',
-				expected: 'foo_'
-			},
-			{
-				query: 'foo-',
-				expected: 'foo-'
-			},
-			{
-				query: 'foo+',
-				expected: 'foo+'
-			},
-			{
-				query: 'foo/',
-				expected: 'foo/'
-			},
-			{
-				query: 'foo~',
-				expected: 'foo~'
-			},
-			{
-				query: 'foo*',
-				expected: 'foo*'
-			},
-			{
-				query: '(foo)',
-				expected: '(foo)'
-			},
-			{
-				query: '[foo]',
-				expected: '[foo]'
-			},
-			{
-				query: '{foo}',
-				expected: '{foo}'
-			},
-			{
-				query: '"foo"',
-				expected: '"foo"'
-			},
-			{
-				query: 'foß',
-				expected: 'foß*'
-			},
-			{
-				query: '中文字',
-				expected: '中文字*'
-			},
-			{
-				query: 'zhōngwénzì',
-				expected: 'zhōngwénzì*'
-			}
-		].forEach( ( data ) => {
-			const apiParams = widget.getApiParams( data.query );
-
-			assert.strictEqual(
-				apiParams.gsrsearch,
-				data.expected,
-				'Searching for ' + data.query
-			);
-		} );
+		assert.strictEqual(
+			apiParams.gsrsearch,
+			data.expected,
+			'Searching for ' + data.query
+		);
 	} );
 
-	QUnit.test( 'CirrusSearch with prefixsearch fallback', function ( assert ) {
-		const done = assert.async(),
-			api = makeFakeApi();
+	QUnit.test( 'CirrusSearch with prefixsearch fallback', async function ( assert ) {
+		const api = new mw.Api();
 		this.sandbox.stub( api, 'get' )
 			.onFirstCall().returns( ve.createDeferred()
 				.resolve( { query: {
@@ -170,7 +160,7 @@
 						{ pageid: 101, title: 'B' },
 						{ pageid: 102, title: 'A' },
 						// Documentation subpage, expected to be stripped
-						{ pageid: 103, title: 'A/(templatedata-doc-subpage)' }
+						{ pageid: 103, title: 'A/(templatedata-doc-subpage)', index: 2 }
 					],
 					redirects: [
 						// Alternative source for indexes, expected to be copied to the pages array
@@ -178,7 +168,7 @@
 						{ from: '', to: 'A', index: 0 }
 					]
 				} } )
-				.promise( { abort: function () {} } )
+				.promise( { abort: () => {} } )
 			)
 			.onSecondCall().returns( ve.createDeferred()
 				.resolve( { query: { pages: [
@@ -195,22 +185,20 @@
 
 		const widget = new ve.ui.MWTemplateTitleInputWidget( { api, showDescriptions: true } );
 		widget.setValue( 'something' );
-		widget.getLookupRequest()
-			.done( ( response ) => {
-				assert.deepEqual( response.query.pages, [
-					{ pageid: 202, title: 'C', index: -10 },
-					{ pageid: 201, title: 'D', index: -9 },
-					{ pageid: 102, title: 'A', index: 0 },
-					{ pageid: 101, title: 'B', index: 1 }
-				] );
-			} )
-			.always( () => done() );
+
+		const response = await widget.getLookupRequest();
+		assert.deepEqual( response.query.pages, [
+			{ pageid: 202, title: 'C', index: -10 },
+			{ pageid: 201, title: 'D', index: -9 },
+			{ pageid: 102, title: 'A', index: 0 },
+			{ pageid: 101, title: 'B', index: 1 }
+		] );
 	} );
 
 	QUnit.test( 'CirrusSearch: redirect is forwarded to the TitleOptionWidget', ( assert ) => {
-		const widget = new ve.ui.MWTemplateTitleInputWidget(),
-			originalData = { redirecttitle: 'Template:From' },
-			data = widget.getOptionWidgetData( 'Template:To', { originalData } );
+		const widget = new ve.ui.MWTemplateTitleInputWidget();
+		const originalData = { redirecttitle: 'Template:From' };
+		const data = widget.getOptionWidgetData( 'Template:To', { originalData } );
 
 		assert.strictEqual( data.redirecttitle, 'Template:From' );
 	} );

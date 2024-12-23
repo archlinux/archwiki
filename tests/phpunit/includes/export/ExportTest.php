@@ -1,8 +1,12 @@
 <?php
 
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\Renderer\ContentParseParams;
+use MediaWiki\Content\TextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\ParserOutput;
 
 /**
  * Test class for Export methods.
@@ -143,7 +147,7 @@ class ExportTest extends MediaWikiLangTestCase {
 	private function getXmlDumpForPage( PageIdentity $page ): SimpleXMLElement {
 		$exporter = $this->getServiceContainer()
 			->getWikiExporterFactory()
-			->getWikiExporter( $this->db, WikiExporter::FULL );
+			->getWikiExporter( $this->getDb(), WikiExporter::FULL );
 
 		$sink = new DumpStringOutput();
 		$exporter->setOutputSink( $sink );

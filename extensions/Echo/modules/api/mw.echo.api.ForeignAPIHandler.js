@@ -9,7 +9,7 @@
 	 * @param {string} apiUrl A url for the access point of the
 	 *  foreign API.
 	 * @param {Object} [config] Configuration object
-	 * @cfg {boolean} [unreadOnly] Whether this handler should request unread
+	 * @param {boolean} [config.unreadOnly] Whether this handler should request unread
 	 *  notifications by default.
 	 */
 	mw.echo.api.ForeignAPIHandler = function MwEchoApiForeignAPIHandler( apiUrl, config ) {
@@ -30,15 +30,15 @@
 	 * @inheritdoc
 	 */
 	mw.echo.api.ForeignAPIHandler.prototype.getTypeParams = function ( type ) {
-		var params = {
+		let params = {
 			// Backwards compatibility
 			notforn: 1
 		};
 
 		if ( this.unreadOnly ) {
-			params = $.extend( {}, params, { notfilter: '!read' } );
+			params = Object.assign( {}, params, { notfilter: '!read' } );
 		}
 
-		return $.extend( {}, this.typeParams[ type ], params );
+		return Object.assign( {}, this.typeParams[ type ], params );
 	};
 }() );

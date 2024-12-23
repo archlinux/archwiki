@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Afalau",
+			"Ceirios",
 			"Lloffiwr",
-			"Xxglennxx",
-			"Ceirios"
+			"Xxglennxx"
 		]
 	},
 	"spam-blacklist": " #<!-- leave this line exactly as it is --> <pre>\n# Bydd URLs allanol sy'n cyfateb i URL ar y rhestr hon yn cael eu blocio os osodir ar dudalen.\n# Mae'r rhestr hon yn effeithio ar y wici hwn yn unig; ceir hefyd restr blocio cyd-wici.\n# Gweler https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist am fwy o wybodaeth\n#\n# Dyma'r gystrawen:\n#   * Mae popeth o nod \"#\" hyd at ddiwedd y llinell yn sylwad\n#   * Mae pob llinell nad yw'n wag yn ddarn regex sydd ddim ond yn cyfateb i westeiwyr tu mewn i gyfeiriadau URL\n\n #</pre> <!-- leave this line exactly as it is -->",

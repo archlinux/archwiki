@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\User\User;
@@ -36,6 +38,7 @@ use Wikimedia\ParamValidator\ParamValidator;
 class ApiQueryUsers extends ApiQueryBase {
 	use ApiQueryBlockInfoTrait;
 
+	/** @var array<string,true> */
 	private $prop;
 
 	private UserNameUtils $userNameUtils;
@@ -64,18 +67,9 @@ class ApiQueryUsers extends ApiQueryBase {
 		'cancreate',
 	];
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param UserNameUtils $userNameUtils
-	 * @param UserFactory $userFactory
-	 * @param UserGroupManager $userGroupManager
-	 * @param GenderCache $genderCache
-	 * @param AuthManager $authManager
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		UserNameUtils $userNameUtils,
 		UserFactory $userFactory,
 		UserGroupManager $userGroupManager,
@@ -204,6 +198,10 @@ class ApiQueryUsers extends ApiQueryBase {
 				}
 				$data[$key]['userid'] = $user->getId();
 				$data[$key]['name'] = $user->getName();
+
+				if ( $user->isSystemUser() ) {
+					$data[$key]['systemuser'] = true;
+				}
 
 				if ( isset( $this->prop['editcount'] ) ) {
 					$data[$key]['editcount'] = $user->getEditCount();
@@ -359,3 +357,6 @@ class ApiQueryUsers extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Users';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryUsers::class, 'ApiQueryUsers' );

@@ -18,6 +18,8 @@
  * @file
  */
 
+use Wikimedia\ObjectCache\BagOStuff;
+
 /**
  * Store an arbitrary value whilst representing several CacheDependency objects as one.
  *
@@ -27,6 +29,7 @@
  * @ingroup Language
  */
 class DependencyWrapper {
+	/** @var mixed */
 	private $value;
 	/** @var CacheDependency[] */
 	private $deps;

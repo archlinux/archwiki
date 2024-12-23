@@ -19,6 +19,10 @@
  * @since 1.23
  */
 
+namespace MediaWiki\Api;
+
+use ChangesFeed;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Feed\ChannelFeed;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\DerivativeRequest;
@@ -26,16 +30,19 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
+use RuntimeException;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 /**
  * Recent changes feed.
  *
+ * @ingroup RecentChanges
  * @ingroup API
  */
 class ApiFeedRecentChanges extends ApiBase {
 
+	/** @var array */
 	private $params;
 
 	private SpecialPageFactory $specialPageFactory;
@@ -190,7 +197,7 @@ class ApiFeedRecentChanges extends ApiBase {
 			'hidebots' => false,
 			'hideanons' => [
 				ParamValidator::PARAM_DEFAULT => false,
-				ApiBase::PARAM_HELP_MSG => $this->tempUserConfig->isEnabled() ?
+				ApiBase::PARAM_HELP_MSG => $this->tempUserConfig->isKnown() ?
 					'apihelp-feedrecentchanges-param-hideanons-temp' :
 					'apihelp-feedrecentchanges-param-hideanons',
 			],
@@ -224,3 +231,6 @@ class ApiFeedRecentChanges extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Feedrecentchanges';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiFeedRecentChanges::class, 'ApiFeedRecentChanges' );

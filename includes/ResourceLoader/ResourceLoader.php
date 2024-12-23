@@ -22,10 +22,7 @@
 
 namespace MediaWiki\ResourceLoader;
 
-use BagOStuff;
 use Exception;
-use ExtensionRegistry;
-use HashBagOStuff;
 use HttpStatus;
 use InvalidArgumentException;
 use Less_Environment;
@@ -41,6 +38,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Profiler\ProfilingContext;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\HeaderCallback;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
@@ -49,7 +47,6 @@ use MediaWiki\WikiMap\WikiMap;
 use MWExceptionHandler;
 use MWExceptionRenderer;
 use Net_URL2;
-use ObjectCache;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -67,6 +64,8 @@ use Wikimedia\Minify\JavaScriptMapperState;
 use Wikimedia\Minify\JavaScriptMinifier;
 use Wikimedia\Minify\JavaScriptMinifierState;
 use Wikimedia\Minify\MinifierState;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\RequestTimeout\TimeoutException;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\StatsFactory;
@@ -173,8 +172,8 @@ class ResourceLoader implements LoggerAwareInterface {
 	 */
 	public function __construct(
 		Config $config,
-		LoggerInterface $logger = null,
-		DependencyStore $tracker = null,
+		?LoggerInterface $logger = null,
+		?DependencyStore $tracker = null,
 		array $params = []
 	) {
 		$this->maxageVersioned = $params['maxageVersioned'] ?? 30 * 24 * 60 * 60;
@@ -269,7 +268,7 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * @throws InvalidArgumentException If a module name contains illegal characters (pipes or commas)
 	 * @throws InvalidArgumentException If the module info is not an array
 	 */
-	public function register( $name, array $info = null ) {
+	public function register( $name, ?array $info = null ) {
 		// Allow multiple modules to be registered in one call
 		$registrations = is_array( $name ) ? $name : [ $name => $info ];
 		foreach ( $registrations as $name => $info ) {
@@ -289,7 +288,7 @@ class ResourceLoader implements LoggerAwareInterface {
 			}
 			if ( !is_array( $info ) ) {
 				throw new InvalidArgumentException(
-					'Invalid module info for "' . $name . '": expected array, got ' . gettype( $info )
+					'Invalid module info for "' . $name . '": expected array, got ' . get_debug_type( $info )
 				);
 			}
 
@@ -521,7 +520,8 @@ class ResourceLoader implements LoggerAwareInterface {
 			DeferredUpdates::addCallableUpdate( function () {
 				$updatesByEntity = $this->depStoreUpdateBuffer;
 				$this->depStoreUpdateBuffer = [];
-				$cache = ObjectCache::getLocalClusterInstance();
+				$cache = MediaWikiServices::getInstance()
+					->getObjectCacheFactory()->getLocalClusterInstance();
 
 				$scopeLocks = [];
 				$depsByEntity = [];
@@ -857,7 +857,6 @@ class ResourceLoader implements LoggerAwareInterface {
 			}
 		}
 
-		// @phan-suppress-next-line SecurityCheck-XSS
 		echo $response;
 	}
 
@@ -1038,26 +1037,24 @@ class ResourceLoader implements LoggerAwareInterface {
 	/**
 	 * Handle exception display.
 	 *
-	 * @param Throwable $e Exception to be shown to the user
-	 * @return string Sanitized text in a CSS/JS comment that can be returned to the user
-	 */
-	public static function formatException( Throwable $e ) {
-		return self::makeComment( self::formatExceptionNoComment( $e ) );
-	}
-
-	/**
-	 * Handle exception display.
-	 *
 	 * @since 1.25
 	 * @param Throwable $e Exception to be shown to the user
-	 * @return string Sanitized text that can be returned to the user
+	 * @return string Sanitized text for a CSS/JS comment that can be returned to the user
 	 */
 	protected static function formatExceptionNoComment( Throwable $e ) {
 		if ( !MWExceptionRenderer::shouldShowExceptionDetails() ) {
 			return MWExceptionHandler::getPublicLogMessage( $e );
 		}
 
-		return MWExceptionHandler::getLogMessage( $e ) .
+		// Like MWExceptionHandler::getLogMessage but without $url and $id.
+		// - Long load.php URL would push the actual error message off-screen into
+		//   scroll overflow in browser devtools.
+		// - reqId is redundant with X-Request-Id header, plus usually no need to
+		//   correlate the reqId since the backtrace is already included below.
+		$type = get_class( $e );
+		$message = $e->getMessage();
+
+		return "$type: $message" .
 			"\nBacktrace:\n" .
 			MWExceptionHandler::getRedactedTraceAsString( $e );
 	}
@@ -1901,9 +1898,8 @@ MESSAGE;
 
 			$resourceLoaderDebug = MediaWikiServices::getInstance()->getMainConfig()->get(
 				MainConfigNames::ResourceLoaderDebug );
-			$str = $wgRequest->getRawVal( 'debug',
-				$wgRequest->getCookie( 'resourceLoaderDebug', '', $resourceLoaderDebug ? 'true' : '' )
-			);
+			$str = $wgRequest->getRawVal( 'debug' ) ??
+				$wgRequest->getCookie( 'resourceLoaderDebug', '', $resourceLoaderDebug ? 'true' : '' );
 			self::$debugMode = Context::debugFromString( $str );
 		}
 		return self::$debugMode;
@@ -2049,7 +2045,6 @@ MESSAGE;
 	 * @return Less_Parser
 	 */
 	public function getLessCompiler( array $vars = [], array $importDirs = [] ) {
-		global $IP;
 		// When called from the installer, it is possible that a required PHP extension
 		// is missing (at least for now; see T49564). If this is the case, throw an
 		// exception (caught by the installer) to prevent a fatal error later on.
@@ -2057,20 +2052,30 @@ MESSAGE;
 			throw new RuntimeException( 'MediaWiki requires the less.php parser' );
 		}
 
-		$importDirs[] = "$IP/resources/src/mediawiki.less";
+		$importDirs[] = MW_INSTALL_PATH . '/resources/src/mediawiki.less';
 
 		$parser = new Less_Parser;
 		$parser->ModifyVars( $vars );
 		$parser->SetOption( 'relativeUrls', false );
+		$parser->SetOption( 'math', 'always' );
 
 		// SetImportDirs expects an array like [ 'path1' => '', 'path2' => '' ]
 		$formattedImportDirs = array_fill_keys( $importDirs, '' );
+
 		// Add a callback to the import dirs array for path remapping
-		$formattedImportDirs[] = static function ( $path ) {
-			global $IP;
+		$codexDevDir = $this->getConfig()->get( MainConfigNames::CodexDevelopmentDir );
+		$formattedImportDirs[] = static function ( $path ) use ( $codexDevDir ) {
+			// For each of the Codex import paths, use CodexDevelopmentDir if it's set
 			$importMap = [
-				'@wikimedia/codex-icons/' => "$IP/resources/lib/codex-icons/",
-				'mediawiki.skin.codex-design-tokens/' => "$IP/resources/lib/codex-design-tokens/",
+				'@wikimedia/codex-icons/' => $codexDevDir !== null ?
+					"$codexDevDir/packages/codex-icons/dist/" :
+					MW_INSTALL_PATH . '/resources/lib/codex-icons/',
+				'mediawiki.skin.codex/' => $codexDevDir !== null ?
+					"$codexDevDir/packages/codex/dist/" :
+					MW_INSTALL_PATH . '/resources/lib/codex/',
+				'mediawiki.skin.codex-design-tokens/' => $codexDevDir !== null ?
+					"$codexDevDir/packages/codex-design-tokens/dist/" :
+					MW_INSTALL_PATH . '/resources/lib/codex-design-tokens/',
 				'@wikimedia/codex-design-tokens/' => /** @return never */ static function ( $unused_path ) {
 					throw new RuntimeException(
 						'Importing from @wikimedia/codex-design-tokens is not supported. ' .
@@ -2166,7 +2171,8 @@ MESSAGE;
 		}
 
 		$statsFactory = MediaWikiServices::getInstance()->getStatsFactory();
-		$cache = ObjectCache::getLocalServerInstance( CACHE_ANYTHING );
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()
+			->getLocalServerInstance( CACHE_ANYTHING );
 
 		$key = $cache->makeGlobalKey(
 			'resourceloader-filter',
@@ -2305,7 +2311,7 @@ MESSAGE;
 		// Internal variables for use by MediaWiki core and/or ResourceLoader.
 		$vars += [
 			// @internal For mediawiki.widgets
-			'wgUrlProtocols' => wfUrlProtocols(),
+			'wgUrlProtocols' => $services->getUrlUtils()->validProtocols(),
 			// @internal For mediawiki.page.watch
 			// Force object to avoid "empty" associative array from
 			// becoming [] instead of {} in JS (T36604)

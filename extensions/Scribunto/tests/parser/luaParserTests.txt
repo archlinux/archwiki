@@ -272,10 +272,10 @@ extension=ScribuntoErrors-5e10d413
 cat=Pages_with_script_errors sort=
 extension[ScribuntoErrors-5e10d413]="<p>Script error: No such module \"foo\".</p><p>No further details are available.</p>"
 !! html/php
-<p><strong class="error"><span class="scribunto-error" id="mw-scribunto-error-5e10d413">Script error: No such module &quot;foo&quot;.</span></strong>
+<p><strong class="error"><span class="scribunto-error mw-scribunto-error-5e10d413">Script error: No such module &quot;foo&quot;.</span></strong>
 </p>
 !! html/parsoid
-<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:foo","function":"invoke"},"params":{"1":{"wt":"bar"}},"i":0}}]}'><span class="scribunto-error" id="mw-scribunto-error-5e10d413">Script error: No such module <span typeof="mw:Entity">"</span>foo<span typeof="mw:Entity">"</span>.</span></strong></p>
+<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:foo","function":"invoke"},"params":{"1":{"wt":"bar"}},"i":0}}]}'><span class="scribunto-error mw-scribunto-error-5e10d413">Script error: No such module <span typeof="mw:Entity">"</span>foo<span typeof="mw:Entity">"</span>.</span></strong></p>
 !! end
 
 !! test
@@ -290,10 +290,10 @@ extension=ScribuntoErrors-d64a22ba
 cat=Pages_with_script_errors sort=
 extension[ScribuntoErrors-d64a22ba]="<p>Script error: The function \"blah\" does not exist.</p><p>No further details are available.</p>"
 !! html/php
-<p><strong class="error"><span class="scribunto-error" id="mw-scribunto-error-d64a22ba">Script error: The function &quot;blah&quot; does not exist.</span></strong>
+<p><strong class="error"><span class="scribunto-error mw-scribunto-error-d64a22ba">Script error: The function &quot;blah&quot; does not exist.</span></strong>
 </p>
 !! html/parsoid
-<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"blah"}},"i":0}}]}'><span class="scribunto-error" id="mw-scribunto-error-d64a22ba">Script error: The function <span typeof="mw:Entity">"</span>blah<span typeof="mw:Entity">"</span> does not exist.</span></strong></p>
+<p><strong class="error" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"blah"}},"i":0}}]}'><span class="scribunto-error mw-scribunto-error-d64a22ba">Script error: The function <span typeof="mw:Entity">"</span>blah<span typeof="mw:Entity">"</span> does not exist.</span></strong></p>
 !! end
 
 !! test
@@ -429,13 +429,18 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! test
 Scribunto: expandTemplate with headers
 !! options
-parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
+parsoid={ "modes": ["wt2html","wt2wt"] }
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 ==foo==
 {{#invoke:test|testExpandTemplateWithHeaders}}
-!! html
-<h2><span class="mw-headline" id="foo">foo</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: foo">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="bar">bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Template:Scribunto_template_with_headers&amp;action=edit&amp;section=T-1" title="Edit section: bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+!! html/php
+<div class="mw-heading mw-heading2"><h2 id="foo">foo</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: foo">edit</a><span class="mw-editsection-bracket">]</span></span></div>
+<div class="mw-heading mw-heading2"><h2 id="bar">bar</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Template:Scribunto_template_with_headers&amp;action=edit&amp;section=T-1" title="Edit section: bar">edit</a><span class="mw-editsection-bracket">]</span></span></div>
+!! html/parsoid
+<h2 id="foo">foo</h2>
+<h2 typeof="mw:Transclusion" id="bar" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"testExpandTemplateWithHeaders"}},"i":0}}]}'>bar</h2>
 !! end
 
 !! test

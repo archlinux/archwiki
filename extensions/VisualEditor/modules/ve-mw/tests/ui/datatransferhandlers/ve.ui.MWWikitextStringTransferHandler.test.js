@@ -17,18 +17,14 @@ QUnit.module( 've.ui.MWWikitextStringTransferHandler', ve.test.utils.newMwEnviro
 	}
 } ) );
 
-/* Tests */
-
 ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType, expectedResponse, expectedData, annotations, assertDom, base, msg ) => {
 	const done = assert.async(),
 		item = ve.ui.DataTransferItem.static.newFromString( string, mimeType ),
 		doc = ve.dm.Document.static.newBlankDocument(),
 		mockSurface = {
-			getModel: () => {
-				return {
+			getModel: () => ( {
 					getDocument: () => doc
-				};
-			},
+				} ),
 			createProgress: () => ve.createDeferred().promise()
 		};
 
@@ -80,193 +76,182 @@ ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType,
 	}
 };
 
-QUnit.test( 'convert', function ( assert ) {
-	const cases = [
-			{
-				msg: 'Simple link',
-				// Put link in the middle of text to verify that the
-				// start-of-line and end-of-line anchors on the heading
-				// identification pattern don't affect link identification
-				pasteString: 'some [[Foo]] text',
-				pasteType: 'text/plain',
-				parsoidResponse: '<p>some <a rel="mw:WikiLink" href="./Foo" title="Foo">Foo</a> text</p>',
-				annotations: [ {
-					type: 'link/mwInternal',
-					attributes: {
-						lookupTitle: 'Foo',
-						normalizedTitle: 'Foo',
-						title: 'Foo'
-					}
-				} ],
-				expectedData: [
-					{ type: 'paragraph' },
-					's',
-					'o',
-					'm',
-					'e',
-					' ',
-					[ 'F', [ 0 ] ],
-					[ 'o', [ 0 ] ],
-					[ 'o', [ 0 ] ],
-					' ',
-					't',
-					'e',
-					'x',
-					't',
-					{ type: '/paragraph' },
-					{ type: 'internalList' },
-					{ type: '/internalList' }
-				]
-			},
-			{
-				msg: 'Simple link with no p-wrapping',
-				pasteString: '*[[Foo]]',
-				pasteType: 'text/plain',
-				parsoidResponse: '<ul><li><a rel="mw:WikiLink" href="./Foo" title="Foo">Foo</a></li></ul>',
-				annotations: [ {
-					type: 'link/mwInternal',
-					attributes: {
-						lookupTitle: 'Foo',
-						normalizedTitle: 'Foo',
-						title: 'Foo'
-					}
-				} ],
-				expectedData: [
-					{
-						type: 'list',
-						attributes: { style: 'bullet' }
-					},
-					{ type: 'listItem' },
-					{
-						type: 'paragraph',
-						internal: { generated: 'wrapper' }
-					},
-					[ 'F', [ 0 ] ],
-					[ 'o', [ 0 ] ],
-					[ 'o', [ 0 ] ],
-					{ type: '/paragraph' },
-					{ type: '/listItem' },
-					{ type: '/list' },
-					{ type: 'internalList' },
-					{ type: '/internalList' }
-				]
-			},
-			{
-				msg: 'Simple template',
-				pasteString: '{{Template}}',
-				pasteType: 'text/plain',
-				parsoidResponse: '<div typeof="mw:Transclusion" about="#mwt1">Template</div>',
-				assertDom: true,
-				expectedData: [
-					{
-						type: 'mwTransclusionBlock',
-						attributes: {
-							mw: {}
-						},
-						originalDomElements: $.parseHTML( '<div typeof="mw:Transclusion" about="#mwt40000000">Template</div>' )
-					},
-					{ type: '/mwTransclusionBlock' },
-					{ type: 'internalList' },
-					{ type: '/internalList' }
-				]
-			},
-			{
-				msg: 'Headings, only RESTBase IDs stripped',
-				pasteString: '==heading==',
-				pasteType: 'text/plain',
-				parsoidResponse: '<h2 id="mwAB">foo</h2><h2 id="mw-meaningful-id">bar</h2>',
-				annotations: [],
-				assertDom: true,
-				expectedData: [
-					{ type: 'mwHeading', attributes: { level: 2 }, originalDomElements: $.parseHTML( '<h2>foo</h2>' ) },
-					'f', 'o', 'o',
-					{ type: '/mwHeading' },
-					{ type: 'mwHeading', attributes: { level: 2 }, originalDomElements: $.parseHTML( '<h2 id="mw-meaningful-id">bar</h2>' ) },
-					'b', 'a', 'r',
-					{ type: '/mwHeading' },
-					{ type: 'internalList' },
-					{ type: '/internalList' }
-				]
-			},
-			{
-				msg: 'Headings, parsoid fallback ids don\'t interfere with whitespace stripping',
-				pasteString: '== Tudnivalók ==',
-				pasteType: 'text/plain',
-				parsoidResponse: '<h2 id="Tudnivalók"><span id="Tudnival.C3.B3k" typeof="mw:FallbackId"></span> Tudnivalók </h2>',
-				annotations: [],
-				assertDom: true,
-				expectedData: [
-					{ type: 'mwHeading', attributes: { level: 2 }, originalDomElements: $.parseHTML( '<h2 id="Tudnivalók"> Tudnivalók </h2>' ) },
-					'T', 'u', 'd', 'n', 'i', 'v', 'a', 'l', 'ó', 'k',
-					{ type: '/mwHeading' },
-					{ type: 'internalList' },
-					{ type: '/internalList' }
-				]
-			},
-			{
-				msg: 'Magic link (RFC)',
-				pasteString: 'RFC 1234',
-				pasteType: 'text/plain',
-				parsoidResponse: false,
-				annotations: [],
-				expectedData: [
-					{
-						type: 'link/mwMagic',
-						attributes: {
-							content: 'RFC 1234'
-						}
-					},
-					{
-						type: '/link/mwMagic'
-					}
-				]
-			},
-			{
-				msg: 'Magic link (PMID)',
-				pasteString: 'PMID 1234',
-				pasteType: 'text/plain',
-				parsoidResponse: false,
-				annotations: [],
-				expectedData: [
-					{
-						type: 'link/mwMagic',
-						attributes: {
-							content: 'PMID 1234'
-						}
-					},
-					{
-						type: '/link/mwMagic'
-					}
-				]
-			},
-			{
-				msg: 'Magic link (ISBN)',
-				pasteString: 'ISBN 123456789X',
-				pasteType: 'text/plain',
-				parsoidResponse: false,
-				annotations: [],
-				expectedData: [
-					{
-						type: 'link/mwMagic',
-						attributes: {
-							content: 'ISBN 123456789X'
-						}
-					},
-					{
-						type: '/link/mwMagic'
-					}
-				]
+QUnit.test.each( 'convert', [
+	{
+		msg: 'Simple link',
+		// Put link in the middle of text to verify that the
+		// start-of-line and end-of-line anchors on the heading
+		// identification pattern don't affect link identification
+		pasteString: 'some [[Foo]] text',
+		pasteType: 'text/plain',
+		parsoidResponse: '<p>some <a rel="mw:WikiLink" href="./Foo" title="Foo">Foo</a> text</p>',
+		annotations: [ {
+			type: 'link/mwInternal',
+			attributes: {
+				lookupTitle: 'Foo',
+				normalizedTitle: 'Foo',
+				title: 'Foo'
 			}
-		];
-
+		} ],
+		expectedData: [
+			{ type: 'paragraph' },
+			...'some ',
+			[ 'F', [ 0 ] ],
+			[ 'o', [ 0 ] ],
+			[ 'o', [ 0 ] ],
+			...' text',
+			{ type: '/paragraph' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		]
+	},
+	{
+		msg: 'Simple link with no p-wrapping',
+		pasteString: '*[[Foo]]',
+		pasteType: 'text/plain',
+		parsoidResponse: '<ul><li><a rel="mw:WikiLink" href="./Foo" title="Foo">Foo</a></li></ul>',
+		annotations: [ {
+			type: 'link/mwInternal',
+			attributes: {
+				lookupTitle: 'Foo',
+				normalizedTitle: 'Foo',
+				title: 'Foo'
+			}
+		} ],
+		expectedData: [
+			{
+				type: 'list',
+				attributes: { style: 'bullet' }
+			},
+			{ type: 'listItem' },
+			{
+				type: 'paragraph',
+				internal: { generated: 'wrapper' }
+			},
+			[ 'F', [ 0 ] ],
+			[ 'o', [ 0 ] ],
+			[ 'o', [ 0 ] ],
+			{ type: '/paragraph' },
+			{ type: '/listItem' },
+			{ type: '/list' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		]
+	},
+	{
+		msg: 'Simple template',
+		pasteString: '{{Template}}',
+		pasteType: 'text/plain',
+		parsoidResponse: '<div typeof="mw:Transclusion" about="#mwt1">Template</div>',
+		assertDom: true,
+		expectedData: [
+			{
+				type: 'mwTransclusionBlock',
+				attributes: {
+					mw: {}
+				},
+				originalDomElements: $.parseHTML( '<div typeof="mw:Transclusion" about="#mwt40000000">Template</div>' )
+			},
+			{ type: '/mwTransclusionBlock' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		]
+	},
+	{
+		msg: 'Headings, only RESTBase IDs stripped',
+		pasteString: '==heading==',
+		pasteType: 'text/plain',
+		parsoidResponse: '<h2 id="mwAB">foo</h2><h2 id="mw-meaningful-id">bar</h2>',
+		annotations: [],
+		assertDom: true,
+		expectedData: [
+			{ type: 'mwHeading', attributes: { level: 2 }, originalDomElements: $.parseHTML( '<h2>foo</h2>' ) },
+			...'foo',
+			{ type: '/mwHeading' },
+			{ type: 'mwHeading', attributes: { level: 2 }, originalDomElements: $.parseHTML( '<h2 id="mw-meaningful-id">bar</h2>' ) },
+			...'bar',
+			{ type: '/mwHeading' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		]
+	},
+	{
+		msg: 'Headings, parsoid fallback ids don\'t interfere with whitespace stripping',
+		pasteString: '== Tudnivalók ==',
+		pasteType: 'text/plain',
+		parsoidResponse: '<h2 id="Tudnivalók"><span id="Tudnival.C3.B3k" typeof="mw:FallbackId"></span> Tudnivalók </h2>',
+		annotations: [],
+		assertDom: true,
+		expectedData: [
+			{ type: 'mwHeading', attributes: { level: 2 }, originalDomElements: $.parseHTML( '<h2 id="Tudnivalók"> Tudnivalók </h2>' ) },
+			...'Tudnivalók',
+			{ type: '/mwHeading' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		]
+	},
+	{
+		msg: 'Magic link (RFC)',
+		pasteString: 'RFC 1234',
+		pasteType: 'text/plain',
+		parsoidResponse: false,
+		annotations: [],
+		expectedData: [
+			{
+				type: 'link/mwMagic',
+				attributes: {
+					content: 'RFC 1234'
+				}
+			},
+			{
+				type: '/link/mwMagic'
+			}
+		]
+	},
+	{
+		msg: 'Magic link (PMID)',
+		pasteString: 'PMID 1234',
+		pasteType: 'text/plain',
+		parsoidResponse: false,
+		annotations: [],
+		expectedData: [
+			{
+				type: 'link/mwMagic',
+				attributes: {
+					content: 'PMID 1234'
+				}
+			},
+			{
+				type: '/link/mwMagic'
+			}
+		]
+	},
+	{
+		msg: 'Magic link (ISBN)',
+		pasteString: 'ISBN 123456789X',
+		pasteType: 'text/plain',
+		parsoidResponse: false,
+		annotations: [],
+		expectedData: [
+			{
+				type: 'link/mwMagic',
+				attributes: {
+					content: 'ISBN 123456789X'
+				}
+			},
+			{
+				type: '/link/mwMagic'
+			}
+		]
+	}
+], function ( assert, caseItem ) {
 	mw.config.set( {
 		wgArticlePath: '/wiki/$1'
 	} );
-	for ( let i = 0; i < cases.length; i++ ) {
-		ve.test.utils.runWikitextStringHandlerTest(
-			assert, this.server, cases[ i ].pasteString, cases[ i ].pasteType, cases[ i ].parsoidResponse,
-			cases[ i ].expectedData, cases[ i ].annotations, cases[ i ].assertDom, ve.dm.mwExample.baseUri,
-			cases[ i ].msg
-		);
-	}
+
+	ve.test.utils.runWikitextStringHandlerTest(
+		assert, this.server, caseItem.pasteString, caseItem.pasteType, caseItem.parsoidResponse,
+		caseItem.expectedData, caseItem.annotations, caseItem.assertDom, ve.dm.mwExample.baseUri,
+		caseItem.msg
+	);
 } );

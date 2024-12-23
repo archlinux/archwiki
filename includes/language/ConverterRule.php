@@ -19,7 +19,10 @@
  * @author fdcn <fdcn64@gmail.com>, PhiLiP <philip.npc@gmail.com>
  */
 
+namespace MediaWiki\Language;
+
 use MediaWiki\Logger\LoggerFactory;
+use StringUtils;
 
 /**
  * The rules used for language conversion, this processes the rules
@@ -36,15 +39,21 @@ class ConverterRule {
 	 * @var LanguageConverter
 	 */
 	public $mConverter;
+	/** @var string|false */
 	public $mRuleDisplay = '';
+	/** @var string|false */
 	public $mRuleTitle = false;
 	/**
 	 * @var string the text of the rules
 	 */
 	public $mRules = '';
+	/** @var string */
 	public $mRulesAction = 'none';
+	/** @var array */
 	public $mFlags = [];
+	/** @var array */
 	public $mVariantFlags = [];
+	/** @var array */
 	public $mConvTable = [];
 	/**
 	 * @var array of the translation in each variant
@@ -524,3 +533,6 @@ class ConverterRule {
 		return $this->mFlags;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ConverterRule::class, 'ConverterRule' );

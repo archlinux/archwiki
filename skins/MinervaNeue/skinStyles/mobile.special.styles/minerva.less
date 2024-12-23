@@ -3,31 +3,6 @@
 @import '../../minerva.less/minerva.mixins.less';
 @import 'mediawiki.mixins.less';
 
-.mw-mf-special-page {
-	#bodyContent.content {
-		max-width: none;
-		margin: 0;
-		width: auto;
-
-		ul {
-			list-style: none;
-			padding: 0;
-		}
-
-		// override core .content li rule
-		.page-header-bar li {
-			margin-bottom: 0;
-		}
-
-		.mw-mf-history-wrap-link {
-			@media all and ( min-width: @width-breakpoint-desktop ) {
-				margin: 0;
-				max-width: none;
-			}
-		}
-	}
-}
-
 .ns-special {
 	.mw-body .mw-first-heading {
 		font-size: 1.5em;
@@ -41,10 +16,13 @@
 		overflow: auto;
 	}
 
-	h1,
-	h2 {
-		// Important given we have no idea which rules special pages are enforcing
-		font-family: @font-family-base !important;
+	.pre-content h1,
+	.content .mw-heading1,
+	.content h1,
+	.content .mw-heading2,
+	.content h2 {
+		// Consistent header font across special pages
+		font-family: @font-family-base;
 	}
 
 	.content-header {
@@ -74,5 +52,113 @@
 		-webkit-line-clamp: 2;
 		// fallback for non-WebKit
 		max-height: 2.6em;
+	}
+}
+
+/* Watchlist with AMC disabled */
+html.mw-mf-amc-clientpref-0 body.mw-special-Watchlist {
+	#mw-content-subtitle {
+		margin: 0;
+	}
+
+	.watchlistDetails,
+	.mw-rcfilters-head,
+	.mw-fr-reviewlink,
+	.mw-rcfilters-spinner,
+	.mw-rcfilters-container {
+		display: none;
+	}
+
+	.mw-rcfilters-ui-changesListWrapperWidget {
+		border-top: 1px solid @border-color-subtle;
+		margin: 20px 0 0;
+		width: 100%;
+		max-width: none;
+	}
+}
+
+/* Hide edit raw watchlist and clear watchlist options for non-advanced logged in users */
+html.mw-mf-amc-clientpref-0 {
+	body.mw-special-Watchlist,
+	body.mw-special-EditWatchlist {
+		/* Hide third and forth tabs */
+		#p-associated-pages .minerva__tab:nth-child( 3 ),
+		#p-associated-pages .minerva__tab:nth-child( 4 ) {
+			display: none;
+		}
+	}
+}
+
+body.mw-special-Newpages {
+	.mw-contributions-list {
+		padding: 0;
+		margin: 0;
+
+		li {
+			.changeslist-row();
+		}
+	}
+
+	.mw-index-pager-list-header {
+		.changeslist-header();
+		box-sizing: border-box;
+	}
+
+	.mw-newpages-pagename {
+		font-weight: bold;
+	}
+
+	.mw-newpages-time,
+	.mw-userlink,
+	.mw-newpages-pagename {
+		display: block;
+	}
+
+	.comment,
+	.mw-userlink,
+	.mw-usertoollinks {
+		float: left;
+		padding: 0;
+	}
+
+	.comment {
+		clear: both;
+	}
+
+	.mw-usertoollinks {
+		margin-left: 8px;
+	}
+
+	.mw-changeslist-date {
+		display: none;
+	}
+
+	.mw-changeslist-time {
+		display: inline-block;
+	}
+}
+
+.mw-mf-special-page {
+	#bodyContent.content {
+		max-width: none;
+		margin: 0;
+		width: auto;
+
+		ul {
+			list-style: none;
+			padding: 0;
+		}
+
+		// override core .content li rule
+		.page-header-bar li {
+			margin-bottom: 0;
+		}
+
+		.mw-mf-history-wrap-link {
+			@media all and ( min-width: @min-width-breakpoint-desktop ) {
+				margin: 0;
+				max-width: none;
+			}
+		}
 	}
 }

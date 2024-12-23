@@ -24,13 +24,13 @@ namespace MediaWiki\Block;
 
 use InvalidArgumentException;
 use MediaWiki\CommentStore\CommentStore;
-use MediaWiki\Config\ConfigException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Deferred\AutoCommitUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Session\SessionManager;
 use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserFactory;
@@ -42,8 +42,12 @@ use stdClass;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\RawSQLExpression;
+use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use function array_key_exists;
@@ -68,7 +72,6 @@ class DatabaseBlockStore {
 		MainConfigNames::AutoblockExpiry,
 		MainConfigNames::BlockCIDRLimit,
 		MainConfigNames::BlockDisablesLogin,
-		MainConfigNames::BlockTargetMigrationStage,
 		MainConfigNames::PutIPinRC,
 		MainConfigNames::UpdateRowsPerQuery,
 	];
@@ -76,63 +79,19 @@ class DatabaseBlockStore {
 	/** @var string|false */
 	private $wikiId;
 
-	/** @var ServiceOptions */
-	private $options;
+	private ServiceOptions $options;
+	private LoggerInterface $logger;
+	private ActorStoreFactory $actorStoreFactory;
+	private BlockRestrictionStore $blockRestrictionStore;
+	private CommentStore $commentStore;
+	private HookRunner $hookRunner;
+	private IConnectionProvider $dbProvider;
+	private ReadOnlyMode $readOnlyMode;
+	private UserFactory $userFactory;
+	private TempUserConfig $tempUserConfig;
+	private BlockUtils $blockUtils;
+	private AutoblockExemptionList $autoblockExemptionList;
 
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var ActorStoreFactory */
-	private $actorStoreFactory;
-
-	/** @var BlockRestrictionStore */
-	private $blockRestrictionStore;
-
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var IConnectionProvider */
-	private $dbProvider;
-
-	/** @var ReadOnlyMode */
-	private $readOnlyMode;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var TempUserConfig */
-	private $tempUserConfig;
-
-	/** @var BlockUtils */
-	private $blockUtils;
-
-	/** @var AutoblockExemptionList */
-	private $autoblockExemptionList;
-
-	/** @var int */
-	private $readStage;
-
-	/** @var int */
-	private $writeStage;
-
-	/**
-	 * @param ServiceOptions $options
-	 * @param LoggerInterface $logger
-	 * @param ActorStoreFactory $actorStoreFactory
-	 * @param BlockRestrictionStore $blockRestrictionStore
-	 * @param CommentStore $commentStore
-	 * @param HookContainer $hookContainer
-	 * @param IConnectionProvider $dbProvider
-	 * @param ReadOnlyMode $readOnlyMode
-	 * @param UserFactory $userFactory
-	 * @param TempUserConfig $tempUserConfig
-	 * @param BlockUtils $blockUtils
-	 * @param AutoblockExemptionList $autoblockExemptionList
-	 * @param string|false $wikiId
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		LoggerInterface $logger,
@@ -146,7 +105,7 @@ class DatabaseBlockStore {
 		TempUserConfig $tempUserConfig,
 		BlockUtils $blockUtils,
 		AutoblockExemptionList $autoblockExemptionList,
-		$wikiId = DatabaseBlock::LOCAL
+		/* string|false */ $wikiId = DatabaseBlock::LOCAL
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 
@@ -164,41 +123,30 @@ class DatabaseBlockStore {
 		$this->tempUserConfig = $tempUserConfig;
 		$this->blockUtils = $blockUtils;
 		$this->autoblockExemptionList = $autoblockExemptionList;
-
-		$stage = $options->get( MainConfigNames::BlockTargetMigrationStage );
-		$this->readStage = $stage & SCHEMA_COMPAT_READ_MASK;
-		if ( !in_array( $this->readStage, [ SCHEMA_COMPAT_READ_OLD, SCHEMA_COMPAT_READ_NEW ], true ) ) {
-			throw new ConfigException(
-				'$wgBlockTargetMigrationStage has an unsupported read stage' );
-		}
-		$this->writeStage = $stage & SCHEMA_COMPAT_WRITE_MASK;
-		if ( !in_array(
-			$this->writeStage,
-			[ SCHEMA_COMPAT_WRITE_OLD, SCHEMA_COMPAT_WRITE_BOTH, SCHEMA_COMPAT_WRITE_NEW ]
-		) ) {
-			throw new ConfigException(
-				'$wgBlockTargetMigrationStage has an unsupported write stage' );
-		}
 	}
 
 	/**
 	 * Get the read stage of the block_target migration
 	 *
 	 * @since 1.42
+	 * @deprecated since 1.43
 	 * @return int
 	 */
 	public function getReadStage() {
-		return $this->readStage;
+		wfDeprecated( __METHOD__, '1.43' );
+		return SCHEMA_COMPAT_NEW;
 	}
 
 	/**
 	 * Get the write stage of the block_target migration
 	 *
 	 * @since 1.42
+	 * @deprecated since 1.43
 	 * @return int
 	 */
 	public function getWriteStage() {
-		return $this->writeStage;
+		wfDeprecated( __METHOD__, '1.43' );
+		return SCHEMA_COMPAT_NEW;
 	}
 
 	/***************************************************************************/
@@ -214,27 +162,12 @@ class DatabaseBlockStore {
 	 */
 	public function newFromID( $id ) {
 		$dbr = $this->getReplicaDB();
-		if ( $this->readStage === SCHEMA_COMPAT_READ_OLD ) {
-			$blockQuery = $this->getQueryInfo( self::SCHEMA_IPBLOCKS );
-			$res = $dbr->selectRow(
-				$blockQuery['tables'],
-				$blockQuery['fields'],
-				[ 'ipb_id' => $id ],
-				__METHOD__,
-				[],
-				$blockQuery['joins']
-			);
-		} else {
-			$blockQuery = $this->getQueryInfo( self::SCHEMA_BLOCK );
-			$res = $dbr->selectRow(
-				$blockQuery['tables'],
-				$blockQuery['fields'],
-				[ 'bl_id' => $id ],
-				__METHOD__,
-				[],
-				$blockQuery['joins']
-			);
-		}
+		$blockQuery = $this->getQueryInfo();
+		$res = $dbr->newSelectQueryBuilder()
+			->queryInfo( $blockQuery )
+			->where( [ 'bl_id' => $id ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 		if ( $res ) {
 			return $this->newFromRow( $dbr, $res );
 		} else {
@@ -256,8 +189,8 @@ class DatabaseBlockStore {
 	 *   newListFromConds() and deleteBlocksMatchingConds().
 	 *
 	 * @param string $schema What schema to use for field aliases. May be either
-	 *   self::SCHEMA_IPBLOCKS or self::SCHEMA_BLOCK. In future this will
-	 *   default to SCHEMA_BLOCK, and later the parameter will be removed.
+	 *   self::SCHEMA_IPBLOCKS or self::SCHEMA_BLOCK. This parameter will soon be
+	 *   removed.
 	 * @return array[] With three keys:
 	 *   - tables: (string[]) to include in the `$table` to `IDatabase->select()`
 	 *     or `SelectQueryBuilder::tables`
@@ -267,137 +200,71 @@ class DatabaseBlockStore {
 	 *     or `SelectQueryBuilder::joinConds`
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
-	public function getQueryInfo( $schema ) {
-		if ( $this->readStage === SCHEMA_COMPAT_READ_OLD ) {
-			$commentQuery = $this->commentStore->getJoin( 'ipb_reason' );
-			if ( $schema === self::SCHEMA_IPBLOCKS ) {
-				return [
-					'tables' => [
-						'ipblocks',
-						'ipblocks_actor' => 'actor'
-					] + $commentQuery['tables'],
-					'fields' => [
-						'ipb_id',
-						'ipb_address',
-						'ipb_timestamp',
-						'ipb_auto',
-						'ipb_anon_only',
-						'ipb_create_account',
-						'ipb_enable_autoblock',
-						'ipb_expiry',
-						'ipb_deleted',
-						'ipb_block_email',
-						'ipb_allow_usertalk',
-						'ipb_parent_block_id',
-						'ipb_sitewide',
-						'ipb_by_actor',
-						'ipb_by' => 'ipblocks_actor.actor_user',
-						'ipb_by_text' => 'ipblocks_actor.actor_name',
-					] + $commentQuery['fields'],
-					'joins' => [
-						'ipblocks_actor' => [ 'JOIN', 'actor_id=ipb_by_actor' ]
-					] + $commentQuery['joins'],
-				];
-			} elseif ( $schema === self::SCHEMA_BLOCK ) {
-				return [
-					'tables' => [
-						'ipblocks',
-						'ipblocks_actor' => 'actor'
-					] + $commentQuery['tables'],
-					'fields' => [
-						'bl_id' => 'ipb_id',
-						'bt_address' => 'ipb_address',
-						'bt_user' => 'ipb_user',
-						'bt_user_text' => 'ipb_address',
-						'bl_timestamp' => 'ipb_timestamp',
-						'bt_auto' => 'ipb_auto',
-						'bl_anon_only' => 'ipb_anon_only',
-						'bl_create_account' => 'ipb_create_account',
-						'bl_enable_autoblock' => 'ipb_enable_autoblock',
-						'bl_expiry' => 'ipb_expiry',
-						'bl_deleted' => 'ipb_deleted',
-						'bl_block_email' => 'ipb_block_email',
-						'bl_allow_usertalk' => 'ipb_allow_usertalk',
-						'bl_parent_block_id' => 'ipb_parent_block_id',
-						'bl_sitewide' => 'ipb_sitewide',
-						'bl_by_actor' => 'ipb_by_actor',
-						'bl_by_user' => 'ipblocks_actor.actor_user',
-						'bl_by_text' => 'ipblocks_actor.actor_name',
-						'bl_reason_text' => $commentQuery['fields']['ipb_reason_text'],
-						'bl_reason_data' => $commentQuery['fields']['ipb_reason_data'],
-						'bl_reason_cid' => $commentQuery['fields']['ipb_reason_cid'],
-					],
-					'joins' => [
-						'ipblocks_actor' => [ 'JOIN', 'actor_id=ipb_by_actor' ]
-					] + $commentQuery['joins'],
-				];
-			}
-		} else {
-			$commentQuery = $this->commentStore->getJoin( 'bl_reason' );
-			if ( $schema === self::SCHEMA_IPBLOCKS ) {
-				return [
-					'tables' => [
-						'block',
-						'block_by_actor' => 'actor',
-					] + $commentQuery['tables'],
-					'fields' => [
-						'ipb_id' => 'bl_id',
-						'ipb_address' => 'COALESCE(bt_address, bt_user_text)',
-						'ipb_timestamp' => 'bl_timestamp',
-						'ipb_auto' => 'bt_auto',
-						'ipb_anon_only' => 'bl_anon_only',
-						'ipb_create_account' => 'bl_create_account',
-						'ipb_enable_autoblock' => 'bl_enable_autoblock',
-						'ipb_expiry' => 'bl_expiry',
-						'ipb_deleted' => 'bl_deleted',
-						'ipb_block_email' => 'bl_block_email',
-						'ipb_allow_usertalk' => 'bl_allow_usertalk',
-						'ipb_parent_block_id' => 'bl_parent_block_id',
-						'ipb_sitewide' => 'bl_sitewide',
-						'ipb_by_actor' => 'bl_by_actor',
-						'ipb_by' => 'block_by_actor.actor_user',
-						'ipb_by_text' => 'block_by_actor.actor_name',
-						'ipb_reason_text' => $commentQuery['fields']['bl_reason_text'],
-						'ipb_reason_data' => $commentQuery['fields']['bl_reason_data'],
-						'ipb_reason_cid' => $commentQuery['fields']['bl_reason_cid'],
-					],
-					'joins' => [
-						'block_by_actor' => [ 'JOIN', 'actor_id=bl_by_actor' ],
-					] + $commentQuery['joins'],
-				];
-			} elseif ( $schema === self::SCHEMA_BLOCK ) {
-				return [
-					'tables' => [
-						'block',
-						'block_target',
-						'block_by_actor' => 'actor',
-					] + $commentQuery['tables'],
-					'fields' => [
-						'bl_id',
-						'bt_address',
-						'bt_user',
-						'bt_user_text',
-						'bl_timestamp',
-						'bt_auto',
-						'bl_anon_only',
-						'bl_create_account',
-						'bl_enable_autoblock',
-						'bl_expiry',
-						'bl_deleted',
-						'bl_block_email',
-						'bl_allow_usertalk',
-						'bl_parent_block_id',
-						'bl_sitewide',
-						'bl_by_actor',
-						'bl_by' => 'block_by_actor.actor_user',
-						'bl_by_text' => 'block_by_actor.actor_name',
-					] + $commentQuery['fields'],
-					'joins' => [
-						'block_target' => [ 'JOIN', 'bt_id=bl_target' ],
-						'block_by_actor' => [ 'JOIN', 'actor_id=bl_by_actor' ],
-					] + $commentQuery['joins'],
-				];
-			}
+	public function getQueryInfo( $schema = self::SCHEMA_BLOCK ) {
+		$commentQuery = $this->commentStore->getJoin( 'bl_reason' );
+		if ( $schema === self::SCHEMA_IPBLOCKS ) {
+			return [
+				'tables' => [
+					'block',
+					'block_by_actor' => 'actor',
+				] + $commentQuery['tables'],
+				'fields' => [
+					'ipb_id' => 'bl_id',
+					'ipb_address' => 'COALESCE(bt_address, bt_user_text)',
+					'ipb_timestamp' => 'bl_timestamp',
+					'ipb_auto' => 'bt_auto',
+					'ipb_anon_only' => 'bl_anon_only',
+					'ipb_create_account' => 'bl_create_account',
+					'ipb_enable_autoblock' => 'bl_enable_autoblock',
+					'ipb_expiry' => 'bl_expiry',
+					'ipb_deleted' => 'bl_deleted',
+					'ipb_block_email' => 'bl_block_email',
+					'ipb_allow_usertalk' => 'bl_allow_usertalk',
+					'ipb_parent_block_id' => 'bl_parent_block_id',
+					'ipb_sitewide' => 'bl_sitewide',
+					'ipb_by_actor' => 'bl_by_actor',
+					'ipb_by' => 'block_by_actor.actor_user',
+					'ipb_by_text' => 'block_by_actor.actor_name',
+					'ipb_reason_text' => $commentQuery['fields']['bl_reason_text'],
+					'ipb_reason_data' => $commentQuery['fields']['bl_reason_data'],
+					'ipb_reason_cid' => $commentQuery['fields']['bl_reason_cid'],
+				],
+				'joins' => [
+					'block_by_actor' => [ 'JOIN', 'actor_id=bl_by_actor' ],
+				] + $commentQuery['joins'],
+			];
+		} elseif ( $schema === self::SCHEMA_BLOCK ) {
+			return [
+				'tables' => [
+					'block',
+					'block_target',
+					'block_by_actor' => 'actor',
+				] + $commentQuery['tables'],
+				'fields' => [
+					'bl_id',
+					'bt_address',
+					'bt_user',
+					'bt_user_text',
+					'bl_timestamp',
+					'bt_auto',
+					'bl_anon_only',
+					'bl_create_account',
+					'bl_enable_autoblock',
+					'bl_expiry',
+					'bl_deleted',
+					'bl_block_email',
+					'bl_allow_usertalk',
+					'bl_parent_block_id',
+					'bl_sitewide',
+					'bl_by_actor',
+					'bl_by' => 'block_by_actor.actor_user',
+					'bl_by_text' => 'block_by_actor.actor_name',
+				] + $commentQuery['fields'],
+				'joins' => [
+					'block_target' => [ 'JOIN', 'bt_id=bl_target' ],
+					'block_by_actor' => [ 'JOIN', 'actor_id=bl_by_actor' ],
+				] + $commentQuery['joins'],
+			];
 		}
 		throw new InvalidArgumentException(
 			'$schema must be SCHEMA_IPBLOCKS or SCHEMA_BLOCK' );
@@ -476,52 +343,34 @@ class DatabaseBlockStore {
 			}
 		}
 
-		if ( $this->readStage === SCHEMA_COMPAT_READ_OLD ) {
-			$userIdField = 'ipb_user';
-			$addressField = 'ipb_address';
-			$schema = self::SCHEMA_IPBLOCKS;
-		} else {
-			$userIdField = 'bt_user';
-			$addressField = 'bt_address';
-			$schema = self::SCHEMA_BLOCK;
-		}
-
 		$orConds = [];
 		if ( $userIds ) {
 			// @phan-suppress-next-line PhanTypeMismatchArgument -- array_unique() result is non-empty
-			$orConds[] = $db->expr( $userIdField, '=', array_unique( $userIds ) );
+			$orConds[] = $db->expr( 'bt_user', '=', array_unique( $userIds ) );
 		}
 		if ( $userNames ) {
-			if ( $this->readStage === SCHEMA_COMPAT_READ_OLD ) {
+			// Add bt_ip_hex to the condition since it is in the index
+			$orConds[] = $db->expr( 'bt_ip_hex', '=', null )
 				// @phan-suppress-next-line PhanTypeMismatchArgument -- array_unique() result is non-empty
-				$orConds[] = $db->expr( 'ipb_address', '=', array_unique( $userNames ) );
-			} else {
-				// Add bt_ip_hex to the condition since it is in the index
-				$orConds[] = $db->expr( 'bt_ip_hex', '=', null )
-					// @phan-suppress-next-line PhanTypeMismatchArgument -- array_unique() result is non-empty
-					->and( 'bt_user_text', '=', array_unique( $userNames ) );
-			}
+				->and( 'bt_user_text', '=', array_unique( $userNames ) );
 		}
 		if ( $addresses ) {
 			// @phan-suppress-next-line PhanTypeMismatchArgument
-			$orConds[] = $db->expr( $addressField, '=', array_unique( $addresses ) );
+			$orConds[] = $db->expr( 'bt_address', '=', array_unique( $addresses ) );
 		}
 		foreach ( $ranges as $range ) {
-			$orConds[] = $this->getRangeCond( $range[0], $range[1], $schema );
+			$orConds[] = new RawSQLExpression( $this->getRangeCond( $range[0], $range[1] ) );
 		}
 		if ( !$orConds ) {
 			return [];
 		}
 
-		$blockQuery = $this->getQueryInfo( $schema );
-		$res = $db->select(
-			$blockQuery['tables'],
-			$blockQuery['fields'],
-			$db->makeList( $orConds, IDatabase::LIST_OR ),
-			__METHOD__,
-			[],
-			$blockQuery['joins']
-		);
+		$blockQuery = $this->getQueryInfo();
+		$res = $db->newSelectQueryBuilder()
+			->queryInfo( $blockQuery )
+			->where( $db->orExpr( $orConds ) )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$blocks = [];
 		$blockIds = [];
@@ -617,50 +466,51 @@ class DatabaseBlockStore {
 	 * @param string $schema What schema to use for field aliases. Can be one of:
 	 *    - self::SCHEMA_IPBLOCKS for the old schema
 	 *    - self::SCHEMA_BLOCK for the new schema
-	 *    - self::SCHEMA_CURRENT for the schema configured by read mode in
-	 *      $wgBlockTargetMigrationStage.
-	 *   In future this will default to the new schema and later the parameter will be removed.
+	 *    - self::SCHEMA_CURRENT formerly used the configured schema, but now
+	 *      acts the same as SCHEMA_BLOCK
+	 *   In future this parameter will be removed.
 	 * @return string
 	 */
-	public function getRangeCond( $start, $end, $schema ) {
+	public function getRangeCond( $start, $end, $schema = self::SCHEMA_BLOCK ) {
 		// Per T16634, we want to include relevant active range blocks; for
 		// range blocks, we want to include larger ranges which enclose the given
 		// range. We know that all blocks must be smaller than $wgBlockCIDRLimit,
 		// so we can improve performance by filtering on a LIKE clause
 		$chunk = $this->getIpFragment( $start );
 		$dbr = $this->getReplicaDB();
-		$like = $dbr->buildLike( $chunk, $dbr->anyString() );
 		$end ??= $start;
 
 		if ( $schema === self::SCHEMA_CURRENT ) {
-			$schema = $this->readStage === SCHEMA_COMPAT_READ_OLD
-				? self::SCHEMA_IPBLOCKS : self::SCHEMA_BLOCK;
+			$schema = self::SCHEMA_BLOCK;
 		}
 
 		if ( $schema === self::SCHEMA_IPBLOCKS ) {
 			return $dbr->makeList(
 				[
-					"ipb_range_start $like",
+					$dbr->expr( 'ipb_range_start', IExpression::LIKE,
+						new LikeValue( $chunk, $dbr->anyString() ) ),
 					$dbr->expr( 'ipb_range_start', '<=', $start ),
 					$dbr->expr( 'ipb_range_end', '>=', $end ),
 				],
 				LIST_AND
 			);
 		} elseif ( $schema === self::SCHEMA_BLOCK ) {
-			return $dbr->makeList(
-				[
-					'bt_ip_hex' => $start,
-					$dbr->makeList(
-						[
-							"bt_range_start $like",
-							$dbr->expr( 'bt_range_start', '<=', $start ),
-							$dbr->expr( 'bt_range_end', '>=', $end ),
-						],
-						LIST_AND
-					)
-				],
-				LIST_OR
-			);
+			$expr = $dbr->expr(
+					'bt_range_start',
+					IExpression::LIKE,
+					new LikeValue( $chunk, $dbr->anyString() )
+				)
+				->and( 'bt_range_start', '<=', $start )
+				->and( 'bt_range_end', '>=', $end );
+			if ( $start === $end ) {
+				// Also select single IP blocks for this target
+				$expr = $dbr->orExpr( [
+					$dbr->expr( 'bt_ip_hex', '=', $start )
+						->and( 'bt_range_start', '=', null ),
+					$expr
+				] );
+			}
+			return $expr->toSql( $dbr );
 		} else {
 			throw new InvalidArgumentException(
 				'$schema must be SCHEMA_IPBLOCKS or SCHEMA_BLOCK' );
@@ -828,7 +678,7 @@ class DatabaseBlockStore {
 
 		$conds = [];
 		foreach ( array_unique( $addresses ) as $ipaddr ) {
-			$conds[] = $this->getRangeCond( IPUtils::toHex( $ipaddr ), null, self::SCHEMA_CURRENT );
+			$conds[] = $this->getRangeCond( IPUtils::toHex( $ipaddr ), null );
 		}
 
 		if ( $conds === [] ) {
@@ -841,29 +691,16 @@ class DatabaseBlockStore {
 			$db = $this->getReplicaDB();
 		}
 		$conds = $db->makeList( $conds, LIST_OR );
-		if ( $this->readStage === SCHEMA_COMPAT_READ_OLD ) {
-			if ( !$applySoftBlocks ) {
-				$conds = [ $conds, 'ipb_anon_only' => 0 ];
-			}
-			$blockQuery = $this->getQueryInfo( self::SCHEMA_IPBLOCKS );
-			$rows = $db->newSelectQueryBuilder()
-				->queryInfo( $blockQuery )
-				->fields( [ 'ipb_range_start', 'ipb_range_end' ] )
-				->where( $conds )
-				->caller( __METHOD__ )
-				->fetchResultSet();
-		} else {
-			if ( !$applySoftBlocks ) {
-				$conds = [ $conds, 'bl_anon_only' => 0 ];
-			}
-			$blockQuery = $this->getQueryInfo( self::SCHEMA_BLOCK );
-			$rows = $db->newSelectQueryBuilder()
-				->queryInfo( $blockQuery )
-				->fields( [ 'bt_range_start', 'bt_range_end' ] )
-				->where( $conds )
-				->caller( __METHOD__ )
-				->fetchResultSet();
+		if ( !$applySoftBlocks ) {
+			$conds = [ $conds, 'bl_anon_only' => 0 ];
 		}
+		$blockQuery = $this->getQueryInfo();
+		$rows = $db->newSelectQueryBuilder()
+			->queryInfo( $blockQuery )
+			->fields( [ 'bt_range_start', 'bt_range_end' ] )
+			->where( $conds )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$blocks = [];
 		foreach ( $rows as $row ) {
@@ -889,27 +726,15 @@ class DatabaseBlockStore {
 	 */
 	public function newListFromConds( $conds, $fromPrimary = false, $includeExpired = false ) {
 		$db = $fromPrimary ? $this->getPrimaryDB() : $this->getReplicaDB();
-		if ( $this->readStage === SCHEMA_COMPAT_READ_OLD ) {
-			$conds = self::mapCondsToOldSchema( $conds );
-			if ( !$includeExpired ) {
-				$conds[] = $db->expr( 'ipb_expiry', '>=', $db->timestamp() );
-			}
-			$res = $db->newSelectQueryBuilder()
-				->queryInfo( $this->getQueryInfo( self::SCHEMA_IPBLOCKS ) )
-				->conds( $conds )
-				->caller( __METHOD__ )
-				->fetchResultSet();
-		} else {
-			$conds = self::mapActorAlias( $conds );
-			if ( !$includeExpired ) {
-				$conds[] = $db->expr( 'bl_expiry', '>=', $db->timestamp() );
-			}
-			$res = $db->newSelectQueryBuilder()
-				->queryInfo( $this->getQueryInfo( self::SCHEMA_BLOCK ) )
-				->conds( $conds )
-				->caller( __METHOD__ )
-				->fetchResultSet();
+		$conds = self::mapActorAlias( $conds );
+		if ( !$includeExpired ) {
+			$conds[] = $db->expr( 'bl_expiry', '>=', $db->timestamp() );
 		}
+		$res = $db->newSelectQueryBuilder()
+			->queryInfo( $this->getQueryInfo() )
+			->conds( $conds )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		$blocks = [];
 		foreach ( $res as $row ) {
 			$blocks[] = $this->newFromRow( $db, $row );
@@ -940,33 +765,14 @@ class DatabaseBlockStore {
 			__METHOD__,
 			function ( IDatabase $dbw, $fname ) {
 				$limit = $this->options->get( MainConfigNames::UpdateRowsPerQuery );
-				if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-					$ids = $dbw->newSelectQueryBuilder()
-						->select( 'ipb_id' )
-						->from( 'ipblocks' )
-						->where( $dbw->expr( 'ipb_expiry', '<', $dbw->timestamp() ) )
-						// Set a limit to avoid causing replication lag (T301742)
-						->limit( $limit )
-						->caller( $fname )->fetchFieldValues();
-					if ( $ids ) {
-						$ids = array_map( 'intval', $ids );
-						$this->blockRestrictionStore->deleteByBlockId( $ids );
-						$dbw->newDeleteQueryBuilder()
-							->deleteFrom( 'ipblocks' )
-							->where( [ 'ipb_id' => $ids ] )
-							->caller( $fname )->execute();
-					}
-				}
-				if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-					$res = $dbw->newSelectQueryBuilder()
-						->select( [ 'bl_id', 'bl_target' ] )
-						->from( 'block' )
-						->where( $dbw->expr( 'bl_expiry', '<', $dbw->timestamp() ) )
-						// Set a limit to avoid causing replication lag (T301742)
-						->limit( $limit )
-						->caller( $fname )->fetchResultSet();
-					$this->deleteBlockRows( $res );
-				}
+				$res = $dbw->newSelectQueryBuilder()
+					->select( [ 'bl_id', 'bl_target' ] )
+					->from( 'block' )
+					->where( $dbw->expr( 'bl_expiry', '<', $dbw->timestamp() ) )
+					// Set a limit to avoid causing replication lag (T301742)
+					->limit( $limit )
+					->caller( $fname )->fetchResultSet();
+				$this->deleteBlockRows( $res );
 			}
 		) );
 	}
@@ -983,81 +789,22 @@ class DatabaseBlockStore {
 	 */
 	public function deleteBlocksMatchingConds( array $conds, $limit = null ) {
 		$dbw = $this->getPrimaryDB();
-		$affected = 0;
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$oldConds = self::mapCondsToOldSchema( $conds );
-			$qb = $dbw->newSelectQueryBuilder()
-				->select( 'ipb_id' )
-				->from( 'ipblocks' )
-				->where( $oldConds )
-				->caller( __METHOD__ );
-			if ( self::hasActorAlias( $oldConds ) ) {
-				$qb->join( 'actor', 'ipblocks_actor', 'actor_id=ipb_by_actor' );
-			}
-			if ( $limit !== null ) {
-				$qb->limit( $limit );
-			}
-			$ids = $qb->fetchFieldValues();
-			if ( $ids ) {
-				$ids = array_map( 'intval', $ids );
-				$this->blockRestrictionStore->deleteByBlockId( $ids );
-				$dbw->newDeleteQueryBuilder()
-					->deleteFrom( 'ipblocks' )
-					->where( [ 'ipb_id' => $ids ] )
-					->caller( __METHOD__ )->execute();
-				$affected = $dbw->affectedRows();
-			}
+		$conds = self::mapActorAlias( $conds );
+		$qb = $dbw->newSelectQueryBuilder()
+			->select( [ 'bl_id', 'bl_target' ] )
+			->from( 'block' )
+			// Typical input conds need block_target
+			->join( 'block_target', null, 'bt_id=bl_target' )
+			->where( $conds )
+			->caller( __METHOD__ );
+		if ( self::hasActorAlias( $conds ) ) {
+			$qb->join( 'actor', 'ipblocks_actor', 'actor_id=bl_by_actor' );
 		}
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$conds = self::mapActorAlias( $conds );
-			$qb = $dbw->newSelectQueryBuilder()
-				->select( [ 'bl_id', 'bl_target' ] )
-				->from( 'block' )
-				// Typical input conds need block_target
-				->join( 'block_target', null, 'bt_id=bl_target' )
-				->where( $conds )
-				->caller( __METHOD__ );
-			if ( self::hasActorAlias( $conds ) ) {
-				$qb->join( 'actor', 'ipblocks_actor', 'actor_id=bl_by_actor' );
-			}
-			if ( $limit !== null ) {
-				$qb->limit( $limit );
-			}
-			$res = $qb->fetchResultSet();
-			$affected = max( $affected, $this->deleteBlockRows( $res ) );
+		if ( $limit !== null ) {
+			$qb->limit( $limit );
 		}
-		return $affected;
-	}
-
-	/**
-	 * Convert the field names in the condition array from new/generic names
-	 * old names.
-	 *
-	 * @param array $conds
-	 * @return array
-	 */
-	private static function mapCondsToOldSchema( $conds ) {
-		return self::mapConds(
-			[
-				'bl_id' => 'ipb_id',
-				'bt_address' => 'ipb_address',
-				'bt_user' => 'ipb_user',
-				'bl_timestamp' => 'ipb_timestamp',
-				'bt_auto' => 'ipb_auto',
-				'bl_anon_only' => 'ipb_anon_only',
-				'bl_create_account' => 'ipb_create_account',
-				'bl_enable_autoblock' => 'ipb_enable_autoblock',
-				'bl_expiry' => 'ipb_expiry',
-				'bl_deleted' => 'ipb_deleted',
-				'bl_block_email' => 'ipb_block_email',
-				'bl_allow_usertalk' => 'ipb_allow_usertalk',
-				'bl_parent_block_id' => 'ipb_parent_block_id',
-				'bl_sitewide' => 'ipb_sitewide',
-				'bl_by_actor' => 'ipb_by_actor',
-				'bl_by' => 'ipblocks_actor.actor_user',
-			],
-			$conds
-		);
+		$res = $qb->fetchResultSet();
+		return $this->deleteBlockRows( $res );
 	}
 
 	/**
@@ -1151,10 +898,10 @@ class DatabaseBlockStore {
 	 * @param int[] $targetIds
 	 * @param int $delta The amount to decrement by
 	 */
-	private function releaseTargets( IDatabase $dbw, $targetIds, $delta = 1 ) {
+	private function releaseTargets( IDatabase $dbw, $targetIds, int $delta = 1 ) {
 		$dbw->newUpdateQueryBuilder()
 			->update( 'block_target' )
-			->set( "bt_count=bt_count-$delta" )
+			->set( [ 'bt_count' => new RawSQLValue( "bt_count-$delta" ) ] )
 			->where( [ 'bt_id' => $targetIds ] )
 			->caller( __METHOD__ )
 			->execute();
@@ -1231,10 +978,7 @@ class DatabaseBlockStore {
 				$targetUserIdentity = $block->getTargetUserIdentity();
 				if ( $targetUserIdentity ) {
 					$targetUser = $this->userFactory->newFromUserIdentity( $targetUserIdentity );
-					// TODO: respect the wiki the block belongs to here
-					// Change user login token to force them to be logged out.
-					$targetUser->setToken();
-					$targetUser->saveSettings();
+					SessionManager::singleton()->invalidateSessionsForUser( $targetUser );
 				}
 			}
 
@@ -1258,41 +1002,20 @@ class DatabaseBlockStore {
 		IDatabase $dbw,
 		$expectedTargetCount
 	) {
-		$id = null;
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$row = $this->getArrayForBlockUpdate( $block, $dbw, self::SCHEMA_IPBLOCKS );
-			$dbw->newInsertQueryBuilder()
-				->insertInto( 'ipblocks' )
-				->ignore()
-				->row( $row )
-				->caller( __METHOD__ )->execute();
-			if ( !$dbw->affectedRows() ) {
-				return false;
-			}
-			$id = $dbw->insertId();
+		$targetId = $this->acquireTarget( $block, $dbw, $expectedTargetCount );
+		if ( !$targetId ) {
+			return false;
 		}
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$targetId = $this->acquireTarget( $block, $dbw, $expectedTargetCount );
-			if ( !$targetId ) {
-				return false;
-			}
-			$row = $this->getArrayForBlockUpdate( $block, $dbw, self::SCHEMA_BLOCK );
-			if ( $id !== null ) {
-				$row['bl_id'] = $id;
-			}
-
-			$row['bl_target'] = $targetId;
-			$dbw->newInsertQueryBuilder()
-				->insertInto( 'block' )
-				->row( $row )
-				->caller( __METHOD__ )->execute();
-			if ( !$dbw->affectedRows() ) {
-				return false;
-			}
-			if ( $id === null ) {
-				$id = $dbw->insertId();
-			}
+		$row = $this->getArrayForBlockUpdate( $block, $dbw );
+		$row['bl_target'] = $targetId;
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'block' )
+			->row( $row )
+			->caller( __METHOD__ )->execute();
+		if ( !$dbw->affectedRows() ) {
+			return false;
 		}
+		$id = $dbw->insertId();
 
 		if ( !$id ) {
 			throw new RuntimeException( 'block insert ID is falsey' );
@@ -1317,38 +1040,15 @@ class DatabaseBlockStore {
 		DatabaseBlock $block,
 		IDatabase $dbw
 	) {
-		$ipblocksIDs = [];
-		$blockDeletionDone = false;
-		// T96428: The ipb_address index uses a prefix on a field, so
-		// use a standard SELECT + DELETE to avoid annoying gap locks.
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$ipblocksIDs = $dbw->newSelectQueryBuilder()
-				->select( 'ipb_id' )
-				->from( 'ipblocks' )
-				->where( [ 'ipb_address' => $block->getTargetName() ] )
-				->andWhere( $dbw->expr( 'ipb_expiry', '<', $dbw->timestamp() ) )
-				->caller( __METHOD__ )->fetchFieldValues();
-			if ( $ipblocksIDs ) {
-				$ipblocksIDs = array_map( 'intval', $ipblocksIDs );
-				$dbw->newDeleteQueryBuilder()
-					->deleteFrom( 'ipblocks' )
-					->where( [ 'ipb_id' => $ipblocksIDs ] )
-					->caller( __METHOD__ )->execute();
-				$this->blockRestrictionStore->deleteByBlockId( $ipblocksIDs );
-			}
-		}
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$targetConds = $this->getTargetConds( $block );
-			$res = $dbw->newSelectQueryBuilder()
-				->select( [ 'bl_id', 'bl_target' ] )
-				->from( 'block' )
-				->join( 'block_target', null, [ 'bt_id=bl_target' ] )
-				->where( $targetConds )
-				->andWhere( $dbw->expr( 'bl_expiry', '<', $dbw->timestamp() ) )
-				->caller( __METHOD__ )->fetchResultSet();
-			$blockDeletionDone = (bool)$this->deleteBlockRows( $res );
-		}
-		return $ipblocksIDs || $blockDeletionDone;
+		$targetConds = $this->getTargetConds( $block );
+		$res = $dbw->newSelectQueryBuilder()
+			->select( [ 'bl_id', 'bl_target' ] )
+			->from( 'block' )
+			->join( 'block_target', null, [ 'bt_id=bl_target' ] )
+			->where( $targetConds )
+			->andWhere( $dbw->expr( 'bl_expiry', '<', $dbw->timestamp() ) )
+			->caller( __METHOD__ )->fetchResultSet();
+		return (bool)$this->deleteBlockRows( $res );
 	}
 
 	/**
@@ -1416,7 +1116,7 @@ class DatabaseBlockStore {
 		// connection.
 		$dbw->newUpdateQueryBuilder()
 			->update( 'block_target' )
-			->set( 'bt_count=bt_count+1' )
+			->set( [ 'bt_count' => new RawSQLValue( 'bt_count+1' ) ] )
 			->where( $condsWithCount )
 			->caller( __METHOD__ )->execute();
 		$numUpdatedRows = $dbw->affectedRows();
@@ -1488,7 +1188,7 @@ class DatabaseBlockStore {
 		$blockId = $block->getId( $this->wikiId );
 		if ( !$blockId ) {
 			throw new InvalidArgumentException(
-				__METHOD__ . " requires that a block id be set\n"
+				__METHOD__ . ' requires that a block id be set'
 			);
 		}
 
@@ -1496,22 +1196,12 @@ class DatabaseBlockStore {
 
 		$dbw->startAtomic( __METHOD__ );
 
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$row = $this->getArrayForBlockUpdate( $block, $dbw, self::SCHEMA_IPBLOCKS );
-			$dbw->newUpdateQueryBuilder()
-				->update( 'ipblocks' )
-				->set( $row )
-				->where( [ 'ipb_id' => $blockId ] )
-				->caller( __METHOD__ )->execute();
-		}
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$row = $this->getArrayForBlockUpdate( $block, $dbw, self::SCHEMA_BLOCK );
-			$dbw->newUpdateQueryBuilder()
-				->update( 'block' )
-				->set( $row )
-				->where( [ 'bl_id' => $blockId ] )
-				->caller( __METHOD__ )->execute();
-		}
+		$row = $this->getArrayForBlockUpdate( $block, $dbw );
+		$dbw->newUpdateQueryBuilder()
+			->update( 'block' )
+			->set( $row )
+			->where( [ 'bl_id' => $blockId ] )
+			->caller( __METHOD__ )->execute();
 
 		// Only update the restrictions if they have been modified.
 		$result = true;
@@ -1527,20 +1217,11 @@ class DatabaseBlockStore {
 
 		if ( $block->isAutoblocking() ) {
 			// Update corresponding autoblock(s) (T50813)
-			if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-				$dbw->newUpdateQueryBuilder()
-					->update( 'ipblocks' )
-					->set( $this->getArrayForAutoblockUpdate( $block, self::SCHEMA_IPBLOCKS ) )
-					->where( [ 'ipb_parent_block_id' => $blockId ] )
-					->caller( __METHOD__ )->execute();
-			}
-			if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-				$dbw->newUpdateQueryBuilder()
-					->update( 'block' )
-					->set( $this->getArrayForAutoblockUpdate( $block, self::SCHEMA_BLOCK ) )
-					->where( [ 'bl_parent_block_id' => $blockId ] )
-					->caller( __METHOD__ )->execute();
-			}
+			$dbw->newUpdateQueryBuilder()
+				->update( 'block' )
+				->set( $this->getArrayForAutoblockUpdate( $block ) )
+				->where( [ 'bl_parent_block_id' => $blockId ] )
+				->caller( __METHOD__ )->execute();
 
 			// Only update the restrictions if they have been modified.
 			if ( $restrictions !== null ) {
@@ -1589,48 +1270,28 @@ class DatabaseBlockStore {
 		$oldTargetConds = $this->getTargetConds( $block );
 		$block->setTarget( $newTarget );
 
-		$affected = 0;
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			if ( $block->getTargetUserIdentity() ) {
-				$userId = $block->getTargetUserIdentity()->getId( $this->wikiId );
-			} else {
-				$userId = 0;
-			}
-			$dbw->newUpdateQueryBuilder()
-				->update( 'ipblocks' )
-				->set( [
-					'ipb_address' => $block->getTargetName(),
-					'ipb_user' => $userId,
-				] )
-				->where( [ 'ipb_id' => $blockId ] )
-				->caller( __METHOD__ )
-				->execute();
-			$affected = $dbw->affectedRows();
-		}
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$dbw->startAtomic( __METHOD__ );
-			$targetId = $this->acquireTarget( $block, $dbw, null );
-			if ( !$targetId ) {
-				// This is an exotic and unlikely error -- perhaps an exception should be thrown
-				$dbw->endAtomic( __METHOD__ );
-				return false;
-			}
-			$oldTargetId = $dbw->newSelectQueryBuilder()
-				->select( 'bt_id' )
-				->from( 'block_target' )
-				->where( $oldTargetConds )
-				->caller( __METHOD__ )->fetchField();
-			$this->releaseTargets( $dbw, [ $oldTargetId ] );
-
-			$dbw->newUpdateQueryBuilder()
-				->update( 'block' )
-				->set( [ 'bl_target' => $targetId ] )
-				->where( [ 'bl_id' => $blockId ] )
-				->caller( __METHOD__ )
-				->execute();
-			$affected = max( $affected, $dbw->affectedRows() );
+		$dbw->startAtomic( __METHOD__ );
+		$targetId = $this->acquireTarget( $block, $dbw, null );
+		if ( !$targetId ) {
+			// This is an exotic and unlikely error -- perhaps an exception should be thrown
 			$dbw->endAtomic( __METHOD__ );
+			return false;
 		}
+		$oldTargetId = $dbw->newSelectQueryBuilder()
+			->select( 'bt_id' )
+			->from( 'block_target' )
+			->where( $oldTargetConds )
+			->caller( __METHOD__ )->fetchField();
+		$this->releaseTargets( $dbw, [ $oldTargetId ] );
+
+		$dbw->newUpdateQueryBuilder()
+			->update( 'block' )
+			->set( [ 'bl_target' => $targetId ] )
+			->where( [ 'bl_id' => $blockId ] )
+			->caller( __METHOD__ )
+			->execute();
+		$affected = $dbw->affectedRows();
+		$dbw->endAtomic( __METHOD__ );
 		return (bool)$affected;
 	}
 
@@ -1651,42 +1312,23 @@ class DatabaseBlockStore {
 
 		if ( !$blockId ) {
 			throw new InvalidArgumentException(
-				__METHOD__ . " requires that a block id be set\n"
+				__METHOD__ . ' requires that a block id be set'
 			);
 		}
 		$dbw = $this->getPrimaryDB();
 		$dbw->startAtomic( __METHOD__ );
-		$affected = 0;
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$ids = $dbw->newSelectQueryBuilder()
-				->select( 'ipb_id' )
-				->from( 'ipblocks' )
-				->where( [ 'ipb_parent_block_id' => $blockId ] )
-				->caller( __METHOD__ )->fetchFieldValues();
-			$ids = array_map( 'intval', $ids );
-			$ids[] = $blockId;
-
-			$this->blockRestrictionStore->deleteByBlockId( $ids );
-			$dbw->newDeleteQueryBuilder()
-				->deleteFrom( 'ipblocks' )
-				->where( [ 'ipb_id' => $ids ] )
-				->caller( __METHOD__ )->execute();
-			$affected = $dbw->affectedRows();
-		}
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$res = $dbw->newSelectQueryBuilder()
-				->select( [ 'bl_id', 'bl_target' ] )
-				->from( 'block' )
-				->where(
-					$dbw->makeList( [
-						'bl_parent_block_id' => $blockId,
-						'bl_id' => $blockId,
-					], IDatabase::LIST_OR )
-				)
-				->caller( __METHOD__ )->fetchResultSet();
-			$this->deleteBlockRows( $res );
-			$affected = max( $affected, $res->numRows() );
-		}
+		$res = $dbw->newSelectQueryBuilder()
+			->select( [ 'bl_id', 'bl_target' ] )
+			->from( 'block' )
+			->where(
+				$dbw->orExpr( [
+					'bl_parent_block_id' => $blockId,
+					'bl_id' => $blockId,
+				] )
+			)
+			->caller( __METHOD__ )->fetchResultSet();
+		$this->deleteBlockRows( $res );
+		$affected = $res->numRows();
 		$dbw->endAtomic( __METHOD__ );
 
 		return $affected > 0;
@@ -1698,21 +1340,14 @@ class DatabaseBlockStore {
 	 * @param DatabaseBlock $block
 	 * @param IDatabase $dbw Database to use if not the same as the one in the load balancer.
 	 *                       Must connect to the wiki identified by $block->getBlocker->getWikiId().
-	 * @param string $schema self:SCHEMA_IPBLOCKS or self::SCHEMA_BLOCK
 	 * @return array
 	 */
 	private function getArrayForBlockUpdate(
 		DatabaseBlock $block,
-		IDatabase $dbw,
-		$schema
+		IDatabase $dbw
 	): array {
 		$expiry = $dbw->encodeExpiry( $block->getExpiry() );
 
-		if ( $block->getTargetUserIdentity() ) {
-			$userId = $block->getTargetUserIdentity()->getId( $this->wikiId );
-		} else {
-			$userId = 0;
-		}
 		$blocker = $block->getBlocker();
 		if ( !$blocker ) {
 			throw new RuntimeException( __METHOD__ . ': this block does not have a blocker' );
@@ -1723,50 +1358,24 @@ class DatabaseBlockStore {
 			->getActorStore( $dbw->getDomainID() )
 			->acquireActorId( $blocker, $dbw );
 
-		if ( $schema === self::SCHEMA_IPBLOCKS ) {
-			$blockArray = [
-				'ipb_address'          => $block->getTargetName(),
-				'ipb_user'             => $userId,
-				'ipb_by_actor'         => $blockerActor,
-				'ipb_timestamp'        => $dbw->timestamp( $block->getTimestamp() ),
-				'ipb_auto'             => $block->getType() === AbstractBlock::TYPE_AUTO,
-				'ipb_anon_only'        => !$block->isHardblock(),
-				'ipb_create_account'   => $block->isCreateAccountBlocked(),
-				'ipb_enable_autoblock' => $block->isAutoblocking(),
-				'ipb_expiry'           => $expiry,
-				'ipb_range_start'      => $block->getRangeStart(),
-				'ipb_range_end'        => $block->getRangeEnd(),
-				'ipb_deleted'          => intval( $block->getHideName() ), // typecast required for SQLite
-				'ipb_block_email'      => $block->isEmailBlocked(),
-				'ipb_allow_usertalk'   => $block->isUsertalkEditAllowed(),
-				'ipb_parent_block_id'  => $block->getParentBlockId(),
-				'ipb_sitewide'         => $block->isSitewide(),
-			];
-			$commentArray = $this->commentStore->insert(
-				$dbw,
-				'ipb_reason',
-				$block->getReasonComment()
-			);
-		} else {
-			$blockArray = [
-				'bl_by_actor'         => $blockerActor,
-				'bl_timestamp'        => $dbw->timestamp( $block->getTimestamp() ),
-				'bl_anon_only'        => !$block->isHardblock(),
-				'bl_create_account'   => $block->isCreateAccountBlocked(),
-				'bl_enable_autoblock' => $block->isAutoblocking(),
-				'bl_expiry'           => $expiry,
-				'bl_deleted'          => intval( $block->getHideName() ), // typecast required for SQLite
-				'bl_block_email'      => $block->isEmailBlocked(),
-				'bl_allow_usertalk'   => $block->isUsertalkEditAllowed(),
-				'bl_parent_block_id'  => $block->getParentBlockId(),
-				'bl_sitewide'         => $block->isSitewide(),
-			];
-			$commentArray = $this->commentStore->insert(
-				$dbw,
-				'bl_reason',
-				$block->getReasonComment()
-			);
-		}
+		$blockArray = [
+			'bl_by_actor'         => $blockerActor,
+			'bl_timestamp'        => $dbw->timestamp( $block->getTimestamp() ),
+			'bl_anon_only'        => !$block->isHardblock(),
+			'bl_create_account'   => $block->isCreateAccountBlocked(),
+			'bl_enable_autoblock' => $block->isAutoblocking(),
+			'bl_expiry'           => $expiry,
+			'bl_deleted'          => intval( $block->getHideName() ), // typecast required for SQLite
+			'bl_block_email'      => $block->isEmailBlocked(),
+			'bl_allow_usertalk'   => $block->isUsertalkEditAllowed(),
+			'bl_parent_block_id'  => $block->getParentBlockId(),
+			'bl_sitewide'         => $block->isSitewide(),
+		];
+		$commentArray = $this->commentStore->insert(
+			$dbw,
+			'bl_reason',
+			$block->getReasonComment()
+		);
 
 		$combinedArray = $blockArray + $commentArray;
 		return $combinedArray;
@@ -1776,10 +1385,9 @@ class DatabaseBlockStore {
 	 * Get an array suitable for autoblock updates
 	 *
 	 * @param DatabaseBlock $block
-	 * @param string $schema
 	 * @return array
 	 */
-	private function getArrayForAutoblockUpdate( DatabaseBlock $block, $schema ): array {
+	private function getArrayForAutoblockUpdate( DatabaseBlock $block ): array {
 		$blocker = $block->getBlocker();
 		if ( !$blocker ) {
 			throw new RuntimeException( __METHOD__ . ': this block does not have a blocker' );
@@ -1788,57 +1396,31 @@ class DatabaseBlockStore {
 		$blockerActor = $this->actorStoreFactory
 			->getActorNormalization( $this->wikiId )
 			->acquireActorId( $blocker, $dbw );
-		if ( $schema === self::SCHEMA_IPBLOCKS ) {
-			$blockArray = [
-				'ipb_by_actor'       => $blockerActor,
-				'ipb_create_account' => $block->isCreateAccountBlocked(),
-				'ipb_deleted'        => (int)$block->getHideName(), // typecast required for SQLite
-				'ipb_allow_usertalk' => $block->isUsertalkEditAllowed(),
-				'ipb_sitewide'       => $block->isSitewide(),
-			];
 
-			if ( $block->getExpiry() !== 'infinity' ) {
-				// Shorten the autoblock expiry if the parent block expiry is sooner.
-				// Don't lengthen -- that is only done when the IP address is actually
-				// used by the blocked user.
-				$blockArray[] = 'ipb_expiry=' . $dbw->conditional(
-					$dbw->expr( 'ipb_expiry', '>', $dbw->timestamp( $block->getExpiry() ) ),
+		$blockArray = [
+			'bl_by_actor'       => $blockerActor,
+			'bl_create_account' => $block->isCreateAccountBlocked(),
+			'bl_deleted'        => (int)$block->getHideName(), // typecast required for SQLite
+			'bl_allow_usertalk' => $block->isUsertalkEditAllowed(),
+			'bl_sitewide'       => $block->isSitewide(),
+		];
+
+		// Shorten the autoblock expiry if the parent block expiry is sooner.
+		// Don't lengthen -- that is only done when the IP address is actually
+		// used by the blocked user.
+		if ( $block->getExpiry() !== 'infinity' ) {
+			$blockArray['bl_expiry'] = new RawSQLValue( $dbw->conditional(
+					$dbw->expr( 'bl_expiry', '>', $dbw->timestamp( $block->getExpiry() ) ),
 					$dbw->addQuotes( $dbw->timestamp( $block->getExpiry() ) ),
-					'ipb_expiry'
-				);
-			}
-
-			$commentArray = $this->commentStore->insert(
-				$dbw,
-				'ipb_reason',
-				$this->getAutoblockReason( $block )
-			);
-		} else {
-			$blockArray = [
-				'bl_by_actor'       => $blockerActor,
-				'bl_create_account' => $block->isCreateAccountBlocked(),
-				'bl_deleted'        => (int)$block->getHideName(), // typecast required for SQLite
-				'bl_allow_usertalk' => $block->isUsertalkEditAllowed(),
-				'bl_sitewide'       => $block->isSitewide(),
-			];
-
-			// Shorten the autoblock expiry if the parent block expiry is sooner.
-			// Don't lengthen -- that is only done when the IP address is actually
-			// used by the blocked user.
-			if ( $block->getExpiry() !== 'infinity' ) {
-				$blockArray[] = 'bl_expiry=' . $dbw->conditional(
-						$dbw->expr( 'bl_expiry', '>', $dbw->timestamp( $block->getExpiry() ) ),
-						$dbw->addQuotes( $dbw->timestamp( $block->getExpiry() ) ),
-						'bl_expiry'
-					);
-			}
-
-			$commentArray = $this->commentStore->insert(
-				$dbw,
-				'bl_reason',
-				$this->getAutoblockReason( $block )
-			);
+					'bl_expiry'
+				) );
 		}
+
+		$commentArray = $this->commentStore->insert(
+			$dbw,
+			'bl_reason',
+			$this->getAutoblockReason( $block )
+		);
 
 		$combinedArray = $blockArray + $commentArray;
 		return $combinedArray;
@@ -2034,30 +1616,16 @@ class DatabaseBlockStore {
 		$block->setExpiry( $this->getAutoblockExpiry( $now ) );
 
 		$dbw = $this->getPrimaryDB();
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$dbw->newUpdateQueryBuilder()
-				->update( 'ipblocks' )
-				->set(
-					[
-						'ipb_timestamp' => $dbw->timestamp( $block->getTimestamp() ),
-						'ipb_expiry' => $dbw->timestamp( $block->getExpiry() ),
-					]
-				)
-				->where( [ 'ipb_id' => $block->getId( $this->wikiId ) ] )
-				->caller( __METHOD__ )->execute();
-		}
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$dbw->newUpdateQueryBuilder()
-				->update( 'block' )
-				->set(
-					[
-						'bl_timestamp' => $dbw->timestamp( $block->getTimestamp() ),
-						'bl_expiry' => $dbw->timestamp( $block->getExpiry() ),
-					]
-				)
-				->where( [ 'bl_id' => $block->getId( $this->wikiId ) ] )
-				->caller( __METHOD__ )->execute();
-		}
+		$dbw->newUpdateQueryBuilder()
+			->update( 'block' )
+			->set(
+				[
+					'bl_timestamp' => $dbw->timestamp( $block->getTimestamp() ),
+					'bl_expiry' => $dbw->timestamp( $block->getExpiry() ),
+				]
+			)
+			->where( [ 'bl_id' => $block->getId( $this->wikiId ) ] )
+			->caller( __METHOD__ )->execute();
 	}
 
 	/**
@@ -2071,7 +1639,7 @@ class DatabaseBlockStore {
 	 * @param string|null $parentExpiry
 	 * @return string
 	 */
-	public function getAutoblockExpiry( $timestamp, string $parentExpiry = null ) {
+	public function getAutoblockExpiry( $timestamp, ?string $parentExpiry = null ) {
 		$maxDuration = $this->options->get( MainConfigNames::AutoblockExpiry );
 		$expiry = wfTimestamp( TS_MW, (int)wfTimestamp( TS_UNIX, $timestamp ) + $maxDuration );
 		if ( $parentExpiry !== null && $parentExpiry !== 'infinity' ) {

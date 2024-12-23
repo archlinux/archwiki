@@ -1,13 +1,19 @@
 <?php
+
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logger\Spi as LoggerSpi;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Hook\OpportunisticLinksUpdateHook;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserCacheFactory;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\PoolCounter\PoolCounter;
 use MediaWiki\PoolCounter\PoolCounterWork;
@@ -18,8 +24,12 @@ use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
+use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Utils\MWTimestamp;
 use Psr\Log\NullLogger;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Stats\StatsFactory;
@@ -50,7 +60,8 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 		}
 
 		if ( $value instanceof ParserOutput ) {
-			$value = $value->getText();
+			$pipeline = MediaWikiServices::getInstance()->getDefaultOutputPipeline();
+			$value = $pipeline->run( $value, $this->getParserOptions(), [] )->getContentHolderText();
 		}
 
 		$html = preg_replace( '/<!--.*?-->/s', '', $value );
@@ -95,7 +106,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$bag ?: new HashBagOStuff(),
 			'19900220000000',
 			$this->getServiceContainer()->getHookContainer(),
-			new JsonCodec(),
+			new JsonCodec( $this->getServiceContainer() ),
 			StatsFactory::newNull(),
 			new NullLogger(),
 			$this->getServiceContainer()->getTitleFactory(),
@@ -113,7 +124,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 			$wanCache,
 			$expiry,
 			'19900220000000',
-			new JsonCodec(),
+			new JsonCodec( $this->getServiceContainer() ),
 			StatsFactory::newNull(),
 			new NullLogger(),
 			$this->getServiceContainer()->getGlobalIdGenerator()
@@ -193,7 +204,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 				$parserCacheFactory,
 				$this->getServiceContainer()->getRevisionLookup(),
 				$revRenderer,
-				new NullStatsdDataFactory(),
+				$this->getServiceContainer()->getStatsFactory(),
 				$this->getServiceContainer()->getDBLoadBalancerFactory(),
 				$this->getServiceContainer()->getChronologyProtector(),
 				LoggerFactory::getProvider(),
@@ -207,7 +218,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 				ParserCacheFactory $parserCacheFactory,
 				RevisionLookup $revisionLookup,
 				RevisionRenderer $revisionRenderer,
-				IBufferingStatsdDataFactory $statsDataFactory,
+				StatsFactory $statsFactory,
 				ILBFactory $lbFactory,
 				ChronologyProtector $chronologyProtector,
 				LoggerSpi $loggerSpi,
@@ -219,7 +230,7 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 					$parserCacheFactory,
 					$revisionLookup,
 					$revisionRenderer,
-					$statsDataFactory,
+					$statsFactory,
 					$lbFactory,
 					$chronologyProtector,
 					$loggerSpi,
@@ -839,14 +850,12 @@ class ParserOutputAccessTest extends MediaWikiIntegrationTestCase {
 	 * @param bool $fastStale
 	 */
 	private function setPoolCounterFactory( $status, $fastStale = false ) {
-		$this->overrideConfigValues( [
-			MainConfigNames::PoolCounterConf => [
-				'ArticleView' => [
-					'class' => MockPoolCounterFailing::class,
-					'fastStale' => $fastStale,
-					'mockAcquire' => $status,
-					'mockRelease' => Status::newGood( PoolCounter::RELEASED ),
-				],
+		$this->overrideConfigValue( MainConfigNames::PoolCounterConf, [
+			'ArticleView' => [
+				'class' => MockPoolCounterFailing::class,
+				'fastStale' => $fastStale,
+				'mockAcquire' => $status,
+				'mockRelease' => Status::newGood( PoolCounter::RELEASED ),
 			],
 		] );
 	}

@@ -16,13 +16,21 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 final class IntentParserTest extends MediaWikiUnitTestCase {
+	/** @var string */
 	private static $FILENAMEINTENTTESTS = __DIR__ . "/intent_mathml_testing_extracted.json";
+	/** @var string */
 	private static $FILENAMEINTENTANNOTATED = __DIR__ . "/intent_mathml_testing_latex_annotated.json";
+	/** @var bool */
 	private static $APPLYFILTER = false;
+	/** @var int */
 	private static $FILTERSTART = 3;
+	/** @var int */
 	private static $FILTERLENGTH = 2;
+	/** @var bool */
 	private static $GENERATEJSONFILE = false;
+	/** @var string */
 	private static $GENERATEDJSONFILE = __DIR__ . "/IntentParserTestLocal-Output.json";
+	/** @var int[] */
 	private static $SKIPPEDINDICES = [ 67 ];
 
 	public static function setUpBeforeClass(): void {
@@ -61,7 +69,7 @@ final class IntentParserTest extends MediaWikiUnitTestCase {
 	public function testTexVC( $title, $tc ) {
 		$texVC = new TexVC();
 		if ( $tc->skipped == true || in_array( $tc->ctr, self::$SKIPPEDINDICES, true ) ) {
-			$this->assertTrue( true );
+			$this->addToAssertionCount( 1 );
 			return;
 		}
 		# Fetch result from TexVC(PHP)
@@ -74,7 +82,7 @@ final class IntentParserTest extends MediaWikiUnitTestCase {
 		] );
 		if ( !isset( $resultT["input"] ) ) {
 			if ( $tc->shouldfail ) {
-				$this->assertTrue( true );
+				$this->addToAssertionCount( 1 );
 				return;
 			}
 		}
@@ -89,7 +97,7 @@ final class IntentParserTest extends MediaWikiUnitTestCase {
 			"Name" => $tc->name,
 		];
 		self::writeToJSONFile( $writeObj, $tc->ctr != 86 ? true : false );
-		$this->assertTrue( true );
+		$this->addToAssertionCount( 1 );
 	}
 
 	public static function provideTestCases() {

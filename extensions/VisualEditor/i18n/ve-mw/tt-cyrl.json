@@ -3,10 +3,10 @@
 		"authors": [
 			"Ajdar",
 			"Derslek",
+			"Don Alessandro",
 			"Ерней",
 			"З. ӘЙЛЕ",
-			"Ильнар",
-			"Don Alessandro"
+			"Ильнар"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -19,7 +19,6 @@
 	"visualeditor-autosave-modified-prompt-accept": "Үзгәртүне дәвам итү",
 	"visualeditor-autosave-modified-prompt-reject": "Яңа төзәтмә башлау",
 	"visualeditor-backbutton-tooltip": "Кире кайту",
-	"visualeditor-browserwarning": "Сез кергән браузер, әлеге мөхәррирдә рәсми кулланмый.",
 	"visualeditor-ca-createlocaldescriptionsource": "Локаль тасвирлама өстәү",
 	"visualeditor-ca-createsource": "Чыганак коды булдыру",
 	"visualeditor-ca-editsource": "Вики-текстны үзгәртү",

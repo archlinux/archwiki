@@ -73,10 +73,11 @@ class JsonStaticClassCodec implements JsonClassCodec {
 	 *
 	 * @param class-string<T> $className
 	 * @param string $keyName
-	 * @return class-string|string|null A class string, a class string suffixed
-	 *   with `[]`, or null
+	 * @return class-string|string|Hint|null A class string, Hint or null.
+	 *   For backward compatibility, a class string suffixed with `[]` can
+	 *   also be returned, but that is deprecated.
 	 */
-	public function jsonClassHintFor( string $className, string $keyName ): ?string {
+	public function jsonClassHintFor( string $className, string $keyName ) {
 		// Proxy to a static method on the class.
 		// @see JsonCodecableTrait
 		return $className::jsonClassHintFor( $keyName );

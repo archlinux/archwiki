@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use EchoEventPresentationModel;
-use Message;
+use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
+use MediaWiki\Message\Message;
 
 class ThrottleFilterPresentationModel extends EchoEventPresentationModel {
 

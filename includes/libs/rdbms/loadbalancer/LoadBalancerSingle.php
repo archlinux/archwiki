@@ -79,16 +79,21 @@ class LoadBalancerSingle extends LoadBalancer {
 		) );
 	}
 
+	protected function sanitizeConnectionFlags( $flags, $domain ) {
+		// There is only one underlying connection handle. Also, this class is only meant to
+		// be used during situations like site installation, where there should be no contenting
+		// connections, and integration testing, where everything uses temporary tables.
+		$flags &= ~self::CONN_TRX_AUTOCOMMIT;
+
+		return $flags;
+	}
+
 	protected function reallyOpenConnection( $i, DatabaseDomain $domain, array $lbInfo ) {
 		foreach ( $lbInfo as $k => $v ) {
 			$this->conn->setLBInfo( $k, $v );
 		}
 
 		return $this->conn;
-	}
-
-	public function reuseConnection( IDatabase $conn ) {
-		// do nothing since the connection was injected
 	}
 
 	public function __destruct() {

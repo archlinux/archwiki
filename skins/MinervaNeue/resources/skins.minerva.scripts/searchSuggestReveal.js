@@ -2,7 +2,7 @@ const SEARCH_CLASS = 'search-enabled';
 
 module.exports = function () {
 	// eslint-disable-next-line no-jquery/no-global-selector
-	$( '#searchIcon' ).on( 'click', function () {
+	$( '#searchIcon' ).on( 'click', () => {
 		// eslint-disable-next-line no-jquery/no-global-selector
 		const $input = $( '#searchInput' );
 		const $body = $( document.body );
@@ -11,7 +11,7 @@ module.exports = function () {
 		if ( !$input.is( ':visible' ) ) {
 			$body.addClass( SEARCH_CLASS );
 			$input.trigger( 'focus' )
-				.one( 'blur', function () {
+				.one( 'blur', () => {
 					$body.removeClass( SEARCH_CLASS );
 				} );
 			return false;

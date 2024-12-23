@@ -6,7 +6,7 @@
  */
 
 /**
- * DataModel index meta item (for __INDEX__ and __NOINDEX__).
+ * DataModel index meta item (for `__INDEX__` and `__NOINDEX__`).
  *
  * @class
  * @extends ve.dm.MWFlaggedMetaItem

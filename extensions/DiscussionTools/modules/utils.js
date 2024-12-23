@@ -4,7 +4,7 @@
 /**
  * @constant
  */
-var NEW_TOPIC_COMMENT_ID = 'new|' + mw.config.get( 'wgRelevantPageName' );
+const NEW_TOPIC_COMMENT_ID = 'new|' + mw.config.get( 'wgRelevantPageName' );
 
 /**
  * @param {Node} node
@@ -14,14 +14,14 @@ function isBlockElement( node ) {
 	return node instanceof HTMLElement && ve.isBlockElement( node );
 }
 
-var solTransparentLinkRegexp = /(?:^|\s)mw:PageProp\/(?:Category|redirect|Language)(?=$|\s)/;
+const solTransparentLinkRegexp = /(?:^|\s)mw:PageProp\/(?:Category|redirect|Language)(?=$|\s)/;
 
 /**
  * @param {Node} node
  * @return {boolean} Node is considered a rendering-transparent node in Parsoid
  */
 function isRenderingTransparentNode( node ) {
-	var nextSibling = node.nextSibling;
+	const nextSibling = node.nextSibling;
 	return (
 		node.nodeType === Node.COMMENT_NODE ||
 		node.nodeType === Node.ELEMENT_NODE && (
@@ -59,7 +59,7 @@ function isOurGeneratedNode( node ) {
 }
 
 // Elements which can't have element children (but some may have text content).
-var noElementChildrenElementTypes = [
+const noElementChildrenElementTypes = [
 	// https://html.spec.whatwg.org/multipage/syntax.html#elements-2
 	// Void elements
 	'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
@@ -117,7 +117,7 @@ function isCommentSeparator( node ) {
 		return false;
 	}
 
-	var tagName = node.tagName.toLowerCase();
+	const tagName = node.tagName.toLowerCase();
 	if ( tagName === 'br' || tagName === 'hr' ) {
 		return true;
 	}
@@ -130,7 +130,7 @@ function isCommentSeparator( node ) {
 		return true;
 	}
 
-	var classList = node.classList;
+	const classList = node.classList;
 	if (
 		// Anything marked as not containing comments
 		classList.contains( 'mw-notalk' ) ||
@@ -174,7 +174,7 @@ function isCommentContent( node ) {
  * @return {number} Index in parentNode's childNode list
  */
 function childIndexOf( child ) {
-	var i = 0;
+	let i = 0;
 	while ( ( child = child.previousSibling ) ) {
 		i++;
 	}
@@ -219,7 +219,7 @@ function getTranscludedFromElement( node ) {
 			node.getAttribute( 'about' ) &&
 			/^#mwt\d+$/.test( node.getAttribute( 'about' ) )
 		) {
-			var about = node.getAttribute( 'about' );
+			const about = node.getAttribute( 'about' );
 
 			// 2.
 			while (
@@ -247,32 +247,27 @@ function getTranscludedFromElement( node ) {
 /**
  * Given a heading node, return the node on which the ID attribute is set.
  *
- * Also returns the offset within that node where the heading text starts.
- *
  * @param {HTMLElement} heading Heading node (`<h1>`-`<h6>`)
- * @return {Array} Array containing a 'node' (HTMLElement) and offset (number)
+ * @return {HTMLElement}
  */
-function getHeadlineNodeAndOffset( heading ) {
+function getHeadlineNode( heading ) {
 	// This code assumes that $wgFragmentMode is [ 'html5', 'legacy' ] or [ 'html5' ]
-	var headline = heading,
-		offset = 0;
+	let headline = heading;
 
 	if ( headline.hasAttribute( 'data-mw-comment-start' ) ) {
+		// JS only: Support output from the PHP CommentFormatter
 		headline = headline.parentNode;
 	}
 
 	if ( !headline.getAttribute( 'id' ) ) {
-		// PHP HTML: Find the child with .mw-headline
+		// JS only: Support output after HandleSectionLinks OutputTransform has been applied
 		headline = headline.querySelector( '.mw-headline' );
 		if ( !headline ) {
 			headline = heading;
 		}
 	}
 
-	return {
-		node: headline,
-		offset: offset
-	};
+	return headline;
 }
 
 /**
@@ -297,12 +292,12 @@ function htmlTrim( str ) {
  * @return {number}
  */
 function getIndentLevel( node, rootNode ) {
-	var indent = 0;
+	let indent = 0;
 	while ( node ) {
 		if ( node === rootNode ) {
 			break;
 		}
-		var tagName = node instanceof HTMLElement ? node.tagName.toLowerCase() : null;
+		const tagName = node instanceof HTMLElement ? node.tagName.toLowerCase() : null;
 		if ( tagName === 'li' || tagName === 'dd' ) {
 			indent++;
 		}
@@ -318,11 +313,11 @@ function getIndentLevel( node, rootNode ) {
  * @return {Node[]}
  */
 function getCoveredSiblings( range ) {
-	var ancestor = range.commonAncestorContainer;
+	const ancestor = range.commonAncestorContainer;
 
-	var siblings = ancestor.childNodes;
-	var start = 0;
-	var end = siblings.length - 1;
+	const siblings = ancestor.childNodes;
+	let start = 0;
+	let end = siblings.length - 1;
 
 	// Find first of the siblings that contains the item
 	if ( ancestor === range.startContainer ) {
@@ -355,20 +350,20 @@ function getCoveredSiblings( range ) {
  * @return {Node[]|null}
  */
 function getFullyCoveredSiblings( item, excludedAncestorNode ) {
-	var siblings = getCoveredSiblings( item.getRange() );
+	let siblings = getCoveredSiblings( item.getRange() );
 
 	function makeRange( sibs ) {
-		var range = sibs[ 0 ].ownerDocument.createRange();
+		const range = sibs[ 0 ].ownerDocument.createRange();
 		range.setStartBefore( sibs[ 0 ] );
 		range.setEndAfter( sibs[ sibs.length - 1 ] );
 		return range;
 	}
 
-	var matches = compareRanges( makeRange( siblings ), item.getRange() ) === 'equal';
+	const matches = compareRanges( makeRange( siblings ), item.getRange() ) === 'equal';
 
 	if ( matches ) {
 		// If these are all of the children (or the only child), go up one more level
-		var parent;
+		let parent;
 		while (
 			( parent = siblings[ 0 ].parentNode ) &&
 			parent !== excludedAncestorNode &&
@@ -392,18 +387,17 @@ function getTitleFromUrl( url ) {
 	if ( !url ) {
 		return null;
 	}
-	var parsedUrl = new URL( url );
+	const parsedUrl = new URL( url );
 	if ( parsedUrl.searchParams.get( 'title' ) ) {
 		return parsedUrl.searchParams.get( 'title' );
 	}
 
 	// wgArticlePath is site config so is trusted
-	// eslint-disable-next-line security/detect-non-literal-regexp
-	var articlePathRegexp = new RegExp(
+	const articlePathRegexp = new RegExp(
 		mw.util.escapeRegExp( mw.config.get( 'wgArticlePath' ) )
 			.replace( '\\$1', '(.*)' )
 	);
-	var match;
+	let match;
 	if ( ( match = parsedUrl.pathname.match( articlePathRegexp ) ) ) {
 		return decodeURIComponent( match[ 1 ] );
 	}
@@ -422,10 +416,10 @@ function getTitleFromUrl( url ) {
  * @param {Node} node Node to start at
  * @param {Function} callback Function accepting two arguments: `event` ('enter' or 'leave') and
  *     `node` (DOMNode)
- * @return {Mixed} Final return value of the callback
+ * @return {any} Final return value of the callback
  */
 function linearWalk( node, callback ) {
-	var
+	let
 		result = null,
 		withinNode = node.parentNode,
 		beforeNode = node;
@@ -454,7 +448,7 @@ function linearWalk( node, callback ) {
  * @inheritdoc #linearWalk
  */
 function linearWalkBackwards( node, callback ) {
-	var
+	let
 		result = null,
 		withinNode = node.parentNode,
 		beforeNode = node;
@@ -526,10 +520,10 @@ function getRangeLastNode( range ) {
 function compareRanges( a, b ) {
 	// Compare the positions of: start of A to start of B, start of A to end of B, and so on.
 	// Watch out, the constant names are the opposite of what they should be.
-	var startToStart = a.compareBoundaryPoints( Range.START_TO_START, b );
-	var startToEnd = a.compareBoundaryPoints( Range.END_TO_START, b );
-	var endToStart = a.compareBoundaryPoints( Range.START_TO_END, b );
-	var endToEnd = a.compareBoundaryPoints( Range.END_TO_END, b );
+	let startToStart = a.compareBoundaryPoints( Range.START_TO_START, b );
+	const startToEnd = a.compareBoundaryPoints( Range.END_TO_START, b );
+	const endToStart = a.compareBoundaryPoints( Range.START_TO_END, b );
+	let endToEnd = a.compareBoundaryPoints( Range.END_TO_END, b );
 
 	// Check for almost equal ranges (boundary points only differing by uninteresting nodes)
 	if (
@@ -585,18 +579,18 @@ function compareRangesAlmostEqualBoundaries( a, b, boundary ) {
 	// This code is awful, but several attempts to rewrite it made it even worse.
 	// You're welcome to give it a try.
 
-	var from = boundary === 'end' ? getRangeLastNode( a ) : getRangeFirstNode( a );
-	var to = boundary === 'end' ? getRangeLastNode( b ) : getRangeFirstNode( b );
+	const from = boundary === 'end' ? getRangeLastNode( a ) : getRangeFirstNode( a );
+	const to = boundary === 'end' ? getRangeLastNode( b ) : getRangeFirstNode( b );
 
-	var skipNode = null;
+	let skipNode = null;
 	if ( boundary === 'end' ) {
 		skipNode = from;
 	}
 
-	var foundContent = false;
+	let foundContent = false;
 	linearWalk(
 		from,
-		function ( event, n ) {
+		( event, n ) => {
 			if ( n === to && event === ( boundary === 'end' ? 'leave' : 'enter' ) ) {
 				return true;
 			}
@@ -661,7 +655,7 @@ module.exports = {
 	getCoveredSiblings: getCoveredSiblings,
 	getFullyCoveredSiblings: getFullyCoveredSiblings,
 	getTranscludedFromElement: getTranscludedFromElement,
-	getHeadlineNodeAndOffset: getHeadlineNodeAndOffset,
+	getHeadlineNode: getHeadlineNode,
 	htmlTrim: htmlTrim,
 	getTitleFromUrl: getTitleFromUrl,
 	linearWalk: linearWalk,

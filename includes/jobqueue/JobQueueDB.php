@@ -22,8 +22,10 @@ use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
-use Wikimedia\ScopedCallback;
+use Wikimedia\Rdbms\ServerInfo;
 
 /**
  * Database-backed job queue storage.
@@ -66,6 +68,9 @@ class JobQueueDB extends JobQueue {
 
 		if ( isset( $params['server'] ) ) {
 			$this->server = $params['server'];
+			// Always use autocommit mode, even if DBO_TRX is configured
+			$this->server['flags'] ??= 0;
+			$this->server['flags'] &= ~( IDatabase::DBO_TRX | IDatabase::DBO_DEFAULT );
 		} elseif ( isset( $params['cluster'] ) && is_string( $params['cluster'] ) ) {
 			$this->cluster = $params['cluster'];
 		}
@@ -85,8 +90,6 @@ class JobQueueDB extends JobQueue {
 	 */
 	protected function doIsEmpty() {
 		$dbr = $this->getReplicaDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbr );
 		try {
 			// unclaimed job
 			$found = (bool)$dbr->newSelectQueryBuilder()
@@ -114,8 +117,6 @@ class JobQueueDB extends JobQueue {
 		}
 
 		$dbr = $this->getReplicaDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbr );
 		try {
 			$size = $dbr->newSelectQueryBuilder()
 				->from( 'job' )
@@ -146,8 +147,6 @@ class JobQueueDB extends JobQueue {
 		}
 
 		$dbr = $this->getReplicaDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbr );
 		try {
 			$count = $dbr->newSelectQueryBuilder()
 				->from( 'job' )
@@ -183,8 +182,6 @@ class JobQueueDB extends JobQueue {
 		}
 
 		$dbr = $this->getReplicaDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbr );
 		try {
 			$count = $dbr->newSelectQueryBuilder()
 				->from( 'job' )
@@ -214,8 +211,6 @@ class JobQueueDB extends JobQueue {
 	 */
 	protected function doBatchPush( array $jobs, $flags ) {
 		$dbw = $this->getPrimaryDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbw );
 		// In general, there will be two cases here:
 		// a) sqlite; DB connection is probably a regular round-aware handle.
 		// If the connection is busy with a transaction, then defer the job writes
@@ -309,10 +304,6 @@ class JobQueueDB extends JobQueue {
 	 * @return RunnableJob|false
 	 */
 	protected function doPop() {
-		$dbw = $this->getPrimaryDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbw );
-
 		$job = false; // job popped off
 		try {
 			$uuid = wfRandomString( 32 ); // pop attempt
@@ -358,8 +349,6 @@ class JobQueueDB extends JobQueue {
 	 */
 	protected function claimRandom( $uuid, $rand, $gte ) {
 		$dbw = $this->getPrimaryDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbw );
 		// Check cache to see if the queue has <= OFFSET items
 		$tinyQueue = $this->wanCache->get( $this->getCacheKey( 'small' ) );
 
@@ -423,7 +412,7 @@ class JobQueueDB extends JobQueue {
 				->set( [
 					'job_token' => $uuid,
 					'job_token_timestamp' => $dbw->timestamp(),
-					'job_attempts = job_attempts+1'
+					'job_attempts' => new RawSQLValue( 'job_attempts+1' ),
 				] )
 				->where( [
 					'job_cmd' => $this->type,
@@ -450,8 +439,6 @@ class JobQueueDB extends JobQueue {
 	 */
 	protected function claimOldest( $uuid ) {
 		$dbw = $this->getPrimaryDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbw );
 
 		$row = false; // the row acquired
 		do {
@@ -486,9 +473,9 @@ class JobQueueDB extends JobQueue {
 					->set( [
 						'job_token' => $uuid,
 						'job_token_timestamp' => $dbw->timestamp(),
-						'job_attempts = job_attempts+1'
+						'job_attempts' => new RawSQLValue( 'job_attempts+1' ),
 					] )
-					->where( [ 'job_id = (' . $qb->getSQL() . ')' ] )
+					->where( [ 'job_id' => new RawSQLValue( '(' . $qb->getSQL() . ')' ) ] )
 					->caller( __METHOD__ )->execute();
 			}
 
@@ -523,8 +510,6 @@ class JobQueueDB extends JobQueue {
 		}
 
 		$dbw = $this->getPrimaryDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbw );
 		try {
 			// Delete a row with a single DELETE without holding row locks over RTTs...
 			$dbw->newDeleteQueryBuilder()
@@ -551,8 +536,6 @@ class JobQueueDB extends JobQueue {
 		// maintained. Having only the de-duplication registration succeed would cause
 		// jobs to become no-ops without any actual jobs that made them redundant.
 		$dbw = $this->getPrimaryDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbw );
 		$dbw->onTransactionCommitOrIdle(
 			function () use ( $job ) {
 				parent::doDeduplicateRootJob( $job );
@@ -569,8 +552,6 @@ class JobQueueDB extends JobQueue {
 	 */
 	protected function doDelete() {
 		$dbw = $this->getPrimaryDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbw );
 		try {
 			$dbw->newDeleteQueryBuilder()
 				->deleteFrom( 'job' )
@@ -618,7 +599,8 @@ class JobQueueDB extends JobQueue {
 	 * @return Iterator<RunnableJob>
 	 */
 	public function getAllAcquiredJobs() {
-		return $this->getJobIterator( [ 'job_cmd' => $this->getType(), "job_token > ''" ] );
+		$dbr = $this->getReplicaDB();
+		return $this->getJobIterator( [ 'job_cmd' => $this->getType(), $dbr->expr( 'job_token', '>', '' ) ] );
 	}
 
 	/**
@@ -626,10 +608,11 @@ class JobQueueDB extends JobQueue {
 	 * @return Iterator<RunnableJob>
 	 */
 	public function getAllAbandonedJobs() {
+		$dbr = $this->getReplicaDB();
 		return $this->getJobIterator( [
 			'job_cmd' => $this->getType(),
-			"job_token > ''",
-			"job_attempts >= " . intval( $this->maxTries )
+			$dbr->expr( 'job_token', '>', '' ),
+			$dbr->expr( 'job_attempts', '>=', intval( $this->maxTries ) ),
 		] );
 	}
 
@@ -639,8 +622,6 @@ class JobQueueDB extends JobQueue {
 	 */
 	protected function getJobIterator( array $conds ) {
 		$dbr = $this->getReplicaDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbr );
 		$qb = $dbr->newSelectQueryBuilder()
 			->select( self::selectFields() )
 			->from( 'job' )
@@ -669,8 +650,6 @@ class JobQueueDB extends JobQueue {
 
 	protected function doGetSiblingQueuesWithJobs( array $types ) {
 		$dbr = $this->getReplicaDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbr );
 		// @note: this does not check whether the jobs are claimed or not.
 		// This is useful so JobQueueGroup::pop() also sees queues that only
 		// have stale jobs. This lets recycleAndDeleteStaleJobs() re-enqueue
@@ -692,8 +671,6 @@ class JobQueueDB extends JobQueue {
 
 	protected function doGetSiblingQueueSizes( array $types ) {
 		$dbr = $this->getReplicaDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbr );
 
 		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'job_cmd', 'count' => 'COUNT(*)' ] )
@@ -719,8 +696,6 @@ class JobQueueDB extends JobQueue {
 		$now = time();
 		$count = 0; // affected rows
 		$dbw = $this->getPrimaryDB();
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$scope = $this->getScopedNoTrxFlag( $dbw );
 
 		try {
 			if ( !$dbw->lock( "jobqueue-recycle-{$this->type}", __METHOD__, 1 ) ) {
@@ -815,10 +790,10 @@ class JobQueueDB extends JobQueue {
 
 	/**
 	 * @param IJobSpecification $job
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @return array
 	 */
-	protected function insertFields( IJobSpecification $job, IDatabase $db ) {
+	protected function insertFields( IJobSpecification $job, IReadableDatabase $db ) {
 		return [
 			// Fields that describe the nature of the job
 			'job_cmd' => $job->getType(),
@@ -889,7 +864,7 @@ class JobQueueDB extends JobQueue {
 				? $lbFactory->getExternalLB( $this->cluster )
 				: $lbFactory->getMainLB( $this->domain );
 
-			if ( $lb->getServerType( $lb->getWriterIndex() ) !== 'sqlite' ) {
+			if ( $lb->getServerType( ServerInfo::WRITER_INDEX ) !== 'sqlite' ) {
 				// Keep a separate connection to avoid contention and deadlocks;
 				// However, SQLite has the opposite behavior due to DB-level locking.
 				$flags = $lb::CONN_TRX_AUTOCOMMIT;
@@ -900,21 +875,6 @@ class JobQueueDB extends JobQueue {
 
 			return $lb->getMaintenanceConnectionRef( $index, [], $this->domain, $flags );
 		}
-	}
-
-	/**
-	 * @param IDatabase $db
-	 * @return ScopedCallback
-	 */
-	private function getScopedNoTrxFlag( IDatabase $db ) {
-		$autoTrx = $db->getFlag( DBO_TRX ); // get current setting
-		$db->clearFlag( DBO_TRX ); // make each query its own transaction
-
-		return new ScopedCallback( static function () use ( $db, $autoTrx ) {
-			if ( $autoTrx ) {
-				$db->setFlag( DBO_TRX ); // restore old setting
-			}
-		} );
 	}
 
 	/**

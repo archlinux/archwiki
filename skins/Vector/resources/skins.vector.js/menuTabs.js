@@ -24,7 +24,7 @@ function init() {
 		/**
 		 * @param {HTMLElement} item
 		 */
-		function ( item ) {
+		( item ) => {
 			// Check if this menu item belongs to a tabs menu.
 			if ( item.closest( TABS_SELECTOR ) ) {
 				addNoIconClass( item );

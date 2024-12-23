@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"787IYO",
 			"Misbahu umar",
-			"Umar Ahmad2345",
-			"787IYO"
+			"Umar Ahmad2345"
 		]
 	},
 	"vector-languages": "Ezhimizhi",
@@ -16,20 +16,25 @@
 	"vector-view-create": "Te",
 	"vector-view-history": "Chin etan le",
 	"vector-more-actions": "Ndocizhi",
+	"vector-appearance-label": "Wuwu",
 	"vector-feature-limited-width-name": "Epede",
-	"vector-feature-custom-font-size-name": "Enyakikaci",
 	"vector-feature-limited-width-0-label": "Epe",
 	"vector-feature-limited-width-1-label": "Kinigi",
+	"vector-feature-custom-font-size-name": "Enyakikaci",
 	"vector-feature-custom-font-size-0-label": "Tetengi",
 	"vector-feature-custom-font-size-1-label": "Kinigi",
 	"vector-feature-custom-font-size-2-label": "Wunciko",
 	"skin-theme-name": "Kwege",
+	"skin-theme-day-label": "Bayetin",
+	"skin-theme-night-label": "Bazhiko",
 	"skin-theme-os-label": "Tsutsoci",
+	"skin-theme-exclusion-notice": "Eye nana kamindondo dan bayetin o.",
 	"vector-searchsuggest-containing": " Wiwaza feregi nan fibo nan<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Enyanzhi",
 	"vector-toc-beginning": "Chaba",
 	"vector-anon-user-menu-pages": "Eyegizhi nya lilatinya edzuntazhi",
 	"vector-main-menu-label": "fere gboko",
+	"vector-feature-custom-font-size-exclusion-notice": "Kperegi nana kamindondo wun e lotun be eciwan enyaka tetengi",
 	"vector-page-tools-label": "Nyangagi tunzhi",
 	"vector-page-tools-general-label": "Kpata",
 	"vector-page-tools-actions-label": "Jinjin",

@@ -23,18 +23,19 @@
 
 namespace MediaWiki\Output;
 
-use FileBackend;
-use HTTPFileStreamer;
 use InvalidArgumentException;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use UploadBase;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\HTTPFileStreamer;
 
 /**
  * Functions related to the output of file content
  */
 class StreamFile {
-	/** @var string */
+
 	private const UNKNOWN_CONTENT_TYPE = 'unknown/unknown';
 
 	/**
@@ -64,11 +65,21 @@ class StreamFile {
 			$fname,
 			[
 				'obResetFunc' => 'wfResetOutputBuffers',
-				'streamMimeFunc' => [ __CLASS__, 'contentTypeFromPath' ]
+				'streamMimeFunc' => [ __CLASS__, 'contentTypeFromPath' ],
+				'headerFunc' => [ __CLASS__, 'setHeader' ],
 			]
 		);
 
 		return $streamer->stream( $headers, $sendErrors, $optHeaders, $flags );
+	}
+
+	/**
+	 * @param string $header
+	 *
+	 * @internal
+	 */
+	public static function setHeader( $header ) {
+		RequestContext::getMain()->getRequest()->response()->header( $header );
 	}
 
 	/**
@@ -99,6 +110,8 @@ class StreamFile {
 				case 'jpg':
 				case 'jpeg':
 					return 'image/jpeg';
+				case 'webp':
+					return 'image/webp';
 			}
 
 			return self::UNKNOWN_CONTENT_TYPE;

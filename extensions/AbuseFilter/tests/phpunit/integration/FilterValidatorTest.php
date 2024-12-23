@@ -13,15 +13,13 @@ use MediaWikiIntegrationTestCase;
  * @group Test
  * @group AbuseFilter
  * @group Database
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\FilterValidator
- * @covers ::__construct()
+ * @covers \MediaWiki\Extension\AbuseFilter\FilterValidator
  */
 class FilterValidatorTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @todo Make this a unit test once static methods in ChangeTags are moved to a service
 	 * @param string[] $tags
 	 * @param string|null $expected
-	 * @covers ::checkAllTags
 	 * @dataProvider provideAllTags
 	 */
 	public function testCheckAllTags( array $tags, ?string $expected ) {
@@ -33,13 +31,14 @@ class FilterValidatorTest extends MediaWikiIntegrationTestCase {
 				FilterValidator::CONSTRUCTOR_OPTIONS,
 				[
 					'AbuseFilterActionRestrictions' => [],
-					'AbuseFilterValidGroups' => [ 'default' ]
+					'AbuseFilterValidGroups' => [ 'default' ],
+					'AbuseFilterProtectedVariables' => [],
 				]
 			)
 		);
 
 		$status = $validator->checkAllTags( $tags );
-		$actualError = $status->isGood() ? null : $status->getErrors()[0]['message'];
+		$actualError = $status->isGood() ? null : $status->getMessages()[0]->getKey();
 		$this->assertSame( $expected, $actualError );
 	}
 

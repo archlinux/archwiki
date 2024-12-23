@@ -38,8 +38,7 @@ use UnexpectedValueException;
  * @since 1.37
  */
 class BlockActionInfo {
-	/** @var HookRunner */
-	private $hookRunner;
+	private HookRunner $hookRunner;
 
 	/** @internal Public for testing only -- use getIdFromAction() */
 	public const ACTION_UPLOAD = 1;
@@ -62,8 +61,6 @@ class BlockActionInfo {
 	 * ipb-action-upload
 	 * ipb-action-move
 	 * ipb-action-create
-	 *
-	 * @var int[]
 	 */
 	private const CORE_BLOCK_ACTIONS = [
 		'upload' => self::ACTION_UPLOAD,
@@ -71,9 +68,6 @@ class BlockActionInfo {
 		'create' => self::ACTION_CREATE,
 	];
 
-	/**
-	 * @param HookContainer $hookContainer
-	 */
 	public function __construct( HookContainer $hookContainer ) {
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}

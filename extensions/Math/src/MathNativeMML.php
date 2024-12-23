@@ -60,7 +60,7 @@ class MathNativeMML extends MathMathML {
 	/**
 	 * @inheritDoc
 	 */
-	public function getHtmlOutput(): string {
+	public function getHtmlOutput( bool $svg = true ): string {
 		return $this->getMathml();
 	}
 

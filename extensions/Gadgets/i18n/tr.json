@@ -56,7 +56,7 @@
 	"gadgets-export-download": "İndir",
 	"gadgets-requires-es6": "Bu küçük araç yalnızca ES6 uyumlu tarayıcılarda desteklenir",
 	"gadgets-validate-notset": "<code>$1</code> özelliği ayarlanmadı.",
-	"gadgets-validate-wrongtype": "<code>$1</code> özelliği, <code>$3</code> yerine <code>$2</code> olmalıdır.",
+	"gadgets-validate-wrongtype": "<code>$1</code> özelliği, <code>$2</code> türünde olmalıdır.",
 	"gadgets-validate-json": "JSON dosyaları belirtilmiş ancak kullanılmıyor. Sadece paketlenmiş küçük araçlarda geçerlidir.",
 	"gadgets-validate-es6default": "ES6 gerektiren küçük araçlar varsayılan olarak etkinleştirilemez.",
 	"gadgets-validate-noentrypoint": "Hiçbir betik dosyası belirtilmediğinden paket bayrağı yoksayıldı.",

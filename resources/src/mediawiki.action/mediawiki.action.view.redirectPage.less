@@ -1,0 +1,65 @@
+/*!
+ * Display neat icons on redirect pages.
+ */
+
+/* stylelint-disable selector-class-pattern */
+@import 'mediawiki.mixins.less';
+
+/**
+ * Hide, but keep accessible for screen-readers.
+ * Prefix with .mw-body to override any skin defaults for `p` tag.
+*/
+.mw-body .redirectMsg p {
+	overflow: hidden;
+	height: 0;
+	padding: 0;
+}
+
+.redirectText {
+	list-style: none;
+	display: inline;
+	margin: 0;
+	padding: 0;
+
+	li {
+		display: inline;
+		margin: 0;
+		padding: 0;
+		.padding-inline( 47px, 0 );
+
+		.mw-content-ltr & {
+			/* @noflip */
+			background: transparent url( images/redirect-ltr.svg ) bottom left no-repeat;
+		}
+
+		.mw-content-rtl & {
+			/* @noflip */
+			background: transparent url( images/redirect-rtl.svg ) bottom right no-repeat;
+		}
+
+		@media screen {
+			html.skin-theme-clientpref-night & {
+				filter: invert( 1 );
+
+				> a {
+					filter: invert( 1 );
+				}
+			}
+		}
+		/**
+		* Auto night mode.
+		*
+		* Applies the night mode color palette only in response to system settings.
+		*/
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+		@media screen and ( prefers-color-scheme: dark ) {
+			html.skin-theme-clientpref-os & {
+				filter: invert( 1 );
+
+				> a {
+					filter: invert( 1 );
+				}
+			}
+		}
+	}
+}

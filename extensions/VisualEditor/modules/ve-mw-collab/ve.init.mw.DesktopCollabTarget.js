@@ -17,7 +17,7 @@
  * @param {mw.Title} title Page sub-title
  * @param {string} rebaserUrl Rebaser server URL
  * @param {Object} [config] Configuration options
- * @cfg {mw.Title} [importTitle] Title to import
+ * @param {mw.Title} [config.importTitle] Title to import
  */
 ve.init.mw.DesktopCollabTarget = function VeInitMwDesktopCollabTarget( title, rebaserUrl, config ) {
 	// Parent constructor
@@ -41,7 +41,7 @@ OO.inheritClass( ve.init.mw.DesktopCollabTarget, ve.init.mw.CollabTarget );
  */
 ve.init.mw.DesktopCollabTarget.prototype.transformPage = function () {
 	this.$originalContent.append( this.$element.siblings() );
-	var title;
+	let title;
 	if ( ( title = this.getImportTitle() ) ) {
 		// ve.htmlMsg returns `Node[]`
 		// eslint-disable-next-line no-jquery/no-html
@@ -69,7 +69,7 @@ ve.init.mw.DesktopCollabTarget.prototype.restorePage = function () {
  * @inheritdoc
  */
 ve.init.mw.DesktopCollabTarget.prototype.attachToolbar = function () {
-	var toolbar = this.getToolbar();
+	const toolbar = this.getToolbar();
 
 	// Parent method
 	ve.init.mw.DesktopCollabTarget.super.prototype.attachToolbar.apply( this, arguments );

@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to show database lag.
@@ -30,6 +32,7 @@ require_once __DIR__ . '/Maintenance.php';
  */
 class DatabaseLag extends Maintenance {
 
+	/** @var bool */
 	protected $stopReporting = false;
 
 	public function __construct() {
@@ -82,5 +85,7 @@ class DatabaseLag extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DatabaseLag::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku",
-			"Jilorisa"
+			"Jilorisa",
+			"Tofeiku"
 		]
 	},
 	"vector-languages": "Ling",
@@ -17,19 +17,24 @@
 	"vector-view-history": "Ngenda' kisa dau-dau",
 	"vector-view-view": "Boso",
 	"vector-more-actions": "Iko",
+	"vector-appearance-label": "Pengitoon",
 	"vector-feature-limited-width-name": "Lambu",
-	"vector-feature-custom-font-size-name": "Tiks",
 	"vector-feature-limited-width-0-label": "Laga'",
 	"vector-feature-limited-width-1-label": "Bioso",
+	"vector-feature-custom-font-size-name": "Tiks",
 	"vector-feature-custom-font-size-0-label": "Diki'",
 	"vector-feature-custom-font-size-1-label": "Bioso",
 	"vector-feature-custom-font-size-2-label": "Oyo",
 	"skin-theme-name": "Rena",
+	"skin-theme-day-label": "Tarang",
+	"skin-theme-night-label": "Patang",
 	"skin-theme-os-label": "Otomitik",
+	"skin-theme-exclusion-notice": "Laman tu bioso ni mediam mud tarang",
 	"vector-searchsuggest-containing": "Penemia laman yang bengen <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Isi",
 	"vector-toc-beginning": "Nimpoon",
 	"vector-main-menu-label": "Laman tekokon",
+	"vector-feature-custom-font-size-exclusion-notice": "Laman tu bioso ni makai telisan diki'",
 	"vector-page-tools-label": "Pekakas",
 	"vector-page-tools-general-label": "Umum",
 	"vector-unpin-element-label": "tenapuk"

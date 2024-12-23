@@ -22,21 +22,17 @@
 
 namespace MediaWiki\Extension\Gadgets;
 
-use ApiMessage;
-use Content;
-use Exception;
-use HTMLForm;
-use IContextSource;
 use InvalidArgumentException;
 use ManualLogEntry;
-use MediaWiki\Extension\Gadgets\Content\GadgetDefinitionContent;
+use MediaWiki\Api\ApiMessage;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Gadgets\Special\SpecialGadgetUsage;
-use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\DeleteUnknownPreferencesHook;
-use MediaWiki\Hook\EditFilterMergedContentHook;
 use MediaWiki\Hook\PreferencesGetIconHook;
 use MediaWiki\Hook\PreferencesGetLegendHook;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\PageDeleteCompleteHook;
 use MediaWiki\Page\ProperPageIdentity;
@@ -49,23 +45,20 @@ use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\Status\Status;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use MessageSpecifier;
 use OOUI\HtmlSnippet;
-use RequestContext;
 use Skin;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\WrappedString;
 use WikiPage;
-use Xml;
 
 class Hooks implements
 	PageDeleteCompleteHook,
@@ -76,7 +69,6 @@ class Hooks implements
 	PreferencesGetLegendHook,
 	ResourceLoaderRegisterModulesHook,
 	BeforePageDisplayHook,
-	EditFilterMergedContentHook,
 	ContentHandlerDefaultModelForHook,
 	WgQueryPagesHook,
 	DeleteUnknownPreferencesHook,
@@ -331,42 +323,11 @@ class Hooks implements
 		$special = SpecialPage::getTitleFor( 'Gadgets' );
 
 		return ResourceLoader::makeInlineScript(
-			Xml::encodeJsCall( 'mw.log.warn', [
+			Html::encodeJsCall( 'mw.log.warn', [
 				"Gadget \"$id\" was not loaded. Please migrate it to use ResourceLoader. " .
 				'See <' . $special->getCanonicalURL() . '>.'
 			] )
 		);
-	}
-
-	/**
-	 * Valid gadget definition page after content is modified
-	 *
-	 * @param IContextSource $context
-	 * @param Content $content
-	 * @param Status $status
-	 * @param string $summary
-	 * @param User $user
-	 * @param bool $minoredit
-	 * @throws Exception
-	 * @return bool
-	 */
-	public function onEditFilterMergedContent(
-		IContextSource $context,
-		Content $content,
-		Status $status,
-		$summary,
-		User $user,
-		$minoredit
-	) {
-		if ( $content instanceof GadgetDefinitionContent ) {
-			$validateStatus = $content->validate();
-			if ( !$validateStatus->isGood() ) {
-				$status->merge( $validateStatus );
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	/**
@@ -397,7 +358,7 @@ class Hooks implements
 	 * Prevent gadget preferences from being deleted.
 	 * @link https://www.mediawiki.org/wiki/Manual:Hooks/DeleteUnknownPreferences
 	 * @param string[] &$where Array of where clause conditions to add to.
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 */
 	public function onDeleteUnknownPreferences( &$where, $db ) {
 		$where[] = $db->expr(

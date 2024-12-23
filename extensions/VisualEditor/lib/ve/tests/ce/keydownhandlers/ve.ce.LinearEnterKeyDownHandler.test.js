@@ -8,15 +8,14 @@ QUnit.module( 've.ce.LinearEnterKeyDownHandler', {
 	// See https://github.com/platinumazure/eslint-plugin-qunit/issues/68
 	// eslint-disable-next-line qunit/resolve-async
 	beforeEach: function ( assert ) {
-		var done = assert.async();
+		const done = assert.async();
 		return ve.init.platform.getInitializedPromise().then( done );
 	}
 } );
 
-QUnit.test( 'special key down: linear enter', function ( assert ) {
-	var done = assert.async(),
+QUnit.test( 'special key down: linear enter', ( assert ) => {
+	const done = assert.async(),
 		noChange = function () {},
-		promise = Promise.resolve(),
 		emptyList = '<ul><li><p></p></li></ul>',
 		alienDoc = ve.dm.example.createExampleDocument( 'alienData' ),
 		cases = [
@@ -52,7 +51,7 @@ QUnit.test( 'special key down: linear enter', function ( assert ) {
 				rangeOrSelection: new ve.Range( 57 ),
 				keys: [ 'ENTER' ],
 				htmlOrDoc: ( function () {
-					var view = ve.test.utils.createSurfaceViewFromDocument( ve.dm.example.createExampleDocument() );
+					const view = ve.test.utils.createSurfaceViewFromDocument( ve.dm.example.createExampleDocument() );
 					view.surface.isMultiline = function () {
 						return false;
 					};
@@ -354,10 +353,9 @@ QUnit.test( 'special key down: linear enter', function ( assert ) {
 
 		];
 
-	cases.forEach( function ( caseItem ) {
-		promise = promise.then( function () {
-			return ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem );
-		} );
+	let promise = Promise.resolve();
+	cases.forEach( ( caseItem ) => {
+		promise = promise.then( () => ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem ) );
 	} );
 
 	promise.finally( () => done() );

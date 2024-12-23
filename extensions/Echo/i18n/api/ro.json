@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"NGC 54",
-			"Reception123",
-			"Paloi Sciurala"
+			"Paloi Sciurala",
+			"Reception123"
 		]
 	},
 	"apihelp-echomarkread-param-list": "Lista de ID-ul de notificare pentru a marca ca fiind citite.",

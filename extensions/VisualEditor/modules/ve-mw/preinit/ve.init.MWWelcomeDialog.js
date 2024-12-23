@@ -69,12 +69,12 @@ mw.libs.ve.WelcomeDialog.prototype.getSetupProcess = function ( data ) {
 	}, data );
 
 	return mw.libs.ve.WelcomeDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.switchable = data.switchable;
 			this.editor = data.editor;
 
 			this.actions.setMode( this.switchable ? this.editor : 'noswitch' );
-		}, this );
+		} );
 };
 
 /**
@@ -82,9 +82,9 @@ mw.libs.ve.WelcomeDialog.prototype.getSetupProcess = function ( data ) {
  */
 mw.libs.ve.WelcomeDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'switch-wte' ) {
-		return new OO.ui.Process( function () {
+		return new OO.ui.Process( () => {
 			this.close( { action: 'switch-wte' } );
-		}, this );
+		} );
 	}
 
 	// Parent method

@@ -20,8 +20,16 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use HtmlArmor;
+use ISearchResultSet;
 use MediaWiki\Search\TitleMatcher;
 use MediaWiki\Status\Status;
+use SearchEngine;
+use SearchEngineConfig;
+use SearchEngineFactory;
+use SearchResult;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 
@@ -31,20 +39,13 @@ use Wikimedia\ParamValidator\TypeDef\EnumDef;
  * @ingroup API
  */
 class ApiQuerySearch extends ApiQueryGeneratorBase {
-	use SearchApi;
+	use \MediaWiki\Api\SearchApi;
 
 	private TitleMatcher $titleMatcher;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param SearchEngineConfig $searchEngineConfig
-	 * @param SearchEngineFactory $searchEngineFactory
-	 * @param TitleMatcher $titleMatcher
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		SearchEngineConfig $searchEngineConfig,
 		SearchEngineFactory $searchEngineFactory,
 		TitleMatcher $titleMatcher
@@ -471,3 +472,6 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Search';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQuerySearch::class, 'ApiQuerySearch' );

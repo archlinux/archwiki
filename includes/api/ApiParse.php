@@ -20,19 +20,28 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use Article;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Content\Transform\ContentTransformer;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
@@ -42,12 +51,17 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\WikiMap\WikiMap;
+use MWContentSerializationException;
+use Skin;
+use SkinFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
+use WikiPage;
 
 /**
  * @ingroup API
@@ -63,8 +77,8 @@ class ApiParse extends ApiBase {
 	/** @var Content|null */
 	private $pstContent = null;
 
-	/** @var bool */
-	private $contentIsDeleted = false, $contentIsSuppressed = false;
+	private bool $contentIsDeleted = false;
+	private bool $contentIsSuppressed = false;
 
 	private RevisionLookup $revisionLookup;
 	private SkinFactory $skinFactory;
@@ -82,28 +96,9 @@ class ApiParse extends ApiBase {
 	private UrlUtils $urlUtils;
 	private TitleFormatter $titleFormatter;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param RevisionLookup $revisionLookup
-	 * @param SkinFactory $skinFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param LinkCache $linkCache
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param ParserFactory $parserFactory
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param ContentRenderer $contentRenderer
-	 * @param ContentTransformer $contentTransformer
-	 * @param CommentFormatter $commentFormatter
-	 * @param TempUserCreator $tempUserCreator
-	 * @param UserFactory $userFactory
-	 * @param UrlUtils $urlUtils
-	 * @param TitleFormatter $titleFormatter
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		RevisionLookup $revisionLookup,
 		SkinFactory $skinFactory,
 		LanguageNameUtils $languageNameUtils,
@@ -239,6 +234,7 @@ class ApiParse extends ApiBase {
 		// The parser needs $wgTitle to be set, apparently the
 		// $title parameter in Parser::parse isn't enough *sigh*
 		// TODO: Does this still need $wgTitle?
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 		global $wgTitle;
 
 		$format = null;
@@ -477,6 +473,7 @@ class ApiParse extends ApiBase {
 			// - Hook: SkinSubPageSubtitle
 			// - Hook: OutputPageParserOutput
 			// - Hook: OutputPageMakeCategoryLinks
+			// - Hook: OutputPageRenderCategoryLink
 			// - Hook: OutputPageBeforeHTML
 			// HACK Adding the 'mobileformat' parameter *also* enables the skin, for compatibility with legacy
 			// apps. This behavior should be considered deprecated so new users should not rely on this and
@@ -536,7 +533,13 @@ class ApiParse extends ApiBase {
 			$skinOptions = $skin ? $skin->getOptions() : [
 				'toc' => true,
 			];
-			$result_array['text'] = $p_result->getText( [
+			// TODO T371004 move runOutputPipeline out of $parserOutput
+			// TODO T371022 it should be reasonably straightforward to move this to a clone, but it requires
+			// careful checking of the clone and of what happens on the boundary of OutputPage. Leaving this as
+			// "getText-equivalent" for now; will fix in a later, independent patch.
+			$oldText = $p_result->getRawText();
+			$result_array['text'] = $p_result->runOutputPipeline( $popts, [
+				'allowClone' => false,
 				'allowTOC' => !$params['disabletoc'],
 				'injectTOC' => $skinOptions['toc'],
 				'enableSectionEditLinks' => !$params['disableeditsection'],
@@ -545,7 +548,8 @@ class ApiParse extends ApiBase {
 				'userLang' => $context ? $context->getLanguage() : null,
 				'skin' => $skin,
 				'includeDebugInfo' => !$params['disablepp'] && !$params['disablelimitreport']
-			] );
+			] )->getContentHolderText();
+			$p_result->setRawText( $oldText );
 			$result_array[ApiResult::META_BC_SUBELEMENTS][] = 'text';
 			if ( $context ) {
 				$this->getHookRunner()->onOutputPageBeforeHTML( $context->getOutput(), $result_array['text'] );
@@ -564,7 +568,7 @@ class ApiParse extends ApiBase {
 				$langlinks = $outputPage->getLanguageLinks();
 			} else {
 				$langlinks = $p_result->getLanguageLinks();
-				// The deprecated 'effectivelanglinks' option depredates OutputPage
+				// The deprecated 'effectivelanglinks' option pre-dates OutputPage
 				// support via 'useskin'. If not already applied, then run just this
 				// one hook of OutputPage::addParserOutputMetadata here.
 				if ( $params['effectivelanglinks'] ) {
@@ -757,6 +761,15 @@ class ApiParse extends ApiBase {
 	private function makeParserOptions( WikiPage $pageObj, array $params ) {
 		$popts = $pageObj->makeParserOptions( $this->getContext() );
 		$popts->setRenderReason( 'api-parse' );
+		if ( $params['usearticle'] ) {
+			# T349037: The ArticleParserOptions hook should be broadened to take
+			# a WikiPage (aka $pageObj) instead of an Article.  But for now
+			# fake the Article.
+			$article = Article::newFromWikiPage( $pageObj, $this->getContext() );
+			# Allow extensions to vary parser options used for article rendering,
+			# in the same way Article does
+			$this->getHookRunner()->onArticleParserOptions( $article, $popts );
+		}
 		return $this->tweakParserOptions( $popts, $pageObj->getTitle(), $params );
 	}
 
@@ -904,22 +917,25 @@ class ApiParse extends ApiBase {
 		$result = [];
 		foreach ( $links as $link ) {
 			$entry = [];
-			$bits = explode( ':', $link, 2 );
-			$title = Title::newFromText( $link );
+			[ $lang, $titleWithFrag ] = explode( ':', $link, 2 );
+			[ $title, $frag ] = array_pad( explode( '#', $titleWithFrag, 2 ), 2, '' );
+			$title = TitleValue::tryNew( NS_MAIN, $title, $frag, $lang );
+			$title = $title ? Title::newFromLinkTarget( $title ) : null;
 
-			$entry['lang'] = $bits[0];
+			$entry['lang'] = $lang;
 			if ( $title ) {
 				$entry['url'] = (string)$this->urlUtils->expand( $title->getFullURL(), PROTO_CURRENT );
+				// title validity implies language code validity
 				// localised language name in 'uselang' language
 				$entry['langname'] = $this->languageNameUtils->getLanguageName(
-					$title->getInterwiki(),
+					$lang,
 					$this->getLanguage()->getCode()
 				);
 
 				// native language name
-				$entry['autonym'] = $this->languageNameUtils->getLanguageName( $title->getInterwiki() );
+				$entry['autonym'] = $this->languageNameUtils->getLanguageName( $lang );
 			}
-			ApiResult::setContentValue( $entry, 'title', $bits[1] );
+			ApiResult::setContentValue( $entry, 'title', $titleWithFrag );
 			$result[] = $entry;
 		}
 
@@ -1104,6 +1120,7 @@ class ApiParse extends ApiBase {
 				],
 			],
 			'wrapoutputclass' => 'mw-parser-output',
+			'usearticle' => false, // since 1.43
 			'parsoid' => false, // since 1.41
 			'pst' => false,
 			'onlypst' => false,
@@ -1164,3 +1181,6 @@ class ApiParse extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Parsing_wikitext';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiParse::class, 'ApiParse' );

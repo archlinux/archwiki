@@ -32,12 +32,6 @@ class Subscription {
 		);
 	}
 
-	/**
-	 * @param string $provider
-	 * @param string $token
-	 * @param string|null $topic
-	 * @param ConvertibleTimestamp $updated
-	 */
 	public function __construct( string $provider, string $token, ?string $topic, ConvertibleTimestamp $updated ) {
 		$this->provider = $provider;
 		$this->token = $token;

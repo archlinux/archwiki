@@ -4,7 +4,9 @@
 /* eslint-disable no-console */
 
 /**
- * Library for logging developer warnings to the JavaScript console.
+ * Log debug messages and developer warnings to the browser console.
+ *
+ * See [mw.log()]{@link mw.log(2)} for verbose debug logging.
  *
  * @namespace mw.log
  */
@@ -19,13 +21,13 @@
 function stackSet() {
 	// Optimisation: Don't create or compute anything for the common case
 	// where deprecations are not triggered.
-	var stacks;
+	let stacks;
 
 	return function isFirst() {
 		if ( !stacks ) {
 			stacks = new Set();
 		}
-		var stack = new Error().stack;
+		const stack = new Error().stack;
 		if ( !stacks.has( stack ) ) {
 			stacks.add( stack );
 			return true;
@@ -68,7 +70,7 @@ mw.log.error = Function.prototype.bind.call( console.error, console );
  * @return {Function}
  */
 mw.log.makeDeprecated = function ( key, msg ) {
-	var isFirst = stackSet();
+	const isFirst = stackSet();
 	return function maybeLog() {
 		if ( isFirst() ) {
 			if ( key ) {
@@ -97,7 +99,7 @@ mw.log.makeDeprecated = function ( key, msg ) {
  *  Tracking is disabled by default, except for global variables on `window`.
  */
 mw.log.deprecate = function ( obj, key, val, msg, logName ) {
-	var maybeLog = mw.log.makeDeprecated(
+	const maybeLog = mw.log.makeDeprecated(
 		logName || ( obj === window ? key : null ),
 		'Use of "' + ( logName || key ) + '" is deprecated.' + ( msg ? ' ' + msg : '' )
 	);

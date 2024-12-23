@@ -34,6 +34,6 @@ class JavaScriptMinifierState extends MinifierState {
 	 * @return string
 	 */
 	protected function minify( string $source ): string {
-		return JavaScriptMinifier::minifyInternal( $source );
+		return JavaScriptMinifier::minifyInternal( $source, null, $this->onError );
 	}
 }

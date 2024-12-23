@@ -1,20 +1,23 @@
 <?php
 
+use MediaWiki\Api\ApiMessage;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Message\UserGroupMembershipParam;
-use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Assert\ParameterTypeException;
-use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
+ * @group Language
  * @group Database
  * @covers ::wfMessage
- * @covers \Message
+ * @covers \MediaWiki\Message\Message
  */
 class MessageTest extends MediaWikiLangTestCase {
 
@@ -128,7 +131,7 @@ class MessageTest extends MediaWikiLangTestCase {
 		$returned = $msg->params( ...$args );
 
 		$this->assertSame( $msg, $returned );
-		$this->assertSame( $expected, $msg->getParams() );
+		$this->assertEquals( $expected, $msg->getParams() );
 	}
 
 	public static function provideConstructorLanguage() {
@@ -327,15 +330,31 @@ class MessageTest extends MediaWikiLangTestCase {
 
 	public function testInLanguage() {
 		$this->assertSame( 'Main Page', wfMessage( 'mainpage' )->inLanguage( 'en' )->text() );
-		$this->assertSame( 'Заглавная страница',
-			wfMessage( 'mainpage' )->inLanguage( 'ru' )->text() );
+		$this->assertSame( 'Главна страна',
+			wfMessage( 'mainpage' )->inLanguage( 'sr-ec' )->text() );
 
 		// NOTE: make sure internal caching of the message text is reset appropriately
 		$msg = wfMessage( 'mainpage' );
 		$this->assertSame( 'Main Page', $msg->inLanguage( 'en' )->text() );
 		$this->assertSame(
-			'Заглавная страница',
-			$msg->inLanguage( 'ru' )->text()
+			'Главна страна',
+			$msg->inLanguage( 'sr-ec' )->text()
+		);
+	}
+
+	public function testInLanguageBcp47() {
+		$en = new Bcp47CodeValue( 'en' );
+		$sr = new Bcp47CodeValue( 'sr-Cyrl' );
+		$this->assertSame( 'Main Page', wfMessage( 'mainpage' )->inLanguage( $en )->text() );
+		$this->assertSame( 'Главна страна',
+			wfMessage( 'mainpage' )->inLanguage( $sr )->text() );
+
+		// NOTE: make sure internal caching of the message text is reset appropriately
+		$msg = wfMessage( 'mainpage' );
+		$this->assertSame( 'Main Page', $msg->inLanguage( $en )->text() );
+		$this->assertSame(
+			'Главна страна',
+			$msg->inLanguage( $sr )->text()
 		);
 	}
 
@@ -367,9 +386,48 @@ class MessageTest extends MediaWikiLangTestCase {
 		$this->assertSame( 'example &amp;', $msg->escaped() );
 	}
 
+	public static function provideRawMessage() {
+		yield 'No params' => [
+			new RawMessage( 'Foo Bar' ),
+			'Foo Bar',
+		];
+		yield 'Single param' => [
+			new RawMessage( '$1', [ 'Foo Bar' ] ),
+			'Foo Bar',
+		];
+		yield 'Multiple params' => [
+			new RawMessage( '$2 and $1', [ 'One', 'Two' ] ),
+			'Two and One',
+		];
+	}
+
+	/**
+	 * @dataProvider provideRawMessage
+	 * @covers \MediaWiki\Language\RawMessage
+	 */
+	public function testRawMessageParams( RawMessage $m, string $param ) {
+		$this->assertEquals( [ $param ], $m->getParams() );
+	}
+
+	/**
+	 * @dataProvider provideRawMessage
+	 * @covers \MediaWiki\Language\RawMessage
+	 */
+	public function testRawMessageDisassembleSpecifier( RawMessage $m, string $text ) {
+		// Check this just in case, although it's not really covered by this test.
+		$this->assertEquals( $text, $m->text(), 'output from RawMessage itself' );
+		// Verify that RawMessage can be used as a MessageSpecifier, producing the same output.
+		$msg = wfMessage( $m );
+		$this->assertEquals( $text, $msg->text(), 'output from RawMessage used as MessageSpecifier' );
+		// Verify that if you disassemble it using MessageSpecifier's getKey() and getParams() methods,
+		// then assemble a new MessageSpecifier using the return values, you will get the same output.
+		$msg2 = wfMessage( $m->getKey(), ...$m->getParams() );
+		$this->assertEquals( $text, $msg2->text(), 'output from RawMessage disassembled' );
+	}
+
 	/**
 	 * @covers \MediaWiki\Language\RawMessage
-	 * @covers \CoreTagHooks::html
+	 * @covers \MediaWiki\Parser\CoreTagHooks::html
 	 */
 	public function testRawHtmlInMsg() {
 		$this->overrideConfigValue( MainConfigNames::RawHtml, true );
@@ -476,6 +534,8 @@ class MessageTest extends MediaWikiLangTestCase {
 	}
 
 	public function testUserGroupMemberParams() {
+		$this->expectDeprecationAndContinue( '/UserGroupMembershipParam/' );
+		$this->expectDeprecationAndContinue( '/objectParams/' );
 		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'qqx' );
 		$msg = new RawMessage( '$1' );
 		$this->setUserLang( $lang );
@@ -665,11 +725,6 @@ class MessageTest extends MediaWikiLangTestCase {
 	}
 
 	public function testMessageAsParam() {
-		$this->overrideConfigValues( [
-			MainConfigNames::Script => '/wiki/index.php',
-			MainConfigNames::ArticlePath => '/wiki/$1',
-		] );
-
 		$msg = new Message( 'returnto', [
 			new Message( 'apihelp-link', [
 				'foo', new Message( 'mainpage', [],
@@ -725,7 +780,6 @@ class MessageTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers \Message
 	 * @covers \LanguageQqx
 	 */
 	public function testQqxPlaceholders() {
@@ -783,22 +837,71 @@ class MessageTest extends MediaWikiLangTestCase {
 		wfMessage( 'foo' )->inLanguage( 123 );
 	}
 
-	public function testSerialization() {
-		$msg = new Message( 'parentheses' );
-		$msg->rawParams( '<a>foo</a>' );
-		$msg->page( PageReferenceValue::localReference( NS_MAIN, 'Testing' ) );
-		$this->assertSame( '(<a>foo</a>)', $msg->parse() );
-		$msg = unserialize( serialize( $msg ) );
-		$this->assertSame( '(<a>foo</a>)', $msg->parse() );
-		$title = TestingAccessWrapper::newFromObject( $msg )->contextPage;
-		$this->assertInstanceOf( PageReference::class, $title );
-		$this->assertSame( 'Testing', $title->getDBkey() );
+	/**
+	 * @dataProvider provideSerializationRoundtrip
+	 */
+	public function testSerialization( $msgCallback, $serialized, $parsed ) {
+		$msg = $msgCallback();
+		$this->assertSame( $serialized, serialize( $msg ) );
+		$this->assertSame( $parsed, $msg->parse() );
+	}
 
-		$msg = new Message( 'mainpage' );
-		$msg->inLanguage( 'de' );
-		$this->assertSame( 'Hauptseite', $msg->plain() );
-		$msg = unserialize( serialize( $msg ) );
-		$this->assertSame( 'Hauptseite', $msg->plain() );
+	/**
+	 * @dataProvider provideSerializationRoundtrip
+	 * @dataProvider provideSerializationLegacy
+	 */
+	public function testUnserialization( $msgCallback, $serialized, $parsed ) {
+		// Message objects hold references to lots of global state which is different in the provider
+		// and in the test, so we need to delay constructing the expected object, hence the callback.
+		$msg = $msgCallback();
+		$this->assertEquals( $msg, unserialize( $serialized ) );
+		$this->assertSame( $parsed, unserialize( $serialized )->parse() );
+	}
+
+	public function provideSerializationRoundtrip() {
+		// Test cases where we can test both serialization and unserialization.
+		// These really ought to use the MessageSerializationTestTrait, but
+		// doing so is complicated (T373719).
+
+		yield "Serializing raw parameters" => [
+			fn () => ( new Message( 'parentheses' ) )->rawParams( '<a>foo</a>' ),
+			'O:25:"MediaWiki\Message\Message":7:{s:9:"interface";b:1;s:8:"language";N;s:3:"key";s:11:"parentheses";s:9:"keysToTry";a:1:{i:0;s:11:"parentheses";}s:10:"parameters";a:1:{i:0;O:29:"Wikimedia\Message\ScalarParam":2:{s:7:"' . chr( 0 ) . '*' . chr( 0 ) . 'type";s:3:"raw";s:8:"' . chr( 0 ) . '*' . chr( 0 ) . 'value";s:10:"<a>foo</a>";}}s:11:"useDatabase";b:1;s:10:"titlevalue";N;}',
+			'(<a>foo</a>)',
+		];
+
+		yield "Serializing message with a context page" => [
+			fn () => ( new Message( 'rawmessage', [ '{{PAGENAME}}' ] ) )->page( PageReferenceValue::localReference( NS_MAIN, 'Testing' ) ),
+			'O:25:"MediaWiki\Message\Message":7:{s:9:"interface";b:1;s:8:"language";N;s:3:"key";s:10:"rawmessage";s:9:"keysToTry";a:1:{i:0;s:10:"rawmessage";}s:10:"parameters";a:1:{i:0;s:12:"{{PAGENAME}}";}s:11:"useDatabase";b:1;s:10:"titlevalue";a:2:{i:0;i:0;i:1;s:7:"Testing";}}',
+			'Testing',
+		];
+
+		yield "Serializing language" => [
+			fn () => ( new Message( 'mainpage' ) )->inLanguage( 'de' ),
+			'O:25:"MediaWiki\Message\Message":7:{s:9:"interface";b:0;s:8:"language";s:2:"de";s:3:"key";s:8:"mainpage";s:9:"keysToTry";a:1:{i:0;s:8:"mainpage";}s:10:"parameters";a:0:{}s:11:"useDatabase";b:1;s:10:"titlevalue";N;}',
+			'Hauptseite',
+		];
+	}
+
+	public function provideSerializationLegacy() {
+		// Test cases where we can test only unserialization, because the serialization format changed.
+
+		yield "MW 1.42: Magic arrays instead of MessageParam objects" => [
+			fn () => ( new Message( 'parentheses' ) )->rawParams( '<a>foo</a>' ),
+			'O:25:"MediaWiki\Message\Message":7:{s:9:"interface";b:1;s:8:"language";N;s:3:"key";s:11:"parentheses";s:9:"keysToTry";a:1:{i:0;s:11:"parentheses";}s:10:"parameters";a:1:{i:0;a:1:{s:3:"raw";s:10:"<a>foo</a>";}}s:11:"useDatabase";b:1;s:10:"titlevalue";N;}',
+			'(<a>foo</a>)',
+		];
+
+		yield "MW 1.41: Un-namespaced class" => [
+			fn () => new Message( 'mainpage' ),
+			'O:7:"Message":7:{s:9:"interface";b:1;s:8:"language";N;s:3:"key";s:8:"mainpage";s:9:"keysToTry";a:1:{i:0;s:8:"mainpage";}s:10:"parameters";a:0:{}s:11:"useDatabase";b:1;s:10:"titlevalue";N;}',
+			'Main Page',
+		];
+
+		yield "MW 1.34: 'titlestr' instead of 'titlevalue'" => [
+			fn () => ( new Message( 'rawmessage', [ '{{PAGENAME}}' ] ) )->title( Title::newFromText( 'Testing' ) ),
+			'C:7:"Message":242:{a:8:{s:9:"interface";b:1;s:8:"language";b:0;s:3:"key";s:10:"rawmessage";s:9:"keysToTry";a:1:{i:0;s:10:"rawmessage";}s:10:"parameters";a:1:{i:0;s:12:"{{PAGENAME}}";}s:6:"format";s:5:"parse";s:11:"useDatabase";b:1;s:8:"titlestr";s:7:"Testing";}}',
+			'Testing',
+		];
 	}
 
 	/**

@@ -2,19 +2,19 @@
 
 namespace MediaWiki\Extension\Scribunto;
 
-use CodeContentHandler;
-use Content;
-use ExtensionRegistry;
+use MediaWiki\Content\CodeContentHandler;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\Renderer\ContentParseParams;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Content\ValidationParams;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Status\Status;
 use MediaWiki\SyntaxHighlight\SyntaxHighlight;
 use MediaWiki\Title\Title;
-use TextContent;
 
 /**
  * Scribunto Content Handler
@@ -38,9 +38,7 @@ class ScribuntoContentHandler extends CodeContentHandler {
 		parent::__construct( $modelId, $formats );
 	}
 
-	/**
-	 * @return string Class name
-	 */
+	/** @inheritDoc */
 	protected function getContentClass() {
 		return ScribuntoContent::class;
 	}
@@ -160,6 +158,7 @@ class ScribuntoContentHandler extends CodeContentHandler {
 			$html .= $parserOutput->getRawText();
 		} else {
 			$parserOutput = new ParserOutput();
+			$parserOutput->setLanguage( $parserOptions->getTargetLanguage() ?? $docTitle->getPageLanguage() );
 		}
 
 		if ( $docTitle ) {
@@ -222,7 +221,7 @@ class ScribuntoContentHandler extends CodeContentHandler {
 				// @todo replace addModuleStyles line with the appropriate call on
 				// SyntaxHighlight once one is created
 				$parserOutput->addModuleStyles( [ 'ext.pygments' ] );
-				$parserOutput->addModules( [ 'ext.pygments.linenumbers' ] );
+				$parserOutput->addModules( [ 'ext.pygments.view' ] );
 				return $status->getValue();
 			}
 		}

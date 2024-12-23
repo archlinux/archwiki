@@ -20,12 +20,12 @@
 
 namespace MediaWiki\EditPage\Constraint;
 
-use Content;
-use Language;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\Content;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logger\Spi;
 use MediaWiki\MainConfigNames;
@@ -52,23 +52,12 @@ class EditConstraintFactory {
 		MainConfigNames::MaxArticleSize,
 	];
 
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var Spi */
-	private $loggerFactory;
-
-	/** @var PermissionManager */
-	private $permissionManager;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var ReadOnlyMode */
-	private $readOnlyMode;
-
-	/** @var SpamChecker */
-	private $spamRegexChecker;
+	private ServiceOptions $options;
+	private Spi $loggerFactory;
+	private PermissionManager $permissionManager;
+	private HookContainer $hookContainer;
+	private ReadOnlyMode $readOnlyMode;
+	private SpamChecker $spamRegexChecker;
 	private RateLimiter $rateLimiter;
 
 	/**

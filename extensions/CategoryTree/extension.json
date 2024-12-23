@@ -6,10 +6,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.42"
-	},
-	"ConfigRegistry": {
-		"categorytree": "GlobalVarConfig::newInstance"
+		"MediaWiki": ">= 1.43"
 	},
 	"SpecialPages": {
 		"CategoryTree": {
@@ -24,7 +21,6 @@
 		"categorytree": {
 			"class": "MediaWiki\\Extension\\CategoryTree\\ApiCategoryTree",
 			"services": [
-				"ConfigFactory",
 				"DBLoadBalancerFactory",
 				"LanguageConverterFactory",
 				"LinkRenderer",
@@ -76,7 +72,7 @@
 			]
 		},
 		"ext.categoryTree.styles": {
-			"styles": "ext.categoryTree.styles.css"
+			"styles": "ext.categoryTree.styles.less"
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -90,7 +86,8 @@
 				"CategoryTree.CategoryCache",
 				"MainConfig",
 				"DBLoadBalancerFactory",
-				"LinkRenderer"
+				"LinkRenderer",
+				"TitleFormatter"
 			]
 		},
 		"config": {
@@ -104,7 +101,7 @@
 		"SkinAfterPortlet": "default",
 		"SkinBuildSidebar": "default",
 		"ParserFirstCallInit": "default",
-		"OutputPageMakeCategoryLinks": "default",
+		"OutputPageRenderCategoryLink": "default",
 		"CategoryViewer::doCategoryQuery": "default",
 		"CategoryViewer::generateLink": "default"
 	},
@@ -185,6 +182,9 @@
 			}
 		}
 	},
+	"TrackingCategories": [
+		"categorytree-deprecation-category"
+	],
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
 	],

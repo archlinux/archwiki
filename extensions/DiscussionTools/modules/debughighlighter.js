@@ -1,29 +1,29 @@
 'use strict';
 
-var initialOffset, indentWidth, firstMarker;
-var updaters = [];
+let initialOffset, indentWidth, firstMarker;
+const updaters = [];
 // eslint-disable-next-line no-jquery/no-global-selector
-var isRtl = $( 'html' ).attr( 'dir' ) === 'rtl';
+const isRtl = $( 'html' ).attr( 'dir' ) === 'rtl';
 
 function markTimestamp( parser, node, match ) {
-	var dfParsers = parser.getLocalTimestampParsers();
+	const dfParsers = parser.getLocalTimestampParsers();
 
-	var newNode = node.splitText( match.matchData.index );
+	const newNode = node.splitText( match.matchData.index );
 	newNode.splitText( match.matchData[ 0 ].length );
 
-	var wrapper = document.createElement( 'span' );
+	const wrapper = document.createElement( 'span' );
 	wrapper.className = 'ext-discussiontools-debughighlighter-timestamp';
 	// We might need to actually port all the date formatting code from MediaWiki's PHP code
 	// if we want to support displaying dates in all the formats available in user preferences
 	// (which include formats in several non-Gregorian calendars).
-	var date = dfParsers[ match.parserIndex ]( match.matchData ).date;
+	const date = dfParsers[ match.parserIndex ]( match.matchData ).date;
 	wrapper.title = date.format() + ' / ' + date.fromNow();
 	wrapper.appendChild( newNode );
 	node.parentNode.insertBefore( wrapper, node.nextSibling );
 }
 
 function markSignature( sigNodes ) {
-	var
+	const
 		where = sigNodes[ 0 ],
 		wrapper = document.createElement( 'span' );
 	wrapper.className = 'ext-discussiontools-debughighlighter-signature';
@@ -37,7 +37,7 @@ function fixFakeFirstHeadingRect( rect, comment ) {
 	// If the page has comments before the first section heading, they are connected to a "fake"
 	// heading with an empty range. Visualize the page title as the heading for that section.
 	if ( rect.x === 0 && rect.y === 0 && comment.type === 'heading' ) {
-		var node = document.getElementsByClassName( 'firstHeading' )[ 0 ];
+		const node = document.getElementsByClassName( 'firstHeading' )[ 0 ];
 		return node.getBoundingClientRect();
 	}
 	return rect;
@@ -45,9 +45,9 @@ function fixFakeFirstHeadingRect( rect, comment ) {
 
 function calculateSizes() {
 	// eslint-disable-next-line no-jquery/no-global-selector
-	var $content = $( '#mw-content-text' );
-	var $test = $( '<dd>' ).appendTo( $( '<dl>' ).appendTo( $content ) );
-	var rect = $content[ 0 ].getBoundingClientRect();
+	const $content = $( '#mw-content-text' );
+	const $test = $( '<dd>' ).appendTo( $( '<dl>' ).appendTo( $content ) );
+	const rect = $content[ 0 ].getBoundingClientRect();
 
 	initialOffset = isRtl ? document.body.scrollWidth - rect.left - rect.width : rect.left;
 	indentWidth = parseFloat( $test.css( isRtl ? 'margin-right' : 'margin-left' ) ) +
@@ -57,33 +57,33 @@ function calculateSizes() {
 }
 
 function markComment( comment ) {
-	var marker = document.createElement( 'div' );
+	const marker = document.createElement( 'div' );
 	marker.className = 'ext-discussiontools-debughighlighter-comment';
 
 	if ( !firstMarker ) {
 		firstMarker = marker;
 	}
 
-	var marker2 = null;
+	let marker2 = null;
 	if ( comment.parent ) {
 		marker2 = document.createElement( 'div' );
 		marker2.className = 'ext-discussiontools-debughighlighter-comment-ruler';
 	}
 
-	var markerWarnings = null;
+	let markerWarnings = null;
 	if ( comment.warnings && comment.warnings.length ) {
 		markerWarnings = document.createElement( 'div' );
 		markerWarnings.className = 'ext-discussiontools-debughighlighter-comment-warnings';
 		markerWarnings.innerText = comment.warnings.join( '\n' );
 	}
 
-	var update = function () {
-		var rect = fixFakeFirstHeadingRect(
+	const update = function () {
+		const rect = fixFakeFirstHeadingRect(
 			comment.getRange().getBoundingClientRect(),
 			comment
 		);
-		var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-		var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+		const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+		const scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
 
 		marker.style.top = ( rect.top + scrollTop ) + 'px';
 		marker.style.height = ( rect.height ) + 'px';
@@ -91,11 +91,11 @@ function markComment( comment ) {
 		marker.style.width = ( rect.width ) + 'px';
 
 		if ( marker2 ) {
-			var parentRect = comment.parent.getRange().getBoundingClientRect();
+			let parentRect = comment.parent.getRange().getBoundingClientRect();
 			parentRect = fixFakeFirstHeadingRect( parentRect, comment.parent );
 			if ( comment.parent.level === 0 ) {
 				// Twiddle so that it looks nice
-				parentRect = $.extend( {}, parentRect );
+				parentRect = Object.assign( {}, parentRect );
 				parentRect.height -= 10;
 			}
 
@@ -140,7 +140,7 @@ function markThreads( threads ) {
 }
 
 function updateAll() {
-	updaters.forEach( function ( update ) {
+	updaters.forEach( ( update ) => {
 		calculateSizes();
 		update();
 	} );

@@ -5,6 +5,7 @@
 			"Zulfadli51"
 		]
 	},
+	"linter-category-duplicate-ids": "ID pendua",
 	"linter-form-tag-option-all": "Tiada penapis",
 	"linter-form-template-option-all": "Tiada penapis",
 	"linter-form-template-option-with": "Dengan templat",
@@ -12,6 +13,7 @@
 	"linter-page-history": "sejarah",
 	"linter-pager-bogus-image-options-details": "Pilihan fail palsu",
 	"linter-pager-deletable-table-tag-details": "Teg jadual yang harus dipadamkan",
+	"linter-pager-duplicate-ids-details": "ID pendua",
 	"linter-pager-html5-misnesting-details": "Silap penyarangan (kini rosak)",
 	"linter-pager-misc-tidy-replacement-issues-details": "Lain-lain kesilapan penandaan",
 	"linter-pager-misnested-tag-details": "Teg yang disarang dengan tidak betul yang harus disarang dengan betul",

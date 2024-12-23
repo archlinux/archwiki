@@ -11,19 +11,19 @@
 		 * @return {jQuery.Promise<Object.<string, string>>}
 		 */
 		getMessages: function ( messages, options ) {
-			var that = this;
+			const that = this;
 			options = options || {};
 			messages = Array.isArray( messages ) ? messages : [ messages ];
-			return this.get( $.extend( {
+			return this.get( Object.assign( {
 				action: 'query',
 				meta: 'allmessages',
 				ammessages: messages.slice( 0, 50 ),
 				amlang: mw.config.get( 'wgUserLanguage' ),
 				formatversion: 2
-			}, options ) ).then( function ( data ) {
-				var result = {};
+			}, options ) ).then( ( data ) => {
+				const result = {};
 
-				data.query.allmessages.forEach( function ( obj ) {
+				data.query.allmessages.forEach( ( obj ) => {
 					if ( !obj.missing ) {
 						result[ obj.name ] = obj.content;
 					}
@@ -40,10 +40,8 @@
 				}
 
 				return that.getMessages( messages.slice( 50 ), options ).then(
-					function ( innerResult ) {
-						// Merge result objects
-						return $.extend( result, innerResult );
-					}
+					// Merge result objects
+					( innerResult ) => Object.assign( result, innerResult )
 				);
 			} );
 		},
@@ -70,10 +68,10 @@
 		 */
 		loadMessagesIfMissing: function ( messages, options ) {
 			messages = Array.isArray( messages ) ? messages : [ messages ];
-			var missing = messages.filter( function ( msg ) {
+			const missing = messages.filter(
 				// eslint-disable-next-line mediawiki/msg-doc
-				return !mw.message( msg ).exists();
-			} );
+				( msg ) => !mw.message( msg ).exists()
+			);
 
 			if ( missing.length === 0 ) {
 				return $.Deferred().resolve();

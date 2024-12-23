@@ -12,23 +12,19 @@ use MediaWikiUnitTestCase;
 use MessageLocalizer;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\BlockAutopromote
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\BlockAutopromote
  */
 class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 	use ConsequenceGetMessageTestTrait;
 
 	private function getMsgLocalizer(): MessageLocalizer {
 		$ml = $this->createMock( MessageLocalizer::class );
-		$ml->method( 'msg' )->willReturnCallback( function ( $k, $p ) {
+		$ml->method( 'msg' )->willReturnCallback( function ( $k, ...$p ) {
 			return $this->getMockMessage( $k, $p );
 		} );
 		return $ml;
 	}
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute_anonymous() {
 		$user = new UserIdentityValue( 0, 'Anonymous user' );
 		$params = $this->provideGetMessageParameters( $user )->current()[0];
@@ -47,7 +43,6 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::execute
 	 * @dataProvider provideExecute
 	 */
 	public function testExecute( bool $success ) {
@@ -79,7 +74,6 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::revert
 	 * @dataProvider provideExecute
 	 */
 	public function testRevert( bool $success ) {
@@ -103,7 +97,6 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getMessage
 	 * @dataProvider provideGetMessageParameters
 	 */
 	public function testGetMessage( Parameters $params ) {

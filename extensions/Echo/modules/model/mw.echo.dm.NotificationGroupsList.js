@@ -12,7 +12,7 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {boolean} [foreign] The list contains foreign notifications
+	 * @param {boolean} [config.foreign] The list contains foreign notifications
 	 */
 	mw.echo.dm.NotificationGroupsList = function MwEchoDmNotificationGroupsList( config ) {
 		config = config || {};
@@ -21,7 +21,7 @@
 		mw.echo.dm.NotificationGroupsList.super.call( this );
 
 		// Sorting callback
-		this.setSortingCallback( function ( a, b ) {
+		this.setSortingCallback( ( a, b ) => {
 			// Reverse sorting
 			if ( b.getTimestamp() < a.getTimestamp() ) {
 				return -1;
@@ -46,9 +46,9 @@
 	/* Events */
 
 	/**
-	 * @event discard
-	 *
 	 * A group was permanently removed
+	 *
+	 * @event mw.echo.dm.NotificationGroupsList#discard
 	 */
 
 	/* Methods */
@@ -77,7 +77,7 @@
 	 * @param {mw.echo.dm.NotificationItem[]} [groupItems] Optional items to add to this group
 	 */
 	mw.echo.dm.NotificationGroupsList.prototype.addGroup = function ( groupSource, sourceData, groupItems ) {
-		var groupListModel = new mw.echo.dm.NotificationsList( {
+		const groupListModel = new mw.echo.dm.NotificationsList( {
 			title: sourceData.title,
 			name: groupSource,
 			source: groupSource,
@@ -100,7 +100,7 @@
 	 * @return {string} Latest timestamp
 	 */
 	mw.echo.dm.NotificationGroupsList.prototype.getTimestamp = function () {
-		var items = this.getItems();
+		const items = this.getItems();
 
 		return (
 			items.length > 0 ?
@@ -116,7 +116,7 @@
 	 * @param {mw.echo.dm.NotificationItem[]} groupItems Items to add to this group
 	 */
 	mw.echo.dm.NotificationGroupsList.prototype.addItemsToGroup = function ( groupSource, groupItems ) {
-		var group = this.getGroupByName( groupSource );
+		const group = this.getGroupByName( groupSource );
 
 		if ( group ) {
 			group.addItems( groupItems );
@@ -133,10 +133,10 @@
 	 * for the sake of sorting. To avoid ambiguity, we use 'discard' event.
 	 *
 	 * @param {string} groupName Group name
-	 * @fires discard
+	 * @fires mw.echo.dm.NotificationGroupsList#discard
 	 */
 	mw.echo.dm.NotificationGroupsList.prototype.removeGroup = function ( groupName ) {
-		var group = this.getGroupByName( groupName );
+		const group = this.getGroupByName( groupName );
 
 		if ( group ) {
 			this.removeItems( group );
@@ -151,9 +151,9 @@
 	 * @return {mw.echo.dm.NotificationsList|null} Requested group, null if none was found.
 	 */
 	mw.echo.dm.NotificationGroupsList.prototype.getGroupByName = function ( groupName ) {
-		var items = this.getItems();
+		const items = this.getItems();
 
-		for ( var i = 0; i < items.length; i++ ) {
+		for ( let i = 0; i < items.length; i++ ) {
 			if ( items[ i ].getName() === groupName ) {
 				return items[ i ];
 			}

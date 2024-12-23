@@ -26,7 +26,6 @@ ve.ce.MWReferenceNode = function VeCeMWReferenceNode() {
 	// DOM changes
 	this.$link = $( '<a>' ).attr( 'href', '#' );
 	this.$element.addClass( 've-ce-mwReferenceNode mw-ref reference' ).append( this.$link );
-	// Add a backwards-compatible text for browsers that don't support counters
 	this.$text = $( '<span>' ).addClass( 'mw-reflink-text' );
 	this.$link.append( this.$text );
 
@@ -65,6 +64,7 @@ ve.ce.MWReferenceNode.static.primaryCommandName = 'reference';
  */
 ve.ce.MWReferenceNode.prototype.onSetup = function () {
 	ve.ce.MWReferenceNode.super.prototype.onSetup.call( this );
+	// FIXME: if this is about getIndex, just do it once at a higher level.
 	this.internalList.connect( this, { update: 'onInternalListUpdate' } );
 };
 
@@ -129,9 +129,8 @@ ve.ce.MWReferenceNode.prototype.executeCommand = function () {
  * Update the rendering
  */
 ve.ce.MWReferenceNode.prototype.update = function () {
-	this.$text.text( this.model.getIndexLabel() );
+	this.$text.html( this.model.getIndexLabel() );
 	this.$link
-		.css( 'counterReset', 'mw-Ref ' + this.model.getIndex() )
 		.attr( 'data-mw-group', this.model.getGroup() || null );
 	this.$element.toggleClass( 've-ce-mwReferenceNode-placeholder', !!this.model.getAttribute( 'placeholder' ) );
 };

@@ -26,7 +26,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "แหล่งอ้างอิงนี้ถูกใช้แล้ว $1 {{PLURAL:$1|ครั้ง}}บนหน้านี้ การเปลี่ยนแปลงที่ทำที่นี่จะถูกนำไปใช้กับทุกที่ที่ใช้แหล่งอ้างอิงนี้ซ้ำ",
 	"cite-ve-dialog-reference-options-group-label": "ใช้กลุ่มนี้",
 	"cite-ve-dialog-reference-options-group-placeholder": "แหล่งอ้างอิงทั่วไป",
-	"cite-ve-dialog-reference-options-name-label": "ใช้ซ้ำโดยชื่อนี้",
 	"cite-ve-dialog-reference-options-responsive-label": "ใช้ผังแนวตั้งโต้ตอบ",
 	"cite-ve-dialog-reference-options-section": "ตัวเลือก",
 	"cite-ve-dialog-reference-placeholder": "เขียนหรือวางแหล่งอ้างอิงของคุณที่นี่ หรือแทรกแม่แบบอ้างอิงที่มา",

@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Language;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Language\Language;
+use MediaWiki\Message\Message;
 use MediaWiki\User\User;
-use Message;
 
 /**
  * Abstract class for formatters that process multiple events.

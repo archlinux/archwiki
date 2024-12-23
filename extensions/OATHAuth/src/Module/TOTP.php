@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\OATHAuth\Module;
 
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\OATHAuth\Auth\TOTPSecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
 use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPDisableForm;
@@ -48,7 +48,9 @@ class TOTP implements IModule {
 	 * @return TOTPSecondaryAuthenticationProvider
 	 */
 	public function getSecondaryAuthProvider() {
-		return new TOTPSecondaryAuthenticationProvider();
+		return new TOTPSecondaryAuthenticationProvider(
+			$this
+		);
 	}
 
 	/**

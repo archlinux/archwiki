@@ -21,7 +21,7 @@
 	// links should be separated by same color
 	.hlist {
 		li::after {
-			color: @color-link;
+			color: @color-progressive;
 		}
 	}
 
@@ -56,13 +56,15 @@
 }
 
 // Night mode
-html.skin-theme-clientpref-night {
-	.minerva-footer-logo img {
-		.night-mode-invert-image();
+@media screen {
+	html.skin-theme-clientpref-night {
+		.minerva-footer-logo img {
+			.night-mode-invert-image();
+		}
 	}
 }
 
-@media ( prefers-color-scheme: dark ) {
+@media screen and ( prefers-color-scheme: dark ) {
 	html.skin-theme-clientpref-os {
 		.minerva-footer-logo img {
 			.night-mode-invert-image();

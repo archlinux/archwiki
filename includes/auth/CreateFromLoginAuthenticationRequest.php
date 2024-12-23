@@ -33,6 +33,7 @@ namespace MediaWiki\Auth;
  * @since 1.27
  */
 class CreateFromLoginAuthenticationRequest extends AuthenticationRequest {
+	/** @inheritDoc */
 	public $required = self::OPTIONAL;
 
 	/** @var AuthenticationRequest|null */
@@ -49,7 +50,7 @@ class CreateFromLoginAuthenticationRequest extends AuthenticationRequest {
 	 *  after creation.
 	 */
 	public function __construct(
-		AuthenticationRequest $createRequest = null, array $maybeLink = []
+		?AuthenticationRequest $createRequest = null, array $maybeLink = []
 	) {
 		$this->createRequest = $createRequest;
 		$this->maybeLink = $maybeLink;

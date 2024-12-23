@@ -27,7 +27,9 @@
 
 // NO_AUTOLOAD -- due to hashbang above
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Installer\DatabaseInstaller;
@@ -47,6 +49,8 @@ class UpdateMediaWiki extends Maintenance {
 		parent::__construct();
 		$this->addDescription( 'MediaWiki database updater' );
 		$this->addOption( 'quick', 'Skip 5 second countdown before starting' );
+		$this->addOption( 'initial',
+			'Do initial updates required after manual installation using tables-generated.sql' );
 		$this->addOption( 'doshared', 'Also update shared tables' );
 		$this->addOption( 'noschema', 'Only do the updates that are not done during schema updates' );
 		$this->addOption(
@@ -143,8 +147,7 @@ class UpdateMediaWiki extends Maintenance {
 		$status = $dbInstallerClass::meetsMinimumRequirement( $db );
 		if ( !$status->isOK() ) {
 			// This might output some wikitext like <strong> but it should be comprehensible
-			$text = $status->getWikiText();
-			$this->fatalError( $text );
+			$this->fatalError( $status );
 		}
 
 		$dbDomain = WikiMap::getCurrentWikiDbDomain()->getId();
@@ -173,14 +176,17 @@ class UpdateMediaWiki extends Maintenance {
 			}
 			$updates[] = 'stats';
 		}
+		if ( $this->hasOption( 'initial' ) ) {
+			$updates[] = 'initial';
+		}
 
 		$updater = DatabaseUpdater::newForDB( $db, $shared, $this );
 
 		// Avoid upgrading from versions older than 1.35
-		// Using an implicit marker (ar_user was dropped in 1.34)
+		// Using an implicit marker (rev_actor was introduced in 1.34)
 		// TODO: Use an explicit marker
 		// See T259771
-		if ( $updater->fieldExists( 'archive', 'ar_user' ) ) {
+		if ( !$updater->fieldExists( 'revision', 'rev_actor' ) ) {
 			$this->fatalError(
 				"Can not upgrade from versions older than 1.35, please upgrade to that version or later first."
 			);
@@ -272,9 +278,8 @@ class UpdateMediaWiki extends Maintenance {
 
 		$status = $settings->validate();
 		if ( !$status->isOK() ) {
-			foreach ( $status->getErrorsByType( 'error' ) as $msg ) {
-				$msg = wfMessage( $msg['message'], ...$msg['params'] );
-				$warnings[] = $msg->text();
+			foreach ( $status->getMessages( 'error' ) as $msg ) {
+				$warnings[] = wfMessage( $msg )->text();
 			}
 		}
 
@@ -298,5 +303,7 @@ class UpdateMediaWiki extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = UpdateMediaWiki::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

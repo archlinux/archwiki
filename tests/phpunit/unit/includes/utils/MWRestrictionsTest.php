@@ -1,11 +1,13 @@
 <?php
 
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
 
 class MWRestrictionsTest extends MediaWikiUnitTestCase {
 
+	/** @var MWRestrictions */
 	protected static $restrictionsForChecks;
 
 	public static function setUpBeforeClass(): void {
@@ -47,7 +49,7 @@ class MWRestrictionsTest extends MediaWikiUnitTestCase {
 			$ret = MWRestrictions::newFromArray( $data );
 			$this->assertInstanceOf( MWRestrictions::class, $ret );
 			$this->assertSame( $data, $ret->toArray() );
-			$this->assertSame( $ret->validity->getErrors(), $expect->getErrors() );
+			$this->assertStatusMessagesExactly( $expect, $ret->validity );
 		} else {
 			try {
 				MWRestrictions::newFromArray( $data );
@@ -105,7 +107,7 @@ class MWRestrictionsTest extends MediaWikiUnitTestCase {
 				FormatJson::encode( $restrictions, true, FormatJson::ALL_OK ),
 				$ret->toJson( true )
 			);
-			$this->assertSame( $expect->getErrors(), $ret->validity->getErrors() );
+			$this->assertStatusMessagesExactly( $expect, $ret->validity );
 		} else {
 			try {
 				MWRestrictions::newFromJson( $json );

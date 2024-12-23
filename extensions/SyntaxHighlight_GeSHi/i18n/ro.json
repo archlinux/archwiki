@@ -5,8 +5,8 @@
 			"KlaudiuMihaila",
 			"Minisarm",
 			"NGC 54",
-			"Stelistcristi",
-			"Paloi Sciurala"
+			"Paloi Sciurala",
+			"Stelistcristi"
 		]
 	},
 	"syntaxhighlight-desc": "Produce evidențierea sintaxei prin eticheta <code>&lt;syntaxhighlight&gt;</code> folosind [http://pygments.org/ Pygments - evidențiere Python de sintaxă]",

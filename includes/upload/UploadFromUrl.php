@@ -37,10 +37,13 @@ use MediaWiki\Status\Status;
  * @author Michael Dale
  */
 class UploadFromUrl extends UploadBase {
+	/** @var string */
 	protected $mUrl;
 
-	protected $mTempPath, $mTmpHandle;
+	/** @var resource|null|false */
+	protected $mTmpHandle;
 
+	/** @var array<string,bool> */
 	protected static $allowedUrls = [];
 
 	/**
@@ -83,7 +86,7 @@ class UploadFromUrl extends UploadBase {
 		if ( !count( $domains ) ) {
 			return true;
 		}
-		$parsedUrl = wfParseUrl( $url );
+		$parsedUrl = wfGetUrlUtils()->parse( $url );
 		if ( !$parsedUrl ) {
 			return false;
 		}
@@ -345,9 +348,6 @@ class UploadFromUrl extends UploadBase {
 		$copyUploadProxy = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::CopyUploadProxy );
 		$copyUploadTimeout = MediaWikiServices::getInstance()->getMainConfig()
 			->get( MainConfigNames::CopyUploadTimeout );
-		if ( $this->mTempPath === false ) {
-			return Status::newFatal( 'tmp-create-error' );
-		}
 
 		// Note the temporary file should already be created by makeTemporaryFile()
 		$this->mTmpHandle = fopen( $this->mTempPath, 'wb' );

@@ -67,7 +67,7 @@ class MultipartReader {
 		$this->closingBoundary = "\r\n--$boundary--\r\n";
 		$this->buffer = '';
 		if ( $hmacKey !== false ) {
-			$this->hashContext = hash_init( 'sha256',  HASH_HMAC, $hmacKey );
+			$this->hashContext = hash_init( 'sha256', HASH_HMAC, $hmacKey );
 		}
 	}
 

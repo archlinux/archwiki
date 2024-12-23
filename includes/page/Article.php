@@ -27,18 +27,22 @@ use MediaWiki\EditPage\EditPage;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\ProtectionForm;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\BadRevisionException;
 use MediaWiki\Revision\RevisionRecord;
@@ -50,6 +54,7 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
+use MediaWiki\Xml\Xml;
 use Wikimedia\IPUtils;
 use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 use Wikimedia\NonSerializable\NonSerializableTrait;
@@ -110,42 +115,18 @@ class Article implements Page {
 	 */
 	protected $viewIsRenderAction = false;
 
-	/**
-	 * @var LinkRenderer
-	 */
-	protected $linkRenderer;
-
-	/**
-	 * @var RevisionStore
-	 */
-	private $revisionStore;
-
-	/**
-	 * @var UserNameUtils
-	 */
-	private $userNameUtils;
-
-	/**
-	 * @var UserOptionsLookup
-	 */
-	private $userOptionsLookup;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	/** @var JobQueueGroup */
-	private $jobQueueGroup;
-
-	/** @var ArchivedRevisionLookup */
-	private $archivedRevisionLookup;
-
+	protected LinkRenderer $linkRenderer;
+	private RevisionStore $revisionStore;
+	private UserNameUtils $userNameUtils;
+	private UserOptionsLookup $userOptionsLookup;
+	private CommentFormatter $commentFormatter;
+	private WikiPageFactory $wikiPageFactory;
+	private JobQueueGroup $jobQueueGroup;
+	private ArchivedRevisionLookup $archivedRevisionLookup;
 	protected IConnectionProvider $dbProvider;
+	protected DatabaseBlockStore $blockStore;
 
-	/** @var DatabaseBlockStore */
-	protected $blockStore;
+	protected RestrictionStore $restrictionStore;
 
 	/**
 	 * @var RevisionRecord|null Revision to be shown
@@ -174,6 +155,7 @@ class Article implements Page {
 		$this->archivedRevisionLookup = $services->getArchivedRevisionLookup();
 		$this->dbProvider = $services->getConnectionProvider();
 		$this->blockStore = $services->getDatabaseBlockStore();
+		$this->restrictionStore = $services->getRestrictionStore();
 	}
 
 	/**
@@ -505,6 +487,8 @@ class Article implements Page {
 			return;
 		}
 
+		$this->showProtectionIndicator();
+
 		# Set page title (may be overridden from ParserOutput if title conversion is enabled or DISPLAYTITLE is used)
 		$outputPage->setPageTitle( Parser::formatPageTitle(
 			str_replace( '_', ' ', $this->getTitle()->getNsText() ),
@@ -514,7 +498,7 @@ class Article implements Page {
 
 		$outputPage->setArticleFlag( true );
 		# Allow frames by default
-		$outputPage->setPreventClickjacking( false );
+		$outputPage->getMetadata()->setPreventClickjacking( false );
 
 		$parserOptions = $this->getParserOptions();
 
@@ -598,12 +582,95 @@ class Article implements Page {
 			$request->response()->clearCookie( $cookieKey );
 			$outputPage->addJsConfigVars( 'wgPostEdit', $postEdit );
 			$outputPage->addModules( 'mediawiki.action.view.postEdit' ); // FIXME: test this
-			if ( $this->getContext()->getConfig()->get( 'EnableEditRecovery' )
+			if ( $this->getContext()->getConfig()->get( MainConfigNames::EnableEditRecovery )
 				&& $this->userOptionsLookup->getOption( $this->getContext()->getUser(), 'editrecovery' )
 			) {
 				$outputPage->addModules( 'mediawiki.editRecovery.postEdit' );
 			}
 		}
+	}
+
+	/**
+	 * Show a lock icon above the article body if the page is protected.
+	 */
+	public function showProtectionIndicator(): void {
+		$title = $this->getTitle();
+		$context = $this->getContext();
+		$outputPage = $context->getOutput();
+
+		$protectionIndicatorsAreEnabled = $context->getConfig()
+			->get( MainConfigNames::EnableProtectionIndicators );
+
+		if ( !$protectionIndicatorsAreEnabled || $title->isMainPage() ) {
+			return;
+		}
+
+		$protection = $this->restrictionStore->getRestrictions( $title, 'edit' );
+
+		$cascadeProtection = $this->restrictionStore->getCascadeProtectionSources( $title )[1];
+
+		$isCascadeProtected = array_key_exists( 'edit', $cascadeProtection );
+
+		if ( !$protection && !$isCascadeProtected ) {
+			return;
+		}
+
+		if ( $isCascadeProtected ) {
+			// Cascade-protected pages are protected at the sysop level. So it
+			// should not matter if we take the protection level of the first
+			// or last page that is being cascaded to the current page.
+			$protectionLevel = $cascadeProtection['edit'][0];
+		} else {
+			$protectionLevel = $protection[0];
+		}
+
+		// Protection levels are stored in the database as plain text, but
+		// they are expected to be valid protection levels. So we should be able to
+		// safely use them. However phan thinks this could be a XSS problem so we
+		// are being paranoid and escaping them once more.
+		$protectionLevel = htmlspecialchars( $protectionLevel );
+
+		$protectionExpiry = $this->restrictionStore->getRestrictionExpiry( $title, 'edit' );
+		$formattedProtectionExpiry = $context->getLanguage()
+			->formatExpiry( $protectionExpiry ?? '' );
+
+		$protectionMsg = 'protection-indicator-title';
+		if ( $protectionExpiry === 'infinity' || !$protectionExpiry ) {
+			$protectionMsg .= '-infinity';
+		}
+
+		// Potential values: 'protection-sysop', 'protection-autoconfirmed',
+		// 'protection-sysop-cascade' etc.
+		// If the wiki has more protection levels, the additional ids that get
+		// added take the form 'protection-<protectionLevel>' and
+		// 'protection-<protectionLevel>-cascade'.
+		$protectionIndicatorId = 'protection-' . $protectionLevel;
+		$protectionIndicatorId .= ( $isCascadeProtected ? '-cascade' : '' );
+
+		// Messages 'protection-indicator-title', 'protection-indicator-title-infinity'
+		$protectionMsg = $outputPage->msg( $protectionMsg, $protectionLevel, $formattedProtectionExpiry )->text();
+
+		// Use a trick similar to the one used in Action::addHelpLink() to allow wikis
+		// to customize where the help link points to.
+		$protectionHelpLink = $outputPage->msg( $protectionIndicatorId . '-helppage' );
+		if ( $protectionHelpLink->isDisabled() ) {
+			$protectionHelpLink = 'https://mediawiki.org/wiki/Special:MyLanguage/Help:Protection';
+		} else {
+			$protectionHelpLink = $protectionHelpLink->text();
+		}
+
+		$outputPage->setIndicators( [
+			$protectionIndicatorId => Html::rawElement( 'a', [
+				'class' => 'mw-protection-indicator-icon--lock',
+				'title' => $protectionMsg,
+				'href' => $protectionHelpLink
+			],
+			// Screen reader-only text describing the same thing as
+			// was mentioned in the title attribute.
+			Html::element( 'span', [], $protectionMsg ) )
+		] );
+
+		$outputPage->addModuleStyles( 'mediawiki.protectionIndicators.styles' );
 	}
 
 	/**
@@ -830,7 +897,7 @@ class Article implements Page {
 
 		# Check for any __NOINDEX__ tags on the page using $pOutput
 		$policy = $this->getRobotPolicy( 'view', $pOutput ?: null );
-		$outputPage->setIndexPolicy( $policy['index'] );
+		$outputPage->getMetadata()->setIndexPolicy( $policy['index'] );
 		$outputPage->setFollowPolicy( $policy['follow'] ); // FIXME: test this
 
 		$this->mParserOutput = $pOutput;
@@ -1027,7 +1094,7 @@ class Article implements Page {
 	 * @return string[] The policy that should be set
 	 * @todo actions other than 'view'
 	 */
-	public function getRobotPolicy( $action, ParserOutput $pOutput = null ) {
+	public function getRobotPolicy( $action, ?ParserOutput $pOutput = null ) {
 		$context = $this->getContext();
 		$mainConfig = $context->getConfig();
 		$articleRobotPolicies = $mainConfig->get( MainConfigNames::ArticleRobotPolicies );
@@ -1189,7 +1256,7 @@ class Article implements Page {
 			// This is an externally redirected view, from some other wiki.
 			// If it was reported from a trusted site, supply a backlink.
 			if ( $redirectSources && preg_match( $redirectSources, $rdfrom ) ) {
-				$redir = Linker::makeExternalLink( $rdfrom, $rdfrom );
+				$redir = $this->linkRenderer->makeExternalLink( $rdfrom, $rdfrom, $this->getTitle() );
 				$outputPage->addSubtitle( "<span class=\"mw-redirectedfrom\">" .
 					$context->msg( 'redirectedfrom' )->rawParams( $redir )->parse()
 				. "</span>" );
@@ -1387,15 +1454,14 @@ class Article implements Page {
 			return false;
 		}
 
-		$outputPage->setPreventClickjacking( true );
-		if ( $context->getAuthority()->isAllowed( 'writeapi' ) ) {
-			$outputPage->addModules( 'mediawiki.misc-authed-curate' );
-		}
+		$outputPage->getMetadata()->setPreventClickjacking( true );
+		$outputPage->addModules( 'mediawiki.misc-authed-curate' );
 
 		$link = $this->linkRenderer->makeKnownLink(
 			$title,
-			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable $markPatrolledMsg is always set when $rc is set
-			$markPatrolledMsg->text(),
+			new HtmlArmor( '<button class="cdx-button cdx-button--action-progressive">'
+				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable $markPatrolledMsg is always set
+				. $markPatrolledMsg->escaped() . '</button>' ),
 			[],
 			[
 				'action' => 'markpatrolled',
@@ -1404,11 +1470,7 @@ class Article implements Page {
 		);
 
 		$outputPage->addModuleStyles( 'mediawiki.action.styles' );
-		$outputPage->addHTML(
-			"<div class='patrollink' data-mw='interface'>" .
-				$context->msg( 'markaspatrolledlink' )->rawParams( $link )->escaped() .
-			'</div>'
-		);
+		$outputPage->addHTML( "<div class='patrollink' data-mw='interface'>$link</div>" );
 
 		return true;
 	}
@@ -1520,7 +1582,7 @@ class Article implements Page {
 		$sessionExists = $context->getRequest()->getSession()->isPersistent();
 
 		if ( $isRegistered || $dbCache->get( $key ) || $sessionExists ) {
-			$logTypes = [ 'delete', 'move', 'protect' ];
+			$logTypes = [ 'delete', 'move', 'protect', 'merge' ];
 
 			$dbr = $this->dbProvider->getReplicaDatabase();
 
@@ -1552,7 +1614,7 @@ class Article implements Page {
 
 		// Also apply the robot policy for nonexisting pages (even if a 404 was used)
 		$policy = $this->getRobotPolicy( 'view' );
-		$outputPage->setIndexPolicy( $policy['index'] );
+		$outputPage->getMetadata()->setIndexPolicy( $policy['index'] );
 		$outputPage->setFollowPolicy( $policy['follow'] );
 
 		$hookResult = $this->getHookRunner()->onBeforeDisplayNoArticleText( $this );
@@ -1707,6 +1769,7 @@ class Article implements Page {
 
 		$outputPage = $context->getOutput();
 		$outputPage->addModuleStyles( [
+			'mediawiki.codex.messagebox.styles',
 			'mediawiki.action.styles',
 			'mediawiki.interface.helpers.styles'
 		] );
@@ -1950,7 +2013,7 @@ class Article implements Page {
 	 * @param UserIdentity|null $user The relevant user
 	 * @return ParserOutput|false ParserOutput or false if the given revision ID is not found
 	 */
-	public function getParserOutput( $oldid = null, UserIdentity $user = null ) {
+	public function getParserOutput( $oldid = null, ?UserIdentity $user = null ) {
 		if ( $user === null ) {
 			$parserOptions = $this->getParserOptions();
 		} else {

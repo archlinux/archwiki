@@ -2,18 +2,21 @@
 
 @media screen {
 	@media ( min-width: @desktop-small-floor ) {
-		.ve-init-mw-desktopArticleTarget .CodeMirror {
+		.ve-init-mw-desktopArticleTarget .CodeMirror,
+		.ve-init-mw-desktopArticleTarget .cm-editor {
 			padding: 0 @content-padding;
 		}
 	}
 
 	@media ( max-width: @mobile-width ) {
-		.ve-init-mw-desktopArticleTarget .CodeMirror {
+		.ve-init-mw-desktopArticleTarget .CodeMirror,
+		.ve-init-mw-desktopArticleTarget .cm-editor {
 			padding: 0;
 		}
 	}
 
-	div.CodeMirror {
+	div.CodeMirror,
+	.cm-editor .cm-scroller {
 		font-family: @fonts-mono;
 	}
 }

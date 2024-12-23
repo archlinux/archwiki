@@ -21,7 +21,31 @@
  * @ingroup FileBackend
  */
 
+namespace Wikimedia\FileBackend;
+
+use InvalidArgumentException;
+use LockManager;
+use MapCacheLRU;
+use MediaWiki\Json\FormatJson;
+use Shellbox\Command\BoxedCommand;
+use StatusValue;
+use Traversable;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\FileBackend\FileIteration\FileBackendStoreShardDirIterator;
+use Wikimedia\FileBackend\FileIteration\FileBackendStoreShardFileIterator;
+use Wikimedia\FileBackend\FileOpHandle\FileBackendStoreOpHandle;
+use Wikimedia\FileBackend\FileOps\CopyFileOp;
+use Wikimedia\FileBackend\FileOps\CreateFileOp;
+use Wikimedia\FileBackend\FileOps\DeleteFileOp;
+use Wikimedia\FileBackend\FileOps\DescribeFileOp;
+use Wikimedia\FileBackend\FileOps\FileOp;
+use Wikimedia\FileBackend\FileOps\MoveFileOp;
+use Wikimedia\FileBackend\FileOps\NullFileOp;
+use Wikimedia\FileBackend\FileOps\StoreFileOp;
+use Wikimedia\FileBackend\FSFile\FSFile;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -54,7 +78,8 @@ abstract class FileBackendStore extends FileBackend {
 	/** @var callable|null Method to get the MIME type of files */
 	protected $mimeCallback;
 
-	protected $maxFileSize = 32 * 1024 * 1024 * 1024; // integer bytes (32GiB)
+	/** @var int Size in bytes, defaults to 32 GiB */
+	protected $maxFileSize = 32 * 1024 * 1024 * 1024;
 
 	protected const CACHE_TTL = 10; // integer; TTL in seconds for process cache entries
 	protected const CACHE_CHEAP_SIZE = 500; // integer; max entries in "cheap cache"
@@ -1027,6 +1052,22 @@ abstract class FileBackendStore extends FileBackend {
 		return self::TEMPURL_ERROR; // not supported
 	}
 
+	public function addShellboxInputFile( BoxedCommand $command, string $boxedName,
+		array $params
+	) {
+		$ref = $this->getLocalReference( [ 'src' => $params['src'] ] );
+		if ( $ref === false ) {
+			return $this->newStatus( 'backend-fail-notexists', $params['src'] );
+		} elseif ( $ref === null ) {
+			return $this->newStatus( 'backend-fail-read', $params['src'] );
+		} else {
+			$file = $command->newInputFileFromFile( $ref->getPath() )
+				->userData( __CLASS__, $ref );
+			$command->inputFile( $boxedName, $file );
+			return $this->newStatus();
+		}
+	}
+
 	final public function streamFile( array $params ) {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$ps = $this->scopedProfileSection( __METHOD__ . "-{$this->name}" );
@@ -1065,10 +1106,7 @@ abstract class FileBackendStore extends FileBackend {
 		if ( $fsFile ) {
 			$streamer = new HTTPFileStreamer(
 				$fsFile->getPath(),
-				[
-					'obResetFunc' => $this->obResetFunc,
-					'streamMimeFunc' => $this->streamMimeFunc
-				]
+				$this->getStreamerOptions()
 			);
 			$res = $streamer->stream( $params['headers'], true, $params['options'], $flags );
 		} else {
@@ -1465,7 +1503,7 @@ abstract class FileBackendStore extends FileBackend {
 		$this->primeFileCache( $paths );
 	}
 
-	final public function clearCache( array $paths = null ) {
+	final public function clearCache( ?array $paths = null ) {
 		if ( is_array( $paths ) ) {
 			$paths = array_map( [ FileBackend::class, 'normalizeStoragePath' ], $paths );
 			$paths = array_filter( $paths, 'strlen' ); // remove nulls
@@ -1490,7 +1528,7 @@ abstract class FileBackendStore extends FileBackend {
 	 *
 	 * @param string[]|null $paths Storage paths (optional)
 	 */
-	protected function doClearCache( array $paths = null ) {
+	protected function doClearCache( ?array $paths = null ) {
 	}
 
 	final public function preloadFileStat( array $params ) {
@@ -1720,7 +1758,7 @@ abstract class FileBackendStore extends FileBackend {
 		if ( $digits > 0 ) {
 			$numShards = $base ** $digits;
 			for ( $index = 0; $index < $numShards; $index++ ) {
-				$shards[] = '.' . Wikimedia\base_convert( (string)$index, 10, $base, $digits );
+				$shards[] = '.' . \Wikimedia\base_convert( (string)$index, 10, $base, $digits );
 			}
 		}
 
@@ -2032,3 +2070,6 @@ abstract class FileBackendStore extends FileBackend {
 		return $mime ?: 'unknown/unknown';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( FileBackendStore::class, 'FileBackendStore' );

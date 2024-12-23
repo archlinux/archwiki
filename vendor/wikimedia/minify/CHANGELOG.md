@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.8.0 (2014-08-20)
+
+Added:
+
+* JavaScriptMinifier: Add support for ES2020 `??` nullish operator (Hannah Okwelum) [T351610](https://phabricator.wikimedia.org/T351610)
+* JavaScriptMinifier: Add support for ES2016 `**=` operator (Timo Tijhof) [T277675](https://phabricator.wikimedia.org/T277675)
+* JavaScriptMinifier: Add optional `onError` callback to `minify()` (Timo Tijhof) [T357477](https://phabricator.wikimedia.org/T357477)
+* Cli: Append "onError" result to minify command output (Timo Tijhof)
+
+Changed:
+
+* Raise required PHP to >= 7.4.3 (Sam Reed)
+
+Fixed:
+
+* JavaScriptMinifier: Fix treatment of `yield` in expressions (Roan Kattouw) [T371938](https://phabricator.wikimedia.org/T371938)
+
 ## 2.7.0 (2023-11-14)
 
 * JavaScriptMinifier: Add basic ES2017 async-await syntax support (Hannah Okwelum)

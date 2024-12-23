@@ -2,6 +2,7 @@
 
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\Language;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\FauxRequest;
@@ -34,9 +35,9 @@ class SpecialPageExecutor {
 	public function executeSpecialPage(
 		SpecialPage $page,
 		$subPage = '',
-		WebRequest $request = null,
+		?WebRequest $request = null,
 		$language = null,
-		Authority $performer = null,
+		?Authority $performer = null,
 		$fullHtml = false
 	) {
 		$context = $this->newContext( $request, $language, $performer );
@@ -69,9 +70,9 @@ class SpecialPageExecutor {
 	 * @return DerivativeContext
 	 */
 	private function newContext(
-		WebRequest $request = null,
+		?WebRequest $request = null,
 		$language = null,
-		Authority $performer = null
+		?Authority $performer = null
 	) {
 		$context = new DerivativeContext( RequestContext::getMain() );
 

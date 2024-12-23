@@ -27,6 +27,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserIdentity;
 use RuntimeException;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Rdbms\RawSQLValue;
 
 /**
  * Handles increment the edit count for a given set of users
@@ -72,7 +73,7 @@ class UserEditCountUpdate implements DeferrableUpdate, MergeableUpdate {
 	public function doUpdate() {
 		$mwServices = MediaWikiServices::getInstance();
 		$lb = $mwServices->getDBLoadBalancer();
-		$dbw = $lb->getConnectionRef( DB_PRIMARY );
+		$dbw = $lb->getConnection( DB_PRIMARY );
 		$editTracker = $mwServices->getUserEditTracker();
 		$fname = __METHOD__;
 
@@ -80,15 +81,19 @@ class UserEditCountUpdate implements DeferrableUpdate, MergeableUpdate {
 			foreach ( $this->infoByUser as $userId => $info ) {
 				$dbw->newUpdateQueryBuilder()
 					->update( 'user' )
-					->set( [ 'user_editcount=user_editcount+' . (int)$info->getIncrement() ] )
-					->where( [ 'user_id' => $userId, 'user_editcount IS NOT NULL' ] )
+					->set( [
+						'user_editcount' => new RawSQLValue(
+							'user_editcount+' . (int)$info->getIncrement()
+						)
+					] )
+					->where( [ 'user_id' => $userId, $dbw->expr( 'user_editcount', '!=', null ) ] )
 					->caller( $fname )->execute();
 				// Lazy initialization check...
 				if ( $dbw->affectedRows() == 0 ) {
 					// The user_editcount is probably NULL (e.g. not initialized).
 					// Since this update runs after the new revisions were committed,
 					// wait for the replica DB to catch up so they will be counted.
-					$dbr = $lb->getConnectionRef( DB_REPLICA );
+					$dbr = $lb->getConnection( DB_REPLICA );
 					// If $dbr is actually the primary DB, then clearing the snapshot
 					// is harmless and waitForPrimaryPos() will just no-op.
 					$dbr->flushSnapshot( $fname );

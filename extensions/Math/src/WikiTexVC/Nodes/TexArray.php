@@ -4,16 +4,29 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
+use Generator;
 use InvalidArgumentException;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseMappings;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLParsingUtil;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLutil;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmstyle;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmsup;
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 
-class TexArray extends TexNode {
+/**
+ *
+ */
+class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
+	protected bool $curly = false;
+	private ?LengthSpec $rowSpecs = null;
+
+	public static function newCurly( ...$args ) {
+		$node = new self( ...$args );
+		$node->curly = true;
+		return $node;
+	}
 
 	public function __construct( ...$args ) {
 		$nargs = [];
@@ -116,9 +129,16 @@ class TexArray extends TexNode {
 		$tu = TexUtil::getInstance();
 
 		// Check whether the current node is a possible preceding literal
-		if ( !( $currentNode instanceof Literal
-			&& ( $tu->nullary_macro( trim( $currentNode->getArg() ) )
-			|| trim( $currentNode->getArg() ) == "\\lim" ) ) ) {
+		if ( !(
+		// logically superfluous brackets were inserted to improve readability
+		( $currentNode instanceof Literal &&
+				// Check if the current node is a nullary macro such as \iint, \sum, \prod, etc.
+				( $tu->nullary_macro( trim( $currentNode->getArg() ) )
+				// or a limit operator
+				|| ( trim( $currentNode->getArg() ) == "\\lim" ) ) ) ||
+		// or the special case of \operatorname
+		( $currentNode instanceof Fun1nb && $currentNode->getFname() == "\\operatorname" )
+		) ) {
 			return [ null, false ];
 		}
 
@@ -159,11 +179,13 @@ class TexArray extends TexNode {
 		$hasNamedFct = false;
 		if ( $currentNode instanceof TexArray && count( $currentNode->args ) == 2 ) {
 			$tu = TexUtil::getInstance();
-			$currentNodeContent = $currentNode->getArgs()[0];
+			$currentNodeContent = $currentNode[0];
 			if ( $currentNodeContent instanceof Literal &&
 				$tu->latex_function_names( $currentNodeContent->getArg() ) ) {
 				$hasNamedFct = true;
 			}
+		} elseif ( $currentNode instanceof Fun1nb && $currentNode->getFname() === '\\operatorname' ) {
+			$hasNamedFct = true;
 		}
 
 		// Check if there is a valid argument as next parameter
@@ -179,11 +201,31 @@ class TexArray extends TexNode {
 		return [ $hasNamedFct, $hasValidParameters ];
 	}
 
+	private function squashLiterals() {
+		$tmp = '';
+		foreach ( $this->args as $arg ) {
+			if ( !( $arg instanceof Literal ) ) {
+				return;
+			}
+			// Don't squash if there is a macro in the literal
+			if ( preg_match( "/[\\\\]/", $arg->getArg() ) ) {
+				return;
+			}
+			$tmp .= $arg->getArg();
+		}
+		$this->args = [ new Literal( $tmp ) ];
+		$this->curly = false;
+	}
+
 	public function renderMML( $arguments = [], $state = [] ) {
 		// Everything here is for parsing displaystyle, probably refactored to WikiTexVC grammar later
 		$fullRenderedArray = "";
 		$mmlStyles = [];
 		$currentColor = null;
+
+		if ( array_key_exists( 'squashLiterals', $state ) ) {
+			$this->squashLiterals();
+		}
 
 		for ( $i = 0, $count = count( $this->args ); $i < $count; $i++ ) {
 			$current = $this->args[$i];
@@ -246,10 +288,10 @@ class TexArray extends TexNode {
 
 			if ( $styleArguments ) {
 				$state["styleargs"] = $styleArguments;
-				if ( $next instanceof Curly ) {
+				$mmlStyle = new MMLmstyle( "", $styleArguments );
+				$fullRenderedArray .= $mmlStyle->getStart();
+				if ( $next instanceof TexNode && $next->isCurly() ) {
 					// Wrap with style-tags when the next element is a Curly which determines start and end tag.
-					$mmlStyle = new MMLmstyle( "", $styleArguments );
-					$fullRenderedArray .= $mmlStyle->getStart();
 					$fullRenderedArray .= $this->createMMLwithContext( $currentColor, $next, $state, $arguments );
 					$fullRenderedArray .= $mmlStyle->getEnd();
 					$mmlStyle = null;
@@ -257,8 +299,6 @@ class TexArray extends TexNode {
 					$i++;
 				} else {
 					// Start the style indicator in cases like \textstyle abc
-					$mmlStyle = new MMLmstyle( "", $styleArguments );
-					$fullRenderedArray .= $mmlStyle->getStart();
 					$mmlStyles[] = $mmlStyle->getEnd();
 
 				}
@@ -279,6 +319,10 @@ class TexArray extends TexNode {
 
 		foreach ( array_reverse( $mmlStyles ) as $mmlStyleEnd ) {
 			$fullRenderedArray .= $mmlStyleEnd;
+		}
+		if ( $this->curly && $this->getLength() > 1 ) {
+			$mmlRow = new MMLmrow();
+			return $mmlRow->encapsulateRaw( $fullRenderedArray );
 		}
 
 		return $fullRenderedArray;
@@ -340,7 +384,7 @@ class TexArray extends TexNode {
 		if ( isset( $this->args[0] ) && count( $this->args ) == 1 ) {
 			return $this->args[0]->inCurlies();
 		} else {
-			return '{' . $this->render() . '}';
+			return '{' . parent::render() . '}';
 		}
 	}
 
@@ -410,6 +454,7 @@ class TexArray extends TexNode {
 		self::checkInput( $elements );
 
 		array_push( $this->args, ...$elements );
+		return $this;
 	}
 
 	public function pop() {
@@ -417,29 +462,22 @@ class TexArray extends TexNode {
 	}
 
 	/**
-	 * @return TexNode|string|null first value
+	 * @return TexNode|null first value
 	 */
 	public function first() {
-		if ( isset( $this->args[0] ) ) {
-			return $this->args[0];
-		} else {
-			return null;
-		}
+		return $this->args[0] ?? null;
 	}
 
 	/**
-	 * @return TexNode|string|null second value
+	 * @return TexNode|null second value
 	 */
 	public function second() {
-		if ( isset( $this->args[1] ) ) {
-			return $this->args[1];
-		} else {
-			return null;
-		}
+		return $this->args[1] ?? null;
 	}
 
-	public function unshift( ...$elements ) {
+	public function unshift( ...$elements ): TexArray {
 		array_unshift( $this->args, ...$elements );
+		return $this;
 	}
 
 	/**
@@ -455,4 +493,60 @@ class TexArray extends TexNode {
 		}
 	}
 
+	public function render() {
+		if ( $this->curly ) {
+			return $this->inCurlies();
+		}
+		return parent::render();
+	}
+
+	public function isCurly(): bool {
+		return $this->curly;
+	}
+
+	public function setCurly( $curly = true ): TexArray {
+		$this->curly = $curly;
+		return $this;
+	}
+
+	/**
+	 * @return Generator<TexNode>
+	 */
+	public function getIterator(): Generator {
+		yield from $this->args;
+	}
+
+	/**
+	 * @return TexNode[]
+	 */
+	public function getArgs(): array {
+		return parent::getArgs();
+	}
+
+	public function offsetExists( $offset ): bool {
+		return isset( $this->args[$offset] );
+	}
+
+	public function offsetGet( $offset ): ?TexNode {
+		return $this->args[$offset] ?? null;
+	}
+
+	public function offsetSet( $offset, $value ): void {
+		if ( !( $value instanceof TexNode ) ) {
+			throw new InvalidArgumentException( 'TexArray elements must be of type TexNode.' );
+		}
+		$this->args[$offset] = $value;
+	}
+
+	public function offsetUnset( $offset ): void {
+		unset( $this->args[$offset] );
+	}
+
+	public function setRowSpecs( ?LengthSpec $r ) {
+		$this->rowSpecs = $r;
+	}
+
+	public function getRowSpecs(): ?LengthSpec {
+		return $this->rowSpecs;
+	}
 }

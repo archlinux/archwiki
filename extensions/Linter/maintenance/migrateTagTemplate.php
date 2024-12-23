@@ -1,12 +1,15 @@
 <?php
 
+namespace MediaWiki\Linter\Maintenance;
+
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
+
 /**
  * Maintenance script that migrates the linter_params field value to the new tag and template fields
- * note: This should be run once the tag and template write functionality in linter
- *   recordLintJob has been enabled by setting LinterWriteTagAndTemplateColumnsStage true.
+ * Note: The schema migration "patch-linter-add-template-tag-fields.json" is expected to have been done.
+ * The extension now populates these new fields by default. This script will migrate any data
+ * in existing records to the new fields.
  */
-
-use MediaWiki\Linter\Database;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
@@ -39,19 +42,12 @@ class MigrateTagTemplate extends LoggedUpdateMaintenance {
 	 * @inheritDoc
 	 */
 	protected function doDBUpdates() {
-		$config = $this->getConfig();
-		$enableMigrateTagAndTemplateStage = $config->get( 'LinterWriteTagAndTemplateColumnsStage' );
-		if ( !$enableMigrateTagAndTemplateStage ) {
-			$this->output( "LinterWriteTagAndTemplateColumnsStage config value is false, code disabled\n" );
-			return false;
-		}
-
 		$this->output( "Running linter migrate linter_params to tag and template function, this may take a while\n" );
 
 		$batchSize = $this->getBatchSize();
 		$sleep = (int)$this->getOption( 'sleep', 1 );
 
-		$dbw = self::getDB( DB_PRIMARY );
+		$dbw = $this->getDB( DB_PRIMARY );
 		if ( !$dbw->fieldExists( 'linter', 'linter_template', __METHOD__ ) ) {
 			$this->output( "Run update.php to add linter_tag and linter_template fields to the linter table.\n" );
 			return false;
@@ -59,7 +55,8 @@ class MigrateTagTemplate extends LoggedUpdateMaintenance {
 
 		$this->output( "Migrating the linter_params field to the linter_tag and linter_template fields...\n" );
 
-		$updated = Database::migrateTemplateAndTagInfo( $batchSize, $sleep, false );
+		$database = $this->getServiceContainer()->get( 'Linter.Database' );
+		$updated = $database->migrateTemplateAndTagInfo( $batchSize, $sleep );
 
 		$this->output(
 			"Completed migration of linter_params data in the linter table, $updated rows updated.\n"

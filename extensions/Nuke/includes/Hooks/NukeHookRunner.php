@@ -11,12 +11,8 @@ use MediaWiki\Title\Title;
  */
 class NukeHookRunner implements NukeDeletePageHook, NukeGetNewPagesHook {
 
-	/** @var HookContainer */
-	private $hookContainer;
+	private HookContainer $hookContainer;
 
-	/**
-	 * @param HookContainer $hookContainer
-	 */
 	public function __construct( HookContainer $hookContainer ) {
 		$this->hookContainer = $hookContainer;
 	}

@@ -14,6 +14,7 @@ use MediaWiki\User\User;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Test class for ChangesListSpecialPage class
@@ -68,7 +69,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 	private function buildQuery(
 		array $requestOptions,
-		User $user = null
+		?User $user = null
 	): array {
 		$context = new RequestContext;
 		$context->setRequest( new FauxRequest( $requestOptions ) );
@@ -121,7 +122,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		array $expected,
 		array $requestOptions,
 		string $message,
-		User $user = null
+		?User $user = null
 	) {
 		$queryConditions = $this->buildQuery( $requestOptions, $user );
 
@@ -254,7 +255,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$namespaces = $this->getServiceContainer()->getNamespaceInfo()->getSubjectNamespaces();
 		$this->assertConditions(
 			[ # expected
-				'rc_namespace IN (' . $this->db->makeList( $namespaces ) . ')',
+				'rc_namespace IN (' . $this->getDb()->makeList( $namespaces ) . ')',
 			],
 			[
 				'namespace' => 'all-contents',
@@ -282,7 +283,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		sort( $namespaces );
 		$this->assertConditions(
 			[ # expected
-				'rc_namespace IN (' . $this->db->makeList( $namespaces ) . ')',
+				'rc_namespace IN (' . $this->getDb()->makeList( $namespaces ) . ')',
 			],
 			[
 				'namespace' => 'all-contents;1;invalid',
@@ -293,10 +294,9 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 
 	public function testRcHidemyselfFilter() {
 		$user = $this->getTestUser()->getUser();
-		$encName = $this->db->addQuotes( $user->getName() );
 		$this->assertConditions(
 			[ # expected
-				"actor_name<>$encName",
+				$this->getDb()->expr( 'actor_name', '!=', $user->getName() ),
 			],
 			[
 				'hidemyself' => 1,
@@ -308,7 +308,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$user = User::newFromName( '10.11.12.13', false );
 		$this->assertConditions(
 			[ # expected
-				"actor_name<>'10.11.12.13'",
+				"actor_name != '10.11.12.13'",
 			],
 			[
 				'hidemyself' => 1,
@@ -476,7 +476,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	public function testRcHideminorFilter() {
 		$this->assertConditions(
 			[ # expected
-				"rc_minor = 0",
+				'rc_minor = 0',
 			],
 			[
 				'hideminor' => 1,
@@ -488,7 +488,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	public function testRcHidemajorFilter() {
 		$this->assertConditions(
 			[ # expected
-				"rc_minor = 1",
+				'rc_minor = 1',
 			],
 			[
 				'hidemajor' => 1,
@@ -517,9 +517,41 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	}
 
 	/** @see TempUserTestTrait::disableAutoCreateTempUser */
-	protected function disableAutoCreateTempUser( ?string $reservedPattern = null ): void {
-		$this->_disableAutoCreateTempUser( $reservedPattern );
+	protected function disableAutoCreateTempUser( array $configOverrides = [] ): void {
+		$this->_disableAutoCreateTempUser( $configOverrides );
 		$this->changesListSpecialPage->setTempUserConfig( $this->getServiceContainer()->getTempUserConfig() );
+	}
+
+	public function testRegistrationHideliu() {
+		$this->enableAutoCreateTempUser();
+		$tempUserMatchPattern = $this->getServiceContainer()->getTempUserConfig()
+			->getMatchCondition( $this->getDb(), 'actor_name', IExpression::LIKE )
+			->toSql( $this->getDb() );
+		$this->assertConditions(
+			[
+				"((actor_user IS NULL OR $tempUserMatchPattern))",
+			],
+			[
+				'hideliu' => 1,
+			],
+			"rc conditions: hideliu=1"
+		);
+	}
+
+	public function testRegistrationHideanons() {
+		$this->enableAutoCreateTempUser();
+		$tempUserMatchPattern = $this->getServiceContainer()->getTempUserConfig()
+			->getMatchCondition( $this->getDb(), 'actor_name', IExpression::NOT_LIKE )
+			->toSql( $this->getDb() );
+		$this->assertConditions(
+			[
+				"((actor_user IS NOT NULL AND $tempUserMatchPattern))",
+			],
+			[
+				'hideanons' => 1,
+			],
+			"rc conditions: hideanons=1"
+		);
 	}
 
 	public function testFilterUserExpLevelAll() {
@@ -563,7 +595,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$this->assertConditions(
 			[
 				# expected
-				'((actor_user IS NOT NULL))',
+				'(actor_user IS NOT NULL)',
 			],
 			[
 				'userExpLevel' => 'newcomer;learner;experienced',
@@ -577,7 +609,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$this->assertConditions(
 			[
 				# expected
-				'((actor_user IS NOT NULL))',
+				'(actor_user IS NOT NULL)',
 			],
 			[
 				'userExpLevel' => 'registered',
@@ -594,7 +626,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$this->assertConditions(
 			[
 				# expected
-				"(((actor_user IS NOT NULL AND $tempUserMatchPattern)))",
+				"((actor_user IS NOT NULL AND $tempUserMatchPattern))",
 			],
 			[
 				'userExpLevel' => 'registered',
@@ -608,7 +640,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$this->assertConditions(
 			[
 				# expected
-				'((actor_user IS NULL))'
+				'(actor_user IS NULL)'
 			],
 			[
 				'userExpLevel' => 'unregistered',
@@ -625,7 +657,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$this->assertConditions(
 			[
 				# expected
-				"(((actor_user IS NULL OR $tempUserMatchPattern)))",
+				"((actor_user IS NULL OR $tempUserMatchPattern))",
 			],
 			[
 				'userExpLevel' => 'unregistered',
@@ -639,7 +671,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		$this->assertConditions(
 			[
 				# expected
-				'((actor_user IS NOT NULL))',
+				'(actor_user IS NOT NULL)',
 			],
 			[
 				'userExpLevel' => 'registered;learner',
@@ -648,38 +680,87 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 		);
 	}
 
+	public function testFilterUserExpLevelLearner() {
+		$this->disableAutoCreateTempUser();
+		ConvertibleTimestamp::setFakeTime( '20201231000000' );
+		$this->assertConditions(
+			[
+				# expected
+				"((actor_user IS NOT NULL AND "
+				. "(user_editcount >= 10 AND (user_registration IS NULL OR user_registration <= '{$this->getDb()->timestamp( '20201227000000' )}')) AND "
+				. "(user_editcount < 500 OR user_registration > '{$this->getDb()->timestamp( '20201201000000' )}')"
+				. "))"
+			],
+			[
+				'userExpLevel' => 'learner'
+			],
+			"rc conditions: userExpLevel=learner"
+		);
+	}
+
+	public function testFilterUserExpLevelLearnerWhenTemporaryAccountsEnabled() {
+		$this->enableAutoCreateTempUser();
+		ConvertibleTimestamp::setFakeTime( '20201231000000' );
+
+		$notLikeTempUserMatchExpression = $this->getServiceContainer()->getTempUserConfig()
+			->getMatchCondition( $this->getDb(), 'actor_name', IExpression::NOT_LIKE )
+			->toSql( $this->getDb() );
+
+		$this->assertConditions(
+			[
+				# expected
+				"(((actor_user IS NOT NULL AND $notLikeTempUserMatchExpression) AND "
+				. "(user_editcount >= 10 AND (user_registration IS NULL OR user_registration <= '{$this->getDb()->timestamp( '20201227000000' )}')) AND "
+				. "(user_editcount < 500 OR user_registration > '{$this->getDb()->timestamp( '20201201000000' )}')"
+				. "))"
+			],
+			[
+				'userExpLevel' => 'learner'
+			],
+			"rc conditions: userExpLevel=learner"
+		);
+	}
+
 	public function testFilterUserExpLevelUnregisteredOrExperienced() {
 		$this->disableAutoCreateTempUser();
-		$conds = $this->buildQuery( [ 'userExpLevel' => 'unregistered;experienced' ] );
-		$this->assertMatchesRegularExpression(
-			'/\(\(actor_user IS NULL\)\) OR '
-				. '\(\(actor_user IS NOT NULL\) AND \(\('
-					. 'user_editcount >= 500 AND \(user_registration IS NULL OR '
-					. 'user_registration <= \'[^\']+\'\)'
-				. '\)\)\)/',
-			reset( $conds ),
+		ConvertibleTimestamp::setFakeTime( '20201231000000' );
+		$this->assertConditions(
+			[
+				# expected
+				"(actor_user IS NULL OR "
+				. "(actor_user IS NOT NULL AND "
+					. "(user_editcount >= 500 AND (user_registration IS NULL OR user_registration <= '{$this->getDb()->timestamp( '20201201000000' )}'))"
+				. "))"
+			],
+			[
+				'userExpLevel' => 'unregistered;experienced'
+			],
 			"rc conditions: userExpLevel=unregistered;experienced"
 		);
 	}
 
 	public function testFilterUserExpLevelUnregisteredOrExperiencedWhenTemporaryAccountsEnabled() {
 		$this->enableAutoCreateTempUser();
-		$conds = $this->buildQuery( [ 'userExpLevel' => 'unregistered;experienced' ] );
+		ConvertibleTimestamp::setFakeTime( '20201231000000' );
+
 		$notLikeTempUserMatchExpression = $this->getServiceContainer()->getTempUserConfig()
 			->getMatchCondition( $this->getDb(), 'actor_name', IExpression::NOT_LIKE )
 			->toSql( $this->getDb() );
-		$notLikeTempUserMatchExpression = preg_quote( $notLikeTempUserMatchExpression );
 		$likeTempUserMatchExpression = $this->getServiceContainer()->getTempUserConfig()
 			->getMatchCondition( $this->getDb(), 'actor_name', IExpression::LIKE )
 			->toSql( $this->getDb() );
-		$likeTempUserMatchExpression = preg_quote( $likeTempUserMatchExpression );
-		$this->assertMatchesRegularExpression(
-			"/\(\(\(actor_user IS NULL OR $likeTempUserMatchExpression\)\)\) OR "
-				. "\(\(\(actor_user IS NOT NULL AND $notLikeTempUserMatchExpression\)\) AND \(\("
-					. 'user_editcount >= 500 AND \(user_registration IS NULL OR '
-					. 'user_registration <= \'[^\']+\'\)'
-				. '\)\)\)/',
-			reset( $conds ),
+
+		$this->assertConditions(
+			[
+				# expected
+				"((actor_user IS NULL OR $likeTempUserMatchExpression) OR "
+				. "((actor_user IS NOT NULL AND $notLikeTempUserMatchExpression) AND "
+					. "(user_editcount >= 500 AND (user_registration IS NULL OR user_registration <= '{$this->getDb()->timestamp( '20201201000000' )}'))"
+				. "))"
+			],
+			[
+				'userExpLevel' => 'unregistered;experienced'
+			],
 			"rc conditions: userExpLevel=unregistered;experienced"
 		);
 	}

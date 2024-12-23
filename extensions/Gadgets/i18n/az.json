@@ -3,12 +3,12 @@
 		"authors": [
 			"Cekli829",
 			"NMW03",
+			"Nemoralis",
 			"PPerviz",
 			"Toghrul Rahimli",
 			"Vago",
 			"Vugar 1981",
-			"Wertuose",
-			"Nemoralis"
+			"Wertuose"
 		]
 	},
 	"gadgets-desc": "İstifadəçilərə [[Special:Preferences#mw-prefsection-gadgets|nizamlamalarda ]] özəl [[Special:Gadgets|CSS və JavaScript qadcetlərini]] seçməyə imkan verir.",
@@ -46,7 +46,7 @@
 	"gadgets-export-download": "Yüklə",
 	"gadgets-requires-es6": "Bu qadcet yalnız ES6 olan brauzerlərdə dəstəklənir",
 	"gadgets-validate-notset": "<code>$1</code> parametri təyin olunmayıb.",
-	"gadgets-validate-wrongtype": "<code>$1</code> parametrinin tipi <code>$3</code> yox <code>$2</code> olmalıdır.",
+	"gadgets-validate-wrongtype": "<code>$1</code> parametrinin tipi <code>$2</code> olmalıdır.",
 	"gadgets-validate-json": "JSON faylları göstərilib, lakin istifadə edilmir. Onlar yalnız paketləşdirilmiş qadcetlərdə etibarlıdır.",
 	"gadgets-validate-es6default": "ES6 tələb edən qadcetlər defolt olaraq aktiv edilə bilməz.",
 	"gadgets-validate-noentrypoint": "Heç bir skript faylı göstərilmədiyi üçün paket bayrağı nəzərə alınmadı.",

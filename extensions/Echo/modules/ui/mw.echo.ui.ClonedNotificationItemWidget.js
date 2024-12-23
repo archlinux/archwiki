@@ -10,10 +10,10 @@
 	 * @constructor
 	 * @param {jQuery} $element A clone of an mw.echo.ui.NotificationItemWidget's $element
 	 * @param {Object} [config] Configuration options
-	 * @cfg {string} [timestamp] The timestamp for this cloned widget, in UTC and ISO 8601 format
-	 * @cfg {boolean} [read=false] The read state for this cloned widget
-	 * @cfg {boolean} [foreign=false] The foreignness state of this cloned widget
-	 * @cfg {number} [id] The id for this cloned widget
+	 * @param {string} [config.timestamp] The timestamp for this cloned widget, in UTC and ISO 8601 format
+	 * @param {boolean} [config.read=false] The read state for this cloned widget
+	 * @param {boolean} [config.foreign=false] The foreignness state of this cloned widget
+	 * @param {number} [config.id] The id for this cloned widget
 	 */
 	mw.echo.ui.ClonedNotificationItemWidget = function MwEchoUiClonedNotificationItemWidget( $element, config ) {
 		config = config || {};

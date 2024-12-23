@@ -214,19 +214,23 @@ class SiteLibrary extends LibraryBase {
 			// Not expensive because we can have a max of three cache misses in the
 			// entire page parse.
 			$interwikiMap = [];
-			$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();
+
+			$services = MediaWikiServices::getInstance();
+			$lookup = $services->getInterwikiLookup();
+			$config = $services->getMainConfig();
+			$urlUtils = $services->getUrlUtils();
+
 			$prefixes = $lookup->getAllPrefixes( $local );
-			$config = MediaWikiServices::getInstance()->getMainConfig();
 			$localInterwikis = $config->get( MainConfigNames::LocalInterwikis );
 			$extraInterlanguageLinkPrefixes = $config->get( MainConfigNames::ExtraInterlanguageLinkPrefixes );
 			foreach ( $prefixes as $row ) {
 				$prefix = $row['iw_prefix'];
 				$val = [
 					'prefix' => $prefix,
-					'url' => wfExpandUrl( $row['iw_url'], PROTO_RELATIVE ),
-					'isProtocolRelative' => substr( $row['iw_url'], 0, 2 ) === '//',
-					'isLocal' => isset( $row['iw_local'] ) && $row['iw_local'] == '1',
-					'isTranscludable' => isset( $row['iw_trans'] ) && $row['iw_trans'] == '1',
+					'url' => $urlUtils->expand( $row['iw_url'], PROTO_RELATIVE ) ?? false,
+					'isProtocolRelative' => str_starts_with( $row['iw_url'], '//' ),
+					'isLocal' => (bool)( $row['iw_local'] ?? false ),
+					'isTranscludable' => (bool)( $row['iw_trans'] ?? false ),
 					'isCurrentWiki' => in_array( $prefix, $localInterwikis ),
 					'isExtraLanguageLink' => in_array( $prefix, $extraInterlanguageLinkPrefixes ),
 				];

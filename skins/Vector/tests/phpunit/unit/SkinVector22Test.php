@@ -5,8 +5,6 @@ use MediaWiki\Skins\Vector\SkinVector22;
 use ReflectionMethod;
 
 /**
- * Class VectorTemplateTest
- * @package MediaWiki\Skins\Vector\Tests\Unit
  * @coversDefaultClass \MediaWiki\Skins\Vector\SkinVector22
  * @group Vector
  * @group Skins

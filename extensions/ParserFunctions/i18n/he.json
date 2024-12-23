@@ -9,6 +9,7 @@
 	"pfunc_time_too_long": "שגיאה: יותר מדי קריאות ל#זמן.",
 	"pfunc_time_too_big": "שגיאה: #זמן תומכת רק בשנים עד 9999.",
 	"pfunc_time_too_small": "שגיאה: הפונקציה #time תומכת רק בשנים מ־0.",
+	"pfunc_timef_bad_format": "שגיאה: תסדיר שגוי עבור #timef",
 	"pfunc_rel2abs_invalid_depth": "שגיאה: עומק שגוי בנתיב: \"$1\" (ניסיון כניסה לצומת מעל צומת השורש)",
 	"pfunc_expr_stack_exhausted": "שגיאה בביטוי: המחסנית מלאה",
 	"pfunc_expr_unexpected_number": "שגיאה בביטוי: מספר בלתי צפוי",

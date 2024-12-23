@@ -2,8 +2,9 @@
 
 namespace MediaWiki\Tests;
 
-use HashBagOStuff;
 use MediaWiki\Logger\LoggerFactory;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
@@ -28,6 +29,7 @@ use Wikimedia\Rdbms\TransactionProfiler;
  * @since 1.42
  */
 class MockDatabase extends Database {
+	/** @var int */
 	private $nextInsertId = 0;
 
 	public function __construct( $options = [] ) {
@@ -52,7 +54,7 @@ class MockDatabase extends Database {
 		$this->replicationReporter = new ReplicationReporter(
 			$options['topologyRole'] ?? IDatabase::ROLE_STREAMING_MASTER,
 			$logger,
-			$options['srvCache'] ?? new \WANObjectCache( [
+			$options['srvCache'] ?? new WANObjectCache( [
 				'cache' => new HashBagOStuff(),
 				'logger' => $logger,
 			] )

@@ -21,5 +21,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Kodlaşdırma fraqmenti",
 	"syntaxhighlight-error-pygments-invocation-failure": "Pygments-i işə salmaq alınmadı",
 	"syntaxhighlight-error-unknown-language": "Naməlum \"$1\" dili",
-	"syntaxhighlight-error-exceeds-size-limit": "$1 {{PLURAL:$1|bayt}} olan cari kod ölçüsü maksimum limit olan $2 {{PLURAL:$2|bayt}}ı keçir"
+	"syntaxhighlight-error-exceeds-size-limit": "$1 {{PLURAL:$1|bayt}} olan cari kod ölçüsü maksimum limit olan $2 {{PLURAL:$2|bayt}}ı keçir",
+	"syntaxhighlight-button-copy": "Kopyala",
+	"syntaxhighlight-button-copied": "Kopyalandı!"
 }

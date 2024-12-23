@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\LogFormatter;
 
 use LogFormatter;
-use Message;
+use MediaWiki\Message\Message;
 
 class AbuseFilterBlockedDomainHitLogFormatter extends LogFormatter {
 	/**

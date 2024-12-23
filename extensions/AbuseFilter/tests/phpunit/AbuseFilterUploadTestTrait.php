@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Api\RandomImageGenerator;
 use MediaWiki\User\User;
 
 /**
@@ -11,7 +13,7 @@ use MediaWiki\User\User;
  * @todo This might be moved to MediaWikiIntegrationTestCase
  *
  * @method string getNewTempDirectory()
- * @method setMwGlobals($pairs)
+ * @method overrideConfigValue( string $key, $value )
  */
 trait AbuseFilterUploadTestTrait {
 	/**
@@ -42,7 +44,7 @@ trait AbuseFilterUploadTestTrait {
 	protected function doUpload( User $user, string $fileName, string $pageText, string $summary ): array {
 		global $wgFileExtensions;
 
-		$this->setMwGlobals( [ 'wgFileExtensions' => array_merge( $wgFileExtensions, [ 'svg' ] ) ] );
+		$this->overrideConfigValue( MainConfigNames::FileExtensions, [ ...$wgFileExtensions, 'svg' ] );
 		$imgGen = new RandomImageGenerator();
 		// Use SVG, since the ImageGenerator doesn't need anything special to create it
 		$format = 'svg';

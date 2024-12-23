@@ -33,16 +33,16 @@ ve.dm.MWDefaultSortMetaItem.static.matchTagNames = [ 'span' ];
 ve.dm.MWDefaultSortMetaItem.static.matchRdfaTypes = [ 'mw:Transclusion' ];
 
 ve.dm.MWDefaultSortMetaItem.static.matchFunction = function ( domElement ) {
-	var mwDataJSON = domElement.getAttribute( 'data-mw' ),
+	const mwDataJSON = domElement.getAttribute( 'data-mw' ),
 		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
 	return ve.getProp( mwData, 'parts', '0', 'template', 'target', 'function' ) === 'defaultsort';
 };
 
 ve.dm.MWDefaultSortMetaItem.static.toDataElement = function ( domElements ) {
-	var mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+	const mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {},
-		input = ve.getProp( mwData, 'parts', '0', 'template', 'target', 'wt' ),
-		prefix, sortKey;
+		input = ve.getProp( mwData, 'parts', '0', 'template', 'target', 'wt' );
+	let prefix, sortKey;
 	if ( input ) {
 		prefix = input.split( ':' )[ 0 ];
 		sortKey = input.slice( prefix.length + 1 );
@@ -57,7 +57,7 @@ ve.dm.MWDefaultSortMetaItem.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.MWDefaultSortMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	var prefix = dataElement.attributes.prefix ||
+	const prefix = dataElement.attributes.prefix ||
 			mw.config.get( 'wgVisualEditorConfig' ).defaultSortPrefix,
 		sortKey = dataElement.attributes.sortkey || '',
 		mwData = {
@@ -73,7 +73,7 @@ ve.dm.MWDefaultSortMetaItem.static.toDomElements = function ( dataElement, doc )
 			]
 		};
 
-	var span = doc.createElement( 'span' );
+	const span = doc.createElement( 'span' );
 	span.setAttribute( 'typeof', 'mw:Transclusion' );
 	span.setAttribute( 'data-mw', JSON.stringify( mwData ) );
 	return [ span ];

@@ -7,9 +7,9 @@
 	}
 }
 
-@media screen and ( min-width: @width-breakpoint-tablet ) {
+@media screen and ( min-width: @max-width-content-tablet ) {
 	.empty-page {
-		max-width: @max-width-content-tablet + 2 * @width-icon-gutter;
+		max-width: calc( @max-width-content-tablet + ( 2 * @width-icon-gutter ) );
 		margin-left: auto;
 		margin-right: auto;
 	}

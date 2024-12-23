@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Amire80"
+		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "Preslovljavanje je onemogućeno",
 	"visualeditor-mwlanguagevariant-filter": "Varijante su filtrirane na $1",
@@ -12,7 +14,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Ovo je skriveno pravilo.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Ovo pravilo utiče na naslov stranice.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Jezički kod",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<nevažeće>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Nevažeći</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Jezik",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Izvor",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Odredište",

@@ -21,11 +21,16 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Password\LayeredParameterizedPassword;
+use MediaWiki\Password\ParameterizedPassword;
 use MediaWiki\User\User;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to wrap all passwords of a certain type in a specified layered
@@ -124,11 +129,12 @@ class WrapOldPasswords extends Maintenance {
 				$count++;
 				if ( $update ) {
 					$updateUsers[] = $user;
-					$dbw->update( 'user',
-						[ 'user_password' => $layeredPassword->toString() ],
-						[ 'user_id' => $row->user_id ],
-						__METHOD__
-					);
+					$dbw->newUpdateQueryBuilder()
+						->update( 'user' )
+						->set( [ 'user_password' => $layeredPassword->toString() ] )
+						->where( [ 'user_id' => $row->user_id ] )
+						->caller( __METHOD__ )
+						->execute();
 				}
 
 				$minUserId = $row->user_id;
@@ -162,5 +168,7 @@ class WrapOldPasswords extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = WrapOldPasswords::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

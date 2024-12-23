@@ -8,8 +8,8 @@ QUnit.module( 've.ui.DiffElement' );
 
 /* Tests */
 
-QUnit.test( 'Diffing', function ( assert ) {
-	var spacer = '<div class="ve-ui-diffElement-spacer">⋮</div>',
+QUnit.test( 'Diffing', ( assert ) => {
+	const spacer = '<div class="ve-ui-diffElement-spacer">⋮</div>',
 		listSpacer = '<li data-diff-list-spacer><p data-diff-action="none">…</p></li>',
 		listSpacerOpen = listSpacer.slice( 0, -5 ),
 		noChanges = '<div class="ve-ui-diffElement-no-changes">' + ve.msg( 'visualeditor-diff-no-changes' ) + '</div>',
@@ -1917,7 +1917,7 @@ QUnit.test( 'Diffing', function ( assert ) {
 	};
 	MetaItem.static.toDomElements = function ( dataElement, doc, converter ) {
 		if ( converter.isForPreview() ) {
-			var domElement = doc.createElement( 'div' );
+			const domElement = doc.createElement( 'div' );
 			domElement.appendChild( doc.createTextNode( dataElement.attributes.value ) );
 			return [ domElement ];
 		} else {
@@ -1929,14 +1929,14 @@ QUnit.test( 'Diffing', function ( assert ) {
 
 	ve.dm.modelRegistry.register( MetaItem );
 	ve.dm.modelRegistry.register( InlineWidgetNode );
-	ve.ui.metaListDiffRegistry.register( 'test', function ( diffElement, diffQueue, documentNode, documentSpacerNode ) {
+	ve.ui.metaListDiffRegistry.register( 'test', ( diffElement, diffQueue, documentNode, documentSpacerNode ) => {
 		diffElement.renderQueue(
 			diffElement.processQueue( diffQueue ),
 			documentNode, documentSpacerNode
 		);
 	} );
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runDiffElementTest( assert, caseItem );
 	} );
 
@@ -1945,8 +1945,8 @@ QUnit.test( 'Diffing', function ( assert ) {
 	ve.ui.metaListDiffRegistry.unregister( 'test' );
 } );
 
-QUnit.test( 'compareAttributes/describeChanges', function ( assert ) {
-	var cases = [
+QUnit.test( 'compareAttributes/describeChanges', ( assert ) => {
+	const cases = [
 		{
 			msg: 'LinkAnnotation: Random attribute test (fallback)',
 			type: 'link',
@@ -2003,12 +2003,12 @@ QUnit.test( 'compareAttributes/describeChanges', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
-		var attributeChanges = ve.ui.DiffElement.static.compareAttributes( caseItem.before, caseItem.after );
-		var changes = ve.dm.modelRegistry.lookup( caseItem.type ).static.describeChanges(
+	cases.forEach( ( caseItem ) => {
+		const attributeChanges = ve.ui.DiffElement.static.compareAttributes( caseItem.before, caseItem.after );
+		const changes = ve.dm.modelRegistry.lookup( caseItem.type ).static.describeChanges(
 			attributeChanges, caseItem.after, { type: caseItem.type, attributes: caseItem.after }
 		);
-		changes.forEach( function ( change, j ) {
+		changes.forEach( ( change, j ) => {
 			assert.deepEqualWithDomElements(
 				change,
 				$.parseHTML( caseItem.expected[ j ] ),

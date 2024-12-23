@@ -18,10 +18,10 @@
 			"Luis Felipe Schenone",
 			"Macofe",
 			"Muro de Aguas",
+			"No se",
 			"Pertile",
 			"Sanbec",
-			"Sophivorus",
-			"No se"
+			"Sophivorus"
 		]
 	},
 	"captcha-edit": "Para editar esta página, realiza la siguiente tarea y escribe el resultado en la casilla ([[Special:Captcha/help|más información]]):",
@@ -51,5 +51,6 @@
 	"confirmedit-preview-validity": "Validez",
 	"confirmedit-preview-valid": "válida",
 	"confirmedit-preview-invalid": "no válida",
-	"confirmedit-preview-description": "La tabla siguiente muestra la lista de renglones de esta página y si cada dirección IP o intervalo de direcciones IP tiene validez. Si un elemento es válido, se añadirá a la lista blanca del CAPTCHA; los elementos no válidos se pasarán por alto. Un ejemplo de intervalo de direcciones IP válido es: 69.208.0.0/16, que abarca desde 69.208.0.0 hasta 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Más información] sobre el cálculo de intervalos de direcciones IP."
+	"confirmedit-preview-description": "La tabla siguiente muestra la lista de renglones de esta página y si cada dirección IP o intervalo de direcciones IP tiene validez. Si un elemento es válido, se añadirá a la lista blanca del CAPTCHA; los elementos no válidos se pasarán por alto. Un ejemplo de intervalo de direcciones IP válido es: 69.208.0.0/16, que abarca desde 69.208.0.0 hasta 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Más información] sobre el cálculo de intervalos de direcciones IP.",
+	"abusefilter-edit-action-showcaptcha": "Requerir que el usuario complete un CAPTCHA para poder continuar con la acción. Los usuarios con permiso para omitir un CAPTCHA están exentos."
 }

@@ -6,7 +6,7 @@
  */
 
 /**
- * DataModel hidden category meta item (for __HIDDENCAT__).
+ * DataModel hidden category meta item (for `__HIDDENCAT__`).
  *
  * @class
  * @extends ve.dm.MetaItem
@@ -37,7 +37,7 @@ ve.dm.MWHiddenCategoryMetaItem.static.toDataElement = function () {
 };
 
 ve.dm.MWHiddenCategoryMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	var meta = doc.createElement( 'meta' );
+	const meta = doc.createElement( 'meta' );
 	meta.setAttribute( 'property', 'mw:PageProp/hiddencat' );
 	return [ meta ];
 };

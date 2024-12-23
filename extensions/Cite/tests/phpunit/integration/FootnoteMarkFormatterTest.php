@@ -8,8 +8,8 @@ use Cite\ErrorReporter;
 use Cite\FootnoteMarkFormatter;
 use Cite\ReferenceMessageLocalizer;
 use Cite\Tests\TestUtils;
-use Message;
-use Parser;
+use MediaWiki\Message\Message;
+use MediaWiki\Parser\Parser;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -21,7 +21,7 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideLinkRef
 	 */
-	public function testLinkRef( string $group, array $ref, string $expectedOutput ) {
+	public function testLinkRef( array $ref, string $expectedOutput ) {
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'plain' )->willReturnCallback(
 			static fn ( $parser, ...$args ) => implode( '|', $args )
@@ -55,43 +55,43 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 		);
 
 		$ref = TestUtils::refFromArray( $ref );
-		$output = $formatter->linkRef( $mockParser, $group, $ref );
+		$output = $formatter->linkRef( $mockParser, $ref );
 		$this->assertSame( $expectedOutput, $output );
 	}
 
 	public static function provideLinkRef() {
 		return [
 			'Default label' => [
-				'',
 				[
 					'name' => null,
+					'group' => '',
 					'number' => 50003,
 					'key' => 50004,
 				],
 				'(cite_reference_link|50004+|50004|50003)'
 			],
 			'Default label, named group' => [
-				'bar',
 				[
 					'name' => null,
+					'group' => 'bar',
 					'number' => 3,
 					'key' => 4,
 				],
 				'(cite_reference_link|4+|4|bar 3)'
 			],
 			'Custom label' => [
-				'foo',
 				[
 					'name' => null,
+					'group' => 'foo',
 					'number' => 3,
 					'key' => 4,
 				],
 				'(cite_reference_link|4+|4|c)'
 			],
 			'Custom label overrun' => [
-				'foo',
 				[
 					'name' => null,
+					'group' => 'foo',
 					'number' => 10,
 					'key' => 4,
 				],
@@ -99,9 +99,9 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 					'cite_error_no_link_label_group&#124;foo&#124;cite_link_label_group-foo)'
 			],
 			'Named ref' => [
-				'',
 				[
 					'name' => 'a',
+					'group' => '',
 					'number' => 3,
 					'key' => 4,
 					'count' => 1,
@@ -109,9 +109,9 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 				'(cite_reference_link|a+4-0|a-4|3)'
 			],
 			'Named ref reused' => [
-				'',
 				[
 					'name' => 'a',
+					'group' => '',
 					'number' => 3,
 					'key' => 4,
 					'count' => 50002,
@@ -119,9 +119,9 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 				'(cite_reference_link|a+4-50001|a-4|3)'
 			],
 			'Subreference' => [
-				'',
 				[
 					'name' => null,
+					'group' => '',
 					'number' => 3,
 					'key' => 4,
 					'extends' => 'b',

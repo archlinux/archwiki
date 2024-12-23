@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\VisualEditor;
 
-use OutputPage;
+use MediaWiki\Output\OutputPage;
 use Skin;
 
 /**

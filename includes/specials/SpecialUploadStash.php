@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:UploadStash.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -312,11 +310,10 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 
 		$status = $req->execute();
 		if ( !$status->isOK() ) {
-			$errors = $status->getErrorsArray();
 			throw new UploadStashFileNotFoundException(
 				$this->msg(
 					'uploadstash-file-not-found-no-remote-thumb',
-					print_r( $errors, 1 ),
+					$status->getMessage(),
 					$scalerThumbUrl
 				)
 			);

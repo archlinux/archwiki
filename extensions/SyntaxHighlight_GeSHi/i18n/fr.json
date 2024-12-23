@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Antimuonium",
 			"Dcausse",
 			"Gomoko",
 			"Grondin",
@@ -29,5 +30,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloc de code",
 	"syntaxhighlight-error-pygments-invocation-failure": "Impossible d'appeler Pygments",
 	"syntaxhighlight-error-unknown-language": "Langue inconnue \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "La taille du code ($1 octet{{PLURAL:$1||s}}) dépasse le maximum autorisé ($2 octet{{PLURAL:$2||s}})"
+	"syntaxhighlight-error-exceeds-size-limit": "La taille du code ($1 octet{{PLURAL:$1||s}}) dépasse le maximum autorisé ($2 octet{{PLURAL:$2||s}})",
+	"syntaxhighlight-button-copy": "Copier",
+	"syntaxhighlight-button-copied": "Copié !"
 }

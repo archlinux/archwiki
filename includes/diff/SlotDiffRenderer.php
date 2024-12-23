@@ -21,6 +21,7 @@
  * @ingroup DifferenceEngine
  */
 
+use MediaWiki\Content\Content;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
@@ -52,7 +53,7 @@ abstract class SlotDiffRenderer {
 	 * @return string HTML. One or more <tr> tags, or an empty string if the inputs are identical.
 	 * @throws IncompatibleDiffTypesException
 	 */
-	abstract public function getDiff( Content $oldContent = null, Content $newContent = null );
+	abstract public function getDiff( ?Content $oldContent = null, ?Content $newContent = null );
 
 	/**
 	 * Localize language-independent text returned by getDiff(), making it
@@ -109,7 +110,7 @@ abstract class SlotDiffRenderer {
 	 * @throws IncompatibleDiffTypesException
 	 */
 	protected function normalizeContents(
-		Content &$oldContent = null, Content &$newContent = null, $allowedClasses = null
+		?Content &$oldContent = null, ?Content &$newContent = null, $allowedClasses = null
 	) {
 		if ( !$oldContent && !$newContent ) {
 			throw new InvalidArgumentException( '$oldContent and $newContent cannot both be null' );

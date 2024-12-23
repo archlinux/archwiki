@@ -15,8 +15,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|سپاسی لێ کرا}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|سپاس بکە}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|سپاسی لێ کرا}}}}",
-	"thanks-button-action-cancel": "ھەڵوەشاندنەوە",
-	"thanks-button-action-completed": "تۆ {{GENDER:$1|{{GENDER:$2|سپاسی}}}} $1ت کرد",
 	"thanks-error-undefined": "کردەوەی سپاسکردن سەرکەوتوو نەبوو (کۆدی ھەڵە: $1). تکایە دیسان ھەوڵ بدەوە.",
 	"thanks-error-invalid-log-id": "بابەتی لۆگ نەدۆزرایەوە",
 	"thanks-error-invalidrevision": "پێداچوونەوەی پێناسە نادروستە.",

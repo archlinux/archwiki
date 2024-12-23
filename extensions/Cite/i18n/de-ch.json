@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Filzstift",
 			"Geitost",
-			"Umherirrender",
-			"Filzstift"
+			"Umherirrender"
 		]
 	},
 	"cite_error_references_invalid_parameters": "Ungültige <tt>&lt;references&gt;</tt>-Verwendung: Es sind keine zusätzlichen Parameter erlaubt, verwende ausschliesslich <tt><nowiki><references /></nowiki></tt>.",
 	"cite_error_included_ref": "Es fehlt ein schliessendes <code>&lt;/ref&gt;</code>",
-	"cite_error_references_missing_key": "Das in <code>&lt;references&gt;</code> definierte <code>&lt;ref&gt;</code>-Tag mit dem Namen «$1» wird im vorausgehenden Text nicht verwendet."
+	"cite_error_references_missing_key": "Das in <code>&lt;references&gt;</code> definierte <code>&lt;ref&gt;</code>-Tag mit dem Namen «$1» wird im vorausgehenden Text nicht verwendet.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Du hast die Helferlein [[$1|Navigations-Popups]] und [[$1|Fussnoten-Tooltip]] aktiviert, sodass du keine durch diese Funktion zur Verfügung gestellte Vorschauen sehen wirst. Diese Helferlein können abhängig von deinem Wiki einen leicht abweichenden Namen haben. Wenn du weiterhin Probleme hast, prüfe bitte deine Helferlein und Benutzerskripte, inklusive den globalen."
 }

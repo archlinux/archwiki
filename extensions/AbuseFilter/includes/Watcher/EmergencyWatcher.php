@@ -142,12 +142,12 @@ class EmergencyWatcher implements Watcher {
 				$this->lbFactory->getPrimaryDatabase(),
 				__METHOD__,
 				static function ( IDatabase $dbw, $fname ) use ( $throttleFilters ) {
-					$dbw->update(
-						'abuse_filter',
-						[ 'af_throttled' => 1 ],
-						[ 'af_id' => $throttleFilters ],
-						$fname
-					);
+					$dbw->newUpdateQueryBuilder()
+						->update( 'abuse_filter' )
+						->set( [ 'af_throttled' => 1 ] )
+						->where( [ 'af_id' => $throttleFilters ] )
+						->caller( $fname )
+						->execute();
 				}
 			)
 		);

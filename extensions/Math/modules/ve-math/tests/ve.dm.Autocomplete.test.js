@@ -1,6 +1,6 @@
 QUnit.module( 've.dm.Autocomplete (Math)', ve.test.utils.newMwEnvironment() );
 
-QUnit.test( 'Autocomplete list', function ( assert ) {
+QUnit.test( 'Autocomplete list', ( assert ) => {
 	assert.notStrictEqual(
 		ve.ui.MWMathDialog.static.autocompleteWordList,
 		undefined,

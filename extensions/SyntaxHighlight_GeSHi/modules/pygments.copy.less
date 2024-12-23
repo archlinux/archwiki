@@ -1,0 +1,35 @@
+@import 'mediawiki.skin.variables.less';
+
+/**
+ * Adapted from https://www.mediawiki.org/wiki/MediaWiki:Gadget-site-tpl-copy.css
+ * Original author: Krinkle
+ */
+
+/**
+ * https://doc.wikimedia.org/oojs-ui/master/demos/ (2023-11-13)
+ * https://design.wikimedia.org/style-guide/components/buttons.html
+ */
+.mw-highlight-copy--bound button {
+	position: absolute;
+	top: -1em;
+	right: -0.9em;
+	box-sizing: border-box;
+	padding: 5px 7px;
+	border-radius: 2px;
+	background: @background-color-base;
+	color: @color-progressive;
+	border: 1px solid @border-color-muted;
+
+	&:hover {
+		cursor: pointer;
+		color: @color-progressive--hover;
+		background: @background-color-interactive-subtle;
+		border-color: @border-color-progressive--hover;
+	}
+
+	&:active {
+		color: @color-progressive--active;
+		background: @background-color-interactive;
+		border-color: @border-color-progressive--active;
+	}
+}

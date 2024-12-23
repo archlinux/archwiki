@@ -4,10 +4,10 @@
 			"Dağlı95",
 			"Eminn",
 			"NMW03",
+			"Nemoralis",
 			"Serkanland",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"Nemoralis",
 			"Əkrəm Cəfər"
 		]
 	},
@@ -69,7 +69,6 @@
 	"templatedata-modal-button-map": "Xəritələri redaktə et",
 	"templatedata-modal-button-importParams": "Parametləri idxal et",
 	"templatedata-modal-button-removemap": "Xəritəni sil",
-	"templatedata-modal-button-restoreparam": "Parametri bərpa et",
 	"templatedata-modal-button-saveparam": "Yadda saxla",
 	"templatedata-modal-current-language": "Cari dil: $1",
 	"templatedata-modal-format-block": "Blok",

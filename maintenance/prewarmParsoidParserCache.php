@@ -1,14 +1,20 @@
 <?php
-use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageLookup;
+use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\ParserOutputAccess;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\Parsoid\Config\SiteConfig as ParsoidSiteConfig;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
+use Wikimedia\Parsoid\Core\ClientError;
+use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for populating parser cache with parsoid output.
@@ -20,9 +26,10 @@ require_once __DIR__ . '/Maintenance.php';
  */
 class PrewarmParsoidParserCache extends Maintenance {
 	private int $forceParse = 0;
-	private ParsoidOutputAccess $parsoidOutputAccess;
+	private ParserOutputAccess $parserOutputAccess;
 	private PageLookup $pageLookup;
 	private RevisionLookup $revisionLookup;
+	private ParsoidSiteConfig $parsoidSiteConfig;
 
 	public function __construct() {
 		parent::__construct();
@@ -52,9 +59,14 @@ class PrewarmParsoidParserCache extends Maintenance {
 		return $this->revisionLookup;
 	}
 
-	private function getParsoidOutputAccess(): ParsoidOutputAccess {
-		$this->parsoidOutputAccess = $this->getServiceContainer()->getParsoidOutputAccess();
-		return $this->parsoidOutputAccess;
+	private function getParserOutputAccess(): ParserOutputAccess {
+		$this->parserOutputAccess = $this->getServiceContainer()->getParserOutputAccess();
+		return $this->parserOutputAccess;
+	}
+
+	private function getParsoidSiteConfig(): ParsoidSiteConfig {
+		$this->parsoidSiteConfig = $this->getServiceContainer()->getParsoidSiteConfig();
+		return $this->parsoidSiteConfig;
 	}
 
 	private function getQueryBuilder(): SelectQueryBuilder {
@@ -68,15 +80,23 @@ class PrewarmParsoidParserCache extends Maintenance {
 	}
 
 	private function parse(
-		PageIdentity $page,
+		PageRecord $page,
 		RevisionRecord $revision
-	) {
-		return $this->parsoidOutputAccess->getParserOutput(
-			$page,
-			ParserOptions::newFromAnon(),
-			$revision,
-			$this->forceParse
-		);
+	): Status {
+		$popts = ParserOptions::newFromAnon();
+		$popts->setUseParsoid();
+		try {
+			return $this->getParserOutputAccess()->getParserOutput(
+				$page,
+				$popts,
+				$revision,
+				$this->forceParse
+			);
+		} catch ( ClientError $e ) {
+			return Status::newFatal( 'parsoid-client-error', $e->getMessage() );
+		} catch ( ResourceLimitExceededException $e ) {
+			return Status::newFatal( 'parsoid-resource-limit-exceeded', $e->getMessage() );
+		}
 	}
 
 	/*
@@ -122,7 +142,7 @@ class PrewarmParsoidParserCache extends Maintenance {
 			if ( $namespaceIndex !== null ) {
 				$query = $query->where( [ 'page_namespace' => $namespaceIndex ] );
 			}
-			$query = $query->where( 'page_id >= ' . $startFrom )
+			$query = $query->where( $this->getReplicaDB()->expr( 'page_id', '>=', $startFrom ) )
 				->limit( $this->getBatchSize() );
 
 			$result = $query->fetchResultSet();
@@ -149,7 +169,7 @@ class PrewarmParsoidParserCache extends Maintenance {
 				$mainSlot = $revision->getSlot( SlotRecord::MAIN );
 
 				// POA will write a dummy output to PC, but we don't want that here. Just skip!
-				if ( !$this->getParsoidOutputAccess()->supportsContentModel( $mainSlot->getModel() ) ) {
+				if ( !$this->getParsoidSiteConfig()->supportsContentModel( $mainSlot->getModel() ) ) {
 					$this->output(
 						'[Skipped] Content model "' .
 						$mainSlot->getModel() .
@@ -178,5 +198,7 @@ class PrewarmParsoidParserCache extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PrewarmParsoidParserCache::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -7,12 +7,12 @@
 			"Liangent",
 			"Liuxinyu970226",
 			"Mywood",
+			"NekoCharm",
 			"PhiLiP",
 			"Shinjiman",
 			"Shizhao",
 			"Stang",
 			"Xiaomingyan",
-			"NekoCharm",
 			"沈澄心"
 		]
 	},
@@ -43,5 +43,9 @@
 	"categorytree-no-pages": "没有页面或子分类",
 	"categorytree-not-found": "找不到分类“$1”",
 	"categorytree-error": "加载数据出错。",
-	"categorytree-retry": "请稍后重试。"
+	"categorytree-retry": "请稍后重试。",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]：参数<code>onlyroot</code>已弃用。请改用<code>depth=\"0\"</code>。",
+	"categorytree-deprecation-warning": "'''警告：'''此页面使用了有已弃用参数的<code>&lt;categorytree&gt;</code>。",
+	"categorytree-deprecation-category": "使用已弃用的categorytree参数的页面",
+	"categorytree-deprecation-category-desc": "此页面使用了已弃用的categorytree参数，例如<code>onlyroot</code>。"
 }

@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Atakhanli",
 			"NMW03",
+			"Nemoralis",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"Zpizza",
-			"Atakhanli",
-			"Nemoralis"
+			"Zpizza"
 		]
 	},
 	"linterrors": "Lint xətaları",
@@ -16,8 +16,12 @@
 	"linter-category-large-tables-desc": "Bu səhifələrdə mobil cihazlarda görünüşü çətin olan cədvəllər var",
 	"linter-category-deletable-table-tag": "Silinməli olan cədvəl teqi",
 	"linter-category-deletable-table-tag-desc": "Bu səhifələrdə silinməli olan cədvəl teqləri var.",
+	"linter-category-duplicate-ids": "Dublikat idlər",
+	"linter-category-duplicate-ids-desc": "Bu səhifələrdə dublikat id atributları olan elementlər var.",
 	"linter-category-fostered": "Təşviq edilmiş məzmun",
 	"linter-category-fostered-desc": "Bu səhifələrin məzmunu təşviq edilib.",
+	"linter-category-fostered-transparent": "Renderdə görünməyən məzmun",
+	"linter-category-fostered-transparent-desc": "Bu səhifələr renderdə görünməyən məzmun ehtiva edir.",
 	"linter-category-html5-misnesting": "HTML5 və HTML4-də fərqli renderlənməyə sahib yanlış iç-içə daxil edilmiş teq",
 	"linter-category-html5-misnesting-desc": "Bu səhv daxil edilmiş teqlər HTML4 ilə müqayisədə HTML5-də fərqli davranacaq.",
 	"linter-category-night-mode-unaware-background-color": "Fon rəngi daxili stil qaydası müvafiq mətn rəngi olmadan mövcuddur",
@@ -30,6 +34,8 @@
 	"linter-category-missing-end-tag-desc": "Bu səhifələrin sonlandırıcı teqləri yoxdur.",
 	"linter-category-missing-end-tag-in-heading": "Başlıqda çatışmayan son etiketi",
 	"linter-category-missing-end-tag-in-heading-desc": "Bu səhifələrin başlıqlarında sonlandırma teqləri yoxdur.",
+	"linter-category-missing-image-alt-text": "Şəkildə çatışmayan alt mətn",
+	"linter-category-missing-image-alt-text-desc": "Bu səhifələrdə əlçatan alt mətn olmayan şəkillər var.",
 	"linter-category-multi-colon-escape": "Çoxlu iki nöqtə xətası",
 	"linter-category-multi-colon-escape-desc": "Bu səhifələrdə çoxsaylı iki nöqtə ilə prefiks edilmiş keçidlər var.",
 	"linter-category-multiline-html-table-in-list": "Siyahıda çoxsətirli cədvəl",
@@ -77,7 +83,9 @@
 	"linter-pager-category-header": "Kateqoriya",
 	"linter-pager-deletable-table-tag-details": "Silinməli olan cədvəl teqi",
 	"linter-pager-details-header": "Əlavə məlumat",
+	"linter-pager-duplicate-ids-details": "Dublikat idlər",
 	"linter-pager-fostered-details": "Görünməyən məzmun",
+	"linter-pager-fostered-transparent-details": "Renderdə görünməyən məzmun",
 	"linter-pager-html5-misnesting-details": "Yanlış yerləşdirmə (indi xarabdır)",
 	"linter-pager-inline-media-caption-details": "Görünməyən başlıq",
 	"linter-pager-large-tables-details": "Mobil görünüş üçün böyük olan cədvəl",
@@ -85,6 +93,7 @@
 	"linter-pager-misnested-tag-details": "Düzgün daxil edilməli olan səhv daxil edilmiş etiket",
 	"linter-pager-missing-end-tag-details": "Çatışmayan son teqi",
 	"linter-pager-missing-end-tag-in-heading-details": "Başlıqda çatışmayan son etiketi",
+	"linter-pager-missing-image-alt-text-details": "Şəkildə çatışmayan alt mətn",
 	"linter-pager-multi-colon-escape-details": "Çoxsaylı iki nöqtə xətası",
 	"linter-pager-multiline-html-table-in-list-details": "Siyahı daxilində çoxsətirli HTML5 cədvəli",
 	"linter-pager-multiple-unclosed-formatting-tags-details": "Səhifədə çoxlu qapalı olmayan formatlama teqləri",

@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Tests\Parser;
 
-use Language;
+use MediaWiki\Language\Language;
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Parser\MagicWordArray;
 use MediaWiki\Parser\MagicWordFactory;
@@ -119,7 +119,7 @@ class MagicWordArrayTest extends MediaWikiUnitTestCase {
 	public function testMatchStartAndRemove(
 		string $input,
 		$expectedMatches,
-		string $expectedText = null
+		?string $expectedText = null
 	) {
 		$array = new MagicWordArray( [ 'ID' ], $this->getFactory() );
 		$text = $input;
@@ -143,7 +143,7 @@ class MagicWordArrayTest extends MediaWikiUnitTestCase {
 	public function testMatchAndRemove(
 		string $input,
 		array $expectedMatches = [],
-		string $expectedText = null
+		?string $expectedText = null
 	) {
 		$array = new MagicWordArray( [ 'ID' ], $this->getFactory() );
 		$text = $input;
@@ -167,7 +167,7 @@ class MagicWordArrayTest extends MediaWikiUnitTestCase {
 	public function testMatchAndRemoveMultiple(
 		string $input,
 		array $expectedMatches = [],
-		string $expectedText = null
+		?string $expectedText = null
 	) {
 		$array = new MagicWordArray( array_keys( self::MAGIC_WORDS ), $this->getFactory() );
 		$text = $input;
@@ -217,7 +217,7 @@ class MagicWordArrayTest extends MediaWikiUnitTestCase {
 	}
 
 	private function getFactory( ?bool $caseSensitive = null ): MagicWordFactory {
-		$language = $this->createNoOpMock( Language::class, [ 'lc', '__debugInfo' ] );
+		$language = $this->createNoOpMock( Language::class, [ 'lc' ] );
 		$language->method( 'lc' )->willReturnCallback( static fn ( $s ) => strtolower( $s ) );
 
 		$factory = $this->createNoOpMock( MagicWordFactory::class, [ 'getContentLanguage', 'get' ] );

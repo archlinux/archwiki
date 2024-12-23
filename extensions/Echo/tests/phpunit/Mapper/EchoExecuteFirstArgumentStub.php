@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Integration\Mapper;
+
 use PHPUnit\Framework\MockObject\Invocation;
 use PHPUnit\Framework\MockObject\Invocation\StaticInvocation;
 use PHPUnit\Framework\MockObject\Stub\Stub;
@@ -7,10 +9,10 @@ use PHPUnit\Framework\MockObject\Stub\Stub;
 class EchoExecuteFirstArgumentStub implements Stub {
 	public function invoke( Invocation $invocation ) {
 		if ( !$invocation instanceof StaticInvocation ) {
-			throw new PHPUnit\Framework\Exception( 'wrong invocation type' );
+			throw new \PHPUnit\Framework\Exception( 'wrong invocation type' );
 		}
 		if ( !$invocation->arguments ) {
-			throw new PHPUnit\Framework\Exception( 'Method call must have an argument' );
+			throw new \PHPUnit\Framework\Exception( 'Method call must have an argument' );
 		}
 
 		return call_user_func( reset( $invocation->arguments ) );

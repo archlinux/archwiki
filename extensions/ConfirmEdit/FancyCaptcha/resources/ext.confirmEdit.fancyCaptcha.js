@@ -7,7 +7,7 @@ $( document ).on( 'click', '.fancycaptcha-reload', function () {
 	$this.addClass( 'fancycaptcha-reload-loading' );
 
 	// AJAX request to get captcha index key
-	new mw.Api().post( { action: 'fancycaptchareload' } ).done( function ( data ) {
+	new mw.Api().post( { action: 'fancycaptchareload' } ).done( ( data ) => {
 		const captchaIndex = data.fancycaptchareload.index;
 		let imgSrc;
 		if ( typeof captchaIndex === 'string' ) {
@@ -27,7 +27,7 @@ $( document ).on( 'click', '.fancycaptcha-reload', function () {
 			$captchaImage.data( 'captchaId', captchaIndex );
 		}
 	} )
-		.always( function () {
+		.always( () => {
 			$this.removeClass( 'fancycaptcha-reload-loading' );
 		} );
 

@@ -15,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "この規則は表示されません。",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "この規則はページ題名に影響します。",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "言語コード",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<無効>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>無効</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "言語",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "ソース",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-twoway-label": "テキスト",

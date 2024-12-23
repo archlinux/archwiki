@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
+use MediaWikiIntegrationTestCase;
+
 class NotificationStructureTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @coversNothing

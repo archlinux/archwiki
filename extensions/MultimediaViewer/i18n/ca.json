@@ -4,12 +4,12 @@
 			"F3RaN",
 			"Fitoschido",
 			"Jmarchn",
+			"Lluis Cat",
 			"Macofe",
 			"Pginer",
 			"QuimGil",
 			"Ssola",
-			"Vriullop",
-			"Lluis Cat"
+			"Vriullop"
 		]
 	},
 	"multimediaviewer-desc": "Amplia les miniatures en una interfície a pantalla completa.",
@@ -38,13 +38,6 @@
 	"multimediaviewer-restriction-personality": "Aquesta imatge conté persones que poden tenir drets que legalment restringeixin determinats re-usos de la imatge sense el seu consentiment.",
 	"multimediaviewer-restriction-default": "Aquesta imatge encara és susceptible de ser restringida degut a altres disposicions legals fora de la llei de propietat intel·lectual. Vegeu la pàgina de descripció del fitxer per a més detalls.",
 	"multimediaviewer-restriction-default-and-others": "Aquesta imatge encara és susceptible de ser restringida degut a altres disposicions legals fora de la llei de propietat intel·lectual. Vegeu la pàgina de descripció del fitxer per a més detalls.",
-	"multimediaviewer-about-mmv": "Quant a Media Viewer",
-	"multimediaviewer-optout-mmv": "Desactiva el visor multimèdia",
-	"multimediaviewer-optin-mmv": "Activa el visor multimèdia",
-	"multimediaviewer-optout-pending-mmv": "Desactivant el visor multimèdia",
-	"multimediaviewer-optin-pending-mmv": "Activant el visor multimèdia",
-	"multimediaviewer-optout-help": "Les imatges ja no es mostraran amb Media Viewer. Per utilitzar-lo de nou, cliqueu el botó \"{{int:multimediaviewer-view-expanded}}\" al costat d'una imatge. Desprès cliqueu \"{{int:multimediaviewer-optin-mmv}}\".",
-	"multimediaviewer-optin-help": "Media Viewer s'utilitzarà per mostrar imatges.",
 	"multimediaviewer-geolocation": "Emplaçament: $1",
 	"multimediaviewer-reuse-link": "Compartir o incrustar aquest fitxer",
 	"multimediaviewer-reuse-loading-placeholder": "S'està carregant...",
@@ -77,6 +70,5 @@
 	"multimediaviewer-close-popup-text": "Tanca aquesta eina (Esc)",
 	"multimediaviewer-fullscreen-popup-text": "Mostra a pantalla completa",
 	"multimediaviewer-defullscreen-popup-text": "Surt del mode de pantalla completa",
-	"multimediaviewer-title-popup-text": "Descripció",
-	"multimediaviewer-options-learn-more": "Més informació"
+	"multimediaviewer-title-popup-text": "Descripció"
 }

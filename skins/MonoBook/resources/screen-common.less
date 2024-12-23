@@ -52,11 +52,11 @@
 body {
 	font-family: sans-serif;
 	font-size: x-small; // Typical: 16px * 0.625 == 10px.
-	/* stylelint-disable stylistic/value-list-comma-newline-after, stylistic/declaration-colon-newline-after */
+	/* stylelint-disable @stylistic/value-list-comma-newline-after, @stylistic/declaration-colon-newline-after */
 	/* @embed */
 	background: url( images/headbg.svg ) 0 0 no-repeat,
 		@background url( images/headbg-gradient.svg ) 0 0 repeat-x;
-	/* stylelint-enable stylistic/value-list-comma-newline-after, stylistic/declaration-colon-newline-after */
+	/* stylelint-enable @stylistic/value-list-comma-newline-after, @stylistic/declaration-colon-newline-after */
 	color: @color-base;
 	direction: ltr; /* Needed for RTL flipping */
 	unicode-bidi: embed;
@@ -86,7 +86,8 @@ pre,
 	margin-top: 0.4em;
 	margin-bottom: 0.1em;
 	padding-top: 0;
-	overflow: visible;
+	/* Change the default from mediawiki.skinning CSS to let indicators float into heading area (T373617) */
+	display: block;
 }
 
 .mw-indicators {
@@ -289,10 +290,6 @@ div.noarticletext {
 
 #powersearch p {
 	margin-top: 0;
-}
-
-.templatesUsed {
-	margin-top: 1.5em;
 }
 
 .mw-summary-preview {

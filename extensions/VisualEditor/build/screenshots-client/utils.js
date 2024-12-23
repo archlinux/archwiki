@@ -1,11 +1,11 @@
 module.exports = function () {
-	var veDone = arguments[ arguments.length - 1 ];
+	const veDone = arguments[ arguments.length - 1 ];
 
 	window.seleniumUtils = {
 		getBoundingRect: function ( elements ) {
-			var boundingRect;
-			for ( var i = 0, l = elements.length; i < l; i++ ) {
-				var rect = elements[ i ].getBoundingClientRect();
+			let boundingRect;
+			for ( let i = 0, l = elements.length; i < l; i++ ) {
+				const rect = elements[ i ].getBoundingClientRect();
 				if ( !boundingRect ) {
 					boundingRect = {
 						left: rect.left,
@@ -27,14 +27,14 @@ module.exports = function () {
 			return boundingRect;
 		},
 		collapseToolbar: function () {
-			ve.init.target.toolbar.items.forEach( function ( group ) {
+			ve.init.target.toolbar.items.forEach( ( group ) => {
 				if ( group.setActive ) {
 					group.setActive( false );
 				}
 			} );
 		},
 		runMenuTask: function ( done, tool, expanded, highlight, extraElements ) {
-			var toolGroup = tool.toolGroup;
+			const toolGroup = tool.toolGroup;
 
 			seleniumUtils.collapseToolbar();
 			toolGroup.setActive( true );
@@ -47,7 +47,7 @@ module.exports = function () {
 				tool.$link[ 0 ].focus();
 			}
 
-			setTimeout( function () {
+			setTimeout( () => {
 				done(
 					seleniumUtils.getBoundingRect( [
 						toolGroup.$element[ 0 ],
@@ -57,7 +57,7 @@ module.exports = function () {
 			} );
 		},
 		runDiffTest: function ( oldHtml, newHtml, done ) {
-			var target = ve.init.target,
+			const target = ve.init.target,
 				surface = target.surface;
 
 			if ( target.saveDialog ) {
@@ -76,9 +76,9 @@ module.exports = function () {
 				target.constructor.static.createModelFromDom( target.constructor.static.parseDocument( newHtml ), 'visual' )
 			).collapseToEnd().adjustLinearSelection( 0, 3 ).removeContent();
 
-			target.once( 'saveReview', function () {
-				setTimeout( function () {
-					var dialog = surface.dialogs.currentWindow;
+			target.once( 'saveReview', () => {
+				setTimeout( () => {
+					const dialog = surface.dialogs.currentWindow;
 					dialog.reviewModeButtonSelect.selectItemByData( 'visual' );
 
 					// Fake parsed edit summary
@@ -98,21 +98,21 @@ module.exports = function () {
 	// Welcome dialog suppressed by query string (vehidebetadialog)
 	// Suppress user education indicators
 	mw.storage.set( 've-hideusered', 1 );
-	mw.hook( 've.activationComplete' ).add( function () {
-		var target = ve.init.target,
+	mw.hook( 've.activationComplete' ).add( () => {
+		const target = ve.init.target,
 			surfaceView = target.getSurface().getView();
 
 		// eslint-disable-next-line no-jquery/no-deferred
-		var welcomeDialogPromise = target.welcomeDialogPromise || $.Deferred().resolve().promise();
+		const welcomeDialogPromise = target.welcomeDialogPromise || $.Deferred().resolve().promise();
 
-		welcomeDialogPromise.then( function () {
+		welcomeDialogPromise.then( () => {
 			// Hide edit notices
 			target.toolbar.tools.notices.getPopup().toggle( false );
 			surfaceView.focus();
 			// Modify the document to make the save button blue
 			target.surface.getModel().getFragment().insertContent( ' ' ).collapseToStart().select();
 			// Wait for save button fade
-			setTimeout( function () {
+			setTimeout( () => {
 				veDone( { width: window.innerWidth, height: window.innerHeight } );
 			}, 100 );
 		} );

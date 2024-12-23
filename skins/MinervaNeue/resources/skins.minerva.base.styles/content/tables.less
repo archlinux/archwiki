@@ -9,7 +9,7 @@
 // by putting the original in a media query instead.
 // This also avoids having a reset with too-high specificity, which
 // would break unrelated styles from core and extensions.
-@media all and ( max-width: @width-breakpoint-tablet ) {
+@media all and ( max-width: @max-width-breakpoint-mobile ) {
 	.content {
 		table {
 			display: block;
@@ -36,8 +36,7 @@
 
 		/* following 4 rules are needed for scrolling */
 		overflow: auto; /* for browsers that don't support overflow-y */
-		overflow-y: hidden;
-		overflow-x: auto;
+		overflow: auto hidden;
 	}
 
 	caption {

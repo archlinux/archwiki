@@ -22,9 +22,13 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\RawSQLValue;
 
 class InitEditCount extends Maintenance {
 	public function __construct() {
@@ -70,7 +74,7 @@ class InitEditCount extends Maintenance {
 					->from( 'user' )
 					->leftJoin( 'revision', 'rev', "user_id = actor_rev_user.actor_user" )
 					->join( 'actor', 'actor_rev_user', 'actor_rev_user.actor_id = rev_actor' )
-					->where( "user_id > $min AND user_id <= $max" )
+					->where( $dbr->expr( 'user_id', '>', $min )->and( 'user_id', '<=', $max ) )
 					->groupBy( 'user_id' )
 					->caller( __METHOD__ )->fetchResultSet();
 
@@ -97,7 +101,6 @@ class InitEditCount extends Maintenance {
 		} else {
 			$this->output( "Using single-query mode...\n" );
 
-			$user = $dbw->tableName( 'user' );
 			$subquery = $dbw->newSelectQueryBuilder()
 				->select( 'COUNT(*)' )
 				->from( 'revision' )
@@ -105,12 +108,19 @@ class InitEditCount extends Maintenance {
 				->where( 'user_id = actor_rev_user.actor_user' )
 				->caller( __METHOD__ )->getSQL();
 
-			$dbw->query( "UPDATE $user SET user_editcount=($subquery)", __METHOD__ );
+			$dbw->newUpdateQueryBuilder()
+				->table( 'user' )
+				->set( [ 'user_editcount' => new RawSQLValue( "($subquery)" ) ] )
+				->where( IDatabase::ALL_ROWS )
+				->caller( __METHOD__ )
+				->execute();
 		}
 
 		$this->output( "Done!\n" );
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = InitEditCount::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

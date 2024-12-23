@@ -26,7 +26,6 @@
 
 namespace MediaWiki\Revision;
 
-use BagOStuff;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\HookContainer\HookContainer;
@@ -37,8 +36,9 @@ use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\ActorStoreFactory;
 use Psr\Log\LoggerInterface;
-use WANObjectCache;
 use Wikimedia\Assert\Assert;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILBFactory;
 
 /**
@@ -140,7 +140,7 @@ class RevisionStoreFactory {
 	 *
 	 * @return RevisionStore for the given wikiId with all necessary services
 	 */
-	public function getRevisionStore( $dbDomain = false ) {
+	public function getRevisionStore( $dbDomain = false ): RevisionStore {
 		return $this->getStore(
 			$dbDomain,
 			$this->actorStoreFactory->getActorStore( $dbDomain )
@@ -154,10 +154,24 @@ class RevisionStoreFactory {
 	 *
 	 * @return RevisionStore for the given wikiId with all necessary services
 	 */
-	public function getRevisionStoreForImport( $dbDomain = false ) {
+	public function getRevisionStoreForImport( $dbDomain = false ): RevisionStore {
 		return $this->getStore(
 			$dbDomain,
 			$this->actorStoreFactory->getActorStoreForImport( $dbDomain )
+		);
+	}
+
+	/**
+	 * @since 1.43
+	 *
+	 * @param false|string $dbDomain DB domain of the relevant wiki or false for the current one
+	 *
+	 * @return RevisionStore for the given wikiId with all necessary services
+	 */
+	public function getRevisionStoreForUndelete( $dbDomain = false ): RevisionStore {
+		return $this->getStore(
+			$dbDomain,
+			$this->actorStoreFactory->getActorStoreForUndelete( $dbDomain )
 		);
 	}
 

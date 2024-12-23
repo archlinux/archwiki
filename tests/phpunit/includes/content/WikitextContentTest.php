@@ -1,7 +1,11 @@
 <?php
 
+use MediaWiki\Content\JavaScriptContent;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\Title;
 
 /**
@@ -9,9 +13,10 @@ use MediaWiki\Title\Title;
  *
  * @group Database
  *        ^--- needed, because we do need the database to test link updates
+ * @covers \MediaWiki\Content\WikitextContent
  */
 class WikitextContentTest extends TextContentTest {
-	public static $sections = "Intro
+	public const SECTIONS = "Intro
 
 == stuff ==
 hello world
@@ -29,16 +34,16 @@ more stuff
 
 	public static function dataGetSection() {
 		return [
-			[ self::$sections,
+			[ self::SECTIONS,
 				"0",
 				"Intro"
 			],
-			[ self::$sections,
+			[ self::SECTIONS,
 				"2",
 				"== test ==
 just a test"
 			],
-			[ self::$sections,
+			[ self::SECTIONS,
 				"8",
 				false
 			],
@@ -47,7 +52,6 @@ just a test"
 
 	/**
 	 * @dataProvider dataGetSection
-	 * @covers \WikitextContent::getSection
 	 */
 	public function testGetSection( $text, $sectionId, $expectedText ) {
 		$content = $this->newContent( $text );
@@ -64,45 +68,44 @@ just a test"
 
 	public static function dataReplaceSection() {
 		return [
-			[ self::$sections,
+			[ self::SECTIONS,
 				"0",
 				"No more",
 				null,
-				trim( preg_replace( '/^Intro/m', 'No more', self::$sections ) )
+				trim( preg_replace( '/^Intro/m', 'No more', self::SECTIONS ) )
 			],
-			[ self::$sections,
+			[ self::SECTIONS,
 				"",
 				"No more",
 				null,
 				"No more"
 			],
-			[ self::$sections,
+			[ self::SECTIONS,
 				"2",
 				"== TEST ==\nmore fun",
 				null,
 				trim( preg_replace(
 					'/^== test ==.*== foo ==/sm', "== TEST ==\nmore fun\n\n== foo ==",
-					self::$sections
+					self::SECTIONS
 				) )
 			],
-			[ self::$sections,
+			[ self::SECTIONS,
 				"8",
 				"No more",
 				null,
-				self::$sections
+				self::SECTIONS
 			],
-			[ self::$sections,
+			[ self::SECTIONS,
 				"new",
 				"No more",
 				"New",
-				trim( self::$sections ) . "\n\n\n== New ==\n\nNo more"
+				trim( self::SECTIONS ) . "\n\n\n== New ==\n\nNo more"
 			],
 		];
 	}
 
 	/**
 	 * @dataProvider dataReplaceSection
-	 * @covers \WikitextContent::replaceSection
 	 */
 	public function testReplaceSection( $text, $section, $with, $sectionTitle, $expected ) {
 		$content = $this->newContent( $text );
@@ -112,9 +115,6 @@ just a test"
 		$this->assertEquals( $expected, $c ? $c->getText() : null );
 	}
 
-	/**
-	 * @covers \WikitextContent::addSectionHeader
-	 */
 	public function testAddSectionHeader() {
 		$content = $this->newContent( 'hello world' );
 		$content = $content->addSectionHeader( 'test' );
@@ -216,9 +216,6 @@ just a test"
 		];
 	}
 
-	/**
-	 * @covers \WikitextContent::matchMagicWord
-	 */
 	public function testMatchMagicWord() {
 		$mw = $this->getServiceContainer()->getMagicWordFactory()->get( "staticredirect" );
 
@@ -232,9 +229,6 @@ just a test"
 		);
 	}
 
-	/**
-	 * @covers \WikitextContent::updateRedirect
-	 */
 	public function testUpdateRedirect() {
 		$target = Title::makeTitle( NS_MAIN, 'TestUpdateRedirect_target' );
 
@@ -257,18 +251,12 @@ just a test"
 		);
 	}
 
-	/**
-	 * @covers \WikitextContent::getModel
-	 */
 	public function testGetModel() {
 		$content = $this->newContent( "hello world." );
 
 		$this->assertEquals( CONTENT_MODEL_WIKITEXT, $content->getModel() );
 	}
 
-	/**
-	 * @covers \WikitextContent::getContentHandler
-	 */
 	public function testGetContentHandler() {
 		$content = $this->newContent( "hello world." );
 
@@ -276,8 +264,7 @@ just a test"
 	}
 
 	/**
-	 * @covers \ParserOptions::getRedirectTarget
-	 * @covers \ParserOptions::setRedirectTarget
+	 * @covers \MediaWiki\Parser\ParserOptions
 	 */
 	public function testRedirectParserOption() {
 		$title = Title::makeTitle( NS_MAIN, 'TestRedirectParserOption' );

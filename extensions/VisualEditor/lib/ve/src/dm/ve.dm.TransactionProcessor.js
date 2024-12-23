@@ -95,14 +95,14 @@ ve.dm.TransactionProcessor.prototype.process = function () {
 	// First process each operation to gather modifications in the modification queue.
 	// If an exception occurs during this stage, we don't need to do anything to recover,
 	// because no modifications were made yet.
-	for ( var i = 0; i < this.operations.length; i++ ) {
+	for ( let i = 0; i < this.operations.length; i++ ) {
 		this.executeOperation( this.operations[ i ] );
 	}
 	if ( !this.balanced ) {
 		throw new Error( 'Unbalanced set of replace operations found' );
 	}
 
-	var completed;
+	let completed;
 	// Apply the queued modifications
 	try {
 		completed = false;
@@ -161,11 +161,11 @@ ve.dm.TransactionProcessor.prototype.queueUndoFunction = function ( func ) {
  * @private
  */
 ve.dm.TransactionProcessor.prototype.applyModifications = function () {
-	var modifications = this.modificationQueue;
+	const modifications = this.modificationQueue;
 
 	this.modificationQueue = [];
-	for ( var i = 0, len = modifications.length; i < len; i++ ) {
-		var modifier = ve.dm.TransactionProcessor.modifiers[ modifications[ i ].type ];
+	for ( let i = 0, len = modifications.length; i < len; i++ ) {
+		const modifier = ve.dm.TransactionProcessor.modifiers[ modifications[ i ].type ];
 		modifier.apply( this, modifications[ i ].args || [] );
 	}
 };
@@ -177,9 +177,9 @@ ve.dm.TransactionProcessor.prototype.applyModifications = function () {
  * @private
  */
 ve.dm.TransactionProcessor.prototype.rollbackModifications = function () {
-	var rollbacks = this.rollbackQueue;
+	const rollbacks = this.rollbackQueue;
 	this.rollbackQueue = [];
-	for ( var i = rollbacks.length - 1; i >= 0; i-- ) {
+	for ( let i = rollbacks.length - 1; i >= 0; i-- ) {
 		rollbacks[ i ]();
 	}
 };
@@ -191,13 +191,13 @@ ve.dm.TransactionProcessor.prototype.rollbackModifications = function () {
  *
  * @private
  * @param {ve.dm.Node} node
- * @param {string} event Event name
- * @param {...Mixed} [args] Additional arguments to be passed to the event when fired
+ * @param {string} name Event name
+ * @param {...any} [args] Additional arguments to be passed to the event when fired
  */
-ve.dm.TransactionProcessor.prototype.queueEvent = function ( node ) {
-	var args = Array.prototype.slice.call( arguments, 1 );
+ve.dm.TransactionProcessor.prototype.queueEvent = function ( node, name, ...args ) {
 	this.eventQueue.push( {
-		node: node,
+		node,
+		name,
 		args: args.concat( this.transaction )
 	} );
 };
@@ -208,25 +208,14 @@ ve.dm.TransactionProcessor.prototype.queueEvent = function ( node ) {
  * @private
  */
 ve.dm.TransactionProcessor.prototype.emitQueuedEvents = function () {
-	var queue = this.eventQueue;
-
-	var event;
-
-	function isDuplicate( otherEvent ) {
-		return otherEvent.node === event.node &&
-			otherEvent.args.every( function ( arg, index ) {
-				return arg === event.args[ index ];
-			} );
-	}
-
+	const queue = this.eventQueue;
 	this.eventQueue = [];
-	for ( var i = 0; i < queue.length; i++ ) {
-		event = queue[ i ];
+	queue.forEach( ( event, i ) => {
 		// Check if this event is a duplicate of something we've already emitted
-		if ( !queue.slice( 0, i ).some( isDuplicate ) ) {
-			event.node.emit.apply( event.node, event.args );
+		if ( !queue.slice( 0, i ).some( ( e ) => ve.compare( event, e ) ) ) {
+			event.node.emit( event.name, ...event.args );
 		}
-	}
+	} );
 };
 
 /**
@@ -264,16 +253,15 @@ ve.dm.TransactionProcessor.prototype.advanceCursor = function ( increment ) {
  *  {Array} splices[].insert Data to insert; for efficiency, objects are inserted without cloning
  */
 ve.dm.TransactionProcessor.modifiers.splice = function ( splices ) {
-	var lengthDiff = 0,
-		data = this.document.data;
+	const data = this.document.data;
 
-	var i;
+	let lengthDiff = 0;
+	let i;
 	// We're about to do lots of things that can go wrong, so queue an undo function now
 	// that undoes all splices that we got to
-	this.queueUndoFunction( function () {
-		var i2, s2;
-		for ( i2 = splices.length - 1; i2 >= 0; i2-- ) {
-			s2 = splices[ i ];
+	this.queueUndoFunction( () => {
+		for ( let i2 = splices.length - 1; i2 >= 0; i2-- ) {
+			const s2 = splices[ i ];
 			if ( s2.removedData !== undefined ) {
 				data.batchSplice( s2.offset, s2.insert.length, s2.removedData );
 			}
@@ -282,7 +270,7 @@ ve.dm.TransactionProcessor.modifiers.splice = function ( splices ) {
 
 	// Apply splices to the linmod and record how to undo them
 	for ( i = 0; i < splices.length; i++ ) {
-		var s = splices[ i ];
+		const s = splices[ i ];
 
 		// Adjust s.offset for previous modifications that have already been synced to the tree;
 		// this value is used by the tree sync code later.
@@ -303,20 +291,20 @@ ve.dm.TransactionProcessor.modifiers.splice = function ( splices ) {
  *
  * @param {number} offset Offset in data array (unadjusted)
  * @param {string} key Attribute name
- * @param {Mixed} value New attribute value
+ * @param {any} value New attribute value
  */
 ve.dm.TransactionProcessor.modifiers.setAttribute = function ( offset, key, value ) {
-	var data = this.document.data;
+	const data = this.document.data;
 	offset += this.adjustment;
 
-	var oldItem = data.getData( offset );
-	var oldValue = oldItem.attributes && oldItem.attributes[ key ];
+	const oldItem = data.getData( offset );
+	const oldValue = oldItem.attributes && oldItem.attributes[ key ];
 	data.setAttributeAtOffset( offset, key, value );
-	this.queueUndoFunction( function () {
+	this.queueUndoFunction( () => {
 		data.setAttributeAtOffset( offset, key, oldValue );
 	} );
 
-	var node = this.document.getDocumentNode().getNodeFromOffset( offset + 1 );
+	const node = this.document.getDocumentNode().getNodeFromOffset( offset + 1 );
 	// Update node element pointer
 	node.element = data.getData( offset );
 
@@ -345,9 +333,9 @@ ve.dm.TransactionProcessor.modifiers.setAttribute = function ( offset, key, valu
 ve.dm.TransactionProcessor.processors.retain = function ( op ) {
 	if ( !this.balanced ) {
 		// Track the depth of retained data when in the middle of an unbalanced replace
-		var retainedData = this.document.getData( new ve.Range( this.cursor, this.cursor + op.length ) );
-		for ( var i = 0; i < retainedData.length; i++ ) {
-			var type = retainedData[ i ].type;
+		const retainedData = this.document.getData( new ve.Range( this.cursor, this.cursor + op.length ) );
+		for ( let i = 0; i < retainedData.length; i++ ) {
+			const type = retainedData[ i ].type;
 			if ( type !== undefined ) {
 				this.retainDepth += type.charAt( 0 ) === '/' ? -1 : 1;
 			}
@@ -368,8 +356,8 @@ ve.dm.TransactionProcessor.processors.retain = function ( op ) {
  *
  * @param {Object} op Operation object
  * @param {string} op.key Attribute name
- * @param {Mixed} op.from Old attribute value, or undefined if not previously set
- * @param {Mixed} op.to New attribute value, or undefined to unset
+ * @param {any} op.from Old attribute value, or undefined if not previously set
+ * @param {any} op.to New attribute value, or undefined to unset
  */
 ve.dm.TransactionProcessor.processors.attribute = function ( op ) {
 	if ( !this.document.data.isElementData( this.cursor ) ) {
@@ -395,7 +383,7 @@ ve.dm.TransactionProcessor.processors.replace = function ( op ) {
 	// and keep track of the element depth change (level)
 	// for each of these two separately. The model is
 	// only consistent if both levels are zero.
-	var i, type;
+	let i, type;
 	for ( i = 0; i < op.remove.length; i++ ) {
 		type = op.remove[ i ].type;
 		if ( type !== undefined ) {

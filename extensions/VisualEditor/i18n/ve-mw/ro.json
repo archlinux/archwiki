@@ -10,12 +10,12 @@
 			"Kyouko",
 			"Minisarm",
 			"NGC 54",
+			"Paloi Sciurala",
 			"Reception123",
 			"Stelistcristi",
 			"Strainu",
 			"TMg",
-			"Wintereu",
-			"Paloi Sciurala"
+			"Wintereu"
 		]
 	},
 	"collabpad-import-subtitle": "Importat de pe $1",
@@ -32,7 +32,6 @@
 	"visualeditor-autosave-recovered-text": "Schimbările dvs. nesalvate au fost recuperate automat.",
 	"visualeditor-autosave-recovered-title": "Schimbări recuperate",
 	"visualeditor-backbutton-tooltip": "Înapoi",
-	"visualeditor-browserwarning": "Folosiți un navigator care nu este oficial acceptat de acest editor.",
 	"visualeditor-ca-createlocaldescriptionsource": "Adăugare sursă descriere locală",
 	"visualeditor-ca-createsource": "Creare sursă",
 	"visualeditor-ca-editlocaldescriptionsource": "Modificare sursă descriere locală",
@@ -217,6 +216,7 @@
 	"visualeditor-linkinspector-educationpopup-text": "Pentru termenii semnificativi creați legături către alte articole din wiki sau chiar alte site-uri web. Astfel, cititorii vor înțelege mai bine contextul.",
 	"visualeditor-linkinspector-educationpopup-title": "Legături",
 	"visualeditor-linkinspector-illegal-title": "Titlu de pagină nevalid",
+	"visualeditor-linkinspector-invalid-blocked": "Oamenii de la acest wiki au decis să blocheze legăturile către acest website. Vă rugăm să încercați altă legătură.",
 	"visualeditor-linkinspector-invalid-external": "Introduceți o adresă URL întreagă, de ex. https://example.org",
 	"visualeditor-linknodeinspector-add-label": "Adăugare etichetă",
 	"visualeditor-linknodeinspector-title": "Legătură simplă",

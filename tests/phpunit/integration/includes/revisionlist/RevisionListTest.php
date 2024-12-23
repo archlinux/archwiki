@@ -1,13 +1,16 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\RevisionList\RevisionItem;
+use MediaWiki\RevisionList\RevisionList;
 
 /**
- * @covers \RevisionList
- * @covers \RevisionListBase
- * @covers \RevisionItem
- * @covers \RevisionItemBase
+ * @covers \MediaWiki\RevisionList\RevisionList
+ * @covers \MediaWiki\RevisionList\RevisionListBase
+ * @covers \MediaWiki\RevisionList\RevisionItem
+ * @covers \MediaWiki\RevisionList\RevisionItemBase
  * @group Database
  *
  * @author DannyS712
@@ -30,7 +33,7 @@ class RevisionListTest extends MediaWikiIntegrationTestCase {
 		$wikiPage = $this->getExistingTestPage( __METHOD__ );
 		$currentRevId = $wikiPage->getRevisionRecord()->getId();
 
-		$queryBuilder = $this->getServiceContainer()->getRevisionStore()->newSelectQueryBuilder( $this->db )
+		$queryBuilder = $this->getServiceContainer()->getRevisionStore()->newSelectQueryBuilder( $this->getDb() )
 			->joinComment()
 			->joinPage()
 			->joinUser()

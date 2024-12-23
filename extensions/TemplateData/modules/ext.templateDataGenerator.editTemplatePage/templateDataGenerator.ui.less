@@ -1,8 +1,8 @@
 .tdg-editscreen-main {
-	margin-bottom: 1em;
+	margin: 1em 0;
 
 	.skin-vector-legacy .ve-init-mw-desktopArticleTarget-originalContent & {
-		font-size: 14/16em;
+		font-size: (14 / 16em);
 	}
 }
 
@@ -94,15 +94,19 @@
 	}
 }
 
-/* LanguageSearchWidget */
+.tdg-languageResultWidget {
+	&-name {
+		text-align: left;
+	}
 
-.tdg-languageResultWidget-otherMatch {
-	float: right;
-	color: #777;
-}
+	&-otherMatch {
+		float: right;
+		color: #777;
+	}
 
-.tdg-languageResultWidget-highlight {
-	font-weight: bold;
+	&-highlight {
+		font-weight: bold;
+	}
 }
 
 .mw-templateData-template-add-map-button .oo-ui-buttonElement-button {

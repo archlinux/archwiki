@@ -33,8 +33,7 @@
 // https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/heads/main/packages/codex-design-tokens/src/theme-wikimedia-ui.json#429
 // See also Vector's 'mediawiki.skin.variables.less' overrides.
 
-@font-size-base: unit( 14 / @font-size-browser, em ); // Equals `0.875em`.
-@font-size-base--trident-hack: calc( 1em ~'*' unit( @font-size-base ) );
+@font-size-small--trident-hack: calc( 1em ~'*' unit( @font-size-small ) );
 @font-size-reset: @font-size-root;
 @font-size-heading-1: 1.8em;
 @font-size-heading-2: 1.5em;
@@ -54,7 +53,7 @@
 @border-color-content: #a7d7f9;
 // Due to darker background gradient, border needs to be darkened for aligned visual perception.
 @border-color-content--tabs-inactive: darken( @border-color-content, 10% );
-@border-color-portal-heading: #c8ccd1;
+@border-color-subtle: #c8ccd1;
 // Use `rgba()` notation for better Safari support, see T254489.
 @border-start-blockquote: 4px @border-style-base #eaecf0;
 @padding-top-content: 0.5em;
@@ -86,7 +85,7 @@
 @height-dropdown-menu-item: unit( 32 / @font-size-browser, rem );
 @padding-vertical-dropdown-menu-item: 6px;
 @padding-horizontal-dropdown-menu-item: 14px;
-@font-size-dropdown: unit( @font-size-base, rem ); // Equals `0.875rem`.
+@font-size-dropdown: @font-size-small;
 
 // Scroll Indicator
 @height-scroll-indicator: 30px;
@@ -110,7 +109,7 @@
 @margin-top-pinned-toc: @margin-top-pinned-page-tools + @padding-top-content;
 
 // Search
-@max-width-search: unit( 500px / @font-size-browser / @font-size-base, em ); // 35.71428571em @ 16 & 0.875em T270202
+@max-width-search: unit( 500px / @font-size-browser / @font-size-small, em ); // 35.71428571em @ 16 & 0.875em T270202
 @min-width-search-button: 28px;
 @width-search-button: unit( 28 / @font-size-browser / @font-size-search-input, em );
 @font-size-search-input: unit( 13 / @font-size-browser, em ); // Equals `0.8125em`.

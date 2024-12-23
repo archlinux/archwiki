@@ -3,5 +3,11 @@
 		"authors": [
 			"BivutiChakma"
 		]
-	}
+	},
+	"echo-category-title-edit-user-talk": "{{PLURAL:$1|𑄥𑄮𑄢𑄴 𑄉𑄧𑄌𑄴𑄬|𑄥𑄮𑄢𑄴 𑄉𑄧𑄌𑄴𑄬𑄊𑄚𑄨}} 𑄟𑄧 𑄇𑄧𑄙 𑄛𑄘𑄖𑄴",
+	"echo-pref-tooltip-edit-user-talk": "𑄟𑄧 𑄇𑄧𑄙 𑄛𑄘𑄖𑄴 𑄡𑄧𑄇𑄴𑄬 𑄇𑄧𑄚𑄧 𑄟𑄮𑄚𑄨𑄌𑄴𑄥𑄮𑄢𑄬 𑄥𑄮𑄢𑄴 𑄉𑄧𑄢𑄧𑄚𑄴 𑄥𑄧𑄇𑄴𑄬 𑄟𑄧𑄢𑄬 𑄇𑄮𑄃𑄨 𑄘𑄨𑄌𑄴",
+	"notification-header-mention-user-talkpage-v2": "$1 {{GENDER:$2|𑄟𑄬𑄚𑄴𑄥𑄧𑄚𑄴 𑄉𑄮𑄌𑄴𑄬}} {{GENDER:$3|𑄖𑄧𑄢𑄴}} 𑄃𑄨𑄠𑄮𑄖𑄴 <strong>𑄇𑄧𑄙 𑄛𑄘𑄢𑄴 {{GENDER:$5|𑄣𑄢𑄴𑄌𑄢𑄴 𑄉𑄧𑄢𑄨𑄠𑄬𑄊𑄪𑄚𑄴}} $4</strong> 𑄃𑄬 𑄞𑄨𑄘𑄨𑄢𑄬 \"<strong>$6</strong>\".",
+	"notification-header-mention-user-talkpage-nosection": "$1 {{GENDER:$2|𑄟𑄬𑄚𑄴𑄥𑄧𑄚𑄴 𑄉𑄮𑄌𑄴𑄬}} {{GENDER:$3|𑄖𑄧𑄢𑄴}} 𑄃𑄨𑄠𑄮𑄖𑄴 <strong> 𑄇𑄧𑄙 𑄛𑄘𑄖𑄴 {{GENDER:$5|𑄣𑄢𑄴𑄌𑄢𑄴 𑄉𑄧𑄢𑄨𑄠𑄬𑄊𑄪𑄚𑄴}} $4</strong>.",
+	"notification-header-mention-failure-user-unknown": "𑄛𑄘𑄬𑄭 𑄘𑄬 𑄡𑄬𑄘𑄧 𑄚𑄧𑄠𑄴{{GENDER:$2|your}} 𑄟𑄬𑄚𑄴𑄥𑄧𑄚𑄴 𑄉𑄧𑄌𑄴𑄬<strong>$3</strong> 𑄇𑄢𑄧𑄚𑄴 𑄃𑄬𑄭 𑄚𑄋𑄬 𑄃𑄉𑄬𑄘𑄨 𑄇𑄧𑄚𑄧 𑄃𑄬𑄇𑄅𑄚𑄴𑄑𑄴 𑄚𑄬𑄭𑅁",
+	"notification-header-mention-failure-user-anonymous": "𑄛𑄘𑄬𑄭 𑄘𑄬 𑄡𑄬𑄘𑄧 𑄚𑄧𑄠𑄴 {{GENDER:$2|𑄖𑄧𑄢𑄴}} 𑄟𑄬𑄚𑄴𑄥𑄧𑄚𑄴 𑄉𑄧𑄌𑄴𑄬 <strong>$3</strong> 𑄇𑄢𑄧𑄚𑄴 𑄃𑄬𑄭 𑄟𑄮𑄚𑄨𑄌𑄴𑄥𑄮𑄢𑄴𑄝𑄮 𑄚𑄋𑄴 𑄚𑄬𑄠𑄬𑄝𑄧𑄣𑅁"
 }

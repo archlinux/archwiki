@@ -557,10 +557,8 @@ class DumpAsserter {
 	 *
 	 * @return int
 	 */
-	public function getLineNumber( XMLReader $xml = null ) {
-		if ( !$xml ) {
-			$xml = $this->xml;
-		}
+	public function getLineNumber( ?XMLReader $xml = null ) {
+		$xml ??= $this->xml;
 
 		if ( $xml->nodeType == XMLReader::NONE ) {
 			return 0;
@@ -682,7 +680,7 @@ class DumpAsserter {
 		return $text;
 	}
 
-	private function getAttributeArray( XMLReader $xml = null ) {
+	private function getAttributeArray( ?XMLReader $xml = null ) {
 		if ( !$xml ) {
 			$xml = $this->xml;
 		}

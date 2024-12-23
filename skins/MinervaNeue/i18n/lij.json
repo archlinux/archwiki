@@ -29,7 +29,6 @@
 	"mobile-frontend-meta-data-issues-categories": "A propòxito de 'sta categorîa chi",
 	"mobile-frontend-meta-data-issues-header": "Problêmi da pàgina",
 	"minerva-meta-data-issues-section-header": "Problêmi da seçión",
-	"mobile-frontend-notifications-filter": "Fìltro",
 	"mobile-frontend-pageaction-edit-tooltip": "Modìfica a prìmma seçión de 'sta pàgina chi.",
 	"mobile-frontend-placeholder": "Çèrca inte {{SITENAME}}",
 	"mobile-frontend-random-button": "'Na pàgina abrétio",
@@ -49,7 +48,7 @@
 	"minerva-page-actions-overflow": "Âtro",
 	"minerva-page-actions-language-switcher": "Léngoe",
 	"minerva-page-actions-history": "Cronologîa",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discusción]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Discusción]",
 	"minerva-skin-desc": "'Na prìmma skin reatîva pe apægi mòbili",
 	"skin-minerva-issue-learn-more": "Pe savéine de ciù",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 segóndo|$1 segóndi}} fa",
@@ -60,8 +59,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 ànno|$1 ànni}} fa",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorîe",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vizoalizâ e categorîe de pàgine",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Gestión megioâ di problêmi de pàgine",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "I problêmi da pàgina (Template:ambox) saiàn inserîi inta vôxe.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Pe desdìccia a fonçión \"ragrùppa pe pàgina\" a no l'é disponìbile inta versción mòbile. Se ti ti vêu dêuviâla, ti ti gh'æ da vixitâ o scîto inta versción desktop.",
 	"skin-minerva-night-mode-unavailable": "Pàgina disponìbile sôlo inti coî do têma \"Giórno\"."
 }

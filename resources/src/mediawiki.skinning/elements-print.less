@@ -8,14 +8,14 @@
 a {
 	background: none !important; /* stylelint-disable-line declaration-no-important */
 	padding: 0 !important; /* stylelint-disable-line declaration-no-important */
-}
 
-a,
-a.external,
-a.new,
-a.stub {
-	color: inherit !important; /* stylelint-disable-line declaration-no-important */
-	text-decoration: inherit !important; /* stylelint-disable-line declaration-no-important */
+	&,
+	&.external,
+	&.new,
+	&.stub {
+		color: inherit !important; /* stylelint-disable-line declaration-no-important */
+		text-decoration: inherit !important; /* stylelint-disable-line declaration-no-important */
+	}
 }
 
 dt {
@@ -39,7 +39,10 @@ p {
 	margin: 1em 0;
 	line-height: 1.2;
 	/* Pagination */
+	/* oprhans/widows not supported by Firefox */
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	orphans: 3;
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	widows: 3;
 }
 

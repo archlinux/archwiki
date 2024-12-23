@@ -3,8 +3,8 @@
 		"authors": [
 			"CorrelMoris38",
 			"Jilorisa",
-			"Meqqal",
 			"Jjurieee",
+			"Meqqal",
 			"Rumandawi",
 			"Ultron90"
 		]
@@ -51,6 +51,7 @@
 	"minerva-page-actions-overflow": "Ogumu",
 	"minerva-page-actions-language-switcher": "Boros",
 	"minerva-page-actions-history": "Sajara",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Discussion]",
 	"minerva-skin-desc": "Kulit koiso mudah alih ii responsif",
 	"skin-minerva-issue-learn-more": "Pinsingilo lobi gumu",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 second|$1 seconds}} ditinu",
@@ -61,9 +62,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 toun|$1 toun}} nakatalib",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategori",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Intangai kategori do liwang",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Isu liwang di noinsanangan",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Isu liwang (Templat:ambox) nopo nga posoruludon id suang rencana.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sundung do ingkaa, au milo do popotimung aasil tumanud liwang di au pointounda id suang do mudah alih. Nung manu kou momoguno kowoowoyoo tinimungan tumanud liwang, intangai koiyonon id sakai mija.",
+	"skin-minerva-night-mode-unavailable": "Liwang nopo nga kiharo tema wotik do \"atalang\".",
 	"minerva.css": "/* All CSS here will be loaded for users of the MinervaNeue skin */",
 	"minerva.js": "/* All JavaScript here will be loaded for users of the MinervaNeue skin */"
 }

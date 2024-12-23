@@ -2,14 +2,16 @@
 
 namespace MediaWiki\Tests\Storage;
 
-use ChangeTags;
-use Content;
-use FormatJson;
 use LogicException;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\RenderedRevision;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -19,11 +21,8 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWikiIntegrationTestCase;
-use ParserOptions;
 use RecentChange;
-use TextContent;
 use WikiPage;
-use WikitextContent;
 
 /**
  * @covers \MediaWiki\Storage\PageUpdater
@@ -64,14 +63,11 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 	 */
 	private function getRecentChangeFor( $revId ) {
 		$qi = RecentChange::getQueryInfo();
-		$row = $this->db->selectRow(
-			$qi['tables'],
-			$qi['fields'],
-			[ 'rc_this_oldid' => $revId ],
-			__METHOD__,
-			[],
-			$qi['joins']
-		);
+		$row = $this->getDb()->newSelectQueryBuilder()
+			->queryInfo( $qi )
+			->where( [ 'rc_this_oldid' => $revId ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 
 		return $row ? RecentChange::newFromRow( $row ) : null;
 	}
@@ -88,7 +84,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$page = $wikiPageFactory->newFromTitle( $title );
 		$updater = $page->newPageUpdater( $user );
 
-		$oldStats = $this->db->newSelectQueryBuilder()
+		$oldStats = $this->getDb()->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'site_stats' )
 			->where( '1=1' )
@@ -168,7 +164,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $rc, 'RecentChange' );
 
 		// check site stats - this asserts that derived data updates where run.
-		$stats = $this->db->newSelectQueryBuilder()
+		$stats = $this->getDb()->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'site_stats' )
 			->where( '1=1' )
@@ -207,7 +203,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 
 		$updater = $page->newPageUpdater( $user );
 
-		$oldStats = $this->db->newSelectQueryBuilder()
+		$oldStats = $this->getDb()->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'site_stats' )
 			->where( '1=1' )
@@ -308,7 +304,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		);
 
 		// check site stats - this asserts that derived data updates where run.
-		$stats = $this->db->newSelectQueryBuilder()
+		$stats = $this->getDb()->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'site_stats' )
 			->where( '1=1' )
@@ -990,7 +986,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$updater = $page->newPageUpdater( $user )
-			->setContent( SlotRecord::MAIN, new \WikitextContent( $wikitext ) );
+			->setContent( SlotRecord::MAIN, new \MediaWiki\Content\WikitextContent( $wikitext ) );
 
 		$summary = CommentStoreComment::newUnsavedComment( 'Just a test' );
 		$rev = $updater->saveRevision( $summary, EDIT_UPDATE );
@@ -1002,7 +998,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$expected = strval( $callback( $rev ) );
 
 		$output = $page->getParserOutput( ParserOptions::newFromAnon() );
-		$html = $output->getText();
+		$html = $output->getRawText();
 		$text = $rev->getContent( SlotRecord::MAIN )->serialize();
 
 		if ( $subst ) {
@@ -1025,7 +1021,12 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 			->addTag( 'foo' )
 			->setFlags( EDIT_SUPPRESS_RC )
 			->saveRevision( CommentStoreComment::newUnsavedComment( 'Comment' ) );
-		$this->assertArrayEquals( [ 'foo' ], ChangeTags::getTags( $this->db, null, $revision->getId() ) );
+		$this->assertArrayEquals(
+			[ 'foo' ],
+			$this->getServiceContainer()->getChangeTagsStore()->getTags(
+				$this->getDb(), null, $revision->getId()
+			)
+		);
 
 		$revision2 = $this->getServiceContainer()
 			->getPageUpdaterFactory()
@@ -1037,7 +1038,12 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 			->addTag( 'bar' )
 			->setFlags( EDIT_SUPPRESS_RC )
 			->saveRevision( CommentStoreComment::newUnsavedComment( 'Comment' ) );
-		$this->assertArrayEquals( [ 'bar' ], ChangeTags::getTags( $this->db, null, $revision2->getId() ) );
+		$this->assertArrayEquals(
+			[ 'bar' ],
+			$this->getServiceContainer()->getChangeTagsStore()->getTags(
+				$this->getDb(), null, $revision2->getId()
+			)
+		);
 	}
 
 	/**

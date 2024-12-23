@@ -42,13 +42,32 @@
 	};
 	QUnit.hooks.beforeEach( function () {
 		// Sinon sandbox
-		var config = sinon.getConfig( sinon.config );
+		const config = sinon.getConfig( sinon.config );
 		config.injectInto = this;
 		sinon.sandbox.create( config );
 	} );
 	QUnit.hooks.afterEach( function () {
 		this.sandbox.verifyAndRestore();
 	} );
+
+	const deepClone = typeof structuredClone === 'function' ? structuredClone : function ( obj ) {
+		return $.extend( /* deep */ true, {}, obj );
+	};
+
+	const liveConfig = mw.config.values;
+	const liveMessages = mw.messages.values;
+	const liveWarnFn = mw.log.warn;
+	const liveErrorFn = mw.log.error;
+	const noopFn = function () {};
+
+	function suppressWarnings() {
+		mw.log.warn = mw.log.error = noopFn;
+	}
+
+	function restoreWarnings() {
+		mw.log.warn = liveWarnFn;
+		mw.log.error = liveErrorFn;
+	}
 
 	/**
 	 * Ensure mw.config and other `mw` singleton state is prestine for each test.
@@ -70,70 +89,56 @@
 	 * @param {Object} [localEnv.config]
 	 * @param {Object} [localEnv.messages]
 	 */
-	QUnit.newMwEnvironment = ( function () {
-		var deepClone = typeof structuredClone === 'function' ? structuredClone : function ( obj ) {
-			return $.extend( /* deep */ true, {}, obj );
+	QUnit.newMwEnvironment = function newMwEnvironment( localEnv ) {
+		localEnv = localEnv || {};
+
+		const orgBeforeEach = localEnv.beforeEach;
+		const orgAfterEach = localEnv.afterEach;
+
+		localEnv.beforeEach = function () {
+			mw.config.values = deepClone( liveConfig );
+			if ( localEnv.config ) {
+				mw.config.set( localEnv.config );
+			}
+
+			// Start with a clean message store.
+			// Optimization: Use fast empty object instead of deep clone to preserve
+			// server response (on mediawiki-wmf-quibble with 2000 tests, reduces
+			// newMwEnvironment_beforeEach from 3.7s to 0.7s). ResourceLoader runs
+			// tests with lang=qqx so tests shouldn't rely on these anyway.
+			mw.messages.values = {};
+			if ( localEnv.messages ) {
+				mw.messages.set( localEnv.messages );
+			}
+
+			this.suppressWarnings = suppressWarnings;
+			this.restoreWarnings = restoreWarnings;
+
+			if ( orgBeforeEach ) {
+				return orgBeforeEach.apply( this, arguments );
+			}
 		};
-		var liveConfig = mw.config.values;
-		var liveMessages = mw.messages.values;
-		var liveWarnFn = mw.log.warn;
-		var liveErrorFn = mw.log.error;
+		localEnv.afterEach = function () {
+			let ret;
+			if ( orgAfterEach ) {
+				ret = orgAfterEach.apply( this, arguments );
+			}
 
-		function suppressWarnings() {
-			mw.log.warn = mw.log.error = function () {};
-		}
+			// For convenience and to avoid leakage, always restore after each test.
+			// Restoring earlier is allowed.
+			restoreWarnings();
 
-		function restoreWarnings() {
-			mw.log.warn = liveWarnFn;
-			mw.log.error = liveErrorFn;
-		}
+			mw.config.values = liveConfig;
+			mw.messages.values = liveMessages;
 
-		return function newMwEnvironment( localEnv ) {
-			localEnv = localEnv || {};
+			// Stop animations to ensure a clean start for the next test
+			$.timers = [];
+			$.fx.stop();
 
-			var orgBeforeEach = localEnv.beforeEach;
-			var orgAfterEach = localEnv.afterEach;
-
-			localEnv.beforeEach = function () {
-				mw.config.values = deepClone( liveConfig );
-				if ( localEnv.config ) {
-					mw.config.set( localEnv.config );
-				}
-
-				mw.messages.values = deepClone( liveMessages );
-				if ( localEnv.messages ) {
-					mw.messages.set( localEnv.messages );
-				}
-
-				this.suppressWarnings = suppressWarnings;
-				this.restoreWarnings = restoreWarnings;
-
-				if ( orgBeforeEach ) {
-					return orgBeforeEach.apply( this, arguments );
-				}
-			};
-			localEnv.afterEach = function () {
-				var ret;
-				if ( orgAfterEach ) {
-					ret = orgAfterEach.apply( this, arguments );
-				}
-
-				// For convenience and to avoid leakage, always restore after each test.
-				// Restoring earlier is allowed.
-				restoreWarnings();
-
-				mw.config.values = liveConfig;
-				mw.messages.values = liveMessages;
-
-				// Stop animations to ensure a clean start for the next test
-				$.timers = [];
-				$.fx.stop();
-
-				return ret;
-			};
-			return localEnv;
+			return ret;
 		};
-	}() );
+		return localEnv;
+	};
 
 	/**
 	 * Wait for multiple promises to have finished.
@@ -146,11 +151,11 @@
 	 * @return {jQuery.Promise}
 	 */
 	QUnit.whenPromisesComplete = function () {
-		var altPromises = [];
+		const altPromises = [];
 
 		// eslint-disable-next-line no-jquery/no-each-util
-		$.each( arguments, function ( i, arg ) {
-			var alt = $.Deferred();
+		$.each( arguments, ( i, arg ) => {
+			const alt = $.Deferred();
 			altPromises.push( alt );
 
 			// Whether this one fails or not, forwards it to
@@ -158,7 +163,7 @@
 			arg.always( alt.resolve );
 		} );
 
-		return $.when.apply( $, altPromises );
+		return $.when( ...altPromises );
 	};
 
 	/**
@@ -171,16 +176,16 @@
 	 */
 	function getDomStructure( node ) {
 		if ( node.nodeType === Node.ELEMENT_NODE ) {
-			var processedChildren = [];
-			$( node ).contents().each( function ( i, el ) {
+			const processedChildren = [];
+			$( node ).contents().each( ( i, el ) => {
 				if ( el.nodeType === Node.ELEMENT_NODE || el.nodeType === Node.TEXT_NODE ) {
 					processedChildren.push( getDomStructure( el ) );
 				}
 			} );
 
-			var attribs = {};
+			const attribs = {};
 			// eslint-disable-next-line no-jquery/no-each-util
-			$.each( node.attributes, function ( i, attrib ) {
+			$.each( node.attributes, ( i, attrib ) => {
 				attribs[ attrib.name ] = attrib.value;
 			} );
 
@@ -202,11 +207,11 @@
 	 * @return {Object}
 	 */
 	function getHtmlStructure( html ) {
-		var el = $( '<div>' ).append( html )[ 0 ];
+		const el = $( '<div>' ).append( html )[ 0 ];
 		return getDomStructure( el );
 	}
 
-	var addons = {
+	const addons = {
 
 		/**
 		 * Assert numerical value less than X
@@ -280,7 +285,7 @@
 		 * @param {string} message Assertion message.
 		 */
 		domEqual: function ( actual, expectedStruct, message ) {
-			var actualStruct = getDomStructure( actual );
+			const actualStruct = getDomStructure( actual );
 			this.pushResult( {
 				result: QUnit.equiv( actualStruct, expectedStruct ),
 				actual: actualStruct,
@@ -297,7 +302,7 @@
 		 * @param {string} message Assertion message.
 		 */
 		htmlEqual: function ( actualHtml, expectedHtml, message ) {
-			var actual = getHtmlStructure( actualHtml ),
+			const actual = getHtmlStructure( actualHtml ),
 				expected = getHtmlStructure( expectedHtml );
 			this.pushResult( {
 				result: QUnit.equiv( actual, expected ),
@@ -315,7 +320,7 @@
 		 * @param {string} message Assertion message.
 		 */
 		notHtmlEqual: function ( actualHtml, expectedHtml, message ) {
-			var actual = getHtmlStructure( actualHtml ),
+			const actual = getHtmlStructure( actualHtml ),
 				expected = getHtmlStructure( expectedHtml );
 
 			this.pushResult( {
@@ -328,63 +333,77 @@
 		}
 	};
 
-	$.extend( QUnit.assert, addons );
+	Object.assign( QUnit.assert, addons );
 
-	// Small test suite to confirm proper functionality of the utilities and
-	// initializations defined above in this file.
-	QUnit.module( 'testrunner', QUnit.newMwEnvironment( {
-		beforeEach: function () {
-			this.mwHtmlLive = mw.html;
-			mw.html = {
-				escape: function () {
-					return 'mocked';
-				}
-			};
-		},
-		afterEach: function () {
-			mw.html = this.mwHtmlLive;
-		},
-		config: {
-			testVar: 'foo'
-		},
-		messages: {
-			testMsg: 'Foo.'
-		}
-	} ), function () {
-
-		QUnit.test( 'beforeEach', function ( assert ) {
-			assert.strictEqual( mw.html.escape( 'foo' ), 'mocked', 'callback ran' );
-			assert.strictEqual( mw.config.get( 'testVar' ), 'foo', 'config applied' );
-			assert.strictEqual( mw.messages.get( 'testMsg' ), 'Foo.', 'messages applied' );
-
-			mw.config.set( 'testVar', 'bar' );
-			mw.messages.set( 'testMsg', 'Bar.' );
-		} );
-
-		QUnit.test( 'afterEach', function ( assert ) {
-			assert.strictEqual( mw.config.get( 'testVar' ), 'foo', 'config restored' );
-			assert.strictEqual( mw.messages.get( 'testMsg' ), 'Foo.', 'messages restored' );
-		} );
-
-		QUnit.test( 'Loader status', function ( assert ) {
-			var modules = mw.loader.getModuleNames();
-			var error = [];
-			var missing = [];
-
-			for ( var i = 0; i < modules.length; i++ ) {
-				var state = mw.loader.getState( modules[ i ] );
-				if ( state === 'error' ) {
-					error.push( modules[ i ] );
-				} else if ( state === 'missing' ) {
-					missing.push( modules[ i ] );
-				}
+	QUnit.begin( () => {
+		// Run a few quick environment checks to make sure the above is all working correctly.
+		// We run this as a plugin callback with QUnit.onUncaughtException() instead of as
+		// a normal QUnit.module() or QUnit.test() because:
+		//
+		// 1. This way it always runs first, instead of out of order when using `seed`,
+		//    or when reloading which runs previously failed tests first.
+		// 2. Reduce noise in the output.
+		// 3. Makes it actually run instead of skipped when selecting a single module,
+		//    or re-running a single test.
+		const issues = [];
+		function ensure( ok, issue ) {
+			if ( !ok ) {
+				issues.push( issue );
 			}
-
-			assert.deepEqual( error, [], 'Modules in error state' );
-			assert.deepEqual( missing, [], 'Modules in missing state' );
+		}
+		const env = QUnit.newMwEnvironment( {
+			beforeEach: function () {
+				this.mwHtmlLive = mw.html;
+				mw.html = {
+					escape: function () {
+						return 'mocked';
+					}
+				};
+			},
+			afterEach: function () {
+				mw.html = this.mwHtmlLive;
+			},
+			config: {
+				testVar: 'foo'
+			},
+			messages: {
+				testMsg: 'Foo.'
+			}
 		} );
 
-		QUnit.test( 'assert.htmlEqual', function ( assert ) {
+		env.beforeEach();
+		ensure( mw.html.escape( 'foo' ) === 'mocked', 'newMwEnvironment did not call beforeEach()' );
+		ensure( mw.config.get( 'testVar' ) === 'foo', 'newMwEnvironment did not apply config' );
+		ensure( mw.messages.get( 'testMsg' ) === 'Foo.', 'newMwEnvironment did not apply messages' );
+
+		mw.config.set( 'testVar', 'bar' );
+		mw.messages.set( 'testMsg', 'Bar.' );
+		env.afterEach();
+		env.beforeEach();
+		ensure( mw.config.get( 'testVar' ) === 'foo', 'newMwEnvironment failed to restore config' );
+		ensure( mw.messages.get( 'testMsg' ) === 'Foo.', 'newMwEnvironment failed to restore messages' );
+
+		env.afterEach();
+		ensure( mw.html.escape( '<' ) === '&lt;', 'newMwEnvironment did not call afterEach()' );
+		ensure( mw.config.get( 'testVar' ) === null, 'newMwEnvironment leaks config' );
+		ensure( mw.messages.get( 'testMsg' ) === null, 'newMwEnvironment leaks messages' );
+
+		mw.loader.getModuleNames().forEach( ( name ) => {
+			const state = mw.loader.getState( name );
+			if ( state === 'error' ) {
+				issues.push( `Module "${ name }" in error state` );
+			} else if ( state === 'missing' ) {
+				issues.push( `Missing "${ name }" module dependency` );
+			}
+		} );
+
+		if ( issues.length ) {
+			QUnit.onUncaughtException( 'testrunner.js found the following issues:\n * ' + issues.join( '\n * ' ) );
+		}
+	} );
+
+	QUnit.module( 'testrunner', () => {
+		QUnit.test( 'assert.htmlEqual', ( assert ) => {
 			assert.htmlEqual(
 				'<div><p class="some classes" data-length="10">Child paragraph with <a href="http://example.com">A link</a></p>Regular text<span>A span</span></div>',
 				'<div><p data-length=\'10\'  class=\'some classes\'>Child paragraph with <a href=\'http://example.com\' >A link</a></p>Regular text<span>A span</span></div>',
@@ -432,25 +451,5 @@
 				'Outer text nodes are compared (last text node different)'
 			);
 		} );
-
-		var beforeEachRan = false;
-		QUnit.module( 'testrunner-nested-hooks', {
-			beforeEach: function () {
-				beforeEachRan = true;
-			}
-		} );
-
-		QUnit.test( 'beforeEach', function ( assert ) {
-			assert.true( beforeEachRan );
-		} );
 	} );
-
-	QUnit.module( 'testrunner-next' );
-
-	QUnit.test( 'afterEach', function ( assert ) {
-		assert.strictEqual( mw.html.escape( '<' ), '&lt;', 'mock not leaked to next module' );
-		assert.strictEqual( mw.config.get( 'testVar' ), null, 'config not leaked to next module' );
-		assert.strictEqual( mw.messages.get( 'testMsg' ), null, 'messages not lekaed to next module' );
-	} );
-
 }() );

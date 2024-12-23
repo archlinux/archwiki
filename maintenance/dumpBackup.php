@@ -26,7 +26,11 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\BackupDumper;
+
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/includes/BackupDumper.php';
+// @codeCoverageIgnoreEnd
 
 class DumpBackup extends BackupDumper {
 	public function __construct( $args = null ) {
@@ -140,5 +144,7 @@ TEXT
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DumpBackup::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

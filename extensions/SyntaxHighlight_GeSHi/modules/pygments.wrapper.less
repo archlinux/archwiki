@@ -1,15 +1,26 @@
+@import 'mediawiki.skin.variables.less';
+
 .mw-highlight {
 	unicode-bidi: embed;
 
+	div& {
+		// Position absolutely positioned elements relative to this container.
+		position: relative;
+		// Create a block formatting context so that the code block's background and
+		// absolutely positioned elements inside it (line numbers, copy button)
+		// do not overlap floated elements outside of it (e.g. image thumbnails, infoboxes).
+		// See T126010, T272853, T40932#10211022.
+		display: flow-root;
+		// Move the margin from the nested pre, as the block formatting context prevents margin collapsing
+		margin: 1em 0;
+	}
+
 	pre {
+		margin: 0;
 		/* Use a more commonly found tab size of 4 (e.g. as used in CodeEditor)
 		instead of the browser-default value of 8 */
 		-moz-tab-size: 4;
 		tab-size: 4;
-		// Position .linenos relative to this container.
-		// Do not put this on the main container as it is 100%
-		// and causes it to stack above floated elements (T272853)
-		position: relative;
 	}
 
 	/* Avoid displaying double borders for nested 'code' elements.
@@ -18,13 +29,9 @@
 	   was a common pattern. Continue supporting it in existing content. */
 	code code& {
 		background-color: transparent;
+		color: inherit;
 		border: 0;
 		padding: 0;
-	}
-
-	/* The nested pre already has a background. T126010 */
-	div& {
-		background-color: inherit;
 	}
 
 	/*
@@ -49,7 +56,7 @@
 			/* @noflip */
 			padding-left: 3.5em;
 			/* @noflip */
-			box-shadow: inset 2.75em 0 0 #f0f0f0;
+			box-shadow: inset 2.75em 0 0 @background-color-neutral;
 
 			.hll {
 				/* @noflip */
@@ -64,7 +71,7 @@
 			/* @noflip */
 			padding-right: 3.5em;
 			/* @noflip */
-			box-shadow: inset -2.75em 0 0 #f0f0f0;
+			box-shadow: inset -2.75em 0 0 @background-color-neutral;
 
 			/* stylelint-disable-next-line no-descending-specificity */
 			.hll {
@@ -81,7 +88,7 @@
 		box-sizing: border-box;
 		width: 2.75em;
 		background: none;
-		color: #72777d;
+		color: @color-placeholder;
 		white-space: pre;
 
 		.mw-content-ltr& {
@@ -109,6 +116,6 @@
 
 	a:hover .linenos,
 	.hll a .linenos {
-		color: #333;
+		color: @color-base--hover;
 	}
 }

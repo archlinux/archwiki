@@ -35,7 +35,9 @@ use MediaWiki\Logger\ConsoleSpi;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script providing an interactive console for evaluating php commands
@@ -96,8 +98,9 @@ class MWEval extends Maintenance {
 			&& Maintenance::posix_isatty( 0 /*STDIN*/ );
 
 		if ( $__useReadline ) {
-			$__historyFile = isset( $_ENV['HOME'] ) ?
-				"{$_ENV['HOME']}/.mweval_history" : ( MW_INSTALL_PATH . "/maintenance/.mweval_history" );
+			$home = getenv( 'HOME' );
+			$__historyFile = $home ?
+				"$home/.mweval_history" : ( MW_INSTALL_PATH . "/maintenance/.mweval_history" );
 			readline_read_history( $__historyFile );
 		} else {
 			$__historyFile = null;
@@ -106,6 +109,7 @@ class MWEval extends Maintenance {
 		( new HookRunner( $this->getServiceContainer()->getHookContainer() ) )->onMaintenanceShellStart();
 
 		$__e = null; // PHP exception
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $__line = Maintenance::readconsole() ) !== false ) {
 			if ( !$__ignoreErrors && $__e && !preg_match( '/^(exit|die);?$/', $__line ) ) {
 				// Internal state may be corrupted or fatals may occur later due
@@ -150,5 +154,7 @@ class MWEval extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MWEval::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
-use ApiBase;
-use ApiMain;
 use Exception;
-use Language;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\Language;
 use MediaWiki\Request\FauxRequest;
 use PHPUnit\Framework\MockObject\MockBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -17,7 +17,6 @@ use PHPUnit\Framework\MockObject\MockObject;
  * This trait is intended to be used on subclasses of MediaWikiUnitTestCase
  * or MediaWikiIntegrationTestCase.
  *
- * @package MediaWiki\Tests\Rest\Handler
  * @method MockBuilder getMockBuilder(string $className)
  */
 trait ActionModuleBasedHandlerTestTrait {
@@ -36,7 +35,7 @@ trait ActionModuleBasedHandlerTestTrait {
 		ApiMain $main,
 		$name,
 		$resultData,
-		Exception $throwException = null
+		?Exception $throwException = null
 	) {
 		/** @var ApiBase|MockObject $module */
 		$module = $this->getMockBuilder( ApiBase::class )

@@ -4,8 +4,10 @@ namespace MediaWiki\Extension\OATHAuth\Hook;
 
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;
 use MediaWiki\Permissions\Hook\UserGetRightsHook;
 use MediaWiki\Permissions\PermissionManager;
@@ -17,11 +19,9 @@ use MediaWiki\User\Hook\UserEffectiveGroupsHook;
 use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserGroupMembership;
-use Message;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\LabelWidget;
-use RequestContext;
 
 class HookHandler implements
 	AuthChangeFormFieldsHook,

@@ -20,7 +20,12 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use HttpStatus;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Html\Html;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
@@ -33,10 +38,15 @@ use Wikimedia\ParamValidator\ParamValidator;
  * @ingroup API
  */
 abstract class ApiFormatBase extends ApiBase {
-	private $mIsHtml, $mFormat;
-	private $mBuffer, $mDisabled = false;
+	private bool $mIsHtml;
+	private string $mFormat;
+	private string $mBuffer = '';
+	private bool $mDisabled = false;
+	/** @var bool */
 	private $mIsWrappedHtml = false;
+	/** @var int|false */
 	private $mHttpStatus = false;
+	/** @var bool */
 	protected $mForceDefaultParams = false;
 
 	/**
@@ -45,7 +55,7 @@ abstract class ApiFormatBase extends ApiBase {
 	 * @param ApiMain $main
 	 * @param string $format Format name
 	 */
-	public function __construct( ApiMain $main, $format ) {
+	public function __construct( ApiMain $main, string $format ) {
 		parent::__construct( $main, $format );
 
 		$this->mIsHtml = str_ends_with( $format, 'fm' );
@@ -335,7 +345,7 @@ abstract class ApiFormatBase extends ApiBase {
 			} else {
 				// API handles its own clickjacking protection.
 				// Note: $wgBreakFrames will still override $wgApiFrameOptions for format mode.
-				$out->setPreventClickjacking( false );
+				$out->getMetadata()->setPreventClickjacking( false );
 				$out->output();
 			}
 		} else {
@@ -393,3 +403,6 @@ abstract class ApiFormatBase extends ApiBase {
  * For really cool vim folding this needs to be at the end:
  * vim: foldmarker=@{,@} foldmethod=marker
  */
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiFormatBase::class, 'ApiFormatBase' );

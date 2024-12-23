@@ -1,0 +1,24 @@
+{
+	"modules": [
+		{
+			"resourceModule": "mmv",
+			"maxSize": "25.2 kB"
+		},
+		{
+			"resourceModule": "mmv.ui.restriction",
+			"maxSize": "0.5 kB"
+		},
+		{
+			"resourceModule": "mmv.codex",
+			"maxSize": "5.2 kB"
+		},
+		{
+			"resourceModule": "mmv.ui.reuse",
+			"maxSize": "5.7 kB"
+		},
+		{
+			"resourceModule": "mmv.bootstrap",
+			"maxSize": "4.8 kB"
+		}
+	]
+}

@@ -1,7 +1,9 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Integration test that checks import success and
@@ -16,6 +18,7 @@ use MediaWiki\Title\Title;
  */
 class ImportLinkCacheIntegrationTest extends MediaWikiIntegrationTestCase {
 
+	/** @var Status */
 	private $importStreamSource;
 
 	protected function setUp(): void {
@@ -77,12 +80,14 @@ class ImportLinkCacheIntegrationTest extends MediaWikiIntegrationTestCase {
 			->getWikiImporter( $importStreamSource->value, $this->getTestSysop()->getAuthority() );
 		$importer->setDebug( true );
 
+		$context = RequestContext::getMain();
+		$context->setUser( $this->getTestUser()->getUser() );
 		$reporter = new ImportReporter(
 			$importer,
 			false,
 			'',
 			false,
-			new RequestContext()
+			$context
 		);
 
 		$reporter->open();

@@ -24,7 +24,7 @@ use Psr\Container\ContainerInterface;
 
 class AbuseFilterServices {
 
-	public static function getHookRunner( ContainerInterface $services = null ): AbuseFilterHookRunner {
+	public static function getHookRunner( ?ContainerInterface $services = null ): AbuseFilterHookRunner {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( AbuseFilterHookRunner::SERVICE_NAME );
 	}
 
@@ -32,7 +32,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return KeywordsManager
 	 */
-	public static function getKeywordsManager( ContainerInterface $services = null ): KeywordsManager {
+	public static function getKeywordsManager( ?ContainerInterface $services = null ): KeywordsManager {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( KeywordsManager::SERVICE_NAME );
 	}
 
@@ -40,7 +40,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return FilterProfiler
 	 */
-	public static function getFilterProfiler( ContainerInterface $services = null ): FilterProfiler {
+	public static function getFilterProfiler( ?ContainerInterface $services = null ): FilterProfiler {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( FilterProfiler::SERVICE_NAME );
 	}
 
@@ -48,7 +48,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return AbuseFilterPermissionManager
 	 */
-	public static function getPermissionManager( ContainerInterface $services = null ): AbuseFilterPermissionManager {
+	public static function getPermissionManager( ?ContainerInterface $services = null ): AbuseFilterPermissionManager {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( AbuseFilterPermissionManager::SERVICE_NAME );
 	}
 
@@ -56,7 +56,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return ChangeTagger
 	 */
-	public static function getChangeTagger( ContainerInterface $services = null ): ChangeTagger {
+	public static function getChangeTagger( ?ContainerInterface $services = null ): ChangeTagger {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( ChangeTagger::SERVICE_NAME );
 	}
 
@@ -64,7 +64,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return ChangeTagsManager
 	 */
-	public static function getChangeTagsManager( ContainerInterface $services = null ): ChangeTagsManager {
+	public static function getChangeTagsManager( ?ContainerInterface $services = null ): ChangeTagsManager {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( ChangeTagsManager::SERVICE_NAME );
 	}
 
@@ -72,7 +72,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return ChangeTagValidator
 	 */
-	public static function getChangeTagValidator( ContainerInterface $services = null ): ChangeTagValidator {
+	public static function getChangeTagValidator( ?ContainerInterface $services = null ): ChangeTagValidator {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( ChangeTagValidator::SERVICE_NAME );
 	}
 
@@ -80,7 +80,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return BlockAutopromoteStore
 	 */
-	public static function getBlockAutopromoteStore( ContainerInterface $services = null ): BlockAutopromoteStore {
+	public static function getBlockAutopromoteStore( ?ContainerInterface $services = null ): BlockAutopromoteStore {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( BlockAutopromoteStore::SERVICE_NAME );
 	}
 
@@ -88,7 +88,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return FilterUser
 	 */
-	public static function getFilterUser( ContainerInterface $services = null ): FilterUser {
+	public static function getFilterUser( ?ContainerInterface $services = null ): FilterUser {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( FilterUser::SERVICE_NAME );
 	}
 
@@ -96,7 +96,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return CentralDBManager
 	 */
-	public static function getCentralDBManager( ContainerInterface $services = null ): CentralDBManager {
+	public static function getCentralDBManager( ?ContainerInterface $services = null ): CentralDBManager {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( CentralDBManager::SERVICE_NAME );
 	}
 
@@ -104,7 +104,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return RuleCheckerFactory
 	 */
-	public static function getRuleCheckerFactory( ContainerInterface $services = null ): RuleCheckerFactory {
+	public static function getRuleCheckerFactory( ?ContainerInterface $services = null ): RuleCheckerFactory {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( RuleCheckerFactory::SERVICE_NAME );
 	}
 
@@ -112,7 +112,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return FilterLookup
 	 */
-	public static function getFilterLookup( ContainerInterface $services = null ): FilterLookup {
+	public static function getFilterLookup( ?ContainerInterface $services = null ): FilterLookup {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( FilterLookup::SERVICE_NAME );
 	}
 
@@ -120,7 +120,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return EmergencyCache
 	 */
-	public static function getEmergencyCache( ContainerInterface $services = null ): EmergencyCache {
+	public static function getEmergencyCache( ?ContainerInterface $services = null ): EmergencyCache {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( EmergencyCache::SERVICE_NAME );
 	}
 
@@ -128,7 +128,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return EmergencyWatcher
 	 */
-	public static function getEmergencyWatcher( ContainerInterface $services = null ): EmergencyWatcher {
+	public static function getEmergencyWatcher( ?ContainerInterface $services = null ): EmergencyWatcher {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( EmergencyWatcher::SERVICE_NAME );
 	}
 
@@ -136,7 +136,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return EchoNotifier
 	 */
-	public static function getEchoNotifier( ContainerInterface $services = null ): EchoNotifier {
+	public static function getEchoNotifier( ?ContainerInterface $services = null ): EchoNotifier {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( EchoNotifier::SERVICE_NAME );
 	}
 
@@ -144,7 +144,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return FilterValidator
 	 */
-	public static function getFilterValidator( ContainerInterface $services = null ): FilterValidator {
+	public static function getFilterValidator( ?ContainerInterface $services = null ): FilterValidator {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( FilterValidator::SERVICE_NAME );
 	}
 
@@ -152,7 +152,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return FilterCompare
 	 */
-	public static function getFilterCompare( ContainerInterface $services = null ): FilterCompare {
+	public static function getFilterCompare( ?ContainerInterface $services = null ): FilterCompare {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( FilterCompare::SERVICE_NAME );
 	}
 
@@ -160,7 +160,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return FilterImporter
 	 */
-	public static function getFilterImporter( ContainerInterface $services = null ): FilterImporter {
+	public static function getFilterImporter( ?ContainerInterface $services = null ): FilterImporter {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( FilterImporter::SERVICE_NAME );
 	}
 
@@ -168,7 +168,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return FilterStore
 	 */
-	public static function getFilterStore( ContainerInterface $services = null ): FilterStore {
+	public static function getFilterStore( ?ContainerInterface $services = null ): FilterStore {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( FilterStore::SERVICE_NAME );
 	}
 
@@ -176,7 +176,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return ConsequencesFactory
 	 */
-	public static function getConsequencesFactory( ContainerInterface $services = null ): ConsequencesFactory {
+	public static function getConsequencesFactory( ?ContainerInterface $services = null ): ConsequencesFactory {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( ConsequencesFactory::SERVICE_NAME );
 	}
 
@@ -184,7 +184,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return EditBoxBuilderFactory
 	 */
-	public static function getEditBoxBuilderFactory( ContainerInterface $services = null ): EditBoxBuilderFactory {
+	public static function getEditBoxBuilderFactory( ?ContainerInterface $services = null ): EditBoxBuilderFactory {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( EditBoxBuilderFactory::SERVICE_NAME );
 	}
 
@@ -192,7 +192,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return ConsequencesLookup
 	 */
-	public static function getConsequencesLookup( ContainerInterface $services = null ): ConsequencesLookup {
+	public static function getConsequencesLookup( ?ContainerInterface $services = null ): ConsequencesLookup {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( ConsequencesLookup::SERVICE_NAME );
 	}
 
@@ -200,7 +200,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return ConsequencesRegistry
 	 */
-	public static function getConsequencesRegistry( ContainerInterface $services = null ): ConsequencesRegistry {
+	public static function getConsequencesRegistry( ?ContainerInterface $services = null ): ConsequencesRegistry {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( ConsequencesRegistry::SERVICE_NAME );
 	}
 
@@ -208,7 +208,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return AbuseLoggerFactory
 	 */
-	public static function getAbuseLoggerFactory( ContainerInterface $services = null ): AbuseLoggerFactory {
+	public static function getAbuseLoggerFactory( ?ContainerInterface $services = null ): AbuseLoggerFactory {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( AbuseLoggerFactory::SERVICE_NAME );
 	}
 
@@ -216,7 +216,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return UpdateHitCountWatcher
 	 */
-	public static function getUpdateHitCountWatcher( ContainerInterface $services = null ): UpdateHitCountWatcher {
+	public static function getUpdateHitCountWatcher( ?ContainerInterface $services = null ): UpdateHitCountWatcher {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( UpdateHitCountWatcher::SERVICE_NAME );
 	}
 
@@ -224,7 +224,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return VariablesBlobStore
 	 */
-	public static function getVariablesBlobStore( ContainerInterface $services = null ): VariablesBlobStore {
+	public static function getVariablesBlobStore( ?ContainerInterface $services = null ): VariablesBlobStore {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( VariablesBlobStore::SERVICE_NAME );
 	}
 
@@ -233,7 +233,7 @@ class AbuseFilterServices {
 	 * @return ConsequencesExecutorFactory
 	 */
 	public static function getConsequencesExecutorFactory(
-		ContainerInterface $services = null
+		?ContainerInterface $services = null
 	): ConsequencesExecutorFactory {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( ConsequencesExecutorFactory::SERVICE_NAME );
 	}
@@ -242,7 +242,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return FilterRunnerFactory
 	 */
-	public static function getFilterRunnerFactory( ContainerInterface $services = null ): FilterRunnerFactory {
+	public static function getFilterRunnerFactory( ?ContainerInterface $services = null ): FilterRunnerFactory {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( FilterRunnerFactory::SERVICE_NAME );
 	}
 
@@ -250,7 +250,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return SpecsFormatter
 	 */
-	public static function getSpecsFormatter( ContainerInterface $services = null ): SpecsFormatter {
+	public static function getSpecsFormatter( ?ContainerInterface $services = null ): SpecsFormatter {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( SpecsFormatter::SERVICE_NAME );
 	}
 
@@ -258,7 +258,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return VariablesFormatter
 	 */
-	public static function getVariablesFormatter( ContainerInterface $services = null ): VariablesFormatter {
+	public static function getVariablesFormatter( ?ContainerInterface $services = null ): VariablesFormatter {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( VariablesFormatter::SERVICE_NAME );
 	}
 
@@ -266,7 +266,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return LazyVariableComputer
 	 */
-	public static function getLazyVariableComputer( ContainerInterface $services = null ): LazyVariableComputer {
+	public static function getLazyVariableComputer( ?ContainerInterface $services = null ): LazyVariableComputer {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( LazyVariableComputer::SERVICE_NAME );
 	}
 
@@ -274,7 +274,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return TextExtractor
 	 */
-	public static function getTextExtractor( ContainerInterface $services = null ): TextExtractor {
+	public static function getTextExtractor( ?ContainerInterface $services = null ): TextExtractor {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( TextExtractor::SERVICE_NAME );
 	}
 
@@ -282,7 +282,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return VariablesManager
 	 */
-	public static function getVariablesManager( ContainerInterface $services = null ): VariablesManager {
+	public static function getVariablesManager( ?ContainerInterface $services = null ): VariablesManager {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( VariablesManager::SERVICE_NAME );
 	}
 
@@ -291,7 +291,7 @@ class AbuseFilterServices {
 	 * @return VariableGeneratorFactory
 	 */
 	public static function getVariableGeneratorFactory(
-		ContainerInterface $services = null
+		?ContainerInterface $services = null
 	): VariableGeneratorFactory {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( VariableGeneratorFactory::SERVICE_NAME );
 	}
@@ -300,23 +300,15 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return EditRevUpdater
 	 */
-	public static function getEditRevUpdater( ContainerInterface $services = null ): EditRevUpdater {
+	public static function getEditRevUpdater( ?ContainerInterface $services = null ): EditRevUpdater {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( EditRevUpdater::SERVICE_NAME );
-	}
-
-	/**
-	 * @param ContainerInterface|null $services
-	 * @return AbuseFilterActorMigration
-	 */
-	public static function getActorMigration( ContainerInterface $services = null ): AbuseFilterActorMigration {
-		return ( $services ?? MediaWikiServices::getInstance() )->get( AbuseFilterActorMigration::SERVICE_NAME );
 	}
 
 	/**
 	 * @param ContainerInterface|null $services
 	 * @return BlockedDomainStorage
 	 */
-	public static function getBlockedDomainStorage( ContainerInterface $services = null ): BlockedDomainStorage {
+	public static function getBlockedDomainStorage( ?ContainerInterface $services = null ): BlockedDomainStorage {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( BlockedDomainStorage::SERVICE_NAME );
 	}
 
@@ -324,7 +316,7 @@ class AbuseFilterServices {
 	 * @param ContainerInterface|null $services
 	 * @return BlockedDomainFilter
 	 */
-	public static function getBlockedDomainFilter( ContainerInterface $services = null ): BlockedDomainFilter {
+	public static function getBlockedDomainFilter( ?ContainerInterface $services = null ): BlockedDomainFilter {
 		return ( $services ?? MediaWikiServices::getInstance() )->get( BlockedDomainFilter::SERVICE_NAME );
 	}
 }

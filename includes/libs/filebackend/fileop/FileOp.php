@@ -20,7 +20,17 @@
  * @file
  * @ingroup FileBackend
  */
+
+namespace Wikimedia\FileBackend\FileOps;
+
+use Closure;
+use Exception;
+use InvalidArgumentException;
+use MediaWiki\Json\FormatJson;
 use Psr\Log\LoggerInterface;
+use StatusValue;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FileBackendStore;
 use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
@@ -70,7 +80,6 @@ abstract class FileOp {
 	 * @param FileBackendStore $backend
 	 * @param array $params
 	 * @param LoggerInterface $logger PSR logger instance
-	 * @throws InvalidArgumentException
 	 */
 	final public function __construct(
 		FileBackendStore $backend, array $params, LoggerInterface $logger
@@ -473,3 +482,6 @@ abstract class FileOp {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( FileOp::class, 'FileOp' );

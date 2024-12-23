@@ -19,11 +19,11 @@
 
 namespace MediaWiki\Parser\Parsoid\Config;
 
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleHandler;
 use MediaWiki\Title\Title;
-use ParserOptions;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Config\PageConfig as IPageConfig;
 use Wikimedia\Parsoid\Config\PageContent as IPageContent;
@@ -91,18 +91,8 @@ class PageConfig extends IPageConfig {
 	}
 
 	/** @inheritDoc */
-	public function getTitle(): string {
-		return $this->title->getPrefixedText();
-	}
-
-	/** @inheritDoc */
 	public function getLinkTarget(): Title {
 		return $this->title;
-	}
-
-	/** @inheritDoc */
-	public function getNs(): int {
-		return $this->title->getNamespace();
 	}
 
 	/** @inheritDoc */

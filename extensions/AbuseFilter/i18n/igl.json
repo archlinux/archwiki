@@ -3,5 +3,8 @@
 		"authors": [
 			"AnnGabZak"
 		]
-	}
+	},
+	"action-abusefilter-protected-vars-log": "Go am'ẹnwu ku ma kójó ku ma du ña am'ẹnwu ojoji kuma dide nwu",
+	"abusefilter-protected-vars-log-header": "Eyi che am'ẹnwu ku ma ko jọ eyi:",
+	"log-action-filter-abusefilter-protected-vars": "Uchẹ ẹnwu eche:"
 }

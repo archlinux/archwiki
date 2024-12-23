@@ -21,8 +21,7 @@ class Hooks implements
 	LocalUserCreatedHook,
 	RecentChange_saveHook
 {
-	/** @var UserFactory */
-	private $userFactory;
+	private UserFactory $userFactory;
 
 	public function __construct( UserFactory $userFactory ) {
 		$this->userFactory = $userFactory;

@@ -2,10 +2,10 @@
 
 module.exports = {
 	toolbar: function () {
-		var done = arguments[ arguments.length - 1 ];
+		const done = arguments[ arguments.length - 1 ];
 		// HACK: The test page is on the help namespace, so overwrite the
 		// read tab with the nstab-main message.
-		new mw.Api().loadMessagesIfMissing( [ 'nstab-main' ], { amenableparser: true } ).then( function () {
+		new mw.Api().loadMessagesIfMissing( [ 'nstab-main' ], { amenableparser: true } ).then( () => {
 			$( '#ca-nstab-help a' ).text( mw.msg( 'nstab-main' ) );
 			done(
 				seleniumUtils.getBoundingRect( [
@@ -16,7 +16,7 @@ module.exports = {
 		} );
 	},
 	toolbarActions: function () {
-		var done = arguments[ arguments.length - 1 ];
+		const done = arguments[ arguments.length - 1 ];
 		done(
 			seleniumUtils.getBoundingRect( [
 				ve.init.target.toolbar.$after[ 0 ]
@@ -24,10 +24,10 @@ module.exports = {
 		);
 	},
 	citoidInspector: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 		ve.init.target.toolbar.tools.citoid.onSelect();
-		setTimeout( function () {
+		setTimeout( () => {
 			done(
 				seleniumUtils.getBoundingRect( [
 					surface.$element.find( '.ve-ce-mwReferenceNode' )[ 0 ],
@@ -37,10 +37,10 @@ module.exports = {
 		}, 500 );
 	},
 	citoidInspectorManual: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 		surface.context.inspectors.currentWindow.setModePanel( 'manual' );
-		setTimeout( function () {
+		setTimeout( () => {
 			done(
 				seleniumUtils.getBoundingRect( [
 					surface.$element.find( '.ve-ce-mwReferenceNode' )[ 0 ],
@@ -50,10 +50,10 @@ module.exports = {
 		} );
 	},
 	citoidInspectorReuse: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 		surface.context.inspectors.currentWindow.setModePanel( 'reuse' );
-		setTimeout( function () {
+		setTimeout( () => {
 			done(
 				seleniumUtils.getBoundingRect( [
 					surface.$element.find( '.ve-ce-mwReferenceNode' )[ 0 ],
@@ -63,7 +63,7 @@ module.exports = {
 		} );
 	},
 	citoidInspectorTeardown: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 		surface.context.inspectors.currentWindow.close().closed.then( done );
 	},
@@ -106,17 +106,17 @@ module.exports = {
 		seleniumUtils.runMenuTask( arguments[ arguments.length - 1 ], ve.init.target.toolbar.tools.categories, false, true );
 	},
 	toolbarTeardown: function () {
-		var done = arguments[ arguments.length - 1 ];
+		const done = arguments[ arguments.length - 1 ];
 		seleniumUtils.collapseToolbar();
 		done();
 	},
 	save: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 
-		surface.dialogs.once( 'opening', function ( win, opening ) {
-			opening.then( function () {
-				setTimeout( function () {
+		surface.dialogs.once( 'opening', ( win, opening ) => {
+			opening.then( () => {
+				setTimeout( () => {
 					done(
 						seleniumUtils.getBoundingRect( [
 							ve.init.target.surface.dialogs.currentWindow.$frame[ 0 ]
@@ -128,17 +128,17 @@ module.exports = {
 		ve.init.target.toolbarSaveButton.onSelect();
 	},
 	saveTeardown: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 		surface.dialogs.currentWindow.close().closed.then( done );
 	},
 	specialCharacters: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 
-		surface.getToolbarDialogs().once( 'opening', function ( win, opening ) {
-			opening.then( function () {
-				setTimeout( function () {
+		surface.getToolbarDialogs().once( 'opening', ( win, opening ) => {
+			opening.then( () => {
+				setTimeout( () => {
 					done(
 						seleniumUtils.getBoundingRect( [
 							ve.init.target.toolbar.tools.specialCharacter.$element[ 0 ],
@@ -151,18 +151,18 @@ module.exports = {
 		ve.init.target.toolbar.tools.specialCharacter.onSelect();
 	},
 	specialCharactersTeardown: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 		surface.getToolbarDialogs().currentWindow.close().closed.then( done );
 	},
 	formula: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 
-		surface.dialogs.once( 'opening', function ( win, opening ) {
-			opening.then( function () {
-				win.previewElement.once( 'render', function () {
-					win.previewElement.$element.find( 'img' ).on( 'load', function () {
+		surface.dialogs.once( 'opening', ( win, opening ) => {
+			opening.then( () => {
+				win.previewElement.once( 'render', () => {
+					win.previewElement.$element.find( 'img' ).on( 'load', () => {
 						done(
 							seleniumUtils.getBoundingRect( [
 								win.$frame[ 0 ]
@@ -176,17 +176,17 @@ module.exports = {
 		surface.executeCommand( 'mathDialog' );
 	},
 	formulaTeardown: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 		surface.dialogs.currentWindow.close().closed.then( done );
 	},
 	referenceList: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 
-		surface.dialogs.once( 'opening', function ( win, opening ) {
-			opening.then( function () {
-				setTimeout( function () {
+		surface.dialogs.once( 'opening', ( win, opening ) => {
+			opening.then( () => {
+				setTimeout( () => {
 					done(
 						seleniumUtils.getBoundingRect( [
 							win.$frame[ 0 ]
@@ -200,20 +200,20 @@ module.exports = {
 		surface.executeCommand( 'referencesList' );
 	},
 	referenceListTeardown: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
-		surface.dialogs.currentWindow.close().closed.then( function () {
+		surface.dialogs.currentWindow.close().closed.then( () => {
 			// Remove the reference list
 			surface.getModel().undo();
 			done();
 		} );
 	},
 	toolbarCite: function () {
-		var done = arguments[ arguments.length - 1 ];
+		const done = arguments[ arguments.length - 1 ];
 
 		ve.init.target.toolbar.tools.citoid.$element.css( 'font-size', '250%' );
 		// Wait for re-paint
-		setTimeout( function () {
+		setTimeout( () => {
 			done(
 				seleniumUtils.getBoundingRect( [
 					ve.init.target.toolbar.tools.citoid.$element[ 0 ]
@@ -222,12 +222,12 @@ module.exports = {
 		}, 100 );
 	},
 	toolbarCiteTeardown: function () {
-		var done = arguments[ arguments.length - 1 ];
+		const done = arguments[ arguments.length - 1 ];
 		ve.init.target.toolbar.tools.citoid.$element.css( 'font-size', '' );
 		done();
 	},
 	linkSearchResults: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 
 		surface.getModel().getFragment()
@@ -235,12 +235,12 @@ module.exports = {
 			.insertContent( 'World literature is literature that is read by many people all over' )
 			.collapseToStart().select();
 
-		surface.context.inspectors.once( 'opening', function ( win, opening ) {
-			opening.then( function () {
-				surface.context.inspectors.windows.link.annotationInput.input.requestRequest.then( function () {
+		surface.context.inspectors.once( 'opening', ( win, opening ) => {
+			opening.then( () => {
+				surface.context.inspectors.windows.link.annotationInput.input.requestRequest.then( () => {
 					// Wait a while for the images to load using a time guesstimate - as they're background
 					// images it's quite tricky to get load events.
-					setTimeout( function () {
+					setTimeout( () => {
 						done(
 							seleniumUtils.getBoundingRect( [
 								surface.$element.find( '.ve-ce-linkAnnotation' )[ 0 ],
@@ -254,10 +254,10 @@ module.exports = {
 		ve.init.target.surface.executeCommand( 'link' );
 	},
 	linkSearchResultsTeardown: function () {
-		var done = arguments[ arguments.length - 1 ],
+		const done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
 
-		surface.context.inspectors.currentWindow.close().closed.then( function () {
+		surface.context.inspectors.currentWindow.close().closed.then( () => {
 			// Remove content
 			surface.getModel().undo();
 			done();

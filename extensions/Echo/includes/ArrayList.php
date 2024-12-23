@@ -13,9 +13,6 @@ class ArrayList implements ContainmentList {
 	 */
 	protected $list;
 
-	/**
-	 * @param array $list
-	 */
 	public function __construct( array $list ) {
 		$this->list = $list;
 	}

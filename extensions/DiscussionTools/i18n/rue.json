@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gramo6",
-			"Constraque"
+			"Constraque",
+			"Gramo6"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Вы}} будете ознамены, кедь хтось напише повідомлїня в той діскусії. Вы можете змінити параметры своїх ознамінь в наставлїнях.",
@@ -19,6 +19,7 @@
 	"discussiontools-findcomment-noresults": "Нїт резултатів.",
 	"discussiontools-ledesection-button": "Далша інформація про тоту сторінку",
 	"discussiontools-ledesection-title": "Про тоту діскусну сторінку",
+	"discussiontools-newtopic-missing-title": "Просиме, вказати в своєй діскусії свою назву темы. Кедь {{GENDER:|вы}} нажмете на «{{int:discussiontools-replywidget-newtopic}}», ваша тема буде придана без назвы.",
 	"discussiontools-notification-subscribed-new-comment-view": "Зобразити повідомлїня",
 	"discussiontools-pageframe-latestcomment": "Послїдне повідомлїня: $1 од $2 в темі $3",
 	"discussiontools-pageframe-latestcomment-notopic": "Послїдне повідомлїня: $1 од $2",

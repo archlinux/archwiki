@@ -7,7 +7,7 @@ use Wikimedia\Rdbms\Platform\SQLPlatform;
 use Wikimedia\Rdbms\QueryBuilderFromRawSql;
 
 /**
- * @covers \Wikimedia\Rdbms\QueryBuilderFromRawSql::buildQuery
+ * @covers \Wikimedia\Rdbms\QueryBuilderFromRawSql
  */
 class QueryBuilderFromRawSqlTest extends MediaWikiUnitTestCase {
 
@@ -74,7 +74,7 @@ class QueryBuilderFromRawSqlTest extends MediaWikiUnitTestCase {
 			],
 			[
 				'RELEASE SAVEPOINT foo',
-				'RELEASE', SQLPlatform::QUERY_CHANGE_TRX,
+				'RELEASE SAVEPOINT', SQLPlatform::QUERY_CHANGE_TRX,
 			],
 			[
 				'ROLLBACK TO SAVEPOINT foo',
@@ -88,11 +88,11 @@ class QueryBuilderFromRawSqlTest extends MediaWikiUnitTestCase {
 			],
 			[
 				'CREATE TEMPORARY TABLE foo (id INT)',
-				'CREATE TEMPORARY', SQLPlatform::QUERY_CHANGE_SCHEMA | SQLPlatform::QUERY_CREATE_TEMP,
+				'CREATE TEMPORARY', SQLPlatform::QUERY_CHANGE_SCHEMA,
 			],
 			[
 				'CREATE INDEX foo ON bar (baz)',
-				'CREATE', SQLPlatform::QUERY_CHANGE_SCHEMA,
+				'CREATE INDEX', SQLPlatform::QUERY_CHANGE_SCHEMA,
 			],
 			[
 				'DROP TABLE foo',
@@ -100,11 +100,23 @@ class QueryBuilderFromRawSqlTest extends MediaWikiUnitTestCase {
 			],
 			[
 				'DROP INDEX foo ON bar',
-				'DROP', SQLPlatform::QUERY_CHANGE_SCHEMA,
+				'DROP INDEX', SQLPlatform::QUERY_CHANGE_SCHEMA,
 			],
 			[
 				'ALTER TABLE foo ADD COLUMN bar INT',
 				'ALTER', SQLPlatform::QUERY_CHANGE_SCHEMA,
+			],
+			[
+				'CREATE DATABASE foo',
+				'CREATE DATABASE', SQLPlatform::QUERY_CHANGE_SCHEMA,
+			],
+			[
+				'ALTER DATABASE foo',
+				'ALTER DATABASE', SQLPlatform::QUERY_CHANGE_SCHEMA,
+			],
+			[
+				'DROP DATABASE foo',
+				'DROP DATABASE', SQLPlatform::QUERY_CHANGE_SCHEMA,
 			],
 		];
 	}
@@ -119,9 +131,6 @@ class QueryBuilderFromRawSqlTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $res, $query->isWriteQuery() );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function provideIsWriteQuery(): array {
 		return [
 			[ 'SELECT foo', false ],
@@ -134,6 +143,47 @@ class QueryBuilderFromRawSqlTest extends MediaWikiUnitTestCase {
 			[ 'TRUNCATE bar', true ],
 			[ 'DELETE FROM baz', true ],
 			[ 'CREATE TABLE foobar', true ]
+		];
+	}
+
+	/**
+	 * @dataProvider provideGeneralizeSQL
+	 */
+	public function testGeneralizeSQL( string $sql, string $generalizedSql ) {
+		// Note that the default pcre.backtrack_limit is 1000000
+		$this->assertSame( $generalizedSql, QueryBuilderFromRawSql::generalizeSQL( $sql ) );
+	}
+
+	public static function provideGeneralizeSQL() {
+		return [
+			[
+				'SELECT * FROM t1 WHERE c1 = 5',
+				'SELECT * FROM t1 WHERE c1 = N'
+			],
+			[
+				'SELECT * FROM t1 WHERE c1 = "A"',
+				'SELECT * FROM t1 WHERE c1 = \'X\''
+			],
+			[
+				'SELECT * FROM t1 WHERE c1 = \'A\'',
+				'SELECT * FROM t1 WHERE c1 = \'X\''
+			],
+			[
+				'SELECT * FROM t1 WHERE c1 IN (5,-6)',
+				'SELECT * FROM t1 WHERE c1 IN (N,...,N)'
+			],
+			[
+				'SELECT * FROM t1 WHERE c1 IN ("A","B")',
+				'SELECT * FROM t1 WHERE c1 IN (\'X\')'
+			],
+			[
+				'SELECT * FROM t2 WHERE c1 IN ("1","2","3","4")',
+				'SELECT * FROM t2 WHERE c1 IN (\'X\')'
+			],
+			[
+				'SELECT * FROM t3 WHERE c1 IN (' . implode( ',', range( -1, -5000 ) ) . ')',
+				'SELECT * FROM t3 WHERE c1 IN (N,...,N)'
+			]
 		];
 	}
 }

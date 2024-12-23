@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:MIMESearch
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,18 +16,16 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  */
 
 namespace MediaWiki\Specials;
 
 use File;
 use HtmlArmor;
-use ILanguageConverter;
 use LocalFile;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
@@ -40,12 +36,19 @@ use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
- * Searches the database for files of the requested MIME type, comparing this with the
+ * Search the database for files of the requested MIME type, comparing this with the
  * 'img_major_mime' and 'img_minor_mime' fields in the image table.
+ *
  * @ingroup SpecialPage
+ * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  */
 class SpecialMIMESearch extends QueryPage {
-	protected $major, $minor, $mime;
+	/** @var string */
+	protected $major;
+	/** @var string */
+	protected $minor;
+	/** @var string */
+	protected $mime;
 
 	private ILanguageConverter $languageConverter;
 

@@ -6,6 +6,8 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\NodeData\DataMw;
+use Wikimedia\Parsoid\NodeData\DataMwAttrib;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
@@ -585,7 +587,7 @@ class AttributeExpander extends TokenHandler {
 			// Rebuild flattened k-v pairs.
 			$expAttrs = [];
 			for ( $j = 0;  $j < count( $eVals );  $j += 2 ) {
-				$expAttrs[] = [ $eVals[$j], $eVals[$j + 1] ];
+				$expAttrs[] = new DataMwAttrib( $eVals[$j], $eVals[$j + 1] );
 			}
 
 			if ( $token->getName() === 'template' ) {
@@ -605,7 +607,7 @@ class AttributeExpander extends TokenHandler {
 				foreach ( $annotationTypes as $annotationType ) {
 					$token->addSpaceSeparatedAttribute( 'typeof', 'mw:Annotation/' . $annotationType );
 				}
-				$token->addAttribute( 'data-mw', PHPUtils::jsonEncode( [ 'attribs' => $expAttrs ] ) );
+				$token->dataMw = new DataMw( [ 'attribs' => $expAttrs ] );
 			}
 		}
 
@@ -621,12 +623,31 @@ class AttributeExpander extends TokenHandler {
 	 * @param Token $token Token whose attrs being expanded.
 	 * @return TokenHandlerResult
 	 */
-	public function processComplexAttributes( Token $token ): TokenHandlerResult {
+	private function processComplexAttributes( Token $token ): TokenHandlerResult {
 		$atm = new AttributeTransformManager( $this->manager->getFrame(), [
 			'expandTemplates' => $this->options['expandTemplates'],
 			'inTemplate' => $this->options['inTemplate']
 		] );
 		return $this->buildExpandedAttrs( $token, $atm->process( $token->attribs ) );
+	}
+
+	/**
+	 * Expand the first attribute of the token -- usually needed to support
+	 * tempate tokens where the template target itself is a complex attribute.
+	 *
+	 * @param Token $token Token whose first attribute is being expanded.
+	 * @return TokenHandlerResult
+	 */
+	public function expandFirstAttribute( Token $token ): TokenHandlerResult {
+		$atm = new AttributeTransformManager( $this->manager->getFrame(), [
+			'expandTemplates' => $this->options['expandTemplates'],
+			'inTemplate' => $this->options['inTemplate']
+		] );
+		$expandedAttrs = $atm->process( [ $token->attribs[0] ] );
+		return $this->buildExpandedAttrs(
+			$token,
+			array_replace( $token->attribs, [ 0 => $expandedAttrs[0] ] )
+		);
 	}
 
 	/**

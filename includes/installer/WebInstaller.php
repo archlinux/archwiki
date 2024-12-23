@@ -32,7 +32,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
-use Xml;
+use MediaWiki\Xml\Xml;
 
 /**
  * Class for the core installer web interface.
@@ -184,7 +184,7 @@ class WebInstaller extends Installer {
 			return $this->session;
 		}
 
-		$isCSS = $this->request->getVal( 'css' );
+		$isCSS = $this->request->getCheck( 'css' );
 		if ( $isCSS ) {
 			$this->outputCss();
 			return $this->session;
@@ -369,12 +369,6 @@ class WebInstaller extends Installer {
 		] ) );
 	}
 
-	/**
-	 * Show an error message in a box. Parameters are like wfMessage(), or
-	 * alternatively, pass a Message object in.
-	 * @param string|Message $msg
-	 * @param mixed ...$params
-	 */
 	public function showError( $msg, ...$params ) {
 		if ( !( $msg instanceof Message ) ) {
 			$msg = wfMessage(
@@ -508,12 +502,12 @@ class WebInstaller extends Installer {
 	 * @return-taint none It can only return a known-good code.
 	 */
 	public function getAcceptLanguage() {
-		global $wgLanguageCode, $wgRequest;
+		global $wgLanguageCode;
 
 		$mwLanguages = MediaWikiServices::getInstance()
 			->getLanguageNameUtils()
 			->getLanguageNames( LanguageNameUtils::AUTONYMS, LanguageNameUtils::SUPPORTED );
-		$headerLanguages = array_keys( $wgRequest->getAcceptLang() );
+		$headerLanguages = array_keys( $this->request->getAcceptLang() );
 
 		foreach ( $headerLanguages as $lang ) {
 			if ( isset( $mwLanguages[$lang] ) ) {
@@ -683,13 +677,6 @@ class WebInstaller extends Installer {
 		$this->output->addHTML( $html );
 	}
 
-	/**
-	 * Show a short informational message.
-	 * Output looks like a list.
-	 *
-	 * @param string $msg
-	 * @param mixed ...$params
-	 */
 	public function showMessage( $msg, ...$params ) {
 		$html = '<div class="cdx-message cdx-message--block cdx-message--notice">' .
 			'<span class="cdx-message__icon"></span><div class="cdx-message__content">' .
@@ -698,13 +685,13 @@ class WebInstaller extends Installer {
 		$this->output->addHTML( $html );
 	}
 
-	/**
-	 * @param Status $status
-	 */
 	public function showStatusMessage( Status $status ) {
-		$errors = array_merge( $status->getErrorsArray(), $status->getWarningsArray() );
-		foreach ( $errors as $error ) {
-			$this->showMessage( ...$error );
+		// Show errors at the top in web installer to make them easier to notice
+		foreach ( $status->getMessages( 'error' ) as $msg ) {
+			$this->showMessage( $msg );
+		}
+		foreach ( $status->getMessages( 'warning' ) as $msg ) {
+			$this->showMessage( $msg );
 		}
 	}
 
@@ -1267,6 +1254,55 @@ class WebInstaller extends Installer {
 
 		return Html::warningBox( $s, $class )
 			. Html::element( 'div', [ 'style' => 'clear: left;' ], ' ' );
+	}
+
+	/**
+	 * Determine whether the current database needs to be upgraded, i.e. whether
+	 * it already has MediaWiki tables.
+	 *
+	 * @return bool
+	 */
+	public function needsUpgrade() {
+		return $this->getDBInstaller()->needsUpgrade();
+	}
+
+	/**
+	 * Perform database upgrades
+	 *
+	 * @return bool
+	 */
+	public function doUpgrade() {
+		$dbInstaller = $this->getDBInstaller();
+		$dbInstaller->preUpgrade();
+		$this->restoreServices();
+
+		$ret = true;
+		ob_start( [ $this, 'outputHandler' ] );
+		$up = DatabaseUpdater::newForDB(
+			$dbInstaller->definitelyGetConnection( DatabaseInstaller::CONN_CREATE_TABLES ) );
+		try {
+			$up->doUpdates();
+			$up->purgeCache();
+
+			// If they're going to possibly regenerate LocalSettings, we
+			// need to create the upgrade/secret keys. T28481
+			if ( !$this->getVar( '_ExistingDBSettings' ) ) {
+				$this->generateKeys();
+			}
+			$this->setVar( '_UpgradeDone', true );
+		} catch ( Exception $e ) {
+			// TODO: Should this use MWExceptionRenderer?
+			echo "\nAn error occurred:\n";
+			echo $e->getMessage();
+			$ret = false;
+		}
+		ob_end_flush();
+
+		return $ret;
+	}
+
+	public function outputHandler( $string ) {
+		return htmlspecialchars( $string );
 	}
 
 }

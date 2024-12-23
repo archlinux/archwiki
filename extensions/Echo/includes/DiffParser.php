@@ -178,7 +178,7 @@ class DiffParser {
 	 *
 	 * @return DiffGroup|null Changes to this line and any changed lines immediately previous
 	 */
-	protected function parseLine( $line, DiffGroup $change = null ) {
+	protected function parseLine( $line, ?DiffGroup $change = null ) {
 		if ( $line ) {
 			$op = $line[0];
 			if ( strlen( $line ) > $this->prefixLength ) {

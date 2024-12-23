@@ -27,7 +27,9 @@ use Wikimedia\TestingAccessWrapper;
 class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 	use SessionProviderTestTrait;
 
+	/** @var HashConfig */
 	private $config;
+	/** @var string */
 	private $configHash;
 
 	private function getProvider( $name = null, $prefix = null, $isApiRequest = true ) {
@@ -94,18 +96,18 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 			->deleteFrom( 'bot_passwords' )
 			->where( [ 'bp_user' => $userId, 'bp_app_id' => 'BotPasswordSessionProvider' ] )
 			->caller( __METHOD__ )->execute();
-		$dbw->insert(
-			'bot_passwords',
-			[
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'bot_passwords' )
+			->row( [
 				'bp_user' => $userId,
 				'bp_app_id' => 'BotPasswordSessionProvider',
 				'bp_password' => $passwordHash->toString(),
 				'bp_token' => 'token!',
 				'bp_restrictions' => '{"IPAddresses":["127.0.0.0/8"]}',
 				'bp_grants' => '["test"]',
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 	public function testConstructor() {
@@ -206,9 +208,9 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertInstanceOf( SessionInfo::class, $info );
 		$this->assertSame( 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', $info->getId() );
 
-		$this->config->set( 'EnableBotPasswords', false );
+		$this->config->set( MainConfigNames::EnableBotPasswords, false );
 		$this->assertNull( $provider->provideSessionInfo( $request ) );
-		$this->config->set( 'EnableBotPasswords', true );
+		$this->config->set( MainConfigNames::EnableBotPasswords, true );
 
 		$this->assertNull( $provider->provideSessionInfo( new FauxRequest ) );
 	}

@@ -4,14 +4,17 @@
 			"Jon Harald Søby"
 		]
 	},
-	"rest-prefix-mismatch": "Den forespurte stien ($1) var ikke i REST-API-ets rotsti ($2)",
+	"rest-prefix-mismatch": "Den forespurte stien ($1) var ikke i REST-API-ets grunnsti ($2)",
+	"rest-bad-prefix": "Endepunktstien ($1) inneholder ikke et gyldig modulprefiks",
 	"rest-wrong-method": "Den forespurte metoden ($1) var ikke {{PLURAL:$3|den tillatte metoden|blant de tillatte metodene}} for denne stien ($2)",
 	"rest-no-match": "Den forespurte relative stien ($1) passet ikke med noen kjent behandler",
+	"rest-unknown-module": "Det forespurte modulnavnet ($1) er ikke kjent",
 	"rest-nonexistent-title": "Den gitte siden ($1) finnes ikke",
 	"rest-nonexistent-title-revision": "Den gitte sideversjonen ($1) eksisterer ikke for den gitte siden ($2)",
 	"rest-nonexistent-revision": "Den etterspurte sideversjonen ($1) finnes ikke.",
 	"rest-nonexistent-user": "Den angitte brukeren ($1) finnes ikke",
 	"rest-invalid-user": "Det angitte brukernavnet ($1) er ugyldig",
+	"rest-invalid-ip": "Den angitte IP-en ($1) er ugyldig",
 	"rest-invalid-title": "Den gitte tittelen ($1) refererer ikke til en wikiside.",
 	"rest-unsupported-content-type": "Ustøttet Content-Type: $1",
 	"rest-permission-error": "Ingen tilgang: $1",
@@ -41,7 +44,7 @@
 	"rest-bad-json-body": "Ugyldig forespørselsinnhold, må være JSON-objekt.",
 	"rest-json-body-parse-error": "Tolkning av forespørselsinnhold som JSON feilet: $1",
 	"rest-missing-body-field": "Påkrevd felt «$1» mangler fra forespørselsinnholdet.",
-	"rest-body-validation error": "Ugyldig forespørselstekst: $1",
+	"rest-body-validation-error": "Ugyldig forespørselstekst: $1",
 	"rest-extraneous-body-fields": "Overflødige felter funnet i forespørselsteksten: $1",
 	"rest-bad-content-model": "Ugyldig innholdsmodell: $1",
 	"rest-update-cannot-create-page": "Siden «$1» kan ikke opprettes fordi den allerede finnes. For å oppdatere den eksisterende siden, angi grunnversjons-ID-en i strukturen under «latest»-nøkkelen i forespørselsinnholdet.",
@@ -61,5 +64,6 @@
 	"rest-parsoid-resource-exceeded": "Ressursgrense overskredet",
 	"rest-parsoid-error": "Parsoid-feil.",
 	"rest-bad-stash-key": "Ugyldig stash-nøkkel.",
+	"rest-html-key-expected": "Uventet <var>html</var>-nøkkel i brødteksten",
 	"rest-invalid-transform": "Ugyldig transformasjon: $1 til $2"
 }

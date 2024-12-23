@@ -23,7 +23,7 @@
 
 namespace MediaWiki\Feed;
 
-use LogFormatter;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
@@ -33,7 +33,6 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
-use TextContent;
 use UtfNormal;
 
 /**
@@ -89,7 +88,8 @@ class FeedUtils {
 		$actiontext = '';
 		if ( $row->rc_type == RC_LOG ) {
 			$rcRow = (array)$row; // newFromRow() only accepts arrays for RC rows
-			$actiontext = LogFormatter::newFromRow( $rcRow )->getActionText();
+			$actiontext = MediaWikiServices::getInstance()->getLogFormatterFactory()
+				->newFromRow( $rcRow )->getActionText();
 		}
 		if ( $row->rc_deleted & RevisionRecord::DELETED_COMMENT ) {
 			$formattedComment = wfMessage( 'rev-deleted-comment' )->escaped();
@@ -120,7 +120,7 @@ class FeedUtils {
 	 *
 	 */
 	public static function formatDiffRow( $title, $oldid, $newid, $timestamp,
-										 $comment, $actiontext = ''
+		$comment, $actiontext = ''
 	) {
 		$formattedComment = MediaWikiServices::getInstance()->getCommentFormatter()
 			->format( $comment );
@@ -158,7 +158,7 @@ class FeedUtils {
 		$services = MediaWikiServices::getInstance();
 		$anon = $services->getUserFactory()->newAnonymous();
 		$permManager = $services->getPermissionManager();
-		$accErrors = $permManager->getPermissionErrors(
+		$userCan = $permManager->userCan(
 			'read',
 			$anon,
 			$title
@@ -166,7 +166,7 @@ class FeedUtils {
 
 		// Can't diff special pages, unreadable pages or pages with no new revision
 		// to compare against: just return the text.
-		if ( $title->getNamespace() < 0 || $accErrors || !$newid ) {
+		if ( $title->getNamespace() < 0 || !$userCan || !$newid ) {
 			return $completeText;
 		}
 

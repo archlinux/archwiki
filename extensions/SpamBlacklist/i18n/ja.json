@@ -8,9 +8,9 @@
 			"MathXplore",
 			"Shirayuki",
 			"Tmv",
+			"Waki285",
 			"Whym",
-			"Yusuke1109",
-			"Waki285"
+			"Yusuke1109"
 		]
 	},
 	"spam-blacklist": " #<!-- この行は変更しないでください --> <pre>\n# この一覧に掲載されている外部URLをページに追加すると編集をブロックします。\n# この一覧はこのウィキでのみ有効です。グローバル ブロックリストも参照してください。\n# 利用方法は https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist をご覧ください。\n#\n# 構文は以下の通りです:\n#  * 「#」以降行末まではコメントです\n#  * 空でない行は、URLに含まれるホスト名との一致を検出する正規表現です\n\n #</pre> <!-- この行は変更しないでください -->",

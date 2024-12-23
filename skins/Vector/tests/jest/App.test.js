@@ -12,23 +12,21 @@ const defaultProps = {
 	searchQuery: ''
 };
 
-const mount = ( /** @type {Object} */ customProps ) => {
-	return VueTestUtils.shallowMount( App, {
-		props: Object.assign( {}, defaultProps, customProps ),
-		global: {
-			mocks: {
-				$i18n: ( /** @type {string} */ str ) => ( {
-					text: () => str
-				} )
-			},
-			directives: {
-				'i18n-html': ( el, binding ) => {
-					el.innerHTML = `${ binding.arg } (${ binding.value })`;
-				}
+const mount = ( /** @type {Object} */ customProps ) => VueTestUtils.shallowMount( App, {
+	props: Object.assign( {}, defaultProps, customProps ),
+	global: {
+		mocks: {
+			$i18n: ( /** @type {string} */ str ) => ( {
+				text: () => str
+			} )
+		},
+		directives: {
+			'i18n-html': ( el, binding ) => {
+				el.innerHTML = `${ binding.arg } (${ binding.value })`;
 			}
 		}
-	} );
-};
+	}
+} );
 
 describe( 'App', () => {
 	it( 'renders a typeahead search component', () => {

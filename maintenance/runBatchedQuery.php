@@ -23,7 +23,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
@@ -87,15 +89,15 @@ class RunBatchedQuery extends Maintenance {
 			if ( $res->numRows() ) {
 				$res->seek( $res->numRows() - 1 );
 				$row = $res->fetchObject();
-				$end = $dbw->addQuotes( $row->$key );
-				$selectConds = array_merge( $where, [ "$key > $end" ] );
-				$updateConds = array_merge( $where, [ "$key <= $end" ] );
+				$end = $row->$key;
+				$selectConds = array_merge( $where, [ $dbw->expr( $key, '>', $end ) ] );
+				$updateConds = array_merge( $where, [ $dbw->expr( $key, '<=', $end ) ] );
 			} else {
 				$updateConds = $where;
 				$end = false;
 			}
 			if ( $prevEnd !== false ) {
-				$updateConds = array_merge( [ "$key > $prevEnd" ], $updateConds );
+				$updateConds = array_merge( [ $dbw->expr( $key, '>', $prevEnd ) ], $updateConds );
 			}
 
 			$query = "UPDATE " . $dbw->tableName( $table ) .
@@ -117,5 +119,7 @@ class RunBatchedQuery extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RunBatchedQuery::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

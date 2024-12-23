@@ -2,6 +2,8 @@
 
 use MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo;
 use MediaWiki\Title\Title;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * @covers \MediaWiki\Extension\Gadgets\GadgetRepo
@@ -30,7 +32,8 @@ EOT;
 		$repo = new MediaWikiGadgetsDefinitionRepo(
 			$services->getConnectionProvider(),
 			$services->getMainWANObjectCache(),
-			$services->getRevisionLookup()
+			$services->getRevisionLookup(),
+			new HashBagOStuff()
 		);
 		$gadgets = $repo->fetchStructuredList();
 		$this->assertCount( 6, $gadgets );
@@ -45,10 +48,11 @@ EOT;
 	public function testCacheInvalidationOnSave() {
 		$services = $this->getServiceContainer();
 		$dbProvider = $services->getConnectionProvider();
+		$srvCache = new HashBagOStuff();
 		$wanCache = new WANObjectCache( [ 'cache' => new HashBagOStuff ] );
 		$wanCache->useInterimHoldOffCaching( false );
 
-		$repo = new MediaWikiGadgetsDefinitionRepo( $dbProvider, $wanCache, $services->getRevisionLookup() );
+		$repo = new MediaWikiGadgetsDefinitionRepo( $dbProvider, $wanCache, $services->getRevisionLookup(), $srvCache );
 		$this->setService( 'GadgetsRepo', $repo );
 
 		$this->editPage( 'MediaWiki:Gadgets-definition', '* X1[ResourceLoader|default]|foo.js' );

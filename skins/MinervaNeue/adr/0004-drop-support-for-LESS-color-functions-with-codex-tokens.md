@@ -1,11 +1,19 @@
 # 1. Drop support for Less color functions with Codex design tokens
 
 Date: 2024-02-16
-Last Edited: 2024-03-14
+Last Edited: 2024-06-10
+
+## Update June 2024
+As of T363743, we will no longer be using CSS variables directly, rather we are
+back to using codex design tokens (LESS variables) so that the design system
+team can maintain a unified source of truth and also supply fallback values
+
+Given that the LESS variables are still of type string, color function support
+is still dropped
 
 ## Status
 
-Accepted.
+Updated
 
 ## Context
 

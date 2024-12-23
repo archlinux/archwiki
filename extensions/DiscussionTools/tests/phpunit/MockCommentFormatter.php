@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
-use Language;
 use MediaWiki\Extension\DiscussionTools\CommentFormatter;
 use MediaWiki\Extension\DiscussionTools\CommentParser;
+use MediaWiki\Language\Language;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 

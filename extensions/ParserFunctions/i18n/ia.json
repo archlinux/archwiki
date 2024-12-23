@@ -9,6 +9,7 @@
 	"pfunc_time_too_long": "Error: troppo de appellos a #time",
 	"pfunc_time_too_big": "Error: #time supporta solmente annos usque a 9999",
 	"pfunc_time_too_small": "Error: #time supporta solmente annos desde 0.",
+	"pfunc_timef_bad_format": "Error: formato non valide pro #timef",
 	"pfunc_rel2abs_invalid_depth": "Error: Profunditate invalide in percurso: “$1” (tentativa de accesso a un nodo superior al nodo radice)",
 	"pfunc_expr_stack_exhausted": "Error in expression: Pila exhaurite",
 	"pfunc_expr_unexpected_number": "Error in expression: Numero non expectate",

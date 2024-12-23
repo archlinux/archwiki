@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Arkanosis",
 			"Automatik",
 			"Boniface",
@@ -33,9 +34,6 @@
 	"thanks-thanked": "{{GENDER:$1|}}remercié{{GENDER:$2||e|(e)}}",
 	"thanks-button-thank": "{{GENDER:$1|}}Remercier{{GENDER:$2|}}",
 	"thanks-button-thanked": "{{GENDER:$1|}}Remercié{{GENDER:$2||e|(e)}}",
-	"thanks-button-action-queued": "{{GENDER:$2|}}Remerciement de {{GENDER:$1|}}$1...",
-	"thanks-button-action-cancel": "Annuler",
-	"thanks-button-action-completed": "{{GENDER:$2|}}Vous avez remercié {{GENDER:$1|}}$1",
 	"thanks-error-undefined": "Échec de l’action de remerciement (code d’erreur : $1). Veuillez essayer à nouveau.",
 	"thanks-error-invalid-log-id": "Entrée non trouvée dans le journal",
 	"thanks-error-invalid-log-type": "Le type de journal « $1 » n’est pas dans la liste des types de journaux autorisés.",

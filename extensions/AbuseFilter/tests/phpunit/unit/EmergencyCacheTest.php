@@ -2,33 +2,21 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
-use HashBagOStuff;
 use MediaWiki\Extension\AbuseFilter\EmergencyCache;
 use MediaWikiUnitTestCase;
+use Wikimedia\ObjectCache\HashBagOStuff;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\EmergencyCache
+ * @covers \MediaWiki\Extension\AbuseFilter\EmergencyCache
  */
 class EmergencyCacheTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::getFiltersToCheckInGroup
-	 * @covers ::getForFilter
-	 */
 	public function testEmptyCache() {
 		$cache = new EmergencyCache( new HashBagOStuff(), [ 'default' => 86400 ] );
 		$this->assertSame( [], $cache->getFiltersToCheckInGroup( 'default' ) );
 		$this->assertFalse( $cache->getForFilter( 1 ) );
 	}
 
-	/**
-	 * @covers ::setNewForFilter
-	 * @covers ::getFiltersToCheckInGroup
-	 * @covers ::getForFilter
-	 * @covers ::createGroupKey
-	 * @covers ::createFilterKey
-	 */
 	public function testSetNewForFilter() {
 		$time = microtime( true );
 		$stash = new HashBagOStuff();
@@ -55,11 +43,6 @@ class EmergencyCacheTest extends MediaWikiUnitTestCase {
 		$this->assertSame( [], $cache->getFiltersToCheckInGroup( 'other' ) );
 	}
 
-	/**
-	 * @covers ::incrementForFilter
-	 * @covers ::getForFilter
-	 * @covers ::setNewForFilter
-	 */
 	public function testIncrementForFilter() {
 		$time = microtime( true );
 		$stash = new HashBagOStuff();
@@ -82,9 +65,6 @@ class EmergencyCacheTest extends MediaWikiUnitTestCase {
 		$this->assertFalse( $cache->getForFilter( 1 ) );
 	}
 
-	/**
-	 * @covers ::getFiltersToCheckInGroup
-	 */
 	public function testGetFiltersToCheckInGroup() {
 		$time = microtime( true );
 		$stash = new HashBagOStuff();

@@ -32,8 +32,8 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
 use MessageLocalizer;
-use MessageSpecifier;
 use Psr\Log\LoggerInterface;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Context object that contains information about the state of a specific
@@ -102,8 +102,12 @@ class Context implements MessageLocalizer {
 	/**
 	 * @param ResourceLoader $resourceLoader
 	 * @param WebRequest $request
+	 * @param string[]|null $validSkins List of valid skin names. If not passed,
+	 *   any skin name is considered valid. Invalid skins are replaced by the default.
 	 */
-	public function __construct( ResourceLoader $resourceLoader, WebRequest $request ) {
+	public function __construct(
+		ResourceLoader $resourceLoader, WebRequest $request, $validSkins = null
+	) {
 		$this->resourceLoader = $resourceLoader;
 		$this->request = $request;
 		$this->logger = $resourceLoader->getLogger();
@@ -128,16 +132,16 @@ class Context implements MessageLocalizer {
 		$this->variant = $request->getRawVal( 'variant' );
 		$this->format = $request->getRawVal( 'format' );
 
-		$this->skin = $request->getRawVal( 'skin' );
-		$skinFactory = MediaWikiServices::getInstance()->getSkinFactory();
-		$skinnames = $skinFactory->getInstalledSkins();
-
-		if ( !$this->skin || !isset( $skinnames[$this->skin] ) ) {
-			// The 'skin' parameter is required. (Not yet enforced.)
+		$skin = $request->getRawVal( 'skin' );
+		if (
+			$skin === null
+			|| ( is_array( $validSkins ) && !in_array( $skin, $validSkins ) )
+		) {
 			// For requests without a known skin specified,
-			// use MediaWiki's 'fallback' skin for skin-specific decisions.
-			$this->skin = self::DEFAULT_SKIN;
+			// use MediaWiki's 'fallback' skin for any skin-specific decisions.
+			$skin = self::DEFAULT_SKIN;
 		}
+		$this->skin = $skin;
 	}
 
 	/**
@@ -206,8 +210,7 @@ class Context implements MessageLocalizer {
 		if ( $this->language === null ) {
 			// Must be a valid language code after this point (T64849)
 			// Only support uselang values that follow built-in conventions (T102058)
-			$lang = $this->getRequest()->getRawVal( 'lang', '' );
-			'@phan-var string $lang'; // getRawVal does not return null here
+			$lang = $this->getRequest()->getRawVal( 'lang' ) ?? '';
 			// Stricter version of RequestContext::sanitizeLangCode()
 			$validBuiltinCode = MediaWikiServices::getInstance()->getLanguageNameUtils()
 				->isValidBuiltInCode( $lang );

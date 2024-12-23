@@ -38,7 +38,7 @@ class ServiceAlreadyDefinedException extends RuntimeException
 	 * @param string $serviceName
 	 * @param Exception|null $previous
 	 */
-	public function __construct( string $serviceName, Exception $previous = null ) {
+	public function __construct( string $serviceName, ?Exception $previous = null ) {
 		parent::__construct( "Service already defined: $serviceName", 0, $previous );
 	}
 

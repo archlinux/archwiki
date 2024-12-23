@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that updates page_restrictions and
@@ -43,21 +45,23 @@ class RenameRestrictions extends Maintenance {
 		$newLevel = $this->getArg( 1 );
 
 		$dbw = $this->getPrimaryDB();
-		$dbw->update(
-			'page_restrictions',
-			[ 'pr_level' => $newLevel ],
-			[ 'pr_level' => $oldLevel ],
-			__METHOD__
-		);
-		$dbw->update(
-			'protected_titles',
-			[ 'pt_create_perm' => $newLevel ],
-			[ 'pt_create_perm' => $oldLevel ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'page_restrictions' )
+			->set( [ 'pr_level' => $newLevel ] )
+			->where( [ 'pr_level' => $oldLevel ] )
+			->caller( __METHOD__ )
+			->execute();
+		$dbw->newUpdateQueryBuilder()
+			->update( 'protected_titles' )
+			->set( [ 'pt_create_perm' => $newLevel ] )
+			->where( [ 'pt_create_perm' => $oldLevel ] )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RenameRestrictions::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

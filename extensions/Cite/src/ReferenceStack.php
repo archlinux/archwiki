@@ -3,7 +3,7 @@
 namespace Cite;
 
 use LogicException;
-use StripState;
+use MediaWiki\Parser\StripState;
 
 /**
  * Encapsulates most of Cite state during parsing.  This includes metadata about each ref tag,
@@ -242,7 +242,7 @@ class ReferenceStack {
 		if ( $lookup === null ) {
 			// Find anonymous ref by key.
 			foreach ( $this->refs[$group] as $k => $v ) {
-				if ( $this->refs[$group][$k]->key === $key ) {
+				if ( $v->key === $key ) {
 					$lookup = $k;
 					break;
 				}
@@ -310,13 +310,11 @@ class ReferenceStack {
 	 * Returns true if the group exists and contains references.
 	 */
 	public function hasGroup( string $group ): bool {
-		return isset( $this->refs[$group] ) && $this->refs[$group];
+		return (bool)( $this->refs[$group] ?? false );
 	}
 
 	/**
-	 * Returns a list of all groups with references.
-	 *
-	 * @return string[]
+	 * @return string[] List of group names that contain at least one reference
 	 */
 	public function getGroups(): array {
 		$groups = [];
@@ -357,7 +355,7 @@ class ReferenceStack {
 		}
 	}
 
-	private function nextRefSequence() {
+	private function nextRefSequence(): int {
 		return ++$this->refSequence;
 	}
 

@@ -12,8 +12,8 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {string} [valueAndWhitespace=''] Initial value and whitespace
- * @cfg {number} [limit] Maximum number of characters to preserve at each end
+ * @param {string} [config.valueAndWhitespace=''] Initial value and whitespace
+ * @param {number} [config.limit] Maximum number of characters to preserve at each end
  */
 ve.ui.WhitespacePreservingTextInputWidget = function VeUiWhitespacePreservingTextInputWidget( config ) {
 	// Configuration
@@ -42,11 +42,11 @@ OO.inheritClass( ve.ui.WhitespacePreservingTextInputWidget, OO.ui.MultilineTextI
  * @param {string} value
  */
 ve.ui.WhitespacePreservingTextInputWidget.prototype.setValueAndWhitespace = function ( value ) {
-	var leftValue = this.limit ? value.slice( 0, this.limit ) : value;
+	const leftValue = this.limit ? value.slice( 0, this.limit ) : value;
 	this.whitespace[ 0 ] = leftValue.match( /^\s*/ )[ 0 ];
 	value = value.slice( this.whitespace[ 0 ].length );
 
-	var rightValue = this.limit ? value.slice( -this.limit ) : value;
+	const rightValue = this.limit ? value.slice( -this.limit ) : value;
 	this.whitespace[ 1 ] = rightValue.match( /\s*$/ )[ 0 ];
 	value = value.slice( 0, value.length - this.whitespace[ 1 ].length );
 

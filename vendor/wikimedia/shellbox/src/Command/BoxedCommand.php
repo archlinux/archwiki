@@ -3,6 +3,7 @@
 namespace Shellbox\Command;
 
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 use Shellbox\Shellbox;
 use Shellbox\ShellboxError;
 
@@ -50,9 +51,7 @@ class BoxedCommand extends Command {
 	 * @return $this
 	 */
 	public function inputFileFromString( string $boxedName, string $contents ) {
-		$boxedName = $this->normalizeBoxedPath( $boxedName );
-		$this->inputFiles[$boxedName] = new InputFileFromString( $contents );
-		return $this;
+		return $this->inputFile( $boxedName, $this->newInputFileFromString( $contents ) );
 	}
 
 	/**
@@ -64,9 +63,7 @@ class BoxedCommand extends Command {
 	 * @return $this
 	 */
 	public function inputFileFromFile( string $boxedName, string $sourcePath ) {
-		$boxedName = $this->normalizeBoxedPath( $boxedName );
-		$this->inputFiles[$boxedName] = new InputFileFromFile( $sourcePath );
-		return $this;
+		return $this->inputFile( $boxedName, $this->newInputFileFromFile( $sourcePath ) );
 	}
 
 	/**
@@ -78,9 +75,89 @@ class BoxedCommand extends Command {
 	 * @return $this
 	 */
 	public function inputFileFromStream( string $boxedName, StreamInterface $stream ) {
+		return $this->inputFile( $boxedName, $this->newInputFileFromStream( $stream ) );
+	}
+
+	/**
+	 * Add an input file, with the contents fetched from a URL. The fetch may
+	 * be done on the remote side.
+	 *
+	 * If you need to set options such as headers, use methods on the object
+	 * returned from newInputFileFromUrl().
+	 *
+	 * @since 4.1.0
+	 * @param string $boxedName The destination file name relative to the
+	 *   working directory
+	 * @param UriInterface|string $url
+	 * @return $this
+	 */
+	public function inputFileFromUrl( string $boxedName, $url ) {
+		return $this->inputFile( $boxedName, $this->newInputFileFromUrl( $url ) );
+	}
+
+	/**
+	 * Add an input file of any type. Use a factory function to create an
+	 * InputFile object.
+	 *
+	 * @see newInputFileFromString
+	 * @see newInputFileFromFile
+	 * @see newInputFileFromStream
+	 * @see newInputFileFromUrl
+	 *
+	 * @since 4.1.0
+	 * @param string $boxedName The destination file name relative to the
+	 *   working directory
+	 * @param InputFile $file
+	 * @return $this
+	 */
+	public function inputFile( string $boxedName, InputFile $file ) {
 		$boxedName = $this->normalizeBoxedPath( $boxedName );
-		$this->inputFiles[$boxedName] = new InputFileFromStream( $stream );
+		$this->inputFiles[$boxedName] = $file;
 		return $this;
+	}
+
+	/**
+	 * @see inputFileFromString
+	 * @since 4.1.0
+	 * @param string $contents
+	 * @return InputFileFromString
+	 */
+	public function newInputFileFromString( string $contents ) {
+		return new InputFileFromString( $contents );
+	}
+
+	/**
+	 * @see inputFileFromFile
+	 * @since 4.1.0
+	 * @param string $sourcePath
+	 * @return InputFileFromFile
+	 */
+	public function newInputFileFromFile( string $sourcePath ) {
+		return new InputFileFromFile( $sourcePath );
+	}
+
+	/**
+	 * @see inputFileFromStream
+	 * @since 4.1.0
+	 * @param StreamInterface $stream
+	 * @return InputFileFromStream
+	 */
+	public function newInputFileFromStream( StreamInterface $stream ) {
+		return new InputFileFromStream( $stream );
+	}
+
+	/**
+	 * @see inputFileFromUrl
+	 * @since 4.1.0
+	 * @param string|UriInterface $url
+	 * @return InputFileFromUrl
+	 */
+	public function newInputFileFromUrl( $url ) {
+		if ( $this->areUrlFilesAllowed() ) {
+			return new InputFileFromUrl( $url );
+		} else {
+			throw new ShellboxError( "Download from URL is disabled" );
+		}
 	}
 
 	/**
@@ -92,9 +169,7 @@ class BoxedCommand extends Command {
 	 * @return $this
 	 */
 	public function outputFileToString( string $boxedName ) {
-		$boxedName = $this->normalizeBoxedPath( $boxedName );
-		$this->outputFiles[$boxedName] = new OutputFileToString;
-		return $this;
+		return $this->outputFile( $boxedName, $this->newOutputFileToString() );
 	}
 
 	/**
@@ -107,9 +182,7 @@ class BoxedCommand extends Command {
 	 * @return $this
 	 */
 	public function outputFileToFile( string $boxedName, string $destPath ) {
-		$boxedName = $this->normalizeBoxedPath( $boxedName );
-		$this->outputFiles[$boxedName] = new OutputFileToFile( $destPath );
-		return $this;
+		return $this->outputFile( $boxedName, $this->newOutputFileToFile( $destPath ) );
 	}
 
 	/**
@@ -122,9 +195,86 @@ class BoxedCommand extends Command {
 	 * @return $this
 	 */
 	public function outputFileToStream( string $boxedName, StreamInterface $stream ) {
+		return $this->outputFile( $boxedName, $this->newOutputFileToStream( $stream ) );
+	}
+
+	/**
+	 * Add an output file. If the command creates it, it will be sent to the
+	 * given URL as a PUT request.
+	 *
+	 * If you need to set options such as headers, use methods on the object
+	 * returned from newOutputFileToUrl().
+	 *
+	 * @since 4.1.0
+	 * @param string $boxedName
+	 * @param UriInterface|string $url
+	 * @return $this
+	 */
+	public function outputFileToUrl( string $boxedName, $url ) {
+		return $this->outputFile( $boxedName, $this->newOutputFileToUrl( $url ) );
+	}
+
+	/**
+	 * Add an output file of any type. Use a factory function to create an
+	 * OutputFile.
+	 *
+	 * @see newOutputFileToString
+	 * @see newOutputFileToFile
+	 * @see newOutputFileToStream
+	 * @see newOutputFileToUrl
+	 *
+	 * @param string $boxedName The expected location of the file relative to
+	 *   the working directory.
+	 * @param OutputFile $file
+	 * @return $this
+	 */
+	public function outputFile( string $boxedName, OutputFile $file ) {
 		$boxedName = $this->normalizeBoxedPath( $boxedName );
-		$this->outputFiles[$boxedName] = new OutputFileToStream( $stream );
+		$this->outputFiles[$boxedName] = $file;
 		return $this;
+	}
+
+	/**
+	 * @see outputFileToString
+	 * @since 4.1.0
+	 * @return OutputFileToString
+	 */
+	public function newOutputFileToString() {
+		return new OutputFileToString;
+	}
+
+	/**
+	 * @see outputFileToFile
+	 * @since 4.1.0
+	 * @param string $destPath
+	 * @return OutputFileToFile
+	 */
+	public function newOutputFileToFile( string $destPath ) {
+		return new OutputFileToFile( $destPath );
+	}
+
+	/**
+	 * @see outputFileToStream
+	 * @since 4.1.0
+	 * @param StreamInterface $stream
+	 * @return OutputFileToStream
+	 */
+	public function newOutputFileToStream( StreamInterface $stream ) {
+		return new OutputFileToStream( $stream );
+	}
+
+	/**
+	 * @see outputFileToUrl
+	 * @since 4.1.0
+	 * @param string|UriInterface $url
+	 * @return OutputFileToUrl
+	 */
+	public function newOutputFileToUrl( $url ) {
+		if ( $this->areUrlFilesAllowed() ) {
+			return new OutputFileToUrl( $url );
+		} else {
+			throw new ShellboxError( "Upload to URL is disabled" );
+		}
 	}
 
 	/**
@@ -140,10 +290,7 @@ class BoxedCommand extends Command {
 	 * @return $this
 	 */
 	public function outputGlobToString( string $prefix, string $extension ) {
-		$prefix = $this->normalizeBoxedPath( $prefix );
-		$this->checkExtension( $extension );
-		$this->outputGlobs["$prefix.$extension"] = new OutputGlobToString( $prefix, $extension );
-		return $this;
+		return $this->outputGlob( $this->newOutputGlobToString( $prefix, $extension ) );
 	}
 
 	/**
@@ -161,11 +308,87 @@ class BoxedCommand extends Command {
 	 * @return $this
 	 */
 	public function outputGlobToFile( string $prefix, string $extension, string $destDir ) {
-		$prefix = $this->normalizeBoxedPath( $prefix );
-		$this->checkExtension( $extension );
-		$this->outputGlobs["$prefix.$extension"] = new OutputGlobToFile(
-			$prefix, $extension, $destDir );
+		return $this->outputGlob( $this->newOutputGlobToFile( $prefix, $extension, $destDir ) );
+	}
+
+	/**
+	 * Register a series of expected output files identified by a pattern
+	 *   <prefix>*.<extension>
+	 *
+	 * Each file that appears in the working directory which matches the
+	 * specified pattern will be sent to the specified URL with a PUT request.
+	 * The base name of the matched file will be appended to the path part of
+	 * the URL.
+	 *
+	 * @param string $prefix The prefix, potentially including a subdirectory
+	 *    relative to the working directory.
+	 * @param string $extension The file extension, not including the dot.
+	 * @param string|UriInterface $destUrl The destination directory as a URL.
+	 *   The URL should end with a slash or some other application-dependent
+	 *   separator, such as %2F.
+	 * @return $this
+	 */
+	public function outputGlobToUrl( string $prefix, string $extension, $destUrl ) {
+		return $this->outputGlob( $this->newOutputGlobToUrl( $prefix, $extension, $destUrl ) );
+	}
+
+	/**
+	 * Register a previously constructed output glob.
+	 *
+	 * @since 4.1.0
+	 * @param OutputGlob $glob
+	 * @return $this
+	 */
+	public function outputGlob( OutputGlob $glob ) {
+		$this->outputGlobs[$glob->getId()] = $glob;
 		return $this;
+	}
+
+	/**
+	 * @see outputGlobToString
+	 * @param string $prefix
+	 * @param string $extension
+	 * @return OutputGlobToString
+	 */
+	public function newOutputGlobToString( string $prefix, string $extension ) {
+		return new OutputGlobToString( $prefix, $extension );
+	}
+
+	/**
+	 * @see outputGlobToFile
+	 * @since 4.1.0
+	 * @param string $prefix
+	 * @param string $extension
+	 * @param string $destDir
+	 * @return OutputGlobToFile
+	 */
+	public function newOutputGlobToFile( string $prefix, string $extension, string $destDir ) {
+		return new OutputGlobToFile( $prefix, $extension, $destDir );
+	}
+
+	/**
+	 * @see outputGlobToUrl
+	 * @since 4.1.0
+	 * @param string $prefix
+	 * @param string $extension
+	 * @param string|UriInterface $destUrl
+	 * @return OutputGlobToUrl
+	 */
+	public function newOutputGlobToUrl( string $prefix, string $extension, $destUrl ) {
+		if ( $this->areUrlFilesAllowed() ) {
+			return new OutputGlobToUrl( $prefix, $extension, $destUrl );
+		} else {
+			throw new ShellboxError( "Upload to URL is disabled" );
+		}
+	}
+
+	/**
+	 * @since 4.1.0
+	 * Determine whether URL input/output files are supported by the executor.
+	 * @return bool
+	 */
+	public function areUrlFilesAllowed() {
+		return $this->executor->areUrlFilesAllowed();
 	}
 
 	/**
@@ -192,7 +415,7 @@ class BoxedCommand extends Command {
 	public function getClientData() {
 		$inputFiles = [];
 		foreach ( $this->inputFiles as $name => $file ) {
-			$inputFiles[$name] = [];
+			$inputFiles[$name] = $file->getClientData();
 		}
 		$outputFiles = [];
 		foreach ( $this->outputFiles as $name => $file ) {
@@ -264,19 +487,6 @@ class BoxedCommand extends Command {
 	 */
 	private function normalizeBoxedPath( $path ) {
 		return Shellbox::normalizePath( $path );
-	}
-
-	/**
-	 * Check an extension for path traversal safety and cross-platform file
-	 * name compliance. Throw an exception if it is not acceptable.
-	 *
-	 * @param string $extension
-	 * @throws ShellboxError
-	 */
-	private function checkExtension( $extension ) {
-		if ( !preg_match( '/^[0-9a-zA-Z\-_]*$/', $extension ) ) {
-			throw new ShellboxError( "invalid extension \"$extension\"" );
-		}
 	}
 
 	/**

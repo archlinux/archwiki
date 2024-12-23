@@ -1,76 +1,59 @@
-import * as helpers from '../../utils/functions.helper.js';
+require( '@cypress/skip-test/support' );
+import * as helper from '../../utils/functions.helper.js';
 
-const title = getTestString( 'CiteTest-title' );
-const encodedTitle = encodeURIComponent( title );
-
-function getTestString( prefix = '' ) {
-	return prefix + Math.random().toString();
-}
-
-function skipTest( message ) {
-	cy.log( message );
-	// Dips into secret internals—stealing code from the skip plugin.
-	const mochaContext = cy.state( 'runnable' ).ctx;
-	return mochaContext.skip();
-}
+const title = helper.getTestString( 'CiteTest-title' );
 
 describe( 'Cite popups integration', () => {
 	before( () => {
 		cy.visit( '/index.php' );
+		helper.waitForMWLoader();
 
+		// Skip tests when Popups extension is not availible
+		cy.window().then( async ( win ) => {
+			cy.skipOn( !win.mw.loader.getModuleNames().includes( 'ext.popups.main' ) );
+		} );
+
+		// Create a new page containing a reference
 		const wikiText = 'Lorem ipsum dolor.<ref>small reference</ref>' +
 			'Reference with lots of text.<ref>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</ref>' +
 			'Lorem ipsum dolor.<ref>reference inception{{#tag:ref|body}}</ref>';
 
-		// Rely on the retry behavior of Cypress assertions to use this as a "wait"
-		// until the specified conditions are met.
-		cy.window().should( 'have.property', 'mw' ).and( 'have.property', 'loader' ).and( 'have.property', 'using' );
-		// Create a new page containing a reference
-		cy.window().then( async ( win ) => {
-			await win.mw.loader.using( 'mediawiki.api' );
-			const response = await new win.mw.Api().create( title, {}, wikiText );
-			expect( response.result ).to.equal( 'Success' );
-
-			await win.mw.loader.using( 'ext.popups.main', () => {}, () => skipTest( 'Popups not available' ) );
-		} );
-
+		helper.editPage( title, wikiText );
 	} );
 
 	beforeEach( () => {
-		cy.visit( `/index.php?title=${ encodedTitle }` );
-		cy.window()
-			.should( 'have.property', 'mw' ).and( 'have.property', 'loader' ).and( 'have.property', 'getState' );
-		cy.window().should( ( win ) => win.mw.loader.getState( 'ext.cite.referencePreviews' ) === 'ready' );
+		helper.visitTitle( title );
+		helper.waitForModuleReady( 'ext.cite.referencePreviews' );
 	} );
 
 	it( 'simple popup on hover and hide on leave', () => {
-		helpers.abandonReference( 'cite_ref-1' );
-		helpers.dwellReference( 'cite_ref-1' );
+		helper.abandonReference( 'cite_ref-1' );
+		helper.dwellReference( 'cite_ref-1' );
 		cy.get( '.mwe-popups-type-reference', { timeout: 1000 } )
 			.should( 'be.visible' );
-		helpers.assertPreviewIsScrollable( false );
+		helper.assertPreviewIsScrollable( false );
 		cy.get( '.mwe-popups-fade-out' ).should( 'not.exist' );
 
-		helpers.abandonReference( 'cite_ref-1' );
+		helper.abandonReference( 'cite_ref-1' );
 		cy.get( '.mwe-popups-type-reference' )
 			.should( 'not.exist' );
 	} );
 
 	it( 'includes scrollbar and fadeout on long previews', () => {
-		helpers.abandonReference( 'cite_ref-2' );
-		helpers.dwellReference( 'cite_ref-2' );
+		helper.abandonReference( 'cite_ref-2' );
+		helper.dwellReference( 'cite_ref-2' );
 		cy.get( '.mwe-popups-type-reference', { timeout: 1000 } )
 			.should( 'be.visible' );
-		helpers.assertPreviewIsScrollable( true );
+		helper.assertPreviewIsScrollable( true );
 		cy.get( '.mwe-popups-fade-out' ).should( 'be.visible' );
 	} );
 
 	it( 'hovering nested reference', () => {
-		helpers.abandonReference( 'cite_ref-3' );
-		helpers.dwellReference( 'cite_ref-3' );
+		helper.abandonReference( 'cite_ref-3' );
+		helper.dwellReference( 'cite_ref-3' );
 		cy.get( '.mwe-popups-type-reference', { timeout: 1000 } )
 			.should( 'be.visible' );
-		helpers.dwellReference( 'cite_ref-4' );
+		helper.dwellReference( 'cite_ref-4' );
 		// eslint-disable-next-line cypress/no-unnecessary-waiting
 		cy.wait( 1000 );
 		cy.get( '.mwe-popups-type-reference' )

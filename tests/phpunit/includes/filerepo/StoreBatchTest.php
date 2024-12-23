@@ -2,6 +2,7 @@
 
 use MediaWiki\Status\Status;
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\FileBackend\FSFileBackend;
 
 /**
  * @group FileRepo
@@ -9,7 +10,9 @@ use MediaWiki\WikiMap\WikiMap;
  */
 class StoreBatchTest extends MediaWikiIntegrationTestCase {
 
+	/** @var string[] */
 	protected $createdFiles;
+	/** @var string */
 	protected $date;
 	/** @var FileRepo */
 	protected $repo;

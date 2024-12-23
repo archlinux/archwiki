@@ -11,7 +11,7 @@ function runTests( lang ) {
 
 	test.describe( 'Screenshots: ' + lang, function () {
 		this.lang = lang;
-		test.it( 'Simple diff', function () {
+		test.it( 'Simple diff', () => {
 			runLang( 'VisualEditor_diff_simple', diffs.simple );
 			runLang( 'VisualEditor_diff_move_and_change', diffs.moveAndChange );
 			runLang( 'VisualEditor_diff_link_change', diffs.linkChange );

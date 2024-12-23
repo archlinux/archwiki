@@ -8,7 +8,7 @@
  * Generic document.
  *
  * @class
- * @mixins OO.EventEmitter
+ * @mixes OO.EventEmitter
  *
  * @constructor
  * @param {ve.BranchNode} documentNode Document node
@@ -33,7 +33,7 @@ OO.mixinClass( ve.Document, OO.EventEmitter );
  * to be attached too (and the event is emitted for descendants first, and for siblings
  * in their order in the children list)
  *
- * @event nodeAttached
+ * @event ve.Document#nodeAttached
  * @param {ve.Node} node The node that has been attached
  */
 
@@ -42,7 +42,7 @@ OO.mixinClass( ve.Document, OO.EventEmitter );
  * to be detached too (and the event is emitted for descendants first, and for siblings
  * in their order in the children list)
  *
- * @event nodeDetached
+ * @event ve.Document#nodeDetached
  * @param {ve.Node} node The node that has been detached
  */
 
@@ -64,7 +64,7 @@ ve.Document.prototype.getDocumentNode = function () {
  * @return {ve.Node|null} Node at offset
  */
 ve.Document.prototype.getBranchNodeFromOffset = function ( offset ) {
-	var node = this.getDocumentNode().getNodeFromOffset( offset );
+	let node = this.getDocumentNode().getNodeFromOffset( offset );
 	if ( node && !node.hasChildren() ) {
 		node = node.getParent();
 	}
@@ -105,8 +105,7 @@ ve.Document.prototype.getBranchNodeFromOffset = function ( offset ) {
  * @throws {Error} Failed to select any nodes
  */
 ve.Document.prototype.selectNodes = function ( range, mode ) {
-	var doc = this.getDocumentNode(),
-		retval = [],
+	const doc = this.getDocumentNode(),
 		start = range.start,
 		end = range.end,
 		stack = [ {
@@ -117,7 +116,8 @@ ve.Document.prototype.selectNodes = function ( range, mode ) {
 			index: 0,
 			// First offset inside node
 			startOffset: 0
-		} ],
+		} ];
+	let retval = [],
 		currentFrame = stack[ 0 ],
 		startFound = false;
 
@@ -135,7 +135,7 @@ ve.Document.prototype.selectNodes = function ( range, mode ) {
 
 	if ( !doc.children || doc.children.length === 0 ) {
 		// Document has no children. This is weird
-		var nodeRange = new ve.Range( 0, doc.getLength() );
+		const nodeRange = new ve.Range( 0, doc.getLength() );
 		return [ {
 			node: doc,
 			range: new ve.Range( start, end ),
@@ -144,36 +144,36 @@ ve.Document.prototype.selectNodes = function ( range, mode ) {
 			nodeOuterRange: nodeRange
 		} ];
 	}
-	var left = doc.children[ 0 ].isWrapped() ? 1 : 0;
+	let left = doc.children[ 0 ].isWrapped() ? 1 : 0;
 
 	do {
-		var node = currentFrame.node.children[ currentFrame.index ];
-		var prevNode = currentFrame.node.children[ currentFrame.index - 1 ];
-		var nextNode = currentFrame.node.children[ currentFrame.index + 1 ];
-		var right = left + node.getLength();
+		const node = currentFrame.node.children[ currentFrame.index ];
+		const prevNode = currentFrame.node.children[ currentFrame.index - 1 ];
+		let nextNode = currentFrame.node.children[ currentFrame.index + 1 ];
+		const right = left + node.getLength();
 		// Is the start inside node?
-		var startInside = start >= left && start <= right;
+		const startInside = start >= left && start <= right;
 		// Is the end inside node?
-		var endInside = end >= left && end <= right;
+		const endInside = end >= left && end <= right;
 		// Does the node have wrapping elements around it
-		var isWrapped = node.isWrapped();
+		let isWrapped = node.isWrapped();
 		// Is there an unwrapped node right before this node?
-		var isPrevUnwrapped = prevNode ? !prevNode.isWrapped() : false;
+		const isPrevUnwrapped = prevNode ? !prevNode.isWrapped() : false;
 		// Is there an unwrapped node right after this node?
-		var isNextUnwrapped = nextNode ? !nextNode.isWrapped() : false;
+		const isNextUnwrapped = nextNode ? !nextNode.isWrapped() : false;
 		// Is this node an empty non-content branch node?
-		var isEmptyBranch = ( node.getLength() === 0 || node.shouldIgnoreChildren() ) &&
+		const isEmptyBranch = ( node.getLength() === 0 || node.shouldIgnoreChildren() ) &&
 			!node.isContent() && !node.canContainContent();
 		// Is the start between prevNode's closing and node or between the parent's opening and node?
-		var startBetween = ( isWrapped ? start === left - 1 : start === left ) && !isPrevUnwrapped;
+		const startBetween = ( isWrapped ? start === left - 1 : start === left ) && !isPrevUnwrapped;
 		// Is the end between node and nextNode's opening or between node and the parent's closing?
-		var endBetween = ( isWrapped ? end === right + 1 : end === right ) && !isNextUnwrapped;
-		var parentRange = new ve.Range(
+		const endBetween = ( isWrapped ? end === right + 1 : end === right ) && !isNextUnwrapped;
+		let parentRange = new ve.Range(
 			currentFrame.startOffset,
 			currentFrame.startOffset + currentFrame.node.getLength()
 		);
 
-		var parentFrame;
+		let parentFrame;
 		if ( isWrapped && end === left - 1 && currentFrame.index === 0 ) {
 			// The selection ends here with an empty range at the beginning of the node
 			// TODO duplicated code
@@ -521,20 +521,20 @@ ve.Document.prototype.selectNodes = function ( range, mode ) {
  *  - grandparent: parent's parent
  */
 ve.Document.prototype.getCoveredSiblingGroups = function ( range ) {
-	var leaves = this.selectNodes( range, 'leaves' ),
-		groups = [],
-		lastEndOffset = 0;
-	for ( var i = 0; i < leaves.length; i++ ) {
+	const leaves = this.selectNodes( range, 'leaves' ),
+		groups = [];
+	let lastEndOffset = 0;
+	for ( let i = 0; i < leaves.length; i++ ) {
 		if ( leaves[ i ].nodeOuterRange.end <= lastEndOffset ) {
 			// This range is contained within a range we've already processed
 			continue;
 		}
-		var node = leaves[ i ].node;
+		let node = leaves[ i ].node;
 		// Traverse up to a content branch from content elements
 		if ( node.isContent() ) {
 			node = node.getParent();
 		}
-		var parentNode = node.getParent();
+		const parentNode = node.getParent();
 		if ( !parentNode ) {
 			break;
 		}
@@ -545,7 +545,7 @@ ve.Document.prototype.getCoveredSiblingGroups = function ( range ) {
 			nodes: []
 		} );
 		// Seek forward to the last covered sibling
-		var siblingNode = node;
+		let siblingNode = node;
 		do {
 			// Add this to its sibling's group
 			groups[ groups.length - 1 ].nodes.push( siblingNode );
@@ -572,7 +572,7 @@ ve.Document.prototype.getCoveredSiblingGroups = function ( range ) {
  * @return {boolean} Whether the range lies within a single node
  */
 ve.Document.prototype.rangeInsideOneLeafNode = function ( range ) {
-	var selected = this.selectNodes( range, 'leaves' );
+	const selected = this.selectNodes( range, 'leaves' );
 	return selected.length === 1 && selected[ 0 ].nodeRange.containsRange( range ) && selected[ 0 ].indexInNode === undefined;
 };
 
@@ -582,6 +582,7 @@ ve.Document.prototype.rangeInsideOneLeafNode = function ( range ) {
  * The node and all its children are guaranteed to be attached
  *
  * @param {ve.Node} node The node attached
+ * @fires ve.Document#nodeAttached
  */
 ve.Document.prototype.nodeAttached = function ( node ) {
 	this.emit( 'nodeAttached', node );
@@ -593,6 +594,7 @@ ve.Document.prototype.nodeAttached = function ( node ) {
  * The node and all its children are guaranteed to be attached
  *
  * @param {ve.Node} node The node detached
+ * @fires ve.Document#nodeDetached
  */
 ve.Document.prototype.nodeDetached = function ( node ) {
 	this.emit( 'nodeDetached', node );

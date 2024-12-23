@@ -2,11 +2,15 @@
 // phpcs:disable Generic.Files.LineLength -- Long html test examples
 // @phan-file-suppress PhanUndeclaredClassMethod, PhanUndeclaredClassConstant Other extensions used for testing purposes
 
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {

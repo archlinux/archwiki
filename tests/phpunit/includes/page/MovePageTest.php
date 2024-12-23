@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -11,8 +12,10 @@ use MediaWiki\Tests\Rest\Handler\MediaTestTrait;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\Watchlist\WatchedItemStore;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * @covers \MediaWiki\Page\MovePage
@@ -42,8 +45,8 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 				MovePage::CONSTRUCTOR_OPTIONS,
 				$params['options'] ?? [],
 				[
-					'CategoryCollation' => 'uppercase',
-					'MaximumMovedPages' => 100,
+					MainConfigNames::CategoryCollation => 'uppercase',
+					MainConfigNames::MaximumMovedPages => 100,
 				]
 			),
 			$mockProvider,
@@ -62,7 +65,9 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->getMovePageFactory(),
 			$this->getServiceContainer()->getCollationFactory(),
 			$this->getServiceContainer()->getPageUpdaterFactory(),
-			$this->getServiceContainer()->getRestrictionStore()
+			$this->getServiceContainer()->getRestrictionStore(),
+			$this->getServiceContainer()->getDeletePageFactory(),
+			$this->getServiceContainer()->getLogFormatterFactory()
 		);
 	}
 
@@ -78,7 +83,8 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 		$this->getExistingTestPage( 'File:Existent.jpg' );
 		$this->getExistingTestPage( 'File:Existent2.jpg' );
 		$this->getExistingTestPage( 'File:Non-file.jpg' );
-		$this->getExistingTestPage( 'MediaWiki:Existent.js' );
+		// Special treatment as we can't just add wikitext to a JS page
+		$this->insertPage( 'MediaWiki:Existent.js', '// Hello this is JavaScript!' );
 		$this->getExistingTestPage( 'Hooked in place' );
 		$this->getNonexistingTestPage( 'Nonexistent' );
 		$this->getNonexistingTestPage( 'Nonexistent2' );
@@ -115,11 +121,11 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * @param string|Title $old
 	 * @param string|Title $new
-	 * @param array $expectedErrors
+	 * @param StatusValue $expectedStatus
 	 * @param array $extraOptions
 	 */
 	public function testIsValidMove(
-		$old, $new, array $expectedErrors, array $extraOptions = []
+		$old, $new, StatusValue $expectedStatus, array $extraOptions = []
 	) {
 		$iwLookup = $this->createMock( InterwikiLookup::class );
 		$iwLookup->method( 'isValidInterwiki' )
@@ -130,7 +136,10 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 		$old = $old instanceof Title ? $old : Title::newFromText( $old );
 		$new = $new instanceof Title ? $new : Title::newFromText( $new );
 		$mp = $this->newMovePageWithMocks( $old, $new, [ 'options' => $extraOptions ] );
-		$this->assertSame( $expectedErrors, $mp->isValidMove()->getErrorsArray() );
+		$this->assertStatusMessagesExactly(
+			$expectedStatus,
+			$mp->isValidMove()
+		);
 	}
 
 	public static function provideIsValidMove() {
@@ -138,155 +147,162 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 			'Valid move with redirect' => [
 				'Existent',
 				'Nonexistent',
-				[],
+				StatusValue::newGood(),
 				[ 'createRedirect' => true ]
 			],
 			'Valid move without redirect' => [
 				'Existent',
 				'Nonexistent',
-				[],
+				StatusValue::newGood(),
 				[ 'createRedirect' => false ]
 			],
 			'Self move' => [
 				'Existent',
 				'Existent',
-				[ [ 'selfmove' ] ],
+				StatusValue::newFatal( 'selfmove' ),
 			],
 			'Move from empty name' => [
 				Title::makeTitle( NS_MAIN, '' ),
 				'Nonexistent',
 				// @todo More specific error message, or make the move valid if the page actually
 				// exists somehow in the database
-				[ [ 'badarticleerror' ] ],
+				StatusValue::newFatal( 'badarticleerror' ),
 			],
 			'Move to empty name' => [
 				'Existent',
 				Title::makeTitle( NS_MAIN, '' ),
-				[ [ 'movepage-invalid-target-title' ] ],
+				StatusValue::newFatal( 'movepage-invalid-target-title' ),
 			],
 			'Move to invalid name' => [
 				'Existent',
 				Title::makeTitle( NS_MAIN, '<' ),
-				[ [ 'movepage-invalid-target-title' ] ],
+				StatusValue::newFatal( 'movepage-invalid-target-title' ),
 			],
 			'Move between invalid names' => [
 				Title::makeTitle( NS_MAIN, '<' ),
 				Title::makeTitle( NS_MAIN, '>' ),
 				// @todo First error message should be more specific, or maybe we should make moving
 				// such pages valid if they actually exist somehow in the database
-				[ [ 'movepage-source-doesnt-exist', '<' ], [ 'movepage-invalid-target-title' ] ],
+				StatusValue::newFatal( 'movepage-source-doesnt-exist', '<' )
+					->fatal( 'movepage-invalid-target-title' ),
 			],
 			'Move nonexistent' => [
 				'Nonexistent',
 				'Nonexistent2',
-				[ [ 'movepage-source-doesnt-exist', 'Nonexistent' ] ],
+				StatusValue::newFatal( 'movepage-source-doesnt-exist', 'Nonexistent' ),
 			],
 			'Move over existing' => [
 				'Existent',
 				'Existent2',
-				[ [ 'articleexists', 'Existent2' ] ],
+				StatusValue::newFatal( 'articleexists', 'Existent2' ),
 			],
 			'Move from another wiki' => [
 				Title::makeTitle( NS_MAIN, 'Test', '', 'otherwiki' ),
 				'Nonexistent',
-				[ [ 'immobile-source-namespace-iw' ] ],
+				StatusValue::newFatal( 'immobile-source-namespace-iw' ),
 			],
 			'Move special page' => [
 				'Special:FooBar',
 				'Nonexistent',
-				[ [ 'immobile-source-namespace', 'Special' ] ],
+				StatusValue::newFatal( 'immobile-source-namespace', 'Special' ),
 			],
 			'Move to another wiki' => [
 				'Existent',
 				Title::makeTitle( NS_MAIN, 'Test', '', 'otherwiki' ),
-				[ [ 'immobile-target-namespace-iw' ] ],
+				StatusValue::newFatal( 'immobile-target-namespace-iw' ),
 			],
-			'Move to special page' =>
-				[ 'Existent', 'Special:FooBar', [ [ 'immobile-target-namespace', 'Special' ] ] ],
+			'Move to special page' => [
+				'Existent',
+				'Special:FooBar',
+				StatusValue::newFatal( 'immobile-target-namespace', 'Special' ),
+			],
 			'Move to allowed content model' => [
 				'MediaWiki:Existent.js',
 				'MediaWiki:Nonexistent',
-				[],
+				StatusValue::newGood(),
 			],
 			'Move to prohibited content model' => [
 				'Existent',
 				'No content allowed',
-				[ [ 'content-not-allowed-here', 'wikitext', 'No content allowed', 'main' ] ],
+				StatusValue::newFatal( 'content-not-allowed-here', 'wikitext', 'No content allowed', 'main' ),
 			],
 			'Aborted by hook' => [
 				'Hooked in place',
 				'Nonexistent',
-				[ [ 'immobile-source-namespace', '(Main)' ] ],
+				StatusValue::newFatal( 'immobile-source-namespace', '(Main)' ),
 			],
 			'Doubly aborted by hook' => [
 				'Hooked in place',
 				'Hooked In Place',
-				[
-					[ 'immobile-source-namespace', '(Main)' ],
-					[ 'immobile-target-namespace', '(Main)' ]
-				],
+				StatusValue::newFatal( 'immobile-source-namespace', '(Main)' )
+					->fatal( 'immobile-target-namespace', '(Main)' ),
 			],
-			'Non-file to file' =>
-				[ 'Existent', 'File:Nonexistent.jpg', [ [ 'nonfile-cannot-move-to-file' ] ] ],
+			'Non-file to file' => [
+				'Existent',
+				'File:Nonexistent.jpg',
+				StatusValue::newFatal( 'nonfile-cannot-move-to-file' ),
+			],
 			'File to non-file' => [
 				'File:Existent.jpg',
 				'Nonexistent',
-				[ [ 'imagenocrossnamespace' ] ],
+				StatusValue::newFatal( 'imagenocrossnamespace' ),
 			],
 			'Existing file to non-existing file' => [
 				'File:Existent.jpg',
 				'File:Nonexistent.jpg',
-				[],
+				StatusValue::newGood(),
 			],
 			'Existing file to existing file' => [
 				'File:Existent.jpg',
 				'File:Existent2.jpg',
-				[ [ 'articleexists', 'File:Existent2.jpg' ] ],
+				StatusValue::newFatal( 'articleexists', 'File:Existent2.jpg' ),
 			],
 			'Existing file to existing file with no page' => [
 				'File:Existent.jpg',
 				'File:Existent-file-no-page.jpg',
 				// @todo Is this correct? Moving over an existing file with no page should succeed?
-				[],
+				StatusValue::newGood(),
 			],
 			'Existing file to name with slash' => [
 				'File:Existent.jpg',
 				'File:Existent/slashed.jpg',
-				[ [ 'imageinvalidfilename' ] ],
+				StatusValue::newFatal( 'imageinvalidfilename' ),
 			],
 			'Mismatched file extension' => [
 				'File:Existent.jpg',
 				'File:Nonexistent.png',
-				[ [ 'imagetypemismatch' ] ],
+				StatusValue::newFatal( 'imagetypemismatch' ),
 			],
 			'Non-file page in the File namespace' => [
 				'File:Non-file.jpg',
 				'File:Non-file-new.png',
-				[],
+				StatusValue::newGood(),
 			],
 			'File too long' => [
 				'File:Existent.jpg',
 				'File:0123456789012345678901234567890123456789012345678901234567890123456789' .
-				'0123456789012345678901234567890123456789012345678901234567890123456789' .
-				'0123456789012345678901234567890123456789012345678901234567890123456789' .
-				'012345678901234567890123456789-long.jpg',
-				[ [ 'filename-toolong' ] ]
+					'0123456789012345678901234567890123456789012345678901234567890123456789' .
+					'0123456789012345678901234567890123456789012345678901234567890123456789' .
+					'012345678901234567890123456789-long.jpg',
+				StatusValue::newFatal( 'filename-toolong' ),
 			],
 			// The FileRepo mock does not return true for ->backendSupportsUnicodePaths()
 			'Non-ascii' => [
 				'File:Existent.jpg',
 				'File:🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈 🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈 🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈 🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈 🏳️‍🌈.jpg',
-				[ [ 'filename-toolong' ], [ 'windows-nonascii-filename' ] ]
+				StatusValue::newFatal( 'filename-toolong' )
+					->fatal( 'windows-nonascii-filename' ),
 			],
 			'Non-file move long with unicode' => [
 				'File:Non-file.jpg',
 				'File:🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈 🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈 🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈 🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈 🏳️‍🌈.jpg',
-				[]
+				StatusValue::newGood()
 			],
 			'File just extension' => [
 				'File:Existent.jpg',
 				'File:.jpg',
-				[ [ 'filename-tooshort' ], [ 'imagetypemismatch' ] ]
+				StatusValue::newFatal( 'filename-tooshort' )
+					->fatal( 'imagetypemismatch' ),
 			],
 		];
 		return $ret;
@@ -297,10 +313,10 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * @param string|Title $old Old name
 	 * @param string|Title $new New name
-	 * @param array $expectedErrors
+	 * @param StatusValue $expectedStatus
 	 * @param array $extraOptions
 	 */
-	public function testMove( $old, $new, array $expectedErrors, array $extraOptions = [] ) {
+	public function testMove( $old, $new, StatusValue $expectedStatus, array $extraOptions = [] ) {
 		$iwLookup = $this->createMock( InterwikiLookup::class );
 		$iwLookup->method( 'isValidInterwiki' )
 			->willReturn( true );
@@ -314,10 +330,13 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 		unset( $extraOptions['createRedirect'] );
 		$params = [ 'options' => $extraOptions ];
 
-		if ( $expectedErrors ) {
+		if ( !$expectedStatus->isGood() ) {
 			$obj = $this->newMovePageWithMocks( $old, $new, $params );
 			$status = $obj->move( $this->getTestUser()->getUser() );
-			$this->assertSame( $expectedErrors, $status->getErrorsArray() );
+			$this->assertStatusMessagesExactly(
+				$expectedStatus,
+				$status
+			);
 		} else {
 			$oldPageId = $old->getArticleID();
 			$status = $this->getServiceContainer()
@@ -490,9 +509,8 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 			Title::makeTitle( NS_MAIN, 'Existent' ),
 			Title::makeTitle( NS_MAIN, 'ExistentRedirect' )
 		);
-		$this->assertSame(
-			[],
-			$mp->isValidMove()->getErrorsArray(),
+		$this->assertStatusGood(
+			$mp->isValidMove(),
 			'Can move over normal redirect'
 		);
 
@@ -501,9 +519,9 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 			Title::makeTitle( NS_MAIN, 'Existent2' ),
 			Title::makeTitle( NS_MAIN, 'ExistentRedirect3' )
 		);
-		$this->assertSame(
-			[ [ 'redirectexists', 'ExistentRedirect3' ] ],
-			$mp->isValidMove()->getErrorsArray(),
+		$this->assertStatusError(
+			'redirectexists',
+			$mp->isValidMove(),
 			'Cannot move over redirect with a different target'
 		);
 
@@ -512,9 +530,9 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 			Title::makeTitle( NS_MAIN, 'Existent' ),
 			Title::makeTitle( NS_MAIN, 'ExistentRedirect3' )
 		);
-		$this->assertSame(
-			[ [ 'articleexists', 'ExistentRedirect3' ] ],
-			$mp->isValidMove()->getErrorsArray(),
+		$this->assertStatusError(
+			'articleexists',
+			$mp->isValidMove(),
 			'Multi-revision redirects count as articles'
 		);
 	}
@@ -534,7 +552,7 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 
 		// do a cross-namespace move
 		$new = Title::makeTitle( NS_PROJECT, __METHOD__ );
-		$obj = $this->newMovePageWithMocks( $old, $new, [ 'db' => $this->db ] );
+		$obj = $this->newMovePageWithMocks( $old, $new, [ 'db' => $this->getDb() ] );
 		$status = $obj->move( $this->getTestUser()->getUser() );
 
 		// sanity checks
@@ -544,8 +562,9 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 
 		// ensure links tables where updated
 		$this->newSelectQueryBuilder()
-			->select( [ 'pl_namespace', 'pl_title', 'pl_from_namespace' ] )
+			->select( [ 'lt_namespace', 'lt_title', 'pl_from_namespace' ] )
 			->from( 'pagelinks' )
+			->join( 'linktarget', null, 'pl_target_id=lt_id' )
 			->where( [ 'pl_from' => $pageId ] )
 			->assertResultSet( [
 				[ NS_MAIN, 'Test', NS_PROJECT ]

@@ -1,8 +1,14 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
+use MediaWikiIntegrationTestCase;
 
 /**
  * Tests for the built in notification types
@@ -21,7 +27,7 @@ class NotificationsTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Helper function to get a user's latest notification
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @return Event
 	 */
 	public static function getLatestNotification( $user ) {

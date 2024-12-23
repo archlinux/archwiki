@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Api;
 
-use ApiBase;
-use ApiMain;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use Wikimedia\ParamValidator\ParamValidator;

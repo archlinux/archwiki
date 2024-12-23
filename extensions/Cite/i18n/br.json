@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Adriendelucca",
 			"Fohanno",
 			"Fulup",
 			"Huñvreüs",
-			"VIGNERON",
-			"Adriendelucca"
+			"VIGNERON"
 		]
 	},
 	"cite-desc": "Ouzhpennañ a ra ar tikedennoù <code>&lt;ref&gt;</code> ha <code>&lt;references/&gt;</code> evit an daveoù",
@@ -26,6 +26,13 @@
 	"cite_error_references_missing_key": "N'eo ket bet implijet en destenn gent an <code>&lt;ref&gt;</code> dikedenn hec'h anv \"$1\" termenet e <code>&lt;references&gt;</code>.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> an dikedenn termenet e <code>&lt;references&gt;</code> n'he deus dezverk anv ebet.",
 	"cite_error_empty_references_define": "Balizenn <code>&lt;ref&gt;</code> gant anv \"$1\" termenet e <code>&lt;references&gt;</code> gant an dezverk group \"$2\" a zo goullo.",
+	"cite-reference-previews-reference": "Dave",
+	"cite-reference-previews-book": "Dave levr",
+	"cite-reference-previews-journal": "Dave kazetenn",
+	"cite-reference-previews-news": "Dave neventioù",
+	"cite-reference-previews-note": "Notenn",
+	"cite-reference-previews-web": "Dave gwiad",
+	"cite-reference-previews-collapsible-placeholder": "En dave-mañ ez eus un tres ha n’ez a ket ur rakwel.",
 	"cite_references_link_many_and": " ha",
 	"cite_references_link_accessibility_label": "Lammat",
 	"cite_references_link_many_accessibility_label": "Lammat da :",
@@ -34,5 +41,10 @@
 	"cite-wikieditor-help-content-reference-description": "Daveenn",
 	"cite-wikieditor-help-content-named-reference-description": "Dave anvet",
 	"cite-wikieditor-help-content-rereference-description": "Adimplij eus an hevelep daveenn",
-	"cite-wikieditor-help-content-showreferences-description": "Diskwel an daveennoù"
+	"cite-wikieditor-help-content-showreferences-description": "Diskwel an daveennoù",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Munudoù all",
+	"popups-prefs-navpopups-gadget-conflict-info": "Gweredekaet eo ar bitrak [[$1|Navigation popups]], neuze ne weloc’h ket rakweloù pourchaset gant an arc’hwel-mañ. Gallout a rafe ar bitrak-mañ kaout un anv all en ho wiki. Ma kendalc’hit da gaout kudennoù, arsellit mar plij ho pitrakoù hag ho skriptoù implijer, re hollek hag all.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Gweredekaet eo ar bitrakoù [[$1|Navigation popups]] ha [[Reference Tooltips]], neuze ne weloc’h ket rakweloù pourchaset gant an arc’hwel-mañ. Gallout a rafe ar bitrakoù-mañ kaout un anv all en ho wiki. Ma kendalc’hit da gaout kudennoù, arsellit mar plij ho pitrakoù hag ho skriptoù implijer, re hollek hag all.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Gweredekaet eo ar bitrak [[$1|Reference Tooltips]], neuze ne weloc’h ket rakweloù daveoù met gwelout a reoc’h rakweloù pajennoù. Gallout a rafe ar bitrak-mañ kaout un anv all en ho wiki. Ma kendalc’hit da gaout kudennoù, arsellit mar plij ho pitrakoù hag ho skriptoù implijer, re hollek hag all.",
+	"popups-refpreview-user-preference-label": "Gweredekaat rakwel daveoù (kaout rakweloù prim eus un dave en ul lenn ur bajenn)"
 }

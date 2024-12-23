@@ -75,6 +75,11 @@ local function test_getContent()
 		mw.title.new( 'ScribuntoTestNonExistingPage' ):getContent()
 end
 
+local function test_content()
+	return mw.title.new( 'ScribuntoTestPage' ).content,
+		mw.title.new( 'ScribuntoTestNonExistingPage' ).content
+end
+
 local function test_redirectTarget()
 	local targets = {}
 	local titles = {
@@ -409,6 +414,13 @@ local tests = {
 		expect = {
 			'{{int:mainpage}}<includeonly>...</includeonly><noinclude>...</noinclude>',
 			nil,
+		}
+	},
+
+	{ name = '.content', func = test_content,
+		expect = {
+			'{{int:mainpage}}<includeonly>...</includeonly><noinclude>...</noinclude>',
+			false,
 		}
 	},
 

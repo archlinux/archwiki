@@ -3,12 +3,13 @@
  *
  * @copyright See AUTHORS.txt
  */
+@import '../../../../lib/codex-design-tokens/theme-wikimedia-ui.less';
 
 .ve-ui-toolbarDialog {
-	background: #fff;
+	background: @background-color-base;
 
 	&-padded .oo-ui-window-body {
-		padding: 0.375em; /* 0.3em / 0.8 */
+		padding: ( 0.3em / 0.8 );
 	}
 
 	&-position-above {
@@ -33,11 +34,15 @@
 	&-position-side {
 		position: absolute;
 		right: 0;
-		border-left: 1px solid #c8ccd1;
 		overflow-x: hidden;
 		width: 0;
-		margin-top: 1px;
+		/* Move away from toolbar drop shadow */
+		margin-top: 4px;
 		transition: width 250ms;
+
+		.ve-ui-toolbarDialog-framed {
+			border-left: 1px solid #c8ccd1;
+		}
 	}
 
 	&-disabled {

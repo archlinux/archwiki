@@ -9,12 +9,12 @@
 			"Jmnote",
 			"Kwj2772",
 			"LiteHell",
+			"Markingdots",
 			"Nuevo Paso",
 			"SeoJeongHo",
 			"Ykhwong",
 			"관인생략",
 			"아라",
-			"Markingdots",
 			"Suleiman the Magnificent Television"
 		]
 	},
@@ -41,7 +41,6 @@
 	"mobile-frontend-meta-data-issues-categories": "이 분류에 대해",
 	"mobile-frontend-meta-data-issues-header": "문서 이슈",
 	"minerva-meta-data-issues-section-header": "문단 문제",
-	"mobile-frontend-notifications-filter": "필터",
 	"mobile-frontend-pageaction-edit-tooltip": "이 문서의 선두 문단을 편집합니다",
 	"mobile-frontend-placeholder": "{{SITENAME}} 검색",
 	"mobile-frontend-random-button": "임의의 문서로",
@@ -61,7 +60,7 @@
 	"minerva-page-actions-overflow": "더 보기",
 	"minerva-page-actions-language-switcher": "언어",
 	"minerva-page-actions-history": "역사",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|토론]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue 토론]",
 	"skinname-minerva": "미네르바 노이에",
 	"minerva-skin-desc": "반응형 모바일 우선 스킨",
 	"skin-minerva-issue-learn-more": "더 알아보기",
@@ -73,6 +72,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1년}} 전",
 	"skin-minerva-mobile-option-MinervaShowCategories": "분류",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "문서 분류 보기",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "문서의 문제들(틀:ambox)은 문서에서 인라인 처리됩니다.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "유감스럽지만, 문서별 그룹화는 모바일에서는 가능하지 않습니다. 페이지별 그룹화를 원하신다면 데스크탑 사이트를 방문해 주세요."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "유감스럽지만, 문서별 그룹화는 모바일에서는 가능하지 않습니다. 페이지별 그룹화를 원하신다면 데스크탑 사이트를 방문해 주세요.",
+	"skin-minerva-night-mode-unavailable": "\"라이트\" 색상 테마로만 제공되는 페이지입니다."
 }

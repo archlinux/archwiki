@@ -25,7 +25,6 @@
 	"mobile-frontend-meta-data-issues-categories": "About this category",
 	"mobile-frontend-meta-data-issues-header": "Page issues",
 	"minerva-meta-data-issues-section-header": "Section issues",
-	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "Edit the lead section of this page",
 	"mobile-frontend-placeholder": "Search {{SITENAME}}",
 	"mobile-frontend-random-button": "Random",
@@ -45,7 +44,7 @@
 	"minerva-page-actions-overflow": "More",
 	"minerva-page-actions-language-switcher": "Languages",
 	"minerva-page-actions-history": "History",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussion]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Discussion]",
 	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "A responsive mobile first skin",
 	"skin-minerva-issue-learn-more": "Learn more",
@@ -57,10 +56,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 year|$1 years}} ago",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categories",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "View categories of pages",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Improved page issues treatment",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Page issues (Template:ambox) will be inlined in the article.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Unfortunately, grouping results by page is not available on mobile. If you would like to use the group by page feature please visit the desktop site.",
-	"skin-minerva-night-mode-unavailable": "Page only available in \"Day\" color theme.",
+	"skin-minerva-night-mode-unavailable": "Page only available in \"Light\" color theme.",
 	"minerva.css": "/* All CSS here will be loaded for users of the MinervaNeue skin */",
 	"minerva.js": "/* All JavaScript here will be loaded for users of the MinervaNeue skin */"
 }

@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Parser\Exception;
 
-use Message;
+use MediaWiki\Message\Message;
 
 /**
  * A variant of user-visible exception that is not fatal.
@@ -16,7 +16,7 @@ class UserVisibleWarning extends UserVisibleException {
 		// abusefilter-parser-warning-match-empty-regex
 		return new Message(
 			'abusefilter-parser-warning-' . $this->mExceptionID,
-			array_merge( [ $this->mPosition ], $this->mParams )
+			[ $this->mPosition, ...$this->mParams ]
 		);
 	}
 }

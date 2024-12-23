@@ -35,69 +35,69 @@ class MobileFrontendHooks implements
 	 * @see https://www.mediawiki.org/wiki/
 	 *  Extension:MobileFrontend/MobileFrontendFeaturesRegistration
 	 *
-	 * @param FeaturesManager $featureManager
+	 * @param FeaturesManager $featuresManager
 	 */
-	public function onMobileFrontendFeaturesRegistration( FeaturesManager $featureManager ) {
+	public function onMobileFrontendFeaturesRegistration( FeaturesManager $featuresManager ) {
 		$config = $this->configFactory->makeConfig( 'minerva' );
 
 		try {
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					'MinervaShowCategories',
 					'skin-minerva',
 					$config->get( 'MinervaShowCategories' )
 				)
 			);
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					'MinervaPageIssuesNewTreatment',
 					'skin-minerva',
 					$config->get( 'MinervaPageIssuesNewTreatment' )
 				)
 			);
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					'MinervaTalkAtTop',
 					'skin-minerva',
 					$config->get( 'MinervaTalkAtTop' )
 				)
 			);
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					'MinervaDonateLink',
 					'skin-minerva',
 					$config->get( 'MinervaDonateLink' )
 				)
 			);
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					'MinervaHistoryInPageActions',
 					'skin-minerva',
 					$config->get( 'MinervaHistoryInPageActions' )
 				)
 			);
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					Hooks::FEATURE_OVERFLOW_PAGE_ACTIONS,
 					'skin-minerva',
 					$config->get( Hooks::FEATURE_OVERFLOW_PAGE_ACTIONS )
 				)
 			);
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					'MinervaAdvancedMainMenu',
 					'skin-minerva',
 					$config->get( 'MinervaAdvancedMainMenu' )
 				)
 			);
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					'MinervaPersonalMenu',
 					'skin-minerva',
 					$config->get( 'MinervaPersonalMenu' )
 				)
 			);
-			$featureManager->registerFeature(
+			$featuresManager->registerFeature(
 				new Feature(
 					'MinervaNightMode',
 					'skin-minerva',

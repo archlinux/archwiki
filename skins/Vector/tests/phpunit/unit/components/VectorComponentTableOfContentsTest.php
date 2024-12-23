@@ -22,9 +22,9 @@
 namespace MediaWiki\Skins\Vector\Tests\Unit\Components;
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Message\Message;
 use MediaWiki\Skins\Vector\Components\VectorComponentTableOfContents;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
-use Message;
 use MessageLocalizer;
 
 /**

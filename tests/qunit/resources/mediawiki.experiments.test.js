@@ -1,6 +1,6 @@
 ( function () {
 
-	var getBucket = mw.experiments.getBucket;
+	const getBucket = mw.experiments.getBucket;
 
 	function createExperiment() {
 		return {
@@ -17,9 +17,9 @@
 
 	QUnit.module( 'mediawiki.experiments' );
 
-	QUnit.test( 'getBucket( experiment, token )', function ( assert ) {
-		var experiment = createExperiment(),
-			token = '123457890';
+	QUnit.test( 'getBucket( experiment, token )', ( assert ) => {
+		const token = '123457890';
+		let experiment = createExperiment();
 
 		assert.strictEqual(
 			getBucket( experiment, token ),

@@ -10,16 +10,16 @@
 	 *
 	 * @constructor
 	 * @param {Object} config Configuration options
-	 * @cfg {Function} [sortingCallback] A function defining the sorting order
+	 * @param {Function} [config.sortingCallback] A function defining the sorting order
 	 *  of items in this list.
-	 * @cfg {string} [title] An optional title for this notifications list
-	 * @cfg {string} [name='local'] Symbolic name for this list
-	 * @cfg {string} [source='local'] Symbolic name for the source of this list.
+	 * @param {string} [config.title] An optional title for this notifications list
+	 * @param {string} [config.name='local'] Symbolic name for this list
+	 * @param {string} [config.source='local'] Symbolic name for the source of this list.
 	 *  This is used mainly for recognizing where API actions should be by the
 	 *  controller.
-	 * @cfg {string} [sourceURL] The URL for the article base of the remote
+	 * @param {string} [config.sourceURL] The URL for the article base of the remote
 	 *  group or wiki
-	 * @cfg {string} [timestamp=0] A timestamp representing the latest item in
+	 * @param {string} [config.timestamp=0] A timestamp representing the latest item in
 	 *  the list.
 	 */
 	mw.echo.dm.NotificationsList = function MwEchoDmNotificationsList( config ) {
@@ -35,7 +35,7 @@
 		this.fallbackTimestamp = config.timestamp || 0;
 
 		// Sorting callback
-		this.setSortingCallback( config.sortingCallback || function ( a, b ) {
+		this.setSortingCallback( config.sortingCallback || ( ( a, b ) => {
 			if ( !a.isRead() && b.isRead() ) {
 				return -1; // Unread items are always above read items
 			} else if ( a.isRead() && !b.isRead() ) {
@@ -55,7 +55,7 @@
 
 			// Fallback on IDs
 			return b.getId() - a.getId();
-		} );
+		} ) );
 
 		// Events
 		this.aggregate( { update: 'itemUpdate' } );
@@ -67,24 +67,24 @@
 	/* Events */
 
 	/**
-	 * @event update
-	 * @param {mw.echo.dm.NotificationItem[]} items Current items in the list
-	 *
 	 * The list has been updated
+	 *
+	 * @event mw.echo.dm.NotificationsList#update
+	 * @param {mw.echo.dm.NotificationItem[]} items Current items in the list
 	 */
 
 	/**
-	 * @event itemUpdate
-	 * @param {mw.echo.dm.NotificationItem} item Item that has changed
-	 *
 	 * An item in the list has been updated
+	 *
+	 * @event mw.echo.dm.NotificationsList#itemUpdate
+	 * @param {mw.echo.dm.NotificationItem} item Item that has changed
 	 */
 
 	/**
-	 * @event discard
-	 * @param {mw.echo.dm.NotificationItem} item Item that was discarded
-	 *
 	 * An item was discarded
+	 *
+	 * @event mw.echo.dm.NotificationsList#discard
+	 * @param {mw.echo.dm.NotificationItem} item Item that was discarded
 	 */
 
 	/* Methods */
@@ -93,7 +93,7 @@
 	 * Set the items in this list
 	 *
 	 * @param {mw.echo.dm.NotificationItem[]} items Items to insert into the list
-	 * @fires update
+	 * @fires mw.echo.dm.NotificationsList#update
 	 */
 	mw.echo.dm.NotificationsList.prototype.setItems = function ( items ) {
 		this.clearItems();
@@ -111,6 +111,7 @@
 	 * temporarily moving them.
 	 *
 	 * @param {mw.echo.dm.NotificationItem[]} items Items to insert into the list
+	 * @fires mw.echo.dm.NotificationsList#discard
 	 */
 	mw.echo.dm.NotificationsList.prototype.discardItems = function ( items ) {
 		this.removeItems( items );
@@ -123,10 +124,10 @@
 	 * @return {number[]} Item IDs
 	 */
 	mw.echo.dm.NotificationsList.prototype.getAllItemIds = function () {
-		var idArray = [],
+		const idArray = [],
 			items = this.getItems();
 
-		for ( var i = 0; i < items.length; i++ ) {
+		for ( let i = 0; i < items.length; i++ ) {
 			idArray.push( items[ i ].getId() );
 		}
 
@@ -140,10 +141,10 @@
 	 * @return {number[]} Item IDs
 	 */
 	mw.echo.dm.NotificationsList.prototype.getAllItemIdsByType = function ( type ) {
-		var idArray = [],
+		const idArray = [],
 			items = this.getItems();
 
-		for ( var i = 0; i < items.length; i++ ) {
+		for ( let i = 0; i < items.length; i++ ) {
 			if ( items[ i ].getType() === type ) {
 				idArray.push( items[ i ].getId() );
 			}
@@ -195,7 +196,7 @@
 	 * @return {string} Latest timestamp
 	 */
 	mw.echo.dm.NotificationsList.prototype.getTimestamp = function () {
-		var items = this.getItems();
+		const items = this.getItems();
 
 		return (
 			// In the cases where we want a single timestamp for a
@@ -214,9 +215,7 @@
 	 * @return {mw.echo.dm.NotificationItem[]} An array of matching items
 	 */
 	mw.echo.dm.NotificationsList.prototype.findByIds = function ( ids ) {
-		return this.getItems().filter( function ( item ) {
-			return ids.indexOf( item.getId() ) !== -1;
-		} );
+		return this.getItems().filter( ( item ) => ids.indexOf( item.getId() ) !== -1 );
 	};
 
 	/**
@@ -234,12 +233,7 @@
 	 * @return {boolean} There are unseen items in the list
 	 */
 	mw.echo.dm.NotificationsList.prototype.hasUnseen = function () {
-		var isItemUnseen = function ( item ) {
-				return !item.isSeen();
-			},
-			items = this.getItems();
-
-		return !!items.some( isItemUnseen );
+		return this.getItems().some( ( item ) => !item.isSeen() );
 	};
 
 	/**
@@ -248,7 +242,7 @@
 	 * @param {string} timestamp New seen timestamp
 	 */
 	mw.echo.dm.NotificationsList.prototype.updateSeenState = function ( timestamp ) {
-		this.getItems().forEach( function ( notification ) {
+		this.getItems().forEach( ( notification ) => {
 			notification.toggleSeen(
 				notification.isRead() || notification.getTimestamp() < timestamp
 			);

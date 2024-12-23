@@ -1,9 +1,11 @@
 <?php
 
 use MediaWiki\Cache\BacklinkCache;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
@@ -12,6 +14,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Assert\PreconditionException;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * @group Database
@@ -46,7 +49,6 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 			MainConfigNames::CanonicalServer => 'https://example.org',
 			MainConfigNames::ScriptPath => '/w',
 			MainConfigNames::Script => '/w/index.php',
-			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::LanguageCode => 'en',
 			// For testSecureAndSplitValid, testSecureAndSplitInvalid
 			MainConfigNames::LocalInterwikis => [ 'localtestiw' ],
@@ -54,7 +56,6 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 		$this->setUserLang( 'en' );
 
 		// Define valid interwiki prefixes and their configuration
-		// DummyServicesTrait::getDummyInterwikiLookup
 		$interwikiLookup = $this->getDummyInterwikiLookup( [
 			// testSecureAndSplitValid, testSecureAndSplitInvalid
 			[ 'iw_prefix' => 'localtestiw', 'iw_url' => 'localtestiw' ],
@@ -74,7 +75,6 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 			[ 'iw_prefix' => 'zz', 'iw_local' => 0 ],
 
 			// Some tests use interwikis - define valid prefixes and their configuration
-			// DummyServicesTrait::getDummyInterwikiLookup
 			[ 'iw_prefix' => 'acme', 'iw_url' => 'https://acme.test/$1' ],
 			[ 'iw_prefix' => 'yy', 'iw_url' => 'https://yy.wiki.test/wiki/$1', 'iw_local' => true ]
 		] );
@@ -477,7 +477,6 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	) {
 		$this->overrideConfigValues( [
 			MainConfigNames::Server => 'https://xx.wiki.test',
-			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::ExternalInterwikiFragmentMode => 'legacy',
 			MainConfigNames::FragmentMode => [ 'html5', 'legacy' ]
 		] );
@@ -762,7 +761,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testNewFromMissingId() {
 		// Testing return of null for an id that does not exist
-		$maxPageId = (int)$this->db->newSelectQueryBuilder()
+		$maxPageId = (int)$this->getDb()->newSelectQueryBuilder()
 			->select( 'max(page_id)' )
 			->from( 'page' )
 			->caller( __METHOD__ )->fetchField();
@@ -900,11 +899,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 		$title = Title::newFromText( $text );
 		$fixed = $title->fixSpecialName();
 		$stuff = explode( '/', $fixed->getDBkey(), 2 );
-		if ( count( $stuff ) == 2 ) {
-			$par = $stuff[1];
-		} else {
-			$par = null;
-		}
+		$par = $stuff[1] ?? null;
 		$this->assertEquals(
 			$expectedParam,
 			$par,
@@ -980,6 +975,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 		$this->assertInstanceOf( Title::class, $title,
 			"Test must be passed a valid title text, you gave '$titleText'"
 		);
+		$this->hideDeprecated( Title::class . '::getPageViewLanguage' );
 		$this->assertEquals( $expected,
 			$title->getPageViewLanguage()->getCode(),
 			$msg
@@ -1847,6 +1843,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetTitleProtection() {
 		$title = $this->getNonexistingTestPage( 'UTest1' )->getTitle();
+		$this->hideDeprecated( Title::class . '::getTitleProtection' );
 		$this->assertFalse( $title->getTitleProtection() );
 	}
 
@@ -1855,22 +1852,8 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testDeleteTitleProtection() {
 		$title = $this->getExistingTestPage( 'UTest1' )->getTitle();
+		$this->hideDeprecated( Title::class . '::getTitleProtection' );
 		$this->assertFalse( $title->getTitleProtection() );
-	}
-
-	/**
-	 * @covers \MediaWiki\Title\Title::getCdnUrls
-	 */
-	public function testGetCdnUrls() {
-		$this->hideDeprecated( Title::class . '::getCdnUrls' );
-		$this->assertEquals(
-			[
-				'https://example.org/wiki/Example',
-				'https://example.org/w/index.php?title=Example&action=history',
-			],
-			Title::makeTitle( NS_MAIN, 'Example' )->getCdnUrls(),
-			'article'
-		);
 	}
 
 	/**

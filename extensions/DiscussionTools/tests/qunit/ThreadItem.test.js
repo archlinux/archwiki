@@ -1,14 +1,14 @@
-var
+const
 	CommentItem = require( 'ext.discussionTools.init' ).CommentItem,
 	HeadingItem = require( 'ext.discussionTools.init' ).HeadingItem;
 
 QUnit.module( 'mw.dt.ThreadItem', QUnit.newMwEnvironment() );
 
-QUnit.test( '#getAuthorsBelow/#getThreadItemsBelow', function ( assert ) {
-	var cases = require( '../cases/authors.json' );
+QUnit.test( '#getAuthorsBelow/#getThreadItemsBelow', ( assert ) => {
+	const cases = require( '../cases/authors.json' );
 
 	function newFromJSON( json ) {
-		var item;
+		let item;
 		if ( json.type === 'heading' ) {
 			item = new HeadingItem();
 		} else {
@@ -21,8 +21,8 @@ QUnit.test( '#getAuthorsBelow/#getThreadItemsBelow', function ( assert ) {
 		return item;
 	}
 
-	cases.forEach( function ( caseItem ) {
-		var threadItem = newFromJSON( caseItem.thread ),
+	cases.forEach( ( caseItem ) => {
+		const threadItem = newFromJSON( caseItem.thread ),
 			authors = threadItem.getAuthorsBelow();
 
 		assert.deepEqual(
@@ -32,9 +32,7 @@ QUnit.test( '#getAuthorsBelow/#getThreadItemsBelow', function ( assert ) {
 		);
 
 		assert.deepEqual(
-			threadItem.getThreadItemsBelow().map( function ( item ) {
-				return item.id;
-			} ),
+			threadItem.getThreadItemsBelow().map( ( item ) => item.id ),
 			caseItem.expectedThreadItemIdsBelow
 		);
 	} );

@@ -1,4 +1,4 @@
-var ThreadItem = require( './ThreadItem.js' ),
+const ThreadItem = require( './ThreadItem.js' ),
 	moment = require( './lib/moment-timezone/moment-timezone-with-data-1970-2030.js' );
 
 /**
@@ -51,8 +51,8 @@ OO.inheritClass( CommentItem, ThreadItem );
  * @return {string} Comment timestamp in standard format
  */
 CommentItem.prototype.getTimestampString = function () {
-	var dtConfig = require( './config.json' );
-	var switchTime = moment.utc( dtConfig.switchTime );
+	const dtConfig = require( './config.json' );
+	const switchTime = moment.utc( dtConfig.switchTime );
 	if ( this.timestamp < switchTime ) {
 		return this.timestamp.utc().toISOString();
 	} else {
@@ -65,7 +65,7 @@ CommentItem.prototype.getTimestampString = function () {
  * @return {HeadingItem} Closest ancestor which is a HeadingItem
  */
 CommentItem.prototype.getHeading = function () {
-	var parent = this;
+	let parent = this;
 	while ( parent && parent.type !== 'heading' ) {
 		parent = parent.parent;
 	}
@@ -76,7 +76,7 @@ CommentItem.prototype.getHeading = function () {
  * @return {HeadingItem|null} Closest heading that can be used for topic subscriptions
  */
 CommentItem.prototype.getSubscribableHeading = function () {
-	var heading = this.getHeading();
+	let heading = this.getHeading();
 	while ( heading && heading.type === 'heading' && !heading.isSubscribable() ) {
 		heading = heading.parent;
 	}

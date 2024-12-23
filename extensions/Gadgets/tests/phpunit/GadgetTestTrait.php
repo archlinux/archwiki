@@ -4,6 +4,8 @@ use MediaWiki\Extension\Gadgets\Gadget;
 use MediaWiki\Extension\Gadgets\GadgetResourceLoaderModule;
 use MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo;
 use MediaWiki\Revision\RevisionLookup;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
 
@@ -22,7 +24,8 @@ trait GadgetTestTrait {
 		$dbProvider = $this->createMock( IConnectionProvider::class );
 		$wanCache = WANObjectCache::newEmpty();
 		$revLookup = $this->createMock( RevisionLookup::class );
-		$repo = new MediaWikiGadgetsDefinitionRepo( $dbProvider, $wanCache, $revLookup );
+		$srvCache = new HashBagOStuff();
+		$repo = new MediaWikiGadgetsDefinitionRepo( $dbProvider, $wanCache, $revLookup, $srvCache );
 		return $repo->newFromDefinition( $line, 'misc' );
 	}
 

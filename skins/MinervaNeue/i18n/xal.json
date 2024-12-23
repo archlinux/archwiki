@@ -25,7 +25,6 @@
 	"mobile-frontend-meta-data-issues": "Халхин асудлмуд",
 	"mobile-frontend-meta-data-issues-categories": "Эн әңгллин туск",
 	"mobile-frontend-meta-data-issues-header": "Халхин асудлмуд",
-	"mobile-frontend-notifications-filter": "Шүр",
 	"mobile-frontend-pageaction-edit-tooltip": "Халхин толһа кесгиг ясврлх",
 	"mobile-frontend-placeholder": "{{SITENAME}}-с хәәх",
 	"mobile-frontend-random-button": "Санмсрго",
@@ -47,6 +46,5 @@
 	"skin-minerva-issue-learn-more": "Үлүг медх",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Әңгллмүд",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Халхсин әңгллмүдиг үзх",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Халхсин асудлмудын сәәҗрүлсн илрүллт",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Харм төрхд, халхин үр-дүңгин бөлгллиг һар-утцн гих мет төкәрмҗәс үзх болмҗ уга. Эн функциг ашглхар делгцин хүвлврт орхнтн."
 }

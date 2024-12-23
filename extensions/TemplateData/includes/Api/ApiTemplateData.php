@@ -2,16 +2,16 @@
 
 namespace MediaWiki\Extension\TemplateData\Api;
 
-use ApiBase;
-use ApiContinuationManager;
-use ApiFormatBase;
-use ApiPageSet;
-use ApiResult;
-use ExtensionRegistry;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiContinuationManager;
+use MediaWiki\Api\ApiFormatBase;
+use MediaWiki\Api\ApiPageSet;
+use MediaWiki\Api\ApiResult;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Extension\EventLogging\EventLogging;
 use MediaWiki\Extension\TemplateData\TemplateDataBlob;
 use MediaWiki\MediaWikiServices;
-use TextContent;
+use MediaWiki\Registration\ExtensionRegistry;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**

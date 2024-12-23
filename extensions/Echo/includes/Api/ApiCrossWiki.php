@@ -18,10 +18,8 @@ use Wikimedia\ParamValidator\ParamValidator;
  * - Optionally, override getForeignQueryParams() to customize what is sent to the foreign wikis
  */
 trait ApiCrossWiki {
-	/**
-	 * @var ForeignNotifications
-	 */
-	protected $foreignNotifications;
+
+	protected ?ForeignNotifications $foreignNotifications = null;
 
 	/**
 	 * This will take the current API call (with all of its params) and execute
@@ -32,7 +30,7 @@ trait ApiCrossWiki {
 	 * @return array[]
 	 * @throws Exception
 	 */
-	protected function getFromForeign( array $wikis = null, array $paramOverrides = [] ) {
+	protected function getFromForeign( ?array $wikis = null, array $paramOverrides = [] ) {
 		$wikis ??= $this->getRequestedForeignWikis();
 		if ( $wikis === [] ) {
 			return [];
@@ -73,7 +71,7 @@ trait ApiCrossWiki {
 	 *
 	 * @return string[]
 	 */
-	protected function getRequestedWikis() {
+	protected function getRequestedWikis(): array {
 		$params = $this->extractRequestParams();
 
 		// if wiki is omitted from params, that's because crosswiki is/was not
@@ -99,31 +97,26 @@ trait ApiCrossWiki {
 	/**
 	 * @return string[] Wiki names
 	 */
-	protected function getRequestedForeignWikis() {
+	protected function getRequestedForeignWikis(): array {
 		return array_diff( $this->getRequestedWikis(), [ WikiMap::getCurrentWikiId() ] );
 	}
 
-	/**
-	 * @return ForeignNotifications
-	 */
-	protected function getForeignNotifications() {
-		if ( $this->foreignNotifications === null ) {
-			$this->foreignNotifications = new ForeignNotifications( $this->getUser() );
-		}
+	protected function getForeignNotifications(): ForeignNotifications {
+		$this->foreignNotifications ??= new ForeignNotifications( $this->getUser() );
 		return $this->foreignNotifications;
 	}
 
 	/**
 	 * @return string[] Wiki names
 	 */
-	protected function getForeignWikisWithUnreadNotifications() {
+	protected function getForeignWikisWithUnreadNotifications(): array {
 		return $this->getForeignNotifications()->getWikis();
 	}
 
 	/**
 	 * @return array[]
 	 */
-	public function getCrossWikiParams() {
+	public function getCrossWikiParams(): array {
 		global $wgConf;
 
 		$params = [];

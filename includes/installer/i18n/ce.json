@@ -3,8 +3,8 @@
 		"authors": [
 			"Sasan700",
 			"Seb35",
-			"Умар",
-			"Робин"
+			"Робин",
+			"Умар"
 		]
 	},
 	"config-desc": "MediaWiki инсталлятор",
@@ -121,7 +121,6 @@
 	"config-install-database": "Хаамийн базан нисдаран гӀирс",
 	"config-install-schema": "Схема кхоллар",
 	"config-install-pg-schema-not-exist": "PostgreSQL схема йац",
-	"config-install-pg-commit": "Бина хийцамаш",
 	"config-install-pg-plpgsql": "PL/pgSQL мотт таллар",
 	"config-install-user": "Декъашхочун хаамийн база кхоллар",
 	"config-install-user-alreadyexists": "Декъашхо «$1» хӀинцале волуш ву",
@@ -133,9 +132,6 @@
 	"config-install-tables": "Таблицаш кхоллар, хьалхара гӀулч",
 	"config-install-tables-exist": "'''ДӀахьедар''': MediaWiki таблицаш, йолуш хила там бу.\nЙуха кхоллар чекхдалийтар.",
 	"config-install-tables-failed": "'''ГӀалат''': Таблица кхолла таро йац гӀалат бахьнехь: $1",
-	"config-install-tables-manual": "Таблицаш кхоллар, шолгӀа гӀулч",
-	"config-install-manual-tables-exist": "'''ДӀахьедар''': MediaWiki таблицаш, йолуш хила там бу.\nЙуха кхоллар чекхдалийтар.",
-	"config-install-manual-tables-failed": "<strong>ГӀалат</strong>: Таблица кхолла таро йац гӀалат бахьнехь: $1",
 	"config-install-interwiki-list": "Файл <code>interwiki.list</code> ца карийна.",
 	"config-install-stats": "Инициализацин статистика",
 	"config-install-keys": "Къайлаха долу догӀанаш кхоллар",

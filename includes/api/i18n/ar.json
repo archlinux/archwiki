@@ -14,7 +14,9 @@
 			"LaMagiaaa",
 			"Maroen1990",
 			"Matma Rex",
+			"McDutchie",
 			"Meno25",
+			"Mohanad",
 			"NEHAOUA",
 			"SaldırganSincap",
 			"Tala Ali",
@@ -23,9 +25,7 @@
 			"أَحمد",
 			"ديفيد",
 			"علاء",
-			"محمد أحمد عبد الفتاح",
-			"McDutchie",
-			"Mohanad"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|التوثيق]]\n* [[mw:Special:MyLanguage/API:Etiquette|الآداب وإرشادات الاستخدام]]\n* [[mw:Special:MyLanguage/API:FAQ|الأسئلة الأكثر تكرارا]]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api.lists.wikimedia.org/ القائمة البريدية]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/ إعلانات API]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R الأخطاء والطلبات]\n</div>\n<strong>الحالة:</strong> API ميدياويكي هي واجهة ناضجة ومستقرة يتم دعمها وتحسينها بشكل نشط، في حين أننا نحاول تجنب ذلك، قد نحتاج في بعض الأحيان إلى إجراء تغييرات في التكسير، اشترك في [https://lists.wikimedia.org/hyperkitty/list/mediawiki-api-announce@lists.wikimedia.org/ القائمة البريدية لإعلان API ميدياويكي] لإشعارات التحديثات.\n\n<strong>الطلبات الخاطئة:</strong>عندما يتم إرسال طلبات خاطئة إلى API، سيتم إرسال رأس HTTP مع مفتاح \"خطأ-API-ميدياويكي\"، وبعد ذلك سترجع قيمة الرأس ورمز الخطأ المرتجع إلى يتم تعيينه على نفس القيمة، لمزيد من المعلومات; راجع [[mw:Special:MyLanguage/API:Errors_and_warnings|API: Errors and warnings]].\n\n<p class=\"mw-apisandbox-link\"><strong>الاختبار:</strong>لسهولة اختبار طلبات API ; انظر [[Special:ApiSandbox]].</p>",
@@ -51,8 +51,6 @@
 	"apihelp-main-paramvalue-errorformat-bc": "التنسيق المستخدم قبل ميدياويكي 1.29. يتم تجاهل <var>errorlang</var> و<var>errorsuselocal</var>.",
 	"apihelp-main-param-errorlang": "اللغة المستخدمة للتحذيرات والأخطاء. <kbd>[[Special:ApiHelp/query+siteinfo|action=query&meta=siteinfo&siprop=languages]]</kbd> تعيد قائمة برموز اللغة. حدد <kbd>المحتوى</kbd> لاستخدام لغة محتوى هذه الويكي أو <kbd>uselang</kbd> لاستخدام نفس القيمة كمعلمة <var>uselang</var> .",
 	"apihelp-main-param-errorsuselocal": "إذا ما أعطيت، النصوص الخطأ ستستخدم الرسائل المخصصة محليا من نطاق {{ns:MediaWiki}}.",
-	"apihelp-acquiretempusername-summary": "احصل على اسم مستخدم مؤقت وقم بتخزينه في الجلسة الحالية، إذا تم تمكين إنشاء حساب مؤقت وتم تسجيل خروج المستخدم الحالي. إذا تم تخزين اسم بالفعل، فسيتم إرجاع نفس الاسم.",
-	"apihelp-acquiretempusername-extended-description": "إذا قام المستخدم لاحقًا بإجراء يؤدي إلى إنشاء حساب مؤقت، فسيتم استخدام اسم المستخدم المخزن لحسابه. ويمكن استخدامه أيضًا في المعاينات. ومع ذلك، لم يتم إنشاء الحساب بعد، ولا يمكن للمستخدمين الآخرين رؤية الاسم.",
 	"apihelp-block-summary": "منع مستخدم.",
 	"apihelp-block-param-user": "المستخدم المراد حظره.",
 	"apihelp-block-param-userid": "حدد <kbd>$1user=#<var>ID</var></kbd> بدلاً من ذلك.",
@@ -1749,7 +1747,6 @@
 	"apierror-nosuchsection": "لا يوجد قسم $1.",
 	"apierror-nosuchsection-what": "لا يوجد قسم $1 في $2.",
 	"apierror-nosuchuserid": "لا يوجد مستخدم بالمعرف $1.",
-	"apierror-notarget": "لم تحدد هدفا صالحا لهذا الإجراء.",
 	"apierror-notpatrollable": "لا يمكن إجراء مراجعة للمراجعة $1 لأنها قديمة جدا.",
 	"apierror-nouploadmodule": "لا توجد وحدة رفع محددة.",
 	"apierror-opensearch-json-warnings": "لا يمكن تمثيل التحذيرات بتنسيق OpenSearch JSON.",

@@ -62,5 +62,7 @@
 	"scribunto-limitreport-profile-ms": "$1 мс",
 	"scribunto-limitreport-logs": "Днавници на Lua",
 	"nstab-module": "Модул",
-	"tooltip-ca-nstab-module": "Преглед на модулната страница"
+	"tooltip-ca-nstab-module": "Преглед на модулната страница",
+	"namespaceinfo-description-ns828": "Именски простор за модулите со Lua-код, кој може да се повика од викистраници и нивните документациски страници",
+	"namespaceinfo-description-ns829": "Разговорни страници за модулите и документацијата"
 }

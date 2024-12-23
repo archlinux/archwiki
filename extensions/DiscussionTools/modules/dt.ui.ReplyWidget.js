@@ -1,4 +1,4 @@
-var controller = require( 'ext.discussionTools.init' ).controller,
+const controller = require( 'ext.discussionTools.init' ).controller,
 	utils = require( 'ext.discussionTools.init' ).utils,
 	ModeTabSelectWidget = require( './ModeTabSelectWidget.js' ),
 	ModeTabOptionWidget = require( './ModeTabOptionWidget.js' ),
@@ -23,8 +23,6 @@ require( './AbandonTopicDialog.js' );
  * @param {Object} [config.input] Configuration options for the comment input widget
  */
 function ReplyWidget( commentController, commentDetails, config ) {
-	var widget = this;
-
 	config = config || {};
 
 	// Parent constructor
@@ -33,7 +31,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	this.pending = false;
 	this.isTornDown = false;
 	this.commentController = commentController;
-	var threadItem = commentController.getThreadItem();
+	const threadItem = commentController.getThreadItem();
 	this.commentDetails = commentDetails;
 	this.isNewTopic = !!threadItem.isNewTopic;
 	this.pageName = commentDetails.pageName;
@@ -41,7 +39,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	// pageExists can only be false for the new comment tool, so we
 	// don't need to worry about transcluded replies.
 	this.pageExists = mw.config.get( 'wgRelevantArticleId', 0 ) !== 0;
-	var contextNode = utils.closestElement( threadItem.range.endContainer, [ 'dl', 'ul', 'ol' ] );
+	const contextNode = utils.closestElement( threadItem.range.endContainer, [ 'dl', 'ul', 'ol' ] );
 	this.context = contextNode ? contextNode.tagName.toLowerCase() : 'dl';
 	this.storage = commentController.storage;
 	// eslint-disable-next-line no-jquery/no-global-selector
@@ -53,7 +51,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	this.$window = $( this.getElementWindow() );
 	this.onWindowScrollThrottled = OO.ui.throttle( this.onWindowScroll.bind( this ), 100 );
 
-	var inputConfig = $.extend(
+	const inputConfig = Object.assign(
 		{
 			placeholder: this.isNewTopic ?
 				mw.msg( 'discussiontools-replywidget-placeholder-newtopic' ) :
@@ -174,7 +172,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 			mw.message( 'discussiontools-replywidget-transcluded', this.pageName ).parseDom()
 		) );
 	}
-	var $footerLinks = $( '<ul>' ).addClass( 'ext-discussiontools-ui-replyWidget-footer-links' );
+	const $footerLinks = $( '<ul>' ).addClass( 'ext-discussiontools-ui-replyWidget-footer-links' );
 	if ( mw.user.isNamed() ) {
 		$footerLinks.append(
 			$( '<li>' ).append(
@@ -206,9 +204,11 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	this.$footer.append(
 		$( '<p>' ).addClass( 'plainlinks' ).html(
 			this.isNewTopic ? licenseMessages.newtopic : licenseMessages.reply
-		),
-		$footerLinks
+		)
 	);
+	if ( $footerLinks.children().length ) {
+		this.$footer.append( $footerLinks );
+	}
 	this.$actionsWrapper.append( this.$footer, this.$actions );
 
 	this.viewportScrollContainer = OO.ui.Element.static.getClosestScrollableContainer( document.body );
@@ -270,10 +270,10 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	}
 
 	if ( mw.user.isAnon() ) {
-		var msg = this.commentDetails.wouldAutoCreate ?
+		const msg = this.commentDetails.wouldAutoCreate ?
 			'discussiontools-replywidget-autocreate-warning' :
 			'discussiontools-replywidget-anon-warning';
-		var returnTo = {
+		const returnTo = {
 			returntoquery: window.location.search.slice( 1 ),
 			returnto: mw.config.get( 'wgPageName' )
 		};
@@ -295,23 +295,24 @@ function ReplyWidget( commentController, commentDetails, config ) {
 		this.$actionsWrapper.detach();
 	}
 
+	function trackCheckbox( n ) {
+		mw.track( 'visualEditorFeatureUse', {
+			feature: 'dtReply',
+			action: 'checkbox-' + n
+		} );
+	}
+
 	this.checkboxesPromise = controller.getCheckboxesPromise( this.pageName, this.oldId );
-	this.checkboxesPromise.then( function ( checkboxes ) {
-		function trackCheckbox( n ) {
-			mw.track( 'visualEditorFeatureUse', {
-				feature: 'dtReply',
-				action: 'checkbox-' + n
-			} );
-		}
+	this.checkboxesPromise.then( ( checkboxes ) => {
 		if ( checkboxes.checkboxFields ) {
-			widget.$checkboxes = $( '<div>' ).addClass( 'ext-discussiontools-ui-replyWidget-checkboxes' );
-			checkboxes.checkboxFields.forEach( function ( field ) {
-				widget.$checkboxes.append( field.$element );
+			this.$checkboxes = $( '<div>' ).addClass( 'ext-discussiontools-ui-replyWidget-checkboxes' );
+			checkboxes.checkboxFields.forEach( ( field ) => {
+				this.$checkboxes.append( field.$element );
 			} );
-			widget.editSummaryField.$body.append( widget.$checkboxes );
+			this.editSummaryField.$body.append( this.$checkboxes );
 
 			// bind logging:
-			for ( var name in checkboxes.checkboxesByName ) {
+			for ( const name in checkboxes.checkboxesByName ) {
 				checkboxes.checkboxesByName[ name ].$element.off( '.dtReply' ).on( 'click.dtReply', trackCheckbox.bind( this, name ) );
 			}
 		}
@@ -347,6 +348,12 @@ OO.inheritClass( ReplyWidget, OO.ui.Widget );
  * The 'Reload page' button in the widget was clicked
  *
  * @event reloadPage
+ */
+
+/**
+ * The reply widget is submitted
+ *
+ * @event submit
  */
 
 /* Methods */
@@ -395,6 +402,16 @@ ReplyWidget.prototype.isEmpty = null;
 ReplyWidget.prototype.getMode = null;
 
 /**
+ * Clear the save error message
+ */
+ReplyWidget.prototype.clearSaveErrorMessage = function () {
+	if ( this.saveErrorMessage ) {
+		this.saveErrorMessage.$element.remove();
+		this.saveErrorMessage = null;
+	}
+};
+
+/**
  * Restore the widget to its original state
  *
  * Clear any widget values, reset UI states, and clear
@@ -403,10 +420,8 @@ ReplyWidget.prototype.getMode = null;
  * @param {boolean} [preserveStorage] Preserve auto-save storage
  */
 ReplyWidget.prototype.clear = function ( preserveStorage ) {
-	if ( this.saveErrorMessage ) {
-		this.saveErrorMessage.$element.remove();
-		this.saveErrorMessage = null;
-	}
+	this.clearSaveErrorMessage();
+
 	if ( this.previewRequest ) {
 		this.previewRequest.abort();
 		this.previewRequest = null;
@@ -437,9 +452,9 @@ ReplyWidget.prototype.clearStorage = function () {
  * Handle window scroll events
  */
 ReplyWidget.prototype.onWindowScroll = function () {
-	var rect = this.$element[ 0 ].getBoundingClientRect();
-	var viewportHeight = window.visualViewport ? visualViewport.height : this.viewportScrollContainer.clientHeight;
-	var floating = rect.bottom < 0 ? 'top' :
+	const rect = this.$element[ 0 ].getBoundingClientRect();
+	const viewportHeight = window.visualViewport ? visualViewport.height : this.viewportScrollContainer.clientHeight;
+	const floating = rect.bottom < 0 ? 'top' :
 		( rect.top > viewportHeight ? 'bottom' : null );
 
 	if ( floating !== this.floating ) {
@@ -474,37 +489,37 @@ ReplyWidget.prototype.setPending = function ( pending ) {
 };
 
 ReplyWidget.prototype.saveEditMode = function ( mode ) {
-	controller.getApi().saveOption( 'discussiontools-editmode', mode ).then( function () {
+	controller.getApi().saveOption( 'discussiontools-editmode', mode ).then( () => {
 		mw.user.options.set( 'discussiontools-editmode', mode );
 	} );
 };
 
 ReplyWidget.prototype.onAdvancedToggleClick = function () {
-	var showAdvanced = !this.showAdvanced;
+	const showAdvanced = !this.showAdvanced;
 	mw.track( 'visualEditorFeatureUse', {
 		feature: 'dtReply',
 		action: 'advanced-' + ( showAdvanced ? 'show' : 'hide' )
 	} );
-	controller.getApi().saveOption( 'discussiontools-showadvanced', +showAdvanced ).then( function () {
+	controller.getApi().saveOption( 'discussiontools-showadvanced', +showAdvanced ).then( () => {
 		mw.user.options.set( 'discussiontools-showadvanced', +showAdvanced );
 	} );
 	this.toggleAdvanced( showAdvanced );
 
 	if ( showAdvanced ) {
-		var summary = this.editSummaryInput.getValue();
+		const summary = this.editSummaryInput.getValue();
 
 		// If the current summary has not been edited yet, select the text following the autocomment to
 		// make it easier to change. Otherwise, move cursor to end.
-		var selectFromIndex = summary.length;
+		let selectFromIndex = summary.length;
 		if ( this.isNewTopic ) {
-			var titleText = this.commentController.sectionTitle.getValue();
+			const titleText = this.commentController.sectionTitle.getValue();
 			if ( summary === this.commentController.generateSummary( titleText ) ) {
 				selectFromIndex = titleText.length + '/* '.length + ' */ '.length;
 			}
 		} else {
 			// Same as summary.endsWith( defaultReplyTrail )
-			var defaultReplyTrail = '*/ ' + mw.msg( 'discussiontools-defaultsummary-reply' );
-			var endCommentIndex = summary.indexOf( defaultReplyTrail );
+			const defaultReplyTrail = '*/ ' + mw.msg( 'discussiontools-defaultsummary-reply' );
+			const endCommentIndex = summary.indexOf( defaultReplyTrail );
 			if ( endCommentIndex + defaultReplyTrail.length === summary.length ) {
 				selectFromIndex = endCommentIndex + 3;
 			}
@@ -538,8 +553,7 @@ ReplyWidget.prototype.getEditSummary = function () {
 };
 
 ReplyWidget.prototype.onModeTabSelectChoose = function ( option ) {
-	var mode = option.getData(),
-		widget = this;
+	const mode = option.getData();
 
 	if ( mode === this.getMode() ) {
 		return;
@@ -548,23 +562,21 @@ ReplyWidget.prototype.onModeTabSelectChoose = function ( option ) {
 	this.modeTabSelect.setDisabled( true );
 	this.switch( mode ).then(
 		null,
-		function () {
+		() => {
 			// Switch failed, clear the tab selection
-			widget.modeTabSelect.selectItem( null );
+			this.modeTabSelect.selectItem( null );
 		}
-	).always( function () {
-		widget.modeTabSelect.setDisabled( false );
+	).always( () => {
+		this.modeTabSelect.setDisabled( false );
 	} );
 };
 
 ReplyWidget.prototype.switch = function ( mode ) {
-	var widget = this;
-
 	if ( mode === this.getMode() ) {
 		return $.Deferred().reject().promise();
 	}
 
-	var promise;
+	let promise;
 	this.setPending( true );
 	switch ( mode ) {
 		case 'source':
@@ -577,7 +589,7 @@ ReplyWidget.prototype.switch = function ( mode ) {
 	// TODO: We rely on #setup to call #saveEditMode, so when we have 2017WTE
 	// we will need to save the new preference here as switching will not
 	// reload the editor.
-	return promise.then( function () {
+	return promise.then( () => {
 		// Switch succeeded
 		mw.track( 'visualEditorFeatureUse', {
 			feature: 'editor-switch',
@@ -587,8 +599,8 @@ ReplyWidget.prototype.switch = function ( mode ) {
 					( enable2017Wikitext ? 'source-nwe' : 'source' )
 			) + '-desktop'
 		} );
-	} ).always( function () {
-		widget.setPending( false );
+	} ).always( () => {
+		this.setPending( false );
 	} );
 };
 
@@ -596,7 +608,7 @@ ReplyWidget.prototype.switch = function ( mode ) {
  * Setup the widget
  *
  * @param {Object} [data] Initial data
- * @param {Mixed} [data.value] Initial value
+ * @param {any} [data.value] Initial value
  * @param {string} [data.showAdvanced] Whether the "Advanced" menu is initially visible
  * @param {string} [data.editSummary] Initial edit summary
  * @chainable
@@ -613,7 +625,7 @@ ReplyWidget.prototype.setup = function ( data ) {
 	}
 	this.saveEditMode( this.getMode() );
 
-	var summary = this.storage.get( 'summary' ) || data.editSummary;
+	let summary = this.storage.get( 'summary' ) || data.editSummary;
 
 	if ( !summary ) {
 		if ( this.isNewTopic ) {
@@ -621,7 +633,7 @@ ReplyWidget.prototype.setup = function ( data ) {
 			// in NewTopicController#onSectionTitleChange
 			summary = '';
 		} else {
-			var title = this.commentController.getThreadItem().getHeading().getLinkableTitle();
+			const title = this.commentController.getThreadItem().getHeading().getLinkableTitle();
 			summary = ( title ? '/* ' + title + ' */ ' : '' ) +
 				mw.msg( 'discussiontools-defaultsummary-reply' );
 		}
@@ -667,10 +679,10 @@ ReplyWidget.prototype.afterSetup = function () {
  * @return {string} Form token
  */
 ReplyWidget.prototype.getFormToken = function () {
-	var formToken = this.storage.get( 'formToken' );
+	let formToken = this.storage.get( 'formToken' );
 	if ( !formToken ) {
 		// See ApiBase::PARAM_MAX_CHARS in ApiDiscussionToolsEdit.php
-		var maxLength = 16;
+		const maxLength = 16;
 		formToken = Math.random().toString( 36 ).slice( 2, maxLength + 2 );
 		this.storage.set( 'formToken', formToken );
 	}
@@ -684,12 +696,11 @@ ReplyWidget.prototype.getFormToken = function () {
  * @return {jQuery.Promise} Resolves if widget was torn down, rejects if it wasn't
  */
 ReplyWidget.prototype.tryTeardown = function () {
-	var promise,
-		widget = this;
+	let promise;
 
 	if ( !this.isEmpty() || ( this.isNewTopic && this.commentController.sectionTitle.getValue() ) ) {
 		promise = OO.ui.getWindowManager().openWindow( this.isNewTopic ? 'abandontopic' : 'abandoncomment' )
-			.closed.then( function ( data ) {
+			.closed.then( ( data ) => {
 				if ( !( data && data.action === 'discard' ) ) {
 					return $.Deferred().reject().promise();
 				}
@@ -707,8 +718,8 @@ ReplyWidget.prototype.tryTeardown = function () {
 			type: 'nochange'
 		} );
 	}
-	promise = promise.then( function () {
-		widget.teardown( 'abandoned' );
+	promise = promise.then( () => {
+		this.teardown( 'abandoned' );
 	} );
 	return promise;
 };
@@ -753,13 +764,12 @@ ReplyWidget.prototype.teardown = function ( mode ) {
  * @param {string} expirySelected
  */
 ReplyWidget.prototype.onWatchToggle = function ( isWatched ) {
-	var widget = this;
 	if ( this.pageName === mw.config.get( 'wgRelevantPageName' ) ) {
-		this.checkboxesPromise.then( function ( checkboxes ) {
+		this.checkboxesPromise.then( ( checkboxes ) => {
 			if ( checkboxes.checkboxesByName.wpWatchthis ) {
 				checkboxes.checkboxesByName.wpWatchthis.setSelected(
 					!!mw.user.options.get( 'watchdefault' ) ||
-					( !!mw.user.options.get( 'watchcreations' ) && !widget.pageExists ) ||
+					( !!mw.user.options.get( 'watchcreations' ) && !this.pageExists ) ||
 					isWatched
 				);
 			}
@@ -815,15 +825,13 @@ ReplyWidget.prototype.onInputChange = function () {
  * @return {jQuery.Promise} Promise resolved when we're done
  */
 ReplyWidget.prototype.preparePreview = function ( wikitext ) {
-	var widget = this;
-
 	if ( this.getMode() !== 'source' ) {
 		return $.Deferred().resolve().promise();
 	}
 
 	wikitext = wikitext !== undefined ? wikitext : this.getValue();
 	wikitext = utils.htmlTrim( wikitext );
-	var title = this.isNewTopic && this.commentController.sectionTitle.getValue();
+	const title = this.isNewTopic && this.commentController.sectionTitle.getValue();
 
 	if ( this.previewWikitext === wikitext && this.previewTitle === title ) {
 		return $.Deferred().resolve().promise();
@@ -836,28 +844,28 @@ ReplyWidget.prototype.preparePreview = function ( wikitext ) {
 		this.previewRequest = null;
 	}
 
-	var parsePromise;
+	let parsePromise;
 	if ( !wikitext ) {
 		parsePromise = $.Deferred().resolve( null ).promise();
 	} else {
 		// Acquire a temporary user username before previewing, so that signatures and
 		// user-related magic words display the temp user instead of IP user in the preview. (T331397)
-		parsePromise = mw.user.acquireTempUserName().then( function () {
-			widget.previewRequest = controller.getApi().post( {
+		parsePromise = mw.user.acquireTempUserName().then( () => {
+			this.previewRequest = controller.getApi().post( {
 				action: 'discussiontoolspreview',
-				type: widget.isNewTopic ? 'topic' : 'reply',
-				page: widget.pageName,
+				type: this.isNewTopic ? 'topic' : 'reply',
+				page: this.pageName,
 				wikitext: wikitext,
 				sectiontitle: title,
 				useskin: mw.config.get( 'skin' ),
 				mobileformat: OO.ui.isMobile()
 			} );
-			return widget.previewRequest;
+			return this.previewRequest;
 		} );
 	}
 
-	return parsePromise.then( function ( response ) {
-		widget.$preview.html( response ? response.discussiontoolspreview.parse.text : '' );
+	return parsePromise.then( ( response ) => {
+		this.$preview.html( response ? response.discussiontoolspreview.parse.text : '' );
 
 		if ( response ) {
 			mw.config.set( response.discussiontoolspreview.parse.jsconfigvars );
@@ -865,7 +873,7 @@ ReplyWidget.prototype.preparePreview = function ( wikitext ) {
 			mw.loader.load( response.discussiontoolspreview.parse.modules );
 		}
 
-		mw.hook( 'wikipage.content' ).fire( widget.$preview );
+		mw.hook( 'wikipage.content' ).fire( this.$preview );
 	} );
 };
 
@@ -954,7 +962,6 @@ ReplyWidget.prototype.updateParentRemovedError = function ( parentRemoved ) {
  * @param {Object[]} comments Array of JSON-serialized CommentItem's
  */
 ReplyWidget.prototype.updateNewCommentsWarning = function ( comments ) {
-	var widget = this;
 	if ( !comments.length ) {
 		if ( this.newCommentsWarning ) {
 			this.newCommentsWarning.toggle( false );
@@ -991,8 +998,8 @@ ReplyWidget.prototype.updateNewCommentsWarning = function ( comments ) {
 	);
 	if ( !this.hideNewCommentsWarning ) {
 		this.newCommentsWarning.toggle( true );
-		setTimeout( function () {
-			widget.newCommentsWarning.$element.addClass( 'ext-discussiontools-ui-replyWidget-newComments-open' );
+		setTimeout( () => {
+			this.newCommentsWarning.$element.addClass( 'ext-discussiontools-ui-replyWidget-newComments-open' );
 		} );
 		mw.track( 'visualEditorFeatureUse', {
 			feature: 'notificationNewComments',
@@ -1038,7 +1045,7 @@ ReplyWidget.prototype.onNewCommentsCloseClick = function () {
  * @return {OO.ui.MessageWidget} Message widget
  */
 ReplyWidget.prototype.createErrorMessage = function ( message ) {
-	var errorMessage = new OO.ui.MessageWidget( {
+	const errorMessage = new OO.ui.MessageWidget( {
 		type: 'error',
 		label: message,
 		classes: [ 'ext-discussiontools-ui-replyWidget-error' ]
@@ -1050,102 +1057,65 @@ ReplyWidget.prototype.createErrorMessage = function ( message ) {
 
 /**
  * Handle clicks on the reply button
+ *
+ * @fires submit
  */
 ReplyWidget.prototype.onReplyClick = function () {
-	var widget = this;
-
 	if ( this.pending || this.isEmpty() ) {
 		return;
 	}
 
-	if ( this.saveErrorMessage ) {
-		this.saveErrorMessage.$element.remove();
-		this.saveErrorMessage = null;
+	this.emit( 'submit' );
+};
+
+/**
+ * Set the save error message
+ *
+ * @param {string} code Error code
+ * @param {Object} data Error data
+ */
+ReplyWidget.prototype.setSaveErrorMessage = function ( code, data ) {
+	if ( !(
+		// Don't duplicate the parentRemovedErrorMessage
+		code === 'discussiontools-commentname-notfound' && this.parentRemovedErrorMessage
+	) ) {
+		this.saveErrorMessage = this.createErrorMessage(
+			code instanceof Error ? code.toString() : controller.getApi().getErrorMessage( data )
+		);
 	}
+};
 
-	this.saveInitiated = mw.now();
-	this.setPending( true );
+/**
+ * Clear the captcha input
+ */
+ReplyWidget.prototype.clearCaptcha = function () {
+	if ( this.captchaMessage ) {
+		this.captchaMessage.$element.detach();
+	}
+	this.captchaInput = undefined;
+};
 
-	mw.track( 'editAttemptStep', { action: 'saveIntent' } );
-
-	// TODO: When editing a transcluded page, VE API returning the page HTML is a waste, since we won't use it
-	var pageName = this.pageName;
-
-	mw.track( 'editAttemptStep', { action: 'saveAttempt' } );
-	widget.commentController.save( pageName ).fail( function ( code, data ) {
-		// Compare to ve.init.mw.ArticleTargetEvents.js in VisualEditor.
-		var typeMap = {
-			badtoken: 'userBadToken',
-			assertanonfailed: 'userNewUser',
-			assertuserfailed: 'userNewUser',
-			assertnameduserfailed: 'userNewUser',
-			'abusefilter-disallowed': 'extensionAbuseFilter',
-			'abusefilter-warning': 'extensionAbuseFilter',
-			captcha: 'extensionCaptcha',
-			spamblacklist: 'extensionSpamBlacklist',
-			'titleblacklist-forbidden': 'extensionTitleBlacklist',
-			pagedeleted: 'editPageDeleted',
-			editconflict: 'editConflict'
-		};
-
-		if ( widget.captchaMessage ) {
-			widget.captchaMessage.$element.detach();
-		}
-		widget.captchaInput = undefined;
-
-		if ( OO.getProp( data, 'discussiontoolsedit', 'edit', 'captcha' ) ) {
-			code = 'captcha';
-
-			widget.captchaInput = new mw.libs.confirmEdit.CaptchaInputWidget(
-				OO.getProp( data, 'discussiontoolsedit', 'edit', 'captcha' )
-			);
-			// Save when pressing 'Enter' in captcha field as it is single line.
-			widget.captchaInput.on( 'enter', function () {
-				widget.onReplyClick();
-			} );
-
-			widget.captchaMessage = new OO.ui.MessageWidget( {
-				type: 'notice',
-				label: widget.captchaInput.$element,
-				classes: [ 'ext-discussiontools-ui-replyWidget-captcha' ]
-			} );
-			widget.captchaMessage.$element.insertAfter( widget.$preview );
-
-			widget.captchaInput.focus();
-			widget.captchaInput.scrollElementIntoView();
-
-		} else {
-			if ( !(
-				// Don't duplicate the parentRemovedErrorMessage
-				code === 'discussiontools-commentname-notfound' && widget.parentRemovedErrorMessage
-			) ) {
-				widget.saveErrorMessage = widget.createErrorMessage(
-					code instanceof Error ? code.toString() : controller.getApi().getErrorMessage( data )
-				);
-			}
-		}
-
-		if ( code instanceof Error ) {
-			code = 'exception';
-		}
-		// Log more precise error codes, mw.Api just gives us 'http' in all of these cases
-		if ( data ) {
-			if ( data.textStatus === 'timeout' || data.textStatus === 'abort' || data.textStatus === 'parsererror' ) {
-				code = data.textStatus;
-			} else if ( data.xhr ) {
-				code = 'http-' + ( data.xhr.status || 0 );
-			}
-		}
-
-		mw.track( 'editAttemptStep', {
-			action: 'saveFailure',
-			timing: mw.now() - widget.saveInitiated,
-			message: code,
-			type: typeMap[ code ] || 'responseUnknown'
-		} );
-	} ).always( function () {
-		widget.setPending( false );
+/**
+ * Set the captcha input
+ *
+ * @param {Object} captchaData Captcha data
+ */
+ReplyWidget.prototype.setCaptcha = function ( captchaData ) {
+	this.captchaInput = new mw.libs.confirmEdit.CaptchaInputWidget( captchaData );
+	// Save when pressing 'Enter' in captcha field as it is single line.
+	this.captchaInput.on( 'enter', () => {
+		this.emit( 'reply' );
 	} );
+
+	this.captchaMessage = new OO.ui.MessageWidget( {
+		type: 'notice',
+		label: this.captchaInput.$element,
+		classes: [ 'ext-discussiontools-ui-replyWidget-captcha' ]
+	} );
+	this.captchaMessage.$element.insertAfter( this.$preview );
+
+	this.captchaInput.focus();
+	this.captchaInput.scrollElementIntoView();
 };
 
 /**

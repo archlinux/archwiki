@@ -22,7 +22,7 @@
 	"url": "https://www.mediawiki.org/wiki/Skin:MinervaNeue",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.42.0"
+		"MediaWiki": ">= 1.43"
 	},
 	"config": {
 		"MinervaDonateLink": {
@@ -36,9 +36,6 @@
 			]
 		},
 		"MinervaEnableSiteNotice": {
-			"value": true
-		},
-		"MinervaApplyKnownTemplateHacks": {
 			"value": true
 		},
 		"MinervaAlwaysShowLanguageButton": {
@@ -98,7 +95,9 @@
 		},
 		"MinervaNightMode": {
 			"value": {
-				"base": false
+				"base": false,
+				"loggedin": false,
+				"amc": true
 			}
 		},
 		"MinervaNightModeOptions": {
@@ -110,7 +109,7 @@
 					"pagetitles": []
 				}
 			},
-			"description": "options for configuring where Night Mode should and should not apply. More details can be found in Hooks::shouldDisableNightMode PHP documentation."
+			"description": "options for configuring where Dark/Night Mode should and should not apply. More details can be found in Hooks::shouldDisableNightMode PHP documentation."
 		}
 	},
 	"ValidSkinNames": {
@@ -121,6 +120,7 @@
 				"LinkRenderer",
 				"Minerva.LanguagesHelper",
 				"Minerva.Menu.Definitions",
+				"Minerva.Menu.PageActions",
 				"Minerva.Permissions",
 				"Minerva.SkinOptions",
 				"Minerva.SkinUserPageHelper",
@@ -132,9 +132,11 @@
 			"args": [
 				{
 					"name": "minerva",
+					"supportsMwHeading": true,
 					"templateDirectory": "includes/Skins",
 					"templateSectionLinks": "SectionLinks",
 					"tempUserBanner": true,
+					"wrapSiteNotice": true,
 					"scripts": [
 						"skins.minerva.scripts"
 					],
@@ -172,9 +174,6 @@
 				}
 			]
 		}
-	},
-	"SkinCodexThemes": {
-		"minerva": "experimental"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Minerva\\": "includes/"
@@ -230,6 +229,9 @@
 	},
 	"ResourceModuleSkinStyles": {
 		"minerva": {
+			"ext.visualEditor.core.mobile": [
+				"skinStyles/ext.visualEditor.core.mobile.less"
+			],
 			"ext.echo.styles.badge": [
 				"skinStyles/ext.echo.styles.badge.less"
 			],
@@ -258,9 +260,6 @@
 				"skinStyles/mediawiki.interface.helpers.styles.less"
 			],
 			"mediawiki.rcfilters.highlightCircles.seenunseen.styles": [],
-			"ext.confirmEdit.fancyCaptcha.styles": [
-				"skinStyles/ext.confirmEdit.fancyCaptcha.styles/minerva.less"
-			],
 			"mobile.special.mobileoptions.styles": [
 				"skinStyles/mobile.special.mobileoptions.styles/minerva.less"
 			],
@@ -317,19 +316,21 @@
 			],
 			"mobile.special.pagefeed.styles": [
 				"skinStyles/mobile.special.pagefeed.styles.less"
+			],
+			"+ext.CodeMirror.v6.visualEditor": [
+				"skinStyles/ext.visualEditor.codeMirror.less"
 			]
 		}
 	},
 	"ResourceModules": {
 		"skins.minerva.base.styles": {
-			"class": "MediaWiki\\Minerva\\ResourceLoaderSkinModule",
+			"class": "MediaWiki\\ResourceLoader\\SkinModule",
 			"features": [
 				"normalize",
 				"accessibility",
 				"i18n-ordered-lists",
 				"content-body",
 				"content-tables",
-				"content-links",
 				"interface-core"
 			],
 			"styles": [
@@ -371,6 +372,8 @@
 			"useDataURI": false,
 			"defaultColor": "#54595d",
 			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
+			"variants": [],
+			"useMaskImage": true,
 			"icons": [
 				"block",
 				"ellipsis",
@@ -394,25 +397,12 @@
 			]
 		},
 		"skins.minerva.icons.wikimedia": {
-			"selectorWithVariant": ".minerva-icon--{name}-{variant}",
-			"selectorWithoutVariant": ".minerva-icon--{name}-base20, .minerva-icon--{name}",
+			"selectorWithoutVariant": ".minerva-icon--{name}-base20, .minerva-icon--{name}-disabled, .minerva-icon--{name}",
 			"useDataURI": false,
 			"defaultColor": "#54595d",
-			"variants": {
-				"progressive": {
-					"color": "#36c",
-					"global": true
-				},
-				"invert": {
-					"color": "#fff",
-					"global": true
-				},
-				"warning": {
-					"color": "#fc3",
-					"global": true
-				}
-			},
 			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
+			"variants": [],
+			"useMaskImage": true,
 			"icons": [
 				"edit",
 				"wikiText",
@@ -429,7 +419,6 @@
 			]
 		},
 		"skins.minerva.mainPage.styles": {
-			"class": "MediaWiki\\Minerva\\ResourceLoaderSkinModule",
 			"styles": [
 				"resources/skins.minerva.mainPage.styles/common.less"
 			]
@@ -441,16 +430,18 @@
 		},
 		"skins.minerva.personalMenu.icons": {
 			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
+			"variants": [],
+			"useMaskImage": true,
 			"selectorWithoutVariant": ".minerva-icon--{name}",
 			"defaultColor": "#54595d",
 			"icons": [
 				"sandbox"
 			],
-			"variants": [],
 			"useDataURI": false
 		},
 		"skins.minerva.mainMenu.advanced.icons": {
 			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
+			"useMaskImage": true,
 			"selectorWithoutVariant": ".minerva-icon--{name}",
 			"defaultColor": "#54595d",
 			"icons": [
@@ -464,6 +455,7 @@
 		"skins.minerva.mainMenu.icons": {
 			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
 			"variants": [],
+			"useMaskImage": true,
 			"selectorWithoutVariant": ".minerva-icon--{name}",
 			"defaultColor": "#54595d",
 			"useDataURI": false,
@@ -491,6 +483,8 @@
 			]
 		},
 		"skins.minerva.scripts": {
+			"localBasePath": "resources/skins.minerva.scripts",
+			"remoteSkinPath": "MinervaNeue/resources/skins.minerva.scripts",
 			"dependencies": [
 				"skins.minerva.mainMenu.icons",
 				"skins.minerva.mainMenu.styles",
@@ -515,7 +509,6 @@
 				"skin-minerva-time-ago-months",
 				"skin-minerva-time-ago-years",
 				"echo-badge-count",
-				"mobile-frontend-notifications-filter",
 				"skin-minerva-issue-learn-more",
 				"mobile-frontend-meta-data-issues",
 				"minerva-meta-data-issues-section-header",
@@ -531,46 +524,47 @@
 				"mobile-frontend-redirected-from"
 			],
 			"styles": [
-				"resources/skins.minerva.scripts/styles.less"
+				"styles.less"
 			],
 			"templates": {
-				"IssueNotice.mustache": "resources/skins.minerva.scripts/page-issues/overlay/IssueNotice.mustache"
+				"IssueNotice.mustache": "page-issues/overlay/IssueNotice.mustache"
 			},
 			"packageFiles": [
-				"resources/skins.minerva.scripts/setup.js",
-				"resources/skins.minerva.scripts/reportIfNightModeWasDisabledOnPage.js",
-				"resources/skins.minerva.scripts/addPortletLink.js",
-				"resources/skins.minerva.scripts/initMobile.js",
-				"resources/skins.minerva.scripts/searchSuggestReveal.js",
-				"resources/skins.minerva.scripts/drawers.js",
-				"resources/skins.minerva.scripts/ctaDrawers.js",
-				"resources/skins.minerva.scripts/menu.js",
-				"resources/skins.minerva.scripts/preInit.js",
-				"resources/skins.minerva.scripts/downloadPageAction.js",
-				"resources/skins.minerva.scripts/page-issues/parser.js",
-				"resources/skins.minerva.scripts/AB.js",
-				"resources/skins.minerva.scripts/page-issues/overlay/IssueNotice.js",
-				"resources/skins.minerva.scripts/page-issues/overlay/IssueList.js",
-				"resources/skins.minerva.scripts/page-issues/overlay/pageIssuesOverlay.js",
-				"resources/skins.minerva.scripts/page-issues/page/PageIssueLearnMoreLink.js",
-				"resources/skins.minerva.scripts/page-issues/page/PageIssueLink.js",
-				"resources/skins.minerva.scripts/page-issues/page/pageIssueFormatter.js",
-				"resources/skins.minerva.scripts/page-issues/index.js",
-				"resources/skins.minerva.scripts/UriUtil.js",
-				"resources/skins.minerva.scripts/TitleUtil.js",
-				"includes/Skins/ToggleList/ToggleList.js",
-				"resources/skins.minerva.scripts/TabScroll.js",
-				"resources/skins.minerva.scripts/Toolbar.js",
-				"resources/skins.minerva.scripts/mobileRedirect.js",
-				"resources/skins.minerva.scripts/search.js",
-				"resources/skins.minerva.scripts/references.js",
-				"resources/skins.minerva.scripts/watchstar.js"
+				"setup.js",
+				"reportIfNightModeWasDisabledOnPage.js",
+				"addPortletLink.js",
+				"initMobile.js",
+				"searchSuggestReveal.js",
+				"drawers.js",
+				"ctaDrawers.js",
+				"menu.js",
+				"preInit.js",
+				"downloadPageAction.js",
+				"page-issues/parser.js",
+				"AB.js",
+				"page-issues/overlay/IssueNotice.js",
+				"page-issues/overlay/IssueList.js",
+				"page-issues/overlay/pageIssuesOverlay.js",
+				"page-issues/page/PageIssueLearnMoreLink.js",
+				"page-issues/page/PageIssueLink.js",
+				"page-issues/page/pageIssueFormatter.js",
+				"page-issues/index.js",
+				"UriUtil.js",
+				"TitleUtil.js",
+				"../../includes/Skins/ToggleList/ToggleList.js",
+				"TabScroll.js",
+				"Toolbar.js",
+				"mobileRedirect.js",
+				"search.js",
+				"references.js",
+				"watchstar.js"
 			]
 		},
 		"skins.minerva.messageBox.styles": {
-			"class": "MediaWiki\\ResourceLoader\\SkinModule",
-			"features": [
-				"interface-message-box"
+			"class": "MediaWiki\\ResourceLoader\\CodexModule",
+			"codexStyleOnly": true,
+			"codexComponents": [
+				"CdxMessage"
 			]
 		},
 		"skins.minerva.categories.styles": {
@@ -583,44 +577,32 @@
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"codexStyleOnly": true,
 			"codexComponents": [
-				"CdxButton"
+				"CdxButton",
+				"CdxMessage"
 			]
 		}
 	},
 	"QUnitTestModule": {
-		"localBasePath": "",
-		"remoteSkinPath": "MinervaNeue",
+		"localBasePath": "tests/qunit/skins.minerva.scripts",
+		"remoteSkinPath": "MinervaNeue/tests/qunit/skins.minerva.scripts",
 		"dependencies": [
 			"mediawiki.cookie",
 			"skins.minerva.messageBox.styles",
+			"skins.minerva.scripts",
 			"mobile.startup",
 			"mediawiki.user",
 			"mediawiki.experiments",
 			"mediawiki.Uri"
 		],
-		"packageFiles": [
-			"tests/qunit/skins.minerva.scripts/index.js",
-			"tests/qunit/skins.minerva.scripts/integration.test.js",
-			"resources/skins.minerva.scripts/page-issues/parser.js",
-			"resources/skins.minerva.scripts/downloadPageAction.js",
-			"resources/skins.minerva.scripts/AB.js",
-			"resources/skins.minerva.scripts/page-issues/overlay/IssueNotice.js",
-			"resources/skins.minerva.scripts/page-issues/overlay/IssueList.js",
-			"resources/skins.minerva.scripts/page-issues/overlay/pageIssuesOverlay.js",
-			"resources/skins.minerva.scripts/page-issues/page/PageIssueLearnMoreLink.js",
-			"resources/skins.minerva.scripts/page-issues/page/PageIssueLink.js",
-			"resources/skins.minerva.scripts/page-issues/page/pageIssueFormatter.js",
-			"resources/skins.minerva.scripts/page-issues/index.js",
-			"resources/skins.minerva.scripts/UriUtil.js",
-			"resources/skins.minerva.scripts/TitleUtil.js",
-			"resources/skins.minerva.scripts/watchstar.js",
-			"tests/qunit/skins.minerva.scripts/downloadPageAction.test.js",
-			"tests/qunit/skins.minerva.scripts/page-issues/parser.test.js",
-			"tests/qunit/skins.minerva.scripts/AB.test.js",
-			"tests/qunit/skins.minerva.scripts/page-issues/index.test.js",
-			"tests/qunit/skins.minerva.scripts/UriUtil.test.js",
-			"tests/qunit/skins.minerva.scripts/TitleUtil.test.js",
-			"tests/qunit/skins.minerva.scripts/watchstar.test.js"
+		"scripts": [
+			"integration.test.js",
+			"downloadPageAction.test.js",
+			"page-issues/parser.test.js",
+			"AB.test.js",
+			"page-issues/index.test.js",
+			"UriUtil.test.js",
+			"TitleUtil.test.js",
+			"watchstar.test.js"
 		]
 	},
 	"ServiceWiringFiles": [

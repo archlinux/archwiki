@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Tests\Page;
 
-use Content;
-use ContentHandler;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -76,9 +76,8 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 		int $logID
 	): void {
 		$commentQuery = $this->getServiceContainer()->getCommentStore()->getJoin( 'log_comment' );
-		$this->assertSelect(
-			[ 'logging' ] + $commentQuery['tables'],
-			[
+		$this->newSelectQueryBuilder()
+			->select( [
 				'log_type',
 				'log_action',
 				'log_comment' => $commentQuery['fields']['log_comment_text'],
@@ -86,9 +85,12 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 				'log_namespace',
 				'log_title',
 				'log_page',
-			],
-			[ 'log_id' => $logID ],
-			[ [
+			] )
+			->from( 'logging' )
+			->tables( $commentQuery['tables'] )
+			->where( [ 'log_id' => $logID ] )
+			->joinConds( $commentQuery['joins'] )
+			->assertRowValue( [
 				$suppress ? 'suppress' : 'delete',
 				$logSubtype,
 				$reason,
@@ -96,10 +98,7 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 				(string)$title->getNamespace(),
 				$title->getDBkey(),
 				$pageID,
-			] ],
-			[],
-			$commentQuery['joins']
-		);
+			] );
 	}
 
 	private function assertArchiveVisibility( Title $title, bool $suppression ): void {
@@ -178,8 +177,9 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 			Title::makeTitle( NS_TEMPLATE, 'Multiple_issues' )
 		);
 		$this->newSelectQueryBuilder()
-			->select( [ 'pl_namespace', 'pl_title' ] )
+			->select( [ 'lt_namespace', 'lt_title' ] )
 			->from( 'pagelinks' )
+			->join( 'linktarget', null, 'pl_target_id=lt_id' )
 			->where( [ 'pl_from' => $pageID ] )
 			->assertResultSet( [ [ 0, 'Stuart_Little' ], [ NS_TEMPLATE, 'Multiple_issues' ] ] );
 		$this->newSelectQueryBuilder()
@@ -205,8 +205,9 @@ class DeletePageTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$this->newSelectQueryBuilder()
-			->select( [ 'pl_namespace', 'pl_title' ] )
+			->select( [ 'lt_namespace', 'lt_title' ] )
 			->from( 'pagelinks' )
+			->join( 'linktarget', null, 'pl_target_id=lt_id' )
 			->where( [ 'pl_from' => $pageID ] )
 			->assertEmptyResult();
 		$this->newSelectQueryBuilder()

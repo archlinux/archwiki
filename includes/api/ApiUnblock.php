@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Block\Block;
 use MediaWiki\Block\BlockPermissionCheckerFactory;
 use MediaWiki\Block\UnblockUserFactory;
@@ -28,6 +30,7 @@ use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentityLookup;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -50,7 +53,7 @@ class ApiUnblock extends ApiBase {
 
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		BlockPermissionCheckerFactory $permissionCheckerFactory,
 		UnblockUserFactory $unblockUserFactory,
 		UserIdentityLookup $userIdentityLookup,
@@ -216,3 +219,6 @@ class ApiUnblock extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Block';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiUnblock::class, 'ApiUnblock' );

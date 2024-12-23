@@ -1,8 +1,8 @@
 'use strict';
 
-var config = require( './config.json' );
-var portletLinkOptions = require( './portletLinkOptions.json' );
-var infinityValues = require( './infinityValues.json' );
+let config = require( './config.json' );
+const portletLinkOptions = require( './portletLinkOptions.json' );
+const infinityValues = require( './infinityValues.json' );
 
 require( './jquery.accessKeyLabel.js' );
 
@@ -48,10 +48,12 @@ function escapeIdInternal( str, mode ) {
 }
 
 /**
- * Library providing useful common skin-agnostic utility functions.
+ * Library providing useful common skin-agnostic utility functions. Please see
+ * [mediawiki.util]{@link module:mediawiki.util}.
+ *
+ * Alias for the [mediawiki.util]{@link module:mediawiki.util} module.
  *
  * @namespace mw.util
- * @classdesc Alias for the [mediawiki.util]{@link module:mediawiki.util} module.
  */
 
 /**
@@ -65,7 +67,7 @@ function escapeIdInternal( str, mode ) {
  * const mwUtil = mw.util;
  * @exports mediawiki.util
  */
-var util = {
+const util = {
 
 	/**
 	 * Encode the string like PHP's rawurlencode.
@@ -130,11 +132,11 @@ var util = {
 		}
 		// Per https://html.spec.whatwg.org/multipage/browsing-the-web.html#target-element
 		// we try the raw fragment first, then the percent-decoded fragment.
-		var element = document.getElementById( hash );
+		const element = document.getElementById( hash );
 		if ( element ) {
 			return element;
 		}
-		var decodedHash = this.percentDecodeFragment( hash );
+		const decodedHash = this.percentDecodeFragment( hash );
 		if ( !decodedHash ) {
 			// decodedHash can return null, calling getElementById would cast it to a string
 			return null;
@@ -158,7 +160,7 @@ var util = {
 	 * @return {string|null} Decoded text, null if decoding failed
 	 */
 	percentDecodeFragment: function ( text ) {
-		var params = new URLSearchParams(
+		const params = new URLSearchParams(
 			'q=' +
 			text
 				// Query string param decoding replaces '+' with ' ' before doing the
@@ -190,13 +192,13 @@ var util = {
 	debounce: function ( func, wait, immediate ) {
 		// Old signature (wait, func).
 		if ( typeof func === 'number' ) {
-			var tmpWait = wait;
+			const tmpWait = wait;
 			wait = func;
 			func = tmpWait;
 		}
-		var timeout;
+		let timeout;
 		return function () {
-			var context = this,
+			const context = this,
 				args = arguments,
 				later = function () {
 					timeout = null;
@@ -230,20 +232,20 @@ var util = {
 	 * @return {Function} Throttled function
 	 */
 	throttle: function ( func, wait ) {
-		var context, args, timeout,
-			previous = Date.now() - wait,
-			run = function () {
-				timeout = null;
-				previous = Date.now();
-				func.apply( context, args );
-			};
+		let context, args, timeout,
+			previous = Date.now() - wait;
+		const run = function () {
+			timeout = null;
+			previous = Date.now();
+			func.apply( context, args );
+		};
 		return function () {
 			// Check how long it's been since the last time the function was
 			// called, and whether it's more or less than the requested throttle
 			// period. If it's less, run the function immediately. If it's more,
 			// set a timeout for the remaining time -- but don't replace an
 			// existing timeout, since that'd indefinitely prolong the wait.
-			var remaining = Math.max( wait - ( Date.now() - previous ), 0 );
+			const remaining = Math.max( wait - ( Date.now() - previous ), 0 );
 			context = this;
 			args = arguments;
 			if ( !timeout ) {
@@ -278,11 +280,11 @@ var util = {
 	 * @return {string} URL, relative to `wgServer`.
 	 */
 	getUrl: function ( pageName, params ) {
-		var fragmentIdx, url, query, fragment,
+		let url, query, fragment,
 			title = typeof pageName === 'string' ? pageName : mw.config.get( 'wgPageName' );
 
 		// Find any fragment
-		fragmentIdx = title.indexOf( '#' );
+		const fragmentIdx = title.indexOf( '#' );
 		if ( fragmentIdx !== -1 ) {
 			fragment = title.slice( fragmentIdx + 1 );
 			// Exclude the fragment from the page name
@@ -302,8 +304,10 @@ var util = {
 				util.wikiScript() + '?title=' + util.wikiUrlencode( title ) + '&' + query :
 				util.wikiScript() + '?' + query;
 		} else {
+			// Specify a function as the replacement,
+			// so that "$" characters in title are not interpreted.
 			url = mw.config.get( 'wgArticlePath' )
-				.replace( '$1', util.wikiUrlencode( title ).replace( /\$/g, '$$$$' ) );
+				.replace( '$1', () => util.wikiUrlencode( title ) );
 		}
 
 		// Append the encoded fragment
@@ -355,7 +359,7 @@ var util = {
 	 * @return {CSSStyleSheet} The sheet object
 	 */
 	addCSS: function ( text ) {
-		var s = mw.loader.addStyleTag( text );
+		const s = mw.loader.addStyleTag( text );
 		return s.sheet;
 	},
 
@@ -373,8 +377,8 @@ var util = {
 	 */
 	getParamValue: function ( param, url ) {
 		// Get last match, stop at hash
-		// eslint-disable-next-line security/detect-non-literal-regexp
-		var re = new RegExp( '^[^#]*[&?]' + util.escapeRegExp( param ) + '=([^&#]*)' ),
+
+		const re = new RegExp( '^[^#]*[&?]' + util.escapeRegExp( param ) + '=([^&#]*)' ),
 			m = re.exec( url !== undefined ? url : location.href );
 
 		if ( m ) {
@@ -406,18 +410,18 @@ var util = {
 	 * @return {string[]|null} Parameter value, or null if parameter was not found.
 	 */
 	getArrayParam: function ( param, params ) {
-		// eslint-disable-next-line security/detect-non-literal-regexp
-		var paramRe = new RegExp( '^' + util.escapeRegExp( param ) + '\\[(\\d*)\\]$' );
+
+		const paramRe = new RegExp( '^' + util.escapeRegExp( param ) + '\\[(\\d*)\\]$' );
 
 		if ( !params ) {
 			params = new URLSearchParams( location.search );
 		}
 
-		var arr = [];
-		params.forEach( function ( v, k ) {
-			var paramMatch = k.match( paramRe );
+		const arr = [];
+		params.forEach( ( v, k ) => {
+			const paramMatch = k.match( paramRe );
 			if ( paramMatch ) {
-				var i = paramMatch[ 1 ];
+				let i = paramMatch[ 1 ];
 				if ( i === '' ) {
 					// If no explicit index, append at the end
 					i = arr.length;
@@ -442,8 +446,8 @@ var util = {
 	 *
 	 * If you need just the wikipage content (not any of the
 	 * extra elements output by the skin), use `$( '#mw-content-text' )`
-	 * instead. Or listen to mw.hook#wikipage_content which will
-	 * allow your code to re-run when the page changes (e.g. live preview
+	 * instead. Or listen to {@link event:'wikipage.content' wikipage.content}
+	 * which will allow your code to re-run when the page changes (e.g. live preview
 	 * or re-render after ajax save).
 	 *
 	 * @type {jQuery}
@@ -456,7 +460,7 @@ var util = {
 	 * @param {string} portletId ID of the target portlet (e.g. 'p-cactions' or 'p-personal')
 	 */
 	hidePortlet: function ( portletId ) {
-		var portlet = document.getElementById( portletId );
+		const portlet = document.getElementById( portletId );
 		if ( portlet ) {
 			portlet.classList.add( 'emptyPortlet' );
 		}
@@ -469,7 +473,7 @@ var util = {
 	 * @return {boolean}
 	 */
 	isPortletVisible: function ( portletId ) {
-		var portlet = document.getElementById( portletId );
+		const portlet = document.getElementById( portletId );
 		return portlet && !portlet.classList.contains( 'emptyPortlet' );
 	},
 
@@ -479,7 +483,7 @@ var util = {
 	 * @param {string} portletId ID of the target portlet (e.g. 'p-cactions' or 'p-personal')
 	 */
 	showPortlet: function ( portletId ) {
-		var portlet = document.getElementById( portletId );
+		const portlet = document.getElementById( portletId );
 		if ( portlet ) {
 			portlet.classList.remove( 'emptyPortlet' );
 		}
@@ -490,10 +494,46 @@ var util = {
 	 * after edit with response from parse API.
 	 */
 	clearSubtitle: function () {
-		var subtitle = document.getElementById( 'mw-content-subtitle' );
+		const subtitle = document.getElementById( 'mw-content-subtitle' );
 		if ( subtitle ) {
 			subtitle.innerHTML = '';
 		}
+	},
+
+	/**
+	 * Create a message box element. Callers are responsible for ensuring suitable Codex styles
+	 * have been added to the page e.g. mediawiki.codex.messagebox.styles.
+	 *
+	 * @since 1.43
+	 * @param {string|Element} textOrElement text or node.
+	 * @param {string} [type] defaults to notice.
+	 * @param {boolean} [inline] whether the notice should be inline.
+	 * @return {Element}
+	 */
+	messageBox: function ( textOrElement, type = 'notice', inline = false ) {
+		const msgBoxElement = document.createElement( 'div' );
+		msgBoxElement.classList.add( 'cdx-message' );
+		if ( [ 'error', 'warning', 'success', 'notice' ].indexOf( type ) > -1 ) {
+			// The following CSS classes are used here:
+			// * cdx-message--notice
+			// * cdx-message--warning
+			// * cdx-message--error
+			msgBoxElement.classList.add( `cdx-message--${ type }` );
+		}
+		msgBoxElement.classList.add( inline ? 'cdx-message--inline' : 'cdx-message--block' );
+		msgBoxElement.setAttribute( 'aria-live', 'polite' );
+		const iconElement = document.createElement( 'span' );
+		iconElement.classList.add( 'cdx-message__icon' );
+		const contentElement = document.createElement( 'div' );
+		contentElement.classList.add( 'cdx-message__content' );
+		if ( typeof textOrElement === 'string' ) {
+			contentElement.textContent = textOrElement;
+		} else {
+			contentElement.appendChild( textOrElement );
+		}
+		msgBoxElement.appendChild( iconElement );
+		msgBoxElement.appendChild( contentElement );
+		return msgBoxElement;
 	},
 
 	/**
@@ -502,7 +542,7 @@ var util = {
 	 * @param {HTMLElement|string} nodeOrHTMLString
 	 */
 	addSubtitle: function ( nodeOrHTMLString ) {
-		var subtitle = document.getElementById( 'mw-content-subtitle' );
+		const subtitle = document.getElementById( 'mw-content-subtitle' );
 		if ( subtitle ) {
 			if ( typeof nodeOrHTMLString === 'string' ) {
 				subtitle.innerHTML += nodeOrHTMLString;
@@ -517,16 +557,30 @@ var util = {
 	/**
 	 * Creates a detached portlet Element in the skin with no elements.
 	 *
+	 * @example
+	 * // Create a portlet with 2 menu items that is styled as a dropdown in certain skins.
+	 * const p = mw.util.addPortlet( 'p-myportlet', 'My label', '#p-cactions' );
+	 * mw.util.addPortletLink( 'p-myportlet', '#', 'Link 1' );
+	 * mw.util.addPortletLink( 'p-myportlet', '#', 'Link 2' );
 	 * @param {string} id of the new portlet.
 	 * @param {string} [label] of the new portlet.
-	 * @param {string} [before] selector of the element preceding the new portlet. If not passed
-	 *  the caller is responsible for appending the element to the DOM before using addPortletLink.
+	 * @param {string} [selectorHint] selector of the element the new portlet would like to
+	 *  be inserted near. Typically the portlet will be inserted after this selector, but in some
+	 *  skins, the skin may relocate the element when provided to the closest available space.
+	 *  If this argument is not passed then the caller is responsible for appending the element
+	 *  to the DOM before using addPortletLink.
+	 *  To add a portlet in an exact position do not rely on this parameter, instead using the return
+	 *  element (make sure to also assign the result to a variable), use
+	 *  ```p.parentNode.appendChild( p );```
+	 *  When provided, skins can use the parameter to infer information about how the user intended
+	 *  the menu to be rendered. For example, in vector and vector-2022 targeting '#p-cactions' will
+	 *  result in the creation of a dropdown.
 	 * @fires Hooks~'util.addPortlet'
 	 * @return {HTMLElement|null} will be null if it was not possible to create an portlet with
-	 *  the required information e.g. the selector given in before parameter could not be resolved
+	 *  the required information e.g. the selector given in `selectorHint` parameter could not be resolved
 	 *  to an existing element in the page.
 	 */
-	addPortlet: function ( id, label, before ) {
+	addPortlet: function ( id, label, selectorHint ) {
 		const portlet = document.createElement( 'div' );
 		// These classes should be kept in sync with includes/skins/components/SkinComponentMenu.php.
 		// eslint-disable-next-line mediawiki/class-doc
@@ -544,10 +598,10 @@ var util = {
 		const list = document.createElement( 'ul' );
 		listWrapper.appendChild( list );
 		portlet.appendChild( listWrapper );
-		if ( before ) {
-			var referenceNode;
+		if ( selectorHint ) {
+			let referenceNode;
 			try {
-				referenceNode = document.querySelector( before );
+				referenceNode = document.querySelector( selectorHint );
 			} catch ( e ) {
 				// CSS selector not supported by browser.
 			}
@@ -564,14 +618,14 @@ var util = {
 		 * @event ~'util.addPortlet'
 		 * @memberof Hooks
 		 * @param {HTMLElement} portlet the portlet that was created.
-		 * @param {string|null} before the css selector used to append to the DOM.
+		 * @param {string|null} selectorHint the css selector used to append to the DOM.
 		 *
 		 * @example
 		 * mw.hook( 'util.addPortlet' ).add( ( p ) => {
 		 *     p.style.border = 'solid 1px black';
 		 * } );
 		 */
-		mw.hook( 'util.addPortlet' ).fire( portlet, before );
+		mw.hook( 'util.addPortlet' ).fire( portlet, selectorHint );
 		return portlet;
 	},
 	/**
@@ -643,24 +697,24 @@ var util = {
 			return null;
 		}
 
-		var portlet = document.getElementById( portletId );
+		const portlet = document.getElementById( portletId );
 		if ( !portlet ) {
 			// Invalid portlet ID
 			return null;
 		}
 
 		// Setup the anchor tag and set any the properties
-		var link = document.createElement( 'a' );
+		const link = document.createElement( 'a' );
 		link.href = href;
 
-		var linkChild = document.createTextNode( text );
-		var i = portletLinkOptions[ 'text-wrapper' ].length;
+		let linkChild = document.createTextNode( text );
+		let i = portletLinkOptions[ 'text-wrapper' ].length;
 		// Wrap link using text-wrapper option if provided
 		// Iterate backward since the wrappers are declared from outer to inner,
 		// and we build it up from the inside out.
 		while ( i-- ) {
-			var wrapper = portletLinkOptions[ 'text-wrapper' ][ i ];
-			var wrapperElement = document.createElement( wrapper.tag );
+			const wrapper = portletLinkOptions[ 'text-wrapper' ][ i ];
+			const wrapperElement = document.createElement( wrapper.tag );
 			if ( wrapper.attributes ) {
 				$( wrapperElement ).attr( wrapper.attributes );
 			}
@@ -679,7 +733,7 @@ var util = {
 		// Unhide portlet if it was hidden before
 		util.showPortlet( portletId );
 
-		var item = $( '<li>' ).append( link )[ 0 ];
+		const item = $( '<li>' ).append( link )[ 0 ];
 		// mw-list-item-js distinguishes portlet links added via javascript and the server
 		item.className = 'mw-list-item mw-list-item-js';
 		if ( id ) {
@@ -687,11 +741,11 @@ var util = {
 		}
 
 		// Select the first (most likely only) unordered list inside the portlet
-		var ul = portlet.tagName.toLowerCase() === 'ul' ? portlet : portlet.querySelector( 'ul' );
+		let ul = portlet.tagName.toLowerCase() === 'ul' ? portlet : portlet.querySelector( 'ul' );
 		if ( !ul ) {
 			// If it didn't have an unordered list yet, create one
 			ul = document.createElement( 'ul' );
-			var portletDiv = portlet.querySelector( 'div' );
+			const portletDiv = portlet.querySelector( 'div' );
 			if ( portletDiv ) {
 				// Support: Legacy skins have a div (such as div.body or div.pBody).
 				// Append the <ul> to that.
@@ -702,7 +756,7 @@ var util = {
 			}
 		}
 
-		var next;
+		let next;
 		if ( nextnode && ( typeof nextnode === 'string' || nextnode.nodeType || nextnode.jquery ) ) {
 			// eslint-disable-next-line no-jquery/variable-pattern
 			nextnode = $( ul ).find( nextnode );
@@ -782,7 +836,7 @@ var util = {
 		//     "`" / "{" /
 		//     "|" / "}" /
 		//     "~"
-		var rfc5322Atext = 'a-z0-9!#$%&\'*+\\-/=?^_`{|}~';
+		const rfc5322Atext = 'a-z0-9!#$%&\'*+\\-/=?^_`{|}~';
 
 		// Next define the RFC 1034 'ldh-str'
 		//     <domain> ::= <subdomain> | " "
@@ -791,9 +845,9 @@ var util = {
 		//     <ldh-str> ::= <let-dig-hyp> | <let-dig-hyp> <ldh-str>
 		//     <let-dig-hyp> ::= <let-dig> | "-"
 		//     <let-dig> ::= <letter> | <digit>
-		var rfc1034LdhStr = 'a-z0-9\\-';
+		const rfc1034LdhStr = 'a-z0-9\\-';
 
-		var html5EmailRegexp = new RegExp(
+		const html5EmailRegexp = new RegExp(
 			// start of string
 			'^' +
 			// User part which is liberal :p
@@ -831,17 +885,15 @@ var util = {
 	 * @return {boolean}
 	 */
 	isIPv4Address: function ( address, allowBlock ) {
-		var block,
-			RE_IP_BYTE = '(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])',
-			RE_IP_ADD = '(?:' + RE_IP_BYTE + '\\.){3}' + RE_IP_BYTE;
 
 		if ( typeof address !== 'string' ) {
 			return false;
 		}
 
-		block = allowBlock ? '(?:\\/(?:3[0-2]|[12]?\\d))?' : '';
+		const RE_IP_BYTE = '(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])';
+		const RE_IP_ADD = '(?:' + RE_IP_BYTE + '\\.){3}' + RE_IP_BYTE;
+		const block = allowBlock ? '(?:\\/(?:3[0-2]|[12]?\\d))?' : '';
 
-		// eslint-disable-next-line security/detect-non-literal-regexp
 		return ( new RegExp( '^' + RE_IP_ADD + block + '$' ).test( address ) );
 	},
 
@@ -864,14 +916,12 @@ var util = {
 	 * @return {boolean}
 	 */
 	isIPv6Address: function ( address, allowBlock ) {
-		var block, RE_IPV6_ADD;
-
 		if ( typeof address !== 'string' ) {
 			return false;
 		}
 
-		block = allowBlock ? '(?:\\/(?:12[0-8]|1[01][0-9]|[1-9]?\\d))?' : '';
-		RE_IPV6_ADD =
+		const block = allowBlock ? '(?:\\/(?:12[0-8]|1[01][0-9]|[1-9]?\\d))?' : '';
+		let RE_IPV6_ADD =
 			'(?:' + // starts with "::" (including "::")
 				':(?::|(?::' +
 					'[0-9A-Fa-f]{1,4}' +
@@ -888,7 +938,6 @@ var util = {
 				'){7}' +
 			')';
 
-		// eslint-disable-next-line security/detect-non-literal-regexp
 		if ( new RegExp( '^' + RE_IPV6_ADD + block + '$' ).test( address ) ) {
 			return true;
 		}
@@ -901,7 +950,7 @@ var util = {
 			'){1,6}';
 
 		return (
-			// eslint-disable-next-line security/detect-non-literal-regexp
+
 			new RegExp( '^' + RE_IPV6_ADD + block + '$' ).test( address ) &&
 			/::/.test( address ) &&
 			!/::.*::/.test( address )
@@ -945,7 +994,7 @@ var util = {
 	 *   image/thumbnail URL.
 	 */
 	parseImageUrl: function ( url ) {
-		var name, decodedName, width, urlTemplate;
+		let name, decodedName, width, urlTemplate;
 
 		// thumb.php-generated thumbnails
 		// thumb.php?f=<name>&w[idth]=<width>[px]
@@ -955,12 +1004,12 @@ var util = {
 			width = mw.util.getParamValue( 'width', url ) || mw.util.getParamValue( 'w', url );
 			urlTemplate = url.replace( /([&?])w(?:idth)?=[^&]+/g, '' ) + '&width={width}';
 		} else {
-			var regexes = [
+			const regexes = [
 				// Thumbnails
 				// /<hash prefix>/<name>/[<options>-]<width>-<name*>[.<ext>]
 				// where <name*> could be the filename, 'thumbnail.<ext>' (for long filenames)
 				// or the base-36 SHA1 of the filename.
-				// eslint-disable-next-line security/detect-unsafe-regex
+
 				/\/[\da-f]\/[\da-f]{2}\/([^\s/]+)\/(?:[^\s/]+-)?(\d+)px-(?:\1|thumbnail|[a-z\d]{31})(\.[^\s/]+)?$/,
 
 				// Full size images
@@ -969,15 +1018,15 @@ var util = {
 
 				// Thumbnails in non-hashed upload directories
 				// /<name>/[<options>-]<width>-<name*>[.<ext>]
-				// eslint-disable-next-line security/detect-unsafe-regex
+
 				/\/([^\s/]+)\/(?:[^\s/]+-)?(\d+)px-(?:\1|thumbnail|[a-z\d]{31})[^\s/]*$/,
 
 				// Full-size images in non-hashed upload directories
 				// /<name>
 				/\/([^\s/]+)$/
 			];
-			for ( var i = 0; i < regexes.length; i++ ) {
-				var match = url.match( regexes[ i ] );
+			for ( let i = 0; i < regexes.length; i++ ) {
+				const match = url.match( regexes[ i ] );
 				if ( match ) {
 					name = match[ 1 ];
 					decodedName = decodeURIComponent( name );
@@ -1001,7 +1050,7 @@ var util = {
 			} else if ( width && !urlTemplate ) {
 				// Javascript does not expose regexp capturing group indexes, and the width
 				// part could in theory also occur in the filename so hide that first.
-				var strippedUrl = url.replace( name, '{name}' )
+				const strippedUrl = url.replace( name, '{name}' )
 					.replace( name, '{name}' )
 					.replace( width + 'px-', '{width}px-' );
 				urlTemplate = strippedUrl.replace( /\{name\}/g, name );
@@ -1060,11 +1109,11 @@ var util = {
 			return ip.replace( /(^|\.)0+(\d)/g, '$1$2' );
 		}
 		ip = ip.toUpperCase();
-		var abbrevPos = ip.indexOf( '::' );
+		const abbrevPos = ip.indexOf( '::' );
 		if ( abbrevPos !== -1 ) {
-			var CIDRStart = ip.indexOf( '/' );
-			var addressEnd = ( CIDRStart !== -1 ) ? CIDRStart - 1 : ip.length - 1;
-			var repeatStr, extra, pad;
+			const CIDRStart = ip.indexOf( '/' );
+			const addressEnd = ( CIDRStart !== -1 ) ? CIDRStart - 1 : ip.length - 1;
+			let repeatStr, extra, pad;
 			if ( abbrevPos === 0 ) {
 				repeatStr = '0:';
 				extra = ip === '::' ? '0' : '';
@@ -1078,7 +1127,7 @@ var util = {
 				extra = ':';
 				pad = 8;
 			}
-			var count = pad - ( ip.split( ':' ).length - 1 );
+			const count = pad - ( ip.split( ':' ).length - 1 );
 			ip = ip.replace( '::', repeatStr.repeat( count ) + extra );
 		}
 		return ip.replace( /(^|:)0+(([0-9A-Fa-f]{1,4}))/g, '$1$2' );
@@ -1100,18 +1149,18 @@ var util = {
 			return null;
 		}
 		if ( this.isIPv6Address( ip, true ) ) {
-			var cidr, matches, ipCidrSplit, i, replaceZeros;
+			let cidr, replaceZeros;
 			if ( ip.indexOf( '/' ) !== -1 ) {
-				ipCidrSplit = ip.split( '/', 2 );
+				const ipCidrSplit = ip.split( '/', 2 );
 				ip = ipCidrSplit[ 0 ];
 				cidr = ipCidrSplit[ 1 ];
 			} else {
 				cidr = '';
 			}
-			matches = ip.match( /(?:^|:)0(?::0)+(?:$|:)/g );
+			const matches = ip.match( /(?:^|:)0(?::0)+(?:$|:)/g );
 			if ( matches ) {
 				replaceZeros = matches[ 0 ];
-				for ( i = 1; i < matches.length; i++ ) {
+				for ( let i = 1; i < matches.length; i++ ) {
 					if ( matches[ i ].length > replaceZeros.length ) {
 						replaceZeros = matches[ i ];
 					}
@@ -1132,32 +1181,37 @@ var util = {
 	 *
 	 * This functionality has been adapted from MediaWiki\User\TempUser\Pattern::isMatch()
 	 *
-	 * @param {string} username
+	 * @param {string|null} username
 	 * @return {boolean}
 	 */
 	isTemporaryUser: function ( username ) {
-		// Just return early if temporary accounts are disabled.
-		if ( !config.AutoCreateTempUser.enabled ) {
+		// Just return early if temporary accounts are not known about.
+		if ( !config.AutoCreateTempUser.enabled && !config.AutoCreateTempUser.known ) {
 			return false;
 		}
-		/** @type{string|string[]} */
-		var matchPatterns = config.AutoCreateTempUser.matchPattern;
+		if ( username === null ) {
+			return false;
+		}
+		/** @type {string|string[]} */
+		let matchPatterns = config.AutoCreateTempUser.matchPattern;
 		if ( typeof matchPatterns === 'string' ) {
 			matchPatterns = [ matchPatterns ];
+		} else if ( matchPatterns === null ) {
+			matchPatterns = [ config.AutoCreateTempUser.genPattern ];
 		}
-		for ( var i = 0; i < matchPatterns.length; i++ ) {
-			var autoCreateUserMatchPattern = matchPatterns[ i ];
+		for ( let i = 0; i < matchPatterns.length; i++ ) {
+			const autoCreateUserMatchPattern = matchPatterns[ i ];
 			// Check each match pattern, and if any matches then return a match.
-			var position = autoCreateUserMatchPattern.indexOf( '$1' );
+			const position = autoCreateUserMatchPattern.indexOf( '$1' );
 
 			// '$1' was not found in autoCreateUserMatchPattern
 			if ( position === -1 ) {
 				return false;
 			}
-			var prefix = autoCreateUserMatchPattern.slice( 0, position );
-			var suffix = autoCreateUserMatchPattern.slice( position + '$1'.length );
+			const prefix = autoCreateUserMatchPattern.slice( 0, position );
+			const suffix = autoCreateUserMatchPattern.slice( position + '$1'.length );
 
-			var match = true;
+			let match = true;
 			if ( prefix !== '' ) {
 				match = ( username.indexOf( prefix ) === 0 );
 			}
@@ -1197,7 +1251,7 @@ function init() {
 	// You may also use class "mw-body mw-body-primary" if you use
 	// mw-body in multiple locations. Or class "mw-body-primary" if
 	// you use mw-body deeper in the DOM.
-	var content = document.querySelector( '.mw-body-primary' ) ||
+	const content = document.querySelector( '.mw-body-primary' ) ||
 		document.querySelector( '.mw-body' ) ||
 		// If the skin has no such class, fall back to the parser output
 		document.querySelector( '#mw-content-text' ) ||
@@ -1215,7 +1269,7 @@ mw.log.deprecate( mw.RegExp, 'escape', util.escapeRegExp, 'Use mw.util.escapeReg
 if ( window.QUnit ) {
 	// Not allowed outside unit tests
 	util.setOptionsForTest = function ( opts ) {
-		config = !opts ? require( './config.json' ) : $.extend( {}, config, opts );
+		config = !opts ? require( './config.json' ) : Object.assign( {}, config, opts );
 	};
 	util.init = init;
 } else {

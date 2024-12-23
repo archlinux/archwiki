@@ -15,11 +15,11 @@
 			"MrTapsa",
 			"Nike",
 			"Pyscowicz",
+			"Samoasambia",
 			"Stryn",
 			"Syreeni",
 			"Valtlai",
-			"Valtlait",
-			"Samoasambia"
+			"Valtlait"
 		]
 	},
 	"minerva-last-modified-date": "Viimeksi muokattu $1 kello $2",
@@ -45,7 +45,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Tietoa tästä luokasta",
 	"mobile-frontend-meta-data-issues-header": "Sivun ongelmat",
 	"minerva-meta-data-issues-section-header": "Osion ongelmat",
-	"mobile-frontend-notifications-filter": "Suodata",
 	"mobile-frontend-pageaction-edit-tooltip": "Muokkaa tämän sivun johdantoa",
 	"mobile-frontend-placeholder": "Hae {{GRAMMAR:elative|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Satunnainen",
@@ -65,6 +64,7 @@
 	"minerva-page-actions-overflow": "Lisää",
 	"minerva-page-actions-language-switcher": "Kielet",
 	"minerva-page-actions-history": "Historia",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Keskustelu]",
 	"minerva-skin-desc": "Responsiivinen mobiililaitteille suunniteltu ulkoasu",
 	"skin-minerva-issue-learn-more": "Lisätietoja",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekunti|$1 sekuntia}} sitten",
@@ -75,6 +75,7 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 vuosi|$1 vuotta}} sitten",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Luokat",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Näytä sivun luokat",
+	"skin-minerva-night-mode-unavailable": "Sivu saatavilla vain vaaleasssa väriteemassa.",
 	"minerva.css": "/* Tämä sivu sisältää MinervaNeue-ulkoasua muuttavia tyylejä. */",
 	"minerva.js": "/* Tämän sivun JavaScript-koodi liitetään MinervaNeue-tyyliin */"
 }

@@ -11,14 +11,14 @@
 
 const { After, Before } = require( '@cucumber/cucumber' );
 
-Before( function () {
+Before( () => {
 	// This hook will be executed before ALL scenarios
 } );
 
-After( function () {
+After( () => {
 	// This hook will be executed after ALL scenarios
 } );
 
-Before( { tags: '@foo' }, function () {
+Before( { tags: '@foo' }, () => {
 	// This hook will be executed before scenarios tagged with @foo
 } );

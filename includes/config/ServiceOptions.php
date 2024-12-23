@@ -24,7 +24,9 @@ use Wikimedia\Assert\Assert;
  * @since 1.34
  */
 class ServiceOptions {
+	/** @var string[] */
 	private $keys;
+	/** @var array */
 	private $options = [];
 
 	/**
@@ -50,11 +52,9 @@ class ServiceOptions {
 						$this->options[$key] = $source->get( $key );
 						continue 2;
 					}
-				} else {
-					if ( array_key_exists( $key, $source ) ) {
-						$this->options[$key] = $source[$key];
-						continue 2;
-					}
+				} elseif ( array_key_exists( $key, $source ) ) {
+					$this->options[$key] = $source[$key];
+					continue 2;
 				}
 			}
 			throw new InvalidArgumentException( "Key \"$key\" not found in input sources" );

@@ -9,7 +9,7 @@ class Less_Functions {
 	public $env;
 	public $currentFileInfo;
 
-	public function __construct( $env, array $currentFileInfo = null ) {
+	public function __construct( $env, ?array $currentFileInfo = null ) {
 		$this->env = $env;
 		$this->currentFileInfo = $currentFileInfo;
 	}
@@ -273,6 +273,7 @@ class Less_Functions {
 	/**
 	 * @param Less_Tree_Color|null $color
 	 * @param Less_Tree_Dimension|null $amount
+	 * @param Less_Tree_Quoted|Less_Tree_Color|Less_Tree_Keyword|null $method
 	 */
 	public function desaturate( $color = null, $amount = null, $method = null ) {
 		if ( !$color instanceof Less_Tree_Color ) {
@@ -712,7 +713,7 @@ class Less_Functions {
 				$unit = $currentUnified->unit->toString();
 			}
 
-			if ( $unit !== '' && !$unitStatic || $unit !== '' && $order[0]->unify()->unit->toString() === "" ) {
+			if ( ( $unit !== '' && !$unitStatic ) || ( $unit !== '' && $order[0]->unify()->unit->toString() === "" ) ) {
 				$unitStatic = $unit;
 			}
 
@@ -854,6 +855,13 @@ class Less_Functions {
 
 	public function shade( $color, $amount = null ) {
 		return $this->mix( $this->rgb( 0, 0, 0 ), $color, $amount );
+	}
+
+	/**
+	 * @see less-3.13.1.js#functions _SELF
+	 */
+	public function _self( $args ) {
+		return $args;
 	}
 
 	public function extract( $values, $index ) {

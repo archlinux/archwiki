@@ -30,7 +30,7 @@ class Less_Exception_Parser extends Exception {
 	 * @param array|null $currentFile The file
 	 * @param int $code The exception code
 	 */
-	public function __construct( $message = null, Exception $previous = null, $index = null, $currentFile = null, $code = 0 ) {
+	public function __construct( $message = null, ?Exception $previous = null, $index = null, $currentFile = null, $code = 0 ) {
 		parent::__construct( $message, $code, $previous );
 
 		$this->currentFile = $currentFile;

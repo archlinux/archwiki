@@ -6,9 +6,9 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {jQuery} [$ariaDescribedBy]
- * @cfg {string} [ariaLabel]
- * @cfg {jQuery} [$describedElement]
+ * @param {jQuery} [config.$ariaDescribedBy]
+ * @param {string} [config.ariaLabel]
+ * @param {jQuery} [config.$describedElement]
  */
 ve.ui.MWAriaDescribe = function VeUiMWAriaDescribe( config ) {
 	this.$describedElement = config.$describedElement || this.$element;

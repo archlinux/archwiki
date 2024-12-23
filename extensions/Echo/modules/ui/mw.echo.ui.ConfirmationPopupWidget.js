@@ -9,7 +9,7 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration object
-	 * @cfg {number} [interval=2000] The number of milliseconds that it takes
+	 * @param {number} [config.interval=2000] The number of milliseconds that it takes
 	 *  for the popup to disappear after appearing.
 	 */
 	mw.echo.ui.ConfirmationPopupWidget = function MwEchoUiConfirmationPopupWidget( config ) {
@@ -19,7 +19,7 @@
 		mw.echo.ui.ConfirmationPopupWidget.super.call( this, config );
 
 		this.labelWidget = new OO.ui.LabelWidget( config );
-		this.iconWidget = new OO.ui.IconWidget( $.extend( { icon: 'checkAll' }, config ) );
+		this.iconWidget = new OO.ui.IconWidget( Object.assign( { icon: 'checkAll' }, config ) );
 		this.interval = config.interval || 2000;
 
 		this.$element

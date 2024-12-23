@@ -42,20 +42,20 @@ OO.inheritClass( ve.ui.Toolbar, OO.ui.Toolbar );
 /* Events */
 
 /**
- * @event updateState
+ * @event ve.ui.Toolbar#updateState
  * @param {ve.dm.SurfaceFragment|null} fragment Surface fragment. Null if no surface is active.
  * @param {Object|null} direction Context direction with 'inline' & 'block' properties if a surface exists. Null if no surface is active.
  * @param {string[]} activeDialogs List of names of currently open dialogs.
  */
 
 /**
- * @event surfaceChange
+ * @event ve.ui.Toolbar#surfaceChange
  * @param {ve.ui.Surface|null} oldSurface Old surface being controlled
  * @param {ve.ui.Surface|null} newSurface New surface being controlled
  */
 
 /**
- * @event resize
+ * @event ve.ui.Toolbar#resize
  */
 
 /* Methods */
@@ -65,9 +65,11 @@ OO.inheritClass( ve.ui.Toolbar, OO.ui.Toolbar );
  *
  * @param {Object} groups List of tool group configurations
  * @param {ve.ui.Surface} [surface] Surface to attach to
+ * @fires ve.ui.Toolbar#surfaceChange
+ * @fires ve.ui.Toolbar#resize
  */
 ve.ui.Toolbar.prototype.setup = function ( groups, surface ) {
-	var oldSurface,
+	let oldSurface,
 		surfaceChange = false;
 
 	this.detach();
@@ -83,7 +85,7 @@ ve.ui.Toolbar.prototype.setup = function ( groups, surface ) {
 	// do this if they have changed
 	if ( groups !== this.groups ) {
 		// Parent method
-		groups = groups.map( function ( group ) {
+		groups = groups.map( ( group ) => {
 			if ( group.name ) {
 				group.classes = group.classes || [];
 				group.classes.push( 've-ui-toolbar-group-' + group.name );
@@ -134,12 +136,12 @@ ve.ui.Toolbar.prototype.isToolAvailable = function ( name ) {
 		return false;
 	}
 	// Check the tool's command is available on the surface
-	var tool = this.getToolFactory().lookup( name );
+	const tool = this.getToolFactory().lookup( name );
 	if ( !tool ) {
 		return false;
 	}
 	// FIXME should use .static.getCommandName(), but we have tools that aren't ve.ui.Tool subclasses :(
-	var commandName = tool.static.commandName;
+	const commandName = tool.static.commandName;
 	return !commandName || this.getCommands().indexOf( commandName ) !== -1;
 };
 
@@ -151,16 +153,15 @@ ve.ui.Toolbar.prototype.isToolAvailable = function ( name ) {
  * @param {Object} data
  */
 ve.ui.Toolbar.prototype.onInspectorOrDialogOpeningOrClosing = function ( win, openingOrClosing ) {
-	var toolbar = this;
-	openingOrClosing.then( function () {
-		toolbar.updateToolStateDebounced();
+	openingOrClosing.then( () => {
+		this.updateToolStateDebounced();
 	} );
 };
 
 /**
  * Handle context changes on the surface.
  *
- * @fires updateState
+ * @fires ve.ui.Toolbar#updateState
  */
 ve.ui.Toolbar.prototype.onContextChange = function () {
 	this.updateToolStateDebounced();
@@ -168,6 +169,8 @@ ve.ui.Toolbar.prototype.onContextChange = function () {
 
 /**
  * Update the state of the tools
+ *
+ * @fires ve.ui.Toolbar#updateState
  */
 ve.ui.Toolbar.prototype.updateToolState = function () {
 	if ( !this.getSurface() ) {
@@ -175,16 +178,16 @@ ve.ui.Toolbar.prototype.updateToolState = function () {
 		return;
 	}
 
-	var fragment = this.getSurface().getModel().getFragment();
+	const fragment = this.getSurface().getModel().getFragment();
 
 	// Update context direction for button icons UI.
 	// By default, inline and block directions are the same.
 	// If no context direction is available, use document model direction.
-	var dirInline = this.surface.getView().getSelectionDirectionality();
-	var dirBlock = dirInline;
+	let dirInline = this.surface.getView().getSelectionDirectionality();
+	const dirBlock = dirInline;
 
 	// 'inline' direction is different only if we are inside a language annotation
-	var fragmentAnnotation = fragment.getAnnotations();
+	const fragmentAnnotation = fragment.getAnnotations();
 	if ( fragmentAnnotation.hasAnnotationWithName( 'meta/language' ) ) {
 		dirInline = fragmentAnnotation.getAnnotationsByName( 'meta/language' ).get( 0 ).getAttribute( 'dir' );
 	}
@@ -207,18 +210,16 @@ ve.ui.Toolbar.prototype.updateToolState = function () {
 		this.contextDirection.block = dirBlock;
 	}
 
-	var activeDialogs = [
+	const activeDialogs = [
 		this.surface.getDialogs(),
 		this.surface.getContext().getInspectors(),
 		this.surface.getToolbarDialogs()
-	].map( function ( windowManager ) {
+	].map( ( windowManager ) => {
 		if ( windowManager.getCurrentWindow() ) {
 			return windowManager.getCurrentWindow().constructor.static.name;
 		}
 		return null;
-	} ).filter( function ( name ) {
-		return name !== null;
-	} );
+	} ).filter( ( name ) => name !== null );
 
 	this.emit( 'updateState', fragment, this.contextDirection, activeDialogs );
 };
@@ -246,7 +247,7 @@ ve.ui.Toolbar.prototype.getCommands = function () {
  * @inheritdoc
  */
 ve.ui.Toolbar.prototype.getToolAccelerator = function ( name ) {
-	var messages = ve.ui.triggerRegistry.getMessages( name );
+	const messages = ve.ui.triggerRegistry.getMessages( name );
 
 	return messages ? messages.join( ', ' ) : undefined;
 };

@@ -1,4 +1,5 @@
 @import 'mediawiki.mixins';
+@import 'mediawiki.skin.variables.less';
 
 /* stylelint-disable selector-class-pattern */
 
@@ -32,8 +33,8 @@
 .codeEditor-status {
 	clear: both;
 	width: 100%;
-	background-color: #f8f9fa;
-	border-top: 1px solid #c8ccd1;
+	background-color: @background-color-neutral-subtle;
+	border-top: 1px solid @border-color-subtle;
 	display: table;
 }
 
@@ -50,8 +51,8 @@
 }
 
 .codeEditor-status-message {
-	border-left: 1px solid #c8ccd1;
-	border-right: 1px solid #c8ccd1;
+	border-left: 1px solid @border-color-subtle;
+	border-right: 1px solid @border-color-subtle;
 	padding: 0 0.3em;
 	width: 100%;
 	display: table-cell;

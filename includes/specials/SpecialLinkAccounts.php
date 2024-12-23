@@ -13,11 +13,15 @@ use MediaWiki\SpecialPage\AuthManagerSpecialPage;
 use StatusValue;
 
 /**
- * Links/unlinks external accounts to the current user.
+ * Link/unlink external accounts to the current user.
  *
  * To interact with this page, account providers need to register themselves with AuthManager.
+ *
+ * @ingroup SpecialPage
+ * @ingroup Auth
  */
 class SpecialLinkAccounts extends AuthManagerSpecialPage {
+	/** @inheritDoc */
 	protected static $allowedActions = [
 		AuthManager::ACTION_LINK, AuthManager::ACTION_LINK_CONTINUE,
 	];
@@ -45,7 +49,6 @@ class SpecialLinkAccounts extends AuthManagerSpecialPage {
 	/**
 	 * @param null|string $subPage
 	 * @throws ErrorPageError
-	 * @throws LogicException
 	 */
 	public function execute( $subPage ) {
 		$this->setHeaders();

@@ -13,6 +13,7 @@
 	"pfunc_time_too_long": "Hata: Çok fazla #time çağrıları.",
 	"pfunc_time_too_big": "Hata: #time yalnızca 9999'a kadar olan yılları destekler.",
 	"pfunc_time_too_small": "Hata: #time yalnızca 0'dan sonraki yılları destekler.",
+	"pfunc_timef_bad_format": "Hata: #timef için geçersiz biçim",
 	"pfunc_rel2abs_invalid_depth": "Hata: Yolda geçersiz derinlik: \"$1\" (kök düğümünün üstünde bir düğüme erişmeye çalıştı)",
 	"pfunc_expr_stack_exhausted": "İfade hatası: Stack bitti.",
 	"pfunc_expr_unexpected_number": "İfade hatası: Beklenmeyen sayı.",

@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Cabal",
 			"Satdeep gill",
-			"Tow",
-			"Cabal"
+			"Tow"
 		]
 	},
 	"pfunc_time_error": "ਗ਼ਲਤੀ: ਗ਼ਲਤ ਸਮਾਂ",
 	"pfunc_time_too_big": "ਗਲਤੀ: # ਸਮਾਂ ਸਿਰਫ 9999 ਤੱਕ ਦੇ ਸਾਲਾਂ ਦਾ ਸਮਰਥਨ ਕਰਦਾ ਹੈ।",
 	"pfunc_time_too_small": "ਗਲਤੀ: # ਸਮਾਂ ਸਿਰਫ 0 ਤੋਂ ਸਾਲਾਂ ਦਾ ਸਮਰਥਨ ਕਰਦਾ ਹੈ।",
+	"pfunc_timef_bad_format": "ਗਲਤੀ: #timef ਲਈ ਗ਼ਲਤ ਤਰਤੀਬ",
 	"pfunc_expr_stack_exhausted": "ਸਮੀਕਰਨ ਗਲਤੀ: ਖਲਵਾੜਾ ਸੱਖਣਾ ਹੋ ਗਿਆ।",
 	"pfunc_expr_unexpected_number": "ਸਮੀਕਰਨ ਗਲਤੀ: ਅਣਜਾਣ ਸੰਖਿਆ।",
 	"pfunc_expr_preg_match_failure": "ਸਮੀਕਰਨ ਗਲਤੀ: ਅਣਜਾਣ preg_match ਅਸਫਲਤਾ।",

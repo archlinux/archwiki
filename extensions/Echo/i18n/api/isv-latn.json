@@ -4,6 +4,14 @@
 			"IJzeren Jan"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Ručno aktivovati uvědomjenje za koristnika",
+	"apihelp-echocreateevent-example": "Poslati uvědomjenje",
+	"apihelp-echocreateevent-param-user": "Koristnika, ktoromu poslati uvědomjenje",
+	"apihelp-echocreateevent-param-header": "Sodržanje zaglavja uvědomjenja",
+	"apihelp-echocreateevent-param-content": "Glavny tekst uvědomjenja",
+	"apihelp-echocreateevent-param-page": "Stranica, na ktoru napravjaje link v uvědomjenju",
+	"apihelp-echocreateevent-param-section": "Razděl, kde uvědomjenje bude dostavjeno",
+	"apihelp-echocreateevent-param-email": "Či takože trěba poslati e-poštu",
 	"apihelp-echomarkread-summary": "Označiti uvědomjenja kako pročitane za nyněšnjego koristnika.",
 	"apihelp-echomarkread-param-list": "Spisok identifikatorov uvědomjenij, ktore trěba označiti kako pročitane.",
 	"apihelp-echomarkread-param-unreadlist": "Spisok identifikatorov uvědomjenij, ktore trěba označiti kako nepročitane.",

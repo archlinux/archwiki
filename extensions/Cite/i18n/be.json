@@ -5,8 +5,8 @@
 			"Chadyka",
 			"Maksim L.",
 			"No Sleep till Krupki",
-			"Чаховіч Уладзіслаў",
-			"ZlyiLev"
+			"ZlyiLev",
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"cite-desc": "Дадае тэгі <code>&lt;ref&gt;</code> і <code>&lt;references/&gt;</code> для цытаванняў (зносак)",
@@ -31,6 +31,13 @@
 	"cite_error_empty_references_define": "Тэг <code>&lt;ref&gt;</code> з назвай (name) «$1», вызначаны ў групе <code>&lt;references&gt;</code> «$2» не мае зместу.",
 	"cite-tracking-category-cite-error": "Старонкі з памылкамі ў зносках",
 	"cite-tracking-category-cite-error-desc": "Старонка мае памылкі ў выкарыстанні тэгаў зносак",
+	"cite-reference-previews-reference": "Зноска",
+	"cite-reference-previews-book": "Спасылка на кнігу",
+	"cite-reference-previews-journal": "Спасылка на часопіс",
+	"cite-reference-previews-news": "Спасылка на навіны",
+	"cite-reference-previews-note": "Нататка",
+	"cite-reference-previews-web": "Спасылка на інтэрнэт",
+	"cite-reference-previews-collapsible-placeholder": "Гэтая зноска змяшчае выяву, якая не ўпісваецца ў перадпрагляд.",
 	"cite_references_link_accessibility_label": "Назад",
 	"cite_references_link_many_accessibility_label": "Угару да:",
 	"cite_references_link_accessibility_back_label": "Вярнуцца назад",
@@ -42,5 +49,9 @@
 	"cite-wikieditor-help-content-reference-description": "Зноска",
 	"cite-wikieditor-help-content-named-reference-description": "Зноска з назвай",
 	"cite-wikieditor-help-content-rereference-description": "Шматразовае карыстанне зноскай",
-	"cite-wikieditor-help-content-showreferences-description": "Паказаць зноскі"
+	"cite-wikieditor-help-content-showreferences-description": "Паказаць зноскі",
+	"popups-prefs-navpopups-gadget-conflict-info": "У вас уключаны гаджэт «[[$1|Навігацыйныя акенцы]]», таму вы не ўбачыце перадпрагляды, які забяспечваецца гэтай функцыяй. У залежнасці ад вашай вікі, гаджэт можа мець крыху іншую назву. Калі праблемы працягваюцца, праглядзіце свае гаджэты і карыстальніцкія скрыпты, у тым ліку глабальныя.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "У вас уключаныя гаджэты «[[$1|Навігацыйныя акенцы]]» і «[[$1|Выплыўныя зноскі]]», таму вы не ўбачыце перадпрагляды, які забяспечваецца гэтай функцыяй. У залежнасці ад вашай вікі, гаджэт можа мець крыху іншую назву. Калі праблемы працягваюцца, праглядзіце свае гаджэты і карыстальніцкія скрыпты, у тым ліку глабальныя.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "У вас уключаны гаджэт «[[$1|Выплыўныя зноскі]]», таму вы не будзеце бачыць перадпрагляды зносак, але ўсё адно будзеце бачыць перадпрагляд старонак. У залежнасці ад вашай вікі, гаджэт можа мець крыху іншую назву. Калі праблемы працягваюцца, праглядзіце свае гаджэты і карыстальніцкія скрыпты, у тым ліку глабальныя.",
+	"popups-refpreview-user-preference-label": "Уключыць перадпрагляд зносак (атрымаць хуткі перадпрагляд зноскі пры чытанні старонкі)"
 }

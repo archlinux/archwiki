@@ -1,7 +1,7 @@
 QUnit.module( 'ext.echo.dm - NotificationGroupsList' );
 
-QUnit.test( 'Constructing the model', function ( assert ) {
-	var model = new mw.echo.dm.NotificationGroupsList();
+QUnit.test( 'Constructing the model', ( assert ) => {
+	const model = new mw.echo.dm.NotificationGroupsList();
 
 	assert.strictEqual(
 		model.getTimestamp(),
@@ -10,9 +10,9 @@ QUnit.test( 'Constructing the model', function ( assert ) {
 	);
 } );
 
-QUnit.test( 'Managing lists', function ( assert ) {
-	var model = new mw.echo.dm.NotificationGroupsList();
-	var groupDefinitions = [
+QUnit.test( 'Managing lists', ( assert ) => {
+	const model = new mw.echo.dm.NotificationGroupsList();
+	const groupDefinitions = [
 		{
 			name: 'foo',
 			sourceData: {
@@ -50,7 +50,7 @@ QUnit.test( 'Managing lists', function ( assert ) {
 		}
 	];
 
-	groupDefinitions.forEach( function ( def, i ) {
+	groupDefinitions.forEach( ( def, i ) => {
 		model.addGroup(
 			def.name,
 			def.sourceData,
@@ -63,7 +63,7 @@ QUnit.test( 'Managing lists', function ( assert ) {
 			'Group number increases after addGroup ("' + def.name + '")'
 		);
 
-		var result = model.getGroupByName( def.name );
+		const result = model.getGroupByName( def.name );
 		assert.strictEqual(
 			result.getName(),
 			def.name,
@@ -86,7 +86,7 @@ QUnit.test( 'Managing lists', function ( assert ) {
 	);
 
 	// Removing the last item from a group should remove the group
-	var group = model.getGroupByName( 'baz' );
+	const group = model.getGroupByName( 'baz' );
 	group.discardItems( groupDefinitions[ 2 ].items );
 	assert.strictEqual(
 		model.getGroupByName( 'baz' ),
@@ -95,10 +95,10 @@ QUnit.test( 'Managing lists', function ( assert ) {
 	);
 } );
 
-QUnit.test( 'Emitting discard event', function ( assert ) {
-	var results = [];
-	var model = new mw.echo.dm.NotificationGroupsList();
-	var groups = {
+QUnit.test( 'Emitting discard event', ( assert ) => {
+	const results = [];
+	const model = new mw.echo.dm.NotificationGroupsList();
+	const groups = {
 		first: [
 			new mw.echo.dm.NotificationItem( 0 ),
 			new mw.echo.dm.NotificationItem( 1 ),
@@ -121,12 +121,12 @@ QUnit.test( 'Emitting discard event', function ( assert ) {
 
 	// Listen to the event
 	model
-		.on( 'discard', function ( g ) {
+		.on( 'discard', ( g ) => {
 			results.push( g.getName() );
 		} );
 
 	// Fill the list
-	for ( var group in groups ) {
+	for ( const group in groups ) {
 		model.addGroup( group, {}, groups[ group ] );
 	}
 

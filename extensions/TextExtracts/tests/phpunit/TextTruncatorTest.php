@@ -1,11 +1,11 @@
 <?php
 
-namespace TextExtracts\Test;
+namespace MediaWiki\Extension\TextExtracts\Test;
 
-use TextExtracts\TextTruncator;
+use MediaWiki\Extension\TextExtracts\TextTruncator;
 
 /**
- * @covers \TextExtracts\TextTruncator
+ * @covers MediaWiki\Extension\TextExtracts\TextTruncator
  * @group TextExtracts
  *
  * @license GPL-2.0-or-later

@@ -4,21 +4,42 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
 use Generator;
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
+use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager
+ * @covers \MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager
  */
 class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	use MockAuthorityTrait;
 
 	private function getPermMan(): AbuseFilterPermissionManager {
-		// No longer has any dependencies
-		return new AbuseFilterPermissionManager();
+		$userOptions = new StaticUserOptionsLookup(
+			[
+				'User1' => [
+					'abusefilter-protected-vars-view-agreement' => 1
+				],
+				'User2' => [
+					'abusefilter-protected-vars-view-agreement' => ''
+				],
+			]
+		);
+		return new AbuseFilterPermissionManager(
+			new ServiceOptions(
+				AbuseFilterPermissionManager::CONSTRUCTOR_OPTIONS,
+				[
+					'AbuseFilterProtectedVariables' => [ 'user_unnamed_ip' ]
+				]
+			),
+			$userOptions
+		);
 	}
 
 	public function provideCanEdit(): Generator {
@@ -39,7 +60,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 * @param ?DatabaseBlock $block
 	 * @param array $rights
 	 * @param bool $expected
-	 * @covers ::canEdit
 	 * @dataProvider provideCanEdit
 	 */
 	public function testCanEdit( ?DatabaseBlock $block, array $rights, bool $expected ) {
@@ -64,7 +84,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canEditGlobal
 	 * @dataProvider provideCanEditGlobal
 	 */
 	public function testCanEditGlobal( array $rights, bool $expected ) {
@@ -103,7 +122,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 * @param ?DatabaseBlock $block
 	 * @param array $rights
 	 * @param bool $expected
-	 * @covers ::canEditFilter
 	 * @dataProvider provideCanEditFilter
 	 */
 	public function testCanEditFilter(
@@ -135,7 +153,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canViewPrivateFilters
 	 * @dataProvider provideCanViewPrivateFilters
 	 */
 	public function testCanViewPrivateFilters( array $rights, bool $expected ) {
@@ -156,7 +173,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param array $rights
 	 * @param bool $expected
-	 * @covers ::canViewPrivateFiltersLogs
 	 * @dataProvider provideCanViewPrivateFiltersLogs
 	 */
 	public function testCanViewPrivateFiltersLogs( array $rights, bool $expected ) {
@@ -170,26 +186,178 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	public static function provideCanSeeLogDetailsForFilter(): Generator {
 		$details = [ 0 => 'abusefilter-log-detail' ];
 		$private = [ 1 => 'abusefilter-log-private' ];
-		yield 'filter hidden, not privileged' => [ true, [], false ];
-		yield 'filter hidden, details only' => [ true, $details, false ];
-		yield 'filter hidden, private logs only' => [ true, $private, false ];
-		yield 'filter hidden, details and private logs' => [ true, $details + $private, true ];
-		yield 'filter visible, not privileged' => [ false, [], false ];
-		yield 'filter visible, privileged' => [ false, $details, true ];
+		$protected = [ 2 => 'abusefilter-access-protected-vars' ];
+
+		yield 'filter hidden, not privileged' => [ Flags::FILTER_HIDDEN, [], false ];
+		yield 'filter hidden, details only' => [ Flags::FILTER_HIDDEN, $details, false ];
+		yield 'filter hidden, private logs only' => [ Flags::FILTER_HIDDEN, $private, false ];
+		yield 'filter hidden, details and private logs' => [ Flags::FILTER_HIDDEN, $details + $private, true ];
+
+		yield 'filter protected, not privileged' => [ Flags::FILTER_USES_PROTECTED_VARS, [], false ];
+		yield 'filter protected, details only' => [ Flags::FILTER_USES_PROTECTED_VARS, $details, false ];
+		yield 'filter protected, protected logs only' => [ Flags::FILTER_USES_PROTECTED_VARS, $protected, false ];
+		yield 'filter protected, privileged' => [ Flags::FILTER_USES_PROTECTED_VARS, $details + $protected, true ];
+
+		$hiddenProtected = Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
+		yield 'filter hidden and protected, not privileged' => [ $hiddenProtected, [], false ];
+		yield 'filter hidden and protected, details only' => [ $hiddenProtected, $details, false ];
+		yield 'filter hidden and protected, private only' => [ $hiddenProtected, $private, false ];
+		yield 'filter hidden and protected, protected only' => [ $hiddenProtected, $protected, false ];
+		yield 'filter hidden and protected, details and private only' => [
+			$hiddenProtected, $details + $private, false
+		];
+		yield 'filter hidden and protected, details and protected only' => [
+			$hiddenProtected, $details + $protected, false
+		];
+		yield 'filter hidden and protected, private and protected only' => [
+			$hiddenProtected, $private + $protected, false
+		];
+		yield 'filter hidden and protected, privileged' => [
+			$hiddenProtected, $details + $private + $protected, true
+		];
+
+		yield 'filter visible, not privileged' => [ Flags::FILTER_PUBLIC, [], false ];
+		yield 'filter visible, privileged' => [ Flags::FILTER_PUBLIC, $details, true ];
 	}
 
 	/**
-	 * @param bool $filterHidden
+	 * @param int $privacyLevel
 	 * @param array $rights
 	 * @param bool $expected
-	 * @covers ::canSeeLogDetailsForFilter
 	 * @dataProvider provideCanSeeLogDetailsForFilter
 	 */
-	public function testCanSeeLogDetailsForFilter( bool $filterHidden, array $rights, bool $expected ) {
+	public function testCanSeeLogDetailsForFilter( int $privacyLevel, array $rights, bool $expected ) {
 		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
 		$this->assertSame(
 			$expected,
-			$this->getPermMan()->canSeeLogDetailsForFilter( $performer, $filterHidden )
+			$this->getPermMan()->canSeeLogDetailsForFilter( $performer, $privacyLevel )
+		);
+	}
+
+	public function provideCanViewProtectedVariables(): Generator {
+		$block = $this->createMock( DatabaseBlock::class );
+		$block->method( 'isSiteWide' )->willReturn( true );
+		yield 'not privileged, blocked' => [ $block, [], false ];
+		yield 'not privileged, not blocked' => [ null, [], false ];
+		yield 'has right, blocked' => [ $block, [ 'abusefilter-access-protected-vars' ], false ];
+		yield 'has right, not blocked' => [ null, [ 'abusefilter-access-protected-vars' ], true ];
+	}
+
+	/**
+	 * @dataProvider provideCanViewProtectedVariables
+	 */
+	public function testCanViewProtectedVariables( ?DatabaseBlock $block, array $rights, bool $expected ) {
+		if ( $block !== null ) {
+			$performer = $this->mockUserAuthorityWithBlock(
+				$this->mockRegisteredUltimateAuthority()->getUser(),
+				$block,
+				$rights
+			);
+		} else {
+			$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		}
+
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->canViewProtectedVariables( $performer )
+		);
+	}
+
+	public function provideCanViewProtectedVariableValues(): Generator {
+		$userCheckedPreference = new UserIdentityValue( 1, 'User1' );
+		$userUncheckedPreference = new UserIdentityValue( 2, 'User2' );
+		yield 'can view protected variables, has checked preference' => [
+			[ 'abusefilter-access-protected-vars' ], $userCheckedPreference, true
+		];
+		yield 'can view protected variables, has not checked preference' => [
+			[ 'abusefilter-access-protected-vars' ], $userUncheckedPreference, false
+		];
+		yield 'cannot view protected variables, has checked preference' => [
+			[], $userCheckedPreference, false
+		];
+		yield 'cannot view protected variables, has not checked preference' => [
+			[], $userUncheckedPreference, false
+		];
+	}
+
+	/**
+	 * @dataProvider provideCanViewProtectedVariableValues
+	 */
+	public function testCanViewProtectedVariableValues( array $rights, UserIdentityValue $user, bool $expected ) {
+		$performer = $this->mockUserAuthorityWithPermissions( $user, $rights );
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->canViewProtectedVariableValues( $performer )
+		);
+	}
+
+	public function provideTestGetUsedProtectedVariables(): Generator {
+		$userCheckedPreference = new UserIdentityValue( 1, 'User1' );
+		$userUncheckedPreference = new UserIdentityValue( 2, 'User2' );
+		yield 'uses protected variables' => [
+			[ 'user_unnamed_ip', 'user_name' ], [ 'user_unnamed_ip' ]
+		];
+		yield 'no protected variables' => [
+			[ 'user_name' ], []
+		];
+	}
+
+	/**
+	 * @dataProvider provideTestGetUsedProtectedVariables
+	 */
+	public function testGetUsedProtectedVariables( array $usedVariables, $expected ) {
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->getUsedProtectedVariables( $usedVariables )
+		);
+	}
+
+	public static function provideGetForbiddenVariables(): Generator {
+		yield 'cannot view, protected vars' => [
+			[
+				'rights' => [],
+				'usedVars' => [ 'user_unnamed_ip' ]
+			],
+			[ 'user_unnamed_ip' ]
+		];
+		yield 'cannot view, no protected vars' => [
+			[
+				'rights' => [],
+				'usedVars' => []
+			],
+			[]
+		];
+		yield 'can view, protected vars' => [
+			[
+				'rights' => [ 'abusefilter-access-protected-vars' ],
+				'usedVars' => [ 'user_unnamed_ip' ]
+			],
+			[]
+		];
+		yield 'can view, no protected vars' => [
+			[
+				'rights' => [ 'abusefilter-access-protected-vars' ],
+				'usedVars' => []
+			],
+			[]
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetForbiddenVariables
+	 */
+	public function testGetForbiddenVariables( array $data, $expected ) {
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $data[ 'rights' ] );
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->getForbiddenVariables( $performer, $data[ 'usedVars' ] )
+		);
+	}
+
+	public function testGetProtectedVariables() {
+		$this->assertSame(
+			[ 'user_unnamed_ip' ],
+			$this->getPermMan()->getProtectedVariables()
 		);
 	}
 
@@ -201,7 +369,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canEditFilterWithRestrictedActions
 	 * @dataProvider provideSimpleCases
 	 */
 	public function testCanEditFilterWithRestrictedActions( bool $allowed ) {
@@ -214,7 +381,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canViewAbuseLog
 	 * @dataProvider provideSimpleCases
 	 */
 	public function testCanViewAbuseLog( bool $allowed ) {
@@ -227,7 +393,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canHideAbuseLog
 	 * @dataProvider provideSimpleCases
 	 */
 	public function testCanHideAbuseLog( bool $allowed ) {
@@ -240,7 +405,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canRevertFilterActions
 	 * @dataProvider provideSimpleCases
 	 */
 	public function testCanRevertFilterActions( bool $allowed ) {
@@ -253,7 +417,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canSeeLogDetails
 	 * @dataProvider provideSimpleCases
 	 */
 	public function testCanSeeLogDetails( bool $allowed ) {
@@ -266,7 +429,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canSeePrivateDetails
 	 * @dataProvider provideSimpleCases
 	 */
 	public function testCanSeePrivateDetails( bool $allowed ) {
@@ -279,7 +441,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canSeeHiddenLogEntries
 	 * @dataProvider provideSimpleCases
 	 */
 	public function testCanSeeHiddenLogEntries( bool $allowed ) {
@@ -292,7 +453,6 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canUseTestTools
 	 * @dataProvider provideSimpleCases
 	 */
 	public function testCanUseTestTools( bool $allowed ) {

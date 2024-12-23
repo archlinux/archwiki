@@ -18,6 +18,9 @@
  * @file
  */
 
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Rdbms\DBUnexpectedError;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -55,8 +58,6 @@ class LoadMonitorTest extends MediaWikiUnitTestCase {
 
 		$lbMock->method( 'getClusterName' )
 			->willReturn( 'test-cluster' );
-		$lbMock->method( 'getWriterIndex' )
-			->willReturn( 0 );
 
 		$wanMock = new WANObjectCache( [ 'cache' => new HashBagOStuff() ] );
 
@@ -65,6 +66,44 @@ class LoadMonitorTest extends MediaWikiUnitTestCase {
 		$weights = [ 0, 100, 100, 100, 100 ];
 		$loadMonitor->scaleLoads( $weights );
 		$this->assertSame( [ 0, 130, 111, 91, 72 ], $weights );
+	}
+
+	public function testCircuitBreaking() {
+		$dbArray = $this->newMultiServerLocalLoadBalancer();
+		$dbs = [];
+		foreach ( $dbArray as $i => $info ) {
+			$dbMock = $this->createMock( IDatabase::class );
+			$dbMock->method( 'getType' )
+				->willReturn( 'mysql' );
+			$dbMock->method( 'query' )
+				->willReturn( new FakeResultWrapper( [ [ 'pcount' => $i * 500 ] ] ) );
+			$dbs[] = $dbMock;
+		}
+		$lbMock = $this->createMock( ILoadBalancer::class );
+		$lbMock->method( 'getServerInfo' )
+			->willReturnCallback( static function ( $i ) use ( $dbArray ) {
+				return $dbArray[$i] ?? false;
+			} );
+		$lbMock->method( 'getServerName' )
+			->willReturnCallback( static function ( $i ) use ( $dbArray ) {
+				return $dbArray[$i]['serverName'] ?? false;
+			} );
+
+		$lbMock->method( 'getServerConnection' )
+			->willReturnCallback( static function ( $i ) use ( $dbs ) {
+				return $dbs[$i];
+			} );
+
+		$lbMock->method( 'getClusterName' )
+			->willReturn( 'test-cluster' );
+
+		$wanMock = new WANObjectCache( [ 'cache' => new HashBagOStuff() ] );
+
+		$loadMonitor = new LoadMonitor( $lbMock, new HashBagOStuff(), $wanMock, [ 'maxConnCount' => 400 ] );
+
+		$weights = [ 0, 100, 100, 100, 100 ];
+		$this->expectException( DBUnexpectedError::class );
+		$loadMonitor->scaleLoads( $weights );
 	}
 
 	private function newMultiServerLocalLoadBalancer() {
@@ -79,65 +118,65 @@ class LoadMonitorTest extends MediaWikiUnitTestCase {
 		return [
 			// Primary DB
 			0 => [
-					'serverName' => 'db0',
-					'host' => $DBserver,
-					'port' => $DBport,
-					'dbname' => $DBname,
-					'tablePrefix' => $prefix,
-					'user' => $DBuser,
-					'password' => $DBpassword,
-					'type' => $DBtype,
-					'flags' => DBO_TRX,
-					'load' => 0,
-				],
+				'serverName' => 'db0',
+				'host' => $DBserver,
+				'port' => $DBport,
+				'dbname' => $DBname,
+				'tablePrefix' => $prefix,
+				'user' => $DBuser,
+				'password' => $DBpassword,
+				'type' => $DBtype,
+				'flags' => DBO_TRX,
+				'load' => 0,
+			],
 			1 => [
-					'serverName' => 'db1',
-					'host' => $DBserver,
-					'port' => $DBport,
-					'dbname' => $DBname,
-					'tablePrefix' => $prefix,
-					'user' => $DBuser,
-					'password' => $DBpassword,
-					'type' => $DBtype,
-					'flags' => DBO_TRX,
-					'load' => 100,
-				],
+				'serverName' => 'db1',
+				'host' => $DBserver,
+				'port' => $DBport,
+				'dbname' => $DBname,
+				'tablePrefix' => $prefix,
+				'user' => $DBuser,
+				'password' => $DBpassword,
+				'type' => $DBtype,
+				'flags' => DBO_TRX,
+				'load' => 100,
+			],
 			2 => [
-					'serverName' => 'db2',
-					'host' => $DBserver,
-					'port' => $DBport,
-					'dbname' => $DBname,
-					'tablePrefix' => $prefix,
-					'user' => $DBuser,
-					'password' => $DBpassword,
-					'type' => $DBtype,
-					'flags' => DBO_TRX,
-					'load' => 100,
-				],
+				'serverName' => 'db2',
+				'host' => $DBserver,
+				'port' => $DBport,
+				'dbname' => $DBname,
+				'tablePrefix' => $prefix,
+				'user' => $DBuser,
+				'password' => $DBpassword,
+				'type' => $DBtype,
+				'flags' => DBO_TRX,
+				'load' => 100,
+			],
 			3 => [
-					'serverName' => 'db3',
-					'host' => $DBserver,
-					'port' => $DBport,
-					'dbname' => $DBname,
-					'tablePrefix' => $prefix,
-					'user' => $DBuser,
-					'password' => $DBpassword,
-					'type' => $DBtype,
-					'load' => 100,
-					'flags' => DBO_TRX,
-				],
+				'serverName' => 'db3',
+				'host' => $DBserver,
+				'port' => $DBport,
+				'dbname' => $DBname,
+				'tablePrefix' => $prefix,
+				'user' => $DBuser,
+				'password' => $DBpassword,
+				'type' => $DBtype,
+				'load' => 100,
+				'flags' => DBO_TRX,
+			],
 			4 => [
-					'serverName' => 'db4',
-					'host' => $DBserver,
-					'port' => $DBport,
-					'dbname' => $DBname,
-					'tablePrefix' => $prefix,
-					'user' => $DBuser,
-					'password' => $DBpassword,
-					'type' => $DBtype,
-					'load' => 100,
-					'flags' => DBO_TRX,
-				],
+				'serverName' => 'db4',
+				'host' => $DBserver,
+				'port' => $DBport,
+				'dbname' => $DBname,
+				'tablePrefix' => $prefix,
+				'user' => $DBuser,
+				'password' => $DBpassword,
+				'type' => $DBtype,
+				'load' => 100,
+				'flags' => DBO_TRX,
+			],
 		];
 	}
 }

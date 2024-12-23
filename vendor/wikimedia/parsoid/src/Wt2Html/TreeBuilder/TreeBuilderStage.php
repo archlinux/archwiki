@@ -89,7 +89,7 @@ class TreeBuilderStage extends PipelineStage {
 		 * -------------------------------------------------------------------- */
 		$this->tableDepth = 0;
 
-		$this->remexPipeline = $this->env->fetchRemexPipeline( $this->atTopLevel );
+		$this->remexPipeline = $this->env->fetchRemexPipeline( $this->toFragment );
 		$this->textContentBuffer = '';
 		$this->lastToken = null;
 	}
@@ -127,9 +127,7 @@ class TreeBuilderStage extends PipelineStage {
 			);
 		}
 
-		if ( $this->atTopLevel ) {
-			$node = DOMCompat::getBody( $this->remexPipeline->doc );
-		} else {
+		if ( $this->toFragment ) {
 			// This is similar to DOMCompat::setInnerHTML() in that we can
 			// consider it equivalent to the fragment parsing algorithm,
 			// https://html.spec.whatwg.org/#html-fragment-parsing-algorithm
@@ -137,6 +135,8 @@ class TreeBuilderStage extends PipelineStage {
 			DOMUtils::migrateChildrenBetweenDocs(
 				DOMCompat::getBody( $this->remexPipeline->doc ), $node
 			);
+		} else {
+			$node = DOMCompat::getBody( $this->remexPipeline->doc );
 		}
 
 		return $node;
@@ -158,12 +158,11 @@ class TreeBuilderStage extends PipelineStage {
 	 * @param DataParsoid $dataParsoid
 	 * @return array
 	 */
-	private function stashDataAttribs( array $attribs, DataParsoid $dataParsoid ): array {
+	private function stashDataAttribs( array $attribs, DataParsoid $dataParsoid, ?DataMw $dataMw ): array {
 		$data = new NodeData;
 		$data->parsoid = $dataParsoid;
-		if ( isset( $attribs['data-mw'] ) ) {
-			$data->mw = new DataMw( (array)json_decode( $attribs['data-mw'] ) );
-			unset( $attribs['data-mw'] );
+		if ( $dataMw !== null ) {
+			$data->mw = $dataMw;
 		}
 		// Store in the top level doc since we'll be importing the nodes after treebuilding
 		$nodeId = DOMDataUtils::stashObjectInDoc( $this->env->topLevelDoc, $data );
@@ -188,7 +187,8 @@ class TreeBuilderStage extends PipelineStage {
 
 		$dispatcher = $this->remexPipeline->dispatcher;
 		$attribs = isset( $token->attribs ) ? $this->kvArrToAttr( $token->attribs ) : [];
-		$dataParsoid = $token->dataParsoid ?? new DataParsoid;
+		$dataParsoid = !is_string( $token ) ? $token->dataParsoid : new DataParsoid;
+		$dataMw = $token->dataMw ?? null;
 		$tmp = $dataParsoid->getTemp();
 
 		if ( $this->inTransclusion ) {
@@ -256,7 +256,7 @@ class TreeBuilderStage extends PipelineStage {
 
 			$node = $this->remexPipeline->insertExplicitStartTag(
 				$tName,
-				$this->stashDataAttribs( $attribs, $dataParsoid ),
+				$this->stashDataAttribs( $attribs, $dataParsoid, $dataMw ),
 				false
 			);
 			if ( !$node ) {
@@ -288,7 +288,7 @@ class TreeBuilderStage extends PipelineStage {
 						$this->inTransclusion = ( $transType === 'mw:Transclusion' );
 					}
 					$this->remexPipeline->insertUnfosteredMeta(
-						$this->stashDataAttribs( $attribs, $dataParsoid ) );
+						$this->stashDataAttribs( $attribs, $dataParsoid, $dataMw ) );
 					$wasInserted = true;
 				}
 			}
@@ -296,7 +296,7 @@ class TreeBuilderStage extends PipelineStage {
 			if ( !$wasInserted ) {
 				$node = $this->remexPipeline->insertExplicitStartTag(
 					$tName,
-					$this->stashDataAttribs( $attribs, $dataParsoid ),
+					$this->stashDataAttribs( $attribs, $dataParsoid, $dataMw ),
 					false
 				);
 				if ( $node ) {
@@ -358,7 +358,7 @@ class TreeBuilderStage extends PipelineStage {
 				// Add a marker meta tag to aid accurate DSR computation
 				$attribs = [ 'typeof' => 'mw:Placeholder/UnclosedComment' ];
 				$this->remexPipeline->insertUnfosteredMeta(
-					$this->stashDataAttribs( $attribs, $dp ) );
+					$this->stashDataAttribs( $attribs, $dp, $token->dataMw ) );
 			}
 			$dispatcher->comment( $token->value, 0, 0 );
 		} elseif ( $token instanceof EOFTk ) {
@@ -452,7 +452,7 @@ class TreeBuilderStage extends PipelineStage {
 			$this->remexPipeline->insertUnfosteredMeta(
 				$this->stashDataAttribs(
 					[ 'typeof' => 'mw:Placeholder/StrippedTag' ],
-					$metaDP
+					$metaDP, null
 				)
 			);
 		}
@@ -461,7 +461,7 @@ class TreeBuilderStage extends PipelineStage {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( $input, array $opts = null ) {
+	public function process( $input, array $opts ) {
 		'@phan-var array $input'; // @var array $input
 		$this->processChunk( $input );
 		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
@@ -471,7 +471,7 @@ class TreeBuilderStage extends PipelineStage {
 	/**
 	 * @inheritDoc
 	 */
-	public function processChunkily( $input, array $opts = null ): Generator {
+	public function processChunkily( $input, array $opts ): Generator {
 		if ( $this->prevStage ) {
 			foreach ( $this->prevStage->processChunkily( $input, $opts ) as $chunk ) {
 				'@phan-var array $chunk'; // @var array $chunk

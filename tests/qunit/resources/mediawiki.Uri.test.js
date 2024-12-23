@@ -6,7 +6,7 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 	QUnit.test.each( 'new mw.Uri( string ) with HTTP value', {
 		'strict mode': true,
 		'non-strict mode': false
-	}, function ( assert, strictMode ) {
+	}, ( assert, strictMode ) => {
 		const uriString = 'http://www.ietf.org/rfc/rfc2396.txt';
 		const uri = new mw.Uri( uriString, {
 			strictMode: strictMode
@@ -60,7 +60,7 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 			// preserve order of multi-value parameters
 			m: [ 'foo', 'bar' ]
 		} ]
-	], function ( assert, [ overrideKeys, expected ] ) {
+	], ( assert, [ overrideKeys, expected ] ) => {
 		const uri = new mw.Uri( 'http://www.example.com/dir/?m=foo&m=bar&n=1', {
 			overrideKeys: overrideKeys
 		} );
@@ -68,7 +68,7 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.propEqual( uri.query, expected, 'query object' );
 	} );
 
-	QUnit.test( 'new mw.Uri( string ) with non-HTTP values', function ( assert ) {
+	QUnit.test( 'new mw.Uri( string ) with non-HTTP values', ( assert ) => {
 		let uri = new mw.Uri( 'ftp://usr:pwd@192.0.2.16/' );
 		assert.propContains( uri,
 			{
@@ -95,23 +95,15 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 			'Array query parameters parsed as normal with arrayParams:false'
 		);
 		assert.throws(
-			function () {
-				return new mw.Uri( 'glaswegian penguins' );
-			},
-			function ( e ) {
-				return e.message === 'Bad constructor arguments';
-			},
+			() => new mw.Uri( 'glaswegian penguins' ),
+			( e ) => e.message === 'Bad constructor arguments',
 			'throw error on non-URI as argument to constructor'
 		);
 		assert.throws(
-			function () {
-				return new mw.Uri( 'example.com/bar/baz', {
-					strictMode: true
-				} );
-			},
-			function ( e ) {
-				return e.message === 'Bad constructor arguments';
-			},
+			() => new mw.Uri( 'example.com/bar/baz', {
+				strictMode: true
+			} ),
+			( e ) => e.message === 'Bad constructor arguments',
 			'throw error on URI without protocol or // or leading / in strict mode'
 		);
 
@@ -133,8 +125,8 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		);
 	} );
 
-	QUnit.test( 'new mw.Uri( Object )', function ( assert ) {
-		var uri = new mw.Uri( {
+	QUnit.test( 'new mw.Uri( Object )', ( assert ) => {
+		let uri = new mw.Uri( {
 			protocol: 'http',
 			host: 'www.foo.local',
 			path: '/this'
@@ -151,26 +143,20 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.strictEqual( uri.toString(), 'http://www.foo.local/this?hi=there#blah', 'complex input' );
 
 		assert.throws(
-			function () {
-				return new mw.Uri( {
-					protocol: 'http',
-					host: 'www.foo.local'
-				} );
-			},
-			function ( e ) {
-				return e.message === 'Bad constructor arguments';
-			},
+			() => new mw.Uri( {
+				protocol: 'http',
+				host: 'www.foo.local'
+			} ),
+			( e ) => e.message === 'Bad constructor arguments',
 			'missing required properties'
 		);
 	} );
 
-	QUnit.test( 'new mw.Uri( empty )', function ( assert ) {
-		var testuri, MyUri, uri;
+	QUnit.test( 'new mw.Uri( empty )', ( assert ) => {
+		const testuri = 'http://example.org/w/index.php?a=1&a=2';
+		const MyUri = mw.UriRelative( testuri );
 
-		testuri = 'http://example.org/w/index.php?a=1&a=2';
-		MyUri = mw.UriRelative( testuri );
-
-		uri = new MyUri();
+		let uri = new MyUri();
 		assert.strictEqual( uri.toString(), testuri, 'no arguments' );
 
 		uri = new MyUri( undefined );
@@ -186,12 +172,10 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.deepEqual( uri.query, { a: '2' }, 'null, with options' );
 	} );
 
-	QUnit.test( 'Setting properties', function ( assert ) {
-		var uriBase, uri;
+	QUnit.test( 'Setting properties', ( assert ) => {
+		const uriBase = new mw.Uri( 'http://en.wiki.local/w/api.php' );
 
-		uriBase = new mw.Uri( 'http://en.wiki.local/w/api.php' );
-
-		uri = uriBase.clone();
+		let uri = uriBase.clone();
 		uri.fragment = 'frag';
 		assert.strictEqual( uri.toString(), 'http://en.wiki.local/w/api.php#frag', 'add a fragment' );
 		uri.fragment = 'café';
@@ -214,15 +198,17 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.strictEqual( uri.toString(), 'http://en.wiki.local/w/api.php?foo=bar', 'extend query arguments' );
 		uri.extend( {
 			foo: 'quux',
-			pif: 'paf'
+			pif: 'paf',
+			absent: undefined // T372742
 		} );
 		assert.true( uri.toString().includes( 'foo=quux' ), 'extend query arguments' );
 		assert.false( uri.toString().includes( 'foo=bar' ), 'extend query arguments' );
 		assert.true( uri.toString().includes( 'pif=paf' ), 'extend query arguments' );
+		assert.false( uri.toString().includes( 'absent' ), 'extend query arguments' );
 	} );
 
-	QUnit.test( '.getQueryString()', function ( assert ) {
-		var uri = new mw.Uri( 'http://search.example.com/?q=uri' );
+	QUnit.test( '.getQueryString()', ( assert ) => {
+		let uri = new mw.Uri( 'http://search.example.com/?q=uri' );
 
 		assert.propContains( uri,
 			{
@@ -247,16 +233,12 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		);
 	} );
 
-	QUnit.test( 'arrayParams', function ( assert ) {
-		var uri1, uri2, uri3, expectedQ, expectedS,
-			uriMissing, expectedMissingQ, expectedMissingS,
-			uriWeird, expectedWeirdQ, expectedWeirdS;
-
-		uri1 = new mw.Uri( 'http://example.com/?foo[]=a&foo[]=b&foo[]=c', { arrayParams: true } );
-		uri2 = new mw.Uri( 'http://example.com/?foo[0]=a&foo[1]=b&foo[2]=c', { arrayParams: true } );
-		uri3 = new mw.Uri( 'http://example.com/?foo[1]=b&foo[0]=a&foo[]=c', { arrayParams: true } );
-		expectedQ = { foo: [ 'a', 'b', 'c' ] };
-		expectedS = 'foo%5B0%5D=a&foo%5B1%5D=b&foo%5B2%5D=c';
+	QUnit.test( 'arrayParams', ( assert ) => {
+		const uri1 = new mw.Uri( 'http://example.com/?foo[]=a&foo[]=b&foo[]=c', { arrayParams: true } );
+		const uri2 = new mw.Uri( 'http://example.com/?foo[0]=a&foo[1]=b&foo[2]=c', { arrayParams: true } );
+		const uri3 = new mw.Uri( 'http://example.com/?foo[1]=b&foo[0]=a&foo[]=c', { arrayParams: true } );
+		const expectedQ = { foo: [ 'a', 'b', 'c' ] };
+		const expectedS = 'foo%5B0%5D=a&foo%5B1%5D=b&foo%5B2%5D=c';
 
 		assert.deepEqual( uri1.query, expectedQ,
 			'array query parameters are parsed (implicit indexes)' );
@@ -271,19 +253,19 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.deepEqual( uri3.getQueryString(), expectedS,
 			'array query parameters are encoded (always with explicit indexes)' );
 
-		uriMissing = new mw.Uri( 'http://example.com/?foo[0]=a&foo[2]=c', { arrayParams: true } );
+		const uriMissing = new mw.Uri( 'http://example.com/?foo[0]=a&foo[2]=c', { arrayParams: true } );
 		// eslint-disable-next-line no-sparse-arrays
-		expectedMissingQ = { foo: [ 'a', , 'c' ] };
-		expectedMissingS = 'foo%5B0%5D=a&foo%5B2%5D=c';
+		const expectedMissingQ = { foo: [ 'a', , 'c' ] };
+		const expectedMissingS = 'foo%5B0%5D=a&foo%5B2%5D=c';
 
 		assert.deepEqual( uriMissing.query, expectedMissingQ,
 			'array query parameters are parsed (missing array item)' );
 		assert.deepEqual( uriMissing.getQueryString(), expectedMissingS,
 			'array query parameters are encoded (missing array item)' );
 
-		uriWeird = new mw.Uri( 'http://example.com/?foo[0]=a&foo[1][1]=b&foo[x]=c', { arrayParams: true } );
-		expectedWeirdQ = { foo: [ 'a' ], 'foo[1][1]': 'b', 'foo[x]': 'c' };
-		expectedWeirdS = 'foo%5B0%5D=a&foo%5B1%5D%5B1%5D=b&foo%5Bx%5D=c';
+		const uriWeird = new mw.Uri( 'http://example.com/?foo[0]=a&foo[1][1]=b&foo[x]=c', { arrayParams: true } );
+		const expectedWeirdQ = { foo: [ 'a' ], 'foo[1][1]': 'b', 'foo[x]': 'c' };
+		const expectedWeirdS = 'foo%5B0%5D=a&foo%5B1%5D%5B1%5D=b&foo%5Bx%5D=c';
 
 		assert.deepEqual( uriWeird.query, expectedWeirdQ,
 			'array query parameters are parsed (multi-dimensional or associative arrays are ignored)' );
@@ -291,11 +273,9 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 			'array query parameters are encoded (multi-dimensional or associative arrays are ignored)' );
 	} );
 
-	QUnit.test( '.clone()', function ( assert ) {
-		var original, clone;
-
-		original = new mw.Uri( 'http://foo.example.org/index.php?one=1&two=2' );
-		clone = original.clone();
+	QUnit.test( '.clone()', ( assert ) => {
+		const original = new mw.Uri( 'http://foo.example.org/index.php?one=1&two=2' );
+		const clone = original.clone();
 
 		assert.deepEqual( clone, original, 'clone has equivalent properties' );
 		assert.strictEqual( original.toString(), clone.toString(), 'toString matches original' );
@@ -315,10 +295,8 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		);
 	} );
 
-	QUnit.test( '.toString() after query manipulation', function ( assert ) {
-		var uri;
-
-		uri = new mw.Uri( 'http://www.example.com/dir/?m=foo&m=bar&n=1', {
+	QUnit.test( '.toString() after query manipulation', ( assert ) => {
+		let uri = new mw.Uri( 'http://www.example.com/dir/?m=foo&m=bar&n=1', {
 			overrideKeys: true
 		} );
 
@@ -354,14 +332,11 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.strictEqual( uri.toString(), 'http://www.example.com/dir/', 'empty array value is omitted' );
 	} );
 
-	QUnit.test( 'Variable defaultUri', function ( assert ) {
-		var uri,
-			href = 'http://example.org/w/index.php#here',
-			UriClass = mw.UriRelative( function () {
-				return href;
-			} );
+	QUnit.test( 'Variable defaultUri', ( assert ) => {
+		let href = 'http://example.org/w/index.php#here';
+		const UriClass = mw.UriRelative( () => href );
 
-		uri = new UriClass();
+		let uri = new UriClass();
 		assert.propContains( uri,
 			{
 				protocol: 'http',
@@ -394,7 +369,7 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		);
 	} );
 
-	QUnit.test( 'Advanced URL', function ( assert ) {
+	QUnit.test( 'Advanced URL', ( assert ) => {
 		const uri = new mw.Uri( 'http://auth@www.example.com:81/dir/dir.2/index.htm?q1=0&&test1&test2=value+%28escaped%29#caf%C3%A9' );
 		assert.propContains( uri,
 			{
@@ -426,8 +401,8 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.true( relativePath.includes( mw.Uri.encode( uri.fragment ) ), 'escaped fragment in relative path' );
 	} );
 
-	QUnit.test( 'Parse a uri with an @ symbol in the path and query', function ( assert ) {
-		var uri = new mw.Uri( 'http://www.example.com/test@test?x=@uri&y@=uri&z@=@' );
+	QUnit.test( 'Parse a uri with an @ symbol in the path and query', ( assert ) => {
+		const uri = new mw.Uri( 'http://www.example.com/test@test?x=@uri&y@=uri&z@=@' );
 		assert.propContains( uri,
 			{
 				protocol: 'http',
@@ -444,12 +419,10 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.strictEqual( uri.getQueryString(), 'x=%40uri&y%40=uri&z%40=%40', 'query string' );
 	} );
 
-	QUnit.test( 'Handle protocol-relative URLs', function ( assert ) {
-		var UriRel, uri;
+	QUnit.test( 'Handle protocol-relative URLs', ( assert ) => {
+		const UriRel = mw.UriRelative( 'glork://en.wiki.local/foo.php' );
 
-		UriRel = mw.UriRelative( 'glork://en.wiki.local/foo.php' );
-
-		uri = new UriRel( '//en.wiki.local/w/api.php' );
+		let uri = new UriRel( '//en.wiki.local/w/api.php' );
 		assert.strictEqual( uri.protocol, 'glork', 'create protocol-relative URLs with same protocol as document' );
 
 		uri = new UriRel( '/foo.com' );
@@ -465,7 +438,7 @@ QUnit.module( 'mediawiki.Uri', ( hooks ) => {
 		assert.strictEqual( uri.toString(), 'http://en.wiki.local/foo.com', 'handle absolute paths by supplying host from document in strict mode' );
 	} );
 
-	QUnit.test( 'T37658', function ( assert ) {
+	QUnit.test( 'T37658', ( assert ) => {
 		const testProtocol = 'https://';
 		const testServer = 'foo.example.org';
 		const testPort = '3004';

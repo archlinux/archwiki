@@ -12,7 +12,7 @@
  * is a sub-element of a {@see ve.dm.MWTransclusionModel}.
  *
  * @class
- * @mixins OO.EventEmitter
+ * @mixes OO.EventEmitter
  *
  * @constructor
  * @param {ve.dm.MWTemplateModel} template Reference back to the template that contains the
@@ -42,7 +42,7 @@ OO.mixinClass( ve.dm.MWParameterModel, OO.EventEmitter );
 /**
  * Emitted when the parameter's value changed.
  *
- * @event change
+ * @event ve.dm.MWParameterModel#change
  */
 
 /* Methods */
@@ -154,7 +154,7 @@ ve.dm.MWParameterModel.prototype.getType = function () {
 
 /**
  * @param {string} value
- * @fires change
+ * @fires ve.dm.MWTemplateModel#change
  */
 ve.dm.MWParameterModel.prototype.setValue = function ( value ) {
 	if ( this.value !== value ) {

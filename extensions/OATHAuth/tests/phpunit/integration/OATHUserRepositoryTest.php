@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Extension\OATHAuth\Tests\Integration;
 
-use EmptyBagOStuff;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
@@ -28,6 +27,7 @@ use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\CentralId\CentralIdLookupFactory;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
 
@@ -84,7 +84,7 @@ class OATHUserRepositoryTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$this->assertNotEmpty(
-			$this->db->newSelectQueryBuilder()
+			$this->getDb()->newSelectQueryBuilder()
 				->select( '1' )
 				->from( 'oathauth_devices' )
 				->where( [ 'oad_user' => $oathUser->getCentralId() ] )

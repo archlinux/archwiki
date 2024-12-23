@@ -28,6 +28,11 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\Field\HTMLMultiSelectField;
+use MediaWiki\HTMLForm\Field\HTMLSelectField;
+use MediaWiki\HTMLForm\Field\HTMLTitleTextField;
+use MediaWiki\HTMLForm\Field\HTMLUserTextField;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
@@ -40,12 +45,14 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
+use MediaWiki\Xml\Xml;
 
 class LogEventsList extends ContextSource {
 	public const NO_ACTION_LINK = 1;
 	public const NO_EXTRA_USER_LINKS = 2;
 	public const USE_CHECKBOXES = 4;
 
+	/** @var int */
 	public $flags;
 
 	/**
@@ -60,6 +67,8 @@ class LogEventsList extends ContextSource {
 
 	/** @var HookRunner */
 	private $hookRunner;
+
+	private LogFormatterFactory $logFormatterFactory;
 
 	/** @var MapCacheLRU */
 	private $tagsCache;
@@ -77,7 +86,9 @@ class LogEventsList extends ContextSource {
 		if ( $linkRenderer instanceof LinkRenderer ) {
 			$this->linkRenderer = $linkRenderer;
 		}
-		$this->hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
+		$services = MediaWikiServices::getInstance();
+		$this->hookRunner = new HookRunner( $services->getHookContainer() );
+		$this->logFormatterFactory = $services->getLogFormatterFactory();
 		$this->tagsCache = new MapCacheLRU( 50 );
 	}
 
@@ -312,9 +323,8 @@ class LogEventsList extends ContextSource {
 	 */
 	public function logLine( $row ) {
 		$entry = DatabaseLogEntry::newFromRow( $row );
-		$formatter = LogFormatter::newFromEntry( $entry );
+		$formatter = $this->logFormatterFactory->newFromEntry( $entry );
 		$formatter->setContext( $this->getContext() );
-		$formatter->setLinkRenderer( $this->getLinkRenderer() );
 		$formatter->setShowUserToolLinks( !( $this->flags & self::NO_EXTRA_USER_LINKS ) );
 
 		$time = $this->getLanguage()->userTimeAndDate(
@@ -581,6 +591,8 @@ class LogEventsList extends ContextSource {
 			$msgKey = [ $msgKey ];
 		}
 
+		// ???
+		// @phan-suppress-next-line PhanRedundantCondition
 		if ( $out instanceof OutputPage ) {
 			$context = $out->getContext();
 		} else {
@@ -607,7 +619,8 @@ class LogEventsList extends ContextSource {
 			'',
 			0,
 			$services->getLinkBatchFactory(),
-			$services->getActorNormalization()
+			$services->getActorNormalization(),
+			$services->getLogFormatterFactory()
 		);
 		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( !$useRequestParams ) {
@@ -746,7 +759,7 @@ class LogEventsList extends ContextSource {
 	 * @return string|false String on success, false on failure.
 	 * @throws InvalidArgumentException
 	 */
-	public static function getExcludeClause( $db, $audience = 'public', Authority $performer = null ) {
+	public static function getExcludeClause( $db, $audience = 'public', ?Authority $performer = null ) {
 		$logRestrictions = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::LogRestrictions );
 
 		if ( $audience != 'public' && $performer === null ) {

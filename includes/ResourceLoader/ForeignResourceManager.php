@@ -24,11 +24,13 @@ use Composer\Spdx\SpdxLicenses;
 use LogicException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use PharData;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
+use Wikimedia\UUID\GlobalIdGenerator;
 
 /**
  * Manage foreign resources registered with ResourceLoader.
@@ -79,6 +81,8 @@ class ForeignResourceManager {
 	/** @var array[] */
 	private $registry;
 
+	private GlobalIdGenerator $globalIdGenerator;
+
 	/**
 	 * @param string $registryFile Path to YAML file
 	 * @param string $libDir Path to a modules directory
@@ -90,10 +94,11 @@ class ForeignResourceManager {
 	public function __construct(
 		$registryFile,
 		$libDir,
-		callable $infoPrinter = null,
-		callable $errorPrinter = null,
-		callable $verbosePrinter = null
+		?callable $infoPrinter = null,
+		?callable $errorPrinter = null,
+		?callable $verbosePrinter = null
 	) {
+		$this->globalIdGenerator = MediaWikiServices::getInstance()->getGlobalIdGenerator();
 		$this->registryFile = $registryFile;
 		$this->libDir = $libDir;
 		$this->infoPrinter = $infoPrinter ?? static function ( $_ ) {
@@ -103,13 +108,17 @@ class ForeignResourceManager {
 		};
 
 		// Support XDG_CACHE_HOME to speed up CI by avoiding repeated downloads.
-		$conf = MediaWikiServices::getInstance()->getMainConfig();
-		if ( ( $cacheHome = getenv( 'XDG_CACHE_HOME' ) ) !== false ) {
+		$cacheHome = getenv( 'XDG_CACHE_HOME' );
+		if ( $cacheHome !== false ) {
 			$this->cacheDir = realpath( $cacheHome ) . '/mw-foreign';
-		} elseif ( ( $cacheConf = $conf->get( MainConfigNames::CacheDirectory ) ) !== false ) {
-			$this->cacheDir = "$cacheConf/ForeignResourceManager";
 		} else {
-			$this->cacheDir = "{$this->libDir}/.foreign/cache";
+			$conf = MediaWikiServices::getInstance()->getMainConfig();
+			$cacheConf = $conf->get( MainConfigNames::CacheDirectory );
+			if ( $cacheConf !== false ) {
+				$this->cacheDir = "$cacheConf/ForeignResourceManager";
+			} else {
+				$this->cacheDir = "{$this->libDir}/.foreign/cache";
+			}
 		}
 	}
 
@@ -120,7 +129,7 @@ class ForeignResourceManager {
 	 * @throws LogicException
 	 */
 	public function run( $action, $module ) {
-		$actions = [ 'update', 'verify', 'make-sri' ];
+		$actions = [ 'update', 'verify', 'make-sri', 'make-cdx' ];
 		if ( !in_array( $action, $actions ) ) {
 			$this->error( "Invalid action.\n\nMust be one of " . implode( ', ', $actions ) . '.' );
 			return false;
@@ -139,6 +148,17 @@ class ForeignResourceManager {
 				'.'
 			);
 			return false;
+		}
+
+		if ( $this->action === 'make-cdx' ) {
+			$cdxFile = $this->getCdxFileLocation();
+			$cdxJson = json_encode(
+				$this->generateCdxForModules( $modules ),
+				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR
+			);
+			file_put_contents( $cdxFile, $cdxJson );
+			$this->output( "Created CycloneDX file at $cdxFile\n" );
+			return true;
 		}
 
 		foreach ( $modules as $moduleName => $info ) {
@@ -194,26 +214,6 @@ class ForeignResourceManager {
 				default:
 					throw new LogicException( "Unknown type '{$info['type']}' for '$moduleName'" );
 			}
-
-			if ( $this->action === 'update' ) {
-				foreach ( $info['transforms'] ?? [] as $file => $transforms ) {
-					$fullFilePath = "$destDir/$file";
-					if ( !file_exists( $fullFilePath ) ) {
-						throw new LogicException( "$moduleName: invalid transform target $file" );
-					}
-					if ( !is_array( $transforms ) || !array_is_list( $transforms ) ) {
-						$transforms = [ $transforms ];
-					}
-					foreach ( $transforms as $transform ) {
-						if ( $transform === 'nomin' ) {
-							// not super efficient but these files aren't expected to be large
-							file_put_contents( $fullFilePath, "/*@nomin*/\n" . file_get_contents( $fullFilePath ) );
-						} else {
-							throw new LogicException( "$moduleName: invalid transform $transform" );
-						}
-					}
-				}
-			}
 		}
 
 		$this->cleanUp();
@@ -226,6 +226,24 @@ class ForeignResourceManager {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Returns a JSON string describing the foreign resources in a CycloneDX format.
+	 */
+	public function generateCdx(): string {
+		$this->registry = Yaml::parseFile( $this->registryFile );
+		return json_encode(
+			$this->generateCdxForModules( $this->registry ),
+			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR
+		);
+	}
+
+	/**
+	 * Get the path to the CycloneDX file that describes the foreign resources.
+	 */
+	public function getCdxFileLocation(): string {
+		return "$this->libDir/foreign-resources.cdx.json";
 	}
 
 	/**
@@ -294,13 +312,20 @@ class ForeignResourceManager {
 			}
 		}
 
-		$req = MediaWikiServices::getInstance()->getHttpRequestFactory()
+		$services = MediaWikiServices::getInstance();
+		$req = $services->getHttpRequestFactory()
 			->create( $src, [ 'method' => 'GET', 'followRedirects' => false ], __METHOD__ );
-		if ( !$req->execute()->isOK() ) {
-			throw new LogicException( "Failed to download resource at {$src}" );
+		$reqStatusValue = $req->execute();
+		if ( !$reqStatusValue->isOK() ) {
+			$message = "Failed to download resource at {$src}";
+			$reqError = $reqStatusValue->getMessages( 'error' )[0] ?? null;
+			if ( $reqError !== null ) {
+				$message .= ': ' . Message::newFromSpecifier( $reqError )->inLanguage( 'en' )->plain();
+			}
+			throw new ForeignResourceNetworkException( $message );
 		}
 		if ( $req->getStatus() !== 200 ) {
-			throw new LogicException( "Unexpected HTTP {$req->getStatus()} response from {$src}" );
+			throw new ForeignResourceNetworkException( "Unexpected HTTP {$req->getStatus()} response from {$src}" );
 		}
 		$data = $req->getContent();
 		$algo = $integrity === null ? $this->defaultAlgo : explode( '-', $integrity )[0];
@@ -313,7 +338,7 @@ class ForeignResourceManager {
 			$this->output( "Integrity for {$src}\n\tintegrity: {$actualIntegrity}\n" );
 		} else {
 			$expectedIntegrity = $integrity ?? 'null';
-			throw new LogicException( "Integrity check failed for {$src}\n" .
+			throw new ForeignResourceNetworkException( "Integrity check failed for {$src}\n" .
 				"\tExpected: {$expectedIntegrity}\n" .
 				"\tActual: {$actualIntegrity}"
 			);
@@ -495,6 +520,46 @@ class ForeignResourceManager {
 				. "see <https://spdx.org/licenses/>.\n"
 			);
 		}
+	}
+
+	private function generateCdxForModules( array $modules ): array {
+		$cdx = [
+			'$schema' => 'http://cyclonedx.org/schema/bom-1.6.schema.json',
+			'bomFormat' => 'CycloneDX',
+			'specVersion' => '1.6',
+			'serialNumber' => 'urn:uuid:' . $this->globalIdGenerator->newUUIDv4(),
+			'version' => 1,
+			'components' => [],
+		];
+		foreach ( $modules as $moduleName => $module ) {
+			$moduleCdx = [
+				'type' => 'library',
+				'name' => $moduleName,
+				'version' => $module['version'],
+			];
+			if ( preg_match( '/ (AND|OR|WITH) /', $module['license'] ) ) {
+				$moduleCdx['licenses'][] = [ 'expression' => $module['license'] ];
+			} else {
+				$moduleCdx['licenses'][] = [ 'license' => [ 'id' => $module['license'] ] ];
+			}
+			if ( $module['purl'] ?? false ) {
+				$moduleCdx['purl'] = $module['purl'];
+			}
+			if ( $module['version'] ?? false ) {
+				$moduleCdx['version'] = $module['version'];
+			}
+			if ( $module['authors'] ?? false ) {
+				$moduleCdx['authors'] = array_map(
+					fn ( $author ) => [ 'name' => $author ],
+					preg_split( '/,( and)? /', $module['authors'] )
+				);
+			}
+			if ( $module['homepage'] ?? false ) {
+				$moduleCdx['externalReferences'] = [ [ 'url' => $module['homepage'], 'type' => 'website' ] ];
+			}
+			$cdx['components'][] = $moduleCdx;
+		}
+		return $cdx;
 	}
 }
 

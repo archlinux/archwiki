@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Parser;
 
-use BagOStuff;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
+use Wikimedia\ObjectCache\BagOStuff;
 
 /**
  * Tokenizer for AbuseFilter rules.

@@ -1,4 +1,4 @@
-$( function () {
+$( () => {
 
 	/**
 	 * Parse a line ID, e.g. "L-18"
@@ -112,4 +112,4 @@ $( function () {
 	// Check hash on load
 	onHashChange( true );
 
-}() );
+} );

@@ -1,14 +1,17 @@
 <?php
 // phpcs:disable MediaWiki.Files.ClassMatchesFilename.NotMatch
+use MediaWiki\Content\TextContent;
+use MediaWiki\Language\Language;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Search pages for a given regex
@@ -120,17 +123,25 @@ class GrepPages extends Maintenance {
 				$orConds[] = $prefixExpr;
 			}
 		}
-		$res = $dbr->newSelectQueryBuilder()
-			->queryInfo( WikiPage::getQueryInfo() )
-			->where( $orConds ? new OrExpressionGroup( ...$orConds ) : [] )
-			->caller( __METHOD__ )
-			->fetchResultSet();
-		foreach ( $res as $row ) {
-			$title = Title::newFromRow( $row );
-			yield $this->wikiPageFactory->newFromTitle( $title );
-		}
+		$lastId = 0;
+		do {
+			$res = $dbr->newSelectQueryBuilder()
+				->queryInfo( WikiPage::getQueryInfo() )
+				->where( $orConds ? $dbr->orExpr( $orConds ) : [] )
+				->andWhere( $dbr->expr( 'page_id', '>', $lastId ) )
+				->limit( 200 )
+				->caller( __METHOD__ )
+				->fetchResultSet();
+			foreach ( $res as $row ) {
+				$title = Title::newFromRow( $row );
+				yield $this->wikiPageFactory->newFromTitle( $title );
+				$lastId = $row->page_id;
+			}
+		} while ( $res->numRows() );
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GrepPages::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -6,6 +6,7 @@
  */
 
 use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWiki\Maintenance\Maintenance;
 
 require_once getenv( 'MW_INSTALL_PATH' ) !== false
 	? getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php'
@@ -44,15 +45,15 @@ class RemoveInvalidNotification extends Maintenance {
 		$count = $batchSize;
 
 		while ( $count == $batchSize ) {
-			$res = $dbr->select(
-				[ 'echo_event' ],
-				[ 'event_id' ],
-				[
+			$res = $dbr->newSelectQueryBuilder()
+				->select( 'event_id' )
+				->from( 'echo_event' )
+				->where( [
 					'event_type' => $this->invalidEventType,
-				],
-				__METHOD__,
-				[ 'LIMIT' => $batchSize ]
-			);
+				] )
+				->limit( $batchSize )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 
 			$event = [];
 			$count = 0;
@@ -67,16 +68,16 @@ class RemoveInvalidNotification extends Maintenance {
 			if ( $event ) {
 				$this->beginTransaction( $dbw, __METHOD__ );
 
-				$dbw->delete(
-					'echo_event',
-					[ 'event_id' => $event ],
-					__METHOD__
-				);
-				$dbw->delete(
-					'echo_notification',
-					[ 'notification_event' => $event ],
-					__METHOD__
-				);
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'echo_event' )
+					->where( [ 'event_id' => $event ] )
+					->caller( __METHOD__ )
+					->execute();
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'echo_notification' )
+					->where( [ 'notification_event' => $event ] )
+					->caller( __METHOD__ )
+					->execute();
 
 				$this->commitTransaction( $dbw, __METHOD__ );
 

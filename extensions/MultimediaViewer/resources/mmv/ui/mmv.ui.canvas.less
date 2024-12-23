@@ -19,7 +19,7 @@
 		a,
 		a:visited {
 			cursor: pointer;
-			color: #3472e5;
+			color: @color-progressive;
 		}
 	}
 
@@ -50,17 +50,10 @@
 	display: block;
 	margin-right: auto;
 	margin-left: auto;
-	cursor: pointer;
 	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	cursor: zoom-in;
 
-	&.blurred {
-		-webkit-filter: blur( 3px );
-		filter: blur( 3px );
-		opacity: 0.8;
-	}
-
-	/* Whitelist file types that are potentially transparent.
+	/* Allowlist file types that are potentially transparent.
 	   We don't set it for other file types because Media Viewer plugins
 	   can find that undesirable (eg. 3d) */
 	&.gif,

@@ -24,6 +24,7 @@ use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
@@ -120,7 +121,7 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * @return ImageGalleryBase
 	 * @throws ImageGalleryClassNotFoundException
 	 */
-	public static function factory( $mode = false, IContextSource $context = null ) {
+	public static function factory( $mode = false, ?IContextSource $context = null ) {
 		self::loadModes();
 		if ( !$context ) {
 			$context = RequestContext::getMainAndWarn( __METHOD__ );
@@ -169,7 +170,7 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * @param string $mode
 	 * @param IContextSource|null $context
 	 */
-	public function __construct( $mode = 'traditional', IContextSource $context = null ) {
+	public function __construct( $mode = 'traditional', ?IContextSource $context = null ) {
 		if ( $context ) {
 			$this->setContext( $context );
 		}
@@ -246,7 +247,12 @@ abstract class ImageGalleryBase extends ContextSource {
 	 *   and those below 0 are ignored.
 	 */
 	public function setWidths( $num ) {
-		$parsed = Parser::parseWidthParam( $num, false );
+		$parser = $this->mParser;
+		if ( !$parser ) {
+			wfDeprecated( __METHOD__ . ' without parser', '1.43' );
+			$parser = MediaWikiServices::getInstance()->getParser();
+		}
+		$parsed = $parser->parseWidthParam( $num, false );
 		if ( isset( $parsed['width'] ) && $parsed['width'] > 0 ) {
 			$this->mWidths = $parsed['width'];
 		}
@@ -259,7 +265,12 @@ abstract class ImageGalleryBase extends ContextSource {
 	 *   and those below 0 are ignored.
 	 */
 	public function setHeights( $num ) {
-		$parsed = Parser::parseWidthParam( $num, false );
+		$parser = $this->mParser;
+		if ( !$parser ) {
+			wfDeprecated( __METHOD__ . ' without parser', '1.43' );
+			$parser = MediaWikiServices::getInstance()->getParser();
+		}
+		$parsed = $parser->parseWidthParam( $num, false );
 		if ( isset( $parsed['width'] ) && $parsed['width'] > 0 ) {
 			$this->mHeights = $parsed['width'];
 		}

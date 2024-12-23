@@ -15,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "यो अप्रदर्शित नियम हो।",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "यो नियमले पृष्ठको शीर्षकलाई असर पार्दछ।",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "भाषा&nbsp;कोड",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<अमान्य>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>अमान्य</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "भाषा",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "अनुवाद",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "गन्तव्य",

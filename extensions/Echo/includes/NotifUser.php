@@ -15,7 +15,7 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
@@ -100,14 +100,6 @@ class NotifUser {
 	/**
 	 * Usually client code doesn't need to initialize the object directly
 	 * because it could be obtained from factory method newFromUser()
-	 * @param UserIdentity $user
-	 * @param WANObjectCache $cache
-	 * @param UserNotificationGateway $userNotifGateway
-	 * @param NotificationMapper $notifMapper
-	 * @param TargetPageMapper $targetPageMapper
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param UserFactory $userFactory
-	 * @param ReadOnlyMode $readOnlyMode
 	 */
 	public function __construct(
 		UserIdentity $user,

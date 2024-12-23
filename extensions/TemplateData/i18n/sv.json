@@ -72,7 +72,6 @@
 	"templatedata-modal-button-map": "Redigera kartor",
 	"templatedata-modal-button-importParams": "Importera parametrar",
 	"templatedata-modal-button-removemap": "Ta bort karta",
-	"templatedata-modal-button-restoreparam": "Återställ parameter",
 	"templatedata-modal-button-saveparam": "Spara",
 	"templatedata-modal-confirmcancel": "Är du säker på att du vill slänga dina ändringar?",
 	"templatedata-modal-current-language": "Aktuellt språk: $1",

@@ -19,12 +19,12 @@
  */
 namespace Wikimedia\Rdbms;
 
-use BagOStuff;
-use EmptyBagOStuff;
 use LogicException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
 
 /**
  * Provide a given client with protection against visible database lag.
@@ -87,7 +87,7 @@ use Psr\Log\NullLogger;
  *
  * ### Storage requirements
  *
- * The store used by ChronologyProtector, as configured via {@link $wgChronologyProtectorStash},
+ * The store used by ChronologyProtector, as configured via {@link $wgMicroStashType},
  * should meet the following requirements:
  *
  * - Low latencies. Nearly all web requests that involve a database connection will
@@ -173,7 +173,7 @@ class ChronologyProtector implements LoggerAwareInterface {
 	 *
 	 * If the clientId wasn't passed by the incoming request, lazyStartup()
 	 * can skip fetching position data, and thus LoadBalancer can skip
-	 * its IDatabase::primaryPosWait() call.
+	 * its IDatabaseForOwner::primaryPosWait() call.
 	 *
 	 * See also: <https://phabricator.wikimedia.org/T314434>
 	 *
@@ -302,7 +302,7 @@ class ChronologyProtector implements LoggerAwareInterface {
 		}
 
 		$cluster = $lb->getClusterName();
-		$primaryName = $lb->getServerName( $lb->getWriterIndex() );
+		$primaryName = $lb->getServerName( ServerInfo::WRITER_INDEX );
 
 		$pos = $this->getStartupSessionPositions()[$primaryName] ?? null;
 		if ( $pos instanceof DBPrimaryPos ) {
@@ -332,7 +332,7 @@ class ChronologyProtector implements LoggerAwareInterface {
 		}
 
 		$cluster = $lb->getClusterName();
-		$masterName = $lb->getServerName( $lb->getWriterIndex() );
+		$masterName = $lb->getServerName( ServerInfo::WRITER_INDEX );
 
 		if ( $lb->hasStreamingReplicaServers() ) {
 			$pos = $lb->getPrimaryPos();

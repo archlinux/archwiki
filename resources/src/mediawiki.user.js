@@ -4,10 +4,10 @@
  * @namespace mw.user
  */
 ( function () {
-	var userInfoPromise, tempUserNamePromise, pageviewRandomId, sessionId;
-	var CLIENTPREF_COOKIE_NAME = 'mwclientpreferences';
-	var CLIENTPREF_SUFFIX = '-clientpref-';
-	var CLIENTPREF_DELIMITER = ',';
+	let userInfoPromise, tempUserNamePromise, pageviewRandomId, sessionId;
+	const CLIENTPREF_COOKIE_NAME = 'mwclientpreferences';
+	const CLIENTPREF_SUFFIX = '-clientpref-';
+	const CLIENTPREF_DELIMITER = ',';
 
 	/**
 	 * Get the current user's groups or rights
@@ -30,19 +30,17 @@
 	 * @param {string} value
 	 */
 	function saveClientPrefs( feature, value ) {
-		var existingCookie = mw.cookie.get( CLIENTPREF_COOKIE_NAME ) || '';
-		var data = {};
-		existingCookie.split( CLIENTPREF_DELIMITER ).forEach( function ( keyValuePair ) {
-			var m = keyValuePair.match( /^([\w-]+)-clientpref-(\w+)$/ );
+		const existingCookie = mw.cookie.get( CLIENTPREF_COOKIE_NAME ) || '';
+		const data = {};
+		existingCookie.split( CLIENTPREF_DELIMITER ).forEach( ( keyValuePair ) => {
+			const m = keyValuePair.match( /^([\w-]+)-clientpref-(\w+)$/ );
 			if ( m ) {
 				data[ m[ 1 ] ] = m[ 2 ];
 			}
 		} );
 		data[ feature ] = value;
 
-		var newCookie = Object.keys( data ).map( function ( key ) {
-			return key + CLIENTPREF_SUFFIX + data[ key ];
-		} ).join( CLIENTPREF_DELIMITER );
+		const newCookie = Object.keys( data ).map( ( key ) => key + CLIENTPREF_SUFFIX + data[ key ] ).join( CLIENTPREF_DELIMITER );
 		mw.cookie.set( CLIENTPREF_COOKIE_NAME, newCookie );
 	}
 
@@ -97,9 +95,7 @@
 		 * @return {string} 80 bit integer (20 characters) in hex format, padded
 		 */
 		generateRandomSessionId: function () {
-			var rnds, i,
-				// Support: IE 11
-				crypto = window.crypto || window.msCrypto;
+			let rnds;
 
 			// We first attempt to generate a set of random values using the WebCrypto API's
 			// getRandomValues method. If the WebCrypto API is not supported, the Uint16Array
@@ -120,7 +116,7 @@
 				rnds = new Array( 5 );
 				// 0x10000 is 2^16 so the operation below will return a number
 				// between 2^16 and zero
-				for ( i = 0; i < 5; i++ ) {
+				for ( let i = 0; i < 5; i++ ) {
 					rnds[ i ] = Math.floor( Math.random() * 0x10000 );
 				}
 			}
@@ -214,14 +210,14 @@
 				// Temporary user username already acquired
 				tempUserNamePromise = $.Deferred().resolve( mw.config.get( 'wgTempUserName' ) );
 			} else {
-				var api = new mw.Api();
-				tempUserNamePromise = api.post( { action: 'acquiretempusername' } ).then( function ( resp ) {
+				const api = new mw.Api();
+				tempUserNamePromise = api.post( { action: 'acquiretempusername' } ).then( ( resp ) => {
 					mw.config.set( 'wgTempUserName', resp.acquiretempusername );
 					return resp.acquiretempusername;
-				} ).catch( function () {
+				} ).catch(
 					// Ignore failures. The temp name should not be necessary for anything to work.
-					return null;
-				} );
+					() => null
+				);
 			}
 
 			return tempUserNamePromise;
@@ -234,11 +230,10 @@
 		 *  unavailable, or Date for when the user registered.
 		 */
 		getRegistration: function () {
-			var registration;
 			if ( mw.user.isAnon() ) {
 				return false;
 			}
-			registration = mw.config.get( 'wgUserRegistration' );
+			const registration = mw.config.get( 'wgUserRegistration' );
 			// Registration may be unavailable if the user signed up before MediaWiki
 			// began tracking this.
 			return !registration ? null : new Date( registration );
@@ -246,6 +241,7 @@
 
 		/**
 		 * Get date user first registered, if available.
+		 *
 		 * @return {boolean|null|Date} False for anonymous users, null if data is
 		 *  unavailable, or Date for when the user registered. For temporary users
 		 *  that is when their temporary account was created.
@@ -254,7 +250,7 @@
 			if ( mw.user.isAnon() ) {
 				return false;
 			}
-			var registration = mw.config.get( 'wgUserFirstRegistration' );
+			const registration = mw.config.get( 'wgUserFirstRegistration' );
 			// Registration may be unavailable if the user signed up before MediaWiki
 			// began tracking this.
 			return registration ? new Date( registration ) : null;
@@ -313,7 +309,7 @@
 		 * @return {jQuery.Promise}
 		 */
 		getGroups: function ( callback ) {
-			var userGroups = mw.config.get( 'wgUserGroups', [] );
+			const userGroups = mw.config.get( 'wgUserGroups', [] );
 
 			// Uses promise for backwards compatibility
 			return $.Deferred().resolve( userGroups ).then( callback );
@@ -327,12 +323,8 @@
 		 */
 		getRights: function ( callback ) {
 			return getUserInfo().then(
-				function ( userInfo ) {
-					return userInfo.rights;
-				},
-				function () {
-					return [];
-				}
+				( userInfo ) => userInfo.rights,
+				() => []
 			).then( callback );
 		},
 
@@ -348,9 +340,9 @@
 		 * and swap class names server-side through the Skin interface.
 		 *
 		 * This feature is limited to page views by unregistered users. For logged-in requests,
-		 * store preferences in the database instead, via UserOptionsManager or `mw.Api.saveOption`
-		 * (may be hidden or API-only to exclude from Special:Preferences), and then include the
-		 * desired classes directly in Skin::getHtmlElementAttributes.
+		 * store preferences in the database instead, via UserOptionsManager or
+		 * {@link mw.Api#saveOption} (may be hidden or API-only to exclude from Special:Preferences),
+		 * and then include the desired classes directly in Skin::getHtmlElementAttributes.
 		 *
 		 * Classes toggled by this feature must be named as `<feature>-clientpref-<value>`,
 		 * where `value` contains only alphanumerical characters (a-z, A-Z, and 0-9), and `feature`
@@ -380,13 +372,13 @@
 				if ( !isValidFeatureName( feature ) || !isValidFeatureValue( value ) ) {
 					return false;
 				}
-				var currentValue = mw.user.clientPrefs.get( feature );
+				const currentValue = mw.user.clientPrefs.get( feature );
 				// the feature is not recognized
 				if ( !currentValue ) {
 					return false;
 				}
-				var oldFeatureClass = feature + CLIENTPREF_SUFFIX + currentValue;
-				var newFeatureClass = feature + CLIENTPREF_SUFFIX + value;
+				const oldFeatureClass = feature + CLIENTPREF_SUFFIX + currentValue;
+				const newFeatureClass = feature + CLIENTPREF_SUFFIX + value;
 				// The following classes are removed here:
 				// * feature-name-clientpref-<old-feature-value>
 				// * e.g. vector-font-size--clientpref-small
@@ -408,16 +400,16 @@
 			 *  returns string if a feature was found.
 			 */
 			get: function ( feature ) {
-				var featurePrefix = feature + CLIENTPREF_SUFFIX;
-				var docClass = document.documentElement.className;
-				// eslint-disable-next-line security/detect-non-literal-regexp
-				var featureRegEx = new RegExp(
+				const featurePrefix = feature + CLIENTPREF_SUFFIX;
+				const docClass = document.documentElement.className;
+
+				const featureRegEx = new RegExp(
 					'(^| )' + mw.util.escapeRegExp( featurePrefix ) + '([a-zA-Z0-9]+)( |$)'
 				);
-				var match = docClass.match( featureRegEx );
+				const match = docClass.match( featureRegEx );
 
 				// check no further matches if we replaced this occurance.
-				var isAmbiguous = docClass.replace( featureRegEx, '$1$3' ).match( featureRegEx ) !== null;
+				const isAmbiguous = docClass.replace( featureRegEx, '$1$3' ).match( featureRegEx ) !== null;
 				return !isAmbiguous && match ? match[ 2 ] : false;
 			}
 		}

@@ -40,10 +40,7 @@ class ContentHeadingItem extends ContentThreadItem implements HeadingItem {
 		$title = '';
 		// If this comment is in 0th section, there's no section title for the edit summary
 		if ( !$this->isPlaceholderHeading() ) {
-			// <span class="mw-headline" …>, or <hN …> in Parsoid HTML
-			$headline = $this->getRange()->startContainer;
-			Assert::precondition( $headline instanceof Element, 'HeadingItem refers to an element node' );
-			$id = $headline->getAttribute( 'id' ) ?: $headline->getAttribute( 'data-mw-anchor' );
+			$id = $this->getLinkableId();
 			if ( $id ) {
 				// Replace underscores with spaces to undo Sanitizer::escapeIdInternal().
 				// This assumes that $wgFragmentMode is [ 'html5', 'legacy' ] or [ 'html5' ],
@@ -53,6 +50,33 @@ class ContentHeadingItem extends ContentThreadItem implements HeadingItem {
 			// else: Not a real section, probably just HTML markup in wikitext
 		}
 		return $title;
+	}
+
+	/**
+	 * Return the ID found on the headline node, if it has one.
+	 *
+	 * In Parsoid HTML, it is stored in the `<hN id>` attribute.
+	 * In legacy parser HTML, it is stored in the `<hN data-mw-anchor>` attribute.
+	 * In integration tests and in JS, things are a little bit wilder than that.
+	 *
+	 * @return string
+	 */
+	public function getLinkableId(): string {
+		$headline = $this->getHeadlineNode();
+		return ( $headline->getAttribute( 'id' ) ?: $headline->getAttribute( 'data-mw-anchor' ) ) ?? '';
+	}
+
+	/**
+	 * Return the node on which the ID attribute is set.
+	 *
+	 * @return Element Headline node, normally a `<h1>`-`<h6>` element (unless it's a placeholder heading).
+	 *   In integration tests and in JS, it can be a `<span class="mw-headline">` (see T363031).
+	 */
+	public function getHeadlineNode(): Element {
+		// This value comes from CommentUtils::getHeadlineNode(), this function just guarantees the type
+		$headline = $this->getRange()->startContainer;
+		Assert::precondition( $headline instanceof Element, 'HeadingItem refers to an element node' );
+		return $headline;
 	}
 
 	public function isUneditableSection(): bool {

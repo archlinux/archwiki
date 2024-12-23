@@ -60,7 +60,7 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset {
 					foreach ( $params as $j => $param ) {
 						if ( !isset( $evaldArguments[$j] ) && $arg['name'] === $param['name'] ) {
 							$evaldArguments[$j] = $arg['value']->compile( $env );
-							array_unshift( $frame->rules, new Less_Tree_Rule( $arg['name'], $arg['value']->compile( $env ) ) );
+							array_unshift( $frame->rules, new Less_Tree_Declaration( $arg['name'], $arg['value']->compile( $env ) ) );
 							$isNamedFound = true;
 							break;
 						}
@@ -92,12 +92,17 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset {
 						$varargs[] = $args[$j]['value']->compile( $env );
 					}
 					$expression = new Less_Tree_Expression( $varargs );
-					array_unshift( $frame->rules, new Less_Tree_Rule( $name, $expression->compile( $env ) ) );
+					array_unshift( $frame->rules, new Less_Tree_Declaration( $name, $expression->compile( $env ) ) );
 				} else {
 					$val = ( $arg && $arg['value'] ) ? $arg['value'] : false;
 
 					if ( $val ) {
-						$val = $val->compile( $env );
+						// This was a mixin call, pass in a detached ruleset of it's eval'd rules
+						if ( is_array( $val ) ) {
+							$val = new Less_Tree_DetachedRuleset( new Less_Tree_Ruleset( null, $val ) );
+						} else {
+							$val = $val->compile( $env );
+						}
 					} elseif ( isset( $param['value'] ) ) {
 
 						if ( !$mixinEnv ) {
@@ -110,7 +115,7 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset {
 						throw new Less_Exception_Compiler( "Wrong number of arguments for " . $this->name . " (" . $argsLength . ' for ' . $this->arity . ")" );
 					}
 
-					array_unshift( $frame->rules, new Less_Tree_Rule( $name, $val ) );
+					array_unshift( $frame->rules, new Less_Tree_Declaration( $name, $val ) );
 					$evaldArguments[$i] = $val;
 				}
 			}
@@ -156,7 +161,7 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset {
 		$frame = $this->compileParams( $env, $mixinFrames, $args, $_arguments );
 
 		$ex = new Less_Tree_Expression( $_arguments );
-		array_unshift( $frame->rules, new Less_Tree_Rule( '@arguments', $ex->compile( $env ) ) );
+		array_unshift( $frame->rules, new Less_Tree_Declaration( '@arguments', $ex->compile( $env ) ) );
 
 		$ruleset = new Less_Tree_Ruleset( null, $this->rules );
 		$ruleset->originalRuleset = $this->ruleset_id;
@@ -205,7 +210,7 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset {
 	public function makeImportant() {
 		$important_rules = [];
 		foreach ( $this->rules as $rule ) {
-			if ( $rule instanceof Less_Tree_Rule || $rule instanceof self || $rule instanceof Less_Tree_NameValue ) {
+			if ( $rule instanceof Less_Tree_Declaration || $rule instanceof self || $rule instanceof Less_Tree_NameValue ) {
 				$important_rules[] = $rule->makeImportant();
 			} else {
 				$important_rules[] = $rule;

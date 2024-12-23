@@ -60,7 +60,7 @@
 	"gadgets-export-download": "Скачать",
 	"gadgets-requires-es6": "Этот гаджет поддерживается только в браузерах, совместимых с ES6.",
 	"gadgets-validate-notset": "Свойство <code>$1</code> не установлено.",
-	"gadgets-validate-wrongtype": "Свойство <code>$1</code> должно иметь <code>$2</code> вместо <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Свойство <code>$1</code> должно иметь тип <code>$2</code>.",
 	"gadgets-validate-json": "JSON-файлы указаны, но не используются. Они могут использоваться только в упакованных гаджетах.",
 	"gadgets-validate-es6default": "Гаджеты, требующие ES6, не могут быть включены по умолчанию.",
 	"gadgets-validate-noentrypoint": "Флаг упакованного гаджета проигнорирован, так как не указано файлов скриптов.",

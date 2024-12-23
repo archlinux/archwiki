@@ -20,11 +20,9 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {boolean} [autosize=false]
+ * @param {boolean} [config.autosize=false]
  */
 ve.ui.MWLazyMultilineTextInputWidget = function VeUiMWLazyMultilineTextInputWidget() {
-	var widget = this;
-
 	// Parent constructor
 	ve.ui.MWLazyMultilineTextInputWidget.super.apply( this, arguments );
 
@@ -32,10 +30,10 @@ ve.ui.MWLazyMultilineTextInputWidget = function VeUiMWLazyMultilineTextInputWidg
 	if ( this.autosize ) {
 		this.$input.addClass( 've-ui-mwLazyMultilineTextInputWidget-collapsed' );
 		this.autosize = false;
-		this.$input.one( 'focus', function () {
-			widget.$input.removeClass( 've-ui-mwLazyMultilineTextInputWidget-collapsed' );
-			widget.autosize = true;
-			widget.adjustSize();
+		this.$input.one( 'focus', () => {
+			this.$input.removeClass( 've-ui-mwLazyMultilineTextInputWidget-collapsed' );
+			this.autosize = true;
+			this.adjustSize();
 		} );
 	}
 };

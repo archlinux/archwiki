@@ -1,6 +1,6 @@
 'use strict';
 
-var slice = Array.prototype.slice;
+const slice = Array.prototype.slice;
 
 // Apply site-level data
 mw.config.set( require( './config.json' ) );
@@ -8,8 +8,8 @@ mw.config.set( require( './config.json' ) );
 require( './log.js' );
 
 /**
- * Object constructor for messages.
- * The constructor is not publicly accessible; use {@link mw.message} instead.
+ * @class mw.Message
+ * @classdesc Describes a translateable text or HTML string. Similar to the Message class in MediaWiki PHP.
  *
  * @example
  * var obj, str;
@@ -46,8 +46,9 @@ require( './log.js' );
  * mw.log( obj.escaped() );
  * // You will find: Time &quot;after&quot; &lt;time&gt;
  *
- * @class mw.Message
- * @classdesc Describes a translateable text or HTML string. Similar to the Message class in MediaWiki PHP.
+ * @constructor
+ * @description Object constructor for messages. The constructor is not publicly accessible;
+ * use {@link mw.message} instead.
  * @param {mw.Map} map Message store
  * @param {string} key
  * @param {Array} [parameters]
@@ -74,14 +75,24 @@ Message.prototype = /** @lends mw.Message.prototype */ {
 	 * @return {string} Parsed message
 	 */
 	parser: function ( format ) {
-		var text = this.map.get( this.key );
+		let text = this.map.get( this.key );
+
+		// Apply qqx formatting.
+		//
+		// - Keep this synchronised with LanguageQqx/MessageCache in PHP.
+		// - Keep this synchronised with mw.jqueryMsg.Parser#getAst.
+		//
+		// Unlike LanguageQqx in PHP, this doesn't replace unconditionally.
+		// It replaces non-existent messages, and messages that were exported by
+		// load.php as "(key)" in qqx formatting. Some extensions export other data
+		// via their message blob (T222944).
 		if (
 			mw.config.get( 'wgUserLanguage' ) === 'qqx' &&
-			text === '(' + this.key + ')'
+			( !text || text === '(' + this.key + ')' )
 		) {
 			text = '(' + this.key + '$*)';
 		}
-		text = mw.format.apply( null, [ text ].concat( this.parameters ) );
+		text = mw.format( text, ...this.parameters );
 		if ( format === 'parse' ) {
 			// We don't know how to parse anything, so escape it all
 			text = mw.html.escape( text );
@@ -97,9 +108,7 @@ Message.prototype = /** @lends mw.Message.prototype */ {
 	 * @chainable
 	 */
 	params: function ( parameters ) {
-		// Optimization: push all parameter arguments at once. Can't use spread operator
-		// `this.parameters.push( ...parameters );` yet, but apply() does the same thing.
-		Array.prototype.push.apply( this.parameters, parameters );
+		this.parameters.push( ...parameters );
 		return this;
 	},
 
@@ -118,15 +127,18 @@ Message.prototype = /** @lends mw.Message.prototype */ {
 	 */
 	toString: function ( format ) {
 		if ( !this.exists() ) {
-			// Use ⧼key⧽ as text if key does not exist
-			// Err on the side of safety, ensure that the output
-			// is always html safe in the event the message key is
-			// missing, since in that case its highly likely the
-			// message key is user-controlled.
-			// '⧼' is used instead of '<' to side-step any
-			// double-escaping issues.
-			// (Keep synchronised with Message::toString() in PHP.)
-			return '⧼' + mw.html.escape( this.key ) + '⧽';
+			// Make sure qqx works for non-existent messages, see parser() above.
+			if ( mw.config.get( 'wgUserLanguage' ) !== 'qqx' ) {
+				// Use ⧼key⧽ as text if key does not exist
+				// Err on the side of safety, ensure that the output
+				// is always html safe in the event the message key is
+				// missing, since in that case its highly likely the
+				// message key is user-controlled.
+				// '⧼' is used instead of '<' to side-step any
+				// double-escaping issues.
+				// (Keep synchronised with Message::toString() in PHP.)
+				return '⧼' + mw.html.escape( this.key ) + '⧽';
+			}
 		}
 
 		if ( !format ) {
@@ -232,11 +244,10 @@ mw.widgets = {};
  *
  * @ignore
  */
-mw.inspect = function () {
-	var args = arguments;
+mw.inspect = function ( ...reports ) {
 	// Lazy-load
-	mw.loader.using( 'mediawiki.inspect', function () {
-		mw.inspect.runReports.apply( mw.inspect, args );
+	mw.loader.using( 'mediawiki.inspect', () => {
+		mw.inspect.runReports( ...reports );
 	} );
 };
 
@@ -251,11 +262,9 @@ mw.inspect = function () {
  */
 mw.internalDoTransformFormatForQqx = function ( formatString, parameters ) {
 	if ( formatString.indexOf( '$*' ) !== -1 ) {
-		var replacement = '';
+		let replacement = '';
 		if ( parameters.length ) {
-			replacement = ': ' + parameters.map( function ( _, i ) {
-				return '$' + ( i + 1 );
-			} ).join( ', ' );
+			replacement = ': ' + parameters.map( ( _, i ) => '$' + ( i + 1 ) ).join( ', ' );
 		}
 		return formatString.replace( '$*', replacement );
 	}
@@ -293,11 +302,10 @@ mw.internalWikiUrlencode = function ( str ) {
  * @param {...Mixed} parameters Values for $N replacements
  * @return {string} Formatted string
  */
-mw.format = function ( formatString ) {
-	var parameters = slice.call( arguments, 1 );
+mw.format = function ( formatString, ...parameters ) {
 	formatString = mw.internalDoTransformFormatForQqx( formatString, parameters );
-	return formatString.replace( /\$(\d+)/g, function ( str, match ) {
-		var index = parseInt( match, 10 ) - 1;
+	return formatString.replace( /\$(\d+)/g, ( str, match ) => {
+		const index = parseInt( match, 10 ) - 1;
 		return parameters[ index ] !== undefined ? parameters[ index ] : '$' + match;
 	} );
 };
@@ -317,7 +325,7 @@ mw.Message = Message;
  * @return {mw.Message}
  */
 mw.message = function ( key ) {
-	var parameters = slice.call( arguments, 1 );
+	const parameters = slice.call( arguments, 1 );
 	return new Message( mw.messages, key, parameters );
 };
 
@@ -332,10 +340,11 @@ mw.message = function ( key ) {
  * @param {...any} parameters Values for $N replacements
  * @return {string}
  */
-mw.msg = function () {
+mw.msg = function ( key, ...parameters ) {
 	// Shortcut must process text transformations by default
 	// if mediawiki.jqueryMsg is loaded. (T46459)
-	return mw.message.apply( mw, arguments ).text();
+	// eslint-disable-next-line mediawiki/msg-doc
+	return mw.message( key, ...parameters ).text();
 };
 
 /**
@@ -349,13 +358,11 @@ mw.msg = function () {
  */
 mw.notify = function ( message, options ) {
 	// Lazy load
-	return mw.loader.using( 'mediawiki.notification' ).then( function () {
-		return mw.notification.notify( message, options );
-	} );
+	return mw.loader.using( 'mediawiki.notification' ).then( () => mw.notification.notify( message, options ) );
 };
 
-var trackCallbacks = $.Callbacks( 'memory' );
-var trackHandlers = [];
+const trackCallbacks = $.Callbacks( 'memory' );
+let trackHandlers = [];
 
 /**
  * Track an analytic event.
@@ -402,10 +409,10 @@ mw.track = function ( topic, data ) {
  * @param {Object} [callback.data]
  */
 mw.trackSubscribe = function ( topic, callback ) {
-	var seen = 0;
+	let seen = 0;
 	function handler( trackQueue ) {
 		for ( ; seen < trackQueue.length; seen++ ) {
-			var event = trackQueue[ seen ];
+			const event = trackQueue[ seen ];
 			if ( event.topic.indexOf( topic ) === 0 ) {
 				callback.call( event, event.topic, event.data );
 			}
@@ -423,7 +430,7 @@ mw.trackSubscribe = function ( topic, callback ) {
  * @param {Function} callback
  */
 mw.trackUnsubscribe = function ( callback ) {
-	trackHandlers = trackHandlers.filter( function ( fns ) {
+	trackHandlers = trackHandlers.filter( ( fns ) => {
 		if ( fns[ 1 ] === callback ) {
 			trackCallbacks.remove( fns[ 0 ] );
 			// Ensure the tuple is removed to avoid holding on to closures
@@ -452,6 +459,7 @@ trackCallbacks.fire( mw.trackQueue );
  * Features like navigating to other wiki pages, previewing an edit
  * and editing itself – without a refresh – can then retrigger these
  * hooks accordingly to ensure everything still works as expected.
+ * See {@link Hook}.
  *
  * Example usage:
  * ```
@@ -475,12 +483,11 @@ trackCallbacks.fire( mw.trackQueue );
  * new mw.Foo( .. ).fetch( { callback: h.fire } );
  * ```
  *
+ * The function signature for hooks can be considered [stable](https://www.mediawiki.org/wiki/Special:MyLanguage/Stable_interface_policy/Frontend).
  * See available global events below.
- *
- * @See {@link Hook}
  */
 
-var hooks = Object.create( null );
+const hooks = Object.create( null );
 
 /**
  * Create an instance of {@link Hook}.
@@ -495,10 +502,10 @@ var hooks = Object.create( null );
  */
 mw.hook = function ( name ) {
 	return hooks[ name ] || ( hooks[ name ] = ( function () {
-		var memory;
-		var fns = [];
+		let memory;
+		const fns = [];
 		function rethrow( e ) {
-			setTimeout( function () {
+			setTimeout( () => {
 				throw e;
 			} );
 		}
@@ -517,7 +524,7 @@ mw.hook = function ( name ) {
 			 * @return {Hook}
 			 */
 			add: function () {
-				for ( var i = 0; i < arguments.length; i++ ) {
+				for ( let i = 0; i < arguments.length; i++ ) {
 					fns.push( arguments[ i ] );
 					if ( memory ) {
 						try {
@@ -537,8 +544,8 @@ mw.hook = function ( name ) {
 			 * @return {Hook}
 			 */
 			remove: function () {
-				for ( var i = 0; i < arguments.length; i++ ) {
-					var j;
+				for ( let i = 0; i < arguments.length; i++ ) {
+					let j;
 					while ( ( j = fns.indexOf( arguments[ i ] ) ) !== -1 ) {
 						fns.splice( j, 1 );
 					}
@@ -554,7 +561,7 @@ mw.hook = function ( name ) {
 			 * @chainable
 			 */
 			fire: function () {
-				for ( var i = 0; i < fns.length; i++ ) {
+				for ( let i = 0; i < fns.length; i++ ) {
 					try {
 						fns[ i ].apply( null, arguments );
 					} catch ( e ) {
@@ -581,7 +588,6 @@ mw.hook = function ( name ) {
  * mw.log( output ); // <div><img src="&lt;"/></div>
  *
  * @namespace mw.html
- * @singleton
  */
 
 function escapeCallback( s ) {
@@ -628,11 +634,11 @@ mw.html = {
 	 * @return {string} HTML
 	 */
 	element: function ( name, attrs, contents ) {
-		var s = '<' + name;
+		let s = '<' + name;
 
 		if ( attrs ) {
-			for ( var attrName in attrs ) {
-				var v = attrs[ attrName ];
+			for ( const attrName in attrs ) {
+				let v = attrs[ attrName ];
 				// Convert name=true, to name=name
 				if ( v === true ) {
 					v = attrName;
@@ -670,7 +676,6 @@ mw.html = {
 	 * @classdesc Wrapper object for raw HTML. Can be used with {@link mw.html.element}.
 	 * @class mw.html.Raw
 	 * @param {string} value
-	 * @property {string} value
 	 * @example
 	 * const raw = new mw.html.Raw( 'Text' );
 	 * mw.html.element( 'div', { class: 'html' }, raw );
@@ -688,12 +693,12 @@ mw.html = {
  * @param {Function} fn
  */
 window.addOnloadHook = function ( fn ) {
-	$( function () {
+	$( () => {
 		fn();
 	} );
 };
 
-var loadedScripts = {};
+const loadedScripts = {};
 
 /**
  * Import a script using an absolute URI.
@@ -807,7 +812,7 @@ mw.loader.getModuleNames = function () {
  * @return {jQuery.Promise} With a `require` function
  */
 mw.loader.using = function ( dependencies, ready, error ) {
-	var deferred = $.Deferred();
+	const deferred = $.Deferred();
 
 	// Allow calling with a single dependency as a string
 	if ( !Array.isArray( dependencies ) ) {
@@ -830,7 +835,7 @@ mw.loader.using = function ( dependencies, ready, error ) {
 
 	mw.loader.enqueue(
 		dependencies,
-		function () {
+		() => {
 			deferred.resolve( mw.loader.require );
 		},
 		deferred.reject
@@ -860,7 +865,7 @@ mw.loader.using = function ( dependencies, ready, error ) {
  */
 mw.loader.getScript = function ( url ) {
 	return $.ajax( url, { dataType: 'script', cache: true } )
-		.catch( function () {
+		.catch( () => {
 			throw new Error( 'Failed to load script' );
 		} );
 };
@@ -868,7 +873,6 @@ mw.loader.getScript = function ( url ) {
 // Skeleton user object, extended by the 'mediawiki.user' module.
 /**
  * @namespace mw.user
- * @singleton
  * @ignore
  */
 mw.user = {
@@ -889,7 +893,7 @@ mw.user = {
 mw.user.options.set( require( './user.json' ) );
 
 // Process callbacks for modern browsers (Grade A) that require modules.
-var queue = window.RLQ;
+const queue = window.RLQ;
 // Replace temporary RLQ implementation from startup.js with the
 // final implementation that also processes callbacks that can
 // require modules. It must also support late arrivals of
@@ -914,7 +918,7 @@ while ( queue[ 0 ] ) {
  * @ignore
  * @deprecated since 1.26
  */
-[ 'write', 'writeln' ].forEach( function ( func ) {
+[ 'write', 'writeln' ].forEach( ( func ) => {
 	mw.log.deprecate( document, func, function () {
 		$( document.body ).append( $.parseHTML( slice.call( arguments ).join( '' ) ) );
 	}, 'Use jQuery or mw.loader.load instead.', 'document.' + func );

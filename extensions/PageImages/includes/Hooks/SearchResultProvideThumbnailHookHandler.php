@@ -71,7 +71,7 @@ class SearchResultProvideThumbnailHookHandler implements SearchResultProvideThum
 	 * @param array &$results Placeholder for result. $pageId => SearchResultThumbnail
 	 * @param int|null $size size of thumbnail height and width in points
 	 */
-	public function onSearchResultProvideThumbnail( array $pageIdentities, &$results, int $size = null ): void {
+	public function onSearchResultProvideThumbnail( array $pageIdentities, &$results, ?int $size = null ): void {
 		$fileNamesByPageId = $this->getFileNamesByPageId( $pageIdentities );
 		$results ??= [];
 		foreach ( $fileNamesByPageId as $pageId => $fileName ) {

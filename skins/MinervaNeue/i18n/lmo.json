@@ -27,7 +27,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Sora 'sta categoria chì",
 	"mobile-frontend-meta-data-issues-header": "Problema della pagina",
 	"minerva-meta-data-issues-section-header": "Problema de la sezzion",
-	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "Modifega la sezzion inizzial de questa pagina chì",
 	"mobile-frontend-placeholder": "Cerca in {{SITENAME}}",
 	"mobile-frontend-random-button": "Una vos a sort",
@@ -50,7 +49,5 @@
 	"skin-minerva-issue-learn-more": "Per savenn pussee",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorie",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Varda i categorie di pagina",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Migliorament del tratament di problema di pagine",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "I problema de la pagina (model:ambox) i sarann miss denter in la vos.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Purtop, la fonzion \"ragruppa per pagina\" l'è minga disponibil. Se te voeuret doprà sta fonzion chì te gh'hee de visità el sit in la version del compiuter fiss."
 }

@@ -1,6 +1,7 @@
 /**
  * Less mixins.
  */
+@import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 
 .mixin-vector-page-container-sizing() {
@@ -20,7 +21,7 @@
 
 	&::after {
 		content: '';
-		background: url( ../skins.vector.styles/images/arrow-down.svg ) 100% 50% no-repeat;
+		.cdx-mixin-css-icon( @cdx-icon-expand, @param-size-icon: @size-icon-x-small );
 		width: unit( 12 / @font-size-browser, rem );
 		height: unit( 12 / @font-size-browser, rem );
 		// https://phabricator.wikimedia.org/T319070#8284272
@@ -44,28 +45,54 @@
 	max-width: 200px;
 }
 
+// Base links without a visited state
+.mixin-vector-unvisited-link-base() {
+	&:visited {
+		color: @color-progressive;
+	}
+
+	&:visited:hover {
+		color: @color-progressive--hover;
+	}
+}
+
+// Red links without a visited state
+.mixin-vector-unvisited-link-red() {
+	&:visited {
+		color: @color-link-red;
+	}
+
+	&:visited:hover {
+		color: @color-link-red--hover;
+	}
+}
+
+// Used for "selected" links inside tabs and dropdowns
+.mixin-vector-selected-link() {
+	// Override all link states to style it as text
+	color: @color-base !important; /* stylelint-disable-line declaration-no-important */
+}
+
 .mixin-vector-dropdown-menu-item() {
 	display: flex;
 	align-items: center;
 	padding: @padding-vertical-dropdown-menu-item 0;
 
-	&:not( .mw-selflink ):visited {
-		color: @color-link;
-	}
-
 	.vector-icon {
 		margin-right: @spacing-35;
 	}
 
-	&.selected a,
-	&.selected a:visited {
-		color: @color-link-selected;
+	&:not( .mw-selflink ) {
+		.mixin-vector-unvisited-link-base();
+	}
+
+	&.selected a {
+		.mixin-vector-selected-link();
 	}
 }
 
 .mixin-vector-scrollable-with-fade() {
-	overflow-x: hidden;
-	overflow-y: auto;
+	overflow: hidden auto;
 
 	&::after {
 		content: '';

@@ -8,38 +8,29 @@ QUnit.module( 've.ce.LinearArrowKeyDownHandler', {
 	// See https://github.com/platinumazure/eslint-plugin-qunit/issues/68
 	// eslint-disable-next-line qunit/resolve-async
 	beforeEach: function ( assert ) {
-		var done = assert.async();
+		const done = assert.async();
 		return ve.init.platform.getInitializedPromise().then( done );
 	}
 } );
 
-QUnit.test( 'special key down: linear arrow keys', function ( assert ) {
-	var done = assert.async(),
-		promise = Promise.resolve(),
+QUnit.test( 'special key down: linear arrow keys', ( assert ) => {
+	const done = assert.async(),
 		supportsSelectionExtend = ve.supportsSelectionExtend,
 		complexTableDoc = ve.dm.example.createExampleDocument( 'complexTable' ),
-		slugDoc = ve.dm.example.createExampleDocumentFromData(
-			[
-				{ type: 'alienBlock' }, { type: '/alienBlock' },
-				{ type: 'internalList' }, { type: '/internalList' }
-			]
-		),
-		inlineFocusableDoc = ve.dm.example.createExampleDocumentFromData(
-			[
-				{ type: 'paragraph' }, 'F', 'o', 'o', ' ', { type: 'alienInline' }, { type: '/alienInline' }, ' ', 'b', 'a', 'r', { type: '/paragraph' },
-				{ type: 'internalList' }, { type: '/internalList' }
-			]
-		),
-		blockImageDoc = ve.dm.example.createExampleDocumentFromData(
-			[ { type: 'paragraph' }, 'F', 'o', 'o', { type: '/paragraph' } ].concat(
-				ve.dm.example.blockImage.data.slice()
-			).concat(
-				[
-					{ type: 'paragraph' }, 'B', 'a', 'r', { type: '/paragraph' },
-					{ type: 'internalList' }, { type: '/internalList' }
-				]
-			)
-		),
+		slugDoc = ve.dm.example.createExampleDocumentFromData( [
+			{ type: 'alienBlock' }, { type: '/alienBlock' },
+			{ type: 'internalList' }, { type: '/internalList' }
+		] ),
+		inlineFocusableDoc = ve.dm.example.createExampleDocumentFromData( [
+			{ type: 'paragraph' }, ...'Foo ', { type: 'alienInline' }, { type: '/alienInline' }, ...' Bar', { type: '/paragraph' },
+			{ type: 'internalList' }, { type: '/internalList' }
+		] ),
+		blockImageDoc = ve.dm.example.createExampleDocumentFromData( [
+			{ type: 'paragraph' }, ...'Foo', { type: '/paragraph' },
+			...ve.dm.example.blockImage.data,
+			{ type: 'paragraph' }, ...'Bar', { type: '/paragraph' },
+			{ type: 'internalList' }, { type: '/internalList' }
+		] ),
 		cases = [
 			// Within normal text. NOTE: these tests manually force the cursor to
 			// move, because we rely on native browser actions for that.
@@ -155,6 +146,7 @@ QUnit.test( 'special key down: linear arrow keys', function ( assert ) {
 				rangeOrSelection: new ve.Range( 5, 18 ),
 				keys: [ 'HOME' ],
 				expectedRangeOrSelection: new ve.Range( 4 ),
+				expectedDefaultPrevented: [ false ],
 				msg: 'Cursor home off a block node'
 			},
 			{
@@ -162,6 +154,7 @@ QUnit.test( 'special key down: linear arrow keys', function ( assert ) {
 				rangeOrSelection: new ve.Range( 5, 18 ),
 				keys: [ 'UP' ],
 				expectedRangeOrSelection: new ve.Range( 4 ),
+				expectedDefaultPrevented: [ false ],
 				msg: 'Cursor up off a block node'
 			},
 			{
@@ -169,6 +162,7 @@ QUnit.test( 'special key down: linear arrow keys', function ( assert ) {
 				rangeOrSelection: new ve.Range( 5, 18 ),
 				keys: [ 'PAGEUP' ],
 				expectedRangeOrSelection: new ve.Range( 4 ),
+				expectedDefaultPrevented: [ false ],
 				msg: 'Cursor page up off a block node'
 			},
 			{
@@ -183,6 +177,7 @@ QUnit.test( 'special key down: linear arrow keys', function ( assert ) {
 				rangeOrSelection: new ve.Range( 5, 18 ),
 				keys: [ 'END' ],
 				expectedRangeOrSelection: new ve.Range( 19 ),
+				expectedDefaultPrevented: [ false ],
 				msg: 'Cursor end off a block node'
 			},
 			{
@@ -190,6 +185,7 @@ QUnit.test( 'special key down: linear arrow keys', function ( assert ) {
 				rangeOrSelection: new ve.Range( 5, 18 ),
 				keys: [ 'DOWN' ],
 				expectedRangeOrSelection: new ve.Range( 19 ),
+				expectedDefaultPrevented: [ false ],
 				msg: 'Cursor down off a block node'
 			},
 			{
@@ -197,7 +193,41 @@ QUnit.test( 'special key down: linear arrow keys', function ( assert ) {
 				rangeOrSelection: new ve.Range( 5, 18 ),
 				keys: [ 'PAGEDOWN' ],
 				expectedRangeOrSelection: new ve.Range( 19 ),
+				expectedDefaultPrevented: [ false ],
 				msg: 'Cursor page down off a block node'
+			},
+			// ...with shift
+			{
+				htmlOrDoc: blockImageDoc,
+				rangeOrSelection: new ve.Range( 5, 18 ),
+				keys: [ 'SHIFT+LEFT' ],
+				expectedRangeOrSelection: new ve.Range( 18, 4 ),
+				expectedDefaultPrevented: [ false ],
+				msg: 'Cursor left off a block node with shift'
+			},
+			{
+				htmlOrDoc: blockImageDoc,
+				rangeOrSelection: new ve.Range( 5, 18 ),
+				keys: [ 'SHIFT+UP' ],
+				expectedRangeOrSelection: new ve.Range( 18, 4 ),
+				expectedDefaultPrevented: [ false ],
+				msg: 'Cursor up off a block node with shift'
+			},
+			{
+				htmlOrDoc: blockImageDoc,
+				rangeOrSelection: new ve.Range( 5, 18 ),
+				keys: [ 'SHIFT+RIGHT' ],
+				expectedRangeOrSelection: new ve.Range( 5, 19 ),
+				expectedDefaultPrevented: [ false ],
+				msg: 'Cursor right off a block node with shift'
+			},
+			{
+				htmlOrDoc: blockImageDoc,
+				rangeOrSelection: new ve.Range( 5, 18 ),
+				keys: [ 'SHIFT+DOWN' ],
+				expectedRangeOrSelection: new ve.Range( 5, 19 ),
+				expectedDefaultPrevented: [ false ],
+				msg: 'Cursor down off a block node with shift'
 			},
 			// Cursoring onto a block node, which should focus it
 			// Again, these are forcibly moving the cursor, so it's not a perfect
@@ -370,10 +400,9 @@ QUnit.test( 'special key down: linear arrow keys', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		promise = promise.then( function () {
-			return ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem );
-		} );
+	let promise = Promise.resolve();
+	cases.forEach( ( caseItem ) => {
+		promise = promise.then( () => ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem ) );
 	} );
 
 	promise.finally( () => done() );

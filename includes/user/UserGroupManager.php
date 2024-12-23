@@ -20,7 +20,6 @@
 
 namespace MediaWiki\User;
 
-use IDBAccessObject;
 use InvalidArgumentException;
 use JobQueueGroup;
 use LogicException;
@@ -40,9 +39,9 @@ use UserGroupExpiryJob;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\IReadableDatabase;
-use Wikimedia\Rdbms\OrExpressionGroup;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -289,9 +288,6 @@ class UserGroupManager {
 				$groups[] = 'temp';
 			} elseif ( $user->isRegistered() ) {
 				$groups[] = 'user';
-				if ( $this->tempUserConfig->isEnabled() ) {
-					$groups[] = 'named';
-				}
 				$groups = array_unique( array_merge(
 					$groups,
 					$this->getUserAutopromoteGroups( $user )
@@ -826,7 +822,7 @@ class UserGroupManager {
 	public function addUserToGroup(
 		UserIdentity $user,
 		string $group,
-		string $expiry = null,
+		?string $expiry = null,
 		bool $allowUpdate = false
 	): bool {
 		$user->assertWiki( $this->wikiId );
@@ -887,7 +883,7 @@ class UserGroupManager {
 				// Update the current row if its expiry does not match that of the loaded row
 				$conds[] = $expiry
 					? $dbw->expr( 'ug_expiry', '=', null )
-						  ->or( 'ug_expiry', '!=', $dbw->timestamp( $expiry ) )
+						->or( 'ug_expiry', '!=', $dbw->timestamp( $expiry ) )
 					: $dbw->expr( 'ug_expiry', '!=', null );
 			} else {
 				// Update the current row if it is expired
@@ -903,14 +899,14 @@ class UserGroupManager {
 		$dbw->endAtomic( __METHOD__ );
 
 		// Purge old, expired memberships from the DB
-		$fname = __METHOD__;
-		DeferredUpdates::addCallableUpdate( function () use ( $fname ) {
+		DeferredUpdates::addCallableUpdate( function ( $fname ) {
 			$dbr = $this->dbProvider->getReplicaDatabase( $this->wikiId );
 			$hasExpiredRow = (bool)$dbr->newSelectQueryBuilder()
 				->select( '1' )
 				->from( 'user_groups' )
 				->where( [ $dbr->expr( 'ug_expiry', '<', $dbr->timestamp() ) ] )
-				->caller( $fname )->fetchField();
+				->caller( $fname )
+				->fetchField();
 			if ( $hasExpiredRow ) {
 				$this->jobQueueGroup->push( new UserGroupExpiryJob( [] ) );
 			}
@@ -951,7 +947,7 @@ class UserGroupManager {
 	public function addUserToMultipleGroups(
 		UserIdentity $user,
 		array $groups,
-		string $expiry = null,
+		?string $expiry = null,
 		bool $allowUpdate = false
 	) {
 		foreach ( $groups as $group ) {
@@ -1028,7 +1024,7 @@ class UserGroupManager {
 	 * @internal
 	 */
 	public function newQueryBuilder( IReadableDatabase $db ): SelectQueryBuilder {
-		 return $db->newSelectQueryBuilder()
+		return $db->newSelectQueryBuilder()
 			->select( [
 				'ug_user',
 				'ug_group',
@@ -1081,7 +1077,7 @@ class UserGroupManager {
 				// Delete the rows we're about to move
 				$dbw->newDeleteQueryBuilder()
 					->deleteFrom( 'user_groups' )
-					->where( new OrExpressionGroup( ...$deleteCond ) )
+					->where( $dbw->orExpr( $deleteCond ) )
 					->caller( __METHOD__ )->execute();
 				// Push the groups to user_former_groups
 				$dbw->newInsertQueryBuilder()

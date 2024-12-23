@@ -20,6 +20,12 @@ $magicWords['en'] = [
 	'ifexist' => [ 0, 'ifexist' ],
 	'time' => [ 0, 'time' ],
 	'timel' => [ 0, 'timel' ],
+	'timef' => [ 1, 'timef' ],
+	'timefl' => [ 1, 'timefl' ],
+	'timef-time' => [ 1, 'time' ],
+	'timef-date' => [ 1, 'date' ],
+	'timef-both' => [ 1, 'both' ],
+	'timef-pretty' => [ 1, 'pretty' ],
 	'rel2abs' => [ 0, 'rel2abs' ],
 	'titleparts' => [ 0, 'titleparts' ],
 	'len' => [ 0, 'len' ],
@@ -615,7 +621,7 @@ $magicWords['ru'] = [
 ];
 
 /** Serbian (Cyrillic script) (српски (ћирилица)) */
-$magicWords['sr-ec'] = [
+$magicWords['sr-cyrl'] = [
 	'if' => [ 0, 'ако' ],
 	'default' => [ 0, '#подразумевано' ],
 	'time' => [ 0, 'време' ],
@@ -625,7 +631,7 @@ $magicWords['sr-ec'] = [
 ];
 
 /** Serbian (Latin script) (srpski (latinica)) */
-$magicWords['sr-el'] = [
+$magicWords['sr-latn'] = [
 	'if' => [ 0, 'ako' ],
 	'default' => [ 0, '#podrazumevano' ],
 	'time' => [ 0, 'vreme' ],

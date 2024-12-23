@@ -98,7 +98,7 @@ class AFPData {
 				return new AFPData( self::DNULL );
 			default:
 				throw new InternalException(
-					'Data type ' . gettype( $var ) . ' is not supported by AbuseFilter'
+					'Data type ' . get_debug_type( $var ) . ' is not supported by AbuseFilter'
 				);
 		}
 	}

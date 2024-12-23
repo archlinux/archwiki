@@ -86,7 +86,7 @@ class RevisionArchiveRecord extends RevisionRecord {
 		$this->mComment = $comment;
 		$this->mUser = $user;
 		$this->mTimestamp = $timestamp;
-		$this->mMinorEdit = boolval( $row->ar_minor_edit );
+		$this->mMinorEdit = (bool)$row->ar_minor_edit;
 		$this->mDeleted = intval( $row->ar_deleted );
 		$this->mSize = isset( $row->ar_len ) ? intval( $row->ar_len ) : null;
 		$this->mSha1 = !empty( $row->ar_sha1 ) ? $row->ar_sha1 : null;
@@ -141,7 +141,7 @@ class RevisionArchiveRecord extends RevisionRecord {
 	 *
 	 * @return UserIdentity The identity of the revision author, null if access is forbidden.
 	 */
-	public function getUser( $audience = self::FOR_PUBLIC, Authority $performer = null ) {
+	public function getUser( $audience = self::FOR_PUBLIC, ?Authority $performer = null ) {
 		// overwritten just to add a guarantee to the contract
 		return parent::getUser( $audience, $performer );
 	}
@@ -152,7 +152,7 @@ class RevisionArchiveRecord extends RevisionRecord {
 	 *
 	 * @return CommentStoreComment The revision comment, null if access is forbidden.
 	 */
-	public function getComment( $audience = self::FOR_PUBLIC, Authority $performer = null ) {
+	public function getComment( $audience = self::FOR_PUBLIC, ?Authority $performer = null ) {
 		// overwritten just to add a guarantee to the contract
 		return parent::getComment( $audience, $performer );
 	}
@@ -190,7 +190,7 @@ class RevisionArchiveRecord extends RevisionRecord {
 		return parent::userCan( $field, $performer );
 	}
 
-	public function audienceCan( $field, $audience, Authority $performer = null ) {
+	public function audienceCan( $field, $audience, ?Authority $performer = null ) {
 		// This revision belongs to a deleted page, so check the relevant permissions as well. (T345777)
 		// See userCan().
 		if (

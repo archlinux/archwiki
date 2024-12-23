@@ -10,9 +10,8 @@
  * @param {Object} config Configuration object
  * @param {jQuery} [config.$overlay] Overlay
  */
-var FilterMenuSectionOptionWidget = function MwRcfiltersUiFilterMenuSectionOptionWidget( controller, model, config ) {
-	var whatsThisMessages,
-		$header = $( '<div>' )
+const FilterMenuSectionOptionWidget = function MwRcfiltersUiFilterMenuSectionOptionWidget( controller, model, config ) {
+	const $header = $( '<div>' )
 			.addClass( 'mw-rcfilters-ui-filterMenuSectionOptionWidget-header' ),
 		$popupContent = $( '<div>' )
 			.addClass( 'mw-rcfilters-ui-filterMenuSectionOptionWidget-whatsThisButton-popup-content' );
@@ -24,7 +23,7 @@ var FilterMenuSectionOptionWidget = function MwRcfiltersUiFilterMenuSectionOptio
 	this.$overlay = config.$overlay || this.$element;
 
 	// Parent
-	FilterMenuSectionOptionWidget.super.call( this, $.extend( {
+	FilterMenuSectionOptionWidget.super.call( this, Object.assign( {
 		label: this.model.getTitle(),
 		$label: $( '<div>' )
 			.addClass( 'mw-rcfilters-ui-filterMenuSectionOptionWidget-header-title' )
@@ -33,7 +32,7 @@ var FilterMenuSectionOptionWidget = function MwRcfiltersUiFilterMenuSectionOptio
 	$header.append( this.$label );
 
 	if ( this.model.hasWhatsThis() ) {
-		whatsThisMessages = this.model.getWhatsThis();
+		const whatsThisMessages = this.model.getWhatsThis();
 
 		// Create popup
 		if ( whatsThisMessages.header ) {

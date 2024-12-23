@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Language\RawMessage;
 
 /**
@@ -38,7 +40,7 @@ class ApiRawMessage extends RawMessage implements IApiMessage {
 	 * @param string|null $code
 	 * @param array|null $data
 	 */
-	public function __construct( $msg, $code = null, array $data = null ) {
+	public function __construct( $msg, $code = null, ?array $data = null ) {
 		if ( $msg instanceof RawMessage ) {
 			foreach ( get_class_vars( get_class( $this ) ) as $key => $value ) {
 				if ( isset( $msg->$key ) ) {
@@ -53,4 +55,16 @@ class ApiRawMessage extends RawMessage implements IApiMessage {
 		}
 		$this->setApiCode( $code, $data );
 	}
+
+	public function getApiCode() {
+		if ( $this->apiCode === null ) {
+			// Copied from ApiMessageTrait to avoid changing the error codes. This causes T350248,
+			// but there's nothing better we can do when a RawMessage is used.
+			$this->apiCode = preg_replace( '/[^a-zA-Z0-9_-]/', '_', $this->getTextOfRawMessage() );
+		}
+		return $this->apiCode;
+	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiRawMessage::class, 'ApiRawMessage' );

@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
-use Content;
+use MediaWiki\Content\Content;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\RCVariableGenerator;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\HookContainer\HookContainer;

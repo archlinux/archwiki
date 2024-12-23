@@ -19,7 +19,9 @@
  * @ingroup Benchmark
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../includes/Benchmarker.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Measure ResourceLoader syntax validation for user-supplied JavaScript.
@@ -29,6 +31,7 @@ require_once __DIR__ . '/../includes/Benchmarker.php';
  * @ingroup Benchmark
  */
 class BenchmarkJsValidate extends Benchmarker {
+	/** @inheritDoc */
 	protected $defaultCount = 10;
 
 	public function __construct() {
@@ -57,5 +60,7 @@ class BenchmarkJsValidate extends Benchmarker {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = BenchmarkJsValidate::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

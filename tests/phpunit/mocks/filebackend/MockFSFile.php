@@ -21,6 +21,8 @@
  * @ingroup FileBackend
  */
 
+use Wikimedia\FileBackend\FSFile\FSFile;
+
 /**
  * Class representing an in-memory fake file.
  * This is intended for unit testing / development when you do not want
@@ -32,7 +34,8 @@
  * @ingroup FileBackend
  */
 class MockFSFile extends FSFile {
-	protected $sha1Base36 = null; // File Sha1Base36
+	/** @inheritDoc */
+	protected $sha1Base36 = null;
 
 	public function exists() {
 		return true;

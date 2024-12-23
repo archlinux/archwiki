@@ -87,8 +87,8 @@ ve.ui.TableDialog.prototype.getValues = function () {
  */
 ve.ui.TableDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.TableDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
-			var isReadOnly = this.isReadOnly();
+		.next( () => {
+			const isReadOnly = this.isReadOnly();
 			this.initialValues = {
 				caption: !!this.getFragment().getSelection().getTableNode(
 					this.getFragment().getDocument()
@@ -97,7 +97,7 @@ ve.ui.TableDialog.prototype.getSetupProcess = function ( data ) {
 			this.captionToggle.setValue( this.initialValues.caption ).setDisabled( isReadOnly );
 			this.closingFragment = null;
 			this.updateActions();
-		}, this );
+		} );
 };
 
 /**
@@ -105,15 +105,15 @@ ve.ui.TableDialog.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.TableDialog.prototype.getActionProcess = function ( action ) {
 	return ve.ui.TableDialog.super.prototype.getActionProcess.call( this, action )
-		.next( function () {
+		.next( () => {
 			if ( action === 'done' ) {
-				var surfaceModel = this.getFragment().getSurface();
-				var selection = surfaceModel.getSelection();
-				var captionNode = this.getFragment().getSelection().getTableNode(
+				const surfaceModel = this.getFragment().getSurface();
+				const selection = surfaceModel.getSelection();
+				const captionNode = this.getFragment().getSelection().getTableNode(
 					this.getFragment().getDocument()
 				).getCaptionNode();
 				if ( this.captionToggle.getValue() !== this.initialValues.caption ) {
-					var fragment;
+					let fragment;
 					if ( this.initialValues.caption ) {
 						fragment = surfaceModel.getLinearFragment( captionNode.getOuterRange(), true );
 						fragment.removeContent();
@@ -133,7 +133,7 @@ ve.ui.TableDialog.prototype.getActionProcess = function ( action ) {
 				}
 				this.close( { action: 'done' } );
 			}
-		}, this );
+		} );
 };
 
 /**
@@ -141,9 +141,9 @@ ve.ui.TableDialog.prototype.getActionProcess = function ( action ) {
  */
 ve.ui.TableDialog.prototype.getTeardownProcess = function ( action ) {
 	return ve.ui.TableDialog.super.prototype.getTeardownProcess.call( this, action )
-		.first( function () {
+		.first( () => {
 			this.fragment = this.closingFragment || this.fragment;
-		}, this );
+		} );
 };
 
 /* Registration */

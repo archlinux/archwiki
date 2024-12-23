@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Rajemian",
-			"Azniv Stepanian"
+			"Azniv Stepanian",
+			"Rajemian"
 		]
 	},
 	"cite_error": "Մէջբերման սխալ՝ $1",
+	"cite-reference-previews-reference": "Ծանօթագրութիւն",
+	"cite-reference-previews-web": "Կայքի ծանօթագրութիւն",
 	"cite-wikieditor-tool-reference": "Ծանօթագրութիւն"
 }

@@ -15,6 +15,16 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 class MMLRenderTest extends MediaWikiUnitTestCase {
+
+	public function testMathFRakUnicode() {
+		$input = "\\mathfrak{O},  \\mathfrak{K}, \\mathfrak{t}, \\mathfrak{C}";
+		$mathMLtexVC = $this->generateMML( $input );
+		$this->assertStringContainsString( '&#x1D512;', $mathMLtexVC );
+		$this->assertStringContainsString( '&#x1D50E;', $mathMLtexVC );
+		$this->assertStringContainsString( '&#x1D531;', $mathMLtexVC );
+		$this->assertStringContainsString( '&#x212D;', $mathMLtexVC );
+	}
+
 	public function testMathCalUnicode() {
 		$input = "\\mathcal{O},  \\mathcal{K}, \\mathcal{t}, \\mathcal{c}";
 		$mathMLtexVC = $this->generateMML( $input );
@@ -163,7 +173,9 @@ class MMLRenderTest extends MediaWikiUnitTestCase {
 	public function testAlignLeft() {
 		$input = " \begin{align} f(x) & = (a+b)^2 \\ & = a^2+2ab+b^2 \\ \\end{align} ";
 		$mathMLtexVC = $this->generateMML( $input );
-		$this->assertStringContainsString( "columnalign=\"left\"", $mathMLtexVC );
+		$this->assertStringContainsString( "columnalign=\"right left right", $mathMLtexVC );
+		$this->assertStringContainsString( "columnspacing=\"0em 2em 0em", $mathMLtexVC );
+		$this->assertStringContainsString( "rowspacing=\"3pt\"", $mathMLtexVC );
 		$this->assertStringContainsString( "mtable", $mathMLtexVC );
 	}
 

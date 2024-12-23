@@ -8,7 +8,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"ValidSkinNames": {
 		"timeless": {
@@ -17,6 +17,7 @@
 			"args": [
 				{
 					"name": "timeless",
+					"supportsMwHeading": true,
 					"bodyOnly": true,
 					"template": "MediaWiki\\Skin\\Timeless\\TimelessTemplate",
 					"responsive": true,
@@ -54,19 +55,15 @@
 			"class": "MediaWiki\\Skin\\Timeless\\TimelessVariablesModule",
 			"features": {
 				"normalize": false,
-				"logo": true,
+				"logo": false,
 				"content-media": false,
 				"content-links": true,
 				"content-links-external": true,
-				"content-parser-output": false,
 				"content-tables": false,
 				"interface": false,
 				"interface-category": false,
-				"interface-message-box": true,
 				"elements": false,
-				"legacy": false,
 				"i18n-ordered-lists": true,
-				"i18n-all-lists-margins": true,
 				"i18n-headings": true,
 				"toc": true
 			},
@@ -139,10 +136,13 @@
 			"+oojs-ui-core.styles": "resources/ooui.less",
 			"+ext.echo.styles.badge": "resources/extensions/Echo.less",
 			"+ext.eventLogging.jsonSchema.styles": "resources/extensions/EventLogging.jsonSchema.less",
+			"+ext.translate.messagetable": "resources/extensions/Translate.messagetable.less",
+			"+ext.translate.statstable": "resources/extensions/Translate.statstable.less",
 			"+ext.visualEditor.core": "resources/extensions/VisualEditor.core.less",
 			"+ext.visualEditor.desktopArticleTarget.noscript": "resources/extensions/VisualEditor.article.less",
 			"+ext.visualEditor.mwwikitext": "resources/extensions/VisualEditor.mwwikitext.less",
 			"+ext.CodeMirror.visualEditor": "resources/extensions/VisualEditor.CodeMirror.less",
+			"+ext.CodeMirror.v6.visualEditor": "resources/extensions/VisualEditor.CodeMirror.less",
 			"+ext.dismissableSiteNotice.styles": "resources/extensions/DismissableSiteNotice.less",
 			"+ext.MWOAuth.AuthorizeForm": "resources/extensions/MWOAuth.AuthorizeForm.less",
 			"+ext.wikiLove.icon": "resources/extensions/WikiLove.icon.less",

@@ -34,8 +34,14 @@ ve.ui.MWEditModeTool.prototype.getMode = function () {
  * @inheritdoc mw.libs.ve.MWEditModeTool
  */
 ve.ui.MWEditModeTool.prototype.isModeAvailable = function ( mode ) {
+	const target = this.toolbar.getTarget();
+	const surface = target.getSurface();
+	const canSwitch = surface && !surface.getModel().isMultiUser();
+
 	// Source mode is always available
-	return mode === 'source' || this.toolbar.getTarget().isModeAvailable( mode );
+	return canSwitch && (
+		mode === 'source' || target.isModeAvailable( mode )
+	);
 };
 
 /**
@@ -43,7 +49,7 @@ ve.ui.MWEditModeTool.prototype.isModeAvailable = function ( mode ) {
  *
  * @class
  * @extends mw.libs.ve.MWEditModeVisualTool
- * @mixins ve.ui.MWEditModeTool
+ * @mixes ve.ui.MWEditModeTool
  * @constructor
  * @param {OO.ui.ToolGroup} toolGroup
  * @param {Object} [config] Config options
@@ -69,7 +75,7 @@ ve.ui.toolFactory.register( ve.ui.MWEditModeVisualTool );
  *
  * @class
  * @extends mw.libs.ve.MWEditModeSourceTool
- * @mixins ve.ui.MWEditModeTool
+ * @mixes ve.ui.MWEditModeTool
  * @constructor
  * @param {OO.ui.ToolGroup} toolGroup
  * @param {Object} [config] Config options

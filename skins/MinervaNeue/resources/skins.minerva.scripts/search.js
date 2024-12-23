@@ -58,12 +58,12 @@ module.exports = function () {
 	 * triggered unless the element is already visible.
 	 * Touchstart makes the overlay visible, touchend brings up the keyboard afterwards.
 	 */
-	$searchBar.on( 'touchstart click', function ( ev ) {
+	$searchBar.on( 'touchstart click', ( ev ) => {
 		ev.preventDefault();
 		overlayManager.router.navigate( '/search' );
 	} );
 
-	$searchBar.on( 'touchend', function ( ev ) {
+	$searchBar.on( 'touchend', ( ev ) => {
 		ev.preventDefault();
 		/**
 		 * Manually triggering focus event because on-screen keyboard only

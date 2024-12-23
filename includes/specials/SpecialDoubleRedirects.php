@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:DoubleRedirects
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,13 +16,13 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Html\Html;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
 use Skin;
@@ -34,8 +32,10 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * A special page listing redirects to redirecting page.
- * The software will automatically not follow double redirects, to prevent loops.
+ * List of redirects to another redirecting page.
+ *
+ * The software will by default not follow double redirects, to prevent loops.
+ * Editors are encouraged to fix these, and can discover them via this page.
  *
  * @ingroup SpecialPage
  */
@@ -152,12 +152,10 @@ class SpecialDoubleRedirects extends QueryPage {
 					$result->namespace,
 					$result->title
 				);
-				$deep = $this->getDatabaseProvider()->getReplicaDatabase()->selectRow(
-					$qi['tables'],
-					$qi['fields'],
-					$qi['conds'],
-					__METHOD__
-				);
+				$deep = $this->getDatabaseProvider()->getReplicaDatabase()->newSelectQueryBuilder()
+					->queryInfo( $qi )
+					->caller( __METHOD__ )
+					->fetchRow();
 			}
 		}
 
@@ -186,22 +184,28 @@ class SpecialDoubleRedirects extends QueryPage {
 			$edit = '';
 		}
 
-		$linkA = $linkRenderer->makeKnownLink(
+		$arrow = $this->getLanguage()->getArrow();
+		$contentLanguage = $this->getContentLanguage();
+		$bdiAttrs = [
+			'dir' => $contentLanguage->getDir(),
+			'lang' => $contentLanguage->getHtmlCode(),
+		];
+		$linkA = Html::rawElement( 'bdi', $bdiAttrs, $linkRenderer->makeKnownLink(
 			$titleA,
 			null,
 			[],
 			[ 'redirect' => 'no' ]
-		);
+		) );
 
 		$titleB = Title::makeTitle( $deep->b_namespace, $deep->b_title );
 		// We show fragment, but don't link to it, as it probably doesn't exist anymore.
 		$titleBFrag = Title::makeTitle( $deep->b_namespace, $deep->b_title, $deep->b_fragment );
-		$linkB = $linkRenderer->makeKnownLink(
+		$linkB = Html::rawElement( 'bdi', $bdiAttrs, $linkRenderer->makeKnownLink(
 			$titleB,
 			$titleBFrag->getFullText(),
 			[],
 			[ 'redirect' => 'no' ]
-		);
+		) );
 
 		$titleC = Title::makeTitle(
 			$deep->c_namespace,
@@ -209,12 +213,11 @@ class SpecialDoubleRedirects extends QueryPage {
 			$deep->c_fragment,
 			$deep->c_interwiki
 		);
-		$linkC = $linkRenderer->makeKnownLink( $titleC, $titleC->getFullText() );
+		$linkC = Html::rawElement( 'bdi', $bdiAttrs,
+			$linkRenderer->makeKnownLink( $titleC, $titleC->getFullText() )
+		);
 
-		$lang = $this->getLanguage();
-		$arr = $lang->getArrow() . $lang->getDirMark();
-
-		return ( "{$linkA} {$edit} {$arr} {$linkB} {$arr} {$linkC}" );
+		return ( "{$linkA} {$edit} {$arrow} {$linkB} {$arrow} {$linkC}" );
 	}
 
 	public function execute( $par ) {

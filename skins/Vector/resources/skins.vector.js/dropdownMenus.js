@@ -9,13 +9,14 @@ const
 
 /**
  * Enhance dropdownMenu functionality and accessibility using core's checkboxHack.
+ *
  * @param {HTMLElement[]|NodeList} [containers]
  */
 function dropdownMenus( containers ) {
 	// Search for all dropdown containers using the CHECKBOX_HACK_CONTAINER_SELECTOR.
 	containers = containers || document.querySelectorAll( CHECKBOX_HACK_CONTAINER_SELECTOR );
 
-	Array.prototype.forEach.call( containers, function ( container ) {
+	Array.prototype.forEach.call( containers, ( container ) => {
 		const
 			checkbox = container.querySelector( CHECKBOX_HACK_CHECKBOX_SELECTOR ),
 			button = container.querySelector( CHECKBOX_HACK_BUTTON_SELECTOR ),
@@ -156,7 +157,7 @@ function addPortletLinkHandler( item, data ) {
 // Enhance previously added items.
 Array.prototype.forEach.call(
 	document.querySelectorAll( '.mw-list-item-js' ),
-	function ( item ) {
+	( item ) => {
 		addPortletLinkHandler( item, {
 			id: item.getAttribute( 'id' )
 		} );

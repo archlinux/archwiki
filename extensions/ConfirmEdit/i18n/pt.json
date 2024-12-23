@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Athena in Wonderland",
 			"Hamilton Abreu",
 			"Helder.wiki",
@@ -8,7 +9,6 @@
 			"Malafaya",
 			"Mansil alfalb",
 			"Vitorvicentevalente",
-			555,
 			"B3rnas"
 		]
 	},
@@ -39,5 +39,6 @@
 	"confirmedit-preview-validity": "Validade",
 	"confirmedit-preview-valid": "válido",
 	"confirmedit-preview-invalid": "inválido",
-	"confirmedit-preview-description": "A seguinte tabela mostra cada linha nesta página e se ela é um endereço IP válido, ou uma gama de endereços IP válida. Se a linha for um endereço IP válido, ou uma gama de endereços IP válida, o endereço ou gama serão excluídos de verificações CAPTCHA, mas linhas inválidas serão ignoradas. Um exemplo de uma gama de endereços IP válidos é 69.208.0.0/16, que vai de 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mais informação] sobre o cálculo de gamas de endereços IP."
+	"confirmedit-preview-description": "A seguinte tabela mostra cada linha nesta página e se ela é um endereço IP válido, ou uma gama de endereços IP válida. Se a linha for um endereço IP válido, ou uma gama de endereços IP válida, o endereço ou gama serão excluídos de verificações CAPTCHA, mas linhas inválidas serão ignoradas. Um exemplo de uma gama de endereços IP válidos é 69.208.0.0/16, que vai de 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mais informação] sobre o cálculo de gamas de endereços IP.",
+	"abusefilter-edit-action-showcaptcha": "Exigir que o utilizador resolva um CAPTCHA para prosseguir com a operação. Os utilizadores com permissão de saltar CAPTCHA estão isentos."
 }

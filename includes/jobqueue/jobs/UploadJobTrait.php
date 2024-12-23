@@ -19,6 +19,7 @@
  * @defgroup JobQueue JobQueue
  */
 
+use MediaWiki\Api\ApiUpload;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Status\Status;
@@ -169,9 +170,7 @@ trait UploadJobTrait {
 		if ( $this->user === null ) {
 			return;
 		}
-		if ( $status === null ) {
-			$status = Status::newGood();
-		}
+		$status ??= Status::newGood();
 		$info = [ 'result' => $result, 'stage' => $stage, 'status' => $status ];
 		$info += $additionalInfo;
 		UploadBase::setSessionStatus(

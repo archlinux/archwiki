@@ -16,21 +16,16 @@ use Wikimedia\Assert\Assert;
  * A handler that returns Parsoid HTML for the following routes:
  * - /revision/{revision}/html,
  * - /revision/{revision}/with_html
- *
- * Class RevisionHTMLHandler
- * @package MediaWiki\Rest\Handler
  */
 class RevisionHTMLHandler extends SimpleHandler {
 
-	/** @var HtmlOutputRendererHelper */
-	private $htmlHelper;
-
-	/** @var RevisionContentHelper */
-	private $contentHelper;
+	private ?HtmlOutputRendererHelper $htmlHelper = null;
+	private PageRestHelperFactory $helperFactory;
+	private RevisionContentHelper $contentHelper;
 
 	public function __construct( PageRestHelperFactory $helperFactory ) {
+		$this->helperFactory = $helperFactory;
 		$this->contentHelper = $helperFactory->newRevisionContentHelper();
-		$this->htmlHelper = $helperFactory->newHtmlOutputRendererHelper();
 	}
 
 	protected function postValidationSetup() {
@@ -41,7 +36,9 @@ class RevisionHTMLHandler extends SimpleHandler {
 		$revision = $this->contentHelper->getTargetRevision();
 
 		if ( $page && $revision ) {
-			$this->htmlHelper->init( $page, $this->getValidatedParams(), $authority, $revision );
+			$this->htmlHelper = $this->helperFactory->newHtmlOutputRendererHelper(
+				$page, $this->getValidatedParams(), $authority, $revision
+			);
 
 			$request = $this->getRequest();
 			$acceptLanguage = $request->getHeaderLine( 'Accept-Language' ) ?: null;
@@ -136,7 +133,7 @@ class RevisionHTMLHandler extends SimpleHandler {
 	public function getParamSettings(): array {
 		return array_merge(
 			$this->contentHelper->getParamSettings(),
-			$this->htmlHelper->getParamSettings()
+			HtmlOutputRendererHelper::getParamSettings()
 		);
 	}
 

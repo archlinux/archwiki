@@ -43,7 +43,7 @@
 	"gadgets-export-download": "הורדה",
 	"gadgets-requires-es6": "הגאדג'ט הזה נתמך רק בדפדפנים תואמי ES6",
 	"gadgets-validate-notset": "המאפיין <code>$1</code> אינו מוגדר.",
-	"gadgets-validate-wrongtype": "המאפיין <code>$1</code> צריך להיות מסוג <code>$2</code> ולא <code>$3</code>.",
+	"gadgets-validate-wrongtype": "המאפיין <code>$1</code> צריך להיות מסוג <code>$2</code>.",
 	"gadgets-validate-json": "קובצי JSON צוינו אך אינם בשימוש. הם תקפים רק בגאדג'טים ארוזים בחבילות.",
 	"gadgets-validate-es6default": "לא ניתן להפעיל גאדג'טים הדורשים ES6 כברירת מחדל.",
 	"gadgets-validate-noentrypoint": "לדגל Package לא הייתה השפעה מכיוון שלא צוינו קובצי סקריפט.",

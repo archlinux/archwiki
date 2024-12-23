@@ -24,7 +24,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
@@ -32,6 +34,7 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LikeValue;
@@ -279,7 +282,7 @@ class NamespaceDupes extends Maintenance {
 				} else {
 					$action = 'alternate';
 				}
-			} elseif ( $newTitle->exists() ) {
+			} elseif ( $newTitle->exists( IDBAccessObject::READ_LATEST ) ) {
 				if ( $options['merge'] ) {
 					if ( $this->canMerge( $row->page_id, $newTitle, $logStatus ) ) {
 						$action = 'merge';
@@ -376,7 +379,9 @@ class NamespaceDupes extends Maintenance {
 		if ( isset( $linksMigration::$mapping[$table] ) ) {
 			$sqb->queryInfo( $linksMigration->getQueryInfo( $table ) );
 			[ $namespaceField, $titleField ] = $linksMigration->getTitleFields( $table );
-			$schemaMigrationStage = $this->getConfig()->get( $linksMigration::$mapping[$table]['config'] );
+			$schemaMigrationStage = $linksMigration::$mapping[$table]['config'] === -1
+				? MIGRATION_NEW
+				: $this->getConfig()->get( $linksMigration::$mapping[$table]['config'] );
 			$linkTargetLookup = $this->getServiceContainer()->getLinkTargetLookup();
 			$targetIdField = $linksMigration::$mapping[$table]['target_id'];
 		} else {
@@ -562,9 +567,11 @@ class NamespaceDupes extends Maintenance {
 	 */
 	private function getDestination( $ns, $name, $sourceNs, $sourceDbk ) {
 		$dbk = substr( $sourceDbk, strlen( "$name:" ) );
-		if ( $ns == 0 ) {
-			// An interwiki; try an alternate encoding with '-' for ':'
+		if ( $ns <= 0 ) {
+			// An interwiki or an illegal namespace like "Special" or "Media"
+			// try an alternate encoding with '-' for ':'
 			$dbk = "$name-" . $dbk;
+			$ns = 0;
 		}
 		$destNS = $ns;
 		$nsInfo = $this->getServiceContainer()->getNamespaceInfo();
@@ -635,10 +642,14 @@ class NamespaceDupes extends Maintenance {
 
 		// Update *_from_namespace in links tables
 		$fromNamespaceTables = [
-			[ 'pagelinks', 'pl', [ 'pl_namespace', 'pl_title' ] ],
 			[ 'templatelinks', 'tl', [ 'tl_target_id' ] ],
 			[ 'imagelinks', 'il', [ 'il_to' ] ]
 		];
+		if ( $this->getConfig()->get( MainConfigNames::PageLinksSchemaMigrationStage ) & SCHEMA_COMPAT_WRITE_OLD ) {
+			$fromNamespaceTables[] = [ 'pagelinks', 'pl', [ 'pl_namespace', 'pl_title' ] ];
+		} else {
+			$fromNamespaceTables[] = [ 'pagelinks', 'pl', [ 'pl_target_id' ] ];
+		}
 		$updateRowsPerQuery = $this->getConfig()->get( MainConfigNames::UpdateRowsPerQuery );
 		foreach ( $fromNamespaceTables as [ $table, $fieldPrefix, $additionalPrimaryKeyFields ] ) {
 			$fromField = "{$fieldPrefix}_from";
@@ -768,5 +779,7 @@ class NamespaceDupes extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = NamespaceDupes::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -43,7 +43,7 @@ class NamespaceInfo {
 	 * forevermore. Historically, they could've probably been lowercased too,
 	 * but some things are just too ingrained now. :)
 	 */
-	private $alwaysCapitalizedNamespaces = [ NS_SPECIAL, NS_USER, NS_MEDIAWIKI ];
+	private const ALWAYS_CAPITALIZED_NAMESPACES = [ NS_SPECIAL, NS_USER, NS_MEDIAWIKI ];
 
 	/** @var string[]|null Canonical namespaces cache */
 	private $canonicalNamespaces = null;
@@ -54,14 +54,9 @@ class NamespaceInfo {
 	/** @var int[]|null Valid namespaces cache */
 	private $validNamespaces = null;
 
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
+	private ServiceOptions $options;
+	private HookRunner $hookRunner;
 	private array $extensionNamespaces;
-
 	private array $extensionImmovableNamespaces;
 
 	/**
@@ -105,12 +100,6 @@ class NamespaceInfo {
 		MainConfigNames::NonincludableNamespaces,
 	];
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param HookContainer $hookContainer
-	 * @param array $extensionNamespaces
-	 * @param array $extensionImmovableNamespaces
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		HookContainer $hookContainer,
@@ -161,7 +150,7 @@ class NamespaceInfo {
 			|| ( $index[0] === '-' && ctype_digit( substr( $index, 1 ) ) )
 		) ) {
 			throw new InvalidArgumentException(
-				"$method called with non-integer (" . gettype( $index ) . ") namespace '$index'"
+				"$method called with non-integer (" . get_debug_type( $index ) . ") namespace '$index'"
 			);
 		}
 
@@ -561,7 +550,7 @@ class NamespaceInfo {
 		$index = $this->getSubject( $index );
 
 		// Some namespaces are special and should always be upper case
-		if ( in_array( $index, $this->alwaysCapitalizedNamespaces ) ) {
+		if ( in_array( $index, self::ALWAYS_CAPITALIZED_NAMESPACES ) ) {
 			return true;
 		}
 		$overrides = $this->options->get( MainConfigNames::CapitalLinkOverrides );

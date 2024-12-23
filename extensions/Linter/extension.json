@@ -10,7 +10,11 @@
 	"descriptionmsg": "linter-desc",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
+	},
+	"AutoloadClasses": {
+		"MediaWiki\\Linter\\Maintenance\\MigrateNamespace": "maintenance/migrateNamespace.php",
+		"MediaWiki\\Linter\\Maintenance\\MigrateTagTemplate": "maintenance/migrateTagTemplate.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Linter\\": "includes/"
@@ -29,8 +33,13 @@
 			"class": "MediaWiki\\Linter\\Hooks",
 			"services": [
 				"LinkRenderer",
-				"MainWANObjectCache",
-				"JobQueueGroup"
+				"JobQueueGroup",
+				"WikiPageFactory",
+				"ParserOutputAccess",
+				"Linter.CategoryManager",
+				"Linter.TotalsLookup",
+				"Linter.Database",
+				"MainConfig"
 			]
 		},
 		"schema": {
@@ -44,16 +53,22 @@
 		"InfoAction": "main",
 		"WikiPageDeletionUpdates": "main",
 		"RevisionFromEditComplete": "main",
-		"ParserLogLinterData": "main"
+		"ParserLogLinterData": "main",
+		"RevisionDataUpdates": "main"
 	},
 	"APIListModules": {
-		"linterrors": "MediaWiki\\Linter\\ApiQueryLintErrors"
+		"linterrors": {
+			"class": "MediaWiki\\Linter\\ApiQueryLintErrors",
+			"services": [
+				"Linter.CategoryManager"
+			]
+		}
 	},
 	"APIMetaModules": {
 		"linterstats": {
 			"class": "MediaWiki\\Linter\\ApiQueryLinterStats",
 			"services": [
-				"MainWANObjectCache"
+				"Linter.TotalsLookup"
 			]
 		}
 	},
@@ -61,9 +76,12 @@
 		"LintErrors": {
 			"class": "MediaWiki\\Linter\\SpecialLintErrors",
 			"services": [
-				"MainWANObjectCache",
 				"NamespaceInfo",
-				"TitleParser"
+				"TitleParser",
+				"LinkCache",
+				"PermissionManager",
+				"Linter.CategoryManager",
+				"Linter.TotalsLookup"
 			]
 		}
 	},
@@ -71,7 +89,9 @@
 		"RecordLintJob": {
 			"class": "MediaWiki\\Linter\\RecordLintJob",
 			"services": [
-				"MainWANObjectCache"
+				"Linter.TotalsLookup",
+				"Linter.Database",
+				"Linter.CategoryManager"
 			]
 		}
 	},
@@ -212,26 +232,36 @@
 				"night-mode-unaware-background-color": {
 					"dbid": 22,
 					"enabled": true,
+					"priority": "low",
+					"no-params": true
+				},
+				"missing-image-alt-text": {
+					"dbid": 23,
+					"enabled": false,
+					"priority": "none"
+				},
+				"fostered-transparent": {
+					"dbid": 24,
+					"enabled": true,
 					"priority": "none",
 					"no-params": true
+				},
+				"duplicate-ids": {
+					"dbid": 25,
+					"enabled": true,
+					"priority": "high"
 				}
 			}
 		},
 		"LinterStatsdSampleFactor": {
 			"value": false
 		},
-		"LinterWriteNamespaceColumnStage": {
-			"value": false
-		},
-		"LinterUseNamespaceColumnStage": {
-			"value": false
-		},
-		"LinterWriteTagAndTemplateColumnsStage": {
-			"value": false
-		},
-		"LinterUserInterfaceTagAndTemplateStage": {
-			"value": false
+		"LinterParseOnDerivedDataUpdate": {
+			"value": true
 		}
 	},
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
 	"manifest_version": 2
 }

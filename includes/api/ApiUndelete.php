@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\UndeletePage;
 use MediaWiki\Page\UndeletePageFactory;
@@ -28,6 +30,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * @ingroup API
@@ -39,17 +42,9 @@ class ApiUndelete extends ApiBase {
 	private UndeletePageFactory $undeletePageFactory;
 	private WikiPageFactory $wikiPageFactory;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param WatchlistManager $watchlistManager
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param UndeletePageFactory $undeletePageFactory
-	 * @param WikiPageFactory $wikiPageFactory
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		WatchlistManager $watchlistManager,
 		UserOptionsLookup $userOptionsLookup,
 		UndeletePageFactory $undeletePageFactory,
@@ -195,3 +190,6 @@ class ApiUndelete extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Undelete';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiUndelete::class, 'ApiUndelete' );

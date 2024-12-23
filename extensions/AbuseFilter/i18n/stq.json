@@ -142,7 +142,6 @@
 	"abusefilter-edit-builder-op-bool-not": "Nit (!)",
 	"abusefilter-edit-builder-op-bool-and": "Un (&)",
 	"abusefilter-edit-builder-op-bool-or": "Of (|)",
-	"abusefilter-edit-builder-op-bool-xor": "XOR (^)",
 	"abusefilter-edit-builder-group-misc": "Ferskeedenhaide",
 	"abusefilter-edit-builder-misc-in": "äntheelden in Teekenfoulge (in)",
 	"abusefilter-edit-builder-misc-like": "Paaset tou Muster (like)",

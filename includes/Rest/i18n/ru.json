@@ -3,14 +3,14 @@
 		"authors": [
 			"BerryAVGN",
 			"Dirruw'o",
+			"Kareyac",
 			"Katunchik",
 			"Megakott",
 			"Okras",
-			"Vlad5250",
-			"Kareyac"
+			"Vlad5250"
 		]
 	},
-	"rest-prefix-mismatch": "Запрашиваемый путь ($1) не найден внутри корневого пути REST API ($2)",
+	"rest-prefix-mismatch": "Запрашиваемый путь ($1) не найден внутри базового пути REST API ($2)",
 	"rest-wrong-method": "Метод запроса ($1) не был {{{{PLURAL:$3|}}|разрешённым методом для этого пути|одним из разрешённых методов для этого пути}} ($2)",
 	"rest-no-match": "Запрошенный относительный путь ($1) не соответствует ни одному известному обработчику",
 	"rest-nonexistent-title": "Указанной страницы ($1) не существует",
@@ -46,7 +46,7 @@
 	"rest-bad-json-body": "Неверное тело запроса, должно быть объектом JSON.",
 	"rest-json-body-parse-error": "Не удалось выполнить синтаксический анализ тела запроса как JSON: $1",
 	"rest-missing-body-field": "В теле запроса отсутствует обязательное поле «$1».",
-	"rest-body-validation error": "Недопустимый режим запроса: $1",
+	"rest-body-validation-error": "Недопустимый режим запроса: $1",
 	"rest-extraneous-body-fields": "В теле запроса обнаружены посторонние поля: $1",
 	"rest-bad-content-model": "Неверная модель содержимого: $1",
 	"rest-update-cannot-create-page": "Страница «$1» не может быть создана, так как она уже существует. Чтобы обновить существующую страницу, укажите идентификатор базовой версии в структуре под ключом «latest» в теле запроса.",
@@ -57,5 +57,11 @@
 	"rest-badtoken": "Предоставленный CSRF-токен недействителен.",
 	"rest-badtoken-missing": "Параметр <var>token</var> является обязательным, если только не используется метод аутентификации, безопасный для CSRF.",
 	"rest-badtoken-nosession": "Ошибка CSRF — нет сеанса.",
-	"rest-parsoid-error": "Ошибка Parsoid."
+	"rest-parsoid-error": "Ошибка Parsoid.",
+	"rest-html-key-expected": "Ожидаемый <var>HTML-</var> ключ в теле",
+	"rest-unsupported-transform-input": "Неподдерживаемый ввод: $1",
+	"rest-edit-conflict": "Конфликт редактирования ($1)",
+	"rest-unknown-parsoid-transformation": "Неизвестная трансформация.",
+	"rest-unknown-content-model": "Неизвестная модель содержимого: $1",
+	"rest-param-desc-revision-id": "ID правки"
 }

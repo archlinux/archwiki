@@ -20,10 +20,6 @@
 
 namespace MediaWiki\Preferences;
 
-use ILanguageConverter;
-use Language;
-use LanguageCode;
-use LanguageConverter;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
 use MediaWiki\Config\ServiceOptions;
@@ -31,9 +27,16 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\Field\HTMLCheckMatrix;
+use MediaWiki\HTMLForm\Field\HTMLInfoField;
+use MediaWiki\HTMLForm\Field\HTMLMultiSelectField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWiki\HTMLForm\HTMLNestedFilterable;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageCode;
+use MediaWiki\Language\LanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
@@ -42,6 +45,8 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Specials\SpecialWatchlist;
@@ -54,19 +59,18 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserGroupMembership;
 use MediaWiki\User\UserTimeCorrection;
+use MediaWiki\Xml\Xml;
 use MessageLocalizer;
 use OOUI\ButtonWidget;
 use OOUI\FieldLayout;
 use OOUI\HtmlSnippet;
 use OOUI\LabelWidget;
-use ParserFactory;
-use ParserOptions;
 use PreferencesFormOOUI;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use SkinFactory;
 use UnexpectedValueException;
-use Xml;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * This is the default implementation of PreferencesFactory.
@@ -123,7 +127,6 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	 * @internal For use by ServiceWiring
 	 */
 	public const CONSTRUCTOR_OPTIONS = [
-		MainConfigNames::AllowRequiringEmailForResets,
 		MainConfigNames::AllowUserCss,
 		MainConfigNames::AllowUserCssPrefs,
 		MainConfigNames::AllowUserJs,
@@ -184,11 +187,11 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		LanguageNameUtils $languageNameUtils,
 		HookContainer $hookContainer,
 		UserOptionsLookup $userOptionsLookup,
-		LanguageConverterFactory $languageConverterFactory = null,
-		ParserFactory $parserFactory = null,
-		SkinFactory $skinFactory = null,
-		UserGroupManager $userGroupManager = null,
-		SignatureValidatorFactory $signatureValidatorFactory = null
+		?LanguageConverterFactory $languageConverterFactory = null,
+		?ParserFactory $parserFactory = null,
+		?SkinFactory $skinFactory = null,
+		?UserGroupManager $userGroupManager = null,
+		?SignatureValidatorFactory $signatureValidatorFactory = null
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 
@@ -277,7 +280,9 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			// Info fields are useless and can use complicated closure to provide
 			// text, skip all of them.
 			if ( ( isset( $params['type'] ) && $params['type'] === 'info' ) ||
-				( isset( $params['class'] ) && $params['class'] === \HTMLInfoField::class )
+				// Checking old alias for compatibility with unchanged extensions
+				( isset( $params['class'] ) && $params['class'] === \HTMLInfoField::class ) ||
+				( isset( $params['class'] ) && $params['class'] === HTMLInfoField::class )
 			) {
 				unset( $descriptor[$name] );
 				continue;
@@ -391,7 +396,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	/**
 	 * Pull option from a user account. Handles stuff like array-type preferences.
 	 *
-	 * @deprecated 1.41 Use getPreferenceForField() instead.
+	 * @deprecated since 1.41; Use getPreferenceForField() instead.
 	 * @param string $name
 	 * @param array $info
 	 * @param array $userOptions
@@ -402,7 +407,10 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 		// Handling for multiselect preferences
 		if ( ( isset( $info['type'] ) && $info['type'] == 'multiselect' ) ||
-				( isset( $info['class'] ) && $info['class'] == \HTMLMultiSelectField::class ) ) {
+			// Checking old alias for compatibility with unchanged extensions
+			( isset( $info['class'] ) && $info['class'] === \HTMLMultiSelectField::class ) ||
+			( isset( $info['class'] ) && $info['class'] === HTMLMultiSelectField::class )
+		) {
 			$options = HTMLFormField::flattenOptions( $info['options-messages'] ?? $info['options'] );
 			$prefix = $info['prefix'] ?? $name;
 			$val = [];
@@ -416,7 +424,10 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 		// Handling for checkmatrix preferences
 		if ( ( isset( $info['type'] ) && $info['type'] == 'checkmatrix' ) ||
-				( isset( $info['class'] ) && $info['class'] == \HTMLCheckMatrix::class ) ) {
+			// Checking old alias for compatibility with unchanged extensions
+			( isset( $info['class'] ) && $info['class'] === \HTMLCheckMatrix::class ) ||
+			( isset( $info['class'] ) && $info['class'] === HTMLCheckMatrix::class )
+		) {
 			$columns = HTMLFormField::flattenOptions( $info['columns'] );
 			$rows = HTMLFormField::flattenOptions( $info['rows'] );
 			$prefix = $info['prefix'] ?? $name;
@@ -465,7 +476,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		$defaultPreferences['usergroups'] = [
 			'type' => 'info',
 			'label-message' => [ 'prefs-memberingroups',
-				\Message::numParam( count( $userEffectiveGroups ) ), $userName ],
+				Message::numParam( count( $userEffectiveGroups ) ), $userName ],
 			'default' => function () use ( $user, $userEffectiveGroups, $context, $lang, $userName ) {
 				$userGroupMemberships = $this->userGroupManager->getUserGroupMemberships( $user );
 				$userGroups = $userMembers = $userTempGroups = $userTempMembers = [];
@@ -559,8 +570,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 				] ),
 				'label-message' => 'yourpassword',
 				// email password reset feature only works for users that have an email set up
-				'help' => $this->options->get( MainConfigNames::AllowRequiringEmailForResets ) &&
-						$user->getEmail()
+				'help' => $user->getEmail()
 					? $context->msg( 'prefs-help-yourpassword',
 						'[[#mw-prefsection-personal-email|{{int:prefs-email}}]]' )->parse()
 					: '',
@@ -807,15 +817,13 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 			$disableEmailPrefs = false;
 
-			if ( $this->options->get( MainConfigNames::AllowRequiringEmailForResets ) ) {
-				$defaultPreferences['requireemail'] = [
-					'type' => 'toggle',
-					'label-message' => 'tog-requireemail',
-					'help-message' => 'prefs-help-requireemail',
-					'section' => 'personal/email',
-					'disabled' => !$user->getEmail(),
-				];
-			}
+			$defaultPreferences['requireemail'] = [
+				'type' => 'toggle',
+				'label-message' => 'tog-requireemail',
+				'help-message' => 'prefs-help-requireemail',
+				'section' => 'personal/email',
+				'disabled' => !$user->getEmail(),
+			];
 
 			if ( $this->options->get( MainConfigNames::EmailAuthentication ) ) {
 				if ( $user->getEmail() ) {
@@ -894,6 +902,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 						'section' => 'personal/email',
 						'disabled' => $disableEmailPrefs,
 						'filter' => MultiUsernameFilter::class,
+						'excludetemp' => true,
 					];
 				}
 			}
@@ -1643,7 +1652,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 		// Display the installed skin the user has specifically requested via useskin=….
 		$useSkin = $context->getRequest()->getRawVal( 'useskin' );
-		if ( isset( $allInstalledSkins[$useSkin] )
+		if ( $useSkin !== null && isset( $allInstalledSkins[$useSkin] )
 			&& $context->msg( "skinname-$useSkin" )->exists()
 		) {
 			$validSkinNames[$useSkin] = $useSkin;
@@ -2005,10 +2014,16 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			}
 
 			// Keep old preferences from interfering due to back-compat code, etc.
-			$this->userOptionsManager->resetOptions( $user, $form->getContext(), 'unused' );
+			$optionsToReset = $this->getOptionNamesForReset( $user, $form->getContext(), 'unused' );
+			$this->userOptionsManager->resetOptionsByName( $user, $optionsToReset );
 
 			foreach ( $formData as $key => $value ) {
-				$this->userOptionsManager->setOption( $user, $key, $value );
+				// If we're creating a new local override, we need to explicitly pass
+				// GLOBAL_OVERRIDE to setOption(), otherwise the update would be ignored
+				// due to the conflicting global option.
+				$except = !empty( $formData[$key . UserOptionsLookup::LOCAL_EXCEPTION_SUFFIX] );
+				$this->userOptionsManager->setOption( $user, $key, $value,
+					$except ? UserOptionsManager::GLOBAL_OVERRIDE : UserOptionsManager::GLOBAL_IGNORE );
 			}
 
 			$this->hookRunner->onPreferencesFormPreSave(
@@ -2079,5 +2094,116 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		}
 
 		return ( $res === true ? Status::newGood() : $res );
+	}
+
+	public function getResetKinds(
+		User $user, IContextSource $context, $options = null
+	): array {
+		$options ??= $this->userOptionsManager->loadUserOptions( $user );
+
+		$prefs = $this->getFormDescriptor( $user, $context );
+		$mapping = [];
+
+		// Pull out the "special" options, so they don't get converted as
+		// multiselect or checkmatrix.
+		$specialOptions = array_fill_keys( $this->getSaveBlacklist(), true );
+		foreach ( $specialOptions as $name => $value ) {
+			unset( $prefs[$name] );
+		}
+
+		// Multiselect and checkmatrix options are stored in the database with
+		// one key per option, each having a boolean value. Extract those keys.
+		$multiselectOptions = [];
+		foreach ( $prefs as $name => $info ) {
+			if ( ( isset( $info['type'] ) && $info['type'] == 'multiselect' ) ||
+				// Checking old alias for compatibility with unchanged extensions
+				( isset( $info['class'] ) && $info['class'] === \HTMLMultiSelectField::class ) ||
+				( isset( $info['class'] ) && $info['class'] === HTMLMultiSelectField::class )
+			) {
+				$opts = HTMLFormField::flattenOptions( $info['options'] ?? $info['options-messages'] );
+				$prefix = $info['prefix'] ?? $name;
+
+				foreach ( $opts as $value ) {
+					$multiselectOptions["$prefix$value"] = true;
+				}
+
+				unset( $prefs[$name] );
+			}
+		}
+		$checkmatrixOptions = [];
+		foreach ( $prefs as $name => $info ) {
+			if ( ( isset( $info['type'] ) && $info['type'] == 'checkmatrix' ) ||
+				// Checking old alias for compatibility with unchanged extensions
+				( isset( $info['class'] ) && $info['class'] === \HTMLCheckMatrix::class ) ||
+				( isset( $info['class'] ) && $info['class'] === HTMLCheckMatrix::class )
+			) {
+				$columns = HTMLFormField::flattenOptions( $info['columns'] );
+				$rows = HTMLFormField::flattenOptions( $info['rows'] );
+				$prefix = $info['prefix'] ?? $name;
+
+				foreach ( $columns as $column ) {
+					foreach ( $rows as $row ) {
+						$checkmatrixOptions["$prefix$column-$row"] = true;
+					}
+				}
+
+				unset( $prefs[$name] );
+			}
+		}
+
+		// $value is ignored
+		foreach ( $options as $key => $value ) {
+			if ( isset( $prefs[$key] ) ) {
+				$mapping[$key] = 'registered';
+			} elseif ( isset( $multiselectOptions[$key] ) ) {
+				$mapping[$key] = 'registered-multiselect';
+			} elseif ( isset( $checkmatrixOptions[$key] ) ) {
+				$mapping[$key] = 'registered-checkmatrix';
+			} elseif ( isset( $specialOptions[$key] ) ) {
+				$mapping[$key] = 'special';
+			} elseif ( str_starts_with( $key, 'userjs-' ) ) {
+				$mapping[$key] = 'userjs';
+			} elseif ( str_starts_with( $key, UserOptionsLookup::LOCAL_EXCEPTION_SUFFIX ) ) {
+				$mapping[$key] = 'local-exception';
+			} else {
+				$mapping[$key] = 'unused';
+			}
+		}
+
+		return $mapping;
+	}
+
+	public function listResetKinds() {
+		return [
+			'registered',
+			'registered-multiselect',
+			'registered-checkmatrix',
+			'userjs',
+			'special',
+			'unused'
+		];
+	}
+
+	public function getOptionNamesForReset( User $user, IContextSource $context, $kinds ) {
+		$oldOptions = $this->userOptionsManager->loadUserOptions( $user, IDBAccessObject::READ_LATEST );
+
+		if ( !is_array( $kinds ) ) {
+			$kinds = [ $kinds ];
+		}
+
+		if ( in_array( 'all', $kinds ) ) {
+			return array_keys( $oldOptions );
+		} else {
+			$optionKinds = $this->getResetKinds( $user, $context );
+			$kinds = array_intersect( $kinds, $this->listResetKinds() );
+			$optionNames = [];
+
+			foreach ( $oldOptions as $key => $value ) {
+				if ( in_array( $optionKinds[$key], $kinds ) ) {
+					$optionNames[] = $key;
+				}
+			}
+			return $optionNames;
+		}
 	}
 }

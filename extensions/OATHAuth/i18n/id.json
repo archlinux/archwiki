@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Daud I.F. Argana",
+			"Ezagren",
 			"Iwan Novirion",
 			"Rachmat.Wahidi",
 			"Rachmat04",
-			"William Surya Permana",
-			"Ezagren"
+			"William Surya Permana"
 		]
 	},
 	"oathauth-desc": "Memberikan dukungan otentikasi menggunakan kata sandi sekali-pakai berbasis HMAC",

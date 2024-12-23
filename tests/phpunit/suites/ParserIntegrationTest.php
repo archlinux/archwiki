@@ -15,17 +15,17 @@ use Wikimedia\Parsoid\ParserTests\TestMode as ParserTestMode;
  * @group Parser
  * @group ParserTests
  *
- * @covers \Parser
- * @covers \BlockLevelPass
- * @covers \CoreParserFunctions
- * @covers \CoreTagHooks
+ * @covers \MediaWiki\Parser\Parser
+ * @covers \MediaWiki\Parser\BlockLevelPass
+ * @covers \MediaWiki\Parser\CoreParserFunctions
+ * @covers \MediaWiki\Parser\CoreTagHooks
  * @covers \MediaWiki\Parser\Sanitizer
- * @covers \Preprocessor
- * @covers \Preprocessor_Hash
- * @covers \DateFormatter
- * @covers \LinkHolderArray
- * @covers \StripState
- * @covers \ParserOptions
+ * @covers \MediaWiki\Parser\Preprocessor
+ * @covers \MediaWiki\Parser\Preprocessor_Hash
+ * @covers \MediaWiki\Parser\DateFormatter
+ * @covers \MediaWiki\Parser\LinkHolderArray
+ * @covers \MediaWiki\Parser\StripState
+ * @covers \MediaWiki\Parser\ParserOptions
  * @covers \MediaWiki\Parser\ParserOutput
  */
 class ParserIntegrationTest extends PHPUnit\Framework\TestCase {
@@ -50,7 +50,7 @@ class ParserIntegrationTest extends PHPUnit\Framework\TestCase {
 		string $fileName,
 		ParserTest $test,
 		ParserTestMode $mode,
-		string $skipMessage = null
+		?string $skipMessage = null
 	) {
 		parent::__construct(
 			'testParse',

@@ -1,10 +1,17 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Integration\Mapper;
+
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Notification;
+use MediaWiki\MainConfigNames;
 use MediaWiki\User\User;
+use MediaWikiIntegrationTestCase;
+use Wikimedia\Rdbms\DeleteQueryBuilder;
+use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Mapper\NotificationMapper
@@ -19,12 +26,6 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function fetchUnreadByUser( User $user, $limit, array $eventTypes = [] ) {
-		// Unsuccessful select
-		$notifMapper = new NotificationMapper( $this->mockDbFactory( [ 'select' => false ] ) );
-		$res = $notifMapper->fetchUnreadByUser( $this->mockUser(), 10, null, '' );
-		$this->assertSame( [], $res );
-
-		// Successful select
 		$dbResult = [
 			(object)[
 				'event_id' => 1,
@@ -54,12 +55,6 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testFetchByUser() {
-		// Unsuccessful select
-		$notifMapper = new NotificationMapper( $this->mockDbFactory( [ 'select' => false ] ) );
-		$res = $notifMapper->fetchByUser( $this->mockUser(), 10, '' );
-		$this->assertSame( [], $res );
-
-		// Successful select
 		$notifDbResult = [
 			(object)[
 				'event_id' => 1,
@@ -123,10 +118,10 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testDeleteByUserEventOffset() {
-		$this->setMwGlobals( [ 'wgUpdateRowsPerQuery' => 4 ] );
+		$this->overrideConfigValue( MainConfigNames::UpdateRowsPerQuery, 4 );
 		$mockDb = $this->createMock( IDatabase::class );
 		$makeResultRows = static function ( $eventIds ) {
-			return new ArrayIterator( array_map( static function ( $eventId ) {
+			return new FakeResultWrapper( array_map( static function ( $eventId ) {
 				return (object)[ 'notification_event' => $eventId ];
 			}, $eventIds ) );
 		};
@@ -180,6 +175,14 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 			->willReturnCallback( function ( $table, $conds ) use ( &$expectedArgs ): bool {
 				$this->assertSame( array_shift( $expectedArgs ), [ $table, $conds ] );
 				return true;
+			} );
+		$mockDb->method( 'newDeleteQueryBuilder' )
+			->willReturnCallback( static function () use ( $mockDb ) {
+				return new DeleteQueryBuilder( $mockDb );
+			} );
+		$mockDb->method( 'newSelectQueryBuilder' )
+			->willReturnCallback( static function () use ( $mockDb ) {
+				return new SelectQueryBuilder( $mockDb );
 			} );
 
 		$notifMapper = new NotificationMapper( $this->mockDbFactory( $mockDb ) );
@@ -236,7 +239,7 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 	protected function mockDb( array $dbResult ) {
 		$dbResult += [
 			'insert' => '',
-			'select' => '',
+			'select' => [],
 			'selectRow' => '',
 			'delete' => ''
 		];
@@ -245,13 +248,17 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 		$db->method( 'insert' )
 			->willReturn( $dbResult['insert'] );
 		$db->method( 'select' )
-			->willReturn( $dbResult['select'] );
+			->willReturn( new FakeResultWrapper( $dbResult['select'] ) );
 		$db->method( 'delete' )
 			->willReturn( $dbResult['delete'] );
 		$db->method( 'selectRow' )
 			->willReturn( $dbResult['selectRow'] );
 		$db->method( 'onTransactionCommitOrIdle' )
 			->will( new EchoExecuteFirstArgumentStub );
+		$db->method( 'newSelectQueryBuilder' )
+			->willReturnCallback( static function () use ( $db ) {
+				return new SelectQueryBuilder( $db );
+			} );
 
 		return $db;
 	}

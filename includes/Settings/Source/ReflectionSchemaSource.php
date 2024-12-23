@@ -6,6 +6,7 @@ use Closure;
 use MediaWiki\Settings\SettingsBuilderException;
 use ReflectionClass;
 use ReflectionException;
+use Stringable;
 
 /**
  * Constructs a settings array based on a PHP class by inspecting class
@@ -34,7 +35,7 @@ use ReflectionException;
  *
  * @since 1.39
  */
-class ReflectionSchemaSource implements SettingsSource {
+class ReflectionSchemaSource implements Stringable, SettingsSource {
 	use JsonSchemaTrait;
 
 	/**
@@ -65,10 +66,13 @@ class ReflectionSchemaSource implements SettingsSource {
 	}
 
 	/**
+	 * @param bool $inlineReferences Whether the references found in the schema `$ref` should
+	 * be inlined, meaning resolving its final type and embedding it as a regular schema. No
+	 * definitions `$defs` will be returned.
 	 * @throws SettingsBuilderException
 	 * @return array
 	 */
-	public function loadAsComponents(): array {
+	public function loadAsComponents( bool $inlineReferences = false ): array {
 		$schemas = [];
 		$defs = [];
 		$obsolete = [];
@@ -106,7 +110,7 @@ class ReflectionSchemaSource implements SettingsSource {
 
 				$schema['default'] ??= null;
 
-				$schema = self::normalizeJsonSchema( $schema, $defs, $this->class, $name );
+				$schema = self::normalizeJsonSchema( $schema, $defs, $this->class, $name, $inlineReferences );
 
 				$schemas[ $name ] = $schema;
 			}
@@ -133,10 +137,13 @@ class ReflectionSchemaSource implements SettingsSource {
 	 * returned schema may contain `$defs`, which then may be referenced internally in the schema
 	 * via `$ref`.
 	 *
+	 * @param bool $inlineReferences Whether the references found in the schema `$ref` should
+	 * be inlined, meaning resolving its final type and embedding it as a regular schema. No
+	 * definitions `$defs` will be returned.
 	 * @return array
 	 */
-	public function loadAsSchema(): array {
-		$info = $this->loadAsComponents();
+	public function loadAsSchema( bool $inlineReferences = false ): array {
+		$info = $this->loadAsComponents( $inlineReferences );
 		$schema = [
 			'type' => 'object',
 			'properties' => $info['config-schema'],

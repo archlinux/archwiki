@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use Wikimedia\IPUtils;
 
@@ -40,7 +42,7 @@ class GetLagTimes extends Maintenance {
 	public function execute() {
 		$services = $this->getServiceContainer();
 		$lbFactory = $services->getDBLoadBalancerFactory();
-		$stats = $services->getStatsdDataFactory();
+		$stats = $services->getStatsFactory();
 		$lbsByType = [
 			'main' => $lbFactory->getAllMainLBs(),
 			'external' => $lbFactory->getAllExternalLBs()
@@ -71,7 +73,20 @@ class GetLagTimes extends Maintenance {
 
 					if ( $this->hasOption( 'report' ) ) {
 						$group = ( $type === 'external' ) ? 'external' : $cluster;
-						$stats->gauge( "loadbalancer.lag.$group.$host", (int)( $lag * 1e3 ) );
+
+						// $lag is the lag duration in seconds
+						// emit milliseconds for backwards-compatibility
+						$stats->getGauge( 'loadbalancer_lag_milliseconds' )
+							->setLabel( 'group', $group )
+							->setLabel( 'host', $host )
+							->copyToStatsdAt( "loadbalancer.lag.$group.$host" )
+							->set( (int)( $lag * 1e3 ) );
+
+						// emit seconds also to align with Prometheus' recommendations
+						$stats->getGauge( 'loadbalancer_lag_seconds' )
+							->setLabel( 'group', $group )
+							->setLabel( 'host', $host )
+							->set( (int)$lag );
 					}
 				}
 			}
@@ -79,5 +94,7 @@ class GetLagTimes extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GetLagTimes::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

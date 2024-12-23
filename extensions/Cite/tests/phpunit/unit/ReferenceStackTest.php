@@ -5,7 +5,7 @@ namespace Cite\Tests\Unit;
 use Cite\ReferenceStack;
 use Cite\Tests\TestUtils;
 use LogicException;
-use StripState;
+use MediaWiki\Parser\StripState;
 use Wikimedia\TestingAccessWrapper;
 
 /**

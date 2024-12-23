@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use IContextSource;
 use LogicException;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\Extension\Notifications\Services;
@@ -15,9 +15,7 @@ use MediaWiki\Pager\ReverseChronologicalPager;
  * It paginates on notification_event for a specific user, only for the enabled event types.
  */
 class NotificationPager extends ReverseChronologicalPager {
-	/**
-	 * @param IContextSource $context
-	 */
+
 	public function __construct( IContextSource $context ) {
 		$dbFactory = DbFactory::newFromDefault();
 		$this->mDb = $dbFactory->getEchoDb( DB_REPLICA );

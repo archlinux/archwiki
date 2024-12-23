@@ -31,7 +31,7 @@ ve.dm.MWLanguageMetaItem.static.matchTagNames = [ 'link' ];
 ve.dm.MWLanguageMetaItem.static.matchRdfaTypes = [ 'mw:PageProp/Language' ];
 
 ve.dm.MWLanguageMetaItem.static.toDataElement = function ( domElements ) {
-	var href = domElements[ 0 ].getAttribute( 'href' );
+	const href = domElements[ 0 ].getAttribute( 'href' );
 	return {
 		type: this.name,
 		attributes: {
@@ -41,7 +41,7 @@ ve.dm.MWLanguageMetaItem.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.MWLanguageMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	var domElement = doc.createElement( 'link' );
+	const domElement = doc.createElement( 'link' );
 	domElement.setAttribute( 'rel', 'mw:PageProp/Language' );
 	domElement.setAttribute( 'href', dataElement.attributes.href );
 	return [ domElement ];

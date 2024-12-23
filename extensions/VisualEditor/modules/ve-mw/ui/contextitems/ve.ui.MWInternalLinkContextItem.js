@@ -45,7 +45,7 @@ ve.ui.MWInternalLinkContextItem.static.modelClasses = [ ve.dm.MWInternalLinkAnno
  * @return {jQuery} The jQuery object of the link context item
  */
 ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, model, htmlDoc, context ) {
-	var lookupTitle = model.getAttribute( 'lookupTitle' ),
+	const lookupTitle = model.getAttribute( 'lookupTitle' ),
 		normalizedTitle = model.getAttribute( 'normalizedTitle' ),
 		href = model.getHref(),
 		title = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( href ) ),
@@ -69,7 +69,7 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 	// Don't style as a self-link in the context menu (but do elsewhere)
 	$link.removeClass( 'mw-selflink' );
 
-	var icon;
+	let icon;
 	if ( usePageImages ) {
 		icon = new OO.ui.IconWidget( { icon: 'page-existing' } );
 		$wrapper
@@ -84,7 +84,7 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 	}
 
 	if ( usePageImages || usePageDescriptions ) {
-		linkCache.get( lookupTitle ).then( function ( linkData ) {
+		linkCache.get( lookupTitle ).then( ( linkData ) => {
 			if ( usePageImages ) {
 				if ( linkData.imageUrl ) {
 					icon.$element
@@ -95,7 +95,7 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 				}
 			}
 			if ( usePageDescriptions && linkData.description ) {
-				var $description = $( '<span>' )
+				const $description = $( '<span>' )
 					.addClass( 've-ui-mwInternalLinkContextItem-description' )
 					.text( linkData.description );
 				$wrapper.append( $description );
@@ -120,7 +120,7 @@ ve.ui.MWInternalLinkContextItem.prototype.getDescription = function () {
  * @inheritdoc
  */
 ve.ui.MWInternalLinkContextItem.prototype.renderBody = function () {
-	var $body = this.constructor.static.generateBody(
+	const $body = this.constructor.static.generateBody(
 		ve.init.platform.linkCache,
 		this.model,
 		this.context.getSurface().getModel().getDocument().getHtmlDocument(),

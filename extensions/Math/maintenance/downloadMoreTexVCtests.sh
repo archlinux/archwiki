@@ -18,5 +18,5 @@ curl $URL -o $FILEPATH
 
 # Downloads the file containing reference renderings for all english wikipedia chem-regression tests to the testfolder
 FILEPATH=../tests/phpunit/unit/WikiTexVC/en-wiki-formulae-good-reference.json
-URL=https://zenodo.org/records/7494266/files/normalized.json
+URL=https://zenodo.org/records/14209690/files/normalized.json
 curl $URL -o $FILEPATH

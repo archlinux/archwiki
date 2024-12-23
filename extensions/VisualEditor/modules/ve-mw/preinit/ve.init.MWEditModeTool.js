@@ -77,7 +77,7 @@ mw.libs.ve.MWEditModeTool.prototype.onSelect = function () {
  * @inheritdoc
  */
 mw.libs.ve.MWEditModeTool.prototype.onUpdateState = function () {
-	var modeAvailable = this.isModeAvailable( this.constructor.static.editMode );
+	const modeAvailable = this.isModeAvailable( this.constructor.static.editMode );
 
 	// Change title if state has changed
 	if ( this.modeAvailable !== modeAvailable ) {

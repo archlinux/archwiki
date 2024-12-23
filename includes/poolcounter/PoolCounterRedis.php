@@ -24,9 +24,9 @@ use ArrayUtils;
 use Exception;
 use HashRing;
 use MediaWiki\Status\Status;
-use RedisConnectionPool;
-use RedisConnRef;
 use RedisException;
+use Wikimedia\ObjectCache\RedisConnectionPool;
+use Wikimedia\ObjectCache\RedisConnRef;
 
 /**
  * Version of PoolCounter that uses Redis
@@ -448,5 +448,5 @@ LUA;
 	}
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( PoolCounterRedis::class, 'PoolCounterRedis' );

@@ -171,6 +171,7 @@
 	"notification-link-thank-you-edit": "การแก้ไข{{GENDER:$1|ของคุณ}}",
 	"notification-link-text-view-edit": "ดูการแก้ไข",
 	"notification-link-article-reminder": "ดูหน้า",
+	"notification-link-api-triggered": "ดูหน้า",
 	"notification-header-reverted": "{{PLURAL:$4|การแก้ไขใน <strong>$3</strong>}} ของคุณถูก{{GENDER:$2|ย้อน}}",
 	"notification-header-emailuser": "$1 {{GENDER:$2|ส่ง}}อีเมลถึงคุณ",
 	"notification-edit-talk-page-email-subject2": "$1 ส่งข้อความถึงคุณบน {{SITENAME}}",

@@ -85,21 +85,13 @@ class MhchemPatterns {
 		 */
 		if ( !$pattern instanceof Reg ) {
 			// Added this if to catch empty needle for strpos input  in PHP
-			if ( !MhchemUtil::issetJS( $pattern ) ) {
+			if ( !MhchemUtil::issetJS( $pattern ) || str_starts_with( $input, $pattern ) ) {
 				return $pattern;
 			}
-			if ( strpos( $input, $pattern ) !== 0 ) {
-				return null;
-			}
-			return $pattern;
-		} else {
-			$matches = [];
-			$match = preg_match( $pattern->getRegExp(), $input, $matches );
-			if ( !$match ) {
-				return null;
-			}
+		} elseif ( preg_match( $pattern->getRegExp(), $input, $matches ) ) {
 			return $matches[0];
 		}
+		return null;
 	}
 
 	private function findObserveGroupsInner( string $input, $i, $endChars ): ?array {

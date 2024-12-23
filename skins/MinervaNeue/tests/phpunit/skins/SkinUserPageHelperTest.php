@@ -161,6 +161,30 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * @covers ::setTitle
+	 */
+	public function testSetTitle() {
+		$title = Title::makeTitle( NS_USER, '127.0.0.1' );
+
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserFactory(),
+			$this->getServiceContainer()->getUserNameUtils()
+		);
+
+		$helper->setTitle( $title );
+		$this->assertTrue( $helper->isUserPage() );
+
+		// setTitle resets the cache
+		$helper->setTitle( null );
+		$this->assertFalse( $helper->isUserPage() );
+		$this->assertNull( $helper->getPageUser() );
+
+		// setTitle resets the cache
+		$helper->setTitle( $title );
+		$this->assertTrue( $helper->isUserPage() );
+	}
+
+	/**
 	 * @covers ::fetchData
 	 * @covers ::getPageUser
 	 * @covers ::isUserPage

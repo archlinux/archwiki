@@ -32,7 +32,9 @@
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/TableCleanup.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to remove broken, unparseable titles in the watchlist table.
@@ -40,6 +42,7 @@ require_once __DIR__ . '/TableCleanup.php';
  * @ingroup Maintenance
  */
 class CleanupWatchlist extends TableCleanup {
+	/** @inheritDoc */
 	protected $defaultParams = [
 		'table' => 'watchlist',
 		'index' => [ 'wl_id' ],
@@ -80,17 +83,17 @@ class CleanupWatchlist extends TableCleanup {
 	private function removeWatch( $row ) {
 		if ( !$this->dryrun && $this->hasOption( 'fix' ) ) {
 			$dbw = $this->getPrimaryDB();
-			$dbw->delete(
-				'watchlist',
-				[ 'wl_id' => $row->wl_id ],
-				__METHOD__
-			);
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'watchlist' )
+				->where( [ 'wl_id' => $row->wl_id ] )
+				->caller( __METHOD__ )
+				->execute();
 			if ( $this->getConfig()->get( MainConfigNames::WatchlistExpiry ) ) {
-				$dbw->delete(
-					'watchlist_expiry',
-					[ 'we_item' => $row->wl_id ],
-					__METHOD__
-				);
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'watchlist_expiry' )
+					->where( [ 'we_item' => $row->wl_id ] )
+					->caller( __METHOD__ )
+					->execute();
 			}
 
 			$this->output( "- removed\n" );
@@ -102,5 +105,7 @@ class CleanupWatchlist extends TableCleanup {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CleanupWatchlist::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

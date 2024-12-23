@@ -40,6 +40,7 @@
 	"gadgets-export-download": "Схьаэца",
 	"gadgets-requires-es6": "ХӀара гаджет ES6-ца йогӀуш йолчу браузершкахь бен болх беш йац.",
 	"gadgets-validate-notset": "Башхалла <code>$1</code> дӀахӀоттийна йац.",
+	"gadgets-validate-wrongtype": "<code>$1</code> башхалла тайпанан хила йеза <code>$2</code>.",
 	"gadgets-validate-json": "JSON файлаш билгалйаьхна йу, амма лелош йац. Уьш лело йиш йац дӀакъевлинчу гаджеташкахь бен.",
 	"gadgets-validate-es6default": "ES6 оьшуш йолу гаджеташ Ӏад йитаран кепаца латто йиш йац",
 	"gadgets-validate-noentrypoint": "Пакет йина гаджетан байракх тидаме ца оьцуш йисира, хӀунда аьлча цхьа а скриптан файлаш билгалйаьхна йацара.",

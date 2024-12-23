@@ -3,12 +3,11 @@
 namespace MediaWiki\Extension\SpamBlacklist;
 
 use InvalidArgumentException;
+use MediaWiki\Content\TextContent;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use ObjectCache;
-use TextContent;
 
 /**
  * Base class for different kinds of blacklists
@@ -374,7 +373,8 @@ abstract class BaseBlacklist {
 		// FIXME: This is a hack to use Memcached where possible (incl. WMF),
 		// but have CACHE_DB as fallback (instead of no cache).
 		// This might be a good candidate for T248005.
-		$cache = ObjectCache::getInstance( $wgMessageCacheType );
+		$services = MediaWikiServices::getInstance()->getObjectCacheFactory();
+		$cache = $services->getInstance( $wgMessageCacheType );
 
 		$listType = $this->getBlacklistType();
 		// There are two keys, when the warning key expires, a random thread will refresh

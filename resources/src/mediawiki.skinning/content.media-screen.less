@@ -1,5 +1,10 @@
-@import 'mediawiki.skin.variables';
+/* stylelint-disable selector-class-pattern */
+@import 'mediawiki.mixins.less';
+@import 'mediawiki.skin.variables.less';
 @import 'content.variables.less';
+
+@margin-horizontal-image: 3px;
+@border-width-image: 1px;
 
 figure[ typeof~='mw:File/Thumb' ],
 figure[ typeof~='mw:File/Frame' ] {
@@ -9,7 +14,6 @@ figure[ typeof~='mw:File/Frame' ] {
 
 	> :not( figcaption ) .mw-file-element {
 		border: @border-subtle;
-		background: @background-color-interactive-subtle;
 	}
 
 	> figcaption {
@@ -33,26 +37,30 @@ figure[ typeof~='mw:File/Thumb' ] {
 		content: '';
 		width: 15px;
 		height: 11px;
+		margin: 0;
+		.margin-inline( @margin-horizontal-image, 0 );
 
 		// Default where page content language is not set
 		// Allow to flip
-		margin: 0 0 0 3px;
 		float: right;
 
 		// Defaults for page content language
 
 		.mw-content-ltr & {
 			/* @noflip */
-			margin: 0 0 0 3px;
-			/* @noflip */
 			float: right;
 		}
 
 		.mw-content-rtl & {
 			/* @noflip */
-			margin: 0 3px 0 0;
-			/* @noflip */
 			float: left;
+		}
+
+		body.skin--responsive & {
+			/** Disable magnifying glass at lower resolutions */
+			@media all and ( max-width: @max-width-breakpoint-mobile ) {
+				content: none;
+			}
 		}
 	}
 
@@ -92,6 +100,50 @@ figure[ typeof~='mw:File/Thumb' ] {
 				/* @noflip */
 				background-image: @background-image-magnify-rtl;
 			}
+
+			/** Disable magnifying glass at lower resolutions to maximize space for caption. */
+			@media all and ( max-width: @max-width-breakpoint-mobile ) {
+				/* stylelint-disable-next-line declaration-no-important */
+				background-image: none !important;
+			}
+		}
+	}
+}
+
+/**
+ * RESPONSIVE IMAGES FOR RESPONSIVE SKINS (T113101 and T367463)
+ * Note we restrict to img's to avoid conflicts with VisualEditor shields.
+ * Note this currently doesn't apply to frameless images (tracked in T367831) and
+ * does not currently apply to responsive images in MobileFrontend.
+ */
+body.skin--responsive .mw-parser-output {
+	// Only block images should be responsive to prevent 0 sizing in tables
+	// Inline images do not use figure. We do not target audio and video or other content
+	// We target .mw-file-element, as there can be img inside captions...
+	figure img.mw-file-element {
+		// Note height auto is required and only applied to images.
+		height: auto;
+		// make sure that images in articles don't cause a horizontal scrollbar
+		// on small screens.
+		max-width: @size-full;
+	}
+
+	// Note: If the image is a thumbnail, max-width also needs to take into account margin and border.
+	figure[ typeof~='mw:File/Thumb' ] img.mw-file-element,
+	figure[ typeof~='mw:File/Frame' ] img.mw-file-element {
+		max-width: calc( @size-full - ( 2 * @margin-horizontal-image ) - ( 2 * @border-width-image ) );
+	}
+
+	/**
+	 * When the noresize class is used e.g. on a panorama or image map
+	 * with clickable regions (T22030), do not subject the image to a max-width rule.
+	 *
+	 * [[File:example.jpg|thumb|class=noresize]] and imagemap extension put the class on figure itself (T368034)
+	 */
+	.noresize figure,
+	figure.noresize {
+		img.mw-file-element {
+			max-width: none;
 		}
 	}
 }

@@ -54,17 +54,13 @@ describe( 'reportIfNightModeWasDisabledOnPage.js', () => {
 				options: userOptionsAutomatic
 			}
 		};
-		window.matchMedia = () => {
-			return {
-				matches: true
-			};
-		};
+		window.matchMedia = () => ( {
+			matches: true
+		} );
 		expect( reportIfNightModeWasDisabledOnPage( nightModeDisabledDoc ) ).toBe( true );
-		window.matchMedia = () => {
-			return {
-				matches: false
-			};
-		};
+		window.matchMedia = () => ( {
+			matches: false
+		} );
 		expect( reportIfNightModeWasDisabledOnPage( nightModeDisabledDoc ) ).toBe( false );
 	} );
 

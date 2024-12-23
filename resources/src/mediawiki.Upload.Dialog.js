@@ -1,13 +1,11 @@
 ( function () {
 
 	/**
-	 * Class for controlling a BookletLayout.
-	 *
-	 * @classdesc mw.Upload.Dialog controls a {@link mw.Upload.BookletLayout BookletLayout}.
+	 * @classdesc Controls a {@link mw.Upload.BookletLayout BookletLayout}.
 	 *
 	 * ## Usage
 	 *
-	 * To use, setup a {@link OO.ui.WindowManager window manager} like for normal
+	 * To use, set up a {@link OO.ui.WindowManager window manager} like for normal
 	 * dialogs:
 	 * ```
 	 * var uploadDialog = new mw.Upload.Dialog();
@@ -32,6 +30,7 @@
 	 * @extends OO.ui.ProcessDialog
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.Upload.Dialog`.
 	 * @param {Object} [config] Configuration options
 	 * @param {Function} [config.bookletClass=mw.Upload.BookletLayout] Booklet class to be
 	 *     used for the steps
@@ -39,7 +38,7 @@
 	 */
 	mw.Upload.Dialog = function ( config ) {
 		// Config initialization
-		config = $.extend( {
+		config = Object.assign( {
 			bookletClass: mw.Upload.BookletLayout
 		}, config );
 
@@ -134,7 +133,7 @@
 	 */
 	mw.Upload.Dialog.prototype.createUploadBooklet = function () {
 		// eslint-disable-next-line new-cap
-		return new this.bookletClass( $.extend( {
+		return new this.bookletClass( Object.assign( {
 			$overlay: this.$overlay
 		}, this.bookletConfig ) );
 	};
@@ -200,7 +199,7 @@
 	 * @inheritdoc
 	 */
 	mw.Upload.Dialog.prototype.getActionProcess = function ( action ) {
-		var dialog = this;
+		const dialog = this;
 
 		if ( action === 'upload' ) {
 			return new OO.ui.Process( this.uploadBooklet.uploadFile() );
@@ -209,7 +208,7 @@
 			return new OO.ui.Process( this.uploadBooklet.saveFile() );
 		}
 		if ( action === 'insert' ) {
-			return new OO.ui.Process( function () {
+			return new OO.ui.Process( () => {
 				dialog.close( dialog.upload );
 			} );
 		}

@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Afalau",
+			"Ceirios",
 			"Lloffiwr",
 			"Macofe",
-			"Robin Owain",
-			"Ceirios"
+			"Robin Owain"
 		]
 	},
 	"math-desc": "Arddangos fformwla mathemategol rhwng y tagiau <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",

@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
@@ -38,12 +40,7 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 
 	private UrlUtils $urlUtils;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param UrlUtils $urlUtils
-	 */
-	public function __construct( ApiQuery $query, $moduleName, UrlUtils $urlUtils ) {
+	public function __construct( ApiQuery $query, string $moduleName, UrlUtils $urlUtils ) {
 		parent::__construct( $query, $moduleName, 'el' );
 
 		$this->urlUtils = $urlUtils;
@@ -181,3 +178,6 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Extlinks';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryExternalLinks::class, 'ApiQueryExternalLinks' );

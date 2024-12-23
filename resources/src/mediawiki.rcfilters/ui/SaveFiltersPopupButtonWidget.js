@@ -12,10 +12,8 @@
  * @param {mw.rcfilters.dm.SavedQueriesModel} model View model
  * @param {Object} [config] Configuration object
  */
-var SaveFiltersPopupButtonWidget = function MwRcfiltersUiSaveFiltersPopupButtonWidget( controller, model, config ) {
-	var layout,
-		checkBoxLayout,
-		$popupContent = $( '<div>' );
+const SaveFiltersPopupButtonWidget = function MwRcfiltersUiSaveFiltersPopupButtonWidget( controller, model, config ) {
+	const $popupContent = $( '<div>' );
 
 	config = config || {};
 
@@ -23,7 +21,7 @@ var SaveFiltersPopupButtonWidget = function MwRcfiltersUiSaveFiltersPopupButtonW
 	this.model = model;
 
 	// Parent
-	SaveFiltersPopupButtonWidget.super.call( this, $.extend( {
+	SaveFiltersPopupButtonWidget.super.call( this, Object.assign( {
 		framed: false,
 		icon: 'bookmark',
 		title: mw.msg( 'rcfilters-savedqueries-add-new-title' ),
@@ -44,13 +42,13 @@ var SaveFiltersPopupButtonWidget = function MwRcfiltersUiSaveFiltersPopupButtonW
 	this.input = new OO.ui.TextInputWidget( {
 		placeholder: mw.msg( 'rcfilters-savedqueries-new-name-placeholder' )
 	} );
-	layout = new OO.ui.FieldLayout( this.input, {
+	const layout = new OO.ui.FieldLayout( this.input, {
 		label: mw.msg( 'rcfilters-savedqueries-new-name-label' ),
 		align: 'top'
 	} );
 
 	this.setAsDefaultCheckbox = new OO.ui.CheckboxInputWidget();
-	checkBoxLayout = new OO.ui.FieldLayout( this.setAsDefaultCheckbox, {
+	const checkBoxLayout = new OO.ui.FieldLayout( this.setAsDefaultCheckbox, {
 		label: mw.msg( 'rcfilters-savedqueries-setdefault' ),
 		align: 'inline'
 	} );
@@ -127,7 +125,7 @@ SaveFiltersPopupButtonWidget.prototype.onInputChange = function ( value ) {
  * Respond to input keyup event, this is the way to intercept 'escape' key
  *
  * @param {jQuery.Event} e Event data
- * @return {boolean} false
+ * @return {boolean|undefined} false
  */
 SaveFiltersPopupButtonWidget.prototype.onInputKeyup = function ( e ) {
 	if ( e.which === OO.ui.Keys.ESCAPE ) {
@@ -171,7 +169,7 @@ SaveFiltersPopupButtonWidget.prototype.onApplyButtonClick = function () {
  * Apply and add the new quick link
  */
 SaveFiltersPopupButtonWidget.prototype.apply = function () {
-	var label = this.input.getValue().trim();
+	const label = this.input.getValue().trim();
 
 	// This condition is more for double-checking, since the
 	// apply button should be disabled if the label is empty

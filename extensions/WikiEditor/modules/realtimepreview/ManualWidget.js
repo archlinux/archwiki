@@ -14,7 +14,7 @@ function ManualWidget( realtimePreview, reloadHoverButton ) {
 
 	// Mixins.
 	OO.ui.mixin.AccessKeyedElement.call( this, {} );
-	OO.ui.mixin.ButtonElement.call( this, $.extend( {
+	OO.ui.mixin.ButtonElement.call( this, Object.assign( {
 		$button: this.$element
 	}, config ) );
 	OO.ui.mixin.IconElement.call( this, { icon: 'reload' } );

@@ -23,17 +23,17 @@
 namespace MediaWiki\Category;
 
 use Collation;
-use DeprecationHelper;
 use HtmlArmor;
-use ILanguageConverter;
 use ImageGalleryBase;
 use ImageGalleryClassNotFoundException;
 use InvalidArgumentException;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Debug\DeprecationHelper;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -151,7 +151,7 @@ class CategoryViewer extends ContextSource {
 	 */
 	public function getHTML() {
 		$this->showGallery = $this->getConfig()->get( MainConfigNames::CategoryMagicGallery )
-			&& !$this->getOutput()->mNoGallery;
+			&& !$this->getOutput()->getNoGallery();
 
 		$this->clearCategoryState();
 		$this->doCategoryQuery();

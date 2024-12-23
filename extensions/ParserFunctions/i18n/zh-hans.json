@@ -3,6 +3,7 @@
 		"authors": [
 			"FakeGreenHand",
 			"GuoPC",
+			"Huajing",
 			"Hydra",
 			"Hzy980512",
 			"Liangent",
@@ -19,6 +20,7 @@
 	"pfunc_time_too_long": "错误：#time调用过多。",
 	"pfunc_time_too_big": "错误：#time只支持9999年及以下的年份。",
 	"pfunc_time_too_small": "错误：#time只支持0年及以上的年份。",
+	"pfunc_timef_bad_format": "错误：#timef格式无效",
 	"pfunc_rel2abs_invalid_depth": "错误：路径深度无效：“$1”（试图访问根节点之上的节点）。",
 	"pfunc_expr_stack_exhausted": "表达式错误：堆栈耗尽。",
 	"pfunc_expr_unexpected_number": "表达式错误：预期外的数字。",

@@ -213,7 +213,7 @@ class Net_SMTP
         $this->gssapi_cname     = $gssapi_cname;
 
         /* If PHP krb5 extension is loaded, we enable GSSAPI method. */
-        if (extension_loaded('krb5')) {
+        if (isset($gssapi_principal) && extension_loaded('krb5')) {
             $this->setAuthMethod('GSSAPI', array($this, 'authGSSAPI'));
         }
 
@@ -233,6 +233,7 @@ class Net_SMTP
         $this->setAuthMethod('LOGIN', array($this, 'authLogin'), false);
         $this->setAuthMethod('PLAIN', array($this, 'authPlain'), false);
         $this->setAuthMethod('XOAUTH2', array($this, 'authXOAuth2'), false);
+        $this->setAuthMethod('OAUTHBEARER', array($this, 'authOAuthBearer'), false);
     }
 
     /**
@@ -708,14 +709,17 @@ class Net_SMTP
 
             return true;
     }
-        
+
     /**
      * Attempt to do SMTP authentication.
      *
      * @param string $uid    The userid to authenticate as.
      * @param string $pwd    The password to authenticate with.
-     * @param string $method The requested authentication method.  If none is
+     * @param string $method The requested authentication method. If none is
      *                       specified, the best supported method will be used.
+     *                       If you use the special method `OAUTH`, library
+     *                       will choose between OAUTHBEARER or XOAUTH2
+     *                       according the server's capabilities.
      * @param bool   $tls    Flag indicating whether or not TLS should be attempted.
      * @param string $authz  An optional authorization identifier.  If specified, this
      *                       identifier will be used as the authorization proxy.
@@ -748,6 +752,19 @@ class Net_SMTP
             if (PEAR::isError($method = $this->getBestAuthMethod())) {
                 /* Return the PEAR_Error object from _getBestAuthMethod(). */
                 return $method;
+            }
+        } elseif ($method === 'OAUTH') {
+            // special case of OAUTH, use the supported method
+            $found = false;
+            $available_methods = explode(' ', $this->esmtp['AUTH']);
+            foreach (['OAUTHBEARER', 'XOAUTH2'] as $method) {
+                if (in_array($method, $available_methods)) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                return PEAR::raiseError("neither OAUTHBEARER nor XOAUTH2 is a supported authentication method");
             }
         } else {
             $method = strtoupper($method);
@@ -1101,7 +1118,8 @@ class Net_SMTP
      * Authenticates the user using the XOAUTH2 method.
      *
      * @param string $uid   The userid to authenticate as.
-     * @param string $token The access token to authenticate with.
+     * @param string $token The access token prefixed by it's type
+     *                      example: "Bearer $access_token".
      * @param string $authz The optional authorization proxy identifier.
      * @param object $conn  The current object
      *
@@ -1109,20 +1127,56 @@ class Net_SMTP
      *               kind of failure, or true on success.
      * @since 1.9.0
      */
+    //FIXME: to switch into protected method on next major release
     public function authXOAuth2($uid, $token, $authz, $conn)
     {
         $auth = base64_encode("user=$uid\1auth=$token\1\1");
+        return $this->authenticateOAuth('XOAUTH2', $auth, $authz, $conn);
+    }
 
-        // Maximum length of the base64-encoded token to be sent in the initial response is 497 bytes, according to
-        // RFC 4954 (https://datatracker.ietf.org/doc/html/rfc4954); for longer tokens an empty initial
+    /**
+     * Authenticates the user using the OAUTHBEARER method.
+     *
+     * @param string $uid   The userid to authenticate as.
+     * @param string $token The access token prefixed by it's type
+     *                      example: "Bearer $access_token".
+     * @param string $authz The optional authorization proxy identifier.
+     * @param object $conn  The current object
+     *
+     * @return mixed Returns a PEAR_Error with an error message on any
+     *               kind of failure, or true on success.
+     * @since 1.9.3
+     * @see https://www.rfc-editor.org/rfc/rfc7628.html
+     */
+    protected function authOAuthBearer($uid, $token, $authz, $conn)
+    {
+        $auth = base64_encode("n,a=$uid\1auth=$token\1\1");
+        return $this->authenticateOAuth('OAUTHBEARER', $auth, $authz, $conn);
+    }
+
+    /**
+     * Authenticates the user using the OAUTHBEARER or XOAUTH2 method.
+     *
+     * @param string $method The method (OAUTHBEARER or XOAUTH2)
+     * @param string $auth   The authentication string (base64 coded)
+     * @param string $authz  The optional authorization proxy identifier.
+     * @param object $conn   The current object
+     *
+     * @return mixed Returns a PEAR_Error with an error message on any
+     *               kind of failure, or true on success.
+     */
+    protected function authenticateOAuth( $method, $auth, $authz, $conn)
+    {
+        // Maximum length of the base64-encoded token to be sent in the initial response is 504 - strlen($method) bytes,
+        // according to RFC 4954 (https://datatracker.ietf.org/doc/html/rfc4954); for longer tokens an empty initial
         // response MUST be sent and the token must be sent separately
-        // (497 bytes = 512 bytes /SMTP command length limit/ - 13 bytes /"AUTH XOAUTH2 "/ - 2 bytes /CRLF/)
-        if (strlen($auth) <= 497) {
-            if (PEAR::isError($error = $this->put('AUTH', 'XOAUTH2 ' . $auth))) {
+        // (504 bytes = /SMTP command length limit/ - 6 bytes /"AUTH "/ -strlen($method) - 1 byte /" "/ - 2 bytes /CRLF/)
+        if (strlen($auth) <= (504-strlen($method))) {
+            if (PEAR::isError($error = $this->put('AUTH', $method . ' ' . $auth))) {
                 return $error;
             }
         } else {
-            if (PEAR::isError($error = $this->put('AUTH', 'XOAUTH2'))) {
+            if (PEAR::isError($error = $this->put('AUTH', $method))) {
                 return $error;
             }
 

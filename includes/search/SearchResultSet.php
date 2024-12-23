@@ -30,6 +30,7 @@ class SearchResultSet extends BaseSearchResultSet {
 
 	use SearchResultSetTrait;
 
+	/** @var bool */
 	protected $containedSyntax = false;
 
 	/**
@@ -213,7 +214,7 @@ class SearchResultSet extends BaseSearchResultSet {
 				return $this->results;
 			}
 			$this->rewind();
-			while ( $result = $this->next() ) {
+			foreach ( $this as $result ) {
 				$this->results[] = $result;
 			}
 			$this->rewind();

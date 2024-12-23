@@ -172,6 +172,8 @@ class KeywordsManager {
 			'page_prefixedtitle' => 'page-prefixedtitle',
 			// Generates abusefilter-edit-builder-vars-page-age
 			'page_age' => 'page-age',
+			// Generates abusefilter-edit-builder-vars-page-last-edit-age
+			'page_last_edit_age' => 'page-last-edit-age',
 			// Generates abusefilter-edit-builder-vars-movedfrom-id
 			'moved_from_id' => 'movedfrom-id',
 			// Generates abusefilter-edit-builder-vars-movedfrom-ns
@@ -182,6 +184,8 @@ class KeywordsManager {
 			'moved_from_prefixedtitle' => 'movedfrom-prefixedtitle',
 			// Generates abusefilter-edit-builder-vars-movedfrom-age
 			'moved_from_age' => 'movedfrom-age',
+			// Generates abusefilter-edit-builder-vars-movedfrom-last-edit-age
+			'moved_from_last_edit_age' => 'movedfrom-last-edit-age',
 			// Generates abusefilter-edit-builder-vars-movedto-id
 			'moved_to_id' => 'movedto-id',
 			// Generates abusefilter-edit-builder-vars-movedto-ns
@@ -192,10 +196,14 @@ class KeywordsManager {
 			'moved_to_prefixedtitle' => 'movedto-prefixedtitle',
 			// Generates abusefilter-edit-builder-vars-movedto-age
 			'moved_to_age' => 'movedto-age',
+			// Generates abusefilter-edit-builder-vars-movedto-last-edit-age
+			'moved_to_last_edit_age' => 'movedto-last-edit-age',
 			// Generates abusefilter-edit-builder-vars-user-editcount
 			'user_editcount' => 'user-editcount',
 			// Generates abusefilter-edit-builder-vars-user-age
 			'user_age' => 'user-age',
+			// Generates abusefilter-edit-builder-vars-user-unnamed-ip
+			'user_unnamed_ip' => 'user-unnamed-ip',
 			// Generates abusefilter-edit-builder-vars-user-name
 			'user_name' => 'user-name',
 			// Generates abusefilter-edit-builder-vars-user-type

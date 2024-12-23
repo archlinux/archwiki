@@ -34,7 +34,7 @@ ve.dm.MWEntityNode.static.matchTagNames = [ 'span' ];
 ve.dm.MWEntityNode.static.matchRdfaTypes = [ 'mw:Entity', 'mw:DisplaySpace' ];
 
 ve.dm.MWEntityNode.static.toDataElement = function ( domElements ) {
-	var dataElement = {
+	const dataElement = {
 		type: this.name,
 		attributes: {
 			character: domElements[ 0 ].textContent
@@ -47,7 +47,7 @@ ve.dm.MWEntityNode.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.MWEntityNode.static.toDomElements = function ( dataElement, doc ) {
-	var domElement = doc.createElement( 'span' ),
+	const domElement = doc.createElement( 'span' ),
 		textNode = doc.createTextNode( dataElement.attributes.character );
 	domElement.setAttribute( 'typeof',
 		dataElement.attributes.displaySpace ? 'mw:DisplaySpace' : 'mw:Entity' );

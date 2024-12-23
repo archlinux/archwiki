@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Math\InputCheck;
 
 use Exception;
 use MediaWiki\Extension\Math\MathRestbaseInterface;
-use Message;
+use MediaWiki\Message\Message;
 
 /**
  * MediaWiki math extension

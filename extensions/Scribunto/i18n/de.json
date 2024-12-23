@@ -68,5 +68,7 @@
 	"scribunto-limitreport-profile-percent": "$1 %",
 	"scribunto-limitreport-logs": "Lua-Logbücher",
 	"nstab-module": "Modul",
-	"tooltip-ca-nstab-module": "Die Modulseite ansehen"
+	"tooltip-ca-nstab-module": "Die Modulseite ansehen",
+	"namespaceinfo-description-ns828": "Namensraum für Lua-Codemodule, die von Wiki-Seiten und deren Dokumentationsseiten aufgerufen werden können",
+	"namespaceinfo-description-ns829": "Diskussionsseiten für die Module und Dokumentation"
 }

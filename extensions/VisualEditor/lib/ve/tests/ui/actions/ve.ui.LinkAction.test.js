@@ -8,8 +8,8 @@ QUnit.module( 've.ui.LinkAction' );
 
 /* Tests */
 
-QUnit.test( 'autolink', function ( assert ) {
-	var cases = [
+QUnit.test( 'autolink', ( assert ) => {
+	const cases = [
 		{
 			html: '<p>http://example.com xyz</p>',
 			rangeOrSelection: new ve.Range( 1, 19 ),
@@ -17,9 +17,8 @@ QUnit.test( 'autolink', function ( assert ) {
 			expectedRangeOrSelection: new ve.Range( 19 ),
 			expectedOriginalRangeOrSelection: new ve.Range( 19 ),
 			expectedData: function ( data, action ) {
-				var i,
-					a = action.getLinkAnnotation( 'http://example.com' );
-				for ( i = 1; i < 19; i++ ) {
+				const a = action.getLinkAnnotation( 'http://example.com' );
+				for ( let i = 1; i < 19; i++ ) {
 					data[ i ] = [ data[ i ], [ a.element ] ];
 				}
 			},
@@ -33,9 +32,8 @@ QUnit.test( 'autolink', function ( assert ) {
 			expectedRangeOrSelection: new ve.Range( 19 ),
 			expectedOriginalRangeOrSelection: new ve.Range( 19 ),
 			expectedData: function ( data, action ) {
-				var i,
-					a = action.getLinkAnnotation( 'http://example.com' );
-				for ( i = 1; i < 19; i++ ) {
+				const a = action.getLinkAnnotation( 'http://example.com' );
+				for ( let i = 1; i < 19; i++ ) {
 					data[ i ] = [ data[ i ], [ a.element ] ];
 				}
 			},
@@ -49,9 +47,8 @@ QUnit.test( 'autolink', function ( assert ) {
 			expectedRangeOrSelection: new ve.Range( 19 ),
 			expectedOriginalRangeOrSelection: new ve.Range( 19 ),
 			expectedData: function ( data, action ) {
-				var i,
-					a = action.getLinkAnnotation( 'Http://Example.COm' );
-				for ( i = 1; i < 19; i++ ) {
+				const a = action.getLinkAnnotation( 'Http://Example.COm' );
+				for ( let i = 1; i < 19; i++ ) {
 					data[ i ] = [ data[ i ], [ a.element ] ];
 				}
 			},
@@ -65,9 +62,8 @@ QUnit.test( 'autolink', function ( assert ) {
 			expectedRangeOrSelection: new ve.Range( 21 ),
 			expectedOriginalRangeOrSelection: new ve.Range( 21 ),
 			expectedData: function ( data, action ) {
-				var i,
-					a = action.getLinkAnnotation( 'http://example.com' );
-				for ( i = 1; i < 19; i++ ) {
+				const a = action.getLinkAnnotation( 'http://example.com' );
+				for ( let i = 1; i < 19; i++ ) {
 					data[ i ] = [ data[ i ], [ a.element ] ];
 				}
 			},
@@ -81,9 +77,8 @@ QUnit.test( 'autolink', function ( assert ) {
 			expectedRangeOrSelection: new ve.Range( 21 ),
 			expectedOriginalRangeOrSelection: new ve.Range( 21 ),
 			expectedData: function ( data, action ) {
-				var i,
-					a = action.getLinkAnnotation( 'http://example.com' );
-				for ( i = 2; i < 20; i++ ) {
+				const a = action.getLinkAnnotation( 'http://example.com' );
+				for ( let i = 2; i < 20; i++ ) {
 					data[ i ] = [ data[ i ], [ a.element ] ];
 				}
 			},
@@ -112,14 +107,12 @@ QUnit.test( 'autolink', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runActionTest(
-			'link', assert, caseItem.html, false, caseItem.method, [], caseItem.rangeOrSelection, caseItem.msg,
+			assert,
 			{
-				expectedData: caseItem.expectedData,
-				expectedRangeOrSelection: caseItem.expectedRangeOrSelection,
-				expectedOriginalRangeOrSelection: caseItem.expectedOriginalRangeOrSelection,
-				undo: caseItem.undo
+				actionName: 'link',
+				...caseItem
 			}
 		);
 	} );

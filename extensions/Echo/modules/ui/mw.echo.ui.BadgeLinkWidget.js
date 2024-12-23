@@ -7,11 +7,11 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration object
-	 * @cfg {string} [type] The notification types this button represents;
+	 * @param {string} [config.type] The notification types this button represents;
 	 *  'message', 'alert' or 'all'
-	 * @cfg {string} [href] URL the badge links to
-	 * @cfg {string} [numItems=0] The number of items that are in the button display
-	 * @cfg {string} [convertedNumber] A converted version of the initial count
+	 * @param {string} [config.href] URL the badge links to
+	 * @param {string} [config.numItems=0] The number of items that are in the button display
+	 * @param {string} [config.convertedNumber] A converted version of the initial count
 	 */
 	mw.echo.ui.BadgeLinkWidget = function MwEchoUiBadgeLinkWidget( config ) {
 		config = config || {};
@@ -20,10 +20,10 @@
 		mw.echo.ui.BadgeLinkWidget.super.call( this, config );
 
 		// Mixin constructors
-		OO.ui.mixin.LabelElement.call( this, $.extend( { $label: this.$element }, config ) );
-		OO.ui.mixin.ButtonElement.call( this, $.extend( { $button: this.$element }, config ) );
-		OO.ui.mixin.TitledElement.call( this, $.extend( { $titled: this.$element }, config ) );
-		OO.ui.mixin.FlaggedElement.call( this, $.extend( {}, config, { $flagged: this.$element } ) );
+		OO.ui.mixin.LabelElement.call( this, Object.assign( { $label: this.$element }, config ) );
+		OO.ui.mixin.ButtonElement.call( this, Object.assign( { $button: this.$element }, config ) );
+		OO.ui.mixin.TitledElement.call( this, Object.assign( { $titled: this.$element }, config ) );
+		OO.ui.mixin.FlaggedElement.call( this, Object.assign( {}, config, { $flagged: this.$element } ) );
 
 		this.$element
 			.addClass( 'mw-echo-notifications-badge' );

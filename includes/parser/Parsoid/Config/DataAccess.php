@@ -19,22 +19,23 @@
 
 namespace MediaWiki\Parser\Parsoid\Config;
 
-use ContentHandler;
 use File;
-use LanguageCode;
 use MediaTransformError;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Category\TrackingCategories;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\Transform\ContentTransformer;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\File\BadFileLookup;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\PPFrame;
 use MediaWiki\Title\Title;
-use ParserFactory;
-use PPFrame;
 use RepoGroup;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\DataAccess as IDataAccess;
@@ -60,6 +61,7 @@ class DataAccess extends IDataAccess {
 	private HookContainer $hookContainer;
 	private HookRunner $hookRunner;
 	private ContentTransformer $contentTransformer;
+	private TrackingCategories $trackingCategories;
 	private ParserFactory $parserFactory;
 	/** Lazy-created via self::prepareParser() */
 	private ?Parser $parser = null;
@@ -75,6 +77,7 @@ class DataAccess extends IDataAccess {
 	 * @param BadFileLookup $badFileLookup
 	 * @param HookContainer $hookContainer
 	 * @param ContentTransformer $contentTransformer
+	 * @param TrackingCategories $trackingCategories
 	 * @param ReadOnlyMode $readOnlyMode used to disable linting when the
 	 *   database is read-only.
 	 * @param ParserFactory $parserFactory A legacy parser factory,
@@ -87,6 +90,7 @@ class DataAccess extends IDataAccess {
 		BadFileLookup $badFileLookup,
 		HookContainer $hookContainer,
 		ContentTransformer $contentTransformer,
+		TrackingCategories $trackingCategories,
 		ReadOnlyMode $readOnlyMode,
 		ParserFactory $parserFactory,
 		LinkBatchFactory $linkBatchFactory
@@ -97,6 +101,7 @@ class DataAccess extends IDataAccess {
 		$this->badFileLookup = $badFileLookup;
 		$this->hookContainer = $hookContainer;
 		$this->contentTransformer = $contentTransformer;
+		$this->trackingCategories = $trackingCategories;
 		$this->readOnlyMode = $readOnlyMode;
 		$this->linkBatchFactory = $linkBatchFactory;
 
@@ -286,7 +291,7 @@ class DataAccess extends IDataAccess {
 
 					// Proposed MediaTransformOutput serialization method for T51896 etc.
 					// Note that getAPIData(['fullurl']) would return
-					// wfExpandUrl(), which wouldn't respect the wiki's
+					// UrlUtils::expand(), which wouldn't respect the wiki's
 					// protocol preferences -- instead it would use the
 					// protocol used for the API request.
 					if ( is_callable( [ $mto, 'getAPIData' ] ) ) {
@@ -439,6 +444,24 @@ class DataAccess extends IDataAccess {
 			$tplData = json_decode( json_encode( $tplData ), true );
 		}
 		return $tplData;
+	}
+
+	/**
+	 * Add a tracking category with the given key to the metadata for the page.
+	 * @param IPageConfig $pageConfig the page on which the tracking category
+	 *   is to be added
+	 * @param ContentMetadataCollector $metadata The metadata for the page
+	 * @param string $key Message key (not localized)
+	 */
+	public function addTrackingCategory(
+		IPageConfig $pageConfig,
+		ContentMetadataCollector $metadata,
+		string $key
+	): void {
+		$page = Title::newFromLinkTarget( $pageConfig->getLinkTarget() );
+		$this->trackingCategories->addTrackingCategory(
+			$metadata, $key, $page
+		);
 	}
 
 	/** @inheritDoc */

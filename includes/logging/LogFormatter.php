@@ -23,15 +23,19 @@
  * @since 1.19
  */
 
+use MediaWiki\Api\ApiQueryBase;
+use MediaWiki\Api\ApiResult;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -61,9 +65,10 @@ class LogFormatter {
 	 * Constructs a new formatter suitable for given entry.
 	 * @param LogEntry $entry
 	 * @return LogFormatter
-	 * @deprecated since 1.42, use LogFormatterFactory instead
+	 * @deprecated since 1.42, use LogFormatterFactory instead, hard-deprecated since 1.43
 	 */
 	public static function newFromEntry( LogEntry $entry ) {
+		wfDeprecated( __METHOD__, '1.42' );
 		return MediaWikiServices::getInstance()->getLogFormatterFactory()->newFromEntry( $entry );
 	}
 
@@ -73,9 +78,10 @@ class LogFormatter {
 	 * @param stdClass|array $row
 	 * @see DatabaseLogEntry::getSelectQueryData
 	 * @return LogFormatter
-	 * @deprecated since 1.42, use LogFormatterFactory instead
+	 * @deprecated since 1.42, use LogFormatterFactory instead, hard-deprecated since 1.43
 	 */
 	public static function newFromRow( $row ) {
+		wfDeprecated( __METHOD__, '1.42' );
 		return self::newFromEntry( DatabaseLogEntry::newFromRow( $row ) );
 	}
 
@@ -691,7 +697,7 @@ class LogFormatter {
 	 *     * number: Format value as number
 	 *     * list: Format value as a comma-separated list
 	 * @param mixed $value The parameter value that should be formatted
-	 * @return string|array Formatted value
+	 * @return mixed Formatted value
 	 * @since 1.21
 	 */
 	protected function formatParameterValue( $type, $value ) {
@@ -756,7 +762,7 @@ class LogFormatter {
 	 * @return string wikitext or html
 	 * @return-taint onlysafefor_html
 	 */
-	protected function makePageLink( Title $title = null, $parameters = [], $html = null ) {
+	protected function makePageLink( ?Title $title = null, $parameters = [], $html = null ) {
 		if ( !$title instanceof Title ) {
 			$msg = $this->msg( 'invalidtitle' )->text();
 			if ( $this->plaintext ) {

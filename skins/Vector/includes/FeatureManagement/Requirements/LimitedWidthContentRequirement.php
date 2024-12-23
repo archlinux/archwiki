@@ -48,7 +48,7 @@ final class LimitedWidthContentRequirement implements Requirement {
 	public function __construct(
 		Config $config,
 		WebRequest $request,
-		Title $title = null
+		?Title $title = null
 	) {
 		$this->config = $config;
 		$this->title = $title;

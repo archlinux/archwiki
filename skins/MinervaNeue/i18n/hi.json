@@ -41,7 +41,6 @@
 	"mobile-frontend-meta-data-issues-categories": "इस श्रेणी के बारे में",
 	"mobile-frontend-meta-data-issues-header": "पृष्ठ संबंधित मसले",
 	"minerva-meta-data-issues-section-header": "अनुभाग की समस्याएँ",
-	"mobile-frontend-notifications-filter": "फ़िल्टर",
 	"mobile-frontend-pageaction-edit-tooltip": "इस पृष्ठ की भूमिका सम्पादित करें।",
 	"mobile-frontend-placeholder": "{{SITENAME}} में खोजें",
 	"mobile-frontend-random-button": "बेतरतीब",
@@ -64,7 +63,5 @@
 	"skin-minerva-issue-learn-more": "अधिक जानें",
 	"skin-minerva-mobile-option-MinervaShowCategories": "श्रेणियाँ",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "पृष्ठों की श्रेणियां देखें",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "पृष्ठ समस्या उपचार में सुधार",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "पृष्ठ की समस्याओं (Template:ambox) को लेख में इनलाइन कर दिया जाएगा।",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "बदकिस्मती से, मोबाइल पर परिणामों का समूहन संभव नहीं है। अगर आप पृष्ठ के आधार पर समूहन सुविधा का उपयोग करना चाहते हैं कृपया डेस्कटॉप साइट पर जाएँ।"
 }

@@ -19,19 +19,19 @@
  */
 namespace Wikimedia\Rdbms;
 
-use BagOStuff;
-use EmptyBagOStuff;
 use Exception;
 use Generator;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
 use Throwable;
-use WANObjectCache;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\RequestTimeout\CriticalSectionProvider;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * @see ILBFactory
@@ -222,13 +222,13 @@ abstract class LBFactory implements ILBFactory {
 		}
 	}
 
-	public function getLocalDomainID() {
+	public function getLocalDomainID(): string {
 		return $this->localDomain->getId();
 	}
 
 	public function shutdown(
 		$flags = self::SHUTDOWN_NORMAL,
-		callable $workCallback = null,
+		?callable $workCallback = null,
 		&$cpIndex = null,
 		&$cpClientId = null
 	) {
@@ -261,8 +261,6 @@ abstract class LBFactory implements ILBFactory {
 
 	/**
 	 * Get all tracked load balancers with the internal "for owner" interface.
-	 * Most subclasses override this, we just provide an implementation here
-	 * for the benefit of Wikibase's FakeLBFactory.
 	 *
 	 * @return Generator|ILoadBalancerForOwner[]
 	 */
@@ -285,6 +283,10 @@ abstract class LBFactory implements ILBFactory {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scope = ScopedCallback::newScopedIgnoreUserAbort();
 
+		foreach ( $this->getLBsForOwner() as $lb ) {
+			$lb->flushReplicaSnapshots( $fname );
+		}
+
 		$this->trxRoundStage = self::ROUND_BEGINNING;
 		if ( $this->trxRoundId !== false ) {
 			throw new DBTransactionError(
@@ -293,7 +295,7 @@ abstract class LBFactory implements ILBFactory {
 			);
 		}
 		$this->trxRoundId = $fname;
-		// Set DBO_TRX flags on all appropriate DBs
+		// Flush snapshots and appropriately set DBO_TRX on primary connections
 		foreach ( $this->getLBsForOwner() as $lb ) {
 			$lb->beginPrimaryChanges( $fname );
 		}
@@ -331,10 +333,16 @@ abstract class LBFactory implements ILBFactory {
 			$lb->commitPrimaryChanges( $fname );
 		}
 		// Run all post-commit callbacks in a separate step
+		$this->trxRoundStage = self::ROUND_COMMIT_CALLBACKS;
 		$e = $this->executePostTransactionCallbacks();
+		$this->trxRoundStage = self::ROUND_CURSORY;
 		// Throw any last post-commit callback error
 		if ( $e instanceof Exception ) {
 			throw $e;
+		}
+
+		foreach ( $this->getLBsForOwner() as $lb ) {
+			$lb->flushReplicaSnapshots( $fname );
 		}
 	}
 
@@ -349,7 +357,13 @@ abstract class LBFactory implements ILBFactory {
 			$lb->rollbackPrimaryChanges( $fname );
 		}
 		// Run all post-commit callbacks in a separate step
+		$this->trxRoundStage = self::ROUND_ROLLBACK_CALLBACKS;
 		$this->executePostTransactionCallbacks();
+		$this->trxRoundStage = self::ROUND_CURSORY;
+
+		foreach ( $this->getLBsForOwner() as $lb ) {
+			$lb->flushReplicaSnapshots( $fname );
+		}
 	}
 
 	final public function flushPrimarySessions( $fname = __METHOD__ ) {
@@ -368,7 +382,6 @@ abstract class LBFactory implements ILBFactory {
 	 * @return Exception|null
 	 */
 	private function executePostTransactionCallbacks() {
-		$this->trxRoundStage = self::ROUND_COMMIT_CALLBACKS;
 		$fname = __METHOD__;
 		// Run all post-commit callbacks until new ones stop getting added
 		$e = null; // first callback exception
@@ -383,7 +396,6 @@ abstract class LBFactory implements ILBFactory {
 			$ex = $lb->runPrimaryTransactionListenerCallbacks( $fname );
 			$e = $e ?: $ex;
 		}
-		$this->trxRoundStage = self::ROUND_CURSORY;
 
 		return $e;
 	}
@@ -402,7 +414,7 @@ abstract class LBFactory implements ILBFactory {
 	private function logIfMultiDbTransaction() {
 		$callersByDB = [];
 		foreach ( $this->getLBsForOwner() as $lb ) {
-			$primaryName = $lb->getServerName( $lb->getWriterIndex() );
+			$primaryName = $lb->getServerName( ServerInfo::WRITER_INDEX );
 			$callers = $lb->pendingPrimaryChangeCallers();
 			if ( $callers ) {
 				$callersByDB[$primaryName] = $callers;
@@ -456,9 +468,6 @@ abstract class LBFactory implements ILBFactory {
 		foreach ( $this->getLBsForOwner() as $lb ) {
 			$lbs[] = $lb;
 		}
-		if ( !$lbs ) {
-			return true; // nothing actually used
-		}
 
 		// Get all the primary DB positions of applicable DBs right now.
 		// This can be faster since waiting on one cluster reduces the
@@ -493,7 +502,7 @@ abstract class LBFactory implements ILBFactory {
 			if ( $primaryPositions[$i] ) {
 				// The RDBMS may not support getPrimaryPos()
 				if ( !$lb->waitForAll( $primaryPositions[$i], $opts['timeout'] ) ) {
-					$failed[] = $lb->getServerName( $lb->getWriterIndex() );
+					$failed[] = $lb->getServerName( ServerInfo::WRITER_INDEX );
 				}
 			}
 		}
@@ -501,7 +510,7 @@ abstract class LBFactory implements ILBFactory {
 		return !$failed;
 	}
 
-	public function setWaitForReplicationListener( $name, callable $callback = null ) {
+	public function setWaitForReplicationListener( $name, ?callable $callback = null ) {
 		if ( $callback ) {
 			$this->replicationWaitCallbacks[$name] = $callback;
 		} else {
@@ -535,6 +544,22 @@ abstract class LBFactory implements ILBFactory {
 		return $this->getMappedDatabase( DB_REPLICA, $groups, $domain );
 	}
 
+	public function getLoadBalancer( $domain = false ): ILoadBalancer {
+		if ( $domain !== false && in_array( $domain, $this->virtualDomains ) ) {
+			if ( isset( $this->virtualDomainsMapping[$domain] ) ) {
+				$config = $this->virtualDomainsMapping[$domain];
+				if ( isset( $config['cluster'] ) ) {
+					return $this->getExternalLB( $config['cluster'] );
+				}
+				$domain = $config['db'];
+			} else {
+				// It's not configured, assume local db.
+				$domain = false;
+			}
+		}
+		return $this->getMainLB( $domain );
+	}
+
 	/**
 	 * Helper for getPrimaryDatabase and getReplicaDatabase() providing virtual
 	 * domain mapping.
@@ -546,20 +571,11 @@ abstract class LBFactory implements ILBFactory {
 	 */
 	private function getMappedDatabase( $index, $groups, $domain ) {
 		if ( $domain !== false && in_array( $domain, $this->virtualDomains ) ) {
-			if ( isset( $this->virtualDomainsMapping[$domain] ) ) {
-				$config = $this->virtualDomainsMapping[$domain];
-				if ( isset( $config['cluster'] ) ) {
-					return $this
-						->getExternalLB( $config['cluster'] )
-						->getConnection( $index, $groups, $config['db'] );
-				}
-				$domain = $config['db'];
-			} else {
-				// It's not configured, assume local db.
-				$domain = false;
-			}
+			$dbDomain = $this->virtualDomainsMapping[$domain]['db'] ?? false;
+		} else {
+			$dbDomain = $domain;
 		}
-		return $this->getMainLB( $domain )->getConnection( $index, $groups, $domain );
+		return $this->getLoadBalancer( $domain )->getConnection( $index, $groups, $dbDomain );
 	}
 
 	final public function commitAndWaitForReplication( $fname, $ticket, array $opts = [] ) {

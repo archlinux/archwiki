@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Api;
 
-use ApiBase;
-use ApiMain;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\User\CentralId\CentralIdLookup;

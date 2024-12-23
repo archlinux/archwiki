@@ -78,7 +78,6 @@
 	"templatedata-modal-button-map": "عدل الخرائط",
 	"templatedata-modal-button-importParams": "استيراد وسيط",
 	"templatedata-modal-button-removemap": "أزل الخريطة",
-	"templatedata-modal-button-restoreparam": "استرجاع العامل المتغير",
 	"templatedata-modal-button-saveparam": "حفظ",
 	"templatedata-modal-confirmcancel": "هل أنت متأكد أنك تريد تجاهل تغييراتك؟",
 	"templatedata-modal-current-language": "اللغة الحالية: $1",

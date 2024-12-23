@@ -5,8 +5,8 @@ namespace MediaWiki\Extension\AbuseFilter\LogFormatter;
 use LogEntry;
 use LogFormatter;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
+use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
-use Message;
 
 /**
  * This class formats abuse log notifications.

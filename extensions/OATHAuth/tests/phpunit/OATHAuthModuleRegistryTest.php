@@ -30,7 +30,7 @@ class OATHAuthModuleRegistryTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry::getModuleIds
 	 */
 	public function testGetModuleIds() {
-		$this->db->newInsertQueryBuilder()
+		$this->getDb()->newInsertQueryBuilder()
 			->insertInto( 'oathauth_types' )
 			->row( [ 'oat_name' => 'first' ] )
 			->caller( __METHOD__ )

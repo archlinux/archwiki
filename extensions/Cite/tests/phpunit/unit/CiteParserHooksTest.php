@@ -4,16 +4,23 @@ namespace Cite\Tests\Unit;
 
 use Cite\Cite;
 use Cite\Hooks\CiteParserHooks;
-use Parser;
-use ParserOptions;
-use ParserOutput;
-use StripState;
+use MediaWiki\Config\Config;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\StripState;
 
 /**
  * @covers \Cite\Hooks\CiteParserHooks
  * @license GPL-2.0-or-later
  */
 class CiteParserHooksTest extends \MediaWikiUnitTestCase {
+
+	private function newCiteParserHooks() {
+		return new CiteParserHooks(
+			$this->createNoOpMock( Config::class )
+		);
+	}
 
 	public function testOnParserFirstCallInit() {
 		$parser = $this->createNoOpMock( Parser::class, [ 'setHook' ] );
@@ -25,7 +32,7 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 				unset( $expectedTags[$tag] );
 			} );
 
-		$citeParserHooks = new CiteParserHooks();
+		$citeParserHooks = $this->newCiteParserHooks();
 		$citeParserHooks->onParserFirstCallInit( $parser );
 	}
 
@@ -33,7 +40,7 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 		$parser = $this->createNoOpMock( Parser::class, [ '__isset' ] );
 		$parser->extCite = $this->createMock( Cite::class );
 
-		$citeParserHooks = new CiteParserHooks();
+		$citeParserHooks = $this->newCiteParserHooks();
 		$citeParserHooks->onParserClearState( $parser );
 
 		$this->assertNull( $parser->extCite ?? null );
@@ -43,7 +50,7 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 		$parser = $this->createNoOpMock( Parser::class, [ '__isset' ] );
 		$parser->extCite = $this->createMock( Cite::class );
 
-		$citeParserHooks = new CiteParserHooks();
+		$citeParserHooks = $this->newCiteParserHooks();
 		$citeParserHooks->onParserCloned( $parser );
 
 		$this->assertNull( $parser->extCite ?? null );
@@ -66,7 +73,7 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 		$parser->extCite = $cite;
 
 		$text = '';
-		$citeParserHooks = new CiteParserHooks();
+		$citeParserHooks = $this->newCiteParserHooks();
 		$citeParserHooks->onParserAfterParse( $parser, $text, $this->createMock( StripState::class ) );
 	}
 

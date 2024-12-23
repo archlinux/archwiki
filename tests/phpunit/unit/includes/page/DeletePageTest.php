@@ -3,7 +3,6 @@
 namespace MediaWiki\Tests\Unit\Page;
 
 use BadMethodCallException;
-use BagOStuff;
 use Generator;
 use JobQueueGroup;
 use MediaWiki\Cache\BacklinkCacheFactory;
@@ -15,6 +14,7 @@ use MediaWiki\Page\DeletePage;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\Page\RedirectStore;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
@@ -29,6 +29,7 @@ use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Message\ITextFormatter;
+use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LBFactory;
@@ -78,11 +79,11 @@ class DeletePageTest extends MediaWikiUnitTestCase {
 
 	private function getDeletePage(
 		ProperPageIdentity $page,
-		Authority $deleter = null,
-		ServiceOptions $options = null,
-		RevisionStore $revStore = null,
-		WikiPageFactory $wpFactory = null,
-		NamespaceInfo $nsInfo = null
+		?Authority $deleter = null,
+		?ServiceOptions $options = null,
+		?RevisionStore $revStore = null,
+		?WikiPageFactory $wpFactory = null,
+		?NamespaceInfo $nsInfo = null
 	): DeletePage {
 		if ( !$wpFactory ) {
 			$wpFactory = $this->createMock( WikiPageFactory::class );
@@ -113,6 +114,7 @@ class DeletePageTest extends MediaWikiUnitTestCase {
 			$this->createMock( BacklinkCacheFactory::class ),
 			$nsInfo ?? $this->createMock( NamespaceInfo::class ),
 			$this->createMock( ITextFormatter::class ),
+			$this->createMock( RedirectStore::class ),
 			$page,
 			$deleter ?? $this->createMock( Authority::class )
 		);
@@ -129,9 +131,9 @@ class DeletePageTest extends MediaWikiUnitTestCase {
 	public function testPermissions(
 		Authority $authority,
 		bool $expectedGood,
-		string $expectedMessage = null,
-		ServiceOptions $options = null,
-		RevisionStore $revStore = null
+		?string $expectedMessage = null,
+		?ServiceOptions $options = null,
+		?RevisionStore $revStore = null
 	) {
 		$dp = $this->getDeletePage(
 			$this->getMockPage(),
@@ -151,8 +153,8 @@ class DeletePageTest extends MediaWikiUnitTestCase {
 		$cannotDeleteAuthority = $this->mockAnonAuthority(
 			static function (
 				string $permission,
-				PageIdentity $page = null,
-				PermissionStatus $status = null
+				?PageIdentity $page = null,
+				?PermissionStatus $status = null
 			) use ( $cannotDeleteMsg ): bool {
 				if ( $permission === 'delete' ) {
 					if ( $status ) {
@@ -169,8 +171,8 @@ class DeletePageTest extends MediaWikiUnitTestCase {
 		$cannotBigDeleteAuthority = $this->mockAnonAuthority(
 			static function (
 				string $permission,
-				PageIdentity $page = null,
-				PermissionStatus $status = null
+				?PageIdentity $page = null,
+				?PermissionStatus $status = null
 			) use ( $cannotBigDeleteMsg ): bool {
 				if ( $permission === 'bigdelete' ) {
 					if ( $status ) {

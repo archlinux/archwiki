@@ -2,56 +2,45 @@
 
 namespace MediaWiki\Tests\Integration\Permissions;
 
-use IDBAccessObject;
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinksMigration;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Database
  *
- * See \MediaWiki\Tests\Unit\Permissions\RestrictionStoreTest
- * for unit tests
+ * See \MediaWiki\Tests\Unit\Permissions\RestrictionStoreTest for unit tests
  *
- * @coversDefaultClass \MediaWiki\Permissions\RestrictionStore
+ * @covers \MediaWiki\Permissions\RestrictionStore
  */
 class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 	private const DEFAULT_RESTRICTION_TYPES = [ 'create', 'edit', 'move', 'upload' ];
 
-	/** @var WANObjectCache */
-	private $wanCache;
+	private WANObjectCache $wanCache;
+	private ILoadBalancer $loadBalancer;
+	private LinkCache $linkCache;
+	private LinksMigration $linksMigration;
+	private HookContainer $hookContainer;
+	private CommentStore $commentStore;
+	private PageStore $pageStore;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var LinkCache */
-	private $linkCache;
-
-	/** @var LinksMigration */
-	private $linksMigration;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var PageStore */
-	private $pageStore;
-
+	/** @var array */
 	private static $testPageRestrictionSource;
+	/** @var array */
 	private static $testPageRestrictionCascade;
 
 	protected function setUp(): void {
@@ -62,8 +51,8 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 		$this->loadBalancer = $services->getDBLoadBalancer();
 		$this->linkCache = $services->getLinkCache();
 		$this->linksMigration = $services->getLinksMigration();
-		$this->commentStore = $services->getCommentStore();
 		$this->hookContainer = $services->getHookContainer();
+		$this->commentStore = $services->getCommentStore();
 		$this->pageStore = $services->getPageStore();
 	}
 
@@ -81,11 +70,11 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 	private function newRestrictionStore( array $options = [] ) {
 		return new RestrictionStore(
 			new ServiceOptions( RestrictionStore::CONSTRUCTOR_OPTIONS, $options + [
-					'NamespaceProtection' => [],
-					'RestrictionLevels' => [ '', 'autoconfirmed', 'sysop' ],
-					'RestrictionTypes' => self::DEFAULT_RESTRICTION_TYPES,
-					'SemiprotectedRestrictionLevels' => [ 'autoconfirmed' ],
-				] ),
+				MainConfigNames::NamespaceProtection => [],
+				MainConfigNames::RestrictionLevels => [ '', 'autoconfirmed', 'sysop' ],
+				MainConfigNames::RestrictionTypes => self::DEFAULT_RESTRICTION_TYPES,
+				MainConfigNames::SemiprotectedRestrictionLevels => [ 'autoconfirmed' ],
+			] ),
 			$this->wanCache,
 			$this->loadBalancer,
 			$this->linkCache,
@@ -107,10 +96,6 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 			);
 	}
 
-	/**
-	 * @covers ::getCascadeProtectionSources
-	 * @covers ::getCascadeProtectionSourcesInternal
-	 */
 	public function testGetCascadeProtectionSources() {
 		$page = self::$testPageRestrictionCascade['title'];
 		$pageSource = self::$testPageRestrictionSource['title'];
@@ -127,10 +112,6 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertCount( 0, $restrictions );
 	}
 
-	/**
-	 * @covers ::getCascadeProtectionSources
-	 * @covers ::getCascadeProtectionSourcesInternal
-	 */
 	public function testGetCascadeProtectionSourcesSpecialPage() {
 		[ $sources, $restrictions ] = $this->newRestrictionStore()
 			->getCascadeProtectionSources( SpecialPage::getTitleFor( 'Whatlinkshere' ) );
@@ -139,7 +120,6 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ::loadRestrictions
 	 * @dataProvider provideLoadRestrictions
 	 */
 	public function testLoadRestrictions( $page, $expectedCacheSubmap, ?array $restrictions = null ) {
@@ -176,9 +156,6 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::loadRestrictions
-	 */
 	public function testLoadRestrictions_latest() {
 		$pageSource = self::$testPageRestrictionSource['title'];
 		$cacheKey = CacheKeyHelper::getKeyForPage( $pageSource );

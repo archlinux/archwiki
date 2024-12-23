@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "За категоријава",
 	"mobile-frontend-meta-data-issues-header": "Проблеми на страницата",
 	"minerva-meta-data-issues-section-header": "Проблеми со одделот",
-	"mobile-frontend-notifications-filter": "Филтрирај",
 	"mobile-frontend-pageaction-edit-tooltip": "Уредете го воведниот пасус на страницава",
 	"mobile-frontend-placeholder": "Пребарајте ја {{SITENAME}}",
 	"mobile-frontend-random-button": "Случајна",
@@ -48,7 +47,7 @@
 	"minerva-page-actions-overflow": "Повеќе",
 	"minerva-page-actions-language-switcher": "Јазици",
 	"minerva-page-actions-history": "Историја",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Разговор]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Разговор]",
 	"skinname-minerva": "Минерва Ново",
 	"minerva-skin-desc": "Одѕивно руво за првенствено мобилна употреба.",
 	"skin-minerva-issue-learn-more": "Дознајте повеќе",
@@ -60,10 +59,8 @@
 	"skin-minerva-time-ago-years": "пред {{PLURAL:$1|$1 година|$1 години}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категории",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Погл. категории на страници",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Подобрено справување со проблеми на страницата",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Проблемите со страницата (Предлошка:ambox) ќе бидат вметнати во редовите на статијата.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "За жал, групирањето на исходни ставки по страница е недостапно за мобилен уред. За таа цел, ќе мора да отворите од сметач.",
-	"skin-minerva-night-mode-unavailable": "Страница е достапна само во бојниот изглед „Ден“.",
+	"skin-minerva-night-mode-unavailable": "Страница е достапна само во бојниот изглед „Светол“.",
 	"minerva.css": "/* Тука поставениот CSS се однесува на корисниците на рувото „MinervaNeue“ */",
 	"minerva.js": "/* Сиот тука поставен JavaScript ќе им се вчитува на корисниците што го користат рувото „MinervaNeue“ */"
 }

@@ -9,7 +9,7 @@
 	"oathauth-account": "Nama Akaun:",
 	"oathauth-secret": "Kunci rahsia pengesahihan dwifaktor:",
 	"oathauth-enable": "Hidupkan Penentusahan Dwifaktor",
-	"oathauth-recoverycodes": "Yang berikut ialah senarai token kegunaan sekali. Token-token ini hanya boleh digunakan sekali, malah adalah untuk kegunaan kecemasan. Sila catatkan dalam kertas dan simpan dalam tempat yang selamat. Sekiranya anda kehilangan telefon anda, token-token ini sahajalah caranya untuk menyelamatkan akaun anda. Token-token ini tidak akan dipaparkan lagi.",
+	"oathauth-recoverycodes": "Senarai berikut ialah senarai kod pemulihan guna sekali. Kod ini hanya boleh digunakan sekali sahaja dan untuk kegunaan kecemasan apabila anda tidak mempunyai akses kepada peranti anda. Sila catat kod ini dan simpan di lokasi yang selamat. Anda disyorkan untuk menanda setiap kod sebagai \"telah diguna\" apabila anda telah log masuk menggunakan kod tersebut. Jika anda kehilangan peranti anda, kod ini adalah satu-satunya cara untuk menyelamatkan akaun anda.",
 	"oathauth-disable": "Matikan Penentusahan Dwifaktor",
 	"oathauth-validatedoath": "Watikah dwifaktor disahkan. Penentusahan dwifaktor kini akan berkuatkuasa.",
 	"oathauth-failedtovalidateoath": "Watikah dwifaktor gagal disahkan",

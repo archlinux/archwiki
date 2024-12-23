@@ -30,6 +30,7 @@ require_once "$IP/maintenance/Maintenance.php";
 
 use MediaWiki\Extension\ConfirmEdit\FancyCaptcha\FancyCaptcha;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
+use MediaWiki\Maintenance\Maintenance;
 
 /**
  * Maintenance script that counts the number of captchas remaining.

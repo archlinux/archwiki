@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\Maintenance\MWDoxygenFilter;
+
 /**
- * @covers \MWDoxygenFilter
+ * @covers \MediaWiki\Namespace\MWDoxygenFilter
  */
 class MWDoxygenFilterTest extends \PHPUnit\Framework\TestCase {
 

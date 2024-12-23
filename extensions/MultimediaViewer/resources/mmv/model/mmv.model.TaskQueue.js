@@ -15,126 +15,123 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function () {
-
-	/**
-	 * A queue which holds a list of tasks (functions). The tasks will be executed in order,
-	 * each starting when the previous one has finished (or failed).
-	 */
-	class TaskQueue {
-		constructor() {
-			/**
-			 * The list of functions to execute.
-			 *
-			 * @protected
-			 * @property {Array}
-			 */
-			this.queue = [];
-
-			/**
-			 * State of the task queue (running, finished etc)
-			 *
-			 * @protected
-			 * @property {TaskQueue.State}
-			 */
-			this.state = TaskQueue.State.NOT_STARTED;
-
-			/**
-			 * A deferred which shows the state of the queue.
-			 *
-			 * @protected
-			 * @property {jQuery.Deferred}
-			 */
-			this.deferred = $.Deferred();
-		}
+/**
+ * A queue which holds a list of tasks (functions). The tasks will be executed in order,
+ * each starting when the previous one has finished (or failed).
+ */
+class TaskQueue {
+	constructor() {
+		/**
+		 * The list of functions to execute.
+		 *
+		 * @protected
+		 * @property {Array}
+		 */
+		this.queue = [];
 
 		/**
-		 * Adds a task. The task should be a function which returns a promise. (Other return values are
-		 * permitted, and will be taken to mean that the task has finished already.) The next task will
-		 * start when the promise resolves (or rejects).
+		 * State of the task queue (running, finished etc)
 		 *
-		 * Tasks can only be added before the queue is first executed.
-		 *
-		 * @param {function(): any} task
+		 * @protected
+		 * @property {TaskQueue.State}
 		 */
-		push( task ) {
-			if ( this.state !== TaskQueue.State.NOT_STARTED ) {
-				throw new Error( 'Task queue already started!' );
-			}
-			this.queue.push( task );
-		}
+		this.state = TaskQueue.State.NOT_STARTED;
 
 		/**
-		 * Execute the queue. The tasks will be performed in order. No more tasks can be added to the
-		 * queue.
+		 * A deferred which shows the state of the queue.
 		 *
-		 * @return {jQuery.Promise} a promise which will resolve when the queue execution is finished,
-		 *     or reject when it is cancelled.
+		 * @protected
+		 * @property {jQuery.Deferred}
 		 */
-		execute() {
-			if ( this.state === TaskQueue.State.NOT_STARTED ) {
-				this.state = TaskQueue.State.RUNNING;
-				this.runNextTask( 0, $.Deferred().resolve() );
-			}
-
-			return this.deferred;
-		}
-
-		/**
-		 * Runs the next task once the current one has finished.
-		 *
-		 * @param {number} index
-		 * @param {jQuery.Promise} currentTask
-		 */
-		runNextTask( index, currentTask ) {
-			const taskQueue = this;
-
-			function handleThen() {
-				if ( !taskQueue.queue[ index ] ) {
-					taskQueue.state = TaskQueue.State.FINISHED;
-					taskQueue.queue = []; // just to be sure there are no memory leaks
-					taskQueue.deferred.resolve();
-					return;
-				}
-
-				taskQueue.runNextTask( index + 1, $.when( taskQueue.queue[ index ]() ) );
-			}
-
-			if ( this.state !== TaskQueue.State.RUNNING ) {
-				return;
-			}
-
-			currentTask.then( handleThen, handleThen );
-		}
-
-		/**
-		 * Cancel the queue. No more tasks will be executed.
-		 */
-		cancel() {
-			this.state = TaskQueue.State.CANCELLED;
-			this.queue = []; // just to be sure there are no memory leaks
-			this.deferred.reject();
-		}
+		this.deferred = $.Deferred();
 	}
 
 	/**
-	 * State of the task queue (running, finished etc)
+	 * Adds a task. The task should be a function which returns a promise. (Other return values are
+	 * permitted, and will be taken to mean that the task has finished already.) The next task will
+	 * start when the promise resolves (or rejects).
 	 *
-	 * @enum {string} TaskQueue.State
+	 * Tasks can only be added before the queue is first executed.
+	 *
+	 * @param {function(): any} task
 	 */
-	TaskQueue.State = {
-		/** not executed yet, tasks can still be added */
-		NOT_STARTED: 'not_started',
+	push( task ) {
+		if ( this.state !== TaskQueue.State.NOT_STARTED ) {
+			throw new Error( 'Task queue already started!' );
+		}
+		this.queue.push( task );
+	}
 
-		/** some task is being executed */
-		RUNNING: 'running',
+	/**
+	 * Execute the queue. The tasks will be performed in order. No more tasks can be added to the
+	 * queue.
+	 *
+	 * @return {jQuery.Promise} a promise which will resolve when the queue execution is finished,
+	 *     or reject when it is cancelled.
+	 */
+	execute() {
+		if ( this.state === TaskQueue.State.NOT_STARTED ) {
+			this.state = TaskQueue.State.RUNNING;
+			this.runNextTask( 0, $.Deferred().resolve() );
+		}
 
-		/** all tasks finished, queue can be discarded */
-		FINISHED: 'finished',
+		return this.deferred;
+	}
 
-		/** cancel() function has been called, queue can be discarded */
-		CANCELLED: 'cancelled'
-	};
+	/**
+	 * Runs the next task once the current one has finished.
+	 *
+	 * @param {number} index
+	 * @param {jQuery.Promise} currentTask
+	 */
+	runNextTask( index, currentTask ) {
+		const taskQueue = this;
 
-	module.exports = TaskQueue;
-}() );
+		function handleThen() {
+			if ( !taskQueue.queue[ index ] ) {
+				taskQueue.state = TaskQueue.State.FINISHED;
+				taskQueue.queue = []; // just to be sure there are no memory leaks
+				taskQueue.deferred.resolve();
+				return;
+			}
+
+			taskQueue.runNextTask( index + 1, $.when( taskQueue.queue[ index ]() ) );
+		}
+
+		if ( this.state !== TaskQueue.State.RUNNING ) {
+			return;
+		}
+
+		currentTask.then( handleThen, handleThen );
+	}
+
+	/**
+	 * Cancel the queue. No more tasks will be executed.
+	 */
+	cancel() {
+		this.state = TaskQueue.State.CANCELLED;
+		this.queue = []; // just to be sure there are no memory leaks
+		this.deferred.reject();
+	}
+}
+
+/**
+ * State of the task queue (running, finished etc)
+ *
+ * @enum {string} TaskQueue.State
+ */
+TaskQueue.State = {
+	/** not executed yet, tasks can still be added */
+	NOT_STARTED: 'not_started',
+
+	/** some task is being executed */
+	RUNNING: 'running',
+
+	/** all tasks finished, queue can be discarded */
+	FINISHED: 'finished',
+
+	/** cancel() function has been called, queue can be discarded */
+	CANCELLED: 'cancelled'
+};
+
+module.exports = TaskQueue;

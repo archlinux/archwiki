@@ -24,7 +24,6 @@ namespace MediaWiki\Linker;
 
 use File;
 use HtmlArmor;
-use Language;
 use MediaTransformError;
 use MediaTransformOutput;
 use MediaWiki\Context\ContextSource;
@@ -45,13 +44,12 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\ExternalUserNames;
 use MediaWiki\User\UserIdentityValue;
+use MediaWiki\Xml\Xml;
 use MessageLocalizer;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
-use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
-use Xml;
 
 /**
  * Some internal bits split of from Skin.php. These functions are used
@@ -332,10 +330,8 @@ class Linker {
 	) {
 		$title = Title::newFromLinkTarget( $title );
 		$res = null;
-		// DummyLinker is deprecated since 1.42, $dummy will be replaced with null.
-		$dummy = new DummyLinker();
 		$hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
-		if ( !$hookRunner->onImageBeforeProduceHTML( $dummy, $title,
+		if ( !$hookRunner->onImageBeforeProduceHTML( null, $title,
 			// @phan-suppress-next-line PhanTypeMismatchArgument Type mismatch on pass-by-ref args
 			$file, $frameParams, $handlerParams, $time, $res,
 			// @phan-suppress-next-line PhanTypeMismatchArgument Type mismatch on pass-by-ref args
@@ -1132,6 +1128,7 @@ class Linker {
 	 * @param string $url URL to link to
 	 * @param-taint $url escapes_html
 	 * @param string $text Text of link
+	 * @param-taint $text none
 	 * @param bool $escape Do we escape the link text?
 	 * @param-taint $escape none
 	 * @param string $linktype Type of external link. Gets added to the classes
@@ -1141,47 +1138,22 @@ class Linker {
 	 * @param LinkTarget|null $title LinkTarget object used for title specific link attributes
 	 * @param-taint $title none
 	 * @return string
+	 * @deprecated since 1.43; use LinkRenderer::makeExternalLink(), passing
+	 *   in an HtmlArmor instance if $escape was false.
 	 */
 	public static function makeExternalLink( $url, $text, $escape = true,
 		$linktype = '', $attribs = [], $title = null
 	) {
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 		global $wgTitle;
-		$class = 'external';
-		if ( $linktype ) {
-			$class .= " $linktype";
-		}
-		if ( isset( $attribs['class'] ) && $attribs['class'] ) {
-			$class .= " {$attribs['class']}";
-		}
-		$attribs['class'] = $class;
-
-		if ( $escape ) {
-			$text = htmlspecialchars( $text, ENT_COMPAT );
-		}
-
-		if ( !$title ) {
-			$title = $wgTitle;
-		}
-		$newRel = Parser::getExternalLinkRel( $url, $title );
-		if ( !isset( $attribs['rel'] ) || $attribs['rel'] === '' ) {
-			$attribs['rel'] = $newRel;
-		} elseif ( $newRel !== null ) {
-			// Merge the rel attributes.
-			$newRels = explode( ' ', $newRel );
-			$oldRels = explode( ' ', $attribs['rel'] );
-			$combined = array_unique( array_merge( $newRels, $oldRels ) );
-			$attribs['rel'] = implode( ' ', $combined );
-		}
-		$link = '';
-		$success = ( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onLinkerMakeExternalLink(
-			$url, $text, $link, $attribs, $linktype );
-		if ( !$success ) {
-			wfDebug( "Hook LinkerMakeExternalLink changed the output of link "
-				. "with url {$url} and text {$text} to {$link}" );
-			return $link;
-		}
-		$attribs['href'] = $url;
-		return Html::rawElement( 'a', $attribs, $text );
+		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		return $linkRenderer->makeExternalLink(
+			$url,
+			$escape ? $text : new HtmlArmor( $text ),
+			$title ?? $wgTitle ?? SpecialPage::getTitleFor( 'Badtitle' ),
+			$linktype,
+			$attribs
+		);
 	}
 
 	/**
@@ -1300,8 +1272,13 @@ class Linker {
 			$items[] = self::blockLink( $userId, $userText );
 		}
 
-		$user = RequestContext::getMain()->getUser();
-		if ( $addEmailLink && $user->canSendEmail() ) {
+		if (
+			$addEmailLink
+			&& MediaWikiServices::getInstance()->getEmailUserFactory()
+				->newEmailUser( RequestContext::getMain()->getAuthority() )
+				->canSend()
+				->isGood()
+		) {
 			$items[] = self::emailLink( $userId, $userText );
 		}
 
@@ -1560,66 +1537,12 @@ class Linker {
 				return $node->name === 'a' && isset( $node->attrs['href'] );
 			},
 			static function ( SerializerNode $node ): SerializerNode {
+				$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
 				$node->attrs['href'] =
-					wfExpandUrl( $node->attrs['href'], PROTO_RELATIVE );
+					$urlUtils->expand( $node->attrs['href'], PROTO_RELATIVE ) ?? false;
 				return $node;
 			}
 		);
-	}
-
-	/**
-	 * This function is called by all recent changes variants, by the page history,
-	 * and by the user contributions list. It is responsible for formatting edit
-	 * summaries. It escapes any HTML in the summary, but adds some CSS to format
-	 * auto-generated comments (from section editing) and formats [[wikilinks]].
-	 *
-	 * This method produces HTML that can require CSS styles in mediawiki.interface.helpers.styles.
-	 *
-	 * @since 1.16.3. $wikiId added in 1.26
-	 * @deprecated since 1.38 use CommentFormatter, hard-deprecated in 1.41
-	 *
-	 * @param string $comment
-	 * @param LinkTarget|null $title LinkTarget object (to generate link to the section in
-	 *  autocomment) or null
-	 * @param bool $local Whether section links should refer to local page
-	 * @param string|null $wikiId Id (as used by WikiMap) of the wiki to generate links to.
-	 *  For use with external changes.
-	 *
-	 * @return string HTML
-	 */
-	public static function formatComment(
-		$comment, $title = null, $local = false, $wikiId = null
-	) {
-		wfDeprecated( __METHOD__, '1.41' );
-		$formatter = MediaWikiServices::getInstance()->getCommentFormatter();
-		return $formatter->format( $comment, $title, $local, $wikiId );
-	}
-
-	/**
-	 * Formats wiki links and media links in text; all other wiki formatting
-	 * is ignored
-	 *
-	 * @since 1.16.3. $wikiId added in 1.26
-	 * @deprecated since 1.38 use CommentFormatter, hard-deprecated in 1.41
-	 *
-	 * @param string $comment Text to format links in. WARNING! Since the output of this
-	 * 	function is html, $comment must be sanitized for use as html. You probably want
-	 * 	to pass $comment through Sanitizer::escapeHtmlAllowEntities() before calling
-	 * 	this function.
-	 * @param LinkTarget|null $title An optional LinkTarget object used to links to sections
-	 * @param bool $local Whether section links should refer to local page
-	 * @param string|null $wikiId Id of the wiki to link to (if not the local wiki),
-	 *  as used by WikiMap.
-	 *
-	 * @return string HTML
-	 * @return-taint onlysafefor_html
-	 */
-	public static function formatLinksInComment(
-		$comment, $title = null, $local = false, $wikiId = null
-	) {
-		wfDeprecated( __METHOD__, '1.41' );
-		$formatter = MediaWikiServices::getInstance()->getCommentFormatter();
-		return $formatter->formatLinksUnsafe( $comment, $title, $local, $wikiId );
 	}
 
 	/**
@@ -1707,60 +1630,6 @@ class Linker {
 	}
 
 	/**
-	 * Wrap a comment in standard punctuation and formatting if
-	 * it's non-empty, otherwise return empty string.
-	 *
-	 * This method produces HTML that requires CSS styles in mediawiki.interface.helpers.styles.
-	 *
-	 * @since 1.16.3. $wikiId added in 1.26
-	 * @deprecated since 1.38 use CommentFormatter, hard-deprecated in 1.41
-	 *
-	 * @param string $comment
-	 * @param LinkTarget|null $title LinkTarget object (to generate link to section in autocomment)
-	 *  or null
-	 * @param bool $local Whether section links should refer to local page
-	 * @param string|null $wikiId Id (as used by WikiMap) of the wiki to generate links to.
-	 *  For use with external changes.
-	 * @param bool $useParentheses Whether the comment is wrapped in parentheses
-	 *
-	 * @return string
-	 */
-	public static function commentBlock(
-		$comment, $title = null, $local = false, $wikiId = null, $useParentheses = true
-	) {
-		wfDeprecated( __METHOD__, '1.41' );
-		return MediaWikiServices::getInstance()->getCommentFormatter()
-			->formatBlock( $comment, $title, $local, $wikiId, $useParentheses );
-	}
-
-	/**
-	 * Wrap and format the given revision's comment block, if the current
-	 * user is allowed to view it.
-	 *
-	 * This method produces HTML that requires CSS styles in mediawiki.interface.helpers.styles.
-	 *
-	 * @since 1.16.3
-	 * @deprecated since 1.38 use CommentFormatter, hard-deprecated in 1.41
-	 * @param RevisionRecord $revRecord (Switched from the old Revision class to RevisionRecord
-	 *    since 1.35)
-	 * @param bool $local Whether section links should refer to local page
-	 * @param bool $isPublic Show only if all users can see it
-	 * @param bool $useParentheses (optional) Wrap comments in parentheses where needed
-	 * @return string HTML fragment
-	 */
-	public static function revComment(
-		RevisionRecord $revRecord,
-		$local = false,
-		$isPublic = false,
-		$useParentheses = true
-	) {
-		wfDeprecated( __METHOD__, '1.41' );
-		$authority = RequestContext::getMain()->getAuthority();
-		$formatter = MediaWikiServices::getInstance()->getCommentFormatter();
-		return $formatter->formatRevision( $revRecord, $authority, $local, $isPublic, $useParentheses );
-	}
-
-	/**
 	 * @since 1.16.3
 	 * @param int $size
 	 * @return string
@@ -1772,201 +1641,6 @@ class Linker {
 			$stxt = wfMessage( 'nbytes' )->numParams( $size )->escaped();
 		}
 		return "<span class=\"history-size mw-diff-bytes\" data-mw-bytes=\"$size\">$stxt</span>";
-	}
-
-	/**
-	 * Add another level to the Table of Contents
-	 *
-	 * @deprecated since 1.42
-	 * @since 1.16.3
-	 * @return string
-	 */
-	public static function tocIndent() {
-		wfDeprecated( __METHOD__, '1.42' );
-		return "\n<ul>\n";
-	}
-
-	/**
-	 * Finish one or more sublevels on the Table of Contents
-	 *
-	 * @deprecated since 1.42
-	 * @since 1.16.3
-	 * @param int $level
-	 * @return string
-	 */
-	public static function tocUnindent( $level ) {
-		wfDeprecated( __METHOD__, '1.42' );
-		return "</li>\n" . str_repeat( "</ul>\n</li>\n", $level > 0 ? $level : 0 );
-	}
-
-	/**
-	 * parameter level defines if we are on an indentation level
-	 *
-	 * @deprecated since 1.42
-	 * @since 1.16.3
-	 * @param string $linkAnchor Identifier
-	 * @param string $tocline Properly escaped HTML
-	 * @param string $tocnumber Unescaped text
-	 * @param int $level
-	 * @param string|false $sectionIndex
-	 * @return string
-	 */
-	public static function tocLine( $linkAnchor, $tocline, $tocnumber, $level, $sectionIndex = false ) {
-		wfDeprecated( __METHOD__, '1.42' );
-		$classes = "toclevel-$level";
-
-		// Parser.php used to suppress tocLine by setting $sectionindex to false.
-		// In those circumstances, we can now encounter '' or a "T-" prefixed index
-		// for when the section comes from templates.
-		if ( $sectionIndex !== false && $sectionIndex !== '' && !str_starts_with( $sectionIndex, "T-" ) ) {
-			$classes .= " tocsection-$sectionIndex";
-		}
-
-		// <li class="$classes"><a href="#$linkAnchor"><span class="tocnumber">
-		// $tocnumber</span> <span class="toctext">$tocline</span></a>
-		return Html::openElement( 'li', [ 'class' => $classes ] )
-			. Html::rawElement( 'a',
-				[ 'href' => "#$linkAnchor" ],
-				Html::element( 'span', [ 'class' => 'tocnumber' ], $tocnumber )
-					. ' '
-					. Html::rawElement( 'span', [ 'class' => 'toctext' ], $tocline )
-			);
-	}
-
-	/**
-	 * End a Table Of Contents line.
-	 * tocUnindent() will be used instead if we're ending a line below
-	 * the new level.
-	 * @deprecated since 1.42
-	 * @since 1.16.3
-	 * @return string
-	 */
-	public static function tocLineEnd() {
-		wfDeprecated( __METHOD__, '1.42' );
-		return "</li>\n";
-	}
-
-	/**
-	 * Wraps the TOC in a div with ARIA navigation role and provides the hide/collapse JavaScript.
-	 *
-	 * @deprecated since 1.42
-	 * @since 1.16.3
-	 * @param string $toc Html of the Table Of Contents
-	 * @param Language|null $lang Language for the toc title, defaults to user language
-	 * @return string Full html of the TOC
-	 */
-	public static function tocList( $toc, Language $lang = null ) {
-		wfDeprecated( __METHOD__, '1.42' );
-		$lang ??= RequestContext::getMain()->getLanguage();
-
-		$title = wfMessage( 'toc' )->inLanguage( $lang )->escaped();
-
-		return '<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading">'
-			. Html::element( 'input', [
-				'type' => 'checkbox',
-				'role' => 'button',
-				'id' => 'toctogglecheckbox',
-				'class' => 'toctogglecheckbox',
-				'style' => 'display:none',
-			] )
-			. Html::openElement( 'div', [
-				'class' => 'toctitle',
-				'lang' => $lang->getHtmlCode(),
-				'dir' => $lang->getDir(),
-			] )
-			. '<h2 id="mw-toc-heading">' . $title . '</h2>'
-			. '<span class="toctogglespan">'
-			. Html::label( '', 'toctogglecheckbox', [
-				'class' => 'toctogglelabel',
-			] )
-			. '</span>'
-			. '</div>'
-			. $toc
-			. "</ul>\n</div>\n";
-	}
-
-	/**
-	 * @internal For use by ParserOutput and API modules
-	 * Generate a table of contents from a section tree.
-	 *
-	 * @deprecated since 1.42
-	 * @since 1.16.3. $lang added in 1.17. Parameters changed in 1.40.
-	 * @param ?TOCData $tocData Return value of ParserOutput::getSections()
-	 * @param Language|null $lang Language for the toc title, defaults to user language
-	 * @param array $options
-	 *   - 'maxtoclevel' Max TOC level to generate
-	 * @return string HTML fragment
-	 */
-	public static function generateTOC( ?TOCData $tocData, Language $lang = null, array $options = [] ): string {
-		wfDeprecated( __METHOD__, '1.42' );
-		$toc = '';
-		$lastLevel = 0;
-		$maxTocLevel = $options['maxtoclevel'] ?? null;
-		if ( $maxTocLevel === null ) {
-			// Use wiki-configured default
-			$services = MediaWikiServices::getInstance();
-			$config = $services->getMainConfig();
-			$maxTocLevel = $config->get( MainConfigNames::MaxTocLevel );
-		}
-		foreach ( ( $tocData ? $tocData->getSections() : [] ) as $section ) {
-			$tocLevel = $section->tocLevel;
-			if ( $tocLevel < $maxTocLevel ) {
-				if ( $tocLevel > $lastLevel ) {
-					$toc .= self::tocIndent();
-				} elseif ( $tocLevel < $lastLevel ) {
-					if ( $lastLevel < $maxTocLevel ) {
-						$toc .= self::tocUnindent(
-							$lastLevel - $tocLevel );
-					} else {
-						$toc .= self::tocLineEnd();
-					}
-				} else {
-					$toc .= self::tocLineEnd();
-				}
-
-				$toc .= self::tocLine( $section->linkAnchor,
-					$section->line, $section->number,
-					$tocLevel, $section->index );
-				$lastLevel = $tocLevel;
-			}
-		}
-		if ( $lastLevel < $maxTocLevel && $lastLevel > 0 ) {
-			$toc .= self::tocUnindent( $lastLevel - 1 );
-		}
-		return self::tocList( $toc, $lang );
-	}
-
-	/**
-	 * Create a headline for content
-	 *
-	 * @deprecated since 1.42
-	 * @since 1.16.3
-	 * @param int $level The level of the headline (1-6)
-	 * @param string $attribs Any attributes for the headline, starting with
-	 *   a space and ending with '>'
-	 *   This *must* be at least '>' for no attribs
-	 * @param string $anchor The anchor to give the headline (the bit after the #)
-	 * @param string $html HTML for the text of the header
-	 * @param string $link HTML to add for the section edit link
-	 * @param string|false $fallbackAnchor A second, optional anchor to give for
-	 *   backward compatibility (false to omit)
-	 *
-	 * @return string HTML headline
-	 */
-	public static function makeHeadline( $level, $attribs, $anchor, $html,
-		$link, $fallbackAnchor = false
-	) {
-		wfDeprecated( __METHOD__, '1.42' );
-		$anchorEscaped = htmlspecialchars( $anchor, ENT_COMPAT );
-		$fallback = '';
-		if ( $fallbackAnchor !== false && $fallbackAnchor !== $anchor ) {
-			$fallbackAnchor = htmlspecialchars( $fallbackAnchor, ENT_COMPAT );
-			$fallback = "<span id=\"$fallbackAnchor\"></span>";
-		}
-		return "<h$level$attribs"
-			. "$fallback<span class=\"mw-headline\" id=\"$anchorEscaped\">$html</span>"
-			. $link
-			. "</h$level>";
 	}
 
 	/**
@@ -2016,7 +1690,7 @@ class Linker {
 	 */
 	public static function generateRollback(
 		RevisionRecord $revRecord,
-		IContextSource $context = null,
+		?IContextSource $context = null,
 		$options = []
 	) {
 		$context ??= RequestContext::getMain();
@@ -2043,8 +1717,10 @@ class Linker {
 		if ( $services->getUserOptionsLookup()
 			->getBoolOption( $context->getUser(), 'showrollbackconfirmation' )
 		) {
-			$stats = $services->getStatsdDataFactory();
-			$stats->increment( 'rollbackconfirmation.event.load' );
+			$services->getStatsFactory()
+				->getCounter( 'rollbackconfirmation_event_load_total' )
+				->copyToStatsdAt( 'rollbackconfirmation.event.load' )
+				->increment();
 			$context->getOutput()->addModules( 'mediawiki.misc-authed-curate' );
 		}
 
@@ -2137,7 +1813,7 @@ class Linker {
 	 */
 	public static function buildRollbackLink(
 		RevisionRecord $revRecord,
-		IContextSource $context = null,
+		?IContextSource $context = null,
 		$editCount = false
 	) {
 		$config = MediaWikiServices::getInstance()->getMainConfig();
@@ -2291,6 +1967,7 @@ class Linker {
 		return $tooltip;
 	}
 
+	/** @var (string|false)[] */
 	public static $accesskeycache;
 
 	/**

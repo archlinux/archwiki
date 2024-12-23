@@ -22,13 +22,16 @@
  */
 
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to make a page edit.
@@ -135,11 +138,13 @@ class EditCLI extends Maintenance {
 			$this->output( "failed\n" );
 		}
 		if ( !$status->isGood() ) {
-			$this->output( $status->getMessage( false, false, 'en' )->text() . "\n" );
+			$this->error( $status );
 		}
 		return $status->isOK();
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = EditCLI::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

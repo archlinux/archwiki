@@ -10,8 +10,11 @@ use MediaWiki\Extension\Math\MathMathMLCli;
  * @license GPL-2.0-or-later
  */
 class MathoidCliTest extends MediaWikiIntegrationTestCase {
+	/** @var string */
 	private $goodInput = '\sin\left(\frac12x\right)';
+	/** @var string */
 	private $badInput = '\newcommand{\text{do evil things}}';
+	/** @var true|null */
 	protected static $hasMathoidCli;
 
 	public static function setUpBeforeClass(): void {

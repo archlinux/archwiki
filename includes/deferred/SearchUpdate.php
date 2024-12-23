@@ -25,14 +25,14 @@
 
 namespace MediaWiki\Deferred;
 
-use Content;
-use IDBAccessObject;
+use MediaWiki\Content\Content;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageIdentity;
 use SearchEngine;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Database independent search index updater
@@ -68,16 +68,16 @@ class SearchUpdate implements DeferrableUpdate {
 	 */
 	public function doUpdate() {
 		$services = MediaWikiServices::getInstance();
-		$config = $services->getSearchEngineConfig();
+		$searchEngineConfig = $services->getSearchEngineConfig();
 
-		if ( $config->getConfig()->get( MainConfigNames::DisableSearchUpdate ) || !$this->id ) {
+		if ( $services->getMainConfig()->get( MainConfigNames::DisableSearchUpdate ) || !$this->id ) {
 			LoggerFactory::getInstance( "search" )
 				->debug( "Skipping update: search updates disabled by config" );
 			return;
 		}
 
 		$seFactory = $services->getSearchEngineFactory();
-		foreach ( $config->getSearchTypes() as $type ) {
+		foreach ( $searchEngineConfig->getSearchTypes() as $type ) {
 			$search = $seFactory->create( $type );
 			if ( !$search->supports( 'search-update' ) ) {
 				continue;
@@ -109,7 +109,7 @@ class SearchUpdate implements DeferrableUpdate {
 	 * @param SearchEngine|null $se Search engine
 	 * @return string
 	 */
-	public function updateText( $text, SearchEngine $se = null ) {
+	public function updateText( $text, ?SearchEngine $se = null ) {
 		$services = MediaWikiServices::getInstance();
 		$contLang = $services->getContentLanguage();
 		# Language-specific strip/conversion

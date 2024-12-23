@@ -8,8 +8,8 @@ QUnit.module( 've.ce.RangeState' );
 
 /* Tests */
 
-QUnit.test( 'Basic tests', function ( assert ) {
-	var view = ve.test.utils.createSurfaceViewFromHtml( ve.dm.example.html ),
+QUnit.test( 'Basic tests', ( assert ) => {
+	const view = ve.test.utils.createSurfaceViewFromHtml( ve.dm.example.html ),
 		nativeSelection = view.nativeSelection,
 		doc = view.getDocument().getDocumentNode(),
 		cases = [
@@ -118,11 +118,11 @@ QUnit.test( 'Basic tests', function ( assert ) {
 		};
 	}
 
-	var oldState = null;
-	cases.forEach( function ( caseItem ) {
+	let oldState = null;
+	cases.forEach( ( caseItem ) => {
 		nativeSelection.removeAllRanges();
 		if ( caseItem.range ) {
-			var nativeRange = document.createRange();
+			const nativeRange = document.createRange();
 			nativeRange.setStart( caseItem.range.startNode, caseItem.range.startOffset );
 			if ( caseItem.range.endNode ) {
 				nativeRange.setEnd( caseItem.range.endNode, caseItem.range.endOffset );
@@ -132,7 +132,7 @@ QUnit.test( 'Basic tests', function ( assert ) {
 		if ( caseItem.resetOld ) {
 			oldState = null;
 		}
-		var rangeState = new ve.ce.RangeState( oldState, doc );
+		const rangeState = new ve.ce.RangeState( oldState, doc );
 		assert.deepEqualWithNodeTree(
 			getSummary( rangeState ),
 			getSummary( caseItem.expected ),

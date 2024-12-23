@@ -13,7 +13,7 @@ use MediaWikiUnitTestCase;
 use Wikimedia\Rdbms\LBFactory;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher
+ * @covers \MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher
  */
 class EmergencyWatcherTest extends MediaWikiUnitTestCase {
 
@@ -145,8 +145,6 @@ class EmergencyWatcherTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getFiltersToThrottle
-	 * @covers ::getEmergencyValue
 	 * @dataProvider provideFiltersToThrottle
 	 */
 	public function testGetFiltersToThrottle(
@@ -174,9 +172,6 @@ class EmergencyWatcherTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct() {
 		$watcher = new EmergencyWatcher(
 			$this->createMock( EmergencyCache::class ),

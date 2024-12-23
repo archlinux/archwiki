@@ -6,7 +6,7 @@
 	},
 	"visualeditor-mwlanguagevariant-name": "ဘာသာစကား အမည်: $1",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "ဘာသာစကားကုဒ်",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<မဆီလျော်ပါ>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>မဆီလျော်ပါ</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "ဘာသာစကား",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "ရင်းမြစ်",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-twoway-label": "စာသား",

@@ -43,6 +43,8 @@ class MockSiteConfig extends SiteConfig {
 		'project_talk' => 5, 'wt' => 5, 'wikipedia_talk' => 5,
 		'file' => 6,
 		'file_talk' => 7,
+		'template' => 10,
+		'template_talk' => 11,
 		'help' => 12,
 		'category' => 14,
 		'category_talk' => 15,
@@ -87,8 +89,8 @@ class MockSiteConfig extends SiteConfig {
 		$this->setLogger( $logger );
 	}
 
-	public function getLinterConfig(): array {
-		return $this->linterOverrides + parent::getLinterConfig();
+	public function getLinterSiteConfig(): array {
+		return $this->linterOverrides + parent::getLinterSiteConfig();
 	}
 
 	public function allowedExternalImagePrefixes(): array {
@@ -472,5 +474,29 @@ class MockSiteConfig extends SiteConfig {
 			$this->metrics = new MockMetrics();
 		}
 		return $this->metrics;
+	}
+
+	/**
+	 * Increment a counter metric
+	 * @param string $name
+	 * @param array $labels
+	 * @param float $amount
+	 * @return void
+	 */
+	public function incrementCounter( string $name, array $labels, float $amount = 1 ): void {
+		// We don't use the labels for now, using MockMetrics instead
+		$this->metrics->increment( $name );
+	}
+
+	/**
+	 * Record a timing metric
+	 * @param string $name
+	 * @param float $value
+	 * @param array $labels
+	 * @return void
+	 */
+	public function observeTiming( string $name, float $value, array $labels ): void {
+		// We don't use the labels for now, using MockMetrics instead
+		$this->metrics->timing( $name, $value );
 	}
 }

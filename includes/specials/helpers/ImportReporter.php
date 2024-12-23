@@ -27,6 +27,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\ForeignTitle;
+use MediaWiki\Xml\Xml;
 
 /**
  * Reporting callback
@@ -35,13 +36,21 @@ use MediaWiki\Title\ForeignTitle;
 class ImportReporter extends ContextSource {
 	use ProtectedHookAccessorTrait;
 
+	/** @var string */
 	private $reason;
+	/** @var string[] */
 	private $logTags = [];
+	/** @var callable|null */
 	private $mOriginalLogCallback;
+	/** @var callable|null */
 	private $mOriginalPageOutCallback;
+	/** @var int */
 	private $mLogItemCount = 0;
+	/** @var int */
 	private $mPageCount = 0;
+	/** @var bool */
 	private $mIsUpload;
+	/** @var string */
 	private $mInterwiki;
 
 	/**
@@ -51,7 +60,7 @@ class ImportReporter extends ContextSource {
 	 * @param string|bool $reason
 	 * @param IContextSource|null $context
 	 */
-	public function __construct( $importer, $upload, $interwiki, $reason = "", IContextSource $context = null ) {
+	public function __construct( $importer, $upload, $interwiki, $reason = "", ?IContextSource $context = null ) {
 		if ( $context ) {
 			$this->setContext( $context );
 		} else {

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kimberli Mäkäräinen (WMNO)",
-			"Yupik",
-			"WMNO sámeprošeakta"
+			"WMNO sámeprošeakta",
+			"Yupik"
 		]
 	},
 	"echo-desc": "Vuogádat dieđihit geavaheddjiide dáhpáhusaid ja dieđuid birra",
@@ -37,6 +37,7 @@
 	"echo-learn-more": "Lassedieđut",
 	"echo-log": "Almmolaš logga",
 	"echo-new-messages": "Dus lea iežat ságastallansiiddus ođđa diehtu",
+	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Rievdadeapmi|Rievdadeami}} mu ságastallansiiddus",
 	"echo-category-title-edit-user-page": "{{PLURAL:$1|Rievdadeapmi|Rievdadeami}} mu ságastallansiiddus",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Siiddu liŋka|Siiddui liŋkkat}}",
 	"echo-category-title-reverted": "{{PLURAL:$1|Rievdadusa máhcaheapmi|Rievdadusaid máhcaheamit}}",
@@ -136,10 +137,14 @@
 	"notification-link-text-what-links-here": "Buot liŋkkat dán siidui",
 	"notification-header-mention-other": "$1 {{GENDER:$2|namuhii}} {{GENDER:$3|du}} «<strong>$5</strong>»:s, <strong>$4</strong>:s.",
 	"notification-header-mention-other-nosection": "$1 {{GENDER:$2|namuhii}} {{GENDER:$3|du}} <strong>$4</strong>:s.",
+	"notification-header-mention-user-talkpage-v2": "$1 {{GENDER:$2|namuhii}} {{GENDER:$3|du}} «<strong>$6</strong>» <strong> {{GENDER:$5|}}, $4</strong> geavaheaddjiságastallansiiddus.",
+	"notification-header-mention-user-talkpage-nosection": "$1 {{GENDER:$2|namuhii}} {{GENDER:$3|du}} {{GENDER:$5|}} $4</strong> <strong>geavaheaddjiságastallansiiddus.",
 	"notification-header-mention-agent-talkpage": "$1 {{GENDER:$2|namuhii}} {{GENDER:$3|du}} «<strong>$4</strong>:s» {{GENDER:$2|iežas}}</strong> <strong>ságastallansiiddus.",
 	"notification-header-mention-agent-talkpage-nosection": "$1 {{GENDER:$2|namuhii}} {{GENDER:$3|du}} {{GENDER:$2|iežas}}</strong> <strong>ságastallansiiddus.",
 	"notification-header-mention-article-talkpage": "$1 {{GENDER:$2|namuhii}} {{GENDER:$3|du}} «<strong>$5</strong>»:s, <strong>$4</strong> ságastallansiiddus.",
 	"notification-header-mention-article-talkpage-nosection": "$1 {{GENDER:$2|namuhii}} {{GENDER:$3|du}} <strong>$4</strong> ságastallansiiddus.",
+	"notification-header-mention-failure-user-unknown": "Geavaheaddji <strong>$3</strong>, man {{GENDER:$2|don}} geahččalit namuhit, ii gávdnon.",
+	"notification-header-mention-failure-user-anonymous": "Geavaheaddji <strong>$3</strong>, man {{GENDER:$2|don}} geahččalit namuhit, lea anonyma.",
 	"notification-header-mention-failure-too-many": "{{GENDER:$2|Don}} geahččalit namuhit eanet go $3 {{PLURAL:$3|geavaheaddji|geavaheaddji}}. Liiggás namuhusat eai sáddejuvvon.",
 	"notification-header-mention-failure-bundle": "{{PLURAL:$3|Ii sáhttán}} sáddet {{PLURAL:$3|namuhusa|$3 namuhusaid}} {{GENDER:$2|maid geahččalit dahkat}} ságastallansiiddus <strong>$4</strong>.",
 	"notification-compact-header-mention-failure-user-unknown": "<strong>Geavaheaddjinamma ii gávdno:</strong> $1",

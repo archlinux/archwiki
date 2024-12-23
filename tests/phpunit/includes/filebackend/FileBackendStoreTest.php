@@ -2,13 +2,13 @@
 
 namespace phpunit\includes\filebackend;
 
-use FileBackend;
 use MediaWikiIntegrationTestCase;
-use MemoryFileBackend;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\MemoryFileBackend;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \FileBackendStore
+ * @covers \Wikimedia\FileBackend\FileBackendStore
  */
 class FileBackendStoreTest extends MediaWikiIntegrationTestCase {
 

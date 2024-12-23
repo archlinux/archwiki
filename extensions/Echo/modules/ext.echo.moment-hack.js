@@ -2,12 +2,12 @@
 	/* global moment:false */
 	'use strict';
 
-	var momentOrigLocale = moment.locale();
+	const momentOrigLocale = moment.locale();
 
 	// Set up new 'short relative time' locale strings for momentjs
 	moment.defineLocale( 'echo-shortRelativeTime', {
 		relativeTime: function ( number, withoutSuffix, key ) {
-			var keymap = {
+			const keymap = {
 				s: 'seconds',
 				m: 'minutes',
 				mm: 'minutes',

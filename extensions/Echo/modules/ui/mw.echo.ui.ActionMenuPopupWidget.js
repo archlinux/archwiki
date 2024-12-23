@@ -16,9 +16,9 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration object
-	 * @cfg {jQuery} [$overlay] A jQuery element functioning as an overlay
+	 * @param {jQuery} [config.$overlay] A jQuery element functioning as an overlay
 	 *  for popups.
-	 * @cfg {Object} [horizontalPosition='auto'] How to position the menu, see OO.ui.FloatableElement.
+	 * @param {Object} [config.horizontalPosition='auto'] How to position the menu, see OO.ui.FloatableElement.
 	 *  By default, 'start' will be tried first, and if that doesn't fit, 'end' will be used.
 	 */
 	mw.echo.ui.ActionMenuPopupWidget = function MwEchoUiActionMenuPopupWidget( config ) {

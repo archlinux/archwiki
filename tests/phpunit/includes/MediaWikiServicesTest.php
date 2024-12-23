@@ -18,12 +18,13 @@ use Wikimedia\Services\SalvageableService;
  * that storage isn't disabled on the original instance.
  */
 class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
-	private $deprecatedServices = [
+	private const DEPRECATED_SERVICES = [
 		'BlockErrorFormatter',
 		'ConfigRepository',
 		'ConfiguredReadOnlyMode',
 	];
 
+	/** @var array */
 	public static $mockServiceWiring = [];
 
 	/**
@@ -334,7 +335,7 @@ class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 			$getterCases[$name] = [
 				'get' . $service,
 				$class,
-				in_array( $service, $this->deprecatedServices )
+				in_array( $service, self::DEPRECATED_SERVICES )
 			];
 		}
 

@@ -49,7 +49,13 @@ class Server {
 		'syslogIdent' => 'shellbox',
 		'logToSyslog' => false,
 		'logToClient' => true,
-		'logFormat' => LineFormatter::SIMPLE_FORMAT
+		'logFormat' => LineFormatter::SIMPLE_FORMAT,
+		'allowUrlFiles' => false,
+		'urlFileConcurrency' => 5,
+		'urlFileConnectTimeout' => 3,
+		'urlFileRequestTimeout' => 600,
+		'urlFileUploadAttempts' => 3,
+		'urlFileRetryDelay' => 1,
 	];
 
 	/**

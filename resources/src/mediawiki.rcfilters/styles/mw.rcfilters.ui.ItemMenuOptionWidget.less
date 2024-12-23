@@ -25,8 +25,8 @@
 	}
 
 	.mw-rcfilters-ui-table {
-		padding-top: 6 / @font-size-system-ui / @font-size-vector;
-		padding-bottom: 6 / @font-size-system-ui / @font-size-vector;
+		padding-top: (6 / @font-size-system-ui / @font-size-vector);
+		padding-bottom: (6 / @font-size-system-ui / @font-size-vector);
 	}
 
 	&.oo-ui-optionWidget-selected {
@@ -47,8 +47,10 @@
 	}
 
 	&-itemCheckbox {
+		flex-grow: 1;
+
 		.oo-ui-fieldLayout-body > .oo-ui-fieldLayout-header {
-			padding-left: 12 / @font-size-system-ui / @font-size-vector;
+			padding-left: (12 / @font-size-system-ui / @font-size-vector);
 		}
 
 		.oo-ui-fieldLayout.oo-ui-fieldLayout-align-inline {
@@ -60,11 +62,6 @@
 			}
 		}
 
-		.oo-ui-checkboxInputWidget {
-			// Workaround for IE11 rendering issues. T162098
-			display: block;
-		}
-
 		label {
 			// Workaround for Chrome browser bug (T199932)
 			// Override padding rule from FieldLayout
@@ -73,17 +70,14 @@
 	}
 
 	.mw-rcfilters-ui-cell {
-		vertical-align: middle;
+		align-self: center;
+
+		> * {
+			margin-left: 1em;
+		}
 	}
 
 	&-excludeLabel {
-		width: 5em;
-		padding-left: 1em;
 		color: @color-subtle;
-	}
-
-	&-highlightButton {
-		width: 4em;
-		padding-left: 1em;
 	}
 }

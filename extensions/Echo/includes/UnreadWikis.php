@@ -69,16 +69,16 @@ class UnreadWikis {
 			return [];
 		}
 
-		$rows = $dbr->select(
-			'echo_unread_wikis',
-			[
+		$rows = $dbr->newSelectQueryBuilder()
+			->select( [
 				'euw_wiki',
 				'euw_alerts', 'euw_alerts_ts',
 				'euw_messages', 'euw_messages_ts',
-			],
-			[ 'euw_user' => $this->id ],
-			__METHOD__
-		);
+			] )
+			->from( 'echo_unread_wikis' )
+			->where( [ 'euw_user' => $this->id ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$wikis = [];
 		foreach ( $rows as $row ) {
@@ -150,11 +150,11 @@ class UnreadWikis {
 				->execute();
 		} else {
 			// No unread notifications, delete the row
-			$dbw->delete(
-				'echo_unread_wikis',
-				$conditions,
-				__METHOD__
-			);
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'echo_unread_wikis' )
+				->where( $conditions )
+				->caller( __METHOD__ )
+				->execute();
 		}
 	}
 }

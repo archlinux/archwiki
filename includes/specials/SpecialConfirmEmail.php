@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Confirmemail
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,12 +16,10 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
-use IDBAccessObject;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Parser\Sanitizer;
@@ -36,11 +32,17 @@ use PermissionsError;
 use Profiler;
 use ReadOnlyError;
 use UserNotLoggedIn;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\ScopedCallback;
 
 /**
- * Special page allows users to request email confirmation message, and handles
- * processing of the confirmation code when the link in the email is followed
+ * Email confirmation for registered users.
+ *
+ * This page responds to the link with the confirmation code
+ * that is sent in the confirmation email.
+ *
+ * This page can also be accessed directly at any later time
+ * to re-send the confirmation email.
  *
  * @ingroup SpecialPage
  * @author Brooke Vibber
@@ -87,7 +89,7 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 		}
 
 		if ( $code === null || $code === '' ) {
-			$this->requireNamedUser( 'confirmemail_needlogin' );
+			$this->requireNamedUser( 'confirmemail_needlogin', 'exception-nologin', true );
 			if ( Sanitizer::validateEmail( $this->getUser()->getEmail() ) ) {
 				$this->showRequestForm();
 			} else {

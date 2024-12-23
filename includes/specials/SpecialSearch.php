@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Search
- *
  * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,12 +18,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
 use ISearchResultSet;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Html\Html;
@@ -48,16 +46,18 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
+use MediaWiki\Xml\Xml;
 use RepoGroup;
 use SearchEngine;
 use SearchEngineConfig;
 use SearchEngineFactory;
 use Wikimedia\Rdbms\ReadOnlyMode;
-use Xml;
 
 /**
- * implements Special:Search - Run text & title search and display the output
+ * Run text & title search and display the output
+ *
  * @ingroup SpecialPage
+ * @ingroup Search
  */
 class SpecialSearch extends SpecialPage {
 	/**
@@ -85,10 +85,8 @@ class SpecialSearch extends SpecialPage {
 	 */
 	protected $mPrefix;
 
-	/**
-	 * @var int
-	 */
-	protected $limit, $offset;
+	protected int $limit;
+	protected int $offset;
 
 	/**
 	 * @var array
@@ -407,6 +405,10 @@ class SpecialSearch extends SpecialPage {
 		$out = $this->getOutput();
 		$widgetOptions = $this->getConfig()->get( MainConfigNames::SpecialSearchFormOptions );
 		$formWidget = new SearchFormWidget(
+			new ServiceOptions(
+				SearchFormWidget::CONSTRUCTOR_OPTIONS,
+				$this->getConfig()
+			),
 			$this,
 			$this->searchConfig,
 			$this->getHookContainer(),
@@ -501,7 +503,7 @@ class SpecialSearch extends SpecialPage {
 			$out->addHTML( $dymWidget->render( $term, $textMatches ) );
 		}
 
-		$hasSearchErrors = $textStatus && $textStatus->getErrors() !== [];
+		$hasSearchErrors = $textStatus && $textStatus->getMessages() !== [];
 		$hasInlineIwResults = $textMatches &&
 			$textMatches->hasInterwikiResults( ISearchResultSet::INLINE_RESULTS );
 		$hasSecondaryIwResults = $textMatches &&
@@ -518,19 +520,19 @@ class SpecialSearch extends SpecialPage {
 
 		$out->addHTML( '<div class="mw-search-results-info">' );
 
-		if ( $hasSearchErrors || $this->loadStatus->getErrors() ) {
+		if ( $hasSearchErrors || $this->loadStatus->getMessages() ) {
 			if ( $textStatus === null ) {
 				$textStatus = $this->loadStatus;
 			} else {
 				$textStatus->merge( $this->loadStatus );
 			}
 			[ $error, $warning ] = $textStatus->splitByErrorType();
-			if ( $error->getErrors() ) {
+			if ( $error->getMessages() ) {
 				$out->addHTML( Html::errorBox(
 					$error->getHTML( 'search-error' )
 				) );
 			}
-			if ( $warning->getErrors() ) {
+			if ( $warning->getMessages() ) {
 				$out->addHTML( Html::warningBox(
 					$warning->getHTML( 'search-warning' )
 				) );
@@ -660,7 +662,7 @@ class SpecialSearch extends SpecialPage {
 		$this->outputHeader();
 		// TODO: Is this true? The namespace remember uses a user token
 		// on save.
-		$out->setPreventClickjacking( false );
+		$out->getMetadata()->setPreventClickjacking( false );
 		$this->addHelpLink( 'Help:Searching' );
 
 		if ( strval( $term ) !== '' ) {

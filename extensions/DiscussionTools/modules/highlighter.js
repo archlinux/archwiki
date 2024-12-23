@@ -1,9 +1,9 @@
-var
-	lastHighlightedPublishedComment = null,
+const
 	featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {},
 	CommentItem = require( './CommentItem.js' ),
 	HeadingItem = require( './HeadingItem.js' ),
 	utils = require( './utils.js' );
+let lastHighlightedPublishedComment = null;
 
 /**
  * Draw a semi-transparent rectangle on the page to highlight the given thread item.
@@ -12,8 +12,8 @@ var
  * @param {ThreadItem|ThreadItem[]} items Thread item(s) to highlight
  */
 function Highlight( items ) {
-	var highlightNodes = [];
-	var ranges = [];
+	const highlightNodes = [];
+	const ranges = [];
 
 	this.topmostElement = null;
 
@@ -21,13 +21,13 @@ function Highlight( items ) {
 
 	this.rootNode = items[ 0 ] ? items[ 0 ].rootNode : null;
 
-	items.forEach( function ( item ) {
-		var $highlight = $( '<div>' ).addClass( 'ext-discussiontools-init-highlight' );
+	items.forEach( ( item ) => {
+		const $highlight = $( '<div>' ).addClass( 'ext-discussiontools-init-highlight' );
 
 		// We insert the highlight in the DOM near the thead item, so that it remains positioned correctly
 		// when it shifts (e.g. collapsing the table of contents), and disappears when it is hidden (e.g.
 		// opening visual editor).
-		var range = item.getRange();
+		const range = item.getRange();
 		// Support: Firefox
 		// The highlight node must be inserted after the start marker node (data-mw-comment-start), not
 		// before, otherwise Node#getBoundingClientRect() returns wrong results.
@@ -35,7 +35,7 @@ function Highlight( items ) {
 
 		// If the item is a top-level comment wrapped in a frame, highlight outside that frame
 		if ( item.level === 1 ) {
-			var coveredSiblings = utils.getFullyCoveredSiblings( item, item.rootNode );
+			const coveredSiblings = utils.getFullyCoveredSiblings( item, item.rootNode );
 			if ( coveredSiblings ) {
 				range.setStartBefore( coveredSiblings[ 0 ] );
 				range.setEndAfter( coveredSiblings[ coveredSiblings.length - 1 ] );
@@ -79,7 +79,6 @@ OO.initClass( Highlight );
  * Update position of highlights, e.g. after window resize
  */
 Highlight.prototype.update = function () {
-	var highlight = this;
 	this.$element.css( {
 		'margin-top': '',
 		'margin-left': '',
@@ -87,13 +86,13 @@ Highlight.prototype.update = function () {
 		width: '',
 		height: ''
 	} );
-	var rootRect = this.rootNode.getBoundingClientRect();
+	const rootRect = this.rootNode.getBoundingClientRect();
 	this.topmostElement = null;
-	var topmostTop = Infinity;
-	this.ranges.forEach( function ( range, i ) {
-		var $element = highlight.$element.eq( i );
-		var baseRect = $element[ 0 ].getBoundingClientRect();
-		var rect = RangeFix.getBoundingClientRect( range );
+	let topmostTop = Infinity;
+	this.ranges.forEach( ( range, i ) => {
+		const $element = this.$element.eq( i );
+		const baseRect = $element[ 0 ].getBoundingClientRect();
+		const rect = RangeFix.getBoundingClientRect( range );
 		// rect may be null if the range is in a detached or hidden node
 		if ( rect ) {
 			// Draw the highlight over the full width of the page, except for very short comments
@@ -105,9 +104,9 @@ Highlight.prototype.update = function () {
 			//
 			// It seems difficult to distinguish the floating boxes from comments that are just
 			// very short or very deeply indented, and this seems to work well enough in practice.
-			var useFullWidth = rect.width > rootRect.width / 3;
+			const useFullWidth = rect.width > rootRect.width / 3;
 
-			var headingTopAdj = 0;
+			let headingTopAdj = 0;
 			if (
 				featuresEnabled.visualenhancements &&
 				$element.closest( '.ext-discussiontools-init-section' ).length
@@ -117,10 +116,10 @@ Highlight.prototype.update = function () {
 				headingTopAdj = 10;
 			}
 
-			var top = rect.top - baseRect.top;
-			var width = rect.width;
-			var height = rect.height;
-			var left, right;
+			const top = rect.top - baseRect.top;
+			let width = rect.width;
+			const height = rect.height;
+			let left, right;
 			if ( $element.css( 'direction' ) === 'ltr' ) {
 				left = rect.left - baseRect.left;
 				if ( useFullWidth ) {
@@ -132,7 +131,7 @@ Highlight.prototype.update = function () {
 					width = rootRect.width - ( ( rootRect.left + rootRect.width ) - ( rect.left + rect.width ) );
 				}
 			}
-			var padding = 5;
+			const padding = 5;
 			$element.css( {
 				'margin-top': top - padding + headingTopAdj,
 				'margin-left': left !== undefined ? left - padding : '',
@@ -142,7 +141,7 @@ Highlight.prototype.update = function () {
 			} );
 
 			if ( rect.top < topmostTop ) {
-				highlight.topmostElement = $element[ 0 ];
+				this.topmostElement = $element[ 0 ];
 				topmostTop = rect.top;
 			}
 		}
@@ -166,7 +165,7 @@ Highlight.prototype.destroy = function () {
 	window.removeEventListener( 'resize', this.updateDebounced );
 };
 
-var highlightedTarget = null;
+let highlightedTarget = null;
 /**
  * Highlight the thread item(s) on the page associated with the URL hash or query string
  *
@@ -180,11 +179,11 @@ function highlightTargetComment( threadItemSet, noScroll ) {
 		highlightedTarget = null;
 	}
 
-	var targetElement = mw.util.getTargetFromFragment();
+	const targetElement = mw.util.getTargetFromFragment();
 
 	if ( targetElement && targetElement.hasAttribute( 'data-mw-comment-start' ) ) {
-		var threadItemId = targetElement.getAttribute( 'id' );
-		var threadItem = threadItemSet.findCommentById( targetElement.getAttribute( 'id' ) );
+		const threadItemId = targetElement.getAttribute( 'id' );
+		const threadItem = threadItemSet.findCommentById( targetElement.getAttribute( 'id' ) );
 		if ( threadItem ) {
 			highlightedTarget = new Highlight( threadItem );
 			highlightedTarget.$element.addClass( 'ext-discussiontools-init-targetcomment' );
@@ -204,7 +203,7 @@ function highlightTargetComment( threadItemSet, noScroll ) {
 		};
 	}
 
-	var url = new URL( location.href );
+	const url = new URL( location.href );
 	return highlightNewComments(
 		threadItemSet,
 		noScroll,
@@ -226,11 +225,11 @@ function highlightTargetComment( threadItemSet, noScroll ) {
  * @param {string} threadItemId Thread item ID (NEW_TOPIC_COMMENT_ID for the a new topic)
  */
 function highlightPublishedComment( threadItemSet, threadItemId ) {
-	var highlightComments = [];
+	const highlightComments = [];
 
 	if ( threadItemId === utils.NEW_TOPIC_COMMENT_ID ) {
 		// Highlight the last comment on the page
-		var lastComment = threadItemSet.threadItems[ threadItemSet.threadItems.length - 1 ];
+		const lastComment = threadItemSet.threadItems[ threadItemSet.threadItems.length - 1 ];
 		lastHighlightedPublishedComment = lastComment;
 		highlightComments.push( lastComment );
 
@@ -245,23 +244,23 @@ function highlightPublishedComment( threadItemSet, threadItemId ) {
 			lastHighlightedPublishedComment = lastComment.parent;
 			// Change URL to point to this section, like the old section=new wikitext editor does.
 			// This also expands collapsed sections on mobile (T301840).
-			var sectionTitle = lastHighlightedPublishedComment.getLinkableTitle();
-			var urlFragment = mw.util.escapeIdForLink( sectionTitle );
+			const sectionTitle = lastHighlightedPublishedComment.getLinkableTitle();
+			const urlFragment = mw.util.escapeIdForLink( sectionTitle );
 			// Navigate to fragment without scrolling
 			location.hash = '#' + urlFragment + '-DoesNotExist-DiscussionToolsHack';
 			history.replaceState( null, '', '#' + urlFragment );
 		}
 	} else {
 		// Find the comment we replied to, then highlight the last reply
-		var repliedToComment = threadItemSet.threadItemsById[ threadItemId ];
+		const repliedToComment = threadItemSet.threadItemsById[ threadItemId ];
 		highlightComments.push( repliedToComment.replies[ repliedToComment.replies.length - 1 ] );
 		lastHighlightedPublishedComment = highlightComments[ 0 ];
 	}
 
 	// We may have changed the location hash on mobile, so wait for that to cause
 	// the section to expand before drawing the highlight.
-	setTimeout( function () {
-		var highlight = new Highlight( highlightComments );
+	setTimeout( () => {
+		const highlight = new Highlight( highlightComments );
 		highlight.$element.addClass( 'ext-discussiontools-init-publishedcomment' );
 
 		// Show a highlight with the same timing as the post-edit message (mediawiki.action.view.postEdit):
@@ -278,11 +277,11 @@ function highlightPublishedComment( threadItemSet, threadItemId ) {
 				// Apparently it makes `<dd>` elements scrollable and OOUI tried to scroll them instead of body.
 				scrollContainer: OO.ui.Element.static.getRootScrollableElement( highlight.topmostElement )
 			}
-		).then( function () {
+		).then( () => {
 			highlight.$element.addClass( 'ext-discussiontools-init-highlight-fadein' );
-			setTimeout( function () {
+			setTimeout( () => {
 				highlight.$element.addClass( 'ext-discussiontools-init-highlight-fadeout' );
-				setTimeout( function () {
+				setTimeout( () => {
 					// Remove the node when no longer needed, because it's using CSS 'mix-blend-mode', which
 					// affects the text rendering of the whole page, disabling subpixel antialiasing on Windows
 					highlight.destroy();
@@ -315,17 +314,17 @@ function highlightNewComments( threadItemSet, noScroll, newCommentIds, options )
 	options = options || {};
 
 	if ( options.newCommentsSinceId ) {
-		var newCommentsSince = threadItemSet.findCommentById( options.newCommentsSinceId );
+		const newCommentsSince = threadItemSet.findCommentById( options.newCommentsSinceId );
 		if ( newCommentsSince && newCommentsSince instanceof CommentItem ) {
-			var sinceTimestamp = newCommentsSince.timestamp;
-			var threadItems;
+			const sinceTimestamp = newCommentsSince.timestamp;
+			let threadItems;
 			if ( options.inThread ) {
-				var heading = newCommentsSince.getSubscribableHeading() || newCommentsSince.getHeading();
+				const heading = newCommentsSince.getSubscribableHeading() || newCommentsSince.getHeading();
 				threadItems = heading.getThreadItemsBelow();
 			} else {
 				threadItems = threadItemSet.getCommentItems();
 			}
-			threadItems.forEach( function ( threadItem ) {
+			threadItems.forEach( ( threadItem ) => {
 				if (
 					threadItem instanceof CommentItem &&
 					threadItem.timestamp >= sinceTimestamp
@@ -333,8 +332,8 @@ function highlightNewComments( threadItemSet, noScroll, newCommentIds, options )
 					if ( options.sinceThread ) {
 						// Check that we are in a thread that is newer than `sinceTimestamp`.
 						// Thread age is determined by looking at getOldestReply.
-						var itemHeading = threadItem.getSubscribableHeading() || threadItem.getHeading();
-						var oldestReply = itemHeading.getOldestReply();
+						const itemHeading = threadItem.getSubscribableHeading() || threadItem.getHeading();
+						const oldestReply = itemHeading.getOldestReply();
 						if ( !( oldestReply && oldestReply.timestamp >= sinceTimestamp ) ) {
 							return;
 						}
@@ -345,13 +344,11 @@ function highlightNewComments( threadItemSet, noScroll, newCommentIds, options )
 		}
 	}
 
-	var comments;
+	let comments;
 	if ( newCommentIds.length ) {
-		comments = newCommentIds.map( function ( id ) {
-			return threadItemSet.findCommentById( id );
-		} ).filter( function ( cmt ) {
-			return !!cmt;
-		} );
+		comments = newCommentIds
+			.map( ( id ) => threadItemSet.findCommentById( id ) )
+			.filter( ( cmt ) => !!cmt );
 		if ( comments.length ) {
 			highlightedTarget = new Highlight( comments );
 			highlightedTarget.$element.addClass( 'ext-discussiontools-init-targetcomment' );
@@ -375,9 +372,9 @@ function highlightNewComments( threadItemSet, noScroll, newCommentIds, options )
  * @param {ThreadItemSet} threadItemSet
  */
 function clearHighlightTargetComment( threadItemSet ) {
-	var url = new URL( location.href );
+	const url = new URL( location.href );
 
-	var targetElement = mw.util.getTargetFromFragment();
+	const targetElement = mw.util.getTargetFromFragment();
 
 	if ( targetElement && targetElement.hasAttribute( 'data-mw-comment-start' ) ) {
 		// Clear the hash from the URL, triggering the 'hashchange' event and updating the :target

@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:ChangeEmail
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -86,7 +83,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 			throw new ErrorPageError( 'changeemail', 'cannotchangeemail' );
 		}
 
-		$this->requireNamedUser( 'changeemail-no-info' );
+		$this->requireNamedUser( 'changeemail-no-info', 'exception-nologin', true );
 
 		// This could also let someone check the current email address, so
 		// require both permissions.

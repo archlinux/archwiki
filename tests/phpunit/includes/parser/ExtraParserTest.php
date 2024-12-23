@@ -6,11 +6,11 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use ParserOptions;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -41,15 +41,13 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 		// FIXME: This test should pass without setting global content language
 		$this->options = ParserOptions::newFromUserAndLang( new User, $contLang );
 		$this->options->setTemplateCallback( [ __CLASS__, 'statelessFetchTemplate' ] );
-		$services->resetServiceForTesting( 'MagicWordFactory' );
-		$services->resetServiceForTesting( 'ParserFactory' );
 
 		$this->parser = $services->getParserFactory()->create();
 	}
 
 	/**
 	 * @see T10689
-	 * @covers \Parser::parse
+	 * @covers \MediaWiki\Parser\Parser::parse
 	 */
 	public function testLongNumericLinesDontKillTheParser() {
 		$longLine = '1.' . str_repeat( '1234567890', 100000 ) . "\n";
@@ -57,11 +55,11 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 		$title = Title::makeTitle( NS_MAIN, 'Unit test' );
 		$options = ParserOptions::newFromUser( new User() );
 		$this->assertEquals( "<p>$longLine</p>",
-			$this->parser->parse( $longLine, $title, $options )->getText( [ 'unwrap' => true ] ) );
+			$this->parser->parse( $longLine, $title, $options )->getRawText() );
 	}
 
 	/**
-	 * @covers \Parser::braceSubstitution
+	 * @covers \MediaWiki\Parser\Parser::braceSubstitution
 	 * @covers \MediaWiki\SpecialPage\SpecialPageFactory::capturePath
 	 */
 	public function testSpecialPageTransclusionRestoresGlobalState() {
@@ -71,25 +69,25 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 
 		RequestContext::getMain()->setTitle( $title );
 
-		$parsed = $this->parser->parse( $text, $title, $options )->getText();
+		$parsed = $this->parser->parse( $text, $title, $options )->getRawText();
 		$this->assertStringContainsString( 'apihelp-header', $parsed );
 	}
 
 	/**
 	 * Test the parser entry points
-	 * @covers \Parser::parse
+	 * @covers \MediaWiki\Parser\Parser::parse
 	 */
 	public function testParse() {
 		$title = Title::newFromText( __FUNCTION__ );
 		$parserOutput = $this->parser->parse( "Test\n{{Foo}}\n{{Bar}}", $title, $this->options );
 		$this->assertEquals(
 			"<p>Test\nContent of <i>Template:Foo</i>\nContent of <i>Template:Bar</i>\n</p>",
-			$parserOutput->getText( [ 'unwrap' => true ] )
+			$parserOutput->getRawText()
 		);
 	}
 
 	/**
-	 * @covers \Parser::preSaveTransform
+	 * @covers \MediaWiki\Parser\Parser::preSaveTransform
 	 */
 	public function testPreSaveTransform() {
 		$title = Title::newFromText( __FUNCTION__ );
@@ -112,7 +110,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::preprocess
+	 * @covers \MediaWiki\Parser\Parser::preprocess
 	 */
 	public function testPreprocess() {
 		$title = Title::newFromText( __FUNCTION__ );
@@ -126,7 +124,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * cleanSig() makes all templates substs and removes tildes
-	 * @covers \Parser::cleanSig
+	 * @covers \MediaWiki\Parser\Parser::cleanSig
 	 */
 	public function testCleanSig() {
 		$outputText = $this->parser->cleanSig( "{{Foo}} ~~~~" );
@@ -136,7 +134,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * cleanSig() should do nothing if disabled
-	 * @covers \Parser::cleanSig
+	 * @covers \MediaWiki\Parser\Parser::cleanSig
 	 */
 	public function testCleanSigDisabled() {
 		$this->overrideConfigValue( MainConfigNames::CleanSignatures, false );
@@ -149,7 +147,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * cleanSigInSig() just removes tildes
 	 * @dataProvider provideStringsForCleanSigInSig
-	 * @covers \Parser::cleanSigInSig
+	 * @covers \MediaWiki\Parser\Parser::cleanSigInSig
 	 */
 	public function testCleanSigInSig( $in, $out ) {
 		$this->assertEquals( Parser::cleanSigInSig( $in ), $out );
@@ -164,7 +162,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::getSection
+	 * @covers \MediaWiki\Parser\Parser::getSection
 	 */
 	public function testGetSection() {
 		$outputText2 = $this->parser->getSection(
@@ -183,7 +181,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::replaceSection
+	 * @covers \MediaWiki\Parser\Parser::replaceSection
 	 */
 	public function testReplaceSection() {
 		$outputText = $this->parser->replaceSection(
@@ -198,7 +196,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Templates and comments are not affected, but noinclude/onlyinclude is.
-	 * @covers \Parser::getPreloadText
+	 * @covers \MediaWiki\Parser\Parser::getPreloadText
 	 */
 	public function testGetPreloadText() {
 		$title = Title::newFromText( __FUNCTION__ );
@@ -228,7 +226,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::parse
+	 * @covers \MediaWiki\Parser\Parser::parse
 	 */
 	public function testTrackingCategory() {
 		$title = Title::newFromText( __FUNCTION__ );
@@ -241,7 +239,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::parse
+	 * @covers \MediaWiki\Parser\Parser::parse
 	 */
 	public function testTrackingCategorySpecial() {
 		// Special pages shouldn't have tracking cats.
@@ -252,7 +250,7 @@ class ExtraParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::parseLinkParameter
+	 * @covers \MediaWiki\Parser\Parser::parseLinkParameter
 	 * @dataProvider provideParseLinkParameter
 	 */
 	public function testParseLinkParameter( $input, $expected, $expectedLinks, $desc ) {

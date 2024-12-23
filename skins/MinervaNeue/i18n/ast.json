@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Tocante a esta categoría",
 	"mobile-frontend-meta-data-issues-header": "Problemes de la páxina",
 	"minerva-meta-data-issues-section-header": "Problemes de la sección",
-	"mobile-frontend-notifications-filter": "Filtru",
 	"mobile-frontend-pageaction-edit-tooltip": "Editar la seición d'introducción d'esta páxina",
 	"mobile-frontend-placeholder": "Buscar en {{SITENAME}}",
 	"mobile-frontend-random-button": "Al debalu",
@@ -51,7 +50,5 @@
 	"skin-minerva-issue-learn-more": "Más información",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categoríes",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Ver les categoríes de páxines",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tratamientu ameyoráu de los problemes de páxina",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemes de la páxina (Plantía:ambox) incluiráse en llinia nel artículu.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Llamentablemente, l'agrupamientu de resultaos per páxina nun ta disponible nel móvil. Si quies usar la función d'agrupamientu per páxina, visita la versión pa escritoriu."
 }

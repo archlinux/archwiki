@@ -6,13 +6,13 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\User\UserFactory;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -25,18 +25,18 @@ abstract class LogFormatterTestCase extends MediaWikiLangTestCase {
 		RequestContext::resetMain();
 		$row = $this->expandDatabaseRow( $row, $this->isLegacy( $extra ) );
 
+		$services = $this->getServiceContainer();
 		$userGroups = (array)$userGroups;
-		$userRights = MediaWikiServices::getInstance()->getGroupPermissionsLookup()->getGroupPermissions( $userGroups );
+		$userRights = $services->getGroupPermissionsLookup()->getGroupPermissions( $userGroups );
 		$context = new RequestContext();
 		$authority = $this->mockRegisteredAuthorityWithPermissions( $userRights );
 		$context->setAuthority( $authority );
 		$context->setLanguage( 'en' );
 
-		$formatter = LogFormatter::newFromRow( $row );
+		$formatter = $services->getLogFormatterFactory()->newFromRow( $row );
 		$formatter->setContext( $context );
 
 		// Create a LinkRenderer without LinkCache to avoid DB access
-		$services = $this->getServiceContainer();
 		$realLinkRenderer = new LinkRenderer(
 			$services->getTitleFormatter(),
 			$this->createMock( LinkCache::class ),
@@ -70,7 +70,7 @@ abstract class LogFormatterTestCase extends MediaWikiLangTestCase {
 				$services->getNamespaceInfo(),
 				$services->getTitleParser(),
 				null,
-				null
+				StatsFactory::newNull()
 			] )
 			->getMock();
 		$pageStore->method( 'getPageByName' )

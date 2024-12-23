@@ -30,7 +30,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Mengenai kategori ini",
 	"mobile-frontend-meta-data-issues-header": "Masalah laman",
 	"minerva-meta-data-issues-section-header": "Masalah bahagian",
-	"mobile-frontend-notifications-filter": "Tapis",
 	"mobile-frontend-pageaction-edit-tooltip": "Sunting bahagian utama halaman ini",
 	"mobile-frontend-placeholder": "Cari dalam {{SITENAME}}",
 	"mobile-frontend-random-button": "Rawak",
@@ -50,7 +49,7 @@
 	"minerva-page-actions-overflow": "Lagi",
 	"minerva-page-actions-language-switcher": "Bahasa",
 	"minerva-page-actions-history": "Sejarah",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Perbincangan]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Perbincangan]",
 	"minerva-skin-desc": "Kulit pertama mudah alih yang responsif",
 	"skin-minerva-issue-learn-more": "Ketahui lebih lanjut",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 saat}} lalu",
@@ -61,9 +60,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 tahun}} lalu",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategori",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Lihat kategori halaman",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Pembaikian masalah halaman yang dipertingkatkan",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Masalah halaman (Templat:ambox) akan disebariskan dalam rencana.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Malangnya, mengelompokkan hasil mengikut laman tidak tersedia dalam mudah alih. Jika anda ingin menggunakan ciri kelompok mengikut laman, sila kunjungi tapak atas meja.",
+	"skin-minerva-night-mode-unavailable": "Laman hanya tersedia dalam tema warna \"Cerah\".",
 	"minerva.css": "/* Semua CSS di sini akan dimuatkan untuk pengguna kekulit MinervaNeue */",
 	"minerva.js": "/* Semua JavaScript di sini akan dimuatkan untuk pengguna kekulit MinervaNeue */"
 }

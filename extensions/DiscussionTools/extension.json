@@ -7,7 +7,7 @@
 	"descriptionmsg": "discussiontools-desc",
 	"manifest_version": 2,
 	"requires": {
-		"MediaWiki": ">= 1.42.0",
+		"MediaWiki": ">= 1.43.0",
 		"extensions": {
 			"VisualEditor": "*",
 			"Linter": "*"
@@ -44,6 +44,7 @@
 				"topicsubscriptions.js",
 				"mobile.js",
 				"overflowMenu.js",
+				"thanks.js",
 				"LedeSectionDialog.js",
 				{
 					"name": "controller/contLangMessages.json",
@@ -124,6 +125,7 @@
 				"discussiontools-ledesection-title",
 				"discussiontools-newtopic-placeholder-title",
 				"discussiontools-newtopic-missing-title",
+				"discussiontools-newtopic-missing-title-prompt",
 				"discussiontools-newtopicssubscription-button-subscribe-label",
 				"discussiontools-newtopicssubscription-button-subscribe-tooltip",
 				"discussiontools-newtopicssubscription-button-unsubscribe-label",
@@ -154,7 +156,12 @@
 				"discussiontools-topicsubscription-notify-unsubscribed-body",
 				"discussiontools-topicsubscription-notify-unsubscribed-title",
 				"pagetitle",
-				"skin-view-edit"
+				"skin-view-edit",
+				"cancel",
+				"thanks-button-thank",
+				"thanks-button-thanked",
+				"thanks-confirmation2",
+				"thanks-thanked-notice"
 			]
 		},
 		"ext.discussionTools.minervaicons": {
@@ -418,6 +425,7 @@
 		"RevisionDataUpdates": "dataupdates",
 		"LoadExtensionSchemaUpdates": "installer",
 		"GetDoubleUnderscoreIDs": "parser",
+		"ApiMain::moduleManager": "api",
 		"ParserAfterTidy": "parser",
 		"ParserOutputPostCacheTransform": "parser",
 		"BeforeDisplayNoArticleText": "page",
@@ -430,7 +438,6 @@
 		"ResourceLoaderGetConfigVars": "resourceloader",
 		"GetBetaFeaturePreferences": "betapreferences",
 		"GetPreferences": "preferences",
-		"LocalUserCreated": "preferences",
 		"DiscussionToolsAddOverflowMenuItems": "discussiontools",
 		"ChangeTagsListActive": "tags",
 		"ListDefinedTags": "tags",
@@ -445,6 +452,9 @@
 		},
 		"installer": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\InstallerHooks"
+		},
+		"api": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\ApiHooks"
 		},
 		"page": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\PageHooks",
@@ -474,14 +484,12 @@
 				"ConfigFactory"
 			]
 		},
-		"resourceloader": {
-			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\ResourceLoaderHooks",
-			"services": [
-				"ConfigFactory"
-			]
-		},
 		"discussiontools": {
-			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\DiscussionToolsHooks"
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\DiscussionToolsHooks",
+			"services": [
+				"ConfigFactory",
+				"UserNameUtils"
+			]
 		},
 		"tags": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\TagHooks"
@@ -521,14 +529,18 @@
 		"discussiontools-autotopicsub": 1,
 		"discussiontools-visualenhancements": 1
 	},
+	"ConditionalUserOptions": {
+		"echo-subscriptions-email-dt-subscription": [
+			[
+				true,
+				[ "registered-after", "20240617000000" ]
+			]
+		]
+	},
 	"config": {
 		"DiscussionToolsBeta": {
 			"value": false,
 			"description": "Make DiscussionTools a BetaFeature."
-		},
-		"DiscussionToolsABTest": {
-			"value": false,
-			"description": "A/B test DiscussionTools features for logged in users. false, any valid feature string for an option below, or an array thereof"
 		},
 		"DiscussionTools_visualenhancements": {
 			"value": "default",
@@ -560,6 +572,10 @@
 		"DiscussionToolsEnablePermalinksFrontend": {
 			"value": true,
 			"description": "Enable permalinks frontend features: 1. Convert signature timestamps to comment links. 2. Show notification when the target comment is found on another page."
+		},
+		"DiscussionToolsEnableThanks": {
+			"value": true,
+			"description": "Show a button to thank individual comments. Requires the 'Thanks' extension."
 		},
 		"DiscussionToolsAutoTopicSubEditor": {
 			"value": "any",

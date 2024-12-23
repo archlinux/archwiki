@@ -5,10 +5,10 @@
 			"Crt",
 			"Nike",
 			"Pyscowicz",
+			"Samoasambia",
 			"Stryn",
 			"Valtlai",
-			"Valtlait",
-			"Samoasambia"
+			"Valtlait"
 		]
 	},
 	"syntaxhighlight-desc": "Mahdollistaa syntaksin korostuksen [http://pygments.org/ Pygments - Python -syntaksin korostimella]",
@@ -20,5 +20,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Alkaen riviltä",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Koodipätkä",
 	"syntaxhighlight-error-unknown-language": "Tuntematon kieli: ”$1”",
-	"syntaxhighlight-error-exceeds-size-limit": "Koodin koko $1 {{PLURAL:$1|tavu|tavua}} ylittää suurimman sallitun $2 {{PLURAL:$2|tavu|tavua}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Koodin koko $1 {{PLURAL:$1|tavu|tavua}} ylittää suurimman sallitun $2 {{PLURAL:$2|tavu|tavua}}",
+	"syntaxhighlight-button-copy": "Kopioi",
+	"syntaxhighlight-button-copied": "Kopioitu!"
 }

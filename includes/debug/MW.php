@@ -2,7 +2,9 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * Helper class to reduce typing in manual debugging tools like shell.php.

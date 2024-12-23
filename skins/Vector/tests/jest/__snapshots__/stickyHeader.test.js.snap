@@ -10,7 +10,7 @@ exports[`Sticky header renders 1`] = `
 </button>
 		</div>
 <div> </div>		<div class=\\"vector-sticky-header-context-bar\\">
-			<nav role=\\"navigation\\" aria-label=\\"\\" class=\\"vector-toc-landmark\\">
+			<nav aria-label=\\"\\" class=\\"vector-toc-landmark\\">
 <div id=\\"vector-sticky-header-toc\\" class=\\"vector-dropdown mw-portlet mw-portlet-sticky-header-toc vector-sticky-header-toc\\">
 	<input type=\\"checkbox\\" id=\\"vector-sticky-header-toc-checkbox\\" role=\\"button\\" aria-haspopup=\\"true\\" data-event-name=\\"ui.dropdown-vector-sticky-header-toc\\" class=\\"vector-dropdown-checkbox\\" aria-label=\\"\\" tabindex=\\"-1\\">
 	<label id=\\"vector-sticky-header-toc-label\\" for=\\"vector-sticky-header-toc-checkbox\\" class=\\"vector-dropdown-label cdx-button cdx-button--weight-quiet cdx-button--icon-only\\" aria-hidden=\\"true\\" tabindex=\\"-1\\"><span class=\\"vector-dropdown-label-text\\"></span>

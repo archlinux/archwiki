@@ -119,7 +119,7 @@ class VectorComponentSearchBox implements VectorComponent {
 		$searchButton = new VectorComponentButton(
 			$this->localizer->msg( 'search' ),
 			'search',
-			'',
+			null,
 			'search-toggle',
 			$collapseIconAttrs,
 			'quiet',

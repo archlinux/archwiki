@@ -53,11 +53,11 @@ class UpdateHitCountWatcher implements Watcher {
 	 * @param array $loggedFilters
 	 */
 	private function updateHitCounts( IDatabase $dbw, array $loggedFilters ): void {
-		$dbw->update(
-			'abuse_filter',
-			[ 'af_hit_count=af_hit_count+1' ],
-			[ 'af_id' => $loggedFilters ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'abuse_filter' )
+			->set( [ 'af_hit_count=af_hit_count+1' ] )
+			->where( [ 'af_id' => $loggedFilters ] )
+			->caller( __METHOD__ )
+			->execute();
 	}
 }

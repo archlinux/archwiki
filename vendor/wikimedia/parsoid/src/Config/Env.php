@@ -126,6 +126,9 @@ class Env {
 	/** @var bool logLinterData */
 	public $logLinterData = false;
 
+	/** @var array linterOverrides */
+	private $linterOverrides = [];
+
 	/** @var bool[] */
 	private $traceFlags;
 
@@ -257,8 +260,9 @@ class Env {
 	 *  - nativeTemplateExpansion: boolean
 	 *  - discardDataParsoid: boolean
 	 *  - offsetType: 'byte' (default), 'ucs2', 'char'
-	 *                See `Parsoid\Wt2Html\PP\Processors\ConvertOffsets`.
+	 *                See `Parsoid\Wt2Html\DOM\Processors\ConvertOffsets`.
 	 *  - logLinterData: (bool) Should we log linter data if linting is enabled?
+	 *  - linterOverrides: (array) Override the site linting configs.
 	 *  - skipLanguageConversionPass: (bool) Should we skip the language
 	 *      conversion pass? (defaults to false)
 	 *  - htmlVariantLanguage: Bcp47Code|null
@@ -320,6 +324,7 @@ class Env {
 		$this->discardDataParsoid = !empty( $options['discardDataParsoid'] );
 		$this->requestOffsetType = $options['offsetType'] ?? 'byte';
 		$this->logLinterData = !empty( $options['logLinterData'] );
+		$this->linterOverrides = $options['linterOverrides'] ?? [];
 		$this->traceFlags = $options['traceFlags'] ?? [];
 		$this->dumpFlags = $options['dumpFlags'] ?? [];
 		$this->debugFlags = $options['debugFlags'] ?? [];
@@ -539,7 +544,7 @@ class Env {
 	 * representation), but for external use we can convert these to
 	 * other formats when we output wt2html or input for html2wt.
 	 *
-	 * @see Parsoid\Wt2Html\PP\Processors\ConvertOffsets
+	 * @see Parsoid\Wt2Html\DOM\Processors\ConvertOffsets
 	 * @return string 'byte', 'ucs2', or 'char'
 	 */
 	public function getRequestOffsetType(): string {
@@ -552,7 +557,7 @@ class Env {
 	 * been converted to the external format (as returned by
 	 * `getRequestOffsetType`) yet.
 	 *
-	 * @see Parsoid\Wt2Html\PP\Processors\ConvertOffsets
+	 * @see Parsoid\Wt2Html\DOM\Processors\ConvertOffsets
 	 * @return string 'byte', 'ucs2', or 'char'
 	 */
 	public function getCurrentOffsetType(): string {
@@ -561,7 +566,7 @@ class Env {
 
 	/**
 	 * Update the current offset type. Only
-	 * Parsoid\Wt2Html\PP\Processors\ConvertOffsets should be doing this.
+	 * Parsoid\Wt2Html\DOM\Processors\ConvertOffsets should be doing this.
 	 * @param string $offsetType 'byte', 'ucs2', or 'char'
 	 */
 	public function setCurrentOffsetType( string $offsetType ) {
@@ -829,6 +834,7 @@ class Env {
 	 */
 	public function setupTopLevelDoc( ?Document $topLevelDoc = null ) {
 		if ( $topLevelDoc ) {
+			$this->remexPipeline = null;
 			$this->topLevelDoc = $topLevelDoc;
 		} else {
 			$this->remexPipeline = new RemexPipeline( $this );
@@ -837,8 +843,8 @@ class Env {
 		DOMDataUtils::prepareDoc( $this->topLevelDoc );
 	}
 
-	public function fetchRemexPipeline( bool $atTopLevel ): RemexPipeline {
-		if ( $atTopLevel ) {
+	public function fetchRemexPipeline( bool $toFragment ): RemexPipeline {
+		if ( !$toFragment ) {
 			return $this->remexPipeline;
 		} else {
 			$pipeline = new RemexPipeline( $this );
@@ -852,21 +858,8 @@ class Env {
 	}
 
 	/**
-	 * BehaviorSwitchHandler support function that adds a property named by
-	 * $variable and sets it to $state
-	 *
-	 * @deprecated Use setBehaviorSwitch() instead.
-	 * @param string $variable
-	 * @param mixed $state
-	 */
-	public function setVariable( string $variable, $state ): void {
-		$this->setBehaviorSwitch( $variable, $state );
-	}
-
-	/**
 	 * Record a behavior switch.
 	 *
-	 * @todo Does this belong here, or on some equivalent to MediaWiki's ParserOutput?
 	 * @param string $switch Switch name
 	 * @param mixed $state Relevant state data to record
 	 */
@@ -877,7 +870,6 @@ class Env {
 	/**
 	 * Fetch the state of a previously-recorded behavior switch.
 	 *
-	 * @todo Does this belong here, or on some equivalent to MediaWiki's ParserOutput?
 	 * @param string $switch Switch name
 	 * @param mixed $default Default value if the switch was never set
 	 * @return mixed State data that was previously passed to setBehaviorSwitch(), or $default
@@ -929,7 +921,7 @@ class Env {
 	 *  - templateInfo: (array|null)
 	 */
 	public function recordLint( string $type, array $lintData ): void {
-		if ( !$this->getSiteConfig()->linting( $type ) ) {
+		if ( !$this->linting( $type ) ) {
 			return;
 		}
 
@@ -939,7 +931,7 @@ class Env {
 		}
 
 		// This will always be recorded as a native 'byte' offset
-		$lintData['dsr'] = $lintData['dsr']->jsonSerialize();
+		$lintData['dsr'] = $lintData['dsr']->toJsonArray();
 		$lintData['params'] ??= [];
 
 		$this->lints[] = [ 'type' => $type ] + $lintData;
@@ -1161,5 +1153,48 @@ class Env {
 			}
 		}
 		return $attribs;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getLinterConfig(): array {
+		return $this->linterOverrides + $this->getSiteConfig()->getLinterSiteConfig();
+	}
+
+	/**
+	 * Whether to enable linter Backend.
+	 * Consults the allow list and block list from ::getLinterConfig().
+	 *
+	 * @param null $type If $type is null or omitted, returns true if *any* linting
+	 *   type is enabled; otherwise returns true only if the specified
+	 *   linting type is enabled.
+	 * @return bool If $type is null or omitted, returns true if *any* linting
+	 *   type is enabled; otherwise returns true only if the specified
+	 *   linting type is enabled.
+	 */
+	public function linting( ?string $type = null ) {
+		if ( !$this->getSiteConfig()->linterEnabled() ) {
+			return false;
+		}
+		$lintConfig = $this->getLinterConfig();
+		// Allow list
+		$allowList = $lintConfig['enabled'] ?? null;
+		if ( is_array( $allowList ) ) {
+			if ( $type === null ) {
+				return count( $allowList ) > 0;
+			}
+			return in_array( $type, $allowList, true );
+		}
+		// Block list
+		if ( $type === null ) {
+			return true;
+		}
+		$blockList = $lintConfig['disabled'] ?? null;
+		if ( is_array( $blockList ) ) {
+			return !in_array( $type, $blockList, true );
+		}
+		// No specific configuration
+		return true;
 	}
 }

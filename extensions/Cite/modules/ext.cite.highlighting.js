@@ -1,7 +1,8 @@
 'use strict';
 
 /**
- * @file Dynamic highlighting while reading an article
+ * Dynamic highlighting while reading an article
+ *
  * @author Thiemo Kreuz
  */
 ( function () {
@@ -88,7 +89,7 @@
 		$upArrowLink.attr( 'href', $backlink.attr( 'href' ) );
 	}
 
-	mw.hook( 'wikipage.content' ).add( function ( $content ) {
+	mw.hook( 'wikipage.content' ).add( ( $content ) => {
 		// We are going to use the ID in the code below, so better be sure one is there.
 		$content.find( '.reference[id] > a' ).on( 'click', function () {
 			const id = $( this ).parent().attr( 'id' );

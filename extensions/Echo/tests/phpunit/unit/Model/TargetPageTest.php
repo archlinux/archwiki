@@ -1,8 +1,12 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Unit;
+
+use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\TargetPage;
 use MediaWiki\Title\Title;
+use MediaWikiUnitTestCase;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Model\TargetPage

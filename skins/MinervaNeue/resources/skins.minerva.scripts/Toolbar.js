@@ -2,15 +2,16 @@ const
 	mobile = require( 'mobile.startup' ),
 	ToggleList = require( '../../includes/Skins/ToggleList/ToggleList.js' ),
 	page = mobile.currentPage(),
-	/** The top level menu. */
+	// The top level menu.
 	selector = '.page-actions-menu',
-	/** The secondary overflow submenu component container. */
+	// The secondary overflow submenu component container.
 	overflowSubmenuSelector = '#page-actions-overflow',
 	overflowListSelector = '.toggle-list__list';
 
 /**
  * @param {Window} window
  * @param {Element} toolbar
+ * @ignore
  */
 function bind( window, toolbar ) {
 	const overflowSubmenu = toolbar.querySelector( overflowSubmenuSelector );
@@ -22,6 +23,7 @@ function bind( window, toolbar ) {
 /**
  * @param {Window} window
  * @param {Element} toolbar
+ * @ignore
  */
 function render( window, toolbar ) {
 	const overflowList = toolbar.querySelector( overflowListSelector );
@@ -57,6 +59,7 @@ function checkForReadOnlyMode() {
  * all device/os/operating system related checks and if device supports printing it will inject
  * the Download icon
  *
+ * @ignore
  * @param {Window} window
  * @param {Element|null} overflowList
  */

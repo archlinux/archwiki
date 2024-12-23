@@ -10,7 +10,7 @@
  *
  * @class
  * @extends OO.ui.Element
- * @mixins OO.EventEmitter
+ * @mixes OO.EventEmitter
  *
  * @constructor
  * @param {Object} [config] Configuration options
@@ -51,7 +51,7 @@ OO.mixinClass( ve.ui.MWExpandableErrorElement, OO.EventEmitter );
 /* Events */
 
 /**
- * @event update
+ * @event ve.ui.MWExpandableErrorElement#update
  */
 
 /* Methods */

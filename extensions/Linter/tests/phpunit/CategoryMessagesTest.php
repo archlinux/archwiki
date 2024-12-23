@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Linter\Test;
 
-use MediaWiki\Linter\CategoryManager;
 use MediaWikiLangTestCase;
 
 /**
@@ -29,34 +28,27 @@ use MediaWikiLangTestCase;
  */
 class CategoryMessagesTest extends MediaWikiLangTestCase {
 
-	public static function provideCategoryNames() {
-		$manager = new CategoryManager();
-		$tests = [];
-		foreach ( $manager->getVisibleCategories() as $category ) {
-			$tests[] = [ $category ];
-		}
-
-		return $tests;
-	}
-
 	/**
 	 * @coversNothing
-	 * @dataProvider provideCategoryNames
 	 */
-	public function testMessagesExistence( $category ) {
-		$manager = new CategoryManager();
-		$msgs = [
-			"linter-category-$category",
-			"linter-category-$category-desc",
-		];
-		if ( !$manager->hasNoParams( $category ) ) {
-			$msgs[] = "linter-pager-$category-details";
-		}
-		foreach ( $msgs as $msg ) {
-			$this->assertTrue(
-				wfMessage( $msg )->exists(),
-				"Missing '$msg' message"
-			);
+	public function testMessagesExistence() {
+		$services = $this->getServiceContainer();
+		$manager = $services->get( 'Linter.CategoryManager' );
+
+		foreach ( $manager->getVisibleCategories() as $category ) {
+			$msgs = [
+				"linter-category-$category",
+				"linter-category-$category-desc",
+			];
+			if ( !$manager->hasNoParams( $category ) ) {
+				$msgs[] = "linter-pager-$category-details";
+			}
+			foreach ( $msgs as $msg ) {
+				$this->assertTrue(
+					wfMessage( $msg )->exists(),
+					"Missing '$msg' message"
+				);
+			}
 		}
 	}
 }

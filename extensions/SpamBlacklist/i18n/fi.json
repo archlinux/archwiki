@@ -10,9 +10,9 @@
 			"Olli",
 			"Pxos",
 			"Pyscowicz",
+			"Samoasambia",
 			"Valtlait",
-			"Zoranzoki21",
-			"Samoasambia"
+			"Zoranzoki21"
 		]
 	},
 	"spam-blacklist": " #<!-- älä koske tähän riviin lainkaan --> <pre>\n# Tämän listan säännöillä voi estää ulkopuolisiin sivustoihin viittaavien osoitteiden lisäämisen.\n# Tämä lista koskee vain tätä wikiä. Tutustu myös järjestelmänlaajuiseen torjuntalistaan.\n# Lisätietoja on osoitteessa https://www.mediawiki.org/wiki/Special:MyLanguageExtension:SpamBlacklist\n#\n# Syntaksi on seuraavanlainen:\n#   * Kaikki #-merkistä lähtien rivin loppuun asti on kommenttia.\n#   * Jokainen epätyhjä rivi on säännöllisen lausekkeen osa, joka tunnistaa vain osoitteissa olevat verkkotunnukset.\n\n #</pre> <!-- älä koske tähän riviin lainkaan -->",

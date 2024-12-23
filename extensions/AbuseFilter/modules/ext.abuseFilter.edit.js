@@ -478,7 +478,7 @@
 					// server, so this rewrite should suffice.
 					basePath = window.location.protocol + basePath;
 				}
-				ace.config.set( 'basePath', basePath + '/CodeEditor/modules/ace' );
+				ace.config.set( 'basePath', basePath + '/CodeEditor/modules/lib/ace' );
 
 				// Settings for Ace editor box
 				var readOnly = mw.config.get( 'aceConfig' ).aceReadOnly;
@@ -509,7 +509,7 @@
 					// Refresh Ace editor size (notably its scrollbars) when the container
 					// is resized, otherwise it would be refreshed only on window resize
 					new ResizeObserver( function () {
-						// eslint-disable-next-line es-x/no-resizable-and-growable-arraybuffers
+
 						filterEditor.resize();
 					} ).observe( $filterBox[ 0 ] );
 				}

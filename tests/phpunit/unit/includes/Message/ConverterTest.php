@@ -2,9 +2,11 @@
 
 namespace MediaWiki\Tests\Unit\Message;
 
-use InvalidArgumentException;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Converter;
 use MediaWiki\Message\Message;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use Wikimedia\Message\MessageValue;
 
@@ -12,14 +14,6 @@ use Wikimedia\Message\MessageValue;
  * @covers \MediaWiki\Message\Converter
  */
 class ConverterTest extends MediaWikiUnitTestCase {
-
-	public function testCreateMessage() {
-		$converter = new Converter();
-		$m = $converter->createMessage( 'foobar' );
-		$this->assertInstanceOf( Message::class, $m );
-		$this->assertSame( 'foobar', $m->getKey() );
-		$this->assertSame( [], $m->getParams() );
-	}
 
 	/** @dataProvider provideConversions */
 	public function testConvertMessage( Message $m, MessageValue $mv ) {
@@ -42,6 +36,12 @@ class ConverterTest extends MediaWikiUnitTestCase {
 		yield 'Scalar text params' => [
 			new Message( 'foobar', [ 'one', 2, 3 ] ),
 			new MessageValue( 'foobar', [ 'one', 2, 3 ] ),
+		];
+
+		$u = new UserIdentityValue( 1, 'Username' );
+		yield 'Stringable params' => [
+			new Message( 'foobar', [ $u ] ),
+			new MessageValue( 'foobar', [ $u ] ),
 		];
 
 		yield 'Message(Value) as param' => [
@@ -104,11 +104,32 @@ class ConverterTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	public function testConvertMessage_invalidParam() {
-		$m = Message::newFromKey( 'foobar', [ 'foo' => 'bar' ] );
+	public static function provideConversions_RawMessage() {
+		yield 'No params' => [
+			new RawMessage( 'Foo Bar' ),
+			new MessageValue( 'rawmessage', [ 'Foo Bar' ] ),
+		];
+
+		yield 'Single param' => [
+			new RawMessage( '$1', [ 'Foo Bar' ] ),
+			new MessageValue( 'rawmessage', [ 'Foo Bar' ] ),
+		];
+
+		yield 'Multiple params' => [
+			new RawMessage( '$1 $2', [ 'Foo', 'Bar' ] ),
+			new MessageValue( 'rawmessage', [ 'Foo Bar' ] ),
+		];
+	}
+
+	/** @dataProvider provideConversions_RawMessage */
+	public function testConvertMessage_RawMessage( RawMessage $m, MessageValue $mv ) {
+		// Tests for unidirectional conversion from RawMessage.
+		// The result doesn't roundtrip, but it at least renders the same output.
 		$converter = new Converter();
-		$this->expectException( InvalidArgumentException::class );
-		$converter->convertMessage( $m );
+		// Avoid service container access in the multiple param case
+		$lang = $this->createMock( Language::class );
+		$m->inLanguage( $lang );
+		$this->assertEquals( $mv, $converter->convertMessage( $m ) );
 	}
 
 }

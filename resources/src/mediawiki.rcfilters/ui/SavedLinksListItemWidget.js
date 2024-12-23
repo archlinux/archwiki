@@ -9,13 +9,13 @@
  * @param {Object} [config] Configuration object
  * @param {jQuery} [config.$overlay] A jQuery object serving as overlay for popups
  */
-var SavedLinksListItemWidget = function MwRcfiltersUiSavedLinksListWidget( model, config ) {
+const SavedLinksListItemWidget = function MwRcfiltersUiSavedLinksListWidget( model, config ) {
 	config = config || {};
 
 	this.model = model;
 
 	// Parent
-	SavedLinksListItemWidget.super.call( this, $.extend( {
+	SavedLinksListItemWidget.super.call( this, Object.assign( {
 		data: this.model.getID(),
 		label: this.model.getLabel(),
 		title: this.model.getLabel()
@@ -80,7 +80,7 @@ var SavedLinksListItemWidget = function MwRcfiltersUiSavedLinksListWidget( model
 	this.$icon.on( { click: this.onDefaultIconClick.bind( this ) } );
 
 	// Prevent clicks on interactive elements from closing the parent menu
-	this.buttonMenu.$element.add( this.$icon ).on( 'mousedown', function ( e ) {
+	this.buttonMenu.$element.add( this.$icon ).on( 'mousedown', ( e ) => {
 		e.stopPropagation();
 	} );
 
@@ -185,7 +185,7 @@ SavedLinksListItemWidget.prototype.onDefaultIconClick = function () {
  * @fires default
  */
 SavedLinksListItemWidget.prototype.onMenuChoose = function ( item ) {
-	var action = item.getData();
+	const action = item.getData();
 
 	if ( action === 'edit' ) {
 		this.toggleEdit( true );
@@ -200,7 +200,7 @@ SavedLinksListItemWidget.prototype.onMenuChoose = function ( item ) {
  * Respond to input keyup event, this is the way to intercept 'escape' key
  *
  * @param {jQuery.Event} e Event data
- * @return {boolean} false
+ * @return {boolean|undefined} false
  */
 SavedLinksListItemWidget.prototype.onInputKeyup = function ( e ) {
 	if ( e.which === OO.ui.Keys.ESCAPE ) {
@@ -239,7 +239,7 @@ SavedLinksListItemWidget.prototype.onInputChange = function ( value ) {
  * @fires edit
  */
 SavedLinksListItemWidget.prototype.save = function () {
-	var value = this.editInput.getValue().trim();
+	const value = this.editInput.getValue().trim();
 
 	if ( value ) {
 		this.emit( 'edit', value );

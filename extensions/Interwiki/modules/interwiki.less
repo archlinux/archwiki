@@ -1,0 +1,55 @@
+// Styles for Special:Interwiki
+@import 'mediawiki.skin.variables.less';
+
+table.mw-interwikitable {
+	width: 100%;
+
+	&.intro th {
+		padding-right: 1.4ex;
+		vertical-align: top;
+	}
+
+	&.intro th.mw-align-start {
+		text-align: left;
+	}
+
+	&.intro th.mw-align-end {
+		text-align: right;
+	}
+
+	&.body td.mw-interwikitable-local,
+	&.body td.mw-interwikitable-trans,
+	&.body td.mw-interwikitable-modify {
+		text-align: center;
+	}
+
+	&.body td.mw-interwikitable-local-yes {
+		background: @background-color-success-subtle;
+	}
+}
+
+/* It's safe enough to assume that URLs are usually LTR. */
+/* @noflip */
+.mw-interwikitable-url,
+input#mw-interwiki-url {
+	text-align: left;
+	direction: ltr;
+}
+
+.mw-interwikitable-modify {
+	white-space: nowrap;
+}
+
+.mw-interwiki-legend th::before,
+.mw-interwiki-legend .mw-collapsible-toggle {
+	font-weight: normal !important; /* stylelint-disable-line declaration-no-important */
+}
+
+/* Selector with higher specifity than wikitable */
+table.wikitable.mw-interwiki-legend {
+	margin-top: 2em;
+}
+
+.mw-collapsible-content {
+	clear: both;
+}

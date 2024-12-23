@@ -3,8 +3,7 @@
 ( function () {
 	'use strict';
 
-	var debug,
-		hovzer = $.getFootHovzer();
+	const hovzer = $.getFootHovzer();
 
 	OO.ui.getViewportSpacing = function () {
 		return {
@@ -16,16 +15,13 @@
 	};
 
 	/**
-	 * Debug toolbar.
+	 * Access the debug toolbar. Enabled server-side through `$wgDebugToolbar`.
 	 *
-	 * Enabled server-side through `$wgDebugToolbar`.
-	 *
-	 * @class mw.Debug
-	 * @singleton
+	 * @namespace mw.Debug
 	 * @author John Du Hart
 	 * @since 1.19
 	 */
-	debug = mw.Debug = {
+	const debug = mw.Debug = {
 		/**
 		 * Toolbar container element.
 		 *
@@ -71,11 +67,11 @@
 		 * @param {jQuery.Event} e
 		 */
 		switchPane: function ( e ) {
-			var currentPaneId = debug.$container.data( 'currentPane' ),
+			const currentPaneId = debug.$container.data( 'currentPane' ),
 				requestedPaneId = $( this ).prop( 'id' ).slice( 9 ),
 				$currentPane = $( '#mw-debug-pane-' + currentPaneId ),
-				$requestedPane = $( '#mw-debug-pane-' + requestedPaneId ),
-				hovDone = false;
+				$requestedPane = $( '#mw-debug-pane-' + requestedPaneId );
+			let hovDone = false;
 
 			function updateHov() {
 				if ( !hovDone ) {
@@ -116,9 +112,7 @@
 		 * Construct the HTML for the debugging toolbar.
 		 */
 		buildHtml: function () {
-			var $container, $bits, panes, paneId, gitInfoText, $gitInfo;
-
-			$container = $( '<div>' )
+			const $container = $( '<div>' )
 				.attr( {
 					id: 'mw-debug-toolbar',
 					lang: 'en',
@@ -126,7 +120,7 @@
 				} )
 				.addClass( 'mw-debug' );
 
-			$bits = $( '<div>' ).addClass( 'mw-debug-bits' );
+			const $bits = $( '<div>' ).addClass( 'mw-debug-bits' );
 
 			/**
 			 * Returns a jQuery element for a debug-bit div
@@ -190,8 +184,9 @@
 
 			paneTriggerBitDiv( 'includes', 'PHP includes', this.data.includes.length );
 
+			let $gitInfo;
 			if ( this.data.gitRevision !== false ) {
-				gitInfoText = '(' + this.data.gitRevision.slice( 0, 7 ) + ')';
+				const gitInfoText = '(' + this.data.gitRevision.slice( 0, 7 ) + ')';
 				if ( this.data.gitViewUrl !== false ) {
 					$gitInfo = $( '<a>' )
 						.attr( 'href', this.data.gitViewUrl )
@@ -222,7 +217,7 @@
 
 			$bits.appendTo( $container );
 
-			panes = {
+			const panes = {
 				console: this.buildConsoleTable(),
 				querylist: this.buildQueryTable(),
 				debuglog: this.buildDebugLogTable(),
@@ -230,7 +225,7 @@
 				includes: this.buildIncludesPane()
 			};
 
-			for ( paneId in panes ) {
+			for ( const paneId in panes ) {
 				$( '<div>' )
 					.prop( {
 						className: 'mw-debug-pane',
@@ -249,16 +244,14 @@
 		 * @return {jQuery} Console panel
 		 */
 		buildConsoleTable: function () {
-			var $table, entryTypeText, i, length, entry;
-
-			$table = $( '<table>' ).attr( 'id', 'mw-debug-console' );
-			length = this.data.log.length;
+			const $table = $( '<table>' ).attr( 'id', 'mw-debug-console' );
+			const length = this.data.log.length;
 
 			$( '<colgroup>' ).css( 'width', /* padding = */ 20 + ( 10 * /* fontSize = */ 11 ) ).appendTo( $table );
 			$( '<colgroup>' ).appendTo( $table );
 			$( '<colgroup>' ).css( 'width', 350 ).appendTo( $table );
 
-			entryTypeText = function ( entryType ) {
+			const entryTypeText = function ( entryType ) {
 				switch ( entryType ) {
 					case 'log':
 						return 'Log';
@@ -271,8 +264,8 @@
 				}
 			};
 
-			for ( i = 0; i < length; i++ ) {
-				entry = this.data.log[ i ];
+			for ( let i = 0; i < length; i++ ) {
+				const entry = this.data.log[ i ];
 				entry.typeText = entryTypeText( entry.type );
 
 				// The following classes are used here:
@@ -298,10 +291,8 @@
 		 * @return {jQuery}
 		 */
 		buildQueryTable: function () {
-			var $table, i, length, query;
-
-			$table = $( '<table>' ).attr( 'id', 'mw-debug-querylist' );
-			length = this.data.queries.length;
+			const $table = $( '<table>' ).attr( 'id', 'mw-debug-querylist' );
+			const length = this.data.queries.length;
 
 			$( '<tr>' )
 				.append( $( '<th>' ).attr( 'scope', 'col' ).text( '#' ).css( 'width', '4em' ) )
@@ -310,13 +301,13 @@
 				.append( $( '<th>' ).attr( 'scope', 'col' ).text( 'Call' ).css( 'width', '18em' ) )
 				.appendTo( $table );
 
-			for ( i = 0; i < length; i++ ) {
-				query = this.data.queries[ i ];
+			for ( let i = 0; i < length; i++ ) {
+				const query = this.data.queries[ i ];
 
 				$( '<tr>' )
 					.append( $( '<td>' ).text( i + 1 ) )
 					.append( $( '<td>' ).text( query.sql ) )
-					.append( $( '<td>' ).text( ( query.time * 1000 ).toFixed( 4 ) + 'ms' ).addClass( 'stats' ) )
+					.append( $( '<td>' ).text( ( query.time * 1000 ).toFixed( 3 ) + 'ms' ).addClass( 'stats' ) )
 					.append( $( '<td>' ).text( query.function ) )
 					.appendTo( $table );
 			}
@@ -330,12 +321,11 @@
 		 * @return {jQuery}
 		 */
 		buildDebugLogTable: function () {
-			var $list, i, length, line;
-			$list = $( '<ul>' );
-			length = this.data.debugLog.length;
+			const $list = $( '<ul>' );
+			const length = this.data.debugLog.length;
 
-			for ( i = 0; i < length; i++ ) {
-				line = this.data.debugLog[ i ];
+			for ( let i = 0; i < length; i++ ) {
+				const line = this.data.debugLog[ i ];
 				$( '<li>' )
 					.html( mw.html.escape( line ).replace( /\n/g, '<br />\n' ) )
 					.appendTo( $list );
@@ -352,11 +342,9 @@
 		buildRequestPane: function () {
 
 			function buildTable( title, data ) {
-				var $unit, $table, key;
+				const $unit = $( '<div>' ).append( $( '<h2>' ).text( title ) );
 
-				$unit = $( '<div>' ).append( $( '<h2>' ).text( title ) );
-
-				$table = $( '<table>' ).appendTo( $unit );
+				const $table = $( '<table>' ).appendTo( $unit );
 
 				$( '<tr>' )
 					.append(
@@ -365,7 +353,7 @@
 					)
 					.appendTo( $table );
 
-				for ( key in data ) {
+				for ( const key in data ) {
 					$( '<tr>' )
 						.append( $( '<th>' ).attr( 'scope', 'row' ).text( key ) )
 						.append( $( '<td>' ).text( data[ key ] ) )
@@ -387,13 +375,11 @@
 		 * @return {jQuery}
 		 */
 		buildIncludesPane: function () {
-			var $table, i, length, file;
+			const $table = $( '<table>' );
+			const length = this.data.includes.length;
 
-			$table = $( '<table>' );
-			length = this.data.includes.length;
-
-			for ( i = 0; i < length; i++ ) {
-				file = this.data.includes[ i ];
+			for ( let i = 0; i < length; i++ ) {
+				const file = this.data.includes[ i ];
 				$( '<tr>' )
 					.append( $( '<td>' ).text( file.name ) )
 					.append( $( '<td>' ).text( file.size ).addClass( 'nr' ) )
@@ -404,7 +390,7 @@
 		}
 	};
 
-	$( function () {
+	$( () => {
 		debug.init();
 	} );
 

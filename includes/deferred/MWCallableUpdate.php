@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Deferred;
 
+use Closure;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
  * DeferrableUpdate for closure/callable
@@ -20,26 +22,38 @@ class MWCallableUpdate
 	private $trxRoundRequirement = self::TRX_ROUND_PRESENT;
 
 	/**
-	 * @param callable $callback
-	 * @param string $fname Calling method
-	 * @param IDatabase|IDatabase[]|null $dbws Cancel the update if a DB transaction
-	 *  is rolled back [optional] (since 1.28)
+	 * @param callable $callback One of the following:
+	 *    - A Closure callback that takes the caller name as its argument
+	 *    - A non-Closure callback that takes no arguments
+	 * @param string $fname Calling method @phan-mandatory-param
+	 * @param IDatabase|IDatabase[] $dependeeDbws DB handles which might have pending writes
+	 *  upon which this update depends. If any of the handles already has an open transaction,
+	 *  a rollback thereof will cause this update to be cancelled (if it has not already run).
+	 *  [optional]
 	 */
-	public function __construct( callable $callback, $fname = 'unknown', $dbws = [] ) {
+	public function __construct(
+		callable $callback,
+		$fname = ISQLPlatform::CALLER_UNKNOWN,
+		$dependeeDbws = []
+	) {
 		$this->callback = $callback;
 		$this->fname = $fname;
 
-		$dbws = is_array( $dbws ) ? $dbws : [ $dbws ];
-		foreach ( $dbws as $dbw ) {
-			if ( $dbw && $dbw->trxLevel() ) {
+		$dependeeDbws = is_array( $dependeeDbws ) ? $dependeeDbws : [ $dependeeDbws ];
+		foreach ( $dependeeDbws as $dbw ) {
+			if ( $dbw->trxLevel() ) {
 				$dbw->onTransactionResolution( [ $this, 'cancelOnRollback' ], $fname );
 			}
 		}
 	}
 
 	public function doUpdate() {
-		if ( $this->callback ) {
-			call_user_func( $this->callback );
+		if ( $this->callback instanceof Closure ) {
+			( $this->callback )( $this->fname );
+		} elseif ( $this->callback ) {
+			// For backwards-compatibility with [$classOrObject, 'func'] style callbacks
+			// where the function happened to already take an optional parameter.
+			( $this->callback )();
 		}
 	}
 
@@ -58,7 +72,6 @@ class MWCallableUpdate
 	}
 
 	/**
-	 * @since 1.34
 	 * @param int $mode One of the class TRX_ROUND_* constants
 	 */
 	public function setTransactionRoundRequirement( $mode ) {

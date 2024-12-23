@@ -4,6 +4,7 @@
 			"APPER",
 			"Brettchenweber",
 			"CyberOne25",
+			"Elya",
 			"Filzstift",
 			"G.Hagedorn",
 			"Hwboehm",
@@ -26,8 +27,7 @@
 			"Tomabrafix",
 			"Umherirrender",
 			"Wnme",
-			"XanonymusX",
-			"Elya"
+			"XanonymusX"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -55,7 +55,6 @@
 	"visualeditor-autosave-recovered-text": "Deine ungespeicherten Änderungen wurden automatisch wiederhergestellt.",
 	"visualeditor-autosave-recovered-title": "Änderungen wiederhergestellt",
 	"visualeditor-backbutton-tooltip": "Zurück gehen",
-	"visualeditor-browserwarning": "Du verwendest einen Browser, der von diesem Editor nicht offiziell unterstützt wird.",
 	"visualeditor-ca-createlocaldescriptionsource": "Lokalen Beschreibungsquelltext hinzufügen",
 	"visualeditor-ca-createsource": "Quelltext erstellen",
 	"visualeditor-ca-editlocaldescriptionsource": "Lokalen Beschreibungsquelltext bearbeiten",
@@ -71,6 +70,7 @@
 	"visualeditor-changedesc-mwtransclusion": "Vorlagenparameter geändert",
 	"visualeditor-desc": "Stellt einen Editor mit Echtbilddarstellung (WYSIWYG) bereit",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
+	"visualeditor-dialog-extension-abandonedit": "Möchtest du diesen Dialog wirklich schließen, ohne deine Änderungen zu übernehmen?",
 	"visualeditor-dialog-media-alttext-checkbox": "Die Bildunterschrift als Alternativtext verwenden",
 	"visualeditor-dialog-media-alttext-section": "Alternativtext",
 	"visualeditor-dialog-media-alttext-section-help": "Du kannst dies verwenden, um eine Textbeschreibung für Menschen zu schreiben, die das Element nicht sehen können. Die Beschreibung sollte geeignet sein, um den Zweck und die Angaben des Medienelements verstehen zu können. Dies ist wichtig für blinde Benutzer und andere Menschen, die Screenreader-Software oder Nur-Text-Browser verwenden.",
@@ -277,6 +277,7 @@
 	"visualeditor-linkinspector-educationpopup-text": "Verlinkt wichtige Wörter zu anderen Wikiartikeln oder anderen Websites. Dies hilft Lesern, den Kontext zu verstehen.",
 	"visualeditor-linkinspector-educationpopup-title": "Links",
 	"visualeditor-linkinspector-illegal-title": "Ungültiger Seitentitel",
+	"visualeditor-linkinspector-invalid-blocked": "Die Benutzer in diesem Wiki haben beschlossen, Links zu dieser Site zu blockieren. Bitte {{#FORMAL|versuche es|versuchen Sie}} es mit einem anderen Link.",
 	"visualeditor-linkinspector-invalid-external": "Gib eine vollständige URL ein, z. B. https://example.org",
 	"visualeditor-linknodeinspector-add-label": "Beschriftung hinzufügen",
 	"visualeditor-linknodeinspector-title": "Einfacher Link",

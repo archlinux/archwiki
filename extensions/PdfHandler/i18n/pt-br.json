@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Eduardo.mps",
-			"Felipe L. Ewald",
-			555
+			"Felipe L. Ewald"
 		]
 	},
 	"pdf-desc": "Ferramenta de visualização de arquivos PDF em modo de imagem.",

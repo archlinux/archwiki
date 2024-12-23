@@ -2,12 +2,13 @@
 
 namespace MediaWiki\Tests\Parser;
 
-use Language;
 use MediaWiki\Category\TrackingCategories;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRendererFactory;
 use MediaWiki\Page\File\BadFileLookup;
 use MediaWiki\Page\PageReference;
@@ -15,6 +16,7 @@ use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Preferences\SignatureValidatorFactory;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Tidy\TidyDriverBase;
@@ -26,13 +28,12 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\Utils\UrlUtils;
 use MediaWikiIntegrationTestCase;
-use ParserFactory;
 use Psr\Log\NullLogger;
 use ReflectionObject;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
- * @covers \Parser::__construct
+ * @covers \MediaWiki\Parser\Parser::__construct
  */
 class ParserTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -70,6 +71,7 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 			new NullLogger(),
 			$this->createNoOpMock( BadFileLookup::class ),
 			$this->createNoOpMock( LanguageConverterFactory::class, [ 'isConversionDisabled' ] ),
+			$this->createNoOpMock( LanguageNameUtils::class ),
 			$this->createNoOpMock( HookContainer::class, [ 'run' ] ),
 			$this->createNoOpMock( TidyDriverBase::class ),
 			$this->createNoOpMock( WANObjectCache::class ),
@@ -84,7 +86,7 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::__construct
+	 * @covers \MediaWiki\Parser\Parser::__construct
 	 */
 	public function testConstructorArguments() {
 		$args = $this->createConstructorArguments();
@@ -137,9 +139,9 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::setPage
-	 * @covers \Parser::getPage
-	 * @covers \Parser::getTitle
+	 * @covers \MediaWiki\Parser\Parser::setPage
+	 * @covers \MediaWiki\Parser\Parser::getPage
+	 * @covers \MediaWiki\Parser\Parser::getTitle
 	 */
 	public function testSetPage() {
 		$parser = $this->newParser();
@@ -152,9 +154,9 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Parser::setPage
-	 * @covers \Parser::getPage
-	 * @covers \Parser::getTitle
+	 * @covers \MediaWiki\Parser\Parser::setPage
+	 * @covers \MediaWiki\Parser\Parser::getPage
+	 * @covers \MediaWiki\Parser\Parser::getTitle
 	 */
 	public function testSetTitle() {
 		$parser = $this->newParser();

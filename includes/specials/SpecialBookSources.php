@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Booksources
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,23 +16,24 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Content\TextContent;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleFactory;
-use TextContent;
 use UnexpectedValueException;
 
 /**
- * Special page outputs information on sourcing a book with a particular ISBN
- * The parser creates links to this page when dealing with ISBNs in wikitext
+ * Information on citing a book with a particular ISBN.
+ *
+ * The parser can create automatic links to this special page when
+ * it sees an ISBN in wikitext.
  *
  * @author Rob Church <robchur@gmail.com>
  * @ingroup SpecialPage

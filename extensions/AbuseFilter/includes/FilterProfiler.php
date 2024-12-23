@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use BagOStuff;
-use IBufferingStatsdDataFactory;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Title\Title;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\WRStats\LocalEntityKey;
 use Wikimedia\WRStats\WRStatsFactory;
 

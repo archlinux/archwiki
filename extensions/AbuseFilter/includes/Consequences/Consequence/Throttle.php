@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Consequences\Consequence;
 
-use BagOStuff;
 use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequenceNotPrecheckedException;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
@@ -11,6 +10,7 @@ use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use Psr\Log\LoggerInterface;
 use Wikimedia\IPUtils;
+use Wikimedia\ObjectCache\BagOStuff;
 
 /**
  * Consequence that delays executing other actions until certain conditions are met
@@ -26,7 +26,7 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 	private $userFactory;
 	/** @var LoggerInterface */
 	private $logger;
-	/** @var $bool */
+	/** @var bool */
 	private $filterIsCentral;
 	/** @var string|null */
 	private $centralDB;

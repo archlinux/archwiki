@@ -5,6 +5,9 @@ namespace Wikimedia\Rdbms;
 use InvalidArgumentException;
 use UnexpectedValueException;
 
+// Very long type annotations :(
+// phpcs:disable Generic.Files.LineLength
+
 /**
  * A query builder for DELETE queries with a fluent interface.
  *
@@ -92,7 +95,7 @@ class DeleteQueryBuilder {
 	/**
 	 * Manually set the table name to be passed to IDatabase::delete()
 	 *
-	 * @param string $table The table name
+	 * @param string $table The unqualified name of a table
 	 * @param-taint $table exec_sql
 	 * @return $this
 	 */
@@ -104,7 +107,7 @@ class DeleteQueryBuilder {
 	/**
 	 * Set table for the query. Alias for table().
 	 *
-	 * @param string $table The table name
+	 * @param string $table The unqualified name of a table
 	 * @param-taint $table exec_sql
 	 * @return $this
 	 */
@@ -115,7 +118,7 @@ class DeleteQueryBuilder {
 	/**
 	 * Set table for the query. Alias for table().
 	 *
-	 * @param string $table The table name
+	 * @param string $table The unqualified name of a table
 	 * @param-taint $table exec_sql
 	 * @return $this
 	 */
@@ -127,7 +130,7 @@ class DeleteQueryBuilder {
 	 * Add conditions to the query. The supplied conditions will be appended
 	 * to the existing conditions, separated by AND.
 	 *
-	 * @param string|array|IExpression $conds
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 *
 	 * May be either a string containing a single condition, or an array of
@@ -183,7 +186,7 @@ class DeleteQueryBuilder {
 	/**
 	 * Add conditions to the query. Alias for where().
 	 *
-	 * @param string|array|IExpression $conds
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
 	 */
@@ -194,7 +197,7 @@ class DeleteQueryBuilder {
 	/**
 	 * Add conditions to the query. Alias for where().
 	 *
-	 * @param string|array|IExpression $conds
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
 	 */

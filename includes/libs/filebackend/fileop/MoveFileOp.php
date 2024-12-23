@@ -21,6 +21,11 @@
  * @ingroup FileBackend
  */
 
+namespace Wikimedia\FileBackend\FileOps;
+
+use StatusValue;
+use Wikimedia\FileBackend\FileBackend;
+
 /**
  * Move a file from one storage path to another in the backend.
  * Parameters for this operation are outlined in FileBackend::doOperations().
@@ -117,3 +122,6 @@ class MoveFileOp extends FileOp {
 		return [ $this->params['src'], $this->params['dst'] ];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( MoveFileOp::class, 'MoveFileOp' );

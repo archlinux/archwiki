@@ -1,4 +1,4 @@
-var HighlightColors = require( '../HighlightColors.js' );
+const HighlightColors = require( '../HighlightColors.js' );
 
 /**
  * A widget representing a filter item highlight color picker.
@@ -11,14 +11,14 @@ var HighlightColors = require( '../HighlightColors.js' );
  * @param {mw.rcfilters.Controller} controller RCFilters controller
  * @param {Object} [config] Configuration object
  */
-var HighlightColorPickerWidget = function MwRcfiltersUiHighlightColorPickerWidget( controller, config ) {
-	var colors = [ 'none' ].concat( HighlightColors );
+const HighlightColorPickerWidget = function MwRcfiltersUiHighlightColorPickerWidget( controller, config ) {
+	const colors = [ 'none' ].concat( HighlightColors );
 	config = config || {};
 
 	// Parent
 	HighlightColorPickerWidget.super.call( this, config );
 	// Mixin constructors
-	OO.ui.mixin.LabelElement.call( this, $.extend( {}, config, {
+	OO.ui.mixin.LabelElement.call( this, Object.assign( {}, config, {
 		label: mw.msg( 'rcfilters-highlightmenu-title' )
 	} ) );
 
@@ -26,14 +26,14 @@ var HighlightColorPickerWidget = function MwRcfiltersUiHighlightColorPickerWidge
 
 	this.currentSelection = 'none';
 	this.buttonSelect = new OO.ui.ButtonSelectWidget( {
-		items: colors.map( function ( color ) {
+		items: colors.map(
 			// The following classes are used here:
 			// * mw-rcfilters-ui-highlightColorPickerWidget-buttonSelect-color-c1
 			// * mw-rcfilters-ui-highlightColorPickerWidget-buttonSelect-color-c2
 			// * mw-rcfilters-ui-highlightColorPickerWidget-buttonSelect-color-c3
 			// * mw-rcfilters-ui-highlightColorPickerWidget-buttonSelect-color-c4
 			// * mw-rcfilters-ui-highlightColorPickerWidget-buttonSelect-color-c5
-			return new OO.ui.ButtonOptionWidget( {
+			( color ) => new OO.ui.ButtonOptionWidget( {
 				icon: color === 'none' ? 'check' : null,
 				data: color,
 				classes: [
@@ -41,8 +41,8 @@ var HighlightColorPickerWidget = function MwRcfiltersUiHighlightColorPickerWidge
 					'mw-rcfilters-ui-highlightColorPickerWidget-buttonSelect-color-' + color
 				],
 				framed: false
-			} );
-		} ),
+			} )
+		),
 		classes: [ 'mw-rcfilters-ui-highlightColorPickerWidget-buttonSelect' ]
 	} );
 
@@ -103,7 +103,7 @@ HighlightColorPickerWidget.prototype.updateUiBasedOnModel = function () {
  * @param {string} color Selected color
  */
 HighlightColorPickerWidget.prototype.selectColor = function ( color ) {
-	var previousItem = this.buttonSelect.findItemFromData( this.currentSelection ),
+	const previousItem = this.buttonSelect.findItemFromData( this.currentSelection ),
 		selectedItem = this.buttonSelect.findItemFromData( color );
 
 	if ( this.currentSelection !== color ) {
@@ -121,7 +121,7 @@ HighlightColorPickerWidget.prototype.selectColor = function ( color ) {
 };
 
 HighlightColorPickerWidget.prototype.onChooseColor = function ( button ) {
-	var color = button.data;
+	const color = button.data;
 	if ( color === 'none' ) {
 		this.controller.clearHighlightColor( this.filterItem.getName() );
 	} else {

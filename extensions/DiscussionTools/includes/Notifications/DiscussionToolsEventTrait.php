@@ -9,10 +9,10 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
-use EchoDiscussionParser;
-use Language;
+use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Extension\Notifications\Formatters\EchoPresentationModelSection;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Language\Language;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\WikiMap\WikiMap;
 
@@ -113,7 +113,7 @@ trait DiscussionToolsEventTrait {
 		if ( !$content ) {
 			return '';
 		}
-		return $this->language->truncateForVisual( $content, EchoDiscussionParser::DEFAULT_SNIPPET_LENGTH );
+		return $this->language->truncateForVisual( $content, DiscussionParser::DEFAULT_SNIPPET_LENGTH );
 	}
 
 	/**

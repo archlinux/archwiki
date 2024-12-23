@@ -24,10 +24,10 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Xml\XmlSelect;
 use OOUI\ButtonGroupWidget;
 use OOUI\ButtonWidget;
 use stdClass;
-use XmlSelect;
 
 /**
  * Table-based display with a user-selectable sort order
@@ -48,7 +48,7 @@ abstract class TablePager extends IndexPager {
 	 * @param IContextSource|null $context
 	 * @param LinkRenderer|null $linkRenderer
 	 */
-	public function __construct( IContextSource $context = null, LinkRenderer $linkRenderer = null ) {
+	public function __construct( ?IContextSource $context = null, ?LinkRenderer $linkRenderer = null ) {
 		if ( $context ) {
 			$this->setContext( $context );
 		}
@@ -67,26 +67,6 @@ abstract class TablePager extends IndexPager {
 
 		// Parent constructor needs mSort set, so we call it last
 		parent::__construct( null, $linkRenderer );
-	}
-
-	/**
-	 * Get the formatted result list. Calls getStartBody(), formatRow() and getEndBody(), concatenates
-	 * the results and returns them.
-	 *
-	 * Also adds the required styles to our OutputPage object (this means that if context wasn't
-	 * passed to constructor or otherwise set up, you will get a pager with missing styles).
-	 *
-	 * This method has been made 'final' in 1.24. There's no reason to override it, and if there exist
-	 * any subclasses that do, the style loading hack is probably broken in them. Let's fail fast
-	 * rather than mysteriously render things wrong.
-	 *
-	 * @deprecated since 1.24, use getBodyOutput() or getFullOutput() instead
-	 *   Emitting deprecation warnings since 1.41.
-	 * @return string
-	 */
-	final public function getBody() {
-		wfDeprecated( __METHOD__, '1.24' );
-		return parent::getBody();
 	}
 
 	/**

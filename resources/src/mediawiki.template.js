@@ -2,6 +2,7 @@
  * An extensible library for rendering templates in different template languages.
  * By default only the `html` template library is provided.
  * The Mustache library is also provided in mediawiki core via the mediawiki.template.mustache library.
+ *
  * @example
  * // returns $( '<div>hello world</div>' );
  * const $node = mw.template.compile( '<div>hello world</div>', 'html' ).render();
@@ -44,7 +45,7 @@
  * @property {TemplateCompileFunction} compile
  */
 ( function () {
-	var compiledTemplates = {},
+	const compiledTemplates = {},
 		compilers = {};
 
 	mw.template = {
@@ -73,7 +74,7 @@
 		 * @return {string} Name of a compiler
 		 */
 		getCompilerName: function ( templateName ) {
-			var nameParts = templateName.split( '.' );
+			const nameParts = templateName.split( '.' );
 			if ( nameParts.length < 2 ) {
 				throw new Error( 'Template name must have a suffix' );
 			}
@@ -88,7 +89,7 @@
 		 * @throws {Error} when unknown compiler provided
 		 */
 		getCompiler: function ( name ) {
-			var compiler = compilers[ name ];
+			const compiler = compilers[ name ];
 			if ( !compiler ) {
 				throw new Error( 'Unknown compiler ' + name );
 			}
@@ -107,7 +108,7 @@
 		 */
 		add: function ( moduleName, templateName, templateBody ) {
 			// Precompile and add to cache
-			var compiled = this.compile( templateBody, this.getCompilerName( templateName ) );
+			const compiled = this.compile( templateBody, this.getCompilerName( templateName ) );
 			if ( !compiledTemplates[ moduleName ] ) {
 				compiledTemplates[ moduleName ] = {};
 			}
@@ -124,14 +125,12 @@
 		 * @return {TemplateRenderer} Compiled template
 		 */
 		get: function ( moduleName, templateName ) {
-			var moduleTemplates;
-
 			// Try cache first
 			if ( compiledTemplates[ moduleName ] && compiledTemplates[ moduleName ][ templateName ] ) {
 				return compiledTemplates[ moduleName ][ templateName ];
 			}
 
-			moduleTemplates = mw.templates.get( moduleName );
+			const moduleTemplates = mw.templates.get( moduleName );
 			if ( !moduleTemplates || moduleTemplates[ templateName ] === undefined ) {
 				throw new Error( 'Template ' + templateName + ' not found in module ' + moduleName );
 			}

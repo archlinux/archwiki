@@ -27,7 +27,7 @@ class MutableFilter extends Filter {
 			new Flags(
 				true,
 				false,
-				false,
+				Flags::FILTER_PUBLIC,
 				false
 			),
 			[],
@@ -114,6 +114,13 @@ class MutableFilter extends Filter {
 	 */
 	public function setHidden( bool $hidden ): void {
 		$this->flags->setHidden( $hidden );
+	}
+
+	/**
+	 * @param bool $protected
+	 */
+	public function setProtected( bool $protected ): void {
+		$this->flags->setProtected( $protected );
 	}
 
 	/**

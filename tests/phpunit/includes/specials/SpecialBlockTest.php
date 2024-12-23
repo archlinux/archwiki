@@ -2,9 +2,11 @@
 
 use MediaWiki\Block\BlockRestrictionStore;
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
@@ -12,6 +14,7 @@ use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialBlock;
 use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
 
@@ -23,6 +26,7 @@ use Wikimedia\TestingAccessWrapper;
 class SpecialBlockTest extends SpecialPageTestBase {
 	use MockAuthorityTrait;
 
+	/** @var DatabaseBlockStore */
 	private $blockStore;
 
 	/**
@@ -55,6 +59,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->overrideConfigValues( [
 			MainConfigNames::BlockAllowsUTEdit => true,
 			MainConfigNames::EnablePartialActionBlocks => true,
+			MainConfigNames::UseCodexSpecialBlock => false,
 		] );
 		$page = $this->newSpecialPage();
 		$wrappedPage = TestingAccessWrapper::newFromObject( $page );
@@ -70,9 +75,70 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertArrayHasKey( 'PreviousTarget', $fields );
 		$this->assertArrayHasKey( 'Confirm', $fields );
 		$this->assertArrayHasKey( 'EditingRestriction', $fields );
+		$this->assertArrayNotHasKey( 'options-messages', $fields['EditingRestriction'] );
+		$this->assertArrayNotHasKey( 'option-descriptions-messages', $fields['EditingRestriction'] );
 		$this->assertArrayHasKey( 'PageRestrictions', $fields );
 		$this->assertArrayHasKey( 'NamespaceRestrictions', $fields );
 		$this->assertArrayHasKey( 'ActionRestrictions', $fields );
+	}
+
+	/**
+	 * @dataProvider provideGetFormFieldsCodex
+	 * @covers ::getFormFields
+	 * @covers ::execute
+	 */
+	public function testCodexFormData( array $params, array $expected, bool $preErrors = false ): void {
+		$this->overrideConfigValues( [
+			MainConfigNames::BlockAllowsUTEdit => true,
+			MainConfigNames::EnablePartialActionBlocks => true,
+			MainConfigNames::UseCodexSpecialBlock => true,
+		] );
+		$context = RequestContext::getMain();
+		$context->setRequest( new FauxRequest( array_merge( $params, [ 'uselang' => 'qqx' ] ) ) );
+		$context->setTitle( Title::newFromText( 'Block', NS_SPECIAL ) );
+		$context->setUser( $this->getTestSysop()->getUser() );
+		$page = $this->newSpecialPage();
+		$wrappedPage = TestingAccessWrapper::newFromObject( $page );
+		$wrappedPage->execute( null );
+		$actualJsConfigVars = $wrappedPage->getOutput()->getJsConfigVars();
+		$this->assertArrayContains( $expected, $actualJsConfigVars );
+		if ( $preErrors ) {
+			$this->assertArrayHasKey( 'blockPreErrors', $actualJsConfigVars );
+		} else {
+			$this->assertArrayNotHasKey( 'blockPreErrors', $actualJsConfigVars );
+		}
+	}
+
+	public static function provideGetFormFieldsCodex(): Generator {
+		yield 'wpExpiry 3 hours' => [
+			[ 'wpExpiry' => '3 hours' ],
+			[ 'blockExpiryPreset' => '3 hours' ],
+		];
+		yield 'wpExpiry indefinite' => [
+			[ 'wpExpiry' => 'indefinite' ],
+			[ 'blockExpiryPreset' => 'infinite' ],
+		];
+		yield 'wpExpiry YYYY-MM-DDTHH:mm:SS' => [
+			[ 'wpExpiry' => '2999-01-01T12:59:59' ],
+			[ 'blockExpiryPreset' => '2999-01-01T12:59' ],
+		];
+		yield 'wpExpiry YYYY-MM-DD HH:mm:SS' => [
+			[ 'wpExpiry' => '2999-01-01 12:59:59' ],
+			[ 'blockExpiryPreset' => '2999-01-01T12:59' ],
+		];
+		yield 'wpExpiry YYYYMMDDHHmmSS' => [
+			[ 'wpExpiry' => '29990101125959' ],
+			[ 'blockExpiryPreset' => '2999-01-01T12:59' ],
+		];
+		yield 'wpExpiry YYYY-MM-DDTHH:mm' => [
+			[ 'wpExpiry' => '2999-01-01T12:59' ],
+			[ 'blockExpiryPreset' => '2999-01-01T12:59' ],
+		];
+		yield 'wpTarget NonexistentUser' => [
+			[ 'wpTarget' => 'NonexistentUser' ],
+			[ 'blockTargetUser' => 'NonexistentUser' ],
+			true,
+		];
 	}
 
 	/**
@@ -166,6 +232,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessForm() {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$badActor = $this->getTestUser()->getUserIdentity();
 		$context = RequestContext::getMain();
 		$context->setUser( $this->getTestSysop()->getUser() );
@@ -201,6 +268,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessFormExisting() {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
 		$context = RequestContext::getMain();
@@ -248,6 +316,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessFormRestrictions() {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$this->overrideConfigValue( MainConfigNames::EnablePartialActionBlocks, true );
 
 		$badActor = $this->getTestUser()->getUser();
@@ -304,6 +373,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessFormRestrictionsChange() {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$badActor = $this->getTestUser()->getUser();
 		$context = RequestContext::getMain();
 		$context->setUser( $this->getTestSysop()->getUser() );
@@ -395,7 +465,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertSame( [], $block->getRestrictions() );
 
 		// Ensure that there are no restrictions where the blockId is 0.
-		$count = $this->db->newSelectQueryBuilder()
+		$count = $this->getDb()->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'ipblocks_restrictions' )
 			->where( [ 'ir_ipb_id' => 0 ] )
@@ -408,6 +478,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessFormUserTalkEditFlag( $options, $expected ) {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$this->overrideConfigValue( MainConfigNames::BlockAllowsUTEdit, $options['configAllowsUserTalkEdit'] );
 
 		$performer = $this->getTestSysop()->getUser();
@@ -515,6 +586,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessFormErrors( $data, $expected, $options = [] ) {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$this->overrideConfigValue( MainConfigNames::BlockAllowsUTEdit, true );
 
 		$performer = $this->getTestSysop()->getUser();
@@ -541,10 +613,11 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		);
 
 		if ( $result instanceof Status ) {
-			$result = $result->getErrorsArray();
+			$this->assertStatusMessage( $expected, $result );
+		} else {
+			$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
+			$this->assertEquals( $expected, $error );
 		}
-		$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
-		$this->assertEquals( $expected, $error );
 	}
 
 	public static function provideProcessFormErrors() {
@@ -622,6 +695,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessFormErrorsReblock( $data, $permissions, $expected ) {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$this->overrideConfigValue( MainConfigNames::BlockAllowsUTEdit, true );
 
 		$performer = $this->getTestSysop()->getUser();
@@ -659,10 +733,11 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		);
 
 		if ( $result instanceof Status ) {
-			$result = $result->getErrorsArray();
+			$this->assertStatusMessage( $expected, $result );
+		} else {
+			$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
+			$this->assertEquals( $expected, $error );
 		}
-		$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
-		$this->assertEquals( $expected, $error );
 	}
 
 	public static function provideProcessFormErrorsReblock() {
@@ -704,6 +779,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessFormErrorsHideUser( $data, $permissions, $expected ) {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$performer = $this->getTestSysop()->getUser();
 		$this->overrideUserPermissions( $performer, array_merge( $permissions, [ 'block' ] ) );
 
@@ -729,10 +805,11 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		);
 
 		if ( $result instanceof Status ) {
-			$result = $result->getErrorsArray();
+			$this->assertStatusMessage( $expected, $result );
+		} else {
+			$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
+			$this->assertEquals( $expected, $error );
 		}
-		$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
-		$this->assertEquals( $expected, $error );
 	}
 
 	public static function provideProcessFormErrorsHideUser() {
@@ -764,6 +841,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm
 	 */
 	public function testProcessFormErrorsHideUserProlific() {
+		$this->hideDeprecated( SpecialBlock::class . '::processForm' );
 		$this->overrideConfigValue( MainConfigNames::HideUserContribLimit, 0 );
 
 		$performer = $this->mockRegisteredUltimateAuthority();
@@ -795,10 +873,11 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		);
 
 		if ( $result instanceof Status ) {
-			$result = $result->getErrorsArray();
+			$this->assertStatusMessage( 'ipb_hide_invalid', $result );
+		} else {
+			$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
+			$this->assertEquals( 'ipb_hide_invalid', $error );
 		}
-		$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
-		$this->assertEquals( 'ipb_hide_invalid', $error );
 	}
 
 	/**
@@ -806,7 +885,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::getTargetAndTypeInternal
 	 */
 	public function testGetTargetAndType( $par, $requestData, $expectedTarget ) {
-		$request = $requestData ? new FauxRequest( $requestData ) : null;
+		$request = new FauxRequest( $requestData );
 		/** @var SpecialBlock $page */
 		$page = TestingAccessWrapper::newFromObject( $this->newSpecialPage() );
 		[ $target, $type ] = $page->getTargetAndTypeInternal( $par, $request );
@@ -852,9 +931,9 @@ class SpecialBlockTest extends SpecialPageTestBase {
 				],
 				'4.4.4.0/24',
 			],
-			'No web request' => [
+			'Subpage, no valid request data' => [
 				'2.2.2.0/24',
-				false,
+				[],
 				'2.2.2.0/24',
 			],
 			'No valid request data or subpage parameter' => [
@@ -890,9 +969,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	private function getBlockRestrictionStore(): BlockRestrictionStore {
 		$dbProvider = $this->createMock( IConnectionProvider::class );
 
-		return new BlockRestrictionStore(
-			$dbProvider,
-			$this->getConfVar( MainConfigNames::BlockTargetMigrationStage )
-		);
+		return new BlockRestrictionStore( $dbProvider );
 	}
 }

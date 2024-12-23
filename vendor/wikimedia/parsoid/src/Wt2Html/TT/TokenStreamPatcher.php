@@ -12,6 +12,7 @@ use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Wt2Html\PegTokenizer;
 use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
@@ -91,7 +92,7 @@ class TokenStreamPatcher extends TokenHandler {
 		$this->env->log( 'trace/tsp', $this->pipelineId,
 			static function () use ( $self, $token ) {
 				return "(indep=" . ( $self->inIndependentParse ? "yes" : "no " ) .
-					";sol=" . ( $self->sol ? "yes" : "no " ) .
+					";sol=" . ( $self->sol ? "yes" : "no " ) . ') ' .
 					PHPUtils::jsonEncode( $token );
 			}
 		);
@@ -135,22 +136,27 @@ class TokenStreamPatcher extends TokenHandler {
 	 * Fully reprocess the output tokens from the tokenizer through
 	 * all the other handlers in stage 2.
 	 *
-	 * @param int $srcOffset
+	 * @param int|false $srcOffset See TokenUtils::shiftTokenTSR, which has b/c for null
 	 * @param array $toks
 	 * @param bool $popEOF
 	 * @return array
 	 */
-	private function reprocessTokens( int $srcOffset, array $toks, bool $popEOF = false ): array {
+	private function reprocessTokens( $srcOffset, array $toks, bool $popEOF = false ): array {
 		// Update tsr
 		TokenUtils::shiftTokenTSR( $toks, $srcOffset );
-		$pipe = $this->env->getPipelineFactory()->getPipeline( "tokens/x-mediawiki" );
-		$pipe->init( [
-			'frame' => $this->manager->getFrame(),
-			'toplevel' => $this->atTopLevel,
-			// The tokens should be reprocessed in the context of the original frame's source
-			'srcText' => $this->manager->getFrame()->getSrcText()
-		] );
-		$toks = (array)$pipe->parse( $toks, [] );
+
+		$toks = (array)PipelineUtils::processContentInPipeline(
+			$this->env,
+			$this->manager->getFrame(),
+			$toks,
+			[
+				'pipelineType' => 'peg-tokens-to-expanded-tokens',
+				'pipelineOpts' => [],
+				'sol' => true,
+				'toplevel' => $this->atTopLevel,
+			]
+		);
+
 		if ( $popEOF ) {
 			array_pop( $toks ); // pop EOFTk
 		}
@@ -266,7 +272,7 @@ class TokenStreamPatcher extends TokenHandler {
 		$this->env->log( 'trace/tsp', $this->pipelineId,
 			static function () use ( $self, $token ) {
 				return "(indep=" . ( $self->inIndependentParse ? "yes" : "no " ) .
-					";sol=" . ( $self->sol ? "yes" : "no " ) .
+					";sol=" . ( $self->sol ? "yes" : "no " ) . ') ' .
 					PHPUtils::jsonEncode( $token );
 			}
 		);
@@ -363,9 +369,7 @@ class TokenStreamPatcher extends TokenHandler {
 						$this->tokenBuf[] = $token;
 						return new TokenHandlerResult( [] );
 					}
-				} elseif ( $token->getName() === 'link' &&
-					$token->getAttributeV( 'rel' ) === 'mw:PageProp/Category'
-				) {
+				} elseif ( TokenUtils::isSolTransparentLinkTag( $token ) ) {
 					// Replace buffered newline & whitespace tokens with mw:EmptyLine
 					// meta-tokens. This tunnels them through the rest of the transformations
 					// without affecting them. During HTML building, they are expanded

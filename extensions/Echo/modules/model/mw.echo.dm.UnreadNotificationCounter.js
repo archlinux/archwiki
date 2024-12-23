@@ -3,16 +3,16 @@
 	 * Echo notification UnreadNotificationCounter model
 	 *
 	 * @class
-	 * @mixins OO.EventEmitter
+	 * @mixes OO.EventEmitter
 	 *
 	 * @constructor
 	 * @param {Object} api An instance of EchoAPI.
 	 * @param {string} type The notification type 'message', 'alert', or 'all'.
 	 * @param {number} max Maximum number supported. Above this number there is no precision, we only know it is 'more than max'.
 	 * @param {Object} config Configuration object
-	 * @cfg {boolean} [localOnly=false] The update only takes into account
+	 * @param {boolean} [config.localOnly=false] The update only takes into account
 	 *  local notifications and ignores the number of cross-wiki notifications.
-	 * @cfg {string} [source='local'] The source for this counter. Specifically important if the counter
+	 * @param {string} [config.source='local'] The source for this counter. Specifically important if the counter
 	 *  is set to be counting only local notifications
 	 */
 	mw.echo.dm.UnreadNotificationCounter = function mwEchoDmUnreadNotificationCounter( api, type, max, config ) {
@@ -38,10 +38,10 @@
 	/* Events */
 
 	/**
-	 * @event countChange
-	 * @param {number} count Notification count
-	 *
 	 * The number of unread notification represented by this counter has changed.
+	 *
+	 * @event mw.echo.dm.UnreadNotificationCounter#countChange
+	 * @param {number} count Notification count
 	 */
 
 	/* Methods */
@@ -80,6 +80,7 @@
 	 *
 	 * @param {number} count
 	 * @param {boolean} isEstimation Whether this number is estimated or accurate
+	 * @fires mw.echo.dm.UnreadNotificationCounter#countChange
 	 */
 	mw.echo.dm.UnreadNotificationCounter.prototype.setCount = function ( count, isEstimation ) {
 		if ( isEstimation ) {
@@ -118,8 +119,6 @@
 	 *  count is fetched, with the actual unread notification count.
 	 */
 	mw.echo.dm.UnreadNotificationCounter.prototype.update = function () {
-		var model = this;
-
 		if ( !this.api ) {
 			return $.Deferred().reject();
 		}
@@ -128,8 +127,8 @@
 			this.source,
 			this.type,
 			this.localOnly
-		) ).then( function ( actualCount ) {
-			model.setCount( actualCount, false );
+		) ).then( ( actualCount ) => {
+			this.setCount( actualCount, false );
 
 			return actualCount;
 		} );

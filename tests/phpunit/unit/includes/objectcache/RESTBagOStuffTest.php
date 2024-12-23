@@ -1,8 +1,13 @@
 <?php
+
+use Wikimedia\Http\MultiHttpClient;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\RESTBagOStuff;
+
 /**
  * @group BagOStuff
  *
- * @covers \RESTBagOStuff
+ * @covers \Wikimedia\ObjectCache\RESTBagOStuff
  */
 class RESTBagOStuffTest extends \MediaWikiUnitTestCase {
 
@@ -95,7 +100,7 @@ class RESTBagOStuffTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @dataProvider dataPut
+	 * @dataProvider dataGet
 	 */
 	public function testPut( $serializationType, $hmacKey, $data ) {
 		$classReflect = new ReflectionClass( RESTBagOStuff::class );
@@ -117,16 +122,6 @@ class RESTBagOStuffTest extends \MediaWikiUnitTestCase {
 		] )->willReturn( [ 200, 'OK', [], 'Done', 0 ] );
 		$result = $this->bag->set( '42xyz42', 'somedata' );
 		$this->assertTrue( $result );
-	}
-
-	public static function dataPut() {
-		// Make sure the defaults are last, so the $bag is left as expected for the next test
-		return [
-			[ 'JSON', '12345', 'JSON.Us1wli82zEJ6DNQnCG//w+MShOFrdx9wCdfTUhPPA2w=."somedata"' ],
-			[ 'JSON', '', 'JSON.."somedata"' ],
-			[ 'PHP', '12345', 'PHP.t2EKhUF4l65kZqWhoAnKW8ZPzekDYfrDxTkQcVmGsuM=.s:8:"somedata";' ],
-			[ 'PHP', '', 'PHP..s:8:"somedata";' ],
-		];
 	}
 
 	public function testDelete() {

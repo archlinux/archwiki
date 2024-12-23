@@ -18,6 +18,9 @@
  * @file
  */
 
+use MediaWiki\Message\Message;
+use Wikimedia\Message\MessageSpecifier;
+
 /**
  * An error page which can definitely be safely rendered using the OutputPage.
  *
@@ -30,15 +33,20 @@
 class ErrorPageError extends MWException implements ILocalizedException {
 	public const SEND_OUTPUT = 0;
 	public const STAGE_OUTPUT = 1;
-	public $title, $msg, $params;
+
+	/** @var string|MessageSpecifier */
+	public $title;
+	/** @var string|MessageSpecifier */
+	public $msg;
+	public array $params;
 
 	/**
 	 * Note: these arguments are keys into wfMessage(), not text!
 	 *
 	 * @stable to call
 	 *
-	 * @param string|Message $title Message key (string) for page title, or a Message object
-	 * @param string|Message $msg Message key (string) for error text, or a Message object
+	 * @param string|MessageSpecifier $title Message key (string) for page title, or a MessageSpecifier
+	 * @param string|MessageSpecifier $msg Message key (string) for error text, or a MessageSpecifier
 	 * @param array $params Array with parameters to wfMessage()
 	 */
 	public function __construct( $title, $msg, $params = [] ) {

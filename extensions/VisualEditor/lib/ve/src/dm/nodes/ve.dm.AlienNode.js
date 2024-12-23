@@ -10,7 +10,7 @@
  * @class
  * @abstract
  * @extends ve.dm.LeafNode
- * @mixins ve.dm.FocusableNode
+ * @mixes ve.dm.FocusableNode
  *
  * @constructor
  * @param {Object} [element] Reference to element in linear model
@@ -44,20 +44,21 @@ ve.dm.AlienNode.static.matchFunction = function () {
 };
 
 ve.dm.AlienNode.static.toDataElement = function ( domElements, converter ) {
-	var element;
+	let element;
 
 	if ( this.name !== 'alien' ) {
 		element = { type: this.name };
-	} else if ( domElements.length === 1 && [ 'td', 'th' ].indexOf( domElements[ 0 ].nodeName.toLowerCase() ) !== -1 ) {
-		var attributes = {};
-		ve.dm.TableCellableNode.static.setAttributes( attributes, domElements );
-		element = {
-			type: 'alienTableCell',
-			attributes: attributes
-		};
+	} else if ( ve.dm.TableCellableNode.static.areNodesCellable( domElements ) ) {
+		element = { type: 'alienTableCell' };
+
+		const attributes = {};
+		ve.dm.TableCellableNode.static.setAttributes( attributes, domElements, true );
+		if ( !ve.isEmptyObject( attributes ) ) {
+			element.attributes = attributes;
+		}
 	} else {
-		var isInline = this.isHybridInline( domElements, converter );
-		var type = isInline ? 'alienInline' : 'alienBlock';
+		const isInline = this.isHybridInline( domElements, converter );
+		const type = isInline ? 'alienInline' : 'alienBlock';
 		element = { type: type };
 	}
 
@@ -85,14 +86,14 @@ ve.dm.AlienNode.static.isDiffComparable = function ( element, other, elementStor
 	// non-persistent in historical diffs.
 
 	function removeAboutAttributes( el ) {
-		Array.prototype.forEach.call( el.querySelectorAll( '[about]' ), function ( e ) {
+		Array.prototype.forEach.call( el.querySelectorAll( '[about]' ), ( e ) => {
 			e.removeAttribute( 'about' );
 		} );
 	}
 
 	// Deep copy DOM nodes from store
-	var elementOriginalDomElements = ve.copy( elementStore.value( element.originalDomElementsHash ) );
-	var otherOriginalDomElements = ve.copy( otherStore.value( other.originalDomElementsHash ) );
+	const elementOriginalDomElements = ve.copy( elementStore.value( element.originalDomElementsHash ) );
+	const otherOriginalDomElements = ve.copy( otherStore.value( other.originalDomElementsHash ) );
 	// Remove about attributes
 	elementOriginalDomElements.forEach( removeAboutAttributes );
 	otherOriginalDomElements.forEach( removeAboutAttributes );

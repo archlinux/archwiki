@@ -137,7 +137,6 @@
 	"abusefilter-edit-builder-op-bool-not": "មិន (!)",
 	"abusefilter-edit-builder-op-bool-and": "និង (&)",
 	"abusefilter-edit-builder-op-bool-or": "ឬ (|)",
-	"abusefilter-edit-builder-op-bool-xor": "XOR (^)",
 	"abusefilter-edit-builder-group-misc": "ផ្សេងៗ",
 	"abusefilter-edit-builder-misc-tern": "ប្រមាណវិធីត្រីធាតុ (X ? Y : Z)",
 	"abusefilter-edit-builder-misc-cond": "លក្ខខណ្ឌ(if X then Y else Z)",

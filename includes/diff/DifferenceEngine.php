@@ -22,16 +22,20 @@
  */
 
 use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Debug\DeprecationHelper;
 use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
@@ -231,6 +235,7 @@ class DifferenceEngine extends ContextSource {
 
 	/**
 	 * Extra query parameters to be appended to diff page links
+	 * @var array
 	 */
 	private $extraQueryParams = [];
 
@@ -735,7 +740,7 @@ class DifferenceEngine extends ContextSource {
 	public function showDiffPage( $diffOnly = false ) {
 		# Allow frames except in certain special cases
 		$out = $this->getOutput();
-		$out->setPreventClickjacking( false );
+		$out->getMetadata()->setPreventClickjacking( false );
 		$out->setRobotPolicy( 'noindex,nofollow' );
 
 		// Allow extensions to add any extra output here
@@ -819,7 +824,7 @@ class DifferenceEngine extends ContextSource {
 						[ 'noBrackets' ]
 					);
 					if ( $rollbackLink ) {
-						$out->setPreventClickjacking( true );
+						$out->getMetadata()->setPreventClickjacking( true );
 						$rollback = "\u{00A0}\u{00A0}\u{00A0}" . $rollbackLink;
 					}
 				}
@@ -1066,7 +1071,8 @@ class DifferenceEngine extends ContextSource {
 	 * Returns empty string if there's either no revision to patrol or the user is not allowed to.
 	 *
 	 * Side effect: When the patrol link is build, this method will call
-	 * OutputPage::setPreventClickjacking(true) and load a JS module.
+	 * OutputPage::getMetadata()->setPreventClickjacking(true) and load a
+	 * JS module.
 	 *
 	 * @return string HTML or empty string
 	 */
@@ -1142,10 +1148,8 @@ class DifferenceEngine extends ContextSource {
 
 			// Build the link
 			if ( $rcid ) {
-				$this->getOutput()->setPreventClickjacking( true );
-				if ( $this->getAuthority()->isAllowed( 'writeapi' ) ) {
-					$this->getOutput()->addModules( 'mediawiki.misc-authed-curate' );
-				}
+				$this->getOutput()->getMetadata()->setPreventClickjacking( true );
+				$this->getOutput()->addModules( 'mediawiki.misc-authed-curate' );
 
 				return [ 'rcid' => $rcid ];
 			}
@@ -1345,6 +1349,14 @@ class DifferenceEngine extends ContextSource {
 		return $this->addHeader( $body, $otitle, $ntitle, $multi, $notice );
 	}
 
+	private function incrementStats( string $cacheStatus ): void {
+		$stats = MediaWikiServices::getInstance()->getStatsFactory();
+		$stats->getCounter( 'diff_cache_total' )
+			->setLabel( 'status', $cacheStatus )
+			->copyToStatsdAt( 'diff_cache.' . $cacheStatus )
+			->increment();
+	}
+
 	/**
 	 * Get the diff table body, without header
 	 *
@@ -1395,7 +1407,7 @@ class DifferenceEngine extends ContextSource {
 			if ( !$this->mRefreshCache ) {
 				$difftext = $cache->get( $key );
 				if ( is_string( $difftext ) ) {
-					$stats->updateCount( 'diff_cache.hit', 1 );
+					$this->incrementStats( 'hit' );
 					$difftext = $this->localiseDiff( $difftext );
 					$this->cacheHitKey = $key;
 					return $difftext;
@@ -1431,12 +1443,12 @@ class DifferenceEngine extends ContextSource {
 
 		// Save to cache for 7 days
 		if ( !$this->hookRunner->onAbortDiffCache( $this ) ) {
-			$stats->updateCount( 'diff_cache.uncacheable', 1 );
+			$this->incrementStats( 'uncacheable' );
 		} elseif ( $key !== false ) {
-			$stats->updateCount( 'diff_cache.miss', 1 );
+			$this->incrementStats( 'miss' );
 			$cache->set( $key, $difftext, 7 * 86400 );
 		} else {
-			$stats->updateCount( 'diff_cache.uncacheable', 1 );
+			$this->incrementStats( 'uncacheable' );
 		}
 		// localise line numbers and title attribute text
 		$difftext = $this->localiseDiff( $difftext );

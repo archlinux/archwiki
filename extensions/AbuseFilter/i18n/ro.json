@@ -17,12 +17,12 @@
 			"Minisarm",
 			"Misterr",
 			"NGC 54",
+			"Paloi Sciurala",
 			"Rsocol",
 			"Silviubogan",
 			"Stelistcristi",
 			"Strainu",
-			"WebSourceContentRO",
-			"Paloi Sciurala"
+			"WebSourceContentRO"
 		]
 	},
 	"abusefilter-desc": "Aplică euristici automate modificărilor.",
@@ -325,7 +325,7 @@
 	"abusefilter-edit-builder-op-bool-not": "Nu (!)",
 	"abusefilter-edit-builder-op-bool-and": "Și (&)",
 	"abusefilter-edit-builder-op-bool-or": "Sau (|)",
-	"abusefilter-edit-builder-op-bool-xor": "Sau exclusiv (^)",
+	"abusefilter-edit-builder-op-bool-xor": "Sau exclusiv ($1)",
 	"abusefilter-edit-builder-group-misc": "Diverse",
 	"abusefilter-edit-builder-misc-in": "conținut în șir (in)",
 	"abusefilter-edit-builder-misc-contains": "Șirul din stânga conține șirul din dreapta (contains)",

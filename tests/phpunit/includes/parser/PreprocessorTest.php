@@ -2,33 +2,31 @@
 
 namespace MediaWiki\Tests\Parser;
 
-use HashBagOStuff;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\Preprocessor;
+use MediaWiki\Parser\Preprocessor_Hash;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use ParserOptions;
-use Preprocessor;
-use Preprocessor_Hash;
-use WANObjectCache;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
- * @covers \Preprocessor
+ * @covers \MediaWiki\Parser\Preprocessor
  *
- * @covers \Preprocessor_Hash
- * @covers \PPDStack_Hash
- * @covers \PPDStackElement_Hash
- * @covers \PPDPart_Hash
- * @covers \PPFrame_Hash
- * @covers \PPTemplateFrame_Hash
- * @covers \PPCustomFrame_Hash
- * @covers \PPNode_Hash_Tree
- * @covers \PPNode_Hash_Text
- * @covers \PPNode_Hash_Array
- * @covers \PPNode_Hash_Attr
+ * @covers \MediaWiki\Parser\Preprocessor_Hash
+ * @covers \MediaWiki\Parser\PPDStack_Hash
+ * @covers \MediaWiki\Parser\PPDStackElement_Hash
+ * @covers \MediaWiki\Parser\PPDPart_Hash
+ * @covers \MediaWiki\Parser\PPFrame_Hash
+ * @covers \MediaWiki\Parser\PPTemplateFrame_Hash
+ * @covers \MediaWiki\Parser\PPCustomFrame_Hash
+ * @covers \MediaWiki\Parser\PPNode_Hash_Tree
+ * @covers \MediaWiki\Parser\PPNode_Hash_Text
+ * @covers \MediaWiki\Parser\PPNode_Hash_Array
+ * @covers \MediaWiki\Parser\PPNode_Hash_Attr
  */
 class PreprocessorTest extends MediaWikiIntegrationTestCase {
-	protected $mTitle = 'Page title';
-	protected $mPPNodeCount = 0;
 	/** @var ParserOptions */
 	protected $mOptions;
 	/** @var Preprocessor */
@@ -181,6 +179,7 @@ class PreprocessorTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideCases
+	 * @dataProvider provideHeadings
 	 */
 	public function testPreprocessorOutput( $wikiText, $expectedXml ) {
 		$this->assertEquals(
@@ -267,13 +266,4 @@ class PreprocessorTest extends MediaWikiIntegrationTestCase {
 		// phpcs:enable
 	}
 
-	/**
-	 * @dataProvider provideHeadings
-	 */
-	public function testHeadings( $wikiText, $expectedXml ) {
-		$this->assertEquals(
-			$this->normalizeXml( $expectedXml ),
-			$this->preprocessToXml( $wikiText )
-		);
-	}
 }

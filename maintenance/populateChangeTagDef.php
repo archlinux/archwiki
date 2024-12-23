@@ -16,7 +16,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Populate and improve accuracy of change_tag_def statistics.
@@ -91,12 +93,12 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 			return;
 		}
 
-		$dbw->update(
-			'change_tag_def',
-			[ 'ctd_user_defined' => 1 ],
-			[ 'ctd_name' => $userTags ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'change_tag_def' )
+			->set( [ 'ctd_user_defined' => 1 ] )
+			->where( [ 'ctd_name' => $userTags ] )
+			->caller( __METHOD__ )
+			->execute();
 		$this->waitForReplication();
 		$this->output( "Finished setting user defined tags in change_tag_def table\n" );
 	}
@@ -123,12 +125,12 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 				continue;
 			}
 
-			$dbw->update(
-				'change_tag_def',
-				[ 'ctd_count' => $row->hitcount ],
-				[ 'ctd_id' => $row->ct_tag_id ],
-				__METHOD__
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( 'change_tag_def' )
+				->set( [ 'ctd_count' => $row->hitcount ] )
+				->where( [ 'ctd_id' => $row->ct_tag_id ] )
+				->caller( __METHOD__ )
+				->execute();
 		}
 		$this->waitForReplication();
 	}
@@ -194,7 +196,7 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 			$ids = $dbr->newSelectQueryBuilder()
 				->select( 'ct_id' )
 				->from( 'change_tag' )
-				->where( [ 'ct_tag' => $tagName, 'ct_tag_id' => null, 'ct_id > ' . $lastId ] )
+				->where( [ 'ct_tag' => $tagName, 'ct_tag_id' => null, $dbr->expr( 'ct_id', '>', $lastId ) ] )
 				->orderBy( 'ct_id' )
 				->limit( $this->getBatchSize() )
 				->caller( __METHOD__ )->fetchFieldValues();
@@ -213,12 +215,12 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 				$this->output( "Updating ct_tag_id = {$tagId} up to row ct_id = {$lastId}\n" );
 			}
 
-			$dbw->update(
-				'change_tag',
-				[ 'ct_tag_id' => $tagId ],
-				[ 'ct_id' => $ids ],
-				__METHOD__
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( 'change_tag' )
+				->set( [ 'ct_tag_id' => $tagId ] )
+				->where( [ 'ct_id' => $ids ] )
+				->caller( __METHOD__ )
+				->execute();
 
 			$this->waitForReplication();
 			if ( $sleep > 0 ) {
@@ -234,5 +236,7 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PopulateChangeTagDef::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

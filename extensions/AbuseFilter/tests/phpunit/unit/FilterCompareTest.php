@@ -14,14 +14,13 @@ use MediaWikiUnitTestCase;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\FilterCompare
+ * @covers \MediaWiki\Extension\AbuseFilter\FilterCompare
  */
 class FilterCompareTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param Filter $firstVersion
 	 * @param Filter $secondVersion
 	 * @param array $expected The differences
-	 * @covers ::compareVersions
 	 * @dataProvider provideVersions
 	 */
 	public function testCompareVersions(
@@ -336,9 +335,6 @@ class FilterCompareTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct() {
 		$this->assertInstanceOf(
 			FilterCompare::class,

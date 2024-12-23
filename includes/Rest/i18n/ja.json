@@ -10,7 +10,7 @@
 			"Shirayuki"
 		]
 	},
-	"rest-prefix-mismatch": "リクエストされたパス ($1) は REST API ルートパス ($2) 内にありませんでした",
+	"rest-prefix-mismatch": "リクエストされたパス ($1) は REST API ベースパス ($2) 内にありませんでした",
 	"rest-wrong-method": "このリクエストメソッド（$1）はこのパスで使用可能なメソッド{{PLURAL:$3||の一つ}}（$2）ではありません。",
 	"rest-no-match": "リクエストした相対パス（$1）は既知のハンドラーのどれにも一致しませんでした",
 	"rest-nonexistent-title": "指定されたページ ($1) は存在しません",

@@ -62,7 +62,6 @@
 	"templatedata-modal-button-delparam": "प्राचल (पॅरामीटर) माहिती काढून टाका",
 	"templatedata-modal-button-done": "केले",
 	"templatedata-modal-button-importParams": "प्राचले (पॅरामिटर्स) आयात करा",
-	"templatedata-modal-button-restoreparam": "प्राचल पुनर्स्थापित करा",
 	"templatedata-modal-button-saveparam": "जतन करा",
 	"templatedata-modal-confirmcancel": "आपण याची निश्चिती करता काय कि,आपणास केलेले बदल रद्द करावयाचे आहेत.",
 	"templatedata-modal-current-language": "सध्याची भाषा:$1",

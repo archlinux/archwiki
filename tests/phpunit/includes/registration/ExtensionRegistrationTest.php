@@ -3,20 +3,21 @@
 namespace MediaWiki\Tests\Registration;
 
 use AutoLoader;
-use ExtensionRegistry;
 use Generator;
-use HashBagOStuff;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
 use MediaWiki\Settings\Config\PhpIniSink;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \ExtensionRegistry
+ * @covers \MediaWiki\Registration\ExtensionRegistry
  */
 class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 
+	/** @var array */
 	private $autoloaderState;
 
 	/** @var ?ExtensionRegistry */

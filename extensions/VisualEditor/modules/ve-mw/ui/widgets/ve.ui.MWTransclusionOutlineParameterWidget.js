@@ -8,11 +8,11 @@
  *
  * @constructor
  * @param {Object} config
- * @cfg {string} data Parameter name
- * @cfg {string} label
- * @cfg {boolean} [required=false] Required parameters can't be unchecked
- * @cfg {boolean} [selected=false] If the parameter is currently used (checked)
- * @cfg {boolean} [hasValue=false] If the parameter has a value that's not empty
+ * @param {string} config.data Parameter name
+ * @param {string} config.label
+ * @param {boolean} [config.required=false] Required parameters can't be unchecked
+ * @param {boolean} [config.selected=false] If the parameter is currently used (checked)
+ * @param {boolean} [config.hasValue=false] If the parameter has a value that's not empty
  */
 ve.ui.MWTransclusionOutlineParameterWidget = function VeUiMWTransclusionOutlineParameterWidget( config ) {
 	this.checkbox = new OO.ui.CheckboxInputWidget( {

@@ -13,8 +13,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|fu ringrazziatu|fu ringrazziata}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Ringrazzia}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Fu ringrazziatu|Fu ringrazziata}}}}",
-	"thanks-button-action-cancel": "Annulla",
-	"thanks-button-action-completed": "{{GENDER:$1|{{GENDER:$2|Ringrazziasti}}}} $1",
 	"thanks-error-undefined": "Lu ringrazziamentu nun arriniscìu (còdici erruri: $1). Pi favuri prova n'àutra vota.",
 	"thanks-error-invalidrevision": "L'ID dâ virsioni nun è vàlidu.",
 	"thanks-error-invalidrecipient-bot": "Li bot nun ponnu èssiri ringrazziati.",

@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\SiteStats\SiteStats;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
@@ -42,11 +44,15 @@ class SiteStatsTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\SiteStats\SiteStats
 	 */
 	public function testInit() {
-		$this->db->delete( 'site_stats', ISQLPlatform::ALL_ROWS, __METHOD__ );
+		$this->getDb()->newDeleteQueryBuilder()
+			->deleteFrom( 'site_stats' )
+			->where( ISQLPlatform::ALL_ROWS )
+			->caller( __METHOD__ )
+			->execute();
 		SiteStats::unload();
 
 		SiteStats::edits();
-		$row = $this->db->newSelectQueryBuilder()
+		$row = $this->getDb()->newSelectQueryBuilder()
 			->select( '1' )
 			->from( 'site_stats' )
 			->caller( __METHOD__ )->fetchRow();

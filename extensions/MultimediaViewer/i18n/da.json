@@ -16,11 +16,6 @@
 	"multimediaviewer-license-cc-pd": "Offentlig ejendom",
 	"multimediaviewer-license-default": "Se licens",
 	"multimediaviewer-permission-viewmore": "Vis mere",
-	"multimediaviewer-about-mmv": "Om dette grænsesnit",
-	"multimediaviewer-optout-mmv": "Deaktiver Media Viewer",
-	"multimediaviewer-optin-mmv": "Aktiver Media Viewer",
-	"multimediaviewer-optout-pending-mmv": "Deaktiverer Media Viewer",
-	"multimediaviewer-optin-pending-mmv": "Aktiverer Media Viewer",
 	"multimediaviewer-geolocation": "Sted: $1",
 	"multimediaviewer-reuse-link": "Brug eller indlejre denne fil",
 	"multimediaviewer-reuse-loading-placeholder": "Indlæser...",
@@ -45,11 +40,6 @@
 	"multimediaviewer-title-popup-text": "Beskrivelse",
 	"multimediaviewer-title-popup-text-more": "Se fuld beskrivelse",
 	"multimediaviewer-download-attribution-cta": "Vis mig hvordan",
-	"multimediaviewer-options-tooltip": "Aktiver eller deaktiver Media Viewer",
-	"multimediaviewer-options-dialog-header": "Deaktiver Media Viewer?",
-	"multimediaviewer-options-learn-more": "Lær mere",
-	"multimediaviewer-option-submit-button": "Deaktiver Media Viewer",
-	"multimediaviewer-option-cancel-button": "Annullér",
 	"multimediaviewer-enable-dialog-header": "Aktiver Media Viewer?",
 	"multimediaviewer-enable-submit-button": "Aktiver Media Viewer"
 }

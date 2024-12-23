@@ -1,16 +1,17 @@
 'use strict';
 
 /**
- * @file Adds accessibility attributes to citation links.
+ * Adds accessibility attributes to citation links.
+ *
  * @see https://phabricator.wikimedia.org/T40141
  * @author Marius Hoch <hoo@online.de>
  */
-mw.hook( 'wikipage.content' ).add( function ( $content ) {
+mw.hook( 'wikipage.content' ).add( ( $content ) => {
 	const accessibilityLabelOne = mw.msg( 'cite_references_link_accessibility_label' );
 	const accessibilityLabelMany = mw.msg( 'cite_references_link_many_accessibility_label' );
 
-	$content.find( '.mw-cite-backlink' ).each( function () {
-		const $links = $( this ).find( 'a' );
+	$content.find( '.mw-cite-backlink' ).each( ( i, el ) => {
+		const $links = $( el ).find( 'a' );
 
 		if ( $links.length > 1 ) {
 			// This citation is used multiple times. Let's only set the accessibility

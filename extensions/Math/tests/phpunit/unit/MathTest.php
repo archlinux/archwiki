@@ -1,12 +1,12 @@
 <?php
 namespace MediaWiki\Extension\Math\Tests;
 
-use ExtensionRegistry;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\Math;
 use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWikiUnitTestCase;
 
 /**

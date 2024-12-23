@@ -65,7 +65,7 @@ OO.inheritClass( ve.ui.MWTocWidget, OO.ui.Widget );
 ve.ui.MWTocWidget.prototype.onMetaListInsert = function ( metaItem ) {
 	// Responsible for adding UI components
 	if ( metaItem instanceof ve.dm.MWTOCMetaItem ) {
-		var property = metaItem.getAttribute( 'property' );
+		const property = metaItem.getAttribute( 'property' );
 		if ( property === 'mw:PageProp/forcetoc' ) {
 			this.mwTOCForce = true;
 		} else if ( property === 'mw:PageProp/notoc' ) {
@@ -82,7 +82,7 @@ ve.ui.MWTocWidget.prototype.onMetaListInsert = function ( metaItem ) {
  */
 ve.ui.MWTocWidget.prototype.onMetaListRemove = function ( metaItem ) {
 	if ( metaItem instanceof ve.dm.MWTOCMetaItem ) {
-		var property = metaItem.getAttribute( 'property' );
+		const property = metaItem.getAttribute( 'property' );
 		if ( property === 'mw:PageProp/forcetoc' ) {
 			this.mwTOCForce = false;
 		} else if ( property === 'mw:PageProp/notoc' ) {
@@ -96,31 +96,30 @@ ve.ui.MWTocWidget.prototype.onMetaListRemove = function ( metaItem ) {
  * Initialize TOC based on the presence of magic words
  */
 ve.ui.MWTocWidget.prototype.initFromMetaList = function () {
-	var i = 0,
-		items = this.metaList.getItemsInGroup( 'mwTOC' ),
-		len = items.length;
-	if ( len > 0 ) {
-		for ( ; i < len; i++ ) {
-			if ( items[ i ] instanceof ve.dm.MWTOCMetaItem ) {
-				var property = items[ i ].getAttribute( 'property' );
-				if ( property === 'mw:PageProp/forcetoc' ) {
-					this.mwTOCForce = true;
-				}
-				if ( property === 'mw:PageProp/notoc' ) {
-					this.mwTOCDisable = true;
-				}
+	const items = this.metaList.getItemsInGroup( 'mwTOC' );
+	if ( items.length === 0 ) {
+		return;
+	}
+	for ( let i = 0; i < items.length; i++ ) {
+		if ( items[ i ] instanceof ve.dm.MWTOCMetaItem ) {
+			const property = items[ i ].getAttribute( 'property' );
+			if ( property === 'mw:PageProp/forcetoc' ) {
+				this.mwTOCForce = true;
+			}
+			if ( property === 'mw:PageProp/notoc' ) {
+				this.mwTOCDisable = true;
 			}
 		}
-		this.updateVisibility();
 	}
+	this.updateVisibility();
 };
 
 /**
  * Hides or shows the TOC based on page and default settings
  */
 ve.ui.MWTocWidget.prototype.updateVisibility = function () {
-	// In MediaWiki if __FORCETOC__ is anywhere TOC is always displayed
-	// ... Even if there is a __NOTOC__ in the article
+	// In MediaWiki if `__FORCETOC__` is anywhere TOC is always displayed
+	// ... Even if there is a `__NOTOC__` in the article
 	this.toggle( !this.mwTOCDisable && ( this.mwTOCForce || this.rootLength >= 3 ) );
 };
 
@@ -153,11 +152,10 @@ ve.ui.MWTocWidget.prototype.updateNode = function ( viewNode ) {
  * Based on generateTOC in Linker.php
  */
 ve.ui.MWTocWidget.prototype.build = function () {
-	var $newTocList = $( '<ul>' ),
+	const $newTocList = $( '<ul>' ),
 		nodes = this.doc.getNodesByType( 'mwHeading', true ),
 		surfaceView = this.surface.getView(),
 		documentView = surfaceView.getDocument(),
-		lastLevel = 0,
 		stack = [],
 		url = new URL( location.href );
 
@@ -171,12 +169,13 @@ ve.ui.MWTocWidget.prototype.build = function () {
 		return false;
 	}
 
-	for ( var i = 0, l = nodes.length; i < l; i++ ) {
-		var modelNode = nodes[ i ];
-		var level = modelNode.getAttribute( 'level' );
+	let lastLevel = 0;
+	for ( let i = 0, l = nodes.length; i < l; i++ ) {
+		const modelNode = nodes[ i ];
+		const level = modelNode.getAttribute( 'level' );
 
 		if ( level > lastLevel ) {
-			var $list;
+			let $list;
 			if ( stack.length ) {
 				$list = $( '<ul>' );
 				stack[ stack.length - 1 ].children().last().append( $list );
@@ -185,24 +184,24 @@ ve.ui.MWTocWidget.prototype.build = function () {
 			}
 			stack.push( $list );
 		} else if ( level < lastLevel ) {
-			var levelDiff = lastLevel - level;
+			let levelDiff = lastLevel - level;
 			while ( levelDiff > 0 && stack.length > 1 ) {
 				stack.pop();
 				levelDiff--;
 			}
 		}
 
-		var tocNumber = stack.map( getItemIndex ).join( '.' );
-		var viewNode = documentView.getBranchNodeFromOffset( modelNode.getRange().start );
+		const tocNumber = stack.map( getItemIndex ).join( '.' );
+		const viewNode = documentView.getBranchNodeFromOffset( modelNode.getRange().start );
 		url.searchParams.set( 'section', ( i + 1 ).toString() );
 		// The following classes are used here:
 		// * toclevel-1, toclevel-2, ...
 		// * tocsection-1, tocsection-2, ...
-		var $item = $( '<li>' ).addClass( 'toclevel-' + stack.length ).addClass( 'tocsection-' + ( i + 1 ) );
-		var $link = $( '<a>' ).attr( 'href', url.toString() ).append(
+		const $item = $( '<li>' ).addClass( 'toclevel-' + stack.length ).addClass( 'tocsection-' + ( i + 1 ) );
+		const $link = $( '<a>' ).attr( 'href', url.toString() ).append(
 			$( '<span>' ).addClass( 'tocnumber' ).text( tocNumber )
 		);
-		var $text = $( '<span>' ).addClass( 'toctext' );
+		const $text = $( '<span>' ).addClass( 'toctext' );
 
 		viewNode.$tocText = $text;
 		this.updateNode( viewNode );
@@ -217,7 +216,7 @@ ve.ui.MWTocWidget.prototype.build = function () {
 
 	if ( nodes.length ) {
 		this.rootLength = this.$tocList.children().length;
-		var tocBeforeNode = documentView.getBranchNodeFromOffset( nodes[ 0 ].getRange().start );
+		const tocBeforeNode = documentView.getBranchNodeFromOffset( nodes[ 0 ].getRange().start );
 		tocBeforeNode.$element.before( this.$element );
 	} else {
 		this.rootLength = 0;

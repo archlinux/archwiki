@@ -6,7 +6,6 @@
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|مٱنمۊن}}}}",
-	"thanks-button-action-cancel": "ٱنجومشیڤ کردن",
 	"thanks-error-invalid-log-id": "پهرستنوماْ ٱڤوڌن ڤامیٛن دیاری نکرد.",
 	"thanks-error-invalidrecipient-self": "ایسا نٱترین مٱنموندار خوتوݩ بۊین",
 	"thanks-error-notloggedin": "کاریارٱل نادیار نٱترن مٱنموندار بۊݩ",

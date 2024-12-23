@@ -22,6 +22,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Job for asynchronous rendering of thumbnails, e.g. after new uploads.
@@ -101,7 +102,7 @@ class ThumbnailRenderJob extends Job {
 		}
 
 		if ( $uploadThumbnailRenderHttpCustomDomain ) {
-			$parsedUrl = wfParseUrl( $thumbUrl );
+			$parsedUrl = wfGetUrlUtils()->parse( $thumbUrl );
 
 			if ( !isset( $parsedUrl['path'] ) || $parsedUrl['path'] === '' ) {
 				$this->setLastError( __METHOD__ . ": invalid thumb URL: $thumbUrl" );

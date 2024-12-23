@@ -6,7 +6,7 @@
  */
 
 /**
- * DataModel new section edit link meta item (for __NEWSECTIONLINK__ and __NONEWSECTIONLINK__).
+ * DataModel new section edit link meta item (for `__NEWSECTIONLINK__` and `__NONEWSECTIONLINK__`).
  *
  * @class
  * @extends ve.dm.MWFlaggedMetaItem

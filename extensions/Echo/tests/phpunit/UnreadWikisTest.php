@@ -1,8 +1,11 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\UnreadWikis;
 use MediaWiki\Utils\MWTimestamp;
+use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 
 /**

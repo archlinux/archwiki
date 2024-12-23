@@ -73,7 +73,6 @@
 	"templatedata-modal-button-map": "Редагувати мапи",
 	"templatedata-modal-button-importParams": "Імпортувати параметри",
 	"templatedata-modal-button-removemap": "Вилучити мапу",
-	"templatedata-modal-button-restoreparam": "Відновити параметр",
 	"templatedata-modal-button-saveparam": "Зберегти",
 	"templatedata-modal-confirmcancel": "Ви впевнені, що хочете відхилити свої зміни?",
 	"templatedata-modal-current-language": "Поточна мова: $1",

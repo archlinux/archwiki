@@ -26,5 +26,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Codeblok",
 	"syntaxhighlight-error-pygments-invocation-failure": "Fout bij het aanroepen van Pygments",
 	"syntaxhighlight-error-unknown-language": "Onbekende taal \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "Codegrootte van $1 byte{{PLURAL:$1||s}} overschrijdt het toegestane maximum van $2 byte{{PLURAL:$2||s}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Codegrootte van $1 byte{{PLURAL:$1||s}} overschrijdt het toegestane maximum van $2 byte{{PLURAL:$2||s}}",
+	"syntaxhighlight-button-copy": "Kopiëren",
+	"syntaxhighlight-button-copied": "Gekopieerd!"
 }

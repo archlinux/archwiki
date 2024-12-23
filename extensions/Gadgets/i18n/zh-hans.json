@@ -66,7 +66,7 @@
 	"gadgets-export-download": "下载",
 	"gadgets-requires-es6": "此小工具仅支持兼容ES6的浏览器",
 	"gadgets-validate-notset": "未设置属性<code>$1</code>。",
-	"gadgets-validate-wrongtype": "属性<code>$1</code>必须为<code>$2</code>，而不是<code>$3</code>。",
+	"gadgets-validate-wrongtype": "属性<code>$1</code>的类型必须为<code>$2</code>。",
 	"gadgets-validate-json": "JSON文件已指定但未使用。它们仅在被封装的小工具中有效。",
 	"gadgets-validate-es6default": "需要ES6的小工具无法默认启用。",
 	"gadgets-validate-noentrypoint": "由于未指定脚本文件，package标志被忽略。",

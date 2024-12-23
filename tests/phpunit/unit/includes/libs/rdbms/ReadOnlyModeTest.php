@@ -1,5 +1,6 @@
 <?php
 
+use Wikimedia\FileBackend\FSFile\TempFSFile;
 use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -11,6 +12,7 @@ use Wikimedia\Rdbms\ReadOnlyMode;
  */
 class ReadOnlyModeTest extends MediaWikiUnitTestCase {
 
+	/** @var string */
 	private $fileName;
 
 	protected function setUp(): void {
@@ -135,8 +137,8 @@ class ReadOnlyModeTest extends MediaWikiUnitTestCase {
 		$lb->method( 'getReadOnlyReason' )
 			->willReturn( $params['lbMessage'] );
 		$lbf = $this->createMock( ILBFactory::class );
-		$lbf->method( 'getMainLB' )
-		   ->willReturn( $lb );
+		$lbf->method( 'getLoadBalancer' )
+			->willReturn( $lb );
 		return $lbf;
 	}
 

@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\Math\InputCheck;
 
-use HashBagOStuff;
+use MediaWiki\Message\Message;
 use MediaWikiIntegrationTestCase;
-use Message;
-use WANObjectCache;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * @group Math

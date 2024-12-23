@@ -7,6 +7,7 @@
 	"apierror-discussiontools-commentid-notfound": "Не пронајдов коментар со назнаката „$1“.",
 	"apierror-discussiontools-commentname-ambiguous": "Пронајдов повеќе коментари со називот „$1“; се бара <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "Не пронајдов коментар со назив „$1“.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Страницата никогаш не содржела разговори.",
 	"apierror-discussiontools-formtoken-used": "Коментарот е веќе објавен. Превчитајте ја страницата за да го видите.",
 	"apierror-discussiontools-subscription-failed-add": "Не можев да ве претплатам на темава.",
 	"apierror-discussiontools-subscription-failed-remove": "Не можев да ве отпишам од темава.",
@@ -40,5 +41,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Име на темата на која се претплаќате (или отпишувате)",
 	"apihelp-discussiontoolssubscribe-param-page": "Страницата на која се јавува темата",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "True за претплата, false за отпис",
-	"apihelp-discussiontoolssubscribe-summary": "Претплатете се (или отпишете се) за да добивате известувања на тема."
+	"apihelp-discussiontoolssubscribe-summary": "Претплатете се (или отпишете се) за да добивате известувања на тема.",
+	"apihelp-discussiontoolsthank-param-commentid": "Назнака на коментарот на кој се заблагодарувате.",
+	"apihelp-discussiontoolsthank-summary": "Испратете јавна благодарница за коментар."
 }

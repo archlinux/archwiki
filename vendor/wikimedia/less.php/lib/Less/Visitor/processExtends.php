@@ -116,7 +116,7 @@ class Less_Visitor_processExtends extends Less_Visitor {
 		return array_merge( $extendsList, $extendsToAdd );
 	}
 
-	protected function visitRule( $ruleNode, &$visitDeeper ) {
+	protected function visitDeclaration( $declNode, &$visitDeeper ) {
 		$visitDeeper = false;
 	}
 
@@ -452,12 +452,12 @@ class Less_Visitor_processExtends extends Less_Visitor {
 		array_pop( $this->allExtendsStack );
 	}
 
-	protected function visitDirective( $directiveNode ) {
-		$newAllExtends = array_merge( $directiveNode->allExtends, end( $this->allExtendsStack ) );
-		$this->allExtendsStack[] = $this->doExtendChaining( $newAllExtends, $directiveNode->allExtends );
+	protected function visitAtRule( $atRuleNode ) {
+		$newAllExtends = array_merge( $atRuleNode->allExtends, end( $this->allExtendsStack ) );
+		$this->allExtendsStack[] = $this->doExtendChaining( $newAllExtends, $atRuleNode->allExtends );
 	}
 
-	protected function visitDirectiveOut() {
+	protected function visitAtRuleOut() {
 		array_pop( $this->allExtendsStack );
 	}
 

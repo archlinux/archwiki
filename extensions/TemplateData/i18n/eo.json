@@ -45,7 +45,6 @@
 	"templatedata-modal-button-changelang": "Ŝanĝi lingvon",
 	"templatedata-modal-button-delparam": "Forigi parametrajn informojn",
 	"templatedata-modal-button-importParams": "Importi parametrojn",
-	"templatedata-modal-button-restoreparam": "Restarigi parametrojn",
 	"templatedata-modal-button-saveparam": "Konservi",
 	"templatedata-modal-current-language": "Nuna lingvo: $1",
 	"templatedata-modal-errormsg-import-noparams": "Neniuj novaj parametroj trovitaj dum importo.",

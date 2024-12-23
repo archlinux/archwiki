@@ -18,15 +18,21 @@
  * @file
  */
 
+namespace MediaWiki\Maintenance;
+
+use ExecutableFinder;
+use MediaWiki;
 use MediaWiki\Config\Config;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Maintenance\MaintenanceParameters;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Shell\Shell;
 use MediaWiki\User\User;
+use StatusValue;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
@@ -96,13 +102,13 @@ abstract class Maintenance {
 
 	/**
 	 * @var array This is the list of options that were actually passed
-	 * @deprecated since 1.39, use $this->parameters instead.
+	 * @deprecated since 1.39, use {@see addOption} instead.
 	 */
 	protected $mOptions = [];
 
 	/**
 	 * @var array This is the list of arguments that were actually passed
-	 * @deprecated since 1.39, use $this->parameters instead.
+	 * @deprecated since 1.39, use {@see addArg} instead.
 	 */
 	protected $mArgs = [];
 
@@ -111,11 +117,12 @@ abstract class Maintenance {
 
 	/** @var bool Special vars for params that are always used */
 	protected $mQuiet = false;
-	protected $mDbUser, $mDbPass;
+	protected ?string $mDbUser = null;
+	protected ?string $mDbPass = null;
 
 	/**
 	 * @var string A description of the script, children should change this via addDescription()
-	 * @deprecated since 1.39, use $this->parameters instead.
+	 * @deprecated since 1.39, use {@see addDescription} instead.
 	 */
 	protected $mDescription = '';
 
@@ -176,7 +183,7 @@ abstract class Maintenance {
 	 * This is an array of arrays where
 	 * 0 => the option and 1 => parameter value.
 	 *
-	 * @deprecated since 1.39, use $this->parameters instead.
+	 * @deprecated since 1.39, use $this->getParameters()->getOptionsSequence() instead.
 	 * @var array
 	 */
 	public $orderedOptions = [];
@@ -364,6 +371,18 @@ abstract class Maintenance {
 	}
 
 	/**
+	 * Get the name of an argument.
+	 * @since 1.43
+	 *
+	 * @param int $argId The index (from zero) of the argument.
+	 *
+	 * @return string|null The name of the argument, or null if the argument does not exist.
+	 */
+	protected function getArgName( int $argId ): ?string {
+		return $this->parameters->getArgName( $argId );
+	}
+
+	/**
 	 * Programmatically set the value of the given option.
 	 * Useful for setting up child scripts, see runChild().
 	 *
@@ -489,13 +508,26 @@ abstract class Maintenance {
 	 * Throw an error to the user. Doesn't respect --quiet, so don't use
 	 * this for non-error output
 	 * @stable to override
-	 * @param string $err The error to display
+	 * @param string|StatusValue $err The error to display
 	 * @param int $die Deprecated since 1.31, use Maintenance::fatalError() instead
 	 */
 	protected function error( $err, $die = 0 ) {
 		if ( intval( $die ) !== 0 ) {
 			wfDeprecated( __METHOD__ . '( $err, $die )', '1.31' );
 			$this->fatalError( $err, intval( $die ) );
+		}
+		if ( $err instanceof StatusValue ) {
+			foreach ( [ 'warning' => 'Warning: ', 'error' => 'Error: ' ] as $type => $prefix ) {
+				foreach ( $err->getMessages( $type ) as $msg ) {
+					$this->error(
+						$prefix . wfMessage( $msg )
+							->inLanguage( 'en' )
+							->useDatabase( false )
+							->text()
+					);
+				}
+			}
+			return;
 		}
 		$this->outputChanneled( false );
 		if (
@@ -504,7 +536,7 @@ abstract class Maintenance {
 		) {
 			fwrite( STDERR, $err . "\n" );
 		} else {
-			print $err;
+			print $err . "\n";
 		}
 	}
 
@@ -512,17 +544,26 @@ abstract class Maintenance {
 	 * Output a message and terminate the current script.
 	 *
 	 * @stable to override
-	 * @param string $msg Error message
+	 * @param string|StatusValue $msg Error message
 	 * @param int $exitCode PHP exit status. Should be in range 1-254.
 	 * @since 1.31
 	 * @return never
 	 */
 	protected function fatalError( $msg, $exitCode = 1 ) {
 		$this->error( $msg );
-		exit( $exitCode );
+		// If running PHPUnit tests we don't want to call exit, as it will end the test suite early.
+		// Instead, throw an exception that will still cause the relevant test to fail if the ::fatalError
+		// call was not expected.
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new MaintenanceFatalError( $exitCode );
+		} else {
+			exit( $exitCode );
+		}
 	}
 
+	/** @var bool */
 	private $atLineStart = true;
+	/** @var string|null */
 	private $lastChannel = null;
 
 	/**
@@ -689,14 +730,35 @@ abstract class Maintenance {
 	}
 
 	/**
-	 * Run a child maintenance script. Pass all of the current arguments
-	 * to it.
+	 * Returns an instance of the given maintenance script, with all of the current arguments
+	 * passed to it.
+	 *
+	 * Callers are expected to run the returned maintenance script instance by calling {@link Maintenance::execute}
+	 *
+	 * @deprecated Since 1.43. Use {@link Maintenance::createChild} instead. This method is an alias to that method.
+	 * @param string $maintClass A name of a child maintenance class
+	 * @param string|null $classFile Full path of where the child is
+	 * @return Maintenance The created instance, which the caller is expected to run by calling
+	 *   {@link Maintenance::execute} on the returned object.
+	 */
+	public function runChild( $maintClass, $classFile = null ) {
+		MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'runChild', '1.43' );
+		return self::createChild( $maintClass, $classFile );
+	}
+
+	/**
+	 * Returns an instance of the given maintenance script, with all of the current arguments
+	 * passed to it.
+	 *
+	 * Callers are expected to run the returned maintenance script instance by calling {@link Maintenance::execute}
+	 *
 	 * @param string $maintClass A name of a child maintenance class
 	 * @param string|null $classFile Full path of where the child is
 	 * @stable to override
-	 * @return Maintenance
+	 * @return Maintenance The created instance, which the caller is expected to run by calling
+	 *   {@link Maintenance::execute} on the returned object.
 	 */
-	public function runChild( $maintClass, $classFile = null ) {
+	public function createChild( string $maintClass, ?string $classFile = null ): Maintenance {
 		// Make sure the class is loaded first
 		if ( !class_exists( $maintClass ) ) {
 			if ( $classFile ) {
@@ -864,7 +926,7 @@ abstract class Maintenance {
 		}
 
 		$this->showHelp();
-		die( 1 );
+		$this->fatalError( '' );
 	}
 
 	/**
@@ -999,12 +1061,16 @@ abstract class Maintenance {
 
 		# Get the IDs of all text records not in these sets
 		$this->output( 'Searching for inactive text records...' );
-		$res = $dbw->newSelectQueryBuilder()
+		$textTableQueryBuilder = $dbw->newSelectQueryBuilder()
 			->select( 'old_id' )
 			->distinct()
-			->from( 'text' )
-			->where( $dbw->expr( 'old_id', '!=', $cur ) )
-			->caller( __METHOD__ )->fetchResultSet();
+			->from( 'text' );
+		if ( count( $cur ) ) {
+			$textTableQueryBuilder->where( $dbw->expr( 'old_id', '!=', $cur ) );
+		}
+		$res = $textTableQueryBuilder
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		$old = [];
 		foreach ( $res as $row ) {
 			$old[] = $row->old_id;
@@ -1018,7 +1084,11 @@ abstract class Maintenance {
 		# Delete as appropriate
 		if ( $delete && $count ) {
 			$this->output( 'Deleting...' );
-			$dbw->delete( 'text', [ 'old_id' => $old ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'text' )
+				->where( [ 'old_id' => $old ] )
+				->caller( __METHOD__ )
+				->execute();
 			$this->output( "done.\n" );
 		}
 
@@ -1219,9 +1289,7 @@ abstract class Maintenance {
 	 */
 	public static function readconsole( $prompt = '> ' ) {
 		static $isatty = null;
-		if ( $isatty === null ) {
-			$isatty = self::posix_isatty( 0 /*STDIN*/ );
-		}
+		$isatty ??= self::posix_isatty( 0 /*STDIN*/ );
 
 		if ( $isatty && function_exists( 'readline' ) ) {
 			return readline( $prompt );
@@ -1382,8 +1450,7 @@ abstract class Maintenance {
 	}
 
 	/**
-	 * @param string $errorMsg Error message to be displayed if the passed --user or --userid
-	 *  does not result in a valid existing user object.
+	 * @param string $errorMsg Error message to be displayed if neither --user or --userid are passed.
 	 *
 	 * @since 1.37
 	 *
@@ -1407,4 +1474,29 @@ abstract class Maintenance {
 
 		return $user;
 	}
+
+	/**
+	 * @param string $prompt The prompt to display to the user
+	 * @param string|null $default The default value to return if the user just presses enter
+	 *
+	 * @return string|null
+	 *
+	 * @since 1.43
+	 */
+	protected function prompt( string $prompt, ?string $default = null ): ?string {
+		$defaultText = $default === null ? ' > ' : " [{$default}] > ";
+		$promptWithDefault = $prompt . $defaultText;
+		$line = self::readconsole( $promptWithDefault );
+		if ( $line === false ) {
+			return $default;
+		}
+		if ( $line === '' ) {
+			return $default;
+		}
+
+		return $line;
+	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( Maintenance::class, 'Maintenance' );

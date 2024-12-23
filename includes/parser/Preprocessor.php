@@ -21,7 +21,9 @@
  * @ingroup Parser
  */
 
-use MediaWiki\Parser\Parser;
+namespace MediaWiki\Parser;
+
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * @ingroup Parser
@@ -76,7 +78,7 @@ abstract class Preprocessor {
 	 */
 	public function __construct(
 		Parser $parser,
-		WANObjectCache $wanCache = null,
+		?WANObjectCache $wanCache = null,
 		array $options = []
 	) {
 		$this->parser = $parser;
@@ -146,3 +148,6 @@ abstract class Preprocessor {
 	 */
 	abstract public function preprocessToObj( $text, $flags = 0 );
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( Preprocessor::class, 'Preprocessor' );

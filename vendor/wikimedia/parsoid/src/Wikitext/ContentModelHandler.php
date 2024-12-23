@@ -5,7 +5,7 @@ namespace Wikimedia\Parsoid\Wikitext;
 
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\ContentModelHandler as IContentModelHandler;
-use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Ext\DOMProcessor as ExtDOMProcessor;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
@@ -34,14 +34,16 @@ class ContentModelHandler extends IContentModelHandler {
 
 	/**
 	 * Bring DOM to expected canonical form
-	 * @param Env $env
-	 * @param Document $doc
 	 */
-	private function canonicalizeDOM( Env $env, Document $doc ): void {
+	private function canonicalizeDOM(
+		Env $env, Document $doc, bool $isSelectiveUpdate
+	): void {
 		$body = DOMCompat::getBody( $doc );
 
 		// Convert DOM to internal canonical form
-		DOMDataUtils::visitAndLoadDataAttribs( $body, [ 'markNew' => true ] );
+		DOMDataUtils::visitAndLoadDataAttribs( $body, [
+			'markNew' => !$isSelectiveUpdate,
+		] );
 
 		// Update DSR offsets if necessary.
 		ContentUtils::convertOffsets(
@@ -62,9 +64,11 @@ class ContentModelHandler extends IContentModelHandler {
 	 * Fetch prior DOM for selser.
 	 *
 	 * @param ParsoidExtensionAPI $extApi
-	 * @param SelserData $selserData
+	 * @param SelectiveUpdateData $selserData
 	 */
-	private function setupSelser( ParsoidExtensionAPI $extApi, SelserData $selserData ) {
+	private function setupSelser(
+		ParsoidExtensionAPI $extApi, SelectiveUpdateData $selserData
+	) {
 		$env = $this->env;
 
 		// Why is it safe to use a reparsed dom for dom diff'ing?
@@ -102,23 +106,23 @@ class ContentModelHandler extends IContentModelHandler {
 		// selser, will only get worse over time.
 		//
 		// So, we're forced to trade off the correctness for usability.
-		if ( $selserData->oldHTML === null ) {
-			$env->log( "warn/html2wt", "Missing selserData->oldHTML. Regenerating." );
+		if ( $selserData->revHTML === null ) {
+			$env->log( "warn/html2wt", "Missing selserData->revHTML. Regenerating." );
 
 			// FIXME(T266838): Create a new Env for this parse?  Something is
 			// needed to avoid this rigmarole.
 			$topLevelDoc = $env->topLevelDoc;
 			$env->setupTopLevelDoc();
-			// This effectively parses $selserData->oldText for us because
-			// $selserData->oldText = $env->getPageconfig()->getPageMainContent()
+			// This effectively parses $selserData->revText for us because
+			// $selserData->revText = $env->getPageconfig()->getPageMainContent()
 			$doc = $this->toDOM( $extApi );
 			$env->topLevelDoc = $topLevelDoc;
 		} else {
-			$doc = ContentUtils::createDocument( $selserData->oldHTML, true );
+			$doc = ContentUtils::createDocument( $selserData->revHTML, true );
 		}
 
-		$this->canonicalizeDOM( $env, $doc );
-		$selserData->oldDOM = $doc;
+		$this->canonicalizeDOM( $env, $doc, false );
+		$selserData->revDOM = $doc;
 	}
 
 	private function processIndicators( Document $doc, ParsoidExtensionAPI $extApi ): void {
@@ -136,7 +140,10 @@ class ContentModelHandler extends IContentModelHandler {
 		// for indicators that use the same name key.
 		foreach ( $indicators as $meta ) {
 			// Since the DOM is in "stored" state, we have to reparse data-mw here.
-			$dmw = DOMDataUtils::getJSONAttribute( $meta, 'data-mw', null );
+			$codec = DOMDataUtils::getCodec( $doc );
+			$dataMwAttr = DOMCompat::getAttribute( $meta, 'data-mw' );
+			$dmw = $dataMwAttr === null ? null :
+				$codec->newFromJsonString( $dataMwAttr, DOMDataUtils::getCodecHints()['data-mw'] );
 			$name = $dmw->attrs->name;
 			$iData[$name] = $dmw->html;
 		}
@@ -150,14 +157,30 @@ class ContentModelHandler extends IContentModelHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function toDOM( ParsoidExtensionAPI $extApi ): Document {
-		$doc = $this->env->getPipelineFactory()->parse(
-			// @phan-suppress-next-line PhanDeprecatedFunction not ready for topFrame yet
-			$this->env->getPageConfig()->getPageMainContent()
-		);
+	public function toDOM(
+		ParsoidExtensionAPI $extApi, ?SelectiveUpdateData $selectiveUpdateData = null
+	): Document {
+		$env = $this->env;
+		$pipelineFactory = $env->getPipelineFactory();
+
+		if ( $selectiveUpdateData ) {
+			$doc = ContentUtils::createDocument( $selectiveUpdateData->revHTML, true );
+			$env->setupTopLevelDoc( $doc );
+			$this->canonicalizeDOM( $env, $env->topLevelDoc, true );
+			$selectiveUpdateData->revDOM = $doc;
+			$doc = $pipelineFactory->selectiveDOMUpdate( $selectiveUpdateData );
+		} else {
+			$doc = $pipelineFactory->parse(
+				// @phan-suppress-next-line PhanDeprecatedFunction not ready for topFrame yet
+				$env->getPageConfig()->getPageMainContent()
+			);
+		}
 
 		// Hardcoded support for indicators
-		$this->processIndicators( $doc, $extApi );
+		// TODO: Eventually we'll want to apply this to selective updates as well
+		if ( !$selectiveUpdateData ) {
+			$this->processIndicators( $doc, $extApi );
+		}
 
 		return $doc;
 	}
@@ -197,16 +220,16 @@ class ContentModelHandler extends IContentModelHandler {
 	 * @inheritDoc
 	 */
 	public function fromDOM(
-		ParsoidExtensionAPI $extApi, ?SelserData $selserData = null
+		ParsoidExtensionAPI $extApi, ?SelectiveUpdateData $selserData = null
 	): string {
 		$env = $this->env;
-		$metrics = $env->getSiteConfig()->metrics();
-		$setupTiming = Timing::start( $metrics );
+		$siteConfig = $env->getSiteConfig();
+		$setupTiming = Timing::start( $siteConfig );
 
-		$this->canonicalizeDOM( $env, $env->topLevelDoc );
+		$this->canonicalizeDOM( $env, $env->topLevelDoc, false );
 
 		$serializerOpts = [ 'selserData' => $selserData ];
-		if ( $selserData && $selserData->oldText !== null ) {
+		if ( $selserData ) {
 			$serializer = new SelectiveSerializer( $env, $serializerOpts );
 			$this->setupSelser( $extApi, $selserData );
 			$wtsType = 'selser';
@@ -216,15 +239,19 @@ class ContentModelHandler extends IContentModelHandler {
 			$wtsType = 'noselser';
 		}
 
-		$setupTiming->end( 'html2wt.setup' );
+		$setupTiming->end( 'html2wt.setup', 'html2wt_setup_seconds', [] );
 
-		$preprocTiming = Timing::start( $metrics );
+		$preprocTiming = Timing::start( $siteConfig );
 		$this->preprocessEditedDOM( $env, $env->topLevelDoc );
-		$preprocTiming->end( 'html2wt.preprocess' );
+		$preprocTiming->end( 'html2wt.preprocess', 'html2wt_preprocess_seconds', [] );
 
-		$serializeTiming = Timing::start( $metrics );
+		$serializeTiming = Timing::start( $siteConfig );
 		$res = $serializer->serializeDOM( $env->topLevelDoc );
-		$serializeTiming->end( "html2wt.{$wtsType}.serialize" );
+		$serializeTiming->end(
+			"html2wt.{$wtsType}.serialize",
+			"html2wt_serialize_seconds",
+			[ 'wts' => $wtsType ]
+		);
 
 		return $res;
 	}

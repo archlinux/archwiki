@@ -3,7 +3,6 @@
 namespace MediaWiki\Tests\Session;
 
 use BadMethodCallException;
-use CachedBagOStuff;
 use DummySessionProvider;
 use InvalidArgumentException;
 use MediaWiki\Config\Config;
@@ -23,6 +22,7 @@ use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\NullLogger;
 use UnexpectedValueException;
+use Wikimedia\ObjectCache\CachedBagOStuff;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
@@ -48,6 +48,7 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 	/** @var TestBagOStuff */
 	protected $store;
 
+	/** @var bool */
 	protected $onSessionMetadataCalled = false;
 
 	/**
@@ -64,7 +65,7 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 	 * @param string|null $id
 	 * @return SessionBackend
 	 */
-	protected function getBackend( User $user = null, $id = null ) {
+	protected function getBackend( ?User $user = null, $id = null ) {
 		if ( !$this->config ) {
 			$this->config = new HashConfig();
 			$this->manager = null;

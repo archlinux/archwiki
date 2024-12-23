@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Tests\Unit\Settings;
 
-use ExtensionRegistry;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
 use MediaWiki\Settings\Config\PhpIniSink;
 use MediaWiki\Settings\SettingsBuilder;
@@ -17,6 +17,7 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class WikiFarmSettingsLoaderTest extends MediaWikiUnitTestCase {
 
+	/** @var array|null */
 	private $originalServerVars = null;
 
 	/**

@@ -88,7 +88,6 @@
 	"templatedata-modal-button-map": "Modifier les correspondances de données",
 	"templatedata-modal-button-importParams": "Importer les paramètres",
 	"templatedata-modal-button-removemap": "Supprimer la correspondance",
-	"templatedata-modal-button-restoreparam": "Restaurer les paramètres",
 	"templatedata-modal-button-saveparam": "Enregistrer",
 	"templatedata-modal-confirmcancel": "Êtes-vous sûr{{GENDER:||e}} de vouloir annuler vos modifications ?",
 	"templatedata-modal-current-language": "Langue actuelle : $1",

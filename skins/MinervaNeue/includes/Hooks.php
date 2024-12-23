@@ -23,17 +23,17 @@ namespace MediaWiki\Minerva;
 use ChangesList;
 use ChangesListFilterGroup;
 use DifferenceEngine;
-use ExtensionRegistry;
 use MediaWiki\Config\Config;
 use MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook;
 use MediaWiki\Hook\FetchChangesListHook;
-use MediaWiki\Hook\OutputPageBodyAttributesHook;
 use MediaWiki\Hook\PreferencesGetLayoutHook;
 use MediaWiki\Hook\UserLogoutCompleteHook;
 use MediaWiki\Html\Html;
 use MediaWiki\Minerva\Skins\SkinMinerva;
+use MediaWiki\Output\Hook\OutputPageBodyAttributesHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
@@ -193,14 +193,15 @@ class Hooks implements
 				) );
 			}
 		} else {
-			// Add default warning message to Special:UserLogin and Special:UserCreate
-			// if no warning message set.
+			// Add default notice message to Special:UserLogin and Special:UserCreate
+			// if no warning or notice message is set.
 			if (
-				!$request->getVal( 'warning' ) &&
+				!$request->getCheck( 'warning' ) &&
+				!$request->getCheck( 'notice' ) &&
 				!$special->getUser()->isRegistered() &&
 				!$request->wasPosted()
 			) {
-				$request->setVal( 'warning', 'mobile-frontend-generic-login-new' );
+				$request->setVal( 'notice', 'mobile-frontend-generic-login-new' );
 			}
 		}
 	}
@@ -269,8 +270,6 @@ class Hooks implements
 	/**
 	 * SkinPageReadyConfig hook handler
 	 *
-	 * Disable collapsible on page load
-	 *
 	 * @param Context $context
 	 * @param mixed[] &$config Associative array of configurable options
 	 */
@@ -280,7 +279,10 @@ class Hooks implements
 	): void {
 		if ( $context->getSkin() === 'minerva' ) {
 			$config['search'] = false;
-			$config['collapsible'] = false;
+			// Enable collapsible styles on Minerva. Projects are already doing this via gadgets
+			// which creates an unpredictable testing environment so it is better to match production.
+			// NOTE: This is enabled despite the well documented problems with the current design on T111565.
+			$config['collapsible'] = true;
 			$config['selectorLogoutLink'] = 'a.menu__item--logout[data-mw="interface"]';
 		}
 	}

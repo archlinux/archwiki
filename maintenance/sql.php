@@ -22,12 +22,15 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Installer\DatabaseUpdater;
 use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\ServerInfo;
 
 /**
  * Maintenance script that sends SQL queries from the specified file to the database.
@@ -77,7 +80,8 @@ class MwSql extends Maintenance {
 					break;
 				}
 			}
-			if ( $index === null || $index === $lb->getWriterIndex() ) {
+			// @phan-suppress-next-line PhanSuspiciousValueComparison
+			if ( $index === null || $index === ServerInfo::WRITER_INDEX ) {
 				$this->fatalError( "No replica DB server configured with the name '$replicaDB'." );
 			}
 		} else {
@@ -121,8 +125,9 @@ class MwSql extends Maintenance {
 			function_exists( 'readline_add_history' ) &&
 			Maintenance::posix_isatty( 0 /*STDIN*/ )
 		) {
-			$historyFile = isset( $_ENV['HOME'] ) ?
-				"{$_ENV['HOME']}/.mwsql_history" : "$IP/maintenance/.mwsql_history";
+			$home = getenv( 'HOME' );
+			$historyFile = $home ?
+				"$home/.mwsql_history" : "$IP/maintenance/.mwsql_history";
 			readline_read_history( $historyFile );
 		} else {
 			$historyFile = null;
@@ -134,6 +139,7 @@ class MwSql extends Maintenance {
 		$doDie = !Maintenance::posix_isatty( 0 );
 		$res = 1;
 		$batchCount = 0;
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $line = Maintenance::readconsole( $prompt ) ) !== false ) {
 			if ( !$line ) {
 				# User simply pressed return key
@@ -232,5 +238,7 @@ class MwSql extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MwSql::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

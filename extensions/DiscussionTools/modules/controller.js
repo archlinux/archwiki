@@ -1,10 +1,6 @@
 'use strict';
 
-var
-	$pageContainer, linksController,
-	pageThreads,
-	lastControllerScrollOffset,
-	featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {},
+const featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {},
 	MemoryStorage = require( './MemoryStorage.js' ),
 	STORAGE_EXPIRY = 60 * 60 * 24 * 30,
 	Parser = require( './Parser.js' ),
@@ -16,17 +12,22 @@ var
 	highlighter = require( './highlighter.js' ),
 	topicSubscriptions = require( './topicsubscriptions.js' ),
 	permalinks = require( './permalinks.js' ),
-	pageHandlersSetup = false,
-	pageDataCache = {},
 	defaultEditMode = mw.user.options.get( 'discussiontools-editmode' ) || mw.config.get( 'wgDiscussionToolsFallbackEditMode' ),
 	defaultVisual = defaultEditMode === 'visual',
 	enable2017Wikitext = featuresEnabled.sourcemodetoolbar,
 	overflowMenu = require( './overflowMenu.js' );
+let
+	$pageContainer, linksController,
+	pageThreads,
+	lastControllerScrollOffset,
+	pageDataCache = {},
+	pageHandlersSetup = false;
 
-var mobile = null;
+let mobile = null;
 if ( OO.ui.isMobile() && mw.config.get( 'skin' ) === 'minerva' ) {
 	mobile = require( './mobile.js' );
 }
+require( './thanks.js' );
 
 mw.messages.set( require( './controller/contLangMessages.json' ) );
 
@@ -56,7 +57,7 @@ function getApi() {
  * @return {jQuery.Promise}
  */
 function getPageData( pageName, oldId, apiParams ) {
-	var api = getApi();
+	const api = getApi();
 	apiParams = apiParams || {};
 
 	pageDataCache[ pageName ] = pageDataCache[ pageName ] || {};
@@ -64,7 +65,7 @@ function getPageData( pageName, oldId, apiParams ) {
 		return pageDataCache[ pageName ][ oldId ];
 	}
 
-	var lintPromise, transcludedFromPromise;
+	let lintPromise, transcludedFromPromise;
 	if ( oldId ) {
 		lintPromise = api.get( {
 			action: 'query',
@@ -72,38 +73,30 @@ function getPageData( pageName, oldId, apiParams ) {
 			lntcategories: 'fostered',
 			lntlimit: 1,
 			lnttitle: pageName
-		} ).then( function ( response ) {
-			return OO.getProp( response, 'query', 'linterrors' ) || [];
-		} );
+		} ).then( ( response ) => OO.getProp( response, 'query', 'linterrors' ) || [] );
 
 		transcludedFromPromise = api.get( {
 			action: 'discussiontoolspageinfo',
 			page: pageName,
 			oldid: oldId
-		} ).then( function ( response ) {
-			return OO.getProp( response, 'discussiontoolspageinfo', 'transcludedfrom' ) || {};
-		} );
+		} ).then( ( response ) => OO.getProp( response, 'discussiontoolspageinfo', 'transcludedfrom' ) || {} );
 	} else {
 		lintPromise = $.Deferred().resolve( [] ).promise();
 		transcludedFromPromise = $.Deferred().resolve( {} ).promise();
 	}
 
-	var veMetadataPromise = api.get( $.extend( {
+	const veMetadataPromise = api.get( Object.assign( {
 		action: 'visualeditor',
 		paction: 'metadata',
 		page: pageName
-	}, apiParams ) ).then( function ( response ) {
-		return OO.getProp( response, 'visualeditor' ) || [];
-	} );
+	}, apiParams ) ).then( ( response ) => OO.getProp( response, 'visualeditor' ) || [] );
 
-	var promise = $.when( lintPromise, transcludedFromPromise, veMetadataPromise )
-		.then( function ( linterrors, transcludedfrom, metadata ) {
-			return {
-				linterrors: linterrors,
-				transcludedfrom: transcludedfrom,
-				metadata: metadata
-			};
-		}, function () {
+	const promise = $.when( lintPromise, transcludedFromPromise, veMetadataPromise )
+		.then( ( linterrors, transcludedfrom, metadata ) => ( {
+			linterrors: linterrors,
+			transcludedfrom: transcludedfrom,
+			metadata: metadata
+		} ), () => {
 			// Clear on failure
 			pageDataCache[ pageName ][ oldId ] = null;
 			// Let caller handle the error
@@ -127,9 +120,9 @@ function getPageData( pageName, oldId, apiParams ) {
  *  Rejects with error data if the comment is transcluded, or there are lint errors on the page.
  */
 function checkThreadItemOnPage( pageName, oldId, threadItem ) {
-	var isNewTopic = threadItem.id === utils.NEW_TOPIC_COMMENT_ID;
-	var defaultMode = mw.user.options.get( 'discussiontools-editmode' ) || mw.config.get( 'wgDiscussionToolsFallbackEditMode' );
-	var apiParams = null;
+	const isNewTopic = threadItem.id === utils.NEW_TOPIC_COMMENT_ID;
+	const defaultMode = mw.user.options.get( 'discussiontools-editmode' ) || mw.config.get( 'wgDiscussionToolsFallbackEditMode' );
+	let apiParams = null;
 	if ( isNewTopic ) {
 		apiParams = {
 			section: 'new',
@@ -141,8 +134,8 @@ function checkThreadItemOnPage( pageName, oldId, threadItem ) {
 	}
 
 	return getPageData( pageName, oldId, apiParams )
-		.then( function ( response ) {
-			var metadata = response.metadata,
+		.then( ( response ) => {
+			const metadata = response.metadata,
 				lintErrors = response.linterrors,
 				transcludedFrom = response.transcludedfrom;
 
@@ -152,7 +145,7 @@ function checkThreadItemOnPage( pageName, oldId, threadItem ) {
 				// or if a thread item's parent changes.
 				// Data by name might be combined from two or more thread items, which would only allow us to
 				// treat them both as transcluded from unknown source, unless we check ID first.
-				var isTranscludedFrom = transcludedFrom[ threadItem.id ];
+				let isTranscludedFrom = transcludedFrom[ threadItem.id ];
 				if ( isTranscludedFrom === undefined ) {
 					isTranscludedFrom = transcludedFrom[ threadItem.name ];
 				}
@@ -166,11 +159,11 @@ function checkThreadItemOnPage( pageName, oldId, threadItem ) {
 							mw.message( 'discussiontools-error-comment-disappeared-reload' ).parse()
 					} ] } ).promise();
 				} else if ( isTranscludedFrom ) {
-					var mwTitle = isTranscludedFrom === true ? null : mw.Title.newFromText( isTranscludedFrom );
+					const mwTitle = isTranscludedFrom === true ? null : mw.Title.newFromText( isTranscludedFrom );
 					// If this refers to a template rather than a subpage, we never want to edit it
-					var follow = mwTitle && mwTitle.getNamespaceId() !== mw.config.get( 'wgNamespaceIds' ).template;
+					const follow = mwTitle && mwTitle.getNamespaceId() !== mw.config.get( 'wgNamespaceIds' ).template;
 
-					var transcludedErrMsg;
+					let transcludedErrMsg;
 					if ( follow ) {
 						transcludedErrMsg = mw.message(
 							'discussiontools-error-comment-is-transcluded-title',
@@ -200,7 +193,7 @@ function checkThreadItemOnPage( pageName, oldId, threadItem ) {
 
 				if ( lintErrors.length ) {
 					// We currently only request the first error
-					var lintType = lintErrors[ 0 ].category;
+					const lintType = lintErrors[ 0 ].category;
 
 					return $.Deferred().reject( 'lint', { errors: [ {
 						code: 'lint',
@@ -234,8 +227,8 @@ function getCheckboxesPromise( pageName, oldId ) {
 	return getPageData(
 		pageName,
 		oldId
-	).then( function ( pageData ) {
-		var data = pageData.metadata,
+	).then( ( pageData ) => {
+		const data = pageData.metadata,
 			checkboxesDef = {};
 
 		mw.messages.set( data.checkboxesMessages );
@@ -246,9 +239,8 @@ function getCheckboxesPromise( pageName, oldId ) {
 			// Override the label with a more verbose one to distinguish this from topic subscriptions (T290712)
 			checkboxesDef.wpWatchthis[ 'label-message' ] = 'discussiontools-replywidget-watchthis';
 		}
-		return mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
-			return mw.libs.ve.targetLoader.createCheckboxFields( checkboxesDef );
-		} );
+		return mw.loader.using( 'ext.visualEditor.targetLoader' )
+			.then( () => mw.libs.ve.targetLoader.createCheckboxFields( checkboxesDef ) );
 		// TODO: createCheckboxField doesn't make links in the label open in a new
 		// window as that method currently lives in ve.utils
 	} );
@@ -260,22 +252,24 @@ function getCheckboxesPromise( pageName, oldId ) {
  * @return {string[]}
  */
 function getReplyWidgetModules() {
-	var veConf = mw.config.get( 'wgVisualEditorConfig' ),
-		modules = [ 'ext.discussionTools.ReplyWidget' ]
-			.concat( veConf.pluginModules.filter( mw.loader.getState ) );
-
+	const modules = [];
 	if ( OO.ui.isMobile() ) {
-		modules = [
+		modules.push(
 			'ext.visualEditor.core.mobile',
 			'ext.visualEditor.mwextensions'
-		].concat( modules );
+		);
 	} else {
-		modules = [
+		modules.push(
 			'ext.visualEditor.core.desktop',
 			'ext.visualEditor.desktopTarget',
 			'ext.visualEditor.mwextensions.desktop'
-		].concat( modules );
+		);
 	}
+	modules.push( 'ext.discussionTools.ReplyWidget' );
+
+	const veConf = mw.config.get( 'wgVisualEditorConfig' );
+	modules.push( ...veConf.pluginModules.filter( mw.loader.getState ) );
+
 	return modules;
 }
 
@@ -283,16 +277,16 @@ function getReplyWidgetModules() {
  * Initialize Discussion Tools features
  *
  * @param {jQuery} $container Page container
- * @param {Object<string,Mixed>} [state] Page state data object
+ * @param {Object<string,any>} [state] Page state data object
  * @param {string} [state.repliedTo] The comment ID that was just replied to
  * @param {boolean} [state.tempUserCreated] Whether a temp user was just created
  */
 function init( $container, state ) {
-	var
+	let
 		activeCommentId = null,
-		activeController = null,
-		// Loads later to avoid circular dependency
-		CommentController = require( './CommentController.js' ),
+		activeController = null;
+	// Loads later to avoid circular dependency
+	const CommentController = require( './CommentController.js' ),
 		NewTopicController = require( './NewTopicController.js' );
 
 	// We may be re-initializing after posting a new comment, so clear the cache, because
@@ -312,7 +306,7 @@ function init( $container, state ) {
 	linksController = new ReplyLinksController( $pageContainer );
 	permalinks.init( $pageContainer );
 
-	linksController.on( 'link-interact', function () {
+	linksController.on( 'link-interact', () => {
 		// Preload page metadata when the user is about to use a link, to make the tool load faster.
 		// NOTE: As of January 2023, this is an EXPENSIVE API CALL. It must not be done on every
 		// pageview, as that would generate enough load to take down Wikimedia sites (T325477).
@@ -324,9 +318,9 @@ function init( $container, state ) {
 		);
 	} );
 
-	var parser = new Parser( require( './parser/data.json' ) );
+	const parser = new Parser( require( './parser/data.json' ) );
 
-	var commentNodes = $pageContainer[ 0 ].querySelectorAll( '[data-mw-thread-id]' );
+	const commentNodes = $pageContainer[ 0 ].querySelectorAll( '[data-mw-thread-id]' );
 	pageThreads = ThreadItemSet.static.newFromJSON( mw.config.get( 'wgDiscussionToolsPageThreads' ) || [], $pageContainer[ 0 ], parser );
 
 	if ( featuresEnabled.topicsubscription ) {
@@ -353,17 +347,18 @@ function init( $container, state ) {
 	 *
 	 * @param {ThreadItem} comment
 	 * @param {jQuery} $link Add section link for new topic controller
-	 * @param {string} [mode] Optionally force a mode, 'visual' or 'source'
-	 * @param {boolean} [hideErrors] Suppress errors, e.g. when restoring auto-save
-	 * @param {boolean} [suppressNotifications] Don't notify the user if recovering auto-save
+	 * @param {Object} [options] Options, see CommentController
+	 * @param {string} [options.mode] Optionally force a mode, 'visual' or 'source'
+	 * @param {boolean} [options.hideErrors] Suppress errors, e.g. when restoring auto-save
+	 * @param {boolean} [options.suppressNotifications] Don't notify the user if recovering auto-save
 	 * @param {MemoryStorage} [storage] Storage object for autosave
 	 */
-	function setupController( comment, $link, mode, hideErrors, suppressNotifications, storage ) {
-		var commentController, $addSectionLink;
-
+	function setupController( comment, $link, options, storage ) {
 		if ( !storage ) {
 			storage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + comment.id, STORAGE_EXPIRY );
 		}
+
+		let commentController, $addSectionLink;
 		if ( comment.id === utils.NEW_TOPIC_COMMENT_ID ) {
 			// eslint-disable-next-line no-jquery/no-global-selector
 			$addSectionLink = $( '#ca-addsection' ).find( 'a' );
@@ -378,7 +373,7 @@ function init( $container, state ) {
 		activeController = commentController;
 		linksController.setActiveLink( $link );
 
-		commentController.on( 'teardown', function ( teardownMode ) {
+		commentController.on( 'teardown', ( teardownMode ) => {
 			activeCommentId = null;
 			activeController = null;
 
@@ -390,12 +385,10 @@ function init( $container, state ) {
 				linksController.focusLink( $link );
 			}
 		} );
-		commentController.on( 'reloadPage', function () {
-			mw.dt.initState.newCommentIds = commentController.newComments.map( function ( cmt ) {
-				return cmt.id;
-			} );
+		commentController.on( 'reloadPage', () => {
+			mw.dt.initState.newCommentIds = commentController.newComments.map( ( cmt ) => cmt.id );
 			// Teardown active reply widget(s)
-			commentController.replyWidgetPromise.then( function ( replyWidget ) {
+			commentController.replyWidgetPromise.then( ( replyWidget ) => {
 				lastControllerScrollOffset = $( commentController.newListItem ).offset().top;
 				replyWidget.teardown( 'refresh' );
 				// Only fetch the last now "good" revision, on which we know the parent comment still exists.
@@ -404,7 +397,7 @@ function init( $container, state ) {
 			} );
 		} );
 
-		commentController.setup( mode, hideErrors, suppressNotifications );
+		commentController.setup( options );
 		if ( lastControllerScrollOffset ) {
 			$( document.documentElement ).scrollTop(
 				$( document.documentElement ).scrollTop() +
@@ -415,10 +408,10 @@ function init( $container, state ) {
 	}
 
 	function newTopicComment( data ) {
-		var comment = new HeadingItem( {}, 2 );
+		const comment = new HeadingItem( {}, 2 );
 		comment.id = utils.NEW_TOPIC_COMMENT_ID;
 		comment.isNewTopic = true;
-		$.extend( comment, data );
+		Object.assign( comment, data );
 		return comment;
 	}
 
@@ -426,7 +419,7 @@ function init( $container, state ) {
 	//
 	// TODO: Allow users to use multiple reply widgets simultaneously.
 	// Currently submitting a reply from one widget would also destroy the other ones.
-	linksController.on( 'link-click', function ( commentId, $link, data ) {
+	linksController.on( 'link-click', ( commentId, $link, data ) => {
 		// If the reply widget is already open, activate it.
 		// Reply links are also made unclickable using 'pointer-events' in CSS, but that doesn't happen
 		// for new section links, because we don't have a good way of visually disabling them.
@@ -435,7 +428,7 @@ function init( $container, state ) {
 			return;
 		}
 
-		var teardownPromise = $.Deferred().resolve();
+		let teardownPromise = $.Deferred().resolve();
 		if ( commentId === utils.NEW_TOPIC_COMMENT_ID ) {
 			// If this is a new topic link, and a reply widget is open, attempt to close it first.
 			if ( activeController ) {
@@ -450,17 +443,15 @@ function init( $container, state ) {
 		}
 
 		if ( mobile ) {
-			teardownPromise = teardownPromise.then( function () {
-				return mobile.closeLedeSectionDialog();
-			} );
+			teardownPromise = teardownPromise.then( () => mobile.closeLedeSectionDialog() );
 		}
 
-		teardownPromise.then( function () {
+		teardownPromise.then( () => {
 			// If another reply widget is open (or opening), do nothing.
 			if ( activeController ) {
 				return;
 			}
-			var comment;
+			let comment;
 			if ( commentId !== utils.NEW_TOPIC_COMMENT_ID ) {
 				comment = pageThreads.findCommentById( commentId );
 			} else {
@@ -475,52 +466,56 @@ function init( $container, state ) {
 		} );
 	} );
 
-	var mobilePromise = OO.ui.isMobile() && mw.loader.getState( 'mobile.init' ) ?
+	const mobilePromise = OO.ui.isMobile() && mw.loader.getState( 'mobile.init' ) ?
 		mw.loader.using( 'mobile.init' ) :
 		$.Deferred().resolve().promise();
 
 	// Restore autosave
-	( function () {
-		if ( mw.config.get( 'wgAction' ) !== 'view' ) {
-			// Don't do anything when we're editing/previewing
-			return;
-		}
-
-		for ( let i = 0; i < pageThreads.threadItems.length; i++ ) {
-			const comment = pageThreads.threadItems[ i ];
+	// Don't do anything when we're editing/previewing
+	if ( mw.config.get( 'wgAction' ) === 'view' ) {
+		pageThreads.threadItems.every( ( comment, i ) => {
 			const replyStorage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + comment.id, STORAGE_EXPIRY );
 			if ( replyStorage.get( 'saveable' ) ) {
 				const mode = replyStorage.get( 'mode' );
 				const $link = $( commentNodes[ i ] );
 				// Wait for mobile section toggling code to be ready
-				mobilePromise.then( function () {
+				mobilePromise.then( () => {
 					if ( OO.ui.isMobile() ) {
 						const urlFragment = mw.util.escapeIdForLink( comment.id );
 						// Force the section to expand on mobile (T338920)
 						location.hash = '#' + urlFragment;
 					}
 					// Wait for the 'hashchange' event to be handled by the mobile code
-					setTimeout( function () {
-						setupController( comment, $link, mode, true, !state.firstLoad, replyStorage );
+					setTimeout( () => {
+						setupController( comment, $link, {
+							mode: mode,
+							hideErrors: true,
+							suppressNotifications: !state.firstLoad
+						}, replyStorage );
 					} );
 				} );
-				break;
+				return false;
 			}
-		}
+			return true;
+		} );
 		const newTopicStorage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + utils.NEW_TOPIC_COMMENT_ID, STORAGE_EXPIRY );
 		if ( newTopicStorage.get( 'saveable' ) || newTopicStorage.get( 'title' ) ) {
 			const mode = newTopicStorage.get( 'mode' );
-			setupController( newTopicComment(), $( [] ), mode, true, !state.firstLoad, newTopicStorage );
+			setupController( newTopicComment(), $( [] ), {
+				mode: mode,
+				hideErrors: true,
+				suppressNotifications: !state.firstLoad
+			}, newTopicStorage );
 		} else if ( mw.config.get( 'wgDiscussionToolsStartNewTopicTool' ) ) {
 			const data = linksController.parseNewTopicLink( location.href );
 			setupController( newTopicComment( data ), $( [] ) );
 		}
-	}() );
+	}
 
 	// For debugging (now unused in the code)
 	mw.dt.pageThreads = pageThreads;
 
-	mobilePromise.then( function () {
+	mobilePromise.then( () => {
 		if ( state.repliedTo ) {
 			highlighter.highlightPublishedComment( pageThreads, state.repliedTo );
 
@@ -546,24 +541,24 @@ function init( $container, state ) {
 		}
 	} );
 
-	var dismissableNotificationPromise = null;
+	let dismissableNotificationPromise = null;
 	// Page-level handlers only need to be setup once
 	if ( !pageHandlersSetup ) {
-		$( window ).on( 'popstate', function () {
+		$( window ).on( 'popstate', () => {
 			// Delay with setTimeout() because "the Document's target element" (corresponding to the :target
 			// selector in CSS) is not yet updated to match the URL when handling a 'popstate' event.
-			setTimeout( function () {
+			setTimeout( () => {
 				highlighter.highlightTargetComment( pageThreads, true );
 			} );
 		} );
 		// eslint-disable-next-line no-jquery/no-global-selector
-		$( 'body' ).on( 'click', function ( e ) {
+		$( 'body' ).on( 'click', ( e ) => {
 			if ( utils.isUnmodifiedLeftClick( e ) && !e.target.closest( 'a' ) ) {
 				// Remove the highlight and the hash from the URL, unless clicking on another link
 				highlighter.clearHighlightTargetComment( pageThreads );
 			}
 			if ( dismissableNotificationPromise ) {
-				dismissableNotificationPromise.then( function ( notif ) {
+				dismissableNotificationPromise.then( ( notif ) => {
 					notif.close();
 				} );
 				dismissableNotificationPromise = null;
@@ -572,10 +567,10 @@ function init( $container, state ) {
 		pageHandlersSetup = true;
 	}
 	if ( state.firstLoad ) {
-		mobilePromise.then( function () {
-			var findCommentQuery;
-			var isHeading = false;
-			var highlightResult = highlighter.highlightTargetComment( pageThreads );
+		mobilePromise.then( () => {
+			let findCommentQuery;
+			let isHeading = false;
+			const highlightResult = highlighter.highlightTargetComment( pageThreads );
 
 			// Hash contains a non-replaced space (should be underscore), maybe due to
 			// manual creation or a broken third party tool. Just replace the spaces
@@ -585,7 +580,7 @@ function init( $container, state ) {
 			// element, but the fixed hash does, to avoid affects on other apps which
 			// may use fragments with spaces.
 			if ( location.hash && !mw.util.getTargetFromFragment() && location.hash.indexOf( '%20' ) !== -1 ) {
-				var fixedHash = location.hash.slice( 1 ).replace( /%20/g, '_' );
+				const fixedHash = location.hash.slice( 1 ).replace( /%20/g, '_' );
 				if ( mw.util.getTargetFromFragment( fixedHash ) ) {
 					location.hash = fixedHash;
 				}
@@ -597,8 +592,8 @@ function init( $container, state ) {
 				// Not a DT comment
 				highlightResult.highlighted.length === 0 && highlightResult.requested.length === 0
 			) {
-				var fragment = location.hash.slice( 1 );
-				var ignorePatterns = [
+				const fragment = location.hash.slice( 1 );
+				const ignorePatterns = [
 					// A leading '/' or '!/' usually means a application route, e.g. /media, or /editor.
 					// We can't rule out a heading title (T349498), but they are unlikely
 					/^!?\//,
@@ -613,9 +608,7 @@ function init( $container, state ) {
 					// Gadget: RedWarn
 					/^noticeApplied-/
 				];
-				if ( ignorePatterns.every( function ( pattern ) {
-					return !pattern.test( fragment );
-				} ) ) {
+				if ( ignorePatterns.every( ( pattern ) => !pattern.test( fragment ) ) ) {
 					findCommentQuery = {
 						heading: mw.util.percentDecodeFragment( fragment ).replace( / /g, '_' ),
 						page: mw.config.get( 'wgRelevantPageName' )
@@ -630,37 +623,35 @@ function init( $container, state ) {
 			}
 			if ( findCommentQuery ) {
 				// TODO: Support multiple commentIds being requested and not all being found
-				var dtConf = require( './config.json' );
-				var findCommentRequest = dtConf.enablePermalinksFrontend ?
-					getApi().get( $.extend( {
+				const dtConf = require( './config.json' );
+				const findCommentRequest = dtConf.enablePermalinksFrontend ?
+					getApi().get( Object.assign( {
 						action: 'discussiontoolsfindcomment'
 					}, findCommentQuery ) ) :
 					$.Deferred().resolve( [ {} ] ).promise();
 				dismissableNotificationPromise = $.when(
 					findCommentRequest,
 					mw.loader.using( 'mediawiki.notification' )
-				).then( function ( results ) {
-					var result = results[ 0 ];
-					var titles = [];
+				).then( ( results ) => {
+					const result = results[ 0 ];
+					let titles = [];
 					if ( result.discussiontoolsfindcomment ) {
-						titles = result.discussiontoolsfindcomment.map( function ( threadItemData ) {
+						titles = result.discussiontoolsfindcomment.map( ( threadItemData ) => {
 							// Only show items that appear on the current revision of their page
 							// and are not transcluded from another page
 							if ( threadItemData.couldredirect ) {
-								var title = mw.Title.newFromText(
+								const title = mw.Title.newFromText(
 									threadItemData.title + '#' +
 									mw.util.escapeIdForLink( threadItemData.id )
 								);
 								return title;
 							}
 							return null;
-						} ).filter( function ( url ) {
-							return url;
-						} );
+						} ).filter( ( url ) => url );
 					}
 					if ( titles.length ) {
-						var $list = $( '<ul>' );
-						var $notification = $( '<div>' ).append(
+						const $list = $( '<ul>' );
+						const $notification = $( '<div>' ).append(
 							$( '<p>' ).text( mw.message(
 								isHeading ?
 									'discussiontools-target-heading-found-moved' :
@@ -669,7 +660,7 @@ function init( $container, state ) {
 							).text() ),
 							$list
 						);
-						titles.forEach( function ( title ) {
+						titles.forEach( ( title ) => {
 							$list.append(
 								$( '<li>' ).append(
 									$( '<a>' ).attr( 'href', title.getUrl() ).text( title.getPrefixedText() )
@@ -694,12 +685,10 @@ function init( $container, state ) {
 				} );
 			}
 			if ( highlightResult.highlighted.length === 0 && ( highlightResult.requested.length > 1 || highlightResult.requestedSince ) ) {
-				dismissableNotificationPromise = mw.loader.using( 'mediawiki.notification' ).then( function () {
-					return mw.notification.notify(
-						mw.message( 'discussiontools-target-comments-missing' ).text(),
-						{ type: 'warn', autoHide: false }
-					);
-				} );
+				dismissableNotificationPromise = mw.loader.using( 'mediawiki.notification' ).then( () => mw.notification.notify(
+					mw.message( 'discussiontools-target-comments-missing' ).text(),
+					{ type: 'warn', autoHide: false }
+				) );
 			}
 		} );
 	}
@@ -719,7 +708,7 @@ function updatePageContents( $container, data ) {
 
 	// eslint-disable-next-line no-jquery/no-global-selector
 	if ( $( '#catlinks' ).length ) {
-		var $categories = $( $.parseHTML( data.parse.categorieshtml ) );
+		const $categories = $( $.parseHTML( data.parse.categorieshtml ) );
 		mw.hook( 'wikipage.categories' ).fire( $categories );
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '#catlinks' ).replaceWith( $categories );
@@ -754,24 +743,24 @@ function updatePageContents( $container, data ) {
 	// Copied from ve.init.mw.DesktopArticleTarget.prototype.saveComplete
 	// TODO: Upstream this to core/skins, triggered by a hook (wikipage.content?)
 	// eslint-disable-next-line no-jquery/no-global-selector
-	$( '#t-permalink' ).add( '#coll-download-as-rl' ).find( 'a' ).each( function () {
-		var permalinkUrl = new URL( this.href );
+	$( '#t-permalink' ).add( '#coll-download-as-rl' ).find( 'a' ).each( ( i, link ) => {
+		const permalinkUrl = new URL( link.href );
 		permalinkUrl.searchParams.set( 'oldid', data.parse.revid );
-		$( this ).attr( 'href', permalinkUrl.toString() );
+		$( link ).attr( 'href', permalinkUrl.toString() );
 	} );
 
-	var url = new URL( location.href );
+	const url = new URL( location.href );
 	url.searchParams.delete( 'oldid' );
 
 	// If there are any other query parameters left, re-use that URL object.
 	// Otherwise use the canonical style view url (T44553, T102363).
-	var keys = [];
-	url.searchParams.forEach( function ( val, key ) {
+	const keys = [];
+	url.searchParams.forEach( ( val, key ) => {
 		keys.push( key );
 	} );
 
 	if ( !keys.length || ( keys.length === 1 && keys[ 0 ] === 'title' ) ) {
-		var viewUrl = new URL( mw.util.getUrl( mw.config.get( 'wgRelevantPageName' ) ), document.baseURI );
+		const viewUrl = new URL( mw.util.getUrl( mw.config.get( 'wgRelevantPageName' ) ), document.baseURI );
 		viewUrl.hash = location.hash;
 		history.pushState( null, '', viewUrl );
 	} else {
@@ -799,7 +788,7 @@ function refreshPageContents( oldId ) {
 		prop: [ 'text', 'revid', 'categorieshtml', 'sections', 'displaytitle', 'subtitle', 'modules', 'jsconfigvars' ],
 		page: !oldId ? mw.config.get( 'wgRelevantPageName' ) : undefined,
 		oldid: oldId || undefined
-	} ).then( function ( parseResp ) {
+	} ).then( ( parseResp ) => {
 		updatePageContents( $pageContainer, parseResp );
 	} );
 }
@@ -816,7 +805,7 @@ function update( data, threadItem, pageName, replyWidget ) {
 	function logSaveSuccess() {
 		mw.track( 'editAttemptStep', {
 			action: 'saveSuccess',
-			timing: mw.now() - replyWidget.saveInitiated,
+			timing: mw.now() - replyWidget.commentController.saveInitiated,
 			// eslint-disable-next-line camelcase
 			revision_id: data.newrevid
 		} );
@@ -832,7 +821,7 @@ function update( data, threadItem, pageName, replyWidget ) {
 		replyWidget.unbindBeforeUnloadHandler();
 		replyWidget.clearStorage();
 		replyWidget.setPending( true );
-		var params = { dtrepliedto: threadItem.id };
+		const params = { dtrepliedto: threadItem.id };
 		if ( data.tempusercreated ) {
 			params.dttempusercreated = '1';
 		}
@@ -849,7 +838,7 @@ function update( data, threadItem, pageName, replyWidget ) {
 	mw.dt.initState.tempUserCreated = data.tempusercreated;
 
 	// Update page state
-	var pageUpdated = $.Deferred();
+	const pageUpdated = $.Deferred();
 	if ( pageName === mw.config.get( 'wgRelevantPageName' ) ) {
 		// We can use the result from the VisualEditor API
 		updatePageContents( $pageContainer, {
@@ -877,15 +866,13 @@ function update( data, threadItem, pageName, replyWidget ) {
 
 	} else {
 		// We saved to another page, we must purge and then fetch the current page
-		var api = getApi();
+		const api = getApi();
 		api.post( {
 			action: 'purge',
 			titles: mw.config.get( 'wgRelevantPageName' )
-		} ).then( function () {
-			return refreshPageContents();
-		} ).then( function () {
+		} ).then( () => refreshPageContents() ).then( () => {
 			pageUpdated.resolve();
-		} ).catch( function () {
+		} ).catch( () => {
 			// We saved the reply, but couldn't purge or fetch the updated page. Seems difficult to
 			// explain this problem. Redirect to the page where the user can at least see their reply…
 			window.location = mw.util.getUrl( pageName, { dtrepliedto: threadItem.id } );
@@ -896,7 +883,7 @@ function update( data, threadItem, pageName, replyWidget ) {
 
 	// User logged in if module loaded.
 	if ( mw.loader.getState( 'mediawiki.page.watch.ajax' ) === 'ready' ) {
-		var watch = require( 'mediawiki.page.watch.ajax' );
+		const watch = require( 'mediawiki.page.watch.ajax' );
 
 		watch.updateWatchLink(
 			mw.Title.newFromText( pageName ),

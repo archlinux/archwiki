@@ -21,13 +21,13 @@
 	 * @hideconstructor
 	 */
 
-	var inspect = mw.inspect,
+	const inspect = mw.inspect,
 		byteLength = require( 'mediawiki.String' ).byteLength,
 		hasOwn = Object.prototype.hasOwnProperty;
 
 	function sortByProperty( array, prop, descending ) {
-		var order = descending ? -1 : 1;
-		return array.sort( function ( a, b ) {
+		const order = descending ? -1 : 1;
+		return array.sort( ( a, b ) => {
 			if ( a[ prop ] === undefined || b[ prop ] === undefined ) {
 				// Sort undefined to the end, regardless of direction
 				return a[ prop ] !== undefined ? -1 : b[ prop ] !== undefined ? 1 : 0;
@@ -37,14 +37,14 @@
 	}
 
 	function humanSize( bytesInput ) {
-		var i,
-			bytes = +bytesInput,
-			units = [ '', ' KiB', ' MiB', ' GiB', ' TiB', ' PiB' ];
+		let bytes = +bytesInput;
+		const units = [ '', ' KiB', ' MiB', ' GiB', ' TiB', ' PiB' ];
 
 		if ( bytes === 0 || isNaN( bytes ) ) {
 			return bytesInput;
 		}
 
+		let i;
 		for ( i = 0; bytes >= 1024; bytes /= 1024 ) {
 			i++;
 		}
@@ -62,18 +62,18 @@
 	 * @method mediawiki.inspect.getDependencyGraph
 	 */
 	inspect.getDependencyGraph = function () {
-		var modules = inspect.getLoadedModules(),
+		const modules = inspect.getLoadedModules(),
 			graph = {};
 
-		modules.forEach( function ( moduleName ) {
-			var dependencies = mw.loader.moduleRegistry[ moduleName ].dependencies || [];
+		modules.forEach( ( moduleName ) => {
+			const dependencies = mw.loader.moduleRegistry[ moduleName ].dependencies || [];
 
 			if ( !hasOwn.call( graph, moduleName ) ) {
 				graph[ moduleName ] = { requiredBy: [] };
 			}
 			graph[ moduleName ].requires = dependencies;
 
-			dependencies.forEach( function ( depName ) {
+			dependencies.forEach( ( depName ) => {
 				if ( !hasOwn.call( graph, depName ) ) {
 					graph[ depName ] = { requiredBy: [] };
 				}
@@ -98,7 +98,7 @@
 		//
 		// The module declarator function is stored by mw.loader.implement(), allowing easy
 		// computation of the exact size.
-		var module = mw.loader.moduleRegistry[ moduleName ];
+		const module = mw.loader.moduleRegistry[ moduleName ];
 
 		if ( module.state !== 'ready' ) {
 			return null;
@@ -122,13 +122,13 @@
 	 * @method mediawiki.inspect.auditSelectors
 	 */
 	inspect.auditSelectors = function ( css ) {
-		var selectors = { total: 0, matched: 0 },
+		const selectors = { total: 0, matched: 0 },
 			style = document.createElement( 'style' );
 
 		style.textContent = css;
 		document.body.appendChild( style );
-		var cssRules = style.sheet.cssRules;
-		for ( var index in cssRules ) {
+		const cssRules = style.sheet.cssRules;
+		for ( const index in cssRules ) {
 			const rule = cssRules[ index ];
 			selectors.total++;
 			// document.querySelector() on prefixed pseudo-elements can throw exceptions
@@ -153,9 +153,7 @@
 	 * @method mediawiki.inspect.getLoadedModules
 	 */
 	inspect.getLoadedModules = function () {
-		return mw.loader.getModuleNames().filter( function ( module ) {
-			return mw.loader.getState( module ) === 'ready';
-		} );
+		return mw.loader.getModuleNames().filter( ( module ) => mw.loader.getState( module ) === 'ready' );
 	};
 
 	/**
@@ -178,11 +176,11 @@
 	 * @method mediawiki.inspect.runReports
 	 */
 	inspect.runReports = function () {
-		var reports = arguments.length > 0 ?
+		const reports = arguments.length > 0 ?
 			Array.prototype.slice.call( arguments ) :
 			Object.keys( inspect.reports );
 
-		reports.forEach( function ( name ) {
+		reports.forEach( ( name ) => {
 			if ( console.group ) {
 				console.group( 'mw.inspect ' + name + ' report' );
 			} else {
@@ -207,12 +205,12 @@
 	 */
 	inspect.grep = function ( pattern ) {
 		if ( typeof pattern.test !== 'function' ) {
-			// eslint-disable-next-line security/detect-non-literal-regexp
+
 			pattern = new RegExp( mw.util.escapeRegExp( pattern ), 'g' );
 		}
 
-		return inspect.getLoadedModules().filter( function ( moduleName ) {
-			var module = mw.loader.moduleRegistry[ moduleName ];
+		return inspect.getLoadedModules().filter( ( moduleName ) => {
+			const module = mw.loader.moduleRegistry[ moduleName ];
 
 			// Grep module's JavaScript
 			if ( typeof module.script === 'function' && pattern.test( module.script.toString() ) ) {
@@ -246,18 +244,16 @@
 		 */
 		size: function () {
 			// Map each module to a descriptor object.
-			var modules = inspect.getLoadedModules().map( function ( module ) {
-				return {
-					name: module,
-					size: inspect.getModuleSize( module )
-				};
-			} );
+			const modules = inspect.getLoadedModules().map( ( module ) => ( {
+				name: module,
+				size: inspect.getModuleSize( module )
+			} ) );
 
 			// Sort module descriptors by size, largest first.
 			sortByProperty( modules, 'size', true );
 
 			// Convert size to human-readable string.
-			modules.forEach( function ( module ) {
+			modules.forEach( ( module ) => {
 				module.sizeInBytes = module.size;
 				module.size = humanSize( module.size );
 			} );
@@ -272,11 +268,12 @@
 		 * @return {Object[]} CSS reports
 		 */
 		css: function () {
-			var modules = [];
+			const modules = [];
 
-			inspect.getLoadedModules().forEach( function ( name ) {
-				var css, stats, module = mw.loader.moduleRegistry[ name ];
+			inspect.getLoadedModules().forEach( ( name ) => {
+				const module = mw.loader.moduleRegistry[ name ];
 
+				let css;
 				try {
 					css = module.style.css.join();
 				} catch ( e ) {
@@ -284,7 +281,7 @@
 					return;
 				}
 
-				stats = inspect.auditSelectors( css );
+				const stats = inspect.auditSelectors( css );
 				modules.push( {
 					module: name,
 					allSelectors: stats.total,
@@ -305,11 +302,11 @@
 		 * @return {Object[]} Store stats
 		 */
 		store: function () {
-			var raw, stats = { enabled: mw.loader.store.enabled };
+			const stats = { enabled: mw.loader.store.enabled };
 			if ( stats.enabled ) {
-				$.extend( stats, mw.loader.store.stats );
+				Object.assign( stats, mw.loader.store.stats );
 				try {
-					raw = localStorage.getItem( mw.loader.store.key );
+					const raw = localStorage.getItem( mw.loader.store.key );
 					stats.totalSizeInBytes = byteLength( raw );
 					stats.totalSize = humanSize( byteLength( raw ) );
 				} catch ( e ) {}
@@ -326,28 +323,24 @@
 		 * @return {Object[]} Table rows
 		 */
 		time: function () {
-			var modules;
-
 			if ( !mw.loader.profiler ) {
 				mw.log.warn( 'mw.inspect: The time report requires $wgResourceLoaderEnableJSProfiler.' );
 				return [];
 			}
 
-			modules = inspect.getLoadedModules()
-				.map( function ( moduleName ) {
-					return mw.loader.profiler.getProfile( moduleName );
-				} )
-				.filter( function ( perf ) {
+			const modules = inspect.getLoadedModules()
+				.map( ( moduleName ) => mw.loader.profiler.getProfile( moduleName ) )
+				.filter(
 					// Exclude modules that reached "ready" state without involvement from mw.loader.
 					// This is primarily styles-only as loaded via <link rel="stylesheet">.
-					return perf !== null;
-				} );
+					( perf ) => perf !== null
+				);
 
 			// Sort by total time spent, highest first.
 			sortByProperty( modules, 'total', true );
 
 			// Add human-readable strings
-			modules.forEach( function ( module ) {
+			modules.forEach( ( module ) => {
 				module.totalInMs = module.total;
 				module.total = module.totalInMs.toLocaleString() + ' ms';
 			} );

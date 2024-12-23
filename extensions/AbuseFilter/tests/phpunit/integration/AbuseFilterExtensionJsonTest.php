@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
-use ExtensionRegistry;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Tests\ExtensionJsonTestBase;
 
 /**
@@ -16,11 +16,12 @@ class AbuseFilterExtensionJsonTest extends ExtensionJsonTestBase {
 	protected string $extensionJsonPath = __DIR__ . '/../../../extension.json';
 
 	public function provideHookHandlerNames(): iterable {
-		foreach ( $this->getExtensionJson()['HookHandlers'] ?? [] as $hookHandlerName => $specification ) {
-			if ( $hookHandlerName === 'UserMerge' && !ExtensionRegistry::getInstance()->isLoaded( 'UserMerge' ) ) {
+		$extHookHandlers = [ 'CheckUser', 'ConfirmEdit', 'Echo', 'UserMerge' ];
+		foreach ( $this->getExtensionJson()['HookHandlers'] ?? [] as $name => $specification ) {
+			if ( in_array( $name, $extHookHandlers ) && !ExtensionRegistry::getInstance()->isLoaded( $name ) ) {
 				continue;
 			}
-			yield [ $hookHandlerName ];
+			yield [ $name ];
 		}
 	}
 }

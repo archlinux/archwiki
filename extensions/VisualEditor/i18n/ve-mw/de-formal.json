@@ -12,7 +12,6 @@
 	"visualeditor-autosave-not-recovered-text": "Ihre ungespeicherten Änderungen konnten nicht wiederhergestellt werden.",
 	"visualeditor-autosave-not-recovered-title": "Die Wiederherstellung Ihrer Änderungen ist fehlgeschlagen",
 	"visualeditor-autosave-recovered-text": "Ihre ungespeicherten Änderungen wurden automatisch wiederhergestellt.",
-	"visualeditor-browserwarning": "Sie verwenden einen Browser, der vom VisualEditor nicht offiziell unterstützt wird.",
 	"visualeditor-ca-editsource-section": "Quelltext bearbeiten",
 	"visualeditor-dialog-media-alttext-section-help": "Sie können dies verwenden, um eine Textbeschreibung für Menschen zu schreiben, die das Element nicht sehen können. Die Beschreibung sollte genug für sie zum Verstehen des Zwecks und der Information sein, die vom Medienelement gegeben wird. Dies ist wichtig für blinde Benutzer und andere Menschen, die Screenreader-Software oder Nur-Text-Browser verwenden.",
 	"visualeditor-dialog-media-content-section-help": "Sie können dies verwenden, um eine Bezeichnung anzuzeigen, die neben dem Element für alle Leser angezeigt wird. Dies wird oft verwendet, um zu erklären, warum das Element für den Kontext relevant ist, in dem es angezeigt wird. Sie sollte knapp und informativ sein.",

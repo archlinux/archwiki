@@ -2,11 +2,9 @@
 
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
-use MediaWiki\Deferred\EnqueueableDataUpdate;
 use MediaWiki\Deferred\MergeableUpdate;
 use MediaWiki\Deferred\MWCallableUpdate;
 use MediaWiki\Deferred\TransactionRoundDefiningUpdate;
-use MediaWiki\Logger\LoggerFactory;
 
 /**
  * @group Database
@@ -342,41 +340,6 @@ class DeferredUpdatesTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( [ 'oti', 1, 2 ], $calls );
 	}
 
-	public function testTryOpportunisticExecute_enqueue() {
-		$this->setLogger( 'DeferredUpdates', new TestLogger( true, null, true ) );
-		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
-		$lbFactory->beginPrimaryChanges( __METHOD__ );
-		for ( $i = 1; $i <= 50; $i++ ) {
-			DeferredUpdates::addCallableUpdate( fn () => null );
-		}
-		$enqueueableUpdate = new class ( fn () => null, $this->getDb()->getDomainID() )
-			extends MWCallableUpdate
-			implements EnqueueableDataUpdate
-		{
-			private $domainId;
-
-			public function __construct( callable $callback, $domainId ) {
-				parent::__construct( $callback );
-				$this->domainId = $domainId;
-			}
-
-			public function getAsJobSpecification() {
-				return [ 'domain' => $this->domainId, 'job' => new JobSpecification( 'foo', [] ) ];
-			}
-		};
-		DeferredUpdates::addUpdate( $enqueueableUpdate );
-		for ( $i = 1; $i <= 50; $i++ ) {
-			DeferredUpdates::addCallableUpdate( fn () => null );
-		}
-		DeferredUpdates::tryOpportunisticExecute();
-		$lbFactory->commitPrimaryChanges( __METHOD__ );
-
-		$log = LoggerFactory::getInstance( 'DeferredUpdates' )->getBuffer();
-		$this->assertSame( 'Enqueued {enqueuedUpdatesCount} updates as jobs', $log[0][1] );
-		$this->assertSame( 1, $log[0][2]['enqueuedUpdatesCount'] );
-		$this->assertSame( get_class( $enqueueableUpdate ) . ': 1', $log[0][2]['enqueuedUpdates'] );
-	}
-
 	/**
 	 * @covers \MediaWiki\Deferred\MWCallableUpdate
 	 */
@@ -391,7 +354,6 @@ class DeferredUpdatesTest extends MediaWikiIntegrationTestCase {
 		DeferredUpdates::attemptUpdate(
 			new MWCallableUpdate(
 				static function () use ( $lbFactory, $fname, &$called ) {
-					$lbFactory->flushReplicaSnapshots( $fname );
 					$lbFactory->commitPrimaryChanges( $fname );
 					$called = true;
 				},

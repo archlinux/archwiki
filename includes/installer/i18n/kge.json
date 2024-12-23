@@ -107,7 +107,6 @@
 	"config-install-database": "Nyiapko basis data",
 	"config-install-schema": "Ngguwai skema",
 	"config-install-pg-schema-not-exist": "Skema PostgreSQL makka.",
-	"config-install-pg-commit": "Ngguwai parubahan",
 	"config-install-pg-plpgsql": "Mariksa bahasa PL/pgSQL",
 	"config-help": "katulungan",
 	"config-help-tooltip": "picit untuk mborakko",

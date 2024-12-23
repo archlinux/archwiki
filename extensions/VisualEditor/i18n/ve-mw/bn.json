@@ -13,6 +13,7 @@
 			"NahidSultan",
 			"Nasir8891",
 			"RYasmeen (WMF)",
+			"RiazACU",
 			"Runab",
 			"Sayak Sarkar",
 			"Sayma Jahan",
@@ -21,8 +22,7 @@
 			"YahyA",
 			"Yahya",
 			"আজিজ",
-			"আফতাবুজ্জামান",
-			"RiazACU"
+			"আফতাবুজ্জামান"
 		]
 	},
 	"collabpad-doctitle": "কোলাবপ্যাড: $1",
@@ -49,7 +49,6 @@
 	"visualeditor-autosave-recovered-text": "আপনার অসংরক্ষিত পরিবর্তনগুলি স্বয়ংক্রিয়ভাবে পুনরুদ্ধার করা হয়েছে।",
 	"visualeditor-autosave-recovered-title": "পরিবর্তন পুনরুদ্ধার করা হয়েছে",
 	"visualeditor-backbutton-tooltip": "ফিরে যান",
-	"visualeditor-browserwarning": "আপনি এমন একটি ব্রাউজার ব্যবহার করছেন যা অফিসিয়ালি এই সম্পাদক সমর্থন করে না।",
 	"visualeditor-ca-createlocaldescriptionsource": "স্থানীয় বিবরণের উৎস যোগ করুন",
 	"visualeditor-ca-createsource": "উৎস তৈরি করুন",
 	"visualeditor-ca-editlocaldescriptionsource": "স্থানীয় বিবরণের উৎস সম্পাদনা করুন",
@@ -62,6 +61,7 @@
 	"visualeditor-changedesc-mwtransclusion": "টেমপ্লেট প্যারামিটার পরিবর্তিত হয়েছে",
 	"visualeditor-desc": "মিডিয়াউইকির জন্য দৃশ্যমান সম্পাদনা",
 	"visualeditor-descriptionpagelink": "Project:দৃশ্যমান সম্পাদনা",
+	"visualeditor-dialog-extension-abandonedit": "আপনি কি নিশ্চিত যে আপনি আপনার পরিবর্তনগুলি প্রয়োগ না করেই এই ডায়ালগটি বন্ধ করতে চান?",
 	"visualeditor-dialog-media-alttext-checkbox": "বিকল্প পাঠ্য হিসাবে ক্যাপশন ব্যবহার করুন",
 	"visualeditor-dialog-media-alttext-section": "বিকল্প লেখা",
 	"visualeditor-dialog-media-alttext-section-help": "যারা এই আইটেমটি দেখতে পাবে না তাদের জন্য একটি পাঠ্য বিবরণ লিখতে আপনি এটি ব্যবহার করতে পারেন। মিডিয়া আইটেম দ্বারা প্রদত্ত তথ্য এবং উদ্দেশ্য বুঝতে তাদের জন্য বিবরণটি যথেষ্ট। এটি অন্ধ ব্যবহারকারী এবং অন্যান্য এমন ব্যক্তি যারা স্ক্রিন-রিডার সফটওয়্যার অথবা পাঠ্য-শুধুমাত্র ব্রাউজার ব্যবহার করেন তাদের জন্য অতীব গুরুত্বপূর্ণ।",

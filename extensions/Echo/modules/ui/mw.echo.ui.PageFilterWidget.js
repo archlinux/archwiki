@@ -9,10 +9,10 @@
 	 * @param {mw.echo.dm.FiltersModel} filterModel Filters model
 	 * @param {string} source Symbolic name for the source
 	 * @param {Object} [config] Configuration object
-	 * @cfg {string} [title] The title of this page group, usually
+	 * @param {string} [config.title] The title of this page group, usually
 	 *  the name of the wiki that the pages belong to
-	 * @cfg {number} [unreadCount] Number of unread notifications
-	 * @cfg {number} [initialSelection] The page title of the option to select initially
+	 * @param {number} [config.unreadCount] Number of unread notifications
+	 * @param {number} [config.initialSelection] The page title of the option to select initially
 	 */
 	mw.echo.ui.PageFilterWidget = function MwEchoUiPageFilterWidget( filterModel, source, config ) {
 		config = config || {};
@@ -64,12 +64,12 @@
 	 * Populate the widget from the model
 	 */
 	mw.echo.ui.PageFilterWidget.prototype.populateDataFromModel = function () {
-		var optionWidgets = [],
+		const optionWidgets = [],
 			sourcePages = this.model.getSourcePages( this.source );
 
-		for ( var title in sourcePages ) {
-			var isUserPage = sourcePages[ title ].ns === mw.config.get( 'wgNamespaceIds' ).user;
-			var widget = new mw.echo.ui.PageNotificationsOptionWidget( {
+		for ( const title in sourcePages ) {
+			const isUserPage = sourcePages[ title ].ns === mw.config.get( 'wgNamespaceIds' ).user;
+			const widget = new mw.echo.ui.PageNotificationsOptionWidget( {
 				label: isUserPage ? sourcePages[ title ].unprefixed : title,
 				title: isUserPage ? sourcePages[ title ].unprefixed : title,
 				icon: isUserPage ? 'userAvatar' : 'article',
@@ -112,8 +112,8 @@
 	 */
 	mw.echo.ui.PageFilterWidget.prototype.setItems = function ( items ) {
 		this.clearItems();
-		for ( var i = 0; i < items.length; i++ ) {
-			var index = this.findInsertionIndex( items[ i ] );
+		for ( let i = 0; i < items.length; i++ ) {
+			const index = this.findInsertionIndex( items[ i ] );
 			this.addItems( [ items[ i ] ], index );
 		}
 
@@ -129,13 +129,9 @@
 	 * @return {number} Insertion index
 	 */
 	mw.echo.ui.PageFilterWidget.prototype.findInsertionIndex = function ( item ) {
-		var widget = this;
-
 		return OO.binarySearch(
 			this.items,
-			function ( otherItem ) {
-				return widget.sortingFunction( item, otherItem );
-			},
+			( otherItem ) => this.sortingFunction( item, otherItem ),
 			true
 		);
 	};

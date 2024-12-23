@@ -1,32 +1,32 @@
 [submodule "extensions/CheckUser"]
 	path = extensions/CheckUser
 	url = https://github.com/wikimedia/mediawiki-extensions-CheckUser.git
-	branch = REL1_42
+	branch = REL1_43
 [submodule "extensions/TitleKey"]
 	path = extensions/TitleKey
 	url = https://github.com/wikimedia/mediawiki-extensions-TitleKey.git
-	branch = REL1_42
+	branch = REL1_43
 [submodule "extensions/BounceHandler"]
 	path = extensions/BounceHandler
 	url = https://github.com/wikimedia/mediawiki-extensions-BounceHandler.git
-	branch = REL1_42
+	branch = REL1_43
 [submodule "extensions/Lockdown"]
 	path = extensions/Lockdown
 	url = https://github.com/wikimedia/mediawiki-extensions-Lockdown.git
-	branch = REL1_42
+	branch = REL1_43
 [submodule "extensions/UserMerge"]
 	path = extensions/UserMerge
 	url = https://github.com/wikimedia/mediawiki-extensions-UserMerge.git
-	branch = REL1_42
+	branch = REL1_43
 [submodule "extensions/CodeMirror"]
 	path = extensions/CodeMirror
 	url = https://github.com/wikimedia/mediawiki-extensions-CodeMirror.git
-	branch = REL1_42
+	branch = REL1_43
 [submodule "extensions/FlarumAuth"]
 	path = extensions/FlarumAuth
 	url = https://github.com/archlinux-de/mediawiki-extensions-FlarumAuth.git
-	branch = REL1_42
+	branch = REL1_43
 [submodule "extensions/DarkMode"]
 	path = extensions/DarkMode
 	url = https://github.com/wikimedia/mediawiki-extensions-DarkMode.git
-	branch = REL1_42
+	branch = REL1_43

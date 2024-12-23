@@ -153,7 +153,7 @@ class TokenUtils {
 
 	/**
 	 * This should come close to matching
-	 * {@link DOMUtils.emitsSolTransparentSingleLineWT},
+	 * {@link WTUtils::emitsSolTransparentSingleLineWT},
 	 * without the single line caveat.
 	 * @param Env $env
 	 * @param Token|string $token
@@ -161,7 +161,7 @@ class TokenUtils {
 	 */
 	public static function isSolTransparent( Env $env, $token ): bool {
 		if ( is_string( $token ) ) {
-			return (bool)preg_match( '/^\s*$/D', $token );
+			return (bool)preg_match( '/^[ \t]*$/D', $token );
 		} elseif ( self::isSolTransparentLinkTag( $token ) ) {
 			return true;
 		} elseif ( $token instanceof CommentTk && !self::isTranslationUnitMarker( $env, $token ) ) {
@@ -242,14 +242,14 @@ class TokenUtils {
 	/**
 	 * Shift TSR of a token
 	 *
-	 * Port warning: in JS this was sometimes called with $offset=undefined, which meant do
+	 * PORT-FIXME: In JS this was sometimes called with $offset=undefined, which meant do
 	 * nothing by default, except if there was a third parameter set to true, in which case it
 	 * meant the same thing as $offset = null. We can't pass in undefined in PHP, so this should
 	 * usually be handled with isset() is the caller. But isset() returns true if the variable is
 	 * null, so let's use false instead of null for whatever the previous code meant by a null
 	 * offset.
 	 *
-	 * @param Token[] $tokens
+	 * @param array<Token|string> $tokens
 	 * @param int|false $offset
 	 */
 	public static function shiftTokenTSR( array $tokens, $offset ): void {
@@ -298,9 +298,9 @@ class TokenUtils {
 					// now that $frame->srcText is always accurate?
 
 					// content offsets for ext-links
-					if ( $offset && isset( $da->extLinkContentOffsets ) ) {
-						$da->extLinkContentOffsets =
-							$da->extLinkContentOffsets->offset( $offset );
+					if ( $offset && isset( $da->tmp->extLinkContentOffsets ) ) {
+						$da->tmp->extLinkContentOffsets =
+							$da->tmp->extLinkContentOffsets->offset( $offset );
 					}
 
 					// Process attributes
@@ -507,7 +507,7 @@ class TokenUtils {
 	}
 
 	/**
-	 * @param array<Token>|array<KV>|KV|Token|DomSourceRange|KVSourceRange|SourceRange|string $input
+	 * @param array<Token|string>|array<KV>|KV|Token|DomSourceRange|KVSourceRange|SourceRange|string $input
 	 * @param callable $offsetFunc
 	 */
 	private static function collectOffsets( $input, callable $offsetFunc ): void {
@@ -525,8 +525,8 @@ class TokenUtils {
 			if ( isset( $input->dataParsoid->tsr ) ) {
 				self::collectOffsets( $input->dataParsoid->tsr, $offsetFunc );
 			}
-			if ( isset( $input->dataParsoid->extLinkContentOffsets ) ) {
-				self::collectOffsets( $input->dataParsoid->extLinkContentOffsets, $offsetFunc );
+			if ( isset( $input->dataParsoid->tmp->extLinkContentOffsets ) ) {
+				self::collectOffsets( $input->dataParsoid->tmp->extLinkContentOffsets, $offsetFunc );
 			}
 			if ( isset( $input->dataParsoid->tokens ) ) {
 				self::collectOffsets( $input->dataParsoid->tokens, $offsetFunc );
@@ -665,7 +665,7 @@ class TokenUtils {
 	 * Convert an array of key-value pairs into a hash of keys to values.
 	 * For duplicate keys, the last entry wins.
 	 * @param array<KV> $kvs
-	 * @return array<string,Token[]>|array<string,string>
+	 * @return array<string,array<Token|string>>|array<string,string>
 	 */
 	public static function kvToHash( array $kvs ): array {
 		$res = [];

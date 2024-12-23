@@ -21,6 +21,8 @@
  * @ingroup DifferenceEngine
  */
 
+use MediaWiki\Content\Content;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
@@ -28,11 +30,14 @@ use MediaWiki\Diff\TextDiffer\TextDiffer;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use OOUI\ToggleSwitchWidget;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * Renders a slot diff by doing a text diff on the native representation.
@@ -62,8 +67,8 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 
 	public const INLINE_SWITCHER_KEY = '60_mw-diff-inline-switch';
 
-	/** @var IBufferingStatsdDataFactory|null */
-	private $statsdDataFactory;
+	/** @var StatsFactory|null */
+	private $statsFactory;
 
 	/** @var HookRunner|null */
 	private $hookRunner;
@@ -103,10 +108,21 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 	}
 
 	/**
+	 * This has no effect since MW 1.43.
+	 *
+	 * @internal Use ContentHandler::createTextSlotDiffRenderer instead
 	 * @param IBufferingStatsdDataFactory $statsdDataFactory
 	 */
 	public function setStatsdDataFactory( IBufferingStatsdDataFactory $statsdDataFactory ) {
-		$this->statsdDataFactory = $statsdDataFactory;
+		wfDeprecated( __METHOD__, '1.43' );
+	}
+
+	/**
+	 * @internal Use ContentHandler::createTextSlotDiffRenderer instead
+	 * @param StatsFactory $statsFactory
+	 */
+	public function setStatsFactory( StatsFactory $statsFactory ) {
+		$this->statsFactory = $statsFactory;
 	}
 
 	/**
@@ -120,6 +136,7 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 	}
 
 	/**
+	 * @internal Use ContentHandler::createTextSlotDiffRenderer instead
 	 * @since 1.41
 	 * @param HookContainer $hookContainer
 	 */
@@ -226,7 +243,7 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 	}
 
 	/** @inheritDoc */
-	public function getDiff( Content $oldContent = null, Content $newContent = null ) {
+	public function getDiff( ?Content $oldContent = null, ?Content $newContent = null ) {
 		$this->normalizeContents( $oldContent, $newContent, TextContent::class );
 
 		$oldText = $oldContent->serialize();
@@ -295,8 +312,11 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 			$result = $this->getTextDiffInternal( $oldText, $newText );
 
 			$time = intval( ( microtime( true ) - $time ) * 1000 );
-			if ( $this->statsdDataFactory ) {
-				$this->statsdDataFactory->timing( 'diff_time', $time );
+
+			if ( $this->statsFactory ) {
+				$this->statsFactory->getTiming( 'diff_text_seconds' )
+					->copyToStatsdAt( 'diff_time' )
+					->observe( $time );
 			}
 
 			return $result;

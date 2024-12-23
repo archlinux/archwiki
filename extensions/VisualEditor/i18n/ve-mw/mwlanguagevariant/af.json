@@ -8,7 +8,7 @@
 	},
 	"visualeditor-mwlanguagevariant-name": "Taalnaam: $1",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Taalkode",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<ongeldig>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Ongeldig</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Taal",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Bestemming",
 	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Tale",

@@ -515,7 +515,7 @@ return testframework.getTestProvider( {
 	},
 	{ name = 'mw.loadJsonData, bad title (1)',
 		func = test.loadJsonData.error, args = { 0 },
-		expect = "bad argument #1 to 'mw.loadJsonData' (string expected, got nil)",
+		expect = "bad argument #1 to 'mw.loadJsonData' (string expected, got number)",
 	},
 	{ name = 'mw.loadJsonData, bad title (2)',
 		func = test.loadJsonData.error, args = { "<invalid title>" },

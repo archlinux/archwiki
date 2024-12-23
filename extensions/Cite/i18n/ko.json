@@ -7,12 +7,12 @@
 			"Hwangjy9",
 			"Ilovesabbath",
 			"Kwj2772",
+			"Maoue",
 			"MemphisA5",
 			"Revi",
 			"ToePeu",
 			"Ykhwong",
-			"아라",
-			"Maoue"
+			"아라"
 		]
 	},
 	"cite-desc": "인용에 쓰이는 <code>&lt;ref&gt;</code>와 <code>&lt;references&gt;</code> 태그를 추가합니다",
@@ -37,6 +37,12 @@
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> 태그 안에 정의된 \"$1\"이라는 이름을 가진 <code>&lt;ref&gt;</code> 태그에 내용이 없습니다.",
 	"cite-tracking-category-cite-error": "참조 오류가 있는 문서",
 	"cite-tracking-category-cite-error-desc": "이 분류가 있는 문서는 참조 태그 사용에 오류가 있습니다.",
+	"cite-reference-previews-reference": "각주",
+	"cite-reference-previews-book": "서적 참고 문헌",
+	"cite-reference-previews-journal": "저널 참조",
+	"cite-reference-previews-news": "뉴스 참조",
+	"cite-reference-previews-note": "각주",
+	"cite-reference-previews-web": "웹 참조",
 	"cite_references_link_many_format_backlink_labels": "가 나 다 라 마 바 사 아 자 차 카 타 파 하 거 너 더 러 머 버 서 어 저 처 커 터 퍼 허 고 노 도 로 모 보 소 오 조 초 코 토 포 호 구 누 두 루 무 부 수 우 주 추 쿠 투 푸 후 그 느 드 르 므 브 스 으 즈 츠 크 트 프 흐 기 니 디 리 미 비 시 이 지 치 키 티 피 히",
 	"cite_references_link_accessibility_label": "이동",
 	"cite_references_link_many_accessibility_label": "이동:",
@@ -49,5 +55,10 @@
 	"cite-wikieditor-help-content-reference-description": "각주",
 	"cite-wikieditor-help-content-named-reference-description": "이름이 지정된 각주",
 	"cite-wikieditor-help-content-rereference-description": "같은 각주의 추가 사용",
-	"cite-wikieditor-help-content-showreferences-description": "각주 표시"
+	"cite-wikieditor-help-content-showreferences-description": "각주 표시",
+	"cite-wikieditor-help-content-reference-example-extra-details": "추가 세부정보",
+	"popups-prefs-navpopups-gadget-conflict-info": "[[$1|내비게이션 팝업]] 소도구를 사용하고 있으므로 이 기능이 제공하는 미리 보기를 볼 수 없습니다. 위키에 따라 이 소도구의 이름은 조금씩 다를 수 있습니다. 문제를 계속 마주친다면 통합 계정을 포함하여 소도구와 사용자 스크립트를 검토해 주십시오.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "[[$1|내비게이션 팝업]]과 [[$1|각주 풍선말]] 소도구를 사용하고 있으므로 이 기능이 제공하는 미리 보기를 볼 수 없ㅂ니다. 위키에 따라 이 소도구의 이름은 조금씩 다를 수 있습니다. 문제를 계속 마주친다면 통합 계정을 포함하여 {{int:prefs-gadgets}} 환경 설정과 사용자 스크립트를 검토해 주십시오.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "[[$1|각주 말풍선]] 소도구가 활성화되어 있으므로 각주 미리 보기는 표시되지 않지만 문서 미리 보기는 계속 표시됩니다. 위키에 따라 소도구의 이름이 다소 다를 수 있습니다. 문제가 지속하는 경우 전역 소도구와 스크립트를 포함하여 자신의 소도구와 사용자 스크립트를 검토해 주십시오.",
+	"popups-refpreview-user-preference-label": "각주 미리 보기 활성화 (문서를 읽는 동안 각주를 빠르게 미리 보기)"
 }

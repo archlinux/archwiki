@@ -65,5 +65,7 @@
 	"scribunto-limitreport-profile-percent": "$1 %",
 	"scribunto-limitreport-logs": "Protokoly Lua",
 	"nstab-module": "Modul",
-	"tooltip-ca-nstab-module": "Zobrazit stránku modulu"
+	"tooltip-ca-nstab-module": "Zobrazit stránku modulu",
+	"namespaceinfo-description-ns828": "Jmenný prostor pro moduly kódu Lua, které lze vyvolávat z wiki stránek, a jejich dokumentaci",
+	"namespaceinfo-description-ns829": "Diskusní stránky pro moduly a dokumentaci"
 }

@@ -3,25 +3,24 @@
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 use Exception;
-use FormatJson;
 use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxInterpreter;
 use MediaWiki\Extension\Scribunto\Scribunto;
 use MediaWiki\Extension\Scribunto\ScribuntoContent;
 use MediaWiki\Extension\Scribunto\ScribuntoEngineBase;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
 use MediaWiki\Html\Html;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\PPFrame;
 use MediaWiki\Title\Title;
-use ObjectCache;
-use Parser;
-use PPFrame;
 use RuntimeException;
 use Wikimedia\ScopedCallback;
 
 abstract class LuaEngine extends ScribuntoEngineBase {
 	/**
 	 * Libraries to load. See also the 'ScribuntoExternalLibraries' hook.
-	 * @var array Maps module names to PHP classes or definition arrays
+	 * @var array<string,class-string<LibraryBase>> Maps module names to PHP classes or definition arrays
 	 */
 	protected static $libraryClasses = [
 		'mw.site' => SiteLibrary::class,
@@ -38,7 +37,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	/**
 	 * Paths for modules that may be loaded from Lua. See also the
 	 * 'ScribuntoExternalLibraryPaths' hook.
-	 * @var array Paths
+	 * @var string[] Paths
 	 */
 	protected static $libraryPaths = [
 		'.',
@@ -60,15 +59,15 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	protected $mw;
 
 	/**
-	 * @var array
+	 * @var array<string,?PPFrame>
 	 */
 	protected $currentFrames = [];
 	/**
-	 * @var array|null
+	 * @var array<string,string>|null
 	 */
 	protected $expandCache = [];
 	/**
-	 * @var array
+	 * @var array<string,array|class-string<LibraryBase>>
 	 */
 	protected $availableLibraries = [];
 
@@ -190,7 +189,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 *
 	 * @param string $moduleFileName The path to the Lua portion of the library
 	 *         (absolute, or relative to $this->getLuaLibDir())
-	 * @param array $interfaceFuncs Populates mw_interface
+	 * @param array<string,callable> $interfaceFuncs Populates mw_interface
 	 * @param array $setupOptions Passed to the modules setupInterface() method.
 	 * @return array Lua package
 	 */
@@ -254,7 +253,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @param PPFrame|null $frame If null, an empty frame with no parent will be used
 	 * @return ScopedCallback
 	 */
-	private function setupCurrentFrames( PPFrame $frame = null ) {
+	private function setupCurrentFrames( ?PPFrame $frame = null ) {
 		if ( !$frame ) {
 			$frame = $this->getParser()->getPreprocessor()->newFrame();
 		}
@@ -362,8 +361,10 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	protected function loadLibraryFromFile( $fileName ) {
 		static $cache = null;
 
+		$objectcachefactory = MediaWikiServices::getInstance()->getObjectCacheFactory();
+
 		if ( !$cache ) {
-			$cache = ObjectCache::getLocalServerInstance( CACHE_HASH );
+			$cache = $objectcachefactory->getLocalServerInstance( CACHE_HASH );
 		}
 
 		$mtime = filemtime( $fileName );
@@ -473,7 +474,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @param string $funcName The Lua function name, for use in error messages
 	 * @param array $args The argument array
 	 * @param int $index0 The zero-based argument index
-	 * @param string|array $type The allowed type names as given by gettype()
+	 * @param string|string[] $type The allowed type names as given by gettype()
 	 * @param string $msgType The type name used in the error message
 	 * @throws LuaError
 	 */
@@ -512,19 +513,21 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	/**
 	 * Instantiate and register a library.
 	 * @param string $name
-	 * @param array|string $def
+	 * @param array|class-string<LibraryBase> $def
 	 * @param bool $loadDeferred
 	 * @return array|null
 	 */
 	private function instantiatePHPLibrary( $name, $def, $loadDeferred ) {
 		$def = $this->availableLibraries[$name];
 		if ( is_string( $def ) ) {
+			/** @var LibraryBase $class */
 			$class = new $def( $this );
 		} else {
 			if ( !$loadDeferred && !empty( $def['deferLoad'] ) ) {
 				return null;
 			}
 			if ( isset( $def['class'] ) ) {
+				/** @var LibraryBase $class */
 				$class = new $def['class']( $this );
 			} else {
 				throw new RuntimeException( "No class for library \"$name\"" );
@@ -606,6 +609,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		if ( $frameId === 'empty' ) {
 			return $this->getParser()->getPreprocessor()->newFrame();
 		} elseif ( isset( $this->currentFrames[$frameId] ) ) {
+			// @phan-suppress-next-line PhanTypeMismatchReturnNullable False positive
 			return $this->currentFrames[$frameId];
 		} else {
 			throw new LuaError( 'invalid frame ID' );

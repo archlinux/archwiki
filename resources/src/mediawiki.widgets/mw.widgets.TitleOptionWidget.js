@@ -7,12 +7,13 @@
 ( function () {
 
 	/**
-	 * Creates a mw.widgets.TitleOptionWidget object.
+	 * @classdesc Title option widget.
 	 *
 	 * @class
 	 * @extends OO.ui.MenuOptionWidget
 	 *
 	 * @constructor
+	 * @description Create a mw.widgets.TitleOptionWidget object.
 	 * @param {Object} config Configuration options
 	 * @param {string} config.data Label to display
 	 * @param {string} config.url URL of page
@@ -26,7 +27,7 @@
 	 * @param {Function} [config.compare] String comparison function for query highlighting
 	 */
 	mw.widgets.TitleOptionWidget = function MwWidgetsTitleOptionWidget( config ) {
-		var icon;
+		let icon;
 
 		if ( !config.showImages ) {
 			icon = null;
@@ -41,7 +42,7 @@
 		}
 
 		// Config initialization
-		config = $.extend( {
+		config = Object.assign( {
 			icon: icon,
 			label: config.data,
 			autoFitLabel: false,
@@ -64,7 +65,7 @@
 		this.$label.attr( 'tabindex', '-1' );
 
 		// Allow opening the link in new tab, but not regular navigation.
-		this.$label.on( 'click', function ( e ) {
+		this.$label.on( 'click', ( e ) => {
 			// Don't interfere with special clicks (e.g. to open in new tab)
 			if ( !( e.which !== 1 || e.altKey || e.ctrlKey || e.shiftKey || e.metaKey ) ) {
 				e.preventDefault();

@@ -8,11 +8,11 @@
 ( function () {
 
 	/**
-	 * Creates an mw.widgets.DateInputWidget object.
+	 * @classdesc Date input widget.
 	 *
 	 * @example
 	 * // Date input widget showcase
-	 * var fieldset = new OO.ui.FieldsetLayout( {
+	 * let fieldset = new OO.ui.FieldsetLayout( {
 	 *   items: [
 	 *     new OO.ui.FieldLayout(
 	 *       new mw.widgets.DateInputWidget(),
@@ -46,12 +46,12 @@
 	 *
 	 * @example
 	 * // Accessing values in a date input widget
-	 * var dateInput = new mw.widgets.DateInputWidget();
-	 * var $label = $( '<p>' );
+	 * let dateInput = new mw.widgets.DateInputWidget();
+	 * let $label = $( '<p>' );
 	 * $( document.body ).append( $label, dateInput.$element );
 	 * dateInput.on( 'change', function () {
 	 *   // The value will always be a valid date or empty string, malformed input is ignored
-	 *   var date = dateInput.getValue();
+	 *   let date = dateInput.getValue();
 	 *   $label.text( 'Selected date: ' + ( date || '(none)' ) );
 	 * } );
 	 *
@@ -60,6 +60,7 @@
 	 * @mixes OO.ui.mixin.IndicatorElement
 	 *
 	 * @constructor
+	 * @description Create an mw.widgets.DateInputWidget object.
 	 * @param {Object} [config] Configuration options
 	 * @param {string} [config.precision='day'] Date precision to use, 'day' or 'month'
 	 * @param {string} [config.value] Day or month date (depending on `precision`), in the format 'YYYY-MM-DD'
@@ -92,7 +93,7 @@
 	 */
 	mw.widgets.DateInputWidget = function MWWDateInputWidget( config ) {
 		// Config initialization
-		config = $.extend( {
+		config = Object.assign( {
 			precision: 'day',
 			longDisplayFormat: false,
 			required: false,
@@ -104,7 +105,7 @@
 			}
 		}
 
-		var placeholderDateFormat;
+		let placeholderDateFormat;
 		if ( config.placeholderDateFormat ) {
 			placeholderDateFormat = config.placeholderDateFormat;
 		} else if ( config.inputFormat ) {
@@ -125,7 +126,7 @@
 			placeholder: placeholderDateFormat,
 			validate: this.validateDate.bind( this )
 		} );
-		this.calendar = new mw.widgets.CalendarWidget( $.extend( {
+		this.calendar = new mw.widgets.CalendarWidget( Object.assign( {
 			lazyInitOnToggle: true,
 			// Can't pass `$floatableContainer: this.$element` here, the latter is not set yet.
 			// Instead we call setFloatableContainer() below.
@@ -142,13 +143,13 @@
 		// Validate and set min and max dates as properties
 
 		if ( config.mustBeAfter !== undefined ) {
-			var mustBeAfter = moment( config.mustBeAfter, 'YYYY-MM-DD' );
+			const mustBeAfter = moment( config.mustBeAfter, 'YYYY-MM-DD' );
 			if ( mustBeAfter.isValid() ) {
 				this.mustBeAfter = mustBeAfter;
 			}
 		}
 		if ( config.mustBeBefore !== undefined ) {
-			var mustBeBefore = moment( config.mustBeBefore, 'YYYY-MM-DD' );
+			const mustBeBefore = moment( config.mustBeBefore, 'YYYY-MM-DD' );
 			if ( mustBeBefore.isValid() ) {
 				this.mustBeBefore = mustBeBefore;
 			}
@@ -195,14 +196,14 @@
 			.addClass( 'mw-widget-dateInputWidget' )
 			.append( this.$handle, this.textInput.$element, this.calendar.$element );
 
-		var $overlay = config.$overlay === true ? OO.ui.getDefaultOverlay() : config.$overlay;
+		const $overlay = config.$overlay === true ? OO.ui.getDefaultOverlay() : config.$overlay;
 
 		if ( $overlay ) {
 			this.calendar.setFloatableContainer( this.$element );
 			$overlay.append( this.calendar.$element );
 
 			// The text input and calendar are not in DOM order, so fix up focus transitions.
-			this.textInput.$input.on( 'keydown', function ( e ) {
+			this.textInput.$input.on( 'keydown', ( e ) => {
 				if ( e.which === OO.ui.Keys.TAB ) {
 					if ( e.shiftKey ) {
 						// Tabbing backward from text input: normal browser behavior
@@ -212,8 +213,8 @@
 						return false;
 					}
 				}
-			}.bind( this ) );
-			this.calendar.$element.on( 'keydown', function ( e ) {
+			} );
+			this.calendar.$element.on( 'keydown', ( e ) => {
 				if ( e.which === OO.ui.Keys.TAB ) {
 					if ( e.shiftKey ) {
 						// Tabbing backward from calendar: just focus the text input
@@ -225,7 +226,7 @@
 						this.textInput.$input.trigger( 'focus' );
 					}
 				}
-			}.bind( this ) );
+			} );
 		}
 
 		// Set handle label and hide stuff
@@ -286,7 +287,7 @@
 	 * @private
 	 */
 	mw.widgets.DateInputWidget.prototype.onTextInputChange = function () {
-		var
+		const
 			widget = this,
 			value = this.textInput.getValue(),
 			mom = moment( value, this.getInputFormat() ),
@@ -318,7 +319,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.DateInputWidget.prototype.setValue = function ( value ) {
-		var oldValue = this.value;
+		const oldValue = this.value;
 
 		if ( !moment( value, this.getInternalFormat() ).isValid() ) {
 			value = '';
@@ -340,16 +341,15 @@
 	 * @private
 	 */
 	mw.widgets.DateInputWidget.prototype.onBlur = function () {
-		var widget = this;
-		setTimeout( function () {
-			var $focussed = $( ':focus' );
+		setTimeout( () => {
+			const $focussed = $( ':focus' );
 			// Deactivate unless the focus moved to something else inside this widget
 			if (
-				!OO.ui.contains( widget.$element[ 0 ], $focussed[ 0 ], true ) &&
+				!OO.ui.contains( this.$element[ 0 ], $focussed[ 0 ], true ) &&
 				// Calendar might be in an $overlay
-				!OO.ui.contains( widget.calendar.$element[ 0 ], $focussed[ 0 ], true )
+				!OO.ui.contains( this.calendar.$element[ 0 ], $focussed[ 0 ], true )
 			) {
-				widget.deactivate();
+				this.deactivate();
 			}
 		}, 0 );
 	};
@@ -382,7 +382,7 @@
 			this.innerLabel.setLabel( this.placeholderLabel );
 			this.$element.addClass( 'mw-widget-dateInputWidget-empty' );
 		} else {
-			var moment = this.getMoment();
+			const moment = this.getMoment();
 			if ( !this.inTextInput ) {
 				this.textInput.setValue( moment.format( this.getInputFormat() ) );
 			}
@@ -457,11 +457,11 @@
 			// We try to construct it as 'llll - (lll - ll)' and hope for the best.
 			// This seems to work well for many languages (maybe even all?).
 
-			var localeData = moment.localeData( moment.locale() );
-			var llll = localeData.longDateFormat( 'llll' );
-			var lll = localeData.longDateFormat( 'lll' );
-			var ll = localeData.longDateFormat( 'll' );
-			var format = llll.replace( lll.replace( ll, '' ), '' );
+			const localeData = moment.localeData( moment.locale() );
+			const llll = localeData.longDateFormat( 'llll' );
+			const lll = localeData.longDateFormat( 'lll' );
+			const ll = localeData.longDateFormat( 'll' );
+			let format = llll.replace( lll.replace( ll, '' ), '' );
 
 			if ( this.longDisplayFormat ) {
 				// Replace MMM to MMMM and ddd to dddd but don't change MMMM and dddd
@@ -531,7 +531,7 @@
 	 *
 	 * @private
 	 * @param {jQuery.Event} e Key press event
-	 * @return {boolean} False to cancel the default event
+	 * @return {boolean|undefined} False to cancel the default event
 	 */
 	mw.widgets.DateInputWidget.prototype.onKeyPress = function ( e ) {
 		if ( !this.isDisabled() && !this.isReadOnly() &&
@@ -558,7 +558,7 @@
 	 *
 	 * @private
 	 * @param {jQuery.Event} e Key press event
-	 * @return {boolean} False to cancel the default event
+	 * @return {boolean|undefined} False to cancel the default event
 	 */
 	mw.widgets.DateInputWidget.prototype.onCalendarKeyPress = function ( e ) {
 		if ( !this.isDisabled() && e.which === OO.ui.Keys.ENTER ) {
@@ -572,10 +572,10 @@
 	 *
 	 * @private
 	 * @param {jQuery.Event} e Mouse click event
-	 * @return {boolean} False to cancel the default event
+	 * @return {boolean|undefined} False to cancel the default event
 	 */
 	mw.widgets.DateInputWidget.prototype.onCalendarClick = function ( e ) {
-		var targetClass = this.calendar.getPrecision() === 'month' ?
+		const targetClass = this.calendar.getPrecision() === 'month' ?
 			'mw-widget-calendarWidget-month' :
 			'mw-widget-calendarWidget-day';
 		if (
@@ -605,7 +605,7 @@
 	 * @return {boolean}
 	 */
 	mw.widgets.DateInputWidget.prototype.validateDate = function ( date ) {
-		var isValid;
+		let isValid;
 		if ( date === '' ) {
 			isValid = !this.required;
 		} else {
@@ -623,7 +623,7 @@
 		// "Half-strict mode": for example, for the format 'YYYY-MM-DD', 2015-1-3 instead of 2015-01-03
 		// is okay, but 2015-01 isn't, and neither is 2015-01-foo. Use Moment's "fuzzy" mode and check
 		// parsing flags for the details (stolen from implementation of moment#isValid).
-		var
+		const
 			mom = moment( date, this.getInputFormat() ),
 			flags = mom.parsingFlags();
 
@@ -643,9 +643,9 @@
 		if ( this.mustBeAfter === undefined && this.mustBeBefore === undefined ) {
 			return true;
 		}
-		var momentDate = moment( date, 'YYYY-MM-DD' );
-		var isAfter = ( this.mustBeAfter === undefined || momentDate.isAfter( this.mustBeAfter ) );
-		var isBefore = ( this.mustBeBefore === undefined || momentDate.isBefore( this.mustBeBefore ) );
+		const momentDate = moment( date, 'YYYY-MM-DD' );
+		const isAfter = ( this.mustBeAfter === undefined || momentDate.isAfter( this.mustBeAfter ) );
+		const isBefore = ( this.mustBeBefore === undefined || momentDate.isBefore( this.mustBeBefore ) );
 		return isAfter && isBefore;
 	};
 
@@ -658,7 +658,7 @@
 	 * @return {jQuery.Promise} A promise that resolves if the value is valid, rejects if not.
 	 */
 	mw.widgets.DateInputWidget.prototype.getValidity = function () {
-		var isValid = this.validateDate( this.getValue() );
+		const isValid = this.validateDate( this.getValue() );
 
 		if ( isValid ) {
 			return $.Deferred().resolve().promise();
@@ -673,7 +673,7 @@
 	 * @param {boolean} [isValid] Optionally override validation result
 	 */
 	mw.widgets.DateInputWidget.prototype.setValidityFlag = function ( isValid ) {
-		var widget = this,
+		const widget = this,
 			setFlag = function ( valid ) {
 				if ( !valid ) {
 					widget.$input.attr( 'aria-invalid', 'true' );
@@ -686,9 +686,9 @@
 		if ( isValid !== undefined ) {
 			setFlag( isValid );
 		} else {
-			this.getValidity().then( function () {
+			this.getValidity().then( () => {
 				setFlag( true );
-			}, function () {
+			}, () => {
 				setFlag( false );
 			} );
 		}

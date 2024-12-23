@@ -70,8 +70,7 @@ QUnit.test( 'Adding and moving parts to specific positions', ( assert ) => {
 	[ 'part_0/foo', 'foo' ],
 	[ 'part_1/foo', null ],
 	[ 'part_0/foo/bar', 'foo/bar' ]
-].forEach( ( [ pageName, expected ] ) =>
-	QUnit.test( 'setSelectionByPageName: ' + pageName, ( assert ) => {
+].forEach( ( [ pageName, expected ] ) => QUnit.test( 'setSelectionByPageName: ' + pageName, ( assert ) => {
 		const transclusion = new ve.dm.MWTransclusionModel(),
 			template = new ve.dm.MWTemplateModel( transclusion, { wt: '' } ),
 			partWidget = new ve.ui.MWTransclusionOutlineTemplateWidget( template ),

@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:ExpandTemplates
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -26,23 +23,25 @@ namespace MediaWiki\Specials;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Tidy\TidyDriverBase;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
-use ParserFactory;
-use ParserOptions;
-use Xml;
+use MediaWiki\Xml\Xml;
 
 /**
- * A special page that expands submitted templates, parser functions,
+ * A special page to enter wikitext and expands its templates, parser functions,
  * and variables, allowing easier debugging of these.
  *
  * @ingroup SpecialPage
+ * @ingroup Parser
  */
 class SpecialExpandTemplates extends SpecialPage {
 
@@ -135,9 +134,10 @@ class SpecialExpandTemplates extends SpecialPage {
 			$out->addHTML( $tmp );
 
 			$pout = $parser->parse( $output, $title, $options );
-			$rawhtml = $pout->getText( [ 'enableSectionEditLinks' => false ] );
+			// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
+			$rawhtml = MediaWikiServices::getInstance()->getDefaultOutputPipeline()
+				->run( $pout, $options, [ 'enableSectionEditLinks' => false ] )->getContentHolderText();
 			if ( $generateRawHtml && strlen( $rawhtml ) > 0 ) {
-				// @phan-suppress-next-line SecurityCheck-DoubleEscaped Wanted here to display the html
 				$out->addHTML( $this->makeOutput( $rawhtml, 'expand_templates_html_output' ) );
 			}
 
@@ -168,19 +168,20 @@ class SpecialExpandTemplates extends SpecialPage {
 	 */
 	private function makeForm() {
 		$fields = [
-			'ContextTitle' => [
-				'type' => 'text',
-				'label' => $this->msg( 'expand_templates_title' )->plain(),
-				'id' => 'contexttitle',
-				'size' => 60,
-				'autofocus' => true,
-			],
 			'Input' => [
 				'type' => 'textarea',
 				'label' => $this->msg( 'expand_templates_input' )->text(),
 				'rows' => 10,
 				'id' => 'input',
 				'useeditfont' => true,
+				'required' => true,
+				'autofocus' => true,
+			],
+			'ContextTitle' => [
+				'type' => 'text',
+				'label' => $this->msg( 'expand_templates_title' )->plain(),
+				'id' => 'contexttitle',
+				'size' => 60,
 			],
 			'RemoveComments' => [
 				'type' => 'check',
@@ -277,7 +278,7 @@ class SpecialExpandTemplates extends SpecialPage {
 		}
 
 		$out->addParserOutputContent( $pout, [ 'enableSectionEditLinks' => false ] );
-		$out->setCategoryLinks( $pout->getCategoryMap() );
+		$out->addCategoryLinks( $pout->getCategoryMap() );
 	}
 
 	protected function getGroupName() {

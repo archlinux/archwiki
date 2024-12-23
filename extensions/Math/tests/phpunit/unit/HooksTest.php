@@ -1,8 +1,8 @@
 <?php
 namespace MediaWiki\Extension\Math\Tests;
 
-use ExtensionRegistry;
 use MediaWiki\Extension\Math\Hooks;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
 use MediaWiki\Settings\Config\PhpIniSink;
 use MediaWiki\Settings\SettingsBuilder;

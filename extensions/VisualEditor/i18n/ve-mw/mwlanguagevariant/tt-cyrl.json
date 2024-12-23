@@ -7,7 +7,7 @@
 	},
 	"visualeditor-mwlanguagevariant-name": "Телнең исеме: $1",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Телнең коды",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Ярамый>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Ярамый</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Тел",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Чыганак",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Максат",

@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Extension\OATHAuth\Hook;
 
+use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Hooks\BeforeCreateEchoEventHook;
+use MediaWiki\Extension\Notifications\UserLocator;
 use MediaWiki\Extension\OATHAuth\Notifications\DisablePresentationModel;
 use MediaWiki\Extension\OATHAuth\Notifications\EnablePresentationModel;
 use MediaWiki\Extension\OATHAuth\Notifications\RecoveryCodeCountPresentationModel;
@@ -33,7 +35,9 @@ class EchoHandler implements BeforeCreateEchoEventHook {
 			'section' => 'alert',
 			'presentation-model' => DisablePresentationModel::class,
 			'canNotifyAgent' => true,
-			'user-locators' => [ 'EchoUserLocator::locateEventAgent' ],
+			AttributeManager::ATTR_LOCATORS => [
+				[ [ UserLocator::class, 'locateEventAgent' ] ],
+			],
 		];
 
 		// message used: notification-header-oathauth-enable
@@ -43,7 +47,9 @@ class EchoHandler implements BeforeCreateEchoEventHook {
 			'section' => 'alert',
 			'presentation-model' => EnablePresentationModel::class,
 			'canNotifyAgent' => true,
-			'user-locators' => [ 'EchoUserLocator::locateEventAgent' ],
+			AttributeManager::ATTR_LOCATORS => [
+				[ [ UserLocator::class, 'locateEventAgent' ] ],
+			],
 		];
 
 		// message used: notification-header-oathauth-recoverycodes-count

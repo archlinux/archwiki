@@ -185,7 +185,6 @@
 	"abusefilter-edit-builder-op-bool-not": "Ekki (!)",
 	"abusefilter-edit-builder-op-bool-and": "Og (&)",
 	"abusefilter-edit-builder-op-bool-or": "Eða (|)",
-	"abusefilter-edit-builder-op-bool-xor": "XOR (^)",
 	"abusefilter-edit-builder-group-misc": "Ýmislegt",
 	"abusefilter-edit-builder-group-funcs": "Aðgerðir",
 	"abusefilter-edit-builder-funcs-length": "Strengjalengd (length)",

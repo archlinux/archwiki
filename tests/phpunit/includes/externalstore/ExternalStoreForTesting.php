@@ -2,6 +2,7 @@
 
 class ExternalStoreForTesting {
 
+	/** @var array */
 	protected $data = [
 		'cluster1' => [
 			'200' => 'Hello',
@@ -37,6 +38,16 @@ class ExternalStoreForTesting {
 		}
 
 		return $this->data[$cluster][$id];
+	}
+
+	public function store( $location, $data ) {
+		$itemId = mt_rand( 500, 1000 );
+		$this->data[$location][$itemId] = $data;
+		return "ForTesting://$location/$itemId";
+	}
+
+	public function isReadOnly() {
+		return false;
 	}
 
 }

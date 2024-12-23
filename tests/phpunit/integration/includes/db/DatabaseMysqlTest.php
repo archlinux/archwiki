@@ -3,6 +3,7 @@
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ChangedTablesTracker;
 use Wikimedia\Rdbms\DatabaseMySQL;
+use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\DBQueryDisconnectedError;
 use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\DBQueryTimeoutError;
@@ -10,9 +11,15 @@ use Wikimedia\Rdbms\DBSessionStateError;
 use Wikimedia\Rdbms\DBTransactionStateError;
 use Wikimedia\Rdbms\DBUnexpectedError;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\Platform\ISQLPlatform;
+use Wikimedia\Rdbms\Platform\SQLPlatform;
+use Wikimedia\Rdbms\Query;
 use Wikimedia\Rdbms\TransactionManager;
 
 /**
+ * @covers \Wikimedia\Rdbms\Database
+ * @covers \Wikimedia\Rdbms\DatabaseMySQL
+ * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform
  * @group mysql
  * @group Database
  * @group medium
@@ -44,16 +51,16 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		parent::tearDown();
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::query()
-	 */
 	public function testQueryTimeout() {
 		try {
-			$this->conn->query(
+			$res = $this->conn->query(
 				'SET STATEMENT max_statement_time=0.001 FOR SELECT sleep(1) FROM dual',
 				__METHOD__
 			);
-			$this->fail( "No DBQueryTimeoutError caught" );
+			// if the query did not time out, there should be a single row where sleep() returned 1
+			$this->assertSame( 1, $res->numRows() );
+			$row = $res->fetchRow();
+			$this->assertSame( '1', (string)reset( $row ) );
 		} catch ( DBQueryTimeoutError $e ) {
 			$this->assertInstanceOf( DBQueryTimeoutError::class, $e );
 		}
@@ -62,9 +69,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSame( 'x', $row->v, "Still connected/usable" );
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::query()
-	 */
 	public function testConnectionKill() {
 		try {
 			$this->conn->query( 'KILL (SELECT connection_id())', __METHOD__ );
@@ -77,11 +81,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSame( 'x', $row->v, "Recovered" );
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::query()
-	 * @covers \Wikimedia\Rdbms\Database::rollback()
-	 * @covers \Wikimedia\Rdbms\Database::flushSession()
-	 */
 	public function testConnectionLossQuery() {
 		$row = $this->conn->query( 'SELECT connection_id() AS id', __METHOD__ )->fetchObject();
 		$encId = intval( $row->id );
@@ -155,9 +154,76 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$adminConn->close( __METHOD__ );
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::getScopedLockAndFlush()
-	 */
+	public function testConnectionLossSnapshotFlush() {
+		$fakeWriteQuery = new Query( 'SELECT 1', SQLPlatform::QUERY_CHANGE_ROWS, 'SELECT' );
+
+		$this->conn->begin( __METHOD__, IDatabase::TRANSACTION_INTERNAL );
+		$row = $this->conn->query( 'SELECT connection_id() AS id', __METHOD__ )->fetchObject();
+		$encId = intval( $row->id );
+
+		$adminConn = $this->newConnection();
+		$adminConn->query( "KILL $encId", __METHOD__ );
+
+		$this->conn->flushSnapshot( __METHOD__ );
+		$this->assertSame( 0, $this->conn->trxLevel(), "Lost connection during snapshot flush" );
+		$this->assertSame( TransactionManager::STATUS_TRX_NONE, $this->conn->trxStatus() );
+
+		$this->conn->begin( __METHOD__, IDatabase::TRANSACTION_INTERNAL );
+		$this->conn->query( $fakeWriteQuery, __METHOD__ );
+
+		$row = $this->conn->query( 'SELECT connection_id() AS id', __METHOD__ )->fetchObject();
+		$encId = intval( $row->id );
+		$adminConn->query( "KILL $encId", __METHOD__ );
+
+		try {
+			$this->conn->query( $fakeWriteQuery, __METHOD__ );
+			$this->fail( "Error thrown due to connection loss with pending writes" );
+		} catch ( DBError $e ) {
+			$this->assertInstanceOf( DBQueryDisconnectedError::class, $e );
+			$this->assertSame( TransactionManager::STATUS_TRX_ERROR, $this->conn->trxStatus() );
+		}
+
+		try {
+			$this->conn->query( 'SELECT 1', __METHOD__ );
+			$this->fail( "Error thrown due to unacknowledged transaction error" );
+		} catch ( DBError $e ) {
+			$this->assertInstanceOf( DBTransactionStateError::class, $e );
+			$this->assertSame( TransactionManager::STATUS_TRX_ERROR, $this->conn->trxStatus() );
+		}
+
+		$this->conn->flushSnapshot( __METHOD__ );
+		$this->assertSame( 0, $this->conn->trxLevel(), "Snapshot flush after lost writes" );
+		$this->assertSame( TransactionManager::STATUS_TRX_NONE, $this->conn->trxStatus() );
+
+		// Get a lock outside of any transaction
+		$unlocker = $this->conn->getScopedLockAndFlush( 'testing-key', __METHOD__, 0 );
+		// Start transaction after getting the lock
+		$this->conn->begin( __METHOD__, IDatabase::TRANSACTION_INTERNAL );
+
+		$row = $this->conn->query( 'SELECT connection_id() AS id', __METHOD__ )->fetchObject();
+		$encId = intval( $row->id );
+		$adminConn->query( "KILL $encId", __METHOD__ );
+
+		try {
+			$this->conn->query( 'SELECT 1', __METHOD__ );
+			$this->fail( "Error thrown due to connection loss with locks" );
+		} catch ( DBError $e ) {
+			$this->assertSame( TransactionManager::STATUS_TRX_ERROR, $this->conn->trxStatus() );
+		}
+
+		$this->conn->flushSnapshot( __METHOD__ );
+		$this->assertSame( 0, $this->conn->trxLevel(), "Snapshot flush with lost lock" );
+
+		try {
+			$this->conn->query( 'SELECT 1', __METHOD__ );
+			$this->fail( "Error thrown due to unacknowledged session error" );
+		} catch ( DBError $e ) {
+			$this->assertInstanceOf( DBSessionStateError::class, $e );
+		}
+
+		$adminConn->close( __METHOD__ );
+	}
+
 	public function testConnectionLossScopedLock() {
 		$row = $this->conn->query( 'SELECT connection_id() AS id', __METHOD__ )->fetchObject();
 		$encId = intval( $row->id );
@@ -182,12 +248,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->conn->unlock( 'x', __METHOD__ );
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::query()
-	 * @covers \Wikimedia\Rdbms\Database::cancelAtomic()
-	 * @covers \Wikimedia\Rdbms\Database::rollback()
-	 * @covers \Wikimedia\Rdbms\Database::flushSession()
-	 */
 	public function testTransactionError() {
 		$this->assertSame( TransactionManager::STATUS_TRX_NONE, $this->conn->trxStatus() );
 
@@ -249,10 +309,7 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$adminConn->close( __METHOD__ );
 	}
 
-	/**
-	 * @return DatabaseMySQL
-	 */
-	private function newConnection() {
+	private function newConnection(): DatabaseMySQL {
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 		$dbFactory = MediaWikiServices::getInstance()->getDatabaseFactory();
 		/** @var DatabaseMySQL $conn */
@@ -271,10 +328,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		return $conn;
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::insert()
-	 * @covers \Wikimedia\Rdbms\Database::insertId()
-	 */
 	public function testInsertIdAfterInsert() {
 		$dTable = $this->createDestTable();
 
@@ -291,10 +344,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->dropDestTable();
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::insert()
-	 * @covers \Wikimedia\Rdbms\Database::insertId()
-	 */
 	public function testInsertIdAfterInsertIgnore() {
 		$dTable = $this->createDestTable();
 
@@ -316,10 +365,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->dropDestTable();
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::replace()
-	 * @covers \Wikimedia\Rdbms\Database::insertId()
-	 */
 	public function testInsertIdAfterReplace() {
 		$dTable = $this->createDestTable();
 
@@ -341,10 +386,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->dropDestTable();
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::upsert()
-	 * @covers \Wikimedia\Rdbms\Database::insertId()
-	 */
 	public function testInsertIdAfterUpsert() {
 		$dTable = $this->createDestTable();
 
@@ -370,10 +411,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->dropDestTable();
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::insertSelect()
-	 * @covers \Wikimedia\Rdbms\Database::insertId()
-	 */
 	public function testInsertIdAfterInsertSelect() {
 		$sTable = $this->createSourceTable();
 		$dTable = $this->createDestTable();
@@ -403,10 +440,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->dropDestTable();
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\Database::insertSelect()
-	 * @covers \Wikimedia\Rdbms\Database::insertId()
-	 */
 	public function testInsertIdAfterInsertSelectIgnore() {
 		$sTable = $this->createSourceTable();
 		$dTable = $this->createDestTable();
@@ -500,6 +533,39 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSame( 1, $this->conn->affectedRows(), 'Key conflict, nothing changed on database' );
 	}
 
+	public function testFieldAndIndexInfo() {
+		global $wgDBname;
+
+		$this->conn->selectDomain( $wgDBname );
+		$this->conn->query(
+			"CREATE TEMPORARY TABLE tmp_schema_tbl (" .
+			"n integer not null auto_increment, " .
+			"k varchar(255), " .
+			"v integer, " .
+			"t integer," .
+			"PRIMARY KEY (n)," .
+			"UNIQUE INDEX k (k)," .
+			"INDEX t (t)" .
+			")"
+		);
+
+		$this->assertTrue( $this->conn->fieldExists( 'tmp_schema_tbl', 'n' ) );
+		$this->assertTrue( $this->conn->fieldExists( 'tmp_schema_tbl', 'k' ) );
+		$this->assertTrue( $this->conn->fieldExists( 'tmp_schema_tbl', 'v' ) );
+		$this->assertTrue( $this->conn->fieldExists( 'tmp_schema_tbl', 't' ) );
+		$this->assertFalse( $this->conn->fieldExists( 'tmp_schema_tbl', 'x' ) );
+
+		$this->assertTrue( $this->conn->indexExists( 'tmp_schema_tbl', 'k' ) );
+		$this->assertTrue( $this->conn->indexExists( 'tmp_schema_tbl', 't' ) );
+		$this->assertFalse( $this->conn->indexExists( 'tmp_schema_tbl', 'x' ) );
+		$this->assertTrue( $this->conn->indexExists( 'tmp_schema_tbl', 'PRIMARY' ) );
+
+		$this->assertTrue( $this->conn->indexUnique( 'tmp_schema_tbl', 'k' ) );
+		$this->assertFalse( $this->conn->indexUnique( 'tmp_schema_tbl', 't' ) );
+		$this->assertNull( $this->conn->indexUnique( 'tmp_schema_tbl', 'x' ) );
+		$this->assertTrue( $this->conn->indexUnique( 'tmp_schema_tbl', 'PRIMARY' ) );
+	}
+
 	private function createSourceTable() {
 		global $wgDBname;
 
@@ -546,8 +612,6 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * Insert a null value into a field that is not nullable using INSERT IGNORE
-	 *
-	 * @covers \Wikimedia\Rdbms\DatabaseMySQL::checkInsertWarnings
 	 */
 	public function testInsertIgnoreNull() {
 		$this->expectException( DBQueryError::class );
@@ -556,5 +620,81 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 			->ignore()
 			->row( [ 'ls_field' => 'test', 'ls_value' => null, 'ls_log_id' => 1 ] )
 			->execute();
+	}
+
+	/**
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL::query
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL::dropTable
+	 */
+	public function testTempTableDomains() {
+		global $wgDBname;
+
+		$table = 'temp_test_tbl';
+
+		$this->conn->selectDomain( $wgDBname . '-xxx1_' );
+		$this->assertFalse( $this->conn->tableExists( $table ) );
+
+		$query = new Query(
+			"CREATE TEMPORARY TABLE " . $this->conn->tableName( $table ) .
+			" (n integer not null unique key)",
+			ISQLPlatform::QUERY_CHANGE_SCHEMA,
+			"CREATE TEMPORARY",
+			$table
+		);
+		$this->conn->query( $query, __METHOD__ );
+		$this->assertTrue( $this->conn->tableExists( $table ) );
+
+		$this->conn->selectDomain( $wgDBname . '-xxx2_' );
+		$this->assertFalse( $this->conn->tableExists( $table ) );
+
+		$query = new Query(
+			"CREATE TEMPORARY TABLE " . $this->conn->tableName( $table ) .
+			" (n integer not null unique key)",
+			ISQLPlatform::QUERY_CHANGE_SCHEMA,
+			"CREATE TEMPORARY",
+			$table
+		);
+		$this->conn->query( $query, __METHOD__ );
+		$this->assertTrue( $this->conn->tableExists( $table ) );
+
+		$this->conn->selectDomain( $wgDBname . '-xxx1_' );
+		$this->conn->dropTable( $table );
+		$this->assertFalse( $this->conn->tableExists( $table ) );
+
+		$this->conn->selectDomain( $wgDBname . '-xxx2_' );
+		$this->conn->dropTable( $table );
+		$this->assertFalse( $this->conn->tableExists( $table ) );
+	}
+
+	/**
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL::query
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL::dropTable
+	 */
+	public function testTempTableDomainsTableWithDot() {
+		global $wgDBname;
+
+		$table = '.temp_test_tbl';
+
+		$this->conn->selectDomain( $wgDBname . '-xxx1_' );
+		$this->assertFalse( $this->conn->tableExists( $table ) );
+
+		$query = new Query(
+			"CREATE TEMPORARY TABLE " . $this->conn->tableName( $table ) .
+			" (n integer not null unique key)",
+			ISQLPlatform::QUERY_CHANGE_SCHEMA,
+			"CREATE TEMPORARY",
+			$table
+		);
+		$this->conn->query( $query, __METHOD__ );
+		$this->assertTrue( $this->conn->tableExists( $table ) );
+
+		$this->conn->selectDomain( $wgDBname . '-xxx2_' );
+		$this->assertTrue( $this->conn->tableExists( $table ) );
+
+		$this->conn->dropTable( $table );
+		$this->assertFalse( $this->conn->tableExists( $table ) );
+
+		$this->conn->selectDomain( $wgDBname . '-xxx1_' );
+		$this->assertFalse( $this->conn->tableExists( $table ) );
 	}
 }

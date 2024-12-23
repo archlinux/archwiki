@@ -1,5 +1,29 @@
 # Purtle release notes
 
+## Version 2.0.0 (2024-11-10)
+* Add phan (Reedy)
+* [BREAKING CHANGE] Drop PHP 7.2 and PHP 7.3 support (James D. Forrester)
+* build: Switch phan to special library mode (James D. Forrester)
+* build: Updating composer dependencies (libraryupgrader)
+* build: Updating composer dependencies (libraryupgrader)
+* build: Updating composer dependencies (libraryupgrader)
+* build: Updating composer dependencies (libraryupgrader)
+* build: Updating mediawiki/mediawiki-codesniffer to 37.0.0 (libraryupgrader)
+* build: Updating mediawiki/mediawiki-codesniffer to 41.0.0 (libraryupgrader)
+* build: Updating mediawiki/mediawiki-codesniffer to 44.0.0 (libraryupgrader)
+* build: Updating mediawiki/mediawiki-codesniffer to 45.0.0 (libraryupgrader)
+* build: Updating mediawiki/mediawiki-phan-config to 0.12.0 (Umherirrender)
+* build: Updating mediawiki/mediawiki-phan-config to 0.13.0 (libraryupgrader)
+* build: Upgrade mediawiki/mediawiki-codesniffer to v43.0.0 (Umherirrender)
+* build: Upgrade mediawiki/mediawiki-phan-config from 0.13.0 to 0.14.0 manually (James D. Forrester)
+* build: Upgrade PHPUnit from ^8.5 to 9.5.28 (James D. Forrester)
+* build: Upgrade phpunit to 9.6.16 (James D. Forrester)
+* Fix several type hints (Thiemo Kreuz)
+* Minor cleanup (Reedy)
+* Remove unused role constants (Thiemo Kreuz)
+* tests: Replace assertRegExp with assertMatchesRegularExpression (Umherirrender)
+* Use explicit nullable type on parameter arguments (Reedy)
+
 ## Version 1.0.8 (2021-06-17)
 * Require PHP 7.2 or later
 * Fix phpcs issues

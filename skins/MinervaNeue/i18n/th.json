@@ -36,7 +36,6 @@
 	"mobile-frontend-meta-data-issues-categories": "เกี่ยวกับหมวดหมู่นี้",
 	"mobile-frontend-meta-data-issues-header": "ปัญหาในหน้า",
 	"minerva-meta-data-issues-section-header": "ปัญหาส่วน",
-	"mobile-frontend-notifications-filter": "ตัวกรอง",
 	"mobile-frontend-pageaction-edit-tooltip": "แก้ไขส่วนนำของหน้านี้",
 	"mobile-frontend-placeholder": "ค้นหา {{SITENAME}}",
 	"mobile-frontend-random-button": "สุ่ม",
@@ -56,7 +55,7 @@
 	"minerva-page-actions-overflow": "เพิ่มเติม",
 	"minerva-page-actions-language-switcher": "ภาษา",
 	"minerva-page-actions-history": "ประวัติ",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|อภิปราย]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue อภิปราย]",
 	"minerva-skin-desc": "สกินดั้งเดิมสำหรับอุปกรณ์เคลื่อนที่",
 	"skin-minerva-issue-learn-more": "เรียนรู้เพิ่มเติม",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 วินาที}}ที่แล้ว",
@@ -67,7 +66,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 ปี}}ที่แล้ว",
 	"skin-minerva-mobile-option-MinervaShowCategories": "หมวดหมู่",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "ดูหมวดหมู่ของหน้า",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "ปรับปรุงการแสดงผลปัญหาหน้า",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "ปัญหาหน้า (แม่แบบ:ambox) จะเป็นแบบในบรรทัดในบทความ",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "น่าเสียดายที่การจัดกลุ่มผลลัพธ์ตามหน้าไม่พร้อมใช้งานบนอุปกรณ์เคลื่อนที่ หากต้องการใช้คุณลักษณะนี้กรุณาใช้มุมมองแบบคอมพิวเตอร์ตั้งโต๊ะ"
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "น่าเสียดายที่การจัดกลุ่มผลลัพธ์ตามหน้าไม่พร้อมใช้งานบนอุปกรณ์เคลื่อนที่ หากต้องการใช้คุณลักษณะนี้กรุณาใช้มุมมองแบบคอมพิวเตอร์ตั้งโต๊ะ",
+	"skin-minerva-night-mode-unavailable": "หน้านี้รองรับเฉพาะธีมสี \"สว่าง\" เท่านั้น"
 }

@@ -21,6 +21,8 @@
  * @ingroup Media
  */
 
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;

@@ -11,7 +11,7 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
@@ -101,15 +101,24 @@
 		}
 	},
 	"ResourceModules": {
-		"ext.oath.totp.showqrcode.styles": {
+		"ext.oath.styles": {
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"styles": [
-				"totp/ext.oath.showqrcode.styles.less"
+				"totp/ext.oath.showqrcode.styles.less",
+				"recovery/ext.oauth.recovery.less"
 			],
 			"codexStyleOnly": "true",
 			"codexComponents": [
 				"CdxButton",
 				"CdxIcon"
+			]
+		},
+		"ext.oath": {
+			"packageFiles": [
+				"recovery/ext.oath.recovery.copy.js"
+			],
+			"messages": [
+				"oathauth-recoverycodes-copy-success"
 			]
 		}
 	},

@@ -33,7 +33,6 @@
 	"mobile-frontend-meta-data-issues-categories": "اس زمرہ کا تعارف",
 	"mobile-frontend-meta-data-issues-header": "اعلانات",
 	"minerva-meta-data-issues-section-header": "قطعہ کے اعلانات",
-	"mobile-frontend-notifications-filter": "مقطر",
 	"mobile-frontend-pageaction-edit-tooltip": "اس صفحے کے دیباچہ میں ترمیم کریں",
 	"mobile-frontend-placeholder": "{{SITENAME}} میں تلاش",
 	"mobile-frontend-random-button": "جستہ جستہ",
@@ -65,8 +64,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1| $1 سال| $1 برس}} پہلے",
 	"skin-minerva-mobile-option-MinervaShowCategories": "زمرہ جات",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "صفحات میں موجود زمرہ جات دکھائیں",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "صفحات میں درپیش مسائل کے ساتھ مزید بہتر سلوک",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "صفحہ کے اعلانات (یعنی سانچہ:Ambox) مضمون کی ابتدائی سطروں میں ظاہر ہوں گے۔",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "افسوس کہ صفحہ کے لحاظ سے نتائج کی گروہ بندی موبائل پر دستیاب نہیں ہے۔ اگر آپ صفحہ کی گروہ بندی والی سہولت استعمال کرنا چاہتے ہیں تو براہ کرم ڈیسک ٹاپ سائٹ پر جائیں۔",
 	"minerva.css": "/* یہاں درج سی ایس ایس مائینرواجدید نامی پوشاک استعمال کرنے والے تمام صارفین پر اثر انداز ہوگی */",
 	"minerva.js": "/* یہاں درج جاوا اسکرپٹ مائینرواجدید نامی پوشاک استعمال کرنے والے تمام صارفین پر اثر انداز ہوگی */"

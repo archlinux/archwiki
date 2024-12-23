@@ -1,22 +1,17 @@
-.vector-icon {
-	.cdx-mixin-css-icon-background( );
-	.cdx-mixin-css-icon-size( );
-	.cdx-mixin-css-icon-alignment( );
-	font-size: 14px;
+@import 'mediawiki.skin.variables.less';
 
-	// Temporary fix for https://phabricator.wikimedia.org/T356540
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: ~'calc( max( @{size-icon-medium}, @{min-size-icon-medium} ) )';
+@transparentPNG: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=);
+
+.vector-icon {
+	// By default use a transparent PNG. This is important for icons loaded via JavaScript, as without this
+	// the icon will appear as a black square until loaded.
+	-webkit-mask-image: @transparentPNG;
+	mask-image: @transparentPNG;
+	.cdx-mixin-css-icon( 'none' );
 }
 
-// Temporary generic small icon class
-// FIXME: Replace with proper Codex CSS icon usage in T338403
-.vector-icon--x-small {
-	.cdx-mixin-css-icon-background( @size-icon-x-small );
-	.cdx-mixin-css-icon-size( @size-icon-x-small );
-	.cdx-mixin-css-icon-alignment( );
-
-	// Temporary fix for https://phabricator.wikimedia.org/T356540
-	background-size: ~'calc( max( @{size-icon-x-small}, @{min-size-icon-x-small} ) )';
+/* If the class contains the string -progressive convert to a progressive icon.
+This impacts language button and talk add topic. */
+.vector-icon[ class*='-progressive' ] {
+	background-color: @color-progressive;
 }

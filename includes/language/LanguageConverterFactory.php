@@ -24,13 +24,14 @@ use BanConverter;
 use CrhConverter;
 use EnConverter;
 use GanConverter;
-use ILanguageConverter;
 use IuConverter;
 use KuConverter;
-use Language;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\StubObject\StubUserLang;
+use MniConverter;
 use ShConverter;
 use ShiConverter;
 use SrConverter;
@@ -40,6 +41,7 @@ use TrivialLanguageConverter;
 use UzConverter;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use WuuConverter;
+use ZghConverter;
 use ZhConverter;
 
 /**
@@ -50,6 +52,7 @@ use ZhConverter;
  */
 class LanguageConverterFactory {
 
+	/** @var ILanguageConverter[] */
 	private $cache = [];
 	/**
 	 * @var array
@@ -69,6 +72,9 @@ class LanguageConverterFactory {
 		],
 		'ku' => [
 			'class' => KuConverter::class,
+		],
+		'mni' => [
+			'class' => MniConverter::class,
 		],
 		'shi' => [
 			'class' => ShiConverter::class,
@@ -90,6 +96,9 @@ class LanguageConverterFactory {
 		],
 		'wuu' => [
 			'class' => WuuConverter::class,
+		],
+		'zgh' => [
+			'class' => ZghConverter::class,
 		],
 		'zh' => [
 			'class' => ZhConverter::class,

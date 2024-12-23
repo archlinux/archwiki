@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
- * Information about an individual database host
+ * Container for accessing information about the database servers in a database cluster
  *
  * @internal
  * @ingroup Database
@@ -136,7 +136,7 @@ class ServerInfo {
 		return $newIndexByServerIndex;
 	}
 
-	public function normalizeServerMaps( array $servers, array &$indexBySrvName = null ) {
+	public function normalizeServerMaps( array $servers, ?array &$indexBySrvName = null ) {
 		if ( !$servers ) {
 			throw new InvalidArgumentException( 'Missing or empty "servers" parameter' );
 		}

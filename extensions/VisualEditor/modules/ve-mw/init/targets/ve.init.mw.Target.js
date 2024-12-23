@@ -13,7 +13,7 @@
  *
  * @constructor
  * @param {Object} config
- * @cfg {string[]} [surfaceClasses=[]] Surface classes to apply
+ * @param {string[]} [config.surfaceClasses=[]] Surface classes to apply
  */
 ve.init.mw.Target = function VeInitMwTarget( config ) {
 	this.surfaceClasses = config.surfaceClasses || [];
@@ -183,7 +183,7 @@ ve.init.mw.Target.static.fixBase = function ( doc ) {
  * @inheritdoc
  */
 ve.init.mw.Target.static.createModelFromDom = function ( doc, mode, options ) {
-	var conf = mw.config.get( 'wgVisualEditor' );
+	const conf = mw.config.get( 'wgVisualEditor' );
 
 	options = ve.extendObject( {
 		lang: conf.pageLanguageCode,
@@ -209,7 +209,7 @@ ve.init.mw.Target.prototype.createModelFromDom = function () {
  * @return {HTMLDocument|string} HTML document, or document string (source mode)
  */
 ve.init.mw.Target.static.parseDocument = function ( documentString, mode, section, onlySection ) {
-	var doc;
+	let doc;
 	if ( mode === 'source' ) {
 		// Parent method
 		doc = ve.init.mw.Target.super.static.parseDocument.call( this, documentString, mode );
@@ -217,7 +217,7 @@ ve.init.mw.Target.static.parseDocument = function ( documentString, mode, sectio
 		doc = ve.createDocumentFromHtml( documentString );
 		if ( section !== undefined ) {
 			if ( onlySection ) {
-				var sectionNode = doc.body.querySelector( '[data-mw-section-id="' + section + '"]' );
+				const sectionNode = doc.body.querySelector( '[data-mw-section-id="' + section + '"]' );
 				doc.body.innerHTML = '';
 				if ( sectionNode ) {
 					doc.body.appendChild( sectionNode );
@@ -235,14 +235,14 @@ ve.init.mw.Target.static.parseDocument = function ( documentString, mode, sectio
 		// Fix relative or missing base URL if needed
 		this.fixBase( doc );
 		// Test: Remove tags injected by plugins during parse (T298147)
-		Array.prototype.forEach.call( doc.querySelectorAll( 'script' ), function ( element ) {
+		Array.prototype.forEach.call( doc.querySelectorAll( 'script' ), ( element ) => {
 			function truncate( text, l ) {
 				return text.length > l ? text.slice( 0, l ) + '…' : text;
 			}
-			var errorMessage = 'DOM content matching deny list found during parse:\n' + truncate( element.outerHTML, 100 ) +
+			const errorMessage = 'DOM content matching deny list found during parse:\n' + truncate( element.outerHTML, 100 ) +
 				'\nContext:\n' + truncate( element.parentNode.outerHTML, 200 );
 			mw.log.error( errorMessage );
-			var err = new Error( errorMessage );
+			const err = new Error( errorMessage );
 			err.name = 'VeDomDenyListWarning';
 			mw.errorLogger.logError( err, 'error.visualeditor' );
 			element.parentNode.removeChild( element );
@@ -266,7 +266,7 @@ ve.init.mw.Target.prototype.documentReady = function ( doc ) {
 /**
  * Once surface is ready, initialize the UI
  *
- * @fires surfaceReady
+ * @fires ve.init.Target#surfaceReady
  */
 ve.init.mw.Target.prototype.surfaceReady = function () {
 	this.emit( 'surfaceReady' );
@@ -307,9 +307,7 @@ ve.init.mw.Target.prototype.createTargetWidget = function ( config ) {
 		// Reset to visual mode for target widgets
 		modes: [ 'visual' ],
 		defaultMode: 'visual',
-		toolbarGroups: this.toolbarGroups.filter( function ( group ) {
-			return group.align !== 'after';
-		} ),
+		toolbarGroups: this.toolbarGroups.filter( ( group ) => group.align !== 'after' ),
 		surfaceClasses: this.getSurfaceClasses()
 	}, config ) );
 };
@@ -319,7 +317,7 @@ ve.init.mw.Target.prototype.createTargetWidget = function ( config ) {
  */
 ve.init.mw.Target.prototype.createSurface = function ( dmDoc, config ) {
 	if ( config && config.mode === 'source' ) {
-		var importRules = ve.copy( this.constructor.static.importRules );
+		const importRules = ve.copy( this.constructor.static.importRules );
 		importRules.all = importRules.all || {};
 		// Preserve empty linebreaks on paste in source editor
 		importRules.all.keepEmptyContentBranches = true;
@@ -354,20 +352,19 @@ ve.init.mw.Target.prototype.getSurfaceConfig = function ( config ) {
  * @param {HTMLDocument|string} doc HTML document or source text
  */
 ve.init.mw.Target.prototype.setupSurface = function ( doc ) {
-	var target = this;
-	setTimeout( function () {
+	setTimeout( () => {
 		// Build model
-		target.track( 'trace.convertModelFromDom.enter' );
-		var dmDoc = target.constructor.static.createModelFromDom( doc, target.getDefaultMode() );
-		target.track( 'trace.convertModelFromDom.exit' );
+		this.track( 'trace.convertModelFromDom.enter' );
+		const dmDoc = this.constructor.static.createModelFromDom( doc, this.getDefaultMode() );
+		this.track( 'trace.convertModelFromDom.exit' );
 
 		// Build DM tree now (otherwise it gets lazily built when building the CE tree)
-		target.track( 'trace.buildModelTree.enter' );
+		this.track( 'trace.buildModelTree.enter' );
 		dmDoc.buildNodeTree();
-		target.track( 'trace.buildModelTree.exit' );
+		this.track( 'trace.buildModelTree.exit' );
 
-		setTimeout( function () {
-			target.addSurface( dmDoc );
+		setTimeout( () => {
+			this.addSurface( dmDoc );
 		} );
 	} );
 };
@@ -376,8 +373,6 @@ ve.init.mw.Target.prototype.setupSurface = function ( doc ) {
  * @inheritdoc
  */
 ve.init.mw.Target.prototype.addSurface = function () {
-	var target = this;
-
 	// Clear dummy surfaces
 	// TODO: Move to DesktopArticleTarget
 	this.clearSurfaces();
@@ -385,7 +380,7 @@ ve.init.mw.Target.prototype.addSurface = function () {
 	// Create ui.Surface (also creates ce.Surface and dm.Surface and builds CE tree)
 	this.track( 'trace.createSurface.enter' );
 	// Parent method
-	var surface = ve.init.mw.Target.super.prototype.addSurface.apply( this, arguments );
+	const surface = ve.init.mw.Target.super.prototype.addSurface.apply( this, arguments );
 	// Add classes specific to surfaces attached directly to the target,
 	// as opposed to TargetWidget surfaces
 	if ( !surface.inTargetWidget ) {
@@ -395,17 +390,17 @@ ve.init.mw.Target.prototype.addSurface = function () {
 
 	this.setSurface( surface );
 
-	setTimeout( function () {
+	setTimeout( () => {
 		// Initialize surface
-		target.track( 'trace.initializeSurface.enter' );
+		this.track( 'trace.initializeSurface.enter' );
 
-		target.active = true;
+		this.active = true;
 		// Now that the surface is attached to the document and ready,
 		// let it initialize itself
 		surface.initialize();
 
-		target.track( 'trace.initializeSurface.exit' );
-		target.surfaceReady();
+		this.track( 'trace.initializeSurface.exit' );
+		this.surfaceReady();
 	} );
 
 	return surface;
@@ -427,14 +422,12 @@ ve.init.mw.Target.prototype.setSurface = function ( surface ) {
  * Intialise autosave, recovering changes if applicable
  *
  * @param {Object} [config] Configuration options
- * @cfg {boolean} [suppressNotification=false] Don't notify the user if changes are recovered
- * @cfg {string} [docId] Document ID for storage grouping
- * @cfg {ve.init.SafeStorage} [storage] Storage interface
- * @cfg {number} [storageExpiry] Storage expiry time in seconds (optional)
+ * @param {boolean} [config.suppressNotification=false] Don't notify the user if changes are recovered
+ * @param {string} [config.docId] Document ID for storage grouping
+ * @param {ve.init.SafeStorage} [config.storage] Storage interface
+ * @param {number} [config.storageExpiry] Storage expiry time in seconds (optional)
  */
 ve.init.mw.Target.prototype.initAutosave = function ( config ) {
-	var target = this;
-
 	// Old function signature
 	// TODO: Remove after fixed downstream
 	if ( typeof config === 'boolean' ) {
@@ -443,7 +436,7 @@ ve.init.mw.Target.prototype.initAutosave = function ( config ) {
 		config = config || {};
 	}
 
-	var surfaceModel = this.getSurface().getModel();
+	const surfaceModel = this.getSurface().getModel();
 
 	if ( config.docId ) {
 		surfaceModel.setAutosaveDocId( config.docId );
@@ -479,10 +472,10 @@ ve.init.mw.Target.prototype.initAutosave = function ( config ) {
 			this.storeDocState( this.originalHtml );
 		} else {
 			// Only store after the first change if this is an unmodified document
-			surfaceModel.once( 'undoStackChange', function () {
+			surfaceModel.once( 'undoStackChange', () => {
 				// Check the surface hasn't been destroyed
-				if ( target.getSurface() ) {
-					target.storeDocState( target.originalHtml );
+				if ( this.getSurface() ) {
+					this.storeDocState( this.originalHtml );
 				}
 			} );
 		}
@@ -498,7 +491,7 @@ ve.init.mw.Target.prototype.initAutosave = function ( config ) {
  * @param {string} [html] Document HTML, will generate from current state if not provided
  */
 ve.init.mw.Target.prototype.storeDocState = function ( html ) {
-	var mode = this.getSurface().getMode();
+	const mode = this.getSurface().getMode();
 	this.getSurface().getModel().storeDocState( { mode: mode }, html );
 };
 
@@ -535,8 +528,8 @@ ve.init.mw.Target.prototype.refreshUser = function ( doc ) {
 	return this.getContentApi( doc ).get( {
 		action: 'query',
 		meta: 'userinfo'
-	} ).then( function ( data ) {
-		var userInfo = data.query && data.query.userinfo;
+	} ).then( ( data ) => {
+		const userInfo = data.query && data.query.userinfo;
 
 		if ( userInfo.anon !== undefined ) {
 			// New session is an anonymous user
@@ -575,7 +568,7 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
 		return ve.createDeferred().resolve( '' );
 	}
 
-	var params = {
+	const params = {
 		action: 'visualeditoredit',
 		paction: 'serialize',
 		html: mw.libs.ve.targetSaver.getHtml(
@@ -589,12 +582,12 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
 		params.etag = this.etag;
 	}
 
-	var xhr = this.getContentApi( doc ).postWithToken( 'csrf',
+	const xhr = this.getContentApi( doc ).postWithToken( 'csrf',
 		params,
 		{ contentType: 'multipart/form-data' }
 	);
 
-	return xhr.then( function ( response ) {
+	return xhr.then( ( response ) => {
 		if ( response.visualeditoredit ) {
 			return response.visualeditoredit.content;
 		}
@@ -611,9 +604,8 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
  * @return {jQuery.Promise} Abortable promise
  */
 ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, doc ) {
-	var target = this;
-	var abortable, aborted;
-	var abortedPromise = ve.createDeferred().reject( 'http',
+	let abortable, aborted;
+	const abortedPromise = ve.createDeferred().reject( 'http',
 		{ textStatus: 'abort', exception: 'abort' } ).promise();
 
 	function abort() {
@@ -625,7 +617,7 @@ ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, do
 
 	// Acquire a temporary user username before previewing or diffing, so that signatures and
 	// user-related magic words display the temp user instead of IP user in the preview. (T331397)
-	var tempUserNamePromise;
+	let tempUserNamePromise;
 	if ( pst ) {
 		tempUserNamePromise = mw.user.acquireTempUserName();
 	} else {
@@ -633,14 +625,14 @@ ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, do
 	}
 
 	return tempUserNamePromise
-		.then( function () {
+		.then( () => {
 			if ( aborted ) {
 				return abortedPromise;
 			}
-			return ( abortable = target.getContentApi( doc ).post( {
+			return ( abortable = this.getContentApi( doc ).post( {
 				action: 'visualeditor',
 				paction: 'parsefragment',
-				page: target.getPageName( doc ),
+				page: this.getPageName( doc ),
 				wikitext: wikitext,
 				pst: pst
 			} ) );

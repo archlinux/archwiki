@@ -23,7 +23,9 @@
 
 use MediaWiki\WikiMap\WikiMap;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Generic class to cleanup a database table. Already subclasses Maintenance.
@@ -31,6 +33,7 @@ require_once __DIR__ . '/Maintenance.php';
  * @ingroup Maintenance
  */
 class TableCleanup extends Maintenance {
+	/** @var array */
 	protected $defaultParams = [
 		'table' => 'page',
 		'conds' => [],
@@ -38,10 +41,16 @@ class TableCleanup extends Maintenance {
 		'callback' => 'processRow',
 	];
 
+	/** @var bool */
 	protected $dryrun = false;
+	/** @var int */
 	protected $reportInterval = 100;
 
-	protected $processed, $updated, $count, $startTime, $table;
+	protected int $processed;
+	protected int $updated;
+	protected int $count;
+	protected float $startTime;
+	protected string $table;
 
 	public function __construct() {
 		parent::__construct();
@@ -119,7 +128,10 @@ class TableCleanup extends Maintenance {
 
 		$table = $params['table'];
 		// count(*) would melt the DB for huge tables, we can estimate here
-		$count = $dbr->estimateRowCount( $table, '*', '', __METHOD__ );
+		$count = $dbr->newSelectQueryBuilder()
+			->table( $table )
+			->caller( __METHOD__ )
+			->estimateRowCount();
 		$this->init( $count, $table );
 		$this->output( "Processing $table...\n" );
 

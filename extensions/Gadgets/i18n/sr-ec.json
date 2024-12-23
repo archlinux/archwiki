@@ -42,7 +42,7 @@
 	"gadgets-export-text": "Да бисте извезли $1 справицу, кликните на дугме „{{int:gadgets-export-download}}“, сачувајте преузету датотеку,\nпређите на ''Special:Import'' на жељеној викији и пошаљите справицу. Након тога, додајте следеће на ''MediaWiki:Gadgets-definition'' страницу:\n<pre>$2</pre>\nМорате имати одређене дозволе на наведеној викији (укључујући и право за уређивање системских порука), док увоз преко датотека мора бити омогућен.",
 	"gadgets-export-download": "Преузми",
 	"gadgets-validate-notset": "Својство <code>$1</code> није задато.",
-	"gadgets-validate-wrongtype": "Својство <code>$1</code> мора бити <code>$2</code> уместо <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Својство <code>$1</code> мора бити типа <code>$2</code>.",
 	"gadgets-validate-invalidjs": "Скрипта $1 се не користи због погрешног садржинског модела „$2”.",
 	"gadgets-validate-invalidcss": "Стилска таблица $1 се не користи због погрешног садржинског модела „$2”.",
 	"gadgets-validate-invalidactions": "{{PLURAL:$2|Следећа радња није препозната|Следеће радње нису препознате}}: $1",

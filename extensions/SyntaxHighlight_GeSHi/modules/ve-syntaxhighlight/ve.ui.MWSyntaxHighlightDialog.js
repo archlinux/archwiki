@@ -10,7 +10,7 @@
  *
  * @class
  * @extends ve.ui.MWExtensionDialog
- * @mixins ve.ui.MWSyntaxHighlightWindow
+ * @mixes ve.ui.MWSyntaxHighlightWindow
  *
  * @constructor
  * @param {Object} [config] Configuration options
@@ -83,15 +83,13 @@ ve.ui.MWSyntaxHighlightDialog.prototype.initialize = function () {
  * @inheritdoc MWSyntaxHighlightWindow
  */
 ve.ui.MWSyntaxHighlightDialog.prototype.onLanguageInputChange = function () {
-	var dialog = this;
-
 	// Mixin method
 	ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange.call( this );
 
-	var validity = this.language.getValidity();
-	validity.always( function () {
-		var language = ve.dm.MWSyntaxHighlightNode.static.convertLanguageToAce( dialog.language.getValue() );
-		dialog.input.setLanguage( validity.state() === 'resolved' ? language : 'text' );
+	const validity = this.language.getValidity();
+	validity.always( () => {
+		const language = ve.dm.MWSyntaxHighlightNode.static.convertLanguageToAce( this.language.getValue() );
+		this.input.setLanguage( validity.state() === 'resolved' ? language : 'text' );
 	} );
 };
 
@@ -100,7 +98,7 @@ ve.ui.MWSyntaxHighlightDialog.prototype.onLanguageInputChange = function () {
  */
 ve.ui.MWSyntaxHighlightDialog.prototype.getReadyProcess = function ( data ) {
 	// Parent process
-	var process = ve.ui.MWSyntaxHighlightDialog.super.prototype.getReadyProcess.call( this, data );
+	const process = ve.ui.MWSyntaxHighlightDialog.super.prototype.getReadyProcess.call( this, data );
 	// Mixin process
 	return ve.ui.MWSyntaxHighlightWindow.prototype.getReadyProcess.call( this, data, process );
 };
@@ -110,16 +108,16 @@ ve.ui.MWSyntaxHighlightDialog.prototype.getReadyProcess = function ( data ) {
  */
 ve.ui.MWSyntaxHighlightDialog.prototype.getSetupProcess = function ( data ) {
 	// Parent process
-	var process = ve.ui.MWSyntaxHighlightDialog.super.prototype.getSetupProcess.call( this, data );
+	const process = ve.ui.MWSyntaxHighlightDialog.super.prototype.getSetupProcess.call( this, data );
 	// Mixin process
 	return ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess.call( this, data, process )
-		.first( function () {
+		.first( () => {
 			this.input.setup();
-		}, this )
-		.next( function () {
+		} )
+		.next( () => {
 			this.onShowLinesCheckboxChange();
 			this.input.clearUndoStack();
-		}, this );
+		} );
 };
 
 /**
@@ -127,12 +125,12 @@ ve.ui.MWSyntaxHighlightDialog.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.MWSyntaxHighlightDialog.prototype.getTeardownProcess = function ( data ) {
 	// Parent process
-	var process = ve.ui.MWSyntaxHighlightDialog.super.prototype.getTeardownProcess.call( this, data );
+	const process = ve.ui.MWSyntaxHighlightDialog.super.prototype.getTeardownProcess.call( this, data );
 	// Mixin process
-	return ve.ui.MWSyntaxHighlightWindow.prototype.getTeardownProcess.call( this, data, process ).first( function () {
+	return ve.ui.MWSyntaxHighlightWindow.prototype.getTeardownProcess.call( this, data, process ).first( () => {
 		this.language.setValue( '' );
 		this.input.teardown();
-	}, this );
+	} );
 };
 
 /**

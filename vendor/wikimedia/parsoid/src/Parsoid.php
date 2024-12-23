@@ -17,11 +17,12 @@ use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
-use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Language\LanguageConverter;
 use Wikimedia\Parsoid\Logger\LintLogger;
+use Wikimedia\Parsoid\Utils\ComputeSelectiveStats;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -29,8 +30,8 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wikitext\Wikitext;
-use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddRedLinks;
-use Wikimedia\Parsoid\Wt2Html\PP\Processors\ConvertOffsets;
+use Wikimedia\Parsoid\Wt2Html\DOM\Processors\AddRedLinks;
+use Wikimedia\Parsoid\Wt2Html\DOM\Processors\ConvertOffsets;
 
 class Parsoid {
 
@@ -151,12 +152,14 @@ class Parsoid {
 	 * @param PageConfig $pageConfig
 	 * @param ContentMetadataCollector $metadata
 	 * @param array $options See wikitext2html.
-	 * @return array
+	 * @param ?SelectiveUpdateData $selparData See wikitext2html.
+	 * @return array{0:Env,1:Document,2:?string}
 	 */
 	private function parseWikitext(
 		PageConfig $pageConfig,
 		ContentMetadataCollector $metadata,
-		array $options = []
+		array $options = [],
+		?SelectiveUpdateData $selparData = null
 	): array {
 		$envOptions = $this->setupCommonOptions( $options );
 		if ( isset( $options['outputContentVersion'] ) ) {
@@ -171,6 +174,9 @@ class Parsoid {
 		}
 		if ( isset( $options['logLinterData'] ) ) {
 			$envOptions['logLinterData'] = (bool)$options['logLinterData'];
+		}
+		if ( isset( $options['linterOverrides'] ) ) {
+			$envOptions['linterOverrides'] = $options['linterOverrides'];
 		}
 		$envOptions['skipLanguageConversionPass'] =
 			$options['skipLanguageConversionPass'] ?? false;
@@ -188,7 +194,8 @@ class Parsoid {
 		$contentmodel = $options['contentmodel'] ?? null;
 		$handler = $env->getContentHandler( $contentmodel );
 		$extApi = new ParsoidExtensionAPI( $env );
-		return [ $env, $handler->toDOM( $extApi ), $contentmodel ];
+		// FIXME: Hardcoded to assume 'mode' is 'template'
+		return [ $env, $handler->toDOM( $extApi, $selparData ), $contentmodel ];
 	}
 
 	/**
@@ -210,33 +217,50 @@ class Parsoid {
 	 *   'htmlVariantLanguage'  => (Bcp47Code) If non-null, the language variant used for Parsoid HTML.
 	 *   'wtVariantLanguage'    => (Bcp47Code) If non-null, the language variant used for wikitext.
 	 *   'logLinterData'        => (bool) Should we log linter data if linting is enabled?
+	 *   'linterOverrides'      => (array) Override the site linting configs.
+	 *   // Debugging options, not for use in production
 	 *   'traceFlags'           => (array) associative array with tracing options
 	 *   'dumpFlags'            => (array) associative array with dump options
 	 *   'debugFlags'           => (array) associative array with debug options
 	 *   'logLevels'            => (string[]) Levels to log
+	 *   // Experimental options, not considered stable
+	 *   'sampleStats'          => (bool) If true, okay to perform "expensive"
+	 *                             analysis to generate metrics.
+	 *   'renderReason'         => (?string) Passed through from MediaWiki core
+	 *                             to classify metrics; see
+	 *                             ParserOptions::getRenderReason()
+	 *   'previousInput'        => (?PageConfig) wikitext, revision ID, etc of
+	 *                             some recent parse of this page.
+	 *                             Not guaranteed to be usable for selective
+	 *                             update, and could even be from a "newer"
+	 *                             revision (if this is a render of an old
+	 *                             revision).
+	 *   'previousOutput'       => (?PageBundle) output of the prior parse of
+	 *                             'previousInput'
 	 * ]
 	 * @param ?array &$headers
 	 * @param ?ContentMetadataCollector $metadata Pass in a CMC in order to
 	 *  collect and retrieve metadata about the parse.
+	 * @param ?SelectiveUpdateData $selparData
 	 * @return PageBundle|string
 	 */
 	public function wikitext2html(
 		PageConfig $pageConfig, array $options = [], ?array &$headers = null,
-		?ContentMetadataCollector $metadata = null
+		?ContentMetadataCollector $metadata = null, ?SelectiveUpdateData $selparData = null
 	) {
 		if ( $metadata === null ) {
 			$metadata = new StubMetadataCollector( $this->siteConfig );
 		}
 
 		$parseTiming = Timing::start();
-		[ $env, $doc, $contentmodel ] = $this->parseWikitext( $pageConfig, $metadata, $options );
-		$parseTime = $parseTiming->end();
+		[ $env, $doc, $contentmodel ] = $this->parseWikitext( $pageConfig, $metadata, $options, $selparData );
+		$parseTimeMs = $parseTiming->end();
 
 		// FIXME: Does this belong in parseWikitext so that the other endpoint
 		// is covered as well?  It probably depends on expectations of the
 		// Rest API.  If callers of /page/lint/ assume that will update the
 		// results on the Special page.
-		if ( $env->getSiteConfig()->linting() ) {
+		if ( $env->linting() ) {
 			( new LintLogger( $env ) )->logLintOutput();
 		}
 
@@ -256,7 +280,9 @@ class Parsoid {
 			];
 		}
 
-		$this->recordParseMetrics( $env, $parseTime, $out );
+		$this->recordParseMetrics(
+			$env, $parseTimeMs, $out, $headers, $contentmodel, $options
+		);
 
 		if ( $env->pageBundle ) {
 			return new PageBundle(
@@ -275,12 +301,11 @@ class Parsoid {
 	 *
 	 */
 	private function recordParseMetrics(
-		Env $env, float $parseTime, array $out
+		Env $env, float $parseTimeMs,
+		array $out, ?array $headers, string $contentmodel,
+		array $options
 	) {
 		$metrics = $this->siteConfig->metrics();
-		if ( !$metrics ) {
-			return;
-		}
 
 		$pageConfig = $env->getPageConfig();
 
@@ -293,24 +318,37 @@ class Parsoid {
 			$mstr = 'wt';
 		}
 
-		$metrics->timing( "entry.wt2html.{$mstr}.parse", $parseTime );
+		$timing = Timing::fakeTiming( $this->siteConfig, $parseTimeMs );
+		$timing->end( "entry.wt2html.{$mstr}.parse", 'wt2html_parse_seconds', [ 'type' => $mstr ] );
+		$version = 'default';
 
 		if ( Semver::satisfies(
 			$env->getOutputContentVersion(), '!=' . self::defaultHTMLVersion()
 		) ) {
-			$metrics->increment( 'entry.wt2html.parse.version.notdefault' );
+			if ( $metrics ) {
+				$metrics->increment( 'entry.wt2html.parse.version.notdefault' );
+			}
+			$version = 'non-default';
 		}
 
-		$metrics->timing(
+		$this->siteConfig->incrementCounter( 'wt2html_parse_total', [
+			'type' => $mstr,
+			'version' => $version
+		] );
+
+		// @phan-suppress-next-line PhanDeprecatedFunction
+		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $pageConfig->getPageMainContent() ) );
+		$timing->end(
 			"entry.wt2html.{$mstr}.size.input",
-			// @phan-suppress-next-line PhanDeprecatedFunction
-			strlen( $pageConfig->getPageMainContent() )
+			"wt2html_size_input_bytes",
+			[ "type" => $mstr ]
 		);
 
 		$outSize = strlen( $out['html'] );
-		$metrics->timing( "entry.wt2html.{$mstr}.size.output", $outSize );
+		$timing = Timing::fakeTiming( $this->siteConfig, $outSize );
+		$timing->end( "entry.wt2html.{$mstr}.size.output", "wt2html_size_output_bytes", [ "type" => $mstr ] );
 
-		if ( $parseTime > 10 && $outSize > 100 ) {
+		if ( $parseTimeMs > 10 && $outSize > 100 ) {
 			// * Don't bother with this metric for really small parse times
 			//   p99 for initialization time is ~7ms according to grafana.
 			//   So, 10ms ensures that startup overheads don't skew the metrics
@@ -321,8 +359,49 @@ class Parsoid {
 			// NOTE: This is slightly misleading since there are fixed costs
 			// for generating output like the <head> section and should be factored in,
 			// but this is good enough for now as a useful first degree of approxmation.
-			$timePerKB = $parseTime * 1024 / $outSize;
-			$metrics->timing( 'entry.wt2html.timePerKB', $timePerKB );
+			$msPerKB = $parseTimeMs * 1024 / $outSize;
+			$timing = Timing::fakeTiming( $this->siteConfig, $msPerKB );
+			$timing->end(
+				'entry.wt2html.timePerKB',
+				'wt2html_msPerKB',
+				[]
+			);
+		}
+
+		// Expensive analyses: sampleStats is randomly sampled will not be
+		// true "often"
+		$doSample = $options['sampleStats'] ?? false;
+		if ( !$doSample ) {
+			return;
+		}
+
+		try {
+			// create new page bundle for this computation to ensure we
+			// don't inadvertently corrupt the main document result.
+			$newPb = new PageBundle(
+				$out['html'],
+				$out['pb']->parsoid, $out['pb']->mw ?? null,
+				$env->getOutputContentVersion(),
+				$headers,
+				$contentmodel
+			);
+			$labels = ComputeSelectiveStats::classify(
+				$env,
+				$options['previousInput'] ?? null,
+				$options['previousOutput'] ?? null,
+				$pageConfig,
+				$newPb
+			);
+			$labels['wiki'] = $this->siteConfig->iwp();
+			$labels['reason'] = $options['renderReason'] ?? 'unknown';
+
+			$this->siteConfig->incrementCounter( 'selective_update_total', $labels );
+			$this->siteConfig->incrementCounter( 'selective_update_seconds', $labels, $parseTimeMs / 1000. );
+		} catch ( \Throwable $t ) {
+			// Don't ever allow bugs in the classification code to
+			// impact the availability of content for read views/editing,
+			// just log.
+			$env->log( 'warn', 'Classification failure', $t->getTraceAsString() );
 		}
 	}
 
@@ -331,12 +410,17 @@ class Parsoid {
 	 *
 	 * @param PageConfig $pageConfig
 	 * @param array $options See wikitext2html.
+	 * @param ?ContentMetadataCollector $metadata Pass in a CMC in order to
+	 *  collect and retrieve metadata about the parse.
 	 * @return array
 	 */
 	public function wikitext2lint(
-		PageConfig $pageConfig, array $options = []
+		PageConfig $pageConfig, array $options = [],
+		?ContentMetadataCollector $metadata = null
 	): array {
-		$metadata = new StubMetadataCollector( $this->siteConfig );
+		if ( $metadata === null ) {
+			$metadata = new StubMetadataCollector( $this->siteConfig );
+		}
 		[ $env, ] = $this->parseWikitext( $pageConfig, $metadata, $options );
 		return $env->getLints();
 	}
@@ -362,12 +446,12 @@ class Parsoid {
 	 *   'logLevels'           => (string[]) Levels to log
 	 *   'htmlSize'            => (int) Size of the HTML that generated $doc
 	 * ]
-	 * @param ?SelserData $selserData
+	 * @param ?SelectiveUpdateData $selserData
 	 * @return string
 	 */
 	public function dom2wikitext(
 		PageConfig $pageConfig, Document $doc, array $options = [],
-		?SelserData $selserData = null
+		?SelectiveUpdateData $selserData = null
 	): string {
 		$envOptions = $this->setupCommonOptions( $options );
 		if ( isset( $options['inputContentVersion'] ) ) {
@@ -398,28 +482,41 @@ class Parsoid {
 	private function recordSerializationMetrics(
 		array $options, float $serialTime, string $wikitext
 	) {
-		$metrics = $this->siteConfig->metrics();
-		if ( !$metrics ) {
-			return;
-		}
+		$siteConfig = $this->siteConfig;
+		$metrics = $siteConfig->metrics();
 
 		$htmlSize = $options['htmlSize'] ?? 0;
-		$metrics->timing( 'entry.html2wt.size.input', $htmlSize );
+		$timing = Timing::fakeTiming( $this->siteConfig, $htmlSize );
+		$timing->end( 'entry.html2wt.size.input', 'html2wt_size_input_bytes' );
 
 		if ( isset( $options['inputContentVersion'] ) ) {
-			$metrics->increment(
-				'entry.html2wt.original.version.' . $options['inputContentVersion']
+			if ( $metrics ) {
+				$metrics->increment(
+					'entry.html2wt.original.version.' . $options['inputContentVersion']
+				);
+			}
+			$this->siteConfig->incrementCounter(
+				'html2wt_original_version',
+				[ 'input_content_version' => $options['inputContentVersion'] ]
 			);
 		}
 
-		$metrics->timing( 'entry.html2wt.total', $serialTime );
-		$metrics->timing( 'entry.html2wt.size.output', strlen( $wikitext ) );
+		$timing = Timing::fakeTiming( $this->siteConfig, $serialTime );
+		$timing->end( 'entry.html2wt.total', 'html2wt_total_seconds', [] );
+
+		$timing = Timing::fakeTiming( $this->siteConfig, strlen( $wikitext ) );
+		$timing->end( 'entry.html2wt.size.output', 'html2wt_size_output_bytes', [] );
 
 		if ( $htmlSize ) {  // Avoid division by zero
 			// NOTE: the name timePerInputKB is misleading, since $htmlSize is
 			//       in characters, not bytes.
-			$timePerInputKB = $serialTime * 1024 / $htmlSize;
-			$metrics->timing( 'entry.html2wt.timePerInputKB', $timePerInputKB );
+			$msPerKB = $serialTime * 1024 / $htmlSize;
+			$timing = Timing::fakeTiming( $this->siteConfig, $msPerKB );
+			$timing->end(
+				'entry.html2wt.timePerInputKB',
+				'html2wt_msPerKB',
+				[]
+			);
 		}
 	}
 
@@ -429,12 +526,12 @@ class Parsoid {
 	 * @param PageConfig $pageConfig
 	 * @param string $html
 	 * @param array $options
-	 * @param ?SelserData $selserData
+	 * @param ?SelectiveUpdateData $selserData
 	 * @return string
 	 */
 	public function html2wikitext(
 		PageConfig $pageConfig, string $html, array $options = [],
-		?SelserData $selserData = null
+		?SelectiveUpdateData $selserData = null
 	): string {
 		$doc = DOMUtils::parseHTML( $html, true );
 		$options['htmlSize'] ??= mb_strlen( $html );
@@ -641,7 +738,7 @@ class Parsoid {
 	 */
 	public function implementsLanguageConversionBcp47( PageConfig $pageConfig, Bcp47Code $htmlVariant ): bool {
 		// Hardcode disable zh lang conversion support since Parsoid's
-		// implementation is incomplete and not performant.
+		// implementation is incomplete and not performant (T346657).
 		if ( $pageConfig->getPageLanguageBcp47()->toBcp47Code() === 'zh' ) {
 			return false;
 		}

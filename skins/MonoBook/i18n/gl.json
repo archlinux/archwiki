@@ -7,7 +7,7 @@
 			"Xosé"
 		]
 	},
-	"monobook-prefs-talkpage": "[[mw:Skin talk:MonoBook|{{int:talk}}]]",
+	"monobook-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:MonoBook {{int:talk}}]",
 	"skinname-monobook": "MonoBook",
 	"monobook-desc": "A aparencia clásica de MediaWiki desde 2004; recibe o seu nome pola foto en branco e negro dun libro que aparece no fondo das páxinas",
 	"monobook.css": "/* O CSS colocado aquí afectará aos usuarios da aparencia MonoBook */",

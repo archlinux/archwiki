@@ -8,7 +8,6 @@ use Closure;
 use Exception;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
-use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
@@ -70,7 +69,7 @@ class Ref extends ExtensionTagHandler {
 	/** @inheritDoc */
 	public function lintHandler(
 		ParsoidExtensionAPI $extApi, Element $ref, callable $defaultHandler
-	): ?Node {
+	): bool {
 		$dataMw = DOMDataUtils::getDataMw( $ref );
 		if ( isset( $dataMw->body->html ) ) {
 			$fragment = $extApi->htmlToDom( $dataMw->body->html );
@@ -81,7 +80,7 @@ class Ref extends ExtensionTagHandler {
 				$defaultHandler( $refNode );
 			}
 		}
-		return $ref->nextSibling;
+		return true;
 	}
 
 	/** @inheritDoc */

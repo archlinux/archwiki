@@ -14,7 +14,7 @@ trait AbuseFilterApiTestTrait {
 	 * @param FilterEvaluator|null $ruleChecker
 	 * @return RuleCheckerFactory
 	 */
-	protected function getRuleCheckerFactory( FilterEvaluator $ruleChecker = null ): RuleCheckerFactory {
+	protected function getRuleCheckerFactory( ?FilterEvaluator $ruleChecker = null ): RuleCheckerFactory {
 		$factory = $this->createMock( RuleCheckerFactory::class );
 		if ( $ruleChecker !== null ) {
 			$factory->expects( $this->atLeastOnce() )

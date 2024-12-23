@@ -10,7 +10,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|ыраазычылык билдирдиңиз}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Ыраазычылык билдирүү}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Ыраазычылык билдирдиңиз}}}}",
-	"thanks-button-action-cancel": "Жокко чыгаруу",
 	"thanks-error-undefined": "Ыраазычылык билдирилген жок (катанын коду: $1). Кайра аракеттенип көрүңүз.",
 	"thanks-error-invalid-log-id": "Журналдын жазуусу табылган жок",
 	"thanks-error-invalidrecipient": "Тийиштүү алуучу табылган жок",

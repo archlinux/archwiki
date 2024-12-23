@@ -2,8 +2,8 @@
 
 namespace Cite;
 
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
-use Parser;
 
 /**
  * Footnote markers in the context of the Cite extension are the numbers in the article text, e.g.
@@ -36,22 +36,12 @@ class FootnoteMarkFormatter {
 	 *
 	 * @suppress SecurityCheck-DoubleEscaped
 	 * @param Parser $parser
-	 * @param string $group
 	 * @param ReferenceStackItem $ref
 	 *
-	 * @return string
+	 * @return string HTML
 	 */
-	public function linkRef( Parser $parser, string $group, ReferenceStackItem $ref ): string {
-		$label = $this->fetchCustomizedLinkLabel( $parser, $group, $ref->number );
-		if ( $label === null ) {
-			$label = $this->messageLocalizer->localizeDigits( (string)$ref->number );
-			if ( $group !== Cite::DEFAULT_GROUP ) {
-				$label = "$group $label";
-			}
-		}
-		if ( isset( $ref->extendsIndex ) ) {
-			$label .= '.' . $this->messageLocalizer->localizeDigits( (string)$ref->extendsIndex );
-		}
+	public function linkRef( Parser $parser, ReferenceStackItem $ref ): string {
+		$label = $this->makeLabel( $ref, $parser );
 
 		$key = $ref->name ?? $ref->key;
 		// TODO: Use count without decrementing.
@@ -66,6 +56,20 @@ class FootnoteMarkFormatter {
 				Sanitizer::safeEncodeAttribute( $label )
 			)->plain()
 		);
+	}
+
+	private function makeLabel( ReferenceStackItem $ref, Parser $parser ): string {
+		$label = $this->fetchCustomizedLinkLabel( $parser, $ref->group, $ref->number ) ??
+			$this->makeDefaultLabel( $ref );
+		if ( isset( $ref->extendsIndex ) ) {
+			$label .= '.' . $this->messageLocalizer->localizeDigits( (string)$ref->extendsIndex );
+		}
+		return $label;
+	}
+
+	private function makeDefaultLabel( ReferenceStackItem $ref ): string {
+		$label = $this->messageLocalizer->localizeDigits( (string)$ref->number );
+		return $ref->group === Cite::DEFAULT_GROUP ? $label : "$ref->group $label";
 	}
 
 	/**

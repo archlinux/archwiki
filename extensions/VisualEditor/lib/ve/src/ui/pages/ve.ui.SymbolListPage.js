@@ -14,9 +14,9 @@
  * @constructor
  * @param {string} name Unique symbolic name of page
  * @param {Object} [config] Configuration options
- * @cfg {string} [label] Group label
- * @cfg {Object} [symbols] Symbol set
- * @cfg {Object} [attributes] Extra attributes for the group, e.g. `lang` & `dir`
+ * @param {string} [config.label] Group label
+ * @param {Object} [config.symbols] Symbol set
+ * @param {Object} [config.attributes] Extra attributes for the group, e.g. `lang` & `dir`
  */
 ve.ui.SymbolListPage = function VeUiSymbolListPage( name, config ) {
 	// Parent constructor
@@ -24,13 +24,13 @@ ve.ui.SymbolListPage = function VeUiSymbolListPage( name, config ) {
 
 	this.label = config.label;
 
-	var $symbols = $( '<div>' ).addClass( 've-ui-symbolListPage-symbols' );
-	var symbolsNode = $symbols[ 0 ];
+	const $symbols = $( '<div>' ).addClass( 've-ui-symbolListPage-symbols' );
+	const symbolsNode = $symbols[ 0 ];
 
 	// It is assumed this loop may contain hundreds or thousands of symbols,
 	// so avoid jQuery and use plain DOM.
-	config.symbols.forEach( function ( symbol ) {
-		var symbolNode = document.createElement( 'div' );
+	config.symbols.forEach( ( symbol ) => {
+		const symbolNode = document.createElement( 'div' );
 		symbolNode.classList.add( 've-ui-symbolListPage-symbol' );
 		if ( symbol.classes ) {
 			DOMTokenList.prototype.add.apply( symbolNode.classList, symbol.classes );

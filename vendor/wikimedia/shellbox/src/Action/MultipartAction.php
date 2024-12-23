@@ -203,7 +203,7 @@ abstract class MultipartAction {
 				'unauthorized requests' );
 		}
 
-		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $headers = $multipartReader->readPartHeaders() ) !== false ) {
 			if ( !isset( $headers['content-disposition'] ) ) {
 				$this->error( 'Part has no Content-Disposition', 400 );

@@ -17,6 +17,8 @@
  *
  * @file
  */
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\StubObject\StubUserLang;
@@ -58,7 +60,7 @@ class TrivialLanguageConverter implements ILanguageConverter {
 	 */
 	public function __construct(
 		$langobj,
-		TitleFormatter $titleFormatter = null
+		?TitleFormatter $titleFormatter = null
 	) {
 		$this->language = $langobj;
 		$this->titleFormatter = $titleFormatter ?? MediaWikiServices::getInstance()->getTitleFormatter();

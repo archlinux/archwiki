@@ -18,9 +18,15 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use DifferenceEngine;
+use Exception;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Transform\ContentTransformer;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionArchiveRecord;
@@ -31,6 +37,7 @@ use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
+use MWContentSerializationException;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\RequestTimeout\TimeoutException;
 
@@ -45,6 +52,7 @@ class ApiComparePages extends ApiBase {
 
 	/** @var Title|null|false */
 	private $guessedTitle = false;
+	/** @var array<string,true> */
 	private $props;
 
 	private IContentHandlerFactory $contentHandlerFactory;
@@ -54,21 +62,9 @@ class ApiComparePages extends ApiBase {
 	private UserFactory $userFactory;
 	private DifferenceEngine $differenceEngine;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param RevisionStore $revisionStore
-	 * @param ArchivedRevisionLookup $archivedRevisionLookup
-	 * @param SlotRoleRegistry $slotRoleRegistry
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param ContentTransformer $contentTransformer
-	 * @param CommentFormatter $commentFormatter
-	 * @param TempUserCreator $tempUserCreator
-	 * @param UserFactory $userFactory
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		RevisionStore $revisionStore,
 		ArchivedRevisionLookup $archivedRevisionLookup,
 		SlotRoleRegistry $slotRoleRegistry,
@@ -804,3 +800,6 @@ class ApiComparePages extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Compare';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiComparePages::class, 'ApiComparePages' );

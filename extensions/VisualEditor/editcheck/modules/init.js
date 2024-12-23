@@ -1,136 +1,19 @@
+mw.editcheck = {
+	config: require( './config.json' ),
+	ecenable: !!( new URL( location.href ).searchParams.get( 'ecenable' ) || window.MWVE_FORCE_EDIT_CHECK_ENABLED )
+};
+
 require( './EditCheckContextItem.js' );
 require( './EditCheckInspector.js' );
+require( './EditCheckDialog.js' );
+require( './EditCheckFactory.js' );
+require( './EditCheckAction.js' );
+require( './BaseEditCheck.js' );
 
-mw.editcheck = {};
-
-mw.editcheck.config = require( './config.json' );
-
-mw.editcheck.accountShouldSeeEditCheck = function ( config ) {
-	// account status:
-	// loggedin, loggedout, or any-other-value meaning 'both'
-	// we'll count temporary users as "logged out" by using isNamed here
-	if ( config.account === 'loggedout' && mw.user.isNamed() ) {
-		return false;
-	}
-	if ( config.account === 'loggedin' && !mw.user.isNamed() ) {
-		return false;
-	}
-	if ( config.maximumEditcount && mw.config.get( 'wgUserEditCount', 0 ) > config.maximumEditcount ) {
-		return false;
-	}
-	return true;
-};
-
-mw.editcheck.shouldApplyToSection = function ( documentModel, selection, config ) {
-	var ignoreSections = config.ignoreSections || [];
-	if ( ignoreSections.length === 0 && !config.ignoreLeadSection ) {
-		// Nothing is forbidden, so everything is permitted
-		return true;
-	}
-	var isHeading = function ( nodeType ) {
-		return nodeType === 'mwHeading';
-	};
-	// Note: we set a limit of 1 here because otherwise this will turn around
-	// to keep looking when it hits the document boundary:
-	var heading = documentModel.getNearestNodeMatching( isHeading, selection.getRange().start, -1, 1 );
-	if ( !heading ) {
-		// There's no preceding heading, so work out if we count as being in a
-		// lead section. It's only a lead section if there's more headings
-		// later in the document, otherwise it's just a stub article.
-		return !(
-			config.ignoreLeadSection &&
-			!!documentModel.getNearestNodeMatching( isHeading, selection.getRange().start, 1 )
-		);
-	}
-	if ( ignoreSections.length === 0 ) {
-		// There's nothing left to deny
-		return true;
-	}
-	var compare = new Intl.Collator( documentModel.getLang(), { sensitivity: 'accent' } ).compare;
-	var headingText = documentModel.data.getText( false, heading.getRange() );
-	for ( var i = ignoreSections.length - 1; i >= 0; i-- ) {
-		if ( compare( headingText, ignoreSections[ i ] ) === 0 ) {
-			return false;
-		}
-	}
-	return true;
-};
-
-/**
- * Find added content in the document model that might need a reference
- *
- * @param {ve.dm.DocumentModel} documentModel Document model
- * @param {boolean} [includeReferencedContent] Include content ranges that already
- *  have a reference.
- * @return {ve.dm.Selection[]} Content ranges that might need a reference
- */
-mw.editcheck.findAddedContentNeedingReference = function ( documentModel, includeReferencedContent ) {
-	if ( mw.config.get( 'wgNamespaceNumber' ) !== mw.config.get( 'wgNamespaceIds' )[ '' ] ) {
-		return [];
-	}
-
-	if ( !documentModel.completeHistory.getLength() ) {
-		return [];
-	}
-	var operations;
-	try {
-		operations = documentModel.completeHistory.squash().transactions[ 0 ].operations;
-	} catch ( err ) {
-		// TransactionSquasher can sometimes throw errors; until T333710 is
-		// fixed just count this as not needing a reference.
-		mw.errorLogger.logError( err, 'error.visualeditor' );
-		return [];
-	}
-
-	var ranges = [];
-	var offset = 0;
-	var endOffset = documentModel.getDocumentRange().end;
-	operations.every( function ( op ) {
-		if ( op.type === 'retain' ) {
-			offset += op.length;
-		} else if ( op.type === 'replace' ) {
-			var insertedRange = new ve.Range( offset, offset + op.insert.length );
-			offset += op.insert.length;
-			// 1. Only trigger if the check is a pure insertion, with no adjacent content removed (T340088)
-			if ( op.remove.length === 0 ) {
-				ve.batchPush(
-					ranges,
-					// 2. Only fully inserted paragraphs (ranges that cover the whole node) (T345121)
-					mw.editcheck.getContentRanges( documentModel, insertedRange, true )
-				);
-			}
-		}
-		// Reached the end of the doc / start of internal list, stop searching
-		return offset < endOffset;
-	} );
-	var addedTextRanges = ranges.filter( function ( range ) {
-		var minimumCharacters = mw.editcheck.config.addReference.minimumCharacters;
-		// 3. Check that at least minimumCharacters characters have been inserted sequentially
-		if ( range.getLength() >= minimumCharacters ) {
-			// 4. Exclude any ranges that already contain references
-			if ( !includeReferencedContent ) {
-				for ( var i = range.start; i < range.end; i++ ) {
-					if ( documentModel.data.isElementData( i ) && documentModel.data.getType( i ) === 'mwReference' ) {
-						return false;
-					}
-				}
-			}
-			// 5. Exclude any ranges that aren't at the document root (i.e. image captions, table cells)
-			var branchNode = documentModel.getBranchNodeFromOffset( range.start );
-			if ( branchNode.getParent() !== documentModel.attachedRoot ) {
-				return false;
-			}
-			return true;
-		}
-		return false;
-	} );
-
-	return addedTextRanges.map( function ( range ) {
-		return new ve.dm.LinearSelection( range );
-	} ).filter( function ( selection ) {
-		return mw.editcheck.shouldApplyToSection( documentModel, selection, mw.editcheck.config.addReference );
-	} );
-};
+// TODO: Load these checks behind feature flags
+// require( './ConvertReferenceEditCheck.js' );
+// require( './TextMatchEditCheck.js' );
+require( './AddReferenceEditCheck.js' );
 
 /**
  * Return the content ranges (content branch node interiors) contained within a range
@@ -145,8 +28,8 @@ mw.editcheck.findAddedContentNeedingReference = function ( documentModel, includ
  * @return {ve.Range[]} The contained content ranges (content branch node interiors)
  */
 mw.editcheck.getContentRanges = function ( documentModel, range, covers ) {
-	var ranges = [];
-	documentModel.selectNodes( range, 'branches' ).forEach( function ( spec ) {
+	const ranges = [];
+	documentModel.selectNodes( range, 'branches' ).forEach( ( spec ) => {
 		if (
 			spec.node.canContainContent() && (
 				!covers || (
@@ -161,6 +44,46 @@ mw.editcheck.getContentRanges = function ( documentModel, range, covers ) {
 	return ranges;
 };
 
+mw.editcheck.hasAddedContentNeedingReference = function ( documentModel, includeReferencedContent ) {
+	// helper for ve.init.mw.ArticleTarget save-tagging, keep logic below in-sync with AddReferenceEditCheck.
+	// This is bypassing the normal "should this check apply?" logic for creation, so we need to manually
+	// apply the "only the main namespace" rule.
+	if ( mw.config.get( 'wgNamespaceNumber' ) !== mw.config.get( 'wgNamespaceIds' )[ '' ] ) {
+		return false;
+	}
+	const check = mw.editcheck.editCheckFactory.create( 'addReference', mw.editcheck.config.addReference );
+	return check.findAddedContent( documentModel, includeReferencedContent ).length > 0;
+};
+
+mw.editcheck.getModifiedRanges = function ( documentModel, coveredNodesOnly ) {
+	if ( !documentModel.completeHistory.getLength() ) {
+		return [];
+	}
+	const operations = documentModel.completeHistory.squash().transactions[ 0 ].operations;
+	const ranges = [];
+	let offset = 0;
+	const endOffset = documentModel.getDocumentRange().end;
+	operations.every( ( op ) => {
+		if ( op.type === 'retain' ) {
+			offset += op.length;
+		} else if ( op.type === 'replace' ) {
+			const insertedRange = new ve.Range( offset, offset + op.insert.length );
+			offset += op.insert.length;
+			// 1. Only trigger if the check is a pure insertion, with no adjacent content removed (T340088)
+			if ( op.remove.length === 0 ) {
+				ve.batchPush(
+					ranges,
+					// 2. Only fully inserted paragraphs (ranges that cover the whole node) (T345121)
+					mw.editcheck.getContentRanges( documentModel, insertedRange, coveredNodesOnly )
+				);
+			}
+		}
+		// Reached the end of the doc / start of internal list, stop searching
+		return offset < endOffset;
+	} );
+	return ranges;
+};
+
 mw.editcheck.rejections = [];
 
 mw.editcheck.getRejectionReasons = function () {
@@ -170,31 +93,31 @@ mw.editcheck.getRejectionReasons = function () {
 mw.editcheck.refCheckShown = false;
 
 if ( mw.config.get( 'wgVisualEditorConfig' ).editCheckTagging ) {
-	mw.hook( 've.activationComplete' ).add( function () {
-		var target = ve.init.target;
+	mw.hook( 've.activationComplete' ).add( () => {
+		const target = ve.init.target;
 
 		function getRefNodes() {
 			// The firstNodes list is a numerically indexed array of reference nodes in the document.
 			// The list is append only, and removed references are set to undefined in place.
 			// To check if a new reference is being published, we just need to know if a reference
 			// with an index beyond the initial list (initLength) is still set.
-			var internalList = target.getSurface().getModel().getDocument().getInternalList();
-			var group = internalList.getNodeGroup( 'mwReference/' );
+			const internalList = target.getSurface().getModel().getDocument().getInternalList();
+			const group = internalList.getNodeGroup( 'mwReference/' );
 			return group ? group.firstNodes || [] : [];
 		}
 
-		var initLength = getRefNodes().length;
+		const initLength = getRefNodes().length;
 		target.saveFields.vetags = function () {
-			var refNodes = getRefNodes();
-			var newLength = refNodes.length;
-			var newNodesInDoc = false;
-			for ( var i = initLength; i < newLength; i++ ) {
+			const refNodes = getRefNodes();
+			const newLength = refNodes.length;
+			let newNodesInDoc = false;
+			for ( let i = initLength; i < newLength; i++ ) {
 				if ( refNodes[ i ] ) {
 					newNodesInDoc = true;
 					break;
 				}
 			}
-			var tags = [];
+			const tags = [];
 			if ( newNodesInDoc ) {
 				tags.push( 'editcheck-newreference' );
 			}
@@ -204,21 +127,17 @@ if ( mw.config.get( 'wgVisualEditorConfig' ).editCheckTagging ) {
 			return tags.join( ',' );
 		};
 	} );
-	mw.hook( 've.deactivationComplete' ).add( function () {
-		var target = ve.init.target;
+	mw.hook( 've.deactivationComplete' ).add( () => {
+		const target = ve.init.target;
 		delete target.saveFields.vetags;
 	} );
 }
 
-if (
-	( mw.config.get( 'wgVisualEditorConfig' ).editCheck && mw.editcheck.accountShouldSeeEditCheck( mw.editcheck.config.addReference ) ) ||
-	// ecenable will bypass normal account-status checks as well:
-	new URL( location.href ).searchParams.get( 'ecenable' ) ||
-	!!window.MWVE_FORCE_EDIT_CHECK_ENABLED
-) {
-	var saveProcessDeferred;
-	mw.hook( 've.preSaveProcess' ).add( function ( saveProcess, target ) {
-		var surface = target.getSurface();
+if ( mw.config.get( 'wgVisualEditorConfig' ).editCheck || mw.editcheck.ecenable ) {
+	let saveProcessDeferred;
+
+	mw.hook( 've.preSaveProcess' ).add( ( saveProcess, target ) => {
+		const surface = target.getSurface();
 
 		if ( surface.getMode() !== 'visual' ) {
 			// Some checks will entirely work in source mode for most cases.
@@ -228,17 +147,19 @@ if (
 			return;
 		}
 
+		ve.track( 'counter.editcheck.preSaveChecksAvailable' );
+
 		// clear rejection-reasons between runs of the save process, so only the last one counts
 		mw.editcheck.rejections.length = 0;
 
-		var selections = mw.editcheck.findAddedContentNeedingReference( surface.getModel().getDocument() );
-
-		if ( selections.length ) {
+		let checks = mw.editcheck.editCheckFactory.createAllByListener( 'onBeforeSave', surface.getModel() );
+		if ( checks.length ) {
+			ve.track( 'counter.editcheck.preSaveChecksShown' );
 			mw.editcheck.refCheckShown = true;
 
-			var surfaceView = surface.getView();
-			var toolbar = target.getToolbar();
-			var reviewToolbar = new ve.ui.PositionedTargetToolbar( target, target.toolbarConfig );
+			const surfaceView = surface.getView();
+			const toolbar = target.getToolbar();
+			const reviewToolbar = new ve.ui.PositionedTargetToolbar( target, target.toolbarConfig );
 			reviewToolbar.setup( [
 				{
 					name: 'back',
@@ -260,6 +181,7 @@ if (
 					include: [ 'showSaveDisabled' ]
 				}
 			], surface );
+			reviewToolbar.$element.addClass( 've-ui-editCheck-toolbar' );
 
 			reviewToolbar.items[ 1 ].$element.removeClass( 'oo-ui-toolGroup-empty' );
 			reviewToolbar.items[ 1 ].$group.append(
@@ -271,42 +193,96 @@ if (
 			target.toolbar.$element.before( reviewToolbar.$element );
 			target.toolbar = reviewToolbar;
 
-			var selection = selections[ 0 ];
-			var highlightNodes = surfaceView.getDocument().selectNodes( selection.getCoveringRange(), 'branches' ).map( function ( spec ) {
-				return spec.node;
-			} );
+			saveProcessDeferred = ve.createDeferred();
+			const context = surface.getContext();
 
-			surfaceView.drawSelections( 'editCheck', [ ve.ce.Selection.static.newFromModel( selection, surfaceView ) ] );
-			surfaceView.setReviewMode( true, highlightNodes );
-			toolbar.toggle( false );
-			target.onContainerScroll();
+			// TODO: Allow multiple checks to be shown when multicheck is enabled
+			checks = checks.slice( 0, 1 );
 
-			saveProcess.next( function () {
-				saveProcessDeferred = ve.createDeferred();
-				var fragment = surface.getModel().getFragment( selection, true );
+			// eslint-disable-next-line no-shadow
+			const drawSelections = ( checks ) => {
+				const highlightNodes = [];
+				const selections = [];
+				checks.forEach( ( check ) => {
+					highlightNodes.push.apply( highlightNodes, surfaceView.getDocument().selectNodes( check.highlight.getSelection().getCoveringRange(), 'branches' ).map( ( spec ) => spec.node ) );
+					const selection = ve.ce.Selection.static.newFromModel( check.highlight.getSelection(), surfaceView );
+					selections.push( selection );
+				} );
+				// TODO: Make selections clickable when multicheck is enabled
+				surfaceView.drawSelections(
+					'editCheck',
+					checks.map( ( check ) => ve.ce.Selection.static.newFromModel( check.highlight.getSelection(), surfaceView ) )
+				);
+				surfaceView.setReviewMode( true, highlightNodes );
+			};
 
-				var context = surface.getContext();
+			const contextDone = ( responseData, contextData ) => {
+				if ( !responseData ) {
+					// this is the back button
+					return saveProcessDeferred.resolve();
+				}
+				const selectionIndex = checks.indexOf( contextData.action );
 
-				// Select the found content to correctly the context on desktop
+				if ( responseData.action !== 'reject' ) {
+					mw.notify( ve.msg( 'editcheck-dialog-addref-success-notify' ), { type: 'success' } );
+				} else if ( responseData.reason ) {
+					mw.editcheck.rejections.push( responseData.reason );
+				}
+				// TODO: Move on to the next issue, when multicheck is enabled
+				// checks = mw.editcheck.editCheckFactory.createAllByListener( 'onBeforeSave', surface.getModel() );
+				checks = [];
+
+				if ( checks.length ) {
+					context.removePersistentSource( 'editCheckReferences' );
+					setTimeout( () => {
+						// timeout needed to wait out the newly added content being focused
+						surface.getModel().setNullSelection();
+						drawSelections( checks );
+						setTimeout( () => {
+							// timeout needed to allow the context to reposition
+							showCheckContext( checks[ Math.min( selectionIndex, checks.length - 1 ) ] );
+						} );
+					}, 500 );
+				} else {
+					saveProcessDeferred.resolve( true );
+				}
+			};
+
+			// eslint-disable-next-line no-inner-declarations
+			function showCheckContext( check ) {
+				const fragment = check.highlight;
+
+				// Select the found content to correctly position the context on desktop
 				fragment.select();
-				// Deactivate to prevent selection suppressing mobile context
-				surface.getView().deactivate();
 
 				context.addPersistentSource( {
 					embeddable: false,
 					data: {
+						action: check,
 						fragment: fragment,
+						callback: contextDone,
 						saveProcessDeferred: saveProcessDeferred
 					},
 					name: 'editCheckReferences'
 				} );
 
+				// Deactivate to prevent selection suppressing mobile context
+				surface.getView().deactivate();
+
 				// Once the context is positioned, clear the selection
-				setTimeout( function () {
+				setTimeout( () => {
 					surface.getModel().setNullSelection();
 				} );
+			}
 
-				return saveProcessDeferred.promise().then( function ( data ) {
+			drawSelections( checks );
+			toolbar.toggle( false );
+			target.onContainerScroll();
+
+			saveProcess.next( () => {
+				showCheckContext( checks[ 0 ] );
+
+				return saveProcessDeferred.promise().then( ( data ) => {
 					context.removePersistentSource( 'editCheckReferences' );
 
 					surfaceView.drawSelections( 'editCheck', [] );
@@ -318,26 +294,27 @@ if (
 					target.onContainerScroll();
 
 					// Check the user inserted a citation
-					if ( data && data.action ) {
-						if ( data.action !== 'reject' ) {
-							mw.notify( ve.msg( 'editcheck-dialog-addref-success-notify' ), { type: 'success' } );
-						} else if ( data.reason ) {
-							mw.editcheck.rejections.push( data.reason );
-						}
-						var delay = ve.createDeferred();
+					if ( data ) {
+						const delay = ve.createDeferred();
 						// If they inserted, wait 2 seconds on desktop before showing save dialog
-						setTimeout( function () {
+						setTimeout( () => {
+							ve.track( 'counter.editcheck.preSaveChecksCompleted' );
 							delay.resolve();
 						}, !OO.ui.isMobile() && data.action !== 'reject' ? 2000 : 0 );
 						return delay.promise();
 					} else {
+						ve.track( 'counter.editcheck.preSaveChecksAbandoned' );
 						return ve.createDeferred().reject().promise();
 					}
 				} );
 			} );
+		} else {
+			// Counterpart to earlier preSaveChecksShown, for use in tracking
+			// errors in check-generation:
+			ve.track( 'counter.editcheck.preSaveChecksNotShown' );
 		}
 	} );
-	mw.hook( 've.deactivationComplete' ).add( function () {
+	mw.hook( 've.deactivationComplete' ).add( () => {
 		if ( saveProcessDeferred ) {
 			saveProcessDeferred.reject();
 		}
@@ -358,7 +335,7 @@ ve.ui.EditCheckBack.static.autoAddToGroup = false;
 ve.ui.EditCheckBack.static.title =
 	OO.ui.deferMsg( 'visualeditor-backbutton-tooltip' );
 ve.ui.EditCheckBack.prototype.onSelect = function () {
-	var context = this.toolbar.getSurface().getContext();
+	const context = this.toolbar.getSurface().getContext();
 	if ( context.inspector ) {
 		context.inspector.close();
 	} else {

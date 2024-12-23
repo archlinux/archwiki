@@ -3,13 +3,13 @@
 namespace MediaWiki\SpecialPage;
 
 use ErrorPageError;
-use HTMLInfoField;
 use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Context\DerivativeContext;
+use MediaWiki\HTMLForm\Field\HTMLInfoField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logger\LoggerFactory;
@@ -30,6 +30,7 @@ use UnexpectedValueException;
  * @note Call self::setAuthManager from special page constructor when extending
  *
  * @stable to extend
+ * @ingroup Auth
  */
 abstract class AuthManagerSpecialPage extends SpecialPage {
 	/** @var string[] The list of actions this special page deals with. Subclasses should override
@@ -143,7 +144,7 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 
 		if ( $subPage === 'return' ) {
 			$this->loadAuth( $subPage );
-			$preservedParams = $this->getPreservedParams( false );
+			$preservedParams = $this->getPreservedParams();
 
 			// FIXME save POST values only from request
 			$authData = array_diff_key( $this->getRequest()->getValues(),
@@ -193,7 +194,7 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 
 					$queryParams = [ 'authUniqueId' => $uniqueId ] + $queryParams;
 					$authData = array_diff_key( $request->getValues(),
-							$this->getPreservedParams( false ), [ 'title' => 1 ] );
+							$this->getPreservedParams(), [ 'title' => 1 ] );
 					$authManager->setAuthenticationSessionData( $key, $authData );
 				}
 
@@ -334,7 +335,6 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 	 * the caller's responsibility.
 	 * @param string $action One of the AuthManager::ACTION_* constants in static::$allowedActions
 	 * @return bool
-	 * @throws LogicException if $action is invalid
 	 */
 	protected function isActionAllowed( $action ) {
 		$authManager = $this->getAuthManager();
@@ -383,7 +383,7 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 
 		$authManager = $this->getAuthManager();
 		$returnToUrl = $this->getPageTitle( 'return' )
-			->getFullURL( $this->getPreservedParams( true ), false, PROTO_HTTPS );
+			->getFullURL( $this->getPreservedParams( [ 'withToken' => true ] ), false, PROTO_HTTPS );
 
 		switch ( $action ) {
 			case AuthManager::ACTION_LOGIN:
@@ -482,13 +482,13 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 					$status = $ret;
 				} else {
 					throw new UnexpectedValueException( 'invalid HTMLForm::trySubmit() return value: '
-						. 'first element of array is ' . gettype( reset( $status ) ) );
+						. 'first element of array is ' . get_debug_type( reset( $status ) ) );
 				}
 			} else {
 				// not supposed to happen, but HTMLForm does not verify the return type
 				// from the submit callback; better safe then sorry!
 				throw new UnexpectedValueException( 'invalid HTMLForm::trySubmit() return type: '
-					. gettype( $status ) );
+					. get_debug_type( $status ) );
 			}
 
 			if ( ( !$status || !$status->isOK() ) && $this->isReturn ) {
@@ -528,22 +528,62 @@ abstract class AuthManagerSpecialPage extends SpecialPage {
 	}
 
 	/**
-	 * Returns URL query parameters which can be used to reload the page (or leave and return) while
-	 * preserving all information that is necessary for authentication to continue. These parameters
-	 * will be preserved in the action URL of the form and in the return URL for redirect flow.
+	 * Returns URL query parameters which should be preserved between authentication requests.
+	 * These should be used when generating links such as form submit or language switch.
+	 *
+	 * These parameters will be preserved in:
+	 * - successive authentication steps (the form submit URL and the return URL for redirecting
+	 *   providers);
+	 * - links that reload the same form somehow (e.g. language switcher links);
+	 * - links for switching between the login and create account forms.
+	 *
 	 * @stable to override
-	 * @param bool $withToken Include CSRF token
-	 * @return array
+	 * @param array $options (since 1.43)
+	 *   - reset (bool, default false): Reset the authentication process, i.e. omit parameters
+	 *     which are related to continuing in-progress authentication.
+	 *   - withToken (bool, default false): Include CSRF token
+	 *   Before 1.43, this was a boolean flag identical to the current 'withToken' option.
+	 *   That usage is deprecated.
+	 * @phan-param array{reset?: bool, withToken?: bool}|bool $options
+	 * @return array Array of parameter name => parameter value.
 	 */
-	protected function getPreservedParams( $withToken = false ) {
+	protected function getPreservedParams( $options = [] ) {
+		if ( is_bool( $options ) ) {
+			wfDeprecated( __METHOD__ . ' boolean $options', '1.43' );
+			$options = [ 'withToken' => $options ];
+		}
+		$options += [
+			'reset' => false,
+			'withToken' => false,
+		];
+		// Help Phan figure out that these fields are now definitely set - https://github.com/phan/phan/issues/4864
+		'@phan-var array{reset: bool, withToken: bool} $options';
 		$params = [];
-		if ( $this->authAction !== $this->getDefaultAction( $this->subPage ) ) {
+		$request = $this->getRequest();
+
+		$params += [
+			'uselang' => $request->getVal( 'uselang' ),
+			'variant' => $request->getVal( 'variant' ),
+			'returnto' => $request->getVal( 'returnto' ),
+			'returntoquery' => $request->getVal( 'returntoquery' ),
+			'returntoanchor' => $request->getVal( 'returntoanchor' ),
+		];
+
+		if ( !$options['reset'] && $this->authAction !== $this->getDefaultAction( $this->subPage ) ) {
 			$params['authAction'] = $this->getContinueAction( $this->authAction );
 		}
-		if ( $withToken ) {
+
+		if ( $options['withToken'] ) {
 			$params[$this->getTokenName()] = $this->getToken()->toString();
 		}
-		return $params;
+
+		// Allow authentication extensions like CentralAuth to preserve their own
+		// query params during and after the authentication process.
+		$this->getHookRunner()->onAuthPreserveQueryParams(
+			$params, [ 'reset' => $options['reset'] ]
+		);
+
+		return array_filter( $params, fn ( $val ) => $val !== null );
 	}
 
 	/**

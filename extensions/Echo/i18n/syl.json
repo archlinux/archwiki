@@ -48,6 +48,7 @@
 	"notification-welcome-linktext": "ꠀꠃꠇ꠆ꠇꠣ !",
 	"notification-link-text-view-edit": "ꠄꠒꠤꠐ ꠖꠦꠈꠂꠘ",
 	"notification-link-article-reminder": "ꠙꠣꠔꠣ ꠖꠦꠈꠂꠘ",
+	"notification-link-api-triggered": "ꠙꠣꠔꠣ ꠖꠦꠈꠂꠘ",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1ꠘ}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1ꠁꠘ}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1ꠁꠘ}}",

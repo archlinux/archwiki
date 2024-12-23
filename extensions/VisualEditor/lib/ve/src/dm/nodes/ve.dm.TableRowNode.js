@@ -26,11 +26,6 @@ ve.dm.TableRowNode = function VeDmTableRowNode() {
 
 OO.inheritClass( ve.dm.TableRowNode, ve.dm.BranchNode );
 
-/**
- * @event cellAttributeChange
- * @param {ve.dm.TableCellableNode} cell
- */
-
 /* Static Properties */
 
 ve.dm.TableRowNode.static.name = 'tableRow';
@@ -54,12 +49,12 @@ ve.dm.TableRowNode.static.matchTagNames = [ 'tr' ];
 ve.dm.TableRowNode.static.createData = function ( options ) {
 	options = options || {};
 
-	var cellCount = options.cellCount || 1;
+	const cellCount = options.cellCount || 1;
 
-	var data = [];
+	const data = [];
 	data.push( { type: 'tableRow' } );
-	for ( var i = 0; i < cellCount; i++ ) {
-		data = data.concat( ve.dm.TableCellNode.static.createData( {
+	for ( let i = 0; i < cellCount; i++ ) {
+		ve.batchPush( data, ve.dm.TableCellNode.static.createData( {
 			style: Array.isArray( options.style ) ? options.style[ i ] : options.style
 		} ) );
 	}
@@ -76,8 +71,8 @@ ve.dm.TableRowNode.prototype.onSplice = function () {
 	if ( this.getRoot() ) {
 		this.getParent().getParent().getMatrix().invalidate();
 	}
-	var nodes = Array.prototype.slice.call( arguments, 2 );
-	for ( var i = 0; i < nodes.length; i++ ) {
+	const nodes = Array.prototype.slice.call( arguments, 2 );
+	for ( let i = 0; i < nodes.length; i++ ) {
 		nodes[ i ].connect( this, {
 			attributeChange: [ 'onCellAttributeChange', nodes[ i ] ]
 		} );
@@ -88,7 +83,7 @@ ve.dm.TableRowNode.prototype.onSplice = function () {
  * Handle cell attribute changes
  *
  * @param {ve.dm.TableCellableNode} cell
- * @fires cellAttributeChange
+ * @fires ve.dm.TableNode#cellAttributeChange
  */
 ve.dm.TableRowNode.prototype.onCellAttributeChange = function ( cell ) {
 	this.emit( 'cellAttributeChange', cell );

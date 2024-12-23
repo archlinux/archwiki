@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Constraque",
 			"Gazeb",
-			"KHMELNYTSKYIA",
-			"Tkalyn",
 			"Gramo Džukić",
-			"Constraque"
+			"KHMELNYTSKYIA",
+			"Tkalyn"
 		]
 	},
 	"skinname-vector": "Старый Вектор (2010)",
@@ -28,15 +28,19 @@
 	"vector-view-view": "Чітати",
 	"vector-view-viewsource": "Видїти код",
 	"vector-more-actions": "Веце",
+	"vector-appearance-label": "Вызир",
 	"vector-feature-limited-width-name": "Шырина",
-	"vector-feature-custom-font-size-name": "Текст",
 	"vector-feature-limited-width-0-label": "Шыроко",
 	"vector-feature-limited-width-1-label": "Стандардно",
+	"vector-feature-custom-font-size-name": "Текст",
 	"vector-feature-custom-font-size-0-label": "Друбный",
 	"vector-feature-custom-font-size-1-label": "Штандартный",
 	"vector-feature-custom-font-size-2-label": "Грубый",
 	"skin-theme-name": "Цвіт",
+	"skin-theme-day-label": "Світлый",
+	"skin-theme-night-label": "Темный",
 	"skin-theme-os-label": "Автоматично",
+	"skin-theme-exclusion-notice": "Ися сторунка є лем у світлому режімови",
 	"vector-toc-menu-tooltip": "Содержай",
 	"vector-toc-collapsible-button-label": "Указати/спрятати содержай",
 	"vector-site-nav-label": "Сайт",

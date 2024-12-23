@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { Share } = require( 'mmv.ui.reuse.shareembed' );
+const { Share } = require( 'mmv.ui.reuse' );
 
 ( function () {
 	function makeShare() {
@@ -24,16 +24,14 @@ const { Share } = require( 'mmv.ui.reuse.shareembed' );
 
 	QUnit.module( 'mmv.ui.reuse.share', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', ( assert ) => {
 		const share = makeShare();
 
 		assert.true( share instanceof Share, 'Share UI element is created.' );
-		assert.strictEqual( share.$pane.length, 1, 'Pane div created.' );
-		assert.true( share.pageInput instanceof mw.widgets.CopyTextLayout, 'Text field created.' );
-		assert.strictEqual( share.$pageLink.length, 1, 'Link created.' );
+		assert.true( share.$pageInput[ 0 ] instanceof HTMLElement, 'Text field created.' );
 	} );
 
-	QUnit.test( 'set()/empty():', function ( assert ) {
+	QUnit.test( 'set()/empty():', ( assert ) => {
 		const share = makeShare();
 		const image = { // fake ImageModel
 			title: new mw.Title( 'File:Foobar.jpg' ),
@@ -41,7 +39,7 @@ const { Share } = require( 'mmv.ui.reuse.shareembed' );
 			descriptionUrl: '//commons.wikimedia.org/wiki/File:Foobar.jpg'
 		};
 
-		assert.notStrictEqual( !share.pageInput.textInput.getValue(), '', 'pageInput is empty.' );
+		assert.notStrictEqual( !share.$pageInput.val(), '', 'pageInput is empty.' );
 
 		share.select = function () {
 			assert.true( true, 'Text has been selected after data is set.' );
@@ -49,11 +47,11 @@ const { Share } = require( 'mmv.ui.reuse.shareembed' );
 
 		share.set( image );
 
-		assert.notStrictEqual( share.pageInput.textInput.getValue(), '', 'pageInput is not empty.' );
+		assert.notStrictEqual( share.$pageInput.val(), '', 'pageInput is not empty.' );
 
 		share.empty();
 
-		assert.notStrictEqual( !share.pageInput.textInput.getValue(), '', 'pageInput is empty.' );
+		assert.notStrictEqual( !share.$pageInput.val(), '', 'pageInput is empty.' );
 	} );
 
 }() );

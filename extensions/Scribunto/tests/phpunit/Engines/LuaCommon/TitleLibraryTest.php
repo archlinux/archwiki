@@ -2,12 +2,13 @@
 
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Title\Title;
-use WikitextContent;
 
 /**
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaCommon\TitleLibrary
@@ -29,20 +30,18 @@ class TitleLibraryTest extends LuaEngineTestBase {
 
 		// Set up interwikis (via wgInterwikiCache) before creating any Titles
 		$this->overrideConfigValues( [
-			'Server' => '//wiki.local',
-			'CanonicalServer' => 'http://wiki.local',
-			'UsePathInfo' => true,
-			'ActionPaths' => [],
-			'Script' => '/w/index.php',
-			'ScriptPath' => '/w',
-			'ArticlePath' => '/wiki/$1',
-			'InterwikiCache' => ClassicInterwikiLookup::buildCdbHash( [
-				[
-					'iw_prefix' => 'interwikiprefix',
-					'iw_url'    => '//test.wikipedia.org/wiki/$1',
-					'iw_local'  => 0,
-				],
-			] ),
+			MainConfigNames::Server => '//wiki.local',
+			MainConfigNames::CanonicalServer => 'http://wiki.local',
+			MainConfigNames::UsePathInfo => true,
+			MainConfigNames::ActionPaths => [],
+			MainConfigNames::Script => '/w/index.php',
+			MainConfigNames::ScriptPath => '/w',
+			MainConfigNames::ArticlePath => '/wiki/$1',
+			MainConfigNames::InterwikiCache => ClassicInterwikiLookup::buildCdbHash( [ [
+				'iw_prefix' => 'interwikiprefix',
+				'iw_url' => '//test.wikipedia.org/wiki/$1',
+				'iw_local' => 0,
+			] ] ),
 		] );
 
 		$editor = self::getTestSysop()->getUser();

@@ -16,7 +16,6 @@
 
 @font-size-browser: 16; // Assumed browser default of `16px`.
 @font-size-root: 100%;
-@font-size-root--feature-phone: 0.8 * @font-size-root;
 // T282315: Use rem instead of em to avoid font-size compounding, resulting in smaller than intended text
 @font-size-minerva-small: unit( 14 / @font-size-browser, rem ); // Equals `14px` at `16px` browser default.
 @font-size-minerva-smallest: unit( 13 / @font-size-browser, rem ); // Equals `13px` at `16px` browser default.
@@ -32,7 +31,6 @@
 
 // Navigation Drawers
 @drawer-width-right: 60%;
-@menu-button-icon-size: 3.5em;
 
 // Headings
 @font-size-h1: 1.7em;
@@ -48,8 +46,18 @@
 @height-overlay-header: unit( 48 / @font-size-browser, em );
 @padding-vertical-header: 0.15em;
 @width-search-box: 375/16em;
-@device-width-tablet-ems: unit( @width-breakpoint-tablet / @font-size-browser, em );
-@width-branding-box: @device-width-tablet-ems - (3 * @menu-button-icon-size + @width-icon-gutter) - @width-search-box;
+@device-width-tablet-ems: unit( @min-width-breakpoint-tablet / @font-size-browser, em );
+// This is the minimum width at which the logo can be rendered safely for logged in users,
+// using advanced mobile mode,
+// without overflowing the viewport at @min-width-breakpoint-tablet.
+//
+// This is calculated by taking @min-width-breakpoint-tablet and counting the space available
+// after accounting for 3 icons - main menu, notification bell and user menu icon,
+// and the search bar.
+@min-size-interactive-touch-ems: unit( @min-size-interactive-touch / @font-size-browser, em );
+@min-width-branding-box-ems: @device-width-tablet-ems - ( 3 * @min-size-interactive-touch-ems ) - @width-search-box;
+// FIXME: This is the min-width before T349793 was merged. Remove when T366859 is resolved.
+@T366859-min-width-branding-box-ems: 10.0625em;
 
 @top-spacing-title-section: @spacing-125;
 
@@ -76,8 +84,11 @@
 // custom tablet styling
 @padding-content-tablet: 3.35em;
 
-// note since content does not use view border box we have to include padding.
-@max-width-content-tablet: @width-breakpoint-desktop - ( 2 * @padding-content-tablet );
+// This value was previously derived from taking the old tablet breakpoint of 720px
+// and subtracting ( 2 * @padding-content-tablet ) ) to account for the lack of
+// view border box.
+// This may be reassessed in phab:T366860.
+@max-width-content-tablet: 993.3px;
 
 // Wiki specific variables
 @width-infobox: 320px;

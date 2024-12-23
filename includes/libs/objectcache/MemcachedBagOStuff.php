@@ -1,7 +1,5 @@
 <?php
 /**
- * Base class for memcached clients.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,11 +16,17 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Cache
  */
+namespace Wikimedia\ObjectCache;
+
+use Exception;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
- * Base class for memcached clients.
+ * Store data in a memcached server or memcached cluster.
+ *
+ * This is a base class for MemcachedPhpBagOStuff and MemcachedPeclBagOStuff.
  *
  * @ingroup Cache
  */
@@ -54,8 +58,10 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 	 *
 	 * @since 1.27
 	 * @see BagOStuff::makeKeyInternal
+	 *
 	 * @param string $keyspace
 	 * @param string[]|int[] $components
+	 *
 	 * @return string
 	 */
 	protected function makeKeyInternal( $keyspace, $components ) {
@@ -101,6 +107,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 	 * characters above the ASCII range.)
 	 *
 	 * @param string $key
+	 *
 	 * @return string
 	 * @throws Exception
 	 */
@@ -114,6 +121,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 
 	/**
 	 * @param string $key
+	 *
 	 * @return string
 	 */
 	protected function validateKeyAndPrependRoute( $key ) {
@@ -132,6 +140,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 
 	/**
 	 * @param string $key
+	 *
 	 * @return string
 	 */
 	protected function stripRouteFromKey( $key ) {
@@ -148,6 +157,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 
 	/**
 	 * @param int|float $exptime
+	 *
 	 * @return int
 	 */
 	protected function fixExpiry( $exptime ) {
@@ -181,6 +191,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 	 * @param int $exptime
 	 * @param int $step
 	 * @param int $init
+	 *
 	 * @return bool True on success, false on failure
 	 */
 	abstract protected function doIncrWithInitAsync( $key, $exptime, $step, $init );
@@ -190,7 +201,11 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 	 * @param int $exptime
 	 * @param int $step
 	 * @param int $init
+	 *
 	 * @return int|bool New value or false on failure
 	 */
 	abstract protected function doIncrWithInitSync( $key, $exptime, $step, $init );
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( MemcachedBagOStuff::class, 'MemcachedBagOStuff' );

@@ -5,14 +5,14 @@
 			"Derbeth",
 			"Holek",
 			"Leinad",
+			"Matma Rex",
 			"Msz2001",
 			"Nux",
 			"Peter Bowman",
 			"Rail",
 			"Railfail536",
 			"Sp5uhe",
-			"Woytecr",
-			"Matma Rex"
+			"Woytecr"
 		]
 	},
 	"cite-desc": "Dodaje znaczniki <code>&lt;ref&gt;</code> oraz <code>&lt;references&gt;</code> ułatwiające podawanie źródeł cytatów",
@@ -39,6 +39,15 @@
 	"cite_error_empty_references_define": "Znacznik <code>&lt;ref&gt;</code> o nazwie „$1”, zdefiniowany w <code>&lt;references&gt;</code> (grupa „$2”) nie ma treści.",
 	"cite-tracking-category-cite-error": "Strony z zepsutymi przypisami",
 	"cite-tracking-category-cite-error-desc": "Strony w tej kategorii zawierają błędy w użyciu znaczników przypisów.",
+	"cite-tracking-category-ref-extends": "Strony wykorzystujące rozszerzane przypisy",
+	"cite-tracking-category-ref-extends-desc": "Strony w tej kategorii wykorzystują atrybut „extends” znacznika &lt;ref&gt;.",
+	"cite-reference-previews-reference": "Przypis",
+	"cite-reference-previews-book": "Przypis do książki",
+	"cite-reference-previews-journal": "Przypis do pisma",
+	"cite-reference-previews-news": "Przypis do artykułu w wiadomościach",
+	"cite-reference-previews-note": "Uwaga",
+	"cite-reference-previews-web": "Przypis do strony internetowej",
+	"cite-reference-previews-collapsible-placeholder": "Ten przypis zawiera elementy, które nie mieszczą się w podglądzie.",
 	"cite_references_link_accessibility_label": "Skocz do góry",
 	"cite_references_link_many_accessibility_label": "Skocz do:",
 	"cite_references_link_accessibility_back_label": "Wróć na górę",
@@ -50,8 +59,14 @@
 	"cite-wikieditor-help-content-reference-description": "Przypis",
 	"cite-wikieditor-help-content-named-reference-description": "Nazwany przypis",
 	"cite-wikieditor-help-content-rereference-description": "Kolejne użycie nazwanego przypisu",
+	"cite-wikieditor-help-content-extended-reference-description": "Ponowne użycie tego samego przypisu z dodatkowymi szczegółami",
 	"cite-wikieditor-help-content-showreferences-description": "Wyświetl przypisy",
 	"cite-wikieditor-help-content-reference-example-text1": "Treść strony.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Treść linku], dodatkowy tekst.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Treść linku]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Treść linku]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Dodatkowe szczegóły",
+	"popups-prefs-navpopups-gadget-conflict-info": "Gadżet [[$1|navigation popups]] jest włączony, co oznacza, że nie zobaczysz poglądów dostarczanych przez tę funkcję. W zależności od wiki, na jakiej się znajdujesz, gadżet ten może nazywać się inaczej. Jeśli problem wciąż będzie występował, sprawdź swoje gadżety oraz skrypty, włączając również te globalne.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Gadżety [[$1|navigation popups]] i [[$1|Reference Tooltips]] są włączone, co oznacza, że nie zobaczysz poglądów dostarczanych przez tę funkcję. W zależności od wiki, na jakiej się znajdujesz, gadżety te mogą nazywać się inaczej. Jeśli problem wciąż będzie występował, sprawdź swoje gadżety oraz skrypty, włączając również te globalne.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Gadżet [[$1|Reference Tooltips]] jest włączony, co oznacza, że nie zobaczysz poglądów przypisów dostarczanych przez tę funkcję. W zależności od wiki, na jakiej się znajdujesz, gadżet ten może nazywać się inaczej. Jeśli problem wciąż będzie występował, sprawdź swoje gadżety oraz skrypty, włączając również te globalne.",
+	"popups-refpreview-user-preference-label": "Włącz podgląd przypisów (szybki podgląd przypisów podczas czytania strony)"
 }

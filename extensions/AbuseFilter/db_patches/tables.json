@@ -13,19 +13,9 @@
 				"options": { "notnull": true, "length": 65530 }
 			},
 			{
-				"name": "af_user",
-				"type": "bigint",
-				"options": { "notnull": true, "unsigned": true, "default": 0 }
-			},
-			{
-				"name": "af_user_text",
-				"type": "binary",
-				"options": { "notnull": true, "length": 255, "default": "" }
-			},
-			{
 				"name": "af_actor",
 				"type": "bigint",
-				"options": { "notnull": true, "unsigned": true, "default": 0 }
+				"options": { "notnull": true, "unsigned": true }
 			},
 			{
 				"name": "af_timestamp",
@@ -84,11 +74,6 @@
 			}
 		],
 		"indexes": [
-			{
-				"name": "af_user",
-				"columns": [ "af_user" ],
-				"unique": false
-			},
 			{
 				"name": "af_actor",
 				"columns": [ "af_actor" ],
@@ -267,19 +252,9 @@
 				"options": { "notnull": true, "unsigned": true }
 			},
 			{
-				"name": "afh_user",
-				"type": "bigint",
-				"options": { "notnull": true, "unsigned": true, "default": 0 }
-			},
-			{
-				"name": "afh_user_text",
-				"type": "binary",
-				"options": { "notnull": true, "length": 255, "default": "" }
-			},
-			{
 				"name": "afh_actor",
 				"type": "bigint",
-				"options": { "notnull": true, "unsigned": true, "default": 0 }
+				"options": { "notnull": true, "unsigned": true }
 			},
 			{
 				"name": "afh_timestamp",
@@ -331,16 +306,6 @@
 			{
 				"name": "afh_filter",
 				"columns": [ "afh_filter" ],
-				"unique": false
-			},
-			{
-				"name": "afh_user",
-				"columns": [ "afh_user" ],
-				"unique": false
-			},
-			{
-				"name": "afh_user_text",
-				"columns": [ "afh_user_text" ],
 				"unique": false
 			},
 			{

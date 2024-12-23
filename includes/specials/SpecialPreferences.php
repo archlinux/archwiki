@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Preferences
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -51,8 +48,8 @@ class SpecialPreferences extends SpecialPage {
 	 * @param UserOptionsManager|null $userOptionsManager
 	 */
 	public function __construct(
-		PreferencesFactory $preferencesFactory = null,
-		UserOptionsManager $userOptionsManager = null
+		?PreferencesFactory $preferencesFactory = null,
+		?UserOptionsManager $userOptionsManager = null
 	) {
 		parent::__construct( 'Preferences' );
 		// This class is extended and therefore falls back to global state - T265924
@@ -170,7 +167,6 @@ class SpecialPreferences extends SpecialPage {
 			->setSubmitTextMsg( 'restoreprefs' )
 			->setSubmitDestructive()
 			->setSubmitCallback( [ $this, 'submitReset' ] )
-			->suppressReset()
 			->showCancel()
 			->setCancelTarget( $this->getPageTitle() )
 			->show();
@@ -182,7 +178,7 @@ class SpecialPreferences extends SpecialPage {
 		}
 
 		$user = $this->getUser()->getInstanceForUpdate();
-		$this->userOptionsManager->resetOptions( $user, $this->getContext(), 'all' );
+		$this->userOptionsManager->resetAllOptions( $user );
 		$user->saveSettings();
 
 		// Set session data for the success message

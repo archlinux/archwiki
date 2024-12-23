@@ -8,7 +8,7 @@
  *
  * @class
  * @extends OO.ui.Widget
- * @mixins OO.ui.mixin.GroupElement
+ * @mixes OO.ui.mixin.GroupElement
  *
  * @constructor
  */
@@ -73,7 +73,7 @@ ve.ui.MWTransclusionOutlineControlsWidget = function OoUiOutlineControlsWidget()
 			this.addTemplateButton.$element,
 			this.addWikitextButton.$element
 		);
-	var $movers = $( '<div>' )
+	const $movers = $( '<div>' )
 		.addClass( 've-ui-mwTransclusionOutlineControlsWidget-movers' )
 		.append(
 			this.upButton.$element,
@@ -93,26 +93,26 @@ OO.mixinClass( ve.ui.MWTransclusionOutlineControlsWidget, OO.ui.mixin.GroupEleme
 /**
  * Emitted when the "Add template" button in the toolbar is clicked
  *
- * @event addTemplate
+ * @event ve.ui.MWTransclusionOutlineControlsWidget#addTemplate
  */
 
 /**
  * Emitted when the "Add wikitext" button in the toolbar is clicked
  *
- * @event addWikitext
+ * @event ve.ui.MWTransclusionOutlineControlsWidget#addWikitext
  */
 
 /**
  * Emitted when one of the two "Move item up/down" buttons in the toolbar is clicked
  *
- * @event move
+ * @event ve.ui.MWTransclusionOutlineControlsWidget#move
  * @param {number} places Number of places to move, typically -1 or 1
  */
 
 /**
  * Emitted when the "Remove item" button in the toolbar is clicked
  *
- * @event remove
+ * @event ve.ui.MWTransclusionOutlineControlsWidget#remove
  */
 
 /* Methods */

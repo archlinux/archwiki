@@ -2,9 +2,13 @@
 
 namespace Wikimedia\Tests\Unit;
 
+use MediaWiki\Message\Message;
 use MediaWikiUnitTestCase;
 use StatusValue;
 
+/**
+ * @covers \StatusValue
+ */
 class StatusValueTest extends MediaWikiUnitTestCase {
 
 	public function provideToString() {
@@ -31,25 +35,25 @@ class StatusValueTest extends MediaWikiUnitTestCase {
 		];
 
 		yield [
-			 true, 42, null,
-			 '<OK, no errors detected, integer value set>',
-			 'Simple int, good state'
+			true, 42, null,
+			'<OK, no errors detected, int value set>',
+			'Simple int, good state'
 		];
 		yield [
-			 false, 42, null,
-			 '<Error, no errors detected, integer value set>',
-			 'Simple int, error state'
+			false, 42, null,
+			'<Error, no errors detected, int value set>',
+			'Simple int, error state'
 		];
 
 		yield [
-			 true, [ 'TestValue' => false ], null,
-			 '<OK, no errors detected, array value set>',
-			 'Simple array, good state'
+			true, [ 'TestValue' => false ], null,
+			'<OK, no errors detected, array value set>',
+			'Simple array, good state'
 		];
 		yield [
-			 false, [ 'TestValue' => false ], null,
-			 '<Error, no errors detected, array value set>',
-			 'Simple array, error state'
+			false, [ 'TestValue' => false ], null,
+			'<Error, no errors detected, array value set>',
+			'Simple array, error state'
 		];
 
 		$basicErrorReport = "\n"
@@ -58,25 +62,25 @@ class StatusValueTest extends MediaWikiUnitTestCase {
 			. "+----------+---------------------------+--------------------------------------+\n";
 
 		yield [
-			 true, null, [ 'This is the error' ],
-			 '<OK, collected 1 message(s) on the way, no value set>' . $basicErrorReport,
-			 'Empty, string error, good state'
+			true, null, [ 'This is the error' ],
+			'<OK, collected 1 message(s) on the way, no value set>' . $basicErrorReport,
+			'Empty, string error, good state'
 		];
 		yield [
-			 false, null, [ 'This is the error' ],
-			 '<Error, collected 1 message(s) on the way, no value set>' . $basicErrorReport,
-			 'Empty, string error, error state'
+			false, null, [ 'This is the error' ],
+			'<Error, collected 1 message(s) on the way, no value set>' . $basicErrorReport,
+			'Empty, string error, error state'
 		];
 
 		yield [
-			 false, 'TestValue', [ 'This is the error' ],
-			 '<Error, collected 1 message(s) on the way, string value set>' . $basicErrorReport,
-			 'Simple string, string error, error state'
+			false, 'TestValue', [ 'This is the error' ],
+			'<Error, collected 1 message(s) on the way, string value set>' . $basicErrorReport,
+			'Simple string, string error, error state'
 		];
 
 		yield [
 			false, 42, [ 'This is the error' ],
-			'<Error, collected 1 message(s) on the way, integer value set>' . $basicErrorReport,
+			'<Error, collected 1 message(s) on the way, int value set>' . $basicErrorReport,
 			'Simple int, string error, error state'
 		];
 
@@ -167,7 +171,6 @@ class StatusValueTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideToString
-	 * @covers \StatusValue::__toString
 	 */
 	public function testToString( bool $sucess, $message, $errors, string $expected, string $testExplanation ) {
 		$status = StatusValue::newGood();
@@ -188,4 +191,23 @@ class StatusValueTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expected, $status->__toString(), $testExplanation );
 	}
 
+	public function testGetErrorsByType() {
+		$status = new StatusValue();
+		$warning = new Message( 'warning111' );
+		$error = new Message( 'error111' );
+		$status->warning( $warning );
+		$status->error( $error );
+
+		$this->assertCount( 2, $status->getErrors() );
+		$this->assertCount( 1, $status->getErrorsByType( 'warning' ) );
+		$this->assertCount( 1, $status->getErrorsByType( 'error' ) );
+		$this->assertEquals( $warning, $status->getErrorsByType( 'warning' )[0]['message'] );
+		$this->assertEquals( $error, $status->getErrorsByType( 'error' )[0]['message'] );
+
+		$this->assertCount( 2, $status->getMessages() );
+		$this->assertCount( 1, $status->getMessages( 'warning' ) );
+		$this->assertCount( 1, $status->getMessages( 'error' ) );
+		$this->assertEquals( 'warning111', $status->getMessages( 'warning' )[0]->getKey() );
+		$this->assertEquals( 'error111', $status->getMessages( 'error' )[0]->getKey() );
+	}
 }

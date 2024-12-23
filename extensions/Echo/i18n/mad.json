@@ -48,8 +48,8 @@
 	"echo-category-title-thank-you-edit": "{{PLURAL:$1|riwayat}} beccè'an",
 	"echo-category-title-watchlist": "Beccè'an ḍâ' pelataran sèghârân",
 	"echo-category-title-minor-watchlist": "Beccè'an kèni' ḍâ' pelataran sèghârân",
+	"echo-category-title-api-triggered": "Pamartèlan sè èsolet API",
 	"tooltip-pt-notifications-alert": "Parèmotân {{GENDER:|Abâ'na}}",
 	"echo-displaynotificationsconfiguration": "Konfigurasi robâ pratèlan",
-	"echo-displaynotificationsconfiguration-summary": "Ariya aslèra ikhtisar konfigurasi partèlan ḍâ' ka wiki riya.",
-	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Partèlan anot category"
+	"echo-displaynotificationsconfiguration-summary": "Ariya aslèra ikhtisar konfigurasi partèlan ḍâ' ka wiki riya."
 }

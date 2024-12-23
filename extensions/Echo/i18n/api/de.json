@@ -9,6 +9,14 @@
 			"Tiin"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Manuelles Auslösen einer Benachrichtigung an einen Benutzer",
+	"apihelp-echocreateevent-example": "Senden einer Benachrichtigung",
+	"apihelp-echocreateevent-param-user": "Benutzer, an den die Benachrichtigung gesendet werden soll",
+	"apihelp-echocreateevent-param-header": "Header-Inhalt der Benachrichtigung",
+	"apihelp-echocreateevent-param-content": "Hauptteil der Benachrichtigung",
+	"apihelp-echocreateevent-param-page": "Seite, auf die in der Benachrichtigung verwiesen werden soll",
+	"apihelp-echocreateevent-param-section": "Abschnitt, in dem die Benachrichtigung übermittelt wird",
+	"apihelp-echocreateevent-param-email": "Ob auch eine E-Mail gesendet werden soll",
 	"apihelp-echomarkread-summary": "Markiert Benachrichtigungen für den aktuellen Benutzer als gelesen.",
 	"apihelp-echomarkread-param-list": "Eine Liste von Benachrichtigungskennungen, um sie als gelesen zu markieren.",
 	"apihelp-echomarkread-param-unreadlist": "Eine Liste mit Benachrichtigungskennungen, die als ungelesen markiert werden sollen.",

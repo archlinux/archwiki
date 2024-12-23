@@ -8,9 +8,10 @@
 
 namespace MediaWiki\Extension\TitleBlacklist;
 
-use ApiMessage;
-use ApiResult;
 use ManualLogEntry;
+use MediaWiki\Api\ApiMessage;
+use MediaWiki\Api\ApiResult;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Hook\EditFilterHook;
 use MediaWiki\Hook\MovePageCheckPermissionsHook;
@@ -25,9 +26,8 @@ use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
-use MessageSpecifier;
-use RequestContext;
 use StatusValue;
+use Wikimedia\Message\MessageSpecifier;
 use WikiPage;
 
 /**

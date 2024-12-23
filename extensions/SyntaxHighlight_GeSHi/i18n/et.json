@@ -20,5 +20,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Koodiplokk",
 	"syntaxhighlight-error-pygments-invocation-failure": "Teeki Pygments ei õnnestunud käivitada.",
 	"syntaxhighlight-error-unknown-language": "Tundmatu keel \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "Koodi suurus $1 {{PLURAL:$1|bait|baiti}} ületab lubatud $2 {{PLURAL:$2|baidist}} ülemmäära."
+	"syntaxhighlight-error-exceeds-size-limit": "Koodi suurus $1 {{PLURAL:$1|bait|baiti}} ületab lubatud $2 {{PLURAL:$2|baidist}} ülemmäära.",
+	"syntaxhighlight-button-copy": "Kopeeri",
+	"syntaxhighlight-button-copied": "Kopeeritud!"
 }

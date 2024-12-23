@@ -26,11 +26,6 @@ ve.dm.TableSectionNode = function VeDmTableSectionNode() {
 
 OO.inheritClass( ve.dm.TableSectionNode, ve.dm.BranchNode );
 
-/**
- * @event cellAttributeChange
- * @param {ve.dm.TableCellableNode} cell
- */
-
 /* Static Properties */
 
 ve.dm.TableSectionNode.static.name = 'tableSection';
@@ -46,7 +41,7 @@ ve.dm.TableSectionNode.static.matchTagNames = [ 'thead', 'tbody', 'tfoot' ];
 /* Static Methods */
 
 ve.dm.TableSectionNode.static.toDataElement = function ( domElements ) {
-	var styles = {
+	const styles = {
 			thead: 'header',
 			tbody: 'body',
 			tfoot: 'footer'
@@ -56,7 +51,7 @@ ve.dm.TableSectionNode.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.TableSectionNode.static.toDomElements = function ( dataElement, doc ) {
-	var tags = {
+	const tags = {
 			header: 'thead',
 			body: 'tbody',
 			footer: 'tfoot'
@@ -74,8 +69,8 @@ ve.dm.TableSectionNode.prototype.onSplice = function () {
 	if ( this.getRoot() ) {
 		this.getParent().getMatrix().invalidate();
 	}
-	var nodes = Array.prototype.slice.call( arguments, 2 );
-	for ( var i = 0; i < nodes.length; i++ ) {
+	const nodes = Array.prototype.slice.call( arguments, 2 );
+	for ( let i = 0; i < nodes.length; i++ ) {
 		nodes[ i ].connect( this, {
 			cellAttributeChange: 'onCellAttributeChange'
 		} );
@@ -86,7 +81,7 @@ ve.dm.TableSectionNode.prototype.onSplice = function () {
  * Handle cell attribute changes
  *
  * @param {ve.dm.TableCellableNode} cell
- * @fires cellAttributeChange
+ * @fires ve.dm.TableNode#cellAttributeChange
  */
 ve.dm.TableSectionNode.prototype.onCellAttributeChange = function ( cell ) {
 	this.emit( 'cellAttributeChange', cell );

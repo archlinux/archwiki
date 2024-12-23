@@ -17,6 +17,7 @@
 			"LucyDiniz",
 			"Macofe",
 			"Matma Rex",
+			"McDutchie",
 			"Raphaelras",
 			"Re demz",
 			"Rhcastilhos",
@@ -25,8 +26,7 @@
 			"Stanglavine",
 			"TheEduGobi",
 			"Warley Felipe C.",
-			"YuriNikolai",
-			"McDutchie"
+			"YuriNikolai"
 		]
 	},
 	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Documentação]]\n* [[mw:Special:MyLanguage/API:Etiquette|Etiqueta & diretrizes de uso]]\n* [[mw:Special:MyLanguage/API:FAQ|FAQ]]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api.lists.wikimedia.org/ Lista de discussão]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/ Anúncios da API]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Erros e pedidos]\n</div>\n<strong>Estado:</strong> A API do MediaWiki é uma interface madura e estável que é ativamente suportada e aprimorada. Por mais que tentemos evitar, ocasionalmente talvez precisemos fazer mudanças estruturais; inscreva-se na [https://lists.wikimedia.org/hyperkitty/list/mediawiki-api-announce@lists.wikimedia.org/ lista de discussão mediawiki-api-announce] para ser informado acerca das atualizações.\n\n<strong>Pedidos incorretos:</strong> Quando são enviados pedidos incorretos à API, será devolvido um cabeçalho HTTP com a chave \"MediaWiki-API-Error\" e depois tanto o valor desse cabeçalho como o código de erro devolvido serão definidos com o mesmo valor. Para mais informação, consulte [[mw:Special:MyLanguage/API:Errors_and_warnings|API:Erros e avisos]].\n\n<p class=\"mw-apisandbox-link\"><strong>Testes:</strong> Para testar facilmente pedidos à API, visite [[Special:ApiSandbox|Testes da API]].</p>",
@@ -1744,7 +1744,6 @@
 	"apierror-nosuchsection": "Não há seção $1.",
 	"apierror-nosuchsection-what": "Não há seção $1 em $2.",
 	"apierror-nosuchuserid": "Não há usuário com ID $1.",
-	"apierror-notarget": "Você não especificou um alvo válido para esta ação.",
 	"apierror-notpatrollable": "A revisão r$1 não pode ser patrulhada, já que é muito antiga.",
 	"apierror-nouploadmodule": "Módulo de upload não definido.",
 	"apierror-opensearch-json-warnings": "Os avisos não podem ser representados no formato JSON do OpenSearch.",

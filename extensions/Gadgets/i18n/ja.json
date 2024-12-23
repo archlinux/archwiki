@@ -3,7 +3,9 @@
 		"authors": [
 			"1108-Kiju",
 			"2nd-player",
+			"Ant176",
 			"Aotake",
+			"Dragoniez",
 			"Fryed-peach",
 			"JtFuruhata",
 			"Kokage si",
@@ -17,9 +19,7 @@
 			"Sujiniku",
 			"Whym",
 			"Yusuke1109",
-			"青子守歌",
-			"Dragoniez",
-			"Ant176"
+			"青子守歌"
 		]
 	},
 	"gadgets-desc": "利用者が [[Special:Gadgets|CSS や JavaScript のカスタム ガジェット]]を[[Special:Preferences#mw-prefsection-gadgets|{{int:preferences}}]]で選択できるようにする",
@@ -57,7 +57,7 @@
 	"gadgets-export-download": "ダウンロード",
 	"gadgets-requires-es6": "このガジェットはES6対応ブラウザでのみ使用できます",
 	"gadgets-validate-notset": "プロパティ <code>$1</code> が設定されていません。",
-	"gadgets-validate-wrongtype": "プロパティ <code>$1</code> は型 <code>$3</code> ではなく <code>$2</code> でなければなりません。",
+	"gadgets-validate-wrongtype": "プロパティ<code>$1</code>は<code>$2</code>型でなければなりません。",
 	"gadgets-validate-json": "JSONファイルが指定されていますが使用されていません。JSONファイルはパッケージ化されたガジェットでのみ有効です。",
 	"gadgets-validate-es6default": "ES6を要求するガジェットはデフォルトで有効化できません。",
 	"gadgets-validate-noentrypoint": "スクリプトファイルが指定されていないため、パッケージフラグが無視されています。",

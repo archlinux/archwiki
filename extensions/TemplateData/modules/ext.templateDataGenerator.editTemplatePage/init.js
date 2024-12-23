@@ -10,21 +10,17 @@
 
 'use strict';
 
-new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 'wgContentLanguage' ) } ).then( function () {
-	var Target = require( './Target.js' ),
+new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 'wgContentLanguage' ) } ).then( () => {
+	const Target = require( './Target.js' ),
 		pageName = mw.config.get( 'wgPageName' ),
-		docSubpage = mw.msg( 'templatedata-doc-subpage' ),
-		config = {
-			pageName: pageName,
-			isPageSubLevel: false
-		},
-		$textbox = $( '#wpTextbox1' );
+		docSubpage = mw.msg( 'templatedata-doc-subpage' );
+	let $textbox = $( '#wpTextbox1' );
 
-	var pieces = pageName.split( '/' );
-	var isDocPage = pieces.length > 1 && pieces[ pieces.length - 1 ] === docSubpage;
-	var openTDG = new URL( location.href ).searchParams.get( 'templatedata' ) === 'edit';
+	const pieces = pageName.split( '/' );
+	const isDocPage = pieces.length > 1 && pieces[ pieces.length - 1 ] === docSubpage;
+	const openTDG = new URL( location.href ).searchParams.get( 'templatedata' ) === 'edit';
 
-	config = {
+	const config = {
 		pageName: pageName,
 		isPageSubLevel: pieces.length > 1,
 		parentPage: pageName,
@@ -42,16 +38,16 @@ new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 
 	// Textbox wikitext editor
 	if ( $textbox.length ) {
 		// Prepare the editor
-		var wtTarget = new Target( $textbox, config );
+		const wtTarget = new Target( $textbox, config );
 		$( '.tdg-editscreen-placeholder' ).replaceWith( wtTarget.$element );
 		if ( openTDG ) {
 			wtTarget.onEditOpenDialogButton();
 		}
 	}
-	var veTarget;
+	let veTarget;
 	// Visual editor source mode
-	mw.hook( 've.activationComplete' ).add( function () {
-		var surface = ve.init.target.getSurface();
+	mw.hook( 've.activationComplete' ).add( () => {
+		const surface = ve.init.target.getSurface();
 		if ( surface.getMode() === 'source' ) {
 			// Source mode will have created a dummy textbox
 			$textbox = $( '#wpTextbox1' );
@@ -65,7 +61,7 @@ new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 
 			}
 		}
 	} );
-	mw.hook( 've.deactivationComplete' ).add( function () {
+	mw.hook( 've.deactivationComplete' ).add( () => {
 		if ( veTarget ) {
 			veTarget.destroy();
 			veTarget = null;

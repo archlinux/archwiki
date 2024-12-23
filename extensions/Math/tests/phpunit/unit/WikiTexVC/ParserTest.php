@@ -9,42 +9,34 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\Parser
  */
 class ParserTest extends MediaWikiUnitTestCase {
-	private $testCases;
+
+	/** @var Parser */
 	private $parser;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->parser = new Parser();
-
-		$this->testCases = [
-			[
-				'in' => '',
-			],
-			[
-				'in' => 'a',
-			],
-			[
-				'in' => 'a^2',
-			],
-			[
-				'in' => 'a^2+b^{2}',
-			],
-			[
-				'in' => 'l_a^2+l_b^2=l_c^2',
-			]
-		];
 	}
 
-	public function testSimpleParse() {
-		foreach ( $this->testCases as $case ) {
-			$this->parser->parse( $case['in'], [ 'debug' => true ] );
-			$this->assertTrue( true, 'Should parse: ' . $case['in'] );
-		}
+	public function provideTestCases() {
+		yield [ '' ];
+		yield [ 'a' ];
+		yield [ 'a^2' ];
+		yield [ 'a^2+b^{2}' ];
+		yield [ 'l_a^2+l_b^2=l_c^2' ];
+	}
+
+	/**
+	 * @dataProvider provideTestCases
+	 */
+	public function testSimpleParse( string $input ) {
+		$this->parser->parse( $input, [ 'debug' => true ] );
+		$this->addToAssertionCount( 1 );
 	}
 
 	public function testExample() {
 		$this->parser->parse( '\\sin(x)+{}{}\\cos(x)^2 newcommand', [ 'debug' => true ] );
-		$this->assertTrue( true, 'Should parse texVC example' );
+		$this->addToAssertionCount( 1 );
 	}
 
 	public function testSpecific() {

@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that refreshes category membership counts in the category
@@ -93,6 +95,7 @@ TEXT
 
 			// do the work, batch by batch
 			$affectedRows = 0;
+			// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 			while ( ( $result = $this->doWork( $mode ) ) !== false ) {
 				$affectedRows += $result;
 				usleep( $this->getOption( 'throttle', 0 ) * 1000 );
@@ -150,7 +153,7 @@ TEXT
 		$idsToUpdate = $dbr->newSelectQueryBuilder()
 			->select( 'cat_id' )
 			->from( 'category' )
-			->where( [ 'cat_id > ' . (int)$this->minimumId, "cat_{$mode} != ($countingSubquery)" ] )
+			->where( [ $dbr->expr( 'cat_id', '>', (int)$this->minimumId ), "cat_{$mode} != ($countingSubquery)" ] )
 			->limit( $this->getBatchSize() )
 			->caller( __METHOD__ )->fetchFieldValues();
 		if ( !$idsToUpdate ) {
@@ -180,13 +183,15 @@ TEXT
 		// cleanupEmptyCategories.php.
 		$affectedRows = 0;
 		foreach ( $res as $row ) {
-			$dbw->update( 'category',
-				[ "cat_{$mode}" => $row->count ],
-				[
+			$dbw->newUpdateQueryBuilder()
+				->update( 'category' )
+				->set( [ "cat_{$mode}" => $row->count ] )
+				->where( [
 					'cat_id' => $row->cat_id,
-					"cat_{$mode} != " . (int)( $row->count ),
-				],
-				__METHOD__ );
+					$dbw->expr( "cat_{$mode}", '!=', (int)$row->count ),
+				] )
+				->caller( __METHOD__ )
+				->execute();
 			$affectedRows += $dbw->affectedRows();
 		}
 
@@ -196,5 +201,7 @@ TEXT
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RecountCategories::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

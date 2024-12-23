@@ -1,0 +1,20 @@
+.mw-watchlink {
+	.minerva-icon--halfStar,
+	.minerva-icon--unStar {
+		background: @color-progressive;
+	}
+
+	.minerva-animations-ready & .minerva-icon {
+		transition: transform 0.5s;
+	}
+
+	.minerva-icon--unStar {
+		[ dir='ltr' ] & {
+			transform: rotate( 72deg );
+		}
+
+		[ dir='rtl' ] & {
+			transform: rotate( -72deg );
+		}
+	}
+}

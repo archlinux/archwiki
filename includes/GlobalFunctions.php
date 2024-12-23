@@ -20,18 +20,22 @@
  * @file
  */
 
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\HookContainer\HookRunner;
-use MediaWiki\Libs\UnpackFailedException;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\ProcOpenError;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Shell\Shell;
-use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\Utils\UrlUtils;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 use Wikimedia\RequestTimeout\RequestTimeout;
 
@@ -107,11 +111,13 @@ function wfLoadSkins( array $skins ) {
 
 /**
  * Like array_diff( $arr1, $arr2 ) except that it works with two-dimensional arrays.
+ * @deprecated since 1.43 Use StatusValue::merge() instead
  * @param string[]|array[] $arr1
  * @param string[]|array[] $arr2
  * @return array
  */
 function wfArrayDiff2( $arr1, $arr2 ) {
+	wfDeprecated( __FUNCTION__, '1.43' );
 	/**
 	 * @param string|array $a
 	 * @param string|array $b
@@ -162,10 +168,12 @@ function wfArrayDiff2( $arr1, $arr2 ) {
  *       [ 'y' ]
  *     ]
  *
+ * @deprecated since 1.43 Use StatusValue::merge() instead
  * @param array[] ...$args
  * @return array
  */
 function wfMergeErrorArrays( ...$args ) {
+	wfDeprecated( __FUNCTION__, '1.43' );
 	$out = [];
 	foreach ( $args as $errors ) {
 		foreach ( $errors as $params ) {
@@ -457,7 +465,7 @@ function wfAppendQuery( $url, $query ) {
 }
 
 /**
- * @deprecated Get a UrlUtils from services, or construct your own
+ * @deprecated since 1.43; get a UrlUtils from services, or construct your own
  * @internal
  * @return UrlUtils from services if initialized, otherwise make one from globals
  */
@@ -504,7 +512,7 @@ function wfGetUrlUtils(): UrlUtils {
  * specifies a protocol, PROTO_HTTP, PROTO_HTTPS, PROTO_RELATIVE and
  * PROTO_CURRENT do not change that.
  *
- * Parent references (/../) in the path are resolved (as in wfRemoveDotSegments).
+ * Parent references (/../) in the path are resolved (as in UrlUtils::removeDotSegments()).
  *
  * @deprecated since 1.39, use UrlUtils::expand()
  * @param string $url An URL; can be absolute (e.g. http://example.com/foo/bar),
@@ -521,12 +529,14 @@ function wfExpandUrl( $url, $defaultProto = PROTO_CURRENT ) {
  * Get the wiki's "server", i.e. the protocol and host part of the URL, with a
  * protocol specified using a PROTO_* constant as in wfExpandUrl()
  *
- * @deprecated since 1.39, use UrlUtils::getServer()
+ * @deprecated since 1.39, use UrlUtils::getServer(); hard-deprecated since 1.43
  * @since 1.32
  * @param string|int|null $proto One of the PROTO_* constants.
  * @return string The URL
  */
 function wfGetServerUrl( $proto ) {
+	wfDeprecated( __FUNCTION__, '1.39' );
+
 	return wfGetUrlUtils()->getServer( $proto ) ?? '';
 }
 
@@ -547,28 +557,16 @@ function wfAssembleUrl( $urlParts ) {
 }
 
 /**
- * Remove all dot-segments in the provided URL path.  For example,
- * '/a/./b/../c/' becomes '/a/c/'.  For details on the algorithm, please see
- * RFC3986 section 5.2.4.
- *
- * @deprecated since 1.39, use UrlUtils::removeDotSegments()
- * @since 1.19
- * @param string $urlPath URL path, potentially containing dot-segments
- * @return string URL path with all dot-segments removed
- */
-function wfRemoveDotSegments( $urlPath ) {
-	return UrlUtils::removeDotSegments( (string)$urlPath );
-}
-
-/**
  * Returns a partial regular expression of recognized URL protocols, e.g. "http:\/\/|https:\/\/"
  *
- * @deprecated since 1.39, use UrlUtils::validProtocols()
+ * @deprecated since 1.39, use UrlUtils::validProtocols(); hard-deprecated since 1.43
  * @param bool $includeProtocolRelative If false, remove '//' from the returned protocol list.
  *        DO NOT USE this directly, use wfUrlProtocolsWithoutProtRel() instead
  * @return string
  */
 function wfUrlProtocols( $includeProtocolRelative = true ) {
+	wfDeprecated( __FUNCTION__, '1.39' );
+
 	return $includeProtocolRelative ? wfGetUrlUtils()->validProtocols() :
 		wfGetUrlUtils()->validAbsoluteProtocols();
 }
@@ -619,11 +617,13 @@ function wfParseUrl( $url ) {
  * encoded non-ASCII Unicode characters with their UTF-8 original forms
  * for more compact display and legibility for local audiences.
  *
- * @deprecated since 1.39, use UrlUtils::expandIRI()
+ * @deprecated since 1.39, use UrlUtils::expandIRI(); hard-deprecated since 1.43
  * @param string $url
  * @return string
  */
 function wfExpandIRI( $url ) {
+	wfDeprecated( __FUNCTION__, '1.39' );
+
 	return wfGetUrlUtils()->expandIRI( (string)$url ) ?? '';
 }
 
@@ -826,58 +826,6 @@ function wfLogWarning( $msg, $callerOffset = 1, $level = E_USER_WARNING ) {
 }
 
 /**
- * Return a Language object from $langcode
- *
- * @deprecated since 1.41, use MediaWiki\Languages\LanguageFactory::getLanguage instead.
- * @param Language|string|bool $langcode Either:
- *                  - a Language object
- *                  - code of the language to get the message for, if it is
- *                    a valid code create a language for that language, if
- *                    it is a string but not a valid code then make a basic
- *                    language object
- *                  - a boolean: if it's false then use the global object for
- *                    the current user's language (as a fallback for the old parameter
- *                    functionality), or if it is true then use global object
- *                    for the wiki's content language.
- * @return Language|StubUserLang
- */
-function wfGetLangObj( $langcode = false ) {
-	wfDeprecated( __FUNCTION__, '1.41' );
-	# Identify which language to get or create a language object for.
-	# Using is_object here due to Stub objects.
-	if ( is_object( $langcode ) ) {
-		# Great, we already have the object (hopefully)!
-		return $langcode;
-	}
-
-	global $wgLanguageCode;
-	$services = MediaWikiServices::getInstance();
-	if ( $langcode === true || $langcode === $wgLanguageCode ) {
-		# $langcode is the language code of the wikis content language object.
-		# or it is a boolean and value is true
-		return $services->getContentLanguage();
-	}
-
-	global $wgLang;
-	if ( $langcode === false || $langcode === $wgLang->getCode() ) {
-		# $langcode is the language code of user language object.
-		# or it was a boolean and value is false
-		return $wgLang;
-	}
-
-	$languageNames = $services->getLanguageNameUtils()->getLanguageNames();
-	// FIXME: Can we use isSupportedLanguage here?
-	if ( isset( $languageNames[$langcode] ) ) {
-		# $langcode corresponds to a valid language.
-		return $services->getLanguageFactory()->getLanguage( $langcode );
-	}
-
-	# $langcode is a string, but not a valid language code; use content language.
-	wfDebug( "Invalid language code passed to wfGetLangObj, falling back to content language." );
-	return $services->getContentLanguage();
-}
-
-/**
  * This is the function for getting translated interface messages.
  *
  * @see Message class for documentation how to use them.
@@ -1043,8 +991,9 @@ function wfBacktrace( $raw = null ) {
  * wfGetCaller( 2 ) [default] is the caller of the function running wfGetCaller()
  * wfGetCaller( 3 ) is the parent of that.
  *
+ * The format will be the same as for {@see wfFormatStackFrame()}.
  * @param int $level
- * @return string
+ * @return string function name or 'unknown'
  */
 function wfGetCaller( $level = 2 ) {
 	$backtrace = wfDebugBacktrace( $level + 1 );
@@ -1073,6 +1022,12 @@ function wfGetAllCallers( $limit = 3 ) {
 
 /**
  * Return a string representation of frame
+ *
+ * Typically, the returned value will be in one of these formats:
+ * - method
+ * - Fully\Qualified\method
+ * - Fully\Qualified\Class->method
+ * - Fully\Qualified\Class::method
  *
  * @param array $frame
  * @return string
@@ -1319,6 +1274,7 @@ function wfHttpError( $code, $label, $desc ) {
  * @param bool $resetGzipEncoding
  */
 function wfResetOutputBuffers( $resetGzipEncoding = true ) {
+	// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 	while ( $status = ob_get_status() ) {
 		if ( isset( $status['flags'] ) ) {
 			$flags = PHP_OUTPUT_HANDLER_CLEANABLE | PHP_OUTPUT_HANDLER_REMOVABLE;
@@ -1687,7 +1643,7 @@ function wfMerge(
 	string $mine,
 	string $yours,
 	?string &$simplisticMergeAttempt,
-	string &$mergeLeftovers = null
+	?string &$mergeLeftovers = null
 ): bool {
 	global $wgDiff3;
 
@@ -2028,30 +1984,6 @@ function wfShorthandToInteger( ?string $string = '', int $default = -1 ): int {
 	}
 
 	return $val;
-}
-
-/**
- * Wrapper around php's unpack.
- *
- * @param string $format The format string (See php's docs)
- * @param string $data A binary string of binary data
- * @param int|bool $length The minimum length of $data or false. This is to
- * 	prevent reading beyond the end of $data. false to disable the check.
- *
- * Also be careful when using this function to read unsigned 32 bit integer
- * because php might make it negative.
- *
- * @throws MWException If $data not long enough, or if unpack fails
- * @return array Associative array of the extracted data
- * @deprecated since 1.42 Use StringUtils::unpack instead
- */
-function wfUnpack( $format, $data, $length = false ) {
-	wfDeprecated( __FUNCTION__, '1.42' );
-	try {
-		return StringUtils::unpack( (string)$format, (string)$data, $length );
-	} catch ( UnpackFailedException $e ) {
-		throw new MWException( $e->getMessage(), 0, $e );
-	}
 }
 
 /**

@@ -22,7 +22,6 @@ namespace MediaWiki\Page;
 
 use ChangeTags;
 use HTMLCacheUpdateJob;
-use IDBAccessObject;
 use JobQueueGroup;
 use LocalFile;
 use ManualLogEntry;
@@ -46,6 +45,7 @@ use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use WikiPage;
 
@@ -60,34 +60,6 @@ class UndeletePage {
 	public const FILES_RESTORED = 'files';
 	public const REVISIONS_RESTORED = 'revs';
 
-	/** @var HookRunner */
-	private $hookRunner;
-	/** @var JobQueueGroup */
-	private $jobQueueGroup;
-	/** @var IConnectionProvider */
-	private $dbProvider;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var ReadOnlyMode */
-	private $readOnlyMode;
-	/** @var RepoGroup */
-	private $repoGroup;
-	/** @var RevisionStore */
-	private $revisionStore;
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-	/** @var PageUpdaterFactory */
-	private $pageUpdaterFactory;
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-	/** @var ArchivedRevisionLookup */
-	private $archivedRevisionLookup;
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-	/** @var ProperPageIdentity */
-	private $page;
-	/** @var Authority */
-	private $performer;
 	/** @var Status|null */
 	private $fileStatus;
 	/** @var StatusValue|null */
@@ -102,26 +74,25 @@ class UndeletePage {
 	private $tags = [];
 	/** @var WikiPage|null If not null, it means that we have to undelete it. */
 	private $associatedTalk;
-	/** @var ITextFormatter */
-	private $contLangMsgTextFormatter;
+
+	private HookRunner $hookRunner;
+	private JobQueueGroup $jobQueueGroup;
+	private IConnectionProvider $dbProvider;
+	private ReadOnlyMode $readOnlyMode;
+	private RepoGroup $repoGroup;
+	private LoggerInterface $logger;
+	private RevisionStore $revisionStore;
+	private WikiPageFactory $wikiPageFactory;
+	private PageUpdaterFactory $pageUpdaterFactory;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private ArchivedRevisionLookup $archivedRevisionLookup;
+	private NamespaceInfo $namespaceInfo;
+	private ITextFormatter $contLangMsgTextFormatter;
+	private ProperPageIdentity $page;
+	private Authority $performer;
 
 	/**
 	 * @internal Create via the UndeletePageFactory service.
-	 * @param HookContainer $hookContainer
-	 * @param JobQueueGroup $jobQueueGroup
-	 * @param IConnectionProvider $dbProvider
-	 * @param ReadOnlyMode $readOnlyMode
-	 * @param RepoGroup $repoGroup
-	 * @param LoggerInterface $logger
-	 * @param RevisionStore $revisionStore
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param PageUpdaterFactory $pageUpdaterFactory
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param ArchivedRevisionLookup $archivedRevisionLookup
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param ITextFormatter $contLangMsgTextFormatter
-	 * @param ProperPageIdentity $page
-	 * @param Authority $performer
 	 */
 	public function __construct(
 		HookContainer $hookContainer,
@@ -348,8 +319,8 @@ class UndeletePage {
 
 			} else {
 				// Add errors as warnings since the talk page is secondary to the main action
-				foreach ( $talkStatus->getErrors() as $error ) {
-					$resStatus->warning( $error['message'], $error['params'] );
+				foreach ( $talkStatus->getMessages() as $msg ) {
+					$resStatus->warning( $msg );
 				}
 			}
 		}

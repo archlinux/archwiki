@@ -1,15 +1,21 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
 // phpcs:disable Generic.Files.LineLength -- Long html test examples
 
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWikiIntegrationTestCase;
+use ReflectionObject;
 use Wikimedia\TestingAccessWrapper;
 
 /**

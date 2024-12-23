@@ -3,17 +3,18 @@
 namespace MediaWiki\Tests\Action;
 
 use BadTitleError;
-use DeferredUpdates;
-use DeferredUpdatesScopeStack;
 use MediaWiki\Actions\ActionEntryPoint;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\DeferredUpdatesScopeMediaWikiStack;
+use MediaWiki\Deferred\DeferredUpdatesScopeStack;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\FauxResponse;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Tests\MockEnvironment;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
@@ -29,6 +30,8 @@ use WikiPage;
  * @covers \MediaWiki\Actions\ActionEntryPoint
  */
 class ActionEntryPointTest extends MediaWikiIntegrationTestCase {
+	use TempUserTestTrait;
+
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -36,10 +39,11 @@ class ActionEntryPointTest extends MediaWikiIntegrationTestCase {
 			MainConfigNames::Server => 'http://example.org',
 			MainConfigNames::ScriptPath => '/w',
 			MainConfigNames::Script => '/w/index.php',
-			MainConfigNames::ArticlePath => '/wiki/$1',
-			MainConfigNames::ActionPaths => [],
 			MainConfigNames::LanguageCode => 'en',
 		] );
+
+		// Needed to test redirects to My* special pages as an anonymous user.
+		$this->disableAutoCreateTempUser();
 	}
 
 	protected function tearDown(): void {
@@ -54,7 +58,7 @@ class ActionEntryPointTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * @return ActionEntryPoint
 	 */
-	private function getEntryPoint( $environment = null, RequestContext $context = null ) {
+	private function getEntryPoint( $environment = null, ?RequestContext $context = null ) {
 		if ( !$environment ) {
 			$environment = new MockEnvironment();
 		}

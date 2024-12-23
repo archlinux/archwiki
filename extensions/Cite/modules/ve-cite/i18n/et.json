@@ -28,7 +28,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "Seda viidet on sellel leheküljel kasutatud {{PLURAL:$1|ühel korral|2=kaks korda|$1 korda}}. Siin tehtud muudatused rakenduvad igas kohas, kus seda viidet kasutatakse.",
 	"cite-ve-dialog-reference-options-group-label": "Viiterühm",
 	"cite-ve-dialog-reference-options-group-placeholder": "Üldviited",
-	"cite-ve-dialog-reference-options-name-label": "Korduvkasutusnimi",
 	"cite-ve-dialog-reference-options-responsive-label": "Kasuta isereguleeruvat veergude paigutust",
 	"cite-ve-dialog-reference-options-section": "Suvandid",
 	"cite-ve-dialog-reference-placeholder": "Kirjuta või kleebi siia viide või lisa viitemall.",

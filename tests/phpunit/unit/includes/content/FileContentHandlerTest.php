@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Tests\Unit;
 
-use FileContentHandler;
+use MediaWiki\Content\FileContentHandler;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Title\TitleFactory;
 use MediaWikiUnitTestCase;
-use ParserFactory;
 use SearchEngine;
 use SearchIndexField;
 use SearchIndexFieldDefinition;
@@ -18,7 +18,7 @@ use Wikimedia\UUID\GlobalIdGenerator;
 /**
  * @group ContentHandler
  *
- * @covers \FileContentHandler
+ * @covers \MediaWiki\Content\FileContentHandler
  */
 class FileContentHandlerTest extends MediaWikiUnitTestCase {
 	/**

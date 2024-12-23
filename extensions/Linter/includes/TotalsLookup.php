@@ -20,43 +20,47 @@
 
 namespace MediaWiki\Linter;
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\WikiMap\WikiMap;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database as MWDatabase;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 
 /**
  * Lookup to find and cache the total amount of
  * lint errors in each category
  */
 class TotalsLookup {
+	public const CONSTRUCTOR_OPTIONS = [
+		'LinterStatsdSampleFactor',
+	];
+
+	private ServiceOptions $options;
+	private WANObjectCache $cache;
+	private IBufferingStatsdDataFactory $statsdDataFactory;
+	private CategoryManager $categoryManager;
+	private Database $database;
 
 	/**
-	 * @var WANObjectCache
-	 */
-	private $cache;
-
-	/**
-	 * @var CategoryManager
-	 */
-	private $catManager;
-
-	/**
-	 * @var Database
-	 */
-	private $db;
-
-	/**
-	 * @param CategoryManager $catManager
+	 * @param ServiceOptions $options
 	 * @param WANObjectCache $cache
-	 * @param Database $db
+	 * @param IBufferingStatsdDataFactory $statsdDataFactory
+	 * @param CategoryManager $categoryManager
+	 * @param Database $database
 	 */
 	public function __construct(
-		CategoryManager $catManager, WANObjectCache $cache, Database $db
+		ServiceOptions $options,
+		WANObjectCache $cache,
+		IBufferingStatsdDataFactory $statsdDataFactory,
+		CategoryManager $categoryManager,
+		Database $database
 	) {
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+		$this->options = $options;
 		$this->cache = $cache;
-		$this->catManager = $catManager;
-		$this->db = $db;
+		$this->statsdDataFactory = $statsdDataFactory;
+		$this->categoryManager = $categoryManager;
+		$this->database = $database;
 	}
 
 	/**
@@ -72,21 +76,20 @@ class TotalsLookup {
 	 *
 	 * @return array
 	 */
-	public function getTotals() {
-		$cats = $this->catManager->getVisibleCategories();
-		$db = $this->db;
+	public function getTotals(): array {
+		$cats = $this->categoryManager->getVisibleCategories();
 		$fetchedTotals = false;
 		$totals = [];
 		foreach ( $cats as $cat ) {
 			$totals[$cat] = $this->cache->getWithSetCallback(
 				$this->makeKey( $cat ),
 				WANObjectCache::TTL_INDEFINITE,
-				static function ( $oldValue, &$ttl, &$setOpts, $oldAsOf ) use ( $cat, $db, &$fetchedTotals ) {
+				function ( $oldValue, &$ttl, &$setOpts, $oldAsOf ) use ( $cat, &$fetchedTotals ) {
 					$setOpts += MWDatabase::getCacheSetOptions(
-						Database::getDBConnectionRef( DB_REPLICA )
+						$this->database->getDBConnectionRef( DB_REPLICA )
 					);
 					if ( $fetchedTotals === false ) {
-						$fetchedTotals = $db->getTotals();
+						$fetchedTotals = $this->database->getTotals();
 					}
 					return $fetchedTotals[$cat];
 				},
@@ -99,7 +102,6 @@ class TotalsLookup {
 				]
 			);
 		}
-
 		return $totals;
 	}
 
@@ -109,8 +111,7 @@ class TotalsLookup {
 	 * @param array $changes
 	 */
 	public function updateStats( array $changes ) {
-		$mwServices = MediaWikiServices::getInstance();
-		$linterStatsdSampleFactor = $mwServices->getMainConfig()->get( 'LinterStatsdSampleFactor' );
+		$linterStatsdSampleFactor = $this->options->get( 'LinterStatsdSampleFactor' );
 
 		if ( $linterStatsdSampleFactor === false ) {
 			// Don't send to statsd, but update cache with $changes
@@ -135,9 +136,9 @@ class TotalsLookup {
 			return;
 		}
 
-		$totals = $this->db->getTotals();
+		$totals = $this->database->getTotals();
 		$wiki = WikiMap::getCurrentWikiId();
-		$stats = $mwServices->getStatsdDataFactory();
+		$stats = $this->statsdDataFactory;
 		foreach ( $totals as $name => $count ) {
 			$stats->gauge( "linter.category.$name.$wiki", $count );
 		}

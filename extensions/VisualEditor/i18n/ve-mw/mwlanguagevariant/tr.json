@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"BaRaN6161 TURK"
 		]
 	},
@@ -14,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Bu gizli bir kuraldır.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Bu kural sayfa başlığını etkiler.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Dil kodu",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Geçersiz>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Geçersiz</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Dil",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Kaynak",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Hedef",

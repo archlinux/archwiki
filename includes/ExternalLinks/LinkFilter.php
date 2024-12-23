@@ -20,16 +20,15 @@
 
 namespace MediaWiki\ExternalLinks;
 
-use Content;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\TextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use StringUtils;
-use TextContent;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeMatch;
 use Wikimedia\Rdbms\LikeValue;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * Utilities for formatting and querying the externallinks table.
@@ -384,7 +383,7 @@ class LinkFilter {
 		$index2 = implode( '', $trimmedlikePath );
 
 		return [
-			new OrExpressionGroup( ...$domainConditions ),
+			$db->orExpr( $domainConditions ),
 			$db->expr( 'el_to_path', IExpression::LIKE, new LikeValue( $index2, $db->anyString() ) ),
 		];
 	}
@@ -392,7 +391,7 @@ class LinkFilter {
 	public static function getProtocolPrefix( $protocol ) {
 		// Find the right prefix
 		$urlProtocols = MediaWikiServices::getInstance()->getMainConfig()
-										 ->get( MainConfigNames::UrlProtocols );
+			->get( MainConfigNames::UrlProtocols );
 		if ( $protocol && !in_array( $protocol, $urlProtocols ) ) {
 			foreach ( $urlProtocols as $p ) {
 				if ( str_starts_with( $p, $protocol ) ) {
@@ -409,7 +408,7 @@ class LinkFilter {
 
 	public static function prepareProtocols() {
 		$urlProtocols = MediaWikiServices::getInstance()->getMainConfig()
-										 ->get( MainConfigNames::UrlProtocols );
+			->get( MainConfigNames::UrlProtocols );
 		$protocols = [ '' ];
 		foreach ( $urlProtocols as $p ) {
 			if ( $p !== '//' ) {
@@ -448,7 +447,10 @@ class LinkFilter {
 		// while we want to match the email's domain or news server the same way we are
 		// matching hosts for other URLs.
 		if ( in_array( $bits['scheme'], [ 'mailto', 'news' ] ) ) {
-			$bits['host'] = $bits['path'];
+			// (T364743) Only set host if it's not already set (if // is used)
+			if ( array_key_exists( 'path', $bits ) ) {
+				$bits['host'] = $bits['path'];
+			}
 			$bits['path'] = '';
 		}
 

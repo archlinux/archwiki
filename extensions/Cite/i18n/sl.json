@@ -3,8 +3,8 @@
 		"authors": [
 			"Dbc334",
 			"Eleassar",
-			"Yerpo",
-			"Upwinxp"
+			"Upwinxp",
+			"Yerpo"
 		]
 	},
 	"cite-desc": "Doda znački <code>&lt;ref&gt;</code> in <code>&lt;references/&gt;</code> za citat",
@@ -31,6 +31,13 @@
 	"cite_error_empty_references_define": "Značka <code>&lt;ref&gt;</code> z imenom »$1«, določena v <code>&lt;references&gt;</code> skupine »$2«, nima vsebine.",
 	"cite-tracking-category-cite-error": "Strani z napakami sklicev",
 	"cite-tracking-category-cite-error-desc": "Strani v tej kategoriji vsebujejo napačno zapisane značke sklicev.",
+	"cite-reference-previews-reference": "Sklic",
+	"cite-reference-previews-book": "Sklic na knjigo",
+	"cite-reference-previews-journal": "Sklic na revijo",
+	"cite-reference-previews-news": "Sklic na novice",
+	"cite-reference-previews-note": "Opomba",
+	"cite-reference-previews-web": "Spletni sklic",
+	"cite-reference-previews-collapsible-placeholder": "Ta sklic vključuje sliko, ki se ne prilega predogledu.",
 	"cite_references_link_many_format_backlink_labels": "a b c č d e f g h i j k l m n o p r s š t u v z ž a aa ab ac ač ad ae af ag ah ai aj ak al am an ao ap ar as aš at au av az až b ba bb bc bč bd be bf bg bh bi bj bk bl bm bn bo bp br bs bš bt bu bv bz bž c ca cb cc cč cd ce cf cg ch ci cj ck cl cm cn co cp cr cs cš ct cu cv cz cž č ča čb čc čč čd če čf čg čh či čj čk čl čm čn čo čp čr čs čš čt ču čv čz čž d da db dc dč dd de df dg dh di dj dk dl dm dn do dp dr ds dš dt du dv dz dž e ea eb ec eč ed ee ef eg eh ei ej ek el em en eo ep er es eš et eu ev ez ež f fa fb fc fč fd fe ff fg fh fi fj fk fl fm fn fo fp fr fs fš ft fu fv fz fž g ga gb gc gč gd ge gf gg gh gi gj gk gl gm gn go gp gr gs gš gt gu gv gz gž h ha hb hc hč hd he hf hg hh hi hj hk hl hm hn ho hp hr hs hš ht hu hv hz hž i ia ib ic ič id ie if ig ih ii ij ik il im in io ip ir is iš it iu iv iz iž j ja jb jc jč jd je jf jg jh ji jj jk jl jm jn jo jp jr js jš jt ju jv jz jž k ka kb kc kč kd ke kf kg kh ki kj kk kl km kn ko kp kr ks kš kt ku kv kz kž l la lb lc lč ld le lf lg lh li lj lk ll lm ln lo lp lr ls lš lt lu lv lz lž m ma mb mc mč md me mf mg mh mi mj mk ml mm mn mo mp mr ms mš mt mu mv mz mž n na nb nc nč nd ne nf ng nh ni nj nk nl nm nn no np nr ns nš nt nu nv nz nž o oa ob oc oč od oe of og oh oi oj ok ol om on oo op or os oš ot ou ov oz ož p pa pb pc pč pd pe pf pg ph pi pj pk pl pm pn po pp pr ps pš pt pu pv pz pž r ra rb rc rč rd re rf rg rh ri rj rk rl rm rn ro rp rr rs rš rt ru rv rz rž s sa sb sc sč sd se sf sg sh si sj sk sl sm sn so sp sr ss sš st su sv sz sž š ša šb šc šč šd še šf šg šh ši šj šk šl šm šn šo šp šr šs šš št šu šv šz šž t ta tb tc tč td te tf tg th ti tj tk tl tm tn to tp tr ts tš tt tu tv tz tž u ua ub uc uč ud ue uf ug uh ui uj uk ul um un uo up ur us uš ut uu uv uz už v va vb vc vč vd ve vf vg vh vi vj vk vl vm vn vo vp vr vs vš vt vu vv vz vž z za zb zc zč zd ze zf zg zh zi zj zk zl zm zn zo zp zr zs zš zt zu zv zz zž ž ža žb žc žč žd že žf žg žh ži žj žk žl žm žn žo žp žr žs žš žt žu žv žz žž",
 	"cite_references_link_many_and": "&#32;",
 	"cite_references_link_accessibility_label": "Skoči gor",
@@ -47,5 +54,9 @@
 	"cite-wikieditor-help-content-showreferences-description": "Prikaži sklice",
 	"cite-wikieditor-help-content-reference-example-text1": "Besedilo strani.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Besedilo povezave], dodatno besedilo.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Besedilo povezave]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Besedilo povezave]",
+	"popups-prefs-navpopups-gadget-conflict-info": "Vklopljen imate pripomoček [[$1|Navigacijski izskokci]], zato ne boste videli predogledov, ki jih zagotavlja ta možnost. Odvisno od vašega vikija se lahko pripomoček imenuje nekoliko drugače. Če imate še naprej težave, preglejte svoje pripomočke in uporabniške skripte, vključno z globalnimi.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Vklopljena imate pripomočka [[$1|Navigation Popups]] (Navigacijski izskokci) in [[$1|Reference Tooltips]] (Opisi orodij za sklice), zato ne boste videli predogledov, ki jih ponuja ta možnost. V vašem vikiju se lahko pripomočka imenujeta nekoliko drugače. Če imate še naprej težave, preglejte svoje pripomočke in uporabniške skripte, vključno z globalnimi.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Vklopljen imate pripomoček [[$1|Reference Tooltips]] (Opisi orodij za sklice), zato ne boste videli predogledov sklicev, še vedno pa boste videli predoglede strani. V vašem vikiju se lahko pripomoček imenuje nekoliko drugače. Če imate še naprej težave, preglejte svoje pripomočke in uporabniške skripte, vključno z globalnimi.",
+	"popups-refpreview-user-preference-label": "Omogoči predoglede sklicev (prikaže hitre predoglede sklicev med branjem strani)"
 }

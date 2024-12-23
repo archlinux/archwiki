@@ -2,16 +2,17 @@
 
 namespace MediaWiki\Tests\Unit\Revision;
 
-use Content;
 use InvalidArgumentException;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Revision\MutableRevisionSlots;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionSlots;
 use MediaWiki\Revision\SlotRecord;
-use WikitextContent;
 
 /**
  * @covers \MediaWiki\Revision\MutableRevisionSlots
+ * @covers \MediaWiki\Revision\RevisionSlots
  */
 class MutableRevisionSlotsTest extends RevisionSlotsTest {
 
@@ -32,9 +33,6 @@ class MutableRevisionSlotsTest extends RevisionSlotsTest {
 	/**
 	 * @dataProvider provideConstructorFailue
 	 * @param array $slots
-	 *
-	 * @covers \MediaWiki\Revision\RevisionSlots::__construct
-	 * @covers \MediaWiki\Revision\RevisionSlots::setSlotsInternal
 	 */
 	public function testConstructorFailue( $slots ) {
 		$this->expectException( InvalidArgumentException::class );

@@ -44,6 +44,7 @@
 	"visualeditor-changedesc-mwtransclusion": "Parametry šablona izměnjene",
 	"visualeditor-desc": "Vizualny redaktor za MediaWiki",
 	"visualeditor-descriptionpagelink": "Project:Vizualny redaktor",
+	"visualeditor-dialog-extension-abandonedit": "Jeste li uvěrjeni, že hočete zatvoriti tutoj dialog bez priměnjenja vaših izměn?",
 	"visualeditor-dialog-media-alttext-checkbox": "Upotrěbiti nadpis kako alternativny tekst",
 	"visualeditor-dialog-media-alttext-section": "Alternativny tekst",
 	"visualeditor-dialog-media-alttext-section-help": "Vy možete upotrěbiti tuto polje za pisanje tekstnogo opisa za ljudij, ktori ne videt fajl. Opis povinen jest byti dostatočny, da by oni srazuměli cělj i informacije prědavane fajlom. To jest nasučno za slěpyh koristnikov i drugyh, ktori upotrěbjajut softver za odčitanje ekrana ili tekstne prěgledače.",

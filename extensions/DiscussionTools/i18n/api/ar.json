@@ -2,19 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Alshamiri1",
-			"Amire80",
 			"Dyolf77 (WMF)",
 			"FShbib",
 			"Matma Rex",
 			"Michel Bakni",
 			"NEHAOUA",
 			"Shbib Al-Subaie",
-			"أيوب"
+			"أيوب",
+			"Meno25"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "لم يُعثَر على التعليق ذي المُعرِّف '$1'.",
 	"apierror-discussiontools-commentname-ambiguous": "عُثر على العديد من التعليقات ذات الاسم '$1'، نحتاج إلى <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "لم يًعثر على التعليق مع الاسم '$1'.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "الصفحة لم تحتوي على أي مناقشات على الإطلاق.",
 	"apierror-discussiontools-formtoken-used": "نُشر التعليق فعلًا. أعد تحميل الصفحة لرؤيته.",
 	"apierror-discussiontools-subscription-failed-add": "تعذَّر الاشتراك في هذا الموضوع.",
 	"apierror-discussiontools-subscription-failed-remove": "لا يمكن إلغاء الاشتراك في هذا الموضوع.",
@@ -48,5 +49,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "عنوان الموضوع الذي تريدون الاشتراك فيه (أو إلغاء الاشتراك منه)",
 	"apihelp-discussiontoolssubscribe-param-page": "صفحة يظهر عليها الموضوع",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "صح للاشتراك، خطأ لإلغاء الاشتراك",
-	"apihelp-discussiontoolssubscribe-summary": "اشتراك (أو إلغاء الاشتراك) لتلقّي إخطارات حول موضوع."
+	"apihelp-discussiontoolssubscribe-summary": "اشتراك (أو إلغاء الاشتراك) لتلقّي إخطارات حول موضوع.",
+	"apihelp-discussiontoolsthank-param-commentid": "معرف التعليق المراد شكره.",
+	"apihelp-discussiontoolsthank-summary": "إرسال إشعار شكر عام على تعليق."
 }

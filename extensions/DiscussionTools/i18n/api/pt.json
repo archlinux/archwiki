@@ -41,5 +41,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Nome do tópico a subscrever (ou cancelar a subscrição)",
 	"apihelp-discussiontoolssubscribe-param-page": "Uma página na qual o tópico aparece",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Verdadeiro para subscrever, falso para cancelar a subscrição",
-	"apihelp-discussiontoolssubscribe-summary": "Subscrever (ou cancelar a subscrição) para receber notificações sobre um tópico."
+	"apihelp-discussiontoolssubscribe-summary": "Subscrever (ou cancelar a subscrição) para receber notificações sobre um tópico.",
+	"apihelp-discussiontoolsthank-param-commentid": "Identificação do comentário a agradecer.",
+	"apihelp-discussiontoolsthank-summary": "Enviar notificação de agradecimento público por um comentário."
 }

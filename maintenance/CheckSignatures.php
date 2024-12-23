@@ -19,6 +19,8 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Parser\ParserOptions;
+
 /**
  * Maintenance script to list users with invalid signatures.
  *
@@ -50,6 +52,7 @@ class CheckSignatures extends Maintenance {
 				->andWhere( $dbr->expr( 'up_user', '>', $maxUserId ) )
 				->orderBy( [ 'up_property', 'up_user' ] )
 				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )
 				->fetchResultSet();
 
 			foreach ( $res as $row ) {
@@ -78,4 +81,6 @@ class CheckSignatures extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CheckSignatures::class;
+// @codeCoverageIgnoreEnd

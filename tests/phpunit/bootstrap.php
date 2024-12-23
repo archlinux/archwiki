@@ -28,6 +28,8 @@
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionProcessor;
+use MediaWiki\Registration\ExtensionRegistry;
 use PHPUnit\TextUI\CliArguments\Builder;
 
 require_once __DIR__ . '/bootstrap.common.php';
@@ -39,7 +41,22 @@ require_once __DIR__ . '/bootstrap.common.php';
 // TODO This check is obviously imperfect. Once we upgrade to PHPUnit 10 we might be able to use its events
 // (https://docs.phpunit.de/en/10.2/events.html) to get a list of tests that will be run, and check if there's
 // any integration test in there.
-if ( $GLOBALS['argc'] === 1 ) {
+/** @internal Only use this environment variable if you temporarily need it. */
+$envVar = getenv( 'MEDIAWIKI_HAS_INTEGRATION_TESTS' );
+if ( $envVar !== false ) {
+	// Allow the developer to override the detection if necessary.
+	if ( $envVar === 'true' || $envVar === '1' || $envVar === 'yes' ) {
+		$hasIntegrationTests = true;
+	} elseif ( $envVar === 'false' || $envVar === '0' || $envVar === 'no' ) {
+		$hasIntegrationTests = false;
+	} else {
+		fwrite( STDERR,
+			"Unsupported value in MEDIAWIKI_HAS_INTEGRATION_TESTS environment variable,\n" .
+			"assuming there are integration tests (but you should fix the environment variable)\n"
+		);
+		$hasIntegrationTests = true;
+	}
+} elseif ( $GLOBALS['argc'] === 1 ) {
 	// PHPUnit has been invoked with no arguments. We're going to execute all and every test (from core, and potentially
 	// extension tests too), which includes integration tests.
 	$hasIntegrationTests = true;
@@ -101,7 +118,7 @@ if ( !$hasIntegrationTests ) {
 
 	// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.proc_open
 	$process = proc_open(
-		__DIR__ . '/getPHPUnitExtensionsAndSkins.php',
+		PHP_BINARY . ' ' . __DIR__ . '/getPHPUnitExtensionsAndSkins.php',
 		[
 			0 => [ 'pipe', 'r' ],
 			1 => [ 'pipe', 'w' ],

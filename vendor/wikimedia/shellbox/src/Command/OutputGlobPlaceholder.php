@@ -2,11 +2,11 @@
 
 namespace Shellbox\Command;
 
-use Shellbox\ShellboxError;
-
+/**
+ * @internal
+ */
 class OutputGlobPlaceholder extends OutputGlob {
-	public function getInstance( $boxedName ) {
-		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new ShellboxError( __METHOD__ . ': not implemented' );
+	public function getOutputFile( $boxedName ) {
+		return new OutputFilePlaceholder;
 	}
 }

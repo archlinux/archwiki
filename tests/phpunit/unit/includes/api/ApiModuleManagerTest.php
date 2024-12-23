@@ -2,20 +2,21 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiDisabled;
-use ApiFeedContributions;
-use ApiFeedRecentChanges;
-use ApiLogout;
-use ApiMain;
-use ApiModuleManager;
-use ApiRsd;
+use InvalidArgumentException;
+use MediaWiki\Api\ApiDisabled;
+use MediaWiki\Api\ApiFeedContributions;
+use MediaWiki\Api\ApiFeedRecentChanges;
+use MediaWiki\Api\ApiLogout;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiModuleManager;
+use MediaWiki\Api\ApiRsd;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\User\UserFactory;
 use MediaWikiUnitTestCase;
 
 /**
- * @covers \ApiModuleManager
+ * @covers \MediaWiki\Api\ApiModuleManager
  * @group API
  * @group medium
  */
@@ -206,7 +207,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \ApiModuleManager::getModule
+	 * @covers \MediaWiki\Api\ApiModuleManager::getModule
 	 * @dataProvider getModuleProvider
 	 */
 	public function testGetModule( $modules, $name, $expectedClass ) {
@@ -231,7 +232,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \ApiModuleManager::getModule
+	 * @covers \MediaWiki\Api\ApiModuleManager::getModule
 	 */
 	public function testGetModule_null() {
 		$modules = [
@@ -247,7 +248,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \ApiModuleManager::getNames
+	 * @covers \MediaWiki\Api\ApiModuleManager::getNames
 	 */
 	public function testGetNames() {
 		$fooModules = [
@@ -273,7 +274,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \ApiModuleManager::getNamesWithClasses
+	 * @covers \MediaWiki\Api\ApiModuleManager::getNamesWithClasses
 	 */
 	public function testGetNamesWithClasses() {
 		$fooModules = [
@@ -302,7 +303,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \ApiModuleManager::getModuleGroup
+	 * @covers \MediaWiki\Api\ApiModuleManager::getModuleGroup
 	 */
 	public function testGetModuleGroup() {
 		$fooModules = [
@@ -325,7 +326,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \ApiModuleManager::getGroups
+	 * @covers \MediaWiki\Api\ApiModuleManager::getGroups
 	 */
 	public function testGetGroups() {
 		$fooModules = [
@@ -347,7 +348,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \ApiModuleManager::getClassName
+	 * @covers \MediaWiki\Api\ApiModuleManager::getClassName
 	 */
 	public function testGetClassName() {
 		$fooModules = [
@@ -388,7 +389,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	public function testAddModuleWithIncompleteSpec() {
 		$moduleManager = $this->getModuleManager();
 
-		$this->expectException( \InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( '$spec must define a class name' );
 		$moduleManager->addModule(
 			'logout',

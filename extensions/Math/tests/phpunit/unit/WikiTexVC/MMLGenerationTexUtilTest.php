@@ -22,28 +22,39 @@ use MediaWikiUnitTestCase;
  * "php extensions/Math/maintenance/JsonToMathML.php
  * /var/www/html/extensions/Math/tests/phpunit/unit/WikiTexVC/ExportedTexUtilKeys.json
  * /var/www/html/extensions/Math/TexUtil-Ref.json -i 2"
- * 3. If generated correctly shift the TexUtil-Ref file in it's usual folder
+ * 3. If generated correctly shift the TexUtil-Ref file in its usual folder
  * WIP: This currently just generates MathML with WikiTexVC, but does not do
  * a comparison.
  *
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 class MMLGenerationTexUtilTest extends MediaWikiUnitTestCase {
+	/** @var float */
 	private static $SIMILARITYTRESH = 0.7;
+	/** @var bool */
 	private static $SKIPXMLVALIDATION = true;
+	/** @var bool */
 	private static $APPLYFILTER = false;
+	/** @var bool */
 	private static $APPLYCATEGORYFILTER = false;
+	/** @var string[] */
 	private static $SKIPPEDCATEGORIES = [ "mhchemtexified_required" ];
+	/** @var int */
 	private static $FILTERSTART = 38;
+	/** @var int */
 	private static $FILTERLENGTH = 1;
 
+	/** @var bool */
 	private static $GENERATEHTML = false;
+	/** @var string */
 	private static $GENERATEDHTMLFILE = __DIR__ . "/MMLGenerationTexUtilTest-Output.html";
+	/** @var string */
 	private static $MMLREFFILE = __DIR__ . "/TexUtil-Ref.json";
 
 	/** @var bool export the updated TexUtil-Tex to "./ExportedTexUtilKeys.json" */
 	private static $EXPORT_KEYS = false;
 
+	/** @var int[] */
 	private static $SKIPPEDINDICES = [ 434, 489 ];
 
 	/**
@@ -53,7 +64,7 @@ class MMLGenerationTexUtilTest extends MediaWikiUnitTestCase {
 		if ( in_array( $input->ctr, self::$SKIPPEDINDICES, true ) ) {
 			MMLTestUtilHTML::generateHTMLtableRow( self::$GENERATEDHTMLFILE, [ $title, $input->tex, $input->mmlLaTeXML,
 				$input->mmlMathoid, "skipped", "skipped" ], false, self::$GENERATEHTML );
-			$this->assertTrue( true );
+			$this->addToAssertionCount( 1 );
 			return;
 		}
 
@@ -86,12 +97,12 @@ class MMLGenerationTexUtilTest extends MediaWikiUnitTestCase {
 		// Comparing the result either to MathML result from Mathoid
 		if ( !self::$SKIPXMLVALIDATION ) {
 			if ( $compRes['similarityF'] >= self::$SIMILARITYTRESH ) {
-				$this->assertTrue( true );
+				$this->addToAssertionCount( 1 );
 			} else {
 				$this->assertXmlStringEqualsXmlString( $usedMMLRef, $mathMLtexVC );
 			}
 		} else {
-			$this->assertTrue( true );
+			$this->addToAssertionCount( 1 );
 		}
 	}
 

@@ -86,7 +86,7 @@
 	 *   - details Further error details
 	 */
 	MessagePosterFactory.prototype.create = function ( title, apiUrl ) {
-		var factory = this,
+		const factory = this,
 			api = apiUrl ? new mw.ForeignApi( apiUrl ) : new mw.Api();
 
 		return api.get( {
@@ -94,19 +94,17 @@
 			action: 'query',
 			prop: 'info',
 			titles: title.getPrefixedDb()
-		} ).then( function ( data ) {
-			var contentModel, page = data.query.pages[ 0 ];
+		} ).then( ( data ) => {
+			const page = data.query.pages[ 0 ];
 			if ( !page ) {
 				return $.Deferred().reject( 'unexpected-response', 'Unexpected API response' );
 			}
-			contentModel = page.contentmodel;
+			const contentModel = page.contentmodel;
 			if ( !factory.contentModelToClass[ contentModel ] ) {
 				return $.Deferred().reject( 'content-model-unknown', 'No handler for "' + contentModel + '"' );
 			}
 			return new factory.contentModelToClass[ contentModel ]( title, api );
-		}, function ( error, details ) {
-			return $.Deferred().reject( 'content-model-query-failed', error, details );
-		} );
+		}, ( error, details ) => $.Deferred().reject( 'content-model-query-failed', error, details ) );
 	};
 
 	/**

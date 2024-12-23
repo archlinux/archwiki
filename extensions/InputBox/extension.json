@@ -11,7 +11,7 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:InputBox",
 	"descriptionmsg": "inputbox-desc",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"license-name": "MIT",
 	"type": "parserhook",
@@ -25,6 +25,13 @@
 	},
 	"ResourceModules": {
 		"ext.inputBox.styles": {
+			"class": "MediaWiki\\ResourceLoader\\CodexModule",
+			"codexStyleOnly": true,
+			"codexComponents": [
+				"CdxButton",
+				"CdxCheckbox",
+				"CdxTextInput"
+			],
 			"styles": {
 				"ext.inputBox.styles.less": {
 					"media": "screen"

@@ -59,27 +59,31 @@
 	float: left;
 }
 
-@media only screen and ( min-width: @width-breakpoint-tablet ) {
+@media only screen and ( min-width: @min-width-breakpoint-tablet ) {
 	.mw-search-results-container,
 	.mw-search-results-info {
 		width: ~'calc( 100% / 12 * 7 )';
 	}
-
-	.mw-search-profile-tabs {
-		width: 50em;
-	}
 }
 
 .searchResultImage {
+	display: flex;
+
 	.searchResultImage-thumbnail {
+		flex-shrink: 0;
 		width: 90px;
 		height: 90px;
 		text-align: center;
 		vertical-align: top;
-		padding-right: 0.5em;
+		padding-right: 1em;
+
+		> div {
+			padding: 0.5em;
+		}
 
 		.searchResultImage-thumbnail-placeholder {
 			background-color: @background-color-neutral-subtle;
+			box-sizing: border-box;
 			width: inherit;
 			height: inherit;
 			border: @border-subtle;
@@ -94,7 +98,6 @@
 			/* Note: below !important required to override an unrelated !important in minerva skin */
 			/* stylelint-disable-next-line declaration-no-important */
 			height: 100% !important;
-			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 			object-fit: cover;
 			object-position: top;
 			border: @border-subtle;
@@ -125,6 +128,8 @@
 	margin-top: 1em;
 	border: @border-subtle;
 	border-radius: @border-radius-base;
+	// ooui's @max-width-base
+	max-width: 50em;
 }
 
 .search-types {
@@ -195,8 +200,7 @@
 
 	.divider {
 		clear: both;
-		// TODO: Should be `@border-subtle`.
-		border-bottom: @border-width-base @border-style-base #eaecf0;
+		border-bottom: @border-subtle;
 		padding-top: 0.5em;
 		margin-bottom: 0.5em;
 	}

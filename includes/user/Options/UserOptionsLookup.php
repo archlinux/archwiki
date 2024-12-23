@@ -20,8 +20,8 @@
 
 namespace MediaWiki\User\Options;
 
-use IDBAccessObject;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Provides access to user options
@@ -33,6 +33,13 @@ abstract class UserOptionsLookup {
 	 * Exclude user options that are set to their default value.
 	 */
 	public const EXCLUDE_DEFAULTS = 1;
+
+	/**
+	 * The suffix appended to preference names for the associated preference
+	 * that tracks whether they have a local override.
+	 * @since 1.43
+	 */
+	public const LOCAL_EXCEPTION_SUFFIX = '-local-exception';
 
 	/**
 	 * Combine the language default options with any site-specific and user-specific defaults
@@ -141,7 +148,19 @@ abstract class UserOptionsLookup {
 		}
 		return intval( $val );
 	}
-}
 
-/** @deprecated class alias since 1.41 */
+	/**
+	 * Determine if a user option came from a source other than the local store
+	 * or the defaults. If this is true, setting the option will be ignored
+	 * unless GLOBAL_OVERRIDE or GLOBAL_UPDATE is passed to setOption().
+	 *
+	 * @param UserIdentity $user
+	 * @param string $key
+	 * @return bool
+	 */
+	public function isOptionGlobal( UserIdentity $user, string $key ) {
+		return false;
+	}
+}
+/** @deprecated class alias since 1.42 */
 class_alias( UserOptionsLookup::class, 'MediaWiki\\User\\UserOptionsLookup' );

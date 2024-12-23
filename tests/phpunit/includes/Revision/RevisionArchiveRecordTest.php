@@ -4,6 +4,7 @@ namespace MediaWiki\Tests\Revision;
 
 use InvalidArgumentException;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\RevisionArchiveRecord;
@@ -16,7 +17,6 @@ use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use stdClass;
-use TextContent;
 use Wikimedia\Assert\PreconditionException;
 
 /**
@@ -140,7 +140,7 @@ class RevisionArchiveRecordTest extends MediaWikiIntegrationTestCase {
 		$row,
 		RevisionSlots $slots,
 		$wikiId = RevisionRecord::LOCAL,
-		string $expectedException = null
+		?string $expectedException = null
 	) {
 		$rec = new RevisionArchiveRecord( $page, $user, $comment, $row, $slots, $wikiId );
 

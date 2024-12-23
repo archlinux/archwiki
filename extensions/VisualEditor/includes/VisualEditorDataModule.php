@@ -117,7 +117,7 @@ class VisualEditorDataModule extends ResourceLoaderModule {
 	/**
 	 * @inheritDoc
 	 */
-	public function getDependencies( ResourceLoaderContext $context = null ) {
+	public function getDependencies( ?ResourceLoaderContext $context = null ) {
 		return [
 			'ext.visualEditor.base',
 			'ext.visualEditor.mediawiki',

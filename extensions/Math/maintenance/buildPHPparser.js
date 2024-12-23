@@ -50,6 +50,7 @@ console.log( 'Running buildPHPparser.js with this configuration: \n' +
 	'input path:\t' + options.input + '\n' +
 	'output path:\t' + options.output );
 
+// eslint-disable-next-line security/detect-non-literal-fs-filename
 const parserPeg = fs.readFileSync( options.input, 'utf-8' );
 let parser = peggy.generate( parserPeg, {
 	plugins: [ phpeggy ],
@@ -65,7 +66,6 @@ const useStatements =
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Big;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\ChemFun2u;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\ChemWord;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Curly;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Declh;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Dollar;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\DQ;\n' +
@@ -79,6 +79,7 @@ const useStatements =
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Infix;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Literal;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Lr;\n' +
+	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\LengthSpec;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Matrix;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Mhchem;\n' +
 	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\UQ;\n' +
@@ -115,5 +116,6 @@ parser = parser
 	// declare properties for the parser that were created dynamically before PHP 8.2
 	.replace( /class Parser \{/, 'class Parser {\n    private $tu;\n    private $options;' );
 
+// eslint-disable-next-line security/detect-non-literal-fs-filename
 fs.writeFileSync( options.output, parser );
 console.log( 'Generated output file at: ' + options.output );

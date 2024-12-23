@@ -1,6 +1,10 @@
 <?php
 
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\StaticHookRegistry;
+use MediaWiki\Message\Message;
+use MediaWiki\Tests\Unit\FakeQqxMessageLocalizer;
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -58,7 +62,7 @@ trait MediaWikiTestCaseTrait {
 	 */
 	protected function createNoOpMock( $type, $allow = [] ) {
 		$mock = $this->createMock( $type );
-		$mock->expects( $this->never() )->method( $this->anythingBut( '__destruct', ...$allow ) );
+		$mock->expects( $this->never() )->method( $this->anythingBut( '__debugInfo', '__destruct', ...$allow ) );
 		return $mock;
 	}
 
@@ -111,7 +115,7 @@ trait MediaWikiTestCaseTrait {
 	 */
 	protected function createHookContainer( $hooks = [] ) {
 		$hookContainer = new HookContainer(
-			new \MediaWiki\HookContainer\StaticHookRegistry(),
+			new StaticHookRegistry(),
 			$this->createSimpleObjectFactory()
 		);
 		foreach ( $hooks as $name => $callback ) {
@@ -344,31 +348,39 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
+	 * Check that no fake timestamp is set before the tests (e.g. in a test provider).
+	 * They should be only set in the tests and cleared by fakeTimestampTearDown().
+	 *
+	 * @since 1.43
+	 * @before
+	 */
+	protected function fakeTimestampSetUp() {
+		$realTime = time();
+		$maybeFakeTime = ConvertibleTimestamp::time();
+		if ( abs( $maybeFakeTime - $realTime ) > 1 ) {
+			$this->assertTrue( false, "Someone set a fake timestamp ($maybeFakeTime) " .
+				"and did not clean it up. This will cause confusing test failures." );
+		}
+	}
+
+	/**
 	 * @param string $text
 	 * @param array $params
 	 * @return Message|MockObject
 	 * @since 1.35
 	 */
-	protected function getMockMessage( $text = '', $params = [] ) {
-		/** @var MockObject $msg */
+	protected function getMockMessage( string $text = '', array $params = [] ) {
+		// Warning, don't use PHPUnit's logicalOr with strings as that's extremely slow!
+		$oneOf = fn ( string ...$methods ) => $this->logicalOr(
+			...array_map( [ $this, 'identicalTo' ], $methods )
+		);
+
 		$msg = $this->createMock( Message::class );
-		$msg->method( 'toString' )->willReturn( $text );
-		$msg->method( '__toString' )->willReturn( $text );
-		$msg->method( 'text' )->willReturn( $text );
-		$msg->method( 'parse' )->willReturn( $text );
-		$msg->method( 'plain' )->willReturn( $text );
-		$msg->method( 'parseAsBlock' )->willReturn( $text );
-		$msg->method( 'escaped' )->willReturn( $text );
-		$msg->method( 'title' )->willReturn( $msg );
-		$msg->method( 'getKey' )->willReturn( $text );
-		$msg->method( 'params' )->willReturn( $msg );
+		$msg->method( $oneOf( '__toString', 'escaped', 'getKey', 'parse', 'parseAsBlock',
+			'plain', 'text', 'toString' ) )->willReturn( $text );
 		$msg->method( 'getParams' )->willReturn( $params );
-		$msg->method( 'rawParams' )->willReturn( $msg );
-		$msg->method( 'numParams' )->willReturn( $msg );
-		$msg->method( 'inLanguage' )->willReturn( $msg );
-		$msg->method( 'inContentLanguage' )->willReturn( $msg );
-		$msg->method( 'useDatabase' )->willReturn( $msg );
-		$msg->method( 'setContext' )->willReturn( $msg );
+		$msg->method( $oneOf( 'inContentLanguage', 'inLanguage', 'numParams', 'params',
+			'rawParams', 'setContext', 'title', 'useDatabase' ) )->willReturnSelf();
 		$msg->method( 'exists' )->willReturn( true );
 		return $msg;
 	}
@@ -411,7 +423,7 @@ trait MediaWikiTestCaseTrait {
 		}
 	}
 
-	protected function assertStatusMessage( $messageKey, StatusValue $status, $message = '' ) {
+	protected function assertStatusMessage( string $messageKey, StatusValue $status, $message = '' ) {
 		if ( !$status->hasMessage( $messageKey ) ) {
 			$this->failStatus( $status, "Status should have message $messageKey", $message );
 		} else {
@@ -419,16 +431,52 @@ trait MediaWikiTestCaseTrait {
 		}
 	}
 
+	/**
+	 * Check if the status contains exactly the same messages as the expected status.
+	 *
+	 * Prefer using assertStatusError / assertStatusWarning unless you really need to check the
+	 * parameters, count and order of the messages too.
+	 *
+	 * This method does not compare isGood() vs isOK() or the values of the statuses, use dedicated
+	 * assertion methods for that.
+	 *
+	 * Note that some differences between the internals of the objects are allowed (such as their own
+	 * class, use of MessageSpecifier vs string keys, use of strings vs other scalars for parameters).
+	 *
+	 * @param StatusValue $expected
+	 * @param StatusValue $actual
+	 * @param string $message
+	 */
+	protected function assertStatusMessagesExactly( StatusValue $expected, StatusValue $actual, $message = '' ) {
+		$localizer = new FakeQqxMessageLocalizer();
+
+		foreach ( [ 'error', 'warning' ] as $type ) {
+			foreach (
+				array_map( null, $expected->getMessages( $type ), $actual->getMessages( $type ) )
+					as [ $expectedMsg, $actualMsg ]
+			) {
+				if (
+					$expectedMsg === null || $actualMsg === null ||
+					$localizer->msg( $expectedMsg )->text() !== $localizer->msg( $actualMsg )->text()
+				) {
+					$this->failStatus( $actual, "Status messages should be exactly like: $expected\nActual:", $message );
+				}
+			}
+		}
+
+		$this->addToAssertionCount( 1 );
+	}
+
 	protected function assertStatusValue( $expected, StatusValue $status, $message = 'Status value' ) {
 		$this->assertEquals( $expected, $status->getValue(), $message );
 	}
 
-	protected function assertStatusError( $messageKey, StatusValue $status, $message = '' ) {
+	protected function assertStatusError( string $messageKey, StatusValue $status, $message = '' ) {
 		$this->assertStatusNotOK( $status, $message );
 		$this->assertStatusMessage( $messageKey, $status, $message );
 	}
 
-	protected function assertStatusWarning( $messageKey, StatusValue $status, $message = '' ) {
+	protected function assertStatusWarning( string $messageKey, StatusValue $status, $message = '' ) {
 		$this->assertStatusNotGood( $status, $message );
 		$this->assertStatusOK( $status, $message );
 		$this->assertStatusMessage( $messageKey, $status, $message );
@@ -466,7 +514,7 @@ trait MediaWikiTestCaseTrait {
 	protected function expectPHPError(
 		int $errorLevel,
 		callable $callback,
-		string $msg = null
+		?string $msg = null
 	): void {
 		try {
 			$errorEmitted = false;

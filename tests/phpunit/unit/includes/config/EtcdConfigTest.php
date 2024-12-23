@@ -2,6 +2,8 @@
 
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Config\EtcdConfig;
+use Wikimedia\Http\MultiHttpClient;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -162,10 +164,16 @@ class EtcdConfigTest extends MediaWikiUnitTestCase {
 			'backend' => 'success',
 		] ];
 
-		yield 'Cache expired with backend failure' => [ 'from-cache-expired', [
+		yield 'Cache expired with retry after backend failure' => [ 'from-cache-expired', [
 			'cache' => $stale,
 			'lock' => 'acquired',
 			'backend' => 'error-may-retry',
+		] ];
+
+		yield 'Cache expired without retry after backend failure' => [ 'from-cache-expired', [
+			'cache' => $stale,
+			'lock' => 'acquired',
+			'backend' => 'error',
 		] ];
 
 		yield 'Cache expired with lock failure' => [ 'from-cache-expired', [

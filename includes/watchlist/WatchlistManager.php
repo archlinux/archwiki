@@ -38,7 +38,6 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use StatusValue;
-use WatchedItemStoreInterface;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
@@ -192,7 +191,7 @@ class WatchlistManager {
 		$performer,
 		$title,
 		int $oldid = 0,
-		RevisionRecord $oldRev = null
+		?RevisionRecord $oldRev = null
 	) {
 		if ( $this->readOnlyMode->isReadOnly() ) {
 			// Cannot change anything in read only
@@ -488,12 +487,14 @@ class WatchlistManager {
 		bool $watch,
 		Authority $performer,
 		PageIdentity $target,
-		string $expiry = null
+		?string $expiry = null
 	): StatusValue {
-		// User must be registered, and either changing the watch state or at least the expiry.
-		if ( !$performer->getUser()->isRegistered() ) {
+		// User must be registered, and (T371091) not a temp user
+		if ( !$performer->getUser()->isRegistered() || $performer->isTemp() ) {
 			return StatusValue::newGood();
 		}
+
+		// User must be either changing the watch state or at least the expiry.
 
 		// Only call addWatchIgnoringRights() or removeWatch() if there's been a change in the watched status.
 		$oldWatchedItem = $this->watchedItemStore->getWatchedItem( $performer->getUser(), $target );

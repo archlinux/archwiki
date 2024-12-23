@@ -35,20 +35,11 @@ use StatusValue;
  */
 class EditRightConstraint implements IEditConstraint {
 
-	/** @var User */
-	private $performer;
-
-	/** @var PermissionManager */
-	private $permManager;
-
-	/** @var Title */
-	private $title;
-
-	/** @var string|null */
-	private $result;
-
-	/** @var bool */
-	private $new;
+	private User $performer;
+	private PermissionManager $permManager;
+	private Title $title;
+	private string $result;
+	private bool $new;
 
 	/**
 	 * @param User $performer
@@ -80,7 +71,7 @@ class EditRightConstraint implements IEditConstraint {
 		// Check isn't simple enough to just repeat when getting the status
 		// Prior to 1.41 this checked if the user had edit rights in general
 		// instead of for the specific page in question.
-		if ( $this->permManager->getPermissionErrors(
+		if ( !$this->permManager->userCan(
 			'edit',
 			$this->performer,
 			$this->title

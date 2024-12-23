@@ -55,12 +55,12 @@ class UQ extends TexNode {
 
 		// If the superscript has empty elements, render them with empty mi elements to prevent browser issues
 		$mi = new MMLmi();
-		if ( $base instanceof TexArray && count( $base->getArgs() ) == 0 ) {
+		if ( $base instanceof TexArray && $base->getLength() == 0 ) {
 			$baseRendered = $mi->getEmpty();
 		} else {
 			$baseRendered = $base->renderMML( $arguments, $state );
 		}
-		if ( $up instanceof TexArray && count( $up->getArgs() ) == 0 ) {
+		if ( $up instanceof TexArray && $up->getLength() == 0 ) {
 			$upRendered = $mi->getEmpty();
 		} else {
 			// up is inferring a new mrow if it has some content

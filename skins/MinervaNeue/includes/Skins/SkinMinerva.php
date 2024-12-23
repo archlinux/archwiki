@@ -20,26 +20,25 @@
 
 namespace MediaWiki\Minerva\Skins;
 
-use ExtensionRegistry;
-use Language;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Minerva\LanguagesHelper;
 use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Main\AdvancedMainMenuBuilder;
 use MediaWiki\Minerva\Menu\Main\DefaultMainMenuBuilder;
 use MediaWiki\Minerva\Menu\Main\MainMenuDirector;
-use MediaWiki\Minerva\Menu\PageActions\PageActionsDirector;
+use MediaWiki\Minerva\Menu\PageActions\PageActions;
 use MediaWiki\Minerva\Menu\User\AdvancedUserMenuBuilder;
 use MediaWiki\Minerva\Menu\User\DefaultUserMenuBuilder;
 use MediaWiki\Minerva\Menu\User\UserMenuDirector;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
 use MediaWiki\Minerva\Permissions\MinervaPagePermissions;
 use MediaWiki\Minerva\SkinOptions;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\NamespaceInfo;
@@ -69,28 +68,19 @@ class SkinMinerva extends SkinMustache {
 	public $template = 'MinervaTemplate';
 
 	/** @var array|null */
-	private $contentNavigationUrls;
+	private ?array $contentNavigationUrls;
 
 	private GenderCache $genderCache;
-
 	private LinkRenderer $linkRenderer;
-
 	private LanguagesHelper $languagesHelper;
-
 	private Definitions $definitions;
-
+	private PageActions $pageActions;
 	private IMinervaPagePermissions $permissions;
-
 	private SkinOptions $skinOptions;
-
 	private SkinUserPageHelper $skinUserPageHelper;
-
 	private NamespaceInfo $namespaceInfo;
-
 	private RevisionLookup $revisionLookup;
-
 	private UserIdentityUtils $userIdentityUtils;
-
 	private UserOptionsManager $userOptionsManager;
 
 	/**
@@ -98,6 +88,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param LinkRenderer $linkRenderer
 	 * @param LanguagesHelper $languagesHelper
 	 * @param Definitions $definitions
+	 * @param PageActions $pageActions
 	 * @param MinervaPagePermissions $permissions
 	 * @param SkinOptions $skinOptions
 	 * @param SkinUserPageHelper $skinUserPageHelper
@@ -112,6 +103,7 @@ class SkinMinerva extends SkinMustache {
 		LinkRenderer $linkRenderer,
 		LanguagesHelper $languagesHelper,
 		Definitions $definitions,
+		PageActions $pageActions,
 		MinervaPagePermissions $permissions,
 		SkinOptions $skinOptions,
 		SkinUserPageHelper $skinUserPageHelper,
@@ -127,6 +119,7 @@ class SkinMinerva extends SkinMustache {
 		$this->languagesHelper = $languagesHelper;
 		$this->definitions = $definitions
 			->setContext( $this->getContext() );
+		$this->pageActions = $pageActions;
 		$this->permissions = $permissions
 			->setContext( $this->getContext() );
 		$this->skinOptions = $skinOptions;
@@ -142,25 +135,24 @@ class SkinMinerva extends SkinMustache {
 	/**
 	 * @return bool
 	 */
-	private function hasPageActions() {
+	private function hasPageActions(): bool {
 		$title = $this->getTitle();
 		return !$title->isSpecialPage() && !$title->isMainPage() &&
-			$this->getContext()->getActionName() === 'view';
+			$this->getActionName() === 'view';
 	}
 
 	/**
 	 * @return bool
 	 */
-	private function hasSecondaryActions() {
+	private function hasSecondaryActions(): bool {
 		return !$this->skinUserPageHelper->isUserPage();
 	}
 
 	/**
 	 * @return bool
 	 */
-	private function isFallbackEditor() {
-		$action = $this->getContext()->getActionName();
-		return $action === 'edit';
+	private function isFallbackEditor(): bool {
+		return $this->getActionName() === 'edit';
 	}
 
 	/**
@@ -169,13 +161,12 @@ class SkinMinerva extends SkinMustache {
 	 * @param array $nav result of SkinTemplate::buildContentNavigationUrls
 	 * @return array|null
 	 */
-	private function getPageActions( array $nav ) {
+	private function getPageActions( array $nav ): ?array {
 		if ( $this->isFallbackEditor() || !$this->hasPageActions() ) {
 			return null;
 		}
-		$services = MediaWikiServices::getInstance();
-		/** @var PageActionsDirector $pageActionsDirector */
-		$pageActionsDirector = $services->getService( 'Minerva.Menu.PageActionsDirector' );
+
+		$pageActionsDirector = $this->pageActions->getPageActionsDirector( $this->getContext() );
 		$sidebar = $this->buildSidebar();
 		$actions = $nav['actions'] ?? [];
 		$views = $nav['views'] ?? [];
@@ -188,9 +179,9 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * @return array
 	 */
-	private function getNotificationFallbackButton() {
+	private function getNotificationFallbackButton(): array {
 		return [
-			'icon' => 'bellOutline-base20',
+			'icon' => 'bellOutline',
 			'href' => SpecialPage::getTitleFor( 'Mytalk' )->getLocalURL(
 				[ 'returnto' => $this->getTitle()->getPrefixedText() ]
 			),
@@ -202,7 +193,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param array $notice
 	 * @return array
 	 */
-	private function getCombinedNotificationButton( array $alert, array $notice ) {
+	private function getCombinedNotificationButton( array $alert, array $notice ): array {
 		// Sum the notifications from the two original buttons
 		$notifCount = ( $alert['data']['counter-num'] ?? 0 ) + ( $notice['data']['counter-num'] ?? 0 );
 		$alert['data']['counter-num'] = $notifCount;
@@ -242,7 +233,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param bool $hasUnseenNotices does the user have unseen notices?
 	 * @return array
 	 */
-	private function getNotificationCircleButton( array $alert, bool $hasUnseenNotices ) {
+	private function getNotificationCircleButton( array $alert, bool $hasUnseenNotices ): array {
 		$alertCount = $alert['data']['counter-num'] ?? 0;
 		$linkClass = $alert['link-class'] ?? [];
 		$hasSeenAlerts = is_array( $linkClass ) && in_array( 'mw-echo-unseen-notifications', $linkClass );
@@ -261,7 +252,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param array $alert
 	 * @return array
 	 */
-	private function getNotificationButton( array $alert ) {
+	private function getNotificationButton( array $alert ): array {
 		$linkClass = $alert['link-class'];
 		$alert['link-class'] = array_filter(
 			$linkClass,
@@ -269,7 +260,7 @@ class SkinMinerva extends SkinMustache {
 				return $class !== 'oo-ui-icon-bellOutline';
 			}
 		);
-		$alert['icon'] = 'bellOutline-base20';
+		$alert['icon'] = 'bellOutline';
 		return $alert;
 	}
 
@@ -366,7 +357,7 @@ class SkinMinerva extends SkinMustache {
 			'data-minerva-search-box' => $data['data-search-box'] + [
 				'data-btn' => [
 					'data-icon' => [
-						'icon' => 'search-base20',
+						'icon' => 'search',
 					],
 					'label' => $this->msg( 'searchbutton' )->escaped(),
 					'classes' => 'skin-minerva-search-trigger',
@@ -380,7 +371,7 @@ class SkinMinerva extends SkinMustache {
 			],
 			'data-minerva-main-menu-btn' => [
 				'data-icon' => [
-					'icon' => 'menu-base20',
+					'icon' => 'menu',
 				],
 				'tag-name' => 'label',
 				'classes' => 'toggle-list__toggle',
@@ -429,7 +420,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param array $notifications
 	 * @return array
 	 */
-	public static function getNotificationButtons( array $notifications ) {
+	public static function getNotificationButtons( array $notifications ): array {
 		$btns = [];
 
 		foreach ( $notifications as $notification ) {
@@ -478,8 +469,8 @@ class SkinMinerva extends SkinMustache {
 	/**
 	 * @return bool
 	 */
-	private function isHistoryPage() {
-		return $this->getRequest()->getText( 'action' ) === 'history';
+	private function isHistoryPage(): bool {
+		return $this->getRequest()->getRawVal( 'action' ) === 'history';
 	}
 
 	/**
@@ -491,7 +482,7 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * @return bool
 	 */
-	private function hasPageTabs() {
+	private function hasPageTabs(): bool {
 		$title = $this->getTitle();
 		$isSpecialPageOrHistory = $title->isSpecialPage() ||
 			$this->isHistoryPage();
@@ -511,7 +502,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param array $associatedPages - data-associated-pages from template data, currently only used for ID
 	 * @return array
 	 */
-	private function getTabsData( array $contentNavigationUrls, array $associatedPages ) {
+	private function getTabsData( array $contentNavigationUrls, array $associatedPages ): array {
 		$hasPageTabs = $this->hasPageTabs();
 		if ( !$hasPageTabs ) {
 			return [];
@@ -553,7 +544,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param array $personalUrls result of SkinTemplate::buildPersonalUrls
 	 * @return string|null
 	 */
-	private function getPersonalToolsMenu( array $personalUrls ) {
+	private function getPersonalToolsMenu( array $personalUrls ): ?string {
 		$builder = $this->skinOptions->get( SkinOptions::PERSONAL_MENU ) ?
 			new AdvancedUserMenuBuilder(
 				$this->getContext(),
@@ -564,7 +555,7 @@ class SkinMinerva extends SkinMustache {
 
 		$userMenuDirector = new UserMenuDirector(
 			$builder,
-			$this->getContext()->getSkin()
+			$this->getSkin()
 		);
 		return $userMenuDirector->renderMenuData( $personalUrls );
 	}
@@ -572,7 +563,7 @@ class SkinMinerva extends SkinMustache {
 	/**
 	 * @return string
 	 */
-	protected function getSubjectPage() {
+	protected function getSubjectPage(): string {
 		$title = $this->getTitle();
 
 		// If it's a talk page, add a link to the main namespace page
@@ -614,7 +605,7 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * @inheritDoc
 	 */
-	final protected function doEditSectionLinksHTML( array $links, Language $lang ) {
+	final protected function doEditSectionLinksHTML( array $links, Language $lang ): string {
 		$transformedLinks = [];
 		foreach ( $links as $key => $link ) {
 			$transformedLinks[] = $link + [
@@ -631,14 +622,10 @@ class SkinMinerva extends SkinMustache {
 	 * @param Title $title
 	 * @return string
 	 */
-	public function getPageClasses( $title ) {
+	public function getPageClasses( $title ): string {
 		$className = parent::getPageClasses( $title );
 		$className .= ' ' . ( $this->skinOptions->get( SkinOptions::BETA_MODE )
 				? 'beta' : 'stable' );
-
-		if ( $title->isMainPage() ) {
-			$className .= ' page-Main_Page ';
-		}
 
 		if ( $this->getUser()->isRegistered() ) {
 			$className .= ' is-authenticated';
@@ -660,7 +647,7 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * @return string
 	 */
-	private static function resolveNightModeQueryValue( string $value ) {
+	private static function resolveNightModeQueryValue( string $value ): string {
 		switch ( $value ) {
 			case 'day':
 			case 'night':
@@ -682,23 +669,23 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * @return array
 	 */
-	public function getHtmlElementAttributes() {
+	public function getHtmlElementAttributes(): array {
 		$attributes = parent::getHtmlElementAttributes();
 
 		// check to see if night mode is enabled via query params or by config
-		$webRequest = $this->getContext()->getRequest();
-		$forceNightMode = $webRequest->getText( 'minervanightmode' );
+		$webRequest = $this->getRequest();
+		$forceNightMode = $webRequest->getRawVal( 'minervanightmode' );
 
 		// get skin config of night mode to check what is execluded
 		$nightModeConfig = $this->getConfig()->get( 'MinervaNightModeOptions' );
 		$featuresHelper = new FeaturesHelper();
 		$shouldDisableNightMode = $featuresHelper->shouldDisableNightMode( $nightModeConfig,
 			$webRequest,
-			$this->getContext()->getTitle()
+			$this->getTitle()
 		);
 
 		if (
-			$this->skinOptions->get( SkinOptions::NIGHT_MODE ) || $forceNightMode !== ''
+			$this->skinOptions->get( SkinOptions::NIGHT_MODE ) || $forceNightMode !== null
 		) {
 			$user = $this->getUser();
 			$value = $this->userOptionsManager->getOption( $user, 'minerva-theme' );
@@ -725,7 +712,7 @@ class SkinMinerva extends SkinMustache {
 	 * Whether the output page contains category links and the category feature is enabled.
 	 * @return bool
 	 */
-	private function hasCategoryLinks() {
+	private function hasCategoryLinks(): bool {
 		if ( !$this->skinOptions->get( SkinOptions::CATEGORIES ) ) {
 			return false;
 		}
@@ -743,7 +730,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param string $timestamp
 	 * @return array
 	 */
-	protected function getRelativeHistoryLink( Title $title, $timestamp ) {
+	protected function getRelativeHistoryLink( Title $title, string $timestamp ): array {
 		$user = $this->getUser();
 		$userDate = $this->getLanguage()->userDate( $timestamp, $user );
 		$text = $this->msg(
@@ -763,7 +750,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param Title $title The Title object of the page being viewed
 	 * @return array
 	 */
-	protected function getGenericHistoryLink( Title $title ) {
+	protected function getGenericHistoryLink( Title $title ): array {
 		$text = $this->msg( 'mobile-frontend-history' )->plain();
 		return [
 			'href' => $this->getHistoryUrl( $title ),
@@ -776,7 +763,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param Title $title The Title object of the page being viewed
 	 * @return bool
 	 */
-	private function shouldUseSpecialHistory( Title $title ) {
+	private function shouldUseSpecialHistory( Title $title ): bool {
 		return ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
 			SpecialMobileHistory::shouldUseSpecialHistory( $title, $this->getUser() );
 	}
@@ -787,7 +774,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param Title $title The Title object of the page being viewed
 	 * @return string
 	 */
-	protected function getHistoryUrl( Title $title ) {
+	protected function getHistoryUrl( Title $title ): string {
 		return $this->shouldUseSpecialHistory( $title ) ?
 			SpecialPage::getTitleFor( 'History', $title )->getLocalURL() :
 			$title->getLocalURL( [ 'action' => 'history' ] );
@@ -804,15 +791,15 @@ class SkinMinerva extends SkinMustache {
 	 * @param Title $title The Title object of the page being viewed
 	 * @return array|null
 	 */
-	protected function getHistoryLink( Title $title ) {
+	protected function getHistoryLink( Title $title ): ?array {
 		if ( !$title->exists() ||
-			$this->getContext()->getActionName() !== 'view'
+			$this->getActionName() !== 'view'
 		) {
 			return null;
 		}
 		// Do not show the last modified bar on diff pages [T350515]
 		$request = $this->getRequest();
-		if ( $request->getText( 'diff' ) ) {
+		if ( $request->getCheck( 'diff' ) ) {
 			return null;
 		}
 
@@ -848,7 +835,7 @@ class SkinMinerva extends SkinMustache {
 	 * @return array representing user with name and gender fields. Empty if the editor no longer
 	 *   exists in the database or is hidden from public view.
 	 */
-	private function getRevisionEditorData( LinkTarget $title ) {
+	private function getRevisionEditorData( LinkTarget $title ): array {
 		$rev = $this->revisionLookup->getRevisionByTitle( $title );
 		$result = [];
 		if ( $rev ) {
@@ -870,11 +857,11 @@ class SkinMinerva extends SkinMustache {
 	 * Returns the HTML representing the tagline
 	 * @return string HTML for tagline
 	 */
-	protected function getTaglineHtml() {
+	protected function getTaglineHtml(): string {
 		$tagline = '';
 
-		if ( $this->skinUserPageHelper->isUserPage() ) {
-			$pageUser = $this->skinUserPageHelper->getPageUser();
+		$pageUser = $this->skinUserPageHelper->getPageUser();
+		if ( $pageUser ) {
 			$fromDate = $pageUser->getRegistration();
 
 			if ( $this->skinUserPageHelper->isUserPageAccessibleToCurrentUser() && is_string( $fromDate ) ) {
@@ -907,7 +894,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param string $heading The heading suggested by core.
 	 * @return string HTML for header
 	 */
-	private function getUserPageHeadingHtml( $heading ) {
+	private function getUserPageHeadingHtml( string $heading ): string {
 		// The heading is just the username without namespace
 		return Html::element( 'h1',
 			// These IDs and classes should match Skin::getTemplateData
@@ -926,10 +913,10 @@ class SkinMinerva extends SkinMustache {
 	 * @param string $siteNotice HTML fragment
 	 * @return array
 	 */
-	protected function prepareBanners( $siteNotice ) {
+	protected function prepareBanners( string $siteNotice ): array {
 		$banners = [];
 		if ( $siteNotice && $this->getConfig()->get( 'MinervaEnableSiteNotice' ) ) {
-			$banners[] = '<div id="siteNotice">' . $siteNotice . '</div>';
+			$banners[] = $siteNotice;
 		} else {
 			$banners[] = '<div id="siteNotice"></div>';
 		}
@@ -940,7 +927,7 @@ class SkinMinerva extends SkinMustache {
 	 * Returns an array with details for a language button.
 	 * @return array
 	 */
-	protected function getLanguageButton() {
+	protected function getLanguageButton(): array {
 		return [
 			'array-attributes' => [
 				[
@@ -960,7 +947,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param string $label Button label
 	 * @return array
 	 */
-	protected function getTalkButton( $talkTitle, $label ) {
+	protected function getTalkButton( Title $talkTitle, string $label ): array {
 		return [
 			'array-attributes' => [
 				[
@@ -983,7 +970,7 @@ class SkinMinerva extends SkinMustache {
 	 * @param array $contentNavigationUrls
 	 * @return array|null
 	 */
-	protected function getSecondaryActions( array $contentNavigationUrls ) {
+	protected function getSecondaryActions( array $contentNavigationUrls ): ?array {
 		if ( $this->isFallbackEditor() || !$this->hasSecondaryActions() ) {
 			return null;
 		}
@@ -1045,7 +1032,7 @@ class SkinMinerva extends SkinMustache {
 	 * be overriden or added conditionally should be placed here.
 	 * @return array
 	 */
-	public function getDefaultModules() {
+	public function getDefaultModules(): array {
 		$modules = parent::getDefaultModules();
 
 		// FIXME: T223204: Dequeue default content modules except for the history
@@ -1053,7 +1040,7 @@ class SkinMinerva extends SkinMustache {
 		// enable toggling of the filters.
 		// Long term this won't be necessary when T111565 is resolved and a
 		// more general solution can be used.
-		if ( $this->getContext()->getActionName() !== 'history' ) {
+		if ( $this->getActionName() !== 'history' ) {
 			// dequeue default content modules (toc, collapsible, etc.)
 			$modules['content'] = array_diff( $modules['content'], [
 				// T111565
@@ -1083,18 +1070,18 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * @return array
 	 */
-	protected function getPageSpecificStyles() {
+	protected function getPageSpecificStyles(): array {
 		$styles = [];
 		$title = $this->getTitle();
 		$request = $this->getRequest();
-		$requestAction = $this->getContext()->getActionName();
+		$requestAction = $this->getActionName();
 		$viewAction = $requestAction === 'view';
 
 		// Warning box styles are needed when reviewing old revisions
 		// and inside the fallback editor styles to action=edit page.
 		if (
 			$title->getNamespace() !== NS_MAIN ||
-			$request->getText( 'oldid' ) ||
+			$request->getCheck( 'oldid' ) ||
 			!$viewAction
 		) {
 			$styles[] = 'skins.minerva.messageBox.styles';
@@ -1141,7 +1128,7 @@ class SkinMinerva extends SkinMustache {
 	 *
 	 * @return array
 	 */
-	protected function getFeatureSpecificStyles() {
+	protected function getFeatureSpecificStyles(): array {
 		$styles = [];
 
 		if ( $this->hasCategoryLinks() ) {

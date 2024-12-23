@@ -31,6 +31,14 @@
 		line-height: @line-height-footer-buttons;
 		text-align: right;
 	}
+
+	// Design spec for footer buttons: T256190#9770626
+	a {
+		padding-left: @spacing-50;
+		padding-right: @spacing-50;
+		// Don't use variable for background color, it will get reverted in dark mode.
+		background-color: #f8f9fa;
+	}
 }
 
 #footer-info {

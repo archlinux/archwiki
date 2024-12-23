@@ -11,6 +11,7 @@ use Wikimedia\Parsoid\Ext\ExtensionError;
 use Wikimedia\Parsoid\Ext\ExtensionTag;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\NodeData\DataMw;
+use Wikimedia\Parsoid\NodeData\DataMwError;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -72,6 +73,11 @@ class ExtensionHandler extends TokenHandler {
 				$nsName = "ns-$ns";
 			}
 			$metrics->increment( "extension.{$wiki}.{$nsName}.{$extensionName}" );
+			$siteConfig->incrementCounter( "extension_total", [
+				"wiki" => $wiki,
+				"namespace" => $nsName,
+				"name" => $extensionName,
+			] );
 		}
 
 		$nativeExt = $siteConfig->getExtTagImpl( $extensionName );
@@ -108,7 +114,7 @@ class ExtensionHandler extends TokenHandler {
 				}
 			} catch ( ExtensionError $e ) {
 				$domFragment = WTUtils::createInterfaceI18nFragment(
-					$env->topLevelDoc, $e->err['key'], $e->err['params'] ?? null
+					$env->topLevelDoc, $e->err->key, $e->err->params ?: null
 				);
 				$errors = [ $e->err ];
 				// FIXME: Should we include any errors collected
@@ -167,7 +173,7 @@ class ExtensionHandler extends TokenHandler {
 	 * @param Token $extToken
 	 * @param DocumentFragment $domFragment
 	 * @param DataMw $dataMw
-	 * @param array $errors
+	 * @param list<DataMwError> $errors
 	 * @return array
 	 */
 	private function onDocumentFragment(

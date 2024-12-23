@@ -88,17 +88,6 @@ class OATHUser {
 	}
 
 	/**
-	 * Useful for modules that operate on single-key premise,
-	 * as well as testing the key type, since the first key is(?)
-	 * necessarily the same type as others
-	 *
-	 * @return IAuthKey|null
-	 */
-	public function getFirstKey() {
-		return $this->keys[0] ?? null;
-	}
-
-	/**
 	 * Set the key associated with this user.
 	 *
 	 * @param IAuthKey[] $keys
@@ -108,15 +97,6 @@ class OATHUser {
 		foreach ( $keys as $key ) {
 			$this->addKey( $key );
 		}
-	}
-
-	/**
-	 * Removes all keys associated with the user
-	 * Warning: This only removes the keys in memory,
-	 * changes need to be persisted
-	 */
-	public function clearAllKeys() {
-		$this->keys = [];
 	}
 
 	/**
@@ -143,7 +123,7 @@ class OATHUser {
 	 *
 	 * @param IModule|null $module
 	 */
-	public function setModule( IModule $module = null ) {
+	public function setModule( ?IModule $module = null ) {
 		$this->module = $module;
 	}
 

@@ -38,5 +38,6 @@
 	"categorytree-no-pages": "ingen sider eller underkategorier",
 	"categorytree-not-found": "Kategorien ''$1'' blev ikke fundet",
 	"categorytree-error": "Der opstod et problem under indlæsning af data.",
-	"categorytree-retry": "Vent et øjeblik og prøv igen."
+	"categorytree-retry": "Vent et øjeblik og prøv igen.",
+	"categorytree-deprecation-category": "Sider, der bruger forældede categorytree-parametre"
 }

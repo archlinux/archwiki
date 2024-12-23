@@ -6,10 +6,11 @@
  */
 
 /* stylelint-disable selector-class-pattern */
+@import 'mediawiki.skin.variables.less';
 
 .ve-ui-mwAceEditorWidget {
 	.ace_editor {
-		border: 1px solid #c8ccd1;
+		border: @border-subtle;
 		margin: 1px;
 		/* Support: Blink, Gecko, Webkit */
 		/* Specify a valid second value to fix size, see T176636 */
@@ -31,13 +32,13 @@
 
 	.ace_focus {
 		/* TODO: Move to mediawiki theme only */
-		border-color: #36c;
+		border-color: @border-color-progressive--focus;
 		/* HACK: Make border grow out as inset doesn't overlap absolute positioned children */
 		border-width: 2px;
 		margin: 0;
 	}
 
 	&.oo-ui-widget-enabled.oo-ui-flaggedElement-invalid .ace_editor {
-		border-color: #b32424;
+		border-color: @border-color-error;
 	}
 }

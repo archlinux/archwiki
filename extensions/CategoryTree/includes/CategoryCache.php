@@ -22,7 +22,7 @@ namespace MediaWiki\Extension\CategoryTree;
 
 use MediaWiki\Category\Category;
 use MediaWiki\Linker\LinkTarget;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -30,25 +30,19 @@ use Wikimedia\Rdbms\IResultWrapper;
  */
 class CategoryCache {
 	/** @var (?Category)[] Keys are category database names, values are either a Category object or null */
-	private $cache = [];
+	private array $cache = [];
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	private IConnectionProvider $dbProvider;
 
-	/**
-	 * @param ILoadBalancer $loadBalancer
-	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer
+		IConnectionProvider $dbProvider
 	) {
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 	}
 
 	/**
 	 * Get a preloaded Category object or null when the Category does not exists. Loaded the Category on demand,
 	 * if not in cache, use self::doQuery when requesting a high number of category
-	 * @param LinkTarget $categoryTarget
-	 * @return ?Category
 	 */
 	public function getCategory( LinkTarget $categoryTarget ): ?Category {
 		if ( $categoryTarget->getNamespace() !== NS_CATEGORY ) {
@@ -84,7 +78,7 @@ class CategoryCache {
 			return;
 		}
 
-		$rows = $this->loadBalancer->getConnection( ILoadBalancer::DB_REPLICA )
+		$rows = $this->dbProvider->getReplicaDatabase()
 			->newSelectQueryBuilder()
 			->select( [ 'cat_id', 'cat_title', 'cat_pages', 'cat_subcats', 'cat_files' ] )
 			->from( 'category' )
@@ -95,10 +89,7 @@ class CategoryCache {
 		$this->fillFromQuery( $rows );
 	}
 
-	/**
-	 * @param IResultWrapper $rows
-	 */
-	public function fillFromQuery( IResultWrapper $rows ) {
+	public function fillFromQuery( IResultWrapper $rows ): void {
 		foreach ( $rows as $row ) {
 			$this->cache[$row->cat_title] = Category::newFromRow( $row );
 		}

@@ -22,10 +22,13 @@
  * @ingroup Benchmark
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
@@ -41,6 +44,7 @@ class BenchmarkParse extends Maintenance {
 	/** @var string MediaWiki concatenated string timestamp (YYYYMMDDHHMMSS) */
 	private $templateTimestamp = null;
 
+	/** @var bool */
 	private $clearLinkCache = false;
 
 	/**
@@ -198,5 +202,7 @@ class BenchmarkParse extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = BenchmarkParse::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

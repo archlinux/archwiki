@@ -1,6 +1,6 @@
 # Equivset
 
-A mapping of "equivalent" or similar-looking characters ([homoglyphs](https://en.wikipedia.org/wiki/Homoglyph)) to prevent spoofing. This is similar to the Unicode Consortium's [confusables.txt](http://www.unicode.org/Public/security/8.0.0/confusables.txt) with some signficant differences. Confusables.txt lists character pairs that are visually identical or nearly identical, for example, Latin "A" and Greek "Α" (alpha). This list is much broader, including pairs that merely look similar, for example, "S" and "$". Another difference is that this list only includes letters and punctuation. It does not include symbols, emoji, or graphical elements.
+A mapping of "equivalent" or similar-looking characters ([homoglyphs](https://en.wikipedia.org/wiki/Homoglyph)) to prevent spoofing. This is similar to the Unicode Consortium's [confusables.txt](https://www.unicode.org/Public/security/15.1.0/confusables.txt) with some significant differences. Confusables.txt lists character pairs that are visually identical or nearly identical, for example, Latin "A" and Greek "Α" (alpha). This list is much broader, including pairs that merely look similar, for example, "S" and "$". Another difference is that this list only includes letters and punctuation. It does not include symbols, emoji, or graphical elements.
 
 ## Installation
 Using composer:
@@ -14,7 +14,7 @@ Add the following to the composer.json file for your project:
 }
 ```
 
-And then run 'composer update'.
+And then run `composer update`.
 
 ## Usage
 
@@ -44,5 +44,8 @@ $all = $equivset->all();
 ## Contributing
 
 All changes should be made to `./data/equivset.in`. Then run
-`bin/console generate-equivset` to generate the JSON, serialized, and plain
+`bin/console generate-equivset` to generate the JSON, PHP, and plain
 text versions of the equivset in `./dist`.
+
+When releasing, update HISTORY.md with `git log --format='* %s (%aN)' --topo-order`
+to consistently list commits.

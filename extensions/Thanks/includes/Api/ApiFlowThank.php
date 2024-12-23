@@ -2,15 +2,19 @@
 
 namespace MediaWiki\Extension\Thanks\Api;
 
-use ApiBase;
 use Flow\Container;
 use Flow\Conversion\Utils;
 use Flow\Exception\FlowException;
 use Flow\Model\PostRevision;
 use Flow\Model\UUID;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Extension\Thanks\Storage\LogStore;
+use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -24,6 +28,19 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 
 class ApiFlowThank extends ApiThank {
+
+	private UserFactory $userFactory;
+
+	public function __construct(
+		ApiMain $main,
+		$action,
+		PermissionManager $permissionManager,
+		LogStore $storage,
+		UserFactory $userFactory
+	) {
+		parent::__construct( $main, $action, $permissionManager, $storage );
+		$this->userFactory = $userFactory;
+	}
 
 	public function execute() {
 		$user = $this->getUser();
@@ -107,7 +124,7 @@ class ApiFlowThank extends ApiThank {
 	 * @return User
 	 */
 	private function getRecipientFromPost( PostRevision $post ) {
-		$recipient = User::newFromId( $post->getCreatorId() );
+		$recipient = $this->userFactory->newFromId( $post->getCreatorId() );
 		if ( !$recipient->loadFromId() ) {
 			$this->dieWithError( 'thanks-error-invalidrecipient', 'invalidrecipient' );
 		}

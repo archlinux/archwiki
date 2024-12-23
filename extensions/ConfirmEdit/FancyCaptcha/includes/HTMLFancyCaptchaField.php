@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\FancyCaptcha;
 
-use HTMLFormField;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLFormField;
 
 /**
  * Captcha input field for FancyCaptcha that displays a question and returns the answer.
@@ -16,6 +16,7 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 	/** @var bool */
 	protected $showCreateHelp;
 
+	/** @var string */
 	protected $mClass = 'captcha';
 
 	/**

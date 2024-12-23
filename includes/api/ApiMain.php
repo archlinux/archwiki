@@ -21,14 +21,21 @@
  * @defgroup API API
  */
 
+namespace MediaWiki\Api;
+
+use ILocalizedException;
+use LogicException;
+use MediaWiki;
 use MediaWiki\Api\Validator\ApiParamValidator;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Profiler\ProfilingContext;
 use MediaWiki\Request\FauxRequest;
@@ -40,7 +47,13 @@ use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\User\UserRigorOptions;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
+use MWExceptionHandler;
+use MWExceptionRenderer;
+use Profiler;
+use Throwable;
+use UnexpectedValueException;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\Stats\StatsFactory;
@@ -87,6 +100,7 @@ class ApiMain extends ApiBase {
 			'class' => ApiClientLogin::class,
 			'services' => [
 				'AuthManager',
+				'UrlUtils',
 			],
 		],
 		'logout' => [
@@ -96,12 +110,14 @@ class ApiMain extends ApiBase {
 			'class' => ApiAMCreateAccount::class,
 			'services' => [
 				'AuthManager',
+				'UrlUtils',
 			],
 		],
 		'linkaccount' => [
 			'class' => ApiLinkAccount::class,
 			'services' => [
 				'AuthManager',
+				'UrlUtils',
 			],
 		],
 		'unlinkaccount' => [
@@ -170,7 +186,7 @@ class ApiMain extends ApiBase {
 				'ContentHandlerFactory',
 				'PageEditStash',
 				'RevisionLookup',
-				'StatsdDataFactory',
+				'StatsFactory',
 				'WikiPageFactory',
 				'TempUserCreator',
 				'UserFactory',
@@ -189,7 +205,6 @@ class ApiMain extends ApiBase {
 			'class' => ApiFeedContributions::class,
 			'services' => [
 				'RevisionStore',
-				'TitleParser',
 				'LinkRenderer',
 				'LinkBatchFactory',
 				'HookContainer',
@@ -245,6 +260,9 @@ class ApiMain extends ApiBase {
 		],
 		'cspreport' => [
 			'class' => ApiCSPReport::class,
+			'services' => [
+				'UrlUtils',
+			]
 		],
 		'validatepassword' => [
 			'class' => ApiValidatePassword::class,
@@ -370,6 +388,10 @@ class ApiMain extends ApiBase {
 		],
 		'emailuser' => [
 			'class' => ApiEmailUser::class,
+			'services' => [
+				'EmailUserFactory',
+				'UserFactory',
+			]
 		],
 		'watch' => [
 			'class' => ApiWatch::class,
@@ -499,10 +521,6 @@ class ApiMain extends ApiBase {
 	 * ];
 	 */
 	private const RIGHTS_MAP = [
-		'writeapi' => [
-			'msg' => 'right-writeapi',
-			'params' => []
-		],
 		'apihighlimits' => [
 			'msg' => 'api-help-right-apihighlimits',
 			'params' => [ ApiBase::LIMIT_SML2, ApiBase::LIMIT_BIG2 ]
@@ -620,7 +638,7 @@ class ApiMain extends ApiBase {
 		// Setup uselang. This doesn't use $this->getParameter()
 		// because we're not ready to handle errors yet.
 		// Optimisation: Avoid slow getVal(), this isn't user-generated content.
-		$uselang = $request->getRawVal( 'uselang', self::API_DEFAULT_USELANG );
+		$uselang = $request->getRawVal( 'uselang' ) ?? self::API_DEFAULT_USELANG;
 		if ( $uselang === 'user' ) {
 			// Assume the parent context is going to return the user language
 			// for uselang=user (see T85635).
@@ -631,17 +649,19 @@ class ApiMain extends ApiBase {
 			$code = RequestContext::sanitizeLangCode( $uselang );
 			$derivativeContext->setLanguage( $code );
 			if ( !$this->mInternalMode ) {
+				// phpcs:disable MediaWiki.Usage.ExtendClassUsage.FunctionVarUsage
 				global $wgLang;
 				$wgLang = $derivativeContext->getLanguage();
 				RequestContext::getMain()->setLanguage( $wgLang );
+				// phpcs:enable MediaWiki.Usage.ExtendClassUsage.FunctionVarUsage
 			}
 		}
 
 		// Set up the error formatter. This doesn't use $this->getParameter()
 		// because we're not ready to handle errors yet.
 		// Optimisation: Avoid slow getVal(), this isn't user-generated content.
-		$errorFormat = $request->getRawVal( 'errorformat', 'bc' );
-		$errorLangCode = $request->getRawVal( 'errorlang', 'uselang' );
+		$errorFormat = $request->getRawVal( 'errorformat' ) ?? 'bc';
+		$errorLangCode = $request->getRawVal( 'errorlang' ) ?? 'uselang';
 		$errorsUseDB = $request->getCheck( 'errorsuselocal' );
 		if ( in_array( $errorFormat, [ 'plaintext', 'wikitext', 'html', 'raw', 'none' ], true ) ) {
 			if ( $errorLangCode === 'uselang' ) {
@@ -742,7 +762,7 @@ class ApiMain extends ApiBase {
 	/**
 	 * @param ApiContinuationManager|null $manager
 	 */
-	public function setContinuationManager( ApiContinuationManager $manager = null ) {
+	public function setContinuationManager( ?ApiContinuationManager $manager = null ) {
 		if ( $manager !== null && $this->mContinuationManager !== null ) {
 			throw new UnexpectedValueException(
 				__METHOD__ . ': tried to set manager from ' . $manager->getSource() .
@@ -1010,7 +1030,7 @@ class ApiMain extends ApiBase {
 			// parameters and redo.
 			$failed = true;
 			$this->addWarning( 'apiwarn-errorprinterfailed' );
-			foreach ( $ex->getStatusValue()->getErrors() as $error ) {
+			foreach ( $ex->getStatusValue()->getMessages() as $error ) {
 				try {
 					$this->mPrinter->addWarning( $error );
 				} catch ( Throwable $ex2 ) {
@@ -1241,7 +1261,7 @@ class ApiMain extends ApiBase {
 		$maxage = 0;
 		if ( isset( $this->mCacheControl['max-age'] ) ) {
 			$maxage = $this->mCacheControl['max-age'];
-		} elseif ( ( $this->mModule && !$this->mModule->isWriteMode() ) ||
+		} elseif ( ( !$isError && $this->mModule && !$this->mModule->isWriteMode() ) ||
 			$this->mCacheMode !== 'private'
 		) {
 			$maxage = $this->getParameter( 'maxage' );
@@ -1348,8 +1368,8 @@ class ApiMain extends ApiBase {
 	protected function errorMessagesFromException( Throwable $e, $type = 'error' ) {
 		$messages = [];
 		if ( $e instanceof ApiUsageException ) {
-			foreach ( $e->getStatusValue()->getErrorsByType( $type ) as $error ) {
-				$messages[] = ApiMessage::create( $error );
+			foreach ( $e->getStatusValue()->getMessages( $type ) as $msg ) {
+				$messages[] = ApiMessage::create( $msg );
 			}
 		} elseif ( $type !== 'error' ) {
 			// None of the rest have any messages for non-error types
@@ -1761,8 +1781,6 @@ class ApiMain extends ApiBase {
 		if ( $module->isWriteMode() ) {
 			if ( !$this->mEnableWrite ) {
 				$this->dieWithError( 'apierror-noapiwrite' );
-			} elseif ( !$this->getAuthority()->isAllowed( 'writeapi' ) ) {
-				$this->dieWithError( 'apierror-writeapidenied' );
 			} elseif ( $this->getRequest()->getHeader( 'Promise-Non-Write-API-Action' ) ) {
 				$this->dieWithError( 'apierror-promised-nonwrite-api' );
 			}
@@ -1889,10 +1907,20 @@ class ApiMain extends ApiBase {
 			$this->dieWithErrorOrDebug( [ 'apierror-mustbeposted', $this->mAction ] );
 		}
 
-		if ( $request->wasPosted() && !$request->getHeader( 'Content-Type' ) ) {
-			$this->addDeprecation(
-				'apiwarn-deprecation-post-without-content-type', 'post-without-content-type'
-			);
+		if ( $request->wasPosted() ) {
+			if ( !$request->getHeader( 'Content-Type' ) ) {
+				$this->addDeprecation(
+					'apiwarn-deprecation-post-without-content-type', 'post-without-content-type'
+				);
+			}
+			$contentLength = $request->getHeader( 'Content-Length' );
+			$maxPostSize = wfShorthandToInteger( ini_get( 'post_max_size' ), 0 );
+			if ( $maxPostSize && $contentLength > $maxPostSize ) {
+				$this->dieWithError(
+					[ 'apierror-http-contenttoolarge', Message::sizeParam( $maxPostSize ) ],
+					null, null, 413
+				);
+			}
 		}
 
 		// See if custom printer is used
@@ -1965,8 +1993,7 @@ class ApiMain extends ApiBase {
 		$trxLimits = $this->getConfig()->get( MainConfigNames::TrxProfilerLimits );
 		$trxProfiler = Profiler::instance()->getTransactionProfiler();
 		$trxProfiler->setLogger( LoggerFactory::getInstance( 'rdbms' ) );
-		$statsFactory = MediaWikiServices::getInstance()->getStatsdDataFactory();
-		$trxProfiler->setStatsdDataFactory( $statsFactory );
+		$trxProfiler->setStatsFactory( MediaWikiServices::getInstance()->getStatsFactory() );
 		$trxProfiler->setRequestMethod( $request->getMethod() );
 		if ( $request->hasSafeMethod() ) {
 			$trxProfiler->setExpectations( $trxLimits['GET'], __METHOD__ );
@@ -1982,7 +2009,7 @@ class ApiMain extends ApiBase {
 	 * @param float $time Time in seconds
 	 * @param Throwable|null $e Throwable caught while processing the request
 	 */
-	protected function logRequest( $time, Throwable $e = null ) {
+	protected function logRequest( $time, ?Throwable $e = null ) {
 		$request = $this->getRequest();
 
 		$user = $this->getUser();
@@ -2415,6 +2442,7 @@ class ApiMain extends ApiBase {
 		}
 	}
 
+	/** @var bool|null */
 	private $mCanApiHighLimits = null;
 
 	/**
@@ -2440,16 +2468,18 @@ class ApiMain extends ApiBase {
 	/**
 	 * Fetches the user agent used for this request
 	 *
-	 * The value will be the combination of the 'Api-User-Agent' header (if
-	 * any) and the standard User-Agent header (if any).
+	 * This returns the value of the 'Api-User-Agent' header, if any,
+	 * or the standard User-Agent header, otherwise.
 	 *
 	 * @return string
 	 */
 	public function getUserAgent() {
-		return trim(
-			$this->getRequest()->getHeader( 'Api-user-agent' ) . ' ' .
-			$this->getRequest()->getHeader( 'User-agent' )
-		);
+		$agent = (string)$this->getRequest()->getHeader( 'Api-user-agent' );
+		if ( $agent == '' ) {
+			$agent = $this->getRequest()->getHeader( 'User-agent' );
+		}
+
+		return $agent;
 	}
 }
 
@@ -2457,3 +2487,6 @@ class ApiMain extends ApiBase {
  * For really cool vim folding this needs to be at the end:
  * vim: foldmarker=@{,@} foldmethod=marker
  */
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiMain::class, 'ApiMain' );

@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Upload
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,8 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @ingroup Upload
  */
 
 namespace MediaWiki\Specials;
@@ -59,7 +55,7 @@ use UserBlockedError;
 use WikiFilePage;
 
 /**
- * Form for handling uploads and special page.
+ * Form for uploading media files.
  *
  * @ingroup SpecialPage
  * @ingroup Upload
@@ -82,10 +78,10 @@ class SpecialUpload extends SpecialPage {
 	 * @param WatchlistManager|null $watchlistManager
 	 */
 	public function __construct(
-		RepoGroup $repoGroup = null,
-		UserOptionsLookup $userOptionsLookup = null,
-		NamespaceInfo $nsInfo = null,
-		WatchlistManager $watchlistManager = null
+		?RepoGroup $repoGroup = null,
+		?UserOptionsLookup $userOptionsLookup = null,
+		?NamespaceInfo $nsInfo = null,
+		?WatchlistManager $watchlistManager = null
 	) {
 		parent::__construct( 'Upload', 'upload' );
 		// This class is extended and therefor fallback to global state - T265300
@@ -107,10 +103,11 @@ class SpecialUpload extends SpecialPage {
 		return true;
 	}
 
-	/** Misc variables */
+	// Misc variables
 
 	/** @var WebRequest|FauxRequest The request this form is supposed to handle */
 	public $mRequest;
+	/** @var string */
 	public $mSourceType;
 
 	/** @var string The cache key to use to retreive the status of your async upload */
@@ -121,24 +118,32 @@ class SpecialUpload extends SpecialPage {
 
 	/** @var LocalFile */
 	public $mLocalFile;
+	/** @var bool */
 	public $mUploadClicked;
 
-	/** User input variables from the "description" section */
+	// User input variables from the "description" section
 
 	/** @var string The requested target file name */
 	public $mDesiredDestName;
+	/** @var string */
 	public $mComment;
+	/** @var string */
 	public $mLicense;
 
-	/** User input variables from the root section */
+	// User input variables from the root section
 
+	/** @var bool */
 	public $mIgnoreWarning;
+	/** @var bool */
 	public $mWatchthis;
+	/** @var string */
 	public $mCopyrightStatus;
+	/** @var string */
 	public $mCopyrightSource;
 
-	/** Hidden variables */
+	// Hidden variables
 
+	/** @var string */
 	public $mDestWarningAck;
 
 	/** @var bool The user followed an "overwrite this file" link */
@@ -146,6 +151,7 @@ class SpecialUpload extends SpecialPage {
 
 	/** @var bool The user clicked "Cancel and return to upload form" button */
 	public $mCancelUpload;
+	/** @var bool */
 	public $mTokenOk;
 
 	/** @var bool Subclasses can use this to determine whether a file was uploaded */
@@ -314,7 +320,7 @@ class SpecialUpload extends SpecialPage {
 	protected function showUploadStatus( $user ) {
 		// first, let's fetch the status from the main stash
 		$progress = UploadBase::getSessionStatus( $user, $this->mCacheKey );
-		if ( $progress == false ) {
+		if ( !$progress ) {
 			$progress = [ 'status' => Status::newFatal( 'invalid-cache-key' ) ];
 		}
 		$this->log->debug( 'Upload status: stage {stage}, result {result}', $progress );
@@ -360,6 +366,12 @@ class SpecialUpload extends SpecialPage {
 							[ 'active' => true, 'msg' => 'upload-progress-processing' ]
 						);
 						break;
+					default:
+						// unknown result, just show a generic error
+						$this->showUploadError( $this->getOutput()->parseAsInterface(
+							$status->getWikiText( false, false, $this->getLanguage() ) )
+						);
+						break;
 				}
 				break;
 			case 'queued':
@@ -375,6 +387,12 @@ class SpecialUpload extends SpecialPage {
 						break;
 					case 'Failure':
 						// downloading failed
+						$this->showUploadError( $this->getOutput()->parseAsInterface(
+							$status->getWikiText( false, false, $this->getLanguage() ) )
+						);
+						break;
+					default:
+						// unknown result, just show a generic error
 						$this->showUploadError( $this->getOutput()->parseAsInterface(
 							$status->getWikiText( false, false, $this->getLanguage() ) )
 						);
@@ -517,7 +535,7 @@ class SpecialUpload extends SpecialPage {
 			!$this->mTokenOk && !$this->mCancelUpload &&
 			( $this->mUpload && $this->mUploadClicked )
 		) {
-			$form->addPreText( $this->msg( 'session_fail_preview' )->parse() );
+			$form->addPreHtml( $this->msg( 'session_fail_preview' )->parse() );
 		}
 
 		# Give a notice if the user is uploading a file that has been deleted or moved
@@ -533,19 +551,19 @@ class SpecialUpload extends SpecialPage {
 					'msgKey' => [ 'upload-recreate-warning' ] ]
 			);
 		}
-		$form->addPreText( $delNotice );
+		$form->addPreHtml( $delNotice );
 
 		# Add text to form
-		$form->addPreText( '<div id="uploadtext">' .
+		$form->addPreHtml( '<div id="uploadtext">' .
 			$this->msg( 'uploadtext', [ $this->mDesiredDestName ] )->parseAsBlock() .
 			'</div>' );
 		# Add upload error message
-		$form->addPreText( $message );
+		$form->addPreHtml( $message );
 
 		# Add footer to form
 		$uploadFooter = $this->msg( 'uploadfooter' );
 		if ( !$uploadFooter->isDisabled() ) {
-			$form->addPostText( '<div id="mw-upload-footer-message">'
+			$form->addPostHtml( '<div id="mw-upload-footer-message">'
 				. $uploadFooter->parseAsBlock() . "</div>\n" );
 		}
 
@@ -901,7 +919,7 @@ class SpecialUpload extends SpecialPage {
 	 * @return string
 	 */
 	public static function getInitialPageText( $comment = '', $license = '',
-		$copyStatus = '', $source = '', Config $config = null
+		$copyStatus = '', $source = '', ?Config $config = null
 	) {
 		if ( $config === null ) {
 			wfDebug( __METHOD__ . ' called without a Config instance passed to it' );
@@ -1074,10 +1092,10 @@ class SpecialUpload extends SpecialPage {
 		}
 		$success = $this->mUpload->unsaveUploadedFile();
 		if ( !$success ) {
-			$this->getOutput()->showFatalError(
-				$this->msg( 'filedeleteerror' )
-					->params( $this->mUpload->getTempPath() )
-					->escaped()
+			$this->getOutput()->showErrorPage(
+				'internalerror',
+				'filedeleteerror',
+				[ $this->mUpload->getTempPath() ]
 			);
 
 			return false;

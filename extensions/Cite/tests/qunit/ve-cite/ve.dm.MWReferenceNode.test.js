@@ -2,12 +2,12 @@
 
 QUnit.module( 've.dm.MWReferenceNode (Cite)', ve.test.utils.newMwEnvironment() );
 
-QUnit.test( 'getGroup', function ( assert ) {
+QUnit.test( 'getGroup', ( assert ) => {
 	const dataElement = { attributes: { refGroup: 'g' } };
 	assert.deepEqual( ve.dm.MWReferenceNode.static.getGroup( dataElement ), 'g' );
 } );
 
-QUnit.test( 'cloneElement', function ( assert ) {
+QUnit.test( 'cloneElement', ( assert ) => {
 	const element = {
 		attributes: { contentsUsed: true, mw: {}, originalMw: {} }
 	};
@@ -17,7 +17,7 @@ QUnit.test( 'cloneElement', function ( assert ) {
 	assert.true( isFinite( clone.originalDomElementsHash ) );
 } );
 
-QUnit.test( 'getHashObject', function ( assert ) {
+QUnit.test( 'getHashObject', ( assert ) => {
 	const dataElement = { type: 'T', attributes: { listGroup: 'L' } };
 	assert.deepEqual( ve.dm.MWReferenceNode.static.getHashObject( dataElement ), dataElement );
 	// FIXME: Shouldn't this behave different?
@@ -25,7 +25,7 @@ QUnit.test( 'getHashObject', function ( assert ) {
 		dataElement );
 } );
 
-QUnit.test( 'describeChange', function ( assert ) {
+QUnit.test( 'describeChange', ( assert ) => {
 	for ( const [ key, change, expected ] of [
 		[ 'refGroup', { to: 'b' }, 'cite-ve-changedesc-ref-group-to,<ins>b</ins>' ],
 		[ 'refGroup', { from: 'a' }, 'cite-ve-changedesc-ref-group-from,<del>a</del>' ],

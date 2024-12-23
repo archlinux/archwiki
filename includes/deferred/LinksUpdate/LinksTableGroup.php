@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Deferred\LinksUpdate;
 
+use InvalidArgumentException;
 use MediaWiki\Collation\CollationFactory;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Linker\LinkTargetLookup;
@@ -64,9 +65,6 @@ class LinksTableGroup {
 		],
 		'templatelinks' => [
 			'class' => TemplateLinksTable::class,
-			'services' => [
-				'MainConfig'
-			],
 		]
 	];
 
@@ -211,7 +209,7 @@ class LinksTableGroup {
 			$spec = self::CORE_LIST['categorylinks'];
 			return $this->addCollationArgs( $spec, $tableName, true, $info );
 		}
-		throw new \InvalidArgumentException(
+		throw new InvalidArgumentException(
 			__CLASS__ . ": unknown table name \"$tableName\"" );
 	}
 

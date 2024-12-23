@@ -1,5 +1,5 @@
-mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
-	mw.libs.ve.targetLoader.addPlugin( function () {
+mw.loader.using( 'ext.visualEditor.targetLoader' ).then( () => {
+	mw.libs.ve.targetLoader.addPlugin( () => {
 		ve.init.mw.HCaptchaSaveErrorHandler = function () {};
 
 		OO.inheritClass( ve.init.mw.HCaptchaSaveErrorHandler, ve.init.mw.SaveErrorHandler );
@@ -7,14 +7,13 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		ve.init.mw.HCaptchaSaveErrorHandler.static.name = 'confirmEditHCaptcha';
 
 		ve.init.mw.HCaptchaSaveErrorHandler.static.getReadyPromise = function () {
-			const onLoadFn = 'onHcaptchaLoadCallback' + Date.now();
-			let deferred, scriptURL, params;
-
 			if ( !this.readyPromise ) {
-				deferred = $.Deferred();
-				scriptURL = new mw.Uri( require( './config.json' ).hCaptchaScriptURL );
-				params = { onload: onLoadFn, render: 'explicit' };
-				scriptURL.query = $.extend( scriptURL.query, params );
+				const deferred = $.Deferred();
+				const config = require( './config.json' );
+				const scriptURL = new URL( config.hCaptchaScriptURL, location.href );
+				const onLoadFn = 'onHcaptchaLoadCallback' + Date.now();
+				scriptURL.searchParams.set( 'onload', onLoadFn );
+				scriptURL.searchParams.set( 'render', 'explicit' );
 
 				this.readyPromise = deferred.promise();
 				window[ onLoadFn ] = deferred.resolve;
@@ -42,7 +41,7 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 			};
 
 			this.getReadyPromise()
-				.then( function () {
+				.then( () => {
 					// ProcessDialog's error system isn't great for this yet.
 					target.saveDialog.clearMessage( 'api-save-error' );
 					target.saveDialog.showMessage( 'api-save-error', $container, { wrap: false } );

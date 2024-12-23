@@ -14,16 +14,6 @@
 		}
 	}
 
-	// T316574 Override visited link styles
-	.mw-list-item a {
-		color: @color-link;
-	}
-
-	/* T361841 add invisible bottom border by default */
-	.mw-list-item.vector-tab-noicon a {
-		border-bottom: 2px @border-style-base @border-color-transparent;
-	}
-
 	/* focus and hover have outlines. Text underline interferes with bottom border */
 	.mw-list-item.vector-tab-noicon a:focus,
 	.mw-list-item.vector-tab-noicon a:hover {
@@ -31,14 +21,23 @@
 		border-bottom: 2px @border-style-base;
 	}
 
-	.mw-list-item.new a,
-	.mw-list-item.new a:visited {
-		color: @color-link-new;
+	/* T361841 add invisible bottom border by default */
+	.mw-list-item.vector-tab-noicon a {
+		border-bottom: 2px @border-style-base @border-color-transparent;
 	}
 
-	.mw-list-item.selected a,
-	.mw-list-item.selected a:visited {
-		color: @color-link-selected;
+	// T316574 Override visited link styles
+	.mw-list-item a {
+		.mixin-vector-unvisited-link-base();
+	}
+
+	// Override visited red link styles
+	.mw-list-item.new a {
+		.mixin-vector-unvisited-link-red();
+	}
+
+	.mw-list-item.selected a {
+		.mixin-vector-selected-link();
 		border-bottom: 2px @border-style-base;
 	}
 }

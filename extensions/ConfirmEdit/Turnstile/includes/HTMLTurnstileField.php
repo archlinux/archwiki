@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\Turnstile;
 
-use Html;
-use HTMLFormField;
+use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLFormField;
 
 /**
  * Creates a Turnstile widget. Does not return any data; handling the data submitted by the

@@ -6,10 +6,12 @@
 			"Esukhovnina",
 			"Facenapalm",
 			"Kaganer",
+			"Kareyac",
 			"McDutchie",
 			"Okras",
 			"OlegVeliky",
 			"Pacha Tchernof",
+			"Stjn",
 			"Александр Сигачёв"
 		]
 	},
@@ -28,5 +30,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Фрагмент кода",
 	"syntaxhighlight-error-pygments-invocation-failure": "Сбой при вызове Pygments",
 	"syntaxhighlight-error-unknown-language": "Неизвестный язык «$1»",
-	"syntaxhighlight-error-exceeds-size-limit": "Размер кода ($1 {{PLURAL:$1|байт|байта|байт}}) превышает разрешённый лимит в $2 {{PLURAL:$2|байт|байта|байт}}."
+	"syntaxhighlight-error-exceeds-size-limit": "Размер кода ($1 {{PLURAL:$1|байт|байта|байт}}) превышает разрешённый лимит в $2 {{PLURAL:$2|байт|байта|байт}}.",
+	"syntaxhighlight-button-copy": "Копировать",
+	"syntaxhighlight-button-copied": "Скопировано!"
 }

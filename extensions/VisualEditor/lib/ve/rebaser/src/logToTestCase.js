@@ -7,6 +7,7 @@ const ve = require( '../dist/ve-rebaser.js' ),
 /**
  * Parse log file contents.
  *
+ * @ignore
  * @param {string} log Newline-separated list of JSON objects
  * @return {Object[]} Array of parsed objects
  */
@@ -79,7 +80,8 @@ function toTestCase( parsedLog ) {
 	};
 }
 
-fs.readFile( process.argv[ 2 ], { encoding: 'utf8' }, function ( err, data ) {
+// eslint-disable-next-line security/detect-non-literal-fs-filename
+fs.readFile( process.argv[ 2 ], { encoding: 'utf8' }, ( err, data ) => {
 	const parsed = parseLog( data ),
 		testCase = toTestCase( parsed );
 	process.stdout.write( JSON.stringify( testCase ) );

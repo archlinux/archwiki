@@ -20,13 +20,13 @@ for ( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	}
 }
 
-# On scandium and production machines, you should use:
+# On parsoidtest1001 and production machines, you should use:
 # sudo -u www-data php /srv/mediawiki/multiversion/MWScript.php \
 #     /srv/parsoid-testing/bin/<cmd>.php --wiki=hiwiki --integrated <args>
 #
 # eg:
 #
-# USER@scandium:/srv/mediawiki/multiversion$ echo '==Foo==' | \
+# USER@parsoidtest1001:/srv/mediawiki/multiversion$ echo '==Foo==' | \
 #    sudo -u www-data php MWScript.php \
 #    /srv/parsoid-testing/bin/parse.php --wiki=hiwiki --integrated
 #
@@ -72,7 +72,7 @@ if ( $parsoidMode === 'integrated' ) {
 		/**
 		 * @inheritDoc
 		 */
-		public function finalSetup( SettingsBuilder $settingsBuilder = null ) {
+		public function finalSetup( ?SettingsBuilder $settingsBuilder = null ) {
 			parent::finalSetup( $settingsBuilder ?? SettingsBuilder::getInstance() );
 		}
 
@@ -87,6 +87,10 @@ if ( $parsoidMode === 'integrated' ) {
 					'standalone',
 					'Run parsoid standalone, communicating with a host MediaWiki ' .
 					'using network API (see --domain option)'
+				);
+				$this->addOption(
+					'mock',
+					'Use mock environment instead of api or standalone'
 				);
 			}
 			parent::addDefaultParams();
@@ -151,6 +155,10 @@ if ( $parsoidMode === 'integrated' ) {
 					'standalone',
 					'Run parsoid standalone, communicating with a host MediaWiki ' .
 					'using network API (see --domain option)'
+				);
+				$this->addOption(
+					'mock',
+					'Use mock environment instead of api or standalone'
 				);
 			}
 			parent::addDefaultParams();

@@ -10,7 +10,7 @@
  *
  * @class
  * @extends ve.ui.MWLiveExtensionInspector
- * @mixins ve.ui.MWSyntaxHighlightWindow
+ * @mixes ve.ui.MWSyntaxHighlightWindow
  *
  * @constructor
  * @param {Object} [config] Configuration options
@@ -60,7 +60,7 @@ ve.ui.MWSyntaxHighlightInspector.prototype.initialize = function () {
  */
 ve.ui.MWSyntaxHighlightInspector.prototype.getReadyProcess = function ( data ) {
 	// Parent process
-	var process = ve.ui.MWSyntaxHighlightInspector.super.prototype.getReadyProcess.call( this, data );
+	const process = ve.ui.MWSyntaxHighlightInspector.super.prototype.getReadyProcess.call( this, data );
 	// Mixin process
 	return ve.ui.MWSyntaxHighlightWindow.prototype.getReadyProcess.call( this, data, process );
 };
@@ -70,11 +70,11 @@ ve.ui.MWSyntaxHighlightInspector.prototype.getReadyProcess = function ( data ) {
  */
 ve.ui.MWSyntaxHighlightInspector.prototype.getSetupProcess = function ( data ) {
 	// Parent process
-	var process = ve.ui.MWSyntaxHighlightInspector.super.prototype.getSetupProcess.call( this, data );
+	const process = ve.ui.MWSyntaxHighlightInspector.super.prototype.getSetupProcess.call( this, data );
 	// Mixin process
-	return ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess.call( this, data, process ).next( function () {
+	return ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess.call( this, data, process ).next( () => {
 		this.language.on( 'change', this.onChangeHandler );
-	}, this );
+	} );
 };
 
 /**
@@ -82,11 +82,11 @@ ve.ui.MWSyntaxHighlightInspector.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.MWSyntaxHighlightInspector.prototype.getTeardownProcess = function ( data ) {
 	// Parent process
-	var process = ve.ui.MWSyntaxHighlightInspector.super.prototype.getTeardownProcess.call( this, data );
+	const process = ve.ui.MWSyntaxHighlightInspector.super.prototype.getTeardownProcess.call( this, data );
 	// Mixin process
-	return ve.ui.MWSyntaxHighlightWindow.prototype.getTeardownProcess.call( this, data, process ).first( function () {
+	return ve.ui.MWSyntaxHighlightWindow.prototype.getTeardownProcess.call( this, data, process ).first( () => {
 		this.language.off( 'change', this.onChangeHandler );
-	}, this );
+	} );
 };
 
 /**

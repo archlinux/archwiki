@@ -20,9 +20,9 @@
 
 namespace MediaWiki\Parser;
 
-use Language;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 
 /**
  * Store information about magic words, and create/cache MagicWord objects.
@@ -118,9 +118,13 @@ class MagicWordFactory {
 		'localtimestamp',
 		'directionmark',
 		'contentlanguage',
+		'userlanguage',
 		'pagelanguage',
 		'numberofadmins',
 		'cascadingsources',
+		'bcp47',
+		'dir',
+		'language',
 	];
 
 	/** @var string[] */
@@ -134,6 +138,7 @@ class MagicWordFactory {
 		'nonewsectionlink',
 		'hiddencat',
 		'expectunusedcategory',
+		'expectunusedtemplate',
 		'index',
 		'noindex',
 		'staticredirect',

@@ -111,9 +111,9 @@ class PopupTest extends MathWikibaseConnectorTestFactory {
 	}
 
 	private function getPopup(
-		LanguageFactory $languageFactoryMock = null,
-		LanguageNameUtils $languageNameUtilsMock = null,
-		Item $item = null
+		?LanguageFactory $languageFactoryMock = null,
+		?LanguageNameUtils $languageNameUtilsMock = null,
+		?Item $item = null
 	): Popup {
 		$languageFactoryMock = $languageFactoryMock ?: $this->createMock( LanguageFactory::class );
 		if ( !$languageNameUtilsMock ) {

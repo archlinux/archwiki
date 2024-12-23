@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Extension\Math\InputCheck;
 
-use HashBagOStuff;
 use MediaWiki\Extension\Math\Math;
 use MediaWiki\Extension\Math\MathMathML;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWikiIntegrationTestCase;
 use MockHttpTrait;
 use RuntimeException;
-use WANObjectCache;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	use MockHttpTrait;

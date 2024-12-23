@@ -33,5 +33,9 @@
 	"categorytree-no-pages": "אין דפים או קטגוריות־משנה",
 	"categorytree-not-found": "הקטגוריה <i>$1</i> לא נמצאה",
 	"categorytree-error": "בעיה בטעינת הנתונים.",
-	"categorytree-retry": "נא להמתין מעט ולנסות שוב."
+	"categorytree-retry": "נא להמתין מעט ולנסות שוב.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: הפרמטר <code>onlyroot</code> הוכרז בתור מיושן. יש להשתמש במקום זאת <code dir=\"ltr\">depth=\"0\"</code>.",
+	"categorytree-deprecation-warning": "'''אזהרה:''' הדף הזה משתמש בתג <code>&lt;categorytree&gt;</code> עם פרמטר שהוכרז בתור מיושן.",
+	"categorytree-deprecation-category": "דפים שמשתמשים בפרמטרים מיושנים של categorytree",
+	"categorytree-deprecation-category-desc": "הדף משתמש בפרמטרים מיושנים של categorytree כגון <code>onlyroot</code>."
 }

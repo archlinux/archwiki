@@ -4,11 +4,13 @@ use LoginNotify\LoginNotify;
 use MediaWiki\CheckUser as CU;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\User\CentralId\LocalIdLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\TestingAccessWrapper;
 
 // phpcs:disable MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment

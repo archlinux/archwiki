@@ -61,7 +61,6 @@
 	"templatedata-modal-button-delparam": "Desaniciar la información del parámetru",
 	"templatedata-modal-button-done": "Fecho",
 	"templatedata-modal-button-importParams": "Importar parámetros",
-	"templatedata-modal-button-restoreparam": "Restaurar parámetru",
 	"templatedata-modal-button-saveparam": "Guardar",
 	"templatedata-modal-confirmcancel": "¿Tas seguro de que quies descartar los cambeos?",
 	"templatedata-modal-current-language": "Llingua actual: $1",

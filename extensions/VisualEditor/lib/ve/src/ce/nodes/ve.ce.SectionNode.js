@@ -9,7 +9,7 @@
  *
  * @class
  * @extends ve.ce.BranchNode
- * @mixins ve.ce.ActiveNode
+ * @mixes ve.ce.ActiveNode
  * @constructor
  * @param {ve.dm.SectionNode} model Model to observe
  * @param {Object} [config] Configuration options
@@ -48,7 +48,7 @@ ve.ce.SectionNode.static.name = 'section';
  * @return {string} HTML tag name
  */
 ve.ce.SectionNode.prototype.getTagName = function () {
-	var style = this.model.getAttribute( 'style' );
+	const style = this.model.getAttribute( 'style' );
 
 	if ( this.model.constructor.static.matchTagNames.indexOf( style ) === -1 ) {
 		throw new Error( 'Invalid style' );

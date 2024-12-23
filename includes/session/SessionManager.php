@@ -23,8 +23,7 @@
 
 namespace MediaWiki\Session;
 
-use BagOStuff;
-use CachedBagOStuff;
+use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
@@ -39,6 +38,8 @@ use MediaWiki\User\UserNameUtils;
 use MWException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\CachedBagOStuff;
 
 /**
  * This serves as the entry point to the MediaWiki session handling system.
@@ -182,20 +183,21 @@ class SessionManager implements SessionManagerInterface {
 	 *  - store: BagOStuff to store session data in.
 	 */
 	public function __construct( $options = [] ) {
+		$services = MediaWikiServices::getInstance();
 		if ( isset( $options['config'] ) ) {
 			$this->config = $options['config'];
 			if ( !$this->config instanceof Config ) {
-				throw new \InvalidArgumentException(
+				throw new InvalidArgumentException(
 					'$options[\'config\'] must be an instance of Config'
 				);
 			}
 		} else {
-			$this->config = MediaWikiServices::getInstance()->getMainConfig();
+			$this->config = $services->getMainConfig();
 		}
 
 		if ( isset( $options['logger'] ) ) {
 			if ( !$options['logger'] instanceof LoggerInterface ) {
-				throw new \InvalidArgumentException(
+				throw new InvalidArgumentException(
 					'$options[\'logger\'] must be an instance of LoggerInterface'
 				);
 			}
@@ -207,23 +209,24 @@ class SessionManager implements SessionManagerInterface {
 		if ( isset( $options['hookContainer'] ) ) {
 			$this->setHookContainer( $options['hookContainer'] );
 		} else {
-			$this->setHookContainer( MediaWikiServices::getInstance()->getHookContainer() );
+			$this->setHookContainer( $services->getHookContainer() );
 		}
 
 		if ( isset( $options['store'] ) ) {
 			if ( !$options['store'] instanceof BagOStuff ) {
-				throw new \InvalidArgumentException(
+				throw new InvalidArgumentException(
 					'$options[\'store\'] must be an instance of BagOStuff'
 				);
 			}
 			$store = $options['store'];
 		} else {
-			$store = \ObjectCache::getInstance( $this->config->get( MainConfigNames::SessionCacheType ) );
+			$store = $services->getObjectCacheFactory()
+				->getInstance( $this->config->get( MainConfigNames::SessionCacheType ) );
 		}
 
 		$this->logger->debug( 'SessionManager using store ' . get_class( $store ) );
 		$this->store = $store instanceof CachedBagOStuff ? $store : new CachedBagOStuff( $store );
-		$this->userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
+		$this->userNameUtils = $services->getUserNameUtils();
 
 		register_shutdown_function( [ $this, 'shutdown' ] );
 	}
@@ -252,9 +255,9 @@ class SessionManager implements SessionManagerInterface {
 		return $session;
 	}
 
-	public function getSessionById( $id, $create = false, WebRequest $request = null ) {
+	public function getSessionById( $id, $create = false, ?WebRequest $request = null ) {
 		if ( !self::validateSessionId( $id ) ) {
-			throw new \InvalidArgumentException( 'Invalid session ID' );
+			throw new InvalidArgumentException( 'Invalid session ID' );
 		}
 		if ( !$request ) {
 			$request = new FauxRequest;
@@ -293,7 +296,7 @@ class SessionManager implements SessionManagerInterface {
 		return $session;
 	}
 
-	public function getEmptySession( WebRequest $request = null ) {
+	public function getEmptySession( ?WebRequest $request = null ) {
 		return $this->getEmptySessionInternal( $request );
 	}
 
@@ -303,15 +306,15 @@ class SessionManager implements SessionManagerInterface {
 	 * @param string|null $id ID to force on the new session
 	 * @return Session
 	 */
-	private function getEmptySessionInternal( WebRequest $request = null, $id = null ) {
+	private function getEmptySessionInternal( ?WebRequest $request = null, $id = null ) {
 		if ( $id !== null ) {
 			if ( !self::validateSessionId( $id ) ) {
-				throw new \InvalidArgumentException( 'Invalid session ID' );
+				throw new InvalidArgumentException( 'Invalid session ID' );
 			}
 
 			$key = $this->store->makeKey( 'MWSession', $id );
 			if ( is_array( $this->store->get( $key ) ) ) {
-				throw new \InvalidArgumentException( 'Session ID already exists' );
+				throw new InvalidArgumentException( 'Session ID already exists' );
 			}
 		}
 		if ( !$request ) {
@@ -373,7 +376,7 @@ class SessionManager implements SessionManagerInterface {
 	 *  session associated with this WebRequest object will be overwritten.
 	 * @return Session
 	 */
-	private function getInitialSession( WebRequest $request = null ) {
+	private function getInitialSession( ?WebRequest $request = null ) {
 		$session = $this->getEmptySession( $request );
 		$session->getToken();
 		return $session;
@@ -717,7 +720,7 @@ class SessionManager implements SessionManagerInterface {
 					} else {
 						$userInfo = UserInfo::newAnonymous();
 					}
-				} catch ( \InvalidArgumentException $ex ) {
+				} catch ( InvalidArgumentException $ex ) {
 					$this->logger->error( 'Session "{session}": {exception}', [
 						'session' => $info->__toString(),
 						'exception' => $ex,
@@ -963,7 +966,7 @@ class SessionManager implements SessionManagerInterface {
 			$this->allSessionBackends[$id] !== $backend ||
 			$this->allSessionIds[$id] !== $backend->getSessionId()
 		) {
-			throw new \InvalidArgumentException( 'Backend was not registered with this SessionManager' );
+			throw new InvalidArgumentException( 'Backend was not registered with this SessionManager' );
 		}
 
 		unset( $this->allSessionBackends[$id] );
@@ -982,7 +985,7 @@ class SessionManager implements SessionManagerInterface {
 			$this->allSessionBackends[$oldId] !== $backend ||
 			$this->allSessionIds[$oldId] !== $sessionId
 		) {
-			throw new \InvalidArgumentException( 'Backend was not registered with this SessionManager' );
+			throw new InvalidArgumentException( 'Backend was not registered with this SessionManager' );
 		}
 
 		$newId = $this->generateSessionId();
@@ -1057,7 +1060,7 @@ class SessionManager implements SessionManagerInterface {
 	 * @private For use in Setup.php only
 	 * @param Session|null $session For testing only
 	 */
-	public function logPotentialSessionLeakage( Session $session = null ) {
+	public function logPotentialSessionLeakage( ?Session $session = null ) {
 		$proxyLookup = MediaWikiServices::getInstance()->getProxyLookup();
 		$session = $session ?: self::getGlobalSession();
 		$suspiciousIpExpiry = $this->config->get( MainConfigNames::SuspiciousIpExpiry );

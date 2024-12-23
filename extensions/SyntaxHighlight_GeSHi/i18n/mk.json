@@ -20,5 +20,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Коден блок",
 	"syntaxhighlight-error-pygments-invocation-failure": "Не успеав да го повикам Pygments",
 	"syntaxhighlight-error-unknown-language": "Непознат јазик „$1“",
-	"syntaxhighlight-error-exceeds-size-limit": "Големината на кодот од {{PLURAL:$1|еден бајт|$1 бајти}} ја надминува горната граница од  {{PLURAL:$2|еден бајт|$2 бајти}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Големината на кодот од {{PLURAL:$1|еден бајт|$1 бајти}} ја надминува горната граница од  {{PLURAL:$2|еден бајт|$2 бајти}}",
+	"syntaxhighlight-button-copy": "Копирај",
+	"syntaxhighlight-button-copied": "Ископирано!"
 }

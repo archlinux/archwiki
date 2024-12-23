@@ -10,7 +10,7 @@
  *
  * @class
  * @extends ve.ce.LeafNode
- * @mixins ve.ce.FocusableNode
+ * @mixes ve.ce.FocusableNode
  * @constructor
  * @param {ve.dm.MWMagicLinkNode} model Model to observe
  * @param {Object} [config] Configuration options

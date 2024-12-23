@@ -28,12 +28,10 @@ ve.ce.MWSyntaxHighlightNode.static.name = 'mwSyntaxHighlight';
 
 // Inherits from ve.ce.GeneratedContentNode
 ve.ce.MWSyntaxHighlightNode.prototype.generateContents = function () {
-	var node = this,
-		args = arguments;
-	// Parent method
-	return mw.loader.using( 'ext.pygments' ).then( function () {
-		return ve.ce.MWExtensionNode.prototype.generateContents.apply( node, args );
-	} );
+	return mw.loader.using( 'ext.pygments' ).then(
+		// Parent method
+		() => ve.ce.MWExtensionNode.prototype.generateContents.apply( this, arguments )
+	);
 };
 
 // Inherits from ve.ce.BranchNode

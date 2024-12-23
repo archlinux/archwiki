@@ -124,9 +124,9 @@ function getWprovFromResultIndex( index ) {
 function addWprovToSearchResultUrls( results, offset ) {
 	return results.map( ( result, index ) => {
 		if ( result.url ) {
-			const uri = new mw.Uri( result.url );
-			uri.query.wprov = getWprovFromResultIndex( index + offset );
-			result = Object.assign( {}, result, { url: uri.toString() } );
+			const url = new URL( result.url, location.href );
+			url.searchParams.set( 'wprov', getWprovFromResultIndex( index + offset ) );
+			result = Object.assign( {}, result, { url: url.toString() } );
 		}
 		return result;
 	} );

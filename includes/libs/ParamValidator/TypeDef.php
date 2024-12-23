@@ -18,6 +18,19 @@ use Wikimedia\Message\MessageValue;
  */
 abstract class TypeDef {
 
+	/**
+	 * @unstable Temporarily log warnings to detect misbehaving clients (T305973)
+	 */
+	public const OPT_LOG_BAD_TYPES = 'log-bad-types';
+
+	/**
+	 * Option that instructs TypeDefs to enforce the native type of parameter
+	 * values, instead of allowing string values as input. This is intended for
+	 * use with values coming from a JSON request body, and may accommodate for
+	 * differences between the type system of PHP and JSON.
+	 */
+	public const OPT_ENFORCE_JSON_TYPES = 'enforce-json-types';
+
 	/** @var Callbacks */
 	protected $callbacks;
 
@@ -40,6 +53,53 @@ abstract class TypeDef {
 	 */
 	public function supportsArrays() {
 		return false;
+	}
+
+	/**
+	 * Fails if $value is not a string.
+	 *
+	 * @param string $name Parameter name being validated.
+	 * @param mixed $value Value being validated.
+	 * @param array $settings Parameter settings array.
+	 * @param array $options Options array.
+	 *
+	 * @return void
+	 */
+	protected function failIfNotString(
+		string $name,
+		$value,
+		array $settings,
+		array $options
+	): void {
+		if ( !is_string( $value ) ) {
+			$this->fatal(
+				$this->failureMessage( 'needstring' )
+					->params( gettype( $value ) ),
+				$name, $value, $settings, $options
+			);
+		}
+	}
+
+	/**
+	 * Throw a ValidationException.
+	 * This is a wrapper for failure() which explicitly declares that it
+	 * never returns, which is useful to static analysis tools like Phan.
+	 *
+	 * Note that parameters for `$name` and `$value` are always added as `$1`
+	 * and `$2`.
+	 *
+	 * @param DataMessageValue|string $failure Failure code or message.
+	 * @param string $name Parameter name being validated.
+	 * @param mixed $value Value being validated.
+	 * @param array $settings Parameter settings array.
+	 * @param array $options Options array.
+	 * @return never
+	 * @throws ValidationException always
+	 */
+	protected function fatal(
+		$failure, $name, $value, array $settings, array $options
+	) {
+		$this->failure( $failure, $name, $value, $settings, $options );
 	}
 
 	/**
@@ -93,7 +153,7 @@ abstract class TypeDef {
 	 * @param string|null $suffix Suffix to append when producing the message key
 	 * @return DataMessageValue
 	 */
-	protected function failureMessage( $code, array $data = null, $suffix = null ): DataMessageValue {
+	protected function failureMessage( $code, ?array $data = null, $suffix = null ): DataMessageValue {
 		return DataMessageValue::new(
 			"paramvalidator-$code" . ( $suffix !== null ? "-$suffix" : '' ),
 			[], $code, $data
@@ -214,6 +274,10 @@ abstract class TypeDef {
 	 *  reasonably satisfying the description given.
 	 */
 	public function stringifyValue( $name, $value, array $settings, array $options ) {
+		if ( is_array( $value ) ) {
+			return '(array)';
+		}
+
 		return (string)$value;
 	}
 

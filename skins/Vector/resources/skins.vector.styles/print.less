@@ -1,8 +1,3 @@
-@wmui-color-base0: #000;
-
-@color-base: @wmui-color-base0;
-
-@border-color-base: @wmui-color-base0;
 @border-color-footer: #eee;
 
 /* These styles retain the existing typography in skin.less
@@ -66,7 +61,7 @@ img {
 h2 {
 	// To avoid the bottom border of section headings with floated elements
 	overflow: hidden;
-	border-bottom: 2px solid @border-color-base;
+	border-bottom: 2px solid @color-emphasized;
 }
 
 .mw-heading3,
@@ -139,7 +134,7 @@ p {
 }
 
 blockquote {
-	border-left: 2px solid @border-color-base;
+	border-left: 2px solid @color-emphasized;
 	padding-left: 20px;
 }
 
@@ -207,7 +202,7 @@ ul {
 
 .printfooter {
 	margin-top: 10px;
-	border-top: 3px solid @border-color-base;
+	border-top: 3px solid @color-emphasized;
 	padding-top: 10px;
 	font-size: 10pt;
 	clear: both;
@@ -239,7 +234,7 @@ ul {
 
 // Last updated as primary info.
 #footer-info-lastmod {
-	color: @color-base;
+	color: @color-emphasized;
 	font-size: 12pt;
 	font-weight: bold;
 }

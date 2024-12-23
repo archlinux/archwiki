@@ -23,9 +23,9 @@
 
 namespace MediaWiki\Auth;
 
-use IDBAccessObject;
 use MediaWiki\User\User;
 use StatusValue;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * A primary authentication provider is responsible for associating the submitted
@@ -339,6 +339,8 @@ interface PrimaryAuthenticationProvider extends AuthenticationProvider {
 	 *    testForAccountCreation(). In this case, the provider might return
 	 *    StatusValue::newGood() here and let the later call to
 	 *    testForAccountCreation() do a more thorough test.
+	 *  - canAlwaysAutocreate: (bool) If true the session provider is exempt from
+	 *    autocreate user permissions checks.
 	 * @return StatusValue
 	 */
 	public function testUserForCreation( $user, $autocreate, array $options = [] );

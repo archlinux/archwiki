@@ -1,15 +1,15 @@
 // = Echo variables
-@grey-light: #72777d;
+@grey-light: @color-placeholder;
 
 @badge-padding: 0.12em;
 @badge-icon-size: 1.1em;
 @badge-distance-adjustment: 1em;
 
-@notification-item-background-read: #eaecf0;
+@notification-item-background-read: @background-color-neutral;
 
-@notification-background-unseen: #dce8ff;
+@notification-background-unseen: @background-color-progressive-subtle;
 @notification-background-unread: @background-color-base;
-@notification-background-read: #eaecf0;
+@notification-background-read: @background-color-neutral;
 
 @badge-counter-background-seen: @grey-light;
 
@@ -20,11 +20,16 @@
 @opacity-low: 0.6;
 @opacity-mid: 0.8;
 
+/* False positive for css-paged-media */
+/* stylelint-disable plugin/no-unsupported-browser-features */
 @specialpage-separation-unit: 0.7em;
-@specialpage-sidebar-width: 20em;
+@specialpage-sidebar-width: 15em;
+@specialpage-sidebar-max-width: 20em;
+@specialpage-main-width: 20em;
 
 @specialpage-hd-width: 982px;
 
 @specialpage-width: 1000px;
+/* stylelint-enable plugin/no-unsupported-browser-features */
 
-@background-color-popup-confirmation: #202122;
+@background-color-popup-confirmation: @color-notice;

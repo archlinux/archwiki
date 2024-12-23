@@ -2,9 +2,11 @@
 
 namespace MediaWiki\Tests\OutputTransform\Stages;
 
-use Language;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Language\Language;
 use MediaWiki\OutputTransform\OutputTransformStage;
 use MediaWiki\OutputTransform\Stages\HandleParsoidSectionLinks;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Tests\OutputTransform\OutputTransformStageTestBase;
@@ -18,6 +20,7 @@ class HandleParsoidSectionLinksTest extends OutputTransformStageTestBase {
 
 	public function createStage(): OutputTransformStage {
 		return new HandleParsoidSectionLinks(
+			new ServiceOptions( [] ),
 			new NullLogger(),
 			$this->getServiceContainer()->getTitleFactory()
 		);
@@ -29,16 +32,28 @@ class HandleParsoidSectionLinksTest extends OutputTransformStageTestBase {
 
 	public function provideShouldNotRun(): iterable {
 		yield [ new ParserOutput(), null, [ 'isParsoidContent' => false ] ];
-		yield [ new ParserOutput(), null, [ 'enableSectionEditLinks' => false ] ];
-		yield [ new ParserOutput(), null, [ 'isParsoidContent' => true, 'enableSectionEditLinks' => false ] ];
 	}
 
-	private static function pb( string $html, TOCData $toc = null ) {
-		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle(
-			new PageBundle( $html )
-		);
+	private static function newParserOutput(
+		?string $rawText = null,
+		?ParserOptions $parserOptions = null,
+		?TOCData $toc = null,
+		string ...$flags
+	) {
+		$po = new ParserOutput();
+		if ( $rawText !== null ) {
+			$po = PageBundleParserOutputConverter::parserOutputFromPageBundle(
+				new PageBundle( $rawText )
+			);
+		}
+		if ( $parserOptions !== null ) {
+			$po->setFromParserOptions( $parserOptions );
+		}
 		if ( $toc !== null ) {
 			$po->setTOCData( $toc );
+		}
+		foreach ( $flags as $f ) {
+			$po->setOutputFlag( $f );
 		}
 		return $po;
 	}
@@ -64,13 +79,46 @@ class HandleParsoidSectionLinksTest extends OutputTransformStageTestBase {
 			'anchor' => 'foo',
 		] ] );
 		$input = '<section id="a"><h2 id="foo">Foo</h2>Bar</section>';
-		$expected = '<section id="a"><div class="mw-heading mw-heading-1" id="mwAQ"><h2 id="foo">Foo</h2>!<a id="c">edit</a>!</div>Bar</section>';
 
-		yield [ self::pb( $input, $toc ), null, $options, self::pb( $expected, $toc ) ];
+		$expected = '<section id="a"><div class="mw-heading mw-heading-1" id="mwAQ"><h2 id="foo">Foo</h2></div>Bar</section>';
+		yield 'Standard Parsoid output: no links' => [
+			self::newParserOutput( $input, null, $toc ),
+			null, [ 'enableSectionEditLinks' => false ] + $options,
+			self::newParserOutput( $expected, null, $toc )
+		];
+
+		$expected = '<section id="a"><div class="mw-heading mw-heading-1" id="mwAQ"><h2 id="foo">Foo</h2>!<a id="c">edit</a>!</div>Bar</section>';
+		yield 'Standard Parsoid output: with links' => [
+			self::newParserOutput( $input, null, $toc ),
+			null, $options,
+			self::newParserOutput( $expected, null, $toc )
+		];
+
+		// Test collapsible section wrapper (T359001)
+		$pOpts = ParserOptions::newFromAnon();
+		$pOpts->setCollapsibleSections();
+		$expected = '<section id="a"><div class="mw-heading mw-heading-1" id="mwAQ"><h2 id="foo">Foo</h2>!<a id="c">edit</a>!</div><div id="mwAg">Bar</div></section>';
+		yield 'Standard Parsoid output: collapsible with links' => [
+			self::newParserOutput( $input, $pOpts, $toc ),
+			$pOpts, $options,
+			self::newParserOutput( $expected, $pOpts, $toc )
+		];
 
 		// Test that an existing heading <div> wrapper is reused (T357826)
 		$input = '<section id="a"><div class="mw-heading mw-heading2" id="b">prefix<h2 id="foo">Foo</h2>suffix</div>Bar</section>';
 		$expected = '<section id="a"><div class="mw-heading mw-heading2" id="b">prefix<h2 id="foo">Foo</h2>!<a id="c">edit</a>!suffix</div>Bar</section>';
-		yield [ self::pb( $input, $toc ), null, $options, self::pb( $expected, $toc ) ];
+		yield 'Output with existing div: with links' => [
+			self::newParserOutput( $input, null, $toc ),
+			null, $options,
+			self::newParserOutput( $expected, null, $toc )
+		];
+
+		// Reused <div> plus collapsible sections
+		$expected = '<section id="a"><div class="mw-heading mw-heading2" id="b">prefix<h2 id="foo">Foo</h2>!<a id="c">edit</a>!suffix</div><div id="mwAQ">Bar</div></section>';
+		yield 'Output with existing div: collapsible with links' => [
+			self::newParserOutput( $input, $pOpts, $toc ),
+			$pOpts, $options,
+			self::newParserOutput( $expected, $pOpts, $toc )
+		];
 	}
 }

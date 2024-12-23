@@ -31,9 +31,9 @@ OO.inheritClass( ve.ce.MWInlineExtensionNode, ve.ce.MWExtensionNode );
  * @inheritdoc
  */
 ve.ce.MWInlineExtensionNode.prototype.onParseSuccess = function ( deferred, response ) {
-	var data = response.visualeditor,
-		contentNodes = $.parseHTML( data.content );
+	const data = response.visualeditor;
 
+	let contentNodes = $.parseHTML( data.content );
 	// Inline nodes may come back in a wrapper paragraph; in that case, unwrap it
 	if ( contentNodes.length === 1 && contentNodes[ 0 ].nodeName === 'P' ) {
 		contentNodes = Array.prototype.slice.apply( contentNodes[ 0 ].childNodes );

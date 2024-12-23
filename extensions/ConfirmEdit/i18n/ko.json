@@ -40,5 +40,6 @@
 	"confirmedit-preview-content": "내용",
 	"confirmedit-preview-validity": "유효성",
 	"confirmedit-preview-valid": "유효함",
-	"confirmedit-preview-invalid": "유효하지 않음"
+	"confirmedit-preview-invalid": "유효하지 않음",
+	"abusefilter-edit-action-showcaptcha": "작업 진행을 위해 사용자에게 CAPTCHA를 완성할 것을 요구합니다. CAPTCHA를 건너뛸 수 있는 권한이 있는 사용자는 예외입니다."
 }

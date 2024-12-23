@@ -6,10 +6,8 @@ use BadMethodCallException;
 use InvalidArgumentException;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Utils\MWTimestamp;
-use Wikimedia\Rdbms\AndExpressionGroup;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * The real TempUserConfig including internal methods used by TempUserCreator.
@@ -17,6 +15,9 @@ use Wikimedia\Rdbms\OrExpressionGroup;
  * @since 1.39
  */
 class RealTempUserConfig implements TempUserConfig {
+	/** @var bool */
+	private $known = false;
+
 	/** @var bool */
 	private $enabled = false;
 
@@ -46,6 +47,7 @@ class RealTempUserConfig implements TempUserConfig {
 
 	/**
 	 * @param array $config See the documentation of $wgAutoCreateTempUser.
+	 *   - known: bool
 	 *   - enabled: bool
 	 *   - actions: array
 	 *   - genPattern: string
@@ -57,10 +59,23 @@ class RealTempUserConfig implements TempUserConfig {
 	 *   - notifyBeforeExpirationDays: int, optional
 	 */
 	public function __construct( $config ) {
-		if ( $config['enabled'] ?? false ) {
-			$this->enabled = true;
+		$this->enabled = $config['enabled'] ?? false;
+		$this->known = $this->enabled || ( $config['known'] ?? false );
+
+		// Configuration related to creating new temporary accounts for some actions
+		if ( $this->enabled ) {
 			$this->autoCreateActions = $config['actions'];
+			$this->serialProviderConfig = $config['serialProvider'];
+			$this->serialMappingConfig = $config['serialMapping'];
+		}
+
+		// Configuration related to managing and identifying existing temporary accounts,
+		// regardless of whether new temp accounts are being actively created via the
+		// 'enabled' config flag.
+		if ( $this->known || $this->enabled ) {
 			$this->genPattern = new Pattern( 'genPattern', $config['genPattern'] );
+			$this->expireAfterDays = $config['expireAfterDays'] ?? null;
+			$this->notifyBeforeExpirationDays = $config['notifyBeforeExpirationDays'] ?? null;
 			if ( isset( $config['matchPattern'] ) ) {
 				$matchPatterns = $config['matchPattern'];
 				if ( !is_array( $config['matchPattern'] ) ) {
@@ -73,11 +88,9 @@ class RealTempUserConfig implements TempUserConfig {
 			} else {
 				$this->matchPatterns = [ $this->genPattern ];
 			}
-			$this->serialProviderConfig = $config['serialProvider'];
-			$this->serialMappingConfig = $config['serialMapping'];
-			$this->expireAfterDays = $config['expireAfterDays'] ?? null;
-			$this->notifyBeforeExpirationDays = $config['notifyBeforeExpirationDays'] ?? null;
 		}
+
+		// Configuration that is set regardless of whether the feature is enabled or known.
 		if ( isset( $config['reservedPattern'] ) ) {
 			$this->reservedPattern = new Pattern( 'reservedPattern', $config['reservedPattern'] );
 		}
@@ -85,6 +98,10 @@ class RealTempUserConfig implements TempUserConfig {
 
 	public function isEnabled() {
 		return $this->enabled;
+	}
+
+	public function isKnown() {
+		return $this->known;
 	}
 
 	public function isAutoCreateAction( string $action ) {
@@ -102,7 +119,7 @@ class RealTempUserConfig implements TempUserConfig {
 	}
 
 	public function isTempName( string $name ) {
-		if ( !$this->isEnabled() ) {
+		if ( !$this->isKnown() ) {
 			return false;
 		}
 		foreach ( $this->matchPatterns as $pattern ) {
@@ -129,9 +146,12 @@ class RealTempUserConfig implements TempUserConfig {
 		}
 	}
 
+	/**
+	 * @deprecated since 1.42.
+	 */
 	public function getMatchPattern(): Pattern {
 		wfDeprecated( __METHOD__, '1.42' );
-		if ( $this->isEnabled() ) {
+		if ( $this->isKnown() ) {
 			// This method is deprecated to allow time for callers to update.
 			// This method only returns one Pattern, so just return the first one.
 			return $this->getMatchPatterns()[0];
@@ -141,7 +161,7 @@ class RealTempUserConfig implements TempUserConfig {
 	}
 
 	public function getMatchPatterns(): array {
-		if ( $this->isEnabled() ) {
+		if ( $this->isKnown() ) {
 			return $this->matchPatterns;
 		} else {
 			throw new BadMethodCallException( __METHOD__ . ' is disabled' );
@@ -149,7 +169,7 @@ class RealTempUserConfig implements TempUserConfig {
 	}
 
 	public function getMatchCondition( IReadableDatabase $db, string $field, string $op ): IExpression {
-		if ( $this->isEnabled() ) {
+		if ( $this->isKnown() ) {
 			$exprs = [];
 			foreach ( $this->getMatchPatterns() as $pattern ) {
 				$exprs[] = $db->expr( $field, $op, $pattern->toLikeValue( $db ) );
@@ -158,9 +178,9 @@ class RealTempUserConfig implements TempUserConfig {
 				return $exprs[0];
 			}
 			if ( $op === IExpression::LIKE ) {
-				return new OrExpressionGroup( ...$exprs );
+				return $db->orExpr( $exprs );
 			} elseif ( $op === IExpression::NOT_LIKE ) {
-				return new AndExpressionGroup( ...$exprs );
+				return $db->andExpr( $exprs );
 			} else {
 				throw new InvalidArgumentException( "Invalid operator $op" );
 			}

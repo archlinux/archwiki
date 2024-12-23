@@ -11,7 +11,9 @@ use MediaWiki\User\UserSelectQueryBuilder;
 use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Expire temporary accounts that are registered for longer than `expiryAfterDays` days
@@ -36,6 +38,12 @@ class ExpireTemporaryAccounts extends Maintenance {
 
 		$this->addDescription( 'Expire temporary accounts that exist for more than N days' );
 		$this->addOption( 'frequency', 'How frequently the script runs [days]', true, true );
+		$this->addOption(
+			'expiry',
+			'Expire accounts older than this number of days. Use 0 to expire all temporary accounts',
+			false,
+			true
+		);
 		$this->addOption( 'verbose', 'Verbose logging output' );
 	}
 
@@ -142,14 +150,18 @@ class ExpireTemporaryAccounts extends Maintenance {
 	public function execute() {
 		$this->initServices();
 
-		if ( !$this->tempUserConfig->isEnabled() ) {
+		if ( !$this->tempUserConfig->isKnown() ) {
 			$this->output( 'Temporary accounts are disabled' . PHP_EOL );
 			return;
 		}
 
 		$frequencyDays = (int)$this->getOption( 'frequency' );
-		$expiryAfterDays = $this->tempUserConfig->getExpireAfterDays();
-		if ( !$expiryAfterDays ) {
+		if ( $this->getOption( 'expiry' ) !== null ) {
+			$expiryAfterDays = (int)$this->getOption( 'expiry' );
+		} else {
+			$expiryAfterDays = $this->tempUserConfig->getExpireAfterDays();
+		}
+		if ( $expiryAfterDays === null ) {
 			$this->output( 'Temporary account expiry is not enabled' . PHP_EOL );
 			return;
 		}
@@ -179,5 +191,7 @@ class ExpireTemporaryAccounts extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ExpireTemporaryAccounts::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

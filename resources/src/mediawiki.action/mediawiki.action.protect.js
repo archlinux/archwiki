@@ -2,24 +2,22 @@
  * JavaScript for the mediawiki.action.protect module
  */
 ( function () {
-	var cascadeableLevels = require( './config.json' ).CascadingRestrictionLevels,
-		cascadeCheckbox = $( '#mwProtect-cascade' ).length ?
-			OO.ui.CheckboxInputWidget.static.infuse( $( '#mwProtect-cascade' ) ) :
-			false,
-		mwProtectUnchained = new OO.ui.CheckboxInputWidget( {
-			selected: false,
-			id: 'mwProtectUnchained'
-		} ),
-		levelSelectors = $( '[id ^= mwProtect-level-]' ).map( function () {
-			return OO.ui.infuse( this );
-		} ).toArray(),
-		expiryInputs = $( '[id ^= mwProtect-][id $= -expires]' ).map( function () {
-			return OO.ui.infuse( this );
-		} ).toArray(),
-		expirySelectors = $( '[id ^= mwProtectExpirySelection-]' ).map( function () {
-			return OO.ui.infuse( this );
-		} ).toArray(),
-		chainedInputs = [ levelSelectors, expirySelectors, expiryInputs ];
+	'use strict';
+
+	const cascadeableLevels = require( './config.json' ).CascadingRestrictionLevels;
+	const cascadeCheckbox = $( '#mwProtect-cascade' ).length &&
+		OO.ui.CheckboxInputWidget.static.infuse( $( '#mwProtect-cascade' ) );
+	const mwProtectUnchained = new OO.ui.CheckboxInputWidget( {
+		selected: false,
+		id: 'mwProtectUnchained'
+	} );
+	const levelSelectors = $( '[id ^= mwProtect-level-]' ).toArray()
+		.map( ( element ) => OO.ui.infuse( element ) );
+	const expiryInputs = $( '[id ^= mwProtect-][id $= -expires]' ).toArray()
+		.map( ( element ) => OO.ui.infuse( element ) );
+	const expirySelectors = $( '[id ^= mwProtectExpirySelection-]' ).toArray()
+		.map( ( element ) => OO.ui.infuse( element ) );
+	const chainedInputs = [ levelSelectors, expirySelectors, expiryInputs ];
 
 	/**
 	 * Enable/disable protection selectors and expiry inputs
@@ -28,8 +26,8 @@
 	 * @param {boolean} enable
 	 */
 	function toggleUnchainedInputs( enable ) {
-		chainedInputs.forEach( function ( widgets ) {
-			widgets.slice( 1 ).forEach( function ( widget ) {
+		chainedInputs.forEach( ( widgets ) => {
+			widgets.slice( 1 ).forEach( ( widget ) => {
 				widget.setDisabled( !enable );
 			} );
 		} );
@@ -42,11 +40,7 @@
 	 * @return {boolean}
 	 */
 	function areAllTypesMatching() {
-		return chainedInputs.every( function ( widgets ) {
-			return widgets.every( function ( widget ) {
-				return widget.getValue() === widgets[ 0 ].getValue();
-			} );
-		} );
+		return chainedInputs.every( ( widgets ) => widgets.every( ( widget ) => widget.getValue() === widgets[ 0 ].getValue() ) );
 	}
 
 	/**
@@ -66,11 +60,7 @@
 	 * @return {number}
 	 */
 	function getMaxLevel() {
-		return Math.max.apply( Math, levelSelectors.map( function ( widget ) {
-			return widget.dropdownWidget.getMenu().getItems().map( function ( item ) {
-				return item.selected;
-			} ).indexOf( true );
-		} ) );
+		return Math.max.apply( Math, levelSelectors.map( ( widget ) => widget.dropdownWidget.getMenu().getItems().map( ( item ) => item.selected ).indexOf( true ) ) );
 	}
 
 	/**
@@ -80,7 +70,7 @@
 	 * @param {number|string} val Protection level index or value
 	 */
 	function setAllSelectors( val ) {
-		levelSelectors.forEach( function ( widget ) {
+		levelSelectors.forEach( ( widget ) => {
 			if ( typeof val === 'number' ) {
 				widget.setValue( widget.dropdownWidget.getMenu().getItems()[ val ].getData() );
 			} else {
@@ -96,7 +86,7 @@
 	 * @param {OO.ui.Widget[]} widgets Array of widgets
 	 */
 	function setAllToFirst( widgets ) {
-		widgets.slice( 1 ).forEach( function ( widget ) {
+		widgets.slice( 1 ).forEach( ( widget ) => {
 			widget.setValue( widgets[ 0 ].getValue() );
 		} );
 	}
@@ -106,16 +96,16 @@
 	 * Disables expiry inputs when there is not protection
 	 *
 	 * @ignore
-	 * @return {boolean}
+	 * @return {boolean|undefined}
 	 */
 	function updateCascadeAndExpire() {
-		levelSelectors.forEach( function ( val, index ) {
-			var disable = !val.getValue() || index && !isUnchained();
+		levelSelectors.forEach( ( val, index ) => {
+			const disable = !val.getValue() || index && !isUnchained();
 			expirySelectors[ index ].setDisabled( disable );
 			expiryInputs[ index ].setDisabled( disable );
 		} );
 		if ( cascadeCheckbox ) {
-			levelSelectors.some( function ( widget ) {
+			levelSelectors.some( ( widget ) => {
 				if ( cascadeableLevels.indexOf( widget.getValue() ) === -1 ) {
 					cascadeCheckbox.setSelected( false ).setDisabled( true );
 					return true;
@@ -127,17 +117,17 @@
 	}
 
 	// Enable on inputs on submit
-	$( '#mw-Protect-Form' ).on( 'submit', function () {
-		chainedInputs.forEach( function ( widgets ) {
-			widgets.forEach( function ( widget ) {
+	$( '#mw-Protect-Form' ).on( 'submit', () => {
+		chainedInputs.forEach( ( widgets ) => {
+			widgets.forEach( ( widget ) => {
 				widget.setDisabled( false );
 			} );
 		} );
 	} );
 
 	// Change value of chained selectors and expiry inputs
-	expirySelectors.forEach( function ( widget ) {
-		widget.on( 'change', function ( val ) {
+	expirySelectors.forEach( ( widget ) => {
+		widget.on( 'change', ( val ) => {
 			if ( isUnchained() ) {
 				if ( val !== 'othertime' ) {
 					expiryInputs[ expirySelectors.indexOf( widget ) ].setValue( '' );
@@ -153,8 +143,8 @@
 	} );
 
 	// Change value of chained inputs and expiry selectors
-	expiryInputs.forEach( function ( widget ) {
-		widget.on( 'change', function ( val ) {
+	expiryInputs.forEach( ( widget ) => {
+		widget.on( 'change', ( val ) => {
 			if ( isUnchained() ) {
 				if ( val ) {
 					expirySelectors[ expiryInputs.indexOf( widget ) ].setValue( 'othertime' );
@@ -170,8 +160,8 @@
 	} );
 
 	// Change value of chained level selectors and update cascade checkbox
-	levelSelectors.forEach( function ( widget ) {
-		widget.on( 'change', function ( val ) {
+	levelSelectors.forEach( ( widget ) => {
+		widget.on( 'change', ( val ) => {
 			if ( !isUnchained() ) {
 				setAllSelectors( val );
 			}
@@ -181,7 +171,7 @@
 
 	// If there is only one protection type, there is nothing to chain
 	if ( $( '.oo-ui-panelLayout-framed .oo-ui-panelLayout-framed' ).length > 1 ) {
-		mwProtectUnchained.on( 'change', function () {
+		mwProtectUnchained.on( 'change', () => {
 			toggleUnchainedInputs( isUnchained() );
 			if ( !isUnchained() ) {
 				setAllSelectors( getMaxLevel() );
@@ -199,8 +189,8 @@
 		toggleUnchainedInputs( !areAllTypesMatching() );
 	}
 
-	var reasonList = OO.ui.infuse( $( '#wpProtectReasonSelection' ) ),
-		reason = OO.ui.infuse( $( '#mwProtect-reason' ) );
+	const reasonList = OO.ui.infuse( $( '#wpProtectReasonSelection' ) );
+	const reason = OO.ui.infuse( $( '#mwProtect-reason' ) );
 
 	// Arbitrary 75 to leave some space for the autogenerated null edit's summary
 	mw.widgets.visibleCodePointLimitWithDropdown( reason, reasonList, mw.config.get( 'wgCommentCodePointLimit' ) - 75 );

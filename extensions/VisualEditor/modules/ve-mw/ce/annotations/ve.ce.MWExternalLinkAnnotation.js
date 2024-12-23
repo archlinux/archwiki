@@ -20,8 +20,8 @@ ve.ce.MWExternalLinkAnnotation = function VeCeMWExternalLinkAnnotation( model ) 
 	ve.ce.MWExternalLinkAnnotation.super.apply( this, arguments );
 
 	// DOM changes
-	var rel = model.getAttribute( 'rel' ) || '';
-	var relValues = rel.split( /\s+/ );
+	const rel = model.getAttribute( 'rel' ) || '';
+	const relValues = rel.split( /\s+/ );
 	if ( relValues.indexOf( 'mw:WikiLink/Interwiki' ) >= 0 ) {
 		this.$anchor.addClass( 'extiw' );
 	} else {

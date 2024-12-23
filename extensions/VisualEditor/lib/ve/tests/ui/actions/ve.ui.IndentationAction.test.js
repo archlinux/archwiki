@@ -8,8 +8,8 @@ QUnit.module( 've.ui.IndentationAction' );
 
 /* Tests */
 
-QUnit.test( 'increase/decrease', function ( assert ) {
-	var cases = [
+QUnit.test( 'increase/decrease', ( assert ) => {
+	const cases = [
 		{
 			rangeOrSelection: new ve.Range( 13, 14 ),
 			method: 'increase',
@@ -120,14 +120,13 @@ QUnit.test( 'increase/decrease', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runActionTest(
-			'indentation', assert, caseItem.html || ve.dm.example.isolationHtml, false, caseItem.method, [], caseItem.rangeOrSelection, caseItem.msg,
+			assert,
 			{
-				expectedData: caseItem.expectedData,
-				expectedOriginalData: caseItem.expectedOriginalData,
-				expectedRangeOrSelection: caseItem.expectedRangeOrSelection,
-				undo: caseItem.undo
+				actionName: 'indentation',
+				html: ve.dm.example.isolationHtml,
+				...caseItem
 			}
 		);
 	} );

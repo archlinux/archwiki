@@ -39,13 +39,22 @@ namespace MediaWiki\Languages\Data;
  * @ingroup Language
  */
 class Names {
-	/** @phpcs-require-sorted-array */
-	public static $names = [
+	/**
+	 * @deprecated since 1.43
+	 * @var string[]
+	 */
+	public static $names = self::NAMES;
+	/**
+	 * @internal Public for use by LanguageNameUtils, use LanguageNameUtils::getLanguageNames() instead.
+	 * @phpcs-require-sorted-array
+	 */
+	public const NAMES = [
 		'aa' => 'Qafár af', # Afar
 		'aae' => 'Arbërisht', # Arbëresh
 		'ab' => 'аԥсшәа', # Abkhaz
 		'abs' => 'bahasa ambon', # Ambonese Malay, T193566
 		'ace' => 'Acèh', # Aceh
+		'acf' => 'Kwéyòl Sent Lisi', # Saint Lucian Creole
 		'acm' => 'عراقي', # Iraqi (Mesopotamian) Arabic
 		'ady' => 'адыгабзэ', # Adyghe
 		'ady-cyrl' => 'адыгабзэ', # Adyghe
@@ -62,6 +71,7 @@ class Names {
 		'ang' => 'Ænglisc', # Old English, T25283
 		'ann' => 'Obolo', # Obolo
 		'anp' => 'अंगिका', # Angika
+		'apc' => 'شامي', # Levantine Arabic
 		'ar' => 'العربية', # Arabic
 		'arc' => 'ܐܪܡܝܐ', # Aramaic
 		'arn' => 'mapudungun', # Mapuche, Mapudungu, Araucanian (Araucano)
@@ -94,6 +104,7 @@ class Names {
 		'be-x-old' => 'беларуская (тарашкевіца)', # (be-tarask compat)
 		'bew' => 'Betawi', # Betawi
 		'bg' => 'български', # Bulgarian
+		'bgc' => 'हरियाणवी', # Haryanvi
 		'bgn' => 'روچ کپتین بلوچی', # Western Balochi
 		'bh' => 'भोजपुरी', # Bihari macro language. Falls back to Bhojpuri (bho)
 		'bho' => 'भोजपुरी', # Bhojpuri
@@ -114,6 +125,7 @@ class Names {
 		'bxr' => 'буряад', # Buryat (Russia)
 		'ca' => 'català', # Catalan
 		'cbk-zam' => 'Chavacano de Zamboanga', # Zamboanga Chavacano, T124657
+		'ccp' => '𑄌𑄋𑄴𑄟𑄳𑄦', # Chakma
 		'cdo' => '閩東語 / Mìng-dĕ̤ng-ngṳ̄', # Min-dong (multiple scripts - defaults to Latin)
 		'ce' => 'нохчийн', # Chechen
 		'ceb' => 'Cebuano', # Cebuano
@@ -125,11 +137,10 @@ class Names {
 		'ckb' => 'کوردی', # Central Kurdish
 		'co' => 'corsu', # Corsican
 		'cps' => 'Capiceño', # Capiznon
-		# Pu-Xian Min / Putian-Xianyou Min (multiple scripts - defaults to Traditional Han script)
-		'cpx' => '莆仙語 / Pó-sing-gṳ̂',
-		'cpx-hans' => '莆仙语（简体）', # Pu-Xian Min (Simplified Han script)
-		'cpx-hant' => '莆仙語（繁體）', # Pu-Xian Min (Traditional Han script)
-		'cpx-latn' => 'Pó-sing-gṳ̂ (Báⁿ-uā-ci̍)', # Pu-Xian Min (Latin script)
+		'cpx' => '莆仙語 / Pó-sing-gṳ̂', # Puxian (multiple scripts - defaults to Traditional Han)
+		'cpx-hans' => '莆仙语（简体）', # Puxian (Simplified Han script)
+		'cpx-hant' => '莆仙語（繁體）', # Puxian (Traditional Han script)
+		'cpx-latn' => 'Pó-sing-gṳ̂ (Báⁿ-uā-ci̍)', # Puxian (Latin script)
 		'cr' => 'Nēhiyawēwin / ᓀᐦᐃᔭᐍᐏᐣ', # Cree
 		'crh' => 'qırımtatarca', # Crimean Tatar (multiple scripts - defaults to Latin)
 		'crh-cyrl' => 'къырымтатарджа (Кирилл)', # Crimean Tatar (Cyrillic)
@@ -150,8 +161,9 @@ class Names {
 		'din' => 'Thuɔŋjäŋ', # Dinka
 		'diq' => 'Zazaki', # Zazaki
 		'dsb' => 'dolnoserbski', # Lower Sorbian
-		'dtp' => 'Dusun Bundu-liwan', # Central Dusun
+		'dtp' => 'Kadazandusun', # Central Dusun
 		'dty' => 'डोटेली', # Doteli
+		'dua' => 'Duálá', # Duala
 		'dv' => 'ދިވެހިބަސް', # Dhivehi
 		'dz' => 'ཇོང་ཁ', # Dzongkha (Bhutan)
 		'ee' => 'eʋegbe', # Éwé
@@ -212,7 +224,10 @@ class Names {
 		'guw' => 'gungbe', # Gun
 		'gv' => 'Gaelg', # Manx
 		'ha' => 'Hausa', # Hausa
-		'hak' => '客家語/Hak-kâ-ngî', # Hakka
+		'hak' => '客家語 / Hak-kâ-ngî', # Hakka (multiple scripts)
+		'hak-hans' => '客家语（简体）', # Hakka (Simplified Han script)
+		'hak-hant' => '客家語（繁體）', # Hakka (Traditional Han script)
+		'hak-latn' => 'Hak-kâ-ngî (Pha̍k-fa-sṳ)', # Hakka (Latin script)
 		'haw' => 'Hawaiʻi', # Hawaiian
 		'he' => 'עברית', # Hebrew
 		'hi' => 'हिन्दी', # Hindi
@@ -224,7 +239,7 @@ class Names {
 		'hr' => 'hrvatski', # Croatian
 		'hrx' => 'Hunsrik', # Riograndenser Hunsrückisch
 		'hsb' => 'hornjoserbsce', # Upper Sorbian
-		'hsn' => '湘语', # Xiang Chinese
+		'hsn' => '湘語', # Xiang
 		'ht' => 'Kreyòl ayisyen', # Haitian Creole French
 		'hu' => 'magyar', # Hungarian
 		'hu-formal' => 'magyar (formal)', # Hungarian formal address
@@ -232,6 +247,7 @@ class Names {
 		'hyw' => 'Արեւմտահայերէն', # Western Armenian, T201276, T219975
 		'hz' => 'Otsiherero', # Herero
 		'ia' => 'interlingua', # Interlingua (IALA)
+		'iba' => 'Jaku Iban', # Iban
 		'ibb' => 'ibibio', # Ibibio
 		'id' => 'Bahasa Indonesia', # Indonesian
 		'ie' => 'Interlingue', # Interlingue (Occidental)
@@ -245,6 +261,8 @@ class Names {
 		'inh' => 'гӀалгӀай', # Ingush
 		'io' => 'Ido', # Ido
 		'is' => 'íslenska', # Icelandic
+		'isv-cyrl' => 'меджусловјанскы', # Interslavic (Cyrillic)
+		'isv-latn' => 'medžuslovjansky', # Interslavic (Latin)
 		'it' => 'italiano', # Italian
 		'iu' => 'ᐃᓄᒃᑎᑐᑦ / inuktitut', # Inuktitut (macro language, see ike/ikt, falls back to ike-cans)
 		'ja' => '日本語', # Japanese
@@ -262,13 +280,13 @@ class Names {
 		'kcg' => 'Tyap', # Tyap
 		'kea' => 'kabuverdianu', # Cape Verdean Creole
 		'kg' => 'Kongo', # Kongo, (FIXME!) should probably be KiKongo or KiKoongo
-		'kge' => 'Basa Kumoring', # Komering
+		'kge' => 'Kumoring', # Komering
 		'khw' => 'کھوار', # Khowar
 		'ki' => 'Gĩkũyũ', # Gikuyu
 		'kiu' => 'Kırmancki', # Kirmanjki
 		'kj' => 'Kwanyama', # Kwanyama
 		'kjh' => 'хакас', # Khakas
-		'kjp' => 'ဖၠုံလိက်', # Eastern Pwo (multiple scripts - defaults to Burmese script)
+		'kjp' => 'ဖၠုံလိက်', # Eastern Pwo
 		'kk' => 'қазақша', # Kazakh (multiple scripts - defaults to Cyrillic)
 		'kk-arab' => 'قازاقشا (تٴوتە)', # Kazakh Arabic
 		'kk-cn' => 'قازاقشا (جۇنگو)', # Kazakh (China)
@@ -279,10 +297,11 @@ class Names {
 		'kl' => 'kalaallisut', # Inuktitut, Greenlandic/Greenlandic/Kalaallisut (kal)
 		'km' => 'ភាសាខ្មែរ', # Khmer, Central
 		'kn' => 'ಕನ್ನಡ', # Kannada
+		'knc' => 'Yerwa Kanuri', # Central Kanuri
 		'ko' => '한국어', # Korean
 		'ko-kp' => '조선말', # Korean (DPRK), T190324
 		'koi' => 'перем коми', # Komi-Permyak
-		'kr' => 'kanuri', # Kanuri
+		'kr' => 'kanuri', # Kanuri; deprecated, falls back to Central Kanuri (knc)
 		'krc' => 'къарачай-малкъар', # Karachay-Balkar
 		'kri' => 'Krio', # Krio
 		'krj' => 'Kinaray-a', # Kinaray-a
@@ -293,7 +312,7 @@ class Names {
 		'ksh' => 'Ripoarisch', # Ripuarian
 		'ksw' => 'စှီၤ', # S'gaw Karen
 		'ku' => 'kurdî', # Kurdish (multiple scripts - defaults to Latin)
-		'ku-arab' => 'كوردي (عەرەبی)', # Northern Kurdish (Arabic script) (falls back to ckb)
+		'ku-arab' => 'کوردی (عەرەبی)', # Northern Kurdish (Arabic script) (falls back to ckb; see also T368698)
 		'ku-latn' => 'kurdî (latînî)', # Northern Kurdish (Latin script)
 		'kum' => 'къумукъ', # Kumyk (Cyrillic, 'kum-latn' for Latin script)
 		'kus' => 'Kʋsaal', # Kusaal
@@ -319,6 +338,7 @@ class Names {
 		'lrc' => 'لۊری شومالی', # Northern Luri
 		'lt' => 'lietuvių', # Lithuanian
 		'ltg' => 'latgaļu', # Latgalian
+		'lua' => 'ciluba', # Luba-Lulua
 		'lus' => 'Mizo ţawng', # Mizo/Lushai
 		'luz' => 'لئری دوٙمینی', # Southern Luri
 		'lv' => 'latviešu', # Latvian
@@ -337,7 +357,7 @@ class Names {
 		'mk' => 'македонски', # Macedonian
 		'ml' => 'മലയാളം', # Malayalam
 		'mn' => 'монгол', # Halh Mongolian (Cyrillic) (ISO 639-3: khk)
-		'mnc' => 'ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ', # Manchu
+		'mnc' => 'manju gisun', # Manchu (Latin script)
 		'mnc-latn' => 'manju gisun', # Manchu (Latin script)
 		'mnc-mong' => 'ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ', # Manchu (Mongolian script)
 		'mni' => 'ꯃꯤꯇꯩ ꯂꯣꯟ', # Manipuri/Meitei
@@ -350,6 +370,7 @@ class Names {
 		'ms' => 'Bahasa Melayu', # Malay
 		'ms-arab' => 'بهاس ملايو', # Malay (Arabic Jawi script)
 		'mt' => 'Malti', # Maltese
+		'mui' => 'Baso Palembang', # Musi/Palembang
 		'mus' => 'Mvskoke', # Muskogee/Creek
 		'mwl' => 'Mirandés', # Mirandese
 		'my' => 'မြန်မာဘာသာ', # Burmese
@@ -357,7 +378,10 @@ class Names {
 		'mzn' => 'مازِرونی', # Mazanderani
 		'na' => 'Dorerin Naoero', # Nauruan
 		'nah' => 'Nāhuatl', # Nahuatl (added to ISO 639-3 on 2006-10-31)
-		'nan' => 'Bân-lâm-gú', # Min-nan, T10217
+		'nan' => '閩南語 / Bân-lâm-gú', # Minnan (multiple scripts), T10217, T354937
+		'nan-hant' => '閩南語（傳統漢字）', # Minnan (Traditional Han script), T354937
+		'nan-latn-pehoeji' => 'Bân-lâm-gú (Pe̍h-ōe-jī)', # Minnan (Pe̍h-ōe-jī), T354937
+		'nan-latn-tailo' => 'Bân-lâm-gú (Tâi-lô)', # Minnan (Tâi-lô), T354937
 		'nap' => 'Napulitano', # Neapolitan, T45793
 		'nb' => 'norsk bokmål', # Norwegian (Bokmal)
 		'nds' => 'Plattdüütsch', # Low German ''or'' Low Saxon
@@ -377,8 +401,10 @@ class Names {
 		'nog' => 'ногайша', # Nogai
 		'nov' => 'Novial', # Novial
 		'nqo' => 'ߒߞߏ', # N'Ko
+		'nr' => 'isiNdebele seSewula', # Southern Ndebele
 		'nrm' => 'Nouormand', # Norman (invalid code; 'nrf' in ISO 639 since 2014)
 		'nso' => 'Sesotho sa Leboa', # Northern Sotho
+		'nup' => 'Nupe', # Nupe
 		'nv' => 'Diné bizaad', # Navajo
 		'ny' => 'Chi-Chewa', # Chichewa
 		'nyn' => 'runyankore', # Nkore
@@ -428,7 +454,6 @@ class Names {
 		'rup' => 'armãneashti', # Aromanian
 		'ruq' => 'Vlăheşte', # Megleno-Romanian (multiple scripts - defaults to Latin)
 		'ruq-cyrl' => 'Влахесте', # Megleno-Romanian (Cyrillic script)
-		# 'ruq-grek' => 'Βλαεστε', # Megleno-Romanian (Greek script)
 		'ruq-latn' => 'Vlăheşte', # Megleno-Romanian (Latin script)
 		'rut' => 'мыхаӀбишды', # Rutul
 		'rw' => 'Ikinyarwanda', # Kinyarwanda
@@ -467,7 +492,7 @@ class Names {
 		'skr' => 'سرائیکی', # Saraiki (multiple scripts - defaults to Arabic)
 		'skr-arab' => 'سرائیکی', # Saraiki (Arabic script)
 		'sl' => 'slovenščina', # Slovenian
-		'sli' => 'Schläsch', # Lower Selisian
+		'sli' => 'Schläsch', # Lower Silesian
 		'sm' => 'Gagana Samoa', # Samoan
 		'sma' => 'åarjelsaemien', # Southern Sami
 		'smn' => 'anarâškielâ', # Inari Sami
@@ -493,7 +518,7 @@ class Names {
 		'ta' => 'தமிழ்', # Tamil
 		'tay' => 'Tayal', # Atayal
 		'tcy' => 'ತುಳು', # Tulu
-		'tdd' => 'ᥖᥭᥰᥖᥬᥳᥑᥨᥒᥰ', # Tai Nüa
+		'tdd' => 'ᥖᥭᥰ ᥖᥬᥲ ᥑᥨᥒᥰ', # Tai Nüa
 		'te' => 'తెలుగు', # Telugu
 		'tet' => 'tetun', # Tetun
 		'tg' => 'тоҷикӣ', # Tajiki (falls back to tg-cyrl)
@@ -501,6 +526,7 @@ class Names {
 		'tg-latn' => 'tojikī', # Tajiki (Latin script)
 		'th' => 'ไทย', # Thai
 		'ti' => 'ትግርኛ', # Tigrinya
+		'tig' => 'ትግሬ', # Tigre
 		'tk' => 'Türkmençe', # Turkmen
 		'tl' => 'Tagalog', # Tagalog
 		'tly' => 'tolışi', # Talysh
@@ -562,6 +588,7 @@ class Names {
 		'za' => 'Vahcuengh', # Zhuang
 		'zea' => 'Zeêuws', # Zeeuws / Zeaws
 		'zgh' => 'ⵜⴰⵎⴰⵣⵉⵖⵜ ⵜⴰⵏⴰⵡⴰⵢⵜ', # Moroccan Amazigh (multiple scripts - defaults to Neo-Tifinagh)
+		'zgh-latn' => 'tamaziɣt tanawayt', # Moroccan Amazigh (Latin script)
 		'zh' => '中文', # (Zhōng Wén) - Chinese
 		'zh-classical' => '文言', # Classical Chinese/Literary Chinese -- (see T10217)
 		'zh-cn' => '中文（中国大陆）', # Chinese (PRC)

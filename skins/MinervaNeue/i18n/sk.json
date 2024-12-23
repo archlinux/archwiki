@@ -34,7 +34,6 @@
 	"mobile-frontend-meta-data-issues-categories": "O tejto kategórii",
 	"mobile-frontend-meta-data-issues-header": "Nedostatky stránky",
 	"minerva-meta-data-issues-section-header": "Nedostatky sekcie",
-	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "Upraviť úvodnú sekciu tejto stránky",
 	"mobile-frontend-placeholder": "Hľadať na stránke {{SITENAME}}",
 	"mobile-frontend-random-button": "Náhodná",
@@ -55,6 +54,5 @@
 	"minerva-skin-desc": "Responzívny vzhľad navrhnutý pre mobily",
 	"skin-minerva-issue-learn-more": "Viac informácií",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategórie",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "Zobraziť kategórie stránok",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Vylepšené spracovanie nedostatkov stránky"
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "Zobraziť kategórie stránok"
 }

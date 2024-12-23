@@ -2,9 +2,8 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Maintenance;
 
-use Maintenance;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\UserFactory;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -36,7 +35,7 @@ class NewTopicOptOutActiveUsers extends Maintenance {
 		}
 
 		$this->dbw = $this->getDB( DB_PRIMARY );
-		$this->userFactory = MediaWikiServices::getInstance()->getUserFactory();
+		$this->userFactory = $this->getServiceContainer()->getUserFactory();
 
 		$userRows = $this->dbw->newSelectQueryBuilder()
 			->caller( __METHOD__ )
@@ -46,7 +45,7 @@ class NewTopicOptOutActiveUsers extends Maintenance {
 				'qcc_namespace' => NS_USER,
 			] )
 			->join( 'user', null, 'qcc_title=user_name' )
-			->where( [ 'user_editcount >= 100' ] )
+			->where( $this->dbw->expr( 'user_editcount', '>=', 100 ) )
 			->fields( [ 'user_id', 'user_name' ] )
 			->fetchResultSet();
 
@@ -102,7 +101,7 @@ class NewTopicOptOutActiveUsers extends Maintenance {
 			->where( [
 				'up_user' => $userId,
 				'up_property' => 'discussiontools-betaenable',
-				'up_value' => 1,
+				'up_value' => '1',
 			] )
 			->field( '1' )
 			->fetchField();
@@ -134,7 +133,7 @@ class NewTopicOptOutActiveUsers extends Maintenance {
 			->row( [
 				'up_user' => $userId,
 				'up_property' => 'discussiontools-' . HookUtils::NEWTOPICTOOL,
-				'up_value' => 0,
+				'up_value' => '0',
 			] )
 			->caller( __METHOD__ )
 			->execute();

@@ -1,24 +1,32 @@
 'use strict';
 
-const assert = require( 'assert' );
 const Api = require( 'wdio-mediawiki/Api' );
+const BlankPage = require( 'wdio-mediawiki/BlankPage' );
 const RecentChangesPage = require( '../pageobjects/recentchanges.page' );
 const Util = require( 'wdio-mediawiki/Util' );
 
-describe( 'Special:RecentChanges', function () {
+describe( 'Special:RecentChanges', () => {
 	let content, name, bot;
 
 	before( async () => {
 		bot = await Api.bot();
 	} );
 
-	beforeEach( async function () {
+	beforeEach( async () => {
 		await browser.deleteAllCookies();
 		content = Util.getTestString();
 		name = Util.getTestString();
 	} );
 
 	it( 'shows page creation', async function () {
+
+		// First try to load a blank page, so the next command works.
+		await BlankPage.open();
+		// Don't try to run wikitext-specific tests if the test namespace isn't wikitext by default.
+		if ( await Util.isTargetNotWikitext( name ) ) {
+			this.skip();
+		}
+
 		await bot.edit( name, content );
 		await browser.waitUntil( async () => {
 			const result = await bot.request( {
@@ -35,7 +43,7 @@ describe( 'Special:RecentChanges', function () {
 			async () => ( await RecentChangesPage.titles[ 0 ].getText() ) === name,
 			{ timeout: 10000 }
 		);
-		assert.strictEqual( await RecentChangesPage.titles[ 0 ].getText(), name );
+		await expect( await RecentChangesPage.titles[ 0 ] ).toHaveText( name );
 	} );
 
 } );

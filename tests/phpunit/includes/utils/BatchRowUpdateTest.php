@@ -1,6 +1,8 @@
 <?php
 
+use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\Platform\SQLPlatform;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * Tests for BatchRowUpdate and its components
@@ -112,8 +114,7 @@ class BatchRowUpdateTest extends MediaWikiIntegrationTestCase {
 			[
 				'Must not duplicate primary keys into column selector',
 				// Expected column select.
-				// TODO: figure out how to only assert the array_values portion and not the keys
-				[ 0 => 'foo', 1 => 'bar', 3 => 'baz' ],
+				[ 'foo', 'bar', 'baz' ],
 				// primary keys
 				[ 'foo', 'bar', ],
 				// setFetchColumn
@@ -132,8 +133,8 @@ class BatchRowUpdateTest extends MediaWikiIntegrationTestCase {
 		$db->expects( $this->once() )
 			->method( 'select' )
 			// only testing second parameter of Database::select
-			->with( 'some_table', $columns )
-			->willReturn( new ArrayIterator( [] ) );
+			->with( [ 'some_table' ], $columns )
+			->willReturn( new FakeResultWrapper( [] ) );
 
 		$reader = new BatchRowIterator( $db, 'some_table', $primaryKeys, 22 );
 		$reader->setFetchColumns( $fetchColumns );
@@ -200,7 +201,10 @@ class BatchRowUpdateTest extends MediaWikiIntegrationTestCase {
 	}
 
 	protected function mockDbConsecutiveSelect( array $retvals ) {
-		$db = $this->mockDb( [ 'select', 'addQuotes' ] );
+		$db = $this->mockDb( [ 'select', 'newSelectQueryBuilder', 'addQuotes' ] );
+		$db->method( 'newSelectQueryBuilder' )->willReturnCallback( static function () use ( $db ) {
+			return new SelectQueryBuilder( $db );
+		} );
 		$db->method( 'select' )
 			->will( $this->consecutivelyReturnFromSelect( $retvals ) );
 		$db->method( 'addQuotes' )
@@ -214,8 +218,8 @@ class BatchRowUpdateTest extends MediaWikiIntegrationTestCase {
 	protected function consecutivelyReturnFromSelect( array $results ) {
 		$retvals = [];
 		foreach ( $results as $rows ) {
-			// The Database::select method returns iterators, so we do too.
-			$retvals[] = $this->returnValue( new ArrayIterator( $rows ) );
+			// The Database::select method returns result wrapper, so we do too.
+			$retvals[] = $this->returnValue( new FakeResultWrapper( $rows ) );
 		}
 
 		return $this->onConsecutiveCalls( ...$retvals );

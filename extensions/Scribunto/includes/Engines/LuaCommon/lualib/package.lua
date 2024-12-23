@@ -90,7 +90,7 @@ function _G.require (modname)
 	assert (type(modname) == "string", format (
 		"bad argument #1 to 'require' (string expected, got %s)", type(modname)))
 	local p = _LOADED[modname]
-	if p then -- is it there?
+	if p ~= nil then -- is it there?
 		if p == sentinel then
 			error (format ("loop or previous error loading module '%s'", modname))
 		end
@@ -101,7 +101,7 @@ function _G.require (modname)
 	local actual_arg = _G.arg
 	_G.arg = { modname }
 	local res = init (modname)
-	if res then
+	if res ~= nil then
 		_LOADED[modname] = res
 	end
 	_G.arg = actual_arg

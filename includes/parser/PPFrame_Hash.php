@@ -19,15 +19,20 @@
  * @ingroup Parser
  */
 
-use MediaWiki\Parser\Parser;
+namespace MediaWiki\Parser;
+
+use InvalidArgumentException;
+use MediaWiki\Message\Message;
 use MediaWiki\Title\Title;
+use RuntimeException;
+use Stringable;
 
 /**
  * An expansion frame, used as a context to expand the result of preprocessToObj()
  * @ingroup Parser
  */
 // phpcs:ignore Squiz.Classes.ValidClassName.NotCamelCaps
-class PPFrame_Hash implements PPFrame {
+class PPFrame_Hash implements Stringable, PPFrame {
 
 	/**
 	 * @var Parser
@@ -324,8 +329,7 @@ class PPFrame_Hash implements PPFrame {
 				# OT_WIKI will only respect <ignore> in substed templates.
 				# The other output types respect it unless NO_IGNORE is set.
 				# extractSections() sets NO_IGNORE and so never respects it.
-				if ( ( !isset( $this->parent ) &&
-					   $this->parser->getOutputType() === Parser::OT_WIKI )
+				if ( ( !isset( $this->parent ) && $this->parser->getOutputType() === Parser::OT_WIKI )
 					|| ( $flags & PPFrame::NO_IGNORE )
 				) {
 					$out .= $contextChildren[0];
@@ -637,3 +641,6 @@ class PPFrame_Hash implements PPFrame {
 		return $this->ttl;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( PPFrame_Hash::class, 'PPFrame_Hash' );

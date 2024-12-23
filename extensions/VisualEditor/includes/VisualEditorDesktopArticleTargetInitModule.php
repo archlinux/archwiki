@@ -37,7 +37,7 @@ class VisualEditorDesktopArticleTargetInitModule extends FileModule {
 		foreach ( [ 'edit', 'create', 'edit-local', 'create-local' ] as $msgKey ) {
 			// MediaWiki defaults
 			$messages[] = "skin-view-$msgKey";
-			foreach ( $services->getSkinFactory()->getSkinNames() as $skname => $unused ) {
+			foreach ( $services->getSkinFactory()->getInstalledSkins() as $skname => $unused ) {
 				// Per-skin overrides
 				// Messages: vector-view-edit, vector-view-create
 				// Disable database lookups for site-level message overrides as they

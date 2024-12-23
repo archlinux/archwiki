@@ -19,11 +19,14 @@
  */
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\Content;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\MessageCacheUpdate;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageFallback;
@@ -35,6 +38,8 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubObject;
@@ -43,7 +48,11 @@ use MediaWiki\Title\Title;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Wikimedia\LightweightObjectStore\ExpirationAwareness;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LikeValue;
@@ -88,7 +97,6 @@ class MessageCache implements LoggerAwareInterface {
 
 	/**
 	 * Lifetime for cache, for keys stored in $wanCache, in seconds.
-	 * @var int
 	 */
 	private const WAN_TTL = ExpirationAwareness::TTL_DAY;
 
@@ -592,6 +600,7 @@ class MessageCache implements LoggerAwareInterface {
 
 		// Common conditions
 		$conds = [
+			// Treat redirects as not existing (T376398)
 			'page_is_redirect' => 0,
 			'page_namespace' => NS_MEDIAWIKI,
 		];
@@ -618,7 +627,7 @@ class MessageCache implements LoggerAwareInterface {
 			->select( [ 'page_title', 'page_latest' ] )
 			->from( 'page' )
 			->where( $conds )
-			->andWhere( [ 'page_len > ' . intval( $this->maxEntrySize ) ] )
+			->andWhere( $dbr->expr( 'page_len', '>', intval( $this->maxEntrySize ) ) )
 			->caller( __METHOD__ . "($code)-big" )->fetchResultSet();
 		foreach ( $res as $row ) {
 			// Include entries/stubs for all keys in $mostused in adaptive mode
@@ -649,17 +658,16 @@ class MessageCache implements LoggerAwareInterface {
 			array_diff( $revQuery['tables'], [ 'page' ] )
 		);
 
-		$res = $dbr->select(
-			$revQuery['tables'],
-			$revQuery['fields'],
-			array_merge( $conds, [
-				'page_len <= ' . intval( $this->maxEntrySize ),
+		$res = $dbr->newSelectQueryBuilder()
+			->queryInfo( $revQuery )
+			->where( $conds )
+			->andWhere( [
+				$dbr->expr( 'page_len', '<=', intval( $this->maxEntrySize ) ),
 				'page_latest = rev_id' // get the latest revision only
-			] ),
-			__METHOD__ . "($code)-small",
-			[ 'STRAIGHT_JOIN' ],
-			$revQuery['joins']
-		);
+			] )
+			->caller( __METHOD__ . "($code)-small" )
+			->straightJoinOption()
+			->fetchResultSet();
 
 		// Don't load content from uncacheable rows (T313004)
 		[ $cacheableRows, $uncacheableRows ] = $this->separateCacheableRows( $res );
@@ -1038,17 +1046,21 @@ class MessageCache implements LoggerAwareInterface {
 	 * @param string $key The message key
 	 * @param bool $useDB If true, look for the message in the DB, false
 	 *   to use only the compiled l10n cache.
-	 * @param bool|string|Language $langcode Code of the language to get the message for.
+	 * @param bool|string|Language|null $language Code of the language to get the message for.
 	 *   - If string and a valid code, will create a standard language object
 	 *   - If string but not a valid code, will create a basic language object
-	 *   - If boolean and false, create object from the current users language
-	 *   - If boolean and true, create object from the wikis content language
+	 *   - If false, create object from the current users language
+	 *   - If true or null, create object from the wikis content language
 	 *   - If language object, use it as given
+	 *   - If this parameter omitted the object from the wikis content language is used
+	 *   - Other values than a Language object or null are deprecated.
+	 * @param string &$usedKey @phan-output-reference If given, will be set to the message key
+	 *   that the message was fetched from (the requested key may be overridden by hooks).
 	 *
 	 * @return string|false False if the message doesn't exist, otherwise the
 	 *   message (which can be empty)
 	 */
-	public function get( $key, $useDB = true, $langcode = true ) {
+	public function get( $key, $useDB = true, $language = null, &$usedKey = '' ) {
 		if ( is_int( $key ) ) {
 			// Fix numerical strings that somehow become ints on their way here
 			$key = (string)$key;
@@ -1059,7 +1071,8 @@ class MessageCache implements LoggerAwareInterface {
 			return false;
 		}
 
-		$language = $this->getLanguageObject( $langcode );
+		$language ??= $this->contLang;
+		$language = $this->getLanguageObject( $language );
 
 		// Normalise title-case input (with some inlining)
 		$lckey = self::normalizeKey( $key );
@@ -1083,6 +1096,8 @@ class MessageCache implements LoggerAwareInterface {
 		}
 
 		$this->hookRunner->onMessageCache__get( $lckey );
+
+		$usedKey = $lckey;
 
 		// Loop through each language in the fallback list until we find something useful
 		$message = $this->getMessageFromFallbackChain(
@@ -1150,6 +1165,7 @@ class MessageCache implements LoggerAwareInterface {
 			return $langcode;
 		}
 
+		wfDeprecated( __METHOD__ . ' with not a Language object in $langcode', '1.43' );
 		if ( $langcode === true || $langcode === $this->contLangCode ) {
 			# $langcode is the language code of the wikis content language object.
 			# or it is a boolean and value is true
@@ -1444,7 +1460,7 @@ class MessageCache implements LoggerAwareInterface {
 	 * @param PageReference|null $page
 	 * @return string
 	 */
-	public function transform( $message, $interface = false, $language = null, PageReference $page = null ) {
+	public function transform( $message, $interface = false, $language = null, ?PageReference $page = null ) {
 		// Avoid creating parser if nothing to transform
 		if ( $this->inParser || !str_contains( $message, '{{' ) ) {
 			return $message;
@@ -1483,9 +1499,10 @@ class MessageCache implements LoggerAwareInterface {
 	 * @param Language|StubUserLang|string|null $language Language code
 	 * @return ParserOutput|string
 	 */
-	public function parse( $text, PageReference $page = null, $linestart = true,
+	public function parse( $text, ?PageReference $page = null, $linestart = true,
 		$interface = false, $language = null
 	) {
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 		global $wgTitle;
 
 		if ( $this->inParser ) {
@@ -1621,7 +1638,7 @@ class MessageCache implements LoggerAwareInterface {
 	 * @param Content|null $content New content for edit/create, null on deletion
 	 * @since 1.29
 	 */
-	public function updateMessageOverride( LinkTarget $linkTarget, Content $content = null ) {
+	public function updateMessageOverride( LinkTarget $linkTarget, ?Content $content = null ) {
 		// treat null as not existing
 		$msgText = $this->getMessageTextFromContent( $content ) ?? false;
 
@@ -1644,14 +1661,16 @@ class MessageCache implements LoggerAwareInterface {
 	 * @param Content|null $content Content or null if the message page does not exist
 	 * @return string|false|null Returns false if $content is null and null on error
 	 */
-	private function getMessageTextFromContent( Content $content = null ) {
+	private function getMessageTextFromContent( ?Content $content = null ) {
 		// @TODO: could skip pseudo-messages like js/css here, based on content model
-		if ( $content ) {
+		if ( $content && $content->isRedirect() ) {
+			// Treat redirects as not existing (T376398)
+			$msgText = false;
+		} elseif ( $content ) {
 			// Message page exists...
 			// XXX: Is this the right way to turn a Content object into a message?
 			// NOTE: $content is typically either WikitextContent, JavaScriptContent or
-			//       CssContent. MessageContent is *not* used for storing messages, it's
-			//       only used for wrapping them when needed.
+			//       CssContent.
 			$msgText = $content->getWikitextForTransclusion();
 			if ( $msgText === false || $msgText === null ) {
 				// This might be due to some kind of misconfiguration...

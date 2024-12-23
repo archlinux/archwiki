@@ -2,13 +2,14 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiUsageException;
-use IDBAccessObject;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\RateLimiter;
 use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Tests for editing page content model via api
@@ -17,11 +18,12 @@ use MediaWiki\Title\Title;
  * @group Database
  * @group medium
  *
- * @covers \ApiChangeContentModel
+ * @covers \MediaWiki\Api\ApiChangeContentModel
  * @author DannyS712
  */
 class ApiChangeContentModelTest extends ApiTestCase {
 	use MockAuthorityTrait;
+	use TempUserTestTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -155,7 +157,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 				'model' => 'json'
 			],
 			null,
-			$this->mockAnonAuthorityWithPermissions( [ 'edit', 'editcontentmodel', 'writeapi' ] )
+			$this->mockAnonAuthorityWithPermissions( [ 'edit', 'editcontentmodel' ] )
 		);
 	}
 
@@ -198,7 +200,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 				'model' => 'text'
 			],
 			null,
-			$this->mockAnonAuthorityWithPermissions( [ 'edit', 'editcontentmodel', 'writeapi' ] )
+			$this->mockAnonAuthorityWithPermissions( [ 'edit', 'editcontentmodel' ] )
 		);
 	}
 
@@ -237,7 +239,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 				'model' => 'text'
 			],
 			null,
-			$this->mockAnonAuthorityWithPermissions( [ 'edit', 'editcontentmodel', 'writeapi' ] )
+			$this->mockAnonAuthorityWithPermissions( [ 'edit', 'editcontentmodel' ] )
 		);
 	}
 
@@ -272,7 +274,7 @@ class ApiChangeContentModelTest extends ApiTestCase {
 				'model' => 'wikitext'
 			],
 			null,
-			$this->mockAnonAuthorityWithPermissions( [ 'edit', 'editcontentmodel', 'writeapi' ] )
+			$this->mockAnonAuthorityWithPermissions( [ 'edit', 'editcontentmodel' ] )
 		);
 	}
 
@@ -295,9 +297,10 @@ class ApiChangeContentModelTest extends ApiTestCase {
 	 * Test that it works
 	 */
 	public function testEverythingWorks() {
+		$this->disableAutoCreateTempUser();
 		$title = Title::makeTitle( NS_MAIN, 'ExistingPage' );
 		$performer = $this->mockAnonAuthorityWithPermissions(
-			[ 'edit', 'editcontentmodel', 'writeapi', 'applychangetags' ]
+			[ 'edit', 'editcontentmodel', 'applychangetags' ]
 		);
 		$this->assertSame(
 			'wikitext',

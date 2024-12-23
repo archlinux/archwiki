@@ -4,20 +4,18 @@ describe( 'menuTabs', () => {
 	beforeEach( () => {
 		/** @type {Function} */
 		let callback;
-		jest.spyOn( mw, 'hook' ).mockImplementation( () => {
-			return {
-				add: function ( fn ) {
-					callback = fn;
+		jest.spyOn( mw, 'hook' ).mockImplementation( () => ( {
+			add: function ( fn ) {
+				callback = fn;
 
-					return this;
-				},
-				fire: ( data ) => {
-					if ( callback ) {
-						callback( data );
-					}
+				return this;
+			},
+			fire: ( data ) => {
+				if ( callback ) {
+					callback( data );
 				}
-			};
-		} );
+			}
+		} ) );
 
 	} );
 

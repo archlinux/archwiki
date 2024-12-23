@@ -82,7 +82,6 @@
 	"templatedata-modal-button-map": "Verwijzingen bewerken",
 	"templatedata-modal-button-importParams": "Parameters importeren",
 	"templatedata-modal-button-removemap": "Verwijzing verwijderen",
-	"templatedata-modal-button-restoreparam": "Parameter herstellen",
 	"templatedata-modal-button-saveparam": "Opslaan",
 	"templatedata-modal-confirmcancel": "Weet u zeker dat u uw wijzigingen wilt weggooien?",
 	"templatedata-modal-current-language": "Huidige taal: $1",

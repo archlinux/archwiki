@@ -2,16 +2,15 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Hooks;
 
-use HashBagOStuff;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\Hooks\Handlers\AutoPromoteGroupsHandler;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
+use Wikimedia\ObjectCache\HashBagOStuff;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Hooks\Handlers\AutoPromoteGroupsHandler
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\Hooks\Handlers\AutoPromoteGroupsHandler
  */
 class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 
@@ -31,7 +30,6 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::onGetAutoPromoteGroups
 	 * @dataProvider provideOnGetAutoPromoteGroups_nothingToDo
 	 */
 	public function testOnGetAutoPromoteGroups_nothingToDo( bool $enabled, array $groups ) {
@@ -56,7 +54,6 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::onGetAutoPromoteGroups
 	 * @dataProvider provideOnGetAutoPromoteGroups
 	 */
 	public function testOnGetAutoPromoteGroups_cacheHit(
@@ -76,7 +73,6 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::onGetAutoPromoteGroups
 	 * @dataProvider provideOnGetAutoPromoteGroups
 	 */
 	public function testOnGetAutoPromoteGroups_cacheMiss(

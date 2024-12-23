@@ -90,6 +90,10 @@ class EnWikiFormulaeTest extends MediaWikiUnitTestCase {
 				$r1 = $texVC->check( $result["output"] );
 				$this->assertEquals( "+", $r1["status"],
 					"error rechecking output: " . $tex . " -> " . $result["output"] );
+				$mathml = $result["input"]->renderMML();
+				$this->assertStringNotContainsString( 'merror', $mathml,
+					"error rendering MathML: " . $tex . " -> " . $result["output"] );
+
 			} catch ( PhpPegJs\SyntaxError $ex ) {
 				$message = "Syntax error: " . $ex->getMessage() .
 					' at line ' . $ex->grammarLine . ' column ' .

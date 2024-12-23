@@ -24,8 +24,8 @@ use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Extension\OATHAuth\Module\TOTP;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\User\User;
-use Message;
 
 /**
  * AuthManager secondary authentication provider for TOTP second-factor authentication.
@@ -37,6 +37,14 @@ use Message;
  * @see https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm
  */
 class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationProvider {
+	private TOTP $module;
+
+	/**
+	 * @param TOTP $module
+	 */
+	public function __construct( TOTP $module ) {
+		$this->module = $module;
+	}
 
 	/**
 	 * @param string $action
@@ -58,13 +66,6 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 	 * @return AuthenticationResponse
 	 */
 	public function beginSecondaryAuthentication( $user, array $reqs ) {
-		$userRepo = MediaWikiServices::getInstance()->getService( 'OATHUserRepository' );
-		$authUser = $userRepo->findByUser( $user );
-
-		if ( !( $authUser->getModule() instanceof TOTP ) ) {
-			return AuthenticationResponse::newAbstain();
-		}
-
 		return AuthenticationResponse::newUI(
 			[ new TOTPAuthenticationRequest() ],
 			wfMessage( 'oathauth-auth-ui' ),
@@ -87,13 +88,6 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 		$authUser = $userRepo->findByUser( $user );
 		$token = $request->OATHToken;
 
-		if ( !( $authUser->getModule() instanceof TOTP ) ) {
-			$this->logger->warning( 'Two-factor authentication was disabled mid-authentication for {user}', [
-				'user' => $user->getName(),
-			] );
-			return AuthenticationResponse::newAbstain();
-		}
-
 		// Don't increase pingLimiter, just check for limit exceeded.
 		if ( $user->pingLimiter( 'badoath', 0 ) ) {
 			return AuthenticationResponse::newUI(
@@ -105,7 +99,7 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 				), 'error' );
 		}
 
-		if ( $authUser->getModule()->verify( $authUser, [ 'token' => $token ] ) ) {
+		if ( $this->module->verify( $authUser, [ 'token' => $token ] ) ) {
 			return AuthenticationResponse::newPass();
 		}
 

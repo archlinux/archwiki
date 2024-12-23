@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:AutoblockList
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -30,16 +27,14 @@ use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
-use MediaWiki\Config\ConfigException;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
-use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\BlockListPager;
 use MediaWiki\SpecialPage\SpecialPage;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
- * A special page that lists autoblocks
+ * List of autoblocks
  *
  * @since 1.29
  * @ingroup SpecialPage
@@ -129,29 +124,12 @@ class SpecialAutoblockList extends SpecialPage {
 	 * @return BlockListPager
 	 */
 	protected function getBlockListPager() {
-		$readStage = $this->getConfig()
-				->get( MainConfigNames::BlockTargetMigrationStage ) & SCHEMA_COMPAT_READ_MASK;
-		if ( $readStage === SCHEMA_COMPAT_READ_OLD ) {
-			$conds = [
-				'ipb_parent_block_id IS NOT NULL',
-				// ipb_parent_block_id <> 0 because of T282890
-				'ipb_parent_block_id <> 0',
-			];
-			# Is the user allowed to see hidden blocks?
-			if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
-				$conds['ipb_deleted'] = 0;
-			}
-		} elseif ( $readStage === SCHEMA_COMPAT_READ_NEW ) {
-			$conds = [
-				'bl_parent_block_id IS NOT NULL',
-			];
-			# Is the user allowed to see hidden blocks?
-			if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
-				$conds['bl_deleted'] = 0;
-			}
-		} else {
-			throw new ConfigException(
-				'$wgBlockTargetMigrationStage has an invalid read stage' );
+		$conds = [
+			$this->dbProvider->getReplicaDatabase()->expr( 'bl_parent_block_id', '!=', null ),
+		];
+		# Is the user allowed to see hidden blocks?
+		if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
+			$conds['bl_deleted'] = 0;
 		}
 
 		return new BlockListPager(

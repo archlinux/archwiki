@@ -21,8 +21,12 @@
  * @since 1.21
  */
 
+namespace MediaWiki\Api;
+
+use InvalidArgumentException;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\MediaWikiServices;
+use UnexpectedValueException;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
@@ -60,7 +64,7 @@ class ApiModuleManager extends ContextSource {
 	 * @param ApiBase $parentModule Parent module instance will be used during instantiation
 	 * @param ObjectFactory|null $objectFactory Object factory to use when instantiating modules
 	 */
-	public function __construct( ApiBase $parentModule, ObjectFactory $objectFactory = null ) {
+	public function __construct( ApiBase $parentModule, ?ObjectFactory $objectFactory = null ) {
 		$this->mParent = $parentModule;
 		$this->objectFactory = $objectFactory ?? MediaWikiServices::getInstance()->getObjectFactory();
 	}
@@ -97,18 +101,8 @@ class ApiModuleManager extends ContextSource {
 	 * @param string|array $spec The ObjectFactory spec for instantiating the module,
 	 *  or a class name to instantiate.
 	 * @param callable|null $factory Callback for instantiating the module (deprecated).
-	 *
-	 * @throws InvalidArgumentException
 	 */
-	public function addModule( $name, $group, $spec, $factory = null ) {
-		if ( !is_string( $name ) ) {
-			throw new InvalidArgumentException( '$name must be a string' );
-		}
-
-		if ( !is_string( $group ) ) {
-			throw new InvalidArgumentException( '$group must be a string' );
-		}
-
+	public function addModule( string $name, string $group, $spec, $factory = null ) {
 		if ( is_string( $spec ) ) {
 			$spec = [
 				'class' => $spec
@@ -271,3 +265,6 @@ class ApiModuleManager extends ContextSource {
 		return array_keys( $this->mGroups );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiModuleManager::class, 'ApiModuleManager' );

@@ -2,8 +2,6 @@
 
 namespace MediaWiki\Permissions;
 
-use DBAccessObjectUtils;
-use IDBAccessObject;
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\CommentStore\CommentStore;
@@ -18,14 +16,14 @@ use MediaWiki\Page\PageStore;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use stdClass;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\DBAccessObjectUtils;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
- * Class RestrictionStore
- *
  * @since 1.37
  */
 class RestrictionStore {
@@ -38,32 +36,15 @@ class RestrictionStore {
 		MainConfigNames::SemiprotectedRestrictionLevels,
 	];
 
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var WANObjectCache */
-	private $wanCache;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var LinkCache */
-	private $linkCache;
-
-	/** @var LinksMigration */
-	private $linksMigration;
-
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var PageStore */
-	private $pageStore;
+	private ServiceOptions $options;
+	private WANObjectCache $wanCache;
+	private ILoadBalancer $loadBalancer;
+	private LinkCache $linkCache;
+	private LinksMigration $linksMigration;
+	private CommentStore $commentStore;
+	private HookContainer $hookContainer;
+	private HookRunner $hookRunner;
+	private PageStore $pageStore;
 
 	/**
 	 * @var array[] Caching various restrictions data in the following format:
@@ -78,16 +59,6 @@ class RestrictionStore {
 	 */
 	private $cache = [];
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param WANObjectCache $wanCache
-	 * @param ILoadBalancer $loadBalancer
-	 * @param LinkCache $linkCache
-	 * @param LinksMigration $linksMigration
-	 * @param CommentStore $commentStore
-	 * @param HookContainer $hookContainer
-	 * @param PageStore $pageStore
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		WANObjectCache $wanCache,
@@ -123,6 +94,15 @@ class RestrictionStore {
 	 */
 	public function getRestrictions( PageIdentity $page, string $action ): array {
 		$page->assertWiki( PageIdentity::LOCAL );
+
+		// Optimization: Avoid repeatedly fetching page restrictions (from cache or DB)
+		// for repeated PermissionManager::userCan calls, if this action cannot be restricted
+		// in the first place. This is primarily to improve batch rendering on RecentChanges,
+		// where as of writing this will save 0.5s on a 8.0s response. (T341319)
+		$restrictionTypes = $this->listApplicableRestrictionTypes( $page );
+		if ( !in_array( $action, $restrictionTypes ) ) {
+			return [];
+		}
 
 		$restrictions = $this->getAllRestrictions( $page );
 		return $restrictions[$action] ?? [];
@@ -200,7 +180,7 @@ class RestrictionStore {
 	public function deleteCreateProtection( PageIdentity $page ): void {
 		$page->assertWiki( PageIdentity::LOCAL );
 
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->loadBalancer->getConnection( DB_PRIMARY );
 		$dbw->newDeleteQueryBuilder()
 			->deleteFrom( 'protected_titles' )
 			->where( [ 'pt_namespace' => $page->getNamespace(), 'pt_title' => $page->getDBkey() ] )
@@ -372,18 +352,18 @@ class RestrictionStore {
 			$loadRestrictionsFromDb = static function ( IReadableDatabase $dbr ) use ( $fname, $id ) {
 				return iterator_to_array(
 					$dbr->newSelectQueryBuilder()
-					->select( [ 'pr_type', 'pr_expiry', 'pr_level', 'pr_cascade' ] )
-					->from( 'page_restrictions' )
-					->where( [ 'pr_page' => $id ] )
-					->caller( $fname )->fetchResultSet()
+						->select( [ 'pr_type', 'pr_expiry', 'pr_level', 'pr_cascade' ] )
+						->from( 'page_restrictions' )
+						->where( [ 'pr_page' => $id ] )
+						->caller( $fname )->fetchResultSet()
 				);
 			};
 
 			if ( $readLatest ) {
-				$dbr = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+				$dbr = $this->loadBalancer->getConnection( DB_PRIMARY );
 				$rows = $loadRestrictionsFromDb( $dbr );
 			} else {
-				$this->linkCache->addLinkObj( $page );
+				$this->pageStore->getPageForLink( TitleValue::newFromPage( $page ) )->getId();
 				$latestRev = $this->linkCache->getGoodLinkFieldObj( $page, 'revision' );
 				if ( !$latestRev ) {
 					// This method can get called in the middle of page creation
@@ -396,7 +376,7 @@ class RestrictionStore {
 						$this->wanCache->makeKey( 'page-restrictions', 'v1', $id, $latestRev ),
 						$this->wanCache::TTL_DAY,
 						function ( $curValue, &$ttl, array &$setOpts ) use ( $loadRestrictionsFromDb ) {
-							$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+							$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
 							$setOpts += Database::getCacheSetOptions( $dbr );
 							if ( $this->loadBalancer->hasOrMadeRecentPrimaryChanges() ) {
 								// TODO: cleanup Title cache and caller assumption mess in general
@@ -469,7 +449,7 @@ class RestrictionStore {
 				continue;
 			}
 
-			$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+			$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
 			$expiry = $dbr->decodeExpiry( $row->pr_expiry );
 
 			// Only apply the restrictions if they haven't expired!
@@ -510,16 +490,15 @@ class RestrictionStore {
 		$cacheEntry = &$this->cache[CacheKeyHelper::getKeyForPage( $page )];
 
 		if ( !$cacheEntry || !array_key_exists( 'create_protection', $cacheEntry ) ) {
-			$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+			$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
 			$commentQuery = $this->commentStore->getJoin( 'pt_reason' );
-			$row = $dbr->selectRow(
-				[ 'protected_titles' ] + $commentQuery['tables'],
-				[ 'pt_user', 'pt_expiry', 'pt_create_perm' ] + $commentQuery['fields'],
-				[ 'pt_namespace' => $page->getNamespace(), 'pt_title' => $page->getDBkey() ],
-				__METHOD__,
-				[],
-				$commentQuery['joins']
-			);
+			$row = $dbr->newSelectQueryBuilder()
+				->select( [ 'pt_user', 'pt_expiry', 'pt_create_perm' ] )
+				->from( 'protected_titles' )
+				->where( [ 'pt_namespace' => $page->getNamespace(), 'pt_title' => $page->getDBkey() ] )
+				->queryInfo( $commentQuery )
+				->caller( __METHOD__ )
+				->fetchRow();
 
 			if ( $row ) {
 				$cacheEntry['create_protection'] = [
@@ -574,7 +553,7 @@ class RestrictionStore {
 			return $cacheEntry['has_cascading'];
 		}
 
-		$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+		$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
 		$queryBuilder = $dbr->newSelectQueryBuilder();
 		$queryBuilder->select( [ 'pr_expiry' ] )
 			->from( 'page_restrictions' )

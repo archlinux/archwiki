@@ -22,19 +22,32 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 final class MMLFullCoverageTest extends MediaWikiUnitTestCase {
+	/** @var float */
 	private static $SIMILARITYTRESH = 0.7;
+	/** @var bool */
 	private static $SKIPXMLVALIDATION = true;
+	/** @var string */
 	private static $FILENAMELATEXML = __DIR__ . "/mmlRes-latexml-FullCoverage.json";
+	/** @var string */
 	private static $FILENAMEMATHOID = __DIR__ . "/mmlRes-mathml-FullCoverage.json";
+	/** @var bool */
 	private static $APPLYFILTER = false;
+	/** @var int */
 	private static $FILTERSTART = 0;
+	/** @var int */
 	private static $FILTERLENGTH = 60;
+	/** @var bool */
 	private static $GENERATEHTML = false;
+	/** @var string */
 	private static $GENERATEDHTMLFILE = __DIR__ . "/MMLFullCoverageTest-Output.html";
+	/** @var bool */
 	private static $GENERATEEVAL = false;
+	/** @var string */
 	private static $GENERATEDEVALFILE = __DIR__ . "/MMLFullCoverageEval.json";
+	/** @var int[] */
 	private static $SKIPPEDINDICES = [];
 
+	/** @var bool */
 	private static $FILTERMML = true;
 
 	public static function setUpBeforeClass(): void {
@@ -62,7 +75,7 @@ final class MMLFullCoverageTest extends MediaWikiUnitTestCase {
 		if ( in_array( $tc->ctr, self::$SKIPPEDINDICES, true ) ) {
 			MMLTestUtilHTML::generateHTMLtableRow( self::$GENERATEDHTMLFILE, [ $tc->ctr, $tc->tex,
 				"skipped", "skipped", "skipped" ], false, self::$GENERATEHTML );
-			$this->assertTrue( true );
+			$this->addToAssertionCount( 1 );
 			return;
 		}
 		# Fetch result from WikiTexVC(PHP)
@@ -74,6 +87,8 @@ final class MMLFullCoverageTest extends MediaWikiUnitTestCase {
 
 		$mml_latexml = self::$FILTERMML ? self::loadXMLandDeleteAttrs( $tc->mml_latexml ) : $tc->mml_latexml;
 		$mathMLtexVC = MMLTestUtil::getMMLwrapped( $resultT["input"] );
+		$this->assertStringNotContainsString( 'merror', $mathMLtexVC,
+			"tc $$tc->tex$: MathML $mathMLtexVC contains error" );
 		$mmlComparator = new MMLComparator();
 		$compRes = $mmlComparator->compareMathML( $tc->mml_mathoid, $mathMLtexVC );
 
@@ -100,12 +115,12 @@ final class MMLFullCoverageTest extends MediaWikiUnitTestCase {
 				$this->fail( "No Mathoid reference found for: " . $tc->tex );
 			}
 			if ( $compRes['similarityF'] >= self::$SIMILARITYTRESH ) {
-				$this->assertTrue( true );
+				$this->addToAssertionCount( 1 );
 			} else {
 				$this->assertXmlStringEqualsXmlString( $tc->mml_mathoid, $mathMLtexVC );
 			}
 		} else {
-			$this->assertTrue( true );
+			$this->addToAssertionCount( 1 );
 		}
 	}
 

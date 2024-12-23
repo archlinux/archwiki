@@ -1,32 +1,17 @@
 /* CSS for Parsoid Cite extension */
 
+@import 'ext.cite.parsoid.counter-style.less';
+
+:root {
+	--cite-backlink-separator: '.';
+	--cite-counter-style: decimal;
+}
+
 /* Parsoid HTML emits <sup> tags for follows uses even though there is
  * no visible output for follows. Parsoid does this to ensure it can
  * roundtrip back the source wikitext after edits.
  * However, since this HTML should not be rendered, we use CSS to hide it */
 .mw-ref-follow {
-	display: none;
-}
-
-/* Upstream bug in stylelint makes it complain aboout the case of 'mw-Ref' */
-
-.mw-ref a {
-	/* With a group set */
-	&[ data-mw-group ]::after {
-		content: '[' attr( data-mw-group ) ' ' counter( mw-Ref, decimal ) ']';
-	}
-
-	/* Without a group */
-	&::after {
-		content: '[' counter( mw-Ref, decimal ) ']';
-	}
-}
-
-/* Hide the default rendering in browsers that support content
- * generation by selecting for :after pseudo-element. */
-/* stylelint-disable-next-line selector-type-no-unknown */
-x-thereisnoelementwiththisname::after,
-span.mw-reflink-text {
 	display: none;
 }
 
@@ -71,7 +56,6 @@ span[ rel~='mw:referencedBy' ] {
 
 	a::before {
 		counter-increment: mw-ref-linkback;
-		content: counter( mw-references, decimal ) '.' counter( mw-ref-linkback, decimal );
 		line-height: 1;
 		vertical-align: super; /* <sup> use in Cite */
 		font-size: smaller; /* <sup> use in Cite */

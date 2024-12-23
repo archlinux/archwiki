@@ -61,7 +61,6 @@
 	"templatedata-modal-button-map": "Labot piesaistes",
 	"templatedata-modal-button-importParams": "Importēt parametrus",
 	"templatedata-modal-button-removemap": "Noņemt piesaisti",
-	"templatedata-modal-button-restoreparam": "Atjaunot parametru",
 	"templatedata-modal-button-saveparam": "Saglabāt",
 	"templatedata-modal-confirmcancel": "Vai tiešām vēlies atmest savas izmaiņas?",
 	"templatedata-modal-current-language": "Pašreizējā valoda: $1",

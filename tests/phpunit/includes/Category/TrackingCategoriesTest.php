@@ -4,10 +4,11 @@ use MediaWiki\Category\TrackingCategories;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Parser\ParserOutput;
 
 /**
  * @covers \MediaWiki\Parser\ParserOutput
- * @covers \CacheTime
+ * @covers \MediaWiki\Parser\CacheTime
  * @group Database
  *        ^--- trigger DB shadowing because we are using Title magic
  */
@@ -28,7 +29,7 @@ class TrackingCategoriesTest extends MediaWikiLangTestCase {
 		);
 
 		$po = new ParserOutput;
-		$po->setPageProperty( 'defaultsort', 'foobar' );
+		$po->setUnsortedPageProperty( 'defaultsort', 'foobar' );
 
 		$page = PageReferenceValue::localReference( NS_USER, 'Testing' );
 

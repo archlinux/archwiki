@@ -1,9 +1,29 @@
 /* Toolbar */
 
+.ve-ui-editCheck-toolbar {
+	.oo-ui-toolbar-bar {
+		display: flex;
+	}
+
+	.oo-ui-toolbar-tools {
+		flex: 1;
+		display: flex;
+	}
+
+	.oo-ui-toolbar-tools.oo-ui-toolbar-after {
+		flex: 0;
+	}
+
+	&.ve-init-mw-mobileArticleTarget-toolbar .oo-ui-toolbar-tools.oo-ui-toolbar-after {
+		display: none;
+	}
+}
+
 .ve-ui-toolbar-group-title {
 	font-weight: bold;
 	flex: 5 !important; /* stylelint-disable-line declaration-no-important */
 	line-height: 3em;
+	text-align: center;
 }
 
 /* Context item */
@@ -18,14 +38,17 @@
 	}
 }
 
+/* Fix the callout border color in browsers which support :has */
+/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 .ve-ui-desktopContext > .oo-ui-popupWidget:has( .ve-ui-editCheckContextItem:first-child ) .oo-ui-popupWidget-anchor::after {
 	border-bottom-color: #fce7fe;
 }
 
 /* Selections */
 
-.ve-ce-surface-selections-editCheck .ve-ce-surface-selection {
+.ve-ce-surface-reviewMode + .ve-ui-overlay .ve-ce-surface-selections-editCheck .ve-ce-surface-selection {
 	opacity: 0.2;
+	pointer-events: auto;
 }
 
 .ve-ce-surface-selections-editCheck .ve-ce-surface-selection > div {
@@ -36,4 +59,18 @@
 	border-radius: 2px;
 	padding: 2px;
 	margin: -2px 0 0 -2px;
+}
+
+.ve-ce-surface-selections-editCheckWarning .ve-ce-surface-selection {
+	opacity: 0.2;
+
+	> div {
+		mix-blend-mode: darken;
+		// Adjust target colours to account for 50% opacity
+		background: ( #fef6e7 - 0.8 * ( #fff ) ) / 0.2;
+		border: 1px solid ( ( #a66200 - 0.8 * ( #fff ) ) / 0.2 );
+		border-radius: 2px;
+		padding: 2px;
+		margin: -2px 0 0 -2px;
+	}
 }

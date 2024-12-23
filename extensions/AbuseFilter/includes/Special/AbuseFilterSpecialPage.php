@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\AbuseFilter\Special;
 
 use HtmlArmor;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Html\Html;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleValue;
-use Xml;
 
 /**
  * Parent class for AbuseFilter special pages.
@@ -113,7 +113,7 @@ abstract class AbuseFilterSpecialPage extends SpecialPage {
 			$msg = $this->msg( $msgName )->parse();
 
 			if ( $name === $pageType ) {
-				$links[] = Xml::tags( 'strong', null, $msg );
+				$links[] = Html::rawElement( 'strong', [], $msg );
 			} else {
 				$links[] = $this->getLinkRenderer()->makeLink(
 					new TitleValue( NS_SPECIAL, $page ),
@@ -127,7 +127,7 @@ abstract class AbuseFilterSpecialPage extends SpecialPage {
 			->escaped();
 		$linkStr = $this->msg( 'abusefilter-topnav' )->parse() . " $linkStr";
 
-		$linkStr = Xml::tags( 'div', [ 'class' => 'mw-abusefilter-navigation' ], $linkStr );
+		$linkStr = Html::rawElement( 'div', [ 'class' => 'mw-abusefilter-navigation' ], $linkStr );
 
 		$this->getOutput()->setSubtitle( $linkStr );
 	}

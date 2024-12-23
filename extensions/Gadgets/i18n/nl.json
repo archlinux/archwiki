@@ -51,7 +51,7 @@
 	"gadgets-export-download": "Downloaden",
 	"gadgets-requires-es6": "Deze gadget wordt alleen ondersteund in ES6-compatibele browsers",
 	"gadgets-validate-notset": "De eigenschap <code>$1</code> is niet ingesteld.",
-	"gadgets-validate-wrongtype": "De eigenschap <code>$1</code> moet <code>$2</code> zijn in plaats van <code>$3</code>.",
+	"gadgets-validate-wrongtype": "De eigenschap <code>$1</code> moet van het type <code>$2</code> zijn.",
 	"gadgets-validate-json": "Er zijn JSON-bestanden opgegeven, maar die worden niet gebruikt. Ze zijn alleen geldig voor ingepakte gadgets.",
 	"gadgets-validate-es6default": "Gadgets waarvoor ES6 vereist is kunnen niet standaard worden ingeschakeld.",
 	"gadgets-validate-noentrypoint": "Pakketvlag genegeerd omdat er geen scriptbestanden zijn opgegeven.",

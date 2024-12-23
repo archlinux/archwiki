@@ -95,14 +95,25 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider formatValueEmptyProvider
 	 * @dataProvider formatValueDefaultProvider
 	 */
-	public function testFormatValue( $name, $expected = null, $row = null ) {
+	public function testFormatValue( $name, $expected, $row ) {
 		// Set the time to now so it does not get off during the test.
-		MWTimestamp::setFakeTime( MWTimestamp::time() );
+		MWTimestamp::setFakeTime( '20230405060708' );
 
-		$value = $name === 'bl_timestamp' ? MWTimestamp::time() : '';
-		$expected ??= MWTimestamp::getInstance()->format( 'H:i, j F Y' );
+		$value = $row->$name ?? null;
 
-		$row = $row ?: (object)[];
+		if ( $name === 'bl_timestamp' ) {
+			// Wrap the expected timestamp in a string with the timestamp in the format
+			// used by the BlockListPager.
+			$linkRenderer = $this->getServiceContainer()->getLinkRenderer();
+			$link = $linkRenderer->makeKnownLink(
+				$this->specialPageFactory->getTitleForAlias( 'BlockList' ),
+				MWTimestamp::getInstance( $value )->format( 'H:i, j F Y' ),
+				[],
+				[ 'wpTarget' => "#{$row->bl_id}" ],
+			);
+			$expected = $link;
+		}
+
 		$pager = $this->getBlockListPager();
 		$wrappedPager = TestingAccessWrapper::newFromObject( $pager );
 		$wrappedPager->mCurrentRow = $row;
@@ -115,18 +126,14 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 	 * Test empty values.
 	 */
 	public static function formatValueEmptyProvider() {
+		$row = (object)[
+			'bl_id' => 1,
+		];
+
 		return [
-			[
-				'test',
-				'Unable to format test',
-			],
-			[
-				'bl_timestamp',
-			],
-			[
-				'bl_expiry',
-				'infinite<br />0 minutes left',
-			],
+			[ 'test', 'Unable to format test', $row ],
+			[ 'bl_timestamp', null, $row ],
+			[ 'bl_expiry', 'infinite<br />0 seconds left', $row ],
 		];
 	}
 
@@ -138,6 +145,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 			'bt_user' => 0,
 			'bt_user_text' => null,
 			'bt_address' => '127.0.0.1',
+			'bl_id' => 1,
 			'bl_by_text' => 'Admin',
 			'bt_auto' => 0,
 			'bl_anon_only' => 0,
@@ -157,12 +165,12 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				'bl_timestamp',
-				null,
+				'20230405060708',
 				$row,
 			],
 			[
 				'bl_expiry',
-				'infinite<br />0 minutes left',
+				'infinite<br />0 seconds left',
 				$row,
 			],
 			[
@@ -185,7 +193,6 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testFormatValueRestrictions() {
 		$this->overrideConfigValues( [
-			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::Script => '/w/index.php',
 		] );
 
@@ -273,7 +280,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 			'bl_by' => $admin->getId(),
 			'bl_by_text' => $admin->getName(),
 			'bl_sitewide' => 1,
-			'bl_timestamp' => $this->db->timestamp( wfTimestamp( TS_MW ) ),
+			'bl_timestamp' => $this->getDb()->timestamp( wfTimestamp( TS_MW ) ),
 			'bl_reason_text' => '[[Comment link]]',
 			'bl_reason_data' => null,
 		];
@@ -310,7 +317,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 			'address' => $target,
 			'by' => $this->getTestSysop()->getUser(),
 			'reason' => 'Parce que',
-			'expiry' => $this->db->getInfinity(),
+			'expiry' => $this->getDb()->getInfinity(),
 			'sitewide' => false,
 		] );
 		$block->setRestrictions( [
@@ -320,9 +327,9 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 		$blockStore->insertBlock( $block );
 
 		$pager = $this->getBlockListPager();
-		$result = $this->db->newSelectQueryBuilder()
+		$result = $this->getDb()->newSelectQueryBuilder()
 			->queryInfo( $pager->getQueryInfo() )
-			->where( [ 'ipb_id' => $block->getId() ] )
+			->where( [ 'bl_id' => $block->getId() ] )
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
@@ -345,7 +352,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 	 * @coversNothing
 	 */
 	public function testOffset() {
-		if ( $this->db->getType() === 'postgres' ) {
+		if ( $this->getDb()->getType() === 'postgres' ) {
 			$this->markTestSkipped( "PostgreSQL fatals when the first part of " .
 				"the offset parameter has the wrong timestamp format" );
 		}

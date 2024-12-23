@@ -1,0 +1,51 @@
+{
+	"opts": {
+		"destination": "docs/js",
+		"pages": {
+			"modules": {
+				"longname": "Modules",
+				"readme": "resources/src/modules.md"
+			},
+			"namespaces": {
+				"depth": 1,
+				"longname": "Globals",
+				"readme": "resources/src/README.md"
+			}
+		},
+		"pedantic": true,
+		"readme": "resources/README.md",
+		"recurse": true,
+		"template": "node_modules/jsdoc-wmf-theme"
+	},
+	"plugins": [
+		"node_modules/jsdoc-wmf-theme/plugins/default"
+	],
+	"source": {
+		"include": [
+			"resources/src/"
+		],
+		"exclude": [
+		]
+	},
+	"templates": {
+		"cleverLinks": true,
+		"default": {
+			"useLongnameInNav": true
+		},
+		"wmf": {
+			"maintitle": "MediaWiki Frontend API",
+			"siteMap": {
+				"sections": true
+			},
+			"hideSections": [ "Classes", "Events" ],
+			"repository": "https://gerrit.wikimedia.org/g/mediawiki/core/",
+			"linkMap": {
+				"boolean": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+				"jQuery.fn": "https://api.jquery.com/jQuery/",
+				"JSON.parse": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse",
+				"number": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number",
+				"string": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String"
+			}
+		}
+	}
+}

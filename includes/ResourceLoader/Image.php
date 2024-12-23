@@ -21,7 +21,6 @@
 namespace MediaWiki\ResourceLoader;
 
 use DOMDocument;
-use FileBackend;
 use InvalidArgumentException;
 use InvalidSVGException;
 use MediaWiki\Languages\LanguageFallback;
@@ -31,6 +30,7 @@ use MediaWiki\Shell\Shell;
 use RuntimeException;
 use SvgHandler;
 use SVGReader;
+use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\Minify\CSSMin;
 
 /**
@@ -42,7 +42,6 @@ use Wikimedia\Minify\CSSMin;
 class Image {
 	/**
 	 * Map of allowed file extensions to their MIME types.
-	 * @var array
 	 */
 	private const FILE_TYPES = [
 		'svg' => 'image/svg+xml',
@@ -338,6 +337,7 @@ class Image {
 		header( 'Content-Type: ' . $mime );
 		header( 'Content-Disposition: ' .
 			FileBackend::makeContentDisposition( 'inline', $filename ) );
+		header( 'Access-Control-Allow-Origin: *' );
 	}
 
 	/**

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Besnik b",
 			"TMg",
 			"Vyolla"
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Ky është rregull i fshehur.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Ky rregull prek titullin e faqes.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Kod gjuhe",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<I pavlefshëm>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>I pavlefshëm</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Gjuhë",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Burim",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Synim",

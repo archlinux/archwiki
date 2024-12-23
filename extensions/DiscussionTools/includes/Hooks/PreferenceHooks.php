@@ -9,18 +9,15 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use MediaWiki\Auth\Hook\LocalUserCreatedHook;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\User;
 
 class PreferenceHooks implements
-	LocalUserCreatedHook,
 	GetPreferencesHook
 {
 
@@ -204,31 +201,6 @@ class PreferenceHooks implements
 				$categoryMessage,
 				$categoryMessageExtra
 			);
-		}
-	}
-
-	/**
-	 * Handler for LocalUserCreated hook.
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/LocalUserCreated
-	 * @param User $user User object for the created user
-	 * @param bool $autocreated Whether this was an auto-creation
-	 * @return bool|void True or no return value to continue or false to abort
-	 */
-	public function onLocalUserCreated( $user, $autocreated ) {
-		if ( $user->isTemp() ) {
-			// Temp users can't have preferences (and we don't let them have topic subscriptions anyway)
-			return;
-		}
-
-		$userOptionsManager = MediaWikiServices::getInstance()->getUserOptionsManager();
-		// We want new users to be created with email-subscriptions to our notifications enabled
-		$userOptionsManager->setOption( $user, 'echo-subscriptions-email-dt-subscription', true );
-		// The auto topic subscription feature is disabled by default for existing users, but
-		// we enable it for new users (T294398).
-		// This can only occur when the feature is available for everyone; when it's in beta,
-		// the new user won't have the beta enabled, so it'll never be available here.
-		if ( HookUtils::isFeatureAvailableToUser( $user, HookUtils::AUTOTOPICSUB ) ) {
-			$userOptionsManager->setOption( $user, 'discussiontools-' . HookUtils::AUTOTOPICSUB, 1 );
 		}
 	}
 

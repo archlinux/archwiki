@@ -23,7 +23,7 @@
 	"license-name": "MIT",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"callback": "MediaWiki\\Extension\\VisualEditor\\Hooks::onRegistration",
 	"ServiceWiringFiles": [
@@ -46,28 +46,6 @@
 				"Category": true
 			},
 			"merge_strategy": "array_plus"
-		},
-		"VisualEditorBrowserUnsupportedList": {
-			"value": {
-				"firefox": [
-					[
-						"<=",
-						11
-					]
-				],
-				"safari": [
-					[
-						"<=",
-						6
-					]
-				],
-				"opera": [
-					[
-						"<",
-						12
-					]
-				]
-			}
 		},
 		"VisualEditorDisableForAnons": {
 			"description": "Do not change the edit tabs/links for anon users, regardless of other settings. Does not affect temporary users. Note that this does not actually disable the visual editor, contrary to the name, and you should probably set the user preferences so that wikitext editor is the default. (T253941)",
@@ -355,7 +333,6 @@
 				]
 			},
 			"dependencies": [
-				"jquery.client",
 				"jquery.textSelection",
 				"mediawiki.page.ready",
 				"mediawiki.storage",
@@ -567,6 +544,8 @@
 				"ext.visualEditor.supportCheck"
 			],
 			"messages": [
+				"visualeditor-rebase-corrupted-document-error",
+				"visualeditor-rebase-corrupted-document-title",
 				"collabpad",
 				"collabpad-doctitle"
 			]
@@ -602,6 +581,9 @@
 				"ext.visualEditor.core"
 			],
 			"messages": [
+				"visualeditor-rebase-client-author-name",
+				"visualeditor-rebase-corrupted-document-error",
+				"visualeditor-rebase-corrupted-document-title",
 				"visualeditor-collab-copy-title",
 				"visualeditor-collab-dialog-title",
 				"visualeditor-collab-dialog-privacy",
@@ -632,6 +614,13 @@
 				"editcheck/modules/init.js",
 				"editcheck/modules/EditCheckContextItem.js",
 				"editcheck/modules/EditCheckInspector.js",
+				"editcheck/modules/EditCheckDialog.js",
+				"editcheck/modules/EditCheckFactory.js",
+				"editcheck/modules/EditCheckAction.js",
+				"editcheck/modules/BaseEditCheck.js",
+				"editcheck/modules/AddReferenceEditCheck.js",
+				"editcheck/modules/ConvertReferenceEditCheck.js",
+				"editcheck/modules/TextMatchEditCheck.js",
 				{
 					"name": "editcheck/modules/config.json",
 					"callback": "\\MediaWiki\\Extension\\VisualEditor\\EditCheck\\ResourceLoaderData::getConfig"
@@ -700,6 +689,7 @@
 				"oojs",
 				"oojs-ui",
 				"unicodejs",
+				"jquery.client",
 				"ext.visualEditor.core.utils",
 				"ext.visualEditor.core.utils.parsing"
 			]
@@ -832,7 +822,6 @@
 				"savechanges",
 				"savechanges-start",
 				"showpreview",
-				"visualeditor-browserwarning",
 				"visualeditor-loaderror-revidconflict",
 				"visualeditor-loaderror-wrongmode",
 				"visualeditor-mweditmodesource-progress",
@@ -1197,6 +1186,7 @@
 				"lib/ve/src/ce/styles/nodes/ve.ce.TableNode.less",
 				"lib/ve/src/ce/styles/ve.ce.less",
 				"lib/ve/src/ce/styles/ve.ce.Surface.less",
+				"lib/ve/src/ui/styles/ve.ui.icons.less",
 				"lib/ve/src/ui/styles/dialogs/ve.ui.ToolbarDialog.less",
 				"lib/ve/src/ui/styles/dialogs/ve.ui.CommandHelpDialog.less",
 				"lib/ve/src/ui/styles/dialogs/ve.ui.FindAndReplaceDialog.less",
@@ -1546,6 +1536,7 @@
 				"oojs-ui.styles.icons-accessibility"
 			],
 			"messages": [
+				"visualeditor-dialog-extension-abandonedit",
 				"visualeditor-editingtabdialog-body",
 				"visualeditor-editingtabdialog-ok",
 				"visualeditor-editingtabdialog-title",
@@ -1892,6 +1883,7 @@
 				"visualeditor-linkinspector-educationpopup-text",
 				"visualeditor-linkinspector-educationpopup-title",
 				"visualeditor-linkinspector-illegal-title",
+				"visualeditor-linkinspector-invalid-blocked",
 				"visualeditor-linkinspector-invalid-external",
 				"visualeditor-linknodeinspector-add-label",
 				"visualeditor-linknodeinspector-title",
@@ -1935,7 +1927,7 @@
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWCategoryInputWidget.less",
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWCategoryItemWidget.less",
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWCategoryPopupWidget.less",
-				"modules/ve-mw/ui/styles/widgets/ve.ui.MWCategoryWidget.css",
+				"modules/ve-mw/ui/styles/widgets/ve.ui.MWCategoryWidget.less",
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWTocWidget.css",
 				"modules/ve-mw/ui/styles/dialogs/ve.ui.MWMetaDialog.less"
 			],
@@ -2043,7 +2035,6 @@
 				"modules/ve-mw/ui/pages/ve.ui.MWParameterPage.js",
 				"modules/ve-mw/ui/pages/ve.ui.MWTemplatePlaceholderPage.js",
 				"modules/ve-mw/ui/pages/ve.ui.MWTransclusionContentPage.js",
-				"modules/ve-mw/ui/dialogs/ve.ui.MWConfirmationDialog.js",
 				"modules/ve-mw/ui/dialogs/ve.ui.MWFloatingHelpDialog.js",
 				"modules/ve-mw/ui/dialogs/ve.ui.MWRequiredParamBlankConfirmDialog.js",
 				"modules/ve-mw/ui/dialogs/ve.ui.MWTemplateDialog.js",

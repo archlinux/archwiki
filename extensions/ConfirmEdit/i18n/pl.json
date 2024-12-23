@@ -8,12 +8,12 @@
 			"FunPL",
 			"Leinad",
 			"Matma Rex",
+			"Msz2001",
 			"Rail",
 			"Railfail536",
 			"Sp5uhe",
 			"WTM",
-			"Woytecr",
-			"Msz2001"
+			"Woytecr"
 		]
 	},
 	"captcha-edit": "Aby edytować tę stronę, najpierw musisz rozwiązać poniższe zadanie i wpisać odpowiedź do pola tekstowego ([[Special:Captcha/help|więcej informacji]]):",
@@ -43,5 +43,6 @@
 	"confirmedit-preview-validity": "Poprawność",
 	"confirmedit-preview-valid": "poprawny",
 	"confirmedit-preview-invalid": "nieprawidłowy",
-	"confirmedit-preview-description": "Poniższa tabela pokazuje listę linii na tej stronie ze wskazaniem czy jest to prawidłowy adres IP lub zakres adresów IP. Jeżeli dana linia będzie poprawnym adresem IP lub zakresem adresów IP, zostanie wykluczona ze sprawdzeń CAPTCHA, natomiast nieprawidłowe linie będą ignorowane. Przykładem prawidłowego zakresu adresów IP może być: 69.208.0.0/16, który zaczyna się od 69.208.0.0, a kończy na 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Więcej informacji] na temat przeliczania zakresów adresów IP."
+	"confirmedit-preview-description": "Poniższa tabela pokazuje listę linii na tej stronie ze wskazaniem czy jest to prawidłowy adres IP lub zakres adresów IP. Jeżeli dana linia będzie poprawnym adresem IP lub zakresem adresów IP, zostanie wykluczona ze sprawdzeń CAPTCHA, natomiast nieprawidłowe linie będą ignorowane. Przykładem prawidłowego zakresu adresów IP może być: 69.208.0.0/16, który zaczyna się od 69.208.0.0, a kończy na 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Więcej informacji] na temat przeliczania zakresów adresów IP.",
+	"abusefilter-edit-action-showcaptcha": "Wymagaj od użytkownika wypełnienia CAPTCHA, aby móc kontynuować akcję. Użytkownicy z uprawnieniami do pominięcia CAPTCHA są zwolnieni."
 }

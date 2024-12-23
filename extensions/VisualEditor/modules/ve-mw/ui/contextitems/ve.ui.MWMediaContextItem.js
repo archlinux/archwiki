@@ -22,7 +22,7 @@ ve.ui.MWMediaContextItem = function VeUiMWMediaContextItem( context, model ) {
 	// Initialization
 	this.$element.addClass( 've-ui-mwMediaContextItem' );
 
-	var mediaTag = model.getAttribute( 'mediaTag' ) || 'img';
+	const mediaTag = model.getAttribute( 'mediaTag' ) || 'img';
 
 	this.setIcon( {
 		img: 'image',
@@ -32,7 +32,7 @@ ve.ui.MWMediaContextItem = function VeUiMWMediaContextItem( context, model ) {
 		video: 'play'
 	}[ mediaTag ] );
 
-	var messagePostfix = ( mediaTag === 'audio' || mediaTag === 'video' ) ? mediaTag : 'image';
+	const messagePostfix = ( mediaTag === 'audio' || mediaTag === 'video' ) ? mediaTag : 'image';
 
 	// The following messages are used here:
 	// * visualeditor-media-title-audio
@@ -71,8 +71,8 @@ ve.ui.MWMediaContextItem.prototype.getDescription = function () {
  * @inheritdoc
  */
 ve.ui.MWMediaContextItem.prototype.renderBody = function () {
-	var title = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( this.model.getAttribute( 'resource' ) ) );
-	var $link = $( '<a>' )
+	const title = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( this.model.getAttribute( 'resource' ) ) );
+	const $link = $( '<a>' )
 		.text( this.getDescription() )
 		.attr( {
 			target: '_blank',

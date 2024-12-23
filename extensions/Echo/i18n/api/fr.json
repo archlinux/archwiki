@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Funkytoast",
 			"GeekEmad",
 			"Gomoko",
 			"Orlodrim",
@@ -13,6 +14,14 @@
 			"Yasten"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Déclencher manuellement l'envoi de notification à un utilisateur",
+	"apihelp-echocreateevent-example": "Envoyer une notification",
+	"apihelp-echocreateevent-param-user": "Utilisateur à qui envoyer la notification",
+	"apihelp-echocreateevent-param-header": "Contenu d'entête de la notification",
+	"apihelp-echocreateevent-param-content": "Contenu du corps de la notification",
+	"apihelp-echocreateevent-param-page": "Page qu'il faut lier dans la notification",
+	"apihelp-echocreateevent-param-section": "Section où la notification serait envoyée",
+	"apihelp-echocreateevent-param-email": "S'il faut également envoyer un courriel",
 	"apihelp-echomarkread-summary": "Marquer les notifications comme lues pour l’utilisateur actuel.",
 	"apihelp-echomarkread-param-list": "Une liste des identifiants de notifications à marquer comme lues.",
 	"apihelp-echomarkread-param-unreadlist": "Une liste des identifiants de notifications à marquer comme lues.",

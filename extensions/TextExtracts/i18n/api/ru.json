@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Okras",
-			"Facenapalm"
+			"Facenapalm",
+			"Okras"
 		]
 	},
 	"apihelp-query+extracts-summary": "Возвращает фрагменты указанных страниц в виде обычного текста или ограниченного HTML.",

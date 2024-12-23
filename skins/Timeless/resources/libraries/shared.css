@@ -301,20 +301,6 @@ a.new {
 	color: #ba0000;
 }
 
-/* Plainlinks - this can be used to switch
- * off special external link styling */
-.plainlinks a.external {
-	background: none !important; /* stylelint-disable-line declaration-no-important */
-	padding: 0 !important; /* stylelint-disable-line declaration-no-important */
-}
-
-/* External URLs should always be treated as LTR (T6330) */
-/* @noflip */ .rtl a.external.free,
-.rtl a.external.autonumber {
-	direction: ltr;
-	unicode-bidi: embed;
-}
-
 /**
  * wikitable class for skinning normal tables
  * keep in sync with commonPrint.css
@@ -350,10 +336,6 @@ a.new {
 .warning,
 .success {
 	font-size: larger;
-}
-
-.error {
-	color: #d73333;
 }
 
 .warning {

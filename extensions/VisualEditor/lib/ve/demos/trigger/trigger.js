@@ -6,7 +6,7 @@
 
 ( function () {
 	/* eslint-disable no-jquery/no-global-selector */
-	var $primary = $( '#primary' ),
+	const $primary = $( '#primary' ),
 		$modifiers = $( '#modifiers' ),
 		$aliases = $( '#aliases' ),
 		$trigger = $( '#trigger' ),
@@ -16,19 +16,18 @@
 		keyAliases = ve.ui.Trigger.static.keyAliases;
 
 	function setTrigger( trigger ) {
-		var parts;
 		trigger = trigger.toString();
-		parts = trigger.split( '+' );
+		const parts = trigger.split( '+' );
 		$trigger.text( trigger );
-		parts.forEach( function ( part ) {
-			var key = part.replace( '\\', '\\\\' ).replace( '"', '\\"' );
+		parts.forEach( ( part ) => {
+			const key = part.replace( '\\', '\\\\' ).replace( '"', '\\"' );
 			$( '.key[rel~="' + key + '"]' ).addClass( 'active' );
 		} );
 	}
 
 	// Initialization
 
-	modifierKeys.forEach( function ( modifierKey ) {
+	modifierKeys.forEach( ( modifierKey ) => {
 		$modifiers.append(
 			$( '<li>' ).append(
 				$( '<span>' )
@@ -38,7 +37,7 @@
 			)
 		);
 	} );
-	primaryKeys.forEach( function ( primaryKey ) {
+	primaryKeys.forEach( ( primaryKey ) => {
 		$primary.append(
 			$( '<li>' ).append(
 				$( '<span>' )
@@ -48,7 +47,7 @@
 			)
 		);
 	} );
-	Object.keys( keyAliases ).forEach( function ( key ) {
+	Object.keys( keyAliases ).forEach( ( key ) => {
 		$aliases.append(
 			$( '<li>' )
 				.append( $( '<span>' ).addClass( 'key alias' ).text( key ) )
@@ -69,7 +68,7 @@
 	// eslint-disable-next-line no-jquery/no-global-selector
 	$( '#primary .key, #modifiers .key' ).on( {
 		mousedown: function ( e ) {
-			var $target = $( e.target );
+			const $target = $( e.target );
 			if ( e.which === OO.ui.MouseButtons.LEFT ) {
 				if ( $target.closest( '#primary' ).length ) {
 					$primary.find( '.active' ).removeClass( 'active' );
@@ -81,7 +80,7 @@
 			}
 		},
 		mouseup: function ( e ) {
-			var parts = [],
+			const parts = [],
 				$target = $( e.target );
 			if ( e.which === OO.ui.MouseButtons.LEFT ) {
 				// eslint-disable-next-line no-jquery/no-class-state

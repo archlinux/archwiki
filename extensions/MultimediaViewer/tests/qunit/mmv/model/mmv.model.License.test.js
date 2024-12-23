@@ -21,7 +21,7 @@ const { License } = require( 'mmv' );
 
 	QUnit.module( 'mmv.model.License', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'License constructor sense check', function ( assert ) {
+	QUnit.test( 'License constructor sense check', ( assert ) => {
 		const shortName = 'CC-BY-SA-3.0';
 		const internalName = 'cc-by-sa-3.0';
 		const longName = 'Creative Commons Attribution--Share-Alike 3.0';
@@ -41,12 +41,12 @@ const { License } = require( 'mmv' );
 		assert.strictEqual( license.longName, longName, 'License has correct long name' );
 		assert.strictEqual( license.deedUrl, url, 'License has correct deed URL' );
 
-		assert.throws( function () {
+		assert.throws( () => {
 			license = new License();
 		}, 'License cannot be created without a short name' );
 	} );
 
-	QUnit.test( 'getShortName()', function ( assert ) {
+	QUnit.test( 'getShortName()', ( assert ) => {
 		const existingMessageKey = 'Internal name that does exist';
 		const nonExistingMessageKey = 'Internal name that does not exist';
 		const license1 = new License( 'Shortname' );
@@ -78,7 +78,7 @@ const { License } = require( 'mmv' );
 		mw.messages.exists = oldMwMessagesExists;
 	} );
 
-	QUnit.test( 'getShortLink()', function ( assert ) {
+	QUnit.test( 'getShortLink()', ( assert ) => {
 		const license1 = new License( 'lorem ipsum' );
 		const license2 = new License( 'lorem ipsum', 'lipsum' );
 		const license3 = new License( 'lorem ipsum', 'lipsum', 'Lorem ipsum dolor sit amet' );
@@ -101,7 +101,7 @@ const { License } = require( 'mmv' );
 			'Title for license with link is formatted correctly' );
 	} );
 
-	QUnit.test( 'isCc()', function ( assert ) {
+	QUnit.test( 'isCc()', ( assert ) => {
 		let license = new License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
 			'Creative Commons Attribution - ShareAlike 2.0',
 			'http://creativecommons.org/licenses/by-sa/2.0/' );
@@ -115,7 +115,7 @@ const { License } = require( 'mmv' );
 		assert.strictEqual( license.isCc(), false, 'Non-CC license with no internal name not recognized' );
 	} );
 
-	QUnit.test( 'isPd()', function ( assert ) {
+	QUnit.test( 'isPd()', ( assert ) => {
 		let license = new License( 'Public Domain', 'pd',
 			'Public Domain for lack of originality' );
 		assert.strictEqual( license.isPd(), true, 'PD license recognized' );
@@ -129,7 +129,7 @@ const { License } = require( 'mmv' );
 		assert.strictEqual( license.isPd(), false, 'Non-PD license with no internal name not recognized' );
 	} );
 
-	QUnit.test( 'isFree()', function ( assert ) {
+	QUnit.test( 'isFree()', ( assert ) => {
 		let license = new License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
 			'Creative Commons Attribution - ShareAlike 2.0',
 			'http://creativecommons.org/licenses/by-sa/2.0/' );
@@ -140,7 +140,7 @@ const { License } = require( 'mmv' );
 		assert.strictEqual( license.isFree(), false, 'Non-free flag handled correctly' );
 	} );
 
-	QUnit.test( 'needsAttribution()', function ( assert ) {
+	QUnit.test( 'needsAttribution()', ( assert ) => {
 		let license = new License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
 			'Creative Commons Attribution - ShareAlike 2.0',
 			'http://creativecommons.org/licenses/by-sa/2.0/' );

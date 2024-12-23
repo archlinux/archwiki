@@ -3,6 +3,7 @@
 namespace Wikimedia\Rdbms;
 
 use InvalidArgumentException;
+use Stringable;
 
 /**
  * DBPrimaryPos implementation for MySQL and MariaDB.
@@ -17,7 +18,7 @@ use InvalidArgumentException;
  * @see https://dev.mysql.com/doc/refman/5.6/en/replication-gtids-concepts.html
  * @internal
  */
-class MySQLPrimaryPos implements DBPrimaryPos {
+class MySQLPrimaryPos implements Stringable, DBPrimaryPos {
 	/** @var string One of (BINARY_LOG, GTID_MYSQL, GTID_MARIA) */
 	private $style;
 	/** @var string|null Base name of all Binary Log files */
@@ -39,9 +40,9 @@ class MySQLPrimaryPos implements DBPrimaryPos {
 	private const GTID_MARIA = 'gtid-maria';
 	private const GTID_MYSQL = 'gtid-mysql';
 
-	/** @var int Key name of the 6 digit binary log index number of a position tuple */
+	/** Key name of the 6 digit binary log index number of a position tuple */
 	public const CORD_INDEX = 0;
-	/** @var int Key name of the 64 bit binary log event number of a position tuple */
+	/** Key name of the 64 bit binary log event number of a position tuple */
 	public const CORD_EVENT = 1;
 
 	/**

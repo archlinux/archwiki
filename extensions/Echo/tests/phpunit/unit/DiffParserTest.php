@@ -1,6 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Unit;
+
 use MediaWiki\Extension\Notifications\DiscussionParser;
+use MediaWikiUnitTestCase;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\DiffParser

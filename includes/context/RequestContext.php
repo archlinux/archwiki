@@ -26,10 +26,10 @@ namespace MediaWiki\Context;
 
 use BadMethodCallException;
 use InvalidArgumentException;
-use Language;
 use LogicException;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -44,7 +44,7 @@ use MediaWiki\Session\SessionManager;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use MessageSpecifier;
+use MediaWiki\User\UserRigorOptions;
 use RuntimeException;
 use Skin;
 use Timing;
@@ -52,6 +52,7 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\IPUtils;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\NonSerializable\NonSerializableTrait;
 use Wikimedia\ScopedCallback;
 use WikiPage;
@@ -197,7 +198,7 @@ class RequestContext implements IContextSource, MutableContext {
 	/**
 	 * @param Title|null $title
 	 */
-	public function setTitle( Title $title = null ) {
+	public function setTitle( ?Title $title = null ) {
 		$this->title = $title;
 		// Clear cache of derived getters
 		$this->wikipage = null;
@@ -209,6 +210,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 */
 	public function getTitle() {
 		if ( $this->title === null ) {
+			// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 			global $wgTitle; # fallback to $wg till we can improve this
 			$this->title = $wgTitle;
 			$logger = LoggerFactory::getInstance( 'GlobalTitleFail' );
@@ -470,7 +472,7 @@ class RequestContext implements IContextSource, MutableContext {
 				$services = MediaWikiServices::getInstance();
 
 				// Optimisation: Avoid slow getVal(), this isn't user-generated content.
-				$code = $request->getRawVal( 'uselang', 'user' );
+				$code = $request->getRawVal( 'uselang' ) ?? 'user';
 				if ( $code === 'user' ) {
 					$userOptionsLookup = $services->getUserOptionsLookup();
 					$code = $userOptionsLookup->getOption( $user, 'language' );
@@ -555,7 +557,7 @@ class RequestContext implements IContextSource, MutableContext {
 			$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
 			$userSkin = $userOptionsLookup->getOption( $this->getUser(), 'skin' );
 			// Optimisation: Avoid slow getVal(), this isn't user-generated content.
-			$skinName = $this->getRequest()->getRawVal( 'useskin', $userSkin );
+			$skinName = $this->getRequest()->getRawVal( 'useskin' ) ?? $userSkin;
 		} else {
 			// User preference disabled
 			$skinName = $this->getConfig()->get( MainConfigNames::DefaultSkin );
@@ -625,7 +627,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 * Get the RequestContext object associated with the main request
 	 * and gives a warning to the log, to find places, where a context maybe is missing.
 	 *
-	 * @param string $func
+	 * @param string $func @phan-mandatory-param
 	 * @return RequestContext
 	 * @since 1.24
 	 */
@@ -697,14 +699,16 @@ class RequestContext implements IContextSource, MutableContext {
 			throw new InvalidArgumentException( "Invalid client IP address '{$params['ip']}'." );
 		}
 
+		$userFactory = MediaWikiServices::getInstance()->getUserFactory();
+
 		if ( $params['userId'] ) { // logged-in user
-			$user = User::newFromId( $params['userId'] );
+			$user = $userFactory->newFromId( (int)$params['userId'] );
 			$user->load();
 			if ( !$user->isRegistered() ) {
 				throw new InvalidArgumentException( "No user with ID '{$params['userId']}'." );
 			}
 		} else { // anon user
-			$user = User::newFromName( $params['ip'], false );
+			$user = $userFactory->newFromName( $params['ip'], UserRigorOptions::RIGOR_NONE );
 		}
 
 		$importSessionFunc = static function ( User $user, array $params ) {
@@ -756,6 +760,7 @@ class RequestContext implements IContextSource, MutableContext {
 		$oUser = self::getMain()->getUser();
 		$oParams = self::getMain()->exportSession();
 		$oRequest = self::getMain()->getRequest();
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable exceptions triggered above prevent the null case
 		$importSessionFunc( $user, $params );
 
 		// Set callback to save and close the new session and reload the old one
@@ -792,7 +797,10 @@ class RequestContext implements IContextSource, MutableContext {
 		} else {
 			$context->setRequest( new FauxRequest( $request ) );
 		}
-		$context->user = User::newFromName( '127.0.0.1', false );
+		$context->user = MediaWikiServices::getInstance()->getUserFactory()->newFromName(
+			'127.0.0.1',
+			UserRigorOptions::RIGOR_NONE
+		);
 
 		return $context;
 	}

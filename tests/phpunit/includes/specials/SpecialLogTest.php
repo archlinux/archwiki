@@ -4,6 +4,7 @@
  * @author Legoktm
  */
 
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionRecord;
@@ -28,7 +29,8 @@ class SpecialLogTest extends SpecialPageTestBase {
 			$services->getConnectionProvider(),
 			$services->getActorNormalization(),
 			$services->getUserIdentityLookup(),
-			$services->getUserNameUtils()
+			$services->getUserNameUtils(),
+			$services->getLogFormatterFactory()
 		);
 	}
 
@@ -52,8 +54,10 @@ class SpecialLogTest extends SpecialPageTestBase {
 		$title = $this->insertPage( 'Foo', 'Bar', null, $user )['title'];
 		$revId = $title->getLatestRevID();
 
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setUser( $this->getTestUser( [ 'sysop', 'suppress' ] )->getUser() );
 		// Hide our revision's comment
-		$list = RevisionDeleter::createList( 'revision', RequestContext::getMain(), $title, [ $revId ] );
+		$list = RevisionDeleter::createList( 'revision', $context, $title, [ $revId ] );
 		$status = $list->setVisibility( [
 			'value' => [
 				RevisionRecord::DELETED_RESTRICTED => 1,

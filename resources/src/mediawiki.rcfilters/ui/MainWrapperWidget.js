@@ -1,11 +1,10 @@
-var SavedLinksListWidget = require( './SavedLinksListWidget.js' ),
+const SavedLinksListWidget = require( './SavedLinksListWidget.js' ),
 	FilterWrapperWidget = require( './FilterWrapperWidget.js' ),
 	ChangesListWrapperWidget = require( './ChangesListWrapperWidget.js' ),
 	RcTopSectionWidget = require( './RcTopSectionWidget.js' ),
 	RclTopSectionWidget = require( './RclTopSectionWidget.js' ),
 	WatchlistTopSectionWidget = require( './WatchlistTopSectionWidget.js' ),
-	FormWrapperWidget = require( './FormWrapperWidget.js' ),
-	MainWrapperWidget;
+	FormWrapperWidget = require( './FormWrapperWidget.js' );
 
 /**
  * Wrapper for changes list content.
@@ -27,10 +26,10 @@ var SavedLinksListWidget = require( './SavedLinksListWidget.js' ),
  * @param {jQuery} [config.$wrapper] A jQuery object for the wrapper of the general
  *  system. If not given, falls back to this widget's $element
  */
-MainWrapperWidget = function MwRcfiltersUiMainWrapperWidget(
+const MainWrapperWidget = function MwRcfiltersUiMainWrapperWidget(
 	controller, model, savedQueriesModel, changesListModel, config
 ) {
-	config = $.extend( {}, config );
+	config = Object.assign( {}, config );
 
 	// Parent
 	MainWrapperWidget.super.call( this, config );
@@ -89,7 +88,7 @@ OO.inheritClass( MainWrapperWidget, OO.ui.Widget );
  * @param {string} specialPage
  */
 MainWrapperWidget.prototype.setTopSection = function ( specialPage ) {
-	var topSection;
+	let topSection;
 
 	if ( specialPage === 'Recentchanges' ) {
 		topSection = new RcTopSectionWidget(

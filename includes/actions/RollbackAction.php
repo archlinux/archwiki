@@ -25,6 +25,7 @@ use MediaWiki\Config\ConfigException;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -191,12 +192,22 @@ class RollbackAction extends FormAction {
 			throw new ThrottledError;
 		}
 
-		if ( $rollbackResult->hasMessage( 'alreadyrolled' ) || $rollbackResult->hasMessage( 'cantrollback' ) ) {
-			$this->getOutput()->setPageTitleMsg( $this->msg( 'rollbackfailed' ) );
-			$errArray = $rollbackResult->getErrors()[0];
-			$this->getOutput()->addWikiMsgArray( $errArray['message'], $errArray['params'] );
+		# NOTE: Permission errors already handled by Action::checkExecute.
+		if ( $rollbackResult->hasMessage( 'readonlytext' ) ) {
+			throw new ReadOnlyError;
+		}
 
-			if ( isset( $data['current-revision-record'] ) ) {
+		if ( $rollbackResult->getMessages() ) {
+			$this->getOutput()->setPageTitleMsg( $this->msg( 'rollbackfailed' ) );
+
+			foreach ( $rollbackResult->getMessages() as $msg ) {
+				$this->getOutput()->addWikiMsg( $msg );
+			}
+
+			if (
+				( $rollbackResult->hasMessage( 'alreadyrolled' ) || $rollbackResult->hasMessage( 'cantrollback' ) )
+				&& isset( $data['current-revision-record'] )
+			) {
 				/** @var RevisionRecord $current */
 				$current = $data['current-revision-record'];
 
@@ -212,17 +223,6 @@ class RollbackAction extends FormAction {
 			}
 
 			return;
-		}
-
-		# NOTE: Permission errors already handled by Action::checkExecute.
-		if ( $rollbackResult->hasMessage( 'readonlytext' ) ) {
-			throw new ReadOnlyError;
-		}
-
-		# XXX: Would be nice if ErrorPageError could take multiple errors, and/or a status object.
-		#      Right now, we only show the first error
-		foreach ( $rollbackResult->getErrors() as $error ) {
-			throw new ErrorPageError( 'rollbackfailed', $error['message'], $error['params'] );
 		}
 
 		/** @var RevisionRecord $current */

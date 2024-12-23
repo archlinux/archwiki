@@ -14,11 +14,9 @@
  * @constructor
  * @param {string} name Unique symbolic name of page
  * @param {Object} [config] Configuration options
- * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
+ * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
  */
 ve.ui.MWAdvancedSettingsPage = function VeUiMWAdvancedSettingsPage( name, config ) {
-	var advancedSettingsPage = this;
-
 	// Parent constructor
 	ve.ui.MWAdvancedSettingsPage.super.apply( this, arguments );
 
@@ -118,7 +116,7 @@ ve.ui.MWAdvancedSettingsPage = function VeUiMWAdvancedSettingsPage( name, config
 		);
 	}
 
-	this.metaItemCheckboxes.forEach( function ( metaItemCheckbox ) {
+	this.metaItemCheckboxes.forEach( ( metaItemCheckbox ) => {
 		metaItemCheckbox.fieldLayout = new OO.ui.FieldLayout(
 			new OO.ui.CheckboxInputWidget(),
 			{
@@ -128,7 +126,7 @@ ve.ui.MWAdvancedSettingsPage = function VeUiMWAdvancedSettingsPage( name, config
 				help: metaItemCheckbox.help
 			}
 		);
-		advancedSettingsPage.advancedSettingsFieldset.addItems( [ metaItemCheckbox.fieldLayout ] );
+		this.advancedSettingsFieldset.addItems( [ metaItemCheckbox.fieldLayout ] );
 	} );
 
 	this.$element.append( this.advancedSettingsFieldset.$element );
@@ -196,31 +194,29 @@ ve.ui.MWAdvancedSettingsPage.prototype.onNewSectionEditLinkOptionChange = functi
  * @return {jQuery.Promise}
  */
 ve.ui.MWAdvancedSettingsPage.prototype.setup = function ( fragment, config ) {
-	var advancedSettingsPage = this;
-
 	this.fragment = fragment;
 
 	// Indexing items
-	var indexingField = this.indexing.getField();
-	var indexingOption = this.getMetaItem( 'mwIndex' );
-	var indexingType = indexingOption && indexingOption.getAttribute( 'property' ) || 'default';
+	const indexingField = this.indexing.getField();
+	const indexingOption = this.getMetaItem( 'mwIndex' );
+	const indexingType = indexingOption && indexingOption.getAttribute( 'property' ) || 'default';
 	indexingField
 		.selectItemByData( indexingType )
 		.setDisabled( config.isReadOnly );
 	this.indexingOptionTouched = false;
 
 	// New section edit link items
-	var newSectionEditField = this.newEditSectionLink.getField();
-	var newSectionEditLinkOption = this.getMetaItem( 'mwNewSectionEdit' );
-	var newSectionEditLinkType = newSectionEditLinkOption && newSectionEditLinkOption.getAttribute( 'property' ) || 'default';
+	const newSectionEditField = this.newEditSectionLink.getField();
+	const newSectionEditLinkOption = this.getMetaItem( 'mwNewSectionEdit' );
+	const newSectionEditLinkType = newSectionEditLinkOption && newSectionEditLinkOption.getAttribute( 'property' ) || 'default';
 	newSectionEditField
 		.selectItemByData( newSectionEditLinkType )
 		.setDisabled( config.isReadOnly );
 	this.newSectionEditLinkOptionTouched = false;
 
 	// Display title items
-	var displayTitleItem = this.getMetaItem( 'mwDisplayTitle' );
-	var displayTitle = displayTitleItem && displayTitleItem.getAttribute( 'content' ) || '';
+	const displayTitleItem = this.getMetaItem( 'mwDisplayTitle' );
+	let displayTitle = displayTitleItem && displayTitleItem.getAttribute( 'content' ) || '';
 	if ( !displayTitle ) {
 		displayTitle = mw.Title.newFromText( ve.init.target.getPageName() ).getPrefixedText();
 	}
@@ -230,8 +226,8 @@ ve.ui.MWAdvancedSettingsPage.prototype.setup = function ( fragment, config ) {
 	this.displayTitleTouched = false;
 
 	// Simple checkbox items
-	this.metaItemCheckboxes.forEach( function ( metaItemCheckbox ) {
-		var isSelected = !!advancedSettingsPage.getMetaItem( metaItemCheckbox.metaName );
+	this.metaItemCheckboxes.forEach( ( metaItemCheckbox ) => {
+		const isSelected = !!this.getMetaItem( metaItemCheckbox.metaName );
 		metaItemCheckbox.fieldLayout.getField()
 			.setSelected( isSelected )
 			.setDisabled( config.isReadOnly );
@@ -246,8 +242,6 @@ ve.ui.MWAdvancedSettingsPage.prototype.setup = function ( fragment, config ) {
  * @param {Object} [data] Dialog tear down data
  */
 ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
-	var advancedSettingsPage = this;
-
 	// Data initialization
 	data = data || {};
 	if ( data.action !== 'done' ) {
@@ -255,8 +249,8 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 	}
 
 	// Indexing items
-	var currentIndexingItem = this.getMetaItem( 'mwIndex' );
-	var newIndexingData = this.indexing.getField().findSelectedItem();
+	const currentIndexingItem = this.getMetaItem( 'mwIndex' );
+	const newIndexingData = this.indexing.getField().findSelectedItem();
 
 	// Alter the indexing option flag iff it's been touched & is actually different
 	if ( this.indexingOptionTouched ) {
@@ -265,7 +259,7 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 				this.fragment.removeMeta( currentIndexingItem );
 			}
 		} else {
-			var newIndexingItem = { type: 'mwIndex', attributes: { property: newIndexingData.data } };
+			const newIndexingItem = { type: 'mwIndex', attributes: { property: newIndexingData.data } };
 
 			if ( !currentIndexingItem ) {
 				this.fragment.insertMeta( newIndexingItem );
@@ -279,8 +273,8 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 	}
 
 	// New section edit link items
-	var currentNewSectionEditLinkItem = this.getMetaItem( 'mwNewSectionEdit' );
-	var newNewSectionEditLinkData = this.newEditSectionLink.getField().findSelectedItem();
+	const currentNewSectionEditLinkItem = this.getMetaItem( 'mwNewSectionEdit' );
+	const newNewSectionEditLinkData = this.newEditSectionLink.getField().findSelectedItem();
 
 	// Alter the new section edit option flag iff it's been touched & is actually different
 	if ( this.newSectionEditLinkOptionTouched ) {
@@ -289,7 +283,7 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 				this.fragment.removeMeta( currentNewSectionEditLinkItem );
 			}
 		} else {
-			var newNewSectionEditLinkItem = { type: 'mwNewSectionEdit', attributes: { property: newNewSectionEditLinkData.data } };
+			const newNewSectionEditLinkItem = { type: 'mwNewSectionEdit', attributes: { property: newNewSectionEditLinkData.data } };
 
 			if ( !currentNewSectionEditLinkItem ) {
 				this.fragment.insertMeta( newNewSectionEditLinkItem );
@@ -303,12 +297,12 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 	}
 
 	// Display title items
-	var currentDisplayTitleItem = this.getMetaItem( 'mwDisplayTitle' );
-	var newDisplayTitle = this.displayTitleInput.getValue();
+	const currentDisplayTitleItem = this.getMetaItem( 'mwDisplayTitle' );
+	let newDisplayTitle = this.displayTitleInput.getValue();
 	if ( newDisplayTitle === mw.Title.newFromText( ve.init.target.getPageName() ).getPrefixedText() ) {
 		newDisplayTitle = '';
 	}
-	var newDisplayTitleItem = { type: 'mwDisplayTitle', attributes: { content: newDisplayTitle } };
+	const newDisplayTitleItem = { type: 'mwDisplayTitle', attributes: { content: newDisplayTitle } };
 
 	// Alter the display title flag iff it's been touched & is actually different
 	if ( this.displayTitleTouched ) {
@@ -337,14 +331,14 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 		}
 	}
 
-	this.metaItemCheckboxes.forEach( function ( metaItemCheckbox ) {
-		var currentItem = advancedSettingsPage.getMetaItem( metaItemCheckbox.metaName ),
+	this.metaItemCheckboxes.forEach( ( metaItemCheckbox ) => {
+		const currentItem = this.getMetaItem( metaItemCheckbox.metaName ),
 			isSelected = metaItemCheckbox.fieldLayout.getField().isSelected();
 
 		if ( currentItem && !isSelected ) {
-			advancedSettingsPage.fragment.removeMeta( currentItem );
+			this.fragment.removeMeta( currentItem );
 		} else if ( !currentItem && isSelected ) {
-			advancedSettingsPage.fragment.insertMeta( { type: metaItemCheckbox.metaName } );
+			this.fragment.insertMeta( { type: metaItemCheckbox.metaName } );
 		}
 	} );
 

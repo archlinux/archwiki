@@ -11,7 +11,7 @@
  *
  * @abstract
  * @extends ve.dm.Node
- * @mixins ve.BranchNode
+ * @mixes ve.BranchNode
  *
  * @constructor
  * @param {Object} [element] Reference to element in linear model
@@ -29,20 +29,16 @@ ve.dm.BranchNode = function VeDmBranchNode( element, children ) {
 
 	// TODO: children is only ever used in tests
 	if ( Array.isArray( children ) && children.length ) {
-		this.splice.apply( this, [ 0, 0 ].concat( children ) );
+		this.splice( 0, 0, ...children );
 	}
 };
 
 /**
- * @event splice
+ * @event ve.dm.BranchNode#splice
  * @see #method-splice
  * @param {number} index
- * @param {number} howmany
- * @param {ve.dm.BranchNode} [childModel]
- */
-
-/**
- * @event update
+ * @param {number} deleteCount
+ * @param {...ve.dm.BranchNode} [nodes]
  */
 
 /* Inheritance */
@@ -58,8 +54,6 @@ OO.mixinClass( ve.dm.BranchNode, ve.BranchNode );
  *
  * @param {ve.dm.BranchNode} childModel Item to add
  * @return {number} New number of children
- * @fires splice
- * @fires update
  */
 ve.dm.BranchNode.prototype.push = function ( childModel ) {
 	this.splice( this.children.length, 0, childModel );
@@ -69,13 +63,11 @@ ve.dm.BranchNode.prototype.push = function ( childModel ) {
 /**
  * Remove a child node from the end of the list.
  *
- * @return {ve.dm.BranchNode} Removed childModel
- * @fires splice
- * @fires update
+ * @return {ve.dm.BranchNode|undefined} Removed childModel
  */
 ve.dm.BranchNode.prototype.pop = function () {
 	if ( this.children.length ) {
-		var childModel = this.children[ this.children.length - 1 ];
+		const childModel = this.children[ this.children.length - 1 ];
 		this.splice( this.children.length - 1, 1 );
 		return childModel;
 	}
@@ -86,8 +78,6 @@ ve.dm.BranchNode.prototype.pop = function () {
  *
  * @param {ve.dm.BranchNode} childModel Item to add
  * @return {number} New number of children
- * @fires splice
- * @fires update
  */
 ve.dm.BranchNode.prototype.unshift = function ( childModel ) {
 	this.splice( 0, 0, childModel );
@@ -97,13 +87,11 @@ ve.dm.BranchNode.prototype.unshift = function ( childModel ) {
 /**
  * Remove a child node from the beginning of the list.
  *
- * @return {ve.dm.BranchNode} Removed childModel
- * @fires splice
- * @fires update
+ * @return {ve.dm.BranchNode|undefined} Removed childModel
  */
 ve.dm.BranchNode.prototype.shift = function () {
 	if ( this.children.length ) {
-		var childModel = this.children[ 0 ];
+		const childModel = this.children[ 0 ];
 		this.splice( 0, 1 );
 		return childModel;
 	}
@@ -113,33 +101,28 @@ ve.dm.BranchNode.prototype.shift = function () {
  * Add and/or remove child nodes at an offset.
  *
  * @param {number} index Index to remove and or insert nodes at
- * @param {number} howmany Number of nodes to remove
+ * @param {number} deleteCount Number of nodes to remove
  * @param {...ve.dm.BranchNode} [nodes] Variadic list of nodes to insert
- * @fires splice
+ * @fires ve.dm.BranchNode#splice
  * @return {ve.dm.BranchNode[]} Removed nodes
  */
-ve.dm.BranchNode.prototype.splice = function () {
-	var args = Array.prototype.slice.call( arguments ),
-		diff = 0;
+ve.dm.BranchNode.prototype.splice = function ( index, deleteCount, ...nodes ) {
+	let diff = 0;
 
-	var i, length;
-	var removals = this.children.splice.apply( this.children, args );
-	for ( i = 0, length = removals.length; i < length; i++ ) {
-		removals[ i ].detach();
-		diff -= removals[ i ].getOuterLength();
-	}
+	const removals = this.children.splice( index, deleteCount, ...nodes );
+	removals.forEach( ( node ) => {
+		node.detach();
+		diff -= node.getOuterLength();
+	} );
 
-	if ( args.length >= 3 ) {
-		length = args.length;
-		for ( i = 2; i < length; i++ ) {
-			args[ i ].attach( this );
-			diff += args[ i ].getOuterLength();
-		}
-	}
+	nodes.forEach( ( node ) => {
+		node.attach( this );
+		diff += node.getOuterLength();
+	} );
 
 	this.adjustLength( diff, true );
 	this.setupBlockSlugs();
-	this.emit.apply( this, [ 'splice' ].concat( args ) );
+	this.emit( 'splice', index, deleteCount, ...nodes );
 
 	return removals;
 };
@@ -150,7 +133,7 @@ ve.dm.BranchNode.prototype.splice = function () {
  * TODO: The function name is misleading: in ContentBranchNodes it sets up inline slugs
  */
 ve.dm.BranchNode.prototype.setupBlockSlugs = function () {
-	var isBlock = this.canHaveChildrenNotContent();
+	const isBlock = this.canHaveChildrenNotContent();
 
 	this.slugPositions = {};
 
@@ -167,9 +150,9 @@ ve.dm.BranchNode.prototype.setupBlockSlugs = function () {
 	// internal items, keeping the node from becoming invisible/unfocusable. In Firefox, backspace
 	// after Ctrl+A leaves the document completely empty, so this ensures DocumentNode gets a slug.
 
-	var len = this.children.length;
-	var i = -1; // from -1 to len-1
-	var j = 0; // from 0 to len
+	const len = this.children.length;
+	let i = -1; // from -1 to len-1
+	let j = 0; // from 0 to len
 	while ( i < len ) {
 		// If the next node is a meta item, find the first non-meta node after it, and consider that
 		// one instead when deciding to insert a slug. Meta nodes themselves don't have slugs.
@@ -178,14 +161,14 @@ ve.dm.BranchNode.prototype.setupBlockSlugs = function () {
 		}
 
 		// Can have slug at the beginning, or after every node which allows it (except internal nodes)
-		var canHaveSlugAfter = i === -1 || ( this.children[ i ].canHaveSlugAfter() &&
+		const canHaveSlugAfter = i === -1 || ( this.children[ i ].canHaveSlugAfter() &&
 			!this.children[ i ].isInternal() );
 		// Can have slug at the end, or before every node which allows it
-		var canHaveSlugBefore = j === len || this.children[ j ].canHaveSlugBefore();
+		const canHaveSlugBefore = j === len || this.children[ j ].canHaveSlugBefore();
 
 		if ( canHaveSlugAfter && canHaveSlugBefore ) {
-			var suppressSlugTypeAfter = this.children[ j ] && this.children[ j ].suppressSlugType();
-			var suppressSlugTypeBefore = this.children[ i ] && this.children[ i ].suppressSlugType();
+			const suppressSlugTypeAfter = this.children[ j ] && this.children[ j ].suppressSlugType();
+			const suppressSlugTypeBefore = this.children[ i ] && this.children[ i ].suppressSlugType();
 			// Slugs are suppressed if they have the same string type, e.g. for adjacent floated images
 			if ( !( typeof suppressSlugTypeAfter === 'string' && suppressSlugTypeAfter === suppressSlugTypeBefore ) ) {
 				this.slugPositions[ j ] = true;
@@ -204,12 +187,12 @@ ve.dm.BranchNode.prototype.setupBlockSlugs = function () {
  * @return {boolean} There is a slug at the offset
  */
 ve.dm.BranchNode.prototype.hasSlugAtOffset = function ( offset ) {
-	var startOffset = this.getOffset() + ( this.isWrapped() ? 1 : 0 );
+	let startOffset = this.getOffset() + ( this.isWrapped() ? 1 : 0 );
 
 	if ( offset === startOffset ) {
 		return !!this.slugPositions[ 0 ];
 	}
-	for ( var i = 0; i < this.children.length; i++ ) {
+	for ( let i = 0; i < this.children.length; i++ ) {
 		startOffset += this.children[ i ].getOuterLength();
 		if ( offset === startOffset ) {
 			return !!this.slugPositions[ i + 1 ];

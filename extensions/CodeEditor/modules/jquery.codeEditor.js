@@ -58,7 +58,7 @@
 		 *
 		 * This is also where we can attach some extra information to the events.
 		 */
-		context.evt = $.extend( context.evt, {
+		context.evt = Object.assign( context.evt, {
 			keydown: returnFalse,
 			change: returnFalse,
 			delayedChange: returnFalse,
@@ -99,7 +99,7 @@
 		/**
 		 * Internally used functions
 		 */
-		context.fn = $.extend( context.fn, {
+		context.fn = Object.assign( context.fn, {
 			isCodeEditorActive: function () {
 				return context.codeEditorActive;
 			},
@@ -366,10 +366,17 @@
 					context.codeEditor.setReadOnly( $box.prop( 'readonly' ) );
 					context.codeEditor.setShowInvisibles( context.showInvisibleChars );
 
+					var htmlClasses = document.documentElement.classList;
+					var inDarkMode = htmlClasses.contains( 'skin-theme-clientpref-night' ) || (
+						htmlClasses.contains( 'skin-theme-clientpref-os' ) &&
+						window.matchMedia && window.matchMedia( '(prefers-color-scheme: dark)' ).matches
+					);
+
 					// The options to enable
 					context.codeEditor.setOptions( {
 						enableBasicAutocompletion: true,
-						enableSnippets: true
+						enableSnippets: true,
+						theme: inDarkMode ? 'ace/theme/monokai' : 'ace/theme/textmate'
 					} );
 
 					context.codeEditor.commands.addCommand( {
@@ -395,7 +402,8 @@
 						var mode = session2.getMode().$id;
 						if ( mode === 'ace/mode/javascript' ) {
 							session2.$worker.send( 'changeOptions', [ {
-								maxerr: 1000
+								maxerr: 1000,
+								globals: { mw: true, mediaWiki: true, $: true, jQuery: true, OO: true }
 							} ] );
 						}
 					} );
@@ -415,12 +423,12 @@
 					} );
 
 					// Use jQuery UI resizable() so that users can make the box taller
-					// eslint-disable-next-line es-x/no-resizable-and-growable-arraybuffers
+
 					container.resizable( {
 						handles: 's',
 						minHeight: $box.height(),
 						resize: function () {
-							// eslint-disable-next-line es-x/no-resizable-and-growable-arraybuffers
+
 							context.codeEditor.resize();
 						}
 					} );

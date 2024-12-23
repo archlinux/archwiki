@@ -28,6 +28,13 @@
 	"cite_error_empty_references_define": "Walang laman ang <code>&lt;ref&gt;</code> tag na binigyang-kahulugan sa <code>&lt;references&gt;</code> na may pangalang \"$1\".",
 	"cite-tracking-category-cite-error": "Mga pahinang may error sa reference",
 	"cite-tracking-category-cite-error-desc": "Ang mga pahina sa kategoryang ito ay may mga error sa paggamit sa mga reference tag.",
+	"cite-reference-previews-reference": "Sanggunian",
+	"cite-reference-previews-book": "Sanggunian sa aklat",
+	"cite-reference-previews-journal": "Sanggunian sa dyornal",
+	"cite-reference-previews-news": "Sanggunian sa balita",
+	"cite-reference-previews-note": "Talababa",
+	"cite-reference-previews-web": "Sanggunian sa web",
+	"cite-reference-previews-collapsible-placeholder": "Naglalaman ang sanggunian na ito ng isang bagay na hindi kasya sa pasilip.",
 	"cite_references_link_accessibility_label": "Umakyat",
 	"cite_references_link_many_accessibility_label": "Umakyat patungo:",
 	"cite_references_link_accessibility_back_label": "Umakyat pabalik",
@@ -39,5 +46,9 @@
 	"cite-wikieditor-help-content-reference-description": "Sanggunian",
 	"cite-wikieditor-help-content-named-reference-description": "Pinangalanang sanggunian",
 	"cite-wikieditor-help-content-rereference-description": "Karagdagang paggamit na gayun ding sanggunian",
-	"cite-wikieditor-help-content-showreferences-description": "Ipakita ang mga sanggunian"
+	"cite-wikieditor-help-content-showreferences-description": "Ipakita ang mga sanggunian",
+	"popups-prefs-navpopups-gadget-conflict-info": "Kasalukuyang nakabukas ang gadget na [[$1|Navigation popups]], kaya hindi mo makikita ang mga pasilip na binibigay ng tampok na ito. Depende sa wiki ko, posibleng iba ang pangalan ng gadget. Kung patuloy ka pa ring nakakaranas ng mga isyu, pakirebyu ang mga gadget mo pati mga user script, kasama na ang mga pandaigdigan.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Kasalukuyang nakabukas ang gadget na [[$1|Navigation popups]] at [[$2|Reference Tooltips]], kaya hindi mo makikita ang mga pasilip na binibigay ng tampok na ito. Depende sa wiki ko, posibleng iba ang pangalan ng gadget. Kung patuloy ka pa ring nakakaranas ng mga isyu, pakirebyu ang mga gadget mo pati mga user script, kasama na ang mga pandaigdigan.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Kasalukuyang nakabukas ang gadget na [[$1|Reference Tooltips]], kaya hindi mo makikita ang mga pasilip sa sanggunian pero makikita mo pa rin ang mga pasilip sa pahina. Depende sa wiki ko, posibleng iba ang pangalan ng gadget. Kung patuloy ka pa ring nakakaranas ng mga isyu, pakirebyu ang mga gadget mo pati mga user script, kasama na ang mga pandaigdigan.",
+	"popups-refpreview-user-preference-label": "Buksan ang mga pasilip sa sanggunian (kunin ang mga mabilisang pasilip sa isang sanggunian habang nagbabasa ng pahina)"
 }

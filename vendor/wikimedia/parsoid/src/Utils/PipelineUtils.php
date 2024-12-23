@@ -13,6 +13,7 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\NodeList;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
@@ -41,7 +42,7 @@ class PipelineUtils {
 	 * be a bit fragile and makes dom-fragments a leaky abstraction by leaking subpipeline
 	 * processing into the top-level pipeline.
 	 *
-	 * @param Token[]|string $content The array of tokens to process.
+	 * @param string|Token|array<Token|string> $content The array of tokens to process.
 	 * @param SourceRange $srcOffsets Wikitext source offsets (start/end) of these tokens.
 	 * @param array $opts Parsing options.
 	 *    - Token token The token that generated the content.
@@ -68,8 +69,7 @@ class PipelineUtils {
 	 * @param Frame $frame
 	 *    The parent frame within which the expansion is taking place.
 	 *    Used for template expansion and source text tracking.
-	 * @param string|Token|Token[] $content
-	 *    This could be wikitext or single token or an array of tokens.
+	 * @param string|Token|array<Token|string>|Element $content
 	 *    How this content is processed depends on what kind of pipeline
 	 *    is constructed specified by opts.
 	 * @param array $opts
@@ -83,7 +83,8 @@ class PipelineUtils {
 	 *    - SourceRange  srcOffsets - if set, defines the range within the
 	 *          source text that $content corresponds to
 	 *    - bool   sol Whether tokens should be processed in start-of-line context.
-	 * @return Token[]|DocumentFragment (depending on pipeline type)
+	 *    - bool   toplevel Whether the pipeline is considered atTopLevel
+	 * @return array<Token|string>|DocumentFragment (depending on pipeline type)
 	 */
 	public static function processContentInPipeline(
 		Env $env, Frame $frame, $content, array $opts
@@ -95,7 +96,8 @@ class PipelineUtils {
 		);
 
 		$pipeline->init( [
-			'toplevel' => false,
+			// NOTE: some pipelines force toplevel to true
+			'toplevel' => $opts['toplevel'] ?? false,
 			'frame' => $frame,
 			'tplArgs' => $opts['tplArgs'] ?? null,
 			'srcText' => $opts['srcText'] ?? $frame->getSrcText(),
@@ -132,7 +134,7 @@ class PipelineUtils {
 		if ( is_array( $v['html'] ?? null ) ) {
 			// Set up pipeline options
 			$opts = [
-				'pipelineType' => 'tokens/x-mediawiki/expanded',
+				'pipelineType' => 'expanded-tokens-to-fragment',
 				'pipelineOpts' => [
 					'attrExpansion' => true,
 					'inlineContext' => true,
@@ -192,8 +194,8 @@ class PipelineUtils {
 	 * are stored outside the DOM.
 	 *
 	 * @param Element $node
-	 * @param string[] $attrs
-	 * @return array
+	 * @param array<string,string> $attrs
+	 * @return array{attrs:KV[],dataParsoid:?DataParsoid,dataMw:?DataMw}
 	 */
 	private static function domAttrsToTagAttrs( Element $node, array $attrs ): array {
 		$out = [];
@@ -202,17 +204,19 @@ class PipelineUtils {
 				$out[] = new KV( $name, $value );
 			}
 		}
-		if ( DOMDataUtils::validDataMw( $node ) ) {
-			$out[] = new KV( 'data-mw', PHPUtils::jsonEncode( DOMDataUtils::getDataMw( $node ) ) );
-		}
-		return [ 'attrs' => $out, 'dataAttrs' => DOMDataUtils::getDataParsoid( $node ) ];
+		return [
+			'attrs' => $out,
+			'dataParsoid' => DOMDataUtils::getDataParsoid( $node ),
+			'dataMw' =>
+				DOMDataUtils::validDataMw( $node ) ? DOMDataUtils::getDataMw( $node ) : null,
+		];
 	}
 
 	/**
 	 * Convert a DOM to tokens. Data attributes for nodes are stored outside the DOM.
 	 *
 	 * @param Node $node The root of the DOM tree to convert to tokens
-	 * @param Token[] $tokBuf This is where the tokens get stored
+	 * @param array<Token|string> $tokBuf This is where the tokens get stored
 	 * @return array
 	 */
 	private static function convertDOMtoTokens( Node $node, array $tokBuf ): array {
@@ -221,9 +225,15 @@ class PipelineUtils {
 			$attrInfo = self::domAttrsToTagAttrs( $node, DOMUtils::attributes( $node ) );
 
 			if ( Utils::isVoidElement( $nodeName ) ) {
-				$tokBuf[] = new SelfclosingTagTk( $nodeName, $attrInfo['attrs'], $attrInfo['dataAttrs'] );
+				$tokBuf[] = new SelfclosingTagTk(
+					$nodeName, $attrInfo['attrs'],
+					$attrInfo['dataParsoid'], $attrInfo['dataMw']
+				);
 			} else {
-				$tokBuf[] = new TagTk( $nodeName, $attrInfo['attrs'], $attrInfo['dataAttrs'] );
+				$tokBuf[] = new TagTk(
+					$nodeName, $attrInfo['attrs'],
+					$attrInfo['dataParsoid'], $attrInfo['dataMw']
+				);
 				for ( $child = $node->firstChild;  $child;  $child = $child->nextSibling ) {
 					$tokBuf = self::convertDOMtoTokens( $child, $tokBuf );
 				}
@@ -258,7 +268,7 @@ class PipelineUtils {
 	 * @param DocumentFragment $domFragment List of DOM nodes that need to be tunneled through.
 	 * @param array $opts
 	 * @see encapsulateExpansionHTML's doc. for more info about these options.
-	 * @return Token[] List of token representatives.
+	 * @return array<Token|string> List of token representatives.
 	 */
 	private static function getWrapperTokens(
 		DocumentFragment $domFragment, array $opts
@@ -440,7 +450,7 @@ class PipelineUtils {
 	 *    - array pipelineOpts
 	 *    - bool  unpackOutput
 	 *    - string wrapperName
-	 * @return Token[]
+	 * @return array<Token|string>
 	 */
 	public static function encapsulateExpansionHTML(
 		Env $env, Token $token, array $expansion, array $opts
@@ -570,7 +580,7 @@ class PipelineUtils {
 	 * @param array $opts
 	 *    Options to be passed onto the encapsulation code
 	 *    See encapsulateExpansionHTML's doc. for more info about these options.
-	 * @return Token[]
+	 * @return array<Token|string>
 	 */
 	public static function tunnelDOMThroughTokens(
 		Env $env, Token $token, DocumentFragment $domFragment, array $opts

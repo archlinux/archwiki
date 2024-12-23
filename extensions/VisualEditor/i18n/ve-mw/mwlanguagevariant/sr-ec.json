@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Acamicamacaraca",
-			"BadDog"
+			"BadDog",
+			"Milicevic01"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "Пресловљавање је онемогућено",
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Ово је скривено правило.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Ово правило утиче на наслов странице.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Језички код",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<неважеће>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Неважећи</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Језик",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Извор",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Одредиште",

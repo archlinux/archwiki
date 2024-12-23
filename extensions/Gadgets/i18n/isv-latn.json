@@ -39,6 +39,7 @@
 	"gadgets-export-download": "Daunlodovati",
 	"gadgets-requires-es6": "Tutoj gadžet poddrživaje se samo v prěgledačah suměstimyh s ES6",
 	"gadgets-validate-notset": "Svojstvo <code>$1</code> ne jest ustavjeno.",
+	"gadgets-validate-wrongtype": "Svojstvo <code>$1</code> povinna jest iměti tip <code>$2</code>.",
 	"gadgets-validate-json": "JSON-fajly sut ukazane, ale ne upotrěbjane. One upotrěbjajut se samo v spakovanyh gadžetah.",
 	"gadgets-validate-es6default": "Gadžety trěbujuče ES6 ne mogut byti standardno vključene.",
 	"gadgets-validate-noentrypoint": "Oznaka za paket jest ignorovana, ibo ne jest ukazany nijedin fajl s skriptom.",

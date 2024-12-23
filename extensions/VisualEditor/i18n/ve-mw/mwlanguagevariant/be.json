@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Artsiom91",
 			"Chadyka"
 		]
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Гэтае схаванае правіла.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Гэта правіла ўплывае на назву старонкі.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Код мовы",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Няслушны>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Няслушны</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Мова",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Крыніца",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Мэта",

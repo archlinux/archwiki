@@ -62,7 +62,7 @@ class PostgresPlatform extends SQLPlatform {
 	}
 
 	public function selectSQLText(
-		$table, $vars, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
+		$tables, $vars, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
 	) {
 		if ( is_string( $options ) ) {
 			$options = [ $options ];
@@ -81,7 +81,7 @@ class PostgresPlatform extends SQLPlatform {
 				unset( $options[$forUpdateKey] );
 				$options['FOR UPDATE'] = [];
 
-				$toCheck = $table;
+				$toCheck = $tables;
 				reset( $toCheck );
 				while ( $toCheck ) {
 					$alias = key( $toCheck );
@@ -116,7 +116,7 @@ class PostgresPlatform extends SQLPlatform {
 			}
 		}
 
-		return parent::selectSQLText( $table, $vars, $conds, $fname, $options, $join_conds );
+		return parent::selectSQLText( $tables, $vars, $conds, $fname, $options, $join_conds );
 	}
 
 	protected function makeSelectOptions( array $options ) {
@@ -148,6 +148,20 @@ class PostgresPlatform extends SQLPlatform {
 		return [ $startOpts, $preLimitTail, $postLimitTail ];
 	}
 
+	public function getDatabaseAndTableIdentifier( string $table ) {
+		$components = $this->qualifiedTableComponents( $table );
+		switch ( count( $components ) ) {
+			case 1:
+				return [ $this->currentDomain->getDatabase(), $components[0] ];
+			case 2:
+				return [ $this->currentDomain->getDatabase(), $components[1] ];
+			case 3:
+				return [ $components[0], $components[2] ];
+			default:
+				throw new DBLanguageError( 'Too many table components' );
+		}
+	}
+
 	protected function relationSchemaQualifier() {
 		if ( $this->coreSchema === $this->currentDomain->getSchema() ) {
 			// The schema to be used is now in the search path; no need for explicit qualification
@@ -158,11 +172,11 @@ class PostgresPlatform extends SQLPlatform {
 	}
 
 	public function buildGroupConcatField(
-		$delim, $table, $field, $conds = '', $join_conds = []
+		$delim, $tables, $field, $conds = '', $join_conds = []
 	) {
 		$fld = "array_to_string(array_agg($field)," . $this->quoter->addQuotes( $delim ) . ')';
 
-		return '(' . $this->selectSQLText( $table, $fld, $conds, null, [], $join_conds ) . ')';
+		return '(' . $this->selectSQLText( $tables, $fld, $conds, static::CALLER_SUBQUERY, [], $join_conds ) . ')';
 	}
 
 	public function makeInsertLists( array $rows, $aliasPrefix = '', array $typeByColumn = [] ) {

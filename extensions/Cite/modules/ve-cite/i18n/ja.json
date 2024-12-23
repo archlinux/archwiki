@@ -21,9 +21,9 @@
 			"Sujiniku",
 			"Takot",
 			"Vigorous action",
+			"Waki285",
 			"Whym",
-			"おはぐろ蜻蛉",
-			"Waki285"
+			"おはぐろ蜻蛉"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書籍",
@@ -45,10 +45,8 @@
 	"cite-ve-dialog-reference-editing-reused": "この脚注はこのページ上で$1{{PLURAL:$1|回}}使用されています。",
 	"cite-ve-dialog-reference-editing-reused-long": "この脚注は、このページで$1回使われています。ここでの変更は、この脚注が使われているすべての場所に適用されます。",
 	"cite-ve-dialog-reference-editing-extends": "これは別の脚注の拡張です。",
-	"cite-ve-dialog-reference-editing-extends-long": "これは別の脚注「$1」の拡張です。",
 	"cite-ve-dialog-reference-options-group-label": "使用するグループ",
 	"cite-ve-dialog-reference-options-group-placeholder": "汎用の脚注",
-	"cite-ve-dialog-reference-options-name-label": "この名前で再使用",
 	"cite-ve-dialog-reference-options-responsive-label": "レスポンシブなコラムレイアウトを使用する",
 	"cite-ve-dialog-reference-options-section": "オプション",
 	"cite-ve-dialog-reference-placeholder": "ここに脚注を入力し、若しくは貼り付け、又は引用テンプレートを追加してください。",

@@ -31,19 +31,20 @@ use StatusValue;
  */
 class MissingCommentConstraint implements IEditConstraint {
 
-	/** @var string */
-	private $userComment;
+	private string $section;
+	private string $userComment;
 
 	/**
+	 * @param string $section
 	 * @param string $userComment
 	 */
-	public function __construct( string $userComment ) {
+	public function __construct( string $section, string $userComment ) {
+		$this->section = $section;
 		$this->userComment = $userComment;
 	}
 
 	public function checkConstraint(): string {
-		if ( $this->userComment == '' ) {
-			// TODO this was == in EditPage, can it be === ?
+		if ( $this->section === 'new' && $this->userComment === '' ) {
 			return self::CONSTRAINT_FAILED;
 		}
 		return self::CONSTRAINT_PASSED;
@@ -51,7 +52,7 @@ class MissingCommentConstraint implements IEditConstraint {
 
 	public function getLegacyStatus(): StatusValue {
 		$statusValue = StatusValue::newGood();
-		if ( $this->userComment == '' ) {
+		if ( $this->section === 'new' && $this->userComment === '' ) {
 			$statusValue->fatal( 'missingcommenttext' );
 			$statusValue->value = self::AS_TEXTBOX_EMPTY;
 		}

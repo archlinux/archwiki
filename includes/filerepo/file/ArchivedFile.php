@@ -25,7 +25,6 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\Blob;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -494,10 +493,10 @@ class ArchivedFile {
 	 * returning their addresses.
 	 *
 	 * @internal
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @return string|Blob
 	 */
-	public function getMetadataForDb( IDatabase $db ) {
+	public function getMetadataForDb( IReadableDatabase $db ) {
 		$this->load();
 		if ( !$this->metadataArray && !$this->metadataBlobs ) {
 			$s = '';
@@ -551,7 +550,7 @@ class ArchivedFile {
 
 	/**
 	 * Unserialize a metadata string which came from some non-DB source, or is
-	 * the return value of IDatabase::decodeBlob().
+	 * the return value of IReadableDatabase::decodeBlob().
 	 *
 	 * @since 1.37
 	 * @param string $metadataString
@@ -703,7 +702,7 @@ class ArchivedFile {
 	 *   passed to the $audience parameter
 	 * @return UserIdentity|null
 	 */
-	public function getUploader( int $audience = self::FOR_PUBLIC, Authority $performer = null ): ?UserIdentity {
+	public function getUploader( int $audience = self::FOR_PUBLIC, ?Authority $performer = null ): ?UserIdentity {
 		$this->load();
 		if ( $audience === self::FOR_PUBLIC && $this->isDeleted( File::DELETED_USER ) ) {
 			return null;
@@ -726,7 +725,7 @@ class ArchivedFile {
 	 *   passed to the $audience parameter
 	 * @return string
 	 */
-	public function getDescription( int $audience = self::FOR_PUBLIC, Authority $performer = null ): string {
+	public function getDescription( int $audience = self::FOR_PUBLIC, ?Authority $performer = null ): string {
 		$this->load();
 		if ( $audience === self::FOR_PUBLIC && $this->isDeleted( File::DELETED_COMMENT ) ) {
 			return '';

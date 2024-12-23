@@ -6,7 +6,9 @@
 			"Hwangjy9",
 			"IRTC1015",
 			"Kwj2772",
+			"Markingdots",
 			"Namoroka",
+			"Pikakapi",
 			"Priviet",
 			"Revi",
 			"SeoJeongHo",
@@ -14,8 +16,6 @@
 			"Ykhwong",
 			"렌즈",
 			"아라",
-			"Markingdots",
-			"Pikakapi",
 			"이강철",
 			"Suleiman the Magnificent Television"
 		]
@@ -81,7 +81,6 @@
 	"templatedata-modal-button-map": "지도 편집",
 	"templatedata-modal-button-importParams": "변수 가져오기",
 	"templatedata-modal-button-removemap": "지도 삭제",
-	"templatedata-modal-button-restoreparam": "변수 복구",
 	"templatedata-modal-button-saveparam": "저장",
 	"templatedata-modal-confirmcancel": "변경 사항을 버리시겠습니까?",
 	"templatedata-modal-current-language": "현재 언어: $1",

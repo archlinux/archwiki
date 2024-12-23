@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Page;
 
-use IDBAccessObject;
 use ManualLogEntry;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
@@ -47,6 +46,7 @@ use StatusValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -59,51 +59,11 @@ class RollbackPage {
 
 	/**
 	 * @internal For use in PageCommandFactory only
-	 * @var array
 	 */
 	public const CONSTRUCTOR_OPTIONS = [
 		MainConfigNames::UseRCPatrol,
 		MainConfigNames::DisableAnonTalk,
 	];
-
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var IConnectionProvider */
-	private $dbProvider;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var ReadOnlyMode */
-	private $readOnlyMode;
-
-	/** @var TitleFormatter */
-	private $titleFormatter;
-
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	/** @var ActorMigration */
-	private $actorMigration;
-
-	/** @var ActorNormalization */
-	private $actorNormalization;
-
-	/** @var PageIdentity */
-	private $page;
-
-	/** @var Authority */
-	private $performer;
-
-	/** @var UserIdentity who made the edits we are rolling back */
-	private $byUser;
 
 	/** @var string */
 	private $summary = '';
@@ -114,21 +74,23 @@ class RollbackPage {
 	/** @var string[] */
 	private $tags = [];
 
+	private ServiceOptions $options;
+	private IConnectionProvider $dbProvider;
+	private UserFactory $userFactory;
+	private ReadOnlyMode $readOnlyMode;
+	private RevisionStore $revisionStore;
+	private TitleFormatter $titleFormatter;
+	private HookRunner $hookRunner;
+	private WikiPageFactory $wikiPageFactory;
+	private ActorMigration $actorMigration;
+	private ActorNormalization $actorNormalization;
+	private PageIdentity $page;
+	private Authority $performer;
+	/** @var UserIdentity who made the edits we are rolling back */
+	private UserIdentity $byUser;
+
 	/**
 	 * @internal Create via the RollbackPageFactory service.
-	 * @param ServiceOptions $options
-	 * @param IConnectionProvider $dbProvider
-	 * @param UserFactory $userFactory
-	 * @param ReadOnlyMode $readOnlyMode
-	 * @param RevisionStore $revisionStore
-	 * @param TitleFormatter $titleFormatter
-	 * @param HookContainer $hookContainer
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param ActorMigration $actorMigration
-	 * @param ActorNormalization $actorNormalization
-	 * @param PageIdentity $page
-	 * @param Authority $performer
-	 * @param UserIdentity $byUser who made the edits we are rolling back
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -429,8 +391,7 @@ class RollbackPage {
 			return;
 		}
 
-		$actorId = $this->actorNormalization
-			->acquireActorId( $current->getUser( RevisionRecord::RAW ), $dbw );
+		$actorId = $this->actorNormalization->findActorId( $current->getUser( RevisionRecord::RAW ), $dbw );
 		$timestamp = $dbw->timestamp( $target->getTimestamp() );
 		$rows = $dbw->newSelectQueryBuilder()
 			->select( [ 'rc_id', 'rc_patrolled' ] )

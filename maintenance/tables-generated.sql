@@ -101,7 +101,7 @@ CREATE TABLE /*_*/log_search (
 
 CREATE TABLE /*_*/change_tag (
   ct_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-  ct_rc_id INT UNSIGNED DEFAULT NULL,
+  ct_rc_id BIGINT UNSIGNED DEFAULT NULL,
   ct_log_id INT UNSIGNED DEFAULT NULL,
   ct_rev_id INT UNSIGNED DEFAULT NULL,
   ct_params BLOB DEFAULT NULL,
@@ -155,21 +155,14 @@ CREATE TABLE /*_*/redirect (
 
 CREATE TABLE /*_*/pagelinks (
   pl_from INT UNSIGNED DEFAULT 0 NOT NULL,
-  pl_namespace INT DEFAULT 0 NOT NULL,
-  pl_title VARBINARY(255) DEFAULT '' NOT NULL,
+  pl_target_id BIGINT UNSIGNED NOT NULL,
   pl_from_namespace INT DEFAULT 0 NOT NULL,
-  pl_target_id BIGINT UNSIGNED DEFAULT NULL,
-  INDEX pl_namespace (pl_namespace, pl_title, pl_from),
-  INDEX pl_backlinks_namespace (
-    pl_from_namespace, pl_namespace,
-    pl_title, pl_from
-  ),
   INDEX pl_target_id (pl_target_id, pl_from),
   INDEX pl_backlinks_namespace_target_id (
     pl_from_namespace, pl_target_id,
     pl_from
   ),
-  PRIMARY KEY(pl_from, pl_namespace, pl_title)
+  PRIMARY KEY(pl_from, pl_target_id)
 ) /*$wgDBTableOptions*/;
 
 
@@ -633,42 +626,6 @@ CREATE TABLE /*_*/objectcache (
 ) /*$wgDBTableOptions*/;
 
 
-CREATE TABLE /*_*/ipblocks (
-  ipb_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-  ipb_address TINYBLOB NOT NULL,
-  ipb_user INT UNSIGNED DEFAULT 0 NOT NULL,
-  ipb_by_actor BIGINT UNSIGNED NOT NULL,
-  ipb_reason_id BIGINT UNSIGNED NOT NULL,
-  ipb_timestamp BINARY(14) NOT NULL,
-  ipb_auto TINYINT(1) DEFAULT 0 NOT NULL,
-  ipb_anon_only TINYINT(1) DEFAULT 0 NOT NULL,
-  ipb_create_account TINYINT(1) DEFAULT 1 NOT NULL,
-  ipb_enable_autoblock TINYINT(1) DEFAULT 1 NOT NULL,
-  ipb_expiry VARBINARY(14) NOT NULL,
-  ipb_range_start TINYBLOB NOT NULL,
-  ipb_range_end TINYBLOB NOT NULL,
-  ipb_deleted TINYINT(1) DEFAULT 0 NOT NULL,
-  ipb_block_email TINYINT(1) DEFAULT 0 NOT NULL,
-  ipb_allow_usertalk TINYINT(1) DEFAULT 0 NOT NULL,
-  ipb_parent_block_id INT UNSIGNED DEFAULT NULL,
-  ipb_sitewide TINYINT(1) DEFAULT 1 NOT NULL,
-  UNIQUE INDEX ipb_address_unique (
-    ipb_address(255),
-    ipb_user,
-    ipb_auto
-  ),
-  INDEX ipb_user (ipb_user),
-  INDEX ipb_range (
-    ipb_range_start(8),
-    ipb_range_end(8)
-  ),
-  INDEX ipb_timestamp (ipb_timestamp),
-  INDEX ipb_expiry (ipb_expiry),
-  INDEX ipb_parent_block_id (ipb_parent_block_id),
-  PRIMARY KEY(ipb_id)
-) /*$wgDBTableOptions*/;
-
-
 CREATE TABLE /*_*/block (
   bl_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
   bl_target INT UNSIGNED NOT NULL,
@@ -755,7 +712,7 @@ CREATE TABLE /*_*/image (
 
 
 CREATE TABLE /*_*/recentchanges (
-  rc_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+  rc_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
   rc_timestamp BINARY(14) NOT NULL,
   rc_actor BIGINT UNSIGNED NOT NULL,
   rc_namespace INT DEFAULT 0 NOT NULL,
@@ -829,7 +786,7 @@ CREATE TABLE /*_*/page (
   page_is_new TINYINT UNSIGNED DEFAULT 0 NOT NULL,
   page_random DOUBLE PRECISION UNSIGNED NOT NULL,
   page_touched BINARY(14) NOT NULL,
-  page_links_updated VARBINARY(14) DEFAULT NULL,
+  page_links_updated BINARY(14) DEFAULT NULL,
   page_latest INT UNSIGNED NOT NULL,
   page_len INT UNSIGNED NOT NULL,
   page_content_model VARBINARY(32) DEFAULT NULL,
@@ -880,15 +837,15 @@ CREATE TABLE /*_*/user_autocreate_serial (
 
 
 CREATE TABLE /*_*/revision (
-  rev_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+  rev_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
   rev_page INT UNSIGNED NOT NULL,
-  rev_comment_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-  rev_actor BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+  rev_comment_id BIGINT UNSIGNED NOT NULL,
+  rev_actor BIGINT UNSIGNED NOT NULL,
   rev_timestamp BINARY(14) NOT NULL,
   rev_minor_edit TINYINT UNSIGNED DEFAULT 0 NOT NULL,
   rev_deleted TINYINT UNSIGNED DEFAULT 0 NOT NULL,
   rev_len INT UNSIGNED DEFAULT NULL,
-  rev_parent_id INT UNSIGNED DEFAULT NULL,
+  rev_parent_id BIGINT UNSIGNED DEFAULT NULL,
   rev_sha1 VARBINARY(32) DEFAULT '' NOT NULL,
   INDEX rev_timestamp (rev_timestamp),
   INDEX rev_page_timestamp (rev_page, rev_timestamp),
@@ -902,12 +859,12 @@ CREATE TABLE /*_*/revision (
 
 CREATE TABLE /*_*/searchindex (
   si_page INT UNSIGNED NOT NULL,
-  si_title VARCHAR(255) DEFAULT '' NOT NULL,
+  si_title MEDIUMTEXT NOT NULL,
   si_text MEDIUMTEXT NOT NULL,
-  UNIQUE INDEX si_page (si_page),
   FULLTEXT INDEX si_title (si_title),
-  FULLTEXT INDEX si_text (si_text)
-) ENGINE = MyISAM DEFAULT CHARSET = utf8;
+  FULLTEXT INDEX si_text (si_text),
+  PRIMARY KEY(si_page)
+) ENGINE = MyISAM DEFAULT CHARSET = utf8mb4;
 
 
 CREATE TABLE /*_*/linktarget (

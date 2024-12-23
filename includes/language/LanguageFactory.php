@@ -21,15 +21,15 @@
 namespace MediaWiki\Languages;
 
 use InvalidArgumentException;
-use Language;
-use LanguageCode;
-use LanguageConverter;
 use LocalisationCache;
 use LogicException;
 use MapCacheLRU;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageCode;
+use MediaWiki\Language\LanguageConverter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\NamespaceInfo;
 use Wikimedia\Bcp47Code\Bcp47Code;
@@ -150,6 +150,14 @@ class LanguageFactory {
 			$code = $this->options->get( MainConfigNames::DummyLanguageCodes )[$code] ?? $code;
 		}
 		return $this->getRawLanguage( $code );
+	}
+
+	public function getLanguageCode( string $code ): LanguageCode {
+		$code = $this->options->get( MainConfigNames::DummyLanguageCodes )[$code] ?? $code;
+		if ( !$this->langNameUtils->isValidCode( $code ) ) {
+			throw new InvalidArgumentException( "Invalid language code \"$code\"" );
+		}
+		return new LanguageCode( $code );
 	}
 
 	/**

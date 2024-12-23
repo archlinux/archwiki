@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Matma Rex",
+			"Исмаил Садуев",
 			"Саид Мисарбиев",
 			"Умар",
-			"Исмаил Садуев",
 			"Woytecr"
 		]
 	},
@@ -72,6 +72,9 @@
 	"discussiontools-notification-added-topic-header": "$2 кхоьллина керла тема «<strong>$4</strong>» <strong>$3</strong> агӀонгахь.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|$1 керла тема}}<strong>$2</strong> тӀехь",
 	"discussiontools-notification-added-topic-view": "Хьажа темега",
+	"discussiontools-notification-comment-thank-header": "$1 {{GENDER:$2|баркалла аьлла}} {{GENDER:$4|хьуна}} «<strong>$3</strong>» темехь коммент йитарна.",
+	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|Цхьана декъашхочо|$1 декъашхочо|100=99+ декъашхочо}} {{GENDER:$3|хьуна}} баркалла аьлла \"<strong>$2</strong>\" чохь коммент йитарна.",
+	"discussiontools-notification-comment-thank-header-compact": "$1 {{GENDER:$2|баркалла аьлла}} {{GENDER:$3|хьуна}}.",
 	"discussiontools-notification-removed-topic-body": "Хила мега, {{GENDER:|хьоьга}} кхий хаамаш богӀура бац {{PLURAL:$1|хӀокху темах|хӀокху темех}} лаьцна.",
 	"discussiontools-notification-removed-topic-header": "Тема «<strong>$4</strong>» архиве йахийтина йа дӀайаьккхина агӀонна тӀера $3.",
 	"discussiontools-notification-removed-topic-header-bundled": "{{PLURAL:$1|Цхьа тема хилла|$1 теманаш хилла}} {{PLURAL:$1|архиве хьажийна йа дӀайаьккхина}} агӀонна тӀера $2.",

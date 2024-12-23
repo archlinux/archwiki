@@ -1,12 +1,17 @@
 <?php
 
+namespace MediaWiki\Content;
+
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
+use SearchEngine;
+use SearchIndexField;
+use WikiPage;
 
 /**
  * Content handler for File: files
- * TODO: this handler s not used directly now,
+ * TODO: this handler is not used directly now,
  * but instead manually called by WikitextHandler.
  * This should be fixed in the future.
  */
@@ -73,3 +78,6 @@ class FileContentHandler extends WikitextContentHandler {
 	}
 
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( FileContentHandler::class, 'FileContentHandler' );

@@ -28,9 +28,6 @@ class BaseMethods {
 			// just discard these elements, sometimes empty TexArray
 			return null;
 		}
-		if ( $prepareInput ) {
-			$input = MMLutil::inputPreparation( $input );
-		}
 
 		// Checking for a named parsing function
 		$resFct = BaseMappings::getMacroByKey( $input );
@@ -76,9 +73,6 @@ class BaseMethods {
 
 	public function checkAndParseOperator( $input, $node, $passedArgs, $operatorContent,
 										   $state, $prepareInput = true ) {
-		if ( $prepareInput ) {
-			$input = MMLutil::inputPreparation( $input );
-		}
 		$resOperator = BaseMappings::getOperatorByKey( $input );
 		if ( $resOperator == null ) {
 
@@ -91,7 +85,7 @@ class BaseMethods {
 						return $this->parseOperatorDict( $node, $passedArgs, $operatorContent, $input, false );
 					}
 					// Atm just do simple parsing for elements in operator dictionary
-					$mmlMo = new MMLmo();
+					$mmlMo = new MMLmo( '', $passedArgs );
 					return $mmlMo->encapsulateRaw( $input );
 				}
 			}
@@ -131,6 +125,9 @@ class BaseMethods {
 				 // see: https://gerrit.wikimedia.org/r/c/mediawiki/extensions/Math/+/961213
 				$mspace = new MMLmspace( "", [ "width" => "0.5em" ] );
 				return $mspace->getEmpty();
+			case '/':
+				$mmlMo = new MMLmo( '', [ 'lspace' => '0', 'rspace' => '0' ] );
+				return $mmlMo->encapsulateRaw( $input );
 		}
 		return $input;
 	}
@@ -155,9 +152,6 @@ class BaseMethods {
 	}
 
 	public function checkAndParseIdentifier( $input, $node, $passedArgs, $operatorContent, $prepareInput = true ) {
-		if ( $prepareInput ) {
-			$input = MMLutil::inputPreparation( $input );
-		}
 		$resIdentifier = BaseMappings::getIdentifierByKey( $input );
 		if ( $resIdentifier == null ) {
 			$resIdentifier = AMSMappings::getIdentifierByKey( $input );
@@ -181,7 +175,7 @@ class BaseMethods {
 		// tbd verify rule: Lowercase name ("operator" instead "Operator") seems to
 		// indicate additional italic mathvariant when bold already
 		if ( !ctype_upper( $name ) ) {
-			if ( isset( $passedArgs["mathvariant"] ) && $passedArgs["mathvariant"] ) {
+			if ( isset( $passedArgs["mathvariant"] ) && $passedArgs["mathvariant"] === 'bold' ) {
 				$passedArgs["mathvariant"] = $passedArgs["mathvariant"] . "-" . Variants::ITALIC;
 			}
 		}
@@ -203,7 +197,6 @@ class BaseMethods {
 		$resDelimiter = BaseMappings::getDelimiterByKey( trim( $input ) );
 
 		if ( $resDelimiter == null ) {
-			$input = MMLutil::inputPreparation( $input );
 			$resDelimiter = AMSMappings::getSymbolDelimiterByKey( $input );
 			if ( $resDelimiter == null ) {
 				$resDelimiter = AMSMappings::getMathDelimiterByKey( $input );
@@ -225,9 +218,6 @@ class BaseMethods {
 	}
 
 	public function checkAndParseMathCharacter( $input, $node, $passedArgs, $operatorContent, $prepareInput = true ) {
-		if ( $prepareInput ) {
-			$input = MMLutil::inputPreparation( $input );
-		}
 		$resChar = BaseMappings::getCharacterByKey( $input );
 		if ( $resChar == null ) {
 			return null;
@@ -247,9 +237,6 @@ class BaseMethods {
 			return null;
 		}
 
-		if ( $prepareInput ) {
-			$input = MMLutil::inputPreparation( $input );
-		}
 		if ( !( $input === 'color' || $input === 'pagecolor' ) ) {
 			return null;
 		}

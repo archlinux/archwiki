@@ -51,7 +51,7 @@
 		fixTarget( ve.init.mw.targetFactory.lookup( n ) );
 	}
 
-	ve.init.mw.targetFactory.on( 'register', function ( name, target ) {
+	ve.init.mw.targetFactory.on( 'register', ( name, target ) => {
 		fixTarget( target );
 	} );
 
@@ -94,7 +94,7 @@
 		// Ensure it has a fallback, just in case.
 		ve.ui.mwCitationTools = ve.ui.mwCitationTools || [];
 
-		ve.ui.mwCitationTools.forEach( function ( item ) {
+		ve.ui.mwCitationTools.forEach( ( item ) => {
 			const hasOwn = Object.prototype.hasOwnProperty;
 			const data = { template: item.template, title: item.title };
 

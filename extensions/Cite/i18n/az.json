@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"NMW03",
+			"Nemoralis",
 			"Neriman2003",
 			"Serkanland",
 			"Toghrul Rahimli",
 			"Vago",
-			"Wertuose",
-			"Nemoralis"
+			"Wertuose"
 		]
 	},
 	"cite-desc": "Sitatlar üçün<code>&lt;ref&gt;</code> və <code>&lt;references&gt;</code> teqləri əlavə edir",
@@ -34,6 +34,15 @@
 	"cite_error_empty_references_define": "\"$2\" <code><references></code> qrupu daxilində müəyyən edilmiş \"$1\" adlı <code><ref></code> teqi məzmuna malik deyil.",
 	"cite-tracking-category-cite-error": "İstinad xətası olan səhifələr",
 	"cite-tracking-category-cite-error-desc": "Bu kateqoriyadakı səhifələrdə istinad teqlərinin istifadəsində səhvlər var.",
+	"cite-tracking-category-ref-extends": "Genişləndirilmiş istinadlardan istifadə edən səhifələr",
+	"cite-tracking-category-ref-extends-desc": "Bu kateqoriyadakı səhifələr &lt;ref&gt; teqinin \"extends\" atributundan istifadə edir.",
+	"cite-reference-previews-reference": "İstinad",
+	"cite-reference-previews-book": "Kitab istinadı",
+	"cite-reference-previews-journal": "Jurnal istinadı",
+	"cite-reference-previews-news": "Xəbər istinadı",
+	"cite-reference-previews-note": "Qeyd",
+	"cite-reference-previews-web": "Veb istinadı",
+	"cite-reference-previews-collapsible-placeholder": "Bu istinad önizləməyə uyğun gəlməyən rəqəmi ehtiva edir.",
 	"cite_references_link_accessibility_label": "Yuxarı get",
 	"cite_references_link_many_accessibility_label": "Yuxarıda get:",
 	"cite_references_link_accessibility_back_label": "Aşağı get",
@@ -45,8 +54,14 @@
 	"cite-wikieditor-help-content-reference-description": "İstinad",
 	"cite-wikieditor-help-content-named-reference-description": "Adlı istinad",
 	"cite-wikieditor-help-content-rereference-description": "Eyni istinaddan istifadənin əlavəsi",
+	"cite-wikieditor-help-content-extended-reference-description": "Əlavə detallarla eyni istinaddan əlavə istifadə",
 	"cite-wikieditor-help-content-showreferences-description": "İstinadları göstər",
 	"cite-wikieditor-help-content-reference-example-text1": "Səhifə mətni.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Keçidin mətni], əlavə mətn.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Keçid mətni]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Keçid mətni]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Əlavə detallar",
+	"popups-prefs-navpopups-gadget-conflict-info": "Sizdə [[$1|Naviqasiya pop-upları]] qadceti aktivdir, ona görə də bu funksiyanın təqdim etdiyi önizləmələri görməyəcəksiniz. Vikidən asılı olaraq, qadcetin fərqli adı ola bilər. Problemlərlə üzləşməyə davam etsəniz, qlobal olanlar da daxil olmaqla qadcetlərinizi və istifadəçi skriptlərinizi nəzərdən keçirin.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Sizdə [[$1|Naviqasiya pop-upları]] [[$1|İstinad aləti]] qadcetləri aktivdir, ona görə də siz istinad önizləmələrini görməyəcəksiniz, lakin səhifənin önizləmələrini hələ də görəcəksiniz. Vikidən asılı olaraq, qadcetin fərqli adı ola bilər. Problemlərlə üzləşməyə davam etsəniz, qlobal olanlar da daxil olmaqla qadcetlərinizi və istifadəçi skriptlərinizi nəzərdən keçirin.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Sizdə [[$1|İstinad aləti]] qadceti aktivdir, ona görə də siz istinad önizləmələrini görməyəcəksiniz, lakin səhifənin önizləmələrini hələ də görəcəksiniz. Vikidən asılı olaraq, qadcetin fərqli adı ola bilər. Problemlərlə üzləşməyə davam etsəniz, qlobal olanlar da daxil olmaqla qadcetlərinizi və istifadəçi skriptlərinizi nəzərdən keçirin.",
+	"popups-refpreview-user-preference-label": "İstinad önizləmələrini aktivləşdirin (səhifəni oxuyarkən istinadın sürətli önizləmələrini əldə edin)"
 }

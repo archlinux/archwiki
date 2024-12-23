@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Tests\Storage;
 
-use ContentHandler;
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Revision\SlotRecord;
 use MediaWikiIntegrationTestCase;
-use TextContent;
 
 /**
  * @covers \MediaWiki\Storage\PageUpdaterFactory
@@ -40,7 +40,7 @@ class PageUpdaterFactoryIntegrationTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $content->getText(), $pstContent->getText() );
 
 		$pout = $update->getCanonicalParserOutput();
-		$this->assertStringContainsString( 'dolor sit amet', $pout->getText() );
+		$this->assertStringContainsString( 'dolor sit amet', $pout->getRawText() );
 	}
 
 }

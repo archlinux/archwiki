@@ -37,7 +37,7 @@
 	"visualeditor-feedback-source-link": "{{int:visualeditor-feedback-link}}",
 	"visualeditor-feedback-tool": "Leave feedback about this software",
 	"visualeditor-help-label": "Read the user guide",
-	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
+	"visualeditor-help-link": "//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide",
 	"visualeditor-welcomedialog-action": "Start editing",
 	"visualeditor-welcomedialog-content": "Anyone can edit, and every improvement helps.",
 	"visualeditor-welcomedialog-content-thanks": "Thank you for helping the world discover more!",

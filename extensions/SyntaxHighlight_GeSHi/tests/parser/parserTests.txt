@@ -160,8 +160,6 @@ Text <source lang="javascript" enclose="none">var a;</source>.
 
 !! test
 Enclose with nowiki
-!! options
-disabled
 parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 {{#tag:syntaxhighlight|<nowiki>foo</nowiki>|lang="text"|inline=none}}
@@ -169,7 +167,7 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 <p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr">foo</code>
 </p>
 !! html/parsoid
-<p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr" about="#mwt1" typeof="mw:Extension/syntaxhighlight mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#tag:syntaxhighlight","function":"tag"},"params":{"1":{"wt":"&lt;nowiki>foo&lt;/nowiki>"},"lang":{"wt":"\"text\""},"inline":{"wt":"none"}},"i":0}}]}'>foo</code></p>
+<p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr" about="#mwt1" typeof="mw:Extension/syntaxhighlight mw:Transclusion" data-mw='{"name":"syntaxhighlight","attrs":{"lang":"text","inline":"none"},"body":{"extsrc":"foo"},"parts":[{"template":{"target":{"wt":"#tag:syntaxhighlight","function":"tag"},"params":{"1":{"wt":"&lt;nowiki>foo&lt;/nowiki>"},"lang":{"wt":"\"text\""},"inline":{"wt":"none"}},"i":0}}]}'>foo</code></p>
 !! end
 
 !! test

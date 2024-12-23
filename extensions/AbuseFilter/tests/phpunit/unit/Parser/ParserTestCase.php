@@ -22,8 +22,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Parser;
 
-use EmptyBagOStuff;
-use Language;
 use LanguageEn;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
@@ -31,11 +29,13 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Language\Language;
 use MediaWikiUnitTestCase;
-use NullStatsdDataFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Equivset\Equivset;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * Helper for parser-related tests
@@ -45,7 +45,7 @@ abstract class ParserTestCase extends MediaWikiUnitTestCase {
 	 * @param LoggerInterface|null $logger
 	 * @return FilterEvaluator
 	 */
-	protected function getParser( LoggerInterface $logger = null ) {
+	protected function getParser( ?LoggerInterface $logger = null ) {
 		// We're not interested in caching or logging; tests should call respectively setCache
 		// and setLogger if they want to test any of those.
 		$keywordsManager = new KeywordsManager( $this->createMock( AbuseFilterHookRunner::class ) );

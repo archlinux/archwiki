@@ -87,7 +87,7 @@ class NotificationServiceClient implements LoggerAwareInterface {
 	private function constructRequest( string $provider, array $payload ): MWHttpRequest {
 		$url = "$this->endpointBase/$provider";
 		$opts = [ 'method' => 'POST', 'postData' => json_encode( $payload ) ];
-		$req = $this->httpRequestFactory->create( $url, $opts );
+		$req = $this->httpRequestFactory->create( $url, $opts, __METHOD__ );
 		$req->setHeader( 'Content-Type', 'application/json; charset=utf-8' );
 		return $req;
 	}

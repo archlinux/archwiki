@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bjarki S",
 			"Fitoschido",
 			"Gaddi00",
 			"LoveIceLang",
 			"Maxí",
 			"Snævar",
-			"Sveinn í Felli",
-			"Bjarki S"
+			"Sveinn í Felli"
 		]
 	},
 	"minerva-last-modified-date": "Síðast breytt $1, kl. $2",
@@ -31,7 +31,6 @@
 	"mobile-frontend-meta-data-issues": "Vandamál varðandi síðu",
 	"mobile-frontend-meta-data-issues-categories": "Um þennan flokk",
 	"mobile-frontend-meta-data-issues-header": "Vandamál varðandi síðu",
-	"mobile-frontend-notifications-filter": "Sía",
 	"mobile-frontend-pageaction-edit-tooltip": "Breyta innganginum að þessari síðu.",
 	"mobile-frontend-placeholder": "Leita á {{SITENAME}}",
 	"mobile-frontend-random-button": "Handahófsvalið",

@@ -25,7 +25,7 @@ const { StripeButtons } = require( 'mmv' );
 		return new StripeButtons( $fixture );
 	}
 
-	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', ( assert ) => {
 		const oldMwUserIsAnon = mw.user.isAnon;
 
 		// first pretend we are anonymous
@@ -33,60 +33,49 @@ const { StripeButtons } = require( 'mmv' );
 		let buttons = createStripeButtons();
 
 		assert.true( buttons instanceof StripeButtons, 'UI element is created.' );
-		assert.strictEqual( buttons.buttons.$descriptionPage.length, 1, 'File page button created for anon.' );
+		assert.strictEqual( buttons.$descriptionPage.length, 1, 'File page button created for anon.' );
 
 		// now pretend we are logged in
 		mw.user.isAnon = () => false;
 		buttons = createStripeButtons();
 
-		assert.strictEqual( buttons.buttons.$descriptionPage.length, 1, 'File page button created for logged in.' );
+		assert.strictEqual( buttons.$descriptionPage.length, 1, 'File page button created for logged in.' );
 
 		mw.user.isAnon = oldMwUserIsAnon;
 	} );
 
-	QUnit.test( 'set()/empty() sense test:', function ( assert ) {
+	QUnit.test( 'set()/empty() sense test:', ( assert ) => {
 		const buttons = createStripeButtons();
 		const fakeImageInfo = { descriptionUrl: '//commons.wikimedia.org/wiki/File:Foo.jpg' };
-		const fakeRepoInfo = {
-			displayName: 'Wikimedia Commons',
-			isCommons: function () {
-				return true;
-			}
-		};
 
-		buttons.set( fakeImageInfo, fakeRepoInfo );
+		buttons.set( null, fakeImageInfo );
 		buttons.empty();
 
 		assert.true( true, 'No error on set()/empty().' );
 	} );
 
-	QUnit.test( 'Description page button', function ( assert ) {
+	QUnit.test( 'Description page button', ( assert ) => {
 		const $qf = $( '#qunit-fixture' );
 		const buttons = new StripeButtons( $qf );
-		const $button = buttons.buttons.$descriptionPage;
+		const $button = buttons.$descriptionPage;
 		const descriptionUrl = 'http://example.com/desc';
+		const descriptionUrlCommons = 'https://commons.wikimedia.org/desc';
 		const descriptionUrl2 = 'http://example.com/different-desc';
-		const imageInfo = { descriptionUrl: descriptionUrl };
-		const repoInfo = {
-			isCommons: function () {
-				return false;
-			}
-		};
 
-		buttons.setDescriptionPageButton( imageInfo, repoInfo );
+		buttons.set( null, { descriptionUrl } );
 
 		assert.strictEqual( $button.hasClass( 'mw-mmv-repo-button-commons' ), false, 'Button does not have commons class non-Commons files' );
 		assert.strictEqual( $button.find( 'a' ).addBack().filter( 'a' ).attr( 'href' ), descriptionUrl, 'Description page link is correct' );
 
-		repoInfo.isCommons = () => true;
-		buttons.setDescriptionPageButton( imageInfo, repoInfo );
+		buttons.set( null, { descriptionUrl: descriptionUrlCommons } );
 
 		assert.strictEqual( $button.hasClass( 'mw-mmv-repo-button-commons' ), true, 'Button commons class for Commons files' );
 
-		imageInfo.pageID = 1;
-		imageInfo.title = { getUrl: () => descriptionUrl2 };
-		repoInfo.isLocal = false;
-		buttons.setDescriptionPageButton( imageInfo, repoInfo );
+		buttons.set( null, {
+			descriptionUrl,
+			pageID: 1,
+			title: { getUrl: () => descriptionUrl2 }
+		} );
 
 		assert.strictEqual(
 			$button.hasClass( 'mw-mmv-repo-button-commons' ), false,

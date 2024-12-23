@@ -65,7 +65,7 @@ interface MetricInterface {
 	 * Sets sample rate on a new metric instance.
 	 *
 	 * @param float $sampleRate
-	 * @return CounterMetric|GaugeMetric|TimingMetric|NullMetric
+	 * @return self|NullMetric
 	 */
 	public function setSampleRate( float $sampleRate );
 
@@ -92,9 +92,17 @@ interface MetricInterface {
 	 *
 	 * @param string $key
 	 * @param string $value
-	 * @return CounterMetric|GaugeMetric|TimingMetric|NullMetric
+	 * @return self|NullMetric
 	 */
 	public function setLabel( string $key, string $value );
+
+	/**
+	 * Convenience function to set a number of labels at once.
+	 * @see ::setLabel
+	 * @param array<string,string> $labels
+	 * @return self|NullMetric
+	 */
+	public function setLabels( array $labels );
 
 	/**
 	 * Copies metric operation to StatsD at provided namespace.
@@ -102,14 +110,14 @@ interface MetricInterface {
 	 * Takes a namespace or multiple namespaces.
 	 *
 	 * @param string|string[] $statsdNamespaces
-	 * @return CounterMetric|GaugeMetric|TimingMetric|NullMetric
+	 * @return self|NullMetric
 	 */
 	public function copyToStatsdAt( $statsdNamespaces );
 
 	/**
 	 * Returns metric with cleared labels.
 	 *
-	 * @return CounterMetric|GaugeMetric|TimingMetric|NullMetric
+	 * @return self|NullMetric
 	 */
 	public function fresh();
 }

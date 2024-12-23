@@ -6,14 +6,13 @@ use Shellbox\FileUtils;
 
 /**
  * Encapsulation of an input file that is copied from another file
- *
- * @internal
  */
-class InputFileFromFile extends InputFile {
+class InputFileFromFile extends InputFileWithContents {
 	/** @var string */
 	private $path;
 
 	/**
+	 * @internal
 	 * @param string $path
 	 */
 	public function __construct( $path ) {

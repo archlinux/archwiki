@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\Scribunto;
 
 use MediaWiki\Config\ConfigException;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
-use Parser;
 
 /**
  * Static function collection for general extension support.
@@ -95,7 +95,7 @@ class Scribunto {
 	 * @param Title|null &$forModule Module for which this is a doc page
 	 * @return bool
 	 */
-	public static function isDocPage( Title $title, Title &$forModule = null ) {
+	public static function isDocPage( Title $title, ?Title &$forModule = null ) {
 		$docPage = wfMessage( 'scribunto-doc-page-name' )->inContentLanguage();
 		if ( $docPage->isDisabled() ) {
 			return false;

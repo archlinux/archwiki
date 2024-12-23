@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use HTMLForm;
+use MediaWiki\HTMLForm\HTMLForm;
 
 class AbuseFilterViewImport extends AbuseFilterView {
 	/**

@@ -24,7 +24,6 @@ namespace MediaWiki\Pager;
 use LogEventsList;
 use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\Cache\UserCache;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Context\IContextSource;
@@ -38,21 +37,25 @@ use Wikimedia\Rdbms\IConnectionProvider;
 
 class ProtectedPagesPager extends TablePager {
 
-	public $mConds;
+	/** @var string */
 	private $type;
+	/** @var string */
 	private $level;
 	/** @var int|null */
 	private $namespace;
+	/** @var string */
 	private $sizetype;
 	/** @var int */
 	private $size;
+	/** @var bool */
 	private $indefonly;
+	/** @var bool */
 	private $cascadeonly;
+	/** @var bool */
 	private $noredirect;
 
 	private CommentStore $commentStore;
 	private LinkBatchFactory $linkBatchFactory;
-	private UserCache $userCache;
 	private RowCommentFormatter $rowCommentFormatter;
 
 	/** @var string[] */
@@ -65,8 +68,6 @@ class ProtectedPagesPager extends TablePager {
 	 * @param LinkRenderer $linkRenderer
 	 * @param IConnectionProvider $dbProvider
 	 * @param RowCommentFormatter $rowCommentFormatter
-	 * @param UserCache $userCache
-	 * @param array $conds
 	 * @param string $type
 	 * @param string $level
 	 * @param int|null $namespace
@@ -83,8 +84,6 @@ class ProtectedPagesPager extends TablePager {
 		LinkRenderer $linkRenderer,
 		IConnectionProvider $dbProvider,
 		RowCommentFormatter $rowCommentFormatter,
-		UserCache $userCache,
-		$conds,
 		$type,
 		$level,
 		$namespace,
@@ -100,8 +99,6 @@ class ProtectedPagesPager extends TablePager {
 		$this->commentStore = $commentStore;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->rowCommentFormatter = $rowCommentFormatter;
-		$this->userCache = $userCache;
-		$this->mConds = $conds;
 		$this->type = $type ?: 'edit';
 		$this->level = $level;
 		$this->namespace = $namespace;
@@ -115,28 +112,17 @@ class ProtectedPagesPager extends TablePager {
 	public function preprocessResults( $result ) {
 		# Do a link batch query
 		$lb = $this->linkBatchFactory->newLinkBatch();
-		$userids = [];
 		$rowsWithComments = [];
 
 		foreach ( $result as $row ) {
 			$lb->add( $row->page_namespace, $row->page_title );
-			if ( $row->actor_user !== null ) {
-				$userids[] = $row->actor_user;
+			// for old protection rows, user and comment are missing
+			if ( $row->actor_name !== null ) {
+				$lb->add( NS_USER, $row->actor_name );
+				$lb->add( NS_USER_TALK, $row->actor_name );
 			}
 			if ( $row->log_timestamp !== null ) {
 				$rowsWithComments[] = $row;
-			}
-		}
-
-		// fill LinkBatch with user page and user talk
-		if ( count( $userids ) ) {
-			$this->userCache->doQuery( $userids, [], __METHOD__ );
-			foreach ( $userids as $userid ) {
-				$name = $this->userCache->getProp( $userid, 'name' );
-				if ( $name !== false ) {
-					$lb->add( NS_USER, $name );
-					$lb->add( NS_USER_TALK, $name );
-				}
 			}
 		}
 
@@ -155,7 +141,7 @@ class ProtectedPagesPager extends TablePager {
 	protected function getFieldNames() {
 		static $headers = null;
 
-		if ( $headers == [] ) {
+		if ( $headers === null ) {
 			$headers = [
 				'log_timestamp' => 'protectedpages-timestamp',
 				'pr_page' => 'protectedpages-page',
@@ -212,9 +198,11 @@ class ProtectedPagesPager extends TablePager {
 				} else {
 					$formatted = $linkRenderer->makeLink( $title );
 				}
+				$formatted = Html::rawElement( 'bdi', [
+					'dir' => $this->getLanguage()->getDir()
+				], $formatted );
 				if ( $row->page_len !== null ) {
-					$formatted .= $this->getLanguage()->getDirMark() .
-						' ' . Html::rawElement(
+					$formatted .= ' ' . Html::rawElement(
 							'span',
 							[ 'class' => 'mw-protectedpages-length' ],
 							Linker::formatRevisionSize( $row->page_len )
@@ -310,11 +298,12 @@ class ProtectedPagesPager extends TablePager {
 
 	public function getQueryInfo() {
 		$dbr = $this->getDatabase();
-		$conds = $this->mConds;
-		$conds[] = $dbr->expr( 'pr_expiry', '>', $dbr->timestamp() )
-			->or( 'pr_expiry', '=', null );
-		$conds[] = 'page_id=pr_page';
-		$conds[] = $dbr->expr( 'pr_type', '=', $this->type );
+		$conds = [
+			$dbr->expr( 'pr_expiry', '>', $dbr->timestamp() )
+				->or( 'pr_expiry', '=', null ),
+			'page_id=pr_page',
+			$dbr->expr( 'pr_type', '=', $this->type ),
+		];
 
 		if ( $this->sizetype == 'min' ) {
 			$conds[] = 'page_len>=' . $this->size;
@@ -326,10 +315,10 @@ class ProtectedPagesPager extends TablePager {
 			$conds['pr_expiry'] = [ $dbr->getInfinity(), null ];
 		}
 		if ( $this->cascadeonly ) {
-			$conds[] = 'pr_cascade = 1';
+			$conds['pr_cascade'] = 1;
 		}
 		if ( $this->noredirect ) {
-			$conds[] = 'page_is_redirect = 0';
+			$conds['page_is_redirect'] = 0;
 		}
 
 		if ( $this->level ) {

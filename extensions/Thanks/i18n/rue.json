@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tkalyn",
-			"Constraque"
+			"Constraque",
+			"Tkalyn"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|подяковати}}}}",

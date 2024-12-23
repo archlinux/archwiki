@@ -1,7 +1,7 @@
 'use strict';
 /* global $:off */
 
-var
+const
 	utils = require( './utils.js' );
 
 /**
@@ -24,7 +24,7 @@ function sanitizeWikitextLinebreaks( wikitext ) {
  * @param {HTMLElement} linkNode Reply link
  */
 function addReplyLink( comment, linkNode ) {
-	var target = comment.range.endContainer;
+	const target = comment.range.endContainer;
 
 	// Insert the link before trailing whitespace.
 	// In the MediaWiki parser output, <ul>/<dl> nodes are preceded by a newline. Normally it isn't
@@ -52,7 +52,7 @@ function addReplyLink( comment, linkNode ) {
  * @return {HTMLElement}
  */
 function addListItem( comment, replyIndentation ) {
-	var listTypeMap = {
+	const listTypeMap = {
 		li: 'ul',
 		dd: 'dl'
 	};
@@ -62,13 +62,13 @@ function addListItem( comment, replyIndentation ) {
 	//    (or in other words, all replies, and replies to replies, and so on)
 	// 3. Add comment with level of the given comment plus 1
 
-	var curComment = comment;
+	let curComment = comment;
 	while ( curComment.replies.length ) {
 		curComment = curComment.replies[ curComment.replies.length - 1 ];
 	}
 
 	// Tag names for lists and items we're going to insert
-	var itemType;
+	let itemType;
 	if ( replyIndentation === 'invisible' ) {
 		itemType = 'dd';
 	} else if ( replyIndentation === 'bullet' ) {
@@ -76,16 +76,16 @@ function addListItem( comment, replyIndentation ) {
 	} else {
 		throw new Error( "Invalid reply indentation syntax '" + replyIndentation + "'" );
 	}
-	var listType = listTypeMap[ itemType ];
+	const listType = listTypeMap[ itemType ];
 
-	var desiredLevel = comment.level + 1;
-	var target = curComment.range.endContainer;
+	const desiredLevel = comment.level + 1;
+	let target = curComment.range.endContainer;
 
 	// target is a text node or an inline element at the end of a "paragraph" (not necessarily paragraph node).
 	// First, we need to find a block-level parent that we can mess with.
 	// If we can't find a surrounding list item or paragraph (e.g. maybe we're inside a table cell
 	// or something), take the parent node and hope for the best.
-	var parent = utils.closestElement( target, [ 'li', 'dd', 'p' ] ) || target.parentNode;
+	let parent = utils.closestElement( target, [ 'li', 'dd', 'p' ] ) || target.parentNode;
 	while ( target.parentNode !== parent ) {
 		target = target.parentNode;
 	}
@@ -95,9 +95,9 @@ function addListItem( comment, replyIndentation ) {
 	// If the comment is fully covered by some wrapper element, insert replies outside that wrapper.
 	// This will often just be a paragraph node (<p>), but it can be a <div> or <table> that serves
 	// as some kind of a fancy frame, which are often used for barnstars and announcements.
-	var excludedWrapper = utils.closestElement( target, [ 'section' ] ) ||
+	const excludedWrapper = utils.closestElement( target, [ 'section' ] ) ||
 		curComment.rootNode;
-	var covered = utils.getFullyCoveredSiblings( curComment, excludedWrapper );
+	const covered = utils.getFullyCoveredSiblings( curComment, excludedWrapper );
 	if ( curComment.level === 1 && covered ) {
 		target = covered[ covered.length - 1 ];
 		parent = target.parentNode;
@@ -105,7 +105,7 @@ function addListItem( comment, replyIndentation ) {
 
 	// If the comment is in a transclusion, insert replies after the transclusion. (T313100)
 	// This method should never be called in cases where that would be a bad idea.
-	var transclusionNode = utils.getTranscludedFromElement( target );
+	let transclusionNode = utils.getTranscludedFromElement( target );
 	if ( transclusionNode ) {
 		while (
 			transclusionNode.nextSibling &&
@@ -142,9 +142,9 @@ function addListItem( comment, replyIndentation ) {
 
 	// Instead of just using curComment.level, consider indentation of lists within the
 	// comment (T252702)
-	var curLevel = utils.getIndentLevel( target, curComment.rootNode ) + 1;
+	let curLevel = utils.getIndentLevel( target, curComment.rootNode ) + 1;
 
-	var item, list;
+	let item, list;
 	if ( desiredLevel === 1 ) {
 		// Special handling for top-level comments
 		item = target.ownerDocument.createElement( 'div' );
@@ -160,7 +160,7 @@ function addListItem( comment, replyIndentation ) {
 		// which appear at the end of the line in wikitext outside the paragraph,
 		// but we usually shouldn't insert replies between the paragraph and such comments. (T257651)
 		// Skip over comments and whitespace, but only update target when skipping past comments.
-		var pointer = target;
+		let pointer = target;
 		while (
 			pointer.nextSibling && (
 				utils.isRenderingTransparentNode( pointer.nextSibling ) ||
@@ -196,7 +196,7 @@ function addListItem( comment, replyIndentation ) {
 	} else {
 		// Split the ancestor nodes after the target to decrease nesting.
 
-		var newNode;
+		let newNode;
 		do {
 			if ( !target || !parent ) {
 				throw new Error( 'Can not decrease nesting any more' );
@@ -270,7 +270,7 @@ function addListItem( comment, replyIndentation ) {
  */
 function removeAddedListItem( node ) {
 	while ( node && node.discussionToolsModified ) {
-		var nextNode;
+		let nextNode;
 		if ( node.discussionToolsModified === 'new' ) {
 			nextNode = node.previousSibling || node.parentNode;
 
@@ -310,10 +310,6 @@ function removeAddedListItem( node ) {
  * @param {DocumentFragment|null} fragment Containing document fragment if list has no parent
  */
 function unwrapList( list, fragment ) {
-	var doc = list.ownerDocument,
-		container = fragment || list.parentNode,
-		referenceNode = list;
-
 	if ( !(
 		list.nodeType === Node.ELEMENT_NODE && (
 			list.tagName.toLowerCase() === 'dl' ||
@@ -330,21 +326,23 @@ function unwrapList( list, fragment ) {
 		return;
 	}
 
-	var insertBefore;
+	const doc = list.ownerDocument;
+	const container = fragment || list.parentNode;
+	let referenceNode = list;
 	while ( list.firstChild ) {
 		if ( list.firstChild.nodeType === Node.ELEMENT_NODE ) {
 			// Move <dd> contents to <p>
-			var p = doc.createElement( 'p' );
+			let p = doc.createElement( 'p' );
 			while ( list.firstChild.firstChild ) {
 				// If contents is a block element, place outside the paragraph
 				// and start a new paragraph after
 				if ( utils.isBlockElement( list.firstChild.firstChild ) ) {
 					if ( p.firstChild ) {
-						insertBefore = referenceNode.nextSibling;
+						const insertBefore2 = referenceNode.nextSibling;
 						referenceNode = p;
-						container.insertBefore( p, insertBefore );
+						container.insertBefore( p, insertBefore2 );
 					}
-					insertBefore = referenceNode.nextSibling;
+					const insertBefore = referenceNode.nextSibling;
 					referenceNode = list.firstChild.firstChild;
 					container.insertBefore( list.firstChild.firstChild, insertBefore );
 					p = doc.createElement( 'p' );
@@ -353,14 +351,14 @@ function unwrapList( list, fragment ) {
 				}
 			}
 			if ( p.firstChild ) {
-				insertBefore = referenceNode.nextSibling;
+				const insertBefore = referenceNode.nextSibling;
 				referenceNode = p;
 				container.insertBefore( p, insertBefore );
 			}
 			list.removeChild( list.firstChild );
 		} else {
 			// Text node / comment node, probably empty
-			insertBefore = referenceNode.nextSibling;
+			const insertBefore = referenceNode.nextSibling;
 			referenceNode = list.firstChild;
 			container.insertBefore( list.firstChild, insertBefore );
 		}
@@ -375,7 +373,7 @@ function unwrapList( list, fragment ) {
  * @return {HTMLElement}
  */
 function addSiblingListItem( previousItem ) {
-	var listItem = previousItem.ownerDocument.createElement( previousItem.tagName );
+	const listItem = previousItem.ownerDocument.createElement( previousItem.tagName );
 	previousItem.parentNode.insertBefore( listItem, previousItem.nextSibling );
 	return listItem;
 }

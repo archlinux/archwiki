@@ -44,7 +44,7 @@ class RelPath {
 			$cur = dirname( $path );
 			if ( $cur[0] === DIRECTORY_SEPARATOR ) {
 				// dirname() on Windows sometimes returns a leading backslash, but other
-				// times retains the leading forward slash. Slashes other than the leading one
+				// times it retains the leading forward slash. Slashes other than the leading one
 				// are returned as-is, and therefore do not need to be touched.
 				// Furthermore, don't break on *nix where \ is allowed in file/directory names.
 				$cur[0] = '/';
@@ -75,7 +75,7 @@ class RelPath {
 	}
 
 	/**
-	 * Return a relative filepath to path either from the current directory or from
+	 * Return a relative filepath to $path, either from the current directory or from
 	 * an optional start directory. Both paths must be absolute.
 	 *
 	 * @param string $path File path.
@@ -83,14 +83,14 @@ class RelPath {
 	 *  working directory will be used.
 	 * @return string|false Relative path, or false if input was invalid.
 	 */
-	public static function getRelativePath( string $path, string $start = null ) {
+	public static function getRelativePath( string $path, ?string $start = null ) {
 		if ( $start === null ) {
 			// @codeCoverageIgnoreStart
 			$start = getcwd();
 		}
 		// @codeCoverageIgnoreEnd
 
-		if ( substr( $path, 0, 1 ) !== '/' || substr( $start, 0, 1 ) !== '/' ) {
+		if ( strpos( $path, '/' ) !== 0 || strpos( $start, '/' ) !== 0 ) {
 			return false;
 		}
 
@@ -134,16 +134,16 @@ class RelPath {
 	 * and `path.join()` in Node.js.
 	 *
 	 * @param string $base Base path.
-	 * @param string $path File path to join to base path.
+	 * @param string $path File $path to join to $base path.
 	 * @return string|false Combined path, or false if input was invalid.
 	 */
 	public static function joinPath( string $base, string $path ) {
-		if ( substr( $path, 0, 1 ) === '/' ) {
+		if ( strpos( $path, '/' ) === 0 ) {
 			// $path is absolute.
 			return $path;
 		}
 
-		if ( substr( $base, 0, 1 ) !== '/' ) {
+		if ( strpos( $base, '/' ) !== 0 ) {
 			// $base is relative.
 			return false;
 		}
@@ -151,18 +151,19 @@ class RelPath {
 		$pathParts = self::splitPath( $path );
 		$resultParts = self::splitPath( $base );
 
+		// @phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $part = array_shift( $pathParts ) ) !== null ) {
 			switch ( $part ) {
-			case '.':
-				break;
-			case '..':
-				if ( count( $resultParts ) > 1 ) {
-					array_pop( $resultParts );
-				}
-				break;
-			default:
-				$resultParts[] = $part;
-				break;
+				case '.':
+					break;
+				case '..':
+					if ( count( $resultParts ) > 1 ) {
+						array_pop( $resultParts );
+					}
+					break;
+				default:
+					$resultParts[] = $part;
+					break;
 			}
 		}
 

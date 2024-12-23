@@ -2,9 +2,8 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
-use ApiTestCase;
 use MediaWiki\Extension\DiscussionTools\ApiDiscussionToolsPageInfo;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Tests\Api\ApiTestCase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -31,7 +30,7 @@ class ApiDiscussionToolsPageInfoTest extends ApiTestCase {
 		$doc = static::createDocument( $dom );
 		$container = static::getThreadContainer( $doc );
 
-		$title = MediaWikiServices::getInstance()->getTitleParser()->parseTitle( $title );
+		$title = $this->getServiceContainer()->getTitleParser()->parseTitle( $title );
 		$threadItemSet = $this->createParser( $config, $data )->parse( $container, $title );
 
 		$pageInfo = TestingAccessWrapper::newFromClass( ApiDiscussionToolsPageInfo::class );

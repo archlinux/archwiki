@@ -5,8 +5,8 @@ namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use Language;
-use LanguageCode;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -18,7 +18,7 @@ use Wikimedia\RequestTimeout\TimeoutException;
 class LanguageLibrary extends LibraryBase {
 	/** @var Language[] */
 	public $langCache = [];
-	/** @var array */
+	/** @var array[] */
 	public $timeCache = [];
 	/** @var int */
 	public $maxLangCacheSize;
@@ -186,8 +186,12 @@ class LanguageLibrary extends LibraryBase {
 	 * @return array
 	 * @throws LuaError
 	 */
-	public function languageMethod( $name, $args ) {
-		$name = strval( $name );
+	public function languageMethod( string $name, array $args ): array {
+		if ( !is_string( $args[0] ?? null ) ) {
+			throw new LuaError(
+				"invalid code property of language object when calling $name"
+			);
+		}
 		$code = array_shift( $args );
 		if ( !isset( $this->langCache[$code] ) ) {
 			if ( count( $this->langCache ) > $this->maxLangCacheSize ) {

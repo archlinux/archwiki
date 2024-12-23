@@ -23,8 +23,10 @@ use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use Wikimedia\AtEase;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\Rdbms\DBExpectedError;
 use Wikimedia\Rdbms\DBReadOnlyError;
@@ -45,6 +47,7 @@ class MWExceptionRenderer {
 	 * May be changed at runtime via MWExceptionRenderer::setShowExceptionDetails().
 	 *
 	 * @see MainConfigNames::ShowExceptionDetails
+	 * @var bool
 	 */
 	private static $showExceptionDetails = false;
 
@@ -69,7 +72,7 @@ class MWExceptionRenderer {
 	 * @param int $mode MWExceptionExposer::AS_* constant
 	 * @param Throwable|null $eNew New throwable from attempting to show the first
 	 */
-	public static function output( Throwable $e, $mode, Throwable $eNew = null ) {
+	public static function output( Throwable $e, $mode, ?Throwable $eNew = null ) {
 		$showExceptionDetails = self::shouldShowExceptionDetails();
 		if ( $e instanceof RequestTimeoutException && headers_sent() ) {
 			// Excimer's flag check happens on function return, so, a timeout
@@ -155,8 +158,6 @@ class MWExceptionRenderer {
 		// Don't even bother with OutputPage if there's no Title context set,
 		// (e.g. we're in RL code on load.php) - the Skin system (and probably
 		// most of MediaWiki) won't work.
-
-		// NOTE: keep in sync with MWException::useOutputPage
 		return (
 			!empty( $GLOBALS['wgFullyInitialised'] ) &&
 			!empty( $GLOBALS['wgOut'] ) &&
@@ -196,6 +197,7 @@ class MWExceptionRenderer {
 				'<title>' .
 				htmlspecialchars( self::msg( 'pagetitle', '$1 - MediaWiki', $pageTitle ) ) .
 				'</title>' .
+				'<meta name="color-scheme" content="light dark" />' .
 				'<style>body { font-family: sans-serif; margin: 0; padding: 0.5em 2em; }</style>' .
 				"</head><body>\n";
 
@@ -213,14 +215,12 @@ class MWExceptionRenderer {
 	 */
 	public static function getHTML( Throwable $e ) {
 		if ( self::shouldShowExceptionDetails() ) {
-			$html = Html::errorBox( "<p>" .
+			$html = '<div dir=ltr>' . Html::errorBox( "<p>" .
 				nl2br( htmlspecialchars( MWExceptionHandler::getLogMessage( $e ) ) ) .
 				'</p><p>Backtrace:</p><p>' .
 				nl2br( htmlspecialchars( MWExceptionHandler::getRedactedTraceAsString( $e ) ) ) .
-				"</p>\n",
-				'',
-				'mw-content-ltr'
-			);
+				"</p>\n"
+			) . '</div>';
 		} else {
 			$logId = WebRequest::getRequestId();
 			$html = Html::errorBox(
@@ -232,9 +232,7 @@ class MWExceptionRenderer {
 						get_class( $e ),
 						$logId,
 						MWExceptionHandler::getURL()
-				) ),
-				'',
-				'mw-content-ltr'
+				) )
 			) . "<!-- " . wordwrap( self::getShowBacktraceError(), 50 ) . " -->";
 		}
 
@@ -314,14 +312,7 @@ class MWExceptionRenderer {
 	 * @return Message
 	 */
 	private static function getExceptionTitle( Throwable $e ): Message {
-		if (
-			$e instanceof MWException &&
-			MWDebug::detectDeprecatedOverride( $e, MWException::class, 'getPageTitle', '1.42' )
-		) {
-			return ( new RawMessage( '$1' ) )->plaintextParams(
-				$e->getPageTitle() /* convert string title to Message */
-			);
-		} elseif ( $e instanceof DBReadOnlyError ) {
+		if ( $e instanceof DBReadOnlyError ) {
 			return self::msgObj( 'readonly', 'Database is locked' );
 		} elseif ( $e instanceof DBExpectedError ) {
 			return self::msgObj( 'databaseerror', 'Database error' );
@@ -431,6 +422,7 @@ class MWExceptionRenderer {
 		$html = "<!DOCTYPE html>\n" .
 				'<html><head>' .
 				'<title>MediaWiki</title>' .
+				'<meta name="color-scheme" content="light dark" />' .
 				'<style>body { font-family: sans-serif; margin: 0; padding: 0.5em 2em; }</style>' .
 				"</head><body><h1>$sorry</h1><p>$again</p><p><small>$info</small></p>";
 

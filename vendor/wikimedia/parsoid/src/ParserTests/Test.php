@@ -360,7 +360,7 @@ class Test extends Item {
 				'@phan-var Element $node'; // @var Element $node
 				DOMCompat::setInnerHTML( $node, $h );
 			},
-			'remove' => static function ( Node $node, string $optSelector = null ) {
+			'remove' => static function ( Node $node, ?string $optSelector = null ) {
 				// jquery lets us specify an optional selector to further
 				// restrict the removed elements.
 				// text nodes don't have the "querySelectorAll" method, so
@@ -909,6 +909,18 @@ class Test extends Item {
 		}
 
 		return [ TestUtils::normalizeOut( $actual, $normOpts ), $normExpected ];
+	}
+
+	/**
+	 * Normalize "known failure" output.
+	 *
+	 * This is an extremely light normalization, since the point of the
+	 * known failure file is to catch changes in output, even if we don't
+	 * know what "correct" is.  But we do remove 'about' numbering, since
+	 * that is not guaranteed consistent from run to run.
+	 */
+	public function normalizeKnownFailure( string $out ): string {
+		return TestUtils::normalizeAbout( $out );
 	}
 
 	/**

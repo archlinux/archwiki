@@ -20,8 +20,12 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use Exception;
 use MediaWiki\Feed\FeedItem;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
@@ -37,19 +41,16 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiFeedWatchlist extends ApiBase {
 
+	/** @var ApiBase|null */
 	private $watchlistModule = null;
+	/** @var bool */
 	private $linkToSections = false;
 
 	private ParserFactory $parserFactory;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param ParserFactory $parserFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		ParserFactory $parserFactory
 	) {
 		parent::__construct( $main, $action );
@@ -171,9 +172,9 @@ class ApiFeedWatchlist extends ApiBase {
 			$feed = new $feedClasses[$feedFormat] ( $feedTitle, $msg, $feedUrl );
 
 			if ( $e instanceof ApiUsageException ) {
-				foreach ( $e->getStatusValue()->getErrors() as $error ) {
+				foreach ( $e->getStatusValue()->getMessages() as $msg ) {
 					// @phan-suppress-next-line PhanUndeclaredMethod
-					$msg = ApiMessage::create( $error )
+					$msg = ApiMessage::create( $msg )
 						->inLanguage( $this->getLanguage() );
 					$errorTitle = $this->msg( 'api-feed-error-title', $msg->getApiCode() );
 					$errorText = $msg->text();
@@ -319,3 +320,6 @@ class ApiFeedWatchlist extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Watchlist_feed';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiFeedWatchlist::class, 'ApiFeedWatchlist' );

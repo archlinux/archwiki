@@ -1,8 +1,8 @@
 <?php
 
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Title\Title;
-use MediaWiki\User\User;
 
 /**
  * @group Database
@@ -20,7 +20,7 @@ class TemplateCategoriesTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Title\Title::getParentCategories
 	 */
 	public function testTemplateCategories() {
-		$user = new User();
+		$user = $this->getTestUser()->getUser();
 		$this->overrideUserPermissions( $user, [ 'createpage', 'edit', 'purge', 'delete' ] );
 		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
 

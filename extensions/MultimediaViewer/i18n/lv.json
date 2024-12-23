@@ -19,13 +19,6 @@
 	"multimediaviewer-permission-title": "Atļauju detaļas",
 	"multimediaviewer-permission-link": "skatīt noteikumus",
 	"multimediaviewer-permission-viewmore": "Skatīt vairāk",
-	"multimediaviewer-about-mmv": "Par šo saskarni",
-	"multimediaviewer-optout-mmv": "Deaktivizēt Media Viewer",
-	"multimediaviewer-optin-mmv": "Aktivizēt multimediju skatīkli",
-	"multimediaviewer-optout-pending-mmv": "Atspējo multimediju skatīkli",
-	"multimediaviewer-optin-pending-mmv": "Iepsējo multimediju skatīkli",
-	"multimediaviewer-optout-help": "Multimediju skatīklis vairs netiks izmantots attēlu apskatei. Lai atkal to izmantotu, klikšķiniet uz \"Izplest\" pogas blakus jebkuram attēlam. tad klikšķiniet uz \"{{int:multimediaviewer-optin-mmv}}\".",
-	"multimediaviewer-optin-help": "Multimediju skatīklis tiks izmantots attēlu apskatei.",
 	"multimediaviewer-geolocation": "Atrašanās vieta: $1",
 	"multimediaviewer-reuse-link": "Dalīties vai iegult šo failu",
 	"multimediaviewer-reuse-loading-placeholder": "Ielādē…",
@@ -60,7 +53,5 @@
 	"multimediaviewer-next-image-alt-text": "Rādīt nākamo attēlu",
 	"multimediaviewer-prev-image-alt-text": "Rādīt iepriekšējo attēlu",
 	"multimediaviewer-title-popup-text": "Apraksts",
-	"multimediaviewer-reuse-warning-nonfree": "Šim failam nav brīvas licences",
-	"multimediaviewer-options-learn-more": "Uzzināt vairāk",
-	"multimediaviewer-option-cancel-button": "Atcelt"
+	"multimediaviewer-reuse-warning-nonfree": "Šim failam nav brīvas licences"
 }

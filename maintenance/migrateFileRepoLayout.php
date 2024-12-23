@@ -21,7 +21,11 @@
  * @ingroup Maintenance
  */
 
+use Wikimedia\FileBackend\FileBackend;
+
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Copy all files in FileRepo to an originals container using SHA1 paths.
@@ -108,7 +112,7 @@ class MigrateFileRepoLayout extends Maintenance {
 					$status = $be->prepare( [
 						'dir' => dirname( $dpath ), 'bypassReadOnly' => true ] );
 					if ( !$status->isOK() ) {
-						$this->error( print_r( $status->getErrors(), true ) );
+						$this->error( $status );
 					}
 
 					$batch[] = [ 'op' => 'copy', 'overwrite' => true,
@@ -141,7 +145,7 @@ class MigrateFileRepoLayout extends Maintenance {
 					$status = $be->prepare( [
 						'dir' => dirname( $dpath ), 'bypassReadOnly' => true ] );
 					if ( !$status->isOK() ) {
-						$this->error( print_r( $status->getErrors(), true ) );
+						$this->error( $status );
 					}
 					$batch[] = [ 'op' => 'copy', 'overwrite' => true,
 						'src' => $spath, 'dst' => $dpath, 'img' => $ofile->getArchiveName() ];
@@ -202,7 +206,7 @@ class MigrateFileRepoLayout extends Maintenance {
 				$status = $be->prepare( [
 					'dir' => dirname( $dpath ), 'bypassReadOnly' => true ] );
 				if ( !$status->isOK() ) {
-					$this->error( print_r( $status->getErrors(), true ) );
+					$this->error( $status );
 				}
 
 				$batch[] = [ 'op' => 'copy', 'src' => $spath, 'dst' => $dpath,
@@ -238,12 +242,14 @@ class MigrateFileRepoLayout extends Maintenance {
 
 		$status = $be->doOperations( $ops, [ 'bypassReadOnly' => true ] );
 		if ( !$status->isOK() ) {
-			$this->output( print_r( $status->getErrors(), true ) );
+			$this->error( $status );
 		}
 
 		$this->output( "Batch done\n\n" );
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MigrateFileRepoLayout::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -38,7 +38,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "Kjo referencë është përdorur {{PLURAL:$1|once|2=twice|$1 times}} në këtë faqe. Ndryshimet e bëra këtu do të zbatohen në të gjitha vendet ku do të ripërdoret kjo referencë.",
 	"cite-ve-dialog-reference-options-group-label": "Përdorni këtë grup",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referenca të përgjithshme",
-	"cite-ve-dialog-reference-options-name-label": "Ripërdoreni me këtë emër",
 	"cite-ve-dialog-reference-options-responsive-label": "Përdorni skemë shtyllash reaguese",
 	"cite-ve-dialog-reference-options-section": "Mundësi",
 	"cite-ve-dialog-reference-placeholder": "Shkruani ose ngjitni këtu referencën tuaj ose futni një gjedhe citimesh.",

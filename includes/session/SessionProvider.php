@@ -23,19 +23,22 @@
 
 namespace MediaWiki\Session;
 
-use ApiUsageException;
 use ErrorPageError;
-use Language;
+use InvalidArgumentException;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
 use MWRestrictions;
 use Psr\Log\LoggerInterface;
+use Stringable;
 
 /**
  * A SessionProvider provides SessionInfo and support for Session
@@ -83,7 +86,7 @@ use Psr\Log\LoggerInterface;
  * @since 1.27
  * @see https://www.mediawiki.org/wiki/Manual:SessionManager_and_AuthManager
  */
-abstract class SessionProvider implements SessionProviderInterface {
+abstract class SessionProvider implements Stringable, SessionProviderInterface {
 
 	/** @var LoggerInterface */
 	protected $logger;
@@ -580,7 +583,7 @@ abstract class SessionProvider implements SessionProviderInterface {
 	public function getAllowedUserRights( SessionBackend $backend ) {
 		if ( $backend->getProvider() !== $this ) {
 			// Not that this should ever happen...
-			throw new \InvalidArgumentException( 'Backend\'s provider isn\'t $this' );
+			throw new InvalidArgumentException( 'Backend\'s provider isn\'t $this' );
 		}
 
 		return null;
@@ -623,7 +626,7 @@ abstract class SessionProvider implements SessionProviderInterface {
 	 * @warning This will be called early during MediaWiki startup. Do not
 	 *  use $wgUser, $wgLang, $wgOut, the global Parser, or their equivalents via
 	 *  RequestContext from this method!
-	 * @return \Message
+	 * @return Message
 	 */
 	protected function describeMessage() {
 		return wfMessage(
@@ -692,13 +695,13 @@ abstract class SessionProvider implements SessionProviderInterface {
 	 */
 	final protected function hashToSessionId( $data, $key = null ) {
 		if ( !is_string( $data ) ) {
-			throw new \InvalidArgumentException(
-				'$data must be a string, ' . gettype( $data ) . ' was passed'
+			throw new InvalidArgumentException(
+				'$data must be a string, ' . get_debug_type( $data ) . ' was passed'
 			);
 		}
 		if ( $key !== null && !is_string( $key ) ) {
-			throw new \InvalidArgumentException(
-				'$key must be a string or null, ' . gettype( $key ) . ' was passed'
+			throw new InvalidArgumentException(
+				'$key must be a string or null, ' . get_debug_type( $key ) . ' was passed'
 			);
 		}
 

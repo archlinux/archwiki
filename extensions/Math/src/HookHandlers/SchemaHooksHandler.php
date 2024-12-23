@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Math\HookHandlers;
 
-use DatabaseUpdater;
+use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 
 /**

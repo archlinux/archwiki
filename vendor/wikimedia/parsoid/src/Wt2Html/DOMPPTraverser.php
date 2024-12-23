@@ -11,12 +11,14 @@ use Wikimedia\Parsoid\Utils\DTState;
 
 /**
  * This is a class that wraps the DOMTraverser utility for use
- * in the DOM Post Processor pipeline.
+ * in the DOM Processor pipeline.
  */
 class DOMPPTraverser implements Wt2HtmlDOMProcessor {
 	private DOMTraverser $dt;
 
-	public function __construct( bool $traverseWithTplInfo = false, bool $applyToAttributeEmbeddedHTML = false ) {
+	public function __construct(
+		?DOMPostProcessor $domPP, bool $traverseWithTplInfo = false, bool $applyToAttributeEmbeddedHTML = false
+	) {
 		$this->dt = new DOMTraverser( $traverseWithTplInfo, $applyToAttributeEmbeddedHTML );
 	}
 
@@ -33,9 +35,9 @@ class DOMPPTraverser implements Wt2HtmlDOMProcessor {
 	 * @inheritDoc
 	 */
 	public function run(
-		Env $env, Node $workNode, array $options = [], bool $atTopLevel = false
+		Env $env, Node $root, array $options = [], bool $atTopLevel = false
 	): void {
-		$state = new DTState( $options, $atTopLevel );
-		$this->dt->traverse( new ParsoidExtensionAPI( $env ), $workNode, $state );
+		$state = new DTState( $env, $options, $atTopLevel );
+		$this->dt->traverse( new ParsoidExtensionAPI( $env ), $root, $state );
 	}
 }

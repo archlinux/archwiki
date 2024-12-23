@@ -62,7 +62,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 
 	protected function handleTopLevelError( Throwable $e ) {
 		$context = $this->getContext();
-		$action = $context->getRequest()->getRawVal( 'action', 'view' );
+		$action = $context->getRequest()->getRawVal( 'action' ) ?? 'view';
 		if (
 			$e instanceof DBConnectionError &&
 			$context->hasTitle() &&
@@ -86,6 +86,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 	 * Determine and send the response headers and body for this web request
 	 */
 	protected function execute() {
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 		global $wgTitle;
 
 		// Get title from request parameters,
@@ -98,7 +99,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 		$trxLimits = $this->getConfig( MainConfigNames::TrxProfilerLimits );
 		$trxProfiler = Profiler::instance()->getTransactionProfiler();
 		$trxProfiler->setLogger( LoggerFactory::getInstance( 'rdbms' ) );
-		$trxProfiler->setStatsdDataFactory( $this->getStatsdDataFactory() );
+		$trxProfiler->setStatsFactory( $this->getStatsFactory() );
 		$trxProfiler->setRequestMethod( $request->getMethod() );
 		if ( $request->hasSafeMethod() ) {
 			$trxProfiler->setExpectations( $trxLimits['GET'], __METHOD__ );
@@ -361,6 +362,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 	 * @return void
 	 */
 	protected function performRequest() {
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 		global $wgTitle;
 
 		$context = $this->getContext();
@@ -428,9 +430,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 				$url = $title->getFullURL( $query );
 			}
 			// Check for a redirect loop
-			if ( !preg_match( '/^' . preg_quote( $this->getConfig( MainConfigNames::Server ), '/' ) . '/', $url )
-				&& $title->isLocal()
-			) {
+			if ( $url !== $request->getFullRequestURL() && $title->isLocal() ) {
 				// 301 so google et al report the target as the actual url.
 				$output->redirect( $url, 301 );
 			} else {
@@ -545,7 +545,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 		$request = $this->getRequest();
 		$output = $this->getOutput();
 
-		if ( $request->getRawVal( 'action', 'view' ) != 'view'
+		if ( ( $request->getRawVal( 'action' ) ?? 'view' ) !== 'view'
 			|| $request->wasPosted()
 			|| ( $request->getCheck( 'title' )
 				&& $title->getPrefixedDBkey() == $request->getText( 'title' ) )
@@ -635,7 +635,7 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 
 		// Namespace might change when using redirects
 		// Check for redirects ...
-		$action = $request->getRawVal( 'action', 'view' );
+		$action = $request->getRawVal( 'action' ) ?? 'view';
 		$file = ( $page instanceof WikiFilePage ) ? $page->getFile() : null;
 		if ( ( $action == 'view' || $action == 'render' ) // ... for actions that show content
 			&& !$request->getCheck( 'oldid' ) // ... and are not old revisions

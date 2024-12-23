@@ -2,6 +2,7 @@
 
 use MediaWiki\Extension\Math\InputCheck\RestbaseChecker;
 use MediaWiki\Extension\Math\Tests\MathMockHttpTrait;
+use MediaWiki\Message\Message;
 
 /**
  * @group Math

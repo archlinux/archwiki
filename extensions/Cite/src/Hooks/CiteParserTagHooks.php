@@ -3,20 +3,29 @@
 namespace Cite\Hooks;
 
 use Cite\Cite;
-use Parser;
-use PPFrame;
+use MediaWiki\Config\Config;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\PPFrame;
 
 /**
  * @license GPL-2.0-or-later
  */
 class CiteParserTagHooks {
 
+	private Config $config;
+
+	public function __construct(
+		Config $config
+	) {
+		$this->config = $config;
+	}
+
 	/**
 	 * Enables the two <ref> and <references> tags.
 	 */
-	public static function register( Parser $parser ): void {
-		$parser->setHook( 'ref', [ __CLASS__, 'ref' ] );
-		$parser->setHook( 'references', [ __CLASS__, 'references' ] );
+	public function register( Parser $parser ): void {
+		$parser->setHook( 'ref', [ $this, 'ref' ] );
+		$parser->setHook( 'references', [ $this, 'references' ] );
 	}
 
 	/**
@@ -29,13 +38,13 @@ class CiteParserTagHooks {
 	 *
 	 * @return string HTML
 	 */
-	public static function ref(
+	public function ref(
 		?string $text,
 		array $argv,
 		Parser $parser,
 		PPFrame $frame
 	): string {
-		$cite = self::citeForParser( $parser );
+		$cite = $this->citeForParser( $parser );
 		$result = $cite->ref( $parser, $text, $argv );
 
 		if ( $result === null ) {
@@ -60,13 +69,13 @@ class CiteParserTagHooks {
 	 *
 	 * @return string HTML
 	 */
-	public static function references(
+	public function references(
 		?string $text,
 		array $argv,
 		Parser $parser,
 		PPFrame $frame
 	): string {
-		$cite = self::citeForParser( $parser );
+		$cite = $this->citeForParser( $parser );
 		$result = $cite->references( $parser, $text, $argv );
 
 		if ( $result === null ) {
@@ -83,8 +92,8 @@ class CiteParserTagHooks {
 	/**
 	 * Get or create Cite state for this parser.
 	 */
-	private static function citeForParser( Parser $parser ): Cite {
-		$parser->extCite ??= new Cite( $parser );
+	private function citeForParser( Parser $parser ): Cite {
+		$parser->extCite ??= new Cite( $parser, $this->config );
 		return $parser->extCite;
 	}
 

@@ -56,12 +56,12 @@ ve.ce.MWSignatureNode.static.getDescription = function () {
 };
 
 // Update the timestamp on inserted signatures every minute.
-setInterval( function () {
-	var liveSignatures = ve.ce.MWSignatureNode.static.liveSignatures;
+setInterval( () => {
+	const liveSignatures = ve.ce.MWSignatureNode.static.liveSignatures;
 
-	var updatedSignatures = [];
-	for ( var i = 0; i < liveSignatures.length; i++ ) {
-		var sig = liveSignatures[ i ];
+	const updatedSignatures = [];
+	for ( let i = 0; i < liveSignatures.length; i++ ) {
+		const sig = liveSignatures[ i ];
 		try {
 			sig.forceUpdate();
 			updatedSignatures.push( sig );
@@ -90,13 +90,13 @@ ve.ce.MWSignatureNode.prototype.onSetup = function () {
  * @inheritdoc
  */
 ve.ce.MWSignatureNode.prototype.onTeardown = function () {
-	var liveSignatures = this.constructor.static.liveSignatures;
+	const liveSignatures = this.constructor.static.liveSignatures;
 
 	// Parent method
 	ve.ce.MWSignatureNode.super.prototype.onTeardown.call( this );
 
 	// Stop tracking
-	var index = liveSignatures.indexOf( this );
+	const index = liveSignatures.indexOf( this );
 	if ( index !== -1 ) {
 		liveSignatures.splice( index, 1 );
 	}
@@ -106,9 +106,9 @@ ve.ce.MWSignatureNode.prototype.onTeardown = function () {
  * @inheritdoc ve.ce.GeneratedContentNode
  */
 ve.ce.MWSignatureNode.prototype.generateContents = function () {
-	var doc = this.getModel().getDocument();
-	var abortable, aborted;
-	var abortedPromise = ve.createDeferred().reject( 'http',
+	const doc = this.getModel().getDocument();
+	let abortable, aborted;
+	const abortedPromise = ve.createDeferred().reject( 'http',
 		{ textStatus: 'abort', exception: 'abort' } ).promise();
 
 	function abort() {
@@ -121,13 +121,13 @@ ve.ce.MWSignatureNode.prototype.generateContents = function () {
 	// Acquire a temporary user username before previewing, so that signatures
 	// display the temp user instead of IP user. (T331397)
 	return mw.user.acquireTempUserName()
-		.then( function () {
+		.then( () => {
 			if ( aborted ) {
 				return abortedPromise;
 			}
 
 			// We must have only one top-level node, this is the easiest way.
-			var wikitext = '<span>~~~~</span>';
+			const wikitext = '<span>~~~~</span>';
 
 			// Parsoid doesn't support pre-save transforms. PHP parser doesn't support Parsoid's
 			// meta attributes (that may or may not be required).
@@ -141,17 +141,17 @@ ve.ce.MWSignatureNode.prototype.generateContents = function () {
 				onlypst: true
 			} ) );
 		} )
-		.then( function ( pstResponse ) {
+		.then( ( pstResponse ) => {
 			if ( aborted ) {
 				return abortedPromise;
 			}
-			var wikitext = ve.getProp( pstResponse, 'parse', 'text' );
+			const wikitext = ve.getProp( pstResponse, 'parse', 'text' );
 			if ( !wikitext ) {
 				return ve.createDeferred().reject();
 			}
 			return ( abortable = ve.init.target.parseWikitextFragment( wikitext, true, doc ) );
 		} )
-		.then( function ( parseResponse ) {
+		.then( ( parseResponse ) => {
 			if ( aborted ) {
 				return abortedPromise;
 			}

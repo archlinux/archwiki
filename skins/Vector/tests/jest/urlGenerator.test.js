@@ -22,9 +22,7 @@ describe( 'urlGenerator', () => {
 
 		test( 'custom params, articlePath', () => {
 			const config = {
-				get: jest.fn().mockImplementation( ( _key, fallback ) => {
-					return fallback;
-				} ),
+				get: jest.fn().mockImplementation( ( _key, fallback ) => fallback ),
 				set: jest.fn()
 			};
 

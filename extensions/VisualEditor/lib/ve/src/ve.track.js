@@ -5,7 +5,7 @@
  */
 
 ( function () {
-	var callbacks = $.Callbacks( 'memory' ),
+	const callbacks = $.Callbacks( 'memory' ),
 		queue = [];
 
 	/**
@@ -17,7 +17,7 @@
 	 * and reliability. VisualEditor does not transmit these events by default, but it provides a
 	 * generic interface for routing these events to an analytics framework.
 	 *
-	 * @member ve
+	 * @memberof ve
 	 * @param {string} topic Event name
 	 * @param {Object} [data] Additional data describing the event, encoded as an object
 	 */
@@ -33,15 +33,15 @@
 	 * handler was registered, with the topic, event data payload, and event timestamp as the first,
 	 * second, and third arguments, respectively.
 	 *
-	 * @member ve
+	 * @memberof ve
 	 * @param {string} topic Handle events whose name starts with this string prefix
 	 * @param {Function} callback Handler to call for each matching tracked event
 	 */
 	ve.trackSubscribe = function ( topic, callback ) {
-		var seen = 0;
+		let seen = 0;
 
-		callbacks.add( function ( q ) {
-			var event;
+		callbacks.add( ( q ) => {
+			let event;
 			for ( ; seen < q.length; seen++ ) {
 				event = q[ seen ];
 				if ( event.topic.indexOf( topic ) === 0 ) {

@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Tests\Structure;
 
-use ExtensionRegistry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
 use MediaWiki\Settings\Config\PhpIniSink;
 use MediaWiki\Settings\SettingsBuilder;
@@ -598,7 +598,7 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testSetLocaltimezone(): void {
 		// Make sure the configured timezone ewas applied to the PHP runtime.
-		$tz = $this->getServiceContainer()->getMainConfig()->get( 'Localtimezone' );
+		$tz = $this->getConfVar( MainConfigNames::Localtimezone );
 		$this->assertSame( $tz, date_default_timezone_get() );
 	}
 }

@@ -4,7 +4,7 @@
 
 namespace PageImages\Hooks;
 
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Title\Title;
 use MobileFrontend\Hooks\SpecialMobileEditWatchlistImagesHook;
 use PageImages\PageImages;

@@ -3,9 +3,8 @@
 namespace MediaWiki\Tests\Rest\Handler;
 
 use Exception;
-use HashBagOStuff;
-use IContextSource;
 use MediaWiki\Block\BlockErrorFormatter;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Edit\ParsoidOutputStash;
 use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\Edit\SimpleParsoidOutputStash;
@@ -14,6 +13,7 @@ use MediaWiki\Permissions\UserAuthority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\User\User;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use WikiPage;
 
 /**
@@ -22,6 +22,7 @@ use WikiPage;
  */
 trait HTMLHandlerTestTrait {
 
+	/** @var ParsoidOutputStash|null */
 	private $parsoidOutputStash = null;
 
 	private function getParsoidOutputStash(): ParsoidOutputStash {
@@ -57,7 +58,7 @@ trait HTMLHandlerTestTrait {
 		WikiPage $page,
 		array $queryParams = [],
 		array $config = [],
-		Authority $authority = null
+		?Authority $authority = null
 	): array {
 		$handler = $this->newHandler();
 		$request = new RequestData( [
@@ -91,7 +92,7 @@ trait HTMLHandlerTestTrait {
 		int $revId,
 		array $queryParams = [],
 		array $config = [],
-		Authority $authority = null
+		?Authority $authority = null
 	): array {
 		$handler = $this->newHandler();
 		$request = new RequestData( [

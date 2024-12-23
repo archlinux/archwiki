@@ -23,18 +23,18 @@ ve.dm.nodeFactory.register( ve.dm.LeafNodeStub );
 
 /* Tests */
 
-QUnit.test( 'canHaveChildren', function ( assert ) {
-	var node = new ve.dm.LeafNodeStub();
+QUnit.test( 'canHaveChildren', ( assert ) => {
+	const node = new ve.dm.LeafNodeStub();
 	assert.strictEqual( node.canHaveChildren(), false );
 } );
 
-QUnit.test( 'canHaveChildrenNotContent', function ( assert ) {
-	var node = new ve.dm.LeafNodeStub();
+QUnit.test( 'canHaveChildrenNotContent', ( assert ) => {
+	const node = new ve.dm.LeafNodeStub();
 	assert.strictEqual( node.canHaveChildrenNotContent(), false );
 } );
 
-QUnit.test( 'getAnnotations', function ( assert ) {
-	var element = { type: 'leaf-stub' },
+QUnit.test( 'getAnnotations', ( assert ) => {
+	const element = { type: 'leaf-stub' },
 		node = new ve.dm.LeafNodeStub( element );
 	assert.deepEqual( node.getAnnotations(), [], 'undefined .annotations returns empty set' );
 	assert.strictEqual( element.annotations, undefined, 'no .annotations property added' );

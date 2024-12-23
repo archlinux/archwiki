@@ -30,6 +30,8 @@
 	"cite_error_empty_references_define": "L'etiqueta <code>&lt;ref&gt;</code> definida a <code>&lt;references&gt;</code> amb el nom \"$1\" no té contingut.",
 	"cite-tracking-category-cite-error": "Pàgines amb errors a les referències",
 	"cite-tracking-category-cite-error-desc": "Les pàgines en aquesta categoria tenen errors d’ús de les etiquetes de referències.",
+	"cite-reference-previews-reference": "Referència",
+	"cite-reference-previews-note": "Nota",
 	"cite_section_preview_references": "Previsualització de les referències",
 	"cite_warning": "Advertiment de citació: $1",
 	"cite-wikieditor-tool-reference": "Referència",

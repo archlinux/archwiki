@@ -31,5 +31,9 @@
 	"categorytree-no-pages": "alt kategoriya ve ya maqale yoq",
 	"categorytree-not-found": "<i>$1</i> kategoriyası tapılmadı",
 	"categorytree-error": "Malümat yüklenmesi hatası.",
-	"categorytree-retry": "Lütfen biraz beklep bir daa yapıp baqıñız."
+	"categorytree-retry": "Lütfen biraz beklep bir daa yapıp baqıñız.",
+	"categorytree-onlyroot-message": "<code>onlyroot</code> parametri endi qullanılmay. Bunıñ yerine <code>depth=\"0\"</code> qullanıñız.",
+	"categorytree-deprecation-warning": "'''Tenbi:''' Bu saife içinde endi qullanılmağan parametr olğan <code>&lt;categorytree&gt;</code> qullana.",
+	"categorytree-deprecation-category": "Endi qullanılmağan categorytree parametrini qullanğan saifeler",
+	"categorytree-deprecation-category-desc": "Saife, <code>onlyroot</code> kibi endi qullanılmağan categorytree parametrni qullana."
 }

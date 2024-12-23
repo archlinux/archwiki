@@ -42,7 +42,7 @@ class OATHAuthServices {
 	 * @param MediaWikiServices|null $services
 	 * @return OATHAuthServices
 	 */
-	public static function getInstance( MediaWikiServices $services = null ): OATHAuthServices {
+	public static function getInstance( ?MediaWikiServices $services = null ): OATHAuthServices {
 		return new self(
 			$services ?? MediaWikiServices::getInstance(),
 		);

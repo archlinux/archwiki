@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Allpages
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -63,9 +60,9 @@ class SpecialAllPages extends IncludableSpecialPage {
 	private PageStore $pageStore;
 
 	public function __construct(
-		IConnectionProvider $dbProvider = null,
-		SearchEngineFactory $searchEngineFactory = null,
-		PageStore $pageStore = null
+		?IConnectionProvider $dbProvider = null,
+		?SearchEngineFactory $searchEngineFactory = null,
+		?PageStore $pageStore = null
 	) {
 		parent::__construct( 'Allpages' );
 		// This class is extended and therefore falls back to global state - T265309
@@ -86,7 +83,7 @@ class SpecialAllPages extends IncludableSpecialPage {
 
 		$this->setHeaders();
 		$this->outputHeader();
-		$out->setPreventClickjacking( false );
+		$out->getMetadata()->setPreventClickjacking( false );
 
 		# GET values
 		$from = $request->getVal( 'from', null );

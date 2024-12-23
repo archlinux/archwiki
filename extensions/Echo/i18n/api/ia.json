@@ -1,10 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"McDutchie"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Activar manualmente le invio de un notification a un usator",
+	"apihelp-echocreateevent-example": "Inviar un notification",
+	"apihelp-echocreateevent-param-user": "Usator a qui inviar le notification",
+	"apihelp-echocreateevent-param-header": "Contento de capite del notification",
+	"apihelp-echocreateevent-param-content": "Contento de corpore del notification",
+	"apihelp-echocreateevent-param-page": "Pagina al qual ligar in le notification",
+	"apihelp-echocreateevent-param-section": "Section ubi le notification esserea livrate",
+	"apihelp-echocreateevent-param-email": "Si se debe inviar un e-mail tamben",
 	"apihelp-echomarkread-summary": "Marcar notificationes como legite pro le usator actual.",
 	"apihelp-echomarkread-param-list": "Un lista de IDs de notification a marcar como legite.",
 	"apihelp-echomarkread-param-unreadlist": "Un lista de IDs de notification a marcar como non legite.",

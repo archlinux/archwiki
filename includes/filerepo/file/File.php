@@ -9,6 +9,7 @@
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
@@ -19,6 +20,11 @@ use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use Shellbox\Command\BoxedCommand;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFile\FSFile;
+use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * Base code for files.
@@ -485,12 +491,14 @@ abstract class File implements MediaHandlerState {
 	public function getLocalRefPath() {
 		$this->assertRepoDefined();
 		if ( !isset( $this->fsFile ) ) {
-			$starttime = microtime( true );
+			$timer = MediaWikiServices::getInstance()->getStatsFactory()
+				->getTiming( 'media_thumbnail_generate_fetchoriginal_seconds' )
+				->copyToStatsdAt( 'media.thumbnail.generate.fetchoriginal' );
+			$timer->start();
+
 			$this->fsFile = $this->repo->getLocalReference( $this->getPath() );
 
-			$statTiming = microtime( true ) - $starttime;
-			MediaWikiServices::getInstance()->getStatsdDataFactory()->timing(
-				'media.thumbnail.generate.fetchoriginal', 1000 * $statTiming );
+			$timer->stop();
 
 			if ( !$this->fsFile ) {
 				$this->fsFile = false; // null => false; cache negative hits
@@ -500,6 +508,18 @@ abstract class File implements MediaHandlerState {
 		return ( $this->fsFile )
 			? $this->fsFile->getPath()
 			: false;
+	}
+
+	/**
+	 * Add the file to a Shellbox command as an input file
+	 *
+	 * @since 1.43
+	 * @param BoxedCommand $command
+	 * @param string $boxedName
+	 * @return StatusValue
+	 */
+	public function addToShellboxCommand( BoxedCommand $command, string $boxedName ) {
+		return $this->repo->addShellboxInputFile( $command, $boxedName, $this->getVirtualUrl() );
 	}
 
 	/**
@@ -1296,7 +1316,7 @@ abstract class File implements MediaHandlerState {
 			);
 		}
 
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+		$statsFactory = MediaWikiServices::getInstance()->getStatsFactory();
 
 		$handler = $this->getHandler();
 
@@ -1317,14 +1337,20 @@ abstract class File implements MediaHandlerState {
 			$this->generateBucketsIfNeeded( $normalisedParams, $flags );
 		}
 
+		# T367110
+		# Calls to doTransform() can recur back on $this->transform()
+		# depending on implementation. One such example is PagedTiffHandler.
+		# TimingMetric->start() and stop() cannot be used in this situation
+		# so we will track the time manually.
 		$starttime = microtime( true );
 
 		// Actually render the thumbnail...
 		$thumb = $handler->doTransform( $this, $tmpThumbPath, $thumbUrl, $transformParams );
 		$tmpFile->bind( $thumb ); // keep alive with $thumb
 
-		$statTiming = microtime( true ) - $starttime;
-		$stats->timing( 'media.thumbnail.generate.transform', 1000 * $statTiming );
+		$statsFactory->getTiming( 'media_thumbnail_generate_transform_seconds' )
+			->copyToStatsdAt( 'media.thumbnail.generate.transform' )
+			->observe( ( microtime( true ) - $starttime ) * 1000 );
 
 		if ( !$thumb ) { // bad params?
 			$thumb = false;
@@ -1339,7 +1365,9 @@ abstract class File implements MediaHandlerState {
 		} elseif ( $this->repo && $thumb->hasFile() && !$thumb->fileIsSource() ) {
 			// Copy the thumbnail from the file system into storage...
 
-			$starttime = microtime( true );
+			$timer = $statsFactory->getTiming( 'media_thumbnail_generate_store_seconds' )
+				->copyToStatsdAt( 'media.thumbnail.generate.store' );
+			$timer->start();
 
 			$disposition = $this->getThumbDisposition( $thumbName );
 			$status = $this->repo->quickImport( $tmpThumbPath, $thumbPath, $disposition );
@@ -1349,8 +1377,7 @@ abstract class File implements MediaHandlerState {
 				$thumb = $this->transformErrorOutput( $thumbPath, $thumbUrl, $transformParams, $flags );
 			}
 
-			$statTiming = microtime( true ) - $starttime;
-			$stats->timing( 'media.thumbnail.generate.store', 1000 * $statTiming );
+			$timer->stop();
 
 			// Give extensions a chance to do something with this thumbnail...
 			$this->getHookRunner()->onFileTransformed( $this, $thumb, $tmpThumbPath, $thumbPath );
@@ -1385,7 +1412,10 @@ abstract class File implements MediaHandlerState {
 			return false;
 		}
 
-		$starttime = microtime( true );
+		$timer = MediaWikiServices::getInstance()->getStatsFactory()
+			->getTiming( 'media_thumbnail_generate_bucket_seconds' )
+			->copyToStatsdAt( 'media.thumbnail.generate.bucket' );
+		$timer->start();
 
 		$params['physicalWidth'] = $bucket;
 		$params['width'] = $bucket;
@@ -1400,19 +1430,16 @@ abstract class File implements MediaHandlerState {
 
 		$thumb = $this->generateAndSaveThumb( $tmpFile, $params, $flags );
 
-		$buckettime = microtime( true ) - $starttime;
-
 		if ( !$thumb || $thumb->isError() ) {
 			return false;
 		}
+
+		$timer->stop();
 
 		$this->tmpBucketedThumbCache[$bucket] = $tmpFile->getPath();
 		// For the caching to work, we need to make the tmp file survive as long as
 		// this object exists
 		$tmpFile->bind( $this );
-
-		MediaWikiServices::getInstance()->getStatsdDataFactory()->timing(
-			'media.thumbnail.generate.bucket', 1000 * $buckettime );
 
 		return true;
 	}
@@ -1426,38 +1453,40 @@ abstract class File implements MediaHandlerState {
 		if ( $this->repo
 			&& $this->getHandler()->supportsBucketing()
 			&& isset( $params['physicalWidth'] )
-			&& $bucket = $this->getThumbnailBucket( $params['physicalWidth'] )
 		) {
-			if ( $this->getWidth() != 0 ) {
-				$bucketHeight = round( $this->getHeight() * ( $bucket / $this->getWidth() ) );
-			} else {
-				$bucketHeight = 0;
-			}
-
-			// Try to avoid reading from storage if the file was generated by this script
-			if ( isset( $this->tmpBucketedThumbCache[$bucket] ) ) {
-				$tmpPath = $this->tmpBucketedThumbCache[$bucket];
-
-				if ( file_exists( $tmpPath ) ) {
-					return [
-						'path' => $tmpPath,
-						'width' => $bucket,
-						'height' => $bucketHeight
-					];
+			$bucket = $this->getThumbnailBucket( $params['physicalWidth'] );
+			if ( $bucket ) {
+				if ( $this->getWidth() != 0 ) {
+					$bucketHeight = round( $this->getHeight() * ( $bucket / $this->getWidth() ) );
+				} else {
+					$bucketHeight = 0;
 				}
-			}
 
-			$bucketPath = $this->getBucketThumbPath( $bucket );
+				// Try to avoid reading from storage if the file was generated by this script
+				if ( isset( $this->tmpBucketedThumbCache[$bucket] ) ) {
+					$tmpPath = $this->tmpBucketedThumbCache[$bucket];
 
-			if ( $this->repo->fileExists( $bucketPath ) ) {
-				$fsFile = $this->repo->getLocalReference( $bucketPath );
+					if ( file_exists( $tmpPath ) ) {
+						return [
+							'path' => $tmpPath,
+							'width' => $bucket,
+							'height' => $bucketHeight
+						];
+					}
+				}
 
-				if ( $fsFile ) {
-					return [
-						'path' => $fsFile->getPath(),
-						'width' => $bucket,
-						'height' => $bucketHeight
-					];
+				$bucketPath = $this->getBucketThumbPath( $bucket );
+
+				if ( $this->repo->fileExists( $bucketPath ) ) {
+					$fsFile = $this->repo->getLocalReference( $bucketPath );
+
+					if ( $fsFile ) {
+						return [
+							'path' => $fsFile->getPath(),
+							'width' => $bucket,
+							'height' => $bucketHeight
+						];
+					}
 				}
 			}
 		}
@@ -1528,15 +1557,6 @@ abstract class File implements MediaHandlerState {
 		}
 
 		return FileBackend::makeContentDisposition( $dispositionType, $fileName );
-	}
-
-	/**
-	 * Hook into transform() to allow migration of thumbnail files
-	 * STUB
-	 * @stable to override
-	 * @param string $thumbName
-	 */
-	protected function migrateThumbFile( $thumbName ) {
 	}
 
 	/**
@@ -1652,7 +1672,7 @@ abstract class File implements MediaHandlerState {
 	 * @param string|int|null $end Only revisions newer than $end will be returned
 	 * @param bool $inc Include the endpoints of the time range
 	 *
-	 * @return File[]
+	 * @return File[] Guaranteed to be in descending order
 	 */
 	public function getHistory( $limit = null, $start = null, $end = null, $inc = true ) {
 		return [];
@@ -2224,7 +2244,7 @@ abstract class File implements MediaHandlerState {
 	 * @return string|false HTML
 	 * @return-taint escaped
 	 */
-	public function getDescriptionText( Language $lang = null ) {
+	public function getDescriptionText( ?Language $lang = null ) {
 		global $wgLang;
 
 		if ( !$this->repo || !$this->repo->fetchDescription ) {
@@ -2277,7 +2297,7 @@ abstract class File implements MediaHandlerState {
 	 *   passed to the $audience parameter
 	 * @return UserIdentity|null
 	 */
-	public function getUploader( int $audience = self::FOR_PUBLIC, Authority $performer = null ): ?UserIdentity {
+	public function getUploader( int $audience = self::FOR_PUBLIC, ?Authority $performer = null ): ?UserIdentity {
 		return null;
 	}
 
@@ -2294,7 +2314,7 @@ abstract class File implements MediaHandlerState {
 	 *   passed to the $audience parameter
 	 * @return null|string
 	 */
-	public function getDescription( $audience = self::FOR_PUBLIC, Authority $performer = null ) {
+	public function getDescription( $audience = self::FOR_PUBLIC, ?Authority $performer = null ) {
 		return null;
 	}
 

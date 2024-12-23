@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Jeeputer",
 			"TayfunEt.",
-			"Zolgoyo",
-			"Jeeputer"
+			"Zolgoyo"
 		]
 	},
 	"templatedata-desc": "داده‌های ذخیره‌شده برای پارامترهای الگو را پیاده‌سازی می‌کند (با استفاده از JSON)",

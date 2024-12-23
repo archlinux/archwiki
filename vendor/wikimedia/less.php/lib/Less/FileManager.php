@@ -8,7 +8,7 @@ class Less_FileManager {
 	 * @see less-node/FileManager.getPath https://github.com/less/less.js/blob/v2.5.3/lib/less-node/file-manager.js#L70
 	 * @param string $filename
 	 * @param null|array $currentFileInfo
-	 * @return null|array
+	 * @return null|array{0:string,1:string}
 	 */
 	public static function getFilePath( $filename, $currentFileInfo ) {
 		if ( !$filename ) {

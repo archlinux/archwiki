@@ -33,7 +33,7 @@ class CommentFormatterTest extends MediaWikiIntegrationTestCase {
 			}
 
 			public function preprocess(
-				string $comment, LinkTarget $selfLinkTarget = null, $samePage = false,
+				string $comment, ?LinkTarget $selfLinkTarget = null, $samePage = false,
 				$wikiId = null, $enableSectionLinks = true
 			) {
 				if ( $comment === '' || $comment === '*' ) {
@@ -49,7 +49,7 @@ class CommentFormatterTest extends MediaWikiIntegrationTestCase {
 			}
 
 			public function preprocessUnsafe(
-				$comment, LinkTarget $selfLinkTarget = null, $samePage = false, $wikiId = null,
+				$comment, ?LinkTarget $selfLinkTarget = null, $samePage = false, $wikiId = null,
 				$enableSectionLinks = true
 			) {
 				return CommentFormatterTestUtils::dumpArray( [
@@ -179,31 +179,6 @@ class CommentFormatterTest extends MediaWikiIntegrationTestCase {
 			[
 				'a' => 'comment=A, selfLinkTarget=0:Page, samePage, wikiId=enwiki, enableSectionLinks',
 				'b' => 'comment=B, selfLinkTarget=0:Page, samePage, wikiId=enwiki, enableSectionLinks'
-			],
-			$result
-		);
-	}
-
-	public function testFormatStringsAsBlock() {
-		$formatter = $this->newCommentFormatter();
-		$result = $formatter->formatStringsAsBlock(
-			[
-				'a' => 'A',
-				'b' => 'B'
-			],
-			new TitleValue( 0, 'Page' ),
-			true,
-			'enwiki',
-			true
-		);
-		$this->assertSame(
-			[
-				'a' => ' <span class="comment">(' .
-					'comment=A, selfLinkTarget=0:Page, samePage, wikiId=enwiki, enableSectionLinks' .
-					')</span>',
-				'b' => ' <span class="comment">(' .
-					'comment=B, selfLinkTarget=0:Page, samePage, wikiId=enwiki, enableSectionLinks' .
-					')</span>'
 			],
 			$result
 		);

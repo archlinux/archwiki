@@ -5,6 +5,14 @@
 			"Guycn2"
 		]
 	},
+	"apihelp-echocreateevent-summary": "גרימה ידנית לשליחת התראה למשתמש",
+	"apihelp-echocreateevent-example": "שליחת התראה",
+	"apihelp-echocreateevent-param-user": "לאיזה משתמש לשלוח התראה",
+	"apihelp-echocreateevent-param-header": "תוכן כותרת ההתראה",
+	"apihelp-echocreateevent-param-content": "תוכן גוף ההתראה",
+	"apihelp-echocreateevent-param-page": "לאיזה דף לקשר בהתראה",
+	"apihelp-echocreateevent-param-section": "לאיזו קבוצה התראה תימסר",
+	"apihelp-echocreateevent-param-email": "היום לשלוח גם דוא\"ל",
 	"apihelp-echomarkread-summary": "סימון שההודעות נקראו עבור המשתמש הנוכחי.",
 	"apihelp-echomarkread-param-list": "רשימת מזהי התראות שצריך לסמן שהן נקראו.",
 	"apihelp-echomarkread-param-unreadlist": "רשימת מזהי הודעה לסימון כהודעות שלא נקראו.",

@@ -2,17 +2,17 @@
 
 namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\HTMLForm\OOUIHTMLForm;
 use MediaWiki\Logger\LoggerFactory;
 use OOUI\FieldsetLayout;
 use OOUI\HtmlSnippet;
 use OOUI\Layout;
 use OOUI\PanelLayout;
 use OOUI\Widget;
-use OOUIHTMLForm;
 use Psr\Log\LoggerInterface;
 
 abstract class OATHAuthOOUIHTMLForm extends OOUIHTMLForm implements IManageForm {

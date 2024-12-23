@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\SpamBlacklist\BaseBlacklist;
 use MediaWiki\Extension\SpamBlacklist\SpamBlacklist;
@@ -146,6 +147,7 @@ class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 		$article = new Article( $title );
 		$ep = new EditPage( $article );
 		$ep->setContextTitle( $title );
+		$ep->getContext()->setUser( $articleContext->getUser() );
 
 		$ep->importFormData( $req );
 
@@ -159,7 +161,7 @@ class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function prepareGlobals(): void {
-		$this->setMwGlobals( 'wgBlacklistSettings', [
+		$this->overrideConfigValue( 'BlacklistSettings', [
 			'files' => [],
 		] );
 

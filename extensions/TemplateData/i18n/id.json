@@ -74,7 +74,6 @@
 	"templatedata-modal-button-map": "Sunting peta",
 	"templatedata-modal-button-importParams": "Impor parameter",
 	"templatedata-modal-button-removemap": "Hapus peta",
-	"templatedata-modal-button-restoreparam": "Pulihkan parameter",
 	"templatedata-modal-button-saveparam": "Simpan",
 	"templatedata-modal-confirmcancel": "Apakah Anda yakin ingin menghapus perubahan Anda?",
 	"templatedata-modal-current-language": "Bahasa saat ini: $1",

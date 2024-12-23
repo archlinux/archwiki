@@ -20,9 +20,9 @@
 
 namespace MediaWiki\CommentStore;
 
-use FormatJson;
 use InvalidArgumentException;
-use Language;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Message;
 use OverflowException;
@@ -277,7 +277,7 @@ class CommentStore {
 	 *  Ignored if $comment is a CommentStoreComment.
 	 * @return CommentStoreComment
 	 */
-	public function createComment( IDatabase $dbw, $comment, array $data = null ) {
+	public function createComment( IDatabase $dbw, $comment, ?array $data = null ) {
 		$comment = CommentStoreComment::newUnsavedComment( $comment, $data );
 
 		# Truncate comment in a Unicode-sensitive manner
@@ -391,7 +391,7 @@ class CommentStore {
 	 * @param string|null $data Comment data
 	 * @return int 32-bit signed integer
 	 */
-	public static function hash( $text, $data ) {
+	private static function hash( $text, $data ) {
 		$hash = crc32( $text ) ^ crc32( (string)$data );
 
 		// 64-bit PHP returns an unsigned CRC, change it to signed for

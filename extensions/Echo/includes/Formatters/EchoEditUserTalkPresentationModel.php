@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Language;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
 
@@ -69,6 +69,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 			$msg->plaintextParams( $this->section->getTruncatedSectionTitle() );
 			return $msg;
 		} else {
+			// Messages: notification-header-edit-user-talk
 			$msg = parent::getHeaderMessage();
 			$msg->params( $this->getViewingUserForGender() );
 			return $msg;

@@ -1,7 +1,7 @@
 @import '../../minerva.less/minerva.variables.less';
 
-.minerva-icon--bellOutline-base20 {
-	.cdx-mixin-css-icon( @cdx-icon-bell-outline, var(--color-subtle) );
+.minerva-icon.minerva-icon--bellOutline {
+	.cdx-mixin-css-icon( @cdx-icon-bell-outline, @color-subtle);
 }
 
 //
@@ -20,18 +20,21 @@
 //
 .mw-mf .mw-echo-unseen-notifications {
 	margin: auto;
-	background: var( --background-color-interactive );
-	color: var( --color-subtle );
+	background: @background-color-interactive;
+	color: @color-subtle;
 	cursor: pointer;
 
+	/* FIXME: Mimics the Codex icon mixin. This should be replaced when T376497 is resolved. */
 	.minerva-icon--circle {
 		border-radius: @border-radius-circle;
 		border: @border-width-thick @border-style-base #54595d;
 		margin: auto;
 		height: @icon-size-medium;
 		width: @icon-size-medium;
-		background: var( --background-color-destructive );
+		background: @background-color-destructive;
 		border-color: @border-color-destructive;
+		-webkit-mask-image: none;
+		mask-image: none;
 
 		&::before {
 			content: none;
@@ -39,7 +42,7 @@
 	}
 
 	&::after {
-		color: var( --color-inverted );
+		color: @color-inverted;
 		content: attr( data-counter-text );
 		position: absolute;
 		left: 0;

@@ -20,16 +20,19 @@
  */
 
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\DeferredUpdatesScopeMediaWikiStack;
 use MediaWiki\Deferred\DeferredUpdatesScopeStack;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logger\NullSpi;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Wikimedia\ObjectFactory\ObjectFactory;
+use Wikimedia\Services\NoSuchServiceException;
 
 /**
  * Base class for unit tests.
@@ -44,8 +47,17 @@ abstract class MediaWikiUnitTestCase extends TestCase {
 	use MediaWikiCoversValidator;
 	use MediaWikiTestCaseTrait;
 
+	/** @var array */
 	private static $originalGlobals;
+	/** @var array */
 	private static $unitGlobals;
+
+	private ?MediaWikiServices $serviceContainer = null;
+
+	/**
+	 * @var array<string,object>
+	 */
+	private array $services = [];
 
 	/**
 	 * List of allowed globals to allow in MediaWikiUnitTestCase.
@@ -172,6 +184,70 @@ abstract class MediaWikiUnitTestCase extends TestCase {
 		DeferredUpdates::setScopeStack( new DeferredUpdatesScopeMediaWikiStack() );
 		ExtensionRegistry::enableForTest();
 		SettingsBuilder::enableAccessAfterUnitTests();
+	}
+
+	/**
+	 * Returns a mock service container.
+	 * To populate the service container with service objects, use setService().
+	 *
+	 * @since 1.43
+	 */
+	protected function getServiceContainer(): MediaWikiServices {
+		if ( !$this->serviceContainer ) {
+			$this->serviceContainer = $this->getMockBuilder( MediaWikiServices::class )
+				->setConstructorArgs( [ new HashConfig() ] )
+				->onlyMethods( [
+					'getService',
+					'disableStorage',
+					'isStorageDisabled',
+					'redefineService',
+					'resetServiceForTesting',
+					'resetChildProcessServices',
+					'peekService'
+				] )
+				->getMock();
+
+			$this->serviceContainer
+				->method( 'getService' )
+				->willReturnCallback( function ( $name ) {
+					return $this->getService( $name );
+				} );
+		}
+
+		return $this->serviceContainer;
+	}
+
+	/**
+	 * Returns a service previously defined with setService().
+	 *
+	 * @param string $name
+	 *
+	 * @return mixed The service instance
+	 */
+	protected function getService( string $name ) {
+		if ( !isset( $this->services[$name] ) ) {
+			throw new NoSuchServiceException( $name );
+		}
+
+		if ( is_callable( $this->services[$name] ) ) {
+			$func = $this->services[$name];
+			$this->services[$name] = $func( $this->serviceContainer );
+		}
+
+		return $this->services[$name];
+	}
+
+	/**
+	 * Register a service object with the service container returned by
+	 * getServiceContainer().
+	 *
+	 * @param string $name
+	 * @param mixed $service
+	 *
+	 * @since 1.43
+	 */
+	protected function setService( string $name, $service ) {
+		$this->services[$name] = $service;
 	}
 
 }

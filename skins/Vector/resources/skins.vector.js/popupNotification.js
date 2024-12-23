@@ -68,7 +68,6 @@ function hide( popupWidget ) {
  */
 function show( popupWidget, timeout = 4000 ) {
 	popupWidget.toggle( true );
-	// @ts-ignore https://github.com/wikimedia/typescript-types/pull/40
 	popupWidget.toggleClipping( true );
 	// hide the popup after timeout ms
 	if ( timeout === false ) {

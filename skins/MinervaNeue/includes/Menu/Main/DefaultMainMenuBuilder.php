@@ -23,7 +23,8 @@ namespace MediaWiki\Minerva\Menu\Main;
 use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Minerva\Menu\Group;
-use MediaWiki\User\UserIdentity;
+use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityUtils;
 
 /**
@@ -31,27 +32,10 @@ use MediaWiki\User\UserIdentityUtils;
  */
 final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 
-	/**
-	 * @var bool
-	 */
-	private $showMobileOptions;
-
-	/**
-	 * @var bool
-	 */
-	private $showDonateLink;
-
-	/**
-	 * Currently logged in user
-	 * @var UserIdentity
-	 */
-	private $user;
-
-	/**
-	 * @var Definitions
-	 */
-	private $definitions;
-
+	private bool $showMobileOptions;
+	private bool $showDonateLink;
+	private User $user;
+	private Definitions $definitions;
 	private UserIdentityUtils $userIdentityUtils;
 
 	/**
@@ -59,14 +43,14 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 	 *
 	 * @param bool $showMobileOptions Show MobileOptions instead of Preferences
 	 * @param bool $showDonateLink whether to show the donate link
-	 * @param UserIdentity $user The current user
+	 * @param User $user The current user
 	 * @param Definitions $definitions A menu items definitions set
 	 * @param UserIdentityUtils $userIdentityUtils
 	 */
 	public function __construct(
 		$showMobileOptions,
 		$showDonateLink,
-		UserIdentity $user,
+		User $user,
 		Definitions $definitions,
 		UserIdentityUtils $userIdentityUtils
 	) {
@@ -143,6 +127,12 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 			$excludeKeyList[] = 'mycontris';
 		}
 		foreach ( $personalTools as $key => $item ) {
+			// Default to EditWatchlist if $user has no edits
+			// Many users use the watchlist like a favorites list without ever editing.
+			// [T88270].
+			if ( $key === 'watchlist' && $this->user->getEditCount() === 0 ) {
+				$item['href'] = Title::newFromText( 'Special:EditWatchlist' )->getLocalUrl();
+			}
 			$href = $item['href'] ?? null;
 			if ( $href && !in_array( $key, $excludeKeyList ) ) {
 				// Substitute preference if $showMobileOptions is set.

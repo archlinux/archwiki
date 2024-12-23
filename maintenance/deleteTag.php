@@ -5,10 +5,11 @@
  * @see bug T75181
  */
 
-use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Storage\NameTableAccessException;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 class DeleteTag extends Maintenance {
 	public function __construct() {
@@ -32,8 +33,7 @@ class DeleteTag extends Maintenance {
 
 		$status = ChangeTags::canDeleteTag( $tag, null, ChangeTags::BYPASS_MAX_USAGE_CHECK );
 		if ( !$status->isOK() ) {
-			$message = $status->getHTML( false, false, 'en' );
-			$this->fatalError( Sanitizer::stripAllTags( $message ) );
+			$this->fatalError( $status );
 		}
 
 		$this->output( "Deleting tag '$tag'...\n" );
@@ -48,7 +48,7 @@ class DeleteTag extends Maintenance {
 			] )
 			->where( [ 'ctd_id' => $tagId ] )
 			->caller( __METHOD__ )->execute();
-		ChangeTags::purgeTagCacheAll();
+		$this->getServiceContainer()->getChangeTagsStore()->purgeTagCacheAll();
 
 		// Iterate over change_tag, deleting rows in batches
 		$count = 0;
@@ -74,10 +74,12 @@ class DeleteTag extends Maintenance {
 		} while ( true );
 		$this->output( "The tag has been removed from $count revisions, deleting the tag itself...\n" );
 
-		ChangeTags::deleteTagEverywhere( $tag );
+		$this->getServiceContainer()->getChangeTagsStore()->deleteTagEverywhere( $tag );
 		$this->output( "Done.\n" );
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DeleteTag::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

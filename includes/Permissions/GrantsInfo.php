@@ -71,12 +71,8 @@ class GrantsInfo {
 		MainConfigNames::GrantRiskGroups,
 	];
 
-	/** @var ServiceOptions */
-	private $options;
+	private ServiceOptions $options;
 
-	/**
-	 * @param ServiceOptions $options
-	 */
 	public function __construct(
 		ServiceOptions $options
 	) {
@@ -136,7 +132,7 @@ class GrantsInfo {
 	 * @param string[]|null $grantsFilter
 	 * @return string[][] Map of (group => (grant list))
 	 */
-	public function getGrantGroups( array $grantsFilter = null ): array {
+	public function getGrantGroups( ?array $grantsFilter = null ): array {
 		if ( is_array( $grantsFilter ) ) {
 			$grantsFilter = array_fill_keys( $grantsFilter, true );
 		}

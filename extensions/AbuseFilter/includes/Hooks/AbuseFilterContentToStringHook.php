@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
-use Content;
+use MediaWiki\Content\Content;
 
 interface AbuseFilterContentToStringHook {
 	/**

@@ -141,14 +141,14 @@ class UserLocator {
 		$services = MediaWikiServices::getInstance();
 		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
 		$revQuery = $services->getRevisionStore()->getQueryInfo();
-		$res = $dbr->selectRow(
-			$revQuery['tables'],
-			[ 'rev_user' => $revQuery['fields']['rev_user'] ],
-			[ 'rev_page' => $articleId ],
-			__METHOD__,
-			[ 'LIMIT' => 1, 'ORDER BY' => 'rev_timestamp, rev_id' ],
-			$revQuery['joins']
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( [ 'rev_user' => $revQuery['fields']['rev_user'] ] )
+			->tables( $revQuery['tables'] )
+			->where( [ 'rev_page' => $articleId ] )
+			->orderBy( [ 'rev_timestamp', 'rev_id' ] )
+			->joinConds( $revQuery['joins'] )
+			->caller( __METHOD__ )
+			->fetchRow();
 		if ( !$res || !$res->rev_user ) {
 			return null;
 		}
@@ -168,7 +168,7 @@ class UserLocator {
 	 *
 	 * @param Event $event
 	 * @param string[] $keys one or more keys to check for user ids
-	 * @return User[]
+	 * @return array<int,User>
 	 */
 	public static function locateFromEventExtra( Event $event, array $keys ) {
 		$users = [];

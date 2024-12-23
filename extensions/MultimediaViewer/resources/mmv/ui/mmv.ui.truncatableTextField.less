@@ -41,25 +41,21 @@
 		background-size: contain;
 		background-position: center center;
 		background-repeat: no-repeat;
-		/* @embed */
-		background-image: url( img/ellipsis_lightgray.svg );
-		box-shadow: -4px 6px 0 0 #fff;
+		.cdx-mixin-css-icon( @cdx-icon-ellipsis, @param-fill-color: @color-base );
+		box-shadow: -4px 6px 0 0 @box-shadow-color-inverted;
+		opacity: 0.5;
 
 		// Hovering over .mw-mmv-ttf-ellipsis-container will make the ellipsis more visible to attract
 		// attention to it. Since it has to be set on a parent element which is not under control of
 		// TruncatableTextField, setting it is the caller's responsibility.
 		.mw-mmv-ttf-ellipsis-container:hover & {
-			background-color: #eaecf0;
-			/* @embed */
-			background-image: url( img/ellipsis_gray.svg );
+			opacity: 0.75;
 		}
 
 		// second rule + ordering needed for specificity
 		&:hover,
 		.mw-mmv-ttf-ellipsis-container &:hover {
-			background-color: #c8ccd1;
-			/* @embed */
-			background-image: url( img/ellipsis_darkgray.svg );
+			opacity: 1;
 		}
 
 		&::before {

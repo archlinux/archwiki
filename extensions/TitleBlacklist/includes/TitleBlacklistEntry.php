@@ -9,11 +9,11 @@
 
 namespace MediaWiki\Extension\TitleBlacklist;
 
-use CoreParserFunctions;
-use ExtensionRegistry;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\AntiSpoof\AntiSpoof;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\CoreParserFunctions;
+use MediaWiki\Registration\ExtensionRegistry;
 use Wikimedia\AtEase\AtEase;
 
 /**

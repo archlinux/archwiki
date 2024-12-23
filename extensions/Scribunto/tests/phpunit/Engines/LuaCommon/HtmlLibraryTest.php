@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
-use Parser;
+use MediaWiki\Parser\Parser;
 
 /**
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaCommon\HtmlLibrary

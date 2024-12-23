@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use ApiMain;
-use ApiResult;
-use DerivativeContext;
-use IContextSource;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiResult;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\VisualEditor\ParsoidClient;
 use MediaWiki\Extension\VisualEditor\VisualEditorParsoidClientFactory;
 use MediaWiki\Request\DerivativeRequest;
@@ -155,7 +155,7 @@ trait ApiDiscussionToolsTrait {
 	abstract protected function requestRestbasePageHtml( RevisionRecord $revision ): array;
 
 	abstract protected function transformHTML(
-		Title $title, string $html, int $oldid = null, string $etag = null
+		Title $title, string $html, ?int $oldid = null, ?string $etag = null
 	): array;
 
 	/**

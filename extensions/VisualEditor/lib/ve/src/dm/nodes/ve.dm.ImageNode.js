@@ -9,8 +9,8 @@
  *
  * @class
  * @abstract
- * @mixins ve.dm.FocusableNode
- * @mixins ve.dm.ResizableNode
+ * @mixes ve.dm.FocusableNode
+ * @mixes ve.dm.ResizableNode
  *
  * @constructor
  */
@@ -28,19 +28,21 @@ OO.mixinClass( ve.dm.ImageNode, ve.dm.ResizableNode );
 
 /* Static Methods */
 
+// eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
 /**
- * @inheritdoc ve.dm.Model
+ * @see ve.dm.Model
  */
 ve.dm.ImageNode.static.isDiffComparable = function ( element, other ) {
 	// Images with different src's shouldn't be diffed
 	return element.type === other.type && element.attributes.src === other.attributes.src;
 };
 
+// eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
 /**
- * @inheritdoc ve.dm.Model
+ * @see ve.dm.Model
  */
 ve.dm.ImageNode.static.describeChanges = function ( attributeChanges, attributes ) {
-	var customKeys = [ 'width', 'height' ],
+	const customKeys = [ 'width', 'height' ],
 		descriptions = [];
 
 	function describeSize( width, height ) {
@@ -48,20 +50,20 @@ ve.dm.ImageNode.static.describeChanges = function ( attributeChanges, attributes
 	}
 
 	if ( 'width' in attributeChanges || 'height' in attributeChanges ) {
-		var sizeFrom = describeSize(
+		const sizeFrom = describeSize(
 			'width' in attributeChanges ? attributeChanges.width.from : attributes.width,
 			'height' in attributeChanges ? attributeChanges.height.from : attributes.height
 		);
-		var sizeTo = describeSize(
+		const sizeTo = describeSize(
 			'width' in attributeChanges ? attributeChanges.width.to : attributes.width,
 			'height' in attributeChanges ? attributeChanges.height.to : attributes.height
 		);
 
 		descriptions.push( ve.htmlMsg( 'visualeditor-changedesc-image-size', this.wrapText( 'del', sizeFrom ), this.wrapText( 'ins', sizeTo ) ) );
 	}
-	for ( var key in attributeChanges ) {
+	for ( const key in attributeChanges ) {
 		if ( customKeys.indexOf( key ) === -1 ) {
-			var change = this.describeChange( key, attributeChanges[ key ] );
+			const change = this.describeChange( key, attributeChanges[ key ] );
 			if ( change ) {
 				descriptions.push( change );
 			}
@@ -70,8 +72,9 @@ ve.dm.ImageNode.static.describeChanges = function ( attributeChanges, attributes
 	return descriptions;
 };
 
+// eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
 /**
- * @inheritdoc ve.dm.Node
+ * @see ve.dm.Node
  */
 ve.dm.ImageNode.static.describeChange = function ( key, change ) {
 	switch ( key ) {

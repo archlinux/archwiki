@@ -54,16 +54,9 @@ class CommentStoreComment {
 	 * @param Message|null $message
 	 * @param array|null $data
 	 */
-	public function __construct( $id, $text, Message $message = null, array $data = null ) {
-		if ( $text === null ) {
-			// TODO: Turn this warning into a proper type hint once we have
-			// found and fixed any offenders (T355751).
-			wfLogWarning( 'Comment text should not be null!' );
-			$text = '';
-		}
-
+	public function __construct( $id, string $text, ?Message $message = null, ?array $data = null ) {
 		$this->id = (int)$id;
-		$this->text = (string)$text;
+		$this->text = $text;
 		$this->message = $message
 			?: new RawMessage(
 				'$1',
@@ -81,7 +74,7 @@ class CommentStoreComment {
 	 *  Ignored if $comment is a CommentStoreComment.
 	 * @return CommentStoreComment
 	 */
-	public static function newUnsavedComment( $comment, array $data = null ) {
+	public static function newUnsavedComment( $comment, ?array $data = null ) {
 		if ( $comment instanceof CommentStoreComment ) {
 			return $comment;
 		}

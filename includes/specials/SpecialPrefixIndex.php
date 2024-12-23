@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Prefixindex
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,14 +16,13 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
-use HTMLCheckField;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\Field\HTMLCheckField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -36,19 +33,23 @@ use Wikimedia\Rdbms\LikeValue;
  * Implements Special:Prefixindex
  *
  * @ingroup SpecialPage
+ * @ingroup Search
  */
 class SpecialPrefixIndex extends SpecialAllPages {
 
 	/**
 	 * Whether to remove the searched prefix from the displayed link. Useful
 	 * for inclusion of a set of subpages in a root page.
+	 * @var bool
 	 */
 	protected $stripPrefix = false;
 
+	/** @var bool */
 	protected $hideRedirects = false;
 
 	// Inherit $maxPerPage
 
+	// phpcs:ignore MediaWiki.Commenting.PropertyDocumentation.WrongStyle
 	private IConnectionProvider $dbProvider;
 	private LinkCache $linkCache;
 
@@ -167,9 +168,7 @@ class SpecialPrefixIndex extends SpecialAllPages {
 	 * @param string|null $from List all pages from this name (default false)
 	 */
 	protected function showPrefixChunk( $namespace, $prefix, $from = null ) {
-		if ( $from === null ) {
-			$from = $prefix;
-		}
+		$from ??= $prefix;
 
 		$fromList = $this->getNamespaceKeyAndText( $namespace, $from );
 		$prefixList = $this->getNamespaceKeyAndText( $namespace, $prefix );

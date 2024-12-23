@@ -10,17 +10,21 @@ use Shellbox\Multipart\MultipartReader;
 /**
  * Encapsulation of an output file that is copied to a stream
  */
-class OutputFileToStream extends OutputFile {
+class OutputFileToStream extends OutputFileWithContents {
 	/** @var StreamInterface */
 	private $stream;
 
+	/**
+	 * @internal
+	 * @param StreamInterface $stream
+	 */
 	public function __construct( StreamInterface $stream ) {
 		$this->stream = $stream;
 	}
 
 	public function copyFromFile( $sourcePath ) {
 		Utils::copyToStream( FileUtils::openInputFileStream( $sourcePath ), $this->stream );
-		$this->received = true;
+		$this->setReceived();
 	}
 
 	public function getContents() {
@@ -30,6 +34,6 @@ class OutputFileToStream extends OutputFile {
 
 	public function readFromMultipart( MultipartReader $multipartReader ) {
 		$multipartReader->copyPartToStream( $this->stream );
-		$this->received = true;
+		$this->setReceived();
 	}
 }

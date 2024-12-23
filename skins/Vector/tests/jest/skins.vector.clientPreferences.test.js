@@ -12,6 +12,12 @@ describe( 'clientPreferences', () => {
 			get: jest.fn( () => '1' )
 		};
 		const portlet = document.createElement( 'div' );
+		portlet.innerHTML = `
+			<div class="vector-menu-heading">Width</div>
+			<div class="vector-menu-content">
+				<ul class="vector-menu-content-list"></ul>
+			</div>
+		`;
 		mw.util.addPortlet = jest.fn( () => portlet );
 		mw.util.addPortletLink = jest.fn( () => {
 			const li = document.createElement( 'li' );
@@ -26,11 +32,9 @@ describe( 'clientPreferences', () => {
 		} ) );
 	} );
 
-	test( 'render empty', () => {
-		return clientPreferences.render( '#cp', {} ).then( () => {
-			expect( cp.innerHTML ).toMatchSnapshot();
-		} );
-	} );
+	test( 'render empty', () => clientPreferences.render( '#cp', {} ).then( () => {
+		expect( cp.innerHTML ).toMatchSnapshot();
+	} ) );
 
 	test( 'render font size', () => {
 		document.documentElement.setAttribute( 'class', 'vector-feature-custom-font-size-clientpref-2' );
@@ -38,6 +42,22 @@ describe( 'clientPreferences', () => {
 			'vector-feature-custom-font-size': {
 				options: [ '0', '1', '2' ],
 				preferenceKey: 'vector-font-size'
+			}
+		} ).then( () => {
+			expect( cp.innerHTML ).toMatchSnapshot();
+		} );
+	} );
+
+	test( 'doesnt render exclusion notice if the msg key doesnt exist', () => {
+		mw.message = jest.fn( ( key ) => ( {
+			text: () => `msg:${ key }`,
+			exists: () => key !== 'vector-feature-limited-width-exclusion-notice'
+		} ) );
+		document.documentElement.setAttribute( 'class', 'vector-feature-limited-width-clientpref-0' );
+		return clientPreferences.render( '#cp', {
+			'vector-feature-limited-width': {
+				options: [ '1', '0' ],
+				preferenceKey: 'vector-limited-width'
 			}
 		} ).then( () => {
 			expect( cp.innerHTML ).toMatchSnapshot();

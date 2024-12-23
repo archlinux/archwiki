@@ -6,9 +6,8 @@
 
 QUnit.module( 've.dm.Scalable' );
 
-QUnit.test( 'construction/clone/getters/setters/toggleDefault/clearers', function ( assert ) {
-	var eventEmitted = false,
-		currentDimensions = {
+QUnit.test( 'construction/clone/getters/setters/toggleDefault/clearers', ( assert ) => {
+	const currentDimensions = {
 			width: 300,
 			height: 200
 		},
@@ -34,7 +33,9 @@ QUnit.test( 'construction/clone/getters/setters/toggleDefault/clearers', functio
 			defaultDimensions: defaultDimensions,
 			minDimensions: minDimensions,
 			maxDimensions: maxDimensions
-		} ),
+		} );
+
+	let eventEmitted = false,
 		clone = scalable.clone();
 
 	assert.deepEqual( scalable, clone, 'Clone is deepEqual' );
@@ -56,7 +57,7 @@ QUnit.test( 'construction/clone/getters/setters/toggleDefault/clearers', functio
 	scalable.clearDefaultDimensions();
 	assert.strictEqual( scalable.getDefaultDimensions(), null, 'clearDefaultDimensions' );
 
-	scalable.on( 'defaultSizeChange', function () {
+	scalable.on( 'defaultSizeChange', () => {
 		eventEmitted = true;
 	} );
 	eventEmitted = false;
@@ -67,7 +68,7 @@ QUnit.test( 'construction/clone/getters/setters/toggleDefault/clearers', functio
 	scalable.clearOriginalDimensions();
 	assert.strictEqual( scalable.getOriginalDimensions(), null, 'clearOriginalDimensions' );
 
-	scalable.on( 'originalSizeChange', function () {
+	scalable.on( 'originalSizeChange', () => {
 		eventEmitted = true;
 	} );
 	eventEmitted = false;
@@ -78,7 +79,7 @@ QUnit.test( 'construction/clone/getters/setters/toggleDefault/clearers', functio
 	scalable.clearMinDimensions();
 	assert.strictEqual( scalable.getMinDimensions(), null, 'clearMinDimensions' );
 
-	scalable.on( 'minSizeChange', function () {
+	scalable.on( 'minSizeChange', () => {
 		eventEmitted = true;
 	} );
 	eventEmitted = false;
@@ -89,7 +90,7 @@ QUnit.test( 'construction/clone/getters/setters/toggleDefault/clearers', functio
 	scalable.clearMaxDimensions();
 	assert.strictEqual( scalable.getMaxDimensions(), null, 'clearMaxDimensions' );
 
-	scalable.on( 'maxSizeChange', function () {
+	scalable.on( 'maxSizeChange', () => {
 		eventEmitted = true;
 	} );
 	eventEmitted = false;
@@ -134,8 +135,8 @@ QUnit.test( 'construction/clone/getters/setters/toggleDefault/clearers', functio
 
 } );
 
-QUnit.test( 'getBoundedDimensions/getCurrentScale/isCurrentDimensionsValid/isTooSmall/isTooLarge', function ( assert ) {
-	var currentDimensions = {
+QUnit.test( 'getBoundedDimensions/getCurrentScale/isCurrentDimensionsValid/isTooSmall/isTooLarge', ( assert ) => {
+	const currentDimensions = {
 			width: 300,
 			height: 200
 		},
@@ -190,8 +191,8 @@ QUnit.test( 'getBoundedDimensions/getCurrentScale/isCurrentDimensionsValid/isToo
 
 } );
 
-QUnit.test( 'isDefault/toggleDefault', function ( assert ) {
-	var scalable = new ve.dm.Scalable( {
+QUnit.test( 'isDefault/toggleDefault', ( assert ) => {
+	const scalable = new ve.dm.Scalable( {
 			isDefault: true
 		} ),
 		clone = scalable.clone();
@@ -205,8 +206,8 @@ QUnit.test( 'isDefault/toggleDefault', function ( assert ) {
 	assert.strictEqual( scalable.isDefault(), true, 'toggleDefault changes false to true' );
 } );
 
-QUnit.test( 'isDimensionsObjectValid', function ( assert ) {
-	var cases = [
+QUnit.test( 'isDimensionsObjectValid', ( assert ) => {
+	const cases = [
 		{ dimensions: null, expected: false, msg: 'Null' },
 		{ dimensions: { width: 200 }, expected: true, msg: 'Only width' },
 		{ dimensions: { height: 200 }, expected: true, msg: 'Only height' },
@@ -214,20 +215,20 @@ QUnit.test( 'isDimensionsObjectValid', function ( assert ) {
 		{ dimensions: { width: undefined, height: undefined }, expected: false, msg: 'Explicity undefined' }
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		assert.strictEqual( ve.dm.Scalable.static.isDimensionsObjectValid( caseItem.dimensions ), caseItem.expected, caseItem.msg );
 	} );
 } );
 
-QUnit.test( 'getDimensionsFromValue', function ( assert ) {
-	var cases = [
+QUnit.test( 'getDimensionsFromValue', ( assert ) => {
+	const cases = [
 		{ dimensions: { width: 200 }, ratio: 1, expected: { width: 200, height: 200 }, msg: 'Only width' },
 		{ dimensions: { height: 200 }, ratio: 2, expected: { width: 400, height: 200 }, msg: 'Only height' },
 		{ dimensions: { width: '', height: 400 }, ratio: 0.5, expected: { width: 200, height: 400 }, msg: 'Empty width' },
 		{ dimensions: { width: 200, height: '' }, ratio: 0.5, expected: { width: 200, height: 400 }, msg: 'Empty height' }
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		assert.deepEqual( ve.dm.Scalable.static.getDimensionsFromValue( caseItem.dimensions, caseItem.ratio ), caseItem.expected, caseItem.msg );
 	} );
 } );

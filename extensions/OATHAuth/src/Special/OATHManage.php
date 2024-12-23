@@ -19,7 +19,6 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
-use HTMLForm;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
 use MediaWiki\Extension\OATHAuth\IModule;
@@ -27,8 +26,9 @@ use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
-use Message;
 use MWException;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
@@ -122,7 +122,7 @@ class OATHManage extends SpecialPage {
 	 * @throws UserNotLoggedIn
 	 */
 	public function checkPermissions() {
-		$this->requireLogin();
+		$this->requireNamedUser();
 
 		$canEnable = $this->getUser()->isAllowed( 'oathauth-enable' );
 
@@ -167,7 +167,7 @@ class OATHManage extends SpecialPage {
 
 	private function addInactiveHTML(): void {
 		foreach ( $this->moduleRegistry->getAllModules() as $module ) {
-			if ( $this->isModuleEnabled( $module ) ) {
+			if ( $this->isModuleEnabled( $module ) || !$this->isModuleAvailable( $module ) ) {
 				continue;
 			}
 			$this->addModuleHTML( $module );
@@ -231,7 +231,7 @@ class OATHManage extends SpecialPage {
 		return $modulePanel;
 	}
 
-	private function addCustomContent( IModule $module, PanelLayout $panel = null ): void {
+	private function addCustomContent( IModule $module, ?PanelLayout $panel = null ): void {
 		$form = $module->getManageForm(
 			$this->action,
 			$this->authUser,
@@ -271,6 +271,25 @@ class OATHManage extends SpecialPage {
 			return false;
 		}
 		return $enabled->getName() === $module->getName();
+	}
+
+	/**
+	 * Verifies if the module is available to be enabled
+	 *
+	 * @param IModule $module
+	 * @return bool
+	 */
+	private function isModuleAvailable( IModule $module ): bool {
+		$form = $module->getManageForm(
+			static::ACTION_ENABLE,
+			$this->authUser,
+			$this->userRepo,
+			$this->getContext()
+		);
+		if ( $form === '' ) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -327,7 +346,7 @@ class OATHManage extends SpecialPage {
 
 	private function hasAlternativeModules(): bool {
 		foreach ( $this->moduleRegistry->getAllModules() as $module ) {
-			if ( !$this->isModuleEnabled( $module ) ) {
+			if ( !$this->isModuleEnabled( $module ) && $this->isModuleAvailable( $module ) ) {
 				return true;
 			}
 		}

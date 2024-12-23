@@ -9,6 +9,7 @@
 			"Beginneruser",
 			"Dalba",
 			"Danialbehzadi",
+			"Ebrahim",
 			"Ebraminio",
 			"Fatemi127",
 			"Huji",
@@ -16,8 +17,7 @@
 			"Ladsgroup",
 			"Reza1615",
 			"Saadat",
-			"Sunfyre",
-			"Ebrahim"
+			"Sunfyre"
 		]
 	},
 	"templatedata-desc": "پیاده‌سازی ذخیره‌سازی داده‌های پارامترهای الگو (با استفاده از جی‌سن)",
@@ -80,7 +80,6 @@
 	"templatedata-modal-button-map": "ویرایش نقشه‌ها",
 	"templatedata-modal-button-importParams": "درون‌ریزی پارامترها",
 	"templatedata-modal-button-removemap": "حذف نقشه",
-	"templatedata-modal-button-restoreparam": "بازگرداندن پارامتر",
 	"templatedata-modal-button-saveparam": "ذخیره",
 	"templatedata-modal-confirmcancel": "آیا مطمئن هستید که می‌خواهید از تغییرات خود چشم‌پوشی کنید؟",
 	"templatedata-modal-current-language": "زبان کنونی: $1",

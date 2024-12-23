@@ -21,11 +21,13 @@
 
 namespace MediaWiki\Auth;
 
-use IDBAccessObject;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Password\InvalidPassword;
 use MediaWiki\User\UserRigorOptions;
+use Wikimedia\Rdbms\DBAccessObjectUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * A primary authentication provider that uses the password field in the 'user' table.
@@ -138,8 +140,7 @@ class LocalPasswordPrimaryAuthenticationProvider
 		// @codeCoverageIgnoreStart
 		if ( $this->getPasswordFactory()->needsUpdate( $pwhash ) ) {
 			$newHash = $this->getPasswordFactory()->newFromPlaintext( $req->password );
-			$fname = __METHOD__;
-			DeferredUpdates::addCallableUpdate( function () use ( $newHash, $oldRow, $fname ) {
+			DeferredUpdates::addCallableUpdate( function ( $fname ) use ( $newHash, $oldRow ) {
 				$dbw = $this->dbProvider->getPrimaryDatabase();
 				$dbw->newUpdateQueryBuilder()
 					->update( 'user' )
@@ -148,7 +149,8 @@ class LocalPasswordPrimaryAuthenticationProvider
 						'user_id' => $oldRow->user_id,
 						'user_password' => $oldRow->user_password,
 					] )
-					->caller( $fname )->execute();
+					->caller( $fname )
+					->execute();
 			} );
 		}
 		// @codeCoverageIgnoreEnd
@@ -180,7 +182,7 @@ class LocalPasswordPrimaryAuthenticationProvider
 			return true;
 		}
 
-		return !$this->getPassword( $row->user_password ) instanceof \InvalidPassword;
+		return !$this->getPassword( $row->user_password ) instanceof InvalidPassword;
 	}
 
 	public function testUserExists( $username, $flags = IDBAccessObject::READ_NORMAL ) {
@@ -190,7 +192,7 @@ class LocalPasswordPrimaryAuthenticationProvider
 			return false;
 		}
 
-		$db = \DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
+		$db = DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
 		return (bool)$db->newSelectQueryBuilder()
 			->select( [ 'user_id' ] )
 			->from( 'user' )
@@ -266,7 +268,7 @@ class LocalPasswordPrimaryAuthenticationProvider
 					'user_password' => $pwhash->toString(),
 					// @phan-suppress-next-line PhanPossiblyUndeclaredVariable expiry is set together with pwhash
 					'user_password_expires' => $dbw->timestampOrNull( $expiry ),
-				 ] )
+				] )
 				->where( [ 'user_name' => $username ] )
 				->caller( __METHOD__ )->execute();
 		}

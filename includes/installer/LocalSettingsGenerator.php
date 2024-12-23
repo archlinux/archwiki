@@ -30,11 +30,17 @@ use InvalidArgumentException;
  */
 class LocalSettingsGenerator {
 
+	/** @var string[] */
 	protected $extensions = [];
+	/** @var string[] */
 	protected $skins = [];
+	/** @var string[] */
 	protected $values = [];
+	/** @var bool[][] */
 	protected $groupPermissions = [];
+	/** @var string */
 	protected $dbSettings = '';
+	/** @var string */
 	protected $IP;
 
 	/**
@@ -184,7 +190,6 @@ class LocalSettingsGenerator {
 	 *
 	 * @param string $dir Either "extensions" or "skins"
 	 * @param string $name Name of extension/skin
-	 * @throws InvalidArgumentException
 	 * @return string
 	 */
 	private function generateExtEnableLine( $dir, $name ) {

@@ -7,6 +7,7 @@
 	"apierror-discussiontools-commentid-notfound": "Non se atopou o comentario co identificador \"$1\".",
 	"apierror-discussiontools-commentname-ambiguous": "Atopáronse varios comentarios co nome \"$1\"; cómpre o parámetro <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "Non se atopou o comentario co nome \"$1\".",
+	"apierror-discussiontools-findcomment-pagenevertalk": "A páxina nunca contivo ningunha conversa.",
 	"apierror-discussiontools-formtoken-used": "O comentario xa está publicado. Recarga a páxina para velo.",
 	"apierror-discussiontools-subscription-failed-add": "Non te puideches subscribir ao fío.",
 	"apierror-discussiontools-subscription-failed-remove": "Non puideches cancelar a subscrición ao fío.",
@@ -40,5 +41,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Nome do fío ao que subscribirse (ou do que cancelar a subscrición)",
 	"apihelp-discussiontoolssubscribe-param-page": "Unha páxina na que aparece o fío",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Verdadeiro para subscribirse, falso para cancelar a subscrición",
-	"apihelp-discussiontoolssubscribe-summary": "Subscribirse (ou cancelar a subscrición) para recibir notificacións dun fío."
+	"apihelp-discussiontoolssubscribe-summary": "Subscribirse (ou cancelar a subscrición) para recibir notificacións dun fío.",
+	"apihelp-discussiontoolsthank-param-commentid": "Identificador do comentario que agradecer.",
+	"apihelp-discussiontoolsthank-summary": "Enviar unha notificación pública de agradecemento por un comentario."
 }

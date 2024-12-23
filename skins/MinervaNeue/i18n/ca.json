@@ -10,10 +10,10 @@
 			"Macofe",
 			"Mguix",
 			"Paucabot",
+			"Pginer",
 			"QuimGil",
 			"Skurz0",
-			"Vriullop",
-			"Pginer"
+			"Vriullop"
 		]
 	},
 	"minerva-last-modified-date": "Darrera modificació: $1 a les $2",
@@ -56,5 +56,6 @@
 	"minerva-page-actions-history": "Historial",
 	"skin-minerva-issue-learn-more": "Més informació",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categories",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "Mostra les categories de les pàgines"
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "Mostra les categories de les pàgines",
+	"skin-minerva-night-mode-unavailable": "La pàgina només està disponible en el tema de color \"Clar\"."
 }

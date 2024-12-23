@@ -2,11 +2,11 @@
 namespace MediaWiki\Skins\Vector\Components;
 
 use MediaWiki\Linker\Linker;
+use MediaWiki\Message\Message;
 use MediaWiki\Skin\SkinComponentLink;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use Message;
 use MessageLocalizer;
 
 /**
@@ -61,9 +61,10 @@ class VectorComponentUserLinks implements VectorComponent {
 	/**
 	 * @param bool $isDefaultAnonUserLinks
 	 * @param bool $isAnonEditorLinksEnabled
+	 * @param int $userLinksCount
 	 * @return VectorComponentDropdown
 	 */
-	private function getDropdown( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled ) {
+	private function getDropdown( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled, $userLinksCount ) {
 		$user = $this->user;
 		$isAnon = !$user->isRegistered();
 
@@ -76,12 +77,21 @@ class VectorComponentUserLinks implements VectorComponent {
 		// Hide entire user links dropdown on larger viewports if it only contains
 		// create account & login link, which are only shown on smaller viewports
 		if ( $isAnon && $isDefaultAnonUserLinks && !$isAnonEditorLinksEnabled ) {
-			$class .= ' user-links-collapsible-item';
+			$linkclass = ' user-links-collapsible-item';
+
+			if ( $userLinksCount === 0 ) {
+				// The user links can be completely empty when even login is not possible
+				// (e.g using remote authentication). In this case, we need to hide the
+				// dropdown completely not only on larger viewports.
+				$linkclass .= '--none';
+			}
+
+			$class .= $linkclass;
 		}
 
 		$tooltip = '';
 		$icon = $this->userIcon;
-		if ( $icon === '' ) {
+		if ( $icon === '' && $userLinksCount ) {
 			$icon = 'ellipsis';
 			// T287494 We use tooltip messages to provide title attributes on hover over certain menu icons.
 			// For modern Vector, the "tooltip-p-personal" key is set to "User menu" which is appropriate for
@@ -237,7 +247,8 @@ class VectorComponentUserLinks implements VectorComponent {
 	public function getTemplateData(): array {
 		$portletData = $this->portletData;
 
-		$isDefaultAnonUserLinks = count( $portletData['data-user-menu']['array-items'] ) === 2;
+		$userLinksCount = count( $portletData['data-user-menu']['array-items'] );
+		$isDefaultAnonUserLinks = $userLinksCount <= 3;
 		$isAnonEditorLinksEnabled = isset( $portletData['data-user-menu-anon-editor']['is-empty'] )
 			&& !$portletData['data-user-menu-anon-editor']['is-empty'];
 
@@ -327,8 +338,8 @@ class VectorComponentUserLinks implements VectorComponent {
 			'data-user-links-overflow' => $overflowMenu->getTemplateData(),
 			'data-user-links-preferences' => $preferencesMenu->getTemplateData(),
 			'data-user-links-user-page' => $userPageMenu->getTemplateData(),
-			'data-user-links-dropdown' => $this->getDropdown( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled )
-				->getTemplateData(),
+			'data-user-links-dropdown' => $this->getDropdown(
+				$isDefaultAnonUserLinks, $isAnonEditorLinksEnabled, $userLinksCount )->getTemplateData(),
 			'data-user-links-menus' => array_map( static function ( $menu ) {
 				return $menu->getTemplateData();
 			}, $this->getMenus( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled ) ),

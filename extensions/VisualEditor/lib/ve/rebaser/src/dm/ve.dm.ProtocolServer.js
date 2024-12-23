@@ -42,8 +42,7 @@ ve.dm.ProtocolServer.static.palette = [
  * @return {Promise} Resolves when loaded
  */
 ve.dm.ProtocolServer.prototype.ensureLoaded = function ( docName ) {
-	const documentStore = this,
-		rebaseServer = this.rebaseServer;
+	const rebaseServer = this.rebaseServer;
 
 	let loading = this.loadingForDoc.get( docName );
 
@@ -51,8 +50,8 @@ ve.dm.ProtocolServer.prototype.ensureLoaded = function ( docName ) {
 		return loading;
 	}
 	this.logger.logServerEvent( { type: 'ProtocolServer#load', docName: docName } );
-	loading = this.documentStore.load( docName ).then( function ( change ) {
-		documentStore.logger.logServerEvent( {
+	loading = this.documentStore.load( docName ).then( ( change ) => {
+		this.logger.logServerEvent( {
 			type: 'ProtocolServer#loaded',
 			docName: docName,
 			length: change.getLength()
@@ -118,8 +117,9 @@ ve.dm.ProtocolServer.prototype.onLogEvent = function ( context, event ) {
  *
  * @param {Object} context The connection context
  * @param {number} [startLength=0] The length of the common history
+ * @param {Function} [usernameGenerator] Function which returns a username, with an authorID argument
  */
-ve.dm.ProtocolServer.prototype.welcomeClient = function ( context, startLength ) {
+ve.dm.ProtocolServer.prototype.welcomeClient = function ( context, startLength, usernameGenerator ) {
 	const docName = context.docName,
 		serverId = context.serverId,
 		authorId = context.authorId;
@@ -128,7 +128,7 @@ ve.dm.ProtocolServer.prototype.welcomeClient = function ( context, startLength )
 		startLength = 0;
 	}
 	this.rebaseServer.updateDocState( docName, authorId, null, {
-		name: ve.init.platform.getUserName() || ve.msg( 'visualeditor-collab-user-placeholder', authorId ),
+		name: usernameGenerator ? usernameGenerator( authorId ) : 'User ' + authorId,
 		color: this.constructor.static.palette[
 			authorId % this.constructor.static.palette.length
 		],

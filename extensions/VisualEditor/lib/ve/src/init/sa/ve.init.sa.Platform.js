@@ -9,7 +9,7 @@
  *
  *     @example
  *     var platform = new ve.init.sa.Platform( ve.messagePaths );
- *     platform.initialize().done( function () {
+ *     platform.initialize().done( () => {
  *         $( document.body ).append( $( '<p>' ).text(
  *             platform.getMessage( 'visualeditor' )
  *         ) );
@@ -51,7 +51,7 @@ ve.init.sa.Platform.prototype.getUnanchoredExternalLinkUrlProtocolsRegExp = func
 
 /** @inheritdoc */
 ve.init.sa.Platform.prototype.notify = function ( message, title ) {
-	var $notification = $( '<div>' ).addClass( 've-init-notification' );
+	const $notification = $( '<div>' ).addClass( 've-init-notification' );
 
 	if ( title ) {
 		$notification.append(
@@ -70,7 +70,7 @@ ve.init.sa.Platform.prototype.notify = function ( message, title ) {
 		)
 	);
 
-	var $notificationWrapper = $( '<div>' ).addClass( 've-init-notification-wrapper' );
+	const $notificationWrapper = $( '<div>' ).addClass( 've-init-notification-wrapper' );
 	$notificationWrapper.append( $notification );
 
 	if ( !this.$notifications ) {
@@ -78,28 +78,27 @@ ve.init.sa.Platform.prototype.notify = function ( message, title ) {
 		$( document.body ).append( this.$notifications );
 	}
 
-	var closeId;
+	let closeId;
 
 	function remove() {
 		$notificationWrapper.remove();
 	}
 	function collapse() {
 		$notificationWrapper.addClass( 've-init-notification-collapse' );
-		setTimeout( remove, 250 );
+		$notificationWrapper.one( 'transitionend', remove );
 	}
 	function close() {
 		clearTimeout( closeId );
 		$notificationWrapper.removeClass( 've-init-notification-open' );
 		$notificationWrapper.css( 'height', $notificationWrapper[ 0 ].clientHeight );
-		setTimeout( collapse, 250 );
+		$notificationWrapper.one( 'transitionend', collapse );
 	}
 	function open() {
 		$notificationWrapper.addClass( 've-init-notification-open' );
 		closeId = setTimeout( close, 5000 );
 	}
 
-	var rAF = window.requestAnimationFrame || setTimeout;
-	rAF( open );
+	requestAnimationFrame( open );
 
 	$notification.on( 'click', close );
 
@@ -147,14 +146,14 @@ ve.init.sa.Platform.prototype.formatNumber = function ( number ) {
  * @inheritdoc
  */
 ve.init.sa.Platform.prototype.getHtmlMessage = function ( key ) {
-	var $message = $( [] ),
-		lastOffset = 0,
-		args = arguments,
+	const args = arguments,
 		message = this.getMessage( key );
-	message.replace( /\$[0-9]+/g, function ( placeholder, offset ) {
+	let $message = $( [] ),
+		lastOffset = 0;
+	message.replace( /\$[0-9]+/g, ( placeholder, offset ) => {
 		$message = $message.add( ve.sanitizeHtml( message.slice( lastOffset, offset ) ) );
-		var placeholderIndex = +( placeholder.slice( 1 ) );
-		var arg = args[ placeholderIndex ];
+		const placeholderIndex = +( placeholder.slice( 1 ) );
+		const arg = args[ placeholderIndex ];
 		$message = $message.add(
 			typeof arg === 'string' ?
 				// Arguments come from the code so shouldn't be sanitized
@@ -180,8 +179,8 @@ ve.init.sa.Platform.prototype.getConfig = function () {
  */
 ve.init.sa.Platform.prototype.getUserConfig = function ( keys ) {
 	if ( Array.isArray( keys ) ) {
-		var values = {};
-		for ( var i = 0, l = keys.length; i < l; i++ ) {
+		const values = {};
+		for ( let i = 0, l = keys.length; i < l; i++ ) {
 			values[ keys[ i ] ] = this.getUserConfig( keys[ i ] );
 		}
 		return values;
@@ -199,7 +198,7 @@ ve.init.sa.Platform.prototype.getUserConfig = function ( keys ) {
  */
 ve.init.sa.Platform.prototype.setUserConfig = function ( keyOrValueMap, value ) {
 	if ( typeof keyOrValueMap === 'object' ) {
-		for ( var i in keyOrValueMap ) {
+		for ( const i in keyOrValueMap ) {
 			if ( Object.prototype.hasOwnProperty.call( keyOrValueMap, i ) ) {
 				if ( !this.setUserConfig( i, keyOrValueMap[ i ] ) ) {
 					// localStorage will fail if the quota is full, so further
@@ -226,7 +225,7 @@ ve.init.sa.Platform.prototype.createSafeStorage = function ( storage ) {
  * @inheritdoc
  */
 ve.init.sa.Platform.prototype.addParsedMessages = function ( messages ) {
-	for ( var key in messages ) {
+	for ( const key in messages ) {
 		this.parsedMessages[ key ] = messages[ key ];
 	}
 };
@@ -239,15 +238,13 @@ ve.init.sa.Platform.prototype.getParsedMessage = function ( key ) {
 		return this.parsedMessages[ key ];
 	}
 	// Fallback to regular messages, html escaping applied.
-	return this.getMessage( key ).replace( /['"<>&]/g, function ( char ) {
-		return {
-			'\'': '&#039;',
-			'"': '&quot;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'&': '&amp;'
-		}[ char ];
-	} );
+	return this.getMessage( key ).replace( /['"<>&]/g, ( char ) => ( {
+		'\'': '&#039;',
+		'"': '&quot;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'&': '&amp;'
+	}[ char ] ) );
 };
 
 /**
@@ -286,12 +283,12 @@ ve.init.sa.Platform.prototype.getUserLanguages = function () {
  * @inheritdoc
  */
 ve.init.sa.Platform.prototype.initialize = function () {
-	var messagePaths = this.getMessagePaths(),
+	const messagePaths = this.getMessagePaths(),
 		locale = $.i18n().locale,
 		languages = [ locale, 'en' ], // Always use 'en' as the final fallback
 		languagesCovered = {},
-		promises = [],
-		fallbacks = $.i18n.fallbacks[ locale ];
+		promises = [];
+	let fallbacks = $.i18n.fallbacks[ locale ];
 
 	if ( !VisualEditorSupportCheck() ) {
 		return ve.createDeferred().reject().promise();
@@ -301,10 +298,10 @@ ve.init.sa.Platform.prototype.initialize = function () {
 		// Try to find something that has fallbacks (which means it's a language we know about)
 		// by stripping things from the end. But collect all the intermediate ones in case we
 		// go past languages that don't have fallbacks but do exist.
-		var localeParts = locale.split( '-' );
+		const localeParts = locale.split( '-' );
 		localeParts.pop();
 		while ( localeParts.length && !fallbacks ) {
-			var partialLocale = localeParts.join( '-' );
+			const partialLocale = localeParts.join( '-' );
 			languages.push( partialLocale );
 			fallbacks = $.i18n.fallbacks[ partialLocale ];
 			localeParts.pop();
@@ -312,12 +309,12 @@ ve.init.sa.Platform.prototype.initialize = function () {
 	}
 
 	if ( fallbacks ) {
-		languages = languages.concat( fallbacks );
+		languages.push( ...fallbacks );
 	}
 
 	this.userLanguages = languages;
 
-	for ( var i = 0, iLen = languages.length; i < iLen; i++ ) {
+	for ( let i = 0, iLen = languages.length; i < iLen; i++ ) {
 		if ( languagesCovered[ languages[ i ] ] ) {
 			continue;
 		}
@@ -325,10 +322,10 @@ ve.init.sa.Platform.prototype.initialize = function () {
 
 		// Lower-case the language code for the filename. jQuery.i18n does not case-fold
 		// language codes, so we should not case-fold the second argument in #load.
-		var filename = languages[ i ].toLowerCase() + '.json';
+		const filename = languages[ i ].toLowerCase() + '.json';
 
-		for ( var j = 0, jLen = messagePaths.length; j < jLen; j++ ) {
-			var deferred = ve.createDeferred();
+		for ( let j = 0, jLen = messagePaths.length; j < jLen; j++ ) {
+			const deferred = ve.createDeferred();
 			$.i18n().load( messagePaths[ j ] + filename, languages[ i ] )
 				.always( deferred.resolve );
 			promises.push( deferred.promise() );

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Cainamarques",
 			"Dr03ramos",
 			"Eduardo Addad de Oliveira",
@@ -10,7 +11,6 @@
 			"Fúlvio",
 			"Giro720",
 			"Glaucia Japui Gonçalves",
-			555,
 			"Mariagarbin",
 			"Marinaazev",
 			"TheEduGobi"
@@ -38,6 +38,13 @@
 	"cite_error_empty_references_define": "marca <code>&lt;ref&gt;</code> com o nome \"$1\", definida no grupo <code>&lt;references&gt;</code> \"$2\", não tem nenhum conteúdo.",
 	"cite-tracking-category-cite-error": "Páginas com erros de referência",
 	"cite-tracking-category-cite-error-desc": "As páginas nesta categoria têm erros no uso de tags de referência.",
+	"cite-reference-previews-reference": "Referência",
+	"cite-reference-previews-book": "Referência de livro",
+	"cite-reference-previews-journal": "Referência de revista",
+	"cite-reference-previews-news": "Referência de notícias",
+	"cite-reference-previews-note": "Nota",
+	"cite-reference-previews-web": "Referência de site",
+	"cite-reference-previews-collapsible-placeholder": "Esta referência inclui uma figura que não cabe na pré-visualização.",
 	"cite_references_link_accessibility_label": "Ir para cima",
 	"cite_references_link_many_accessibility_label": "Ir para:",
 	"cite_references_link_accessibility_back_label": "Voltar acima",
@@ -52,5 +59,9 @@
 	"cite-wikieditor-help-content-showreferences-description": "Mostrar referências",
 	"cite-wikieditor-help-content-reference-example-text1": "Página\n  texto.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Texto do link], texto adicional.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto do link]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto do link]",
+	"popups-prefs-navpopups-gadget-conflict-info": "Voe tem o ''gadget'' da [[$1|navegação flutuante]] (''navigation popups'') ativado, por isso não verá as pré-visualizações fornecidas por esta funcionalidade. Dependendo da sua wiki, este ''gadget'' pode ter um nome ligeiramente diferente. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do usuário, incluindo os globais.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Você tem os ''gadgets'' da [[$1|navegação flutuante]] (''navigation popups'') e das [[$1|dicas de referências]] (''reference tooltips'') ativados, por isso não verá as pré-visualizações fornecidas por esta funcionalidade. Dependendo da sua wiki, estes ''gadgets'' pode ter nomes ligeiramente diferentes. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do usuário, incluindo os globais.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Você tem o ''gadget'' das [[$1|dicas de referências]] (''reference tooltips'') ativado, por isso não verá as pré-visualizações de referências,  mas continuará a ver as pré-visualizações de páginas. Dependendo da sua wiki, este ''gadget'' pode ter um nome ligeiramente diferente. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do utilizador, incluindo os globais.",
+	"popups-refpreview-user-preference-label": "Ativar a pré-visualizações de referência (obtenha pré-visualizações rápidas de uma referência ao ler uma página)"
 }

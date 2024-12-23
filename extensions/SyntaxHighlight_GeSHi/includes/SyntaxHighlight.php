@@ -18,25 +18,29 @@
 
 namespace MediaWiki\SyntaxHighlight;
 
-use Content;
-use ExtensionRegistry;
-use FormatJson;
-use IContextSource;
 use MediaWiki\Api\Hook\ApiFormatHighlightHook;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\Hook\ContentGetParserOutputHook;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\SoftwareInfoHook;
 use MediaWiki\Html\Html;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
+use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use Parser;
-use ParserOptions;
 use RuntimeException;
-use TextContent;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
@@ -44,6 +48,7 @@ use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 class SyntaxHighlight extends ExtensionTagHandler implements
 	ParserFirstCallInitHook,
 	ContentGetParserOutputHook,
+	ResourceLoaderRegisterModulesHook,
 	ApiFormatHighlightHook,
 	SoftwareInfoHook
 {
@@ -194,12 +199,9 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 			$parser->addTrackingCategory( $cat );
 		}
 
-		// Register CSS
+		// Register modules
 		$parser->getOutput()->addModuleStyles( self::getModuleStyles() );
-		if ( !empty( $args['linelinks'] ) ) {
-			$parser->getOutput()->addModules( [ 'ext.pygments.linenumbers' ] );
-		}
-
+		$parser->getOutput()->addModules( [ 'ext.pygments.view' ] );
 		return $result['html'];
 	}
 
@@ -212,8 +214,9 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 		// FIXME: There is no API method in Parsoid to add tracking categories
 		// So, $result['cats'] is being ignored
 
-		// Register CSS
-		$extApi->addModuleStyles( self::getModuleStyles() );
+		// Register modules
+		$extApi->getMetadata()->appendOutputStrings( CMCSS::MODULE_STYLE, self::getModuleStyles() );
+		$extApi->getMetadata()->appendOutputStrings( CMCSS::MODULE, [ 'ext.pygments.view' ] );
 
 		return $extApi->htmlToDom( $result['html'] );
 	}
@@ -389,6 +392,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 	 *  If it contains a 'inline' key, the output will not be wrapped in `<div><pre/></div>`.
 	 *  If it contains a 'linelinks' key, lines will have links and anchors with a prefix
 	 *   of the value. Similar to the lineanchors+linespans features in Pygments.
+	 *  If it contains a 'copy' key, a link will be shown for copying content to the clipboard.
 	 * @param Parser|null $parser Parser, if generating content to be parsed.
 	 * @return Status Status object, with HTML representing the highlighted
 	 *  code as its value.
@@ -441,6 +445,9 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 		$classList[] = 'mw-content-' . $dir;
 		if ( $showLines ) {
 			$classList[] = self::HIGHLIGHT_CSS_CLASS . '-lines';
+		}
+		if ( !$isInline && isset( $args['copy'] ) ) {
+			$classList[] = 'mw-highlight-copy';
 		}
 		$htmlAttribs['class'] = implode( ' ', $classList );
 		$htmlAttribs['dir'] = $dir;
@@ -555,8 +562,6 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 	public function onContentGetParserOutput( $content, $title,
 		$revId, $options, $generateHtml, &$parserOutput
 	) {
-		global $wgTextModelsToParse;
-
 		// Hope that the "SyntaxHighlightModels" attribute does not contain silly types.
 		if ( !( $content instanceof TextContent ) ) {
 			// Oops! Non-text content? Let MediaWiki handle this.
@@ -584,9 +589,10 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 		$lexer = $models[$model];
 		$text = $content->getText();
 
+		$config = MediaWikiServices::getInstance()->getMainConfig();
 		// Parse using the standard parser to get links etc. into the database, HTML is replaced below.
 		// We could do this using $content->fillParserOutput(), but alas it is 'protected'.
-		if ( in_array( $model, $wgTextModelsToParse, true ) ) {
+		if ( in_array( $model, $config->get( MainConfigNames::TextModelsToParse ), true ) ) {
 			$parserOutput = MediaWikiServices::getInstance()->getParser()
 				->parse( $text, $title, $options, true, true, $revId );
 		}
@@ -598,7 +604,7 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 		$out = $status->getValue();
 
 		$parserOutput->addModuleStyles( self::getModuleStyles() );
-		$parserOutput->addModules( [ 'ext.pygments.linenumbers' ] );
+		$parserOutput->addModules( [ 'ext.pygments.view' ] );
 		$parserOutput->setText( $out );
 
 		// Inform MediaWiki that we have parsed this page and it shouldn't mess with it.
@@ -653,5 +659,34 @@ class SyntaxHighlight extends ExtensionTagHandler implements
 		} catch ( PygmentsException $e ) {
 			// pass
 		}
+	}
+
+	/**
+	 * Hook to register ext.pygments.view module.
+	 * @param ResourceLoader $rl
+	 */
+	public function onResourceLoaderRegisterModules( ResourceLoader $rl ): void {
+		$rl->register( 'ext.pygments.view', [
+			'localBasePath' => MW_INSTALL_PATH . '/extensions/SyntaxHighlight_GeSHi/modules',
+			'remoteExtPath' => 'SyntaxHighlight_GeSHi/modules',
+			'scripts' => array_merge( [
+				'pygments.linenumbers.js',
+				'pygments.links.js',
+				'pygments.copy.js'
+			], ExtensionRegistry::getInstance()->isLoaded( 'Scribunto' ) ? [
+				'pygments.links.scribunto.js'
+			] : [] ),
+			'styles' => [
+				'pygments.copy.less'
+			],
+			'messages' => [
+				'syntaxhighlight-button-copy',
+				'syntaxhighlight-button-copied'
+			],
+			'dependencies' => [
+				'mediawiki.util',
+				'mediawiki.Title'
+			]
+		] );
 	}
 }

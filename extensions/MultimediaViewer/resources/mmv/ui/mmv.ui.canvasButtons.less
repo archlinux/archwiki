@@ -3,141 +3,122 @@
 @import 'mediawiki.mixins.less';
 @import '../mmv.mixins.less';
 
-.mw-mmv-download-button,
-.mw-mmv-reuse-button,
-.mw-mmv-options-button,
-.mw-mmv-close,
-.mw-mmv-fullscreen,
-.mw-mmv-next-image,
-.mw-mmv-prev-image {
-	cursor: pointer;
+// Common to all buttons
+// We override the codex background and borders to be their forced darkmode variant
+// We use transparency on the background and on the icon color
+// Increase of specificity by class name repeat to avoid rare white boxes, T374373
+.cdx-button.mw-mmv-button.mw-mmv-button {
+	background-color: @buttons-background-color-faded;
 	position: fixed;
-	background-color: transparent;
-	background-repeat: no-repeat;
-	opacity: 0.8;
-	border: 0;
 	z-index: 1003;
+	// Cancel out default outline
+	border-width: 0;
+	outline: 0;
+	transition-property: background-color, opacity, border-width, border-color, box-shadow, transform;
+
+	&.mw-mmv-dialog-open, /* A button that has opened a dialog */
+	&:active,
+	&:hover {
+		background-color: @buttons-background-color;
+	}
+
+	&:focus {
+		background-color: @buttons-background-color;
+		border-width: 1px;
+	}
+
+	.mw-mmv-icon {
+		// Default transparency of the icon
+		opacity: 0.8;
+	}
 
 	&.mw-mmv-dialog-open,
+	&:active,
+	&:focus,
 	&:hover {
-		text-decoration: none;
-		opacity: 1;
+		.mw-mmv-icon {
+			transition: opacity 0.1s ease-in;
+			opacity: 1;
+		}
 	}
 
-	.user-select( none );
-}
-
-.mw-mmv-download-button.hidden,
-.mw-mmv-reuse-button.hidden,
-.mw-mmv-options-button.hidden,
-.mw-mmv-close.hidden,
-.mw-mmv-fullscreen.hidden,
-.mw-mmv-next-image.hidden,
-.mw-mmv-prev-image.hidden {
-	display: none;
-}
-
-.cursor-hidden {
-	.mw-mmv-download-button,
-	.mw-mmv-reuse-button,
-	.mw-mmv-close,
-	.mw-mmv-fullscreen,
-	.mw-mmv-next-image,
-	.mw-mmv-prev-image {
-		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-		cursor: none;
+	// when the cursor is hidden, the buttons are hidden as well
+	.user-inactive & {
+		opacity: 0;
+		transform: scale( 0 );
 	}
 }
 
+// Positioning of buttons
 .mw-mmv-download-button,
 .mw-mmv-reuse-button,
-.mw-mmv-options-button,
 .mw-mmv-close,
 .mw-mmv-fullscreen {
-	right: @buttons-offset-right;
+	right: @buttons-offset-edge;
 	left: auto;
-	transition: opacity 0.25s;
-	background-position: center;
-	margin-top: 14px;
-	width: 24px + 2 * 14px;
+	min-width: @buttons-size;
+	min-height: @buttons-size;
 }
 
-.mw-mmv-next-image,
-.mw-mmv-prev-image {
-	top: -999px;
-	width: 80px;
-	height: 120px;
-	transition: opacity 0.25s, margin 0.25s;
+// Per button positioning and providing icons
+.mw-mmv-close {
+	top: @buttons-offset-edge;
 
-	&.disabled {
-		display: none;
-		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-		cursor: none;
+	.mw-mmv-icon {
+		.cdx-mixin-css-icon( @cdx-icon-close, @param-fill-color: @color-inverted-fixed );
 	}
 }
 
-.mw-mmv-close {
-	top: @buttons-offset-right;
-	/* @embed */
-	background-image: url( img/mw-close.svg );
-	height: 23px;
-}
-
 .mw-mmv-fullscreen {
-	right: @buttons-offset-right - 2px;
-	top: ( @buttons-offset-right + ( @buttons-offset-each-top ) );
-	/* @embed */
-	background-image: url( img/mw-fullscreen-ltr.svg );
-	height: 22px;
-}
+	top: ( @buttons-offset-edge + ( @buttons-offset-each ) );
 
-.mw-mmv-options-button {
-	top: ( @buttons-offset-right + ( 2 * @buttons-offset-each-top ) );
-	/* @embed */
-	background-image: url( img/gear.svg );
-	height: 23px;
-}
+	.mw-mmv-icon {
+		.cdx-mixin-css-icon( @cdx-icon-full-screen, @param-fill-color: @color-inverted-fixed );
 
-.jq-fullscreened {
-	.mw-mmv-fullscreen {
-		/* @embed */
-		background-image: url( img/mw-defullscreen-ltr.svg );
+		.jq-fullscreened & {
+			.cdx-mixin-css-icon( @cdx-icon-exit-fullscreen, @param-fill-color: @color-inverted-fixed );
+		}
 	}
 }
 
 .mw-mmv-next-image {
-	/* @embed */
-	background-image: url( img/next-ltr.svg );
-	background-position: right;
-	right: @navbutton-width;
+	right: @size-icon-medium;
 
-	&:hover {
-		margin-right: -4px;
+	.mw-mmv-icon {
+		mask-size: @buttons-icon-size-large;
+		.cdx-mixin-css-icon( @cdx-icon-next, @param-fill-color: @color-inverted-fixed, @param-size-icon: @size-icon-medium );
 	}
 }
 
 .mw-mmv-prev-image {
-	/* @embed */
-	background-image: url( img/prev-ltr.svg );
-	background-position: left;
-	left: @navbutton-width;
+	left: @size-icon-medium;
 
-	&:hover {
-		margin-left: -4px;
+	.mw-mmv-icon {
+		mask-size: @buttons-icon-size-large;
+		.cdx-mixin-css-icon( @cdx-icon-previous, @param-fill-color: @color-inverted-fixed, @param-size-icon: @size-icon-medium );
 	}
 }
 
 .mw-mmv-reuse-button {
-	right: @buttons-offset-right - 2px;
-	bottom: @buttons-offset-right + @metadatabar-above-fold-height + @progress-bar-height;
-	/* @embed */
-	background-image: url( img/use-ltr.svg );
-	height: 24px;
+	bottom: @buttons-offset-edge + @metadatabar-above-fold-height;
+
+	.jq-fullscreened & {
+		bottom: @buttons-offset-edge + @progress-bar-height;
+	}
+
+	.mw-mmv-icon {
+		.cdx-mixin-css-icon( @cdx-icon-share, @param-fill-color: @color-inverted-fixed );
+	}
 }
 
 .mw-mmv-download-button {
-	bottom: @buttons-offset-right + @metadatabar-above-fold-height + @progress-bar-height + 37px;
-	/* @embed */
-	background-image: url( img/mw-download.svg );
-	height: 24px;
+	bottom: @buttons-offset-edge + @metadatabar-above-fold-height + @buttons-offset-each;
+
+	.jq-fullscreened & {
+		bottom: @buttons-offset-edge + @progress-bar-height + @buttons-offset-each;
+	}
+
+	.mw-mmv-icon {
+		.cdx-mixin-css-icon( @cdx-icon-download, @param-fill-color: @color-inverted-fixed );
+	}
 }

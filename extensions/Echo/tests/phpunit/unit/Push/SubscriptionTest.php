@@ -1,6 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Unit;
+
 use MediaWiki\Extension\Notifications\Push\Subscription;
+use MediaWikiUnitTestCase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /** @covers \MediaWiki\Extension\Notifications\Push\Subscription */

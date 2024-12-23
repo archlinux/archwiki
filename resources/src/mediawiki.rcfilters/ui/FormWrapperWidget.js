@@ -12,11 +12,11 @@
  * @param {jQuery} $formRoot Root element of the form to attach to
  * @param {Object} config Configuration object
  */
-var FormWrapperWidget = function MwRcfiltersUiFormWrapperWidget( filtersModel, changeListModel, controller, $formRoot, config ) {
+const FormWrapperWidget = function MwRcfiltersUiFormWrapperWidget( filtersModel, changeListModel, controller, $formRoot, config ) {
 	config = config || {};
 
 	// Parent
-	FormWrapperWidget.super.call( this, $.extend( {}, config, {
+	FormWrapperWidget.super.call( this, Object.assign( {}, config, {
 		$element: $formRoot
 	} ) );
 
@@ -65,7 +65,7 @@ FormWrapperWidget.prototype.onLinkClick = function ( e ) {
  * @return {boolean} false
  */
 FormWrapperWidget.prototype.onFormSubmit = function ( e ) {
-	var data = {};
+	const data = {};
 
 	// Collect all data from the form
 	$( e.target ).find( 'input, select' ).each( function () {

@@ -23,11 +23,11 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
-use MediaWiki\MainConfigNames;
-use MediaWiki\User\ActorMigration;
 use MediaWiki\User\UserIdentity;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that removes unused user accounts from the database.
@@ -97,22 +97,12 @@ class RemoveUnusedAccounts extends Maintenance {
 				->deleteFrom( 'user' )
 				->where( [ 'user_id' => $delUser ] )
 				->caller( __METHOD__ )->execute();
-			# Keep actor rows referenced from ipblocks
-			$stage = $this->getConfig()
-				->get( MainConfigNames::BlockTargetMigrationStage );
-			if ( $stage & SCHEMA_COMPAT_READ_OLD ) {
-				$keep = $dbw->newSelectQueryBuilder()
-					->select( 'ipb_by_actor' )
-					->from( 'ipblocks' )
-					->where( [ 'ipb_by_actor' => $delActor ] )
-					->caller( __METHOD__ )->fetchFieldValues();
-			} else {
-				$keep = $dbw->newSelectQueryBuilder()
-					->select( 'bl_by_actor' )
-					->from( 'block' )
-					->where( [ 'bl_by_actor' => $delActor ] )
-					->caller( __METHOD__ )->fetchFieldValues();
-			}
+			# Keep actor rows referenced from block
+			$keep = $dbw->newSelectQueryBuilder()
+				->select( 'bl_by_actor' )
+				->from( 'block' )
+				->where( [ 'bl_by_actor' => $delActor ] )
+				->caller( __METHOD__ )->fetchFieldValues();
 			$del = array_diff( $delActor, $keep );
 			if ( $del ) {
 				$dbw->newDeleteQueryBuilder()
@@ -121,7 +111,12 @@ class RemoveUnusedAccounts extends Maintenance {
 					->caller( __METHOD__ )->execute();
 			}
 			if ( $keep ) {
-				$dbw->update( 'actor', [ 'actor_user' => null ], [ 'actor_id' => $keep ], __METHOD__ );
+				$dbw->newUpdateQueryBuilder()
+					->update( 'actor' )
+					->set( [ 'actor_user' => null ] )
+					->where( [ 'actor_id' => $keep ] )
+					->caller( __METHOD__ )
+					->execute();
 			}
 			$dbw->newDeleteQueryBuilder()
 				->deleteFrom( 'user_groups' )
@@ -149,12 +144,12 @@ class RemoveUnusedAccounts extends Maintenance {
 				->select( 'COUNT(*)' )
 				->from( 'user' )
 				->caller( __METHOD__ )->fetchField();
-			$dbw->update(
-				'site_stats',
-				[ 'ss_users' => $users ],
-				[ 'ss_row_id' => 1 ],
-				__METHOD__
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( 'site_stats' )
+				->set( [ 'ss_users' => $users ] )
+				->where( [ 'ss_row_id' => 1 ] )
+				->caller( __METHOD__ )
+				->execute();
 		} elseif ( $count > 0 ) {
 			$this->output( "\nRun the script again with --delete to remove them from the database.\n" );
 		}
@@ -183,32 +178,20 @@ class RemoveUnusedAccounts extends Maintenance {
 			'archive' => 'ar',
 			'image' => 'img',
 			'oldimage' => 'oi',
-			'filearchive' => 'fa'
-			// re-add when actor migration is complete
-			// 'revision' => 'rev'
+			'filearchive' => 'fa',
+			'revision' => 'rev',
 		];
 		$count = 0;
 
 		$this->beginTransaction( $dbo, __METHOD__ );
 		foreach ( $checks as $table => $prefix ) {
-			$count += (int)$dbo->selectField(
-				$table,
-				'COUNT(*)',
-				[ "{$prefix}_actor" => $actor ],
-				__METHOD__
-			);
+			$count += (int)$dbo->newSelectQueryBuilder()
+				->select( 'COUNT(*)' )
+				->from( $table )
+				->where( [ "{$prefix}_actor" => $actor ] )
+				->caller( __METHOD__ )
+				->fetchField();
 		}
-
-		// Delete this special case when the actor migration is complete
-		$actorQuery = ActorMigration::newMigration()->getWhere( $dbo, 'rev_user', $user );
-		$count += (int)$dbo->selectField(
-			[ 'revision' ] + $actorQuery['tables'],
-			'COUNT(*)',
-			$actorQuery['conds'],
-			__METHOD__,
-			[],
-			$actorQuery['joins']
-		);
 
 		$count += (int)$dbo->newSelectQueryBuilder()
 			->select( 'COUNT(*)' )
@@ -222,5 +205,7 @@ class RemoveUnusedAccounts extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RemoveUnusedAccounts::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

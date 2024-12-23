@@ -19,8 +19,8 @@
  */
 namespace Wikimedia\Rdbms\Replication;
 
-use BagOStuff;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\DBPrimaryPos;
 use Wikimedia\Rdbms\IDatabase;
@@ -175,13 +175,5 @@ class ReplicationReporter {
 			],
 			$extras
 		);
-	}
-
-	/**
-	 * @param IDatabase $conn To make queries
-	 * @return string|null 32 bit integer ID; null if not applicable or unknown
-	 */
-	public function getTopologyBasedServerId( IDatabase $conn ) {
-		return null;
 	}
 }

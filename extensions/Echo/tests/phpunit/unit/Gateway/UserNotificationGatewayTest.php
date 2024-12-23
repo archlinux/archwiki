@@ -1,10 +1,16 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Unit;
+
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Gateway\UserNotificationGateway;
 use MediaWiki\User\User;
+use MediaWikiUnitTestCase;
+use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Rdbms\UpdateQueryBuilder;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Gateway\UserNotificationGateway
@@ -90,13 +96,6 @@ class UserNotificationGatewayTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testGetUnreadNotifications() {
-		$gateway = new UserNotificationGateway(
-			$this->mockUser(),
-			$this->mockDbFactory( [ 'select' => false ] ),
-			$this->mockConfig()
-		);
-		$this->assertSame( [], $gateway->getUnreadNotifications( 'user_talk' ) );
-
 		$dbResult = [
 			(object)[ 'notification_event' => 1 ],
 			(object)[ 'notification_event' => 2 ],
@@ -150,19 +149,29 @@ class UserNotificationGatewayTest extends MediaWikiUnitTestCase {
 	protected function mockDb( array $dbResult = [] ) {
 		$dbResult += [
 			'update' => '',
-			'select' => '',
+			'select' => [],
 			'selectRow' => '',
-			'selectRowCount' => '',
+			'selectRowCount' => 0,
 		];
 		$db = $this->createMock( IDatabase::class );
+		$db->method( 'affectedRows' )
+			->willReturn( $dbResult['update'] ? 1 : 0 );
 		$db->method( 'update' )
 			->willReturn( $dbResult['update'] );
 		$db->method( 'select' )
-			->willReturn( $dbResult['select'] );
+			->willReturn( new FakeResultWrapper( $dbResult['select'] ) );
 		$db->method( 'selectRow' )
 			->willReturn( $dbResult['selectRow'] );
 		$db->method( 'selectRowCount' )
 			->willReturn( $dbResult['selectRowCount'] );
+		$db->method( 'newUpdateQueryBuilder' )
+			->willReturnCallback( static function () use ( $db ) {
+				return new UpdateQueryBuilder( $db );
+			} );
+		$db->method( 'newSelectQueryBuilder' )
+			->willReturnCallback( static function () use ( $db ) {
+				return new SelectQueryBuilder( $db );
+			} );
 
 		return $db;
 	}

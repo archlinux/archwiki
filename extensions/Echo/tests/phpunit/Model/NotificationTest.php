@@ -1,11 +1,16 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Integration\Model;
+
+use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\Extension\Notifications\Model\TargetPage;
+use MediaWikiIntegrationTestCase;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Model\Notification
@@ -45,8 +50,13 @@ class NotificationTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewFromRowWithException() {
+		$queryBuilder = $this->createMock( SelectQueryBuilder::class );
+		$queryBuilder->method( $this->logicalOr( 'select', 'from', 'where', 'caller' ) )->willReturnSelf();
+		$queryBuilder->method( 'fetchRow' )->willReturn( false );
+		$db = $this->createMock( IDatabase::class );
+		$db->method( 'newSelectQueryBuilder' )->willReturn( $queryBuilder );
 		$lb = $this->createMock( ILoadBalancer::class );
-		$lb->method( 'getConnection' )->willReturn( $this->createMock( IDatabase::class ) );
+		$lb->method( 'getConnection' )->willReturn( $db );
 		$lbFactory = $this->createMock( LBFactory::class );
 		$lbFactory->method( 'getExternalLB' )->willReturn( $lb );
 		$this->setService( 'DBLoadBalancer', $lb );
@@ -60,9 +70,8 @@ class NotificationTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Mock a notification row from database
-	 * @return array
 	 */
-	protected function mockNotificationRow() {
+	protected function mockNotificationRow(): array {
 		return [
 			'notification_user' => 1,
 			'notification_event' => 1,
@@ -74,9 +83,8 @@ class NotificationTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Mock an event row from database
-	 * @return array
 	 */
-	protected function mockEventRow() {
+	protected function mockEventRow(): array {
 		return [
 			'event_id' => 1,
 			'event_type' => 'test_event',
@@ -91,9 +99,8 @@ class NotificationTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Mock a target page row
-	 * @return array
 	 */
-	protected function mockTargetPageRow() {
+	protected function mockTargetPageRow(): array {
 		return [
 			'etp_page' => 2,
 			'etp_event' => 1

@@ -53,7 +53,7 @@ ve.ui.MWTransclusionDialogTool.static.template = null;
  */
 ve.ui.MWTransclusionDialogTool.static.isCompatibleWith = function ( model ) {
 	// Parent method
-	var compatible = ve.ui.MWTransclusionDialogTool.super.static.isCompatibleWith.call( this, model );
+	const compatible = ve.ui.MWTransclusionDialogTool.super.static.isCompatibleWith.call( this, model );
 
 	if ( compatible && this.template ) {
 		return model.isSingleTemplate( this.template );

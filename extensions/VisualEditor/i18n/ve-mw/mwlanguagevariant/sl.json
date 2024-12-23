@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Eleassar",
 			"HairyFotr",
 			"Janezdrilc"
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "To pravilo je skrito.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "To pravilo zadeva naslov strani.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Oznaka jezika",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Neveljavno>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Neveljavna</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Jezik",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Vir",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Cilj",

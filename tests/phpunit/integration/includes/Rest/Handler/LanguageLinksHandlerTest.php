@@ -50,15 +50,14 @@ class LanguageLinksHandlerTest extends MediaWikiIntegrationTestCase {
 			new ServiceOptions(
 				LanguageNameUtils::CONSTRUCTOR_OPTIONS,
 				[
-					'ExtraLanguageNames' => [],
-					'UsePigLatinVariant' => false,
-					'UseXssLanguage' => false,
+					MainConfigNames::ExtraLanguageNames => [],
+					MainConfigNames::UsePigLatinVariant => false,
+					MainConfigNames::UseXssLanguage => false,
 				]
 			),
 			$this->getServiceContainer()->getHookContainer()
 		);
 
-		// DummyServicesTrait::getDummyMediaWikiTitleCodec
 		$titleCodec = $this->getDummyMediaWikiTitleCodec();
 
 		return new LanguageLinksHandler(

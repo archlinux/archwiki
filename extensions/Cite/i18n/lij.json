@@ -29,6 +29,15 @@
 	"cite_error_empty_references_define": "O tag <code>&lt;ref&gt;</code> con nómme \"$1\" definîo into <code>&lt;references&gt;</code> grùppo \"$2\" o no gh'à nisciùn contegnûo.",
 	"cite-tracking-category-cite-error": "Pàgine con di eroî inte nòtte",
 	"cite-tracking-category-cite-error-desc": "E pàgine inte sta categorîa chi gh'àn di eroî inte l'ûzo di tag pe-e nòtte.",
+	"cite-tracking-category-ref-extends": "Pàgine ch'adêuvian de nòtte estéize",
+	"cite-tracking-category-ref-extends-desc": "E pàgine inte sta categorîa chi aêuvian l'atribûto \"estéizo\" do tag &lt;ref&gt;.",
+	"cite-reference-previews-reference": "Nòtta",
+	"cite-reference-previews-book": "Nòtta da lìbbro",
+	"cite-reference-previews-journal": "Nòtta da pubricaçión",
+	"cite-reference-previews-news": "Nòtta da notìçie",
+	"cite-reference-previews-note": "Nòtta",
+	"cite-reference-previews-web": "Nòtta da scîto web",
+	"cite-reference-previews-collapsible-placeholder": "Sta nòtta chi a l'inclùdde 'na figûa ch'a no l'ìntra inte l'anteprìmma.",
 	"cite_references_link_accessibility_label": "Sâta",
 	"cite_references_link_many_accessibility_label": "Sâta a:",
 	"cite_references_link_accessibility_back_label": "Tórna in çìmma",
@@ -40,8 +49,11 @@
 	"cite-wikieditor-help-content-reference-description": "Nòtta",
 	"cite-wikieditor-help-content-named-reference-description": "Nòtta nominâ",
 	"cite-wikieditor-help-content-rereference-description": "Âtri ûxi da mæxima nòtta",
+	"cite-wikieditor-help-content-extended-reference-description": "Âtri ûxi da mæxima nòtta, con detàggi de ciù",
 	"cite-wikieditor-help-content-showreferences-description": "Móstra nòtte",
 	"cite-wikieditor-help-content-reference-example-text1": "Tèsto da pàgina.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Tèsto do ligàmme], tèsto de ciù.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Tèsto do ligàmme]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Tèsto do ligàmme]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Detàggi de ciù",
+	"popups-refpreview-user-preference-label": "Anteprimma di rifeimenti (otegni 'na rappida anteprimma de notte a pê de paggina)"
 }

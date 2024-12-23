@@ -1,5 +1,9 @@
 # Changelog
 
+# 4.0.1
+
+* Fix "Implicitly nullable parameter" PHP 8.4 warning (libraryupgrader)
+
 ## 4.0.0
 
 The library now requires PHP 7.4 or later.

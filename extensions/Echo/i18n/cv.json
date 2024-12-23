@@ -101,6 +101,7 @@
 	"notification-link-text-view-page": "Страницӑпа паллаш",
 	"notification-link-text-view-edit": "Тӳрлетӗве пӑх",
 	"notification-link-article-reminder": "Страницӑпа паллаш",
+	"notification-link-api-triggered": "Страницӑпа паллаш",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 с}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1 мин}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1 сех}}",

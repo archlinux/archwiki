@@ -69,9 +69,7 @@ class MinervaPage extends Page {
 
 	waitUntilResourceLoaderModuleReady( moduleName ) {
 		browser.waitUntil( () => {
-			const state = browser.execute( ( m ) => {
-				return mw.loader.getState( m );
-			}, moduleName );
+			const state = browser.execute( ( m ) => mw.loader.getState( m ), moduleName );
 			return state === 'ready';
 		} );
 	}

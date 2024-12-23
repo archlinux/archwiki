@@ -29,20 +29,9 @@ use MessageLocalizer;
 
 class DefaultOverflowBuilder implements IOverflowBuilder {
 
-	/**
-	 * @var Title
-	 */
-	private $title;
-
-	/**
-	 * @var MessageLocalizer
-	 */
-	private $messageLocalizer;
-
-	/**
-	 * @var IMinervaPagePermissions
-	 */
-	private $permissions;
+	private Title $title;
+	private MessageLocalizer $messageLocalizer;
+	private IMinervaPagePermissions $permissions;
 
 	/**
 	 * Initialize Default overflow menu Group
@@ -113,7 +102,7 @@ class DefaultOverflowBuilder implements IOverflowBuilder {
 	 * @param array $toolbox An array of common toolbox items from the sidebar menu
 	 * @return IMenuEntry|null
 	 */
-	private function build( $name, $icon, $toolboxIdx, array $toolbox ) {
+	private function build( $name, $icon, $toolboxIdx, array $toolbox ): ?IMenuEntry {
 		$href = $toolbox[$toolboxIdx]['href'] ?? null;
 		$originalMsg = $toolbox[$toolboxIdx]['text'] ??
 			$this->messageLocalizer->msg( $toolboxIdx )->text();

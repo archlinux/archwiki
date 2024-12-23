@@ -1,0 +1,18 @@
+/* Hide the complete TOC on print when the TOC is hidden. */
+/* stylelint-disable selector-class-pattern */
+.toctogglecheckbox:checked + .toctitle {
+	display: none;
+}
+
+.toc {
+	background-color: #f9f9f9;
+	border: 1pt solid #aaa;
+	padding: 5px;
+	display: table;
+}
+
+/* Separate columns for `.tocnumber` and `.toctext` */
+.tocnumber,
+.toctext {
+	display: table-cell;
+}

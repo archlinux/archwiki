@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Minerva;
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Minerva\Skins\SkinMinerva;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use RequestContext;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -43,6 +43,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 			$services->getLinkRenderer(),
 			$services->getService( 'Minerva.LanguagesHelper' ),
 			$services->getService( 'Minerva.Menu.Definitions' ),
+			$services->getService( 'Minerva.Menu.PageActions' ),
 			$services->getService( 'Minerva.Permissions' ),
 			$services->getService( 'Minerva.SkinOptions' ),
 			$services->getService( 'Minerva.SkinUserPageHelper' ),
@@ -434,7 +435,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 						],
 					],
 					'data-icon' => [
-						'icon' => 'bellOutline-base20'
+						'icon' => 'bellOutline'
 					],
 					'label' => 'Alerts (13)',
 				],
@@ -447,7 +448,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 						'class' => 'mw-list-item',
 						'array-links' => [
 							[
-								'icon' => 'bellOutline-base20',
+								'icon' => 'bellOutline',
 								'array-attributes' => [
 									self::ATTRIBUTE_NOTIFICATION_HREF,
 									self::ATTRIBUTE_NOTIFICATION_DATA_COUNTER_TEXT,

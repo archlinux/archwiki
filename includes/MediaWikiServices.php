@@ -20,17 +20,10 @@
 
 namespace MediaWiki;
 
-use BagOStuff;
-use CryptHKDF;
-use DateFormatterFactory;
-use ExtensionRegistry;
 use ExternalStoreAccess;
 use ExternalStoreFactory;
-use FileBackendGroup;
-use IBufferingStatsdDataFactory;
 use JobQueueGroup;
 use JobRunner;
-use Language;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use LocalisationCache;
 use LogFormatterFactory;
@@ -77,6 +70,7 @@ use MediaWiki\EditPage\IntroMessageBuilder;
 use MediaWiki\EditPage\PreloadedContentBuilder;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\Export\WikiExporterFactory;
+use MediaWiki\FileBackend\FileBackendGroup;
 use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
 use MediaWiki\HookContainer\HookContainer;
@@ -89,6 +83,8 @@ use MediaWiki\JobQueue\JobFactory;
 use MediaWiki\JobQueue\JobQueueGroupFactory;
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Language\FormatterFactory;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageFallback;
@@ -114,13 +110,19 @@ use MediaWiki\Page\RedirectStore;
 use MediaWiki\Page\RollbackPageFactory;
 use MediaWiki\Page\UndeletePageFactory;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\DateFormatterFactory;
 use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserCacheFactory;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
+use MediaWiki\Parser\Parsoid\Config\SiteConfig;
 use MediaWiki\Parser\Parsoid\HtmlTransformFactory;
+use MediaWiki\Parser\Parsoid\LintErrorChecker;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
+use MediaWiki\Password\PasswordFactory;
 use MediaWiki\Permissions\GrantsInfo;
 use MediaWiki\Permissions\GrantsLocalization;
 use MediaWiki\Permissions\GroupPermissionsLookup;
@@ -130,11 +132,11 @@ use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\PoolCounter\PoolCounterFactory;
 use MediaWiki\Preferences\PreferencesFactory;
 use MediaWiki\Preferences\SignatureValidatorFactory;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\ProxyLookup;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Revision\ArchivedRevisionLookup;
-use MediaWiki\Revision\ContributionsLookup;
 use MediaWiki\Revision\RevisionFactory;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRenderer;
@@ -168,11 +170,11 @@ use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\User\BotPasswordStore;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\CentralId\CentralIdLookupFactory;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\PasswordReset;
 use MediaWiki\User\Registration\UserRegistrationLookup;
-use MediaWiki\User\StaticUserOptionsLookup;
 use MediaWiki\User\TalkPageNotificationManager;
 use MediaWiki\User\TempUser\RealTempUserConfig;
 use MediaWiki\User\TempUser\TempUserCreator;
@@ -185,32 +187,28 @@ use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\Utils\UrlUtils;
+use MediaWiki\Watchlist\WatchedItemQueryService;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use MessageCache;
-use MimeAnalyzer;
 use MWLBFactory;
-use ObjectCache;
 use ObjectCacheFactory;
 use OldRevisionImporter;
-use ParserCache;
-use ParserFactory;
-use PasswordFactory;
 use RepoGroup;
 use SearchEngine;
 use SearchEngineConfig;
 use SearchEngineFactory;
 use SkinFactory;
 use UploadRevisionImporter;
-use WANObjectCache;
-use WatchedItemQueryService;
-use WatchedItemStoreInterface;
 use WikiImporterFactory;
 use Wikimedia\EventRelayer\EventRelayerGroup;
 use Wikimedia\Message\IMessageFormatterFactory;
+use Wikimedia\Mime\MimeAnalyzer;
 use Wikimedia\NonSerializable\NonSerializableTrait;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Parsoid\Config\DataAccess;
-use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
 use Wikimedia\Rdbms\DatabaseFactory;
@@ -224,7 +222,9 @@ use Wikimedia\RequestTimeout\CriticalSectionProvider;
 use Wikimedia\Services\NoSuchServiceException;
 use Wikimedia\Services\SalvageableService;
 use Wikimedia\Services\ServiceContainer;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Telemetry\TracerInterface;
 use Wikimedia\UUID\GlobalIdGenerator;
 use Wikimedia\WRStats\WRStatsFactory;
 
@@ -414,7 +414,7 @@ class MediaWikiServices extends ServiceContainer {
 	 * @param string $quick Set this to "quick" to allow expensive resources to be re-used.
 	 * See SalvageableService for details.
 	 */
-	public static function resetGlobalInstance( Config $bootstrapConfig = null, $quick = '' ) {
+	public static function resetGlobalInstance( ?Config $bootstrapConfig = null, $quick = '' ) {
 		if ( self::$instance === null ) {
 			// no global instance yet, nothing to reset
 			return;
@@ -573,7 +573,7 @@ class MediaWikiServices extends ServiceContainer {
 			}
 		);
 
-		ObjectCache::clear();
+		self::getInstance()->getObjectCacheFactory()->clear();
 
 		$this->storageDisabled = true;
 	}
@@ -974,6 +974,13 @@ class MediaWikiServices extends ServiceContainer {
 	}
 
 	/**
+	 * @since 1.43
+	 */
+	public function getContentLanguageCode(): LanguageCode {
+		return $this->getService( 'ContentLanguageCode' );
+	}
+
+	/**
 	 * @since 1.35
 	 */
 	public function getContentModelChangeFactory(): ContentModelChangeFactory {
@@ -1002,24 +1009,10 @@ class MediaWikiServices extends ServiceContainer {
 	}
 
 	/**
-	 * @since 1.35
-	 */
-	public function getContributionsLookup(): ContributionsLookup {
-		return $this->getService( 'ContributionsLookup' );
-	}
-
-	/**
 	 * @since 1.36
 	 */
 	public function getCriticalSectionProvider(): CriticalSectionProvider {
 		return $this->getService( 'CriticalSectionProvider' );
-	}
-
-	/**
-	 * @since 1.28
-	 */
-	public function getCryptHKDF(): CryptHKDF {
-		return $this->getService( 'CryptHKDF' );
 	}
 
 	/**
@@ -1335,6 +1328,13 @@ class MediaWikiServices extends ServiceContainer {
 	 */
 	public function getLinkTargetLookup(): LinkTargetLookup {
 		return $this->getService( 'LinkTargetLookup' );
+	}
+
+	/**
+	 * @since 1.43
+	 */
+	public function getLintErrorChecker(): LintErrorChecker {
+		return $this->getService( 'LintErrorChecker' );
 	}
 
 	/**
@@ -1910,7 +1910,7 @@ class MediaWikiServices extends ServiceContainer {
 	}
 
 	/**
-	 * @internal
+	 * @since 1.41
 	 */
 	public function getStatsFactory(): StatsFactory {
 		return $this->getService( 'StatsFactory' );
@@ -1979,6 +1979,10 @@ class MediaWikiServices extends ServiceContainer {
 		return $this->getService( 'TitleParser' );
 	}
 
+	public function getTracer(): TracerInterface {
+		return $this->getService( 'Tracer' );
+	}
+
 	/**
 	 * @since 1.38
 	 */
@@ -2016,6 +2020,7 @@ class MediaWikiServices extends ServiceContainer {
 
 	/**
 	 * @since 1.36
+	 * @deprecated since 1.43, use ActorStore
 	 */
 	public function getUserCache(): UserCache {
 		return $this->getService( 'UserCache' );

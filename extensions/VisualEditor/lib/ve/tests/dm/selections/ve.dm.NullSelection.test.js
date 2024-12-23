@@ -8,15 +8,15 @@ QUnit.module( 've.dm.NullSelection' );
 
 /* Tests */
 
-QUnit.test( 'Construction and getters (getDocument, getRanges)', function ( assert ) {
-	var selection = new ve.dm.NullSelection();
+QUnit.test( 'Construction and getters (getDocument, getRanges)', ( assert ) => {
+	const selection = new ve.dm.NullSelection();
 
 	assert.deepEqual( selection.getRanges(), [], 'getRanges' );
 	assert.strictEqual( selection.getName(), 'null', 'getName' );
 } );
 
-QUnit.test( 'Basic methods (collapse*, isCollased, equals, isNull)', function ( assert ) {
-	var selection = new ve.dm.NullSelection();
+QUnit.test( 'Basic methods (collapse*, isCollased, equals, isNull)', ( assert ) => {
+	const selection = new ve.dm.NullSelection();
 
 	assert.deepEqual( selection.collapseToStart(), selection, 'collapseToStart' );
 	assert.deepEqual( selection.collapseToEnd(), selection, 'collapseToEnd' );
@@ -27,8 +27,8 @@ QUnit.test( 'Basic methods (collapse*, isCollased, equals, isNull)', function ( 
 	assert.strictEqual( selection.isNull(), true, 'null' );
 } );
 
-QUnit.test( 'Factory methods & serialization (newFromJSON, toJSON, getDescription)', function ( assert ) {
-	var selection = new ve.dm.NullSelection();
+QUnit.test( 'Factory methods & serialization (newFromJSON, toJSON, getDescription)', ( assert ) => {
+	const selection = new ve.dm.NullSelection();
 
 	assert.deepEqual( selection.toJSON(), { type: 'null' }, 'toJSON' );
 	assert.deepEqual(

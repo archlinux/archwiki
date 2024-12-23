@@ -3,6 +3,8 @@
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
 use Psr\Log\LoggerInterface;
+use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * @since 1.31
@@ -126,16 +128,11 @@ class ImportableUploadRevisionImporter implements UploadRevisionImporter {
 	}
 
 	/**
-	 * @deprecated DO NOT CALL ME.
-	 * This method was introduced when factoring (Importable)UploadRevisionImporter out of
-	 * WikiRevision. It only has 1 use by the deprecated downloadSource method in WikiRevision.
-	 * Do not use this in new code, it will be made private soon.
-	 *
 	 * @param ImportableUploadRevision $wikiRevision
 	 *
 	 * @return string|false
 	 */
-	public function downloadSource( ImportableUploadRevision $wikiRevision ) {
+	private function downloadSource( ImportableUploadRevision $wikiRevision ) {
 		if ( !$this->enableUploads ) {
 			return false;
 		}

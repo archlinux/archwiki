@@ -5,6 +5,7 @@
 		]
 	},
 	"paramvalidator-badbool": "Nevalida valoro \"$2\" por booleana parametro \"$1\". Informez $3 se vera, o $5 se falsa.",
+	"paramvalidator-badbool-type": "Nevalida valoro \"$2\" por parametro booleana \"$1\". Informesis valoro $3, nekorekta.",
 	"paramvalidator-badfloat": "Nevalida valoro \"$2\" por flotacanta parametro \"$1\".",
 	"paramvalidator-help-default": "Normala: $1",
 	"paramvalidator-help-default-empty": "Normala: (vakua)",

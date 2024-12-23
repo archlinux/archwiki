@@ -17,14 +17,10 @@ use Psr\Log\NullLogger;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesExecutorFactory
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesExecutorFactory
  */
 class ConsequencesExecutorFactoryTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::newExecutor
-	 */
 	public function testNewExecutor() {
 		$factory = new ConsequencesExecutorFactory(
 			$this->createMock( ConsequencesLookup::class ),

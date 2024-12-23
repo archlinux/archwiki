@@ -169,6 +169,7 @@ class ListHandler extends TokenHandler {
 		if ( $token instanceof NlTk ) {
 			$this->currListFrame->atEOL = true;
 			$this->currListFrame->nlTk = $token;
+			$this->currListFrame->haveDD = false;
 			// php's findColonNoLinks is run in doBlockLevels, which examines
 			// the text line-by-line. At nltk, any open tags will cease having
 			// an effect.
@@ -250,13 +251,16 @@ class ListHandler extends TokenHandler {
 	private function onListItem( Token $token ): ?TokenHandlerResult {
 		if ( $token instanceof TagTk ) {
 			$this->onAnyEnabled = true;
+			$bullets = $token->getAttributeV( 'bullets' );
 			if ( $this->currListFrame ) {
 				// Ignoring colons inside tags to prevent illegal overlapping.
 				// Attempts to mimic findColonNoLinks in the php parser.
-				$bullets = $token->getAttributeV( 'bullets' );
 				if ( PHPUtils::lastItem( $bullets ) === ':'
-					&& $this->currListFrame->numOpenTags > 0
+					&& ( $this->currListFrame->haveDD || $this->currListFrame->numOpenTags > 0 )
 				) {
+					$this->env->log( 'trace/list', $this->pipelineId,
+						'ANY:', static function () use ( $token ) { return PHPUtils::jsonEncode( $token );
+						} );
 					$this->env->log( 'trace/list', $this->pipelineId, 'RET: ', ':' );
 					return new TokenHandlerResult( [ ':' ] );
 				}
@@ -264,8 +268,7 @@ class ListHandler extends TokenHandler {
 				$this->currListFrame = new ListFrame;
 			}
 			// convert listItem to list and list item tokens
-			$res = $this->doListItem( $this->currListFrame->bstack, $token->getAttributeV( 'bullets' ),
-				$token );
+			$res = $this->doListItem( $this->currListFrame->bstack, $bullets, $token );
 			return new TokenHandlerResult( $res );
 		}
 
@@ -302,6 +305,12 @@ class ListHandler extends TokenHandler {
 	private function pushList( array $container, DataParsoid $dp1, DataParsoid $dp2 ): array {
 		$this->currListFrame->endtags[] = new EndTagTk( $container['list'] );
 		$this->currListFrame->endtags[] = new EndTagTk( $container['item'] );
+
+		if ( $container['item'] === 'dd' ) {
+			$this->currListFrame->haveDD = true;
+		} elseif ( $container['item'] === 'dt' ) {
+			$this->currListFrame->haveDD = false; // reset
+		}
 
 		return [
 			new TagTk( $container['list'], [], $dp1 ),
@@ -356,9 +365,11 @@ class ListHandler extends TokenHandler {
 	 * @return array
 	 */
 	private function doListItem( array $bs, array $bn, Token $token ): array {
-		$this->env->log( 'trace/list', $this->pipelineId,
-			'BEGIN:', static function () use ( $token ) { return PHPUtils::jsonEncode( $token );
-			} );
+		$this->env->log(
+			'trace/list', $this->pipelineId, 'BEGIN:',
+			static function () use ( $token ) { return PHPUtils::jsonEncode( $token );
+			}
+		);
 
 		$prefixLen = $this->commonPrefixLength( $bs, $bn );
 		$prefix = array_slice( $bn, 0, $prefixLen/*CHECK THIS*/ );
@@ -368,9 +379,7 @@ class ListHandler extends TokenHandler {
 			$newDP = $dp->clone();
 			$tsr = $dp->tsr ?? null;
 			if ( $tsr ) {
-				$newDP->tsr = new SourceRange(
-					$tsr->start + $k, $tsr->start + $j
-				);
+				$newDP->tsr = new SourceRange( $tsr->start + $k, $tsr->start + $j );
 			}
 			return $newDP;
 		};
@@ -381,9 +390,12 @@ class ListHandler extends TokenHandler {
 		$itemToken = null;
 
 		// emit close tag tokens for closed lists
-		$this->env->log( 'trace/list', $this->pipelineId, static function () use ( $bs, $bn ) {
-			return '    bs: ' . PHPUtils::jsonEncode( $bs ) . '; bn: ' . PHPUtils::jsonEncode( $bn );
-		} );
+		$this->env->log(
+			'trace/list', $this->pipelineId,
+			static function () use ( $bs, $bn ) {
+				return '    bs: ' . PHPUtils::jsonEncode( $bs ) . '; bn: ' . PHPUtils::jsonEncode( $bn );
+			}
+		);
 
 		if ( count( $prefix ) === count( $bs ) && count( $bn ) === count( $bs ) ) {
 			$this->env->log( 'trace/list', $this->pipelineId, '    -> no nesting change' );
@@ -424,6 +436,11 @@ class ListHandler extends TokenHandler {
 				$tokens = array_merge( $this->currListFrame->solTokens, $tokens );
 				$newName = self::$bullet_chars_map[$bn[$prefixLen]]['item'];
 				$endTag = array_pop( $this->currListFrame->endtags );
+				if ( $newName === 'dd' ) {
+					$this->currListFrame->haveDD = true;
+				} elseif ( $newName === 'dt' ) {
+					$this->currListFrame->haveDD = false; // reset
+				}
 				$this->currListFrame->endtags[] = new EndTagTk( $newName );
 
 				$newTag = null;
@@ -524,9 +541,11 @@ class ListHandler extends TokenHandler {
 		$this->currListFrame->nlTk = null;
 		$this->currListFrame->atEOL = false;
 
-		$this->env->log( 'trace/list', $this->pipelineId,
-			'RET:', static function () use ( $res ) { return PHPUtils::jsonEncode( $res );
-			} );
+		$this->env->log(
+			'trace/list', $this->pipelineId, 'RET:',
+			static function () use ( $res ) { return PHPUtils::jsonEncode( $res );
+			}
+		);
 		return $res;
 	}
 }

@@ -129,8 +129,10 @@ class PdfImage {
 			->execute();
 
 		// Record in statsd
-		MediaWikiServices::getInstance()->getStatsdDataFactory()
-			->increment( 'pdfhandler.shell.retrieve_meta_data' );
+		MediaWikiServices::getInstance()->getStatsFactory()
+			->getCounter( 'pdfhandler_shell_retrievemetadata_total' )
+			->copyToStatsdAt( 'pdfhandler.shell.retrieve_meta_data' )
+			->increment();
 
 		// Metadata retrieval is allowed to fail, but we'd like to know why
 		if ( $result->getExitCode() != 0 ) {

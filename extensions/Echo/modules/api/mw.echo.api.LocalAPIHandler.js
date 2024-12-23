@@ -46,16 +46,14 @@
 			type: type.length === 1 ? type[ 0 ] : 'all',
 			timestampFormat: 'ISO_8601'
 		} )
-			.then( function ( data ) {
-				return data.query.echomarkseen.timestamp;
-			} );
+			.then( ( data ) => data.query.echomarkseen.timestamp );
 	};
 
 	/**
 	 * @inheritdoc
 	 */
 	mw.echo.api.LocalAPIHandler.prototype.markAllRead = function ( source, type ) {
-		var data = {
+		const data = {
 			action: 'echomarkread'
 		};
 		type = Array.isArray( type ) ? type : [ type ];
@@ -72,16 +70,14 @@
 		}
 
 		return this.api.postWithToken( 'csrf', data )
-			.then( function ( result ) {
-				return OO.getProp( result.query, 'echomarkread', type, 'rawcount' ) || 0;
-			} );
+			.then( ( result ) => OO.getProp( result.query, 'echomarkread', type, 'rawcount' ) || 0 );
 	};
 
 	/**
 	 * @inheritdoc
 	 */
 	mw.echo.api.LocalAPIHandler.prototype.markItemsRead = function ( source, itemIdArray, isRead ) {
-		var data = {
+		const data = {
 			action: 'echomarkread'
 		};
 
@@ -107,7 +103,7 @@
 	 * @return {jQuery.Promise} Promise which resolves with the unread count
 	 */
 	mw.echo.api.LocalAPIHandler.prototype.fetchUnreadCount = function ( type, ignoreCrossWiki ) {
-		var normalizedType = this.normalizedType[ type ],
+		const normalizedType = this.normalizedType[ type ],
 			apiData = {
 				action: 'query',
 				meta: 'notifications',
@@ -124,7 +120,7 @@
 		}
 
 		return this.api.get( apiData )
-			.then( function ( result ) {
+			.then( ( result ) => {
 				if ( type === 'message' || type === 'alert' ) {
 					return OO.getProp( result.query, 'notifications', normalizedType, 'rawcount' ) || 0;
 				} else {
@@ -137,7 +133,7 @@
 	 * @inheritdoc
 	 */
 	mw.echo.api.LocalAPIHandler.prototype.getTypeParams = function ( type ) {
-		return $.extend( {}, this.typeParams[ type ], {
+		return Object.assign( {}, this.typeParams[ type ], {
 			notcrosswikisummary: 1
 		} );
 	};

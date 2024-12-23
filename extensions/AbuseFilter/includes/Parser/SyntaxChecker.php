@@ -7,7 +7,7 @@ use LogicException;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\InternalException;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
-use Message;
+use MediaWiki\Message\Message;
 
 /**
  * SyntaxChecker statically analyzes the code without actually running it.

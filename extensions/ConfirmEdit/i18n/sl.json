@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"A09",
 			"BrokenArrow",
 			"Dbc334",
-			"Eleassar",
-			"A09"
+			"Eleassar"
 		]
 	},
 	"captcha-edit": "Če želite urejati stran, prosimo rešite spodnjo nalogo in odgovor vpišite v polje ([[Special:Captcha/help|več informacij]]):",
@@ -34,5 +34,6 @@
 	"confirmedit-preview-validity": "Veljavnost",
 	"confirmedit-preview-valid": "veljavno",
 	"confirmedit-preview-invalid": "neveljavno",
-	"confirmedit-preview-description": "Naslednja tabela prikazuje seznam vrstic na tej strani in ali gre za veljaven IP-naslov ali razpon IP-naslovov. Če je vrstica veljaven IP-naslov ali razpon IP-naslovov, bo izključena iz preverjanj CAPTCHA, neveljavne vrstice pa bodo prezrte. Primer veljavnega razpona IP-naslovov bi bil: 69.208.0.0/16, ki sega od 69.208.0.0 do 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Več informacij] o izračunu razpona IP-naslovov."
+	"confirmedit-preview-description": "Naslednja tabela prikazuje seznam vrstic na tej strani in ali gre za veljaven IP-naslov ali razpon IP-naslovov. Če je vrstica veljaven IP-naslov ali razpon IP-naslovov, bo izključena iz preverjanj CAPTCHA, neveljavne vrstice pa bodo prezrte. Primer veljavnega razpona IP-naslovov bi bil: 69.208.0.0/16, ki sega od 69.208.0.0 do 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Več informacij] o izračunu razpona IP-naslovov.",
+	"abusefilter-edit-action-showcaptcha": "Od uporabnika za izvršitev dejanja zahtevajte izpolnitev CAPTCHA. Uporabniki z dovoljenjem preskočitve CAPTCHA so izvzeti."
 }

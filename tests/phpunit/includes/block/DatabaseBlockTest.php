@@ -12,7 +12,7 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserNameUtils;
-use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\LBFactory;
 
@@ -314,7 +314,7 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 			'address' => $username,
 			'reason' => 'crosswiki block...',
 			'timestamp' => wfTimestampNow(),
-			'expiry' => $this->db->getInfinity(),
+			'expiry' => $this->getDb()->getInfinity(),
 			'createAccount' => true,
 			'enableAutoblock' => true,
 			'hideName' => true,
@@ -418,17 +418,14 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 		$blockStore->insertBlock( $block );
 
-		$blockQuery = DatabaseBlock::getQueryInfo();
-		$row = $this->db->select(
-			$blockQuery['tables'],
-			$blockQuery['fields'],
-			[
-				'ipb_id' => $block->getId(),
-			],
-			__METHOD__,
-			[],
-			$blockQuery['joins']
-		)->fetchObject();
+		$blockQuery = $blockStore->getQueryInfo();
+		$row = $this->getDb()->newSelectQueryBuilder()
+			->queryInfo( $blockQuery )
+			->where( [
+				'bl_id' => $block->getId(),
+			] )
+			->caller( __METHOD__ )
+			->fetchRow();
 
 		$block = DatabaseBlock::newFromRow( $row );
 		$this->assertInstanceOf( DatabaseBlock::class, $block );
@@ -448,10 +445,10 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 	 */
 	public function testCrossWikiBlocking() {
 		$this->overrideConfigValue( MainConfigNames::LocalDatabases, [ 'm' ] );
-		$dbMock = $this->createMock( DBConnRef::class );
+		$dbMock = $this->createMock( IDatabase::class );
 		$dbMock->method( 'decodeExpiry' )->willReturn( 'infinity' );
 		$lbMock = $this->createMock( ILoadBalancer::class );
-		$lbMock->method( 'getConnectionRef' )
+		$lbMock->method( 'getConnection' )
 			->with( DB_REPLICA, [], 'm' )
 			->willReturn( $dbMock );
 		$lbFactoryMock = $this->createMock( LBFactory::class );
@@ -530,10 +527,10 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 	 */
 	public function testGetWikiId() {
 		$this->overrideConfigValue( MainConfigNames::LocalDatabases, [ 'foo' ] );
-		$dbMock = $this->createMock( DBConnRef::class );
+		$dbMock = $this->createMock( IDatabase::class );
 		$dbMock->method( 'decodeExpiry' )->willReturn( 'infinity' );
 		$lbMock = $this->createMock( ILoadBalancer::class );
-		$lbMock->method( 'getConnectionRef' )->willReturn( $dbMock );
+		$lbMock->method( 'getConnection' )->willReturn( $dbMock );
 		$lbFactoryMock = $this->createMock( LBFactory::class );
 		$lbFactoryMock->method( 'getMainLB' )->willReturn( $lbMock );
 		$this->setService( 'DBLoadBalancerFactory', $lbFactoryMock );
@@ -637,7 +634,7 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 		$this->assertFalse( $result );
 
 		// Ensure that there are no restrictions where the blockId is 0.
-		$count = $this->db->newSelectQueryBuilder()
+		$count = $this->getDb()->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'ipblocks_restrictions' )
 			->where( [ 'ir_ipb_id' => 0 ] )

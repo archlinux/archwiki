@@ -26,11 +26,14 @@
  * @author Daniel Kinzler
  */
 
-use MediaWiki\Content\IContentHandlerFactory;
+namespace MediaWiki\Content;
+
+use LogicException;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Title\Title;
+use MWException;
 
 /**
  * Base implementation for content objects.
@@ -243,7 +246,7 @@ abstract class AbstractContent implements Content {
 	 *
 	 * @see Content::equals
 	 */
-	public function equals( Content $that = null ) {
+	public function equals( ?Content $that = null ) {
 		if ( $that === null ) {
 			return false;
 		}
@@ -256,7 +259,7 @@ abstract class AbstractContent implements Content {
 			return false;
 		}
 
-		// For type safety. Needed for odd cases like MessageContent using CONTENT_MODEL_WIKITEXT
+		// For type safety. Needed for odd cases like non-TextContents using CONTENT_MODEL_WIKITEXT
 		if ( get_class( $that ) !== get_class( $this ) ) {
 			return false;
 		}
@@ -417,3 +420,6 @@ abstract class AbstractContent implements Content {
 	}
 
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( AbstractContent::class, 'AbstractContent' );

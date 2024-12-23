@@ -6,6 +6,14 @@
 			"Jon Harald Søby"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Utløs et varsel til en bruker manuelt",
+	"apihelp-echocreateevent-example": "Send et varsel",
+	"apihelp-echocreateevent-param-user": "Bruker som skal varsles",
+	"apihelp-echocreateevent-param-header": "Toppinnhold i varselet",
+	"apihelp-echocreateevent-param-content": "Innholdstekst for varselet",
+	"apihelp-echocreateevent-param-page": "Side varselet skal lenke til",
+	"apihelp-echocreateevent-param-section": "Seksjon der et varsel skal leveres",
+	"apihelp-echocreateevent-param-email": "Hvorvidt en e-post også skal sendes",
 	"apihelp-echomarkread-summary": "Marker varsler som lest for den gjeldende brukeren.",
 	"apihelp-echomarkread-param-list": "En liste over ID-er for beskjeder som skal merkes som lest.",
 	"apihelp-echomarkread-param-unreadlist": "En liste av beskjed-IDer som merkes som ulest.",

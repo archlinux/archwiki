@@ -8,26 +8,21 @@ use MediaWikiUnitTestCase;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Filter\Flags
+ * @covers \MediaWiki\Extension\AbuseFilter\Filter\Flags
  */
 class FlagsTest extends MediaWikiUnitTestCase {
-	/**
-	 * @covers ::__construct
-	 * @covers ::getEnabled
-	 * @covers ::getDeleted
-	 * @covers ::getHidden
-	 * @covers ::getGlobal
-	 */
 	public function testGetters() {
 		$enabled = true;
 		$deleted = false;
-		$hidden = true;
+		$privacyLevel = Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
 		$global = false;
-		$flags = new Flags( $enabled, $deleted, $hidden, $global );
+		$flags = new Flags( $enabled, $deleted, $privacyLevel, $global );
 
 		$this->assertSame( $enabled, $flags->getEnabled(), 'enabled' );
 		$this->assertSame( $deleted, $flags->getDeleted(), 'deleted' );
-		$this->assertSame( $hidden, $flags->getHidden(), 'hidden' );
+		$this->assertSame( true, $flags->getHidden(), 'hidden' );
+		$this->assertSame( true, $flags->getProtected(), 'protected variables' );
+		$this->assertSame( $privacyLevel, $flags->getPrivacyLevel(), 'privacy level' );
 		$this->assertSame( $global, $flags->getGlobal(), 'global' );
 	}
 
@@ -35,14 +30,10 @@ class FlagsTest extends MediaWikiUnitTestCase {
 	 * @param mixed $value
 	 * @param string $setter
 	 * @param string $getter
-	 * @covers ::setEnabled
-	 * @covers ::setDeleted
-	 * @covers ::setHidden
-	 * @covers ::setGlobal
 	 * @dataProvider provideSetters
 	 */
 	public function testSetters( $value, string $setter, string $getter ) {
-		$flags = new Flags( true, true, true, true );
+		$flags = new Flags( true, true, Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS, true );
 
 		$flags->$setter( $value );
 		$this->assertSame( $value, $flags->$getter() );
@@ -56,6 +47,7 @@ class FlagsTest extends MediaWikiUnitTestCase {
 			'enabled' => [ true, 'setEnabled', 'getEnabled' ],
 			'deleted' => [ false, 'setDeleted', 'getDeleted' ],
 			'hidden' => [ true, 'setHidden', 'getHidden' ],
+			'protected' => [ true, 'setProtected', 'getProtected' ],
 			'global' => [ false, 'setGlobal', 'getGlobal' ],
 		];
 	}

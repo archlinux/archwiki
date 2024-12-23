@@ -7,7 +7,7 @@
 	 *
 	 * @constructor
 	 * @param {Object} config Configuration options
-	 * @cfg {number} limit Number of notifications to fetch
+	 * @param {number} config.limit Number of notifications to fetch
 	 */
 	mw.echo.api.NetworkHandler = function MwEchoApiNetworkHandler( config ) {
 		config = config || {};
@@ -32,8 +32,8 @@
 	 *  finished with some resolution or rejection.
 	 */
 	mw.echo.api.NetworkHandler.static.waitForAllPromises = function ( promiseArray ) {
-		var promises = promiseArray.slice( 0 ),
-			counter = 0,
+		let counter = 0;
+		const promises = promiseArray.slice( 0 ),
 			deferred = $.Deferred(),
 			countPromises = function () {
 				counter++;
@@ -46,7 +46,7 @@
 			deferred.resolve();
 		}
 
-		for ( var i = 0; i < promises.length; i++ ) {
+		for ( let i = 0; i < promises.length; i++ ) {
 			promises[ i ].always( countPromises );
 		}
 

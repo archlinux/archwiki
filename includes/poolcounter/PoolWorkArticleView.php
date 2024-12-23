@@ -21,11 +21,15 @@
 namespace MediaWiki\PoolCounter;
 
 use MediaWiki\Logger\Spi as LoggerSpi;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
-use ParserOptions;
+use MediaWiki\WikiMap\WikiMap;
 
 /**
  * PoolCounter protected work wrapping RenderedRevision->getRevisionParserOutput.
@@ -78,17 +82,50 @@ class PoolWorkArticleView extends PoolCounterWork {
 	 *
 	 * @see ParserOutputAccess::renderRevision
 	 *
+	 * @param ?ParserOutput $previousOutput previously-cached output for this
+	 *   page (used by Parsoid for selective updates)
+	 * @param bool $doSample Whether to collect statistics on this render
+	 * @param string $sourceLabel the source label to use on the statistics
 	 * @return Status with the value being a ParserOutput or null
 	 */
-	public function renderRevision(): Status {
+	public function renderRevision(
+		?ParserOutput $previousOutput = null,
+		bool $doSample = false,
+		string $sourceLabel = ''
+	): Status {
 		$renderedRevision = $this->renderer->getRenderedRevision(
 			$this->revision,
 			$this->parserOptions,
 			null,
-			[ 'audience' => RevisionRecord::RAW ]
+			[
+				'audience' => RevisionRecord::RAW,
+				'previous-output' => $previousOutput,
+			]
 		);
 
 		$parserOutput = $renderedRevision->getRevisionParserOutput();
+
+		if ( $doSample ) {
+			$stats = MediaWikiServices::getInstance()->getStatsFactory();
+			$content = $this->revision->getContent( SlotRecord::MAIN );
+			$labels = [
+				'source' => $sourceLabel,
+				'type' => $previousOutput === null ? 'full' : 'selective',
+				'reason' => $this->parserOptions->getRenderReason(),
+				'parser' => $this->parserOptions->getUseParsoid() ? 'parsoid' : 'legacy',
+				'opportunistic' => 'false',
+				'wiki' => WikiMap::getCurrentWikiId(),
+				'model' => $content ? $content->getModel() : 'unknown',
+			];
+			$stats
+				->getCounter( 'ParserCache_selective_total' )
+				->setLabels( $labels )
+				->increment();
+			$stats
+				->getCounter( 'ParserCache_selective_cpu_seconds' )
+				->setLabels( $labels )
+				->incrementBy( $parserOutput->getTimeProfile( 'cpu' ) );
+		}
 
 		return Status::newGood( $parserOutput );
 	}
@@ -103,5 +140,5 @@ class PoolWorkArticleView extends PoolCounterWork {
 
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( PoolWorkArticleView::class, 'PoolWorkArticleView' );

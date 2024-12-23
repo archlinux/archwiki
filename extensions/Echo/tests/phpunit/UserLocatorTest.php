@@ -2,8 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications\Test;
 
-use ContentHandler;
-use EchoUserLocator;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\UserLocator;
 use MediaWiki\Title\Title;
@@ -28,7 +27,11 @@ class UserLocatorTest extends MediaWikiIntegrationTestCase {
 			];
 		}
 
-		$this->getDb()->insert( 'watchlist', $rows, __METHOD__ );
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'watchlist' )
+			->rows( $rows )
+			->caller( __METHOD__ )
+			->execute();
 
 		$event = $this->createMock( Event::class );
 		$event->method( 'getTitle' )
@@ -68,7 +71,7 @@ class UserLocatorTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider locateTalkPageOwnerProvider
 	 */
-	public function testLocateTalkPageOwner( $message, $expectMode, Title $title = null ) {
+	public function testLocateTalkPageOwner( $message, $expectMode, ?Title $title = null ) {
 		if ( $expectMode === 'user' ) {
 			$user = $this->getTestUser()->getUser();
 			$user->addToDatabase();
@@ -126,7 +129,7 @@ class UserLocatorTest extends MediaWikiIntegrationTestCase {
 			->willReturn( User::newFromId( 123 ) );
 		$event->method( 'getType' )
 			->willReturn( 'page-linked' );
-		$this->assertEquals( [], EchoUserLocator::locateArticleCreator( $event ) );
+		$this->assertEquals( [], UserLocator::locateArticleCreator( $event ) );
 
 		$normalUser = $this->getTestUser()->getUser();
 		$normalUser->addToDatabase();
@@ -141,7 +144,7 @@ class UserLocatorTest extends MediaWikiIntegrationTestCase {
 			->willReturn( 'page-linked' );
 		$this->assertEquals(
 			$normalUser->getUser()->getId(),
-			array_key_first( EchoUserLocator::locateArticleCreator( $event ) )
+			array_key_first( UserLocator::locateArticleCreator( $event ) )
 		);
 	}
 
@@ -176,7 +179,7 @@ class UserLocatorTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider locateEventAgentProvider
 	 */
-	public function testLocateEventAgent( $message, $expect, User $agent = null ) {
+	public function testLocateEventAgent( $message, $expect, ?User $agent = null ) {
 		$event = $this->createMock( Event::class );
 		$event->method( 'getAgent' )
 			->willReturn( $agent );

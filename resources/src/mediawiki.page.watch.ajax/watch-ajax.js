@@ -1,6 +1,6 @@
 ( function () {
 	// The name of the page to watch or unwatch
-	var pageTitle = mw.config.get( 'wgRelevantPageName' ),
+	const pageTitle = mw.config.get( 'wgRelevantPageName' ),
 		isWatchlistExpiryEnabled = require( './config.json' ).WatchlistExpiry,
 		// Use Object.create( null ) instead of {} to get an Object without predefined properties.
 		// This avoids problems if the title is 'hasOwnPropery' or similar. Bug: T342137
@@ -28,8 +28,8 @@
 			throw new Error( 'Invalid action' );
 		}
 
-		var otherAction = action === 'watch' ? 'unwatch' : 'watch';
-		var $li = $link.closest( 'li' );
+		const otherAction = action === 'watch' ? 'unwatch' : 'watch';
+		const $li = $link.closest( 'li' );
 
 		if ( state !== 'loading' ) {
 			// jQuery event, @deprecated in 1.38
@@ -38,17 +38,17 @@
 			$li.trigger( 'watchpage.mw', [ otherAction, mw.util.isInfinity( expiry ) ? null : expiry ] );
 		}
 
-		var tooltipAction = action;
-		var daysLeftExpiry = null;
-		var watchExpiry = null;
+		let tooltipAction = action;
+		let daysLeftExpiry = null;
+		let watchExpiry = null;
 		// Checking to see what if the expiry is set or indefinite to display the correct message
 		if ( isWatchlistExpiryEnabled && action === 'unwatch' ) {
 			if ( mw.util.isInfinity( expiry ) ) {
 				// Resolves to tooltip-ca-unwatch message
 				tooltipAction = 'unwatch';
 			} else {
-				var expiryDate = new Date( expiry );
-				var currentDate = new Date();
+				const expiryDate = new Date( expiry );
+				const currentDate = new Date();
 				// Using the Math.ceil function instead of floor so when, for example, a user selects one week
 				// the tooltip shows 7 days instead of 6 days (see Phab ticket T253936)
 				daysLeftExpiry = Math.ceil( ( expiryDate - currentDate ) / ( 1000 * 60 * 60 * 24 ) );
@@ -63,13 +63,13 @@
 			}
 		}
 
-		var msgKey = state === 'loading' ? action + 'ing' : action;
+		const msgKey = state === 'loading' ? action + 'ing' : action;
 		// The following messages can be used here:
 		// * watch
 		// * watching
 		// * unwatch
 		// * unwatching
-		var msg = mw.msg( msgKey );
+		const msg = mw.msg( msgKey );
 		const link = $link.get( 0 );
 		if ( link.children.length > 1 && link.lastElementChild.tagName === 'SPAN' ) {
 			// Handle updated button markup,
@@ -154,7 +154,7 @@
 	 */
 	function updatePageWatchStatus( isWatched, expiry, expirySelected ) {
 		// Update all watchstars associated with the current page
-		( watchstarsByTitle[ pageTitle ] || [] ).forEach( function ( w ) {
+		( watchstarsByTitle[ pageTitle ] || [] ).forEach( ( w ) => {
 			w.update( isWatched, expiry );
 		} );
 
@@ -166,7 +166,7 @@
 	 *
 	 * For an individual link being set to 'loading', the first
 	 * argument can be a jQuery collection. When updating to an
-	 * "idle" state, an mw.Title object should be passed to that
+	 * "idle" state, an {@link mw.Title} object should be passed to that
 	 * all watchstars associated with that title are updated.
 	 *
 	 * @memberof module:mediawiki.page.watch.ajax
@@ -183,9 +183,9 @@
 			updateWatchLinkAttributes( titleOrLink, action, state, expiry );
 		} else {
 			// Assumed state is 'idle' when update a group of watchstars by title
-			var isWatched = action === 'unwatch';
-			var normalizedTitle = titleOrLink.getPrefixedDb();
-			( watchstarsByTitle[ normalizedTitle ] || [] ).forEach( function ( w ) {
+			const isWatched = action === 'unwatch';
+			const normalizedTitle = titleOrLink.getPrefixedDb();
+			( watchstarsByTitle[ normalizedTitle ] || [] ).forEach( ( w ) => {
 				w.update( isWatched, expiry, expirySelected );
 			} );
 			if ( normalizedTitle === pageTitle ) {
@@ -204,17 +204,17 @@
 	function mwUriGetAction( url ) {
 		// TODO: Does MediaWiki give action path or query param
 		// precedence? If the former, move this to the bottom
-		var action = mw.util.getParamValue( 'action', url );
+		const action = mw.util.getParamValue( 'action', url );
 		if ( action !== null ) {
 			return action;
 		}
 
-		var actionPaths = mw.config.get( 'wgActionPaths' );
-		for ( var key in actionPaths ) {
-			var parts = actionPaths[ key ].split( '$1' );
+		const actionPaths = mw.config.get( 'wgActionPaths' );
+		for ( const key in actionPaths ) {
+			let parts = actionPaths[ key ].split( '$1' );
 			parts = parts.map( mw.util.escapeRegExp );
-			// eslint-disable-next-line security/detect-non-literal-regexp
-			var m = new RegExp( parts.join( '(.+)' ) ).exec( url );
+
+			const m = new RegExp( parts.join( '(.+)' ) ).exec( url );
 			if ( m && m[ 1 ] ) {
 				return key;
 			}
@@ -227,7 +227,7 @@
 	 * @private
 	 */
 	function init() {
-		var $pageWatchLinks = $( '.mw-watchlink a[data-mw="interface"], a.mw-watchlink[data-mw="interface"]' );
+		let $pageWatchLinks = $( '.mw-watchlink a[data-mw="interface"], a.mw-watchlink[data-mw="interface"]' );
 		if ( !$pageWatchLinks.length ) {
 			// Fallback to the class-based exclusion method for backwards-compatibility
 			$pageWatchLinks = $( '.mw-watchlink a, a.mw-watchlink' );
@@ -278,12 +278,12 @@
 	/**
 	 * Bind a given watchstar element to make it interactive.
 	 *
-	 * NOTE: This is meant to allow binding of watchstars for arbitrary page titles,
+	 * This is meant to allow binding of watchstars for arbitrary page titles,
 	 * especially if different from the currently viewed page. As such, this function
 	 * will *not* synchronise its state with any "Watch this page" checkbox such as
 	 * found on the "Edit page" and "Publish changes" forms. The caller should either make
-	 * "current page" watchstars picked up by #init (and not use #watchstar) sync it manually
-	 * from the callback #watchstar provides.
+	 * "current page" watchstars picked up by init (and not use this function) or sync it manually
+	 * from the callback this function provides.
 	 *
 	 * @memberof module:mediawiki.page.watch.ajax
 	 * @param {jQuery} $links One or more anchor elements that must have an href
@@ -297,14 +297,14 @@
 	function watchstar( $links, title, callback ) {
 		// Set up the ARIA connection between the watch link and the notification.
 		// This is set outside the click handler so that it's already present when the user clicks.
-		var notificationId = 'mw-watchlink-notification';
-		var mwTitle = mw.Title.newFromText( title );
+		const notificationId = 'mw-watchlink-notification';
+		const mwTitle = mw.Title.newFromText( title );
 
 		if ( !mwTitle ) {
 			return;
 		}
 
-		var normalizedTitle = mwTitle.getPrefixedDb();
+		const normalizedTitle = mwTitle.getPrefixedDb();
 		watchstarsByTitle[ normalizedTitle ] = watchstarsByTitle[ normalizedTitle ] || [];
 
 		$links.each( function () {
@@ -317,7 +317,7 @@
 
 		// Add click handler.
 		$links.on( 'click', function ( e ) {
-			var action = mwUriGetAction( this.href );
+			const action = mwUriGetAction( this.href );
 
 			if ( !mwTitle || ( action !== 'watch' && action !== 'unwatch' ) ) {
 				// Let native browsing handle the link
@@ -326,7 +326,7 @@
 			e.preventDefault();
 			e.stopPropagation();
 
-			var $link = $( this );
+			const $link = $( this );
 
 			// eslint-disable-next-line no-jquery/no-class-state
 			if ( $link.hasClass( 'loading' ) ) {
@@ -336,7 +336,7 @@
 			updateWatchLinkAttributes( $link, action, 'loading' );
 
 			// Preload the notification module for mw.notify
-			var modulesToLoad = [ 'mediawiki.notification' ];
+			const modulesToLoad = [ 'mediawiki.notification' ];
 
 			// Preload watchlist expiry widget so it runs in parallel with the api call
 			if ( isWatchlistExpiryEnabled ) {
@@ -345,18 +345,18 @@
 
 			mw.loader.load( modulesToLoad );
 
-			var api = new mw.Api();
+			const api = new mw.Api();
 			api[ action ]( title )
-				.done( function ( watchResponse ) {
-					var isWatched = watchResponse.watched === true;
+				.done( ( watchResponse ) => {
+					const isWatched = watchResponse.watched === true;
 
-					var message = isWatched ? 'addedwatchtext' : 'removedwatchtext';
+					let message = isWatched ? 'addedwatchtext' : 'removedwatchtext';
 					if ( mwTitle.isTalkPage() ) {
 						message += '-talk';
 					}
 
-					var notifyPromise;
-					var watchlistPopup;
+					let notifyPromise;
+					let watchlistPopup;
 					// @since 1.35 - pop up notification will be loaded with OOUI
 					// only if Watchlist Expiry is enabled
 					if ( isWatchlistExpiryEnabled ) {
@@ -364,8 +364,8 @@
 							message = mwTitle.isTalkPage() ? 'addedwatchindefinitelytext-talk' : 'addedwatchindefinitelytext';
 						}
 
-						notifyPromise = mw.loader.using( 'mediawiki.watchstar.widgets' ).then( function ( require ) {
-							var WatchlistExpiryWidget = require( 'mediawiki.watchstar.widgets' );
+						notifyPromise = mw.loader.using( 'mediawiki.watchstar.widgets' ).then( ( require ) => {
+							const WatchlistExpiryWidget = require( 'mediawiki.watchstar.widgets' );
 
 							if ( !watchlistPopup ) {
 								watchlistPopup = new WatchlistExpiryWidget(
@@ -407,9 +407,9 @@
 					// once it is resolved. Otherwise, if $wgWatchlistExpiry set, the loading of
 					// OOUI could cause a race condition and the link is updated before the popup
 					// actually is shown. See T263135
-					notifyPromise.always( function () {
+					notifyPromise.always( () => {
 						// Update all watchstars associated with this title
-						watchstarsByTitle[ normalizedTitle ].forEach( function ( w ) {
+						watchstarsByTitle[ normalizedTitle ].forEach( ( w ) => {
 							w.update( isWatched );
 						} );
 
@@ -419,12 +419,12 @@
 						}
 					} );
 				} )
-				.fail( function ( code, data ) {
+				.fail( ( code, data ) => {
 					// Reset link to non-loading mode
 					updateWatchLinkAttributes( $link, action );
 
 					// Format error message
-					var $msg = api.getErrorMessage( data );
+					const $msg = api.getErrorMessage( data );
 
 					// Report to user about the error
 					mw.notify( $msg, {

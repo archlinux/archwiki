@@ -23,9 +23,13 @@
  * @author Pablo Castellano <pablo@anche.no>
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
+use MediaWiki\Auth\AuthManager;
 use MediaWiki\Deferred\SiteStatsUpdate;
+use MediaWiki\Password\PasswordError;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 
@@ -35,7 +39,7 @@ use MediaWiki\WikiMap\WikiMap;
  * @ingroup Maintenance
  */
 class CreateAndPromote extends Maintenance {
-	private static $permitRoles = [ 'sysop', 'bureaucrat', 'interface-admin', 'bot' ];
+	private const PERMIT_ROLES = [ 'sysop', 'bureaucrat', 'interface-admin', 'bot' ];
 
 	public function __construct() {
 		parent::__construct();
@@ -44,7 +48,7 @@ class CreateAndPromote extends Maintenance {
 			'force',
 			'If account exists already, just grant it rights or change password.'
 		);
-		foreach ( self::$permitRoles as $role ) {
+		foreach ( self::PERMIT_ROLES as $role ) {
 			$this->addOption( $role, "Add the account to the {$role} group" );
 		}
 
@@ -89,7 +93,7 @@ class CreateAndPromote extends Maintenance {
 			$inGroups = $services->getUserGroupManager()->getUserGroups( $user );
 		}
 
-		$groups = array_filter( self::$permitRoles, [ $this, 'hasOption' ] );
+		$groups = array_filter( self::PERMIT_ROLES, [ $this, 'hasOption' ] );
 		if ( $this->hasOption( 'custom-groups' ) ) {
 			$allGroups = array_fill_keys( $services->getUserGroupManager()->listAllGroups(), true );
 			$customGroupsText = $this->getOption( 'custom-groups' );
@@ -132,7 +136,7 @@ class CreateAndPromote extends Maintenance {
 				$status = $user->checkPasswordValidity( $password );
 
 				if ( !$status->isGood() ) {
-					$this->fatalError( $status->getMessage( false, false, 'en' )->text() );
+					$this->fatalError( $status );
 				}
 			}
 
@@ -140,11 +144,11 @@ class CreateAndPromote extends Maintenance {
 			// effects that are performed by the configured AuthManager chain.
 			$status = $this->getServiceContainer()->getAuthManager()->autoCreateUser(
 				$user,
-				MediaWiki\Auth\AuthManager::AUTOCREATE_SOURCE_MAINT,
+				AuthManager::AUTOCREATE_SOURCE_MAINT,
 				false
 			);
 			if ( !$status->isGood() ) {
-				$this->fatalError( $status->getMessage( false, false, 'en' )->text() );
+				$this->fatalError( $status );
 			}
 		}
 
@@ -208,5 +212,7 @@ class CreateAndPromote extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CreateAndPromote::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

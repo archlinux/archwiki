@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to check that database usernames are actually valid.
@@ -48,9 +50,10 @@ class CheckUsernames extends Maintenance {
 			$res = $dbr->newSelectQueryBuilder()
 				->select( [ 'user_id', 'user_name' ] )
 				->from( 'user' )
-				->where( 'user_id > ' . $maxUserId )
+				->where( $dbr->expr( 'user_id', '>', $maxUserId ) )
 				->orderBy( 'user_id' )
 				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )
 				->fetchResultSet();
 
 			foreach ( $res as $row ) {
@@ -65,5 +68,7 @@ class CheckUsernames extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CheckUsernames::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -1,7 +1,11 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\API;
+
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Extension\Notifications\Push\Utils;
 use MediaWiki\Extension\Notifications\Services;
+use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\User\User;
 
 /**
@@ -17,9 +21,9 @@ class ApiEchoPushSubscriptionsCreateTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->setMwGlobals( [
-			'wgEchoEnablePush' => true,
-			'wgEchoPushMaxSubscriptionsPerUser' => 2
+		$this->overrideConfigValues( [
+			'EchoEnablePush' => true,
+			'EchoPushMaxSubscriptionsPerUser' => 2,
 		] );
 		$this->user = $this->getTestUser()->getUser();
 		$this->createTestData();

@@ -23,11 +23,11 @@
 
 namespace MediaWiki\Page;
 
-use Content;
 use InvalidArgumentException;
 use ManualLogEntry;
 use MediaWiki;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\HookContainer\HookContainer;
@@ -45,9 +45,8 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Title\TitleValue;
-use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
-use WatchedItemStoreInterface;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Timestamp\TimestampException;
@@ -101,30 +100,16 @@ class MergeHistory {
 	/** @var int Number of revisions merged (for Special:MergeHistory success message) */
 	protected $revisionsMerged;
 
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var WatchedItemStoreInterface */
-	private $watchedItemStore;
-
-	/** @var SpamChecker */
-	private $spamChecker;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	/** @var TitleFormatter */
-	private $titleFormatter;
-
-	/** @var TitleFactory */
-	private $titleFactory;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private RevisionStore $revisionStore;
+	private WatchedItemStoreInterface $watchedItemStore;
+	private SpamChecker $spamChecker;
+	private HookRunner $hookRunner;
+	private WikiPageFactory $wikiPageFactory;
+	private TitleFormatter $titleFormatter;
+	private TitleFactory $titleFactory;
 	private LinkTargetLookup $linkTargetLookup;
+	private DeletePageFactory $deletePageFactory;
 
 	/**
 	 * @param PageIdentity $source Page from which history will be merged
@@ -140,6 +125,7 @@ class MergeHistory {
 	 * @param TitleFormatter $titleFormatter
 	 * @param TitleFactory $titleFactory
 	 * @param LinkTargetLookup $linkTargetLookup
+	 * @param DeletePageFactory $deletePageFactory
 	 */
 	public function __construct(
 		PageIdentity $source,
@@ -154,7 +140,8 @@ class MergeHistory {
 		WikiPageFactory $wikiPageFactory,
 		TitleFormatter $titleFormatter,
 		TitleFactory $titleFactory,
-		LinkTargetLookup $linkTargetLookup
+		LinkTargetLookup $linkTargetLookup,
+		DeletePageFactory $deletePageFactory
 	) {
 		// Save the parameters
 		$this->source = $source;
@@ -173,6 +160,7 @@ class MergeHistory {
 		$this->titleFormatter = $titleFormatter;
 		$this->titleFactory = $titleFactory;
 		$this->linkTargetLookup = $linkTargetLookup;
+		$this->deletePageFactory = $deletePageFactory;
 	}
 
 	/**
@@ -240,7 +228,7 @@ class MergeHistory {
 	 * @param string|null $reason
 	 * @return PermissionStatus
 	 */
-	public function probablyCanMerge( Authority $performer, string $reason = null ): PermissionStatus {
+	public function probablyCanMerge( Authority $performer, ?string $reason = null ): PermissionStatus {
 		return $this->authorizeInternal(
 			static function ( string $action, PageIdentity $target, PermissionStatus $status ) use ( $performer ) {
 				return $performer->probablyCan( $action, $target, $status );
@@ -261,7 +249,7 @@ class MergeHistory {
 	 * @param string|null $reason
 	 * @return PermissionStatus
 	 */
-	public function authorizeMerge( Authority $performer, string $reason = null ): PermissionStatus {
+	public function authorizeMerge( Authority $performer, ?string $reason = null ): PermissionStatus {
 		return $this->authorizeInternal(
 			static function ( string $action, PageIdentity $target, PermissionStatus $status ) use ( $performer ) {
 				return $performer->authorizeWrite( $action, $target, $status );
@@ -367,21 +355,21 @@ class MergeHistory {
 		// Update source page, histories and invalidate caches
 		if ( !$haveRevisions ) {
 			if ( $reason ) {
-				$reason = wfMessage(
+				$revisionComment = wfMessage(
 					'mergehistory-comment',
 					$this->titleFormatter->getPrefixedText( $this->source ),
 					$this->titleFormatter->getPrefixedText( $this->dest ),
 					$reason
 				)->inContentLanguage()->text();
 			} else {
-				$reason = wfMessage(
+				$revisionComment = wfMessage(
 					'mergehistory-autocomment',
 					$this->titleFormatter->getPrefixedText( $this->source ),
 					$this->titleFormatter->getPrefixedText( $this->dest )
 				)->inContentLanguage()->text();
 			}
 
-			$this->updateSourcePage( $status, $performer->getUser(), $reason );
+			$this->updateSourcePage( $status, $performer, $revisionComment );
 
 		} else {
 			$legacySource->invalidateCache();
@@ -419,19 +407,23 @@ class MergeHistory {
 	 * depending on whether the content model of the page supports redirects or not.
 	 *
 	 * @param Status $status
-	 * @param UserIdentity $user
-	 * @param string $reason
-	 *
-	 * @return Status
+	 * @param Authority $performer
+	 * @param string $revisionComment Edit summary for the redirect or empty revision
+	 *   to be created in place of the source page
 	 */
-	private function updateSourcePage( $status, $user, $reason ) {
+	private function updateSourcePage( $status, $performer, $revisionComment ): void {
 		$deleteSource = false;
 		$legacySourceTitle = $this->titleFactory->newFromPageIdentity( $this->source );
 		$legacyDestTitle = $this->titleFactory->newFromPageIdentity( $this->dest );
 		$sourceModel = $legacySourceTitle->getContentModel();
 		$contentHandler = $this->contentHandlerFactory->getContentHandler( $sourceModel );
 
-		if ( !$contentHandler->supportsRedirects() ) {
+		if ( !$contentHandler->supportsRedirects() || (
+			// Do not create redirects for wikitext message overrides (T376399).
+			// Maybe one day they will have a custom content model and this special case won't be needed.
+			$legacySourceTitle->getNamespace() === NS_MEDIAWIKI &&
+			$legacySourceTitle->getContentModel() === CONTENT_MODEL_WIKITEXT
+		) ) {
 			$deleteSource = true;
 			$newContent = $contentHandler->makeEmptyContent();
 		} else {
@@ -454,7 +446,7 @@ class MergeHistory {
 				. 'to return Content object from ContentHandler::makeRedirectContent().'
 				. ' {value} returned instead.',
 				[
-					'value' => gettype( $newContent ),
+					'value' => get_debug_type( $newContent ),
 					'model' => $sourceModel
 				]
 			);
@@ -470,12 +462,12 @@ class MergeHistory {
 		// content model supports redirects, then it will be the redirect content.
 		// If the content model does not supports redirect, this content will aid
 		// proper deletion of the page below.
-		$comment = CommentStoreComment::newUnsavedComment( $reason );
+		$comment = CommentStoreComment::newUnsavedComment( $revisionComment );
 		$revRecord = new MutableRevisionRecord( $this->source );
 		$revRecord->setContent( SlotRecord::MAIN, $newContent )
 			->setPageId( $this->source->getId() )
 			->setComment( $comment )
-			->setUser( $user )
+			->setUser( $performer->getUser() )
 			->setTimestamp( wfTimestampNow() );
 
 		$insertedRevRecord = $this->revisionStore->insertRevisionOn( $revRecord, $this->dbw );
@@ -521,13 +513,18 @@ class MergeHistory {
 			// This deletion does not depend on userright but may still fails. If it
 			// fails, it will be communicated in the status response.
 			$reason = wfMessage( 'mergehistory-source-deleted-reason' )->inContentLanguage()->plain();
-			$deletionStatus = $newPage->doDeleteArticleReal( $reason, $user );
+			$delPage = $this->deletePageFactory->newDeletePage( $newPage, $performer );
+			$deletionStatus = $delPage->deleteUnsafe( $reason );
+			if ( $deletionStatus->isGood() && $delPage->deletionsWereScheduled()[DeletePage::PAGE_BASE] ) {
+				$deletionStatus->warning(
+					'delete-scheduled',
+					wfEscapeWikiText( $newPage->getTitle()->getPrefixedText() )
+				);
+			}
 			// Notify callers that the source page has been deleted.
 			$status->value = 'source-deleted';
 			$status->merge( $deletionStatus );
 		}
-
-		return $status;
 	}
 
 	/**

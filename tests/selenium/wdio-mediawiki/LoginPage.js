@@ -1,3 +1,6 @@
+// This file is used at Selenium/Explanation/Page object pattern
+// https://www.mediawiki.org/wiki/Selenium/Explanation/Page_object_pattern
+
 'use strict';
 
 const Page = require( './Page' );
@@ -21,6 +24,10 @@ class LoginPage extends Page {
 
 	open() {
 		super.openTitle( 'Special:UserLogin' );
+	}
+
+	async getActualUsername() {
+		return browser.execute( () => mw.config.get( 'wgUserName' ) );
 	}
 
 	async login( username, password ) {

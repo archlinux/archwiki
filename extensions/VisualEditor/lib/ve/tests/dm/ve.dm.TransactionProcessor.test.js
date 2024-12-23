@@ -8,8 +8,8 @@ QUnit.module( 've.dm.TransactionProcessor' );
 
 /* Tests */
 
-QUnit.test( 'commit', function ( assert ) {
-	var store = ve.dm.example.createExampleDocument().getStore(),
+QUnit.test( 'commit', ( assert ) => {
+	const store = ve.dm.example.createExampleDocument().getStore(),
 		cases = {
 			'no operations': {
 				calls: [],
@@ -45,10 +45,10 @@ QUnit.test( 'commit', function ( assert ) {
 			'inserting text': {
 				calls: [
 					[ 'pushRetain', 1 ],
-					[ 'pushReplacement', 1, 0, [ 'F', 'O', 'O' ] ]
+					[ 'pushReplacement', 1, 0, [ ...'Foo' ] ]
 				],
 				expected: function ( data ) {
-					data.splice( 1, 0, 'F', 'O', 'O' );
+					data.splice( 1, 0, ...'Foo' );
 				}
 			},
 			'removing text': {
@@ -63,10 +63,10 @@ QUnit.test( 'commit', function ( assert ) {
 			'replacing text': {
 				calls: [
 					[ 'pushRetain', 1 ],
-					[ 'pushReplacement', 1, 1, [ 'F', 'O', 'O' ] ]
+					[ 'pushReplacement', 1, 1, [ ...'Foo' ] ]
 				],
 				expected: function ( data ) {
-					data.splice( 1, 1, 'F', 'O', 'O' );
+					data.splice( 1, 1, ...'Foo' );
 				}
 			},
 			'emptying text': {
@@ -81,10 +81,10 @@ QUnit.test( 'commit', function ( assert ) {
 			'inserting mixed content': {
 				calls: [
 					[ 'pushRetain', 1 ],
-					[ 'pushReplacement', 1, 1, [ 'F', 'O', 'O', { type: 'inlineImage' }, { type: '/inlineImage' }, 'B', 'A', 'R' ] ]
+					[ 'pushReplacement', 1, 1, [ ...'Foo', { type: 'inlineImage' }, { type: '/inlineImage' }, ...'Bar' ] ]
 				],
 				expected: function ( data ) {
-					data.splice( 1, 1, 'F', 'O', 'O', { type: 'inlineImage' }, { type: '/inlineImage' }, 'B', 'A', 'R' );
+					data.splice( 1, 1, ...'Foo', { type: 'inlineImage' }, { type: '/inlineImage' }, ...'Bar' );
 				}
 			},
 			'inserting unbalanced data': {
@@ -96,7 +96,7 @@ QUnit.test( 'commit', function ( assert ) {
 			'inserting unclosed inline node': {
 				calls: [
 					[ 'pushRetain', 1 ],
-					[ 'pushReplacement', 1, 1, [ 'F', { type: 'inlineImage' }, 'O', 'O' ] ]
+					[ 'pushReplacement', 1, 1, [ 'F', { type: 'inlineImage' }, ...'OO' ] ]
 				],
 				exception: /Unbalanced set of replace operations found/
 			},
@@ -367,7 +367,7 @@ QUnit.test( 'commit', function ( assert ) {
 					},
 					{ type: '/alienMeta' },
 					{ type: 'paragraph' },
-					'o', 'o',
+					...'oo',
 					{ type: '/paragraph' }
 				],
 				calls: [
@@ -395,7 +395,7 @@ QUnit.test( 'commit', function ( assert ) {
 						}
 					},
 					{ type: '/alienMeta' },
-					'o', 'o',
+					...'oo',
 					{ type: '/paragraph' }
 				],
 				calls: [
@@ -424,7 +424,7 @@ QUnit.test( 'commit', function ( assert ) {
 						}
 					},
 					{ type: '/alienMeta' },
-					'o', 'o',
+					...'oo',
 					{ type: '/paragraph' },
 					{
 						type: 'alienMeta',
@@ -432,7 +432,7 @@ QUnit.test( 'commit', function ( assert ) {
 					},
 					{ type: '/alienMeta' },
 					{ type: 'paragraph' },
-					'B', 'a', 'r',
+					...'Bar',
 					{ type: '/paragraph' }
 				],
 				calls: [
@@ -462,7 +462,7 @@ QUnit.test( 'commit', function ( assert ) {
 						}
 					},
 					{ type: '/alienMeta' },
-					'o', 'o',
+					...'oo',
 					{ type: '/paragraph' },
 					{
 						type: 'alienMeta',
@@ -470,7 +470,7 @@ QUnit.test( 'commit', function ( assert ) {
 					},
 					{ type: '/alienMeta' },
 					{ type: 'paragraph' },
-					'B', 'a', 'r',
+					...'Bar',
 					{ type: '/paragraph' }
 				],
 				calls: [
@@ -529,22 +529,22 @@ QUnit.test( 'commit', function ( assert ) {
 		};
 
 	// Run tests
-	for ( var msg in cases ) {
-		var caseItem = cases[ msg ];
+	for ( const msg in cases ) {
+		const caseItem = cases[ msg ];
 		// Generate original document
-		var originalData = caseItem.data || ve.dm.example.data;
-		var originalDoc = new ve.dm.Document(
+		const originalData = caseItem.data || ve.dm.example.data;
+		const originalDoc = new ve.dm.Document(
 			ve.dm.example.preprocessAnnotations( ve.copy( originalData ), store )
 		);
 		originalDoc.buildNodeTree();
-		var testDoc = new ve.dm.Document(
+		const testDoc = new ve.dm.Document(
 			ve.dm.example.preprocessAnnotations( ve.copy( originalData ), store )
 		);
 		testDoc.buildNodeTree();
 
-		var txBuilder = new ve.dm.TransactionBuilder();
-		var tx = null;
-		for ( var i = 0; i < caseItem.calls.length; i++ ) {
+		const txBuilder = new ve.dm.TransactionBuilder();
+		let tx = null;
+		for ( let i = 0; i < caseItem.calls.length; i++ ) {
 			// Some calls need the document as its first argument
 			if ( /^(pushReplacement$|new)/.test( caseItem.calls[ i ][ 0 ] ) ) {
 				caseItem.calls[ i ].splice( 1, 0, testDoc );
@@ -562,19 +562,18 @@ QUnit.test( 'commit', function ( assert ) {
 
 		if ( 'expected' in caseItem ) {
 			// Generate expected document
-			var expectedData = ve.copy( originalData );
+			const expectedData = ve.copy( originalData );
 			caseItem.expected( expectedData );
-			var expectedDoc = new ve.dm.Document(
+			const expectedDoc = new ve.dm.Document(
 				ve.dm.example.preprocessAnnotations( expectedData, store )
 			);
 			expectedDoc.buildNodeTree();
 
 			if ( 'events' in caseItem ) {
 				// Set up event handlers
-				// eslint-disable-next-line no-loop-func
-				caseItem.events.forEach( function ( event ) {
-					var node = testDoc.getDocumentNode();
-					for ( var j = 1; j < event.length; j++ ) {
+				caseItem.events.forEach( ( event ) => {
+					let node = testDoc.getDocumentNode();
+					for ( let j = 1; j < event.length; j++ ) {
 						node = node.getChildren()[ event[ j ] ];
 					}
 					node.on( event[ 0 ], ( function ( obj ) {
@@ -595,8 +594,7 @@ QUnit.test( 'commit', function ( assert ) {
 				'commit (tree): ' + msg
 			);
 			if ( 'events' in caseItem ) {
-				// eslint-disable-next-line no-loop-func
-				caseItem.events.forEach( function ( event ) {
+				caseItem.events.forEach( ( event ) => {
 					assert.strictEqual(
 						event.fired,
 						1,
@@ -615,8 +613,7 @@ QUnit.test( 'commit', function ( assert ) {
 			);
 		} else if ( 'exception' in caseItem ) {
 			assert.throws(
-				// eslint-disable-next-line no-loop-func
-				function () {
+				() => {
 					testDoc.commit( tx );
 				},
 				caseItem.exception,
@@ -633,16 +630,16 @@ QUnit.test( 'commit', function ( assert ) {
 } );
 
 // TODO: Fix the code so undoing unbold roundtrips properly, then fix this test to reflect that
-QUnit.test( 'undo clear annotation', function ( assert ) {
-	var origData = [
+QUnit.test( 'undo clear annotation', ( assert ) => {
+	const origData = [
 		{ type: 'paragraph' },
 		[ 'x', [ ve.dm.example.boldHash, ve.dm.example.italicHash ] ],
 		{ type: '/paragraph' }
 	];
-	var doc = ve.dm.example.createExampleDocumentFromData( origData );
+	const doc = ve.dm.example.createExampleDocumentFromData( origData );
 	doc.store.hash( ve.dm.example.italic );
 	doc.store.hash( ve.dm.example.bold );
-	var tx = ve.dm.TransactionBuilder.static.newFromAnnotation(
+	const tx = ve.dm.TransactionBuilder.static.newFromAnnotation(
 		doc,
 		new ve.Range( 1, 2 ),
 		'clear',

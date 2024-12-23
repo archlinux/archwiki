@@ -14,6 +14,7 @@ use Wikimedia\Rdbms\Database\DbQuoter;
 class Expression implements IExpression {
 	private string $field;
 	private string $op;
+	/** @var ?scalar|RawSQLValue|Blob|LikeValue|non-empty-list<scalar|Blob> */
 	private $value;
 
 	/**
@@ -22,8 +23,9 @@ class Expression implements IExpression {
 	 * @param string $field
 	 * @param-taint $field exec_sql
 	 * @param string $op One of '>', '<', '!=', '=', '>=', '<=', IExpression::LIKE, IExpression::NOT_LIKE
+	 * @phan-param '\x3E'|'\x3C'|'!='|'='|'\x3E='|'\x3C='|'LIKE'|'NOT LIKE' $op
 	 * @param-taint $op exec_sql
-	 * @param string|int|float|bool|Blob|null|LikeValue|non-empty-list<string|int|float|bool|Blob> $value
+	 * @param ?scalar|RawSQLValue|Blob|LikeValue|non-empty-list<scalar|Blob> $value
 	 * @param-taint $value escapes_sql
 	 * @internal Outside of rdbms, Use IReadableDatabase::expr() to create an expression object.
 	 */
@@ -38,8 +40,14 @@ class Expression implements IExpression {
 			throw new InvalidArgumentException( "Operator $op can't take array or null as value" );
 		}
 
-		if ( is_array( $value ) && in_array( null, $value, true ) ) {
-			throw new InvalidArgumentException( "NULL can't be in the array of values" );
+		if ( is_array( $value ) ) {
+			if ( !$value ) {
+				throw new InvalidArgumentException( "The array of values can't be empty" );
+			} elseif ( !array_is_list( $value ) ) {
+				throw new InvalidArgumentException( "The array of values must be a list" );
+			} elseif ( in_array( null, $value, true ) ) {
+				throw new InvalidArgumentException( "NULL can't be in the array of values" );
+			}
 		}
 
 		if ( in_array( $op, [ IExpression::LIKE, IExpression::NOT_LIKE ] ) && !( $value instanceof LikeValue ) ) {
@@ -62,8 +70,9 @@ class Expression implements IExpression {
 	 * @param string $field
 	 * @param-taint $field exec_sql
 	 * @param string $op One of '>', '<', '!=', '=', '>=', '<=', IExpression::LIKE, IExpression::NOT_LIKE
+	 * @phan-param '\x3E'|'\x3C'|'!='|'='|'\x3E='|'\x3C='|'LIKE'|'NOT LIKE' $op
 	 * @param-taint $op exec_sql
-	 * @param string|int|float|bool|Blob|null|LikeValue|non-empty-list<string|int|float|bool|Blob> $value
+	 * @param ?scalar|RawSQLValue|Blob|LikeValue|non-empty-list<scalar|Blob> $value
 	 * @param-taint $value escapes_sql
 	 * @phan-side-effect-free
 	 */
@@ -76,8 +85,9 @@ class Expression implements IExpression {
 	 * @param string $field
 	 * @param-taint $field exec_sql
 	 * @param string $op One of '>', '<', '!=', '=', '>=', '<=', IExpression::LIKE, IExpression::NOT_LIKE
+	 * @phan-param '\x3E'|'\x3C'|'!='|'='|'\x3E='|'\x3C='|'LIKE'|'NOT LIKE' $op
 	 * @param-taint $op exec_sql
-	 * @param string|int|float|bool|Blob|null|LikeValue|non-empty-list<string|int|float|bool|Blob> $value
+	 * @param ?scalar|RawSQLValue|Blob|LikeValue|non-empty-list<scalar|Blob> $value
 	 * @param-taint $value escapes_sql
 	 * @phan-side-effect-free
 	 */
@@ -112,11 +122,8 @@ class Expression implements IExpression {
 	 */
 	public function toSql( DbQuoter $dbQuoter ): string {
 		if ( is_array( $this->value ) ) {
-			if ( !$this->value ) {
-				throw new InvalidArgumentException( "The array of values can't be empty." );
-			}
 			if ( count( $this->value ) === 1 ) {
-				$value = $this->value[ array_key_first( $this->value ) ];
+				$value = $this->value[0];
 				if ( $this->op === '=' ) {
 					return $this->field . ' = ' . $dbQuoter->addQuotes( $value );
 				} elseif ( $this->op === '!=' ) {

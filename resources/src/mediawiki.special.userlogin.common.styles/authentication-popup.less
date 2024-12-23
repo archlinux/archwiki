@@ -1,0 +1,71 @@
+/* Flexbox gap not supported by all browsers */
+/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+body.mw-authentication-popup {
+	font-family: sans-serif;
+	font-size: 0.875rem;
+	line-height: 1.4;
+
+	header,
+	main,
+	footer {
+		margin: 2em auto;
+	}
+
+	/* Flexbox gap not supported by all browsers */
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+	header {
+		max-width: 28rem;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1em;
+
+		.mw-logo {
+			display: flex;
+			align-items: center;
+
+			.mw-logo-icon {
+				margin-right: 0.5em;
+			}
+		}
+
+		h1 {
+			font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
+			border: 0;
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	main {
+		max-width: 28rem;
+
+		.mw-htmlform {
+			width: 100%;
+		}
+
+		.mw-createacct-benefits-container {
+			display: none;
+		}
+
+		#mw-createaccount-cta {
+			background-image: none;
+			padding-top: 0;
+		}
+	}
+
+	/* Flexbox gap not supported by all browsers */
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+	footer {
+		/* Flexbox gap not supported by all browsers */
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+		ul {
+			list-style: none none;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: center;
+			gap: 1em;
+		}
+	}
+}

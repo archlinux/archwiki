@@ -2,7 +2,7 @@
 
 QUnit.module( 've.ui.MWReferenceContextItem (Cite)', ve.test.utils.newMwEnvironment() );
 
-QUnit.test( 'getReferenceNode', function ( assert ) {
+QUnit.test( 'getReferenceNode', ( assert ) => {
 	// XXX: This is a regression test with a fragile setup. Please feel free to delete this test
 	// when you feel like it doesn't make sense to update it.
 	const context = {

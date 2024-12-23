@@ -36,11 +36,11 @@ module.exports = function () {
 				onShowNestedReference: true,
 				onBeforeHide: drawers.discardDrawer
 			},
-			function ( oldDrawer, newDrawer ) {
+			( oldDrawer, newDrawer ) => {
 				oldDrawer.hide();
 				drawers.displayDrawer( newDrawer, {} );
 			}
-		).then( function ( drawer ) {
+		).then( ( drawer ) => {
 			drawers.displayDrawer( drawer, {} );
 		} );
 	}

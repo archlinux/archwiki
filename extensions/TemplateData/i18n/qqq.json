@@ -83,7 +83,6 @@
 	"templatedata-modal-button-map": "{{technical}}\nLabel of the Edit maps button. See [[:mw:Extension:TemplateData#Maps object]].",
 	"templatedata-modal-button-importParams": "Label of the import button",
 	"templatedata-modal-button-removemap": "{{technical}}\n\nLabel of the remove map button. See [[:mw:Extension:TemplateData#Maps object]].",
-	"templatedata-modal-button-restoreparam": "Label for the button to restore a previously deleted parameter in the edit dialog.",
 	"templatedata-modal-button-saveparam": "Label for the button to save parameter details in the templatedata edit dialog.\n{{Identical|Save}}",
 	"templatedata-modal-confirmcancel": "Prompt shown to the user when they attempt to cancel the templatedata edit dialog after making changes.",
 	"templatedata-modal-current-language": "Label displaying the current language in the edit dialog. Parameters:\n* $1 - currently showing language\n{{Identical|Current language}}",

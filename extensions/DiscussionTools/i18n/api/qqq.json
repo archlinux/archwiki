@@ -7,6 +7,7 @@
 	"apierror-discussiontools-commentid-notfound": "{{doc-apierror}}\n\nParameters:\n* $1 - Comment ID",
 	"apierror-discussiontools-commentname-ambiguous": "{{doc-apierror}}\n\nParameters:\n* $1 - Comment name",
 	"apierror-discussiontools-commentname-notfound": "{{doc-apierror}}\n\nParameters:\n* $1 - Comment name",
+	"apierror-discussiontools-findcomment-pagenevertalk": "{{doc-apierror}}",
 	"apierror-discussiontools-formtoken-used": "{{doc-apierror}}",
 	"apierror-discussiontools-subscription-failed-add": "{{doc-apierror}}",
 	"apierror-discussiontools-subscription-failed-remove": "{{doc-apierror}}",
@@ -40,5 +41,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "{{doc-apihelp-param|discussiontoolssubscribe|commentname}}",
 	"apihelp-discussiontoolssubscribe-param-page": "{{doc-apihelp-param|discussiontoolssubscribe|page}}",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "{{doc-apihelp-param|discussiontoolssubscribe|subscribe}}",
-	"apihelp-discussiontoolssubscribe-summary": "{{doc-apihelp-summary|discussiontoolssubscribe}}"
+	"apihelp-discussiontoolssubscribe-summary": "{{doc-apihelp-summary|discussiontoolssubscribe}}",
+	"apihelp-discussiontoolsthank-param-commentid": "{{doc-apihelp-summary|discussiontoolsthank|commentid}}",
+	"apihelp-discussiontoolsthank-summary": "{{doc-apihelp-summary|discussiontoolsthank}}"
 }

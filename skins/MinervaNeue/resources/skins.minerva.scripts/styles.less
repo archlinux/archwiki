@@ -2,16 +2,15 @@
 @import '../../minerva.less/minerva.mixins.less';
 @import 'mediawiki.mixins.less';
 @import 'toc.less';
-@import 'watchStar.less';
 @import 'page-issues/styles.less';
 @import 'Toolbar.less';
 
 .minerva-icon--download {
-	.cdx-mixin-css-icon( @cdx-icon-download, #54595d );
+	.cdx-mixin-css-icon( @cdx-icon-download, @color-subtle );
 }
 
 .minerva-icon--listBullet {
-	.cdx-mixin-css-icon( @cdx-icon-list-bullet, #54595d );
+	.cdx-mixin-css-icon( @cdx-icon-list-bullet, @color-subtle );
 }
 
 .mw-mf-page-center__mask {
@@ -36,17 +35,17 @@
 }
 
 // Last modified bar styles
-.last-modified-bar.active {
+a.last-modified-bar.active {
 	background-color: @background-color-progressive;
-	color: var( --color-inverted );
+	color: @color-inverted-fixed !important;
 
 	.last-modified-text-accent,
 	a {
-		color: var( --color-inverted );
+		color: @color-inverted-fixed;
 	}
 
 	.minerva-icon {
-		background-color: var( --color-inverted );
+		background-color: @color-inverted-fixed;
 	}
 }
 

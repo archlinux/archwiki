@@ -20,6 +20,8 @@
 			"Meno25",
 			"Michel Bakni",
 			"Mido",
+			"Mohammed Qays",
+			"Mohanad",
 			"Mohanad Kh",
 			"Moud hosny",
 			"Omar Ghrida",
@@ -34,9 +36,7 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"مشعل الحربي",
-			"Mohammed Qays",
-			"Mohanad"
+			"مشعل الحربي"
 		]
 	},
 	"echo-desc": "نظام لإخطار المستخدمين عن الأحداث والرسائل",
@@ -64,8 +64,8 @@
 	"echo-pref-email-format-html": "إتش تي إم إل",
 	"echo-pref-email-format-plain-text": "نص خام",
 	"echo-pref-cross-wiki-notifications": "أظهر الإشعارات من ويكيات أخرى.",
-	"echo-pref-notifications-blacklist": "لا تعرض الإخطارات من هؤلاء المستخدمين. ([[mw:Special:MyLanguage/Help:Notifications#mute|اعرف المزيد]])",
-	"echo-pref-notifications-page-linked-title-muted-list": "لا تعرض إشعارات \"وصلة صفحة\" لهذه الصفحات. ([[mw:Special:MyLanguage/Help:Notifications#mute|معرفة المزيد]])",
+	"echo-pref-notifications-blacklist": "لا تعرض إشعارات هذه المستخدمين.  ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute تعرف على المزيد])",
+	"echo-pref-notifications-page-linked-title-muted-list": "لا تظهر إشعارات \"رابط الصفحة\" لهذه الصفحات.  ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute تعرف على المزيد])",
 	"echo-pref-dont-email-read-notifications": "لا تقم بتضمين إشعارات القراءة في رسائل البريد الإلكتروني الموجزة",
 	"echo-learn-more": "معرفة المزيد",
 	"echo-log": "السجل العلني",
@@ -216,6 +216,7 @@
 	"notification-link-thank-you-edit": "{{GENDER:$1|تعديلك|تعديلكِ}}",
 	"notification-link-text-view-edit": "اعرض التعديل",
 	"notification-link-article-reminder": "عرض الصفحة",
+	"notification-link-api-triggered": "عرض الصفحة",
 	"notification-header-reverted": "{{PLURAL:$4|تعديلاتك}} في <strong>$3</strong> {{GENDER:$2|أُلغِيت}}",
 	"notification-header-emailuser": "{{GENDER:$2|أرسل|أرسلت}} $1 بريدا إلكترونيا إليك.",
 	"notification-edit-user-page-email-subject": "{{GENDER:$2|عدل|عدلت}} $1 {{GENDER:$3|صفحة المستخدم الخاصة بك}} على {{SITENAME}}.",

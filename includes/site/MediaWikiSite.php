@@ -93,10 +93,7 @@ class MediaWikiSite extends Site {
 			return $t->getPrefixedText();
 		} else {
 			static $mediaWikiPageNameNormalizer = null;
-
-			if ( $mediaWikiPageNameNormalizer === null ) {
-				$mediaWikiPageNameNormalizer = new MediaWikiPageNameNormalizer();
-			}
+			$mediaWikiPageNameNormalizer ??= new MediaWikiPageNameNormalizer();
 
 			return $mediaWikiPageNameNormalizer->normalizePageName(
 				$pageName,
@@ -194,7 +191,7 @@ class MediaWikiSite extends Site {
 	 * This is the equivalent of wfScript() for other sites.
 	 *
 	 * The path should go at the `$1` marker. If the $path
-	 * argument is provided, the marker will be replaced by it's value.
+	 * argument is provided, the marker will be replaced by its value.
 	 *
 	 * @since 1.21
 	 * @param string|false $path Not passing a string for this is deprecated since 1.40.
@@ -216,5 +213,5 @@ class MediaWikiSite extends Site {
 	}
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( MediaWikiSite::class, 'MediaWikiSite' );

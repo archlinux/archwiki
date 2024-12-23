@@ -10,13 +10,13 @@
  *
  * @class
  * @extends OO.ui.TextInputWidget
- * @mixins OO.ui.mixin.LookupElement
+ * @mixes OO.ui.mixin.LookupElement
  *
  * @constructor
  * @param {ve.ui.MWCategoryWidget} categoryWidget
  * @param {Object} [config] Configuration options
- * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
- * @cfg {mw.Api} [api] API object to use, uses Target#getContentApi if not specified
+ * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
+ * @param {mw.Api} [config.api] API object to use, uses Target#getContentApi if not specified
  */
 ve.ui.MWCategoryInputWidget = function VeUiMWCategoryInputWidget( categoryWidget, config ) {
 	// Config initialization
@@ -51,8 +51,9 @@ OO.mixinClass( ve.ui.MWCategoryInputWidget, OO.ui.mixin.LookupElement );
 /* Events */
 
 /**
- * @event choose
  * A category was chosen
+ *
+ * @event ve.ui.MWCategoryInputWidget#choose
  * @param {OO.ui.MenuOptionWidget} item Chosen item
  */
 
@@ -62,7 +63,7 @@ OO.mixinClass( ve.ui.MWCategoryInputWidget, OO.ui.mixin.LookupElement );
  * @inheritdoc
  */
 ve.ui.MWCategoryInputWidget.prototype.getLookupRequest = function () {
-	var title = mw.Title.newFromText( this.value );
+	let title = mw.Title.newFromText( this.value );
 	if ( title && title.getNamespaceId() === mw.config.get( 'wgNamespaceIds' ).category ) {
 		title = title.getMainText();
 	} else {
@@ -82,11 +83,11 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupRequest = function () {
  * @inheritdoc
  */
 ve.ui.MWCategoryInputWidget.prototype.getLookupCacheDataFromResponse = function ( data ) {
-	var result = [],
+	const result = [],
 		linkCacheUpdate = {},
 		query = data.query || {};
 
-	( query.pages || [] ).forEach( function ( categoryPage ) {
+	( query.pages || [] ).forEach( ( categoryPage ) => {
 		result.push( mw.Title.newFromText( categoryPage.title ).getMainText() );
 		linkCacheUpdate[ categoryPage.title ] = {
 			missing: Object.prototype.hasOwnProperty.call( categoryPage, 'missing' ),
@@ -97,7 +98,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupCacheDataFromResponse = function 
 		};
 	} );
 
-	( query.redirects || [] ).forEach( function ( redirect ) {
+	( query.redirects || [] ).forEach( ( redirect ) => {
 		if ( !Object.prototype.hasOwnProperty.call( linkCacheUpdate, redirect.to ) ) {
 			linkCacheUpdate[ redirect.to ] = ve.init.platform.linkCache.getCached( redirect.to ) ||
 				{ missing: false, redirectFrom: [ redirect.from ] };
@@ -121,16 +122,15 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupCacheDataFromResponse = function 
  * @inheritdoc
  */
 ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( data ) {
-	var widget = this,
-		exactMatch = false,
-		itemWidgets = [],
+	const itemWidgets = [],
 		existingCategoryItems = [],
 		matchingCategoryItems = [],
 		hiddenCategoryItems = [],
 		newCategoryItems = [],
 		existingCategories = this.categoryWidget.getCategories(),
-		linkCacheUpdate = {},
-		canonicalQueryValue = mw.Title.newFromText( this.value ),
+		linkCacheUpdate = {};
+
+	let canonicalQueryValue = mw.Title.newFromText( this.value ),
 		prefixedCanonicalQueryValue = mw.Title.newFromText(
 			this.value,
 			mw.config.get( 'wgNamespaceIds' ).category
@@ -143,8 +143,9 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 		canonicalQueryValue = canonicalQueryValue.getMainText();
 	}
 
-	data.forEach( function ( suggestedCategory ) {
-		var suggestedCategoryTitle = mw.Title.newFromText(
+	let exactMatch = false;
+	data.forEach( ( suggestedCategory ) => {
+		const suggestedCategoryTitle = mw.Title.newFromText(
 				suggestedCategory,
 				mw.config.get( 'wgNamespaceIds' ).category
 			).getPrefixedText(),
@@ -167,7 +168,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 	} );
 
 	// Existing categories
-	existingCategories.forEach( function ( existingCategory, i ) {
+	existingCategories.forEach( ( existingCategory, i ) => {
 		if ( existingCategory === canonicalQueryValue ) {
 			exactMatch = true;
 		}
@@ -207,14 +208,14 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 			label: ve.msg( 'visualeditor-dialog-meta-categories-input-hiddencategorieslabel' ),
 			items: hiddenCategoryItems
 		}
-	].forEach( function ( sectionData ) {
+	].forEach( ( sectionData ) => {
 		if ( sectionData.items.length ) {
 			itemWidgets.push( new OO.ui.MenuSectionOptionWidget( {
 				data: sectionData.id,
 				label: sectionData.label
 			} ) );
-			sectionData.items.forEach( function ( categoryItem ) {
-				itemWidgets.push( widget.getCategoryWidgetFromName( categoryItem ) );
+			sectionData.items.forEach( ( categoryItem ) => {
+				itemWidgets.push( this.getCategoryWidgetFromName( categoryItem ) );
 			} );
 		}
 	} );
@@ -224,7 +225,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 
 /**
  * @inheritdoc
- * @fires choose
+ * @fires ve.ui.MWCategoryInputWidget#choose
  */
 ve.ui.MWCategoryInputWidget.prototype.onLookupMenuChoose = function ( item ) {
 	this.emit( 'choose', item );
@@ -240,11 +241,11 @@ ve.ui.MWCategoryInputWidget.prototype.onLookupMenuChoose = function ( item ) {
  * @return {OO.ui.MenuOptionWidget} Menu item widget to be shown
  */
 ve.ui.MWCategoryInputWidget.prototype.getCategoryWidgetFromName = function ( name ) {
-	var cachedData = ve.init.platform.linkCache.getCached( mw.Title.newFromText(
-			name,
-			mw.config.get( 'wgNamespaceIds' ).category
-		).getPrefixedText() ),
-		optionWidget, labelText;
+	const cachedData = ve.init.platform.linkCache.getCached( mw.Title.newFromText(
+		name,
+		mw.config.get( 'wgNamespaceIds' ).category
+	).getPrefixedText() );
+	let optionWidget, labelText;
 	if ( cachedData && cachedData.redirectFrom ) {
 		labelText = mw.Title.newFromText( cachedData.redirectFrom[ 0 ] ).getMainText();
 		optionWidget = new OO.ui.MenuOptionWidget( {

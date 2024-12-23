@@ -17,12 +17,15 @@
  *
  * @file
  */
+
+namespace Wikimedia\Mime;
+
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use UnexpectedValueException;
 use Wikimedia\AtEase\AtEase;
-use Wikimedia\Mime\MimeMap;
-use Wikimedia\Mime\MimeMapMinimal;
+use ZipDirectoryReader;
 
 /**
  * @defgroup Mime Mime
@@ -949,7 +952,7 @@ class MimeAnalyzer implements LoggerAwareInterface {
 	 * @param string|null $mime MIME type. If null it will be guessed using guessMimeType.
 	 * @return string A value to be used with the MEDIATYPE_xxx constants.
 	 */
-	public function getMediaType( string $path = null, string $mime = null ): string {
+	public function getMediaType( ?string $path = null, ?string $mime = null ): string {
 		if ( !$mime && !$path ) {
 			return MEDIATYPE_UNKNOWN;
 		}
@@ -1100,3 +1103,6 @@ class MimeAnalyzer implements LoggerAwareInterface {
 		return in_array( $type, $types );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( MimeAnalyzer::class, 'MimeAnalyzer' );

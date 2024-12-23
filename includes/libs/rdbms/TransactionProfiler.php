@@ -19,14 +19,12 @@
  */
 namespace Wikimedia\Rdbms;
 
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use NullStatsdDataFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
-use StatsdAwareInterface;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * Detect high-contention DB queries via profiling calls.
@@ -38,11 +36,11 @@ use Wikimedia\ScopedCallback;
  * @ingroup Profiler
  * @ingroup Database
  */
-class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface {
+class TransactionProfiler implements LoggerAwareInterface {
 	/** @var LoggerInterface */
 	private $logger;
-	/** @var StatsdDataFactoryInterface */
-	private $stats;
+	/** @var StatsFactory */
+	private $statsFactory;
 	/** @var array<string,array> Map of (event name => map of FLD_* class constants) */
 	private $expect;
 	/** @var array<string,int> Map of (event name => current hits) */
@@ -114,15 +112,21 @@ class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface 
 		$this->silenced = array_fill_keys( self::EVENT_NAMES, 0 );
 
 		$this->setLogger( new NullLogger() );
-		$this->setStatsdDataFactory( new NullStatsdDataFactory() );
+		$this->statsFactory = StatsFactory::newNull();
 	}
 
 	public function setLogger( LoggerInterface $logger ) {
 		$this->logger = $logger;
 	}
 
-	public function setStatsdDataFactory( StatsdDataFactoryInterface $statsFactory ) {
-		$this->stats = $statsFactory;
+	/**
+	 * Set statsFactory
+	 *
+	 * @param StatsFactory $statsFactory
+	 * @return void
+	 */
+	public function setStatsFactory( StatsFactory $statsFactory ) {
+		$this->statsFactory = $statsFactory;
 	}
 
 	/**
@@ -245,9 +249,9 @@ class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface 
 	 *
 	 * @param string $server DB server
 	 * @param string|null $db DB name
-	 * @param bool $isPrimary
+	 * @param bool $isPrimaryWithReplicas If the server is the primary and there are replicas
 	 */
-	public function recordConnection( $server, $db, bool $isPrimary ) {
+	public function recordConnection( $server, $db, bool $isPrimaryWithReplicas ) {
 		// Report when too many connections happen...
 		if ( $this->pingAndCheckThreshold( 'conns' ) ) {
 			$this->reportExpectationViolated(
@@ -258,7 +262,7 @@ class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface 
 		}
 
 		// Report when too many primary connections happen...
-		if ( $isPrimary && $this->pingAndCheckThreshold( 'masterConns' ) ) {
+		if ( $isPrimaryWithReplicas && $this->pingAndCheckThreshold( 'masterConns' ) ) {
 			$this->reportExpectationViolated(
 				'masterConns',
 				"[connect to $server ($db)]",
@@ -275,14 +279,15 @@ class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface 
 	 * @param string $server DB server
 	 * @param string|null $db DB name
 	 * @param string $id ID string of transaction
+	 * @param float $startTime UNIX timestamp
 	 */
-	public function transactionWritingIn( $server, $db, string $id ) {
+	public function transactionWritingIn( $server, $db, string $id, float $startTime ) {
 		$name = "{$db} {$server} TRX#$id";
 		if ( isset( $this->dbTrxHoldingLocks[$name] ) ) {
 			$this->logger->warning( "Nested transaction for '$name' - out of sync." );
 		}
 		$this->dbTrxHoldingLocks[$name] = [
-			'start' => $this->getCurrentTime(),
+			'start' => $startTime,
 			'conns' => [], // all connections involved
 		];
 		$this->dbTrxMethodTimes[$name] = [];
@@ -501,7 +506,11 @@ class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface 
 		$violations = ++$this->violations[$event];
 		// First violation; check if this is a web request
 		if ( $violations === 1 && $this->method !== null ) {
-			$this->stats->increment( "rdbms_trxprofiler_warnings.$event.{$this->method}" );
+			$this->statsFactory->getCounter( 'rdbms_trxprofiler_warnings_total' )
+				->setLabel( 'event', $event )
+				->setLabel( 'method', $this->method )
+				->copyToStatsdAt( "rdbms_trxprofiler_warnings.$event.{$this->method}" )
+				->increment();
 		}
 
 		$max = $this->expect[$event][self::FLD_LIMIT];

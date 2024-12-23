@@ -6,7 +6,8 @@
 	 * functionality of the Language class in MediaWiki:
 	 *
 	 *   - storing and retrieving language data
-	 *   - transforming message syntax (`{{PLURAL:}}`, `{{GRAMMAR:}}`, `{{GENDER:}}`)
+	 *   - transforming message syntax (`{{PLURAL:}}`, `{{GRAMMAR:}}`,
+	 *     `{{GENDER:}}`, `{{#FORMAL:}}`)
 	 *   - formatting numbers
 	 *
 	 * @namespace mw.language
@@ -37,6 +38,7 @@
 		 *  - `digitTransformTable`
 		 *  - `separatorTransformTable`
 		 *  - `minimumGroupingDigits`
+		 *  - `formalityIndex`
 		 *  - `grammarForms`
 		 *  - `pluralRules`
 		 *  - `digitGroupingPattern`
@@ -60,7 +62,7 @@
 		 *  specified langCode)
 		 */
 		getData: function ( langCode, dataKey ) {
-			var langData = mw.language.data;
+			const langData = mw.language.data;
 			langCode = langCode.toLowerCase();
 			if ( langData && langData[ langCode ] instanceof mw.Map ) {
 				return langData[ langCode ].get( dataKey );
@@ -71,14 +73,14 @@
 		/**
 		 * Convenience method for setting language data.
 		 *
-		 * Creates the data mw.Map if there isn't one for the specified language already.
+		 * Creates the data {@link mw.Map} if there isn't one for the specified language already.
 		 *
 		 * @param {string} langCode
 		 * @param {string|Object} dataKey Key or object of key/values
 		 * @param {any} [value] Value for dataKey, omit if dataKey is an object
 		 */
 		setData: function ( langCode, dataKey, value ) {
-			var langData = mw.language.data;
+			const langData = mw.language.data;
 			langCode = langCode.toLowerCase();
 			if ( !( langData[ langCode ] instanceof mw.Map ) ) {
 				langData[ langCode ] = new mw.Map();

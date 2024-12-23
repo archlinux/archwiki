@@ -18,6 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use Wikimedia\Message\MessageSpecifier;
+
 /**
  * Interface for messages with machine-readable data for use by the API
  *
@@ -59,7 +63,7 @@ interface IApiMessage extends MessageSpecifier {
 	 * @param string|null $code If null, uses the default (see self::getApiCode())
 	 * @param array|null $data If non-null, passed to self::setApiData()
 	 */
-	public function setApiCode( $code, array $data = null );
+	public function setApiCode( $code, ?array $data = null );
 
 	/**
 	 * Sets additional machine-readable data about the error condition
@@ -67,3 +71,6 @@ interface IApiMessage extends MessageSpecifier {
 	 */
 	public function setApiData( array $data );
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( IApiMessage::class, 'IApiMessage' );

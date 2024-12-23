@@ -5,17 +5,18 @@
 			"Jack who built the house",
 			"Kaganer",
 			"Kareyac",
+			"Okras",
 			"Pacha Tchernof",
 			"Playershut",
 			"Sunpriat",
 			"Vlad5250",
-			"Wileyfoxyx",
-			"Okras"
+			"Wileyfoxyx"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Сообщение с идентификатором '$1' не найдено.",
 	"apierror-discussiontools-commentname-ambiguous": "Найдено несколько сообщений с названием '$1', необходим <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "Сообщение с названием '$1' не найдено.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Страница никогда не содержала никаких обсуждений.",
 	"apierror-discussiontools-formtoken-used": "Сообщение уже опубликовано. Чтобы увидеть его, перезагрузите страницу.",
 	"apierror-discussiontools-subscription-failed-add": "Не удалось подписаться на эту тему.",
 	"apierror-discussiontools-subscription-failed-remove": "Не удалось отписаться от этой темы.",

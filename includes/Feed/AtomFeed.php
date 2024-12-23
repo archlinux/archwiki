@@ -62,7 +62,9 @@ class AtomFeed extends ChannelFeed {
 			// have to change the id? Maybe? Maybe not.
 			'feedID' => $this->getSelfUrl(),
 			'title' => $this->getTitle(),
-			'url' => $this->xmlEncode( wfExpandUrl( $this->getUrlUnescaped(), PROTO_CURRENT ) ),
+			'url' => $this->xmlEncode(
+				$this->urlUtils->expand( $this->getUrlUnescaped(), PROTO_CURRENT ) ?? ''
+			),
 			'selfUrl' => $this->getSelfUrl(),
 			'timestamp' => $this->xmlEncode( $this->formatTime( wfTimestampNow() ) ),
 			'description' => $this->getDescription(),
@@ -73,6 +75,7 @@ class AtomFeed extends ChannelFeed {
 
 	/**
 	 * Atom 1.0 requests a self-reference to the feed.
+	 *
 	 * @return string
 	 */
 	private function getSelfUrl() {
@@ -82,6 +85,7 @@ class AtomFeed extends ChannelFeed {
 
 	/**
 	 * Output a given item.
+	 *
 	 * @param FeedItem $item
 	 */
 	public function outItem( $item ) {
@@ -93,7 +97,9 @@ class AtomFeed extends ChannelFeed {
 			"uniqueID" => $item->getUniqueID(),
 			"title" => $item->getTitle(),
 			"mimeType" => $this->xmlEncode( $mimeType ),
-			"url" => $this->xmlEncode( wfExpandUrl( $item->getUrlUnescaped(), PROTO_CURRENT ) ),
+			"url" => $this->xmlEncode(
+				$this->urlUtils->expand( $item->getUrlUnescaped(), PROTO_CURRENT ) ?? ''
+			),
 			"date" => $this->xmlEncode( $this->formatTime( $item->getDate() ) ),
 			"description" => $item->getDescription(),
 			"author" => $item->getAuthor()

@@ -4,6 +4,7 @@ use MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider;
 use MediaWiki\Auth\TemporaryPasswordPrimaryAuthenticationProvider;
 use MediaWiki\Logger\LegacySpi;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Session\CookieSessionProvider;
 
 /**
@@ -34,8 +35,10 @@ class TestSetup {
 	 * of a Maintenance subclass which then gets called via MW_SETUP_CALLBACK in Setup.php.
 	 */
 	public static function applyInitialConfig() {
+		global $wgScriptPath, $wgScript, $wgResourceBasePath, $wgStylePath, $wgExtensionAssetsPath;
+		global $wgArticlePath, $wgActionPaths, $wgVariantArticlePath, $wgUploadNavigationUrl;
 		global $wgMainCacheType, $wgMessageCacheType, $wgParserCacheType, $wgSessionCacheType;
-		global $wgMainStash, $wgChronologyProtectorStash;
+		global $wgMainStash;
 		global $wgLanguageConverterCacheType, $wgUseDatabaseMessages;
 		global $wgLocaltimezone, $wgLocalTZoffset, $wgLocalisationCacheConf;
 		global $wgSearchType;
@@ -46,6 +49,7 @@ class TestSetup {
 		global $wgAuthManagerConfig;
 		global $wgShowExceptionDetails, $wgShowHostnames;
 		global $wgDBStrictWarnings, $wgUsePigLatinVariant;
+		global $wgOpenTelemetryConfig;
 
 		$wgShowExceptionDetails = true;
 		$wgShowHostnames = true;
@@ -54,21 +58,31 @@ class TestSetup {
 		$wgDevelopmentWarnings = true;
 		$wgDBStrictWarnings = true;
 
+		// Server URLs
+		$wgScriptPath = '';
+		$wgScript = '/index.php';
+		$wgResourceBasePath = '';
+		$wgStylePath = '/skins';
+		$wgExtensionAssetsPath = '/extensions';
+		$wgArticlePath = '/wiki/$1';
+		$wgActionPaths = [];
+		$wgVariantArticlePath = false;
+		$wgUploadNavigationUrl = false;
+
 		// Make sure all caches and stashes are either disabled or use
 		// in-process cache only to prevent tests from using any preconfigured
 		// cache meant for the local wiki from outside the test run.
 		// See also MediaWikiIntegrationTestCase::run() which mocks CACHE_DB and APC.
 
-		// Disabled per default in MainConfigSchema, override local settings
+		// Disabled by default in MainConfigSchema, override local settings
 		$wgMainCacheType = CACHE_NONE;
-		// Uses CACHE_ANYTHING per default in MainConfigSchema, use hash instead of db
+		// Uses CACHE_ANYTHING by default in MainConfigSchema, use hash instead of db
 		$wgMessageCacheType =
 		$wgParserCacheType =
 		$wgSessionCacheType =
 		$wgLanguageConverterCacheType = 'hash';
-		// Uses db-replicated per default in MainConfigSchema
+		// Uses db-replicated by default in MainConfigSchema
 		$wgMainStash = 'hash';
-		$wgChronologyProtectorStash = 'hash';
 		// Use memory job queue
 		$wgJobTypeConf = [
 			'default' => [ 'class' => JobQueueMemory::class, 'order' => 'fifo' ],
@@ -137,6 +151,9 @@ class TestSetup {
 
 		// This is often used for variant testing
 		$wgUsePigLatinVariant = true;
+
+		// Disable tracing in tests.
+		$wgOpenTelemetryConfig = null;
 
 		// xdebug's default of 100 is too low for MediaWiki
 		ini_set( 'xdebug.max_nesting_level', 1000 );

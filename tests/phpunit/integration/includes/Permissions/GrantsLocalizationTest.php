@@ -12,11 +12,10 @@ use MediaWikiIntegrationTestCase;
 /**
  * @author Zabe
  *
- * @coversDefaultClass \MediaWiki\Permissions\GrantsLocalization
+ * @covers \MediaWiki\Permissions\GrantsLocalization
  */
 class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
-	/** @var GrantsLocalization */
-	private $grantsLocalization;
+	private GrantsLocalization $grantsLocalization;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -25,7 +24,6 @@ class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ::getGrantDescription
 	 * @dataProvider grantDescriptions
 	 */
 	public function testGetGrantDescription( string $grant ) {
@@ -46,9 +44,6 @@ class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
 		yield [ 'delete' ];
 	}
 
-	/**
-	 * @covers ::getGrantDescription
-	 */
 	public function testGetNonExistingGrantDescription() {
 		$message = ( new Message( 'grant-generic' ) )->params( 'foo' );
 		$this->assertSame(
@@ -61,9 +56,6 @@ class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::getGrantDescriptions
-	 */
 	public function testGetGrantDescriptions() {
 		$this->assertSame(
 			[
@@ -80,9 +72,6 @@ class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::getGrantsLink
-	 */
 	public function testGetGrantsLink() {
 		$this->assertSame(
 			$this->getServiceContainer()->getLinkRenderer()->makeKnownLink(
@@ -97,9 +86,6 @@ class GrantsLocalizationTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::getGrantsWikiText
-	 */
 	public function testGetGrantsWikiText() {
 		$this->assertSame(
 			"*<span class=\"mw-grantgroup\">Perform high volume activity</span>\n:High-volume (bot) access <span class=\"mw-grant mw-grantriskgroup-low\"></span>\n\n",

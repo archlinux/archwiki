@@ -20,19 +20,19 @@
 namespace Wikimedia\Rdbms;
 
 use ArrayUtils;
-use BagOStuff;
-use EmptyBagOStuff;
 use InvalidArgumentException;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use LogicException;
-use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
 use Throwable;
 use UnexpectedValueException;
-use WANObjectCache;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * @see ILoadBalancer
@@ -62,11 +62,11 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	/** @var array<string,array<int,Database[]>> Map of (connection pool => server index => Database[]) */
 	private $conns;
 
-	/** @var string|null The name of the DB cluster */
+	/** @var string The name of the DB cluster */
 	private $clusterName;
 	/** @var ServerInfo */
 	private $serverInfo;
-	/** @var array[] Map of (group => server index => weight) */
+	/** @var array<string,array<int,int|float>> Map of (group => server index => weight) */
 	private $groupLoads;
 	/** @var string|null Default query group to use with getConnection() */
 	private $defaultGroup;
@@ -118,12 +118,6 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	private const INFO_SERVER_INDEX = 'serverIndex';
 	/** The "connection category" LB info key; see {@link IDatabase::getLBInfo()} */
 	private const INFO_CONN_CATEGORY = 'connCategory';
-
-	/**
-	 * Default 'maxLag' when unspecified
-	 * @internal Only for use within LoadBalancer/LoadMonitor
-	 */
-	public const MAX_LAG_DEFAULT = ServerInfo::MAX_LAG_DEFAULT;
 
 	/** Warn when this many connection are held */
 	private const CONN_HELD_WARN_THRESHOLD = 10;
@@ -181,6 +175,9 @@ class LoadBalancer implements ILoadBalancerForOwner {
 			}
 			$this->groupLoads[self::GROUP_GENERIC][$i] = $server['load'];
 		}
+		// If the cluster name is not specified, fallback to the current primary name
+		$this->clusterName = $params['clusterName']
+			?? $this->serverInfo->getServerName( ServerInfo::WRITER_INDEX );
 
 		if ( isset( $params['readOnlyReason'] ) && is_string( $params['readOnlyReason'] ) ) {
 			$this->readOnlyReason = $params['readOnlyReason'];
@@ -193,22 +190,21 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		$this->databaseFactory = $params['databaseFactory'] ?? new DatabaseFactory( $params );
 
 		$this->errorLogger = $params['errorLogger'] ?? static function ( Throwable $e ) {
-				trigger_error( get_class( $e ) . ': ' . $e->getMessage(), E_USER_WARNING );
+			trigger_error( get_class( $e ) . ': ' . $e->getMessage(), E_USER_WARNING );
 		};
 		$this->logger = $params['logger'] ?? new NullLogger();
 
-		$this->clusterName = $params['clusterName'] ?? null;
 		$this->trxProfiler = $params['trxProfiler'] ?? new TransactionProfiler();
 		$this->statsd = $params['statsdDataFactory'] ?? new NullStatsdDataFactory();
 
 		// Set up LoadMonitor
-		$loadMonitorConfig = $params['loadMonitor'] ?? [ 'class' => 'LoadMonitorNull' ];
-		$loadMonitorConfig += [ 'maxConnCount' => 500 ];
+		$loadMonitorConfig = $params['loadMonitor'] ?? [ 'class' => LoadMonitorNull::class ];
 		$compat = [
 			'LoadMonitor' => LoadMonitor::class,
 			'LoadMonitorNull' => LoadMonitorNull::class
 		];
 		$class = $loadMonitorConfig['class'];
+		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( isset( $compat[$class] ) ) {
 			$class = $compat[$class];
 		}
@@ -242,8 +238,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	}
 
 	public function getClusterName(): string {
-		// Fallback to the current primary name if not specified
-		return $this->clusterName ?? $this->getServerName( ServerInfo::WRITER_INDEX );
+		return $this->clusterName;
 	}
 
 	public function getLocalDomainID(): string {
@@ -316,16 +311,10 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	 * Sanitize connection flags provided by a call to getConnection()
 	 *
 	 * @param int $flags Bitfield of class CONN_* constants
-	 * @param int $i Specific server index or DB_PRIMARY/DB_REPLICA
 	 * @param string $domain Database domain
 	 * @return int Sanitized bitfield
 	 */
-	private function sanitizeConnectionFlags( $flags, $i, $domain ) {
-		// Whether an outside caller is explicitly requesting the primary database server
-		if ( $i === self::DB_PRIMARY || $i === ServerInfo::WRITER_INDEX ) {
-			$flags |= self::CONN_INTENT_WRITABLE;
-		}
-
+	protected function sanitizeConnectionFlags( $flags, $domain ) {
 		if ( self::fieldHasBit( $flags, self::CONN_TRX_AUTOCOMMIT ) ) {
 			// Callers use CONN_TRX_AUTOCOMMIT to bypass REPEATABLE-READ staleness without
 			// resorting to row locks (e.g. FOR UPDATE) or to make small out-of-band commits
@@ -379,20 +368,22 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	}
 
 	/**
-	 * @param array $loads
-	 * @param int|float $maxLag Restrict the maximum allowed lag to this many seconds, or INF for no max
-	 * @return int|string|false
+	 * @param array<int,int|float> $loads Map of (server index => weight) for a load group
+	 * @param int|float $sessionLagLimit Additional maximum lag threshold imposed by the session;
+	 *  use INF if none applies. Servers will count as lagged if their lag exceeds either this
+	 *  value or the configured "max lag" value.
+	 * @return int|false Index of a non-lagged server with non-zero weight; false if none
 	 */
-	private function getRandomNonLagged( array $loads, $maxLag = INF ) {
+	private function getRandomNonLagged( array $loads, $sessionLagLimit = INF ) {
 		$lags = $this->getLagTimes();
 
-		# Unset excessively lagged servers
+		// Unset excessively lagged servers from the load group
 		foreach ( $lags as $i => $lag ) {
 			if ( $i !== ServerInfo::WRITER_INDEX ) {
-				# How much lag this server nominally is allowed to have
-				$maxServerLag = $this->serverInfo->getServerMaxLag( $i ); // default
-				# Constrain that further by $maxLag argument
-				$maxServerLag = min( $maxServerLag, $maxLag );
+				// How much lag normally counts as "excessive" for this server
+				$maxServerLag = $this->serverInfo->getServerMaxLag( $i );
+				// How much lag counts as "excessive" for this server given the session
+				$maxServerLag = min( $maxServerLag, $sessionLagLimit );
 
 				$srvName = $this->serverInfo->getServerName( $i );
 				if ( $lag === false && !is_infinite( $maxServerLag ) ) {
@@ -413,12 +404,12 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		}
 
 		if ( array_sum( $loads ) == 0 ) {
-			// All the replicas with non-zero load are lagged and the primary has zero load.
+			// All the replicas with non-zero weight are lagged and the primary has zero load.
 			// Inform caller so that it can use switch to read-only mode and use a lagged replica.
 			return false;
 		}
 
-		# Return a random representative of the remainder
+		// Return a server index based on weighted random selection
 		return ArrayUtils::pickRandom( $loads );
 	}
 
@@ -450,11 +441,11 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		// seeing even higher replication positions (e.g. from concurrent requests).
 		$this->loadSessionPrimaryPos();
 
-		// Scale the configured load ratios according to each server's load/state.
+		// Scale the configured load weights according to each server's load/state.
 		// This can sometimes trigger server connections due to cache regeneration.
 		$this->loadMonitor->scaleLoads( $loads );
 
-		// Pick a server, accounting for weight, load, lag, and session consistency
+		// Pick a server, accounting for load weights, lag, and session consistency
 		$i = $this->pickReaderIndex( $loads );
 		if ( $i === false ) {
 			// Connection attempts failed
@@ -492,28 +483,28 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	}
 
 	/**
-	 * Pick a server that is reachable, preferably non-lagged, and return its server index
+	 * Pick a server that is reachable and preferably non-lagged based on the load weights
 	 *
 	 * This will leave the server connection open within the pool for reuse
 	 *
-	 * @param array $loads List of server weights
-	 * @return int|false reader index or false
+	 * @param array<int,int|float> $loads Map of (server index => weight) for a load group
+	 * @return int|false Server index to use as the load group reader index; false on failure
 	 */
 	private function pickReaderIndex( array $loads ) {
 		if ( $loads === [] ) {
-			throw new InvalidArgumentException( "Server configuration array is empty" );
+			throw new InvalidArgumentException( "Load group array is empty" );
 		}
 
+		$i = false;
 		// Quickly look through the available servers for a server that meets criteria...
 		$currentLoads = $loads;
-		$i = false;
 		while ( count( $currentLoads ) ) {
 			if ( $this->waitForPos && $this->waitForPos->asOfTime() ) {
 				$this->logger->debug( __METHOD__ . ": session has replication position" );
-				// ChronologyProtector::getSessionPrimaryPos called in $this->loadSessionPrimaryPos()
-				// sets "waitForPos" for session consistency.
-				// This triggers doWait() after connect, so it's especially good to
-				// avoid lagged servers so as to avoid excessive delay in that method.
+				// ChronologyProtector::getSessionPrimaryPos called in loadSessionPrimaryPos()
+				// sets "waitForPos" for session consistency. This triggers doWait() after
+				// connect, so it's especially good to avoid lagged servers so as to avoid
+				// excessive delay in that method.
 				$ago = microtime( true ) - $this->waitForPos->asOfTime();
 				// Aim for <= 1 second of waiting (being too picky can backfire)
 				$i = $this->getRandomNonLagged( $currentLoads, $ago + 1 );
@@ -646,7 +637,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 
 	/**
 	 * @param Database[][] $connsByServer Map of (server index => array of DB handles)
-	 * @return IDatabase|false An appropriate open connection or false if none found
+	 * @return IDatabaseForOwner|false An appropriate open connection or false if none found
 	 */
 	private function pickAnyOpenConnection( array $connsByServer ) {
 		foreach ( $connsByServer as $i => $conns ) {
@@ -752,13 +743,24 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	}
 
 	public function getConnection( $i, $groups = [], $domain = false, $flags = 0 ) {
-		return $this->getConnectionRef( $i, $groups, $domain, $flags );
+		if ( self::fieldHasBit( $flags, self::CONN_SILENCE_ERRORS ) ) {
+			throw new UnexpectedValueException(
+				__METHOD__ . ' got CONN_SILENCE_ERRORS; connection is already deferred'
+			);
+		}
+
+		$domain = $this->resolveDomainID( $domain );
+		$role = ( $i === self::DB_PRIMARY || $i === ServerInfo::WRITER_INDEX )
+			? self::DB_PRIMARY
+			: self::DB_REPLICA;
+
+		return new DBConnRef( $this, [ $i, $groups, $domain, $flags ], $role, $this->modcount );
 	}
 
 	public function getConnectionInternal( $i, $groups = [], $domain = false, $flags = 0 ): IDatabase {
 		$domain = $this->resolveDomainID( $domain );
 		$group = $this->resolveGroups( $groups, $i );
-		$flags = $this->sanitizeConnectionFlags( $flags, $i, $domain );
+		$flags = $this->sanitizeConnectionFlags( $flags, $domain );
 		// If given DB_PRIMARY/DB_REPLICA, resolve it to a specific server index. Resolving
 		// DB_REPLICA might trigger getServerConnection() calls due to the getReaderIndex()
 		// connectivity checks or LoadMonitor::scaleLoads() server state cache regeneration.
@@ -789,7 +791,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		// Get an open connection to this server (might trigger a new connection)
 		$conn = $this->reuseOrOpenConnectionForNewRef( $i, $domainInstance, $flags );
 		// Throw an error or otherwise bail out if the connection attempt failed
-		if ( !( $conn instanceof IDatabase ) ) {
+		if ( !( $conn instanceof IDatabaseForOwner ) ) {
 			if ( !self::fieldHasBit( $flags, self::CONN_SILENCE_ERRORS ) ) {
 				$this->reportConnectionError();
 			}
@@ -802,7 +804,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 			$this->trxProfiler->recordConnection(
 				$conn->getServerName(),
 				$conn->getDBname(),
-				self::fieldHasBit( $flags, self::CONN_INTENT_WRITABLE )
+				( $i === ServerInfo::WRITER_INDEX && $this->hasStreamingReplicaServers() )
 			);
 		}
 
@@ -820,23 +822,13 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		return $conn;
 	}
 
-	public function reuseConnection( IDatabase $conn ) {
-		// no-op
-	}
-
-	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): IDatabase {
-		if ( self::fieldHasBit( $flags, self::CONN_SILENCE_ERRORS ) ) {
-			throw new UnexpectedValueException(
-				__METHOD__ . ' got CONN_SILENCE_ERRORS; connection is already deferred'
-			);
-		}
-
-		$domain = $this->resolveDomainID( $domain );
-		$role = ( $i === self::DB_PRIMARY || $i === ServerInfo::WRITER_INDEX )
-			? self::DB_PRIMARY
-			: self::DB_REPLICA;
-
-		return new DBConnRef( $this, [ $i, $groups, $domain, $flags ], $role, $this->modcount );
+	/**
+	 * @deprecated since 1.39.
+	 */
+	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef {
+		wfDeprecated( __METHOD__, '1.39' );
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType to be removed soon
+		return $this->getConnection( $i, $groups, $domain, $flags );
 	}
 
 	public function getMaintenanceConnectionRef(
@@ -894,7 +886,6 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		//  - a) IDatabase::databasesAreIndependent() returns true (e.g. postgres) and two
 		//       or more database domains have been used during the load balancer's lifetime
 		//  - b) Two or more nested function calls used getConnection() on different domains.
-		//       Normally, callers should use getConnectionRef() instead of getConnection().
 		foreach ( ( $this->conns[$category][$i] ?? [] ) as $poolConn ) {
 			// Check if any required DB domain changes for the new reference are possible
 			// Calling selectDomain() would trigger a reconnect, which will break if a
@@ -948,7 +939,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 			}
 		}
 
-		if ( $conn instanceof IDatabase ) {
+		if ( $conn instanceof IDatabaseForOwner ) {
 			// Check to make sure that the right domain is selected
 			$this->assertConnectionDomain( $conn, $domain );
 			// Check to make sure that the CONN_* flags are respected
@@ -1131,7 +1122,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	 * @return never
 	 */
 	private function reportConnectionError( $extraLbError = '' ) {
-		if ( $this->lastErrorConn instanceof IDatabase ) {
+		if ( $this->lastErrorConn instanceof IDatabaseForOwner ) {
 			$srvName = $this->lastErrorConn->getServerName();
 			$lastDbError = $this->lastErrorConn->lastError() ?: 'unknown error';
 
@@ -1174,10 +1165,6 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		throw $exception;
 	}
 
-	public function getWriterIndex() {
-		return ServerInfo::WRITER_INDEX;
-	}
-
 	public function getServerCount() {
 		return $this->serverInfo->getServerCount();
 	}
@@ -1214,6 +1201,9 @@ class LoadBalancer implements ILoadBalancerForOwner {
 			$this->reportConnectionError();
 		}
 
+		// ::getConnectionInternal() should return IDatabaseForOwner but changing signature
+		// is not straightforward (being implemented in Wikibase)
+		'@phan-var IDatabaseForOwner $conn';
 		try {
 			return $conn->getPrimaryPos();
 		} finally {
@@ -1310,9 +1300,9 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	 * Using this function makes sure the LoadBalancer knows the connection is closed.
 	 * If you use $conn->close() directly, the load balancer won't update its state.
 	 *
-	 * @param IDatabase $conn
+	 * @param IDatabaseForOwner $conn
 	 */
-	private function closeConnection( IDatabase $conn ) {
+	private function closeConnection( IDatabaseForOwner $conn ) {
 		if ( $conn instanceof DBConnRef ) {
 			// Avoid calling close() but still leaving the handle in the pool
 			throw new RuntimeException( 'Cannot close DBConnRef instance; it must be shareable' );
@@ -1749,7 +1739,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		return $this->laggedReplicaMode;
 	}
 
-	public function getReadOnlyReason( $domain = false ) {
+	public function getReadOnlyReason() {
 		if ( $this->readOnlyReason !== false ) {
 			return $this->readOnlyReason;
 		} elseif ( $this->isPrimaryRunningReadOnly() ) {
@@ -1761,10 +1751,10 @@ class LoadBalancer implements ILoadBalancerForOwner {
 
 	/**
 	 * @note This method suppresses DBError exceptions in order to avoid severe downtime
-	 * @param IDatabase|null $conn Recently acquired primary connection; null if not applicable
+	 * @param IDatabaseForOwner|null $conn Recently acquired primary connection; null if not applicable
 	 * @return bool Whether the entire primary DB server or the local domain DB is read-only
 	 */
-	private function isPrimaryRunningReadOnly( IDatabase $conn = null ) {
+	private function isPrimaryRunningReadOnly( ?IDatabaseForOwner $conn = null ) {
 		// Context will often be HTTP GET/HEAD; heavily cache the results
 		return (bool)$this->wanCache->getWithSetCallback(
 			// Note that table prefixes are not related to server-side read-only mode
@@ -1831,7 +1821,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 	 */
 	private function getOpenPrimaryConnections() {
 		foreach ( $this->conns as $poolConnsByServer ) {
-			/** @var IDatabase $conn */
+			/** @var IDatabaseForOwner $conn */
 			foreach ( ( $poolConnsByServer[ServerInfo::WRITER_INDEX] ?? [] ) as $conn ) {
 				yield $conn;
 			}
@@ -1846,7 +1836,9 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		if ( $this->serverInfo->hasReplicaServers() ) {
 			$lagTimes = $this->getLagTimes();
 			foreach ( $lagTimes as $i => $lag ) {
-				if ( $this->groupLoads[self::GROUP_GENERIC][$i] > 0 && $lag > $maxLag ) {
+				// Allowing the value to be unset due to stale cache (T361824)
+				$load = $this->groupLoads[self::GROUP_GENERIC][$i] ?? 0;
+				if ( $load > 0 && $lag > $maxLag ) {
 					$maxLag = $lag;
 					$host = $this->serverInfo->getServerInfoStrict( $i, 'host' );
 					$maxIndex = $i;
@@ -1861,11 +1853,12 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		if ( !$this->hasReplicaServers() ) {
 			return [ ServerInfo::WRITER_INDEX => 0 ]; // no replication = no lag
 		}
+		$fname = __METHOD__;
 		return $this->wanCache->getWithSetCallback(
-			$this->wanCache->makeGlobalKey( 'rdbms-lags', $this->clusterName ?? '' ),
+			$this->wanCache->makeGlobalKey( 'rdbms-lags', $this->getClusterName() ),
 			// Add jitter to avoid stampede
 			10 + mt_rand( 1, 10 ),
-			function () {
+			function () use ( $fname ) {
 				$lags = [];
 				foreach ( $this->serverInfo->getStreamingReplicaIndexes() as $i ) {
 					$conn = $this->getServerConnection(
@@ -1875,7 +1868,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 					);
 					if ( $conn ) {
 						$lags[$i] = $conn->getLag();
-						$conn->close();
+						$conn->close( $fname );
 					} else {
 						$lags[$i] = false;
 					}
@@ -1908,7 +1901,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 			$this->closeConnection( $primaryConn );
 		}
 
-		if ( $pos instanceof DBPrimaryPos ) {
+		if ( $pos instanceof DBPrimaryPos && $conn instanceof IDatabaseForOwner ) {
 			$this->logger->debug( __METHOD__ . ': waiting' );
 			$result = $conn->primaryPosWait( $pos, self::MAX_WAIT_DEFAULT );
 			$ok = ( $result !== null && $result != -1 );
@@ -1928,7 +1921,7 @@ class LoadBalancer implements ILoadBalancerForOwner {
 		return $ok;
 	}
 
-	public function setTransactionListener( $name, callable $callback = null ) {
+	public function setTransactionListener( $name, ?callable $callback = null ) {
 		if ( $callback ) {
 			$this->trxRecurringCallbacks[$name] = $callback;
 		} else {

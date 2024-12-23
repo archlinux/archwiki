@@ -24,7 +24,11 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
+
+use MediaWiki\Maintenance\Maintenance;
 
 /**
  * Maintenance script to change the password of a given user.
@@ -51,10 +55,12 @@ class ChangePassword extends Maintenance {
 		if ( $status->isGood() ) {
 			$this->output( "Password set for " . $user->getName() . "\n" );
 		} else {
-			$this->fatalError( $status->getMessage( false, false, 'en' )->text() );
+			$this->fatalError( $status );
 		}
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ChangePassword::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

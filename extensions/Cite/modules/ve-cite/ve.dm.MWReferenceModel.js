@@ -8,11 +8,16 @@
  */
 
 /**
- * MediaWiki reference model.
+ * Corresponds to one ref and its metadata, chosen for an action.
+ *
+ * TODO: Distinguish this module from ve.dm.MWReferenceNode
  *
  * @constructor
  * @mixes OO.EventEmitter
- * @param {ve.dm.Document} parentDoc Document that contains or will contain the reference
+ * @param {ve.dm.Document} [parentDoc] The parent Document we can use to auto-generate a blank
+ *  Document for the reference in case {@see setDocument} was never called
+ * @property {ve.dm.Document|Function|undefined} doc Might be deferred via a function, to be
+ *  lazy-evaluated when {@see getDocument} is called
  */
 ve.dm.MWReferenceModel = function VeDmMWReferenceModel( parentDoc ) {
 	// Mixin constructors
@@ -24,9 +29,14 @@ ve.dm.MWReferenceModel = function VeDmMWReferenceModel( parentDoc ) {
 	this.listGroup = '';
 	this.listIndex = null;
 	this.group = '';
-	this.doc = null;
-	this.parentDoc = parentDoc;
-	this.deferDoc = null;
+	if ( parentDoc ) {
+		this.doc = () => parentDoc.cloneWithData( [
+			{ type: 'paragraph', internal: { generated: 'wrapper' } },
+			{ type: '/paragraph' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		] );
+	}
 };
 
 /* Inheritance */
@@ -44,17 +54,17 @@ OO.mixinClass( ve.dm.MWReferenceModel, OO.EventEmitter );
 ve.dm.MWReferenceModel.static.newFromReferenceNode = function ( node ) {
 	const doc = node.getDocument();
 	const internalList = doc.getInternalList();
-	const attr = node.getAttributes();
-	const ref = new ve.dm.MWReferenceModel( doc );
+	const attributes = node.getAttributes();
+	const ref = new ve.dm.MWReferenceModel();
 
-	ref.setExtendsRef( attr.extendsRef );
-	ref.setListKey( attr.listKey );
-	ref.setListGroup( attr.listGroup );
-	ref.setListIndex( attr.listIndex );
-	ref.setGroup( attr.refGroup );
-	ref.deferDoc = function () {
+	ref.extendsRef = attributes.extendsRef;
+	ref.listKey = attributes.listKey;
+	ref.listGroup = attributes.listGroup;
+	ref.listIndex = attributes.listIndex;
+	ref.group = attributes.refGroup;
+	ref.doc = function () {
 		// cloneFromRange is very expensive, so lazy evaluate it
-		return doc.cloneFromRange( internalList.getItemNode( attr.listIndex ).getRange() );
+		return doc.cloneFromRange( internalList.getItemNode( attributes.listIndex ).getRange() );
 	};
 
 	return ref;
@@ -89,13 +99,13 @@ ve.dm.MWReferenceModel.prototype.insertInternalItem = function ( surfaceModel ) 
 	const internalList = doc.getInternalList();
 
 	// Fill in data
-	this.setListKey( 'auto/' + internalList.getNextUniqueNumber() );
-	this.setListGroup( 'mwReference/' + this.group );
+	this.listKey = 'auto/' + internalList.getNextUniqueNumber();
+	this.listGroup = 'mwReference/' + this.group;
 
 	// Insert internal reference item into document
 	const item = internalList.getItemInsertion( this.listGroup, this.listKey, [] );
 	surfaceModel.change( item.transaction );
-	this.setListIndex( item.index );
+	this.listIndex = item.index;
 
 	// Inject reference document into internal reference item
 	surfaceModel.change(
@@ -224,58 +234,13 @@ ve.dm.MWReferenceModel.prototype.getGroup = function () {
  *
  * Auto-generates a blank document if no document exists.
  *
- * @return {ve.dm.Document} Reference document
+ * @return {ve.dm.Document} The (small) document with the content of the reference
  */
 ve.dm.MWReferenceModel.prototype.getDocument = function () {
-	if ( !this.doc ) {
-		if ( this.deferDoc ) {
-			this.doc = this.deferDoc();
-		} else {
-			this.doc = this.parentDoc.cloneWithData( [
-				{ type: 'paragraph', internal: { generated: 'wrapper' } },
-				{ type: '/paragraph' },
-				{ type: 'internalList' },
-				{ type: '/internalList' }
-			] );
-		}
+	if ( typeof this.doc === 'function' ) {
+		this.doc = this.doc();
 	}
 	return this.doc;
-};
-
-/**
- * Set key of reference in list.
- *
- * @param {string} listKey Reference's list key
- */
-ve.dm.MWReferenceModel.prototype.setListKey = function ( listKey ) {
-	this.listKey = listKey;
-};
-
-/**
- * Set the name of the parent reference that is being extended by the current reference.
- *
- * @param {string} extendsRef References parent
- */
-ve.dm.MWReferenceModel.prototype.setExtendsRef = function ( extendsRef ) {
-	this.extendsRef = extendsRef;
-};
-
-/**
- * Set name of the group a references list is in.
- *
- * @param {string} listGroup References list's group
- */
-ve.dm.MWReferenceModel.prototype.setListGroup = function ( listGroup ) {
-	this.listGroup = listGroup;
-};
-
-/**
- * Set the index of reference in list.
- *
- * @param {string} listIndex Reference's list index
- */
-ve.dm.MWReferenceModel.prototype.setListIndex = function ( listIndex ) {
-	this.listIndex = listIndex;
 };
 
 /**
@@ -290,7 +255,7 @@ ve.dm.MWReferenceModel.prototype.setGroup = function ( group ) {
 /**
  * Set the reference document.
  *
- * @param {ve.dm.Document} doc Reference document
+ * @param {ve.dm.Document} doc The (small) document with the content of the reference
  */
 ve.dm.MWReferenceModel.prototype.setDocument = function ( doc ) {
 	this.doc = doc;

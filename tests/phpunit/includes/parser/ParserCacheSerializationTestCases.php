@@ -2,15 +2,17 @@
 
 namespace MediaWiki\Tests\Parser;
 
-use CacheTime;
 use JsonSerializable;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Json\JsonCodec;
+use MediaWiki\Parser\CacheTime;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Tests\Json\JsonDeserializableSubClass;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
-use MWDebug;
+use stdClass;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Tests\SerializationTestUtils;
 
@@ -31,10 +33,12 @@ use Wikimedia\Tests\SerializationTestUtils;
  * to generate and save serialized object, which would be used for acceptance
  * deserialization tests.
  *
+ * See:
+ * https://www.mediawiki.org/wiki/Manual:Parser_cache/Serialization_compatibility
+ *
  * @see SerializationTestTrait
  * @see SerializationTestUtils
  * @see ValidateParserCacheSerializationTestData
- * @package MediaWiki\Tests\Parser
  */
 abstract class ParserCacheSerializationTestCases {
 
@@ -173,7 +177,8 @@ abstract class ParserCacheSerializationTestCases {
 	 * @return array[]
 	 */
 	public static function getParserOutputTestCases() {
-		MWDebug::filterDeprecationForTest( '/::setPageProperty with non-scalar value/' );
+		MWDebug::filterDeprecationForTest( '/::setPageProperty with (non-scalar|non-string|null) value/' );
+		MWDebug::filterDeprecationForTest( '/::addLanguageLink without prefix/' );
 		$parserOutputWithCacheTimeProps = new ParserOutput( 'CacheTime' );
 		$parserOutputWithCacheTimeProps->setCacheTime( self::CACHE_TIME );
 		$parserOutputWithCacheTimeProps->updateCacheExpiry( 10 );
@@ -187,6 +192,15 @@ abstract class ParserCacheSerializationTestCases {
 		foreach ( self::MOCK_EXT_DATA as $key => $value ) {
 			$parserOutputWithExtensionData->setExtensionData( $key, $value );
 		}
+
+		$parserOutputWithCodecableExtensionData = new ParserOutput( '' );
+		$parserOutputWithCodecableExtensionData->setExtensionData(
+			'map',
+			[
+				'a' => new JsonDeserializableSubClass( 'super', 'sub' ),
+				'b' => (object)[ 'r' => 2, 'd' => '2' ],
+			]
+		);
 
 		$parserOutputWithProperties = new ParserOutput( '' );
 		foreach ( self::MOCK_EXT_DATA as $key => $value ) {
@@ -268,7 +282,7 @@ abstract class ParserCacheSerializationTestCases {
 
 		MWDebug::clearDeprecationFilters();
 
-		return [
+		$testCases = [
 			'empty' => [
 				'instance' => new ParserOutput( '' ),
 				'assertions' => static function ( MediaWikiIntegrationTestCase $testCase, ParserOutput $object ) {
@@ -277,7 +291,7 @@ abstract class ParserCacheSerializationTestCases {
 					// Empty string text is counted as having text.
 					$testCase->assertTrue( $object->hasText() );
 
-					$testCase->assertSame( '', $object->getText() );
+					$testCase->assertSame( '', $object->getRawText() );
 					$testCase->assertSame( '', $object->getWrapperDivClass() );
 					$testCase->assertNull( $object->getSpeculativeRevIdUsed() );
 					$testCase->assertNull( $object->getSpeculativePageIdUsed() );
@@ -336,7 +350,6 @@ abstract class ParserCacheSerializationTestCases {
 				'assertions' => static function ( MediaWikiIntegrationTestCase $testCase, ParserOutput $object ) {
 					$testCase->assertTrue( $object->hasText() );
 					$testCase->assertSame( 'Lorem Ipsum', $object->getRawText() );
-					$testCase->assertSame( 'Lorem Ipsum', $object->getText() );
 				}
 			],
 			'usedOptions' => [
@@ -354,6 +367,31 @@ abstract class ParserCacheSerializationTestCases {
 					$testCase->assertSame( self::MOCK_EXT_DATA['string'], $object->getExtensionData( 'string' ) );
 					$testCase->assertArrayEquals( self::MOCK_EXT_DATA['array'], $object->getExtensionData( 'array' ) );
 					$testCase->assertSame( self::MOCK_EXT_DATA['map'], $object->getExtensionData( 'map' ) );
+				}
+			],
+			'codecableExtensionData' => [
+				'instance' => $parserOutputWithCodecableExtensionData,
+				'assertions' => static function ( MediaWikiIntegrationTestCase $testCase, ParserOutput $object ) {
+					$actual = $object->getExtensionData( 'map' );
+					$testCase->assertIsArray( $actual );
+					$testCase->assertArrayHasKey( 'a', $actual );
+					$testCase->assertInstanceOf(
+						JsonDeserializableSubClass::class, $actual['a']
+					);
+					$testCase->assertSame( 'super', $actual['a']->getSuperClassField() );
+					$testCase->assertSame( 'sub', $actual['a']->getSubClassField() );
+					$testCase->assertArrayHasKey( 'b', $actual );
+					$testCase->assertInstanceOf(
+						stdClass::class, $actual['b']
+					);
+					$testCase->assertSame(
+						2, $actual['b']->r
+					);
+					$testCase->assertSame(
+						'2', $actual['b']->d
+					);
+					$testCase->assertCount( 2, (array)$actual['b'] );
+					$testCase->assertCount( 2, $actual );
 				}
 			],
 			'pageProperties' => [
@@ -489,6 +527,13 @@ abstract class ParserCacheSerializationTestCases {
 				}
 			],
 		];
+		// We don't serialize or restore parseStartTime any more, so
+		// ensure that it is cleared in the instances we are going to
+		// compare against.
+		foreach ( $testCases as $name => $case ) {
+			$case['instance']->clearParseStartTime();
+		}
+		return $testCases;
 	}
 
 	/**
@@ -513,9 +558,17 @@ abstract class ParserCacheSerializationTestCases {
 					return $jsonCodec->serialize( $obj );
 				},
 				'deserializer' => static function ( $data ) use ( $jsonCodec ) {
-					return $jsonCodec->unserialize( $data );
+					return $jsonCodec->deserialize( $data );
 				}
 			];
+		}
+		// T374736: hack for old test cases
+		foreach ( $serializationFormats as [ 'deserializer' => &$d ] ) {
+			$oldDeserializer = $d;
+			$d = static function ( $data ) use ( $oldDeserializer ) {
+				MWDebug::filterDeprecationForTest( '/::addLanguageLink without prefix/' );
+				return $oldDeserializer( $data );
+			};
 		}
 		return $serializationFormats;
 	}

@@ -19,15 +19,15 @@
 			"PieRRoMaN",
 			"SRXcraft",
 			"Sherbrooke",
+			"SleaY",
 			"Urhixidur",
 			"Verdy p",
 			"Windes",
 			"Wladek92",
 			"Zcqsc06",
 			"Zetud",
-			"SleaY",
-			"Mahabarata",
-			"Escargot bleu"
+			"Escargot bleu",
+			"Mahabarata"
 		]
 	},
 	"gadgets-desc": "Permet aux utilisateurs de choisir des [[Special:Gadgets|gadgets CSS et Javascripts]] personnalisés dans leurs [[Special:Preferences#mw-prefsection-gadgets|préférences]]",
@@ -65,7 +65,7 @@
 	"gadgets-export-download": "Télécharger",
 	"gadgets-requires-es6": "Ce gadget n’est pris en charge que sur les navigateurs dont le moteur JavaScript est compatible avec la spécification ES6 (ECMAScript 6).",
 	"gadgets-validate-notset": "La propriété <code>$1</code> n’est pas définie.",
-	"gadgets-validate-wrongtype": "La propriété <code>$1</code> doit être <code>$2</code> plutôt que <code>$3</code>.",
+	"gadgets-validate-wrongtype": "La propriété <code>$1</code> doit être de type <code>$2</code>.",
 	"gadgets-validate-json": "Les fichiers JSON sont spécifiés mais non utilisés. Ils ne sont valides que dans les gadgets packagés.",
 	"gadgets-validate-es6default": "Les gadgets nécessitant ES6 ne peuvent pas être activés par défaut.",
 	"gadgets-validate-noentrypoint": "L'indicateur de package est ignoré car aucun fichier de script n'est spécifié.",

@@ -29,7 +29,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Oer dizze kategory",
 	"mobile-frontend-meta-data-issues-header": "Sideproblemen",
 	"minerva-meta-data-issues-section-header": "Seksjeproblemen",
-	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "Begjindiel fan ’e side bewurkje",
 	"mobile-frontend-placeholder": "{{SITENAME}} trochsykje",
 	"mobile-frontend-random-button": "Samar wat",
@@ -54,8 +53,6 @@
 	"skin-minerva-issue-learn-more": "Mear witte",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoryen",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Kategoryen fan siden besjen",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Ferbettere oanpak sideproblemen",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Sideproblemen (Berjocht:ambox) wurde yn it artikel oanjûn.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Spitigernôch binne op side groepearre resulaten net beskikber foar mobyl. At jo de groepearfunksje brûke wolle, gean dan oer op de Buroblêd-werjefte.",
 	"minerva.css": "/* Al it CSS hjirre sil foar brûkers fan de MinervaNij-foarmjouwing laden wurde */",
 	"minerva.js": "/* Al it JavaScript hjirre sil foar brûkers fan de MinervaNij-foarmjouwing laden wurde */"

@@ -2,25 +2,24 @@
 
 namespace MediaWiki\Extension\ParserFunctions;
 
-use Config;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use LinkCache;
+use MediaWiki\Cache\LinkCache;
+use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\PPFrame;
+use MediaWiki\Parser\PPNode;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPageFactory;
-use MWTimestamp;
-use Parser;
-use PPFrame;
-use PPNode;
+use MediaWiki\Title\Title;
+use MediaWiki\Utils\MWTimestamp;
 use RepoGroup;
-use Sanitizer;
 use StringUtils;
-use StubObject;
-use Title;
 use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
@@ -29,8 +28,11 @@ use Wikimedia\RequestTimeout\TimeoutException;
  * @link https://www.mediawiki.org/wiki/Help:Extension:ParserFunctions
  */
 class ParserFunctions {
+	/** @var ExprParser|null */
 	private static $mExprParser = null;
+	/** @var array[][][][] */
 	private static $mTimeCache = [];
+	/** @var int */
 	private static $mTimeChars = 0;
 
 	/** ~10 seconds */
@@ -564,15 +566,8 @@ class ParserFunctions {
 					'</strong>';
 			}
 
-			if ( $language !== '' && $this->languageNameUtils->isValidBuiltInCode( $language ) ) {
-				// use whatever language is passed as a parameter
-				$langObject = $this->languageFactory->getLanguage( $language );
-			} else {
-				// use wiki's content language
-				$langObject = $parser->getTargetLanguage();
-				// $ttl is passed by reference, which doesn't work right on stub objects
-				StubObject::unstub( $langObject );
-			}
+			$langObject = $this->languageFactory->getLanguage(
+				$this->normalizeLangCode( $parser, $language ) );
 			$result = $langObject->sprintfDate( $format, $ts, $tz, $ttl );
 		}
 		self::$mTimeCache[$format][$cacheKey][$language][$local] = [ $result, $ttl ];
@@ -580,6 +575,21 @@ class ParserFunctions {
 			$frame->setTTL( $ttl );
 		}
 		return $result;
+	}
+
+	/**
+	 * Convert an input string to a known language code for time formatting
+	 *
+	 * @param Parser $parser
+	 * @param string $langCode
+	 * @return string
+	 */
+	private function normalizeLangCode( Parser $parser, string $langCode ) {
+		if ( $langCode !== '' && $this->languageNameUtils->isKnownLanguageTag( $langCode ) ) {
+			return $langCode;
+		} else {
+			return $parser->getTargetLanguage()->getCode();
+		}
 	}
 
 	/**
@@ -620,6 +630,69 @@ class ParserFunctions {
 		$date = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
 		$language = isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
 		return $this->timeCommon( $parser, $frame, $format, $date, $language, true );
+	}
+
+	/**
+	 * Formatted time -- time with a symbolic rather than explicit format
+	 *
+	 * @param Parser $parser
+	 * @param PPFrame $frame
+	 * @param array $args
+	 * @return string
+	 */
+	public function timef( Parser $parser, PPFrame $frame, array $args ) {
+		return $this->timefCommon( $parser, $frame, $args, false );
+	}
+
+	/**
+	 * Formatted time -- time with a symbolic rather than explicit format
+	 * Using the local timezone of the wiki.
+	 *
+	 * @param Parser $parser
+	 * @param PPFrame $frame
+	 * @param array $args
+	 * @return string
+	 */
+	public function timefl( Parser $parser, PPFrame $frame, array $args ) {
+		return $this->timefCommon( $parser, $frame, $args, true );
+	}
+
+	/**
+	 * Helper for timef and timefl
+	 *
+	 * @param Parser $parser
+	 * @param PPFrame $frame
+	 * @param array $args
+	 * @param bool $local
+	 * @return string
+	 */
+	private function timefCommon( Parser $parser, PPFrame $frame, array $args, $local ) {
+		$date = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
+		$inputType = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
+
+		if ( $inputType !== '' ) {
+			$types = $parser->getMagicWordFactory()->newArray( [
+				'timef-time',
+				'timef-date',
+				'timef-both',
+				'timef-pretty'
+			] );
+			$id = $types->matchStartToEnd( $inputType );
+			if ( $id === false ) {
+				return '<strong class="error">' .
+					wfMessage( 'pfunc_timef_bad_format' ) .
+					'</strong>';
+			}
+			$type = str_replace( 'timef-', '', $id );
+		} else {
+			$type = 'both';
+		}
+
+		$langCode = isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
+		$langCode = $this->normalizeLangCode( $parser, $langCode );
+		$lang = $this->languageFactory->getLanguage( $langCode );
+		$format = $lang->getDateFormatString( $type, 'default' );
+		return $this->timeCommon( $parser, $frame, $format, $date, $langCode, $local );
 	}
 
 	/**

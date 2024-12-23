@@ -29,7 +29,6 @@
 	"mobile-frontend-meta-data-issues-categories": "He pho thâtih",
 	"mobile-frontend-meta-data-issues-header": "Hmia buanazy",
 	"minerva-meta-data-issues-section-header": "Py buanazy",
-	"mobile-frontend-notifications-filter": "Athlina",
 	"mobile-frontend-pageaction-edit-tooltip": "He hmia âthaona he taopathi",
 	"mobile-frontend-placeholder": "‎{{SITENAME}} lia tlua teh",
 	"mobile-frontend-random-button": "Khothi",
@@ -53,7 +52,5 @@
 	"skin-minerva-issue-learn-more": "Achu via",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Phozy",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Hmia phozy palâ",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Pakiathysapa hmia buanazy patlâhna",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Hmia buanazy (Tepalei:ambox) cha châpaw lia a tlâh rohpa a châ aw.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Vâchhie kawpa ta, hmia ta pachhaihpa cha mobile lia ahmô vei. Py ta hmia nanonazy na hmâ khoh khiah, desktop site charei teh."
 }

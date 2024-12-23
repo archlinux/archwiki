@@ -3,6 +3,8 @@
 		"authors": [
 			"ANukuma",
 			"Bennylin",
+			"Ezagren",
+			"Fafau06",
 			"Gombang",
 			"Hidayatsrf",
 			"IvanLanin",
@@ -10,9 +12,7 @@
 			"Rachmat.Wahidi",
 			"Rachmat04",
 			"Veracious",
-			"William Surya Permana",
-			"Ezagren",
-			"Fafau06"
+			"William Surya Permana"
 		]
 	},
 	"math-desc": "Menghasilkan rumus matematika di antara tag <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",

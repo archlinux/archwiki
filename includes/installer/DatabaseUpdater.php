@@ -23,30 +23,21 @@
 
 namespace MediaWiki\Installer;
 
-use AddRFCandPMIDInterwiki;
 use AutoLoader;
 use CleanupEmptyCategories;
 use DeleteDefaultMessages;
-use ExtensionRegistry;
-use FakeMaintenance;
-use FixDefaultJsonContentPages;
 use LogicException;
-use Maintenance;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\FakeMaintenance;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\MessageBlobStore;
 use MediaWiki\SiteStats\SiteStatsInit;
 use MigrateLinksTable;
-use PopulateBacklinkNamespace;
-use PopulateFilearchiveSha1;
-use PopulateImageSha1;
-use PopulateIpChanges;
-use PopulatePPSortKey;
-use PopulateRevisionLength;
-use PopulateRevisionSha1;
 use RebuildLocalisationCache;
 use RefreshImageMetadata;
 use RuntimeException;
@@ -54,6 +45,7 @@ use UnexpectedValueException;
 use UpdateCollation;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 require_once __DIR__ . '/../../maintenance/Maintenance.php';
 
@@ -104,6 +96,7 @@ abstract class DatabaseUpdater {
 	 */
 	protected $maintenance;
 
+	/** @var bool */
 	protected $shared = false;
 
 	/** @var HookContainer|null */
@@ -115,16 +108,7 @@ abstract class DatabaseUpdater {
 	 */
 	protected $postDatabaseUpdateMaintenance = [
 		DeleteDefaultMessages::class,
-		PopulateRevisionLength::class,
-		PopulateRevisionSha1::class,
-		PopulateImageSha1::class,
-		PopulateFilearchiveSha1::class,
-		PopulateBacklinkNamespace::class,
-		FixDefaultJsonContentPages::class,
 		CleanupEmptyCategories::class,
-		AddRFCandPMIDInterwiki::class,
-		PopulatePPSortKey::class,
-		PopulateIpChanges::class,
 	];
 
 	/**
@@ -149,7 +133,7 @@ abstract class DatabaseUpdater {
 	protected function __construct(
 		IMaintainableDatabase &$db,
 		$shared,
-		Maintenance $maintenance = null
+		?Maintenance $maintenance = null
 	) {
 		$this->db = $db;
 		$this->db->setFlag( DBO_DDLMODE );
@@ -245,7 +229,7 @@ abstract class DatabaseUpdater {
 	public static function newForDB(
 		IMaintainableDatabase $db,
 		$shared = false,
-		Maintenance $maintenance = null
+		?Maintenance $maintenance = null
 	) {
 		$type = $db->getType();
 		if ( in_array( $type, Installer::getDBTypes() ) ) {
@@ -553,6 +537,12 @@ abstract class DatabaseUpdater {
 
 		$what = array_fill_keys( $what, true );
 		$this->skipSchema = isset( $what['noschema'] ) || $this->fileHandle !== null;
+
+		if ( isset( $what['initial'] ) ) {
+			$this->output( 'Inserting initial update keys...' );
+			$this->insertInitialUpdateKeys();
+			$this->output( "done.\n" );
+		}
 		if ( isset( $what['core'] ) ) {
 			$this->doCollationUpdate();
 			$this->runUpdates( $this->getCoreUpdateList(), false );
@@ -677,6 +667,22 @@ abstract class DatabaseUpdater {
 	}
 
 	/**
+	 * Add initial keys to the updatelog table. Should be called during installation.
+	 */
+	public function insertInitialUpdateKeys() {
+		$this->db->clearFlag( DBO_DDLMODE );
+		$iqb = $this->db->newInsertQueryBuilder()
+			->insertInto( 'updatelog' )
+			->ignore()
+			->caller( __METHOD__ );
+		foreach ( $this->getInitialUpdateKeys() as $key ) {
+			$iqb->row( [ 'ul_key' => $key ] );
+		}
+		$iqb->execute();
+		$this->db->setFlag( DBO_DDLMODE );
+	}
+
+	/**
 	 * Returns whether updates should be executed on the database table $name.
 	 * Updates will be prevented if the table is a shared table, and it is not
 	 * specified to run updates on shared tables.
@@ -709,6 +715,18 @@ abstract class DatabaseUpdater {
 	 * @return array[]
 	 */
 	abstract protected function getCoreUpdateList();
+
+	/**
+	 * Get an array of update keys to insert into the updatelog table after a
+	 * new installation. The named operations will then be skipped by a
+	 * subsequent update.
+	 *
+	 * Add keys here to skip updates that are redundant or harmful on a new
+	 * installation, for example reducing field sizes, adding constraints, etc.
+	 *
+	 * @return string[]
+	 */
+	abstract protected function getInitialUpdateKeys();
 
 	/**
 	 * Append an SQL fragment to the open file handle.
@@ -1114,14 +1132,14 @@ abstract class DatabaseUpdater {
 	 *
 	 * @since 1.32
 	 * @param string $class Maintenance subclass
-	 * @param string $script Script path and filename, usually "maintenance/fooBar.php"
+	 * @param string $unused Unused, kept for compatibility
 	 */
-	protected function runMaintenance( $class, $script ) {
-		$this->output( "Running $script...\n" );
+	protected function runMaintenance( $class, $unused = '' ) {
+		$this->output( "Running $class...\n" );
 		$task = $this->maintenance->runChild( $class );
 		$ok = $task->execute();
 		if ( !$ok ) {
-			throw new RuntimeException( "Execution of $script did not complete successfully." );
+			throw new RuntimeException( "Execution of $class did not complete successfully." );
 		}
 		$this->output( "done.\n" );
 	}
@@ -1159,7 +1177,11 @@ abstract class DatabaseUpdater {
 		$this->output( "Purging caches..." );
 
 		// ObjectCache
-		$this->db->delete( 'objectcache', '*', __METHOD__ );
+		$this->db->newDeleteQueryBuilder()
+			->deleteFrom( 'objectcache' )
+			->where( ISQLPlatform::ALL_ROWS )
+			->caller( __METHOD__ )
+			->execute();
 
 		// LocalisationCache
 		if ( $wgLocalisationCacheConf['manualRecache'] ) {
@@ -1173,7 +1195,11 @@ abstract class DatabaseUpdater {
 		);
 
 		// ResourceLoader: File-dependency cache
-		$this->db->delete( 'module_deps', '*', __METHOD__ );
+		$this->db->newDeleteQueryBuilder()
+			->deleteFrom( 'module_deps' )
+			->where( ISQLPlatform::ALL_ROWS )
+			->caller( __METHOD__ )
+			->execute();
 		$this->output( "done.\n" );
 	}
 
@@ -1278,6 +1304,27 @@ abstract class DatabaseUpdater {
 		$this->output( "done.\n" );
 	}
 
+	protected function migratePagelinks() {
+		if ( $this->updateRowExists( MigrateLinksTable::class . 'pagelinks' ) ) {
+			$this->output( "...pagelinks table has already been migrated.\n" );
+			return;
+		}
+		/**
+		 * @var MigrateLinksTable $task
+		 */
+		$task = $this->maintenance->runChild(
+			MigrateLinksTable::class, 'migrateLinksTable.php'
+		);
+		'@phan-var MigrateLinksTable $task';
+		$task->loadParamsAndArgs( MigrateLinksTable::class, [
+			'force' => true,
+			'table' => 'pagelinks'
+		] );
+		$this->output( "Running migrateLinksTable.php on pagelinks...\n" );
+		$task->execute();
+		$this->output( "done.\n" );
+	}
+
 	/**
 	 * Only run a function if a table does not exist
 	 *
@@ -1356,5 +1403,5 @@ abstract class DatabaseUpdater {
 
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( DatabaseUpdater::class, 'DatabaseUpdater' );

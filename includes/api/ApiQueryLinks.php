@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
@@ -37,20 +39,17 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 	private const LINKS = 'links';
 	private const TEMPLATES = 'templates';
 
-	private $table, $prefix, $titlesParam, $helpUrl;
+	private string $table;
+	private string $prefix;
+	private string $titlesParam;
+	private string $helpUrl;
 
 	private LinkBatchFactory $linkBatchFactory;
 	private LinksMigration $linksMigration;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param LinksMigration $linksMigration
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		LinkBatchFactory $linkBatchFactory,
 		LinksMigration $linksMigration
 	) {
@@ -268,3 +267,6 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		return $this->helpUrl;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryLinks::class, 'ApiQueryLinks' );

@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Minerva;
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Minerva\Skins\FeaturesHelper;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
@@ -25,9 +26,9 @@ class FeaturesHelperTest extends MediaWikiIntegrationTestCase {
 				]
 			]
 		];
-		$context = new \RequestContext();
+		$context = new RequestContext();
 		$request = $context->getRequest();
-		$editContext = new \RequestContext();
+		$editContext = new RequestContext();
 		$editRequest = $context->getRequest();
 		$editRequest->setVal( 'action', 'edit' );
 		$mainTitle = Title::makeTitle( NS_MAIN, 'Main Page' );
@@ -46,7 +47,7 @@ class FeaturesHelperTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Minerva\Skins\FeaturesHelper::shouldDisableNightMode
 	 */
 	public function testShouldDisableNightModeExcluded(
-		array $options, WebRequest $request, Title $title = null, bool $expected = false ) {
+		array $options, WebRequest $request, ?Title $title = null, bool $expected = false ) {
 		$featuresHelper = new FeaturesHelper();
 		$shouldDisableNightMode = $featuresHelper->shouldDisableNightMode( $options, $request, $title );
 		$this->assertSame( $expected, $shouldDisableNightMode );
@@ -67,7 +68,7 @@ class FeaturesHelperTest extends MediaWikiIntegrationTestCase {
 				]
 			]
 		];
-		$context = new \RequestContext();
+		$context = new RequestContext();
 		$request = $context->getRequest();
 		$includedTitle = Title::makeTitle( NS_MAIN, 'Included Page' );
 		$featuresHelper = new FeaturesHelper();

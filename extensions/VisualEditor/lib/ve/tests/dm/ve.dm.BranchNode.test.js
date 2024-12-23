@@ -31,18 +31,18 @@ ve.dm.nodeFactory.register( ve.dm.BranchNodeStub );
 
 /* Tests */
 
-QUnit.test( 'canHaveChildren', function ( assert ) {
-	var node = new ve.dm.BranchNodeStub();
+QUnit.test( 'canHaveChildren', ( assert ) => {
+	const node = new ve.dm.BranchNodeStub();
 	assert.strictEqual( node.canHaveChildren(), true );
 } );
 
-QUnit.test( 'canHaveChildrenNotContent', function ( assert ) {
-	var node = new ve.dm.BranchNodeStub();
+QUnit.test( 'canHaveChildrenNotContent', ( assert ) => {
+	const node = new ve.dm.BranchNodeStub();
 	assert.strictEqual( node.canHaveChildrenNotContent(), true );
 } );
 
-QUnit.test( 'setRoot', function ( assert ) {
-	var node1 = new ve.dm.BranchNodeStub(),
+QUnit.test( 'setRoot', ( assert ) => {
+	const node1 = new ve.dm.BranchNodeStub(),
 		node2 = new ve.dm.BranchNodeStub( {}, [ node1 ] ),
 		node3 = new ve.dm.BranchNodeStub( {}, [ node2 ] ),
 		node4 = new ve.dm.BranchNodeStub();
@@ -52,8 +52,8 @@ QUnit.test( 'setRoot', function ( assert ) {
 	assert.strictEqual( node1.getRoot(), node4 );
 } );
 
-QUnit.test( 'setDocument', function ( assert ) {
-	var node1 = new ve.dm.BranchNodeStub(),
+QUnit.test( 'setDocument', ( assert ) => {
+	const node1 = new ve.dm.BranchNodeStub(),
 		node2 = new ve.dm.BranchNodeStub( {}, [ node1 ] ),
 		node3 = new ve.dm.BranchNodeStub( {}, [ node2 ] ),
 		node4 = new ve.dm.BranchNodeStub();
@@ -63,11 +63,11 @@ QUnit.test( 'setDocument', function ( assert ) {
 	assert.strictEqual( node1.getDocument(), node4 );
 } );
 
-QUnit.test( 'push', function ( assert ) {
-	var node1 = new ve.dm.BranchNodeStub(),
+QUnit.test( 'push', ( assert ) => {
+	const node1 = new ve.dm.BranchNodeStub(),
 		node2 = new ve.dm.BranchNodeStub(),
 		node3 = new ve.dm.BranchNodeStub( {}, [ node1 ] );
-	node3.on( 'splice', function () {
+	node3.on( 'splice', () => {
 		// Will be called 1 time
 		assert.true( true, 'splice was emitted' );
 	} );
@@ -75,11 +75,11 @@ QUnit.test( 'push', function ( assert ) {
 	assert.deepEqual( node3.getChildren(), [ node1, node2 ] );
 } );
 
-QUnit.test( 'pop', function ( assert ) {
-	var node1 = new ve.dm.BranchNodeStub(),
+QUnit.test( 'pop', ( assert ) => {
+	const node1 = new ve.dm.BranchNodeStub(),
 		node2 = new ve.dm.BranchNodeStub(),
 		node3 = new ve.dm.BranchNodeStub( {}, [ node1, node2 ] );
-	node3.on( 'splice', function () {
+	node3.on( 'splice', () => {
 		// Will be called 1 time
 		assert.true( true, 'splice was emitted' );
 	} );
@@ -87,11 +87,11 @@ QUnit.test( 'pop', function ( assert ) {
 	assert.deepEqual( node3.getChildren(), [ node1 ] );
 } );
 
-QUnit.test( 'unshift', function ( assert ) {
-	var node1 = new ve.dm.BranchNodeStub(),
+QUnit.test( 'unshift', ( assert ) => {
+	const node1 = new ve.dm.BranchNodeStub(),
 		node2 = new ve.dm.BranchNodeStub(),
 		node3 = new ve.dm.BranchNodeStub( {}, [ node1 ] );
-	node3.on( 'splice', function () {
+	node3.on( 'splice', () => {
 		// Will be called 1 time
 		assert.true( true, 'splice was emitted' );
 	} );
@@ -99,11 +99,11 @@ QUnit.test( 'unshift', function ( assert ) {
 	assert.deepEqual( node3.getChildren(), [ node2, node1 ] );
 } );
 
-QUnit.test( 'shift', function ( assert ) {
-	var node1 = new ve.dm.BranchNodeStub(),
+QUnit.test( 'shift', ( assert ) => {
+	const node1 = new ve.dm.BranchNodeStub(),
 		node2 = new ve.dm.BranchNodeStub(),
 		node3 = new ve.dm.BranchNodeStub( {}, [ node1, node2 ] );
-	node3.on( 'splice', function () {
+	node3.on( 'splice', () => {
 		// Will be called 1 time
 		assert.true( true, 'splice was emitted' );
 	} );
@@ -111,12 +111,12 @@ QUnit.test( 'shift', function ( assert ) {
 	assert.deepEqual( node3.getChildren(), [ node2 ] );
 } );
 
-QUnit.test( 'splice', function ( assert ) {
-	var node1 = new ve.dm.BranchNodeStub(),
+QUnit.test( 'splice', ( assert ) => {
+	const node1 = new ve.dm.BranchNodeStub(),
 		node2 = new ve.dm.BranchNodeStub(),
 		node3 = new ve.dm.BranchNodeStub(),
 		node4 = new ve.dm.BranchNodeStub( {}, [ node1, node2 ] );
-	node4.on( 'splice', function () {
+	node4.on( 'splice', () => {
 		// Will be called 3 times
 		assert.true( true, 'splice was emitted' );
 	} );

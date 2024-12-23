@@ -19,15 +19,19 @@
  * @author Purodha Blissenbach
  */
 
+use MediaWiki\Language\Language;
+
 /**
  * Ripuarian (Ripoarėsh)
  *
  * @ingroup Languages
  */
 class LanguageKsh extends Language {
-	// Do not add male wiki families, since that's the default.
-	// No need to add neuter to wikis having names ending in "-wiki".
-	private static $familygender = [
+	/**
+	 * Do not add male wiki families, since that's the default.
+	 * No need to add neuter to wikis having names ending in "-wiki".
+	 */
+	private const FAMILYGENDER = [
 		'wikipedia' => 'f',
 		'wikiversity' => 'f',
 		'wiktionary' => 'n',
@@ -83,8 +87,8 @@ class LanguageKsh extends Language {
 		if ( preg_match( '/wiki$/', $lord ) ) {
 			$gender = 'n'; // Dat xyz-wiki
 		}
-		if ( isset( self::$familygender[$lord] ) ) {
-			$gender = self::$familygender[$lord];
+		if ( isset( self::FAMILYGENDER[$lord] ) ) {
+			$gender = self::FAMILYGENDER[$lord];
 		}
 
 		$isGenderFemale = $gender === 'f';

@@ -2,14 +2,12 @@
 
 /**
  * @group Language
+ * @covers \MediaWiki\Language\LanguageConverter
  */
 class LanguageConverterIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	use LanguageConverterTestTrait;
 
-	/**
-	 * @covers \LanguageConverter::hasVariant
-	 */
 	public function testHasVariant() {
 		// See LanguageSrTest::testHasVariant() for additional tests
 		$converterEn = $this->getLanguageConverter( 'en' );

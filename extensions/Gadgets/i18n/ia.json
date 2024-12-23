@@ -39,7 +39,7 @@
 	"gadgets-export-download": "Discargar",
 	"gadgets-requires-es6": "Iste accessorio es solmente supportate sur navigatores compatibile con ES6",
 	"gadgets-validate-notset": "Le proprietate <code>$1</code> non es definite.",
-	"gadgets-validate-wrongtype": "Le proprietate <code>$1</code> debe esser <code>$2</code> in vice de <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Le proprietate <code>$1</code> debe esser del typo <code>$2</code>.",
 	"gadgets-validate-json": "Files JSON ha essite specificate ma non usate. Illos es valide solmente in pacchettos de accessorios.",
 	"gadgets-validate-es6default": "Accessorios que require ES6 non pote esser activate per predefinition.",
 	"gadgets-validate-noentrypoint": "Le marca de pacchetto ha essite ignorate perque necun file de script ha essite specificate.",

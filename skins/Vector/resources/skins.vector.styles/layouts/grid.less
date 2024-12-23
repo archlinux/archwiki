@@ -7,7 +7,7 @@
 		display: grid;
 		column-gap: @grid-column-gap;
 		grid-template: ~'min-content 1fr min-content / @{grid-template-column-desktop}';
-		// stylelint-disable-next-line stylistic/declaration-colon-space-after
+		// stylelint-disable-next-line @stylistic/declaration-colon-space-after
 		grid-template-areas:
 			'siteNotice siteNotice'
 			'columnStart pageContent'
@@ -32,7 +32,7 @@
 	}
 
 	.vector-feature-page-tools-pinned-enabled .vector-column-end,
-	.vector-feature-client-prefs-pinned-enabled .vector-column-end {
+	.vector-feature-appearance-pinned-clientpref-1 .vector-column-end {
 		width: @width-column-desktop;
 	}
 
@@ -66,7 +66,7 @@
 	}
 
 	.vector-feature-page-tools-pinned-enabled .vector-column-end,
-	.vector-feature-client-prefs-pinned-enabled .vector-column-end {
+	.vector-feature-appearance-pinned-clientpref-1 .vector-column-end {
 		width: @width-column-desktop-wide;
 	}
 }
@@ -75,7 +75,7 @@
 .vector-feature-main-menu-pinned-disabled.vector-toc-not-available .mw-page-container-inner,
 .vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-clientpref-0 .mw-page-container-inner {
 	grid-template-columns: @width-page-content;
-	// stylelint-disable-next-line stylistic/declaration-colon-space-after
+	// stylelint-disable-next-line @stylistic/declaration-colon-space-after
 	grid-template-areas:
 		'siteNotice'
 		'pageContent'
@@ -97,7 +97,7 @@
 		 * the Content Translation extension and should not be used beyond that.
 		 * FIXME: This can be removed when T322740 is resolved.
 		 */
-		// stylelint-disable-next-line stylistic/declaration-colon-space-after
+		// stylelint-disable-next-line @stylistic/declaration-colon-space-after
 		grid-template-areas:
 			'titlebar-cx .'
 			'titlebar columnEnd'
@@ -123,7 +123,7 @@
 	}
 
 	.vector-feature-page-tools-pinned-enabled .mw-body,
-	.vector-feature-client-prefs-pinned-enabled .mw-body {
+	.vector-feature-appearance-pinned-clientpref-1 .mw-body {
 		column-gap: @grid-column-gap;
 	}
 

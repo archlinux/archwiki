@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\DatabaseMySQL;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDatabaseForOwner;
 use Wikimedia\Rdbms\MySQLPrimaryPos;
 use Wikimedia\Rdbms\Platform\MySQLPlatform;
 use Wikimedia\Rdbms\Replication\MysqlReplicationReporter;
@@ -220,7 +221,7 @@ class DatabaseMySQLTest extends TestCase {
 	 */
 	public function testPtHeartbeat( $lag ) {
 		/** @var IDatabase $db */
-		$db = $this->getMockBuilder( IDatabase::class )
+		$db = $this->getMockBuilder( IDatabaseForOwner::class )
 			->disableOriginalConstructor()
 			->getMock();
 		$db->setLBInfo( 'replica', true );
@@ -288,7 +289,7 @@ class DatabaseMySQLTest extends TestCase {
 		$replicationReporter->method( 'getServerId' )->willReturn( 1 );
 		$replicationReporter->method( 'getServerUUID' )->willReturn( '2E11FA47-71CA-11E1-9E33-C80AA9429562' );
 
-		/** @var DatabaseMySQL $replicationReporter */
+		/** @var MysqlReplicationReporter $replicationReporter */
 		if ( is_array( $rGTIDs ) ) {
 			$this->assertEquals( $rGTIDs, $replicationReporter->getReplicaPos( $db )->getGTIDs() );
 		} else {

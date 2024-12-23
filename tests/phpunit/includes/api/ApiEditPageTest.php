@@ -2,22 +2,23 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiUsageException;
-use IDBAccessObject;
-use JavaScriptContent;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\JavaScriptContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use RevisionDeleter;
+use Wikimedia\Rdbms\IDBAccessObject;
 use WikiPage;
-use WikitextContent;
 
 /**
  * Tests for MediaWiki api.php?action=edit.
@@ -28,9 +29,11 @@ use WikitextContent;
  * @group Database
  * @group medium
  *
- * @covers \ApiEditPage
+ * @covers \MediaWiki\Api\ApiEditPage
  */
 class ApiEditPageTest extends ApiTestCase {
+
+	use TempUserTestTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -891,6 +894,10 @@ class ApiEditPageTest extends ApiTestCase {
 		// Hide the middle revision
 		$list = RevisionDeleter::createList( 'revision',
 			RequestContext::getMain(), $titleObj, [ $revId1 ] );
+		// Set a user for modifying the visibility, this is needed because
+		// setVisibility generates a log, which cannot be an anonymous user actor
+		// when temporary accounts are enabled.
+		RequestContext::getMain()->setUser( $this->getTestUser()->getUser() );
 		$list->setVisibility( [
 			'value' => [ RevisionRecord::DELETED_TEXT => 1 ],
 			'comment' => 'Bye-bye',
@@ -1657,6 +1664,7 @@ class ApiEditPageTest extends ApiTestCase {
 	}
 
 	public function testCreateImageRedirectAnon() {
+		$this->disableAutoCreateTempUser();
 		$name = 'File:' . ucfirst( __FUNCTION__ );
 
 		$this->expectApiErrorCode( 'noimageredirect-anon' );

@@ -15,9 +15,7 @@ function createStubTitle( fragment = null ) {
 		// escape: ( str ) => $.escapeSelector( str )
 		// };
 		mw.msg = ( key ) => `<${ key }>`;
-		mw.message = ( key ) => {
-			return { exists: () => !key.endsWith( 'generic' ), text: () => `<${ key }>` };
-		};
+		mw.message = ( key ) => ( { exists: () => !key.endsWith( 'generic' ), text: () => `<${ key }>` } );
 
 		this.$sourceElement = $( '<a>' ).appendTo(
 			$( '<sup>' ).attr( 'id', 'cite_ref-1' ).appendTo( document.body )

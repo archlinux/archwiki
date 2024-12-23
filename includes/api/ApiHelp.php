@@ -20,19 +20,25 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\HtmlHelper;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Specials\SpecialVersion;
 use MediaWiki\Title\Title;
 use MediaWiki\Utils\ExtensionInfo;
+use SkinFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
@@ -46,14 +52,9 @@ use Wikimedia\RemexHtml\Serializer\SerializerNode;
 class ApiHelp extends ApiBase {
 	private SkinFactory $skinFactory;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param SkinFactory $skinFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		SkinFactory $skinFactory
 	) {
 		parent::__construct( $main, $action );
@@ -598,11 +599,12 @@ class ApiHelp extends ApiBase {
 				}
 
 				if ( $dynamicParams !== null ) {
-					$dynamicParams = ApiBase::makeMessage( $dynamicParams, $context, [
+					$dynamicParams = $context->msg(
+						Message::newFromSpecifier( $dynamicParams ),
 						$module->getModulePrefix(),
 						$module->getModuleName(),
 						$module->getModulePath()
-					] );
+					);
 					$help['parameters'] .= Html::element( 'dt', [], '*' );
 					$help['parameters'] .= Html::rawElement( 'dd',
 						[ 'class' => 'description' ], $dynamicParams->parse() );
@@ -625,11 +627,12 @@ class ApiHelp extends ApiBase {
 
 				$help['examples'] .= Html::openElement( 'dl' );
 				foreach ( $examples as $qs => $msg ) {
-					$msg = ApiBase::makeMessage( $msg, $context, [
+					$msg = $context->msg(
+						Message::newFromSpecifier( $msg ),
 						$module->getModulePrefix(),
 						$module->getModuleName(),
 						$module->getModulePath()
-					] );
+					);
 
 					$link = wfAppendQuery( wfScript( 'api' ), $qs );
 					$sandbox = SpecialPage::getTitleFor( 'ApiSandbox' )->getLocalURL() . '#' . $qs;
@@ -742,3 +745,6 @@ class ApiHelp extends ApiBase {
 		];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiHelp::class, 'ApiHelp' );

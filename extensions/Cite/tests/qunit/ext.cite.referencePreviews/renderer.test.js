@@ -1,33 +1,21 @@
 let createReferencePreview;
 const previewTypes = { TYPE_REFERENCE: 'reference' };
 
-// TODO: Fix this test.  Currently failing on `document.getElementById`
-QUnit.module.skip( 'ext.cite.referencePreviews#renderer', {
+( mw.loader.getModuleNames().indexOf( 'ext.popups.main' ) !== -1 ?
+	QUnit.module :
+	QUnit.module.skip )( 'ext.cite.referencePreviews#renderer', {
 	before() {
 		createReferencePreview = require( 'ext.cite.referencePreviews' ).private.createReferencePreview;
 	},
 	beforeEach() {
 		mw.msg = ( key ) => `<${ key }>`;
-		mw.message = ( key ) => {
-			return { exists: () => !key.endsWith( 'generic' ), text: () => `<${ key }>` };
-		};
+		mw.message = ( key ) => ( { exists: () => !key.endsWith( 'generic' ), text: () => `<${ key }>` } );
 
 		mw.html = {
 			escape: ( str ) => str && str.replace( /'/g, '&apos;' ).replace( /</g, '&lt;' )
 		};
-
-		mw.track = () => {};
-
-		global.navigator = {
-			sendBeacon() {}
-		};
-
-		// Some tests below stub this function. Keep a copy so it can be restored.
-		this.getElementById = document.getElementById;
 	},
 	afterEach() {
-		// Restore getElementsById to its original state.
-		document.getElementById = this.getElementById;
 		mw.msg = null;
 		mw.message = null;
 		mw.html = null;
@@ -48,7 +36,7 @@ QUnit.test( 'createReferencePreview(model)', ( assert ) => {
 
 	assert.strictEqual(
 		$( preview.el ).find( '.mwe-popups-title' ).text().trim(),
-		'<popups-refpreview-web>'
+		'<cite-reference-previews-web>'
 	);
 	assert.strictEqual(
 		$( preview.el ).find( '.mw-parser-output' ).text().trim(),
@@ -71,7 +59,7 @@ QUnit.test( 'createReferencePreview default title', ( assert ) => {
 
 	assert.strictEqual(
 		$( preview.el ).find( '.mwe-popups-title' ).text().trim(),
-		'<popups-refpreview-reference>'
+		'<cite-reference-previews-reference>'
 	);
 } );
 
@@ -104,6 +92,6 @@ QUnit.test( 'createReferencePreview collapsible/sortable handling', ( assert ) =
 	assert.strictEqual( $( preview.el ).find( 'th' ).attr( 'title' ), undefined );
 	assert.strictEqual(
 		$( preview.el ).find( '.mwe-collapsible-placeholder' ).text(),
-		'<popups-refpreview-collapsible-placeholder>'
+		'<cite-reference-previews-collapsible-placeholder>'
 	);
 } );

@@ -94,4 +94,43 @@ class LiteralTest extends MediaWikiUnitTestCase {
 			'hboxes should not be wrapped in to mi elements.' );
 	}
 
+	public function testDoubleVerticalLine() {
+		$n = new Literal( '\\|' );
+		$this->assertStringContainsString( '&#x2016;</mo>', $n->renderMML(),
+			'double vertical line should render as special operator.' );
+	}
+
+	public function testColon() {
+		$n = new Literal( ':' );
+		$this->assertStringContainsString( ':</mo>', $n->renderMML(),
+			'colon should render as special operator.' );
+	}
+
+	public function testRangle() {
+		$n = new Literal( '\\rangle' );
+		$this->assertStringContainsString( 'stretchy="false"', $n->renderMML(),
+			'colon should render as special operator.' );
+	}
+
+	public function testVert() {
+		$n = new Literal( '|' );
+		$this->assertStringContainsString( 'stretchy="false"', $n->renderMML(),
+			'| should render as special operator.' );
+	}
+
+	public function testExclamationMark() {
+		$n = new Literal( '!' );
+		$this->assertStringContainsString( '!</mo>', $n->renderMML(),
+			'exclamation mark should render as special operator.' );
+	}
+
+	public function testDivide() {
+		$n = new Literal( '/' );
+		$real = $n->renderMML();
+		$this->assertStringContainsString( '/</mo>', $real,
+			'divide should render as special operator.' );
+		$this->assertStringContainsString( 'lspace="0" rspace="0"', $real,
+			'divide should have no spacing.' );
+	}
+
 }

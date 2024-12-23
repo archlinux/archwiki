@@ -97,11 +97,98 @@ Explicitly specified timezone: America/New_York (UTC-5)
 !! end
 
 !! test
-Explicitely specified output language (Dutch)
+Explicitly specified output language (Dutch)
 !! wikitext
 {{#time:d F Y|1988-02-28|nl}}
 !! html
 <p>28 februari 1988
+</p>
+!! end
+
+!! test
+#timel: UTC
+!! wikitext
+{{#timel: Y-m-d H:i | 15 January 2001}}
+!! html
+<p>2001-01-15 00:00
+</p>
+!! end
+
+!! test
+#timel: Melbourne
+!! options
+wgLocaltimezone=Australia/Melbourne
+!! wikitext
+{{#timel: Y-m-d H:i | 16 January 2001}}
+!! html
+<p>2001-01-16 11:00
+</p>
+!! end
+
+!! test
+#timef: one parameter
+!! wikitext
+{{#timef:15 January 2001}}
+!! html
+<p>00:00, 15 January 2001
+</p>
+!! end
+
+!! test
+#timef: date only
+!! wikitext
+{{#timef:15 January 2001|date}}
+!! html
+<p>15 January 2001
+</p>
+!! end
+
+!! test
+#timef: time only
+!! wikitext
+{{#timef:15 January 2001|time}}
+!! html
+<p>00:00
+</p>
+!! end
+
+!! test
+#timef: "pretty" format
+!! wikitext
+{{#timef:15 January 2001|pretty}}
+!! html
+<p>15 January
+</p>
+!! end
+
+!! test
+#timef: Japanese target language
+!! options
+language=ja
+!! wikitext
+{{#timef:15 January 2001}}
+!! html
+<p>2001年1月15日 (月) 00:00
+</p>
+!! end
+
+!! test
+#timef: ja parameter
+!! wikitext
+{{#timef:15 January 2001|both|ja}}
+!! html
+<p>2001年1月15日 (月) 00:00
+</p>
+!! end
+
+!! test
+#timefl: one parameter
+!! options
+wgLocaltimezone=Australia/Melbourne
+!! wikitext
+{{#timefl:17 January 2001}}
+!! html
+<p>11:00, 17 January 2001
 </p>
 !! end
 

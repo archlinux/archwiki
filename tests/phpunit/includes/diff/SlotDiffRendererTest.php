@@ -1,5 +1,9 @@
 <?php
 
+use MediaWiki\Content\CssContent;
+use MediaWiki\Content\JsonContent;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Content\WikitextContent;
 use Wikimedia\Assert\ParameterTypeException;
 use Wikimedia\TestingAccessWrapper;
 

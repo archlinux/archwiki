@@ -148,11 +148,11 @@ const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testh
 		// use setTimeout to add new hash change to end of the call stack,
 		// ensuring that event handlers for our previous change can execute
 		// without us interfering with another immediate change
-		setTimeout( function () {
+		setTimeout( () => {
 			location.hash = hash;
 		} );
 
-		return waitForAsync().then( function () {
+		return waitForAsync().then( () => {
 			assert.strictEqual( callCount, 1, 'Viewer should be loaded once' );
 			bootstrap.cleanupEventHandlers();
 			location.hash = '';
@@ -171,7 +171,7 @@ const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testh
 		this.sandbox.stub( bootstrap, 'setupOverlay' );
 		this.sandbox.stub( bootstrap, 'cleanupOverlay' );
 
-		bootstrap.loadViewer( true ).fail( function ( message ) {
+		bootstrap.loadViewer( true ).fail( ( message ) => {
 			assert.strictEqual( bootstrap.setupOverlay.called, true, 'Overlay was set up' );
 			assert.strictEqual( bootstrap.cleanupOverlay.called, true, 'Overlay was cleaned up' );
 			assert.strictEqual( message, errorMessage, 'promise is rejected with the error message when loading fails' );
@@ -234,9 +234,6 @@ const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testh
 
 		const $link4 = $( '.fullMedia .mw-mmv-view-expanded' );
 		assert.ok( $link4.length, 'Link for viewing expanded file was set up.' );
-
-		const $link5 = $( '.fullMedia .mw-mmv-view-config' );
-		assert.ok( $link5.length, 'Link for opening enable/disable configuration was set up.' );
 
 		// Click on valid link
 		$link.trigger( { type: 'click', which: 1 } );
@@ -366,43 +363,32 @@ const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testh
 	} );
 
 	// FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
-	QUnit.skip( 'Validate new LightboxImage object has sensible constructor parameters', function ( assert ) {
+	QUnit.test( 'Validate new LightboxImage object has sensible constructor parameters', function ( assert ) {
 		const viewer = getMultimediaViewer();
-		const fname = 'valid';
-		const imgSrc = '/' + fname + '.jpg/300px-' + fname + '.jpg';
-		const imgRegex = new RegExp( imgSrc + '$' );
-		const clock = this.sandbox.useFakeTimers();
-
-		const $div = createThumb( imgSrc, 'Blah blah', 'meow' );
-		const $link = $div.find( 'a.image' );
+		const fname = 'valid.jpg';
+		const imgSrc = '/' + fname + '/300px-' + fname;
+		createThumb( imgSrc, 'Blah blah', 'meow' );
 
 		// Create a new bootstrap object to trigger the DOM scan, etc.
 		const bootstrap = createBootstrap( viewer );
 		this.sandbox.stub( bootstrap, 'setupOverlay' );
-		this.sandbox.stub( viewer, 'createNewImage' );
 		viewer.loadImage = function () {};
-		viewer.createNewImage = function ( fileLink, filePageLink, fileTitle, index, thumb, caption, alt ) {
-			const html = thumb.outerHTML;
-
-			// FIXME: fileLink doesn't match imgRegex (null)
-			assert.ok( fileLink.match( imgRegex ), 'Thumbnail URL used in creating new image object' );
-			assert.strictEqual( filePageLink, '', 'File page link is sensible when creating new image object' );
-			assert.strictEqual( fileTitle.title, fname, 'Filename is correct when passed into new image constructor' );
-			assert.strictEqual( index, 0, 'The only image we created in the gallery is set at index 0 in the images array' );
-			assert.ok( html.indexOf( ' src="' + imgSrc + '"' ) > 0, 'The image element passed in contains the src=... we want.' );
-			assert.ok( html.indexOf( ' alt="meow"' ) > 0, 'The image element passed in contains the alt=... we want.' );
-			assert.strictEqual( caption, 'Blah blah', 'The caption passed in is correct' );
-			assert.strictEqual( alt, 'meow', 'The alt text passed in is correct' );
-		};
-
-		$link.trigger( { type: 'click', which: 1 } );
-		clock.tick( 10 );
-		assert.equal( bootstrap.setupOverlay.callCount, 1, 'Overlay was set up' );
-
-		clock.reset();
+		const done = assert.async();
+		bootstrap.loadViewer().then( () => {
+			assert.strictEqual( bootstrap.thumbs.length, 1, 'One thumbnail' );
+			/** @property {LightboxImage} */
+			const thumb = bootstrap.thumbs[ 0 ];
+			assert.true( new RegExp( imgSrc + '$' ).test( thumb.src ), 'Thumbnail URL used in creating new image object' );
+			assert.strictEqual( thumb.filePageTitle.title, fname, 'Filename is correct when passed into new image constructor' );
+			assert.strictEqual( thumb.index, 0, 'The only image we created in the gallery is set at index 0 in the images array' );
+			assert.strictEqual( thumb.caption, 'Blah blah', 'The caption passed in is correct' );
+			assert.strictEqual( thumb.alt, 'meow', 'The alt text passed in is correct' );
+			done();
+		} );
+		bootstrap.setupOverlay.reset();
 	} );
 
-	QUnit.test( 'Only load the viewer on a valid hash', function ( assert ) {
+	QUnit.test( 'Only load the viewer on a valid hash', ( assert ) => {
 		location.hash = '';
 
 		const bootstrap = createBootstrap();
@@ -410,7 +396,7 @@ const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testh
 		return hashTest( '/media', bootstrap, assert );
 	} );
 
-	QUnit.test( 'Load the viewer on a legacy hash', function ( assert ) {
+	QUnit.test( 'Load the viewer on a legacy hash', ( assert ) => {
 		location.hash = '';
 
 		const bootstrap = createBootstrap();
@@ -466,7 +452,7 @@ const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testh
 		bootstrap.cleanupOverlay();
 
 		// Scroll restoration is on a setTimeout
-		setTimeout( function () {
+		setTimeout( () => {
 			assert.strictEqual( $( window ).scrollTop(), 50, 'Scroll is correctly reset to original top position' );
 			done();
 		} );
@@ -499,7 +485,7 @@ const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testh
 		clock.restore();
 	} );
 
-	QUnit.test( 'isAllowedThumb', function ( assert ) {
+	QUnit.test( 'isAllowedThumb', ( assert ) => {
 		const $container = $( '<div>' );
 		const $thumb = $( '<img>' ).appendTo( $container );
 		const bootstrap = createBootstrap();
@@ -519,7 +505,7 @@ const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testh
 		assert.strictEqual( bootstrap.isAllowedThumb( $thumb ), false, 'Image with a noviewer class is disallowed.' );
 	} );
 
-	QUnit.test( 'findCaption', function ( assert ) {
+	QUnit.test( 'findCaption', ( assert ) => {
 		const gallery = createGallery( 'foo.jpg', 'Baz' );
 		const thumb = createThumb( 'foo.jpg', 'Quuuuux' );
 		const link = createNormal( 'foo.jpg', 'Foobar' );

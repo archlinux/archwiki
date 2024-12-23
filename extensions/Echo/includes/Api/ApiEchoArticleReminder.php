@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications\Api;
 
-use ApiBase;
 use DateInterval;
 use DateTime;
+use MediaWiki\Api\ApiBase;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\ParamValidator\ParamValidator;

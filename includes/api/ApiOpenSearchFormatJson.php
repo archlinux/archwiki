@@ -22,13 +22,16 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 /**
  * @ingroup API
  */
 class ApiOpenSearchFormatJson extends ApiFormatJson {
+	/** @var bool */
 	private $warningsAsError;
 
-	public function __construct( ApiMain $main, $fm, $warningsAsError ) {
+	public function __construct( ApiMain $main, string $fm, $warningsAsError ) {
 		parent::__construct( $main, "json$fm" );
 		$this->warningsAsError = $warningsAsError;
 	}
@@ -59,3 +62,6 @@ class ApiOpenSearchFormatJson extends ApiFormatJson {
 		parent::execute();
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiOpenSearchFormatJson::class, 'ApiOpenSearchFormatJson' );

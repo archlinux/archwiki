@@ -19,7 +19,7 @@
  */
 
 use MediaWiki\Extension\Math\MathRenderer;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Maintenance\Maintenance;
 
 require_once __DIR__ . '/../../../maintenance/Maintenance.php';
 
@@ -51,7 +51,7 @@ class JsonToMathML extends Maintenance {
 			true );
 		$this->addArg( 'output-path', "Path (with filename) of the output json file created by this script.",
 			true );
-		$this->addOption( 'inputformat', 'Custom parsing how to format the input-json ( see formatInput function)',
+		$this->addOption( 'inputformat', 'Custom parsing how to format the input-json (see formatInput function)',
 			false, true, 'i' );
 		$this->addOption( 'chem-fallback', 'If the json read does not define input-type (tex or chem), check ' .
 			'expressions as Tex and then as chem', false, true, 'c' );
@@ -209,7 +209,7 @@ class JsonToMathML extends Maintenance {
 			$tex = "\\ce{ " . $tex . " }";
 		}
 		/** @var MathRenderer $renderer */
-		$renderer = MediaWikiServices::getInstance()->get( 'Math.RendererFactory' )
+		$renderer = $this->getServiceContainer()->get( 'Math.RendererFactory' )
 			->getRenderer( $tex, $params, $renderingMode );
 		$renderer->render();
 		$mml = $renderer->getMathml();

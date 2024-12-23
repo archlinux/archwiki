@@ -7,6 +7,7 @@
 	"apierror-discussiontools-commentid-notfound": "Ne najden komentar s identifikatorom «$1».",
 	"apierror-discussiontools-commentname-ambiguous": "Najdeno několiko komentarev s nazvoju «$1», potrěbny jest parametr <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "Ne najden komentar s nazvoju «$1».",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Stranica nikogda ne sodrživala diskusije",
 	"apierror-discussiontools-formtoken-used": "Komentar jest uže publikovany. Ako hočete go uviděti, otvorite stranicu ponovno.",
 	"apierror-discussiontools-subscription-failed-add": "Podpisanje se na tutu temu ne udalo se.",
 	"apierror-discussiontools-subscription-failed-remove": "Odpisanje se na tutu temu ne udalo se.",
@@ -40,5 +41,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Nazva temy, na ktoru hočete podpisati se (ili s ktoroj hočete odpisati se)",
 	"apihelp-discussiontoolssubscribe-param-page": "Stranica, na ktoroj javi se tema",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "«True» za podpisanje se, «false» za odpisanje se",
-	"apihelp-discussiontoolssubscribe-summary": "Podpisati se (ili odpisati se) za dobyvanje uvědomjenij o temě."
+	"apihelp-discussiontoolssubscribe-summary": "Podpisati se (ili odpisati se) za dobyvanje uvědomjenij o temě.",
+	"apihelp-discussiontoolsthank-param-commentid": "Identifikator komentara, za ktory trěba poblagodariti.",
+	"apihelp-discussiontoolsthank-summary": "Odpraviti publično poblagodarjenje za komentar."
 }

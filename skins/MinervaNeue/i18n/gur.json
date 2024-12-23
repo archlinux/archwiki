@@ -30,7 +30,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Buuri buuri dina yele",
 	"mobile-frontend-meta-data-issues-header": "Pɛgerɛ yɛla",
 	"minerva-meta-data-issues-section-header": "Yeleŋɔ yɛla",
-	"mobile-frontend-notifications-filter": "Lɛɛsi",
 	"mobile-frontend-pageaction-edit-tooltip": "Demese yelese'ere n boi nɛŋa pɛgedina wa puan",
 	"mobile-frontend-placeholder": "Ɛ {{SITENAME}}",
 	"mobile-frontend-random-button": "Yoo yoo",
@@ -61,7 +60,5 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 year|$1 years}} n tole",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Buuri buuri",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Bisɛ pɛgera buuri buuri",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Pɛgera daaŋɔ tibegɔ",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Pɛgerɛ yɛla (Template: ambox)wan tɔ la gulesegɔ la",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Zube'o, fone puan kan ta'am tigese 'results' yɛsera pɛgera puan. Kiŋɛ 'desk site' la puan fu san bɔta ti fu dikɛ pɛgerɛ la aŋa tum tigese"
 }

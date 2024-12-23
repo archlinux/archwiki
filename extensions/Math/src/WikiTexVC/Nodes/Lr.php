@@ -74,7 +74,8 @@ class Lr extends TexNode {
 			$moRight = new MMLmo( TexClass::CLOSE, $rightAttrs );
 			$right = $moRight->encapsulateRaw( $this->right );
 		}
-
+		// Don't apply outer ' inside the LR structure
+		unset( $state['deriv'] );
 		$inner = $this->getArg()->renderMML( [], $state );
 		$mrow = new MMLmrow( TexClass::INNER );
 		return $mrow->encapsulateRaw(

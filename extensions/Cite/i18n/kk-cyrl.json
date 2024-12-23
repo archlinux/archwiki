@@ -29,5 +29,8 @@
 	"cite-wikieditor-help-content-reference-description": "Дереккөз",
 	"cite-wikieditor-help-content-named-reference-description": "Аталған дереккөз",
 	"cite-wikieditor-help-content-rereference-description": "Кейбір дереккөздердің қосымша қолданылуы",
-	"cite-wikieditor-help-content-showreferences-description": "Дереккөзін көрсету"
+	"cite-wikieditor-help-content-showreferences-description": "Дереккөзін көрсету",
+	"popups-prefs-navpopups-gadget-conflict-info": "Сізде [[$1|Қалқымалы навигация терезесі]] гаджеті қосулы болғандықтан, бұл мүмкіндік берген алдын ала көру терезесін көрмейсіз. Уикиіңізге байланысты, гаджеттің атауы сәл басқаша болуы мүмкін. Қатеге тап бола берсеңіз, гаджеттеріңіз бен қолданушы скриптеріңізді, соның ішінде глобалды скриптерді, тексеріңіз.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "N",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Сізде [[$1|дереккөз кеңестері]] гаджеті қосулы болғандықтан, сіз дереккөз алдын ала көру терезесін көрмейсіз, бірақ бет алдын ала көру терезелерін көре бересіз. Уикиіңізге байланысты, гаджеттің атауы сәл басқаша болуы мүмкін. Қатеге тап бола берсеңіз, гаджеттеріңіз бен қолданушы скриптеріңізді, соның ішінде глобалды скриптерді, тексеріңіз."
 }

@@ -35,7 +35,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "Chú thích này được sử dụng {{PLURAL:$1|một lần|2=hai lần|$1 lần}} trên trang này. Các thay đổi được tạo ra ở đây sẽ được áp dụng ở tất cả những nơi chú thích này được tái sử dụng.",
 	"cite-ve-dialog-reference-options-group-label": "Sử dụng nhóm này",
 	"cite-ve-dialog-reference-options-group-placeholder": "Tham khảo chung",
-	"cite-ve-dialog-reference-options-name-label": "ID để tái sử dụng cước chú",
 	"cite-ve-dialog-reference-options-responsive-label": "Bố trí cột tùy chiều rộng",
 	"cite-ve-dialog-reference-options-section": "Tùy chọn",
 	"cite-ve-dialog-reference-placeholder": "Ghi hoặc dán chú thích vào đây, hoặc nhúng bản mẫu chú thích.",

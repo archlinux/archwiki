@@ -13,7 +13,7 @@ class Less_Visitor_joinSelector extends Less_Visitor {
 		return $this->visitObj( $root );
 	}
 
-	public function visitRule( $ruleNode, &$visitDeeper ) {
+	public function visitDeclration( $declNode, &$visitDeeper ) {
 		$visitDeeper = false;
 	}
 
@@ -64,11 +64,11 @@ class Less_Visitor_joinSelector extends Less_Visitor {
 		}
 	}
 
-	public function visitDirective( $directiveNode ) {
+	public function visitAtRule( $atRuleNode ) {
 		$context = end( $this->contexts );
 
-		if ( $directiveNode->rules && count( $directiveNode->rules ) > 0 ) {
-			$directiveNode->rules[0]->root = $directiveNode->isRooted || count( $context ) === 0;
+		if ( $atRuleNode->rules && count( $atRuleNode->rules ) > 0 ) {
+			$atRuleNode->rules[0]->root = $atRuleNode->isRooted || count( $context ) === 0;
 		}
 	}
 

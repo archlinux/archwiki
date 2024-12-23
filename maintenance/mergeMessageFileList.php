@@ -24,11 +24,14 @@
 
 # Start from scratch
 use MediaWiki\MainConfigNames;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 
+// @codeCoverageIgnoreStart
 define( 'MW_NO_EXTENSION_MESSAGES', 1 );
 
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that merges $wgExtensionMessagesFiles from various
@@ -232,5 +235,7 @@ class MergeMessageFileList extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MergeMessageFileList::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

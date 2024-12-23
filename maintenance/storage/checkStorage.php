@@ -23,8 +23,11 @@
 
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Shell\Shell;
+use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 // ----------------------------------------------------------------------------------
 
@@ -37,7 +40,8 @@ require_once __DIR__ . '/../Maintenance.php';
 class CheckStorage extends Maintenance {
 	private const CONCAT_HEADER = 'O:27:"concatenatedgziphistoryblob"';
 
-	public $oldIdMap, $errors;
+	public array $oldIdMap;
+	public array $errors;
 
 	/** @var ExternalStoreDB */
 	public $dbStore = null;
@@ -55,6 +59,7 @@ class CheckStorage extends Maintenance {
 		$this->check( $fix, $xml );
 	}
 
+	/** @var string[] */
 	public $errorDescriptions = [
 		'restore text' => 'Damaged text, need to be restored from a backup',
 		'restore revision' => 'Damaged revision row, need to be restored from a backup',
@@ -98,7 +103,10 @@ class CheckStorage extends Maintenance {
 				->select( [ 'slot_revision_id', 'content_address' ] )
 				->from( 'slots' )
 				->join( 'content', null, 'content_id = slot_content_id' )
-				->where( [ "slot_revision_id BETWEEN $chunkStart AND $chunkEnd" ] )
+				->where( [
+					$dbr->expr( 'slot_revision_id', '>=', $chunkStart ),
+					$dbr->expr( 'slot_revision_id', '<=', $chunkEnd ),
+				] )
 				->caller( __METHOD__ )->fetchResultSet();
 			/** @var \MediaWiki\Storage\SqlBlobStore $blobStore */
 			$blobStore = $this->getServiceContainer()->getBlobStore();
@@ -162,8 +170,12 @@ class CheckStorage extends Maintenance {
 						$this->addError( 'fixed', "Warning: old_flags set to 0", $id );
 						$dbw = $this->getPrimaryDB();
 						$dbw->ping();
-						$dbw->update( 'text', [ 'old_flags' => '' ],
-							[ 'old_id' => $id ], __METHOD__ );
+						$dbw->newUpdateQueryBuilder()
+							->update( 'text' )
+							->set( [ 'old_flags' => '' ] )
+							->where( [ 'old_id' => $id ] )
+							->caller( __METHOD__ )
+							->execute();
 						echo "Fixed\n";
 					} else {
 						$this->addError( 'fixable', "Warning: old_flags set to 0", $id );
@@ -224,7 +236,7 @@ class CheckStorage extends Maintenance {
 				foreach ( $externalConcatBlobs as $cluster => $xBlobIds ) {
 					$blobIds = array_keys( $xBlobIds );
 					$extDb = $this->dbStore->getReplica( $cluster );
-					$blobsTable = $this->dbStore->getTable( $extDb );
+					$blobsTable = $this->dbStore->getTable( $cluster );
 					$res = $extDb->newSelectQueryBuilder()
 						->select( [ 'blob_id' ] )
 						->from( $blobsTable )
@@ -423,7 +435,7 @@ class CheckStorage extends Maintenance {
 		foreach ( $externalConcatBlobs as $cluster => $oldIds ) {
 			$blobIds = array_keys( $oldIds );
 			$extDb = $this->dbStore->getReplica( $cluster );
-			$blobsTable = $this->dbStore->getTable( $extDb );
+			$blobsTable = $this->dbStore->getTable( $cluster );
 			$headerLength = strlen( self::CONCAT_HEADER );
 			$res = $extDb->newSelectQueryBuilder()
 				->select( [ 'blob_id', "LEFT(blob_text, $headerLength) AS header" ] )
@@ -571,11 +583,12 @@ class CheckStorage extends Maintenance {
 
 		// Update the text row
 		$dbw = $this->getPrimaryDB();
-		$dbw->update( 'text',
-			[ 'old_flags' => $flags, 'old_text' => $text ],
-			[ 'old_id' => $oldId ],
-			__METHOD__, [ 'LIMIT' => 1 ]
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'text' )
+			->set( [ 'old_flags' => $flags, 'old_text' => $text ] )
+			->where( [ 'old_id' => $oldId ] )
+			->caller( __METHOD__ )
+			->execute();
 
 		// Remove it from the unfixed list and add it to the fixed list
 		unset( $this->errors['restore text'][$id] );
@@ -584,5 +597,7 @@ class CheckStorage extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CheckStorage::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

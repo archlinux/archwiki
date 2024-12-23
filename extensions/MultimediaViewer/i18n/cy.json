@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Afalau",
+			"Ceirios",
 			"Lloffiwr",
-			"Robin Owain",
-			"Ceirios"
+			"Robin Owain"
 		]
 	},
 	"multimediaviewer-desc": "Ehangu bawdluniau yn fwy ar ryngwyneb sgrîn lawn",
@@ -30,12 +30,6 @@
 	"multimediaviewer-permission-viewmore": "Gweld mwy",
 	"multimediaviewer-restriction-2257": "Mae'r ddelwedd hon yn cynnwys elfennau rhywiol amlwg a all fod yn destun y Ddeddf Amddiffyn Plant a Gorfodi Anlladrwydd yn yr Unol Daleithiau.",
 	"multimediaviewer-restriction-nazi": "Mae'r ddelwedd hon yn cynnwys arwyddluniau Natsïaidd neu ffasgaidd eraill a allai gael eu gwahardd mewn rhai gwledydd.",
-	"multimediaviewer-about-mmv": "Ynglŷn â'r Syllwr Cyfryngau",
-	"multimediaviewer-optout-mmv": "Analluogi'r Syllwr Cyfryngau",
-	"multimediaviewer-optin-mmv": "Galluogi'r Syllwr Cyfryngau",
-	"multimediaviewer-optout-pending-mmv": "Wrthi'n analluogi'r Syllwr Cyfryngau",
-	"multimediaviewer-optin-pending-mmv": "Wrthi'n galluogi'r Syllwr Cyfryngau",
-	"multimediaviewer-optin-help": "Bydd y Syllwr Cyfryngau yn cael ei ddefnyddio i ddangos delweddau.",
 	"multimediaviewer-geolocation": "Lleoliad: $1",
 	"multimediaviewer-reuse-link": "Rhannu neu fewnosod y ffeil hon",
 	"multimediaviewer-reuse-loading-placeholder": "Wrthi'n llwytho…",
@@ -86,11 +80,6 @@
 	"multimediaviewer-download-attribution-cta": "Dangoswch i mi sut",
 	"multimediaviewer-reuse-warning-generic": "Gwiriwch [$1 ei manylion] cyn ei defnyddio.",
 	"multimediaviewer-attr-plain": "Plaen",
-	"multimediaviewer-options-tooltip": "Galluogi neu analluogi'r Syllwr Cyfryngau",
-	"multimediaviewer-options-dialog-header": "Analluogi'r Syllwr Cyfryngau?",
-	"multimediaviewer-options-learn-more": "Dysgu mwy",
-	"multimediaviewer-option-submit-button": "Analluogi'r Syllwr Cyfryngau",
-	"multimediaviewer-option-cancel-button": "Canslo",
 	"multimediaviewer-disable-confirmation-header": "Rydych chi wedi analluogi'r Syllwr Cyfryngau",
 	"multimediaviewer-enable-dialog-header": "Galluogi'r Syllwr Cyfryngau?",
 	"multimediaviewer-enable-submit-button": "Galluogi'r Syllwr Cyfryngau",

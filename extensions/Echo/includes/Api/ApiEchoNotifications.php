@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications\Api;
 
-use ApiBase;
-use ApiQuery;
-use ApiQueryBase;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiQuery;
+use MediaWiki\Api\ApiQueryBase;
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Bundler;
@@ -18,6 +18,7 @@ use MediaWiki\Extension\Notifications\SeenTime;
 use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -188,7 +189,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		$limit,
 		$continue,
 		$format,
-		array $titles = null,
+		?array $titles = null,
 		$unreadFirst = false,
 		$bundle = false,
 		array $notifierTypes = [ 'web' ]
@@ -232,7 +233,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		$limit,
 		$continue,
 		$format,
-		array $titles = null,
+		?array $titles = null,
 		$unreadFirst = false,
 		$bundle = false
 	) {
@@ -343,12 +344,12 @@ class ApiEchoNotifications extends ApiQueryBase {
 
 	/**
 	 * Internal helper method for getting property 'count' data
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param string[] $sections
 	 * @param bool $groupBySection
 	 * @return array
 	 */
-	protected function getPropCount( User $user, array $sections, $groupBySection ) {
+	protected function getPropCount( UserIdentity $user, array $sections, $groupBySection ) {
 		$result = [];
 		$notifUser = NotifUser::newFromUser( $user );
 		$global = $this->crossWikiSummary ? 'preference' : false;
@@ -370,12 +371,12 @@ class ApiEchoNotifications extends ApiQueryBase {
 
 	/**
 	 * Internal helper method for getting property 'seenTime' data
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param string[] $sections
 	 * @param bool $groupBySection
 	 * @return array
 	 */
-	protected function getPropSeenTime( User $user, array $sections, $groupBySection ) {
+	protected function getPropSeenTime( UserIdentity $user, array $sections, $groupBySection ) {
 		$result = [];
 		$seenTimeHelper = SeenTime::newFromUser( $user );
 
@@ -649,10 +650,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		return $params;
 	}
 
-	/**
-	 * @see ApiBase::getExamplesMessages()
-	 * @return array
-	 */
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&meta=notifications'

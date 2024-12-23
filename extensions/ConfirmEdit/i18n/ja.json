@@ -3,6 +3,7 @@
 		"authors": [
 			"Afaz",
 			"Aotake",
+			"Dragoniez",
 			"Fryed-peach",
 			"Hosiryuhosi",
 			"JtFuruhata",
@@ -10,11 +11,10 @@
 			"Otokoume",
 			"Ridmevo",
 			"Shirayuki",
+			"Waki285",
 			"Whym",
 			"Yusuke1109",
-			"しぃ",
-			"Dragoniez",
-			"Waki285"
+			"しぃ"
 		]
 	},
 	"captcha-edit": "このページを編集するには、下記の数式を計算してその答えを欄に入力してください ([[Special:Captcha/help|ヘルプ]]):",
@@ -44,5 +44,6 @@
 	"confirmedit-preview-validity": "検証",
 	"confirmedit-preview-valid": "有効",
 	"confirmedit-preview-invalid": "無効",
-	"confirmedit-preview-description": "次の表は、このページの行のリストと、それが有効なIPアドレスまたはIPアドレスの範囲であるかどうかを示しています。その行が有効なIPアドレスまたはIPアドレスの範囲であれば、CAPTCHAのチェックから除外されますが、無効な行は無視されます。有効なIPアドレスの範囲の例は以下の通りです。69.208.0.0/16 は、69.208.0.0 から 69.208.255.255 までの範囲です。IPアドレスの範囲の計算については、[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix 詳細情報]を参照してください。"
+	"confirmedit-preview-description": "次の表は、このページの行のリストと、それが有効なIPアドレスまたはIPアドレスの範囲であるかどうかを示しています。その行が有効なIPアドレスまたはIPアドレスの範囲であれば、CAPTCHAのチェックから除外されますが、無効な行は無視されます。有効なIPアドレスの範囲の例は以下の通りです。69.208.0.0/16 は、69.208.0.0 から 69.208.255.255 までの範囲です。IPアドレスの範囲の計算については、[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix 詳細情報]を参照してください。",
+	"abusefilter-edit-action-showcaptcha": "CAPTCHAの入力を要求する（CAPTCHAをスキップできる利用者には無効）"
 }

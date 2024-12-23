@@ -25,8 +25,8 @@
 
 namespace MediaWiki\Extension\OATHAuth\Maintenance;
 
-use FormatJson;
-use LoggedUpdateMaintenance;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\MediaWikiServices;
 
 if ( getenv( 'MW_INSTALL_PATH' ) ) {

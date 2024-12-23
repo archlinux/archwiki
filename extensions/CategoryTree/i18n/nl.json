@@ -4,10 +4,10 @@
 			"Huhbakker",
 			"Kippenvlees1",
 			"Mainframe98",
+			"McDutchie",
 			"Nickthijssen1994",
 			"SPQRobin",
-			"Siebrand",
-			"McDutchie"
+			"Siebrand"
 		]
 	},
 	"categorytree": "Categorieboom",
@@ -37,5 +37,9 @@
 	"categorytree-no-pages": "Geen pagina's of ondercategorieën.",
 	"categorytree-not-found": "Categorie <i>$1</i> is niet gevonden",
 	"categorytree-error": "Probleem bij het laden van de gegevens.",
-	"categorytree-retry": "Wacht even en probeer het dan opnieuw."
+	"categorytree-retry": "Wacht even en probeer het dan opnieuw.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: De parameter <code>onlyroot</code> is verouderd. Gebruik in plaats daarvan <code>depth=\"0\"</code>.",
+	"categorytree-deprecation-warning": "'''Waarschuwing:''' Deze pagina gebruikt <code>&lt;categorytree&gt;</code> met een verouderde parameter.",
+	"categorytree-deprecation-category": "Pagina's die verouderde categorytree-parameters gebruiken",
+	"categorytree-deprecation-category-desc": "De pagina gebruikt verouderde categorytree-parameters zoals <code>onlyroot</code>."
 }

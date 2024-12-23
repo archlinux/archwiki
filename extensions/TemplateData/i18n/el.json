@@ -67,7 +67,6 @@
 	"templatedata-modal-button-map": "Επεξεργασία χαρτών",
 	"templatedata-modal-button-importParams": "Εισαγωγή παραμέτρων",
 	"templatedata-modal-button-removemap": "Αφαίρεση χάρτη",
-	"templatedata-modal-button-restoreparam": "Επαναφορά παραμέτρου",
 	"templatedata-modal-button-saveparam": "Αποθήκευση",
 	"templatedata-modal-confirmcancel": "Είστε σίγουροι ότι θέλετε να απορρίψετε τις αλλαγές σας;",
 	"templatedata-modal-current-language": "Τρέχουσα γλώσσα: $1",

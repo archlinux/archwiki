@@ -53,13 +53,18 @@
 // phpcs:disable MediaWiki.Usage.DeprecatedGlobalVariables
 use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\FauxGlobalHookArray;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
+use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Registration\MissingExtensionException;
 use MediaWiki\Request\HeaderCallback;
 use MediaWiki\Settings\DynamicDefaultValues;
 use MediaWiki\Settings\LocalSettingsLoader;
@@ -582,14 +587,18 @@ if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 		$res = MediaWikiServices::getInstance()->getAuthManager()->autoCreateUser(
 			$sessionUser,
 			MediaWiki\Auth\AuthManager::AUTOCREATE_SOURCE_SESSION,
-			true
+			true,
+			true,
+			$sessionUser
 		);
+		$firstMessage = $res->getMessages( 'error' )[0] ?? $res->getMessages( 'warning' )[0] ?? null;
 		\MediaWiki\Logger\LoggerFactory::getInstance( 'authevents' )->info( 'Autocreation attempt', [
 			'event' => 'autocreate',
 			'successful' => $res->isGood(),
-			'status' => ( $res->getErrorsArray() ?: $res->getWarningsArray() )[0][0] ?? '-',
+			'status' => $firstMessage ? $firstMessage->getKey() : '-',
 		] );
 		unset( $res );
+		unset( $firstMessage );
 	}
 	unset( $sessionUser );
 }

@@ -2,6 +2,9 @@
 
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC\Nodes;
 
+use InvalidArgumentException;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\DQ;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun1nb;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexNode;
@@ -78,5 +81,79 @@ class TexArrayTest extends MediaWikiUnitTestCase {
 		$n = new TexArray( new TexNode( '' ) );
 		$n->unshift( 'test1', 'test2' );
 		$this->assertEquals( 3, $n->getLength(), 'Should unshift elements' );
+	}
+
+	public function testGenerator() {
+		$ta = new TexArray( new Literal( 'a' ), new Literal( 'b' ) );
+		foreach ( $ta as $item ) {
+			$this->assertInstanceOf(
+				'MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal',
+				$item,
+				'Should iterate over the elements' );
+		}
+	}
+
+	public function testOffsetExists() {
+		$ta = new TexArray( new Literal( 'a' ), new Literal( 'b' ) );
+		$this->assertTrue( isset( $ta[0] ) );
+		$this->assertFalse( isset( $ta[2] ) );
+	}
+
+	public function testOffsetGet() {
+		$ta = new TexArray( new Literal( 'a' ), new Literal( 'b' ) );
+		$this->assertEquals( 'a', $ta[0]->render() );
+		$this->assertNull( $ta[100] );
+	}
+
+	public function testOffsetUnset() {
+		$ta = new TexArray( new Literal( 'a' ), new Literal( 'b' ) );
+		unset( $ta[0] );
+		$this->assertNull( $ta[0] );
+	}
+
+	public function testOffsetSet() {
+		$ta = new TexArray();
+		$ta[0] = new Literal( 'a' );
+		$this->assertEquals( 'a', $ta[0]->render() );
+	}
+
+	public function testOffsetSetInvalid() {
+		$this->expectException( InvalidArgumentException::class );
+		$ta = new TexArray();
+		$ta[0] = 'a';
+	}
+
+	public function testSquashLiterals() {
+		$ta = new TexArray( new Literal( 'a' ), new Literal( 'b' ) );
+		$res  = $ta->renderMML( [], [ 'squashLiterals' => true ] );
+		$this->assertEquals( '<mi>ab</mi>', $res );
+	}
+
+	public function testSquashLiteralsMacro() {
+		$ta = new TexArray( new Literal( 'a' ), new Literal( '\gamma' ) );
+		$res  = $ta->renderMML( [], [ 'squashLiterals' => true ] );
+		$this->assertEquals( '<mi>a</mi><mi>&#x03B3;</mi>', $res );
+	}
+
+	public function testSumInLimits() {
+		$ta = new TexArray();
+		$sum = new Literal( '\sum' );
+		$res  = $ta->checkForLimits( $sum, new DQ( new Literal( '\limits' ), new Literal( 'n' ) ) );
+		$this->assertTrue( $res[1] );
+		$this->assertEquals( $sum, $res[0] );
+	}
+
+	public function testCustomOpInLimits() {
+		$ta = new TexArray();
+		$custom = new Fun1nb( '\operatorname', new TexArray( new Literal( 'S' ) ) );
+		$res  = $ta->checkForLimits( $custom, new DQ( new Literal( '\limits' ), new Literal( 'n' ) ) );
+		$this->assertTrue( $res[1] );
+		$this->assertEquals( $custom, $res[0] );
+	}
+
+	public function testRenderADeriv() {
+		$n = new TexArray( new Literal( 'A' ) );
+		$mml = $n->renderMML( [], [ 'deriv' => 1 ] );
+		$this->assertStringContainsString( '&#x2032;</mo>', $mml );
 	}
 }

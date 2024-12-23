@@ -20,16 +20,19 @@
 
 namespace MediaWiki\Extension\Gadgets\Special;
 
-use ContentHandler;
-use HTMLForm;
 use InvalidArgumentException;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Extension\Gadgets\Gadget;
 use MediaWiki\Extension\Gadgets\GadgetRepo;
 use MediaWiki\Html\Html;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Language\Language;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use SkinFactory;
 
 /**
  * Special:Gadgets renders the data of MediaWiki:Gadgets-definition.
@@ -37,17 +40,25 @@ use MediaWiki\Title\Title;
  * @copyright 2007 Daniel Kinzler
  */
 class SpecialGadgets extends SpecialPage {
+	private Language $contentLanguage;
 	private GadgetRepo $gadgetRepo;
+	private SkinFactory $skinFactory;
 
-	public function __construct( GadgetRepo $gadgetRepo ) {
+	public function __construct(
+		Language $contentLanguage,
+		GadgetRepo $gadgetRepo,
+		SkinFactory $skinFactory
+	) {
 		parent::__construct( 'Gadgets' );
+		$this->contentLanguage = $contentLanguage;
 		$this->gadgetRepo = $gadgetRepo;
+		$this->skinFactory = $skinFactory;
 	}
 
 	/**
 	 * Return title for Special:Gadgets heading and Special:Specialpages link.
 	 *
-	 * @return \Message
+	 * @return Message
 	 */
 	public function getDescription() {
 		return $this->msg( 'special-gadgets' );
@@ -89,12 +100,10 @@ class SpecialGadgets extends SpecialPage {
 			return;
 		}
 
-		$services = MediaWikiServices::getInstance();
-
 		$output->disallowUserJs();
 		$lang = $this->getLanguage();
 		$langSuffix = "";
-		if ( !$lang->equals( $services->getContentLanguage() ) ) {
+		if ( !$lang->equals( $this->contentLanguage ) ) {
 			$langSuffix = "/" . $lang->getCode();
 		}
 
@@ -108,7 +117,6 @@ class SpecialGadgets extends SpecialPage {
 			: 'gadgets-viewdescription';
 
 		$linkRenderer = $this->getLinkRenderer();
-		$skinFactory = $services->getSkinFactory();
 		foreach ( $gadgets as $section => $entries ) {
 			if ( $section !== false && $section !== '' ) {
 				if ( $listOpen ) {
@@ -273,7 +281,7 @@ class SpecialGadgets extends SpecialPage {
 				// Portion: Show required skins (optional)
 				$requiredSkins = $gadget->getRequiredSkins();
 				$skins = [];
-				$validskins = $skinFactory->getSkinNames();
+				$validskins = $this->skinFactory->getInstalledSkins();
 				foreach ( $requiredSkins as $skinid ) {
 					if ( isset( $validskins[$skinid] ) ) {
 						$skins[] = $this->msg( "skinname-$skinid" )->plain();
@@ -387,7 +395,7 @@ class SpecialGadgets extends SpecialPage {
 				}
 
 				// Show warnings
-				$warnings = GadgetRepo::singleton()->validationWarnings( $gadget );
+				$warnings = $this->gadgetRepo->validationWarnings( $gadget );
 
 				if ( count( $warnings ) > 0 ) {
 					$output->addHTML( Html::warningBox( implode( '<br/>', array_map( static function ( $msg ) {
@@ -410,8 +418,6 @@ class SpecialGadgets extends SpecialPage {
 	 * @param string $gadget Name of gadget to export
 	 */
 	public function showExportForm( $gadget ) {
-		global $wgScript;
-
 		$this->addHelpLink( 'Extension:Gadgets' );
 		$output = $this->getOutput();
 		try {
@@ -436,7 +442,7 @@ class SpecialGadgets extends SpecialPage {
 			->addHiddenField( 'pages', $exportList )
 			->addHiddenField( 'wpDownload', '1' )
 			->addHiddenField( 'templates', '1' )
-			->setAction( $wgScript )
+			->setAction( $this->getConfig()->get( MainConfigNames::Script ) )
 			->setMethod( 'get' )
 			->setSubmitText( $this->msg( 'gadgets-export-download' )->text() )
 			->prepareForm()

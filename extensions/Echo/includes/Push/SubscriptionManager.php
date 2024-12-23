@@ -69,9 +69,10 @@ class SubscriptionManager extends AbstractMapper {
 			$this->delete( [ $oldest->getToken() ], $centralId );
 		}
 		$topicId = $topic ? $this->pushTopicStore->acquireId( $topic ) : null;
-		$this->dbw->insert(
-			'echo_push_subscription',
-			[
+		$this->dbw->newInsertQueryBuilder()
+			->insertInto( 'echo_push_subscription' )
+			->ignore()
+			->row( [
 				'eps_user' => $centralId,
 				'eps_provider' => $this->pushProviderStore->acquireId( $provider ),
 				'eps_token' => $token,
@@ -79,30 +80,26 @@ class SubscriptionManager extends AbstractMapper {
 				'eps_data' => null,
 				'eps_topic' => $topicId,
 				'eps_updated' => $this->dbw->timestamp()
-			],
-			__METHOD__,
-			[ 'IGNORE' ]
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 		return (bool)$this->dbw->affectedRows();
 	}
 
 	/**
 	 * Get full data for all registered subscriptions for a user (by central ID).
 	 * @param int $centralId
-	 * @return array array of Subscription objects
+	 * @return Subscription[]
 	 */
-	public function getSubscriptionsForUser( int $centralId ) {
-		$res = $this->dbr->select(
-			[ 'echo_push_subscription', 'echo_push_provider', 'echo_push_topic' ],
-			'*',
-			[ 'eps_user' => $centralId ],
-			__METHOD__,
-			[],
-			[
-				'echo_push_provider' => [ 'INNER JOIN', [ 'eps_provider = epp_id' ] ],
-				'echo_push_topic' => [ 'LEFT JOIN', [ 'eps_topic = ept_id' ] ],
-			]
-		);
+	public function getSubscriptionsForUser( int $centralId ): array {
+		$res = $this->dbr->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'echo_push_subscription' )
+			->join( 'echo_push_provider', null, 'eps_provider = epp_id' )
+			->leftJoin( 'echo_push_topic', null, 'eps_topic = ept_id' )
+			->where( [ 'eps_user' => $centralId ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		$result = [];
 		foreach ( $res as $row ) {
 			$result[] = Subscription::newFromRow( $row );
@@ -118,16 +115,16 @@ class SubscriptionManager extends AbstractMapper {
 	 * @return int number of rows deleted
 	 * @throws DBError
 	 */
-	public function delete( array $tokens, int $centralId = null ): int {
+	public function delete( array $tokens, ?int $centralId = null ): int {
 		$cond = [ 'eps_token' => $tokens ];
 		if ( $centralId ) {
 			$cond['eps_user'] = $centralId;
 		}
-		$this->dbw->delete(
-			'echo_push_subscription',
-			$cond,
-			__METHOD__
-		);
+		$this->dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'echo_push_subscription' )
+			->where( $cond )
+			->caller( __METHOD__ )
+			->execute();
 		return $this->dbw->affectedRows();
 	}
 

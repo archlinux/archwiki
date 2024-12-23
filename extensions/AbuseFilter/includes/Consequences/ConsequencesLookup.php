@@ -92,14 +92,13 @@ class ConsequencesLookup {
 			$actionsByFilter[$prefix . $filter] = [];
 		}
 
-		$res = $dbr->select(
-			[ 'abuse_filter_action', 'abuse_filter' ],
-			'*',
-			[ 'af_id' => $filters ],
-			__METHOD__,
-			[],
-			[ 'abuse_filter_action' => [ 'LEFT JOIN', 'afa_filter=af_id' ] ]
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'abuse_filter_action' )
+			->leftJoin( 'abuse_filter', null, 'afa_filter=af_id' )
+			->where( [ 'af_id' => $filters ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$dangerousActions = $this->consequencesRegistry->getDangerousActionNames();
 		// Categorise consequences by filter.

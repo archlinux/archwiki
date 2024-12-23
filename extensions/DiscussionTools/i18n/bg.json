@@ -105,7 +105,7 @@
 	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "Коментарът не може да бъде открит. Може да е изтрит или преместен.",
 	"discussiontools-target-comments-missing": "Нови коментари не могат да бъдат намерени. Може да са изтрити или преместени.",
-	"discussiontools-target-heading-missing": "Темата не може да бъде намерена. Може да е изтрита или преместена.",
+	"discussiontools-target-heading-missing": "Темата не може да бъде намерена. Може да е изтрита, преместена или преименувана.",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|човек участва|човека участват}} в дискусията",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|коментар|коментара}}",
 	"discussiontools-topicheader-latestcomment": "Последен коментар: $1",

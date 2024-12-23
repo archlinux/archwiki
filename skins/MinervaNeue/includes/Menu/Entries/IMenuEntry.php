@@ -26,7 +26,7 @@ interface IMenuEntry {
 	 * Get the menu entry name/identifier
 	 * @return string
 	 */
-	public function getName();
+	public function getName(): string;
 
 	/**
 	 * Get the CSS classes that should be applied to the element

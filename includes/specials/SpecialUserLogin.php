@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:UserLogin
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -35,13 +32,16 @@ use StatusValue;
  * Implements Special:UserLogin
  *
  * @ingroup SpecialPage
+ * @ingroup Auth
  */
 class SpecialUserLogin extends LoginSignupSpecialPage {
+	/** @inheritDoc */
 	protected static $allowedActions = [
 		AuthManager::ACTION_LOGIN,
 		AuthManager::ACTION_LOGIN_CONTINUE
 	];
 
+	/** @inheritDoc */
 	protected static $messages = [
 		'authform-newtoken' => 'nocookiesforlogin',
 		'authform-notoken' => 'sessionfailure',
@@ -148,7 +148,7 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 		} else {
 			$helper = new LoginHelper( $this->getContext() );
 			$helper->showReturnToPage( 'successredirect', $this->mReturnTo, $this->mReturnToQuery,
-				$this->mStickHTTPS );
+				$this->mStickHTTPS, $this->mReturnToAnchor );
 		}
 	}
 

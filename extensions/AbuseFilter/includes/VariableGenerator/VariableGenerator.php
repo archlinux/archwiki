@@ -34,7 +34,7 @@ class VariableGenerator {
 	public function __construct(
 		AbuseFilterHookRunner $hookRunner,
 		UserFactory $userFactory,
-		VariableHolder $vars = null
+		?VariableHolder $vars = null
 	) {
 		$this->hookRunner = $hookRunner;
 		$this->userFactory = $userFactory;
@@ -56,7 +56,7 @@ class VariableGenerator {
 	 *   this is the entry. Null if it's for the current action being filtered.
 	 * @return $this For chaining
 	 */
-	public function addGenericVars( RecentChange $rc = null ): self {
+	public function addGenericVars( ?RecentChange $rc = null ): self {
 		$timestamp = $rc
 			? MWTimestamp::convert( TS_UNIX, $rc->getAttribute( 'rc_timestamp' ) )
 			: wfTimestamp( TS_UNIX );
@@ -76,7 +76,7 @@ class VariableGenerator {
 	 *   this is the entry. Null if it's for the current action being filtered.
 	 * @return $this For chaining
 	 */
-	public function addUserVars( UserIdentity $userIdentity, RecentChange $rc = null ): self {
+	public function addUserVars( UserIdentity $userIdentity, ?RecentChange $rc = null ): self {
 		$asOf = $rc ? $rc->getAttribute( 'rc_timestamp' ) : wfTimestampNow();
 		$user = $this->userFactory->newFromUserIdentity( $userIdentity );
 
@@ -87,6 +87,15 @@ class VariableGenerator {
 		);
 
 		$this->vars->setVar( 'user_name', $user->getName() );
+
+		$this->vars->setLazyLoadVar(
+			'user_unnamed_ip',
+			'user-unnamed-ip',
+			[
+				'user' => $user,
+				'rc' => $rc,
+			]
+		);
 
 		$this->vars->setLazyLoadVar(
 			'user_type',
@@ -139,7 +148,7 @@ class VariableGenerator {
 	public function addTitleVars(
 		Title $title,
 		string $prefix,
-		RecentChange $rc = null
+		?RecentChange $rc = null
 	): self {
 		if ( $rc && $rc->getAttribute( 'rc_type' ) == RC_NEW ) {
 			$this->vars->setVar( $prefix . '_id', 0 );
@@ -206,10 +215,10 @@ class VariableGenerator {
 			[ 'diff-var' => 'edit_diff_pst', 'line-prefix' => '+' ] );
 
 		// Links
-		$this->vars->setLazyLoadVar( 'added_links', 'link-diff-added',
-			[ 'oldlink-var' => 'old_links', 'newlink-var' => 'all_links' ] );
-		$this->vars->setLazyLoadVar( 'removed_links', 'link-diff-removed',
-			[ 'oldlink-var' => 'old_links', 'newlink-var' => 'all_links' ] );
+		$this->vars->setLazyLoadVar( 'added_links', 'array-diff',
+			[ 'base-var' => 'all_links', 'minus-var' => 'old_links' ] );
+		$this->vars->setLazyLoadVar( 'removed_links', 'array-diff',
+			[ 'base-var' => 'old_links', 'minus-var' => 'all_links' ] );
 
 		// Text
 		$this->vars->setLazyLoadVar( 'new_text', 'strip-html',
@@ -230,7 +239,7 @@ class VariableGenerator {
 		WikiPage $page,
 		UserIdentity $userIdentity,
 		bool $forFilter = true,
-		PreparedUpdate $update = null
+		?PreparedUpdate $update = null
 	): self {
 		$this->addDerivedEditVars();
 

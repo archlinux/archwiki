@@ -1,9 +1,14 @@
 <?php
 
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
+/**
+ * @covers \MediaWiki\Content\Transform\ContentTransformer
+ */
 class ContentTransformerTest extends MediaWikiIntegrationTestCase {
 
 	public static function preSaveTransformProvider() {
@@ -16,7 +21,6 @@ class ContentTransformerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Content\Transform\ContentTransformer::preSaveTransform
 	 *
 	 * @dataProvider preSaveTransformProvider
 	 */
@@ -42,8 +46,6 @@ class ContentTransformerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Content\Transform\ContentTransformer::preloadTransform
-	 *
 	 * @dataProvider preloadTransformProvider
 	 */
 	public function testPreloadTransform( $content, $expectedContainText ) {

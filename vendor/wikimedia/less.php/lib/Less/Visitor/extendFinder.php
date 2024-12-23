@@ -23,7 +23,7 @@ class Less_Visitor_extendFinder extends Less_Visitor {
 		return $root;
 	}
 
-	public function visitRule( $ruleNode, &$visitDeeper ) {
+	public function visitDeclaration( $declNode, &$visitDeeper ) {
 		$visitDeeper = false;
 	}
 
@@ -94,12 +94,12 @@ class Less_Visitor_extendFinder extends Less_Visitor {
 		array_pop( $this->allExtendsStack );
 	}
 
-	public function visitDirective( $directiveNode ) {
-		$directiveNode->allExtends = [];
-		$this->allExtendsStack[] =& $directiveNode->allExtends;
+	public function visitAtRule( $atRuleNode ) {
+		$atRuleNode->allExtends = [];
+		$this->allExtendsStack[] =& $atRuleNode->allExtends;
 	}
 
-	public function visitDirectiveOut() {
+	public function visitAtRuleOut() {
 		array_pop( $this->allExtendsStack );
 	}
 }

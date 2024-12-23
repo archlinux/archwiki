@@ -28,6 +28,7 @@ use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Context\ContextSource;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\Field\HTMLApiField;
@@ -75,10 +76,11 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
-use MessageSpecifier;
+use MediaWiki\Xml\Xml;
 use StatusValue;
 use Stringable;
-use Xml;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Object handling generic submission, CSRF protection, layout and
@@ -128,14 +130,14 @@ use Xml;
  *                             the message.
  *    'label'               -- alternatively, a raw text message. Overridden by
  *                             label-message
- *    'help'                -- message text for a message to use as a help text.
+ *    'help-raw'            -- message text for a message to use as a help text.
  *    'help-message'        -- message key or object for a message to use as a help text.
  *                             can be an array of msg key and then parameters to
  *                             the message.
- *                             Overwrites 'help-messages' and 'help'.
+ *                             Overwrites 'help-messages' and 'help-raw'.
  *    'help-messages'       -- array of message keys/objects. As above, each item can
  *                             be an array of msg key and then parameters.
- *                             Overwrites 'help'.
+ *                             Overwrites 'help-raw'.
  *    'help-inline'         -- Whether help text (defined using options above) will be shown
  *                             inline after the input field, rather than in a popup.
  *                             Defaults to true. Only used by OOUI form fields.
@@ -148,7 +150,8 @@ use Xml;
  *                             massage the inputted value before it's processed.
  *                             @see HTMLFormField::filter()
  *    'validation-callback' -- a function name to give you the chance
- *                             to impose extra validation on the field input.
+ *                             to impose extra validation on the field input. The signature should be
+ *                             as documented in {@see HTMLFormField::$mValidationCallback}.
  *                             @see HTMLFormField::validate()
  *    'name'                -- By default, the 'name' attribute of the input field
  *                             is "wp{$fieldname}".  If you want a different name
@@ -255,20 +258,26 @@ class HTMLForm extends ContextSource {
 		'namespacesmultiselect' => HTMLNamespacesMultiselectField::class,
 	];
 
+	/** @var array */
 	public $mFieldData;
 
+	/** @var string */
 	protected $mMessagePrefix;
 
 	/** @var HTMLFormField[] */
 	protected $mFlatFields = [];
+	/** @var array */
 	protected $mFieldTree = [];
-	protected $mShowReset = false;
+	/** @var bool */
 	protected $mShowSubmit = true;
 	/** @var string[] */
 	protected $mSubmitFlags = [ 'primary', 'progressive' ];
+	/** @var bool */
 	protected $mShowCancel = false;
+	/** @var LinkTarget|string|null */
 	protected $mCancelTarget;
 
+	/** @var callable|null */
 	protected $mSubmitCallback;
 	/**
 	 * @var array[]
@@ -276,27 +285,44 @@ class HTMLForm extends ContextSource {
 	 */
 	protected $mValidationErrorMessage;
 
+	/** @var string */
 	protected $mPre = '';
+	/** @var string */
 	protected $mHeader = '';
+	/** @var string */
 	protected $mFooter = '';
+	/** @var string[] */
 	protected $mSectionHeaders = [];
+	/** @var string[] */
 	protected $mSectionFooters = [];
+	/** @var string */
 	protected $mPost = '';
+	/** @var string|null */
 	protected $mId;
+	/** @var string|null */
 	protected $mName;
+	/** @var string */
 	protected $mTableId = '';
 
+	/** @var string|null */
 	protected $mSubmitID;
+	/** @var string|null */
 	protected $mSubmitName;
+	/** @var string|null */
 	protected $mSubmitText;
+	/** @var string|null */
 	protected $mSubmitTooltip;
 
+	/** @var string|null */
 	protected $mFormIdentifier;
+	/** @var bool */
 	protected $mSingleForm = false;
 
 	/** @var Title|null */
 	protected $mTitle;
+	/** @var string */
 	protected $mMethod = 'post';
+	/** @var bool */
 	protected $mWasSubmitted = false;
 
 	/**
@@ -327,6 +353,7 @@ class HTMLForm extends ContextSource {
 	 */
 	protected $mAutocomplete = null;
 
+	/** @var bool */
 	protected $mUseMultipart = false;
 	/**
 	 * @var array[]
@@ -335,11 +362,13 @@ class HTMLForm extends ContextSource {
 	protected $mHiddenFields = [];
 	/**
 	 * @var array[]
-	 * @phan-var array<array{name:string,value:string,label-message?:string|string[]|MessageSpecifier,label?:string,label-raw?:string,id?:string,attribs?:array,flags?:string|string[],framed?:bool}>
+	 * @phan-var array<array{name:string,value:string,label-message?:string|array<string|MessageParam>|MessageSpecifier,label?:string,label-raw?:string,id?:string,attribs?:array,flags?:string|string[],framed?:bool}>
 	 */
 	protected $mButtons = [];
 
+	/** @var string|false */
 	protected $mWrapperLegend = false;
+	/** @var array */
 	protected $mWrapperAttributes = [];
 
 	/**
@@ -603,7 +632,7 @@ class HTMLForm extends ContextSource {
 	 * @return HTMLFormField Instance of a subclass of HTMLFormField
 	 */
 	public static function loadInputFromParameters( $fieldname, $descriptor,
-		HTMLForm $parent = null
+		?HTMLForm $parent = null
 	) {
 		$class = static::getClassFromDescriptor( $fieldname, $descriptor );
 
@@ -853,9 +882,10 @@ class HTMLForm extends ContextSource {
 	 * @param string $msg Complete text of message to display
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use setPreHtml() instead
+	 * @deprecated since 1.38, use setPreHtml() instead, hard-deprecated since 1.43
 	 */
 	public function setIntro( $msg ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->setPreHtml( $msg );
 	}
 
@@ -903,9 +933,10 @@ class HTMLForm extends ContextSource {
 	 * @param string $msg Complete HTML of message to display
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use setPreHtml() instead
+	 * @deprecated since 1.38, use setPreHtml() instead, hard-deprecated since 1.43
 	 */
 	public function setPreText( $msg ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->setPreHtml( $msg );
 	}
 
@@ -915,9 +946,10 @@ class HTMLForm extends ContextSource {
 	 * @param string $msg Complete HTML of message to display
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use addPreHtml() instead
+	 * @deprecated since 1.38, use addPreHtml() instead, hard-deprecated since 1.43
 	 */
 	public function addPreText( $msg ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->addPreHtml( $msg );
 	}
 
@@ -926,9 +958,10 @@ class HTMLForm extends ContextSource {
 	 *
 	 * @since 1.32
 	 * @return string
-	 * @deprecated since 1.38, use getPreHtml() instead
+	 * @deprecated since 1.38, use getPreHtml() instead, hard-deprecated since 1.43
 	 */
 	public function getPreText() {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->getPreHtml();
 	}
 
@@ -990,9 +1023,10 @@ class HTMLForm extends ContextSource {
 	 * @param string|null $section The section to add the header to
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use addHeaderHtml() instead
+	 * @deprecated since 1.38, use addHeaderHtml() instead, hard-deprecated since 1.43
 	 */
 	public function addHeaderText( $msg, $section = null ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->addHeaderHtml( $msg, $section );
 	}
 
@@ -1004,9 +1038,10 @@ class HTMLForm extends ContextSource {
 	 *
 	 * @since 1.19
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use setHeaderHtml() instead
+	 * @deprecated since 1.38, use setHeaderHtml() instead, hard-deprecated since 1.43
 	 */
 	public function setHeaderText( $msg, $section = null ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->setHeaderHtml( $msg, $section );
 	}
 
@@ -1017,9 +1052,10 @@ class HTMLForm extends ContextSource {
 	 * @param string|null $section The section to get the header text for
 	 * @since 1.26
 	 * @return string HTML
-	 * @deprecated since 1.38, use getHeaderHtml() instead
+	 * @deprecated since 1.38, use getHeaderHtml() instead, hard-deprecated since 1.43
 	 */
 	public function getHeaderText( $section = null ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->getHeaderHtml( $section );
 	}
 
@@ -1080,9 +1116,10 @@ class HTMLForm extends ContextSource {
 	 * @param string|null $section The section to add the footer text to
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use addFooterHtml() instead
+	 * @deprecated since 1.38, use addFooterHtml() instead, hard-deprecated since 1.43
 	 */
 	public function addFooterText( $msg, $section = null ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->addFooterHtml( $msg, $section );
 	}
 
@@ -1094,9 +1131,10 @@ class HTMLForm extends ContextSource {
 	 * @param string|null $section The section to add the footer text to
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use setFooterHtml() instead
+	 * @deprecated since 1.38, use setFooterHtml() instead, hard-deprecated since 1.43
 	 */
 	public function setFooterText( $msg, $section = null ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->setFooterHtml( $msg, $section );
 	}
 
@@ -1106,9 +1144,10 @@ class HTMLForm extends ContextSource {
 	 * @param string|null $section The section to get the footer text for
 	 * @since 1.26
 	 * @return string
-	 * @deprecated since 1.38, use getFooterHtml() instead
+	 * @deprecated since 1.38, use getFooterHtml() instead, hard-deprecated since 1.43
 	 */
 	public function getFooterText( $section = null ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->getFooterHtml( $section );
 	}
 
@@ -1156,9 +1195,10 @@ class HTMLForm extends ContextSource {
 	 * @param string $msg Complete text of message to display
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use addPostHtml() instead
+	 * @deprecated since 1.38, use addPostHtml() instead, hard-deprecated since 1.43
 	 */
 	public function addPostText( $msg ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->addPostHtml( $msg );
 	}
 
@@ -1168,9 +1208,10 @@ class HTMLForm extends ContextSource {
 	 * @param string $msg Complete text of message to display
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 * @deprecated since 1.38, use setPostHtml() instead
+	 * @deprecated since 1.38, use setPostHtml() instead, hard-deprecated since 1.43
 	 */
 	public function setPostText( $msg ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->setPostHtml( $msg );
 	}
 
@@ -1258,7 +1299,7 @@ class HTMLForm extends ContextSource {
 	 *  - flags: (string|string[], optional) OOUI flags.
 	 *  - framed: (boolean=true, optional) OOUI framed attribute.
 	 * @phpcs:ignore Generic.Files.LineLength
-	 * @phan-param array{name:string,value:string,label-message?:string|array<string|array>|MessageSpecifier,label?:string,label-raw?:string,id?:string,attribs?:array,flags?:string|string[],framed?:bool} $data
+	 * @phan-param array{name:string,value:string,label-message?:string|array<string|MessageParam>|MessageSpecifier,label?:string,label-raw?:string,id?:string,attribs?:array,flags?:string|string[],framed?:bool} $data
 	 * @return HTMLForm $this for chaining calls (since 1.20)
 	 */
 	public function addButton( $data ) {
@@ -1357,7 +1398,7 @@ class HTMLForm extends ContextSource {
 	 */
 	public function getHTML( $submitResult ) {
 		# For good measure (it is the default)
-		$this->getOutput()->setPreventClickjacking( true );
+		$this->getOutput()->getMetadata()->setPreventClickjacking( true );
 		$this->getOutput()->addModules( 'mediawiki.htmlform' );
 		$this->getOutput()->addModuleStyles( 'mediawiki.htmlform.styles' );
 
@@ -1366,14 +1407,20 @@ class HTMLForm extends ContextSource {
 			$this->getOutput()->addModules( 'jquery.makeCollapsible' );
 		}
 
+		$headerHtml = MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'getHeaderText', '1.38' )
+			? $this->getHeaderText()
+			: $this->getHeaderHtml();
+		$footerHtml = MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'getFooterText', '1.38' )
+			? $this->getFooterText()
+			: $this->getFooterHtml();
 		$html = $this->getErrorsOrWarnings( $submitResult, 'error' )
 			. $this->getErrorsOrWarnings( $submitResult, 'warning' )
-			. $this->getHeaderText()
+			. $headerHtml
 			. $this->getHiddenTitle()
 			. $this->getBody()
 			. $this->getHiddenFields()
 			. $this->getButtons()
-			. $this->getFooterText();
+			. $footerHtml;
 
 		return $this->mPre . $this->wrapForm( $html ) . $this->mPost;
 	}
@@ -1502,16 +1549,6 @@ class HTMLForm extends ContextSource {
 			$attribs['class'] = [ 'mw-htmlform-submit' ];
 
 			$buttons .= Xml::submitButton( $this->getSubmitText(), $attribs ) . "\n";
-		}
-
-		if ( $this->mShowReset ) {
-			$buttons .= Html::element(
-				'input',
-				[
-					'type' => 'reset',
-					'value' => $this->msg( 'htmlform-reset' )->text(),
-				]
-			) . "\n";
 		}
 
 		if ( $this->mShowCancel ) {
@@ -1961,6 +1998,10 @@ class HTMLForm extends ContextSource {
 	 * @todo Document
 	 * @stable to override
 	 *
+	 * Throws an exception when called on uninitialized field data, e.g. when
+	 * HTMLForm::displayForm was called without calling HTMLForm::prepareForm
+	 * first.
+	 *
 	 * @param array[]|HTMLFormField[] $fields Array of fields (either arrays or
 	 *   objects).
 	 * @param string $sectionName ID attribute of the "<table>" tag for this
@@ -1968,9 +2009,6 @@ class HTMLForm extends ContextSource {
 	 * @param string $fieldsetIDPrefix ID prefix for the "<fieldset>" tag of
 	 *   each subsection, ignored if empty.
 	 * @param bool &$hasUserVisibleFields Whether the section had user-visible fields.
-	 * @throws LogicException When called on uninitialized field data, e.g. When
-	 *  HTMLForm::displayForm was called without calling HTMLForm::prepareForm
-	 *  first.
 	 *
 	 * @return string
 	 */
@@ -2022,9 +2060,15 @@ class HTMLForm extends ContextSource {
 
 					$legend = $this->getLegend( $key );
 
-					$section = $this->getHeaderText( $key ) .
+					$headerHtml = MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'getHeaderText', '1.38' )
+						? $this->getHeaderText( $key )
+						: $this->getHeaderHtml( $key );
+					$footerHtml = MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'getFooterText', '1.38' )
+						? $this->getFooterText( $key )
+						: $this->getFooterHtml( $key );
+					$section = $headerHtml .
 						$section .
-						$this->getFooterText( $key );
+						$footerHtml;
 
 					$attributes = [];
 					if ( $fieldsetIDPrefix ) {
@@ -2158,19 +2202,6 @@ class HTMLForm extends ContextSource {
 		}
 
 		$this->mFieldData = $fieldData;
-	}
-
-	/**
-	 * Stop a reset button being shown for this form
-	 *
-	 * @param bool $suppressReset Set to false to re-enable the button again
-	 *
-	 * @return HTMLForm $this for chaining calls (since 1.20)
-	 */
-	public function suppressReset( $suppressReset = true ) {
-		$this->mShowReset = !$suppressReset;
-
-		return $this;
 	}
 
 	/**

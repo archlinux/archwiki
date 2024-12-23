@@ -39,5 +39,5 @@ interface IProfileMenuEntry extends IMenuEntry {
 	 */
 	public function overrideProfileURL(
 		$customURL, $customLabel = null, $trackingCode = null
-	);
+	): self;
 }

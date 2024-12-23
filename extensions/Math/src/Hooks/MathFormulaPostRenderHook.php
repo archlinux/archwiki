@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Math\Hooks;
 
 use MediaWiki\Extension\Math\MathRenderer;
-use Parser;
+use MediaWiki\Parser\Parser;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md in core.

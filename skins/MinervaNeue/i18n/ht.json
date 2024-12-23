@@ -29,7 +29,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Apwopo kategori sa a",
 	"mobile-frontend-meta-data-issues-header": "Pwoblèm yo nan paj",
 	"minerva-meta-data-issues-section-header": "Pwoblèm yo nan seksyon",
-	"mobile-frontend-notifications-filter": "Filtre",
 	"mobile-frontend-pageaction-edit-tooltip": "Modifye seksyon an plon nan paj sa a",
 	"mobile-frontend-placeholder": "Chèche nan {{SITENAME}}",
 	"mobile-frontend-random-button": "Oaza",
@@ -52,6 +51,5 @@
 	"minerva-skin-desc": "Yon estil pou aparèy mobil ki ale sou dimansyon ekran",
 	"skin-minerva-issue-learn-more": "Aprann plis",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategori yo",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "Wè kategori paj yo",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tretman ki pi bon pou pwoblèm yo nan paj"
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "Wè kategori paj yo"
 }

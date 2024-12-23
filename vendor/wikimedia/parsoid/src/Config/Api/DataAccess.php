@@ -10,10 +10,12 @@ use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\PageContent;
 use Wikimedia\Parsoid\Config\SiteConfig as ISiteConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
+use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
 use Wikimedia\Parsoid\Core\LinkTarget;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Title;
+use Wikimedia\Parsoid\Utils\TitleValue;
 
 /**
  * DataAccess via MediaWiki's Action API
@@ -298,10 +300,14 @@ class DataAccess extends IDataAccess {
 	 */
 	private function mergeMetadata( array $data, ContentMetadataCollector $metadata ): void {
 		foreach ( ( $data['categories'] ?? [] ) as $c ) {
-			$metadata->addCategory( $c['category'], $c['sortkey'] );
+			$tv = TitleValue::tryNew(
+				14, // NS_CATEGORY,
+				$c['category']
+			);
+			$metadata->addCategory( $tv, $c['sortkey'] );
 		}
-		$metadata->addModules( $data['modules'] ?? [] );
-		$metadata->addModuleStyles( $data['modulestyles'] ?? [] );
+		$metadata->appendOutputStrings( CMCSS::MODULE, $data['modules'] ?? [] );
+		$metadata->appendOutputStrings( CMCSS::MODULE_STYLE, $data['modulestyles'] ?? [] );
 		foreach ( ( $data['jsconfigvars'] ?? [] ) as $key => $value ) {
 			$strategy = 'write-once';
 			if ( is_array( $value ) ) {
@@ -311,7 +317,7 @@ class DataAccess extends IDataAccess {
 				unset( $value['_mw-strategy'] );
 			}
 			if ( $strategy === 'union' ) {
-				foreach ( $value as $item ) {
+				foreach ( $value as $item => $ignore ) {
 					$metadata->appendJsConfigVar( $key, $item );
 				}
 			} else {
@@ -322,7 +328,16 @@ class DataAccess extends IDataAccess {
 			$metadata->addExternalLink( $url );
 		}
 		foreach ( ( $data['properties'] ?? [] ) as $name => $value ) {
-			$metadata->setPageProperty( $name, $value );
+			if ( is_string( $value ) ) {
+				$metadata->setUnsortedPageProperty( $name, $value );
+			} elseif ( is_numeric( $value ) ) {
+				$metadata->setNumericPageProperty( $name, $value );
+			} elseif ( is_bool( $value ) ) {
+				// Deprecated back-compat
+				$metadata->setNumericPageProperty( $name, (int)$value );
+			} else {
+				// Non-scalar values deprecatedin 1.42; drop them.
+			}
 		}
 	}
 
@@ -452,5 +467,35 @@ class DataAccess extends IDataAccess {
 		return Title::newFromLinkTarget(
 			$linkTarget, $this->siteConfig
 		)->getPrefixedText();
+	}
+
+	/** @inheritDoc */
+	public function addTrackingCategory(
+		PageConfig $pageConfig,
+		ContentMetadataCollector $metadata,
+		string $key
+	): void {
+		$pageConfigTitle = $this->toPrefixedText( $pageConfig->getLinkTarget() );
+		$cacheKey = implode( ':', [ 'allmessages', md5( $pageConfigTitle ), md5( $key ) ] );
+		$data = $this->getCache( $cacheKey );
+		if ( $data === null ) {
+			$params = [
+				'action' => 'query',
+				'meta' => 'allmessages',
+				'amtitle' => $pageConfigTitle,
+				'ammessages' => $key,
+				'amenableparser' => 1,
+			];
+			$data = $this->api->makeRequest( $params )['query']['allmessages'][0];
+			$this->setCache( $cacheKey, $data );
+		}
+		if ( isset( $data['missing'] ) ) {
+			return;
+		}
+		$tv = TitleValue::tryNew(
+			14, // NS_CATEGORY,
+			$data['content']
+		);
+		$metadata->addCategory( $tv );
 	}
 }

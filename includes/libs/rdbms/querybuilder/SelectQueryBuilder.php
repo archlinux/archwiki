@@ -2,7 +2,10 @@
 
 namespace Wikimedia\Rdbms;
 
-use IDBAccessObject;
+use Wikimedia\Rdbms\Platform\ISQLPlatform;
+
+// Very long type annotations :(
+// phpcs:disable Generic.Files.LineLength
 
 /**
  * Build SELECT queries with a fluent interface.
@@ -25,10 +28,10 @@ use IDBAccessObject;
  */
 class SelectQueryBuilder extends JoinGroupBase {
 
-	/** @var string sort the results in ascending order */
+	/** sort the results in ascending order */
 	public const SORT_ASC = 'ASC';
 
-	/** @var string sort the results in descending order */
+	/** sort the results in descending order */
 	public const SORT_DESC = 'DESC';
 
 	/**
@@ -95,11 +98,11 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * which were already set. This can be used to interface with legacy code.
 	 * If a key is omitted, the previous value will be retained.
 	 *
-	 * The parameters must be formatted as required by Database::select. For
+	 * The parameters must be formatted as required by IReadableDatabase::select. For
 	 * example, JoinGroup cannot be used.
 	 *
 	 * @param array $info Associative array of query info, with keys:
-	 *   - tables: The raw array of tables to be passed to Database::select()
+	 *   - tables: The raw array of tables to be passed to IReadableDatabase::select()
 	 *   - fields: The fields
 	 *   - conds: The conditions
 	 *   - options: The query options
@@ -136,7 +139,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	}
 
 	/**
-	 * Given a table or table array as might be passed to Database::select(),
+	 * Given a table or table array as might be passed to IReadableDatabase::select(),
 	 * append it to the existing tables, interpreting nested arrays as join
 	 * groups.
 	 *
@@ -144,7 +147,8 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * groups as nested arrays. In new code, join groups should generally
 	 * be created with newJoinGroup(), which provides a fluent interface.
 	 *
-	 * @param string|array $tables
+	 * @param string|array $tables Table references; see {@link IReadableDatabase::select}
+	 *  for details
 	 * @return $this
 	 */
 	public function rawTables( $tables ) {
@@ -191,7 +195,8 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add a single table to the SELECT query. Alias for table().
 	 *
-	 * @param string|JoinGroup|SelectQueryBuilder $table The table, see table() for details
+	 * @param string|JoinGroup|SelectQueryBuilder $table Table reference; see {@link table}
+	 *  for details
 	 * @param-taint $table exec_sql
 	 * @param string|null $alias The table alias, or null for no alias
 	 * @param-taint $alias exec_sql
@@ -204,7 +209,8 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add multiple tables. It's recommended to use join() and leftJoin() instead in new code.
 	 *
-	 * @param string[] $tables
+	 * @param string[] $tables Table references (string keys are aliases). See {@link table}
+	 *  for details.
 	 * @param-taint $tables exec_sql
 	 * @return $this
 	 */
@@ -283,7 +289,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Add conditions to the query. The supplied conditions will be appended
 	 * to the existing conditions, separated by AND.
 	 *
-	 * @param string|array|IExpression $conds
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 *
 	 * May be either a string containing a single condition, or an array of
@@ -339,7 +345,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add conditions to the query. Alias for where().
 	 *
-	 * @param string|array|IExpression $conds
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
 	 */
@@ -350,7 +356,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Add conditions to the query. Alias for where().
 	 *
-	 * @param string|array|IExpression $conds
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
 	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
 	 */
@@ -720,12 +726,21 @@ class SelectQueryBuilder extends JoinGroupBase {
 	}
 
 	/**
+	 * get the method name of the caller, for use in sub classes
+	 *
+	 * @since 1.43
+	 */
+	final protected function getCaller(): string {
+		return $this->caller;
+	}
+
+	/**
 	 * Run the constructed SELECT query and return all results.
 	 *
 	 * @return IResultWrapper
 	 * @return-taint tainted
 	 */
-	public function fetchResultSet() {
+	public function fetchResultSet(): IResultWrapper {
 		return $this->db->select( $this->tables, $this->fields, $this->conds, $this->caller,
 			$this->options, $this->joinConds );
 	}
@@ -735,7 +750,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * from the first result row. This may only be called when only one field
 	 * has been added to the builder.
 	 *
-	 * @return mixed
+	 * @return mixed|false The value from the field, or false if nothing was found
 	 * @return-taint tainted
 	 */
 	public function fetchField() {
@@ -756,7 +771,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * @return array
 	 * @return-taint tainted
 	 */
-	public function fetchFieldValues() {
+	public function fetchFieldValues(): array {
 		if ( count( $this->fields ) !== 1 ) {
 			throw new \UnexpectedValueException(
 				__METHOD__ . ' expects the query to have only one field' );
@@ -790,7 +805,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 *
 	 * @return int
 	 */
-	public function fetchRowCount() {
+	public function fetchRowCount(): int {
 		return $this->db->selectRowCount( $this->tables, $this->getRowCountVar(), $this->conds,
 			$this->caller, $this->options, $this->joinConds );
 	}
@@ -805,7 +820,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 *
 	 * @return int
 	 */
-	public function estimateRowCount() {
+	public function estimateRowCount(): int {
 		return $this->db->estimateRowCount( $this->tables, $this->getRowCountVar(), $this->conds,
 			$this->caller, $this->options, $this->joinConds );
 	}
@@ -854,13 +869,15 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * @return string
 	 */
 	public function getSQL() {
-		return $this->db->selectSQLText( $this->tables, $this->fields, $this->conds, $this->caller,
+		// Assume that whoever is calling this method is doing it to build a subquery
+		$caller = $this->isCallerOverridden ? $this->caller : ISQLPlatform::CALLER_SUBQUERY;
+		return $this->db->selectSQLText( $this->tables, $this->fields, $this->conds, $caller,
 			$this->options, $this->joinConds );
 	}
 
 	/**
 	 * Get an associative array describing the query in terms of its raw parameters to
-	 * Database::select(). This can be used to interface with legacy code.
+	 * IReadableDatabase::select(). This can be used to interface with legacy code.
 	 *
 	 * @param string $joinsName The name of the join_conds key
 	 * @return array The query info array, with keys:

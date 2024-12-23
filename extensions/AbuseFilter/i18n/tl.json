@@ -198,7 +198,6 @@
 	"abusefilter-edit-builder-op-bool-not": "Hindi (!)",
 	"abusefilter-edit-builder-op-bool-and": "At (&)",
 	"abusefilter-edit-builder-op-bool-or": "O (|)",
-	"abusefilter-edit-builder-op-bool-xor": "XOR (^)",
 	"abusefilter-edit-builder-group-misc": "Samu't sari",
 	"abusefilter-edit-builder-misc-in": "nilalaman ng bagting (in)",
 	"abusefilter-edit-builder-misc-contains": "Naglalaman ang pangkaliwang bagting ng pangkanang bagting (naglalaman ng)",

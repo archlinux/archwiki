@@ -2,11 +2,12 @@
 
 namespace MediaWiki\Tests\Unit\Parser\Parsoid\Config;
 
-use ILanguageConverter;
-use Language;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Interwiki\InterwikiLookup;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
@@ -15,6 +16,7 @@ use MediaWiki\Parser\MagicWord;
 use MediaWiki\Parser\MagicWordArray;
 use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\Parsoid\Config\SiteConfig;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\NamespaceInfo;
@@ -22,16 +24,15 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
 use MediaWikiUnitTestCase;
 use MessageCache;
-use NullStatsdDataFactory;
-use ParserFactory;
 use UnexpectedValueException;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
+use Wikimedia\Stats\NullStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
 use ZhConverter;
 
 /**
  * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig
- * @package MediaWiki\Tests\Unit\Parser\Parsoid\Config
  */
 class SiteConfigTest extends MediaWikiUnitTestCase {
 
@@ -67,11 +68,15 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		],
 	];
 
+	private StatsFactory $statsFactory;
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->statsFactory = StatsFactory::newNull();
+	}
+
 	private function createMockOrOverride( string $class, array $overrides ) {
-		if ( array_key_exists( $class, $overrides ) ) {
-			return $overrides[$class];
-		}
-		return $this->createNoOpMock( $class );
+		return $overrides[$class] ?? $this->createNoOpMock( $class );
 	}
 
 	/**
@@ -99,6 +104,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			$this->createSimpleObjectFactory(),
 			$this->createMockOrOverride( Language::class, $serviceOverrides ),
 			new NullStatsdDataFactory(),
+			$this->statsFactory,
 			$this->createMockOrOverride( MagicWordFactory::class, $serviceOverrides ),
 			$this->createMockOrOverride( NamespaceInfo::class, $serviceOverrides ),
 			$this->createMockOrOverride( SpecialPageFactory::class, $serviceOverrides ),
@@ -108,6 +114,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			$this->createMockOrOverride( LanguageConverterFactory::class, $serviceOverrides ),
 			$this->createMockOrOverride( LanguageNameUtils::class, $serviceOverrides ),
 			$this->createMockOrOverride( UrlUtils::class, $serviceOverrides ),
+			$this->createMockOrOverride( IContentHandlerFactory::class, $serviceOverrides ),
 			[],
 			$this->createMockOrOverride( ParserFactory::class, $serviceOverrides ),
 			new HashConfig( $configOverrides ),
@@ -222,15 +229,15 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	}
 
 	public static function provideParsoidSettingPassed() {
-		yield 'linting' => [
+		yield 'linterEnabled' => [
 			[ 'linting' => true ],
-			'linting',
+			'linterEnabled',
 			true
 		];
 	}
 
 	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::linting()
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::linterEnabled()
 	 * @dataProvider provideParsoidSettingPassed
 	 * @param array $settings
 	 * @param string $method
@@ -896,5 +903,58 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		$this->assertSame( true, $config->getMWConfigValue( 'CiteResponsiveReferences' ) );
 		$this->assertSame( 10, $config->getMWConfigValue( 'CiteResponsiveReferencesThreshold' ) );
 		$this->assertSame( null, $config->getMWConfigValue( 'CiteUnknownConfig' ) );
+	}
+
+	public function provideMetricsData(): iterable {
+		return [ [
+			"metric_name",
+			[
+				[ "label1" => "value1", "label2" => "value2" ],
+				[ "label1" => "value1", "label2" => "value3" ]
+			],
+			[
+				[ "value1", "value2" ],
+				[ "value1", "value3" ] ]
+		] ];
+	}
+
+	/**
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::incrementCounter
+	 * @dataProvider provideMetricsData
+	 */
+	public function testIncrementCounter( $name, $labels, $expectedValues ) {
+		$config = $this->createSiteConfig();
+		$config->incrementCounter( $name, $labels[0] );
+		$config->incrementCounter( $name, $labels[1] );
+		$counter = $this->statsFactory->withComponent( "Parsoid" )->getCounter( $name );
+		$this->assertSame( 2, $counter->getSampleCount() );
+		$this->assertSame( $expectedValues[0], $counter->getSamples()[0]->getLabelValues() );
+		$this->assertSame( 1.0, $counter->getSamples()[0]->getValue() );
+		$this->assertSame( $expectedValues[1], $counter->getSamples()[1]->getLabelValues() );
+		$this->assertSame( 1.0, $counter->getSamples()[1]->getValue() );
+		// Check zero $amount
+		$config->incrementCounter( $name, $labels[0], 0 );
+		$this->assertSame( 3, $counter->getSampleCount() );
+		$this->assertSame( 0.0, $counter->getSamples()[2]->getValue() );
+		// Check non-unit $amount
+		$config->incrementCounter( $name, $labels[1], 12 );
+		$this->assertSame( 4, $counter->getSampleCount() );
+		$this->assertSame( 12.0, $counter->getSamples()[3]->getValue() );
+	}
+
+	/**
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::observeTiming
+	 * @dataProvider provideMetricsData
+	 */
+	public function testObserveTiming( $name, $labels, $expectedValues ) {
+		$config = $this->createSiteConfig();
+		$config->observeTiming( $name, 1500.1, $labels[0] );
+		$config->observeTiming( $name, 2500.2, $labels[1] );
+		$counter = $this->statsFactory->withComponent( "Parsoid" )->getTiming( $name );
+		$this->assertSame( 2, $counter->getSampleCount() );
+		$this->assertSame( $expectedValues[0], $counter->getSamples()[0]->getLabelValues() );
+		$this->assertSame( 1500.1, $counter->getSamples()[0]->getValue() );
+		$this->assertSame( $expectedValues[1], $counter->getSamples()[1]->getLabelValues() );
+		$this->assertSame( 2500.2, $counter->getSamples()[1]->getValue() );
 	}
 }

@@ -10,6 +10,7 @@
 			"Nike",
 			"Olli",
 			"Pxos",
+			"Samoasambia",
 			"Stryn"
 		]
 	},
@@ -34,7 +35,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Poista enemmän sivuja]]",
 	"nuke-pattern": "SQL LIKE -malli (esim. %) sivun nimelle:",
 	"nuke-nopages-global": "Hakuasi vastaavia sivujen nimiä ei ole.",
-	"nuke-viewchanges": "näytä muutokset",
+	"nuke-viewchanges": "historia",
 	"nuke-namespace": "Rajoita nimiavaruuteen:",
 	"nuke-linkoncontribs": "massapoisto",
 	"nuke-linkoncontribs-text": "Massapoista ne sivut, joissa {{GENDER:$1|tämä käyttäjä}} on ainoa muokkaaja",

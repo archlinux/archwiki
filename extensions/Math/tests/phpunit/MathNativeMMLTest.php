@@ -22,7 +22,7 @@ class MathNativeMMLTest extends MediaWikiIntegrationTestCase {
 		$lbFactory = $this->createMock( LBFactory::class );
 		$lbFactory->method( 'getReplicaDatabase' )->willReturn( $db );
 		$this->setService( 'DBLoadBalancerFactory', $lbFactory );
-		$this->setMwGlobals( 'wgMathValidModes', [ 'native' ] );
+		$this->overrideConfigValue( 'MathValidModes', [ 'native' ] );
 		$this->clearHooks();
 	}
 
@@ -35,14 +35,14 @@ class MathNativeMMLTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNoLink() {
-		$this->setMwGlobals( 'wgMathEnableFormulaLinks', false );
+		$this->overrideConfigValue( 'MathEnableFormulaLinks', false );
 		$mml = new MathNativeMML( '\sin', [ 'qid' => 'Q1' ] );
 		$this->assertTrue( $mml->render() );
 		$this->assertStringNotContainsString( 'href', $mml->getMathml() );
 	}
 
 	public function testLink() {
-		$this->setMwGlobals( 'wgMathEnableFormulaLinks', true );
+		$this->overrideConfigValue( 'MathEnableFormulaLinks', true );
 		$mml = new MathNativeMML( '\sin', [ 'qid' => 'Q1' ] );
 		$this->assertTrue( $mml->render() );
 		$this->assertStringContainsString( 'href', $mml->getMathml() );

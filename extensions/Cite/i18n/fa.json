@@ -3,14 +3,14 @@
 		"authors": [
 			"Beginneruser",
 			"Dalba",
+			"Ebrahim",
 			"Ebraminio",
 			"Huji",
 			"Jeeputer",
 			"Ladsgroup",
 			"Reza1615",
 			"Wayiran",
-			"ZxxZxxZ",
-			"Ebrahim"
+			"ZxxZxxZ"
 		]
 	},
 	"cite-desc": "برچسب‌های <code>&lt;ref&gt;</code> و <code>&lt;references&gt;</code> را برای یادکرد اضافه می‌کند",
@@ -33,6 +33,13 @@
 	"cite_error_empty_references_define": "برچسپ <code>&lt;ref&gt;</code> تعریف شده درون <code>&lt;references&gt;</code> با نام «$1» محتوایی ندارد.",
 	"cite-tracking-category-cite-error": "صفحه‌های دارای خطا در ارجاع",
 	"cite-tracking-category-cite-error-desc": "صفحه‌های در این رده خطای استفاده از برچسب ارجاع دارند.",
+	"cite-reference-previews-reference": "منبع",
+	"cite-reference-previews-book": "منبع کتاب",
+	"cite-reference-previews-journal": "منبع ژورنال",
+	"cite-reference-previews-news": "منبع خبری",
+	"cite-reference-previews-note": "یادداشت",
+	"cite-reference-previews-web": "منبع وب",
+	"cite-reference-previews-collapsible-placeholder": "این ارجاع شامل یک طرح ظاهری است که برای پیش‌نمایش مناسب نیست.",
 	"cite_references_link_accessibility_label": "پرش به بالا",
 	"cite_references_link_many_accessibility_label": "پرش به بالا به:",
 	"cite_references_link_accessibility_back_label": "بازگشت به عقب",
@@ -44,5 +51,9 @@
 	"cite-wikieditor-help-content-reference-description": "منبع",
 	"cite-wikieditor-help-content-named-reference-description": "منبع نامگذای‌شده",
 	"cite-wikieditor-help-content-rereference-description": "استفادهٔ دوباره از همان منبع",
-	"cite-wikieditor-help-content-showreferences-description": "نمایش منابع"
+	"cite-wikieditor-help-content-showreferences-description": "نمایش منابع",
+	"popups-prefs-navpopups-gadget-conflict-info": "ابزار [[$1|پاپ‌آپس]] برای شما فعال است، در نتیجه قادر به مشاهدهٔ پیش‌نمایش‌های ارائه‌شده توسط این ویژگی نخواهید بود. اگر با مشکلات بیشتری مواجه شدید، لطفاً ابزارها و اسکریپت‌های کاربری خود، از جمله آن‌هایی که سراسری هستند را بازبینی کنید.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "ابزارهای [[$1|پاپ‌آپس]] و [[$1|جعبهٔ یادکرد]] برای شما فعال هستند، در نتیجه قادر به مشاهدهٔ پیش‌نمایش‌های ارائه‌شده توسط این ویژگی نخواهید بود. اگر با مشکلات بیشتری مواجه شدید، لطفاً ابزارها و اسکریپت‌های کاربری خود، از جمله آن‌هایی که سراسری هستند را بازبینی کنید.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "ابزار [[$1|جعبه یادکرد]] برای شما فعال است، در نتیجه پیش‌نمایش ارجاع‌ها را مشاهده نخواهید کرد، اما همچنان قادر به دیدن پیش‌نمایش صفحه‌ها خواهید بود. اگر با مشکلات بیشتری مواجه شدید، لطفاً ابزارها و اسکریپت‌های کاربری خود، از جمله آن‌هایی که سراسری هستند را بازبینی کنید.",
+	"popups-refpreview-user-preference-label": "فعال‌سازی پیش‌نمایش ارجاع (پیش‌نمایشی سریع از یک ارجاع به‌هنگام مطالعهٔ صفحه)"
 }

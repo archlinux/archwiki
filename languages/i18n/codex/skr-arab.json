@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Saraiki"
+		]
+	},
+	"cdx-chip-input-chip-added": "چِپ $1 شامل کیتی ڳئی ہائی۔",
+	"cdx-chip-input-chip-removed": "چِپ $1 ہٹا ݙتی ڳئی۔",
+	"cdx-dialog-close-button-label": "بند کرو",
+	"cdx-message-dismiss-button-label": "بند کرو",
+	"cdx-search-input-search-button-label": "ڳولو",
+	"cdx-typeahead-search-search-results-label": "ڳولݨ دے نتیجے",
+	"cdx-table-pager-button-first-page": "پہلا ورقہ",
+	"cdx-table-pager-button-last-page": "چھیکڑی ورقہ",
+	"cdx-table-pager-button-next-page": "اڳلا ورقہ",
+	"cdx-table-pager-button-prev-page": "پچھلا ورقہ",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 قطار|$1 قطاراں}}",
+	"cdx-table-pager-items-per-page-default": "فی ورقہ نتیجے",
+	"cdx-table-pagination-status-message-pending": "نتیجے لوڈ تھیندے پئے ہن۔۔۔"
+}

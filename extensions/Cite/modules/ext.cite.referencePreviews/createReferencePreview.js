@@ -45,14 +45,14 @@ function renderReferencePreview(
 ) {
 	const type = model.referenceType || 'generic';
 	// The following messages are used here:
-	// * popups-refpreview-book
-	// * popups-refpreview-journal
-	// * popups-refpreview-news
-	// * popups-refpreview-note
-	// * popups-refpreview-web
-	let titleMsg = mw.message( `popups-refpreview-${ type }` );
+	// * cite-reference-previews-book
+	// * cite-reference-previews-journal
+	// * cite-reference-previews-news
+	// * cite-reference-previews-note
+	// * cite-reference-previews-web
+	let titleMsg = mw.message( `cite-reference-previews-${ type }` );
 	if ( !titleMsg.exists() ) {
-		titleMsg = mw.message( 'popups-refpreview-reference' );
+		titleMsg = mw.message( 'cite-reference-previews-reference' );
 	}
 
 	const el = TEMPLATE.content.cloneNode( true ).children[ 0 ];
@@ -91,7 +91,7 @@ function renderReferencePreview(
 		icon.classList.add( 'popups-icon', 'popups-icon--infoFilled' );
 		const label = document.createElement( 'span' );
 		label.classList.add( 'mwe-collapsible-placeholder-label' );
-		label.textContent = mw.msg( 'popups-refpreview-collapsible-placeholder' );
+		label.textContent = mw.msg( 'cite-reference-previews-collapsible-placeholder' );
 		otherNode.appendChild( icon );
 		otherNode.appendChild( label );
 		replaceWith( node, otherNode );
@@ -130,7 +130,7 @@ function renderReferencePreview(
 		} );
 	}
 
-	el.querySelector( '.mwe-popups-scroll' ).addEventListener( 'scroll', function ( e ) {
+	el.querySelector( '.mwe-popups-scroll' ).addEventListener( 'scroll', ( e ) => {
 		const element = e.target,
 			// We are dealing with floating point numbers here when the page is zoomed!
 			scrolledToBottom = element.scrollTop >= element.scrollHeight - element.clientHeight - 1;

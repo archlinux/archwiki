@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
-use CoreTagHooks;
-use FormatJson;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\CoreTagHooks;
 
 class TextLibrary extends LibraryBase {
 	// Matches Lua mw.text constants

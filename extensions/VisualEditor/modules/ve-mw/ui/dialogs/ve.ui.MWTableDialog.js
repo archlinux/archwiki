@@ -29,7 +29,7 @@ OO.inheritClass( ve.ui.MWTableDialog, ve.ui.TableDialog );
  */
 ve.ui.MWTableDialog.prototype.getValues = function () {
 	// Parent method
-	var values = ve.ui.MWTableDialog.super.prototype.getValues.call( this );
+	const values = ve.ui.MWTableDialog.super.prototype.getValues.call( this );
 	return ve.extendObject( values, {
 		wikitable: this.wikitableToggle.getValue(),
 		sortable: this.sortableToggle.getValue(),
@@ -46,25 +46,25 @@ ve.ui.MWTableDialog.prototype.initialize = function () {
 	ve.ui.MWTableDialog.super.prototype.initialize.call( this );
 
 	this.wikitableToggle = new OO.ui.ToggleSwitchWidget();
-	var wikitableField = new OO.ui.FieldLayout( this.wikitableToggle, {
+	const wikitableField = new OO.ui.FieldLayout( this.wikitableToggle, {
 		align: 'left',
 		label: ve.msg( 'visualeditor-dialog-table-wikitable' )
 	} );
 
 	this.sortableToggle = new OO.ui.ToggleSwitchWidget();
-	var sortableField = new OO.ui.FieldLayout( this.sortableToggle, {
+	const sortableField = new OO.ui.FieldLayout( this.sortableToggle, {
 		align: 'left',
 		label: ve.msg( 'visualeditor-dialog-table-sortable' )
 	} );
 
 	this.collapsibleToggle = new OO.ui.ToggleSwitchWidget();
-	var collapsibleField = new OO.ui.FieldLayout( this.collapsibleToggle, {
+	const collapsibleField = new OO.ui.FieldLayout( this.collapsibleToggle, {
 		align: 'left',
 		label: ve.msg( 'visualeditor-dialog-table-collapsible' )
 	} );
 
 	this.collapsedToggle = new OO.ui.ToggleSwitchWidget();
-	var collapsedField = new OO.ui.FieldLayout( this.collapsedToggle, {
+	const collapsedField = new OO.ui.FieldLayout( this.collapsedToggle, {
 		align: 'left',
 		label: ve.msg( 'visualeditor-dialog-table-collapsed' )
 	} );
@@ -82,8 +82,8 @@ ve.ui.MWTableDialog.prototype.initialize = function () {
  */
 ve.ui.MWTableDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWTableDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
-			var tableNode = this.getFragment().getSelection().getTableNode(
+		.next( () => {
+			const tableNode = this.getFragment().getSelection().getTableNode(
 					this.getFragment().getDocument()
 				),
 				wikitable = !!tableNode.getAttribute( 'wikitable' ),
@@ -109,7 +109,7 @@ ve.ui.MWTableDialog.prototype.getSetupProcess = function ( data ) {
 			} );
 
 			this.onCollapsibleChange( collapsible );
-		}, this );
+		} );
 };
 
 /**
@@ -117,10 +117,10 @@ ve.ui.MWTableDialog.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.MWTableDialog.prototype.getActionProcess = function ( action ) {
 	return ve.ui.MWTableDialog.super.prototype.getActionProcess.call( this, action )
-		.next( function () {
+		.next( () => {
 			if ( action === 'done' ) {
-				var surfaceModel = this.getFragment().getSurface();
-				var fragment = surfaceModel.getLinearFragment( this.getFragment().getSelection().tableRange, true );
+				const surfaceModel = this.getFragment().getSurface();
+				const fragment = surfaceModel.getLinearFragment( this.getFragment().getSelection().tableRange, true );
 				fragment.changeAttributes( {
 					wikitable: this.wikitableToggle.getValue(),
 					sortable: this.sortableToggle.getValue(),
@@ -128,7 +128,7 @@ ve.ui.MWTableDialog.prototype.getActionProcess = function ( action ) {
 					collapsed: this.collapsedToggle.getValue()
 				} );
 			}
-		}, this );
+		} );
 };
 
 /**

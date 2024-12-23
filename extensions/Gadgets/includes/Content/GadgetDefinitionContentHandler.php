@@ -20,15 +20,17 @@
 
 namespace MediaWiki\Extension\Gadgets\Content;
 
-use Content;
-use FormatJson;
-use JsonContentHandler;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\JsonContentHandler;
 use MediaWiki\Content\Renderer\ContentParseParams;
+use MediaWiki\Content\ValidationParams;
 use MediaWiki\Extension\Gadgets\GadgetRepo;
 use MediaWiki\Extension\Gadgets\MediaWikiGadgetsJsonRepo;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
+use StatusValue;
 
 class GadgetDefinitionContentHandler extends JsonContentHandler {
 	private GadgetRepo $gadgetRepo;
@@ -54,6 +56,20 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 	public function makeEmptyContent() {
 		$class = $this->getContentClass();
 		return new $class( FormatJson::encode( $this->getEmptyDefinition(), "\t" ) );
+	}
+
+	/**
+	 * @param Content $content
+	 * @param ValidationParams $validationParams
+	 * @return StatusValue
+	 */
+	public function validateSave( Content $content, ValidationParams $validationParams ) {
+		$status = parent::validateSave( $content, $validationParams );
+		'@phan-var GadgetDefinitionContent $content';
+		if ( !$status->isOK() ) {
+			return $content->validate();
+		}
+		return $status;
 	}
 
 	public function getEmptyDefinition() {

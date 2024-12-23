@@ -9,29 +9,28 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use ExtensionRegistry;
-use IContextSource;
-use IDBAccessObject;
 use LqtDispatch;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\DiscussionTools\CommentParser;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ContentThreadItemSet;
-use MediaWiki\Extension\Gadgets\GadgetRepo;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
-use ParserOptions;
-use RequestContext;
 use RuntimeException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 class HookUtils {
 
@@ -199,7 +198,7 @@ class HookUtils {
 
 		$extensionRegistry = ExtensionRegistry::getInstance();
 		if ( $extensionRegistry->isLoaded( 'Gadgets' ) ) {
-			$gadgetsRepo = GadgetRepo::singleton();
+			$gadgetsRepo = MediaWikiServices::getInstance()->getService( 'GadgetsRepo' );
 			$match = array_search( $gadgetName, $gadgetsRepo->getGadgetIds(), true );
 			if ( $match !== false ) {
 				try {
@@ -253,15 +252,6 @@ class HookUtils {
 			return true;
 		}
 
-		// Being in the "test" group for this feature means it's enabled. This
-		// overrules the wiki's beta feature setting. (However, a user who's
-		// in the control group can still bypass this and enable the feature
-		// normally.)
-		$abtest = static::determineUserABTestBucket( $user, $feature );
-		if ( $abtest === 'test' ) {
-			return true;
-		}
-
 		// No feature-specific override found.
 
 		if ( $dtConfig->get( 'DiscussionToolsBeta' ) ) {
@@ -306,36 +296,6 @@ class HookUtils {
 	}
 
 	/**
-	 * Work out the A/B test bucket for the current user
-	 *
-	 * Currently this just checks whether the user is logged in, and assigns
-	 * them to a consistent bucket based on their ID.
-	 *
-	 * @param UserIdentity $user
-	 * @param string|null $feature Feature to check for (one of static::FEATURES)
-	 *  Null will check for any DT feature.
-	 * @return string 'test' if in the test group, 'control' if in the control group, or '' if
-	 * 	they're not in the test
-	 */
-	public static function determineUserABTestBucket( UserIdentity $user, ?string $feature = null ): string {
-		$services = MediaWikiServices::getInstance();
-		$dtConfig = $services->getConfigFactory()->makeConfig( 'discussiontools' );
-
-		$abtest = $dtConfig->get( 'DiscussionToolsABTest' );
-		if ( !$abtest ) {
-			return '';
-		}
-
-		if (
-			( $feature ? in_array( $feature, (array)$abtest, true ) : (bool)$abtest ) &&
-			$user->isRegistered()
-		) {
-			return $user->getId() % 2 === 0 ? 'test' : 'control';
-		}
-		return '';
-	}
-
-	/**
 	 * Check if the tools are available for a given title
 	 *
 	 * Keep in sync with SQL conditions in persistRevisionThreadItems.php.
@@ -360,12 +320,12 @@ class HookUtils {
 		}
 
 		// ARCHIVEDTALK/NOTALK magic words
-		if ( self::hasPagePropCached( $title, 'notalk' ) ) {
+		if ( static::hasPagePropCached( $title, 'notalk' ) ) {
 			return false;
 		}
 		if (
 			$feature === static::REPLYTOOL &&
-			self::hasPagePropCached( $title, 'archivedtalk' )
+			static::hasPagePropCached( $title, 'archivedtalk' )
 		) {
 			return false;
 		}
@@ -376,8 +336,11 @@ class HookUtils {
 			$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
 			// Visual enhancements are only enabled on talk namespaces (T325417) ...
 			return $title->isTalkPage() || (
-				// ... or __NEWSECTIONLINK__ pages (T331635)
-				static::hasPagePropCached( $title, 'newsectionlink' ) &&
+				// ... or __NEWSECTIONLINK__ (T331635) or __ARCHIVEDTALK__ (T374198) pages
+				(
+					static::hasPagePropCached( $title, 'newsectionlink' ) ||
+					static::hasPagePropCached( $title, 'archivedtalk' )
+				) &&
 				// excluding the main namespace, unless it has been configured for signatures
 				(
 					!$title->inNamespace( NS_MAIN ) ||
@@ -550,7 +513,7 @@ class HookUtils {
 				// When the new topic tool will be opened (usually when clicking the 'Add topic' tab)
 				static::shouldOpenNewTopicTool( $context ) ||
 				// In read mode (accessible for non-existent pages by clicking 'Cancel' in editor)
-				$req->getRawVal( 'action', 'view' ) === 'view'
+				( $req->getRawVal( 'action' ) ?? 'view' ) === 'view'
 			) &&
 			// Only in talk namespaces, not including other namespaces that isAvailableForTitle() allows
 			$title->isTalkPage() &&

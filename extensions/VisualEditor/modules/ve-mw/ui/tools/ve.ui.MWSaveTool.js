@@ -37,7 +37,7 @@ OO.inheritClass( ve.ui.MWSaveTool, ve.ui.Tool );
 /* Static properties */
 
 ve.ui.MWSaveTool.static.name = 'showSave';
-// eslint-disable-next-line es-x/no-regexp-prototype-flags
+
 ve.ui.MWSaveTool.static.flags = [ 'primary', 'progressive' ];
 ve.ui.MWSaveTool.static.displayBothIconAndLabel = true;
 ve.ui.MWSaveTool.static.group = 'save';
@@ -56,7 +56,7 @@ if ( OO.ui.isMobile() ) {
  * @inheritdoc
  */
 ve.ui.MWSaveTool.prototype.onUpdateState = function () {
-	var wasSaveable = !this.isDisabled(),
+	const wasSaveable = !this.isDisabled(),
 		isSaveable = this.toolbar instanceof ve.ui.TargetToolbar &&
 			this.toolbar.target.isSaveable();
 

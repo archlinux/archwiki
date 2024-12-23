@@ -4,6 +4,7 @@ use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\Cache\LinkBatch;
 use MediaWiki\Cache\LinkCache;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logger\LoggerFactory;
@@ -17,14 +18,14 @@ use Wikimedia\Rdbms\IConnectionProvider;
 /**
  * @group Database
  * @group Cache
- * @covers \LinkBatch
+ * @covers \MediaWiki\Cache\LinkBatch
  */
 class LinkBatchTest extends MediaWikiIntegrationTestCase {
 
 	/**
-	 * @covers \LinkBatch::__construct()
-	 * @covers \LinkBatch::getSize()
-	 * @covers \LinkBatch::isEmpty()
+	 * @covers \MediaWiki\Cache\LinkBatch::__construct()
+	 * @covers \MediaWiki\Cache\LinkBatch::getSize()
+	 * @covers \MediaWiki\Cache\LinkBatch::isEmpty()
 	 */
 	public function testConstructEmptyWithServices() {
 		$batch = new LinkBatch(
@@ -43,9 +44,9 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \LinkBatch::__construct()
-	 * @covers \LinkBatch::getSize()
-	 * @covers \LinkBatch::isEmpty()
+	 * @covers \MediaWiki\Cache\LinkBatch::__construct()
+	 * @covers \MediaWiki\Cache\LinkBatch::getSize()
+	 * @covers \MediaWiki\Cache\LinkBatch::isEmpty()
 	 */
 	public function testConstructWithServices() {
 		$batch = new LinkBatch(
@@ -86,8 +87,8 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \LinkBatch::addObj()
-	 * @covers \LinkBatch::getSize()
+	 * @covers \MediaWiki\Cache\LinkBatch::addObj()
+	 * @covers \MediaWiki\Cache\LinkBatch::getSize()
 	 */
 	public function testAddObj() {
 		$batch = $this->newLinkBatch(
@@ -105,8 +106,8 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \LinkBatch::add()
-	 * @covers \LinkBatch::getSize()
+	 * @covers \MediaWiki\Cache\LinkBatch::add()
+	 * @covers \MediaWiki\Cache\LinkBatch::getSize()
 	 */
 	public function testAdd() {
 		$batch = $this->newLinkBatch(

@@ -6,14 +6,14 @@ const assert = require( 'assert' ),
 	Util = require( 'wdio-mediawiki/Util' ),
 	Api = require( 'wdio-mediawiki/Api' );
 
-describe( 'Echo', function () {
+describe( 'Echo', () => {
 	let bot;
 
 	before( async () => {
 		bot = await Api.bot();
 	} );
 
-	it( 'alerts and notices are visible after logging in @daily', async function () {
+	it( 'alerts and notices are visible after logging in @daily', async () => {
 
 		await UserLoginPage.login( browser.config.mwUser, browser.config.mwPwd );
 
@@ -22,7 +22,7 @@ describe( 'Echo', function () {
 
 	} );
 
-	it( 'flyout for alert appears when clicked @daily', async function () {
+	it( 'flyout for alert appears when clicked @daily', async () => {
 
 		await UserLoginPage.login( browser.config.mwUser, browser.config.mwPwd );
 		await EchoPage.alerts.click();
@@ -32,7 +32,7 @@ describe( 'Echo', function () {
 
 	} );
 
-	it( 'flyout for notices appears when clicked @daily', async function () {
+	it( 'flyout for notices appears when clicked @daily', async () => {
 
 		await UserLoginPage.login( browser.config.mwUser, browser.config.mwPwd );
 		await EchoPage.notices.click();
@@ -42,7 +42,8 @@ describe( 'Echo', function () {
 
 	} );
 
-	it.skip( 'checks for welcome message after signup', async function () {
+	// Skipped on 2022-01-17 in 754491 because of T299339
+	it.skip( 'checks for welcome message after signup', async () => {
 
 		const username = Util.getTestString( 'NewUser-' );
 		const password = Util.getTestString();

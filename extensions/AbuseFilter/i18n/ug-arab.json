@@ -186,7 +186,6 @@
 	"abusefilter-edit-builder-op-bool-not": "ئەمەس (!)",
 	"abusefilter-edit-builder-op-bool-and": "ۋە (&)",
 	"abusefilter-edit-builder-op-bool-or": "ياكى (|)",
-	"abusefilter-edit-builder-op-bool-xor": "XOR (^)",
 	"abusefilter-edit-builder-group-misc": "باشقىلار",
 	"abusefilter-edit-builder-misc-in": "ھەرپنىڭ ئىچىدە (in)",
 	"abusefilter-edit-builder-misc-contains": "سول ھەرپ تىزىقى ئوڭ ھەرپ تىزىقى （contains）نى ئۆز ئىچىگە ئالغان",

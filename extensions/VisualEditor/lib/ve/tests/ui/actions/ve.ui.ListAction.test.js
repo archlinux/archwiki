@@ -8,8 +8,8 @@ QUnit.module( 've.ui.ListAction' );
 
 /* Tests */
 
-QUnit.test( '(un)wrap', function ( assert ) {
-	var cases = [
+QUnit.test( '(un)wrap', ( assert ) => {
+	const cases = [
 		{
 			rangeOrSelection: new ve.Range( 56, 60 ),
 			method: 'wrap',
@@ -53,7 +53,24 @@ QUnit.test( '(un)wrap', function ( assert ) {
 			},
 			undo: true,
 			msg: 'unwrapping two double listed paragraphs'
-		},
+		}
+	];
+
+	cases.forEach( ( caseItem ) => {
+		ve.test.utils.runActionTest(
+			assert,
+			{
+				actionName: 'list',
+				args: [ caseItem.style ],
+				createView: true,
+				...caseItem
+			}
+		);
+	} );
+} );
+
+QUnit.test( 'toggle', ( assert ) => {
+	const cases = [
 		{
 			html: '<ul><li>One<ul><li>Two</li></ul></li></ul>',
 			rangeOrSelection: new ve.Range( 11 ),
@@ -80,14 +97,14 @@ QUnit.test( '(un)wrap', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runActionTest(
-			'list', assert, caseItem.html, false, caseItem.method, [ caseItem.style ], caseItem.rangeOrSelection, caseItem.msg,
+			assert,
 			{
-				expectedData: caseItem.expectedData,
-				expectedOriginalData: caseItem.expectedOriginalData,
-				expectedRangeOrSelection: caseItem.expectedRangeOrSelection,
-				undo: caseItem.undo
+				actionName: 'list',
+				args: [ caseItem.style ],
+				createView: true,
+				...caseItem
 			}
 		);
 	} );

@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Shortpages
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -37,8 +34,7 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * SpecialShortpages extends QueryPage. It is used to return the shortest
- * pages in the database.
+ * List of the shortest pages in the database.
  *
  * @ingroup SpecialPage
  */
@@ -177,8 +173,6 @@ class SpecialShortPages extends QueryPage {
 	 * @return string
 	 */
 	public function formatResult( $skin, $result ) {
-		$dm = $this->getLanguage()->getDirMark();
-
 		$title = Title::makeTitleSafe( $result->namespace, $result->title );
 		if ( !$title ) {
 			return Html::element( 'span', [ 'class' => 'mw-invalidtitle' ],
@@ -201,12 +195,16 @@ class SpecialShortPages extends QueryPage {
 			$plink = $linkRenderer->makeKnownLink( $title );
 			$exists = true;
 		}
-
+		$contentLanguage = $this->getContentLanguage();
+		$bdiAttrs = [
+			'dir' => $contentLanguage->getDir(),
+			'lang' => $contentLanguage->getHtmlCode(),
+		];
+		$plink = Html::rawElement( 'bdi', $bdiAttrs, $plink );
 		$size = $this->msg( 'nbytes' )->numParams( $result->value )->escaped();
+		$result = "{$hlinkInParentheses} {$plink} [{$size}]";
 
-		return $exists
-			? "{$hlinkInParentheses} {$dm}{$plink} {$dm}[{$size}]"
-			: "<del>{$hlinkInParentheses} {$dm}{$plink} {$dm}[{$size}]</del>";
+		return $exists ? $result : Html::rawElement( 'del', [], $result );
 	}
 
 	protected function getGroupName() {

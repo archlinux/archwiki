@@ -148,7 +148,7 @@ class Reader implements LoggerAwareInterface {
 	 * @param LoggerInterface|null $logger Logger instance if available
 	 * @param string $filename
 	 */
-	public function __construct( LoggerInterface $logger = null, $filename = 'unknown' ) {
+	public function __construct( ?LoggerInterface $logger = null, $filename = 'unknown' ) {
 		if ( $logger ) {
 			$this->setLogger( $logger );
 		} else {

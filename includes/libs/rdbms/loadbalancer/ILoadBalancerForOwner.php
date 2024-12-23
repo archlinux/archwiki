@@ -22,11 +22,12 @@ namespace Wikimedia\Rdbms;
 use Exception;
 
 /**
- * Internal interface for LoadBalancer methods used by LBFactory
+ * Internal interface for load balancer instances exposed to their owner
  *
- * Used by untracked objects returned from newMainLB().
+ * Instances are either owned by an LBFactory object or owned by the caller that created
+ * the instance using a constructor/factory function such as LBFactory::newMain().
  *
- * @internal
+ * @internal Only for use within LBFactory/LoadMonitor/ChronologyProtector
  * @since 1.39
  * @ingroup Database
  */
@@ -75,14 +76,14 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 *
 	 * Any attempt to open a new connection will result in a DBAccessError.
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 */
 	public function disable( $fname = __METHOD__ );
 
 	/**
 	 * Close all open connections
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 *
 	 */
 	public function closeAll( $fname = __METHOD__ );
@@ -92,7 +93,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 *
 	 * Use this only for multi-database commits
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @return int Number of pre-commit callbacks run (since 1.32)
 	 * @since 1.37
 	 */
@@ -104,7 +105,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 * Use this only for multi-database commits
 	 *
 	 * @param int $maxWriteDuration : max write query duration time in seconds
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @throws DBTransactionError
 	 * @since 1.37
 	 */
@@ -118,7 +119,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 *   - rollbackPrimaryChanges()
 	 * This allows for custom transaction rounds from any outer transaction scope.
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @throws DBExpectedError
 	 * @since 1.37
 	 */
@@ -126,7 +127,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 
 	/**
 	 * Issue COMMIT on all open primary connections to flush changes and view snapshots
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @throws DBExpectedError
 	 * @since 1.37
 	 */
@@ -135,7 +136,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	/**
 	 * Consume and run all pending post-COMMIT/ROLLBACK callbacks and commit dangling transactions
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @return Exception|null The first exception or null if there were none
 	 * @since 1.37
 	 */
@@ -144,7 +145,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	/**
 	 * Run all recurring post-COMMIT/ROLLBACK listener callbacks
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @return Exception|null The first exception or null if there were none
 	 * @since 1.37
 	 */
@@ -153,7 +154,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	/**
 	 * Issue ROLLBACK only on primary, only if queries were done on connection
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @throws DBExpectedError
 	 * @since 1.37
 	 */
@@ -164,7 +165,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 *
 	 * Only call this function right after calling rollbackPrimaryChanges()
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @throws DBExpectedError
 	 * @since 1.38
 	 */
@@ -173,7 +174,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	/**
 	 * Commit all replica DB transactions so as to flush any REPEATABLE-READ or SSI snapshots
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 */
 	public function flushReplicaSnapshots( $fname = __METHOD__ );
 
@@ -182,7 +183,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 *
 	 * An error will be thrown if a connection has pending writes or callbacks
 	 *
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @since 1.37
 	 */
 	public function flushPrimarySnapshots( $fname = __METHOD__ );
@@ -263,4 +264,12 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 * @return bool Success (able to connect and no timeouts reached)
 	 */
 	public function waitForAll( DBPrimaryPos $pos, $timeout = null );
+
+	/**
+	 * Whether a highly "lagged" replica database connection was queried.
+	 *
+	 * @note This method will never cause a new DB connection
+	 * @return bool
+	 */
+	public function laggedReplicaUsed();
 }

@@ -1,7 +1,10 @@
 <?php
 
+use MediaWiki\Content\FallbackContent;
+use MediaWiki\Content\FallbackContentHandler;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Parser\ParserObserver;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Title\Title;
 
@@ -9,6 +12,8 @@ use MediaWiki\Title\Title;
  * See also unit tests at \MediaWiki\Tests\Unit\FallbackContentHandlerTest
  *
  * @group ContentHandler
+ * @covers \MediaWiki\Content\FallbackContentHandler
+ * @covers \MediaWiki\Content\ContentHandler
  */
 class FallbackContentHandlerTest extends MediaWikiLangTestCase {
 
@@ -23,19 +28,10 @@ class FallbackContentHandlerTest extends MediaWikiLangTestCase {
 		$this->setService( '_ParserObserver', $this->createMock( ParserObserver::class ) );
 	}
 
-	/**
-	 * @param string $data
-	 * @param string $type
-	 *
-	 * @return FallbackContent
-	 */
-	public function newContent( $data, $type = self::CONTENT_MODEL ) {
+	private function newContent( string $data, string $type = self::CONTENT_MODEL ) {
 		return new FallbackContent( $data, $type );
 	}
 
-	/**
-	 * @covers \ContentHandler::getSlotDiffRenderer
-	 */
 	public function testGetSlotDiffRenderer() {
 		$context = new RequestContext();
 		$context->setRequest( new FauxRequest() );
@@ -51,9 +47,6 @@ class FallbackContentHandlerTest extends MediaWikiLangTestCase {
 		$this->assertNotEmpty( $diff );
 	}
 
-	/**
-	 * @covers \FallbackContentHandler::fillParserOutput
-	 */
 	public function testGetParserOutput() {
 		$this->setUserLang( 'en' );
 		$this->setContentLang( 'qqx' );
@@ -64,8 +57,10 @@ class FallbackContentHandlerTest extends MediaWikiLangTestCase {
 
 		$content = $this->newContent( 'Horkyporky' );
 		$contentRenderer = $this->getServiceContainer()->getContentRenderer();
-		$po = $contentRenderer->getParserOutput( $content, $title );
-		$html = $po->getText();
+		$opts = ParserOptions::newFromAnon();
+		// TODO T371004
+		$po = $contentRenderer->getParserOutput( $content, $title, null, $opts );
+		$html = $po->runOutputPipeline( $opts, [] )->getContentHolderText();
 		$html = preg_replace( '#<!--.*?-->#sm', '', $html ); // strip comments
 
 		$this->assertStringNotContainsString( 'Horkyporky', $html );

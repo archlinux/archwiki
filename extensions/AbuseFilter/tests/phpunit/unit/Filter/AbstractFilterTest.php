@@ -11,12 +11,9 @@ use Wikimedia\Assert\ParameterTypeException;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter
+ * @covers \MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter
  */
 class AbstractFilterTest extends MediaWikiUnitTestCase {
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct_invalidActions() {
 		$this->expectException( ParameterTypeException::class );
 		new AbstractFilter(
@@ -26,9 +23,6 @@ class AbstractFilterTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct_actionsFormats() {
 		$specs = $this->createMock( Specs::class );
 		$flags = $this->createMock( Flags::class );
@@ -45,18 +39,6 @@ class AbstractFilterTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::getRules
-	 * @covers ::getComments
-	 * @covers ::getName
-	 * @covers ::getActionsNames
-	 * @covers ::getGroup
-	 * @covers ::isEnabled
-	 * @covers ::isDeleted
-	 * @covers ::isHidden
-	 * @covers ::isGlobal
-	 */
 	public function testValueGetters() {
 		$rules = 'rules';
 		$comments = 'comments';
@@ -65,11 +47,11 @@ class AbstractFilterTest extends MediaWikiUnitTestCase {
 		$group = 'group';
 		$enabled = true;
 		$deleted = false;
-		$hidden = true;
+		$privacyLevel = Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
 		$global = false;
 		$filter = new AbstractFilter(
 			new Specs( $rules, $comments, $name, $actionsNames, $group ),
-			new Flags( $enabled, $deleted, $hidden, $global ),
+			new Flags( $enabled, $deleted, $privacyLevel, $global ),
 			[ 'foo' => [] ]
 		);
 
@@ -80,14 +62,12 @@ class AbstractFilterTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $group, $filter->getGroup(), 'group' );
 		$this->assertSame( $enabled, $filter->isEnabled(), 'enabled' );
 		$this->assertSame( $deleted, $filter->isDeleted(), 'deleted' );
-		$this->assertSame( $hidden, $filter->isHidden(), 'hidden' );
+		$this->assertSame( true, $filter->isHidden(), 'hidden' );
+		$this->assertSame( true, $filter->isProtected(), 'uses protected vars' );
+		$this->assertSame( $privacyLevel, $filter->getPrivacyLevel(), 'privacy level' );
 		$this->assertSame( $global, $filter->isGlobal(), 'global' );
 	}
 
-	/**
-	 * @covers ::getSpecs
-	 * @covers ::getFlags
-	 */
 	public function testGetObjects() {
 		$specs = $this->createMock( Specs::class );
 		$flags = $this->createMock( Flags::class );
@@ -103,8 +83,6 @@ class AbstractFilterTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param array|callable $value
 	 * @param array $expected
-	 * @covers ::getActions
-	 * @covers ::setActions
 	 * @dataProvider provideActions
 	 */
 	public function testActions( $value, array $expected ) {
@@ -135,10 +113,6 @@ class AbstractFilterTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::__clone
-	 */
 	public function testNoWriteableReferences() {
 		$oldRules = 'rules';
 		$specs = new Specs( $oldRules, 'x', 'x', [], 'x' );

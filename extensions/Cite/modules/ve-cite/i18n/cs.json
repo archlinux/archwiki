@@ -45,7 +45,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "Tato reference se na této stránce používá $1{{PLURAL:$1|krát}}. Zde provedené změny se projeví všude, kde se tato reference používá.",
 	"cite-ve-dialog-reference-options-group-label": "Použít tuto skupinu",
 	"cite-ve-dialog-reference-options-group-placeholder": "Obecné reference",
-	"cite-ve-dialog-reference-options-name-label": "Znovupoužívat pod tímto názvem",
 	"cite-ve-dialog-reference-options-responsive-label": "Použít responzivní vzhled sloupců",
 	"cite-ve-dialog-reference-options-section": "Možnosti",
 	"cite-ve-dialog-reference-placeholder": "Sem napište nebo vložte svou referenci nebo citační šablonu.",

@@ -1,15 +1,19 @@
 <?php
 
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\MainConfigNames;
 use Wikimedia\LightweightObjectStore\StorageAwareness;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\MultiWriteBagOStuff;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @author Matthias Mullie <mmullie@wikimedia.org>
  * @group BagOStuff
- * @covers \BagOStuff
- * @covers \MediumSpecificBagOStuff
+ * @covers \Wikimedia\ObjectCache\BagOStuff
+ * @covers \Wikimedia\ObjectCache\MediumSpecificBagOStuff
  */
 abstract class BagOStuffTestBase extends MediaWikiIntegrationTestCase {
 	/** @var BagOStuff */
@@ -42,10 +46,10 @@ abstract class BagOStuffTestBase extends MediaWikiIntegrationTestCase {
 	abstract protected function newCacheInstance();
 
 	protected function getCacheByClass( $className ) {
-		$caches = $this->getConfVar( 'ObjectCaches' );
+		$caches = $this->getConfVar( MainConfigNames::ObjectCaches );
 		foreach ( $caches as $id => $cache ) {
 			if ( ( $cache['class'] ?? '' ) === $className ) {
-				return ObjectCache::getInstance( $id );
+				return $this->getServiceContainer()->getObjectCacheFactory()->getInstance( $id );
 			}
 		}
 		$this->markTestSkipped( "No $className is configured" );
@@ -426,7 +430,7 @@ abstract class BagOStuffTestBase extends MediaWikiIntegrationTestCase {
 			$this->cache->set( $key, "@$value", 10, BagOStuff::WRITE_ALLOW_SEGMENTS );
 			$this->assertEquals( "@$value", $this->cache->get( $key ), "get $case" );
 			$this->assertTrue(
-				$this->cache->delete( $key, BagOStuff::WRITE_PRUNE_SEGMENTS ),
+				$this->cache->delete( $key, BagOStuff::WRITE_ALLOW_SEGMENTS ),
 				"prune $case"
 			);
 			$this->assertFalse( $this->cache->get( $key ), "pruned $case" );

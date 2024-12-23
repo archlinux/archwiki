@@ -3,13 +3,13 @@
 namespace MediaWiki\Extension\Math\Tests;
 
 use DataValues\StringValue;
-use ExtensionRegistry;
-use Language;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\MathFormatter;
 use MediaWiki\Extension\Math\MathWikibaseConnector;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Site\Site;
 use MediaWikiUnitTestCase;
 use Psr\Log\LoggerInterface;
@@ -64,8 +64,8 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 	public function getWikibaseConnectorWithExistingItems(
 		EntityRevision $entityRevision,
 		bool $storageExceptionOnQ3 = false,
-		LoggerInterface $logger = null,
-		EntityIdParser $parser = null
+		?LoggerInterface $logger = null,
+		?EntityIdParser $parser = null
 	): MathWikibaseConnector {
 		$revisionLookupMock = $this->createMock( EntityRevisionLookup::class );
 		$revisionLookupMock->method( 'getEntityRevision' )->willReturnCallback(
@@ -105,12 +105,12 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 	}
 
 	public function getWikibaseConnector(
-		LanguageFactory $languageFactory = null,
-		LanguageNameUtils $languageNameUtils = null,
-		FallbackLabelDescriptionLookupFactory $labelDescriptionLookupFactory = null,
-		EntityRevisionLookup $entityRevisionLookupMock = null,
-		LoggerInterface $logger = null,
-		EntityIdParser $parser = null
+		?LanguageFactory $languageFactory = null,
+		?LanguageNameUtils $languageNameUtils = null,
+		?FallbackLabelDescriptionLookupFactory $labelDescriptionLookupFactory = null,
+		?EntityRevisionLookup $entityRevisionLookupMock = null,
+		?LoggerInterface $logger = null,
+		?EntityIdParser $parser = null
 	): MathWikibaseConnector {
 		$labelDescriptionLookupFactory = $labelDescriptionLookupFactory ?:
 			$this->createMock( FallbackLabelDescriptionLookupFactory::class );

@@ -24,15 +24,15 @@
 namespace MediaWiki\Extension\MultimediaViewer;
 
 use CategoryPage;
-use ExtensionRegistry;
 use MediaWiki\Category\Category;
 use MediaWiki\Config\Config;
-use MediaWiki\Hook\BeforePageDisplayHook;
-use MediaWiki\Hook\MakeGlobalVariablesScriptHook;
 use MediaWiki\Hook\ThumbnailBeforeProduceHTMLHook;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
+use MediaWiki\Output\Hook\MakeGlobalVariablesScriptHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\CategoryPageViewHook;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
@@ -51,18 +51,6 @@ class Hooks implements
 	ResourceLoaderGetConfigVarsHook,
 	ThumbnailBeforeProduceHTMLHook
 {
-	/** @var string Link to more information about this module */
-	protected static $infoLink =
-		'https://mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About';
-
-	/** @var string Link to a page where this module can be discussed */
-	protected static $discussionLink =
-		'https://mediawiki.org/wiki/Special:MyLanguage/Extension_talk:Media_Viewer/About';
-
-	/** @var string Link to help about this module */
-	protected static $helpLink =
-		'https://mediawiki.org/wiki/Special:MyLanguage/Help:Extension:Media_Viewer';
-
 	private Config $config;
 	private SpecialPageFactory $specialPageFactory;
 	private UserOptionsLookup $userOptionsLookup;
@@ -123,7 +111,7 @@ class Hooks implements
 		$isMobileFrontendView = ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
 			$this->mobileContext && $this->mobileContext->shouldDisplayMobileView();
 		if ( !$isMobileFrontendView ) {
-			$out->addModules( [ 'mmv.head', 'mmv.bootstrap.autostart' ] );
+			$out->addModules( [ 'mmv.bootstrap' ] );
 		}
 	}
 
@@ -188,15 +176,6 @@ class Hooks implements
 	 * @param Config $config
 	 */
 	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
-		$vars['wgMultimediaViewer'] = [
-			'infoLink' => self::$infoLink,
-			'discussionLink' => self::$discussionLink,
-			'helpLink' => self::$helpLink,
-			'useThumbnailGuessing' => (bool)$this->config->get( 'MediaViewerUseThumbnailGuessing' ),
-			'imageQueryParameter' => $this->config->get( 'MediaViewerImageQueryParameter' ),
-			'recordVirtualViewBeaconURI' => $this->config->get( 'MediaViewerRecordVirtualViewBeaconURI' ),
-			'extensions' => $this->config->get( 'MediaViewerExtensions' ),
-		];
 		$vars['wgMediaViewer'] = true;
 	}
 

@@ -28,85 +28,77 @@ use Wikimedia\ScopedCallback;
  * and query specifics/optimisations.
  */
 
+// Very long type annotations :(
+// phpcs:disable Generic.Files.LineLength
+
 /**
- * Basic database interface for live and lazy-loaded relation database handles
+ * Interface to a relational database
+ *
+ * This is used for both primary databases and replicas, and used for both concrete
+ * connections, as well as wrappers around shared connections, like DBConnRef.
+ *
+ * As such, callers should not assume that the object represents a live connection
+ * (when using DBConnRef, the object may lazily defer the connection to the first query),
+ * and should not assume that they have complete control over the connection
+ * (when using DBConnRef, multiple objects may automatically share and reuse the same
+ * underlying connection).
  *
  * @ingroup Database
  */
 interface IDatabase extends IReadableDatabase {
-	/** @var int Callback triggered immediately due to no active transaction */
+	/** Callback triggered immediately due to no active transaction */
 	public const TRIGGER_IDLE = 1;
-	/** @var int Callback triggered by COMMIT */
+	/** Callback triggered by COMMIT */
 	public const TRIGGER_COMMIT = 2;
-	/** @var int Callback triggered by ROLLBACK */
+	/** Callback triggered by ROLLBACK */
 	public const TRIGGER_ROLLBACK = 3;
-	/** @var int Callback triggered by atomic section cancel (ROLLBACK TO SAVEPOINT) */
+	/** Callback triggered by atomic section cancel (ROLLBACK TO SAVEPOINT) */
 	public const TRIGGER_CANCEL = 4;
 
-	/** @var string Transaction is requested by regular caller outside of the DB layer */
+	/** Transaction is requested by regular caller outside of the DB layer */
 	public const TRANSACTION_EXPLICIT = '';
-	/** @var string Transaction is requested internally via DBO_TRX/startAtomic() */
+	/** Transaction is requested internally via DBO_TRX/startAtomic() */
 	public const TRANSACTION_INTERNAL = 'implicit';
 
-	/** @var string Atomic section is not cancelable */
+	/** Atomic section is not cancelable */
 	public const ATOMIC_NOT_CANCELABLE = '';
-	/** @var string Atomic section is cancelable */
+	/** Atomic section is cancelable */
 	public const ATOMIC_CANCELABLE = 'cancelable';
 
-	/** @var string Commit/rollback is from outside the IDatabase handle and connection manager */
+	/** Commit/rollback is from outside the IDatabase handle and connection manager */
 	public const FLUSHING_ONE = '';
-	/** @var string Commit/rollback is from the connection manager for the IDatabase handle */
+	/**
+	 * Commit/rollback is from the owning connection manager for the IDatabase handle
+	 * @internal Only for use within the rdbms library
+	 */
 	public const FLUSHING_ALL_PEERS = 'flush';
-	/** @var string Commit/rollback is from the IDatabase handle internally */
+	/**
+	 * Commit/rollback is from the IDatabase handle internally
+	 * @internal Only for use within the rdbms library
+	 */
 	public const FLUSHING_INTERNAL = 'flush-internal';
 
-	/** @var string Estimate total time (RTT, scanning, waiting on locks, applying) */
+	/** Estimate total time (RTT, scanning, waiting on locks, applying) */
 	public const ESTIMATE_TOTAL = 'total';
-	/** @var string Estimate time to apply (scanning, applying) */
+	/** Estimate time to apply (scanning, applying) */
 	public const ESTIMATE_DB_APPLY = 'apply';
 
 	/** Flag to return the lock acquisition timestamp (null if not acquired) */
 	public const LOCK_TIMESTAMP = 1;
 
-	/** @var string Field for getLBInfo()/setLBInfo() */
+	/** Field for getLBInfo()/setLBInfo() */
 	public const LB_TRX_ROUND_ID = 'trxRoundId';
-	/** @var string Field for getLBInfo()/setLBInfo() */
+	/** Field for getLBInfo()/setLBInfo() */
 	public const LB_READ_ONLY_REASON = 'readOnlyReason';
 
-	/** @var string Primary server than can stream writes to replica servers */
+	/** Primary server than can stream writes to replica servers */
 	public const ROLE_STREAMING_MASTER = 'streaming-master';
-	/** @var string Replica server that receives writes from a primary server */
+	/** Replica server that receives writes from a primary server */
 	public const ROLE_STREAMING_REPLICA = 'streaming-replica';
-	/** @var string Replica server within a static dataset */
+	/** Replica server within a static dataset */
 	public const ROLE_STATIC_CLONE = 'static-clone';
-	/** @var string Server with unknown topology role */
+	/** Server with unknown topology role */
 	public const ROLE_UNKNOWN = 'unknown';
-
-	/**
-	 * Get a non-recycled ID that uniquely identifies this server within the replication topology
-	 *
-	 * A replication topology defines which servers can originate changes to a given dataset
-	 * and how those changes propagate among database servers. It is assumed that the server
-	 * only participates in the replication of a single relevant dataset.
-	 *
-	 * @return string|null 32, 64, or 128 bit integer ID; null if not applicable or unknown
-	 * @throws DBQueryError
-	 * @since 1.37
-	 */
-	public function getTopologyBasedServerId();
-
-	/**
-	 * Get the replication topology role of this server
-	 *
-	 * A replication topology defines which servers can originate changes to a given dataset
-	 * and how those changes propagate among database servers. It is assumed that the server
-	 * only participates in the replication of a single relevant dataset.
-	 *
-	 * @return string One of the class ROLE_* constants
-	 * @throws DBQueryError
-	 * @since 1.34
-	 */
-	public function getTopologyRole();
 
 	/**
 	 * Gets the current transaction level.
@@ -151,61 +143,6 @@ interface IDatabase extends IReadableDatabase {
 	 * @return array|mixed|null
 	 */
 	public function getLBInfo( $name = null );
-
-	/**
-	 * Set the entire array or a particular key of the managing load balancer info array
-	 *
-	 * Keys matching the IDatabase::LB_* constants are also used internally by subclasses
-	 *
-	 * @internal should not be called outside of rdbms library.
-	 *
-	 * @param array|string $nameOrArray The new array or the name of a key to set
-	 * @param array|mixed|null $value If $nameOrArray is a string, the new key value (null to unset)
-	 */
-	public function setLBInfo( $nameOrArray, $value = null );
-
-	/**
-	 * Get the last time the connection may have been used for a write query
-	 *
-	 * @return int|float|false UNIX timestamp or false
-	 * @since 1.24
-	 */
-	public function lastDoneWrites();
-
-	/**
-	 * @return bool Whether there is a transaction open with possible write queries
-	 * @since 1.27
-	 */
-	public function writesPending();
-
-	/**
-	 * Whether there is a transaction open with either possible write queries
-	 * or unresolved pre-commit/commit/resolution callbacks pending
-	 *
-	 * This does *not* count recurring callbacks, e.g. from setTransactionListener().
-	 *
-	 * @return bool
-	 */
-	public function writesOrCallbacksPending();
-
-	/**
-	 * Get the time spend running write queries for this transaction
-	 *
-	 * High values could be due to scanning, updates, locking, and such.
-	 *
-	 * @param string $type IDatabase::ESTIMATE_* constant [default: ESTIMATE_ALL]
-	 * @return float|false Returns false if not transaction is active
-	 * @since 1.26
-	 */
-	public function pendingWriteQueryDuration( $type = self::ESTIMATE_TOTAL );
-
-	/**
-	 * Get the list of method names that did write queries for this transaction
-	 *
-	 * @return array
-	 * @since 1.27
-	 */
-	public function pendingWriteCallers();
 
 	/**
 	 * Get the sequence-based ID assigned by the last query method call
@@ -274,12 +211,12 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * @param string|Query $sql Single-statement SQL query
 	 * @param-taint $sql exec_sql
-	 * @param string $fname Caller name; used for profiling/SHOW PROCESSLIST comments
-	 * @param int $flags Bit field of IDatabase::QUERY_* constants.
+	 * @param string $fname Caller name; used for profiling/SHOW PROCESSLIST comments @phan-mandatory-param
+	 * @param int $flags Bit field of ISQLPlatform::QUERY_* constants
 	 * @return bool|IResultWrapper True for a successful write query, IResultWrapper object
-	 *     for a successful read query, or false on failure if QUERY_SILENCE_ERRORS is set.
+	 *     for a successful read query, or false on failure if QUERY_SILENCE_ERRORS is set
 	 * @return-taint tainted
-	 * @throws DBQueryError If the query is issued, fails, and QUERY_SILENCE_ERRORS is not set.
+	 * @throws DBQueryError If the query is issued, fails, and QUERY_SILENCE_ERRORS is not set
 	 * @throws DBExpectedError If the query is not, and cannot, be issued yet (non-DBQueryError)
 	 * @throws DBError If the query is inherently not allowed (non-DBExpectedError)
 	 */
@@ -336,14 +273,16 @@ interface IDatabase extends IReadableDatabase {
 	/**
 	 * Lock all rows meeting the given conditions/options FOR UPDATE
 	 *
-	 * @param string|string[] $table Table name(s)
-	 * @param array|string $conds Filters on the table
-	 * @param string $fname Function name for profiling
+	 * @param string|string[] $table The unqualified name of table(s) (use an array for a join)
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
+	 *   Condition in the format of IDatabase::select() conditions
+	 * @param string $fname Function name for profiling @phan-mandatory-param
 	 * @param array $options Options for select ("FOR UPDATE" is added automatically)
 	 * @param array $join_conds Join conditions
 	 * @return int Number of matching rows found (and locked)
 	 * @throws DBError If an error occurs, {@see query}
 	 * @since 1.32
+	 * @deprecated since 1.43; Use SelectQueryBuilder::acquireRowLocks
 	 */
 	public function lockForUpdate(
 		$table, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
@@ -357,14 +296,14 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * @internal callers outside of rdbms library should use InsertQueryBuilder instead.
 	 *
-	 * @param string $table Table name
+	 * @param string $table The unqualified name of a table
 	 * @param array|array[] $rows Row(s) to insert, as either:
 	 *   - A string-keyed map of (column name => value) defining a new row. Values are
 	 *     treated as literals and quoted appropriately; null is interpreted as NULL.
 	 *   - An integer-keyed list of such string-keyed maps, defining a list of new rows.
 	 *     The keys in each map must be identical to each other and in the same order.
 	 *     The rows must not collide with each other.
-	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
+	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling @phan-mandatory-param
 	 * @param string|array $options Combination map/list where each string-keyed entry maps
 	 *   a non-boolean option to the option parameters and each integer-keyed value is the
 	 *   name of a boolean option. Supported options are:
@@ -383,9 +322,10 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * @internal callers outside of rdbms library should use UpdateQueryBuilder instead.
 	 *
-	 * @param string $table Table name
+	 * @param string $table The unqualified name of a table
 	 * @param-taint $table exec_sql
-	 * @param array $set Combination map/list where each string-keyed entry maps a column
+	 * @param array<string,?scalar|RawSQLValue>|array<int,string> $set
+	 *   Combination map/list where each string-keyed entry maps a column
 	 *   to a literal assigned value and each integer-keyed value is a SQL expression in the
 	 *   format of a column assignment within UPDATE...SET. The (column => value) entries are
 	 *   convenient due to automatic value quoting and conversion of null to NULL. The SQL
@@ -393,12 +333,13 @@ interface IDatabase extends IReadableDatabase {
 	 *   have no defined execution order, so they should not depend on each other. Do not
 	 *   modify AUTOINCREMENT or UUID columns in assignments.
 	 * @param-taint $set exec_sql_numkey
-	 * @param array|string $conds Condition in the format of IDatabase::select() conditions.
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
+	 *   Condition in the format of IDatabase::select() conditions.
 	 *   In order to prevent possible performance or replication issues or damaging a data
 	 *   accidentally, an empty condition for 'update' queries isn't allowed.
 	 *   IDatabase::ALL_ROWS should be passed explicitly in order to update all rows.
 	 * @param-taint $conds exec_sql_numkey
-	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
+	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling @phan-mandatory-param
 	 * @param-taint $fname exec_sql
 	 * @param string|array $options Combination map/list where each string-keyed entry maps
 	 *   a non-boolean option to the option parameters and each integer-keyed value is the
@@ -412,24 +353,6 @@ interface IDatabase extends IReadableDatabase {
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function update( $table, $set, $conds, $fname = __METHOD__, $options = [] );
-
-	/**
-	 * Deprecated method, calls should be removed
-	 *
-	 * This was formerly used for PostgreSQL to handle
-	 * self::insertId() auto-incrementing fields. It is no longer necessary
-	 * since DatabasePostgres::insertId() has been reimplemented using
-	 * `lastval()`
-	 *
-	 * Implementations should return null if inserting `NULL` into an
-	 * auto-incrementing field works, otherwise it should return an instance of
-	 * NextSequenceValue and filter it on calls to relevant methods.
-	 *
-	 * @deprecated since 1.30, no longer needed
-	 * @param string $seqName
-	 * @return null|NextSequenceValue
-	 */
-	public function nextSequenceValue( $seqName );
 
 	/**
 	 * Insert row(s) into a table, in the provided order, while deleting conflicting rows
@@ -451,7 +374,7 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * @internal callers outside of rdbms library should use ReplaceQueryBuilder instead.
 	 *
-	 * @param string $table The table name
+	 * @param string $table The unqualified name of a table
 	 * @param string|string[]|string[][] $uniqueKeys Column name or non-empty list of column
 	 *   name lists that define all applicable unique keys on the table. There must only be
 	 *   one such key. Each unique key on the table is "applicable" unless either:
@@ -464,7 +387,7 @@ interface IDatabase extends IReadableDatabase {
 	 *   - An integer-keyed list of such string-keyed maps, defining a list of new rows.
 	 *     The keys in each map must be identical to each other and in the same order.
 	 *     The rows must not collide with each other.
-	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
+	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling @phan-mandatory-param
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function replace( $table, $uniqueKeys, $rows, $fname = __METHOD__ );
@@ -481,7 +404,7 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * @internal callers outside of rdbms library should use InsertQueryBuilder instead.
 	 *
-	 * @param string $table Table name
+	 * @param string $table The unqualified name of a table
 	 * @param array|array[] $rows Row(s) to insert, in the form of either:
 	 *   - A string-keyed map of (column name => value) defining a new row. Values are
 	 *     treated as literals and quoted appropriately; null is interpreted as NULL.
@@ -494,7 +417,8 @@ interface IDatabase extends IReadableDatabase {
 	 *   one such key. Each unique key on the table is "applicable" unless either:
 	 *     - It involves an AUTOINCREMENT column for which no values are assigned in $rows
 	 *     - It involves a UUID column for which newly generated UUIDs are assigned in $rows
-	 * @param array $set Combination map/list where each string-keyed entry maps a column
+	 * @param array<string,?scalar|RawSQLValue>|array<int,string> $set
+	 *   Combination map/list where each string-keyed entry maps a column
 	 *   to a literal assigned value and each integer-keyed value is a SQL assignment expression
 	 *   of the form "<unquoted alphanumeric column> = <SQL expression>". The (column => value)
 	 *   entries are convenient due to automatic value quoting and conversion of null to NULL.
@@ -504,7 +428,7 @@ interface IDatabase extends IReadableDatabase {
 	 *   even if they are just "secondary" unique keys. For multi-row upserts, use
 	 *   buildExcludedValue() to reference the value of a column from the corresponding row
 	 *   in $rows that conflicts with the current row.
-	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
+	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling @phan-mandatory-param
 	 * @throws DBError If an error occurs, {@see query}
 	 * @since 1.22
 	 */
@@ -523,13 +447,14 @@ interface IDatabase extends IReadableDatabase {
 	 * This operation will be seen by affectedRows()/insertId() as one query statement,
 	 * regardless of how many statements are actually sent by the class implementation.
 	 *
-	 * @param string $delTable The table to delete from.
-	 * @param string $joinTable The reference table used by the join (not modified).
+	 * @param string $delTable The unqualified name of the table to delete rows from.
+	 * @param string $joinTable The unqualified name of the reference table to join on.
 	 * @param string $delVar The variable to join on, in the first table.
 	 * @param string $joinVar The variable to join on, in the second table.
-	 * @param array|string $conds Condition array of field names mapped to variables,
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
+	 *   Condition array of field names mapped to variables,
 	 *   ANDed together in the WHERE clause
-	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
+	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling @phan-mandatory-param
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function deleteJoin(
@@ -549,14 +474,15 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * @internal callers outside of rdbms library should use DeleteQueryBuilder instead.
 	 *
-	 * @param string $table Table name
+	 * @param string $table The unqualified name of a table
 	 * @param-taint $table exec_sql
-	 * @param string|array $conds Array of conditions. See $conds in IDatabase::select()
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
+	 *   Array of conditions. See $conds in IDatabase::select()
 	 *   In order to prevent possible performance or replication issues or damaging a data
 	 *   accidentally, an empty condition for 'delete' queries isn't allowed.
 	 *   IDatabase::ALL_ROWS should be passed explicitly in order to delete all rows.
 	 * @param-taint $conds exec_sql_numkey
-	 * @param string $fname Name of the calling function
+	 * @param string $fname Name of the calling function @phan-mandatory-param
 	 * @param-taint $fname exec_sql
 	 * @return bool Return true if no exception was thrown (deprecated since 1.33)
 	 * @return-taint none
@@ -575,17 +501,17 @@ interface IDatabase extends IReadableDatabase {
 	 * This operation will be seen by affectedRows()/insertId() as one query statement,
 	 * regardless of how many statements are actually sent by the class implementation.
 	 *
-	 * @param string $destTable The table name to insert into
-	 * @param string|array $srcTable May be either a table name, or an array of table names
-	 *    to include in a join.
+	 * @param string $destTable Unqualified name of destination table
+	 * @param string|array $srcTable Unqualified name of source table(s) (use an array for a join)
 	 * @param array $varMap Must be an associative array of the form
 	 *    [ 'dest1' => 'source1', ... ]. Source items may be literals
 	 *    rather than field names, but strings should be quoted with
 	 *    IDatabase::addQuotes()
-	 * @param array $conds Condition array. See $conds in IDatabase::select() for
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
+	 *    Condition array. See $conds in IDatabase::select() for
 	 *    the details of the format of condition arrays. May be "*" to copy the
 	 *    whole table.
-	 * @param string $fname The function name of the caller, from __METHOD__
+	 * @param string $fname The function name of the caller, from __METHOD__ @phan-mandatory-param
 	 * @param array $insertOptions Options for the INSERT part of the query, see
 	 *    IDatabase::insert() for details. Also, one additional option is
 	 *    available: pass 'NO_AUTO_COLUMNS' to hint that the query does not use
@@ -607,22 +533,6 @@ interface IDatabase extends IReadableDatabase {
 		$selectOptions = [],
 		$selectJoinConds = []
 	);
-
-	/**
-	 * Get the replication position of this primary DB server
-	 *
-	 * @return DBPrimaryPos|false Position; false if this is not a primary DB
-	 * @throws DBError If an error occurs, {@see query}
-	 * @since 1.37
-	 */
-	public function getPrimaryPos();
-
-	/**
-	 * @return bool Whether this DB server is running in server-side read-only mode
-	 * @throws DBError If an error occurs, {@see query}
-	 * @since 1.28
-	 */
-	public function serverIsReadOnly();
 
 	/**
 	 * Run a callback when the current transaction commits or rolls back
@@ -651,7 +561,7 @@ interface IDatabase extends IReadableDatabase {
 	 * @note Use onAtomicSectionCancel() to take action as soon as an atomic section is cancelled
 	 *
 	 * @param callable $callback
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @throws DBError If an error occurs, {@see query}
 	 * @throws Exception If the callback runs immediately and an error occurs in it
 	 * @since 1.28
@@ -687,7 +597,7 @@ interface IDatabase extends IReadableDatabase {
 	 * Callbacks will execute in the order they were enqueued.
 	 *
 	 * @param callable $callback
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @throws DBError If an error occurs, {@see query}
 	 * @throws Exception If the callback runs immediately and an error occurs in it
 	 * @since 1.32
@@ -718,7 +628,7 @@ interface IDatabase extends IReadableDatabase {
 	 * Callbacks will execute in the order they were enqueued.
 	 *
 	 * @param callable $callback
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @throws DBError If an error occurs, {@see query}
 	 * @throws Exception If the callback runs immediately and an error occurs in it
 	 * @since 1.22
@@ -745,29 +655,10 @@ interface IDatabase extends IReadableDatabase {
 	 *   - This IDatabase instance
 	 *
 	 * @param callable $callback
-	 * @param string $fname Caller name
+	 * @param string $fname Caller name @phan-mandatory-param
 	 * @since 1.34
 	 */
 	public function onAtomicSectionCancel( callable $callback, $fname = __METHOD__ );
-
-	/**
-	 * Run a callback after each time any transaction commits or rolls back
-	 *
-	 * The callback takes two arguments:
-	 *   - IDatabase::TRIGGER_COMMIT or IDatabase::TRIGGER_ROLLBACK
-	 *   - This IDatabase object
-	 * Callbacks must commit any transactions that they begin.
-	 *
-	 * Registering a callback here will not affect writesOrCallbacks() pending.
-	 *
-	 * Since callbacks from this or onTransactionCommitOrIdle() can start and end transactions,
-	 * a single call to IDatabase::commit might trigger multiple runs of the listener callbacks.
-	 *
-	 * @param string $name Callback name
-	 * @param callable|null $callback Use null to unset a listener
-	 * @since 1.28
-	 */
-	public function setTransactionListener( $name, callable $callback = null );
 
 	/**
 	 * Begin an atomic section of SQL statements
@@ -837,7 +728,7 @@ interface IDatabase extends IReadableDatabase {
 	 * @endcode
 	 *
 	 * @since 1.23
-	 * @param string $fname
+	 * @param string $fname @phan-mandatory-param
 	 * @param string $cancelable Pass self::ATOMIC_CANCELABLE to use a
 	 *  savepoint and enable self::cancelAtomic() for this section.
 	 * @return AtomicSectionIdentifier section ID token
@@ -853,7 +744,7 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * @since 1.23
 	 * @see IDatabase::startAtomic
-	 * @param string $fname
+	 * @param string $fname @phan-mandatory-param
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function endAtomic( $fname = __METHOD__ );
@@ -878,12 +769,12 @@ interface IDatabase extends IReadableDatabase {
 	 *   when startAtomic() was called with the ATOMIC_CANCELABLE flag.
 	 * @since 1.31
 	 * @see IDatabase::startAtomic
-	 * @param string $fname
+	 * @param string $fname @phan-mandatory-param
 	 * @param AtomicSectionIdentifier|null $sectionId Section ID from startAtomic();
 	 *   passing this enables cancellation of unclosed nested sections [optional]
 	 * @throws DBError If an error occurs, {@see query}
 	 */
-	public function cancelAtomic( $fname = __METHOD__, AtomicSectionIdentifier $sectionId = null );
+	public function cancelAtomic( $fname = __METHOD__, ?AtomicSectionIdentifier $sectionId = null );
 
 	/**
 	 * Perform an atomic section of reversible SQL statements from a callback
@@ -946,7 +837,7 @@ interface IDatabase extends IReadableDatabase {
 	 * @see Database::endAtomic
 	 * @see Database::cancelAtomic
 	 *
-	 * @param string $fname Caller name (usually __METHOD__)
+	 * @param string $fname Caller name (usually __METHOD__) @phan-mandatory-param
 	 * @param callable $callback Callback that issues write queries
 	 * @param string $cancelable Pass self::ATOMIC_CANCELABLE to use a
 	 *  savepoint and enable self::cancelAtomic() for this section.
@@ -976,7 +867,7 @@ interface IDatabase extends IReadableDatabase {
 	 * will cause a warning, unless the current transaction was started
 	 * automatically because of the DBO_TRX flag.
 	 *
-	 * @param string $fname Calling function name
+	 * @param string $fname Calling function name @phan-mandatory-param
 	 * @param string $mode A situationally valid IDatabase::TRANSACTION_* constant [optional]
 	 * @throws DBError If an error occurs, {@see query}
 	 */
@@ -991,7 +882,7 @@ interface IDatabase extends IReadableDatabase {
 	 * See https://www.mediawiki.org/wiki/Database_transactions for details.
 	 * Nesting of transactions is not supported.
 	 *
-	 * @param string $fname
+	 * @param string $fname @phan-mandatory-param
 	 * @param string $flush Flush flag, set to situationally valid IDatabase::FLUSHING_*
 	 *   constant to disable warnings about explicitly committing implicit transactions,
 	 *   or calling commit when no transaction is in progress.
@@ -1013,7 +904,7 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * Query, connection, and onTransaction* callback errors will be suppressed and logged.
 	 *
-	 * @param string $fname Calling function name
+	 * @param string $fname Calling function name @phan-mandatory-param
 	 * @param string $flush Flush flag, set to a situationally valid IDatabase::FLUSHING_*
 	 *   constant to disable warnings about explicitly rolling back implicit transactions.
 	 *   This will silently break any ongoing explicit transaction. Only set the flush flag
@@ -1024,25 +915,6 @@ interface IDatabase extends IReadableDatabase {
 	public function rollback( $fname = __METHOD__, $flush = self::FLUSHING_ONE );
 
 	/**
-	 * Release important session-level state (named lock, table locks) as post-rollback cleanup
-	 *
-	 * This should only be called by a load balancer or if the handle is not attached to one.
-	 * Also, there must be no chance that a future caller will still be expecting some of the
-	 * lost session state.
-	 *
-	 * Connection and query errors will be suppressed and logged
-	 *
-	 * @param string $fname Calling function name
-	 * @param string $flush Flush flag, set to a situationally valid IDatabase::FLUSHING_*
-	 *   constant to disable warnings about explicitly rolling back implicit transactions.
-	 *   This will silently break any ongoing explicit transaction. Only set the flush flag
-	 *   if you are sure that it is safe to ignore these warnings in your context.
-	 * @throws DBError If an error occurs, {@see query}
-	 * @since 1.38
-	 */
-	public function flushSession( $fname = __METHOD__, $flush = self::FLUSHING_ONE );
-
-	/**
 	 * Commit any transaction but error out if writes or callbacks are pending
 	 *
 	 * This is intended for clearing out REPEATABLE-READ snapshots so that callers can
@@ -1051,7 +923,7 @@ interface IDatabase extends IReadableDatabase {
 	 * useful to call on a replica server after waiting on replication to catch up to the
 	 * primary server.
 	 *
-	 * @param string $fname Calling function name
+	 * @param string $fname Calling function name @phan-mandatory-param
 	 * @param string $flush Flush flag, set to situationally valid IDatabase::FLUSHING_*
 	 *   constant to disable warnings about explicitly committing implicit transactions,
 	 *   or calling commit when no transaction is in progress.
@@ -1142,14 +1014,6 @@ interface IDatabase extends IReadableDatabase {
 	 * @since 1.27
 	 */
 	public function getScopedLockAndFlush( $lockKey, $fname, $timeout );
-
-	/**
-	 * Check to see if a named lock used by lock() use blocking queues
-	 *
-	 * @return bool
-	 * @since 1.26
-	 */
-	public function namedLocksEnqueue();
 
 	/**
 	 * Check if this DB server is marked as read-only according to load balancer info

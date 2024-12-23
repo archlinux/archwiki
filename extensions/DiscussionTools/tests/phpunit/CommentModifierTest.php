@@ -125,6 +125,23 @@ class CommentModifierTest extends IntegrationTestCase {
 	}
 
 	/**
+	 * @dataProvider provideUnwrapFragment
+	 */
+	public function testUnwrapFragment( string $html, string $expected ): void {
+		$doc = static::createDocument( '' );
+		$container = DOMUtils::parseHTMLToFragment( $doc, $html );
+		CommentModifier::unwrapFragment( $container );
+		static::assertEquals( $expected, DOMUtils::getFragmentInnerHTML( $container ) );
+	}
+
+	public static function provideUnwrapFragment() {
+		yield [
+			"<ul><li>aaa</li></ul>\n<dl><dd>bbb</dd></dl>",
+			"<p>aaa</p>\n<p>bbb</p>",
+		];
+	}
+
+	/**
 	 * @dataProvider provideAppendSignature
 	 */
 	public function testAppendSignature(

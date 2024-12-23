@@ -3,5 +3,8 @@
 		"authors": [
 			"Bobbyshabangu"
 		]
-	}
+	},
+	"nuke-list-tempaccount": "Amakhasi alandelako asanda kwenziwa ma-akhawunti wesikhatjhana asetjenziswe ukusuka ekhelini le-IP $1 . Sibawa ukhethe bona ngimaphi amakhasi ozokususa, unikele ngesifinyezo sokuhlela, bese uchofoza 'Susa okukhethiweko' ukuthoma ukususwa kwamakhasi. '''Ngenxa yezizathu zobumfihlo, sicela ungabhali ikheli le-IP esifingqweni sokuhlela.'''\n\nUkuqondisa kabutjha kutjengiswa ngama-italiki.",
+	"nuke-defaultreason-tempaccount": "Ukususwa okukhulu kwamakhasi afakwe ma-akhawundi wesikhatjhana",
+	"nuke-tools-tempaccount": "Ithulusi leli livumela ukususwa okukhulu kwamakhasi asanda kufakwa ngumsebenzisi othileko nofana i-akhawundi yesikhatjhana. Faka ibizo lomsebenzisi nofana ikheli le-IP ukuthola irhelo lamakhasi okufanele ususe, nofana utjhiye linganalitho kibo boke abasebenzisi. Ukufaka ikheli le-IP kuzokubala woke amakhasi enziwe likheli le-IP nanyana ngimaphi ama-akhawundi wesikhatjhana asetjenziswe kilelo kheli le-IP."
 }

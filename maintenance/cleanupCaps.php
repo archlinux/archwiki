@@ -32,7 +32,9 @@
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/TableCleanup.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to clean up broken page links when somebody turns
@@ -42,7 +44,9 @@ require_once __DIR__ . '/TableCleanup.php';
  */
 class CleanupCaps extends TableCleanup {
 
+	/** @var User */
 	private $user;
+	/** @var int */
 	private $namespace;
 
 	public function __construct() {
@@ -170,13 +174,18 @@ class CleanupCaps extends TableCleanup {
 			$mp = $this->getServiceContainer()->getMovePageFactory()
 				->newMovePage( $current, $target );
 			$status = $mp->move( $this->user, $reason, $createRedirect );
-			$ok = $status->isOK() ? 'OK' : $status->getMessage( false, false, 'en' )->text();
+			$ok = $status->isOK() ? 'OK' : 'FAILED';
 			$this->output( "\"$display\" -> \"$targetDisplay\": $ok\n" );
+			if ( !$status->isOK() ) {
+				$this->error( $status );
+			}
 		}
 
 		return $ok === 'OK';
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CleanupCaps::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

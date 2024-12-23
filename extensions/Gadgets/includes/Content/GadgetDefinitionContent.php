@@ -20,8 +20,8 @@
 
 namespace MediaWiki\Extension\Gadgets\Content;
 
-use FormatJson;
-use JsonContent;
+use MediaWiki\Content\JsonContent;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Status\Status;
 
 class GadgetDefinitionContent extends JsonContent {
@@ -54,12 +54,19 @@ class GadgetDefinitionContent extends JsonContent {
 	}
 
 	/**
+	 * Helper for isValid
+	 *
+	 * This placed into a separate method so that the detailed error can be communicated
+	 * to editors via GadgetDefinitionContentHandler::validateSave, instead of the generic
+	 * 'invalid-content-data' message from ContentHandler::validateSave based on isValid.
+	 *
 	 * @return Status
 	 */
 	public function validate() {
 		// Cache the validation result to avoid re-computations
 		if ( !$this->validation ) {
 			if ( !parent::isValid() ) {
+				// Invalid JSON, use the detailed Status from JsonContent::getData for syntax errors.
 				$this->validation = $this->getData();
 			} else {
 				$validator = new GadgetDefinitionValidator();

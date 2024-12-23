@@ -38,6 +38,6 @@
 	"gadgets-export-text": "Để xuất tiện ích $1, hãy bấm nút “{{int:gadgets-export-download}}”, lưu tập tin được tải về, mở trang Special:Import trên wiki đích và tải nó lên. Sau đó, thêm mã này vào trang MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nBạn phải có đủ quyền truy cập trên wiki đích (bao gồm quyền sửa đổi thông điệp hệ thống) và wiki phải bật chức năng xuất từ tập tin tải lên.",
 	"gadgets-export-download": "Tải về",
 	"gadgets-validate-notset": "Thuộc tính <code>$1</code> không được đặt.",
-	"gadgets-validate-wrongtype": "Thuộc tính <code>$1</code> phải là kiểu <code>$2</code> thay vì <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Thuộc tính <code>$1</code> phải là kiểu <code>$2</code>.",
 	"gadgets-supports-urlload": "Có thể tải tiện ích này bằng cách thêm tham số truy vấn <code>?withgadget</code> vào URL."
 }

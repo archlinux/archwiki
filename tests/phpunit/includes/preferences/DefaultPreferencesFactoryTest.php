@@ -7,11 +7,14 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\DefaultPreferencesFactory;
 use MediaWiki\Preferences\SignatureValidatorFactory;
@@ -130,14 +133,13 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 	/**
 	 * Get a basic PreferencesFactory for testing with.
 	 * @param array $options Supported options are:
-	 *    'language' - A Language object, falls back to `new Language()`
+	 *    'language' - A Language object, falls back to content language
 	 *    'userOptionsManager' - A UserOptionsManager service, falls back to using MediaWikiServices
 	 *    'userGroupManager' - A UserGroupManager service, falls back to a mock where no users
 	 *                         have any extra groups, just `*` and `user`
 	 * @return DefaultPreferencesFactory
 	 */
 	protected function getPreferencesFactory( array $options = [] ) {
-		// DummyServicesTrait::getDummyNamespaceInfo
 		$nsInfo = $this->getDummyNamespaceInfo();
 
 		$services = $this->getServiceContainer();
@@ -147,7 +149,7 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		// extension (GlobalPreferencesFactory extends DefaultPreferencesFactory)
 		$permissionManager = $this->createNoOpMock( PermissionManager::class );
 
-		$language = $options['language'] ?? new Language();
+		$language = $options['language'] ?? $services->getContentLanguage();
 		$userOptionsManager = $options['userOptionsManager'] ?? $services->getUserOptionsManager();
 
 		$userGroupManager = $options['userGroupManager'] ?? false;
@@ -470,9 +472,9 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 	 */
 	private function createUserOptionsManagerMock( array $userOptions, bool $defaultOptions = false ) {
 		$services = $this->getServiceContainer();
-		$defaults = $services->getMainConfig()->get( 'DefaultUserOptions' );
+		$defaults = $services->getMainConfig()->get( MainConfigNames::DefaultUserOptions );
 		$defaults['language'] = $services->getContentLanguage()->getCode();
-		$defaults['skin'] = Skin::normalizeKey( $services->getMainConfig()->get( 'DefaultSkin' ) );
+		$defaults['skin'] = Skin::normalizeKey( $services->getMainConfig()->get( MainConfigNames::DefaultSkin ) );
 		( new HookRunner( $services->getHookContainer() ) )->onUserGetDefaultOptions( $defaults );
 		$userOptions += $defaults;
 

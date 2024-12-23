@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\Math\Tests\WikiTexVC\Nodes;
 
 use ArgumentCountError;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
-use MediaWiki\Extension\Math\WikiTexVC\Nodes\Curly;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\FQ;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
@@ -47,8 +46,10 @@ class FQTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testRenderEmptyFq() {
-		$fq = new FQ( new Curly( new TexArray() ), new Literal( 'b' ), new Literal( 'c' ) );
-		$this->assertStringContainsString( ( new MMLmrow() )->getEmpty(), $fq->renderMML() );
+		$fq = new FQ( TexArray::newCurly(), new Literal( 'b' ), new Literal( 'c' ) );
+		$result = $fq->renderMML();
+		$this->assertStringContainsString( 'msubsup', $result );
+		$this->assertStringContainsString( ( new MMLmrow() )->getEmpty(), $result );
 	}
 
 	public function testLatin() {

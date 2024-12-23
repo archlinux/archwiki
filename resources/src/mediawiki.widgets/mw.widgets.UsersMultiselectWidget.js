@@ -7,8 +7,7 @@
 ( function () {
 
 	/**
-	 * UsersMultiselectWidget can be used to input list of users in a single
-	 * line.
+	 * @classdesc Input list of users in a single line.
 	 *
 	 * If used inside HTML form the results will be sent as the list of
 	 * newline-separated usernames.
@@ -20,6 +19,7 @@
 	 * @extends OO.ui.MenuTagMultiselectWidget
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.widgets.UsersMultiselectWidget`.
 	 * @param {Object} [config] Configuration options
 	 * @param {mw.Api} [config.api] Instance of mw.Api (or subclass thereof) to use for queries
 	 * @param {number} [config.limit=10] Number of results to show in autocomplete menu
@@ -30,30 +30,36 @@
 	 * @param {Object} [config.ipRangeLimits] Maximum allowed IP ranges (defaults match HTMLUserTextField.php)
 	 * @param {number} [config.ipRangeLimits.IPv4 = 16] Maximum allowed IPv4 range
 	 * @param {number} [config.ipRangeLimits.IPv6 = 32] Maximum allowed IPv6 range
+	 * @param {boolean} [config.excludenamed] Whether to exclude named users or not
+	 * @param {boolean} [config.excludetemp] Whether to exclude temporary users or not
 	 */
 	mw.widgets.UsersMultiselectWidget = function MwWidgetsUsersMultiselectWidget( config ) {
 		// Config initialization
-		config = $.extend( {
+		config = Object.assign( {
 			limit: 10,
 			ipAllowed: false,
 			ipRangeAllowed: false,
 			ipRangeLimits: {
 				IPv4: 16,
 				IPv6: 32
-			}
+			},
+			excludeNamed: false,
+			excludeTemp: false
 		}, config );
 
 		// Parent constructor
-		mw.widgets.UsersMultiselectWidget.super.call( this, $.extend( {}, config, {} ) );
+		mw.widgets.UsersMultiselectWidget.super.call( this, Object.assign( {}, config, {} ) );
 
 		// Mixin constructors
-		OO.ui.mixin.PendingElement.call( this, $.extend( {}, config, { $pending: this.$handle } ) );
+		OO.ui.mixin.PendingElement.call( this, Object.assign( {}, config, { $pending: this.$handle } ) );
 
 		// Properties
 		this.limit = config.limit;
 		this.ipAllowed = config.ipAllowed;
 		this.ipRangeAllowed = config.ipRangeAllowed;
 		this.ipRangeLimits = config.ipRangeLimits;
+		this.excludeNamed = config.excludeNamed;
+		this.excludeTemp = config.excludeTemp;
 
 		if ( 'name' in config ) {
 			// Use this instead of <input type="hidden">, because hidden inputs do not have separate
@@ -101,7 +107,7 @@
 	 * @private
 	 */
 	mw.widgets.UsersMultiselectWidget.prototype.updateMenuItems = function () {
-		var inputValue = this.input.getValue();
+		const inputValue = this.input.getValue();
 
 		if ( inputValue === this.inputValue ) {
 			// Do not restart api query if nothing has changed in the input
@@ -115,7 +121,7 @@
 		if ( inputValue.length > 0 ) {
 			this.pushPending();
 
-			var isValidIp, isValidRange;
+			let isValidIp, isValidRange;
 			if ( this.ipAllowed || this.ipRangeAllowed ) {
 				isValidIp = mw.util.isIPAddress( inputValue, false );
 				isValidRange = !isValidIp &&
@@ -138,13 +144,16 @@
 					action: 'query',
 					list: 'allusers',
 					auprefix: inputValue,
-					aulimit: this.limit
-				} ).done( function ( response ) {
-					var suggestions = response.query.allusers,
-						selected = this.getSelectedUsernames();
+					aulimit: this.limit,
+					auexcludenamed: this.excludeNamed,
+					auexcludetemp: this.excludeTemp
+				} ).done( ( response ) => {
+					let suggestions = response.query.allusers;
+
+					const selected = this.getSelectedUsernames();
 
 					// Remove usernames, which are already selected from suggestions
-					suggestions = suggestions.map( function ( user ) {
+					suggestions = suggestions.map( ( user ) => {
 						if ( selected.indexOf( user.name ) === -1 ) {
 							return new OO.ui.MenuOptionWidget( {
 								data: user.name,
@@ -153,9 +162,7 @@
 							} );
 						}
 						return undefined;
-					} ).filter( function ( item ) {
-						return item !== undefined;
-					} );
+					} ).filter( ( item ) => item !== undefined );
 
 					// Remove all items from menu add fill it with new
 					this.menu.clearItems();
@@ -170,7 +177,7 @@
 					this.menu.toggle( true );
 
 					this.popPending();
-				}.bind( this ) ).fail( this.popPending.bind( this ) );
+				} ).fail( this.popPending.bind( this ) );
 			}
 
 		} else {

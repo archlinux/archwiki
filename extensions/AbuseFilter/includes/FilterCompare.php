@@ -36,7 +36,7 @@ class FilterCompare {
 			'af_comments' => 'getComments',
 			'af_deleted' => 'isDeleted',
 			'af_enabled' => 'isEnabled',
-			'af_hidden' => 'isHidden',
+			'af_hidden' => 'getPrivacyLevel',
 			'af_global' => 'isGlobal',
 			'af_group' => 'getGroup',
 		];

@@ -5,7 +5,7 @@ namespace LoginNotify;
 use MediaWiki\Title\Title;
 
 class PurgeSeenJob extends \Job {
-	private $loginNotify;
+	private LoginNotify $loginNotify;
 
 	public function __construct( Title $title, array $params, LoginNotify $loginNotify ) {
 		parent::__construct( 'LoginNotifyPurgeSeen', $title, $params );

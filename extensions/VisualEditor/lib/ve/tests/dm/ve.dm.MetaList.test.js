@@ -16,16 +16,16 @@ QUnit.module( 've.dm.MetaList' );
  * @param {string} msg The message
  */
 ve.test.utils.validateMetaListCache = function ( assert, metaList, msg ) {
-	var oldList = metaList.getItems();
-	var newList = [];
+	const oldList = metaList.getItems();
+	const newList = [];
 	// Populate a current list of items
-	metaList.doc.documentNode.traverse( function ( node ) {
+	metaList.doc.documentNode.traverse( ( node ) => {
 		if ( node instanceof ve.dm.MetaItem ) {
 			newList.push( node );
 		}
 	} );
-	var match = true;
-	for ( var i = 0, len = newList.length; i < len; i++ ) {
+	let match = true;
+	for ( let i = 0, len = newList.length; i < len; i++ ) {
 		if ( newList[ i ] !== oldList[ i ] ) {
 			match = false;
 			break;
@@ -34,8 +34,8 @@ ve.test.utils.validateMetaListCache = function ( assert, metaList, msg ) {
 	assert.true( match, msg );
 };
 
-QUnit.test( 'constructor/getItems/getItemsInGroup/indexOf', function ( assert ) {
-	var doc = ve.dm.example.createExampleDocument( 'withMeta' ),
+QUnit.test( 'constructor/getItems/getItemsInGroup/indexOf', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument( 'withMeta' ),
 		list = doc.getMetaList();
 
 	ve.test.utils.validateMetaListCache( assert, list, 'Constructor' );
@@ -48,15 +48,15 @@ QUnit.test( 'constructor/getItems/getItemsInGroup/indexOf', function ( assert ) 
 	assert.strictEqual( list.indexOf( list.items[ 3 ], 'foo' ), -1, 'item not found in group by indexOf' );
 } );
 
-QUnit.test( 'onNodeAttached/onNodeDetached', function ( assert ) {
-	var doc = ve.dm.example.createExampleDocument( 'withMeta' ),
+QUnit.test( 'onNodeAttached/onNodeDetached', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument( 'withMeta' ),
 		heading = { type: 'heading', attributes: { level: 2 } },
 		cases = [
 			{
 				// delta: 0
 				calls: [
 					[ 'pushRetain', 5 ],
-					[ 'pushReplacement', doc, 5, 0, [ 'Q', 'u', 'u', 'x' ] ],
+					[ 'pushReplacement', doc, 5, 0, [ ...'Quux' ] ],
 					[ 'pushRetain', 3 ],
 					[ 'pushReplacement', doc, 8, 7, [ '!' ] ]
 				],
@@ -82,15 +82,15 @@ QUnit.test( 'onNodeAttached/onNodeDetached', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		var txBuilder = new ve.dm.TransactionBuilder();
-		for ( var j = 0; j < caseItem.calls.length; j++ ) {
+	cases.forEach( ( caseItem ) => {
+		const txBuilder = new ve.dm.TransactionBuilder();
+		for ( let j = 0; j < caseItem.calls.length; j++ ) {
 			txBuilder[ caseItem.calls[ j ][ 0 ] ].apply( txBuilder, caseItem.calls[ j ].slice( 1 ) );
 		}
-		var tx = txBuilder.getTransaction();
-		doc = ve.dm.example.createExampleDocument( 'withMeta' );
-		var list = doc.getMetaList();
-		var surface = new ve.dm.Surface( doc );
+		const tx = txBuilder.getTransaction();
+		const caseDoc = ve.dm.example.createExampleDocument( 'withMeta' );
+		const list = caseDoc.getMetaList();
+		const surface = new ve.dm.Surface( caseDoc );
 		// Test both the transaction-via-surface and transaction-via-document flows
 		surface.change( tx );
 		ve.test.utils.validateMetaListCache( assert, list, caseItem.msg );

@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
@@ -26,8 +28,10 @@ use MediaWiki\User\UserIdentityValue;
 class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 	use MockTitleTrait;
 
+	/** @var RequestContext */
 	protected $context;
 
+	/** @var int[] */
 	private static $revisions;
 
 	protected function setUp(): void {
@@ -592,6 +596,7 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 		$context->setLanguage( 'qqx' );
 
 		$out = new OutputPage( $context );
+		$out->enableOOUI();
 		$context->setOutput( $out );
 
 		$engine = new DifferenceEngine(

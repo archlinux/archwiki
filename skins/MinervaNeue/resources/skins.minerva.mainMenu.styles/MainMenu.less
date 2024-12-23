@@ -12,15 +12,15 @@
 	min-width: 275px;
 	visibility: hidden;
 
-	@media screen and ( min-width: @width-breakpoint-tablet ) {
-		min-width: @width-breakpoint-mobile;
+	@media screen and ( min-width: @min-width-breakpoint-tablet ) {
+		min-width: @min-width-breakpoint-mobile;
 	}
 	// It should always be possible to dismiss the menu by tapping outside of it.
 	max-width: 80%;
 	z-index: @z-index-drawer;
 	// Add vertical scrollbar as needed.
 	overflow-y: auto;
-	background-color: var( --background-color-interactive );
+	background-color: @background-color-interactive;
 	transform: translate( -100%, 0 );
 
 	ul {
@@ -49,7 +49,7 @@
 
 #main-menu-input:checked ~ #mw-mf-page-left {
 	visibility: visible;
-	box-shadow: 1px 0 8px 0 var( --box-shadow-color-drawer );
+	box-shadow: @box-shadow-drop-medium;
 	transform: translate( 0, 0 );
 }
 

@@ -4,10 +4,11 @@
  * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
+@import 'mediawiki.skin.variables.less';
 
 /* All debug bars (includes target widgets) */
 .ve-ui-debugBar {
-	border-top: 1px solid #c8ccd1;
+	border-top: @border-subtle;
 	box-shadow: 0 10px 10px -10px rgba( 0, 0, 0, 0.15 ) inset;
 
 	ol {
@@ -15,19 +16,10 @@
 	}
 }
 
-/* Slug animation needs more specific rules and skin-specific target margins */
-.mw-body-content p.ve-ce-branchNode-newSlug {
-	margin: -0.3em 0 -0.1em 0;
-
-	&-open {
-		margin: 0.5em 0;
-	}
-}
-
 .ve-ui-surface .ve-ui-surface-placeholder {
 	opacity: 1;
 
 	& > * {
-		color: #72777d;
+		color: @color-placeholder;
 	}
 }

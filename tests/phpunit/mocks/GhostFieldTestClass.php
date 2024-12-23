@@ -10,7 +10,6 @@ use Wikimedia\Reflection\GhostFieldTestClass as OldGhostFieldTestClass;
  * This is used to test that unserialized instances still have the values of
  * these ghost fields and the values can be accessed with GhostFieldAccessTrait.
  *
- * @package Wikimedia\Reflection
  */
 #[\AllowDynamicProperties]
 class GhostFieldTestClass {

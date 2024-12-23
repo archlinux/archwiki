@@ -20,19 +20,19 @@
 namespace MediaWiki\Parser\Parsoid;
 
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\Parsoid\Config\SiteConfig;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
-use MWUnknownContentModelException;
-use ParserOptions;
-use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 
@@ -48,6 +48,7 @@ use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
  *
  * @since 1.39
  * @unstable
+ * @deprecated since 1.43
  */
 class ParsoidOutputAccess {
 	private ParsoidParserFactory $parsoidParserFactory;
@@ -82,32 +83,6 @@ class ParsoidOutputAccess {
 	}
 
 	/**
-	 * @param string $model
-	 *
-	 * @return bool
-	 */
-	public function supportsContentModel( string $model ): bool {
-		if ( $model === CONTENT_MODEL_WIKITEXT ) {
-			return true;
-		}
-
-		// Check if the content model serializes to wikitext.
-		// NOTE: We could use isSupportedFormat( CONTENT_FORMAT_WIKITEXT ) if PageContent::getContent()
-		//       would specify the format when calling serialize().
-		try {
-			$handler = $this->contentHandlerFactory->getContentHandler( $model );
-			if ( $handler->getDefaultFormat() === CONTENT_FORMAT_WIKITEXT ) {
-				return true;
-			}
-		} catch ( MWUnknownContentModelException $ex ) {
-			// If the content model is not known, it can't be supported.
-			return false;
-		}
-
-		return $this->siteConfig->getContentModelHandler( $model ) !== null;
-	}
-
-	/**
 	 * @param PageIdentity $page
 	 * @param ParserOptions $parserOpts
 	 * @param RevisionRecord|int|null $revision
@@ -115,6 +90,7 @@ class ParsoidOutputAccess {
 	 * @param bool $lenientRevHandling
 	 *
 	 * @return Status<ParserOutput>
+	 * @deprecated since 1.43
 	 */
 	public function getParserOutput(
 		PageIdentity $page,
@@ -123,6 +99,7 @@ class ParsoidOutputAccess {
 		int $options = 0,
 		bool $lenientRevHandling = false
 	): Status {
+		wfDeprecated( __METHOD__, '1.43' );
 		[ $page, $revision, $uncacheable ] = $this->resolveRevision( $page, $revision, $lenientRevHandling );
 
 		try {
@@ -149,6 +126,7 @@ class ParsoidOutputAccess {
 	 * @param bool $lenientRevHandling
 	 *
 	 * @return ?ParserOutput
+	 * @deprecated since 1.43
 	 */
 	public function getCachedParserOutput(
 		PageIdentity $page,
@@ -156,6 +134,7 @@ class ParsoidOutputAccess {
 		$revision = null,
 		bool $lenientRevHandling = false
 	): ?ParserOutput {
+		wfDeprecated( __METHOD__, '1.43' );
 		[ $page, $revision, $ignored ] = $this->resolveRevision( $page, $revision, $lenientRevHandling );
 
 		$this->adjustParserOptions( $revision, $parserOpts );
@@ -172,6 +151,7 @@ class ParsoidOutputAccess {
 	 * @param bool $lenientRevHandling
 	 *
 	 * @return Status
+	 * @deprecated since 1.43
 	 */
 	public function parseUncacheable(
 		PageIdentity $page,
@@ -179,6 +159,7 @@ class ParsoidOutputAccess {
 		$revision,
 		bool $lenientRevHandling = false
 	): Status {
+		wfDeprecated( __METHOD__, '1.43' );
 		// NOTE: If we have a RevisionRecord already, just use it, there is no need to resolve $page to
 		//       a PageRecord (and it may not be possible if the page doesn't exist).
 		if ( !$revision instanceof RevisionRecord ) {
@@ -199,6 +180,13 @@ class ParsoidOutputAccess {
 			$parserOutput = $this->parsoidParserFactory->create()->parseFakeRevision(
 				$revision, $page, $parserOpts );
 			$parserOutput->updateCacheExpiry( 0 ); // Ensure this isn't accidentally cached
+			// set up (fake) render id and other properties
+			$globalIdGenerator = MediaWikiServices::getInstance()->getGlobalIdGenerator();
+			$parserOutput->setRenderId( $globalIdGenerator->newUUIDv1() );
+			$parserOutput->setCacheRevisionId( $revision->getId() );
+			$parserOutput->setRevisionTimestamp( $revision->getTimestamp() );
+			$parserOutput->setCacheTime( wfTimestampNow() );
+
 			$status = Status::newGood( $parserOutput );
 		} catch ( RevisionAccessException $e ) {
 			return Status::newFatal( 'parsoid-revision-access', $e->getMessage() );
@@ -230,9 +218,7 @@ class ParsoidOutputAccess {
 			}
 		}
 
-		if ( $revision === null ) {
-			$revision = $page->getLatest();
-		}
+		$revision ??= $page->getLatest();
 
 		if ( is_int( $revision ) ) {
 			$revId = $revision;
@@ -272,7 +258,7 @@ class ParsoidOutputAccess {
 	private function adjustParserOptions( RevisionRecord $revision, ParserOptions $parserOpts ): void {
 		$mainSlot = $revision->getSlot( SlotRecord::MAIN );
 		$contentModel = $mainSlot->getModel();
-		if ( $this->supportsContentModel( $contentModel ) ) {
+		if ( $this->siteConfig->supportsContentModel( $contentModel ) ) {
 			// Since we know Parsoid supports this content model, explicitly
 			// call ParserOptions::setUseParsoid. This ensures that when
 			// we query the parser-cache, the right cache key is called.

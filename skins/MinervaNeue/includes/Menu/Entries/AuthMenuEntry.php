@@ -24,10 +24,7 @@ use MessageLocalizer;
  * Model for a menu entry that represents log-in / profile+logout pair of links
  */
 final class AuthMenuEntry extends CompositeMenuEntry implements IProfileMenuEntry {
-	/**
-	 * @var ProfileMenuEntry
-	 */
-	private $profileMenuEntry;
+	private ProfileMenuEntry $profileMenuEntry;
 
 	/**
 	 * Initialize the Auth menu entry
@@ -37,7 +34,9 @@ final class AuthMenuEntry extends CompositeMenuEntry implements IProfileMenuEntr
 	 * @param array $authLinksQuery Mapping of URI query parameter names to values.
 	 */
 	public function __construct(
-		UserIdentity $user, MessageLocalizer $messageLocalizer, array $authLinksQuery
+		UserIdentity $user,
+		MessageLocalizer $messageLocalizer,
+		array $authLinksQuery
 	) {
 		$this->profileMenuEntry = new ProfileMenuEntry( $user );
 		$entries = $user->isRegistered()
@@ -49,14 +48,16 @@ final class AuthMenuEntry extends CompositeMenuEntry implements IProfileMenuEntr
 	/**
 	 * @inheritDoc
 	 */
-	public function getName() {
+	public function getName(): string {
 		return 'auth';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function overrideProfileURL( $customURL, $customLabel = null, $trackingCode = null ) {
+	public function overrideProfileURL(
+		$customURL, $customLabel = null, $trackingCode = null
+	): self {
 		$this->profileMenuEntry->overrideProfileURL( $customURL, $customLabel, $trackingCode );
 		return $this;
 	}

@@ -1,15 +1,23 @@
 const { Config } = require( 'mmv.bootstrap' );
 const { MetadataPanel, License } = require( 'mmv' );
 
-QUnit.module( 'mmv.ui.metadataPanel', QUnit.newMwEnvironment() );
+const mwMessagesExists = mw.messages.exists;
+QUnit.module( 'mmv.ui.metadataPanel', QUnit.newMwEnvironment( {
+	beforeEach: () => {
+		// mock mw.messages.exists for License.getShortLink (multimediaviewer-license-cc-by-2.0)
+		mw.messages.exists = () => true;
+	},
+	afterEach: () => {
+		mw.messages.exists = mwMessagesExists;
+	}
+} ) );
 
-QUnit.test( '.empty()', function ( assert ) {
+QUnit.test( '.empty()', ( assert ) => {
 	const $qf = $( '#qunit-fixture' );
 	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
-		mw.storage,
-		new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage )
+		new Config()
 	);
 	panel.empty();
 
@@ -19,7 +27,7 @@ QUnit.test( '.empty()', function ( assert ) {
 		'$location',
 		'$datetimeCreated',
 		'$datetimeUpdated'
-	].forEach( function ( thing ) {
+	].forEach( ( thing ) => {
 		assert.strictEqual( panel[ thing ].text(), '', thing + ' empty text' );
 	} );
 
@@ -29,18 +37,17 @@ QUnit.test( '.empty()', function ( assert ) {
 		'$locationLi',
 		'$datetimeCreatedLi',
 		'$datetimeUpdatedLi'
-	].forEach( function ( thing ) {
+	].forEach( ( thing ) => {
 		assert.true( panel[ thing ].hasClass( 'empty' ), thing + ' empty class' );
 	} );
 } );
 
-QUnit.test( '.setLocationData()', function ( assert ) {
+QUnit.test( '.setLocationData()', ( assert ) => {
 	const $qf = $( '#qunit-fixture' );
 	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
-		mw.storage,
-		new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage )
+		new Config()
 	);
 	const fileName = 'Foobar.jpg';
 	let latitude = 12.3456789;
@@ -48,9 +55,7 @@ QUnit.test( '.setLocationData()', function ( assert ) {
 	const imageData = {
 		latitude: latitude,
 		longitude: longitude,
-		hasCoords: function () {
-			return true;
-		},
+		hasCoords: () => true,
 		title: mw.Title.newFromText( 'File:Foobar.jpg' )
 	};
 
@@ -107,32 +112,22 @@ QUnit.test( '.setImageInfo()', function ( assert ) {
 	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
-		mw.storage,
-		new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage )
+		new Config()
 	);
 	const title = 'Foo bar';
 	const image = {
-		filePageTitle: mw.Title.newFromText( 'File:' + title + '.jpg' )
+		filePageTitle: mw.Title.newFromText( 'File:' + title + '.jpg' ),
+		src: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg'
 	};
 	const imageData = {
 		title: image.filePageTitle,
 		url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
 		descriptionUrl: 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
-		hasCoords: function () {
-			return false;
-		}
-	};
-	const repoData = {
-		getArticlePath: function () {
-			return 'Foo';
-		},
-		isCommons: function () {
-			return false;
-		}
+		hasCoords: () => false
 	};
 	const clock = this.sandbox.useFakeTimers();
 
-	panel.setImageInfo( image, imageData, repoData );
+	panel.setImageInfo( image, imageData );
 
 	assert.strictEqual( panel.$title.text(), title, 'Title is correctly set' );
 	assert.notStrictEqual( panel.$credit.text(), '', 'Default credit is shown' );
@@ -153,7 +148,7 @@ QUnit.test( '.setImageInfo()', function ( assert ) {
 		'http://creativecommons.org/licenses/by-sa/2.0/' );
 	imageData.restrictions = [ 'trademarked', 'default', 'insignia' ];
 
-	panel.setImageInfo( image, imageData, repoData );
+	panel.setImageInfo( image, imageData );
 	const creditPopupText = panel.creditField.$element.attr( 'original-title' );
 	clock.tick( 10 );
 
@@ -170,7 +165,7 @@ QUnit.test( '.setImageInfo()', function ( assert ) {
 	assert.true( panel.$restrictions.children().last().children().hasClass( 'mw-mmv-restriction-default' ), 'Default restriction is correctly displayed last' );
 
 	imageData.creationDateTime = undefined;
-	panel.setImageInfo( image, imageData, repoData );
+	panel.setImageInfo( image, imageData );
 	clock.tick( 10 );
 
 	assert.false( panel.$datetimeUpdatedLi.hasClass( 'empty' ), 'Date/Time is not empty' );
@@ -180,13 +175,12 @@ QUnit.test( '.setImageInfo()', function ( assert ) {
 } );
 
 // FIXME: test broken since migrating to require/packageFiles
-QUnit.skip( 'Setting permission information works as expected', function ( assert ) {
+QUnit.skip( 'Setting permission information works as expected', ( assert ) => {
 	const $qf = $( '#qunit-fixture' );
 	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
-		mw.storage,
-		new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage )
+		new Config()
 	);
 
 	// make sure license is visible as it contains the permission
@@ -195,26 +189,15 @@ QUnit.skip( 'Setting permission information works as expected', function ( asser
 	assert.true( panel.$permissionLink.is( ':visible' ) );
 } );
 
-QUnit.test( 'Date formatting', function ( assert ) {
+QUnit.test( 'Date formatting', ( assert ) => {
 	const $qf = $( '#qunit-fixture' );
 	const panel = new MetadataPanel(
 		$qf,
 		$( '<div>' ).appendTo( $qf ),
-		mw.storage,
-		new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage )
+		new Config()
 	);
 	const date1 = 'Garbage';
 	const result = panel.formatDate( date1 );
 
 	assert.strictEqual( result, date1, 'Invalid date is correctly ignored' );
-} );
-
-QUnit.test( 'About links', function ( assert ) {
-	const $qf = $( '#qunit-fixture' );
-
-	this.sandbox.stub( mw.user, 'isAnon' );
-	// eslint-disable-next-line no-new
-	new MetadataPanel( $qf.empty(), $( '<div>' ).appendTo( $qf ), mw.storage, new Config( {}, mw.config, mw.user, new mw.Api(), mw.storage ) );
-
-	assert.strictEqual( $qf.find( '.mw-mmv-about-link' ).length, 1, 'About link is created.' );
 } );

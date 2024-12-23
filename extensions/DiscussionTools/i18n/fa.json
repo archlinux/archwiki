@@ -4,6 +4,7 @@
 			"Ahmad252",
 			"Ajam",
 			"Beginneruser",
+			"Ebrahim",
 			"Ebraminio",
 			"Ed g2s",
 			"FarsiNevis",
@@ -13,8 +14,7 @@
 			"Matma Rex",
 			"Mohammad ebz",
 			"Reza koulivand",
-			"Rulebased",
-			"Ebrahim"
+			"Rulebased"
 		]
 	},
 	"discussiontools": "Discussion tools",
@@ -68,7 +68,8 @@
 	"discussiontools-limitreport-errorreqid": "شناسهٔ درخواست حاوی خطای ابزارهای گفت‌وگو",
 	"discussiontools-limitreport-timeusage": "مدت استفادهٔ ابزارهای گفت‌وگو",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|ثانیه}}",
-	"discussiontools-newtopic-missing-title": "لطفاً برای موضوع پیام {{GENDER:|خود}} یک عنوان ارائه کنید. اگر روی «{{int:discussiontools-replywidget-newtopic}}» کلیک کنید، پیام شما بدون عنوان درج خواهد شد.",
+	"discussiontools-newtopic-missing-title": "لطفاً برای ریسهٔ گفتگوی {{GENDER:|خود}} یک عنوان ارائه کنید.",
+	"discussiontools-newtopic-missing-title-prompt": "{{GENDER:|شما}} عنوانی برای مبحث گفتگوی خود ارائه نکرده‌اید. آیا مطمئن هستید که می‌خواهید این مبحث را بدون عنوان اضافه کنید؟",
 	"discussiontools-newtopic-placeholder-title": "عنوان",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "اشتراک",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "برای دریافت آگاه‌سازی هنگام آغاز یک مبحث تازه در این صفحه، مشترک شوید.",

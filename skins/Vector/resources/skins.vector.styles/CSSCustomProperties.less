@@ -1,44 +1,125 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.skin.codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
+@import 'mediawiki.skin.codex-design-tokens/theme-wikimedia-ui-reset.less';
+
 /**
- * Vector CSS Custom properties
- * ----------------------------
- * Please be aware that these properties are accessible via *any* client-side code.
- * These variables should mirror Codex design token names and values:
- * https://doc.wikimedia.org/codex/latest/design-tokens
- * Only include properties that are required for client-side modification.
- *
- * @private - Currently, these variables are only intended for use by Vector 2022,
- *            however, they are designed to mimic the naming convention in Codex tokens
- *            in order to facilitate an eventual migration to a centralized source.
- * @experimental
- * @since October 2023 (MediaWiki 1.42)
+ * T365764 - OOUI Icon classes for inverted dark-mode icons.
+ * This includes OOUI icons that are not colored (progressive/destructive), checkbox icons, and
+ * indicator widgets.
  */
+@OOUIIconSelectors: ~'.oo-ui-iconElement-icon:not( .oo-ui-image-progressive ):not( .oo-ui-image-destructive ):not( .oo-ui-checkboxInputWidget-checkIcon ):not( .oo-ui-image-invert ):not( .mw-no-invert )';
+@OOUIIndicatorSelectors: ~'.oo-ui-indicatorElement-indicator';
 
-:root {
-	--font-size-medium: unit( @font-size-small, rem );
-	--line-height-medium: @line-height-small;
-	--background-color-base: @background-color-base;
+@media screen {
+	/**
+	 * Light mode
+	 *
+	 * Applies the light mode color palette by default
+	 * or with the .skin-invert, or .notheme classes
+	 */
+	:root,
+	.skin-invert,
+	.notheme {
+		.cdx-mode-reset();
+	}
+
+	/**
+	 * Forced night mode.
+	 *
+	 * Applies the night mode color palette per the users explicit preference,
+	 * regardless of system settings.
+	 */
+	html.skin-theme-clientpref-night {
+		color-scheme: dark;
+		.cdx-mode-dark();
+	}
+
+	/**
+	 * Inverted Dark-mode
+	 * Creates a dark-mode effect on elements by flipping their color,
+	 * (usually from black to white).
+	 * Applied as a last resort when using CSS variables is not possible.
+	 * NOTE: `.skin-invert` is used in templates and user generated content.
+	 *
+	 * - T365102 invert class specifically for image related element
+	 * - T365764 special treatment of inverted OOUI icons
+	 */
+	html.skin-theme-clientpref-night .skin-invert-image img,
+	html.skin-theme-clientpref-night .skin-invert,
+	html.skin-theme-clientpref-night @{OOUIIconSelectors},
+	html.skin-theme-clientpref-night @{OOUIIndicatorSelectors} {
+		color-scheme: light;
+		filter: invert( 1 ) hue-rotate( 180deg );
+	}
+
+	/**
+	 * Forced light mode.
+	 * Makes elements appear in light-mode when dark-mode is enabled.
+	 * NOTE: might be used in templates and user generated content.
+	 */
+	html.skin-theme-clientpref-night .notheme {
+		color-scheme: light;
+		color: var( --color-base );
+	}
+
+	/**
+	 * Prevent double inversion.
+	 * Do not apply invert to elements that are inside a notheme or a skin-invert class to avoid inversion in light theme or
+	 * double inversion in an already inverted element
+	 * - OOUI icons inside .notheme OOUI elements
+	 * - OOUI icons inside elements with .skin-invert
+	 * - OOUI icons inside elements with .notheme
+	 */
+	.skin-invert,
+	.notheme {
+		@{OOUIIndicatorSelectors},
+		@{OOUIIconSelectors} {
+			filter: none !important; /* stylelint-disable-line declaration-no-important */
+		}
+	}
+
+	/**
+	 * Font size settings
+	 */
+	.vector-feature-custom-font-size-clientpref--excluded,
+	.vector-feature-custom-font-size-clientpref-0 {
+		--font-size-medium: @font-size-small;
+		--line-height-medium: @line-height-small;
+	}
+
+	.vector-feature-custom-font-size-clientpref-1 {
+		--font-size-medium: @font-size-medium;
+		--line-height-medium: @line-height-medium;
+	}
+
+	.vector-feature-custom-font-size-clientpref-2 {
+		--font-size-medium: @font-size-x-large;
+		--line-height-medium: 1.5;
+	}
 }
 
-.night-mode-palette() {
-	/* T354889 */
-}
-
-.vector-feature-custom-font-size-clientpref-1 {
-	--font-size-medium: unit( @font-size-medium, rem );
-	--line-height-medium: 1.6;
-}
-
-.vector-feature-custom-font-size-clientpref-2 {
-	--font-size-medium: unit( @font-size-x-large, rem );
-	--line-height-medium: 1.5;
-}
-
-html.skin-theme-clientpref-night {
-	.night-mode-palette();
-}
-
-@media ( prefers-color-scheme: dark ) {
+/**
+ * Auto night mode.
+ *
+ * Applies the night mode color palette only in response to system settings.
+ */
+@media screen and ( prefers-color-scheme: dark ) {
 	html.skin-theme-clientpref-os {
-		.night-mode-palette();
+		color-scheme: light dark;
+		.cdx-mode-dark();
+	}
+
+	html.skin-theme-clientpref-os .notheme {
+		color-scheme: light;
+		color: var( --color-base );
+	}
+
+	// T365102 invert class specifically for image related elements
+	html.skin-theme-clientpref-os .skin-invert-image img,
+	html.skin-theme-clientpref-os .skin-invert,
+	html.skin-theme-clientpref-os @{OOUIIconSelectors},
+	html.skin-theme-clientpref-os @{OOUIIndicatorSelectors} {
+		color-scheme: light;
+		filter: invert( 1 ) hue-rotate( 180deg );
 	}
 }

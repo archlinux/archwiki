@@ -97,6 +97,7 @@
 	"discussiontools-replywidget-watchthis": "Pridať túto stránku do vášho [[Special:Watchlist|zoznamu sledovaných stránok]]",
 	"discussiontools-target-comment-missing": "Tento príspevok nebol nájdený. Možno bol vymazaný alebo presunutý.",
 	"discussiontools-target-comments-missing": "Nové príspevky sa nepodarilo nájsť. Možno boli vymazané alebo presunuté.",
+	"discussiontools-target-heading-missing": "Táto téma nebola nájdená. Možno bola vymazaná, presunutá alebo premenovaná.",
 	"discussiontools-target-comment-found-moved": "Tento príspevok nebol nájdený na tejto stránke, ale existuje na {{PLURAL:$1|tejto stránke|týchto stránkach}}:",
 	"discussiontools-target-heading-found-moved": "Táto téma nebola nájdená na tejto stránke, ale existuje na {{PLURAL:$1|tejto stránke|týchto stránkach}}:",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|človek|ľudia|ľudí}} v diskusii",

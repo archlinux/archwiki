@@ -24,7 +24,7 @@ use MediaWiki\Category\Category;
 use MediaWiki\Extension\CategoryTree\CategoryCache;
 use MediaWiki\Title\TitleValue;
 use MediaWikiIntegrationTestCase;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -35,7 +35,7 @@ class CategoryCacheTest extends MediaWikiIntegrationTestCase {
 
 	public function testConstruct() {
 		new CategoryCache(
-			$this->createMock( ILoadBalancer::class )
+			$this->createMock( IConnectionProvider::class )
 		);
 		$this->addToAssertionCount( 1 );
 	}

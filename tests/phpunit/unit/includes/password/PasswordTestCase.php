@@ -20,6 +20,8 @@
  * @file
  */
 
+use MediaWiki\Password\PasswordFactory;
+
 /**
  * @since 1.24
  */
@@ -75,7 +77,7 @@ abstract class PasswordTestCase extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider providePasswordTests
-	 * @covers \InvalidPassword
+	 * @covers \MediaWiki\Password\InvalidPassword
 	 */
 	public function testInvalidUnequalNormal( $shouldMatch, $hash, $password ) {
 		$invalid = $this->passwordFactory->newFromCiphertext( null );

@@ -25,10 +25,10 @@
 namespace Cite;
 
 use LogicException;
+use MediaWiki\Config\Config;
 use MediaWiki\Html\Html;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
-use Parser;
 use StatusValue;
 
 /**
@@ -38,15 +38,13 @@ class Cite {
 
 	public const DEFAULT_GROUP = '';
 
-	/**
-	 * Wikitext attribute name for Book Referencing.
-	 */
-	public const BOOK_REF_ATTRIBUTE = 'extends';
+	/** Attribute name for the sub-referencing feature in <ref …> */
+	public const SUBREF_ATTRIBUTE = 'extends';
 
 	/**
-	 * Page property key for the Book Referencing `extends` attribute.
+	 * Message key for the (localized) tracking category for pages using the `extends` attribute.
 	 */
-	public const BOOK_REF_PROPERTY = 'ref-extends';
+	public const EXTENDS_TRACKING_CATEGORY = 'cite-tracking-category-ref-extends';
 
 	private bool $isSectionPreview;
 	private FootnoteMarkFormatter $footnoteMarkFormatter;
@@ -70,8 +68,9 @@ class Cite {
 	 */
 	private StatusValue $mReferencesErrors;
 	private ReferenceStack $referenceStack;
+	private Config $config;
 
-	public function __construct( Parser $parser ) {
+	public function __construct( Parser $parser, Config $config ) {
 		$this->isSectionPreview = $parser->getOptions()->getIsSectionPreview();
 		$messageLocalizer = new ReferenceMessageLocalizer( $parser->getContentLanguage() );
 		$this->errorReporter = new ErrorReporter( $messageLocalizer );
@@ -88,6 +87,7 @@ class Cite {
 			$anchorFormatter,
 			$messageLocalizer
 		);
+		$this->config = $config;
 	}
 
 	/**
@@ -123,15 +123,15 @@ class Cite {
 		?string $text,
 		array $argv
 	): string {
-		// Tag every page where Book Referencing has been used, whether or not the ref tag is valid.
-		// This code and the page property will be removed once the feature is stable.  See T237531.
-		if ( array_key_exists( self::BOOK_REF_ATTRIBUTE, $argv ) ) {
-			$parser->getOutput()->setPageProperty( self::BOOK_REF_PROPERTY, '' );
+		// Tag every page where sub-referencing has been used, whether or not the ref tag is valid.
+		// TODO: Remove this generic usage tracking once the feature is stable.  See T237531.
+		if ( array_key_exists( self::SUBREF_ATTRIBUTE, $argv ) ) {
+			$parser->addTrackingCategory( self::EXTENDS_TRACKING_CATEGORY );
 		}
 
 		$status = $this->parseArguments(
 			$argv,
-			[ 'group', 'name', self::BOOK_REF_ATTRIBUTE, 'follow', 'dir' ]
+			[ 'group', 'name', self::SUBREF_ATTRIBUTE, 'follow', 'dir' ]
 		);
 		$arguments = $status->getValue();
 		// Use the default group, or the references group when inside one.
@@ -141,7 +141,7 @@ class Cite {
 			$this->referenceStack,
 			$this->inReferencesGroup,
 			$this->isSectionPreview,
-			MediaWikiServices::getInstance()->getMainConfig()->get( 'CiteBookReferencing' )
+			$this->config->get( 'CiteBookReferencing' )
 		);
 		// @phan-suppress-next-line PhanParamTooFewUnpack No good way to document it.
 		$status->merge( $validator->validateRef( $text, ...array_values( $arguments ) ) );
@@ -174,9 +174,12 @@ class Cite {
 		// @phan-suppress-next-line PhanParamTooFewUnpack No good way to document it.
 		$ref = $this->referenceStack->pushRef(
 			$parser->getStripState(), $text, $argv, ...array_values( $arguments ) );
-		return $ref
-			? $this->footnoteMarkFormatter->linkRef( $parser, $arguments['group'], $ref )
-			: '';
+		if ( !$ref ) {
+			// Rare edge-cases like follow="…" don't render a footnote marker in-place
+			return '';
+		}
+
+		return $this->footnoteMarkFormatter->linkRef( $parser, $ref );
 	}
 
 	/**
@@ -302,14 +305,14 @@ class Cite {
 	private function formatReferences(
 		Parser $parser,
 		string $group,
-		string $responsive = null
+		?string $responsive = null
 	): string {
-		global $wgCiteResponsiveReferences;
+		$responsiveReferences = $this->config->get( 'CiteResponsiveReferences' );
 
 		return $this->referenceListFormatter->formatReferences(
 			$parser,
 			$this->referenceStack->popGroup( $group ),
-			$responsive !== null ? $responsive !== '0' : $wgCiteResponsiveReferences,
+			$responsive !== null ? $responsive !== '0' : $responsiveReferences,
 			$this->isSectionPreview
 		);
 	}

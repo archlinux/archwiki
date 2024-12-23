@@ -11,6 +11,7 @@
 			"Iwan Novirion",
 			"Iyan",
 			"Kenrick95",
+			"Leapofod",
 			"Macofe",
 			"Marwan Mohamad",
 			"McDutchie",
@@ -20,8 +21,7 @@
 			"Raynasution",
 			"Rv77ax",
 			"Veracious",
-			"William Surya Permana",
-			"Leapofod"
+			"William Surya Permana"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buku",
@@ -45,7 +45,6 @@
 	"cite-ve-dialog-reference-editing-extends": "Ini adalah ekstensi referensi lainnya.",
 	"cite-ve-dialog-reference-options-group-label": "Pakai kelompok ini",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referensi umum",
-	"cite-ve-dialog-reference-options-name-label": "Pakai ulang dengan nama ini",
 	"cite-ve-dialog-reference-options-responsive-label": "Gunakan tata letak kolom responsif",
 	"cite-ve-dialog-reference-options-section": "Opsi",
 	"cite-ve-dialog-reference-placeholder": "Tulis atau salin referensi Anda di sini, atau sisipkan templat kutipan.",

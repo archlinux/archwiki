@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Chrumps",
 			"Sutan"
 		]
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "To jest ukryta zasada.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Ta reguła wpływa na tytuł strony.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Kod&nbsp;języka",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Nieprawidłowy>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Nieprawidłowy</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Język",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Źródło",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Cel",

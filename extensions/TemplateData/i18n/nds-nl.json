@@ -38,7 +38,6 @@
 	"templatedata-modal-button-changelang": "Taal wiezigen",
 	"templatedata-modal-button-delparam": "Parameterinformasie vortdoon",
 	"templatedata-modal-button-importParams": "Parameters invoeren",
-	"templatedata-modal-button-restoreparam": "Parameter herstellen",
 	"templatedata-modal-button-saveparam": "Opslaon",
 	"templatedata-modal-current-language": "Taal op dit moment: $1",
 	"templatedata-modal-json-error-replace": "Vervangen",

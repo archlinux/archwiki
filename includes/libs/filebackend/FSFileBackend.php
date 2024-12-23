@@ -41,8 +41,18 @@
  * @ingroup FileBackend
  */
 
+namespace Wikimedia\FileBackend;
+
+use MapCacheLRU;
+use Shellbox\Command\BoxedCommand;
 use Shellbox\Shellbox;
+use StatusValue;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\FileBackend\FileIteration\FSFileBackendDirList;
+use Wikimedia\FileBackend\FileIteration\FSFileBackendFileList;
+use Wikimedia\FileBackend\FileOpHandle\FSFileOpHandle;
+use Wikimedia\FileBackend\FSFile\FSFile;
+use Wikimedia\FileBackend\FSFile\TempFSFile;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -604,7 +614,7 @@ class FSFileBackend extends FileBackendStore {
 		return $hadError ? self::RES_ERROR : self::RES_ABSENT;
 	}
 
-	protected function doClearCache( array $paths = null ) {
+	protected function doClearCache( ?array $paths = null ) {
 		if ( is_array( $paths ) ) {
 			foreach ( $paths as $path ) {
 				$fsPath = $this->resolveToFSPath( $path );
@@ -760,6 +770,17 @@ class FSFileBackend extends FileBackendStore {
 		}
 
 		return $tmpFiles;
+	}
+
+	public function addShellboxInputFile( BoxedCommand $command, string $boxedName,
+		array $params
+	) {
+		$path = $this->resolveToFSPath( $params['src'] );
+		if ( $path === null ) {
+			return $this->newStatus( 'backend-fail-invalidpath', $params['src'] );
+		}
+		$command->inputFileFromFile( $boxedName, $path );
+		return $this->newStatus();
 	}
 
 	protected function directoriesAreVirtual() {
@@ -1048,3 +1069,6 @@ class FSFileBackend extends FileBackendStore {
 		return (bool)preg_match( $this->getFileNotFoundRegex(), $error );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( FSFileBackend::class, 'FSFileBackend' );

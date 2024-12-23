@@ -19,13 +19,14 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MainConfigNames;
 use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserRigorOptions;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for finding and replacing invalid actor IDs, see T261325 and T307738.
@@ -37,8 +38,6 @@ class FindMissingActors extends Maintenance {
 	private UserFactory $userFactory;
 	private UserNameUtils $userNameUtils;
 	private ActorNormalization $actorNormalization;
-
-	private ?array $tables;
 
 	public function __construct() {
 		parent::__construct();
@@ -66,27 +65,16 @@ class FindMissingActors extends Maintenance {
 	 * @return array
 	 */
 	private function getTables() {
-		if ( !$this->tables ) {
-			$tables = [
-				'ar_actor' => [ 'archive', 'ar_actor', 'ar_id' ],
-				'img_actor' => [ 'image', 'img_actor', 'img_name' ],
-				'oi_actor' => [ 'oldimage', 'oi_actor', 'oi_archive_name' ], // no index on oi_archive_name!
-				'fa_actor' => [ 'filearchive', 'fa_actor', 'fa_id' ],
-				'rc_actor' => [ 'recentchanges', 'rc_actor', 'rc_id' ],
-				'log_actor' => [ 'logging', 'log_actor', 'log_id' ],
-				'rev_actor' => [ 'revision', 'rev_actor', 'rev_id' ],
-			];
-			$stage = $this->getServiceContainer()->getMainConfig()
-				->get( MainConfigNames::BlockTargetMigrationStage );
-			if ( $stage & SCHEMA_COMPAT_WRITE_OLD ) {
-				$tables['ipb_by_actor'] = [ 'ipblocks', 'ipb_by_actor', 'ipb_id' ]; // no index on ipb_by_actor!
-			}
-			if ( $stage & SCHEMA_COMPAT_WRITE_NEW ) {
-				$tables['bl_by_actor'] = [ 'block', 'bl_by_actor', 'bl_id' ]; // no index on bl_by_actor!
-			}
-			$this->tables = $tables;
-		}
-		return $this->tables;
+		return [
+			'ar_actor' => [ 'archive', 'ar_actor', 'ar_id' ],
+			'img_actor' => [ 'image', 'img_actor', 'img_name' ],
+			'oi_actor' => [ 'oldimage', 'oi_actor', 'oi_archive_name' ], // no index on oi_archive_name!
+			'fa_actor' => [ 'filearchive', 'fa_actor', 'fa_id' ],
+			'rc_actor' => [ 'recentchanges', 'rc_actor', 'rc_id' ],
+			'log_actor' => [ 'logging', 'log_actor', 'log_id' ],
+			'rev_actor' => [ 'revision', 'rev_actor', 'rev_id' ],
+			'bl_by_actor' => [ 'block', 'bl_by_actor', 'bl_id' ], // no index on bl_by_actor!
+		];
 	}
 
 	/**
@@ -195,7 +183,7 @@ class FindMissingActors extends Maintenance {
 		[ $table, $actorField, $idField ] = $this->getTableInfo( $field );
 		$this->output( "Finding invalid actor IDs in $table.$actorField...\n" );
 
-		$dbr = $this->getServiceContainer()->getDBLoadBalancer()->getConnectionRef( DB_REPLICA, 'vslow' );
+		$dbr = $this->getServiceContainer()->getDBLoadBalancer()->getConnection( DB_REPLICA, 'vslow' );
 
 		/*
 		We are building an SQL query like this one here, performing a left join
@@ -283,5 +271,7 @@ class FindMissingActors extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = FindMissingActors::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -3,22 +3,22 @@
 namespace MediaWiki\Extension\Notifications;
 
 use Article;
-use IDBAccessObject;
-use Language;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
-use ParserOptions;
-use ParserOutput;
-use RequestContext;
 use RuntimeException;
-use TextContent;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 abstract class DiscussionParser {
 	private const HEADER_REGEX = '^(==+)\h*([^=].*)\h*\1$';
@@ -213,7 +213,7 @@ abstract class DiscussionParser {
 	 * @param Title|null $title
 	 * @return string[] Array containing section title and text
 	 */
-	public static function detectSectionTitleAndText( array $interpretation, Title $title = null ) {
+	public static function detectSectionTitleAndText( array $interpretation, ?Title $title = null ) {
 		$header = $snippet = '';
 		$found = false;
 
@@ -614,7 +614,7 @@ abstract class DiscussionParser {
 	 *    but it contains multiple signatures.
 	 * - unknown: Unrecognised change type.
 	 */
-	public static function interpretDiff( array $changes, $username, Title $title = null ) {
+	public static function interpretDiff( array $changes, $username, ?Title $title = null ) {
 		// One extra item in $changes for _info
 		$actions = [];
 		$signedSections = [];
@@ -923,7 +923,7 @@ abstract class DiscussionParser {
 	 * @param Title|null $title
 	 * @return string
 	 */
-	private static function stripSignature( $text, Title $title = null ) {
+	private static function stripSignature( $text, ?Title $title = null ) {
 		$output = self::getUserFromLine( $text, $title );
 		if ( $output === false ) {
 			$timestampPos = self::getTimestampPosition( $text );
@@ -958,7 +958,7 @@ abstract class DiscussionParser {
 	 * @param Title|null $title
 	 * @return bool
 	 */
-	public static function isSignedComment( $text, $user = false, Title $title = null ) {
+	public static function isSignedComment( $text, $user = false, ?Title $title = null ) {
 		$userData = self::getUserFromLine( $text, $title );
 
 		if ( $userData === false ) {
@@ -1027,7 +1027,7 @@ abstract class DiscussionParser {
 	 * @return array<string,string> Associative array, the key is the username, the value
 	 *  is the last signature that was found.
 	 */
-	private static function extractSignatures( $text, Title $title = null ) {
+	private static function extractSignatures( $text, ?Title $title = null ) {
 		$lines = explode( "\n", $text );
 
 		$output = [];
@@ -1088,8 +1088,9 @@ abstract class DiscussionParser {
 
 			// figure out if the link is related to a user
 			if (
-				$title &&
-				( $title->getNamespace() === NS_USER || $title->getNamespace() === NS_USER_TALK )
+				$title
+				&& ( $title->getNamespace() === NS_USER || $title->getNamespace() === NS_USER_TALK )
+				&& !$title->isSubpage()
 			) {
 				$usernames[] = $title->getText();
 			} elseif ( $title && $title->isSpecial( 'Contributions' ) ) {
@@ -1114,7 +1115,7 @@ abstract class DiscussionParser {
 	 * - First element is the position of the signature.
 	 * - Second element is the normalised user name.
 	 */
-	public static function getUserFromLine( $line, Title $title = null ) {
+	public static function getUserFromLine( $line, ?Title $title = null ) {
 		$parser = MediaWikiServices::getInstance()->getParser();
 
 		/*

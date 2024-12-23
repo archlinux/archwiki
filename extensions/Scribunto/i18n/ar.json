@@ -69,5 +69,7 @@
 	"scribunto-limitreport-profile-ms": "$1 مللي ثانية",
 	"scribunto-limitreport-logs": "سجل لوا",
 	"nstab-module": "وحدة",
-	"tooltip-ca-nstab-module": "عرض صفحة الوحدة"
+	"tooltip-ca-nstab-module": "عرض صفحة الوحدة",
+	"namespaceinfo-description-ns828": "مساحة اسمية لوحدات كود Lua، والتي يمكن استدعاؤها من صفحات الويكي وصفحات التوثيق الخاصة بها",
+	"namespaceinfo-description-ns829": "صفحات المناقشة للوحدات والوثائق"
 }

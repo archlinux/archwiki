@@ -37,7 +37,7 @@ OO.inheritClass( ve.ce.Document, ve.Document );
 /**
  * Language or direction changed
  *
- * @event langChange
+ * @event ve.ce.Document#langChange
  */
 
 /* Methods */
@@ -89,7 +89,7 @@ ve.ce.Document.prototype.getDir = function () {
  * @return {HTMLElement} Slug at offset
  */
 ve.ce.Document.prototype.getSlugAtOffset = function ( offset ) {
-	var node = this.getBranchNodeFromOffset( offset );
+	const node = this.getBranchNodeFromOffset( offset );
 	return node ? node.getSlugAtOffset( offset ) : null;
 };
 
@@ -100,13 +100,11 @@ ve.ce.Document.prototype.getSlugAtOffset = function ( offset ) {
  *
  * @private
  * @param {number} offset Linear model offset
- * @return {Object} position
- * @return {Node} return.node position node
- * @return {number} return.offset position offset within the node
+ * @return {ve.ce.NodeAndOffset} Position
  * @throws {Error} Offset could not be translated to a DOM element and offset
  */
 ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
-	var countedNodes = [];
+	const countedNodes = [];
 
 	// 1. Step with ve.adjacentDomPosition( …, { stop: function () { return true; } } )
 	// until we hit a position at the correct offset (which is guaranteed to be the first
@@ -130,14 +128,14 @@ ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
 	if ( !this.model.getDocumentRange().containsRange( new ve.Range( offset ) ) ) {
 		throw new Error( 'Offset is out of bounds' );
 	}
-	var branchNode = this.getBranchNodeFromOffset( offset );
-	var count = branchNode.getOffset() + ( branchNode.isWrapped() ? 1 : 0 );
+	const branchNode = this.getBranchNodeFromOffset( offset );
+	let count = branchNode.getOffset() + ( branchNode.isWrapped() ? 1 : 0 );
 
-	var node;
+	let node;
 	if ( !( branchNode instanceof ve.ce.ContentBranchNode ) ) {
 		// The cursor does not lie in a ContentBranchNode, so we can determine
 		// everything from the DM tree
-		var i, ceChild;
+		let i, ceChild;
 		for ( i = 0; ; i++ ) {
 			ceChild = branchNode.children[ i ];
 			if ( count === offset ) {
@@ -181,7 +179,7 @@ ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
 
 	// Else the cursor lies in a ContentBranchNode, so we must traverse the DOM, keeping
 	// count of the corresponding DM position until it reaches offset.
-	var position = { node: branchNode.$element[ 0 ], offset: 0 };
+	let position = { node: branchNode.$element[ 0 ], offset: 0 };
 
 	function noDescend() {
 		return this.classList.contains( 've-ce-branchNode-blockSlug' ) ||
@@ -202,7 +200,7 @@ ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
 				}
 			}
 		);
-		var step = position.steps[ 0 ];
+		const step = position.steps[ 0 ];
 		node = step.node;
 		if ( node.nodeType === Node.TEXT_NODE ) {
 			if ( step.type === 'leave' ) {
@@ -242,7 +240,7 @@ ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
 			continue;
 		} // else step.type === 'enter' || step.type === 'cross'
 
-		var model = $.data( node, 'view' ).model;
+		const model = $.data( node, 'view' ).model;
 
 		if ( countedNodes.indexOf( model ) !== -1 ) {
 			// This DM node is rendered as multiple DOM elements, and we have already
@@ -272,12 +270,12 @@ ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
 
 	// If the position is exactly after the first of multiple view nodes sharing a model,
 	// then jump to the position exactly after the final such view node.
-	var prevNode = position.node.childNodes[ position.offset - 1 ];
+	const prevNode = position.node.childNodes[ position.offset - 1 ];
 	if ( prevNode && prevNode.nodeType === Node.ELEMENT_NODE && (
 		prevNode.classList.contains( 've-ce-branchNode' ) ||
 		prevNode.classList.contains( 've-ce-leafNode' )
 	) ) {
-		var $viewNodes = $.data( prevNode, 'view' ).$element;
+		const $viewNodes = $.data( prevNode, 'view' ).$element;
 		if ( $viewNodes.length > 1 ) {
 			position.node = $viewNodes.get( -1 ).parentNode;
 			position.offset = 1 + ve.parentIndex( $viewNodes.get( -1 ) );
@@ -285,9 +283,9 @@ ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
 	}
 
 	// Find all subsequent DOM positions at the same model offset
-	var found = {};
+	const found = {};
 	function stop( s ) {
-		var m;
+		let m;
 		if ( s.node.nodeType === Node.TEXT_NODE ) {
 			return s.type === 'internal';
 		}
@@ -305,10 +303,10 @@ ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
 		}
 		return false;
 	}
-	var steps = ve.adjacentDomPosition( position, 1, { stop: stop, noDescend: noDescend } ).steps;
-	steps.slice( 0, -1 ).forEach( function ( s ) {
+	const steps = ve.adjacentDomPosition( position, 1, { stop: stop, noDescend: noDescend } ).steps;
+	steps.slice( 0, -1 ).forEach( ( s ) => {
 		// Step type cannot be "internal", else the offset would have incremented
-		var hasClass = function ( className ) {
+		const hasClass = function ( className ) {
 			return s.node.nodeType === Node.ELEMENT_NODE &&
 				s.node.classList.contains( className );
 		};
@@ -360,9 +358,9 @@ ve.ce.Document.prototype.getNodeAndOffset = function ( offset ) {
  * @return {string} 'rtl', 'ltr'
  */
 ve.ce.Document.prototype.getDirectionalityFromRange = function ( range ) {
-	var selectedNodes = this.selectNodes( range, 'covered' );
+	const selectedNodes = this.selectNodes( range, 'covered' );
 
-	var effectiveNode;
+	let effectiveNode;
 	if ( selectedNodes.length > 1 ) {
 		// Selection of multiple nodes
 		// Get the common parent node

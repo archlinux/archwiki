@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
-use HashBagOStuff;
 use InvalidArgumentException;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\RequestInterface;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\ObjectCache\HashBagOStuff;
 
 /**
  * @covers \MediaWiki\Rest\Handler\PageSourceHandler
@@ -21,10 +21,7 @@ class PageRedirectHandlerTest extends MediaWikiIntegrationTestCase {
 
 	private const WIKITEXT = 'Hello \'\'\'World\'\'\'';
 
-	private const HTML = '<p>Hello <b>World</b></p>';
-
-	/** @var HashBagOStuff */
-	private $parserCacheBagOStuff;
+	private HashBagOStuff $parserCacheBagOStuff;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -35,11 +32,9 @@ class PageRedirectHandlerTest extends MediaWikiIntegrationTestCase {
 	private function getHandler( $name, RequestInterface $request ) {
 		switch ( $name ) {
 			case 'source':
-				return $this->newPageSourceHandler();
 			case 'bare':
 				return $this->newPageSourceHandler();
 			case 'html':
-				return $this->newPageHtmlHandler( $request );
 			case 'with_html':
 				return $this->newPageHtmlHandler( $request );
 			case 'history':

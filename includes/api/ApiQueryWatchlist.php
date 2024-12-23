@@ -20,15 +20,25 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use ChangesList;
+use LogEventsList;
+use LogFormatterFactory;
+use LogPage;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
+use MediaWiki\Watchlist\WatchedItem;
+use MediaWiki\Watchlist\WatchedItemQueryService;
+use RecentChange;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -47,28 +57,19 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 	private GenderCache $genderCache;
 	private CommentFormatter $commentFormatter;
 	private TempUserConfig $tempUserConfig;
+	private LogFormatterFactory $logFormatterFactory;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param CommentStore $commentStore
-	 * @param WatchedItemQueryService $watchedItemQueryService
-	 * @param Language $contentLanguage
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param GenderCache $genderCache
-	 * @param CommentFormatter $commentFormatter
-	 * @param TempUserConfig $tempUserConfig
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		CommentStore $commentStore,
 		WatchedItemQueryService $watchedItemQueryService,
 		Language $contentLanguage,
 		NamespaceInfo $namespaceInfo,
 		GenderCache $genderCache,
 		CommentFormatter $commentFormatter,
-		TempUserConfig $tempUserConfig
+		TempUserConfig $tempUserConfig,
+		LogFormatterFactory $logFormatterFactory
 	) {
 		parent::__construct( $query, $moduleName, 'wl' );
 		$this->commentStore = $commentStore;
@@ -78,6 +79,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		$this->genderCache = $genderCache;
 		$this->commentFormatter = $commentFormatter;
 		$this->tempUserConfig = $tempUserConfig;
+		$this->logFormatterFactory = $logFormatterFactory;
 	}
 
 	public function execute() {
@@ -88,14 +90,20 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		$this->run( $resultPageSet );
 	}
 
-	private $fld_ids = false, $fld_title = false, $fld_patrol = false,
-		$fld_flags = false, $fld_timestamp = false, $fld_user = false,
-		$fld_comment = false, $fld_parsedcomment = false, $fld_sizes = false,
-		$fld_notificationtimestamp = false, $fld_userid = false,
-		$fld_loginfo = false, $fld_tags;
-
-	/** @var bool */
-	private $fld_expiry = false;
+	private bool $fld_ids = false;
+	private bool $fld_title = false;
+	private bool $fld_patrol = false;
+	private bool $fld_flags = false;
+	private bool $fld_timestamp = false;
+	private bool $fld_user = false;
+	private bool $fld_comment = false;
+	private bool $fld_parsedcomment = false;
+	private bool $fld_sizes = false;
+	private bool $fld_notificationtimestamp = false;
+	private bool $fld_userid = false;
+	private bool $fld_loginfo = false;
+	private bool $fld_tags = false;
+	private bool $fld_expiry = false;
 
 	/**
 	 * @param ApiPageSet|null $resultPageSet
@@ -447,7 +455,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				$vals['logtype'] = $recentChangeInfo['rc_log_type'];
 				$vals['logaction'] = $recentChangeInfo['rc_log_action'];
 
-				$logFormatter = LogFormatter::newFromRow( $recentChangeInfo );
+				$logFormatter = $this->logFormatterFactory->newFromRow( $recentChangeInfo );
 				$vals['logparams'] = $logFormatter->formatParametersForApi();
 				$vals['logdisplay'] = $logFormatter->getActionText();
 			}
@@ -600,3 +608,6 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Watchlist';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryWatchlist::class, 'ApiQueryWatchlist' );

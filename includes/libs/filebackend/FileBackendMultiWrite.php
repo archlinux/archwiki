@@ -21,7 +21,16 @@
  * @ingroup FileBackend
  */
 
+namespace Wikimedia\FileBackend;
+
+use InvalidArgumentException;
+use LockManager;
+use LogicException;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Json\FormatJson;
+use Shellbox\Command\BoxedCommand;
+use StatusValue;
+use StringUtils;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -94,7 +103,6 @@ class FileBackendMultiWrite extends FileBackend {
 	 *                      any checks from "syncChecks" are still synchronous.
 	 *
 	 * @param array $config
-	 * @throws LogicException
 	 */
 	public function __construct( array $config ) {
 		parent::__construct( $config );
@@ -743,6 +751,14 @@ class FileBackendMultiWrite extends FileBackend {
 		return $this->backends[$index]->getFileHttpUrl( $realParams );
 	}
 
+	public function addShellboxInputFile( BoxedCommand $command, string $boxedName,
+		array $params
+	) {
+		$index = $this->getReadIndexFromParams( $params );
+		$realParams = $this->substOpPaths( $params, $this->backends[$index] );
+		return $this->backends[$index]->addShellboxInputFile( $command, $boxedName, $realParams );
+	}
+
 	public function directoryExists( array $params ) {
 		$realParams = $this->substOpPaths( $params, $this->backends[$this->masterIndex] );
 
@@ -786,7 +802,7 @@ class FileBackendMultiWrite extends FileBackend {
 		return $this->backends[$this->masterIndex]->getFeatures();
 	}
 
-	public function clearCache( array $paths = null ) {
+	public function clearCache( ?array $paths = null ) {
 		foreach ( $this->backends as $backend ) {
 			$realPaths = is_array( $paths ) ? $this->substPaths( $paths, $backend ) : null;
 			$backend->clearCache( $realPaths );
@@ -834,3 +850,6 @@ class FileBackendMultiWrite extends FileBackend {
 		return !empty( $params['latest'] ) ? $this->masterIndex : $this->readIndex;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( FileBackendMultiWrite::class, 'FileBackendMultiWrite' );

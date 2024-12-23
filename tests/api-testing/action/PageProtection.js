@@ -2,17 +2,17 @@
 
 const { action, assert, utils } = require( 'api-testing' );
 
-describe( 'Page protection', function () {
+describe( 'Page protection', () => {
 	// users
-	let admin, wikiUser;
-	const anonymousUser = action.getAnon();
+	let anonymousUser, admin, wikiUser;
 
-	before( async () => {
+	beforeEach( async () => {
 		admin = await action.mindy();
 		wikiUser = await action.alice();
+		anonymousUser = action.getAnon();
 	} );
 
-	describe( 'permission checks', function () {
+	describe( 'permission checks', () => {
 		it( 'should allow only admins to protect and unprotect an existing page', async () => {
 			const page = utils.title( 'ProtectionTest_' );
 			await admin.edit( page, { text: 'A page to protect' } );
@@ -68,7 +68,7 @@ describe( 'Page protection', function () {
 
 	} );
 
-	describe( 'cascading protection', function () {
+	describe( 'cascading protection', () => {
 		it( 'should prevent regular users from editing templates used on a protected page', async () => {
 			const template = utils.title( 'Template:Protected_' );
 			const page = utils.title( 'Unprotected_' );
@@ -93,7 +93,7 @@ describe( 'Page protection', function () {
 		} );
 	} );
 
-	describe( 'levels', function () {
+	describe( 'levels', () => {
 		const protectedPage = utils.title( 'Protected_' );
 		const semiProtectedPage = utils.title( 'SemiProtected_' );
 		const protectedNonexistingPage = utils.title( 'Nonexisting_' );
@@ -208,7 +208,7 @@ describe( 'Page protection', function () {
 		} );
 	} );
 
-	describe( '"expiry" parameter', function () {
+	describe( '"expiry" parameter', () => {
 
 		const testForExpiry = async ( expiry ) => {
 			const adminEditToken = await admin.token();
@@ -253,7 +253,7 @@ describe( 'Page protection', function () {
 		} );
 	} );
 
-	describe( '"watchlist" parameter', function () {
+	describe( '"watchlist" parameter', () => {
 		// users
 		let eve;
 
@@ -295,7 +295,7 @@ describe( 'Page protection', function () {
 			return res.watchlistraw;
 		};
 
-		it( 'should have added the page the user\'s watchlist per default', async () => {
+		it( 'should have added the page to the user\'s watchlist by default', async () => {
 			const list = await eve.action( 'query', {
 				list: 'watchlistraw',
 				wrfromtitle: testWatchlist,

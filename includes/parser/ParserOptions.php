@@ -21,17 +21,25 @@
  * @ingroup Parser
  */
 
+namespace MediaWiki\Parser;
+
+use InvalidArgumentException;
+use LogicException;
+use MediaWiki\Content\Content;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\Parser;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubObject;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
+use ReflectionClass;
+use Wikimedia\IPUtils;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -90,6 +98,8 @@ class ParserOptions {
 		'printable' => true,
 		'userlang' => true,
 		'useParsoid' => true,
+		'suppressSectionEditLinks' => true,
+		'collapsibleSections' => true,
 	];
 
 	/**
@@ -141,6 +151,7 @@ class ParserOptions {
 
 	/**
 	 * Appended to the options hash
+	 * @var string
 	 */
 	private $mExtraKey = '';
 
@@ -284,18 +295,6 @@ class ParserOptions {
 	}
 
 	/**
-	 * Allow all external images inline?
-	 * @param bool|null $x New value (null is no change)
-	 * @return bool Old value
-	 * @deprecated since 1.35; per-parser configuration of image handling via
-	 * parser options is deprecated. Use site configuration.
-	 */
-	public function setAllowExternalImages( $x ) {
-		wfDeprecated( __METHOD__, '1.35' );
-		return $this->setOptionLegacy( 'allowExternalImages', $x );
-	}
-
-	/**
 	 * External images to allow
 	 *
 	 * When self::getAllowExternalImages() is false
@@ -307,38 +306,11 @@ class ParserOptions {
 	}
 
 	/**
-	 * External images to allow
-	 *
-	 * When self::getAllowExternalImages() is false
-	 *
-	 * @param string|string[]|null $x New value (null is no change)
-	 * @return string|string[] Old value
-	 * @deprecated since 1.35; per-parser configuration of image handling via
-	 * parser options is deprecated. Use site configuration.
-	 */
-	public function setAllowExternalImagesFrom( $x ) {
-		wfDeprecated( __METHOD__, '1.35' );
-		return $this->setOptionLegacy( 'allowExternalImagesFrom', $x );
-	}
-
-	/**
 	 * Use the on-wiki external image whitelist?
 	 * @return bool
 	 */
 	public function getEnableImageWhitelist() {
 		return $this->getOption( 'enableImageWhitelist' );
-	}
-
-	/**
-	 * Use the on-wiki external image whitelist?
-	 * @param bool|null $x New value (null is no change)
-	 * @return bool Old value
-	 * @deprecated since 1.35; per-parser configuration of image handling via
-	 * parser options is deprecated. Use site configuration.
-	 */
-	public function setEnableImageWhitelist( $x ) {
-		wfDeprecated( __METHOD__, '1.35' );
-		return $this->setOptionLegacy( 'enableImageWhitelist', $x );
 	}
 
 	/**
@@ -846,6 +818,24 @@ class ParserOptions {
 	}
 
 	/**
+	 * Should section contents be wrapped in <div> to make them
+	 * collapsible?
+	 * @since 1.42
+	 */
+	public function getCollapsibleSections(): bool {
+		return $this->getOption( 'collapsibleSections' );
+	}
+
+	/**
+	 * Wrap section contents in a <div> to allow client-side code
+	 * to collapse them.
+	 * @since 1.42
+	 */
+	public function setCollapsibleSections(): void {
+		$this->setOption( 'collapsibleSections', true );
+	}
+
+	/**
 	 * If the wiki is configured to allow raw html ($wgRawHtml = true)
 	 * is it allowed in the specific case of parsing this page.
 	 *
@@ -1130,7 +1120,23 @@ class ParserOptions {
 	 * @return ParserOptions
 	 */
 	public static function newFromContext( IContextSource $context ) {
-		return new ParserOptions( $context->getUser(), $context->getLanguage() );
+		$contextUser = $context->getUser();
+
+		// Use the stashed temporary account name instead of an IP address as the user for the ParserOptions
+		// (if a stashed name is set). This is so that magic words like {{REVISIONUSER}} show the temporary account
+		// name instead of IP address.
+		$tempUserCreator = MediaWikiServices::getInstance()->getTempUserCreator();
+		if ( $tempUserCreator->isEnabled() && IPUtils::isIPAddress( $contextUser->getName() ) ) {
+			// We do not attempt to acquire a temporary account name if no name is stashed, as this may be called in
+			// contexts (such as the parse API) where the user will not be performing an edit on their next action
+			// and therefore would be increasing the rate limit unnecessarily.
+			$tempName = $tempUserCreator->getStashedName( $context->getRequest()->getSession() );
+			if ( $tempName !== null ) {
+				$contextUser = UserIdentityValue::newAnonymous( $tempName );
+			}
+		}
+
+		return new ParserOptions( $contextUser, $context->getLanguage() );
 	}
 
 	/**
@@ -1218,6 +1224,7 @@ class ParserOptions {
 				'removeComments' => true,
 				'suppressTOC' => false,
 				'suppressSectionEditLinks' => false,
+				'collapsibleSections' => false,
 				'enableLimitReport' => false,
 				'preSaveTransform' => true,
 				'isPreview' => false,
@@ -1498,7 +1505,7 @@ class ParserOptions {
 	 * @return bool
 	 * @since 1.30
 	 */
-	public function isSafeToCache( array $usedOptions = null ) {
+	public function isSafeToCache( ?array $usedOptions = null ) {
 		$defaults = self::getDefaults();
 		$inCacheKey = self::getCacheVaryingOptionsHash();
 		$usedOptions ??= array_keys( $this->options );
@@ -1581,6 +1588,9 @@ class ParserOptions {
 		$this->renderReason = $renderReason;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ParserOptions::class, 'ParserOptions' );
 
 /**
  * For really cool vim folding this needs to be at the end:

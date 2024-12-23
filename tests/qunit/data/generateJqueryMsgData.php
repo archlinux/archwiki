@@ -7,13 +7,15 @@
  * mapping expected inputs to outputs, which is used then run by QUnit.
  */
 
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Maintenance\Maintenance;
 
 require __DIR__ . '/../../../maintenance/Maintenance.php';
 
 class GenerateJqueryMsgData extends Maintenance {
 
-	private static $keyToTestArgs = [
+	private const KEY_TO_TEST_ARGS = [
 		'undelete_short' => [
 			[ 0 ],
 			[ 1 ],
@@ -30,7 +32,7 @@ class GenerateJqueryMsgData extends Maintenance {
 		]
 	];
 
-	private static $testLangs = [ 'en', 'fr', 'ar', 'jp', 'zh', 'nl', 'ml', 'hi' ];
+	private const TEST_LANGS = [ 'en', 'fr', 'ar', 'jp', 'zh', 'nl', 'ml', 'hi' ];
 
 	/** @var LanguageFactory */
 	private $languageFactory;
@@ -51,10 +53,10 @@ class GenerateJqueryMsgData extends Maintenance {
 		$messages = [];
 		$tests = [];
 		$jsData = [];
-		foreach ( self::$testLangs as $languageCode ) {
+		foreach ( self::TEST_LANGS as $languageCode ) {
 			$language = $this->languageFactory->getLanguage( $languageCode );
 			$jsData[$languageCode] = $language->getJsData();
-			foreach ( self::$keyToTestArgs as $key => $testArgs ) {
+			foreach ( self::KEY_TO_TEST_ARGS as $key => $testArgs ) {
 				foreach ( $testArgs as $args ) {
 					// Get the raw message, without any transformations.
 					$template = wfMessage( $key )->useDatabase( false )

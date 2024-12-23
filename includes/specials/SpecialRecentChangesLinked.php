@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Recentchangeslinked
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -31,17 +28,18 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityUtils;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
+use MediaWiki\Xml\Xml;
 use MessageCache;
 use RecentChange;
 use SearchEngineFactory;
-use WatchedItemStoreInterface;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Rdbms\Subquery;
-use Xml;
 
 /**
  * This is to display changes made to all articles linked in an article.
  *
+ * @ingroup RecentChanges
  * @ingroup SpecialPage
  */
 class SpecialRecentChangesLinked extends SpecialRecentChanges {
@@ -293,13 +291,14 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 				->setMaxExecutionTime( $this->getConfig()->get( MainConfigNames::MaxExecutionTimeForExpensiveQueries ) )
 				->caller( __METHOD__ )->fetchResultSet();
 		} else {
-			$sqls = array_map( static function ( $queryBuilder ) {
-				return $queryBuilder->getSQL();
-			}, $subsql );
+			$unionQueryBuilder = $dbr->newUnionQueryBuilder()->caller( __METHOD__ );
+			foreach ( $subsql as $selectQueryBuilder ) {
+				$unionQueryBuilder->add( $selectQueryBuilder );
+			}
 			return $dbr->newSelectQueryBuilder()
 				->select( '*' )
 				->from(
-					new Subquery( $dbr->unionQueries( $sqls, $dbr::UNION_DISTINCT ) ),
+					new Subquery( $unionQueryBuilder->getSQL() ),
 					'main'
 				)
 				->orderBy( 'rc_timestamp', SelectQueryBuilder::SORT_DESC )

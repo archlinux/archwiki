@@ -13,7 +13,8 @@ describe( 'instrumentation', () => {
 	test( 'addWprovToSearchResultUrls without offset', () => {
 		const url1 = 'https://host/?title=Special%3ASearch&search=Aa',
 			url2Base = 'https://host/?title=Special%3ASearch&search=Ab',
-			url3 = 'https://host/Ac';
+			url3 = 'https://host/Ac',
+			url5 = '/index.php?title=Special%3ASearch&search=Ad';
 		const results = [
 			{
 				title: 'Aa',
@@ -29,6 +30,10 @@ describe( 'instrumentation', () => {
 			},
 			{
 				title: 'Ad'
+			},
+			{
+				title: 'Ae',
+				url: url5
 			}
 		];
 
@@ -48,6 +53,10 @@ describe( 'instrumentation', () => {
 				},
 				{
 					title: 'Ad'
+				},
+				{
+					title: 'Ae',
+					url: `${ location.origin }${ url5 }&wprov=acrw1_4`
 				}
 			] );
 		expect( results[ 0 ].url ).toStrictEqual( url1 );

@@ -30,5 +30,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Title for the VisualEditor syntax highlighter inspector, above the text area for the code",
 	"syntaxhighlight-error-pygments-invocation-failure": "Error message shown when the syntax highlighting library failed with an unspecified error",
 	"syntaxhighlight-error-unknown-language": "Error message shown when the programming language name was not recognized by the syntax highlighting library. Parameters:\n* $1 - the language name",
-	"syntaxhighlight-error-exceeds-size-limit": "Error message shown when the block of code to be highlighted exceeds the size limit. Parameters:\n* $1 - the size of the code block, in bytes\n* $2 - the maximum size allowed, in bytes."
+	"syntaxhighlight-error-exceeds-size-limit": "Error message shown when the block of code to be highlighted exceeds the size limit. Parameters:\n* $1 - the size of the code block, in bytes\n* $2 - the maximum size allowed, in bytes.",
+	"syntaxhighlight-button-copy": "Label for button to copy the highlighted code",
+	"syntaxhighlight-button-copied": "Label shown when the highlighted code has been copied"
 }

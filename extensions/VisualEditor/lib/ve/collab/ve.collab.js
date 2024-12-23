@@ -18,14 +18,12 @@ ve.collab = {};
  */
 ve.collab.serialize = function ( value ) {
 	if ( Array.isArray( value ) ) {
-		return value.map( function ( item ) {
-			return ve.collab.serialize( item );
-		} );
+		return value.map( ( item ) => ve.collab.serialize( item ) );
 	} else if ( value === null || typeof value !== 'object' ) {
 		return value;
 	} else if ( value.constructor === Object ) {
-		var serialized = {};
-		for ( var property in value ) {
+		const serialized = {};
+		for ( const property in value ) {
 			serialized[ property ] = ve.collab.serialize( value[ property ] );
 		}
 		return serialized;
@@ -46,8 +44,8 @@ ve.collab.newPeer = function () {
 	// return new ve.FakePeer();
 };
 
-ve.collab.initPeerServer = function () {
-	var surface = ve.init.target.surface,
+ve.collab.initPeerServer = function ( userName ) {
+	const surface = ve.init.target.surface,
 		completeHistory = surface.model.documentModel.completeHistory;
 
 	ve.collab.peerServer = new ve.dm.CollabTransportServer( completeHistory.getLength() );
@@ -63,18 +61,18 @@ ve.collab.initPeerServer = function () {
 		{}
 	);
 	ve.collab.peerServer.peer = ve.collab.newPeer();
-	ve.collab.peerServer.peer.on( 'open', function ( id ) {
+	ve.collab.peerServer.peer.on( 'open', ( id ) => {
 		/* eslint-disable-next-line no-console */
 		console.log( 'Open. Now in another browser window, do:\nve.collab.initPeerClient( \'' + id + '\' );' );
-		ve.collab.initPeerClient( id, true );
+		ve.collab.initPeerClient( id, true, userName );
 	} );
-	ve.collab.peerServer.peer.on( 'connection', function ( conn ) {
+	ve.collab.peerServer.peer.on( 'connection', ( conn ) => {
 		ve.collab.peerServer.onConnection( conn );
 	} );
 };
 
-ve.collab.initPeerClient = function ( serverId, isMain ) {
-	var surface = ve.init.target.surface,
+ve.collab.initPeerClient = function ( serverId, isMain, userName ) {
+	const surface = ve.init.target.surface,
 		completeHistory = surface.model.documentModel.completeHistory,
 		peerClient = ve.collab.newPeer();
 	if ( completeHistory.getLength() > 0 ) {
@@ -93,16 +91,16 @@ ve.collab.initPeerClient = function ( serverId, isMain ) {
 		align: 'after'
 	} );
 
-	peerClient.on( 'open', function ( /* id */ ) {
-		var conn = peerClient.connect( serverId );
+	peerClient.on( 'open', ( /* id */ ) => {
+		const conn = peerClient.connect( serverId );
 		// On old js-BinaryPack (before https://github.com/peers/js-binarypack/pull/10 ),
 		// you need JSON serialization, else it crashes on Unicode code points over U+FFFF
 		// var conn = peerClient.connect( serverId, { serialization: 'json' } );
-		conn.on( 'open', function () {
+		conn.on( 'open', () => {
 			surface.model.createSynchronizer( 'foo', { peerConnection: conn } );
 			surface.model.synchronizer.commitLength = completeHistory.getLength();
 			surface.model.synchronizer.sentLength = completeHistory.getLength();
-			surface.model.synchronizer.once( 'initDoc', function ( error ) {
+			surface.model.synchronizer.once( 'initDoc', ( error ) => {
 				if ( error ) {
 					OO.ui.alert(
 						// eslint-disable-next-line no-jquery/no-append-html
@@ -113,7 +111,7 @@ ve.collab.initPeerClient = function ( serverId, isMain ) {
 					);
 					return;
 				}
-				var toolbar = ve.init.target.getToolbar();
+				const toolbar = ve.init.target.getToolbar();
 				toolbar.setup(
 					ve.init.target.constructor.static.toolbarGroups,
 					ve.init.target.surface
@@ -125,12 +123,13 @@ ve.collab.initPeerClient = function ( serverId, isMain ) {
 				}
 			} );
 			ve.collab.connectModelSynchronizer();
+			surface.model.synchronizer.changeAuthor( { name: userName } );
 		} );
 	} );
 };
 
 ve.collab.connectModelSynchronizer = function () {
-	var ceSurface = ve.init.target.surface.view;
+	const ceSurface = ve.init.target.surface.view;
 	ceSurface.model.synchronizer.connect( ceSurface, {
 		authorSelect: 'onSynchronizerAuthorUpdate',
 		authorChange: 'onSynchronizerAuthorUpdate',
@@ -141,7 +140,7 @@ ve.collab.connectModelSynchronizer = function () {
 };
 
 ve.collab.join = function () {
-	var serverId = new URLSearchParams( location.search ).get( 'collabSession' );
+	const serverId = new URLSearchParams( location.search ).get( 'collabSession' );
 	if ( serverId ) {
 		// Valid session URL
 		ve.collab.start( serverId );
@@ -156,11 +155,11 @@ ve.collab.join = function () {
 ve.collab.start = function ( serverId ) {
 	if ( serverId ) {
 		// Join an existing session
-		ve.init.target.surface.dialogs.openWindow( 'joinCollabDialog' ).closing.then( function ( val ) {
-			if ( val !== 'accept' ) {
+		ve.init.target.surface.dialogs.openWindow( 'joinCollabDialog' ).closing.then( ( data ) => {
+			if ( !( data && data.action === 'accept' ) ) {
 				return;
 			}
-			ve.collab.initPeerClient( serverId );
+			ve.collab.initPeerClient( serverId, false, data.userName );
 		} );
 		return;
 	}

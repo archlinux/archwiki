@@ -11,7 +11,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"ValidSkinNames": {
 		"monobook": {
@@ -19,6 +19,7 @@
 			"args": [
 				{
 					"name": "monobook",
+					"supportsMwHeading": true,
 					"responsive": true,
 					"templateDirectory": "templates/",
 					"scripts": [
@@ -76,10 +77,8 @@
 				"content-links": true,
 				"content-tables": true,
 				"interface": true,
-				"interface-message-box": true,
 				"interface-category": true,
 				"i18n-ordered-lists": true,
-				"i18n-all-lists-margins": true,
 				"i18n-headings": true
 			},
 			"styles": [

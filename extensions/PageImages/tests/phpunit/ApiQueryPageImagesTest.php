@@ -2,12 +2,15 @@
 
 namespace PageImages\Tests;
 
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiPageSet;
+use MediaWiki\Api\ApiQuery;
 use MediaWiki\Config\HashConfig;
-use MediaWiki\MediaWikiServices;
-use MediaWiki\Title\Title;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Page\PageReferenceValue;
+use MediaWikiIntegrationTestCase;
 use PageImages\ApiQueryPageImages;
 use PageImages\PageImages;
-use PHPUnit\Framework\TestCase;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\Rdbms\FakeResultWrapper;
@@ -22,29 +25,29 @@ use Wikimedia\TestingAccessWrapper;
  * @author Sam Smith
  * @author Thiemo Kreuz
  */
-class ApiQueryPageImagesTest extends TestCase {
+class ApiQueryPageImagesTest extends MediaWikiIntegrationTestCase {
 
 	private function newInstance() {
 		$config = new HashConfig( [
 			'PageImagesAPIDefaultLicense' => 'free'
 		] );
 
-		$context = $this->createMock( \IContextSource::class );
+		$context = $this->createMock( IContextSource::class );
 
 		$context->method( 'getConfig' )
 			->willReturn( $config );
 
-		$main = $this->createMock( \ApiMain::class );
+		$main = $this->createMock( ApiMain::class );
 		$main->expects( $this->once() )
 			->method( 'getContext' )
 			->willReturn( $context );
 
-		$query = $this->createMock( \ApiQuery::class );
+		$query = $this->createMock( ApiQuery::class );
 		$query->expects( $this->once() )
 			->method( 'getMain' )
 			->willReturn( $main );
 
-		return new ApiQueryPageImages( $query, '', MediaWikiServices::getInstance()->getRepoGroup() );
+		return new ApiQueryPageImages( $query, '', $this->getServiceContainer()->getRepoGroup() );
 	}
 
 	public function testConstructor() {
@@ -79,9 +82,21 @@ class ApiQueryPageImagesTest extends TestCase {
 	/**
 	 * @dataProvider provideGetTitles
 	 */
-	public function testGetTitles( $titles, $missingTitlesByNamespace, $expected ) {
-		$pageSet = $this->createMock( \ApiPageSet::class );
-		$pageSet->method( 'getGoodTitles' )
+	public function testGetTitles( $pageNames, $missingTitlesByNamespace, $expectedNames ) {
+		$titleParser = $this->getServiceContainer()->getTitleParser();
+		$titles = [];
+		foreach ( $pageNames as $pageName ) {
+			$titleValue = $titleParser->parseTitle( $pageName );
+			$titles[] = PageReferenceValue::localReference( $titleValue->getNamespace(), $titleValue->getDBkey() );
+		}
+		$expected = [];
+		foreach ( $expectedNames as $id => $expectedName ) {
+			$titleValue = $titleParser->parseTitle( $expectedName );
+			$expected[$id] = PageReferenceValue::localReference( $titleValue->getNamespace(), $titleValue->getDBkey() );
+		}
+
+		$pageSet = $this->createMock( ApiPageSet::class );
+		$pageSet->method( 'getGoodPages' )
 			->willReturn( $titles );
 		$pageSet->method( 'getMissingTitlesByNamespace' )
 			->willReturn( $missingTitlesByNamespace );
@@ -93,29 +108,29 @@ class ApiQueryPageImagesTest extends TestCase {
 	public static function provideGetTitles() {
 		return [
 			[
-				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
+				[ 'Foo' ],
 				[],
-				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
+				[ 'Foo' ],
 			],
 			[
-				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
+				[ 'Foo' ],
 				[
 					NS_TALK => [
 						'Bar' => -1,
 					],
 				],
-				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
+				[ 'Foo' ],
 			],
 			[
-				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
+				[ 'Foo' ],
 				[
 					NS_FILE => [
 						'Bar' => -1,
 					],
 				],
 				[
-					0 => Title::makeTitle( NS_MAIN, 'Foo' ),
-					-1 => Title::makeTitle( NS_FILE, 'Bar' ),
+					0 => 'Foo',
+					-1 => 'File:Bar',
 				],
 			],
 		];
@@ -124,14 +139,18 @@ class ApiQueryPageImagesTest extends TestCase {
 	/**
 	 * @dataProvider provideExecute
 	 * @param array $requestParams Request parameters to the API
-	 * @param array $titles Page titles passed to the API
+	 * @param array $pageNames Page titles passed to the API
 	 * @param array $queryPageIds Page IDs that will be used for querying the DB.
 	 * @param array $queryResults Results of the DB select query
 	 * @param int $setResultValueCount The number results the API returned
 	 */
-	public function testExecute( $requestParams, $titles, $queryPageIds,
+	public function testExecute( $requestParams, $pageNames, $queryPageIds,
 		$queryResults, $setResultValueCount
 	) {
+		$titles = [];
+		foreach ( $pageNames as $pageName ) {
+			$titles[] = PageReferenceValue::localReference( NS_MAIN, $pageName );
+		}
 		$mock = TestingAccessWrapper::newFromObject(
 			$this->getMockBuilder( ApiQueryPageImages::class )
 				->disableOriginalConstructor()
@@ -178,7 +197,7 @@ class ApiQueryPageImagesTest extends TestCase {
 			[
 				[ 'prop' => [ 'thumbnail' ], 'thumbsize' => 100, 'limit' => 10,
 				  'license' => 'any', 'langcode' => null ],
-				[ Title::newFromText( 'Page 1' ), Title::newFromText( 'Page 2' ) ],
+				[ 'Page 1', 'Page 2' ],
 				[ 0, 1 ],
 				[
 					(object)[ 'pp_page' => 0, 'pp_value' => 'A_Free.jpg',
@@ -200,7 +219,7 @@ class ApiQueryPageImagesTest extends TestCase {
 			[
 				[ 'prop' => [ 'thumbnail' ], 'continue' => 1, 'thumbsize' => 400,
 				  'limit' => 10, 'license' => 'any', 'langcode' => null ],
-				[ Title::newFromText( 'Page 1' ), Title::newFromText( 'Page 2' ) ],
+				[ 'Page 1', 'Page 2' ],
 				[ 1 ],
 				[
 					(object)[ 'pp_page' => 1, 'pp_value' => 'B_Free.jpg',
@@ -213,7 +232,7 @@ class ApiQueryPageImagesTest extends TestCase {
 			[
 				[ 'prop' => [ 'thumbnail' ], 'thumbsize' => 500, 'limit' => 10,
 				  'license' => 'any', 'langcode' => 'en' ],
-				[ Title::newFromText( 'Page 1' ), Title::newFromText( 'Page 2' ) ],
+				[ 'Page 1', 'Page 2' ],
 				[ 0, 1 ],
 				[
 					(object)[ 'pp_page' => 1, 'pp_value' => 'B_Free.jpg',
@@ -224,7 +243,7 @@ class ApiQueryPageImagesTest extends TestCase {
 			[
 				[ 'prop' => [ 'thumbnail' ], 'continue' => 1, 'thumbsize' => 500,
 				  'limit' => 10, 'license' => 'any', 'langcode' => 'de' ],
-				[ Title::newFromText( 'Page 1' ), Title::newFromText( 'Page 2' ) ],
+				[ 'Page 1', 'Page 2' ],
 				[ 1 ],
 				[
 					(object)[ 'pp_page' => 1, 'pp_value' => 'B_Free.jpg',
@@ -235,7 +254,7 @@ class ApiQueryPageImagesTest extends TestCase {
 			[
 				[ 'prop' => [ 'thumbnail' ], 'thumbsize' => 510, 'limit' => 10,
 				  'license' => 'free', 'langcode' => 'de' ],
-				[ Title::newFromText( 'Page 1' ), Title::newFromText( 'Page 2' ) ],
+				[ 'Page 1', 'Page 2' ],
 				[ 0, 1 ],
 				[],
 				0
@@ -243,7 +262,7 @@ class ApiQueryPageImagesTest extends TestCase {
 			[
 				[ 'prop' => [ 'thumbnail' ], 'thumbsize' => 510, 'limit' => 10,
 				  'license' => 'free', 'langcode' => 'en' ],
-				[ Title::newFromText( 'Page 1' ), Title::newFromText( 'Page 2' ) ],
+				[ 'Page 1', 'Page 2' ],
 				[ 0, 1 ],
 				[
 					(object)[ 'pp_page' => 0, 'pp_value' => 'A_Free.jpg',
@@ -256,7 +275,7 @@ class ApiQueryPageImagesTest extends TestCase {
 			[
 				[ 'prop' => [ 'thumbnail', 'original' ], 'thumbsize' => 510,
 				  'limit' => 10, 'license' => 'free', 'langcode' => 'en' ],
-				[ Title::newFromText( 'Page 1' ), Title::newFromText( 'Page 2' ) ],
+				[ 'Page 1', 'Page 2' ],
 				[ 0, 1 ],
 				[
 					(object)[

@@ -27,7 +27,6 @@
 	"mobile-frontend-meta-data-issues-categories": "О тей катеґориї",
 	"mobile-frontend-meta-data-issues-header": "Проблеми боку",
 	"minerva-meta-data-issues-section-header": "Проблеми зоз оддзельком",
-	"mobile-frontend-notifications-filter": "Филтер",
 	"mobile-frontend-pageaction-edit-tooltip": "Ушориц уводни оддзельок того боку",
 	"mobile-frontend-placeholder": "Глєдац у {{SITENAME}}",
 	"mobile-frontend-random-button": "Намислом",
@@ -46,12 +45,10 @@
 	"minerva-page-actions-overflow": "Вецей",
 	"minerva-page-actions-language-switcher": "Язики",
 	"minerva-page-actions-history": "История",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Дискусия]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Дискусия]",
 	"minerva-skin-desc": "Перша адаптабилна тема першенствено за хаснованє на мобилних апаратох",
 	"skin-minerva-issue-learn-more": "Дознайце вецей",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Катеґориї",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Приказує катеґориї бокох",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Злєпшани третман проблема зоз боком",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Проблеми зоз боком (Шаблон:ambox) буду положжени до статї.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Ґрупованє резултатох по боку нє доступне на мобилних пошореньох. Кед же жадаце хасновац тоту функцию, нащивце сайт за компютери."
 }

@@ -23,7 +23,9 @@
  * @since 1.22
  */
 
+use MediaWiki\Api\ApiResult;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
 
@@ -33,7 +35,7 @@ use MediaWiki\WikiMap\WikiMap;
  * @since 1.21
  */
 class RightsLogFormatter extends LogFormatter {
-	protected function makePageLink( Title $title = null, $parameters = [], $html = null ) {
+	protected function makePageLink( ?Title $title = null, $parameters = [], $html = null ) {
 		$userrightsInterwikiDelimiter = $this->context->getConfig()
 			->get( MainConfigNames::UserrightsInterwikiDelimiter );
 

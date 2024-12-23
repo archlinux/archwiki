@@ -17,7 +17,13 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
+use Shellbox\Command\BoxedCommand;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFile\FSFile;
+use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Base code for file repositories.
@@ -169,7 +175,7 @@ class FileRepo {
 	 * @param array|null $info
 	 * @phan-assert array $info
 	 */
-	public function __construct( array $info = null ) {
+	public function __construct( ?array $info = null ) {
 		// Verify required settings presence
 		if (
 			$info === null
@@ -1604,6 +1610,23 @@ class FileRepo {
 	}
 
 	/**
+	 * Add a file to a Shellbox command as an input file
+	 *
+	 * @param BoxedCommand $command
+	 * @param string $boxedName
+	 * @param string $virtualUrl
+	 * @return StatusValue
+	 * @since 1.43
+	 */
+	public function addShellboxInputFile( BoxedCommand $command, string $boxedName,
+		string $virtualUrl
+	) {
+		$path = $this->resolveToStoragePathIfVirtual( $virtualUrl );
+
+		return $this->backend->addShellboxInputFile( $command, $boxedName, [ 'src' => $path ] );
+	}
+
+	/**
 	 * Get properties of a file with a given virtual URL/storage path.
 	 * Properties should ultimately be obtained via FSFile::getProps().
 	 *
@@ -1945,7 +1968,7 @@ class FileRepo {
 	 * @param UserIdentity|null $user
 	 * @return UploadStash
 	 */
-	public function getUploadStash( UserIdentity $user = null ) {
+	public function getUploadStash( ?UserIdentity $user = null ) {
 		return new UploadStash( $this, $user );
 	}
 

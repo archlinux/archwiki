@@ -11,8 +11,7 @@ use MediaWiki\User\UserIdentityValue;
 
 /**
  * @group Database
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Degroup
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Degroup
  * @todo Make this a unit test once ManualLogEntry is servicified (T253717) and DI is possible for User::newSystemUser
  */
 class DegroupTest extends MediaWikiIntegrationTestCase {
@@ -20,7 +19,7 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 
 	private function getMsgLocalizer(): MessageLocalizer {
 		$ml = $this->createMock( MessageLocalizer::class );
-		$ml->method( 'msg' )->willReturnCallback( function ( $k, $p ) {
+		$ml->method( 'msg' )->willReturnCallback( function ( $k, ...$p ) {
 			return $this->getMockMessage( $k, $p );
 		} );
 		return $ml;
@@ -31,9 +30,6 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 		return AbuseFilterServices::getFilterUser();
 	}
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute() {
 		$user = new UserIdentityValue( 1, 'Degrouped user' );
 		$params = $this->provideGetMessageParameters( $user )->current()[0];
@@ -57,9 +53,6 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $degroup->execute() );
 	}
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute_noGroups() {
 		$params = $this->provideGetMessageParameters()->current()[0];
 		$userGroupManager = $this->createMock( UserGroupManager::class );
@@ -79,9 +72,6 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $degroup->execute() );
 	}
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute_variableNotSet() {
 		$user = new UserIdentityValue( 1, 'Degrouped user' );
 		$params = $this->provideGetMessageParameters( $user )->current()[0];
@@ -108,9 +98,6 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $degroup->execute() );
 	}
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute_anonymous() {
 		$user = new UserIdentityValue( 0, 'Anonymous user' );
 		$params = $this->provideGetMessageParameters( $user )->current()[0];
@@ -130,9 +117,6 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $degroup->execute() );
 	}
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute_temp() {
 		$user = new UserIdentityValue( 10, '*12345' );
 		$params = $this->provideGetMessageParameters( $user )->current()[0];
@@ -164,7 +148,6 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ::revert
 	 * @dataProvider provideRevert
 	 */
 	public function testRevert( bool $success, array $hadGroups, array $hasGroups = [] ) {
@@ -197,7 +180,6 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ::getMessage
 	 * @dataProvider provideGetMessageParameters
 	 */
 	public function testGetMessage( Parameters $params ) {

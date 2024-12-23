@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Unusedtemplates
- *
  * Copyright © 2006 Rob Church
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,8 +18,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Rob Church <robchur@gmail.com>
  */
 
 namespace MediaWiki\Specials;
@@ -35,9 +31,11 @@ use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
- * A special page that lists unused templates
+ * Lists of unused templates
  *
+ * @see SpecialMostLinkedTemplates
  * @ingroup SpecialPage
+ * @author Rob Church <robchur@gmail.com>
  */
 class SpecialUnusedTemplates extends QueryPage {
 
@@ -88,8 +86,9 @@ class SpecialUnusedTemplates extends QueryPage {
 		} else {
 			$joinConds['templatelinks'] = $templatelinksJoin;
 		}
+		$joinConds['page_props'] = [ 'LEFT JOIN', [ 'page_id = pp_page', 'pp_propname' => 'expectunusedtemplate' ] ];
 		return [
-			'tables' => array_merge( $queryInfo['tables'], [ 'page' ] ),
+			'tables' => array_merge( $queryInfo['tables'], [ 'page' ], [ 'page_props' ] ),
 			'fields' => [
 				'namespace' => 'page_namespace',
 				'title' => 'page_title',
@@ -97,7 +96,8 @@ class SpecialUnusedTemplates extends QueryPage {
 			'conds' => [
 				'page_namespace' => NS_TEMPLATE,
 				'tl_from' => null,
-				'page_is_redirect' => 0
+				'page_is_redirect' => 0,
+				'pp_page' => null
 			],
 			'join_conds' => array_merge( $joinConds, $queryInfo['joins'] )
 		];

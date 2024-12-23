@@ -19,6 +19,7 @@
 	"multimediaviewer-reuse-loading-placeholder": "لوڈ تھین٘دا پئے۔۔۔",
 	"multimediaviewer-share-tab": "شیئر",
 	"multimediaviewer-embed-tab": "ایمبیڈ کرو",
+	"multimediaviewer-download": "ڈاؤن لوڈ",
 	"multimediaviewer-download-link": "ایہ فائل ڈاؤن لوڈ کرو",
 	"multimediaviewer-download-preview-link-title": "براؤزر وچ ݙیکھو",
 	"multimediaviewer-download-original-button-name": "اصل فائل ڈاؤن لوڈ کرو",
@@ -32,7 +33,6 @@
 	"multimediaviewer-small-embed-dimensions": "چھوٹا $1",
 	"multimediaviewer-view-config": "کنفگریشن",
 	"multimediaviewer-title-popup-text": "تفصیل",
-	"multimediaviewer-attr-plain": "سادی",
-	"multimediaviewer-options-learn-more": "ٻیا سِکھو",
-	"multimediaviewer-option-cancel-button": "منسوخ"
+	"multimediaviewer-copy-button": "نقل کرو",
+	"multimediaviewer-attr-plain": "سادی"
 }

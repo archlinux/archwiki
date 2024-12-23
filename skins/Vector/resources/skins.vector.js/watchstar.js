@@ -15,7 +15,7 @@ const updateWatchIcon = ( watchIcon, isWatched, expiry ) => {
 	);
 
 	if ( isWatched ) {
-		if ( expiry === 'infinity' ) {
+		if ( mw.util.isInfinity( expiry ) ) {
 			watchIcon.classList.add( 'mw-ui-icon-wikimedia-unStar' );
 		} else {
 			watchIcon.classList.add( 'mw-ui-icon-wikimedia-halfStar' );
@@ -27,7 +27,7 @@ const updateWatchIcon = ( watchIcon, isWatched, expiry ) => {
 
 const init = () => {
 	mw.hook( 'wikipage.watchlistChange' ).add(
-		function ( /** @type {boolean} */ isWatched, /** @type {string} */ expiry ) {
+		( /** @type {boolean} */ isWatched, /** @type {string} */ expiry ) => {
 			const watchIcons = document.querySelectorAll( '.mw-watchlink .vector-icon' );
 			if ( !watchIcons ) {
 				return;

@@ -27,7 +27,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Pasal ni bangsaan",
 	"mobile-frontend-meta-data-issues-header": "Masalah halaman",
 	"minerva-meta-data-issues-section-header": "Masalah bagèan",
-	"mobile-frontend-notifications-filter": "Saringan",
 	"mobile-frontend-pageaction-edit-tooltip": "Permak bagèan awal ni halaman",
 	"mobile-frontend-placeholder": "Cari di {{SITENAME}}",
 	"mobile-frontend-random-button": "Sembarang",
@@ -52,7 +51,5 @@
 	"skin-minerva-issue-learn-more": "Belajarin lebi lanjut",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Bangsaan",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Deleng bangsaan halaman",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Penanganan masalah halaman nyang ditingkatin",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Masalah halaman (Blatan:ambox) bakal disebarisin di makalah.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sayangnya, nglompokin hasil berales halaman kaga' bisa di pesawat. Kalo mau paké keboléan kelompokin berales halaman, padol dah, saba pelampang kumpiuternya."
 }

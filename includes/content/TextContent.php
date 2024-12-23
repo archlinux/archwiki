@@ -25,8 +25,13 @@
  * @author Daniel Kinzler
  */
 
+namespace MediaWiki\Content;
+
+use InvalidArgumentException;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MWUnknownContentModelException;
 use Wikimedia\Diff\Diff;
 
 /**
@@ -219,7 +224,7 @@ class TextContent extends AbstractContent {
 	 * @return Diff A diff representing the changes that would have to be
 	 *    made to this content object to make it equal to $that.
 	 */
-	public function diff( Content $that, Language $lang = null ) {
+	public function diff( Content $that, ?Language $lang = null ) {
 		$this->checkModelID( $that->getModel() );
 		/** @var self $that */
 		'@phan-var self $that';
@@ -276,3 +281,5 @@ class TextContent extends AbstractContent {
 	}
 
 }
+/** @deprecated class alias since 1.43 */
+class_alias( TextContent::class, 'TextContent' );

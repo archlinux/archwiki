@@ -16,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "This is a hidden rule.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "This rule affects the page title.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Language code",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Invalid>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Invalid</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Language",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Source",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destination",

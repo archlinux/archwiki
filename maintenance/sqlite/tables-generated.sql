@@ -106,7 +106,7 @@ CREATE INDEX ls_log_id ON /*_*/log_search (ls_log_id);
 
 CREATE TABLE /*_*/change_tag (
   ct_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  ct_rc_id INTEGER UNSIGNED DEFAULT NULL,
+  ct_rc_id BIGINT UNSIGNED DEFAULT NULL,
   ct_log_id INTEGER UNSIGNED DEFAULT NULL,
   ct_rev_id INTEGER UNSIGNED DEFAULT NULL,
   ct_params BLOB DEFAULT NULL, ct_tag_id INTEGER UNSIGNED NOT NULL
@@ -161,18 +161,9 @@ CREATE INDEX rd_ns_title ON /*_*/redirect (rd_namespace, rd_title, rd_from);
 
 CREATE TABLE /*_*/pagelinks (
   pl_from INTEGER UNSIGNED DEFAULT 0 NOT NULL,
-  pl_namespace INTEGER DEFAULT 0 NOT NULL,
-  pl_title BLOB DEFAULT '' NOT NULL,
+  pl_target_id BIGINT UNSIGNED NOT NULL,
   pl_from_namespace INTEGER DEFAULT 0 NOT NULL,
-  pl_target_id BIGINT UNSIGNED DEFAULT NULL,
-  PRIMARY KEY(pl_from, pl_namespace, pl_title)
-);
-
-CREATE INDEX pl_namespace ON /*_*/pagelinks (pl_namespace, pl_title, pl_from);
-
-CREATE INDEX pl_backlinks_namespace ON /*_*/pagelinks (
-  pl_from_namespace, pl_namespace,
-  pl_title, pl_from
+  PRIMARY KEY(pl_from, pl_target_id)
 );
 
 CREATE INDEX pl_target_id ON /*_*/pagelinks (pl_target_id, pl_from);
@@ -638,36 +629,6 @@ CREATE TABLE /*_*/objectcache (
 CREATE INDEX exptime ON /*_*/objectcache (exptime);
 
 
-CREATE TABLE /*_*/ipblocks (
-  ipb_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  ipb_address BLOB NOT NULL, ipb_user INTEGER UNSIGNED DEFAULT 0 NOT NULL,
-  ipb_by_actor BIGINT UNSIGNED NOT NULL,
-  ipb_reason_id BIGINT UNSIGNED NOT NULL,
-  ipb_timestamp BLOB NOT NULL, ipb_auto SMALLINT DEFAULT 0 NOT NULL,
-  ipb_anon_only SMALLINT DEFAULT 0 NOT NULL,
-  ipb_create_account SMALLINT DEFAULT 1 NOT NULL,
-  ipb_enable_autoblock SMALLINT DEFAULT 1 NOT NULL,
-  ipb_expiry BLOB NOT NULL, ipb_range_start BLOB NOT NULL,
-  ipb_range_end BLOB NOT NULL, ipb_deleted SMALLINT DEFAULT 0 NOT NULL,
-  ipb_block_email SMALLINT DEFAULT 0 NOT NULL,
-  ipb_allow_usertalk SMALLINT DEFAULT 0 NOT NULL,
-  ipb_parent_block_id INTEGER UNSIGNED DEFAULT NULL,
-  ipb_sitewide SMALLINT DEFAULT 1 NOT NULL
-);
-
-CREATE UNIQUE INDEX ipb_address_unique ON /*_*/ipblocks (ipb_address, ipb_user, ipb_auto);
-
-CREATE INDEX ipb_user ON /*_*/ipblocks (ipb_user);
-
-CREATE INDEX ipb_range ON /*_*/ipblocks (ipb_range_start, ipb_range_end);
-
-CREATE INDEX ipb_timestamp ON /*_*/ipblocks (ipb_timestamp);
-
-CREATE INDEX ipb_expiry ON /*_*/ipblocks (ipb_expiry);
-
-CREATE INDEX ipb_parent_block_id ON /*_*/ipblocks (ipb_parent_block_id);
-
-
 CREATE TABLE /*_*/block (
   bl_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   bl_target INTEGER UNSIGNED NOT NULL,
@@ -870,12 +831,12 @@ CREATE TABLE /*_*/user_autocreate_serial (
 CREATE TABLE /*_*/revision (
   rev_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   rev_page INTEGER UNSIGNED NOT NULL,
-  rev_comment_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-  rev_actor BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+  rev_comment_id BIGINT UNSIGNED NOT NULL,
+  rev_actor BIGINT UNSIGNED NOT NULL,
   rev_timestamp BLOB NOT NULL, rev_minor_edit SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
   rev_deleted SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
   rev_len INTEGER UNSIGNED DEFAULT NULL,
-  rev_parent_id INTEGER UNSIGNED DEFAULT NULL,
+  rev_parent_id BIGINT UNSIGNED DEFAULT NULL,
   rev_sha1 BLOB DEFAULT '' NOT NULL
 );
 
@@ -892,11 +853,10 @@ CREATE INDEX rev_page_actor_timestamp ON /*_*/revision (
 
 CREATE TABLE /*_*/searchindex (
   si_page INTEGER UNSIGNED NOT NULL,
-  si_title VARCHAR(255) DEFAULT '' NOT NULL,
-  si_text CLOB NOT NULL
+  si_title CLOB NOT NULL,
+  si_text CLOB NOT NULL,
+  PRIMARY KEY(si_page)
 );
-
-CREATE UNIQUE INDEX si_page ON /*_*/searchindex (si_page);
 
 CREATE INDEX si_title ON /*_*/searchindex (si_title);
 

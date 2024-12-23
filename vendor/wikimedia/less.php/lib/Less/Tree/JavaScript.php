@@ -1,6 +1,7 @@
 <?php
 /**
  * @private
+ * @see less-3.13.1.js#JavaScript.prototype
  */
 class Less_Tree_JavaScript extends Less_Tree {
 
@@ -10,10 +11,10 @@ class Less_Tree_JavaScript extends Less_Tree {
 
 	/**
 	 * @param string $string
-	 * @param int $index
 	 * @param bool $escaped
+	 * @param int $index
 	 */
-	public function __construct( $string, $index, $escaped ) {
+	public function __construct( $string, $escaped, $index ) {
 		$this->escaped = $escaped;
 		$this->expression = $string;
 		$this->index = $index;

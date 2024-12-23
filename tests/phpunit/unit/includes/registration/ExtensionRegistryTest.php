@@ -3,23 +3,24 @@
 namespace MediaWiki\Tests\Registration;
 
 use Exception;
-use ExtensionRegistry;
 use InvalidArgumentException;
 use LogicException;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWikiUnitTestCase;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \ExtensionRegistry
+ * @covers \MediaWiki\Registration\ExtensionRegistry
  */
 class ExtensionRegistryTest extends MediaWikiUnitTestCase {
+	private const DATA_DIR = __DIR__ . '/../../../data/registration';
 
-	private $dataDir = __DIR__ . '/../../../data/registration';
-
+	/** @var array */
 	private $restoreGlobals = [];
 
+	/** @var array */
 	private $unsetGlobals = [];
 
 	protected function tearDown(): void {
@@ -65,7 +66,7 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 
 	public function testQueue() {
 		$registry = $this->getRegistry();
-		$path = "{$this->dataDir}/good.json";
+		$path = self::DATA_DIR . "/good.json";
 		$registry->queue( $path );
 		$this->assertArrayHasKey(
 			$path,
@@ -84,16 +85,16 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 	public function testLoadFromQueue_late() {
 		$registry = $this->getRegistry();
 		$registry->finish();
-		$registry->queue( "{$this->dataDir}/good.json" );
+		$registry->queue( self::DATA_DIR . "/good.json" );
 		$this->expectException( LogicException::class );
 		$this->expectExceptionMessage(
-			"The following paths tried to load late: {$this->dataDir}/good.json" );
+			"The following paths tried to load late: " . self::DATA_DIR . "/good.json" );
 		$registry->loadFromQueue();
 	}
 
 	public function testLoadFromQueue() {
 		$registry = $this->getRegistry();
-		$registry->queue( "{$this->dataDir}/good.json" );
+		$registry->queue( self::DATA_DIR . "/good.json" );
 		$registry->loadFromQueue();
 		$this->assertArrayHasKey( 'FooBar', $registry->getAllThings() );
 		$this->assertTrue( $registry->isLoaded( 'FooBar' ) );
@@ -104,7 +105,7 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 
 	public function testLoadFromQueueWithConstraintWithVersion() {
 		$registry = $this->getRegistry();
-		$registry->queue( "{$this->dataDir}/good_with_version.json" );
+		$registry->queue( self::DATA_DIR . "/good_with_version.json" );
 		$registry->loadFromQueue();
 		$this->assertTrue( $registry->isLoaded( 'FooBar', '>= 1.2.0' ) );
 		$this->assertFalse( $registry->isLoaded( 'FooBar', '^1.3.0' ) );
@@ -112,7 +113,7 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 
 	public function testLoadFromQueueWithConstraintWithoutVersion() {
 		$registry = $this->getRegistry();
-		$registry->queue( "{$this->dataDir}/good.json" );
+		$registry->queue( self::DATA_DIR . "/good.json" );
 		$registry->loadFromQueue();
 		$this->expectException( LogicException::class );
 		$registry->isLoaded( 'FooBar', '>= 1.2.0' );
@@ -169,10 +170,8 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 		];
 		$registry = $this->getRegistry();
 		TestingAccessWrapper::newFromObject( $registry )->exportExtractedData( $info );
-		foreach ( $expected as $name => $value ) {
-			$this->assertArrayHasKey( $name, $GLOBALS, $desc );
-			$this->assertEquals( $value, $GLOBALS[$name], $desc );
-		}
+		$result = array_intersect_key( $GLOBALS, $expected );
+		$this->assertEquals( $expected, $result, $desc );
 
 		// Remove mw prefixed globals
 		if ( $before ) {
@@ -464,13 +463,55 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 				[
 					'wgFlatArray' => [ 1 ]
 				],
-			]
+			],
+			[
+				'a configured value should not turn into a default null value',
+				[
+					'ArrayValue' => [],
+					'BooleanValue' => false,
+					'IntegerValue' => 0,
+					'StringValue' => '',
+				],
+				[
+					'ArrayValue' => null,
+					'BooleanValue' => null,
+					'IntegerValue' => null,
+					'StringValue' => null,
+				],
+				[
+					'ArrayValue' => [],
+					'BooleanValue' => false,
+					'IntegerValue' => 0,
+					'StringValue' => '',
+				],
+			],
+			[
+				'a configured value should not turn into a default empty array value',
+				[
+					'BooleanValue' => false,
+					'IntegerValue' => 0,
+					'NullValue' => null,
+					'StringValue' => '',
+				],
+				[
+					'BooleanValue' => [],
+					'IntegerValue' => [],
+					'NullValue' => [],
+					'StringValue' => [],
+				],
+				[
+					'BooleanValue' => false,
+					'IntegerValue' => 0,
+					'NullValue' => null,
+					'StringValue' => '',
+				],
+			],
 		];
 	}
 
 	public function testSetAttributeForTest() {
 		$registry = $this->getRegistry();
-		$registry->queue( "{$this->dataDir}/good.json" );
+		$registry->queue( self::DATA_DIR . "/good.json" );
 		$registry->loadFromQueue();
 		// Check that it worked
 		$this->assertSame( [ 'test' ], $registry->getAttribute( 'FooBarAttr' ) );
@@ -497,7 +538,7 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 		// Verify the registry is absolutely empty
 		$this->assertSame( [], $registry->getLazyLoadedAttribute( 'FooBarBaz' ) );
 		// Indicate what paths should be checked for the lazy attributes
-		$registry->queue( "{$this->dataDir}/attribute.json" );
+		$registry->queue( self::DATA_DIR . "/attribute.json" );
 		$registry->loadFromQueue();
 		// Set in attribute.json
 		$this->assertEquals(

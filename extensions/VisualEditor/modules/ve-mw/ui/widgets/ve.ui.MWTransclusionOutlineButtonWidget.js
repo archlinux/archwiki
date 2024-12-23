@@ -4,15 +4,15 @@
  *
  * @class
  * @extends OO.ui.OptionWidget
- * @mixins OO.ui.mixin.ButtonElement
- * @mixins OO.ui.mixin.IconElement
- * @mixins OO.ui.mixin.TabIndexedElement
- * @mixins ve.ui.MWAriaDescribe
+ * @mixes OO.ui.mixin.ButtonElement
+ * @mixes OO.ui.mixin.IconElement
+ * @mixes OO.ui.mixin.TabIndexedElement
+ * @mixes ve.ui.MWAriaDescribe
  *
  * @constructor
  * @param {Object} config
- * @cfg {string} [icon=''] Symbolic name of an icon, e.g. "puzzle" or "wikiText"
- * @cfg {string} label
+ * @param {string} [config.icon=''] Symbolic name of an icon, e.g. "puzzle" or "wikiText"
+ * @param {string} config.label
  */
 ve.ui.MWTransclusionOutlineButtonWidget = function VeUiMWTransclusionOutlineButtonWidget( config ) {
 	// Parent constructor
@@ -59,18 +59,18 @@ ve.ui.MWTransclusionOutlineButtonWidget.static.pressable = false;
 /* Events */
 
 /**
- * @event keyPressed
+ * @event ve.ui.MWTransclusionOutlineButtonWidget#keyPressed
  * @param {number} key Typically one of the {@see OO.ui.Keys} constants
  */
 
 /**
  * @inheritDoc OO.ui.mixin.ButtonElement
  * @param {jQuery.Event} e
- * @fires keyPressed
+ * @fires ve.ui.MWTransclusionOutlineButtonWidget#keyPressed
  */
 ve.ui.MWTransclusionOutlineButtonWidget.prototype.onKeyDown = function ( e ) {
-	var isMac = ve.getSystemPlatform() === 'mac';
-	var withMetaKey = isMac ? e.metaKey : e.ctrlKey;
+	const isMac = ve.getSystemPlatform() === 'mac';
+	const withMetaKey = isMac ? e.metaKey : e.ctrlKey;
 
 	if ( e.which === OO.ui.Keys.SPACE &&
 		!withMetaKey && !e.shiftKey && !e.altKey

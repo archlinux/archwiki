@@ -9,6 +9,7 @@
 			"Beginneruser",
 			"Bersam",
 			"Dalba",
+			"Ebrahim",
 			"Ebraminio",
 			"FarsiNevis",
 			"Huji",
@@ -18,8 +19,7 @@
 			"Mjbmr",
 			"Mohammad ebz",
 			"Reza1615",
-			"محک",
-			"Ebrahim"
+			"محک"
 		]
 	},
 	"minerva-last-modified-date": "آخرین‌بار در $1، $2 ویرایش شده است",
@@ -45,7 +45,6 @@
 	"mobile-frontend-meta-data-issues-categories": "دربارۀ این رده",
 	"mobile-frontend-meta-data-issues-header": "مشکلات صفحه",
 	"minerva-meta-data-issues-section-header": "مشکلات بخش",
-	"mobile-frontend-notifications-filter": "پالایه",
 	"mobile-frontend-pageaction-edit-tooltip": "ویرایش بخش نخست این صفحه",
 	"mobile-frontend-placeholder": "جستجو در {{SITENAME}}",
 	"mobile-frontend-random-button": "تصادفی",
@@ -65,7 +64,7 @@
 	"minerva-page-actions-overflow": "بیشتر",
 	"minerva-page-actions-language-switcher": "زبان‌ها",
 	"minerva-page-actions-history": "تاریخچه",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|بحث]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue بحث]",
 	"skinname-minerva": "مینروانوئه",
 	"minerva-skin-desc": "پوستۀ واکنش‌گرای موبایل",
 	"skin-minerva-issue-learn-more": "بیشتر بدانید",
@@ -77,7 +76,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 سال}} پیش",
 	"skin-minerva-mobile-option-MinervaShowCategories": "رده‌ها",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "نمایش رده‌های صفحات",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "مشکلات بهبود یافته در صفحه",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "مشکلات صفحه (الگو:ambox) لابه‌لای متن مقاله نمایش می‌یابند.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "متأسفانه، دسته‌بندی نتایج بر اساس صفحه در نسخهٔ موبایل ممکن نیست. اگر می‌خواهید نتایج را بر اساس صفحه دسته‌بندی کنید لطفاً نسخهٔ رایانه را بازدید کنید."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "متأسفانه، دسته‌بندی نتایج بر اساس صفحه در نسخهٔ موبایل ممکن نیست. اگر می‌خواهید نتایج را بر اساس صفحه دسته‌بندی کنید لطفاً نسخهٔ رایانه را بازدید کنید.",
+	"skin-minerva-night-mode-unavailable": "این صفحه فقط در تم رنگ «روشن» موجود است."
 }

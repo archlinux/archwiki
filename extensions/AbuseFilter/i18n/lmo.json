@@ -53,7 +53,7 @@
 	"abusefilter-edit-builder-op-comparison-lt": "Men de (<)",
 	"abusefilter-edit-builder-op-comparison-lte": "Minor de o istess de (<=)",
 	"abusefilter-edit-builder-op-comparison-gte": "Magior de o istess de (<=)",
-	"abusefilter-edit-builder-op-bool-xor": "Or che 'l taja foeura (^)",
+	"abusefilter-edit-builder-op-bool-xor": "Or che 'l taja foeura ($1)",
 	"abusefilter-edit-builder-misc-in": "contegnud in de la stringa (in)",
 	"abusefilter-edit-builder-misc-contains": "La stringa de drizza la gh'ha denter quella de manzina (contains)",
 	"abusefilter-edit-builder-funcs-ccnorm": "Normaliza i carater sconfondibel (ccnorm)",

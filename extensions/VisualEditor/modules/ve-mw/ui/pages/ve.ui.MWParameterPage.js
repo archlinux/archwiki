@@ -16,11 +16,11 @@
  * @constructor
  * @param {ve.dm.MWParameterModel} parameter Template parameter
  * @param {Object} [config] Configuration options
- * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
- * @cfg {boolean} [readOnly] Parameter is read-only
+ * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
+ * @param {boolean} [config.readOnly] Parameter is read-only
  */
 ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, config ) {
-	var paramName = parameter.getName();
+	const paramName = parameter.getName();
 
 	// Configuration initialization
 	config = ve.extendObject( {
@@ -42,10 +42,10 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, config ) {
 	this.$field = $( '<div>' );
 
 	// Construct the field docs for the template description
-	var $doc = $( '<div>' )
+	const $doc = $( '<div>' )
 		.attr( 'id', OO.ui.generateElementId() )
 		.addClass( 've-ui-mwParameterPage-doc' );
-	var description = this.spec.getParameterDescription( paramName );
+	const description = this.spec.getParameterDescription( paramName );
 	if ( description ) {
 		$( '<p>' ).text( description ).appendTo( $doc );
 	}
@@ -61,13 +61,13 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, config ) {
 		this.valueInput.setReadOnly( true );
 	}
 
-	var labelElement = new OO.ui.LabelWidget( {
+	const labelElement = new OO.ui.LabelWidget( {
 		input: this.valueInput,
 		label: this.spec.getParameterLabel( paramName ),
 		classes: [ 've-ui-mwParameterPage-label' ]
 	} );
 
-	var statusIndicator;
+	let statusIndicator;
 	if ( this.parameter.isRequired() ) {
 		$( '<p>' )
 			.addClass( 've-ui-mwParameterPage-doc-required' )
@@ -148,7 +148,7 @@ OO.inheritClass( ve.ui.MWParameterPage, OO.ui.PageLayout );
 /**
  * Triggered when the parameter value changes between empty and not empty.
  *
- * @event hasValueChange
+ * @event ve.ui.MWParameterPage#hasValueChange
  * @param string parameterId Keyed by unique id of the parameter, e.g. something
  *  like "part_1/param1".
  * @param boolean hasValue
@@ -163,7 +163,7 @@ OO.inheritClass( ve.ui.MWParameterPage, OO.ui.PageLayout );
  * @return {Object}
  */
 ve.ui.MWParameterPage.prototype.getDefaultInputConfig = function () {
-	var valueInputConfig = {
+	const valueInputConfig = {
 		autosize: true,
 		required: this.parameter.isRequired()
 	};
@@ -186,7 +186,7 @@ ve.ui.MWParameterPage.prototype.getDefaultInputConfig = function () {
  * @return {OO.ui.InputWidget}
  */
 ve.ui.MWParameterPage.prototype.createValueInput = function () {
-	var type = this.parameter.getType(),
+	const type = this.parameter.getType(),
 		value = this.parameter.getValue(),
 		valueInputConfig = this.getDefaultInputConfig();
 
@@ -248,12 +248,10 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 	) {
 		valueInputConfig.menu = { filterFromInput: true, highlightOnFilter: true };
 		valueInputConfig.options =
-			this.parameter.getSuggestedValues().filter( function ( suggestedValue ) {
+			this.parameter.getSuggestedValues().filter(
 				// This wasn't validated for a while, existing templates can do anything here
-				return typeof suggestedValue === 'string';
-			} ).map( function ( suggestedValue ) {
-				return { data: suggestedValue, label: suggestedValue || '\xA0' };
-			} );
+				( suggestedValue ) => typeof suggestedValue === 'string'
+			).map( ( suggestedValue ) => ( { data: suggestedValue, label: suggestedValue || '\xA0' } ) );
 		return new OO.ui.ComboBoxInputWidget( valueInputConfig );
 	} else if ( type !== 'line' || value.indexOf( '\n' ) !== -1 ) {
 		// If the type is line, but there are already newlines in the provided
@@ -299,7 +297,7 @@ ve.ui.MWParameterPage.prototype.containsSomeValue = function () {
  * @param {string} value
  */
 ve.ui.MWParameterPage.prototype.onValueInputChange = function () {
-	var value = this.valueInput.getValue();
+	const value = this.valueInput.getValue();
 
 	if ( !this.edited ) {
 		ve.track( 'activity.transclusion', { action: 'edit-parameter-value' } );

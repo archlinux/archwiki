@@ -8,7 +8,7 @@
 
 QUnit.module( 've.ui.DiffElement (Cite)' );
 
-QUnit.test( 'Diffing', function ( assert ) {
+QUnit.test( 'Diffing', ( assert ) => {
 	const spacer = '<div class="ve-ui-diffElement-spacer">⋮</div>',
 		ref = function ( text, num ) {
 			const dataMw = {
@@ -46,7 +46,7 @@ QUnit.test( 'Diffing', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runDiffElementTest( assert, caseItem );
 	} );
 

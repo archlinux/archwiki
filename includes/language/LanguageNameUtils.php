@@ -20,15 +20,15 @@
 
 namespace MediaWiki\Languages;
 
-use BagOStuff;
-use HashBagOStuff;
 use InvalidArgumentException;
-use LanguageCode;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\MediaWikiTitleCodec;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
 
 /**
  * A service that provides utilities to do with language names and codes.
@@ -156,7 +156,7 @@ class LanguageNameUtils {
 	 * @return bool
 	 */
 	public function isValidBuiltInCode( string $code ): bool {
-		return (bool)preg_match( '/^[a-z0-9-]{2,}$/', $code );
+		return (bool)preg_match( '/^[a-z0-9-]{2,128}$/', $code );
 	}
 
 	/**
@@ -173,7 +173,7 @@ class LanguageNameUtils {
 			return false;
 		}
 
-		if ( isset( Data\Names::$names[$tag] ) || $this->getLanguageName( $tag, $tag ) !== '' ) {
+		if ( isset( Data\Names::NAMES[$tag] ) || $this->getLanguageName( $tag, $tag ) !== '' ) {
 			return true;
 		}
 
@@ -232,7 +232,7 @@ class LanguageNameUtils {
 			$this->hookRunner->onLanguageGetTranslatedLanguageNames( $names, $inLanguage );
 		}
 
-		$mwNames = $this->options->get( MainConfigNames::ExtraLanguageNames ) + Data\Names::$names;
+		$mwNames = $this->options->get( MainConfigNames::ExtraLanguageNames ) + Data\Names::NAMES;
 		if ( !$this->options->get( MainConfigNames::UsePigLatinVariant ) ) {
 			// Suppress Pig Latin unless explicitly enabled.
 			unset( $mwNames['en-x-piglatin'] );

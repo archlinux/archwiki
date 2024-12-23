@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Almondega",
 			"Cainamarques",
 			"Daemorris",
@@ -23,8 +24,7 @@
 			"MetalBrasil",
 			"Opraco",
 			"Rafael Vargas",
-			"YuriNikolai",
-			555
+			"YuriNikolai"
 		]
 	},
 	"wikieditor": "Interface avançada de edição de wikitexto",

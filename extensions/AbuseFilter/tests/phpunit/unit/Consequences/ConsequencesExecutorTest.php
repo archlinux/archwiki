@@ -25,7 +25,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesExecutor
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesExecutor
  */
 class ConsequencesExecutorTest extends MediaWikiUnitTestCase {
 	/**
@@ -105,14 +105,6 @@ class ConsequencesExecutorTest extends MediaWikiUnitTestCase {
 	 * @param array $rawConsequences A raw, unfiltered list of consequences
 	 * @param array $expectedKeys
 	 *
-	 * @covers ::getActualConsequencesToExecute
-	 * @covers ::replaceLegacyParameters
-	 * @covers ::specializeParameters
-	 * @covers ::removeForbiddenConsequences
-	 * @covers ::replaceArraysWithConsequences
-	 * @covers ::applyConsequenceDisablers
-	 * @covers ::deduplicateConsequences
-	 * @covers ::removeRedundantConsequences
 	 * @dataProvider provideConsequences
 	 */
 	public function testGetActualConsequencesToExecute(

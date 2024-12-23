@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -31,11 +33,7 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryCategories extends ApiQueryGeneratorBase {
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 */
-	public function __construct( ApiQuery $query, $moduleName ) {
+	public function __construct( ApiQuery $query, string $moduleName ) {
 		parent::__construct( $query, $moduleName, 'cl' );
 	}
 
@@ -117,7 +115,7 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 					'pp_propname' => 'hiddencat' ] ]
 			] );
 			if ( isset( $show['hidden'] ) ) {
-				$this->addWhere( [ 'pp_propname IS NOT NULL' ] );
+				$this->addWhere( $this->getDB()->expr( 'pp_propname', '!=', null ) );
 			} elseif ( isset( $show['!hidden'] ) ) {
 				$this->addWhere( [ 'pp_propname' => null ] );
 			}
@@ -237,3 +235,6 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Categories';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryCategories::class, 'ApiQueryCategories' );

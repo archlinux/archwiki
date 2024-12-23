@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Mostlinkedcategories
- *
  * Copyright © 2005, Ævar Arnfjörð Bjarmason
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,16 +18,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  */
 
 namespace MediaWiki\Specials;
 
 use HtmlArmor;
-use ILanguageConverter;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\Linker;
 use MediaWiki\SpecialPage\QueryPage;
@@ -41,9 +37,10 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * A querypage to show categories ordered in descending order by the pages in them
+ * List of categories with the most pages in them
  *
  * @ingroup SpecialPage
+ * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  */
 class SpecialMostLinkedCategories extends QueryPage {
 
@@ -70,12 +67,13 @@ class SpecialMostLinkedCategories extends QueryPage {
 	}
 
 	public function getQueryInfo() {
+		$dbr = $this->getDatabaseProvider()->getReplicaDatabase();
 		return [
 			'tables' => [ 'category' ],
 			'fields' => [ 'title' => 'cat_title',
 				'namespace' => NS_CATEGORY,
 				'value' => 'cat_pages' ],
-			'conds' => [ 'cat_pages > 0' ],
+			'conds' => [ $dbr->expr( 'cat_pages', '>', 0 ) ],
 		];
 	}
 

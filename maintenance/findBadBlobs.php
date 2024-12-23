@@ -24,10 +24,11 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
-use MediaWiki\Status\Status;
 use MediaWiki\Storage\BlobStore;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for finding and marking bad content blobs.
@@ -260,7 +261,7 @@ class FindBadBlobs extends Maintenance {
 		$db = $this->getReplicaDB();
 		$rows = $this->revisionStore->newArchiveSelectQueryBuilder( $db )
 			->joinComment()
-			->where( [ "ar_rev_id > $afterId", "ar_rev_id <= $uptoId" ] )
+			->where( [ $db->expr( 'ar_rev_id', '>', $afterId ), $db->expr( 'ar_rev_id', '<=', $uptoId ) ] )
 			->orderBy( 'ar_rev_id' )
 			->limit( $batchSize )
 			->caller( __METHOD__ )->fetchResultSet();
@@ -426,7 +427,7 @@ class FindBadBlobs extends Maintenance {
 	 *
 	 * @return false|string
 	 */
-	private function markBlob( SlotRecord $slot, string $error = null ) {
+	private function markBlob( SlotRecord $slot, ?string $error = null ) {
 		$args = [];
 
 		if ( $this->hasOption( 'mark' ) ) {
@@ -458,18 +459,16 @@ class FindBadBlobs extends Maintenance {
 
 	private function handleStatus( StatusValue $status ) {
 		if ( !$status->isOK() ) {
-			$this->fatalError(
-				Status::wrap( $status )->getMessage( false, false, 'en' )->text()
-			);
+			$this->fatalError( $status );
 		}
 		if ( !$status->isGood() ) {
-			$this->error(
-				"\t! " . Status::wrap( $status )->getMessage( false, false, 'en' )->text()
-			);
+			$this->error( $status );
 		}
 	}
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = FindBadBlobs::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

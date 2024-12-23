@@ -4,13 +4,13 @@
 	 *
 	 * @class
 	 * @extends OO.ui.OptionWidget
-	 * @mixins OO.ui.mixin.IconElement
-	 * @mixins OO.ui.mixin.TitledElement
+	 * @mixes OO.ui.mixin.IconElement
+	 * @mixes OO.ui.mixin.TitledElement
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration object
-	 * @cfg {number} [count] Number of unread notifications
-	 * @cfg {boolean} [isCapped] The count for this widget is capped
+	 * @param {number} [config.count] Number of unread notifications
+	 * @param {boolean} [config.isCapped] The count for this widget is capped
 	 */
 	mw.echo.ui.PageNotificationsOptionWidget = function MwEchoUiPageNotificationsOptionWidget( config ) {
 		config = config || {};
@@ -26,7 +26,7 @@
 
 		this.count = config.count !== undefined ? config.count : 0;
 
-		var countLabel = mw.language.convertNumber( this.count );
+		let countLabel = mw.language.convertNumber( this.count );
 		countLabel = config.isCapped ?
 			mw.msg( 'echo-badge-count', countLabel ) : countLabel;
 
@@ -35,7 +35,7 @@
 			label: countLabel
 		} );
 
-		var $row = $( '<div>' )
+		const $row = $( '<div>' )
 			.addClass( 'mw-echo-ui-pageNotificationsOptionWidget-row' )
 			.append(
 				$( '<div>' )
@@ -51,11 +51,7 @@
 		// Initialization
 		this.$element
 			.addClass( 'mw-echo-ui-pageNotificationsOptionWidget' )
-			.append(
-				$( '<div>' )
-					.addClass( 'mw-echo-ui-pageNotificationsOptionWidget-table' )
-					.append( $row )
-			);
+			.append( $row );
 
 		if ( this.getIcon() ) {
 			$row.prepend(

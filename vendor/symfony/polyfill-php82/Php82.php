@@ -180,11 +180,11 @@ class Php82
             while ($digits_consumed < $str_end && false !== strpos($ctype_space, $value[$digits_consumed])) {
                 ++$digits_consumed;
             }
-            if ($digits_consumed !== $str_end && ($value[$digits_consumed] === '+' || $value[$digits_consumed] === '-')) {
+            if ($digits_consumed !== $str_end && ('+' === $value[$digits_consumed] || '-' === $value[$digits_consumed])) {
                 ++$digits_consumed;
             }
 
-            if ($value[$digits_consumed] === '0') {
+            if ('0' === $value[$digits_consumed]) {
                 /* Value is just 0 */
                 if ($digits_consumed + 1 === $str_end) {
                     goto evaluation;
@@ -197,7 +197,7 @@ class Php82
                     case 'b':
                     case 'B':
                         $digits_consumed += 2;
-                    break;
+                        break;
                 }
             }
 

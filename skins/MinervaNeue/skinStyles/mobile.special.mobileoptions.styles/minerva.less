@@ -1,8 +1,8 @@
 @import '../../minerva.less/minerva.variables.less';
 
-@media all and ( min-width: @width-breakpoint-tablet ) {
+@media all and ( min-width: @min-width-breakpoint-tablet ) {
 	.ns-special .pre-content {
-		background: var( --background-color-base );
+		background: @background-color-base;
 		margin-bottom: 15px;
 
 		.tagline,
@@ -12,10 +12,10 @@
 	}
 
 	.ns-special .mw-body {
-		background: var( --background-color-interactive );
+		background: @background-color-interactive;
 
 		form {
-			background: var( --background-color-base );
+			background: @background-color-base;
 		}
 	}
 }

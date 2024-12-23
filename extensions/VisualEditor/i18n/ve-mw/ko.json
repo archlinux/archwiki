@@ -31,9 +31,9 @@
 			"고기랑",
 			"고솜",
 			"렌즈",
+			"밥풀떼기",
 			"아라",
-			"콩가루",
-			"밥풀떼기"
+			"콩가루"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -53,7 +53,6 @@
 	"visualeditor-autosave-recovered-text": "저장되지 않은 변경사항은 자동으로 복구되었습니다.",
 	"visualeditor-autosave-recovered-title": "변경사항 복구됨",
 	"visualeditor-backbutton-tooltip": "돌아가기",
-	"visualeditor-browserwarning": "이 편집기가 공식적으로 지원하지 않는 브라우저를 사용하고 있습니다.",
 	"visualeditor-ca-createlocaldescriptionsource": "로컬 설명 원본 추가",
 	"visualeditor-ca-createsource": "원본 만들기",
 	"visualeditor-ca-editlocaldescriptionsource": "로컬 설명 원본 편집",

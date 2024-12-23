@@ -23,6 +23,7 @@
  * @since 1.22
  */
 
+use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
@@ -34,8 +35,15 @@ use MediaWiki\Title\Title;
 class MoveLogFormatter extends LogFormatter {
 	public function getPreloadTitles() {
 		$params = $this->extractParameters();
+		$title = Title::newFromText( $params[3] );
 
-		return [ Title::newFromText( $params[3] ) ];
+		if ( $title !== null ) {
+			return [ $title ];
+		} else {
+			// namespace configuration may have changed to make $params[3] invalid (T370396);
+			// nothing to preload in this case
+			return [];
+		}
 	}
 
 	protected function getMessageKey() {

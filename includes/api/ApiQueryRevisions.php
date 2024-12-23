@@ -20,11 +20,16 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Content\Transform\ContentTransformer;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRoleRegistry;
@@ -32,6 +37,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
 use MediaWiki\User\ActorMigration;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
@@ -50,25 +56,11 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 	private RevisionStore $revisionStore;
 	private NameTableStore $changeTagDefStore;
 	private ActorMigration $actorMigration;
+	private TitleFormatter $titleFormatter;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param RevisionStore $revisionStore
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param ParserFactory $parserFactory
-	 * @param SlotRoleRegistry $slotRoleRegistry
-	 * @param NameTableStore $changeTagDefStore
-	 * @param ActorMigration $actorMigration
-	 * @param ContentRenderer $contentRenderer
-	 * @param ContentTransformer $contentTransformer
-	 * @param CommentFormatter $commentFormatter
-	 * @param TempUserCreator $tempUserCreator
-	 * @param UserFactory $userFactory
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		RevisionStore $revisionStore,
 		IContentHandlerFactory $contentHandlerFactory,
 		ParserFactory $parserFactory,
@@ -79,7 +71,8 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		ContentTransformer $contentTransformer,
 		CommentFormatter $commentFormatter,
 		TempUserCreator $tempUserCreator,
-		UserFactory $userFactory
+		UserFactory $userFactory,
+		TitleFormatter $titleFormatter
 	) {
 		parent::__construct(
 			$query,
@@ -98,9 +91,10 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		$this->revisionStore = $revisionStore;
 		$this->changeTagDefStore = $changeTagDefStore;
 		$this->actorMigration = $actorMigration;
+		$this->titleFormatter = $titleFormatter;
 	}
 
-	protected function run( ApiPageSet $resultPageSet = null ) {
+	protected function run( ?ApiPageSet $resultPageSet = null ) {
 		$params = $this->extractRequestParams( false );
 
 		// If any of those parameters are used, work in 'enumeration' mode.
@@ -180,7 +174,10 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		}
 
 		if ( $this->fld_tags ) {
-			$this->addFields( [ 'ts_tags' => ChangeTags::makeTagSummarySubquery( 'revision' ) ] );
+			$this->addFields( [
+				'ts_tags' => MediaWikiServices::getInstance()->getChangeTagsStore()
+					->makeTagSummarySubquery( 'revision' )
+			] );
 		}
 
 		if ( $params['tag'] !== null ) {
@@ -200,11 +197,14 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 			// For each page we will request, the user must have read rights for that page
 			$status = Status::newGood();
 
-			/** @var Title $title */
-			foreach ( $pageSet->getGoodTitles() as $title ) {
-				if ( !$this->getAuthority()->authorizeRead( 'read', $title ) ) {
+			/** @var PageIdentity $pageIdentity */
+			foreach ( $pageSet->getGoodPages() as $pageIdentity ) {
+				if ( !$this->getAuthority()->authorizeRead( 'read', $pageIdentity ) ) {
 					$status->fatal( ApiMessage::create(
-						[ 'apierror-cannotviewtitle', wfEscapeWikiText( $title->getPrefixedText() ) ],
+						[
+							'apierror-cannotviewtitle',
+							wfEscapeWikiText( $this->titleFormatter->getPrefixedText( $pageIdentity ) ),
+						],
 						'accessdenied'
 					) );
 				}
@@ -534,3 +534,6 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Revisions';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryRevisions::class, 'ApiQueryRevisions' );

@@ -1,7 +1,7 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
-use Message;
+use MediaWiki\Message\Message;
 use MessageLocalizer;
 
 /**
@@ -156,7 +156,7 @@ class VectorComponentStickyHeader implements VectorComponent {
 		return new VectorComponentButton(
 			$this->msg( 'search' ),
 			'search',
-			'',
+			null,
 			'vector-sticky-header-search-toggle',
 			[
 				'tabindex' => '-1',

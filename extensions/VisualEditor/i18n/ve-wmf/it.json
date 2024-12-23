@@ -20,10 +20,10 @@
 			"Minerva Titani",
 			"Mpiva",
 			"Nemo bis",
+			"Pierpao",
 			"Raoli",
 			"Una giornata uggiosa '94",
-			"아라",
-			"Pierpao"
+			"아라"
 		]
 	},
 	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Edit Check (citazioni) attivato]]",
@@ -38,7 +38,6 @@
 	"visualeditor-feedback-link": "Project:VisualEditor/Commenti",
 	"visualeditor-feedback-tool": "Scrivi un commento su questo software",
 	"visualeditor-help-label": "Leggi la guida utente",
-	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
 	"visualeditor-welcomedialog-action": "Inizia a modificare",
 	"visualeditor-welcomedialog-content": "Ognuno può contribuire, e ogni miglioramento è di aiuto.",
 	"visualeditor-welcomedialog-content-thanks": "Grazie dell'aiuto nel far apprendere sempre di più al mondo!",

@@ -6,10 +6,10 @@
  */
 ( function () {
 
-	var trimByteLength = require( 'mediawiki.String' ).trimByteLength;
+	const trimByteLength = require( 'mediawiki.String' ).trimByteLength;
 
 	/**
-	 * Creates an mw.widgets.TitleInputWidget object.
+	 * @classdesc Title input widget.
 	 *
 	 * @class
 	 * @extends OO.ui.TextInputWidget
@@ -17,6 +17,7 @@
 	 * @mixes OO.ui.mixin.LookupElement
 	 *
 	 * @constructor
+	 * @description Create an mw.widgets.TitleInputWidget object.
 	 * @param {Object} [config] Configuration options
 	 * @param {boolean} [config.suggestions=true] Display search suggestions
 	 * @param {RegExp|Function|string} [config.validate] Perform title validation
@@ -25,7 +26,7 @@
 		config = config || {};
 
 		// Parent constructor
-		mw.widgets.TitleInputWidget.super.call( this, $.extend( {}, config, {
+		mw.widgets.TitleInputWidget.super.call( this, Object.assign( {}, config, {
 			validate: config.validate !== undefined ? config.validate : this.isQueryValid.bind( this ),
 			autocomplete: false
 		} ) );
@@ -118,7 +119,7 @@
 		this.setLookupsDisabled( true );
 
 		// Parent method
-		var retval = mw.widgets.TitleInputWidget.super.prototype.focus.apply( this, arguments );
+		const retval = mw.widgets.TitleInputWidget.super.prototype.focus.apply( this, arguments );
 
 		this.setLookupsDisabled( !this.suggestions );
 
@@ -129,13 +130,11 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.TitleInputWidget.prototype.cleanUpValue = function ( value ) {
-		var widget = this;
-
 		// Parent method
 		value = mw.widgets.TitleInputWidget.super.prototype.cleanUpValue.call( this, value );
 
-		return trimByteLength( this.value, value, this.maxLength, function ( val ) {
-			var title = widget.getMWTitle( val );
+		return trimByteLength( this.value, value, this.maxLength, ( val ) => {
+			const title = this.getMWTitle( val );
 			return title ? title.getMain() : val;
 		} ).newVal;
 	};

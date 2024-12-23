@@ -7,12 +7,16 @@
  *
  * @example To initialize with one or more modules, or to add modules after it's already been initialized:
  *     $( 'textarea#wpTextbox1' ).wikiEditor( 'addModule', 'toolbar', { ... config ... } );
- *
+ */
+/**
+ * @private
  */
 var hasOwn = Object.prototype.hasOwnProperty,
 
 	/**
 	 * Array of language codes.
+	 *
+	 * @private
 	 */
 	fallbackChain = ( function () {
 		// eslint-disable-next-line no-jquery/no-class-state
@@ -34,6 +38,7 @@ var hasOwn = Object.prototype.hasOwnProperty,
  * Helper function to mark the automatic message functionality in
  * the autoMsg and autoSafeMsg functions as deprecated.
  *
+ * @private
  * @param {string} property
  * @param {string} key
  */

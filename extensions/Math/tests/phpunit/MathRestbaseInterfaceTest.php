@@ -4,6 +4,7 @@ use MediaWiki\Extension\Math\InvalidTeXException;
 use MediaWiki\Extension\Math\MathRestbaseException;
 use MediaWiki\Extension\Math\MathRestbaseInterface;
 use MediaWiki\Extension\Math\Tests\MathMockHttpTrait;
+use Wikimedia\Http\MultiHttpClient;
 
 /**
  * Test the interface to access Restbase paths

@@ -52,6 +52,6 @@
 	"gadgets-export-download": "Завантажити",
 	"gadgets-requires-es6": "Цей гаджет підтримується лише в браузерах, сумісних із ES6",
 	"gadgets-validate-notset": "Властивість <code>$1</code> не встановлено.",
-	"gadgets-validate-wrongtype": "Тип властивості <code>$1</code> має бути <code>$2</code> замість <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Тип властивості <code>$1</code> має бути <code>$2</code>.",
 	"gadgets-supports-urlload": "Цей додаток підтримує завантаження через використання параметра <code>?withgadget</code> в URL."
 }

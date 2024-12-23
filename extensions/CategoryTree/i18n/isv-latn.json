@@ -31,5 +31,9 @@
 	"categorytree-no-pages": "nemaje stranic i podkategorij",
 	"categorytree-not-found": "Kategorija <i>$1</i> ne najdena",
 	"categorytree-error": "Problem s včityvanjem danyh.",
-	"categorytree-retry": "Prosimo, počekajte i poprobujte ješče raz."
+	"categorytree-retry": "Prosimo, počekajte i poprobujte ješče raz.",
+	"categorytree-onlyroot-message": "Parametr <code>onlyroot</code> jest zastarěly. Zaměsto njego upotrěbite <code>depth=\"0\"</code>.",
+	"categorytree-deprecation-warning": "'''Čuvanje:''' tuta stranica koristaje <code>&lt;categorytree&gt;</code> s zastarělym parametrom.",
+	"categorytree-deprecation-category": "Stranice upotrěbjajuče zastarěle parametry za drěvo kategorij",
+	"categorytree-deprecation-category-desc": "Stranica upotrěbjaje zastarěle parametry za drěvo kategorij kako <code>onlyroot</code>."
 }

@@ -4,8 +4,8 @@ namespace MediaWiki\Utils;
 
 use BadMethodCallException;
 use InvalidArgumentException;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\MainConfigSchema;
-use MWDebug;
 
 /**
  * A service to expand, parse, and otherwise manipulate URLs.
@@ -347,15 +347,12 @@ class UrlUtils {
 	}
 
 	/**
-	 * Returns a regular expression of recognized URL protocols
+	 * Returns a partial regular expression of recognized URL protocols, e.g. "http:\/\/|https:\/\/"
 	 *
 	 * @return string
 	 */
 	public function validProtocols(): string {
-		if ( $this->validProtocolsCache !== null ) {
-			return $this->validProtocolsCache; // @codeCoverageIgnore
-		}
-		$this->validProtocolsCache = $this->validProtocolsInternal( true );
+		$this->validProtocolsCache ??= $this->validProtocolsInternal( true );
 		return $this->validProtocolsCache;
 	}
 
@@ -366,15 +363,12 @@ class UrlUtils {
 	 * @return string
 	 */
 	public function validAbsoluteProtocols(): string {
-		if ( $this->validAbsoluteProtocolsCache !== null ) {
-			return $this->validAbsoluteProtocolsCache; // @codeCoverageIgnore
-		}
-		$this->validAbsoluteProtocolsCache = $this->validProtocolsInternal( false );
+		$this->validAbsoluteProtocolsCache ??= $this->validProtocolsInternal( false );
 		return $this->validAbsoluteProtocolsCache;
 	}
 
 	/**
-	 * Returns a regular expression of URL protocols
+	 * Returns a partial regular expression of URL protocols, e.g. "http:\/\/|https:\/\/"
 	 *
 	 * @param bool $includeProtocolRelative If false, remove '//' from the returned protocol list.
 	 * @return string

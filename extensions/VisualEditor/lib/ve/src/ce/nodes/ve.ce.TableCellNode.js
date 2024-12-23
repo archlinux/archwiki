@@ -9,8 +9,8 @@
  *
  * @class
  * @extends ve.ce.BranchNode
- * @mixins ve.ce.TableCellableNode
- * @mixins ve.ce.ContentEditableNode
+ * @mixes ve.ce.TableCellableNode
+ * @mixes ve.ce.ContentEditableNode
  * @constructor
  * @param {ve.dm.TableCellNode} model Model to observe
  * @param {Object} [config] Configuration options
@@ -57,8 +57,8 @@ ve.ce.TableCellNode.prototype.initialize = function () {
 	// Parent method
 	ve.ce.TableCellNode.super.prototype.initialize.call( this );
 
-	var rowspan = this.model.getRowspan();
-	var colspan = this.model.getColspan();
+	const rowspan = this.model.getRowspan();
+	const colspan = this.model.getColspan();
 
 	// DOM changes
 	this.$element
@@ -107,15 +107,16 @@ ve.ce.TableCellNode.prototype.onTableCellTeardown = function () {
 	// If the table cell is active on teardown, ensure the surface's
 	// activeNode is cleared.
 	if ( this.getRoot() ) {
-		var surface = this.getRoot().getSurface();
+		const surface = this.getRoot().getSurface();
 		if ( surface.getActiveNode() === this ) {
 			surface.setActiveNode( null );
 		}
 	}
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.ce.ContentEditableNode
+ * @see ve.ce.ContentEditableNode
  */
 ve.ce.TableCellNode.prototype.setContentEditable = function () {
 	// Overwite any state passed to setContentEditable with this.editing, so that
@@ -136,8 +137,8 @@ ve.ce.TableCellNode.prototype.onUpdate = function () {
  * Handle attribute changes to keep the live HTML element updated.
  *
  * @param {string} key Attribute name
- * @param {Mixed} from Old value
- * @param {Mixed} to Old value
+ * @param {any} from Old value
+ * @param {any} to Old value
  */
 ve.ce.TableCellNode.prototype.onAttributeChange = function ( key, from, to ) {
 	switch ( key ) {

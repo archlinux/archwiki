@@ -16,40 +16,22 @@ class MMLTestUtil {
 		if ( !file_exists( $filePath ) ) {
 			throw new InvalidArgumentException( "No testfile found at specified path: " . $filePath );
 		}
-		$file = file_get_contents( $filePath );
-		return json_decode( $file );
+		return json_decode( file_get_contents( $filePath ) );
 	}
 
 	public static function createJSONstartEnd( $start, $file ) {
-		if ( $start ) {
-			$generated = "[\n";
-		} else {
-			$generated = "\n]";
-		}
-		if ( file_put_contents( $file, $generated, FILE_APPEND ) !== false ) {
-			return true;
-		}
-		return false;
+		file_put_contents( $file, $start ? "[\n" : "\n]", FILE_APPEND );
 	}
 
 	public static function appendToJSONFile( $dataArray, $file ) {
 		$jsonData = json_encode( $dataArray, JSON_PRETTY_PRINT ) . ",";
-
-		if ( file_put_contents( $file, $jsonData, FILE_APPEND ) !== false ) {
-			return true;
-		}
-		return false;
+		file_put_contents( $file, $jsonData, FILE_APPEND );
 	}
 
-	public static function deleteFile( $file ) {
+	public static function deleteFile( $file ): void {
 		if ( file_exists( $file ) ) {
-			if ( unlink( $file ) ) {
-				return true;
-			} else {
-				return false;
-			}
+			unlink( $file );
 		}
-		return null;
 	}
 
 	public static function prettifyXML( $xml, $replaceHeader = true ) {

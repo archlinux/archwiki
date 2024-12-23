@@ -12,8 +12,10 @@
 		} );
 		return {
 			params,
-			getTemplateDataQueryTitle: () => null,
-			getTarget: () => {
+			getTemplateDataQueryTitle: function () {
+				return null;
+			},
+			getTarget: function () {
 				return { wt: 'RawTemplateName' };
 			},
 			getParameters: function () {
@@ -116,8 +118,7 @@
 		[ '{{a_a}}', './Talk:b_b', 'Talk:B b', 'does not strip other namespaces' ],
 		[ '{{a_a}}', './b_b', ':B b', 'title in main namespace must be prefixed' ],
 		[ '{{a_a}}', './Template:{{b_b}}', 'Template:{{b b}}', 'falls back to unmodified href if invalid' ]
-	].forEach( ( [ wt, href, expected, message ] ) =>
-		QUnit.test( 'getLabel: ' + message, ( assert ) => {
+	].forEach( ( [ wt, href, expected, message ] ) => QUnit.test( 'getLabel: ' + message, ( assert ) => {
 			const transclusion = new ve.dm.MWTransclusionModel(),
 				template = new ve.dm.MWTemplateModel( transclusion, { wt, href } ),
 				spec = new ve.dm.MWTemplateSpecModel( template );
@@ -131,8 +132,7 @@
 		null,
 		[],
 		{}
-	].forEach( ( templateData ) =>
-		QUnit.test( 'Invalid TemplateData, e.g. empty or without params', ( assert ) => {
+	].forEach( ( templateData ) => QUnit.test( 'Invalid TemplateData, e.g. empty or without params', ( assert ) => {
 			const template = createTemplateMock(),
 				spec = new ve.dm.MWTemplateSpecModel( template );
 
@@ -299,8 +299,7 @@
 
 		[ { notemplatedata: false }, true, 'unexpected false' ],
 		[ { notemplatedata: '' }, true, 'unsupported formatversion=1' ]
-	].forEach( ( [ templateData, expected, message ] ) =>
-		QUnit.test( 'isDocumented(): ' + message, ( assert ) => {
+	].forEach( ( [ templateData, expected, message ] ) => QUnit.test( 'isDocumented(): ' + message, ( assert ) => {
 			const template = createTemplateMock(),
 				spec = new ve.dm.MWTemplateSpecModel( template );
 

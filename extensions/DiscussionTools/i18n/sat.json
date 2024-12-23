@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"ᱥᱟᱹᱜᱩᱱ ᱗",
 			"San1joy23",
+			"ᱥᱟᱹᱜᱩᱱ ᱗",
 			"ᱤᱧ ᱢᱟᱛᱟᱞ"
 		]
 	},
@@ -40,6 +40,7 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|ᱟᱢ}} ᱫᱚ ᱟᱱᱥᱟᱵᱽᱥᱠᱨᱟᱭᱤᱵᱷ ᱦᱩᱭ ᱟᱠᱟᱱᱟ ᱾",
 	"discussiontools-notification-added-topic-view": "ᱥᱟᱛᱟᱢ ᱧᱮᱞ ᱢᱮ",
 	"discussiontools-notification-removed-topic-disable": "ᱱᱚᱶᱟ ᱞᱮᱠᱟᱱ ᱱᱳᱴᱷᱤᱠᱮᱥᱚᱱ ᱧᱟᱢ ᱵᱚᱸᱫᱽ ᱢᱮ ᱾",
+	"discussiontools-notification-topic-hidden": "(ᱥᱟᱛᱟᱢ ᱚᱵᱴᱪᱚᱜ ᱮᱱᱟ)",
 	"discussiontools-notification-subscribed-new-comment-view": "ᱠᱚᱢᱮᱱᱴ ᱧᱮᱞ ᱢᱮ",
 	"discussiontools-pageframe-latestcomment-notopic": "ᱢᱩᱪᱟᱹᱫ ᱨᱮᱱᱟᱜ ᱠᱚᱢᱮᱱᱴ ᱠᱚ $᱑ ᱠᱷᱚᱱ $᱒",
 	"discussiontools-pagetitle-newtopic": "ᱮᱦᱚᱵᱽ ᱨᱮᱱᱟᱜ ᱠᱚᱢᱮᱱᱴ ᱠᱚ $1",

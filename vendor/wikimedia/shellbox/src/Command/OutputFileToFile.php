@@ -8,11 +8,12 @@ use Shellbox\Multipart\MultipartReader;
 /**
  * Encapsulation of an output file that is copied to a local file
  */
-class OutputFileToFile extends OutputFile {
+class OutputFileToFile extends OutputFileWithContents {
 	/** @var string */
 	private $path;
 
 	/**
+	 * @internal
 	 * @param string $path
 	 */
 	public function __construct( $path ) {
@@ -21,7 +22,7 @@ class OutputFileToFile extends OutputFile {
 
 	public function copyFromFile( $sourcePath ) {
 		FileUtils::copy( $sourcePath, $this->path );
-		$this->received = true;
+		$this->setReceived();
 	}
 
 	public function getContents() {
@@ -30,6 +31,6 @@ class OutputFileToFile extends OutputFile {
 
 	public function readFromMultipart( MultipartReader $multipartReader ) {
 		$multipartReader->copyPartToStream( FileUtils::openOutputFileStream( $this->path ) );
-		$this->received = true;
+		$this->setReceived();
 	}
 }

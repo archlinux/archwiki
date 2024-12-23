@@ -8,11 +8,11 @@
 			"MemphisA5",
 			"Priviet",
 			"Revi",
+			"Suleiman the Magnificent Television",
 			"Ykhwong",
 			"렌즈",
 			"밝은소년",
-			"아라",
-			"Suleiman the Magnificent Television"
+			"아라"
 		]
 	},
 	"oathauth-desc": "HMAC 기반 일회용 비밀번호를 이용한 인증 지원 제공",
@@ -23,7 +23,10 @@
 	"oathauth-enable": "2요소 인증 활성화하기",
 	"oathauth-recoverycodes": "다음 목록은 일회용 스크래치 토큰 목록입니다. 이 토큰들은 한 번만 사용할 수 있으며 비상용입니다. 이것들을 적어놓고 안전한 위치에 보관하세요. 전화를 분실할 경우 이 토큰들이 당신의 계정을 찾을 유일한 수단입니다. '''이 토큰들은 다시 볼 수 없습니다'''.",
 	"oathauth-recoverycodes-important": "이 단계는 중요합니다! 이 단계를 건너뛰지 마세요!",
-	"oathauth-recoverycodes-download": "복구 코드 다운로드",
+	"oathauth-recoverytokens-createdat": "복구 코드가 생성되었습니다: $1",
+	"oathauth-recoverycodes-download": "다운로드",
+	"oathauth-recoverycodes-copy": "복사",
+	"oathauth-recoverycodes-copy-success": "복구 코드가 클립보드에 복사되었습니다!",
 	"oathauth-disable": "2요소 인증 비활성화하기",
 	"oathauth-validatedoath": "2요소 자격 정보를 검증했습니다. 이제부터 2요소 인증을 실행합니다.",
 	"oathauth-noscratchforvalidation": "2요소 인증을 확인하기 위해 스크래치 코드를 사용할 수 없습니다. 스크래치 코드는 백업용 및 부수적인 용도 전용입니다. 코드 생성기의 인증 코드를 사용해 주십시오.",

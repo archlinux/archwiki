@@ -21,27 +21,30 @@
 namespace MediaWiki\Storage;
 
 use CategoryMembershipChangeJob;
-use Content;
-use ContentHandler;
-use IDBAccessObject;
 use InvalidArgumentException;
 use JobQueueGroup;
-use Language;
 use LogicException;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Transform\ContentTransformer;
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Deferred\RefreshSecondaryDataUpdate;
 use MediaWiki\Deferred\SearchUpdate;
 use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\Edit\PreparedEdit;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserCache;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\ResourceLoader as RL;
@@ -61,16 +64,14 @@ use MediaWiki\User\UserNameUtils;
 use MediaWiki\Utils\MWTimestamp;
 use MessageCache;
 use MWUnknownContentModelException;
-use ParserCache;
-use ParserOptions;
 use ParsoidCachePrewarmJob;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use RefreshSecondaryDataUpdate;
 use RevertedTagUpdateJob;
-use WANObjectCache;
 use Wikimedia\Assert\Assert;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILBFactory;
 use WikiPage;
 
@@ -170,6 +171,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * Stores (most of) the $options parameter of prepareUpdate().
 	 * @see prepareUpdate()
 	 *
+	 * @var array
 	 * @phpcs:ignore Generic.Files.LineLength
 	 * @phan-var array{changed:bool,created:bool,moved:bool,restored:bool,oldrevision:null|RevisionRecord,triggeringUser:null|UserIdentity,oldredirect:bool|null|string,oldcountable:bool|null|string,causeAction:null|string,causeAgent:null|string,editResult:null|EditResult,approved:bool}
 	 */
@@ -265,8 +267,6 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * and constants are also overkill...
 	 *
 	 * @see docs/pageupdater.md for documentation of the life cycle.
-	 *
-	 * @var array[]
 	 */
 	private const TRANSITIONS = [
 		'new' => [
@@ -319,7 +319,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
 	/**
 	 * @param ServiceOptions $options
-	 * @param WikiPage $wikiPage
+	 * @param PageIdentity $page
 	 * @param RevisionStore $revisionStore
 	 * @param RevisionRenderer $revisionRenderer
 	 * @param SlotRoleRegistry $slotRoleRegistry
@@ -337,10 +337,11 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * @param TalkPageNotificationManager $talkPageNotificationManager
 	 * @param WANObjectCache $mainWANObjectCache
 	 * @param PermissionManager $permissionManager
+	 * @param WikiPageFactory $wikiPageFactory
 	 */
 	public function __construct(
 		ServiceOptions $options,
-		WikiPage $wikiPage,
+		PageIdentity $page,
 		RevisionStore $revisionStore,
 		RevisionRenderer $revisionRenderer,
 		SlotRoleRegistry $slotRoleRegistry,
@@ -357,9 +358,11 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		PageEditStash $pageEditStash,
 		TalkPageNotificationManager $talkPageNotificationManager,
 		WANObjectCache $mainWANObjectCache,
-		PermissionManager $permissionManager
+		PermissionManager $permissionManager,
+		WikiPageFactory $wikiPageFactory
 	) {
-		$this->wikiPage = $wikiPage;
+		// TODO: Remove this cast eventually
+		$this->wikiPage = $wikiPageFactory->newFromTitle( $page );
 
 		$this->parserCache = $parserCache;
 		$this->revisionStore = $revisionStore;
@@ -426,9 +429,6 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 *
 	 * @param string $newStage
 	 * @return string the previous stage
-	 *
-	 * @throws LogicException If a transition to the given stage is not possible in the current
-	 *         stage.
 	 */
 	private function doTransition( $newStage ) {
 		$this->assertTransition( $newStage );
@@ -445,8 +445,6 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * @see docs/pageupdater.md for documentation of the life cycle.
 	 *
 	 * @param string $newStage
-	 *
-	 * @throws LogicException If this instance is not in the expected stage
 	 */
 	private function assertTransition( $newStage ) {
 		if ( empty( self::TRANSITIONS[$this->stage][$newStage] ) ) {
@@ -466,9 +464,9 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * @return bool
 	 */
 	public function isReusableFor(
-		UserIdentity $user = null,
-		RevisionRecord $revision = null,
-		RevisionSlotsUpdate $slotsUpdate = null,
+		?UserIdentity $user = null,
+		?RevisionRecord $revision = null,
+		?RevisionSlotsUpdate $slotsUpdate = null,
 		$parentId = null
 	) {
 		if ( $revision
@@ -563,7 +561,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * @return Title
 	 */
 	private function getTitle() {
-		// NOTE: eventually, we won't get a WikiPage passed into the constructor any more
+		// NOTE: eventually, this won't use WikiPage any more
 		return $this->wikiPage->getTitle();
 	}
 
@@ -571,7 +569,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * @return WikiPage
 	 */
 	private function getWikiPage() {
-		// NOTE: eventually, we won't get a WikiPage passed into the constructor any more
+		// NOTE: eventually, this won't use WikiPage any more
 		return $this->wikiPage;
 	}
 
@@ -581,7 +579,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * @return PageIdentity
 	 */
 	public function getPage(): PageIdentity {
-		return $this->getTitle();
+		return $this->wikiPage;
 	}
 
 	/**
@@ -655,7 +653,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
 		$this->assertTransition( 'knows-current' );
 
-		// NOTE: eventually, we won't get a WikiPage passed into the constructor any more
+		// NOTE: eventually, this won't use WikiPage any more
 		$wikiPage = $this->getWikiPage();
 
 		// Do not call WikiPage::clear(), since the caller may already have caused page data
@@ -699,7 +697,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * @return int
 	 */
 	private function getPageId() {
-		// NOTE: eventually, we won't get a WikiPage passed into the constructor any more
+		// NOTE: eventually, this won't use WikiPage any more
 		return $this->wikiPage->getId();
 	}
 
@@ -1402,7 +1400,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	}
 
 	/**
-	 * @deprecated This only exists for B/C, use the getters on DerivedPageDataUpdater directly!
+	 * @deprecated since 1.43; This only exists for B/C, use the getters on DerivedPageDataUpdater directly!
 	 * @return PreparedEdit
 	 */
 	public function getPreparedEdit() {
@@ -1605,7 +1603,8 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			$this->jobQueueGroup->lazyPush(
 				CategoryMembershipChangeJob::newSpec(
 					$this->getTitle(),
-					$this->revision->getTimestamp()
+					$this->revision->getTimestamp(),
+					$this->options['causeAction'] === 'import-page'
 				)
 			);
 		}

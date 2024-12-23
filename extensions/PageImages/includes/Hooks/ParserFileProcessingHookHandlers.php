@@ -2,24 +2,26 @@
 
 namespace PageImages\Hooks;
 
-use DerivativeContext;
 use Exception;
 use File;
 use FormatMetadata;
+use MediaWiki\Config\Config;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Hook\ParserAfterTidyHook;
 use MediaWiki\Hook\ParserModifyImageHTMLHook;
 use MediaWiki\Hook\ParserTestGlobalsHook;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Linker\LinksMigration;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\TitleFactory;
 use PageImages\PageImageCandidate;
 use PageImages\PageImages;
-use Parser;
 use RepoGroup;
 use RuntimeException;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -46,6 +48,7 @@ class ParserFileProcessingHookHandlers implements
 {
 	private const CANDIDATE_REGEX = '/<!--MW-PAGEIMAGES-CANDIDATE-([0-9]+)-->/';
 
+	protected Config $config;
 	private RepoGroup $repoGroup;
 	private WANObjectCache $mainWANObjectCache;
 	private HttpRequestFactory $httpRequestFactory;
@@ -54,6 +57,7 @@ class ParserFileProcessingHookHandlers implements
 	private LinksMigration $linksMigration;
 
 	public function __construct(
+		Config $config,
 		RepoGroup $repoGroup,
 		WANObjectCache $mainWANObjectCache,
 		HttpRequestFactory $httpRequestFactory,
@@ -61,6 +65,7 @@ class ParserFileProcessingHookHandlers implements
 		TitleFactory $titleFactory,
 		LinksMigration $linksMigration
 	) {
+		$this->config = $config;
 		$this->repoGroup = $repoGroup;
 		$this->mainWANObjectCache = $mainWANObjectCache;
 		$this->httpRequestFactory = $httpRequestFactory;
@@ -124,7 +129,6 @@ class ParserFileProcessingHookHandlers implements
 	 * @param string &$text
 	 */
 	public function onParserAfterTidy( $parser, &$text ) {
-		global $wgPageImagesLeadSectionOnly;
 		$parserOutput = $parser->getOutput();
 		$allImages = $parserOutput->getExtensionData( 'pageImages' );
 		if ( !$allImages ) {
@@ -133,7 +137,7 @@ class ParserFileProcessingHookHandlers implements
 
 		// Find and remove our special comments
 		$images = [];
-		if ( $wgPageImagesLeadSectionOnly ) {
+		if ( $this->config->get( 'PageImagesLeadSectionOnly' ) ) {
 			$leadEndPos = strpos( $text, '<mw:editsection' );
 		} else {
 			$leadEndPos = false;
@@ -236,9 +240,8 @@ class ParserFileProcessingHookHandlers implements
 	 * @return bool
 	 */
 	private function processThisTitle( PageReference $pageReference ) {
-		global $wgPageImagesNamespaces;
 		static $flipped = null;
-		$flipped ??= array_flip( $wgPageImagesNamespaces );
+		$flipped ??= array_flip( $this->config->get( 'PageImagesNamespaces' ) );
 
 		return isset( $flipped[$pageReference->getNamespace()] );
 	}
@@ -252,8 +255,6 @@ class ParserFileProcessingHookHandlers implements
 	 * @param File $file
 	 */
 	private function calcWidth( array &$params, File $file ) {
-		global $wgThumbLimits, $wgDefaultUserOptions;
-
 		if ( isset( $params['handler']['width'] ) ) {
 			return;
 		}
@@ -265,7 +266,9 @@ class ParserFileProcessingHookHandlers implements
 			|| isset( $params['frame']['thumb'] )
 			|| isset( $params['frame']['frameless'] )
 		) {
-			$params['handler']['width'] = $wgThumbLimits[$wgDefaultUserOptions['thumbsize']]
+			$thumbLimits = $this->config->get( MainConfigNames::ThumbLimits );
+			$defaultUserOptions = $this->config->get( MainConfigNames::DefaultUserOptions );
+			$params['handler']['width'] = $thumbLimits[$defaultUserOptions['thumbsize']]
 				?? 250;
 		} else {
 			$params['handler']['width'] = $file->getWidth();
@@ -282,27 +285,26 @@ class ParserFileProcessingHookHandlers implements
 	 * @return float
 	 */
 	protected function getScore( PageImageCandidate $image, $position ) {
-		global $wgPageImagesScores;
-
 		// Exclude images with class="notpageimage"
 		if ( preg_match( '/(?:^|\s)notpageimage(?=\s|$)/', $image->getFrameClass() ) ) {
 			return -1000;
 		}
 
+		$pageImagesScores = $this->config->get( 'PageImagesScores' );
 		if ( $image->getHandlerWidth() ) {
 			// Standalone image
-			$score = $this->scoreFromTable( $image->getHandlerWidth(), $wgPageImagesScores['width'] );
+			$score = $this->scoreFromTable( $image->getHandlerWidth(), $pageImagesScores['width'] );
 		} else {
 			// From gallery
-			$score = $this->scoreFromTable( $image->getFullWidth(), $wgPageImagesScores['galleryImageWidth'] );
+			$score = $this->scoreFromTable( $image->getFullWidth(), $pageImagesScores['galleryImageWidth'] );
 		}
 
-		if ( isset( $wgPageImagesScores['position'][$position] ) ) {
-			$score += $wgPageImagesScores['position'][$position];
+		if ( isset( $pageImagesScores['position'][$position] ) ) {
+			$score += $pageImagesScores['position'][$position];
 		}
 
 		$ratio = intval( $this->getRatio( $image ) * 10 );
-		$score += $this->scoreFromTable( $ratio, $wgPageImagesScores['ratio'] );
+		$score += $this->scoreFromTable( $ratio, $pageImagesScores['ratio'] );
 
 		$denylist = $this->getDenylist();
 		if ( isset( $denylist[$image->getFileName()] ) ) {
@@ -395,16 +397,12 @@ class ParserFileProcessingHookHandlers implements
 	 * @throws Exception
 	 */
 	protected function getDenylist() {
-		global $wgPageImagesDenylistExpiry;
-
 		return $this->mainWANObjectCache->getWithSetCallback(
 			$this->mainWANObjectCache->makeKey( 'pageimages-denylist' ),
-			$wgPageImagesDenylistExpiry,
+			$this->config->get( 'PageImagesDenylistExpiry' ),
 			function () {
-				global $wgPageImagesDenylist;
-
 				$list = [];
-				foreach ( $wgPageImagesDenylist as $source ) {
+				foreach ( $this->config->get( 'PageImagesDenylist' ) as $source ) {
 					switch ( $source['type'] ) {
 						case 'db':
 							$list = array_merge(
@@ -474,11 +472,10 @@ class ParserFileProcessingHookHandlers implements
 	 * @return string[]
 	 */
 	private function getUrlDenylist( $url ) {
-		global $wgFileExtensions;
-
 		$list = [];
 		$text = $this->httpRequestFactory->get( $url, [ 'timeout' => 3 ], __METHOD__ );
-		$regex = '/\[\[:([^|\#]*?\.(?:' . implode( '|', $wgFileExtensions ) . '))/i';
+		$fileExtensions = $this->config->get( 'FileExtensions' );
+		$regex = '/\[\[:([^|\#]*?\.(?:' . implode( '|', $fileExtensions ) . '))/i';
 
 		if ( $text && preg_match_all( $regex, $text, $matches ) ) {
 			foreach ( $matches[1] as $s ) {

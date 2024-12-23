@@ -3,6 +3,7 @@
 namespace MediaWiki\Tests\Integration\Permissions;
 
 use Action;
+use MediaWiki\Api\ApiMessage;
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\CompositeBlock;
 use MediaWiki\Block\DatabaseBlock;
@@ -40,18 +41,12 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	use MockBlockTrait;
 	use TempUserTestTrait;
 
-	/** @var string */
-	protected $userName;
-	/** @var Title */
-	protected $title;
-	/** @var User */
-	protected $user;
-	/** @var User */
-	protected $anonUser;
-	/** @var User */
-	protected $userUser;
-	/** @var User */
-	protected $altUser;
+	protected string $userName;
+	protected Title $title;
+	protected User $user;
+	protected User $anonUser;
+	protected User $userUser;
+	protected User $altUser;
 
 	private const USER_TALK_PAGE = '<user talk page>';
 
@@ -103,6 +98,10 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 		$this->setGroupPermissions( 'testwriters', 'modifytest', true );
 
 		$this->setGroupPermissions( '*', 'editmyoptions', true );
+
+		$this->setGroupPermissions( 'deleted-viewer', 'deletedhistory', true );
+		$this->setGroupPermissions( 'deleted-viewer', 'deletedtext', true );
+		$this->setGroupPermissions( 'deleted-viewer', 'viewsuppressed', true );
 
 		$this->setGroupPermissions( 'interface-admin', 'editinterface', true );
 		$this->setGroupPermissions( 'interface-admin', 'editsitejs', true );
@@ -1275,7 +1274,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	/**
 	 * @dataProvider provideGetRestrictionLevels
 	 */
-	public function testGetRestrictionLevels( array $expected, $ns, array $userGroups = null ) {
+	public function testGetRestrictionLevels( array $expected, $ns, ?array $userGroups = null ) {
 		$this->overrideConfigValues( [
 			MainConfigNames::GroupPermissions => [
 				'*' => [ 'edit' => true ],
@@ -1347,7 +1346,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * Enuser normal admins can view deleted javascript, but not restore it
+	 * Ensure normal admins can view deleted javascript, but not restore it
 	 * See T202989
 	 */
 	public function testSysopInterfaceAdminRights() {
@@ -1365,6 +1364,62 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 		$this->assertTrue( $permManager->userCan( 'deletedtext', $interfaceAdmin, $userJs ) );
 		$this->assertFalse( $permManager->userCan( 'undelete', $admin, $userJs ) );
 		$this->assertTrue( $permManager->userCan( 'undelete', $interfaceAdmin, $userJs ) );
+	}
+
+	/**
+	 * Ensure specific users can view deleted contents regardless of Namespace
+	 * Protection, but not restore it
+	 * See T362536
+	 *
+	 * @dataProvider provideDeletedViewerRights
+	 */
+	public function testDeletedViewerRights(
+		$userGroup,
+		$userPerms,
+		$expectedUserCan
+	) {
+		$currentUser = $this->getTestUser( $userGroup )->getUser();
+		$permManager = $this->getServiceContainer()->getPermissionManager();
+		$targetPage = Title::makeTitle( NS_MEDIAWIKI, 'Example' );
+		foreach ( $userPerms as $userPerm ) {
+			$this->assertSame(
+				$expectedUserCan,
+				$permManager->userCan( $userPerm, $currentUser, $targetPage )
+			);
+		}
+	}
+
+	public static function provideDeletedViewerRights() {
+		yield [
+			'usergroup' => '*',
+			'user permissions' => [
+				'delete',
+				'deletedhistory',
+				'deletedtext',
+				'suppressrevision',
+				'undelete',
+				'viewsuppressed'
+			],
+			'user can' => false
+		];
+		yield [
+			'usergroup' => 'deleted-viewer',
+			'user permissions' => [
+				'delete',
+				'suppressrevision',
+				'undelete'
+			],
+			'user can' => false
+		];
+		yield [
+			'usergroup' => 'deleted-viewer',
+			'user permissions' => [
+				'deletedhistory',
+				'deletedtext',
+				'viewsuppressed'
+			],
+			'user can' => true
+		];
 	}
 
 	/**
@@ -1445,7 +1500,32 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 
 		$this->assertSame( [
 			[ 'noignore', 'param' ],
-			'noignore',
+			[ 'noignore' ],
 		], $errors );
+	}
+
+	/**
+	 * @covers \MediaWiki\Permissions\PermissionManager::checkQuickPermissions
+	 */
+	public function testGetPermissionErrors_objectFromHookResult() {
+		$msg = ApiMessage::create( 'mymessage', 'mymessagecode', [ 'mydata' => true ] );
+		$this->setTemporaryHook(
+			'TitleQuickPermissions',
+			static function ( $hookTitle, $hookUser, $hookAction, &$errors, $doExpensiveQueries, $short ) use ( $msg ) {
+				$errors[] = [ $msg ];
+				return false;
+			}
+		);
+
+		$pm = $this->getServiceContainer()->getPermissionManager();
+
+		$errorsStatus = $pm->getPermissionStatus( 'create', $this->user, $this->title );
+		$errorsArray = $pm->getPermissionErrors( 'create', $this->user, $this->title );
+
+		$this->assertSame(
+			[ $msg ],
+			$errorsStatus->getMessages(),
+			'getPermissionStatus() preserves ApiMessage objects'
+		);
 	}
 }

@@ -30,7 +30,7 @@ ve.ce.MWPreNode.static.name = 'mwPre';
 
 ve.ce.MWPreNode.static.tagName = 'pre';
 
-ve.ce.MWPreNode.static.primaryCommandName = 'pre';
+ve.ce.MWPreNode.static.primaryCommandName = 'mwPre';
 
 /* Registration */
 

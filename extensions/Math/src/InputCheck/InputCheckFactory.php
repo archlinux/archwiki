@@ -6,7 +6,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\MathRestbaseInterface;
 use MediaWiki\Http\HttpRequestFactory;
 use Psr\Log\LoggerInterface;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 class InputCheckFactory {
 
@@ -75,7 +75,7 @@ class InputCheckFactory {
 	 * @return RestbaseChecker checker based on communication with restbase interface
 	 */
 	public function newRestbaseChecker( string $input, string $type,
-										MathRestbaseInterface &$restbaseInterface = null ): RestbaseChecker {
+										?MathRestbaseInterface &$restbaseInterface = null ): RestbaseChecker {
 		return new RestbaseChecker(
 			$input,
 			$type,
@@ -111,7 +111,7 @@ class InputCheckFactory {
 	 */
 	public function newDefaultChecker( string $input,
 									   string $type,
-									   MathRestbaseInterface &$restbaseInterface = null,
+									   ?MathRestbaseInterface &$restbaseInterface = null,
 									   bool $purge = false ): BaseChecker {
 		switch ( $this->texVCmode ) {
 			case "mathoid":

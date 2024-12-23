@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Listfiles
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,12 +16,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
-use MediaWiki\Cache\UserCache;
+use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Pager\ImageListPager;
@@ -34,6 +31,11 @@ use MediaWiki\User\UserRigorOptions;
 use RepoGroup;
 use Wikimedia\Rdbms\IConnectionProvider;
 
+/**
+ * Implements Special:Listfiles
+ *
+ * @ingroup SpecialPage
+ */
 class SpecialListFiles extends IncludableSpecialPage {
 
 	private RepoGroup $repoGroup;
@@ -41,8 +43,8 @@ class SpecialListFiles extends IncludableSpecialPage {
 	private CommentStore $commentStore;
 	private UserNameUtils $userNameUtils;
 	private UserNamePrefixSearch $userNamePrefixSearch;
-	private UserCache $userCache;
 	private CommentFormatter $commentFormatter;
+	private LinkBatchFactory $linkBatchFactory;
 
 	/**
 	 * @param RepoGroup $repoGroup
@@ -50,8 +52,8 @@ class SpecialListFiles extends IncludableSpecialPage {
 	 * @param CommentStore $commentStore
 	 * @param UserNameUtils $userNameUtils
 	 * @param UserNamePrefixSearch $userNamePrefixSearch
-	 * @param UserCache $userCache
 	 * @param CommentFormatter $commentFormatter
+	 * @param LinkBatchFactory $linkBatchFactory
 	 */
 	public function __construct(
 		RepoGroup $repoGroup,
@@ -59,8 +61,8 @@ class SpecialListFiles extends IncludableSpecialPage {
 		CommentStore $commentStore,
 		UserNameUtils $userNameUtils,
 		UserNamePrefixSearch $userNamePrefixSearch,
-		UserCache $userCache,
-		CommentFormatter $commentFormatter
+		CommentFormatter $commentFormatter,
+		LinkBatchFactory $linkBatchFactory
 	) {
 		parent::__construct( 'Listfiles' );
 		$this->repoGroup = $repoGroup;
@@ -68,8 +70,8 @@ class SpecialListFiles extends IncludableSpecialPage {
 		$this->commentStore = $commentStore;
 		$this->userNameUtils = $userNameUtils;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
-		$this->userCache = $userCache;
 		$this->commentFormatter = $commentFormatter;
+		$this->linkBatchFactory = $linkBatchFactory;
 	}
 
 	public function execute( $par ) {
@@ -104,9 +106,9 @@ class SpecialListFiles extends IncludableSpecialPage {
 			$this->getLinkRenderer(),
 			$this->dbProvider,
 			$this->repoGroup,
-			$this->userCache,
 			$this->userNameUtils,
 			$this->commentFormatter,
+			$this->linkBatchFactory,
 			$userName,
 			$search,
 			$this->including(),

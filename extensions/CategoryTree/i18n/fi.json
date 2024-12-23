@@ -8,8 +8,8 @@
 			"Nedergard",
 			"Nike",
 			"Pyscowicz",
-			"Str4nd",
-			"Samoasambia"
+			"Samoasambia",
+			"Str4nd"
 		]
 	},
 	"categorytree": "Luokkapuu",
@@ -39,5 +39,9 @@
 	"categorytree-no-pages": "ei sivuja eikä alaluokkia",
 	"categorytree-not-found": "Luokkaa <i>$1</i> ei löytynyt",
 	"categorytree-error": "Ongelma tietojen latauksessa.",
-	"categorytree-retry": "Odota hetki ja yritä uudelleen."
+	"categorytree-retry": "Odota hetki ja yritä uudelleen.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Parametri <code>onlyroot</code> on vanhentunut. Käytä sen sijaan <code>depth=\"0\"</code>.",
+	"categorytree-deprecation-warning": "'''Varoitus:''' tämä sivu käyttää ominaisuutta <code>&lt;categorytree&gt;</code> vanhentuneella parametrilla.",
+	"categorytree-deprecation-category": "Sivut, jotka käyttävät vanhentuneita categorytree-parametreja",
+	"categorytree-deprecation-category-desc": "Sivu käyttää vanhentuneita luokkapuun (categorytree) parametreja, kuten <code>onlyroot</code>."
 }

@@ -22,10 +22,10 @@ ve.dm.NodeFactoryNodeStub.static.disallowedAnnotationTypes = [ 'link', 'textStyl
 
 /* Tests */
 
-QUnit.test( 'getChildNodeTypes', function ( assert ) {
-	var factory = new ve.dm.NodeFactory();
+QUnit.test( 'getChildNodeTypes', ( assert ) => {
+	const factory = new ve.dm.NodeFactory();
 	assert.throws(
-		function () {
+		() => {
 			factory.getChildNodeTypes( 'node-factory-node-stub', 23, { bar: 'baz' } );
 		},
 		Error,
@@ -39,10 +39,10 @@ QUnit.test( 'getChildNodeTypes', function ( assert ) {
 	);
 } );
 
-QUnit.test( 'getParentNodeTypes', function ( assert ) {
-	var factory = new ve.dm.NodeFactory();
+QUnit.test( 'getParentNodeTypes', ( assert ) => {
+	const factory = new ve.dm.NodeFactory();
 	assert.throws(
-		function () {
+		() => {
 			factory.getParentNodeTypes( 'node-factory-node-stub', 23, { bar: 'baz' } );
 		},
 		Error,
@@ -56,10 +56,10 @@ QUnit.test( 'getParentNodeTypes', function ( assert ) {
 	);
 } );
 
-QUnit.test( 'canNodeHaveChildren', function ( assert ) {
-	var factory = new ve.dm.NodeFactory();
+QUnit.test( 'canNodeHaveChildren', ( assert ) => {
+	const factory = new ve.dm.NodeFactory();
 	assert.throws(
-		function () {
+		() => {
 			factory.canNodeHaveChildren( 'node-factory-node-stub', 23, { bar: 'baz' } );
 		},
 		Error,
@@ -73,10 +73,10 @@ QUnit.test( 'canNodeHaveChildren', function ( assert ) {
 	);
 } );
 
-QUnit.test( 'canNodeTakeAnnotation', function ( assert ) {
-	var factory = new ve.dm.NodeFactory();
+QUnit.test( 'canNodeTakeAnnotation', ( assert ) => {
+	const factory = new ve.dm.NodeFactory();
 	assert.throws(
-		function () {
+		() => {
 			factory.canNodeTakeAnnotation( 'node-factory-node-stub', 23, { bar: 'baz' } );
 		},
 		Error,
@@ -100,10 +100,10 @@ QUnit.test( 'canNodeTakeAnnotation', function ( assert ) {
 	);
 } );
 
-QUnit.test( 'canNodeHaveChildrenNotContent', function ( assert ) {
-	var factory = new ve.dm.NodeFactory();
+QUnit.test( 'canNodeHaveChildrenNotContent', ( assert ) => {
+	const factory = new ve.dm.NodeFactory();
 	assert.throws(
-		function () {
+		() => {
 			factory.canNodeHaveChildrenNotContent( 'node-factory-node-stub', 23, { bar: 'baz' } );
 		},
 		Error,
@@ -117,7 +117,7 @@ QUnit.test( 'canNodeHaveChildrenNotContent', function ( assert ) {
 	);
 } );
 
-QUnit.test( 'initialization', function ( assert ) {
+QUnit.test( 'initialization', ( assert ) => {
 	assert.true( ve.dm.nodeFactory instanceof ve.dm.NodeFactory, 'factory is initialized at ve.dm.nodeFactory' );
 } );
 

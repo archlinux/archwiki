@@ -12,7 +12,7 @@
 			 * @return {string[]} Thanks IDs
 			 */
 			load: function ( cookieName ) {
-				var cookie = mw.cookie.get( cookieName || this.cookieName );
+				const cookie = mw.cookie.get( cookieName || this.cookieName );
 				if ( cookie === null ) {
 					return [];
 				}
@@ -26,7 +26,7 @@
 			 * @param {string} [cookieName] Cookie name to use, defaults to this.cookieName
 			 */
 			push: function ( id, cookieName ) {
-				var saved = this.load();
+				let saved = this.load();
 				saved.push( id );
 				if ( saved.length > this.maxHistory ) { // prevent forever growing
 					saved = saved.slice( saved.length - this.maxHistory );
@@ -60,15 +60,11 @@
 				usprop: 'gender'
 			} )
 				.then(
-					function ( result ) {
-						return (
-							result.query.users[ 0 ] &&
+					( result ) => (
+						result.query.users[ 0 ] &&
 							result.query.users[ 0 ].gender
-						) || 'unknown';
-					},
-					function () {
-						return 'unknown';
-					}
+					) || 'unknown',
+					() => 'unknown'
 				);
 		}
 	};

@@ -29,9 +29,9 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
-use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
 use Wikimedia\IPUtils;
+use Wikimedia\Stats\NullStatsdDataFactory;
 use Wikimedia\WRStats\LimitCondition;
 use Wikimedia\WRStats\WRStatsFactory;
 
@@ -43,34 +43,19 @@ use Wikimedia\WRStats\WRStatsFactory;
  */
 class RateLimiter {
 
-	/** @var LoggerInterface */
-	private $logger;
+	private LoggerInterface $logger;
+	private StatsdDataFactoryInterface $stats;
 
-	/** @var WRStatsFactory */
-	private $wrstatsFactory;
-
-	/** @var ServiceOptions */
-	private $options;
+	private ServiceOptions $options;
+	private WRStatsFactory $wrstatsFactory;
+	private ?CentralIdLookup $centralIdLookup;
+	private UserFactory $userFactory;
+	private UserGroupManager $userGroupManager;
+	private HookContainer $hookContainer;
+	private HookRunner $hookRunner;
 
 	/** @var array */
 	private $rateLimits;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var CentralIdLookup|null */
-	private $centralIdLookup;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	private StatsdDataFactoryInterface $stats;
 
 	/**
 	 * Actions that are exempt from all rate limiting.
@@ -98,14 +83,6 @@ class RateLimiter {
 		MainConfigNames::RateLimitsExcludedIPs,
 	];
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param WRStatsFactory $wrstatsFactory
-	 * @param CentralIdLookup|null $centralIdLookup
-	 * @param UserFactory $userFactory
-	 * @param UserGroupManager $userGroupManager
-	 * @param HookContainer $hookContainer
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		WRStatsFactory $wrstatsFactory,
@@ -198,7 +175,7 @@ class RateLimiter {
 	 * @param RateLimitSubject $subject The subject of the rate limit, representing the
 	 *        client performing the action.
 	 * @param string $action Action to enforce
-	 * @param int $incrBy Positive amount to increment counter by, 1 per default.
+	 * @param int $incrBy Positive amount to increment counter by, 1 by default.
 	 *        Use 0 to check the limit without bumping the counter.
 	 *
 	 * @return bool True if a rate limit was exceeded.

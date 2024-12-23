@@ -4,5 +4,7 @@
 			"Tofeiku"
 		]
 	},
-	"syntaxhighlight-desc": "Menyediakan tag <code>&lt;syntaxhighlight&gt;</code> untuk penonjolan sintaks menggunakan [http://pygments.org/ GeSHi]"
+	"syntaxhighlight-desc": "Menyediakan tag <code>&lt;syntaxhighlight&gt;</code> untuk penonjolan sintaks menggunakan [http://pygments.org/ GeSHi]",
+	"syntaxhighlight-button-copy": "Salin",
+	"syntaxhighlight-button-copied": "Disalin!"
 }

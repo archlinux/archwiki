@@ -22,10 +22,10 @@ namespace MediaWiki;
 
 use Exception;
 use HttpStatus;
-use IBufferingStatsdDataFactory;
 use JobQueueGroup;
 use JobRunner;
 use Liuggio\StatsdClient\Sender\SocketSender;
+use Liuggio\StatsdClient\StatsdClient;
 use LogicException;
 use MediaWiki\Block\BlockManager;
 use MediaWiki\Config\Config;
@@ -47,13 +47,13 @@ use MWExceptionHandler;
 use Profiler;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use SamplingStatsdClient;
 use Throwable;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\Stats\StatsFactory;
 
 /**
@@ -147,6 +147,7 @@ abstract class MediaWikiEntryPoint {
 	protected function doSetup() {
 		// no-op
 		// TODO: move ob_start( [ MediaWiki\Output\OutputHandler::class, 'handle' ] ) here
+		// TODO: move MW_NO_OUTPUT_COMPRESSION handling here.
 		// TODO: move HeaderCallback::register() here
 		// TODO: move SessionManager::getGlobalSession() here (from Setup.php)
 		// TODO: move AuthManager::autoCreateUser here (from Setup.php)
@@ -602,6 +603,7 @@ abstract class MediaWikiEntryPoint {
 		if (
 			// "Content-Length" is used to prevent clients from waiting on deferred updates
 			$this->postSendStrategy === self::DEFER_SET_LENGTH_AND_FLUSH &&
+			!$this->getResponse()->headersSent() &&
 			// The HTTP response code clearly allows for a meaningful body
 			in_array( $this->getStatusCode(), [ 200, 404 ], true ) &&
 			// The queue of (post-send) deferred updates is non-empty
@@ -727,8 +729,7 @@ abstract class MediaWikiEntryPoint {
 				$statsdHost = $statsdServer[0];
 				$statsdPort = $statsdServer[1] ?? 8125;
 				$statsdSender = new SocketSender( $statsdHost, $statsdPort );
-				$statsdClient = new SamplingStatsdClient( $statsdSender, true, false );
-				$statsdClient->setSamplingRates( $config->get( MainConfigNames::StatsdSamplingRates ) );
+				$statsdClient = new StatsdClient( $statsdSender, true, false );
 				$statsdClient->send( $stats->getData() );
 			} catch ( Exception $e ) {
 				MWExceptionHandler::logException( $e, MWExceptionHandler::CAUGHT_BY_ENTRYPOINT );
@@ -1088,6 +1089,7 @@ abstract class MediaWikiEntryPoint {
 			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 			@flush();
 		}
+		wfDebug( "Output buffer flushed" );
 	}
 
 	/**
@@ -1229,7 +1231,9 @@ abstract class MediaWikiEntryPoint {
 			return false;
 		}
 
-		return $this->environment->fastCgiFinishRequest();
+		$success = $this->environment->fastCgiFinishRequest();
+		wfDebug( $success ? 'FastCGI request finished' : 'FastCGI request finish failed' );
+		return $success;
 	}
 
 	/**

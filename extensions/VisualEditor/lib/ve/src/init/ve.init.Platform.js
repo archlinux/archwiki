@@ -8,7 +8,7 @@
  * Generic Initialization platform.
  *
  * @abstract
- * @mixins OO.EventEmitter
+ * @mixes OO.EventEmitter
  *
  * @constructor
  */
@@ -27,7 +27,7 @@ ve.init.Platform = function VeInitPlatform() {
 	OO.ui.msg = this.getMessage.bind( this );
 
 	// Notify those waiting for a platform that they can finish initialization
-	setTimeout( function () {
+	setTimeout( () => {
 		ve.init.Platform.static.deferredPlatform.resolve( ve.init.platform );
 	} );
 };
@@ -55,9 +55,7 @@ ve.init.Platform.static.deferredPlatform = ve.createDeferred();
  *
  * @property {jQuery.Promise}
  */
-ve.init.Platform.static.initializedPromise = ve.init.Platform.static.deferredPlatform.promise().then( function ( platform ) {
-	return platform.getInitializedPromise();
-} );
+ve.init.Platform.static.initializedPromise = ve.init.Platform.static.deferredPlatform.promise().then( ( platform ) => platform.getInitializedPromise() );
 
 /* Static Methods */
 
@@ -138,7 +136,7 @@ ve.init.Platform.prototype.notify = null;
  *
  * @abstract
  * @param {string|string[]} key Config key, or list of keys
- * @return {Mixed|Object} Config value, or keyed object of config values if list of keys provided
+ * @return {any|Object} Config value, or keyed object of config values if list of keys provided
  */
 ve.init.Platform.prototype.getConfig = null;
 
@@ -147,7 +145,7 @@ ve.init.Platform.prototype.getConfig = null;
  *
  * @abstract
  * @param {string|string[]} key Config key, or list of keys
- * @return {Mixed|Object} Config value, or keyed object of config values if list of keys provided
+ * @return {any|Object} Config value, or keyed object of config values if list of keys provided
  */
 ve.init.Platform.prototype.getUserConfig = null;
 
@@ -156,7 +154,7 @@ ve.init.Platform.prototype.getUserConfig = null;
  *
  * @abstract
  * @param {string|Object} keyOrValueMap Key to set value for, or object mapping keys to values
- * @param {Mixed} [value] Value to set (optional, only in use when key is a string)
+ * @param {any} [value] Value to set (optional, only in use when key is a string)
  */
 ve.init.Platform.prototype.setUserConfig = null;
 
@@ -179,7 +177,7 @@ ve.init.Platform.prototype.createConflictableStorage = function ( safeStorage ) 
 };
 
 ve.init.Platform.prototype.createLocalStorage = function () {
-	var localStorage;
+	let localStorage;
 
 	try {
 		localStorage = window.localStorage;
@@ -189,7 +187,7 @@ ve.init.Platform.prototype.createLocalStorage = function () {
 };
 
 ve.init.Platform.prototype.createSessionStorage = function () {
-	var sessionStorage;
+	let sessionStorage;
 
 	try {
 		sessionStorage = window.sessionStorage;
@@ -211,7 +209,7 @@ ve.init.Platform.prototype.addMessages = null;
  *
  * @abstract
  * @param {string} key Message key
- * @param {...Mixed} [args] List of arguments which will be injected at $1, $2, etc. in the message
+ * @param {...any} [args] List of arguments which will be injected at $1, $2, etc. in the message
  * @return {string} Localized message, or key or '<' + key + '>' if message not found
  */
 ve.init.Platform.prototype.getMessage = null;
@@ -248,7 +246,7 @@ ve.init.Platform.prototype.formatNumber = null;
  *
  * @abstract
  * @param {string} key Message key
- * @param {...Mixed} [args] List of arguments which will be injected at $1, $2, etc. in the message
+ * @param {...any} [args] List of arguments which will be injected at $1, $2, etc. in the message
  * @return {Node[]} Localized message, or key or '<' + key + '>' if message not found
  */
 ve.init.Platform.prototype.getHtmlMessage = null;
@@ -295,6 +293,16 @@ ve.init.Platform.prototype.getMediaSources = null;
  * @return {string[]} Language codes
  */
 ve.init.Platform.prototype.getLanguageCodes = null;
+
+/**
+ * Check if a language code is known to this platform.
+ *
+ * @param {string} code Language code
+ * @return {boolean} Language code is known
+ */
+ve.init.Platform.prototype.hasLanguageCode = function ( code ) {
+	return this.getLanguageCodes().indexOf( code ) !== -1;
+};
 
 /**
  * Get a language's name from its code, in the current user language if possible.
@@ -370,15 +378,15 @@ ve.init.Platform.prototype.getInitializedPromise = function () {
  * @return {Object[]}
  */
 ve.init.Platform.prototype.processSpecialCharSymbols = function ( symbols ) {
-	var symbolList;
+	let symbolList;
 	if ( Array.isArray( symbols ) ) {
 		symbolList = ve.copy( symbols );
 	} else {
 		symbolList = [];
-		Object.keys( symbols ).forEach( function ( key ) {
-			var val = symbols[ key ];
+		Object.keys( symbols ).forEach( ( key ) => {
+			const val = symbols[ key ];
 			if ( typeof val === 'object' ) {
-				var symbolData = ve.copy( val );
+				const symbolData = ve.copy( val );
 				if ( !Object.prototype.hasOwnProperty.call( symbolData, 'label' ) ) {
 					symbolData.label = key;
 				}
@@ -394,7 +402,7 @@ ve.init.Platform.prototype.processSpecialCharSymbols = function ( symbols ) {
 			}
 		} );
 	}
-	symbolList.forEach( function ( symbol ) {
+	symbolList.forEach( ( symbol ) => {
 		if ( symbol.source ) {
 			symbol.classes = symbol.classes || [];
 			symbol.classes.push( 've-ui-specialCharacterDialog-source' );
@@ -423,16 +431,15 @@ ve.init.Platform.prototype.fetchSpecialCharList = function () {
 		return null;
 	}
 
-	var charsObj = {},
+	const charsObj = {},
 		groups = [ 'accents', 'mathematical', 'symbols' ];
 
-	var platform = this;
-	groups.forEach( function ( group ) {
+	groups.forEach( ( group ) => {
 		// The following messages are used here:
 		// * visualeditor-specialcharacter-group-set-accents
 		// * visualeditor-specialcharacter-group-set-mathematical
 		// * visualeditor-specialcharacter-group-set-symbols
-		var symbols = tryParseJSON( ve.msg( 'visualeditor-specialcharacter-group-set-' + group ) );
+		const symbols = tryParseJSON( ve.msg( 'visualeditor-specialcharacter-group-set-' + group ) );
 		if ( symbols ) {
 			charsObj[ group ] = {
 				// The following messages are used here:
@@ -440,7 +447,7 @@ ve.init.Platform.prototype.fetchSpecialCharList = function () {
 				// * visualeditor-specialcharacter-group-label-mathematical
 				// * visualeditor-specialcharacter-group-label-symbols
 				label: ve.msg( 'visualeditor-specialcharacter-group-label-' + group ),
-				symbols: platform.processSpecialCharSymbols( symbols )
+				symbols: this.processSpecialCharSymbols( symbols )
 			};
 		}
 	} );

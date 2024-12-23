@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Logger\LoggerFactory;
-use Message;
+use MediaWiki\Message\Message;
 use MWException;
 
 class TOTPDisableForm extends OATHAuthOOUIHTMLForm {

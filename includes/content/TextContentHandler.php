@@ -23,12 +23,18 @@
  * @ingroup Content
  */
 
+namespace MediaWiki\Content;
+
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
+use ReflectionMethod;
+use SearchEngine;
+use SearchIndexField;
+use WikiPage;
 
 /**
  * Base content handler implementation for flat text contents.
@@ -253,3 +259,5 @@ class TextContentHandler extends ContentHandler {
 		$output->setRawText( $html );
 	}
 }
+/** @deprecated class alias since 1.43 */
+class_alias( TextContentHandler::class, 'TextContentHandler' );

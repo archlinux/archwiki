@@ -21,24 +21,23 @@
 
 namespace MediaWiki\Pager;
 
-use Language;
 use LocalisationCache;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageFactory;
-use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\Xml\Xml;
 use stdClass;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
-use Xml;
 
 /**
  * Use TablePager for prettified output. We have to pretend that we're
@@ -167,7 +166,7 @@ class AllMessagesTablePager extends TablePager {
 		$messageNames,
 		$langcode = 'en',
 		$foreign = false,
-		IReadableDatabase $dbr = null
+		?IReadableDatabase $dbr = null
 	) {
 		// FIXME: This function should be moved to Language:: or something.
 		// Fallback to global state, if not provided
@@ -292,7 +291,7 @@ class AllMessagesTablePager extends TablePager {
 				$title = Title::makeTitle( NS_MEDIAWIKI, $value . $this->suffix );
 				$talk = Title::makeTitle( NS_MEDIAWIKI_TALK, $value . $this->suffix );
 				$message = $this->msg( $value )->inLanguage( $this->lang )->useDatabase( false )->plain();
-				$translation = Linker::makeExternalLink(
+				$translation = $linkRenderer->makeExternalLink(
 					'https://translatewiki.net/w/i.php?' . wfArrayToCgi( [
 						'title' => 'Special:SearchTranslations',
 						'group' => 'mediawiki',
@@ -300,7 +299,8 @@ class AllMessagesTablePager extends TablePager {
 						'language' => $this->lang->getCode(),
 						'query' => $value . ' ' . $message
 					] ),
-					$this->msg( 'allmessages-filter-translate' )->text()
+					$this->msg( 'allmessages-filter-translate' ),
+					$this->getTitle()
 				);
 				$talkLink = $this->msg( 'talkpagelinktext' )->text();
 

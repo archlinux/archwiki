@@ -10,19 +10,26 @@ namespace MediaWiki\Extension\Math;
 
 // phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
 
-use ExtensionRegistry;
-use Maintenance;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Hook\MaintenanceRefreshLinksInitHook;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\SpecialPage\Hook\SpecialPage_initListHook;
-use RequestContext;
+use MediaWiki\User\Options\UserOptionsManager;
 
 class Hooks implements
 	SpecialPage_initListHook,
 	MaintenanceRefreshLinksInitHook
 {
+	private UserOptionsManager $userOptionsManager;
+
+	public function __construct(
+		UserOptionsManager $userOptionsManager
+	) {
+		$this->userOptionsManager = $userOptionsManager;
+	}
 
 	/**
 	 * Extension registration callback, used to apply dynamic defaults for configuration variables.
@@ -97,8 +104,7 @@ class Hooks implements
 		$user = RequestContext::getMain()->getUser();
 
 		// Don't parse LaTeX to improve performance
-		MediaWikiServices::getInstance()->getUserOptionsManager()
-			->setOption( $user, 'math', MathConfig::MODE_SOURCE );
+		$this->userOptionsManager->setOption( $user, 'math', MathConfig::MODE_SOURCE );
 	}
 
 	/**

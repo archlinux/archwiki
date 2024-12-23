@@ -20,13 +20,13 @@
 
 namespace MediaWiki\Config;
 
-use BagOStuff;
 use DnsSrvDiscoverer;
-use HashBagOStuff;
-use MultiHttpClient;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Wikimedia\Http\MultiHttpClient;
 use Wikimedia\IPUtils;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\WaitConditionLoop;
 
@@ -202,7 +202,7 @@ class EtcdConfig implements Config, LoggerAwareInterface {
 							return WaitConditionLoop::CONDITION_REACHED;
 						} else {
 							trigger_error( "EtcdConfig failed to fetch data: $error", E_USER_WARNING );
-							if ( !$etcdResponse['retry'] ) {
+							if ( !$etcdResponse['retry'] && !is_array( $data ) ) {
 								// Fail fast since the error is likely to keep happening
 								return WaitConditionLoop::CONDITION_FAILED;
 							}

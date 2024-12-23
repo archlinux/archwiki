@@ -1,13 +1,13 @@
 ( function () {
 	'use strict';
 
-	var notification,
+	let notification = null,
 		// The .mw-notification-area div that all notifications are contained inside.
 		$area,
 		// Number of open notification boxes at any time
 		openNotificationCount = 0,
-		isPageReady = false,
-		preReadyNotifQueue = [];
+		isPageReady = false;
+	const preReadyNotifQueue = [];
 
 	/**
 	 * @classdesc Describes a notification. See [mw.notification module]{@link mw.notification}. A Notification object for 1 message.
@@ -23,9 +23,8 @@
 	 * @param {mw.notification.NotificationOptions} options
 	 */
 	function Notification( message, options ) {
-		var $notification, $notificationContent;
 
-		$notification = $( '<div>' )
+		const $notification = $( '<div>' )
 			.data( 'mw-notification', this )
 			.attr( 'role', 'status' )
 			.addClass( [
@@ -69,7 +68,7 @@
 			$notification.addClass( options.classes );
 		}
 
-		$notificationContent = $( '<div>' ).addClass( 'mw-notification-content' );
+		const $notificationContent = $( '<div>' ).addClass( 'mw-notification-content' );
 
 		if ( typeof message === 'object' ) {
 			// Handle mw.Message objects separately from DOM nodes and jQuery objects
@@ -123,8 +122,6 @@
 	 * @private
 	 */
 	Notification.prototype.start = function () {
-		var options, $notification, $tagMatches, autohideCount;
-
 		$area.css( 'display', '' );
 
 		if ( this.isOpen ) {
@@ -134,9 +131,10 @@
 		this.isOpen = true;
 		openNotificationCount++;
 
-		options = this.options;
-		$notification = this.$notification;
+		const options = this.options;
+		const $notification = this.$notification;
 
+		let $tagMatches;
 		if ( options.tag ) {
 			// Find notifications with the same tag
 			$tagMatches = $area.find( '.mw-notification-tag-' + options.tag );
@@ -148,7 +146,7 @@
 			// While there can be only one "open" notif with a given tag, there can be several
 			// matches here because they remain in the DOM until the animation is finished.
 			$tagMatches.each( function () {
-				var notif = $( this ).data( 'mw-notification' );
+				const notif = $( this ).data( 'mw-notification' );
 				if ( notif && notif.isOpen ) {
 					// Detach from render flow with position absolute so that the new tag can
 					// occupy its space instead.
@@ -168,9 +166,9 @@
 				.addClass( 'mw-notification-visible' );
 		} else {
 			$area.append( $notification );
-			requestAnimationFrame( function () {
+			requestAnimationFrame( () => {
 				// This frame renders the element in the area (invisible)
-				requestAnimationFrame( function () {
+				requestAnimationFrame( () => {
 					$notification.addClass( 'mw-notification-visible' );
 				} );
 			} );
@@ -179,7 +177,7 @@
 		// By default a notification is paused.
 		// If this notification is within the first {autoHideLimit} notifications then
 		// start the auto-hide timer as soon as it's created.
-		autohideCount = $area.find( '.mw-notification-autohide' ).length;
+		const autohideCount = $area.find( '.mw-notification-autohide' ).length;
 		if ( autohideCount <= notification.autoHideLimit ) {
 			this.resume();
 		}
@@ -187,6 +185,7 @@
 
 	/**
 	 * Pause any running auto-hide timer for this notification.
+	 *
 	 * @memberof Notification
 	 */
 	Notification.prototype.pause = function () {
@@ -205,10 +204,11 @@
 	 * Start autoHide timer if not already started.
 	 * Does nothing if autoHide is disabled.
 	 * Either to resume from pause or to make the first start.
+	 *
 	 * @memberof Notification
 	 */
 	Notification.prototype.resume = function () {
-		var notif = this;
+		const notif = this;
 
 		if ( !notif.isPaused ) {
 			return;
@@ -216,7 +216,7 @@
 		// Start any autoHide timeouts
 		if ( notif.options.autoHide ) {
 			notif.isPaused = false;
-			notif.timeoutId = notif.timeout.set( function () {
+			notif.timeoutId = notif.timeout.set( () => {
 				// Already finished, so don't try to re-clear it
 				delete notif.timeoutId;
 				notif.close();
@@ -226,10 +226,11 @@
 
 	/**
 	 * Close the notification.
+	 *
 	 * @memberof Notification
 	 */
 	Notification.prototype.close = function () {
-		var notif = this;
+		const notif = this;
 
 		if ( !this.isOpen ) {
 			return;
@@ -250,10 +251,10 @@
 		// notification that has now become one of the first {autoHideLimit} notifications.
 		notification.resume();
 
-		requestAnimationFrame( function () {
+		requestAnimationFrame( () => {
 			notif.$notification.removeClass( 'mw-notification-visible' );
 
-			setTimeout( function () {
+			setTimeout( () => {
 				if ( openNotificationCount === 0 ) {
 					// Hide the area after the last notification closes. Otherwise, the padding on
 					// the area can be obscure content, despite the area being empty/invisible (T54659). // FIXME
@@ -281,7 +282,7 @@
 	 */
 	function callEachNotification( $notifications, fn ) {
 		$notifications.each( function () {
-			var notif = $( this ).data( 'mw-notification' );
+			const notif = $( this ).data( 'mw-notification' );
 			if ( notif ) {
 				notif[ fn ]();
 			}
@@ -295,11 +296,11 @@
 	 * @ignore
 	 */
 	function init() {
-		var offset, $overlay,
+		let offset, $overlay,
 			isFloating = false;
 
 		function updateAreaMode() {
-			var shouldFloat = window.pageYOffset > offset.top;
+			const shouldFloat = window.pageYOffset > offset.top;
 			if ( isFloating === shouldFloat ) {
 				return;
 			}
@@ -331,7 +332,7 @@
 			} )
 			// When clicking on a notification close it.
 			.on( 'click', '.mw-notification', function () {
-				var notif = $( this ).data( 'mw-notification' );
+				const notif = $( this ).data( 'mw-notification' );
 				if ( notif ) {
 					notif.close();
 				}
@@ -339,15 +340,15 @@
 			// Stop click events from <a> and <select> tags from propagating to prevent clicks
 			// from hiding a notification. stopPropagation() bubbles up, not down,
 			// hence this should not conflict with OOUI's own click handlers.
-			.on( 'click', 'a, select, .oo-ui-dropdownInputWidget', function ( e ) {
+			.on( 'click', 'a, select, .oo-ui-dropdownInputWidget', ( e ) => {
 				e.stopPropagation();
 			} );
 
 		// Read from the DOM:
 		// Must be in the next frame to avoid synchronous layout
 		// computation from offset()/getBoundingClientRect().
-		requestAnimationFrame( function () {
-			var notif;
+		requestAnimationFrame( () => {
+			let notif;
 
 			offset = $area.offset();
 
@@ -393,7 +394,8 @@
 
 		/**
 		 * Resume any paused auto-hide timers from the beginning.
-		 * Only the first #autoHideLimit timers will be resumed.
+		 * Only the first {@link mw.notification.autoHideLimit} timers will be resumed.
+		 *
 		 * @memberof mw.notification
 		 */
 		resume: function () {
@@ -418,10 +420,9 @@
 		 * @return {Notification} Notification object
 		 */
 		notify: function ( message, options ) {
-			var notif;
-			options = $.extend( {}, notification.defaults, options );
+			options = Object.assign( {}, notification.defaults, options );
 
-			notif = new Notification( message, options );
+			const notif = new Notification( message, options );
 
 			if ( isPageReady ) {
 				notif.start();
@@ -459,6 +460,7 @@
 
 		/**
 		 * The defaults for [#notify]{@link mw.notification.notify} options parameter.
+		 *
 		 * @memberof mw.notification
 		 * @type {mw.notification.NotificationOptions}
 		 */
@@ -474,8 +476,13 @@
 		},
 
 		/**
-		 * @private
-		 * @property {Object}
+		 * Map of predefined auto-hide timeout keys to second values. `short` is
+		 * used by default, and other values can be added for use in [#notify]{@link mw.notification.notify}.
+		 *
+		 * @memberof mw.notification
+		 * @type {Object.<string, number>}
+		 * @property {number} short 5 seconds (default)
+		 * @property {number} long 30 seconds
 		 */
 		autoHideSeconds: {
 			short: 5,
@@ -489,7 +496,7 @@
 		 * auto-hiding after the previous messages have been closed.
 		 *
 		 * This basically represents the minimal number of notifications the user should
-		 * be able to process during the {@link #defaults default} #autoHideSeconds time.
+		 * be able to process during the {@link mw.notification.defaults default} `autoHideSeconds` time.
 		 *
 		 * @memberof mw.notification
 		 * @type {number}

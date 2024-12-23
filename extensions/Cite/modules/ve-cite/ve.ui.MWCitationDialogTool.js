@@ -49,7 +49,7 @@ ve.ui.MWCitationDialogTool.static.isCompatibleWith = function ( model ) {
 		// Check if content of the reference node contains only a template with the same name as
 		// this.template
 		const internalItem = model.getInternalItem();
-		const branches = internalItem.getChildren();
+		const branches = internalItem ? internalItem.getChildren() : [];
 		if ( branches.length === 1 && branches[ 0 ].canContainContent() ) {
 			const leaves = branches[ 0 ].getChildren();
 			if ( leaves.length === 1 && leaves[ 0 ] instanceof ve.dm.MWTransclusionNode ) {

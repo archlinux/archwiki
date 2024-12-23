@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\EditBox;
 
-use Xml;
+use MediaWiki\Html\Html;
 
 /**
  * Class responsible for building a plain text filter edit box
@@ -13,15 +13,21 @@ class PlainEditBoxBuilder extends EditBoxBuilder {
 	 */
 	public function getEditBox( string $rules, bool $isUserAllowed, bool $externalForm ): string {
 		$rules = rtrim( $rules ) . "\n";
-		// Rules are in English
-		$editorAttribs = [ 'dir' => 'ltr' ];
+		$editorAttribs = [
+			'name' => 'wpFilterRules',
+			'id' => 'wpFilterRules',
+			// Rules are in English
+			'dir' => 'ltr',
+			'cols' => 40,
+			'rows' => 15,
+		];
 		if ( !$isUserAllowed ) {
 			$editorAttribs['readonly'] = 'readonly';
 		}
 		if ( $externalForm ) {
 			$editorAttribs['form'] = 'wpFilterForm';
 		}
-		return Xml::textarea( 'wpFilterRules', $rules, 40, 15, $editorAttribs );
+		return Html::element( 'textarea', $editorAttribs, $rules );
 	}
 
 }

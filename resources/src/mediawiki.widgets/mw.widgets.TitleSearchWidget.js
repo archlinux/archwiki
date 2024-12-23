@@ -7,7 +7,7 @@
 ( function () {
 
 	/**
-	 * Creates an mw.widgets.TitleSearchWidget object.
+	 * @classdesc Title search widget.
 	 *
 	 * @class
 	 * @extends OO.ui.SearchWidget
@@ -15,6 +15,7 @@
 	 * @mixes mw.widgets.TitleWidget
 	 *
 	 * @constructor
+	 * @description Create an mw.widgets.TitleSearchWidget object.
 	 * @param {Object} [config] Configuration options
 	 */
 	mw.widgets.TitleSearchWidget = function MwWidgetsTitleSearchWidget( config ) {
@@ -74,17 +75,15 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.TitleSearchWidget.prototype.onQueryChange = function () {
-		var widget = this;
-
-		this.getRequestData().done( function ( data ) {
-			if ( widget.query.isReadOnly() ) {
+		this.getRequestData().done( ( data ) => {
+			if ( this.query.isReadOnly() ) {
 				// The request object is always abortable, so just
 				// prevent the results from displaying
 				return;
 			}
 			// Parent method
-			mw.widgets.TitleSearchWidget.super.prototype.onQueryChange.call( widget );
-			widget.results.addItems( widget.getOptionsFromData( data ) );
+			mw.widgets.TitleSearchWidget.super.prototype.onQueryChange.call( this );
+			this.results.addItems( this.getOptionsFromData( data ) );
 		} );
 	};
 

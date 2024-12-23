@@ -22,5 +22,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kode",
 	"syntaxhighlight-error-pygments-invocation-failure": "Pygments ni bilo mogoče priklicati",
 	"syntaxhighlight-error-unknown-language": "Neznani jezik »$1«",
-	"syntaxhighlight-error-exceeds-size-limit": "Velikost kode $1 {{PLURAL:$1|zlog|zloga|zloge|zlogov}} presega največjo dovoljeno velikost $2 {{PLURAL:$2|zlog|zloga|zloge|zlogov}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Velikost kode $1 {{PLURAL:$1|zlog|zloga|zloge|zlogov}} presega največjo dovoljeno velikost $2 {{PLURAL:$2|zlog|zloga|zloge|zlogov}}",
+	"syntaxhighlight-button-copy": "Kopiraj",
+	"syntaxhighlight-button-copied": "Kopirano!"
 }

@@ -17,7 +17,6 @@ use Psr\Log\NullLogger;
  * subclasses of MediaWikiIntegrationTestCase or MediaWikiUnitTestCase.
  *
  * @stable to use
- * @package MediaWiki\Session
  */
 trait SessionProviderTestTrait {
 
@@ -33,11 +32,11 @@ trait SessionProviderTestTrait {
 	 */
 	private function initProvider(
 		SessionProvider $provider,
-		LoggerInterface $logger = null,
-		Config $config = null,
-		SessionManager $manager = null,
-		HookContainer $hookContainer = null,
-		UserNameUtils $userNameUtils = null
+		?LoggerInterface $logger = null,
+		?Config $config = null,
+		?SessionManager $manager = null,
+		?HookContainer $hookContainer = null,
+		?UserNameUtils $userNameUtils = null
 	) {
 		$provider->init(
 			$logger ?? new NullLogger(),

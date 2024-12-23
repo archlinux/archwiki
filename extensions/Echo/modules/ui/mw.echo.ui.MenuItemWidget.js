@@ -4,16 +4,16 @@
 	 *
 	 * @class
 	 * @extends OO.ui.ButtonOptionWidget
-	 * @mixins OO.ui.mixin.PendingElement
+	 * @mixes OO.ui.mixin.PendingElement
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration object
-	 * @cfg {string} [type] Optional action type. Used to note a dynamic action, by setting it to 'dynamic-action'
-	 * @cfg {string} [url] Item URL for links
-	 * @cfg {string} [tooltip] Tooltip for links
-	 * @cfg {string} [description] An optional description for the item
-	 * @cfg {Object} [actionData] Action data
-	 * @cfg {boolean} [prioritized] The item is prioritized outside the
+	 * @param {string} [config.type] Optional action type. Used to note a dynamic action, by setting it to 'dynamic-action'
+	 * @param {string} [config.url] Item URL for links
+	 * @param {string} [config.tooltip] Tooltip for links
+	 * @param {string} [config.description] An optional description for the item
+	 * @param {Object} [config.actionData] Action data
+	 * @param {boolean} [config.prioritized] The item is prioritized outside the
 	 *  popup menu.
 	 */
 	mw.echo.ui.MenuItemWidget = function MwEchoUiMenuItemWidget( config ) {
@@ -25,7 +25,7 @@
 		this.isLink = config.url && !this.isDynamicAction();
 
 		// Parent constructor
-		mw.echo.ui.MenuItemWidget.super.call( this, $.extend( { framed: false }, config ) );
+		mw.echo.ui.MenuItemWidget.super.call( this, Object.assign( { framed: false }, config ) );
 
 		// Mixin constructors
 		OO.ui.mixin.PendingElement.call( this, config );
@@ -108,15 +108,20 @@
 	};
 
 	/**
+	 * @typedef {Object} ConfirmationMessages
+	 * @memberof mw.echo.ui.MenuItemWidget
+	 * @property {string} title Title for the confirmation dialog
+	 * @property {string} description Description for the confirmation dialog
+	 */
+
+	/**
 	 * Get the messages for the confirmation dialog
 	 * We expect optionally two messages - title and description.
 	 *
 	 * NOTE: The messages are parsed as HTML. If user-input is expected
 	 * please make sure to properly escape it.
 	 *
-	 * @return {Object} Messages for the confirmation dialog
-	 * @return {string} return.title Title for the confirmation dialog
-	 * @return {string} return.description Description for the confirmation dialog
+	 * @return {mw.echo.ui.MenuItemWidget.ConfirmationMessages} Messages for the confirmation dialog
 	 */
 	mw.echo.ui.MenuItemWidget.prototype.getConfirmationMessages = function () {
 		return this.messages.confirmation;

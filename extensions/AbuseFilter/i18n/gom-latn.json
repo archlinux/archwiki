@@ -8,5 +8,5 @@
 	"abusefilter-log-search-impact-saved": "Fokot samballeleo bodol dakhoi",
 	"abusefilter-log-search-action-taken-any": "Khuimcheim",
 	"tag-abusefilter-condition-limit": "ottiche xime kodden pavlam",
-	"tag-abusefilter-condition-limit-description": "Sompadon vo her vostu jeo sogllea kriaxil [[Special:AbuseFilter|vaitt upeg gallnneanchean]] topasunk zavnk na ([[mw:Extension:AbuseFilter/Conditions|adar]])."
+	"tag-abusefilter-condition-limit-description": "Sompadon vo her vostu jeo sogllea kriaxil [[Special:AbuseFilter|vaitt upeg gallnneanchean]] topasunk zavnk na ([https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Conditions adar])."
 }

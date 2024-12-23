@@ -20,13 +20,17 @@
 
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Refresh link tables.
@@ -108,7 +112,8 @@ class RefreshLinks extends Maintenance {
 			} else {
 				if ( $touched ) {
 					$builder->andWhere( [
-						'page_touched > page_links_updated OR page_links_updated IS NULL',
+						$dbr->expr( 'page_touched', '>', 'page_links_updated' )
+							->or( 'page_links_updated', '=', null ),
 					] );
 				}
 				$this->output( "Refreshing $what from pages...\n" );
@@ -134,7 +139,7 @@ class RefreshLinks extends Maintenance {
 		// Give extensions a chance to optimize settings
 		$this->getHookRunner()->onMaintenanceRefreshLinksInit( $this );
 
-		$estimateCount = $builder->estimateRowCount();
+		$estimateCount = $builder->caller( __METHOD__ )->estimateRowCount();
 		$this->output( "Estimated page count: $estimateCount\n" );
 
 		$i = 0;
@@ -220,8 +225,12 @@ class RefreshLinks extends Maintenance {
 		}
 
 		// Update the page table to be sure it is an a consistent state
-		$dbw->update( 'page', [ 'page_is_redirect' => $fieldValue ],
-			[ 'page_id' => $id ], __METHOD__ );
+		$dbw->newUpdateQueryBuilder()
+			->update( 'page' )
+			->set( [ 'page_is_redirect' => $fieldValue ] )
+			->where( [ 'page_id' => $id ] )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 	/**
@@ -355,7 +364,7 @@ class RefreshLinks extends Maintenance {
 	}
 
 	/**
-	 * Build a SQL expression for a closed interval (i.e. BETWEEN).
+	 * Build a SQL expression for a closed interval.
 	 *
 	 * By specifying a null $start or $end, it is also possible to create
 	 * half-bounded or unbounded intervals using this function.
@@ -364,17 +373,17 @@ class RefreshLinks extends Maintenance {
 	 * @param string $var Field name
 	 * @param mixed $start First value to include or null
 	 * @param mixed $end Last value to include or null
-	 * @return string
+	 * @return IExpression
 	 */
 	private static function intervalCond( IReadableDatabase $db, $var, $start, $end ) {
 		if ( $start === null && $end === null ) {
-			return "$var IS NOT NULL";
+			return $db->expr( $var, '!=', null );
 		} elseif ( $end === null ) {
-			return "$var >= " . $db->addQuotes( $start );
+			return $db->expr( $var, '>=', $start );
 		} elseif ( $start === null ) {
-			return "$var <= " . $db->addQuotes( $end );
+			return $db->expr( $var, '<=', $end );
 		} else {
-			return "$var BETWEEN " . $db->addQuotes( $start ) . ' AND ' . $db->addQuotes( $end );
+			return $db->expr( $var, '>=', $start )->and( $var, '<=', $end );
 		}
 	}
 
@@ -426,5 +435,7 @@ class RefreshLinks extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RefreshLinks::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -20,6 +20,8 @@ ve.ui.MWReferenceContextItem = function VeUiMWReferenceContextItem() {
 	// Parent constructor
 	ve.ui.MWReferenceContextItem.super.apply( this, arguments );
 	this.view = null;
+	/** @member {ve.dm.MWGroupReferences} */
+	this.groupRefs = null;
 	// Initialization
 	this.$element.addClass( 've-ui-mwReferenceContextItem' );
 };
@@ -69,20 +71,16 @@ ve.ui.MWReferenceContextItem.prototype.getRendering = function () {
  * Get a DOM rendering of a warning if this reference is reused.
  *
  * @private
- * @return {jQuery|null}
+ * @return {jQuery|undefined}
  */
 ve.ui.MWReferenceContextItem.prototype.getReuseWarning = function () {
-	const refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
-	const group = this.getFragment().getDocument().getInternalList()
-		.getNodeGroup( refModel.getListGroup() );
-	const nodes = ve.getProp( group, 'keyedNodes', refModel.getListKey() );
-	const usages = nodes && nodes.filter( function ( node ) {
-		return !node.findParent( ve.dm.MWReferencesListNode );
-	} ).length;
-	if ( usages > 1 ) {
+	const listKey = this.model.getAttribute( 'listKey' );
+	const totalUsageCount = this.groupRefs.getTotalUsageCount( listKey );
+
+	if ( totalUsageCount > 1 ) {
 		return $( '<div>' )
 			.addClass( 've-ui-mwReferenceContextItem-muted' )
-			.text( mw.msg( 'cite-ve-dialog-reference-editing-reused', usages ) );
+			.text( ve.msg( 'cite-ve-dialog-reference-editing-reused', totalUsageCount ) );
 	}
 };
 
@@ -90,15 +88,16 @@ ve.ui.MWReferenceContextItem.prototype.getReuseWarning = function () {
  * Get a DOM rendering of a warning if this reference is an extension.
  *
  * @private
- * @return {jQuery|null}
+ * @return {jQuery|undefined}
  */
 ve.ui.MWReferenceContextItem.prototype.getExtendsWarning = function () {
-	const refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
-
-	if ( refModel.extendsRef ) {
+	if ( this.model.getAttribute( 'extendsRef' ) ) {
 		return $( '<div>' )
-			.addClass( 've-ui-mwReferenceContextItem-muted' )
-			.text( mw.msg( 'cite-ve-dialog-reference-editing-extends' ) );
+			.addClass( [
+				've-ui-mwReferenceContextItem-muted',
+				've-ui-mwReferenceContextItemSubNote'
+			] )
+			.text( ve.msg( 'cite-ve-dialog-reference-contextitem-extends' ) );
 	}
 };
 
@@ -112,9 +111,7 @@ ve.ui.MWReferenceContextItem.prototype.getReferenceNode = function () {
 		return null;
 	}
 	if ( !this.referenceNode ) {
-		const refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
-		this.referenceNode = this.getFragment().getDocument().getInternalList()
-			.getItemNode( refModel.getListIndex() );
+		this.referenceNode = this.groupRefs.getInternalModelNode( this.model.getAttribute( 'listKey' ) );
 	}
 	return this.referenceNode;
 };
@@ -130,16 +127,29 @@ ve.ui.MWReferenceContextItem.prototype.getDescription = function () {
  * Get the text of the parent reference.
  *
  * @private
- * @return {string|null}
+ * @return {jQuery|null}
  */
 ve.ui.MWReferenceContextItem.prototype.getParentRef = function () {
-	const refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
-	if ( !refModel.extendsRef ) {
+	const extendsRef = this.model.getAttribute( 'extendsRef' );
+	if ( !extendsRef ) {
 		return null;
 	}
-	const list = this.getFragment().getDocument().getInternalList();
-	const index = list.keys.indexOf( 'literal/' + refModel.extendsRef );
-	return list.getItemNode( index ).element.attributes.originalHtml;
+	const parentNode = this.groupRefs.getInternalModelNode( extendsRef );
+	return parentNode ? new ve.ui.MWPreviewElement( parentNode, { useView: true } ).$element :
+		$( '<div>' )
+			.addClass( 've-ui-mwReferenceContextItem-muted' )
+			.text( ve.msg( 'cite-ve-dialog-reference-missing-parent-ref' ) );
+};
+
+/**
+ * @override
+ */
+ve.ui.MWReferenceContextItem.prototype.setup = function () {
+	this.groupRefs = ve.dm.MWDocumentReferences.static.refsForDoc( this.getFragment().getDocument() )
+		.getGroupRefs( this.model.getAttribute( 'listGroup' ) );
+
+	// Parent method
+	return ve.ui.MWReferenceContextItem.super.prototype.setup.apply( this, arguments );
 };
 
 /**
@@ -148,9 +158,9 @@ ve.ui.MWReferenceContextItem.prototype.getParentRef = function () {
 ve.ui.MWReferenceContextItem.prototype.renderBody = function () {
 	this.$body.empty().append(
 		this.getParentRef(),
+		this.getExtendsWarning(),
 		this.getRendering(),
-		this.getReuseWarning(),
-		this.getExtendsWarning()
+		this.getReuseWarning()
 	);
 };
 

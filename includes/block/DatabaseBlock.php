@@ -150,7 +150,9 @@ class DatabaseBlock extends AbstractBlock {
 	 * database, but they continue to be available in query results as
 	 * aliases.
 	 *
+	 * @deprecated since 1.43, use DatabaseBlockStore::getQueryInfo()
 	 * @since 1.31
+	 *
 	 * @return array[] With three keys:
 	 *   - tables: (string[]) to include in the `$table` to `IDatabase->select()`
 	 *     or `SelectQueryBuilder::tables`
@@ -161,6 +163,7 @@ class DatabaseBlock extends AbstractBlock {
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
 	public static function getQueryInfo() {
+		wfDeprecated( __METHOD__, '1.43' );
 		return MediaWikiServices::getInstance()->getDatabaseBlockStore()
 			->getQueryInfo( DatabaseBlockStore::SCHEMA_IPBLOCKS );
 	}
@@ -196,11 +199,15 @@ class DatabaseBlock extends AbstractBlock {
 
 	/**
 	 * Get a set of SQL conditions which will select range blocks encompassing a given range
+	 *
+	 * @deprecated since 1.43 use DatabaseBlockStore::getRangeCond
+	 *
 	 * @param string $start Hexadecimal IP representation
 	 * @param string|null $end Hexadecimal IP representation, or null to use $start = $end
 	 * @return string
 	 */
 	public static function getRangeCond( $start, $end = null ) {
+		wfDeprecated( __METHOD__, '1.43' );
 		return MediaWikiServices::getInstance()->getDatabaseBlockStore()
 			->getRangeCond( $start, $end, DatabaseBlockStore::SCHEMA_IPBLOCKS );
 	}
@@ -444,17 +451,6 @@ class DatabaseBlock extends AbstractBlock {
 		wfDeprecated( __METHOD__, '1.42' );
 		return MediaWikiServices::getInstance()->getDatabaseBlockStore()
 			->getAutoblockExpiry( $timestamp );
-	}
-
-	/**
-	 * Purge expired blocks from the ipblocks table
-	 *
-	 * @deprecated since 1.36, hard deprecated since 1.38
-	 * Use DatabaseBlockStore::purgeExpiredBlocks instead.
-	 */
-	public static function purgeExpired() {
-		wfDeprecated( __METHOD__, '1.36' );
-		MediaWikiServices::getInstance()->getDatabaseBlockStore()->purgeExpiredBlocks();
 	}
 
 	/**
@@ -746,6 +742,6 @@ class DatabaseBlock extends AbstractBlock {
 		return MediaWikiServices::getInstance()
 			->getDBLoadBalancerFactory()
 			->getMainLB( $this->getWikiId() )
-			->getConnectionRef( $i, [], $this->getWikiId() );
+			->getConnection( $i, [], $this->getWikiId() );
 	}
 }

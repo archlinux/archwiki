@@ -1,6 +1,33 @@
-#vector-client-prefs {
+@import 'mediawiki.skin.variables.less';
+
+#vector-appearance {
 	form {
 		font-size: 0.875rem;
 		padding: 6px 0;
 	}
+
+	a.skin-theme-beta-notice-success {
+		color: @color-success;
+		pointer-events: none;
+	}
+
+	.vector-icon.vector-icon--heart {
+		.cdx-mixin-css-icon( @cdx-icon-heart, @color-success, @size-icon-small );
+	}
+}
+
+// Only display feedback notice in dark mode.
+// https://phabricator.wikimedia.org/T367871#10003064
+#skin-theme-beta-notice {
+	display: none;
+}
+
+@media screen and ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os #skin-theme-beta-notice {
+		display: block;
+	}
+}
+
+html.skin-theme-clientpref-night #skin-theme-beta-notice {
+	display: block;
 }

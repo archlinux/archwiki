@@ -27,13 +27,10 @@
 
 namespace MediaWiki\Api;
 
-use ApiMain;
 use LogicException;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EntryPointEnvironment;
 use MediaWiki\HookContainer\HookRunner;
-use MediaWiki\Logger\LegacyLogger;
-use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiEntryPoint;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
@@ -85,13 +82,11 @@ class ApiEntryPoint extends MediaWikiEntryPoint {
 	 * the URL.
 	 */
 	protected function execute() {
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 		global $wgTitle;
 
 		$context = $this->getContext();
 		$request = $this->getRequest();
-		$apiRequestLog = $this->getConfig( MainConfigNames::APIRequestLog );
-
-		$starttime = microtime( true );
 
 		$services = $this->getServiceContainer();
 
@@ -156,46 +151,6 @@ class ApiEntryPoint extends MediaWikiEntryPoint {
 		// Process data & print results
 		if ( $processor ) {
 			$processor->execute();
-		}
-
-		// Log what the user did, for book-keeping purposes.
-		$endtime = microtime( true );
-
-		// Log the request
-		if ( $apiRequestLog ) {
-			$items = [
-				wfTimestamp( TS_MW ),
-				$endtime - $starttime,
-				$request->getIP(),
-				$request->getHeader( 'User-agent' )
-			];
-			$items[] = $request->wasPosted() ? 'POST' : 'GET';
-			if ( $processor ) {
-				try {
-					$manager = $processor->getModuleManager();
-					$module = $manager->getModule(
-						$request->getRawVal( 'action' ),
-						'action'
-					);
-				} catch ( Throwable $ex ) {
-					$module = null;
-				}
-				if ( !$module || $module->mustBePosted() ) {
-					$items[] = "action=" . $request->getRawVal( 'action' );
-				} else {
-					$items[] = wfArrayToCgi( $request->getValues() );
-				}
-			} else {
-				$items[] = "failed in ApiBeforeMain";
-			}
-			LegacyLogger::emit(
-				implode(
-					',',
-					$items
-				) . "\n",
-				$apiRequestLog
-			);
-			wfDebug( "Logged API request to $apiRequestLog" );
 		}
 	}
 }

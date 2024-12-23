@@ -167,7 +167,7 @@ class DatabasePostgres extends Database {
 			);
 		} else {
 			$this->currentDomain = $domain;
-			$this->platform->setCurrentDomain( $this->currentDomain );
+			$this->platform->setCurrentDomain( $domain );
 		}
 
 		return true;
@@ -195,6 +195,7 @@ class DatabasePostgres extends Database {
 
 		$sql = mb_convert_encoding( $sql, 'UTF-8' );
 		// Clear any previously left over result
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $priorRes = pg_get_result( $conn ) ) {
 			pg_free_result( $priorRes );
 		}
@@ -277,24 +278,9 @@ class DatabasePostgres extends Database {
 		return '00000';
 	}
 
-	/**
-	 * Estimate rows in dataset
-	 * Returns estimated count, based on EXPLAIN output
-	 * This is not necessarily an accurate estimate, so use sparingly
-	 * Returns -1 if count cannot be found
-	 * Takes same arguments as Database::select()
-	 *
-	 * @param string $table
-	 * @param string $var
-	 * @param string $conds
-	 * @param string $fname
-	 * @param array $options
-	 * @param array $join_conds
-	 * @return int
-	 */
 	public function estimateRowCount( $table, $var = '*', $conds = '',
 		$fname = __METHOD__, $options = [], $join_conds = []
-	) {
+	): int {
 		$conds = $this->platform->normalizeConditions( $conds, $fname );
 		$column = $this->platform->extractSingleFieldFromList( $var );
 		if ( is_string( $column ) && !in_array( $column, [ '*', '1' ] ) ) {
@@ -316,19 +302,29 @@ class DatabasePostgres extends Database {
 	}
 
 	public function indexInfo( $table, $index, $fname = __METHOD__ ) {
+		$components = $this->platform->qualifiedTableComponents( $table );
+		if ( count( $components ) === 1 ) {
+			$schema = $this->getCoreSchema();
+			$tableComponent = $components[0];
+		} elseif ( count( $components ) === 2 ) {
+			[ $schema, $tableComponent ] = $components;
+		} else {
+			[ , $schema, $tableComponent ] = $components;
+		}
+		$encSchema = $this->addQuotes( $schema );
+		$encTable = $this->addQuotes( $tableComponent );
+		$encIndex = $this->addQuotes( $this->platform->indexName( $index ) );
 		$query = new Query(
-			"SELECT indexname FROM pg_indexes WHERE tablename='$table'",
+			"SELECT indexname,indexdef FROM pg_indexes " .
+				"WHERE schemaname=$encSchema AND tablename=$encTable AND indexname=$encIndex",
 			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
 			'SELECT'
 		);
 		$res = $this->query( $query );
-		if ( !$res ) {
-			return null;
-		}
-		foreach ( $res as $row ) {
-			if ( $row->indexname == $this->platform->indexName( $index ) ) {
-				return $row;
-			}
+		$row = $res->fetchObject();
+
+		if ( $row ) {
+			return [ 'unique' => ( strpos( $row->indexdef, 'CREATE UNIQUE ' ) === 0 ) ];
 		}
 
 		return false;
@@ -399,34 +395,6 @@ __INDEXATTR__;
 		return null;
 	}
 
-	public function indexUnique( $table, $index, $fname = __METHOD__ ) {
-		$sql = "SELECT indexname FROM pg_indexes WHERE tablename='{$table}'" .
-			" AND indexdef LIKE 'CREATE UNIQUE%(" .
-			$this->strencode( $this->platform->indexName( $index ) ) .
-			")'";
-		$query = new Query( $sql, self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE, 'SELECT' );
-		$res = $this->query( $query, $fname );
-		return $res && $res->numRows() > 0;
-	}
-
-	/**
-	 * INSERT SELECT wrapper
-	 * $varMap must be an associative array of the form [ 'dest1' => 'source1', ... ]
-	 * Source items may be literals rather then field names, but strings should
-	 * be quoted with Database::addQuotes()
-	 * $conds may be "*" to copy the whole table
-	 * srcTable may be an array of tables.
-	 * @todo FIXME: Implement this a little better (separate select/insert)?
-	 *
-	 * @param string $destTable
-	 * @param array|string $srcTable
-	 * @param array $varMap
-	 * @param array $conds
-	 * @param string $fname
-	 * @param array $insertOptions
-	 * @param array $selectOptions
-	 * @param array $selectJoinConds
-	 */
 	protected function doInsertSelectNative(
 		$destTable,
 		$srcTable,
@@ -460,14 +428,6 @@ __INDEXATTR__;
 		}
 	}
 
-	public function nextSequenceValue( $seqName ) {
-		return new NextSequenceValue;
-	}
-
-	/**
-	 * @param string $table
-	 * @return array<string,string>
-	 */
 	public function getValueTypesForWithClause( $table ) {
 		$typesByColumn = [];
 
@@ -489,30 +449,6 @@ __INDEXATTR__;
 		}
 
 		return $typesByColumn;
-	}
-
-	public function textFieldSize( $table, $field ) {
-		$flags = self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE;
-		$encTable = $this->tableName( $table );
-		$sql = "SELECT t.typname as ftype,a.atttypmod as size
-			FROM pg_class c, pg_attribute a, pg_type t
-			WHERE relname='$encTable' AND a.attrelid=c.oid AND
-				a.atttypid=t.oid and a.attname='$field'";
-		$query = new Query( $sql, $flags, 'SELECT' );
-		$res = $this->query( $query, __METHOD__ );
-		$row = $res->fetchObject();
-		if ( $row->ftype == 'varchar' ) {
-			$size = $row->size - 4;
-		} else {
-			$size = $row->size;
-		}
-
-		return $size;
-	}
-
-	public function wasDeadlock() {
-		// https://www.postgresql.org/docs/9.2/static/errcodes-appendix.html
-		return $this->lastErrno() === '40P01';
 	}
 
 	protected function isConnectionError( $errno ) {
@@ -854,20 +790,15 @@ __INDEXATTR__;
 	 * default mw one if not given)
 	 * @param string $table
 	 * @param array|string $types
-	 * @param bool|string $schema
 	 * @return bool
 	 */
-	private function relationExists( $table, $types, $schema = false ) {
+	private function relationExists( $table, $types ) {
 		if ( !is_array( $types ) ) {
 			$types = [ $types ];
 		}
-		if ( $schema === false ) {
-			$schemas = $this->getCoreSchemas();
-		} else {
-			$schemas = [ $schema ];
-		}
-		$table = $this->tableName( $table, 'raw' );
-		$etable = $this->addQuotes( $table );
+		$schemas = $this->getCoreSchemas();
+		$components = $this->platform->qualifiedTableComponents( $table );
+		$etable = $this->addQuotes( end( $components ) );
 		foreach ( $schemas as $schema ) {
 			$eschema = $this->addQuotes( $schema );
 			$sql = "SELECT 1 FROM pg_catalog.pg_class c, pg_catalog.pg_namespace n "
@@ -887,19 +818,12 @@ __INDEXATTR__;
 		return false;
 	}
 
-	/**
-	 * For backward compatibility, this function checks both tables and views.
-	 * @param string $table
-	 * @param string $fname
-	 * @param bool|string $schema
-	 * @return bool
-	 */
-	public function tableExists( $table, $fname = __METHOD__, $schema = false ) {
-		return $this->relationExists( $table, [ 'r', 'v' ], $schema );
+	public function tableExists( $table, $fname = __METHOD__ ) {
+		return $this->relationExists( $table, [ 'r', 'v' ] );
 	}
 
-	public function sequenceExists( $sequence, $schema = false ) {
-		return $this->relationExists( $sequence, 'S', $schema );
+	public function sequenceExists( $sequence ) {
+		return $this->relationExists( $sequence, 'S' );
 	}
 
 	public function constraintExists( $table, $constraint ) {
@@ -991,6 +915,9 @@ __INDEXATTR__;
 	}
 
 	public function addQuotes( $s ) {
+		if ( $s instanceof RawSQLValue ) {
+			return $s->toSql();
+		}
 		$conn = $this->getBindingHandle();
 
 		if ( $s === null ) {
@@ -1006,8 +933,6 @@ __INDEXATTR__;
 				$s = pg_escape_bytea( $conn, $s->fetch() );
 			}
 			return "'$s'";
-		} elseif ( $s instanceof NextSequenceValue ) {
-			return 'DEFAULT';
 		}
 
 		return "'" . pg_escape_string( $conn, (string)$s ) . "'";
@@ -1106,7 +1031,8 @@ __INDEXATTR__;
 		$column = null;
 
 		$flags = self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE;
-		$encTable = $this->addQuotes( $this->tableName( $table, 'raw' ) );
+		$components = $this->platform->qualifiedTableComponents( $table );
+		$encTable = $this->addQuotes( end( $components ) );
 		foreach ( $this->getCoreSchemas() as $schema ) {
 			$encSchema = $this->addQuotes( $schema );
 			$query = new Query(

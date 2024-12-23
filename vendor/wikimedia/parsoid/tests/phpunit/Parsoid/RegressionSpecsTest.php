@@ -5,7 +5,7 @@ declare( strict_types = 1 );
 namespace Test\Parsoid;
 
 use PHPUnit\Framework\TestCase;
-use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Mocks\MockDataAccess;
 use Wikimedia\Parsoid\Mocks\MockPageConfig;
@@ -63,7 +63,7 @@ class RegressionSpecsTest extends TestCase {
 		$this->assertEquals( $withoutSelser, $editedWT, $description );
 
 		// With selser
-		$selserData = new SelserData( $wt, $html );
+		$selserData = new SelectiveUpdateData( $wt, $html );
 		$editedWT = $parsoid->html2wikitext( $pageConfig, $editedHTML, [], $selserData );
 		$this->assertEquals( $withSelser, $editedWT, $description );
 	}
@@ -234,7 +234,7 @@ class RegressionSpecsTest extends TestCase {
 			"|}"
 		] );
 
-		$selserData = new SelserData( $wt, $html );
+		$selserData = new SelectiveUpdateData( $wt, $html );
 		$editedWT = $parsoid->html2wikitext( $pageConfig, $editedBody, [], $selserData );
 		$this->assertEquals( $newVersion, $editedWT, $description );
 
@@ -261,7 +261,7 @@ class RegressionSpecsTest extends TestCase {
 		// Pretend we are in 1.6.1 version to disable whitespace heuristics
 		$htmlVersion = '1.6.1';
 
-		$selserData = new SelserData( $wt, $html );
+		$selserData = new SelectiveUpdateData( $wt, $html );
 		$editedWT = $parsoid->html2wikitext( $pageConfig, $editedBody,
 			[ 'inputContentVersion' => $htmlVersion ], $selserData );
 		$this->assertEquals( $oldVersion, $editedWT, $description );
@@ -371,7 +371,7 @@ EOT;
 	 * Tests TOC edge cases in T350625 and T352467
 	 * Cannot test some of this via parser tests because that framework strips
 	 * about attributes and here, we want to assert the presence of 'about'.
-	 * @covers \Wikimedia\Parsoid\Wt2Html\PP\Processors\WrapSectionsState
+	 * @covers \Wikimedia\Parsoid\Wt2Html\DOM\Processors\WrapSectionsState
 	 */
 	public function testTocEdgeCases(): void {
 		// For the test below,

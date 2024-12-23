@@ -10,7 +10,7 @@ if ( $IP === false ) {
 require_once "$IP/maintenance/Maintenance.php";
 // @codeCoverageIgnoreEnd
 
-use Maintenance;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Utils\MWTimestamp;
 
 class PurgeOldLogIPData extends Maintenance {
@@ -32,24 +32,24 @@ class PurgeOldLogIPData extends Maintenance {
 
 		$count = 0;
 		do {
-			$ids = $dbw->selectFieldValues(
-				'abuse_filter_log',
-				'afl_id',
-				[
-					'afl_ip <> ' . $dbw->addQuotes( '' ),
-					"afl_timestamp < " . $dbw->addQuotes( $dbw->timestamp( $cutoffUnix ) )
-				],
-				__METHOD__,
-				[ 'LIMIT' => $this->getBatchSize() ]
-			);
+			$ids = $dbw->newSelectQueryBuilder()
+				->select( 'afl_id' )
+				->from( 'abuse_filter_log' )
+				->where( [
+					$dbw->expr( 'afl_ip', '!=', '' ),
+					$dbw->expr( 'afl_timestamp', '<', $dbw->timestamp( $cutoffUnix ) ),
+				] )
+				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )
+				->fetchFieldValues();
 
 			if ( $ids ) {
-				$dbw->update(
-					'abuse_filter_log',
-					[ 'afl_ip' => '' ],
-					[ 'afl_id' => $ids ],
-					__METHOD__
-				);
+				$dbw->newUpdateQueryBuilder()
+					->update( 'abuse_filter_log' )
+					->set( [ 'afl_ip' => '' ] )
+					->where( [ 'afl_id' => $ids ] )
+					->caller( __METHOD__ )
+					->execute();
 				$count += $dbw->affectedRows();
 				$this->output( "$count\n" );
 

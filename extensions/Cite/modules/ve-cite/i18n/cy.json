@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Afalau",
+			"Ceirios",
 			"Cymrodor",
 			"DChan (WMF)",
 			"Ed g2s",
 			"Lloffiwr",
 			"Robin Owain",
-			"ОйЛ",
-			"Ceirios"
+			"ОйЛ"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Llyfr",
@@ -20,7 +20,6 @@
 	"cite-ve-citationneeded-title": "Angen cyfeiriad",
 	"cite-ve-dialog-reference-options-group-label": "Defnyddio'r grŵp hwn",
 	"cite-ve-dialog-reference-options-group-placeholder": "Cyfeirnodau cyffredinol",
-	"cite-ve-dialog-reference-options-name-label": "Ail-ddefnyddio wrth yr enw hwn",
 	"cite-ve-dialog-reference-options-section": "Dewisiadau",
 	"cite-ve-dialog-reference-title": "Cyfeirnod",
 	"cite-ve-dialog-reference-useexisting-tool": "Ail-ddefnyddio",

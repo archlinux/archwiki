@@ -2,12 +2,14 @@
 
 namespace MediaWiki\Tests\OutputTransform\Stages;
 
-use Language;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Language\Language;
 use MediaWiki\OutputTransform\OutputTransformStage;
 use MediaWiki\OutputTransform\Stages\HandleTOCMarkers;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Tests\OutputTransform\OutputTransformStageTestBase;
 use MediaWiki\Tests\OutputTransform\TestUtils;
+use Psr\Log\NullLogger;
 use Skin;
 
 /**
@@ -16,7 +18,11 @@ use Skin;
 class HandleTOCMarkersTest extends OutputTransformStageTestBase {
 
 	public function createStage(): OutputTransformStage {
-		return new HandleTOCMarkers( $this->getServiceContainer()->getTidy() );
+		return new HandleTOCMarkers(
+			new ServiceOptions( [] ),
+			new NullLogger(),
+			$this->getServiceContainer()->getTidy()
+		);
 	}
 
 	public function provideShouldRun(): array {
@@ -104,12 +110,23 @@ EOF;
 			'skin' => $skin,
 			'allowTOC' => true,
 			'injectTOC' => true
-		], $expectedWith ];
+		], $expectedWith, 'should insert TOC' ];
 
 		$poTest2 = new ParserOutput( TestUtils::TEST_DOC );
 		TestUtils::initSections( $poTest2 );
 		$expectedWithout = new ParserOutput( $withoutToc );
 		TestUtils::initSections( $expectedWithout );
-		yield [ $poTest2, null, [ 'allowTOC' => false ], $expectedWithout ];
+		yield [ $poTest2, null, [ 'allowTOC' => false ], $expectedWithout, 'should not insert TOC' ];
+
+		$poTest3 = new ParserOutput( TestUtils::TEST_DOC . '<meta property="mw:PageProp/toc" />' );
+		TestUtils::initSections( $poTest3 );
+		$expectedWith = new ParserOutput( $withToc );
+		TestUtils::initSections( $expectedWith );
+		yield [ $poTest3, null, [
+			'userLang' => $lang,
+			'skin' => $skin,
+			'allowTOC' => true,
+			'injectTOC' => true
+		], $expectedWith, 'should insert TOC only once' ];
 	}
 }

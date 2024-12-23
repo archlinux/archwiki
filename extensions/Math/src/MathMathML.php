@@ -18,8 +18,7 @@ use Psr\Log\LoggerInterface;
 use StatusValue;
 use stdClass;
 use Throwable;
-use Xml;
-use XmlTypeCheck;
+use Wikimedia\Mime\XmlTypeCheck;
 
 /**
  * Converts LaTeX to MathML using the mathoid-server
@@ -111,11 +110,7 @@ class MathMathML extends MathRenderer {
 	 * @return string[]
 	 */
 	public function getAllowedRootElements() {
-		if ( $this->allowedRootElements ) {
-			return $this->allowedRootElements;
-		} else {
-			return $this->defaultAllowedRootElements;
-		}
+		return $this->allowedRootElements ?: $this->defaultAllowedRootElements;
 	}
 
 	/**
@@ -220,7 +215,7 @@ class MathMathML extends MathRenderer {
 		global $wgMathLaTeXMLTimeout;
 		$post = $this->getPostData();
 		$options = [ 'method' => 'POST', 'postData' => $post, 'timeout' => $wgMathLaTeXMLTimeout ];
-		$req = MediaWikiServices::getInstance()->getHttpRequestFactory()->create( $this->host, $options );
+		$req = MediaWikiServices::getInstance()->getHttpRequestFactory()->create( $this->host, $options, __METHOD__ );
 		$status = $req->execute();
 		if ( $status->isGood() ) {
 			return StatusValue::newGood( $req->getContent() );
@@ -441,7 +436,10 @@ class MathMathML extends MathRenderer {
 			$class .= 'inline';
 		}
 		if ( $fallback ) {
+			// Support 3rd party gadgets and extensions.
 			$class .= ' mw-invert';
+			// Support skins with night theme.
+			$class .= ' skin-invert';
 		} else {
 			$class .= ' mwe-math-mathml-a11y';
 		}
@@ -449,15 +447,16 @@ class MathMathML extends MathRenderer {
 	}
 
 	/**
+	 * @param bool $svg
 	 * @return string Html output that is embedded in the page
 	 */
-	public function getHtmlOutput() {
+	public function getHtmlOutput( bool $svg = true ): string {
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$enableLinks = $config->get( "MathEnableFormulaLinks" );
-		if ( $this->getMathStyle() == 'display' ) {
-			$element = 'div';
+		if ( $this->getMathStyle() === 'display' ) {
+			$mml_class = 'mwe-math-mathml-display';
 		} else {
-			$element = 'span';
+			$mml_class = 'mwe-math-mathml-inline';
 		}
 		$attribs = [ 'class' => 'mwe-math-element' ];
 		if ( $this->getID() !== '' ) {
@@ -469,10 +468,7 @@ class MathMathML extends MathRenderer {
 			$titleObj = SpecialPage::getTitleFor( 'MathWikibase' );
 			$hyperlink = $titleObj->getLocalURL( [ 'qid' => $this->params['qid'] ] );
 		}
-		$output = Html::openElement( $element, $attribs );
-		if ( $hyperlink && $enableLinks ) {
-			$output .= Html::openElement( 'a', [ 'href' => $hyperlink, 'style' => 'color:inherit;' ] );
-		}
+		$output = '';
 		// MathML has to be wrapped into a div or span in order to be able to hide it.
 		// Remove displayStyle attributes set by the MathML converter
 		// (Beginning from Mathoid 0.2.5 block is the default layout.)
@@ -482,15 +478,30 @@ class MathMathML extends MathRenderer {
 		if ( $this->getMathStyle() == 'display' ) {
 			$mml = preg_replace( '/<math/', '<math display="block"', $mml );
 		}
-		$output .= Xml::tags( $element, [
-			'class' => $this->getClassName(), 'style' => 'display: none;'
-		], $mml );
-		$output .= $this->getFallbackImage();
-		if ( $hyperlink && $enableLinks ) {
-			$output .= Html::closeElement( 'a' );
+
+		if ( $svg ) {
+			$mml_attribs = [
+				'class' => $this->getClassName(),
+				'style' => 'display: none;'
+			];
+		} else {
+			$mml_attribs = [
+				'class' => $mml_class,
+			];
 		}
-		$output .= Html::closeElement( $element );
-		return $output;
+		$output .= Html::rawElement( 'span', $mml_attribs, $mml );
+		if ( $svg ) {
+			$output .= $this->getFallbackImage();
+		}
+
+		if ( $hyperlink && $enableLinks ) {
+			$output = Html::rawElement( 'a',
+				[ 'href' => $hyperlink, 'style' => 'color:inherit;' ],
+				$output
+			);
+		}
+
+		return Html::rawElement( 'span', $attribs, $output );
 	}
 
 	protected function dbOutArray() {

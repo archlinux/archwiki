@@ -33,7 +33,6 @@
 	"mobile-frontend-meta-data-issues-categories": "এই শ্ৰেণীটোৰ বিষয়ে",
 	"mobile-frontend-meta-data-issues-header": "পৃষ্ঠাৰ সমস্যাসমূহ",
 	"minerva-meta-data-issues-section-header": "অনুচ্ছেদৰ সমস্যাসমূহ",
-	"mobile-frontend-notifications-filter": "ছেকনী",
 	"mobile-frontend-pageaction-edit-tooltip": "এই পৃষ্ঠাৰ শীৰ্ষ অনুচ্ছেদ সম্পাদনা কৰক",
 	"mobile-frontend-placeholder": "{{SITENAME}}ত সন্ধান কৰক",
 	"mobile-frontend-random-button": "যিকোনো",
@@ -57,8 +56,6 @@
 	"skin-minerva-issue-learn-more": "আৰু শিকক",
 	"skin-minerva-mobile-option-MinervaShowCategories": "শ্ৰেণী",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "পৃষ্ঠাসমূহৰ শ্ৰেণীসমূহ চাওক",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "উচ্চত্তৰ পৃষ্ঠাস সমস্যা সমাধান",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "পৃষ্ঠাৰ সমস্যা (সাঁচ:ambox) প্ৰবন্ধটোত ইনলাইন কৰা হ'ব।",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "দুৰ্ভাগ্যবশত, পৃষ্ঠা অনুসৰি ফলাফল দলবদ্ধ কৰা বিকল্পটো মোবাইলত উপলব্ধ নহয়। আপুনি যদি পৃষ্ঠা অনুসৰি দলবদ্ধ কৰা বিকল্পটো ব্যৱহাৰ কৰিব বিচাৰে, তেন্তে অনুগ্ৰহ কৰি ডেস্কটপ সংস্কৰণটো চাওক।",
 	"minerva.css": "/* মিনাৰ্ভানিউ আৱৰণৰ ব্যৱহাৰকাৰীসকলৰ বাবে ইয়াত সকলো CSS লোড কৰা হ'ব */",
 	"minerva.js": "/* মিনাৰ্ভানিউ আৱৰণৰ ব্যৱহাৰকাৰীসকলৰ বাবে ইয়াত সকলো জাভাস্ক্ৰিপ্ট লোড কৰা হ'ব */"

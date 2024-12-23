@@ -29,9 +29,7 @@ let pinnedStatus = false;
 features.toggle = jest.fn( () => {
 	pinnedStatus = !pinnedStatus;
 } );
-features.isEnabled = jest.fn( () => {
-	return pinnedStatus;
-} );
+features.isEnabled = jest.fn( () => pinnedStatus );
 
 const simpleData = {
 	'is-pinned': false,

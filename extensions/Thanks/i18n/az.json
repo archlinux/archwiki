@@ -6,10 +6,10 @@
 			"Interfase",
 			"Khan27",
 			"NMW03",
+			"Nemoralis",
 			"Serkanland",
 			"Toghrul Rahimli",
-			"Wertuose",
-			"Nemoralis"
+			"Wertuose"
 		]
 	},
 	"thanks-desc": "İstifadəçilərin redaktələrinə, şərhlərinə və s. görə minnətdarlıq üçün keçidləri əlavə edir",
@@ -17,9 +17,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|təşəkkür edildi}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Təşəkkür}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Təşəkkür edildi}}}}",
-	"thanks-button-action-queued": "$1 adlı istifadəçiyə {{GENDER:$1|{{GENDER:$2|təşəkkür edilir}}}}…",
-	"thanks-button-action-cancel": "İmtina",
-	"thanks-button-action-completed": "Siz $1 adlı istifadəçiyə {{GENDER:$1|{{GENDER:$2|təşəkkür }}}} etdiniz",
 	"thanks-error-undefined": "Təşəkkür etmək mümkün olmadı (xəta kodu: $1). Xahiş edirik, yenidən cəhd edin.",
 	"thanks-error-invalid-log-id": "Jurnal qeydi tapılmadı",
 	"thanks-error-invalid-log-type": "\"$1\" jurnal növü icazə verilən jurnal növlərinin siyahısında deyil.",

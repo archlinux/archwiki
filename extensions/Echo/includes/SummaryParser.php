@@ -4,23 +4,19 @@ namespace MediaWiki\Extension\Notifications;
 
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
 
 class SummaryParser {
 	/** @var callable */
 	private $userLookup;
 
 	/**
-	 * @param callable|null $userLookup Function that receives User object and returns its id
-	 *  or 0 if the user doesn't exist. Passing null to this parameter will result in default
-	 *  implementation being used.
+	 * @param callable|null $userLookup An alternative filter function that receives a User object
+	 *  (see the caller in {@see parse}) and returns the user id or 0 if the user doesn't exist.
+	 *  Only tests should modify this.
 	 */
-	public function __construct( callable $userLookup = null ) {
-		$this->userLookup = $userLookup;
-		if ( !$this->userLookup ) {
-			$this->userLookup = static function ( User $user ) {
-				return $user->getId();
-			};
-		}
+	public function __construct( ?callable $userLookup = null ) {
+		$this->userLookup = $userLookup ?? static fn ( UserIdentity $user ) => $user->getId();
 	}
 
 	/**
@@ -48,8 +44,7 @@ class SummaryParser {
 					 && $title->getNamespace() === NS_USER
 				) {
 					$user = User::newFromName( $title->getText() );
-					$lookup = $this->userLookup;
-					if ( $user && $lookup( $user ) > 0 ) {
+					if ( $user && ( $this->userLookup )( $user ) > 0 ) {
 						$users[$user->getName()] = $user;
 					}
 				}

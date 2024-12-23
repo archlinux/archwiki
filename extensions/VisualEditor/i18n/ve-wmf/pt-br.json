@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"!Silent",
+			"555",
 			"Cainamarques",
 			"Dianakc",
 			"Felipe L. Ewald",
@@ -14,8 +15,7 @@
 			"OTAVIO1981",
 			"TheEduGobi",
 			"TheGabrielZaum",
-			"아라",
-			555
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "O EditCheck acha que novo conteúdo foi adicionado à página",
@@ -34,7 +34,6 @@
 	"visualeditor-feedback-link": "Project:Editor Visual/Comentários",
 	"visualeditor-feedback-tool": "Deixar comentários sobre este software",
 	"visualeditor-help-label": "Ler o guia do usuário",
-	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
 	"visualeditor-welcomedialog-action": "Começar a editar",
 	"visualeditor-welcomedialog-content": "Todos podem editar, cada ajuda conta.",
 	"visualeditor-welcomedialog-content-thanks": "Obrigado por ajudar o mundo a saber mais!",

@@ -2,15 +2,17 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
-use HTMLForm;
 use ManualLogEntry;
+use MediaWiki\CheckUser\Hooks as CheckUserHooks;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Message\Message;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use Message;
 use MWException;
 use UserBlockedError;
 use UserNotLoggedIn;
@@ -84,9 +86,9 @@ class DisableOATHForUser extends FormSpecialPage {
 	 * @throws UserNotLoggedIn
 	 */
 	protected function checkExecutePermissions( User $user ) {
-		parent::checkExecutePermissions( $user );
+		$this->requireNamedUser();
 
-		$this->requireLogin();
+		parent::checkExecutePermissions( $user );
 	}
 
 	/**
@@ -108,6 +110,7 @@ class DisableOATHForUser extends FormSpecialPage {
 				'label-message' => 'oathauth-enteruser',
 				'name' => 'user',
 				'required' => true,
+				'excludetemp' => true,
 			],
 			'reason' => [
 				'type' => 'text',
@@ -150,6 +153,10 @@ class DisableOATHForUser extends FormSpecialPage {
 		$logEntry->setTarget( $user->getUserPage() );
 		$logEntry->setComment( $formData['reason'] );
 		$logEntry->insert();
+
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
+			CheckUserHooks::updateCheckUserData( $logEntry->getRecentChange() );
+		}
 
 		LoggerFactory::getInstance( 'authentication' )->info(
 			'OATHAuth disabled for {usertarget} by {user} from {clientip}', [

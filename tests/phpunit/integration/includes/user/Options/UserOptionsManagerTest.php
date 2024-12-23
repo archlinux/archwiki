@@ -5,13 +5,15 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\Options\UserOptionsManager;
+use MediaWiki\User\Options\UserOptionsStore;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use Psr\Log\NullLogger;
-use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\DeleteQueryBuilder;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\InsertQueryBuilder;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -49,7 +51,9 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 			new NullLogger(),
 			$overrides['hookContainer'] ?? $services->getHookContainer(),
 			$services->getUserFactory(),
-			$services->getUserNameUtils()
+			$services->getUserNameUtils(),
+			$services->getObjectFactory(),
+			[]
 		);
 	}
 
@@ -76,7 +80,8 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 			'true_vs_int' => true,
 			'true_vs_string' => true,
 		] ] );
-		$user = $this->getAnon( __METHOD__ );
+		// TODO: Why is this testing an anon user when they can't have preferences?
+		$user = $this->getAnon();
 		$manager->setOption( $user, 'null_vs_false', false );
 		$manager->setOption( $user, 'null_vs_string', '' );
 		$manager->setOption( $user, 'false_vs_int', 0 );
@@ -116,7 +121,8 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 	 * @covers \MediaWiki\User\Options\UserOptionsManager::getOption
 	 */
 	public function testGetOptionHiddenPref() {
-		$user = $this->getAnon( __METHOD__ );
+		// TODO: Why is this testing an anon user when they can't have preferences?
+		$user = $this->getAnon();
 		$manager = $this->getManager();
 		$manager->setOption( $user, 'hidden_user_option', 'hidden_value' );
 		$this->assertNull( $manager->getOption( $user, 'hidden_user_option' ) );
@@ -128,7 +134,8 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 	 * @covers \MediaWiki\User\Options\UserOptionsManager::setOption
 	 */
 	public function testSetOptionNullIsDefault() {
-		$user = $this->getAnon( __METHOD__ );
+		// TODO: Why is this testing an anon user when they can't have preferences?
+		$user = $this->getAnon();
 		$manager = $this->getManager();
 		$manager->setOption( $user, 'default_string_option', 'override_value' );
 		$this->assertSame( 'override_value', $manager->getOption( $user, 'default_string_option' ) );
@@ -275,11 +282,11 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 
 	public function testSaveOptionsForAnonUser() {
 		$this->expectException( InvalidArgumentException::class );
-		$this->getManager()->saveOptions( $this->getAnon( __METHOD__ ) );
+		$this->getManager()->saveOptions( $this->getAnon() );
 	}
 
 	/**
-	 * @covers \MediaWiki\User\Options\UserOptionsManager::resetOptions
+	 * @covers \MediaWiki\User\Options\UserOptionsManager::resetOptionsByName
 	 */
 	public function testUserOptionsSaveAfterReset() {
 		$user = $this->getTestUser()->getUser();
@@ -288,7 +295,8 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 		$manager->saveOptions( $user );
 		$manager->clearUserOptionsCache( $user );
 		$this->assertSame( 'test_value', $manager->getOption( $user, 'test_option' ) );
-		$manager->resetOptions( $user, RequestContext::getMain(), 'all' );
+		$optionNames = array_keys( $manager->getOptions( $user ) );
+		$manager->resetOptionsByName( $user, $optionNames );
 		$this->assertNull( $manager->getOption( $user, 'test_option' ) );
 		$manager->saveOptions( $user );
 		$manager->clearUserOptionsCache( $user );
@@ -296,7 +304,7 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 	}
 
 	public function testOptionsForUpdateNotRefetchedBeforeInsert() {
-		$mockDb = $this->createMock( DBConnRef::class );
+		$mockDb = $this->createMock( IDatabase::class );
 		$mockDb->expects( $this->once() ) // This is critical what we are testing
 			->method( 'select' )
 			->willReturn( new FakeResultWrapper( [
@@ -329,7 +337,7 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 	}
 
 	public function testOptionsNoDeleteSetDefaultValue() {
-		$mockDb = $this->createMock( DBConnRef::class );
+		$mockDb = $this->createMock( IDatabase::class );
 		$mockDb->expects( $this->once() )
 			->method( 'select' )
 			->willReturn( new FakeResultWrapper( [
@@ -364,7 +372,7 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 
 	public function testOptionsDeleteSetDefaultValue() {
 		$user = $this->getTestUser()->getUser();
-		$mockDb = $this->createMock( DBConnRef::class );
+		$mockDb = $this->createMock( IDatabase::class );
 		$mockDb
 			->method( 'newDeleteQueryBuilder' )
 			->willReturnCallback( static fn () => new DeleteQueryBuilder( $mockDb ) );
@@ -425,7 +433,7 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 	 */
 	public function testOptionsInsertFromDefaultValue() {
 		$user = $this->getTestUser()->getUser();
-		$mockDb = $this->createMock( DBConnRef::class );
+		$mockDb = $this->createMock( IDatabase::class );
 		$mockDb
 			->method( 'newSelectQueryBuilder' )
 			->willReturnCallback( static fn () => new SelectQueryBuilder( $mockDb ) );
@@ -487,5 +495,41 @@ class UserOptionsManagerTest extends UserOptionsLookupTestBase {
 		$this->assertSame( $newTouched, $user->getDBTouched() );
 		$user->clearInstanceCache();
 		$this->assertSame( $newTouched, $user->getDBTouched() );
+	}
+
+	/**
+	 * @covers \MediaWiki\User\Options\UserOptionsManager
+	 */
+	public function testNoLocalAccountOptionsStore() {
+		$user = new UserIdentityValue( 0, 'NoLocalAccountUsername' );
+		$store = $this->getMockBuilder( UserOptionsStore::class )->getMock();
+		$store->expects( $this->once() )
+			->method( 'fetch' )
+			->with( $user )
+			->willReturn( [ 'NoLocalAccountPreference' => '1' ] );
+		$store->expects( $this->once() )
+			->method( 'store' )
+			->with( $user, [ 'NoLocalAccountPreference' => '2' ] )
+			->willReturn( true );
+		$services = $this->getServiceContainer();
+		$manager = new UserOptionsManager(
+			new ServiceOptions( UserOptionsManager::CONSTRUCTOR_OPTIONS, $services->getMainConfig() ),
+			$services->get( '_DefaultOptionsLookup' ),
+			$services->getLanguageConverterFactory(),
+			$services->getConnectionProvider(),
+			new NullLogger(),
+			$services->getHookContainer(),
+			$services->getUserFactory(),
+			$services->getUserNameUtils(),
+			$services->getObjectFactory(),
+			[
+				'NoLocalAccountStore' => [
+					'factory' => fn () => $store,
+				],
+			]
+		);
+		$this->assertSame( '1', $manager->getOption( $user, 'NoLocalAccountPreference' ) );
+		$manager->setOption( $user, 'NoLocalAccountPreference', '2', UserOptionsManager::GLOBAL_UPDATE );
+		$this->assertTrue( $manager->saveOptionsInternal( $user ) );
 	}
 }

@@ -10,7 +10,7 @@
  *
  * @class
  * @extends ve.dm.LeafNode
- * @mixins ve.dm.FocusableNode
+ * @mixes ve.dm.FocusableNode
  *
  * @constructor
  * @param {Object} [element] Reference to element in linear model
@@ -64,8 +64,7 @@ ve.dm.MWNumberedExternalLinkNode.static.toDataElement = function ( domElements )
 };
 
 ve.dm.MWNumberedExternalLinkNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	var node = this,
-		domElement = doc.createElement( 'a' );
+	const domElement = doc.createElement( 'a' );
 
 	domElement.setAttribute( 'href', dataElement.attributes.href );
 	domElement.setAttribute( 'rel', 'mw:ExtLink' );
@@ -74,12 +73,12 @@ ve.dm.MWNumberedExternalLinkNode.static.toDomElements = function ( dataElement, 
 	// as external documents may not have the same stylesheet - and Firefox
 	// discards empty tags on copy.
 	if ( converter.isForClipboard() ) {
-		var counter = 1;
-		var offset = converter.documentData.indexOf( dataElement );
+		let counter = 1;
+		const offset = converter.documentData.indexOf( dataElement );
 
 		if ( offset !== -1 ) {
-			converter.documentData.slice( 0, offset ).forEach( function ( el ) {
-				if ( el.type && el.type === node.name ) {
+			converter.documentData.slice( 0, offset ).forEach( ( el ) => {
+				if ( el.type && el.type === this.name ) {
 					counter++;
 				}
 			} );

@@ -36,10 +36,10 @@ ve.dm.MWIncludesNode.static.matchRdfaTypes = [
  * @inheritdoc
  */
 ve.dm.MWIncludesNode.static.toDataElement = function ( domElements ) {
-	var mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+	const mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		type = domElements[ 0 ].getAttribute( 'typeof' );
 
-	var dataElement = {
+	const dataElement = {
 		type: 'mwIncludes',
 		attributes: {
 			type: type
@@ -64,16 +64,16 @@ ve.dm.MWIncludesNode.static.toDataElement = function ( domElements ) {
  * @inheritdoc
  */
 ve.dm.MWIncludesNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	var el = doc.createElement( 'meta' );
+	const el = doc.createElement( 'meta' );
 	el.setAttribute( 'typeof', dataElement.attributes.type );
 	if ( dataElement.attributes.mw ) {
 		el.setAttribute( 'data-mw', JSON.stringify( dataElement.attributes.mw ) );
 	}
 
-	var els = [ el ];
+	const els = [ el ];
 	if ( dataElement.attributes.type === 'mw:Includes/IncludeOnly' ) {
 		// includeonly nodes have an implicit closing tag
-		els = els.concat( ve.dm.MWIncludesNode.static.toDomElements( {
+		ve.batchPush( els, ve.dm.MWIncludesNode.static.toDomElements( {
 			type: 'mwIncludes',
 			attributes: {
 				type: 'mw:Includes/IncludeOnly/End'
@@ -87,7 +87,7 @@ ve.dm.MWIncludesNode.static.toDomElements = function ( dataElement, doc, convert
 /* Methods */
 
 ve.dm.MWIncludesNode.prototype.getWikitextTag = function () {
-	var map = {
+	const map = {
 		'mw:Includes/NoInclude': '<noinclude>',
 		'mw:Includes/NoInclude/End': '</noinclude>',
 		'mw:Includes/OnlyInclude': '<onlyinclude>',

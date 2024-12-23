@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Bu kategoriýa barada",
 	"mobile-frontend-meta-data-issues-header": "Sahypa meseleleri",
 	"minerva-meta-data-issues-section-header": "Bölüm meseleleri",
-	"mobile-frontend-notifications-filter": "Süzgüç",
 	"mobile-frontend-pageaction-edit-tooltip": "Bu sahypanyň esasy bölümini redaktirläň",
 	"mobile-frontend-placeholder": "{{SITENAME}} gözläň",
 	"mobile-frontend-random-button": "Tötänleýin",
@@ -52,7 +51,5 @@
 	"skin-minerva-issue-learn-more": "Köpräk oka",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoriýalar",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Sahypalaryň kategoriýalaryny görüň",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Gowulaşan sahypa bejergisi",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Sahypa meseleleri (Şablon:ambox) makalada görkeziler.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Gynansagam, netijeleri sahypa boýunça toparlamak elýeterli däl. Topary sahypa aýratynlygy boýunça ulanmak isleseňiz, iş stolunyň sahypasyna girmegiňizi haýyş edýäris."
 }

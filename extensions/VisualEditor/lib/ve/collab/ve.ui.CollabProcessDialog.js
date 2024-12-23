@@ -32,22 +32,34 @@ ve.ui.CollabProcessDialog.prototype.initialize = function () {
 		padded: true,
 		expanded: false
 	} );
+
+	this.userNameInput = new OO.ui.TextInputWidget( {
+		value: mw.user.getName()
+	} );
+	const userNameField = new OO.ui.FieldLayout( this.userNameInput, {
+		label: ve.msg( 'visualeditor-rebase-client-author-name' ),
+		align: 'left'
+	} );
+
 	this.initButton = new OO.ui.ButtonWidget( {
 		flags: [ 'primary', 'progressive' ]
 	} );
 	this.initButton.$element[ 0 ].style.display = 'block';
 	this.initButton.$element[ 0 ].firstElementChild.style.minWidth = '100%';
+	const initButtonField = new OO.ui.FieldLayout( this.initButton );
 
 	this.$summary = $( '<p>' );
 
 	this.initPanel.$element.append(
 		$( '<img>' ).prop( 'src', ve.ui.CollabProcessDialog.static.imageUri )
+			.attr( { width: 250, height: 150 } )
 			.css( { display: 'block', margin: '2em auto' } ),
 		this.$summary.css( { 'font-weight': 'bold' } ),
 		$( '<p>' ).text( ve.msg( 'visualeditor-collab-dialog-sharing' ) ),
 		$( '<p>' ).text( ve.msg( 'visualeditor-collab-dialog-sessionend' ) ),
 		$( '<p>' ).text( ve.msg( 'visualeditor-collab-dialog-privacy' ) ),
-		$( '<div>' ).append( this.initButton.$element )
+		userNameField.$element,
+		initButtonField.$element
 	);
 
 	this.stack.addItems( [
@@ -63,7 +75,7 @@ ve.ui.CollabProcessDialog.prototype.getBodyHeight = function () {
 };
 
 ve.ui.CollabProcessDialog.prototype.onButtonClick = function () {
-	this.close( 'accept' );
+	this.close( { action: 'accept', userName: this.userNameInput.getValue() } );
 };
 
 ve.ui.CollabProcessDialog.prototype.getReadyProcess = function ( data ) {
@@ -127,16 +139,15 @@ ve.ui.HostCollabProcessDialog.prototype.onButtonClick = function () {
 	this.initButton.setDisabled( true );
 	this.pushPending();
 
-	var dialog = this;
-	ve.collab.initPeerServer();
-	var collabUrl = new URL( location.href );
-	ve.collab.peerServer.peer.on( 'open', function ( newId ) {
+	ve.collab.initPeerServer( this.userNameInput.getValue() );
+	const collabUrl = new URL( location.href );
+	ve.collab.peerServer.peer.on( 'open', ( newId ) => {
 		collabUrl.searchParams.set( 'collabSession', newId );
-		dialog.copyTextLayout.textInput.setValue( collabUrl );
-		dialog.stack.setItem( dialog.copyPanel );
-		dialog.updateSize();
-		dialog.copyTextLayout.button.focus();
-		dialog.popPending();
+		this.copyTextLayout.textInput.setValue( collabUrl );
+		this.stack.setItem( this.copyPanel );
+		this.updateSize();
+		this.copyTextLayout.button.focus();
+		this.popPending();
 	} );
 };
 

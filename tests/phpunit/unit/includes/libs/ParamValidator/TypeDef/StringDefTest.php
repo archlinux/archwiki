@@ -39,7 +39,15 @@ class StringDefTest extends TypeDefTestCase {
 				),
 				$req,
 			],
-			'Empty, required, allowed' => [ '', '', $req, [ 'allowEmptyWhenRequired' => true ] ],
+			'Not a string' => [
+				[ 1, 2, 3 ],
+				new ValidationException(
+					DataMessageValue::new( 'paramvalidator-needstring', [], 'needstring' ),
+					'test', '', []
+				),
+				$req,
+			],
+			'Empty, required, allowed' => [ '', '', $req, [ StringDef::OPT_ALLOW_EMPTY => true ] ],
 			'Max bytes, ok' => [ 'abcd', 'abcd', $maxBytes ],
 			'Max bytes, exceeded' => [
 				'abcde',

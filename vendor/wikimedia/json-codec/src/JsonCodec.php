@@ -26,6 +26,7 @@ use Exception;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use ReflectionClass;
 use stdClass;
 
 /**
@@ -43,7 +44,7 @@ class JsonCodec implements JsonCodecInterface {
 	 * is used to mark "complex" arrays, and as a place to store the contents
 	 * of any pre-existing array property that happened to have the same name.
 	 */
-	private const TYPE_ANNOTATION = '_type_';
+	protected const TYPE_ANNOTATION = '_type_';
 
 	/**
 	 * @param ?ContainerInterface $serviceContainer
@@ -82,13 +83,13 @@ class JsonCodec implements JsonCodecInterface {
 	 * guide deserialization.
 	 *
 	 * @param mixed|null $value
-	 * @param ?class-string $classHint An optional hint to
+	 * @param class-string|Hint|null $classHint An optional hint to
 	 *   the type of the encoded object.  If this is provided and matches
 	 *   the type of $value, then explicit type information will be omitted
 	 *   from the generated JSON, which saves some space.
 	 * @return string
 	 */
-	public function toJsonString( $value, ?string $classHint = null ): string {
+	public function toJsonString( $value, $classHint = null ): string {
 		return json_encode(
 			$this->toJsonArray( $value, $classHint ),
 			JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE |
@@ -106,13 +107,13 @@ class JsonCodec implements JsonCodecInterface {
 	 * objects serialized with explicit classes.
 	 *
 	 * @param string $json A JSON-encoded string
-	 * @param ?class-string $classHint An optional hint to
+	 * @param class-string|Hint|null $classHint An optional hint to
 	 *   the type of the encoded object.  In the absence of explicit
 	 *   type information in the JSON, this will be used as the type of
 	 *   the created object.
 	 * @return mixed|null
 	 */
-	public function newFromJsonString( $json, ?string $classHint = null ) {
+	public function newFromJsonString( $json, $classHint = null ) {
 		return $this->newFromJsonArray(
 			json_decode( $json, true ), $classHint
 		);
@@ -130,12 +131,22 @@ class JsonCodec implements JsonCodecInterface {
 	 */
 	protected function codecFor( string $className ): ?JsonClassCodec {
 		$codec = $this->codecs[$className] ?? null;
-		if ( !$codec ) {
-			if ( !is_a( $className, JsonCodecable::class, true ) ) {
-				return null;
+		if ( $codec !== null ) {
+			return $codec;
+		}
+		// Check for class aliases to ensure we don't use split codecs
+		$trueName = ( new ReflectionClass( $className ) )->getName();
+		if ( $trueName !== $className ) {
+			$codec = $this->codecs[$trueName] ?? null;
+			if ( $codec !== null ) {
+				$this->codecs[$className] = $codec;
+				return $codec;
 			}
-			$codec = $this->codecs[$className] =
-				$className::jsonClassCodec( $this, $this->serviceContainer );
+			$className = $trueName;
+		}
+		if ( is_a( $className, JsonCodecable::class, true ) ) {
+			$codec = $className::jsonClassCodec( $this, $this->serviceContainer );
+			$this->codecs[$className] = $codec;
 		}
 		return $codec;
 	}
@@ -149,7 +160,10 @@ class JsonCodec implements JsonCodecInterface {
 	 * @param JsonClassCodec $codec A codec to use for $className
 	 */
 	public function addCodecFor( string $className, JsonClassCodec $codec ): void {
-		if ( $this->codecs[$className] ?? false ) {
+		// Resolve aliases
+		$className = ( new ReflectionClass( $className ) )->getName();
+		// Sanity check
+		if ( isset( $this->codecs[$className] ) ) {
 			throw new InvalidArgumentException(
 				"Codec already present for $className"
 			);
@@ -159,7 +173,7 @@ class JsonCodec implements JsonCodecInterface {
 
 	/**
 	 * Recursively converts a given object to an associative array
-	 * which can be json-encoded.  (When embeddeding an object into
+	 * which can be json-encoded.  (When embedding an object into
 	 * another context it is sometimes useful to have the array
 	 * representation rather than the string JSON form of the array;
 	 * this can also be useful if you want to pretty-print the result,
@@ -173,21 +187,53 @@ class JsonCodec implements JsonCodecInterface {
 	 * guide deserialization.
 	 *
 	 * @param mixed|null $value
-	 * @param ?class-string $classHint An optional hint to
+	 * @param class-string|Hint|null $classHint An optional hint to
 	 *   the type of the encoded object.  If this is provided and matches
 	 *   the type of $value, then explicit type information will be omitted
 	 *   from the generated JSON, which saves some space.
 	 * @return mixed|null
 	 */
-	public function toJsonArray( $value, ?string $classHint = null ) {
+	public function toJsonArray( $value, $classHint = null ) {
 		$is_complex = false;
 		$className = 'array';
 		$codec = null;
-		// Adjust class hint for arrays.
+		$classHintCodec = null;
+
+		// Process class hints
 		$arrayClassHint = null;
-		if ( $classHint !== null && str_ends_with( $classHint, '[]' ) ) {
-			$arrayClassHint = substr( $classHint, 0, -2 );
-			$classHint = 'array';
+		$forceBraces = null;
+		$allowInherited = false;
+		if ( is_string( $classHint ) && str_ends_with( $classHint, '[]' ) ) {
+			// back-compat
+			$classHint = new Hint( substr( $classHint, 0, -2 ), Hint::LIST );
+		}
+		while ( $classHint instanceof Hint ) {
+			if ( $classHint->modifier === Hint::USE_SQUARE ) {
+				// Allow list-like serializations to use []
+				$classHint = $classHint->parent;
+				$forceBraces = false;
+			} elseif ( $classHint->modifier === Hint::ALLOW_OBJECT ) {
+				// Force empty arrays to serialize as {}
+				$classHint = $classHint->parent;
+				$forceBraces = true;
+			} elseif ( $classHint->modifier === Hint::LIST ) {
+				// Array whose values are the hinted type
+				$arrayClassHint = $classHint->parent;
+				$classHint = 'array';
+			} elseif ( $classHint->modifier === Hint::STDCLASS ) {
+				// stdClass whose values are the hinted type
+				$arrayClassHint = $classHint->parent;
+				$classHint = stdClass::class;
+			} elseif ( $classHint->modifier === Hint::INHERITED ) {
+				// Allow the hint to match subclasses of the hinted class
+				$classHint = $classHint->parent;
+				$allowInherited = true;
+			} elseif ( $classHint->modifier === Hint::DEFAULT ) {
+				// No-op, included for completeness
+				$classHint = $classHint->parent;
+			} else {
+				throw new InvalidArgumentException( 'bad hint modifier: ' . $classHint->modifier );
+			}
 		}
 		if ( is_object( $value ) ) {
 			$className = get_class( $value );
@@ -195,6 +241,18 @@ class JsonCodec implements JsonCodecInterface {
 			if ( $codec !== null ) {
 				$value = $codec->toJsonArray( $value );
 				$is_complex = true;
+			}
+			// Tweak the codec used for class hints if $allowInherited is true
+			// in order to match the codec we would use for deserialization.
+			if (
+				$allowInherited &&
+				$classHint !== null &&
+				is_a( $className, $classHint, true ) &&
+				// extra comparison to let phan know $classHint is not 'array'
+				$classHint !== 'array'
+			) {
+				$className = $classHint;
+				$codec = $this->codecFor( $className );
 			}
 		} elseif (
 			is_array( $value ) && $this->isArrayMarked( $value )
@@ -205,14 +263,16 @@ class JsonCodec implements JsonCodecInterface {
 			// Recursively convert array values to serializable form
 			foreach ( $value as $key => &$v ) {
 				if ( is_object( $v ) || is_array( $v ) ) {
-					$propClassHint = $codec === null ? $arrayClassHint :
+					$propClassHint = $arrayClassHint;
+					$propClassHint ??= ( $codec === null ? null :
 						// phan can't tell that $codec is null when $className is 'array'
 						// @phan-suppress-next-line PhanUndeclaredClassReference
-						$codec->jsonClassHintFor( $className, (string)$key );
+						$codec->jsonClassHintFor( $className, (string)$key )
+					);
 					$v = $this->toJsonArray( $v, $propClassHint );
 					if (
-						$this->isArrayMarked( $v ) ||
-						$propClassHint !== null
+						$propClassHint !== null ||
+						$this->isArrayMarked( $v )
 					) {
 						// an array which contains complex components is
 						// itself complex.
@@ -223,17 +283,36 @@ class JsonCodec implements JsonCodecInterface {
 			// Ok, now mark the array, being careful to transfer away
 			// any fields with the same names as our markers.
 			if ( $is_complex || $classHint !== null ) {
-				// Even if $className === $classHint we need to record this
+				if (
+					$forceBraces === null &&
+					$className !== 'array' &&
+					array_is_list( $value )
+				) {
+					// Include the type annotation (by clearing the
+					// hint) if $forceBraces isn't false and it is
+					// necessary to break up a list.  This ensures that
+					// all objects have a JSON encoding in the `{...}`
+					// style, even if they happen to have all-numeric
+					// keys.
+					$classHint = null;
+				}
+				// Even if $className === $classHint we may need to record this
 				// array as "complex" (ie, requires recursion to process
 				// individual values during deserialization)
 				// @phan-suppress-next-line PhanUndeclaredClassReference 'array'
 				$this->markArray(
 					$value, $className, $classHint
 				);
+				if ( $forceBraces === true && array_is_list( $value ) ) {
+					// It is somewhat surprising for ::toJsonArray() to return
+					// an object (rather than an array), but allow this case
+					// if the class hint expressly asked for it.
+					$value = (object)$value;
+				}
 			}
 		} elseif ( !is_scalar( $value ) && $value !== null ) {
 			throw new InvalidArgumentException(
-				'Unable to serialize JSON.'
+				'Unable to serialize JSON: ' . get_debug_type( $value )
 			);
 		}
 		return $value;
@@ -250,23 +329,36 @@ class JsonCodec implements JsonCodecInterface {
 	 * objects serialized with explicit classes.
 	 *
 	 * @param mixed|null $json
-	 * @param ?class-string $classHint An optional hint to
+	 * @param class-string|Hint|null $classHint An optional hint to
 	 *   the type of the encoded object.  In the absence of explicit
 	 *   type information in the JSON, this will be used as the type of
 	 *   the created object.
 	 * @return mixed|null
 	 */
-	public function newFromJsonArray( $json, ?string $classHint = null ) {
+	public function newFromJsonArray( $json, $classHint = null ) {
 		if ( $json instanceof stdClass ) {
 			// We *shouldn't* be given an object... but we might.
 			$json = (array)$json;
 		}
-		// Adjust class hint for arrays.
+
+		// Process class hints
 		$arrayClassHint = null;
-		if ( $classHint !== null && str_ends_with( $classHint, '[]' ) ) {
-			$arrayClassHint = substr( $classHint, 0, -2 );
-			$classHint = 'array';
+		if ( is_string( $classHint ) && str_ends_with( $classHint, '[]' ) ) {
+			// back-compat
+			$classHint = new Hint( substr( $classHint, 0, -2 ), Hint::LIST );
 		}
+		while ( $classHint instanceof Hint ) {
+			if ( $classHint->modifier === Hint::LIST ) {
+				$arrayClassHint = $classHint->parent;
+				$classHint = 'array';
+			} elseif ( $classHint->modifier === Hint::STDCLASS ) {
+				$arrayClassHint = $classHint->parent;
+				$classHint = stdClass::class;
+			} else {
+				$classHint = $classHint->parent;
+			}
+		}
+
 		// Is this an array containing a complex value?
 		if (
 			is_array( $json ) && (
@@ -289,10 +381,16 @@ class JsonCodec implements JsonCodecInterface {
 			// Recursively unserialize the array contents.
 			$unserialized = [];
 			foreach ( $json as $key => $value ) {
-				$propClassHint = $codec === null ? $arrayClassHint :
+				$propClassHint = $arrayClassHint;
+				$propClassHint ??= ( $codec === null ? null :
 					// phan can't tell that $codec is null when $className is 'array'
 					// @phan-suppress-next-line PhanUndeclaredClassReference
-					$codec->jsonClassHintFor( $className, (string)$key );
+					$codec->jsonClassHintFor( $className, (string)$key )
+				);
+				if ( $value instanceof stdClass ) {
+					// Again, we *shouldn't* be given an object... but we might.
+					$value = (array)$value;
+				}
 				if (
 					is_array( $value ) && (
 						$this->isArrayMarked( $value ) || $propClassHint !== null
@@ -365,7 +463,7 @@ class JsonCodec implements JsonCodecInterface {
 	 * @param 'array'|class-string $className The name of the class encoded
 	 *   by the codec, or else `array` if $value is a "complex" array or a
 	 *   "false mark"
-	 * @param class-string|'array'|null $classHint The class name provided as
+	 * @param 'array'|class-string|null $classHint The class name provided as
 	 *   a hint to the encoder, and which will be in turn provided as a hint
 	 *   to the decoder, or `null` if no hint was provided.  The class hint
 	 *   will be `array` when the array is a homogeneous list of objects.
@@ -375,7 +473,8 @@ class JsonCodec implements JsonCodecInterface {
 		// was already present in the array we've been given, in which case
 		// we need to escape it (by hoisting into a child array).
 		if ( array_key_exists( self::TYPE_ANNOTATION, $value ) ) {
-			if ( $className !== $classHint ) {
+			// @phan-suppress-next-line PhanUndeclaredClassReference 'array'
+			if ( !self::classEquals( $className, $classHint ) ) {
 				$value[self::TYPE_ANNOTATION] = [ $value[self::TYPE_ANNOTATION], $className ];
 			} else {
 				// Omit $className since it matches the $classHint, but we still
@@ -386,13 +485,10 @@ class JsonCodec implements JsonCodecInterface {
 				$value[self::TYPE_ANNOTATION] = [ $value[self::TYPE_ANNOTATION] ];
 			}
 		} elseif (
-			$className !== $classHint ||
-			( array_is_list( $value ) && $className !== 'array' )
+			// @phan-suppress-next-line PhanUndeclaredClassReference 'array'
+			!self::classEquals( $className, $classHint )
 		) {
-			// Include the type annotation if it doesn't match the hint;
-			// but also include it if necessary to break up a list. This
-			// ensures that all objects have an encoding in the '{...}' style,
-			// even if they happen to have all-numeric keys.
+			// Include the type annotation if it doesn't match the hint
 			$value[self::TYPE_ANNOTATION] = $className;
 		}
 	}
@@ -427,4 +523,26 @@ class JsonCodec implements JsonCodecInterface {
 		return $className;
 	}
 
+	/**
+	 * Helper function to test two class strings for equality in the presence
+	 * of class aliases.
+	 *
+	 * @param 'array'|class-string $class1
+	 * @param 'array'|class-string|null $class2
+	 * @return bool True if the arguments refer to the same class
+	 */
+	private static function classEquals( string $class1, ?string $class2 ): bool {
+		if ( $class1 === $class2 ) {
+			// Fast path
+			return true;
+		}
+		if ( $class2 === null || $class1 === 'array' || $class2 === 'array' ) {
+			return false;
+		}
+		if ( is_a( $class1, $class2, true ) && is_a( $class2, $class1, true ) ) {
+			// Check aliases
+			return true;
+		}
+		return false;
+	}
 }

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Liuxinyu970226",
-			"佛壁灯",
-			"XtexChooser"
+			"XtexChooser",
+			"佛壁灯"
 		]
 	},
 	"renocaptcha-desc": "用于确认编辑的reCAPTCHA NoCAPTCHA模块",

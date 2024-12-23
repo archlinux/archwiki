@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\Language;
+
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 
@@ -28,6 +30,26 @@ use Wikimedia\Bcp47Code\Bcp47CodeValue;
  * @ingroup Language
  */
 class LanguageCode {
+
+	private string $code;
+
+	/**
+	 * @param string $code
+	 * @unstable
+	 * @since 1.43
+	 */
+	public function __construct( string $code ) {
+		$this->code = $code;
+	}
+
+	/**
+	 * @return string
+	 * @since 1.43
+	 */
+	public function toString(): string {
+		return $this->code;
+	}
+
 	/**
 	 * Mapping of deprecated language codes that were used in previous
 	 * versions of MediaWiki to up-to-date, current language codes.
@@ -123,9 +145,10 @@ class LanguageCode {
 	 * Returns a mapping of deprecated language codes that were used in previous
 	 * versions of MediaWiki to up-to-date, current language codes.
 	 *
-	 * This array is merged into $wgDummyLanguageCodes in Setup.php, along with
-	 * the fake language codes 'qqq' and 'qqx', which are used internally by
-	 * MediaWiki's localisation system.
+	 * This array is merged into $wgDummyLanguageCodes in
+	 * SetupDynamicConfig.php, along with the fake language codes
+	 * 'qqq' and 'qqx', which are used internally by MediaWiki's
+	 * localisation system.
 	 *
 	 * @return string[]
 	 *
@@ -353,3 +376,6 @@ class LanguageCode {
 		return preg_match( "/$root/i", $code );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( LanguageCode::class, 'LanguageCode' );

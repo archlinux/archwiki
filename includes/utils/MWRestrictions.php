@@ -18,19 +18,23 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
+use MediaWiki\Title\Title;
 use Wikimedia\IPSet;
 use Wikimedia\IPUtils;
 
 /**
  * A class to check request restrictions expressed as a JSON object
  */
-class MWRestrictions {
+class MWRestrictions implements Stringable {
 
+	/** @var string[] */
 	private $ipAddresses = [ '0.0.0.0/0', '::/0' ];
 
+	/** @var string[] */
 	private $pages = [];
 
 	public StatusValue $validity;
@@ -39,7 +43,7 @@ class MWRestrictions {
 	 * @param array|null $restrictions
 	 * @throws InvalidArgumentException
 	 */
-	protected function __construct( array $restrictions = null ) {
+	protected function __construct( ?array $restrictions = null ) {
 		$this->validity = StatusValue::newGood();
 		if ( $restrictions !== null ) {
 			$this->loadFromArray( $restrictions );

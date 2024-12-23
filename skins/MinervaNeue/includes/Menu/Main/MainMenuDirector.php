@@ -24,15 +24,8 @@ namespace MediaWiki\Minerva\Menu\Main;
  */
 final class MainMenuDirector {
 
-	/**
-	 * @var IMainMenuBuilder
-	 */
-	private $builder;
-
-	/**
-	 * @var array
-	 */
-	private $menuData;
+	private IMainMenuBuilder $builder;
+	private ?array $menuData = null;
 
 	/**
 	 * Director responsible for Main Menu building

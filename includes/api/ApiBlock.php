@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Block\AbstractBlock;
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockPermissionCheckerFactory;
@@ -37,6 +39,7 @@ use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -60,22 +63,9 @@ class ApiBlock extends ApiBase {
 	private BlockUtils $blockUtils;
 	private BlockActionInfo $blockActionInfo;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param BlockPermissionCheckerFactory $blockPermissionCheckerFactory
-	 * @param BlockUserFactory $blockUserFactory
-	 * @param TitleFactory $titleFactory
-	 * @param UserIdentityLookup $userIdentityLookup
-	 * @param WatchedItemStoreInterface $watchedItemStore
-	 * @param BlockUtils $blockUtils
-	 * @param BlockActionInfo $blockActionInfo
-	 * @param WatchlistManager $watchlistManager
-	 * @param UserOptionsLookup $userOptionsLookup
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		BlockPermissionCheckerFactory $blockPermissionCheckerFactory,
 		BlockUserFactory $blockUserFactory,
 		TitleFactory $titleFactory,
@@ -331,3 +321,6 @@ class ApiBlock extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Block';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiBlock::class, 'ApiBlock' );

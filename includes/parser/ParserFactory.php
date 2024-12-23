@@ -19,15 +19,17 @@
  * @ingroup Parser
  */
 
+namespace MediaWiki\Parser;
+
 use MediaWiki\Category\TrackingCategories;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRendererFactory;
 use MediaWiki\Page\File\BadFileLookup;
-use MediaWiki\Parser\MagicWordFactory;
-use MediaWiki\Parser\Parser;
 use MediaWiki\Preferences\SignatureValidatorFactory;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Tidy\TidyDriverBase;
@@ -38,6 +40,7 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\Utils\UrlUtils;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * @since 1.32
@@ -72,6 +75,9 @@ class ParserFactory {
 
 	/** @var LanguageConverterFactory */
 	private $languageConverterFactory;
+
+	/** @var LanguageNameUtils */
+	private $languageNameUtils;
 
 	/** @var UserOptionsLookup */
 	private $userOptionsLookup;
@@ -127,6 +133,7 @@ class ParserFactory {
 	 * @param LoggerInterface $logger
 	 * @param BadFileLookup $badFileLookup
 	 * @param LanguageConverterFactory $languageConverterFactory
+	 * @param LanguageNameUtils $languageNameUtils
 	 * @param HookContainer $hookContainer
 	 * @param TidyDriverBase $tidy
 	 * @param WANObjectCache $wanCache
@@ -151,6 +158,7 @@ class ParserFactory {
 		LoggerInterface $logger,
 		BadFileLookup $badFileLookup,
 		LanguageConverterFactory $languageConverterFactory,
+		LanguageNameUtils $languageNameUtils,
 		HookContainer $hookContainer,
 		TidyDriverBase $tidy,
 		WANObjectCache $wanCache,
@@ -176,6 +184,7 @@ class ParserFactory {
 		$this->logger = $logger;
 		$this->badFileLookup = $badFileLookup;
 		$this->languageConverterFactory = $languageConverterFactory;
+		$this->languageNameUtils = $languageNameUtils;
 		$this->hookContainer = $hookContainer;
 		$this->tidy = $tidy;
 		$this->wanCache = $wanCache;
@@ -213,6 +222,7 @@ class ParserFactory {
 				$this->logger,
 				$this->badFileLookup,
 				$this->languageConverterFactory,
+				$this->languageNameUtils,
 				$this->hookContainer,
 				$this->tidy,
 				$this->wanCache,
@@ -268,3 +278,6 @@ class ParserFactory {
 	}
 
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ParserFactory::class, 'ParserFactory' );

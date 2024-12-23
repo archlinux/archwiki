@@ -1,10 +1,14 @@
 <?php
 
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -164,13 +168,14 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 		$article->view();
 
 		$redirectStore = $this->getServiceContainer()->getRedirectStore();
+		$titleFormatter = $this->getServiceContainer()->getTitleFormatter();
 
 		$this->assertNotNull(
-			$redirectStore->getRedirectTarget( $article->getPage() )->getPrefixedDBkey()
+			$redirectStore->getRedirectTarget( $article->getPage() )
 		);
 		$this->assertSame(
 			$target->getPrefixedDBkey(),
-			$redirectStore->getRedirectTarget( $article->getPage() )->getPrefixedDBkey()
+			$titleFormatter->getPrefixedDBkey( $redirectStore->getRedirectTarget( $article->getPage() ) )
 		);
 
 		$output = $article->getContext()->getOutput();
@@ -217,8 +222,7 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 		$content->method( 'getModel' )
 			->willReturn( 'NotText' );
 		$content->expects( $this->never() )->method( 'getNativeData' );
-		$content->method( 'copy' )
-			->willReturn( $content );
+		$content->method( 'copy' )->willReturnSelf();
 
 		$rev = new MutableRevisionRecord( $title );
 		$rev->setId( $dummyRev->getId() );
@@ -727,8 +731,12 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 
 	private function getRevDelRevisionList( $title, $revisionId ) {
 		$services = $this->getServiceContainer();
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setUser(
+			$this->getTestUser( [ 'sysop' ] )->getUser()
+		);
 		return new RevDelRevisionList(
-			RequestContext::getMain(),
+			$context,
 			$title,
 			[ $revisionId ],
 			$services->getConnectionProvider(),

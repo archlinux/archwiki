@@ -452,7 +452,7 @@ class MhchemStateMachines {
 						$c4 = $this->mhchemParser->getPatterns()->match( '$one lowercase latin letter$ $',
 							$buffer["o"] ?? "" );
 						$hyphenFollows = $m === "-" && ( ( isset( $c1["remainder"] ) && $c1["remainder"] === "" )
-								|| isset( $c2 ) || isset( $c3 ) || isset( $c4 ) );
+								|| $c2 !== null || $c3 !== null || $c4 !== null );
 						if ( $hyphenFollows && !isset( $buffer["a"] ) && !isset( $buffer["b"] )
 							&& !isset( $buffer["p"] ) && !isset( $buffer["d"] )
 							&& !isset( $buffer["q"] ) && !$c1 && $c3 ) {

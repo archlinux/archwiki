@@ -21,7 +21,9 @@
  * @ingroup Parser
  */
 
-use MediaWiki\Parser\Parser;
+namespace MediaWiki\Parser;
+
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * Differences from DOM schema:
@@ -58,7 +60,7 @@ class Preprocessor_Hash extends Preprocessor {
 	 */
 	public function __construct(
 		Parser $parser,
-		WANObjectCache $wanCache = null,
+		?WANObjectCache $wanCache = null,
 		array $options = []
 	) {
 		parent::__construct( $parser, $wanCache, $options );
@@ -810,3 +812,6 @@ class Preprocessor_Hash extends Preprocessor {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( Preprocessor_Hash::class, 'Preprocessor_Hash' );

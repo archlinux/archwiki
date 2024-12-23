@@ -20,12 +20,15 @@
 
 namespace MediaWiki\Storage;
 
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILBFactory;
 
 class NameTableStoreFactory {
+	/** @var array<string,mixed> */
 	private static $info;
+	/** @var array<string,array<string,NameTableStore>> */
 	private $stores = [];
 
 	/** @var ILBFactory */
@@ -93,7 +96,7 @@ class NameTableStoreFactory {
 	public function get( $tableName, $wiki = false ): NameTableStore {
 		$infos = self::getTableInfo();
 		if ( !isset( $infos[$tableName] ) ) {
-			throw new \InvalidArgumentException( "Invalid table name \$tableName" );
+			throw new InvalidArgumentException( "Invalid table name \$tableName" );
 		}
 		if ( $wiki !== false && $wiki === $this->lbFactory->getLocalDomainID() ) {
 			$wiki = false;
@@ -109,9 +112,7 @@ class NameTableStoreFactory {
 			$this->cache,
 			$this->logger,
 			$tableName,
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
 			$info['idField'],
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
 			$info['nameField'],
 			$info['normalizationCallback'] ?? null,
 			$wiki,

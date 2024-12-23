@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"1100100",
 			"Indunil Chamara",
 			"Sahan.ssw",
 			"Singhalawap",
@@ -9,15 +10,13 @@
 			"Thirsty",
 			"පසිඳු කාවින්ද",
 			"ශ්වෙත",
-			"හරිත",
-			1100100
+			"හරිත"
 		]
 	},
 	"tooltip-ca-ve-edit": "මෙම පිටුව සංස්කරණය කරන්න",
 	"tooltip-ca-editsource": "මෙම පිටුවේ ප්‍රභව කේතයන් සංස්කරණය කරන්න",
 	"tooltip-ca-createsource": "මෙම පිටුවේ ප්‍රභව කේතයන් නිර්මාණය කරන්න",
 	"visualeditor-advancedsettings-tool": "උසස් සංස්කරණය",
-	"visualeditor-browserwarning": "ඔබ දැනට සිටින වෙබ් බ්‍රවුසරය නිල වශයෙන් විෂුවල්එඩිටර් සඳහා සහාය නොදක්වයි.",
 	"visualeditor-ca-createlocaldescriptionsource": "ප්‍රාදේශීය විස්තරයේ මූලාශ්‍රය එක් කරන්න",
 	"visualeditor-ca-createsource": "ප්‍රභව කේතයන් නිර්මාණය කරන්න",
 	"visualeditor-ca-editsource": "ප්‍රභව කේත සංස්කරණය කරන්න",

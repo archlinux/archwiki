@@ -23,8 +23,6 @@
 
 namespace MediaWiki\Cache;
 
-use DBAccessObjectUtils;
-use IDBAccessObject;
 use InvalidArgumentException;
 use MapCacheLRU;
 use MediaWiki\Linker\LinkTarget;
@@ -40,10 +38,11 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use stdClass;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * Cache for article titles (prefixed DB keys) and ids linked from one source
@@ -82,7 +81,7 @@ class LinkCache implements LoggerAwareInterface {
 		TitleFormatter $titleFormatter,
 		WANObjectCache $cache,
 		NamespaceInfo $nsInfo,
-		ILoadBalancer $loadBalancer = null
+		?ILoadBalancer $loadBalancer = null
 	) {
 		$this->entries = new MapCacheLRU( self::MAX_SIZE );
 		$this->wanCache = $cache;
@@ -403,7 +402,7 @@ class LinkCache implements LoggerAwareInterface {
 	 */
 	private function getGoodLinkRowInternal(
 		TitleValue $link,
-		callable $fetchCallback = null,
+		?callable $fetchCallback = null,
 		int $queryFlags = IDBAccessObject::READ_NORMAL
 	): array {
 		$callerShouldAddGoodLink = false;
@@ -434,7 +433,7 @@ class LinkCache implements LoggerAwareInterface {
 				$wanCacheKey,
 				WANObjectCache::TTL_DAY,
 				function ( $curValue, &$ttl, array &$setOpts ) use ( $fetchCallback, $ns, $dbkey ) {
-					$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+					$dbr = $this->loadBalancer->getConnection( ILoadBalancer::DB_REPLICA );
 					$setOpts += Database::getCacheSetOptions( $dbr );
 
 					$row = $fetchCallback( $dbr, $ns, $dbkey, [] );
@@ -446,8 +445,17 @@ class LinkCache implements LoggerAwareInterface {
 			);
 		} else {
 			// No persistent caching needed, but we can still use the callback.
-			[ $mode, $options ] = DBAccessObjectUtils::getDBOptions( $queryFlags );
-			$dbr = $this->loadBalancer->getConnectionRef( $mode );
+			if ( ( $queryFlags & IDBAccessObject::READ_LATEST ) == IDBAccessObject::READ_LATEST ) {
+				$dbr = $this->loadBalancer->getConnection( DB_PRIMARY );
+			} else {
+				$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+			}
+			$options = [];
+			if ( ( $queryFlags & IDBAccessObject::READ_EXCLUSIVE ) == IDBAccessObject::READ_EXCLUSIVE ) {
+				$options[] = 'FOR UPDATE';
+			} elseif ( ( $queryFlags & IDBAccessObject::READ_LOCKING ) == IDBAccessObject::READ_LOCKING ) {
+				$options[] = 'LOCK IN SHARE MODE';
+			}
 			$row = $fetchCallback( $dbr, $ns, $dbkey, $options );
 		}
 
@@ -462,7 +470,7 @@ class LinkCache implements LoggerAwareInterface {
 	 * @param int $ns
 	 * @param string $dbkey
 	 * @param callable|null $fetchCallback A callback that will retrieve the link row with the
-	 *        signature ( IDatabase $db, int $ns, string $dbkey, array $queryOptions ): ?stdObj.
+	 *        signature ( IReadableDatabase $db, int $ns, string $dbkey, array $queryOptions ): ?stdObj.
 	 * @param int $queryFlags IDBAccessObject::READ_XXX
 	 *
 	 * @return stdClass|null
@@ -471,7 +479,7 @@ class LinkCache implements LoggerAwareInterface {
 	public function getGoodLinkRow(
 		int $ns,
 		string $dbkey,
-		callable $fetchCallback = null,
+		?callable $fetchCallback = null,
 		int $queryFlags = IDBAccessObject::READ_NORMAL
 	): ?stdClass {
 		$link = TitleValue::tryNew( $ns, $dbkey );
@@ -542,13 +550,13 @@ class LinkCache implements LoggerAwareInterface {
 	}
 
 	/**
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @param int $ns
 	 * @param string $dbkey
 	 * @param array $options Query options, see IDatabase::select() for details.
 	 * @return stdClass|false
 	 */
-	private function fetchPageRow( IDatabase $db, int $ns, string $dbkey, $options = [] ) {
+	private function fetchPageRow( IReadableDatabase $db, int $ns, string $dbkey, $options = [] ) {
 		$queryBuilder = $db->newSelectQueryBuilder()
 			->select( self::getSelectFields() )
 			->from( 'page' )

@@ -1,5 +1,5 @@
 ( function () {
-	var pluralTestcases = {
+	const pluralTestcases = {
 		/*
 		 * Sample:
 		 * languagecode : [
@@ -62,8 +62,8 @@
 	QUnit.module( 'mediawiki.cldr', QUnit.newMwEnvironment() );
 
 	function pluralTest( langCode, tests ) {
-		QUnit.test( 'Plural Test for ' + langCode, function ( assert ) {
-			var i;
+		QUnit.test( 'Plural Test for ' + langCode, ( assert ) => {
+			let i;
 			for ( i = 0; i < tests.length; i++ ) {
 				assert.strictEqual(
 					mw.language.convertPlural( tests[ i ][ 0 ], tests[ i ][ 1 ] ),
@@ -75,7 +75,7 @@
 	}
 
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( pluralTestcases, function ( langCode, tests ) {
+	$.each( pluralTestcases, ( langCode, tests ) => {
 		if ( langCode === mw.config.get( 'wgUserLanguage' ) ) {
 			pluralTest( langCode, tests );
 		}

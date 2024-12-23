@@ -8,7 +8,7 @@ QUnit.module( 've.dm.MWReferenceModel (Cite)', ve.test.utils.newMwEnvironment() 
 
 /* Tests */
 
-QUnit.test( 'find an unknown ref', function ( assert ) {
+QUnit.test( 'find an unknown ref', ( assert ) => {
 	const doc = ve.dm.citeExample.createExampleDocument( 'references' );
 	const surface = new ve.dm.Surface( doc );
 
@@ -23,7 +23,7 @@ QUnit.test( 'find an unknown ref', function ( assert ) {
 	assert.strictEqual( refModel.findInternalItem( surface ), undefined );
 } );
 
-QUnit.test( 'find a known ref', function ( assert ) {
+QUnit.test( 'find a known ref', ( assert ) => {
 	const doc = ve.dm.citeExample.createExampleDocument( 'references' );
 	const surface = new ve.dm.Surface( doc );
 
@@ -34,7 +34,7 @@ QUnit.test( 'find a known ref', function ( assert ) {
 	assert.strictEqual( found.type, 'internalItem' );
 } );
 
-QUnit.test( 'insert new ref', function ( assert ) {
+QUnit.test( 'insert new ref', ( assert ) => {
 	const doc = new ve.dm.Document( [
 		{ type: 'paragraph', internal: { generated: 'empty' } },
 		{ type: '/paragraph' },
@@ -61,7 +61,7 @@ QUnit.test( 'insert new ref', function ( assert ) {
 	assert.strictEqual( internalList.getNodeGroup( 'mwReference/' ).keyedNodes[ 'auto/0' ].length, 1, 'keyedNodes track the ref' );
 } );
 
-QUnit.test( 'insert ref reuse', function ( assert ) {
+QUnit.test( 'insert ref reuse', ( assert ) => {
 	const doc = ve.dm.citeExample.createExampleDocument( 'references' );
 	const surface = new ve.dm.Surface( doc );
 	const internalList = doc.getInternalList();

@@ -10,6 +10,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
 use MediaWiki\Utils\MWTimestamp;
 
@@ -18,14 +19,15 @@ use MediaWiki\Utils\MWTimestamp;
  * @group Database
  * @group medium
  *
- * @covers \ApiBlock
+ * @covers \MediaWiki\Api\ApiBlock
  */
 class ApiBlockTest extends ApiTestCase {
 	use MockAuthorityTrait;
 
+	/** @var User|null */
 	protected $mUser = null;
+	/** @var DatabaseBlockStore */
 	private $blockStore;
-	private $blockMigrationStage;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -39,8 +41,6 @@ class ApiBlockTest extends ApiTestCase {
 			]
 		);
 		$this->blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-		$this->blockMigrationStage =
-			$this->getConfVar( MainConfigNames::BlockTargetMigrationStage );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class ApiBlockTest extends ApiTestCase {
 	 * @param Authority|null $blocker User to do the blocking, null to pick arbitrarily
 	 * @return array result of doApiRequest
 	 */
-	private function doBlock( array $extraParams = [], Authority $blocker = null ) {
+	private function doBlock( array $extraParams = [], ?Authority $blocker = null ) {
 		$this->assertNotNull( $this->mUser );
 
 		$params = [
@@ -153,20 +153,11 @@ class ApiBlockTest extends ApiTestCase {
 			new UltimateAuthority( $this->getTestSysop()->getUser() )
 		);
 
-		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$this->assertSame( '1', $this->db->newSelectQueryBuilder()
-				->select( 'ipb_deleted' )
-				->from( 'ipblocks' )
-				->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
-				->caller( __METHOD__ )->fetchField() );
-		}
-		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$this->assertSame( '1', $this->db->newSelectQueryBuilder()
-				->select( 'bl_deleted' )
-				->from( 'block' )
-				->where( [ 'bl_id' => $res[0]['block']['id'] ] )
-				->caller( __METHOD__ )->fetchField() );
-		}
+		$this->assertSame( '1', $this->getDb()->newSelectQueryBuilder()
+			->select( 'bl_deleted' )
+			->from( 'block' )
+			->where( [ 'bl_id' => $res[0]['block']['id'] ] )
+			->caller( __METHOD__ )->fetchField() );
 	}
 
 	public function testBlockWithProhibitedHide() {
@@ -186,21 +177,11 @@ class ApiBlockTest extends ApiTestCase {
 		] );
 
 		$res = $this->doBlock( [ 'noemail' => '' ] );
-
-		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$this->assertSame( '1', $this->getDb()->newSelectQueryBuilder()
-				->select( 'ipb_block_email' )
-				->from( 'ipblocks' )
-				->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
-				->caller( __METHOD__ )->fetchField() );
-		}
-		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$this->assertSame( '1', $this->getDb()->newSelectQueryBuilder()
-				->select( 'bl_block_email' )
-				->from( 'block' )
-				->where( [ 'bl_id' => $res[0]['block']['id'] ] )
-				->caller( __METHOD__ )->fetchField() );
-		}
+		$this->assertSame( '1', $this->getDb()->newSelectQueryBuilder()
+			->select( 'bl_block_email' )
+			->from( 'block' )
+			->where( [ 'bl_id' => $res[0]['block']['id'] ] )
+			->caller( __METHOD__ )->fetchField() );
 	}
 
 	public function testBlockWithProhibitedEmailBlock() {
@@ -218,22 +199,11 @@ class ApiBlockTest extends ApiTestCase {
 		$fakeTime = 1616432035;
 		MWTimestamp::setFakeTime( $fakeTime );
 		$res = $this->doBlock( [ 'expiry' => '1 day' ] );
-
-		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$expiry = $this->getDb()->newSelectQueryBuilder()
-				->select( 'ipb_expiry' )
-				->from( 'ipblocks' )
-				->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
-				->caller( __METHOD__ )->fetchField();
-		}
-		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$expiry = $this->getDb()->newSelectQueryBuilder()
-				->select( 'bl_expiry' )
-				->from( 'block' )
-				->where( [ 'bl_id' => $res[0]['block']['id'] ] )
-				->caller( __METHOD__ )->fetchField();
-		}
-
+		$expiry = $this->getDb()->newSelectQueryBuilder()
+			->select( 'bl_expiry' )
+			->from( 'block' )
+			->where( [ 'bl_id' => $res[0]['block']['id'] ] )
+			->caller( __METHOD__ )->fetchField();
 		$this->assertSame( (int)wfTimestamp( TS_UNIX, $expiry ), $fakeTime + 86400 );
 	}
 

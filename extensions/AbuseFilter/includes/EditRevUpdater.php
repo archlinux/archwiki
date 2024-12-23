@@ -108,21 +108,23 @@ class EditRevUpdater {
 		$logs = $this->logIds[ $key ];
 		if ( $logs[ 'local' ] ) {
 			$dbw = $this->lbFactory->getPrimaryDatabase();
-			$dbw->update( 'abuse_filter_log',
-				[ 'afl_rev_id' => $revisionRecord->getId() ],
-				[ 'afl_id' => $logs['local'] ],
-				__METHOD__
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( 'abuse_filter_log' )
+				->set( [ 'afl_rev_id' => $revisionRecord->getId() ] )
+				->where( [ 'afl_id' => $logs['local'] ] )
+				->caller( __METHOD__ )
+				->execute();
 			$ret = true;
 		}
 
 		if ( $logs[ 'global' ] ) {
 			$fdb = $this->centralDBManager->getConnection( DB_PRIMARY );
-			$fdb->update( 'abuse_filter_log',
-				[ 'afl_rev_id' => $revisionRecord->getId() ],
-				[ 'afl_id' => $logs['global'], 'afl_wiki' => $this->wikiID ],
-				__METHOD__
-			);
+			$fdb->newUpdateQueryBuilder()
+				->update( 'abuse_filter_log' )
+				->set( [ 'afl_rev_id' => $revisionRecord->getId() ] )
+				->where( [ 'afl_id' => $logs['global'], 'afl_wiki' => $this->wikiID ] )
+				->caller( __METHOD__ )
+				->execute();
 			$ret = true;
 		}
 		return $ret;

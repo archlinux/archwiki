@@ -28,7 +28,7 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 		$isOneFound = false;
 		$candidates = [];
 		$conditionResult = [];
-
+		$this->selector = $this->selector->compile( $env );
 		$args = [];
 		foreach ( $this->arguments as $a ) {
 			$argValue = $a['value']->compile( $env );

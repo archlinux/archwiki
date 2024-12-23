@@ -21,7 +21,9 @@
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Page\PageRecord;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\Parsoid\Config\SiteConfig as ParsoidSiteConfig;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
 use Psr\Log\LoggerInterface;
@@ -33,29 +35,33 @@ use Psr\Log\LoggerInterface;
  */
 class ParsoidCachePrewarmJob extends Job {
 	private LoggerInterface $logger;
-	private ParsoidOutputAccess $parsoidOutputAccess;
+	private ParserOutputAccess $parserOutputAccess;
 	private PageLookup $pageLookup;
 	private RevisionLookup $revisionLookup;
+	private ParsoidSiteConfig $parsoidSiteConfig;
 
 	/**
 	 * @param array $params
-	 * @param ParsoidOutputAccess $parsoidOutputAccess
+	 * @param ParserOutputAccess $parserOutputAccess
 	 * @param PageLookup $pageLookup
 	 * @param RevisionLookup $revisionLookup
+	 * @param ParsoidSiteConfig $parsoidSiteConfig
 	 */
 	public function __construct(
 		array $params,
-		ParsoidOutputAccess $parsoidOutputAccess,
+		ParserOutputAccess $parserOutputAccess,
 		PageLookup $pageLookup,
-		RevisionLookup $revisionLookup
+		RevisionLookup $revisionLookup,
+		ParsoidSiteConfig $parsoidSiteConfig
 	) {
 		parent::__construct( 'parsoidCachePrewarm', $params );
 
 		// TODO: find a way to inject the logger
 		$this->logger = LoggerFactory::getInstance( 'ParsoidCachePrewarmJob' );
-		$this->parsoidOutputAccess = $parsoidOutputAccess;
+		$this->parserOutputAccess = $parserOutputAccess;
 		$this->pageLookup = $pageLookup;
 		$this->revisionLookup = $revisionLookup;
+		$this->parsoidSiteConfig = $parsoidSiteConfig;
 	}
 
 	/**
@@ -63,7 +69,7 @@ class ParsoidCachePrewarmJob extends Job {
 	 * @param PageRecord $page
 	 * @param array $params Additional options for the job. Known keys:
 	 * - causeAction: Indicate what action caused the job to be scheduled. Used for monitoring.
-	 * - options: Flags to be passed to ParsoidOutputAccess:getParserOutput.
+	 * - options: Flags to be passed to ParserOutputAccess:getParserOutput.
 	 *   May be set to ParserOutputAccess::OPT_FORCE_PARSE to force a parsing even if there
 	 *   already is cached output.
 	 *
@@ -119,12 +125,13 @@ class ParsoidCachePrewarmJob extends Job {
 		}
 
 		$parserOpts = ParserOptions::newFromAnon();
+		$parserOpts->setUseParsoid();
 
 		$renderReason = $this->params['causeAction'] ?? $this->command;
 		$parserOpts->setRenderReason( $renderReason );
 
 		$mainSlot = $rev->getSlot( SlotRecord::MAIN );
-		if ( !$this->parsoidOutputAccess->supportsContentModel( $mainSlot->getModel() ) ) {
+		if ( !$this->parsoidSiteConfig->supportsContentModel( $mainSlot->getModel() ) ) {
 			$this->logger->debug( __METHOD__ . ': Parsoid does not support content model ' . $mainSlot->getModel() );
 			return;
 		}
@@ -135,7 +142,12 @@ class ParsoidCachePrewarmJob extends Job {
 		$options = $this->params['options'] ?? 0;
 
 		// getParserOutput() will write to ParserCache.
-		$status = $this->parsoidOutputAccess->getParserOutput( $page, $parserOpts, $rev, $options );
+		$status = $this->parserOutputAccess->getParserOutput(
+			$page,
+			$parserOpts,
+			$rev,
+			$options
+		);
 
 		if ( !$status->isOK() ) {
 			$this->logger->error( __METHOD__ . ': Parsoid error', [

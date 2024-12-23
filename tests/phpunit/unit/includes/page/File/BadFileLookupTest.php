@@ -4,6 +4,7 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Page\File\BadFileLookup;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\TitleValue;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
 
 /**
  * @coversDefaultClass \MediaWiki\Page\File\BadFileLookup
@@ -26,8 +27,7 @@ Comment line, no effect [[File:Good.jpg]]
 * [[File:Bad5.jpg]] before [[malformed title<>]] does not ignore the line
 WIKITEXT;
 
-	/** @var HookContainer */
-	private $hookContainer;
+	private HookContainer $hookContainer;
 
 	/**
 	 * Shared with GlobalWithDBTest

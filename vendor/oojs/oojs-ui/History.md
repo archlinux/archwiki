@@ -1,5 +1,120 @@
 # OOUI Release History
 
+## v0.51.2 / 2024-11-13
+
+### Deprecating changes
+* [DEPRECATING CHANGE] Implement Dialog#getEscapeAction (Ed Sanders)
+
+### Styles
+* HorizontalLayout: Use flexbox to avoid extra vertical margin (Bartosz Dziewoński)
+
+### Code
+* Use explicit nullable type on parameter arguments (Sam Reed)
+* build, docs: Improve the releasing process (Anne Tomasevich)
+* build: Updating mediawiki/mediawiki-codesniffer to 45.0.0 ([BOT] libraryupgrader)
+* build: Updating npm dependencies ([BOT] libraryupgrader)
+
+## v0.51.1 / 2024-09-19
+
+* This patch release aims to fix a dist file `dist/wikimedia-ui-base.less` that was incorrectly
+built in the previous release.
+
+## v0.51.0 / 2024-09-18
+
+### Features
+* Flip pending element animation direction for RTL (Ebrahim Byagowi)
+
+### Styles
+* styles, WikimediaUI theme: Use colors from expanded palette (Volker E.)
+
+### Code
+* build: Update cssjanus to 2.3.0 (Bartosz Dziewoński)
+* build: Updating body-parser to 1.20.3 ([BOT] libraryupgrader)
+* build: Updating mediawiki/mediawiki-codesniffer to 44.0.0 ([BOT] libraryupgrader)
+* build: Updating micromatch to 4.0.8 ([BOT] libraryupgrader)
+
+## v0.50.4 / 2024-07-11
+
+## Styles
+* WikimediaUI theme: Fix shorthand border values. (Volker E.)
+* WikimediaUI theme: Update background color in button mixins (Eric Gardner)
+
+## Icons
+* icons: Re-draw 'appearance' icon for most minimal file size (Volker E.)
+
+## v0.50.3 / 2024-07-02
+
+## Code
+* Fix getBoundingClientRect() copying (Lucas Werkmeister)
+
+## v0.50.2 / 2024-06-27
+
+## Styles
+* WikimediaUI theme: Fix dark mode contrast for framed active button element (bwang)
+
+## Code
+* build: Update jsdoc-wmf-theme to 1.1.0 (Ed Sanders)
+
+## v0.50.1 / 2024-06-25
+
+## Features
+* Implement "inline" progress bar from Codex (Ed Sanders)
+
+## Styles
+* ButtonMenuSelectWidget: Add spacing between button and menu to match Codex component (Ed Sanders)
+* WikimediaUI theme: Fix primary button color in dark mode (Volker E.)
+* WikimediaUI theme: Fix radio disc color in dark mode (Volker E.)
+
+## Code
+* Add missing ButtonMenuSelectWidget.less to modules.js (Ed Sanders)
+* Dialog: Check if an action is disabled in the UI before executing (Ed Sanders)
+* Move ButtonMenuSelectWidget spacing to FloatableElement.js (Ed Sanders)
+* windows.js: Fix allowed types for messages (Ed Sanders)
+* README: Small fixes to release instructions (Roan Kattouw)
+* JSDoc: add {@link} to some links (Novem Linguae)
+* JSDoc: rename .jsdoc.json to jsdoc.json (Novem Linguae)
+* Fix grunt-watch of JS files (Ed Sanders)
+* Grunt: Also watch build dir for JS file changes (e.g. modules.js) (Ed Sanders)
+* alphabetize scripts in package.json (Novem Linguae)
+* build: Update eslint-config-wikimedia to 0.28.2 and autofix (Ed Sanders)
+* build: Update stylelint and fix (Ed Sanders)
+* build: Updating braces to 3.0.3 ([BOT] libraryupgrader)
+* build: Updating npm dependencies ([BOT] libraryupgrader)
+
+## v0.50.0 / 2024-06-11
+
+## Features
+* WikimediaUI Theme: minimum updates for dark mode compatibility (Eric Gardner)
+
+## Styles
+* WikimediaUI theme: Replace local `background-color` var with Codex token (Volker E.)
+* WikimediaUI theme: Replace local variable with Codex token (Volker E.)
+* styles, demos: Remove further IE 11 CSS workarounds (Volker E.)
+* styles: Remove IE 11 placeholder workaround (Volker E.)
+
+## Code
+* build: Updating grunt-banana-checker to 0.13.0 ([BOT] libraryupgrader)
+* Element: Remove IE specific `rtlScrollType` handling (Volker E.)
+
+## v0.49.2 / 2024-05-16
+
+### Code
+* ListToolGroup: Apply a very tiny JS code optimization (Thiemo Kreuz)
+* Prefer arrow callbacks (Ed Sanders)
+* Remove unnecessary context binding when using arrow functions (Ed Sanders)
+* Use ES6 variadic arguments (Ed Sanders)
+* Use arrow callbacks with OO.ui.Process, jQuery each (Ed Sanders)
+* JSDoc: Load all plugins (Ed Sanders)
+* JSDoc: Sort and group externals (Ed Sanders)
+* JSDoc: Use externals plugin for OOJS core (Ed Sanders)
+* JSDoc: {Mixed} -> {any} (Ed Sanders)
+* Move eslintignores out of Gruntfile, fix issues (Ed Sanders)
+* Update minus-x to 1.1.3 (Alexander Vorwerk)
+* build: Updating dependencies ([BOT] libraryupgrader)
+* build: Updating jsdoc-wmf-theme to 1.0.0 ([BOT] libraryupgrader)
+* build: Updating npm dependencies ([BOT] libraryupgrader)
+* .nvmrc: Update version from 18.17.0 to 18.20.2 (James D. Forrester)
+
 ## v0.49.1 / 2024-04-02
 
 ### Styles

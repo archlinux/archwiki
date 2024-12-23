@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\AbuseFilter\Pager;
 use LogicException;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
-use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use MediaWiki\Extension\AbuseFilter\FilterUtils;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewList;
 use MediaWiki\Linker\Linker;
@@ -96,9 +96,8 @@ class AbuseFilterPager extends TablePager {
 	 * @return array
 	 */
 	public function getQueryInfo() {
-		$actorQuery = AbuseFilterServices::getActorMigration()->getJoin( 'af_user' );
 		return [
-			'tables' => [ 'abuse_filter' ] + $actorQuery['tables'],
+			'tables' => [ 'abuse_filter', 'actor' ],
 			'fields' => [
 				// All columns but af_comments
 				'af_id',
@@ -107,15 +106,19 @@ class AbuseFilterPager extends TablePager {
 				'af_pattern',
 				'af_global',
 				'af_public_comments',
+				'af_user' => 'actor_user',
+				'af_user_text' => 'actor_name',
 				'af_hidden',
 				'af_hit_count',
 				'af_timestamp',
 				'af_actions',
 				'af_group',
 				'af_throttled'
-			] + $actorQuery['fields'],
+			],
 			'conds' => $this->conds,
-			'join_conds' => $actorQuery['joins'],
+			'join_conds' => [
+				'actor' => [ 'JOIN', 'actor_id = af_actor' ],
+			]
 		];
 	}
 
@@ -152,7 +155,14 @@ class AbuseFilterPager extends TablePager {
 			$this->buildQueryInfo( $offset, $limit, $order );
 
 		unset( $options['LIMIT'] );
-		$res = $this->mDb->select( $tables, $fields, $conds, $fname, $options, $join_conds );
+		$res = $this->mDb->newSelectQueryBuilder()
+			->tables( $tables )
+			->fields( $fields )
+			->conds( $conds )
+			->caller( $fname )
+			->options( $options )
+			->joinConds( $join_conds )
+			->fetchResultSet();
 
 		$filtered = [];
 		foreach ( $res as $row ) {
@@ -213,7 +223,10 @@ class AbuseFilterPager extends TablePager {
 			$headers['af_hit_count'] = 'abusefilter-list-hitcount';
 		}
 
-		if ( $this->afPermManager->canViewPrivateFilters( $performer ) && $this->searchMode !== null ) {
+		if (
+				$this->afPermManager->canViewPrivateFilters( $performer ) &&
+				$this->searchMode !== null
+		) {
 			// This is also excluded in the default view
 			$headers['af_pattern'] = 'abusefilter-list-pattern';
 		}
@@ -279,8 +292,17 @@ class AbuseFilterPager extends TablePager {
 
 				return $lang->commaList( $statuses );
 			case 'af_hidden':
-				$msg = $value ? 'abusefilter-hidden' : 'abusefilter-unhidden';
-				return $this->msg( $msg )->parse();
+				$flagMsgs = [];
+				if ( FilterUtils::isHidden( (int)$value ) ) {
+					$flagMsgs[] = $this->msg( 'abusefilter-hidden' )->parse();
+				}
+				if ( FilterUtils::isProtected( (int)$value ) ) {
+					$flagMsgs[] = $this->msg( 'abusefilter-protected' )->parse();
+				}
+				if ( !$flagMsgs ) {
+					return $this->msg( 'abusefilter-unhidden' )->parse();
+				}
+				return $lang->commaList( $flagMsgs );
 			case 'af_hit_count':
 				if ( $this->afPermManager->canSeeLogDetailsForFilter( $user, $row->af_hidden ) ) {
 					$count_display = $this->msg( 'abusefilter-hitcount' )
@@ -298,11 +320,11 @@ class AbuseFilterPager extends TablePager {
 			case 'af_timestamp':
 				$userLink =
 					Linker::userLink(
-						$row->af_user,
+						$row->af_user ?? 0,
 						$row->af_user_text
 					) .
 					Linker::userToolLinks(
-						$row->af_user,
+						$row->af_user ?? 0,
 						$row->af_user_text
 					);
 

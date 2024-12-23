@@ -1,3 +1,5 @@
+@import 'mediawiki.skin.variables.less';
+
 .mw-dt-heading {
 	font-size: 110%;
 	font-weight: bold;
@@ -14,7 +16,7 @@
 
 		&:focus {
 			outline: 0;
-			background: #f0f3fc !important; /* stylelint-disable-line declaration-no-important */
+			background: @background-color-progressive-subtle !important; /* stylelint-disable-line declaration-no-important */
 		}
 	}
 
@@ -32,12 +34,12 @@
 	}
 
 	&-signature {
-		margin-left: 1.25em / 0.9;
+		margin-left: (1.25em / 0.9);
 		font-size: 90%;
 		color: #666;
 
 		summary > & {
-			margin-left: 0.25em / 0.9;
+			margin-left: (0.25em / 0.9);
 		}
 	}
 
@@ -51,7 +53,7 @@
 	[ data-level='7' ],
 	[ data-level='9' ],
 	[ data-level='11' ] {
-		background: #f6f6f6;
+		background: @background-color-interactive;
 	}
 
 	[ data-level='0' ],
@@ -60,6 +62,6 @@
 	[ data-level='6' ],
 	[ data-level='8' ],
 	[ data-level='10' ] {
-		background: #fff;
+		background: @background-color-base;
 	}
 }

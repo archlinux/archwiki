@@ -13,6 +13,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
 use stdClass;
+use Wikimedia\Http\MultiHttpClient;
 
 class MathRestbaseInterface {
 	/** @var string|false */
@@ -53,9 +54,9 @@ class MathRestbaseInterface {
 	 * Bundles several requests for fetching MathML.
 	 * Does not send requests, if the input TeX is invalid.
 	 * @param MathRestbaseInterface[] $rbis
-	 * @param \MultiHttpClient $multiHttpClient
+	 * @param MultiHttpClient $multiHttpClient
 	 */
-	private static function batchGetMathML( array $rbis, \MultiHttpClient $multiHttpClient ) {
+	private static function batchGetMathML( array $rbis, MultiHttpClient $multiHttpClient ) {
 		$requests = [];
 		$skips = [];
 		$i = 0;

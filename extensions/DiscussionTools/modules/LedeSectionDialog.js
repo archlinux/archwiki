@@ -34,24 +34,13 @@ LedeSectionDialog.prototype.initialize = function () {
 
 LedeSectionDialog.prototype.getSetupProcess = function ( data ) {
 	return LedeSectionDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
-			var dialog = this;
+		.next( () => {
 			this.contentLayout.$element.empty().append( data.$content );
-
-			// Enable collapsible content (T323639), which is normally not handled on mobile (T111565).
-			// It's safe to do this twice if that changes (makeCollapsible() checks if each element was
-			// already handled). Using the same approach as in 'mediawiki.page.ready' in MediaWiki core.
-			var $collapsible = this.contentLayout.$element.find( '.mw-collapsible' );
-			if ( $collapsible.length ) {
-				// This module is also preloaded in PageHooks to avoid visual jumps when things collapse.
-				mw.loader.using( 'jquery.makeCollapsible' ).then( function () {
-					$collapsible.makeCollapsible();
-					$collapsible.on( 'afterExpand.mw-collapsible afterCollapse.mw-collapsible', function () {
-						dialog.updateSize();
-					} );
-				} );
-			}
-		}, this );
+			// Resize dialog if collapsible banners are toggled, see T323639 for context
+			this.contentLayout.$element.on( 'afterExpand.mw-collapsible afterCollapse.mw-collapsible', () => {
+				this.updateSize();
+			} );
+		} );
 };
 
 module.exports = LedeSectionDialog;

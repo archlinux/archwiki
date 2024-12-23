@@ -53,11 +53,19 @@
 		text-decoration: @text-decoration-underline;
 	}
 
-	&:focus {
+	&:focus-visible {
 		outline: @border-style-base @border-width-thick @outline-color-progressive--focus;
 	}
 
-	.cdx-icon:last-child {
+	@supports not selector( :focus-visible ) {
+		&:focus {
+			outline: @border-style-base @border-width-thick @outline-color-progressive--focus;
+		}
+	}
+
+	// Style external link icon.
+	// HACK: Make sure this doesn't apply to placeholder icons in TypeaheadSearch (T372420).
+	.cdx-icon:not( .cdx-thumbnail__placeholder__icon--vue ):last-child {
 		// Note, `@min-size-icon-x-small` & `@size-icon-small` are an approximation in our current
 		// 16/14 base font theme environment.
 		// We're faking it to make it, `@min-size-icon-x-small` is `12px` in both themes,

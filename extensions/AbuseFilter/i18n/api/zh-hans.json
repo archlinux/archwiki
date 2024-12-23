@@ -3,13 +3,13 @@
 		"authors": [
 			"Func",
 			"Lakejason0",
+			"LittlePaw365",
 			"Liuxinyu970226",
 			"Looong",
 			"SomeyaMako",
 			"VulpesVulpes825",
 			"Wenyuan Liu",
-			"Yfdyh000",
-			"LittlePaw365"
+			"Yfdyh000"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "检查以查看滥用过滤器是否匹配某个变量集、某次编辑或某条日志记载的过滤器活动。",

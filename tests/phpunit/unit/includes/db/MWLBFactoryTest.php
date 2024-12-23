@@ -19,17 +19,21 @@
  */
 
 use MediaWiki\Config\ServiceOptions;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\LBFactorySimple;
 use Wikimedia\RequestTimeout\CriticalSectionProvider;
 use Wikimedia\RequestTimeout\RequestTimeout;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * @covers \Wikimedia\Rdbms\LBFactory
  * @covers \Wikimedia\Rdbms\LBFactorySimple
  * @covers \Wikimedia\Rdbms\LBFactoryMulti
+ * @covers \MWLBFactory
  */
 class MWLBFactoryTest extends MediaWikiUnitTestCase {
 
@@ -47,7 +51,6 @@ class MWLBFactoryTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \MWLBFactory::getLBFactoryClass
 	 * @dataProvider getLBFactoryClassProvider
 	 */
 	public function testGetLBFactoryClass( $config, $expected ) {
@@ -69,7 +72,6 @@ class MWLBFactoryTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \MWLBFactory::setDomainAliases()
 	 * @dataProvider setDomainAliasesProvider
 	 */
 	public function testDomainAliases( $dbname, $prefix, $expectedDomain ) {

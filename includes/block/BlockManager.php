@@ -46,15 +46,6 @@ use Wikimedia\IPUtils;
  * @since 1.34 Refactored from User and Block.
  */
 class BlockManager {
-	/** @var UserFactory */
-	private $userFactory;
-
-	/* @var UserIdentityUtils */
-	private $userIdentityUtils;
-
-	/** @var ServiceOptions */
-	private $options;
-
 	/**
 	 * @internal For use by ServiceWiring
 	 */
@@ -70,32 +61,17 @@ class BlockManager {
 		MainConfigNames::SoftBlockRanges,
 	];
 
-	/** @var LoggerInterface */
-	private $logger;
+	private ServiceOptions $options;
+	private UserFactory $userFactory;
+	private UserIdentityUtils $userIdentityUtils;
+	private LoggerInterface $logger;
+	private HookRunner $hookRunner;
+	private DatabaseBlockStore $blockStore;
+	private ProxyLookup $proxyLookup;
 
-	/** @var HookRunner */
-	private $hookRunner;
+	private BlockCache $userBlockCache;
+	private BlockCache $createAccountBlockCache;
 
-	/** @var DatabaseBlockStore */
-	private $blockStore;
-
-	/** @var ProxyLookup */
-	private $proxyLookup;
-
-	/** @var BlockCache */
-	private $userBlockCache;
-
-	/** @var BlockCache */
-	private $createAccountBlockCache;
-
-	/**
-	 * @param ServiceOptions $options
-	 * @param UserFactory $userFactory
-	 * @param UserIdentityUtils $userIdentityUtils
-	 * @param LoggerInterface $logger
-	 * @param HookContainer $hookContainer
-	 * @param DatabaseBlockStore $blockStore
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		UserFactory $userFactory,
@@ -744,13 +720,19 @@ class BlockManager {
 	 *  - If the block is a valid block, but should not be tracked by a cookie, clear the
 	 *    cookie and continue to check whether there is another block that should be tracked.
 	 *
+	 * Must be called after the User object is loaded, and before headers are sent.
+	 *
 	 * @since 1.34
 	 * @param User $user
 	 * @param WebResponse $response The response on which to set the cookie.
-	 * @throws LogicException If called before the User object was loaded.
-	 * @throws LogicException If not called pre-send.
 	 */
 	public function trackBlockWithCookie( User $user, WebResponse $response ) {
+		if ( !$this->options->get( MainConfigNames::CookieSetOnIpBlock ) &&
+			!$this->options->get( MainConfigNames::CookieSetOnAutoblock ) ) {
+			// Cookie blocks are disabled, return early to prevent executing unnecessary logic.
+			return;
+		}
+
 		$request = $user->getRequest();
 
 		if ( $request->getCookie( 'BlockID' ) !== null ) {

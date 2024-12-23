@@ -10,30 +10,30 @@
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
 use Article;
-use ExtensionRegistry;
-use IContextSource;
 use MediaWiki\Actions\Hook\GetActionNameHook;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\DiscussionTools\CommentFormatter;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
 use MediaWiki\Extension\VisualEditor\Hooks as VisualEditorHooks;
-use MediaWiki\Hook\BeforePageDisplayHook;
-use MediaWiki\Hook\OutputPageBeforeHTMLHook;
-use MediaWiki\Hook\OutputPageParserOutputHook;
 use MediaWiki\Hook\SidebarBeforeOutputHook;
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
+use MediaWiki\Output\Hook\OutputPageBeforeHTMLHook;
+use MediaWiki\Output\Hook\OutputPageParserOutputHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\BeforeDisplayNoArticleTextHook;
+use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
 use OOUI\ButtonWidget;
-use ParserOutput;
-use RequestContext;
 use Skin;
 use SkinTemplate;
 
@@ -138,17 +138,6 @@ class PageHooks implements
 			}
 		}
 
-		// This doesn't involve any DB checks, and so we can put it on every
-		// page to make it easy to pick for logging in WikiEditor. If this
-		// becomes not-cheap, move it elsewhere.
-		$abstate = HookUtils::determineUserABTestBucket( $user );
-		if ( $abstate ) {
-			$output->addJsConfigVars(
-				'wgDiscussionToolsABTestBucket',
-				$abstate
-			);
-		}
-
 		// Replace the action=edit&section=new form with the new topic tool.
 		if ( HookUtils::shouldOpenNewTopicTool( $output->getContext() ) ) {
 			$output->addJsConfigVars( 'wgDiscussionToolsStartNewTopicTool', true );
@@ -205,19 +194,12 @@ class PageHooks implements
 						] ) )
 					)
 				);
-
-				// Preload jquery.makeCollapsible for LedeSectionDialog.
-				// Using the same approach as in Skin::getDefaultModules in MediaWiki core.
-				if ( str_contains( $output->getHTML(), 'mw-collapsible' ) ) {
-					$output->addModules( 'jquery.makeCollapsible' );
-					$output->addModuleStyles( 'jquery.makeCollapsible.styles' );
-				}
 			}
 		}
 
 		if ( $output->getSkin()->getSkinName() === 'minerva' ) {
 			if (
-				$req->getRawVal( 'action', 'view' ) === 'view' &&
+				( $req->getRawVal( 'action' ) ?? 'view' ) === 'view' &&
 				HookUtils::isFeatureEnabledForOutput( $output, HookUtils::NEWTOPICTOOL ) &&
 				// Only add the button if "New section" tab would be shown in a normal skin.
 				HookUtils::shouldShowNewSectionTab( $output->getContext() )
@@ -304,16 +286,30 @@ class PageHooks implements
 				// Reply button: share
 				$output->addModuleStyles( 'oojs-ui.styles.icons-content' );
 			}
+			$output->addModuleStyles( [
+				// Overflow menu ('ellipsis' icon)
+				'oojs-ui.styles.icons-interactions',
+			] );
 			if ( $isMobile ) {
 				$output->addModuleStyles( [
-					// Mobile overflow menu:
-					// ellipsis
-					'oojs-ui.styles.icons-interactions',
-					// edit
+					// Edit button in overflow menu ('edit' icon)
 					'oojs-ui.styles.icons-editing-core',
 				] );
 			}
 			$text = CommentFormatter::postprocessVisualEnhancements( $text, $output, $isMobile );
+		}
+
+		// Append empty state if the OutputPageParserOutput hook decided that we should.
+		// This depends on the order in which the hooks run. Hopefully it doesn't change.
+		if ( $output->getProperty( 'DiscussionTools-emptyStateHtml' ) ) {
+			// Insert before the last </div> tag, which should belong to <div class="mw-parser-output">
+			$idx = strrpos( $text, '</div>' );
+			$text = substr_replace(
+				$text,
+				$output->getProperty( 'DiscussionTools-emptyStateHtml' ),
+				$idx === false ? strlen( $text ) : $idx,
+				0
+			);
 		}
 	}
 
@@ -342,9 +338,11 @@ class PageHooks implements
 			HookUtils::shouldDisplayEmptyState( $output->getContext() )
 		) {
 			$output->enableOOUI();
-			CommentFormatter::appendToEmptyTalkPage(
-				$pout, $this->getEmptyStateHtml( $output->getContext() )
-			);
+			// This must be appended after the content of the page, which wasn't added to OutputPage yet.
+			// Pass it to the OutputPageBeforeHTML hook, so that it may add it at the right time.
+			// This depends on the order in which the hooks run. Hopefully it doesn't change.
+			$output->setProperty( 'DiscussionTools-emptyStateHtml',
+				$this->getEmptyStateHtml( $output->getContext() ) );
 			$output->addBodyClasses( 'ext-discussiontools-emptystate-shown' );
 		}
 

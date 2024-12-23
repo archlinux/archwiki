@@ -4,13 +4,13 @@
 			"Cwlin0416",
 			"Gaoxuewei",
 			"Justincheng12345",
+			"Kly",
 			"Lakejason0",
 			"Liangent",
 			"Mark85296341",
 			"Shinjiman",
 			"Simon Shek",
-			"Waihorace",
-			"Kly"
+			"Waihorace"
 		]
 	},
 	"pfunc_desc": "加強解析器，提供邏輯函數功能",
@@ -18,6 +18,7 @@
 	"pfunc_time_too_long": "錯誤：過多 #time 呼叫。",
 	"pfunc_time_too_big": "錯誤：#time 支援上限為 9999 年。",
 	"pfunc_time_too_small": "錯誤：#time 支援下限為 0 年。",
+	"pfunc_timef_bad_format": "錯誤：#timef 格式無效",
 	"pfunc_rel2abs_invalid_depth": "錯誤：無效路徑深度：\"$1\" (嘗試存取根節點以上的節點)",
 	"pfunc_expr_stack_exhausted": "表達式錯誤：堆疊用盡。",
 	"pfunc_expr_unexpected_number": "表達式錯誤：預期之外的數字。",

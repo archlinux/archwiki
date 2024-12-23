@@ -21,5 +21,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "גוש קוד",
 	"syntaxhighlight-error-pygments-invocation-failure": "הרצת Pygments לא עבדה",
 	"syntaxhighlight-error-unknown-language": "השפה \"$1\" אינה ידועה",
-	"syntaxhighlight-error-exceeds-size-limit": "גודל קוד של {{PLURAL:$1|בית אחד|$1 בתים}} עובר את המגבלה של {{PLURAL:$2|בית אחד|$2 בתים}}"
+	"syntaxhighlight-error-exceeds-size-limit": "גודל קוד של {{PLURAL:$1|בית אחד|$1 בתים}} עובר את המגבלה של {{PLURAL:$2|בית אחד|$2 בתים}}",
+	"syntaxhighlight-button-copy": "העתקה",
+	"syntaxhighlight-button-copied": "הועתק!"
 }

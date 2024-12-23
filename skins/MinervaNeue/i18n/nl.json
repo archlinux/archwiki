@@ -39,7 +39,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Over deze categorie",
 	"mobile-frontend-meta-data-issues-header": "Paginaproblemen",
 	"minerva-meta-data-issues-section-header": "Sectieproblemen",
-	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "De openingsparagraaf van deze pagina bewerken",
 	"mobile-frontend-placeholder": "{{SITENAME}} doorzoeken",
 	"mobile-frontend-random-button": "Willekeurig",
@@ -59,6 +58,7 @@
 	"minerva-page-actions-overflow": "Meer",
 	"minerva-page-actions-language-switcher": "Talen",
 	"minerva-page-actions-history": "Geschiedenis",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Overleg]",
 	"minerva-skin-desc": "Een responsieve vormgeving die mobiele apparaten voorop stelt",
 	"skin-minerva-issue-learn-more": "Meer leren",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 seconde|$1 seconden}} geleden",
@@ -69,7 +69,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 jaar}} geleden",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorieën",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Toon paginacategorieën",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Verbeterde behandeling van paginaproblemen",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Meldingen over problemen met de pagina (Sjabloon:ambox) worden in het artikel ingevoegd.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Helaas is het groeperen van resultaten per pagina niet beschikbaar in de mobiele weergave. Als u deze functionaliteit wilt gebruiken, bezoek dan de desktop weergave."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Helaas is het groeperen van resultaten per pagina niet beschikbaar in de mobiele weergave. Als u deze functionaliteit wilt gebruiken, bezoek dan de desktop weergave.",
+	"skin-minerva-night-mode-unavailable": "Pagina alleen beschikbaar in het kleurenthema \"Licht\"."
 }

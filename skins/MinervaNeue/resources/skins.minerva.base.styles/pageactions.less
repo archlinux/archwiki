@@ -6,7 +6,7 @@
 	position: relative;
 
 	.tagline {
-		color: var( --color-subtle );
+		color: @color-subtle;
 		font-size: @font-size-tag-line;
 	}
 }
@@ -16,9 +16,10 @@
 }
 
 // used to disable the languages icon.
-.language-selector.disabled {
+.cdx-button.language-selector.disabled {
 	cursor: default;
-	opacity: 0.25;
+	// has to be !important to override the cdx-button selector
+	color: @color-disabled !important;
 }
 
 #p-views {
@@ -27,7 +28,7 @@
 
 .page-actions-menu {
 	box-sizing: border-box;
-	border-top: @border-width-base @border-style-base var( --border-color-muted );
+	border-top: @border-width-base @border-style-base @border-color-muted;
 	border-bottom: @border-subtle;
 	margin-top: -@border-width-base; // Offset top border.
 }
@@ -36,6 +37,10 @@
 	display: flex;
 	height: @size-icon * 2;
 	justify-content: space-between;
+
+	.disabled .minerva-icon {
+		background: @color-disabled;
+	}
 }
 
 .page-actions-menu__list-item {
@@ -46,7 +51,7 @@
 	overflow: hidden;
 
 	.cdx-button {
-		color: var( --color-subtle ) !important;
+		color: @color-subtle !important;
 		font-weight: 500;
 	}
 }
@@ -83,8 +88,8 @@
 	}
 }
 
-// On small devices that don't support Javascript, hide the page actions bar
-@media all and ( max-width: @width-breakpoint-mobile - 1 ) {
+// On feature phone devices that don't support JavaScript, hide the page actions bar.
+@media all and ( max-width: @min-width-breakpoint-mobile - 1 ) {
 	.client-nojs {
 		#p-views {
 			display: none;

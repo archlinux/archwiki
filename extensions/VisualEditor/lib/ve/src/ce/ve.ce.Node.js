@@ -9,7 +9,7 @@
  *
  * @abstract
  * @extends ve.ce.View
- * @mixins ve.Node
+ * @mixes ve.Node
  *
  * @constructor
  * @param {ve.dm.Node} model Model to observe
@@ -104,153 +104,174 @@ ve.ce.Node.static.getDescription = function () {
 
 /* Methods */
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.getChildNodeTypes = function () {
 	return this.model.getChildNodeTypes();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.getParentNodeTypes = function () {
 	return this.model.getParentNodeTypes();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.getSuggestedParentNodeTypes = function () {
 	return this.model.getSuggestedParentNodeTypes();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.canHaveChildren = function () {
 	return this.model.canHaveChildren();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.canHaveChildrenNotContent = function () {
 	return this.model.canHaveChildrenNotContent();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isInternal = function () {
 	return this.model.isInternal();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isMetaData = function () {
 	return this.model.isMetaData();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isWrapped = function () {
 	return this.model.isWrapped();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isUnwrappable = function () {
 	return this.model.isUnwrappable();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.canContainContent = function () {
 	return this.model.canContainContent();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isContent = function () {
 	return this.model.isContent();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
- *
  * If this is set to true it should implement:
  *
  *     setFocused( boolean val )
  *     boolean isFocused()
+ *
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isFocusable = function () {
 	return this.model.isFocusable();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isAlignable = function () {
 	return this.model.isAlignable();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isCellable = function () {
 	return this.model.isCellable();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.isCellEditable = function () {
 	return this.model.isCellEditable();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.hasSignificantWhitespace = function () {
 	return this.model.hasSignificantWhitespace();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.handlesOwnChildren = function () {
 	return this.model.handlesOwnChildren();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.shouldIgnoreChildren = function () {
 	return this.model.shouldIgnoreChildren();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.getLength = function () {
 	return this.model.getLength();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.getOuterLength = function () {
 	return this.model.getOuterLength();
 };
 
+// eslint-disable-next-line jsdoc/require-returns
 /**
- * @inheritdoc ve.Node
+ * @see ve.Node
  */
 ve.ce.Node.prototype.getOffset = function () {
 	return this.model.getOffset();
@@ -283,9 +304,7 @@ ve.ce.Node.prototype.removeEmptyLastChildOnEnter = function () {
  * @return {boolean} Node supports multiline input
  */
 ve.ce.Node.prototype.isMultiline = function () {
-	var booleanNode = this.traverseUpstream( function ( node ) {
-		return node.constructor.static.isMultiline === null;
-	} );
+	const booleanNode = this.traverseUpstream( ( node ) => node.constructor.static.isMultiline === null );
 	if ( booleanNode ) {
 		return booleanNode.constructor.static.isMultiline;
 	} else {

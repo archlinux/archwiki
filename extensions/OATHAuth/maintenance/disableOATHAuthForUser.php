@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\SessionManager;
 

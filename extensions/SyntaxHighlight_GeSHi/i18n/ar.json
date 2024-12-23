@@ -6,7 +6,8 @@
 			"SaldırganSincap",
 			"Tala Ali",
 			"ديفيد",
-			"زكريا"
+			"زكريا",
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"syntaxhighlight-desc": "يوفر تمييزا لتركيب <code>&lt;syntaxhighlight&gt;</code> باستخدام [http://pygments.org/ Pygments - Python syntax highlighter]",
@@ -24,5 +25,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "نص خام",
 	"syntaxhighlight-error-pygments-invocation-failure": "فشل استدعاء Pygments",
 	"syntaxhighlight-error-unknown-language": "لغة غير معروفة \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "يتجاوز حجم الكود البالغ $1 {{PLURAL:$1|بايت}} الحد الأقصى المسموح به وهو $2 {{PLURAL:$2|بايت}}"
+	"syntaxhighlight-error-exceeds-size-limit": "يتجاوز حجم الكود البالغ $1 {{PLURAL:$1|بايت}} الحد الأقصى المسموح به وهو $2 {{PLURAL:$2|بايت}}",
+	"syntaxhighlight-button-copy": "انسخ",
+	"syntaxhighlight-button-copied": "نُسخ!"
 }

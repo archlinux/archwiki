@@ -26,6 +26,7 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 
 	protected string $name;
 	protected string $id;
+	protected ?string $legacyId = null;
 	/** @var ContentThreadItem[] */
 	protected array $replies = [];
 	/** @var string|bool */
@@ -181,20 +182,9 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	public function getHTML(): string {
 		$fragment = $this->getRange()->cloneContents();
 		CommentModifier::unwrapFragment( $fragment );
-		// Does not work: T357812
-		// $editsection = DOMCompat::querySelector( $fragment, 'mw\\:editsection' );
-		for ( $n = $fragment->firstChild; $n; $n = $n->nextSibling ) {
-			if ( $n instanceof Element ) {
-				if ( strtolower( $n->tagName ) === 'mw:editsection' ) {
-					$n->parentNode->removeChild( $n );
-					break;
-				}
-				$editsection = DOMCompat::querySelector( $n, 'mw\\:editsection' );
-				if ( $editsection ) {
-					$editsection->parentNode->removeChild( $editsection );
-					break;
-				}
-			}
+		$editsection = DOMCompat::querySelector( $fragment, 'mw\\:editsection' );
+		if ( $editsection ) {
+			$editsection->parentNode->removeChild( $editsection );
 		}
 		return DOMUtils::getFragmentInnerHTML( $fragment );
 	}
@@ -259,6 +249,13 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	}
 
 	/**
+	 * @return string|null Thread ID, before most recent change to ID calculation
+	 */
+	public function getLegacyId(): ?string {
+		return $this->legacyId;
+	}
+
+	/**
 	 * @return ContentThreadItem[] Replies to this thread item
 	 */
 	public function getReplies(): array {
@@ -309,6 +306,13 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	 */
 	public function setId( string $id ): void {
 		$this->id = $id;
+	}
+
+	/**
+	 * @param string|null $legacyId Thread ID
+	 */
+	public function setLegacyId( ?string $legacyId ): void {
+		$this->legacyId = $legacyId;
 	}
 
 	public function addWarning( string $warning ): void {

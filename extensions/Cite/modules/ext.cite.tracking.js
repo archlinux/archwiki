@@ -1,9 +1,10 @@
 'use strict';
 
 /**
- * @file Temporary tracking to evaluate the impact of Reference Previews on
+ * Temporary tracking to evaluate the impact of Reference Previews on
  * users' interaction with references.
  *
+ * @memberof module:ext.cite.ux-enhancements
  * @see https://phabricator.wikimedia.org/T214493
  * @see https://phabricator.wikimedia.org/T231529
  * @see https://phabricator.wikimedia.org/T353798
@@ -17,8 +18,8 @@ const CITE_BASELINE_LOGGING_SCHEMA = 'ext.cite.baseline';
 const REFERENCE_PREVIEWS_LOGGING_SCHEMA = 'event.ReferencePreviewsPopups';
 
 // EventLogging may not be installed
-mw.loader.using( 'ext.eventLogging' ).then( function () {
-	$( function () {
+mw.loader.using( 'ext.eventLogging' ).then( () => {
+	$( () => {
 		if ( !navigator.sendBeacon ||
 			!mw.config.get( 'wgIsArticle' )
 		) {
@@ -26,9 +27,9 @@ mw.loader.using( 'ext.eventLogging' ).then( function () {
 		}
 
 		// FIXME: This might be obsolete when the code moves to the this extension
-		mw.trackSubscribe( REFERENCE_PREVIEWS_LOGGING_SCHEMA, function ( type, data ) {
+		mw.trackSubscribe( REFERENCE_PREVIEWS_LOGGING_SCHEMA, ( type, data ) => {
 			if ( data.action.indexOf( 'anonymous' ) !== -1 ) {
-				mw.config.set( 'wgPopupsReferencePreviewsVisible', data.action === 'anonymousEnabled' );
+				mw.config.set( 'wgCiteReferencePreviewsVisible', data.action === 'anonymousEnabled' );
 			}
 		} );
 
@@ -46,7 +47,7 @@ mw.loader.using( 'ext.eventLogging' ).then( function () {
 					// FIXME: This might be obsolete when the code moves to the this extension and
 					//  we get state directly.
 					// eslint-disable-next-line camelcase
-					with_ref_previews: mw.config.get( 'wgPopupsReferencePreviewsVisible' )
+					with_ref_previews: mw.config.get( 'wgCiteReferencePreviewsVisible' )
 				} );
 			}
 		);

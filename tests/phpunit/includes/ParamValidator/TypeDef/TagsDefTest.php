@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Tests\ParamValidator\TypeDef;
 
-use ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\ParamValidator\TypeDef\TagsDef;
 use MediaWikiIntegrationTestCase;
@@ -17,13 +16,11 @@ use Wikimedia\ParamValidator\ValidationException;
  */
 class TagsDefTest extends MediaWikiIntegrationTestCase {
 
-	protected static $testClass = TagsDef::class;
-
 	protected function setUp(): void {
 		parent::setUp();
 
-		ChangeTags::defineTag( 'tag1' );
-		ChangeTags::defineTag( 'tag2' );
+		$this->getServiceContainer()->getChangeTagsStore()->defineTag( 'tag1' );
+		$this->getServiceContainer()->getChangeTagsStore()->defineTag( 'tag2' );
 
 		// Since the type def shouldn't care about the specific user,
 		// remove the right from relevant groups to ensure that it's not
@@ -113,6 +110,13 @@ class TagsDefTest extends MediaWikiIntegrationTestCase {
 					'test', 'doesnotexist', $settings
 				),
 				$settings, $valuesList
+			],
+			'Not a string' => [
+				[ 1, 2, 3 ],
+				new ValidationException(
+					DataMessageValue::new( 'paramvalidator-needstring', [], 'needstring' ),
+					'test', '', []
+				)
 			],
 		];
 	}

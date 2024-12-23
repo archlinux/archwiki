@@ -45,13 +45,21 @@ else
 fi
 
 # Generate commit summary
-# TODO recurse
 NEWCHANGES=$(git log ..$TARGET --oneline --no-merges --topo-order --reverse --color=never)
 TASKS=$(git log ..$TARGET --no-merges --format=format:%B | grep "Bug: T" | sort | uniq)
-  ADDED_I18N_KEYS=$(git diff HEAD..$TARGET -- i18n/en.json | grep '^\+' | grep --color=never -v '^\+\+\+' | sed -E 's/^\+\s*"([^"]+)":.*/\1/' | sed 's/^/- /' || :)
-DELETED_I18N_KEYS=$(git diff HEAD..$TARGET -- i18n/en.json | grep '^\-' | grep --color=never -v '^\-\-\-' | sed -E 's/^\-\s*"([^"]+)":.*/\1/' | sed 's/^/- /' || :)
 
 # Ensure script continues if grep "fails" (returns nothing) with || : (due to -e flag in bash)
+
+# Addede/removed i18n keys
+  ADDED_I18N_KEYS=$(git diff HEAD..$TARGET -- i18n/en.json | grep -E '^\+' | grep --color=never -vE '^\+\+\+' | sed -E 's/^\+\s*"([^"]+)":.*/\1/' | sed 's/^/- /' || :)
+DELETED_I18N_KEYS=$(git diff HEAD..$TARGET -- i18n/en.json | grep -E '^\-' | grep --color=never -vE '^\-\-\-' | sed -E 's/^\-\s*"([^"]+)":.*/\1/' | sed 's/^/- /' || :)
+# Find common keys (modified keys)
+MODIFIED_KEYS=$(echo -e "$ADDED_I18N_KEYS\n$DELETED_I18N_KEYS" | sort | uniq -d)
+# Remove modified keys from the added and removed lists
+  ADDED_I18N_KEYS=$(echo "$ADDED_I18N_KEYS" | grep -vxF -f <(echo "$MODIFIED_KEYS") | sed 's/^/- /')
+DELETED_I18N_KEYS=$(echo "$DELETED_I18N_KEYS" | grep -vxF -f <(echo "$MODIFIED_KEYS") | sed 's/^/- /')
+
+# Added/removed files
   ADDED_FILES=$(git diff HEAD..$TARGET --name-only --diff-filter=A | grep --color=never -E "\.(js|css|less)$" | sed 's/^/- /' || :)
 DELETED_FILES=$(git diff HEAD..$TARGET --name-only --diff-filter=D | grep --color=never -E "\.(js|css|less)$" | sed 's/^/- /' || :)
 

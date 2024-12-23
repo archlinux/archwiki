@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:MediaStatistics
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,8 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Brian Wolff
  */
 
 namespace MediaWiki\Specials;
@@ -29,20 +25,25 @@ use MediaWiki\Html\Html;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\SpecialPage\SpecialPage;
-use MimeAnalyzer;
 use Skin;
+use Wikimedia\Mime\MimeAnalyzer;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
+ * Implements Special:MediaStatistics
+ *
  * @ingroup SpecialPage
+ * @author Brian Wolff
  */
 class SpecialMediaStatistics extends QueryPage {
 
 	public const MAX_LIMIT = 5000;
 
-	protected $totalCount = 0, $totalBytes = 0;
+	protected int $totalCount = 0;
+	protected int $totalBytes = 0;
 
 	/**
 	 * @var int Combined file size of all files in a section
@@ -145,7 +146,7 @@ class SpecialMediaStatistics extends QueryPage {
 	 *
 	 * @param OutputPage $out
 	 * @param Skin $skin (deprecated presumably)
-	 * @param IDatabase $dbr
+	 * @param IReadableDatabase $dbr
 	 * @param IResultWrapper $res Results from query
 	 * @param int $num Number of results
 	 * @param int $offset Paging offset (Should always be 0 in our case)

@@ -1,6 +1,6 @@
 ( function () {
 
-	const AB = require( '../../../resources/skins.minerva.scripts/AB.js' );
+	const AB = require( 'skins.minerva.scripts/AB.js' );
 	const defaultConfig = {
 		testName: 'WME.MinervaABTest',
 		samplingRate: 0.5,
@@ -9,7 +9,7 @@
 
 	QUnit.module( 'Minerva AB-test' );
 
-	QUnit.test( 'Bucketing test', function ( assert ) {
+	QUnit.test( 'Bucketing test', ( assert ) => {
 		const userBuckets = {
 			unsampled: 0,
 			control: 0,

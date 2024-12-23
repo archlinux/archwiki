@@ -290,7 +290,6 @@
 	"abusefilter-edit-builder-op-bool-not": "Ne (!)",
 	"abusefilter-edit-builder-op-bool-and": "I (&)",
 	"abusefilter-edit-builder-op-bool-or": "Ili (|)",
-	"abusefilter-edit-builder-op-bool-xor": "EKSILI (^)",
 	"abusefilter-edit-builder-group-misc": "Razno",
 	"abusefilter-edit-builder-misc-in": "sadržano u niski (in)",
 	"abusefilter-edit-builder-misc-contains": "Leva niska sadrži desnu nisku (contains)",

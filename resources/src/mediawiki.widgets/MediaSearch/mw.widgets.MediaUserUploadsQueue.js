@@ -7,12 +7,13 @@
 ( function () {
 
 	/**
-	 * MediaWiki media resource queue.
+	 * @classdesc Media resource queue.
 	 *
 	 * @class
 	 * @extends mw.widgets.MediaResourceQueue
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.widgets.MediaUserUploadsQueue`.
 	 * @param {Object} [config] Configuration options
 	 * @param {number} config.maxHeight The maximum height of the media, used in the
 	 *  search call to the API.
@@ -38,23 +39,21 @@
 	 * @return {jQuery.Promise} Promise that resolves when the resources are set up
 	 */
 	mw.widgets.MediaUserUploadsQueue.prototype.setup = function () {
-		var queue = this;
-
-		return this.getFileRepos().then( function ( sources ) {
-			if ( queue.providers.length === 0 ) {
+		return this.getFileRepos().then( ( sources ) => {
+			if ( this.providers.length === 0 ) {
 				// Set up the providers
-				for ( var i = 0, len = sources.length; i < len; i++ ) {
-					queue.addProvider( new mw.widgets.MediaUserUploadsProvider(
+				for ( let i = 0, len = sources.length; i < len; i++ ) {
+					this.addProvider( new mw.widgets.MediaUserUploadsProvider(
 						sources[ i ].apiurl,
 						{
 							name: sources[ i ].name,
 							local: sources[ i ].local,
 							scriptDirUrl: sources[ i ].scriptDirUrl,
 							userParams: {
-								gaiuser: queue.getUser()
+								gaiuser: this.getUser()
 							},
 							staticParams: {
-								iiurlheight: queue.getMaxHeight()
+								iiurlheight: this.getMaxHeight()
 							}
 						} )
 					);

@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.49.1
+ * OOUI v0.51.2
  * https://www.mediawiki.org/wiki/OOUI
  *
  * Copyright 2011–2024 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2024-04-04T18:19:07Z
+ * Date: 2024-11-13T16:37:13Z
  */
 .oo-ui-element-hidden {
   display: none !important;
@@ -344,6 +344,10 @@
   background-size: 1.5625em 1.5625em;
   animation: oo-ui-pendingElement-stripes 650ms linear infinite;
 }
+.oo-ui-pendingElement-pending:dir( rtl ) {
+  background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 50%, #fff 50%, #fff 75%, transparent 75%, transparent);
+  animation-direction: reverse;
+}
 @keyframes oo-ui-pendingElement-stripes {
   0% {
     background-position: -1.5625em 0;
@@ -607,16 +611,17 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   margin: 1em 0;
 }
 
-.oo-ui-horizontalLayout > .oo-ui-widget {
-  display: inline-block;
-  vertical-align: middle;
+.oo-ui-horizontalLayout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
 }
-.oo-ui-horizontalLayout > .oo-ui-layout {
-  display: inline-block;
+.oo-ui-horizontalLayout > .oo-ui-widget {
+  align-self: center;
 }
 .oo-ui-horizontalLayout > .oo-ui-layout,
 .oo-ui-horizontalLayout > .oo-ui-widget {
-  margin-right: 0.5em;
+  margin-right: 0;
 }
 .oo-ui-horizontalLayout > .oo-ui-layout:last-child,
 .oo-ui-horizontalLayout > .oo-ui-widget:last-child {
@@ -624,9 +629,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 .oo-ui-horizontalLayout > .oo-ui-layout {
   margin-top: 0;
-}
-.oo-ui-horizontalLayout > .oo-ui-widget {
-  margin-bottom: 0.5em;
 }
 
 
@@ -1185,19 +1187,11 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   max-width: 50em;
 }
 .oo-ui-textInputWidget .oo-ui-inputWidget-input {
-  /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
   -webkit-appearance: none;
-  /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
   -moz-appearance: textfield;
   display: block;
   width: 100%;
   box-sizing: border-box;
-}
-.oo-ui-textInputWidget input::-ms-clear {
-  display: none;
-}
-.oo-ui-textInputWidget textarea {
-  overflow: auto;
 }
 .oo-ui-textInputWidget textarea.oo-ui-textInputWidget-autosized {
   /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
@@ -1205,7 +1199,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 .oo-ui-textInputWidget [type='number']::-webkit-outer-spin-button,
 .oo-ui-textInputWidget [type='number']::-webkit-inner-spin-button {
-  /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
   -webkit-appearance: none;
   margin: 0;
 }
@@ -1227,9 +1220,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
 }
 .oo-ui-textInputWidget.oo-ui-labelElement > .oo-ui-labelElement-label {
   display: block;
-}
-.oo-ui-textInputWidget-labelPosition-after.oo-ui-labelElement ::-ms-clear {
-  display: none;
 }
 .oo-ui-textInputWidget-php > .oo-ui-iconElement-icon,
 .oo-ui-textInputWidget-php > .oo-ui-indicatorElement-indicator,
@@ -1304,14 +1294,6 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   /* stylelint-enable selector-no-vendor-prefix */
 }
 .oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input::-webkit-input-placeholder {
-  color: #767676;
-  opacity: 1;
-}
-.oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input:-ms-input-placeholder {
-  color: #767676;
-  opacity: 1;
-}
-.oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input::-moz-placeholder {
   color: #767676;
   opacity: 1;
 }
@@ -1609,9 +1591,11 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   position: relative;
   z-index: 0;
   max-width: 50em;
+  overflow: hidden;
+}
+.oo-ui-progressBarWidget:not( .oo-ui-progressBarWidget-inline) {
   border: 1px solid #ccc;
   border-radius: 3px;
-  overflow: hidden;
 }
 .oo-ui-progressBarWidget:not( .oo-ui-pendingElement-pending ) {
   background-color: #fff;
@@ -1623,6 +1607,9 @@ body:not( :-moz-handler-blocked ) .oo-ui-fieldsetLayout {
   border-right: 1px solid #ccc;
   transition-property: width;
   transition-duration: 250ms;
+}
+.oo-ui-progressBarWidget-inline .oo-ui-progressBarWidget-bar {
+  height: 0.25em;
 }
 .oo-ui-progressBarWidget-indeterminate .oo-ui-progressBarWidget-bar {
   width: 33%;

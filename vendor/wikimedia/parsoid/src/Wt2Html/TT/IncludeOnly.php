@@ -3,10 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
+use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
-use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
 
 /**
@@ -49,8 +49,7 @@ class IncludeOnly extends TokenCollector {
 				null
 			);
 			if ( $start->dataParsoid->src ) {
-				$datamw = PHPUtils::jsonEncode( [ 'src' => $start->dataParsoid->src ] );
-				$token->addAttribute( 'data-mw', $datamw );
+				$token->dataMw = new DataMw( [ 'src' => $start->dataParsoid->src ] );
 			}
 			return ( $this->options['isInclude'] ) ?
 				new TokenHandlerResult( [] ) : new TokenHandlerResult( [ $token ] );
@@ -76,8 +75,7 @@ class IncludeOnly extends TokenCollector {
 				$start, $eof ? null : $end );
 
 			if ( $start->dataParsoid->src ) {
-				$dataMw = PHPUtils::jsonEncode( [ 'src' => $start->dataParsoid->src ] );
-				$tokens[0]->addAttribute( 'data-mw', $dataMw );
+				$tokens[0]->dataMw = new DataMw( [ 'src' => $start->dataParsoid->src ] );
 			}
 
 			if ( $end && !$eof ) {

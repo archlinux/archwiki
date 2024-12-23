@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"!Silent",
+			"555",
 			"Albertoleoncio",
 			"Amgauna",
 			"Anaclaudiaml",
@@ -37,8 +38,7 @@
 			"Teles",
 			"TheEduGobi",
 			"TheGabrielZaum",
-			"YuriNikolai",
-			555
+			"YuriNikolai"
 		]
 	},
 	"abusefilter-desc": "Aplica heurísticas automáticas às edições",
@@ -351,7 +351,6 @@
 	"abusefilter-edit-builder-op-bool-not": "Negação (!)",
 	"abusefilter-edit-builder-op-bool-and": "E (&)",
 	"abusefilter-edit-builder-op-bool-or": "Ou (|)",
-	"abusefilter-edit-builder-op-bool-xor": "XOR (^)",
 	"abusefilter-edit-builder-group-misc": "Diversos",
 	"abusefilter-edit-builder-misc-in": "contido num texto (in)",
 	"abusefilter-edit-builder-misc-contains": "Texto da esquerda contém o da direita (contains)",

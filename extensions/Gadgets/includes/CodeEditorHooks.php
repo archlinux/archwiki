@@ -6,8 +6,7 @@ use MediaWiki\Extension\CodeEditor\Hooks\CodeEditorGetPageLanguageHook;
 use MediaWiki\Title\Title;
 
 /**
- * Hooks from CodeEditor extension,
- * which is optional to use with this extension.
+ * Hooks for optional integration with the CodeEditor extension.
  */
 class CodeEditorHooks implements CodeEditorGetPageLanguageHook {
 

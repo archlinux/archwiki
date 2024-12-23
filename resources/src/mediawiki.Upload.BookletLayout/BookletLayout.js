@@ -2,9 +2,7 @@
 ( function () {
 
 	/**
-	 * BookletLayout class for encapsulating the process of uploading a file.
-	 *
-	 * @classdesc mw.Upload.BookletLayout encapsulates the process of uploading a file
+	 * @classdesc Encapsulates the process of uploading a file
 	 * to MediaWiki using the {@link mw.Upload upload model}.
 	 * The booklet emits events that can be used to get the stashed
 	 * upload and the final file. It can be extended to accept
@@ -61,6 +59,7 @@
 	 * @extends OO.ui.BookletLayout
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.Upload.BookletLayout`.
 	 * @param {Object} config Configuration options; see also the config parameter for the
 	 *  {@link mw.Upload.BookletLayout} constructor.
 	 * @param {jQuery} [config.$overlay] Overlay to use for widgets in the booklet
@@ -177,7 +176,7 @@
 	 * @return {jQuery.Promise} Promise resolved when everything is initialized
 	 */
 	mw.Upload.BookletLayout.prototype.initialize = function () {
-		var booklet = this;
+		const booklet = this;
 
 		this.clear();
 		this.upload = this.createUpload();
@@ -189,28 +188,26 @@
 		}
 
 		return this.upload.getApi().then(
-			function ( api ) {
-				// If the user can't upload anything, don't give them the option to.
-				return api.getUserInfo().then(
-					function ( userInfo ) {
-						booklet.setPage( 'upload' );
-						if ( userInfo.rights.indexOf( 'upload' ) === -1 ) {
-							if ( !mw.user.isNamed() ) {
-								booklet.getPage( 'upload' ).$element.msg( 'apierror-mustbeloggedin', mw.msg( 'action-upload' ) );
-							} else {
-								booklet.getPage( 'upload' ).$element.msg( 'apierror-permissiondenied', mw.msg( 'action-upload' ) );
-							}
+			// If the user can't upload anything, don't give them the option to.
+			( api ) => api.getUserInfo().then(
+				( userInfo ) => {
+					booklet.setPage( 'upload' );
+					if ( userInfo.rights.indexOf( 'upload' ) === -1 ) {
+						if ( !mw.user.isNamed() ) {
+							booklet.getPage( 'upload' ).$element.msg( 'apierror-mustbeloggedin', mw.msg( 'action-upload' ) );
+						} else {
+							booklet.getPage( 'upload' ).$element.msg( 'apierror-permissiondenied', mw.msg( 'action-upload' ) );
 						}
-						return $.Deferred().resolve();
-					},
-					// Always resolve, never reject
-					function () {
-						booklet.setPage( 'upload' );
-						return $.Deferred().resolve();
 					}
-				);
-			},
-			function ( errorMsg ) {
+					return $.Deferred().resolve();
+				},
+				// Always resolve, never reject
+				() => {
+					booklet.setPage( 'upload' );
+					return $.Deferred().resolve();
+				}
+			),
+			( errorMsg ) => {
 				booklet.setPage( 'upload' );
 				// eslint-disable-next-line mediawiki/msg-doc
 				booklet.getPage( 'upload' ).$element.msg( errorMsg );
@@ -249,7 +246,7 @@
 	 * @return {jQuery.Promise}
 	 */
 	mw.Upload.BookletLayout.prototype.uploadFile = function () {
-		var deferred = $.Deferred(),
+		const deferred = $.Deferred(),
 			startTime = mw.now(),
 			layout = this,
 			file = this.getFile();
@@ -276,23 +273,23 @@
 		this.upload.setFilename( this.getFilename() );
 
 		this.uploadPromise = this.upload.uploadToStash();
-		this.uploadPromise.then( function () {
+		this.uploadPromise.then( () => {
 			deferred.resolve();
 			layout.emit( 'fileUploaded' );
-		}, function () {
+		}, () => {
 			// These errors will be thrown while the user is on the info page.
-			layout.getErrorMessageForStateDetails().then( function ( errorMessage ) {
+			layout.getErrorMessageForStateDetails().then( ( errorMessage ) => {
 				deferred.reject( errorMessage );
 			} );
-		}, function ( progress ) {
-			var elapsedTime = mw.now() - startTime,
+		}, ( progress ) => {
+			const elapsedTime = mw.now() - startTime,
 				estimatedTotalTime = ( 1 / progress ) * elapsedTime,
 				estimatedRemainingTime = moment.duration( estimatedTotalTime - elapsedTime );
 			layout.emit( 'fileUploadProgress', progress, estimatedRemainingTime );
 		} );
 
 		// If there is an error in uploading, come back to the upload page
-		deferred.fail( function () {
+		deferred.fail( () => {
 			layout.setPage( 'upload' );
 		} );
 
@@ -311,25 +308,23 @@
 	 * {@link OO.ui.Error error}, or resolves if the upload was successful.
 	 */
 	mw.Upload.BookletLayout.prototype.saveFile = function () {
-		var layout = this,
+		const layout = this,
 			deferred = $.Deferred();
 
 		this.upload.setFilename( this.getFilename() );
 		this.upload.setText( this.getText() );
 
-		this.uploadPromise.then( function () {
-			layout.upload.finishStashUpload().then( function () {
-				var name;
-
+		this.uploadPromise.then( () => {
+			layout.upload.finishStashUpload().then( () => {
 				// Normalize page name and localise the 'File:' prefix
-				name = new mw.Title( 'File:' + layout.upload.getFilename() ).toString();
+				const name = new mw.Title( 'File:' + layout.upload.getFilename() ).toString();
 				layout.filenameUsageWidget.setValue( '[[' + name + ']]' );
 				layout.setPage( 'insert' );
 
 				deferred.resolve();
 				layout.emit( 'fileSaved', layout.upload.getImageInfo() );
-			}, function () {
-				layout.getErrorMessageForStateDetails().then( function ( errorMessage ) {
+			}, () => {
+				layout.getErrorMessageForStateDetails().then( ( errorMessage ) => {
 					deferred.reject( errorMessage );
 				} );
 			} );
@@ -343,17 +338,16 @@
 	 * state and state details.
 	 *
 	 * @protected
-	 * @return {jQuery.Promise} A Promise that will be resolved with an OO.ui.Error.
+	 * @return {jQuery.Promise|undefined} A Promise that will be resolved with an OO.ui.Error.
 	 */
 	mw.Upload.BookletLayout.prototype.getErrorMessageForStateDetails = function () {
-		var state = this.upload.getState(),
+		const state = this.upload.getState(),
 			stateDetails = this.upload.getStateDetails(),
 			warnings = stateDetails.upload && stateDetails.upload.warnings,
-			$ul = $( '<ul>' ),
-			$error;
+			$ul = $( '<ul>' );
 
 		if ( state === mw.Upload.State.ERROR ) {
-			$error = ( new mw.Api() ).getErrorMessage( stateDetails );
+			const $error = ( new mw.Api() ).getErrorMessage( stateDetails );
 
 			return $.Deferred().resolve( new OO.ui.Error(
 				$error,
@@ -381,8 +375,8 @@
 					{ recoverable: false }
 				) );
 			} else if ( Array.isArray( warnings.duplicate ) ) {
-				warnings.duplicate.forEach( function ( filename ) {
-					var $a = $( '<a>' ).text( filename ),
+				warnings.duplicate.forEach( ( filename ) => {
+					const $a = $( '<a>' ).text( filename ),
 						href = mw.Title.makeTitle( mw.config.get( 'wgNamespaceIds' ).file, filename ).getUrl( {} );
 
 					$a.attr( { href: href, target: '_blank' } );
@@ -440,18 +434,17 @@
 	 * @return {OO.ui.FormLayout}
 	 */
 	mw.Upload.BookletLayout.prototype.renderUploadForm = function () {
-		var fieldset,
-			layout = this;
+		const layout = this;
 
 		this.selectFileWidget = this.getFileWidget();
-		fieldset = new OO.ui.FieldsetLayout();
+		const fieldset = new OO.ui.FieldsetLayout();
 		fieldset.addItems( [ this.selectFileWidget ] );
 		this.uploadForm = new OO.ui.FormLayout( { items: [ fieldset ] } );
 
 		// Validation (if the SFW is for a stashed file, this never fires)
 		this.selectFileWidget.on( 'change', this.onUploadFormChange.bind( this ) );
 
-		this.selectFileWidget.on( 'change', function () {
+		this.selectFileWidget.on( 'change', () => {
 			layout.updateFilePreview();
 		} );
 
@@ -481,11 +474,11 @@
 	 * @protected
 	 */
 	mw.Upload.BookletLayout.prototype.updateFilePreview = function () {
-		this.selectFileWidget.loadAndGetImageUrl().done( function ( url ) {
+		this.selectFileWidget.loadAndGetImageUrl().done( ( url ) => {
 			this.filePreview.$element.find( 'p' ).remove();
 			this.filePreview.$element.css( 'background-image', 'url(' + url + ')' );
 			this.infoForm.$element.addClass( 'mw-upload-bookletLayout-hasThumbnail' );
-		}.bind( this ) ).fail( function () {
+		} ).fail( () => {
 			this.filePreview.$element.find( 'p' ).remove();
 			if ( this.selectFileWidget.getValue() ) {
 				this.filePreview.$element.append(
@@ -494,7 +487,7 @@
 			}
 			this.filePreview.$element.css( 'background-image', '' );
 			this.infoForm.$element.removeClass( 'mw-upload-bookletLayout-hasThumbnail' );
-		}.bind( this ) );
+		} );
 	};
 
 	/**
@@ -516,8 +509,6 @@
 	 * @return {OO.ui.FormLayout}
 	 */
 	mw.Upload.BookletLayout.prototype.renderInfoForm = function () {
-		var fieldset;
-
 		this.filePreview = new OO.ui.Widget( {
 			classes: [ 'mw-upload-bookletLayout-filePreview' ]
 		} );
@@ -538,7 +529,7 @@
 			autosize: true
 		} );
 
-		fieldset = new OO.ui.FieldsetLayout( {
+		const fieldset = new OO.ui.FieldsetLayout( {
 			label: mw.msg( 'upload-form-label-infoform-title' )
 		} );
 		fieldset.addItems( [
@@ -558,9 +549,9 @@
 			items: [ this.filePreview, fieldset ]
 		} );
 
-		this.on( 'fileUploadProgress', function ( progress ) {
+		this.on( 'fileUploadProgress', ( progress ) => {
 			this.progressBarWidget.setProgress( progress * 100 );
-		}.bind( this ) );
+		} );
 
 		this.filenameWidget.on( 'change', this.onInfoFormChange.bind( this ) );
 		this.descriptionWidget.on( 'change', this.onInfoFormChange.bind( this ) );
@@ -575,13 +566,13 @@
 	 * @fires mw.Upload.BookletLayout.infoValid
 	 */
 	mw.Upload.BookletLayout.prototype.onInfoFormChange = function () {
-		var layout = this;
+		const layout = this;
 		$.when(
 			this.filenameWidget.getValidity(),
 			this.descriptionWidget.getValidity()
-		).done( function () {
+		).done( () => {
 			layout.emit( 'infoValid', true );
-		} ).fail( function () {
+		} ).fail( () => {
 			layout.emit( 'infoValid', false );
 		} );
 	};
@@ -594,10 +585,8 @@
 	 * @return {OO.ui.FormLayout}
 	 */
 	mw.Upload.BookletLayout.prototype.renderInsertForm = function () {
-		var fieldset;
-
 		this.filenameUsageWidget = new OO.ui.TextInputWidget();
-		fieldset = new OO.ui.FieldsetLayout( {
+		const fieldset = new OO.ui.FieldsetLayout( {
 			label: mw.msg( 'upload-form-label-usage-title' )
 		} );
 		fieldset.addItems( [
@@ -632,7 +621,7 @@
 	 * @return {string}
 	 */
 	mw.Upload.BookletLayout.prototype.getFilename = function () {
-		var filename = this.filenameWidget.getValue();
+		let filename = this.filenameWidget.getValue();
 		if ( this.filenameExtension ) {
 			filename += '.' + this.filenameExtension;
 		}
@@ -646,7 +635,7 @@
 	 * @param {string} filename
 	 */
 	mw.Upload.BookletLayout.prototype.setFilename = function ( filename ) {
-		var title = mw.Title.newFromFileName( filename );
+		const title = mw.Title.newFromFileName( filename );
 
 		if ( title ) {
 			this.filenameWidget.setValue( title.getNameText() );

@@ -64,8 +64,8 @@ class FilteredSequentialIterator implements IteratorAggregate {
 		} elseif ( $users instanceof IteratorAggregate ) {
 			$it = $users->getIterator();
 		} else {
-			throw new InvalidArgumentException( 'Expected array, Iterator or IteratorAggregate but received:' .
-				( is_object( $users ) ? get_class( $users ) : gettype( $users ) )
+			throw new InvalidArgumentException( 'Expected array, Iterator or IteratorAggregate but received ' .
+				get_debug_type( $users )
 			);
 		}
 

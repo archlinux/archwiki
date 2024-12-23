@@ -11,7 +11,7 @@ require( './CommentTarget.js' );
  * @param {Object} [config] Configuration options
  */
 function CommentTargetWidget( replyWidget, config ) {
-	var excludeCommands = [
+	const excludeCommands = [
 		'blockquoteWrap', // T258194
 		// Disable to allow Tab/Shift+Tab to move focus out of the widget (T172694)
 		'indent',
@@ -26,7 +26,7 @@ function CommentTargetWidget( replyWidget, config ) {
 	];
 
 	if ( !replyWidget.isNewTopic ) {
-		excludeCommands = excludeCommands.concat( [
+		excludeCommands.push(
 			// Disable commands for things whose wikitext markup doesn't work when indented
 			'heading1',
 			'heading2',
@@ -37,10 +37,10 @@ function CommentTargetWidget( replyWidget, config ) {
 			'insertTable',
 			'transclusionFromSequence', // T253667
 			'preformatted'
-		] );
+		);
 	}
 
-	config = $.extend( {}, {
+	config = Object.assign( {
 		excludeCommands: excludeCommands
 	}, config );
 
@@ -75,7 +75,7 @@ CommentTargetWidget.prototype.createTarget = function () {
  * @inheritdoc
  */
 CommentTargetWidget.prototype.setDocument = function ( docOrHtml ) {
-	var mode = this.target.getDefaultMode(),
+	const mode = this.target.getDefaultMode(),
 		doc = ( mode === 'visual' && typeof docOrHtml === 'string' ) ?
 			this.target.parseDocument( docOrHtml ) :
 			docOrHtml,

@@ -23,7 +23,6 @@ namespace MediaWiki\Tests\Unit;
 
 use Interwiki;
 use InvalidArgumentException;
-use Language;
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\CommentFormatter\CommentParser;
@@ -32,6 +31,7 @@ use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Interwiki\InterwikiLookup;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigSchema;
@@ -45,12 +45,13 @@ use MediaWiki\Title\TitleParser;
 use MediaWiki\User\TempUser\RealTempUserConfig;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
+use MediaWiki\Watchlist\WatchedItem;
+use MediaWiki\Watchlist\WatchedItemStore;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
 use Psr\Log\NullLogger;
-use WatchedItem;
-use WatchedItemStore;
 use Wikimedia\Message\ITextFormatter;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
@@ -474,8 +475,8 @@ trait DummyServicesTrait {
 				return 'qqx';
 			}
 
-			public function format( MessageValue $message ) {
-				if ( $this->dumpMessages ) {
+			public function format( MessageSpecifier $message ): string {
+				if ( $this->dumpMessages && $message instanceof MessageValue ) {
 					return $message->dump();
 				}
 				return $message->getKey();
@@ -541,7 +542,7 @@ trait DummyServicesTrait {
 			$titleParser,
 			$textFormatter,
 			$options['hookContainer'] ?? $this->createHookContainer(),
-			new RealTempUserConfig( [
+			$options['tempUserConfig'] ?? new RealTempUserConfig( [
 				'enabled' => true,
 				'expireAfterDays' => null,
 				'actions' => [ 'edit' ],

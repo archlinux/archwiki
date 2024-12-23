@@ -33,7 +33,11 @@ use Wikimedia\IPUtils;
 class UDPTransport {
 	// Limit to 64 KiB
 	public const MAX_PAYLOAD_SIZE = 65507;
-	private $host, $port, $prefix, $domain;
+	private string $host;
+	private int $port;
+	/** @var bool|string */
+	private $prefix;
+	private int $domain;
 
 	/**
 	 * @param string $host IP address to send to
@@ -51,7 +55,6 @@ class UDPTransport {
 	/**
 	 * @param string $info In the format of "udp://host:port/prefix"
 	 * @return UDPTransport
-	 * @throws InvalidArgumentException
 	 */
 	public static function newFromString( $info ) {
 		if ( preg_match( '!^udp:(?://)?\[([0-9a-fA-F:]+)\]:(\d+)(?:/(.*))?$!', $info, $m ) ) {

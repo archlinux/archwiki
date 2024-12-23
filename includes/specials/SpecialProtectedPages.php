@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Protectedpages
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,18 +16,16 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
-use HTMLMultiSelectField;
-use HTMLSelectNamespace;
-use HTMLSizeFilterField;
 use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\Cache\UserCache;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\HTMLForm\Field\HTMLMultiSelectField;
+use MediaWiki\HTMLForm\Field\HTMLSelectNamespace;
+use MediaWiki\HTMLForm\Field\HTMLSizeFilterField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\ProtectedPagesPager;
@@ -43,13 +39,9 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * @ingroup SpecialPage
  */
 class SpecialProtectedPages extends SpecialPage {
-	protected $IdLevel = 'level';
-	protected $IdType = 'type';
-
 	private LinkBatchFactory $linkBatchFactory;
 	private IConnectionProvider $dbProvider;
 	private CommentStore $commentStore;
-	private UserCache $userCache;
 	private RowCommentFormatter $rowCommentFormatter;
 	private RestrictionStore $restrictionStore;
 
@@ -57,7 +49,6 @@ class SpecialProtectedPages extends SpecialPage {
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param IConnectionProvider $dbProvider
 	 * @param CommentStore $commentStore
-	 * @param UserCache $userCache
 	 * @param RowCommentFormatter $rowCommentFormatter
 	 * @param RestrictionStore $restrictionStore
 	 */
@@ -65,7 +56,6 @@ class SpecialProtectedPages extends SpecialPage {
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
 		CommentStore $commentStore,
-		UserCache $userCache,
 		RowCommentFormatter $rowCommentFormatter,
 		RestrictionStore $restrictionStore
 	) {
@@ -73,7 +63,6 @@ class SpecialProtectedPages extends SpecialPage {
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->dbProvider = $dbProvider;
 		$this->commentStore = $commentStore;
-		$this->userCache = $userCache;
 		$this->rowCommentFormatter = $rowCommentFormatter;
 		$this->restrictionStore = $restrictionStore;
 	}
@@ -85,8 +74,8 @@ class SpecialProtectedPages extends SpecialPage {
 		$this->addHelpLink( 'Help:Protected_pages' );
 
 		$request = $this->getRequest();
-		$type = $request->getVal( $this->IdType );
-		$level = $request->getVal( $this->IdLevel );
+		$type = $request->getVal( 'type' );
+		$level = $request->getVal( 'level' );
 		$sizetype = $request->getVal( 'size-mode' );
 		$size = $request->getIntOrNull( 'size' );
 		$ns = $request->getIntOrNull( 'namespace' );
@@ -103,8 +92,6 @@ class SpecialProtectedPages extends SpecialPage {
 			$this->getLinkRenderer(),
 			$this->dbProvider,
 			$this->rowCommentFormatter,
-			$this->userCache,
-			[],
 			$type,
 			$level,
 			$ns,
@@ -197,8 +184,8 @@ class SpecialProtectedPages extends SpecialPage {
 			'type' => 'select',
 			'options' => $options,
 			'label' => $this->msg( 'restriction-type' )->text(),
-			'name' => $this->IdType,
-			'id' => $this->IdType,
+			'name' => 'type',
+			'id' => 'type',
 		];
 	}
 
@@ -222,8 +209,8 @@ class SpecialProtectedPages extends SpecialPage {
 			'type' => 'select',
 			'options-messages' => $options,
 			'label-message' => 'restriction-level',
-			'name' => $this->IdLevel,
-			'id' => $this->IdLevel
+			'name' => 'level',
+			'id' => 'level',
 		];
 	}
 

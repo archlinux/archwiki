@@ -1,9 +1,13 @@
 <?php
 
+use MediaWiki\Content\AbstractContent;
+use MediaWiki\Content\Content;
+
 class DummyContentForTesting extends AbstractContent {
 
 	public const MODEL_ID = "testing";
 
+	/** @var mixed */
 	private $data;
 
 	public function __construct( $data ) {

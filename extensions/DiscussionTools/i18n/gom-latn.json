@@ -24,7 +24,7 @@
 	"discussiontools-findcomment-title": "Xero sod",
 	"discussiontools-ledesection-title": "Hea bhasabhasachea pana vixim",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|second}}",
-	"discussiontools-newtopic-missing-title": "Upkar korun {{GENDER:|tujea}} bhasabhasachea vixoiak ek mathallo di. Tu \"{{int:discussiontools-replywidget-newtopic}}\" -acher klik korxi zalear, tuzo vixoi mathallea vinnem zoddtolo.",
+	"discussiontools-newtopic-missing-title": "Upkar korun {{GENDER:|tujea}} bhasabhasachea vixoiak ek mathallo di.",
 	"discussiontools-newtopic-placeholder-title": "Vixoy",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Kollovnnio magoy",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Hea panacher noveo vixoi chalu zatana kollovnnio magoy.",

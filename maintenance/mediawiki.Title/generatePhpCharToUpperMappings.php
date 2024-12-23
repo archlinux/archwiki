@@ -22,9 +22,12 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Shell\Shell;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Update list of upper case differences between JS and PHP
@@ -94,5 +97,7 @@ class GeneratePhpCharToUpperMappings extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GeneratePhpCharToUpperMappings::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

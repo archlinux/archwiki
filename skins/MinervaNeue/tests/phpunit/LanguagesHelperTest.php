@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Minerva;
 
-use ILanguageConverter;
-use Language;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;

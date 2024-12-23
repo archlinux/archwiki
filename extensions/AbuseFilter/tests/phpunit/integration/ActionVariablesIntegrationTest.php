@@ -3,12 +3,11 @@
 namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
 use AbuseFilterCreateAccountTestTrait;
-use ApiTestCase;
-use ApiUsageException;
-use Content;
-use FormatJson;
 use Generator;
-use JsonContent;
+use MediaWiki\Api\ApiUsageException;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\JsonContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\AbuseLogger;
 use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
@@ -25,10 +24,12 @@ use MediaWiki\Extension\AbuseFilter\Hooks\Handlers\FilteredActionsHandler;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher;
 use MediaWiki\Extension\AbuseFilter\Watcher\UpdateHitCountWatcher;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use NullStatsdDataFactory;
-use WikitextContent;
+use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Utils\MWTimestamp;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * @group Database
@@ -92,7 +93,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 		$this->setService( ConsequencesLookup::SERVICE_NAME, $consequencesLookup );
 	}
 
-	private function setAbuseLoggerFactoryWithEavesdrop( VariableHolder &$varHolder = null ): void {
+	private function setAbuseLoggerFactoryWithEavesdrop( ?VariableHolder &$varHolder = null ): void {
 		$factory = $this->createMock( AbuseLoggerFactory::class );
 		$factory->method( 'newLogger' )
 			->willReturnCallback( function ( $title, $user, $vars ) use ( &$varHolder ) {
@@ -119,12 +120,6 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 					$this->assertStringContainsString( $needle, $actual, 'Checking new_html' );
 				}
 			} else {
-				if ( is_string( $actual ) ) {
-					// TODO: remove and fix expected values once
-					// https://gerrit.wikimedia.org/r/c/mediawiki/core/+/987191/ has been merged
-					$actual = str_replace( "\t", '    ', $actual );
-				}
-
 				$this->assertSame( $value, $actual, $var );
 			}
 		}
@@ -156,6 +151,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'old_links' => [],
 				'added_links' => [ 'https://a.com/' ],
 				'removed_links' => [],
+				'page_last_edit_age' => null,
 			],
 			'params' => [ 'text' => $new, 'summary' => $summary, 'createonly' => true ],
 		];
@@ -186,6 +182,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'all_links' => [ 'https://www.b.com/' ],
 				'removed_links' => [ 'https://a.com/' ],
 				'added_links' => [ 'https://www.b.com/' ],
+				'page_last_edit_age' => 10,
 			],
 			'params' => [ 'text' => $new, 'summary' => $summary ],
 			'oldContent' => new WikitextContent( $old ),
@@ -217,6 +214,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'all_links' => [ 'https://a.com/' ],
 				'removed_links' => [ 'https://www.b.com/' ],
 				'added_links' => [ 'https://a.com/' ],
+				'page_last_edit_age' => 10,
 			],
 			'params' => [ 'text' => $new, 'summary' => $summary ],
 			'oldContent' => new WikitextContent( $old ),
@@ -249,6 +247,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'all_links' => [],
 				'removed_links' => [],
 				'added_links' => [],
+				'page_last_edit_age' => 10,
 			],
 			'params' => [ 'text' => $new, 'summary' => $summary ],
 			'oldContent' => new WikitextContent( $old ),
@@ -257,12 +256,13 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 		yield 'content model change to wikitext' => [
 			'expected' => [
 				'action' => 'edit',
-				'old_wikitext' => "{\n    \"key\": \"value\"\n}",
+				'old_wikitext' => "{\n\t\"key\": \"value\"\n}",
 				'old_content_model' => 'json',
 				'new_wikitext' => 'new test https://en.wikipedia.org',
 				'new_content_model' => 'wikitext',
 				'old_links' => [],
 				'all_links' => [ 'https://en.wikipedia.org/' ],
+				'page_last_edit_age' => 10,
 			],
 			'params' => [
 				'text' => 'new test https://en.wikipedia.org',
@@ -280,6 +280,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 				'new_content_model' => 'json',
 				'old_links' => [ 'https://en.wikipedia.org/' ],
 				'all_links' => [],
+				'page_last_edit_age' => 10,
 			],
 			'params' => [
 				'text' => '{"key": "value"}',
@@ -297,8 +298,11 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 	 * @covers \MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer
 	 */
 	public function testEditVariables(
-		array $expected, array $params, Content $oldContent = null
+		array $expected, array $params, ?Content $oldContent = null
 	) {
+		$time = time();
+		MWTimestamp::setFakeTime( $time );
+
 		$varHolder = null;
 		$this->prepareServices();
 		$this->setAbuseLoggerFactoryWithEavesdrop( $varHolder );
@@ -324,6 +328,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 			true
 		);
 
+		MWTimestamp::setFakeTime( $time + 10 );
 		$ex = null;
 		try {
 			$this->doApiRequestWithToken(
@@ -381,7 +386,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 		array $expected,
 		string $accountName = 'New account',
 		bool $autocreate = false,
-		string $creatorName = null
+		?string $creatorName = null
 	) {
 		$varHolder = null;
 		$this->prepareServices();

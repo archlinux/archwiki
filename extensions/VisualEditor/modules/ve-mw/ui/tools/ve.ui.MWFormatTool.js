@@ -114,7 +114,7 @@ ve.ui.MWHeading6FormatTool.static.format = { type: 'mwHeading', attributes: { le
 ve.ui.toolFactory.register( ve.ui.MWHeading6FormatTool );
 
 ( function () {
-	for ( var i = 1; i <= 6; i++ ) {
+	for ( let i = 1; i <= 6; i++ ) {
 		ve.ui.commandRegistry.register(
 			new ve.ui.Command(
 				'heading' + i, 'format', 'convert',

@@ -8,14 +8,13 @@ QUnit.module( 've.ce.TableArrowKeyDownHandler', {
 	// See https://github.com/platinumazure/eslint-plugin-qunit/issues/68
 	// eslint-disable-next-line qunit/resolve-async
 	beforeEach: function ( assert ) {
-		var done = assert.async();
+		const done = assert.async();
 		return ve.init.platform.getInitializedPromise().then( done );
 	}
 } );
 
-QUnit.test( 'special key down: table arrow keys (complex movements)', function ( assert ) {
-	var done = assert.async(),
-		promise = Promise.resolve(),
+QUnit.test( 'special key down: table arrow keys (complex movements)', ( assert ) => {
+	const done = assert.async(),
 		mergedCellsDoc = ve.dm.example.createExampleDocument( 'mergedCells' ),
 		complexTableDoc = ve.dm.example.createExampleDocument( 'complexTable' ),
 		cases = [
@@ -52,7 +51,7 @@ QUnit.test( 'special key down: table arrow keys (complex movements)', function (
 			{
 				htmlOrDoc: ( function () {
 					// Create a full surface and return the view, as the UI surface is required for the insert action
-					var surface = ve.test.utils.createSurfaceFromDocument( ve.dm.example.createExampleDocument( 'mergedCells' ) );
+					const surface = ve.test.utils.createSurfaceFromDocument( ve.dm.example.createExampleDocument( 'mergedCells' ) );
 					// Detach $blockers so selections aren't rendered, resulting in false code coverage
 					surface.$blockers.detach();
 					return surface.view;
@@ -65,13 +64,18 @@ QUnit.test( 'special key down: table arrow keys (complex movements)', function (
 				},
 				keys: [ 'TAB' ],
 				expectedData: function ( data ) {
-					var tableCell = [
+					const tableCell = [
 						{ type: 'tableCell', attributes: { style: 'data', colspan: 1, rowspan: 1 } },
 						{ type: 'paragraph', internal: { generated: 'wrapper' } },
 						{ type: '/paragraph' },
 						{ type: '/tableCell' }
 					];
-					data.splice.apply( data, [ 169, 0 ].concat( { type: 'tableRow' }, tableCell, tableCell, tableCell, tableCell, tableCell, tableCell, { type: '/tableRow' } ) );
+					data.splice(
+						169, 0,
+						{ type: 'tableRow' },
+						...tableCell, ...tableCell, ...tableCell, ...tableCell, ...tableCell, ...tableCell,
+						{ type: '/tableRow' }
+					);
 				},
 				expectedRangeOrSelection: {
 					type: 'table',
@@ -149,17 +153,16 @@ QUnit.test( 'special key down: table arrow keys (complex movements)', function (
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		promise = promise.then( function () {
-			return ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem );
-		} );
+	let promise = Promise.resolve();
+	cases.forEach( ( caseItem ) => {
+		promise = promise.then( () => ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem ) );
 	} );
 
 	promise.finally( () => done() );
 } );
 
-QUnit.test( 'special key down: table arrow keys (simple movements)', function ( assert ) {
-	var fn = function () {},
+QUnit.test( 'special key down: table arrow keys (simple movements)', ( assert ) => {
+	const fn = function () {},
 		tables = {
 			mergedCells: {
 				view: ve.test.utils.createSurfaceViewFromDocument(
@@ -310,11 +313,11 @@ QUnit.test( 'special key down: table arrow keys (simple movements)', function ( 
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		var offsets = caseItem.selectionOffsets;
-		var table = tables[ caseItem.table || 'mergedCells' ];
-		var view = table.view;
-		var model = view.getModel();
+	cases.forEach( ( caseItem ) => {
+		const offsets = caseItem.selectionOffsets;
+		const table = tables[ caseItem.table || 'mergedCells' ];
+		const view = table.view;
+		const model = view.getModel();
 		model.setSelection( new ve.dm.TableSelection(
 			table.tableRange, offsets[ 0 ], offsets[ 1 ], offsets[ 2 ], offsets[ 3 ] )
 		);
@@ -327,8 +330,8 @@ QUnit.test( 'special key down: table arrow keys (simple movements)', function ( 
 				stopPropagation: fn
 			}
 		);
-		var selection = model.getSelection();
-		var expectedSelectionOffsets = caseItem.expectedSelectionOffsets.length > 2 ?
+		const selection = model.getSelection();
+		const expectedSelectionOffsets = caseItem.expectedSelectionOffsets.length > 2 ?
 			caseItem.expectedSelectionOffsets :
 			caseItem.expectedSelectionOffsets.concat( caseItem.expectedSelectionOffsets );
 		assert.deepEqual(

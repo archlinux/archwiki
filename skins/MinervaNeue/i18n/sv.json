@@ -33,7 +33,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Om denna kategori",
 	"mobile-frontend-meta-data-issues-header": "Sidproblem",
 	"minerva-meta-data-issues-section-header": "Avsnittsärenden",
-	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "Redigera huvudavsnittet på denna sida",
 	"mobile-frontend-placeholder": "Sök på {{SITENAME}}",
 	"mobile-frontend-random-button": "Slumpartikel",
@@ -53,7 +52,7 @@
 	"minerva-page-actions-overflow": "Mer",
 	"minerva-page-actions-language-switcher": "Språk",
 	"minerva-page-actions-history": "Historik",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Diskussion]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Diskussion]",
 	"minerva-skin-desc": "Ett responsivt mobilutseende.",
 	"skin-minerva-issue-learn-more": "Läs mer",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekund|$1 sekunder}} sedan",
@@ -64,9 +63,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 år}} sedan",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorier",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Visa kategorier över sidor",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Förbättrad behandling av sidproblem",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Sidproblem (Template:ambox) kommer att visas i artikeln.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Tyvärr är inte grupperade resultat tillgängligt på mobiler. Besök datorwebbplatsen om du vill använda sidgrupperingsfunktionen.",
+	"skin-minerva-night-mode-unavailable": "Sidan är endast tillgänglig i ljust färgtema.",
 	"minerva.css": "/* All CSS här kommer att läsas in för de som använder utseendet MinervaNeue */",
 	"minerva.js": "/* All JavaScript här kommer att läsas in för alla som använder utseendet MinervaNeue */"
 }

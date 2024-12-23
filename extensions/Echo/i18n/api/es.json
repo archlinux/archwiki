@@ -5,6 +5,7 @@
 			"DarkGames26",
 			"Dgstranz",
 			"DiegoAmbrocio",
+			"Eulalio",
 			"Fitoschido",
 			"Jackiezelaya",
 			"Jakeukalane",
@@ -13,6 +14,14 @@
 			"Tiberius1701"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Activar manualmente una notificación a un usuario",
+	"apihelp-echocreateevent-example": "Enviar una notificación",
+	"apihelp-echocreateevent-param-user": "Usuario al que enviar la notificación",
+	"apihelp-echocreateevent-param-header": "Contenido del encabezado de la notificación",
+	"apihelp-echocreateevent-param-content": "Contenido del cuerpo de la notificación.",
+	"apihelp-echocreateevent-param-page": "Página para vincular en la notificación",
+	"apihelp-echocreateevent-param-section": "Sección donde se entregaría la notificación",
+	"apihelp-echocreateevent-param-email": "Si enviar un correo electrónico también",
 	"apihelp-echomarkread-summary": "Marcar las notificaciones del usuario actual como leídas.",
 	"apihelp-echomarkread-param-list": "Lista de identificaciones de notificación para marcar como leídas.",
 	"apihelp-echomarkread-param-unreadlist": "Una lista de identificadores de notificación para marcar como leídas.",

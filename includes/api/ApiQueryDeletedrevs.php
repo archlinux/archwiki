@@ -20,9 +20,12 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -50,18 +53,9 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 	private NameTableStore $changeTagDefStore;
 	private LinkBatchFactory $linkBatchFactory;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param CommentStore $commentStore
-	 * @param RowCommentFormatter $commentFormatter
-	 * @param RevisionStore $revisionStore
-	 * @param NameTableStore $changeTagDefStore
-	 * @param LinkBatchFactory $linkBatchFactory
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		CommentStore $commentStore,
 		RowCommentFormatter $commentFormatter,
 		RevisionStore $revisionStore,
@@ -149,7 +143,10 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		$this->addFields( [ 'ar_title', 'ar_namespace' ] );
 
 		if ( $fld_tags ) {
-			$this->addFields( [ 'ts_tags' => ChangeTags::makeTagSummarySubquery( 'archive' ) ] );
+			$this->addFields( [
+				'ts_tags' => MediaWikiServices::getInstance()->getChangeTagsStore()
+					->makeTagSummarySubquery( 'archive' )
+			] );
 		}
 
 		if ( $params['tag'] !== null ) {
@@ -387,7 +384,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 					$user
 				) ) {
 					if ( $row->ar_sha1 != '' ) {
-						$rev['sha1'] = Wikimedia\base_convert( $row->ar_sha1, 36, 16, 40 );
+						$rev['sha1'] = \Wikimedia\base_convert( $row->ar_sha1, 36, 16, 40 );
 					} else {
 						$rev['sha1'] = '';
 					}
@@ -577,3 +574,6 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Deletedrevs';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryDeletedrevs::class, 'ApiQueryDeletedrevs' );

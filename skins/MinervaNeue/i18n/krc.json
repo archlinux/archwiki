@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Бу категорияны юсюнден",
 	"mobile-frontend-meta-data-issues-header": "Бетни джетмегенликлери",
 	"minerva-meta-data-issues-section-header": "Бёлюмню джетмегенликлери",
-	"mobile-frontend-notifications-filter": "Фильтр",
 	"mobile-frontend-pageaction-edit-tooltip": "Бетни алчы бёлюмюн тюрлендир",
 	"mobile-frontend-placeholder": "{{SITENAME}} изле",
 	"mobile-frontend-random-button": "Рандомлу",
@@ -48,7 +47,7 @@
 	"minerva-page-actions-overflow": "Энтда",
 	"minerva-page-actions-language-switcher": "Тилле",
 	"minerva-page-actions-history": "Тарих",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Сюзюу]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Сюзюу]",
 	"minerva-skin-desc": "Биринчи келишдирилген мобил тема",
 	"skin-minerva-issue-learn-more": "Аслам бил",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 секунд}} мындан алгъа",
@@ -59,8 +58,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|джыл}} мындан алгъа",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категорияла",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Бетни категорияларын кёргюз",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Маджаллашдырылгъан бетн бузукълукъланы табыучу",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Бетни проблемалары (Шаблон:ambox) статьяда белгиленникди.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Ай медет, эсеблени бетге кёре къауумлашдырыу мобилде джокъду. Бетни бу функциясы бла хайырланыргъа излей эсегиз, толу сайтха киригиз.",
-	"skin-minerva-night-mode-unavailable": "Бет джангыз \"Кюндюз\" бет темада барды."
+	"skin-minerva-night-mode-unavailable": "Бет джангыз \"Джарыкъ\" бет темада барды."
 }

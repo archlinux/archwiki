@@ -18,12 +18,15 @@
  * @file
  */
 
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Title\Title;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * A foreign repository for a remote MediaWiki accessible through api.php requests.
@@ -55,6 +58,7 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 		'timestamp',
 	];
 
+	/** @var callable */
 	protected $fileFactory = [ ForeignAPIFile::class, 'newFromTitle' ];
 	/** @var int Check back with Commons after this expiry */
 	protected $apiThumbCacheExpiry = 24 * 3600; // 1 day

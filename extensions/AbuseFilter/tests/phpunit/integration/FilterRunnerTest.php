@@ -26,8 +26,7 @@ use Psr\Log\NullLogger;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\FilterRunner
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\FilterRunner
  */
 class FilterRunnerTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -38,9 +37,9 @@ class FilterRunnerTest extends MediaWikiIntegrationTestCase {
 	 * @return FilterRunner
 	 */
 	private function getRunner(
-		ChangeTagger $changeTagger = null,
-		EditStashCache $cache = null,
-		VariableHolder $vars = null,
+		?ChangeTagger $changeTagger = null,
+		?EditStashCache $cache = null,
+		?VariableHolder $vars = null,
 		$group = 'default'
 	): FilterRunner {
 		$opts = new ServiceOptions(
@@ -82,9 +81,6 @@ class FilterRunnerTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstructor_invalidGroup() {
 		$invalidGroup = 'invalid-group';
 		$this->expectException( InvalidArgumentException::class );
@@ -92,19 +88,12 @@ class FilterRunnerTest extends MediaWikiIntegrationTestCase {
 		$this->getRunner( null, null, new VariableHolder(), $invalidGroup );
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstructor_noAction() {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'variable is not set' );
 		$this->getRunner( null, null, new VariableHolder() );
 	}
 
-	/**
-	 * @covers ::run
-	 * @covers ::checkAllFilters
-	 */
 	public function testConditionsLimit() {
 		$cache = $this->createMock( EditStashCache::class );
 		$cache->method( 'seek' )->willReturn( [

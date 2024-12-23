@@ -27,7 +27,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "Ovaj izvor se koristi {{PLURAL:$1|jednom|2=dva puta|$1 puta}} na ovoj stranici. Promene napravljene ovde primenjivaće se na svim mestima gde se on ponovo koristi.",
 	"cite-ve-dialog-reference-options-group-label": "Koristi ovu grupu",
 	"cite-ve-dialog-reference-options-group-placeholder": "Opšte reference",
-	"cite-ve-dialog-reference-options-name-label": "Ponovo koristi pod ovim imenom",
 	"cite-ve-dialog-reference-options-responsive-label": "Prilagodljivi raspored kolona",
 	"cite-ve-dialog-reference-options-section": "Opcije",
 	"cite-ve-dialog-reference-placeholder": "Ovde napišite ili nalepite referencu ili umetnite šablon za reference.",

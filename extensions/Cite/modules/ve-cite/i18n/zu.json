@@ -3,5 +3,14 @@
 		"authors": [
 			"INgobemnyama"
 		]
-	}
+	},
+	"cite-ve-dialog-reference-contextitem-extends": "Lamaphatho aphinde asetshenziswa futhi sekwengezwe imininingwane.",
+	"cite-ve-dialog-reference-editing-add-details": "wengeza imininingwane kulamaphatho",
+	"cite-ve-dialog-reference-editing-add-details-placeholder": "Bhala noma unamathisele imininingwane ongathanda ukuyengeza kulamaphatho",
+	"cite-ve-dialog-reference-extend-long-tool": "Phinda usebenzise lamaphatho nemininingwane eyengeziwe",
+	"cite-ve-dialog-reference-missing-parent-ref": "lemininingwane engenzansi ixhumene namaphatho angatholakali. Sicela uyisuse kuleli ikhasi noma ulungise lenkinga lapho usebenzisa inhlokosima.",
+	"cite-ve-dialog-reference-title-add-details": "Engeza imininingwane kulamaphatho",
+	"cite-ve-dialog-reference-title-edit-details": "buyekeza imininingwane",
+	"cite-ve-dialog-reference-useexisting-long-tool": "Phinda usebenzise lamaphatho",
+	"cite-ve-referenceslist-missing-parent": "lemininingwane engenzansi ixhumene namaphatho angatholakali. Sicela uyisuse kuleli ikhasi noma ulungise lenkinga lapho usebenzisa inhlokosima."
 }

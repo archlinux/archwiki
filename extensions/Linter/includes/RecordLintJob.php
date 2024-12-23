@@ -21,25 +21,33 @@
 namespace MediaWiki\Linter;
 
 use Job;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageReference;
-use WANObjectCache;
 
 class RecordLintJob extends Job {
-	private WANObjectCache $cache;
+	private TotalsLookup $totalsLookup;
+	private Database $database;
+	private CategoryManager $categoryManager;
 
 	/**
 	 * RecordLintJob constructor.
 	 * @param PageReference $page
 	 * @param array $params
-	 * @param WANObjectCache $cache
+	 * @param TotalsLookup $totalsLookup
+	 * @param Database $database
+	 * @param CategoryManager $categoryManager
 	 */
 	public function __construct(
 		PageReference $page,
 		array $params,
-		WANObjectCache $cache
+		TotalsLookup $totalsLookup,
+		Database $database,
+		CategoryManager $categoryManager
 	) {
 		parent::__construct( 'RecordLintJob', $page, $params );
-		$this->cache = $cache;
+		$this->totalsLookup = $totalsLookup;
+		$this->database = $database;
+		$this->categoryManager = $categoryManager;
 	}
 
 	public function run() {
@@ -51,8 +59,8 @@ class RecordLintJob extends Job {
 		// [ 'id' => LintError ]
 		$errors = [];
 		foreach ( $this->params['errors'] as $errorInfo ) {
-			if ( $errorInfo['type'] === 'inline-media-caption' ) {
-				// Drop lints of this type for now
+			if ( !$this->categoryManager->isEnabled( $errorInfo['type'] ) ) {
+				// Drop lints of these types for now
 				continue;
 			}
 			$error = new LintError(
@@ -66,13 +74,22 @@ class RecordLintJob extends Job {
 			$errors[$error->id()] = $error;
 		}
 
-		$lintDb = new Database( $this->title->getArticleID(), $this->title->getNamespace() );
-		$totalsLookup = new TotalsLookup(
-			new CategoryManager(),
-			$this->cache,
-			$lintDb
+		LoggerFactory::getInstance( 'Linter' )->debug(
+			'{method}: Recording {numErrors} errors for {page}',
+			[
+				'method' => __METHOD__,
+				'numErrors' => count( $errors ),
+				'page' => $this->title->getPrefixedDBkey()
+			]
 		);
-		$totalsLookup->updateStats( $lintDb->setForPage( $errors ) );
+
+		$this->totalsLookup->updateStats(
+			$this->database->setForPage(
+				$this->title->getArticleID(),
+				$this->title->getNamespace(),
+				$errors
+			)
+		);
 
 		return true;
 	}

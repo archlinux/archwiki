@@ -26,11 +26,13 @@
 
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Config\Config;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPageFactory;
@@ -51,6 +53,7 @@ use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ExternalUserNames;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\NormalizedException\NormalizedException;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * XML file reader for the page data importer.
@@ -1012,13 +1015,13 @@ class WikiImporter {
 	}
 
 	/**
-	 * @param Title $title
+	 * @param PageIdentity $page
 	 * @param int $revisionId
 	 * @param array $contentInfo
 	 *
 	 * @return Content
 	 */
-	private function makeContent( Title $title, $revisionId, $contentInfo ) {
+	private function makeContent( PageIdentity $page, $revisionId, $contentInfo ) {
 		$maxArticleSize = $this->config->get( MainConfigNames::MaxArticleSize );
 
 		if ( !isset( $contentInfo['text'] ) ) {
@@ -1050,7 +1053,7 @@ class WikiImporter {
 		$role = $contentInfo['role'] ?? SlotRecord::MAIN;
 		$model = $contentInfo['model'] ?? $this->slotRoleRegistry
 			->getRoleHandler( $role )
-			->getDefaultModel( $title );
+			->getDefaultModel( $page );
 		$handler = $this->contentHandlerFactory->getContentHandler( $model );
 
 		$text = $handler->importTransform( $contentInfo['text'] );

@@ -238,8 +238,8 @@ class Less_Cache {
 				continue;
 			}
 
-			$full_path = self::$cache_dir . $file;
-			$mtime = filemtime( $full_path );
+			$fullPath = self::$cache_dir . $file;
+			$mtime = filemtime( $fullPath );
 
 			// don't delete if it's a relatively new file
 			if ( $mtime > $check_time ) {
@@ -248,7 +248,7 @@ class Less_Cache {
 
 			// delete the list file and associated css file
 			if ( $type === 'list' ) {
-				self::ListFiles( $full_path, $list, $css_file_name );
+				self::ListFiles( $fullPath, $list, $css_file_name );
 				if ( $css_file_name ) {
 					$css_file = self::$cache_dir . $css_file_name;
 					if ( file_exists( $css_file ) ) {
@@ -257,7 +257,7 @@ class Less_Cache {
 				}
 			}
 
-			unlink( $full_path );
+			unlink( $fullPath );
 		}
 	}
 

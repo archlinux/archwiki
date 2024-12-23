@@ -16,18 +16,18 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 			LoadScript: '/w/load.php'
 		} );
 	} );
-	hooks.afterEach( function () {
+	hooks.afterEach( () => {
 		$.fn.updateTooltipAccessKeys.setTestMode( false );
 		mw.util.setOptionsForTest();
 	} );
 
-	QUnit.test( 'rawurlencode', function ( assert ) {
+	QUnit.test( 'rawurlencode', ( assert ) => {
 		assert.strictEqual( util.rawurlencode( 'Test:A & B/Here' ), 'Test%3AA%20%26%20B%2FHere' );
 	} );
 
-	QUnit.test( 'escapeIdForAttribute', function ( assert ) {
+	QUnit.test( 'escapeIdForAttribute', ( assert ) => {
 		// Test cases are kept in sync with SanitizerTest.php
-		var text = 'foo тест_#%!\'()[]:<>',
+		const text = 'foo тест_#%!\'()[]:<>',
 			legacyEncoded = 'foo_.D1.82.D0.B5.D1.81.D1.82_.23.25.21.27.28.29.5B.5D:.3C.3E',
 			html5Encoded = 'foo_тест_#%!\'()[]:<>',
 			// Settings: this is $wgFragmentMode
@@ -46,16 +46,16 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 			[ newLegacy, text, html5Encoded ],
 			// Distant future: no legacy fallbacks
 			[ allNew, text, html5Encoded ]
-		].forEach( function ( testCase ) {
+		].forEach( ( testCase ) => {
 			mw.util.setOptionsForTest( { FragmentMode: testCase[ 0 ] } );
 
 			assert.strictEqual( util.escapeIdForAttribute( testCase[ 1 ] ), testCase[ 2 ] );
 		} );
 	} );
 
-	QUnit.test( 'escapeIdForLink', function ( assert ) {
+	QUnit.test( 'escapeIdForLink', ( assert ) => {
 		// Test cases are kept in sync with SanitizerTest.php
-		var text = 'foo тест_#%!\'()[]:<>',
+		const text = 'foo тест_#%!\'()[]:<>',
 			legacyEncoded = 'foo_.D1.82.D0.B5.D1.81.D1.82_.23.25.21.27.28.29.5B.5D:.3C.3E',
 			html5Encoded = 'foo_тест_#%!\'()[]:<>',
 			// Settings: this is wgFragmentMode
@@ -73,7 +73,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 			[ newLegacy, text, html5Encoded ],
 			// Distant future: no legacy fallbacks
 			[ allNew, text, html5Encoded ]
-		].forEach( function ( testCase ) {
+		].forEach( ( testCase ) => {
 			mw.util.setOptionsForTest( { FragmentMode: testCase[ 0 ] } );
 
 			assert.strictEqual( util.escapeIdForLink( testCase[ 1 ] ), testCase[ 2 ] );
@@ -94,7 +94,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		[ '===', '===' ],
 		[ '&&&', '&&&' ],
 		[ '###', '###' ]
-	], function ( assert, data ) {
+	], ( assert, data ) => {
 		assert.strictEqual( util.percentDecodeFragment( data[ 0 ] ), data[ 1 ], data[ 0 ] );
 	} );
 
@@ -115,12 +115,12 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 			';@$-_.!*()',
 			';@$-_.!*()'
 		]
-	], function ( assert, data ) {
+	], ( assert, data ) => {
 		assert.strictEqual( util.wikiUrlencode( data[ 0 ] ), data[ 1 ], data[ 0 ] );
 	} );
 
-	QUnit.test( 'getUrl', function ( assert ) {
-		var href;
+	QUnit.test( 'getUrl', ( assert ) => {
+		let href;
 		mw.config.set( {
 			wgScript: '/w/index.php',
 			wgArticlePath: '/wiki/$1',
@@ -182,7 +182,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.strictEqual( href, '/w/index.php?title=Sandbox&action=edit#+&=:;@$-_.!*/[]<>\'§', 'fragment with various characters' );
 	} );
 
-	QUnit.test( 'wikiScript', function ( assert ) {
+	QUnit.test( 'wikiScript', ( assert ) => {
 		mw.util.setOptionsForTest( {
 			LoadScript: '/w/l.php'
 		} );
@@ -192,23 +192,16 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 			wgScriptPath: '/w'
 		} );
 
-		assert.strictEqual( util.wikiScript(), mw.config.get( 'wgScript' ),
-			'wikiScript() returns wgScript'
-		);
-		assert.strictEqual( util.wikiScript( 'index' ), mw.config.get( 'wgScript' ),
-			'wikiScript( index ) returns wgScript'
-		);
-		assert.strictEqual( util.wikiScript( 'load' ), '/w/l.php',
-			'wikiScript( load ) returns /w/l.php'
-		);
-		assert.strictEqual( util.wikiScript( 'api' ), '/w/api.php', 'API path' );
+		assert.strictEqual( util.wikiScript(), '/w/i.php', 'default' );
+		assert.strictEqual( util.wikiScript( 'index' ), '/w/i.php', 'index' );
+		assert.strictEqual( util.wikiScript( 'load' ), '/w/l.php', 'load' );
+		assert.strictEqual( util.wikiScript( 'api' ), '/w/api.php', 'api' );
+		assert.strictEqual( util.wikiScript( 'rest' ), '/w/rest.php', 'rest' );
 	} );
 
-	QUnit.test( 'addCSS', function ( assert ) {
-		var $el, style;
-		$el = $( '<div>' ).attr( 'id', 'mw-addcsstest' ).appendTo( '#qunit-fixture' );
-
-		style = util.addCSS( '#mw-addcsstest { visibility: hidden; }' );
+	QUnit.test( 'addCSS', ( assert ) => {
+		const $el = $( '<div>' ).attr( 'id', 'mw-addcsstest' ).appendTo( '#qunit-fixture' );
+		const style = util.addCSS( '#mw-addcsstest { visibility: hidden; }' );
 		assert.strictEqual( typeof style, 'object', 'addCSS returned an object' );
 		assert.strictEqual( style.disabled, false, 'property "disabled" is available and set to false' );
 
@@ -218,8 +211,8 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		$( style.ownerNode ).remove();
 	} );
 
-	QUnit.test( 'getParamValue', function ( assert ) {
-		var url;
+	QUnit.test( 'getParamValue', ( assert ) => {
+		let url;
 
 		url = 'http://example.org/?foo=wrong&foo=right#&foo=bad';
 		assert.strictEqual( util.getParamValue( 'foo', url ), 'right', 'Use latest one, ignore hash' );
@@ -238,7 +231,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.strictEqual( util.getParamValue( 'title', url ), null, 'T268058: getParamValue can return null on input it cannot decode.' );
 	} );
 
-	QUnit.test( 'getArrayParam', function ( assert ) {
+	QUnit.test( 'getArrayParam', ( assert ) => {
 		const params1 = new URLSearchParams( '?foo[]=a&foo[]=b&foo[]=c' );
 		const params2 = new URLSearchParams( '?foo[0]=a&foo[1]=b&foo[2]=c' );
 		const params3 = new URLSearchParams( '?foo[1]=b&foo[0]=a&foo[]=c' );
@@ -272,12 +265,20 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 
 	function getParents( link ) {
 		return $( link ).parents( '#qunit-fixture *' ).toArray()
-			.map( function ( el ) {
-				return el.tagName + ( el.className && '.' + el.className ) + ( el.id && '#' + el.id );
-			} );
+			.map( ( el ) => el.tagName + ( el.className && '.' + el.className ) + ( el.id && '#' + el.id ) );
 	}
 
-	QUnit.test( 'addPortlet does not append to DOM if no `before` is provided', function ( assert ) {
+	QUnit.test( 'messageBox', ( assert ) => {
+		const message = util.messageBox( 'test' );
+		const errSpan = document.createElement( 'span' );
+		errSpan.textContent = 'error';
+		const errorMessage = util.messageBox( errSpan, 'error' );
+		assert.strictEqual( message.querySelector( '.cdx-message__content' ).textContent, 'test' );
+		assert.strictEqual( errorMessage.querySelector( '.cdx-message__content span' ).textContent, 'error' );
+		assert.true( errorMessage.classList.contains( 'cdx-message--error' ) );
+	} );
+
+	QUnit.test( 'addPortlet does not append to DOM if no `before` is provided', ( assert ) => {
 		$( '#qunit-fixture' ).html(
 			'<div class="portlet" id="p-toolbox"></div>'
 		);
@@ -286,7 +287,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.true( portlet.parentNode === null, 'Portlet has no parent node' );
 	} );
 
-	QUnit.test( 'addPortlet returns null if bad selector given', function ( assert ) {
+	QUnit.test( 'addPortlet returns null if bad selector given', ( assert ) => {
 		$( '#qunit-fixture' ).html(
 			'<div class="portlet" id="p-toolbox"></div>'
 		);
@@ -294,7 +295,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.true( portlet === null, 'No portlet created.' );
 	} );
 
-	QUnit.test( 'addPortlet appends to DOM if before provided', function ( assert ) {
+	QUnit.test( 'addPortlet appends to DOM if before provided', ( assert ) => {
 		$( '#qunit-fixture' ).html(
 			'<div class="portlet" id="p-toolbox"></div>'
 		);
@@ -303,16 +304,14 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.true( portlet.parentNode !== null, 'It is appended to the DOM' );
 	} );
 
-	QUnit.test( 'addPortletLink (Vector list)', function ( assert ) {
-		var link;
-
+	QUnit.test( 'addPortletLink (Vector list)', ( assert ) => {
 		$( '#qunit-fixture' ).html(
 			'<div class="portlet" id="p-toolbox">' +
 				'<h3>Tools</h3>' +
 				'<div class="body"><ul></ul></div>' +
 				'</div>'
 		);
-		link = util.addPortletLink( 'p-toolbox', 'https://foo.test/',
+		const link = util.addPortletLink( 'p-toolbox', 'https://foo.test/',
 			'Foo', 't-foo', 'Tooltip', 'l'
 		);
 
@@ -338,11 +337,9 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		);
 	} );
 
-	QUnit.test( 'addPortletLink (Minerva list)', function ( assert ) {
-		var link;
-
+	QUnit.test( 'addPortletLink (Minerva list)', ( assert ) => {
 		$( '#qunit-fixture' ).html( '<ul id="p-list"></ul>' );
-		link = util.addPortletLink( 'p-list', '#', 'Foo', 't-foo' );
+		const link = util.addPortletLink( 'p-list', '#', 'Foo', 't-foo' );
 
 		assert.domEqual(
 			link,
@@ -366,15 +363,13 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		);
 	} );
 
-	QUnit.test( 'addPortletLink (nextNode option)', function ( assert ) {
-		var linkFoo, link;
-
+	QUnit.test( 'addPortletLink (nextNode option)', ( assert ) => {
 		$( '#qunit-fixture' ).html( '<ul id="p-toolbox"></ul>' );
-		linkFoo = util.addPortletLink( 'p-toolbox', 'https://foo.test/',
+		const linkFoo = util.addPortletLink( 'p-toolbox', 'https://foo.test/',
 			'Foo', 't-foo', 'Tooltip', 'l'
 		);
 
-		link = util.addPortletLink( 'p-toolbox', '#',
+		let link = util.addPortletLink( 'p-toolbox', '#',
 			'Label', 't-node', null, null, linkFoo );
 		assert.strictEqual( link.nextSibling, linkFoo, 'HTMLElement' );
 
@@ -395,11 +390,10 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.strictEqual( link.nextSibling, null, 'empty jQuery object' );
 	} );
 
-	QUnit.test( 'addPortletLink (accesskey option)', function ( assert ) {
-		var link;
+	QUnit.test( 'addPortletLink (accesskey option)', ( assert ) => {
 		$( '#qunit-fixture' ).html( '<ul id="p-toolbox"></ul>' );
 
-		link = util.addPortletLink( 'p-toolbox', '#', 'Label', null, 'Tooltip [shift-x]', 'z' );
+		const link = util.addPortletLink( 'p-toolbox', '#', 'Label', null, 'Tooltip [shift-x]', 'z' );
 		assert.strictEqual(
 			link.querySelector( 'a' ).title,
 			'Tooltip [test-z]',
@@ -407,7 +401,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		);
 	} );
 
-	QUnit.test( 'addPortletLink (nested list)', function ( assert ) {
+	QUnit.test( 'addPortletLink (nested list)', ( assert ) => {
 		// Regresion test for T37082
 		$( '#qunit-fixture' ).html(
 			'<ul id="p-toolbox">' +
@@ -424,7 +418,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		);
 	} );
 
-	QUnit.test( 'validateEmail', function ( assert ) {
+	QUnit.test( 'validateEmail', ( assert ) => {
 		assert.strictEqual( util.validateEmail( '' ), null, 'Should return null for empty string ' );
 		assert.strictEqual( util.validateEmail( 'user@localhost' ), true, 'Return true for a valid e-mail address' );
 
@@ -610,9 +604,9 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		'Space characters': {
 			url: '/a/a0/blah blah blah'
 		}
-	}, function ( assert, thisCase ) {
+	}, ( assert, thisCase ) => {
 		mw.util.setOptionsForTest( { GenerateThumbnailOnParse: false } );
-		var data = mw.util.parseImageUrl( thisCase.url );
+		const data = mw.util.parseImageUrl( thisCase.url );
 		if ( !thisCase.name ) {
 			assert.strictEqual( data, null, 'return null' );
 			return;
@@ -633,13 +627,13 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		mw.util.setOptionsForTest( { GenerateThumbnailOnParse: true } );
 		this.sandbox.stub( mw.config.values, 'wgScript', '/w' );
 
-		var resizeUrl = mw.util.parseImageUrl( '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-thumbnail.jpg' ).resizeUrl;
+		const resizeUrl = mw.util.parseImageUrl( '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-thumbnail.jpg' ).resizeUrl;
 
 		assert.strictEqual( typeof resizeUrl, 'function', 'resizeUrl is set' );
 		assert.strictEqual( resizeUrl( 500 ), '/w?title=Special:Redirect/file/Princess_Alexandra_of_Denmark_(later_Queen_Alexandra,_wife_of_Edward_VII)_with_her_two_eldest_sons,_Prince_Albert_Victor_(Eddy)_and_George_Frederick_Ernest_Albert_(later_George_V).jpg&width=500', 'Resized URL is correct' );
 	} );
 
-	QUnit.test( 'escapeRegExp [normal]', function ( assert ) {
+	QUnit.test( 'escapeRegExp [normal]', ( assert ) => {
 		const normal = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
 			'abcdefghijklmnopqrstuvwxyz' +
 			'0123456789';
@@ -662,9 +656,9 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		'-',
 		'^',
 		'$'
-	], function ( assert, str ) {
+	], ( assert, str ) => {
 		assert.propEqual(
-			// eslint-disable-next-line security/detect-non-literal-regexp
+
 			str.match( new RegExp( mw.util.escapeRegExp( str ) ) ),
 			[ str ],
 			'confirm correct escaping by being able to match itself'
@@ -672,16 +666,16 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 	} );
 
 	QUnit.test( 'debounce(Function, timeout)', async function ( assert ) {
-		var fn = mw.util.debounce( function ( data ) {
+		const fn = mw.util.debounce( ( data ) => {
 			assert.step( data );
 		}, 5 );
 
 		fn( 'A' );
-		setTimeout( function () {
+		setTimeout( () => {
 			fn( 'B' );
 		}, 1 );
 		this.sandbox.clock.tick( 2 );
-		setTimeout( function () {
+		setTimeout( () => {
 			fn( 'C' );
 		}, 1 );
 		this.sandbox.clock.tick( 2 );
@@ -691,16 +685,16 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 	} );
 
 	QUnit.test( 'debounce(Function, timeout, immediate=true)', async function ( assert ) {
-		var fn = mw.util.debounce( function ( data ) {
+		const fn = mw.util.debounce( ( data ) => {
 			assert.step( data );
 		}, 5, true );
 
 		fn( 'A' );
-		setTimeout( function () {
+		setTimeout( () => {
 			fn( 'B' );
 		}, 1 );
 		this.sandbox.clock.tick( 2 );
-		setTimeout( function () {
+		setTimeout( () => {
 			fn( 'C' );
 		}, 1 );
 		this.sandbox.clock.tick( 2 );
@@ -710,16 +704,16 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 	} );
 
 	QUnit.test( 'debounce(timeout, Function) [old signature]', async function ( assert ) {
-		var fn = mw.util.debounce( 5, function ( data ) {
+		const fn = mw.util.debounce( 5, ( data ) => {
 			assert.step( data );
 		} );
 
 		fn( 'A' );
-		setTimeout( function () {
+		setTimeout( () => {
 			fn( 'B' );
 		}, 1 );
 		this.sandbox.clock.tick( 2 );
-		setTimeout( function () {
+		setTimeout( () => {
 			fn( 'C' );
 		}, 1 );
 		this.sandbox.clock.tick( 2 );
@@ -728,8 +722,8 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.verifySteps( [ 'C' ] );
 	} );
 
-	QUnit.test( 'init (.mw-body-primary)', function ( assert ) {
-		var node = $( '<div class="mw-body-primary mw-body">primary</div>' )[ 0 ];
+	QUnit.test( 'init (.mw-body-primary)', ( assert ) => {
+		const node = $( '<div class="mw-body-primary mw-body">primary</div>' )[ 0 ];
 		$( '#qunit-fixture' ).append(
 			'<div id="mw-content-text"></div>',
 			'<div class="mw-body"></div>',
@@ -740,8 +734,8 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.strictEqual( mw.util.$content[ 0 ], node );
 	} );
 
-	QUnit.test( 'init (first of multiple .mw-body)', function ( assert ) {
-		var node = $( '<div class="mw-body">first</div>' )[ 0 ];
+	QUnit.test( 'init (first of multiple .mw-body)', ( assert ) => {
+		const node = $( '<div class="mw-body">first</div>' )[ 0 ];
 		$( '#qunit-fixture' ).append(
 			'<div id="mw-content-text"></div>',
 			node,
@@ -754,8 +748,8 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.strictEqual( mw.util.$content.length, 1, 'length' );
 	} );
 
-	QUnit.test( 'init (#mw-content-text fallback)', function ( assert ) {
-		var node = $( '<div id="mw-content-text">fallback</div>' )[ 0 ];
+	QUnit.test( 'init (#mw-content-text fallback)', ( assert ) => {
+		const node = $( '<div id="mw-content-text">fallback</div>' )[ 0 ];
 		$( '#qunit-fixture' ).append(
 			node
 		);
@@ -766,7 +760,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.strictEqual( mw.util.$content.length, 1, 'length' );
 	} );
 
-	QUnit.test( 'init (body fallback)', function ( assert ) {
+	QUnit.test( 'init (body fallback)', ( assert ) => {
 		util.init();
 		assert.true( util.$content instanceof $, 'jQuery object' );
 		assert.strictEqual( mw.util.$content[ 0 ], document.body, 'node' );
@@ -799,7 +793,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		'IPv6 :: at the end': [ 'FE80:0:0:0:0:0:0:0/10', 'fe80::/10' ],
 		'Non-IP string': [ 'UserName', 'UserName' ],
 		'Non-string': [ null, null ]
-	}, function ( assert, [ expected, input ] ) {
+	}, ( assert, [ expected, input ] ) => {
 		assert.strictEqual( util.sanitizeIP( input ), expected );
 	} );
 
@@ -813,7 +807,7 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		'IPv6 first longer consecutive zeros with ::': [ '2001::15:0:0:1a2b', '2001:0000:0000:0000:0015:0000:0000:1a2b' ],
 		'IPv6 last longer consecutive zeros with ::': [ '2001:0:0:15::1a2b', '2001:0000:0000:0015:0000:0000:0000:1a2b' ],
 		'IPv6 first of equal length consecutive zeros with ::': [ '2001::15:0:0:3:1a2b', '2001:0000:0000:0015:0000:0000:0003:1a2b' ]
-	}, function ( assert, [ expected, input ] ) {
+	}, ( assert, [ expected, input ] ) => {
 		assert.strictEqual( util.prettifyIP( input ), expected );
 	} );
 
@@ -831,8 +825,9 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		'multiple patterns suffix match': [ [ '*$1', '$1~' ], 'Some user~', true, true ],
 		'multiple patterns suffix mismatch': [ [ '*$1', '$1~' ], 'Some user', false, true ],
 		'multiple patterns prefix and suffix match': [ [ '*$1*', '$1~' ], '*Unregistered 123*', true, true ],
-		'Auto create temporary user disabled': [ '*$1*', '*', false, false ]
-	}, function ( assert, username ) {
+		'Auto create temporary user disabled': [ '*$1*', '*', false, false ],
+		'null username': [ '*$1', null, false, true ]
+	}, ( assert, username ) => {
 		mw.util.setOptionsForTest( {
 			AutoCreateTempUser: { enabled: username[ 3 ], matchPattern: username[ 0 ] }
 		} );
@@ -840,7 +835,18 @@ QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		assert.strictEqual( util.isTemporaryUser( username[ 1 ] ), username[ 2 ] );
 	} );
 
-	QUnit.test( 'isInfinity', function ( assert ) {
+	QUnit.test.each( 'isTemporaryUser matchPattern null', {
+		'prefix mismatch': [ '*$1', 'Test', false, true ],
+		'prefix match': [ '*$1', '*Some user', true, true ]
+	}, ( assert, username ) => {
+		mw.util.setOptionsForTest( {
+			AutoCreateTempUser: { enabled: username[ 3 ], genPattern: username[ 0 ], matchPattern: null }
+		} );
+
+		assert.strictEqual( util.isTemporaryUser( username[ 1 ] ), username[ 2 ] );
+	} );
+
+	QUnit.test( 'isInfinity', ( assert ) => {
 		assert.true( util.isInfinity( 'indefinite' ) );
 		assert.true( util.isInfinity( 'infinite' ) );
 		assert.true( util.isInfinity( 'infinity' ) );

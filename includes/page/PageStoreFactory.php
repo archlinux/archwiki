@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Page;
 
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\TitleParser;
 use Wikimedia\Rdbms\ILBFactory;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * @since 1.36
@@ -20,39 +20,20 @@ class PageStoreFactory {
 	 */
 	public const CONSTRUCTOR_OPTIONS = PageStore::CONSTRUCTOR_OPTIONS;
 
-	/** @var ServiceOptions */
-	private $options;
+	private ServiceOptions $options;
+	private ILBFactory $dbLoadBalancerFactory;
+	private NamespaceInfo $namespaceInfo;
+	private TitleParser $titleParser;
+	private LinkCache $linkCache;
+	private StatsFactory $stats;
 
-	/** @var ILBFactory */
-	private $dbLoadBalancerFactory;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var TitleParser */
-	private $titleParser;
-
-	/** @var LinkCache */
-	private $linkCache;
-
-	/** @var StatsdDataFactoryInterface */
-	private $stats;
-
-	/**
-	 * @param ServiceOptions $options
-	 * @param ILBFactory $dbLoadBalancerFactory
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param TitleParser $titleParser
-	 * @param LinkCache $linkCache
-	 * @param StatsdDataFactoryInterface $stats
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		ILBFactory $dbLoadBalancerFactory,
 		NamespaceInfo $namespaceInfo,
 		TitleParser $titleParser,
 		LinkCache $linkCache,
-		StatsdDataFactoryInterface $stats
+		StatsFactory $stats
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 

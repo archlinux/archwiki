@@ -12,6 +12,7 @@ use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\HookAborterConseque
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Message\Message;
 use MediaWiki\Status\Status;
 use MediaWiki\User\UserIdentityUtils;
 use Psr\Log\LoggerInterface;
@@ -83,7 +84,7 @@ class ConsequencesExecutor {
 	 * @param string[] $filters
 	 * @return Status returns the operation's status. $status->isOK() will return true if
 	 *         there were no actions taken, false otherwise. $status->getValue() will return
-	 *         an array listing the actions taken. $status->getErrors() etc. will provide
+	 *         an array listing the actions taken. $status->getMessages() will provide
 	 *         the errors and warnings to be shown to the user to explain the actions.
 	 */
 	public function executeFilterActions( array $filters ): Status {
@@ -375,14 +376,13 @@ class ConsequencesExecutor {
 
 	/**
 	 * @param Consequence $consequence
-	 * @return array [ Executed (bool), Message (?array) ] The message is given as an array
-	 *   containing the message key followed by any message parameters.
-	 * @todo Improve return value
+	 * @return array [ executed (bool), message (?Message) ]
+	 * @phan-return array{0:bool, 1:?Message}
 	 */
 	private function takeConsequenceAction( Consequence $consequence ): array {
 		$res = $consequence->execute();
 		if ( $res && $consequence instanceof HookAborterConsequence ) {
-			$message = $consequence->getMessage();
+			$message = Message::newFromSpecifier( $consequence->getMessage() );
 		}
 
 		return [ $res, $message ?? null ];
@@ -394,9 +394,7 @@ class ConsequencesExecutor {
 	 *
 	 * @param array[] $actionsTaken associative array mapping each filter to the list if
 	 *                actions taken because of that filter.
-	 * @param array[] $messages a list of arrays, where each array contains a message key
-	 *                followed by any message parameters.
-	 * @phan-param non-empty-array[] $messages
+	 * @param Message[] $messages a list of Message objects
 	 *
 	 * @return Status
 	 */
@@ -404,7 +402,7 @@ class ConsequencesExecutor {
 		$status = Status::newGood( $actionsTaken );
 
 		foreach ( $messages as $msg ) {
-			$status->fatal( ...$msg );
+			$status->fatal( $msg );
 		}
 
 		return $status;

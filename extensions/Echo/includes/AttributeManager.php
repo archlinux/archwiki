@@ -282,9 +282,9 @@ class AttributeManager {
 	 * Gets an associative array mapping categories to the notification types in
 	 * the category
 	 *
-	 * @return array[] Associative array with category as key
+	 * @return array<string,string[]> Associative array with category as key
 	 */
-	public function getEventsByCategory() {
+	public function getEventsByCategory(): array {
 		$eventsByCategory = [];
 
 		foreach ( $this->categories as $category => $categoryDetails ) {

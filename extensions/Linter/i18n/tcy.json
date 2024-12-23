@@ -5,5 +5,8 @@
 			"Pragathi. BH"
 		]
 	},
-	"linter-page-history": "ಇತಿಹಾಸೊ"
+	"linter-category-duplicate-ids": "ನಕಲು ಐಡಿಲು",
+	"linter-category-duplicate-ids-desc": "ಈ ಪುಟೊಕುಲು ನಕಲಿ ಐಡಿ ಗುಣಲಕ್ಷಣೊಲೆನ್ ಹೊಂದಿರುವ ಅಂಶೊಲೆನ್ ಪಡೆಯೊಂದಿತ್ತೆ.",
+	"linter-page-history": "ಇತಿಹಾಸೊ",
+	"linter-pager-duplicate-ids-details": "ನಕಲು ಐಡಿಲು"
 }

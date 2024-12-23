@@ -16,7 +16,8 @@ use XmlDumpWriter;
  *
  * @group Database
  * @group Dump
- * @covers \BackupDumper
+ * @covers \MediaWiki\Maintenance\BackupDumper
+ *
  */
 class BackupDumperPageTest extends DumpTestCase {
 
@@ -33,7 +34,7 @@ class BackupDumperPageTest extends DumpTestCase {
 	public function addDBData() {
 		parent::addDBData();
 
-		$this->addTestPages();
+		$this->addTestPages( $this->getTestSysop()->getUser() );
 	}
 
 	protected function tearDown(): void {

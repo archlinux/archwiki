@@ -25,9 +25,9 @@
 namespace MediaWiki\Utils;
 
 use DateInterval;
-use Language;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -93,9 +93,9 @@ class MWTimestamp extends ConvertibleTimestamp {
 	 * @return string Relative timestamp
 	 */
 	public function getRelativeTimestamp(
-		MWTimestamp $relativeTo = null,
-		UserIdentity $user = null,
-		Language $lang = null,
+		?MWTimestamp $relativeTo = null,
+		?UserIdentity $user = null,
+		?Language $lang = null,
 		array $chosenIntervals = []
 	) {
 		$relativeTo ??= new self();

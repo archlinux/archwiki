@@ -19,7 +19,7 @@
  */
 namespace MediaWiki\Rest\Handler\Helper;
 
-use LanguageCode;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Parser\ParserOutput;
@@ -34,15 +34,27 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
  */
 class HtmlMessageOutputHelper implements HtmlOutputHelper {
 
-	private PageIdentity $page;
+	private ?PageIdentity $page;
+
+	/**
+	 * @note Since 1.43 setting $page to null has been deprecated.
+	 */
+	public function __construct( ?PageIdentity $page = null ) {
+		if ( $page === null ) {
+			wfDeprecated( __METHOD__ . ' without $page', '1.43' );
+		}
+		$this->page = $page;
+	}
 
 	/**
 	 * Initializes the helper with the given parameters like the page
 	 * we're dealing with.
 	 *
 	 * @param PageIdentity $page
+	 * @deprecated since 1.43, use constructor argument instead
 	 */
 	public function init( PageIdentity $page ): void {
+		wfDeprecated( __METHOD__, '1.43' );
 		$this->page = $page;
 	}
 
@@ -99,7 +111,7 @@ class HtmlMessageOutputHelper implements HtmlOutputHelper {
 	/**
 	 * @inheritDoc
 	 */
-	public function getParamSettings(): array {
+	public static function getParamSettings(): array {
 		return [];
 	}
 

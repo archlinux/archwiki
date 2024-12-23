@@ -23,14 +23,13 @@
 
 namespace MediaWiki\Cache;
 
-use BagOStuff;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\WebRequest;
-use ObjectCache;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\IPUtils;
+use Wikimedia\ObjectCache\BagOStuff;
 
 /**
  * Base class for data storage in the file system.
@@ -38,7 +37,7 @@ use Wikimedia\IPUtils;
  * @ingroup Cache
  */
 abstract class FileCacheBase {
-	/** @var string[] */
+
 	private const CONSTRUCTOR_OPTIONS = [
 		MainConfigNames::CacheEpoch,
 		MainConfigNames::FileCacheDepth,
@@ -47,10 +46,15 @@ abstract class FileCacheBase {
 		MainConfigNames::UseGzip,
 	];
 
+	/** @var string */
 	protected $mKey;
+	/** @var string */
 	protected $mType = 'object';
+	/** @var string */
 	protected $mExt = 'cache';
+	/** @var string|null */
 	protected $mFilePath;
+	/** @var bool */
 	protected $mUseGzip;
 	/** @var bool|null lazy loaded */
 	protected $mCached;
@@ -249,7 +253,7 @@ abstract class FileCacheBase {
 	 * @return void
 	 */
 	public function incrMissesRecent( WebRequest $request ) {
-		if ( mt_rand( 0, self::MISS_FACTOR - 1 ) == 0 ) {
+		if ( mt_rand( 1, self::MISS_FACTOR ) == 1 ) {
 			# Get a large IP range that should include the user  even if that
 			# person's IP address changes
 			$ip = $request->getIP();
@@ -262,7 +266,8 @@ abstract class FileCacheBase {
 				: IPUtils::sanitizeRange( "$ip/16" );
 
 			# Bail out if a request already came from this range...
-			$cache = ObjectCache::getLocalClusterInstance();
+			$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()
+				->getLocalClusterInstance();
 			$key = $cache->makeKey( static::class, 'attempt', $this->mType, $this->mKey, $ip );
 			if ( !$cache->add( $key, 1, self::MISS_TTL_SEC ) ) {
 				return; // possibly the same user
@@ -278,7 +283,8 @@ abstract class FileCacheBase {
 	 * @return int
 	 */
 	public function getMissesRecent() {
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()
+			->getLocalClusterInstance();
 
 		return self::MISS_FACTOR * $cache->get( $this->cacheMissKey( $cache ) );
 	}

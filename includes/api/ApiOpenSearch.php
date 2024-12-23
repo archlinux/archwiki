@@ -22,36 +22,36 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use InvalidArgumentException;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\Utils\UrlUtils;
+use SearchEngine;
+use SearchEngineConfig;
+use SearchEngineFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * @ingroup API
  */
 class ApiOpenSearch extends ApiBase {
-	use SearchApi;
+	use \MediaWiki\Api\SearchApi;
 
+	/** @var string|null */
 	private $format = null;
+	/** @var string|null */
 	private $fm = null;
 
 	private LinkBatchFactory $linkBatchFactory;
 	private UrlUtils $urlUtils;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param SearchEngineConfig $searchEngineConfig
-	 * @param SearchEngineFactory $searchEngineFactory
-	 * @param UrlUtils $urlUtils
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		LinkBatchFactory $linkBatchFactory,
 		SearchEngineConfig $searchEngineConfig,
 		SearchEngineFactory $searchEngineFactory,
@@ -380,19 +380,21 @@ class ApiOpenSearch extends ApiBase {
 	 * @return string
 	 */
 	public static function getOpenSearchTemplate( $type ) {
-		$config = MediaWikiServices::getInstance()->getSearchEngineConfig();
-		$ns = implode( '|', $config->defaultNamespaces() );
+		$services = MediaWikiServices::getInstance();
+		$canonicalServer = $services->getMainConfig()->get( MainConfigNames::CanonicalServer );
+		$searchEngineConfig = $services->getSearchEngineConfig();
+		$ns = implode( '|', $searchEngineConfig->defaultNamespaces() );
 		if ( !$ns ) {
 			$ns = '0';
 		}
 
 		switch ( $type ) {
 			case 'application/x-suggestions+json':
-				return $config->getConfig()->get( MainConfigNames::CanonicalServer ) .
+				return $canonicalServer .
 					wfScript( 'api' ) . '?action=opensearch&search={searchTerms}&namespace=' . $ns;
 
 			case 'application/x-suggestions+xml':
-				return $config->getConfig()->get( MainConfigNames::CanonicalServer ) .
+				return $canonicalServer .
 					wfScript( 'api' ) .
 					'?action=opensearch&format=xml&search={searchTerms}&namespace=' . $ns;
 
@@ -401,3 +403,6 @@ class ApiOpenSearch extends ApiBase {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiOpenSearch::class, 'ApiOpenSearch' );

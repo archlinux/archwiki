@@ -3,7 +3,7 @@
 	 * SeenTime model for Echo notifications
 	 *
 	 * @param {Object} [config] Configuration
-	 * @cfg {string|string[]} [types='alert','message'] The types of notifications
+	 * @param {string|string[]} [config.types='alert','message'] The types of notifications
 	 *  that this model handles
 	 */
 	mw.echo.dm.SeenTimeModel = function MwEchoSeenTimeModel( config ) {
@@ -28,10 +28,10 @@
 	/* Events */
 
 	/**
-	 * @event update
-	 * @param {string} time Seen time, as a full UTC ISO 8601 timestamp.
-	 *
 	 * Seen time has been updated for the given source
+	 *
+	 * @event mw.echo.dm.SeenTimeModel#update
+	 * @param {string} time Seen time, as a full UTC ISO 8601 timestamp.
 	 */
 
 	/* Methods */
@@ -48,17 +48,15 @@
 	/**
 	 * Set the seen time value for the source
 	 *
-	 * @private
+	 * @internal
 	 * @param {string} time Seen time, as a full UTC ISO 8601 timestamp.
-	 * @fires update
+	 * @fires mw.echo.dm.SeenTimeModel#update
 	 */
 	mw.echo.dm.SeenTimeModel.prototype.setSeenTime = function ( time ) {
-		var model = this,
-			hasChanged = false;
-
-		this.getTypes().forEach( function ( type ) {
-			if ( model.seenTime[ type ] !== time ) {
-				model.seenTime[ type ] = time;
+		let hasChanged = false;
+		this.getTypes().forEach( ( type ) => {
+			if ( this.seenTime[ type ] !== time ) {
+				this.seenTime[ type ] = time;
 				hasChanged = true;
 			}
 		} );
@@ -71,7 +69,7 @@
 	/**
 	 * Get the types associated with this model
 	 *
-	 * @private
+	 * @internal
 	 * @return {string[]} Types for this model; an array of 'alert', 'message' or both.
 	 */
 	mw.echo.dm.SeenTimeModel.prototype.getTypes = function () {

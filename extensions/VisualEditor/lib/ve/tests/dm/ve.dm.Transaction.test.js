@@ -11,26 +11,26 @@ QUnit.module( 've.dm.Transaction' );
 /* Tests */
 // TODO: Change the variable names to reflect the use of TransactionBuilder
 
-QUnit.test( 'translateOffset', function ( assert ) {
-	var b = [ ve.dm.example.boldHash ];
+QUnit.test( 'translateOffset', ( assert ) => {
+	const b = [ ve.dm.example.boldHash ];
 
-	var tx = new ve.dm.Transaction( [
-		{ type: 'replace', remove: [], insert: [ 'a', 'b', 'c' ] },
+	const tx = new ve.dm.Transaction( [
+		{ type: 'replace', remove: [], insert: [ ...'abc' ] },
 		{ type: 'retain', length: 5 },
-		{ type: 'replace', remove: [ 'd', 'e', 'f', 'g' ], insert: [] },
+		{ type: 'replace', remove: [ ...'defg' ], insert: [] },
 		{ type: 'retain', length: 3 },
-		{ type: 'replace', remove: [ 'h' ], insert: [ 'i', 'j', 'k', 'l', 'm' ] },
+		{ type: 'replace', remove: [ 'h' ], insert: [ ...'ijklm' ] },
 		{ type: 'retain', length: 2 },
-		{ type: 'replace', remove: [], insert: [ 'n', 'o', 'p' ] },
+		{ type: 'replace', remove: [], insert: [ ...'nop' ] },
 		{ type: 'retain', length: 2 },
-		{ type: 'replace', remove: [ 'o', 'k' ], insert: [ [ 'o', b ], [ 'k', b ] ] },
+		{ type: 'replace', remove: [ ...'ok' ], insert: [ [ 'o', b ], [ 'k', b ] ] },
 		{ type: 'retain', length: 2 },
-		{ type: 'replace', remove: [ 'n', 'o', 'n' ], insert: [ [ 'n', b ], [ 'o', b ] ] },
+		{ type: 'replace', remove: [ ...'non' ], insert: [ [ 'n', b ], [ 'o', b ] ] },
 		{ type: 'retain', length: 2 },
-		{ type: 'replace', remove: [ 'h', 'i' ], insert: [ [ 'l', b ], [ 'o', b ] ] }
+		{ type: 'replace', remove: [ ...'hi' ], insert: [ [ 'l', b ], [ 'o', b ] ] }
 	] );
 
-	var mapping = {
+	const mapping = {
 		0: [ 0, 3 ],
 		1: 4,
 		2: 5,
@@ -62,15 +62,15 @@ QUnit.test( 'translateOffset', function ( assert ) {
 		28: 33
 	};
 
-	for ( var offset in mapping ) {
-		var expected = Array.isArray( mapping[ offset ] ) ? mapping[ offset ] : [ mapping[ offset ], mapping[ offset ] ];
+	for ( const offset in mapping ) {
+		const expected = Array.isArray( mapping[ offset ] ) ? mapping[ offset ] : [ mapping[ offset ], mapping[ offset ] ];
 		assert.strictEqual( tx.translateOffset( Number( offset ) ), expected[ 1 ], offset );
 		assert.strictEqual( tx.translateOffset( Number( offset ), true ), expected[ 0 ], offset + ' (excludeInsertion)' );
 	}
 } );
 
-QUnit.test( 'translateRange', function ( assert ) {
-	var doc = ve.dm.example.createExampleDocument(),
+QUnit.test( 'translateRange', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument(),
 		txBuilder = new ve.dm.TransactionBuilder();
 	txBuilder.pushRetain( 55 );
 	txBuilder.pushReplacement( doc, 55, 0, [ { type: 'list', attributes: { style: 'number' } } ] );
@@ -81,9 +81,9 @@ QUnit.test( 'translateRange', function ( assert ) {
 	txBuilder.pushRetain( 3 );
 	txBuilder.pushReplacement( doc, 61, 0, [ { type: '/listItem' } ] );
 	txBuilder.pushReplacement( doc, 61, 0, [ { type: '/list' } ] );
-	var tx = txBuilder.getTransaction();
+	const tx = txBuilder.getTransaction();
 
-	var cases = [
+	const cases = [
 		{
 			before: new ve.Range( 55, 61 ),
 			after: new ve.Range( 55, 67 ),
@@ -106,14 +106,14 @@ QUnit.test( 'translateRange', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		assert.equalRange( tx.translateRange( caseItem.before ), caseItem.after, caseItem.msg );
 		assert.equalRange( tx.translateRange( caseItem.before.flip() ), caseItem.after.flip(), caseItem.msg + ' (reversed)' );
 	} );
 } );
 
-QUnit.test( 'getModifiedRange', function ( assert ) {
-	var doc = ve.dm.example.createExampleDocument(),
+QUnit.test( 'getModifiedRange', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument(),
 		cases = [
 			{
 				calls: [
@@ -125,7 +125,7 @@ QUnit.test( 'getModifiedRange', function ( assert ) {
 			{
 				calls: [
 					[ 'pushRetain', 5 ],
-					[ 'pushReplacement', doc, 5, 0, [ 'a', 'b', 'c' ] ],
+					[ 'pushReplacement', doc, 5, 0, [ ...'abc' ] ],
 					[ 'pushRetain', 42 ]
 				],
 				range: new ve.Range( 5, 8 ),
@@ -143,7 +143,7 @@ QUnit.test( 'getModifiedRange', function ( assert ) {
 			{
 				calls: [
 					[ 'pushRetain', 5 ],
-					[ 'pushReplacement', doc, 5, 3, [ 'a', 'b', 'c', 'd' ] ],
+					[ 'pushReplacement', doc, 5, 3, [ ...'abcd' ] ],
 					[ 'pushRetain', 42 ]
 				],
 				range: new ve.Range( 5, 9 ),
@@ -152,7 +152,7 @@ QUnit.test( 'getModifiedRange', function ( assert ) {
 			{
 				calls: [
 					[ 'pushRetain', 5 ],
-					[ 'pushReplacement', doc, 5, 13, [ 'a', 'b', 'c', 'd' ] ],
+					[ 'pushReplacement', doc, 5, 13, [ ...'abcd' ] ],
 					[ 'pushRetain', 42 ]
 				],
 				range: new ve.Range( 5, 9 ),
@@ -163,7 +163,7 @@ QUnit.test( 'getModifiedRange', function ( assert ) {
 					[ 'pushRetain', 5 ],
 					[ 'pushReplacement', doc, 5, 3, [] ],
 					[ 'pushRetain', 42 ],
-					[ 'pushReplacement', doc, 50, 0, [ 'h', 'e', 'l', 'l', 'o' ] ],
+					[ 'pushReplacement', doc, 50, 0, [ ...'hello' ] ],
 					[ 'pushRetain', 108 ]
 				],
 				range: new ve.Range( 5, 52 ),
@@ -172,9 +172,9 @@ QUnit.test( 'getModifiedRange', function ( assert ) {
 			{
 				calls: [
 					[ 'pushRetain', 5 ],
-					[ 'pushReplacement', doc, 5, 3, [ 'a', 'b', 'c', 'd' ] ],
+					[ 'pushReplacement', doc, 5, 3, [ ...'abcd' ] ],
 					[ 'pushRetain', 54 ],
-					[ 'pushReplacement', doc, 62, 0, [ 'h', 'e', 'l', 'l', 'o' ] ],
+					[ 'pushReplacement', doc, 62, 0, [ ...'hello' ] ],
 					[ 'pushRetain', 1 ]
 				],
 				range: new ve.Range( 5, 9 ),
@@ -189,7 +189,7 @@ QUnit.test( 'getModifiedRange', function ( assert ) {
 			},
 			{
 				calls: [
-					[ 'pushReplacement', doc, 0, 0, [ 'a', 'b', 'c' ] ]
+					[ 'pushReplacement', doc, 0, 0, [ ...'abc' ] ]
 				],
 				range: new ve.Range( 0, 3 ),
 				msg: 'insertion without retains'
@@ -213,17 +213,17 @@ QUnit.test( 'getModifiedRange', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		var txBuilder = new ve.dm.TransactionBuilder();
-		for ( var j = 0; j < caseItem.calls.length; j++ ) {
+	cases.forEach( ( caseItem ) => {
+		const txBuilder = new ve.dm.TransactionBuilder();
+		for ( let j = 0; j < caseItem.calls.length; j++ ) {
 			txBuilder[ caseItem.calls[ j ][ 0 ] ].apply( txBuilder, caseItem.calls[ j ].slice( 1 ) );
 		}
 		assert.equalRange( txBuilder.getTransaction().getModifiedRange( doc ), caseItem.range, caseItem.msg );
 	} );
 } );
 
-QUnit.test( 'Metadata transactions', function ( assert ) {
-	var fooMeta = { type: 'alienMeta', attributes: { label: 'foo' } },
+QUnit.test( 'Metadata transactions', ( assert ) => {
+	const fooMeta = { type: 'alienMeta', attributes: { label: 'foo' } },
 		barMeta = { type: 'alienMeta', attributes: { label: 'bar' } },
 		data = [
 			{ type: 'paragraph' },
@@ -239,15 +239,13 @@ QUnit.test( 'Metadata transactions', function ( assert ) {
 		events = [];
 
 	function getElements( list ) {
-		return list.items.map( function ( item ) {
-			return item.element;
-		} );
+		return list.items.map( ( item ) => item.element );
 	}
 
-	var doc = new ve.dm.Document( [] );
-	var metaList = doc.getMetaList();
-	var surface = new ve.dm.Surface( doc );
-	var fragment = surface.getFragment();
+	const doc = new ve.dm.Document( [] );
+	const metaList = doc.getMetaList();
+	const surface = new ve.dm.Surface( doc );
+	const fragment = surface.getFragment();
 	metaList.connect( null, {
 		insert: function ( item ) {
 			events.push( [ 'insert', item.element ] );

@@ -346,7 +346,13 @@ class CommentModifier {
 		while (
 			static::allOfType( $fragment->childNodes, 'dl' ) ||
 			static::allOfType( $fragment->childNodes, 'ul' ) ||
-			static::allOfType( $fragment->childNodes, 'ol' )
+			static::allOfType( $fragment->childNodes, 'ol' ) ||
+			(
+				// Or if the comment starts with a bullet followed by indents
+				count( $fragment->childNodes ) > 1 &&
+				static::allOfType( [ $fragment->childNodes[0] ], 'ul' ) &&
+				static::allOfType( array_slice( iterator_to_array( $fragment->childNodes ), 1 ), 'dl' )
+			)
 		) {
 			// Do not iterate over childNodes while we're modifying it
 			$childNodeList = iterator_to_array( $fragment->childNodes );
@@ -368,10 +374,6 @@ class CommentModifier {
 	 * @param DocumentFragment|null $fragment Containing document fragment if list has no parent
 	 */
 	public static function unwrapList( Node $list, ?DocumentFragment $fragment = null ): void {
-		$doc = $list->ownerDocument;
-		$container = $fragment ?: $list->parentNode;
-		$referenceNode = $list;
-
 		if ( !(
 			$list instanceof Element && (
 				strtolower( $list->tagName ) === 'dl' ||
@@ -388,6 +390,9 @@ class CommentModifier {
 			return;
 		}
 
+		$doc = $list->ownerDocument;
+		$container = $fragment ?: $list->parentNode;
+		$referenceNode = $list;
 		while ( $list->firstChild ) {
 			if ( $list->firstChild instanceof Element ) {
 				// Move <dd> contents to <p>
@@ -647,7 +652,7 @@ class CommentModifier {
 	 * @param string|null $signature
 	 */
 	public static function addWikitextReply(
-		ContentCommentItem $comment, string $wikitext, string $signature = null
+		ContentCommentItem $comment, string $wikitext, ?string $signature = null
 	): void {
 		$doc = $comment->getRange()->endContainer->ownerDocument;
 		$container = static::prepareWikitextReply( $doc, $wikitext );
@@ -665,7 +670,7 @@ class CommentModifier {
 	 * @param string|null $signature
 	 */
 	public static function addHtmlReply(
-		ContentCommentItem $comment, string $html, string $signature = null
+		ContentCommentItem $comment, string $html, ?string $signature = null
 	): void {
 		$doc = $comment->getRange()->endContainer->ownerDocument;
 		$container = static::prepareHtmlReply( $doc, $html );

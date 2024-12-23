@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Tests\Page;
 
-use ChangeTags;
 use DatabaseLogEntry;
-use JsonContent;
+use MediaWiki\Content\JsonContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
@@ -13,6 +13,7 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
@@ -21,18 +22,17 @@ use MediaWikiIntegrationTestCase;
 use RecentChange;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use WikiPage;
-use WikitextContent;
 
 /**
  * @group Database
  * @covers \MediaWiki\Page\RollbackPage
  * @coversDefaultClass \MediaWiki\Page\RollbackPage
- * @package MediaWiki\Tests\Page
  * @method RollbackPage newServiceInstance(string $serviceClass, array $parameterOverrides)
  */
 class RollbackPageTest extends MediaWikiIntegrationTestCase {
 	use MockAuthorityTrait;
 	use MockServiceDependenciesTrait;
+	use TempUserTestTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -144,7 +144,7 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 		 */
 		$this->assertEquals(
 			3,
-			$revisionStore->countRevisionsByPageId( $this->db, $page->getId() )
+			$revisionStore->countRevisionsByPageId( $this->getDb(), $page->getId() )
 		);
 		$this->assertEquals( $admin->getName(), $rev1->getUser()->getName() );
 		$this->assertEquals( $user1->getName(), $rev2->getUser()->getName() );
@@ -248,7 +248,7 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testRollbackTagging() {
-		if ( !in_array( 'mw-rollback', ChangeTags::getSoftwareTags() ) ) {
+		if ( !in_array( 'mw-rollback', $this->getServiceContainer()->getChangeTagsStore()->getSoftwareTags() ) ) {
 			$this->markTestSkipped( 'Rollback tag deactivated, skipped the test.' );
 		}
 
@@ -428,11 +428,31 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 			->setSummary( 'TESTING' )
 			->rollbackIfAllowed();
 		$this->assertStatusGood( $rollbackResult );
-		$logRow = DatabaseLogEntry::newSelectQueryBuilder( $this->db )
+		$logRow = DatabaseLogEntry::newSelectQueryBuilder( $this->getDb() )
 			->where( [ 'log_namespace' => NS_MAIN, 'log_title' => __METHOD__, 'log_type' => 'contentmodel' ] )
 			->caller( __METHOD__ )->fetchRow();
 		$this->assertNotNull( $logRow );
 		$this->assertSame( $admin->getUser()->getName(), $logRow->user_name );
 		$this->assertSame( 'TESTING', $logRow->log_comment_text );
+	}
+
+	public function testRollbackOfIPRevisionWhenTemporaryAccountsAreEnabledT371094() {
+		// Set up the test page to have one revision by a user and then the second revision performed by an IP address.
+		$this->disableAutoCreateTempUser();
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( Title::newFromText( __METHOD__ ) );
+		$admin = $this->getTestSysop()->getUser();
+		$anonUser = $this->mockAnonUltimateAuthority();
+
+		$this->prepareForRollback( $admin, $anonUser, $page );
+
+		// Enable temporary accounts and then perform the rollback
+		$this->enableAutoCreateTempUser();
+		$rollbackResult = $this->getServiceContainer()
+			->getRollbackPageFactory()
+			->newRollbackPage( $page, $admin, $anonUser->getUser() )
+			->rollbackIfAllowed();
+		// Ensure that the rollback worked as expected, as previously this failed with an exception if
+		// rolling back a IP revision.
+		$this->assertStatusGood( $rollbackResult );
 	}
 }

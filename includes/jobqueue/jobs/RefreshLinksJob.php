@@ -18,18 +18,23 @@
  * @file
  */
 
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Deferred\RefreshSecondaryDataUpdate;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageAssertionException;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\Rdbms\IDBAccessObject;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * Job to update link tables for rerendered wiki pages.
@@ -77,15 +82,26 @@ use MediaWiki\User\User;
  * - useRecursiveLinksUpdate (bool): When true, triggers recursive jobs for each page.
  *
  * Metrics:
+ * - `refreshlinks_superseded_updates_total`: The number of times the job was cancelled
+ *    because the target page had already been refreshed by a different edit or job.
+ *    The job is considered to have succeeded in this case.
  *
- * - `refreshlinks_warning.<warning>`:
- *    A recoverable issue. The job will continue as normal.
+ * - `refreshlinks_warnings_total`: The number of times the job failed due to a recoverable issue.
+ *    Possible `reason` label values include:
+ *    - `lag_wait_failed`: The job timed out while waiting for replication.
  *
- * - `refreshlinks_outcome.<reason>`:
- *    If the job ends with an unusual outcome, it will increment this exactly once.
- *    The reason starts with `bad_`, a failure is logged and the job may be retried later.
- *    The reason starts with `good_`, the job was cancelled and considered a success,
- *    i.e. it was superseded.
+ * - `refreshlinks_failures_total`: The number of times the job failed.
+ *   The `reason` label may be:
+ *   - `page_not_found`: The target page did not exist.
+ *   - `rev_not_current`: The target revision was no longer the latest revision for the target page.
+ *   - `rev_not_found`: The target revision was not found.
+ *   - `lock_failure`: The job failed to acquire an exclusive lock to refresh the target page.
+ *
+ * - `refreshlinks_parsercache_operations_total`: The number of times the job attempted
+ *   to fetch parser output from the parser cache.
+ *   Possible `status` label values include:
+ *   - `cache_hit`: The parser output was found in the cache.
+ *   - `cache_miss`: The parser output was not found in the cache.
  *
  * @ingroup JobQueue
  * @see RefreshSecondaryDataUpdate
@@ -161,8 +177,11 @@ class RefreshLinksJob extends Job {
 					'timeout' => self::LAG_WAIT_TIMEOUT
 				] ) ) {
 					// only try so hard, keep going with what we have
-					$stats = $services->getStatsdDataFactory();
-					$stats->increment( 'refreshlinks_warning.lag_wait_failed' );
+					$stats = $services->getStatsFactory();
+					$stats->getCounter( 'refreshlinks_warnings_total' )
+						->setLabel( 'reason', 'lag_wait_failed' )
+						->copyToStatsdAt( 'refreshlinks_warning.lag_wait_failed' )
+						->increment();
 				}
 			}
 			// Carry over information for de-duplication
@@ -207,7 +226,7 @@ class RefreshLinksJob extends Job {
 	 */
 	protected function runForTitle( PageIdentity $pageIdentity ) {
 		$services = MediaWikiServices::getInstance();
-		$stats = $services->getStatsdDataFactory();
+		$stats = $services->getStatsFactory();
 		$renderer = $services->getRevisionRenderer();
 		$parserCache = $services->getParserCache();
 		$lbFactory = $services->getDBLoadBalancerFactory();
@@ -228,7 +247,7 @@ class RefreshLinksJob extends Job {
 					'job_metadata' => $this->getMetadata()
 				]
 			);
-			$stats->increment( 'refreshlinks_outcome.bad_page_not_found' );
+			$this->incrementFailureCounter( $stats, 'page_not_found' );
 
 			// retry later to handle unlucky race condition
 			return false;
@@ -244,7 +263,7 @@ class RefreshLinksJob extends Job {
 		if ( $scopedLock === null ) {
 			// Another job is already updating the page, likely for a prior revision (T170596)
 			$this->setLastError( 'LinksUpdate already running for this page, try again later.' );
-			$stats->increment( 'refreshlinks_outcome.bad_lock_failure' );
+			$this->incrementFailureCounter( $stats, 'lock_failure' );
 
 			// retry later when overlapping job for previous rev is done
 			return false;
@@ -253,14 +272,13 @@ class RefreshLinksJob extends Job {
 		if ( $this->isAlreadyRefreshed( $page ) ) {
 			// this job has been superseded, e.g. by overlapping recursive job
 			// for a different template edit, or by direct edit or purge.
-			$stats->increment( 'refreshlinks_outcome.good_update_superseded' );
+			$stats->getCounter( 'refreshlinks_superseded_updates_total' )
+				->copyToStatsdAt( 'refreshlinks_outcome.good_update_superseded' )
+				->increment();
 			// treat as success
 			return true;
 		}
 
-		// These can be fairly long-running jobs, while commitAndWaitForReplication
-		// releases primary snapshots, let the replica release their snapshot as well
-		$lbFactory->flushReplicaSnapshots( __METHOD__ );
 		// Parse during a fresh transaction round for better read consistency
 		$lbFactory->beginPrimaryChanges( __METHOD__ );
 		$output = $this->getParserOutput( $renderer, $parserCache, $page, $stats );
@@ -351,14 +369,14 @@ class RefreshLinksJob extends Job {
 	 * @param RevisionRenderer $renderer
 	 * @param ParserCache $parserCache
 	 * @param WikiPage $page Page already loaded with READ_LATEST
-	 * @param StatsdDataFactoryInterface $stats
+	 * @param StatsFactory $stats
 	 * @return ParserOutput|null Combined output for all slots; might only contain metadata
 	 */
 	private function getParserOutput(
 		RevisionRenderer $renderer,
 		ParserCache $parserCache,
 		WikiPage $page,
-		StatsdDataFactoryInterface $stats
+		StatsFactory $stats
 	) {
 		$revision = $this->getCurrentRevisionIfUnchanged( $page, $stats );
 		if ( !$revision ) {
@@ -367,16 +385,45 @@ class RefreshLinksJob extends Job {
 		}
 
 		$cachedOutput = $this->getParserOutputFromCache( $parserCache, $page, $revision, $stats );
-		if ( $cachedOutput ) {
+		$statsCounter = $stats->getCounter( 'refreshlinks_parsercache_operations_total' );
+
+		if ( $cachedOutput && $this->canUseParserOutputFromCache( $cachedOutput, $revision ) ) {
+			$statsCounter
+				->setLabel( 'status', 'cache_hit' )
+				->setLabel( 'html_changed', 'n/a' )
+				->copyToStatsdAt( 'refreshlinks.parser_cached' )
+				->increment();
+
 			return $cachedOutput;
 		}
 
 		$causeAction = $this->params['causeAction'] ?? 'RefreshLinksJob';
+		$parserOptions = $page->makeParserOptions( 'canonical' );
+
+		// T371713: Temporary statistics collection code to determine
+		// feasibility of Parsoid selective update
+		$sampleRate = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::ParsoidSelectiveUpdateSampleRate
+		);
+		$doSample = $sampleRate && mt_rand( 1, $sampleRate ) === 1;
+		if ( $doSample && $cachedOutput === null ) {
+			// In order to collect accurate statistics, check for
+			// a dirty copy in the cache even if we wouldn't have
+			// to otherwise.
+			$cachedOutput = $parserCache->getDirty( $page, $parserOptions ) ?: null;
+		}
+
 		$renderedRevision = $renderer->getRenderedRevision(
 			$revision,
-			$page->makeParserOptions( 'canonical' ),
+			$parserOptions,
 			null,
-			[ 'audience' => $revision::RAW, 'causeAction' => $causeAction ]
+			[
+				'audience' => $revision::RAW,
+				'causeAction' => $causeAction,
+				// Providing a previous parse potentially allows for
+				// selective updates
+				'previous-output' => $cachedOutput,
+			]
 		);
 
 		$parseTimestamp = wfTimestampNow(); // timestamp that parsing started
@@ -385,6 +432,50 @@ class RefreshLinksJob extends Job {
 			'generate-html' => $this->shouldGenerateHTMLOnEdit( $revision )
 		] );
 		$output->setCacheTime( $parseTimestamp ); // notify LinksUpdate::doUpdate()
+		// T371713: Temporary statistics collection code to determine
+		// feasibility of Parsoid selective update
+		if ( $doSample ) {
+			$content = $revision->getContent( SlotRecord::MAIN );
+			$labels = [
+				'source' => 'RefreshLinksJob',
+				'type' => $cachedOutput === null ? 'full' : 'selective',
+				'reason' => $causeAction,
+				'parser' => $parserOptions->getUseParsoid() ? 'parsoid' : 'legacy',
+				'opportunistic' => empty( $this->params['isOpportunistic'] ) ? 'false' : 'true',
+				'wiki' => WikiMap::getCurrentWikiId(),
+				'model' => $content ? $content->getModel() : 'unknown',
+			];
+			$stats
+				->getCounter( 'ParserCache_selective_total' )
+				->setLabels( $labels )
+				->increment();
+			$stats
+				->getCounter( 'ParserCache_selective_cpu_seconds' )
+				->setLabels( $labels )
+				->incrementBy( $output->getTimeProfile( 'cpu' ) );
+		}
+
+		// Collect stats on parses that don't actually change the page content.
+		// In that case, we could abort here, and perhaps we could also avoid
+		// triggering CDN purges (T369898).
+		if ( !$cachedOutput ) {
+			// There was no cached output
+			$htmlChanged = 'unknown';
+		} elseif ( $cachedOutput->getRawText() === $output->getRawText() ) {
+			// We have cached output, but we couldn't be sure that it was still good.
+			// So we parsed again, but the result turned out to be the same HTML as
+			// before.
+			$htmlChanged = 'no';
+		} else {
+			// Re-parsing yielded HTML different from the cached output.
+			$htmlChanged = 'yes';
+		}
+
+		$statsCounter
+			->setLabel( 'status', 'cache_miss' )
+			->setLabel( 'html_changed', $htmlChanged )
+			->copyToStatsdAt( 'refreshlinks.parser_uncached' )
+			->increment();
 
 		return $output;
 	}
@@ -393,12 +484,12 @@ class RefreshLinksJob extends Job {
 	 * Get the current revision record if it is unchanged from what was loaded in $page
 	 *
 	 * @param WikiPage $page Page already loaded with READ_LATEST
-	 * @param StatsdDataFactoryInterface $stats
+	 * @param StatsFactory $stats
 	 * @return RevisionRecord|null The same instance that $page->getRevisionRecord() uses
 	 */
 	private function getCurrentRevisionIfUnchanged(
 		WikiPage $page,
-		StatsdDataFactoryInterface $stats
+		StatsFactory $stats
 	) {
 		$title = $page->getTitle();
 		// Get the latest ID since acquirePageLock() in runForTitle() flushed the transaction.
@@ -409,7 +500,7 @@ class RefreshLinksJob extends Job {
 		$triggeringRevisionId = $this->params['triggeringRevisionId'] ?? null;
 		if ( $triggeringRevisionId && $triggeringRevisionId !== $latest ) {
 			// This job is obsolete and one for the latest revision will handle updates
-			$stats->increment( 'refreshlinks_outcome.bad_rev_not_current' );
+			$this->incrementFailureCounter( $stats, 'rev_not_current' );
 			$this->setLastError( "Revision $triggeringRevisionId is not current" );
 			return null;
 		}
@@ -419,7 +510,7 @@ class RefreshLinksJob extends Job {
 		$revision = $page->getRevisionRecord();
 		if ( !$revision ) {
 			// revision just got deleted?
-			$stats->increment( 'refreshlinks_outcome.bad_rev_not_found' );
+			$this->incrementFailureCounter( $stats, 'rev_not_found' );
 			$this->setLastError( "Revision not found for {$title->getPrefixedDBkey()}" );
 			return null;
 
@@ -428,7 +519,7 @@ class RefreshLinksJob extends Job {
 			// serialized, it would be OK to update links based on older revisions since it
 			// would eventually get to the latest. Since that is not the case (by design),
 			// only update the link tables to a state matching the current revision's output.
-			$stats->increment( 'refreshlinks_outcome.bad_rev_not_current' );
+			$this->incrementFailureCounter( $stats, 'rev_not_current' );
 			$this->setLastError( "Revision {$revision->getId()} is not current" );
 
 			return null;
@@ -443,16 +534,21 @@ class RefreshLinksJob extends Job {
 	 * @param ParserCache $parserCache
 	 * @param WikiPage $page
 	 * @param RevisionRecord $currentRevision
-	 * @param StatsdDataFactoryInterface $stats
+	 * @param StatsFactory $stats
 	 * @return ParserOutput|null
 	 */
 	private function getParserOutputFromCache(
 		ParserCache $parserCache,
 		WikiPage $page,
 		RevisionRecord $currentRevision,
-		StatsdDataFactoryInterface $stats
-	) {
-		$cachedOutput = null;
+		StatsFactory $stats
+	): ?ParserOutput {
+		// Parsoid can do selective updates, so it is always worth the I/O
+		// to check for a previous parse.
+		$parserOptions = $page->makeParserOptions( 'canonical' );
+		if ( $parserOptions->getUseParsoid() ) {
+			return $parserCache->getDirty( $page, $parserOptions ) ?: null;
+		}
 		// If page_touched changed after this root job, then it is likely that
 		// any views of the pages already resulted in re-parses which are now in
 		// cache. The cache can be reused to avoid expensive parsing in some cases.
@@ -461,27 +557,36 @@ class RefreshLinksJob extends Job {
 			$opportunistic = !empty( $this->params['isOpportunistic'] );
 			if ( $page->getTouched() >= $rootTimestamp || $opportunistic ) {
 				// Cache is suspected to be up-to-date so it's worth the I/O of checking.
-				// As long as the cache rev ID matches the current rev ID and it reflects
-				// the job's triggering change, then it is usable.
-				$parserOptions = $page->makeParserOptions( 'canonical' );
-				$output = $parserCache->getDirty( $page, $parserOptions );
-				if (
-					$output &&
-					$output->getCacheRevisionId() == $currentRevision->getId() &&
-					$output->getCacheTime() >= $this->getLagAwareRootTimestamp()
-				) {
-					$cachedOutput = $output;
-				}
+				// We call canUseParserOutputFromCache() later to check if it's usable.
+				return $parserCache->getDirty( $page, $parserOptions ) ?: null;
 			}
 		}
 
-		if ( $cachedOutput ) {
-			$stats->increment( 'refreshlinks.parser_cached' );
-		} else {
-			$stats->increment( 'refreshlinks.parser_uncached' );
-		}
+		return null;
+	}
 
-		return $cachedOutput;
+	private function canUseParserOutputFromCache(
+		ParserOutput $cachedOutput,
+		RevisionRecord $currentRevision
+	) {
+		// As long as the cache rev ID matches the current rev ID and it reflects
+		// the job's triggering change, then it is usable.
+		return $cachedOutput->getCacheRevisionId() == $currentRevision->getId()
+			&& $cachedOutput->getCacheTime() >= $this->getLagAwareRootTimestamp();
+	}
+
+	/**
+	 * Increment the RefreshLinks failure counter metric with the given reason.
+	 *
+	 * @param StatsFactory $stats
+	 * @param string $reason Well-known failure reason string
+	 * @return void
+	 */
+	private function incrementFailureCounter( StatsFactory $stats, $reason ): void {
+		$stats->getCounter( 'refreshlinks_failures_total' )
+			->setLabel( 'reason', $reason )
+			->copyToStatsdAt( "refreshlinks_outcome.bad_$reason" )
+			->increment();
 	}
 
 	/**

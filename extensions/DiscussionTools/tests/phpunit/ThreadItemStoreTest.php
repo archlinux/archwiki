@@ -2,10 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
-use ExtensionRegistry;
 use ImportStringSource;
 use MediaWiki\Extension\DiscussionTools\ThreadItemStore;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Title\TitleValue;
 use TestUser;
 
@@ -20,15 +19,15 @@ class ThreadItemStoreTest extends IntegrationTestCase {
 		parent::setUp();
 
 		if (
-			$this->db->getType() === 'mysql' &&
-			strpos( $this->db->getSoftwareLink(), 'MySQL' ) &&
+			$this->getDb()->getType() === 'mysql' &&
+			strpos( $this->getDb()->getSoftwareLink(), 'MySQL' ) &&
 			!$this->getCliArg( 'use-normal-tables' )
 		) {
 			$this->markTestSkipped( 'Set PHPUNIT_USE_NORMAL_TABLES=1 env variable to run these tests, ' .
 				'otherwise they would fail due to a MySQL bug with temporary tables (T256006)' );
 		}
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'Liquid Threads' ) ) {
-			$this->setMwGlobals( 'wgLqtTalkPages', false );
+			$this->overrideConfigValue( 'LqtTalkPages', false );
 		}
 	}
 
@@ -40,7 +39,7 @@ class ThreadItemStoreTest extends IntegrationTestCase {
 
 		// Import revisions
 		$source = new ImportStringSource( static::getText( "$dir/dump.xml" ) );
-		$importer = MediaWikiServices::getInstance()
+		$importer = $this->getServiceContainer()
 			->getWikiImporterFactory()
 			->getWikiImporter( $source, $this->getTestSysop()->getAuthority() );
 		// `true` means to assign edits to the users we created above
@@ -76,6 +75,10 @@ class ThreadItemStoreTest extends IntegrationTestCase {
 				->fetchResultSet();
 			foreach ( $res as $i => $row ) {
 				foreach ( $row as $key => $val ) {
+					if ( $key === 'it_timestamp' ) {
+						// Normalize timestamp values returned by different database engines (T370671)
+						$val = wfTimestampOrNull( TS_MW, $val );
+					}
 					$actual[$table][$i][$key] = $val;
 				}
 			}

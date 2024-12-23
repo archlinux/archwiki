@@ -25,7 +25,9 @@
 use MediaWiki\User\BotPassword;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 class CreateBotPassword extends Maintenance {
 	/**
@@ -67,7 +69,7 @@ class CreateBotPassword extends Maintenance {
 		$username = $this->getArg( 0 );
 		$password = $this->getArg( 1 );
 		$appId = $this->getOption( 'appid' );
-		$grants = explode( ',', $this->getOption( 'grants' ) );
+		$grants = explode( ',', $this->getOption( 'grants', '' ) );
 
 		$errors = [];
 		if ( $username === null ) {
@@ -128,10 +130,8 @@ class CreateBotPassword extends Maintenance {
 			$this->output( "Success.\n" );
 			$this->output( "Log in using username:'{$username}@{$appId}' and password:'{$password}'.\n" );
 		} else {
-			$this->fatalError(
-				"Bot password creation failed. Does this appid already exist for the user perhaps?\n\nErrors:\n" .
-				print_r( $status->getErrors(), true )
-			);
+			$this->error( "Bot password creation failed. Does this appid already exist for the user perhaps?" );
+			$this->fatalError( $status );
 		}
 	}
 
@@ -149,5 +149,7 @@ class CreateBotPassword extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CreateBotPassword::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -1,18 +1,22 @@
-( function () {
+( () => {
 
-	mw.hook( 'wikipage.content' ).add( function () {
-		var regex = /^mw-scribunto-error-(\w+)/,
-			popup;
+	mw.hook( 'wikipage.content' ).add( () => {
+		const regex = /\bmw-scribunto-error-(\w+)\b/;
+		let popup;
 
-		$( '.scribunto-error' ).each( function ( index, span ) {
-			var matches = regex.exec( span.id );
+		$( '.scribunto-error' ).each( ( index, span ) => {
+			let matches = regex.exec( span.className );
+			if ( matches === null ) {
+				// T375539: backward-compatibility with old cached HTML
+				matches = regex.exec( span.id );
+			}
 			if ( matches === null ) {
 				mw.log( 'mw.scribunto.errors: regex mismatch!' );
 				return;
 			}
-			var $span = $( span );
-			$span.on( 'click', function () {
-				var error = mw.config.get( 'ScribuntoErrors-' + matches[ 1 ] );
+			const $span = $( span );
+			$span.on( 'click', () => {
+				const error = mw.config.get( 'ScribuntoErrors-' + matches[ 1 ] );
 				if ( typeof error !== 'string' ) {
 					mw.log( 'mw.scribunto.errors: error ' + matches[ 1 ] + ' not found.' );
 					return;
@@ -35,4 +39,4 @@
 		} );
 	} );
 
-}() );
+} )();

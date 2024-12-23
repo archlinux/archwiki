@@ -18,6 +18,7 @@
  * @file
  */
 
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\Data\CrhExceptions;
 use MediaWiki\StubObject\StubUserLang;
 
@@ -102,8 +103,7 @@ class CrhConverter extends LanguageConverterSpecific {
 		$this->loadExceptions();
 	}
 
-	public $mCyrillicToLatin = [
-
+	public const CYRILLIC_TO_LATIN = [
 		## these are independent of location in the word, but have
 		## to go first so other transforms don't bleed them
 		'гъ' => 'ğ', 'Гъ' => 'Ğ', 'ГЪ' => 'Ğ',
@@ -129,10 +129,9 @@ class CrhConverter extends LanguageConverterSpecific {
 		'Ё' => 'Yo', 'ё' => 'yo', 'Ю' => 'Yu', 'ю' => 'yu',
 		'Ц' => 'Ts', 'ц' => 'ts', 'Щ' => 'Şç', 'щ' => 'şç',
 		'Ь' => '', 'ь' => '', 'Ъ' => '', 'ъ' => '',
-
 	];
 
-	public $mLatinToCyrillic = [
+	public const LATIN_TO_CYRILLIC = [
 		'Â' => 'Я', 'â' => 'я', 'B' => 'Б', 'b' => 'б',
 		'Ç' => 'Ч', 'ç' => 'ч', 'D' => 'Д', 'd' => 'д',
 		'F' => 'Ф', 'f' => 'ф', 'G' => 'Г', 'g' => 'г',
@@ -154,26 +153,30 @@ class CrhConverter extends LanguageConverterSpecific {
 		'Ü' => 'Ю', 'ü' => 'ю', 'Y' => 'Й', 'y' => 'й',
 		'C' => 'Дж', 'c' => 'дж', 'Ğ' => 'Гъ', 'ğ' => 'гъ',
 		'Ñ' => 'Нъ', 'ñ' => 'нъ', 'Q' => 'Къ', 'q' => 'къ',
+	];
 
-		];
+	/** @var string[] */
+	private array $mCyrl2LatnExceptions = [];
+	/** @var string[] */
+	private array $mLatn2CyrlExceptions = [];
 
-	public $mCyrl2LatnExceptions = [];
-	public $mLatn2CyrlExceptions = [];
+	/** @var string[] */
+	private array $mCyrl2LatnPatterns = [];
+	/** @var string[] */
+	private array $mLatn2CyrlPatterns = [];
 
-	public $mCyrl2LatnPatterns = [];
-	public $mLatn2CyrlPatterns = [];
+	/** @var string[] */
+	private array $mCyrlCleanUpRegexes = [];
 
-	public $mCyrlCleanUpRegexes = [];
-
-	public $mExceptionsLoaded = false;
+	private bool $mExceptionsLoaded = false;
 
 	/**
 	 * @inheritDoc
 	 */
 	protected function loadDefaultTables(): array {
 		return [
-			'crh-latn' => new ReplacementArray( $this->mCyrillicToLatin ),
-			'crh-cyrl' => new ReplacementArray( $this->mLatinToCyrillic ),
+			'crh-latn' => new ReplacementArray( self::CYRILLIC_TO_LATIN ),
+			'crh-cyrl' => new ReplacementArray( self::LATIN_TO_CYRILLIC ),
 			'crh' => new ReplacementArray()
 		];
 	}
@@ -191,8 +194,8 @@ class CrhConverter extends LanguageConverterSpecific {
 	}
 
 	/**
-	 *  It translates text into variant, specials:
-	 *    - omitting roman numbers
+	 * It translates text into variant, specials:
+	 * - omitting roman numbers
 	 *
 	 * @param string $text
 	 * @param string $toVariant

@@ -18,10 +18,12 @@
  * @file
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /*
- * Remove expired blocks from the ipblocks and ipblocks_restrictions tables
+ * Remove expired blocks from the block and ipblocks_restrictions tables
  *
  * @since 1.35
  * @ingroup Maintenance
@@ -43,5 +45,7 @@ class PurgeExpiredBlocks extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PurgeExpiredBlocks::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

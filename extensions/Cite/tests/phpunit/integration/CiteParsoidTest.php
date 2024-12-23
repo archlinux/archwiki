@@ -4,8 +4,7 @@ declare( strict_types = 1 );
 
 namespace Cite\Tests\Integration;
 
-use ExtensionRegistry;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Parsoid\Core\SelserData;
 use Wikimedia\Parsoid\DOM\Element;
@@ -23,10 +22,28 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
  */
 class CiteParsoidTest extends \MediaWikiIntegrationTestCase {
 
+	protected function setUp(): void {
+		// Ensure these tests are independent of LocalSettings
+		parent::setUp();
+		$this->overrideConfigValue( 'CiteResponsiveReferences', true );
+		$this->overrideConfigValue( 'CiteResponsiveReferencesThreshold', 10 );
+	}
+
 	private function getSiteConfig( $options ) {
-		$siteConfig = new class( $options ) extends MockSiteConfig {
+		$objectFactory = $this->getServiceContainer()->getObjectFactory();
+		$siteConfig = new class( $options, $objectFactory ) extends MockSiteConfig {
+			private ObjectFactory $objectFactory;
+
+			public function __construct(
+				array $opts,
+				ObjectFactory $objectFactory
+			) {
+				parent::__construct( $opts );
+				$this->objectFactory = $objectFactory;
+			}
+
 			public function getObjectFactory(): ObjectFactory {
-				return MediaWikiServices::getInstance()->getObjectFactory();
+				return $this->objectFactory;
 			}
 		};
 		// Ensure that the Cite module is registered!
@@ -175,14 +192,14 @@ EOT;
 		$this->assertTrue( isset( $result[1]['params'] ), $desc );
 		$this->assertEquals( 'b', $result[1]['params']['name'], $desc );
 		$this->assertTrue( isset( $result[1]['templateInfo'] ), $desc );
-		$this->assertEquals( '1x', $result[1]['templateInfo']['name'], $desc );
+		$this->assertEquals( 'Template:1x', $result[1]['templateInfo']['name'], $desc );
 
 		$this->assertEquals( 'missing-end-tag', $result[2]['type'], $desc );
 		$this->assertEquals( [ 43, 67, null, null ], $result[2]['dsr'], $desc );
 		$this->assertTrue( isset( $result[2]['params'] ), $desc );
 		$this->assertEquals( 'b', $result[2]['params']['name'], $desc );
 		$this->assertTrue( isset( $result[2]['templateInfo'] ), $desc );
-		$this->assertEquals( '1x', $result[2]['templateInfo']['name'], $desc );
+		$this->assertEquals( 'Template:1x', $result[2]['templateInfo']['name'], $desc );
 
 		$desc = "should attribute linter issues properly when ref " .
 			"tags are in non-templated references tag";
@@ -201,7 +218,7 @@ EOT;
 		$this->assertTrue( isset( $result[1]['params'] ), $desc );
 		$this->assertEquals( 'b', $result[1]['params']['name'], $desc );
 		$this->assertTrue( isset( $result[1]['templateInfo'] ), $desc );
-		$this->assertEquals( '1x', $result[1]['templateInfo']['name'], $desc );
+		$this->assertEquals( 'Template:1x', $result[1]['templateInfo']['name'], $desc );
 
 		$desc = "should lint inside ref with redefinition";
 		$wt = "<ref name=\"test\">123</ref>\n" .

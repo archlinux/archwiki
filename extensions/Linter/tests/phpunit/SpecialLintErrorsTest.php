@@ -20,10 +20,8 @@
 
 namespace MediaWiki\Linter\Test;
 
-use ContentHandler;
 use Exception;
-use MediaWiki\Linter\CategoryManager;
-use MediaWiki\Linter\Database;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Linter\RecordLintJob;
 use MediaWiki\Linter\SpecialLintErrors;
 use MediaWiki\Page\PageReference;
@@ -38,26 +36,37 @@ use SpecialPageTestBase;
  */
 class SpecialLintErrorsTest extends SpecialPageTestBase {
 
+	private function getDatabase() {
+		return $this->getServiceContainer()->get( 'Linter.Database' );
+	}
+
 	private function newRecordLintJob( PageReference $page, array $params ) {
 		$services = $this->getServiceContainer();
 		return new RecordLintJob(
 			$page,
 			$params,
-			$services->getMainWANObjectCache()
+			$services->get( 'Linter.TotalsLookup' ),
+			$this->getDatabase(),
+			$services->get( 'Linter.CategoryManager' )
 		);
 	}
 
 	protected function newSpecialPage() {
 		$services = $this->getServiceContainer();
 		return new SpecialLintErrors(
-			$services->getMainWANObjectCache(),
 			$services->getNamespaceInfo(),
-			$services->getTitleParser()
+			$services->getTitleParser(),
+			$services->getLinkCache(),
+			$services->getPermissionManager(),
+			$services->get( 'Linter.CategoryManager' ),
+			$services->get( 'Linter.TotalsLookup' )
 		);
 	}
 
 	public function testExecute() {
-		$category = ( new CategoryManager() )->getVisibleCategories()[0];
+		$categoryManager =
+			$this->getServiceContainer()->get( 'Linter.CategoryManager' );
+		$category = $categoryManager->getVisibleCategories()[0];
 
 		// Basic
 		$html = $this->executeSpecialPage( '', null, 'qqx' )[0];
@@ -69,7 +78,6 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 			$this->executeSpecialPage( $category, null, 'qqx' )[0]
 		);
 
-		$this->overrideConfigValue( 'LinterUserInterfaceTagAndTemplateStage', true );
 		// Verify new tag and template interfaces are present
 		$html = $this->executeSpecialPage( 'misnested-tag', null, 'qqx' )[0];
 		$this->assertStringContainsString( 'linter-form-template', $html );
@@ -111,9 +119,10 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 		] );
 		$this->assertTrue( $job->run() );
 
-		$db = new Database( $titleAndPage['pageID'] );
+		$pageId = $titleAndPage['pageID'];
+		$db = $this->getDatabase();
 
-		$errorsFromDb = array_values( $db->getForPage() );
+		$errorsFromDb = array_values( $db->getForPage( $pageId ) );
 		$this->assertCount( 1, $errorsFromDb );
 
 		$cssText = 'css content model change test page content';
@@ -129,7 +138,7 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 			"update with css content model to trigger onRevisionFromEditComplete hook"
 		);
 
-		$errorsFromDb = array_values( $db->getForPage() );
+		$errorsFromDb = array_values( $db->getForPage( $pageId ) );
 		$this->assertCount( 0, $errorsFromDb );
 	}
 
@@ -147,9 +156,10 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 		] );
 		$this->assertTrue( $job->run() );
 
-		$db = new Database( $titleAndPage['pageID'] );
+		$pageId = $titleAndPage['pageID'];
+		$db = $this->getDatabase();
 
-		$errorsFromDb = array_values( $db->getForPage() );
+		$errorsFromDb = array_values( $db->getForPage( $pageId ) );
 		$this->assertCount( 1, $errorsFromDb );
 
 		// This test recreates the bug mentioned in T280193 of not
@@ -168,7 +178,7 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 			"update with blank text content model to trigger onRevisionFromEditComplete hook"
 		);
 
-		$errorsFromDb = array_values( $db->getForPage() );
+		$errorsFromDb = array_values( $db->getForPage( $pageId ) );
 		$this->assertCount( 0, $errorsFromDb );
 	}
 

@@ -4,18 +4,15 @@
  * @copyright See AUTHORS.txt
  */
 
-new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( function () {
+new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( () => {
 	/* eslint-disable no-jquery/no-global-selector */
-	var $toolbar = $( '.ve-demo-targetToolbar' ),
+	const $toolbar = $( '.ve-demo-targetToolbar' ),
 		$editor = $( '.ve-demo-editor' ),
 		/* eslint-enable no-jquery/no-global-selector */
 		// eslint-disable-next-line new-cap
 		target = new ve.demo.target(),
-		hashChanging = false,
 		$divider = $( '<span>' ).addClass( 've-demo-toolbar-divider' ).text( '\u00a0' ),
 
-		currentLang = ve.init.platform.getUserLanguages()[ 0 ],
-		currentDir = target.$element.css( 'direction' ) || 'ltr',
 		device = ve.demo.target === ve.init.sa.DesktopTarget ? 'desktop' : 'mobile',
 		theme = OO.ui.WikimediaUITheme && OO.ui.theme instanceof OO.ui.WikimediaUITheme ? 'wikimediaui' : 'apex',
 
@@ -39,11 +36,14 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 			new OO.ui.ButtonOptionWidget( { data: 'apex', label: 'Apex' } ),
 			new OO.ui.ButtonOptionWidget( { data: 'wikimediaui', label: 'WikimediaUI' } )
 		] ).toggle( !OO.ui.isMobile() ); // Only one theme on mobile ATM
+	let hashChanging = false,
+		currentLang = ve.init.platform.getUserLanguages()[ 0 ],
+		currentDir = target.$element.css( 'direction' ) || 'ltr';
 
 	// HACK: Prepend a qqx/message keys option to the list
-	languageInput.dialogs.on( 'opening', function ( window, opening ) {
-		opening.then( function () {
-			var searchWidget = languageInput.dialogs.currentWindow.searchWidget;
+	languageInput.dialogs.on( 'opening', ( window, opening ) => {
+		opening.then( () => {
+			const searchWidget = languageInput.dialogs.currentWindow.searchWidget;
 			searchWidget.filteredLanguageResultWidgets.unshift(
 				new ve.ui.LanguageResultWidget( {
 					data: {
@@ -58,7 +58,7 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 	} );
 
 	function updateStylesFromDir() {
-		var oldDir = currentDir === 'ltr' ? 'rtl' : 'ltr';
+		const oldDir = currentDir === 'ltr' ? 'rtl' : 'ltr';
 
 		$( '.stylesheet-' + currentDir ).prop( 'disabled', false );
 		$( '.stylesheet-' + oldDir ).prop( 'disabled', true );
@@ -75,7 +75,7 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 
 	deviceSelect.selectItemByData( device );
 
-	deviceSelect.on( 'select', function ( item ) {
+	deviceSelect.on( 'select', ( item ) => {
 		location.href = location.href
 			.replace( device, item.getData() )
 			.replace( /mobile-(apex|wikimediaui)+/, 'mobile' );
@@ -83,7 +83,7 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 
 	themeSelect.selectItemByData( theme );
 
-	themeSelect.on( 'select', function ( item ) {
+	themeSelect.on( 'select', ( item ) => {
 		if ( item.getData() === 'wikimediaui' ) {
 			location.href = location.href.replace( '.html', '-wikimediaui.html' );
 		} else {
@@ -95,7 +95,7 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 	// Dir doesn't change on init but styles need to be set
 	updateStylesFromDir();
 
-	languageInput.on( 'change', function ( lang, dir ) {
+	languageInput.on( 'change', ( lang, dir ) => {
 		if ( dir === currentDir && lang !== 'qqx' && ve.availableLanguages.indexOf( lang ) === -1 ) {
 			return;
 		}
@@ -120,9 +120,8 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 
 		// HACK: Re-initialize page to load message files
 		ve.init.target.teardownToolbar();
-		ve.init.platform.initialize().done( function () {
-			var i;
-			for ( i = 0; i < ve.demo.surfaceContainers.length; i++ ) {
+		ve.init.platform.initialize().done( () => {
+			for ( let i = 0; i < ve.demo.surfaceContainers.length; i++ ) {
 				ve.demo.surfaceContainers[ i ].reload( currentLang, currentDir );
 			}
 		} );
@@ -147,8 +146,8 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 		if ( hashChanging ) {
 			return false;
 		}
-		var pages = [];
-		for ( var i = 0; i < ve.demo.surfaceContainers.length; i++ ) {
+		const pages = [];
+		for ( let i = 0; i < ve.demo.surfaceContainers.length; i++ ) {
 			pages.push( ve.demo.surfaceContainers[ i ].pageMenu.findSelectedItem().getData() );
 		}
 		history.replaceState( null, '', '#!' + pages.join( ',' ) );
@@ -159,23 +158,23 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 			page = ve.demo.surfaceContainers[ ve.demo.surfaceContainers.length - 1 ].pageMenu.findSelectedItem().getData();
 		}
 
-		var surfaceContainer = new ve.demo.SurfaceContainer( target, page, currentLang, currentDir );
+		const surfaceContainer = new ve.demo.SurfaceContainer( target, page, currentLang, currentDir );
 		surfaceContainer.on( 'changePage', updateHash );
 		updateHash();
 		target.$element.append( surfaceContainer.$element );
 	}
 
-	addSurfaceContainerButton.on( 'click', function () {
+	addSurfaceContainerButton.on( 'click', () => {
 		addSurfaceContainer();
 	} );
 
 	function createSurfacesFromHash( hash ) {
-		var pages = [];
+		let pages = [];
 		if ( hash.slice( 0, 2 ) === '#!' ) {
 			pages = hash.slice( 2 ).split( ',' ).map( decodeURIComponent );
 		}
 		if ( pages.length ) {
-			for ( var i = 0; i < pages.length; i++ ) {
+			for ( let i = 0; i < pages.length; i++ ) {
 				addSurfaceContainer( pages[ i ] );
 			}
 		} else {
@@ -186,18 +185,18 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 	createSurfacesFromHash( location.hash );
 	ve.init.target.once( 'surfaceReady', ve.collab.join );
 
-	$( window ).on( 'hashchange', function () {
+	$( window ).on( 'hashchange', () => {
 		if ( hashChanging ) {
 			return;
 		}
 		hashChanging = true;
-		ve.demo.surfaceContainers.slice().forEach( function ( container ) {
+		ve.demo.surfaceContainers.slice().forEach( ( container ) => {
 			container.destroy();
 		} );
 		createSurfacesFromHash( location.hash );
 		hashChanging = false;
 	} );
-}, function () {
+}, () => {
 	// eslint-disable-next-line no-jquery/no-global-selector
 	$( '.ve-demo-editor' ).text( 'VisualEditor not supported in this browser.' );
 } );

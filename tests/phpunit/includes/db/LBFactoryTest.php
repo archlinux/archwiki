@@ -22,10 +22,12 @@
  */
 
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDatabaseForOwner;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -74,12 +76,9 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$lb = $factory->getMainLB();
 
 		$dbw = $lb->getConnection( DB_PRIMARY );
-		$this->assertEquals(
-			$dbw::ROLE_STREAMING_MASTER, $dbw->getTopologyRole(), 'master shows as master' );
-
+		$this->assertNotFalse( $dbw );
 		$dbr = $lb->getConnection( DB_REPLICA );
-		$this->assertEquals(
-			$dbr::ROLE_STREAMING_MASTER, $dbw->getTopologyRole(), 'replica shows as replica' );
+		$this->assertNotFalse( $dbr );
 
 		$this->assertSame( 'DEFAULT', $lb->getClusterName() );
 
@@ -102,16 +101,9 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$lb = $factory->getMainLB();
 
 		$dbw = $lb->getConnection( DB_PRIMARY );
-		$dbw->ensureConnection();
-
-		$this->assertEquals(
-			$dbw::ROLE_STREAMING_MASTER, $dbw->getTopologyRole(), 'primary shows as primary' );
-
+		$this->assertNotFalse( $dbw );
 		$dbr = $lb->getConnection( DB_REPLICA );
-		$dbr->ensureConnection();
-
-		$this->assertEquals(
-			$dbr::ROLE_STREAMING_REPLICA, $dbr->getTopologyRole(), 'replica shows as replica' );
+		$this->assertNotFalse( $dbr );
 
 		$factory->shutdown();
 	}
@@ -121,13 +113,11 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame( 's3', $factory->getMainLB()->getClusterName() );
 
-		$dbw = $factory->getMainLB()->getConnection( DB_PRIMARY );
-		$this->assertEquals(
-			$dbw::ROLE_STREAMING_MASTER, $dbw->getTopologyRole(), 'master shows as master' );
-
-		$dbr = $factory->getMainLB()->getConnection( DB_REPLICA );
-		$this->assertEquals(
-			$dbr::ROLE_STREAMING_REPLICA, $dbr->getTopologyRole(), 'replica shows as replica' );
+		$lb = $factory->getMainLB();
+		$dbw = $lb->getConnection( DB_PRIMARY );
+		$this->assertNotFalse( $dbw );
+		$dbr = $lb->getConnection( DB_REPLICA );
+		$this->assertNotFalse( $dbr );
 
 		// Destructor should trigger without round stage errors
 		unset( $factory );
@@ -201,6 +191,29 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$factory->closeAll( __METHOD__ );
 	}
 
+	public function testLBFactoryMultiRoundTransactionSnapshots() {
+		$factory = $this->newLBFactoryMultiLBs();
+		$dbr = $factory->getMainLB()->getConnection( DB_REPLICA );
+		$dbw = $factory->getMainLB()->getConnection( DB_PRIMARY );
+
+		$dbr->begin( __METHOD__, $dbr::TRANSACTION_INTERNAL );
+		$this->assertSame( 1, $dbr->trxLevel() );
+		$this->assertSame( 0, $dbw->trxLevel() );
+
+		$factory->beginPrimaryChanges( __METHOD__ );
+		$this->assertSame( 0, $dbr->trxLevel() );
+		$this->assertSame( 0, $dbw->trxLevel() );
+
+		$dbr->begin( __METHOD__, $dbr::TRANSACTION_INTERNAL );
+		$dbw->begin( __METHOD__, $dbw::TRANSACTION_INTERNAL );
+		$this->assertSame( 1, $dbr->trxLevel() );
+		$this->assertSame( 1, $dbw->trxLevel() );
+
+		$factory->commitPrimaryChanges( __METHOD__ );
+		$this->assertSame( 0, $dbr->trxLevel() );
+		$this->assertSame( 0, $dbw->trxLevel() );
+	}
+
 	private function newLBFactoryMultiLBs() {
 		global $wgDBserver, $wgDBport, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBtype;
 		global $wgSQLiteDataDir;
@@ -257,8 +270,8 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$m2Pos = new MySQLPrimaryPos( 'db1064-bin.002400/794074907', $now );
 
 		// Primary DB 1
-		/** @var IDatabase|\PHPUnit\Framework\MockObject\MockObject $mockDB1 */
-		$mockDB1 = $this->createMock( IDatabase::class );
+		/** @var IDatabaseForOwner|\PHPUnit\Framework\MockObject\MockObject $mockDB1 */
+		$mockDB1 = $this->createMock( IDatabaseForOwner::class );
 		$mockDB1->method( 'writesOrCallbacksPending' )->willReturn( true );
 		$mockDB1->method( 'lastDoneWrites' )->willReturn( $now );
 		// Load balancer for primary DB 1
@@ -276,8 +289,8 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$lb1->method( 'getPrimaryPos' )->willReturn( $m1Pos );
 		$lb1->method( 'getServerName' )->with( 0 )->willReturn( 'master1' );
 		// Primary DB 2
-		/** @var IDatabase|\PHPUnit\Framework\MockObject\MockObject $mockDB2 */
-		$mockDB2 = $this->createMock( IDatabase::class );
+		/** @var IDatabaseForOwner|\PHPUnit\Framework\MockObject\MockObject $mockDB2 */
+		$mockDB2 = $this->createMock( IDatabaseForOwner::class );
 		$mockDB2->method( 'writesOrCallbacksPending' )->willReturn( true );
 		$mockDB2->method( 'lastDoneWrites' )->willReturn( $now );
 		// Load balancer for primary DB 2
@@ -406,7 +419,7 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		);
 		$lb = $factory->getMainLB();
 
-		$db = $lb->getConnectionRef( DB_PRIMARY );
+		$db = $lb->getConnection( DB_PRIMARY );
 		$this->assertEquals(
 			WikiMap::getCurrentWikiId(),
 			$db->getDomainID()
@@ -531,8 +544,6 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 			"Correct full table name"
 		);
 
-		$lb->reuseConnection( $db ); // don't care
-
 		$factory->closeAll( __METHOD__ );
 		$factory->destroy();
 	}
@@ -613,7 +624,7 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		);
 		$lb = $factory->getMainLB();
 
-		$conn1 = $lb->getConnectionRef( DB_PRIMARY );
+		$conn1 = $lb->getConnection( DB_PRIMARY );
 		$this->assertEquals(
 			WikiMap::getCurrentWikiId(),
 			$conn1->getDomainID()
@@ -631,7 +642,7 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$n = iterator_count( $lbWrapper->getOpenConnections() );
 		$this->assertSame( 0, $n, "Connections closed" );
 
-		$conn2 = $lb->getConnectionRef( DB_PRIMARY );
+		$conn2 = $lb->getConnection( DB_PRIMARY );
 		$this->assertEquals(
 			$domain->getId(),
 			$conn2->getDomainID()
@@ -671,11 +682,19 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 			'extdomain',
 			$db1->getDomainID()
 		);
+		$this->assertEquals(
+			'extension1',
+			$factory->getLoadBalancer( 'virtualdomain1' )->getClusterName()
+		);
 
 		$db2 = $factory->getPrimaryDatabase( 'virtualdomain2' );
 		$this->assertEquals(
 			'localdomain',
 			$db2->getDomainID()
+		);
+		$this->assertEquals(
+			'extension1',
+			$factory->getLoadBalancer( 'virtualdomain2' )->getClusterName()
 		);
 
 		$db3 = $factory->getPrimaryDatabase( 'virtualdomain3' );
@@ -683,11 +702,19 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 			'shareddb',
 			$db3->getDomainID()
 		);
+		$this->assertEquals(
+			'DEFAULT',
+			$factory->getLoadBalancer( 'virtualdomain3' )->getClusterName()
+		);
 
 		$db3 = $factory->getPrimaryDatabase( 'virtualdomain4' );
 		$this->assertEquals(
 			'localdomain',
 			$db3->getDomainID()
+		);
+		$this->assertEquals(
+			'DEFAULT',
+			$factory->getLoadBalancer( 'virtualdomain4' )->getClusterName()
 		);
 	}
 
@@ -768,7 +795,6 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		// Connection refs should detect the config change, close the old connection,
 		// and get a new connection.
 		$this->assertTrue( $ref->isOpen() );
-		$this->assertSame( IDatabase::ROLE_STREAMING_MASTER, $ref->getTopologyRole() );
 
 		// The old connection should have been closed by DBConnRef.
 		$this->assertFalse( $con->isOpen() );
@@ -833,7 +859,6 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		// Connection refs should detect the config change, close the old connection,
 		// and get a new connection.
 		$this->assertTrue( $ref->isOpen() );
-		$this->assertSame( IDatabase::ROLE_STREAMING_REPLICA, $ref->getTopologyRole() );
 		// The old connection should have been closed by DBConnRef.
 		$this->assertFalse( $con->isOpen() );
 	}
@@ -890,9 +915,31 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		// Connection refs should detect the config change, close the old connection,
 		// and get a new connection.
 		$this->assertTrue( $ref->isOpen() );
-		$this->assertSame( IDatabase::ROLE_STREAMING_MASTER, $ref->getTopologyRole() );
 
 		// The old connection should have been called by DBConnRef.
 		$this->assertFalse( $con->isOpen() );
+	}
+
+	public function testSetWaitForReplicationListener() {
+		$factory = $this->newLBFactoryMultiLBs();
+
+		$allLBs = iterator_to_array( $factory->getAllLBs() );
+		$this->assertCount( 0, $allLBs );
+
+		$runs = 0;
+		$callback = static function () use ( &$runs ) {
+			++$runs;
+		};
+		$factory->setWaitForReplicationListener( 'test', $callback );
+
+		$this->assertSame( 0, $runs );
+		$factory->waitForReplication();
+		$this->assertSame( 1, $runs );
+
+		$factory->getMainLB();
+		$allLBs = iterator_to_array( $factory->getAllLBs() );
+		$this->assertCount( 1, $allLBs );
+		$factory->waitForReplication();
+		$this->assertSame( 2, $runs );
 	}
 }

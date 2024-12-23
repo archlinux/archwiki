@@ -20,7 +20,7 @@ const { Thumbnail, ThumbnailWidth } = require( 'mmv' );
 ( function () {
 	QUnit.module( 'mmv.model', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Thumbnail constructor sense check', function ( assert ) {
+	QUnit.test( 'Thumbnail constructor sense check', ( assert ) => {
 		const width = 23;
 		const height = 42;
 		const url = 'http://example.com/foo.jpg';
@@ -30,12 +30,12 @@ const { Thumbnail, ThumbnailWidth } = require( 'mmv' );
 		assert.strictEqual( thumbnail.width, width, 'Width is set correctly' );
 		assert.strictEqual( thumbnail.height, height, 'Height is set correctly' );
 
-		assert.throws( function () {
+		assert.throws( () => {
 			thumbnail = new Thumbnail( url, width );
 		}, 'Exception is thrown when parameters are missing' );
 	} );
 
-	QUnit.test( 'ThumbnailWidth constructor sense check', function ( assert ) {
+	QUnit.test( 'ThumbnailWidth constructor sense check', ( assert ) => {
 		const cssWidth = 23;
 		const cssHeight = 29;
 		const screenWidth = 42;
@@ -48,7 +48,7 @@ const { Thumbnail, ThumbnailWidth } = require( 'mmv' );
 		assert.strictEqual( thumbnailWidth.screen, screenWidth, 'Screen width is set correctly' );
 		assert.strictEqual( thumbnailWidth.real, realWidth, 'Real width is set correctly' );
 
-		assert.throws( function () {
+		assert.throws( () => {
 			thumbnailWidth = new ThumbnailWidth( cssWidth, screenWidth );
 		}, 'Exception is thrown when parameters are missing' );
 	} );

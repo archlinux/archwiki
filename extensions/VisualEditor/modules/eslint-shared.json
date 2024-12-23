@@ -18,6 +18,8 @@
 		],
 		"no-jquery/no-when": "error",
 		"no-jquery/no-visibility": "error",
+		"security/detect-unsafe-regex": "off",
+		"security/detect-non-literal-regexp": "off",
 		"max-len": "off",
 		"mediawiki/valid-package-file-require": "warn"
 	},

@@ -28,8 +28,8 @@ use MediaWiki\Title\TitleValue;
 use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LikeValue;
 
@@ -153,9 +153,7 @@ class SpecialGadgetUsage extends QueryPage {
 	 * and the opening <tbody>.
 	 */
 	protected function outputTableStart() {
-		$html = Html::openElement( 'table', [ 'class' => [ 'sortable', 'wikitable' ] ] );
-		$html .= Html::openElement( 'thead', [] );
-		$html .= Html::openElement( 'tr', [] );
+		$html = '';
 		$headers = [ 'gadgetusage-gadget', 'gadgetusage-usercount' ];
 		if ( $this->isActiveUsersEnabled() ) {
 			$headers[] = 'gadgetusage-activeusers';
@@ -168,10 +166,12 @@ class SpecialGadgetUsage extends QueryPage {
 					$this->msg( $h )->text() );
 			}
 		}
-		$html .= Html::closeElement( 'tr' );
-		$html .= Html::closeElement( 'thead' );
-		$html .= Html::openElement( 'tbody', [] );
-		$this->getOutput()->addHTML( $html );
+
+		$this->getOutput()->addHTML(
+			Html::openElement( 'table', [ 'class' => [ 'sortable', 'wikitable' ] ] ) .
+			Html::rawElement( 'thead', [], Html::rawElement( 'tr', [], $html ) ) .
+			Html::openElement( 'tbody', [] )
+		);
 		$this->getOutput()->addModuleStyles( 'jquery.tablesorter.styles' );
 		$this->getOutput()->addModules( 'jquery.tablesorter' );
 	}
@@ -196,7 +196,7 @@ class SpecialGadgetUsage extends QueryPage {
 		$gadgetTitle = substr( $result->title, 7 );
 		$gadgetUserCount = $this->getLanguage()->formatNum( $result->value );
 		if ( $gadgetTitle ) {
-			$html = Html::openElement( 'tr', [] );
+			$html = '';
 			// "Gadget" column
 			$link = $this->getLinkRenderer()->makeLink(
 				new TitleValue( NS_SPECIAL, 'Gadgets', 'gadget-' . $gadgetTitle ),
@@ -210,8 +210,7 @@ class SpecialGadgetUsage extends QueryPage {
 				$activeUserCount = $this->getLanguage()->formatNum( $result->namespace );
 				$html .= Html::element( 'td', [], $activeUserCount );
 			}
-			$html .= Html::closeElement( 'tr' );
-			return $html;
+			return Html::rawElement( 'tr', [], $html );
 		}
 		return false;
 	}
@@ -239,7 +238,7 @@ class SpecialGadgetUsage extends QueryPage {
 	 *
 	 * @param OutputPage $out OutputPage to print to
 	 * @param Skin $skin User skin to use
-	 * @param IDatabase $dbr Database (read) connection to use
+	 * @param IReadableDatabase $dbr Database (read) connection to use
 	 * @param IResultWrapper $res Result pointer
 	 * @param int $num Number of available result rows
 	 * @param int $offset Paging offset
@@ -261,7 +260,7 @@ class SpecialGadgetUsage extends QueryPage {
 			$this->outputTableStart();
 			// Append default gadgets to the table with 'default' in the total and active user fields
 			foreach ( $defaultGadgets as $default ) {
-				$html = Html::openElement( 'tr', [] );
+				$html = '';
 				// "Gadget" column
 				$link = $this->getLinkRenderer()->makeLink(
 					new TitleValue( NS_SPECIAL, 'Gadgets', 'gadget-' . $default ),
@@ -276,8 +275,7 @@ class SpecialGadgetUsage extends QueryPage {
 					$html .= Html::element( 'td', [ 'data-sort-value' => 'Infinity' ],
 						$this->msg( 'gadgetusage-default' )->text() );
 				}
-				$html .= Html::closeElement( 'tr' );
-				$out->addHTML( $html );
+				$out->addHTML( Html::rawElement( 'tr', [], $html ) );
 			}
 			foreach ( $res as $row ) {
 				// Remove the 'gadget-' part of the result string and compare if it's present

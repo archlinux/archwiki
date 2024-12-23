@@ -13,13 +13,12 @@ body {
 html {
 	font-size: @font-size-root;
 	// Support Safari: Prevent font scaling in landscape
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	-webkit-text-size-adjust: none;
 }
 
 body {
-	background-color: var( --background-color-base );
-	color: var( --color-base );
+	background-color: @background-color-base;
+	color: @color-base;
 	// Support All Browsers: Remove `margin` (normalized)
 	margin: 0;
 }
@@ -37,13 +36,13 @@ main {
 
 .mw-body {
 	// avoid margin collapsing (see T147956)
-	border-top: @border-width-base @border-style-base var( --border-color-transparent );
+	border-top: @border-width-base @border-style-base @border-color-transparent;
 	padding-bottom: 32px;
 }
 
 .overlay-enabled,
 .mw-body {
-	background-color: var( --background-color-base );
+	background-color: @background-color-base;
 }
 
 // If footer has last modified list item (Desktop MinervaNeue ?useformat=desktop&useskin=minerva),
@@ -92,6 +91,10 @@ main {
 	}
 }
 
+.search-box {
+	position: relative;
+}
+
 // Search input
 // Used in minerva header and search overlay header
 .search-box .search {
@@ -100,24 +103,23 @@ main {
 	@size-modifier-border: unit( 1 / @font-size-browser, em );
 	@padding-vertical-search: 8px - @border-width-base;
 	@padding-start-search-icon: @size-icon-search + ( 2 * @size-icon-search-gutter ) - @size-modifier-border;
-	background-color: var( --background-color-base ); // Support Fennec, Opera Mini: Remove default background, see T38490.
-	background-position: left @size-icon-search-gutter center;
-	background-repeat: no-repeat;
-	background-size: @size-icon-search;
+	background-color: @background-color-base; // Support Fennec, Opera Mini: Remove default background, see T38490.
 	// Support Safari: Get rid of rounded corners.
 	-webkit-appearance: none;
 	width: 100%;
 	margin: 0;
 	height: 2.25em;
-	border: @border-width-base @border-style-base var( --border-color-inverted );
+	border: @border-width-base @border-style-base @border-color-inverted;
 	border-radius: @border-radius-base;
 	padding: @padding-vertical-search 0 @padding-vertical-search @padding-start-search-icon;
-	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.05 );
+	box-shadow: @box-shadow-drop-small;
 	// Keyboard focus is taken care of below at `.search:focus`.
 	outline: 0;
 	transition-property: border-color, box-shadow;
 	transition-duration: @transition-duration-medium;
 	font: inherit;
+	// Disable search background for cached HTML.
+	mask-image: none;
 
 	// [T139928] Hide all pseudo-elements added to search inputs in WebKit.
 	&::-webkit-search-decoration,
@@ -128,11 +130,20 @@ main {
 	}
 }
 
+.search-box-icon-overlay {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	left: 8px;
+	top: 0;
+	bottom: 0;
+}
+
 // Provide focus styles only in non-JS and overlay to prevent double transition.
 .client-nojs .search-box .search:focus,
 .search-overlay .search-box .search:focus {
-	border-color: var( --border-color-progressive--focus );
-	box-shadow: @box-shadow-inset-small var( --box-shadow-color-progressive--focus ), 0 1px 1px rgba( 0, 0, 0, 0.05 );
+	border-color: @border-color-progressive--focus;
+	box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus, 0 1px 1px rgba( 0, 0, 0, 0.05 );
 }
 
 .content {
@@ -155,20 +166,44 @@ main {
 		}
 	}
 
+	/* For legacy parser */
 	.mw-parser-output > .mw-heading2,
 	.mw-parser-output > h2,
+	.mw-parser-output[ data-mw-parsoid-version ] > section > .mw-heading2,
 	.section-heading {
-		border-bottom: @border-width-base @border-style-base var( --border-color-muted );
+		border-bottom: @border-width-base @border-style-base @border-color-muted;
 		margin-bottom: @margin-heading;
 	}
 
 	.mw-parser-output {
+		// We want to apply display: flex to the heading wrapper elements to style them right (T305971),
+		// but not to the heading text elements, because it results in bad text layout (T367468).
+		// This turns out to be difficult, because mobile/desktop, legacy/modern/unwrapped headings,
+		// and DiscussionTools/normal page generate a lot of different combinations of HTML markup.
+
+		// Support modern headings, DiscussionTools, and mobile mode
 		.mw-heading,
-		h1, h2, h3, h4, h5, h6 {
+		.section-heading {
+			display: flex;
+			// T356513: display after floated elements
+			min-width: fit-content;
+		}
+
+		// Support desktop Minerva legacy headings (this can only be done with a :has() selector,
+		// there's no other way to distinguish them from unwrapped headings, even though it lacks
+		// support for some browsers). Will be no longer needed when legacy headings are gone.
+		// FIXME: Remove this block when $wgParserEnableLegacyHeadingDOM is removed.
+		:is( h1, h2, h3, h4, h5, h6 ):has( .mw-headline ) {
 			display: flex;
 		}
 
-		h1, h2, h3, h4, h5, h6,
+		// FIXME: Remove `.mw-headline` when $wgParserEnableLegacyHeadingDOM is removed.
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6,
 		.mw-headline {
 			flex-grow: 1;
 			flex-basis: 0;
@@ -238,7 +273,7 @@ main {
 }
 // stylelint-enable selector-max-id
 
-@media all and ( min-width: @width-breakpoint-tablet ) {
+@media all and ( min-width: @min-width-breakpoint-tablet ) {
 	/* FIXME: this should be one generic class name */
 	/* SpecialMobileEditWatchlist */
 	.page-summary-list,

@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Linter;
 
-use FormatJson;
+use MediaWiki\Json\FormatJson;
 
 /**
  * Model to represent a LintError

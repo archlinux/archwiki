@@ -32,7 +32,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineToggleUnusedWidget, OO.ui.ButtonWidg
 /* Events */
 
 /**
- * @event toggleUnusedFields
+ * @event ve.ui.MWTransclusionOutlineToggleUnusedWidget#toggleUnusedFields
  * @param {boolean} visibility If unused fields should be shown or not.
  * @param {boolean} [fromClick]
  * Emitted when the visibility for unused fields should be (re)applied.
@@ -42,7 +42,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineToggleUnusedWidget, OO.ui.ButtonWidg
  * Handles clicks on the button by mouse or keyboard interaction.
  *
  * @private
- * @fires toggleUnusedFields
+ * @fires ve.ui.MWTransclusionOutlineToggleUnusedWidget#toggleUnusedFields
  */
 ve.ui.MWTransclusionOutlineToggleUnusedWidget.prototype.onClick = function () {
 	this.toggleUnusedParameters( !this.showUnusedFields, true );
@@ -57,7 +57,7 @@ ve.ui.MWTransclusionOutlineToggleUnusedWidget.prototype.setDisabled = function (
 /**
  * @param {boolean} showUnused
  * @param {boolean} [fromClick]
- * @fires toggleUnusedFields
+ * @fires ve.ui.MWTransclusionOutlineToggleUnusedWidget#toggleUnusedFields
  */
 ve.ui.MWTransclusionOutlineToggleUnusedWidget.prototype.toggleUnusedParameters = function ( showUnused, fromClick ) {
 	if ( this.updateState( showUnused ) ) {
@@ -88,7 +88,7 @@ ve.ui.MWTransclusionOutlineToggleUnusedWidget.prototype.updateState = function (
  *
  * @private
  * @param {boolean} visible
- * @fires toggleUnusedFields
+ * @fires ve.ui.MWTransclusionOutlineToggleUnusedWidget#toggleUnusedFields
  */
 ve.ui.MWTransclusionOutlineToggleUnusedWidget.prototype.onToggle = function ( visible ) {
 	if ( visible ) {

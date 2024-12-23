@@ -28,6 +28,13 @@
 	"cite_error_empty_references_define": "'u tag <code>&lt;ref&gt;</code> cu 'u nome \"$1\" definite jndr'à 'u gruppe <code>&lt;references&gt;</code> \"$2\" non ge tène condenute.",
 	"cite-tracking-category-cite-error": "Pàggene cu errore de referimende",
 	"cite-tracking-category-cite-error-desc": "Pàggene jndr'à sta categorije ca ave errore de ause de le tag de referimende.",
+	"cite-reference-previews-reference": "Riferimende",
+	"cite-reference-previews-book": "Referimende a 'nu libbre",
+	"cite-reference-previews-journal": "Referimende a 'nu sciurnale",
+	"cite-reference-previews-news": "Referimende a 'na nuvetà",
+	"cite-reference-previews-note": "Note",
+	"cite-reference-previews-web": "Referimende a 'nu site web",
+	"cite-reference-previews-collapsible-placeholder": "Stu referimende 'nglude 'na figure 'a quale non ge se 'ndruche bbone jndr'à l'andeprime.",
 	"cite_references_link_accessibility_label": "Zumbe sus",
 	"cite_references_link_many_accessibility_label": "Zumbe sus a:",
 	"cite_references_link_accessibility_back_label": "Zumbe rete",
@@ -42,5 +49,9 @@
 	"cite-wikieditor-help-content-showreferences-description": "Fà vedè le rifereminde",
 	"cite-wikieditor-help-content-reference-example-text1": "Teste d'a pàgene.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Teste d'u collegamende], teste aggiundive.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teste d'u collegamende]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teste d'u collegamende]",
+	"popups-prefs-navpopups-gadget-conflict-info": "Tu è abbilitate 'u gadget [[$1|popup de navigazzione]], accussì non ge vuè 'ndrucà le andeprime date da sta funzione. Depende da 'a uicchi toje, 'u gadget pò avè 'nu nome 'nu picca diverse. Ce tu condinue cu ste probbleme, pe piacere condrolle 'u gadget tune e le script utende, 'ngludenne chidde globbale.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Tu è abbilitate le gadget [[$1|popup de navigazzione]] e [[$1|de le suggerimende de referimende]], accussì non ge vuè 'ndrucà le andeprime date da sta funzione. Depende da 'a uicchi toje, le gadget ponne avè 'nu nome 'nu picca diverse. Ce tu condinue cu ste probbleme, pe piacere condrolle 'u gadget tune e le script utende, 'ngludenne chidde globbale.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Tu è abbilitate 'u gadget [[$1|de le suggerimende de referimende]], accussì non ge vuè 'ndrucà le andeprime de referimende ma 'ndruche angore le andeprime d'a pàgene. Depende da 'a uicchi toje, 'u gadget pò avè 'nu nome 'nu picca diverse. Ce tu condinue cu ste probbleme, pe piacere condrolle 'u gadget tune e le script utende, 'ngludenne chidde globbale.",
+	"popups-refpreview-user-preference-label": "Abbilite l'andeprime d'u referimende (pigghie le andeprime veloce de 'nu referimende quanne ste lìgge 'a vôsce)"
 }

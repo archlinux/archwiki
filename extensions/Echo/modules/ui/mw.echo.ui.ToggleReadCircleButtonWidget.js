@@ -7,14 +7,14 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {boolean} [markAsRead=true] Display mark as read state. If false, the button displays
+	 * @param {boolean} [config.markAsRead=true] Display mark as read state. If false, the button displays
 	 *  mark as unread state.
 	 */
 	mw.echo.ui.ToggleReadCircleButtonWidget = function MwEchoUiToggleReadCircleButtonWidget( config ) {
 		config = config || {};
 
 		// Parent constructor
-		mw.echo.ui.ToggleReadCircleButtonWidget.super.call( this, $.extend( {
+		mw.echo.ui.ToggleReadCircleButtonWidget.super.call( this, Object.assign( {
 			invisibleLabel: true,
 			// Set a dummy icon so we get focus styles
 			icon: '_'
@@ -48,7 +48,7 @@
 		this.markAsRead = isMarkAsRead;
 
 		this.$circle.toggleClass( 'mw-echo-ui-toggleReadCircleButtonWidget-circle-unread', !this.markAsRead );
-		var label = this.markAsRead ?
+		const label = this.markAsRead ?
 			mw.msg( 'echo-notification-markasread' ) :
 			mw.msg( 'echo-notification-markasunread' );
 		this.setLabel( label );

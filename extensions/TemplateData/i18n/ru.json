@@ -84,7 +84,6 @@
 	"templatedata-modal-button-map": "Редактировать маппинги",
 	"templatedata-modal-button-importParams": "Импортировать параметры",
 	"templatedata-modal-button-removemap": "Удалить маппинг",
-	"templatedata-modal-button-restoreparam": "Восстановить параметр",
 	"templatedata-modal-button-saveparam": "Сохранить",
 	"templatedata-modal-confirmcancel": "Вы уверены, что хотите отменить внесённые изменения?",
 	"templatedata-modal-current-language": "Текущий язык: $1",

@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\TemplateData;
 
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Status\Status;
 use stdClass;
@@ -28,10 +29,11 @@ class TemplateDataBlob {
 	 * @return TemplateDataBlob
 	 */
 	public static function newFromJSON( IReadableDatabase $db, string $json ): TemplateDataBlob {
+		$lang = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::LanguageCode );
 		if ( $db->getType() === 'mysql' ) {
-			$tdb = new TemplateDataCompressedBlob( $json );
+			$tdb = new TemplateDataCompressedBlob( $json, $lang );
 		} else {
-			$tdb = new TemplateDataBlob( $json );
+			$tdb = new TemplateDataBlob( $json, $lang );
 		}
 		return $tdb;
 	}
@@ -52,7 +54,7 @@ class TemplateDataBlob {
 		return self::newFromJSON( $db, $json );
 	}
 
-	protected function __construct( string $json ) {
+	protected function __construct( string $json, string $lang ) {
 		$deprecatedTypes = array_keys( TemplateDataNormalizer::DEPRECATED_PARAMETER_TYPES );
 		$validator = new TemplateDataValidator( $deprecatedTypes );
 		$this->status = $validator->validate( json_decode( $json ) );
@@ -62,8 +64,7 @@ class TemplateDataBlob {
 		// we don't end up with invalid data in the database.
 		$value = $this->status->getValue() ?? (object)[ 'params' => (object)[] ];
 
-		$lang = MediaWikiServices::getInstance()->getContentLanguage();
-		$normalizer = new TemplateDataNormalizer( $lang->getCode() );
+		$normalizer = new TemplateDataNormalizer( $lang );
 		$normalizer->normalize( $value );
 
 		// Don't bother storing the decoded object, it will always be cloned anyway

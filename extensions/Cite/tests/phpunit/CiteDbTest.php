@@ -2,8 +2,8 @@
 
 namespace Cite\Tests;
 
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\Title;
-use ParserOptions;
 
 /**
  * @group Database

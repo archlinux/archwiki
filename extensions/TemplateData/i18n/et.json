@@ -65,7 +65,6 @@
 	"templatedata-modal-button-map": "Redigeeri vastendusi",
 	"templatedata-modal-button-importParams": "Impordi parameetrid",
 	"templatedata-modal-button-removemap": "Eemalda vastendus",
-	"templatedata-modal-button-restoreparam": "Taasta parameeter",
 	"templatedata-modal-button-saveparam": "Salvesta",
 	"templatedata-modal-confirmcancel": "Kas oled kindel, et tahad muudatustest loobuda?",
 	"templatedata-modal-current-language": "Praegune keel: $1",

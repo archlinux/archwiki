@@ -10,11 +10,11 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Parser;
 
-use IBufferingStatsdDataFactory;
 use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use Psr\Log\LoggerInterface;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 
 /**
  * A parser that transforms the text of the filter into a parse tree.

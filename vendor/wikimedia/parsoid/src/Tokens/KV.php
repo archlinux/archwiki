@@ -54,6 +54,9 @@ class KV implements \JsonSerializable {
 	}
 
 	/**
+	 * BUG: When there are multiple matching attributes, Sanitizer lets the last one win
+	 * whereas this method is letting the first one win. This can introduce subtle bugs!
+	 *
 	 * Lookup a string key in a KV array and return the first matching KV object
 	 *
 	 * @param KV[]|null $kvs
@@ -82,7 +85,7 @@ class KV implements \JsonSerializable {
 	 *
 	 * @param KV[]|null $kvs
 	 * @param string $key
-	 * @return string|Token|Token[]|null
+	 * @return string|Token|array<Token|string>|null
 	 */
 	public static function lookup( ?array $kvs, string $key ) {
 		$kv = self::lookupKV( $kvs, $key );

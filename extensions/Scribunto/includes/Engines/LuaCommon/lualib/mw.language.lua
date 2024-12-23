@@ -63,6 +63,7 @@ function language.new( code )
 	if code == nil then
 		error( "too few arguments to mw.language.new()", 2 )
 	end
+	util.checkType( 'language.new', 1, code, 'string' )
 
 	local lang = { code = code }
 

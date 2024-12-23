@@ -7,8 +7,6 @@
 	"thanks-desc": "Manambahakan tautan gasan batarima kasih ka pamakai gasan babakan, kumintar, dll.",
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|batarima kasih}}}}",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|batarima kasih}}}}",
-	"thanks-button-action-queued": "{{GENDER:$1|{{GENDER:$2|parhatan batarima kasih}}}} ka $1…",
-	"thanks-button-action-completed": "Pian {{GENDER:$1|{{GENDER:$2|sudah batarima kasih}}}} ka $1",
 	"thanks-thank-tooltip": "{{GENDER:$1|Kirim}} sabuting pamadahan tarima kasih ka {{GENDER:$2|pamakai}} ngini",
 	"thanks-thank-tooltip-yes": "{{GENDER:$1|Kirim}} pamadahan tarima kasih",
 	"thanks-confirmation2": "{{GENDER:$1|Kirimakan}} ucapan tarima kasih?",

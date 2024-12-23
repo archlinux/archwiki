@@ -1,19 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"DreZhsh",
 			"Gomoko",
+			"Graineahumus",
+			"Lofhi",
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
 			"Wladek92",
-			"Lofhi"
+			"Mahabarata"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Commentaire avec l’ID « $1 » non trouvé.",
 	"apierror-discussiontools-commentname-ambiguous": "Plusieurs commentaires trouvés avec le nom « $1 », <var>commentid</var> est obligatoire.",
 	"apierror-discussiontools-commentname-notfound": "Commentaire avec le nom « $1 » non trouvé.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "La page n'a jamais contenu de discussions.",
 	"apierror-discussiontools-formtoken-used": "Le commentaire a déjà été posté. Rechargez la page pour le voir.",
 	"apierror-discussiontools-subscription-failed-add": "Impossible de s’abonner à ce sujet.",
 	"apierror-discussiontools-subscription-failed-remove": "Impossible de se désabonner de ce sujet.",
@@ -47,5 +49,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Nom du sujet auquel s’abonner (ou duquel se désabonner)",
 	"apihelp-discussiontoolssubscribe-param-page": "Une page sur laquelle le sujet apparaît",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Vrai pour s’abonner, faux pour se désinscrire",
-	"apihelp-discussiontoolssubscribe-summary": "S’abonner (ou se désinscrire) pour recevoir des notifications sur un sujet."
+	"apihelp-discussiontoolssubscribe-summary": "S’abonner (ou se désinscrire) pour recevoir des notifications sur un sujet.",
+	"apihelp-discussiontoolsthank-param-commentid": "ID du commentaire à remercier.",
+	"apihelp-discussiontoolsthank-summary": "Envoyer publiquement une notification de remerciement pour un commentaire."
 }

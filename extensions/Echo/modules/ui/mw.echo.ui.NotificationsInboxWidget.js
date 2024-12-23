@@ -4,15 +4,15 @@
 	 *
 	 * @class
 	 * @extends OO.ui.Widget
-	 * @mixins OO.ui.mixin.PendingElement
+	 * @mixes OO.ui.mixin.PendingElement
 	 *
 	 * @constructor
 	 * @param {mw.echo.Controller} controller Echo controller
 	 * @param {mw.echo.dm.ModelManager} manager Model manager
 	 * @param {Object} [config] Configuration object
-	 * @cfg {number} [limit=25] Limit the number of notifications per page
-	 * @cfg {string} [prefLink] Link to preferences page
-	 * @cfg {jQuery} [$overlay] An overlay for the popup menus
+	 * @param {number} [config.limit=25] Limit the number of notifications per page
+	 * @param {string} [config.prefLink] Link to preferences page
+	 * @param {jQuery} [config.$overlay] An overlay for the popup menus
 	 */
 	mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget( controller, manager, config ) {
 		config = config || {};
@@ -126,11 +126,11 @@
 				.addClass( 'mw-echo-ui-notificationsInboxWidget-toolbarWrapper' )
 				.append( this.$topToolbar );
 
-		var $sidebar = $( '<div>' )
+		const $sidebar = $( '<div>' )
 			.addClass( 'mw-echo-ui-notificationsInboxWidget-sidebar' )
 			.append( this.xwikiUnreadWidget.$element );
 
-		var $main = $( '<div>' )
+		const $main = $( '<div>' )
 			.addClass( 'mw-echo-ui-notificationsInboxWidget-main' )
 			.append(
 				this.$toolbarWrapper,
@@ -222,9 +222,7 @@
 	 *  have been fetched.
 	 */
 	mw.echo.ui.NotificationsInboxWidget.prototype.populateNotifications = function ( direction ) {
-		var widget = this;
-
-		var fetchPromise;
+		let fetchPromise;
 		if ( direction === 'prev' ) {
 			fetchPromise = this.controller.fetchPrevPageByDate();
 		} else if ( direction === 'next' ) {
@@ -238,17 +236,17 @@
 		return fetchPromise
 			.then(
 				// Success
-				function () {
+				() => {
 					// Fire initialization hook
-					mw.hook( 'ext.echo.special.onInitialize' ).fire( widget.controller.manager.getTypeString(), widget.controller );
+					mw.hook( 'ext.echo.special.onInitialize' ).fire( this.controller.manager.getTypeString(), this.controller );
 
-					widget.popPending();
+					this.popPending();
 					// Update seen time
-					widget.controller.updateSeenTime();
+					this.controller.updateSeenTime();
 				},
 				// Failure
-				function ( errObj ) {
-					var msg;
+				( errObj ) => {
+					let msg;
 					if ( errObj.errCode === 'notlogin-required' ) {
 						// Login required message
 						msg = mw.msg( 'echo-notification-loginrequired' );
@@ -256,9 +254,9 @@
 						// Generic API failure message
 						msg = mw.msg( 'echo-api-failure' );
 					}
-					widget.error = true;
-					widget.noticeMessageWidget.setLabel( msg );
-					widget.displayMessage( true );
+					this.error = true;
+					this.noticeMessageWidget.setLabel( msg );
+					this.displayMessage( true );
 				}
 			)
 			.always( this.popPending.bind( this ) );
@@ -296,10 +294,10 @@
 	 * in case the list is empty.
 	 */
 	mw.echo.ui.NotificationsInboxWidget.prototype.resetMessageLabel = function () {
-		var count = this.manager.getPaginationModel().getCurrentPageItemCount();
+		const count = this.manager.getPaginationModel().getCurrentPageItemCount();
 
 		if ( count === 0 ) {
-			var label = this.manager.getFiltersModel().getReadState() === 'all' ?
+			const label = this.manager.getFiltersModel().getReadState() === 'all' ?
 				mw.msg( 'echo-notification-placeholder' ) :
 				mw.msg( 'echo-notification-placeholder-filters' );
 

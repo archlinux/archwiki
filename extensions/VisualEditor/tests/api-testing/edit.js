@@ -2,7 +2,7 @@
 
 const { action, assert, utils } = require( 'api-testing' );
 
-describe( 'Visual Editor API', function () {
+describe( 'Visual Editor API', () => {
 	const title = utils.title( 'VisualEditor' );
 
 	let alice;
@@ -66,7 +66,7 @@ describe( 'Visual Editor API', function () {
 	// VisualEditor edit: 'visualeditoredit' action API ///
 	const page = utils.title( 'VisualEditorNew' );
 
-	describe( 'Editing', function () {
+	describe( 'Editing', () => {
 		it( 'Should create page, edit and save page with HTML', async () => {
 			const token = await alice.token();
 			const html = '<p>save paction</p>';

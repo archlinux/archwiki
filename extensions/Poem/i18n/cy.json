@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Afalau"
+			"Afalau",
+			"Ceirios"
 		]
 	},
 	"poem-desc": "Mae hwn yn ychwanegu'r tag <code>&lt;poem&gt;</code> i fformatio cerddi"

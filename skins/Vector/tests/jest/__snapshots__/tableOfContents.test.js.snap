@@ -16,7 +16,9 @@ exports[`Table of contents reloadTableOfContents re-renders toc when wikipage.ta
 <li id=\\"toc-foo\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#foo\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">1</span>foo</div>
+			<span class=\\"vector-toc-numb\\">1</span>
+			<span>foo</span>
+		</div>
 	</a>
 	<ul id=\\"toc-foo-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -24,23 +26,29 @@ exports[`Table of contents reloadTableOfContents re-renders toc when wikipage.ta
 <li id=\\"toc-bar\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#bar\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2</span>bar</div>
+			<span class=\\"vector-toc-numb\\">2</span>
+			<span>bar</span>
+		</div>
 	</a>
 		<button aria-controls=\\"toc-bar-sublist\\" class=\\"cdx-button cdx-button--weight-quiet cdx-button--icon-only vector-toc-toggle\\" aria-expanded=\\"true\\">
-			<span class=\\"vector-icon vector-icon--x-small mw-ui-icon-wikimedia-expand\\"></span>
+			<span class=\\"vector-icon mw-ui-icon-wikimedia-expand\\"></span>
 			<span>Toggle bar subsection</span>
 		</button>
 	<ul id=\\"toc-bar-sublist\\" class=\\"vector-toc-list\\">
 <li id=\\"toc-baz\\" class=\\"vector-toc-list-item vector-toc-level-2\\">
 	<a class=\\"vector-toc-link\\" href=\\"#baz\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2.1</span>baz</div>
+			<span class=\\"vector-toc-numb\\">2.1</span>
+			<span>baz</span>
+		</div>
 	</a>
 	<ul id=\\"toc-baz-sublist\\" class=\\"vector-toc-list\\">
 <li id=\\"toc-qux\\" class=\\"vector-toc-list-item vector-toc-level-3\\">
 	<a class=\\"vector-toc-link\\" href=\\"#qux\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2.1.1</span>qux</div>
+			<span class=\\"vector-toc-numb\\">2.1.1</span>
+			<span>qux</span>
+		</div>
 	</a>
 	<ul id=\\"toc-qux-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -52,7 +60,9 @@ exports[`Table of contents reloadTableOfContents re-renders toc when wikipage.ta
 <li id=\\"toc-quux\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#quux\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">3</span>quux</div>
+			<span class=\\"vector-toc-numb\\">3</span>
+			<span>quux</span>
+		</div>
 	</a>
 	<ul id=\\"toc-quux-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -84,7 +94,9 @@ exports[`Table of contents reloadTableOfContents re-renders toc when wikipage.ta
 <li id=\\"toc-foo\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#foo\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">1</span>foo</div>
+			<span class=\\"vector-toc-numb\\">1</span>
+			<span>foo</span>
+		</div>
 	</a>
 	<ul id=\\"toc-foo-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -92,23 +104,29 @@ exports[`Table of contents reloadTableOfContents re-renders toc when wikipage.ta
 <li id=\\"toc-bar\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#bar\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2</span>bar</div>
+			<span class=\\"vector-toc-numb\\">2</span>
+			<span>bar</span>
+		</div>
 	</a>
 		<button aria-controls=\\"toc-bar-sublist\\" class=\\"cdx-button cdx-button--weight-quiet cdx-button--icon-only vector-toc-toggle\\" aria-expanded=\\"true\\">
-			<span class=\\"vector-icon vector-icon--x-small mw-ui-icon-wikimedia-expand\\"></span>
+			<span class=\\"vector-icon mw-ui-icon-wikimedia-expand\\"></span>
 			<span>Toggle bar subsection</span>
 		</button>
 	<ul id=\\"toc-bar-sublist\\" class=\\"vector-toc-list\\">
 <li id=\\"toc-baz\\" class=\\"vector-toc-list-item vector-toc-level-2\\">
 	<a class=\\"vector-toc-link\\" href=\\"#baz\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2.1</span>baz</div>
+			<span class=\\"vector-toc-numb\\">2.1</span>
+			<span>baz</span>
+		</div>
 	</a>
 	<ul id=\\"toc-baz-sublist\\" class=\\"vector-toc-list\\">
 <li id=\\"toc-qux\\" class=\\"vector-toc-list-item vector-toc-level-3\\">
 	<a class=\\"vector-toc-link\\" href=\\"#qux\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2.1.1</span>qux</div>
+			<span class=\\"vector-toc-numb\\">2.1.1</span>
+			<span>qux</span>
+		</div>
 	</a>
 	<ul id=\\"toc-qux-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -120,7 +138,9 @@ exports[`Table of contents reloadTableOfContents re-renders toc when wikipage.ta
 <li id=\\"toc-quux\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#quux\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">3</span>quux</div>
+			<span class=\\"vector-toc-numb\\">3</span>
+			<span>quux</span>
+		</div>
 	</a>
 	<ul id=\\"toc-quux-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -128,7 +148,9 @@ exports[`Table of contents reloadTableOfContents re-renders toc when wikipage.ta
 <li id=\\"toc-bat\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#bat\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">4</span>bat</div>
+			<span class=\\"vector-toc-numb\\">4</span>
+			<span>bat</span>
+		</div>
 	</a>
 	<ul id=\\"toc-bat-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -156,7 +178,9 @@ exports[`Table of contents renders when \`vector-is-collapse-sections-enabled\` 
 <li id=\\"toc-foo\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#foo\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">1</span>foo</div>
+			<span class=\\"vector-toc-numb\\">1</span>
+			<span>foo</span>
+		</div>
 	</a>
 	<ul id=\\"toc-foo-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -164,23 +188,29 @@ exports[`Table of contents renders when \`vector-is-collapse-sections-enabled\` 
 <li id=\\"toc-bar\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#bar\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2</span>bar</div>
+			<span class=\\"vector-toc-numb\\">2</span>
+			<span>bar</span>
+		</div>
 	</a>
 		<button aria-controls=\\"toc-bar-sublist\\" class=\\"cdx-button cdx-button--weight-quiet cdx-button--icon-only vector-toc-toggle\\" aria-expanded=\\"true\\">
-			<span class=\\"vector-icon vector-icon--x-small mw-ui-icon-wikimedia-expand\\"></span>
+			<span class=\\"vector-icon mw-ui-icon-wikimedia-expand\\"></span>
 			<span>Toggle bar subsection</span>
 		</button>
 	<ul id=\\"toc-bar-sublist\\" class=\\"vector-toc-list\\">
 <li id=\\"toc-baz\\" class=\\"vector-toc-list-item vector-toc-level-2\\">
 	<a class=\\"vector-toc-link\\" href=\\"#baz\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2.1</span>baz</div>
+			<span class=\\"vector-toc-numb\\">2.1</span>
+			<span>baz</span>
+		</div>
 	</a>
 	<ul id=\\"toc-baz-sublist\\" class=\\"vector-toc-list\\">
 <li id=\\"toc-qux\\" class=\\"vector-toc-list-item vector-toc-level-3\\">
 	<a class=\\"vector-toc-link\\" href=\\"#qux\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2.1.1</span>qux</div>
+			<span class=\\"vector-toc-numb\\">2.1.1</span>
+			<span>qux</span>
+		</div>
 	</a>
 	<ul id=\\"toc-qux-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -192,7 +222,9 @@ exports[`Table of contents renders when \`vector-is-collapse-sections-enabled\` 
 <li id=\\"toc-quux\\" class=\\"vector-toc-list-item vector-toc-level-1 vector-toc-list-item-expanded\\">
 	<a class=\\"vector-toc-link\\" href=\\"#quux\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">3</span>quux</div>
+			<span class=\\"vector-toc-numb\\">3</span>
+			<span>quux</span>
+		</div>
 	</a>
 	<ul id=\\"toc-quux-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -218,7 +250,9 @@ exports[`Table of contents renders when \`vector-is-collapse-sections-enabled\` 
 <li id=\\"toc-foo\\" class=\\"vector-toc-list-item vector-toc-level-1\\">
 	<a class=\\"vector-toc-link\\" href=\\"#foo\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">1</span>foo</div>
+			<span class=\\"vector-toc-numb\\">1</span>
+			<span>foo</span>
+		</div>
 	</a>
 	<ul id=\\"toc-foo-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -226,23 +260,29 @@ exports[`Table of contents renders when \`vector-is-collapse-sections-enabled\` 
 <li id=\\"toc-bar\\" class=\\"vector-toc-list-item vector-toc-level-1\\">
 	<a class=\\"vector-toc-link\\" href=\\"#bar\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2</span>bar</div>
+			<span class=\\"vector-toc-numb\\">2</span>
+			<span>bar</span>
+		</div>
 	</a>
 		<button aria-controls=\\"toc-bar-sublist\\" class=\\"cdx-button cdx-button--weight-quiet cdx-button--icon-only vector-toc-toggle\\" aria-expanded=\\"false\\">
-			<span class=\\"vector-icon vector-icon--x-small mw-ui-icon-wikimedia-expand\\"></span>
+			<span class=\\"vector-icon mw-ui-icon-wikimedia-expand\\"></span>
 			<span>Toggle bar subsection</span>
 		</button>
 	<ul id=\\"toc-bar-sublist\\" class=\\"vector-toc-list\\">
 <li id=\\"toc-baz\\" class=\\"vector-toc-list-item vector-toc-level-2\\">
 	<a class=\\"vector-toc-link\\" href=\\"#baz\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2.1</span>baz</div>
+			<span class=\\"vector-toc-numb\\">2.1</span>
+			<span>baz</span>
+		</div>
 	</a>
 	<ul id=\\"toc-baz-sublist\\" class=\\"vector-toc-list\\">
 <li id=\\"toc-qux\\" class=\\"vector-toc-list-item vector-toc-level-3\\">
 	<a class=\\"vector-toc-link\\" href=\\"#qux\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">2.1.1</span>qux</div>
+			<span class=\\"vector-toc-numb\\">2.1.1</span>
+			<span>qux</span>
+		</div>
 	</a>
 	<ul id=\\"toc-qux-sublist\\" class=\\"vector-toc-list\\">
 	</ul>
@@ -254,7 +294,9 @@ exports[`Table of contents renders when \`vector-is-collapse-sections-enabled\` 
 <li id=\\"toc-quux\\" class=\\"vector-toc-list-item vector-toc-level-1\\">
 	<a class=\\"vector-toc-link\\" href=\\"#quux\\">
 		<div class=\\"vector-toc-text\\">
-		<span class=\\"vector-toc-numb\\">3</span>quux</div>
+			<span class=\\"vector-toc-numb\\">3</span>
+			<span>quux</span>
+		</div>
 	</a>
 	<ul id=\\"toc-quux-sublist\\" class=\\"vector-toc-list\\">
 	</ul>

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Constraque",
 			"Gazeb",
-			"Gramo6",
-			"Constraque"
+			"Gramo6"
 		]
 	},
 	"fancycaptcha-addurl": "Ваше едітованя обсягує новы одказы формов URL; про охорону перед автоматічным спамом мусите описати текст з наступного образку. ([[Special:Captcha/help|Што тото значіть?]])",

@@ -3,13 +3,13 @@
 		"authors": [
 			"Alexey zakharenkov",
 			"Contra ventum",
+			"Merrahtar",
 			"Movses",
 			"Okras",
 			"Patrick Star",
 			"Putnik",
 			"Vcohen",
-			"WindEwriX",
-			"Merrahtar"
+			"WindEwriX"
 		]
 	},
 	"loginnotify-desc": "Уведомлять пользователей о подозрительных входах с незнакомых компьютеров и/или IP-адресов",

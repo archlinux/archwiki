@@ -23,15 +23,13 @@
 
 namespace MediaWiki\Parser;
 
-use CacheTime;
 use InvalidArgumentException;
 use JsonException;
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Utils\MWTimestamp;
-use ParserOptions;
 use Psr\Log\LoggerInterface;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\UUID\GlobalIdGenerator;
 
@@ -109,7 +107,7 @@ class RevisionOutputCache {
 	 * @param string $status e.g. hit, miss etc.
 	 * @param string|null $reason
 	 */
-	private function incrementStats( string $status, string $reason = null ) {
+	private function incrementStats( string $status, ?string $reason = null ) {
 		$metricSuffix = $reason ? "{$status}_{$reason}" : $status;
 
 		$this->stats->getCounter( 'RevisionOutputCache_operation_total' )
@@ -141,7 +139,7 @@ class RevisionOutputCache {
 	public function makeParserOutputKey(
 		RevisionRecord $revision,
 		ParserOptions $options,
-		array $usedOptions = null
+		?array $usedOptions = null
 	): string {
 		$usedOptions = ParserOptions::allCacheVaryingOptions();
 
@@ -174,7 +172,7 @@ class RevisionOutputCache {
 	public function makeParserOutputKeyOptionalRevId(
 		RevisionRecord $revision,
 		ParserOptions $options,
-		array $usedOptions = null
+		?array $usedOptions = null
 	): string {
 		$usedOptions = ParserOptions::allCacheVaryingOptions();
 
@@ -242,7 +240,7 @@ class RevisionOutputCache {
 		ParserOutput $output,
 		RevisionRecord $revision,
 		ParserOptions $parserOptions,
-		string $cacheTime = null
+		?string $cacheTime = null
 	) {
 		if ( !$output->hasText() ) {
 			throw new InvalidArgumentException( 'Attempt to cache a ParserOutput with no text set!' );
@@ -313,10 +311,10 @@ class RevisionOutputCache {
 	private function restoreFromJson( string $jsonData, string $key, string $expectedClass ) {
 		try {
 			/** @var CacheTime $obj */
-			$obj = $this->jsonCodec->unserialize( $jsonData, $expectedClass );
+			$obj = $this->jsonCodec->deserialize( $jsonData, $expectedClass );
 			return $obj;
 		} catch ( JsonException $e ) {
-			$this->logger->error( 'Unable to unserialize JSON', [
+			$this->logger->error( 'Unable to deserialize JSON', [
 				'name' => $this->name,
 				'cache_key' => $key,
 				'message' => $e->getMessage()

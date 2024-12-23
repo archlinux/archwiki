@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\TemplateData;
 
-use Language;
+use MediaWiki\Language\Language;
 use MessageLocalizer;
 
 /**

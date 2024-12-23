@@ -22,9 +22,25 @@
  * @author Russ Nelson
  */
 
+namespace Wikimedia\FileBackend;
+
+use Exception;
+use LockManager;
+use MapCacheLRU;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Utils\MWTimestamp;
 use Psr\Log\LoggerInterface;
+use Shellbox\Command\BoxedCommand;
+use StatusValue;
+use stdClass;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\FileBackend\FileIteration\SwiftFileBackendDirList;
+use Wikimedia\FileBackend\FileIteration\SwiftFileBackendFileList;
+use Wikimedia\FileBackend\FileOpHandle\SwiftFileOpHandle;
+use Wikimedia\Http\MultiHttpClient;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
@@ -54,6 +70,10 @@ class SwiftFileBackend extends FileBackendStore {
 	protected $swiftKey;
 	/** @var string Shared secret value for making temp URLs */
 	protected $swiftTempUrlKey;
+	/** @var bool */
+	protected $canShellboxGetTempUrl;
+	/** @var string|null */
+	protected $shellboxIpRange;
 	/** @var string S3 access key (RADOS Gateway) */
 	protected $rgwS3AccessKey;
 	/** @var string S3 authentication key (RADOS Gateway) */
@@ -90,6 +110,11 @@ class SwiftFileBackend extends FileBackendStore {
 	 *   - swiftAuthTTL       : Swift authentication TTL (seconds)
 	 *   - swiftTempUrlKey    : Swift "X-Account-Meta-Temp-URL-Key" value on the account.
 	 *                          Do not set this until it has been set in the backend.
+	 *   - canShellboxGetTempUrl : Set this to true to generate a TempURL allowing Shellbox to
+	 *                          directly fetch files from Swift. swiftTempUrlKey should be set.
+	 *   - shellboxIpRange    : An IP range string to use when generating TempURLs for Shellbox.
+	 *                          Specifying this will improve security by preventing exfiltrated
+	 *                          TempURLs from being usable outside the server.
 	 *   - swiftStorageUrl    : Swift storage URL (overrides that of the authentication response).
 	 *                          This is useful to set if a TLS proxy is in use.
 	 *   - shardViaHashLevels : Map of container names to sharding config with:
@@ -128,6 +153,8 @@ class SwiftFileBackend extends FileBackendStore {
 		// Optional settings
 		$this->authTTL = $config['swiftAuthTTL'] ?? 15 * 60; // some sensible number
 		$this->swiftTempUrlKey = $config['swiftTempUrlKey'] ?? '';
+		$this->canShellboxGetTempUrl = $config['canShellboxGetTempUrl'] ?? false;
+		$this->shellboxIpRange = $config['shellboxIpRange'] ?? null;
 		$this->swiftStorageUrl = $config['swiftStorageUrl'] ?? null;
 		$this->shardViaHashLevels = $config['shardViaHashLevels'] ?? '';
 		$this->rgwS3AccessKey = $config['rgwS3AccessKey'] ?? '';
@@ -301,7 +328,7 @@ class SwiftFileBackend extends FileBackendStore {
 					'etag' => md5( $params['content'] ),
 					'content-length' => strlen( $params['content'] ),
 					'x-object-meta-sha1base36' =>
-						Wikimedia\base_convert( sha1( $params['content'] ), 16, 36, 31 )
+						\Wikimedia\base_convert( sha1( $params['content'] ), 16, 36, 31 )
 				]
 			),
 			'body' => $params['content']
@@ -389,7 +416,7 @@ class SwiftFileBackend extends FileBackendStore {
 					'content-length' => $srcSize,
 					'etag' => hash_final( $md5Context ),
 					'x-object-meta-sha1base36' =>
-						Wikimedia\base_convert( hash_final( $sha1Context ), 16, 36, 31 )
+						\Wikimedia\base_convert( hash_final( $sha1Context ), 16, 36, 31 )
 				]
 			),
 			'body' => $srcHandle // resource
@@ -699,10 +726,16 @@ class SwiftFileBackend extends FileBackendStore {
 
 	protected function doPublishInternal( $fullCont, $dir, array $params ) {
 		$status = $this->newStatus();
+		if ( empty( $params['access'] ) ) {
+			return $status; // nothing to do
+		}
 
 		$stat = $this->getContainerStat( $fullCont );
 		if ( is_array( $stat ) ) {
 			$readUsers = array_merge( $this->readUsers, [ $this->swiftUser, '.r:*' ] );
+			if ( !empty( $params['listing'] ) ) {
+				array_push( $readUsers, '.rlistings' );
+			}
 			$writeUsers = array_merge( $this->writeUsers, [ $this->swiftUser ] );
 
 			// Make container public to end-users...
@@ -1165,13 +1198,13 @@ class SwiftFileBackend extends FileBackendStore {
 		// Send the requested additional headers
 		if ( empty( $params['headless'] ) ) {
 			foreach ( $params['headers'] as $header ) {
-				header( $header );
+				$this->header( $header );
 			}
 		}
 
 		if ( empty( $params['allowOB'] ) ) {
 			// Cancel output buffering and gzipping if set
-			( $this->obResetFunc )();
+			$this->resetOutputBuffer();
 		}
 
 		$handle = fopen( 'php://output', 'wb' );
@@ -1272,58 +1305,93 @@ class SwiftFileBackend extends FileBackendStore {
 		return $tmpFiles;
 	}
 
-	public function getFileHttpUrl( array $params ) {
-		if ( $this->swiftTempUrlKey != '' ||
-			( $this->rgwS3AccessKey != '' && $this->rgwS3SecretKey != '' )
-		) {
-			[ $srcCont, $srcRel ] = $this->resolveStoragePathReal( $params['src'] );
-			if ( $srcRel === null ) {
-				return self::TEMPURL_ERROR; // invalid path
+	public function addShellboxInputFile( BoxedCommand $command, string $boxedName,
+		array $params
+	) {
+		if ( $this->canShellboxGetTempUrl ) {
+			$urlParams = [ 'src' => $params['src'] ];
+			if ( $this->shellboxIpRange !== null ) {
+				$urlParams['ipRange'] = $this->shellboxIpRange;
 			}
-
-			$auth = $this->getAuthentication();
-			if ( !$auth ) {
-				return self::TEMPURL_ERROR;
-			}
-
-			$ttl = $params['ttl'] ?? 86400;
-			$expires = time() + $ttl;
-
-			if ( $this->swiftTempUrlKey != '' ) {
-				$url = $this->storageUrl( $auth, $srcCont, $srcRel );
-				// Swift wants the signature based on the unencoded object name
-				$contPath = parse_url( $this->storageUrl( $auth, $srcCont ), PHP_URL_PATH );
-				$signature = hash_hmac( 'sha1',
-					"GET\n{$expires}\n{$contPath}/{$srcRel}",
-					$this->swiftTempUrlKey
-				);
-
-				return "{$url}?temp_url_sig={$signature}&temp_url_expires={$expires}";
-			} else { // give S3 API URL for rgw
-				// Path for signature starts with the bucket
-				$spath = '/' . rawurlencode( $srcCont ) . '/' .
-					str_replace( '%2F', '/', rawurlencode( $srcRel ) );
-				// Calculate the hash
-				$signature = base64_encode( hash_hmac(
-					'sha1',
-					"GET\n\n\n{$expires}\n{$spath}",
-					$this->rgwS3SecretKey,
-					true // raw
-				) );
-				// See https://s3.amazonaws.com/doc/s3-developer-guide/RESTAuthentication.html.
-				// Note: adding a newline for empty CanonicalizedAmzHeaders does not work.
-				// Note: S3 API is the rgw default; remove the /swift/ URL bit.
-				return str_replace( '/swift/v1', '', $this->storageUrl( $auth ) . $spath ) .
-					'?' .
-					http_build_query( [
-						'Signature' => $signature,
-						'Expires' => $expires,
-						'AWSAccessKeyId' => $this->rgwS3AccessKey
-					] );
+			$url = $this->getFileHttpUrl( $urlParams );
+			if ( $url ) {
+				$command->inputFileFromUrl( $boxedName, $url );
+				return $this->newStatus();
 			}
 		}
+		return parent::addShellboxInputFile( $command, $boxedName, $params );
+	}
 
-		return self::TEMPURL_ERROR;
+	public function getFileHttpUrl( array $params ) {
+		if ( $this->swiftTempUrlKey == '' &&
+			( $this->rgwS3AccessKey == '' || $this->rgwS3SecretKey != '' )
+		) {
+			$this->logger->debug( "Can't get Swift file URL: no key available" );
+			return self::TEMPURL_ERROR;
+		}
+
+		[ $srcCont, $srcRel ] = $this->resolveStoragePathReal( $params['src'] );
+		if ( $srcRel === null ) {
+			$this->logger->debug( "Can't get Swift file URL: can't resolve path" );
+			return self::TEMPURL_ERROR; // invalid path
+		}
+
+		$auth = $this->getAuthentication();
+		if ( !$auth ) {
+			$this->logger->debug( "Can't get Swift file URL: authentication failed" );
+			return self::TEMPURL_ERROR;
+		}
+
+		$method = $params['method'] ?? 'GET';
+		$ttl = $params['ttl'] ?? 86400;
+		$expires = time() + $ttl;
+
+		if ( $this->swiftTempUrlKey != '' ) {
+			$url = $this->storageUrl( $auth, $srcCont, $srcRel );
+			// Swift wants the signature based on the unencoded object name
+			$contPath = parse_url( $this->storageUrl( $auth, $srcCont ), PHP_URL_PATH );
+			$messageParts = [
+				$method,
+				$expires,
+				"{$contPath}/{$srcRel}"
+			];
+			$query = [
+				'temp_url_expires' => $expires,
+			];
+			if ( isset( $params['ipRange'] ) ) {
+				array_unshift( $messageParts, "ip={$params['ipRange']}" );
+				$query['temp_url_ip_range'] = $params['ipRange'];
+			}
+
+			$signature = hash_hmac( 'sha1',
+				implode( "\n", $messageParts ),
+				$this->swiftTempUrlKey
+			);
+			$query = [ 'temp_url_sig' => $signature ] + $query;
+
+			return $url . '?' . http_build_query( $query );
+		} else { // give S3 API URL for rgw
+			// Path for signature starts with the bucket
+			$spath = '/' . rawurlencode( $srcCont ) . '/' .
+				str_replace( '%2F', '/', rawurlencode( $srcRel ) );
+			// Calculate the hash
+			$signature = base64_encode( hash_hmac(
+				'sha1',
+				"{$method}\n\n\n{$expires}\n{$spath}",
+				$this->rgwS3SecretKey,
+				true // raw
+			) );
+			// See https://s3.amazonaws.com/doc/s3-developer-guide/RESTAuthentication.html.
+			// Note: adding a newline for empty CanonicalizedAmzHeaders does not work.
+			// Note: S3 API is the rgw default; remove the /swift/ URL bit.
+			return str_replace( '/swift/v1', '', $this->storageUrl( $auth ) . $spath ) .
+				'?' .
+				http_build_query( [
+					'Signature' => $signature,
+					'Expires' => $expires,
+					'AWSAccessKeyId' => $this->rgwS3AccessKey
+				] );
+		}
 	}
 
 	protected function directoriesAreVirtual() {
@@ -1495,6 +1563,9 @@ class SwiftFileBackend extends FileBackendStore {
 		if ( empty( $params['noAccess'] ) ) {
 			// public
 			$readUsers = array_merge( $this->readUsers, [ '.r:*', $this->swiftUser ] );
+			if ( empty( $params['noListing'] ) ) {
+				array_push( $readUsers, '.rlistings' );
+			}
 			$writeUsers = array_merge( $this->writeUsers, [ $this->swiftUser ] );
 		} else {
 			// private
@@ -1967,3 +2038,6 @@ class SwiftFileBackend extends FileBackendStore {
 		$this->logger->error( $msg, $msgParams );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( SwiftFileBackend::class, 'SwiftFileBackend' );

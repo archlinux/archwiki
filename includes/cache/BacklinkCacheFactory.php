@@ -23,12 +23,12 @@
 
 namespace MediaWiki\Cache;
 
-use BacklinkCache;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Page\PageReference;
-use WANObjectCache;
+use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -47,19 +47,22 @@ class BacklinkCacheFactory {
 	private IConnectionProvider $dbProvider;
 	private ServiceOptions $options;
 	private LinksMigration $linksMigration;
+	private LoggerInterface $logger;
 
 	public function __construct(
 		ServiceOptions $options,
 		LinksMigration $linksMigration,
 		WANObjectCache $wanCache,
 		HookContainer $hookContainer,
-		IConnectionProvider $dbProvider
+		IConnectionProvider $dbProvider,
+		LoggerInterface $logger
 	) {
 		$this->options = $options;
 		$this->linksMigration = $linksMigration;
 		$this->wanCache = $wanCache;
 		$this->hookContainer = $hookContainer;
 		$this->dbProvider = $dbProvider;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -80,6 +83,7 @@ class BacklinkCacheFactory {
 				$this->wanCache,
 				$this->hookContainer,
 				$this->dbProvider,
+				$this->logger,
 				$page
 			);
 		}

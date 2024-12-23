@@ -19,23 +19,25 @@
  */
 namespace MediaWiki\Extension\AbuseFilter;
 
-use ApiRawMessage;
-use BagOStuff;
-use DBAccessObjectUtils;
-use FormatJson;
-use IDBAccessObject;
-use JsonContent;
+use MediaWiki\Api\ApiRawMessage;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\JsonContent;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\UrlUtils;
-use Message;
 use RecentChange;
 use StatusValue;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\Rdbms\DBAccessObjectUtils;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Hold and update information about blocked external domains
@@ -108,7 +110,7 @@ class BlockedDomainStorage implements IDBAccessObject {
 	}
 
 	/**
-	 * Load the computed domain block list
+	 * Load the computed domain blocklist
 	 *
 	 * @return array<string,true> Flipped for performance reasons
 	 */
@@ -164,7 +166,7 @@ class BlockedDomainStorage implements IDBAccessObject {
 	/**
 	 * Fetch the contents of the configuration page, without caching.
 	 *
-	 * Result is not validated with a config validator.
+	 * The result is not validated with a config validator.
 	 *
 	 * @param int $flags bit field, see IDBAccessObject::READ_XXX; do NOT pass READ_UNCACHED
 	 * @return StatusValue Status object, with the configuration (as JSON data) on success.
@@ -173,7 +175,7 @@ class BlockedDomainStorage implements IDBAccessObject {
 		$revision = $this->revisionLookup->getRevisionByTitle( $this->getBlockedDomainPage(), 0, $flags );
 		if ( !$revision ) {
 			// The configuration page does not exist. Pretend it does not configure anything
-			// specific (failure mode and empty-page behavior is equal).
+			// specific (failure mode and empty-page behaviors are equal).
 			return StatusValue::newGood( [] );
 		}
 		$content = $revision->getContent( SlotRecord::MAIN );
@@ -191,7 +193,8 @@ class BlockedDomainStorage implements IDBAccessObject {
 	 *
 	 * @param string $domain domain to be blocked
 	 * @param string $notes User provided notes
-	 * @param \MediaWiki\Permissions\Authority|\MediaWiki\User\UserIdentity $user Performer
+	 * @param Authority|UserIdentity $user Performer
+	 *
 	 * @return RevisionRecord|null Null on failure
 	 */
 	public function addDomain( string $domain, string $notes, $user ): ?RevisionRecord {
@@ -211,7 +214,8 @@ class BlockedDomainStorage implements IDBAccessObject {
 	 *
 	 * @param string $domain domain to be removed from the blocked list
 	 * @param string $notes User provided notes
-	 * @param \MediaWiki\Permissions\Authority|\MediaWiki\User\UserIdentity $user Performer
+	 * @param Authority|UserIdentity $user Performer
+	 *
 	 * @return RevisionRecord|null Null on failure
 	 */
 	public function removeDomain( string $domain, string $notes, $user ): ?RevisionRecord {
@@ -255,11 +259,12 @@ class BlockedDomainStorage implements IDBAccessObject {
 	 * Save the provided content into the page
 	 *
 	 * @param array[] $content To be turned into JSON
-	 * @param \MediaWiki\Permissions\Authority|\MediaWiki\User\UserIdentity $user Performer
+	 * @param Authority|UserIdentity $user Performer
 	 * @param string $comment Save comment
+	 *
 	 * @return RevisionRecord|null
 	 */
-	private function saveContent( array $content, $user, $comment ): ?RevisionRecord {
+	private function saveContent( array $content, $user, string $comment ): ?RevisionRecord {
 		$configPage = $this->getBlockedDomainPage();
 		$page = $this->wikiPageFactory->newFromLinkTarget( $configPage );
 		$updater = $page->newPageUpdater( $user );
@@ -275,9 +280,9 @@ class BlockedDomainStorage implements IDBAccessObject {
 	}
 
 	/**
-	 * @return TitleValue TitleValue of the config json page
+	 * @return TitleValue TitleValue of the config JSON page
 	 */
-	private function getBlockedDomainPage() {
+	private function getBlockedDomainPage(): TitleValue {
 		return new TitleValue( NS_MEDIAWIKI, self::TARGET_PAGE );
 	}
 }

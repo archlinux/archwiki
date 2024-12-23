@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\ParserFunctions;
 
-use Scribunto_LuaError;
-use Scribunto_LuaLibraryBase;
+use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LibraryBase;
+use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
 
-class LuaLibrary extends Scribunto_LuaLibraryBase {
+class LuaLibrary extends LibraryBase {
 	public function register() {
 		$lib = [
 			'expr' => [ $this, 'expr' ],
@@ -22,7 +22,7 @@ class LuaLibrary extends Scribunto_LuaLibraryBase {
 			$exprParser = new ExprParser();
 			return [ $exprParser->doExpression( $expression ) ];
 		} catch ( ExprError $e ) {
-			throw new Scribunto_LuaError( $e->getMessage() );
+			throw new LuaError( $e->getMessage() );
 		}
 	}
 

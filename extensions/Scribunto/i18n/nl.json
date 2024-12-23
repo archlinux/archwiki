@@ -72,5 +72,7 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Lua logboeken",
 	"nstab-module": "Module",
-	"tooltip-ca-nstab-module": "Modulepagina bekijken"
+	"tooltip-ca-nstab-module": "Modulepagina bekijken",
+	"namespaceinfo-description-ns828": "Naamruimte voor Lua-codemodules, die kunnen worden aangeroepen vanaf wikipagina’s en hun documentatiepagina’s",
+	"namespaceinfo-description-ns829": "Overlegpagina’s voor modules en documentatie"
 }

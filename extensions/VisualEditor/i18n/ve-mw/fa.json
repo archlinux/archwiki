@@ -9,6 +9,7 @@
 			"Dalba",
 			"Darafsh",
 			"Dejavu",
+			"Ebrahim",
 			"Ebraminio",
 			"FarsiNevis",
 			"Fatemi127",
@@ -32,8 +33,7 @@
 			"Taha",
 			"الناز",
 			"درفش کاویانی",
-			"فلورانس",
-			"Ebrahim"
+			"فلورانس"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -61,7 +61,6 @@
 	"visualeditor-autosave-recovered-text": "تغییرات ذخیره‌نشدهٔ شما به صورت خودکار بازیابی شد.",
 	"visualeditor-autosave-recovered-title": "تغییرات بازیابی شد",
 	"visualeditor-backbutton-tooltip": "بازگشت به عقب",
-	"visualeditor-browserwarning": "شما از مرورگری استفاده می‌کنید که در این ویرایشگر به طور رسمی پشتیبانی نمی‌شود.",
 	"visualeditor-ca-createlocaldescriptionsource": "افزودن منبع توضیحات محلی",
 	"visualeditor-ca-createsource": "ایجاد مبدأ",
 	"visualeditor-ca-editlocaldescriptionsource": "ویرایش توضیحات محلی",

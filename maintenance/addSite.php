@@ -1,7 +1,10 @@
 <?php
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Site\MediaWikiSite;
 
 /**
@@ -97,5 +100,7 @@ class AddSite extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = AddSite::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

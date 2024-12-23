@@ -15,9 +15,9 @@ body {
 }
 
 ul {
-	// `list-style-image` sits on `ul` as it inherits and we don't need to worry about `ol`.
-	// No need for PNG fallback. Fallback is browser default (a smaller, also black, circle).
-	list-style-image: url( images/bullet-icon.svg );
+	// Overrides default sublist styling due to lists being used in some talk pages (i.e. russian wiki)
+	// https://phabricator.wikimedia.org/T364865#9802562
+	list-style-type: disc;
 }
 
 pre,
@@ -145,12 +145,18 @@ pre,
 	}
 
 	p {
-		// T351754 Use padding to avoid margin collapsing between adjacent <p> elements
-		// creating an effective margin-bottom: 1em
-		padding-bottom: 0.5em;
-		// Top margin is needed because many elements rely on adjacent <p> elements
-		// for extra spacing, i.e. lists and headings
-		margin: 0.5em 0 0 0;
+		margin: 0.5em 0 1em 0;
+	}
+
+	p + ul,
+	p + ol,
+	p + table,
+	p + dl,
+	p + blockquote {
+		// Inline elements should have 0.5em total top spacing
+		// Use negative margin to account for 1em bottom margin on paragraphs
+		// This will not work for floated elements
+		margin-top: -0.5em;
 	}
 
 	blockquote {
@@ -166,18 +172,12 @@ pre,
 			margin-bottom: 0;
 		}
 	}
-
-	ul,
-	ol {
-		// Override default spacing so that lists entirely rely on adjacent sibling elements for spacing
-		margin-top: 0;
-	}
 }
 
 // T335625 - Move siteSub into common.less to prevent it from being feature-flagged
 // and overriding on-wiki modifications.
 #siteSub {
-	font-size: unit( @font-size-small, rem ); // T311421
+	font-size: @font-size-small; // T311421
 	// By default the sitesub (i.e. tagline) is hidden as it was hidden in Vector legacy but site styles can reveal.
 	display: none;
 }
@@ -185,30 +185,4 @@ pre,
 .vector-body {
 	font-size: var( --font-size-medium );
 	line-height: var( --line-height-medium );
-}
-
-// External links
-// Use of `a` element selector for limiting generic class scope due to `.external` widespread usage.
-.mw-parser-output {
-	a {
-		// Deal with long links (T327334, inspired by Minerva solution T62387)
-		word-wrap: break-word;
-	}
-
-	a.external {
-		// Use copy of Codex/OOUI WikimediaUI theme's 'linkExternal' icon in progressive color.
-		// Note that CSSJanus is flipping the `ltr` in the URL to `rtl`.
-		// Therefore make sure that both icons are available and up-to-date.
-		background-image: url( images/link-external-small-ltr-progressive.svg );
-		background-position: center right;
-		background-repeat: no-repeat;
-		// Equivalent of `12px` at calculation base of `14px` is `0.857em`.
-		background-size: 0.857em;
-		padding-right: 1em;
-
-		// See T330712 for better understanding of this class and any future changes.
-		&.free {
-			word-break: break-all;
-		}
-	}
 }

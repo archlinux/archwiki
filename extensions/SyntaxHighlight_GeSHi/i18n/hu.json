@@ -3,7 +3,8 @@
 		"authors": [
 			"Dani",
 			"Tacsipacsi",
-			"Urbalazs"
+			"Urbalazs",
+			"Bean49"
 		]
 	},
 	"syntaxhighlight-desc": "Lehetőséget nyújt szintaxiskiemelésre a <code>&lt;syntaxhighlight&gt;</code> címkével, a [https://pygments.org/ Pygments – Python kódkiemelő] használatával",
@@ -21,5 +22,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Kódblokk",
 	"syntaxhighlight-error-pygments-invocation-failure": "A Pygments meghívása sikertelen",
 	"syntaxhighlight-error-unknown-language": "Ismeretlen „$1” nyelv",
-	"syntaxhighlight-error-exceeds-size-limit": "A kód mérete $1 bájt, ami meghaladja az engedélyezett maximális $2 bájtot"
+	"syntaxhighlight-error-exceeds-size-limit": "A kód mérete $1 bájt, ami meghaladja az engedélyezett maximális $2 bájtot",
+	"syntaxhighlight-button-copy": "Másolás",
+	"syntaxhighlight-button-copied": "Vágólapra másolva"
 }

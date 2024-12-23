@@ -1,10 +1,13 @@
 <?php
 
+use MediaWiki\Content\JsonContent;
+use MediaWiki\Content\JsonContentHandler;
+
+/**
+ * @covers \MediaWiki\Content\JsonContentHandler
+ */
 class JsonContentHandlerTest extends \MediaWikiUnitTestCase {
 
-	/**
-	 * @covers \JsonContentHandler::makeEmptyContent
-	 */
 	public function testMakeEmptyContent() {
 		$handler = new JsonContentHandler();
 		$content = $handler->makeEmptyContent();

@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Parser;
 
-use BagOStuff;
-use IBufferingStatsdDataFactory;
-use Language;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Language\Language;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Equivset\Equivset;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 
 class RuleCheckerFactory {
 	public const SERVICE_NAME = 'AbuseFilterRuleCheckerFactory';
@@ -72,7 +72,7 @@ class RuleCheckerFactory {
 	 * @param VariableHolder|null $vars
 	 * @return FilterEvaluator
 	 */
-	public function newRuleChecker( VariableHolder $vars = null ): FilterEvaluator {
+	public function newRuleChecker( ?VariableHolder $vars = null ): FilterEvaluator {
 		return new FilterEvaluator(
 			$this->contLang,
 			$this->cache,

@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Api;
 
+use Article;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Session\Session;
 use MediaWiki\User\UserIdentity;
 
@@ -17,6 +19,7 @@ class ApiHookRunner implements
 	Hook\APIAfterExecuteHook,
 	Hook\ApiCheckCanExecuteHook,
 	Hook\ApiDeprecationHelpHook,
+	Hook\ApiLogFeatureUsageHook,
 	Hook\ApiFeedContributions__feedItemHook,
 	Hook\ApiFormatHighlightHook,
 	Hook\APIGetAllowedParamsHook,
@@ -51,6 +54,7 @@ class ApiHookRunner implements
 	\MediaWiki\Output\Hook\LanguageLinksHook,
 	\MediaWiki\Output\Hook\OutputPageBeforeHTMLHook,
 	\MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook,
+	\MediaWiki\Page\Hook\ArticleParserOptionsHook,
 	\MediaWiki\Hook\TempUserCreatedRedirectHook,
 	\MediaWiki\Hook\UserLoginCompleteHook,
 	\MediaWiki\Hook\UserLogoutCompleteHook,
@@ -122,6 +126,13 @@ class ApiHookRunner implements
 		return $this->container->run(
 			'APIHelpModifyOutput',
 			[ $module, &$help, $options, &$tocData ]
+		);
+	}
+
+	public function onApiLogFeatureUsage( $feature, array $clientInfo ): void {
+		$this->container->run(
+			'ApiLogFeatureUsage',
+			[ $feature, $clientInfo ]
 		);
 	}
 
@@ -272,6 +283,13 @@ class ApiHookRunner implements
 		return $this->container->run(
 			'ApiValidatePassword',
 			[ $module, &$r ]
+		);
+	}
+
+	public function onArticleParserOptions( Article $article, ParserOptions $popts ) {
+		return $this->container->run(
+			'ArticleParserOptions',
+			[ $article, $popts ]
 		);
 	}
 

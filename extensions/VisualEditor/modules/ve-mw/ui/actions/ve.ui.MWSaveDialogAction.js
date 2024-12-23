@@ -106,7 +106,7 @@ ve.ui.commandRegistry.register(
 );
 if ( mw.libs.ve.isWikitextAvailable ) {
 	// Ensure wikitextCommandRegistry has finished loading
-	mw.loader.using( 'ext.visualEditor.mwwikitext' ).then( function () {
+	mw.loader.using( 'ext.visualEditor.mwwikitext' ).then( () => {
 		ve.ui.wikitextCommandRegistry.register(
 			new ve.ui.MWSaveCommand(
 				'showPreview', 'mwSaveDialog', 'preview'
@@ -130,7 +130,7 @@ ve.ui.commandRegistry.register(
 /* Triggers & command help */
 
 ( function () {
-	var accessKeyPrefix = $.fn.updateTooltipAccessKeys.getAccessKeyPrefix().replace( /-/g, '+' ),
+	const accessKeyPrefix = $.fn.updateTooltipAccessKeys.getAccessKeyPrefix().replace( /-/g, '+' ),
 		shortcuts = [
 			{
 				command: 'showSave',
@@ -161,14 +161,14 @@ ve.ui.commandRegistry.register(
 			}
 		];
 
-	shortcuts.forEach( function ( shortcut ) {
+	shortcuts.forEach( ( shortcut ) => {
 		// The following messages can be used here:
 		// * accesskey-save
 		// * accesskey-diff
 		// * accesskey-preview
 		// * accesskey-minoredit
 		// * accesskey-watch
-		var accessKey = ve.msg( shortcut.accessKey );
+		const accessKey = ve.msg( shortcut.accessKey );
 		if ( accessKey !== '-' && accessKey !== '' ) {
 			try {
 				ve.ui.triggerRegistry.register(

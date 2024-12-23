@@ -20,6 +20,10 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use ChangeTags;
+use File;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\DeletePage;
 use MediaWiki\Page\DeletePageFactory;
@@ -28,7 +32,10 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
+use RepoGroup;
+use StatusValue;
 use Wikimedia\ParamValidator\ParamValidator;
+use WikiPage;
 
 /**
  * API module that facilitates deleting pages. The API equivalent of action=delete.
@@ -43,17 +50,9 @@ class ApiDelete extends ApiBase {
 	private RepoGroup $repoGroup;
 	private DeletePageFactory $deletePageFactory;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param RepoGroup $repoGroup
-	 * @param WatchlistManager $watchlistManager
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param DeletePageFactory $deletePageFactory
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		RepoGroup $repoGroup,
 		WatchlistManager $watchlistManager,
 		UserOptionsLookup $userOptionsLookup,
@@ -178,8 +177,8 @@ class ApiDelete extends ApiBase {
 		if ( $deleteTalk ) {
 			$checkStatus = $deletePage->canProbablyDeleteAssociatedTalk();
 			if ( !$checkStatus->isGood() ) {
-				foreach ( $checkStatus->getErrors() as $error ) {
-					$this->addWarning( $error );
+				foreach ( $checkStatus->getMessages() as $msg ) {
+					$this->addWarning( $msg );
 				}
 			} else {
 				$deletePage->setDeleteAssociatedTalk( true );
@@ -248,15 +247,12 @@ class ApiDelete extends ApiBase {
 			}
 		}
 
-		if ( $reason === null ) { // Log and RC don't like null reasons
-			$reason = '';
-		}
-
 		return FileDeleteForm::doDelete(
 			$title,
 			$file,
 			$oldimage,
-			$reason,
+			// Log and RC don't like null reasons
+			$reason ?? '',
 			$suppress,
 			$this->getUser(),
 			$tags,
@@ -323,3 +319,6 @@ class ApiDelete extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Delete';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiDelete::class, 'ApiDelete' );

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Victor Vasiliev",
-			"Base"
+			"Base",
+			"Msz2001"
 		]
 	},
 	"content-model-scribunto": "Scribunto module",
@@ -65,5 +66,7 @@
 	"scribunto-limitreport-profile-percent": "$1%",
 	"scribunto-limitreport-logs": "Lua logs",
 	"nstab-module": "Module",
-	"tooltip-ca-nstab-module": "View the module page"
+	"tooltip-ca-nstab-module": "View the module page",
+	"namespaceinfo-description-ns828": "Namespace for Lua code modules, which can be invoked from wiki pages, and their documentation pages",
+	"namespaceinfo-description-ns829": "Talk pages for the modules and documentation"
 }

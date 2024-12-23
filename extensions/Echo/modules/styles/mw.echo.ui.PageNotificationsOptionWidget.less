@@ -11,7 +11,7 @@
 		transition: background-color 100ms, color 100ms;
 
 		&-highlighted {
-			background-color: #eaecf0;
+			background-color: @background-color-neutral;
 			color: @color-emphasized;
 		}
 
@@ -27,13 +27,8 @@
 		}
 	}
 
-	&-table {
-		display: table;
-		width: 100%;
-	}
-
 	&-row {
-		display: table-row;
+		display: flex;
 	}
 
 	&-cell {
@@ -42,7 +37,7 @@
 	}
 
 	&.oo-ui-iconElement &-icon {
-		width: 1em;
+		min-width: 1em;
 
 		.oo-ui-iconElement-icon {
 			position: relative;
@@ -50,25 +45,26 @@
 	}
 
 	&-title {
-		padding: 0;
-		width: 100%;
+		align-items: center;
+		display: flex;
+		flex: 1;
 		line-height: 1em;
+		min-width: 0;
+		padding: 0;
 
 		&-label {
-			display: inline-block;
-			// Sidebar width - icon width - twice padding - counter average width
-			max-width: calc( @specialpage-sidebar-width - 1.865em - 2 * @specialpage-separation-unit - 2em );
+			display: block;
 			// Truncate text with ellipsis.
 			.text-overflow( @visible: false );
 		}
 	}
 
 	&-count {
-		width: 1em;
+		min-width: 1em;
 	}
 
 	&-label-count {
-		background-color: #eaecf0;
+		background-color: @background-color-neutral;
 		color: @color-subtle;
 		padding: 0.2em 0.5em;
 		margin-left: 0.5em;

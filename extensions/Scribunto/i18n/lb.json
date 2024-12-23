@@ -38,5 +38,7 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Lua-Logbicher",
 	"nstab-module": "Modul",
-	"tooltip-ca-nstab-module": "D'Modulsäit weisen"
+	"tooltip-ca-nstab-module": "D'Modulsäit weisen",
+	"namespaceinfo-description-ns828": "Nummraum fir Lua-Code-Moduler, déi vu Wikisäiten aus opgeruff kënne ginn, an hir Dokumentatiounssäiten",
+	"namespaceinfo-description-ns829": "Diskussiounssäite fir d'Moduler an d'Dokumentatioun"
 }

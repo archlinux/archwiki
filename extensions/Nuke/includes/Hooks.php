@@ -31,4 +31,14 @@ class Hooks implements ContributionsToolLinksHook {
 			);
 		}
 	}
+
+	/**
+	 * Registers Nuke tag for deletion logs
+	 *
+	 * @param string[] &$tags
+	 */
+	public static function onRegisterTags( array &$tags ): bool {
+		$tags[] = 'Nuke';
+		return true;
+	}
 }

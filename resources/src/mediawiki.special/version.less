@@ -1,0 +1,70 @@
+/*!
+ * Styling for Special:Version
+ */
+.mw-version-ext-name,
+.mw-version-library-name {
+	font-weight: bold;
+}
+
+.mw-version-ext-vcs-timestamp {
+	display: block;
+}
+
+.mw-body-content thead {
+	font-size: 0.9em;
+}
+
+.mw-version-credits {
+	column-width: 18em;
+	-moz-column-width: 18em;
+	-webkit-column-width: 18em;
+}
+
+.mw-version-credits ul {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.mw-version-license-info strong {
+	font-weight: normal;
+}
+
+.mw-version-license-info em {
+	font-style: normal;
+}
+
+.mw-installed-software {
+	width: 100%;
+	table-layout: fixed;
+	word-break: break-word;
+
+	td,
+	th {
+		vertical-align: top;
+	}
+
+	th:nth-child( 1 ) {
+		/* Name */
+		width: 13em;
+	}
+
+	th:nth-child( 2 ) {
+		/* Version */
+		width: 13em;
+	}
+
+	th:nth-child( 3 ) {
+		/* License */
+		width: 6em;
+	}
+
+	th:nth-child( 4 ) {
+		/* Description */
+		width: 50%;
+	}
+
+	th:nth-child( 5 ) {
+		/* Authors */
+		width: 50%;
+	}
+}

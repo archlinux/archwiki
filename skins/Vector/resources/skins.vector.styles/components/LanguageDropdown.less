@@ -18,14 +18,10 @@
 		// Set opacity to `1` on language button (it applies to more menu because of label color).
 		opacity: @opacity-base;
 
-		.vector-dropdown-label-text {
-			// Special treatment for language button, based on Vector font-size
-			font-size: @font-size-base;
-		}
-
 		// T291286: Temporarily use progressive ULS style
 		&.cdx-button--action-progressive.cdx-button--weight-quiet::after {
-			background-image: url( ./images/arrow-down-progressive.svg );
+			mask-image: url( ./images/arrow-down-progressive.svg );
+			background-color: @color-progressive;
 			opacity: @opacity-base;
 		}
 	}
@@ -70,7 +66,7 @@
 
 		.mw-portlet-empty-language-selector-body {
 			padding: 20px;
-			border-bottom: @border-style-base @border-width-base @border-color-portal-heading;
+			border-bottom: @border-style-base @border-width-base @border-color-subtle;
 			color: @color-subtle;
 		}
 	}

@@ -12,6 +12,7 @@
 	"pfunc_time_too_long": "Xəta: Həddindən artıq #time çağırışı.",
 	"pfunc_time_too_big": "Xəta: #time yalnız 9999-a qədər olan illəri dəstəkləyir.",
 	"pfunc_time_too_small": "Xəta: #time yalnız 0-dan etibarən olan illəri dəstəkləyir.",
+	"pfunc_timef_bad_format": "Xəta: #timef üçün yanlış format",
 	"pfunc_expr_stack_exhausted": "İfadə xətası: Stek doludur.",
 	"pfunc_expr_unexpected_number": "İfadə xətası: gözlənilməz ədəd",
 	"pfunc_expr_preg_match_failure": "İfadə xətası: Gözlənilməz preg_match nasazlığı",

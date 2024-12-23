@@ -58,6 +58,7 @@
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|सेकेण्ड}}",
 	"discussiontools-newtopic-missing-title": "कृपया तपाईंको छलफल विषय को लागी एक शीर्षक लेख्नुहोस्। यदि तपाईंले \"{{int:discussiontools-replywidget-newtopic}}\"मा क्लिक गर्नुभयो भने, तपाईंको शीर्षक बिना शीर्षक थपिनेछ।",
 	"discussiontools-newtopic-placeholder-title": "विषय",
+	"discussiontools-notification-comment-thank-header-compact": "$1ले {{GENDER:$3|तपाई}}लाई {{GENDER:$2|धन्यवाद}} दिनुभयो।",
 	"discussiontools-notification-removed-topic-body": "तपाईंले अब {{PLURAL:$1|यी विषय|यी विषयहरू}}को बारेमा सूचनाहरू प्राप्त नगर्न सक्नुहुन्छ",
 	"discussiontools-notification-removed-topic-header": "विषय \"<strong>$4</strong>\" $3 बाट अभिलेख गरियो वा हटाइयो।",
 	"discussiontools-notification-removed-topic-header-bundled": "$2बाट {{PLURAL:$1|एक विषय|$1 विषयहरू|100=९९+ विषयहरू}} अभिलेख गरियो वा हटाइयो।",

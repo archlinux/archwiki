@@ -14,12 +14,9 @@ class Hooks implements ResourceLoaderGetConfigVarsHook {
 	 * @param Config $config
 	 */
 	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
-		global $wgReCaptchaSiteKey;
-		global $wgCaptchaClass;
-
-		if ( $wgCaptchaClass === ReCaptchaNoCaptcha::class ) {
+		if ( $config->get( 'CaptchaClass' ) === ReCaptchaNoCaptcha::class ) {
 			$vars['wgConfirmEditConfig'] = [
-				'reCaptchaSiteKey' => $wgReCaptchaSiteKey,
+				'reCaptchaSiteKey' => $config->get( 'ReCaptchaSiteKey' ),
 				'reCaptchaScriptURL' => 'https://www.recaptcha.net/recaptcha/api.js'
 			];
 		}

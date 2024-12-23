@@ -18,7 +18,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"ExtensionMessagesFiles": {
 		"InterwikiAlias": "Interwiki.alias.php"
@@ -49,7 +49,7 @@
 	},
 	"ResourceModules": {
 		"ext.interwiki.specialpage": {
-			"styles": "interwiki.css"
+			"styles": "interwiki.less"
 		}
 	},
 	"ResourceFileModulePaths": {

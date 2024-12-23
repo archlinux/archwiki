@@ -34,11 +34,10 @@ ve.dm.MWAnnotationNode.static.preserveHtmlAttributes = true;
  * @inheritdoc
  */
 ve.dm.MWAnnotationNode.static.toDataElement = function ( domElements ) {
-	var dataElement,
-		mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+	const mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		type = domElements[ 0 ].getAttribute( 'typeof' );
 
-	dataElement = {
+	const dataElement = {
 		type: 'mwAnnotation',
 		attributes: {
 			type: type
@@ -53,9 +52,7 @@ ve.dm.MWAnnotationNode.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.MWAnnotationNode.static.toDomElements = function ( dataElement, doc ) {
-	var el;
-
-	el = doc.createElement( 'meta' );
+	const el = doc.createElement( 'meta' );
 	el.setAttribute( 'typeof', dataElement.attributes.type );
 	if ( dataElement.attributes.mw ) {
 		el.setAttribute( 'data-mw', JSON.stringify( dataElement.attributes.mw ) );

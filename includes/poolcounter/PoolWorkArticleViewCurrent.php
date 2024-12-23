@@ -22,15 +22,17 @@ namespace MediaWiki\PoolCounter;
 
 use InvalidArgumentException;
 use MediaWiki\Logger\Spi as LoggerSpi;
+use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserCache;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Status\Status;
 use MediaWiki\Utils\MWTimestamp;
-use ParserCache;
-use ParserOptions;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ILBFactory;
 
@@ -104,7 +106,21 @@ class PoolWorkArticleViewCurrent extends PoolWorkArticleView {
 	 * @return Status
 	 */
 	public function doWork() {
-		$status = $this->renderRevision();
+		// T371713: Temporary statistics collection code to determine
+		// feasibility of Parsoid selective update
+		$sampleRate = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::ParsoidSelectiveUpdateSampleRate
+		);
+		$doSample = ( $sampleRate && mt_rand( 1, $sampleRate ) === 1 );
+
+		$previousOutput = null;
+		if ( $this->parserOptions->getUseParsoid() || $doSample ) {
+			// Parsoid can do selective updates, so it is worth checking the
+			// cache for an existing entry.  Not worth it for the legacy
+			// parser, though.
+			$previousOutput = $this->parserCache->getDirty( $this->page, $this->parserOptions ) ?: null;
+		}
+		$status = $this->renderRevision( $previousOutput, $doSample, 'PoolWorkArticleViewCurrent' );
 		/** @var ParserOutput|null $output */
 		$output = $status->getValue();
 
@@ -190,5 +206,5 @@ class PoolWorkArticleViewCurrent extends PoolWorkArticleView {
 
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( PoolWorkArticleViewCurrent::class, 'PoolWorkArticleViewCurrent' );

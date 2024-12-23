@@ -13,18 +13,28 @@ class Flags {
 	/** @var bool */
 	private $hidden;
 	/** @var bool */
+	private $protected;
+	/** @var int */
+	private $privacyLevel;
+	/** @var bool */
 	private $global;
+
+	public const FILTER_PUBLIC = 0b00;
+	public const FILTER_HIDDEN = 0b01;
+	public const FILTER_USES_PROTECTED_VARS = 0b10;
 
 	/**
 	 * @param bool $enabled
 	 * @param bool $deleted
-	 * @param bool $hidden
+	 * @param int $privacyLevel
 	 * @param bool $global
 	 */
-	public function __construct( bool $enabled, bool $deleted, bool $hidden, bool $global ) {
+	public function __construct( bool $enabled, bool $deleted, int $privacyLevel, bool $global ) {
 		$this->enabled = $enabled;
 		$this->deleted = $deleted;
-		$this->hidden = $hidden;
+		$this->hidden = (bool)( self::FILTER_HIDDEN & $privacyLevel );
+		$this->protected = (bool)( self::FILTER_USES_PROTECTED_VARS & $privacyLevel );
+		$this->privacyLevel = $privacyLevel;
 		$this->global = $global;
 	}
 
@@ -68,6 +78,35 @@ class Flags {
 	 */
 	public function setHidden( bool $hidden ): void {
 		$this->hidden = $hidden;
+		$this->updatePrivacyLevel();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getProtected(): bool {
+		return $this->protected;
+	}
+
+	/**
+	 * @param bool $protected
+	 */
+	public function setProtected( bool $protected ): void {
+		$this->protected = $protected;
+		$this->updatePrivacyLevel();
+	}
+
+	private function updatePrivacyLevel() {
+		$hidden = $this->hidden ? self::FILTER_HIDDEN : 0;
+		$protected = $this->protected ? self::FILTER_USES_PROTECTED_VARS : 0;
+		$this->privacyLevel = $hidden | $protected;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getPrivacyLevel(): int {
+		return $this->privacyLevel;
 	}
 
 	/**

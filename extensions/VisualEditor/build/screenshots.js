@@ -33,15 +33,15 @@ function createScreenshotEnvironment( test ) {
 		driver.manage().window().setSize( 1200, 1000 );
 
 		driver.get( 'https://en.wikipedia.org/wiki/Help:Sample_page?veaction=edit&vehidebetadialog=1&uselang=' + lang )
-			.then( null, function ( e ) {
+			.then( null, ( e ) => {
 				console.error( e.message );
 			} );
 		driver.wait(
 			driver.executeAsyncScript(
 				require( './screenshots-client/utils.js' )
-			).then( function ( cs ) {
+			).then( ( cs ) => {
 				clientSize = cs;
-			}, function ( e ) {
+			}, ( e ) => {
 				// Log error (timeout)
 				console.error( e.message );
 				// Setup failed, set clientSize to null so no screenshots are generated
@@ -50,9 +50,9 @@ function createScreenshotEnvironment( test ) {
 		);
 	} );
 
-	test.afterEach( function () {
+	test.afterEach( () => {
 		driver.quit()
-			.then( null, function ( e ) {
+			.then( null, ( e ) => {
 				console.error( e.message );
 			} );
 	} );
@@ -67,7 +67,7 @@ function createScreenshotEnvironment( test ) {
 		const right = Math.min( clientSize.width, rect.left + rect.width + padding );
 		const bottom = Math.min( clientSize.height, rect.top + rect.height + padding );
 
-		return Jimp.read( imageBuffer ).then( function ( jimpImage ) {
+		return Jimp.read( imageBuffer ).then( ( jimpImage ) => {
 			try {
 				jimpImage
 					.crop( left, top, right - left, bottom - top )
@@ -89,20 +89,18 @@ function createScreenshotEnvironment( test ) {
 
 		driver.manage().timeouts().setScriptTimeout( TIMEOUT );
 		driver.wait(
-			driver.executeAsyncScript( clientScript ).then( function ( rect ) {
-				return driver.takeScreenshot().then( function ( base64Image ) {
-					if ( rect ) {
-						const imageBuffer = Buffer.from( base64Image, 'base64' );
-						return cropScreenshot( filename, imageBuffer, rect, padding );
-					} else {
-						fs.writeFile( filename, base64Image, 'base64' );
-					}
-				} ).then( function () {
-					if ( teardownScript ) {
-						return driver.executeAsyncScript( teardownScript );
-					}
-				} );
-			}, function ( e ) {
+			driver.executeAsyncScript( clientScript ).then( ( rect ) => driver.takeScreenshot().then( ( base64Image ) => {
+				if ( rect ) {
+					const imageBuffer = Buffer.from( base64Image, 'base64' );
+					return cropScreenshot( filename, imageBuffer, rect, padding );
+				} else {
+					fs.writeFile( filename, base64Image, 'base64' );
+				}
+			} ).then( () => {
+				if ( teardownScript ) {
+					return driver.executeAsyncScript( teardownScript );
+				}
+			} ), ( e ) => {
 				// Log error (timeout)
 				console.error( e );
 			} )

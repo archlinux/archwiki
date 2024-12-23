@@ -17,24 +17,15 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
-use Message;
+use MediaWiki\Message\Message;
 
 /**
  * Model for a simple menu entries with label and icon
  */
 class SingleMenuEntry implements IMenuEntry {
-	/**
-	 * @var string
-	 */
-	private $name;
-	/**
-	 * @var array
-	 */
-	private $attributes;
-	/**
-	 * @var bool
-	 */
-	private $isJSOnly;
+	private string $name;
+	private array $attributes;
+	private bool $isJSOnly = false;
 
 	/**
 	 * Create a simple menu element with one component
@@ -47,7 +38,7 @@ class SingleMenuEntry implements IMenuEntry {
 	 * and is treated as a standard part of the interface (ie. MediaWiki Core might bind to
 	 * the menu element)
 	 */
-	public function __construct( $name, $text, $url, $className = '', bool $isInterface = true ) {
+	public function __construct( string $name, string $text, string $url, $className = '', bool $isInterface = true ) {
 		$this->name = $name;
 		$menuClass = 'menu__item--' . $name;
 
@@ -80,7 +71,7 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @param string $icon
 	 * @return $this
 	 */
-	public function overrideIcon( $icon ) {
+	public function overrideIcon( string $icon ): self {
 		$this->setIcon( $icon );
 		return $this;
 	}
@@ -91,7 +82,7 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @param string $text
 	 * @return $this
 	 */
-	public function overrideText( $text ) {
+	public function overrideText( string $text ): self {
 		$this->attributes['text'] = $text;
 		return $this;
 	}
@@ -122,7 +113,7 @@ class SingleMenuEntry implements IMenuEntry {
 	/**
 	 * @inheritDoc
 	 */
-	public function getName() {
+	public function getName(): string {
 		return $this->name;
 	}
 
@@ -164,7 +155,7 @@ class SingleMenuEntry implements IMenuEntry {
 	 * pass the tracking code as string
 	 * @return $this
 	 */
-	public function trackClicks( $eventName ) {
+	public function trackClicks( $eventName ): self {
 		$this->attributes['data-event-name'] = 'menu.' . $eventName;
 		return $this;
 	}
@@ -174,7 +165,7 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @param string|null $iconName
 	 * @return $this
 	 */
-	public function setIcon( $iconName ) {
+	public function setIcon( $iconName ): self {
 		if ( $iconName !== null ) {
 			$this->attributes['data-icon']['icon'] = $iconName;
 		} else {

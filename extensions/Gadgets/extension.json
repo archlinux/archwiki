@@ -2,13 +2,15 @@
 	"name": "Gadgets",
 	"author": [
 		"Daniel Kinzler",
-		"Max Semenik"
+		"Max Semenik",
+		"Timo Tijhof",
+		"Siddharth VP"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Gadgets",
 	"descriptionmsg": "gadgets-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"type": "other",
 	"ContentHandlers": {
@@ -23,7 +25,9 @@
 		"Gadgets": {
 			"class": "MediaWiki\\Extension\\Gadgets\\Special\\SpecialGadgets",
 			"services": [
-				"GadgetsRepo"
+				"ContentLanguage",
+				"GadgetsRepo",
+				"SkinFactory"
 			]
 		},
 		"GadgetUsage": {
@@ -84,7 +88,6 @@
 		"BeforePageDisplay": "GadgetHooks",
 		"CodeEditorGetPageLanguage": "GadgetCodeEditorHooks",
 		"ContentHandlerDefaultModelFor": "GadgetHooks",
-		"EditFilterMergedContent": "GadgetHooks",
 		"UserGetDefaultOptions": "GadgetHooks",
 		"GetPreferences": "GadgetHooks",
 		"PreferencesGetLegend": "GadgetHooks",

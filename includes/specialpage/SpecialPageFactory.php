@@ -24,12 +24,12 @@
 
 namespace MediaWiki\SpecialPage;
 
-use Language;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReference;
@@ -42,12 +42,14 @@ use MediaWiki\Specials\Redirects\SpecialMylog;
 use MediaWiki\Specials\Redirects\SpecialMypage;
 use MediaWiki\Specials\Redirects\SpecialMytalk;
 use MediaWiki\Specials\Redirects\SpecialMyuploads;
+use MediaWiki\Specials\Redirects\SpecialTalkPage;
 use MediaWiki\Specials\SpecialActiveUsers;
 use MediaWiki\Specials\SpecialAllMessages;
 use MediaWiki\Specials\SpecialAllPages;
 use MediaWiki\Specials\SpecialAncientPages;
 use MediaWiki\Specials\SpecialApiHelp;
 use MediaWiki\Specials\SpecialApiSandbox;
+use MediaWiki\Specials\SpecialAuthenticationPopupSuccess;
 use MediaWiki\Specials\SpecialAutoblockList;
 use MediaWiki\Specials\SpecialBlankpage;
 use MediaWiki\Specials\SpecialBlock;
@@ -109,6 +111,7 @@ use MediaWiki\Specials\SpecialMostRevisions;
 use MediaWiki\Specials\SpecialMovePage;
 use MediaWiki\Specials\SpecialMute;
 use MediaWiki\Specials\SpecialMyLanguage;
+use MediaWiki\Specials\SpecialNamespaceInfo;
 use MediaWiki\Specials\SpecialNewFiles;
 use MediaWiki\Specials\SpecialNewPages;
 use MediaWiki\Specials\SpecialNewSection;
@@ -136,6 +139,7 @@ use MediaWiki\Specials\SpecialRedirect;
 use MediaWiki\Specials\SpecialRemoveCredentials;
 use MediaWiki\Specials\SpecialRenameUser;
 use MediaWiki\Specials\SpecialResetTokens;
+use MediaWiki\Specials\SpecialRestSandbox;
 use MediaWiki\Specials\SpecialRevisionDelete;
 use MediaWiki\Specials\SpecialRunJobs;
 use MediaWiki\Specials\SpecialSearch;
@@ -283,7 +287,6 @@ class SpecialPageFactory {
 				'LinkBatchFactory',
 				'ConnectionProvider',
 				'CommentStore',
-				'UserCache',
 				'RowCommentFormatter',
 				'RestrictionStore',
 			]
@@ -456,6 +459,9 @@ class SpecialPageFactory {
 		],
 		'Userlogout' => [
 			'class' => SpecialUserLogout::class,
+			'services' => [
+				'TempUserConfig',
+			],
 		],
 		'CreateAccount' => [
 			'class' => SpecialCreateAccount::class,
@@ -486,6 +492,12 @@ class SpecialPageFactory {
 			'class' => SpecialRemoveCredentials::class,
 			'services' => [
 				'AuthManager',
+			]
+		],
+		'AuthenticationPopupSuccess' => [
+			'class' => SpecialAuthenticationPopupSuccess::class,
+			'services' => [
+				'SkinFactory',
 			]
 		],
 
@@ -576,14 +588,17 @@ class SpecialPageFactory {
 			'services' => [
 				'PermissionManager',
 				'ConnectionProvider',
-				'RevisionFactory',
+				'RevisionStore',
 				'NamespaceInfo',
-				'UserFactory',
 				'UserNameUtils',
 				'UserNamePrefixSearch',
+				'UserOptionsLookup',
 				'CommentFormatter',
 				'LinkBatchFactory',
+				'UserFactory',
+				'UserIdentityLookup',
 				'DatabaseBlockStore',
+				'TempUserConfig',
 			]
 		],
 		'Preferences' => [
@@ -611,6 +626,7 @@ class SpecialPageFactory {
 				'UserFactory',
 				'UserIdentityLookup',
 				'DatabaseBlockStore',
+				'TempUserConfig',
 			]
 		],
 		'Listgrouprights' => [
@@ -653,6 +669,7 @@ class SpecialPageFactory {
 				'UserFactory',
 				'ActorStoreFactory',
 				'WatchlistManager',
+				'TempUserConfig',
 			]
 		],
 		'EditWatchlist' => [
@@ -692,6 +709,7 @@ class SpecialPageFactory {
 				'ActorNormalization',
 				'UserIdentityLookup',
 				'UserNameUtils',
+				'LogFormatterFactory',
 			]
 		],
 		'Watchlist' => [
@@ -716,6 +734,7 @@ class SpecialPageFactory {
 				'UserOptionsLookup',
 				'RowCommentFormatter',
 				'ChangeTagsStore',
+				'TempUserConfig',
 			]
 		],
 		'Recentchanges' => [
@@ -757,8 +776,8 @@ class SpecialPageFactory {
 				'CommentStore',
 				'UserNameUtils',
 				'UserNamePrefixSearch',
-				'UserCache',
 				'CommentFormatter',
+				'LinkBatchFactory',
 			]
 		],
 		'Filepath' => [
@@ -821,6 +840,12 @@ class SpecialPageFactory {
 		'ApiSandbox' => [
 			'class' => SpecialApiSandbox::class,
 		],
+		'RestSandbox' => [
+			'class' => SpecialRestSandbox::class,
+			'services' => [
+				'UrlUtils',
+			]
+		],
 		'Statistics' => [
 			'class' => SpecialStatistics::class,
 			'services' => [
@@ -849,6 +874,12 @@ class SpecialPageFactory {
 		],
 		'Unlockdb' => [
 			'class' => SpecialUnlockdb::class,
+		],
+		'NamespaceInfo' => [
+			'class' => SpecialNamespaceInfo::class,
+			'services' => [
+				'NamespaceInfo',
+			],
 		],
 
 		// Redirecting special pages
@@ -970,7 +1001,6 @@ class SpecialPageFactory {
 		'Import' => [
 			'class' => SpecialImport::class,
 			'services' => [
-				'PermissionManager',
 				'WikiImporterFactory',
 			]
 		],
@@ -1104,10 +1134,14 @@ class SpecialPageFactory {
 				'WatchlistManager',
 				'RestrictionStore',
 				'TitleFactory',
+				'DeletePageFactory',
 			]
 		],
 		'Mycontributions' => [
 			'class' => SpecialMycontributions::class,
+			'services' => [
+				'TempUserConfig',
+			],
 		],
 		'MyLanguage' => [
 			'class' => SpecialMyLanguage::class,
@@ -1118,12 +1152,21 @@ class SpecialPageFactory {
 		],
 		'Mylog' => [
 			'class' => SpecialMylog::class,
+			'services' => [
+				'TempUserConfig',
+			],
 		],
 		'Mypage' => [
 			'class' => SpecialMypage::class,
+			'services' => [
+				'TempUserConfig',
+			],
 		],
 		'Mytalk' => [
 			'class' => SpecialMytalk::class,
+			'services' => [
+				'TempUserConfig',
+			],
 		],
 		'PageHistory' => [
 			'class' => SpecialPageHistory::class,
@@ -1151,6 +1194,9 @@ class SpecialPageFactory {
 		],
 		'Myuploads' => [
 			'class' => SpecialMyuploads::class,
+			'services' => [
+				'TempUserConfig',
+			],
 		],
 		'AllMyUploads' => [
 			'class' => SpecialAllMyUploads::class,
@@ -1175,7 +1221,6 @@ class SpecialPageFactory {
 			'class' => SpecialRenameUser::class,
 			'services' => [
 				'ConnectionProvider',
-				'ContentLanguage',
 				'MovePageFactory',
 				'PermissionManager',
 				'TitleFactory',
@@ -1206,6 +1251,13 @@ class SpecialPageFactory {
 		],
 		'Contribute' => [
 			'class' => SpecialContribute::class,
+		],
+		'TalkPage' => [
+			'class' => SpecialTalkPage::class,
+			'services' => [
+				'MainConfig',
+				'TitleParser',
+			],
 		],
 	];
 
@@ -1376,6 +1428,9 @@ class SpecialPageFactory {
 			if ( $this->options->get( MainConfigNames::EnableEditRecovery ) ) {
 				$this->list['EditRecovery'] = [
 					'class' => SpecialEditRecovery::class,
+					'services' => [
+						'UserOptionsLookup',
+					],
 				];
 			}
 
@@ -1600,7 +1655,7 @@ class SpecialPageFactory {
 	 * @return bool|Title
 	 */
 	public function executePath( $path, IContextSource $context, $including = false,
-		LinkRenderer $linkRenderer = null
+		?LinkRenderer $linkRenderer = null
 	) {
 		if ( $path instanceof PageReference ) {
 			$path = $path->getDBkey();
@@ -1687,9 +1742,9 @@ class SpecialPageFactory {
 	 * @return bool|Title
 	 */
 	public function capturePath(
-		PageReference $page, IContextSource $context, LinkRenderer $linkRenderer = null
+		PageReference $page, IContextSource $context, ?LinkRenderer $linkRenderer = null
 	) {
-		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgUser
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgUser,MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 		global $wgTitle, $wgOut, $wgRequest, $wgUser, $wgLang;
 		$main = RequestContext::getMain();
 

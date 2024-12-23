@@ -1,0 +1,26 @@
+@import 'mediawiki.skin.variables.less';
+@import '../mmv/mmv.variables.less';
+@import '../mmv/mmv.mixins.less';
+
+.mw-mmv-download-dialog {
+	// resetting height (to overwrite .mw-mmv-dialog's bigger height), since the
+	// height may have to change for warnings being added
+	height: initial;
+	// positioned relative to the download button
+	position: fixed;
+	@bottom-offset: @metadatabar-above-fold-height + @buttons-offset-edge + @buttons-offset-each;
+	bottom: @bottom-offset - 5px;
+
+	.mw-mmv-dialog-down-arrow {
+		bottom: @bottom-offset + ( @buttons-size / 2 )  - ( @arrow-size / 2 );
+		background-color: @background-color-base;
+	}
+
+	.mw-mmv-dialog-warning {
+		padding: 10px 30px;
+	}
+
+	.cdx-button__icon--download {
+		.cdx-mixin-css-icon( @cdx-icon-download, @param-is-button-icon: true );
+	}
+}

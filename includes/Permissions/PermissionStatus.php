@@ -93,6 +93,7 @@ class PermissionStatus extends StatusValue {
 	/**
 	 * Returns this permission status in legacy error array format.
 	 *
+	 * @deprecated since 1.43
 	 * @see PermissionManager::getPermissionErrors()
 	 *
 	 * @return array[]
@@ -135,7 +136,7 @@ class PermissionStatus extends StatusValue {
 	/**
 	 * Returns the name of the permission that was being checked.
 	 *
-	 * @return string|null The permission, of known
+	 * @return string|null The permission, if known
 	 * @since 1.41
 	 */
 	public function getPermission(): ?string {

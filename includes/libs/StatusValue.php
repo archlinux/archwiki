@@ -18,7 +18,9 @@
  * @file
  */
 
-use MediaWiki\Message\Converter;
+use Wikimedia\Assert\Assert;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Message\MessageValue;
 
 /**
@@ -33,18 +35,21 @@ use Wikimedia\Message\MessageValue;
  * informed as to what went wrong. Calling the fatal() function sets an error
  * message and simultaneously switches off the OK flag.
  *
- * The recommended pattern for Status objects is to return a StatusValue
- * unconditionally, i.e. both on success and on failure -- so that the
- * developer of the calling code is reminded that the function can fail, and
- * so that a lack of error-handling will be explicit.
+ * The recommended pattern for functions returning StatusValue objects is
+ * to return a StatusValue unconditionally, both on success and on failure
+ * (similarly to Option, Maybe, Promise etc. objects in other languages) --
+ * so that the developer of the calling code is reminded that the function
+ * can fail, and so that a lack of error-handling will be explicit.
  *
- * The use of Message objects should be avoided when serializability is needed.
+ * This class accepts any MessageSpecifier objects. The use of Message objects
+ * should be avoided when serializability is needed. Use MessageValue in that
+ * case instead.
  *
  * @newable
  * @stable to extend
  * @since 1.25
  */
-class StatusValue {
+class StatusValue implements Stringable {
 
 	/**
 	 * @var bool
@@ -159,6 +164,7 @@ class StatusValue {
 	 *
 	 * Each error is a (message:string or MessageSpecifier,params:array) map
 	 *
+	 * @deprecated since 1.43 Use `->getMessages()` instead
 	 * @return array[]
 	 * @phan-return array{type:'warning'|'error', message:string|MessageSpecifier, params:array}[]
 	 */
@@ -208,47 +214,47 @@ class StatusValue {
 	 * @return $this
 	 */
 	private function addError( array $newError ) {
-		if ( $newError[ 'message' ] instanceof MessageSpecifier ) {
-			$isEqual = static function ( $key, $params ) use ( $newError ) {
-				if ( $key instanceof MessageSpecifier ) {
-					// compare attributes of both MessageSpecifiers
-					return $newError['message'] == $key;
-				} else {
-					return $newError['message']->getKey() === $key &&
-						$newError['message']->getParams() === $params;
-				}
-			};
-		} else {
-			$isEqual = static function ( $key, $params ) use ( $newError ) {
-				if ( $key instanceof MessageSpecifier ) {
-					$params = $key->getParams();
-					$key = $key->getKey();
-				}
-				return $newError['message'] === $key && $newError['params'] === $params;
-			};
+		[ 'type' => $newType, 'message' => $newKey, 'params' => $newParams ] = $newError;
+		if ( $newKey instanceof MessageSpecifier ) {
+			if ( $newParams ) {
+				// Deprecate code like `Status::newFatal( wfMessage( 'foo' ), 'param' )`
+				// - the parameters have always been ignored, so this is usually a mistake.
+				wfDeprecatedMsg( 'Combining MessageSpecifier and parameters array' .
+					' was deprecated in MediaWiki 1.43', '1.43' );
+			}
+			$newParams = $newKey->getParams();
+			$newKey = $newKey->getKey();
 		}
+
 		foreach ( $this->errors as [ 'type' => &$type, 'message' => $key, 'params' => $params ] ) {
-			if ( $isEqual( $key, $params ) ) {
-				if ( $type === 'warning' && $newError['type'] === 'error' ) {
+			if ( $key instanceof MessageSpecifier ) {
+				$params = $key->getParams();
+				$key = $key->getKey();
+			}
+
+			// This uses loose equality as we must support equality between MessageParam objects
+			// (e.g. ScalarParam), including when they are created separate and not by-ref equal.
+			if ( $newKey === $key && $newParams == $params ) {
+				if ( $type === 'warning' && $newType === 'error' ) {
 					$type = 'error';
 				}
 				return $this;
 			}
 		}
+
 		$this->errors[] = $newError;
+
 		return $this;
 	}
 
 	/**
 	 * Add a new warning
 	 *
-	 * @param string|MessageSpecifier|MessageValue $message Message key or object
+	 * @param string|MessageSpecifier $message Message key or object
 	 * @param mixed ...$parameters
 	 * @return $this
 	 */
 	public function warning( $message, ...$parameters ) {
-		$message = $this->normalizeMessage( $message );
-
 		return $this->addError( [
 			'type' => 'warning',
 			'message' => $message,
@@ -260,13 +266,11 @@ class StatusValue {
 	 * Add an error, do not set fatal flag
 	 * This can be used for non-fatal errors
 	 *
-	 * @param string|MessageSpecifier|MessageValue $message Message key or object
+	 * @param string|MessageSpecifier $message Message key or object
 	 * @param mixed ...$parameters
 	 * @return $this
 	 */
 	public function error( $message, ...$parameters ) {
-		$message = $this->normalizeMessage( $message );
-
 		return $this->addError( [
 			'type' => 'error',
 			'message' => $message,
@@ -278,7 +282,7 @@ class StatusValue {
 	 * Add an error and set OK to false, indicating that the operation
 	 * as a whole was fatal
 	 *
-	 * @param string|MessageSpecifier|MessageValue $message Message key or object
+	 * @param string|MessageSpecifier $message Message key or object
 	 * @param mixed ...$parameters
 	 * @return $this
 	 */
@@ -321,6 +325,7 @@ class StatusValue {
 	 *   - message: string message key or MessageSpecifier
 	 *   - params: array list of parameters
 	 *
+	 * @deprecated since 1.43 Use `->getMessages( $type )` instead
 	 * @param string $type
 	 * @return array[]
 	 * @phan-return array{type:'warning'|'error', message:string|MessageSpecifier, params:array}[]
@@ -337,14 +342,46 @@ class StatusValue {
 	}
 
 	/**
-	 * Returns true if the specified message is present as a warning or error
+	 * Returns a list of error messages, optionally only those of the given type
 	 *
-	 * @param string|MessageSpecifier|MessageValue $message Message key or object to search for
+	 * If the `warning()` or `error()` method was called with a MessageSpecifier object,
+	 * this method is guaranteed to return the same object.
 	 *
+	 * @since 1.43
+	 * @param ?string $type If provided, only return messages of the type 'warning' or 'error'
+	 * @phan-param null|'warning'|'error' $type
+	 * @return MessageSpecifier[]
+	 */
+	public function getMessages( ?string $type = null ): array {
+		Assert::parameter( $type === null || $type === 'warning' || $type === 'error',
+			'$type', "must be null, 'warning', or 'error'" );
+		$result = [];
+		foreach ( $this->errors as $error ) {
+			if ( $type === null || $error['type'] === $type ) {
+				[ 'message' => $key, 'params' => $params ] = $error;
+				if ( $key instanceof MessageSpecifier ) {
+					$result[] = $key;
+				} else {
+					$result[] = new MessageValue( $key, $params );
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Returns true if the specified message is present as a warning or error.
+	 * Any message using the same key will be found (ignoring the message parameters).
+	 *
+	 * @param string $message Message key to search for
+	 *   (this parameter used to allow MessageSpecifier too, deprecated since 1.43)
 	 * @return bool
 	 */
 	public function hasMessage( $message ) {
-		if ( $message instanceof MessageSpecifier || $message instanceof MessageValue ) {
+		if ( $message instanceof MessageSpecifier ) {
+			wfDeprecatedMsg( 'Passing MessageSpecifier to hasMessage()' .
+				' was deprecated in MediaWiki 1.43', '1.43' );
 			$message = $message->getKey();
 		}
 
@@ -360,16 +397,19 @@ class StatusValue {
 	}
 
 	/**
-	 * Returns true if any other message than the specified ones  is present as a warning or error.
+	 * Returns true if any other message than the specified ones is present as a warning or error.
+	 * Any messages using the same keys will be found (ignoring the message parameters).
 	 *
-	 * @param string|MessageSpecifier|MessageValue ...$messages Messages to search for.
-	 *
+	 * @param string ...$messages Message keys to search for
+	 *   (this parameter used to allow MessageSpecifier too, deprecated since 1.43)
 	 * @return bool
 	 */
 	public function hasMessagesExcept( ...$messages ) {
 		$exceptedKeys = [];
 		foreach ( $messages as $message ) {
-			if ( $message instanceof MessageSpecifier || $message instanceof MessageValue ) {
+			if ( $message instanceof MessageSpecifier ) {
+				wfDeprecatedMsg( 'Passing MessageSpecifier to hasMessagesExcept()' .
+					' was deprecated in MediaWiki 1.43', '1.43' );
 				$message = $message->getKey();
 			}
 			$exceptedKeys[] = $message;
@@ -391,24 +431,37 @@ class StatusValue {
 	 * If the specified source message exists, replace it with the specified
 	 * destination message, but keep the same parameters as in the original error.
 	 *
-	 * Note, due to the lack of tools for comparing IStatusMessage objects, this
-	 * function will not work when using such an object as the search parameter.
+	 * When using a string as the `$source` parameter, any message using the same key will be replaced
+	 * (regardless of whether it was stored as string or as MessageSpecifier, and ignoring the
+	 * message parameters).
 	 *
-	 * @param MessageSpecifier|MessageValue|string $source Message key or object to search for
-	 * @param MessageSpecifier|MessageValue|string $dest Replacement message key or object
+	 * When using a MessageSpecifier as the `$source` parameter, the message will only be replaced
+	 * when the same MessageSpecifier object was stored in the StatusValue (compared with `===`).
+	 * Since the only reliable way to obtain one is to use getErrors(), which is deprecated,
+	 * passing a MessageSpecifier is deprecated (since 1.43).
+	 *
+	 * @param string $source Message key to search for
+	 *   (this parameter used to allow MessageSpecifier too, deprecated since 1.43)
+	 * @param MessageSpecifier|string $dest Replacement message key or object
 	 * @return bool Return true if the replacement was done, false otherwise.
 	 */
 	public function replaceMessage( $source, $dest ) {
 		$replaced = false;
 
-		$source = $this->normalizeMessage( $source );
-		$dest = $this->normalizeMessage( $dest );
+		if ( $source instanceof MessageSpecifier ) {
+			wfDeprecatedMsg( 'Passing MessageSpecifier as $source to replaceMessage()' .
+				' was deprecated in MediaWiki 1.43', '1.43' );
+		}
 
-		foreach ( $this->errors as [ 'message' => &$message ] ) {
+		foreach ( $this->errors as [ 'message' => &$message, 'params' => &$params ] ) {
 			if ( $message === $source ||
 				( $message instanceof MessageSpecifier && $message->getKey() === $source )
 			) {
 				$message = $dest;
+				if ( $dest instanceof MessageSpecifier ) {
+					// 'params' will be ignored now, so remove them from the internal array
+					$params = [];
+				}
 				$replaced = true;
 			}
 		}
@@ -430,10 +483,7 @@ class StatusValue {
 			$errorcount = "no errors detected";
 		}
 		if ( isset( $this->value ) ) {
-			$valstr = gettype( $this->value ) . " value set";
-			if ( is_object( $this->value ) ) {
-				$valstr .= "\"" . get_class( $this->value ) . "\" instance";
-			}
+			$valstr = get_debug_type( $this->value ) . " value set";
 		} else {
 			$valstr = "no value set";
 		}
@@ -484,6 +534,8 @@ class StatusValue {
 				$r = '[ ' . self::flattenParams( $p ) . ' ]';
 			} elseif ( $p instanceof MessageSpecifier ) {
 				$r = '{ ' . $p->getKey() . ': ' . self::flattenParams( $p->getParams() ) . ' }';
+			} elseif ( $p instanceof MessageParam ) {
+				$r = $p->dump();
 			} else {
 				$r = (string)$p;
 			}
@@ -497,7 +549,6 @@ class StatusValue {
 	 * Returns a list of status messages of the given type (or all if false)
 	 *
 	 * @internal Only for use by Status.
-	 * @note this handles RawMessage poorly
 	 *
 	 * @param string|bool $type
 	 * @return array[]
@@ -516,19 +567,5 @@ class StatusValue {
 		}
 
 		return $result;
-	}
-
-	/**
-	 * @param MessageSpecifier|MessageValue|string $message
-	 *
-	 * @return MessageSpecifier|string
-	 */
-	private function normalizeMessage( $message ) {
-		if ( $message instanceof MessageValue ) {
-			$converter = new Converter();
-			return $converter->convertMessageValue( $message );
-		}
-
-		return $message;
 	}
 }

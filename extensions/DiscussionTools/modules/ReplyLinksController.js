@@ -1,13 +1,13 @@
-var
+const
 	// LanguageData::getLocalData()
 	parserData = require( './parser/data.json' ),
 	utils = require( './utils.js' );
 
-var featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {};
+const featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {};
 
 function tryInfuse( $element ) {
 	if ( $element.length ) {
-		var element = null;
+		let element = null;
 		// $.data() might have already been cleared by jQuery if the elements were removed, ignore
 		// TODO: We should keep references to the OO.ui.ButtonWidget objects instead of infusing again,
 		// which would avoid this issue too
@@ -20,8 +20,6 @@ function tryInfuse( $element ) {
 }
 
 function ReplyLinksController( $pageContainer ) {
-	var controller = this;
-
 	// Mixin constructors
 	OO.EventEmitter.call( this );
 
@@ -35,29 +33,29 @@ function ReplyLinksController( $pageContainer ) {
 	// Reply links
 	this.$replyLinkSets = $pageContainer.find( '.ext-discussiontools-init-replylink-buttons[ data-mw-thread-id ]:not( :empty )' );
 
-	this.$replyLinkSets.each( function () {
-		var replyButton = tryInfuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
-		var $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
-		$replyLink.on( 'click keypress', controller.onReplyLinkClickHandler );
+	this.$replyLinkSets.each( ( i, replyLinkContainer ) => {
+		const replyButton = tryInfuse( $( replyLinkContainer ).find( '.ext-discussiontools-init-replybutton' ) );
+		const $replyLink = $( replyLinkContainer ).find( '.ext-discussiontools-init-replylink-reply' );
+		$replyLink.on( 'click keypress', this.onReplyLinkClickHandler );
 		if ( replyButton ) {
-			replyButton.on( 'click', controller.onReplyButtonClickHandler, [ replyButton ] );
+			replyButton.on( 'click', this.onReplyButtonClickHandler, [ replyButton ] );
 		}
 	} );
 
-	this.$replyLinkSets.on( 'focusin mouseover touchstart', function () {
-		controller.emit( 'link-interact' );
+	this.$replyLinkSets.on( 'focusin mouseover touchstart', () => {
+		this.emit( 'link-interact' );
 	} );
 
 	// "Add topic" link in the skin interface
 	if ( featuresEnabled.newtopictool ) {
 		// eslint-disable-next-line no-jquery/no-global-selector
-		var $addSectionTab = $( '#ca-addsection' );
+		const $addSectionTab = $( '#ca-addsection' );
 		if ( $addSectionTab.length ) {
 			this.$addSectionLink = $addSectionTab.find( 'a' );
 			this.$addSectionLink.on( 'click keypress', this.onAddSectionLinkClickHandler );
 
-			this.$addSectionLink.on( 'focusin mouseover touchstart', function () {
-				controller.emit( 'link-interact' );
+			this.$addSectionLink.on( 'focusin mouseover touchstart', () => {
+				this.emit( 'link-interact' );
 			} );
 		}
 		// Handle events on all links that potentially open the new section interface,
@@ -87,7 +85,7 @@ ReplyLinksController.prototype.onReplyLinkClick = function ( e ) {
 
 	// Browser plugins (such as Google Translate) may add extra tags inside
 	// the link, so find the containing link tag with the data we need.
-	var $linkSet = $( e.target ).closest( '[data-mw-thread-id]' );
+	const $linkSet = $( e.target ).closest( '[data-mw-thread-id]' );
 	if ( !$linkSet.length ) {
 		return;
 	}
@@ -95,7 +93,7 @@ ReplyLinksController.prototype.onReplyLinkClick = function ( e ) {
 };
 
 ReplyLinksController.prototype.onReplyButtonClick = function ( button ) {
-	var $linkSet = button.$element.closest( '[data-mw-thread-id]' );
+	const $linkSet = button.$element.closest( '[data-mw-thread-id]' );
 	this.emit( 'link-click', $linkSet.data( 'mw-thread-id' ), $linkSet );
 };
 
@@ -119,12 +117,12 @@ ReplyLinksController.prototype.onAnyLinkClick = function ( e ) {
 	}
 
 	// Check query parameters to see if this is really a new topic link
-	var href = e.currentTarget.href;
+	const href = e.currentTarget.href;
 	if ( !href ) {
 		return;
 	}
 
-	var data = this.parseNewTopicLink( href );
+	const data = this.parseNewTopicLink( href );
 	if ( !data ) {
 		return;
 	}
@@ -144,9 +142,9 @@ ReplyLinksController.prototype.onAnyLinkClick = function ( e ) {
  * @return {Object|null} `null` if not a new topic link, parameters otherwise
  */
 ReplyLinksController.prototype.parseNewTopicLink = function ( href ) {
-	var searchParams = new URL( href ).searchParams;
+	const searchParams = new URL( href ).searchParams;
 
-	var title = mw.Title.newFromText( utils.getTitleFromUrl( href ) || '' );
+	let title = mw.Title.newFromText( utils.getTitleFromUrl( href ) || '' );
 	if ( !title ) {
 		return null;
 	}
@@ -158,7 +156,7 @@ ReplyLinksController.prototype.parseNewTopicLink = function ( href ) {
 		title.getMainText().split( '/' )[ 0 ] === parserData.specialNewSectionName
 	) {
 		// Get the real title from the subpage parameter
-		var param = title.getMainText().slice( parserData.specialNewSectionName.length + 1 );
+		const param = title.getMainText().slice( parserData.specialNewSectionName.length + 1 );
 		title = mw.Title.newFromText( param );
 		if ( !title ) {
 			return null;
@@ -183,7 +181,7 @@ ReplyLinksController.prototype.parseNewTopicLink = function ( href ) {
 		return null;
 	}
 
-	var data = {};
+	const data = {};
 	if ( searchParams.get( 'editintro' ) ) {
 		data.editintro = searchParams.get( 'editintro' );
 	}
@@ -223,7 +221,7 @@ ReplyLinksController.prototype.isActivationEvent = function ( e ) {
 
 ReplyLinksController.prototype.focusLink = function ( $linkSet ) {
 	if ( $linkSet.is( this.$replyLinkSets ) ) {
-		var button = tryInfuse( $linkSet.find( '.ext-discussiontools-init-replybutton' ) );
+		const button = tryInfuse( $linkSet.find( '.ext-discussiontools-init-replybutton' ) );
 		// Focus whichever is visible, the link or the button
 		if ( button ) {
 			button.focus();
@@ -235,8 +233,8 @@ ReplyLinksController.prototype.focusLink = function ( $linkSet ) {
 ReplyLinksController.prototype.setActiveLink = function ( $linkSet ) {
 	this.$activeLink = $linkSet;
 
-	var isNewTopic = false;
-	var activeButton;
+	let isNewTopic = false;
+	let activeButton;
 	if ( this.$activeLink.is( this.$replyLinkSets ) ) {
 		this.$activeLink.addClass( 'ext-discussiontools-init-replylink-active' );
 		activeButton = tryInfuse( this.$activeLink.find( '.ext-discussiontools-init-replybutton' ) );
@@ -250,8 +248,8 @@ ReplyLinksController.prototype.setActiveLink = function ( $linkSet ) {
 		$( '#ca-view' ).removeClass( 'selected' );
 	}
 
-	var title = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
-	var pageTitleMsg = mw.message( 'pagetitle',
+	const title = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
+	const pageTitleMsg = mw.message( 'pagetitle',
 		mw.msg(
 			isNewTopic ?
 				'discussiontools-pagetitle-newtopic' :
@@ -270,9 +268,9 @@ ReplyLinksController.prototype.setActiveLink = function ( $linkSet ) {
 	}
 
 	$( document.body ).addClass( 'ext-discussiontools-init-replylink-open' );
-	this.$replyLinkSets.each( function () {
-		var replyButton = tryInfuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
-		var $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
+	this.$replyLinkSets.each( ( i, replyLinkContainer ) => {
+		const replyButton = tryInfuse( $( replyLinkContainer ).find( '.ext-discussiontools-init-replybutton' ) );
+		const $replyLink = $( replyLinkContainer ).find( '.ext-discussiontools-init-replylink-reply' );
 		$replyLink.attr( 'tabindex', -1 );
 		if ( !replyButton ) {
 			return;
@@ -291,7 +289,7 @@ ReplyLinksController.prototype.setActiveLink = function ( $linkSet ) {
 };
 
 ReplyLinksController.prototype.clearActiveLink = function () {
-	var activeButton;
+	let activeButton;
 	if ( this.$activeLink.is( this.$replyLinkSets ) ) {
 		this.$activeLink.removeClass( 'ext-discussiontools-init-replylink-active' );
 		activeButton = tryInfuse( this.$activeLink.find( '.ext-discussiontools-init-replybutton' ) );
@@ -309,10 +307,10 @@ ReplyLinksController.prototype.clearActiveLink = function () {
 	}
 
 	$( document.body ).removeClass( 'ext-discussiontools-init-replylink-open' );
-	this.$replyLinkSets.each( function () {
-		var $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
+	this.$replyLinkSets.each( ( i, replyLinkContainer ) => {
+		const $replyLink = $( replyLinkContainer ).find( '.ext-discussiontools-init-replylink-reply' );
 		$replyLink.attr( 'tabindex', 0 );
-		var replyButton = tryInfuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
+		const replyButton = tryInfuse( $( replyLinkContainer ).find( '.ext-discussiontools-init-replybutton' ) );
 		if ( !replyButton ) {
 			return;
 		}
@@ -333,19 +331,17 @@ ReplyLinksController.prototype.clearActiveLink = function () {
 };
 
 ReplyLinksController.prototype.teardown = function () {
-	var controller = this;
-
 	if ( this.$activeLink ) {
 		this.clearActiveLink();
 	}
 
-	this.$replyLinkSets.each( function () {
-		var replyButton = tryInfuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
+	this.$replyLinkSets.each( ( i, replyLinkContainer ) => {
+		const replyButton = tryInfuse( $( replyLinkContainer ).find( '.ext-discussiontools-init-replybutton' ) );
 		if ( replyButton ) {
-			replyButton.off( 'click', controller.onReplyButtonClickHandler );
+			replyButton.off( 'click', this.onReplyButtonClickHandler );
 		}
-		var $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
-		$replyLink.off( 'click keypress', controller.onReplyLinkClickHandler );
+		const $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
+		$replyLink.off( 'click keypress', this.onReplyLinkClickHandler );
 	} );
 
 	if ( featuresEnabled.newtopictool ) {

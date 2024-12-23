@@ -9,8 +9,8 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use EchoUserLocator;
 use MediaWiki\Extension\DiscussionTools\Notifications\AddedTopicPresentationModel;
+use MediaWiki\Extension\DiscussionTools\Notifications\CommentThanksPresentationModel;
 use MediaWiki\Extension\DiscussionTools\Notifications\EnhancedEchoEditUserTalkPresentationModel;
 use MediaWiki\Extension\DiscussionTools\Notifications\EnhancedEchoMentionPresentationModel;
 use MediaWiki\Extension\DiscussionTools\Notifications\EventDispatcher;
@@ -20,6 +20,8 @@ use MediaWiki\Extension\Notifications\Hooks\BeforeCreateEchoEventHook;
 use MediaWiki\Extension\Notifications\Hooks\EchoGetBundleRulesHook;
 use MediaWiki\Extension\Notifications\Hooks\EchoGetEventsForRevisionHook;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Extension\Notifications\UserLocator;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionRecord;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 
@@ -53,10 +55,10 @@ class EchoHooks implements
 			// duplicate notifications for a single comment
 			'user-filters' => [
 				[
-					[ EchoUserLocator::class, 'locateFromEventExtra' ],
+					[ UserLocator::class, 'locateFromEventExtra' ],
 					[ 'mentioned-users' ]
 				],
-				[ [ EchoUserLocator::class, 'locateTalkPageOwner' ] ],
+				[ [ UserLocator::class, 'locateTalkPageOwner' ] ],
 			],
 			'presentation-model' => SubscribedNewCommentPresentationModel::class,
 			'bundle' => [
@@ -101,6 +103,25 @@ class EchoHooks implements
 			],
 		];
 
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'Thanks' ) ) {
+			$notifications['dt-thank'] = [
+				'category' => 'edit-thank',
+				'group' => 'positive',
+				'section' => 'message',
+				'user-locators' => [
+					[
+						[ UserLocator::class, 'locateFromEventExtra' ],
+						[ 'thanked-user-id' ]
+					]
+				],
+				'presentation-model' => CommentThanksPresentationModel::class,
+				'bundle' => [
+					'web' => true,
+					'expandable' => true,
+				],
+			];
+		}
+
 		// Override default handlers
 		$notifications['edit-user-talk']['presentation-model'] = EnhancedEchoEditUserTalkPresentationModel::class;
 		$notifications['mention']['presentation-model'] = EnhancedEchoMentionPresentationModel::class;
@@ -115,6 +136,9 @@ class EchoHooks implements
 			case 'dt-removed-topic':
 				$bundleString = $event->getType() . '-' . $event->getTitle()->getNamespace()
 					. '-' . $event->getTitle()->getDBkey();
+				break;
+			case 'dt-thank':
+				$bundleString = $event->getType() . '-' . $event->getExtraParam( 'comment-name' );
 				break;
 		}
 	}

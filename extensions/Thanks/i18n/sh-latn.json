@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"BadDog"
+			"BadDog",
+			"Winston Sung"
 		]
 	},
 	"thanks-desc": "Dodaje mogućnost zahvaljivanja korisnicima za izmjene, komentare itd.",
@@ -10,7 +10,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|zahvaljeno}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Zahvali se}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Zahvaljeno}}}}",
-	"thanks-button-action-cancel": "Otkaži",
 	"thanks-error-undefined": "Slanje zahvalnice nije uspjelo (kôd greške: $1). Pokušajte ponovo.",
 	"thanks-error-invalid-log-id": "Ne mogu da nađem dnevničku stavku",
 	"thanks-error-invalid-log-type": "Dnevnik vrste „$1” nije na listi dopuštenih vrsta.",

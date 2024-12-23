@@ -16,7 +16,7 @@ class AFPSyntaxTree {
 	/**
 	 * @param AFPTreeNode|null $root
 	 */
-	public function __construct( AFPTreeNode $root = null ) {
+	public function __construct( ?AFPTreeNode $root = null ) {
 		$this->rootNode = $root;
 	}
 

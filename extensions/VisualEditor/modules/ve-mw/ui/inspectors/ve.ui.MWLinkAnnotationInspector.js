@@ -34,13 +34,14 @@ ve.ui.MWLinkAnnotationInspector.static.modelClasses = [
 	ve.dm.MWInternalLinkAnnotation
 ];
 
-ve.ui.MWLinkAnnotationInspector.static.actions = ve.ui.MWLinkAnnotationInspector.static.actions.concat( [
+ve.ui.MWLinkAnnotationInspector.static.actions = [
+	...ve.ui.MWLinkAnnotationInspector.static.actions,
 	{
 		action: 'convert',
 		label: null, // see #updateActions
 		modes: [ 'edit', 'insert' ]
 	}
-] );
+];
 
 /* Methods */
 
@@ -87,6 +88,8 @@ ve.ui.MWLinkAnnotationInspector.prototype.initialize = function () {
 		}
 	);
 
+	this.onExternalLinkInputChangeDebounced = ve.debounce( this.onExternalLinkInputChange, 750 );
+
 	// Events
 	this.linkTypeIndex.connect( this, { set: 'onLinkTypeIndexSet' } );
 	this.labelInput.connect( this, { change: 'onLabelInputChange' } );
@@ -99,7 +102,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.initialize = function () {
 		enter: 'onLinkInputEnter'
 	} );
 	this.externalAnnotationInput.getTextInputWidget().connect( this, {
-		change: 'onExternalLinkInputChange',
+		change: 'onExternalLinkInputChangeDebounced',
 		enter: 'onLinkInputEnter'
 	} );
 	// this.internalAnnotationInput is already bound by parent class
@@ -205,13 +208,12 @@ ve.ui.MWLinkAnnotationInspector.prototype.onExternalLinkChange = function () {
  * @param {jQuery.Event} e Key press event
  */
 ve.ui.MWLinkAnnotationInspector.prototype.onLinkInputEnter = function () {
-	var inspector = this;
 	if ( this.annotationInput.getTextInputWidget().getValue().trim() === '' ) {
 		this.executeAction( 'done' );
 	}
 	this.annotationInput.getTextInputWidget().getValidity()
-		.done( function () {
-			inspector.executeAction( 'done' );
+		.done( () => {
+			this.executeAction( 'done' );
 		} );
 };
 
@@ -219,22 +221,22 @@ ve.ui.MWLinkAnnotationInspector.prototype.onLinkInputEnter = function () {
  * @inheritdoc
  */
 ve.ui.MWLinkAnnotationInspector.prototype.updateActions = function () {
-	var msg = null;
+	let msg = null;
 
 	ve.ui.MWLinkAnnotationInspector.super.prototype.updateActions.call( this );
 
 	// show/hide convert action
-	var content = this.fragment ? this.fragment.getText() : '';
-	var annotation = this.annotationInput.getAnnotation();
-	var href = annotation && annotation.getHref();
+	const content = this.fragment ? this.fragment.getText() : '';
+	const annotation = this.annotationInput.getAnnotation();
+	const href = annotation && annotation.getHref();
 	if ( href && ve.dm.MWMagicLinkNode.static.validateHref( content, href ) ) {
-		var type = ve.dm.MWMagicLinkType.static.fromContent( content ).type;
+		const type = ve.dm.MWMagicLinkType.static.fromContent( content ).type;
 		msg = 'visualeditor-linkinspector-convert-link-' + type.toLowerCase();
 	}
 
 	// Once we toggle the visibility of the ActionWidget, we can't filter
 	// it with `get` any more.  So we have to use `forEach`:
-	this.actions.forEach( null, function ( action ) {
+	this.actions.forEach( null, ( action ) => {
 		if ( action.getAction() === 'convert' ) {
 			if ( msg ) {
 				// The following messages are used here:
@@ -256,8 +258,6 @@ ve.ui.MWLinkAnnotationInspector.prototype.updateActions = function () {
  * @param {string} value Current value of input widget
  */
 ve.ui.MWLinkAnnotationInspector.prototype.onInternalLinkInputChange = function ( value ) {
-	var inspector = this;
-
 	// If this looks like an external link, switch to the correct tabPanel.
 	// Note: We don't care here if it's a *valid* link, so we just
 	// check whether it looks like a URI -- i.e. whether it starts with
@@ -286,12 +286,12 @@ ve.ui.MWLinkAnnotationInspector.prototype.onInternalLinkInputChange = function (
 
 	this.internalAnnotationInput.getTextInputWidget().getValidity()
 		.then(
-			function () {
-				inspector.internalAnnotationField.setErrors( [] );
-				inspector.updateSize();
-			}, function () {
-				inspector.internalAnnotationField.setErrors( [ ve.msg( 'visualeditor-linkinspector-illegal-title' ) ] );
-				inspector.updateSize();
+			() => {
+				this.internalAnnotationField.setErrors( [] );
+				this.updateSize();
+			}, () => {
+				this.internalAnnotationField.setErrors( [ ve.msg( 'visualeditor-linkinspector-illegal-title' ) ] );
+				this.updateSize();
 			}
 		);
 
@@ -303,18 +303,26 @@ ve.ui.MWLinkAnnotationInspector.prototype.onInternalLinkInputChange = function (
  * @param {string} value Current value of input widget
  */
 ve.ui.MWLinkAnnotationInspector.prototype.onExternalLinkInputChange = function () {
-	var inspector = this;
-
-	this.externalAnnotationInput.getTextInputWidget().getValidity()
-		.then(
-			function () {
-				inspector.externalAnnotationField.setErrors( [] );
-				inspector.updateSize();
-			}, function () {
-				inspector.externalAnnotationField.setErrors( [ ve.msg( 'visualeditor-linkinspector-invalid-external' ) ] );
-				inspector.updateSize();
+	this.externalAnnotationInput.getValidity().then(
+		() => {
+			// clear any invalid-protocol errors
+			this.externalAnnotationField.setErrors( [] );
+		}, ( errortype ) => {
+			// Messages that can be used here:
+			// * visualeditor-linkinspector-invalid-blocked
+			// * visualeditor-linkinspector-invalid-external
+			this.externalAnnotationField.setErrors( [ ve.msg( 'visualeditor-linkinspector-' + errortype ) ] );
+			if ( errortype === 'invalid-blocked' ) {
+				// This has been quite async, so:
+				this.actions.forEach( { actions: [ 'done', 'insert' ] }, ( action ) => {
+					action.setDisabled( true );
+				} );
+				ve.track( 'activity.editCheckReliability', { action: 'link-blocked' } );
 			}
-		);
+		}
+	).always( () => {
+		this.updateSize();
+	} );
 
 	if ( this.isActive && !this.trackedExternalLinkInputChange && !this.switchingLinkTypes ) {
 		ve.track( 'activity.' + this.constructor.static.name, { action: 'external-link-input' } );
@@ -334,10 +342,10 @@ ve.ui.MWLinkAnnotationInspector.prototype.createAnnotationInput = function () {
  */
 ve.ui.MWLinkAnnotationInspector.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWLinkAnnotationInspector.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.isReady = false;
 
-			var isReadOnly = this.isReadOnly();
+			const isReadOnly = this.isReadOnly();
 			this.linkTypeIndex.setTabPanel(
 				this.initialAnnotation instanceof ve.dm.MWExternalLinkAnnotation ? 'external' : 'internal'
 			);
@@ -348,7 +356,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.getSetupProcess = function ( data ) {
 			this.trackedInternalLinkInputChange = false;
 			this.trackedExternalLinkInputChange = false;
 			this.isActive = true;
-		}, this );
+		} );
 };
 
 /**
@@ -356,11 +364,11 @@ ve.ui.MWLinkAnnotationInspector.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.MWLinkAnnotationInspector.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.MWLinkAnnotationInspector.super.prototype.getReadyProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.isReady = true;
 			// Focus is skipped during setup. (T321026)
 			this.annotationInput.getTextInputWidget().focus();
-		}, this );
+		} );
 };
 
 /**
@@ -368,9 +376,9 @@ ve.ui.MWLinkAnnotationInspector.prototype.getReadyProcess = function ( data ) {
  */
 ve.ui.MWLinkAnnotationInspector.prototype.getActionProcess = function ( action ) {
 	if ( action === 'convert' ) {
-		return new OO.ui.Process( function () {
+		return new OO.ui.Process( () => {
 			this.close( { action: 'done', convert: true } );
-		}, this );
+		} );
 	}
 	return ve.ui.MWLinkAnnotationInspector.super.prototype.getActionProcess.call( this, action );
 };
@@ -379,26 +387,24 @@ ve.ui.MWLinkAnnotationInspector.prototype.getActionProcess = function ( action )
  * @inheritdoc
  */
 ve.ui.MWLinkAnnotationInspector.prototype.getTeardownProcess = function ( data ) {
-	var fragment;
+	let fragment;
 	return ve.ui.MWLinkAnnotationInspector.super.prototype.getTeardownProcess.call( this, data )
-		.first( function () {
+		.first( () => {
 			// Save the original fragment for later.
 			fragment = this.getFragment();
 
 			this.isActive = false;
-		}, this )
-		.next( function () {
-			var selection = fragment && fragment.getSelection();
+		} )
+		.next( () => {
+			const selection = fragment && fragment.getSelection();
 
 			// Handle conversion to magic link.
 			if ( data && data.convert && selection instanceof ve.dm.LinearSelection ) {
-				var annotations = fragment.getDocument().data
+				const annotations = fragment.getDocument().data
 					.getAnnotationsFromRange( selection.getRange() )
 					// Remove link annotations
-					.filter( function ( annotation ) {
-						return !/^link/.test( annotation.name );
-					} );
-				var linearData = new ve.dm.ElementLinearData( annotations.store, [
+					.filter( ( annotation ) => !/^link/.test( annotation.name ) );
+				const linearData = new ve.dm.ElementLinearData( annotations.store, [
 					{
 						type: 'link/mwMagic',
 						attributes: {
@@ -418,7 +424,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.getTeardownProcess = function ( data )
 			// Make sure both inputs are cleared
 			this.internalAnnotationInput.setAnnotation( null );
 			this.externalAnnotationInput.setAnnotation( null );
-		}, this );
+		} );
 };
 
 /**
@@ -427,7 +433,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.getTeardownProcess = function ( data )
  * @param {OO.ui.TabPanelLayout} tabPanel Current tabPanel
  */
 ve.ui.MWLinkAnnotationInspector.prototype.onLinkTypeIndexSet = function ( tabPanel ) {
-	var text = this.annotationInput.getTextInputWidget().getValue(),
+	const text = this.annotationInput.getTextInputWidget().getValue(),
 		end = text.length,
 		isExternal = this.isExternal(),
 		inputHasProtocol = ve.init.platform.getExternalLinkUrlProtocolsRegExp().test( text );
@@ -482,7 +488,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.onLinkTypeIndexSet = function ( tabPan
  * @return {ve.dm.MWInternalLinkAnnotation|ve.dm.MWExternalLinkAnnotation|null}
  */
 ve.ui.MWLinkAnnotationInspector.prototype.getAnnotationFromFragment = function ( fragment ) {
-	var target = fragment.getText(),
+	const target = fragment.getText(),
 		title = mw.Title.newFromText( target );
 
 	// Figure out if this is an internal or external link
@@ -525,7 +531,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.newExternalLinkAnnotation = function (
  */
 ve.ui.MWLinkAnnotationInspector.prototype.getInsertionText = function () {
 	// Prefer user input, not normalized annotation, to preserve case
-	var label = this.labelInput.getValue().trim();
+	const label = this.labelInput.getValue().trim();
 	if ( label ) {
 		return label;
 	} else if ( this.isNew && this.isExternal() ) {

@@ -1,4 +1,4 @@
-QUnit.module( 'mediawiki.api.options', QUnit.newMwEnvironment(), function ( hooks ) {
+QUnit.module( 'mediawiki.api.options', QUnit.newMwEnvironment(), ( hooks ) => {
 	mw.config.set( {
 		wgUserName: 'Foo'
 	} );
@@ -9,17 +9,17 @@ QUnit.module( 'mediawiki.api.options', QUnit.newMwEnvironment(), function ( hook
 	} );
 
 	QUnit.test( 'saveOption', function ( assert ) {
-		var api = new mw.Api(),
+		const api = new mw.Api(),
 			stub = this.sandbox.stub( mw.Api.prototype, 'saveOptions' );
 
 		api.saveOption( 'foo', 'bar' );
 
 		assert.true( stub.calledOnce, '#saveOptions called once' );
-		assert.deepEqual( stub.getCall( 0 ).args, [ { foo: 'bar' } ], '#saveOptions called correctly' );
+		assert.deepEqual( stub.getCall( 0 ).args, [ { foo: 'bar' }, undefined ], '#saveOptions called correctly' );
 	} );
 
 	QUnit.test( 'saveOptions without Unit Separator', async function ( assert ) {
-		var api = new mw.Api( { useUS: false } );
+		const api = new mw.Api( { useUS: false } );
 
 		// We need to respond to the request for token first, otherwise the other requests won't be sent
 		// until after the server.respond call, which confuses sinon terribly. This sucks a lot.
@@ -32,7 +32,7 @@ QUnit.module( 'mediawiki.api.options', QUnit.newMwEnvironment(), function ( hook
 		);
 
 		// Requests are POST, match requestBody instead of url
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			if ( !request.requestBody ) {
 				// GET request for the token, already responded above
 			} else if ( [
@@ -72,7 +72,7 @@ QUnit.module( 'mediawiki.api.options', QUnit.newMwEnvironment(), function ( hook
 	} );
 
 	QUnit.test( 'saveOptions with Unit Separator', async function ( assert ) {
-		var api = new mw.Api( { useUS: true } );
+		const api = new mw.Api( { useUS: true } );
 
 		// We need to respond to the request for token first, otherwise the other requests won't be sent
 		// until after the server.respond call, which confuses sinon terribly. This sucks a lot.
@@ -85,7 +85,7 @@ QUnit.module( 'mediawiki.api.options', QUnit.newMwEnvironment(), function ( hook
 		);
 
 		// Requests are POST, match requestBody instead of url
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			if ( !request.requestBody ) {
 				// GET request for the token, already responded above
 			} else if ( [

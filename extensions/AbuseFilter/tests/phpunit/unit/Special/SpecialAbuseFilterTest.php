@@ -17,12 +17,11 @@ use MediaWikiUnitTestCase;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter
+ * @covers \MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter
  */
 class SpecialAbuseFilterTest extends MediaWikiUnitTestCase {
 
 	/**
-	 * @covers ::getViewClassAndPageType
 	 * @dataProvider provideGetViewClassAndPageType
 	 */
 	public function testGetViewClassAndPageType( $subpage, $view, $pageType, $params = [] ) {

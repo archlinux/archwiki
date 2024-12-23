@@ -117,7 +117,14 @@ class MockApiHelper extends ApiHelper {
 			'duration' => 0.99875,
 			'mime' => 'audio/ogg; codecs="vorbis"',
 			'mediatype' => 'AUDIO',
-		]
+		],
+		'Hi-ho.jpg' => [
+			'size' => 7881,
+			'width' => 1941,
+			'height' => 220,
+			'bits' => 8,
+			'mime' => 'image/jpeg'
+		],
 	];
 
 	private $articleCache = [];
@@ -416,6 +423,7 @@ class MockApiHelper extends ApiHelper {
 		'Archivo:Foobar.jpg' => 'Foobar.jpg',
 		'Mynd:Foobar.jpg' => 'Foobar.jpg',
 		"Датотека:Foobar.jpg" => 'Foobar.jpg',
+		'Dosiero:Foobar.jpg' => 'Foobar.jpg',
 		'Image:Foobar.svg' => 'Foobar.svg',
 		'File:Foobar.svg' => 'Foobar.svg',
 		'Файл:Foobar.svg' => 'Foobar.svg',
@@ -427,6 +435,7 @@ class MockApiHelper extends ApiHelper {
 		'File:Transcode.webm' => 'Transcode.webm',
 		'File:Audio.oga' => 'Audio.oga',
 		'File:Bad.jpg' => 'Bad.jpg',
+		'File:Hi-ho.jpg' => 'Hi-ho.jpg',
 	];
 
 	private const PNAMES = [
@@ -496,10 +505,15 @@ class MockApiHelper extends ApiHelper {
 	/** @var string wiki prefix for which we are mocking the api access */
 	private $prefix = 'enwiki';
 
-	public function __construct( ?string $prefix = null ) {
-		if ( $prefix ) {
-			$this->prefix = $prefix;
-		}
+	/** @var callable(string):string A helper to normalize titles. */
+	private $normalizeTitle = null;
+
+	public function __construct( ?string $prefix = null, ?callable $normalizeTitleFunc = null ) {
+		$this->prefix = $prefix ?? $this->prefix;
+		$this->normalizeTitle = $normalizeTitleFunc ??
+			// poor man's normalization
+			( fn ( $t ) => str_replace( ' ', '_', $t ) );
+
 		// PORT-FIXME: Need to get this value
 		// $wtSizeLimit = $parsoidOptions->limits->wt2html->maxWikitextSize;
 		$wtSizeLimit = 1000000;
@@ -520,9 +534,14 @@ class MockApiHelper extends ApiHelper {
 	 * the proper known/missing information about that title.
 	 * @param string $key The normalized title of the article
 	 * @param Article $article The contents of the article
+	 * @return callable
 	 */
-	public function addArticle( string $key, Article $article ): void {
+	public function addArticle( string $key, Article $article ): callable {
+		$oldVal = $this->articleCache[$key] ?? null;
 		$this->articleCache[$key] = $article;
+		return function () use ( $key, $oldVal ) {
+			$this->articleCache[$key] = $oldVal;
+		};
 	}
 
 	public function makeRequest( array $params ): array {
@@ -799,6 +818,13 @@ class MockApiHelper extends ApiHelper {
 		];
 	}
 
+	private const TRACKING_CATEGORIES = [
+		'broken-file-category' => 'Pages with broken file links',
+		'magiclink-tracking-rfc' => 'Pages using RFC magic links',
+		'magiclink-tracking-isbn' => 'Pages using ISBN magic links',
+		'magiclink-tracking-pmid' => 'Pages using PMID magic links',
+	];
+
 	private function processQuery( array $params ): array {
 		if ( ( $params['meta'] ?? null ) === 'siteinfo' ) {
 			if ( !isset( $this->cachedConfigs[$this->prefix] ) ) {
@@ -806,6 +832,18 @@ class MockApiHelper extends ApiHelper {
 					file_get_contents( __DIR__ . "/../../baseconfig/$this->prefix.json" ), true );
 			}
 			return $this->cachedConfigs[$this->prefix];
+		}
+
+		if ( ( $params['meta'] ?? null ) === 'allmessages' ) {
+			$allmessages = [];
+			if ( isset( self::TRACKING_CATEGORIES[$params['ammessages']] ) ) {
+				$allmessages[] = [
+					'content' => self::TRACKING_CATEGORIES[$params['ammessages']]
+				];
+			} else {
+				$allmessages[] = [ 'missing' => true ];
+			}
+			return [ 'query' => [ 'allmessages' => $allmessages ] ];
 		}
 
 		$revid = $params['revids'] ?? null;
@@ -852,7 +890,8 @@ class MockApiHelper extends ApiHelper {
 			$titles = preg_split( '/\|/', $params['titles'] );
 			foreach ( $titles as $t ) {
 				$props = [ 'title' => $t ];
-				$key = str_replace( ' ', '_', $t ); # poor man's normalization
+				$normalizeTitle = $this->normalizeTitle;
+				$key = $normalizeTitle( $t );
 				$definedInPt = isset( $this->articleCache[$key] );
 				if ( in_array( $t, self::$missingTitles, true ) ||
 					 !$definedInPt ) {

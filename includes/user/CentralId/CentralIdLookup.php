@@ -22,7 +22,6 @@
 
 namespace MediaWiki\User\CentralId;
 
-use IDBAccessObject;
 use InvalidArgumentException;
 use LogicException;
 use MediaWiki\MediaWikiServices;
@@ -31,6 +30,7 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use Throwable;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * The CentralIdLookup service allows for connecting local users with
@@ -66,27 +66,6 @@ abstract class CentralIdLookup {
 		} catch ( Throwable $unused ) {
 			return null;
 		}
-	}
-
-	/**
-	 * Returns a CentralIdLookup that is guaranteed to be non-local.
-	 * If no such guarantee can be made, returns null.
-	 *
-	 * If this function returns a non-null CentralIdLookup,
-	 * that lookup is expected to provide IDs that are shared with some set of other wikis.
-	 * However, you should still be cautious when using those IDs,
-	 * as they will not necessarily work with *all* other wikis,
-	 * and it can be hard to tell if another wiki is in the same set as this one or not.
-	 *
-	 * @since 1.35
-	 * @deprecated since 1.37. Use CentralIdLookupFactory::getNonLocalLookup instead.
-	 * @return CentralIdLookup|null
-	 */
-	public static function factoryNonLocal(): ?self {
-		wfDeprecated( __METHOD__, '1.37' );
-		return MediaWikiServices::getInstance()
-			->getCentralIdLookupFactory()
-			->getNonLocalLookup();
 	}
 
 	/**
@@ -151,6 +130,23 @@ abstract class CentralIdLookup {
 	 * @return bool
 	 */
 	abstract public function isAttached( UserIdentity $user, $wikiId = UserIdentity::LOCAL ): bool;
+
+	/**
+	 * Check that a username is owned by the central user on the specified wiki.
+	 *
+	 * This should return true if the local account exists and is attached (see isAttached()),
+	 * or if it does not exist but is reserved for the central user (it's guaranteed that
+	 * if it's ever created, then it will be attached to the central user).
+	 *
+	 * @since 1.43
+	 * @stable to override
+	 * @param UserIdentity $user
+	 * @param string|false $wikiId Wiki to check attachment status. If false, check the current wiki.
+	 * @return bool
+	 */
+	public function isOwned( UserIdentity $user, $wikiId = UserIdentity::LOCAL ): bool {
+		return $this->isAttached( $user, $wikiId );
+	}
 
 	/**
 	 * Given central user IDs, return the (local) user names

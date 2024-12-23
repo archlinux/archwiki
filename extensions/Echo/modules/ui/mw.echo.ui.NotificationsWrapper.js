@@ -4,13 +4,13 @@
 	 *
 	 * @class
 	 * @extends OO.ui.Widget
-	 * @mixins OO.ui.mixin.PendingElement
+	 * @mixes OO.ui.mixin.PendingElement
 	 *
 	 * @constructor
 	 * @param {mw.echo.Controller} controller Echo controller
 	 * @param {mw.echo.dm.ModelManager} model Notifications model manager
 	 * @param {Object} [config] Configuration object
-	 * @cfg {jQuery} [$overlay] A jQuery element functioning as an overlay
+	 * @param {jQuery} [config.$overlay] A jQuery element functioning as an overlay
 	 *  for popups.
 	 */
 	mw.echo.ui.NotificationsWrapper = function MwEchoUiNotificationsWrapper( controller, model, config ) {
@@ -50,8 +50,9 @@
 	/* Events */
 
 	/**
-	 * @event finishLoading
 	 * Notifications have successfully finished being processed and are fully loaded
+	 *
+	 * @event mw.echo.ui.NotificationsWrapper#finishLoading
 	 */
 
 	/* Methods */
@@ -61,25 +62,24 @@
 	 *
 	 * @return {jQuery.Promise} A promise that is resolved when all notifications
 	 *  were fetched from the API and added to the model and UI.
+	 * @fires mw.echo.ui.NotificationsWrapper#finishLoading
 	 */
 	mw.echo.ui.NotificationsWrapper.prototype.populate = function () {
-		var widget = this;
-
 		this.pushPending();
 		return this.controller.fetchLocalNotifications( true )
-			.catch( function ( errorObj ) {
+			.catch( ( errorObj ) => {
 				if ( errorObj.errCode === 'notlogin-required' ) {
 					// Login required message
-					widget.notificationsWidget.resetLoadingOption( mw.msg( 'echo-notification-loginrequired' ) );
+					this.notificationsWidget.resetLoadingOption( mw.msg( 'echo-notification-loginrequired' ) );
 				} else {
 					// Generic API failure message
-					widget.notificationsWidget.resetLoadingOption( mw.msg( 'echo-api-failure' ) );
+					this.notificationsWidget.resetLoadingOption( mw.msg( 'echo-api-failure' ) );
 				}
 			} )
-			.always( function () {
-				widget.popPending();
-				widget.emit( 'finishLoading' );
-				widget.promiseRunning = false;
+			.always( () => {
+				this.popPending();
+				this.emit( 'finishLoading' );
+				this.promiseRunning = false;
 			} );
 	};
 }() );

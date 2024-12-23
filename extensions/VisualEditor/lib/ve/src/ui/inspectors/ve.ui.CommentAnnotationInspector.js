@@ -53,15 +53,14 @@ ve.ui.CommentAnnotationInspector.prototype.onTextInputResize = function () {
  * Update the actions based on the annotation state
  */
 ve.ui.CommentAnnotationInspector.prototype.updateActions = function () {
-	var isValid = false,
-		inspector = this;
+	let isValid = false;
 
 	this.textInput.getValidity()
-		.then( function () {
+		.then( () => {
 			isValid = true;
 		} )
-		.always( function () {
-			inspector.actions.forEach( { actions: [ 'done', 'insert' ] }, function ( action ) {
+		.always( () => {
+			this.actions.forEach( { actions: [ 'done', 'insert' ] }, ( action ) => {
 				action.setDisabled( !isValid );
 			} );
 		} );
@@ -85,7 +84,7 @@ ve.ui.CommentAnnotationInspector.prototype.getInsertionText = function () {
  * @inheritdoc
  */
 ve.ui.CommentAnnotationInspector.prototype.getAnnotation = function () {
-	var comments = ( this.initialAnnotation && this.initialAnnotation.getAttribute( 'comments' ).slice() ) || [];
+	const comments = ( this.initialAnnotation && this.initialAnnotation.getAttribute( 'comments' ).slice() ) || [];
 	comments.push( {
 		author: this.getFragment().getSurface().synchronizer.getAuthorData().name,
 		text: this.textInput.getValue().trim()
@@ -143,18 +142,18 @@ ve.ui.CommentAnnotationInspector.prototype.initialize = function () {
  */
 ve.ui.CommentAnnotationInspector.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.CommentAnnotationInspector.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			if ( this.initialAnnotation ) {
-				var $thread = ve.ui.CommentAnnotationContextItem.static.renderThread( this.initialAnnotation );
+				const $thread = ve.ui.CommentAnnotationContextItem.static.renderThread( this.initialAnnotation );
 				this.$thread.empty().append( $thread );
 			}
 			this.$user.text( this.getFragment().getSurface().synchronizer.getAuthorData().name );
 			this.textInput.setValue( '' );
-			this.actions.forEach( { actions: [ 'done' ] }, function ( action ) {
+			this.actions.forEach( { actions: [ 'done' ] }, ( action ) => {
 				action.setLabel( ve.msg( 'visualeditor-commentannotationcontextitem-comment' ) );
 			} );
 			this.updateActions();
-		}, this );
+		} );
 };
 
 /**
@@ -162,12 +161,12 @@ ve.ui.CommentAnnotationInspector.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.CommentAnnotationInspector.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.CommentAnnotationInspector.super.prototype.getReadyProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.textInput.focus().select();
 
 			// Clear validation state, so that we don't get "invalid" state immediately on focus
 			this.textInput.setValidityFlag( true );
-		}, this );
+		} );
 };
 
 /**
@@ -175,9 +174,9 @@ ve.ui.CommentAnnotationInspector.prototype.getReadyProcess = function ( data ) {
  */
 ve.ui.CommentAnnotationInspector.prototype.getHoldProcess = function ( data ) {
 	return ve.ui.CommentAnnotationInspector.super.prototype.getHoldProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.textInput.blur();
-		}, this );
+		} );
 };
 
 /**
@@ -185,9 +184,9 @@ ve.ui.CommentAnnotationInspector.prototype.getHoldProcess = function ( data ) {
  */
 ve.ui.CommentAnnotationInspector.prototype.getTeardownProcess = function ( data ) {
 	return ve.ui.CommentAnnotationInspector.super.prototype.getTeardownProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.textInput.setValue( '' );
-		}, this );
+		} );
 };
 
 /* Registration */

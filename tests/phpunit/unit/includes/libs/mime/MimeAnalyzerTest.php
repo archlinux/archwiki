@@ -3,15 +3,15 @@
 namespace Wikimedia\Tests\Mime;
 
 use MediaWikiCoversValidator;
-use MimeAnalyzer;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Wikimedia\Mime\MimeAnalyzer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Media
  * @group Mime
- * @covers \MimeAnalyzer
+ * @covers \Wikimedia\Mime\MimeAnalyzer
  */
 class MimeAnalyzerTest extends TestCase {
 
@@ -265,7 +265,7 @@ class MimeAnalyzerTest extends TestCase {
 	}
 
 	public static function provideFileExtensionsForMimeType() {
-		yield 'font/sfnt should output ttf file extension' => [ 'font/sfnt', [ 'ttf' ] ];
+		yield 'font/sfnt should output ttf and otf file extensionss' => [ 'font/sfnt', [ 'ttf', 'otf' ] ];
 		yield 'application/font-sfnt should output ttf file extension' => [ 'application/font-sfnt', [ 'ttf' ] ];
 		yield 'font/woff should output woff file extension' => [ 'font/woff', [ 'woff' ] ];
 		yield 'application/font-woff should output woff file extension' => [ 'application/font-woff', [ 'woff' ] ];

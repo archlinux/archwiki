@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Math\InputCheck;
 
 use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\MediaWikiServices;
-use Message;
+use MediaWiki\Message\Message;
 use stdClass;
 
 /**

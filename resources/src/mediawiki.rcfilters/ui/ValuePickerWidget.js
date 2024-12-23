@@ -14,7 +14,7 @@
  *  handle item models and return a boolean whether the item is included
  *  or not. Example: function ( itemModel ) { return itemModel.isSelected(); }
  */
-var ValuePickerWidget = function MwRcfiltersUiValuePickerWidget( model, config ) {
+const ValuePickerWidget = function MwRcfiltersUiValuePickerWidget( model, config ) {
 	config = config || {};
 
 	// Parent
@@ -83,14 +83,12 @@ ValuePickerWidget.prototype.onSelectWidgetChoose = function ( chosenItem ) {
  * Initialize the select widget
  */
 ValuePickerWidget.prototype.initializeSelectWidget = function () {
-	var items = this.model.getItems()
+	const items = this.model.getItems()
 		.filter( this.itemFilter )
-		.map( function ( filterItem ) {
-			return new OO.ui.ButtonOptionWidget( {
-				data: filterItem.getName(),
-				label: filterItem.getLabel()
-			} );
-		} );
+		.map( ( filterItem ) => new OO.ui.ButtonOptionWidget( {
+			data: filterItem.getName(),
+			label: filterItem.getLabel()
+		} ) );
 
 	this.selectWidget.clearItems();
 	this.selectWidget.addItems( items );
@@ -103,7 +101,7 @@ ValuePickerWidget.prototype.initializeSelectWidget = function () {
  * that is currently selected
  */
 ValuePickerWidget.prototype.selectCurrentModelItem = function () {
-	var selectedItem = this.model.findSelectedItems()[ 0 ];
+	const selectedItem = this.model.findSelectedItems()[ 0 ];
 
 	if ( selectedItem ) {
 		this.selectWidget.selectItemByData( selectedItem.getName() );

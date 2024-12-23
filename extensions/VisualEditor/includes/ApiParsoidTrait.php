@@ -10,52 +10,40 @@
 
 namespace MediaWiki\Extension\VisualEditor;
 
-use ApiUsageException;
-use Language;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
+use MediaWiki\Api\ApiUsageException;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
-use Message;
-use NullStatsdDataFactory;
-use PrefixingStatsdDataFactoryProxy;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Throwable;
-use WebRequest;
+use Wikimedia\Stats\NullStatsdDataFactory;
+use Wikimedia\Stats\PrefixingStatsdDataFactoryProxy;
 
 trait ApiParsoidTrait {
 
 	private ?LoggerInterface $logger = null;
 	private ?StatsdDataFactoryInterface $stats = null;
 
-	/**
-	 * @return LoggerInterface
-	 */
 	protected function getLogger(): LoggerInterface {
 		return $this->logger ?: new NullLogger();
 	}
 
-	/**
-	 * @param LoggerInterface $logger
-	 */
-	protected function setLogger( LoggerInterface $logger ) {
+	protected function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
-	/**
-	 * @return StatsdDataFactoryInterface
-	 */
 	protected function getStats(): StatsdDataFactoryInterface {
 		return $this->stats ?: new NullStatsdDataFactory();
 	}
 
-	/**
-	 * @param StatsdDataFactoryInterface $stats
-	 */
-	protected function setStats( StatsdDataFactoryInterface $stats ) {
+	protected function setStats( StatsdDataFactoryInterface $stats ): void {
 		$this->stats = new PrefixingStatsdDataFactoryProxy( $stats, 'VE' );
 	}
 
@@ -70,17 +58,16 @@ trait ApiParsoidTrait {
 	 * @param string $key
 	 * @param float $startTime from statsGetStartTime()
 	 */
-	private function statsRecordTiming( string $key, float $startTime ) {
+	private function statsRecordTiming( string $key, float $startTime ): void {
 		$duration = ( microtime( true ) - $startTime ) * 1000;
 		$this->getStats()->timing( $key, $duration );
 	}
 
 	/**
-	 * @param HttpException $ex
 	 * @return never
 	 * @throws ApiUsageException
 	 */
-	private function dieWithRestHttpException( HttpException $ex ) {
+	private function dieWithRestHttpException( HttpException $ex ): void {
 		if ( $ex instanceof LocalizedHttpException ) {
 			$converter = new \MediaWiki\Message\Converter();
 			$msg = $converter->convertMessageValue( $ex->getMessageValue() );
@@ -125,7 +112,7 @@ trait ApiParsoidTrait {
 	 * @throws ApiUsageException
 	 */
 	protected function transformHTML(
-		Title $title, string $html, int $oldid = null, string $etag = null
+		Title $title, string $html, ?int $oldid = null, ?string $etag = null
 	): array {
 		$lang = self::getPageLanguage( $title );
 
@@ -153,7 +140,7 @@ trait ApiParsoidTrait {
 	 * @throws ApiUsageException
 	 */
 	protected function transformWikitext(
-		Title $title, string $wikitext, bool $bodyOnly, int $oldid = null, bool $stash = false
+		Title $title, string $wikitext, bool $bodyOnly, ?int $oldid = null, bool $stash = false
 	): array {
 		$lang = self::getPageLanguage( $title );
 
@@ -194,7 +181,6 @@ trait ApiParsoidTrait {
 
 	/**
 	 * @see VisualEditorParsoidClientFactory
-	 * @return ParsoidClient
 	 */
 	abstract protected function getParsoidClient(): ParsoidClient;
 

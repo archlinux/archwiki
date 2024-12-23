@@ -19,9 +19,10 @@
  */
 
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 class FindOrphanedFiles extends Maintenance {
 	public function __construct() {
@@ -113,7 +114,7 @@ class FindOrphanedFiles extends Maintenance {
 			$dbr->newSelectQueryBuilder()
 				->select( [ 'name' => 'oi_archive_name', 'old' => '1' ] )
 				->from( 'oldimage' )
-				->where( $oiWheres ? new OrExpressionGroup( ...$oiWheres ) : '1=0' )
+				->where( $oiWheres ? $dbr->orExpr( $oiWheres ) : '1=0' )
 		);
 
 		$res = $uqb->all()->caller( __METHOD__ )->fetchResultSet();
@@ -147,5 +148,7 @@ class FindOrphanedFiles extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = FindOrphanedFiles::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

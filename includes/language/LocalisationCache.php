@@ -20,9 +20,11 @@
 
 use CLDRPluralRuleParser\Error as CLDRPluralRuleError;
 use CLDRPluralRuleParser\Evaluator;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
 use Psr\Log\LoggerInterface;
@@ -155,7 +157,7 @@ class LocalisationCache {
 		'datePreferenceMigrationMap', 'defaultDateFormat',
 		'specialPageAliases', 'imageFiles', 'preloadedMessages',
 		'namespaceGenderAliases', 'digitGroupingPattern', 'pluralRules',
-		'pluralRuleTypes', 'compiledPluralRules',
+		'pluralRuleTypes', 'compiledPluralRules', 'formalityIndex',
 	];
 
 	/**
@@ -170,6 +172,7 @@ class LocalisationCache {
 		'minimumGroupingDigits', 'fallback8bitEncoding', 'linkPrefixExtension',
 		'linkTrail', 'linkPrefixCharset', 'datePreferences',
 		'datePreferenceMigrationMap', 'defaultDateFormat', 'digitGroupingPattern',
+		'formalityIndex',
 	];
 
 	/**
@@ -962,7 +965,9 @@ class LocalisationCache {
 
 		return [
 			'core' => "$IP/languages/i18n",
+			'codex' => "$IP/languages/i18n/codex",
 			'exif' => "$IP/languages/i18n/exif",
+			'preferences' => "$IP/languages/i18n/preferences",
 			'api' => "$IP/includes/api/i18n",
 			'rest' => "$IP/includes/Rest/i18n",
 			'oojs-ui' => "$IP/resources/lib/ooui/i18n",

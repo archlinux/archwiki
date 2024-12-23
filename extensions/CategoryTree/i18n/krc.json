@@ -33,5 +33,9 @@
 	"categorytree-no-pages": "статьяла бла тюбкатегорияла джокъдула",
 	"categorytree-not-found": "«$1» категория табылмады.",
 	"categorytree-error": "Билгиле джюклеуде халат.",
-	"categorytree-retry": "Бираз сакълагъыз да энтда бир кере кёрюрсюз."
+	"categorytree-retry": "Бираз сакълагъыз да энтда бир кере кёрюрсюз.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: <code>onlyroot</code> параметр хайырланыудан къоратылды. Буну орнуна <code>depth=\"0\"</code> хайырлан.",
+	"categorytree-deprecation-warning": "'''Эсгертиу:''' Бу бет хайырланыудан къоратылгъан параметри болгъан <code>&lt;categorytree&gt;</code> хайырландырады.",
+	"categorytree-deprecation-category": "Хайырланыудан къоратылгъан categorytree параметр хайырланнган бетле",
+	"categorytree-deprecation-category-desc": "Бет, <code>onlyroot</code> кибик хайырланыудан къоратылгъан categorytree параметрни хайырланады."
 }

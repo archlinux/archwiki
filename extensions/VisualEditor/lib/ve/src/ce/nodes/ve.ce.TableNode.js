@@ -136,7 +136,7 @@ ve.ce.TableNode.prototype.onTableDblClick = function ( e ) {
 		this.setEditing( true, true );
 		// getOffsetFromEventCoords doesn't work in ce=false in Firefox, so ensure
 		// this is called after setEditing( true ).
-		var offset = this.surface.getOffsetFromEventCoords( e.originalEvent );
+		const offset = this.surface.getOffsetFromEventCoords( e.originalEvent );
 		if ( offset !== -1 ) {
 			// Set selection to where the double click happened
 			this.surface.getModel().setLinearSelection( new ve.Range( offset ) );
@@ -152,22 +152,20 @@ ve.ce.TableNode.prototype.onTableDblClick = function ( e ) {
  * @param {jQuery.Event} e Mouse down or touch start event
  */
 ve.ce.TableNode.prototype.onTableMouseDown = function ( e ) {
-	var node = this;
-
-	var cellNode = this.getCellNodeFromEvent( e );
+	const cellNode = this.getCellNodeFromEvent( e );
 	if ( !cellNode ) {
 		return;
 	}
 
-	var endCell = this.getModel().getMatrix().lookupCell( cellNode.getModel() );
+	const endCell = this.getModel().getMatrix().lookupCell( cellNode.getModel() );
 	if ( !endCell ) {
 		e.preventDefault();
 		return;
 	}
-	var selection = this.surface.getModel().getSelection();
+	const selection = this.surface.getModel().getSelection();
 
-	var startCell;
-	var newSelection;
+	let startCell;
+	let newSelection;
 	if ( e.shiftKey && this.active ) {
 		// Extend selection from the anchor cell
 		if ( selection instanceof ve.dm.TableSelection ) {
@@ -220,11 +218,11 @@ ve.ce.TableNode.prototype.onTableMouseDown = function ( e ) {
 		cellNode.$element.prop( 'contentEditable', true );
 		// Select the clicked element so we get a copy option in the context menu
 		ve.selectElement( cellNode.$element[ 0 ] );
-		setTimeout( function () {
+		setTimeout( () => {
 			// Undo ce=true as soon as the context menu is shown
 			cellNode.$element.prop( 'contentEditable', 'false' );
 			// Trigger onModelSelect to restore the selection
-			node.surface.onModelSelect();
+			this.surface.onModelSelect();
 		} );
 		return;
 	}
@@ -238,8 +236,8 @@ ve.ce.TableNode.prototype.onTableMouseDown = function ( e ) {
 		// As we just have only just set the table selection, the surface is in
 		// process of deactivating, so wait for the event loop to clear before
 		// continuing.
-		setTimeout( function () {
-			node.onTableDblClick( e );
+		setTimeout( () => {
+			this.onTableDblClick( e );
 		} );
 	} else {
 		this.surface.$document.on( {
@@ -268,7 +266,7 @@ ve.ce.TableNode.prototype.getCellNodeFromEvent = function ( e ) {
 			// Ignore multi-touch
 			return null;
 		}
-		var touch = e.originalEvent.touches[ 0 ];
+		const touch = e.originalEvent.touches[ 0 ];
 		return this.getCellNodeFromPoint( touch.clientX, touch.clientY );
 	} else {
 		return this.getNearestCellNode( e.target );
@@ -297,7 +295,7 @@ ve.ce.TableNode.prototype.getCellNodeFromPoint = function ( x, y ) {
  * @return {ve.ce.TableCellNode|null} Table cell node, or null if none found
  */
 ve.ce.TableNode.prototype.getNearestCellNode = function ( element ) {
-	var $element = $( element ),
+	const $element = $( element ),
 		$table = $element.closest( 'table' );
 
 	// Nested table, ignore
@@ -314,19 +312,19 @@ ve.ce.TableNode.prototype.getNearestCellNode = function ( element ) {
  * @param {jQuery.Event} e Mouse/touch move event
  */
 ve.ce.TableNode.prototype.onTableMouseMove = function ( e ) {
-	var endCellNode = this.getCellNodeFromEvent( e );
+	const endCellNode = this.getCellNodeFromEvent( e );
 	if ( !endCellNode ) {
 		return;
 	}
 
-	var endCell = this.getModel().matrix.lookupCell( endCellNode.getModel() );
+	const endCell = this.getModel().matrix.lookupCell( endCellNode.getModel() );
 	if ( !endCell || endCell === this.endCell ) {
 		return;
 	}
 
 	this.endCell = endCell;
 
-	var selection = new ve.dm.TableSelection(
+	let selection = new ve.dm.TableSelection(
 		this.getModel().getOuterRange(),
 		this.startCell.col, this.startCell.row, endCell.col, endCell.row
 	);
@@ -355,30 +353,30 @@ ve.ce.TableNode.prototype.onTableMouseUp = function () {
  * @param {boolean} noSelect Don't change the selection
  */
 ve.ce.TableNode.prototype.setEditing = function ( isEditing, noSelect ) {
-	var surfaceModel = this.surface.getModel(),
-		documentModel = surfaceModel.getDocument(),
-		selection = surfaceModel.getSelection();
+	const surfaceModel = this.surface.getModel(),
+		documentModel = surfaceModel.getDocument();
 
+	let selection = surfaceModel.getSelection();
 	if ( isEditing ) {
 		if ( !selection.isSingleCell( documentModel ) ) {
 			selection = selection.collapseToFrom();
 			this.surface.getModel().setSelection( selection );
 		}
-		var cell = this.getCellNodesFromSelection( selection )[ 0 ];
+		const cell = this.getCellNodesFromSelection( selection )[ 0 ];
 		if ( !cell.isCellEditable() ) {
 			return;
 		}
 		this.editingFragment = this.surface.getModel().getFragment( selection );
 		cell.setEditing( true );
 		if ( !noSelect ) {
-			var cellRange = cell.getModel().getRange();
-			var offset = surfaceModel.getDocument().data.getNearestContentOffset( cellRange.end, -1 );
+			const cellRange = cell.getModel().getRange();
+			const offset = surfaceModel.getDocument().data.getNearestContentOffset( cellRange.end, -1 );
 			if ( offset > cellRange.start ) {
 				surfaceModel.setLinearSelection( new ve.Range( offset ) );
 			}
 		}
 	} else {
-		var activeCellNode;
+		let activeCellNode;
 		if ( ( activeCellNode = this.getActiveCellNode() ) ) {
 			activeCellNode.setEditing( false );
 			if ( !noSelect ) {
@@ -400,7 +398,7 @@ ve.ce.TableNode.prototype.setEditing = function ( isEditing, noSelect ) {
 ve.ce.TableNode.prototype.onSurfaceModelSelect = function ( selection ) {
 	// The table is active if there is a linear selection inside a cell being edited
 	// or a table selection matching this table.
-	var active =
+	const active =
 		(
 			this.editingFragment !== null &&
 			selection instanceof ve.dm.LinearSelection &&
@@ -448,7 +446,7 @@ ve.ce.TableNode.prototype.onSurfaceModelSelect = function ( selection ) {
  * @return {ve.ce.TableNode|null} The active cell node in this table
  */
 ve.ce.TableNode.prototype.getActiveCellNode = function () {
-	var activeNode = this.surface.getActiveNode(),
+	const activeNode = this.surface.getActiveNode(),
 		tableNodeOfActiveCellNode = activeNode && activeNode instanceof ve.ce.TableCellNode && activeNode.findParent( ve.ce.TableNode );
 
 	return tableNodeOfActiveCellNode === this ? activeNode : null;
@@ -474,34 +472,34 @@ ve.ce.TableNode.prototype.updateOverlay = function () {
 		return;
 	}
 
-	var selection = this.editingFragment ?
+	const selection = this.editingFragment ?
 		this.editingFragment.getSelection() :
 		this.surface.getModel().getSelection();
-	var documentModel = this.editingFragment ?
+	const documentModel = this.editingFragment ?
 		this.editingFragment.getDocument() :
 		this.surface.getModel().getDocument();
 	// getBoundingClientRect is more accurate but must be used consistently
 	// due to the iOS7 bug where it is relative to the document.
-	var tableOffset = this.getFirstSectionNode().$element[ 0 ].getBoundingClientRect();
-	var surfaceOffset = this.surface.getSurface().$element[ 0 ].getBoundingClientRect();
+	const tableOffset = this.getFirstSectionNode().$element[ 0 ].getBoundingClientRect();
+	const surfaceOffset = this.surface.getSurface().$element[ 0 ].getBoundingClientRect();
 
 	if ( !tableOffset ) {
 		return;
 	}
 
-	var selectionRect = this.surface.getSelection( selection ).getSelectionBoundingRect();
+	const selectionRect = this.surface.getSelection( selection ).getSelectionBoundingRect();
 
 	if ( !selectionRect ) {
 		return;
 	}
 
 	// Compute a bounding box for the given cell elements
-	var selectionOffset = ve.translateRect(
+	const selectionOffset = ve.translateRect(
 		selectionRect,
 		surfaceOffset.left - tableOffset.left, surfaceOffset.top - tableOffset.top
 	);
 
-	var anchorOffset;
+	let anchorOffset;
 	if ( selection.isSingleCell( documentModel ) ) {
 		// Optimization, use same rects as whole selection
 		anchorOffset = selectionOffset;
@@ -558,7 +556,7 @@ ve.ce.TableNode.prototype.updateOverlay = function () {
  * @return {ve.ce.TableSectionNode} First table section node
  */
 ve.ce.TableNode.prototype.getFirstSectionNode = function () {
-	var i = 0;
+	let i = 0;
 	while ( !( this.children[ i ] instanceof ve.ce.TableSectionNode ) ) {
 		i++;
 	}
@@ -572,12 +570,12 @@ ve.ce.TableNode.prototype.getFirstSectionNode = function () {
  * @return {ve.ce.TableCellNode[]} Cell nodes
  */
 ve.ce.TableNode.prototype.getCellNodesFromSelection = function ( selection ) {
-	var cells = selection.getMatrixCells( this.getModel().getDocument() ),
+	const cells = selection.getMatrixCells( this.getModel().getDocument() ),
 		nodes = [];
 
-	for ( var i = 0, l = cells.length; i < l; i++ ) {
-		var cellModel = cells[ i ].node;
-		var cellView = this.getNodeFromOffset( cellModel.getOffset() - this.model.getOffset() );
+	for ( let i = 0, l = cells.length; i < l; i++ ) {
+		const cellModel = cells[ i ].node;
+		const cellView = this.getNodeFromOffset( cellModel.getOffset() - this.model.getOffset() );
 		nodes.push( cellView );
 	}
 	return nodes;

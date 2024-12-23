@@ -3,17 +3,17 @@
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
 use Generator;
-use Language;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
+use MediaWiki\Language\Language;
+use MediaWiki\Message\Message;
 use MediaWikiUnitTestCase;
-use Message;
 use MessageLocalizer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\SpecsFormatter
+ * @covers \MediaWiki\Extension\AbuseFilter\SpecsFormatter
  */
 class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	/**
@@ -22,36 +22,22 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	 */
 	private function getFormatter( bool $msgDisabled = false ): SpecsFormatter {
 		$localizer = $this->createMock( MessageLocalizer::class );
-		$localizer->method( 'msg' )->willReturnCallback( function ( $k, $p = [] ) use ( $msgDisabled ) {
+		$localizer->method( 'msg' )->willReturnCallback( function ( $k ) use ( $msgDisabled ) {
 			if ( $k === 'abusefilter-throttle-details' ) {
 				// Special case
 				$msg = $this->createMock( Message::class );
-				$msg->method( 'params' )->willReturnCallback( function ( ...$p ) use ( $k ) {
-					$text = implode( '|', array_merge( [ $k ], $p ) );
-					return $this->getMockMessage( $text, [] );
-				} );
+				$msg->method( 'params' )->willReturnCallback(
+					fn ( ...$p ) => $this->getMockMessage( $k . '|' . implode( '|', $p ) )
+				);
 				return $msg;
 			}
-			$msg = $this->getMockMessage( $k, $p );
+			$msg = $this->getMockMessage( $k );
 			$msg->method( 'isDisabled' )->willReturn( $msgDisabled );
 			return $msg;
 		} );
 		return new SpecsFormatter( $localizer );
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
-	public function testConstruct() {
-		$this->assertInstanceOf(
-			SpecsFormatter::class,
-			new SpecsFormatter( $this->createMock( MessageLocalizer::class ) )
-		);
-	}
-
-	/**
-	 * @covers ::setMessageLocalizer
-	 */
 	public function testSetMessageLocalizer() {
 		$formatter = $this->getFormatter();
 		$ml = $this->createMock( MessageLocalizer::class );
@@ -66,16 +52,12 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	 * @param bool $msgDisabled
 	 * @param string $expected
 	 * @dataProvider provideActionDisplay
-	 * @covers ::getActionDisplay
 	 */
 	public function testGetActionDisplay( string $action, bool $msgDisabled, string $expected ) {
 		$formatter = $this->getFormatter( $msgDisabled );
 		$this->assertSame( $expected, $formatter->getActionDisplay( $action ) );
 	}
 
-	/**
-	 * @return array[]
-	 */
 	public static function provideActionDisplay(): array {
 		return [
 			'exists' => [ 'foobar', false, 'abusefilter-action-foobar' ],
@@ -83,9 +65,6 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @return Language
-	 */
 	private function getMockLanguage(): Language {
 		$lang = $this->createMock( Language::class );
 		$lang->method( 'translateBlockExpiry' )->willReturnCallback( static function ( $x ) {
@@ -108,7 +87,6 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	 * @param array $params
 	 * @param string $expected
 	 * @dataProvider provideFormatAction
-	 * @covers ::formatAction
 	 */
 	public function testFormatAction( string $action, array $params, string $expected ) {
 		$formatter = $this->getFormatter();
@@ -141,7 +119,6 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	 * @param string $flags
 	 * @param string $expected
 	 * @dataProvider provideFlags
-	 * @covers ::formatFlags
 	 */
 	public function testFormatFlags( string $flags, string $expected ) {
 		$formatter = $this->getFormatter();
@@ -152,9 +129,6 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $formatter->formatFlags( $flags, $lang ) );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function provideFlags(): array {
 		return [
 			'empty' => [ '', '' ],
@@ -167,7 +141,6 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	 * @param AbstractFilter $filter
 	 * @param string $expected
 	 * @dataProvider provideFilterFlags
-	 * @covers ::formatFilterFlags
 	 */
 	public function testFormatFilterFlags( AbstractFilter $filter, string $expected ) {
 		$formatter = $this->getFormatter();
@@ -187,7 +160,11 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 
 		$multiple = MutableFilter::newDefault();
 		$multiple->setHidden( true );
-		yield 'multiple' => [ $multiple, 'abusefilter-history-enabled,abusefilter-history-hidden' ];
+		$multiple->setProtected( true );
+		yield 'multiple' => [
+			$multiple,
+			'abusefilter-history-enabled,abusefilter-history-hidden,abusefilter-history-protected'
+		];
 	}
 
 	/**
@@ -195,16 +172,12 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	 * @param bool $msgDisabled
 	 * @param string $expected
 	 * @dataProvider provideGroup
-	 * @covers ::nameGroup
 	 */
 	public function testNameGroup( string $group, bool $msgDisabled, string $expected ) {
 		$formatter = $this->getFormatter( $msgDisabled );
 		$this->assertSame( $expected, $formatter->nameGroup( $group ) );
 	}
 
-	/**
-	 * @return array[]
-	 */
 	public static function provideGroup(): array {
 		return [
 			'exists' => [ 'foobar', false, 'abusefilter-group-foobar' ],

@@ -16,7 +16,6 @@
  */
 
 const Api = require( './mmv.provider.Api.js' );
-const FileRepoInfo = require( './mmv.provider.FileRepoInfo.js' );
 const GuessedThumbnailInfo = require( './mmv.provider.GuessedThumbnailInfo.js' );
 const ImageProvider = require( './mmv.provider.Image.js' );
 const ImageInfo = require( './mmv.provider.ImageInfo.js' );
@@ -24,7 +23,6 @@ const ThumbnailInfo = require( './mmv.provider.ThumbnailInfo.js' );
 
 module.exports = {
 	Api,
-	FileRepoInfo,
 	GuessedThumbnailInfo,
 	ImageInfo,
 	ImageProvider,

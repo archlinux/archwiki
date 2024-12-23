@@ -2,12 +2,14 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\FileBackend\SwiftFileBackend;
 
 /**
  * @group FileBackend
- * @covers SwiftFileBackend
+ * @covers \Wikimedia\FileBackend\SwiftFileBackend
  */
 class SwiftFileBackendIntegrationTest extends FileBackendIntegrationTestBase {
+	/** @var SwiftFileBackend|null */
 	private static $backendToUse;
 
 	private function getBackendConfig(): ?array {

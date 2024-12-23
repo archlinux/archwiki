@@ -2,17 +2,19 @@
 
 namespace MediaWiki\OutputTransform\Stages;
 
-use Language;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\OutputTransform\ContentTextTransformStage;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Tidy\TidyDriverBase;
-use ParserOptions;
+use Psr\Log\LoggerInterface;
 use Wikimedia\Parsoid\Core\TOCData;
 
 /**
@@ -23,7 +25,10 @@ class HandleTOCMarkers extends ContentTextTransformStage {
 
 	private TidyDriverBase $tidy;
 
-	public function __construct( TidyDriverBase $tidy ) {
+	public function __construct(
+		ServiceOptions $options, LoggerInterface $logger, TidyDriverBase $tidy
+	) {
+		parent::__construct( $options, $logger );
 		$this->tidy = $tidy;
 	}
 
@@ -143,7 +148,7 @@ class HandleTOCMarkers extends ContentTextTransformStage {
 	 * @param Language|null $lang Language for the toc title, defaults to user language
 	 * @return string Full html of the TOC
 	 */
-	private static function tocList( $toc, Language $lang = null ) {
+	private static function tocList( $toc, ?Language $lang = null ) {
 		$lang ??= RequestContext::getMain()->getLanguage();
 
 		$title = wfMessage( 'toc' )->inLanguage( $lang )->escaped();
@@ -181,7 +186,7 @@ class HandleTOCMarkers extends ContentTextTransformStage {
 	 *   - 'maxtoclevel' Max TOC level to generate
 	 * @return string HTML fragment
 	 */
-	private static function generateTOC( ?TOCData $tocData, Language $lang = null, array $options = [] ): string {
+	private static function generateTOC( ?TOCData $tocData, ?Language $lang = null, array $options = [] ): string {
 		$toc = '';
 		$lastLevel = 0;
 		$maxTocLevel = $options['maxtoclevel'] ?? null;

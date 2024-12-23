@@ -9,10 +9,10 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use ExtensionRegistry;
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookRunner;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Title\Title;
 use MessageLocalizer;

@@ -3,6 +3,7 @@
 		"authors": [
 			"Ankita-ks",
 			"Ansumang",
+			"AnupamM",
 			"Devayon",
 			"Goelujjwal",
 			"Hindustanilanguage",
@@ -17,8 +18,7 @@
 			"Siddhartha Ghai",
 			"Venky2834",
 			"Wikiuser13",
-			"संजीव कुमार",
-			"AnupamM"
+			"संजीव कुमार"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "पुस्तक",
@@ -39,9 +39,9 @@
 	"cite-ve-citationneeded-title": "उद्धरण की ज़रूरत है",
 	"cite-ve-dialog-reference-editing-reused": "इस उद्धरण का इस्तेमाल इस पृष्ठ पर {{PLURAL:$1|एक बार|2=दो बार|$1 बार}} किया जा चुका है।",
 	"cite-ve-dialog-reference-editing-reused-long": "इस उद्धरण का इस्तेमाल इस पृष्ठ पर {{PLURAL:$1|एक बार|2=दो बार|$1 बार}} किया जा चुका है। यहाँ किए गए बदलाव उन सभी जगहों पर लागू किए जाएँगे जहाँ पर इस सन्दर्भ का इस्तेमाल किया गया है।",
+	"cite-ve-dialog-reference-missing-parent-ref": "इस उप-संदर्भ में मूल संदर्भ की कमी है।",
 	"cite-ve-dialog-reference-options-group-label": "इस समूह का प्रयोग करें",
 	"cite-ve-dialog-reference-options-group-placeholder": "साधारण सन्दर्भ",
-	"cite-ve-dialog-reference-options-name-label": "इस नाम का पुनः उपयोग करें",
 	"cite-ve-dialog-reference-options-responsive-label": "उत्तरदायी कॉलम लेआउट का इस्तेमाल करें",
 	"cite-ve-dialog-reference-options-section": "विकल्प",
 	"cite-ve-dialog-reference-placeholder": "अपना सन्दर्भ यहाँ लिखें या चिपकाएँ, या फिर उद्धरण साँचा जोड़ें।",
@@ -59,6 +59,7 @@
 	"cite-ve-reference-input-placeholder": "वर्तमान उद्धरणों में खोजें",
 	"cite-ve-referenceslist-isempty": "इस पृष्ठ पर \"$1\" सन्दर्भ समूह में कोई सन्दर्भ नहीं है जो इस सूची में जोड़े जा सकें।",
 	"cite-ve-referenceslist-isempty-default": "इस पृष्ठ पर कोई सन्दर्भ नहीं है जो इस सूची में जोड़े जा सकें।",
+	"cite-ve-referenceslist-missing-parent": "कुछ उपसंदर्भ ऐसे हैं जिनमें मूल संदर्भ गायब है।",
 	"cite-ve-referenceslist-missingref": "यह सन्दर्भ किसी साँचे या दूसरे ब्लॉक का इस्तेमाल करता है, और इसलिए अभी सिर्फ स्रोत सम्पादन में सम्पादित किया जा सकता है।",
 	"cite-ve-referenceslist-missingref-in-list": "यह सन्दर्भ किसी साँचे या दूसरे ब्लॉक का इस्तेमाल करता है, और इसलिए अभी सिर्फ स्रोत सम्पादन में सम्पादित किया जा सकता है।",
 	"cite-ve-referenceslist-missingreflist": "यह सन्दर्भ सूची एक साँचे द्वारा बनाई गई है, और इसलिए अभी सिर्फ स्रोत सम्पादन में सम्पादित की जा सकती है।",

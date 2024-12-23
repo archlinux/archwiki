@@ -20,13 +20,12 @@
 
 namespace MediaWiki\EditPage\Constraint;
 
-use ApiMessage;
-use Content;
-use Language;
+use MediaWiki\Content\Content;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Message\Message;
 use MediaWiki\Status\Status;
 use MediaWiki\User\User;
@@ -41,32 +40,15 @@ use StatusValue;
  */
 class EditFilterMergedContentHookConstraint implements IEditConstraint {
 
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var Content */
-	private $content;
-
-	/** @var IContextSource */
-	private $hookContext;
-
-	/** @var string */
-	private $summary;
-
-	/** @var bool */
-	private $minorEdit;
-
-	/** @var Language */
-	private $language;
-
-	/** @var User */
-	private $hookUser;
-
-	/** @var Status */
-	private $status;
-
-	/** @var string */
-	private $hookError = '';
+	private HookRunner $hookRunner;
+	private Content $content;
+	private IContextSource $hookContext;
+	private string $summary;
+	private bool $minorEdit;
+	private Language $language;
+	private User $hookUser;
+	private Status $status;
+	private string $hookError = '';
 
 	/**
 	 * @param HookContainer $hookContainer
@@ -114,7 +96,7 @@ class EditFilterMergedContentHookConstraint implements IEditConstraint {
 				// being set. This is used by ConfirmEdit to display a captcha
 				// without any error message cruft.
 			} else {
-				if ( !$this->status->getErrors() ) {
+				if ( !$this->status->getMessages() ) {
 					// Provide a fallback error message if none was set
 					$this->status->fatal( 'hookaborted' );
 				}
@@ -131,7 +113,7 @@ class EditFilterMergedContentHookConstraint implements IEditConstraint {
 		if ( !$this->status->isOK() ) {
 			// ...or the hook could be expecting us to produce an error
 			// FIXME this sucks, we should just use the Status object throughout
-			if ( !$this->status->getErrors() ) {
+			if ( !$this->status->getMessages() ) {
 				// Provide a fallback error message if none was set
 				$this->status->fatal( 'hookaborted' );
 			}
@@ -151,7 +133,7 @@ class EditFilterMergedContentHookConstraint implements IEditConstraint {
 
 	/**
 	 * TODO this is really ugly. The constraint shouldn't know that the status
-	 * will be used as wikitext, with is what the hookError represents, rather
+	 * will be used as wikitext, which is what the hookError represents, rather
 	 * than just the error code. This needs a big refactor to remove the hook
 	 * error string and just rely on the status object entirely.
 	 *
@@ -169,10 +151,8 @@ class EditFilterMergedContentHookConstraint implements IEditConstraint {
 	 */
 	private function formatStatusErrors( Status $status ): string {
 		$ret = '';
-		foreach ( $status->getErrors() as $rawError ) {
-			// XXX: This interface is ugly, but it seems to be the only convenient way to convert a message specifier
-			// as used in Status to a Message without all the cruft that Status::getMessage & friends add.
-			$msg = Message::newFromSpecifier( ApiMessage::create( $rawError ) );
+		foreach ( $status->getMessages() as $msg ) {
+			$msg = Message::newFromSpecifier( $msg );
 			$ret .= Html::errorBox( "\n" . $msg->inLanguage( $this->language )->plain() . "\n" );
 		}
 		return $ret;

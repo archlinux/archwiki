@@ -12,13 +12,10 @@ use RuntimeException;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry
  */
 class ConsequencesRegistryTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct() {
 		$hookRunner = $this->createMock( AbuseFilterHookRunner::class );
 		$this->assertInstanceOf(
@@ -27,9 +24,6 @@ class ConsequencesRegistryTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::getAllActionNames
-	 */
 	public function testGetAllActionNames() {
 		$configActions = [ 'nothing' => false, 'rickroll' => true ];
 		$customActionName = 'spell';
@@ -44,9 +38,6 @@ class ConsequencesRegistryTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $registry->getAllActionNames() );
 	}
 
-	/**
-	 * @covers ::getAllEnabledActionNames
-	 */
 	public function testGetAllEnabledActionNames() {
 		$configActions = [ 'nothing' => false, 'rickroll' => true ];
 		$customActionName = 'spell';
@@ -61,9 +52,6 @@ class ConsequencesRegistryTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $registry->getAllEnabledActionNames() );
 	}
 
-	/**
-	 * @covers ::getDangerousActionNames
-	 */
 	public function testGetDangerousActionNames() {
 		// Cheat a bit
 		$regReflection = new ReflectionClass( ConsequencesRegistry::class );
@@ -73,9 +61,6 @@ class ConsequencesRegistryTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $registry->getDangerousActionNames() );
 	}
 
-	/**
-	 * @covers ::getDangerousActionNames
-	 */
 	public function testGetDangerousActionNames_hook() {
 		$extraDangerous = 'rickroll';
 		$hookRunner = $this->createMock( AbuseFilterHookRunner::class );
@@ -88,10 +73,6 @@ class ConsequencesRegistryTest extends MediaWikiUnitTestCase {
 		$this->assertContains( $extraDangerous, $registry->getDangerousActionNames() );
 	}
 
-	/**
-	 * @covers ::getCustomActions
-	 * @covers ::validateCustomActions
-	 */
 	public function testGetCustomActions() {
 		$customActionName = 'rickroll';
 		$customAction = 'strlen';
@@ -105,10 +86,6 @@ class ConsequencesRegistryTest extends MediaWikiUnitTestCase {
 		$this->assertSame( [ $customActionName => $customAction ], $registry->getCustomActions() );
 	}
 
-	/**
-	 * @covers ::getCustomActions
-	 * @covers ::validateCustomActions
-	 */
 	public function testGetCustomActions_invalidKey() {
 		$hookRunner = $this->createMock( AbuseFilterHookRunner::class );
 		$hookRunner->method( 'onAbuseFilterCustomActions' )->willReturnCallback(
@@ -122,10 +99,6 @@ class ConsequencesRegistryTest extends MediaWikiUnitTestCase {
 		$registry->getCustomActions();
 	}
 
-	/**
-	 * @covers ::getCustomActions
-	 * @covers ::validateCustomActions
-	 */
 	public function testGetCustomActions_invalidValue() {
 		$hookRunner = $this->createMock( AbuseFilterHookRunner::class );
 		$hookRunner->method( 'onAbuseFilterCustomActions' )->willReturnCallback(

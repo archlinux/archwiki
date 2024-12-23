@@ -23,6 +23,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -33,11 +35,7 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryIWBacklinks extends ApiQueryGeneratorBase {
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 */
-	public function __construct( ApiQuery $query, $moduleName ) {
+	public function __construct( ApiQuery $query, string $moduleName ) {
 		parent::__construct( $query, $moduleName, 'iwbl' );
 	}
 
@@ -222,3 +220,6 @@ class ApiQueryIWBacklinks extends ApiQueryGeneratorBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Iwbacklinks';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryIWBacklinks::class, 'ApiQueryIWBacklinks' );

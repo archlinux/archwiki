@@ -55,16 +55,14 @@ ve.ui.MWHelpListToolGroup.prototype.setActive = function () {
 	ve.ui.MWHelpListToolGroup.super.prototype.setActive.apply( this, arguments );
 
 	if ( this.active && !this.versionPromise ) {
-		var $version = $( '<div>' ).addClass( 'oo-ui-pendingElement-pending' ).text( '\u00a0' );
+		const $version = $( '<div>' ).addClass( 'oo-ui-pendingElement-pending' ).text( '\u00a0' );
 		this.$footer.append( $version );
 		this.versionPromise = ve.init.target.getLocalApi().get( {
 			action: 'query',
 			meta: 'siteinfo',
 			siprop: 'extensions'
-		} ).then( function ( response ) {
-			var extension = response.query.extensions.filter( function ( ext ) {
-				return ext.name === 'VisualEditor';
-			} )[ 0 ];
+		} ).then( ( response ) => {
+			const extension = response.query.extensions.filter( ( ext ) => ext.name === 'VisualEditor' )[ 0 ];
 
 			if ( extension && extension[ 'vcs-version' ] ) {
 				$version
@@ -88,7 +86,7 @@ ve.ui.MWHelpListToolGroup.prototype.setActive = function () {
 			} else {
 				$version.remove();
 			}
-		}, function () {
+		}, () => {
 			$version.remove();
 		} );
 	}
@@ -125,7 +123,15 @@ ve.ui.MWUserGuideTool.prototype.onUpdateState = function () {};
 
 ve.ui.MWUserGuideTool.prototype.onSelect = function () {
 	this.setActive( false );
-	window.open( new mw.Title( ve.msg( 'visualeditor-help-link' ) ).getUrl() );
+	const urlOrTitle = ve.msg( 'visualeditor-help-link' );
+	if ( urlOrTitle.indexOf( '//' ) !== -1 ) {
+		window.open( urlOrTitle );
+	} else {
+		// This link used to be internal link to mw:, but that doesn't work
+		// on 3rd party installations (T367267). Keep support for internal
+		// links as many wikis have local overrides which are internal.
+		window.open( new mw.Title( urlOrTitle ).getUrl() );
+	}
 };
 
 ve.ui.toolFactory.register( ve.ui.MWUserGuideTool );
@@ -156,23 +162,21 @@ ve.ui.MWFeedbackDialogTool.static.autoAddToCatchall = false;
 ve.ui.MWFeedbackDialogTool.prototype.onUpdateState = function () {};
 
 ve.ui.MWFeedbackDialogTool.prototype.onSelect = function () {
-	var tool = this;
-
 	this.setActive( false );
 
 	if ( !this.feedbackPromise ) {
-		this.feedbackPromise = mw.loader.using( 'mediawiki.feedback' ).then( function () {
-			var mode = tool.toolbar.getSurface().getMode();
+		this.feedbackPromise = mw.loader.using( 'mediawiki.feedback' ).then( () => {
+			const mode = this.toolbar.getSurface().getMode();
 
 			// This can't be constructed until the editor has loaded as it uses special messages
-			var feedbackConfig = {
+			const feedbackConfig = {
 				bugsLink: 'https://phabricator.wikimedia.org/maniphest/task/edit/form/1/?projects=VisualEditor',
 				showUseragentCheckbox: true,
 				useragentCheckboxMandatory: true
 			};
 
 			// If so configured, tell mw.feedback that we're posting to a remote wiki and set the title
-			var veConfig = mw.config.get( 'wgVisualEditorConfig' );
+			const veConfig = mw.config.get( 'wgVisualEditorConfig' );
 			if ( veConfig.feedbackApiUrl ) {
 				feedbackConfig.apiUrl = veConfig.feedbackApiUrl;
 				feedbackConfig.title = new mw.Title(
@@ -189,7 +193,7 @@ ve.ui.MWFeedbackDialogTool.prototype.onSelect = function () {
 			return new mw.Feedback( feedbackConfig );
 		} );
 	}
-	this.feedbackPromise.done( function ( feedback ) {
+	this.feedbackPromise.done( ( feedback ) => {
 		feedback.launch( {
 			message: ve.msg( 'visualeditor-feedback-defaultmessage', location.toString() )
 		} );

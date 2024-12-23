@@ -6,7 +6,6 @@
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|dankar}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Dankar}}}}",
-	"thanks-button-action-cancel": "Nuligar",
 	"thanks-thank-tooltip": "{{GENDER:$1|Sendez}} avizo 'danko' ad ica {{GENDER:$2|uzero}}",
 	"thanks-thank-tooltip-yes": "{{GENDER:$1|Sendar}} la danko",
 	"thanks-confirmation2": "Dankar {{GENDER:$1|publike}}?",

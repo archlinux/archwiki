@@ -1,0 +1,50 @@
+{
+	"opts": {
+		"encoding": "utf8",
+		"destination": "docs",
+		"package": "package.json",
+		"readme": "README.md",
+		"recurse": true,
+		"template": "node_modules/jsdoc-wmf-theme",
+		"class-hierarchy": {
+			"showList": true
+		}
+	},
+	"plugins": [
+		"plugins/markdown",
+		"node_modules/jsdoc-class-hierarchy",
+		"node_modules/jsdoc-wmf-theme/plugins/allow-dots-in-modules",
+		"node_modules/jsdoc-wmf-theme/plugins/betterlinks",
+		"node_modules/jsdoc-wmf-theme/plugins/externals",
+		"node_modules/jsdoc-wmf-theme/plugins/summarize",
+		"build/jsdoc-peculiar-static"
+	],
+	"recurseDepth": 10,
+	"source": {
+		"include": [ "src" ],
+		"includePattern": ".+\\.js$"
+	},
+	"tags": {
+		"allowUnknownTags": [ "chainable" ],
+		"dictionaries": [ "jsdoc" ]
+	},
+	"templates": {
+		"cleverLinks": true,
+		"default": {
+			"useLongnameInNav": true
+		},
+		"wmf": {
+			"maintitle": "OOUI",
+			"repository": "https://gerrit.wikimedia.org/g/oojs/ui/",
+			"hideSections": [ "Events" ],
+			"prefixMap": {
+				"OO.ui.": true
+			},
+			"linkMap": {
+				"EventEmitter": "https://nodejs.org/api/events.html#events_class_eventemitter",
+				"Request": "http://expressjs.com/en/api.html#req",
+				"Response": "http://expressjs.com/en/api.html#res"
+			}
+		}
+	}
+}

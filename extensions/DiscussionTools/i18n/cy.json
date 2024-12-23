@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Afalau",
+			"Ceirios",
 			"DChan (WMF)",
 			"Dafyddt",
 			"JonesT143",
 			"Matma Rex",
-			"Ceirios",
 			"Woytecr"
 		]
 	},
@@ -47,6 +47,7 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|Rydych chi}} wedi dad-danysgrifio.",
 	"discussiontools-notification-added-topic-header": "Crëwyd pwnc newydd \"<strong>$4</strong>\" ar <strong>$3</strong> gan $2.",
 	"discussiontools-notification-added-topic-view": "Gweld pwnc",
+	"discussiontools-notification-comment-thank-header-compact": "Dywedodd $1 {{GENDER:$2|diolch}} wrthoch {{GENDER:$3|chi}}.",
 	"discussiontools-notification-removed-topic-view": "Gweld y dudalen",
 	"discussiontools-notification-subscribed-new-comment-header": "{{GENDER:$2|Ymatebodd}} $1 yn \"<strong>$4</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-view": "Gweld sylw",

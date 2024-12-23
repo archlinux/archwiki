@@ -26,6 +26,7 @@
  */
 
 use MediaWiki\Config\Config;
+use MediaWiki\Content\Content;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
@@ -62,6 +63,7 @@ abstract class SearchEngine {
 
 	/** @var bool */
 	protected $showSuggestion = true;
+	/** @var string */
 	private $sort = self::DEFAULT_SORT;
 
 	/** @var array Feature values */
@@ -351,7 +353,6 @@ abstract class SearchEngine {
 	 * SearchEngine::getValidSorts()
 	 *
 	 * @since 1.25
-	 * @throws InvalidArgumentException
 	 * @param string $sort sort direction for query result
 	 */
 	public function setSort( $sort ) {
@@ -457,7 +458,7 @@ abstract class SearchEngine {
 	/**
 	 * Find snippet highlight settings for all users
 	 * @return array Contextlines, contextchars
-	 * @deprecated in 1.34 use the SearchHighlighter constants directly
+	 * @deprecated since 1.34; use the SearchHighlighter constants directly
 	 * @see SearchHighlighter::DEFAULT_CONTEXT_CHARS
 	 * @see SearchHighlighter::DEFAULT_CONTEXT_LINES
 	 */
@@ -515,7 +516,7 @@ abstract class SearchEngine {
 	 * @return string
 	 * @deprecated since 1.34 use Content::getTextForSearchIndex directly
 	 */
-	public function getTextFromContent( Title $t, Content $c = null ) {
+	public function getTextFromContent( Title $t, ?Content $c = null ) {
 		return $c ? $c->getTextForSearchIndex() : '';
 	}
 
@@ -772,7 +773,7 @@ abstract class SearchEngine {
 	 * @return array|null the list of profiles or null if none available
 	 * @phan-return null|array{name:string,desc-message:string,default?:bool}
 	 */
-	public function getProfiles( $profileType, User $user = null ) {
+	public function getProfiles( $profileType, ?User $user = null ) {
 		return null;
 	}
 

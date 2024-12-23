@@ -10,7 +10,7 @@
  *
  * @class
  * @extends ve.ce.BranchNode
- * @mixins ve.ce.ActiveNode
+ * @mixes ve.ce.ActiveNode
  *
  * @constructor
  * @param {ve.dm.MWGalleryCaptionNode} model Model to observe

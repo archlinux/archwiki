@@ -1,5 +1,7 @@
 /**
  * Configuration of Toolbar module for wikiEditor
+ *
+ * @private
  */
 var configData = require( './data.json' ),
 	fileNamespace = mw.config.get( 'wgFormattedNamespaces' )[ 6 ],
@@ -10,6 +12,7 @@ var configData = require( './data.json' ),
  * Replace link targets from example messages with hash
  * after a message has been parsed.
  *
+ * @private
  * @param {jQuery} $message an mw.message().parseDom() object
  * @return {string} HTML string
  */

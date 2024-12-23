@@ -1,22 +1,32 @@
+/**
+ * @classdesc
+ * Conflict-safe storage extending a ve.init.SafeStorage instance
+ *
+ * Implements conflict handling for localStorage:
+ * Any time the storage is used and it is detected that another process has
+ * modified the underlying data, all the managed keys are restored from an
+ * in-memory cache. There is no merging of data, all managed keys are either
+ * completely overwritten, or deleted if they were not originally set.
+ *
+ * This would be namespaced ve.init.ConflictableStorage, but as a generated class
+ * it is never exported.
+ *
+ * @class ve.init.ConflictableStorage
+ * @extends ve.init.SafeStorage
+ * @hideconstructor
+ */
+
+/**
+ * Create a conflictable storage object, extending a safe storage object.
+ *
+ * @param {ve.init.SafeStorage} storage Storage class to extend
+ * @return {ve.init.ConflictableStorage} [description]
+ */
 ve.init.createConflictableStorage = function ( storage ) {
-	var conflictKey = '__conflictId';
-	var EXPIRY_PREFIX = '_EXPIRY_';
+	const conflictKey = '__conflictId';
+	const EXPIRY_PREFIX = '_EXPIRY_';
 
 	/**
-	 * Conflict-safe storage extending a ve.init.SafeStorage instance
-	 *
-	 * Implements conflict handling for localStorage:
-	 * Any time the storage is used and it is detected that another process has
-	 * modified the underlying data, all the managed keys are restored from an
-	 * in-memory cache. There is no merging of data, all managed keys are either
-	 * completely overwritten, or deleted if they were not originally set.
-	 *
-	 * This would be namespaced ve.init.ConflictableStorage, but as a generated class
-	 * it is never exported.
-	 *
-	 * @class ve.init.ConflictableStorage
-	 * @extends ve.init.SafeStorage
-	 *
 	 * @constructor
 	 * @param {Storage|undefined} store The Storage instance to wrap around
 	 */
@@ -34,7 +44,7 @@ ve.init.createConflictableStorage = function ( storage ) {
 
 	// Dynamically extend the class of the storage object, in case
 	// it is a sub-class of SafeStorage.
-	var ParentStorage = storage.constructor;
+	const ParentStorage = storage.constructor;
 	OO.inheritClass( ConflictableStorage, ParentStorage );
 
 	/* Methods */
@@ -100,7 +110,7 @@ ve.init.createConflictableStorage = function ( storage ) {
 
 		if ( this.storageMayConflict ) {
 			if ( Object.prototype.hasOwnProperty.call( this.conflictableKeys, key ) ) {
-				var expiryAbsolute = null;
+				let expiryAbsolute = null;
 				try {
 					expiryAbsolute = this.store.getItem( EXPIRY_PREFIX + key );
 				} catch ( e ) {}
@@ -141,11 +151,11 @@ ve.init.createConflictableStorage = function ( storage ) {
 		// Call parent method directly when setting conflict key
 		ConflictableStorage.super.prototype.set.call( this, conflictKey, this.conflictId );
 
-		for ( var key in this.conflictableKeys ) {
+		for ( const key in this.conflictableKeys ) {
 			if ( Object.prototype.hasOwnProperty.call( this.conflictBackup, key ) && this.conflictBackup[ key ] !== null ) {
-				var expiryKey = EXPIRY_PREFIX + key;
-				var expiryAbsolute = this.conflictBackup[ expiryKey ];
-				var expiry = null;
+				const expiryKey = EXPIRY_PREFIX + key;
+				const expiryAbsolute = this.conflictBackup[ expiryKey ];
+				let expiry = null;
 				if ( expiryAbsolute ) {
 					expiry = expiryAbsolute - Math.floor( Date.now() / 1000 );
 				}
@@ -174,11 +184,11 @@ ve.init.createConflictableStorage = function ( storage ) {
 			ConflictableStorage.super.prototype.set.call( this, conflictKey, this.conflictId );
 		}
 
-		for ( var key in keys ) {
+		for ( const key in keys ) {
 			if ( Object.prototype.hasOwnProperty.call( keys, key ) ) {
 				this.conflictBackup[ key ] = this.get( key );
 
-				var expiryAbsolute = null;
+				let expiryAbsolute = null;
 				try {
 					expiryAbsolute = this.store.getItem( EXPIRY_PREFIX + key );
 				} catch ( e ) {}

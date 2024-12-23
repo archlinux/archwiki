@@ -6,6 +6,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 
 	protected $lookups;
 	public $_variables;
+	public $_properties;
 	public $_rulesets;
 
 	public $strictImports;
@@ -111,7 +112,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 
 					for ( $j = 0; $j < count( $rule->rules ); $j++ ) {
 						$subRule = $rule->rules[$j];
-						if ( !( $subRule instanceof Less_Tree_Rule ) || !$subRule->variable ) {
+						if ( !( $subRule instanceof Less_Tree_Declaration ) || !$subRule->variable ) {
 							array_splice( $ruleset->rules, ++$i, 0, [ $subRule ] );
 							$rsRuleCnt++;
 						}
@@ -150,7 +151,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 
 				$temp = [];
 				foreach ( $rule as $r ) {
-					if ( ( $r instanceof Less_Tree_Rule ) && $r->variable ) {
+					if ( ( $r instanceof Less_Tree_Declaration ) && $r->variable ) {
 						// do not pollute the scope if the variable is
 						// already there. consider returning false here
 						// but we need a way to "return" variable from mixins
@@ -167,12 +168,12 @@ class Less_Tree_Ruleset extends Less_Tree {
 				$i += $temp_count;
 				$ruleset->resetCache();
 
-			} elseif ( $rule instanceof Less_Tree_RulesetCall ) {
+			} elseif ( $rule instanceof Less_Tree_VariableCall ) {
 
 				$rule = $rule->compile( $env );
 				$rules = [];
 				foreach ( $rule->rules as $r ) {
-					if ( ( $r instanceof Less_Tree_Rule ) && $r->variable ) {
+					if ( ( $r instanceof Less_Tree_Declaration ) && $r->variable ) {
 						continue;
 					}
 					$rules[] = $r;
@@ -267,7 +268,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 	public function makeImportant() {
 		$important_rules = [];
 		foreach ( $this->rules as $rule ) {
-			if ( $rule instanceof Less_Tree_Rule || $rule instanceof self || $rule instanceof Less_Tree_NameValue ) {
+			if ( $rule instanceof Less_Tree_Declaration || $rule instanceof self || $rule instanceof Less_Tree_NameValue ) {
 				$important_rules[] = $rule->makeImportant();
 			} else {
 				$important_rules[] = $rule;
@@ -301,12 +302,12 @@ class Less_Tree_Ruleset extends Less_Tree {
 	}
 
 	/**
-	 * @see less-2.5.3.js#Ruleset.prototype.variables
+	 * @see less-3.13.1.js#Ruleset.prototype.variables
 	 */
 	public function variables() {
 		$this->_variables = [];
 		foreach ( $this->rules as $r ) {
-			if ( $r instanceof Less_Tree_Rule && $r->variable === true ) {
+			if ( $r instanceof Less_Tree_Declaration && $r->variable === true ) {
 				$this->_variables[$r->name] = $r;
 			}
 			// when evaluating variables in an import statement, imports have not been eval'd
@@ -323,14 +324,105 @@ class Less_Tree_Ruleset extends Less_Tree {
 	}
 
 	/**
+	 * @see less-3.13.1#Ruleset.prototype.properties
+	 */
+	public function properties() {
+		$this->_properties = [];
+		foreach ( $this->rules as $r ) {
+
+			if ( $r instanceof Less_Tree_Declaration && $r->variable !== true ) {
+				$name = is_array( $r->name ) && count( $r->name ) === 1 && $r->name[0] instanceof Less_Tree_Keyword
+					? $r->name[0]->value
+					: $r->name;
+				// Properties don't overwrite as they can merge
+
+				// TODO: differs from upstream. Upstream expects $r->name to be only a
+				// Less_Tree_Keyword but somehow our parser also returns Less_Tree_Property.
+				// Let's handle it for now, but we should debug why this happens
+				// caused by test/Fixtures/lessjs-3.13.1/less/_main/property-accessors.less:59
+				if ( is_array( $name ) && $name[0] instanceof Less_Tree_Property ) {
+					$name = $name[0]->name;
+				}
+
+				$idx = '$' . $name;
+				if ( !array_key_exists( $idx, $this->_properties ) ) {
+					$this->_properties[ $idx ] = [];
+				}
+				$this->_properties[ $idx ][] = $r;
+			}
+		}
+		return $this->_properties;
+	}
+
+	/**
 	 * @param string $name
-	 * @return Less_Tree_Rule|null
+	 * @return Less_Tree_Declaration|null
+	 * @see less-3.13.1#Ruleset.prototype.variable
 	 */
 	public function variable( $name ) {
 		if ( $this->_variables === null ) {
 			$this->variables();
 		}
-		return $this->_variables[$name] ?? null;
+		return array_key_exists( $name, $this->_variables )
+			? $this->parseValue( $this->_variables[ $name ] )
+			: null;
+	}
+
+	/**
+	 * @param string $name
+	 * @see less-3.13.1#Ruleset.prototype.property
+	 */
+	public function property( $name ) {
+		if ( $this->_properties === null ) {
+			$this->properties();
+		}
+		return array_key_exists( $name, $this->_properties )
+			? $this->parseValue( $this->_properties[ $name ] )
+			: null;
+	}
+
+	/**
+	 * @param Less_Tree_Declaration $decl
+	 * @return mixed
+	 * @throws Less_Exception_Parser
+	 */
+	private function transformDeclaration( $decl ) {
+		if ( $decl->value instanceof Less_Tree_Anonymous && !$decl->parsed ) {
+			[ $err, $result ] = self::$parse->parseNode( (string)$decl->value->value, [ 'value', 'important' ],
+				$decl->value->index, $decl->value->currentFileInfo ?? [] );
+			if ( $err ) {
+				$decl->parsed = true;
+			}
+			if ( $result ) {
+				$decl->value = $result[0];
+				$decl->important = $result[1] ?? '';
+				$decl->parsed = true;
+			}
+			return $decl;
+		} else {
+			return $decl;
+		}
+	}
+
+	public function lastDeclaration() {
+		for ( $i = count( $this->rules ); $i > 0; $i-- ) {
+			$decl = $this->rules[ $i - 1 ];
+			if ( $decl instanceof Less_Tree_Declaration ) {
+				return $this->parseValue( $decl );
+			}
+		}
+	}
+
+	private function parseValue( $toParse ) {
+		if ( !is_array( $toParse ) ) {
+			return $this->transformDeclaration( $toParse );
+		} else {
+			$nodes = [];
+			foreach ( $toParse as $n ) {
+				$nodes[] = $this->transformDeclaration( $n );
+			}
+			return $nodes;
+		}
 	}
 
 	public function find( $selector, $self = null, $filter = null ) {
@@ -383,7 +475,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 		// some directives and anonymous nodes are ruleset like, others are not
 		if ( $rule instanceof Less_Tree_Media || $rule instanceof Less_Tree_Ruleset ) {
 			return true;
-		} elseif ( $rule instanceof Less_Tree_Anonymous || $rule instanceof Less_Tree_Directive ) {
+		} elseif ( $rule instanceof Less_Tree_Anonymous || $rule instanceof Less_Tree_AtRule ) {
 			return $rule->isRulesetLike();
 		}
 
@@ -419,7 +511,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 					$importNodeIndex++;
 				}
 				$ruleNodes[] = $rule;
-			} elseif ( $rule instanceof Less_Tree_Directive && $rule->isCharset() ) {
+			} elseif ( $rule instanceof Less_Tree_AtRule && $rule->isCharset() ) {
 				array_splice( $ruleNodes, $charsetNodeIndex, 0, [ $rule ] );
 				$charsetNodeIndex++;
 				$importNodeIndex++;

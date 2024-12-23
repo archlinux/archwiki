@@ -22,7 +22,7 @@
 		$issueContainer.prepend( issue.issue.iconElement );
 		$issueContainer.prepend( $learnMoreEl );
 
-		$clickContainer.on( 'click', function () {
+		$clickContainer.on( 'click', () => {
 			overlayManager.router.navigate( overlayUrl );
 			return false;
 		} );

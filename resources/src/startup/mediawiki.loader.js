@@ -21,10 +21,6 @@
 	 *
 	 * @see <https://www.mediawiki.org/wiki/ResourceLoader/Features>
 	 * @namespace mw.loader
-	 * @memberof mw
-	 * @singleton
-	 * @hideconstructor
-	 * @static
 	 */
 
 	/**
@@ -61,6 +57,7 @@
 	 * Fired via mw.track on various resource loading errors.
 	 *
 	 * eslint-disable jsdoc/valid-types
+	 *
 	 * @event ~'resourceloader.exception'
 	 * @ignore
 	 * @param {Error|Mixed} e The error that was thrown. Almost always an Error
@@ -570,7 +567,7 @@
 	 * @return {string|null} Resolved path, or null if relativePath does not start with ./ or ../
 	 */
 	function resolveRelativePath( relativePath, basePath ) {
-		// eslint-disable-next-line security/detect-unsafe-regex
+
 		var relParts = relativePath.match( /^((?:\.\.?\/)+)(.*)$/ );
 		if ( !relParts ) {
 			return null;
@@ -588,9 +585,16 @@
 
 		// For every ../ in the path prefix, remove one directory level from baseDirParts
 		var prefix;
+		var reachedRoot = false;
 		while ( ( prefix = prefixes.pop() ) !== undefined ) {
 			if ( prefix === '..' ) {
-				baseDirParts.pop();
+				// Once we reach the package's base dir, preserve all remaining "..".
+				reachedRoot = !baseDirParts.length || reachedRoot;
+				if ( !reachedRoot ) {
+					baseDirParts.pop();
+				} else {
+					baseDirParts.push( prefix );
+				}
 			}
 		}
 
@@ -1647,7 +1651,7 @@
 		 * @throws {Error} If type is invalid
 		 */
 		load: function ( modules, type ) {
-			// eslint-disable-next-line security/detect-unsafe-regex
+
 			if ( typeof modules === 'string' && /^(https?:)?\/?\//.test( modules ) ) {
 				// Called with a url like so:
 				// - "https://example.org/x.js"
@@ -1695,7 +1699,7 @@
 		 *
 		 * - `registered`: The module is available for loading but not yet requested.
 		 * - `loading`, `loaded`, or `executing`: The module is currently being loaded.
-		 * - `ready`: The module was succesfully and fully loaded.
+		 * - `ready`: The module was successfully and fully loaded.
 		 * - `error`: The module or one its dependencies has failed to load, e.g. due to
 		 *    uncaught error from the module's script files.
 		 * - `missing`: The module was requested but is not defined according to the server.
@@ -1704,19 +1708,19 @@
 		 *
 		 * - `registered`:
 		 *    The module is known to the system but not yet required.
-		 *    Meta data is stored by mw.loader#register.
+		 *    Meta data is stored by `register()`.
 		 *    Calls to that method are generated server-side by StartupModule.
 		 * - `loading`:
 		 *    The module was required through mw.loader (either directly or as dependency of
 		 *    another module). The client will fetch module contents from mw.loader.store
-		 *    or from the server. The contents should later be received by mw.loader#implement.
+		 *    or from the server. The contents should later be received by `implement()`.
 		 * - `loaded`:
-		 *    The module has been received by mw.loader#implement.
+		 *    The module has been received by `implement()`.
 		 *    Once the module has no more dependencies in-flight, the module will be executed,
-		 *    controlled via #setAndPropagate and #doPropagation.
+		 *    controlled via `setAndPropagate()` and `doPropagation()`.
 		 * - `executing`:
 		 *    The module is being executed (apply messages and stylesheets, execute scripts)
-		 *    by mw.loader#execute.
+		 *    by `execute()`.
 		 * - `ready`:
 		 *    The module has been successfully executed.
 		 * - `error`:

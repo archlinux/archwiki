@@ -18,7 +18,7 @@
 
 namespace MediaWiki\SecureLinkFixer;
 
-use Benchmarker;
+use MediaWiki\Maintenance\Benchmarker;
 use MediaWiki\MediaWikiServices;
 use const RUN_MAINTENANCE_IF_MAIN;
 

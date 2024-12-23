@@ -21,7 +21,9 @@
  * @ingroup MaintenanceLanguage
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that tests various language time and date functions.
@@ -30,6 +32,7 @@ require_once __DIR__ . '/../Maintenance.php';
  */
 class DateFormats extends Maintenance {
 
+	/** @var string */
 	private $ts = '20010115123456';
 
 	public function __construct() {
@@ -78,5 +81,7 @@ class DateFormats extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DateFormats::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -20,14 +20,18 @@ use WikiExporter;
  *
  * @group Database
  * @group Dump
- * @covers \BackupDumper
+ * @covers \MediaWiki\Maintenance\BackupDumper
  */
 class BackupDumperLoggerTest extends DumpTestCase {
 
 	// We'll add several log entries and users for this test. The following
 	// variables hold the corresponding ids.
-	private $userId1, $userId2;
-	private $logId1, $logId2, $logId3;
+	// phpcs:ignore MediaWiki.Commenting.PropertyDocumentation.WrongStyle
+	private int $userId1;
+	private int $userId2;
+	private int $logId1;
+	private int $logId2;
+	private int $logId3;
 
 	/**
 	 * adds a log entry to the database.
@@ -104,7 +108,7 @@ class BackupDumperLoggerTest extends DumpTestCase {
 		$dumper->startId = $this->logId1;
 		$dumper->endId = $this->logId3 + 1;
 		$dumper->reporting = false;
-		$dumper->setDB( $this->db );
+		$dumper->setDB( $this->getDb() );
 
 		// Performing the dump
 		$dumper->dump( WikiExporter::LOGS, WikiExporter::TEXT );
@@ -145,7 +149,7 @@ class BackupDumperLoggerTest extends DumpTestCase {
 			'--reporting=2' ] );
 		$dumper->startId = $this->logId1;
 		$dumper->endId = $this->logId3 + 1;
-		$dumper->setDB( $this->db );
+		$dumper->setDB( $this->getDb() );
 
 		// xmldumps-backup demands reporting, although this is currently not
 		// implemented in BackupDumper, when dumping logging data. We

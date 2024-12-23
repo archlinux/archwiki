@@ -25,6 +25,7 @@
 namespace MediaWiki\Installer;
 
 use FixInconsistentRedirects;
+use MediaWiki\Maintenance\FixAutoblockLogTitles;
 use MigrateExternallinks;
 use MigrateRevisionActorTemp;
 use MigrateRevisionCommentTemp;
@@ -42,19 +43,6 @@ class SqliteUpdater extends DatabaseUpdater {
 
 	protected function getCoreUpdateList() {
 		return [
-			// 1.35
-			[ 'addField', 'revision', 'rev_actor', 'patch-revision-actor-comment-MCR.sql' ],
-			[ 'addTable', 'watchlist_expiry', 'patch-watchlist_expiry.sql' ],
-			[ 'modifyfield', 'filearchive', 'fa_actor', 'patch-filearchive-drop-fa_actor-DEFAULT.sql' ],
-			[ 'modifyfield', 'recentchanges', 'rc_actor', 'patch-recentchanges-drop-rc_actor-DEFAULT.sql' ],
-			[ 'modifyfield', 'logging', 'log_actor', 'patch-logging-drop-log_actor-DEFAULT.sql' ],
-			[ 'modifyField', 'page', 'page_restrictions', 'patch-page_restrictions-null.sql' ],
-			[ 'renameIndex', 'ipblocks', 'ipb_address', 'ipb_address_unique', false,
-				'patch-ipblocks-rename-ipb_address.sql' ],
-			[ 'dropField', 'archive', 'ar_text_id', 'patch-archive-MCR.sql' ],
-			[ 'doFixIpbAddressUniqueIndex' ],
-			[ 'modifyField', 'actor', 'actor_name', 'patch-actor-actor_name-varbinary.sql' ],
-
 			// 1.36
 			[ 'modifyField', 'content', 'content_id', 'patch-content-content_id-fix_not_null.sql' ],
 			[ 'modifyField', 'redirect', 'rd_title', 'patch-redirect-rd_title-varbinary.sql' ],
@@ -123,9 +111,9 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'modifyField', 'ipblocks_restrictions', 'ir_ipb_id', 'patch-ipblocks_restrictions-ir_ipb_id.sql' ],
 			[ 'modifyField', 'ipblocks', 'ipb_id', 'patch-ipblocks-ipb_id.sql' ],
 			[ 'modifyField', 'user', 'user_editcount', 'patch-user-user_editcount.sql' ],
-			[ 'runMaintenance', MigrateRevisionActorTemp::class, 'maintenance/migrateRevisionActorTemp.php' ],
+			[ 'runMaintenance', MigrateRevisionActorTemp::class ],
 			[ 'dropTable', 'revision_actor_temp' ],
-			[ 'runMaintenance', UpdateRestrictions::class, 'maintenance/updateRestrictions.php' ],
+			[ 'runMaintenance', UpdateRestrictions::class ],
 			[ 'dropField', 'page', 'page_restrictions', 'patch-page-drop-page_restrictions.sql' ],
 			[ 'migrateTemplatelinks' ],
 			[ 'modifyField', 'templatelinks', 'tl_namespace', 'patch-templatelinks-tl_title-nullable.sql' ],
@@ -136,13 +124,13 @@ class SqliteUpdater extends DatabaseUpdater {
 
 			// 1.41
 			[ 'addField', 'user', 'user_is_temp', 'patch-user-user_is_temp.sql' ],
-			[ 'runMaintenance', MigrateRevisionCommentTemp::class, 'maintenance/migrateRevisionCommentTemp.php' ],
+			[ 'runMaintenance', MigrateRevisionCommentTemp::class ],
 			[ 'dropTable', 'revision_comment_temp' ],
-			[ 'runMaintenance', MigrateExternallinks::class, 'maintenance/migrateExternallinks.php' ],
+			[ 'runMaintenance', MigrateExternallinks::class ],
 			[ 'modifyField', 'externallinks', 'el_to', 'patch-externallinks-el_to_default.sql' ],
 			[ 'addField', 'pagelinks', 'pl_target_id', 'patch-pagelinks-target_id.sql' ],
 			[ 'dropField', 'externallinks', 'el_to', 'patch-externallinks-drop-el_to.sql' ],
-			[ 'runMaintenance', FixInconsistentRedirects::class, 'maintenance/fixInconsistentRedirects.php' ],
+			[ 'runMaintenance', FixInconsistentRedirects::class ],
 			[ 'modifyField', 'image', 'img_size', 'patch-image-img_size_to_bigint.sql' ],
 			[ 'modifyField', 'filearchive', 'fa_size', 'patch-filearchive-fa_size_to_bigint.sql' ],
 			[ 'modifyField', 'oldimage', 'oi_size', 'patch-oldimage-oi_size_to_bigint.sql' ],
@@ -152,45 +140,29 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'addField', 'user_autocreate_serial', 'uas_year', 'patch-user_autocreate_serial-uas_year.sql' ],
 			[ 'addTable', 'block_target', 'patch-block_target.sql' ],
 			[ 'dropIndex', 'categorylinks', 'cl_collation_ext', 'patch-drop-cl_collation_ext.sql' ],
-			[ 'runMaintenance', PopulateUserIsTemp::class, 'maintenance/populateUserIsTemp.php' ],
+			[ 'runMaintenance', PopulateUserIsTemp::class ],
 			[ 'dropIndex', 'sites', 'site_type', 'patch-sites-drop_indexes.sql' ],
 			[ 'dropIndex', 'iwlinks', 'iwl_prefix_from_title', 'patch-iwlinks-drop-iwl_prefix_from_title.sql' ],
+
+			// 1.43
+			[ 'migratePagelinks' ],
+			[ 'modifyField', 'revision', 'rev_id', 'patch-revision-cleanup.sql' ],
+			[ 'modifyField', 'change_tag', 'ct_rc_id', 'patch-change_tag-ct_rc_id.sql' ],
+			[ 'runMaintenance', \MigrateBlocks::class ],
+			[ 'dropTable', 'ipblocks' ],
+			[ 'dropField', 'pagelinks', 'pl_title', 'patch-pagelinks-drop-pl_title.sql' ],
+			[ 'addPostDatabaseUpdateMaintenance', FixAutoblockLogTitles::class ],
 		];
 	}
 
-	/**
-	 * Check whether an index contains a field
-	 *
-	 * @param string $table Table name
-	 * @param string $index Index name to check
-	 * @param string $field Field that should be in the index
-	 * @return bool
-	 */
-	protected function indexHasField( $table, $index, $field ) {
-		$info = $this->db->indexInfo( $table, $index, __METHOD__ );
-		if ( $info ) {
-			foreach ( $info as $column ) {
-				if ( $column == $field ) {
-					$this->output( "...index $index on table $table includes field $field.\n" );
-					return true;
-				}
-			}
-		}
-		$this->output( "...index $index on table $table has no field $field; added.\n" );
-
-		return false;
-	}
-
-	protected function doFixIpbAddressUniqueIndex() {
-		if ( !$this->indexHasField( 'ipblocks', 'ipb_address_unique', 'ipb_anon_only' ) ) {
-			$this->output( "...ipb_address_unique index up-to-date.\n" );
-			return;
-		}
-
-		$this->applyPatch(
-			'patch-ipblocks-fix-ipb_address_unique.sql',
-			false,
-			'Removing ipb_anon_only column from ipb_address_unique index'
-		);
+	protected function getInitialUpdateKeys() {
+		return [
+			'filearchive-fa_major_mime-patch-fa_major_mime-chemical.sql',
+			'image-img_major_mime-patch-img_major_mime-chemical.sql',
+			'oldimage-oi_major_mime-patch-oi_major_mime-chemical.sql',
+			'user_groups-ug_group-patch-ug_group-length-increase-255.sql',
+			'user_former_groups-ufg_group-patch-ufg_group-length-increase-255.sql',
+			'user_properties-up_property-patch-up_property.sql',
+		];
 	}
 }

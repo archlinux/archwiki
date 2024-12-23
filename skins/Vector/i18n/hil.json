@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Anjoeli9806",
+			"Billie bb",
 			"Kai theos en ho logos",
-			"Redhotchili23",
-			"Billie bb"
+			"Redhotchili23"
 		]
 	},
 	"vector-languages": "Mga Lenguahe",
@@ -22,6 +22,7 @@
 	"vector-view-view": "Magbasa",
 	"vector-view-viewsource": "Lantawon ang ginhalinan",
 	"vector-more-actions": "Dugang Pa",
+	"vector-appearance-label": "Makita sa hitsura",
 	"vector-feature-custom-font-size-name": "Teks",
 	"vector-feature-custom-font-size-0-label": "Magamay",
 	"vector-feature-custom-font-size-1-label": "Istandard",
@@ -30,6 +31,7 @@
 	"skin-theme-os-label": "Awtomatiko",
 	"vector-searchsuggest-containing": "Mangita sang mga panid nga nagasulod sang <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-main-menu-label": "Panguna nga menu",
+	"vector-feature-custom-font-size-exclusion-notice": "Ini nga pahina pirme nagagamit sang gamay nga kadakuon sang letra",
 	"vector-page-tools-label": "Gamit",
 	"vector-page-tools-general-label": "Kabilogan",
 	"vector-unpin-element-label": "panago"

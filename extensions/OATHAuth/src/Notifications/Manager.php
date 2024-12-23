@@ -20,9 +20,9 @@
 
 namespace MediaWiki\Extension\OATHAuth\Notifications;
 
-use ExtensionRegistry;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\OATHAuth\OATHUser;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
 
 /**

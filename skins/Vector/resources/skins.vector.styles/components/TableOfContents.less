@@ -29,7 +29,6 @@
 	.vector-toc-link {
 		display: block;
 		word-break: break-word;
-		color: @color-link;
 	}
 
 	// Highlight and bold active sections, active top sections that are unexpanded
@@ -39,7 +38,7 @@
 	.vector-toc-list-item-active.vector-toc-level-1-active {
 		> .vector-toc-link {
 			// Highlight active section
-			color: @color-base;
+			.mixin-vector-selected-link();
 			font-weight: bold;
 
 			.vector-toc-text {
@@ -52,7 +51,7 @@
 
 	// Highlight active top sections that contain an active section
 	.vector-toc-level-1-active:not( .vector-toc-list-item-active ) > .vector-toc-link {
-		color: @color-base;
+		.mixin-vector-selected-link();
 	}
 
 	.vector-toc-text {

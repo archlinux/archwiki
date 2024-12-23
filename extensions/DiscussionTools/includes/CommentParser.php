@@ -7,12 +7,12 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
-use Language;
 use LogicException;
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\TitleParser;
@@ -605,7 +605,7 @@ class CommentParser {
 				$username = $userpage->getText();
 			}
 		}
-		if ( !$username ) {
+		if ( $username === null ) {
 			return null;
 		}
 		if ( IPUtils::isIPv6( $username ) ) {
@@ -910,11 +910,9 @@ class CommentParser {
 		);
 		while ( $node = $treeWalker->nextNode() ) {
 			if ( $node instanceof Element && preg_match( '/^h([1-6])$/i', $node->tagName, $match ) ) {
-				$headingNodeAndOffset = CommentUtils::getHeadlineNodeAndOffset( $node );
-				$headingNode = $headingNodeAndOffset['node'];
-				$startOffset = $headingNodeAndOffset['offset'];
+				$headingNode = CommentUtils::getHeadlineNode( $node );
 				$range = new ImmutableRange(
-					$headingNode, $startOffset, $headingNode, $headingNode->childNodes->length
+					$headingNode, 0, $headingNode, $headingNode->childNodes->length
 				);
 				$transcludedFrom = $this->computeTranscludedFrom( $range );
 				$curComment = new ContentHeadingItem( $range, $transcludedFrom, (int)( $match[ 1 ] ) );
@@ -926,7 +924,7 @@ class CommentParser {
 				$foundSignature = $this->findSignature( $node, $curCommentEnd );
 				$author = $foundSignature['username'];
 
-				if ( !$author ) {
+				if ( $author === null ) {
 					// Ignore timestamps for which we couldn't find a signature. It's probably not a real
 					// comment, but just a false match due to a copypasted timestamp.
 					continue;
@@ -971,7 +969,7 @@ class CommentParser {
 							$treeWalker->currentNode = $n;
 							// …and add it as another signature to this comment (regardless of the author and timestamp)
 							$foundSignature2 = $this->findSignature( $n, $node );
-							if ( $foundSignature2['username'] ) {
+							if ( $foundSignature2['username'] !== null ) {
 								$sigRanges[] = $this->adjustSigRange( $foundSignature2['nodes'], $match2, $n );
 								$timestampRanges[] = $match2['range'];
 							}
@@ -1236,7 +1234,7 @@ class CommentParser {
 			) {
 				$parsoidHref = $part['template']['target']['href'];
 				Assert::precondition( substr( $parsoidHref, 0, 2 ) === './', "href has valid format" );
-				$out[] = urldecode( substr( $parsoidHref, 2 ) );
+				$out[] = rawurldecode( substr( $parsoidHref, 2 ) );
 			} else {
 				$out[] = null;
 			}
@@ -1278,30 +1276,40 @@ class CommentParser {
 	/**
 	 * Truncate user generated parts of IDs so full ID always fits within a database field of length 255
 	 *
+	 * nb: Text should already have had spaces replaced with underscores by this point.
+	 *
 	 * @param string $text Text
+	 * @param bool $legacy Generate legacy ID, not needed in JS implementation
 	 * @return string Truncated text
 	 */
-	private function truncateForId( string $text ): string {
-		return $this->language->truncateForDatabase( $text, 80, '' );
+	private function truncateForId( string $text, bool $legacy = false ): string {
+		$truncated = $this->language->truncateForDatabase( $text, 80, '' );
+		if ( !$legacy ) {
+			$truncated = trim( $truncated, '_' );
+		}
+		return $truncated;
 	}
 
 	/**
 	 * Given a thread item, return an identifier for it that is unique within the page.
+	 *
+	 * @param ContentThreadItem $threadItem
+	 * @param ContentThreadItemSet $previousItems
+	 * @param bool $legacy Generate legacy ID, not needed in JS implementation
+	 * @return string
 	 */
-	private function computeId( ContentThreadItem $threadItem, ContentThreadItemSet $previousItems ): string {
+	private function computeId(
+		ContentThreadItem $threadItem, ContentThreadItemSet $previousItems, bool $legacy = false
+	): string {
 		$id = null;
 
 		if ( $threadItem instanceof ContentHeadingItem && $threadItem->isPlaceholderHeading() ) {
 			// The range points to the root note, using it like below results in silly values
 			$id = 'h-';
 		} elseif ( $threadItem instanceof ContentHeadingItem ) {
-			// <span class="mw-headline" …>, or <hN …> in Parsoid HTML
-			$headline = $threadItem->getRange()->startContainer;
-			Assert::precondition( $headline instanceof Element, 'HeadingItem refers to an element node' );
-			$id = 'h-' . $this->truncateForId( $headline->getAttribute( 'id' )
-				 ?: $headline->getAttribute( 'data-mw-anchor' ) ?? '' );
+			$id = 'h-' . $this->truncateForId( $threadItem->getLinkableId(), $legacy );
 		} elseif ( $threadItem instanceof ContentCommentItem ) {
-			$id = 'c-' . $this->truncateForId( str_replace( ' ', '_', $threadItem->getAuthor() ) ) .
+			$id = 'c-' . $this->truncateForId( str_replace( ' ', '_', $threadItem->getAuthor() ), $legacy ) .
 				'-' . $threadItem->getTimestampString();
 		} else {
 			throw new InvalidArgumentException( 'Unknown ThreadItem type' );
@@ -1311,13 +1319,9 @@ class CommentParser {
 		// in one edit, or within a minute), add the parent ID to disambiguate them.
 		$threadItemParent = $threadItem->getParent();
 		if ( $threadItemParent instanceof ContentHeadingItem && !$threadItemParent->isPlaceholderHeading() ) {
-			// <span class="mw-headline" …>, or <hN …> in Parsoid HTML
-			$headline = $threadItemParent->getRange()->startContainer;
-			Assert::precondition( $headline instanceof Element, 'HeadingItem refers to an element node' );
-			$id .= '-' . $this->truncateForId( $headline->getAttribute( 'id' )
-				 ?: $headline->getAttribute( 'data-mw-anchor' ) ?? '' );
+			$id .= '-' . $this->truncateForId( $threadItemParent->getLinkableId(), $legacy );
 		} elseif ( $threadItemParent instanceof ContentCommentItem ) {
-			$id .= '-' . $this->truncateForId( str_replace( ' ', '_', $threadItemParent->getAuthor() ) ) .
+			$id .= '-' . $this->truncateForId( str_replace( ' ', '_', $threadItemParent->getAuthor() ), $legacy ) .
 				'-' . $threadItemParent->getTimestampString();
 		}
 
@@ -1334,7 +1338,9 @@ class CommentParser {
 
 		if ( $previousItems->findCommentById( $id ) ) {
 			// Well, that's tough
-			$threadItem->addWarning( 'Duplicate comment ID' );
+			if ( !$legacy ) {
+				$threadItem->addWarning( 'Duplicate comment ID' );
+			}
 			// Finally, disambiguate by adding sequential numbers, to allow replying to both comments
 			$number = 1;
 			while ( $previousItems->findCommentById( "$id-$number" ) ) {
@@ -1426,6 +1432,10 @@ class CommentParser {
 
 			$id = $this->computeId( $threadItem, $result );
 			$threadItem->setId( $id );
+			$legacyId = $this->computeId( $threadItem, $result, true );
+			if ( $legacyId !== $id ) {
+				$threadItem->setLegacyId( $legacyId );
+			}
 
 			$result->updateIdAndNameMaps( $threadItem );
 		}

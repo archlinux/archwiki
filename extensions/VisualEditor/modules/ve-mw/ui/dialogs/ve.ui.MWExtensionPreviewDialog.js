@@ -48,27 +48,29 @@ ve.ui.MWExtensionPreviewDialog.prototype.initialize = function () {
  */
 ve.ui.MWExtensionPreviewDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWExtensionPreviewDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
-			var element;
+		.next( () => {
+			let element;
 			if ( this.selectedNode ) {
 				element = this.selectedNode.getClonedElement();
 			} else {
 				element = this.getNewElement();
 			}
-			var linearData = [ element, { type: '/' + element.type } ];
+			const linearData = [ element, { type: '/' + element.type } ];
 			if ( ve.dm.nodeFactory.isNodeContent( element.type ) ) {
-				linearData = [ { type: 'paragraph' } ].concat( linearData, { type: '/paragraph' } );
+				linearData.unshift( { type: 'paragraph' } );
+				linearData.push( { type: '/paragraph' } );
 			}
-			// We assume that WindowAction pass
-			var doc = data.fragment.getDocument().cloneWithData( linearData.concat( [
+			linearData.push(
 				{ type: 'internalList' },
 				{ type: '/internalList' }
-			] ) );
+			);
+			// We assume that WindowAction pass
+			const doc = data.fragment.getDocument().cloneWithData( linearData );
 
-			var rootNode = doc.getDocumentNode().children[ 0 ];
+			const rootNode = doc.getDocumentNode().children[ 0 ];
 			this.previewNode = doc.getNodesByType( element.type )[ 0 ];
 			this.previewElement.setModel( rootNode );
-		}, this );
+		} );
 };
 
 /**
@@ -85,7 +87,7 @@ ve.ui.MWExtensionPreviewDialog.prototype.onChange = function () {
  * Update the node rendering to reflect the current content in the dialog.
  */
 ve.ui.MWExtensionPreviewDialog.prototype.updatePreview = function () {
-	var mwData = ve.copy( this.previewNode.getAttribute( 'mw' ) ),
+	const mwData = ve.copy( this.previewNode.getAttribute( 'mw' ) ),
 		doc = this.previewNode.getDocument();
 
 	this.updateMwData( mwData );

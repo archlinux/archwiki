@@ -9,10 +9,10 @@
  */
 function ParamSelectWidget( config ) {
 	// Parent constructor
-	ParamSelectWidget.parent.call( this, config );
+	ParamSelectWidget.super.call( this, config );
 
 	// Mixin constructors
-	OO.ui.mixin.DraggableGroupElement.call( this, $.extend( {}, config, { $group: this.$element } ) );
+	OO.ui.mixin.DraggableGroupElement.call( this, Object.assign( {}, config, { $group: this.$element } ) );
 
 	// Initialize
 	this.$element.addClass( 'tdg-templateDataParamSelectWidget' );
@@ -28,7 +28,7 @@ ParamSelectWidget.prototype.onMouseDown = function ( e ) {
 	if ( $( e.target ).closest( '.oo-ui-draggableElement-handle' ).length || e.shiftKey ) {
 		return true;
 	}
-	return ParamSelectWidget.parent.prototype.onMouseDown.apply( this, arguments );
+	return ParamSelectWidget.super.prototype.onMouseDown.apply( this, arguments );
 };
 
 module.exports = ParamSelectWidget;

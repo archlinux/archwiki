@@ -10,7 +10,7 @@
  *
  * @class
  * @extends ve.ce.LeafNode
- * @mixins ve.ce.MWLanguageVariantNode
+ * @mixes ve.ce.MWLanguageVariantNode
  *
  * @constructor
  * @param {ve.dm.MWLanguageVariantInlineNode} model Model to observe

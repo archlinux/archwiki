@@ -81,7 +81,7 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 	public function testDisableCheckingAlways() {
 		$this->setupGoodMathRestBaseMockHttp();
 
-		$this->setMwGlobals( "wgMathDisableTexFilter", 'never' );
+		$this->overrideConfigValue( 'MathDisableTexFilter', 'never' );
 		$renderer =
 			$this->getMockBuilder( MathRenderer::class )->onlyMethods( [
 					'render',
@@ -100,7 +100,7 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testDisableCheckingNever() {
-		$this->setMwGlobals( "wgMathDisableTexFilter", 'always' );
+		$this->overrideConfigValue( 'MathDisableTexFilter', 'always' );
 		$renderer =
 			$this->getMockBuilder( MathRenderer::class )->onlyMethods( [
 					'render',
@@ -119,7 +119,7 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 	public function testCheckingNewUnknown() {
 		$this->setupGoodMathRestBaseMockHttp();
 
-		$this->setMwGlobals( "wgMathDisableTexFilter", 'new' );
+		$this->overrideConfigValue( 'MathDisableTexFilter', 'new' );
 		$renderer =
 			$this->getMockBuilder( MathRenderer::class )->onlyMethods( [
 					'render',
@@ -141,7 +141,7 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 	public function testCheckingNewKnown() {
 		$this->setupGoodMathRestBaseMockHttp();
 
-		$this->setMwGlobals( "wgMathDisableTexFilter", 'new' );
+		$this->overrideConfigValue( 'MathDisableTexFilter', 'new' );
 		$renderer =
 			$this->getMockBuilder( MathRenderer::class )->onlyMethods( [
 					'render',

@@ -11,7 +11,7 @@
  * @class
  * @abstract
  * @extends ve.ce.MWInlineExtensionNode
- * @mixins ve.ce.MWAlienExtensionNode
+ * @mixes ve.ce.MWAlienExtensionNode
  *
  * @constructor
  * @param {Object} [config] Configuration options

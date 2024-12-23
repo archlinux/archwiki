@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
@@ -9,8 +10,8 @@ use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**
+ * @group Language
  * @group Database
- * @group Cache
  * @covers \MessageCache
  */
 class MessageCacheTest extends MediaWikiLangTestCase {
@@ -87,7 +88,8 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	 *
 	 * @dataProvider provideMessagesForFallback
 	 */
-	public function testMessageFallbacks( $message, $lang, $expectedContent ) {
+	public function testMessageFallbacks( $message, $langCode, $expectedContent ) {
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( $langCode );
 		$result = $this->getServiceContainer()->getMessageCache()->get( $message, true, $lang );
 		$this->assertEquals( $expectedContent, $result, "Message fallback failed." );
 	}
@@ -152,9 +154,11 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 
 		// Screw up the database so MessageCache::loadFromDB() will
 		// produce the wrong result for reloading Key1
-		$this->db->delete(
-			'page', [ 'page_namespace' => NS_MEDIAWIKI, 'page_title' => 'Key1' ], __METHOD__
-		);
+		$this->getDb()->newDeleteQueryBuilder()
+			->deleteFrom( 'page' )
+			->where( [ 'page_namespace' => NS_MEDIAWIKI, 'page_title' => 'Key1' ] )
+			->caller( __METHOD__ )
+			->execute();
 
 		// Populate the second key
 		$this->makePage( 'Key2', 'de', 'Value2' );
@@ -192,17 +196,17 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	}
 
 	public function testNoDBAccessContentLanguage() {
-		global $wgLanguageCode;
+		$languageCode = $this->getServiceContainer()->getMainConfig()->get( MainConfigNames::LanguageCode );
 
 		$dbr = $this->getDb();
 
 		$messageCache = $this->getServiceContainer()->getMessageCache();
-		$messageCache->getMsgFromNamespace( 'allpages', $wgLanguageCode );
+		$messageCache->getMsgFromNamespace( 'allpages', $languageCode );
 
 		$this->assertSame( 0, $dbr->trxLevel() );
 		$dbr->setFlag( DBO_TRX, $dbr::REMEMBER_PRIOR ); // make queries trigger TRX
 
-		$messageCache->getMsgFromNamespace( 'go', $wgLanguageCode );
+		$messageCache->getMsgFromNamespace( 'go', $languageCode );
 
 		$dbr->restoreFlags();
 
@@ -296,15 +300,20 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	 */
 	public function testLocalOverride( $messageKey ) {
 		$messageCache = $this->getServiceContainer()->getMessageCache();
-		$oldMessageZh = $messageCache->get( $messageKey, true, 'zh' );
-		$oldMessageZh_tw = $messageCache->get( $messageKey, true, 'zh-tw' );
+		$languageFactory = $this->getServiceContainer()->getLanguageFactory();
+		$languageZh = $languageFactory->getLanguage( 'zh' );
+		$languageZh_tw = $languageFactory->getLanguage( 'zh-tw' );
+		$languageZh_hk = $languageFactory->getLanguage( 'zh-hk' );
+		$languageZh_mo = $languageFactory->getLanguage( 'zh-mo' );
+		$oldMessageZh = $messageCache->get( $messageKey, true, $languageZh );
+		$oldMessageZh_tw = $messageCache->get( $messageKey, true, $languageZh_tw );
 
 		$localOverrideHK = $messageKey . '_zh-hk';
 		$this->makePage( ucfirst( $messageKey ), 'zh-hk', $localOverrideHK );
-		$this->assertEquals( $oldMessageZh, $messageCache->get( $messageKey, true, 'zh' ), 'Local override overlapped (main code)' );
-		$this->assertEquals( $oldMessageZh_tw, $messageCache->get( $messageKey, true, 'zh-tw' ), 'Local override overlapped' );
-		$this->assertEquals( $localOverrideHK, $messageCache->get( $messageKey, true, 'zh-hk' ), 'Local override failed (self)' );
-		$this->assertEquals( $localOverrideHK, $messageCache->get( $messageKey, true, 'zh-mo' ), 'Local override failed (fallback)' );
+		$this->assertEquals( $oldMessageZh, $messageCache->get( $messageKey, true, $languageZh ), 'Local override overlapped (main code)' );
+		$this->assertEquals( $oldMessageZh_tw, $messageCache->get( $messageKey, true, $languageZh_tw ), 'Local override overlapped' );
+		$this->assertEquals( $localOverrideHK, $messageCache->get( $messageKey, true, $languageZh_hk ), 'Local override failed (self)' );
+		$this->assertEquals( $localOverrideHK, $messageCache->get( $messageKey, true, $languageZh_mo ), 'Local override failed (fallback)' );
 	}
 
 	public static function provideLocalOverride() {
@@ -323,8 +332,9 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 			MainConfigNames::RawHtmlMessages => [],
 		] );
 
+		$xss = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'x-xss' );
 		$message = $this->getServiceContainer()->getMessageCache()
-			->get( 'key', true, 'x-xss' );
+			->get( 'key', true, $xss );
 		if ( $expectXssMessage ) {
 			$this->assertSame(
 				"<script>alert('key')</script>\"><script>alert('key')</script><x y=\"(\$*)",

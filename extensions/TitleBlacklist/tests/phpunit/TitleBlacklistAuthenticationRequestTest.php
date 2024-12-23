@@ -1,7 +1,7 @@
 <?php
 
-use MediaWiki\Auth\AuthenticationRequestTestCase;
 use MediaWiki\Extension\TitleBlacklist\TitleBlacklistAuthenticationRequest;
+use MediaWiki\Tests\Auth\AuthenticationRequestTestCase;
 
 /**
  * @covers \MediaWiki\Extension\TitleBlacklist\TitleBlacklistAuthenticationRequest

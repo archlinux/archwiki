@@ -1,15 +1,15 @@
 'use strict';
 
-var config = require( './config.json' ),
-	defaults = {
-		prefix: config.prefix,
-		domain: config.domain,
-		path: config.path,
-		expires: config.expires,
-		secure: false,
-		sameSite: ''
-	},
+const config = require( './config.json' ),
 	jar = require( './jar.js' );
+let defaults = {
+	prefix: config.prefix,
+	domain: config.domain,
+	path: config.path,
+	expires: config.expires,
+	secure: false,
+	sameSite: ''
+};
 
 // define jQuery Cookie methods
 require( './jquery.js' );
@@ -17,12 +17,11 @@ require( './jquery.js' );
 /**
  * Manage cookies in a way that is syntactically and functionally similar
  * to the `WebRequest#getCookie` and `WebResponse#setcookie` methods in PHP.
- * Provided by the mediawiki.cookie ResourceLoader module.
  *
  * @author Sam Smith <samsmith@wikimedia.org>
  * @author Matthew Flaschen <mflaschen@wikimedia.org>
  *
- * @namespace mw.cookie
+ * @module mediawiki.cookie
  * @example
  * mw.loader.using( 'mediawiki.cookie' ).then( () => {
  *   mw.cookie.set('hello', 'world' );
@@ -51,12 +50,11 @@ mw.cookie = {
 	 * @param {string} key
 	 * @param {string|null} value Value of cookie. If `value` is `null` then this method will
 	 *   instead remove a cookie by name of `key`.
-	 * @param {mw.cookie.CookieOptions|Date|number} [options] Options object, or expiry date
+	 * @param {module:mediawiki.cookie~CookieOptions|Date|number} [options] Options object, or expiry date
+	 * @memberof module:mediawiki.cookie
 	 */
 
 	set: function ( key, value, options ) {
-		var prefix, date;
-
 		// The 'options' parameter may be a shortcut for the expiry.
 		if ( arguments.length > 2 && ( !options || options instanceof Date || typeof options === 'number' ) ) {
 			options = { expires: options };
@@ -65,7 +63,7 @@ mw.cookie = {
 		options = Object.assign( {}, defaults, options );
 
 		// Don't pass invalid option to jar.cookie
-		prefix = options.prefix;
+		const prefix = options.prefix;
 		delete options.prefix;
 
 		if ( !options.expires ) {
@@ -74,7 +72,7 @@ mw.cookie = {
 			delete options.expires;
 		} else if ( typeof options.expires === 'number' ) {
 			// Lifetime in seconds
-			date = new Date();
+			const date = new Date();
 			date.setTime( Number( date ) + ( options.expires * 1000 ) );
 			options.expires = date;
 		}
@@ -98,10 +96,9 @@ mw.cookie = {
 	 * @param {null|string} [defaultValue] defaults to null
 	 * @return {string|null} If the cookie exists, then the value of the
 	 *   cookie, otherwise `defaultValue`
+	 * @memberof module:mediawiki.cookie
 	 */
 	get: function ( key, prefix, defaultValue ) {
-		var result;
-
 		if ( prefix === undefined || prefix === null ) {
 			prefix = defaults.prefix;
 		}
@@ -111,13 +108,15 @@ mw.cookie = {
 			defaultValue = null;
 		}
 
-		result = jar.cookie( prefix + key );
+		const result = jar.cookie( prefix + key );
 
 		return result !== null ? result : defaultValue;
 	},
 
 	/**
-	 * Get the value of a SameSite=None cookie, using the legacy ss0- cookie if needed.
+	 * Get the value of a cookie.
+	 *
+	 * @deprecated since 1.43, use {@link module:mediawiki.cookie.get mw.cookie.get}
 	 *
 	 * @param {string} key
 	 * @param {string} [prefix=wgCookiePrefix] The prefix of the key. If `prefix` is
@@ -125,26 +124,21 @@ mw.cookie = {
 	 * @param {null|string} [defaultValue]
 	 * @return {string|null} If the cookie exists, then the value of the
 	 *   cookie, otherwise `defaultValue`
+	 * @memberof module:mediawiki.cookie
 	 */
 	getCrossSite: function ( key, prefix, defaultValue ) {
-		var value;
-
-		value = this.get( key, prefix, null );
-		if ( value === null ) {
-			value = this.get( 'ss0-' + key, prefix, null );
-		}
-		if ( value === null ) {
-			value = defaultValue;
-		}
-		return value;
+		return this.get( key, prefix, defaultValue );
 	}
 };
+
+mw.log.deprecate( mw.cookie, 'getCrossSite', mw.cookie.getCrossSite,
+	'Use mw.cookie.get instead.', 'mw.cookie.getCrossSite' );
 
 if ( window.QUnit ) {
 	module.exports = {
 		jar,
 		setDefaults: function ( value ) {
-			var prev = defaults;
+			const prev = defaults;
 			defaults = value;
 			return prev;
 		}

@@ -4,14 +4,13 @@ namespace Shellbox\Command;
 
 /**
  * An output glob for files that are written to a local directory
- *
- * @internal
  */
 class OutputGlobToFile extends OutputGlob {
 	/** @var string */
 	private $destDir;
 
 	/**
+	 * @internal
 	 * @param string $prefix
 	 * @param string $extension
 	 * @param string $destDir
@@ -21,7 +20,7 @@ class OutputGlobToFile extends OutputGlob {
 		$this->destDir = $destDir;
 	}
 
-	public function getInstance( $boxedName ) {
+	public function getOutputFile( $boxedName ) {
 		$instance = new OutputFileToFile( $this->destDir . '/' . basename( $boxedName ) );
 		$this->files[$boxedName] = $instance;
 		return $instance;

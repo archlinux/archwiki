@@ -29,5 +29,6 @@
 	"confirmedit-preview-validity": "Kehtivus",
 	"confirmedit-preview-valid": "kehtiv",
 	"confirmedit-preview-invalid": "vigane",
-	"confirmedit-preview-description": "Järgnev tabel näitab selle lehekülje ridu ja kas need on kehtivad IP-aadressid või IP-aadresside vahemikud. Kui real on kehtiv IP-aadress või IP-aadresside vahemik, siis selle suhtes robotilõksu ei rakendata. Vigaseid ridu eiratakse. Kehtiva IP-aadresside vahemiku näide on 69.208.0.0/16, mis algab aadressiga 69.208.0.0 ja lõpeb aadressiga 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Lisateave] IP-aadresside vahemiku arvestamise kohta."
+	"confirmedit-preview-description": "Järgnev tabel näitab selle lehekülje ridu ja kas need on kehtivad IP-aadressid või IP-aadresside vahemikud. Kui real on kehtiv IP-aadress või IP-aadresside vahemik, siis selle suhtes robotilõksu ei rakendata. Vigaseid ridu eiratakse. Kehtiva IP-aadresside vahemiku näide on 69.208.0.0/16, mis algab aadressiga 69.208.0.0 ja lõpeb aadressiga 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Lisateave] IP-aadresside vahemiku arvestamise kohta.",
+	"abusefilter-edit-action-showcaptcha": "Nõua kasutajalt robotilõksu läbimist, et tominguga jätkata. Seda ei nõuta kasutajatelt, kellel on õigus robotilõks vahele jätta."
 }

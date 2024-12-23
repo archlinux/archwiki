@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "A proposito de iste categoria",
 	"mobile-frontend-meta-data-issues-header": "Problemas con le pagina",
 	"minerva-meta-data-issues-section-header": "Problemas del section",
-	"mobile-frontend-notifications-filter": "Filtrar",
 	"mobile-frontend-pageaction-edit-tooltip": "Modificar le section introductori de iste pagina",
 	"mobile-frontend-placeholder": "Cercar in {{SITENAME}}",
 	"mobile-frontend-random-button": "Aleatori",
@@ -48,7 +47,7 @@
 	"minerva-page-actions-overflow": "Plus",
 	"minerva-page-actions-language-switcher": "Linguas",
 	"minerva-page-actions-history": "Historia",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussion]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Discussion]",
 	"minerva-skin-desc": "Un apparentia responsive concipite pro dispositivos mobile",
 	"skin-minerva-issue-learn-more": "Leger plus",
 	"skin-minerva-time-ago-seconds": "$1 secunda{{PLURAL:$1||s}} retro",
@@ -59,10 +58,8 @@
 	"skin-minerva-time-ago-years": "$1 anno{{PLURAL:$1||s}} retro",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorias",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vider categorias de paginas",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tractamento meliorate de problemas de paginas",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemas de paginas (Template:ambox) essera inserite in le articulo.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Infortunatemente, le gruppamento de resultatos per pagina non es disponibile sur mobile. Si tu vole usar iste function, visita le sito pro scriptorio.",
-	"skin-minerva-night-mode-unavailable": "Pagina disponibile solmente con le thema de colores “Die”.",
+	"skin-minerva-night-mode-unavailable": "Pagina disponibile solmente con le thema de colores “Clar”.",
 	"minerva.css": "/* Le codice CSS placiate essera cargate pro le usatores del apparentia MinervaNeue */",
 	"minerva.js": "/* Le codice JavaScript placiate hic essera cargate pro le usatores del apparentia MinervaNeue */"
 }

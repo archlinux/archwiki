@@ -21,13 +21,16 @@
  * @ingroup Parser
  */
 
+namespace MediaWiki\Parser;
+
+use HtmlArmor;
 use MediaWiki\Cache\LinkCache;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
 
 /**
@@ -244,7 +247,10 @@ class LinkHolderArray {
 				$searchkey = "$ns:$index";
 				$displayTextHtml = $entry['text'];
 				if ( isset( $entry['selflink'] ) ) {
-					$replacePairs[$searchkey] = Linker::makeSelfLinkObj( $title, $displayTextHtml, $query );
+					$replacePairs[$searchkey] = Linker::makeSelfLinkObj(
+						$title, $displayTextHtml, $query, '', '',
+						Sanitizer::escapeIdForLink( $title->getFragment() )
+					);
 					continue;
 				}
 
@@ -360,7 +366,7 @@ class LinkHolderArray {
 				// Self-link checking for mixed/different variant titles. At this point, we
 				// already know the exact title does not exist, so the link cannot be to a
 				// variant of the current title that exists as a separate page.
-				if ( $variantTitle->equals( $parentTitle ) && !$title->hasFragment() ) {
+				if ( $variantTitle->equals( $parentTitle ) ) {
 					$this->internals[$ns][$index]['selflink'] = true;
 					continue 2;
 				}
@@ -422,8 +428,15 @@ class LinkHolderArray {
 			foreach ( $variantMap[$varPdbk] as $key ) {
 				[ $ns, $index ] = explode( ':', $key, 2 );
 				$entry =& $this->internals[(int)$ns][(int)$index];
-				$pdbk = $entry['pdbk'];
 
+				// The selflink we marked above might not have been the first
+				// $textVariants so be sure to skip any entries that have
+				// subsequently been marked.
+				if ( isset( $entry['selflink'] ) ) {
+					continue;
+				}
+
+				$pdbk = $entry['pdbk'];
 				if ( !isset( $classes[$pdbk] ) || $classes[$pdbk] === 'new' ) {
 					// found link in some of the variants, replace the link holder data
 					$entry['title'] = $variantTitle;
@@ -484,3 +497,6 @@ class LinkHolderArray {
 		);
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( LinkHolderArray::class, 'LinkHolderArray' );

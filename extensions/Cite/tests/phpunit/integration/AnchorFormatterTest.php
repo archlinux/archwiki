@@ -3,6 +3,7 @@
 namespace Cite\Tests\Integration;
 
 use Cite\AnchorFormatter;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Sanitizer;
 use Wikimedia\TestingAccessWrapper;
 
@@ -14,7 +15,7 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->overrideConfigValue( 'FragmentMode', [ 'html5' ] );
+		$this->overrideConfigValue( MainConfigNames::FragmentMode, [ 'html5' ] );
 	}
 
 	public function testRefKey() {

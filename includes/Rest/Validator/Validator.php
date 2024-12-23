@@ -10,12 +10,12 @@ use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestInterface;
-use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\ListParam;
 use Wikimedia\Message\ListType;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef;
 use Wikimedia\ParamValidator\TypeDef\BooleanDef;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -69,7 +69,7 @@ class Validator {
 		'NULL' => [
 			'class' => StringDef::class,
 			'args' => [ [
-				'allowEmptyWhenRequired' => true,
+				StringDef::OPT_ALLOW_EMPTY => true,
 			] ],
 		],
 		'password' => [ 'class' => PasswordDef::class ],
@@ -106,8 +106,7 @@ class Validator {
 		'multipart/form-data',
 	];
 
-	/** @var ParamValidator */
-	private $paramValidator;
+	private ParamValidator $paramValidator;
 
 	/**
 	 * @param ObjectFactory $objectFactory
@@ -152,6 +151,7 @@ class Validator {
 					'source' => $source,
 				] );
 			} catch ( ValidationException $e ) {
+				// NOTE: error data structure must match the one used by validateBodyParams
 				throw new LocalizedHttpException( $e->getFailureMessage(), 400, [
 					'error' => 'parameter-validation-failed',
 					'name' => $e->getParamName(),
@@ -182,6 +182,7 @@ class Validator {
 		$remainingBodyFields = $parsedBody;
 		foreach ( $paramSettings as $name => $settings ) {
 			$source = $settings[Handler::PARAM_SOURCE] ?? 'unspecified';
+
 			if ( $source !== 'body' ) {
 				continue;
 			}
@@ -192,13 +193,24 @@ class Validator {
 		$unvalidatedKeys = array_keys( $remainingBodyFields );
 
 		// Throw if there are unvalidated keys left and there are body params defined.
+		// If there are no known body params declared, we just ignore any body
+		// data coming from the client. This works around that fact that "post"
+		// params also show up in the parsed body. That means that mixing "body"
+		// and "post" params will trigger an error here. Any "post" params should
+		// be converted to "body".
 		if ( $validatedKeys && $unvalidatedKeys ) {
 			throw new LocalizedHttpException(
 				new MessageValue(
 					'rest-extraneous-body-fields',
-					[ new ListParam( ListType::COMMA, array_keys( $unvalidatedKeys ) ) ]
+					[ new ListParam( ListType::COMMA, $unvalidatedKeys ) ]
 				),
-				400
+				400,
+				[ // match fields used by validateBodyParams()
+					'error' => 'parameter-validation-failed',
+					'failureCode' => 'extraneous-body-fields',
+					'name' => reset( $unvalidatedKeys ),
+					'failureData' => $unvalidatedKeys,
+				]
 			);
 		}
 	}
@@ -213,10 +225,13 @@ class Validator {
 	 * @see validateParams
 	 * @see validateBody
 	 * @param array[] $paramSettings Parameter settings.
+	 * @param bool $enforceTypes $enforceTypes Whether the types of primitive values should
+	 *         be enforced. If set to false, parameters values are allowed to be
+	 *         strings.
 	 * @return array Validated parameters
 	 * @throws HttpException on validation failure
 	 */
-	public function validateBodyParams( array $paramSettings ) {
+	public function validateBodyParams( array $paramSettings, bool $enforceTypes = true ) {
 		$validatedParams = [];
 		foreach ( $paramSettings as $name => $settings ) {
 			$source = $settings[Handler::PARAM_SOURCE] ?? 'body';
@@ -225,24 +240,29 @@ class Validator {
 			}
 
 			try {
-				$validatedParams[$name] = $this->paramValidator->getValue( $name, $settings, [
-					'source' => $source,
-				] );
+				$validatedParams[ $name ] = $this->paramValidator->getValue(
+					$name,
+					$settings,
+					[
+						'source' => $source,
+						TypeDef::OPT_ENFORCE_JSON_TYPES => $enforceTypes,
+						StringDef::OPT_ALLOW_EMPTY => $enforceTypes,
+					]
+				);
 			} catch ( ValidationException $e ) {
 				$msg = $e->getFailureMessage();
-				$wrappedMsg = new DataMessageValue(
+				$wrappedMsg = new MessageValue(
 					'rest-body-validation-error',
-					[ $e->getFailureMessage() ],
-					$msg->getCode(),
-					$msg->getData()
+					[ $e->getFailureMessage() ]
 				);
 
+				// NOTE: error data structure must match the one used by validateParams
 				throw new LocalizedHttpException( $wrappedMsg, 400, [
 					'error' => 'parameter-validation-failed',
 					'name' => $e->getParamName(),
 					'value' => $e->getParamValue(),
-					'failureCode' => $e->getFailureMessage()->getCode(),
-					'failureData' => $e->getFailureMessage()->getData(),
+					'failureCode' => $msg->getCode(),
+					'failureData' => $msg->getData(),
 				] );
 			}
 		}
@@ -256,12 +276,16 @@ class Validator {
 	 * in the context of Handler::validateParams(), the returned value will be
 	 * available to the handler via Handler::getValidatedBody().
 	 *
+	 * @deprecated since 1.43, use validateBodyParams instead.
+	 *
 	 * @param RequestInterface $request
 	 * @param Handler $handler Used to call {@see Handler::getBodyValidator}
 	 * @return mixed|null Return value from {@see BodyValidator::validateBody}
 	 * @throws HttpException on validation failure
 	 */
 	public function validateBody( RequestInterface $request, Handler $handler ) {
+		wfDeprecated( __METHOD__, '1.43' );
+
 		$method = strtoupper( trim( $request->getMethod() ) );
 
 		// If the method should never have a body, don't bother validating.
@@ -288,7 +312,7 @@ class Validator {
 
 		// Form data is parsed into $_POST and $_FILES by PHP and from there is accessed as parameters,
 		// don't bother trying to handle these via BodyValidator too.
-		if ( in_array( $ct, self::FORM_DATA_CONTENT_TYPES, true ) ) {
+		if ( in_array( $ct, RequestInterface::FORM_DATA_CONTENT_TYPES, true ) ) {
 			return null;
 		}
 
@@ -336,24 +360,7 @@ class Validator {
 	 * @return array
 	 */
 	public static function getParameterSpec( string $name, array $paramSetting ): array {
-		$type = $paramSetting[ ParamValidator::PARAM_TYPE ] ?? 'string';
-
-		if ( is_array( $type ) ) {
-			if ( $type === [] ) {
-				// Hack for empty enums. In path and query parameters,
-				// the empty string is often the same as "no value".
-				// TODO: generate a warning!
-				$type = [ '' ];
-			}
-
-			$schema = [
-				'type' => 'string',
-				'enum' => $type
-			];
-		} else {
-			// TODO: multi-value params?!
-			$schema = self::PARAM_TYPE_SCHEMAS["{$type}-param"] ?? [];
-		}
+		$schema = self::getParameterSchema( $paramSetting );
 
 		// TODO: generate a warning if the source is not specified!
 		$location = $paramSetting[ self::PARAM_SOURCE ] ?? 'unspecified';
@@ -370,6 +377,39 @@ class Validator {
 			|| ( $paramSetting[ ParamValidator::PARAM_REQUIRED ] ?? false );
 
 		return $param;
+	}
+
+	/**
+	 * Convert a param settings array into an OpenAPI schema structure.
+	 * @see https://swagger.io/specification/#schema-object
+	 *
+	 * @param array $paramSetting
+	 *
+	 * @return array
+	 */
+	public static function getParameterSchema( array $paramSetting ): array {
+		$type = $paramSetting[ ParamValidator::PARAM_TYPE ] ?? 'string';
+
+		if ( is_array( $type ) ) {
+			if ( $type === [] ) {
+				// Hack for empty enums. In path and query parameters,
+				// the empty string is often the same as "no value".
+				// TODO: generate a warning!
+				$type = [ '' ];
+			}
+
+			$schema = [
+				'type' => 'string',
+				'enum' => $type
+			];
+		} elseif ( isset( $paramSetting[ ArrayDef::PARAM_SCHEMA ] ) ) {
+			$schema = $paramSetting[ ArrayDef::PARAM_SCHEMA ];
+		} else {
+			// TODO: multi-value params?!
+			$schema = self::PARAM_TYPE_SCHEMAS["{$type}-param"] ?? [];
+		}
+
+		return $schema;
 	}
 
 }
