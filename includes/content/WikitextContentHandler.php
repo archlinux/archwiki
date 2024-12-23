@@ -23,6 +23,8 @@
  * @ingroup Content
  */
 
+namespace MediaWiki\Content;
+
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreloadTransformParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
@@ -30,13 +32,17 @@ use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
+use SearchEngine;
+use SearchIndexField;
 use Wikimedia\UUID\GlobalIdGenerator;
+use WikiPage;
 
 /**
  * Content handler for wiki text pages.
@@ -115,6 +121,7 @@ class WikitextContentHandler extends TextContentHandler {
 		}
 
 		$class = $this->getContentClass();
+
 		return new $class( $redirectText );
 	}
 
@@ -190,6 +197,7 @@ class WikitextContentHandler extends TextContentHandler {
 		$fields['opening_text']->setFlag(
 			SearchIndexField::FLAG_SCORING | SearchIndexField::FLAG_NO_HIGHLIGHT
 		);
+
 		// Until we have the full first-class content handler for files, we invoke it explicitly here
 		return array_merge( $fields, $this->getFileHandler()->getFieldsForSearchIndex( $engine ) );
 	}
@@ -218,6 +226,7 @@ class WikitextContentHandler extends TextContentHandler {
 				$this->getFileHandler()->getDataForSearchIndex( $page, $parserOutput, $engine, $revision )
 			);
 		}
+
 		return $fields;
 	}
 
@@ -231,13 +240,6 @@ class WikitextContentHandler extends TextContentHandler {
 	 */
 	public function serializeContent( Content $content, $format = null ) {
 		$this->checkFormat( $format );
-
-		// NOTE: MessageContent also uses CONTENT_MODEL_WIKITEXT, but it's not a TextContent!
-		// Perhaps MessageContent should use a separate ContentHandler instead.
-		if ( $content instanceof MessageContent ) {
-			return $content->getMessage()->plain();
-		}
-
 		return parent::serializeContent( $content, $format );
 	}
 
@@ -263,6 +265,7 @@ class WikitextContentHandler extends TextContentHandler {
 		$contentClass = $this->getContentClass();
 		$ret = new $contentClass( $pst );
 		$ret->setPreSaveTransformFlags( $parser->getOutput()->getAllFlags() );
+
 		return $ret;
 	}
 
@@ -290,6 +293,7 @@ class WikitextContentHandler extends TextContentHandler {
 		);
 
 		$contentClass = $this->getContentClass();
+
 		return new $contentClass( $plt );
 	}
 
@@ -340,6 +344,7 @@ class WikitextContentHandler extends TextContentHandler {
 	 * using the global Parser service.
 	 *
 	 * @since 1.38
+	 *
 	 * @param Content $content
 	 * @param ContentParseParams $cpoParams
 	 * @param ParserOutput &$parserOutput The output object to fill (reference).
@@ -362,18 +367,21 @@ class WikitextContentHandler extends TextContentHandler {
 			// T349087: ...and in fact, RESTBase relies on getting
 			// redirect information from this <link> tag, so it needs
 			// to be present.
-			$text = $content->getText();
+			// Further, Parsoid can accept a Content in place of a string.
+			$text = $content;
+			$extraArgs = [ $cpoParams->getPreviousOutput() ];
 		} else {
 			// The legacy parser requires the #REDIRECT magic word to
 			// be stripped from the content before parsing.
 			$parser = $this->parserFactory->getInstance();
 			$text = $contentWithoutRedirect->getText();
+			$extraArgs = [];
 		}
 
 		$time = -microtime( true );
 
 		$parserOutput = $parser
-			->parse( $text, $title, $parserOptions, true, true, $revId );
+			->parse( $text, $title, $parserOptions, true, true, $revId, ...$extraArgs );
 		$time += microtime( true );
 
 		// Timing hack
@@ -417,3 +425,6 @@ class WikitextContentHandler extends TextContentHandler {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( WikitextContentHandler::class, 'WikitextContentHandler' );

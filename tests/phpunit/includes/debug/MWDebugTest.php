@@ -1,6 +1,9 @@
 <?php
 
+use MediaWiki\Api\ApiFormatXml;
+use MediaWiki\Api\ApiResult;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
@@ -8,12 +11,12 @@ use MediaWiki\Title\TitleValue;
 use Psr\Log\LoggerInterface;
 
 /**
- * @covers \MWDebug
+ * @covers \MediaWiki\Debug\MWDebug
  */
 class MWDebugTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
-		$this->setMwGlobals( 'wgDevelopmentWarnings', false );
+		$this->overrideConfigValue( MainConfigNames::DevelopmentWarnings, false );
 
 		parent::setUp();
 		/** Clear log before each test */
@@ -51,7 +54,7 @@ class MWDebugTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testWarningDevelopment() {
-		$this->setMwGlobals( 'wgDevelopmentWarnings', true );
+		$this->overrideConfigValue( MainConfigNames::DevelopmentWarnings, true );
 
 		$this->expectPHPError(
 			E_USER_NOTICE,
@@ -73,7 +76,7 @@ class MWDebugTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testMessagesFromErrorChannel() {
 		// Turn off to keep mw-error.log file empty in CI (and thus avoid build failure)
-		$this->setMwGlobals( 'wgDebugLogGroups', [] );
+		$this->overrideConfigValue( MainConfigNames::DebugLogGroups, [] );
 
 		MWExceptionHandler::handleError( E_USER_DEPRECATED, 'Warning message' );
 		$this->assertEquals(

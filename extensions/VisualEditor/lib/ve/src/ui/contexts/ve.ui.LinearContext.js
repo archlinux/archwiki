@@ -87,7 +87,7 @@ ve.ui.LinearContext.prototype.onDocumentUpdate = function () {
  * Handle debounced context change events.
  */
 ve.ui.LinearContext.prototype.afterContextChange = function () {
-	var selectedNode = this.surface.getModel().getSelectedNode();
+	const selectedNode = this.surface.getModel().getSelectedNode();
 
 	// Reset debouncing state
 	this.afterContextChangeTimeout = null;
@@ -96,8 +96,10 @@ ve.ui.LinearContext.prototype.afterContextChange = function () {
 		if ( !this.isEmpty() ) {
 			if ( this.isInspectable() ) {
 				// Change state: menu -> menu
+				// Make a copy of items so setupMenuItems can compare it
+				const previousItems = this.items.slice();
 				this.teardownMenuItems();
-				this.setupMenuItems();
+				this.setupMenuItems( previousItems );
 				this.updateDimensionsDebounced();
 			} else {
 				// Change state: menu -> closed
@@ -133,8 +135,7 @@ ve.ui.LinearContext.prototype.afterContextChange = function () {
  * @param {Object} data Window opening data
  */
 ve.ui.LinearContext.prototype.onInspectorOpening = function ( win, opening ) {
-	var context = this,
-		observer = this.surface.getView().surfaceObserver;
+	const observer = this.surface.getView().surfaceObserver;
 
 	this.isOpening = true;
 	this.inspector = win;
@@ -146,41 +147,41 @@ ve.ui.LinearContext.prototype.onInspectorOpening = function ( win, opening ) {
 	observer.stopTimerLoop();
 
 	opening
-		.progress( function ( data ) {
-			context.isOpening = false;
+		.progress( ( data ) => {
+			this.isOpening = false;
 			if ( data.state === 'setup' ) {
-				if ( !context.isVisible() ) {
+				if ( !this.isVisible() ) {
 					// Change state: closed -> inspector
-					context.toggle( true );
+					this.toggle( true );
 				}
-				if ( !context.isEmpty() ) {
+				if ( !this.isEmpty() ) {
 					// Change state: menu -> inspector
-					context.toggleMenu( false );
+					this.toggleMenu( false );
 				}
 			}
-			context.updateDimensionsDebounced();
+			this.updateDimensionsDebounced();
 		} )
-		.then( function ( opened ) {
-			opened.then( function ( closed ) {
-				closed.always( function () {
+		.then( ( opened ) => {
+			opened.then( ( closed ) => {
+				closed.always( () => {
 					// Don't try to close the inspector if a second
 					// opening has already been triggered
-					if ( context.isOpening ) {
+					if ( this.isOpening ) {
 						return;
 					}
 
-					context.inspector = null;
+					this.inspector = null;
 
 					// Reenable observer
 					observer.startTimerLoop();
 
-					if ( context.isInspectable() ) {
+					if ( this.isInspectable() ) {
 						// Change state: inspector -> menu
-						context.toggleMenu( true );
-						context.updateDimensionsDebounced();
+						this.toggleMenu( true );
+						this.updateDimensionsDebounced();
 					} else {
 						// Change state: inspector -> closed
-						context.toggle( false );
+						this.toggle( false );
 					}
 				} );
 			} );
@@ -225,22 +226,18 @@ ve.ui.LinearContext.prototype.addPersistentSource = function ( source ) {
  * @param {string} name Source name
  */
 ve.ui.LinearContext.prototype.removePersistentSource = function ( name ) {
-	this.persistentSources = this.persistentSources.filter( function ( source ) {
-		return source.name !== name;
-	} );
+	this.persistentSources = this.persistentSources.filter( ( source ) => source.name !== name );
 
 	this.onContextChange();
 };
 
 /**
- * @inheritdoc
- *
- * Also adds the `embeddable` property to each object.
+ * @inheritdoc Also adds the `embeddable` property to each object.
  */
 ve.ui.LinearContext.prototype.getRelatedSources = function () {
-	var surfaceModel = this.surface.getModel(),
-		selection = surfaceModel.getSelection(),
-		selectedModels = [];
+	const surfaceModel = this.surface.getModel(),
+		selection = surfaceModel.getSelection();
+	let selectedModels = [];
 
 	if ( !this.relatedSources ) {
 		this.relatedSources = [];
@@ -252,7 +249,7 @@ ve.ui.LinearContext.prototype.getRelatedSources = function () {
 		if ( selectedModels.length ) {
 			this.relatedSources = this.getRelatedSourcesFromModels( selectedModels );
 		}
-		this.relatedSources = this.relatedSources.concat( this.persistentSources );
+		this.relatedSources.push( ...this.persistentSources );
 	}
 
 	return this.relatedSources;
@@ -265,11 +262,11 @@ ve.ui.LinearContext.prototype.getRelatedSources = function () {
  * @return {Object[]} See #getRelatedSources
  */
 ve.ui.LinearContext.prototype.getRelatedSourcesFromModels = function ( selectedModels ) {
-	var models = [],
+	const models = [],
 		relatedSources = [],
 		items = ve.ui.contextItemFactory.getRelatedItems( selectedModels );
 
-	var i, len;
+	let i, len;
 	for ( i = 0, len = items.length; i < len; i++ ) {
 		if ( !items[ i ].model.isInspectable() ) {
 			continue;
@@ -284,13 +281,13 @@ ve.ui.LinearContext.prototype.getRelatedSourcesFromModels = function ( selectedM
 			model: items[ i ].model
 		} );
 	}
-	var tools = ve.ui.toolFactory.getRelatedItems( selectedModels );
+	const tools = ve.ui.toolFactory.getRelatedItems( selectedModels );
 	for ( i = 0, len = tools.length; i < len; i++ ) {
 		if ( !tools[ i ].model.isInspectable() ) {
 			continue;
 		}
 		if ( models.indexOf( tools[ i ].model ) === -1 ) {
-			var toolClass = ve.ui.toolFactory.lookup( tools[ i ].name );
+			const toolClass = ve.ui.toolFactory.lookup( tools[ i ].name );
 			relatedSources.push( {
 				type: 'tool',
 				embeddable: !toolClass || toolClass.static.makesEmbeddableContextItem,

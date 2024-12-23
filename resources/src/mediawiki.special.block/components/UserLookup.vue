@@ -1,11 +1,20 @@
 <template>
-	<cdx-field>
+	<cdx-field
+		:is-fieldset="true"
+		:status="status"
+		:messages="messages"
+	>
 		<cdx-lookup
-			v-model:selected="wrappedModel"
+			v-model:selected="selection"
+			v-model:input-value="currentSearchTerm"
+			name="wpTarget"
+			required
 			:menu-items="menuItems"
+			:placeholder="$i18n( 'block-user-placeholder' ).text()"
 			:start-icon="cdxIconSearch"
-			:placeholder="$i18n( 'block-user-placeholder' )"
 			@input="onInput"
+			@change="onChange"
+			@update:selected="currentSearchTerm = selection"
 		>
 		</cdx-lookup>
 		<template #label>
@@ -18,42 +27,62 @@
 </template>
 
 <script>
-const { defineComponent, toRef, ref } = require( 'vue' );
-const { CdxLookup, CdxField, useModelWrapper } = require( '@wikimedia/codex' );
+const { defineComponent, ref, watch } = require( 'vue' );
+const { CdxLookup, CdxField } = require( '@wikimedia/codex' );
+const { storeToRefs } = require( 'pinia' );
 const { cdxIconSearch } = require( '../icons.json' );
+const useBlockStore = require( '../stores/block.js' );
+const api = new mw.Api();
 
-// @vue/component
-module.exports = defineComponent( {
+module.exports = exports = defineComponent( {
 	name: 'UserLookup',
 	components: { CdxLookup, CdxField },
 	props: {
-		// eslint-disable-next-line vue/no-unused-properties
-		modelValue: { type: [ Number, String, null ], required: true }
+		modelValue: { type: [ String, null ], required: true },
+		/**
+		 * Whether the form has been submitted yet. This is used to show
+		 * validation messages only after the form has been submitted.
+		 */
+		formSubmitted: {
+			type: Boolean,
+			default: false
+		}
 	},
 	emits: [
 		'update:modelValue'
 	],
-	setup( props, { emit } ) {
+	setup( props ) {
+		const { targetUser } = storeToRefs( useBlockStore() );
+
+		// Set a flag to keep track of pending API requests, so we can abort if
+		// the target string changes
+		let pending = false;
+
+		// Codex Lookup component requires a v-modeled `selected` prop.
+		// Until a selection is made, the value may be set to null.
+		// We instead want to only update the targetUser for non-null values
+		// (made either via selection, or the 'change' event).
+		const selection = ref( props.modelValue || '' );
+		// This handles changes via selection, while onChange() handles changes via input.
+		watch( selection, ( newValue ) => {
+			if ( newValue !== null ) {
+				targetUser.value = newValue;
+			}
+		} );
+
+		const currentSearchTerm = ref( props.modelValue || '' );
 		const menuItems = ref( [] );
-		const currentSearchTerm = ref( '' );
-		const wrappedModel = useModelWrapper(
-			toRef( props, 'modelValue' ),
-			emit
-		);
+		const status = ref( 'default' );
+		const messages = ref( {} );
 
 		/**
 		 * Get search results.
 		 *
 		 * @param {string} searchTerm
-		 * @param {number} offset Optional result offset
-		 *
 		 * @return {Promise}
 		 */
 		function fetchResults( searchTerm ) {
-			const api = new mw.Api();
-
 			const params = {
-				origin: '*',
 				action: 'query',
 				format: 'json',
 				formatversion: 2,
@@ -72,6 +101,12 @@ module.exports = defineComponent( {
 		 * @param {string} value
 		 */
 		function onInput( value ) {
+			// Abort any existing request if one is still pending
+			if ( pending ) {
+				pending = false;
+				api.abort();
+			}
+
 			// Internally track the current search term.
 			currentSearchTerm.value = value;
 
@@ -83,6 +118,8 @@ module.exports = defineComponent( {
 
 			fetchResults( value )
 				.then( ( data ) => {
+					pending = false;
+
 					// Make sure this data is still relevant first.
 					if ( currentSearchTerm.value !== value ) {
 						return;
@@ -95,15 +132,10 @@ module.exports = defineComponent( {
 					}
 
 					// Build an array of menu items.
-					const results = data.allusers.map( ( result ) => {
-						return {
-							label: result.name,
-							value: result.userid
-						};
-					} );
-
-					// Update menuItems.
-					menuItems.value = results;
+					menuItems.value = data.allusers.map( ( result ) => ( {
+						label: result.name,
+						value: result.name
+					} ) );
 				} )
 				.catch( () => {
 					// On error, set results to empty.
@@ -111,11 +143,46 @@ module.exports = defineComponent( {
 				} );
 		}
 
+		/**
+		 * Validate the input element.
+		 *
+		 * @param {HTMLInputElement} el
+		 */
+		function validate( el ) {
+			if ( el.checkValidity() ) {
+				status.value = 'default';
+				messages.value = {};
+			} else {
+				status.value = 'error';
+				messages.value = { error: el.validationMessage };
+			}
+		}
+
+		/**
+		 * Handle lookup change.
+		 *
+		 * @param {Event} event
+		 */
+		function onChange( event ) {
+			validate( event.target );
+			targetUser.value = event.target.value;
+		}
+
+		// Validate the input when the form is submitted.
+		// TODO: Remove once Codex supports native validations (T373872).
+		watch( () => props.formSubmitted, () => {
+			validate( document.querySelector( '[name="wpTarget"]' ) );
+		} );
+
 		return {
 			menuItems,
+			onChange,
 			onInput,
 			cdxIconSearch,
-			wrappedModel
+			currentSearchTerm,
+			selection,
+			status,
+			messages
 		};
 	}
 } );

@@ -7,9 +7,9 @@ use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagValidator;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
+use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Status\Status;
-use Message;
 
 /**
  * This class validates filters, e.g. before saving.
@@ -19,7 +19,8 @@ class FilterValidator {
 
 	public const CONSTRUCTOR_OPTIONS = [
 		'AbuseFilterValidGroups',
-		'AbuseFilterActionRestrictions'
+		'AbuseFilterActionRestrictions',
+		'AbuseFilterProtectedVariables',
 	];
 
 	/** @var ChangeTagValidator */
@@ -38,6 +39,11 @@ class FilterValidator {
 	private $validGroups;
 
 	/**
+	 * @var string[] Protected variables defined in config via AbuseFilterProtectedVariables
+	 */
+	private $protectedVariables;
+
+	/**
 	 * @param ChangeTagValidator $changeTagValidator
 	 * @param RuleCheckerFactory $ruleCheckerFactory
 	 * @param AbuseFilterPermissionManager $permManager
@@ -54,6 +60,7 @@ class FilterValidator {
 		$this->permManager = $permManager;
 		$this->restrictedActions = array_keys( array_filter( $options->get( 'AbuseFilterActionRestrictions' ) ) );
 		$this->validGroups = $options->get( 'AbuseFilterValidGroups' );
+		$this->protectedVariables = $options->get( 'AbuseFilterProtectedVariables' );
 	}
 
 	/**
@@ -100,6 +107,16 @@ class FilterValidator {
 			if ( !$throttleStatus->isGood() ) {
 				return $throttleStatus;
 			}
+		}
+
+		$protectedVarsPermissionStatus = $this->checkCanViewProtectedVariables( $performer, $newFilter );
+		if ( !$protectedVarsPermissionStatus->isGood() ) {
+			return $protectedVarsPermissionStatus;
+		}
+
+		$protectedVarsStatus = $this->checkProtectedVariables( $newFilter, $originalFilter );
+		if ( !$protectedVarsStatus->isGood() ) {
+			return $protectedVarsStatus;
 		}
 
 		$globalPermStatus = $this->checkGlobalFilterEditPermission( $performer, $newFilter, $originalFilter );
@@ -341,6 +358,56 @@ class FilterValidator {
 			&& !$this->permManager->canEditFilterWithRestrictedActions( $performer )
 		) {
 			$ret->error( 'abusefilter-edit-restricted' );
+		}
+		return $ret;
+	}
+
+	/**
+	 * @param AbstractFilter $filter
+	 * @param ?AbstractFilter $originalFilter
+	 * @return Status
+	 */
+	public function checkProtectedVariables( AbstractFilter $filter, ?AbstractFilter $originalFilter = null ): Status {
+		$ret = Status::newGood();
+
+		// If an original filter is passed through, check if it's already protected and bypass this check
+		// if so.
+		// T364485 introduces a UX that disables the checkbox for already protected filters and
+		// therefore $filter will always fail the isProtected check but because it's already protected,
+		// FilterStore->filterToDatabaseRow() will ensure it stays protected
+		if ( $originalFilter && $originalFilter->isProtected() ) {
+			return $ret;
+		}
+
+		$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
+		$usedVariables = $ruleChecker->getUsedVars( $filter->getRules() );
+		$usedProtectedVariables = array_intersect( $usedVariables, $this->protectedVariables );
+
+		if (
+			count( $usedProtectedVariables ) > 0 &&
+			!$filter->isProtected()
+		) {
+			$ret->error(
+				'abusefilter-edit-protected-variable-not-protected',
+				Message::listParam( $usedProtectedVariables )
+			);
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * @param Authority $performer
+	 * @param AbstractFilter $filter
+	 * @return Status
+	 */
+	public function checkCanViewProtectedVariables( Authority $performer, AbstractFilter $filter ): Status {
+		$ret = Status::newGood();
+		$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
+		$usedVars = $ruleChecker->getUsedVars( $filter->getRules() );
+		$forbiddenVariables = $this->permManager->getForbiddenVariables( $performer, $usedVars );
+		if ( $forbiddenVariables ) {
+			$ret->error( 'abusefilter-edit-protected-variable', Message::listParam( $forbiddenVariables ) );
 		}
 		return $ret;
 	}

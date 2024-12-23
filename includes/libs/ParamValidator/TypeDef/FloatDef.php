@@ -28,17 +28,31 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class FloatDef extends NumericDef {
 
+	/** @inheritDoc */
 	protected $valueType = 'double';
 
 	public function validate( $name, $value, array $settings, array $options ) {
-		// Use a regex so as to avoid any potential oddness PHP's default conversion might allow.
-		if ( !preg_match( '/^[+-]?(?:\d*\.)?\d+(?:[eE][+-]?\d+)?$/D', $value ) ) {
-			$this->failure( 'badfloat', $name, $value, $settings, $options );
+		if ( is_float( $value ) ) {
+			$ret = $value;
+		} elseif ( is_int( $value ) ) {
+			$ret = (float)$value;
+		} elseif ( $options[ self::OPT_ENFORCE_JSON_TYPES ] ?? false ) {
+			$this->fatal(
+				$this->failureMessage( 'badfloat-type' )
+					->params( gettype( $value ) ),
+				$name, $value, $settings, $options
+			);
+		} else {
+			if ( !preg_match( '/^[+-]?(?:\d*\.)?\d+(?:[eE][+-]?\d+)?$/D', $value ) ) {
+				// Use a regex to avoid any potential oddness PHP's default conversion might allow.
+				$this->fatal( 'badfloat', $name, $value, $settings, $options );
+			}
+
+			$ret = (float)$value;
 		}
 
-		$ret = (float)$value;
 		if ( !is_finite( $ret ) ) {
-			$this->failure( 'badfloat-notfinite', $name, $value, $settings, $options );
+			$this->fatal( 'badfloat-notfinite', $name, $value, $settings, $options );
 		}
 
 		return $this->checkRange( $ret, $name, $value, $settings, $options );

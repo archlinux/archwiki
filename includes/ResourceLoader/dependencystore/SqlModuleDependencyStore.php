@@ -21,10 +21,9 @@
 namespace Wikimedia\DependencyStore;
 
 use InvalidArgumentException;
-use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
-use Wikimedia\Rdbms\OrExpressionGroup;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * Track per-module file dependencies in the core module_deps table
@@ -135,17 +134,17 @@ class SqlModuleDependencyStore extends DependencyStore {
 		if ( $disjunctionConds ) {
 			$dbw->newDeleteQueryBuilder()
 				->deleteFrom( 'module_deps' )
-				->where( new OrExpressionGroup( ...$disjunctionConds ) )
+				->where( $dbw->orExpr( $disjunctionConds ) )
 				->caller( __METHOD__ )->execute();
 		}
 	}
 
 	/**
 	 * @param string[] $entities
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @return string[]
 	 */
-	private function fetchDependencyBlobs( array $entities, IDatabase $db ) {
+	private function fetchDependencyBlobs( array $entities, IReadableDatabase $db ) {
 		$modulesByVariant = [];
 		foreach ( $entities as $entity ) {
 			[ $module, $variant ] = $this->getEntityNameComponents( $entity );
@@ -165,7 +164,7 @@ class SqlModuleDependencyStore extends DependencyStore {
 			$res = $db->newSelectQueryBuilder()
 				->select( [ 'md_module', 'md_skin', 'md_deps' ] )
 				->from( 'module_deps' )
-				->where( new OrExpressionGroup( ...$disjunctionConds ) )
+				->where( $db->orExpr( $disjunctionConds ) )
 				->caller( __METHOD__ )->fetchResultSet();
 
 			foreach ( $res as $row ) {
@@ -178,19 +177,19 @@ class SqlModuleDependencyStore extends DependencyStore {
 	}
 
 	/**
-	 * @return DBConnRef
+	 * @return IReadableDatabase
 	 */
 	private function getReplicaDb() {
 		return $this->lb
-			->getConnectionRef( DB_REPLICA, [], false, ( $this->lb )::CONN_TRX_AUTOCOMMIT );
+			->getConnection( DB_REPLICA, [], false, ( $this->lb )::CONN_TRX_AUTOCOMMIT );
 	}
 
 	/**
-	 * @return DBConnRef
+	 * @return IDatabase
 	 */
 	private function getPrimaryDb() {
 		return $this->lb
-			->getConnectionRef( DB_PRIMARY, [], false, ( $this->lb )::CONN_TRX_AUTOCOMMIT );
+			->getConnection( DB_PRIMARY, [], false, ( $this->lb )::CONN_TRX_AUTOCOMMIT );
 	}
 
 	/**

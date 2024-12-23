@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Tests\Parser;
 
-use Language;
+use MediaWiki\Language\Language;
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Parser\MagicWordArray;
 use MediaWiki\Parser\MagicWordFactory;
@@ -16,7 +16,7 @@ use UnexpectedValueException;
  * @author Derick N. Alangi
  */
 class MagicWordFactoryTest extends MediaWikiIntegrationTestCase {
-	private function makeMagicWordFactory( Language $contLang = null ) {
+	private function makeMagicWordFactory( ?Language $contLang = null ) {
 		$services = $this->getServiceContainer();
 		return new MagicWordFactory( $contLang ?:
 			$services->getLanguageFactory()->getLanguage( 'en' ),

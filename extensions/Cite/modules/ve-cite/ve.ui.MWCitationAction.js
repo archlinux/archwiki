@@ -8,8 +8,6 @@
  */
 
 /**
- * Citation action.
- *
  * Opens the {@see ve.ui.MWCitationDialog} (via it's name "cite") in VisualEditor.
  *
  * @constructor
@@ -41,7 +39,7 @@ ve.ui.MWCitationAction.static.methods = [ 'open' ];
  * @return {boolean} Action was executed
  */
 ve.ui.MWCitationAction.prototype.open = function ( windowData ) {
-	windowData = $.extend( {
+	windowData = Object.assign( {
 		inDialog: this.surface.getInDialog()
 	}, windowData );
 

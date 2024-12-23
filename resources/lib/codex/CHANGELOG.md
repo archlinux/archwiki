@@ -1,3 +1,499 @@
+# 1.14.0 / 2024-10-16
+
+## Features
+- Menu: disable Tab keynav selection from multi-select menus (lwatson)
+- Lookup: Add ARIA `role` to no result Lookup item (Arthur Taylor)
+- LookupMultiselect, ChipInput: Improve floating menu UX (Anne Tomasevich)
+- LookupMultiselect: Clear the input on selection (Anne Tomasevich)
+- ChipInput: On chip click, show chip label or value (Anne Tomasevich)
+- MultiselectLookup: Rename component (Anne Tomasevich)
+- MultiselectLookup: Export component for use (Anne Tomasevich)
+- Button: trigger actual click on key interaction (Anne Tomasevich)
+
+## Styles
+- styles, ChipInput: fix separate input's disabled state (lwatson)
+- tokens: Amend focus colors for dark mode (Volker E.)
+- ChipInput: Make input background transparent (Anne Tomasevich)
+
+## Code
+- Menu: minor update test file (lwatson)
+- MultiselectLookup: Handle race condition when editing chip (Anne Tomasevich)
+
+## Docs
+- Lookup, LookupMultiselect: Refactor demo pages (Anne Tomasevich)
+- docs: include MultiselectLookup guidelines (bmartinezcalvo)
+- docs: update Lookup guidelines (bmartinezcalvo)
+- docs: Fix typo in Menu keyboard nav docs (Anne Tomasevich)
+- docs: Add error and warning messages to LookupField (Anne Tomasevich)
+- docs: Fix style class name in Developing Components guide (Volker E.)
+- docs: Add error and warning messages to MultiselectLookupField (Anne Tomasevich)
+- docs: Fix typo in MultiselectLookup field demo (Anne Tomasevich)
+
+# 1.13.1 / 2024-10-01
+
+## Features
+- LookupMultiselect: Add WIP component (Anne Tomasevich)
+
+## Styles
+- tokens: Fix `outline-color-progressive--focus` value (Volker E.)
+
+## Icons
+- icons: Add new external link icon (lwatson)
+
+## Code
+- Menu: key nav scrolls menu items into view (lwatson)
+
+## Docs
+- docs: Remove 'color update' banner from Colors page (Volker E.)
+- Radio, Checkbox: Update status prop documentation (Anne Tomasevich)
+- docs: minor updates to releasing.md (lwatson)
+
+# 1.13.0 / 2024-09-17
+
+## Features
+- MenuItem: multiselect check icon (lwatson)
+- Lookup: Only clear selection on input if there is one (Anne Tomasevich)
+- Radio: Add error handling (Volker E)
+- tokens: Expand color palette (Derek Torsani)
+
+## Styles
+- Message: Prevent content from being wider than the container (Bartosz Dziewoński)
+- styles, Thumbnail: set background color for visibility in dark mode (lwatson)
+
+## Code
+- build: Fix npm-shrinkwrap dependency (Volker E.)
+- build: upgrade browserslist-db to 1.0.30001660 (Volker E.)
+
+## Docs
+- docs: reorder MenuItem's config demo props (lwatson)
+- docs: update menu item guidelines (bmartinezcalvo)
+- docs: Update Colors page of the Style Guide (Anne Tomasevich)
+- docs: Link to WebAIM using HTTPS (Lucas Werkmeister)
+- demo, Radio, Checkbox: custom input CSS-only version (lwatson)
+- docs: Add basic usage instructions for dark mode tokens (Eric Gardner)
+- docs: Update RELEASING.md to include core Jest dependency updates (Volker E.)
+- docs: Fix whitespace according to coding conventions and HTML5 syntax (Volker E.)
+- docs: include error states in Combobox, Lookup, and Radio (bmartinezcalvo)
+- docs: Update all color mentions to use the new color names (Volker E.)
+- docs: Update images and illustrations to new colors (Volker E.)
+
+# 1.12.0 / 2024-09-04
+
+## Deprecating Changes
+- This release deprecates the `initialInputValue` prop of the Lookup component.
+  This prop will be removed in the next major release of Codex (v2.0). In the
+  meantime it is recommended that users stop using this prop in their own code;
+  the new `inputValue` prop should be used instead. See the Lookup component's
+  documentation for more information.
+
+## Features
+- ChipInput: Add optional modelValue and chipValidator props (Anne Tomasevich)
+- ChipInput: Add ARIA live region (Volker E)
+- Lookup: always clear the selection when the input changes (Anne Tomasevich)
+- Lookup: Add optional inputValue and deprecate initialInputValue (Anne Tomasevich)
+- demo, Combobox, Lookup: error state (lwatson)
+
+## Styles
+- Link: Don't accidentally style thumbnail placeholder icons (Anne Tomasevich)
+- Table: Improve column headings with sort (Anne Tomasevich)
+- Table: Align column heading content to the bottom (Anne Tomasevich)
+- Message: Set icon height in ems (Anne Tomasevich)
+- Generate bi-directional Codex stylesheets using PostCSS RTLCSS (Eric Gardner)
+
+## Code
+- Fix variable passing in branch-deploy.sh (Roan Kattouw)
+- tests: Don't use .trigger( 'keydown.enter' ) (Roan Kattouw)
+- Tabs: make 2-way binding of active tab optional (Eric Gardner)
+- Lookup: Make unit tests more realistic when inputting text (Anne Tomasevich)
+
+## Docs
+- RELEASING.md: Update instructions to add make-cdx command (Roan Kattouw)
+- docs: update releasing docs (lwatson)
+- docs: update MenuItem interaction states (bmartinezcalvo)
+- docs: update Field guidelines (bmartinezcalvo)
+- docs: Also protect against VitePress styles in dialogs (Roan Kattouw)
+- docs: update design contribution guidelines (bmartinezcalvo)
+- docs: Highlight deprecated props in the props table (Anne Tomasevich)
+- docs: Fix typos in types.ts: correct minor documentation errors (Doğu Abaris)
+- docs: Fix typo in constants.ts: correct "avialable" to "available" (Doğu Abaris)
+- docs: Add ADR 11 (Eric Gardner)
+
+
+# 1.11.1 / 2024-08-20
+
+## Features
+- tokens: Add color-base-fixed application token (Derek Torsani)
+- Table: CSS-only Pagination (NunyaKlah)
+- ButtonGroup, ToggleButtonGroup: handle arrow key navigation (Anne Tomasevich)
+
+## Styles
+- Table: sortable columns inherit font styles (Lauralyn Watson)
+
+## Code
+- i18n: Build a JSON file for use in MW from Codex message keys (Eric Gardner)
+- Radio, Checkbox: clean up HTML (Lauralyn Watson)
+- ChipInput.vue: rootElement.value can be undefined, use nullcheck (Daphne Smit)
+
+## Docs
+- docs: Use Codex colors for links within content (Anne Tomasevich)
+- docs: Add test for getFormattedDate (Anne Tomasevich)
+- docs: Update ValidationMessages type to include new properties (Anne Tomasevich)
+- docs: Add support for @default tag for props, and use in Table (Roan Kattouw)
+- docs: Don't attempt to link to NaN as if it's a type (Roan Kattouw)
+- docs: Limit width of some tables (Anne Tomasevich)
+- docs: Use new `@default` tag for object props (Anne Tomasevich)
+- docs: update the Config Demo to support Select/Dropdown (Lauralyn Watson)
+- docs: Use select control in Tooltip demo (Anne Tomasevich)
+- docs: Use "placement" in Tooltip docs (Anne Tomasevich)
+- docs: Enable dark mode and mode switching (Anne Tomasevich)
+- docs: Show dark mode colors in the color tokens demo (Anne Tomasevich)
+- docs: Remove unneeded colors in Rules usage (Anne Tomasevich)
+
+# 1.11.0 / 2024-08-07
+
+## Features
+- Basic Table pagination and TablePager component (Eric Gardner)
+- Table: Server-side pagination (Eric Gardner)
+- Radio, Checkbox: enable nested custom inputs (lwatson)
+
+## Styles
+- Table: Fix sort icon spacing (Anne Tomasevich)
+- Table: Fix alignment of sort button contents (Anne Tomasevich)
+- Button: Remove min-width for non-icon-only buttons (Anne Tomasevich)
+
+## Code
+- useI18nWithOverride: Add documentation comment (Roan Kattouw)
+- useI18n: Use WatchSource instead of MaybeRef for parameters (Roan Kattouw)
+- i18n: Make the system more type-safe (Eric Gardner)
+- FloatingUI: Use default fallbackStrategy (Anne Tomasevich)
+
+## Docs
+- docs: include interaction states guidelines for Table's pagination (bmartinezcalvo)
+- Reapply "docs: include guidelines for custom input within Radio and Checkbox" (LWatson)
+- Reapply "docs: include table pagination guidelines" (LWatson)
+- demo, Checkbox, Radio: add validation to demos (lwatson)
+- docs: Add test cases for button flex behavior (Anne Tomasevich)
+- demo: Fix Combobox section markup to be valid (Volker E.)
+
+## New i18n Messages
+- cdx-table-pager-button-first-page
+- cdx-table-pager-button-last-page
+- cdx-table-pager-button-next-page
+- cdx-table-pager-button-prev-page
+- cdx-table-pager-items-per-page-current
+- cdx-table-pager-items-per-page-default
+- cdx-table-pagination-status-message-determinate-long
+- cdx-table-pagination-status-message-determinate-short
+- cdx-table-pagination-status-message-indeterminate-short
+- cdx-table-pagination-status-message-indeterminate-long
+- cdx-table-pagination-status-message-indeterminate-final
+- cdx-table-pagination-status-message-pending
+
+
+# 1.10.0 / 2024-07-25
+
+## Features
+- useI18n: Add useI18nWithOverride and use in SearchInput (Roan Kattouw)
+
+## Styles
+- Link: Use `:focus-visible` when links are focused by keyboard (Volker E.)
+
+## Code
+- Button, ToggleButton: improve keypress event handling (Eric Gardner)
+- Dialog: restore focus to previously-focused element on close (Eric Gardner)
+- Dialog, Label, Message: use useI18nWithOverride composable (lwatson)
+- useI18n: Simplify unit tests (Roan Kattouw)
+
+## Docs
+- Message: fix demo's usage of `allowUserDismiss` prop (lwatson)
+- docs: clarify usage of ToggleButtonGroup and Tabs (bmartinezcalvo)
+- demo: Remove wrong disabled Accordion example (Volker E.)
+- docs: Fix links to TextInput props docs (Anne Tomasevich)
+- docs: include guidelines for combobox types (bmartinezcalvo)
+- docs: Add developer docs on i18n system (Anne Tomasevich)
+- demo: Add Table demo with row actions (Anne Tomasevich)
+
+# 1.9.0 / 2024-07-10
+
+## Features
+- useI18n: Add basic i18n system (Roan Kattouw)
+
+## Styles
+- tokens: Update diff colors (Derek Torsani)
+
+## Code
+- Tooltip: add snapshot tests (lwatson)
+- TypeaheadSearch: replace `searchResultsLabel` prop with i18n (lwatson)
+- Table: replace string props with i18n (lwatson)
+- Dialog: Use i18n, add `useCloseButton` prop (Roan Kattouw)
+- ChipInput, InputChip: Remove chipAriaDescription prop, replace with i18n (Roan Kattouw)
+- Message: Add useI18n and update dismissButtonLabel prop (Anne Tomasevich)
+- TypeaheadSearch, Search Input: add `useButton` prop (lwatson)
+- Field, Label: use i18n, add `optional` prop (lwatson)
+- css-icon: Add basic support for custom icons (Roan Kattouw)
+- build: Add SVGO plugin to remove whitespace in icons `title` tag (Volker E)
+
+## Icons
+- icons: Drop `fill-rule` argument from 'appearance' icon (thiemowmde)
+- icons: Re-draw 'appearance' icon for most minimal file size (thiemowmde)
+
+## Docs
+- docs: add i18n function type (lwatson)
+- docs: Update Field guidelines (bmartinezcalvo)
+- docs: Standardize descriptions of props with default strings (Anne Tomasevich)
+- docs: clarify field's placeholder content (bmartinezcalvo)
+- docs: add link to Codex Figma spec in the Table guidelines (bmartinezcalvo)
+- docs: Elaborate on Tooltip guidelines (Derek Torsani)
+- docs: Add ADR for i18n support (Anne Tomasevich)
+
+# 1.8.0 / 2024-06-25
+
+## Breaking Changes
+- [BREAKING] tokens: Remove remaining deprecated `width-*` breakpoint tokens (Volker E.)
+- [BREAKING] tokens: Remove CSS variables for border- tokens (Roan Kattouw)
+
+## Features
+- Table: add empty state (lwatson)
+- Tooltip: Introduce WIP component (directive) (Eric Gardner)
+- Menu, MenuItem: Add multiselect mode (Anne Tomasevich)
+- Tooltip: Allow tooltip to persist on hover (Eric Gardner)
+- Tooltip: add line-height (lwatson)
+- Tooltip: move out of WIP (lwatson)
+
+## Styles
+- tokens: Update dark mode text tokens (Derek Torsani)
+- styles, Tooltip: add animation and max-width (lwatson)
+- css-icon: Don't crash when `@param-size-icon` is a non-standard value (Roan Kattouw)
+- tokens: Use variable references in Sass, Less and full CSS outputs (Roan Kattouw)
+
+## Code
+- Remove redundant ‘https’ term in card.md (Cyndy)
+- build: Update diff-release.sh for the .mjs -> .js rename (Roan Kattouw)
+- ChipInput: Make chip descriptions optional (Anne Tomasevich)
+- Menu: Refactor tests using given-when-then structure (Anne Tomasevich)
+- Table: minor follow-ups (Anne Tomasevich)
+- tokens: Use transform instead of custom formatter for Less with CSS vars (Roan Kattouw)
+
+## Docs
+- docs, ChipInput: Remove remove-button-label prop from examples (Roan Kattouw)
+- docs: Add recent authors (>1 commit) (Anne Tomasevich)
+- docs: Document Jest pitfall around optional parameters (Roan Kattouw)
+- docs, Tooltip: update demos (lwatson)
+- Tooltip: Add basic guidelines (Eric Gardner)
+- docs: Fix typo in Jest pitfall docs (Roan Kattouw)
+
+
+# 1.7.0 / 2024-06-11
+
+## Deprecating changes
+- [DEPRECATING CHANGE] icons: Unify capitalization (Winston Sung)
+
+This release renames `cdxIconWikiText` to `cdxIconWikitext`, and
+`cdxIconNoWikiText` to `cdxIconNoWikitext`. The old names are deprecated,
+but can still be used.
+
+## Features
+- MenuButton: Publish the MenuButton component (Lauralyn Watson)
+- Radio: Add disabled+selected state styles (akiel)
+- tokens: Update `content-added` and `content-removed` token values (Derek Torsani)
+
+## Styles
+- tokens: Make CSS variable output include references (Roan Kattouw)
+- tokens: Don't reformat tokens without references (Roan Kattouw)
+
+## Code
+- build: Remove unneeded filename prefix (Anne Tomasevich)
+- demos: Add Vue version of disabled Radio group (Anne Tomasevich)
+- tokens: Move font-family theme tokens to work around SD bug (Roan Kattouw)
+- generateMWExamples: Fix script on Windows (Bartosz Dziewoński)
+- ToggleButton: Use component name in icon-only warning (Anne Tomasevich)
+- MenuButton: update the maximum width (Lauralyn Watson)
+- MenuButton: refactor the API for consistency (Lauralyn Watson)
+- MenuButton: Remove unnecessary `../components/` in import paths (Roan Kattouw)
+
+## Documentation
+- docs: remove `export` from public types (Lauralyn Watson)
+- docs: add MenuButton to Menu docs (Lauralyn Watson)
+- docs: add MenuButton demos (Lauralyn Watson)
+- docs: update "Content" recommendations (Bárbara Martínez Calvo)
+- docs: clean up MenuButton demo files and demo order (Anne Tomasevich)
+- docs: make small corrections in “Bidirectionality” guidelines (Bárbara Martínez Calvo)
+- docs, MenuButton: demo a selection triggering an action (Lauralyn Watson)
+- docs, MenuButton: update demos based on design feedback (Lauralyn Watson)
+- docs: update MenuButton max-width in the guidelines (Bárbara Martínez Calvo)
+- docs: update MenuButton's "Component limitations" guidelines (Bárbara Martínez Calvo)
+
+# 1.6.1 / 2024-05-29
+
+## Features
+- Table: Update indeterminate behavior of "select all rows" checkbox (lwatson)
+- Table: Update a11y text for sort order (Anne Tomasevich)
+- Table: update select row label (lwatson)
+- Table: update checkbox label in CSS-only version (lwatson)
+- MenuButton: implement new component (Dan Andreescu)
+- MenuButton: Minor code cleanup (Roan Kattouw)
+
+## Styles
+- Table, styles: Add transition properties to the sort button (lwatson)
+- Table: Improve multiline sortable column headings (Anne Tomasevich)
+- Table: fix border when hidden caption and vertical borders are enabled (lwatson)
+- Table: Improve wrapping behavior of Table header (Anne Tomasevich)
+
+## Code
+- build: Make the prepare-release script pin the icons dependency (Roan Kattouw)
+- build: Update eslint config for the correct Vue version (Roan Kattouw)
+- build: Update Vue, Vite and Vitepress, and related dependencies (Eric Gardner)
+- build: Publish the sandbox on doc.wikimedia.org (Roan Kattouw)
+- build: Move "npm run branch-deploy" into its own bash script (Roan Kattouw)
+- build: Upgrade browserslist-config-wikimedia to 0.7.0 (James D. Forrester)
+- components: Remove unnecessary `../components/` in import paths (Roan Kattouw)
+
+## Documentation
+- demos: Clean up DemoBaseLayout code (Roan Kattouw)
+- demos: Use DemoBaseLayout for the table demos page (Roan Kattouw)
+- docs: include "Content overflow" guidelines (bmartinezcalvo)
+- docs: improve titles within components guidelines (bmartinezcalvo)
+- docs: Clean up borders post-VitePress-update (Anne Tomasevich)
+- docs: Add syntax highlighting to code examples that didn't have it (Roan Kattouw)
+- docs: Remove double `dir` attribute on sandbox subpages (Roan Kattouw)
+- docs: update info in the design contribution guidelines (bmartinezcalvo)
+- docs: fix image in the fade don't example (bmartinezcalvo)
+- docs: include MenuButton guidelines (bmartinezcalvo)
+
+# 1.6.0 / 2024-05-15
+
+## Deprecating Changes
+- [DEPRECATING CHANGE] Checkbox, Radio, ToggleSwitch: Always use Label component in CSS-only version (Roan Kattouw)
+
+## Features
+- Table: Move out of WIP (Anne Tomasevich)
+- Table: Add slots for custom table elements (Anne Tomasevich)
+- Table: Add basic CSS-only component and clean up markup (Anne Tomasevich)
+- Table: CSS-only row header, vertical borders, hidden caption (lwatson)
+- Table: Add guidelines (Anne Tomasevich)
+- Table: sortable table headers wrap a button (lwatson)
+- Table: Add `textAlign` option for numbers (Anne Tomasevich)
+- Table: Enable sorting with row selection (Anne Tomasevich)
+
+## Styles
+- ChipInput, styles: Implement error-hover state (Volker E.)
+- Table, styles: Use `color-subtle` for all sorting arrow icons (Volker E.)
+- Table, styles: Apply `text-align` to `th` elements only (Volker E.)
+- styles: prog/dest prim buttons should not invert icons in dark mode (Derk-Jan Hartman)
+- styles: Don't wrap `kbd` text (Volker E.)
+- tokens: Revise component tokens for Link to work with dark mode (Derek Torsani)
+- tokens: Update blue800 value (Derek Torsani)
+
+## Code
+- Checkbox: Add name prop for submittable forms (akiel)
+- Table: Clean up types and styles (Anne Tomasevich)
+- Table: Fix sandbox demos using default slot (Anne Tomasevich)
+- Table: Add demo page (Anne Tomasevich)
+- Table: Add demo of CSS-only row selection (Anne Tomasevich)
+- Table: Clean up styles and CSS classes (Anne Tomasevich)
+- Table: Clean up alignment classes (Anne Tomasevich)
+- Table: Miscellaneous cleanup (Roan Kattouw)
+- Table: Hide visible caption from assistive technology (Anne Tomasevich)
+- Table: fix caption when column headers with buttons are sortable (lwatson)
+- Revert "Table: Add special class to force vertical borders" (Anne Tomasevich)
+- demos: Remove `// @vue/component` from MW demos (Roan Kattouw)
+- demos: add `scope` to table headers in TableWithSlots example (lwatson)
+- sandbox: Centralize the header and layout into DemoBaseLayout (Derk-Jan Hartman)
+- build: update vue-tsc dependency (Eric Gardner)
+- build: Update @vitejs/plugin-vue (Eric Gardner)
+- build: Introduce a general build command with reference (Volker E.)
+
+## Documentation
+- docs: update docker command in releasing doc (lwatson)
+- docs, styles: Increase `z-index` on open flyout menu (nbarnabee)
+- docs: include bidirectionality guidelines (bmartinezcalvo)
+- docs: Expand BEM section on child element block naming logic (Volker E.)
+- docs: Add spacing between paragraphs and lists in custom blocks (Anne Tomasevich)
+- docs: Unify on "sub-components" (Volker E.)
+- docs: include error-hover state in Select, ChipInput and TextArea guidelines (bmartinezcalvo)
+- docs: Amend guideline references and AT notes (Volker E.)
+- docs, vscode: add rewrap to recommended extensions (Volker E.)
+- docs: fix "Interaction states" images in Select, ChipInput and TextArea (bmartinezcalvo)
+- docs: Add reference to Table guidelines (Anne Tomasevich)
+- RELEASING.md: LibraryUpgrader config repo has just moved to GitLab (James D. Forrester)
+
+# 1.5.0 / 2024-04-30
+
+## Features
+
+### CSS variables and dark mode support
+Codex design tokens and component styles now use CSS variables for all
+color-related design tokens. This change has been made in order to provide
+support for an alternate "dark mode" color palette. In
+@wikimedia/codex-design-tokens, new files have been introduced to provide
+default (light mode) and dark versions of Codex color tokens:
+theme-wikimedia-ui-root.css and theme-wikimedia-ui-mode-dark.css, respectively.
+The theme-wikimedia-ui.less file can continue to be used independently of these
+new CSS variable files.
+
+### Other features
+- Table: add sort icon (lwatson)
+- Checkbox: Allow label to be visually hidden (Anne Tomasevich)
+- Table: Add prop to show vertical borders (Volker E)
+- Table: Add special class to force vertical borders (Anne Tomasevich)
+- Table: Add width and minWidth to column definitions (Anne Tomasevich)
+- Table: Add row selection (Anne Tomasevich)
+- Table: add single sort (lwatson)
+
+## Styles
+- tokens: Add decision tokens for content added and removed (Derek Torsani)
+- Select, TextArea, TextInput: Implement error hover feedback (Volker E.)
+
+## Code
+- build: update 'svglint' to latest (Volker E.)
+- build, tokens: Remove all logic for the legacy build (Eric Gardner)
+- build, tokens: Fold the "experimental" build into the standard build (Eric Gardner)
+- build, tokens: provide a "mode reset" mixin (Eric Gardner)
+- demo: Add dark mode toggle to sandbox (Roan Kattouw)
+- demo: Add a framed toggle to the Tabs sandbox (Roan Kattouw)
+
+## Documentation
+- docs: Include new error-hover state in the “Interaction states“ image (bmartinezcalvo)
+- docs: expand commands in RELEASING.md and build scripts (Volker E.)
+
+# 1.4.0 / 2024-04-16
+
+## BREAKING CHANGES
+- [BREAKING] tokens: Remove deprecated breakpoint tokens (Volker E)
+- [BREAKING] tokens: Remove deprecated tokens without replacement (Volker E)
+
+This release removes the following deprecated design tokens:
+- `background-color-primary--hover`
+- `position-offset-input-radio--focus`
+- `wmui-color-modifier-blue600-translucent`
+- `width-breakpoint-desktop-wide`
+- `width-breakpoint-desktop-extrawide`
+
+## Features
+- Field: Add additional class if it's a `fieldset` (Volker E.)
+
+## Styles
+- styles: adjust component colors for dark mode to work (lwatson)
+- tokens, docs: Change any red focus color to progressive blue (Derek Torsani)
+- tokens: Add `40rem` sizing token (Derek Torsani)
+- tokens: Add dark mode decision tokens (lwatson)
+
+## Code
+- build: Remove needless Stylelint disable (Volker E.)
+- build: Remove the demos build (Roan Kattouw)
+- build: Update .nvmrc version from 18.17.0 to 18.20.2 (James D. Forrester)
+- build: Wrap sandbox in a separate `<div dir="...">` (Roan Kattouw)
+
+## Documentation
+- docs, Dialog: Adjust spacing and guidance between buttons from 8 to 12px (Derek Torsani)
+- docs: Add `kbd` styles to custom.css (Volker E.)
+- docs: Add keyboard navigation in all components guidelines (bmartinezcalvo)
+- docs: Unify alternative text across documentation (Volker E.)
+- docs: Update "Guidelines" section in the "Contributing design" (bmartinezcalvo)
+- docs: Update image in the InfoChip best practices (bmartinezcalvo)
+- docs: fix comment on MediaWiki skin environment (Volker E.)
+- docs: fix nested Fields vertical alignment (Volker E.)
+
 # 1.3.6 / 2024-04-02
 ## Styles
 - Field: Update spacing between fields from 24px to 16px (Roan Kattouw)

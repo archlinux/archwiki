@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Giromin Cangiaxo"
 		]
 	},
@@ -14,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Sta chì a l'è 'na reggola ascoza.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Sta reggola chì a pertocca o tittolo da paggina.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Coddiçe lengua",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Invallido>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Invallido</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Lengua",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Vivagna",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destinassion",

@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use ApiBase;
-use ApiMain;
-use ApiUsageException;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiUsageException;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiDiscussionToolsGetSubscriptions extends ApiBase {

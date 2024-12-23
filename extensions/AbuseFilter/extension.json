@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.42.0"
+		"MediaWiki": ">= 1.43.0"
 	},
 	"AvailableRights": [
 		"abusefilter-modify",
@@ -29,7 +29,9 @@
 		"abusefilter-hide-log",
 		"abusefilter-modify-global",
 		"abusefilter-modify-blocked-external-domains",
-		"abusefilter-bypass-blocked-external-domains"
+		"abusefilter-bypass-blocked-external-domains",
+		"abusefilter-access-protected-vars",
+		"abusefilter-protected-vars-log"
 	],
 	"GroupPermissions": {
 		"*": {
@@ -43,7 +45,9 @@
 			"abusefilter-modify": true,
 			"abusefilter-modify-restricted": true,
 			"abusefilter-revert": true,
-			"abusefilter-modify-blocked-external-domains": true
+			"abusefilter-modify-blocked-external-domains": true,
+			"abusefilter-access-protected-vars": true,
+			"abusefilter-protected-vars-log": true
 		},
 		"suppress": {
 			"abusefilter-hidden-log": true,
@@ -84,7 +88,8 @@
 				"AbuseFilterVariablesBlobStore",
 				"AbuseFilterSpecsFormatter",
 				"AbuseFilterVariablesFormatter",
-				"AbuseFilterVariablesManager"
+				"AbuseFilterVariablesManager",
+				"AbuseFilterAbuseLoggerFactory"
 			]
 		},
 		"AbuseFilter": {
@@ -105,14 +110,17 @@
 	"LogTypes": [
 		"abusefilter",
 		"abusefilterblockeddomainhit",
-		"abusefilterprivatedetails"
+		"abusefilterprivatedetails",
+		"abusefilter-protected-vars"
 	],
 	"LogNames": {
 		"abusefilter": "abusefilter-log-name",
-		"abusefilterprivatedetails": "abusefilterprivatedetails-log-name"
+		"abusefilterprivatedetails": "abusefilterprivatedetails-log-name",
+		"abusefilter-protected-vars": "abusefilter-protected-vars-log-name"
 	},
 	"LogHeaders": {
-		"abusefilter": "abusefilter-log-header"
+		"abusefilter": "abusefilter-log-header",
+		"abusefilter-protected-vars": "abusefilter-protected-vars-log-header"
 	},
 	"LogActionsHandlers": {
 		"abusefilter/hit": {
@@ -128,7 +136,13 @@
 		"suppress/hide-afl": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterSuppressLogFormatter",
 		"suppress/unhide-afl": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterSuppressLogFormatter",
 		"rights/blockautopromote": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterRightsLogFormatter",
-		"rights/restoreautopromote": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterRightsLogFormatter"
+		"rights/restoreautopromote": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterRightsLogFormatter",
+		"abusefilter-protected-vars/*": {
+			"class": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\ProtectedVarsAccessLogFormatter",
+			"services": [
+				"UserFactory"
+			]
+		}
 	},
 	"ActionFilteredLogs": {
 		"abusefilter": {
@@ -152,12 +166,22 @@
 			"restoreautopromote": [
 				"restoreautopromote"
 			]
+		},
+		"abusefilter-protected-vars": {
+			"change-access": [
+				"change-access-enable",
+				"change-access-disable"
+			],
+			"view-protected-variable-value": [
+				"view-protected-variable-value"
+			]
 		}
 	},
 	"LogRestrictions": {
 		"abusefilter": "abusefilter-view",
 		"abusefilterprivatedetails": "abusefilter-privatedetails-log",
-		"abusefilterblockeddomainhit": "abusefilter-view"
+		"abusefilterblockeddomainhit": "abusefilter-view",
+		"abusefilter-protected-vars": "abusefilter-protected-vars-log"
 	},
 	"AuthManagerAutoConfig": {
 		"preauth": {
@@ -218,7 +242,9 @@
 				"AbuseFilterFilterLookup",
 				"AbuseFilterPermissionManager",
 				"AbuseFilterVariablesBlobStore",
-				"AbuseFilterVariablesManager"
+				"AbuseFilterVariablesManager",
+				"UserFactory",
+				"AbuseFilterAbuseLoggerFactory"
 			]
 		},
 		"abusefilters": {
@@ -255,7 +281,7 @@
 	},
 	"ResourceModules": {
 		"ext.abuseFilter": {
-			"styles": "ext.abuseFilter.css"
+			"styles": "ext.abuseFilter.less"
 		},
 		"ext.abuseFilter.edit": {
 			"scripts": "ext.abuseFilter.edit.js",
@@ -354,9 +380,6 @@
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\SchemaChangesHandler",
 			"factory": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\SchemaChangesHandler::newFromGlobalState"
 		},
-		"UserRename": {
-			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\UserRenameHandler"
-		},
 		"EditPermission": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\EditPermissionHandler"
 		},
@@ -364,6 +387,13 @@
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\PageSaveHandler",
 			"services": [
 				"AbuseFilterEditRevUpdater"
+			]
+		},
+		"preferences": {
+			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\PreferencesHandler",
+			"services": [
+				"PermissionManager",
+				"AbuseFilterAbuseLoggerFactory"
 			]
 		},
 		"RecentChangeSave": {
@@ -390,18 +420,18 @@
 				"UserIdentityUtils"
 			]
 		},
+		"ConfirmEdit": {
+			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\ConfirmEditHandler"
+		},
 		"Echo": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\EchoHandler"
 		},
 		"UserMerge": {
-			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\UserMergeHandler",
-			"services": [
-				"MainConfig"
-			]
+			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\UserMergeHandler"
 		}
 	},
 	"Hooks": {
-		"EditFilterMergedContent": "FilteredActions",
+		"EditFilterMergedContent": [ "FilteredActions", "ConfirmEdit" ],
 		"GetAutoPromoteGroups": "AutoPromoteGroups",
 		"TitleMove": "FilteredActions",
 		"ArticleDelete": "FilteredActions",
@@ -415,7 +445,6 @@
 		"UploadVerifyUpload": "FilteredActions",
 		"UploadStashFile": "FilteredActions",
 		"PageSaveComplete": "PageSave",
-		"RenameUserSQL": "UserRename",
 		"getUserPermissionsErrors": "EditPermission",
 		"CheckUserInsertChangesRow": "CheckUser",
 		"CheckUserInsertPrivateEventRow": "CheckUser",
@@ -423,7 +452,9 @@
 		"UserMergeAccountFields": "UserMerge",
 		"BeforeCreateEchoEvent": "Echo",
 		"ParserOutputStashForEdit": "FilteredActions",
-		"JsonValidateSave": "EditPermission"
+		"JsonValidateSave": "EditPermission",
+		"GetPreferences": "preferences",
+		"SaveUserOptions": "preferences"
 	},
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
@@ -563,13 +594,15 @@
 			"value": true,
 			"description": "Whether to include IP in the abuse_filter_log"
 		},
-		"AbuseFilterActorTableSchemaMigrationStage": {
-			"value": 769,
-			"description": "Stage of the migration of af_user/af_user_text to af_actor and afh_user/afh_user_text to afh_actor. Should be one of the following (combinations of) constants: SCHEMA_COMPAT_OLD, SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD, SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_NEW, SCHEMA_COMPAT_NEW. See also \"Schema compatibility flags\" in includes/Defines.php in core. Note: When changing the default here, change it also in unit tests."
-		},
 		"AbuseFilterEnableBlockedExternalDomain": {
 			"value": false,
 			"description": "Temporary config value to disable Special:BlockedExternalDomains"
+		},
+		"AbuseFilterProtectedVariables": {
+			"value": [
+				"user_unnamed_ip"
+			],
+			"description": "Array of variables that are be considered protected (limited access) and require the abusefilter-access-protected-vars right to use/view."
 		}
 	},
 	"load_composer_autoloader": true,

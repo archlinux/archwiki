@@ -15,67 +15,54 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { Utils } = require( 'mmv.ui.ondemandshareddependencies' );
+const { Utils } = require( 'mmv.ui.reuse' );
 
 ( function () {
 	QUnit.module( 'mmv.ui.reuse.utils', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
-		const utils = new Utils();
-
-		assert.true( utils instanceof Utils, 'ReuseUtils object is created.' );
-	} );
-
-	QUnit.test( 'createPulldownMenu():', function ( assert ) {
-		const utils = new Utils();
+	QUnit.test( 'createSelectMenu():', ( assert ) => {
 		const menuItems = [ 'original', 'small', 'medium', 'large' ];
 		const def = 'large';
-		const menu = utils.createPulldownMenu(
+		const $select = Utils.createSelectMenu(
 			menuItems,
-			[ 'mw-mmv-download-size' ],
 			def
 		);
-		const options = menu.getMenu().getItems();
+		const $options = $select.children();
 
-		assert.strictEqual( options.length, 4, 'Menu has correct number of items.' );
+		assert.strictEqual( $options.length, 4, 'Menu has correct number of items.' );
 
 		for ( let i = 0; i < menuItems.length; i++ ) {
-			const data = options[ i ].getData();
+			const $option = $( $options[ i ] );
 
-			assert.strictEqual( data.name, menuItems[ i ], 'Correct item name on the list.' );
-			assert.strictEqual( data.height, null, 'Correct item height on the list.' );
-			assert.strictEqual( data.width, null, 'Correct item width on the list.' );
+			assert.strictEqual( $option.data( 'name' ), menuItems[ i ], 'Correct item name on the list.' );
+			assert.strictEqual( $option.data( 'height' ), undefined, 'Correct item height on the list.' );
+			assert.strictEqual( $option.data( 'width' ), undefined, 'Correct item width on the list.' );
 		}
-
-		assert.strictEqual( menu.getMenu().findSelectedItem(), options[ 3 ], 'Default set correctly.' );
 	} );
 
-	QUnit.test( 'updateMenuOptions():', function ( assert ) {
-		const utils = new Utils();
-		const menu = utils.createPulldownMenu(
+	QUnit.test( 'updateSelectOptions():', ( assert ) => {
+		const $select = Utils.createSelectMenu(
 			[ 'original', 'small', 'medium', 'large' ],
-			[ 'mw-mmv-download-size' ],
 			'original'
 		);
-		const options = menu.getMenu().getItems();
+		const $options = $select.children();
 		const width = 700;
 		const height = 500;
-		const sizes = utils.getPossibleImageSizesForHtml( width, height );
+		const sizes = Utils.getPossibleImageSizesForHtml( width, height );
 		const oldMessage = mw.message;
 
 		mw.message = function ( messageKey ) {
-			assert.true( /^multimediaviewer-(small|medium|original|embed-dimensions)/.test( messageKey ), 'messageKey passed correctly.' );
+			assert.true( /^multimediaviewer-(small|medium|large|original|embed-dimensions)/.test( messageKey ), 'messageKey passed correctly.' );
 
 			return { text: function () {} };
 		};
 
-		utils.updateMenuOptions( sizes, options );
+		Utils.updateSelectOptions( sizes, $options );
 
 		mw.message = oldMessage;
 	} );
 
-	QUnit.test( 'getPossibleImageSizesForHtml()', function ( assert ) {
-		const utils = new Utils();
+	QUnit.test( 'getPossibleImageSizesForHtml()', ( assert ) => {
 		const exampleSizes = [
 			{
 				test: 'Extra large wide image',
@@ -121,7 +108,7 @@ const { Utils } = require( 'mmv.ui.ondemandshareddependencies' );
 		];
 		for ( let i = 0; i < exampleSizes.length; i++ ) {
 			const cursize = exampleSizes[ i ];
-			const opts = utils.getPossibleImageSizesForHtml( cursize.width, cursize.height );
+			const opts = Utils.getPossibleImageSizesForHtml( cursize.width, cursize.height );
 			assert.deepEqual( opts, cursize.expected, 'Size calculation for "' + cursize.test + '" gives expected results' );
 		}
 	} );

@@ -1,9 +1,22 @@
 /**
- * jQuery plugin for limiting string length.
+ * Limit string length.
+ *
+ * This module provides {@link jQuery} plugins that place different types of limits on strings.
+ * To use the plugins, load the module with {@link mw.loader}.
+ *
+ * For other methods for managing strings, see {@link module:mediawiki.String}.
+ *
+ * @example
+ * mw.loader.using( 'jquery.lengthLimit' ).then( () => {
+ *   // Create an input that only accepts values <= 4 bytes. For example: 💪💪 is not a permitted value.
+ *   $( '<input type="text" value="💪">' ).byteLimit( 4 ).appendTo(document.body);
+ * } );
+ *
+ * @module jquery.lengthLimit
  */
 ( function () {
 
-	var
+	const
 		eventKeys = [
 			'keyup.lengthLimit',
 			'keydown.lengthLimit',
@@ -25,24 +38,23 @@
 	 * limit is 4 will result in "fobo", not "foba". Basically emulating the
 	 * native maxlength by reconstructing where the insertion occurred.
 	 *
-	 * @memberof jQueryPlugins
-	 * @method trimByteLength
-	 * @deprecated Use `require( 'mediawiki.String' ).trimByteLength` instead.
+	 * @method '$.fn.trimByteLength'
+	 * @memberof module:jquery.lengthLimit
+	 * @deprecated Use {@link module:mediawiki.String.trimByteLength require( 'mediawiki.String' ).trimByteLength}
+	 * instead.
 	 * @static
 	 * @param {string} safeVal Known value that was previously returned by this
 	 * function, if none, pass empty string.
 	 * @param {string} newVal New value that may have to be trimmed down.
 	 * @param {number} byteLimit Number of bytes the value may be in size.
 	 * @param {Function} [filterFunction] See jQuery#byteLimit.
-	 * @return {Object}
-	 * @return {string} return.newVal
-	 * @return {boolean} return.trimmed
+	 * @return {module:mediawiki.String~StringTrimmed}
 	 */
 	mw.log.deprecate( $, 'trimByteLength', trimByteLength,
 		'Use require( \'mediawiki.String\' ).trimByteLength instead.', '$.trimByteLength' );
 
 	function lengthLimit( trimFn, limit, filterFunction ) {
-		var allowNativeMaxlength = trimFn === trimByteLength;
+		const allowNativeMaxlength = trimFn === trimByteLength;
 
 		// If the first argument is the function,
 		// set filterFunction to the first argument's value and ignore the second argument.
@@ -56,10 +68,8 @@
 		}
 
 		// The following is specific to each element in the collection.
-		return this.each( function ( i, el ) {
-			var $el, elLimit, prevSafeVal;
-
-			$el = $( el );
+		return this.each( ( i, el ) => {
+			const $el = $( el );
 
 			// If no limit was passed to lengthLimit(), use the maxlength value.
 			// Can't re-use 'limit' variable because it's in the higher scope
@@ -72,7 +82,7 @@
 			// Also cast to a (primitive) number (most commonly because the maxlength
 			// attribute contains a string, but theoretically the limit parameter
 			// could be something else as well).
-			elLimit = Number( limit === undefined ? $el.attr( 'maxlength' ) : limit );
+			const elLimit = Number( limit === undefined ? $el.attr( 'maxlength' ) : limit );
 
 			// If there is no (valid) limit passed or found in the property,
 			// skip this. The < 0 check is required for Firefox, which returns
@@ -115,7 +125,7 @@
 			// and the state that triggered the event handler below - and enforce the
 			// limit approppiately (e.g. don't chop from the end if text was inserted
 			// at the beginning of the string).
-			prevSafeVal = '';
+			let prevSafeVal = '';
 
 			// We need to listen to after the change has already happened because we've
 			// learned that trying to guess the new value and canceling the event
@@ -131,7 +141,7 @@
 			// the order and characteristics of the key events.
 
 			function enforceLimit() {
-				var res = trimFn(
+				const res = trimFn(
 					prevSafeVal,
 					this.value,
 					elLimit,
@@ -175,8 +185,7 @@
 	 * value), a filter function (in case the limit should apply to something other than the
 	 * exact input value), or both. Order of parameters is important!
 	 *
-	 * @memberof jQueryPlugins
-	 * @method byteLimit
+	 * @memberof module:jquery.lengthLimit
 	 * @param {number} [limit] Limit to enforce, fallsback to maxLength-attribute,
 	 *  called with fetched value as argument.
 	 * @param {Function} [filterFunction] Function to call on the string before assessing the length.
@@ -191,8 +200,8 @@
 	 * Enforces a codepoint (character) limit on an input field.
 	 *
 	 * For unfortunate historical reasons, browsers' native maxlength counts [the number of UTF-16
-	 * code units rather than Unicode codepoints] [1], which means that codepoints outside the Basic
-	 * Multilingual Plane (e.g. many emojis) count as 2 characters each. This plugin exists to
+	 * code units rather than Unicode codepoints][1], which means that codepoints outside the Basic
+	 * Multilingual Plane (such as many emojis) count as 2 characters each. This plugin exists to
 	 * correct this.
 	 *
 	 * [1]: https://www.w3.org/TR/html5/sec-forms.html#limiting-user-input-length-the-maxlength-attribute
@@ -201,8 +210,7 @@
 	 * value), a filter function (in case the limit should apply to something other than the
 	 * exact input value), or both. Order of parameters is important!
 	 *
-	 * @memberof jQueryPlugins
-	 * @method codePointLimit
+	 * @memberof module:jquery.lengthLimit
 	 * @param {number} [limit] Limit to enforce, fallsback to maxLength-attribute,
 	 *  called with fetched value as argument.
 	 * @param {Function} [filterFunction] Function to call on the string before assessing the length.

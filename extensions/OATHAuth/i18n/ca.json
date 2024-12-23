@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Fitoschido",
+			"Lluis Cat",
 			"Paucabot",
-			"SMP",
-			"Lluis Cat"
+			"SMP"
 		]
 	},
 	"right-oathauth-view-log": "Accedir al registre de canvis de l'autenticació de doble factor",

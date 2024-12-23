@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Afalau",
+			"Ceirios",
 			"Diafol",
 			"Lloffiwr",
 			"Macofe",
@@ -13,9 +14,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|diolchwyd}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Diolch}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Diolchwyd}}}}",
-	"thanks-button-action-queued": "{{GENDER:$1|{{GENDER:$2|Wrthi'n diolch}}}} $1…",
-	"thanks-button-action-cancel": "Canslo",
-	"thanks-button-action-completed": "Rydych chi wedi {{GENDER:$1|{{GENDER:$2|diolch}}}} $1",
 	"thanks-error-undefined": "Methwyd dweud diolch (cod gwall: $1). Ceisiwch eto.",
 	"thanks-error-invalid-log-id": "Ni chanfuwyd cofnod log",
 	"thanks-error-invalid-log-type": "Nid yw'r log '$1' yn y rhestr logiau a ganiateir.",

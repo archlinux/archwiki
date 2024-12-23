@@ -9,6 +9,7 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
+use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\Core\Sanitizer;
@@ -19,6 +20,7 @@ use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\WikiLinkText;
 use Wikimedia\Parsoid\Html2Wt\LinkHandlerUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
+use Wikimedia\Parsoid\NodeData\DataMwError;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\ContentUtils;
@@ -31,7 +33,7 @@ use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wikitext\Wikitext;
-use Wikimedia\Parsoid\Wt2Html\DOMPostProcessor;
+use Wikimedia\Parsoid\Wt2Html\DOM\Processors\AddMetaData;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 
 /**
@@ -71,7 +73,7 @@ class ParsoidExtensionAPI {
 	 * an extension is returning a dom fragment, errors were encountered while
 	 * generating it and should be marked up with the mw:Error typeof.
 	 *
-	 * @var array
+	 * @var list<DataMwError>
 	 */
 	private $errors = [];
 
@@ -117,11 +119,7 @@ class ParsoidExtensionAPI {
 	 * @return DocumentFragment
 	 */
 	public function pushError( string $key, ...$params ): DocumentFragment {
-		$err = [ 'key' => $key ];
-		if ( count( $params ) > 0 ) {
-			$err['params'] = $params;
-		}
-		$this->errors[] = $err;
+		$this->errors[] = new DataMwError( $key, $params );
 		return WTUtils::createInterfaceI18nFragment( $this->getTopLevelDoc(), $key, $params );
 	}
 
@@ -211,6 +209,9 @@ class ParsoidExtensionAPI {
 		WTUtils::addLangI18nAttribute( $element, $lang, $name, $key, $params );
 	}
 
+	/**
+	 * @return list<DataMwError>
+	 */
 	public function getErrors(): array {
 		return $this->errors;
 	}
@@ -380,7 +381,7 @@ class ParsoidExtensionAPI {
 				$this->env, $frame, $wikitext,
 				[
 					// Full pipeline for processing content
-					'pipelineType' => 'text/x-mediawiki/full',
+					'pipelineType' => 'wikitext-to-fragment',
 					'pipelineOpts' => [
 						'expandTemplates' => true,
 						'extTag' => $parseOpts['extTag'],
@@ -789,9 +790,9 @@ class ParsoidExtensionAPI {
 			return null;
 		}
 		if ( $checkIfOrigSrcReusable( $elt ) ) {
-			$start = $inner ? $dsr->innerStart() : $dsr->start;
-			$end = $inner ? $dsr->innerEnd() : $dsr->end;
-			return $state->getOrigSrc( $start, $end );
+			return $state->getOrigSrc(
+				$inner ? $dsr->innerRange() : $dsr
+			);
 		} else {
 			return null;
 		}
@@ -846,7 +847,7 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
-	 * EXTAPI-FIXME: We have to figure out what it means to run a DOM PP pass
+	 * EXTAPI-FIXME: We have to figure out what it means to run a DOM pass
 	 * (and what processors and what handlers apply) on content models that are
 	 * not wikitext. For now, we are only storing data attribs back to the DOM
 	 * and adding metadata to the page.
@@ -856,13 +857,13 @@ class ParsoidExtensionAPI {
 	public function postProcessDOM( Document $doc ): void {
 		$env = $this->env;
 		// From CleanUp::saveDataParsoid
-		DOMDataUtils::visitAndStoreDataAttribs( DOMCompat::getBody( $doc ), [
+		$body = DOMCompat::getBody( $doc );
+		DOMDataUtils::visitAndStoreDataAttribs( $body, [
 			'storeInPageBundle' => $env->pageBundle,
 			'env' => $env
 		] );
-		// DOMPostProcessor has a FIXME about moving this to DOMUtils / Env
-		$dompp = new DOMPostProcessor( $env );
-		$dompp->addMetaData( $env, $doc );
+		// Ugh! But, this whole method needs to go away anyway
+		( new AddMetaData( null ) )->run( $env, $body );
 	}
 
 	/**
@@ -1035,18 +1036,18 @@ class ParsoidExtensionAPI {
 
 	/**
 	 * @param array $modules
-	 * @deprecated Use ::getMetadata()->addModules() instead.
+	 * @deprecated Use ::getMetadata()->appendOutputStrings( MODULE, ...) instead.
 	 */
 	public function addModules( array $modules ) {
-		$this->getMetadata()->addModules( $modules );
+		$this->getMetadata()->appendOutputStrings( CMCSS::MODULE, $modules );
 	}
 
 	/**
 	 * @param array $modulestyles
-	 * @deprecated Use ::getMetadata()->addModuleStyles() instead.
+	 * @deprecated Use ::getMetadata()->appendOutputStrings(MODULE_STYLE, ...) instead.
 	 */
 	public function addModuleStyles( array $modulestyles ) {
-		$this->getMetadata()->addModuleStyles( $modulestyles );
+		$this->getMetadata()->appendOutputStrings( CMCSS::MODULE_STYLE, $modulestyles );
 	}
 
 	/**
@@ -1054,5 +1055,17 @@ class ParsoidExtensionAPI {
 	 */
 	public function getExternalLinkAttribs( string $url ): array {
 		return $this->env->getExternalLinkAttribs( $url );
+	}
+
+	/**
+	 * Add a tracking category to the current page.
+	 * @param string $key Message key (not localized)
+	 */
+	public function addTrackingCategory( string $key ): void {
+		$this->env->getDataAccess()->addTrackingCategory(
+			$this->env->getPageConfig(),
+			$this->env->getMetadata(),
+			$key
+		);
 	}
 }

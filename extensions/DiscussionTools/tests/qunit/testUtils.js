@@ -1,4 +1,4 @@
-var utils = require( 'ext.discussionTools.init' ).utils;
+const utils = require( 'ext.discussionTools.init' ).utils;
 
 module.exports = {};
 
@@ -9,7 +9,7 @@ module.exports = {};
  * @param {Object} config
  */
 module.exports.overrideMwConfig = function ( config ) {
-	$.extend(
+	Object.assign(
 		mw.config.values,
 		config
 	);
@@ -24,8 +24,8 @@ module.exports.overrideMwConfig = function ( config ) {
 module.exports.getThreadContainer = function ( doc ) {
 	// In tests created from Parsoid output, comments are contained directly in <body>.
 	// In tests created from old parser output, comments are contained in <div class="mw-parser-output">.
-	var body = doc.body;
-	var wrapper = body.querySelector( 'div.mw-parser-output' );
+	const body = doc.body;
+	const wrapper = body.querySelector( 'div.mw-parser-output' );
 	return wrapper || body;
 };
 
@@ -38,7 +38,7 @@ module.exports.getThreadContainer = function ( doc ) {
  * @return {string} The offset path
  */
 function getOffsetPath( ancestor, node, nodeOffset ) {
-	var path = [ nodeOffset ];
+	const path = [ nodeOffset ];
 	while ( node !== ancestor ) {
 		if ( node.parentNode === null ) {
 			// eslint-disable-next-line no-console
@@ -77,14 +77,10 @@ module.exports.serializeComments = function ( parent, root ) {
 	// instead use their offsets within their parent nodes
 	parent.range = getPathsFromRange( root, parent.range );
 	if ( parent.signatureRanges ) {
-		parent.signatureRanges = parent.signatureRanges.map( function ( range ) {
-			return getPathsFromRange( root, range );
-		} );
+		parent.signatureRanges = parent.signatureRanges.map( ( range ) => getPathsFromRange( root, range ) );
 	}
 	if ( parent.timestampRanges ) {
-		parent.timestampRanges = parent.timestampRanges.map( function ( range ) {
-			return getPathsFromRange( root, range );
-		} );
+		parent.timestampRanges = parent.timestampRanges.map( ( range ) => getPathsFromRange( root, range ) );
 	}
 	if ( parent.timestamp ) {
 		parent.timestamp = parent.getTimestampString();
@@ -102,7 +98,7 @@ module.exports.serializeComments = function ( parent, root ) {
 	delete parent.oldestReply;
 	delete parent.latestReply;
 
-	parent.replies.forEach( function ( comment ) {
+	parent.replies.forEach( ( comment ) => {
 		module.exports.serializeComments( comment, root );
 	} );
 };

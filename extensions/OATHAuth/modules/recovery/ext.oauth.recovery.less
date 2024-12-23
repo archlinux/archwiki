@@ -1,0 +1,21 @@
+@import 'mediawiki.skin.variables.less';
+
+.mw-oathauth-recoverycodes-download-icon {
+	.cdx-mixin-css-icon( @cdx-icon-download, @param-is-button-icon: true );
+}
+
+.mw-oathauth-recoverycodes-copy-button {
+	&.cdx-button {
+		margin-right: @spacing-horizontal-button;
+		margin-inline-end: @spacing-horizontal-button;
+	}
+
+	.cdx-button__icon {
+		.cdx-mixin-css-icon( @cdx-icon-copy, @param-is-button-icon: true );
+	}
+
+	.client-nojs &,
+	&:not( .clipboard-api-supported ) {
+		display: none;
+	}
+}

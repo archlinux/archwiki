@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that resets page_random over a time range.
@@ -33,9 +35,9 @@ class ResetPageRandom extends Maintenance {
 		parent::__construct();
 		$this->addDescription( 'Reset the page_random for articles within given date range' );
 		$this->addOption( 'from',
-			'From date range selector to select articles to update, ex: 20041011000000', false, true );
+			'From date range selector to select articles to update, ex: 20041011000000', true, true );
 		$this->addOption( 'to',
-			'To date range selector to select articles to update, ex: 20050708000000', false, true );
+			'To date range selector to select articles to update, ex: 20050708000000', true, true );
 		$this->addOption( 'dry', 'Do not update column' );
 		$this->addOption( 'batch-start',
 			'Optional: Use when you need to restart the reset process from a given page ID offset'
@@ -99,10 +101,12 @@ class ResetPageRandom extends Maintenance {
 			foreach ( $res as $row ) {
 				if ( !$dry ) {
 					# Update the row...
-					$dbw->update( 'page',
-						[ 'page_random' => wfRandom() ],
-						[ 'page_id' => $row->page_id ],
-						__METHOD__ );
+					$dbw->newUpdateQueryBuilder()
+						->update( 'page' )
+						->set( [ 'page_random' => wfRandom() ] )
+						->where( [ 'page_id' => $row->page_id ] )
+						->caller( __METHOD__ )
+						->execute();
 					$changed += $dbw->affectedRows();
 				} else {
 					$changed++;
@@ -125,5 +129,7 @@ class ResetPageRandom extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ResetPageRandom::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

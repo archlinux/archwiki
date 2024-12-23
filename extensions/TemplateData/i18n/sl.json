@@ -67,7 +67,6 @@
 	"templatedata-modal-button-map": "Urejanje zemljevidov",
 	"templatedata-modal-button-importParams": "Uvozi parametre",
 	"templatedata-modal-button-removemap": "Odstrani zemljevid",
-	"templatedata-modal-button-restoreparam": "Obnovi parameter",
 	"templatedata-modal-button-saveparam": "Shrani",
 	"templatedata-modal-confirmcancel": "Ali res želite zavreči vnesene spremembe?",
 	"templatedata-modal-current-language": "Trenutni jezik: $1",

@@ -5,17 +5,13 @@
  */
 
 /**
- * @class ve
- */
-
-/**
  * Check whether a given DOM element has a block element type.
  *
  * @param {HTMLElement|string} element Element or element name
  * @return {boolean} Element is a block element
  */
 ve.isBlockElement = function ( element ) {
-	var elementName = typeof element === 'string' ? element : element.nodeName;
+	const elementName = typeof element === 'string' ? element : element.nodeName;
 	return ve.elementTypes.block.indexOf( elementName.toLowerCase() ) !== -1;
 };
 
@@ -26,7 +22,7 @@ ve.isBlockElement = function ( element ) {
  * @return {boolean} Element is a void element
  */
 ve.isVoidElement = function ( element ) {
-	var elementName = typeof element === 'string' ? element : element.nodeName;
+	const elementName = typeof element === 'string' ? element : element.nodeName;
 	return ve.elementTypes.void.indexOf( elementName.toLowerCase() ) !== -1;
 };
 
@@ -62,7 +58,7 @@ ve.elementTypes = {
  */
 ve.matchTag = function ( html, tag ) {
 	return html.match(
-		// eslint-disable-next-line security/detect-non-literal-regexp
+
 		new RegExp( '<' + tag + '(>|\\s[^>]*>)' )
 	);
 };
@@ -83,17 +79,17 @@ ve.addHeadTag = function ( docHtml, tagHtml ) {
 	 * @return {string}
 	 */
 	function insertAfter( match, text ) {
-		var offset = match.index + match[ 0 ].length;
+		const offset = match.index + match[ 0 ].length;
 		return docHtml.slice( 0, offset ) +
 			text +
 			docHtml.slice( offset );
 	}
 
-	var headMatch = ve.matchTag( docHtml, 'head' );
+	const headMatch = ve.matchTag( docHtml, 'head' );
 	if ( headMatch ) {
 		return insertAfter( headMatch, tagHtml );
 	} else {
-		var htmlMatch = ve.matchTag( docHtml, 'html' );
+		const htmlMatch = ve.matchTag( docHtml, 'html' );
 		if ( htmlMatch ) {
 			// <html> but no <head>
 			return insertAfter( htmlMatch, '<head>' + tagHtml + '</head>' );
@@ -129,10 +125,10 @@ ve.createDocumentFromHtml = function ( html ) {
 		html = ve.addHeadTag( html, '<meta name="format-detection" content="telephone=no" data-ve-tmp/>' );
 	}
 
-	var newDocument = new DOMParser().parseFromString( html, 'text/html' );
+	const newDocument = new DOMParser().parseFromString( html, 'text/html' );
 
 	// Remove iOS hack
-	var tmpMeta = newDocument.querySelector( 'meta[data-ve-tmp]' );
+	const tmpMeta = newDocument.querySelector( 'meta[data-ve-tmp]' );
 	if ( tmpMeta ) {
 		tmpMeta.parentNode.removeChild( tmpMeta );
 	}
@@ -153,7 +149,7 @@ ve.createDocumentFromHtml = function ( html ) {
  * @param {string} [fallbackBase] Base URL to use if resolving the base URL fails or there is no <base> tag
  */
 ve.fixBase = function ( targetDoc, sourceDoc, fallbackBase ) {
-	var baseNode = targetDoc.getElementsByTagName( 'base' )[ 0 ];
+	let baseNode = targetDoc.getElementsByTagName( 'base' )[ 0 ];
 	if ( baseNode ) {
 		// Support: Safari
 		// In Safari a base node with an invalid href (e.g. protocol-relative)
@@ -201,7 +197,7 @@ ve.properInnerHtml = function ( element ) {
 /**
  * Get the actual outer HTML of a DOM node.
  *
- * @see ve#properInnerHtml
+ * @see ve.properInnerHtml
  * @param {HTMLElement} element HTML element to get outer HTML of
  * @return {string} Outer HTML
  */
@@ -223,7 +219,7 @@ ve.fixupPreBug = function ( element ) {
 	// Support: Chrome, FF
 	if ( ve.isPreInnerHtmlBroken === undefined ) {
 		// Test whether newlines in `<pre>` are serialized back correctly
-		var div = document.createElement( 'div' );
+		const div = document.createElement( 'div' );
 		div.innerHTML = '<pre>\n\n</pre>';
 		ve.isPreInnerHtmlBroken = div.innerHTML === '<pre>\n</pre>';
 	}
@@ -237,14 +233,14 @@ ve.fixupPreBug = function ( element ) {
 	// If we don't see a leading newline, we still don't know if the original HTML was
 	// `<pre>Foo</pre>` or `<pre>\nFoo</pre>`, but that's a syntactic difference, not a
 	// semantic one, and handling that is the integration target's job.
-	var $element = $( element ).clone();
-	$element.find( 'pre, textarea, listing' ).each( function () {
-		var matches;
-		if ( this.firstChild && this.firstChild.nodeType === Node.TEXT_NODE ) {
-			matches = this.firstChild.data.match( /^(\r\n|\r|\n)/ );
+	const $element = $( element ).clone();
+	$element.find( 'pre, textarea, listing' ).each( ( i, el ) => {
+		let matches;
+		if ( el.firstChild && el.firstChild.nodeType === Node.TEXT_NODE ) {
+			matches = el.firstChild.data.match( /^(\r\n|\r|\n)/ );
 			if ( matches && matches[ 1 ] ) {
 				// Prepend a newline exactly like the one we saw
-				this.firstChild.insertData( 0, matches[ 1 ] );
+				el.firstChild.insertData( 0, matches[ 1 ] );
 			}
 		}
 	} );
@@ -265,7 +261,7 @@ ve.fixupPreBug = function ( element ) {
  * @return {string} Normalized attribute value
  */
 ve.normalizeAttributeValue = function ( name, value, nodeName ) {
-	var node = document.createElement( nodeName || 'div' );
+	const node = document.createElement( nodeName || 'div' );
 	node.setAttribute( name, value );
 	return node.getAttribute( name );
 };
@@ -278,7 +274,7 @@ ve.normalizeAttributeValue = function ( name, value, nodeName ) {
  * @return {string} Resolved URL
  */
 ve.resolveUrl = function ( url, base ) {
-	var node = base.createElement( 'a' );
+	const node = base.createElement( 'a' );
 	node.setAttribute( 'href', url );
 	// If doc.baseURI isn't set, node.href will be an empty string
 	// This is crazy, returning the original URL is better

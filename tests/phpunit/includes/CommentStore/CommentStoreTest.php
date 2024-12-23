@@ -2,7 +2,9 @@
 
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Message\Message;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
@@ -128,34 +130,36 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 
 		$wstore = $this->makeStore();
 
-		$fields = $wstore->insert( $this->db, $key, $comment, $data );
+		$fields = $wstore->insert( $this->getDb(), $key, $comment, $data );
 
 		$this->assertArrayNotHasKey( $key, $fields, "old field" );
 		$this->assertArrayHasKey( "{$key}_id", $fields, "new field" );
 
-		$this->db->insert( $table, [ $pk => ++$id ] + $fields, __METHOD__ );
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( $table )
+			->row( [ $pk => ++$id ] + $fields )
+			->caller( __METHOD__ )
+			->execute();
 
 		$rstore = $this->makeStore();
 
-		$fieldRow = $this->db->newSelectQueryBuilder()
+		$fieldRow = $this->getDb()->newSelectQueryBuilder()
 			->select( [ "{$key}_id" => "{$key}_id" ] )
 			->from( $table )
 			->where( [ $pk => $id ] )
 			->caller( __METHOD__ )->fetchRow();
 
 		$queryInfo = $rstore->getJoin( $key );
-		$joinRow = $this->db->selectRow(
-			[ $table ] + $queryInfo['tables'],
-			$queryInfo['fields'],
-			[ $pk => $id ],
-			__METHOD__,
-			[],
-			$queryInfo['joins']
-		);
+		$joinRow = $this->getDb()->newSelectQueryBuilder()
+			->queryInfo( $queryInfo )
+			->from( $table )
+			->where( [ $pk => $id ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 
 		$this->assertComment(
 			$expect,
-			$rstore->getCommentLegacy( $this->db, $key, $fieldRow ),
+			$rstore->getCommentLegacy( $this->getDb(), $key, $fieldRow ),
 			"from getFields()"
 		);
 		$this->assertComment(
@@ -269,8 +273,8 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 		$truncated = str_repeat( '💣', CommentStore::COMMENT_CHARACTER_LIMIT - 3 ) . '...';
 
 		$store = $this->makeStore();
-		$fields = $store->insert( $this->db, 'ipb_reason', $comment );
-		$stored = $this->db->newSelectQueryBuilder()
+		$fields = $store->insert( $this->getDb(), 'ipb_reason', $comment );
+		$stored = $this->getDb()->newSelectQueryBuilder()
 			->select( 'comment_text' )
 			->from( 'comment' )
 			->where( [ 'comment_id' => $fields['ipb_reason_id'] ] )
@@ -282,7 +286,7 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 		$store = $this->makeStore();
 		$this->expectException( OverflowException::class );
 		$this->expectExceptionMessage( "Comment data is too long (65611 bytes, maximum is 65535)" );
-		$store->insert( $this->db, 'ipb_reason', 'foo', [
+		$store->insert( $this->getDb(), 'ipb_reason', 'foo', [
 			'long' => str_repeat( '💣', 16400 )
 		] );
 	}

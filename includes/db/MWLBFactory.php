@@ -24,15 +24,19 @@
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\RequestTimeout\CriticalSectionProvider;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 
 /**
  * MediaWiki-specific class for generating database load balancers
@@ -42,8 +46,8 @@ use Wikimedia\RequestTimeout\CriticalSectionProvider;
  */
 class MWLBFactory {
 
-	/** @var array Cache of already-logged deprecation messages */
-	private static $loggedDeprecations = [];
+	/** Cache of already-logged deprecation messages */
+	private static array $loggedDeprecations = [];
 
 	public const CORE_VIRTUAL_DOMAINS = [ 'virtual-botpasswords' ];
 
@@ -72,34 +76,13 @@ class MWLBFactory {
 		MainConfigNames::SQLMode,
 		MainConfigNames::VirtualDomainsMapping,
 	];
-	/**
-	 * @var ServiceOptions
-	 */
-	private $options;
-	/**
-	 * @var ConfiguredReadOnlyMode
-	 */
-	private $readOnlyMode;
-	/**
-	 * @var ChronologyProtector
-	 */
-	private $chronologyProtector;
-	/**
-	 * @var BagOStuff
-	 */
-	private $srvCache;
-	/**
-	 * @var WANObjectCache
-	 */
-	private $wanCache;
-	/**
-	 * @var CriticalSectionProvider
-	 */
-	private $csProvider;
-	/**
-	 * @var StatsdDataFactoryInterface
-	 */
-	private $statsdDataFactory;
+	private ServiceOptions $options;
+	private ConfiguredReadOnlyMode $readOnlyMode;
+	private ChronologyProtector $chronologyProtector;
+	private BagOStuff $srvCache;
+	private WANObjectCache $wanCache;
+	private CriticalSectionProvider $csProvider;
+	private StatsdDataFactoryInterface $statsdDataFactory;
 	/** @var string[] */
 	private array $virtualDomains;
 
@@ -138,7 +121,7 @@ class MWLBFactory {
 	 * @return array
 	 * @internal For use with service wiring
 	 */
-	public function applyDefaultConfig( array $lbConf ) {
+	public function applyDefaultConfig( array $lbConf ): array {
 		$this->options->assertRequiredOptions( self::APPLY_DEFAULT_CONFIG_OPTIONS );
 
 		$typesWithSchema = self::getDbTypesWithSchemas();
@@ -236,7 +219,7 @@ class MWLBFactory {
 	/**
 	 * @return array
 	 */
-	private function getDbTypesWithSchemas() {
+	private function getDbTypesWithSchemas(): array {
 		return [ 'postgres' ];
 	}
 
@@ -245,7 +228,7 @@ class MWLBFactory {
 	 * @param ServiceOptions $options
 	 * @return array
 	 */
-	private function initServerInfo( array $server, ServiceOptions $options ) {
+	private function initServerInfo( array $server, ServiceOptions $options ): array {
 		if ( $server['type'] === 'sqlite' ) {
 			$httpMethod = $_SERVER['REQUEST_METHOD'] ?? null;
 			// T93097: hint for how file-based databases (e.g. sqlite) should go about locking.
@@ -294,7 +277,7 @@ class MWLBFactory {
 	 * @param string $ldDB Local domain database name
 	 * @param string $ldTP Local domain prefix
 	 */
-	private function assertValidServerConfigs( array $servers, $ldDB, $ldTP ) {
+	private function assertValidServerConfigs( array $servers, string $ldDB, string $ldTP ): void {
 		foreach ( $servers as $server ) {
 			$type = $server['type'] ?? null;
 			$srvDB = $server['dbname'] ?? null; // server DB
@@ -323,7 +306,7 @@ class MWLBFactory {
 	 * @param string $dbType Database type
 	 * @return never
 	 */
-	private function reportIfPrefixSet( $prefix, $dbType ) {
+	private function reportIfPrefixSet( string $prefix, string $dbType ) {
 		$e = new UnexpectedValueException(
 			"\$wgDBprefix is set to '$prefix' but the database type is '$dbType'. " .
 			"MediaWiki does not support using a table prefix with this RDBMS type."
@@ -337,7 +320,7 @@ class MWLBFactory {
 	 * @param string $ldDB Local DB domain database
 	 * @return never
 	 */
-	private function reportMismatchedDBs( $srvDB, $ldDB ) {
+	private function reportMismatchedDBs( string $srvDB, string $ldDB ) {
 		$e = new UnexpectedValueException(
 			"\$wgDBservers has dbname='$srvDB' but \$wgDBname='$ldDB'. " .
 			"Set \$wgDBname to the database used by this wiki project. " .
@@ -355,7 +338,7 @@ class MWLBFactory {
 	 * @param string $ldTP Local DB domain database
 	 * @return never
 	 */
-	private function reportMismatchedPrefixes( $srvTP, $ldTP ) {
+	private function reportMismatchedPrefixes( string $srvTP, string $ldTP ) {
 		$e = new UnexpectedValueException(
 			"\$wgDBservers has tablePrefix='$srvTP' but \$wgDBprefix='$ldTP'. " .
 			"Set \$wgDBprefix to the table prefix used by this wiki project. " .
@@ -375,7 +358,7 @@ class MWLBFactory {
 	 * @param array $config (e.g. $wgLBFactoryConf)
 	 * @return string Class name
 	 */
-	public function getLBFactoryClass( array $config ) {
+	public function getLBFactoryClass( array $config ): string {
 		$compat = [
 			// For LocalSettings.php compat after removing underscores (since 1.23).
 			'LBFactory_Single' => Wikimedia\Rdbms\LBFactorySingle::class,
@@ -394,7 +377,7 @@ class MWLBFactory {
 	/**
 	 * @param ILBFactory $lbFactory
 	 */
-	public function setDomainAliases( ILBFactory $lbFactory ) {
+	public function setDomainAliases( ILBFactory $lbFactory ): void {
 		$domain = DatabaseDomain::newFromId( $lbFactory->getLocalDomainID() );
 		// For compatibility with hyphenated $wgDBname values on older wikis, handle callers
 		// that assume corresponding database domain IDs and wiki IDs have identical values
@@ -464,7 +447,7 @@ class MWLBFactory {
 	 *
 	 * @param string $msg Deprecation message
 	 */
-	public static function logDeprecation( $msg ) {
+	public static function logDeprecation( string $msg ): void {
 		if ( isset( self::$loggedDeprecations[$msg] ) ) {
 			return;
 		}

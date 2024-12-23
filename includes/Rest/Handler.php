@@ -3,15 +3,19 @@
 namespace MediaWiki\Rest;
 
 use DateTime;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Rest\Module\Module;
 use MediaWiki\Rest\Validator\BodyValidator;
-use MediaWiki\Rest\Validator\JsonBodyValidator;
 use MediaWiki\Rest\Validator\NullBodyValidator;
 use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\Session\Session;
+use UtfNormal\Validator as UtfNormalValidator;
+use Wikimedia\Assert\Assert;
 use Wikimedia\Message\MessageValue;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * Base class for REST route handlers.
@@ -35,14 +39,17 @@ abstract class Handler {
 	 */
 	public const PARAM_DESCRIPTION = Validator::PARAM_DESCRIPTION;
 
-	/** @var Router */
-	private $router;
+	/** @var Module */
+	private $module;
 
 	/** @var RequestInterface */
 	private $request;
 
 	/** @var Authority */
 	private $authority;
+
+	/** @var string */
+	private $path;
 
 	/** @var array */
 	private $config;
@@ -69,47 +76,210 @@ abstract class Handler {
 	private $hookRunner;
 
 	/**
-	 * Initialise with dependencies from the Router. This is called after construction.
-	 * @param Router $router
-	 * @param RequestInterface $request
-	 * @param array $config
+	 * Injects information about the handler's context in the Module.
+	 * The framework should call this right after the object was constructed.
+	 *
+	 * First function of the initialization function, must be called before
+	 * initServices().
+	 *
+	 * @param Module $module
+	 * @param string $path
+	 * @param array $routeConfig information about the route declaration.
+	 *
+	 * @internal
+	 */
+	final public function initContext( Module $module, string $path, array $routeConfig ) {
+		Assert::precondition(
+			$this->authority === null,
+			'initContext() must be called before initServices()'
+		);
+
+		$this->module = $module;
+		$this->path = $path;
+		$this->config = $routeConfig;
+	}
+
+	/**
+	 * Inject service objects.
+	 *
+	 * Second function of the initialization function, must be called after
+	 * initContext() and before initSession().
+	 *
 	 * @param Authority $authority
 	 * @param ResponseFactory $responseFactory
 	 * @param HookContainer $hookContainer
-	 * @param Session $session
+	 *
 	 * @internal
 	 */
-	final public function init( Router $router, RequestInterface $request, array $config,
-		Authority $authority, ResponseFactory $responseFactory, HookContainer $hookContainer,
-		Session $session
+	final public function initServices(
+		Authority $authority, ResponseFactory $responseFactory, HookContainer $hookContainer
 	) {
-		$this->router = $router;
-		$this->request = $request;
+		// Warn if a subclass overrides getBodyValidator()
+		MWDebug::detectDeprecatedOverride(
+			$this,
+			__CLASS__,
+			'getBodyValidator',
+			'1.43'
+		);
+
+		Assert::precondition(
+			$this->module !== null,
+			'initServices() must not be called before initContext()'
+		);
+		Assert::precondition(
+			$this->session === null,
+			'initServices() must be called before initSession()'
+		);
+
 		$this->authority = $authority;
-		$this->config = $config;
 		$this->responseFactory = $responseFactory;
 		$this->hookContainer = $hookContainer;
 		$this->hookRunner = new HookRunner( $hookContainer );
+	}
+
+	/**
+	 * Inject session information.
+	 *
+	 * Third function of the initialization function, must be called after
+	 * initServices() and before initForExecute().
+	 *
+	 * @param Session $session
+	 *
+	 * @internal
+	 */
+	final public function initSession( Session $session ) {
+		Assert::precondition(
+			$this->authority !== null,
+			'initSession() must not be called before initContext()'
+		);
+		Assert::precondition(
+			$this->request === null,
+			'initSession() must be called before initForExecute()'
+		);
+
 		$this->session = $session;
+	}
+
+	/**
+	 * Initialise for execution based on the given request.
+	 *
+	 * Last function of the initialization function, must be called after
+	 * initSession() and before validate() and checkPreconditions().
+	 *
+	 * This function will call postInitSetup() to allow subclasses to
+	 * perform their own initialization.
+	 *
+	 * The request object is updated with parsed body data if needed.
+	 *
+	 * @internal
+	 *
+	 * @param RequestInterface $request
+	 *
+	 * @throws HttpException if the handler does not accept the request for
+	 *         some reason.
+	 */
+	final public function initForExecute( RequestInterface $request ) {
+		Assert::precondition(
+			$this->session !== null,
+			'initForExecute() must not be called before initSession()'
+		);
+
+		if ( $request->getParsedBody() === null ) {
+			$this->processRequestBody( $request );
+		}
+
+		$this->request = $request;
+
 		$this->postInitSetup();
 	}
 
 	/**
-	 * Returns the path this handler is bound to, including path variables.
+	 * Process the request's request body and set the parsed body data
+	 * if appropriate.
+	 *
+	 * @see parseBodyData()
+	 *
+	 * @throws HttpException if the request body is not acceptable.
+	 */
+	private function processRequestBody( RequestInterface $request ) {
+		// fail if the request method is in NO_BODY_METHODS but has body
+		$requestMethod = $request->getMethod();
+		if ( in_array( $requestMethod, RequestInterface::NO_BODY_METHODS ) ) {
+			// check if the request has a body
+			if ( $request->hasBody() ) {
+				// NOTE: Don't throw, see T359509.
+				// TODO: Ignore only empty bodies, log a warning or fail if
+				//       there is actual content.
+				return;
+			}
+		}
+
+		// fail if the request method expects a body but has no body
+		if ( in_array( $requestMethod, RequestInterface::BODY_METHODS ) ) {
+			// check if it has no body
+			if ( !$request->hasBody() ) {
+				throw new LocalizedHttpException(
+					new MessageValue(
+						"rest-request-body-expected",
+						[ $requestMethod ]
+					),
+					411
+				);
+			}
+		}
+
+		// call parsedbody
+		if ( $request->hasBody() ) {
+			$parsedBody = $this->parseBodyData( $request );
+			// Set the parsed body data on the request object
+			$request->setParsedBody( $parsedBody );
+		}
+	}
+
+	/**
+	 * Returns the path this handler is bound to relative to the module prefix.
+	 * Includes path variables.
 	 *
 	 * @return string
 	 */
 	public function getPath(): string {
-		return $this->getConfig()['path'];
+		return $this->path;
 	}
 
 	/**
-	 * Get the Router. The return type declaration causes it to raise
-	 * a fatal error if init() has not yet been called.
+	 * Get a list of parameter placeholders present in the route's path
+	 * as returned by getPath(). Note that this is independent of the parameters
+	 * defined by getParamSettings(): required path parameters defined in
+	 * getParamSettings() should be present in the path, but there is no
+	 * mechanism to ensure that they are.
+	 *
+	 * @return string[]
+	 */
+	public function getSupportedPathParams(): array {
+		$path = $this->getPath();
+
+		preg_match_all( '/\{(.*?)\}/', $path, $matches, PREG_PATTERN_ORDER );
+
+		return $matches[1] ?? [];
+	}
+
+	/**
+	 * Get the Router.
+	 *
 	 * @return Router
 	 */
 	protected function getRouter(): Router {
-		return $this->router;
+		return $this->module->getRouter();
+	}
+
+	/**
+	 * Get the Module this handler belongs to.
+	 * Will fail hard if called before initContext().
+	 *
+	 * @return Module
+	 */
+	protected function getModule(): Module {
+		return $this->module;
 	}
 
 	/**
@@ -124,8 +294,8 @@ abstract class Handler {
 	 * @return string
 	 */
 	protected function getRouteUrl( $pathParams = [], $queryParams = [] ): string {
-		$path = $this->getConfig()['path'];
-		return $this->router->getRouteUrl( $path, $pathParams, $queryParams );
+		$path = $this->getPath();
+		return $this->getRouter()->getRouteUrl( $path, $pathParams, $queryParams );
 	}
 
 	/**
@@ -155,7 +325,7 @@ abstract class Handler {
 
 	/**
 	 * Get the current request. The return type declaration causes it to raise
-	 * a fatal error if init() has not yet been called.
+	 * a fatal error if initForExecute() has not yet been called.
 	 *
 	 * @return RequestInterface
 	 */
@@ -165,7 +335,7 @@ abstract class Handler {
 
 	/**
 	 * Get the current acting authority. The return type declaration causes it to raise
-	 * a fatal error if init() has not yet been called.
+	 * a fatal error if initServices() has not yet been called.
 	 *
 	 * @since 1.36
 	 * @return Authority
@@ -176,7 +346,7 @@ abstract class Handler {
 
 	/**
 	 * Get the configuration array for the current route. The return type
-	 * declaration causes it to raise a fatal error if init() has not
+	 * declaration causes it to raise a fatal error if initContext() has not
 	 * been called.
 	 *
 	 * @return array
@@ -187,7 +357,7 @@ abstract class Handler {
 
 	/**
 	 * Get the ResponseFactory which can be used to generate Response objects.
-	 * This will raise a fatal error if init() has not been
+	 * This will raise a fatal error if initServices() has not been
 	 * called.
 	 *
 	 * @return ResponseFactory
@@ -198,7 +368,7 @@ abstract class Handler {
 
 	/**
 	 * Get the Session.
-	 * This will raise a fatal error if init() has not been
+	 * This will raise a fatal error if initSession() has not been
 	 * called.
 	 *
 	 * @return Session
@@ -217,17 +387,28 @@ abstract class Handler {
 	 * @throws HttpException On validation failure.
 	 */
 	public function validate( Validator $restValidator ) {
-		$paramSettings = $this->getParamSettings();
-		$legacyValidatedBody = $restValidator->validateBody( $this->request, $this );
+		$this->validatedParams = $restValidator->validateParams(
+			$this->getParamSettings()
+		);
 
-		$this->validatedParams = $restValidator->validateParams( $paramSettings );
+		$bodyType = $this->request->getBodyType();
+		$legacyBodyValidator = $bodyType === null ? null
+			: $this->getBodyValidator( $bodyType );
 
-		if ( $legacyValidatedBody !== null ) {
-			// TODO: warn if $bodyParamSettings is not empty
-			// TODO: trigger a deprecation warning
-			$this->validatedBody = $legacyValidatedBody;
+		if ( $legacyBodyValidator && !$legacyBodyValidator instanceof NullBodyValidator ) {
+			$this->validatedBody = $restValidator->validateBody( $this->request, $this );
 		} else {
-			$this->validatedBody = $restValidator->validateBodyParams( $paramSettings );
+			// Allow type coercion if the request body is form data.
+			// For JSON requests, insist on proper types.
+			$enforceTypes = !in_array(
+				$this->request->getBodyType(),
+				RequestInterface::FORM_DATA_CONTENT_TYPES
+			);
+
+			$this->validatedBody = $restValidator->validateBodyParams(
+				$this->getBodyParamSettings(),
+				$enforceTypes
+			);
 
 			// If there is a body, check if it contains extra fields.
 			if ( $this->getRequest()->hasBody() ) {
@@ -256,7 +437,7 @@ abstract class Handler {
 		}
 
 		$restValidator->detectExtraneousBodyFields(
-			$this->getParamSettings(),
+			$this->getBodyParamSettings(),
 			$parsedBody
 		);
 	}
@@ -331,7 +512,7 @@ abstract class Handler {
 	 * getLastModified() when they were called before execute() was run.
 	 *
 	 * Other request methods are assumed to be state-changing, so no headers
-	 * will be set per default.
+	 * will be set by default.
 	 *
 	 * This may be overridden to modify the verifier headers sent in the response.
 	 * However, handlers that modify the resource's state would typically just
@@ -368,7 +549,7 @@ abstract class Handler {
 		if ( !$response->getHeaderLine( 'Cache-Control' ) ) {
 			$rqMethod = $this->getRequest()->getMethod();
 			if ( $rqMethod !== 'GET' && $rqMethod !== 'HEAD' ) {
-				// Responses to requests other than GET or HEAD should not be cacheable per default.
+				// Responses to requests other than GET or HEAD should not be cacheable by default.
 				$response->setHeader( 'Cache-Control', 'private,no-cache,s-maxage=0' );
 			}
 		}
@@ -380,9 +561,17 @@ abstract class Handler {
 	 * Every setting must include self::PARAM_SOURCE to specify which part of
 	 * the request is to contain the parameter.
 	 *
-	 * Can be used for validating parameters inside an application/x-www-form-urlencoded or
-	 * multipart/form-data POST body (i.e. parameters which would be present in PHP's $_POST
-	 * array). For validating other kinds of request bodies, override getBodyValidator().
+	 * Can be used for the request body as well, by setting self::PARAM_SOURCE
+	 * to "post". Note that the values of "post" parameters will be accessible
+	 * through getValidatedParams(). "post" parameters are used with
+	 * form data (application/x-www-form-urlencoded or multipart/form-data).
+	 *
+	 * For "query" parameters, a PARAM_REQUIRED setting of "false" means the caller
+	 * does not have to supply the parameter. For "path" parameters, the path matcher will always
+	 * require the caller to supply all path parameters for a route, regardless of the
+	 * PARAM_REQUIRED setting. However, "path" parameters may be specified in getParamSettings()
+	 * as non-required to indicate that the handler services multiple routes, some of which may
+	 * not supply the parameter.
 	 *
 	 * @stable to override
 	 *
@@ -394,11 +583,26 @@ abstract class Handler {
 	}
 
 	/**
+	 * Fetch ParamValidator settings for body fields. Parameters defined
+	 * by this method are used to validate the request body. The parameter
+	 * values will become available through getValidatedBody().
+	 *
+	 * Subclasses may override this method to specify what fields they support
+	 * in the request body. All parameter settings returned by this method must
+	 * have self::PARAM_SOURCE set to 'body'.
+	 *
+	 * @return array[]
+	 */
+	public function getBodyParamSettings(): array {
+		return [];
+	}
+
+	/**
 	 * Returns an OpenAPI Operation Object specification structure as an associative array.
 	 *
 	 * @see https://swagger.io/specification/#operation-object
 	 *
-	 * Per default, this will contain information about the supported parameters, as well as
+	 * By default, this will contain information about the supported parameters, as well as
 	 * the response for status 200.
 	 *
 	 * Subclasses may override this to provide additional information.
@@ -415,101 +619,212 @@ abstract class Handler {
 	public function getOpenApiSpec( string $method ): array {
 		$parameters = [];
 
-		// XXX: Maybe we want to be able to define a spec file in the route definition?
-		// NOTE: the route definition may not be loaded when this is called before init()!
+		$supportedPathParams = array_flip( $this->getSupportedPathParams() );
 
 		foreach ( $this->getParamSettings() as $name => $paramSetting ) {
+			$source = $paramSetting[ Validator::PARAM_SOURCE ] ?? '';
+
+			if ( $source !== 'query' && $source !== 'path' ) {
+				continue;
+			}
+
+			if ( $source === 'path' && !isset( $supportedPathParams[$name] ) ) {
+				// Skip optional path param not used in the current path
+				continue;
+			}
+
+			if ( array_key_exists( Validator::PARAM_DESCRIPTION, $paramSetting ) &&
+				$paramSetting[ Validator::PARAM_DESCRIPTION ] instanceof MessageValue
+			) {
+				// TODO: consider if we want to request a specific preferred language
+				$translation = $this->responseFactory->getFormattedMessage(
+					$paramSetting[ Validator::PARAM_DESCRIPTION ]
+				);
+				$paramSetting[ Validator::PARAM_DESCRIPTION ] = $translation;
+			}
+
 			$param = Validator::getParameterSpec(
 				$name,
 				$paramSetting
 			);
 
-			$location = $param['in'];
-			if ( $location !== 'post' && $location !== 'body' ) {
-				// 'post' and 'body' are handled in getRequestSpec()
-				// but others are added as normal parameters
-				$parameters[] = $param;
-			}
+			$parameters[] = $param;
 		}
 
 		$spec = [
 			'parameters' => $parameters,
-			'responses' => $this->getResponseSpec(),
+			'responses' => $this->generateResponseSpec( $method ),
 		];
 
-		$requestBody = $this->getRequestSpec();
-		if ( $requestBody ) {
-			$spec['requestBody'] = $requestBody;
+		if ( !in_array( $method, RequestInterface::NO_BODY_METHODS ) ) {
+			$requestBody = $this->getRequestSpec( $method );
+			if ( $requestBody ) {
+				$spec['requestBody'] = $requestBody;
+			}
 		}
+
+		// TODO: Allow additional information about parameters and responses to
+		//       be provided in the route definition.
+		$oas = $this->getConfig()['OAS'] ?? [];
+		$spec += $oas;
 
 		return $spec;
 	}
 
 	/**
 	 * Returns an OpenAPI Request Body Object specification structure as an associative array.
+	 *
 	 * @see https://swagger.io/specification/#request-body-object
 	 *
-	 * Per default, this calls getBodyValidator() to get a SchemaValidator,
-	 * and then calls getBodySpec() on it.
-	 * If no SchemaValidator is supported, this returns null;
+	 * This is based on the getBodyParamSettings() and getSupportedRequestTypes().
 	 *
-	 * Subclasses may override this to provide additional information about the structure of responses.
+	 * Subclasses may override this to provide additional information about the
+	 * structure of responses, or to add support for additional mediaTypes.
 	 *
-	 * @stable to override
+	 * @stable to override getBodySchema() to generate a schema for each
+	 * supported media type as returned by getSupportedBodyTypes().
+	 *
+	 * @param string $method
+	 *
 	 * @return ?array
 	 */
-	protected function getRequestSpec(): ?array {
-		$request = [];
+	protected function getRequestSpec( string $method ): ?array {
+		$mediaTypes = [];
 
-		// XXX: support additional content types?!
-		try {
-			$validator = $this->getBodyValidator( 'application/json' );
+		foreach ( $this->getSupportedRequestTypes() as $type ) {
+			$schema = $this->getRequestBodySchema( $type );
 
-			// TODO: all validators should support getBodySpec()!
-			if ( $validator instanceof JsonBodyValidator ) {
-				$schema = $validator->getOpenAPISpec();
-
-				if ( $schema !== [] ) {
-					$request['content']['application/json']['schema'] = $schema;
-				}
+			if ( $schema ) {
+				$mediaTypes[$type] = [ 'schema' => $schema ];
 			}
-		} catch ( HttpException $ex ) {
-			// JSON not supported, ignore.
 		}
 
-		return $request ?: null;
+		if ( !$mediaTypes ) {
+			return null;
+		}
+
+		return [
+			// TODO: some DELETE handlers may require a body that contains a token
+			// FIXME: check if there are required body params!
+			'required' => in_array( $method, RequestInterface::BODY_METHODS ),
+			'content' => $mediaTypes
+		];
+	}
+
+	/**
+	 * Returns a content schema per the OpenAPI spec.
+	 * @see https://swagger.io/specification/#schema-object
+	 *
+	 * Per default, this provides schemas for JSON requests and form data, based
+	 * on the parameter declarations returned by getParamSettings().
+	 *
+	 * Subclasses may override this to provide additional information about the
+	 * structure of responses, or to add support for additional mediaTypes.
+	 *
+	 * @stable to override
+	 * @return array
+	 */
+	protected function getRequestBodySchema( string $mediaType ): array {
+		if ( $mediaType === RequestInterface::FORM_URLENCODED_CONTENT_TYPE ) {
+			$allowedSources = [ 'body', 'post' ];
+		} elseif ( $mediaType === RequestInterface::MULTIPART_FORM_DATA_CONTENT_TYPE ) {
+			$allowedSources = [ 'body', 'post' ];
+		} else {
+			$allowedSources = [ 'body' ];
+		}
+
+		$paramSettings = $this->getBodyParamSettings();
+
+		$properties = [];
+		$required = [];
+
+		foreach ( $paramSettings as $name => $settings ) {
+			$source = $settings[ Validator::PARAM_SOURCE ] ?? '';
+			$isRequired = $settings[ ParamValidator::PARAM_REQUIRED ] ?? false;
+
+			if ( !in_array( $source, $allowedSources ) ) {
+				// TODO: post parameters also work as body parameters...
+				continue;
+			}
+
+			$properties[$name] = Validator::getParameterSchema( $settings );
+
+			if ( $isRequired ) {
+				$required[] = $name;
+			}
+		}
+
+		if ( !$properties ) {
+			return [];
+		}
+
+		$schema = [
+			'type' => 'object',
+			'properties' => $properties,
+		];
+
+		if ( $required ) {
+			$schema['required'] = $required;
+		}
+
+		return $schema;
 	}
 
 	/**
 	 * Returns an OpenAPI Schema Object specification structure as an associative array.
+	 *
 	 * @see https://swagger.io/specification/#schema-object
 	 *
-	 * Returns null per default. Subclasses that return a JSON response should
+	 * Returns null by default. Subclasses that return a JSON response should
 	 * implement this method to return a schema of the response body.
+	 *
+	 * @param string $method The HTTP method to produce a spec for ("get", "post", etc).
 	 *
 	 * @stable to override
 	 * @return ?array
 	 */
-	protected function getResponseBodySchema(): ?array {
+	protected function getResponseBodySchema( string $method ): ?array {
+		$file = $this->getResponseBodySchemaFileName( $method );
+		return $file ? Module::loadJsonFile( $file ) : null;
+	}
+
+	/**
+	 * Returns the path and name of a JSON file containing an OpenAPI Schema Object
+	 * specification structure.
+	 *
+	 * @see https://swagger.io/specification/#schema-object
+	 *
+	 * Returns null by default. Subclasses with a suitable JSON file should implement this method.
+	 *
+	 * @param string $method The HTTP method to produce a spec for ("get", "post", etc).
+	 *
+	 * @stable to override
+	 * @since 1.43
+	 * @return ?string
+	 */
+	protected function getResponseBodySchemaFileName( string $method ): ?string {
 		return null;
 	}
 
 	/**
 	 * Returns an OpenAPI Responses Object specification structure as an associative array.
+	 *
 	 * @see https://swagger.io/specification/#responses-object
 	 *
-	 * Per default, this will contain basic information response for status 200, 400, and 500.
+	 * By default, this will contain basic information response for status 200, 400, and 500.
 	 * The getResponseBodySchema() method is used to determine the structure of the response for status 200.
 	 *
 	 * Subclasses may override this to provide additional information about the structure of responses.
 	 *
+	 * @param string $method The HTTP method to produce a spec for ("get", "post", etc).
+	 *
 	 * @stable to override
 	 * @return array
 	 */
-	protected function getResponseSpec(): array {
+	protected function generateResponseSpec( string $method ): array {
 		$ok = [ 'description' => 'OK' ];
 
-		$bodySchema = $this->getResponseBodySchema();
+		$bodySchema = $this->getResponseBodySchema( $method );
 
 		if ( $bodySchema ) {
 			$ok['content']['application/json']['schema'] = $bodySchema;
@@ -526,7 +841,10 @@ abstract class Handler {
 	/**
 	 * Fetch the BodyValidator
 	 *
-	 * @stable to override
+	 * @deprecated since 1.43, return body properties from getBodyParamSettings().
+	 * Subclasses that need full control over body data parsing should override
+	 * parseBodyData() or implement validation in the execute() method based on
+	 * the unparsed body data returned by getRequest()->getBody().
 	 *
 	 * @param string $contentType Content type of the request.
 	 * @return BodyValidator A {@see NullBodyValidator} in this default implementation
@@ -534,8 +852,8 @@ abstract class Handler {
 	 *  or later when {@see BodyValidator::validateBody} is called
 	 */
 	public function getBodyValidator( $contentType ) {
-		// TODO: Create a JsonBodyValidator if getParamSettings() returns body params.
-		// XXX: also support multipart/form-data and application/x-www-form-urlencoded?
+		// NOTE: When removing this method, also remove the BodyValidator interface and
+		//       all classes implementing it!
 		return new NullBodyValidator();
 	}
 
@@ -567,7 +885,8 @@ abstract class Handler {
 	 * Should only be called if $request->hasBody() returns true.
 	 *
 	 * The default implementation handles application/x-www-form-urlencoded
-	 * and multipart/form-data by calling $request->getPostParams().
+	 * and multipart/form-data by calling $request->getPostParams(),
+	 * if the list returned by getSupportedRequestTypes() includes these types.
 	 *
 	 * The default implementation handles application/json by parsing
 	 * the body content as JSON. Only object structures (maps) are supported,
@@ -579,8 +898,12 @@ abstract class Handler {
 	 * Subclasses may override this method to support parsing additional
 	 * content types or to disallow content types by throwing an HttpException
 	 * with status 415. Subclasses may also return null to indicate that they
-	 * support reading the content, but intent to handle it as an unparsed
+	 * support reading the content, but intend to handle it as an unparsed
 	 * stream in their implementation of the execute() method.
+	 *
+	 * Subclasses that override this method to support additional request types
+	 * should also override getSupportedRequestTypes() to allow  that support
+	 * to be documented in the OpenAPI spec.
 	 *
 	 * @since 1.42
 	 *
@@ -598,19 +921,40 @@ abstract class Handler {
 		// getBodyValidator() is also responsible for checking whether
 		// the content type is valid, and for parsing the body.
 		// See T359149.
+		// TODO: remove once no subclasses override getBodyValidator() anymore
 		$bodyValidator = $this->getBodyValidator( $contentType ?? 'unknown/unknown' );
 		if ( !$bodyValidator instanceof NullBodyValidator ) {
 			// TODO: Trigger a deprecation warning.
 			return null;
 		}
 
+		$supportedTypes = $this->getSupportedRequestTypes();
+		if ( $contentType !== null && !in_array( $contentType, $supportedTypes ) ) {
+			throw new LocalizedHttpException(
+				new MessageValue( 'rest-unsupported-content-type', [ $contentType ] ),
+				415
+			);
+		}
+
+		// if it's supported and ends with "+json", we can probably parse it like a normal application/json request
+		$contentType = str_ends_with( $contentType ?? '', '+json' )
+			? RequestInterface::JSON_CONTENT_TYPE
+			: $contentType;
+
 		switch ( $contentType ) {
-			case 'application/x-www-form-urlencoded':
-			case 'multipart/form-data':
-				return $request->getPostParams();
-			case 'application/json':
+			case RequestInterface::FORM_URLENCODED_CONTENT_TYPE:
+			case RequestInterface::MULTIPART_FORM_DATA_CONTENT_TYPE:
+				$params = $request->getPostParams();
+				foreach ( $params as $key => $value ) {
+					$params[ $key ] = UtfNormalValidator::cleanUp( $value );
+					// TODO: Warn if normalization was applied
+				}
+				return $params;
+			case RequestInterface::JSON_CONTENT_TYPE:
 				$jsonStream = $request->getBody();
-				$parsedBody = json_decode( "$jsonStream", true );
+				$jsonString = (string)$jsonStream;
+				$normalizedJsonString = UtfNormalValidator::cleanUp( $jsonString );
+				$parsedBody = json_decode( $normalizedJsonString, true );
 				if ( !is_array( $parsedBody ) ) {
 					throw new LocalizedHttpException(
 						new MessageValue(
@@ -620,19 +964,63 @@ abstract class Handler {
 						400
 					);
 				}
+				// TODO: Warn if normalization was applied
 				return $parsedBody;
 			case null:
 				// Specifying no Content-Type is fine if the body is empty
 				if ( $request->getBody()->getSize() === 0 ) {
 					return null;
 				}
-				// no break, else fall through to the error below.
+			// no break, else fall through to the error below.
 			default:
 				throw new LocalizedHttpException(
 					new MessageValue( 'rest-unsupported-content-type', [ $contentType ?? '(null)' ] ),
 					415
 				);
 		}
+	}
+
+	/**
+	 * Returns the content types that should be accepted by parseBodyData().
+	 *
+	 * Subclasses that support request types other than application/json
+	 * should override this method.
+	 *
+	 * If "application/x-www-form-urlencoded" or "multipart/form-data" are
+	 * returned, parseBodyData() will use $request->getPostParams() to determine
+	 * the body data.
+	 *
+	 * @note The return value of this method is ignored for requests
+	 * using a method listed in Validator::NO_BODY_METHODS,
+	 * in particular for the GET method.
+	 *
+	 * @note for backwards compatibility, the default implementation of this
+	 * method will examine the parameter definitions returned by getParamSettings()
+	 * to see if any of the parameters are declared as "post" parameters. If this
+	 * is the case, support for "application/x-www-form-urlencoded" and
+	 * "multipart/form-data" is added. This may change in future releases.
+	 * It is preferred to use "body" parameters and override this method explicitly
+	 * when support for form data is desired.
+	 *
+	 * @stable to override
+	 *
+	 * @return string[] A list of content-types
+	 */
+	public function getSupportedRequestTypes(): array {
+		$types = [
+			RequestInterface::JSON_CONTENT_TYPE
+		];
+
+		// TODO: remove this once "post" parameters are no longer supported! T362850
+		foreach ( $this->getParamSettings() as $settings ) {
+			if ( ( $settings[self::PARAM_SOURCE] ?? null ) === 'post' ) {
+				$types[] = RequestInterface::FORM_URLENCODED_CONTENT_TYPE;
+				$types[] = RequestInterface::MULTIPART_FORM_DATA_CONTENT_TYPE;
+				break;
+			}
+		}
+
+		return $types;
 	}
 
 	/**
@@ -677,7 +1065,7 @@ abstract class Handler {
 	 *
 	 * @stable to override
 	 *
-	 * @return bool|string|int|float|DateTime|null
+	 * @return string|int|float|DateTime|null
 	 */
 	protected function getLastModified() {
 		return null;
@@ -743,14 +1131,23 @@ abstract class Handler {
 	}
 
 	/**
-	 * Indicates whether this route requires write access.
+	 * Indicates whether this route requires write access to the wiki.
 	 *
-	 * The handler should override this if the route does not need to write to
-	 * the database.
+	 * Handlers may override this method to return false if and only if the operation they
+	 * implement is "safe" per RFC 7231 section 4.2.1. A handler's operation is "safe" if
+	 * it is essentially read-only, i.e. the client does not request nor expect any state
+	 * change that would be observable in the responses to future requests.
 	 *
-	 * This should return true for routes that may require synchronous database writes.
-	 * Modules that do not need such writes should also not rely on primary database access,
-	 * since only read queries are needed and each primary DB is a single point of failure.
+	 * Implementations of this method must always return the same value, regardless of the
+	 * parameters passed to the constructor or system state.
+	 *
+	 * Handlers for GET, HEAD, OPTIONS, and TRACE requests should each implement a "safe"
+	 * operation. Handlers of PUT and DELETE requests should each implement a non-"safe"
+	 * operation. Note that handlers of POST requests can implement a "safe" operation,
+	 * particularly in the case where large input parameters are required.
+	 *
+	 * The information provided by this method is used to perform basic authorization checks
+	 * and to determine whether cross-origin requests are safe.
 	 *
 	 * @stable to override
 	 *
@@ -779,10 +1176,12 @@ abstract class Handler {
 	}
 
 	/**
-	 * The handler can override this to do any necessary setup after init()
-	 * is called to inject the dependencies.
+	 * The handler can override this to do any necessary setup after the init functions
+	 * are called to inject dependencies.
 	 *
 	 * @stable to override
+	 * @throws HttpException if the handler does not accept the request for
+	 *         some reason.
 	 */
 	protected function postInitSetup() {
 	}

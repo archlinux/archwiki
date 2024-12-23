@@ -7,6 +7,7 @@
 		]
 	},
 	"linterrors": "Lint-Feeler",
+	"linter-category-duplicate-ids": "Duebel IDen",
 	"linter-category-fostered": "Qualitéits-Inhalt",
 	"linter-category-fostered-desc": "Dës Säiten hu Qualitéits-Inhalt.",
 	"linter-category-misc-tidy-replacement-issues": "Verschidde Probleemer",
@@ -39,6 +40,7 @@
 	"linter-pager-category-header": "Kategorie",
 	"linter-pager-deletable-table-tag-details": "Tabellen-Tag dee geläscht gi soll",
 	"linter-pager-details-header": "Zousätzlech Informatiounen",
+	"linter-pager-duplicate-ids-details": "Duebel IDen",
 	"linter-pager-inline-media-caption-details": "Onsichtbar Beschrëftung",
 	"linter-pager-missing-end-tag-details": "Schluss-Tag feelt",
 	"linter-pager-obsolete-tag-details": "Vereelzten HTML-Tag",

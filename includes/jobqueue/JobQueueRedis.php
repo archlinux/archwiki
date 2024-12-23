@@ -21,6 +21,8 @@
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\RedisConnectionPool;
+use Wikimedia\ObjectCache\RedisConnRef;
 
 /**
  * Redis-backed job queue storage.
@@ -92,7 +94,6 @@ class JobQueueRedis extends JobQueue {
 	 *   - daemonized  : Set to true if the redisJobRunnerService runs in the background.
 	 *                   This will disable job recycling/undelaying from the MediaWiki side
 	 *                   to avoid redundancy and out-of-sync configuration.
-	 * @throws InvalidArgumentException
 	 */
 	public function __construct( array $params ) {
 		parent::__construct( $params );
@@ -442,7 +443,6 @@ LUA;
 	 * @param IJobSpecification $job
 	 * @return bool
 	 * @throws JobQueueError
-	 * @throws LogicException
 	 */
 	protected function doDeduplicateRootJob( IJobSpecification $job ) {
 		if ( !$job->hasRootJobParams() ) {

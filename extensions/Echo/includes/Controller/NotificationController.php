@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\Notifications\Controller;
 
-use IDBAccessObject;
 use InvalidArgumentException;
 use Iterator;
 use MapCacheLRU;
@@ -24,6 +23,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * This class represents the controller for notifications
@@ -481,7 +481,7 @@ class NotificationController {
 	 * Retrieves an array of User objects to be notified for an Event.
 	 *
 	 * @param Event $event
-	 * @return Iterator values are User objects
+	 * @return Iterator<User>
 	 */
 	public static function getUsersToNotifyForEvent( Event $event ) {
 		$notify = new FilteredSequentialIterator;
@@ -519,7 +519,7 @@ class NotificationController {
 		$notify->addFilter( static function ( $user ) use ( &$seen, $fname ) {
 			if ( !$user instanceof User ) {
 				wfDebugLog( $fname, 'Expected all User instances, received: ' .
-					( is_object( $user ) ? get_class( $user ) : gettype( $user ) )
+					get_debug_type( $user )
 				);
 
 				return false;

@@ -6,11 +6,13 @@
 			"BerryAVGN",
 			"Biathlon",
 			"Cinemantique",
+			"Dirruw'o",
 			"DmitTrix",
 			"Facenapalm",
 			"Kareyac",
 			"Lopusanski",
 			"MaxBioHazard",
+			"Mehman (WMF)",
 			"Movses",
 			"Okras",
 			"Ole Yves",
@@ -21,9 +23,7 @@
 			"Redredsonia",
 			"Rivka Silinsky",
 			"Stjn",
-			"Vlad5250",
-			"Dirruw'o",
-			"Mehman (WMF)"
+			"Vlad5250"
 		]
 	},
 	"minerva-last-modified-date": "Последний раз редактировалась $1 в $2",
@@ -49,7 +49,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Об этой категории",
 	"mobile-frontend-meta-data-issues-header": "Проблемы страницы",
 	"minerva-meta-data-issues-section-header": "Проблемы с подразделом",
-	"mobile-frontend-notifications-filter": "Фильтр",
 	"mobile-frontend-pageaction-edit-tooltip": "Редактировать ведущий раздел этой страницы",
 	"mobile-frontend-placeholder": "Искать в {{grammar:prepositional|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Случайная",
@@ -69,7 +68,7 @@
 	"minerva-page-actions-overflow": "Ещё",
 	"minerva-page-actions-language-switcher": "Языки",
 	"minerva-page-actions-history": "История",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Обсуждение]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Обсуждение]",
 	"minerva-skin-desc": "Первая адаптивная мобильная тема оформления",
 	"skin-minerva-issue-learn-more": "Узнать больше",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 секунда|$1 секунды|$1 секунд}} назад",
@@ -80,7 +79,6 @@
 	"skin-minerva-time-ago-years": "$1 {{PLURAL:$1|год|года|лет}} назад",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категории",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Посмотреть категории страниц",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Улучшенное обнаружение проблем страницы",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Проблемы со страницей (Шаблон:ambox) будут вписаны в статью.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "К сожалению, группировка результатов по странице недоступна на мобильных устройствах. Если вы хотите использовать эту функцию, пожалуйста, посетите настольную версию."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "К сожалению, группировка результатов по странице недоступна на мобильных устройствах. Если вы хотите использовать эту функцию, пожалуйста, посетите настольную версию.",
+	"skin-minerva-night-mode-unavailable": "Страница доступна только в цветовой теме «Светлая»."
 }

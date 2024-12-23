@@ -3,8 +3,8 @@
 		"authors": [
 			"Coldfact",
 			"Gustave London",
-			"Tšepo",
-			"Maryam AlAkini"
+			"Maryam AlAkini",
+			"Tšepo"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 puo|$1 lipuo}}",

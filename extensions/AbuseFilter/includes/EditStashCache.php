@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use BagOStuff;
-use IBufferingStatsdDataFactory;
 use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Linker\LinkTarget;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 
 /**
  * Wrapper around cache for storing and retrieving data from edit stash
@@ -118,8 +118,7 @@ class EditStashCache {
 			'user_age' => true,
 			'timestamp' => true,
 			'page_age' => true,
-			'moved_from_age' => true,
-			'moved_to_age' => true
+			'page_last_edit_age' => true,
 		];
 
 		$inputVars = array_diff_key( $inputVars, $excludedVars );

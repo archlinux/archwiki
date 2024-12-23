@@ -11,8 +11,8 @@
  * @class
  * @abstract
  * @extends ve.ce.GeneratedContentNode
- * @mixins ve.ce.FocusableNode
- * @mixins ve.ce.MWResizableNode
+ * @mixes ve.ce.FocusableNode
+ * @mixes ve.ce.MWResizableNode
  *
  * @constructor
  * @param {jQuery} $focusable Focusable part of the node
@@ -66,7 +66,7 @@ ve.ce.MWImageNode.static.primaryCommandName = 'media';
  * @inheritdoc ve.ce.Node
  */
 ve.ce.MWImageNode.static.getDescription = function ( model ) {
-	var title = new mw.Title( model.getFilename() );
+	const title = new mw.Title( model.getFilename() );
 	return title.getMainText();
 };
 
@@ -96,18 +96,18 @@ ve.ce.MWImageNode.prototype.onGeneratedContentNodeUpdate = function () {
  * @inheritdoc ve.ce.GeneratedContentNode
  */
 ve.ce.MWImageNode.prototype.generateContents = function () {
-	var model = this.getModel(),
-		width = model.getAttribute( 'width' ),
+	const model = this.getModel(),
 		height = model.getAttribute( 'height' ),
 		mwData = model.getAttribute( 'mw' ) || {},
 		deferred = ve.createDeferred();
+	let width = model.getAttribute( 'width' );
 
 	// If the current rendering is larger don't fetch a new image, just let the browser resize
 	if ( this.renderedDimensions && this.renderedDimensions.width > width ) {
 		return deferred.reject().promise();
 	}
 
-	var params;
+	let params;
 	if ( mwData.thumbtime !== undefined ) {
 		params = 'seek=' + mwData.thumbtime;
 	} else if ( mwData.page !== undefined ) {
@@ -116,7 +116,7 @@ ve.ce.MWImageNode.prototype.generateContents = function () {
 		width = undefined;
 	}
 
-	var xhr = ve.init.target.getContentApi( this.getModel().getDocument() ).get( {
+	const xhr = ve.init.target.getContentApi( this.getModel().getDocument() ).get( {
 		action: 'query',
 		prop: 'imageinfo',
 		iiprop: 'url',
@@ -138,7 +138,7 @@ ve.ce.MWImageNode.prototype.generateContents = function () {
  * @param {Object} response Response data
  */
 ve.ce.MWImageNode.prototype.onParseSuccess = function ( deferred, response ) {
-	var thumburl = ve.getProp( response.query.pages[ 0 ], 'imageinfo', 0, 'thumburl' );
+	const thumburl = ve.getProp( response.query.pages[ 0 ], 'imageinfo', 0, 'thumburl' );
 	if ( thumburl ) {
 		deferred.resolve( thumburl );
 	} else {

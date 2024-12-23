@@ -4,10 +4,11 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Tests\Unit;
 
-use Language;
 use LanguageQqx;
+use MediaWiki\Language\Language;
 use MediaWiki\Message\Message;
 use MessageLocalizer;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * A MessageLocalizer that does not make database/service calls, for use in unit tests
@@ -32,6 +33,13 @@ class FakeQqxMessageLocalizer implements MessageLocalizer {
 				return "($this->key$*)";
 			}
 
+			public static function newFromSpecifier( $value ) {
+				if ( $value instanceof MessageSpecifier ) {
+					return new self( $value );
+				}
+				return parent::newFromSpecifier( $value );
+			}
+
 			public function getLanguage(): Language {
 				return new class() extends LanguageQqx {
 
@@ -40,6 +48,11 @@ class FakeQqxMessageLocalizer implements MessageLocalizer {
 
 					public function getCode(): string {
 						return 'qqx';
+					}
+
+					// Support using Message::numParam()
+					public function formatNum( $number ): string {
+						return (string)$number;
 					}
 				};
 			}

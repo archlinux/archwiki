@@ -3,9 +3,9 @@
 namespace LoginNotify\Maintenance;
 
 use LoginNotify\Hooks\HookRunner;
-use Maintenance;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\User\UserFactory;

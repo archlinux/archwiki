@@ -79,7 +79,6 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 	 * @return InterwikiLookup
 	 */
 	private function getInterwikiLookup(): InterwikiLookup {
-		// DummyServicesTrait::getDummyInterwikiLookup
 		return $this->getDummyInterwikiLookup( [ 'localtestiw', 'remotetestiw' ] );
 	}
 
@@ -91,17 +90,15 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 	 * @return NamespaceInfo
 	 */
 	private function getNamespaceInfo(): NamespaceInfo {
-		// DummyServicesTrait::getDummyNamespaceInfo with the relevant overrides (the
-		// namespaces that exist, and the capitalization)
 		return $this->getDummyNamespaceInfo( [
-			'CanonicalNamespaceNames' => [
+			MainConfigNames::CanonicalNamespaceNames => [
 				NS_SPECIAL => 'Special',
 				NS_MAIN => '',
 				NS_TALK => 'Talk',
 				NS_USER => 'User',
 				NS_USER_TALK => 'User_talk',
 			],
-			'CapitalLinks' => true,
+			MainConfigNames::CapitalLinks => true,
 		] );
 	}
 
@@ -422,11 +419,8 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideParseTitle
 	 */
 	public function testParseTitle( $text, $ns, $lang, $title = null ) {
-		if ( $title === null ) {
-			$title = str_replace( ' ', '_', trim( $text ) );
-		}
-
-		if ( is_string( $title ) ) {
+		if ( !( $title instanceof TitleValue ) ) {
+			$title ??= str_replace( ' ', '_', trim( $text ) );
 			$title = new TitleValue( NS_MAIN, $title, '' );
 		}
 

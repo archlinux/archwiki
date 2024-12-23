@@ -24,9 +24,12 @@ version=2
 # (Previously, these options pre- or post- pended to the html section)
 #
 # cat           add category links
-#               (ignored by Parsoid, since it emits <link>s)
+# extlinks      add external link metadata
 # ill           add inter-language links
-#               (ignored by Parsoid, since it emits <link>s)
+# iwl           add inter-wiki links
+# links         add local wiki links
+# special       add links to special pages
+# templates     add template information
 # property=XXX  add the value of the page property with the given name.
 #               This can also be a comma-separated list.
 # extension=XXX add the JSON-encoded value of the given extension data.
@@ -46,6 +49,7 @@ version=2
 #               test using a BCP-47 code (eg zh-Hant-TW)
 # htmlVariantLanguage=XXX   set the html (output) variant of language for this
 #               test using a BCP-47 code (eg zh-Hant-TW)
+# userLanguage=XXX  set user language to XXX for this test
 # notoc         disable table of contents
 # thumbsize=NNN set the default thumb size to NNNpx for this test
 # wrap          include the normal wrapper <div class="mw-parser-output"> (since 1.30)
@@ -55,7 +59,7 @@ version=2
 #
 #  wgEnableUploads, wgAllowExternalImages, wgMaxTocLevel,
 #  wgLinkHolderBatchSize, wgRawHtml, wgInterwikiMagic,
-#  wgEnableMagicLinks
+#  wgEnableMagicLinks, wgLocaltimezone
 #
 # Test execution options:
 #
@@ -502,54 +506,6 @@ b
 !!end
 
 !! test
-Extra newlines followed by heading
-!! wikitext
-a
-
-
-=b=
-[[a]]
-
-
-=b=
-!! html
-<p>a
-</p><p><br />
-</p>
-<h1><span class="mw-headline" id="b">b</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: b">edit</a><span class="mw-editsection-bracket">]</span></span></h1>
-<p><a href="/wiki/A" title="A">a</a>
-</p><p><br />
-</p>
-<h1><span class="mw-headline" id="b_2">b</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: b">edit</a><span class="mw-editsection-bracket">]</span></span></h1>
-!! end
-
-!! article
-A
-!! text
-Dummy article to suppress redlinks in tests
-!! end
-
-!! test
-Extra newlines between heading and content are swallowed (Parsoid does not)
-!! wikitext
-=b=
-
-
-
-[[a]]
-!! html/php
-<h1><span class="mw-headline" id="b">b</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: b">edit</a><span class="mw-editsection-bracket">]</span></span></h1>
-<p><a href="/wiki/A" title="A">a</a>
-</p>
-!! html/parsoid
-<h1 id="b">b</h1>
-<p>
-<br/></p>
-
-<p><a rel="mw:WikiLink" href="./A" title="A" data-parsoid='{"stx":"simple","a":{"href":"./A"},"sa":{"href":"a"}}'>a</a></p>
-!! end
-
-!! test
 Extra new lines before and after lists are preserved
 !! wikitext
 a
@@ -582,6 +538,8 @@ c</p>
 Multiple newlines after tables are converted to p-br-p tags
 !!options
 parsoid=wt2html,wt2wt
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !!wikitext
 {|
 |x
@@ -599,7 +557,7 @@ parsoid=wt2html,wt2wt
 <p><br />
 </p><p><br />
 </p>
-<h1><span class="mw-headline" id="b">b</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: b">edit</a><span class="mw-editsection-bracket">]</span></span></h1>
+<div class="mw-heading mw-heading1"><h1 id="b">b</h1><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: b">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 !!html/parsoid
 <table>
 <tbody>
@@ -612,49 +570,6 @@ parsoid=wt2html,wt2wt
 <p><br/></p>
 <h1 id="b">b</h1>
 !!end
-
-!! test
-Heading with line break in nowiki
-!! options
-parsoid=wt2html
-!! config
-wgFragmentMode=[ "html5", "legacy" ]
-!! wikitext
-==A <nowiki>B
-C</nowiki>==
-!! html/php
-<h2><span id="A_B.0AC"></span><span class="mw-headline" id="A_B_C">A B
-C</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: A B&#10;C">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-!! html/parsoid
-<h2 id="A_B_C"><span id="A_B.0AC" typeof="mw:FallbackId"></span>A <span typeof="mw:Nowiki">B
-C</span></h2>
-!! end
-
-!! test
-Heading with nonbreaking space in prefix/suffix (T235684)
-!! options
-parsoid=wt2html,html2html
-!! config
-wgFragmentMode=[ "html5", "legacy" ]
-!! wikitext
-== &nbsp; A &nbsp; B &nbsp; ==
-!! html/php
-<h2><span class="mw-headline" id="_A_B">&#160; A &#160; B &#160;</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section:   A   B  ">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-!! html/parsoid
-<h2 id="_A_B"><span typeof="mw:Entity"> </span> A <span typeof="mw:Entity"> </span> B <span typeof="mw:Entity"> </span></h2>
-!! end
-
-!! test
-Heading with literal wikitext - the wikitext is not parsed in section edit link tooltip
-!! config
-wgFragmentMode=[ "html5" ]
-!! wikitext
-== <nowiki>{{PAGENAME}}</nowiki> ==
-== &#123;&#123;PAGENAME}} ==
-!! html/php
-<h2><span class="mw-headline" id="{{PAGENAME}}">{{PAGENAME}}</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: {{PAGENAME}}">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="{{PAGENAME}}_2">&#123;&#123;PAGENAME}}</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: {{PAGENAME}}">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-!! end
 
 !! test
 Parsing an URL
@@ -1228,9 +1143,14 @@ maxtemplatedepth=1
 
 !! test
 multiple templates that are redirects
+!! options
+templates
 !! wikitext
 {{redirect to foo}}
 {{redirect to foo}}
+!! metadata
+template=Template:Redirect_to_foo
+template=Template:Foo
 !! html/php
 <p>FOO
 FOO
@@ -1238,6 +1158,21 @@ FOO
 !! html/parsoid+integrated
 <p><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"redirect to foo","href":"./Template:Redirect_to_foo"},"params":{},"i":0}}]}'>FOO</span>
 <span about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"redirect to foo","href":"./Template:Redirect_to_foo"},"params":{},"i":0}}]}'>FOO</span></p>
+!! end
+
+!! test
+Transclusion with a (stripped) fragment
+!! options
+templates
+!! wikitext
+{{Foo#bar}}
+!! metadata
+template=Template:Foo
+!! html/php
+<p>FOO
+</p>
+!! html/parsoid+integrated
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"Foo#bar","href":"./Template:Foo#bar"},"params":{},"i":0}}]}'>FOO</span></p>
 !! end
 
 !! test
@@ -1963,8 +1898,12 @@ Broken link
 # Parsoid does not. (T227693)
 !! test
 Broken link with fragment
+!! options
+links
 !! wikitext
 [[Zigzagzogzagzig#zug]]
+!! metadata
+link=Zigzagzogzagzig
 !! html/php
 <p><a href="/index.php?title=Zigzagzogzagzig&amp;action=edit&amp;redlink=1" class="new" title="Zigzagzogzagzig (page does not exist)">Zigzagzogzagzig#zug</a>
 </p>
@@ -1974,8 +1913,12 @@ Broken link with fragment
 
 !! test
 Special page link with fragment
+!! options
+special
 !! wikitext
 [[Special:Version#anchor]]
+!! metadata
+special=Special:Version
 !! html
 <p><a href="/wiki/Special:Version#anchor" title="Special:Version">Special:Version#anchor</a>
 </p>
@@ -2103,8 +2046,12 @@ Link with multiple pipes
 Anchor containing a #. (T65430)
 !! config
 wgFragmentMode=[ "html5", "legacy" ]
+!! options
+links
 !! wikitext
 [[Main Page#And#Link]]
+!! metadata
+link=Main_Page
 !! html/php
 <p><a href="/wiki/Main_Page#And#Link" title="Main Page">Main Page#And#Link</a>
 </p>
@@ -3716,6 +3663,8 @@ List items from template
 
 !! test
 List interrupted by empty line or heading
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 *foo
 
@@ -3725,7 +3674,13 @@ List interrupted by empty line or heading
 !! html
 <ul><li>foo</li></ul>
 <ul><li><ul><li>bar</li></ul></li></ul>
-<h2><span class="mw-headline" id="A_heading">A heading</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: A heading">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="A_heading">A heading</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: A heading">edit</a><span class="mw-editsection-bracket">]</span></span></div>
+<ul><li>Another list item</li></ul>
+!! html/parsoid
+<ul><li>foo</li></ul>
+
+<ul><li><ul><li>bar</li></ul></li></ul>
+<h2 id="A_heading">A heading</h2>
 <ul><li>Another list item</li></ul>
 !!end
 
@@ -3973,6 +3928,31 @@ parsoid=wt2html,html2html
 <p><span data-parsoid='{"stx":"html","autoInsertedEnd":true}'></span></p>
 <ul><li>a<meta typeof="mw:Placeholder/StrippedTag" data-parsoid='{"src":"&lt;/span>","name":"span"}'/><span data-parsoid='{"stx":"html","autoInsertedEnd":true}'></span></li>
 <li>b<meta typeof="mw:Placeholder/StrippedTag" data-parsoid='{"src":"&lt;/span>","name":"span"}'/></li></ul>
+!! end
+
+## The legacy parser output matches the HTML5 spec, the token is ignored.
+## Parsoid's ListHandler doesn't track open elements outside of the list frame
+## so the token induces an implied end to the list.  Considering that Parsoid
+## already diverges from the HTML5 spec in which tag names induce implied ends
+## (see the discussion above about "wikitext block"), we accept this edge case
+## as a known difference.
+!! test
+T368721: Closing block tags not on the stack of open elements in lists
+!! wikitext
+<!-- block tag  -->
+*a</div>b
+
+<!-- wikitext block tag -->
+*a</p>b
+!! html/php
+<ul><li>ab</li></ul>
+<ul><li>a<p class="mw-empty-elt"></p>b</li></ul>
+!! html/parsoid
+<!-- block tag  -->
+<ul><li>a</li></ul><p>b</p>
+
+<!-- wikitext block tag -->
+<ul><li>a</li></ul><p class="mw-empty-elt" data-parsoid='{"autoInsertedStart":true,"stx":"html"}'></p><p>b</p>
 !! end
 
 # Parsoid does some post-dom-building cleanup
@@ -4574,6 +4554,38 @@ parsoid=wt2html
 <p>{{1<span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"2{{{3}}}","href":"./Template:2"},"params":{"4":{"wt":"5"}},"i":0}}]}'>{{2{{{3}}}|4=5}}</span>}}</p>
 !! end
 
+## Regression test (T372669) that is only exercised in integrated mode.
+## By adding {{1x|ignore-this[[Category:Foo]]}} to the 2nd param of the surround {{1x|1x}},
+## it ensures that the output is discarded, but not if Parsoid eagerly processes the attribute.
+!! test
+T372669: While processing templates with templated names, other attributes shouldn't be processed
+!! options
+cat
+parsoid=wt2html
+!! wikitext
+{{{{1x|1x}}|foo|{{1x|ignore-this[[Category:Foo]]}}}}
+!! html/php
+<p>foo
+</p>
+!! html/parsoid+integrated
+<p><span about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"},{"k":"2"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"{{1x|1x}}","href":"./Template:1x"},"params":{"1":{"wt":"foo"},"2":{"wt":"{{1x|ignore-this[[Category:Foo]]}}"}},"i":0}}]}'>foo</span></p>
+!! metadata/php
+!! metadata/parsoid+integrated
+!! end
+
+!! test
+T372669: Template names from multiple templates
+!! options
+parsoid=wt2html
+!! wikitext
+{{{{1x|1}}{{1x|x}}|foo}}
+!! html/php
+<p>foo
+</p>
+!! html/parsoid
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"{{1x|1}}{{1x|x}}","href":"./Template:1x"},"params":{"1":{"wt":"foo"}},"i":0}}]}'>foo</span></p>
+!! end
+
 ## wt2html only, since the bare {{ will get escaped when serializing
 !! test
 Templates with invalid templated targets
@@ -4849,9 +4861,27 @@ foo
 T2041: Template parameters shown as broken links
 !! wikitext
 {{{parameter}}}
-!! html
+!! html/php
 <p>{{{parameter}}}
 </p>
+!! html/parsoid
+<p about="#mwt1" typeof="mw:Param" data-mw='{"parts":[{"templatearg":{"target":{"wt":"parameter"},"params":{},"i":0}}]}'>{{{parameter}}}</p>
+!! end
+
+!! test
+Unsubstituted template argument with newlines
+!! wikitext
+{{{testing
+
+123}}}
+!! html/php
+<p>{{{testing
+</p><p>123}}}
+</p>
+!! html/parsoid
+<p about="#mwt1" typeof="mw:Param" data-mw='{"parts":[{"templatearg":{"target":{"wt":"testing\n\n123"},"params":{},"i":0}}]}'>{{{testing</p><span about="#mwt1">
+
+</span><p about="#mwt1">123}}}</p>
 !! end
 
 !! test
@@ -5151,6 +5181,8 @@ Unbalanced includeonly and noinclude tags
 includeonly / noinclude / onlyinclude and headers
 !! options
 parsoid = wt2html
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 <includeonly><!--hello1 --></includeonly>== test 1 == <includeonly><!--hello2 --></includeonly>
 <noinclude><!--hello3 --></noinclude>== test 2 == <noinclude><!--hello4 --></noinclude>
@@ -5160,27 +5192,9 @@ parsoid = wt2html
 <meta typeof="mw:Includes/NoInclude" data-parsoid='{"src":"&lt;noinclude>"}'/><!--hello3 --><meta typeof="mw:Includes/NoInclude/End" data-parsoid='{"src":"&lt;/noinclude>"}'/><h2 id="test_2">test 2</h2> <meta typeof="mw:Includes/NoInclude" data-parsoid='{"src":"&lt;noinclude>"}'/><!--hello4 --><meta typeof="mw:Includes/NoInclude/End" data-parsoid='{"src":"&lt;/noinclude>"}'/>
 <meta typeof="mw:Includes/OnlyInclude" data-parsoid='{"src":"&lt;onlyinclude>"}'/><!--hello5 --><meta typeof="mw:Includes/OnlyInclude/End" data-parsoid='{"src":"&lt;/onlyinclude>"}'/><h2 id="test_3">test 3</h2> <meta typeof="mw:Includes/OnlyInclude" data-parsoid='{"src":"&lt;onlyinclude>"}'/><!--hello6 --><meta typeof="mw:Includes/OnlyInclude/End" data-parsoid='{"src":"&lt;/onlyinclude>"}'/>
 !! html/php
-<h2><span class="mw-headline" id="test_1">test 1</span></h2>
-<h2><span class="mw-headline" id="test_2">test 2</span></h2>
-<h2><span class="mw-headline" id="test_3">test 3</span></h2>
-!! end
-
-!! article
-Template:Includeonly section
-!! text
-<includeonly>
-==Includeonly section==
-</includeonly>
-==Section T-1==
-!!endarticle
-
-!! test
-T8563: Edit link generation for section shown by <includeonly>
-!! wikitext
-{{includeonly section}}
-!! html
-<h2><span class="mw-headline" id="Includeonly_section">Includeonly section</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Template:Includeonly_section&amp;action=edit&amp;section=T-1" title="Edit section: Includeonly section">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="Section_T-1">Section T-1</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Template:Includeonly_section&amp;action=edit&amp;section=T-2" title="Edit section: Section T-1">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="test_1">test 1</h2></div>
+<div class="mw-heading mw-heading2"><h2 id="test_2">test 2</h2></div>
+<div class="mw-heading mw-heading2"><h2 id="test_3">test 3</h2></div>
 !! end
 
 # Uses same input as the contents of [[Template:Includeonly section]]
@@ -5195,17 +5209,6 @@ section=T-2
 ==Section T-2==
 !! html
 ==Section T-2==
-!! end
-
-!! test
-T8563: Edit link generation for section suppressed by <includeonly>
-!! wikitext
-<includeonly>
-==Includeonly section==
-</includeonly>
-==Section 1==
-!! html
-<h2><span class="mw-headline" id="Section_1">Section 1</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
 !! end
 
 !! test
@@ -5239,6 +5242,8 @@ Un-closed <includeonly>
 Includes and comments at SOL
 !! options
 parsoid=wt2html,html2html
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 <!-- comment --><noinclude><!-- comment --></noinclude><!-- comment -->==hu==
 
@@ -5255,7 +5260,7 @@ some</noinclude>* stuff
 
 __INDEX__== hi ==
 !! html/php
-<h2><span class="mw-headline" id="hu">hu</span></h2>
+<div class="mw-heading mw-heading2"><h2 id="hu">hu</h2></div>
 <p>some
 </p>
 <ul><li>stuff</li>
@@ -5264,8 +5269,8 @@ __INDEX__== hi ==
 some* stuff
 </p>
 <ul><li>here</li></ul>
-<h3><span class="mw-headline" id="here">here</span></h3>
-<h2><span class="mw-headline" id="hi">hi</span></h2>
+<div class="mw-heading mw-heading3"><h3 id="here">here</h3></div>
+<div class="mw-heading mw-heading2"><h2 id="hi">hi</h2></div>
 !! html/parsoid
 <!-- comment --><meta typeof="mw:Includes/NoInclude" data-parsoid='{"src":"&lt;noinclude>"}'/><!-- comment --><meta typeof="mw:Includes/NoInclude/End" data-parsoid='{"src":"&lt;/noinclude>"}'/><!-- comment --><h2 id="hu">hu</h2>
 
@@ -6912,10 +6917,12 @@ subpage title=[[Subpage test/1/2/3/4]]
 T335847: Resolve forward slash title
 !! options
 subpage title=[[/]]
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 ===123===
 !! html/php
-<h3><span class="mw-headline" id="123">123</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=/&amp;action=edit&amp;section=1" title="Edit section: 123">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+<div class="mw-heading mw-heading3"><h3 id="123">123</h3><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=/&amp;action=edit&amp;section=1" title="Edit section: 123">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 !! html/parsoid
 <h3 id="123" data-parsoid="{}">123</h3>
 !! end
@@ -6960,8 +6967,11 @@ blah
 
 !! test
 Link to category
+!! options
+cat
 !! wikitext
 [[:Category:MediaWiki User's Guide]]
+!! metadata
 !! html
 <p><a href="/wiki/Category:MediaWiki_User%27s_Guide" title="Category:MediaWiki User&#39;s Guide">Category:MediaWiki User's Guide</a>
 </p>
@@ -7046,8 +7056,6 @@ Category with newline in sort key
 !! options
 cat
 parsoid=wt2html,html2html
-!! metadata
-cat=Wikidata:Tools sort=*
 !! wikitext
 [[Category:Wikidata:Tools|
 *]]
@@ -7238,24 +7246,28 @@ parsoid=wt2html
 ##
 ## The whitespace on the empty line is part of the test. Please do not delete
 !! test
-1. Categories and newlines: All preceding newlines should be suppressed (courtesy T2087)
+1. cats/langlinks and newlines: All preceding newlines should be suppressed (courtesy T2087)
 !! options
 parsoid=wt2html
 !! wikitext
 This
    
-[[Category:Foo]] and this should be part of same paragraph (not an indent-pre)
+[[Category:Foo]] and this
+[[es:Foo]] and this should be part of same paragraph (not an indent-pre)
    
 {{1x|[[Category:Foo]] and so should this!}}
+{{1x|[[es:Foo]] and this!}}
 !! html/php
-<p>This and this should be part of same paragraph (not an indent-pre) and so should this!
+<p>This and this and this should be part of same paragraph (not an indent-pre) and so should this! and this!
 </p>
 !! html/parsoid
 <p>This
    
-<link rel="mw:PageProp/Category" href="./Category:Foo"/> and this should be part of same paragraph (not an indent-pre)
+<link rel="mw:PageProp/Category" href="./Category:Foo" /> and this
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" /> and this should be part of same paragraph (not an indent-pre)
    
-<link rel="mw:PageProp/Category" href="./Category:Foo" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Category:Foo]] and so should this!"}},"i":0}}]}'/><span about="#mwt1"> and so should this!</span></p>
+<link rel="mw:PageProp/Category" href="./Category:Foo" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Category:Foo]] and so should this!"}},"i":0}}]}'/><span about="#mwt1"> and so should this!</span>
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[es:Foo]] and this!"}},"i":0}}]}'/><span about="#mwt2"> and this!</span></p>
 !! end
 
 ## Parsoid will not try to wt2wt this while preserving newlines because
@@ -7267,31 +7279,37 @@ This
 ##
 ## The whitespace on the empty line is part of the test. Please do not delete
 !! test
-2. Categories and newlines: All preceding newlines should be suppressed (courtesy T2087)
+2. cats/langlinks and newlines: All preceding newlines should be suppressed (courtesy T2087)
 !! options
 parsoid=wt2html
 !! wikitext
 * This
    
-[[Category:Foo]] and this should be part of the same list item
+[[Category:Foo]] and this
+[[es:Foo]] and this should be part of the same list item
 * So should this
 
-{{1x|[[Category:Foo]] and this should be part of the same list item}}
+{{1x|[[Category:Foo]] and this}}
+{{1x|[[es:Foo]] and this should be part of the same list item}}
 !! html/php
-<ul><li>This and this should be part of the same list item</li>
-<li>So should this and this should be part of the same list item</li></ul>
+<ul><li>This and this and this should be part of the same list item</li>
+<li>So should this and this and this should be part of the same list item</li></ul>
 !! html/parsoid
-<ul>
-<li>This <link rel="mw:PageProp/Category" href="./Category:Foo"/> and this should be part of the same list item</li>
-<li>So should this <link rel="mw:PageProp/Category" href="./Category:Foo" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Category:Foo]] and this should be part of the same list item"}},"i":0}}]}'/><span> and this should be part of the same list item</span></li>
-</ul>
+<ul><li>This
+   
+<link rel="mw:PageProp/Category" href="./Category:Foo" /> and this
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" /> and this should be part of the same list item</li>
+<li>So should this
+
+<link rel="mw:PageProp/Category" href="./Category:Foo" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Category:Foo]] and this"}},"i":0}}]}'/><span about="#mwt1"> and this</span>
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[es:Foo]] and this should be part of the same list item"}},"i":0}}]}'/><span about="#mwt2"> and this should be part of the same list item</span></li></ul>
 !! end
 
 ## Newlines and categories that follow the last item of a list
 ## are treated differently because this (list followed by categories)
 ## is an extremely common pattern on wikis.
 !! test
-3. Categories and newlines: newline suppression for last list item should RT properly
+3. cats/langlinks and newlines: newline suppression for last list item should RT properly
 !! wikitext
 *a
 *b
@@ -7300,6 +7318,7 @@ parsoid=wt2html
    
 [[Category:Bar]]
 [[Category:Baz]]
+[[es:Foo]]
 
 :c
 
@@ -7308,41 +7327,46 @@ parsoid=wt2html
 ;d
 
 [[Category:D]]
+[[es:Bar]]
 !! html/parsoid
 <ul><li>a</li>
 <li>b</li></ul>
    
-<link rel="mw:PageProp/Category" href="./Category:Foo"/>
+<link rel="mw:PageProp/Category" href="./Category:Foo" />
    
-<link rel="mw:PageProp/Category" href="./Category:Bar"/>
-<link rel="mw:PageProp/Category" href="./Category:Baz"/>
+<link rel="mw:PageProp/Category" href="./Category:Bar" />
+<link rel="mw:PageProp/Category" href="./Category:Baz" />
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" />
 
 <dl><dd>c</dd></dl>
 
-<link rel="mw:PageProp/Category" href="./Category:C"/>
+<link rel="mw:PageProp/Category" href="./Category:C" />
 
 <dl><dt>d</dt></dl>
 
-<link rel="mw:PageProp/Category" href="./Category:D"/>
+<link rel="mw:PageProp/Category" href="./Category:D" />
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Bar" />
 !! end
 
 !! test
-4. Categories and newlines: newline suppression for last list item should RT properly
+4. cats/langlinks: newline suppression for last list item should RT properly
 !! wikitext
 *a
 ****b
 
 [[Category:Foo]]
+[[es:Foo]]
 !! html/parsoid
 <ul><li>a
 <ul><li><ul><li><ul><li>b</li></ul></li></ul></li></ul></li></ul>
 
-<link rel="mw:PageProp/Category" href="./Category:Foo" data-parsoid='{"stx":"simple","a":{"href":"./Category:Foo"},"sa":{"href":"Category:Foo"}}'/>
+<link rel="mw:PageProp/Category" href="./Category:Foo" />
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" />
 !! end
 
 ## only wt2html for this to make sure the algo only applies to the rightmost path
 !! test
-5. Categories and newlines: migrateTrailingCategories dom pass should only run on the rightmost path of nested lists
+5. cats/langlinks: migrateTrailingSolTransparentLinks dom pass should only run on the rightmost path of nested lists
 !! options
 parsoid=wt2html
 !! wikitext
@@ -7352,13 +7376,15 @@ parsoid=wt2html
 *c
 **d
 [[Category:Foo]]
+[[es:Foo]]
 !! html/parsoid
 <ul><li>a
 <ul><li>b
-<link rel="mw:PageProp/Category" href="./Category:Foo" data-parsoid='{"stx":"simple","a":{"href":"./Category:Foo"},"sa":{"href":"Category:Foo"}}'/></li></ul></li>
+<link rel="mw:PageProp/Category" href="./Category:Foo" /></li></ul></li>
 <li>c
 <ul><li>d</li></ul></li></ul>
-<link rel="mw:PageProp/Category" href="./Category:Foo" data-parsoid='{"stx":"simple","a":{"href":"./Category:Foo"},"sa":{"href":"Category:Foo"}}'/>
+<link rel="mw:PageProp/Category" href="./Category:Foo" />
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" />
 !! end
 
 ## We used to, but no longer wt2wt this test since the default serializer
@@ -7366,56 +7392,64 @@ parsoid=wt2html
 ## This wikitext usage is going to be fairly uncommon in production and
 ## selser will take care of preserving formatting in those scenarios.
 !! test
-6. Categories and newlines: migrateTrailingCategories dom pass should not migrate categories not preceded by newlines
+6. cats/langlinks: migrateTrailingSolTransparentLinks dom pass should not migrate them when not preceded by newlines
 !! options
 parsoid=wt2html
 !! wikitext
 *a [[Category:Foo]]
+*b [[es:Foo]]
 !! html/parsoid
-<ul><li>a<link rel="mw:PageProp/Category" href="./Category:Foo" data-parsoid='{"stx":"simple","a":{"href":"./Category:Foo"},"sa":{"href":"Category:Foo"}}'/></li></ul>
+<ul><li>a<link rel="mw:PageProp/Category" href="./Category:Foo" /></li>
+<li>b<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" /></li></ul>
 !! end
 
 # This test also demonstrates because of newline+category tunneling
 # through the list hander, template wrapping doesn't expand to the
 # containing list when the list item swallows the category.
 !! test
-7. Categories and newlines: migrateTrailingCategories dom pass should leave template content alone
+7. cats/langlinks: migrateTrailingSolTransparentLinks dom pass should leave template content alone
 !! wikitext
 *{{1x|a
-[[Category:Foo]]}}
+[[Category:Foo]]
+[[es:Foo]]}}
 !! html/parsoid
-<ul><li><span about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"a\n[[Category:Foo]]"}},"i":0}}]}'>a
-</span><link rel="mw:PageProp/Category" href="./Category:Foo" about="#mwt1" data-parsoid='{"stx":"simple","a":{"href":"./Category:Foo"},"sa":{"href":"Category:Foo"}}'/></li></ul>
+<ul><li><span about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"a\n[[Category:Foo]]\n[[es:Foo]]"}},"i":0}}]}'>a
+</span><link rel="mw:PageProp/Category" href="./Category:Foo" about="#mwt1" /><span about="#mwt1">
+</span><link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" about="#mwt1"/></li></ul>
 !! end
 
 !! test
-8. Categories and newlines: migrateTrailingCategories dom pass should not get tripped by intervening templates
+8. cats/langlinks: migrateTrailingSolTransparentLinks dom pass should not get tripped by intervening templates
 !! wikitext
 *a
 
 {{1x|[[Category:Foo]]
 [[Category:Bar]]}}
 [[Category:Baz]]
+[[es:Baz]]
 !! html/parsoid
 <ul><li>a</li></ul>
 
 <link rel="mw:PageProp/Category" href="./Category:Foo" about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"stx":"simple","a":{"href":"./Category:Foo"},"sa":{"href":"Category:Foo"},"pi":[[{"k":"1"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Category:Foo]]\n[[Category:Bar]]"}},"i":0}}]}'/><span about="#mwt1">
 </span><link rel="mw:PageProp/Category" href="./Category:Bar" about="#mwt1" data-parsoid='{"stx":"simple","a":{"href":"./Category:Bar"},"sa":{"href":"Category:Bar"}}'/>
 <link rel="mw:PageProp/Category" href="./Category:Baz" data-parsoid='{"stx":"simple","a":{"href":"./Category:Baz"},"sa":{"href":"Category:Baz"}}'/>
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Baz" />
 !! end
 
 !! test
-Categories and newlines: migrateTrailingCategories dom pass should not get tripped by comments and whitespace
+cats/langlinks: migrateTrailingSolTransparentLinks dom pass should not get tripped by comments and whitespace
 !! wikitext
 *a
 
 [[Category:Bar]]<!--boo1--> <!--boo2-->
 [[Category:Baz]]<!--boo3--> <!--boo4-->
+[[es:Foo]]<!--boo5--> <!--boo6-->
 !! html/parsoid
 <ul><li>a</li></ul>
 
-<link rel="mw:PageProp/Category" href="./Category:Bar"/><!--boo1--> <!--boo2-->
-<link rel="mw:PageProp/Category" href="./Category:Baz"/><!--boo3--> <!--boo4-->
+<link rel="mw:PageProp/Category" href="./Category:Bar" /><!--boo1--> <!--boo2-->
+<link rel="mw:PageProp/Category" href="./Category:Baz" /><!--boo3--> <!--boo4-->
+<link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Foo" /><!--boo5--> <!--boo6-->
 !! end
 
 !! test
@@ -7664,14 +7698,19 @@ ill
 [[es:Alimento]]
 [[fr:Nourriture]]
 [[zh:食品]]
+!! metadata
+ill=es:Alimento
+ill=fr:Nourriture
+ill=zh:食品
 !! html/php
-es:Alimento fr:Nourriture zh:食品
 !! html/parsoid
 <link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/Alimento"/>
 <link rel="mw:PageProp/Language" href="http://fr.wikipedia.org/wiki/Nourriture"/>
 <link rel="mw:PageProp/Language" href="http://zh.wikipedia.org/wiki/食品"/>
 !! end
 
+# Integrated-mode parsoid behavior will match other modes after
+# I82a05a51d94782ebb9fa87ff889ca0f633b3e15c is merged in core.
 !! test
 Duplicate interlanguage links (T26502)
 !! options
@@ -7681,8 +7720,10 @@ ill
 [[es:2]]
 [[fr:1]]
 [[fr:2]]
+!! metadata
+ill=es:1
+ill=fr:1
 !! html/php
-es:1 fr:1
 !! html/parsoid
 <link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/1"/>
 <link rel="mw:PageProp/Language" href="http://es.wikipedia.org/wiki/2"/>
@@ -7694,6 +7735,8 @@ es:1 fr:1
 Single-line or multiline-comments can follow headings
 !! options
 parsoid=wt2html,wt2wt
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 ==foo==<!---->
 ==bar==<!--c1-->
@@ -7701,9 +7744,9 @@ parsoid=wt2html,wt2wt
 c2
 c3-->
 !! html/php
-<h2><span class="mw-headline" id="foo">foo</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: foo">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="bar">bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="baz">baz</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: baz">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="foo">foo</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: foo">edit</a><span class="mw-editsection-bracket">]</span></span></div>
+<div class="mw-heading mw-heading2"><h2 id="bar">bar</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: bar">edit</a><span class="mw-editsection-bracket">]</span></span></div>
+<div class="mw-heading mw-heading2"><h2 id="baz">baz</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: baz">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 !! html/parsoid
 <h2 id="foo">foo</h2><!---->
 <h2 id="bar">bar</h2><!--c1-->
@@ -8498,30 +8541,6 @@ T4304: HTML attribute safety (bold)
 <div title="'''foobar'''"></div>
 !! html
 <div title="&#39;&#39;&#39;foobar&#39;&#39;&#39;"></div>
-!! end
-
-!! test
-T4304: HTML attribute safety (ISBN)
-!! wikitext
-<div title="ISBN 1234567890"></div>
-!! html
-<div title="&#73;SBN 1234567890"></div>
-!! end
-
-!! test
-T4304: HTML attribute safety (RFC)
-!! wikitext
-<div title="RFC 1234"></div>
-!! html
-<div title="&#82;FC 1234"></div>
-!! end
-
-!! test
-T4304: HTML attribute safety (PMID)
-!! wikitext
-<div title="PMID 1234567890"></div>
-!! html
-<div title="&#80;MID 1234567890"></div>
 !! end
 
 !! test
@@ -9548,43 +9567,6 @@ Fuzz testing: Parser13
 </td>
 </tr>
 </tbody></table>
-!! end
-
-# Note that Parsoid output differs from the PHP parser here: the PHP
-# parser breaks the URL for the magic word, while in Parsoid the URL
-# production takes precedence.
-!! test
-Fuzz testing: Parser14
-!! wikitext
-==onmouseover===
-http://__TOC__
-!! html/php
-<h2><span class="mw-headline" id="onmouseover.3D">onmouseover=</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: onmouseover=">edit</a><span class="mw-editsection-bracket">]</span></span></h2><p>
-http://</p><div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#onmouseover.3D"><span class="tocnumber">1</span> <span class="toctext">onmouseover=</span></a></li>
-</ul>
-</div>
-!! html/parsoid
-<h2 id="onmouseover="><span id="onmouseover.3D" typeof="mw:FallbackId"></span>onmouseover=</h2>
-<p><a rel="mw:ExtLink" href="http://__TOC__" class="external free" data-parsoid='{"stx":"url"}'>http://__TOC__</a></p>
-!! end
-
-!! test
-Fuzz testing: Parser14-table
-!! options
-parsoid=wt2html,html2html
-!! wikitext
-==a==
-{| STYLE=__TOC__
-!! html/php
-<h2><span class="mw-headline" id="a">a</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: a">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<table style="&#95;_TOC&#95;_">
-<tbody><tr><td></td></tr>
-</tbody></table>
-!! html/parsoid
-<h2 id="a">a</h2>
-<table style="__TOC__"></table>
 !! end
 
 # Known to produce bogus xml (extra </td>)
@@ -11128,119 +11110,6 @@ parsoid={ "modes": ["wt2html","html2html"], "normalizePhp": true }
 !! end
 
 !! test
-ISBN code coverage
-!! wikitext
-ISBN  978-0-1234-56&#x20;789
-!! html/php
-<p><a href="/wiki/Special:BookSources/9780123456" class="internal mw-magiclink-isbn">ISBN 978-0-1234-56</a>&#x20;789
-</p>
-!! html/parsoid
-<p><a href="./Special:BookSources/9780123456" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 978-0-1234-56</a><span typeof="mw:Entity" data-parsoid='{"src":"&amp;#x20;","srcContent":" "}'> </span>789</p>
-!! end
-
-!! test
-ISBN followed by 5 spaces
-!! wikitext
-ISBN    
-!! html
-<p>ISBN    
-</p>
-!! end
-
-!! test
-Double ISBN
-!! wikitext
-ISBN ISBN 1234567890
-!! html/php
-<p>ISBN <a href="/wiki/Special:BookSources/1234567890" class="internal mw-magiclink-isbn">ISBN 1234567890</a>
-</p>
-!! html/parsoid
-<p>ISBN <a href="./Special:BookSources/1234567890" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 1234567890</a></p>
-!! end
-
-# Uppercase X and lowercase x as well
-!! test
-ISBN with an X
-!! wikitext
-ISBN 3-462-04561-X
-ISBN 3-462-04561-x
-ISBN 080442957X
-ISBN 080442957x
-ISBN 978080442957X
-ISBN 978080442957x
-!! html/php
-<p><a href="/wiki/Special:BookSources/346204561X" class="internal mw-magiclink-isbn">ISBN 3-462-04561-X</a>
-<a href="/wiki/Special:BookSources/346204561X" class="internal mw-magiclink-isbn">ISBN 3-462-04561-x</a>
-<a href="/wiki/Special:BookSources/080442957X" class="internal mw-magiclink-isbn">ISBN 080442957X</a>
-<a href="/wiki/Special:BookSources/080442957X" class="internal mw-magiclink-isbn">ISBN 080442957x</a>
-<a href="/wiki/Special:BookSources/978080442957X" class="internal mw-magiclink-isbn">ISBN 978080442957X</a>
-<a href="/wiki/Special:BookSources/978080442957X" class="internal mw-magiclink-isbn">ISBN 978080442957x</a>
-</p>
-!! html/parsoid
-<p><a href="./Special:BookSources/346204561X" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 3-462-04561-X</a>
-<a href="./Special:BookSources/346204561X" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 3-462-04561-x</a>
-<a href="./Special:BookSources/080442957X" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 080442957X</a>
-<a href="./Special:BookSources/080442957X" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 080442957x</a>
-<a href="./Special:BookSources/978080442957X" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 978080442957X</a>
-<a href="./Special:BookSources/978080442957X" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 978080442957x</a></p>
-!! end
-
-!! test
-ISBN with empty prefix (parsoid test)
-!! wikitext
-ISBN 1234567890
-!! html/php
-<p><a href="/wiki/Special:BookSources/1234567890" class="internal mw-magiclink-isbn">ISBN 1234567890</a>
-</p>
-!! html/parsoid
-<p><a href="./Special:BookSources/1234567890" rel="mw:WikiLink">ISBN 1234567890</a></p>
-!! end
-
-!! test
-T24905: <abbr> followed by ISBN followed by </a>
-!! wikitext
-<abbr>(fr)</abbr> ISBN 2753300917 [http://www.example.com example.com]
-!! html/php
-<p><abbr>(fr)</abbr> <a href="/wiki/Special:BookSources/2753300917" class="internal mw-magiclink-isbn">ISBN 2753300917</a> <a rel="nofollow" class="external text" href="http://www.example.com">example.com</a>
-</p>
-!! html/parsoid
-<p><abbr data-parsoid='{"stx":"html"}'>(fr)</abbr> <a href="./Special:BookSources/2753300917" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 2753300917</a> <a rel="mw:ExtLink" href="http://www.example.com" class="external text">example.com</a></p>
-!! end
-
-!! test
-Double RFC
-!! wikitext
-RFC RFC 1234
-!! html/php
-<p>RFC <a class="external mw-magiclink-rfc" rel="nofollow" href="https://tools.ietf.org/html/rfc1234">RFC 1234</a>
-</p>
-!! html/parsoid
-<p>RFC <a href="https://tools.ietf.org/html/rfc1234" rel="mw:ExtLink" class="external mw-magiclink">RFC 1234</a></p>
-!! end
-
-!! test
-Double RFC with a wiki link
-!! wikitext
-RFC [[RFC 1234]]
-!! html/php
-<p>RFC <a href="/index.php?title=RFC_1234&amp;action=edit&amp;redlink=1" class="new" title="RFC 1234 (page does not exist)">RFC 1234</a>
-</p>
-!! html/parsoid
-<p>RFC <a rel="mw:WikiLink" href="./RFC_1234?action=edit&amp;redlink=1" title="RFC 1234" class="new" typeof="mw:LocalizedAttrs" data-parsoid='{"stx":"simple","a":{"href":"./RFC_1234"},"sa":{"href":"RFC 1234"}}' data-mw-i18n='{"title":{"lang":"x-page","key":"red-link-title","params":["RFC 1234"]}}'>RFC 1234</a></p>
-!! end
-
-!! test
-RFC code coverage
-!! wikitext
-RFC   983&#x20;987
-!! html/php
-<p><a class="external mw-magiclink-rfc" rel="nofollow" href="https://tools.ietf.org/html/rfc983">RFC 983</a>&#x20;987
-</p>
-!! html/parsoid
-<p><a href="https://tools.ietf.org/html/rfc983" rel="mw:ExtLink" class="external mw-magiclink" data-parsoid='{"stx":"magiclink"}'>RFC   983</a><span typeof="mw:Entity" data-parsoid='{"src":"&amp;#x20;","srcContent":" "}'> </span>987</p>
-!! end
-
-!! test
 Another italics / bold test
 !! options
 parsoid=wt2html
@@ -11496,94 +11365,6 @@ This is a test template
 </p>
 !! end
 
-
-!! article
-MediaWiki:Fake
-!! text
-==header==
-!! endarticle
-
-!! test
-Inclusion of !userCanEdit() content
-!! wikitext
-{{MediaWiki:Fake}}
-!! html
-<h2><span class="mw-headline" id="header">header</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=MediaWiki:Fake&amp;action=edit&amp;section=T-1" title="Edit section: header">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-!! end
-
-
-
-!! test
-ISBN with a dummy number
-!! wikitext
-ISBN ---
-!! html
-<p>ISBN ---
-</p>
-!! end
-
-
-!! test
-ISBN with space-delimited number
-!! wikitext
-ISBN 92 9017 032 8
-!! html/php
-<p><a href="/wiki/Special:BookSources/9290170328" class="internal mw-magiclink-isbn">ISBN 92 9017 032 8</a>
-</p>
-!! html/parsoid
-<p><a href="./Special:BookSources/9290170328" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 92 9017 032 8</a></p>
-!! end
-
-
-!! test
-ISBN with multiple spaces, no number
-!! wikitext
-ISBN  foo
-!! html
-<p>ISBN  foo
-</p>
-!! end
-
-
-!! test
-ISBN length
-!! wikitext
-ISBN 123456789
-
-ISBN 1234567890
-
-ISBN 12345678901
-!! html/php
-<p>ISBN 123456789
-</p><p><a href="/wiki/Special:BookSources/1234567890" class="internal mw-magiclink-isbn">ISBN 1234567890</a>
-</p><p>ISBN 12345678901
-</p>
-!! html/parsoid
-<p>ISBN 123456789</p>
-
-<p><a href="./Special:BookSources/1234567890" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 1234567890</a></p>
-
-<p>ISBN 12345678901</p>
-!! end
-
-
-!! test
-ISBN with trailing year (T9110)
-!! wikitext
-ISBN 1-234-56789-0 - 2006
-
-ISBN 1 234 56789 0 - 2006
-!! html/php
-<p><a href="/wiki/Special:BookSources/1234567890" class="internal mw-magiclink-isbn">ISBN 1-234-56789-0</a> - 2006
-</p><p><a href="/wiki/Special:BookSources/1234567890" class="internal mw-magiclink-isbn">ISBN 1 234 56789 0</a> - 2006
-</p>
-!! html/parsoid
-<p><a href="./Special:BookSources/1234567890" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 1-234-56789-0</a> - 2006</p>
-
-<p><a href="./Special:BookSources/1234567890" rel="mw:WikiLink" data-parsoid='{"stx":"magiclink"}'>ISBN 1 234 56789 0</a> - 2006</p>
-!! end
-
-
 !! test
 anchorencode
 !! config
@@ -11651,13 +11432,14 @@ wgFragmentMode=[ "html5", "legacy" ]
 anchorencode encodes like the TOC generator: (T20431)
 !! config
 wgFragmentMode=[ "html5", "legacy" ]
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 ===_ +:.3A%3A _ &&amp;]] x===
 {{anchorencode: _ +:.3A%3A _ &&amp;]] x}}
 
 __NOEDITSECTION__
 !! html/php
-<h3><span id=".2B:.3A.253A_.26.26.5D.5D_x"></span><span class="mw-headline" id="+:.3A%3A_&amp;&amp;]]_x">_ +:.3A%3A _ &amp;&amp;]] x</span></h3>
+<div class="mw-heading mw-heading3"><h3 id="+:.3A%3A_&amp;&amp;]]_x"><span id=".2B:.3A.253A_.26.26.5D.5D_x"></span>_ +:.3A%3A _ &amp;&amp;]] x</h3></div>
 <p>+:.3A%253A_&amp;&amp;&#93;&#93;_x
 </p><p><br />
 </p>
@@ -11675,12 +11457,13 @@ __NOEDITSECTION__
 anchorencode encodes like the TOC generator: (T20431) (legacy)
 !! config
 wgFragmentMode=[ "legacy" ]
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 ===_ +:.3A%3A&&amp;]]===
 {{anchorencode: _ +:.3A%3A&&amp;]] }}
 __NOEDITSECTION__
 !! html/php
-<h3><span class="mw-headline" id=".2B:.3A.253A.26.26.5D.5D">_ +:.3A%3A&amp;&amp;]]</span></h3>
+<div class="mw-heading mw-heading3"><h3 id=".2B:.3A.253A.26.26.5D.5D">_ +:.3A%3A&amp;&amp;]]</h3></div>
 <p>.2B:.3A.253A.26.26.5D.5D
 </p>
 !! end
@@ -11851,39 +11634,6 @@ title=[[Main Page]]
 ĚŠČŘ
 ĚŠČŘ
 </p>
-!! end
-
-!! test
-Morwen/13: Unclosed link followed by heading
-!! wikitext
-[[link
-==heading==
-!! html
-<p>[[link
-</p>
-<h2><span class="mw-headline" id="heading">heading</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: heading">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-!! end
-
-!! test
-HHP2.1: Heuristics for headings in preprocessor parenthetical structures
-!! wikitext
-{{foo|
-=heading=
-!! html
-<p>{{foo|
-</p>
-<h1><span class="mw-headline" id="heading">heading</span></h1>
-!! end
-
-!! test
-HHP2.2: Heuristics for headings in preprocessor parenthetical structures
-!! wikitext
-{{foo|
-==heading==
-!! html
-<p>{{foo|
-</p>
-<h2><span class="mw-headline" id="heading">heading</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: heading">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
 !! end
 
 !! test
@@ -12280,7 +12030,7 @@ comment title=[[Main Page]]
 !! wikitext
 /* External links */ removed bogus entries
 !! html/php
-<span dir="auto"><span class="autocomment"><a href="/wiki/Main_Page#External_links" title="Main Page">→‎External links</a>: </span> removed bogus entries</span>
+<span class="autocomment"><a href="/wiki/Main_Page#External_links" title="Main Page">→<bdi dir="ltr">External links</bdi></a>: </span> removed bogus entries
 !!end
 
 !! test
@@ -12290,7 +12040,7 @@ comment title=[[Main Page]]
 !! wikitext
 pre-comment text /* External links */ removed bogus entries
 !! html/php
-pre-comment text <span dir="auto"><span class="autocomment"><a href="/wiki/Main_Page#External_links" title="Main Page">→‎External links</a>: </span> removed bogus entries</span>
+pre-comment text <span class="autocomment"><a href="/wiki/Main_Page#External_links" title="Main Page">→<bdi dir="ltr">External links</bdi></a>: </span> removed bogus entries
 !!end
 
 !! test
@@ -12300,7 +12050,7 @@ comment local title=[[Main Page]]
 !! wikitext
 /* External links */ removed bogus entries
 !! html/php
-<span dir="auto"><span class="autocomment"><a href="#External_links">→‎External links</a>: </span> removed bogus entries</span>
+<span class="autocomment"><a href="#External_links">→<bdi dir="ltr">External links</bdi></a>: </span> removed bogus entries
 !!end
 
 !! test
@@ -12310,7 +12060,7 @@ comment local title=[[Main Page]]
 !! wikitext
 /* [[A link]] */
 !! html/php
-<span dir="auto"><span class="autocomment"><a href="#A_link">→‎&#91;[A link]]</a></span></span>
+<span class="autocomment"><a href="#A_link">→<bdi dir="ltr">&#91;[A link]]</bdi></a></span>
 !! end
 
 !! test
@@ -12320,7 +12070,7 @@ comment local title=[[Main Page]]
 !! wikitext
 /* {{foobar|param}} */
 !! html/php
-<span dir="auto"><span class="autocomment"><a href="#.7B.7Bfoobar.7Cparam.7D.7D">→‎{{foobar|param}}</a></span></span>
+<span class="autocomment"><a href="#.7B.7Bfoobar.7Cparam.7D.7D">→<bdi dir="ltr">{{foobar|param}}</bdi></a></span>
 !! end
 
 !! test
@@ -12430,7 +12180,7 @@ title=[[Main Page]]
 !! wikitext
 /* __hello__world__ */
 !! html/php
-<span dir="auto"><span class="autocomment"><a href="/wiki/Main_Page#hello_world" title="Main Page">→‎__hello__world__</a></span></span>
+<span class="autocomment"><a href="/wiki/Main_Page#hello_world" title="Main Page">→<bdi dir="ltr">__hello__world__</bdi></a></span>
 !! end
 
 !! test
@@ -12758,6 +12508,18 @@ T5158: Test for French spaces in attributes
 </p>
 !! end
 
+# This test relies on the fact that image captions are processed
+# as independent document fragments.
+!! test
+Displayspace processing on embedded fragments
+!! options
+parsoid=wt2html
+!! wikitext
+[[File:Foobar.jpg|« test »]]
+!! html/parsoid
+<p><span class="mw-default-size" typeof="mw:File" data-parsoid='{"optList":[{"ck":"caption","ak":"« test »"}]}' data-mw='{"caption":"«&lt;span typeof=\"mw:DisplaySpace\" data-parsoid=&apos;{\"dsr\":[null,null,null,null]}&apos;> &lt;/span>test&lt;span typeof=\"mw:DisplaySpace\" data-parsoid=&apos;{\"dsr\":[null,null,null,null]}&apos;> &lt;/span>»"}'><a href="./File:Foobar.jpg" class="mw-file-description" title="« test »" data-parsoid="{}"><img alt="« test »" resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"220","width":"1941"},"sa":{"resource":"File:Foobar.jpg"}}'/></a></span></p>
+!! end
+
 !! test
 HTML5 data attributes
 !! wikitext
@@ -12941,10 +12703,12 @@ MediaWiki:T34057
 T34057: Title needed when expanding <h> nodes.
 !! options
 title=[[Main Page]]
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 {{int:T34057}}
 !! html/php
-<h2><span class="mw-headline" id="OK">OK</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Main_Page&amp;action=edit&amp;section=1" title="Edit section: OK">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="OK">OK</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Main_Page&amp;action=edit&amp;section=1" title="Edit section: OK">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 !! html/parsoid+integrated
 <h2 about="#mwt1" typeof="mw:Transclusion" id="OK" data-mw='{"parts":[{"template":{"target":{"wt":"int:T34057","function":"int"},"params":{},"i":0}}]}'>OK</h2>
 !! end
@@ -13088,14 +12852,6 @@ Strip marker in anchorencode
 !! end
 
 !! test
-nowiki inside link inside heading (T20295)
-!! wikitext
-==[[foo|x<nowiki>y</nowiki>z]]==
-!! html
-<h2><span class="mw-headline" id="xyz"><a href="/wiki/Foo" title="Foo">xyz</a></span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: xyz">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-!! end
-
-!! test
 new support for bdi element (T33817)
 !! wikitext
 <p dir="rtl" lang="he">ולדימיר לנין (ברוסית: <bdi lang="ru">Владимир Ленин</bdi>, 24 באפריל 1870–22 בינואר 1924) הוא מנהיג פוליטי קומוניסטי רוסי.</p>
@@ -13121,8 +12877,8 @@ Ignore pipe between table row attributes
 </td></tr></tbody></table>
 !! end
 
-!!test
-Language parser function
+!! test
+Language parser function (autonym)
 !! wikitext
 {{#language:ar}}
 !! html/php
@@ -13130,6 +12886,269 @@ Language parser function
 </p>
 !! html/parsoid+integrated
 <p><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#language:ar","function":"language"},"params":{},"i":0}}]}'>العربية</span></p>
+!! end
+
+!! test
+Language parser function (case-insensitive)
+!! wikitext
+{{#language:AR}}
+!! html/php
+<p>العربية
+</p>
+!! html/parsoid+integrated
+<p><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#language:AR","function":"language"},"params":{},"i":0}}]}'>العربية</span></p>
+!! end
+
+!! test
+Language parser function (non-autonym)
+!! wikitext
+{{#language:aR|En}}
+!! html/php
+<p>Arabic
+</p>
+!! html/parsoid+integrated
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#language:aR","function":"language"},"params":{"1":{"wt":"En"}},"i":0}}]}'>Arabic</span></p>
+!! end
+
+!! test
+Language parser function (bcp-47 codes)
+!! wikitext
+{{#language:de-x-formal|en-simple}}
+!! html/php
+<p>German (formal address)
+</p>
+!! html/parsoid+integrated
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#language:de-x-formal","function":"language"},"params":{"1":{"wt":"en-simple"}},"i":0}}]}'>German (formal address)</span></p>
+!! end
+
+!! test
+Language parser function (target language)
+!! options
+language=ar
+!! wikitext
+{{#language}} / {{#language:}}
+!! html/php
+<p>العربية / العربية
+</p>
+!! html/parsoid+integrated
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#language","function":"language"},"params":{},"i":0}}]}'>العربية</span> / <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#language:","function":"language"},"params":{},"i":0}}]}'>العربية</span></p>
+!! end
+
+!! test
+Language parser function (target language, non-autonym)
+!! options
+language=ar
+!! wikitext
+{{#language:|en}}
+!! html/php
+<p>Arabic
+</p>
+!! html/parsoid+integrated
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#language:","function":"language"},"params":{"1":{"wt":"en"}},"i":0}}]}'>Arabic</span></p>
+!! end
+
+!! test
+Dir parser function (valid codes)
+!! wikitext
+Persian: {{#dir:fa}}
+
+English: {{#dir:en}}
+
+Persian (with space): {{#dir: fa}}
+
+Tajik: {{#dir:tg}}
+
+The string 'egl' is a valid internal code; however when used as a
+BCP-47 code it refers to the internal code 'eml'.  Unfortunately,
+both of these have ltr directionality which makes this test case
+less useful than it could be.
+
+Ambiguous BCP-47 code:
+;Directionality of internal code 'egl':{{#dir:egl}}
+;Directionality of internal code 'eml':{{#dir:egl|bcp47}} == {{#dir:eml}}
+!! html/php
+<p>Persian: rtl
+</p><p>English: ltr
+</p><p>Persian (with space): rtl
+</p><p>Tajik: ltr
+</p><p>The string 'egl' is a valid internal code; however when used as a
+BCP-47 code it refers to the internal code 'eml'.  Unfortunately,
+both of these have ltr directionality which makes this test case
+less useful than it could be.
+</p><p>Ambiguous BCP-47 code:
+</p>
+<dl><dt>Directionality of internal code 'egl'</dt>
+<dd>ltr</dd>
+<dt>Directionality of internal code 'eml'</dt>
+<dd>ltr == ltr</dd></dl>
+!! html/parsoid+integrated
+<p>Persian: <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:fa","function":"dir"},"params":{},"i":0}}]}'>rtl</span></p>
+<p>English: <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:en","function":"dir"},"params":{},"i":0}}]}'>ltr</span></p>
+<p>Persian (with space): <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir: fa","function":"dir"},"params":{},"i":0}}]}'>rtl</span></p>
+<p>Tajik: <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:tg","function":"dir"},"params":{},"i":0}}]}'>ltr</span></p>
+<p>The string 'egl' is a valid internal code; however when used as a BCP-47 code it refers to the internal code 'eml'. Unfortunately, both of these have ltr directionality which makes this test case less useful than it could be.</p>
+<p>Ambiguous BCP-47 code:</p>
+<dl>
+<dt>Directionality of internal code 'egl'</dt>
+<dd><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:egl","function":"dir"},"params":{},"i":0}}]}'>ltr</span></dd>
+<dt>Directionality of internal code 'eml'</dt>
+<dd><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:egl","function":"dir"},"params":{"1":{"wt":"bcp47"}},"i":0}}]}'>ltr</span> == <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:eml","function":"dir"},"params":{},"i":0}}]}'>ltr</span></dd>
+</dl>
+!! end
+
+!! test
+Dir parser function (target language)
+!! options
+language=fa
+cat
+!! metadata
+!! wikitext
+These are all equivalent:
+
+{{#dir}} / {{#dir:}} / {{#dir:{{PAGELANGUAGE}}}}
+!! html/php
+<p>These are all equivalent:
+</p><p>rtl / rtl / rtl
+</p>
+!! html/parsoid+integrated
+<p>These are all equivalent:</p>
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir","function":"dir"},"params":{},"i":0}}]}'>rtl</span> / <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:","function":"dir"},"params":{},"i":0}}]}'>rtl</span> / <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:{{PAGELANGUAGE}}","function":"dir"},"params":{},"i":0}}]}'>rtl</span></p>
+!! end
+
+!! test
+Dir parser function (invalid code)
+!! options
+cat
+!! wikitext
+{{#dir:blah<blah}}
+!! metadata
+cat=Pages_with_invalid_language_codes sort=
+!! html/php
+<p>ltr
+</p>
+!! html/parsoid+integrated
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#dir:blah&lt;blah","function":"dir"},"params":{},"i":0}}]}'>ltr</span></p>
+!! end
+
+!! test
+Bcp47 parser function (valid codes)
+!! wikitext
+Serbian: {{#bcp47:sr-ec}}
+
+Cantonese: {{#bcp47:zh-yue}}
+
+Formal German (with space): {{#bcp47: de-formal}}
+
+Simple English: {{#bcp47:simple}}
+
+The string 'egl' is a valid internal code, distinct from the
+internal code 'eml'; however both map to the BCP-47 code 'egl'.
+
+Ambiguous BCP-47 code:
+;Internal code 'eml':{{#bcp47:eml}} == egl
+;Internal code 'egl':{{#bcp47:egl}} == egl
+!! html/php
+<p>Serbian: sr-Cyrl
+</p><p>Cantonese: yue
+</p><p>Formal German (with space): de-x-formal
+</p><p>Simple English: en-simple
+</p><p>The string 'egl' is a valid internal code, distinct from the
+internal code 'eml'; however both map to the BCP-47 code 'egl'.
+</p><p>Ambiguous BCP-47 code:
+</p>
+<dl><dt>Internal code 'eml'</dt>
+<dd>egl == egl</dd>
+<dt>Internal code 'egl'</dt>
+<dd>egl == egl</dd></dl>
+!! html/parsoid+integrated
+<p>Serbian: <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:sr-ec","function":"bcp47"},"params":{},"i":0}}]}'>sr-Cyrl</span></p>
+<p>Cantonese: <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:zh-yue","function":"bcp47"},"params":{},"i":0}}]}'>yue</span></p>
+<p>Formal German (with space): <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47: de-formal","function":"bcp47"},"params":{},"i":0}}]}'>de-x-formal</span></p>
+<p>Simple English: <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:simple","function":"bcp47"},"params":{},"i":0}}]}'>en-simple</span></p>
+<p>The string 'egl' is a valid internal code, distinct from the internal code 'eml'; however both map to the BCP-47 code 'egl'.</p>
+<p>Ambiguous BCP-47 code:</p>
+<dl>
+<dt>Internal code 'eml'</dt>
+<dd><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:eml","function":"bcp47"},"params":{},"i":0}}]}'>egl</span> == egl</dd>
+<dt>Internal code 'egl'</dt>
+<dd><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:egl","function":"bcp47"},"params":{},"i":0}}]}'>egl</span> == egl</dd>
+</dl>
+!! end
+
+!! test
+Bcp47 parser function (target language)
+!! options
+language=sr-ec
+!! wikitext
+These are all equivalent:
+
+{{#bcp47}} / {{#bcp47:}} / {{#bcp47:{{PAGELANGUAGE}}}}
+!! html/php
+<p>These are all equivalent:
+</p><p>sr-Cyrl / sr-Cyrl / sr-Cyrl
+</p>
+!! html/parsoid+integrated
+<p>These are all equivalent:</p>
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47","function":"bcp47"},"params":{},"i":0}}]}'>sr-Cyrl</span> / <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:","function":"bcp47"},"params":{},"i":0}}]}'>sr-Cyrl</span> / <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:{{PAGELANGUAGE}}","function":"bcp47"},"params":{},"i":0}}]}'>sr-Cyrl</span></p>
+!! end
+
+# from https://commons.wikimedia.org/w/index.php?title=Template:BCP47&oldid=597081406
+!! test
+Bcp47 parser function (examples from Template:BCP47)
+!! wikitext
+Unaffected codes, for example:
+*{{#bcp47:en}} returns: "en"
+Changes required by BCP47, using standard codes:
+*{{#bcp47:als}} returns: "gsw"
+*{{#bcp47:fiu-vro}} returns: "vro"
+*{{#bcp47:simple}} returns: "en"
+*{{#bcp47:zh-classical}} returns: "lzh"
+*{{#bcp47:roa-rup}} returns: "rup"
+Changes required by BCP47, currently using private-use extensions:
+*{{#bcp47:nrm}} returns: "nrf"
+*{{#bcp47:roa-tara}} returns: "it-x-tara"
+Changes preferable with BCP47 for improved interoperability (not really violations):
+*{{#bcp47:be-x-old}} returns: "be-tarask"
+!! html/php
+<p>Unaffected codes, for example:
+</p>
+<ul><li>en returns: "en"</li></ul>
+<p>Changes required by BCP47, using standard codes:
+</p>
+<ul><li>gsw returns: "gsw"</li>
+<li>vro returns: "vro"</li>
+<li>en-simple returns: "en"</li>
+<li>lzh returns: "lzh"</li>
+<li>rup returns: "rup"</li></ul>
+<p>Changes required by BCP47, currently using private-use extensions:
+</p>
+<ul><li>nrf returns: "nrf"</li>
+<li>nap-x-tara returns: "it-x-tara"</li></ul>
+<p>Changes preferable with BCP47 for improved interoperability (not really violations):
+</p>
+<ul><li>be-tarask returns: "be-tarask"</li></ul>
+!! html/parsoid+integrated
+<p>Unaffected codes, for example:</p>
+<ul>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:en","function":"bcp47"},"params":{},"i":0}}]}'>en</span> returns: "en"</li>
+</ul>
+<p>Changes required by BCP47, using standard codes:</p>
+<ul>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:als","function":"bcp47"},"params":{},"i":0}}]}'>gsw</span> returns: "gsw"</li>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:fiu-vro","function":"bcp47"},"params":{},"i":0}}]}'>vro</span> returns: "vro"</li>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:simple","function":"bcp47"},"params":{},"i":0}}]}'>en-simple</span> returns: "en"</li>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:zh-classical","function":"bcp47"},"params":{},"i":0}}]}'>lzh</span> returns: "lzh"</li>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:roa-rup","function":"bcp47"},"params":{},"i":0}}]}'>rup</span> returns: "rup"</li>
+</ul>
+<p>Changes required by BCP47, currently using private-use extensions:</p>
+<ul>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:nrm","function":"bcp47"},"params":{},"i":0}}]}'>nrf</span> returns: "nrf"</li>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:roa-tara","function":"bcp47"},"params":{},"i":0}}]}'>nap-x-tara</span> returns: "it-x-tara"</li>
+</ul>
+<p>Changes preferable with BCP47 for improved interoperability (not really violations):</p>
+<ul>
+<li><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#bcp47:be-x-old","function":"bcp47"},"params":{},"i":0}}]}'>be-tarask</span> returns: "be-tarask"</li>
+</ul>
 !! end
 
 !!test
@@ -13790,7 +13809,7 @@ Empty TR followed by mixed-ws-comment line should RT correctly
 <tbody>
 <tr class='mw-empty-elt'></tr>
  <!--c-->
-<tr>
+<tr class="mw-empty-elt">
 <!--c--> </tr><!--d-->
 </tbody></table>
 !! end
@@ -15051,36 +15070,6 @@ f</pre>
 !! end
 
 !! test
-Edited ISBN links not serializable as ISBN links should serialize as wikilinks
-!! options
-parsoid=html2wt
-!! html/parsoid
-<a href="./Special:BookSources/1234567890" rel="mw:ExtLink">ISBN 1234567895</a>
-!! wikitext
-[[Special:BookSources/1234567890|ISBN 1234567895]]
-!! end
-
-!! test
-Edited RFC links not serializable as RFC links should serialize as extlinks
-!! options
-parsoid=html2wt
-!! html/parsoid
-<a href="https://tools.ietf.org/html/rfc123" rel="mw:ExtLink">New RFC</a>
-!! wikitext
-[https://tools.ietf.org/html/rfc123 New RFC]
-!! end
-
-!! test
-Edited PMID links not serializable as PMID links should serialize as extlinks
-!! options
-parsoid=html2wt
-!! html/parsoid
-<a href="//www.ncbi.nlm.nih.gov/pubmed/123?dopt=Abstract" rel="mw:ExtLink">New PMID</a>
-!! wikitext
-[//www.ncbi.nlm.nih.gov/pubmed/123?dopt=Abstract New PMID]
-!! end
-
-!! test
 WTS of autolinks with trailing/surrounding context
 !! options
 parsoid=html2wt
@@ -15215,56 +15204,6 @@ parsoid={
 [http://example.com foo]
 !! wikitext/edited
 <nowiki>[</nowiki>[http://example.com foo]]
-!! end
-
-!! test
-Magic links inside links (not autolinked)
-!! wikitext
-[[Foo|http://example.com]]
-[[Foo|RFC 1234]]
-[[Foo|PMID 1234]]
-[[Foo|ISBN 123456789x]]
-
-[http://foo.com http://example.com]
-[http://foo.com RFC 1234]
-[http://foo.com PMID 1234]
-[http://foo.com ISBN 123456789x]
-!! html/php
-<p><a href="/wiki/Foo" title="Foo">http://example.com</a>
-<a href="/wiki/Foo" title="Foo">RFC 1234</a>
-<a href="/wiki/Foo" title="Foo">PMID 1234</a>
-<a href="/wiki/Foo" title="Foo">ISBN 123456789x</a>
-</p><p><a rel="nofollow" class="external text" href="http://foo.com">http://example.com</a>
-<a rel="nofollow" class="external text" href="http://foo.com">RFC 1234</a>
-<a rel="nofollow" class="external text" href="http://foo.com">PMID 1234</a>
-<a rel="nofollow" class="external text" href="http://foo.com">ISBN 123456789x</a>
-</p>
-!! html/parsoid
-<p><a rel="mw:WikiLink" href="./Foo" title="Foo">http://example.com</a>
-<a rel="mw:WikiLink" href="./Foo" title="Foo">RFC 1234</a>
-<a rel="mw:WikiLink" href="./Foo" title="Foo">PMID 1234</a>
-<a rel="mw:WikiLink" href="./Foo" title="Foo">ISBN 123456789x</a></p>
-
-<p><a rel="mw:ExtLink" href="http://foo.com" class="external text">http://example.com</a>
-<a rel="mw:ExtLink" href="http://foo.com" class="external text">RFC 1234</a>
-<a rel="mw:ExtLink" href="http://foo.com" class="external text">PMID 1234</a>
-<a rel="mw:ExtLink" href="http://foo.com" class="external text">ISBN 123456789x</a></p>
-!! end
-
-!! test
-WTS of magic word text (T109371)
-!! options
-parsoid=html2wt
-!! html/parsoid
-<p>RFC 1234</p>
-<p><a href="http://foo.com" rel="mw:ExtLink">RFC 1234</a></p>
-<p><a href="./Foo" rel="mw:WikiLink">RFC 1234</a></p>
-!! wikitext
-<nowiki>RFC 1234</nowiki>
-
-[http://foo.com RFC 1234]
-
-[[Foo|RFC 1234]]
 !! end
 
 !! test
@@ -16591,6 +16530,19 @@ Empty LI (T49673)
 !! end
 
 !! test
+Empty list item with rendering transparent tag
+!! wikitext
+{{1x|*hmm
+*[[category:123]]}}
+!! html/php
+<ul><li>hmm</li>
+<li class="mw-empty-elt"></li></ul>
+!! html/parsoid
+<ul about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"*hmm\n*[[category:123]]"}},"i":0}}]}'><li>hmm</li>
+<li class="mw-empty-elt"><link rel="mw:PageProp/Category" href="./Category:123"/></li></ul>
+!! end
+
+!! test
 unclosed internal link XSS (T137264)
 !! wikitext
 [[#%3Cscript%3Ealert(1)%3C/script%3E|
@@ -16746,43 +16698,6 @@ wgRawHtml=1
 !! end
 
 !! test
-Decoding of HTML entities in headings and links for IDs and link fragments (T103714)
-!! config
-wgFragmentMode=[ "html5", "legacy" ]
-!! options
-showtocdata
-parsoid={
-	"wrapSections": true
-}
-!! wikitext
-==A&B&amp;C&amp;amp;D&amp;amp;amp;E==
-[[#A&B&amp;C&amp;amp;D&amp;amp;amp;E]]
-!! html/php
-<h2><span id="A.26B.26C.26amp.3BD.26amp.3Bamp.3BE"></span><span class="mw-headline" id="A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E">A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p><a href="#A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E">#A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E</a>
-</p>
-!! html/parsoid
-<section data-mw-section-id="0"></section><section data-mw-section-id="1"><h2 id="A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E"><span id="A.26B.26C.26amp.3BD.26amp.3Bamp.3BE" typeof="mw:FallbackId"></span>A&amp;B<span typeof="mw:Entity" data-parsoid='{"src":"&amp;amp;","srcContent":"&amp;"}'>&amp;</span>C<span typeof="mw:Entity" data-parsoid='{"src":"&amp;amp;","srcContent":"&amp;"}'>&amp;</span>amp;D<span typeof="mw:Entity" data-parsoid='{"src":"&amp;amp;","srcContent":"&amp;"}'>&amp;</span>amp;amp;E</h2>
-<p><a rel="mw:WikiLink" href="./Parser_test#A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E"},"sa":{"href":"#A&amp;B&amp;amp;C&amp;amp;amp;D&amp;amp;amp;amp;E"}}'>#A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E</a></p></section>
-!! metadata
-Sections:
- h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:A&B&C&amp;D&amp;amp;E line:A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E
-!! end
-
-!! test
-Decoding of HTML entities in headings and links for IDs and link fragments (T103714) (legacy)
-!! config
-wgFragmentMode=[ "legacy" ]
-!! wikitext
-==A&B&amp;C&amp;amp;D&amp;amp;amp;E==
-[[#A&B&amp;C&amp;amp;D&amp;amp;amp;E]]
-!! html/php
-<h2><span class="mw-headline" id="A.26B.26C.26amp.3BD.26amp.3Bamp.3BE">A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p><a href="#A.26B.26C.26amp.3BD.26amp.3Bamp.3BE">#A&amp;B&amp;C&amp;amp;D&amp;amp;amp;E</a>
-</p>
-!! end
-
-!! test
 Decoding of HTML entities in embedded HTML tags
 !! wikitext
 <table class="1&2&amp;3&amp;amp;4&amp;amp;amp;5"><tr><td>x</td></tr></table>
@@ -16790,185 +16705,6 @@ Decoding of HTML entities in embedded HTML tags
 <table class="1&amp;2&amp;3&amp;amp;4&amp;amp;amp;5"><tbody><tr><td>x</td></tr></tbody></table>
 !! html/parsoid
 <table class="1&amp;2&amp;3&amp;amp;4&amp;amp;amp;5" data-parsoid='{"stx":"html","a":{"class":"1&amp;2&amp;3&amp;amp;4&amp;amp;amp;5"},"sa":{"class":"1&amp;2&amp;amp;3&amp;amp;amp;4&amp;amp;amp;amp;5"}}'><tbody><tr data-parsoid='{"stx":"html"}'><td data-parsoid='{"stx":"html"}'>x</td></tr></tbody></table>
-!! end
-
-# This fragment mode is what Parsoid supports.
-!! test
-HTML5 ids: fallback to legacy
-!! config
-wgFragmentMode=[ "html5", "legacy" ]
-!! wikitext
-==Foo bar==
-
-==foo Bar==
-
-==Тест==
-
-==Тест==
-
-==тест==
-
-==Hey < # " > % : '==
-[[#Foo bar]] [[#foo Bar]] [[#Тест]] [[#тест]] [[#Hey < # " > % : ']]
-
-{{anchorencode:💩}} <span id="{{anchorencode:💩}}"></span>
-
-<!-- These two links should produce identical HTML -->
-[[#啤酒]] [[#%E5%95%A4%E9%85%92]]
-
-!! html/php
-<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Foo_bar"><span class="tocnumber">1</span> <span class="toctext">Foo bar</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#foo_Bar_2"><span class="tocnumber">2</span> <span class="toctext">foo Bar</span></a></li>
-<li class="toclevel-1 tocsection-3"><a href="#Тест"><span class="tocnumber">3</span> <span class="toctext">Тест</span></a></li>
-<li class="toclevel-1 tocsection-4"><a href="#Тест_2"><span class="tocnumber">4</span> <span class="toctext">Тест</span></a></li>
-<li class="toclevel-1 tocsection-5"><a href="#тест"><span class="tocnumber">5</span> <span class="toctext">тест</span></a></li>
-<li class="toclevel-1 tocsection-6"><a href="#Hey_&lt;_#_&quot;_&gt;_%_:_&#39;"><span class="tocnumber">6</span> <span class="toctext">Hey &lt; # " &gt;&#160;%&#160;: '</span></a></li>
-</ul>
-</div>
-
-<h2><span class="mw-headline" id="Foo_bar">Foo bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Foo bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="foo_Bar_2">foo Bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: foo Bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span id=".D0.A2.D0.B5.D1.81.D1.82"></span><span class="mw-headline" id="Тест">Тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: Тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span id=".D0.A2.D0.B5.D1.81.D1.82_2"></span><span class="mw-headline" id="Тест_2">Тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=4" title="Edit section: Тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span id=".D1.82.D0.B5.D1.81.D1.82"></span><span class="mw-headline" id="тест">тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=5" title="Edit section: тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span id="Hey_.3C_.23_.22_.3E_.25_:_.27"></span><span class="mw-headline" id="Hey_&lt;_#_&quot;_&gt;_%_:_'">Hey &lt; # " &gt;&#160;%&#160;: '</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=6" title="Edit section: Hey &lt; # &quot; &gt; % : &#039;">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p><a href="#Foo_bar">#Foo bar</a> <a href="#foo_Bar">#foo Bar</a> <a href="#Тест">#Тест</a> <a href="#тест">#тест</a> <a href="#Hey_&lt;_#_&quot;_&gt;_%_:_&#39;">#Hey &lt; # " &gt;&#160;%&#160;: '</a>
-</p><p>💩 <span id="💩"></span>
-</p><p><a href="#啤酒">#啤酒</a> <a href="#啤酒">#啤酒</a>
-</p>
-!! html/parsoid
-<h2 id="Foo_bar">Foo bar</h2>
-
-<h2 id="foo_Bar_2">foo Bar</h2>
-
-<h2 id="Тест"><span id=".D0.A2.D0.B5.D1.81.D1.82" typeof="mw:FallbackId"></span>Тест</h2>
-
-<h2 id="Тест_2"><span id=".D0.A2.D0.B5.D1.81.D1.82_2" typeof="mw:FallbackId"></span>Тест</h2>
-
-<h2 id="тест"><span id=".D1.82.D0.B5.D1.81.D1.82" typeof="mw:FallbackId"></span>тест</h2>
-
-<h2 id="Hey_&lt;_#_&quot;_>_%_:_'"><span id="Hey_.3C_.23_.22_.3E_.25_:_.27" typeof="mw:FallbackId"></span>Hey &lt; # " ><span typeof="mw:DisplaySpace"> </span>%<span typeof="mw:DisplaySpace"> </span>: '</h2>
-<p><a rel="mw:WikiLink" href="./Parser_test#Foo_bar" class="mw-selflink-fragment">#Foo bar</a> <a rel="mw:WikiLink" href="./Parser_test#foo_Bar" class="mw-selflink-fragment">#foo Bar</a> <a rel="mw:WikiLink" href="./Parser_test#Тест" class="mw-selflink-fragment">#Тест</a> <a rel="mw:WikiLink" href="./Parser_test#тест" class="mw-selflink-fragment">#тест</a> <a rel="mw:WikiLink" href="./Parser_test#Hey_&lt;_#_&quot;_>_%_:_'" class="mw-selflink-fragment">#Hey &lt; # " ><span typeof="mw:DisplaySpace"> </span>%<span typeof="mw:DisplaySpace"> </span>: '</a></p>
-
-<p><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"anchorencode:💩","function":"anchorencode"},"params":{},"i":0}}]}'>💩</span> <span id="💩" about="#mwt3" typeof="mw:ExpandedAttrs" data-mw='{"attribs":[[{"txt":"id"},{"html":"&lt;span about=\"#mwt2\" typeof=\"mw:Transclusion\" data-parsoid=&#39;{\"pi\":[[]],\"dsr\":[178,197,null,null]}&#39; data-mw=&#39;{\"parts\":[{\"template\":{\"target\":{\"wt\":\"anchorencode:💩\",\"function\":\"anchorencode\"},\"params\":{},\"i\":0}}]}&#39;>💩&lt;/span>"}]]}'></span></p>
-
-<!-- These two links should produce identical HTML -->
-<p><a rel="mw:WikiLink" href="./Parser_test#啤酒" class="mw-selflink-fragment">#啤酒</a> <a rel="mw:WikiLink" href="./Parser_test#啤酒" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#啤酒"},"sa":{"href":"#%E5%95%A4%E9%85%92"}}'>#啤酒</a></p>
-!! end
-
-# Parsoid doesn't support this mode
-!! test
-HTML5 ids: legacy with a fallback to modern
-!! config
-wgFragmentMode=[ "legacy", "html5" ]
-!! wikitext
-==Foo bar==
-
-==foo Bar==
-
-==Тест==
-
-==Тест==
-
-==тест==
-
-==Hey < # " > % : '==
-[[#Foo bar]] [[#foo Bar]] [[#Тест]] [[#тест]] [[#Hey < # " > % : ']]
-
-{{anchorencode:💩}} <span id="{{anchorencode:💩}}"></span>
-
-<!-- These two links should produce identical HTML -->
-[[#啤酒]] [[#%E5%95%A4%E9%85%92]]
-
-!! html/php
-<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Foo_bar"><span class="tocnumber">1</span> <span class="toctext">Foo bar</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#foo_Bar_2"><span class="tocnumber">2</span> <span class="toctext">foo Bar</span></a></li>
-<li class="toclevel-1 tocsection-3"><a href="#.D0.A2.D0.B5.D1.81.D1.82"><span class="tocnumber">3</span> <span class="toctext">Тест</span></a></li>
-<li class="toclevel-1 tocsection-4"><a href="#.D0.A2.D0.B5.D1.81.D1.82_2"><span class="tocnumber">4</span> <span class="toctext">Тест</span></a></li>
-<li class="toclevel-1 tocsection-5"><a href="#.D1.82.D0.B5.D1.81.D1.82"><span class="tocnumber">5</span> <span class="toctext">тест</span></a></li>
-<li class="toclevel-1 tocsection-6"><a href="#Hey_.3C_.23_.22_.3E_.25_:_.27"><span class="tocnumber">6</span> <span class="toctext">Hey &lt; # " &gt;&#160;%&#160;: '</span></a></li>
-</ul>
-</div>
-
-<h2><span class="mw-headline" id="Foo_bar">Foo bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Foo bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="foo_Bar_2">foo Bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: foo Bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span id="Тест"></span><span class="mw-headline" id=".D0.A2.D0.B5.D1.81.D1.82">Тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: Тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span id="Тест_2"></span><span class="mw-headline" id=".D0.A2.D0.B5.D1.81.D1.82_2">Тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=4" title="Edit section: Тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span id="тест"></span><span class="mw-headline" id=".D1.82.D0.B5.D1.81.D1.82">тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=5" title="Edit section: тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span id="Hey_&lt;_#_&quot;_&gt;_%_:_'"></span><span class="mw-headline" id="Hey_.3C_.23_.22_.3E_.25_:_.27">Hey &lt; # " &gt;&#160;%&#160;: '</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=6" title="Edit section: Hey &lt; # &quot; &gt; % : &#039;">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p><a href="#Foo_bar">#Foo bar</a> <a href="#foo_Bar">#foo Bar</a> <a href="#.D0.A2.D0.B5.D1.81.D1.82">#Тест</a> <a href="#.D1.82.D0.B5.D1.81.D1.82">#тест</a> <a href="#Hey_.3C_.23_.22_.3E_.25_:_.27">#Hey &lt; # " &gt;&#160;%&#160;: '</a>
-</p><p>.F0.9F.92.A9 <span id=".F0.9F.92.A9"></span>
-</p><p><a href="#.E5.95.A4.E9.85.92">#啤酒</a> <a href="#.E5.95.A4.E9.85.92">#啤酒</a>
-</p>
-!! end
-
-# Parsoid doesn't support this mode.
-!! test
-HTML5 ids: no legacy
-!! config
-wgFragmentMode=[ "html5" ]
-!! wikitext
-==Foo bar==
-
-==foo Bar==
-
-==Тест==
-
-==Тест==
-
-==тест==
-
-==Hey < # " > % : '==
-[[#Foo bar]] [[#foo Bar]] [[#Тест]] [[#тест]] [[#Hey < # " > % : ']]
-
-{{anchorencode:💩}} <span id="{{anchorencode:💩}}"></span>
-
-<!-- These two links should produce identical HTML -->
-[[#啤酒]] [[#%E5%95%A4%E9%85%92]]
-
-!! html/php
-<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Foo_bar"><span class="tocnumber">1</span> <span class="toctext">Foo bar</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#foo_Bar_2"><span class="tocnumber">2</span> <span class="toctext">foo Bar</span></a></li>
-<li class="toclevel-1 tocsection-3"><a href="#Тест"><span class="tocnumber">3</span> <span class="toctext">Тест</span></a></li>
-<li class="toclevel-1 tocsection-4"><a href="#Тест_2"><span class="tocnumber">4</span> <span class="toctext">Тест</span></a></li>
-<li class="toclevel-1 tocsection-5"><a href="#тест"><span class="tocnumber">5</span> <span class="toctext">тест</span></a></li>
-<li class="toclevel-1 tocsection-6"><a href="#Hey_&lt;_#_&quot;_&gt;_%_:_&#39;"><span class="tocnumber">6</span> <span class="toctext">Hey &lt; # " &gt;&#160;%&#160;: '</span></a></li>
-</ul>
-</div>
-
-<h2><span class="mw-headline" id="Foo_bar">Foo bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Foo bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="foo_Bar_2">foo Bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: foo Bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="Тест">Тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: Тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="Тест_2">Тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=4" title="Edit section: Тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="тест">тест</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=5" title="Edit section: тест">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="Hey_&lt;_#_&quot;_&gt;_%_:_'">Hey &lt; # " &gt;&#160;%&#160;: '</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=6" title="Edit section: Hey &lt; # &quot; &gt; % : &#039;">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p><a href="#Foo_bar">#Foo bar</a> <a href="#foo_Bar">#foo Bar</a> <a href="#Тест">#Тест</a> <a href="#тест">#тест</a> <a href="#Hey_&lt;_#_&quot;_&gt;_%_:_&#39;">#Hey &lt; # " &gt;&#160;%&#160;: '</a>
-</p><p>💩 <span id="💩"></span>
-</p><p><a href="#啤酒">#啤酒</a> <a href="#啤酒">#啤酒</a>
-</p>
-!! end
-
-!! test
-T90902: Normalize weird characters in section IDs
-!! config
-wgFragmentMode=[ "html5", "legacy" ]
-!! wikitext
-==Foo&nbsp;bar==
-[[#Foo&nbsp;bar]]
-
-!! html/php
-<h2><span class="mw-headline" id="Foo_bar">Foo&#160;bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Foo bar">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p><a href="#Foo_bar">#Foo&#160;bar</a>
-</p>
-!! html/parsoid
-<h2 id="Foo_bar">Foo<span typeof="mw:Entity" data-parsoid='{"src":"&amp;nbsp;","srcContent":" "}'> </span>bar</h2>
-<p><a rel="mw:WikiLink" href="./Parser_test#Foo_bar" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Parser_test#Foo_bar"},"sa":{"href":"#Foo&amp;nbsp;bar"}}'>#Foo bar</a></p>
 !! end
 
 !! test
@@ -17055,6 +16791,8 @@ parsoid={
 	"modes": ["wt2html"],
 	"preserveIEW": true
 }
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 __NOTOC__
 ==    <!--c1-->  <!--c2--> Spaces   <!--c3--> <!--c4-->  ==
@@ -17077,9 +16815,9 @@ __NOTOC__
   |  <!--c1--> <!--c2--> Table Cell 1 <!--c3--> <!--c4--> ||   Table Cell 2 <!--c5-->
   |} foo   <!--c1-->
 !! html/php
-<h2><span class="mw-headline" id="Spaces">Spaces</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Spaces">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="Tabs">Tabs</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: Tabs">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id=".D0.9B.D0.B8.D1.87.D0.BD.D0.B0.D1.8F_.D0.B6.D0.B8.D0.B7.D0.BD.D1.8C">Личная жизнь</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: Личная жизнь">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Spaces">Spaces</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Spaces">edit</a><span class="mw-editsection-bracket">]</span></span></div>
+<div class="mw-heading mw-heading2"><h2 id="Tabs">Tabs</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: Tabs">edit</a><span class="mw-editsection-bracket">]</span></span></div>
+<div class="mw-heading mw-heading2"><h2 id=".D0.9B.D0.B8.D1.87.D0.BD.D0.B0.D1.8F_.D0.B6.D0.B8.D0.B7.D0.BD.D1.8C">Личная жизнь</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=3" title="Edit section: Личная жизнь">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 <ul><li>List item</li></ul>
 <dl><dt>term</dt>
 <dd>definition</dd></dl>
@@ -17137,6 +16875,8 @@ parsoid={
 	"modes": ["wt2html"],
 	"preserveIEW": true
 }
+!! config
+wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 __NOTOC__
 <h2>    <!--c1-->   <!--c2--> Heading    <!--c3--> <!--c4-->  </h2>
@@ -17146,7 +16886,7 @@ __NOTOC__
 <tr><td> <!--c1--> <!--c2--> Table Cell <!--c3--> <!--c4--> <th></tr>
 </table>
 !! html/php
-<h2><span class="mw-headline" id="Heading">        Heading       </span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Heading">        Heading       </h2></div>
 <ul><li>          List item    </li></ul>
 <table>
 <tbody><tr><th>   Table Heading   </th><th></th></tr>

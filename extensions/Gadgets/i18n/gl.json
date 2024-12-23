@@ -43,7 +43,7 @@
 	"gadgets-export-download": "Descargar",
 	"gadgets-requires-es6": "Este trebello só funciona en navegadores compatibles coa especificación ES6",
 	"gadgets-validate-notset": "A propiedade <code>$1</code> non está definida.",
-	"gadgets-validate-wrongtype": "A propiedade <code>$1</code> debe ser de tipo <code>$2</code> en vez de <code>$3</code>.",
+	"gadgets-validate-wrongtype": "A propiedade <code>$1</code> debe ser de tipo <code>$2</code>.",
 	"gadgets-validate-json": "Especificáronse ficheiros JSON, pero non se usan. Unicamente son válidos nos trebellos empaquetados.",
 	"gadgets-validate-es6default": "Os trebellos que necesitan a especificación ES6 non se poden activar por defecto.",
 	"gadgets-validate-noentrypoint": "Ignórase a marca do paquete xa que non se especificaron ficheiros de script.",

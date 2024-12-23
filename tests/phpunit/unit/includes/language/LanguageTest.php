@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFallback;
 use MediaWiki\Languages\LanguageNameUtils;
@@ -8,7 +10,8 @@ use MediaWiki\Title\NamespaceInfo;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 
 /**
- * @coversDefaultClass \Language
+ * @group Language
+ * @covers \MediaWiki\Language\Language
  */
 class LanguageTest extends MediaWikiUnitTestCase {
 	/**
@@ -31,7 +34,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getCode
 	 * @dataProvider provideCodes
 	 */
 	public function testGetCode( $code, $bcp47code ) {
@@ -40,7 +42,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getHtmlCode
 	 * @dataProvider provideCodes
 	 */
 	public function testGetHtmlCode( $code, $bcp47code ) {
@@ -49,7 +50,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::toBcp47Code
 	 * @dataProvider provideCodes
 	 */
 	public function testToBcp47Code( $code, $bcp47code ) {
@@ -58,7 +58,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::isSameCodeAs
 	 * @dataProvider provideCodes
 	 */
 	public function testIsSameCodeAs( $code, $bcp47code ) {
@@ -80,7 +79,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::isSameCodeAs
 	 * @dataProvider provideCodes
 	 */
 	public function testIsNotSameCodeAs( $code, $bcp47code ) {
@@ -97,7 +95,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getGrammarTransformations
 	 * @todo Test the exception case
 	 */
 	public function testGetGrammarTransformations() {
@@ -113,9 +110,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $lang->getGrammarTransformations() );
 	}
 
-	/**
-	 * @covers ::getGrammarTransformations
-	 */
 	public function testGetGrammarTransformations_empty() {
 		$lang = $this->getObj();
 
@@ -124,7 +118,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::ucwords
 	 * @dataProvider provideUcwords
 	 */
 	public function testUcwords( string $input, string $expected ) {
@@ -145,7 +138,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::ucwordbreaks
 	 * @dataProvider provideUcwordbreaks
 	 */
 	public function testUcwordbreaks( string $input, string $expected ) {
@@ -168,7 +160,6 @@ class LanguageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::firstChar
 	 * @dataProvider provideFirstChar
 	 */
 	public function testFirstChar( string $input, string $expected ) {

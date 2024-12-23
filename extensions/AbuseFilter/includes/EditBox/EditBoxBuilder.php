@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\EditBox;
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
+use MediaWiki\Html\Html;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MessageLocalizer;
@@ -12,7 +13,6 @@ use OOUI\DropdownInputWidget;
 use OOUI\FieldLayout;
 use OOUI\FieldsetLayout;
 use OOUI\Widget;
-use Xml;
 
 /**
  * Base class for classes responsible for building filter edit boxes
@@ -97,10 +97,9 @@ abstract class EditBoxBuilder {
 		}
 
 		if ( $addResultDiv ) {
-			$output .= Xml::element(
+			$output .= Html::element(
 				'div',
-				[ 'id' => 'mw-abusefilter-syntaxresult', 'style' => 'display: none;' ],
-				'&#160;'
+				[ 'id' => 'mw-abusefilter-syntaxresult', 'style' => 'display: none;' ]
 			);
 		}
 
@@ -120,14 +119,29 @@ abstract class EditBoxBuilder {
 		$dropdownOptions = [ $this->localizer->msg( 'abusefilter-edit-builder-select' )->text() => 'other' ];
 		foreach ( $rawDropdown as $group => $values ) {
 			// Give grep a chance to find the usages:
-			// abusefilter-edit-builder-group-op-arithmetic, abusefilter-edit-builder-group-op-comparison,
-			// abusefilter-edit-builder-group-op-bool, abusefilter-edit-builder-group-misc,
-			// abusefilter-edit-builder-group-funcs, abusefilter-edit-builder-group-vars
+			// abusefilter-edit-builder-group-op-arithmetic
+			// abusefilter-edit-builder-group-op-comparison
+			// abusefilter-edit-builder-group-op-bool
+			// abusefilter-edit-builder-group-misc
+			// abusefilter-edit-builder-group-funcs
+			// abusefilter-edit-builder-group-vars
 			$localisedGroup = $this->localizer->msg( "abusefilter-edit-builder-group-$group" )->text();
 			$dropdownOptions[ $localisedGroup ] = array_flip( $values );
 			$newKeys = array_map(
-				function ( $key ) use ( $group ) {
-					return $this->localizer->msg( "abusefilter-edit-builder-$group-$key" )->text();
+				function ( $key ) use ( $group, $dropdownOptions, $localisedGroup ) {
+					// Force all operators and functions to be always shown as left to right text
+					// with the help of control characters:
+					// * 202A is LEFT-TO-RIGHT EMBEDDING (LRE)
+					// * 202C is POP DIRECTIONAL FORMATTING (PDF)
+					// This has to be done with control characters because
+					// markup cannot be used within <option> elements.
+					$operatorExample = "\u{202A}" .
+						$dropdownOptions[ $localisedGroup ][ $key ] .
+						"\u{202C}";
+					return $this->localizer->msg(
+						"abusefilter-edit-builder-$group-$key",
+						$operatorExample
+					)->text();
 				},
 				array_keys( $dropdownOptions[ $localisedGroup ] )
 			);
@@ -137,7 +151,7 @@ abstract class EditBoxBuilder {
 			);
 		}
 
-		$dropdownList = Xml::listDropdownOptionsOoui( $dropdownOptions );
+		$dropdownList = Html::listDropdownOptionsOoui( $dropdownOptions );
 		return new DropdownInputWidget( [
 			'name' => 'wpFilterBuilder',
 			'inputId' => 'wpFilterBuilder',

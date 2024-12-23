@@ -145,8 +145,8 @@ applications, however, concise JSON output is desired.  By providing
 an optional "class hint" to the top-level call to `::toJsonArray()` and
 `newFromJsonArray()` and implementing the `::jsonClassHintFor()`
 method in your class codec you can suppress unnecessary type
-information in the JSON (when your provided hint matches what would
-have been added).  For example:
+information in the JSON when your provided hint matches what would
+have been added.  For example:
 
 ```
 class SampleContainerObject implements JsonCodecable {
@@ -154,26 +154,31 @@ class SampleContainerObject implements JsonCodecable {
 
 	/** @var mixed */
 	public $contents;
+	/** @var list<Foo> */
+	public array $foos;
 
-    // ...
+	// ...
 
 	// Implement JsonCodecable using the JsonCodecableTrait
 
 	/** @inheritDoc */
 	public function toJsonArray(): array {
-		return [ 'contents' => $this->contents ];
+		return [ 'contents' => $this->contents, 'foos' => $this->foos ];
 	}
 
 	/** @inheritDoc */
 	public static function newFromJsonArray( array $json ): SampleContainerObject {
-		return new SampleContainerObject( $json['contents'] );
+		return new SampleContainerObject( $json['contents'], $json['foos'] );
 	}
 
 	/** @inheritDoc */
-	public static function jsonClassHintFor( string $keyName ): ?string {
+	public static function jsonClassHintFor( string $keyName ) {
 		if ( $keyName === 'contents' ) {
 			// Hint that the contained value is a SampleObject. It might be!
 			return SampleObject::class;
+		} elseif ( $keyName === 'foos' ) {
+			// A hint with a modifier
+			return Hint::build( Foo::class, Hint::LIST );
 		}
 		return null;
 	}
@@ -187,11 +192,11 @@ use Wikimedia\JsonCodec\JsonCodec;
 
 $codec = new JsonCodec();
 
-$value = new SampleContainerObject( new SampleObject( 'sample' ) );
+$value = new SampleContainerObject( new SampleObject( 'sample' ), ... );
 $string_result = $codec->toJsonString( $value, SampleContainerObject::class );
 
 // $string_result is now:
-//    {"contents":{"property":"sample"}}'
+//    {"contents":{"property":"sample"},"foos":[...]}'
 // with no explicit type information.
 
 // But we need to provide the same class hint when deserializing:
@@ -203,11 +208,46 @@ other than a `SampleObject` into the `SampleContainerObject` the type
 of that value would be embedded into the JSON output, but it would not
 break serialization/deserialization.
 
-The class hint you provide can be suffixed with `[]` to indicate a
-homogenous list or array of the given type.
+As illustrated with the `foos` property, to indicate a homogenous list
+or array of the given type, you can pass `Hint::build(....,
+Hint::LIST)` as the class hint.  A `stdClass` object where properties
+are values of the given type can be hinted with `Hint::build(....,
+Hint::STDCLASS)`.
 
 A full example can be found in
 [`tests/SampleContainerObject.php`](./tests/SampleContainerObject.php).
+
+The `Hint::USE_SQUARE` modifier allows `::toJsonArray()` to
+return a list (see
+[`array_is_list`](https://www.php.net/manual/en/function.array-is-list.php))
+and have that list encoded as a JSON array, with square `[]` brackets.
+
+The `Hint::ALLOW_OBJECT` modifier ensures that empty objects are
+serialized as `{}`.  It has the side effect that `::toJsonArray()` may
+in some cases return an _object_ value instead of the _array_ value
+implied from the method name.
+
+The `USE_SQUARE` and `ALLOW_OBJECT` hints are necessary because
+normally `JsonCodec` attempts to encode all _object values_ with curly `{}`
+brackets by inserting a `_type_` property in the encoded result when
+necessary to ensure that the encoded array is never a list.
+PHP's `json_encode` will use `{}` notation for non-list arrays.  If you
+don't want the added `_type_` property added to your encoded result,
+then you need to specify whether you prefer `[]` notation (`USE_SQUARE`)
+or `{}` notation (`ALLOW_OBJECT`) to be used in ambiguous cases.
+
+An example with hint modifiers can be found in
+[`tests/SampleList.php`](./tests/SampleList.php) and its associated
+test cases.
+
+Where a superclass codec can be used to instantiate objects of
+various subclasses the `Hint::INHERITED` modifier can be used.
+An example of this can be found in
+[`tests/Pet.php`](./tests/Pet.php),
+[`tests/Dog.php`](./tests/Dog.php), and
+[`tests/Cat.php`](./tests/Cat.php)
+and their associated test cases in
+[`tests/JsonCodecTest.php`](./tests/JsonCodecTest.php).
 
 In some cases, `::jsonClassHintFor()` may be inadequate to describe
 the implicit typing of the JSON; for example tagged union values or
@@ -221,7 +261,11 @@ in the interface documentation for
 full example can be found in
 [`tests/TaggedValue.php`](./tests/TaggedValue.php).
 
-
+Further customization of the encoding of class names and class hints
+is available using the protected methods `JsonCodec::isArrayMarked()`,
+`JsonCodec::markArray()` and `JsonCodec::unmarkArray()`.  A full
+example can be found in
+[`tests/ReservedKeyCodec.php`](./tests/ReservedKeyCodec.php).
 
 Running tests
 -------------

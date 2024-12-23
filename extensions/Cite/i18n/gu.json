@@ -29,6 +29,13 @@
 	"cite_error_empty_references_define": "\"$1\" નામના <code>&lt;references&gt;</code>માં વ્યાખ્યાયિત ટેગ <code>&lt;ref&gt;</code>માં કોઇ માહિતી નથી.",
 	"cite-tracking-category-cite-error": "સંદર્ભ ક્ષતિઓ ધરાવતા પાના",
 	"cite-tracking-category-cite-error-desc": "આ શ્રેણીના પાનાંઓમાં સંદર્ભ ટેગ્સના વપરાશની ક્ષતિઓ છે.",
+	"cite-reference-previews-reference": "સંદર્ભ",
+	"cite-reference-previews-book": "પુસ્તક સંદર્ભ",
+	"cite-reference-previews-journal": "જર્નલ સંદર્ભ",
+	"cite-reference-previews-news": "સમાચાર સંદર્ભ",
+	"cite-reference-previews-note": "નોંધ",
+	"cite-reference-previews-web": "વેબ સંદર્ભ",
+	"cite-reference-previews-collapsible-placeholder": "આ સંદર્ભમાં આલેખન સમાવિષ્ટ છે જે પૂર્વાવલોકનમાં બંધબેસતું નથી.",
 	"cite_references_link_accessibility_label": "ઉપર જાઓ",
 	"cite_references_link_many_accessibility_label": "અહીં સુધી ઉપર જાઓ:",
 	"cite_references_link_accessibility_back_label": "ઉપર પાછા જાવ",
@@ -39,5 +46,9 @@
 	"cite-wikieditor-help-page-references": "સંદર્ભો",
 	"cite-wikieditor-help-content-reference-description": "સંદર્ભ",
 	"cite-wikieditor-help-content-rereference-description": "તેજ સંદર્ભનો વધારાનો વપરાશ",
-	"cite-wikieditor-help-content-showreferences-description": "સંદર્ભો દર્શાવો"
+	"cite-wikieditor-help-content-showreferences-description": "સંદર્ભો દર્શાવો",
+	"popups-prefs-navpopups-gadget-conflict-info": "તમે [[$1|નેવિગેશન પોપ-અપ]] સાધન સક્રિય કરેલું છે માટે આ સુવિધા દ્વારા દર્શાવવામાં આવતા પૂર્વાવલોકનો તમને જોવા નહિ મળે. તમારા વિકિમાં નેવિગેશન પોપ-અપ સાધન અન્ય નામથી હોઈ શકે છે. જો તમને કોઈ ક્ષતિ આવતી હોય તો તમારા સક્રિય કરેલા યંત્રો/સાધનો અને યુઝર સ્ક્રિપ્ટ ચકાસી જુઓ.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "તમે [[$1|નેવિગેશન પોપ-અપ]] અને [[$1|સંદર્ભ ટૂલટિપ]] સાધન સક્રિય કરેલ છે માટે આ સુવિધા દ્વારા દર્શાવવામાં આવતા પૂર્વાવલોકનો તમને જોવા નહિ મળે. તમારા વિકિમાં નેવિગેશન પોપ-અપ સાધન અન્ય નામથી હોઈ શકે છે. જો તમને કોઈ ક્ષતિ આવતી હોય તો તમારા સક્રિય કરેલા યંત્રો/સાધનો અને યુઝર સ્ક્રિપ્ટ ચકાસી જુઓ.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "તમે [[$1|સંદર્ભ ટૂલટિપ]] સાધન સક્રિય કરેલું છે માટે આ સુવિધા દ્વારા દર્શાવવામાં આવતા પૂર્વાવલોકનો તમને જોવા નહિ મળે. તમારા વિકિમાં નેવિગેશન પોપ-અપ સાધન અન્ય નામથી હોઈ શકે છે. જો તમને કોઈ ક્ષતિ આવતી હોય તો તમારા સક્રિય કરેલા યંત્રો/સાધનો અને યુઝર સ્ક્રિપ્ટ ચકાસી જુઓ.",
+	"popups-refpreview-user-preference-label": "સંદર્ભ પૂર્વાવલોકન સક્રિય કરો (પૃષ્ઠ વાંચતી વખતે સંદર્ભનું સંક્ષિપ્ત પૂર્વાવલોકન મેળવો)"
 }

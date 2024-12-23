@@ -7,8 +7,6 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
-use MediaWiki\MediaWikiServices;
-
 /**
  * Tests ServiceWiring.php
  *
@@ -20,7 +18,7 @@ class ServiceWiringTest extends IntegrationTestCase {
 	 * @dataProvider provideService
 	 */
 	public function testService( string $name ) {
-		MediaWikiServices::getInstance()->get( $name );
+		$this->getServiceContainer()->get( $name );
 		$this->addToAssertionCount( 1 );
 	}
 

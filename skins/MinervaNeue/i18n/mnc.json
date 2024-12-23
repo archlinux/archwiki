@@ -4,8 +4,8 @@
 			"ChoiChong",
 			"Chulsu463",
 			"Foavi33",
-			"Obonggi",
-			"MiiCii"
+			"MiiCii",
+			"Obonggi"
 		]
 	},
 	"minerva-last-modified-date": "Šuwe amala banjibun: $1 $2",
@@ -50,6 +50,7 @@
 	"minerva-page-actions-overflow": "Ele",
 	"minerva-page-actions-language-switcher": "Gisun",
 	"minerva-page-actions-history": "Suduri",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Leolen]",
 	"minerva-skin-desc": "Jabure durun -i tebunehe durun -i mobail -i ujui sonjoro sukū",
 	"skin-minerva-issue-learn-more": "Elei labdu getuken -i sara",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 miyoori}} onggolo",
@@ -60,7 +61,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 aniya}} onggolo",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Duwalibun",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Afaha -i duwalibun be baicara",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Halame ibebuhe afaha -i fonjin tuhenebume icihiyara",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Afaha -i fonjin (Template:ambox) fiyelen de dorgi holboro",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Umesi hairakan, mobail -i debais de ere afaha -i meyen dendebun -i songkoi šošon be baitalame muterakū. Si \"afaha -i meyen dendebun -i songkoi\" muten be baitalaki seci, bairengge bodotun -i ban be fujurulaki."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Umesi hairakan, mobail -i debais de ere afaha -i meyen dendebun -i songkoi šošon be baitalame muterakū. Si \"afaha -i meyen dendebun -i songkoi\" muten be baitalaki seci, bairengge bodotun -i ban be fujurulaki.",
+	"skin-minerva-night-mode-unavailable": "\"Gelfiyeken\" bocoi joringga -i fejile -i teile baitalaci ojoro afaha."
 }

@@ -9,12 +9,12 @@
 			"Nike",
 			"Pxos",
 			"Pyscowicz",
+			"Samoasambia",
 			"Silvonen",
 			"Stryn",
 			"Valtlai",
 			"Valtlait",
-			"Veikk0.ma",
-			"Samoasambia"
+			"Veikk0.ma"
 		]
 	},
 	"templatedata-desc": "Toteuttaa tietovaraston mallineiden parametreille (käyttäen JSON:ia)",
@@ -75,7 +75,6 @@
 	"templatedata-modal-button-map": "Muokkaa karttoja",
 	"templatedata-modal-button-importParams": "Tuo parametrejä",
 	"templatedata-modal-button-removemap": "Poista kartta",
-	"templatedata-modal-button-restoreparam": "Palauta parametri",
 	"templatedata-modal-button-saveparam": "Tallenna",
 	"templatedata-modal-confirmcancel": "Oletko varma, että haluat hylätä muutoksesi?",
 	"templatedata-modal-current-language": "Nykyinen kieli: $1",

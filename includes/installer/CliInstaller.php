@@ -25,9 +25,10 @@ namespace MediaWiki\Installer;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Password\UserPasswordPolicy;
 use MediaWiki\Status\Status;
 use MediaWiki\User\User;
-use UserPasswordPolicy;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Class for the core installer command line interface.
@@ -36,9 +37,10 @@ use UserPasswordPolicy;
  * @since 1.17
  */
 class CliInstaller extends Installer {
+	/** @var bool */
 	private $specifiedScriptPath = false;
 
-	private $optionMap = [
+	private const OPTION_MAP = [
 		'dbtype' => 'wgDBtype',
 		'dbserver' => 'wgDBserver',
 		'dbname' => 'wgDBname',
@@ -69,7 +71,7 @@ class CliInstaller extends Installer {
 			$this->specifiedScriptPath = true;
 		}
 
-		foreach ( $this->optionMap as $opt => $global ) {
+		foreach ( self::OPTION_MAP as $opt => $global ) {
 			if ( isset( $options[$opt] ) ) {
 				$GLOBALS[$global] = $options[$opt];
 				$this->setVar( $global, $options[$opt] );
@@ -267,9 +269,8 @@ class CliInstaller extends Installer {
 	}
 
 	/**
-	 * @param string $msg
+	 * @param string|MessageSpecifier $msg
 	 * @param array $params
-	 *
 	 * @return string
 	 */
 	protected function getMessageText( $msg, $params ) {
@@ -289,13 +290,12 @@ class CliInstaller extends Installer {
 	}
 
 	public function showStatusMessage( Status $status ) {
-		$warnings = array_merge( $status->getWarningsArray(),
-			$status->getErrorsArray() );
-
-		if ( count( $warnings ) !== 0 ) {
-			foreach ( $warnings as $w ) {
-				$this->showMessage( ...$w );
-			}
+		// Show errors at the end in CLI installer to make them easier to notice
+		foreach ( $status->getMessages( 'warning' ) as $msg ) {
+			$this->showMessage( $msg );
+		}
+		foreach ( $status->getMessages( 'error' ) as $msg ) {
+			$this->showMessage( $msg );
 		}
 	}
 

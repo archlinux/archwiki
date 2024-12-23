@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mitsjol",
-			"McDutchie"
+			"McDutchie",
+			"Mitsjol"
 		]
 	},
 	"turnstile-desc": "Voegt ondersteuning voor Cloudflare Turnstile toe aan ConfirmEdit",

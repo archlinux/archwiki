@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiErrorFormatter;
+use MediaWiki\Api\ApiErrorFormatter;
 use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\UsernameAuthenticationRequest;
@@ -20,7 +20,7 @@ use Wikimedia\TestingAccessWrapper;
  * @group Database
  * @group medium
  *
- * @covers \ApiLogin
+ * @covers \MediaWiki\Api\ApiLogin
  */
 class ApiLoginTest extends ApiTestCase {
 
@@ -317,18 +317,18 @@ class ApiLoginTest extends ApiTestCase {
 		// A is unsalted MD5 (thus fast) ... we don't care about security here, this is test only
 		$passwordHash = $passwordFactory->newFromPlaintext( $password );
 
-		$this->getDb()->insert(
-			'bot_passwords',
-			[
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'bot_passwords' )
+			->row( [
 				'bp_user' => $centralId,
 				'bp_app_id' => 'foo',
 				'bp_password' => $passwordHash->toString(),
 				'bp_token' => '',
 				'bp_restrictions' => MWRestrictions::newDefault()->toJson(),
 				'bp_grants' => '["test"]',
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		$lgName = $user->getName() . BotPassword::getSeparator() . 'foo';
 

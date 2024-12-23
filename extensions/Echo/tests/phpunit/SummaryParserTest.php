@@ -1,7 +1,11 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
 use MediaWiki\Extension\Notifications\SummaryParser;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
+use MediaWikiIntegrationTestCase;
 
 /**
  * @group Echo
@@ -22,7 +26,7 @@ class SummaryParserTest extends MediaWikiIntegrationTestCase {
 	 * @param string[] $expectedUsers
 	 */
 	public function testParse( $summary, array $expectedUsers ) {
-		$parser = new SummaryParser( function ( User $user ) {
+		$parser = new SummaryParser( function ( UserIdentity $user ) {
 			if ( in_array( $user->getName(), $this->existingUsers ) ) {
 				return crc32( $user->getName() );
 			}

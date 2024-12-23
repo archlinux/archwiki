@@ -317,7 +317,6 @@
 	"abusefilter-edit-builder-op-bool-not": "A smerse (!)",
 	"abusefilter-edit-builder-op-bool-and": "E (&)",
 	"abusefilter-edit-builder-op-bool-or": "O (|)",
-	"abusefilter-edit-builder-op-bool-xor": "XOR (^)",
 	"abusefilter-edit-builder-group-misc": "Misckate",
 	"abusefilter-edit-builder-misc-in": "condenute jndr'à stringhe (in)",
 	"abusefilter-edit-builder-misc-contains": "'A righe de mmanghe contène 'a righe de destre (contène)",

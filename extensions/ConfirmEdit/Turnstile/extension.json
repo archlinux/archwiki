@@ -37,6 +37,9 @@
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.turnstile.visualEditor": {
+			"dependencies": [
+				"web2017-polyfills"
+			],
 			"scripts": "ve-confirmedit-turnstile/ve.init.mw.TurnstileSaveErrorHandler.js"
 		}
 	},

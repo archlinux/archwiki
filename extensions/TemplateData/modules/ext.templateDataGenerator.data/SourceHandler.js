@@ -1,4 +1,4 @@
-var Model = require( './Model.js' );
+const Model = require( './Model.js' );
 
 /**
  * TemplateData Source Handler
@@ -11,9 +11,9 @@ var Model = require( './Model.js' );
  *
  * @constructor
  * @param {Object} [config]
- * @cfg {string} [fullPageName] The full name of the current page
- * @cfg {string} [parentPage] The name of the parent page
- * @cfg {string} [isPageSubLevel] The page is sub-level of another template
+ * @param {string} [config.fullPageName=""] The full name of the current page
+ * @param {string} [config.parentPage=""] The name of the parent page
+ * @param {string} [config.isPageSubLevel=false] The page is sub-level of another template
  */
 function SourceHandler( config ) {
 	config = config || {};
@@ -43,7 +43,7 @@ OO.mixinClass( SourceHandler, OO.EventEmitter );
  * @return {jQuery.Promise} API promise
  */
 SourceHandler.prototype.getApi = function ( page, getTemplateData ) {
-	var type = getTemplateData ? 'templatedata' : 'query',
+	const type = getTemplateData ? 'templatedata' : 'query',
 		api = new mw.Api(),
 		baseConfig = {
 			action: type,
@@ -51,9 +51,9 @@ SourceHandler.prototype.getApi = function ( page, getTemplateData ) {
 			redirects: getTemplateData ? 1 : 0
 		};
 
-	var config;
+	let config;
 	if ( type === 'query' ) {
-		config = $.extend( baseConfig, {
+		config = Object.assign( baseConfig, {
 			prop: 'revisions',
 			rvprop: 'content',
 			indexpageids: '1'
@@ -76,9 +76,9 @@ SourceHandler.prototype.getApi = function ( page, getTemplateData ) {
  *  or is rejected if the model was impossible to create.
  */
 SourceHandler.prototype.buildModel = function ( wikitext ) {
-	var tdObject = null,
-		templateDataString = this.findModelInString( wikitext );
+	const templateDataString = this.findModelInString( wikitext );
 
+	let tdObject = null;
 	if ( templateDataString !== null ) {
 		try {
 			tdObject = JSON.parse( templateDataString );
@@ -92,12 +92,10 @@ SourceHandler.prototype.buildModel = function ( wikitext ) {
 	// Mostly used for the import option
 	return this.getParametersFromTemplateSource( wikitext )
 		// This is always successful by definition
-		.then( function ( templateSourceCodeParams ) {
-			return Model.static.newFromObject(
-				tdObject,
-				templateSourceCodeParams
-			);
-		} );
+		.then( ( templateSourceCodeParams ) => Model.static.newFromObject(
+			tdObject,
+			templateSourceCodeParams
+		) );
 };
 
 /**
@@ -116,9 +114,7 @@ SourceHandler.prototype.buildModel = function ( wikitext ) {
  * @return {jQuery.Promise} Promise resolving into template parameter array
  */
 SourceHandler.prototype.getParametersFromTemplateSource = function ( wikitext ) {
-	var params = [],
-		sourceHandler = this;
-
+	let params = [];
 	if ( !this.templateSourceCodePromise ) {
 		// Check given page text first
 		if ( wikitext ) {
@@ -131,8 +127,8 @@ SourceHandler.prototype.getParametersFromTemplateSource = function ( wikitext ) 
 		} else if ( this.isPageSubLevel() && this.getParentPage() ) {
 			// Get the content of the parent
 			this.templateSourceCodePromise = this.getApi( this.getParentPage() ).then(
-				function ( resp ) {
-					var pageContent = '';
+				( resp ) => {
+					let pageContent = '';
 
 					// Verify that we have a sane response from the API.
 					// This is particularly important for unit tests, since the
@@ -143,12 +139,11 @@ SourceHandler.prototype.getParametersFromTemplateSource = function ( wikitext ) 
 					) {
 						pageContent = resp.query.pages[ resp.query.pageids[ 0 ] ].revisions[ 0 ][ '*' ];
 					}
-					return sourceHandler.extractParametersFromTemplateCode( pageContent );
+					return this.extractParametersFromTemplateCode( pageContent );
 				},
-				function () {
-					// Resolve an empty parameters array
-					return $.Deferred().resolve( [] );
-				}
+				// Resolve an empty parameters array
+				() => $.Deferred().resolve( [] )
+
 			);
 		} else {
 			// No template found. Resolve to empty array of parameters
@@ -168,7 +163,7 @@ SourceHandler.prototype.getParametersFromTemplateSource = function ( wikitext ) 
  * @return {string[]} An array of parameters that appear in the template code
  */
 SourceHandler.prototype.extractParametersFromTemplateCode = function ( templateCode ) {
-	var paramNames = [],
+	const paramNames = [],
 		normalizedParamNames = [],
 		// This regex matches the one in TemplateDataBlob.php
 		paramExtractor = /{{{+([^\n#={|}]*?)([<|]|}}})/mg;
@@ -178,10 +173,10 @@ SourceHandler.prototype.extractParametersFromTemplateCode = function ( templateC
 		.replace( /<nowiki\s*>[\s\S]*?<\/nowiki\s*>/g, '' )
 		.replace( /<pre\s*>[\s\S]*?<\/pre\s*>/g, '' );
 
-	var matches;
+	let matches;
 	while ( ( matches = paramExtractor.exec( templateCode ) ) !== null ) {
 		// This normalization process is repeated in PHP in TemplateDataBlob.php
-		var normalizedParamName = matches[ 1 ].replace( /[-_ ]+/, ' ' ).trim().toLowerCase();
+		const normalizedParamName = matches[ 1 ].replace( /[-_ ]+/, ' ' ).trim().toLowerCase();
 		if ( !normalizedParamName || normalizedParamNames.indexOf( normalizedParamName ) !== -1 ) {
 			continue;
 		}
@@ -202,7 +197,7 @@ SourceHandler.prototype.extractParametersFromTemplateCode = function ( templateC
  * templatedata string was found.
  */
 SourceHandler.prototype.findModelInString = function ( templateDataString ) {
-	var parts = templateDataString.match(
+	const parts = templateDataString.match(
 		/<templatedata>([\s\S]*?)<\/templatedata>/i
 	);
 
@@ -216,7 +211,7 @@ SourceHandler.prototype.findModelInString = function ( templateDataString ) {
 /**
  * Set the page as a sub page of the main template
  *
- * @param {boolean} isSubLevel Page is sublevel
+ * @param {boolean} [isSubLevel=false] Page is sublevel
  */
 SourceHandler.prototype.setPageSubLevel = function ( isSubLevel ) {
 	this.subLevel = !!isSubLevel;
@@ -234,7 +229,7 @@ SourceHandler.prototype.isPageSubLevel = function () {
 /**
  * Get full page name
  *
- * @param {string} pageName Page name
+ * @param {string} [pageName=""] Page name
  */
 SourceHandler.prototype.setFullPageName = function ( pageName ) {
 	this.fullPageName = pageName || '';
@@ -252,7 +247,7 @@ SourceHandler.prototype.getFullPageName = function () {
 /**
  * Set parent page
  *
- * @param {string} parent Parent page
+ * @param {string} [parent=""] Parent page
  */
 SourceHandler.prototype.setParentPage = function ( parent ) {
 	this.parentPage = parent || '';

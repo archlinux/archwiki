@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Banjo",
 			"Elisardojm"
 		]
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Esta é unha regra oculta.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Esta regra afecta ó título da páxina.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Código de lingua",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Non válido>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Non válido</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Lingua",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Fonte",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destino",

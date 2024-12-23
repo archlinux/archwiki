@@ -64,7 +64,7 @@
 	"abusefilter-edit-builder-op-arithmetic-divide": "Бөлүү (/)",
 	"abusefilter-edit-builder-op-arithmetic-modulo": "Модуль (%)",
 	"abusefilter-edit-builder-op-arithmetic-pow": "Даража (**)",
-	"abusefilter-edit-builder-op-bool-and": "ЖАНА (&)",
+	"abusefilter-edit-builder-op-bool-and": "Жана ($1)",
 	"abusefilter-edit-builder-op-bool-or": "ЖЕ (|)",
 	"abusefilter-edit-builder-group-funcs": "Функциялар",
 	"abusefilter-edit-builder-funcs-specialratio": "Атайын белгилер / бардык белгилер (specialratio)",
@@ -101,5 +101,5 @@
 	"abusefilter-diff-title": "Жоромолдордун айырмасы",
 	"abusefilter-diff-item": "Элемент",
 	"abusefilter-diff-info": "Негизги маалымат",
-	"abusefilter-group-default": "Демейки"
+	"abusefilter-group-default": "Жарыяланбасча"
 }

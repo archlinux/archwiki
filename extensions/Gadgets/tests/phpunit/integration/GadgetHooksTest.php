@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Gadgets\Gadget;
 use MediaWiki\Extension\Gadgets\Hooks as GadgetHooks;
 use MediaWiki\Extension\Gadgets\StaticGadgetRepo;

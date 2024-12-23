@@ -22,27 +22,37 @@ use Wikimedia\ParamValidator\TypeDef;
  */
 class BooleanDef extends TypeDef {
 
-	public static $TRUEVALS = [ 'true', 't', 'yes', 'y', 'on', '1' ];
-	public static $FALSEVALS = [ 'false', 'f', 'no', 'n', 'off', '0' ];
+	public const TRUEVALS = [ 'true', 't', 'yes', 'y', 'on', '1' ];
+	public const FALSEVALS = [ 'false', 'f', 'no', 'n', 'off', '0' ];
 
 	public function validate( $name, $value, array $settings, array $options ) {
+		if ( is_bool( $value ) ) {
+			return $value;
+		} elseif ( $options[ self::OPT_ENFORCE_JSON_TYPES ] ?? false ) {
+			$this->fatal(
+				$this->failureMessage( 'badbool-type' )
+					->params( gettype( $value ) ),
+				$name, $value, $settings, $options
+			);
+		}
+
 		$value = strtolower( $value );
-		if ( in_array( $value, self::$TRUEVALS, true ) ) {
+		if ( in_array( $value, self::TRUEVALS, true ) ) {
 			return true;
 		}
-		if ( $value === '' || in_array( $value, self::$FALSEVALS, true ) ) {
+		if ( $value === '' || in_array( $value, self::FALSEVALS, true ) ) {
 			return false;
 		}
 
-		$this->failure(
+		$this->fatal(
 			$this->failureMessage( 'badbool' )
-				->textListParams( array_map( [ $this, 'quoteVal' ], self::$TRUEVALS ) )
-				->numParams( count( self::$TRUEVALS ) )
+				->textListParams( array_map( [ $this, 'quoteVal' ], self::TRUEVALS ) )
+				->numParams( count( self::TRUEVALS ) )
 				->textListParams( array_merge(
-					array_map( [ $this, 'quoteVal' ], self::$FALSEVALS ),
+					array_map( [ $this, 'quoteVal' ], self::FALSEVALS ),
 					[ MessageValue::new( 'paramvalidator-emptystring' ) ]
 				) )
-				->numParams( count( self::$FALSEVALS ) + 1 ),
+				->numParams( count( self::FALSEVALS ) + 1 ),
 			$name, $value, $settings, $options
 		);
 	}
@@ -52,7 +62,7 @@ class BooleanDef extends TypeDef {
 	}
 
 	public function stringifyValue( $name, $value, array $settings, array $options ) {
-		return $value ? self::$TRUEVALS[0] : self::$FALSEVALS[0];
+		return $value ? self::TRUEVALS[0] : self::FALSEVALS[0];
 	}
 
 	public function getHelpInfo( $name, array $settings, array $options ) {

@@ -11,7 +11,7 @@
 	 * @type {mw.Rest.Options}
 	 * @private
 	 */
-	var defaultOptions = {
+	const defaultOptions = {
 		ajax: {
 			url: mw.util.wikiScript( 'rest' ),
 			timeout: 30 * 1000 // 30 seconds
@@ -26,20 +26,22 @@
 	 * @private
 	 */
 	function objectKeysToLowerCase( headers ) {
-		return Object.keys( headers || {} ).reduce( function ( updatedHeaders, key ) {
+		return Object.keys( headers || {} ).reduce( ( updatedHeaders, key ) => {
 			updatedHeaders[ key.toLowerCase() ] = headers[ key ];
 			return updatedHeaders;
 		}, {} );
 	}
 
 	/**
-	 * Constructor to create an object to interact with the REST API of a particular MediaWiki server.
-	 * mw.Rest objects represent the REST API of a particular MediaWiki server.
+	 * @classdesc Interact with the REST API. mw.Rest is a client library
+	 * for the [REST API](https://www.mediawiki.org/wiki/Special:MyLanguage/API:REST_API).
+	 * An mw.Rest object represents the REST API of a MediaWiki site.
+	 * For the action API, see {@link mw.Api}.
 	 *
 	 * @example
 	 * var api = new mw.Rest();
 	 * api.get( '/v1/page/Main_Page/html' )
-	 * .done( function ( data ) {
+	 * .then( function ( data ) {
 	 *     console.log( data );
 	 * } );
 	 *
@@ -51,16 +53,17 @@
 	 * }, {
 	 *     'authorization': 'token'
 	 * } )
-	 * .done( function ( data ) {
+	 * .then( function ( data ) {
 	 *     console.log( data );
 	 * } );
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.Rest`.
 	 * @param {mw.Rest.Options} [options] See {@link mw.Rest.Options}
 	 */
 	mw.Rest = function ( options ) {
-		var defaults = $.extend( {}, options );
-		defaults.ajax = $.extend( {}, defaultOptions.ajax, defaults.ajax );
+		const defaults = Object.assign( {}, options );
+		defaults.ajax = Object.assign( {}, defaultOptions.ajax, defaults.ajax );
 
 		this.url = defaults.ajax.url;
 		delete defaults.ajax.url;
@@ -76,7 +79,7 @@
 		 * @method
 		 */
 		abort: function () {
-			this.requests.forEach( function ( request ) {
+			this.requests.forEach( ( request ) => {
 				if ( request ) {
 					request.abort();
 				}
@@ -119,7 +122,7 @@
 			headers = objectKeysToLowerCase( headers );
 			return this.ajax( path, {
 				type: 'POST',
-				headers: $.extend( headers, { 'content-type': 'application/json' } ),
+				headers: Object.assign( headers, { 'content-type': 'application/json' } ),
 				data: JSON.stringify( body )
 			} );
 		},
@@ -139,7 +142,7 @@
 			headers = objectKeysToLowerCase( headers );
 			return this.ajax( path, {
 				type: 'PUT',
-				headers: $.extend( headers, { 'content-type': 'application/json' } ),
+				headers: Object.assign( headers, { 'content-type': 'application/json' } ),
 				data: JSON.stringify( body )
 			} );
 		},
@@ -159,7 +162,7 @@
 			headers = objectKeysToLowerCase( headers );
 			return this.ajax( path, {
 				type: 'DELETE',
-				headers: $.extend( headers, { 'content-type': 'application/json' } ),
+				headers: Object.assign( headers, { 'content-type': 'application/json' } ),
 				data: JSON.stringify( body )
 			} );
 		},
@@ -174,31 +177,30 @@
 		 *  Fail: Error code
 		 */
 		ajax: function ( path, ajaxOptions ) {
-			var self = this,
-				apiDeferred = $.Deferred(),
-				xhr, requestIndex;
+			const self = this,
+				apiDeferred = $.Deferred();
 
-			ajaxOptions = $.extend( {}, this.defaults.ajax, ajaxOptions );
+			ajaxOptions = Object.assign( {}, this.defaults.ajax, ajaxOptions );
 			ajaxOptions.url = this.url + path;
 
 			// Make the AJAX request.
-			xhr = $.ajax( ajaxOptions );
+			const xhr = $.ajax( ajaxOptions );
 
 			// Save it to make it possible to abort.
-			requestIndex = this.requests.length;
+			const requestIndex = this.requests.length;
 			this.requests.push( xhr );
-			xhr.always( function () {
+			xhr.always( () => {
 				self.requests[ requestIndex ] = null;
 			} );
 
 			xhr.then(
 				// AJAX success just means "200 OK" response.
-				function ( result, textStatus, jqXHR ) {
+				( result, textStatus, jqXHR ) => {
 					apiDeferred.resolve( result, jqXHR );
 				},
 				// If AJAX fails, reject API call with error code 'http'
 				// and details in second argument.
-				function ( jqXHR, textStatus, exception ) {
+				( jqXHR, textStatus, exception ) => {
 					apiDeferred.reject( 'http', {
 						xhr: jqXHR,
 						textStatus: textStatus,

@@ -7,10 +7,10 @@ use InvalidArgumentException;
 use MediaWiki\Extension\Math\Widget\WikibaseEntitySelector;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\SpecialPage\SpecialPage;
-use Message;
 use OOUI\ButtonInputWidget;
 use OOUI\FormLayout;
 
@@ -23,16 +23,19 @@ class SpecialMathWikibase extends SpecialPage {
 	/**
 	 * @var MathWikibaseConnector Wikibase connection
 	 */
-	private $wikibase;
+	private MathWikibaseConnector $wikibase;
 
 	/**
 	 * @var \Psr\Log\LoggerInterface
 	 */
 	private $logger;
 
-	public function __construct() {
+	public function __construct(
+		MathWikibaseConnector $wikibase
+	) {
 		parent::__construct( 'MathWikibase' );
 
+		$this->wikibase = $wikibase;
 		$this->logger = LoggerFactory::getInstance( 'Math' );
 	}
 
@@ -40,10 +43,6 @@ class SpecialMathWikibase extends SpecialPage {
 	 * @inheritDoc
 	 */
 	public function execute( $par ) {
-		global $wgLanguageCode;
-
-		$this->wikibase = MediaWikiServices::getInstance()->get( 'Math.WikibaseConnector' );
-
 		$request = $this->getRequest();
 		$output = $this->getOutput();
 		$output->enableOOUI();
@@ -56,15 +55,16 @@ class SpecialMathWikibase extends SpecialPage {
 		);
 
 		// Get request
-		$requestId = $request->getText( self::PARAMETER, $par ?? '' );
+		$requestId = $request->getText( self::PARAMETER, $par );
 
 		// if there is no id requested, show the request form
 		if ( !$requestId ) {
 			$this->showForm();
 		} else {
 			$this->logger->debug( "Request qID: " . $requestId );
+			$languageCode = $this->getConfig()->get( MainConfigNames::LanguageCode );
 			try {
-				$info = $this->wikibase->fetchWikibaseFromId( $requestId, $wgLanguageCode );
+				$info = $this->wikibase->fetchWikibaseFromId( $requestId, $languageCode );
 				$this->logger->debug( "Successfully fetched information for qID: " . $requestId );
 				$this->buildPageRepresentation( $info, $requestId, $output );
 			} catch ( Exception $e ) {
@@ -154,7 +154,7 @@ class SpecialMathWikibase extends SpecialPage {
 		// if 'instance of' is specified, it can be found in the description before a colon
 		// FIXME: There are other reasons to have a colon in an Item's description, e.g.
 		// https://www.wikidata.org/wiki/Special:MathWikibase?qid=Q6203
-		if ( preg_match( '/(.*):\s*(.*)/', $info->getDescription() ?? '', $matches ) ) {
+		if ( preg_match( '/(.*):\s*(.*)/', $info->getDescription(), $matches ) ) {
 			$output->setSubtitle( $matches[1] );
 		}
 
@@ -190,7 +190,7 @@ class SpecialMathWikibase extends SpecialPage {
 
 			$description = $matches[2];
 		} else {
-			$description = $info->getDescription() ?? '';
+			$description = $info->getDescription();
 		}
 		$labelDesc = $this->msg(
 			'math-wikibase-formula-header-format',

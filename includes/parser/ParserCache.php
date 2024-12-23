@@ -21,16 +21,21 @@
  * @ingroup Cache Parser
  */
 
+namespace MediaWiki\Parser;
+
+use Exception;
+use InvalidArgumentException;
+use JsonException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\WikiPageFactory;
-use MediaWiki\Parser\ParserCacheFilter;
-use MediaWiki\Parser\ParserCacheMetadata;
-use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\TitleFactory;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\UUID\GlobalIdGenerator;
 
@@ -336,7 +341,7 @@ class ParserCache {
 	public function makeParserOutputKey(
 		PageRecord $page,
 		ParserOptions $options,
-		array $usedOptions = null
+		?array $usedOptions = null
 	): string {
 		$usedOptions ??= ParserOptions::allCacheVaryingOptions();
 		// idhash seem to mean 'page id' + 'rendering hash' (r3710)
@@ -689,20 +694,20 @@ class ParserCache {
 	private function restoreFromJson( string $jsonData, string $key, string $expectedClass ) {
 		try {
 			/** @var CacheTime $obj */
-			$obj = $this->jsonCodec->unserialize( $jsonData, $expectedClass );
+			$obj = $this->jsonCodec->deserialize( $jsonData, $expectedClass );
 			return $obj;
 		} catch ( JsonException $e ) {
-			$this->logger->error( "Unable to unserialize JSON", [
+			$this->logger->error( "Unable to deserialize JSON", [
 				'name' => $this->name,
 				'cache_key' => $key,
-				'message' => $e->getMessage()
+				'ex_message' => $e->getMessage()
 			] );
 			return null;
 		} catch ( Exception $e ) {
 			$this->logger->error( "Unexpected failure during cache load", [
 				'name' => $this->name,
 				'cache_key' => $key,
-				'message' => $e->getMessage()
+				'ex_message' => $e->getMessage()
 			] );
 			return null;
 		}
@@ -717,12 +722,25 @@ class ParserCache {
 		try {
 			return $this->jsonCodec->serialize( $obj );
 		} catch ( JsonException $e ) {
+			// Try to collect some additional debugging information, but
+			// wrap this in a try block to ensure we don't make the problem
+			// worse.
+			try {
+				$details = $this->jsonCodec->detectNonSerializableData( $obj, true );
+			} catch ( \Throwable $t ) {
+				$details = $t->getMessage();
+			}
 			$this->logger->error( "Unable to serialize JSON", [
 				'name' => $this->name,
 				'cache_key' => $key,
-				'message' => $e->getMessage(),
+				'ex_message' => $e->getMessage(),
+				'details' => $details,
+				'trace' => $e->getTraceAsString(),
 			] );
 			return null;
 		}
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ParserCache::class, 'ParserCache' );

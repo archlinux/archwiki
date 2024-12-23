@@ -2,7 +2,7 @@
 
 namespace PageImages\Tests;
 
-use ApiPageSet;
+use MediaWiki\Api\ApiPageSet;
 use PageImages\ApiQueryPageImages;
 
 class ApiQueryPageImagesProxyMock extends ApiQueryPageImages {

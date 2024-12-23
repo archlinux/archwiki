@@ -1,7 +1,5 @@
 <?php
 /**
- * Per-process memory cache for storing items.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,13 +16,18 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Cache
  */
 
+namespace Wikimedia\ObjectCache;
+
+use InvalidArgumentException;
+
 /**
- * Simple store for keeping values in an associative array for the current process.
+ * Store data in a memory for the current request/process only.
  *
- * Data will not persist and is not shared with other processes.
+ * This keeps values in a simple associative array.
+ * Data will not persist and is not shared with other requests
+ * on the same server.
  *
  * @newable
  * @ingroup Cache
@@ -47,10 +50,12 @@ class HashBagOStuff extends MediumSpecificBagOStuff {
 
 	/**
 	 * @stable to call
+	 *
 	 * @param array $params Additional parameters include:
 	 *   - maxKeys : only allow this many keys (using oldest-first eviction)
+	 *
 	 * @phpcs:ignore Generic.Files.LineLength
-	 * @phan-param array{logger?:Psr\Log\LoggerInterface,asyncHandler?:callable,keyspace?:string,reportDupes?:bool,segmentationSize?:int,segmentedValueMaxSize?:int,maxKeys?:int} $params
+	 * @phan-param array{logger?:\Psr\Log\LoggerInterface,asyncHandler?:callable,keyspace?:string,reportDupes?:bool,segmentationSize?:int,segmentedValueMaxSize?:int,maxKeys?:int} $params
 	 */
 	public function __construct( $params = [] ) {
 		$params['segmentationSize'] ??= INF;
@@ -142,6 +147,7 @@ class HashBagOStuff extends MediumSpecificBagOStuff {
 
 	/**
 	 * @param string $key
+	 *
 	 * @return bool
 	 */
 	protected function expire( $key ) {
@@ -159,6 +165,7 @@ class HashBagOStuff extends MediumSpecificBagOStuff {
 	 * Does this bag have a non-null value for the given key?
 	 *
 	 * @param string $key
+	 *
 	 * @return bool
 	 * @since 1.27
 	 */
@@ -166,3 +173,6 @@ class HashBagOStuff extends MediumSpecificBagOStuff {
 		return isset( $this->bag[$key] );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( HashBagOStuff::class, 'HashBagOStuff' );

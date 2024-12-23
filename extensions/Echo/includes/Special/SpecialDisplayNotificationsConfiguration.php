@@ -5,10 +5,10 @@ namespace MediaWiki\Extension\Notifications\Special;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Hooks as EchoHooks;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\OOUIHTMLForm;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
-use OOUIHTMLForm;
 
 class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	/**
@@ -61,10 +61,6 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	 */
 	private $userOptionsManager;
 
-	/**
-	 * @param AttributeManager $attributeManager
-	 * @param UserOptionsManager $userOptionsManager
-	 */
 	public function __construct(
 		AttributeManager $attributeManager,
 		UserOptionsManager $userOptionsManager

@@ -32,8 +32,11 @@ use MediaWiki\User\UserIdentity;
  * @author Bryan Tong Minh
  */
 class UploadFromStash extends UploadBase {
+	/** @var string */
 	protected $mFileKey;
+	/** @var string */
 	protected $mVirtualTempPath;
+	/** @var string */
 	protected $mSourceType;
 
 	/** @var UploadStash */
@@ -47,7 +50,7 @@ class UploadFromStash extends UploadBase {
 	 * @param UploadStash|false $stash Default: false
 	 * @param FileRepo|false $repo Default: false
 	 */
-	public function __construct( UserIdentity $user = null, $stash = false, $repo = false ) {
+	public function __construct( ?UserIdentity $user = null, $stash = false, $repo = false ) {
 		if ( $repo ) {
 			$this->repo = $repo;
 		} else {

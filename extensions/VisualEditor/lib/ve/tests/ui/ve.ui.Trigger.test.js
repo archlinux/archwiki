@@ -8,19 +8,19 @@ QUnit.module( 've.ui.Trigger' );
 
 /* Tests */
 
-QUnit.test( 'constructor', function ( assert ) {
+QUnit.test( 'constructor', ( assert ) => {
 	function event( options ) {
 		return $.Event( 'keydown', options );
 	}
 
-	var cases = [
+	const cases = [
 		{
 			trigger: 'ctrl+b',
 			event: event( { ctrlKey: true, which: 66 } )
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		assert.strictEqual(
 			new ve.ui.Trigger( caseItem.trigger ).toString(),
 			caseItem.trigger,

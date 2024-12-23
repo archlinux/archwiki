@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Specialpages
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -47,7 +44,7 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 		$out = $this->getOutput();
 		$this->setHeaders();
 		$this->outputHeader();
-		$out->setPreventClickjacking( false );
+		$out->getMetadata()->setPreventClickjacking( false );
 		$out->addModuleStyles( 'mediawiki.special' );
 
 		$groups = $this->getPageGroups();
@@ -70,7 +67,6 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 
 		// Put them into a sortable array
 		$groups = [];
-		/** @var SpecialPage $page */
 		foreach ( $pages as $page ) {
 			$group = $page->getFinalGroupName();
 			$desc = $page->getDescription();
@@ -79,11 +75,14 @@ class SpecialSpecialPages extends UnlistedSpecialPage {
 				wfDeprecated( "string return from {$page->getName()}::getDescription()", '1.41' );
 				$desc = ( new RawMessage( '$1' ) )->rawParams( $desc );
 			}
-			$groups[$group][$desc->text()] = [
-				$page->getPageTitle(),
-				$page->isRestricted(),
-				$page->isCached()
-			];
+			// (T360723) Only show an entry if the message isn't blanked, to allow on-wiki unlisting
+			if ( !$desc->isDisabled() ) {
+				$groups[$group][$desc->text()] = [
+					$page->getPageTitle(),
+					$page->isRestricted(),
+					$page->isCached()
+				];
+			}
 		}
 
 		// Sort

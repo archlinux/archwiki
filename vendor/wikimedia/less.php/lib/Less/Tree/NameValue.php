@@ -3,7 +3,7 @@
  * A simple CSS name-value pair, e.g. `width: 100px;`
  *
  * In bootstrap, there are about 600-1000 simple name-value pairs (depending on
- * how forgiving the match is) -vs- 6,020 dynamic rules (Less_Tree_Rule).
+ * how forgiving the match is) -vs- 6,020 dynamic rules (Less_Tree_Declaration).
  *
  * Using the name-value object can speed up bootstrap compilation slightly, but
  * it breaks color keyword interpretation: `color: red` -> `color: #FF0000`.

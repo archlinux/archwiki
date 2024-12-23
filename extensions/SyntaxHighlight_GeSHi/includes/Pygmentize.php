@@ -33,18 +33,17 @@ class Pygmentize {
 	 * If no pygmentize is configured, use bundled
 	 */
 	public static function useBundled(): bool {
-		global $wgPygmentizePath;
-		return $wgPygmentizePath === false;
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		return $config->get( 'PygmentizePath' ) === false;
 	}
 
 	/**
 	 * Get a real path to pygmentize
 	 */
 	private static function getPath(): string {
-		global $wgPygmentizePath;
-
+		$config = MediaWikiServices::getInstance()->getMainConfig();
 		// If $wgPygmentizePath is unset, use the bundled copy.
-		return $wgPygmentizePath ?: __DIR__ . '/../pygments/pygmentize';
+		return $config->get( 'PygmentizePath' ) ?: __DIR__ . '/../pygments/pygmentize';
 	}
 
 	/**
@@ -140,18 +139,47 @@ class Pygmentize {
 	 * @internal Only public for updateCSS.php
 	 */
 	public static function fetchGeneratedCSS(): string {
-		$result = self::boxedCommand()
+		$lightModeRun = self::boxedCommand()
 			->params(
 				self::getPath(), '-f', 'html',
 				'-S', 'default', '-a', '.mw-highlight' )
 			->includeStderr()
 			->execute();
+		$darkModeRun = self::boxedCommand()
+			->params(
+				self::getPath(), '-f', 'html',
+				'-S', 'monokai', '-a', '    .skin-theme-clientpref-night .mw-highlight' )
+			->includeStderr()
+			->execute();
 		self::recordShellout( 'generated_css' );
-		$output = $result->getStdout();
-		if ( $result->getExitCode() != 0 ) {
-			throw new PygmentsException( $output );
+
+		$lightModeOutput = trim( $lightModeRun->getStdout() );
+		if ( $lightModeRun->getExitCode() != 0 ) {
+			throw new PygmentsException( $lightModeOutput );
 		}
-		return $output;
+		$darkModeOutput = trim( $darkModeRun->getStdout() );
+		if ( $darkModeRun->getExitCode() != 0 ) {
+			throw new PygmentsException( $darkModeOutput );
+		}
+
+		$lightModeRules = explode( "\n", $lightModeOutput );
+		$darkModeRules = explode( "\n", $darkModeOutput );
+		$commonRules = array_intersect( $lightModeRules, $darkModeRules );
+
+		$nightThemeCss = implode( "\n", array_diff( $darkModeRules, $commonRules ) );
+		$osThemeCss = str_replace( '.skin-theme-clientpref-night',
+			'.skin-theme-clientpref-os', $nightThemeCss );
+
+		return <<<EOD
+			$lightModeOutput
+			@media screen {
+			$nightThemeCss
+			}
+			@media screen and ( prefers-color-scheme: dark ) {
+			$osThemeCss
+			}
+
+			EOD;
 	}
 
 	/**
@@ -298,7 +326,11 @@ class Pygmentize {
 
 		$output = $result->getStdout();
 		if ( $result->getExitCode() != 0 ) {
-			throw new PygmentsException( $output );
+			if ( $output === "" || $output === null ) {
+				// Stdout was empty, report stderr instead
+				$output = $result->getStderr();
+			}
+			throw new PygmentsException( (string)$output );
 		}
 
 		return $output;
@@ -327,7 +359,10 @@ class Pygmentize {
 	 * @param string $type Type of shellout
 	 */
 	private static function recordShellout( $type ) {
-		$statsd = MediaWikiServices::getInstance()->getStatsdDataFactory();
-		$statsd->increment( "syntaxhighlight_shell.$type" );
+		MediaWikiServices::getInstance()->getStatsFactory()
+			->getCounter( 'syntaxhighlight_shell_total' )
+			->setLabel( 'type', $type )
+			->copyToStatsdAt( "syntaxhighlight_shell.$type" )
+			->increment();
 	}
 }

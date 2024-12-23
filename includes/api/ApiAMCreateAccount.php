@@ -20,8 +20,11 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Utils\UrlUtils;
 
 /**
  * Create an account with AuthManager
@@ -31,31 +34,29 @@ use MediaWiki\Auth\AuthManager;
 class ApiAMCreateAccount extends ApiBase {
 
 	private AuthManager $authManager;
+	private UrlUtils $urlUtils;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param AuthManager $authManager
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
-		AuthManager $authManager
+		string $action,
+		AuthManager $authManager,
+		UrlUtils $urlUtils
 	) {
 		parent::__construct( $main, $action, 'create' );
 		$this->authManager = $authManager;
+		$this->urlUtils = $urlUtils;
 	}
 
 	public function getFinalDescription() {
 		// A bit of a hack to append 'api-help-authmanager-general-usage'
 		$msgs = parent::getFinalDescription();
-		$msgs[] = ApiBase::makeMessage( 'api-help-authmanager-general-usage', $this->getContext(), [
+		$msgs[] = $this->msg( 'api-help-authmanager-general-usage',
 			$this->getModulePrefix(),
 			$this->getModuleName(),
 			$this->getModulePath(),
 			AuthManager::ACTION_CREATE,
 			$this->needsToken(),
-		] );
+		);
 		return $msgs;
 	}
 
@@ -65,7 +66,7 @@ class ApiAMCreateAccount extends ApiBase {
 		$this->requireAtLeastOneParameter( $params, 'continue', 'returnurl' );
 
 		if ( $params['returnurl'] !== null ) {
-			$bits = wfParseUrl( $params['returnurl'] );
+			$bits = $this->urlUtils->parse( $params['returnurl'] );
 			if ( !$bits || $bits['scheme'] === '' ) {
 				$encParamName = $this->encodeParamName( 'returnurl' );
 				$this->dieWithError(
@@ -147,3 +148,6 @@ class ApiAMCreateAccount extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Account_creation';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiAMCreateAccount::class, 'ApiAMCreateAccount' );

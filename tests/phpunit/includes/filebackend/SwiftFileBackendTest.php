@@ -1,6 +1,9 @@
 <?php
 
 use MediaWiki\Logger\LoggerFactory;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FileBackendError;
+use Wikimedia\FileBackend\SwiftFileBackend;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -8,10 +11,10 @@ use Wikimedia\TestingAccessWrapper;
  * @group FileBackend
  * @group medium
  *
- * @covers \SwiftFileBackend
- * @covers \SwiftFileBackendDirList
- * @covers \SwiftFileBackendFileList
- * @covers \SwiftFileBackendList
+ * @covers \Wikimedia\FileBackend\SwiftFileBackend
+ * @covers \Wikimedia\FileBackend\FileIteration\SwiftFileBackendDirList
+ * @covers \Wikimedia\FileBackend\FileIteration\SwiftFileBackendFileList
+ * @covers \Wikimedia\FileBackend\FileIteration\SwiftFileBackendList
  */
 class SwiftFileBackendTest extends MediaWikiIntegrationTestCase {
 	/** @var TestingAccessWrapper|SwiftFileBackend */

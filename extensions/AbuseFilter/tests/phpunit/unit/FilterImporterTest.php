@@ -18,7 +18,7 @@ use MediaWikiUnitTestCase;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\FilterImporter
+ * @covers \MediaWiki\Extension\AbuseFilter\FilterImporter
  */
 class FilterImporterTest extends MediaWikiUnitTestCase {
 	private const GOOD_FILTER_DATA = [
@@ -29,7 +29,7 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 		'actions' => [],
 		'enabled' => true,
 		'deleted' => false,
-		'hidden' => true,
+		'privacyLevel' => true,
 		'global' => false
 	];
 
@@ -40,9 +40,9 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 	 * @return FilterImporter
 	 */
 	private function getImporter(
-		array $groups = null,
-		bool $isCentral = null,
-		array $actions = null
+		?array $groups = null,
+		?bool $isCentral = null,
+		?array $actions = null
 	): FilterImporter {
 		$actions = array_fill_keys( $actions ?? [ 'warn', 'disallow', 'block' ], true );
 		$registry = new ConsequencesRegistry(
@@ -61,9 +61,6 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::encodeData
-	 */
 	public function testEncodeData() {
 		$importer = $this->getImporter();
 		$filter = MutableFilter::newDefault();
@@ -73,8 +70,6 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @param mixed $data
-	 * @covers ::decodeData
-	 * @covers ::isValidImportData
 	 * @dataProvider provideInvalidData
 	 */
 	public function testDecodeData_invalid( $data ) {
@@ -112,9 +107,6 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 	 * @param array $origActions
 	 * @param Filter $expectedFilter
 	 * @param array $configOptions
-	 * @covers ::decodeData
-	 * @covers ::encodeData
-	 * @covers ::isValidImportData
 	 * @dataProvider provideRoundTrip
 	 */
 	public function testRoundTrip(
@@ -188,9 +180,6 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct() {
 		$this->assertInstanceOf(
 			FilterImporter::class,

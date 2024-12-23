@@ -1,7 +1,13 @@
 <?php
 
+namespace MediaWiki\Registration;
+
+use Exception;
+use InvalidArgumentException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ResourceLoader\FilePath;
+use RuntimeException;
+use UnexpectedValueException;
 
 /**
  * Load extension manifests and then aggregate their contents.
@@ -54,6 +60,7 @@ class ExtensionProcessor implements Processor {
 		MainConfigNames::LogRestrictions,
 		MainConfigNames::LogTypes,
 		MainConfigNames::MediaHandlers,
+		MainConfigNames::OutputPipelineStages,
 		MainConfigNames::PasswordPolicy,
 		MainConfigNames::PrivilegedGroups,
 		MainConfigNames::RateLimits,
@@ -71,8 +78,6 @@ class ExtensionProcessor implements Processor {
 
 	/**
 	 * Top-level attributes that come from MW core
-	 *
-	 * @var string[]
 	 */
 	protected const CORE_ATTRIBS = [
 		'ParsoidModules',
@@ -85,6 +90,7 @@ class ExtensionProcessor implements Processor {
 		'TempUserSerialProviders',
 		'TempUserSerialMappings',
 		'DatabaseVirtualDomains',
+		'UserOptionsStoreProviders',
 	];
 
 	/**
@@ -92,7 +98,6 @@ class ExtensionProcessor implements Processor {
 	 *
 	 * @see ExtensionRegistry::exportExtractedData
 	 * @see getExtractedInfo
-	 * @var array
 	 */
 	protected const MERGE_STRATEGIES = [
 		'wgAuthManagerAutoConfig' => 'array_plus_2d',
@@ -111,8 +116,6 @@ class ExtensionProcessor implements Processor {
 
 	/**
 	 * Keys that are part of the extension credits
-	 *
-	 * @var array
 	 */
 	protected const CREDIT_ATTRIBS = [
 		'type',
@@ -129,8 +132,6 @@ class ExtensionProcessor implements Processor {
 	/**
 	 * Things that are not 'attributes', and are not in
 	 * $globalSettings or CREDIT_ATTRIBS.
-	 *
-	 * @var array
 	 */
 	protected const NOT_ATTRIBS = [
 		'callback',
@@ -165,6 +166,7 @@ class ExtensionProcessor implements Processor {
 	 */
 	protected $globals = [
 		'wgExtensionMessagesFiles' => [],
+		'wgRestAPIAdditionalRouteFiles' => [],
 		'wgMessagesDirs' => [],
 		'TranslationAliasesDirs' => [],
 	];
@@ -258,6 +260,7 @@ class ExtensionProcessor implements Processor {
 		$dir = dirname( $path );
 		$this->extractHooks( $info, $path );
 		$this->extractExtensionMessagesFiles( $dir, $info );
+		$this->extractRestModuleFiles( $dir, $info );
 		$this->extractMessagesDirs( $dir, $info );
 		$this->extractTranslationAliasesDirs( $dir, $info );
 		$this->extractSkins( $dir, $info );
@@ -372,6 +375,7 @@ class ExtensionProcessor implements Processor {
 		}
 
 		$autoload = $this->getExtractedAutoloadInfo( $includeDev );
+
 		return [
 			'globals' => $this->globals,
 			'defines' => $this->defines,
@@ -452,6 +456,7 @@ class ExtensionProcessor implements Processor {
 				);
 			}
 		}
+
 		return $merged;
 	}
 
@@ -464,6 +469,7 @@ class ExtensionProcessor implements Processor {
 	 * @param array $hookHandlersAttr handler definitions from 'HookHandler' attribute
 	 * @param string $name
 	 * @param string $path extension.json file path
+	 *
 	 * @throws UnexpectedValueException
 	 */
 	private function setArrayHookHandler(
@@ -677,6 +683,15 @@ class ExtensionProcessor implements Processor {
 		}
 	}
 
+	protected function extractRestModuleFiles( $dir, array $info ) {
+		$var = MainConfigNames::RestAPIAdditionalRouteFiles;
+		if ( isset( $info['RestModuleFiles'] ) ) {
+			foreach ( $info['RestModuleFiles'] as &$file ) {
+				$this->globals["wg$var"][] = "$dir/$file";
+			}
+		}
+	}
+
 	/**
 	 * Set message-related settings, which need to be expanded to use
 	 * absolute paths
@@ -766,6 +781,7 @@ class ExtensionProcessor implements Processor {
 	/**
 	 * @param string $path
 	 * @param array $info
+	 *
 	 * @return string Name of thing
 	 * @throws Exception
 	 */
@@ -808,6 +824,7 @@ class ExtensionProcessor implements Processor {
 
 	/**
 	 * Set configuration settings for manifest_version == 1
+	 *
 	 * @todo In the future, this should be done via Config interfaces
 	 *
 	 * @param array $info
@@ -842,11 +859,13 @@ class ExtensionProcessor implements Processor {
 		foreach ( $value as $k => $v ) {
 			$result[$k] = $dir . '/' . $v;
 		}
+
 		return $result;
 	}
 
 	/**
 	 * Set configuration settings for manifest_version == 2
+	 *
 	 * @todo In the future, this should be done via Config interfaces
 	 *
 	 * @param array $info
@@ -917,7 +936,7 @@ class ExtensionProcessor implements Processor {
 	 * @param string $name
 	 * @param array $value
 	 * @param array &$array
-	 * @throws InvalidArgumentException
+	 *
 	 */
 	protected function storeToArrayRecursive( $path, $name, $value, &$array ) {
 		if ( !is_array( $value ) ) {
@@ -937,6 +956,7 @@ class ExtensionProcessor implements Processor {
 	 * @param string $name
 	 * @param array $value
 	 * @param array &$array
+	 *
 	 * @throws InvalidArgumentException
 	 */
 	protected function storeToArray( $path, $name, $value, &$array ) {
@@ -1020,3 +1040,6 @@ class ExtensionProcessor implements Processor {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ExtensionProcessor::class, 'ExtensionProcessor' );

@@ -3,6 +3,7 @@
 		"authors": [
 			"Edwingudfriend",
 			"Hussein m mmbaga",
+			"Jadnapac",
 			"Kipala",
 			"Kisare",
 			"Lloffiwr",
@@ -10,7 +11,6 @@
 			"Muddyb Blast Producer",
 			"Wangombe",
 			"Yasen igra",
-			"Jadnapac",
 			"Jon Harald Søby"
 		]
 	},
@@ -38,16 +38,20 @@
 	"vector-jumptosearch": "Nenda kwa kutafuta",
 	"vector-jumptocontent": "Nenda kwa yaliyomo",
 	"vector-more-actions": "Zaidi",
-	"vector-client-prefs-label": "Mandhari",
+	"vector-appearance-label": "Mandhari",
+	"vector-appearance-tooltip": "Badilisha mandhari ya ukubwa, upana, na rangi ya fonti ya ukurasa",
 	"vector-feature-limited-width-name": "Upana",
-	"vector-feature-custom-font-size-name": "Matini",
 	"vector-feature-limited-width-0-label": "Pana",
 	"vector-feature-limited-width-1-label": "Kawaida",
+	"vector-feature-custom-font-size-name": "Matini",
 	"vector-feature-custom-font-size-0-label": "Ndogo",
 	"vector-feature-custom-font-size-1-label": "Kawaida",
 	"vector-feature-custom-font-size-2-label": "Kubwa",
 	"skin-theme-name": "Rangi",
+	"skin-theme-day-label": "Mwanga",
+	"skin-theme-night-label": "Giza",
 	"skin-theme-os-label": "Otomatiki",
+	"skin-theme-exclusion-notice": "Ukurasa huu daima huwa na hali mwanga.",
 	"vector-searchsuggest-containing": "Tafuta kurasa zilizo na <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Yaliyomo",
 	"vector-toc-beginning": "Mwanzo",
@@ -58,7 +62,8 @@
 	"vector-toc-collapsible-button-label": "Geuza uonekanaji wa yaliyomo",
 	"vector-site-nav-label": "Tovuti",
 	"vector-main-menu-label": "Menyu kuu",
-	"vector-limited-width-toggle-off-popup": "Unaweza kugeuza kati ya upana mdogo na upana mkubwa kwa kubofya kitufe hiki.",
+	"vector-feature-custom-font-size-exclusion-notice": "Ukurasa huu hutumia ukubwa mdogo wa fonti",
+	"vector-feature-limited-width-exclusion-notice": "Yaliyomo ni pana iwezekanavyo kwa dirisha la kivinjari chako.",
 	"vector-page-tools-label": "Zana",
 	"vector-page-tools-general-label": "Kijumla",
 	"vector-page-tools-actions-label": "Vitendo",
@@ -72,5 +77,7 @@
 	"vector-toc-unpinned-popup": "Sehemu ya yaliyomo imehamia hapa.",
 	"vector-page-tools-unpinned-popup": "Menyu ya zana imehamia hapa.",
 	"vector-main-menu-unpinned-popup": "Menyu kuu imehamia hapa.",
-	"vector-client-prefs-unpinned-popup": "Menyu ya mandhari imehamia hapa."
+	"vector-appearance-unpinned-popup": "Menyu ya mandhari imehamia hapa.",
+	"vector-night-mode-issue-reporting-link-label": "Toa taarifa ya tatizo kuhusu hali giza",
+	"vector-night-mode-issue-reporting-link-notification": "Taarifa imepokelewa!"
 }

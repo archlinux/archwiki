@@ -47,7 +47,7 @@ ve.init.mw.ViewportZoomHandler = function VeInitMwViewportZoomHandler() {
  * Change the `<meta name="viewport">` tag to prevent automatic zooming.
  */
 ve.init.mw.ViewportZoomHandler.prototype.preventZoom = function () {
-	this.$viewportMeta.attr( 'content', function ( i, val ) {
+	this.$viewportMeta.attr( 'content', ( i, val ) => {
 		// Remove existing maximum-scale, if any, and add 'maximum-scale=1.0'. Don't change other values.
 		if ( val ) {
 			val = val.replace( /maximum-scale=[\d.]+(,\s*|$)/, '' );

@@ -1,8 +1,8 @@
 ( function () {
 	// Copied from mediawiki.requestIdleCallback
-	var requestIdleCallbackInternal = function ( callback ) {
-		setTimeout( function () {
-			var start = ve.now();
+	const requestIdleCallbackInternal = function ( callback ) {
+		setTimeout( () => {
+			const start = ve.now();
 			callback( {
 				didTimeout: false,
 				timeRemaining: function () {
@@ -14,13 +14,13 @@
 	};
 
 	// eslint-disable-next-line compat/compat
-	var requestIdleCallback = window.requestIdleCallback ?
+	const requestIdleCallback = window.requestIdleCallback ?
 		// Bind because it throws TypeError if context is not window
 		// eslint-disable-next-line compat/compat
 		window.requestIdleCallback.bind( window ) :
 		requestIdleCallbackInternal;
 
-	var EXPIRY_PREFIX = '_EXPIRY_';
+	const EXPIRY_PREFIX = '_EXPIRY_';
 	/**
 	 * Implementation of ve.init.SafeStorage
 	 *
@@ -36,9 +36,8 @@
 		this.store = store;
 
 		// Purge expired items once per page session
-		var storage = this;
-		setTimeout( function () {
-			storage.clearExpired();
+		setTimeout( () => {
+			this.clearExpired();
 		}, 2000 );
 	};
 
@@ -86,7 +85,7 @@
 	 * @inheritdoc
 	 */
 	ve.init.sa.SafeStorage.prototype.getObject = function ( key ) {
-		var json = this.get( key );
+		const json = this.get( key );
 
 		if ( json === false ) {
 			return false;
@@ -103,7 +102,7 @@
 	 * @inheritdoc
 	 */
 	ve.init.sa.SafeStorage.prototype.setObject = function ( key, value, expiry ) {
-		var json;
+		let json;
 		try {
 			json = JSON.stringify( value );
 			return this.set( key, json, expiry );
@@ -130,43 +129,41 @@
 	};
 
 	// Minimum amount of time (in milliseconds) for an iteration involving localStorage access.
-	var MIN_WORK_TIME = 3;
+	const MIN_WORK_TIME = 3;
 
 	/**
 	 * @inheritdoc
 	 */
 	ve.init.sa.SafeStorage.prototype.clearExpired = function () {
-		var storage = this;
-		return this.getExpiryKeys().then( function ( keys ) {
-			return $.Deferred( function ( d ) {
-				requestIdleCallback( function iterate( deadline ) {
-					while ( keys[ 0 ] !== undefined && deadline.timeRemaining() > MIN_WORK_TIME ) {
-						var key = keys.shift();
-						if ( storage.isExpired( key ) ) {
-							storage.remove( key );
-						}
+		return this.getExpiryKeys().then( ( keys ) => $.Deferred( ( d ) => {
+			const iterate = ( deadline ) => {
+				while ( keys[ 0 ] !== undefined && deadline.timeRemaining() > MIN_WORK_TIME ) {
+					const key = keys.shift();
+					if ( this.isExpired( key ) ) {
+						this.remove( key );
 					}
-					if ( keys[ 0 ] !== undefined ) {
-						// Ran out of time with keys still to remove, continue later
-						requestIdleCallback( iterate );
-					} else {
-						return d.resolve();
-					}
-				} );
-			} );
-		} );
+				}
+				if ( keys[ 0 ] !== undefined ) {
+					// Ran out of time with keys still to remove, continue later
+					requestIdleCallback( iterate );
+				} else {
+					return d.resolve();
+				}
+			};
+			requestIdleCallback( iterate );
+		} ) );
 	};
 
 	/**
 	 * @inheritdoc
 	 */
 	ve.init.sa.SafeStorage.prototype.getExpiryKeys = function () {
-		var store = this.store;
-		return $.Deferred( function ( d ) {
-			requestIdleCallback( function ( deadline ) {
-				var prefixLength = EXPIRY_PREFIX.length;
-				var keys = [];
-				var length = 0;
+		const store = this.store;
+		return $.Deferred( ( d ) => {
+			requestIdleCallback( ( deadline ) => {
+				const prefixLength = EXPIRY_PREFIX.length;
+				const keys = [];
+				let length = 0;
 				try {
 					length = store.length;
 				} catch ( e ) {}
@@ -179,8 +176,8 @@
 				// We don't expect to have more keys than we can handle in 50ms long-task window.
 				// But, we might still run out of time when other tasks run before this,
 				// or when the device receives UI events (especially on low-end devices).
-				for ( var i = 0; ( i < length && deadline.timeRemaining() > MIN_WORK_TIME ); i++ ) {
-					var key = null;
+				for ( let i = 0; ( i < length && deadline.timeRemaining() > MIN_WORK_TIME ); i++ ) {
+					let key = null;
 					try {
 						key = store.key( i );
 					} catch ( e ) {}
@@ -197,7 +194,7 @@
 	 * @inheritdoc
 	 */
 	ve.init.sa.SafeStorage.prototype.isExpired = function ( key ) {
-		var expiry;
+		let expiry;
 		try {
 			expiry = this.store.getItem( EXPIRY_PREFIX + key );
 		} catch ( e ) {

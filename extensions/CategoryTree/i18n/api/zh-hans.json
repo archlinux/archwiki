@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Liuxinyu970226",
+			"NekoCharm",
 			"U.T.",
-			"Xiplus",
-			"NekoCharm"
+			"Xiplus"
 		]
 	},
 	"apihelp-categorytree-summary": "用于CategoryTree扩展的内部模块。",

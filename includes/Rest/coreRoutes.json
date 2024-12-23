@@ -22,7 +22,8 @@
 			"DBLoadBalancerFactory",
 			"MainWANObjectCache",
 			"PageStore",
-			"PageRestHelperFactory"
+			"PageRestHelperFactory",
+			"TempUserConfig"
 		]
 	},
 	{
@@ -64,6 +65,14 @@
 			"PageRestHelperFactory"
 		],
 		"format": "bare"
+	},
+	{
+		"path": "/v1/search",
+		"class": "MediaWiki\\Rest\\Handler\\OpenSearchDescriptionHandler",
+		"services": [
+			"MainConfig",
+			"UrlUtils"
+		]
 	},
 	{
 		"path": "/v1/search/page",
@@ -188,8 +197,13 @@
 		"class": "MediaWiki\\Rest\\Handler\\TransformHandler",
 		"factory": "MediaWiki\\Rest\\Handler\\TransformHandler::factory",
 		"transformations": {
-			"wikitext": [ "html", "lint" ],
-			"html": [ "wikitext" ]
+			"wikitext": [
+				"html",
+				"lint"
+			],
+			"html": [
+				"wikitext"
+			]
 		}
 	},
 	{
@@ -198,8 +212,13 @@
 		"class": "MediaWiki\\Rest\\Handler\\TransformHandler",
 		"factory": "MediaWiki\\Rest\\Handler\\TransformHandler::factory",
 		"transformations": {
-			"wikitext": [ "html", "lint" ],
-			"html": [ "wikitext" ]
+			"wikitext": [
+				"html",
+				"lint"
+			],
+			"html": [
+				"wikitext"
+			]
 		}
 	},
 	{
@@ -208,8 +227,13 @@
 		"class": "MediaWiki\\Rest\\Handler\\TransformHandler",
 		"factory": "MediaWiki\\Rest\\Handler\\TransformHandler::factory",
 		"transformations": {
-			"wikitext": [ "html", "lint" ],
-			"html": [ "wikitext" ]
+			"wikitext": [
+				"html",
+				"lint"
+			],
+			"html": [
+				"wikitext"
+			]
 		}
 	}
 ]

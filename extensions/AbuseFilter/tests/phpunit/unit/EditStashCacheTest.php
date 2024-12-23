@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
-use HashBagOStuff;
 use MediaWiki\Extension\AbuseFilter\EditStashCache;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
@@ -10,12 +9,12 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Title\TitleValue;
 use MediaWikiUnitTestCase;
-use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\EditStashCache
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\EditStashCache
  */
 class EditStashCacheTest extends MediaWikiUnitTestCase {
 
@@ -26,11 +25,6 @@ class EditStashCacheTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::store
-	 * @covers ::logCache
-	 * @covers ::getStashKey
-	 */
 	public function testStore() {
 		$title = new TitleValue( NS_MAIN, 'Some title' );
 		$cache = $this->getMockBuilder( HashBagOStuff::class )
@@ -76,10 +70,6 @@ class EditStashCacheTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::store
-	 * @covers ::logCache
-	 * @covers ::seek
-	 * @covers ::getStashKey
 	 * @dataProvider provideRoundTrip
 	 */
 	public function testRoundTrip( array $storeVars, array $seekVars ) {
@@ -115,11 +105,6 @@ class EditStashCacheTest extends MediaWikiUnitTestCase {
 		$this->assertArrayEquals( $data, $value );
 	}
 
-	/**
-	 * @covers ::seek
-	 * @covers ::logCache
-	 * @covers ::getStashKey
-	 */
 	public function testSeek_miss() {
 		$title = new TitleValue( NS_MAIN, 'Some title' );
 		$cache = new HashBagOStuff();

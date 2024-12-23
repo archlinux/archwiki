@@ -4,6 +4,8 @@ namespace MediaWiki\Tests\Rest;
 
 use Exception;
 use InvalidArgumentException;
+use MediaWiki\ParamValidator\TypeDef\ArrayDef;
+use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -11,6 +13,7 @@ use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\Validator\BodyValidator;
 use MediaWiki\Rest\Validator\JsonBodyValidator;
 use MediaWiki\Rest\Validator\NullBodyValidator;
+use MediaWiki\Rest\Validator\ParamValidatorCallbacks;
 use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
@@ -36,7 +39,7 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 		];
 
 		$emptyBodyValidator = new NullBodyValidator();
-		$nonEmptyBodyValidator = new JsonBodyValidator( [
+		$nonEmptyBodyValidator = @new JsonBodyValidator( [
 			'kittens' => [
 				'rest-param-source' => 'body',
 				ParamValidator::PARAM_TYPE => 'string',
@@ -142,6 +145,8 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideValidateBody
 	 */
 	public function testValidateBody( BodyValidator $bodyValidator, RequestData $requestData, $expected ) {
+		$this->hideDeprecated( 'MediaWiki\Rest\Validator\Validator::validateBody' );
+
 		$objectFactory = $this->getDummyObjectFactory();
 
 		/** @var Handler|MockObject $handler */
@@ -201,10 +206,19 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 				Validator::PARAM_SOURCE => 'body',
 				Validator::PARAM_DESCRIPTION => 'just a test',
 				ParamValidator::PARAM_REQUIRED => true,
+				ArrayDef::PARAM_SCHEMA => [
+					'type' => 'array',
+					'items' => [
+						'type' => 'object'
+					]
+				]
 			],
 			[
 				'schema' => [
-					'type' => 'object',
+					'type' => 'array',
+					'items' => [
+						'type' => 'object'
+					]
 				],
 				'required' => true,
 				'description' => 'just a test',
@@ -324,7 +338,14 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 			new RequestData( [] ),
 			new LocalizedHttpException(
 				new MessageValue( 'paramvalidator-missingparam' ),
-				400
+				400,
+				[
+					'error' => 'parameter-validation-failed',
+					'name' => 'requiredparam',
+					'value' => null,
+					'failureCode' => 'missingparam',
+					'failureData' => null,
+				]
 			)
 		];
 		yield "$source parameter" => [
@@ -358,13 +379,20 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 			new RequestData( [ $requestDataKey => [ 'param' => [] ] ] ),
 			new LocalizedHttpException(
 				new MessageValue( 'paramvalidator-notmulti' ),
-				400
+				400,
+				[
+					'error' => 'parameter-validation-failed',
+					'name' => 'param',
+					'value' => [],
+					'failureCode' => 'badvalue',
+					'failureData' => null,
+				]
 			)
 		];
 	}
 
 	public static function provideValidateParams() {
-		$sources = [ 'path', 'query', 'post' ];
+		$sources = [ 'path', 'query' ];
 		$paramNames = [
 			"path" => "pathParams",
 			"query" => "queryParams",
@@ -432,7 +460,105 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 				]
 			],
 			new RequestData( [ 'pathParams' => [ 'foo' => 'test' ] ] ),
-			[] // The parameter from an unknown source should be ignored.
+			[] // The parameter from a non-body source should be ignored.
+		];
+
+		yield 'empty string' => [
+			[
+				'foo' => [
+					ParamValidator::PARAM_TYPE => 'string',
+					ParamValidator::PARAM_REQUIRED => true,
+					Validator::PARAM_SOURCE => 'body',
+				]
+			],
+			new RequestData( [ 'parsedBody' => [ 'foo' => '' ] ] ),
+			[ 'foo' => '' ]
+		];
+
+		yield 'valid integer (strict)' => [
+			[
+				'foo' => [
+					ParamValidator::PARAM_TYPE => 'integer',
+					Validator::PARAM_SOURCE => 'body',
+				]
+			],
+			new RequestData( [ 'parsedBody' => [ 'foo' => 123 ] ] ),
+			[ 'foo' => 123 ]
+		];
+
+		yield 'string as integer (lenient)' => [
+			[
+				'foo' => [
+					ParamValidator::PARAM_TYPE => 'integer',
+					Validator::PARAM_SOURCE => 'body',
+				]
+			],
+			new RequestData( [ 'parsedBody' => [ 'foo' => '123' ] ] ),
+			[ 'foo' => 123 ],
+			false, // don't enforce types
+		];
+
+		yield 'string as integer (strict)' => [
+			[
+				'foo' => [
+					ParamValidator::PARAM_TYPE => 'integer',
+					Validator::PARAM_SOURCE => 'body',
+				]
+			],
+			new RequestData( [ 'parsedBody' => [ 'foo' => '123' ] ] ),
+			new LocalizedHttpException(
+				new MessageValue( 'paramvalidator-badinteger-type' ),
+				400,
+				[
+					'error' => 'parameter-validation-failed',
+					'name' => 'foo',
+					'value' => '123',
+					'failureCode' => 'badinteger-type',
+					'failureData' => null,
+				]
+			),
+		];
+
+		yield 'integer instead of string' => [
+			[
+				'foo' => [
+					ParamValidator::PARAM_TYPE => 'string',
+					Validator::PARAM_SOURCE => 'body',
+				]
+			],
+			new RequestData( [ 'parsedBody' => [ 'foo' => 1234 ] ] ),
+			new LocalizedHttpException(
+				new MessageValue( 'paramvalidator-needstring' ),
+				400,
+				[
+					'error' => 'parameter-validation-failed',
+					'name' => 'foo',
+					'value' => '1234',
+					'failureCode' => 'needstring',
+					'failureData' => null,
+				]
+			),
+		];
+
+		yield 'array instead of string' => [
+			[
+				'foo' => [
+					ParamValidator::PARAM_TYPE => 'string',
+					Validator::PARAM_SOURCE => 'body',
+				]
+			],
+			new RequestData( [ 'parsedBody' => [ 'foo' => [ 1, 2, 3 ] ] ] ),
+			new LocalizedHttpException(
+				new MessageValue( 'paramvalidator-notmulti' ),
+				400,
+				[
+					'error' => 'parameter-validation-failed',
+					'name' => 'foo',
+					'value' => [ 1, 2, 3 ],
+					'failureCode' => 'badvalue',
+					'failureData' => null,
+				]
+			),
 		];
 
 		yield "valid complex value" => [
@@ -460,7 +586,17 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 			new RequestData( [ 'parsedBody' => [
 				'foo' => 'xyzzy' // not a complex value
 			] ] ),
-			new LocalizedHttpException( new MessageValue( 'paramvalidator-notarray' ), 400 )
+			new LocalizedHttpException(
+				new MessageValue( 'paramvalidator-notarray' ),
+				400,
+				[
+					'error' => 'parameter-validation-failed',
+					'name' => 'foo',
+					'value' => 'xyzzy',
+					'failureCode' => 'notarray',
+					'failureData' => null,
+				]
+			),
 		];
 
 		yield "default complex value" => [
@@ -479,12 +615,17 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideValidateBodyParams
 	 */
-	public function testValidateBodyParams( $paramSetting, RequestData $requestData, $expected ) {
+	public function testValidateBodyParams(
+		$paramSetting,
+		RequestData $requestData,
+		$expected,
+		$enforceTypes = true
+	) {
 		$objectFactory = $this->getDummyObjectFactory();
 		$validator = new Validator( $objectFactory, $requestData, $this->mockAnonNullAuthority() );
 
 		try {
-			$actual = $validator->validateBodyParams( $paramSetting );
+			$actual = $validator->validateBodyParams( $paramSetting, $enforceTypes );
 
 			if ( $expected instanceof Exception ) {
 				$this->fail( 'Expected exception: ' . $expected );
@@ -503,10 +644,30 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 				/** @var MessageValue $validationMessage */
 				$validationMessage = $param->getValue();
 				$this->assertSame( $expected->getMessageValue()->getKey(), $validationMessage->getKey() );
+
+				$this->assertSame( $expected->getErrorData(), $ex->getErrorData() );
 			} else {
 				$this->fail( 'Unexpected exception: ' . $ex );
 			}
 		}
+	}
+
+	public function testValidateParams_post() {
+		$this->expectDeprecationAndContinue( '/The "post" source is deprecated/' );
+
+		$requestData = new RequestData( [ 'postParams' => [ 'foo' => 'bar' ] ] );
+		$paramSetting = [
+			'foo' => [
+				ParamValidator::PARAM_TYPE => 'string',
+				Validator::PARAM_SOURCE => 'post',
+			]
+		];
+
+		$objectFactory = $this->getDummyObjectFactory();
+		$validator = new Validator( $objectFactory, $requestData, $this->mockAnonNullAuthority() );
+
+		$actual = $validator->validateParams( $paramSetting );
+		$this->assertSame( [ 'foo' => 'bar' ], $actual );
 	}
 
 	public static function provideDetectExtraneousBodyFields() {
@@ -545,7 +706,13 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 					'rest-extraneous-body-fields',
 					[ new ListParam( ListType::COMMA, array_keys( [ 'xyzzy' ] ) ) ]
 				),
-				400
+				400,
+				[
+					'error' => 'parameter-validation-failed',
+					'failureCode' => 'extraneous-body-fields',
+					'name' => 'xyzzy',
+					'failureData' => [ 'xyzzy' ]
+				]
 			)
 		];
 	}
@@ -573,6 +740,7 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 			if ( $expected instanceof LocalizedHttpException ) {
 				$this->assertInstanceOf( get_class( $expected ), $ex );
 				$this->assertSame( $expected->getCode(), $ex->getCode() );
+				$this->assertSame( $expected->getErrorData(), $ex->getErrorData() );
 				$this->assertStringContainsString( $expected->getMessage(), $ex->getMessage() );
 				$this->assertStringContainsString(
 					$expected->getMessageValue()->getKey(),
@@ -582,5 +750,87 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 				$this->fail( 'Unexpected exception: ' . $ex );
 			}
 		}
+	}
+
+	public function provideGetValue() {
+		return [
+			// Test case 0: Parameter exists in source and no normalization required
+			[
+				'source' => 'query',
+				'requestData' => new RequestData( [ 'queryParams' => [ 'param1' => 'value1' ] ] ),
+				'options' => [],
+				'expected' => 'value1'
+			],
+
+			// Test case 1: Parameter exists in source and normalization required
+			[
+				'source' => 'query',
+				'requestData' => new RequestData( [ 'queryParams' => [ 'param1' => "L\u{0061}\u{0308}rm" ] ] ),
+				'options' => [],
+				'expected' => "L\u{00E4}rm"
+			],
+
+			// Test case 2: Parameter exists in source and normalization required
+			[
+				'source' => 'query',
+				'requestData' => new RequestData( [ 'queryParams' => [ 'param1' => "Foo\0" ] ] ),
+				'options' => [],
+				'expected' => "Foo\u{FFFD}"
+			],
+//
+//			// Test case 3: Parameter does not exist, default used
+			[
+				'source' => 'query',
+				'requestData' => new RequestData( [] ),
+				'options' => [],
+				'expected' => 'default'
+			],
+//
+//			// Test case 4: Parameter source is body (No normalization)
+			[
+				'source' => 'body',
+				'requestData' => new RequestData( [ 'parsedBody' => [ 'param1' => "L\u{0061}\u{0308}rm" ] ] ),
+				'options' => [],
+				'expected' => "L\u{0061}\u{0308}rm"
+			],
+//
+//			// Test case 5: raw option is set (No normalization)
+			[
+				'source' => 'query',
+				'requestData' => new RequestData( [ 'queryParams' => [ 'param1' => "L\u{0061}\u{0308}rm" ] ] ),
+				'options' => [ 'raw' => true ],
+				'expected' => "L\u{0061}\u{0308}rm"
+			],
+
+			// Test case 6: Parameter source is not specified (Expect InvalidArgumentException)
+			[
+				'source' => null,
+				'requestData' => new RequestData( [ 'queryParams' => [ 'param1' => "L\u{0061}\u{0308}rm" ] ] ),
+				'options' => [],
+				'expected' => null,
+				'expectedException' => InvalidArgumentException::class
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetValue
+	 */
+	public function testGetValue( $source, RequestData $requestData, $options, $expected, $expectedException = null ) {
+		$validatorCallbacks = new ParamValidatorCallbacks(
+			$requestData,
+			$this->createMock( Authority::class ),
+		);
+
+		// Set options
+		$options['source'] = $source;
+
+		// Test case
+		if ( $expectedException !== null ) {
+			$this->expectException( $expectedException );
+		}
+
+		$result = $validatorCallbacks->getValue( 'param1', 'default', $options );
+		$this->assertSame( $expected, $result );
 	}
 }

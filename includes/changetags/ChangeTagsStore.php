@@ -16,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Change tagging
  */
 
 namespace MediaWiki\ChangeTags;
@@ -35,16 +34,18 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
 use RecentChange;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
- * Gateway class for change_tags table
+ * Read-write access to the change_tags table.
  *
  * @since 1.41
+ * @ingroup ChangeTags
  */
 class ChangeTagsStore {
 
@@ -206,12 +207,13 @@ class ChangeTagsStore {
 			throw new InvalidArgumentException( 'Unable to determine appropriate JOIN condition for tagging.' );
 		}
 
-		$tagTables = [ self::CHANGE_TAG, self::CHANGE_TAG_DEF ];
-		$join_cond_ts_tags = [ self::CHANGE_TAG_DEF => [ 'JOIN', 'ct_tag_id=ctd_id' ] ];
-		$field = 'ctd_name';
-
 		return $this->dbProvider->getReplicaDatabase()
-			->buildGroupConcatField( ',', $tagTables, $field, $join_cond, $join_cond_ts_tags );
+			->newSelectQueryBuilder()
+			->table( self::CHANGE_TAG )
+			->join( self::CHANGE_TAG_DEF, null, 'ct_tag_id=ctd_id' )
+			->field( 'ctd_name' )
+			->where( $join_cond )
+			->buildGroupConcatField( ',' );
 	}
 
 	/**
@@ -527,8 +529,8 @@ class ChangeTagsStore {
 	 * revision or log entry before any changes were made
 	 */
 	public function updateTags( $tagsToAdd, $tagsToRemove, &$rc_id = null,
-		&$rev_id = null, &$log_id = null, $params = null, RecentChange $rc = null,
-		UserIdentity $user = null
+		&$rev_id = null, &$log_id = null, $params = null, ?RecentChange $rc = null,
+		?UserIdentity $user = null
 	) {
 		$tagsToAdd = array_filter(
 			(array)$tagsToAdd, // Make sure we're submitting all tags...
@@ -636,7 +638,7 @@ class ChangeTagsStore {
 			$dbw->onTransactionPreCommitOrIdle( static function () use ( $dbw, $tagsToAdd, $fname ) {
 				$dbw->newUpdateQueryBuilder()
 					->update( self::CHANGE_TAG_DEF )
-					->set( [ 'ctd_count = ctd_count + 1' ] )
+					->set( [ 'ctd_count' => new RawSQLValue( 'ctd_count + 1' ) ] )
 					->where( [ 'ctd_name' => $tagsToAdd ] )
 					->caller( $fname )->execute();
 			}, $fname );
@@ -687,7 +689,7 @@ class ChangeTagsStore {
 					$dbw->onTransactionPreCommitOrIdle( static function () use ( $dbw, $tag, $fname ) {
 						$dbw->newUpdateQueryBuilder()
 							->update( self::CHANGE_TAG_DEF )
-							->set( [ 'ctd_count = ctd_count - 1' ] )
+							->set( [ 'ctd_count' => new RawSQLValue( 'ctd_count - 1' ) ] )
 							->where( [ 'ctd_name' => $tag ] )
 							->caller( $fname )->execute();
 
@@ -721,7 +723,7 @@ class ChangeTagsStore {
 	 * @return bool False if no changes are made, otherwise true
 	 */
 	public function addTags( $tags, $rc_id = null, $rev_id = null,
-		$log_id = null, $params = null, RecentChange $rc = null
+		$log_id = null, $params = null, ?RecentChange $rc = null
 	) {
 		$result = $this->updateTags( $tags, null, $rc_id, $rev_id, $log_id, $params, $rc );
 		return (bool)$result[0];

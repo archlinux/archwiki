@@ -24,7 +24,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that updates page_restrictions table from
@@ -47,7 +49,7 @@ class UpdateRestrictions extends Maintenance {
 			$this->fatalError( "page_restrictions table does not exist" );
 		}
 
-		if ( !$dbw->fieldExists( 'page', 'page_restrictions' ) ) {
+		if ( !$dbw->fieldExists( 'page', 'page_restrictions', __METHOD__ ) ) {
 			$this->output( "Migration is not needed.\n" );
 			return true;
 		}
@@ -58,7 +60,6 @@ class UpdateRestrictions extends Maintenance {
 			->select( 'MAX(page_id)' )
 			->from( 'page' )
 			->caller( __METHOD__ )->fetchField();
-		$escapedEmptyBlobValue = $dbw->addQuotes( '' );
 
 		$batchMinPageId = 0;
 
@@ -71,7 +72,7 @@ class UpdateRestrictions extends Maintenance {
 				->select( [ 'page_id', 'page_restrictions' ] )
 				->from( 'page' )
 				->where( [
-					"page_restrictions != $escapedEmptyBlobValue",
+					$dbw->expr( 'page_restrictions', '!=', '' ),
 					$dbw->expr( 'page_id', '>', $batchMinPageId ),
 					$dbw->expr( 'page_id', '<=', $batchMaxPageId ),
 				] )
@@ -114,7 +115,12 @@ class UpdateRestrictions extends Maintenance {
 				->caller( __METHOD__ )->execute();
 
 			// Clear out the legacy page.page_restrictions blob for this batch
-			$dbw->update( 'page', [ 'page_restrictions' => '' ], [ 'page_id' => $pageIds ], __METHOD__ );
+			$dbw->newUpdateQueryBuilder()
+				->update( 'page' )
+				->set( [ 'page_restrictions' => '' ] )
+				->where( [ 'page_id' => $pageIds ] )
+				->caller( __METHOD__ )
+				->execute();
 
 			$this->commitTransaction( $dbw, __METHOD__ );
 
@@ -158,5 +164,7 @@ class UpdateRestrictions extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = UpdateRestrictions::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

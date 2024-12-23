@@ -11,9 +11,9 @@ namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
 use MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook;
 use MediaWiki\ChangeTags\Hook\ListDefinedTagsHook;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Hook\RecentChange_saveHook;
 use RecentChange;
-use RequestContext;
 
 class TagHooks implements
 	ChangeTagsListActiveHook,

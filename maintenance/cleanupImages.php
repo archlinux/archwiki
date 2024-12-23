@@ -28,7 +28,9 @@
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/TableCleanup.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to clean up broken, unparseable upload filenames.
@@ -36,6 +38,7 @@ require_once __DIR__ . '/TableCleanup.php';
  * @ingroup Maintenance
  */
 class CleanupImages extends TableCleanup {
+	/** @inheritDoc */
 	protected $defaultParams = [
 		'table' => 'image',
 		'conds' => [],
@@ -113,9 +116,11 @@ class CleanupImages extends TableCleanup {
 		} else {
 			$this->output( "deleting bogus row '$name'\n" );
 			$db = $this->getPrimaryDB();
-			$db->delete( 'image',
-				[ 'img_name' => $name ],
-				__METHOD__ );
+			$db->newDeleteQueryBuilder()
+				->deleteFrom( 'image' )
+				->where( [ 'img_name' => $name ] )
+				->caller( __METHOD__ )
+				->execute();
 		}
 	}
 
@@ -190,18 +195,24 @@ class CleanupImages extends TableCleanup {
 			$this->output( "renaming $path to $finalPath\n" );
 			// @todo FIXME: Should this use File::move()?
 			$this->beginTransaction( $db, __METHOD__ );
-			$db->update( 'image',
-				[ 'img_name' => $final ],
-				[ 'img_name' => $orig ],
-				__METHOD__ );
-			$db->update( 'oldimage',
-				[ 'oi_name' => $final ],
-				[ 'oi_name' => $orig ],
-				__METHOD__ );
-			$db->update( 'page',
-				[ 'page_title' => $final ],
-				[ 'page_title' => $orig, 'page_namespace' => NS_FILE ],
-				__METHOD__ );
+			$db->newUpdateQueryBuilder()
+				->update( 'image' )
+				->set( [ 'img_name' => $final ] )
+				->where( [ 'img_name' => $orig ] )
+				->caller( __METHOD__ )
+				->execute();
+			$db->newUpdateQueryBuilder()
+				->update( 'oldimage' )
+				->set( [ 'oi_name' => $final ] )
+				->where( [ 'oi_name' => $orig ] )
+				->caller( __METHOD__ )
+				->execute();
+			$db->newUpdateQueryBuilder()
+				->update( 'page' )
+				->set( [ 'page_title' => $final ] )
+				->where( [ 'page_title' => $orig, 'page_namespace' => NS_FILE ] )
+				->caller( __METHOD__ )
+				->execute();
 			$dir = dirname( $finalPath );
 			if ( !file_exists( $dir ) ) {
 				if ( !wfMkdirParents( $dir, null, __METHOD__ ) ) {
@@ -242,5 +253,7 @@ class CleanupImages extends TableCleanup {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CleanupImages::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

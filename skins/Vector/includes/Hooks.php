@@ -4,16 +4,14 @@ namespace MediaWiki\Skins\Vector;
 
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\ResourceLoader as RL;
-use MediaWiki\ResourceLoader\Hook\ResourceLoaderSiteModulePagesHook;
-use MediaWiki\ResourceLoader\Hook\ResourceLoaderSiteStylesModulePagesHook;
 use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
 use MediaWiki\Skins\Vector\Hooks\HookRunner;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
-use RequestContext;
 use RuntimeException;
 use SkinTemplate;
 
@@ -28,8 +26,6 @@ use SkinTemplate;
 class Hooks implements
 	GetPreferencesHook,
 	LocalUserCreatedHook,
-	ResourceLoaderSiteModulePagesHook,
-	ResourceLoaderSiteStylesModulePagesHook,
 	SkinPageReadyConfigHook
 {
 	private Config $config;
@@ -518,39 +514,35 @@ class Hooks implements
 	}
 
 	/**
-	 * Adds MediaWiki:Vector.css as the skin style that controls classic Vector.
-	 *
-	 * @param string $skin
-	 * @param array &$pages
-	 */
-	public function onResourceLoaderSiteStylesModulePages( $skin, &$pages ): void {
-		if ( $skin === Constants::SKIN_NAME_MODERN && $this->config->get( 'VectorShareUserScripts' ) ) {
-			$pages['MediaWiki:Vector.css'] = [ 'type' => 'style' ];
-		}
-	}
-
-	/**
-	 * Adds MediaWiki:Vector.css as the skin style that controls classic Vector.
-	 *
-	 * @param string $skin
-	 * @param array &$pages
-	 */
-	public function onResourceLoaderSiteModulePages( $skin, &$pages ): void {
-		if ( $skin === Constants::SKIN_NAME_MODERN && $this->config->get( 'VectorShareUserScripts' ) ) {
-			$pages['MediaWiki:Vector.js'] = [ 'type' => 'script' ];
-		}
-	}
-
-	/**
 	 * Adds Vector specific user preferences that can only be accessed via API.
 	 *
 	 * @param User $user User whose preferences are being modified.
 	 * @param array[] &$prefs Preferences description array, to be fed to a HTMLForm object.
 	 */
 	public function onGetPreferences( $user, &$prefs ): void {
+		$services = MediaWikiServices::getInstance();
+		$featureManagerFactory = $services->getService( 'Vector.FeatureManagerFactory' );
+		$featureManager = $featureManagerFactory->createFeatureManager( RequestContext::getMain() );
+		$isNightModeEnabled = $featureManager->isFeatureEnabled( Constants::FEATURE_NIGHT_MODE );
+
 		$vectorPrefs = [
+			Constants::PREF_KEY_LIMITED_WIDTH => [
+				'type' => 'toggle',
+				'label-message' => 'vector-prefs-limited-width',
+				'section' => 'rendering/skin/skin-prefs',
+				'help-message' => 'vector-prefs-limited-width-help',
+				'hide-if' => [ '!==', 'skin', Constants::SKIN_NAME_MODERN ],
+			],
 			Constants::PREF_KEY_FONT_SIZE => [
-				'type' => 'api'
+				'type' => 'select',
+				'label-message' => 'vector-feature-custom-font-size-name',
+				'section' => 'rendering/skin/skin-prefs',
+				'options-messages' => [
+					'vector-feature-custom-font-size-0-label' => '0',
+					'vector-feature-custom-font-size-1-label' => '1',
+					'vector-feature-custom-font-size-2-label' => '2',
+				],
+				'hide-if' => [ '!==', 'skin', Constants::SKIN_NAME_MODERN ],
 			],
 			Constants::PREF_KEY_PAGE_TOOLS_PINNED => [
 				'type' => 'api'
@@ -561,18 +553,20 @@ class Hooks implements
 			Constants::PREF_KEY_TOC_PINNED => [
 				'type' => 'api'
 			],
-			Constants::PREF_KEY_CLIENT_PREFS_PINNED => [
+			Constants::PREF_KEY_APPEARANCE_PINNED => [
 				'type' => 'api'
-			],
-			Constants::PREF_KEY_LIMITED_WIDTH => [
-				'type' => 'toggle',
-				'label-message' => 'vector-prefs-limited-width',
-				'section' => 'rendering/skin/skin-prefs',
-				'help-message' => 'vector-prefs-limited-width-help',
-				'hide-if' => [ '!==', 'skin', Constants::SKIN_NAME_MODERN ],
 			],
 			Constants::PREF_KEY_NIGHT_MODE => [
-				'type' => 'api'
+				'type' => $isNightModeEnabled ? 'select' : 'api',
+				'label-message' => 'skin-theme-name',
+				'help-message' => 'skin-theme-description',
+				'section' => 'rendering/skin/skin-prefs',
+				'options-messages' => [
+					'skin-theme-day-label' => 'day',
+					'skin-theme-night-label' => 'night',
+					'skin-theme-os-label' => 'os',
+				],
+				'hide-if' => [ '!==', 'skin', Constants::SKIN_NAME_MODERN ],
 			],
 		];
 		$prefs += $vectorPrefs;

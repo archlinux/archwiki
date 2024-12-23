@@ -241,32 +241,17 @@ final class Constants {
 	/**
 	 * @var string
 	 */
-	public const FEATURE_CLIENT_PREFS_PINNED = 'ClientPrefsPinned';
+	public const FEATURE_APPEARANCE_PINNED = 'AppearancePinned';
 
 	/**
 	 * @var string
 	 */
-	public const REQUIREMENT_CLIENT_PREFS_PINNED = 'ClientPrefsPinned';
+	public const REQUIREMENT_APPEARANCE_PINNED = 'AppearancePinned';
 
 	/**
 	 * @var string
 	 */
-	public const PREF_KEY_CLIENT_PREFS_PINNED = 'vector-client-prefs-pinned';
-
-	/**
-	 * @var string
-	 */
-	public const CONFIG_KEY_CLIENT_PREFERENCES = 'VectorClientPreferences';
-
-	/**
-	 * @var string
-	 */
-	public const FEATURE_CLIENT_PREFERENCES = 'ClientPreferences';
-
-	/**
-	 * @var string
-	 */
-	public const REQUIREMENT_CLIENT_PREFERENCES = 'ClientPreferences';
+	public const PREF_KEY_APPEARANCE_PINNED = 'vector-appearance-pinned';
 
 	/**
 	 * @var string
@@ -307,7 +292,7 @@ final class Constants {
 	 * @var array
 	 */
 	public const VECTOR_BETA_FEATURES = [
-		self::CONFIG_KEY_CLIENT_PREFERENCES,
+		self::CONFIG_KEY_NIGHT_MODE,
 	];
 
 	/**

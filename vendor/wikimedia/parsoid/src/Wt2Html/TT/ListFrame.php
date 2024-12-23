@@ -13,35 +13,36 @@ use Wikimedia\Parsoid\Tokens\NlTk;
 class ListFrame {
 	/**
 	 * Flag indicating a list-less line that terminates a list block
-	 * @var bool
 	 */
-	public $atEOL = true;
+	public bool $atEOL = true;
 	/**
 	 * NlTk that triggered atEOL
-	 * @var ?NlTk
 	 */
-	public $nlTk = null;
-	/** @var array */
-	public $solTokens = [];
+	public ?NlTk $nlTk = null;
+	public array $solTokens = [];
 	/**
 	 * Bullet stack, previous element's listStyle
-	 * @var array
 	 */
-	public $bstack = [];
+	public array $bstack = [];
 	/**
 	 * Stack of end tags
 	 * @var array<EndTagTk>
 	 */
-	public $endtags = [];
+	public array $endtags = [];
 	/**
 	 * Partial DOM building heuristic:
 	 * Number of open block tags encountered within list context.
-	 * @var int
 	 */
-	public $numOpenBlockTags = 0;
+	public int $numOpenBlockTags = 0;
 	/**
 	 * Number of open tags encountered within list context.
-	 * @var int
 	 */
-	public $numOpenTags = 0;
+	public int $numOpenTags = 0;
+
+	/**
+	 * Did we generate a <dd> already on this line?
+	 * Used to convert extra : listitems to ":" instead of extra <dl>s.
+	 * Gets reset on encountering a NlTk or a ; listitem.
+	 */
+	public bool $haveDD = false;
 }

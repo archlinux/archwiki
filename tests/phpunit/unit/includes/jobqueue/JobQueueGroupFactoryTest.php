@@ -4,7 +4,9 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\JobQueue\JobQueueGroupFactory;
 use MediaWiki\MainConfigNames;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ReadOnlyMode;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\UUID\GlobalIdGenerator;
 
 /**

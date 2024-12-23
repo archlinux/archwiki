@@ -40,7 +40,7 @@ class TalkPageNotificationManagerTest extends MediaWikiIntegrationTestCase {
 	private function getManager(
 		bool $disableAnonTalk = false,
 		bool $isReadOnly = false,
-		RevisionLookup $revisionLookup = null
+		?RevisionLookup $revisionLookup = null
 	) {
 		$services = $this->getServiceContainer();
 		return new TalkPageNotificationManager(
@@ -204,7 +204,7 @@ class TalkPageNotificationManagerTest extends MediaWikiIntegrationTestCase {
 			->where( [ 'user_id' => $user->getId() ] )
 			->assertFieldValue( $user->getId() );
 
-		$this->db->startAtomic( __METHOD__ ); // let deferred updates queue up
+		$this->getDb()->startAtomic( __METHOD__ ); // let deferred updates queue up
 
 		$updateCountBefore = DeferredUpdates::pendingUpdatesCount();
 		$manager->clearForPageView( $user, $revision );
@@ -214,7 +214,7 @@ class TalkPageNotificationManagerTest extends MediaWikiIntegrationTestCase {
 		$updateCountAfter = DeferredUpdates::pendingUpdatesCount();
 		$this->assertGreaterThan( $updateCountBefore, $updateCountAfter, 'An update should have been queued' );
 
-		$this->db->endAtomic( __METHOD__ ); // run deferred updates
+		$this->getDb()->endAtomic( __METHOD__ ); // run deferred updates
 		$this->assertSame( 0, DeferredUpdates::pendingUpdatesCount(), 'No pending updates' );
 
 		// Notification should have been deleted from the DB

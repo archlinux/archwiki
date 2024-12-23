@@ -43,7 +43,7 @@
 
 	.iw-result__header a {
 		vertical-align: middle;
-		color: #000;
+		color: @color-emphasized;
 	}
 
 	.iw-result__footer {
@@ -112,7 +112,7 @@
 	}
 
 	/* Tablet and up */
-	@media only screen and ( min-width: @width-breakpoint-tablet ) {
+	@media only screen and ( min-width: @min-width-breakpoint-tablet ) {
 		#mw-interwiki-results {
 			display: inline-block;
 			width: ~'calc( 100% / 12 * 4 )';
@@ -122,7 +122,6 @@
 		.iw-resultset:nth-child( 1 ) {
 			.iw-result__header {
 				// Fallback is graceful enough.
-				/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 				border-top: unset;
 			}
 		}
@@ -144,7 +143,7 @@
 
 .mw-searchresults-has-iw.mw-searchresults-has-offset {
 	/* Tablet and up */
-	@media only screen and ( max-width: @width-breakpoint-tablet ) {
+	@media only screen and ( max-width: @max-width-breakpoint-mobile ) {
 		#mw-interwiki-results {
 			display: none;
 		}

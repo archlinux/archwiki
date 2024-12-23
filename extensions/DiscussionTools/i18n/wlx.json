@@ -4,26 +4,5 @@
 			"Zakaria Tunsung"
 		]
 	},
-	"discussiontools-defaultsummary-reply": "Ihi noɔre",
-	"discussiontools-replylink": "{{GENDER:|ihi noɔri}}",
-	"discussiontools-replywidget-advanced": "nimbi-toori gaabu",
-	"discussiontools-replywidget-cancel": "Toɔsaaŋ bahi",
-	"discussiontools-replywidget-mode-source": "Yijie",
-	"discussiontools-replywidget-mode-visual": "Buŋkaarihi",
-	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Ihi noɔri}} ko {{BIDI:$1}}",
-	"discussiontools-replywidget-preview": "Daŋkaanyɛ sɛne",
-	"discussiontools-replywidget-reply": "{{GENDER:|Ihi noɔri}}",
-	"discussiontools-replywidget-summary": "yeligiraa",
-	"discussiontools-replywidget-watchthis": "De a peeji ŋa paahi e [[Special:Watchlist|watchlist]]",
-	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|neɛ|noba}} aŋ tiha ba nɔɛ ihibu",
-	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|teɛhii|teɛha}}",
-	"discussiontools-topicheader-latestcomment": "Pampana teɛhii: $1",
-	"discussiontools-topicsubscription-button-subscribe": "sage kee maŋ nyɛ duoho",
-	"discussiontools-topicsubscription-button-subscribe-label": "Sage kee maŋ nyɛ duoho",
-	"discussiontools-topicsubscription-button-unsubscribe": "ta sage kee maŋ nyɛ duoho",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "Ta sage kee maŋ nyɛ duoho",
-	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|E na}} nyɛɛ duoho wuno noba teɛha kyaahi ne a yɛlju ŋa.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|E}} sagɛɛŋ kee maŋ nyɛ duoho!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|E}} kula maŋ nyɛ duoho yi noba teɛha kyaahi ne a yɛlju ŋa.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|E}} bala sage kee maŋ nyɛ duoho."
+	"discussiontools-defaultsummary-reply": "Ihi noɔre"
 }

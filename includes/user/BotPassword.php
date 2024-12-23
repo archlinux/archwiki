@@ -20,27 +20,26 @@
 
 namespace MediaWiki\User;
 
-use FormatJson;
-use IDBAccessObject;
-use InvalidPassword;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\Throttler;
 use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Password\InvalidPassword;
+use MediaWiki\Password\Password;
+use MediaWiki\Password\PasswordError;
+use MediaWiki\Password\PasswordFactory;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\BotPasswordSessionProvider;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Status\Status;
 use MWRestrictions;
-use ObjectCache;
-use Password;
-use PasswordError;
-use PasswordFactory;
 use stdClass;
 use UnexpectedValueException;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
@@ -208,7 +207,7 @@ class BotPassword {
 	}
 
 	/**
-	 * Get the separator for combined user name + app ID
+	 * Get the separator for combined username + app ID
 	 * @return string
 	 */
 	public static function getSeparator() {
@@ -261,7 +260,7 @@ class BotPassword {
 	 * @return Status
 	 * @throws UnexpectedValueException
 	 */
-	public function save( $operation, Password $password = null ) {
+	public function save( $operation, ?Password $password = null ) {
 		// Ensure operation is valid
 		if ( $operation !== 'insert' && $operation !== 'update' ) {
 			throw new UnexpectedValueException(
@@ -315,33 +314,6 @@ class BotPassword {
 	}
 
 	/**
-	 * Invalidate all passwords for a user, by central ID
-	 *
-	 * @deprecated since 1.37
-	 *
-	 * @param int $centralId
-	 * @return bool Whether any passwords were invalidated
-	 */
-	public static function invalidateAllPasswordsForCentralId( $centralId ) {
-		wfDeprecated( __METHOD__, '1.37' );
-
-		$enableBotPasswords = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::EnableBotPasswords );
-
-		if ( !$enableBotPasswords ) {
-			return false;
-		}
-
-		$dbw = self::getPrimaryDatabase();
-		$dbw->newUpdateQueryBuilder()
-			->update( 'bot_passwords' )
-			->set( [ 'bp_password' => PasswordFactory::newInvalidPassword()->toString() ] )
-			->where( [ 'bp_user' => $centralId ] )
-			->caller( __METHOD__ )->execute();
-		return (bool)$dbw->affectedRows();
-	}
-
-	/**
 	 * Remove all passwords for a user, by name
 	 * @param string $username
 	 * @return bool Whether any passwords were removed
@@ -350,32 +322,6 @@ class BotPassword {
 		return MediaWikiServices::getInstance()
 			->getBotPasswordStore()
 			->removeUserPasswords( (string)$username );
-	}
-
-	/**
-	 * Remove all passwords for a user, by central ID
-	 *
-	 * @deprecated since 1.37
-	 *
-	 * @param int $centralId
-	 * @return bool Whether any passwords were removed
-	 */
-	public static function removeAllPasswordsForCentralId( $centralId ) {
-		wfDeprecated( __METHOD__, '1.37' );
-
-		$enableBotPasswords = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::EnableBotPasswords );
-
-		if ( !$enableBotPasswords ) {
-			return false;
-		}
-
-		$dbw = self::getPrimaryDatabase();
-		$dbw->newDeleteQueryBuilder()
-			->deleteFrom( 'bot_passwords' )
-			->where( [ 'bp_user' => $centralId ] )
-			->caller( __METHOD__ )->execute();
-		return (bool)$dbw->affectedRows();
 	}
 
 	/**
@@ -460,7 +406,8 @@ class BotPassword {
 		if ( $passwordAttemptThrottle ) {
 			$throttle = new Throttler( $passwordAttemptThrottle, [
 				'type' => 'botpassword',
-				'cache' => ObjectCache::getLocalClusterInstance(),
+				'cache' => MediaWikiServices::getInstance()->getObjectCacheFactory()
+					->getLocalClusterInstance(),
 			] );
 			$result = $throttle->increase( $user->getName(), $request->getIP(), __METHOD__ );
 			if ( $result ) {

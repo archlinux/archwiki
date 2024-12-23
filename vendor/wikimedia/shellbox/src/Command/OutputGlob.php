@@ -2,12 +2,15 @@
 
 namespace Shellbox\Command;
 
+use Shellbox\Shellbox;
+use Shellbox\ShellboxError;
+
 /**
  * The base class for output file glob patterns
- *
- * @internal
  */
-abstract class OutputGlob extends OutputEntity {
+abstract class OutputGlob {
+	use UserDataTrait;
+
 	/** @var string */
 	protected $prefix;
 	/** @var string */
@@ -16,13 +19,24 @@ abstract class OutputGlob extends OutputEntity {
 	protected $files = [];
 
 	/**
+	 * @internal
 	 * @param string $prefix
 	 * @param string $extension
 	 */
 	public function __construct( $prefix, $extension ) {
-		$this->prefix = $prefix;
+		$this->prefix = Shellbox::normalizePath( $prefix );
+		Shellbox::checkExtension( $extension );
 		$this->extension = $extension;
 	}
+
+	/**
+	 * Get an OutputFile corresponding to a single file that matches the glob.
+	 *
+	 * @internal
+	 * @param string $boxedName
+	 * @return OutputFile
+	 */
+	abstract public function getOutputFile( $boxedName );
 
 	/**
 	 * @return string
@@ -39,8 +53,17 @@ abstract class OutputGlob extends OutputEntity {
 	}
 
 	/**
+	 * @internal
+	 * @return string
+	 */
+	public function getId() {
+		return $this->prefix . '.' . $this->extension;
+	}
+
+	/**
 	 * Get JSON serializable data for client/server communication
 	 *
+	 * @internal
 	 * @return array
 	 */
 	public function getClientData() {
@@ -56,10 +79,17 @@ abstract class OutputGlob extends OutputEntity {
 	 * never actually populated, it's not necessary to distinguish between the
 	 * different glob types.
 	 *
+	 * @internal
 	 * @param array $data
-	 * @return OutputGlobPlaceholder
+	 * @return OutputGlob
 	 */
 	public static function newFromClientData( array $data ) {
+		if ( ( $data['type'] ?? '' ) === 'url' ) {
+			if ( !isset( $data['url'] ) ) {
+				throw new ShellboxError( 'Missing required parameter for URL glob: "url"' );
+			}
+			return new OutputGlobToUrl( $data['prefix'], $data['extension'], $data['url'] );
+		}
 		return new OutputGlobPlaceholder( $data['prefix'], $data['extension'] );
 	}
 

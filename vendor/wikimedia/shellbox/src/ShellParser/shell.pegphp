@@ -22,8 +22,6 @@
 	use Wikimedia\WikiPEG\InternalError;
 	// @phan-file-suppress PhanUnusedGotoLabel
 	// @phan-file-suppress PhanNoopSwitchCases
-	// @phan-file-suppress PhanTypeMismatchArgument
-	// @phan-file-suppress PhanTypeComparisonFromArray
 }
 
 /*
@@ -513,11 +511,12 @@ io_here =
 		/ DLESS { return 'io_here'; }
 	)
 	end: here_end
-{
+{	// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 	// TODO: this is quite complicated to implement, especially given the way
 	// the parser is structured.
 	throw new UnimplementedError( 'heredoc is not implemented' );
 	// For phan
+	// @phan-suppress-next-line PhanPluginUnreachableCode
 	return $this->node( 'io_here', '' );
 }
 

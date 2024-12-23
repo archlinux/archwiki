@@ -30,7 +30,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Ce kategorijə barədə",
 	"mobile-frontend-meta-data-issues-header": "Səhifə problemon",
 	"minerva-meta-data-issues-section-header": "Ǧysmə problemon",
-	"mobile-frontend-notifications-filter": "Parzyn",
 	"mobile-frontend-pageaction-edit-tooltip": "Ce səhifə sə ǧysmi sərost karde",
 	"mobile-frontend-placeholder": "Bynəv {{SITENAME}}",
 	"mobile-frontend-random-button": "Rajrastə",
@@ -55,7 +54,5 @@
 	"skin-minerva-issue-learn-more": "Ve omute",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorijon",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Səhifon kategorijon dijə karde",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Səhifə problemon pəjdo karde təkmil kardə byə",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Ce səhifə problemon (Šablon:ambox) məǧolədə nyvyštə bəben.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Həjf ki, nətičon bə i dastə ogəte dastrəs ni mobil diləgonədə. Əgəm šymə ym funksijə oko doj pidəjone, zəhmət nybu, mizi versijə dijə bykən."
 }

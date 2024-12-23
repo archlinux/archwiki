@@ -8,8 +8,8 @@
 	 * @constructor
 	 * @param {mw.Api} api
 	 * @param {Object} [config] Configuration object
-	 * @cfg {number} [limit=25] The limit on how many notifications to fetch
-	 * @cfg {string} [userLang=mw.config.get( 'wgUserLanguage' )] User language. Defaults
+	 * @param {number} [config.limit=25] The limit on how many notifications to fetch
+	 * @param {string} [config.userLang=mw.config.get( 'wgUserLanguage' )] User language. Defaults
 	 *  to the default user language configuration settings.
 	 */
 	mw.echo.api.APIHandler = function MwEchoApiAPIHandler( api, config ) {
@@ -81,7 +81,7 @@
 	 */
 	mw.echo.api.APIHandler.prototype.fetchUnreadNotificationPages = function ( sources ) {
 		sources = sources || '*';
-		var params = {
+		const params = {
 			action: 'query',
 			meta: 'unreadnotificationpages',
 			uselang: this.userLang,
@@ -122,19 +122,18 @@
 	 *  fetched from the API.
 	 */
 	mw.echo.api.APIHandler.prototype.createNewFetchNotificationPromise = function ( type, sources, overrideParams ) {
-		var fetchingSource = 'local',
-			me = this,
-			params = $.extend( {
-				action: 'query',
-				formatversion: 2,
-				meta: 'notifications',
-				notsections: this.normalizedType[ type ],
-				notformat: 'model',
-				notlimit: this.limit,
-				notprop: 'list|count|seenTime',
-				uselang: this.userLang
-			}, this.getTypeParams( type ) );
+		const params = Object.assign( {
+			action: 'query',
+			formatversion: 2,
+			meta: 'notifications',
+			notsections: this.normalizedType[ type ],
+			notformat: 'model',
+			notlimit: this.limit,
+			notprop: 'list|count|seenTime',
+			uselang: this.userLang
+		}, this.getTypeParams( type ) );
 
+		let fetchingSource = 'local';
 		if ( !this.isSourceLocal( sources ) ) {
 			params.notwikis = sources;
 			params.notfilter = '!read';
@@ -143,14 +142,14 @@
 
 		// Initialize the nested value if it doesn't yet exist
 		this.fetchNotificationsPromise[ type ] = this.fetchNotificationsPromise[ type ] || {};
-		me.apiErrorState[ type ] = me.apiErrorState[ type ] || {};
+		this.apiErrorState[ type ] = this.apiErrorState[ type ] || {};
 
 		// Reset cached values
 		this.fetchNotificationsPromise[ type ][ fetchingSource ] = null;
 		this.apiErrorState[ type ][ fetchingSource ] = false;
 
 		// Create the fetch promise
-		var fetchNotifPromise = this.api.get( $.extend( true, params, overrideParams ) );
+		const fetchNotifPromise = this.api.get( $.extend( true, params, overrideParams ) );
 
 		// Only cache promises that don't have override params in them
 		if ( !overrideParams ) {
@@ -158,9 +157,9 @@
 		}
 
 		return fetchNotifPromise
-			.fail( function () {
+			.fail( () => {
 				// Mark API error state
-				me.apiErrorState[ type ][ fetchingSource ] = true;
+				this.apiErrorState[ type ][ fetchingSource ] = true;
 			} );
 	};
 
@@ -226,7 +225,7 @@
 	 * @return {boolean} The model is in API error state
 	 */
 	mw.echo.api.APIHandler.prototype.isFetchingErrorState = function ( type, sources ) {
-		var fetchingSource = 'local';
+		let fetchingSource = 'local';
 
 		if ( !this.isSourceLocal( sources ) ) {
 			fetchingSource = 'foreign';
@@ -245,7 +244,7 @@
 	 *  fetched from the API.
 	 */
 	mw.echo.api.APIHandler.prototype.getFetchNotificationPromise = function ( type, sources, overrideParams ) {
-		var fetchingSource = 'local';
+		let fetchingSource = 'local';
 
 		if ( !this.isSourceLocal( sources ) ) {
 			fetchingSource = 'foreign';

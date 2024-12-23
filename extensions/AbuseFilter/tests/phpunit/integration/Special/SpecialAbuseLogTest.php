@@ -15,7 +15,7 @@ use MediaWikiIntegrationTestCase;
 use stdClass;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog
+ * @covers \MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog
  */
 class SpecialAbuseLogTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -25,7 +25,6 @@ class SpecialAbuseLogTest extends MediaWikiIntegrationTestCase {
 	 * @param bool $canSeeSuppressed
 	 * @param string $expected
 	 * @dataProvider provideEntryAndVisibility
-	 * @covers ::getEntryVisibilityForUser
 	 */
 	public function testGetEntryVisibilityForUser(
 		stdClass $row,

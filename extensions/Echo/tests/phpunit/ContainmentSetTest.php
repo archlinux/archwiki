@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\Notifications\Test;
 
-use HashBagOStuff;
 use MediaWiki\Extension\Notifications\ArrayList;
 use MediaWiki\Extension\Notifications\CachedList;
 use MediaWiki\Extension\Notifications\ContainmentSet;
 use MediaWiki\Extension\Notifications\OnWikiList;
 use MediaWikiIntegrationTestCase;
-use WANObjectCache;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\ContainmentSet

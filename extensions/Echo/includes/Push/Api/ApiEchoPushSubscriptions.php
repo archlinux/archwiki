@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications\Push\Api;
 
-use ApiBase;
-use ApiModuleManager;
-use ApiUsageException;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiModuleManager;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\ParamValidator\ParamValidator;
 

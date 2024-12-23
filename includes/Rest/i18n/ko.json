@@ -2,17 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Bluehill",
-			"Ykhwong",
-			"Suleiman the Magnificent Television"
+			"Suleiman the Magnificent Television",
+			"Ykhwong"
 		]
 	},
+	"rest-prefix-mismatch": "요청한 경로($1)가 REST API 기본 경로($2) 안에 없었습니다",
+	"rest-bad-prefix": "엔드포인트 경로($1)에 유효한 모듈 접두사가 없습니다",
 	"rest-wrong-method": "요청 메소드($1)는 {{PLURAL:$3|이 경로에 대해 허용되는 메소드|이 경로에 대해 허용되는 메소드 중 하나}}가 아닙니다 ($2)",
 	"rest-no-match": "요청된 상대 경로($1)는 알려진 핸들러와 일치하지 않습니다",
+	"rest-unknown-module": "요청한 모듈 이름($1)을 알 수 없습니다",
 	"rest-nonexistent-title": "지정한 문서($1)가 존재하지 않습니다.",
 	"rest-nonexistent-title-revision": "지정된 판($1)은 지정된 문서($2)에 대해 존재하지 않습니다",
 	"rest-nonexistent-revision": "요청한 판($1)이 존재하지 않습니다",
 	"rest-nonexistent-user": "지정된 사용자 이름($1)이 존재하지 않습니다",
 	"rest-invalid-user": "지정된 사용자 이름($1)이 유효하지 않습니다",
+	"rest-invalid-ip": "지정된 IP($1)가 유효하지 않습니다",
 	"rest-invalid-title": "지정된 제목($1)은 위키 문서를 가리키지 않습니다.",
 	"rest-unsupported-content-type": "지원하지 않는 콘텐츠 유형: $1",
 	"rest-permission-error": "권한이 없습니다: $1",
@@ -42,6 +46,7 @@
 	"rest-bad-json-body": "유효하지 않은 요청 본문입니다. JSON 객체여야 합니다.",
 	"rest-json-body-parse-error": "요청 본문을 JSON으로 구문 분석하는 데 실패했습니다: $1",
 	"rest-missing-body-field": "요청 본문에서 \"$1\" 필수 필드가 없습니다.",
+	"rest-body-validation-error": "유효하지 않은 요청 본문: $1",
 	"rest-extraneous-body-fields": "요청 본문에서 발견된 외부 필드: $1",
 	"rest-bad-content-model": "잘못된 콘텐츠 모델: $1",
 	"rest-update-cannot-create-page": "\"$1\" 문서는 이미 존재하므로 생성할 수 없습니다. 기존 문서를 업데이트하려면 요청 본문의 \"latest\" 키 아래 구조에 기본 판 ID를 제공하십시오.",
@@ -60,5 +65,17 @@
 	"rest-parsoid-resource-exceeded": "리소스 한도를 초과했습니다",
 	"rest-parsoid-error": "파소이드 오류입니다.",
 	"rest-request-body-expected": "$1 요청 메소드는 요청 본문을 예상합니다",
-	"rest-request-body-unaccepted": "$1 요청 메소드는 요청 본문을 허용하지 않습니다"
+	"rest-request-body-unaccepted": "$1 요청 메소드는 요청 본문을 허용하지 않습니다",
+	"rest-unmapped-action-error": "매핑되지 않은 작업 모듈 오류: $1",
+	"rest-unsupported-transform-input": "지원되지 않는 입력: $1",
+	"rest-bad-etag": "잘못된 ETag: $1",
+	"rest-unsupported-profile-version": "지원되지 않는 프로파일 버전: $1",
+	"rest-parsoid-unsupported-media": "지원하지 않는 미디어 유형",
+	"rest-missing-revision-html-content-type": "판 html의 콘텐츠 유형이 없습니다.",
+	"rest-unsupported-profile-conversion": "이 변환을 어떻게 하는지 모릅니다.",
+	"rest-edit-conflict": "편집 충돌 ($1)",
+	"rest-unknown-parsoid-transformation": "알 수 없는 변환.",
+	"rest-unsupported-language-conversion": "지원되지 않는 언어 변환: $1에서 $2",
+	"rest-unknown-content-model": "알 수 없는 콘텐츠 모델: $1",
+	"rest-param-desc-revision-id": "판 ID"
 }

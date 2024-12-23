@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Block
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,14 +16,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
 use ErrorPageError;
 use HtmlArmor;
-use Language;
 use LogEventsList;
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockPermissionCheckerFactory;
@@ -41,6 +37,7 @@ use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
@@ -63,10 +60,11 @@ use OOUI\HtmlSnippet;
 use OOUI\LabelWidget;
 use OOUI\Widget;
 use Wikimedia\IPUtils;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
- * A special page that allows users with 'block' right to block users from
- * editing pages and other actions
+ * Allow users with 'block' user right to block IPs and user accounts from
+ * editing pages and other actions.
  *
  * @ingroup SpecialPage
  */
@@ -99,10 +97,17 @@ class SpecialBlock extends FormSpecialPage {
 	protected $alreadyBlocked;
 
 	/**
-	 * @var array[]
-	 * @phan-var non-empty-array[]
+	 * @var MessageSpecifier[]
 	 */
 	protected $preErrors = [];
+
+	/** @var bool */
+	protected bool $useCodex = false;
+
+	/**
+	 * @var array <mixed,mixed> An associative array used to pass vars to Codex form
+	 */
+	protected array $codexFormData = [];
 
 	private NamespaceInfo $namespaceInfo;
 
@@ -139,13 +144,18 @@ class SpecialBlock extends FormSpecialPage {
 		$this->blockActionInfo = $blockActionInfo;
 		$this->titleFormatter = $titleFormatter;
 		$this->namespaceInfo = $namespaceInfo;
+		$this->useCodex = $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) ||
+			$this->getRequest()->getBool( 'usecodex' );
 	}
 
 	public function execute( $par ) {
 		parent::execute( $par );
 
-		if ( $this->getConfig()->get( 'UseCodexSpecialBlock' ) ) {
-			$this->getOutput()->addModules( 'mediawiki.special.block.codex' );
+		if ( $this->useCodex ) {
+			$this->codexFormData[ 'blockTargetUser' ] = $this->target instanceof UserIdentity ?
+				$this->target->getName() :
+				$this->target ?? null;
+			$this->getOutput()->addJsConfigVars( $this->codexFormData );
 		}
 	}
 
@@ -189,7 +199,7 @@ class SpecialBlock extends FormSpecialPage {
 		// need to extract *every* variable from the form just for processing here, but
 		// there are legitimate uses for some variables
 		$request = $this->getRequest();
-		[ $this->target, $this->type ] = self::getTargetAndTypeInternal( $par, $request );
+		[ $this->target, $this->type ] = $this->getTargetAndTypeInternal( $par, $request );
 		if ( $this->target instanceof UserIdentity ) {
 			// Set the 'relevant user' in the skin, so it displays links like Contributions,
 			// User logs, UserRights, etc.
@@ -199,6 +209,63 @@ class SpecialBlock extends FormSpecialPage {
 		[ $this->previousTarget, /*...*/ ] = $this->blockUtils
 			->parseBlockTarget( $request->getVal( 'wpPreviousTarget' ) );
 		$this->requestedHideUser = $request->getBool( 'wpHideUser' );
+
+		if ( $this->useCodex ) {
+			// Parse wpExpiry param
+			$givenExpiry = $request->getVal( 'wpExpiry', '' );
+			if ( wfIsInfinity( $givenExpiry ) ) {
+				$this->codexFormData[ 'blockExpiryPreset' ] = 'infinite';
+			} else {
+				$expiry = date_parse( $givenExpiry );
+				$this->codexFormData[ 'blockExpiryPreset' ] = isset( $expiry[ 'relative' ] ) ?
+					// Relative expiry (e.g. '1 week')
+					$givenExpiry :
+					// Absolute expiry, formatted for <input type="datetime-local">
+					$this->formatExpiryForHtml( $request->getVal( 'wpExpiry', '' ) );
+			}
+
+			$this->codexFormData[ 'blockTypePreset' ] =
+				$request->getVal( 'wpEditingRestriction' ) === 'sitewide' ||
+				$request->getVal( 'wpEditingRestriction' ) === 'partial' ?
+				$request->getVal( 'wpEditingRestriction' ) :
+				'sitewide';
+			$this->codexFormData[ 'blockReasonPreset' ] = $request->getVal( 'wpReason' );
+			$this->codexFormData[ 'blockReasonOtherPreset' ] = $request->getVal( 'wpReason-other' );
+			$blockAdditionalDetailsPreset = $blockDetailsPreset = [];
+
+			if ( $request->getBool( 'wpCreateAccount' ) ) {
+				$blockDetailsPreset[] = 'wpCreateAccount';
+			}
+
+			if ( $request->getBool( 'wpDisableEmail' ) ) {
+				$blockDetailsPreset[] = 'wpDisableEmail';
+			}
+
+			if ( $request->getBool( 'wpDisableUTEdit' ) ) {
+				$blockDetailsPreset[] = 'wpDisableUTEdit';
+			}
+
+			if ( $request->getVal( 'wpAutoBlock' ) !== '0' ) {
+				$blockAdditionalDetailsPreset[] = 'wpAutoBlock';
+			}
+
+			if ( $request->getBool( 'wpWatch' ) ) {
+				$blockAdditionalDetailsPreset[] = 'wpWatch';
+			}
+
+			if ( $request->getBool( 'wpHideName' ) ) {
+				$blockAdditionalDetailsPreset[] = 'wpHideName';
+			}
+
+			if ( $request->getBool( 'wpHardBlock' ) ) {
+				$blockAdditionalDetailsPreset[] = 'wpHardBlock';
+			}
+
+			$this->codexFormData[ 'blockDetailsPreset' ] = $blockDetailsPreset;
+			$this->codexFormData[ 'blockAdditionalDetailsPreset' ] = $blockAdditionalDetailsPreset;
+			$this->codexFormData[ 'blockPageRestrictions' ] = $request->getVal( 'wpPageRestrictions' );
+			$this->codexFormData[ 'blockNamespaceRestrictions' ] = $request->getVal( 'wpNamespaceRestrictions' );
+		}
 	}
 
 	/**
@@ -223,16 +290,21 @@ class SpecialBlock extends FormSpecialPage {
 				[
 					'align' => 'top',
 					'errors' => array_map( function ( $errMsg ) {
-						// @phan-suppress-next-line PhanParamTooFewUnpack Should infer non-emptiness
-						return new HtmlSnippet( $this->msg( ...$errMsg )->parse() );
+						return new HtmlSnippet( $this->msg( $errMsg )->parse() );
 					}, $this->preErrors ),
 				]
 			) );
+
+			if ( $this->useCodex ) {
+				$this->codexFormData[ 'blockPreErrors' ] = array_map( function ( $errMsg ) {
+					return $this->msg( $errMsg )->parse();
+				}, $this->preErrors );
+			}
 		}
 	}
 
 	protected function getDisplayFormat() {
-		return $this->getConfig()->get( 'UseCodexSpecialBlock' ) ? 'codex' : 'ooui';
+		return $this->useCodex ? 'codex' : 'ooui';
 	}
 
 	/**
@@ -249,6 +321,9 @@ class SpecialBlock extends FormSpecialPage {
 
 		$suggestedDurations = $this->getLanguage()->getBlockDurations();
 
+		$this->codexFormData[ 'blockEnableMultiblocks' ] = $conf->get( MainConfigNames::EnableMultiBlocks ) ||
+			$this->getRequest()->getBool( 'multiblocks' );
+
 		$a = [];
 
 		$a['Target'] = [
@@ -263,16 +338,15 @@ class SpecialBlock extends FormSpecialPage {
 			'validation-callback' => function ( $value, $alldata, $form ) {
 				$status = $this->blockUtils->validateTarget( $value );
 				if ( !$status->isOK() ) {
-					$errors = $status->getErrorsArray();
-
-					return $form->msg( ...$errors[0] );
+					$errors = $status->getMessages();
+					return $form->msg( $errors[0] );
 				}
 				return true;
 			},
 			'section' => 'target',
 		];
 
-		$editingRestrictionOptions = $this->getConfig()->get( 'UseCodexSpecialBlock' ) ?
+		$editingRestrictionOptions = $this->useCodex ?
 			// If we're using Codex, use the option-descriptions feature, which is only supported by Codex
 			[
 				'options-messages' => [
@@ -337,15 +411,19 @@ class SpecialBlock extends FormSpecialPage {
 
 		if ( $conf->get( MainConfigNames::EnablePartialActionBlocks ) ) {
 			$blockActions = $this->blockActionInfo->getAllBlockActions();
+			$optionMessages = array_combine(
+				array_map( static function ( $action ) {
+					return "ipb-action-$action";
+				}, array_keys( $blockActions ) ),
+				$blockActions
+			);
+
+			$this->codexFormData[ 'partialBlockActionOptions'] = $optionMessages;
+
 			$a['ActionRestrictions'] = [
 				'type' => 'multiselect',
 				'cssclass' => 'mw-htmlform-checkradio-indent mw-block-partial-restriction mw-block-action-restriction',
-				'options-messages' => array_combine(
-					array_map( static function ( $action ) {
-						return "ipb-action-$action";
-					}, array_keys( $blockActions ) ),
-					$blockActions
-				),
+				'options-messages' => $optionMessages,
 				'section' => 'actions',
 			];
 		}
@@ -368,6 +446,8 @@ class SpecialBlock extends FormSpecialPage {
 				'label-message' => 'ipbemailban',
 				'section' => 'details',
 			];
+
+			$this->codexFormData[ 'blockAllowsEmailBan'] = true;
 		}
 
 		if ( $blockAllowsUTEdit ) {
@@ -378,6 +458,8 @@ class SpecialBlock extends FormSpecialPage {
 				'default' => false,
 				'section' => 'details',
 			];
+
+			$this->codexFormData[ 'blockAllowsUTEdit'] = true;
 		}
 
 		$defaultExpiry = $this->msg( 'ipb-default-expiry' )->inContentLanguage();
@@ -395,6 +477,8 @@ class SpecialBlock extends FormSpecialPage {
 			'default' => $defaultExpiry->text(),
 			'section' => 'expiry',
 		];
+		$this->codexFormData[ 'blockExpiryOptions' ] = $suggestedDurations;
+		$this->codexFormData[ 'blockExpiryDefault' ] = $defaultExpiry->text();
 
 		$a['Reason'] = [
 			'type' => 'selectandother',
@@ -407,6 +491,15 @@ class SpecialBlock extends FormSpecialPage {
 			'section' => 'reason',
 		];
 
+		if ( $this->useCodex ) {
+			$blockReasonOptions = Html::listDropdownOptionsCodex(
+				Html::listDropdownOptions( $this->msg( 'ipbreason-dropdown' )->plain(),
+					[ 'other' => $this->msg( 'htmlform-selectorother-other' )->text() ]
+			) );
+			$this->codexFormData[ 'blockReasonOptions' ] = $blockReasonOptions;
+			$this->codexFormData[ 'blockReasonMaxLength' ] = CommentStore::COMMENT_CHARACTER_LIMIT;
+		}
+
 		$a['AutoBlock'] = [
 			'type' => 'check',
 			'label-message' => [
@@ -416,6 +509,8 @@ class SpecialBlock extends FormSpecialPage {
 			'default' => true,
 			'section' => 'options',
 		];
+		$this->codexFormData['blockAutoblockExpiry'] = $this->getLanguage()
+			->formatDuration( $conf->get( MainConfigNames::AutoblockExpiry ) );
 
 		// Allow some users to hide name from block log, blocklist and listusers
 		if ( $this->getAuthority()->isAllowed( 'hideuser' ) ) {
@@ -425,6 +520,8 @@ class SpecialBlock extends FormSpecialPage {
 				'cssclass' => 'mw-block-hideuser',
 				'section' => 'options',
 			];
+
+			$this->codexFormData['blockHideUser'] = true;
 		}
 
 		// Watchlist their user page? (Only if user is logged in)
@@ -478,7 +575,7 @@ class SpecialBlock extends FormSpecialPage {
 		if ( $this->target ) {
 			$status = $this->blockUtils->validateTarget( $this->target );
 			if ( !$status->isOK() ) {
-				$errors = $status->getErrorsArray();
+				$errors = $status->getMessages( 'error' );
 				$this->preErrors = array_merge( $this->preErrors, $errors );
 			}
 		}
@@ -530,13 +627,19 @@ class SpecialBlock extends FormSpecialPage {
 			}
 
 			if ( $block->getExpiry() == 'infinity' ) {
-				$fields['Expiry']['default'] = 'infinite';
+				$fields['Expiry']['default'] = $this->codexFormData[ 'blockExpiryDefault' ] = 'infinite';
 			} else {
 				$fields['Expiry']['default'] = wfTimestamp( TS_RFC2822, $block->getExpiry() );
+
+				// Don't overwrite if expiry was specified in the URL
+				if ( !isset( $this->codexFormData[ 'blockExpiryPreset' ] ) ) {
+					$this->codexFormData[ 'blockExpiryPreset' ] = $this->formatExpiryForHtml( $block->getExpiry() );
+				}
 			}
 
 			if ( !$block->isSitewide() ) {
-				$fields['EditingRestriction']['default'] = 'partial';
+				$fields['EditingRestriction']['default'] =
+					$this->codexFormData[ 'blockTypePreset' ] = 'partial';
 
 				$pageRestrictions = [];
 				$namespaceRestrictions = [];
@@ -552,9 +655,11 @@ class SpecialBlock extends FormSpecialPage {
 
 				// Sort the restrictions so they are in alphabetical order.
 				sort( $pageRestrictions );
-				$fields['PageRestrictions']['default'] = implode( "\n", $pageRestrictions );
+				$fields['PageRestrictions']['default'] =
+					$this->codexFormData[ 'blockPageRestrictions' ] = implode( "\n", $pageRestrictions );
 				sort( $namespaceRestrictions );
-				$fields['NamespaceRestrictions']['default'] = implode( "\n", $namespaceRestrictions );
+				$fields['NamespaceRestrictions']['default'] =
+					$this->codexFormData[ 'blockNamespaceRestrictions' ] = implode( "\n", $namespaceRestrictions );
 
 				if ( $this->getConfig()->get( MainConfigNames::EnablePartialActionBlocks ) ) {
 					$actionRestrictions = [];
@@ -568,7 +673,8 @@ class SpecialBlock extends FormSpecialPage {
 			}
 
 			$this->alreadyBlocked = true;
-			$this->preErrors[] = [ 'ipb-needreblock', wfEscapeWikiText( $block->getTargetName() ) ];
+			$this->codexFormData[ 'blockAlreadyBlocked' ] = $this->alreadyBlocked;
+			$this->preErrors[] = $this->msg( 'ipb-needreblock', wfEscapeWikiText( $block->getTargetName() ) );
 		}
 
 		if ( $this->alreadyBlocked || $this->getRequest()->wasPosted()
@@ -581,15 +687,32 @@ class SpecialBlock extends FormSpecialPage {
 		if ( $this->requestedHideUser ) {
 			$fields['Confirm']['type'] = 'check';
 			unset( $fields['Confirm']['default'] );
-			$this->preErrors[] = [ 'ipb-confirmhideuser', 'ipb-confirmaction' ];
+			$this->preErrors[] = $this->msg( 'ipb-confirmhideuser', 'ipb-confirmaction' );
 		}
 
 		// Or if the user is trying to block themselves
 		if ( (string)$this->target === $this->getUser()->getName() ) {
 			$fields['Confirm']['type'] = 'check';
 			unset( $fields['Confirm']['default'] );
-			$this->preErrors[] = [ 'ipb-blockingself', 'ipb-confirmaction' ];
+			$this->preErrors[] = $this->msg( 'ipb-blockingself', 'ipb-confirmaction' );
 		}
+	}
+
+	/**
+	 * Format a date string for use by <input type="datetime-local">
+	 *
+	 * @param string $expiry
+	 * @return string Formatted as YYYY-MM-DDTHH:mm
+	 */
+	private function formatExpiryForHtml( string $expiry ): string {
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/', $expiry ) === 1 ) {
+			// YYYY-MM-DDTHH:mm which is accepted by <input type="datetime-local">, but not by MediaWiki.
+			return substr( $expiry, 0, 16 );
+		} elseif ( $expiry === '' ) {
+			// No expiry specified
+			return '';
+		}
+		return substr( wfTimestamp( TS_ISO_8601, $expiry ), 0, 16 );
 	}
 
 	/**
@@ -598,7 +721,11 @@ class SpecialBlock extends FormSpecialPage {
 	 */
 	protected function preHtml() {
 		$this->getOutput()->addModuleStyles( [ 'mediawiki.special' ] );
-		$this->getOutput()->addModules( [ 'mediawiki.special.block' ] );
+		if ( $this->useCodex ) {
+			$this->getOutput()->addModules( [ 'mediawiki.special.block.codex' ] );
+		} else {
+			$this->getOutput()->addModules( [ 'mediawiki.special.block' ] );
+		}
 
 		$blockCIDRLimit = $this->getConfig()->get( MainConfigNames::BlockCIDRLimit );
 		$text = $this->msg( 'blockiptext', $blockCIDRLimit['IPv4'], $blockCIDRLimit['IPv6'] )->parse();
@@ -765,36 +892,13 @@ class SpecialBlock extends FormSpecialPage {
 	 * Several parameters are handled for backwards compatability. 'wpTarget' is
 	 * prioritized, since it matches the HTML form.
 	 *
-	 * @deprecated since 1.36. Use BlockUtils::parseBlockTarget directly instead.
-	 *   Hard-deprecated since 1.41.
-	 *
 	 * @param string|null $par Subpage parameter passed to setup, or data value from
 	 *  the HTMLForm
-	 * @param WebRequest|null $request Optionally try and get data from a request too
+	 * @param WebRequest $request Try and get data from a request too
 	 * @return array [ UserIdentity|string|null, DatabaseBlock::TYPE_ constant|null ]
 	 * @phan-return array{0:UserIdentity|string|null,1:int|null}
 	 */
-	public static function getTargetAndType( ?string $par, WebRequest $request = null ) {
-		wfDeprecated( __METHOD__, '1.36' );
-		return self::getTargetAndTypeInternal( $par, $request );
-	}
-
-	/**
-	 * Get the target and type, given the request and the subpage parameter.
-	 * Several parameters are handled for backwards compatability. 'wpTarget' is
-	 * prioritized, since it matches the HTML form.
-	 *
-	 * @param string|null $par Subpage parameter passed to setup, or data value from
-	 *  the HTMLForm
-	 * @param WebRequest|null $request Optionally try and get data from a request too
-	 * @return array [ UserIdentity|string|null, DatabaseBlock::TYPE_ constant|null ]
-	 * @phan-return array{0:UserIdentity|string|null,1:int|null}
-	 */
-	private static function getTargetAndTypeInternal( ?string $par, WebRequest $request = null ) {
-		if ( !$request instanceof WebRequest ) {
-			return MediaWikiServices::getInstance()->getBlockUtils()->parseBlockTarget( $par );
-		}
-
+	private function getTargetAndTypeInternal( ?string $par, WebRequest $request ) {
 		$possibleTargets = [
 			$request->getVal( 'wpTarget', null ),
 			$par,
@@ -803,8 +907,7 @@ class SpecialBlock extends FormSpecialPage {
 			$request->getVal( 'wpBlockAddress', null ),
 		];
 		foreach ( $possibleTargets as $possibleTarget ) {
-			$targetAndType = MediaWikiServices::getInstance()
-				->getBlockUtils()
+			$targetAndType = $this->blockUtils
 				->parseBlockTarget( $possibleTarget );
 			// If type is not null then target is valid
 			if ( $targetAndType[ 1 ] !== null ) {
@@ -817,12 +920,14 @@ class SpecialBlock extends FormSpecialPage {
 	/**
 	 * Given the form data, actually implement a block.
 	 *
-	 * @deprecated since 1.36, use BlockUserFactory service instead
+	 * @deprecated since 1.36, use BlockUserFactory service instead,
+	 *     hard-deprecated since 1.43
 	 * @param array $data
 	 * @param IContextSource $context
 	 * @return bool|string|array|Status
 	 */
 	public static function processForm( array $data, IContextSource $context ) {
+		wfDeprecated( __METHOD__, '1.36' );
 		$services = MediaWikiServices::getInstance();
 		return self::processFormInternal(
 			$data,
@@ -991,14 +1096,16 @@ class SpecialBlock extends FormSpecialPage {
 	 * Get an array of suggested block durations from MediaWiki:Ipboptions
 	 * @todo FIXME: This uses a rather odd syntax for the options, should it be converted
 	 *     to the standard "**<duration>|<displayname>" format?
-	 * @deprecated since 1.42, use Language::getBlockDurations() instead.
+	 * @deprecated since 1.42, use Language::getBlockDurations() instead,
+	 *     hard-deprecated since 1.43
 	 * @param Language|null $lang The language to get the durations in, or null to use
 	 *     the wiki's content language
 	 * @param bool $includeOther Whether to include the 'other' option in the list of
 	 *     suggestions
 	 * @return string[]
 	 */
-	public static function getSuggestedDurations( Language $lang = null, $includeOther = true ) {
+	public static function getSuggestedDurations( ?Language $lang = null, $includeOther = true ) {
+		wfDeprecated( __METHOD__, '1.42' );
 		$lang ??= MediaWikiServices::getInstance()->getContentLanguage();
 		return $lang->getBlockDurations( $includeOther );
 	}
@@ -1007,23 +1114,27 @@ class SpecialBlock extends FormSpecialPage {
 	 * Convert a submitted expiry time, which may be relative ("2 weeks", etc) or absolute
 	 * ("24 May 2034", etc), into an absolute timestamp we can put into the database.
 	 *
-	 * @deprecated since 1.36, use BlockUser::parseExpiryInput instead
+	 * @deprecated since 1.36, use BlockUser::parseExpiryInput instead,
+	 *     hard-deprecated since 1.43
 	 *
 	 * @param string $expiry Whatever was typed into the form
 	 * @return string|bool Timestamp or 'infinity' or false on error.
 	 */
 	public static function parseExpiryInput( $expiry ) {
+		wfDeprecated( __METHOD__, '1.36' );
 		return BlockUser::parseExpiryInput( $expiry );
 	}
 
 	/**
 	 * Can we do an email block?
 	 *
-	 * @deprecated since 1.36, use BlockPermissionChecker service instead
+	 * @deprecated since 1.36, use BlockPermissionChecker service instead,
+	 *     hard-deprecated since 1.43
 	 * @param UserIdentity $user The sysop wanting to make a block
 	 * @return bool
 	 */
 	public static function canBlockEmail( UserIdentity $user ) {
+		wfDeprecated( __METHOD__, '1.36' );
 		return MediaWikiServices::getInstance()
 			->getBlockPermissionCheckerFactory()
 			->newBlockPermissionChecker( null, User::newFromIdentity( $user ) )
@@ -1036,7 +1147,7 @@ class SpecialBlock extends FormSpecialPage {
 	 * @param HTMLForm|null $form
 	 * @return bool|string|array|Status As documented for HTMLForm::trySubmit.
 	 */
-	public function onSubmit( array $data, HTMLForm $form = null ) {
+	public function onSubmit( array $data, ?HTMLForm $form = null ) {
 		return self::processFormInternal(
 			$data,
 			$this->getAuthority(),

@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Alhassan Mohammed Awal",
 			"Attah Mohammed",
 			"Chirifo",
 			"Dnshitobu",
-			"Alhassan Mohammed Awal",
 			"Munkaila Sulemana"
 		]
 	},
@@ -25,5 +25,7 @@
 	"cite-wikieditor-help-content-showreferences-description": "Wuhimi kundivihira",
 	"cite-wikieditor-help-content-reference-example-text1": "Peeji yɛltɔɣili.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Link text], yɛltɔɣili pahiya.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Link text]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Link text]",
+	"popups-prefs-navpopups-gadget-conflict-info": "A mali la [[$1|Navigation popups]]",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "A mali la [[$1|Navigation popups]] ni [[$1|kundi vihira Tooltips]] soya din yooi, din zuɣu a pa ŋun ni tooi nya johi yuli shɛli di bɛ din bɔŋɔ ni. Di dolila a wiki nyɛ shɛli, din tooi niŋ ka gadgets ŋɔ mali yuya din waligi biɛla ni taba. Di yi niŋ ka a kuli nyɛri yɛlmuɣisira, dim suɣulo ka labi yuli gadgets mini ŋunsu scripts, n-ti pahi din nyɛ yaɣa zaa di ni."
 }

@@ -1,11 +1,17 @@
 <?php
 
+use MediaWiki\FileBackend\FileBackendGroup;
 use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\StreamFile;
 use MediaWiki\Status\Status;
+use Wikimedia\FileBackend\FSFileBackend;
+use Wikimedia\Mime\MimeAnalyzer;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\TestingAccessWrapper;
 
 /**

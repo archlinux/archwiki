@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Tests\ResourceLoader;
 
-use ExtensionRegistry;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\StaticHookRegistry;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\OOUIImageModule;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use SkinFactory;
@@ -20,6 +22,10 @@ class OOUIImageModuleTest extends ResourceLoaderTestCase {
 			'name' => 'icons',
 			'rootPath' => 'tests/phpunit/data/resourceloader/oouiimagemodule',
 		] );
+		$module->setHookContainer( new HookContainer(
+			new StaticHookRegistry(),
+			$this->getServiceContainer()->getObjectFactory()
+		) );
 
 		// Pretend that 'fakemonobook' is a real skin using the Apex theme
 		$skinFactory = new SkinFactory( $this->getDummyObjectFactory(), [] );

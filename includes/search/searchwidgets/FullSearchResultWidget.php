@@ -10,6 +10,7 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Search\Entity\SearchResultThumbnail;
 use MediaWiki\Search\SearchResultThumbnailProvider;
 use MediaWiki\Specials\SpecialSearch;
@@ -27,8 +28,9 @@ use ThumbnailImage;
  *  5 KiB (651 words) - 12:40, 6 Aug 2016
  */
 class FullSearchResultWidget implements SearchResultWidget {
-	/** @var int */
+
 	public const THUMBNAIL_SIZE = 90;
+
 	/** @var SpecialSearch */
 	protected $specialPage;
 	/** @var LinkRenderer */
@@ -134,25 +136,21 @@ class FullSearchResultWidget implements SearchResultWidget {
 		);
 		$html .= $extract . ' ' . $meta;
 
-		// If the result has a thumbnail, wrap a table around it and the text
+		// If the result has a thumbnail, place it next to the text block
 		if ( $thumb ) {
-			$tableCells = Html::rawElement(
-				'td',
+			$gridCells = Html::rawElement(
+				'div',
 				[ 'class' => 'searchResultImage-thumbnail' ],
 				$thumb
 			) . Html::rawElement(
-				'td',
+				'div',
 				[ 'class' => 'searchResultImage-text' ],
 				$html
 			);
 			$html = Html::rawElement(
-				'table',
+				'div',
 				[ 'class' => 'searchResultImage' ],
-				Html::rawElement(
-					'tr',
-					[],
-					$tableCells
-				)
+				$gridCells
 			);
 		}
 
@@ -348,14 +346,14 @@ class FullSearchResultWidget implements SearchResultWidget {
 	 * @param SearchResultThumbnail|null $thumbnail
 	 * @return string|null
 	 */
-	private function generateThumbnailHtml( SearchResult $result, SearchResultThumbnail $thumbnail = null ): ?string {
+	private function generateThumbnailHtml( SearchResult $result, ?SearchResultThumbnail $thumbnail = null ): ?string {
 		$title = $result->getTitle();
 		// don't assume that result is a valid title; e.g. could be an interwiki link target
 		if ( $title === null || !$title->canExist() ) {
 			return null;
 		}
 
-		$namespacesWithThumbnails = $this->specialPage->getConfig()->get( 'ThumbnailNamespaces' );
+		$namespacesWithThumbnails = $this->specialPage->getConfig()->get( MainConfigNames::ThumbnailNamespaces );
 		$showThumbnail = in_array( $title->getNamespace(), $namespacesWithThumbnails );
 		if ( !$showThumbnail ) {
 			return null;
@@ -425,7 +423,7 @@ class FullSearchResultWidget implements SearchResultWidget {
 		// player must remain at the size we want, regardless of whether or
 		// not it fits the thumb limits, which in this case are irrelevant)
 		if ( $rescaledWidth !== $thumbnail->getWidth() ) {
-			$thumbLimits = $this->specialPage->getConfig()->get( 'ThumbLimits' );
+			$thumbLimits = $this->specialPage->getConfig()->get( MainConfigNames::ThumbLimits );
 			$largerThumbLimits = array_filter(
 				$thumbLimits,
 				static function ( $limit ) use ( $rescaledWidth ) {

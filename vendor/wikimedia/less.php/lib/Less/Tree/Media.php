@@ -44,16 +44,16 @@ class Less_Tree_Media extends Less_Tree {
 	public function compile( $env ) {
 		$media = new self( [], [], $this->index, $this->currentFileInfo );
 
-		$strictMathBypass = false;
-		if ( !$env->strictMath ) {
-			$strictMathBypass = true;
-			$env->strictMath = true;
+		$mathBypass = false;
+		if ( !$env->mathOn ) {
+			$mathBypass = true;
+			$env->mathOn = true;
 		}
 
 		$media->features = $this->features->compile( $env );
 
-		if ( $strictMathBypass ) {
-			$env->strictMath = false;
+		if ( $mathBypass ) {
+			$env->mathOn = false;
 		}
 
 		$env->mediaPath[] = $media;

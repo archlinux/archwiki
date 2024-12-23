@@ -41,6 +41,8 @@ abstract class PipelineStage {
 	/** Defaults to false and resetState initializes it */
 	protected bool $atTopLevel = false;
 
+	protected bool $toFragment = true;
+
 	/** @var Frame */
 	protected $frame;
 
@@ -78,6 +80,7 @@ abstract class PipelineStage {
 	public function resetState( array $options ): void {
 		/* Default implementation */
 		$this->atTopLevel = $options['toplevel'] ?? false;
+		$this->toFragment = $options['toFragment'] ?? true;
 	}
 
 	/**
@@ -107,13 +110,13 @@ abstract class PipelineStage {
 	 * signal will follow.
 	 *
 	 * @param string|array|Document $input
-	 * @param ?array $options
+	 * @param array{sol:bool} $options
 	 *  - atTopLevel: (bool) Whether we are processing the top-level document
 	 *  - sol: (bool) Whether input should be processed in start-of-line context
 	 *  - chunky (bool) Whether we are processing the input chunkily.
 	 * @return array|Document
 	 */
-	abstract public function process( $input, ?array $options = null );
+	abstract public function process( $input, array $options );
 
 	/**
 	 * Process wikitext, an array of tokens, or a DOM document depending on
@@ -125,12 +128,12 @@ abstract class PipelineStage {
 	 * will provide specialized implementations that handle their input type.
 	 *
 	 * @param string|array|Document $input
-	 * @param ?array $options
+	 * @param array{sol:bool} $options
 	 *  - atTopLevel: (bool) Whether we are processing the top-level document
 	 *  - sol: (bool) Whether input should be processed in start-of-line context
 	 * @return Generator
 	 */
 	abstract public function processChunkily(
-		$input, ?array $options
+		$input, array $options
 	): Generator;
 }

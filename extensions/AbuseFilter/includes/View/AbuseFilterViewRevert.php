@@ -2,8 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use HTMLForm;
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\ReversibleConsequence;
@@ -14,17 +13,18 @@ use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserFactory;
-use Message;
 use PermissionsError;
 use UnexpectedValueException;
 use UserBlockedError;
 use Wikimedia\Rdbms\LBFactory;
-use Xml;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class AbuseFilterViewRevert extends AbuseFilterView {
 	/** @var int */
@@ -222,10 +222,10 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 				)->params(
 					$spec->getUser()->getName()
 				)->parse();
-			$list[] = Xml::tags( 'li', null, $msg );
+			$list[] = Html::rawElement( 'li', [], $msg );
 		}
 
-		$dateForm->addPostHtml( Xml::tags( 'ul', null, implode( "\n", $list ) ) );
+		$dateForm->addPostHtml( Html::rawElement( 'ul', [], implode( "\n", $list ) ) );
 
 		// Add a button down the bottom.
 		$confirmForm = [];
@@ -266,15 +266,15 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 		$conds = [ 'afl_filter_id' => $filter, 'afl_global' => 0 ];
 
 		if ( $periodStart !== null ) {
-			$conds[] = 'afl_timestamp >= ' . $dbr->addQuotes( $dbr->timestamp( $periodStart ) );
+			$conds[] = $dbr->expr( 'afl_timestamp', '>=', $dbr->timestamp( $periodStart ) );
 		}
 		if ( $periodEnd !== null ) {
-			$conds[] = 'afl_timestamp <= ' . $dbr->addQuotes( $dbr->timestamp( $periodEnd ) );
+			$conds[] = $dbr->expr( 'afl_timestamp', '<=', $dbr->timestamp( $periodEnd ) );
 		}
 
 		// Don't revert if there was no action, or the action was global
-		$conds[] = 'afl_actions != ' . $dbr->addQuotes( '' );
-		$conds[] = 'afl_wiki IS NULL';
+		$conds[] = $dbr->expr( 'afl_actions', '!=', '' );
+		$conds['afl_wiki'] = null;
 
 		$selectFields = [
 			'afl_id',
@@ -288,13 +288,13 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 			'afl_namespace',
 			'afl_title',
 		];
-		$res = $dbr->select(
-			'abuse_filter_log',
-			$selectFields,
-			$conds,
-			__METHOD__,
-			[ 'ORDER BY' => 'afl_timestamp DESC' ]
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( $selectFields )
+			->from( 'abuse_filter_log' )
+			->where( $conds )
+			->caller( __METHOD__ )
+			->orderBy( 'afl_timestamp', SelectQueryBuilder::SORT_DESC )
+			->fetchResultSet();
 
 		// TODO: get the following from ConsequencesRegistry or sth else
 		static $reversibleActions = [ 'block', 'blockautopromote', 'degroup' ];
@@ -304,7 +304,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 			$actions = explode( ',', $row->afl_actions );
 			$currentReversibleActions = array_intersect( $actions, $reversibleActions );
 			if ( count( $currentReversibleActions ) ) {
-				$vars = $this->varBlobStore->loadVarDump( $row->afl_var_dump );
+				$vars = $this->varBlobStore->loadVarDump( $row );
 				try {
 					// The variable is not lazy-loaded
 					$accountName = $vars->getComputedVariable( 'accountname' )->toNative();
@@ -348,7 +348,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 	public function attemptRevert() {
 		$filter = $this->filter;
 		$token = $this->getRequest()->getVal( 'wpEditToken' );
-		if ( !$this->getUser()->matchEditToken( $token, "abusefilter-revert-$filter" ) ) {
+		if ( !$this->getCsrfTokenSet()->matchToken( $token, "abusefilter-revert-$filter" ) ) {
 			return false;
 		}
 

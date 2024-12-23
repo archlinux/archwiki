@@ -29,8 +29,12 @@ use MediaWikiIntegrationTestCase;
  * @covers \MediaWiki\Linter\Database
  */
 class DatabaseTest extends MediaWikiIntegrationTestCase {
+	private function getDatabase() {
+		return $this->getServiceContainer()->get( 'Linter.Database' );
+	}
+
 	public function testConstructor() {
-		$this->assertInstanceOf( Database::class, new Database( 5 ) );
+		$this->assertInstanceOf( Database::class, $this->getDatabase() );
 	}
 
 	private function getDummyLintErrors() {
@@ -61,7 +65,9 @@ class DatabaseTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayEquals( $expectedIds, $actualIds );
 	}
 
-	private function createManyLintErrors( $lintDb, $errorCount ) {
+	private function createManyLintErrors(
+		$lintDb, int $pageId, int $namespaceId, $errorCount
+	) {
 		$manyLintErrors = [];
 		for ( $i = 0; $i < $errorCount; $i++ ) {
 			$templateName = "Template:Echo";
@@ -70,50 +76,53 @@ class DatabaseTest extends MediaWikiIntegrationTestCase {
 					"templateInfo" => [ "name" => $templateName ] ]
 			);
 		}
-		$lintDb->setForPage( $manyLintErrors );
+		$lintDb->setForPage( $pageId, $namespaceId, $manyLintErrors );
 	}
 
 	public function testSetForPage() {
-		$lintDb = new Database( 5 );
+		$pageId = 5;
+		$namespaceId = 0;
+		$lintDb = $this->getDatabase();
 		$dummyErrors = $this->getDummyLintErrors();
-		$result = $lintDb->setForPage( $dummyErrors );
+
+		$result = $lintDb->setForPage( $pageId, $namespaceId, $dummyErrors );
 		$this->assertSetForPageResult( $result, [], [ 'fostered' => 1, 'obsolete-tag' => 1 ] );
-		$this->assertLintErrorsEqual( $dummyErrors, $lintDb->getForPage() );
+		$this->assertLintErrorsEqual( $dummyErrors, $lintDb->getForPage( $pageId ) );
 
 		// Accurate low error count values should match for both methods
-		$resultTotals = $lintDb->getTotalsForPage();
+		$resultTotals = $lintDb->getTotalsForPage( $pageId );
 		$resultEstimatedTotals = $lintDb->getTotals();
 		$this->assertEquals( $resultTotals, $resultEstimatedTotals );
 
 		// Should delete the second error
-		$result2 = $lintDb->setForPage( [ $dummyErrors[0] ] );
+		$result2 = $lintDb->setForPage( $pageId, $namespaceId, [ $dummyErrors[0] ] );
 		$this->assertSetForPageResult( $result2, [ 'obsolete-tag' => 1 ], [] );
-		$this->assertLintErrorsEqual( [ $dummyErrors[0] ], $lintDb->getForPage() );
+		$this->assertLintErrorsEqual( [ $dummyErrors[0] ], $lintDb->getForPage( $pageId ) );
 
 		// Accurate low error count values should match for both methods
-		$resultTotals = $lintDb->getTotalsForPage();
+		$resultTotals = $lintDb->getTotalsForPage( $pageId );
 		$resultEstimatedTotals = $lintDb->getTotals();
 		$this->assertEquals( $resultTotals, $resultEstimatedTotals );
 
 		// Insert the second error, delete the first
-		$result3 = $lintDb->setForPage( [ $dummyErrors[1] ] );
+		$result3 = $lintDb->setForPage( $pageId, $namespaceId, [ $dummyErrors[1] ] );
 		$this->assertSetForPageResult( $result3, [ 'fostered' => 1 ], [ 'obsolete-tag' => 1 ] );
-		$this->assertLintErrorsEqual( [ $dummyErrors[1] ], $lintDb->getForPage() );
+		$this->assertLintErrorsEqual( [ $dummyErrors[1] ], $lintDb->getForPage( $pageId ) );
 
 		// Delete the second (only) error
-		$result4 = $lintDb->setForPage( [] );
+		$result4 = $lintDb->setForPage( $pageId, $namespaceId, [] );
 		$this->assertSetForPageResult( $result4, [ 'obsolete-tag' => 1 ], [] );
-		$this->assertLintErrorsEqual( [], $lintDb->getForPage() );
+		$this->assertLintErrorsEqual( [], $lintDb->getForPage( $pageId ) );
 
 		// Accurate low error count values should match for both methods
-		$resultTotals = $lintDb->getTotalsForPage();
+		$resultTotals = $lintDb->getTotalsForPage( $pageId );
 		$resultEstimatedTotals = $lintDb->getTotals();
 		$this->assertEquals( $resultTotals, $resultEstimatedTotals );
 
 		// For error counts <= MAX_ACCURATE_COUNT, both error
 		// count methods should return the same count.
-		$this->createManyLintErrors( $lintDb, Database::MAX_ACCURATE_COUNT );
-		$resultTotals = $lintDb->getTotalsForPage();
+		$this->createManyLintErrors( $lintDb, $pageId, $namespaceId, Database::MAX_ACCURATE_COUNT );
+		$resultTotals = $lintDb->getTotalsForPage( $pageId );
 		$resultEstimatedTotals = $lintDb->getTotals();
 		$this->assertEquals( $resultTotals, $resultEstimatedTotals );
 
@@ -126,8 +135,8 @@ class DatabaseTest extends MediaWikiIntegrationTestCase {
 		// // count methods should NOT return the same count in this test scenario
 		// // because previously added and deleted records will be included
 		// // in the estimated count which is normal.
-		// $this->createManyLintErrors( $lintDb, Database::MAX_ACCURATE_COUNT + 1 );
-		// $resultTotals = $lintDb->getTotalsForPage();
+		// $this->createManyLintErrors( $lintDb, $pageId, $namespaceId, Database::MAX_ACCURATE_COUNT + 1 );
+		// $resultTotals = $lintDb->getTotalsForPage( $pageId );
 		// $resultEstimatedTotals = $lintDb->getTotals();
 		// $this->assertNotEquals( $resultTotals, $resultEstimatedTotals );
 		//
@@ -135,8 +144,8 @@ class DatabaseTest extends MediaWikiIntegrationTestCase {
 		// // count method should return a greater count in this test scenario
 		// // because previously added and deleted records will be included
 		// // in the estimated count which is normal.
-		// $this->createManyLintErrors( $lintDb, Database::MAX_ACCURATE_COUNT * 10 );
-		// $resultTotals = $lintDb->getTotalsForPage();
+		// $this->createManyLintErrors( $lintDb, $pageId, $namespaceId, Database::MAX_ACCURATE_COUNT * 10 );
+		// $resultTotals = $lintDb->getTotalsForPage( $pageId );
 		// $resultEstimatedTotals = $lintDb->getTotals();
 		// $this->assertGreaterThan( $resultTotals, $resultEstimatedTotals );
 	}

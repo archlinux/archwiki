@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Rest;
 
-use ExtensionRegistry;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\IContextSource;
@@ -11,11 +10,11 @@ use MediaWiki\EntryPointEnvironment;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiEntryPoint;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Rest\BasicAccess\CompoundAuthorizer;
 use MediaWiki\Rest\BasicAccess\MWBasicAuthorizer;
 use MediaWiki\Rest\Reporter\MWErrorReporter;
 use MediaWiki\Rest\Validator\Validator;
-use MediaWiki\Title\Title;
 use MWExceptionRenderer;
 use Wikimedia\Message\ITextFormatter;
 
@@ -60,7 +59,7 @@ class EntryPoint extends MediaWikiEntryPoint {
 			$authority
 		);
 
-		$stats = $services->getStatsdDataFactory();
+		$stats = $services->getStatsFactory();
 
 		return ( new Router(
 			self::getRouteFiles( $conf ),
@@ -102,14 +101,6 @@ class EntryPoint extends MediaWikiEntryPoint {
 
 		$context = RequestContext::getMain();
 
-		// Set $wgTitle and the title in RequestContext, as in api.php
-		global $wgTitle;
-		$wgTitle = Title::makeTitle(
-			NS_SPECIAL,
-			'Badtitle/rest.php'
-		);
-		$context->setTitle( $wgTitle );
-
 		$responseFactory = new ResponseFactory( $this->getTextFormatters() );
 		$responseFactory->setShowExceptionDetails(
 			MWExceptionRenderer::shouldShowExceptionDetails()
@@ -143,7 +134,7 @@ class EntryPoint extends MediaWikiEntryPoint {
 	private function getTextFormatters() {
 		$services = $this->getServiceContainer();
 
-		$code = $services->getContentLanguage()->getCode();
+		$code = $services->getContentLanguageCode()->toString();
 		$langs = array_unique( [ $code, 'en' ] );
 		$textFormatters = [];
 		$factory = $services->getMessageFormatterFactory();
@@ -165,7 +156,9 @@ class EntryPoint extends MediaWikiEntryPoint {
 		$extensionsDir = $conf->get( MainConfigNames::ExtensionDirectory );
 		// Always include the "official" routes. Include additional routes if specified.
 		$routeFiles = array_merge(
-			[ 'includes/Rest/coreRoutes.json' ],
+			[
+				'includes/Rest/coreRoutes.json',
+			],
 			$conf->get( MainConfigNames::RestAPIAdditionalRouteFiles )
 		);
 		foreach ( $routeFiles as &$file ) {
@@ -211,6 +204,8 @@ class EntryPoint extends MediaWikiEntryPoint {
 	public function execute() {
 		$this->startOutputBuffer();
 
+		// IDEA: Move the call to cors->modifyResponse() into Module,
+		//       so it's in the same class as cors->createPreflightResponse().
 		$response = $this->cors->modifyResponse(
 			$this->request,
 			$this->router->execute( $this->request )

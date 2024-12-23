@@ -3,12 +3,16 @@
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MultiConfig;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Password\InvalidPassword;
+use MediaWiki\Password\Password;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Status\Status;
 use MediaWiki\Tests\Session\TestUtils;
 use MediaWiki\User\BotPassword;
 use MediaWiki\User\CentralId\CentralIdLookup;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
@@ -72,28 +76,26 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 			->deleteFrom( 'bot_passwords' )
 			->where( [ 'bp_user' => [ 42, 43 ], 'bp_app_id' => 'BotPassword' ] )
 			->caller( __METHOD__ )->execute();
-		$dbw->insert(
-			'bot_passwords',
-			[
-				[
-					'bp_user' => 42,
-					'bp_app_id' => 'BotPassword',
-					'bp_password' => $passwordHash->toString(),
-					'bp_token' => 'token!',
-					'bp_restrictions' => '{"IPAddresses":["127.0.0.0/8"]}',
-					'bp_grants' => '["test"]',
-				],
-				[
-					'bp_user' => 43,
-					'bp_app_id' => 'BotPassword',
-					'bp_password' => $passwordHash->toString(),
-					'bp_token' => 'token!',
-					'bp_restrictions' => '{"IPAddresses":["127.0.0.0/8"]}',
-					'bp_grants' => '["test"]',
-				],
-			],
-			__METHOD__
-		);
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'bot_passwords' )
+			->row( [
+				'bp_user' => 42,
+				'bp_app_id' => 'BotPassword',
+				'bp_password' => $passwordHash->toString(),
+				'bp_token' => 'token!',
+				'bp_restrictions' => '{"IPAddresses":["127.0.0.0/8"]}',
+				'bp_grants' => '["test"]',
+			] )
+			->row( [
+				'bp_user' => 43,
+				'bp_app_id' => 'BotPassword',
+				'bp_password' => $passwordHash->toString(),
+				'bp_token' => 'token!',
+				'bp_restrictions' => '{"IPAddresses":["127.0.0.0/8"]}',
+				'bp_grants' => '["test"]',
+			] )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 	public function testBasics() {
@@ -279,7 +281,7 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 		// Now configure BotPasswordSessionProvider for further tests...
 		$mainConfig = $this->getServiceContainer()->getMainConfig();
 		$config = new HashConfig( [
-			MainConfigNames::SessionProviders => $mainConfig->get( 'SessionProviders' ) + [
+			MainConfigNames::SessionProviders => $mainConfig->get( MainConfigNames::SessionProviders ) + [
 				MediaWiki\Session\BotPasswordSessionProvider::class => [
 					'class' => MediaWiki\Session\BotPasswordSessionProvider::class,
 					'args' => [ [ 'priority' => 40 ] ],
@@ -296,18 +298,15 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 
 		// No "@"-thing in the username
 		$status = BotPassword::login( $this->testUserName, 'foobaz', new FauxRequest );
-		$this->assertStatusError( wfMessage( 'botpasswords-invalid-name', '@' ), $status );
+		$this->assertStatusError( 'botpasswords-invalid-name', $status );
 
 		// No base user
 		$status = BotPassword::login( 'UTDummy@BotPassword', 'foobaz', new FauxRequest );
-		$this->assertStatusError( wfMessage( 'nosuchuser', 'UTDummy' ), $status );
+		$this->assertStatusError( 'nosuchuser', $status );
 
 		// No bot password
 		$status = BotPassword::login( "{$this->testUserName}@DoesNotExist", 'foobaz', new FauxRequest );
-		$this->assertStatusError(
-			wfMessage( 'botpasswords-not-exist', $this->testUserName, 'DoesNotExist' ),
-			$status
-		);
+		$this->assertStatusError( 'botpasswords-not-exist', $status );
 
 		// Failed restriction
 		$request = $this->getMockBuilder( FauxRequest::class )
@@ -316,12 +315,12 @@ class BotPasswordTest extends MediaWikiIntegrationTestCase {
 		$request->method( 'getIP' )
 			->willReturn( '10.0.0.1' );
 		$status = BotPassword::login( "{$this->testUserName}@BotPassword", 'foobaz', $request );
-		$this->assertStatusError( wfMessage( 'botpasswords-restriction-failed' ), $status );
+		$this->assertStatusError( 'botpasswords-restriction-failed', $status );
 
 		// Wrong password
 		$status = BotPassword::login(
 			"{$this->testUserName}@BotPassword", $this->testUser->getPassword(), new FauxRequest );
-		$this->assertStatusError( wfMessage( 'wrongpassword' ), $status );
+		$this->assertStatusError( 'wrongpassword', $status );
 
 		// Success!
 		$request = new FauxRequest;

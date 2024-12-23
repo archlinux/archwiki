@@ -32,8 +32,11 @@ use MediaWiki\Deferred\SearchUpdate;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\Rdbms\IDBAccessObject;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for periodic off-peak updating of the search index.
@@ -106,7 +109,8 @@ class UpdateSearchIndex extends Maintenance {
 			->join( 'page', null, 'rc_cur_id=page_id AND rc_this_oldid=page_latest' )
 			->where( [
 				$dbw->expr( 'rc_type', '!=', RC_LOG ),
-				'rc_timestamp BETWEEN ' . $dbw->addQuotes( $start ) . ' AND ' . $dbw->addQuotes( $end )
+				$dbw->expr( 'rc_timestamp', '>=', $start ),
+				$dbw->expr( 'rc_timestamp', '<=', $end ),
 			] )
 			->caller( __METHOD__ )->fetchResultSet();
 
@@ -141,5 +145,7 @@ class UpdateSearchIndex extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = UpdateSearchIndex::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

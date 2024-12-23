@@ -32,7 +32,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "Този източник е използван {{PLURAL:$1|веднъж|2=два пъти|$1 пъти}} на страницата. Направените тук промени ще се приложат на всички места, на които се използва източника.",
 	"cite-ve-dialog-reference-options-group-label": "Използвайте тази група",
 	"cite-ve-dialog-reference-options-group-placeholder": "Общи препратки",
-	"cite-ve-dialog-reference-options-name-label": "Повторно използване с това име",
 	"cite-ve-dialog-reference-options-responsive-label": "Използване на адаптивна подредба в колони",
 	"cite-ve-dialog-reference-options-section": "Настройки",
 	"cite-ve-dialog-reference-placeholder": "Напишете или поставете тук Вашия източник, или добавете шаблон за цитиране.",

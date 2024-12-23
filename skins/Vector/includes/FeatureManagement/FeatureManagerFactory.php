@@ -50,7 +50,7 @@ class FeatureManagerFactory {
 	}
 
 	public function createFeatureManager( IContextSource $context ): FeatureManager {
-		$featureManager = new FeatureManager();
+		$featureManager = new FeatureManager( $this->userOptionsLookup, $context );
 
 		$request = $context->getRequest();
 		$config = $context->getConfig();
@@ -265,45 +265,24 @@ class FeatureManagerFactory {
 			]
 		);
 
-		// Feature: T345363: Client preferences dialog
-		// ============================================
-		$featureManager->registerRequirement(
-			new OverridableConfigRequirement(
-				$config,
-				$user,
-				$request,
-				Constants::CONFIG_KEY_CLIENT_PREFERENCES,
-				Constants::REQUIREMENT_CLIENT_PREFERENCES
-			)
-		);
-
-		$featureManager->registerFeature(
-			Constants::FEATURE_CLIENT_PREFERENCES,
-			[
-				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_CLIENT_PREFERENCES
-			]
-		);
-
-		// Feature: Client preference pinned
+		// Feature: Appearance menu pinned
 		// ================================
 		$featureManager->registerRequirement(
 			new UserPreferenceRequirement(
 				$user,
 				$this->userOptionsLookup,
-				Constants::PREF_KEY_CLIENT_PREFS_PINNED,
-				Constants::REQUIREMENT_CLIENT_PREFS_PINNED,
+				Constants::PREF_KEY_APPEARANCE_PINNED,
+				Constants::REQUIREMENT_APPEARANCE_PINNED,
 				$request,
 				$title
 			)
 		);
 
 		$featureManager->registerFeature(
-			Constants::FEATURE_CLIENT_PREFS_PINNED,
+			Constants::FEATURE_APPEARANCE_PINNED,
 			[
 				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_CLIENT_PREFERENCES,
-				Constants::REQUIREMENT_CLIENT_PREFS_PINNED
+				Constants::REQUIREMENT_APPEARANCE_PINNED
 			]
 		);
 

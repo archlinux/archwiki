@@ -5,8 +5,8 @@ namespace MediaWiki\Extension\TitleBlacklist;
 use MediaWiki\Auth\AbstractPreAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\User\User;
-use RequestContext;
 use StatusValue;
 
 class TitleBlacklistPreAuthenticationProvider extends AbstractPreAuthenticationProvider {

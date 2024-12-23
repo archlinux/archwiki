@@ -19,11 +19,17 @@
  * @ingroup Parser
  */
 
+namespace MediaWiki\Parser;
+
+use InvalidArgumentException;
+use LogicException;
+use Stringable;
+
 /**
  * @ingroup Parser
  */
 // phpcs:ignore Squiz.Classes.ValidClassName.NotCamelCaps
-class PPNode_Hash_Text implements PPNode {
+class PPNode_Hash_Text implements Stringable, PPNode {
 
 	/** @var string */
 	public $value;
@@ -95,3 +101,6 @@ class PPNode_Hash_Text implements PPNode {
 		throw new LogicException( __METHOD__ . ': not supported' );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( PPNode_Hash_Text::class, 'PPNode_Hash_Text' );

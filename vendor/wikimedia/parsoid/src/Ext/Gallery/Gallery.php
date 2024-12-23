@@ -5,6 +5,7 @@ namespace Wikimedia\Parsoid\Ext\Gallery;
 
 use stdClass;
 use Wikimedia\Assert\UnreachableException;
+use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -17,6 +18,7 @@ use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
+use Wikimedia\Parsoid\Ext\Utils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
@@ -84,25 +86,18 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 		$oTitleStr = $matches[1];
 		$imageOptStr = $matches[2] ?? '';
-
-		// TODO: % indicates rawurldecode.
-
-		$mode = Mode::byName( $opts->mode );
-
-		$imageOpts = [
-			[ $imageOptStr, $lineStartOffset + strlen( $oTitleStr ) ],
-			// T305628: Dimensions are last one wins so ensure this takes
-			// precedence over anything in $imageOptStr
-			"|{$mode->dimensions( $opts )}",
-		];
-
 		$fileNs = $extApi->getSiteConfig()->canonicalNamespaceId( 'file' );
 
+		// WikiLinkHandler effectively decodes entities in titles by having
+		// PEG decode entities and preserving the decoding while stringifying.
+		// Match that behavior here by decoding entities in the title string.
+		$decodedTitleStr = Utils::decodeWtEntities( $oTitleStr );
+
 		$noPrefix = false;
-		$title = $extApi->makeTitle( $oTitleStr, 0 );
+		$title = $extApi->makeTitle( $decodedTitleStr, 0 );
 		if ( $title === null || $title->getNamespace() !== $fileNs ) {
 			// Try again, this time with a default namespace
-			$title = $extApi->makeTitle( $oTitleStr, $fileNs );
+			$title = $extApi->makeTitle( $decodedTitleStr, $fileNs );
 			$noPrefix = true;
 		}
 		if ( $title === null || $title->getNamespace() !== $fileNs ) {
@@ -125,6 +120,23 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		} else {
 			$titleStr = $oTitleStr;
 		}
+
+		// A somewhat common editor mistake is to close a gallery line with
+		// trailing square brackets, perhaps as a result of converting a file
+		// from wikilink syntax.  Unfortunately, the implementation in
+		// renderMedia is not robust in the face of stray brackets.  To boot,
+		// media captions can contain wiklinks.
+		if ( !preg_match( '/\[\[/', $imageOptStr, $m ) ) {
+			$imageOptStr = preg_replace( '/]]$/D', '', $imageOptStr );
+		}
+
+		$mode = Mode::byName( $opts->mode );
+		$imageOpts = [
+			[ $imageOptStr, $lineStartOffset + strlen( $oTitleStr ) ],
+			// T305628: Dimensions are last one wins so ensure this takes
+			// precedence over anything in $imageOptStr
+			"|{$mode->dimensions( $opts )}",
+		];
 
 		$thumb = $extApi->renderMedia(
 			$titleStr, $imageOpts, $error,
@@ -219,8 +231,8 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		} );
 
 		$mode = Mode::byName( $opts->mode );
-		$extApi->getMetadata()->addModules( $mode->getModules() );
-		$extApi->getMetadata()->addModuleStyles( $mode->getModuleStyles() );
+		$extApi->getMetadata()->appendOutputStrings( CMCSS::MODULE, $mode->getModules() );
+		$extApi->getMetadata()->appendOutputStrings( CMCSS::MODULE_STYLE, $mode->getModuleStyles() );
 		$domFragment = $mode->render( $extApi, $opts, $caption, $lines );
 
 		$dataMw = $extApi->extTag->getDefaultDataMw();

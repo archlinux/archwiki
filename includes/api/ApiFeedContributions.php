@@ -20,13 +20,16 @@
  * @file
  */
 
-use MediaWiki\Api\ApiHookRunner;
+namespace MediaWiki\Api;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Feed\FeedItem;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Pager\ContribsPager;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionAccessException;
@@ -36,7 +39,6 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use MediaWiki\Title\TitleParser;
 use MediaWiki\User\ExternalUserNames;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserRigorOptions;
@@ -49,7 +51,6 @@ use Wikimedia\Rdbms\IConnectionProvider;
 class ApiFeedContributions extends ApiBase {
 
 	private RevisionStore $revisionStore;
-	private TitleParser $titleParser;
 	private LinkRenderer $linkRenderer;
 	private LinkBatchFactory $linkBatchFactory;
 	private HookContainer $hookContainer;
@@ -59,24 +60,10 @@ class ApiFeedContributions extends ApiBase {
 	private CommentFormatter $commentFormatter;
 	private ApiHookRunner $hookRunner;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param RevisionStore $revisionStore
-	 * @param TitleParser $titleParser
-	 * @param LinkRenderer $linkRenderer
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param HookContainer $hookContainer
-	 * @param IConnectionProvider $dbProvider
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param UserFactory $userFactory
-	 * @param CommentFormatter $commentFormatter
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		RevisionStore $revisionStore,
-		TitleParser $titleParser,
 		LinkRenderer $linkRenderer,
 		LinkBatchFactory $linkBatchFactory,
 		HookContainer $hookContainer,
@@ -87,7 +74,6 @@ class ApiFeedContributions extends ApiBase {
 	) {
 		parent::__construct( $main, $action );
 		$this->revisionStore = $revisionStore;
-		$this->titleParser = $titleParser;
 		$this->linkRenderer = $linkRenderer;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->hookContainer = $hookContainer;
@@ -298,7 +284,9 @@ class ApiFeedContributions extends ApiBase {
 			],
 			'tagfilter' => [
 				ParamValidator::PARAM_ISMULTI => true,
-				ParamValidator::PARAM_TYPE => array_values( ChangeTags::listDefinedTags() ),
+				ParamValidator::PARAM_TYPE => array_values( MediaWikiServices::getInstance()
+					->getChangeTagsStore()->listDefinedTags()
+				),
 				ParamValidator::PARAM_DEFAULT => '',
 			],
 			'deletedonly' => false,
@@ -328,3 +316,6 @@ class ApiFeedContributions extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Feedcontributions';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiFeedContributions::class, 'ApiFeedContributions' );

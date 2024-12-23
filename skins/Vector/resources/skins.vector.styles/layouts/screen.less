@@ -90,7 +90,7 @@ body {
 // are rendered.
 #contentSub:not( :empty ),
 #contentSub2 {
-	font-size: unit( @font-size-small, rem );
+	font-size: @font-size-small;
 	color: @color-subtle;
 	width: auto;
 	// Visually separate #contentSub and #contentSub2 (T315639)
@@ -112,6 +112,17 @@ body {
 	padding-left: @padding-horizontal-page-container;
 	padding-right: @padding-horizontal-page-container;
 	background-color: @background-color-page-container;
+}
+
+@media ( max-width: @max-width-breakpoint-mobile ) {
+	.vector-header {
+		flex-flow: column;
+	}
+
+	.vector-header-start,
+	.vector-header-end {
+		width: 100%;
+	}
 }
 
 @media ( min-width: @min-width-breakpoint-desktop ) {

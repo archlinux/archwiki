@@ -84,10 +84,11 @@ trait JsonCodecableTrait {
 	 * Implementer can override.
 	 *
 	 * @param string $keyName
-	 * @return class-string|string|null A class string, a class string suffixed
-	 *   with `[]`, or null
+	 * @return class-string|string|Hint|null A class string, Hint, or null.
+	 *   For backward compatibility, a class string suffixed with `[]` can
+	 *   also be returned, but that is deprecated.
 	 */
-	public static function jsonClassHintFor( string $keyName ): ?string {
+	public static function jsonClassHintFor( string $keyName ) {
 		return null;
 	}
 }

@@ -2,19 +2,18 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use HTMLForm;
-use IContextSource;
 use LogEventsList;
 use LogPage;
 use ManualLogEntry;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Pager\AbuseLogPager;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\LBFactory;
-use Xml;
 
 class HideAbuseLog extends AbuseFilterView {
 
@@ -85,11 +84,11 @@ class HideAbuseLog extends AbuseFilterView {
 				$this->getLanguage()->formatNum( count( $this->hideIDs ) )
 			]
 		);
-		$output->addHTML( Xml::tags( 'ul', [ 'class' => 'plainlinks' ], $pager->getBody() ) );
+		$output->addHTML( Html::rawElement( 'ul', [ 'class' => 'plainlinks' ], $pager->getBody() ) );
 
 		$hideReasonsOther = $this->msg( 'revdelete-reasonotherlist' )->text();
 		$hideReasons = $this->msg( 'revdelete-reason-dropdown-suppress' )->inContentLanguage()->text();
-		$hideReasons = Xml::listDropdownOptions( $hideReasons, [ 'other' => $hideReasonsOther ] );
+		$hideReasons = Html::listDropdownOptions( $hideReasons, [ 'other' => $hideReasonsOther ] );
 
 		$formInfo = [
 			'showorhide' => [
@@ -148,22 +147,25 @@ class HideAbuseLog extends AbuseFilterView {
 		// Determine which rows actually have to be changed
 		$dbw = $this->lbFactory->getPrimaryDatabase();
 		$newValue = $fields['showorhide'] === 'hide' ? 1 : 0;
-		$actualIDs = $dbw->selectFieldValues(
-			'abuse_filter_log',
-			'afl_id',
-			[ 'afl_id' => $this->hideIDs, "afl_deleted != $newValue" ],
-			__METHOD__
-		);
+		$actualIDs = $dbw->newSelectQueryBuilder()
+			->select( 'afl_id' )
+			->from( 'abuse_filter_log' )
+			->where( [
+				'afl_id' => $this->hideIDs,
+				$dbw->expr( 'afl_deleted', '!=', $newValue ),
+			] )
+			->caller( __METHOD__ )
+			->fetchFieldValues();
 		if ( !count( $actualIDs ) ) {
 			return [ 'abusefilter-log-hide-no-change' ];
 		}
 
-		$dbw->update(
-			'abuse_filter_log',
-			[ 'afl_deleted' => $newValue ],
-			[ 'afl_id' => $actualIDs ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'abuse_filter_log' )
+			->set( [ 'afl_deleted' => $newValue ] )
+			->where( [ 'afl_id' => $actualIDs ] )
+			->caller( __METHOD__ )
+			->execute();
 
 		// Log in a DeferredUpdates to avoid potential flood
 		DeferredUpdates::addCallableUpdate( function () use ( $fields, $actualIDs ) {

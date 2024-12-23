@@ -5,27 +5,31 @@ namespace MediaWiki\Tests\Api\Query;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
+use MediaWiki\Watchlist\WatchedItemQueryService;
 use RecentChange;
-use WatchedItemQueryService;
 
 /**
  * @group medium
  * @group API
  * @group Database
  *
- * @covers \ApiQueryWatchlist
- * @covers \WatchedItemQueryService
+ * @covers MediaWiki\Api\ApiQueryWatchlist
+ * @covers \MediaWiki\Watchlist\WatchedItemQueryService
  */
 class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 	use TempUserTestTrait;
 
 	// TODO: This test should use Authority, but can't due to User::saveSettings
+
+	/** @var User */
 	private $loggedInUser;
+	/** @var User */
 	private $notLoggedInUser;
 
 	protected function setUp(): void {
@@ -74,6 +78,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 	}
 
 	private function doAnonPageEdit( LinkTarget $target, $content, $summary ) {
+		$this->disableAutoCreateTempUser();
 		$this->editPage(
 			$target,
 			$content,
@@ -83,14 +88,14 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 		);
 	}
 
-	// Requires call to $this->enableAutoCreateTempUser() first.
 	private function doTempPageEdit( LinkTarget $target, $content, $summary ) {
+		$this->enableAutoCreateTempUser();
 		$this->editPage(
 			$target,
 			$content,
 			$summary,
 			NS_MAIN,
-			$this->getServiceContainer()->getTempUserCreator()->create()->getUser()
+			$this->getServiceContainer()->getTempUserCreator()->create( null, new FauxRequest() )->getUser()
 		);
 	}
 
@@ -109,7 +114,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 		$rev = $updater->saveRevision( $summary );
 
 		$rc = $this->getServiceContainer()->getRevisionStore()->getRecentChange( $rev );
-		$rc->doMarkPatrolled( $patrollingUser, false, [] );
+		$rc->markPatrolled( $patrollingUser, [] );
 	}
 
 	/**
@@ -165,9 +170,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 	}
 
 	private function doListWatchlistRequest( array $params = [], $user = null ) {
-		if ( $user === null ) {
-			$user = $this->getLoggedInTestUser();
-		}
+		$user ??= $this->getLoggedInTestUser();
 		return $this->doApiRequest(
 			array_merge(
 				[ 'action' => 'query', 'list' => 'watchlist' ],
@@ -908,7 +911,6 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 	}
 
 	public function testShowAnonParamsTemp() {
-		$this->enableAutoCreateTempUser();
 		$user = $this->getLoggedInTestUser();
 		$target = new TitleValue( NS_MAIN, 'ApiQueryWatchlistIntegrationTestPage' );
 		$this->doTempPageEdit(

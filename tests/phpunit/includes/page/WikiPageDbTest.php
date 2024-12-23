@@ -2,10 +2,17 @@
 
 use MediaWiki\Category\Category;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\Renderer\ContentRenderer;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\Edit\PreparedEdit;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -13,10 +20,12 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use PHPUnit\Framework\Assert;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -26,6 +35,7 @@ use Wikimedia\TestingAccessWrapper;
 class WikiPageDbTest extends MediaWikiLangTestCase {
 	use DummyServicesTrait;
 	use MockAuthorityTrait;
+	use TempUserTestTrait;
 
 	protected function tearDown(): void {
 		ParserOptions::clearStaticCache();
@@ -54,7 +64,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 	 *
 	 * @return WikiPage
 	 */
-	protected function createPage( $page, $content, $model = null, Authority $performer = null ) {
+	protected function createPage( $page, $content, $model = null, ?Authority $performer = null ) {
 		if ( is_string( $page ) || $page instanceof Title ) {
 			$page = $this->newPage( $page, $model );
 		}
@@ -133,11 +143,10 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 			$edit->popts,
 			"pops"
 		);
-		$this->assertStringContainsString( '</a>', $edit->output->getText(), "output" );
+		$this->assertStringContainsString( '</a>', $edit->output->getRawText(), "output" );
 		$this->assertStringContainsString(
 			'consetetur sadipscing elitr',
-			$edit->output->getText(),
-			"output"
+			$edit->output->getRawText(), "output"
 		);
 
 		$this->assertTrue( $content->equals( $edit->newContent ), "newContent field" );
@@ -192,9 +201,11 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 
 		$comment = CommentStoreComment::newUnsavedComment( __METHOD__ );
 
-		$contentHandler = ContentHandler::getForModelID( CONTENT_MODEL_WIKITEXT );
 		// PST turns [[|foo]] into [[foo]]
-		$content = $contentHandler->unserializeContent( __METHOD__ . ' [[|foo]][[bar]]' );
+		$content = $this->getServiceContainer()
+			->getContentHandlerFactory()
+			->getContentHandler( CONTENT_MODEL_WIKITEXT )
+			->unserializeContent( __METHOD__ . ' [[|foo]][[bar]]' );
 
 		$revRecord = new MutableRevisionRecord( $page->getTitle() );
 		$revRecord->setContent( SlotRecord::MAIN, $content );
@@ -387,7 +398,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 			// as long as no garbage is written to the database.
 		}
 
-		$row = $this->db->newSelectQueryBuilder()
+		$row = $this->getDb()->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'page' )
 			->where( [ 'page_namespace' => $title->getNamespace(), 'page_title' => $title->getDBkey() ] )
@@ -473,28 +484,27 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		// Test deletion logging
 		$logId = $status->getValue();
 		$commentQuery = $this->getServiceContainer()->getCommentStore()->getJoin( 'log_comment' );
-		$this->assertSelect(
-			[ 'logging' ] + $commentQuery['tables'], /* table */
-			[
+		$this->newSelectQueryBuilder()
+			->select( [
 				'log_type',
 				'log_action',
 				'log_comment' => $commentQuery['fields']['log_comment_text'],
 				'log_actor',
 				'log_namespace',
 				'log_title',
-			],
-			[ 'log_id' => $logId ],
-			[ [
+			] )
+			->from( 'logging' )
+			->tables( $commentQuery['tables'] )
+			->where( [ 'log_id' => $logId ] )
+			->joinConds( $commentQuery['joins'] )
+			->assertRowValue( [
 				'delete',
 				'delete',
 				$reason,
 				(string)$user->getActorId(),
 				(string)$page->getTitle()->getNamespace(),
 				$page->getTitle()->getDBkey(),
-			] ],
-			[],
-			$commentQuery['joins']
-		);
+			] );
 	}
 
 	/**
@@ -517,28 +527,27 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		// Test suppression logging
 		$logId = $status->getValue();
 		$commentQuery = $this->getServiceContainer()->getCommentStore()->getJoin( 'log_comment' );
-		$this->assertSelect(
-			[ 'logging' ] + $commentQuery['tables'], /* table */
-			[
+		$this->newSelectQueryBuilder()
+			->select( [
 				'log_type',
 				'log_action',
 				'log_comment' => $commentQuery['fields']['log_comment_text'],
 				'log_actor',
 				'log_namespace',
 				'log_title',
-			],
-			[ 'log_id' => $logId ],
-			[ [
+			] )
+			->from( 'logging' )
+			->tables( $commentQuery['tables'] )
+			->where( [ 'log_id' => $logId ] )
+			->joinConds( $commentQuery['joins'] )
+			->assertRowValue( [
 				'suppress',
 				'delete',
 				'testing deletion',
 				(string)$user->getActorId(),
 				(string)$page->getTitle()->getNamespace(),
 				$page->getTitle()->getDBkey(),
-			] ],
-			[],
-			$commentQuery['joins']
-		);
+			] );
 
 		$lookup = $this->getServiceContainer()->getArchivedRevisionLookup();
 		$archivedRevs = $lookup->listRevisions( $page->getTitle() );
@@ -661,6 +670,8 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 			MainConfigNames::ForeignFileRepos => [],
 		] );
 
+		$titleFormatter = $this->getServiceContainer()->getTitleFormatter();
+
 		$page = $this->createPage( $title, $text, $model );
 
 		# double check, because this test seems to fail for no reason for some people.
@@ -670,7 +681,8 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		# now, test the actual redirect
 		$redirectStore = $this->getServiceContainer()->getRedirectStore();
 		$t = $redirectStore->getRedirectTarget( $page );
-		$this->assertEquals( $target, $t ? $t->getFullText() : null );
+
+		$this->assertEquals( $target, $t ? $titleFormatter->getFullText( $t ) : null );
 	}
 
 	/**
@@ -933,7 +945,8 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 
 		$opt = $page->makeParserOptions( 'canonical' );
 		$po = $page->getParserOutput( $opt );
-		$text = $po->getText();
+		$pipeline = MediaWikiServices::getInstance()->getDefaultOutputPipeline();
+		$text = $pipeline->run( $po, $opt, [] )->getContentHolderText();
 
 		$text = trim( preg_replace( '/<!--.*?-->/sm', '', $text ) ); # strip injected comments
 		$text = preg_replace( '!\s*(</p>|</div>)!m', '\1', $text ); # don't let tidy confuse us
@@ -961,7 +974,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		$this->assertFalse( $po, "getParserOutput() shall return false for non-existing revisions." );
 	}
 
-	public static $sections =
+	public const SECTIONS =
 
 		"Intro
 
@@ -980,15 +993,15 @@ more stuff
 		return [
 			[ 'Help:WikiPageTest_testReplaceSection',
 				CONTENT_MODEL_WIKITEXT,
-				self::$sections,
+				self::SECTIONS,
 				"0",
 				"No more",
 				null,
-				trim( preg_replace( '/^Intro/m', 'No more', self::$sections ) )
+				trim( preg_replace( '/^Intro/m', 'No more', self::SECTIONS ) )
 			],
 			[ 'Help:WikiPageTest_testReplaceSection',
 				CONTENT_MODEL_WIKITEXT,
-				self::$sections,
+				self::SECTIONS,
 				"",
 				"No more",
 				null,
@@ -996,29 +1009,29 @@ more stuff
 			],
 			[ 'Help:WikiPageTest_testReplaceSection',
 				CONTENT_MODEL_WIKITEXT,
-				self::$sections,
+				self::SECTIONS,
 				"2",
 				"== TEST ==\nmore fun",
 				null,
 				trim( preg_replace( '/^== test ==.*== foo ==/sm',
 					"== TEST ==\nmore fun\n\n== foo ==",
-					self::$sections ) )
+					self::SECTIONS ) )
 			],
 			[ 'Help:WikiPageTest_testReplaceSection',
 				CONTENT_MODEL_WIKITEXT,
-				self::$sections,
+				self::SECTIONS,
 				"8",
 				"No more",
 				null,
-				trim( self::$sections )
+				trim( self::SECTIONS )
 			],
 			[ 'Help:WikiPageTest_testReplaceSection',
 				CONTENT_MODEL_WIKITEXT,
-				self::$sections,
+				self::SECTIONS,
 				"new",
 				"No more",
 				"New",
-				trim( self::$sections ) . "\n\n== New ==\n\nNo more"
+				trim( self::SECTIONS ) . "\n\n== New ==\n\nNo more"
 			],
 		];
 	}
@@ -1126,6 +1139,8 @@ more stuff
 	 * @dataProvider provideGetAutoDeleteReason
 	 */
 	public function testGetAutoDeleteReason( $edits, $expectedResult, $expectedHistory ) {
+		$this->disableAutoCreateTempUser();
+
 		// NOTE: assume Help namespace to contain wikitext
 		$page = $this->newPage( "Help:WikiPageTest_testGetAutoDeleteReason" );
 
@@ -1148,7 +1163,7 @@ more stuff
 		}
 
 		$this->hideDeprecated( 'WikiPage::getAutoDeleteReason:' );
-		$this->hideDeprecated( 'ContentHandler::getAutoDeleteReason:' );
+		$this->hideDeprecated( 'MediaWiki\\Content\\ContentHandler::getAutoDeleteReason:' );
 		$reason = $page->getAutoDeleteReason( $hasHistory );
 
 		if ( is_bool( $expectedResult ) || $expectedResult === null ) {
@@ -1267,11 +1282,11 @@ more stuff
 			? Title::newFromText( $redirectTitle )
 			: $redirectTitle;
 
-		$success = TestingAccessWrapper::newFromObject( $page )
-			->updateRedirectOn( $this->db, $redirectTitle, $lastRevIsRedirect );
+		$success = $this->getServiceContainer()->getRedirectStore()
+			->updateRedirectTarget( $page, $redirectTitle, $lastRevIsRedirect );
 		$this->assertSame( $expectedSuccess, $success, 'Success assertion' );
 		/**
-		 * updateRedirectOn explicitly updates the redirect table (and not the page table).
+		 * updateRedirectTarget explicitly updates the redirect table (and not the page table).
 		 * Most of core checks the page table for redirect status, so we have to be ugly and
 		 * assert a select from the table here.
 		 */
@@ -1293,7 +1308,8 @@ more stuff
 		$targetTitle = Title::newFromText( 'SomeTarget#Frag' );
 		$reflectedTitle = TestingAccessWrapper::newFromObject( $targetTitle );
 		$reflectedTitle->mInterwiki = 'eninter';
-		$page->insertRedirectEntry( $targetTitle, null );
+		$this->getServiceContainer()->getRedirectStore()
+			->updateRedirectTarget( $page, $targetTitle );
 
 		$this->newSelectQueryBuilder()
 			->select( [ 'rd_from', 'rd_namespace', 'rd_title', 'rd_fragment', 'rd_interwiki' ] )
@@ -1306,40 +1322,6 @@ more stuff
 				strval( $targetTitle->getFragment() ),
 				strval( $targetTitle->getInterwiki() ),
 			] ] );
-	}
-
-	public function testInsertRedirectEntry_insertsRedirectEntryWithPageLatest() {
-		$page = $this->createPage( Title::newFromText( __METHOD__ ), 'A' );
-		$this->assertRedirectTableCountForPageId( $page->getId(), [] );
-
-		$targetTitle = Title::newFromText( 'SomeTarget#Frag' );
-		$reflectedTitle = TestingAccessWrapper::newFromObject( $targetTitle );
-		$reflectedTitle->mInterwiki = 'eninter';
-		$page->insertRedirectEntry( $targetTitle, $page->getLatest() );
-
-		$this->newSelectQueryBuilder()
-			->select( [ 'rd_from', 'rd_namespace', 'rd_title', 'rd_fragment', 'rd_interwiki' ] )
-			->from( 'redirect' )
-			->where( [ 'rd_from' => $page->getId() ] )
-			->assertResultSet( [ [
-				strval( $page->getId() ),
-				strval( $targetTitle->getNamespace() ),
-				strval( $targetTitle->getDBkey() ),
-				strval( $targetTitle->getFragment() ),
-				strval( $targetTitle->getInterwiki() ),
-			] ] );
-	}
-
-	public function testInsertRedirectEntry_doesNotInsertIfPageLatestIncorrect() {
-		$page = $this->createPage( Title::newFromText( __METHOD__ ), 'A' );
-		$this->assertRedirectTableCountForPageId( $page->getId(), [] );
-
-		$targetTitle = Title::newFromText( 'SomeTarget#Frag' );
-		$reflectedTitle = TestingAccessWrapper::newFromObject( $targetTitle );
-		$reflectedTitle->mInterwiki = 'eninter';
-		$page->insertRedirectEntry( $targetTitle, 215251 );
-
-		$this->assertRedirectTableCountForPageId( $page->getId(), [] );
 	}
 
 	public function testInsertRedirectEntry_T278367() {
@@ -1347,7 +1329,8 @@ more stuff
 		$this->assertRedirectTableCountForPageId( $page->getId(), [] );
 
 		$targetTitle = Title::newFromText( '#Frag' );
-		$ok = $page->insertRedirectEntry( $targetTitle );
+		$ok = $this->getServiceContainer()->getRedirectStore()
+			->updateRedirectTarget( $page, $targetTitle );
 
 		$this->assertFalse( $ok );
 		$this->assertRedirectTableCountForPageId( $page->getId(), [] );
@@ -1370,7 +1353,7 @@ more stuff
 		$revisionRecord->setMinorEdit( true );
 		$revisionRecord->setComment( CommentStoreComment::newUnsavedComment( __METHOD__ ) );
 
-		$result = $page->updateRevisionOn( $this->db, $revisionRecord );
+		$result = $page->updateRevisionOn( $this->getDb(), $revisionRecord );
 		$this->assertTrue( $result );
 		$this->assertSame( 9989, $page->getLatest() );
 		$this->assertEquals( $revisionRecord, $page->getRevisionRecord() );
@@ -1394,7 +1377,7 @@ more stuff
 		$revisionRecord->setMinorEdit( true );
 		$revisionRecord->setComment( CommentStoreComment::newUnsavedComment( __METHOD__ ) );
 
-		$result = $page->updateRevisionOn( $this->db, $revisionRecord );
+		$result = $page->updateRevisionOn( $this->getDb(), $revisionRecord );
 		$this->assertFalse( $result );
 	}
 
@@ -1403,7 +1386,7 @@ more stuff
 		$page = new WikiPage( $title );
 
 		$startTimeStamp = wfTimestampNow();
-		$result = $page->insertOn( $this->db );
+		$result = $page->insertOn( $this->getDb() );
 		$endTimeStamp = wfTimestampNow();
 
 		$this->assertIsInt( $result );
@@ -1433,7 +1416,7 @@ more stuff
 			] ] );
 
 		// Check the page_random field has been filled
-		$pageRandom = $this->db->newSelectQueryBuilder()
+		$pageRandom = $this->getDb()->newSelectQueryBuilder()
 			->select( 'page_random' )
 			->from( 'page' )
 			->where( $condition )
@@ -1441,7 +1424,7 @@ more stuff
 		$this->assertTrue( (float)$pageRandom < 1 && (float)$pageRandom > 0 );
 
 		// Assert the touched timestamp in the DB is roughly when we inserted the page
-		$pageTouched = $this->db->newSelectQueryBuilder()
+		$pageTouched = $this->getDb()->newSelectQueryBuilder()
 			->select( 'page_touched' )
 			->from( 'page' )
 			->where( $condition )
@@ -1456,7 +1439,7 @@ more stuff
 		);
 
 		// Try inserting the same page again and checking the result is false (no change)
-		$result = $page->insertOn( $this->db );
+		$result = $page->insertOn( $this->getDb() );
 		$this->assertFalse( $result );
 	}
 
@@ -1465,7 +1448,7 @@ more stuff
 		$page = new WikiPage( $title );
 		$id = 1478952189;
 
-		$result = $page->insertOn( $this->db, $id );
+		$result = $page->insertOn( $this->getDb(), $id );
 
 		$this->assertSame( $id, $result );
 
@@ -1568,24 +1551,23 @@ more stuff
 		// Make sure the log entry looks good
 		// log_params is not checked here
 		$commentQuery = $this->getServiceContainer()->getCommentStore()->getJoin( 'log_comment' );
-		$this->assertSelect(
-			[ 'logging' ] + $commentQuery['tables'],
-			[
+		$this->newSelectQueryBuilder()
+			->select( [
 				'log_comment' => $commentQuery['fields']['log_comment_text'],
 				'log_actor',
 				'log_namespace',
 				'log_title',
-			],
-			[ 'log_id' => $logId ],
-			[ [
+			] )
+			->from( 'logging' )
+			->tables( $commentQuery['tables'] )
+			->where( [ 'log_id' => $logId ] )
+			->joinConds( $commentQuery['joins'] )
+			->assertRowValue( [
 				'aReason',
 				(string)$user->getActorId(),
 				(string)$page->getTitle()->getNamespace(),
 				$page->getTitle()->getDBkey(),
-			] ],
-			[],
-			$commentQuery['joins']
-		);
+			] );
 	}
 
 	public function testDoUpdateRestrictions_failsOnReadOnly() {
@@ -1881,7 +1863,7 @@ more stuff
 	public function testGetTouched() {
 		$page = $this->createPage( __METHOD__, 'whatever' );
 
-		$touched = $this->db->newSelectQueryBuilder()
+		$touched = $this->getDb()->newSelectQueryBuilder()
 			->select( 'page_touched' )
 			->from( 'page' )
 			->where( [ 'page_id' => $page->getId() ] )

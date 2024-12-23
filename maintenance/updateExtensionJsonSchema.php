@@ -1,8 +1,12 @@
 <?php
 
 use Composer\Semver\VersionParser;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\Registration\ExtensionRegistry;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 class UpdateExtensionJsonSchema extends Maintenance {
 
@@ -131,5 +135,7 @@ class UpdateExtensionJsonSchema extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = UpdateExtensionJsonSchema::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

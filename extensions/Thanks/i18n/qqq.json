@@ -7,6 +7,7 @@
 			"Mar(c)",
 			"Nemo bis",
 			"Nike",
+			"No se",
 			"Pxos",
 			"Raymond",
 			"Robby",
@@ -14,8 +15,7 @@
 			"Siebrand",
 			"Toghrul Rahimli",
 			"Umherirrender",
-			"Verdy p",
-			"No se"
+			"Verdy p"
 		]
 	},
 	"thanks-desc": "{{desc|name=Thanks|url=https://www.mediawiki.org/wiki/Extension:Thanks}}",
@@ -23,9 +23,6 @@
 	"thanks-thanked": "This message immediately replaces the message {{msg-mw|Thanks-thank}} after it's pressed. It means that the thanking operation has been completed. It can be translated as \"''thanked''\" in \"You ''thanked'' the user\" or \"The user has just been ''thanked''\" - whatever is appropriate to your language.\n\nFor languages that need it, the gender of each of the thanked and thanking users is available.\n\nParameters:\n* $1 - The user that is thanking\n* $2 - The user that has been thanked\n\n{{Identical|Thanked}}",
 	"thanks-button-thank": "Text of a button to thank another user. Same as {{msg-mw|Thanks-thank}}, but the context is in a button.\n\nFor languages that need it, the gender of each of the thanked and thanking users is available.\n\nParameters:\n* $1 - The user that is thanking\n* $2 - The user that is being thanked\n\n{{Identical|Thank}}",
 	"thanks-button-thanked": "This message immediately replaces the message {{msg-mw|Thanks-button-thank}} after it's pressed. It means that the thanking operation has been completed. Same as {{msg-mw|Thanks-thanked}}, but the context is in a button.\n\nFor languages that need it, the gender of each of the thanked and thanking users is available.\n\nParameters:\n* $1 - The user that is thanking\n* $2 - The user that has been thanked\n\n{{Identical|Thanked}}",
-	"thanks-button-action-queued": "Informs the user the thanks will happen ($1)\n\nParameters:\n* $1 - username \n* $2 - gender",
-	"thanks-button-action-cancel": "Follows {{msg-mw|thanks-button-action-queued}} and is clickable to cancel the action.\n{{Identical|Cancel}}",
-	"thanks-button-action-completed": "You {{GENDER:$1|{{GENDER:$2|thanked}}}} $1",
 	"thanks-error-undefined": "Error message that is displayed when the thank action fails. $1 is the error code returned by the API (an English string).",
 	"thanks-error-invalid-log-id": "Error message that is displayed when the thank action can't find the log entry it's supposed to thank for.",
 	"thanks-error-invalid-log-type": "Error message that is displayed when thanks is attempted for a log entry of a non-allowed type. $1 is the offending log type.",

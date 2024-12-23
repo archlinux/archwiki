@@ -38,7 +38,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Sobre esta categoria",
 	"mobile-frontend-meta-data-issues-header": "Problemas da página",
 	"minerva-meta-data-issues-section-header": "Problemas na seção",
-	"mobile-frontend-notifications-filter": "Filtro",
 	"mobile-frontend-pageaction-edit-tooltip": "Editar a introdução desta página",
 	"mobile-frontend-placeholder": "Pesquisar {{SITENAME}}",
 	"mobile-frontend-random-button": "Aleatório",
@@ -61,7 +60,5 @@
 	"skin-minerva-issue-learn-more": "Saiba mais",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorias",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Mostra as categorias das páginas",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tratamento aprimorado de problemas de página",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemas de página (Template:ambox) serão incluídos no artigo.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Infelizmente, o agrupamento de resultados por página não está disponível na versão de acesso móvel. Se pretende usar a funcionalidade de agrupamento por página visite a versão do ''site'' para acesso por computador de secretária."
 }

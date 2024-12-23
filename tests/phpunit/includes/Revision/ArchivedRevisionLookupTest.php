@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Tests\Revision;
 
-use ContentHandler;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -103,7 +103,7 @@ class ArchivedRevisionLookupTest extends MediaWikiIntegrationTestCase {
 				'ar_len' => '11',
 				'ar_deleted' => '0',
 				'ar_rev_id' => strval( $this->secondRev->getId() ),
-				'ar_timestamp' => $this->db->timestamp( $this->secondRev->getTimestamp() ),
+				'ar_timestamp' => $this->getDb()->timestamp( $this->secondRev->getTimestamp() ),
 				'ar_sha1' => '0qdrpxl537ivfnx4gcpnzz0285yxryy',
 				'ar_page_id' => strval( $this->secondRev->getPageId() ),
 				'ar_comment_text' => 'just a test',
@@ -123,7 +123,7 @@ class ArchivedRevisionLookupTest extends MediaWikiIntegrationTestCase {
 				'ar_len' => '7',
 				'ar_deleted' => '0',
 				'ar_rev_id' => strval( $this->firstRev->getId() ),
-				'ar_timestamp' => $this->db->timestamp( $this->firstRev->getTimestamp() ),
+				'ar_timestamp' => $this->getDb()->timestamp( $this->firstRev->getTimestamp() ),
 				'ar_sha1' => 'pr0s8e18148pxhgjfa0gjrvpy8fiyxc',
 				'ar_page_id' => strval( $this->firstRev->getPageId() ),
 				'ar_comment_text' => 'testing',

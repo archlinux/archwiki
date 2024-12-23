@@ -3,7 +3,28 @@
  * Keep in sync with content.tables-print.less.
  */
 
+/* stylelint-disable selector-class-pattern */
+
 @import 'mediawiki.skin.variables.less';
+
+@media all and ( max-width: @max-width-breakpoint-mobile ) {
+	// T330527
+	.mw-parser-output {
+		table {
+			display: block;
+			overflow: auto;
+			max-width: 100%;
+		}
+
+		/**
+		 * Disable the above behaviour when noresize is present.
+		 * See mediawiki.skinning/interface for more information.
+		 */
+		.noresize table {
+			display: table;
+		}
+	}
+}
 
 .wikitable {
 	background-color: @background-color-neutral-subtle;
@@ -29,5 +50,13 @@
 
 	> caption {
 		font-weight: bold;
+	}
+
+	@media all and ( max-width: @max-width-breakpoint-mobile ) {
+		body.skin--responsive & {
+			float: none;
+			margin-left: 0;
+			margin-right: 0;
+		}
 	}
 }

@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that prunes file cache for pages, objects, resources, etc.
@@ -30,6 +32,7 @@ require_once __DIR__ . '/Maintenance.php';
  */
 class PruneFileCache extends Maintenance {
 
+	/** @var int */
 	protected $minSurviveTimestamp;
 
 	public function __construct() {
@@ -81,6 +84,7 @@ class PruneFileCache extends Maintenance {
 	protected function prune_directory( $dir, $report = false ) {
 		$tsNow = time();
 		$dirHandle = opendir( $dir );
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $file = readdir( $dirHandle ) ) !== false ) {
 			// Skip ".", "..", and also any dirs or files like ".svn" or ".htaccess"
 			if ( $file[0] != "." ) {
@@ -108,5 +112,7 @@ class PruneFileCache extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PruneFileCache::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

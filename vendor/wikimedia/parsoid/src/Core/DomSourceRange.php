@@ -119,6 +119,30 @@ class DomSourceRange extends SourceRange {
 	}
 
 	/**
+	 * Return the source range corresponding to the open portion of this range.
+	 * @return SourceRange
+	 */
+	public function openRange(): SourceRange {
+		return new SourceRange( $this->start, $this->innerStart() );
+	}
+
+	/**
+	 * Return the source range corresponding to the close portion of this range.
+	 * @return SourceRange
+	 */
+	public function closeRange(): SourceRange {
+		return new SourceRange( $this->innerEnd(), $this->end );
+	}
+
+	/**
+	 * Return the source range corresponding to the inner portion of this range.
+	 * @return SourceRange
+	 */
+	public function innerRange(): SourceRange {
+		return new SourceRange( $this->innerStart(), $this->innerEnd() );
+	}
+
+	/**
 	 * Strip the tag open and close from the beginning and end of the
 	 * provided string.  This is similar to `DomSourceRange::innerSubstr()`
 	 * but we assume that the string before `$this->start` and after
@@ -166,6 +190,35 @@ class DomSourceRange extends SourceRange {
 	}
 
 	/**
+	 * Determine if this DSR records that whitespace was trimmed from
+	 * this node.  Note that this doesn't mean that the amount trimmed
+	 * is known; use ::hasValidLeadingWS() or ::hasValidTrimmedWS()
+	 * to determine that.
+	 * @return bool True if either leadingWS or trailingWS is non-zero.
+	 */
+	public function hasTrimmedWS(): bool {
+		return $this->leadingWS !== 0 || $this->trailingWS !== 0;
+	}
+
+	/**
+	 * @note In most cases you should check to see if this node
+	 * ::hasTrimmedWS() *and* whether the amount is valid.
+	 * @return bool if the amount of leading whitespace is known.
+	 */
+	public function hasValidLeadingWS(): bool {
+		return $this->leadingWS !== -1;
+	}
+
+	/**
+	 * @note In most cases you should check to see if this node
+	 * ::hasTrimmedWS() *and* whether the amount is valid.
+	 * @return bool if the amount of trailing whitespace is known.
+	 */
+	public function hasValidTrailingWS(): bool {
+		return $this->trailingWS !== -1;
+	}
+
+	/**
 	 * Convert a TSR to a DSR with zero-width container open/close tags.
 	 * @param SourceRange $tsr
 	 * @return DomSourceRange
@@ -180,7 +233,7 @@ class DomSourceRange extends SourceRange {
 	 * @param array<int|null> $dsr
 	 * @return DomSourceRange
 	 */
-	public static function fromArray( array $dsr ): DomSourceRange {
+	public static function newFromJsonArray( array $dsr ): DomSourceRange {
 		$n = count( $dsr );
 		Assert::invariant( $n === 2 || $n === 4 || $n === 6, 'Not enough elements in DSR array' );
 		return new DomSourceRange(
@@ -191,7 +244,7 @@ class DomSourceRange extends SourceRange {
 	/**
 	 * @inheritDoc
 	 */
-	public function jsonSerialize(): array {
+	public function toJsonArray(): array {
 		$a = [ $this->start, $this->end, $this->openWidth, $this->closeWidth ];
 		if ( $this->leadingWS !== 0 || $this->trailingWS !== 0 ) {
 			$a[] = $this->leadingWS;

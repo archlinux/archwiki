@@ -22,7 +22,11 @@
  * @author PhiLiP <philip.npc@gmail.com>
  */
 
+namespace MediaWiki\Language;
+
+use InvalidArgumentException;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Debug\DeprecationHelper;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
@@ -37,6 +41,10 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use RuntimeException;
+use StringUtils;
+use UnexpectedValueException;
+use Wikimedia\ObjectCache\BagOStuff;
 
 /**
  * Base class for multi-variant language conversion.
@@ -58,6 +66,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		'gan',
 		'iu',
 		'ku',
+		'mni',
 		'sh',
 		'shi',
 		'sr',
@@ -65,6 +74,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		'tly',
 		'uz',
 		'wuu',
+		'zgh',
 		'zh',
 	];
 
@@ -81,6 +91,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		'gan' => 'gan',
 		'iu' => 'iu',
 		'ku' => 'ku',
+		'mni' => 'mni',
 		'sh' => 'sh-latn',
 		'shi' => 'shi',
 		'sr' => 'sr',
@@ -88,6 +99,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		'tly' => 'tly',
 		'uz' => 'uz',
 		'wuu' => 'wuu',
+		'zgh' => 'zgh',
 		'zh' => 'zh',
 	];
 
@@ -343,17 +355,16 @@ abstract class LanguageConverter implements ILanguageConverter {
 	}
 
 	public function getURLVariant() {
-		global $wgRequest;
-
 		if ( $this->mURLVariant ) {
 			return $this->mURLVariant;
 		}
 
+		$request = RequestContext::getMain()->getRequest();
 		// see if the preference is set in the request
-		$ret = $wgRequest->getText( 'variant' );
+		$ret = $request->getText( 'variant' );
 
 		if ( !$ret ) {
-			$ret = $wgRequest->getVal( 'uselang' );
+			$ret = $request->getVal( 'uselang' );
 		}
 
 		$this->mURLVariant = $this->validateVariant( $ret );
@@ -404,15 +415,14 @@ abstract class LanguageConverter implements ILanguageConverter {
 	 * @return string|null Variant if one found, null otherwise
 	 */
 	protected function getHeaderVariant() {
-		global $wgRequest;
-
 		if ( $this->mHeaderVariant ) {
 			return $this->mHeaderVariant;
 		}
 
+		$request = RequestContext::getMain()->getRequest();
 		// See if some supported language variant is set in the
 		// HTTP header.
-		$languages = array_keys( $wgRequest->getAcceptLang() );
+		$languages = array_keys( $request->getAcceptLang() );
 		if ( !$languages ) {
 			return null;
 		}
@@ -926,14 +936,14 @@ abstract class LanguageConverter implements ILanguageConverter {
 			return;
 		}
 
-		global $wgRequest;
+		$request = RequestContext::getMain()->getRequest();
 
-		$isredir = $wgRequest->getText( 'redirect', 'yes' );
-		$action = $wgRequest->getText( 'action' );
-		if ( $action == 'edit' && $wgRequest->getBool( 'redlink' ) ) {
+		$isredir = $request->getText( 'redirect', 'yes' );
+		$action = $request->getText( 'action' );
+		if ( $action == 'edit' && $request->getBool( 'redlink' ) ) {
 			$action = 'view';
 		}
-		$linkconvert = $wgRequest->getText( 'linkconvert', 'yes' );
+		$linkconvert = $request->getText( 'linkconvert', 'yes' );
 		$disableLinkConversion =
 			MediaWikiServices::getInstance()->getLanguageConverterFactory()
 			->isLinkConversionDisabled();
@@ -1009,7 +1019,8 @@ abstract class LanguageConverter implements ILanguageConverter {
 	 * @param bool $fromCache Whether to load from cache. Defaults to true.
 	 */
 	protected function loadTables( $fromCache = true ) {
-		$languageConverterCacheType = MediaWikiServices::getInstance()
+		$services = MediaWikiServices::getInstance();
+		$languageConverterCacheType = $services
 			->getMainConfig()->get( MainConfigNames::LanguageConverterCacheType );
 
 		if ( $this->mTablesLoaded ) {
@@ -1017,7 +1028,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		}
 
 		$this->mTablesLoaded = true;
-		$cache = ObjectCache::getInstance( $languageConverterCacheType );
+		$cache = $services->getObjectCacheFactory()->getInstance( $languageConverterCacheType );
 		$cacheKey = $cache->makeKey(
 			'conversiontables', $this->getMainCode(),
 			md5( implode( ',', $this->getVariants() ) ), self::CACHE_VERSION_KEY
@@ -1265,3 +1276,6 @@ abstract class LanguageConverter implements ILanguageConverter {
 		return htmlspecialchars( $this->convert( $text ) );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( LanguageConverter::class, 'LanguageConverter' );

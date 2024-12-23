@@ -24,7 +24,9 @@ use Wikimedia\Purtle\RdfWriter;
 use Wikimedia\Purtle\TurtleRdfWriter;
 use Wikimedia\Rdbms\IReadableDatabase;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to provide RDF representation of the recent changes in category tree.
@@ -68,7 +70,9 @@ SPARQLD;
 	 */
 	private $categoriesRdf;
 
+	/** @var string */
 	private $startTS;
+	/** @var string */
 	private $endTS;
 
 	/**
@@ -234,9 +238,9 @@ SPARQL;
 	 */
 	private function setupChangesIterator(
 		IReadableDatabase $dbr,
-		array $columns = [],
-		array $extra_tables = [],
-		$fname = __METHOD__
+		array $columns,
+		array $extra_tables,
+		string $fname
 	) {
 		$tables = [ 'recentchanges', 'page_props', 'category' ];
 		if ( $extra_tables ) {
@@ -683,5 +687,7 @@ SPARQL;
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CategoryChangesAsRdf::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

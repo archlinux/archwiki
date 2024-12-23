@@ -8,8 +8,8 @@
 			"Mihai",
 			"Minisarm",
 			"Stelistcristi",
-			"XXN",
-			"Strainu"
+			"Strainu",
+			"XXN"
 		]
 	},
 	"categorytree": "Arborele categoriilor",
@@ -39,5 +39,9 @@
 	"categorytree-no-pages": "nicio pagină sau subcategorie",
 	"categorytree-not-found": "Categoria <i>$1</i> nu a fost găsită",
 	"categorytree-error": "Problemă la încărcarea datelor",
-	"categorytree-retry": "Vă rugăm să așteptați câteva momente și să încercați din nou."
+	"categorytree-retry": "Vă rugăm să așteptați câteva momente și să încercați din nou.",
+	"categorytree-onlyroot-message": "Parametrul <code>onlyroot</code> este învechit. Folosiți <code>depth=\"0\"</code> în schimb.",
+	"categorytree-deprecation-warning": "'''Atenție:''' Această pagină folosește <code><categorytree></code> cu un parametru învechit.",
+	"categorytree-deprecation-category": "Pagini care utilizează parametri învechiți pentru categorytree",
+	"categorytree-deprecation-category-desc": "Pagina folosește parametri categorytree învechiți, cum ar fi <code>onlyroot</code> ."
 }

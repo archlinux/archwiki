@@ -2,7 +2,7 @@
  * @private
  */
 ( function () {
-	var $hovzer, footHovzer, $spacer;
+	let $hovzer, footHovzer = null, $spacer;
 
 	function getHovzer() {
 		if ( $hovzer === undefined ) {
@@ -43,16 +43,14 @@
 		 * Update dimensions of stack to account for changes in the subtree.
 		 */
 		update: function () {
-			var $body;
-
-			$body = $( document.body );
+			const $body = $( document.body );
 
 			if ( $spacer === undefined ) {
 				$spacer = $( '<div>' ).attr( 'id', 'jquery-foot-hovzer-spacer' );
 				$spacer.appendTo( $body );
 			}
 			// Ensure CSS is applied by browser before using .outerHeight()
-			setTimeout( function () {
+			setTimeout( () => {
 				$spacer.css( 'height', getHovzer().outerHeight( /* includeMargin = */ true ) );
 			}, 0 );
 		}

@@ -7,8 +7,8 @@ use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\Extension\Math\MathRenderer;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Parser\ParserOptions;
 use MediaWikiIntegrationTestCase;
-use ParserOptions;
 use Psr\Log\NullLogger;
 
 /**
@@ -19,7 +19,7 @@ use Psr\Log\NullLogger;
 class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 
 	private function setupDummyRendering() {
-		$this->setMwGlobals( 'wgMathValidModes', [ MathConfig::MODE_SOURCE, MathConfig::MODE_LATEXML ] );
+		$this->overrideConfigValue( 'MathValidModes', [ MathConfig::MODE_SOURCE, MathConfig::MODE_LATEXML ] );
 		$this->mergeMwGlobalArrayValue( 'wgDefaultUserOptions', [ 'math' => MathConfig::MODE_SOURCE ] );
 		$this->setService( 'Math.RendererFactory', new class(
 			new ServiceOptions( RendererFactory::CONSTRUCTOR_OPTIONS, [
@@ -49,7 +49,7 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 						return true;
 					}
 
-					public function getHtmlOutput() {
+					public function getHtmlOutput( bool $svg = true ): string {
 						return "<render>$this->mode:$this->tex</render>";
 					}
 

@@ -43,6 +43,7 @@ class VectorComponentTableOfContents implements VectorComponent {
 	) {
 		$this->tocData = $tocData;
 		$this->localizer = $localizer;
+		// FIXME: isPinned is no longer accurate because the appearance menu uses client preferences
 		$this->isPinned = $featureManager->isFeatureEnabled( Constants::FEATURE_TOC_PINNED );
 		$this->config = $config;
 		$this->pinnableHeader = new VectorComponentPinnableHeader(

@@ -19,17 +19,17 @@
  */
 namespace MediaWiki\Extension\AbuseFilter;
 
-use ExtensionRegistry;
 use LogPage;
 use ManualLogEntry;
 use MediaWiki\CheckUser\Hooks as CUHooks;
 use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Message\Message;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use Message;
 
 /**
  * Filters blocked domains
@@ -57,17 +57,18 @@ class BlockedDomainFilter {
 	 * @param VariableHolder $vars variables by the action
 	 * @param User $user User that tried to add the domain, used for logging
 	 * @param Title $title Title of the page that was attempted on, used for logging
-	 * @return Status|bool Status if it's a match and false if not
+	 * @return Status Error status if it's a match, good status if not
 	 */
-	public function filter( VariableHolder $vars, $user, $title ) {
+	public function filter( VariableHolder $vars, User $user, Title $title ) {
 		global $wgAbuseFilterEnableBlockedExternalDomain;
+		$status = Status::newGood();
 		if ( !$wgAbuseFilterEnableBlockedExternalDomain ) {
-			return false;
+			return $status;
 		}
 		try {
 			$urls = $this->variablesManager->getVar( $vars, 'added_links', VariablesManager::GET_STRICT );
 		} catch ( UnsetVariableException $_ ) {
-			return false;
+			return $status;
 		}
 
 		$addedDomains = [];
@@ -77,7 +78,7 @@ class BlockedDomainFilter {
 				continue;
 			}
 			// Given that we block subdomains of blocked domains too
-			// pretend that all of higher-level domains are added as well
+			// pretend that all the higher-level domains are added as well
 			// so for foo.bar.com, you will have three domains to check:
 			// foo.bar.com, bar.com, and com
 			// This saves string search in the large list of blocked domains
@@ -95,19 +96,17 @@ class BlockedDomainFilter {
 			}
 		}
 		if ( !$addedDomains ) {
-			return false;
+			return $status;
 		}
 		$blockedDomains = $this->blockedDomainStorage->loadComputed();
 		$blockedDomainsAdded = array_intersect_key( $addedDomains, $blockedDomains );
 		if ( !$blockedDomainsAdded ) {
-			return false;
+			return $status;
 		}
 		$blockedDomainsAdded = array_keys( $blockedDomainsAdded );
 		$error = Message::newFromSpecifier( 'abusefilter-blocked-domains-attempted' );
 		$error->params( Message::listParam( $blockedDomainsAdded ) );
-
-		$status = Status::newFatal( $error, 'blockeddomain', 'blockeddomain' );
-		$status->value['blockeddomain'] = [ 'disallow' ];
+		$status->fatal( $error );
 		$this->logFilterHit(
 			$user,
 			$title,
@@ -123,7 +122,7 @@ class BlockedDomainFilter {
 	 * @param Title $title
 	 * @param string $blockedDomain The blocked domain the user attempted to add
 	 */
-	private function logFilterHit( User $user, $title, $blockedDomain ) {
+	private function logFilterHit( User $user, Title $title, string $blockedDomain ) {
 		$logEntry = new ManualLogEntry( 'abusefilterblockeddomainhit', 'hit' );
 		$logEntry->setPerformer( $user );
 		$logEntry->setTarget( $title );

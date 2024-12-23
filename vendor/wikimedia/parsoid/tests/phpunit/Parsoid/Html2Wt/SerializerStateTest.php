@@ -4,11 +4,12 @@ namespace Test\Parsoid\Html2Wt;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\Html2Wt\WikitextSerializer;
 use Wikimedia\Parsoid\Mocks\MockEnv;
+use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Zest\Zest;
 
@@ -33,7 +34,7 @@ class SerializerStateTest extends TestCase {
 	}
 
 	private function getState(
-		array $options = [], MockEnv $env = null, WikitextSerializer $serializer = null
+		array $options = [], ?MockEnv $env = null, ?WikitextSerializer $serializer = null
 	): SerializerState {
 		if ( !$env ) {
 			$env = new MockEnv( [] );
@@ -98,12 +99,12 @@ class SerializerStateTest extends TestCase {
 	 */
 	public function testGetOrigSrc() {
 		$env = new MockEnv( [] );
-		$selserData = new SelserData( '0123456789' );
+		$selserData = new SelectiveUpdateData( '0123456789' );
 		$state = $this->getState( [
 			'selserData' => $selserData,
 		], $env );
 		$state->initMode( true );
-		$this->assertSame( '23', $state->getOrigSrc( 2, 4 ) );
+		$this->assertSame( '23', $state->getOrigSrc( new SourceRange( 2, 4 ) ) );
 	}
 
 	/**

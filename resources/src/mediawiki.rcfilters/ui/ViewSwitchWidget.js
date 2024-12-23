@@ -1,5 +1,3 @@
-var ViewSwitchWidget;
-
 /**
  * A widget for the footer for the default view, allowing to switch views.
  *
@@ -11,7 +9,7 @@ var ViewSwitchWidget;
  * @param {mw.rcfilters.dm.FiltersViewModel} model View model
  * @param {Object} [config] Configuration object
  */
-ViewSwitchWidget = function MwRcfiltersUiViewSwitchWidget( controller, model, config ) {
+const ViewSwitchWidget = function MwRcfiltersUiViewSwitchWidget( controller, model, config ) {
 	config = config || {};
 
 	// Parent
@@ -61,9 +59,9 @@ OO.inheritClass( ViewSwitchWidget, OO.ui.Widget );
  * Respond to model update event
  */
 ViewSwitchWidget.prototype.onModelUpdate = function () {
-	var currentView = this.model.getCurrentView();
+	const currentView = this.model.getCurrentView();
 
-	this.buttons.getItems().forEach( function ( buttonWidget ) {
+	this.buttons.getItems().forEach( ( buttonWidget ) => {
 		buttonWidget.setActive( buttonWidget.getData() === currentView );
 	} );
 };

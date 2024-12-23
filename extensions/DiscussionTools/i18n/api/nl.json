@@ -8,6 +8,7 @@
 	"apierror-discussiontools-commentid-notfound": "Reactie met ID ‘$1’ niet gevonden.",
 	"apierror-discussiontools-commentname-ambiguous": "Meerdere reacties met de naam ‘$1’ gevonden, <var>commentid</var> is vereist.",
 	"apierror-discussiontools-commentname-notfound": "Reactie met de naam ‘$1’ niet gevonden.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Deze pagina heeft nooit overleg bevat.",
 	"apierror-discussiontools-formtoken-used": "Reactie al geplaatst. Laad de pagina opnieuw om deze te zien.",
 	"apierror-discussiontools-subscription-failed-add": "Kan zich niet abonneren op dit onderwerp.",
 	"apierror-discussiontools-subscription-failed-remove": "Kan zich niet afmelden voor dit onderwerp.",
@@ -41,5 +42,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Naam van het onderwerp waarop u zich wilt abonneren (of waarvoor u zich wilt afmelden)",
 	"apihelp-discussiontoolssubscribe-param-page": "Een pagina waarop het onderwerp verschijnt",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Waar om u te abonneren, onwaar om u af te melden",
-	"apihelp-discussiontoolssubscribe-summary": "Abonneer u (of meld u af) om meldingen over een onderwerp te ontvangen."
+	"apihelp-discussiontoolssubscribe-summary": "Abonneer u (of meld u af) om meldingen over een onderwerp te ontvangen.",
+	"apihelp-discussiontoolsthank-param-commentid": "ID van de reactie waarvoor moet worden bedankt.",
+	"apihelp-discussiontoolsthank-summary": "Een openbaar bedankje sturen voor een reactie."
 }

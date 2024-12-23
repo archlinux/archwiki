@@ -41,7 +41,7 @@ STR;
 
 	/**
 	 * Merges all requests parameter + expected values into one
-	 * @param array ...$arrays List of arrays, each of which contains exactly two
+	 * @param array ...$arrays List of arrays, each of which contains exactly two elements
 	 * @return array
 	 */
 	protected function merge( ...$arrays ) {
@@ -95,13 +95,13 @@ STR;
 	/**
 	 * Checks that the request's result matches the expected results.
 	 * Assumes no rawcontinue and a complete batch.
-	 * @param array $values Array is a two element [ request, expected_results ]
+	 * @param array $values Array containing two elements: [ request, expected_results ]
 	 * @param array|null $session
 	 * @param bool $appendModule
 	 * @param User|null $user
 	 */
-	protected function check( $values, array $session = null,
-		$appendModule = false, User $user = null
+	protected function check( $values, ?array $session = null,
+		$appendModule = false, ?User $user = null
 	) {
 		[ $req, $exp ] = $this->validateRequestExpectedPair( $values );
 		$req['action'] ??= 'query';

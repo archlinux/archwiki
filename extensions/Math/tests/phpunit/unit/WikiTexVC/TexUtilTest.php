@@ -33,6 +33,18 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 		$tu->__call( '\\notlisted', [] );
 	}
 
+	public function testUnicodeDefined() {
+		$tu = TexUtil::getInstance();
+		$sets = [ 'nullary_macro_in_mbox' ];
+		foreach ( $sets as $set ) {
+			$baseElements = $tu->getBaseElements();
+			foreach ( $baseElements[$set] as $key => $value ) {
+				$this->assertIsString( $tu->unicode_char( $key ),
+					"unicode_char should return a string for $key ($set)" );
+			}
+		}
+	}
+
 	/**
 	 * Testing a checksum for the parsed object against a checksum of the json file contents.
 	 * @return void
@@ -45,6 +57,7 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 			'ams_required',
 			'big_literals',
 			'box_functions',
+			'callback',
 			'cancel_required',
 			'color_function',
 			'color_required',
@@ -76,12 +89,14 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 			'mhchem_single_macro',
 			'nullary_macro',
 			'nullary_macro_in_mbox',
+			'operator',
 			'other_delimiters1',
 			'other_delimiters2',
 			'over_operator',
 			'right_function',
 			'teubner_required',
 			'stix_required',
+			'unicode_char',
 		];
 
 		// Reading data from TexUtil.
@@ -123,14 +138,14 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 
 		// Loading local json file
 		$file = TexUtil::getJsonFile();
-		$fileP = str_replace( [ "\n", "\t", "\r", " " ], "", $file );
-
-		$encP = json_encode( $out );
+		// json_encode cannot generate tabs required by WMF convention https://github.com/php/php-src/issues/8864
+		$encP = json_encode( $out, JSON_PRETTY_PRINT );
+		$encP = preg_replace( '/\n\s+/', "\n", $encP ) . "\n";
+		$file = preg_replace( '/\n\s+/', "\n", $file );
 		$hashOutput = $this->getHash( $encP );
-		$hashFile = $this->getHash( $fileP );
+		$hashFile = $this->getHash( $file );
 		// uncomment the following lines to spot differences in your IDE
-		//$this->assertEquals( str_replace( "\t", "    ", $file ), json_encode($out,
-		//        JSON_PRETTY_PRINT) . "\n" );
+		// $this->assertEquals( $encP, $file );
 		$this->assertEquals( $hashFile, $hashOutput );
 	}
 

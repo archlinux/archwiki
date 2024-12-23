@@ -21,11 +21,11 @@
 
 namespace MediaWiki\Message;
 
-use Content;
 use InvalidArgumentException;
-use Language;
+use MediaWiki\Content\Content;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
@@ -36,12 +36,17 @@ use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
-use MessageContent;
-use MessageSpecifier;
 use RuntimeException;
 use Serializable;
 use Stringable;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Bcp47Code\Bcp47Code;
+use Wikimedia\Message\ListParam;
+use Wikimedia\Message\ListType;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\Message\ParamType;
+use Wikimedia\Message\ScalarParam;
 
 /**
  * The Message class deals with fetching and processing of interface message
@@ -140,21 +145,14 @@ use Wikimedia\Assert\Assert;
  *
  * @note You can parse the text only in the content or interface languages
  *
- * @section message_appendix Appendix:
- *
- * @todo
- * - test, can we have tests?
- * - this documentation needs to be extended
- *
- * @see https://www.mediawiki.org/wiki/WfMessage()
- * @see https://www.mediawiki.org/wiki/New_messages_API
+ * @see https://www.mediawiki.org/wiki/Manual:Messages_API
  * @see https://www.mediawiki.org/wiki/Localisation
  *
  * @since 1.17
  * @newable
  * @ingroup Language
  */
-class Message implements MessageSpecifier, Serializable {
+class Message implements Stringable, MessageSpecifier, Serializable {
 	/** Use message text as-is */
 	public const FORMAT_PLAIN = 'plain';
 	/** Use normal wikitext -> HTML parsing (the result will be wrapped in a block-level HTML tag) */
@@ -171,10 +169,10 @@ class Message implements MessageSpecifier, Serializable {
 	 * @var array
 	 */
 	protected static $listTypeMap = [
-		'comma' => 'commaList',
-		'semicolon' => 'semicolonList',
-		'pipe' => 'pipeList',
-		'text' => 'listToText',
+		ListType::COMMA => 'commaList',
+		ListType::SEMICOLON => 'semicolonList',
+		ListType::PIPE => 'pipeList',
+		ListType::AND => 'listToText',
 	];
 
 	/**
@@ -183,14 +181,14 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @var bool
 	 */
-	protected $interface = true;
+	protected $isInterface = true;
 
 	/**
 	 * In which language to get this message. Overrides the $interface setting.
 	 *
 	 * @var Language|null Explicit language object, or null for user language
 	 */
-	protected $language = null;
+	protected ?Language $language = null;
 
 	/**
 	 * @var callable|null A callable which returns the current user language,
@@ -211,7 +209,14 @@ class Message implements MessageSpecifier, Serializable {
 	protected $keysToTry;
 
 	/**
-	 * @var array List of parameters which will be substituted into the message.
+	 * @var ?string The message key that the message was fetched from, if different from
+	 *   all of the requested $keysToTry (the requested key may be overridden by hooks).
+	 */
+	protected $overriddenKey = null;
+
+	/**
+	 * @var (MessageParam|Message|string|int|float)[] List of parameters which will be substituted
+	 *   into the message.
 	 */
 	protected $parameters = [];
 
@@ -239,18 +244,16 @@ class Message implements MessageSpecifier, Serializable {
 	/**
 	 * @stable to call
 	 * @since 1.17
-	 * @param string|string[]|MessageSpecifier $key Message key, or array of
-	 * message keys to try and use the first non-empty message for, or a
-	 * MessageSpecifier to copy from.
-	 * @param array $params Message parameters.
+	 * @param string|MessageSpecifier|string[] $key Message key, MessageSpecifier object to copy,
+	 * or array of fallback message keys where we use the first message that exists and is non-empty.
+	 * @param array $params Message parameters
 	 * @param Language|null $language [optional] Language to use (defaults to current user language).
-	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $key, $params = [], Language $language = null ) {
+	public function __construct( $key, $params = [], ?Language $language = null ) {
 		if ( $key instanceof MessageSpecifier ) {
 			if ( $params ) {
 				throw new InvalidArgumentException(
-					'$params must be empty if $key is a MessageSpecifier'
+					'Cannot set $params when $key is a MessageSpecifier'
 				);
 			}
 			$params = $key->getParams();
@@ -260,17 +263,20 @@ class Message implements MessageSpecifier, Serializable {
 		if ( is_string( $key ) ) {
 			$this->keysToTry = [ $key ];
 			$this->key = $key;
-		} elseif ( is_array( $key ) ) {
-			if ( !$key ) {
-				throw new InvalidArgumentException( '$key must not be an empty list' );
-			}
+		} elseif ( is_array( $key ) && $key ) {
 			$this->keysToTry = $key;
+			foreach ( $this->keysToTry as $key ) {
+				if ( !is_string( $key ) ) {
+					throw new InvalidArgumentException( 'Message keys must be strings. ' .
+						'Did you accidentally pass message key and parameters in one array?' );
+				}
+			}
 			$this->key = reset( $this->keysToTry );
 		} else {
-			throw new InvalidArgumentException( '$key must be a string or an array' );
+			throw new InvalidArgumentException( '$key must be a string or non-empty array' );
 		}
 
-		$this->parameters = array_values( $params );
+		$this->params( ...$params );
 		// User language is only resolved in getLanguage(). This helps preserve the
 		// semantic intent of "user language" across serialize() and unserialize().
 		$this->language = $language;
@@ -292,7 +298,7 @@ class Message implements MessageSpecifier, Serializable {
 	 */
 	public function __serialize() {
 		return [
-			'interface' => $this->interface,
+			'interface' => $this->isInterface,
 			'language' => $this->language ? $this->language->getCode() : null,
 			'key' => $this->key,
 			'keysToTry' => $this->keysToTry,
@@ -326,10 +332,22 @@ class Message implements MessageSpecifier, Serializable {
 		if ( !is_array( $data ) ) {
 			throw new InvalidArgumentException( __METHOD__ . ': Invalid serialized data' );
 		}
-		$this->interface = $data['interface'];
+		$this->isInterface = $data['interface'];
 		$this->key = $data['key'];
 		$this->keysToTry = $data['keysToTry'];
-		$this->parameters = $data['parameters'];
+		// Accept old serialization format for compatibility with pre-MessageParam stored values
+		$this->parameters = array_map( static function ( $param ) {
+			if ( is_array( $param ) ) {
+				$codec = MediaWikiServices::getInstance()->getJsonCodec();
+				if ( isset( $param['type'] ) ) {
+					return ListParam::newFromJsonArray( $codec, $param );
+				} else {
+					return ScalarParam::newFromJsonArray( $codec, $param );
+				}
+			} else {
+				return $param;
+			}
+		}, $data['parameters'] );
 		$this->useDatabase = $data['useDatabase'];
 		$this->language = $data['language']
 			? MediaWikiServices::getInstance()->getLanguageFactory()
@@ -391,7 +409,7 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @since 1.21
 	 *
-	 * @return array
+	 * @return (MessageParam|Message|string|int|float)[]
 	 */
 	public function getParams() {
 		return $this->parameters;
@@ -404,7 +422,7 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @return Language
 	 */
-	public function getLanguage() {
+	public function getLanguage(): Language {
 		// Defaults to null which means current user language
 		if ( $this->language !== null ) {
 			return $this->language;
@@ -437,7 +455,7 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * Also accepts a MessageSpecifier inside an array: that's not considered a valid format
 	 * but is an easy error to make due to how StatusValue stores messages internally.
-	 * Further array elements are ignored in that case.
+	 * Providing further array elements in that case causes an exception to be thrown.
 	 *
 	 * When the MessageSpecifier object is an instance of Message, a clone of the object is returned.
 	 * This is unlike the `new Message( … )` constructor, which returns a new object constructed from
@@ -447,7 +465,6 @@ class Message implements MessageSpecifier, Serializable {
 	 * @param string|array|MessageSpecifier $value
 	 * @param-taint $value tainted
 	 * @return self
-	 * @throws InvalidArgumentException
 	 * @since 1.27
 	 */
 	public static function newFromSpecifier( $value ) {
@@ -458,14 +475,23 @@ class Message implements MessageSpecifier, Serializable {
 		}
 
 		if ( $value instanceof Message ) { // Message, RawMessage, ApiMessage, etc
+			if ( $params ) {
+				throw new InvalidArgumentException(
+					'Cannot have parameters when the key is already a Message instance'
+				);
+			}
 			$message = clone $value;
 		} elseif ( $value instanceof MessageSpecifier ) {
+			if ( $params ) {
+				throw new InvalidArgumentException(
+					'Cannot have parameters when the key is already a MessageSpecifier instance'
+				);
+			}
 			$message = new Message( $value );
 		} elseif ( is_string( $value ) ) {
 			$message = new Message( $value, $params );
 		} else {
-			throw new InvalidArgumentException( __METHOD__ . ': invalid argument type '
-				. gettype( $value ) );
+			throw new InvalidArgumentException( 'Invalid argument type ' . get_debug_type( $value ) );
 		}
 
 		return $message;
@@ -521,8 +547,9 @@ class Message implements MessageSpecifier, Serializable {
 			$title .= '/' . $lang->getCode();
 		}
 
+		// Don't use $contLang->ucfirst() here. See T362654
 		return Title::makeTitle(
-			NS_MEDIAWIKI, $contLang->ucfirst( strtr( $title, ' ', '_' ) ) );
+			NS_MEDIAWIKI, ucfirst( strtr( $title, ' ', '_' ) ) );
 	}
 
 	/**
@@ -530,30 +557,25 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @since 1.17
 	 *
-	 * @param mixed ...$args Parameters as strings or arrays from
-	 *  Message::numParam() and the like, or a single array of parameters.
+	 * @param MessageParam|MessageSpecifier|string|int|float|array ...$params Parameters as strings or
+	 *  MessageParam values (from Message::numParam() and the like), or a single array of parameters.
 	 *
 	 * @return self $this
 	 */
-	public function params( ...$args ) {
-		// If $args has only one entry and it's an array, then it's either a
-		// non-varargs call or it happens to be a call with just a single
-		// "special" parameter. Since the "special" parameters don't have any
-		// numeric keys, we'll test that to differentiate the cases.
-		if ( count( $args ) === 1 && isset( $args[0] ) && is_array( $args[0] ) ) {
-			if ( $args[0] === [] ) {
-				$args = [];
-			} else {
-				foreach ( $args[0] as $key => $value ) {
-					if ( is_int( $key ) ) {
-						$args = $args[0];
-						break;
-					}
-				}
-			}
+	public function params( ...$params ) {
+		if ( count( $params ) === 1 && isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
 		}
-
-		$this->parameters = array_merge( $this->parameters, array_values( $args ) );
+		foreach ( $params as $param ) {
+			if ( $param instanceof ScalarParam && $param->getType() === ParamType::TEXT ) {
+				// Unwrap for compatibility with legacy code that inspects the parameters
+				$param = $param->getValue();
+			}
+			if ( $param instanceof MessageSpecifier ) {
+				$param = static::newFromSpecifier( $param );
+			}
+			$this->parameters[] = $param;
+		}
 		return $this;
 	}
 
@@ -710,6 +732,7 @@ class Message implements MessageSpecifier, Serializable {
 	 * Add parameters that represent stringable objects
 	 *
 	 * @since 1.38
+	 * @deprecated since 1.43
 	 *
 	 * @param Stringable|Stringable[] ...$params stringable parameters,
 	 * or a single argument that is an array of stringable parameters.
@@ -717,11 +740,14 @@ class Message implements MessageSpecifier, Serializable {
 	 * @return self $this
 	 */
 	public function objectParams( ...$params ) {
+		wfDeprecated( __METHOD__, '1.43' );
 		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
 			$params = $params[0];
 		}
 		foreach ( $params as $param ) {
-			$this->parameters[] = self::objectParam( $param );
+			// Suppress redundant deprecation warning
+			// phpcs:ignore Generic.PHP.NoSilencedErrors
+			$this->parameters[] = @self::objectParam( $param );
 		}
 		return $this;
 	}
@@ -859,7 +885,7 @@ class Message implements MessageSpecifier, Serializable {
 	 * turned off.
 	 *
 	 * @since 1.17
-	 * @param Language|StubUserLang|string $lang Language code or Language object.
+	 * @param Bcp47Code|StubUserLang|string $lang Language code or language object.
 	 * @return self $this
 	 */
 	public function inLanguage( $lang ) {
@@ -867,23 +893,28 @@ class Message implements MessageSpecifier, Serializable {
 
 		if ( $lang instanceof Language ) {
 			$this->language = $lang;
-		} elseif ( is_string( $lang ) ) {
-			if ( !$this->language instanceof Language || $this->language->getCode() != $lang ) {
+		} elseif ( $lang instanceof StubUserLang ) {
+			$this->language = null;
+		} elseif ( $lang instanceof Bcp47Code ) {
+			if ( $this->language === null || !$this->language->isSameCodeAs( $lang ) ) {
 				$this->language = MediaWikiServices::getInstance()->getLanguageFactory()
 					->getLanguage( $lang );
 			}
-		} elseif ( $lang instanceof StubUserLang ) {
-			$this->language = null;
+		} elseif ( is_string( $lang ) ) {
+			if ( $this->language === null || $this->language->getCode() != $lang ) {
+				$this->language = MediaWikiServices::getInstance()->getLanguageFactory()
+					->getLanguage( $lang );
+			}
 		} else {
 			// Always throws. Moved here as an optimization.
-			Assert::parameterType( [ Language::class, StubUserLang::class, 'string' ], $lang, '$lang' );
+			Assert::parameterType( [ Bcp47Code::class, StubUserLang::class, 'string' ], $lang, '$lang' );
 		}
 
 		if ( $this->language !== $previousLanguage ) {
 			// The language has changed. Clear the message cache.
 			$this->message = null;
 		}
-		$this->interface = false;
+		$this->isInterface = false;
 		return $this;
 	}
 
@@ -901,7 +932,7 @@ class Message implements MessageSpecifier, Serializable {
 			$this->message = null;
 		}
 		$this->language = null;
-		$this->interface = true;
+		$this->isInterface = true;
 		return $this;
 	}
 
@@ -936,7 +967,7 @@ class Message implements MessageSpecifier, Serializable {
 	 * @return self $this
 	 */
 	public function setInterfaceMessageFlag( $interface ) {
-		$this->interface = (bool)$interface;
+		$this->isInterface = (bool)$interface;
 		return $this;
 	}
 
@@ -983,20 +1014,6 @@ class Message implements MessageSpecifier, Serializable {
 	}
 
 	/**
-	 * Returns the message as a Content object.
-	 * @deprecated since 1.38, MessageContent class is hard-deprecated.
-	 * @return Content
-	 */
-	public function content() {
-		wfDeprecated( __METHOD__, '1.38' );
-		if ( !$this->content ) {
-			$this->content = new MessageContent( $this );
-		}
-
-		return $this->content;
-	}
-
-	/**
 	 * Returns the message formatted a certain way.
 	 *
 	 * @since 1.17
@@ -1032,6 +1049,9 @@ class Message implements MessageSpecifier, Serializable {
 			# Insert a list of alternative message keys for &uselang=qqx.
 			if ( $string === '($*)' ) {
 				$keylist = implode( ' / ', $this->keysToTry );
+				if ( $this->overriddenKey !== null ) {
+					$keylist .= ' = ' . $this->overriddenKey;
+				}
 				$string = "($keylist$*)";
 			}
 			# Replace $* with a list of parameters for &uselang=qqx.
@@ -1184,10 +1204,10 @@ class Message implements MessageSpecifier, Serializable {
 	 * @param mixed $raw
 	 * @param-taint $raw html,exec_html
 	 *
-	 * @return array Array with a single "raw" key.
+	 * @return ScalarParam
 	 */
-	public static function rawParam( $raw ) {
-		return [ 'raw' => $raw ];
+	public static function rawParam( $raw ): ScalarParam {
+		return new ScalarParam( ParamType::RAW, $raw );
 	}
 
 	/**
@@ -1195,10 +1215,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param mixed $num
 	 *
-	 * @return array Array with a single "num" key.
+	 * @return ScalarParam
 	 */
-	public static function numParam( $num ) {
-		return [ 'num' => $num ];
+	public static function numParam( $num ): ScalarParam {
+		return new ScalarParam( ParamType::NUM, $num );
 	}
 
 	/**
@@ -1206,10 +1226,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param int $duration
 	 *
-	 * @return int[] Array with a single "duration" key.
+	 * @return ScalarParam
 	 */
-	public static function durationParam( $duration ) {
-		return [ 'duration' => $duration ];
+	public static function durationParam( $duration ): ScalarParam {
+		return new ScalarParam( ParamType::DURATION_LONG, $duration );
 	}
 
 	/**
@@ -1217,10 +1237,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param string $expiry
 	 *
-	 * @return string[] Array with a single "expiry" key.
+	 * @return ScalarParam
 	 */
-	public static function expiryParam( $expiry ) {
-		return [ 'expiry' => $expiry ];
+	public static function expiryParam( $expiry ): ScalarParam {
+		return new ScalarParam( ParamType::EXPIRY, $expiry );
 	}
 
 	/**
@@ -1228,10 +1248,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param string $dateTime
 	 *
-	 * @return string[] Array with a single "datetime" key.
+	 * @return ScalarParam
 	 */
-	public static function dateTimeParam( string $dateTime ) {
-		return [ 'datetime' => $dateTime ];
+	public static function dateTimeParam( string $dateTime ): ScalarParam {
+		return new ScalarParam( ParamType::DATETIME, $dateTime );
 	}
 
 	/**
@@ -1239,10 +1259,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param string $date
 	 *
-	 * @return string[] Array with a single "date" key.
+	 * @return ScalarParam
 	 */
-	public static function dateParam( string $date ) {
-		return [ 'date' => $date ];
+	public static function dateParam( string $date ): ScalarParam {
+		return new ScalarParam( ParamType::DATE, $date );
 	}
 
 	/**
@@ -1250,10 +1270,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param string $time
 	 *
-	 * @return string[] Array with a single "time" key.
+	 * @return ScalarParam
 	 */
-	public static function timeParam( string $time ) {
-		return [ 'time' => $time ];
+	public static function timeParam( string $time ): ScalarParam {
+		return new ScalarParam( ParamType::TIME, $time );
 	}
 
 	/**
@@ -1261,21 +1281,23 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param string $userGroup
 	 *
-	 * @return string[] Array with a single "group" key.
+	 * @return ScalarParam
 	 */
-	public static function userGroupParam( string $userGroup ) {
-		return [ 'group' => $userGroup ];
+	public static function userGroupParam( string $userGroup ): ScalarParam {
+		return new ScalarParam( ParamType::GROUP, $userGroup );
 	}
 
 	/**
 	 * @since 1.38
+	 * @deprecated since 1.43
 	 *
 	 * @param Stringable $object
 	 *
-	 * @return Stringable[] Array with a single "object" key.
+	 * @return ScalarParam
 	 */
-	public static function objectParam( Stringable $object ) {
-		return [ 'object' => $object ];
+	public static function objectParam( Stringable $object ): ScalarParam {
+		wfDeprecated( __METHOD__, '1.43' );
+		return new ScalarParam( ParamType::OBJECT, $object );
 	}
 
 	/**
@@ -1283,10 +1305,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param int|float $period
 	 *
-	 * @return int[]|float[] Array with a single "period" key.
+	 * @return ScalarParam
 	 */
-	public static function timeperiodParam( $period ) {
-		return [ 'period' => $period ];
+	public static function timeperiodParam( $period ): ScalarParam {
+		return new ScalarParam( ParamType::DURATION_SHORT, $period );
 	}
 
 	/**
@@ -1294,10 +1316,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param int $size
 	 *
-	 * @return int[] Array with a single "size" key.
+	 * @return ScalarParam
 	 */
-	public static function sizeParam( $size ) {
-		return [ 'size' => $size ];
+	public static function sizeParam( $size ): ScalarParam {
+		return new ScalarParam( ParamType::SIZE, $size );
 	}
 
 	/**
@@ -1305,10 +1327,10 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param int $bitrate
 	 *
-	 * @return int[] Array with a single "bitrate" key.
+	 * @return ScalarParam
 	 */
-	public static function bitrateParam( $bitrate ) {
-		return [ 'bitrate' => $bitrate ];
+	public static function bitrateParam( $bitrate ): ScalarParam {
+		return new ScalarParam( ParamType::BITRATE, $bitrate );
 	}
 
 	/**
@@ -1316,26 +1338,21 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @param string $plaintext
 	 *
-	 * @return string[] Array with a single "plaintext" key.
+	 * @return ScalarParam
 	 */
-	public static function plaintextParam( $plaintext ) {
-		return [ 'plaintext' => $plaintext ];
+	public static function plaintextParam( $plaintext ): ScalarParam {
+		return new ScalarParam( ParamType::PLAINTEXT, $plaintext );
 	}
 
 	/**
 	 * @since 1.29
 	 *
 	 * @param array $list
-	 * @param string $type 'comma', 'semicolon', 'pipe', 'text'
-	 * @return array Array with "list" and "type" keys.
+	 * @param string $type One of the ListType constants
+	 * @return ListParam
 	 */
-	public static function listParam( array $list, $type = 'text' ) {
-		if ( !isset( self::$listTypeMap[$type] ) ) {
-			throw new InvalidArgumentException(
-				"Invalid type '$type'. Known types are: " . implode( ', ', array_keys( self::$listTypeMap ) )
-			);
-		}
-		return [ 'list' => $list, 'type' => $type ];
+	public static function listParam( array $list, $type = ListType::AND ): ListParam {
+		return new ListParam( $type, $list );
 	}
 
 	/**
@@ -1381,71 +1398,74 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @since 1.18
 	 *
-	 * @param mixed $param Parameter as defined in this class.
+	 * @param ScalarParam|ListParam|MessageSpecifier|string $param Parameter as defined in this class.
 	 * @param string $format One of the FORMAT_* constants.
 	 *
 	 * @return array Array with the parameter type (either "before" or "after") and the value.
 	 */
 	protected function extractParam( $param, $format ) {
-		if ( is_array( $param ) ) {
-			if ( isset( $param['raw'] ) ) {
-				return [ 'after', $param['raw'] ];
-			} elseif ( isset( $param['num'] ) ) {
-				// Replace number params always in before step for now.
-				// No support for combined raw and num params
-				return [ 'before', $this->getLanguage()->formatNum( $param['num'] ) ];
-			} elseif ( isset( $param['duration'] ) ) {
-				return [ 'before', $this->getLanguage()->formatDuration( $param['duration'] ) ];
-			} elseif ( isset( $param['expiry'] ) ) {
-				return [ 'before', $this->getLanguage()->formatExpiry( $param['expiry'] ) ];
-			} elseif ( isset( $param['datetime'] ) ) {
-				return [ 'before', $this->getLanguage()->timeanddate( $param['datetime'] ) ];
-			} elseif ( isset( $param['date'] ) ) {
-				return [ 'before', $this->getLanguage()->date( $param['date'] ) ];
-			} elseif ( isset( $param['time'] ) ) {
-				return [ 'before', $this->getLanguage()->time( $param['time'] ) ];
-			} elseif ( isset( $param['group'] ) ) {
-				return [ 'before', $this->getLanguage()->getGroupName( $param['group'] ) ];
-			} elseif ( isset( $param['period'] ) ) {
-				return [ 'before', $this->getLanguage()->formatTimePeriod( $param['period'] ) ];
-			} elseif ( isset( $param['size'] ) ) {
-				return [ 'before', $this->getLanguage()->formatSize( $param['size'] ) ];
-			} elseif ( isset( $param['bitrate'] ) ) {
-				return [ 'before', $this->getLanguage()->formatBitrate( $param['bitrate'] ) ];
-			} elseif ( isset( $param['plaintext'] ) ) {
-				return [ 'after', $this->formatPlaintext( $param['plaintext'], $format ) ];
-			} elseif ( isset( $param['list'] ) ) {
-				return $this->formatListParam( $param['list'], $param['type'], $format );
-			} elseif ( isset( $param['object'] ) ) {
-				$obj = $param['object'];
-				if ( $obj instanceof UserGroupMembershipParam ) {
-					return [
+		if ( $param instanceof ScalarParam ) {
+			switch ( $param->getType() ) {
+				case ParamType::RAW:
+					return [ 'after', $this->extractParam( $param->getValue(), self::FORMAT_PARSE )[1] ];
+				case ParamType::NUM:
+					// Replace number params always in before step for now.
+					// No support for combined raw and num params
+					return [ 'before', $this->getLanguage()->formatNum( $param->getValue() ) ];
+				case ParamType::DURATION_LONG:
+					return [ 'before', $this->getLanguage()->formatDuration( $param->getValue() ) ];
+				case ParamType::EXPIRY:
+					return [ 'before', $this->getLanguage()->formatExpiry( $param->getValue() ) ];
+				case ParamType::DATETIME:
+					return [ 'before', $this->getLanguage()->timeanddate( $param->getValue() ) ];
+				case ParamType::DATE:
+					return [ 'before', $this->getLanguage()->date( $param->getValue() ) ];
+				case ParamType::TIME:
+					return [ 'before', $this->getLanguage()->time( $param->getValue() ) ];
+				case ParamType::GROUP:
+					return [ 'before', $this->getLanguage()->getGroupName( $param->getValue() ) ];
+				case ParamType::DURATION_SHORT:
+					return [ 'before', $this->getLanguage()->formatTimePeriod( $param->getValue() ) ];
+				case ParamType::SIZE:
+					return [ 'before', $this->getLanguage()->formatSize( $param->getValue() ) ];
+				case ParamType::BITRATE:
+					return [ 'before', $this->getLanguage()->formatBitrate( $param->getValue() ) ];
+				case ParamType::PLAINTEXT:
+					return [ 'after', $this->formatPlaintext( $param->getValue(), $format ) ];
+				case ParamType::OBJECT:
+					$obj = $param->getValue();
+					if ( $obj instanceof UserGroupMembershipParam ) {
+						return [
 						'before',
 						$this->getLanguage()->getGroupMemberName( $obj->getGroup(), $obj->getMember() )
-					];
-				} else {
-					return [ 'before', $obj->__toString() ];
-				}
-			} else {
-				LoggerFactory::getInstance( 'Bug58676' )->warning(
-					'Invalid parameter for message "{msgkey}": {param}',
-					[
-						'exception' => new RuntimeException,
-						'msgkey' => $this->getKey(),
-						'param' => htmlspecialchars( serialize( $param ) ),
-					]
-				);
-
-				return [ 'before', '[INVALID]' ];
+						];
+					} else {
+						return [ 'before', $obj->__toString() ];
+					}
+				case ParamType::TEXT: // impossible because we unwrapped it in params()
+				default:
+					throw new \LogicException( "Invalid ScalarParam type: {$param->getType()}" );
 			}
-		} elseif ( $param instanceof Message ) {
+		} elseif ( $param instanceof ListParam ) {
+			return $this->formatListParam( $param->getValue(), $param->getListType(), $format );
+		} elseif ( is_array( $param ) ) {
+			LoggerFactory::getInstance( 'Bug58676' )->warning(
+				'Invalid parameter for message "{msgkey}": {param}',
+				[
+					'exception' => new RuntimeException,
+					'msgkey' => $this->key,
+					'param' => htmlspecialchars( serialize( $param ) ),
+				]
+			);
+			return [ 'before', '[INVALID]' ];
+		} elseif ( $param instanceof MessageSpecifier ) {
 			// Match language, flags, etc. to the current message.
-			$msg = clone $param;
+			$msg = static::newFromSpecifier( $param );
 			if ( $msg->language !== $this->language || $msg->useDatabase !== $this->useDatabase ) {
 				// Cache depends on these parameters
 				$msg->message = null;
 			}
-			$msg->interface = $this->interface;
+			$msg->isInterface = $this->isInterface;
 			$msg->language = $this->language;
 			$msg->useDatabase = $this->useDatabase;
 			$msg->contextPage = $this->contextPage;
@@ -1458,7 +1478,8 @@ class Message implements MessageSpecifier, Serializable {
 			// Message objects should not be before parameters because
 			// then they'll get double escaped. If the message needs to be
 			// escaped, it'll happen right here when we call toString().
-			return [ 'after', $msg->format( $format ) ];
+			// (Using the public toString() to allow mocking / subclassing.)
+			return [ 'after', $msg->toString( $format ) ];
 		} else {
 			return [ 'before', $param ];
 		}
@@ -1478,7 +1499,7 @@ class Message implements MessageSpecifier, Serializable {
 			$string,
 			$this->contextPage,
 			/*linestart*/true,
-			$this->interface,
+			$this->isInterface,
 			$this->getLanguage()
 		);
 
@@ -1509,7 +1530,7 @@ class Message implements MessageSpecifier, Serializable {
 	protected function transformText( $string ) {
 		return MediaWikiServices::getInstance()->getMessageCache()->transform(
 			$string,
-			$this->interface,
+			$this->isInterface,
 			$this->getLanguage(),
 			$this->contextPage
 		);
@@ -1526,9 +1547,13 @@ class Message implements MessageSpecifier, Serializable {
 		if ( $this->message === null ) {
 			$cache = MediaWikiServices::getInstance()->getMessageCache();
 
+			$usedKey = null;
 			foreach ( $this->keysToTry as $key ) {
-				$message = $cache->get( $key, $this->useDatabase, $this->getLanguage() );
+				$message = $cache->get( $key, $this->useDatabase, $this->getLanguage(), $usedKey );
 				if ( $message !== false && $message !== '' ) {
+					if ( $usedKey !== $key ) {
+						$this->overriddenKey = $usedKey;
+					}
 					break;
 				}
 			}
@@ -1580,7 +1605,7 @@ class Message implements MessageSpecifier, Serializable {
 	 */
 	protected function formatListParam( array $params, $listType, $format ) {
 		if ( !isset( self::$listTypeMap[$listType] ) ) {
-			$warning = 'Invalid list type for message "' . $this->getKey() . '": '
+			$warning = 'Invalid list type for message "' . $this->key . '": '
 				. htmlspecialchars( $listType )
 				. ' (params are ' . htmlspecialchars( serialize( $params ) ) . ')';
 			trigger_error( $warning, E_USER_WARNING );
@@ -1600,6 +1625,10 @@ class Message implements MessageSpecifier, Serializable {
 		$vars = [];
 		$list = [];
 		foreach ( $params as $n => $p ) {
+			if ( $p instanceof ScalarParam && $p->getType() === ParamType::TEXT ) {
+				// Unwrap like in params()
+				$p = $p->getValue();
+			}
 			[ $type, $value ] = $this->extractParam( $p, $format );
 			$types[$type] = true;
 			$list[] = $value;
@@ -1616,7 +1645,6 @@ class Message implements MessageSpecifier, Serializable {
 		// return the concatenated values as 'after'. We handle this by turning
 		// the list into a RawMessage and processing that as a parameter.
 		$vars = $this->getLanguage()->$func( $vars );
-		// @phan-suppress-next-line SecurityCheck-DoubleEscaped RawMessage is safe here
 		return $this->extractParam( new RawMessage( $vars, $params ), $format );
 	}
 }

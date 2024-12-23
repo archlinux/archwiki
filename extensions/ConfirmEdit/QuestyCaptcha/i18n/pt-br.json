@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Eduardo Addad de Oliveira",
 			"Eduardo.mps",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
 			"Giro720",
-			"Luckas",
-			555
+			"Luckas"
 		]
 	},
 	"questycaptcha-desc": "Gerador de Questy CAPTCHA para Confirm Edit",

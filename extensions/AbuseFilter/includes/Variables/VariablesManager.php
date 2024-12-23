@@ -58,7 +58,7 @@ class VariablesManager {
 	 * @param VariableHolder $holder
 	 * @param string $varName The variable name
 	 * @param int $mode One of the self::GET_* constants, determines how to behave when the variable is unset:
-	 *  - GET_STRICT -> In the future, this will throw an exception. For now it returns a DUNDEFINED and logs a warning
+	 *  - GET_STRICT -> Throw UnsetVariableException
 	 *  - GET_LAX -> Return a DUNDEFINED AFPData
 	 *  - GET_BC -> Return a DNULL AFPData (this should only be used for BC, see T230256)
 	 * @return AFPData
@@ -70,7 +70,7 @@ class VariablesManager {
 	): AFPData {
 		$varName = strtolower( $varName );
 		if ( $holder->varIsSet( $varName ) ) {
-			/** @var $variable LazyLoadedVariable|AFPData */
+			/** @var LazyLoadedVariable|AFPData $variable */
 			$variable = $holder->getVarThrow( $varName );
 			if ( $variable instanceof LazyLoadedVariable ) {
 				$getVarCB = function ( string $varName ) use ( $holder ): AFPData {
@@ -84,7 +84,7 @@ class VariablesManager {
 			} else {
 				// @codeCoverageIgnoreStart
 				throw new \UnexpectedValueException(
-					"Variable $varName has unexpected type " . gettype( $variable )
+					"Variable $varName has unexpected type " . get_debug_type( $variable )
 				);
 				// @codeCoverageIgnoreEnd
 			}
@@ -163,6 +163,9 @@ class VariablesManager {
 			'links-from-wikitext-or-database',
 			'load-recent-authors',
 			'page-age',
+			'revision-age-by-id',
+			'revision-age-by-title',
+			'previous-revision-age',
 			'get-page-restrictions',
 			'user-editcount',
 			'user-emailconfirm',

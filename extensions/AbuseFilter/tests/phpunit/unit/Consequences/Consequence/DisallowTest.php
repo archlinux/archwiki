@@ -8,22 +8,17 @@ use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWikiUnitTestCase;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Disallow
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Disallow
  */
 class DisallowTest extends MediaWikiUnitTestCase {
 	use ConsequenceGetMessageTestTrait;
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute() {
 		$disallow = new Disallow( $this->createMock( Parameters::class ), '' );
 		$this->assertTrue( $disallow->execute() );
 	}
 
 	/**
-	 * @covers ::getMessage
 	 * @dataProvider provideGetMessageParameters
 	 */
 	public function testGetMessage( Parameters $params ) {

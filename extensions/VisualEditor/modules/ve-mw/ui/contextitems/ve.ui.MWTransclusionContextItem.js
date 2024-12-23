@@ -68,7 +68,7 @@ ve.ui.MWTransclusionContextItem.static.isCompatibleWith =
  */
 ve.ui.MWTransclusionContextItem.prototype.getDescription = function () {
 	/** @type {ve.ce.MWTransclusionNode} */
-	var nodeClass = ve.ce.nodeFactory.lookup( this.model.constructor.static.name );
+	const nodeClass = ve.ce.nodeFactory.lookup( this.model.constructor.static.name );
 	return ve.msg(
 		'visualeditor-dialog-transclusion-contextitem-description',
 		nodeClass.static.getDescription( this.model ),
@@ -80,7 +80,7 @@ ve.ui.MWTransclusionContextItem.prototype.getDescription = function () {
  * @inheritdoc
  */
 ve.ui.MWTransclusionContextItem.prototype.renderBody = function () {
-	var nodeClass = ve.ce.nodeFactory.lookup( this.model.constructor.static.name );
+	const nodeClass = ve.ce.nodeFactory.lookup( this.model.constructor.static.name );
 	// eslint-disable-next-line no-jquery/no-append-html
 	this.$body.append( ve.htmlMsg(
 		'visualeditor-dialog-transclusion-contextitem-description',
@@ -93,9 +93,8 @@ ve.ui.MWTransclusionContextItem.prototype.renderBody = function () {
  * @inheritdoc
  */
 ve.ui.MWTransclusionContextItem.prototype.onEditButtonClick = function () {
-	var surfaceModel = this.context.getSurface().getModel(),
-		selection = surfaceModel.getSelection(),
-		contextItem = this;
+	const surfaceModel = this.context.getSurface().getModel(),
+		selection = surfaceModel.getSelection();
 
 	if ( selection instanceof ve.dm.TableSelection ) {
 		surfaceModel.setLinearSelection( selection.getOuterRanges(
@@ -105,9 +104,9 @@ ve.ui.MWTransclusionContextItem.prototype.onEditButtonClick = function () {
 
 	ve.ui.MWTransclusionContextItem.super.prototype.onEditButtonClick.apply( this, arguments );
 
-	this.context.getSurface().getDialogs().once( 'opening', function ( win, opening ) {
-		opening.then( function () {
-			contextItem.toggleLoadingVisualization( false );
+	this.context.getSurface().getDialogs().once( 'opening', ( win, opening ) => {
+		opening.then( () => {
+			this.toggleLoadingVisualization( false );
 		} );
 	} );
 	this.toggleLoadingVisualization( true );

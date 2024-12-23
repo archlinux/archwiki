@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Mybluberet",
-			"Owula kpakpo",
-			"NanaYawBotar"
+			"NanaYawBotar",
+			"Owula kpakpo"
 		]
 	},
 	"mobile-frontend-history": "Kwɛmɔ baafa nɛɛ tsakemɔ yinɔsane.",
@@ -12,6 +12,6 @@
 	"mobile-frontend-main-menu-login": "Yaa mli",
 	"mobile-frontend-main-menu-nearby": "ebɛŋkɛ",
 	"mobile-frontend-placeholder": "Taomɔ {{SITENAME}}",
-	"mobile-frontend-random-button": "Trukaa",
+	"mobile-frontend-random-button": "trukaa",
 	"minerva-page-actions-overflow": "Pii"
 }

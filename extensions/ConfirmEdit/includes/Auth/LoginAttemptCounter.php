@@ -2,13 +2,12 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\Auth;
 
-use BagOStuff;
 use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
-use ObjectCache;
-use User;
+use Wikimedia\ObjectCache\BagOStuff;
 
 /**
  * Helper to count login attempts per IP and per username.
@@ -31,7 +30,7 @@ class LoginAttemptCounter {
 	public function increaseBadLoginCounter( $username ) {
 		global $wgCaptchaBadLoginExpiration, $wgCaptchaBadLoginPerUserExpiration;
 
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 
 		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN ) ) {
 			$key = $this->badLoginKey( $cache );
@@ -50,7 +49,7 @@ class LoginAttemptCounter {
 	 */
 	public function resetBadLoginCounter( $username ) {
 		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
-			$cache = ObjectCache::getLocalClusterInstance();
+			$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 			$cache->delete( $this->badLoginPerUserKey( $username, $cache ) );
 		}
 	}
@@ -63,7 +62,7 @@ class LoginAttemptCounter {
 	public function isBadLoginTriggered() {
 		global $wgCaptchaBadLoginAttempts;
 
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 		return $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN )
 			&& (int)$cache->get( $this->badLoginKey( $cache ) ) >= $wgCaptchaBadLoginAttempts;
 	}
@@ -77,7 +76,7 @@ class LoginAttemptCounter {
 	public function isBadLoginPerUserTriggered( $u ) {
 		global $wgCaptchaBadLoginPerUserAttempts;
 
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 
 		if ( is_object( $u ) ) {
 			$u = $u->getName();

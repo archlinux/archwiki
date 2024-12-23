@@ -20,11 +20,13 @@
  * @file
  */
 
+namespace Wikimedia\Http;
+
+use InvalidArgumentException;
 use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Wikimedia\Http\TelemetryHeadersInterface;
 
 /**
  * Class to handle multiple HTTP requests
@@ -115,7 +117,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 *   - caBundlePath      : path to specific Certificate Authority bundle (if any)
 	 *   - headers           : an array of default headers to send with every request
 	 *   - telemetry         : a \Wikimedia\Http\RequestTelemetry instance to track telemetry data
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function __construct( array $options ) {
 		if ( isset( $options['caBundlePath'] ) ) {
@@ -193,7 +195,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 *   - httpVersion     : One of 'v1.0', 'v1.1', 'v2' or 'v2.0'. Leave empty to use
 	 *                       PHP/curl's default
 	 * @return array[] $reqs With response array populated for each
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function runMulti( array $reqs, array $opts = [] ) {
 		$this->normalizeRequests( $reqs );
@@ -253,7 +255,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 *   - httpVersion:    : HTTP version to use
 	 * @phan-param array{connTimeout?:int,reqTimeout?:int,usePipelining?:bool,maxConnsPerHost?:int} $opts
 	 * @return array $reqs With response array populated for each
-	 * @throws Exception
+	 * @throws \Exception
 	 * @suppress PhanTypeInvalidDimOffset
 	 */
 	private function runMultiCurl( array $reqs, array $opts ) {
@@ -356,7 +358,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 *   - httpVersion: default HTTP version
 	 * @phpcs:ignore MediaWiki.Commenting.FunctionComment.ObjectTypeHintReturn
 	 * @return resource|object
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function getCurlHandle( array &$req, array $opts ) {
 		$ch = curl_init();
@@ -489,7 +491,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 * @param array $opts
 	 * @phpcs:ignore MediaWiki.Commenting.FunctionComment.ObjectTypeHintReturn
 	 * @return resource|object
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function getCurlMulti( array $opts ) {
 		if ( !$this->cmh ) {
@@ -559,7 +561,7 @@ class MultiHttpClient implements LoggerAwareInterface {
 	 *   - reqTimeout      : post-connection timeout per request (seconds)
 	 * @phan-param array{connTimeout:int,reqTimeout:int} $opts
 	 * @return array $reqs With response array populated for each
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	private function runMultiHttp( array $reqs, array $opts = [] ) {
 		$httpOptions = [
@@ -708,28 +710,75 @@ class MultiHttpClient implements LoggerAwareInterface {
 	}
 
 	private function useReverseProxy( array &$req, $proxy ) {
-		$parsedProxy = wfParseUrl( $proxy );
+		$parsedProxy = parse_url( $proxy );
 		if ( $parsedProxy === false ) {
 			throw new InvalidArgumentException( "Invalid reverseProxy configured: $proxy" );
 		}
-		$parsedUrl = wfParseUrl( $req['url'] );
+		$parsedUrl = parse_url( $req['url'] );
 		if ( $parsedUrl === false ) {
 			throw new InvalidArgumentException( "Invalid url specified: {$req['url']}" );
 		}
 		// Set the current host in the Host header
+		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 		$req['headers']['Host'] = $parsedUrl['host'];
 		// Replace scheme, host and port in the request
+		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 		$parsedUrl['scheme'] = $parsedProxy['scheme'];
+		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 		$parsedUrl['host'] = $parsedProxy['host'];
 		if ( isset( $parsedProxy['port'] ) ) {
 			$parsedUrl['port'] = $parsedProxy['port'];
 		} else {
 			unset( $parsedUrl['port'] );
 		}
-		$req['url'] = wfAssembleUrl( $parsedUrl );
+		$req['url'] = self::assembleUrl( $parsedUrl );
 		// Explicitly disable use of another proxy by setting to false,
 		// since null will fallback to $this->proxy
 		$req['proxy'] = false;
+	}
+
+	/**
+	 * This is derived from MediaWiki\Utils\UrlUtils::assemble but changed to work
+	 * with parse_url's result so the delimiter is hardcoded.
+	 *
+	 * The basic structure used:
+	 * [scheme://][[user][:pass]@][host][:port][path][?query][#fragment]
+	 *
+	 * @param array $urlParts URL parts, as output from parse_url()
+	 * @return string URL assembled from its component parts
+	 */
+	private static function assembleUrl( array $urlParts ): string {
+		$result = isset( $urlParts['scheme'] ) ? $urlParts['scheme'] . '://' : '';
+
+		if ( isset( $urlParts['host'] ) ) {
+			if ( isset( $urlParts['user'] ) ) {
+				$result .= $urlParts['user'];
+				if ( isset( $urlParts['pass'] ) ) {
+					$result .= ':' . $urlParts['pass'];
+				}
+				$result .= '@';
+			}
+
+			$result .= $urlParts['host'];
+
+			if ( isset( $urlParts['port'] ) ) {
+				$result .= ':' . $urlParts['port'];
+			}
+		}
+
+		if ( isset( $urlParts['path'] ) ) {
+			$result .= $urlParts['path'];
+		}
+
+		if ( isset( $urlParts['query'] ) && $urlParts['query'] !== '' ) {
+			$result .= '?' . $urlParts['query'];
+		}
+
+		if ( isset( $urlParts['fragment'] ) ) {
+			$result .= '#' . $urlParts['fragment'];
+		}
+
+		return $result;
 	}
 
 	/**
@@ -812,3 +861,5 @@ class MultiHttpClient implements LoggerAwareInterface {
 	}
 
 }
+/** @deprecated class alias since 1.43 */
+class_alias( MultiHttpClient::class, 'MultiHttpClient' );

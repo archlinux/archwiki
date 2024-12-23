@@ -24,9 +24,14 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\User\Options\UserOptionsLookup;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
 /**
  * Maintenance script that removes unused preferences from the database.
@@ -53,7 +58,7 @@ class CleanupPreferences extends Maintenance {
 	 *      of a bug. We don't want them.
 	 */
 	public function execute() {
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$hidden = $this->hasOption( 'hidden' );
 		$unknown = $this->hasOption( 'unknown' );
 
@@ -81,8 +86,11 @@ class CleanupPreferences extends Maintenance {
 		if ( $unknown ) {
 			$defaultUserOptions = $this->getServiceContainer()->getUserOptionsLookup()->getDefaultOptions( null );
 			$where = [
-				'up_property NOT' . $dbr->buildLike( 'userjs-', $dbr->anyString() ),
-				'up_property NOT IN (' . $dbr->makeList( array_keys( $defaultUserOptions ) ) . ')',
+				$dbr->expr( 'up_property', IExpression::NOT_LIKE,
+					new LikeValue( 'userjs-', $dbr->anyString() ) ),
+				$dbr->expr( 'up_property', IExpression::NOT_LIKE,
+					new LikeValue( UserOptionsLookup::LOCAL_EXCEPTION_SUFFIX, $dbr->anyString() ) ),
+				$dbr->expr( 'up_property', '!=', array_keys( $defaultUserOptions ) ),
 			];
 			// Allow extensions to add to the where clause to prevent deletion of their own prefs.
 			$this->getHookRunner()->onDeleteUnknownPreferences( $where, $dbr );
@@ -143,5 +151,7 @@ class CleanupPreferences extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CleanupPreferences::class; // Tells it to run the class
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

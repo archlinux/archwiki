@@ -20,15 +20,15 @@
 
 namespace MediaWiki\EditPage;
 
-use Content;
-use ContentHandler;
-use IBufferingStatsdDataFactory;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Html\Html;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MWUnknownContentModelException;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\Stats\StatsFactory;
 
 /**
@@ -136,7 +136,7 @@ class TextConflictHelper {
 	 * Record a user encountering an edit conflict
 	 * @param User|null $user
 	 */
-	public function incrementConflictStats( User $user = null ) {
+	public function incrementConflictStats( ?User $user = null ) {
 		$namespace = 'n/a';
 		$userBucket = 'n/a';
 		$statsdMetrics = [ 'edit.failures.conflict' ];
@@ -174,7 +174,7 @@ class TextConflictHelper {
 	 * Record when a user has resolved an edit conflict
 	 * @param User|null $user
 	 */
-	public function incrementResolvedStats( User $user = null ) {
+	public function incrementResolvedStats( ?User $user = null ) {
 		$namespace = 'n/a';
 		$userBucket = 'n/a';
 		$statsdMetrics = [ 'edit.failures.conflict.resolved' ];

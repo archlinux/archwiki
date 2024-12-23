@@ -9,7 +9,7 @@
  *
  * @class
  * @extends ve.dm.BranchNode
- * @mixins ve.dm.TableCellableNode
+ * @mixes ve.dm.TableCellableNode
  *
  * @constructor
  * @param {Object} [element] Reference to element in linear model
@@ -51,7 +51,7 @@ ve.dm.TableCellNode.static.preserveHtmlAttributes = function ( attribute ) {
 /* Static Methods */
 
 ve.dm.TableCellNode.static.toDataElement = function ( domElements ) {
-	var attributes = {};
+	const attributes = {};
 
 	ve.dm.TableCellableNode.static.setAttributes( attributes, domElements );
 
@@ -62,7 +62,7 @@ ve.dm.TableCellNode.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.TableCellNode.static.toDomElements = function ( dataElement, doc ) {
-	var tag = dataElement.attributes && dataElement.attributes.style === 'header' ? 'th' : 'td',
+	const tag = dataElement.attributes && dataElement.attributes.style === 'header' ? 'th' : 'td',
 		domElement = doc.createElement( tag ),
 		attributes = dataElement.attributes;
 
@@ -83,7 +83,7 @@ ve.dm.TableCellNode.static.toDomElements = function ( dataElement, doc ) {
  */
 ve.dm.TableCellNode.static.createData = function ( options ) {
 	options = options || {};
-	var opening = {
+	const opening = {
 		type: 'tableCell',
 		attributes: {
 			style: options.style || 'data',
@@ -91,11 +91,11 @@ ve.dm.TableCellNode.static.createData = function ( options ) {
 			colspan: options.colspan || 1
 		}
 	};
-	var content = options.content || [
+	const content = options.content || [
 		{ type: 'paragraph', internal: { generated: 'wrapper' } },
 		{ type: '/paragraph' }
 	];
-	return [ opening ].concat( content ).concat( [ { type: '/tableCell' } ] );
+	return [ opening ].concat( content, { type: '/tableCell' } );
 };
 
 ve.dm.TableCellNode.static.describeChange = function ( key, change ) {

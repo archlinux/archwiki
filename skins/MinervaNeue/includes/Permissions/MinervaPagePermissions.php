@@ -19,11 +19,11 @@
  */
 namespace MediaWiki\Minerva\Permissions;
 
-use ContentHandler;
-use IContextSource;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Minerva\LanguagesHelper;
 use MediaWiki\Minerva\SkinOptions;
@@ -38,49 +38,18 @@ use MediaWiki\Watchlist\WatchlistManager;
  * A wrapper for all available Minerva permissions.
  */
 final class MinervaPagePermissions implements IMinervaPagePermissions {
-	/**
-	 * @var Title Current page title
-	 */
-	private $title;
-	/**
-	 * @var Config Extension config
-	 */
-	private $config;
-
-	/**
-	 * @var Authority
-	 */
-	private $performer;
-
+	/** @var Title Current page title */
+	private ?Title $title;
+	/** @var Config Extension config */
+	private Config $config;
+	private Authority $performer;
 	private OutputPage $out;
-
-	/**
-	 * @var ContentHandler
-	 */
-	private $contentHandler;
-
-	/**
-	 * @var SkinOptions Minerva skin options
-	 */
-	private $skinOptions;
-
-	/**
-	 * @var LanguagesHelper
-	 */
-	private $languagesHelper;
-
-	/**
-	 * @var PermissionManager
-	 */
-	private $permissionManager;
-
-	/**
-	 * @var IContentHandlerFactory
-	 */
-	private $contentHandlerFactory;
-
+	private ContentHandler $contentHandler;
+	private SkinOptions $skinOptions;
+	private LanguagesHelper $languagesHelper;
+	private PermissionManager $permissionManager;
+	private IContentHandlerFactory $contentHandlerFactory;
 	private UserFactory $userFactory;
-
 	private WatchlistManager $watchlistManager;
 
 	/**
@@ -112,7 +81,7 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	 * @param IContextSource $context
 	 * @return $this
 	 */
-	public function setContext( IContextSource $context ) {
+	public function setContext( IContextSource $context ): self {
 		$this->title = $context->getTitle();
 		$this->config = $context->getConfig();
 		$this->performer = $context->getAuthority();
@@ -144,7 +113,7 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	 * @inheritDoc
 	 * @throws ConfigException
 	 */
-	public function isAllowed( $action ) {
+	public function isAllowed( $action ): bool {
 		if ( !$this->title ) {
 			return false;
 		}
@@ -223,7 +192,7 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	/**
 	 * @inheritDoc
 	 */
-	public function isTalkAllowed() {
+	public function isTalkAllowed(): bool {
 		return $this->isAllowed( self::TALK );
 	}
 
@@ -232,7 +201,7 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	 *
 	 * @return bool
 	 */
-	protected function isCurrentPageContentModelEditable() {
+	protected function isCurrentPageContentModelEditable(): bool {
 		if ( !$this->contentHandler ) {
 			return false;
 		}
@@ -257,7 +226,7 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	 * quick checks.
 	 * @return bool
 	 */
-	private function canEditOrCreate() {
+	private function canEditOrCreate(): bool {
 		if ( !$this->title ) {
 			return false;
 		}
@@ -283,7 +252,7 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	 *
 	 * @return bool
 	 */
-	private function canMove() {
+	private function canMove(): bool {
 		if ( !$this->title ) {
 			return false;
 		}
@@ -297,7 +266,7 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	 *
 	 * @return bool
 	 */
-	private function canDelete() {
+	private function canDelete(): bool {
 		if ( !$this->title ) {
 			return false;
 		}
@@ -311,7 +280,7 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	 *
 	 * @return bool
 	 */
-	private function canProtect() {
+	private function canProtect(): bool {
 		if ( !$this->title ) {
 			return false;
 		}

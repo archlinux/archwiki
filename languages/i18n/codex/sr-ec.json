@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kizule",
+			"Milicevic01"
+		]
+	},
+	"cdx-input-chip-aria-description": "Притисните Enter да уредите или Delete да уклоните.",
+	"cdx-dialog-close-button-label": "Затвори",
+	"cdx-label-optional-flag": "(необавезно)",
+	"cdx-message-dismiss-button-label": "Затвори",
+	"cdx-search-input-search-button-label": "Претрага",
+	"cdx-table-select-all-label": "Изабери све редове",
+	"cdx-table-select-row-label": "Изаберите ред $1 од $2",
+	"cdx-typeahead-search-search-results-label": "Резултати претраге",
+	"cdx-table-pager-button-first-page": "Прва страница",
+	"cdx-table-pager-button-last-page": "Последња страница",
+	"cdx-table-pager-button-next-page": "Следећа страница",
+	"cdx-table-pager-button-prev-page": "Претходна страница",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 ред|$1 реда}}",
+	"cdx-table-pager-items-per-page-default": "Резултата по страници",
+	"cdx-table-pagination-status-message-determinate-long": "Приказани резултати $1–$2 од $3",
+	"cdx-table-pagination-status-message-determinate-short": "$1–$2 од $3",
+	"cdx-table-pagination-status-message-indeterminate-long": "Приказани резултати $1–$2 од многих",
+	"cdx-table-pagination-status-message-indeterminate-short": "$1—$2 од многих",
+	"cdx-table-pagination-status-message-indeterminate-final": "Приказ последњих {{PLURAL:$1|$1 резултат|$1 резултата}}",
+	"cdx-table-pagination-status-message-pending": "Учитавање резултата..."
+}

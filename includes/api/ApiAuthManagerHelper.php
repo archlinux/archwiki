@@ -21,13 +21,17 @@
  * @since 1.27
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\CreateFromLoginAuthenticationRequest;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Parser\Parser;
+use UnexpectedValueException;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -50,7 +54,7 @@ class ApiAuthManagerHelper {
 	 * @param ApiBase $module API module, for context and parameters
 	 * @param AuthManager|null $authManager
 	 */
-	public function __construct( ApiBase $module, AuthManager $authManager = null ) {
+	public function __construct( ApiBase $module, ?AuthManager $authManager = null ) {
 		$this->module = $module;
 
 		$params = $module->extractRequestParams();
@@ -64,7 +68,7 @@ class ApiAuthManagerHelper {
 	 * @param AuthManager|null $authManager
 	 * @return ApiAuthManagerHelper
 	 */
-	public static function newForModule( ApiBase $module, AuthManager $authManager = null ) {
+	public static function newForModule( ApiBase $module, ?AuthManager $authManager = null ) {
 		return new self( $module, $authManager );
 	}
 
@@ -400,3 +404,6 @@ class ApiAuthManagerHelper {
 		return $ret;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiAuthManagerHelper::class, 'ApiAuthManagerHelper' );

@@ -2,7 +2,7 @@
 	"@metadata": {
 		"authors": []
 	},
-	"monobook-prefs-talkpage": "[[mw:Skin talk:MonoBook|{{int:talk}}]]",
+	"monobook-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:MonoBook {{int:talk}}]",
 	"skinname-monobook": "MonoBook",
 	"monobook-desc": "The classic MediaWiki skin since 2004, named after the black-and-white photo of a book in the page background",
 	"monobook.css": "/* All CSS here will be loaded for users of the MonoBook skin */",

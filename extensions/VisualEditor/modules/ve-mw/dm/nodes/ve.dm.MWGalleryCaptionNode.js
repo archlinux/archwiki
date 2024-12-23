@@ -27,7 +27,7 @@ ve.dm.MWGalleryCaptionNode.static.name = 'mwGalleryCaption';
 ve.dm.MWGalleryCaptionNode.static.matchTagNames = [ 'li' ];
 
 ve.dm.MWGalleryCaptionNode.static.matchFunction = function ( element ) {
-	var parentTypeof = ( element.parentNode && element.parentNode.getAttribute( 'typeof' ) ) || '';
+	const parentTypeof = ( element.parentNode && element.parentNode.getAttribute( 'typeof' ) ) || '';
 	return element.getAttribute( 'class' ) === 'gallerycaption' &&
 		parentTypeof.trim().split( /\s+/ ).indexOf( 'mw:Extension/gallery' ) !== -1;
 };
@@ -35,7 +35,7 @@ ve.dm.MWGalleryCaptionNode.static.matchFunction = function ( element ) {
 ve.dm.MWGalleryCaptionNode.static.parentNodeTypes = [ 'mwGallery' ];
 
 ve.dm.MWGalleryCaptionNode.static.toDomElements = function ( dataElement, doc ) {
-	var li = doc.createElement( 'li' );
+	const li = doc.createElement( 'li' );
 	li.classList.add( 'gallerycaption' );
 	return [ li ];
 };

@@ -20,14 +20,21 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Content\Transform\ContentTransformer;
+use MediaWiki\Content\WikitextContent;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -37,6 +44,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
+use stdClass;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -62,15 +70,49 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 
 	// endregion
 
-	protected $limit, $diffto, $difftotext, $difftotextpst, $expandTemplates, $generateXML,
-		$section, $parseContent, $fetchContent, $contentFormat, $setParsedLimit = true,
-		$slotRoles = null, $slotContentFormats, $needSlots;
+	/** @var int|string|null */
+	protected $limit;
+	/** @var int|string|null */
+	protected $diffto;
+	/** @var string|null */
+	protected $difftotext;
+	/** @var bool */
+	protected $difftotextpst;
+	/** @var int|string|null */
+	protected $expandTemplates;
+	/** @var bool */
+	protected $generateXML;
+	/** @var int|string|null */
+	protected $section;
+	/** @var bool */
+	protected $parseContent;
+	/** @var bool */
+	protected $fetchContent;
+	/** @var string */
+	protected $contentFormat;
+	protected bool $setParsedLimit = true;
+	protected ?array $slotRoles = null;
+	/** @var string[] */
+	protected $slotContentFormats;
+	/** @var bool */
+	protected $needSlots;
 
-	protected $fld_ids = false, $fld_flags = false, $fld_timestamp = false,
-		$fld_size = false, $fld_slotsize = false, $fld_sha1 = false, $fld_slotsha1 = false,
-		$fld_comment = false, $fld_parsedcomment = false, $fld_user = false, $fld_userid = false,
-		$fld_content = false, $fld_tags = false, $fld_contentmodel = false, $fld_roles = false,
-		$fld_parsetree = false;
+	protected bool $fld_ids = false;
+	protected bool $fld_flags = false;
+	protected bool $fld_timestamp = false;
+	protected bool $fld_size = false;
+	protected bool $fld_slotsize = false;
+	protected bool $fld_sha1 = false;
+	protected bool $fld_slotsha1 = false;
+	protected bool $fld_comment = false;
+	protected bool $fld_parsedcomment = false;
+	protected bool $fld_user = false;
+	protected bool $fld_userid = false;
+	protected bool $fld_content = false;
+	protected bool $fld_tags = false;
+	protected bool $fld_contentmodel = false;
+	protected bool $fld_roles = false;
+	protected bool $fld_parsetree = false;
 
 	/**
 	 * The number of uncached diffs that had to be generated for this request.
@@ -92,34 +134,21 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	/**
 	 * @since 1.37 Support injection of services
 	 * @stable to call
-	 * @param ApiQuery $queryModule
-	 * @param string $moduleName
-	 * @param string $paramPrefix
-	 * @param RevisionStore|null $revisionStore
-	 * @param IContentHandlerFactory|null $contentHandlerFactory
-	 * @param ParserFactory|null $parserFactory
-	 * @param SlotRoleRegistry|null $slotRoleRegistry
-	 * @param ContentRenderer|null $contentRenderer
-	 * @param ContentTransformer|null $contentTransformer
-	 * @param CommentFormatter|null $commentFormatter
-	 * @param TempUserCreator|null $tempUserCreator
-	 * @param UserFactory|null $userFactory
-	 * @param UserNameUtils|null $userNameUtils
 	 */
 	public function __construct(
 		ApiQuery $queryModule,
-		$moduleName,
-		$paramPrefix = '',
-		RevisionStore $revisionStore = null,
-		IContentHandlerFactory $contentHandlerFactory = null,
-		ParserFactory $parserFactory = null,
-		SlotRoleRegistry $slotRoleRegistry = null,
-		ContentRenderer $contentRenderer = null,
-		ContentTransformer $contentTransformer = null,
-		CommentFormatter $commentFormatter = null,
-		TempUserCreator $tempUserCreator = null,
-		UserFactory $userFactory = null,
-		UserNameUtils $userNameUtils = null
+		string $moduleName,
+		string $paramPrefix = '',
+		?RevisionStore $revisionStore = null,
+		?IContentHandlerFactory $contentHandlerFactory = null,
+		?ParserFactory $parserFactory = null,
+		?SlotRoleRegistry $slotRoleRegistry = null,
+		?ContentRenderer $contentRenderer = null,
+		?ContentTransformer $contentTransformer = null,
+		?CommentFormatter $commentFormatter = null,
+		?TempUserCreator $tempUserCreator = null,
+		?UserFactory $userFactory = null,
+		?UserNameUtils $userNameUtils = null
 	) {
 		parent::__construct( $queryModule, $moduleName, $paramPrefix );
 		// This class is part of the stable interface and
@@ -149,7 +178,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	 * @param ApiPageSet|null $resultPageSet
 	 * @return void
 	 */
-	abstract protected function run( ApiPageSet $resultPageSet = null );
+	abstract protected function run( ?ApiPageSet $resultPageSet = null );
 
 	/**
 	 * Parse the parameters into the various instance fields.
@@ -379,7 +408,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 			}
 			if ( !( $revDel & self::CANNOT_VIEW ) ) {
 				try {
-					$vals['sha1'] = Wikimedia\base_convert( $revision->getSha1(), 36, 16, 40 );
+					$vals['sha1'] = \Wikimedia\base_convert( $revision->getSha1(), 36, 16, 40 );
 				} catch ( RevisionAccessException $e ) {
 					// Back compat: If there's no sha1, return empty string.
 					// @todo: Gergő says to mention T198099 as a "todo" here.
@@ -559,7 +588,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 			}
 			if ( !( $revDel & self::CANNOT_VIEW ) ) {
 				if ( $slot->getSha1() != '' ) {
-					$vals['sha1'] = Wikimedia\base_convert( $slot->getSha1(), 36, 16, 40 );
+					$vals['sha1'] = \Wikimedia\base_convert( $slot->getSha1(), 36, 16, 40 );
 				} else {
 					$vals['sha1'] = '';
 				}
@@ -667,13 +696,15 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 				}
 			}
 			if ( $this->parseContent ) {
+				$popts = ParserOptions::newFromContext( $this->getContext() );
 				$po = $this->contentRenderer->getParserOutput(
 					$content,
 					$title,
 					$revision,
-					ParserOptions::newFromContext( $this->getContext() )
+					$popts
 				);
-				$text = $po->getText();
+				// TODO T371004 move runOutputPipeline out of $parserOutput
+				$text = $po->runOutputPipeline( $popts, [] )->getContentHolderText();
 			}
 
 			if ( $text === null ) {
@@ -894,3 +925,6 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryRevisionsBase::class, 'ApiQueryRevisionsBase' );

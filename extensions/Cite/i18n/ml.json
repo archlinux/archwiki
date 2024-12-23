@@ -27,6 +27,11 @@
 	"cite_error_empty_references_define": " <code>&lt;references&gt;</code> ആവശ്യത്തിനായി \"$1\" എന്ന പേരിൽ നിർ‌വചിക്കപ്പെട്ട <code>&lt;ref&gt;</code> റ്റാഗിന് ഉള്ളടക്കമൊന്നുമില്ല.",
 	"cite-tracking-category-cite-error": "അവലംബത്തിൽ പിഴവുകളുള്ള താളുകൾ",
 	"cite-tracking-category-cite-error-desc": "അവലംബം ടാഗുകൾ ഉപയോഗിച്ചതിൽ പിഴവുകളുള്ള താളുകളാണ് ഈ വർഗ്ഗത്തിൽ ഉള്ളത്.",
+	"cite-reference-previews-reference": "അവലംബം",
+	"cite-reference-previews-book": "പുസ്തക അവലംബം",
+	"cite-reference-previews-journal": "ജേണൽ അവലംബം",
+	"cite-reference-previews-news": "വാർത്താ അവലംബം",
+	"cite-reference-previews-web": "വെബ് അവലംബം",
 	"cite_references_link_accessibility_label": "മുകളിലേയ്ക്ക്",
 	"cite_references_link_many_accessibility_label": "മുകളിൽ ഇവിടേയ്ക്ക്:",
 	"cite_references_link_accessibility_back_label": "മുകളിലേക്ക് പോവുക",
@@ -38,5 +43,7 @@
 	"cite-wikieditor-help-content-reference-description": "അവലംബം",
 	"cite-wikieditor-help-content-named-reference-description": "പേരുള്ള അവലംബം",
 	"cite-wikieditor-help-content-rereference-description": "അതേ അവലംബത്തിന്റെ കൂടുതൽ ഉപയോഗം",
-	"cite-wikieditor-help-content-showreferences-description": "അവലംബങ്ങൾ പ്രദർശിപ്പിക്കുക"
+	"cite-wikieditor-help-content-showreferences-description": "അവലംബങ്ങൾ പ്രദർശിപ്പിക്കുക",
+	"cite-wikieditor-help-content-reference-example-extra-details": "അധിക വിശദാംശങ്ങൾ",
+	"popups-refpreview-user-preference-label": "അവലംബ പ്രിവ്യൂകൾ (കുറിപ്പുകളുടെ പ്രിവ്യൂകൾ എടുക്കുക)"
 }

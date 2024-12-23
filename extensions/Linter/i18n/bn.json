@@ -6,16 +6,18 @@
 			"Aishik Rehman",
 			"Borhan",
 			"Elias Ahmmad",
+			"San1joy23",
 			"YahyA",
 			"Yahya",
-			"আফতাবুজ্জামান",
-			"San1joy23"
+			"আফতাবুজ্জামান"
 		]
 	},
 	"linterrors": "লিন্ট ত্রুটি",
 	"linter-category-bogus-image-options": "ভুয়া ফাইল বিকল্প",
 	"linter-category-deletable-table-tag": "টেবিল ট্যাগ যা মুছে ফেলা উচিত",
 	"linter-category-deletable-table-tag-desc": "এই সব পাতায় টেবিল ট্যাগ রয়েছে যা মুছে ফেলা উচিত।",
+	"linter-category-duplicate-ids": "সদৃশ আইডিসমূহ",
+	"linter-category-duplicate-ids-desc": "এই পাতাগুলিতে সদৃশ্য আইডি বৈশিষ্ট্যযুক্ত উপাদান রয়েছে।",
 	"linter-category-misc-tidy-replacement-issues": "বিবিধ সমস্যা",
 	"linter-category-missing-end-tag": "সমাপ্ত হবার ট্যাগ অনুপস্থিত",
 	"linter-category-self-closed-tag": "স্ব-বন্ধকৃত ট্যাগ",
@@ -39,6 +41,7 @@
 	"linter-pager-category-header": "বিষয়শ্রেণী",
 	"linter-pager-deletable-table-tag-details": "টেবিল ট্যাগ যা মুছে ফেলা উচিত",
 	"linter-pager-details-header": "অতিরিক্ত তথ্য",
+	"linter-pager-duplicate-ids-details": "সদৃশ আইডিসমূহ",
 	"linter-pager-misc-tidy-replacement-issues-details": "বিবিধ মার্কআপ ত্রুটি",
 	"linter-pager-missing-end-tag-details": "সমাপ্তির ট্যাগ অনুপস্থিত",
 	"linter-pager-obsolete-tag-details": "অপ্রচলিত HTML ট্যাগ",

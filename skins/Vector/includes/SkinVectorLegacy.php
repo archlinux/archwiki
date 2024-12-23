@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Skins\Vector;
 
+use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Skins\Vector\Components\VectorComponentSearchBox;
 use MediaWiki\Skins\Vector\Components\VectorComponentVariants;
 use SkinMustache;
@@ -20,6 +21,16 @@ class SkinVectorLegacy extends SkinMustache {
 	/** @var int */
 	private const MENU_TYPE_DROPDOWN = 2;
 	private const MENU_TYPE_PORTAL = 3;
+
+	private LanguageConverterFactory $languageConverterFactory;
+
+	public function __construct(
+		LanguageConverterFactory $languageConverterFactory,
+		array $options
+	) {
+		parent::__construct( $options );
+		$this->languageConverterFactory = $languageConverterFactory;
+	}
 
 	/**
 	 * @inheritDoc
@@ -108,6 +119,7 @@ class SkinVectorLegacy extends SkinMustache {
 		// Hopefully we can revisit and possibly remove this code when the language switcher is moved.
 		if ( $key === 'data-variants' ) {
 			$variant = new VectorComponentVariants(
+				$this->languageConverterFactory,
 				$portletData,
 				$this->getTitle()->getPageLanguage(),
 				$this->msg( 'vector-language-variant-switcher-label' )

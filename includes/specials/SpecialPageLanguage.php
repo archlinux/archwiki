@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:PageLanguage
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,17 +16,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Kunal Grover
- * @since 1.24
  */
 
 namespace MediaWiki\Specials;
 
-use ApiMessage;
 use LogEventsList;
 use LogPage;
 use ManualLogEntry;
+use MediaWiki\Api\ApiMessage;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\HTMLForm\HTMLForm;
@@ -41,15 +36,17 @@ use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
+use MediaWiki\Xml\Xml;
 use SearchEngineFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Xml;
 
 /**
  * Special page for changing the content language of a page
  *
  * @ingroup SpecialPage
+ * @author Kunal Grover
+ * @since 1.24
  */
 class SpecialPageLanguage extends FormSpecialPage {
 	/**
@@ -223,7 +220,7 @@ class SpecialPageLanguage extends FormSpecialPage {
 	 * @return Status
 	 */
 	public static function changePageLanguage( IContextSource $context, Title $title,
-		$newLanguage, $reason = "", array $tags = [], IDatabase $dbw = null ) {
+		$newLanguage, $reason = "", array $tags = [], ?IDatabase $dbw = null ) {
 		// Get the default language for the wiki
 		$defLang = $context->getConfig()->get( MainConfigNames::LanguageCode );
 

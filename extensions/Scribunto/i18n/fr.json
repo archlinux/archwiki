@@ -11,12 +11,12 @@
 			"Od1n",
 			"Orlodrim",
 			"Pols12",
+			"Qwrop",
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
 			"Wladek92",
 			"Wyz",
-			"Qwrop",
 			"Mahabarata"
 		]
 	},
@@ -79,5 +79,7 @@
 	"scribunto-limitreport-profile-percent": "$1 %",
 	"scribunto-limitreport-logs": "Journaux de Lua",
 	"nstab-module": "Module",
-	"tooltip-ca-nstab-module": "Afficher la page du module"
+	"tooltip-ca-nstab-module": "Afficher la page du module",
+	"namespaceinfo-description-ns828": "Espace de noms pour les modules de code Lua, qui peuvent être invoqués à partir des pages wiki, et leurs pages de documentation",
+	"namespaceinfo-description-ns829": "Pages de discussion pour les modules et la documentation"
 }

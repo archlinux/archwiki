@@ -4,32 +4,33 @@
 	 * Notification item data structure.
 	 *
 	 * @class
-	 * @mixins OO.EventEmitter
-	 * @mixins OO.SortedEmitterList
+	 * @mixes OO.EventEmitter
+	 * @mixes OO.SortedEmitterList
 	 *
 	 * @constructor
 	 * @param {number} id Notification id,
 	 * @param {Object} [config] Configuration object
-	 * @cfg {string} [iconUrl] A URL for the given icon.
-	 * @cfg {string} [iconType] A string noting the icon type.
-	 * @cfg {Object} [content] The message object defining the text for the header and,
+	 * @param {string} [config.iconUrl] A URL for the given icon.
+	 * @param {string} [config.iconType] A string noting the icon type.
+	 * @param {Object} [config.content] The message object defining the text for the header and,
 	 *  optionally, the body of the notification.
-	 * @cfg {string} [content.header=''] The header text of the notification
-	 * @cfg {string} [content.body=''] The body text of the notification
-	 * @cfg {string} [category] The category of this notification. The category identifies
+	 * @param {string} [config.content.header=''] The header text of the notification
+	 * @param {string} [config.content.body=''] The body text of the notification
+	 * @param {string} [config.category] The category of this notification. The category identifies
 	 *  where the notification originates from.
-	 * @cfg {string} [type='message'] The notification type 'message' or 'alert'
-	 * @cfg {boolean} [read=false] State the read state of the option
-	 * @cfg {boolean} [seen=false] State the seen state of the option
-	 * @cfg {string} [timestamp] Notification timestamp in ISO 8601 format
-	 * @cfg {string} [primaryUrl] Notification primary link in raw url format
-	 * @cfg {boolean} [foreign=false] This notification is from a foreign source
-	 * @cfg {boolean} [bundled=false] This notification is part of a bundle
-	 * @cfg {number[]} [bundledIds] IDs of notifications bundled with this one
-	 * @cfg {string} [modelName='local'] The name of the model this item belongs to
-	 * @cfg {string} [source] The source this notification is coming from, if it is foreign
-	 * @cfg {Object[]} [secondaryUrls] An array of objects defining the secondary URLs
+	 * @param {string} [config.type='message'] The notification type 'message' or 'alert'
+	 * @param {boolean} [config.read=false] State the read state of the option
+	 * @param {boolean} [config.seen=false] State the seen state of the option
+	 * @param {string} [config.timestamp] Notification timestamp in ISO 8601 format
+	 * @param {string} [config.primaryUrl] Notification primary link in raw url format
+	 * @param {boolean} [config.foreign=false] This notification is from a foreign source
+	 * @param {boolean} [config.bundled=false] This notification is part of a bundle
+	 * @param {number[]} [config.bundledIds] IDs of notifications bundled with this one
+	 * @param {string} [config.modelName='local'] The name of the model this item belongs to
+	 * @param {string} [config.source] The source this notification is coming from, if it is foreign
+	 * @param {Object[]} [config.secondaryUrls] An array of objects defining the secondary URLs
 	 *  for this notification. The secondary URLs are expected to have this structure:
+	 *    ```
 	 *    {
 	 *      "iconType": "userAvatar", // A symbolic name for the icon.
 	 *                                // Will render as oo-ui-icon-* class.
@@ -38,6 +39,7 @@
 	 *                                 // menu, whenever possible.
 	 *      "url": "..." // The url for the secondary link
 	 *    }
+	 *    ```
 	 */
 	mw.echo.dm.NotificationItem = function MwEchoDmNotificationItem( id, config ) {
 		config = config || {};
@@ -48,14 +50,14 @@
 		// Properties
 		this.id = id;
 		this.modelName = config.modelName || 'local';
-		this.content = $.extend( { header: '', body: '' }, config.content );
+		this.content = Object.assign( { header: '', body: '' }, config.content );
 		this.category = config.category || '';
 		this.type = config.type || 'message';
 		this.foreign = !!config.foreign;
 		this.bundled = !!config.bundled;
 		this.source = config.source || '';
 		this.iconType = config.iconType;
-		this.iconURL = config.iconURL;
+		this.iconUrl = config.iconUrl;
 
 		this.read = !!config.read;
 		this.seen = !!config.seen;
@@ -74,9 +76,9 @@
 	/* Events */
 
 	/**
-	 * @event update
-	 *
 	 * Item details have changed or were updated
+	 *
+	 * @event mw.echo.dm.NotificationItem#update
 	 */
 
 	/* Methods */
@@ -176,7 +178,8 @@
 	 *
 	 * @param {boolean} [read] The current read state. If not given, the state will
 	 *  become the opposite of its current state.
-	 * @fires update
+	 * @fires mw.echo.dm.NotificationItem#update
+	 * @fires OO.EventEmitter#sortChange
 	 */
 	mw.echo.dm.NotificationItem.prototype.toggleRead = function ( read ) {
 		read = read !== undefined ? read : !this.read;
@@ -192,7 +195,7 @@
 	 *
 	 * @param {boolean} [seen] The current seen state. If not given, the state will
 	 *  become the opposite of its current state.
-	 * @fires update
+	 * @fires mw.echo.dm.NotificationItem#update
 	 */
 	mw.echo.dm.NotificationItem.prototype.toggleSeen = function ( seen ) {
 		seen = seen !== undefined ? seen : !this.seen;
@@ -239,8 +242,8 @@
 	 *
 	 * @return {string} Notification icon URL
 	 */
-	mw.echo.dm.NotificationItem.prototype.getIconURL = function () {
-		return this.iconURL;
+	mw.echo.dm.NotificationItem.prototype.getIconUrl = function () {
+		return this.iconUrl;
 	};
 
 	/**

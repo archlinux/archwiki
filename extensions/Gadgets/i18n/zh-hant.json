@@ -21,9 +21,7 @@
 			"Waihorace",
 			"Winston Sung",
 			"Xiplus",
-			"列维劳德",
-			"張詠涵",
-			"LowensteinYang"
+			"列维劳德"
 		]
 	},
 	"gadgets-desc": "讓使用者可以於[[Special:Preferences#mw-prefsection-gadgets|偏好設定]]自訂 [[Special:Gadgets|CSS 與 JavaScript 小工具]]",
@@ -61,7 +59,7 @@
 	"gadgets-export-download": "下載",
 	"gadgets-requires-es6": "此小工具僅被支援在兼容 ES6 的瀏覽器上",
 	"gadgets-validate-notset": "屬性 <code>$1</code> 尚未設定。",
-	"gadgets-validate-wrongtype": "屬性 <code>$1</code> 必須是 <code>$2</code> 類型，而非 <code>$3</code>。",
+	"gadgets-validate-wrongtype": "屬性 <code>$1</code> 必須是 <code>$2</code> 類型。",
 	"gadgets-validate-json": "已指定 JSON 檔案但未使用。它們僅在封裝的小工具裡有效。",
 	"gadgets-validate-es6default": "預設無法啟用需要 ES6 的小工具。",
 	"gadgets-validate-noentrypoint": "由於未指定腳本檔案，因此忽略套件標誌。",

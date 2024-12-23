@@ -12,7 +12,7 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {string} [dir='ltr'] Interface directionality
+ * @param {string} [config.dir='ltr'] Interface directionality
  */
 ve.ui.AlignWidget = function VeUiAlignWidget( config ) {
 	config = config || {};
@@ -20,7 +20,7 @@ ve.ui.AlignWidget = function VeUiAlignWidget( config ) {
 	// Parent constructor
 	ve.ui.AlignWidget.super.call( this, config );
 
-	var alignButtons = [
+	let alignButtons = [
 		new OO.ui.ButtonOptionWidget( {
 			data: 'left',
 			icon: 'alignLeft',

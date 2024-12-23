@@ -94,7 +94,7 @@ ve.ui.MWLatexInspector.prototype.initialize = function () {
  */
 ve.ui.MWLatexInspector.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWLatexInspector.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			const display = this.selectedNode.getAttribute( 'mw' ).attrs.display || 'default';
 			const attributes = this.selectedNode && this.selectedNode.getAttribute( 'mw' ).attrs,
 				id = attributes && attributes.id || '',
@@ -113,7 +113,7 @@ ve.ui.MWLatexInspector.prototype.getSetupProcess = function ( data ) {
 			this.qidInput.on( 'change', this.onChangeHandler );
 			this.displaySelect.selectItemByData( display );
 			this.displaySelect.on( 'choose', this.onChangeHandler );
-		}, this );
+		} );
 };
 
 /**
@@ -121,9 +121,9 @@ ve.ui.MWLatexInspector.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.MWLatexInspector.prototype.getTeardownProcess = function ( data ) {
 	return ve.ui.MWLatexInspector.super.prototype.getTeardownProcess.call( this, data )
-		.first( function () {
+		.first( () => {
 			this.displaySelect.off( 'choose', this.onChangeHandler );
-		}, this );
+		} );
 };
 
 /**

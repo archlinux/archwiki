@@ -11,6 +11,7 @@
 			"아라"
 		]
 	},
+	"apihelp-echocreateevent-summary": "사용자에게 알림을 수동으로 보냅니다",
 	"apihelp-echomarkread-summary": "현재 사용자의 알림을 읽은 것으로 표시합니다.",
 	"apihelp-echomarkread-param-list": "읽은 것으로 표시할 알림 ID의 목록.",
 	"apihelp-echomarkread-param-unreadlist": "읽지 않은 것으로 처리할 알림 ID의 목록.",

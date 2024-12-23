@@ -27,7 +27,6 @@ namespace MediaWiki\Page;
 
 use Article;
 use ErrorPageError;
-use Language;
 use LogEventsList;
 use LogPage;
 use MediaWiki\CommentStore\CommentStore;
@@ -35,6 +34,7 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
@@ -45,8 +45,8 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Watchlist\WatchlistManager;
-use Xml;
-use XmlSelect;
+use MediaWiki\Xml\Xml;
+use MediaWiki\Xml\XmlSelect;
 
 /**
  * Handles the page protection UI and backend
@@ -82,49 +82,20 @@ class ProtectionForm {
 	/** @var array Map of action to the expiry time of the existing protection */
 	protected $mExistingExpiry = [];
 
-	/** @var Article */
-	protected $mArticle;
-
-	/** @var Title */
-	protected $mTitle;
-
-	/** @var bool */
-	protected $disabled;
-
-	/** @var array */
-	protected $disabledAttrib;
-
-	/** @var IContextSource */
-	private $mContext;
-
-	/** @var WebRequest */
-	private $mRequest;
-
-	/** @var Authority */
-	private $mPerformer;
-
-	/** @var Language */
-	private $mLang;
-
-	/** @var OutputPage */
-	private $mOut;
-
-	/** @var PermissionManager */
-	private $permManager;
-
-	/**
-	 * @var WatchlistManager
-	 */
-	private $watchlistManager;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var RestrictionStore */
-	private $restrictionStore;
-
-	/** @var TitleFormatter */
-	private $titleFormatter;
+	protected Article $mArticle;
+	protected Title $mTitle;
+	protected bool $disabled;
+	protected array $disabledAttrib;
+	private IContextSource $mContext;
+	private WebRequest $mRequest;
+	private Authority $mPerformer;
+	private Language $mLang;
+	private OutputPage $mOut;
+	private PermissionManager $permManager;
+	private HookRunner $hookRunner;
+	private WatchlistManager $watchlistManager;
+	private TitleFormatter $titleFormatter;
+	private RestrictionStore $restrictionStore;
 
 	public function __construct( Article $article ) {
 		// Set instance variables.

@@ -6,7 +6,8 @@ const
 /**
  * IssueList
  *
- * @class IssueList
+ * @class
+ * @ignore
  * @extends View
  *
  * @param {IssueSummary} issues
@@ -20,9 +21,7 @@ IssueList.prototype.tagName = 'ul';
 IssueList.prototype.postRender = function () {
 	View.prototype.postRender.apply( this, arguments );
 	this.append(
-		( this.issues || [] ).map( function ( issue ) {
-			return new IssueNotice( issue ).$el;
-		} )
+		( this.issues || [] ).map( ( issue ) => new IssueNotice( issue ).$el )
 	);
 };
 module.exports = IssueList;

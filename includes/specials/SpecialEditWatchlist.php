@@ -1,11 +1,5 @@
 <?php
 /**
- * @defgroup Watchlist Users watchlist handling
- */
-
-/**
- * Implements Special:EditWatchlist
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -22,8 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @ingroup Watchlist
  */
 
 namespace MediaWiki\Specials;
@@ -54,16 +46,15 @@ use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleParser;
 use MediaWiki\Title\TitleValue;
+use MediaWiki\Watchlist\WatchedItemStore;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use UserNotLoggedIn;
-use WatchedItemStore;
-use WatchedItemStoreInterface;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\Core\TOCData;
 
 /**
- * Provides the UI through which users can perform editing
- * operations on their watchlist
+ * Users can edit their watchlist via this page.
  *
  * @ingroup SpecialPage
  * @ingroup Watchlist
@@ -79,11 +70,13 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	public const EDIT_NORMAL = 3;
 	public const VIEW = 4;
 
+	/** @var string|null */
 	protected $successMessage;
 
 	/** @var TOCData */
 	protected $tocData;
 
+	/** @var array[] */
 	private $badItems = [];
 
 	private TitleParser $titleParser;
@@ -107,13 +100,13 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @param WatchlistManager|null $watchlistManager
 	 */
 	public function __construct(
-		WatchedItemStoreInterface $watchedItemStore = null,
-		TitleParser $titleParser = null,
-		GenderCache $genderCache = null,
-		LinkBatchFactory $linkBatchFactory = null,
-		NamespaceInfo $nsInfo = null,
-		WikiPageFactory $wikiPageFactory = null,
-		WatchlistManager $watchlistManager = null
+		?WatchedItemStoreInterface $watchedItemStore = null,
+		?TitleParser $titleParser = null,
+		?GenderCache $genderCache = null,
+		?LinkBatchFactory $linkBatchFactory = null,
+		?NamespaceInfo $nsInfo = null,
+		?WikiPageFactory $wikiPageFactory = null,
+		?WatchlistManager $watchlistManager = null
 	) {
 		parent::__construct( 'EditWatchlist', 'editmywatchlist' );
 		// This class is extended and therefor fallback to global state - T266065
@@ -893,7 +886,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @return int|false
 	 */
 	public static function getMode( $request, $par, $defaultValue = false ) {
-		$mode = strtolower( $request->getRawVal( 'action', $par ?? '' ) );
+		$mode = strtolower( $request->getRawVal( 'action' ) ?? $par ?? '' );
 
 		switch ( $mode ) {
 			case 'view':
@@ -921,7 +914,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @param int|false $selectedMode result of self::getMode
 	 * @return string
 	 */
-	public static function buildTools( $unused, LinkRenderer $linkRenderer = null, $selectedMode = false ) {
+	public static function buildTools( $unused, ?LinkRenderer $linkRenderer = null, $selectedMode = false ) {
 		if ( !$linkRenderer ) {
 			$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
 		}

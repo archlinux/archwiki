@@ -18,6 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use InvalidArgumentException;
+
 /**
  * Trait to implement the IApiMessage interface for Message subclasses
  * @since 1.27
@@ -30,6 +34,7 @@ trait ApiMessageTrait {
 	/**
 	 * Compatibility code mappings for various MW messages.
 	 * @todo Ideally anything relying on this should be changed to use ApiMessage.
+	 * @var string[]
 	 */
 	protected static $messageMap = [
 		'actionthrottledtext' => 'ratelimited',
@@ -93,7 +98,9 @@ trait ApiMessageTrait {
 		'userrights-no-interwiki' => 'nointerwikiuserrights',
 	];
 
+	/** @var string|null */
 	protected $apiCode = null;
+	/** @var array */
 	protected $apiData = [];
 
 	public function getApiCode() {
@@ -118,7 +125,7 @@ trait ApiMessageTrait {
 		return $this->apiCode;
 	}
 
-	public function setApiCode( $code, array $data = null ) {
+	public function setApiCode( $code, ?array $data = null ) {
 		if ( $code !== null && !ApiErrorFormatter::isValidApiCode( $code ) ) {
 			throw new InvalidArgumentException( "Invalid code \"$code\"" );
 		}
@@ -151,3 +158,6 @@ trait ApiMessageTrait {
 		$this->apiData = $data['apiData'];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiMessageTrait::class, 'ApiMessageTrait' );

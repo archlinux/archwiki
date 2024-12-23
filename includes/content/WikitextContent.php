@@ -25,6 +25,9 @@
  * @author Daniel Kinzler
  */
 
+namespace MediaWiki\Content;
+
+use InvalidArgumentException;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
@@ -77,6 +80,7 @@ class WikitextContent extends TextContent {
 	 * @param string|int|null|false $sectionId
 	 * @param Content $with New section content, must have the same content model as $this.
 	 * @param string $sectionTitle
+	 *
 	 * @return Content
 	 *
 	 * @see Content::replaceSection()
@@ -210,7 +214,7 @@ class WikitextContent extends TextContent {
 	 *
 	 * @return bool
 	 */
-	public function isCountable( $hasLinks = null, Title $title = null ) {
+	public function isCountable( $hasLinks = null, ?Title $title = null ) {
 		$articleCountMethod = MediaWikiServices::getInstance()->getMainConfig()
 			->get( MainConfigNames::ArticleCountMethod );
 
@@ -240,6 +244,7 @@ class WikitextContent extends TextContent {
 
 	/**
 	 * @param int $maxlength
+	 *
 	 * @return string
 	 */
 	public function getTextForSummary( $maxlength = 250 ) {
@@ -268,7 +273,9 @@ class WikitextContent extends TextContent {
 
 	/**
 	 * Records flags set by preSaveTransform
+	 *
 	 * @internal for use by WikitextContentHandler
+	 *
 	 * @param string[] $flags
 	 */
 	public function setPreSaveTransformFlags( array $flags ) {
@@ -277,6 +284,7 @@ class WikitextContent extends TextContent {
 
 	/**
 	 * Records flags set by preSaveTransform
+	 *
 	 * @internal for use by WikitextContentHandler
 	 * @return string[]
 	 */
@@ -287,6 +295,10 @@ class WikitextContent extends TextContent {
 	public function getContentHandler(): WikitextContentHandler {
 		$handler = parent::getContentHandler();
 		'@phan-var WikitextContentHandler $handler';
+
 		return $handler;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( WikitextContent::class, 'WikitextContent' );

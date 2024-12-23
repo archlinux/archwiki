@@ -5,6 +5,7 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\User\User;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * This trait can be used to create accounts in integration tests.
@@ -21,7 +22,7 @@ trait AbuseFilterCreateAccountTestTrait {
 	protected function createAccount(
 		string $accountName,
 		bool $autocreate = false,
-		User $creator = null
+		?User $creator = null
 	): StatusValue {
 		$userFactory = MediaWikiServices::getInstance()->getUserFactory();
 		$user = $userFactory->newFromName( $accountName );

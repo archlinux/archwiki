@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"BukhariSaeed",
+			"Charoo",
 			"Kaleem Bhatti",
 			"Mehtab ahmed",
 			"Sindhu",
-			"Tweety",
-			"Charoo"
+			"Tweety"
 		]
 	},
 	"minerva-last-modified-date": "آخري ڀيرو $1 تي، $2 وڳي سنواريو ويو",
@@ -32,7 +32,6 @@
 	"mobile-frontend-meta-data-issues-categories": "ھن زمري بابت",
 	"mobile-frontend-meta-data-issues-header": "صفحن جا معاملا",
 	"minerva-meta-data-issues-section-header": "ڀاڱي جا مسئلا",
-	"mobile-frontend-notifications-filter": "ڇاڻي",
 	"mobile-frontend-pageaction-edit-tooltip": "ھن صفحي جي نمائنده سيڪشن کي سنواريو",
 	"mobile-frontend-placeholder": "{{SITENAME}} ۾ ڳوليو",
 	"mobile-frontend-random-button": "بلاترتيب",
@@ -52,7 +51,7 @@
 	"minerva-page-actions-overflow": "وڌيڪ",
 	"minerva-page-actions-language-switcher": "ٻوليون",
 	"minerva-page-actions-history": "سوانح",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|گفتگو]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki\n/Talk:Moderator_Tools/Content_moderation_on_mobile_we گفتگو]",
 	"skinname-minerva": "مائينروانَييو",
 	"minerva-skin-desc": "ھڪ جواب-ڏيندڙ موبائل پھريان ظاھريت",
 	"skin-minerva-issue-learn-more": "وڌيڪ ڄاڻيو",
@@ -64,10 +63,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|سال}} اڳ",
 	"skin-minerva-mobile-option-MinervaShowCategories": "زمرا",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "صفحي جا زمرا ڏسو",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "بھتربڻايل صفحي جي مسئلن جي تيمارداري",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "صفحي جا مسئلا (سانچو:ambox) مضمون ۾ انلائن ڪيا ويندا.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "بدقسمتيءَ سان، صفحي پاران گروھڪاري جا نتيجا موبائل تي موجود نہ آھن. جيڪڏھن توھان صفحي پاران گروھ جي خصوصيت استعمال ڪرڻ چاھيو ٿا تہ مھرباني ڪري ڊيسڪٽاپ سائيٽ ڏسو.",
-	"skin-minerva-night-mode-unavailable": "اھو اڪيلو صفحو جيڪ \"ڏينھن\" رنگ جي ٿيم ۾ موجود آهي.",
+	"skin-minerva-night-mode-unavailable": "اھو صفحو رڳو \"ھلڪي\" رنگ جي ٿيم ۾ موجود آهي.",
 	"minerva.css": "/* ھتي سڀ سي.ايس.ايس مائينروانَييو ظاھريت جي واپرائيندڙ لاءِ لاٿي ويندي */",
 	"minerva.js": "/* ھتي سڀ جاوااسڪرپٽ مائينروانَييو ظاھريت جي واپرائيندڙ لاءِ لاٿي ويندي */"
 }

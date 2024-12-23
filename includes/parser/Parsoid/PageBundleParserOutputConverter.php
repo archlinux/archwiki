@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Parser\Parsoid;
 
-use LanguageCode;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\Parser\ParserOutput;
 use Wikimedia\Parsoid\Core\PageBundle;
 
@@ -44,33 +44,47 @@ final class PageBundleParserOutputConverter {
 		PageBundle $pageBundle, ?ParserOutput $originalParserOutput = null
 	): ParserOutput {
 		$parserOutput = new ParserOutput( $pageBundle->html );
-
 		if ( $originalParserOutput ) {
 			$parserOutput->mergeHtmlMetaDataFrom( $originalParserOutput );
 			$parserOutput->mergeTrackingMetaDataFrom( $originalParserOutput );
 			$parserOutput->mergeInternalMetaDataFrom( $originalParserOutput );
 		}
+		self::applyPageBundleDataToParserOutput( $pageBundle, $parserOutput );
+		return $parserOutput;
+	}
 
+	/**
+	 * Given an existing ParserOutput and a PageBundle, applies the PageBundle data to the ParserOutput.
+	 * NOTE: it does NOT apply the text of said pageBundle - this should be done by the calling method, if desired.
+	 * This way, we can modify a ParserOutput's associated bundle without creating a new ParserOutput,
+	 * which makes it easier to deal with in the OutputTransformPipeline.
+	 * @param PageBundle|\stdClass $pageBundle
+	 * @param ParserOutput $parserOutput
+	 * @internal
+	 */
+	public static function applyPageBundleDataToParserOutput(
+		$pageBundle, ParserOutput $parserOutput
+	): void {
+		// Overwriting ExtensionData was deprecated in 1.38 but it's safe inside an OutputTransform pipeline,
+		// which is the only place where this should happen right now.
 		$parserOutput->setExtensionData(
 			self::PARSOID_PAGE_BUNDLE_KEY,
 			[
-				'parsoid' => $pageBundle->parsoid,
-				'mw' => $pageBundle->mw,
-				'version' => $pageBundle->version,
-				'headers' => $pageBundle->headers,
-				'contentmodel' => $pageBundle->contentmodel,
+				'parsoid' => $pageBundle->parsoid ?? null,
+				'mw' => $pageBundle->mw ?? null,
+				'version' => $pageBundle->version ?? null,
+				'headers' => $pageBundle->headers ?? null,
+				'contentmodel' => $pageBundle->contentmodel ?? null,
 			]
 		);
 
 		if ( isset( $pageBundle->headers['content-language'] ) ) {
 			$lang = LanguageCode::normalizeNonstandardCodeAndWarn(
-				// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+			// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 				$pageBundle->headers['content-language']
 			);
 			$parserOutput->setLanguage( $lang );
 		}
-
-		return $parserOutput;
 	}
 
 	/**
@@ -87,7 +101,7 @@ final class PageBundleParserOutputConverter {
 		$headers = $pageBundleData['headers'] ?? [];
 
 		if ( $lang ) {
-			$headers['content-language'] = $lang;
+			$headers['content-language'] = $lang->toBcp47Code();
 		}
 
 		return new PageBundle(

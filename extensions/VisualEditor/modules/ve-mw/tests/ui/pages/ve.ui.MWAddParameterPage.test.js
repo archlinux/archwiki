@@ -46,8 +46,7 @@ QUnit.test( 'Input event handlers', ( assert ) => {
 	[ 'usedAliasNoLabel', '(visualeditor-dialog-transclusion-add-param-error-alias: usedAliasNoLabel, usedAliasNoLabel)' ],
 	[ 'usedDeprecated', '(visualeditor-dialog-transclusion-add-param-error-exists-selected: usedDeprecated, usedDeprecated)' ],
 	[ 'unusedDeprecated', '(visualeditor-dialog-transclusion-add-param-error-deprecated: unusedDeprecated, unusedDeprecated)' ]
-].forEach( ( [ input, expected ] ) =>
-	QUnit.test( 'getValidationErrors: ' + input, ( assert ) => {
+].forEach( ( [ input, expected ] ) => QUnit.test( 'getValidationErrors: ' + input, ( assert ) => {
 		const data = {
 			target: {},
 			params: {

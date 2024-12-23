@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Emailuser
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,19 +16,15 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
 use ErrorPageError;
-use MediaWiki\Config\Config;
-use MediaWiki\Context\IContextSource;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Mail\EmailUserFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Message;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
@@ -42,9 +36,12 @@ use MediaWiki\User\UserNameUtils;
 use StatusValue;
 
 /**
- * A special page that allows users to send e-mails to other users
+ * Send an e-mail from one user to another.
+ *
+ * This is discoverable via the sidebar on any user's User namespace page.
  *
  * @ingroup SpecialPage
+ * @ingroup Mail
  */
 class SpecialEmailUser extends SpecialPage {
 
@@ -160,8 +157,8 @@ class SpecialEmailUser extends SpecialPage {
 			} elseif ( $status->getValue() !== null ) {
 				// BC for deprecated hook errors
 				// (to be removed when UserCanSendEmail and EmailUserPermissionsErrors are removed)
-				$error = $status->getErrors()[0];
-				throw new ErrorPageError( $status->getValue(), $error['message'], $error['params'] );
+				$msg = $status->getMessages()[0];
+				throw new ErrorPageError( $status->getValue(), $msg );
 			} else {
 				// Fallback in case new error types are added in EmailUser
 				throw new ErrorPageError( $this->getDescription(), Status::wrap( $status )->getMessage() );
@@ -193,73 +190,12 @@ class SpecialEmailUser extends SpecialPage {
 			->newEmailUser( $sender )
 			->validateTarget( $targetObject );
 		if ( !$status->isGood() ) {
-			$msg = $status->getErrors()[0]['message'];
+			$msg = $status->getMessages()[0]->getKey();
 			$ret = $msg === 'emailnotarget' ? 'notarget' : preg_replace( '/text$/', '', $msg );
 		} else {
 			$ret = $targetObject;
 		}
 		return $ret;
-	}
-
-	/**
-	 * Validate target User
-	 *
-	 * @param User $target Target user
-	 * @param User $sender User sending the email
-	 * @return string Error message or empty string if valid.
-	 * @since 1.30
-	 * @deprecated since 1.41 Use EmailUser::validateTarget()
-	 */
-	public static function validateTarget( $target, User $sender ) {
-		if ( !$target instanceof User ) {
-			return 'notarget';
-		}
-		$status = MediaWikiServices::getInstance()->getEmailUserFactory()
-			->newEmailUser( $sender )
-			->validateTarget( $target );
-		if ( $status->isGood() ) {
-			$ret = '';
-		} else {
-			$msg = $status->getErrors()[0]['message'];
-			$ret = $msg === 'emailnotarget' ? 'notarget' : preg_replace( '/text$/', '', $msg );
-		}
-		return $ret;
-	}
-
-	/**
-	 * Check whether a user is allowed to send email
-	 *
-	 * @param User $user
-	 * @param string $editToken
-	 * @param Config|null $config optional for backwards compatibility
-	 * @param bool $authorize whether to authorize the immediate sending of mails,
-	 *        rather than just checking beforehand.
-	 *
-	 * @return null|string|array Null on success, string on error, or array on
-	 *  hook error
-	 * @deprecated since 1.41 Use EmailUser::canSend() or EmailUser::authorizeSend()
-	 */
-	public static function getPermissionsError( $user, $editToken, Config $config = null, $authorize = false ) {
-		$emailUser = MediaWikiServices::getInstance()->getEmailUserFactory()->newEmailUserBC( $user, $config );
-		$emailUser->setEditToken( (string)$editToken );
-		$status = $authorize ? $emailUser->authorizeSend() : $emailUser->canSend();
-
-		if ( $status->isGood() ) {
-			return null;
-		}
-		foreach ( $status->getErrors() as $err ) {
-			$errKey = $err['message'] instanceof Message ? $err['message']->getKey() : $err['message'];
-			if ( strpos( $errKey, 'blockedtext' ) !== false ) {
-				// BC for block messages
-				return "blockedemailuser";
-			}
-		}
-		$error = $status->getErrors()[0];
-		if ( $status->getValue() !== null ) {
-			// BC for hook errors intended to be used with ErrorPageError
-			return [ $status->getValue(), $error['message'], $error['params'] ];
-		}
-		return $error['message'];
 	}
 
 	/**
@@ -378,45 +314,6 @@ class SpecialEmailUser extends SpecialPage {
 			$res = Status::wrap( $res );
 		}
 		return $res;
-	}
-
-	/**
-	 * Really send a mail. Permissions should have been checked using
-	 * getPermissionsError(). It is probably also a good
-	 * idea to check the edit token and ping limiter in advance.
-	 *
-	 * @param array $data
-	 * @param IContextSource $context
-	 * @return Status|false
-	 * @deprecated since 1.41 Use EmailUser::sendEmailUnsafe()
-	 */
-	public static function submit( array $data, IContextSource $context ) {
-		$target = MediaWikiServices::getInstance()->getUserFactory()->newFromName( (string)$data['Target'] );
-		if ( !$target instanceof User ) {
-			return Status::newFatal( 'emailnotarget' );
-		}
-
-		$emailUser = MediaWikiServices::getInstance()->getEmailUserFactory()
-			->newEmailUserBC( $context->getAuthority(), $context->getConfig() );
-
-		$ret = $emailUser->sendEmailUnsafe(
-			$target,
-			(string)$data['Subject'],
-			(string)$data['Text'],
-			(bool)$data['CCMe'],
-			$context->getLanguage()->getCode()
-		);
-		if ( $ret->hasMessage( 'hookaborted' ) ) {
-			// BC: The method could previously return false if the EmailUser hook set the error to false.
-			$ret = false;
-		} elseif ( $ret->hasMessage( 'noemailtarget' ) ) {
-			// BC: The previous implementation would use notargettext even if noemailtarget would be the right
-			// message to use here.
-			return Status::newFatal( 'notargettext' );
-		} else {
-			$ret = Status::wrap( $ret );
-		}
-		return $ret;
 	}
 
 	/**

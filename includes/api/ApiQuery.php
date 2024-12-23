@@ -20,14 +20,19 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use DumpStringOutput;
 use MediaWiki\Export\WikiExporterFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\Title\TitleFormatter;
+use WikiExporter;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\ParamValidator\ParamValidator;
+use XmlDumpWriter;
 
 /**
  * This is the main query class. It behaves similar to ApiMain: based on the
@@ -185,6 +190,7 @@ class ApiQuery extends ApiBase {
 				'CommentFormatter',
 				'TempUserCreator',
 				'UserFactory',
+				'TitleFormatter',
 			]
 		],
 		'stashimageinfo' => [
@@ -313,6 +319,7 @@ class ApiQuery extends ApiBase {
 				'UserGroupManager',
 				'GroupPermissionsLookup',
 				'ContentLanguage',
+				'TempUserConfig',
 			]
 		],
 		'backlinks' => [
@@ -385,6 +392,7 @@ class ApiQuery extends ApiBase {
 				'RowCommentFormatter',
 				'ChangeTagDefStore',
 				'UserNameUtils',
+				'LogFormatterFactory',
 			],
 		],
 		'pageswithprop' => [
@@ -425,6 +433,8 @@ class ApiQuery extends ApiBase {
 				'SlotRoleStore',
 				'SlotRoleRegistry',
 				'UserNameUtils',
+				'TempUserConfig',
+				'LogFormatterFactory',
 			],
 		],
 		'search' => [
@@ -472,7 +482,8 @@ class ApiQuery extends ApiBase {
 				'NamespaceInfo',
 				'GenderCache',
 				'CommentFormatter',
-				'TempUserConfig'
+				'TempUserConfig',
+				'LogFormatterFactory',
 			],
 		],
 		'watchlistraw' => [
@@ -524,6 +535,7 @@ class ApiQuery extends ApiBase {
 				'DBLoadBalancer',
 				'ReadOnlyMode',
 				'UrlUtils',
+				'TempUserConfig'
 			]
 		],
 		'userinfo' => [
@@ -561,24 +573,18 @@ class ApiQuery extends ApiBase {
 	 */
 	private $mPageSet;
 
+	/** @var array */
 	private $mParams;
+	/** @var ApiModuleManager */
 	private $mModuleMgr;
 
 	private WikiExporterFactory $wikiExporterFactory;
 	private TitleFormatter $titleFormatter;
 	private TitleFactory $titleFactory;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param ObjectFactory $objectFactory
-	 * @param WikiExporterFactory $wikiExporterFactory
-	 * @param TitleFormatter $titleFormatter
-	 * @param TitleFactory $titleFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		ObjectFactory $objectFactory,
 		WikiExporterFactory $wikiExporterFactory,
 		TitleFormatter $titleFormatter,
@@ -992,6 +998,22 @@ class ApiQuery extends ApiBase {
 		return false;
 	}
 
+	public function isWriteMode() {
+		// Ask each module if it requires write mode. If any require write mode this returns true.
+		$modules = [];
+		$this->mParams = $this->extractRequestParams();
+		$this->instantiateModules( $modules, 'list' );
+		$this->instantiateModules( $modules, 'meta' );
+		$this->instantiateModules( $modules, 'prop' );
+		foreach ( $modules as $module ) {
+			if ( $module->isWriteMode() ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage()->getPrefixedText();
 		$mp = rawurlencode( $title );
@@ -1014,3 +1036,6 @@ class ApiQuery extends ApiBase {
 		];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQuery::class, 'ApiQuery' );

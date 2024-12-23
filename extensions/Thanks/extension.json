@@ -11,7 +11,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.42",
+		"MediaWiki": ">= 1.43",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -43,7 +43,12 @@
 		"thanks": true
 	},
 	"LogActionsHandlers": {
-		"thanks/*": "MediaWiki\\Extension\\Thanks\\ThanksLogFormatter"
+		"thanks/*": {
+			"class": "MediaWiki\\Extension\\Thanks\\ThanksLogFormatter",
+			"services": [
+				"NamespaceInfo"
+			]
+		}
 	},
 	"APIModules": {
 		"thank": {
@@ -103,30 +108,6 @@
 				"ext.thanks"
 			]
 		},
-		"ext.thanks.mobilediff": {
-			"styles": [
-				"ext.thanks.mobilediff.less"
-			],
-			"scripts": [
-				"ext.thanks.mobilediff.js"
-			],
-			"messages": [
-				"thanks-button-action-queued",
-				"thanks-button-action-cancel",
-				"thanks-button-action-completed",
-				"thanks-button-thank",
-				"thanks-button-thanked",
-				"thanks-error-invalidrevision",
-				"thanks-error-ratelimited",
-				"thanks-error-undefined",
-				"thanks-thanked-notice"
-			],
-			"dependencies": [
-				"mobile.startup",
-				"mediawiki.api",
-				"mediawiki.jqueryMsg"
-			]
-		},
 		"ext.thanks.flowthank": {
 			"scripts": [
 				"jquery.findWithParent.js",
@@ -154,19 +135,16 @@
 		"localBasePath": "tests/qunit",
 		"remoteExtPath": "Thanks/tests/qunit",
 		"scripts": [
-			"test_ext.thanks.thank.js",
-			"test_ext.thanks.mobilediff.js"
+			"test_ext.thanks.thank.js"
 		],
 		"dependencies": [
-			"ext.thanks",
-			"ext.thanks.mobilediff"
+			"ext.thanks"
 		]
 	},
 	"Hooks": {
 		"ApiMain::moduleManager": "main",
 		"BeforeCreateEchoEvent": "echo",
 		"BeforePageDisplay": "main",
-		"BeforeSpecialMobileDiffDisplay": "mobile-frontend",
 		"DiffTools": "main",
 		"DifferenceEngineViewHeader": "main",
 		"EchoGetBundleRules": "echo",
@@ -175,7 +153,9 @@
 		"HistoryTools": "main",
 		"LocalUserCreated": "main",
 		"LogEventsListLineEnding": "main",
-		"PageHistoryBeforeList": "main"
+		"PageHistoryBeforeList": "main",
+		"PageHistoryPager::doBatchLookups": "main",
+		"ChangesListInitRows": "main"
 	},
 	"HookHandlers": {
 		"main": {
@@ -187,13 +167,6 @@
 				"RevisionLookup",
 				"UserFactory",
 				"UserOptionsManager"
-			]
-		},
-		"mobile-frontend": {
-			"class": "MediaWiki\\Extension\\Thanks\\MobileFrontendHandler",
-			"services": [
-				"MainConfig",
-				"UserFactory"
 			]
 		},
 		"echo": {

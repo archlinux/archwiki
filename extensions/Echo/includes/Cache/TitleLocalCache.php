@@ -15,10 +15,6 @@ class TitleLocalCache extends LocalCache {
 	private PageStore $pageStore;
 	private TitleFactory $titleFactory;
 
-	/**
-	 * @param PageStore $pageStore
-	 * @param TitleFactory $titleFactory
-	 */
 	public function __construct(
 		PageStore $pageStore,
 		TitleFactory $titleFactory

@@ -2,32 +2,25 @@
 
 namespace MediaWiki\Page\File;
 
-use BagOStuff;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\TitleParser;
 use RepoGroup;
+use Wikimedia\ObjectCache\BagOStuff;
 
 class BadFileLookup {
 	/** @var callable Returns contents of bad file list (see comment for isBadFile()) */
 	private $listCallback;
 
-	/** @var BagOStuff Cache of parsed bad image list */
-	private $cache;
-
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var TitleParser */
-	private $titleParser;
+	private BagOStuff $cache;
+	private RepoGroup $repoGroup;
+	private TitleParser $titleParser;
+	private HookRunner $hookRunner;
 
 	/** @var array<string,array<int,array<string,true>>>|null Parsed bad file list */
 	private $badFiles;
-
-	/** @var HookRunner */
-	private $hookRunner;
 
 	/**
 	 * Do not call directly. Use MediaWikiServices.
@@ -65,7 +58,7 @@ class BadFileLookup {
 	 * @param LinkTarget|null $contextTitle The page on which the file occurs, if known
 	 * @return bool
 	 */
-	public function isBadFile( $name, LinkTarget $contextTitle = null ) {
+	public function isBadFile( $name, ?LinkTarget $contextTitle = null ) {
 		// Handle redirects; callers almost always hit RepoGroup::findFile() anyway,
 		// so just use that method because it has a fast process cache.
 		$file = $this->repoGroup->findFile( $name );

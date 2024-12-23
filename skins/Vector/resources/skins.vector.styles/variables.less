@@ -1,19 +1,8 @@
 @import 'mediawiki.skin.variables.less';
 
-//
-// == Media query breakpoints ==
-// See also https://doc.wikimedia.org/codex/latest/design-tokens/breakpoint.html
-//
-@max-width-breakpoint-mobile: 719px;
-@min-width-breakpoint-tablet: 720px; // In contrast to Codex `640px`.
-@max-width-breakpoint-tablet: 999px;
-@min-width-breakpoint-desktop: 1000px; // In contrast to Codex `1120px`.
-@max-width-breakpoint-desktop: 1199px;
-@min-width-breakpoint-desktop-wide: 1200px; // In contrast to Codex `1680px`.
-
 // Defines the minimum viewport width, at which point the layout will not get any
 // smaller and will start horizontal scrolling instead.
-@min-width-supported: unit( 500px / @font-size-browser, em );
+@min-width-supported: unit( 300px / @font-size-browser, em );
 
 // Sizing calculation primitives.
 @font-size-root: 100%;
@@ -33,7 +22,6 @@
 // https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/heads/main/packages/codex-design-tokens/src/theme-wikimedia-ui.json#429
 // See also Vector's 'mediawiki.skin.variables.less' overrides.
 
-@font-size-base: unit( 14 / @font-size-browser, em ); // Equals `0.875em`.
 @font-size-reset: @font-size-root;
 @font-size-heading-1: 1.8em;
 @font-size-heading-2: 1.5em;
@@ -49,20 +37,14 @@
 
 @size-icon: unit( 20 / @font-size-browser, em );
 
-// FIXME: Use global variable since Echo and CentralNotice use this variable
-@border-color-content: #a7d7f9;
 // Due to darker background gradient, border needs to be darkened for aligned visual perception.
-@border-color-content--tabs-inactive: darken( @border-color-content, 10% );
-@border-color-portal-heading: #c8ccd1;
-// Use `rgba()` notation for better Safari support, see T254489.
-@border-start-blockquote: 4px @border-style-base #eaecf0;
+@border-start-blockquote: 4px @border-style-base @border-color-muted;
 @padding-blockquote: 8px 32px;
 
-@background-color-secondary--modern: #f8f9fa;
-@background-color-page-container: var( --background-color-base );
+@background-color-secondary--modern: @background-color-neutral-subtle;
+@background-color-page-container: @background-color-base;
 
 // Navigation
-@background-color-secondary: #f6f6f6;
 // Navigation `line-height` has to be set in `em`s due to a rendering calculation issue.
 @line-height-nav: 1.125em;
 
@@ -95,7 +77,7 @@
 @padding-horizontal-dropdown-menu: 16px;
 @padding-vertical-dropdown-menu: 16px;
 @padding-vertical-dropdown-menu-item: 6px;
-@font-size-dropdown: unit( @font-size-base, rem ); // Equals `0.875rem`.
+@font-size-dropdown: @font-size-small;
 
 // TOC
 @size-toc-subsection-toggle: 22px;
@@ -103,7 +85,7 @@
 @toc-list-item-padding-start: 12px;
 
 // Search
-@max-width-search: unit( 500px / @font-size-browser / @font-size-base, em ); // 35.71428571em @ 16 & 0.875em T270202
+@max-width-search: unit( 500px / @font-size-browser / @font-size-small, em ); // 35.71428571em @ 16 & 0.875em T270202
 @min-width-search-button: 28px;
 @width-search-button: unit( 28 / @font-size-browser / @font-size-search-input, em );
 @font-size-search-input: unit( 13 / @font-size-browser, em ); // Equals `0.8125em`.

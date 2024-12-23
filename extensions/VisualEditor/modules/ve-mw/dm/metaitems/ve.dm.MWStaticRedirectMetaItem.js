@@ -37,7 +37,7 @@ ve.dm.MWStaticRedirectMetaItem.static.toDataElement = function () {
 };
 
 ve.dm.MWStaticRedirectMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	var meta = doc.createElement( 'meta' );
+	const meta = doc.createElement( 'meta' );
 	meta.setAttribute( 'property', 'mw:PageProp/staticredirect' );
 	return [ meta ];
 };

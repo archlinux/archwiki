@@ -1,15 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"80686",
 			"Als-Holder",
-			"J. 'mach' wust",
-			80686
+			"J. 'mach' wust"
 		]
 	},
 	"tooltip-ca-ve-edit": "Die Syte bearbeite",
 	"tooltip-ca-editsource": "Am Quälltäxt vu däre Syte schaffe",
 	"tooltip-ca-createsource": "Dr Quälltäxt zue däre Syten aalege",
-	"visualeditor-browserwarning": "Du bruchsch e Browser, wu vum VisualEditor nit offiziäll unterstitzt wird.",
 	"visualeditor-ca-createlocaldescriptionsource": "Lokale Bschrybigsquälltäxt zuefiege",
 	"visualeditor-ca-createsource": "Quälltäxt aalege",
 	"visualeditor-ca-editsource": "Quälltäxt bearbeite",

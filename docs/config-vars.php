@@ -1239,12 +1239,6 @@ $wgMaxExecutionTimeForExpensiveQueries = null;
 $wgVirtualDomainsMapping = null;
 
 /**
- * Config variable stub for the TemplateLinksSchemaMigrationStage setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::TemplateLinksSchemaMigrationStage
- */
-$wgTemplateLinksSchemaMigrationStage = null;
-
-/**
  * Config variable stub for the PageLinksSchemaMigrationStage setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::PageLinksSchemaMigrationStage
  */
@@ -1303,6 +1297,12 @@ $wgDefaultExternalStore = null;
  * @see MediaWiki\MainConfigSchema::RevisionCacheExpiry
  */
 $wgRevisionCacheExpiry = null;
+
+/**
+ * Config variable stub for the RevisionSlotsCacheExpiry setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::RevisionSlotsCacheExpiry
+ */
+$wgRevisionSlotsCacheExpiry = null;
 
 /**
  * Config variable stub for the PageLanguageUseDB setting, for use by phpdoc and IDEs.
@@ -1509,16 +1509,16 @@ $wgMainStash = null;
 $wgParsoidCacheConfig = null;
 
 /**
+ * Config variable stub for the ParsoidSelectiveUpdateSampleRate setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ParsoidSelectiveUpdateSampleRate
+ */
+$wgParsoidSelectiveUpdateSampleRate = null;
+
+/**
  * Config variable stub for the ParserCacheFilterConfig setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::ParserCacheFilterConfig
  */
 $wgParserCacheFilterConfig = null;
-
-/**
- * Config variable stub for the ChronologyProtectorStash setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::ChronologyProtectorStash
- */
-$wgChronologyProtectorStash = null;
 
 /**
  * Config variable stub for the ChronologyProtectorSecret setting, for use by phpdoc and IDEs.
@@ -1911,6 +1911,12 @@ $wgForceUIMsgAsContentMsg = null;
 $wgRawHtmlMessages = null;
 
 /**
+ * Config variable stub for the AllowRawHtmlCopyrightMessages setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::AllowRawHtmlCopyrightMessages
+ */
+$wgAllowRawHtmlCopyrightMessages = null;
+
+/**
  * Config variable stub for the Localtimezone setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::Localtimezone
  */
@@ -2139,6 +2145,12 @@ $wgAllowSiteCSSOnRestrictedPages = null;
 $wgVueDevelopmentMode = null;
 
 /**
+ * Config variable stub for the CodexDevelopmentDir setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::CodexDevelopmentDir
+ */
+$wgCodexDevelopmentDir = null;
+
+/**
  * Config variable stub for the MetaNamespace setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::MetaNamespace
  */
@@ -2351,6 +2363,12 @@ $wgParsoidSettings = null;
 $wgParserEnableLegacyMediaDOM = null;
 
 /**
+ * Config variable stub for the ParserEnableLegacyHeadingDOM setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ParserEnableLegacyHeadingDOM
+ */
+$wgParserEnableLegacyHeadingDOM = null;
+
+/**
  * Config variable stub for the UseContentMediaStyles setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::UseContentMediaStyles
  * @deprecated since 1.41
@@ -2440,6 +2458,12 @@ $wgTranscludeCacheExpiry = null;
  * @see MediaWiki\MainConfigSchema::EnableMagicLinks
  */
 $wgEnableMagicLinks = null;
+
+/**
+ * Config variable stub for the ParserEnableUserLanguage setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ParserEnableUserLanguage
+ */
+$wgParserEnableUserLanguage = null;
 
 /**
  * Config variable stub for the ArticleCountMethod setting, for use by phpdoc and IDEs.
@@ -2656,12 +2680,6 @@ $wgAuthenticationTokenVersion = null;
  * @see MediaWiki\MainConfigSchema::SessionProviders
  */
 $wgSessionProviders = null;
-
-/**
- * Config variable stub for the AllowRequiringEmailForResets setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::AllowRequiringEmailForResets
- */
-$wgAllowRequiringEmailForResets = null;
 
 /**
  * Config variable stub for the AutoCreateTempUser setting, for use by phpdoc and IDEs.
@@ -2898,6 +2916,12 @@ $wgAccountCreationThrottle = null;
 $wgTempAccountCreationThrottle = null;
 
 /**
+ * Config variable stub for the TempAccountNameAcquisitionThrottle setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::TempAccountNameAcquisitionThrottle
+ */
+$wgTempAccountNameAcquisitionThrottle = null;
+
+/**
  * Config variable stub for the SpamRegex setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::SpamRegex
  */
@@ -3102,24 +3126,6 @@ $wgRestAllowCrossOriginCookieAuth = null;
 $wgSessionSecret = null;
 
 /**
- * Config variable stub for the SessionInsecureSecrets setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::SessionInsecureSecrets
- */
-$wgSessionInsecureSecrets = null;
-
-/**
- * Config variable stub for the HKDFSecret setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::HKDFSecret
- */
-$wgHKDFSecret = null;
-
-/**
- * Config variable stub for the HKDFAlgorithm setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::HKDFAlgorithm
- */
-$wgHKDFAlgorithm = null;
-
-/**
  * Config variable stub for the CookieExpiration setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::CookieExpiration
  */
@@ -3318,12 +3324,6 @@ $wgStatsdServer = null;
 $wgStatsdMetricPrefix = null;
 
 /**
- * Config variable stub for the StatsdSamplingRates setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::StatsdSamplingRates
- */
-$wgStatsdSamplingRates = null;
-
-/**
  * Config variable stub for the StatsTarget setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::StatsTarget
  */
@@ -3340,6 +3340,12 @@ $wgStatsFormat = null;
  * @see MediaWiki\MainConfigSchema::StatsPrefix
  */
 $wgStatsPrefix = null;
+
+/**
+ * Config variable stub for the OpenTelemetryConfig setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::OpenTelemetryConfig
+ */
+$wgOpenTelemetryConfig = null;
 
 /**
  * Config variable stub for the PageInfoTransclusionLimit setting, for use by phpdoc and IDEs.
@@ -3978,6 +3984,12 @@ $wgCategoryCollation = null;
 $wgTempCategoryCollations = null;
 
 /**
+ * Config variable stub for the SortedCategories setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::SortedCategories
+ */
+$wgSortedCategories = null;
+
+/**
  * Config variable stub for the TrackingCategories setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::TrackingCategories
  * @deprecated since 1.25 Extensions should now register tracking categories using the new
@@ -4168,6 +4180,7 @@ $wgAPIMaxLagThreshold = null;
 /**
  * Config variable stub for the APIRequestLog setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::APIRequestLog
+ * @deprecated since 1.43; use api or api-request $wgDebugLogGroups channel
  */
 $wgAPIRequestLog = null;
 
@@ -4212,6 +4225,12 @@ $wgAllowedCorsHeaders = null;
  * @see MediaWiki\MainConfigSchema::RestAPIAdditionalRouteFiles
  */
 $wgRestAPIAdditionalRouteFiles = null;
+
+/**
+ * Config variable stub for the RestSandboxSpecs setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::RestSandboxSpecs
+ */
+$wgRestSandboxSpecs = null;
 
 /**
  * Config variable stub for the MaxShellMemory setting, for use by phpdoc and IDEs.
@@ -4440,3 +4459,15 @@ $wgUseCodexSpecialBlock = null;
  * @see MediaWiki\MainConfigSchema::ShowLogoutConfirmation
  */
 $wgShowLogoutConfirmation = null;
+
+/**
+ * Config variable stub for the EnableProtectionIndicators setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::EnableProtectionIndicators
+ */
+$wgEnableProtectionIndicators = null;
+
+/**
+ * Config variable stub for the OutputPipelineStages setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::OutputPipelineStages
+ */
+$wgOutputPipelineStages = null;

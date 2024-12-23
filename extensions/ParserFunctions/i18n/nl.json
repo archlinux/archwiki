@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"McDutchie",
 			"Nickthijssen1994",
 			"SPQRobin",
 			"Siebrand"
@@ -11,6 +12,7 @@
 	"pfunc_time_too_long": "Fout: #time te vaak aangeroepen.",
 	"pfunc_time_too_big": "Fout: #time ondersteunt jaren tot maximaal 9999",
 	"pfunc_time_too_small": "Fout: #time ondersteunt alleen jaren vanaf 0.",
+	"pfunc_timef_bad_format": "Fout: ongeldige indeling voor #timef",
 	"pfunc_rel2abs_invalid_depth": "Fout: ongeldige diepte in pad: \"$1\" (probeerde een node boven de stamnode aan te roepen).",
 	"pfunc_expr_stack_exhausted": "Fout in uitdrukking: stack uitgeput.",
 	"pfunc_expr_unexpected_number": "Fout in uitdrukking: onverwacht getal.",

@@ -1254,12 +1254,6 @@ class MainConfigNames {
 	public const VirtualDomainsMapping = 'VirtualDomainsMapping';
 
 	/**
-	 * Name constant for the TemplateLinksSchemaMigrationStage setting, for use with Config::get()
-	 * @see MainConfigSchema::TemplateLinksSchemaMigrationStage
-	 */
-	public const TemplateLinksSchemaMigrationStage = 'TemplateLinksSchemaMigrationStage';
-
-	/**
 	 * Name constant for the PageLinksSchemaMigrationStage setting, for use with Config::get()
 	 * @see MainConfigSchema::PageLinksSchemaMigrationStage
 	 */
@@ -1318,6 +1312,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::RevisionCacheExpiry
 	 */
 	public const RevisionCacheExpiry = 'RevisionCacheExpiry';
+
+	/**
+	 * Name constant for the RevisionSlotsCacheExpiry setting, for use with Config::get()
+	 * @see MainConfigSchema::RevisionSlotsCacheExpiry
+	 */
+	public const RevisionSlotsCacheExpiry = 'RevisionSlotsCacheExpiry';
 
 	/**
 	 * Name constant for the PageLanguageUseDB setting, for use with Config::get()
@@ -1524,16 +1524,16 @@ class MainConfigNames {
 	public const ParsoidCacheConfig = 'ParsoidCacheConfig';
 
 	/**
+	 * Name constant for the ParsoidSelectiveUpdateSampleRate setting, for use with Config::get()
+	 * @see MainConfigSchema::ParsoidSelectiveUpdateSampleRate
+	 */
+	public const ParsoidSelectiveUpdateSampleRate = 'ParsoidSelectiveUpdateSampleRate';
+
+	/**
 	 * Name constant for the ParserCacheFilterConfig setting, for use with Config::get()
 	 * @see MainConfigSchema::ParserCacheFilterConfig
 	 */
 	public const ParserCacheFilterConfig = 'ParserCacheFilterConfig';
-
-	/**
-	 * Name constant for the ChronologyProtectorStash setting, for use with Config::get()
-	 * @see MainConfigSchema::ChronologyProtectorStash
-	 */
-	public const ChronologyProtectorStash = 'ChronologyProtectorStash';
 
 	/**
 	 * Name constant for the ChronologyProtectorSecret setting, for use with Config::get()
@@ -1926,6 +1926,12 @@ class MainConfigNames {
 	public const RawHtmlMessages = 'RawHtmlMessages';
 
 	/**
+	 * Name constant for the AllowRawHtmlCopyrightMessages setting, for use with Config::get()
+	 * @see MainConfigSchema::AllowRawHtmlCopyrightMessages
+	 */
+	public const AllowRawHtmlCopyrightMessages = 'AllowRawHtmlCopyrightMessages';
+
+	/**
 	 * Name constant for the Localtimezone setting, for use with Config::get()
 	 * @see MainConfigSchema::Localtimezone
 	 */
@@ -2154,6 +2160,12 @@ class MainConfigNames {
 	public const VueDevelopmentMode = 'VueDevelopmentMode';
 
 	/**
+	 * Name constant for the CodexDevelopmentDir setting, for use with Config::get()
+	 * @see MainConfigSchema::CodexDevelopmentDir
+	 */
+	public const CodexDevelopmentDir = 'CodexDevelopmentDir';
+
+	/**
 	 * Name constant for the MetaNamespace setting, for use with Config::get()
 	 * @see MainConfigSchema::MetaNamespace
 	 */
@@ -2366,6 +2378,12 @@ class MainConfigNames {
 	public const ParserEnableLegacyMediaDOM = 'ParserEnableLegacyMediaDOM';
 
 	/**
+	 * Name constant for the ParserEnableLegacyHeadingDOM setting, for use with Config::get()
+	 * @see MainConfigSchema::ParserEnableLegacyHeadingDOM
+	 */
+	public const ParserEnableLegacyHeadingDOM = 'ParserEnableLegacyHeadingDOM';
+
+	/**
 	 * Name constant for the UseContentMediaStyles setting, for use with Config::get()
 	 * @see MainConfigSchema::UseContentMediaStyles
 	 * @deprecated since 1.41
@@ -2455,6 +2473,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::EnableMagicLinks
 	 */
 	public const EnableMagicLinks = 'EnableMagicLinks';
+
+	/**
+	 * Name constant for the ParserEnableUserLanguage setting, for use with Config::get()
+	 * @see MainConfigSchema::ParserEnableUserLanguage
+	 */
+	public const ParserEnableUserLanguage = 'ParserEnableUserLanguage';
 
 	/**
 	 * Name constant for the ArticleCountMethod setting, for use with Config::get()
@@ -2671,12 +2695,6 @@ class MainConfigNames {
 	 * @see MainConfigSchema::SessionProviders
 	 */
 	public const SessionProviders = 'SessionProviders';
-
-	/**
-	 * Name constant for the AllowRequiringEmailForResets setting, for use with Config::get()
-	 * @see MainConfigSchema::AllowRequiringEmailForResets
-	 */
-	public const AllowRequiringEmailForResets = 'AllowRequiringEmailForResets';
 
 	/**
 	 * Name constant for the AutoCreateTempUser setting, for use with Config::get()
@@ -2913,6 +2931,12 @@ class MainConfigNames {
 	public const TempAccountCreationThrottle = 'TempAccountCreationThrottle';
 
 	/**
+	 * Name constant for the TempAccountNameAcquisitionThrottle setting, for use with Config::get()
+	 * @see MainConfigSchema::TempAccountNameAcquisitionThrottle
+	 */
+	public const TempAccountNameAcquisitionThrottle = 'TempAccountNameAcquisitionThrottle';
+
+	/**
 	 * Name constant for the SpamRegex setting, for use with Config::get()
 	 * @see MainConfigSchema::SpamRegex
 	 */
@@ -3117,24 +3141,6 @@ class MainConfigNames {
 	public const SessionSecret = 'SessionSecret';
 
 	/**
-	 * Name constant for the SessionInsecureSecrets setting, for use with Config::get()
-	 * @see MainConfigSchema::SessionInsecureSecrets
-	 */
-	public const SessionInsecureSecrets = 'SessionInsecureSecrets';
-
-	/**
-	 * Name constant for the HKDFSecret setting, for use with Config::get()
-	 * @see MainConfigSchema::HKDFSecret
-	 */
-	public const HKDFSecret = 'HKDFSecret';
-
-	/**
-	 * Name constant for the HKDFAlgorithm setting, for use with Config::get()
-	 * @see MainConfigSchema::HKDFAlgorithm
-	 */
-	public const HKDFAlgorithm = 'HKDFAlgorithm';
-
-	/**
 	 * Name constant for the CookieExpiration setting, for use with Config::get()
 	 * @see MainConfigSchema::CookieExpiration
 	 */
@@ -3333,12 +3339,6 @@ class MainConfigNames {
 	public const StatsdMetricPrefix = 'StatsdMetricPrefix';
 
 	/**
-	 * Name constant for the StatsdSamplingRates setting, for use with Config::get()
-	 * @see MainConfigSchema::StatsdSamplingRates
-	 */
-	public const StatsdSamplingRates = 'StatsdSamplingRates';
-
-	/**
 	 * Name constant for the StatsTarget setting, for use with Config::get()
 	 * @see MainConfigSchema::StatsTarget
 	 */
@@ -3355,6 +3355,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::StatsPrefix
 	 */
 	public const StatsPrefix = 'StatsPrefix';
+
+	/**
+	 * Name constant for the OpenTelemetryConfig setting, for use with Config::get()
+	 * @see MainConfigSchema::OpenTelemetryConfig
+	 */
+	public const OpenTelemetryConfig = 'OpenTelemetryConfig';
 
 	/**
 	 * Name constant for the PageInfoTransclusionLimit setting, for use with Config::get()
@@ -3993,6 +3999,12 @@ class MainConfigNames {
 	public const TempCategoryCollations = 'TempCategoryCollations';
 
 	/**
+	 * Name constant for the SortedCategories setting, for use with Config::get()
+	 * @see MainConfigSchema::SortedCategories
+	 */
+	public const SortedCategories = 'SortedCategories';
+
+	/**
 	 * Name constant for the TrackingCategories setting, for use with Config::get()
 	 * @see MainConfigSchema::TrackingCategories
 	 * @deprecated since 1.25 Extensions should now register tracking categories using the new
@@ -4183,6 +4195,7 @@ class MainConfigNames {
 	/**
 	 * Name constant for the APIRequestLog setting, for use with Config::get()
 	 * @see MainConfigSchema::APIRequestLog
+	 * @deprecated since 1.43; use api or api-request $wgDebugLogGroups channel
 	 */
 	public const APIRequestLog = 'APIRequestLog';
 
@@ -4227,6 +4240,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::RestAPIAdditionalRouteFiles
 	 */
 	public const RestAPIAdditionalRouteFiles = 'RestAPIAdditionalRouteFiles';
+
+	/**
+	 * Name constant for the RestSandboxSpecs setting, for use with Config::get()
+	 * @see MainConfigSchema::RestSandboxSpecs
+	 */
+	public const RestSandboxSpecs = 'RestSandboxSpecs';
 
 	/**
 	 * Name constant for the MaxShellMemory setting, for use with Config::get()
@@ -4455,5 +4474,17 @@ class MainConfigNames {
 	 * @see MainConfigSchema::ShowLogoutConfirmation
 	 */
 	public const ShowLogoutConfirmation = 'ShowLogoutConfirmation';
+
+	/**
+	 * Name constant for the EnableProtectionIndicators setting, for use with Config::get()
+	 * @see MainConfigSchema::EnableProtectionIndicators
+	 */
+	public const EnableProtectionIndicators = 'EnableProtectionIndicators';
+
+	/**
+	 * Name constant for the OutputPipelineStages setting, for use with Config::get()
+	 * @see MainConfigSchema::OutputPipelineStages
+	 */
+	public const OutputPipelineStages = 'OutputPipelineStages';
 
 }

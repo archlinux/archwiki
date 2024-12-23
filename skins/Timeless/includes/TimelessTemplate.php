@@ -475,7 +475,7 @@ class TimelessTemplate extends BaseTemplate {
 				'role' => 'banner'
 			]
 		);
-		$logos = SkinModule::getAvailableLogos( $config );
+		$logos = SkinModule::getAvailableLogos( $config, $this->getSkin()->getLanguage()->getCode() );
 		if ( $part !== 'image' ) {
 			$wordmarkImage = $this->getLogoImage( $config->get( 'TimelessWordmark' ), true );
 			if ( !$wordmarkImage && isset( $logos['wordmark'] ) ) {

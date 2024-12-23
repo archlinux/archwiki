@@ -2,6 +2,10 @@
 
 .notifications-overlay {
 	visibility: visible;
+
+	a {
+		text-decoration: none;
+	}
 }
 
 // needs to be more specific than .overlay rules
@@ -9,7 +13,7 @@
 	display: block;
 	width: auto;
 	right: 0;
-	box-shadow: -5px 0 0 0 var( --box-shadow-color-drawer );
+	box-shadow: @box-shadow-drop-medium;
 	transform: translate( 100%, 0 );
 	transition: transform @transition-duration-medium @transition-timing-function-menu;
 
@@ -18,7 +22,7 @@
 	}
 }
 
-@media all and ( min-width: @width-breakpoint-tablet ) {
+@media all and ( min-width: @min-width-breakpoint-tablet ) {
 	@rightDrawerLeftOffset: 100% - @drawer-width-right;
 
 	.notifications-overlay.navigation-drawer {

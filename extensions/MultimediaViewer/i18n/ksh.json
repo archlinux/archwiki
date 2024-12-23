@@ -18,7 +18,6 @@
 	"multimediaviewer-license-default": "De Lezänz beraache",
 	"multimediaviewer-permission-title": "Einzelheijte övver et Jebruche",
 	"multimediaviewer-permission-viewmore": "Mih aanzeije",
-	"multimediaviewer-about-mmv": "Övver",
 	"multimediaviewer-geolocation": "Posizjuhn: $1",
 	"multimediaviewer-reuse-link": "Donn heh di dattei wigger jävve udder woh ennboue",
 	"multimediaviewer-reuse-loading-placeholder": "Ben am Lahde&nbsp;…",
@@ -55,7 +54,5 @@
 	"multimediaviewer-credit-popup-text-more": "Alles övver der Könsler un de Quäll",
 	"multimediaviewer-download-attribution-cta-header": "Do moß der Maacher nänne",
 	"multimediaviewer-download-attribution-cta": "Zeijsch mer, wi",
-	"multimediaviewer-attr-plain": "Pladd un eijfach",
-	"multimediaviewer-options-learn-more": "Mih lässe",
-	"multimediaviewer-option-cancel-button": "Ophühre"
+	"multimediaviewer-attr-plain": "Pladd un eijfach"
 }

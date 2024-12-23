@@ -44,13 +44,12 @@ class DOMUtils {
 
 		$domBuilder = new class( [
 			'suppressHtmlNamespace' => true,
-		] ) extends DOMBuilder
-		{
+		] ) extends DOMBuilder {
 			/** @inheritDoc */
 			protected function createDocument(
-				string $doctypeName = null,
-				string $public = null,
-				string $system = null
+				?string $doctypeName = null,
+				?string $public = null,
+				?string $system = null
 			) {
 				// @phan-suppress-next-line PhanTypeMismatchReturn
 				return DOMCompat::newDocument( false );

@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Linker\LinkRenderer;

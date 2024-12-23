@@ -10,21 +10,21 @@
 		return OO.ui.infuse( $el );
 	}
 
-	$( function () {
-		var blockTargetWidget, anonOnlyWidget, enableAutoblockWidget, hideUserWidget, watchUserWidget,
+	$( () => {
+		let blockTargetWidget, anonOnlyWidget, enableAutoblockWidget, hideUserWidget, watchUserWidget = null,
 			expiryWidget, editingRestrictionWidget, partialActionsRestrictionsWidget, preventTalkPageEditWidget,
 			pageRestrictionsWidget, namespaceRestrictionsWidget, createAccountWidget,
 			userChangedCreateAccount, updatingBlockOptions;
 
 		function preserveSelectedStateOnDisable( widget ) {
-			var widgetWasSelected;
+			let widgetWasSelected;
 
 			if ( !widget ) {
 				return;
 			}
 
 			// 'disable' event fires if disabled state changes
-			widget.on( 'disable', function ( disabled ) {
+			widget.on( 'disable', ( disabled ) => {
 				if ( disabled ) {
 					// Disabling an enabled widget
 					// Save selected and set selected to false
@@ -42,7 +42,7 @@
 		}
 
 		function updateBlockOptions() {
-			var blocktarget = blockTargetWidget.getValue().trim(),
+			const blocktarget = blockTargetWidget.getValue().trim(),
 				isEmpty = blocktarget === '',
 				isIp = mw.util.isIPAddress( blocktarget, true ),
 				isNonEmptyIp = isIp && !isEmpty,
@@ -88,7 +88,7 @@
 		}
 
 		function updateWatchOption( blocktarget ) {
-			var isEmpty = blocktarget === '',
+			const isEmpty = blocktarget === '',
 				isIp = mw.util.isIPAddress( blocktarget, true ),
 				isIpRange = isIp && blocktarget.match( /\/\d+$/ ),
 				isAutoBlock = blocktarget.match( /^#\d+$/ );
@@ -100,7 +100,7 @@
 
 		watchUserWidget = infuseIfExists( $( '#mw-input-wpWatch' ) );
 		if ( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Unblock' ) {
-			var $wpTarget = $( '#mw-input-wpTarget' );
+			const $wpTarget = $( '#mw-input-wpTarget' );
 			if ( $wpTarget.attr( 'type' ) === 'hidden' ) {
 				// target is not changeable, determine watch state once
 				updateWatchOption( $wpTarget.val() );
@@ -108,7 +108,7 @@
 			}
 			blockTargetWidget = infuseIfExists( $wpTarget );
 			if ( blockTargetWidget ) {
-				blockTargetWidget.on( 'change', function () {
+				blockTargetWidget.on( 'change', () => {
 					updateWatchOption( blockTargetWidget.getValue().trim() );
 				} );
 				updateWatchOption( blockTargetWidget.getValue().trim() );
@@ -131,7 +131,7 @@
 			anonOnlyWidget = OO.ui.infuse( $( '#mw-input-wpHardBlock' ) );
 			blockTargetWidget.on( 'change', updateBlockOptions );
 			expiryWidget.on( 'change', updateBlockOptions );
-			createAccountWidget.on( 'change', function () {
+			createAccountWidget.on( 'change', () => {
 				if ( !updatingBlockOptions ) {
 					userChangedCreateAccount = true;
 				}

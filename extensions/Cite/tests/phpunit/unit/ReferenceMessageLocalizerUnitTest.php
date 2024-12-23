@@ -3,7 +3,7 @@
 namespace Cite\Tests\Unit;
 
 use Cite\ReferenceMessageLocalizer;
-use Language;
+use MediaWiki\Language\Language;
 
 /**
  * @covers \Cite\ReferenceMessageLocalizer

@@ -1,4 +1,4 @@
-var LanguageResultWidget = require( './LanguageResultWidget.js' );
+const LanguageResultWidget = require( './LanguageResultWidget.js' );
 
 /**
  * Creates a TemplateDataLanguageSearchWidget object.
@@ -12,25 +12,23 @@ var LanguageResultWidget = require( './LanguageResultWidget.js' );
  */
 function LanguageSearchWidget( config ) {
 	// Configuration initialization
-	config = $.extend( {
+	config = Object.assign( {
 		placeholder: mw.msg( 'templatedata-modal-search-input-placeholder' )
 	}, config );
 
 	// Parent constructor
-	LanguageSearchWidget.parent.call( this, config );
+	LanguageSearchWidget.super.call( this, config );
 
 	// Properties
 	this.filteredLanguageResultWidgets = [];
-	var languageCodes = Object.keys( $.uls.data.getAutonyms() ).sort();
-	this.languageResultWidgets = languageCodes.map( function ( languageCode ) {
-		return new LanguageResultWidget( {
-			data: {
-				code: languageCode,
-				name: $.uls.data.getAutonym( languageCode ),
-				autonym: $.uls.data.getAutonym( languageCode )
-			}
-		} );
-	} );
+	const languageCodes = Object.keys( $.uls.data.getAutonyms() ).sort();
+	this.languageResultWidgets = languageCodes.map( ( languageCode ) => new LanguageResultWidget( {
+		data: {
+			code: languageCode,
+			name: $.uls.data.getAutonym( languageCode ),
+			autonym: $.uls.data.getAutonym( languageCode )
+		}
+	} ) );
 	this.setAvailableLanguages();
 
 	// Initialization
@@ -48,7 +46,7 @@ OO.inheritClass( LanguageSearchWidget, OO.ui.SearchWidget );
  */
 LanguageSearchWidget.prototype.onQueryChange = function () {
 	// Parent method
-	LanguageSearchWidget.parent.prototype.onQueryChange.apply( this, arguments );
+	LanguageSearchWidget.super.prototype.onQueryChange.apply( this, arguments );
 
 	// Populate
 	this.addResults();
@@ -65,22 +63,20 @@ LanguageSearchWidget.prototype.setAvailableLanguages = function ( availableLangu
 		return;
 	}
 
-	this.filteredLanguageResultWidgets = this.languageResultWidgets.map( function ( languageResult ) {
-		var data = languageResult.getData();
+	this.filteredLanguageResultWidgets = this.languageResultWidgets.map( ( languageResult ) => {
+		const data = languageResult.getData();
 		if ( availableLanguages.indexOf( data.code ) !== -1 ) {
 			return languageResult;
 		}
 		return null;
-	} ).filter( function ( languageResult ) {
-		return languageResult;
-	} );
+	} ).filter( ( languageResult ) => languageResult );
 };
 
 /**
  * Update search results from current query
  */
 LanguageSearchWidget.prototype.addResults = function () {
-	var matchProperties = [ 'name', 'autonym', 'code' ],
+	const matchProperties = [ 'name', 'autonym', 'code' ],
 		query = this.query.getValue().trim(),
 		compare = window.Intl && Intl.Collator ?
 			new Intl.Collator( this.lang, { sensitivity: 'base' } ).compare :
@@ -90,14 +86,14 @@ LanguageSearchWidget.prototype.addResults = function () {
 		hasQuery = !!query.length,
 		items = [];
 
-	var results = this.getResults();
+	const results = this.getResults();
 	results.clearItems();
 
-	this.filteredLanguageResultWidgets.forEach( function ( languageResult ) {
-		var data = languageResult.getData();
-		var matchedProperty = null;
+	this.filteredLanguageResultWidgets.forEach( ( languageResult ) => {
+		const data = languageResult.getData();
+		let matchedProperty = null;
 
-		matchProperties.some( function ( prop ) {
+		matchProperties.some( ( prop ) => {
 			if ( data[ prop ] && compare( data[ prop ].slice( 0, query.length ), query ) === 0 ) {
 				matchedProperty = prop;
 				return true;

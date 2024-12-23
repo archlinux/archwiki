@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Crazymadlover",
 			"Fúlvio",
 			"Giro720",
@@ -9,8 +10,7 @@
 			"Mansil alfalb",
 			"Opraco",
 			"Vitorvicentevalente",
-			"Waldir",
-			555
+			"Waldir"
 		]
 	},
 	"cite-desc": "Adiciona elementos <code>&lt;ref&gt;</code> e <code>&lt;references&gt;</code> para uso em citações",
@@ -37,6 +37,13 @@
 	"cite_error_empty_references_define": "A etiqueta <code>&lt;ref&gt;</code> com o nome \"$1\" definida no grupo <code>&lt;references&gt;</code> \"$2\" não tem conteúdo.",
 	"cite-tracking-category-cite-error": "Páginas com erros em referências",
 	"cite-tracking-category-cite-error-desc": "As páginas nesta categoria contêm erros no uso dos elementos de referências.",
+	"cite-reference-previews-reference": "Referência",
+	"cite-reference-previews-book": "Referência de livro",
+	"cite-reference-previews-journal": "Referência de revista",
+	"cite-reference-previews-news": "Referência de notícias",
+	"cite-reference-previews-note": "Nota",
+	"cite-reference-previews-web": "Referência da Internet",
+	"cite-reference-previews-collapsible-placeholder": "Esta referência inclui uma figura que não cabe na antevisão.",
 	"cite_references_link_accessibility_label": "Ir para cima",
 	"cite_references_link_many_accessibility_label": "Ir para:",
 	"cite_references_link_accessibility_back_label": "Voltar acima",
@@ -51,5 +58,9 @@
 	"cite-wikieditor-help-content-showreferences-description": "Mostrar referências",
 	"cite-wikieditor-help-content-reference-example-text1": "Texto da página.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Texto da hiperligação], texto adicional.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto da hiperligação]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto da hiperligação]",
+	"popups-prefs-navpopups-gadget-conflict-info": "Tem o ''gadget'' da [[$1|navegação flutuante]] (''navigation popups'') ativado, por isso não verá as antevisões fornecidas por esta funcionalidade. Dependendo da sua wiki, este ''gadget'' pode ter um nome ligeiramente diferente. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do utilizador, incluindo os globais.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Tem os ''gadgets'' da [[$1|navegação flutuante]] (''navigation popups'') e das [[$1|dicas de referências]] (''reference tooltips'') ativados, por isso não verá as antevisões fornecidas por esta funcionalidade. Dependendo da sua wiki, estes ''gadgets'' pode ter nomes ligeiramente diferentes. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do utilizador, incluindo os globais.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Tem o ''gadget'' das [[$1|dicas de referências]] (''reference tooltips'') ativado, por isso não verá as antevisões de referências  mas continuará a ver as antevisões de páginas. Dependendo da sua wiki, este ''gadget'' pode ter um nome ligeiramente diferente. Se continuar a ter problemas, reveja os seus ''gadgets'' e os ''scripts'' do utilizador, incluindo os globais.",
+	"popups-refpreview-user-preference-label": "Ativar a antevisão de referências (obter antevisões rápidas de uma referência durante a leitura de uma página)"
 }

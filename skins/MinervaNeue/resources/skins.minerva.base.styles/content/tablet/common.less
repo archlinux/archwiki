@@ -5,7 +5,7 @@ A file for css that optimises the Minerva skin on larger devices.
 @import '../../../../minerva.less/minerva.variables.less';
 @import '../../../../minerva.less/minerva.mixins.less';
 
-@media screen and ( min-width: @width-breakpoint-tablet ) {
+@media screen and ( min-width: @min-width-breakpoint-tablet ) {
 	.client-js #searchIcon { // stylelint-disable-line selector-max-id
 		display: none;
 	}
@@ -26,37 +26,13 @@ A file for css that optimises the Minerva skin on larger devices.
 
 	figure[ typeof~='mw:File/Thumb' ],
 	figure[ typeof~='mw:File/Frame' ] {
-		// Default where page content language is not set
-		// Allow to flip
 		clear: right;
+		clear: inline-end;
 		float: right;
+		float: inline-end;
 		margin-left: 1.4em;
 		margin-right: 0;
-
-		// Defaults for page content language
-		// These will be overriden below when explicit classes are set
-
-		.mw-content-ltr & {
-			/* @noflip */
-			float: right;
-			/* @noflip */
-			clear: right;
-			/* @noflip */
-			margin-left: 1.4em;
-			/* @noflip */
-			margin-right: 0;
-		}
-
-		.mw-content-rtl & {
-			/* @noflip */
-			float: left;
-			/* @noflip */
-			clear: left;
-			/* @noflip */
-			margin-left: 0;
-			/* @noflip */
-			margin-right: 1.4em;
-		}
+		margin-inline: 1.4em 0;
 	}
 
 	.content {
@@ -67,7 +43,7 @@ A file for css that optimises the Minerva skin on larger devices.
 		figure[ typeof~='mw:File/Thumb' ],
 		figure[ typeof~='mw:File/Frame' ],
 		.thumb {
-			max-width: @width-breakpoint-tablet - @margin-content;
+			max-width: calc( @max-width-breakpoint-mobile - @margin-content );
 
 			&.mw-halign-left,
 			&.tleft {
@@ -119,7 +95,7 @@ A file for css that optimises the Minerva skin on larger devices.
 		}
 	}
 
-	.last-modified-bar {
+	a.last-modified-bar {
 		background-color: transparent;
 		padding-left: 0;
 		padding-right: 0;
@@ -127,7 +103,7 @@ A file for css that optimises the Minerva skin on larger devices.
 	}
 }
 
-@media screen and ( min-width: @width-breakpoint-desktop ) {
+@media screen and ( min-width: @max-width-content-tablet ) {
 	// stylelint-disable-next-line selector-max-id
 	.banner-container,
 	.minerva-anon-talk-message,

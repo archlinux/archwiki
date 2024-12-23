@@ -67,7 +67,6 @@
 	"templatedata-modal-button-map": "Uredi mape",
 	"templatedata-modal-button-importParams": "Uvezi parametre",
 	"templatedata-modal-button-removemap": "Ukloni mapu",
-	"templatedata-modal-button-restoreparam": "Vrati parametar",
 	"templatedata-modal-button-saveparam": "Sačuvaj",
 	"templatedata-modal-confirmcancel": "Želite li zaista da odbacite izmene?",
 	"templatedata-modal-current-language": "Trenutni jezik: $1",

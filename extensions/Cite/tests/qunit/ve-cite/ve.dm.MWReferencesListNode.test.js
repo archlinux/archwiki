@@ -2,7 +2,7 @@
 
 QUnit.module( 've.dm.MWReferencesListNode (Cite)', ve.test.utils.newMwEnvironment() );
 
-QUnit.test( 'isEditable', function ( assert ) {
+QUnit.test( 'isEditable', ( assert ) => {
 	let model = new ve.dm.MWReferencesListNode();
 	assert.true( model.isEditable() );
 
@@ -10,12 +10,12 @@ QUnit.test( 'isEditable', function ( assert ) {
 	assert.false( model.isEditable() );
 } );
 
-QUnit.test( 'matchFunction', function ( assert ) {
+QUnit.test( 'matchFunction', ( assert ) => {
 	const el = document.createElement( 'div' );
 	assert.false( ve.dm.MWReferencesListNode.static.matchFunction( el ) );
 } );
 
-QUnit.test( 'describeChange', function ( assert ) {
+QUnit.test( 'describeChange', ( assert ) => {
 	for ( const [ key, change, expected ] of [
 		[ 'refGroup', { to: 'b' }, 'cite-ve-changedesc-reflist-group-to,<ins>b</ins>' ],
 		[ 'refGroup', { from: 'a' }, 'cite-ve-changedesc-reflist-group-from,<del>a</del>' ],
@@ -33,7 +33,7 @@ QUnit.test( 'describeChange', function ( assert ) {
 	}
 } );
 
-QUnit.test( 'getHashObject', function ( assert ) {
+QUnit.test( 'getHashObject', ( assert ) => {
 	const dataElement = {
 		type: 'T',
 		attributes: {

@@ -4,7 +4,8 @@ namespace MediaWiki\Extension\Math\Tests\WikiTexVC\Nodes;
 
 use ArgumentCountError;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
-use MediaWiki\Extension\Math\WikiTexVC\Nodes\Curly;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmsub;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmunder;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\DQ;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
@@ -53,8 +54,20 @@ class DQTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testRenderEmptyDq() {
-		$dq = new DQ( new Curly( new TexArray() ), new Literal( 'b' ) );
+		$dq = new DQ( TexArray::newCurly(), new Literal( 'b' ) );
 		$this->assertStringContainsString( ( new MMLmrow() )->getEmpty(), $dq->renderMML() );
+	}
+
+	public function testBigSum() {
+		$dq = new DQ( new Literal( '\\sum' ), new Literal( 'i' ) );
+		$this->assertStringContainsString( ( new MMLmunder() )->getStart(), $dq->renderMML() );
+	}
+
+	public function testSmallSum() {
+		$dq = new DQ( new Literal( '\\sum' ), new Literal( 'i' ) );
+		$this->assertStringContainsString(
+			( new MMLmsub() )->getStart(),
+			$dq->renderMML( [], [ 'styleargs' => [ 'displaystle' => 'false' ] ] ) );
 	}
 
 }

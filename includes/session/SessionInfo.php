@@ -23,6 +23,9 @@
 
 namespace MediaWiki\Session;
 
+use InvalidArgumentException;
+use Stringable;
+
 /**
  * Value object returned by SessionProvider
  *
@@ -34,7 +37,7 @@ namespace MediaWiki\Session;
  * @ingroup Session
  * @since 1.27
  */
-class SessionInfo {
+class SessionInfo implements Stringable {
 	/** Minimum allowed priority */
 	public const MIN_PRIORITY = 1;
 
@@ -101,13 +104,13 @@ class SessionInfo {
 	 */
 	public function __construct( $priority, array $data ) {
 		if ( $priority < self::MIN_PRIORITY || $priority > self::MAX_PRIORITY ) {
-			throw new \InvalidArgumentException( 'Invalid priority' );
+			throw new InvalidArgumentException( 'Invalid priority' );
 		}
 
 		if ( isset( $data['copyFrom'] ) ) {
 			$from = $data['copyFrom'];
 			if ( !$from instanceof SessionInfo ) {
-				throw new \InvalidArgumentException( 'Invalid copyFrom' );
+				throw new InvalidArgumentException( 'Invalid copyFrom' );
 			}
 			$data += [
 				'provider' => $from->provider,
@@ -139,21 +142,21 @@ class SessionInfo {
 		}
 
 		if ( $data['id'] !== null && !SessionManager::validateSessionId( $data['id'] ) ) {
-			throw new \InvalidArgumentException( 'Invalid session ID' );
+			throw new InvalidArgumentException( 'Invalid session ID' );
 		}
 
 		if ( $data['userInfo'] !== null && !$data['userInfo'] instanceof UserInfo ) {
-			throw new \InvalidArgumentException( 'Invalid userInfo' );
+			throw new InvalidArgumentException( 'Invalid userInfo' );
 		}
 
 		if ( !$data['provider'] && $data['id'] === null ) {
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				'Must supply an ID when no provider is given'
 			);
 		}
 
 		if ( $data['metadata'] !== null && !is_array( $data['metadata'] ) ) {
-			throw new \InvalidArgumentException( 'Invalid metadata' );
+			throw new InvalidArgumentException( 'Invalid metadata' );
 		}
 
 		$this->provider = $data['provider'];

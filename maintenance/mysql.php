@@ -24,9 +24,13 @@
  */
 
 use MediaWiki\Shell\Shell;
+use Wikimedia\FileBackend\FSFile\TempFSFile;
 use Wikimedia\IPUtils;
+use Wikimedia\Rdbms\ServerInfo;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * @ingroup Maintenance
@@ -93,7 +97,7 @@ class MysqlMaintenance extends Maintenance {
 				$this->fatalError( "Error: Host not configured: \"$host\"" );
 			}
 		} elseif ( $this->hasOption( 'write' ) ) {
-			$index = $lb->getWriterIndex();
+			$index = ServerInfo::WRITER_INDEX;
 		} else {
 			$group = $this->getOption( 'group', false );
 			$index = $lb->getReaderIndex( $group );
@@ -200,5 +204,7 @@ class MysqlMaintenance extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MysqlMaintenance::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

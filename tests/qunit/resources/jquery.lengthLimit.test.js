@@ -1,4 +1,4 @@
-QUnit.module( 'jquery.lengthLimit', function () {
+QUnit.module( 'jquery.lengthLimit', () => {
 	// Simple sample (20 chars, 20 bytes)
 	const simpleSample = '12345678901234567890';
 
@@ -18,7 +18,7 @@ QUnit.module( 'jquery.lengthLimit', function () {
 			return $el.val() + charstr.charAt( i );
 		}
 
-		for ( var c = 0; c < charstr.length; c++ ) {
+		for ( let c = 0; c < charstr.length; c++ ) {
 			$input
 				.val( x( $input, c ) )
 				.trigger( 'change' );
@@ -86,8 +86,8 @@ QUnit.module( 'jquery.lengthLimit', function () {
 
 		'Pass the limit and a callback as input filter': {
 			$input: $( '<input>' ).attr( 'type', 'text' )
-				.byteLimit( 6, function ( val ) {
-					var title = mw.Title.newFromText( String( val ) );
+				.byteLimit( 6, ( val ) => {
+					const title = mw.Title.newFromText( String( val ) );
 					// Return without namespace prefix
 					return title ? title.getMain() : '';
 				} ),
@@ -98,8 +98,8 @@ QUnit.module( 'jquery.lengthLimit', function () {
 		'Limit using the maxlength attribute and pass a callback as input filter': {
 			$input: $( '<input>' ).attr( 'type', 'text' )
 				.attr( 'maxlength', '6' )
-				.byteLimit( function ( val ) {
-					var title = mw.Title.newFromText( String( val ) );
+				.byteLimit( ( val ) => {
+					const title = mw.Title.newFromText( String( val ) );
 					// Return without namespace prefix
 					return title ? title.getMain() : '';
 				} ),
@@ -109,8 +109,8 @@ QUnit.module( 'jquery.lengthLimit', function () {
 
 		'Truncate with exceeded limit and filter callback': {
 			$input: $( '<input>' ).attr( 'type', 'text' )
-				.byteLimit( 6, function ( val ) {
-					var title = mw.Title.newFromText( String( val ) );
+				.byteLimit( 6, ( val ) => {
+					const title = mw.Title.newFromText( String( val ) );
 					// Return without namespace prefix
 					return title ? title.getMain() : '';
 				} ),
@@ -123,9 +123,7 @@ QUnit.module( 'jquery.lengthLimit', function () {
 
 		'Input filter that increases the length': {
 			$input: $( '<input>' ).attr( 'type', 'text' )
-				.byteLimit( 10, function ( text ) {
-					return 'prefix' + text;
-				} ),
+				.byteLimit( 10, ( text ) => 'prefix' + text ),
 			sample: simpleSample,
 			// Prefix adds 6 characters, limit is reached after 4
 			expected: '1234'
@@ -134,9 +132,7 @@ QUnit.module( 'jquery.lengthLimit', function () {
 		// Regression tests for T43450
 		'Input filter of which the base exceeds the limit': {
 			$input: $( '<input>' ).attr( 'type', 'text' )
-				.byteLimit( 3, function ( text ) {
-					return 'prefix' + text;
-				} ),
+				.byteLimit( 3, ( text ) => 'prefix' + text ),
 			sample: simpleSample,
 			expected: ''
 		},
@@ -145,7 +141,7 @@ QUnit.module( 'jquery.lengthLimit', function () {
 			sample: '\uD800\uD800\uDFFF',
 			expected: '\uD800'
 		}
-	}, function ( assert, opt ) {
+	}, ( assert, opt ) => {
 		opt.$input.appendTo( '#qunit-fixture' );
 
 		// Simulate pressing keys for each of the sample characters
@@ -158,8 +154,8 @@ QUnit.module( 'jquery.lengthLimit', function () {
 		);
 	} );
 
-	QUnit.test( 'Confirm properties and attributes set', function ( assert ) {
-		var $el;
+	QUnit.test( 'Confirm properties and attributes set', ( assert ) => {
+		let $el;
 
 		$el = $( '<input>' ).attr( 'type', 'text' )
 			.attr( 'maxlength', '7' )
@@ -178,9 +174,7 @@ QUnit.module( 'jquery.lengthLimit', function () {
 		$el = $( '<input>' ).attr( 'type', 'text' )
 			.attr( 'maxlength', '7' )
 			.appendTo( '#qunit-fixture' )
-			.byteLimit( 12, function ( val ) {
-				return val;
-			} );
+			.byteLimit( 12, ( val ) => val );
 
 		assert.strictEqual( $el.attr( 'maxlength' ), undefined, 'maxlength attribute removed for limit with callback' );
 
@@ -201,8 +195,8 @@ QUnit.module( 'jquery.lengthLimit', function () {
 		$el.byteLimit();
 	} );
 
-	QUnit.test( 'Trim from insertion when limit exceeded', function ( assert ) {
-		var $el;
+	QUnit.test( 'Trim from insertion when limit exceeded', ( assert ) => {
+		let $el;
 
 		// Use a new <input> because the bug only occurs on the first time
 		// the limit it reached (T42850)
@@ -223,9 +217,8 @@ QUnit.module( 'jquery.lengthLimit', function () {
 		assert.strictEqual( $el.val(), 'abc', 'Trim from the insertion point (at 1), not the end' );
 	} );
 
-	QUnit.test( 'Do not cut up false matching substrings in emoji insertions', function ( assert ) {
-		var $el,
-			oldVal = '\uD83D\uDCA9\uD83D\uDCA9', // "💩💩"
+	QUnit.test( 'Do not cut up false matching substrings in emoji insertions', ( assert ) => {
+		const oldVal = '\uD83D\uDCA9\uD83D\uDCA9', // "💩💩"
 			newVal = '\uD83D\uDCA9\uD83D\uDCB9\uD83E\uDCA9\uD83D\uDCA9', // "💩💹🢩💩"
 			expected = '\uD83D\uDCA9\uD83D\uDCB9\uD83D\uDCA9'; // "💩💹💩"
 
@@ -235,7 +228,7 @@ QUnit.module( 'jquery.lengthLimit', function () {
 		// * With correct trimming but bad detection of inserted text:
 		//   '\uD83D\uDCA9\uD83D\uDCB9\uDCA9' "💩💹�"
 
-		$el = $( '<input>' ).attr( 'type', 'text' )
+		const $el = $( '<input>' ).attr( 'type', 'text' )
 			.appendTo( '#qunit-fixture' )
 			.byteLimit( 12 )
 			.val( oldVal ).trigger( 'change' )

@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Push\Api;
 
-use ApiBase;
-use ApiMain;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
 use MediaWiki\Extension\Notifications\Push\SubscriptionManager;
 use MediaWiki\Extension\Notifications\Push\Utils;
 use MediaWiki\Extension\Notifications\Services;
@@ -37,11 +37,6 @@ class ApiEchoPushSubscriptionsCreate extends ApiBase {
 		return $module;
 	}
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param SubscriptionManager $subscriptionManager
-	 */
 	public function __construct(
 		ApiMain $mainModule,
 		string $moduleName,

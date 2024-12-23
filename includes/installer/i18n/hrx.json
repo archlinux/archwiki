@@ -3,8 +3,7 @@
 		"authors": [
 			"Iohanen",
 			"Macofe",
-			"Paul Beppler",
-			"Krinkle"
+			"Paul Beppler"
 		]
 	},
 	"config-desc": "Das MediaWiki-Installationsprogramm",
@@ -56,7 +55,6 @@
 	"config-memory-raised": "Der PHP-Parameter <code>memory_limit</code> betruch $1 und woard uff $2 erhöcht.",
 	"config-memory-bad": "'''Warnung:''' Der PHP-Parameter <code>memory_limit</code> beträcht $1.\nDer Weart ist wahrscheinlich zu niedrich.\nDer Installationsvoargang könnt doher scheitre!",
 	"config-apc": "[https://www.php.net/apc APC] ist installiert",
-	"config-wincache": "[https://www.iis.net/downloads/microsoft/wincache-extension WinCache] ist installiert",
 	"config-mod-security": "'''Warnung:''' Uff dem Webserver woard [https://modsecurity.org/ ModSecurity] aktiviert. Sofern falsch konfiguriert, kann das zu Probleme mit MediaWiki sowie annrer Software uff dem Server führe und es Benutzer ermöchliche beliebiche Inhalte im Wiki Renzustelle.\nFür weitre Informatione empfehle mir die [https://modsecurity.org/documentation/ Dokumentation zu ModSecurity] orrer den Kontakt zum Hoster, sofern Fehler ufftrete.",
 	"config-diff3-bad": "GNU diff3 woard net gefund.",
 	"config-git": "Die Versionsverwaltungssoftware „Git“ woard gefund: <code>$1</code>.",
@@ -222,7 +220,6 @@
 	"config-install-schema": "Dateschema weard erstellt",
 	"config-install-pg-schema-not-exist": "Das PostgesSQL-Datenschema ist net voarhande",
 	"config-install-pg-schema-failed": "Das Erstelle von der Datetabelle ist gescheitert.\nDas muss sichergestellt sin, dass der Benutzer „$1“ Schreibzugriff uff das Dateschema „$2“ hot.",
-	"config-install-pg-commit": "Ändrunge oonwenne",
 	"config-install-pg-plpgsql": "Such noh der Datebanksprache PL/pgSQL",
 	"config-pg-no-plpgsql": "Für Datebank $1 muss die Datebanksprache PL/pgSQL installiert sin",
 	"config-pg-no-create-privs": "Das für die Installation oongeb Konto verfücht net üwer ausreichende Berechtichunge, um en Datebanknutzerkonto zu erstelle.",

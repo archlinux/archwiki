@@ -7,15 +7,18 @@
 ( function () {
 
 	/**
-	 * Creates a mw.widgets.UserInputWidget object.
+	 * @classdesc User input widget.
 	 *
 	 * @class
 	 * @extends OO.ui.TextInputWidget
 	 * @mixes OO.ui.mixin.LookupElement
 	 *
 	 * @constructor
+	 * @description Create a mw.widgets.UserInputWidget object.
 	 * @param {Object} [config] Configuration options
 	 * @param {number} [config.limit=10] Number of results to show
+	 * @param {boolean} [config.excludenamed] Whether to exclude named users or not
+	 * @param {boolean} [config.excludetemp] Whether to exclude temporary users or not
 	 * @param {mw.Api} [config.api] API object to use, creates a default mw.Api instance if not specified
 	 */
 	mw.widgets.UserInputWidget = function MwWidgetsUserInputWidget( config ) {
@@ -23,13 +26,15 @@
 		config = config || {};
 
 		// Parent constructor
-		mw.widgets.UserInputWidget.super.call( this, $.extend( {}, config, { autocomplete: false } ) );
+		mw.widgets.UserInputWidget.super.call( this, Object.assign( {}, config, { autocomplete: false } ) );
 
 		// Mixin constructors
 		OO.ui.mixin.LookupElement.call( this, config );
 
 		// Properties
 		this.limit = config.limit || 10;
+		this.excludeNamed = config.excludenamed || false;
+		this.excludeTemp = config.excludetemp || false;
 		this.api = config.api || new mw.Api();
 
 		// Initialization
@@ -64,7 +69,7 @@
 		this.setLookupsDisabled( true );
 
 		// Parent method
-		var retval = mw.widgets.UserInputWidget.super.prototype.focus.apply( this, arguments );
+		const retval = mw.widgets.UserInputWidget.super.prototype.focus.apply( this, arguments );
 
 		this.setLookupsDisabled( false );
 
@@ -79,7 +84,9 @@
 			action: 'query',
 			list: 'allusers',
 			auprefix: this.value,
-			aulimit: this.limit
+			aulimit: this.limit,
+			auexcludenamed: this.excludeNamed,
+			auexcludetemp: this.excludeTemp
 		} );
 	};
 
@@ -101,10 +108,10 @@
 	 * @return {OO.ui.MenuOptionWidget[]} Menu items
 	 */
 	mw.widgets.UserInputWidget.prototype.getLookupMenuOptionsFromData = function ( data ) {
-		var items = [];
+		const items = [];
 
-		for ( var i = 0, len = data.length; i < len; i++ ) {
-			var user = data[ i ] || {};
+		for ( let i = 0, len = data.length; i < len; i++ ) {
+			const user = data[ i ] || {};
 			items.push( new OO.ui.MenuOptionWidget( {
 				label: user.name,
 				data: user.name

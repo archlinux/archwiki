@@ -27,11 +27,15 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -234,7 +238,8 @@ class RefreshImageMetadata extends Maintenance {
 		}
 		if ( $like ) {
 			$queryBuilder->andWhere(
-				$fieldPrefix . 'metadata ' . $dbw->buildLike( $dbw->anyString(), $like, $dbw->anyString() )
+				$dbw->expr( $fieldPrefix . 'metadata', IExpression::LIKE,
+					new LikeValue( $dbw->anyString(), $like, $dbw->anyString() ) )
 			);
 		}
 	}
@@ -273,5 +278,7 @@ class RefreshImageMetadata extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RefreshImageMetadata::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

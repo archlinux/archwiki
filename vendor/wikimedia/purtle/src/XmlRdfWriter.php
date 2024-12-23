@@ -16,7 +16,7 @@ class XmlRdfWriter extends RdfWriterBase {
 	 * @param string $role
 	 * @param BNodeLabeler|null $labeler
 	 */
-	public function __construct( $role = parent::DOCUMENT_ROLE, BNodeLabeler $labeler = null ) {
+	public function __construct( $role = parent::DOCUMENT_ROLE, ?BNodeLabeler $labeler = null ) {
 		parent::__construct( $role, $labeler );
 
 		$this->transitionTable[self::STATE_START][self::STATE_DOCUMENT] = function () {
@@ -138,6 +138,7 @@ class XmlRdfWriter extends RdfWriterBase {
 		}
 
 		return [
+			// @phan-suppress-next-line PhanTypeMismatchReturn
 			"rdf:$name" => $value
 		];
 	}

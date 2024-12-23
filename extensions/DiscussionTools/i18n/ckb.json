@@ -117,6 +117,7 @@
 	"discussiontools-replywidget-watchthis": "ئەم پەڕە بە [[Special:Watchlist|پێڕستی چاودێرییەکەت]] زیاد بکە",
 	"discussiontools-target-comment-missing": "نەتوانرا ئەم لێدوانە بدۆزرێتەوە. لەوانەیە سڕدرابێتەوە یان گوازرابێتەوە.",
 	"discussiontools-target-comments-missing": "نەتوانرا لێدوانە نوێیەکان بدۆزرێنەوە. لەوانەیە سڕدرابنەوە یان گوازرابنەوە.",
+	"discussiontools-target-heading-missing": "ئەم بابەتە نەدۆزرایەوە. لەوانەیە سڕابێتەوە، گوێزرابێتەوە یانیش ناوی لێ نرابێتەوە.",
 	"discussiontools-topicheader-authorcount": "$1 کەس لە {{PLURAL:$1|وتووێژدایە|وتووێژدان}}",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|لێدوان}}",
 	"discussiontools-topicheader-latestcomment": "کۆتا لێدوان: $1",

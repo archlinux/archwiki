@@ -21,14 +21,14 @@
 namespace MediaWiki\Interwiki;
 
 use Interwiki;
-use Language;
 use MapCacheLRU;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\WikiMap\WikiMap;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -47,7 +47,6 @@ use Wikimedia\Rdbms\IConnectionProvider;
 class ClassicInterwikiLookup implements InterwikiLookup {
 	/**
 	 * @internal For use by ServiceWiring
-	 * @var string[]
 	 */
 	public const CONSTRUCTOR_OPTIONS = [
 		MainConfigNames::InterwikiExpiry,

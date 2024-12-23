@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Agripinoduarte",
 			"Amgauna",
 			"Cainamarques",
@@ -30,8 +31,7 @@
 			"Teles",
 			"TheEduGobi",
 			"TheGabrielZaum",
-			"Tuliouel",
-			555
+			"Tuliouel"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -59,7 +59,6 @@
 	"visualeditor-autosave-recovered-text": "As suas mudanças ainda não salvadas foram recuperadas automaticamente.",
 	"visualeditor-autosave-recovered-title": "Mudanças recuperadas",
 	"visualeditor-backbutton-tooltip": "Voltar",
-	"visualeditor-browserwarning": "Você está usando um navegador que ainda não é oficialmente suportado por este editor.",
 	"visualeditor-ca-createlocaldescriptionsource": "Adicionar fonte da descrição do local",
 	"visualeditor-ca-createsource": "Criar código-fonte",
 	"visualeditor-ca-editlocaldescriptionsource": "Editar fonte da descrição local",

@@ -28,11 +28,14 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that takes page text out of an XML dump file
@@ -42,8 +45,10 @@ require_once __DIR__ . '/Maintenance.php';
  */
 class DumpRenderer extends Maintenance {
 
+	/** @var int */
 	private $count = 0;
-	private $outputDirectory, $startTime;
+	private string $outputDirectory;
+	private float $startTime;
 	/** @var string */
 	private $prefix;
 
@@ -135,14 +140,18 @@ class DumpRenderer extends Maintenance {
 			"<html lang=\"en\" dir=\"ltr\">\n" .
 			"<head>\n" .
 			"<meta charset=\"UTF-8\" />\n" .
+			"<meta name=\"color-scheme\" content=\"light dark\">" .
 			"<title>" . htmlspecialchars( $display, ENT_COMPAT ) . "</title>\n" .
 			"</head>\n" .
 			"<body>\n" .
-			$output->getText() .
+			// TODO T371004 move runOutputPipeline out of $parserOutput
+			$output->runOutputPipeline( $options, [] )->getContentHolderText() .
 			"</body>\n" .
 			"</html>" );
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DumpRenderer::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

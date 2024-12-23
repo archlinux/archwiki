@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Afalau",
+			"Ceirios",
 			"Lloffiwr",
-			"Robin Owain",
-			"Ceirios"
+			"Robin Owain"
 		]
 	},
 	"gadgets-desc": "Yn galluogi defnyddwyr i ddewis [[Special:Gadgets|teclynnau CSS a JavaScript]] yn eu [[Special:Preferences#mw-prefsection-gadgets|dewisiadau]]",

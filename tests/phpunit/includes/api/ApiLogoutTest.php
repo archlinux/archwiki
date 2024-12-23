@@ -9,7 +9,7 @@ use MediaWiki\User\User;
  * @group Database
  * @group medium
  *
- * @covers \ApiLogout
+ * @covers \MediaWiki\Api\ApiLogout
  */
 class ApiLogoutTest extends ApiTestCase {
 
@@ -33,6 +33,20 @@ class ApiLogoutTest extends ApiTestCase {
 		} finally {
 			$this->assertTrue( $user->isRegistered(), 'not logged out' );
 		}
+	}
+
+	public function testUserLogoutAlreadyLoggedOut() {
+		$user = $this->getServiceContainer()->getUserFactory()->newAnonymous( '1.2.3.4' );
+
+		$this->assertFalse( $user->isRegistered() );
+		$token = $this->getUserCsrfTokenFromApi( $user );
+		$response = $this->doUserLogout( $token, $user )[0];
+		$this->assertFalse( $user->isRegistered() );
+
+		$this->assertArrayEquals(
+			[ 'warnings' => [ 'logout' => [ 'warnings' => 'You must be logged in.' ] ] ],
+			$response
+		);
 	}
 
 	public function testUserLogout() {

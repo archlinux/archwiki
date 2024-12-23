@@ -22,18 +22,18 @@
 
 namespace MediaWiki\User;
 
-use FormatJson;
-use IDBAccessObject;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Password\Password;
+use MediaWiki\Password\PasswordFactory;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MWCryptRand;
 use MWRestrictions;
-use Password;
-use PasswordFactory;
 use StatusValue;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
@@ -215,16 +215,14 @@ class BotPasswordStore {
 	 */
 	public function insertBotPassword(
 		BotPassword $botPassword,
-		Password $password = null
+		?Password $password = null
 	): StatusValue {
 		$res = $this->validateBotPassword( $botPassword );
 		if ( !$res->isGood() ) {
 			return $res;
 		}
 
-		if ( $password === null ) {
-			$password = PasswordFactory::newInvalidPassword();
-		}
+		$password ??= PasswordFactory::newInvalidPassword();
 
 		$dbw = $this->getPrimaryDatabase();
 		$dbw->newInsertQueryBuilder()
@@ -263,7 +261,7 @@ class BotPasswordStore {
 	 */
 	public function updateBotPassword(
 		BotPassword $botPassword,
-		Password $password = null
+		?Password $password = null
 	): StatusValue {
 		$res = $this->validateBotPassword( $botPassword );
 		if ( !$res->isGood() ) {

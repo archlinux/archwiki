@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Mormegil",
 			"Patrik L."
 		]
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Toto je skryté pravidlo.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Toto pravidlo ovlivňuje název stránky.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Kód jazyka",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<neplatný>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Neplatný</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Jazyk",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Zdroj",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Cíl",

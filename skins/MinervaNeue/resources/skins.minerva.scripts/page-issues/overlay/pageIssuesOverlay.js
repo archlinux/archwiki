@@ -1,13 +1,16 @@
 const Overlay = require( 'mobile.startup' ).Overlay;
 const IssueList = require( './IssueList.js' );
 const KEYWORD_ALL_SECTIONS = 'all';
-const NS_MAIN = 0;
-const NS_CATEGORY = 14;
+const namespaceIds = mw.config.get( 'wgNamespaceIds' );
+const NS_MAIN = namespaceIds[ '' ];
+const NS_CATEGORY = namespaceIds.category;
 
 /**
  * Overlay for displaying page issues
  *
- * @param {IssueSummary[]} issues list of page issue summaries for display.
+ * @ignore
+ * @param {IssueSummary[]} issues List of page issue
+ *  summaries for display.
  * @param {string} section
  * @param {number} namespaceID
  * @return {Overlay}
@@ -34,6 +37,7 @@ function pageIssuesOverlay( issues, section, namespaceID ) {
 /**
  * Obtain a suitable heading for the issues overlay based on the namespace
  *
+ * @private
  * @param {number} namespaceID is the namespace to generate heading for
  * @return {string} heading for overlay
  */

@@ -2,10 +2,11 @@
 
 namespace MediaWiki\Extension\Interwiki;
 
-use HTMLForm;
 use LogPage;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
@@ -34,7 +35,7 @@ class SpecialInterwiki extends SpecialPage {
 	 * Different description will be shown on Special:SpecialPage depending on
 	 * whether the user can modify the data.
 	 *
-	 * @return \Message
+	 * @return Message
 	 */
 	public function getDescription() {
 		return $this->msg( $this->canModify() ? 'interwiki' : 'interwiki-title-norights' );
@@ -189,7 +190,12 @@ class SpecialInterwiki extends SpecialPage {
 
 		if ( $action === 'edit' ) {
 			$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
-			$row = $dbr->selectRow( 'interwiki', '*', [ 'iw_prefix' => $prefix ], __METHOD__ );
+			$row = $dbr->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'interwiki' )
+				->where( [ 'iw_prefix' => $prefix ] )
+				->caller( __METHOD__ )
+				->fetchRow();
 
 			$formDescriptor['prefix']['disabled'] = true;
 			$formDescriptor['prefix']['default'] = $prefix;
@@ -314,8 +320,8 @@ class SpecialInterwiki extends SpecialPage {
 
 				// Simple URL validation: check that the protocol is one of
 				// the supported protocols for this wiki.
-				// (bug 30600)
-				if ( !wfParseUrl( $theurl ) ) {
+				// (T32600)
+				if ( !$services->getUrlUtils()->parse( $theurl ) ) {
 					$status->fatal( 'interwiki-submit-invalidurl' );
 					break;
 				}
@@ -381,7 +387,11 @@ class SpecialInterwiki extends SpecialPage {
 			// Fetch list from global table
 			$dbrCentralDB = $connectionProvider->getReplicaDatabase( $interwikiCentralDB );
 
-			$res = $dbrCentralDB->select( 'interwiki', '*', [], __METHOD__ );
+			$res = $dbrCentralDB->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'interwiki' )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 			$retval = [];
 			foreach ( $res as $row ) {
 				$row = (array)$row;
@@ -402,7 +412,11 @@ class SpecialInterwiki extends SpecialPage {
 			// Fetch list from global table
 			$dbrCentralLangDB = $connectionProvider->getReplicaDatabase( $interwikiCentralInterlanguageDB );
 
-			$res = $dbrCentralLangDB->select( 'interwiki', '*', [], __METHOD__ );
+			$res = $dbrCentralLangDB->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'interwiki' )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 			$retval2 = [];
 			foreach ( $res as $row ) {
 				$row = (array)$row;

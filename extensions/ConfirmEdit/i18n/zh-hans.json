@@ -4,6 +4,7 @@
 			"Bencmq",
 			"Hzy980512",
 			"Impersonator 1",
+			"Lakejason0",
 			"Liangent",
 			"Liuxinyu970226",
 			"Mywood",
@@ -13,7 +14,6 @@
 			"Yfdyh000",
 			"佛壁灯",
 			"铁桶",
-			"Lakejason0",
 			"沈澄心"
 		]
 	},
@@ -45,5 +45,6 @@
 	"confirmedit-preview-validity": "有效性",
 	"confirmedit-preview-valid": "有效",
 	"confirmedit-preview-invalid": "无效",
-	"confirmedit-preview-description": "以下表格显示此页面的行列表，以及是否为有效IP地址或IP地址段。如果某一行是有效IP地址或IP地址段，它将被排除在CAPTCHA检查之外，但无效行将被忽略。举一个有效IP地址段的例子：69.208.0.0/16，这是从69.208.0.0至69.208.255.255。更多有关计算IP地址段的[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix 信息]。"
+	"confirmedit-preview-description": "以下表格显示此页面的行列表，以及是否为有效IP地址或IP地址段。如果某一行是有效IP地址或IP地址段，它将被排除在CAPTCHA检查之外，但无效行将被忽略。举一个有效IP地址段的例子：69.208.0.0/16，这是从69.208.0.0至69.208.255.255。更多有关计算IP地址段的[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix 信息]。",
+	"abusefilter-edit-action-showcaptcha": "要求用户完成验证码才能继续操作。拥有跳过验证码权限的用户可豁免。"
 }

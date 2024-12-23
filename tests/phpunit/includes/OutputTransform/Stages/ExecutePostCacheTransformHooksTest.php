@@ -2,11 +2,13 @@
 
 namespace MediaWiki\Tests\OutputTransform\Stages;
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\OutputTransform\Stages\ExecutePostCacheTransformHooks;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Tests\OutputTransform\TestUtils;
+use Psr\Log\NullLogger;
 
 /**
  * This test does not extend OutputTransformStageTestBase because we're explicitly testing that
@@ -14,6 +16,14 @@ use MediaWiki\Tests\OutputTransform\TestUtils;
  * @covers \MediaWiki\OutputTransform\Stages\ExecutePostCacheTransformHooks
  */
 class ExecutePostCacheTransformHooksTest extends \MediaWikiIntegrationTestCase {
+
+	public function createStage(): ExecutePostCacheTransformHooks {
+		return new ExecutePostCacheTransformHooks(
+			new ServiceOptions( [] ),
+			new NullLogger(),
+			$this->getServiceContainer()->getHookContainer()
+		);
+	}
 
 	/**
 	 * @covers \MediaWiki\OutputTransform\Stages\ExecutePostCacheTransformHooks::transform
@@ -24,15 +34,15 @@ class ExecutePostCacheTransformHooksTest extends \MediaWikiIntegrationTestCase {
 		RequestContext::resetMain();
 
 		$this->overrideConfigValues( [
-			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::ScriptPath => '/w',
 			MainConfigNames::Script => '/w/index.php',
+			MainConfigNames::ParserEnableLegacyHeadingDOM => false,
 		] );
 
 		// This tests that the options are modified by the PostCacheTransformHookRunner (if it is not run, or if
 		// the options are not modified, the test fails)
 		$po = new ParserOutput( TestUtils::TEST_DOC );
-		$expected = new ParserOutput( TestUtils::TEST_DOC_WITH_LINKS );
+		$expected = new ParserOutput( TestUtils::TEST_DOC_WITH_LINKS_NEW_MARKUP );
 		$this->getServiceContainer()->getHookContainer()->register( 'ParserOutputPostCacheTransform',
 			static function ( ParserOutput $out, &$text, array &$options ) {
 				$options['enableSectionEditLinks'] = true;
@@ -55,6 +65,8 @@ class ExecutePostCacheTransformHooksTest extends \MediaWikiIntegrationTestCase {
 				'includeDebugInfo' => false,
 			]
 		);
+		$res->clearParseStartTime();
+		$expected->clearParseStartTime();
 		$this->assertEquals( $expected, $res );
 	}
 
@@ -62,7 +74,7 @@ class ExecutePostCacheTransformHooksTest extends \MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\OutputTransform\Stages\ExecutePostCacheTransformHooks::shouldRun
 	 */
 	public function testShouldRun() {
-		$transform = new ExecutePostCacheTransformHooks( $this->getServiceContainer()->getHookContainer() );
+		$transform = $this->createStage();
 		$this->getServiceContainer()
 			->getHookContainer()
 			->register( 'ParserOutputPostCacheTransform',
@@ -77,7 +89,7 @@ class ExecutePostCacheTransformHooksTest extends \MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\OutputTransform\Stages\ExecutePostCacheTransformHooks::shouldRun
 	 */
 	public function testShouldNotRun() {
-		$transform = new ExecutePostCacheTransformHooks( $this->getServiceContainer()->getHookContainer() );
+		$transform = $this->createStage();
 		$this->getServiceContainer()->getHookContainer()->clear( 'ParserOutputPostCacheTransform' );
 		$options = [];
 		self::assertFalse( $transform->shouldRun( new ParserOutput(), null, $options ) );

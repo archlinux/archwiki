@@ -1,9 +1,13 @@
 <?php
 
+use MediaWiki\Password\EncryptedPassword;
+use MediaWiki\Password\PasswordError;
+use MediaWiki\Password\Pbkdf2PasswordUsingHashExtension;
+
 /**
- * @covers \EncryptedPassword
- * @covers \ParameterizedPassword
- * @covers \Password
+ * @covers \Mediawiki\Password\EncryptedPassword
+ * @covers \Mediawiki\Password\ParameterizedPassword
+ * @covers \Mediawiki\Password\Password
  */
 class EncryptedPasswordTest extends PasswordTestCase {
 	protected function getTypeConfigs() {

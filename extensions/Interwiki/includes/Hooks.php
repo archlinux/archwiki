@@ -74,12 +74,12 @@ class Hooks implements UserGetAllRightsHook {
 
 			$dbrCentralDB = $connectionProvider->getReplicaDatabase( $wgInterwikiCentralDB ?? false );
 
-			$res = $dbrCentralDB->selectRow(
-				'interwiki',
-				'*',
-				[ 'iw_prefix' => $prefix ],
-				__METHOD__
-			);
+			$res = $dbrCentralDB->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'interwiki' )
+				->where( [ 'iw_prefix' => $prefix ] )
+				->caller( __METHOD__ )
+				->fetchRow();
 			if ( !$res ) {
 				return true;
 			}
@@ -91,12 +91,12 @@ class Hooks implements UserGetAllRightsHook {
 			// Global interlanguage link? Whoo!
 			$dbrCentralLangDB = $connectionProvider->getReplicaDatabase( $wgInterwikiCentralInterlanguageDB ?? false );
 
-			$res = $dbrCentralLangDB->selectRow(
-				'interwiki',
-				'*',
-				[ 'iw_prefix' => $prefix ],
-				__METHOD__
-			);
+			$res = $dbrCentralLangDB->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'interwiki' )
+				->where( [ 'iw_prefix' => $prefix ] )
+				->caller( __METHOD__ )
+				->fetchRow();
 			if ( !$res ) {
 				return false;
 			}

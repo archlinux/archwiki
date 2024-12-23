@@ -1,10 +1,12 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\FileRepo\Thumbnail404EntryPoint;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\FileRepo\TestRepoTrait;
 use MediaWiki\Tests\MockEnvironment;
+use MediaWiki\Title\Title;
 
 /**
  * @covers \MediaWiki\FileRepo\Thumbnail404EntryPoint
@@ -24,6 +26,9 @@ class Thumbnail404EntryPointTest extends MediaWikiIntegrationTestCase {
 	 * will be called only once per test class
 	 */
 	public function addDBDataOnce() {
+		// Set a named user account for the request context as the default,
+		// so that these tests do not fail with temp accounts enabled
+		RequestContext::getMain()->setUser( $this->getTestUser()->getUser() );
 		// Create mock repo with test files
 		$this->initTestRepoGroup();
 
@@ -76,7 +81,7 @@ class Thumbnail404EntryPointTest extends MediaWikiIntegrationTestCase {
 	 * @return Thumbnail404EntryPoint
 	 */
 	private function getEntryPoint(
-		MockEnvironment $environment = null,
+		?MockEnvironment $environment = null,
 		$request = null
 	) {
 		if ( !$request && $environment ) {

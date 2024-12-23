@@ -8,6 +8,12 @@
 	},
 	"cite_error": "Xeletiya çavkanî: $1",
 	"cite_error_ref_no_input": "Etîketa <code>&lt;ref&gt;</code> ne derbasdar e; eger navê wî nehatibe nivîsin, divê di referansan de naverok hebe.",
+	"cite-reference-previews-reference": "Çavkanî",
+	"cite-reference-previews-book": "Çavkaniya kitêban",
+	"cite-reference-previews-journal": "Çavkaniya kovaran",
+	"cite-reference-previews-news": "Çavkaniya nûçeyan",
+	"cite-reference-previews-note": "Not",
+	"cite-reference-previews-web": "Çavkaniya înternetê",
 	"cite-wikieditor-tool-reference": "Çavkanî",
 	"cite-wikieditor-help-page-references": "Referans",
 	"cite-wikieditor-help-content-reference-description": "Çavkanî"

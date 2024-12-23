@@ -13,15 +13,15 @@
 			"Orlodrim",
 			"Pols12",
 			"Sherbrooke",
+			"SleaY",
+			"Tar Lócesilion",
 			"Thibaut120094",
 			"Urhixidur",
 			"Vega",
 			"Verdy p",
 			"Vikoula5",
 			"Weft",
-			"Wladek92",
-			"SleaY",
-			"Tar Lócesilion"
+			"Wladek92"
 		]
 	},
 	"minerva-last-modified-date": "Dernière modification le $1, à $2",
@@ -47,7 +47,6 @@
 	"mobile-frontend-meta-data-issues-categories": "À propos de cette catégorie",
 	"mobile-frontend-meta-data-issues-header": "Problèmes de page",
 	"minerva-meta-data-issues-section-header": "Problèmes de section",
-	"mobile-frontend-notifications-filter": "Filtrer",
 	"mobile-frontend-pageaction-edit-tooltip": "Modifier la section d’introduction de cette page",
 	"mobile-frontend-placeholder": "Rechercher sur {{SITENAME}}",
 	"mobile-frontend-random-button": "Au hasard",
@@ -67,7 +66,7 @@
 	"minerva-page-actions-overflow": "Plus",
 	"minerva-page-actions-language-switcher": "Langues",
 	"minerva-page-actions-history": "Historique",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussion]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Discussion]",
 	"minerva-skin-desc": "Un habillage réactif conçu pour les mobiles",
 	"skin-minerva-issue-learn-more": "En savoir plus",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 seconde|$1 secondes}}",
@@ -78,10 +77,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 année|$1 années}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Catégories",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Afficher les catégories des pages",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "traitement amélioré des problèmes de pages",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Les problèmes de page (Modèle:Ambox) seront insérés dans l’article.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Malheureusement, regrouper les résultats par page n’est pas disponible sur mobile. Si vous voulez utiliser la fonctionnalité de regroupement par page, veuillez visiter le site pour bureau.",
-	"skin-minerva-night-mode-unavailable": "Page disponible uniquement avec le thème de couleur « Jour ».",
+	"skin-minerva-night-mode-unavailable": "Page disponible uniquement avec le thème de couleur « Clair ».",
 	"minerva.css": "/* Tout CSS placé ici sera chargé avec les pages accédées par les utilisateurs de l’habillage MinervaNeue */",
 	"minerva.js": "/* Tout code JavaScript placé ici sera chargé avec les pages accédées par les utilisateurs de l’habillage MinervaNeue */"
 }

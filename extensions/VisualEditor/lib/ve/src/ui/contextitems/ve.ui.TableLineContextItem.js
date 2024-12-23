@@ -58,9 +58,10 @@ ve.ui.TableLineContextItem.static.title = null;
  * @localdoc Executes the command related to #static-commandName on the context's surface
  *
  * @protected
+ * @fires ve.ui.ContextItem#command
  */
 ve.ui.TableLineContextItem.prototype.onActionButtonClick = function () {
-	var command = this.getCommand();
+	const command = this.getCommand();
 
 	if ( command ) {
 		command.execute( this.context.getSurface() );
@@ -92,17 +93,17 @@ ve.ui.TableLineContextItem.prototype.setup = function () {
 /* Specific tools */
 
 ( function () {
-	var modes = [ 'row', 'col' ],
+	const modes = [ 'row', 'col' ],
 		sides = [ 'before', 'after' ],
 		modeNames = { row: 'Row', col: 'Column' },
 		sideNames = { before: 'Before', after: 'After' };
 
-	modes.forEach( function ( mode ) {
-		var modeName = modeNames[ mode ];
-		var className;
+	modes.forEach( ( mode ) => {
+		const modeName = modeNames[ mode ];
+		let className;
 
-		sides.forEach( function ( side ) {
-			var sideName = sideNames[ side ];
+		sides.forEach( ( side ) => {
+			const sideName = sideNames[ side ];
 
 			className = 'Insert' + modeName + sideName + 'ContextItem';
 			// The following classes are used here:
@@ -152,8 +153,8 @@ ve.ui.TableLineContextItem.prototype.setup = function () {
 				// Parent method
 				ve.ui.TableLineContextItem.prototype.setup.call( this );
 
-				var selection = this.context.getSurface().getModel().getSelection();
-				var documentModel = this.context.getSurface().getModel().getDocument();
+				const selection = this.context.getSurface().getModel().getSelection();
+				const documentModel = this.context.getSurface().getModel().getDocument();
 
 				if ( !( selection instanceof ve.dm.TableSelection ) ) {
 					this.actionButton.setDisabled( true );
@@ -166,7 +167,7 @@ ve.ui.TableLineContextItem.prototype.setup = function () {
 						( mode === 'col' && selection.startCol === 0 )
 					);
 				} else {
-					var matrix = selection.getTableNode( documentModel ).getMatrix();
+					const matrix = selection.getTableNode( documentModel ).getMatrix();
 					this.actionButton.setDisabled(
 						( mode === 'row' && selection.endRow === matrix.getRowCount() - 1 ) ||
 						( mode === 'col' && selection.endCol === matrix.getMaxColCount() - 1 )
@@ -191,9 +192,9 @@ ve.ui.TableLineContextItem.prototype.setup = function () {
 		ve.ui[ className ].static.icon = 'trash';
 		ve.ui[ className ].static.commandName = 'delete' + modeName;
 		ve.ui[ className ].prototype.getTitle = function () {
-			var selection = this.context.getSurface().getModel().getSelection();
+			const selection = this.context.getSurface().getModel().getSelection();
 
-			var count;
+			let count;
 			if ( !( selection instanceof ve.dm.TableSelection ) ) {
 				count = 0;
 			} else if ( mode === 'row' ) {
@@ -223,7 +224,7 @@ ve.ui.TableLineContextItem.prototype.setup = function () {
 	ve.ui.TablePropertiesContextItem.static.title = OO.ui.deferMsg( 'visualeditor-table-contextitem-properties' );
 	ve.ui.TablePropertiesContextItem.prototype.onActionButtonClick = function () {
 		// Tweak the selection here:
-		var command = this.context.getSurface().commandRegistry.lookup( 'exitTableCell' );
+		const command = this.context.getSurface().commandRegistry.lookup( 'exitTableCell' );
 		if ( command ) {
 			command.execute( this.context.getSurface() );
 		}
@@ -254,12 +255,13 @@ ve.ui.TableLineContextItem.prototype.setup = function () {
 	ve.ui.ToggleTableSelectionContextItem.static.group = 'table';
 	ve.ui.ToggleTableSelectionContextItem.static.icon = 'table';
 	ve.ui.ToggleTableSelectionContextItem.prototype.getCommand = function () {
-		var commandName = this.context.wasEditing ? 'exitTableCell' : 'enterTableCell';
+		const commandName = this.context.wasEditing ? 'exitTableCell' : 'enterTableCell';
 		return this.context.getSurface().commandRegistry.lookup( commandName );
 	};
 	ve.ui.ToggleTableSelectionContextItem.prototype.getTitle = function () {
-		var mode = 'cells',
-			selection = this.context.getSurface().getModel().getSelection();
+		const selection = this.context.getSurface().getModel().getSelection();
+
+		let mode = 'cells';
 		if ( selection instanceof ve.dm.TableSelection ) {
 			mode = 'contents';
 		}

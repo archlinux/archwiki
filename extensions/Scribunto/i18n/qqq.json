@@ -8,6 +8,7 @@
 			"Jon Harald Søby",
 			"Liuxinyu970226",
 			"Mormegil",
+			"Msz2001",
 			"Nemo bis",
 			"Raymond",
 			"Shirayuki",
@@ -76,5 +77,7 @@
 	"scribunto-limitreport-profile-percent": "{{optional}}\nText to format the time percentage in the \"Lua Profile\" table.\n\nPreceded by {{msg-mw|Scribunto-limitreport-profile}} and {{msg-mw|Scribunto-limitreport-profile-ms}}.\n\nParameters:\n* $1 - the percentage",
 	"scribunto-limitreport-logs": "Label for the \"Lua logs\" row in the limit report table",
 	"nstab-module": "The name for the tab of the Module namespace.\n\nSee also:\n* {{msg-mw|Nstab-module}}\n* {{msg-mw|Tooltip-ca-nstab-module}}\n{{Identical|Module}}",
-	"tooltip-ca-nstab-module": "Tooltip shown when hovering over the {{msg-mw|Nstab-module}} tab.\n\nSee also:\n* {{msg-mw|Nstab-module}}\n* {{msg-mw|Tooltip-ca-nstab-module}}"
+	"tooltip-ca-nstab-module": "Tooltip shown when hovering over the {{msg-mw|Nstab-module}} tab.\n\nSee also:\n* {{msg-mw|Nstab-module}}\n* {{msg-mw|Tooltip-ca-nstab-module}}",
+	"namespaceinfo-description-ns828": "Namespace description for the Module namespace",
+	"namespaceinfo-description-ns829": "Namespace description for the Module talk namespace"
 }

@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:LinkSearch
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,8 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Brooke Vibber
  */
 
 namespace MediaWiki\Specials;
@@ -27,7 +23,6 @@ namespace MediaWiki\Specials;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\HTMLForm\HTMLForm;
-use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Parser;
 use MediaWiki\SpecialPage\QueryPage;
@@ -37,11 +32,15 @@ use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\LikeValue;
 
 /**
  * Special:LinkSearch to search the external-links table.
+ *
  * @ingroup SpecialPage
+ * @author Brooke Vibber
  */
 class SpecialLinkSearch extends QueryPage {
 	/** @var array|bool */
@@ -86,7 +85,7 @@ class SpecialLinkSearch extends QueryPage {
 		$this->outputHeader();
 
 		$out = $this->getOutput();
-		$out->setPreventClickjacking( false );
+		$out->getMetadata()->setPreventClickjacking( false );
 
 		$request = $this->getRequest();
 		$target = $request->getVal( 'target', $par ?? '' );
@@ -189,9 +188,16 @@ class SpecialLinkSearch extends QueryPage {
 			'urlpath' => 'el_to_path'
 		];
 		if ( $this->mQuery === '*' && $this->mProt !== '' ) {
-			$this->mungedQuery = [
-				$field . $dbr->buildLike( $this->mProt, $dbr->anyString() ),
-			];
+			if ( $this->mProt !== null ) {
+				$this->mungedQuery = [
+					$dbr->expr( $field, IExpression::LIKE, new LikeValue( $this->mProt, $dbr->anyString() ) ),
+				];
+			} else {
+				$this->mungedQuery = [
+					$dbr->expr( $field, IExpression::LIKE, new LikeValue( 'http://', $dbr->anyString() ) )
+						->or( $field, IExpression::LIKE, new LikeValue( 'https://', $dbr->anyString() ) ),
+				];
+			}
 		} else {
 			$this->mungedQuery = LinkFilter::getQueryConditions( $this->mQuery, [
 				'protocol' => $this->mProt,
@@ -247,7 +253,7 @@ class SpecialLinkSearch extends QueryPage {
 		$pageLink = $this->getLinkRenderer()->makeLink( $title );
 		$url = LinkFilter::reverseIndexes( $result->urldomain ) . $result->urlpath;
 
-		$urlLink = Linker::makeExternalLink( $url, $url );
+		$urlLink = $this->getLinkRenderer()->makeExternalLink( $url, $url, $this->getFullTitle() );
 
 		return $this->msg( 'linksearch-line' )->rawParams( $urlLink, $pageLink )->escaped();
 	}

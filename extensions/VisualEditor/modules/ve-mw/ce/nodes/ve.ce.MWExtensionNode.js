@@ -15,8 +15,8 @@
  * @class
  * @abstract
  * @extends ve.ce.LeafNode
- * @mixins ve.ce.FocusableNode
- * @mixins ve.ce.GeneratedContentNode
+ * @mixes ve.ce.FocusableNode
+ * @mixes ve.ce.GeneratedContentNode
  *
  * @constructor
  */
@@ -49,7 +49,7 @@ ve.ce.MWExtensionNode.static.rendersEmpty = false;
 ve.ce.MWExtensionNode.static.iconWhenInvisible = 'markup';
 
 ve.ce.MWExtensionNode.static.getDescription = function ( model ) {
-	var body = ve.getProp( model.getAttribute( 'mw' ), 'body', 'extsrc' ) || '';
+	const body = ve.getProp( model.getAttribute( 'mw' ), 'body', 'extsrc' ) || '';
 	return body.slice( 0, 100 ) + ( body.length > 100 ? '…' : '' );
 };
 
@@ -59,24 +59,24 @@ ve.ce.MWExtensionNode.static.getDescription = function ( model ) {
  * @inheritdoc ve.ce.GeneratedContentNode
  */
 ve.ce.MWExtensionNode.prototype.generateContents = function ( config ) {
-	var deferred = ve.createDeferred(),
+	const deferred = ve.createDeferred(),
 		mwData = ve.copy( this.getModel().getAttribute( 'mw' ) ),
 		extsrc = config && config.extsrc !== undefined ? config.extsrc : ( ve.getProp( mwData, 'body', 'extsrc' ) || '' ),
 		attrs = config && config.attrs || mwData.attrs,
 		tagName = this.getModel().getExtensionName();
 
 	// undefined means omit the attribute, not convert it to string 'undefined'
-	for ( var attr in attrs ) {
+	for ( const attr in attrs ) {
 		if ( attrs[ attr ] === undefined ) {
 			delete attrs[ attr ];
 		}
 	}
 
 	// XML-like tags in wikitext are not actually XML and don't expect their contents to be escaped.
-	var wikitext = mw.html.element( tagName, attrs, new mw.html.Raw( extsrc ) );
+	const wikitext = mw.html.element( tagName, attrs, new mw.html.Raw( extsrc ) );
 
 	if ( this.constructor.static.rendersEmpty || extsrc.trim() !== '' ) {
-		var xhr = ve.init.target.parseWikitextFragment( wikitext, false, this.getModel().getDocument() )
+		const xhr = ve.init.target.parseWikitextFragment( wikitext, false, this.getModel().getDocument() )
 			.done( this.onParseSuccess.bind( this, deferred ) )
 			.fail( this.onParseError.bind( this, deferred ) );
 		return deferred.promise( { abort: xhr.abort } );
@@ -91,7 +91,7 @@ ve.ce.MWExtensionNode.prototype.generateContents = function ( config ) {
  */
 ve.ce.MWExtensionNode.prototype.getRenderedDomElements = function () {
 	// Parent method
-	var elements = ve.ce.GeneratedContentNode.prototype.getRenderedDomElements.apply( this, arguments );
+	const elements = ve.ce.GeneratedContentNode.prototype.getRenderedDomElements.apply( this, arguments );
 
 	if ( this.getModelHtmlDocument() ) {
 		ve.init.platform.linkCache.styleParsoidElements(
@@ -109,16 +109,15 @@ ve.ce.MWExtensionNode.prototype.getRenderedDomElements = function () {
  * @param {Object} response Response data
  */
 ve.ce.MWExtensionNode.prototype.onParseSuccess = function ( deferred, response ) {
-	var data = response.visualeditor,
+	const data = response.visualeditor,
 		contentNodes = $( data.content ).get();
 	deferred.resolve( contentNodes );
 };
 
 ve.ce.MWExtensionNode.prototype.afterRender = function () {
-	var node = this,
-		$images = this.$element
-			.find( 'img:not([width]),img:not([height])' )
-			.addBack( 'img:not([width]),img:not([height])' );
+	const $images = this.$element
+		.find( 'img:not([width]),img:not([height])' )
+		.addBack( 'img:not([width]),img:not([height])' );
 
 	// Mixin method
 	ve.ce.GeneratedContentNode.prototype.afterRender.call( this );
@@ -126,9 +125,9 @@ ve.ce.MWExtensionNode.prototype.afterRender = function () {
 	// Images missing a dimension change size after load
 	// TODO: Ignore images which have dimensions defined in CSS, if performant
 	if ( $images.length ) {
-		$images.on( 'load', function () {
+		$images.on( 'load', () => {
 			// Mixin method
-			ve.ce.GeneratedContentNode.prototype.afterRender.call( node );
+			ve.ce.GeneratedContentNode.prototype.afterRender.call( this );
 		} );
 	}
 };

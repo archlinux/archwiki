@@ -23,8 +23,8 @@ namespace MediaWiki\Logger;
 use DateTimeZone;
 use Error;
 use LogicException;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\WikiMap\WikiMap;
-use MWDebug;
 use MWExceptionHandler;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
@@ -455,7 +455,7 @@ class LegacyLogger extends AbstractLogger {
 			return '[Resource ' . get_resource_type( $item ) . ']';
 		}
 
-		return '[Unknown ' . gettype( $item ) . ']';
+		return '[Unknown ' . get_debug_type( $item ) . ']';
 	}
 
 	/**

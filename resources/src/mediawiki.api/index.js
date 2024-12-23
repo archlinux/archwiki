@@ -14,21 +14,20 @@
 	 * @private
 	 * @type {mw.Api.Options}
 	 */
-	var defaultOptions;
+	let defaultOptions = null;
 
 	/**
-	 * Client library for the action API. See mw.Rest for the REST API.
-	 * See also <https://www.mediawiki.org/wiki/API:Main_page>.
-	 *
-	 * @classdesc Interact with the API of a particular MediaWiki site. mw.Api objects represent the API of
-	 * one particular MediaWiki site.
+	 * @classdesc Interact with the MediaWiki API. `mw.Api` is a client library for
+	 * the [action API](https://www.mediawiki.org/wiki/Special:MyLanguage/API:Main_page).
+	 * An `mw.Api` object represents the API of a MediaWiki site. For the REST API,
+	 * see {@link mw.Rest}.
 	 *
 	 * ```
 	 * var api = new mw.Api();
 	 * api.get( {
 	 *     action: 'query',
 	 *     meta: 'userinfo'
-	 * } ).done( function ( data ) {
+	 * } ).then( function ( data ) {
 	 *     console.log( data );
 	 * } );
 	 * ```
@@ -40,7 +39,7 @@
 	 * api.get( {
 	 *     action: 'query',
 	 *     meta: [ 'userinfo', 'siteinfo' ] // same effect as 'userinfo|siteinfo'
-	 * } ).done( function ( data ) {
+	 * } ).then( function ( data ) {
 	 *     console.log( data );
 	 * } );
 	 * ```
@@ -51,16 +50,17 @@
 	 *
 	 * @class mw.Api
 	 * @constructor
+	 * @description Create an instance of `mw.Api`.
 	 * @param {mw.Api.Options} [options] See {@link mw.Api.Options}. This can also be overridden for
 	 *  each request by passing them to [get()]{@link mw.Api#get} or [post()]{@link mw.Api#post} (or directly to
 	 *  [ajax()]{@link mw.Api#ajax}) later on.
 	 */
 	mw.Api = function ( options ) {
-		var defaults = $.extend( {}, options ),
+		const defaults = Object.assign( {}, options ),
 			setsUrl = options && options.ajax && options.ajax.url !== undefined;
 
-		defaults.parameters = $.extend( {}, defaultOptions.parameters, defaults.parameters );
-		defaults.ajax = $.extend( {}, defaultOptions.ajax, defaults.ajax );
+		defaults.parameters = Object.assign( {}, defaultOptions.parameters, defaults.parameters );
+		defaults.ajax = Object.assign( {}, defaultOptions.ajax, defaults.ajax );
 
 		// Force a string if we got a mw.Uri object
 		if ( setsUrl ) {
@@ -90,12 +90,9 @@
 		}
 	};
 
-	// Keyed by ajax url and symbolic name for the individual request
-	var promises = {};
-
 	function mapLegacyToken( action ) {
 		// Legacy types for backward-compatibility with API action=tokens.
-		var csrfActions = [
+		const csrfActions = [
 			'edit',
 			'delete',
 			'protect',
@@ -114,18 +111,27 @@
 		return action;
 	}
 
-	// Pre-populate with fake ajax promises to avoid HTTP requests for tokens that
-	// we already have on the page from the embedded user.options module (T36733).
-	promises[ defaultOptions.ajax.url ] = {};
-	var tokens = mw.user.tokens.get();
-	for ( var tokenKey in tokens ) {
-		var value = tokens[ tokenKey ];
-		// This requires #getToken to use the same key as mw.user.tokens.
-		// Format: token-type + "Token" (eg. csrfToken, patrolToken, watchToken).
-		promises[ defaultOptions.ajax.url ][ tokenKey ] = $.Deferred()
-			.resolve( value )
-			.promise( { abort: function () {} } );
+	function createTokenCache() {
+		const tokenPromises = {};
+
+		// Pre-populate with fake ajax promises to avoid HTTP requests for tokens that
+		// we already have on the page from the embedded user.options module (T36733).
+		tokenPromises[ defaultOptions.ajax.url ] = {};
+		const tokens = mw.user.tokens.get();
+		for ( const tokenKey in tokens ) {
+			const value = tokens[ tokenKey ];
+			// This requires #getToken to use the same key as mw.user.tokens.
+			// Format: token-type + "Token" (eg. csrfToken, patrolToken, watchToken).
+			tokenPromises[ defaultOptions.ajax.url ][ tokenKey ] = $.Deferred()
+				.resolve( value )
+				.promise( { abort: function () {} } );
+		}
+
+		return tokenPromises;
 	}
+
+	// Keyed by ajax url and symbolic name for the individual request
+	let promises = createTokenCache();
 
 	mw.Api.prototype = {
 		/**
@@ -134,7 +140,7 @@
 		 * @method
 		 */
 		abort: function () {
-			this.requests.forEach( function ( request ) {
+			this.requests.forEach( ( request ) => {
 				if ( request ) {
 					request.abort();
 				}
@@ -178,7 +184,7 @@
 		 * @param {boolean} useUS Whether to use U+001F when joining multivalued parameters.
 		 */
 		preprocessParameters: function ( parameters, useUS ) {
-			var key;
+			let key;
 			// Handle common MediaWiki API idioms for passing parameters
 			for ( key in parameters ) {
 				// Multiple values are pipe-separated
@@ -225,14 +231,13 @@
 		 *       {@link JSON.parse}.
 		 */
 		ajax: function ( parameters, ajaxOptions ) {
-			var token, requestIndex,
-				api = this,
-				apiDeferred = $.Deferred(),
-				xhr, key, formData;
+			const api = this,
+				apiDeferred = $.Deferred();
 
-			parameters = $.extend( {}, this.defaults.parameters, parameters );
-			ajaxOptions = $.extend( {}, this.defaults.ajax, ajaxOptions );
+			parameters = Object.assign( {}, this.defaults.parameters, parameters );
+			ajaxOptions = Object.assign( {}, this.defaults.ajax, ajaxOptions );
 
+			let token;
 			// Ensure that token parameter is last (per [[mw:API:Edit#Token]]).
 			if ( parameters.token ) {
 				token = parameters.token;
@@ -248,9 +253,9 @@
 				ajaxOptions.contentType === 'multipart/form-data'
 			) {
 
-				formData = new FormData();
+				const formData = new FormData();
 
-				for ( key in parameters ) {
+				for ( const key in parameters ) {
 					formData.append( key, parameters[ key ] );
 				}
 				// If we extracted a token parameter, add it back in.
@@ -280,10 +285,10 @@
 			}
 
 			// Make the AJAX request
-			xhr = $.ajax( ajaxOptions )
+			const xhr = $.ajax( ajaxOptions )
 				// If AJAX fails, reject API call with error code 'http'
 				// and the details in the second argument.
-				.fail( function ( jqXHR, textStatus, exception ) {
+				.fail( ( jqXHR, textStatus, exception ) => {
 					apiDeferred.reject( 'http', {
 						xhr: jqXHR,
 						textStatus: textStatus,
@@ -291,8 +296,8 @@
 					} );
 				} )
 				// AJAX success just means "200 OK" response, also check API error codes
-				.done( function ( result, textStatus, jqXHR ) {
-					var code;
+				.done( ( result, textStatus, jqXHR ) => {
+					let code;
 					if ( result === undefined || result === null || result === '' ) {
 						apiDeferred.reject( 'ok-but-empty',
 							'OK response but empty result (check HTTP headers?)',
@@ -312,13 +317,13 @@
 					}
 				} );
 
-			requestIndex = this.requests.length;
+			const requestIndex = this.requests.length;
 			this.requests.push( xhr );
-			xhr.always( function () {
+			xhr.always( () => {
 				api.requests[ requestIndex ] = null;
 			} );
 			// Return the Promise
-			return apiDeferred.promise( { abort: xhr.abort } ).fail( function ( code, details ) {
+			return apiDeferred.promise( { abort: xhr.abort } ).fail( ( code, details ) => {
 				if ( !( code === 'http' && details && details.textStatus === 'abort' ) ) {
 					mw.log( 'mw.Api error: ', code, details );
 				}
@@ -344,17 +349,17 @@
 		 * @since 1.22
 		 */
 		postWithToken: function ( tokenType, params, ajaxOptions ) {
-			var api = this,
+			const api = this,
 				assertParams = {
 					assert: params.assert,
 					assertuser: params.assertuser
 				},
 				abortedPromise = $.Deferred().reject( 'http',
-					{ textStatus: 'abort', exception: 'abort' } ).promise(),
-				abortable,
+					{ textStatus: 'abort', exception: 'abort' } ).promise();
+			let abortable,
 				aborted;
 
-			return api.getToken( tokenType, assertParams ).then( function ( token ) {
+			return api.getToken( tokenType, assertParams ).then( ( token ) => {
 				params.token = token;
 				// Request was aborted while token request was running, but we
 				// don't want to unnecessarily abort token requests, so abort
@@ -371,7 +376,7 @@
 							// Try again, once
 							params.token = undefined;
 							abortable = null;
-							return api.getToken( tokenType, assertParams ).then( function ( t ) {
+							return api.getToken( tokenType, assertParams ).then( ( t ) => {
 								params.token = t;
 								if ( aborted ) {
 									return abortedPromise;
@@ -404,34 +409,34 @@
 		 * @return {jQuery.Promise<string>} Received token.
 		 */
 		getToken: function ( type, additionalParams ) {
-			var apiPromise, promiseGroup, d, reject;
 			type = mapLegacyToken( type );
-			promiseGroup = promises[ this.defaults.ajax.url ];
-			d = promiseGroup && promiseGroup[ type + 'Token' ];
-
 			if ( typeof additionalParams === 'string' ) {
 				additionalParams = { assert: additionalParams };
 			}
 
+			const cacheKey = type + 'Token';
+			let promiseGroup = promises[ this.defaults.ajax.url ];
 			if ( !promiseGroup ) {
 				promiseGroup = promises[ this.defaults.ajax.url ] = {};
 			}
+			let promise = promiseGroup && promiseGroup[ cacheKey ];
 
-			if ( !d ) {
-				apiPromise = this.get( $.extend( {
+			function reject() {
+				// Clear cache. Do not cache errors.
+				delete promiseGroup[ cacheKey ];
+
+				// Let caller handle the error code
+				return $.Deferred().rejectWith( this, arguments );
+			}
+
+			if ( !promise ) {
+				const apiPromise = this.get( Object.assign( {
 					action: 'query',
 					meta: 'tokens',
 					type: type
 				}, additionalParams ) );
-				reject = function () {
-					// Clear promise. Do not cache errors.
-					delete promiseGroup[ type + 'Token' ];
-
-					// Let caller handle the error code
-					return $.Deferred().rejectWith( this, arguments );
-				};
-				d = apiPromise
-					.then( function ( res ) {
+				promise = apiPromise
+					.then( ( res ) => {
 						if ( !res.query ) {
 							return reject( 'query-missing', res );
 						}
@@ -441,14 +446,15 @@
 						}
 						return res.query.tokens[ type + 'token' ];
 					}, reject )
-					// Attach abort handler
+					// Preserve abort handler
 					.promise( { abort: apiPromise.abort } );
 
-				// Store deferred now so that we can use it again even if it isn't ready yet
-				promiseGroup[ type + 'Token' ] = d;
+				// Optimization: Store the promise so we can reuse it immediately, even when
+				// other async code requests before this one finishes.
+				promiseGroup[ cacheKey ] = promise;
 			}
 
-			return d;
+			return promise;
 		},
 
 		/**
@@ -462,7 +468,7 @@
 		 * @since 1.26
 		 */
 		badToken: function ( type ) {
-			var promiseGroup = promises[ this.defaults.ajax.url ];
+			const promiseGroup = promises[ this.defaults.ajax.url ];
 
 			type = mapLegacyToken( type );
 			if ( promiseGroup ) {
@@ -539,9 +545,9 @@
 
 			} else if ( data.errors ) {
 				// errorformat: 'html'
-				return $( data.errors.map( function ( err ) {
+				return $( data.errors.map( ( err ) => {
 					// formatversion: 1 / 2
-					var $node = $( '<div>' ).html( err[ '*' ] || err.html );
+					const $node = $( '<div>' ).html( err[ '*' ] || err.html );
 					return $node[ 0 ];
 				} ) );
 
@@ -554,4 +560,9 @@
 		}
 	};
 
+	if ( window.QUnit ) {
+		mw.Api.resetTokenCacheForTest = function () {
+			promises = createTokenCache();
+		};
+	}
 }() );

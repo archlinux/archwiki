@@ -45,7 +45,6 @@
 	"templatedata-modal-button-delparam": "پیرامیٹر کی معلومات ہٹائیں",
 	"templatedata-modal-button-done": "مکمل",
 	"templatedata-modal-button-importParams": "پیرامیٹرز درآمد کریں",
-	"templatedata-modal-button-restoreparam": "پیرامیٹر بحال کریں",
 	"templatedata-modal-button-saveparam": "محفوظ",
 	"templatedata-modal-current-language": "حالیہ زبان: $1",
 	"templatedata-modal-errormsg-import-noparams": "درآمد کرنے کے دوران نئے پیرامیٹرز نہیں ملے۔",

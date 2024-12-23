@@ -11,7 +11,7 @@ use Wikimedia\Parsoid\Config\Api\DataAccess;
 use Wikimedia\Parsoid\Config\Api\PageConfig;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\StubMetadataCollector;
-use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
@@ -21,6 +21,7 @@ use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\ScriptUtils;
+use Wikimedia\Parsoid\Utils\Title;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wt2Html\PageConfigFrame;
 
@@ -131,7 +132,7 @@ class TestRunner {
 			'prefix' => 'gerrit',
 			'local' => true,
 			'url' => 'https://gerrit.wikimedia.org/$1'
-		]
+		],
 	];
 
 	/** @var bool */
@@ -224,7 +225,7 @@ class TestRunner {
 		$this->stats = new Stats();
 		$this->stats->modes = $newModes;
 
-		$this->mockApi = new MockApiHelper();
+		$this->mockApi = new MockApiHelper( null, fn ( $title )=>$this->normalizeTitleKey( $title ) );
 		$this->siteConfig = new SiteConfig( $this->mockApi, [] );
 		$this->dataAccess = new DataAccess( $this->mockApi, $this->siteConfig, [ 'stripProto' => false ] );
 		$this->dummyEnv = new Env(
@@ -240,6 +241,7 @@ class TestRunner {
 		// Init interwiki map to parser tests info.
 		// This suppresses interwiki info from cached configs.
 		$this->siteConfig->setupInterwikiMap( self::PARSER_TESTS_IWPS );
+		$this->siteConfig->reset();
 	}
 
 	private function newEnv( Test $test, string $wikitext ): Env {
@@ -263,12 +265,29 @@ class TestRunner {
 			new StubMetadataCollector( $this->siteConfig ),
 			$this->envOptions
 		);
-
 		$env->pageCache = $this->articles;
+
 		// Set parsing resource limits.
 		// $env->setResourceLimits();
 
 		return $env;
+	}
+
+	private function normalizeTitleKey( string $title ): string {
+		return $this->dummyEnv->normalizedTitleKey( $title, false, true );
+	}
+
+	private function addArticle( Article $art ): array {
+		$key = $this->normalizeTitleKey( $art->title );
+		$oldVal = $this->articles[$key] ?? null;
+		$this->articles[$key] = $art->text;
+		$teardown = [
+			function () use ( $key, $oldVal ) {
+				$this->articles[$key] = $oldVal;
+			},
+			$this->mockApi->addArticle( $key, $art ),
+		];
+		return $teardown;
 	}
 
 	/**
@@ -281,7 +300,7 @@ class TestRunner {
 			error_log( $warnMsg );
 		};
 		$normFunc = function ( string $title ): string {
-			return $this->dummyEnv->normalizedTitleKey( $title, false, true );
+			return $this->normalizeTitleKey( $title );
 		};
 		$testReader = TestFileReader::read(
 			$this->testFilePath, $warnFunc, $normFunc, $this->knownFailuresInfix
@@ -290,9 +309,7 @@ class TestRunner {
 		$this->testCases = $testReader->testCases;
 		$this->articles = [];
 		foreach ( $testReader->articles as $art ) {
-			$key = $normFunc( $art->title );
-			$this->articles[$key] = $art->text;
-			$this->mockApi->addArticle( $key, $art );
+			$this->addArticle( $art );
 		}
 		if ( !ScriptUtils::booleanOption( $options['quieter'] ?? '' ) ) {
 			if ( $this->knownFailuresPath ) {
@@ -346,7 +363,7 @@ class TestRunner {
 	private function convertHtml2Wt( Env $env, Test $test, string $mode, Document $doc ): string {
 		$startsAtWikitext = $mode === 'wt2wt' || $mode === 'wt2html' || $mode === 'selser';
 		if ( $mode === 'selser' ) {
-			$selserData = new SelserData( $test->wikitext, $test->cachedBODYstr );
+			$selserData = new SelectiveUpdateData( $test->wikitext, $test->cachedBODYstr );
 		} else {
 			$selserData = null;
 		}
@@ -380,10 +397,14 @@ class TestRunner {
 			// These test option names are deprecated:
 			// (Note that test options names are lowercased by the reader.)
 			if ( $testOpts['sourcevariant'] ?? false ) {
-				$this->envOptions['wtVariantLanguage'] = Utils::mwCodeToBcp47( $testOpts['sourcevariant'] );
+				$this->envOptions['wtVariantLanguage'] = Utils::mwCodeToBcp47(
+					$testOpts['sourcevariant'], true, $this->siteConfig->getLogger()
+				);
 			}
 			if ( $testOpts['variant'] ?? false ) {
-				$this->envOptions['htmlVariantLanguage'] = Utils::mwCodeToBcp47( $testOpts['variant'] );
+				$this->envOptions['htmlVariantLanguage'] = Utils::mwCodeToBcp47(
+					$testOpts['variant'], true, $this->siteConfig->getLogger()
+				);
 			}
 			// Preferred option names, which are also specified in bcp-47 codes
 			// (Note that test options names are lowercased by the reader.)
@@ -525,14 +546,50 @@ class TestRunner {
 		$after = [];
 
 		// 'showtitle' not yet supported
-		// 'ill' not yet supported
 
+		// unlike other link types, this dumps the 'sort' property as well
 		if ( isset( $opts['cat'] ) ) {
-			foreach ( $output->getCategoryNames() as $name ) {
-				$sortkey = $output->getCategorySortKey( $name );
+			$defaultSortKey = $output->getPageProperty( 'defaultsort' ) ?? '';
+			foreach (
+				$output->getLinkList( StubMetadataCollector::LINKTYPE_CATEGORY )
+				as [ 'link' => $link, 'sort' => $sort ]
+			) {
+				$sortkey = $sort ?: $defaultSortKey;
+				$name = $link->getDBkey();
 				$after[] = "cat=$name sort=$sortkey";
 			}
 		}
+
+		if ( isset( $opts['extlinks'] ) ) {
+			foreach ( $output->getExternalLinks() as $url => $ignore ) {
+				$after[] = "extlink=$url";
+			}
+		}
+
+		// Unlike other link types, this is stored as text, not dbkey
+		if ( isset( $opts['ill'] ) ) {
+			foreach (
+				$output->getLinkList( StubMetadataCollector::LINKTYPE_LANGUAGE )
+				as [ 'link' => $ll ]
+			) {
+				$after[] = "ill=" . Title::newFromLinkTarget( $ll, $this->siteConfig )->getFullText();
+			}
+		}
+
+		$linkoptions = [
+			[ 'iwl', 'iwl=', StubMetadataCollector::LINKTYPE_INTERWIKI ],
+			[ 'links', 'link=', StubMetadataCollector::LINKTYPE_LOCAL ],
+			[ 'special', 'special=', StubMetadataCollector::LINKTYPE_SPECIAL ],
+			[ 'templates', 'template=', StubMetadataCollector::LINKTYPE_TEMPLATE ],
+		];
+		foreach ( $linkoptions as [ $optName, $prefix, $type ] ) {
+			if ( isset( $opts[$optName] ) ) {
+				foreach ( $output->getLinkList( $type ) as [ 'link' => $ll ] ) {
+					$after[] = $prefix . Title::newFromLinkTarget( $ll, $this->siteConfig )->getPrefixedDBkey();
+				}
+			}
+		}
+
 		if ( isset( $opts['extension'] ) ) {
 			$extList = $opts['extension'];
 			if ( !is_array( $extList ) ) {
@@ -574,7 +631,11 @@ class TestRunner {
 			}
 		}
 		if ( isset( $opts['showmedia'] ) ) {
-			$after[] = 'images=' . implode( ', ', $output->getImages() );
+			$images = array_map(
+				fn ( $item ) => $item['link']->getDBkey(),
+				$output->getLinkList( StubMetadataCollector::LINKTYPE_MEDIA )
+			);
+			$after[] = 'images=' . implode( ', ', $images );
 		}
 		if ( $metadataExpected === null ) {
 			// legacy format, add $before and $after to $doc
@@ -644,7 +705,12 @@ class TestRunner {
 			$checkPassed = true;
 		}
 
-		if ( $metadataExpected !== null && !$modeObj->isCachingMode() ) {
+		// We could also check metadata in the html2html or wt2wt
+		// modes, but (a) we'd need a separate key for known failures
+		// to avoid overwriting the wt2html metadata results, and (b)
+		// any failures would probably be redundant with html2wt
+		// failures and not indicative of a "real" root cause bug.
+		if ( $metadataExpected !== null && !$modeObj->isCachingMode() && $mode === 'wt2html' ) {
 			$metadataResult = $this->checkMetadata( $test, $metadataExpected, $metadataActual ?? '', $options );
 			$checkPassed = $checkPassed && $metadataResult;
 		}
@@ -821,6 +887,10 @@ class TestRunner {
 			foreach ( $kfModes as $mode ) {
 				foreach ( $this->stats->modes[$mode]->failList as $fail ) {
 					$testKnownFailures[$fail['testName']] ??= [];
+					Assert::invariant(
+						!isset( $testKnownFailures[$fail['testName']][$mode . $fail['suffix']] ),
+						"Overwriting known failures result for " . $fail['testName'] . " " . $mode . $fail['suffix']
+					);
 					$testKnownFailures[$fail['testName']][$mode . $fail['suffix']] = $fail['raw'];
 				}
 			}
@@ -834,7 +904,17 @@ class TestRunner {
 				JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE
 			) . "\n";
 			if ( ScriptUtils::booleanOption( $options['updateKnownFailures'] ?? null ) ) {
-				file_put_contents( $this->knownFailuresPath, $contents );
+				if ( $this->knownFailuresPath !== null ) {
+					file_put_contents( $this->knownFailuresPath, $contents );
+				} else {
+					// To be safe, we don't try to write a file that doesn't
+					// (yet) exist.  Create an empty file if you need to, and
+					// then we'll happily update it for you.
+					throw new \RuntimeException(
+						"Known failures file for {$this->testFileName} does not exist, " .
+						"and so won't be updated."
+					);
+				}
 			} elseif ( $allModes && $offsetType === 'byte' ) {
 				$knownFailuresChanged = $contents !== $old;
 			}
@@ -961,6 +1041,18 @@ class TestRunner {
 		$this->mockApi->setApiPrefix( $prefix );
 		$this->siteConfig->reset();
 
+		// Add the title associated with the current test as a known title to
+		// be consistent with the test runner in the core repo.
+		$teardown = $this->addArticle( new Article( [
+			'title' => $test->pageName(),
+			'text' => $test->wikitext ?? '',
+			// Fake it
+			'type' => 'article',
+			'filename' => 'fake',
+			'lineNumStart' => 0,
+			'lineNumEnd' => 0,
+		] ) );
+
 		// We don't do any sanity checking or type casting on $test->config
 		// values here: if you set a bogus value in a parser test it *should*
 		// blow things up, so that you fix your test case.
@@ -970,6 +1062,26 @@ class TestRunner {
 		$this->siteConfig->setInterwikiMagic(
 			$test->config['wgInterwikiMagic'] ?? true
 		);
+
+		// Update $wgEnableMagicLinks flag
+		// default (undefined) setting is true for all types
+		foreach ( [ "RFC", "ISBN", "PMID" ] as $v ) {
+			$this->siteConfig->setMagicLinkEnabled(
+				$v,
+				( $test->config['wgEnableMagicLinks'] ?? [] )[$v] ?? true
+			);
+		}
+		if ( isset( $testOpts['pmid-interwiki'] ) ) {
+			$this->siteConfig->setupInterwikiMap( array_merge( self::PARSER_TESTS_IWPS, [
+				// Added to support T145590#8608455
+				[
+					'prefix' => 'pmid',
+					'local' => true,
+					'url' => '//www.ncbi.nlm.nih.gov/pubmed/$1?dopt=Abstract',
+				]
+			] ) );
+			$teardown[] = fn () => $this->siteConfig->setupInterwikiMap( self::PARSER_TESTS_IWPS );
+		}
 
 		// FIXME: Cite-specific hack
 		$this->siteConfig->responsiveReferences = [
@@ -1052,6 +1164,10 @@ class TestRunner {
 
 		$runner = $this;
 		$test->testAllModes( $targetModes, $options, Closure::fromCallable( [ $this, 'runTest' ] ) );
+
+		foreach ( $teardown as $t ) {
+			$t();
+		}
 	}
 
 	/**

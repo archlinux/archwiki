@@ -6,9 +6,9 @@
 
 QUnit.module( 've.sanitize' );
 
-QUnit.test( 've.sanitizeHtml', function ( assert ) {
+QUnit.test( 've.sanitizeHtml', ( assert ) => {
 
-	var cases = [
+	const cases = [
 		{
 			msg: 'Unsafe link href removed',
 			html: '<a href="javascript:alert(1);">Foo</a>',
@@ -51,36 +51,36 @@ QUnit.test( 've.sanitizeHtml', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
-		var actual = document.createElement( 'div' );
-		var nodes = ve.sanitizeHtml( caseItem.html );
-		Array.prototype.forEach.call( nodes, function ( node ) {
+	cases.forEach( ( caseItem ) => {
+		const actual = document.createElement( 'div' );
+		const nodes = ve.sanitizeHtml( caseItem.html );
+		Array.prototype.forEach.call( nodes, ( node ) => {
 			actual.appendChild( node );
 		} );
 
-		var expected = document.createElement( 'div' );
+		const expected = document.createElement( 'div' );
 		expected.innerHTML = caseItem.expected;
 		assert.equalDomElement( actual, expected, caseItem.msg );
 	} );
 
 } );
 
-QUnit.test( 've.sanitizeHtmlToDocument', function ( assert ) {
+QUnit.test( 've.sanitizeHtmlToDocument', ( assert ) => {
 
-	var nodes = ve.sanitizeHtml( '<a href="allowed">Foo</a>' );
-	var body = document.createElement( 'body' );
-	Array.prototype.forEach.call( nodes, function ( node ) {
+	const nodes = ve.sanitizeHtml( '<a href="allowed">Foo</a>' );
+	const body = document.createElement( 'body' );
+	Array.prototype.forEach.call( nodes, ( node ) => {
 		body.appendChild( node );
 	} );
-	var sanitizedDocument = ve.sanitizeHtmlToDocument( '<a href="allowed">Foo</a>' );
+	const sanitizedDocument = ve.sanitizeHtmlToDocument( '<a href="allowed">Foo</a>' );
 
 	assert.equalDomElement( sanitizedDocument.body, body, 'Body node is the same as if we used ve.sanitizeHtml' );
 
 } );
 
-QUnit.test( 've.setAttributeSafe', function ( assert ) {
+QUnit.test( 've.setAttributeSafe', ( assert ) => {
 
-	var cases = [
+	const cases = [
 		{
 			msg: 'Unsafe link href sets fallback instead',
 			element: '<a rel="bar">Foo</a>',
@@ -121,8 +121,8 @@ QUnit.test( 've.setAttributeSafe', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
-		var actual = document.createElement( 'div' );
+	cases.forEach( ( caseItem ) => {
+		const actual = document.createElement( 'div' );
 		actual.innerHTML = caseItem.element;
 		ve.setAttributeSafe(
 			actual.childNodes[ 0 ],
@@ -131,7 +131,7 @@ QUnit.test( 've.setAttributeSafe', function ( assert ) {
 			caseItem.fallbackVal
 		);
 
-		var expected = document.createElement( 'div' );
+		const expected = document.createElement( 'div' );
 		expected.innerHTML = caseItem.expected;
 
 		assert.equalDomElement( actual, expected, caseItem.msg );

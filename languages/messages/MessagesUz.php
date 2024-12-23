@@ -69,7 +69,7 @@ $magicWords = [
 	'gender'                    => [ '0', 'JINS', 'GENDER:' ],
 	'hiddencat'                 => [ '1', '__YASHIRINTURKUM__', '__HIDDENCAT__' ],
 	'index'                     => [ '1', '__INDEKS__', '__INDEX__' ],
-	'language'                  => [ '0', '#TIL:', '#LANGUAGE:' ],
+	'language'                  => [ '0', '#TIL', '#LANGUAGE' ],
 	'localday'                  => [ '1', 'MAHALLIYKUN', 'LOCALDAY' ],
 	'localday2'                 => [ '1', 'MAHALLIYKUN2', 'LOCALDAY2' ],
 	'localdayname'              => [ '1', 'MAHALLIYKUNNOMI', 'LOCALDAYNAME' ],
@@ -110,8 +110,8 @@ $linkPrefixCharset = 'a-zA-Z\\x80-\\xffʻʼ«„';
  * Formats need to be overwritten. Others are inherited automatically
  */
 $dateFormats = [
-	'dmy date' => 'j-F Y',
-	'dmy both' => 'H:i, j-F Y',
+	'dmy date' => 'Y-"yil" j-F',
+	'dmy both' => 'H:i, Y-"yil" j-F',
 	'dmy pretty' => 'j-F'
 ];
 

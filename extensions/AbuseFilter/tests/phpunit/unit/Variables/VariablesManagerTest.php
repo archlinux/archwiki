@@ -16,23 +16,20 @@ use MediaWikiUnitTestCase;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Variables\VariablesManager
+ * @covers \MediaWiki\Extension\AbuseFilter\Variables\VariablesManager
  */
 class VariablesManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param LazyVariableComputer|null $lazyComputer
 	 * @return VariablesManager
 	 */
-	private function getManager( LazyVariableComputer $lazyComputer = null ): VariablesManager {
+	private function getManager( ?LazyVariableComputer $lazyComputer = null ): VariablesManager {
 		return new VariablesManager(
 			new KeywordsManager( $this->createMock( AbuseFilterHookRunner::class ) ),
 			$lazyComputer ?? $this->createMock( LazyVariableComputer::class )
 		);
 	}
 
-	/**
-	 * @covers ::translateDeprecatedVars
-	 */
 	public function testTranslateDeprecatedVars() {
 		$varsMap = [
 			'timestamp' => new AFPData( AFPData::DSTRING, '123' ),
@@ -59,7 +56,6 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 	 * @param array $expected
 	 * @dataProvider provideDumpAllVars
 	 *
-	 * @covers ::dumpAllVars
 	 */
 	public function testDumpAllVars(
 		VariableHolder $holder,
@@ -128,9 +124,6 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::computeDBVars
-	 */
 	public function testComputeDBVars() {
 		$nonDBMet = [ 'unknown', 'certainly-not-db' ];
 		$dbMet = [ 'page-age', 'user-age', 'load-recent-authors' ];
@@ -172,7 +165,6 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 	 * @param string $name
 	 * @param int $flags
 	 * @param AFPData|string $expected String if expecting an exception
-	 * @covers ::getVar
 	 *
 	 * @dataProvider provideGetVar
 	 */
@@ -245,9 +237,6 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::exportAllVars
-	 */
 	public function testExportAllVars() {
 		$pairs = [
 			'foo' => 42,
@@ -261,9 +250,6 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $pairs, $manager->exportAllVars( $vars ) );
 	}
 
-	/**
-	 * @covers ::exportNonLazyVars
-	 */
 	public function testExportNonLazyVars() {
 		$afcv = $this->createMock( LazyLoadedVariable::class );
 		$pairs = [
@@ -287,9 +273,6 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $nonLazy, $manager->exportNonLazyVars( $vars ) );
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct() {
 		$this->assertInstanceOf(
 			VariablesManager::class,

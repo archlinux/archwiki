@@ -46,6 +46,9 @@
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.hCaptcha.visualEditor": {
+			"dependencies": [
+				"web2017-polyfills"
+			],
 			"packageFiles": [
 				"ve-confirmedit-hCaptcha/ve.init.mw.HCaptchaSaveErrorHandler.js",
 				{

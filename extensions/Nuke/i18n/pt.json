@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Hamilton Abreu",
 			"Imperadeiro98",
 			"Luckas",
 			"Malafaya",
 			"Vitorvicentevalente",
-			555
+			"Mbs262"
 		]
 	},
 	"nuke": "Eliminação em massa",
@@ -30,7 +31,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Eliminar mais páginas]]",
 	"nuke-pattern": "Padrão do tipo SQL LIKE (por exemplo %) para o nome da página:",
 	"nuke-nopages-global": "Não existem títulos de página que correspondam à sua pesquisa.",
-	"nuke-viewchanges": "ver alterações",
+	"nuke-viewchanges": "histórico",
 	"nuke-namespace": "Limitar ao espaço nominal:",
 	"nuke-linkoncontribs": "eliminação em massa",
 	"nuke-linkoncontribs-text": "Eliminar em massa páginas em que {{GENDER:$1|este utilizador é o único autor|esta utilizadora é a única autora}}",

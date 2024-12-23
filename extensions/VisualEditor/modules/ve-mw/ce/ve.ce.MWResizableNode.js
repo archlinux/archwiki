@@ -34,7 +34,7 @@ OO.inheritClass( ve.ce.MWResizableNode, ve.ce.ResizableNode );
  * @return {Object} Attribute changes
  */
 ve.ce.MWResizableNode.prototype.getAttributeChanges = function ( width, height ) {
-	var attrChanges = ve.ce.ResizableNode.prototype.getAttributeChanges.call( this, width, height );
+	const attrChanges = ve.ce.ResizableNode.prototype.getAttributeChanges.call( this, width, height );
 	if ( !ve.isEmptyObject( attrChanges ) ) {
 		attrChanges.defaultSize = false;
 	}

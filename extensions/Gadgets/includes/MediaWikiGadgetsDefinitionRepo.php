@@ -21,14 +21,14 @@
 namespace MediaWiki\Extension\Gadgets;
 
 use InvalidArgumentException;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
-use ObjectCache;
-use TextContent;
-use WANObjectCache;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -44,15 +44,18 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	private IConnectionProvider $dbProvider;
 	private WANObjectCache $wanCache;
 	private RevisionLookup $revLookup;
+	private BagOStuff $srvCache;
 
 	public function __construct(
 		IConnectionProvider $dbProvider,
 		WANObjectCache $wanCache,
-		RevisionLookup $revLookup
+		RevisionLookup $revLookup,
+		BagOStuff $srvCache
 	) {
 		$this->dbProvider = $dbProvider;
 		$this->wanCache = $wanCache;
 		$this->revLookup = $revLookup;
+		$this->srvCache = $srvCache;
 	}
 
 	/**
@@ -83,11 +86,10 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	 * Purge the definitions cache, for example when MediaWiki:Gadgets-definition is edited.
 	 */
 	private function purgeDefinitionCache(): void {
-		$srvCache = ObjectCache::getLocalServerInstance( CACHE_HASH );
 		$key = $this->makeDefinitionCacheKey( $this->wanCache );
 
 		$this->wanCache->delete( $key );
-		$srvCache->delete( $key );
+		$this->srvCache->delete( $key );
 		$this->definitions = null;
 	}
 
@@ -127,15 +129,13 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		//
 		// 1. process cache. Faster repeat calls.
 		if ( $this->definitions === null ) {
-			$wanCache = $this->wanCache;
-			$srvCache = ObjectCache::getLocalServerInstance( CACHE_HASH );
-			$key = $this->makeDefinitionCacheKey( $wanCache );
-			$this->definitions = $srvCache->getWithSetCallback(
+			$key = $this->makeDefinitionCacheKey( $this->wanCache );
+			$this->definitions = $this->srvCache->getWithSetCallback(
 				$key,
 				// between 7 and 15 seconds to avoid memcached/lockTSE stampede (T203786)
 				mt_rand( 7, 15 ),
-				function () use ( $wanCache, $key ) {
-					return $wanCache->getWithSetCallback(
+				function () use ( $key ) {
+					return $this->wanCache->getWithSetCallback(
 						$key,
 						// 1 day
 						Gadget::CACHE_TTL,

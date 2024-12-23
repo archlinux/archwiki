@@ -8,19 +8,19 @@ QUnit.module( 've.dm.Converter' );
 
 /* Tests */
 
-QUnit.test( 'getModelFromDom', function ( assert ) {
-	var cases = ve.dm.example.domToDataCases;
+QUnit.test( 'getModelFromDom', ( assert ) => {
+	const cases = ve.dm.example.domToDataCases;
 
-	for ( var msg in cases ) {
-		var caseItem = ve.copy( cases[ msg ] );
+	for ( const msg in cases ) {
+		const caseItem = ve.copy( cases[ msg ] );
 		caseItem.base = caseItem.base || ve.dm.example.baseUri;
 		ve.test.utils.runGetModelFromDomTest( assert, caseItem, msg );
 	}
 } );
 
-QUnit.test( 'getModelFromDom with store argument', function ( assert ) {
-	var store = new ve.dm.HashValueStore();
-	var model = ve.dm.converter.getModelFromDom(
+QUnit.test( 'getModelFromDom with store argument', ( assert ) => {
+	const store = new ve.dm.HashValueStore();
+	const model = ve.dm.converter.getModelFromDom(
 		ve.createDocumentFromHtml( '<p>foo</p>' ),
 		{ lang: 'en', dir: 'ltr' },
 		store
@@ -28,18 +28,18 @@ QUnit.test( 'getModelFromDom with store argument', function ( assert ) {
 	assert.strictEqual( model.getStore(), store, 'Document store is reference-equal to store argument' );
 } );
 
-QUnit.test( 'getDomFromModel', function ( assert ) {
-	var cases = ve.dm.example.domToDataCases;
+QUnit.test( 'getDomFromModel', ( assert ) => {
+	const cases = ve.dm.example.domToDataCases;
 
-	for ( var msg in cases ) {
-		var caseItem = ve.copy( cases[ msg ] );
+	for ( const msg in cases ) {
+		const caseItem = ve.copy( cases[ msg ] );
 		caseItem.base = caseItem.base || ve.dm.example.baseUri;
 		ve.test.utils.runGetDomFromModelTest( assert, caseItem, msg );
 	}
 } );
 
-QUnit.test( 'getFullData', function ( assert ) {
-	var cases = [
+QUnit.test( 'getFullData', ( assert ) => {
+	const cases = [
 		{
 			msg: 'Metadata in ContentBranchNode gets moved outside by any change',
 			beforeHtml: '<p>x</p><!-- w --><meta foo="x"><p>ab<meta foo="y">cd</p><p>ef<meta foo="z">gh</p>',
@@ -80,8 +80,8 @@ QUnit.test( 'getFullData', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
-		var doc = ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( caseItem.beforeHtml ) ),
+	cases.forEach( ( caseItem ) => {
+		const doc = ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( caseItem.beforeHtml ) ),
 			tx = caseItem.transaction( doc );
 
 		doc.commit( tx );
@@ -100,12 +100,12 @@ QUnit.test( 'getFullData', function ( assert ) {
 	} );
 } );
 
-QUnit.test( 'roundTripMetadata', function ( assert ) {
-	var beforeHtml = '<!-- w --><meta foo="x"><p>ab<meta foo="y">cd</p><p>ef<meta foo="z">gh</p>',
+QUnit.test( 'roundTripMetadata', ( assert ) => {
+	const beforeHtml = '<!-- w --><meta foo="x"><p>ab<meta foo="y">cd</p><p>ef<meta foo="z">gh</p>',
 		afterHtml = '<!-- w --><meta foo="x"><p>abc</p><meta foo="y"><p>ef<meta foo="z">gh</p>';
 
-	var doc = ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( beforeHtml ) );
-	var tx = ve.dm.TransactionBuilder.static.newFromRemoval( doc, new ve.Range( 10, 11 ) );
+	const doc = ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( beforeHtml ) );
+	const tx = ve.dm.TransactionBuilder.static.newFromRemoval( doc, new ve.Range( 10, 11 ) );
 	doc.commit( tx );
 	assert.strictEqual(
 		ve.dm.converter.getDomFromModel( doc ).body.innerHTML,

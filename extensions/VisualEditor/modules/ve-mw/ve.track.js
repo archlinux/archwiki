@@ -2,7 +2,7 @@
 ve.track = mw.track;
 ve.trackSubscribe = mw.trackSubscribe;
 
-ve.trackSubscribe( 'activity.', function ( topic, data ) {
+ve.trackSubscribe( 'activity.', ( topic, data ) => {
 	mw.track( 'visualEditorFeatureUse', ve.extendObject( data, {
 		feature: topic.split( '.' )[ 1 ]
 	} ) );

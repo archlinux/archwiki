@@ -1,11 +1,15 @@
 <?php
 
 use MediaWiki\Json\JsonCodec;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\PoolCounter\PoolWorkArticleViewOld;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use Psr\Log\NullLogger;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\UUID\GlobalIdGenerator;
 
@@ -27,7 +31,7 @@ class PoolWorkArticleViewOldTest extends PoolWorkArticleViewTest {
 	 */
 	protected function newPoolWorkArticleView(
 		WikiPage $page,
-		RevisionRecord $rev = null,
+		?RevisionRecord $rev = null,
 		$options = null
 	) {
 		if ( !$options ) {
@@ -89,7 +93,8 @@ class PoolWorkArticleViewOldTest extends PoolWorkArticleViewTest {
 
 		$cachedOutput = $cache->get( $page->getRevisionRecord(), $options );
 		$this->assertNotEmpty( $cachedOutput );
-		$this->assertSame( $status->getValue()->getText(), $cachedOutput->getText() );
+		$this->assertSame( $status->getValue()->getRawText(),
+			$cachedOutput->getRawText() );
 	}
 
 	public function testDoesNotCacheNotSafe() {

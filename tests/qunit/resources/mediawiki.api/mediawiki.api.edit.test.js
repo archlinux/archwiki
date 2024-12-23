@@ -6,7 +6,7 @@ QUnit.module( 'mediawiki.api.edit', ( hooks ) => {
 	} );
 
 	QUnit.test( 'edit( title, transform String )', async ( assert ) => {
-		server.respond( function ( req ) {
+		server.respond( ( req ) => {
 			if ( /query.+titles=Sandbox/.test( req.url ) ) {
 				req.respond( 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 					curtimestamp: '2016-01-02T12:00:00Z',
@@ -37,14 +37,12 @@ QUnit.module( 'mediawiki.api.edit', ( hooks ) => {
 			}
 		} );
 
-		const edit = await new mw.Api().edit( 'Sandbox', ( revision ) => {
-			return revision.content.replace( 'Sand', 'Box' );
-		} );
+		const edit = await new mw.Api().edit( 'Sandbox', ( revision ) => revision.content.replace( 'Sand', 'Box' ) );
 		assert.strictEqual( edit.newrevid, 13 );
 	} );
 
 	QUnit.test( 'edit( mw.Title, transform String )', async ( assert ) => {
-		server.respond( function ( req ) {
+		server.respond( ( req ) => {
 			if ( /query.+titles=Sandbox/.test( req.url ) ) {
 				req.respond( 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 					curtimestamp: '2016-01-02T12:00:00Z',
@@ -75,14 +73,12 @@ QUnit.module( 'mediawiki.api.edit', ( hooks ) => {
 			}
 		} );
 
-		const edit = await new mw.Api().edit( new mw.Title( 'Sandbox' ), ( revision ) => {
-			return revision.content.replace( 'Sand', 'Box' );
-		} );
+		const edit = await new mw.Api().edit( new mw.Title( 'Sandbox' ), ( revision ) => revision.content.replace( 'Sand', 'Box' ) );
 		assert.strictEqual( edit.newrevid, 13 );
 	} );
 
 	QUnit.test( 'edit( title, transform Promise )', async ( assert ) => {
-		server.respond( function ( req ) {
+		server.respond( ( req ) => {
 			if ( /query.+titles=Async/.test( req.url ) ) {
 				req.respond( 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 					curtimestamp: '2016-02-02T12:00:00Z',
@@ -113,14 +109,12 @@ QUnit.module( 'mediawiki.api.edit', ( hooks ) => {
 			}
 		} );
 
-		const edit = await new mw.Api().edit( 'Async', async ( revision ) => {
-			return Promise.resolve( revision.content.replace( 'Async', 'Promise' ) );
-		} );
+		const edit = await new mw.Api().edit( 'Async', async ( revision ) => Promise.resolve( revision.content.replace( 'Async', 'Promise' ) ) );
 		assert.strictEqual( edit.newrevid, 23 );
 	} );
 
 	QUnit.test( 'edit( title, transform Object )', async ( assert ) => {
-		server.respond( function ( req ) {
+		server.respond( ( req ) => {
 			if ( /query.+titles=Param/.test( req.url ) ) {
 				req.respond( 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 					curtimestamp: '2016-03-02T12:00:00Z',
@@ -151,14 +145,12 @@ QUnit.module( 'mediawiki.api.edit', ( hooks ) => {
 			}
 		} );
 
-		const edit = await new mw.Api().edit( 'Param', function () {
-			return { text: 'Content', summary: 'Sum' };
-		} );
+		const edit = await new mw.Api().edit( 'Param', () => ( { text: 'Content', summary: 'Sum' } ) );
 		assert.strictEqual( edit.newrevid, 33 );
 	} );
 
 	QUnit.test( 'edit( invalid-title, transform String )', ( assert ) => {
-		server.respond( function ( req ) {
+		server.respond( ( req ) => {
 			if ( /query.+titles=%1F%7C/.test( req.url ) ) {
 				req.respond( 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 					query: {
@@ -172,14 +164,12 @@ QUnit.module( 'mediawiki.api.edit', ( hooks ) => {
 			}
 		} );
 
-		const promise = new mw.Api().edit( '|', ( revision ) => {
-			return revision.content.replace( 'Sand', 'Box' );
-		} );
+		const promise = new mw.Api().edit( '|', ( revision ) => revision.content.replace( 'Sand', 'Box' ) );
 		assert.rejects( promise, 'invalidtitle' );
 	} );
 
 	QUnit.test( 'create( title, content )', async ( assert ) => {
-		server.respond( function ( req ) {
+		server.respond( ( req ) => {
 			if ( /edit.+text=Sand/.test( req.requestBody ) ) {
 				req.respond( 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 					edit: {

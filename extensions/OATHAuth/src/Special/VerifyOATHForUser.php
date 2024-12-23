@@ -2,14 +2,19 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
-use HTMLForm;
 use ManualLogEntry;
+use MediaWiki\CheckUser\Hooks as CheckUserHooks;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MWException;
+use UserBlockedError;
+use UserNotLoggedIn;
 
 class VerifyOATHForUser extends FormSpecialPage {
 
@@ -77,6 +82,17 @@ class VerifyOATHForUser extends FormSpecialPage {
 	}
 
 	/**
+	 * @param User $user
+	 * @throws UserBlockedError
+	 * @throws UserNotLoggedIn
+	 */
+	protected function checkExecutePermissions( User $user ) {
+		$this->requireNamedUser();
+
+		parent::checkExecutePermissions( $user );
+	}
+
+	/**
 	 * @param string $par
 	 */
 	public function execute( $par ) {
@@ -130,6 +146,10 @@ class VerifyOATHForUser extends FormSpecialPage {
 		$logEntry->setTarget( $user->getUserPage() );
 		$logEntry->setComment( $formData['reason'] );
 		$logEntry->insert();
+
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
+			CheckUserHooks::updateCheckUserData( $logEntry->getRecentChange() );
+		}
 
 		LoggerFactory::getInstance( 'authentication' )->info(
 			'OATHAuth status checked for {usertarget} by {user} from {clientip}', [

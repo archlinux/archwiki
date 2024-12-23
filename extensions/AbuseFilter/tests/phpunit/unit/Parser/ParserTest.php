@@ -110,11 +110,6 @@ class ParserTest extends ParserTestCase {
 		$this->assertFalse( $this->getParser()->parse( $code ) );
 	}
 
-	/**
-	 * Data provider for testEmptySyntax
-	 *
-	 * @return array
-	 */
 	public static function provideEmptySyntax() {
 		return [
 			[ '' ],
@@ -158,10 +153,6 @@ class ParserTest extends ParserTestCase {
 		$this->assertEquals( $expected, $this->getParser()->checkConditions( $rule )->getCondsUsed(), "Rule: $rule" );
 	}
 
-	/**
-	 * Data provider for testCondCount method.
-	 * @return array
-	 */
 	public static function condCountCases() {
 		return [
 			[ '((("a" == "b")))', 1 ],
@@ -777,8 +768,8 @@ class ParserTest extends ParserTestCase {
 	 * @param string $new The new name of the variable
 	 * @dataProvider provideDeprecatedVars
 	 *
-	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator::getVarValue
-	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\AFPTreeParser::checkLogDeprecatedVar
+	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator
+	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\AFPTreeParser
 	 */
 	public function testDeprecatedVars( $old, $new ) {
 		// Set it under the new name, and check that the old name points to it
@@ -1120,9 +1111,6 @@ class ParserTest extends ParserTestCase {
 		$this->exceptionTestInSkippedBlock( $expID, $code, $caller );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function provideArgsErrorsInSyntaxCheck() {
 		return [
 			[ 'accountname rlike "("', 'regexfailure' ],
@@ -1149,7 +1137,7 @@ class ParserTest extends ParserTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator::toggleConditionLimit
+	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator
 	 */
 	public function testToggleConditionLimit() {
 		/** @var FilterEvaluator $wrapper */
@@ -1164,7 +1152,7 @@ class ParserTest extends ParserTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator::setVariables
+	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator
 	 */
 	public function testSetVariables() {
 		$parser = $this->getParser();
@@ -1173,5 +1161,21 @@ class ParserTest extends ParserTestCase {
 		/** @var FilterEvaluator $wrapper */
 		$wrapper = TestingAccessWrapper::newFromObject( $parser );
 		$this->assertSame( $vars, $wrapper->mVariables );
+	}
+
+	public static function provideGetUsedVars() {
+		yield [ [ 'action', 'user_name' ], 'action = "edit" & ip_in_range( user_name, "1.2.3.4" )' ];
+		yield [ [ 'action', 'user_name' ], 'action = "edit" & ip_in_range( USER_NAME, "1.2.3.4" )' ];
+		yield [ [ 'added_lines' ], "added_lines[0] !== ''" ];
+		yield [ [ 'old_size', 'new_size' ], 'old_size > 0 & new_size / old_size < 0.5' ];
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator
+	 * @dataProvider provideGetUsedVars
+	 */
+	public function testGetUsedVars( $expected, $conditions ) {
+		$parser = $this->getParser();
+		$this->assertSame( $expected, $parser->getUsedVars( $conditions ) );
 	}
 }

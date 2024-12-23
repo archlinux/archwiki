@@ -3,9 +3,9 @@
 		"authors": [
 			"Dağlı95",
 			"NMW03",
+			"Nemoralis",
 			"Serkanland",
-			"Vugar 1981",
-			"Nemoralis"
+			"Vugar 1981"
 		]
 	},
 	"captcha-edit": "Bu səhifəni redaktə etmək üçün sizdən aşağıdakı tapşırığı həll etməyinizi və cavabını qutuya yazmağınızı xahiş edirik ([[Special:Captcha/help|daha ətraflı]]):",
@@ -35,5 +35,6 @@
 	"confirmedit-preview-validity": "Etibarlılıq",
 	"confirmedit-preview-valid": "etibarlıdır",
 	"confirmedit-preview-invalid": "etibarsızdır",
-	"confirmedit-preview-description": "Aşağıdakı cədvəl bu səhifədəki sətirlərin siyahısını və bunun etibarlı IP ünvanı və ya IP ünvan diapazonu olub-olmadığını göstərir. Sətr etibarlı IP ünvanı və ya IP ünvan diapazonudursa, o, CAPTCHA yoxlamalarından çıxarılacaq, lakin etibarsız sətirlər nəzərə alınmayacaq. Etibarlı IP ünvanı diapazonuna nümunə: 69.208.0.0/16, 69.208.0.0-dan 69.208.255.255-ə qədər. IP ünvanı diapazonunun hesablanması haqqında [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix ətraflı məlumat]."
+	"confirmedit-preview-description": "Aşağıdakı cədvəl bu səhifədəki sətirlərin siyahısını və bunun etibarlı IP ünvanı və ya IP ünvan diapazonu olub-olmadığını göstərir. Sətr etibarlı IP ünvanı və ya IP ünvan diapazonudursa, o, CAPTCHA yoxlamalarından çıxarılacaq, lakin etibarsız sətirlər nəzərə alınmayacaq. Etibarlı IP ünvanı diapazonuna nümunə: 69.208.0.0/16, 69.208.0.0-dan 69.208.255.255-ə qədər. IP ünvanı diapazonunun hesablanması haqqında [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix ətraflı məlumat].",
+	"abusefilter-edit-action-showcaptcha": "Fəaliyyətə davam etmək üçün istifadəçidən CAPTCHA-nı tamamlamasını tələb edin. CAPTCHA-dan keçmək icazəsi olan istifadəçilərə aid deyil."
 }

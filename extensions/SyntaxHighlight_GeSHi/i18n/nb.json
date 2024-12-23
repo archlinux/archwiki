@@ -20,5 +20,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Kodeblokk",
 	"syntaxhighlight-error-pygments-invocation-failure": "Kunne ikke kalle Pygments",
 	"syntaxhighlight-error-unknown-language": "Ukjent språk «$1»",
-	"syntaxhighlight-error-exceeds-size-limit": "Kodestørrelse $1 {{PLURAL:$1|bytes}} er over tillatt maksimum på $2 {{PLURAL:$2|bytes}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Kodestørrelse $1 {{PLURAL:$1|bytes}} er over tillatt maksimum på $2 {{PLURAL:$2|bytes}}",
+	"syntaxhighlight-button-copy": "Kopier",
+	"syntaxhighlight-button-copied": "Kopiert!"
 }

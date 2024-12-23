@@ -3,12 +3,13 @@
 namespace Cite\Hooks;
 
 use Cite\Cite;
+use MediaWiki\Config\Config;
 use MediaWiki\Hook\ParserAfterParseHook;
 use MediaWiki\Hook\ParserClearStateHook;
 use MediaWiki\Hook\ParserClonedHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
-use Parser;
-use StripState;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\StripState;
 
 /**
  * @license GPL-2.0-or-later
@@ -20,13 +21,21 @@ class CiteParserHooks implements
 	ParserAfterParseHook
 {
 
+	private CiteParserTagHooks $citeParserTagHooks;
+
+	public function __construct(
+		Config $config
+	) {
+		$this->citeParserTagHooks = new CiteParserTagHooks( $config );
+	}
+
 	/**
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ParserFirstCallInit
 	 *
 	 * @param Parser $parser
 	 */
 	public function onParserFirstCallInit( $parser ) {
-		CiteParserTagHooks::register( $parser );
+		$this->citeParserTagHooks->register( $parser );
 	}
 
 	/**

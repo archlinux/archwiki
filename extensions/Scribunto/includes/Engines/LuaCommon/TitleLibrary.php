@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
-use Content;
 use LogicException;
+use MediaWiki\Content\Content;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutputFlags;
@@ -28,6 +28,7 @@ class TitleLibrary extends LibraryBase {
 			'getExpensiveData' => [ $this, 'getExpensiveData' ],
 			'getUrl' => [ $this, 'getUrl' ],
 			'getContent' => [ $this, 'getContent' ],
+			'getCategories' => [ $this, 'getCategories' ],
 			'getFileInfo' => [ $this, 'getFileInfo' ],
 			'protectionLevels' => [ $this, 'protectionLevels' ],
 			'cascadingProtection' => [ $this, 'cascadingProtection' ],
@@ -294,11 +295,6 @@ class TitleLibrary extends LibraryBase {
 			return null;
 		}
 
-		// Record in templatelinks, so edits cause the page to be refreshed
-		$this->getParser()->getOutput()->addTemplate(
-			$title, $title->getArticleID(), $title->getLatestRevID()
-		);
-
 		$rev = $this->getParser()->fetchCurrentRevisionRecordOfTitle( $title );
 
 		if ( $title->equals( $this->getTitle() ) ) {
@@ -306,6 +302,11 @@ class TitleLibrary extends LibraryBase {
 			$parserOutput->setOutputFlag( ParserOutputFlags::VARY_REVISION_SHA1 );
 			$parserOutput->setRevisionUsedSha1Base36( $rev ? $rev->getSha1() : '' );
 			wfDebug( __METHOD__ . ": set vary-revision-sha1 for '$title'" );
+		} else {
+			// Record in templatelinks, so edits cause the page to be refreshed
+			$this->getParser()->getOutput()->addTemplate(
+				$title, $title->getArticleID(), $title->getLatestRevID()
+			);
 		}
 
 		if ( !$rev ) {
@@ -335,6 +336,36 @@ class TitleLibrary extends LibraryBase {
 		$this->checkType( 'getContent', 1, $text, 'string' );
 		$content = $this->getContentInternal( $text );
 		return [ $content ? $content->serialize() : null ];
+	}
+
+	/**
+	 * @internal
+	 * @param string $text
+	 * @return string[][]
+	 */
+	public function getCategories( $text ) {
+		$this->checkType( 'getCategories', 1, $text, 'string' );
+		$title = Title::newFromText( $text );
+		if ( !$title ) {
+			return [ [] ];
+		}
+		$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
+		$this->incrementExpensiveFunctionCount();
+
+		$parserOutput = $this->getParser()->getOutput();
+		if ( $title->equals( $this->getTitle() ) ) {
+			$parserOutput->setOutputFlag( ParserOutputFlags::VARY_REVISION );
+		} else {
+			// Record in templatelinks, so edits cause the page to be refreshed
+			$parserOutput->addTemplate( $title, $title->getArticleID(), $title->getLatestRevID() );
+		}
+
+		$categoryTitles = $page->getCategories();
+		$categoryNames = [];
+		foreach ( $categoryTitles as $title ) {
+			$categoryNames[] = $title->getText();
+		}
+		return [ self::makeArrayOneBased( $categoryNames ) ];
 	}
 
 	/**

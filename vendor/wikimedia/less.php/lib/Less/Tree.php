@@ -10,6 +10,12 @@ class Less_Tree {
 	public $allExtends;
 
 	/**
+	 * @var Less_Parser
+	 * @see less-3.13.1.js#Node.prototype.parse
+	 */
+	public static $parse;
+
+	/**
 	 * @see less-2.5.3.js#Node.prototype.toCSS
 	 */
 	public function toCSS() {

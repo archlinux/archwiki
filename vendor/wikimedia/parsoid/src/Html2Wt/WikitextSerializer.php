@@ -5,7 +5,6 @@ namespace Wikimedia\Parsoid\Html2Wt;
 
 use Closure;
 use Exception;
-use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\InternalException;
@@ -18,6 +17,8 @@ use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\ConstrainedText;
 use Wikimedia\Parsoid\Html2Wt\DOMHandlers\DOMHandler;
 use Wikimedia\Parsoid\Html2Wt\DOMHandlers\DOMHandlerFactory;
+use Wikimedia\Parsoid\NodeData\ParamInfo;
+use Wikimedia\Parsoid\NodeData\TemplateInfo;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
@@ -179,12 +180,11 @@ class WikitextSerializer {
 		foreach ( $tplAttrs as $attr ) {
 			// If this attribute's key is generated content,
 			// serialize HTML back to generator wikitext.
-			// PORT-FIXME: bool check might not be safe. Need documentation on attrib format.
-			if ( ( $attr[0]->txt ?? null ) === $key && isset( $attr[0]->html ) ) {
+			if ( ( $attr->key['txt'] ?? null ) === $key && isset( $attr->key['html'] ) ) {
 				return $this->htmlToWikitext( [
 					'env' => $this->env,
 					'onSOL' => false,
-				], $attr[0]->html );
+				], $attr->key['html'] );
 			}
 		}
 		return $key;
@@ -201,22 +201,21 @@ class WikitextSerializer {
 			// If this attribute's value is generated content,
 			// serialize HTML back to generator wikitext.
 			// PORT-FIXME: not type safe. Need documentation on attrib format.
-			if ( ( $attr[0] === $key || ( $attr[0]->txt ?? null ) === $key )
+			if ( ( $attr->key === $key || ( $attr->key['txt'] ?? null ) === $key )
 				 // Only return here if the value is generated (ie. .html),
 				 // it may just be in .txt form.
-				 && isset( $attr[1]->html )
-				 // !== null is required. html:"" will serialize to "" and
+				 // html:"" will serialize to "" and
 				 // will be returned here. This is used to suppress the =".."
 				 // string in the attribute in scenarios where the template
 				 // generates a "k=v" string.
 				 // Ex: <div {{1x|1=style='color:red'}}>foo</div>
-				 && $attr[1]->html !== null
+				 && isset( $attr->value['html'] )
 			) {
 				return $this->htmlToWikitext( [
 					'env' => $this->env,
 					'onSOL' => false,
 					'inAttribute' => true,
-				], $attr[1]->html );
+				], $attr->value['html'] );
 			}
 		}
 		return null;
@@ -305,7 +304,7 @@ class WikitextSerializer {
 
 		if ( $wrapperUnmodified ) {
 			$dsr = DOMDataUtils::getDataParsoid( $node )->dsr;
-			return $this->state->getOrigSrc( $dsr->start, $dsr->innerStart() ) ?? '';
+			return $this->state->getOrigSrc( $dsr->openRange() ) ?? '';
 		}
 
 		$da = $token->dataParsoid;
@@ -339,7 +338,7 @@ class WikitextSerializer {
 	public function serializeHTMLEndTag( Element $node, $wrapperUnmodified ): string {
 		if ( $wrapperUnmodified ) {
 			$dsr = DOMDataUtils::getDataParsoid( $node )->dsr;
-			return $this->state->getOrigSrc( $dsr->innerEnd(), $dsr->end ) ?? '';
+			return $this->state->getOrigSrc( $dsr->closeRange() ) ?? '';
 		}
 
 		$token = WTSUtils::mkEndTagTk( $node );
@@ -640,18 +639,16 @@ class WikitextSerializer {
 	 * @param SerializerState $state
 	 * @param string $buf
 	 * @param Element $node
-	 * @param string $type The type of the part to be serialized. One of template, templatearg,
-	 *   parserfunction.
-	 * @param stdClass $part The expression fragment to serialize. See $srcParts
+	 * @param TemplateInfo $part The expression fragment to serialize. See $srcParts
 	 *   in serializeFromParts() for format.
 	 * @param ?array $tplData Templatedata, see
 	 *   https://github.com/wikimedia/mediawiki-extensions-TemplateData/blob/master/Specification.md
-	 * @param mixed $prevPart Previous part. See $srcParts in serializeFromParts().
-	 * @param mixed $nextPart Next part. See $srcParts in serializeFromParts().
+	 * @param string|TemplateInfo $prevPart Previous part. See $srcParts in serializeFromParts().
+	 * @param string|TemplateInfo $nextPart Next part. See $srcParts in serializeFromParts().
 	 * @return string
 	 */
 	private function serializePart(
-		SerializerState $state, string $buf, Element $node, string $type, stdClass $part,
+		SerializerState $state, string $buf, Element $node, TemplateInfo $part,
 		?array $tplData, $prevPart, $nextPart
 	): string {
 		// Parse custom format specification, if present.
@@ -679,7 +676,7 @@ class WikitextSerializer {
 		$forceTrim = ( $format !== null ) || WTUtils::isNewElt( $node );
 
 		// Shoehorn formatting of top-level templatearg wikitext into this code.
-		if ( $type === 'templatearg' ) {
+		if ( $part->type === 'templatearg' ) {
 			$formatStart = preg_replace( '/{{/', '{{{', $formatStart, 1 );
 			$formatEnd = preg_replace( '/}}/', '}}}', $formatEnd, 1 );
 		}
@@ -690,12 +687,10 @@ class WikitextSerializer {
 		}
 
 		// open the transclusion
-		$tgt = $part->target;
-		'@phan-var stdClass $tgt';
-		$buf .= $this->formatStringSubst( $formatStart, $tgt->wt, $forceTrim );
+		$buf .= $this->formatStringSubst( $formatStart, $part->targetWt, $forceTrim );
 
 		// Short-circuit transclusions without params
-		$paramKeys = array_keys( get_object_vars( $part->params ) );
+		$paramKeys = array_map( fn ( ParamInfo $pi ) => $pi->k, $part->paramInfos );
 		if ( !$paramKeys ) {
 			if ( substr( $formatEnd, 0, 1 ) === "\n" ) {
 				$formatEnd = substr( $formatEnd, 1 );
@@ -706,13 +701,11 @@ class WikitextSerializer {
 		// Trim whitespace from data-mw keys to deal with non-compliant
 		// clients. Make sure param info is accessible for the stripped key
 		// since later code will be using the stripped key always.
-		$tplKeysFromDataMw = array_map( static function ( $key ) use ( $part ) {
-			$strippedKey = trim( (string)$key );
-			if ( $key !== $strippedKey ) {
-				$part->params->{$strippedKey} = $part->params->{$key};
-			}
-			return $strippedKey;
-		}, $paramKeys );
+		$tplKeysFromDataMw = [];
+		foreach ( $part->paramInfos as $pi ) {
+			$strippedKey = trim( $pi->k );
+			$tplKeysFromDataMw[$strippedKey] = $pi;
+		}
 
 		// Per-parameter info from data-parsoid for pre-existing parameters
 		$dp = DOMDataUtils::getDataParsoid( $node );
@@ -733,24 +726,25 @@ class WikitextSerializer {
 		// 3. Format them according to formatParamName/formatParamValue
 
 		$kvMap = [];
-		foreach ( $tplKeysFromDataMw as $key ) {
-			$param = $part->params->{$key};
+		foreach ( $tplKeysFromDataMw as $key => $param ) {
+			// Storing keys in an array can turn them into ints; stringify.
+			$key = (string)$key;
 			$argInfo = $dpArgInfoMap[$key] ?? [];
 
 			// TODO: Other formats?
 			// Only consider the html parameter if the wikitext one
 			// isn't present at all. If it's present but empty,
 			// that's still considered a valid parameter.
-			if ( property_exists( $param, 'wt' ) ) {
-				$value = $param->wt;
-			} elseif ( property_exists( $param, 'html' ) ) {
+			if ( $param->valueWt !== null ) {
+				$value = $param->valueWt;
+			} elseif ( $param->html !== null ) {
 				$value = $this->htmlToWikitext( [ 'env' => $this->env ], $param->html );
 			} else {
 				$this->env->log(
 					'error',
 					"params in data-mw part is missing wt/html for $key. " .
 						"Serializing as empty string.",
-					"data-mw part: " . json_encode( $part )
+					"data-mw part: " . json_encode( $part->toJsonArray() )
 				);
 				$value = "";
 			}
@@ -763,8 +757,8 @@ class WikitextSerializer {
 			// The name is usually equal to the parameter key, but
 			// if there's a key->wt attribute, use that.
 			$name = null;
-			if ( isset( $param->key->wt ) ) {
-				$name = $param->key->wt;
+			if ( $param->keyWt !== null ) {
+				$name = $param->keyWt;
 				// And make it appear even if there wasn't any data-parsoid information.
 				$serializeAsNamed = true;
 			} else {
@@ -775,7 +769,7 @@ class WikitextSerializer {
 			//
 			// The normalized form of 'k' is used as the key in both
 			// data-parsoid and data-mw. The full non-normalized form
-			// is present in '$param->key->wt'
+			// is present in '$param->keyWt'
 			$kvMap[$key] = [ 'serializeAsNamed' => $serializeAsNamed, 'name' => $name, 'value' => $value ];
 		}
 
@@ -787,7 +781,7 @@ class WikitextSerializer {
 
 		$numPositionalArgs = 0;
 		foreach ( $dpArgInfo as $pi ) {
-			if ( isset( $part->params->{$pi->k} ) && empty( $pi->named ) ) {
+			if ( isset( $tplKeysFromDataMw[trim( $pi->k )] ) && empty( $pi->named ) ) {
 				$numPositionalArgs++;
 			}
 		}
@@ -798,7 +792,7 @@ class WikitextSerializer {
 			// Add nowiki escapes for the arg value, as required
 			$escapedValue = $this->wteHandlers->escapeTplArgWT( $kv['value'], [
 				'serializeAsNamed' => $kv['serializeAsNamed'] || $param !== $numericIndex,
-				'type' => $type,
+				'type' => $part->type,
 				'argPositionalIndex' => $numericIndex,
 				'numPositionalArgs' => $numPositionalArgs,
 				'argIndex' => $argIndex++,
@@ -908,7 +902,7 @@ class WikitextSerializer {
 	 * Serialize a template from its parts.
 	 * @param SerializerState $state
 	 * @param Element $node
-	 * @param list<stdClass|string> $srcParts Template parts from TemplateInfo::getDataMw()
+	 * @param list<string|TemplateInfo> $srcParts Template parts
 	 * @return string
 	 */
 	public function serializeFromParts(
@@ -925,10 +919,7 @@ class WikitextSerializer {
 			$prevPart = $srcParts[$i - 1] ?? null;
 			$nextPart = $srcParts[$i + 1] ?? null;
 
-			$isTplArg = isset( $part->templatearg );
-			$tpl = $part->templatearg ?? $part->template ?? null;
-
-			if ( !isset( $tpl->target->wt ) ) {
+			if ( !isset( $part->targetWt ) ) {
 				// Maybe we should just raise a ClientError
 				$this->env->log( 'error', 'data-mw.parts array is malformed: ',
 					DOMCompat::getOuterHTML( $node ), PHPUtils::jsonEncode( $srcParts ) );
@@ -937,20 +928,19 @@ class WikitextSerializer {
 
 			// Account for clients leaving off the params array, presumably when empty.
 			// See T291741
-			$tpl->params ??= (object)[];
+			$part->paramInfos ??= [];
 
-			if ( $isTplArg ) {
+			if ( $part->type === 'templatearg' ) {
 				$buf = $this->serializePart(
-					$state, $buf, $node, 'templatearg', $tpl, null, $prevPart,
+					$state, $buf, $node, $part, null, $prevPart,
 					$nextPart
 				);
 				continue;
 			}
 
-			// transclusion: tpl or parser function
-			$tplHref = $tpl->target->href ?? null;
-			$isTpl = is_string( $tplHref );
-			$type = $isTpl ? 'template' : 'parserfunction';
+			// transclusion: tpl or parser function?
+			// templates have $part->href
+			// parser functions have $part->func
 
 			// While the API supports fetching multiple template data objects in one call,
 			// we will fetch one at a time to benefit from cached responses.
@@ -958,10 +948,11 @@ class WikitextSerializer {
 			// Fetch template data for the template
 			$tplData = null;
 			$apiResp = null;
-			if ( $isTpl && $useTplData ) {
+			if ( isset( $part->href ) && $useTplData ) {
+				// Not a parser function
 				try {
 					$title = Title::newFromText(
-						PHPUtils::stripPrefix( Utils::decodeURIComponent( $tplHref ), './' ),
+						PHPUtils::stripPrefix( Utils::decodeURIComponent( $part->href ), './' ),
 						$this->env->getSiteConfig()
 					);
 					$tplData = $this->env->getDataAccess()->fetchTemplateData( $this->env->getPageConfig(), $title );
@@ -975,7 +966,7 @@ class WikitextSerializer {
 			if ( !empty( $tplData['missing'] ) || !empty( $tplData['notemplatedata'] ) ) {
 				$tplData = null;
 			}
-			$buf = $this->serializePart( $state, $buf, $node, $type, $tpl, $tplData, $prevPart, $nextPart );
+			$buf = $this->serializePart( $state, $buf, $node, $part, $tplData, $prevPart, $nextPart );
 		}
 		return $buf;
 	}
@@ -1176,7 +1167,7 @@ class WikitextSerializer {
 					$state->sep->constraints['constraintInfo']['nodeB'] = $node->firstChild;
 				}
 
-				$out = $state->getOrigSrc( $dp->dsr->start, $dp->dsr->end ) ?? '';
+				$out = $state->getOrigSrc( $dp->dsr ) ?? '';
 
 				$this->trace( 'ORIG-src with DSR', static function () use ( $dp, $out ) {
 					return '[' . $dp->dsr->start . ',' . $dp->dsr->end . '] = '

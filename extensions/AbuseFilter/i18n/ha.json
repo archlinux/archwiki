@@ -4,7 +4,12 @@
 			"Mr. Snatch"
 		]
 	},
+	"action-abusefilter-protected-vars-log": "duba rajistan ayyukan da ke bayyana masu canji masu kariya",
 	"abusefilter-log-search-submit": "Nema",
 	"abusefilter-log-hide-reason": "Dalili:",
-	"abusefilter-examine-submit": "Nema"
+	"abusefilter-examine-submit": "Nema",
+	"abusefilter-protected-vars-log-name": "Abuse tace kariyar log ɗin masu canji",
+	"abusefilter-protected-vars-log-header": "Wannan rajista ne na: # Dubi masu canji masu kariya a cikin bayanan rajista # Canja matakan samun damar mai amfani don kallon masu canji da aka kare",
+	"logentry-abusefilter-protected-vars-change-access-enable": "An kunna $1 {{GENDER:$2| nasa|ita| nasu}} nasu damar duba masu canji masu kariya",
+	"log-action-filter-abusefilter-protected-vars": "Nau'in aikin:"
 }

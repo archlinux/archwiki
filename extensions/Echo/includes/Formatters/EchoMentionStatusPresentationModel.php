@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Language;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Language\Language;
 use MediaWiki\User\User;
 
 /**

@@ -6,8 +6,7 @@
 			"CiphriusKane",
 			"John Reid",
 			"Macofe",
-			"Seb35",
-			"Krinkle"
+			"Seb35"
 		]
 	},
 	"config-desc": "The installer fer MediaWiki",
@@ -57,7 +56,6 @@
 	"config-memory-raised": "PHP's <code>memerie_limit</code> is $1, raised til $2.",
 	"config-memory-bad": "<strong>Warnishment:</strong> PHP's <code>memerie_limit</code> is $1.\nThis is proably ower low.\nThe installation micht fail!",
 	"config-apc": "[https://www.php.net/apc APC] is installed.",
-	"config-wincache": "[https://www.iis.net/downloads/microsoft/wincache-extension WinCache] is instawed.",
 	"config-no-cache-apcu": "<strong>Wairnin:</strong> Could nae find [https://www.php.net/apcu APCu], [http://xcache.lighttpd.net/ XCache] or [https://www.iis.net/downloads/microsoft/wincache-extension WinCache].\nObject cachin isna enabled.",
 	"config-mod-security": "<strong>Warnishment:</strong> Yer wab server haes [https://modsecurity.org/ mod_security] enabled. Gif misconfeegured, it can cause problems fer MediaWiki or ither saffware that allous uisers tae post arbitrie content.\nRefer til [https://modsecurity.org/documentation/ mod_security documentation] or contact yer host's support gif ye encounter random mistaks.",
 	"config-diff3-bad": "GNU diff3 naw foond.",
@@ -230,7 +228,6 @@
 	"config-install-schema": "Makin schema",
 	"config-install-pg-schema-not-exist": "PostgreSQL schema disna exeest.",
 	"config-install-pg-schema-failed": "Buirds makin failed.\nMak sair that the uiser \"$1\" can write til the schema \"$2\".",
-	"config-install-pg-commit": "Committin chynges",
 	"config-install-pg-plpgsql": "Checkin fer lied PL/pgSQL",
 	"config-pg-no-plpgsql": "Ye need tae install the leid PL/pgSQL in the database $1",
 	"config-pg-no-create-privs": "The accoont ye speceefied fer installâtion disna hae enough preevileges tae mak aen accoont.",

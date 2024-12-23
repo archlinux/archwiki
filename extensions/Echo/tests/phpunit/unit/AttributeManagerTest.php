@@ -1,10 +1,13 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Unit;
+
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
+use MediaWikiUnitTestCase;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\AttributeManager

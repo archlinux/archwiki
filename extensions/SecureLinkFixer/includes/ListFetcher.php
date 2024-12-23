@@ -40,7 +40,7 @@ class ListFetcher {
 	/**
 	 * @param callable|null $output
 	 */
-	public function __construct( callable $output = null ) {
+	public function __construct( ?callable $output = null ) {
 		$this->output = $output;
 	}
 

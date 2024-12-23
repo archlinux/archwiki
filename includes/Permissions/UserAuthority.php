@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Permissions;
 
-use IDBAccessObject;
 use InvalidArgumentException;
 use MediaWiki\Block\Block;
 use MediaWiki\Block\BlockErrorFormatter;
@@ -33,6 +32,7 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Assert\Assert;
 use Wikimedia\DebugInfo\DebugInfoTrait;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Represents the authority of a given User. For anonymous visitors, this will typically
@@ -140,7 +140,7 @@ class UserAuthority implements Authority {
 	}
 
 	/** @inheritDoc */
-	public function isAllowed( string $permission, PermissionStatus $status = null ): bool {
+	public function isAllowed( string $permission, ?PermissionStatus $status = null ): bool {
 		return $this->internalAllowed( $permission, $status, false, null );
 	}
 
@@ -166,7 +166,7 @@ class UserAuthority implements Authority {
 	public function probablyCan(
 		string $action,
 		PageIdentity $target,
-		PermissionStatus $status = null
+		?PermissionStatus $status = null
 	): bool {
 		return $this->internalCan(
 			PermissionManager::RIGOR_QUICK,
@@ -181,7 +181,7 @@ class UserAuthority implements Authority {
 	public function definitelyCan(
 		string $action,
 		PageIdentity $target,
-		PermissionStatus $status = null
+		?PermissionStatus $status = null
 	): bool {
 		// Note that we do not use RIGOR_SECURE to avoid hitting the primary
 		// database for read operations. RIGOR_FULL performs the same checks,
@@ -196,7 +196,7 @@ class UserAuthority implements Authority {
 	}
 
 	/** @inheritDoc */
-	public function isDefinitelyAllowed( string $action, PermissionStatus $status = null ): bool {
+	public function isDefinitelyAllowed( string $action, ?PermissionStatus $status = null ): bool {
 		$userBlock = $this->getApplicableBlock( PermissionManager::RIGOR_FULL, $action );
 		return $this->internalAllowed( $action, $status, 0, $userBlock );
 	}
@@ -204,7 +204,7 @@ class UserAuthority implements Authority {
 	/** @inheritDoc */
 	public function authorizeAction(
 		string $action,
-		PermissionStatus $status = null
+		?PermissionStatus $status = null
 	): bool {
 		// Any side-effects can be added here.
 
@@ -222,7 +222,7 @@ class UserAuthority implements Authority {
 	public function authorizeRead(
 		string $action,
 		PageIdentity $target,
-		PermissionStatus $status = null
+		?PermissionStatus $status = null
 	): bool {
 		// Any side-effects can be added here.
 
@@ -242,7 +242,7 @@ class UserAuthority implements Authority {
 	public function authorizeWrite(
 		string $action,
 		PageIdentity $target,
-		PermissionStatus $status = null
+		?PermissionStatus $status = null
 	): bool {
 		// Any side-effects can be added here.
 
@@ -324,6 +324,17 @@ class UserAuthority implements Authority {
 		return !$status || $status->isOK();
 	}
 
+	// See ApiBase::BLOCK_CODE_MAP
+	private const BLOCK_CODES = [
+		'blockedtext',
+		'blockedtext-partial',
+		'autoblockedtext',
+		'systemblockedtext',
+		'blockedtext-composite',
+		'blockedtext-tempuser',
+		'autoblockedtext-tempuser',
+	];
+
 	/**
 	 * @param string $rigor
 	 * @param string $action
@@ -358,27 +369,38 @@ class UserAuthority implements Authority {
 		if ( $status ) {
 			$status->setPermission( $action );
 
-			$errors = $this->permissionManager->getPermissionErrors(
+			$tempStatus = $this->permissionManager->getPermissionStatus(
 				$action,
 				$this->actor,
 				$target,
 				$rigor
 			);
 
-			foreach ( $errors as $err ) {
-				$status->fatal( wfMessage( ...$err ) );
+			if ( $tempStatus->isGood() ) {
+				// Nothing to merge, return early
+				return $status->isOK();
+			}
 
+			// Instead of `$status->merge( $tempStatus )`, process the messages like this to ensure that
+			// the resulting status contains Message objects instead of strings+arrays, and thus does not
+			// trigger wikitext escaping in a legacy code path. See T368821 for more information about
+			// that behavior, and see T306494 for the specific bug this fixes.
+			foreach ( $tempStatus->getMessages() as $msg ) {
+				$status->fatal( $msg );
+			}
+
+			foreach ( self::BLOCK_CODES as $code ) {
 				// HACK: Detect whether the permission was denied because the user is blocked.
-				//       A similar hack exists in ApiBase::$blockMsgMap.
+				//       A similar hack exists in ApiBase::BLOCK_CODE_MAP.
 				//       When permission checking logic is moved out of PermissionManager,
 				//       we can record the block info directly when first checking the block,
 				//       rather than doing that here.
-				if ( strpos( $err[0], 'blockedtext' ) !== false ) {
+				if ( $tempStatus->hasMessage( $code ) ) {
 					$block = $this->getBlock();
-
 					if ( $block ) {
 						$status->setBlock( $block );
 					}
+					break;
 				}
 			}
 

@@ -9,14 +9,14 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
-use EchoEventPresentationModel;
-use Language;
 use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
+use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\User\User;
-use Message;
 use Wikimedia\Timestamp\TimestampException;
 
 class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
@@ -88,17 +88,16 @@ class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 		if ( $this->isBundled() ) {
 			$count = $this->getNotificationCountForOutput();
 			$msg = $this->msg( $this->getHeaderMessageKey() );
-
 			// Repeat is B/C until unused parameter is removed from translations
 			$msg->numParams( $count, $count );
 			$msg->plaintextParams( $this->section->getTruncatedSectionTitle() );
-			return $msg;
 		} else {
 			$msg = parent::getHeaderMessage();
 			$msg->params( $this->getTruncatedTitleText( $this->event->getTitle(), true ) );
 			$msg->plaintextParams( $this->section->getTruncatedSectionTitle() );
-			return $msg;
 		}
+
+		return $msg;
 	}
 
 	/**

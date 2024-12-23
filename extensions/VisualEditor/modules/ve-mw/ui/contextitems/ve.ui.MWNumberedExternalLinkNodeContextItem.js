@@ -54,7 +54,7 @@ ve.ui.MWNumberedExternalLinkNodeContextItem.static.clearable = false;
  * @inheritdoc
  */
 ve.ui.MWNumberedExternalLinkNodeContextItem.prototype.onLabelButtonClick = function () {
-	var surfaceModel = this.context.getSurface().getModel(),
+	const surfaceModel = this.context.getSurface().getModel(),
 		surfaceView = this.context.getSurface().getView(),
 		doc = surfaceModel.getDocument(),
 		nodeRange = this.model.getOuterRange();
@@ -64,23 +64,21 @@ ve.ui.MWNumberedExternalLinkNodeContextItem.prototype.onLabelButtonClick = funct
 	// perhaps be consolidated into a reusable "replace node with annotated
 	// text and select that text" method somewhere appropriate.
 
-	var annotation = new ve.dm.MWExternalLinkAnnotation( {
+	const annotation = new ve.dm.MWExternalLinkAnnotation( {
 		type: 'link/mwExternal',
 		attributes: {
 			href: this.model.getHref()
 		}
 	} );
-	var annotations = doc.data.getAnnotationsFromOffset( nodeRange.start ).clone();
+	const annotations = doc.data.getAnnotationsFromOffset( nodeRange.start ).clone();
 	annotations.push( annotation );
-	var content = this.model.getHref().split( '' );
+	const content = this.model.getHref().split( '' );
 	ve.dm.Document.static.addAnnotationsToData( content, annotations );
 	surfaceModel.change(
 		ve.dm.TransactionBuilder.static.newFromReplacement( doc, nodeRange, content )
 	);
-	setTimeout( function () {
-		surfaceView.selectAnnotation( function ( view ) {
-			return view.model instanceof ve.dm.MWExternalLinkAnnotation;
-		} );
+	setTimeout( () => {
+		surfaceView.selectAnnotation( ( view ) => view.model instanceof ve.dm.MWExternalLinkAnnotation );
 	} );
 };
 

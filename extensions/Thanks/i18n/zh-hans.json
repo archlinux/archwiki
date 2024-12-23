@@ -10,6 +10,7 @@
 			"Hzy980512",
 			"Impersonator 1",
 			"Lakejason0",
+			"LittlePaw365",
 			"Liuxinyu970226",
 			"Macofe",
 			"Mywood",
@@ -26,8 +27,7 @@
 			"沈澄心",
 			"王庭茂",
 			"神樂坂秀吉",
-			"飞舞回堂前",
-			"LittlePaw365"
+			"飞舞回堂前"
 		]
 	},
 	"thanks-desc": "添加用于感谢用户的编辑、评论等的链接。",
@@ -35,9 +35,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|已感谢}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|感谢}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|已感谢}}}}",
-	"thanks-button-action-queued": "{{GENDER:$1|{{GENDER:$2|正在感谢}}}} $1…",
-	"thanks-button-action-cancel": "取消",
-	"thanks-button-action-completed": "您已{{GENDER:$1|{{GENDER:$2|感谢}}}}$1",
 	"thanks-error-undefined": "感谢操作失败（错误代码：$1）。请重试。",
 	"thanks-error-invalid-log-id": "未找到日志条目",
 	"thanks-error-invalid-log-type": "日志类型“$1”不在允许的日志类型列表内。",

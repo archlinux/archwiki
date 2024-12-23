@@ -61,7 +61,7 @@ mw.libs.ve.EditingTabDialog.static.actions = [
  */
 mw.libs.ve.EditingTabDialog.prototype.getSetupProcess = function ( action ) {
 	return mw.libs.ve.EditingTabDialog.super.prototype.getSetupProcess.call( this, action )
-		.next( function () {
+		.next( () => {
 			// Same as ve.init.target.getLocalApi()
 			new mw.Api().saveOption( 'visualeditor-hidetabdialog', 1 );
 			mw.user.options.set( 'visualeditor-hidetabdialog', 1 );
@@ -72,20 +72,19 @@ mw.libs.ve.EditingTabDialog.prototype.getSetupProcess = function ( action ) {
  * @inheritdoc
  */
 mw.libs.ve.EditingTabDialog.prototype.getActionProcess = function ( action ) {
-	var dialog = this;
 	if ( action ) {
-		return new OO.ui.Process( function () {
-			var actionWidget = this.getActions().get( { actions: action } )[ 0 ];
+		return new OO.ui.Process( () => {
+			const actionWidget = this.getActions().get( { actions: action } )[ 0 ];
 			actionWidget.pushPending();
-			dialog.pushPending();
+			this.pushPending();
 
 			// Same as ve.init.target.getLocalApi()
-			new mw.Api().saveOption( 'visualeditor-tabs', action ).done( function () {
+			new mw.Api().saveOption( 'visualeditor-tabs', action ).done( () => {
 				actionWidget.popPending();
 				mw.user.options.set( 'visualeditor-tabs', action );
-				dialog.close( { action: action } );
+				this.close( { action: action } );
 			} );
-		}, this );
+		} );
 	} else {
 		// Parent method
 		return mw.libs.ve.EditingTabDialog.super.prototype.getActionProcess.call( this, action );

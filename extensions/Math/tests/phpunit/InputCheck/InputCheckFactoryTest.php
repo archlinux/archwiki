@@ -9,10 +9,10 @@ use MediaWiki\Extension\Math\InputCheck\MathoidChecker;
 use MediaWiki\Extension\Math\InputCheck\RestbaseChecker;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Message\Message;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWikiIntegrationTestCase;
-use Message;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * @method InputCheckFactory newServiceInstance(string $serviceClass, array $parameterOverrides)
@@ -22,7 +22,9 @@ class InputCheckFactoryTest extends MediaWikiIntegrationTestCase {
 
 	use MockServiceDependenciesTrait;
 
+	/** @var HttpRequestFactory */
 	private $fakeHTTP;
+	/** @var WANObjectCache */
 	private $fakeWAN;
 
 	protected function setUp(): void {

@@ -85,7 +85,7 @@ QUnit.test( 'convert', function ( assert ) {
 	];
 
 	const server = this.server;
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runWikitextStringHandlerTest(
 			assert, server, caseItem.pasteString, caseItem.pasteType,
 			caseItem.parsoidResponse, caseItem.expectedData, caseItem.annotations,

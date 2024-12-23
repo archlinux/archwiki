@@ -60,36 +60,28 @@ ve.ui.NodeWindow.prototype.isEditing = function () {
  * @return {ve.dm.Node|null} Selected node
  */
 ve.ui.NodeWindow.prototype.getSelectedNode = function () {
-	var modelClasses = this.constructor.static.modelClasses,
+	const modelClasses = this.constructor.static.modelClasses,
 		selectedNode = this.getFragment().getSelectedNode();
 
 	if (
 		selectedNode &&
-		modelClasses.some( function ( modelClass ) {
-			return selectedNode instanceof modelClass;
-		} )
+		modelClasses.some( ( modelClass ) => selectedNode instanceof modelClass )
 	) {
 		return selectedNode;
 	}
 	return null;
 };
 
-/**
- * @inheritdoc OO.ui.Window
- */
 ve.ui.NodeWindow.prototype.getSetupProcess = function ( data, process ) {
 	data = data || {};
-	return process.next( function () {
+	return process.next( () => {
 		this.selectedNode = this.getSelectedNode( data );
-	}, this );
+	} );
 };
 
-/**
- * @inheritdoc OO.ui.Window
- */
 ve.ui.NodeWindow.prototype.getTeardownProcess = function ( data, process ) {
 	data = data || {};
-	return process.next( function () {
+	return process.next( () => {
 		this.selectedNode = null;
-	}, this );
+	} );
 };

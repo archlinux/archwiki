@@ -21,12 +21,12 @@
 			"Patrik L.",
 			"Paxt",
 			"Robins7",
+			"Spotter",
 			"Tchoř",
 			"Teslaton",
 			"TheMatto58",
 			"Urbanecm",
-			"Vks",
-			"Spotter"
+			"Vks"
 		]
 	},
 	"abusefilter-desc": "Podrobuje editace automatickým heuristikám",
@@ -70,6 +70,7 @@
 	"action-abusefilter-hide-log": "skrývat záznamy v protokolu zneužití",
 	"action-abusefilter-hidden-log": "prohlížet si skryté záznamy v protokolu zneužití",
 	"action-abusefilter-modify-global": "vytvářet nebo editovat globální filtry zneužití",
+	"action-abusefilter-protected-vars-log": "zobrazit protokoly, které odhalují chráněné proměnné",
 	"abusefilter-log-summary": "Tento protokol obsahuje seznam všech operací zachycených filtry.",
 	"abusefilter-log-search": "Hledat v protokolu zneužití",
 	"abusefilter-log-search-user": "Uživatel:",
@@ -394,6 +395,7 @@
 	"abusefilter-edit-builder-vars-page-title": "Název stránky (bez jmenného prostoru)",
 	"abusefilter-edit-builder-vars-page-prefixedtitle": "Úplný název stránky",
 	"abusefilter-edit-builder-vars-page-age": "Stáří stránky (v sekundách)",
+	"abusefilter-edit-builder-vars-page-last-edit-age": "Čas od poslední úpravy stránky v sekundách ($1)",
 	"abusefilter-edit-builder-vars-movedfrom-id": "ID přesouvané stránky",
 	"abusefilter-edit-builder-vars-movedfrom-ns": "Původní jmenný prostor přesouvané stránky",
 	"abusefilter-edit-builder-vars-movedfrom-title": "Název přesouvané stránky",
@@ -406,8 +408,9 @@
 	"abusefilter-edit-builder-vars-movedto-age": "Stáří stránky, na kterou se přesunuje (v sekundách)",
 	"abusefilter-edit-builder-vars-user-editcount": "Počet uživatelových editací",
 	"abusefilter-edit-builder-vars-user-age": "Stáří uživatelského účtu",
+	"abusefilter-edit-builder-vars-user-unnamed-ip": "IP adresa uživatelského účtu (pouze odhlášení a dočasné účty) ($1)",
 	"abusefilter-edit-builder-vars-user-name": "Uživatelské jméno",
-	"abusefilter-edit-builder-vars-user-type": "Typ uživatelského účtu",
+	"abusefilter-edit-builder-vars-user-type": "Typ uživatelského účtu ($1)",
 	"abusefilter-edit-builder-vars-user-groups": "Skupiny (včetně implicitních), do kterých uživatel patří",
 	"abusefilter-edit-builder-vars-user-rights": "Práva, která má uživatel",
 	"abusefilter-edit-builder-vars-user-blocked": "Jestli je uživatel zablokovaný",
@@ -629,5 +632,8 @@
 	"right-abusefilter-modify-blocked-external-domains": "Vytvořit nebo upravit seznam externích domén, jejichž odkazování je blokováno",
 	"action-abusefilter-modify-blocked-external-domains": "vytvořit nebo upravit seznam externích domén, jejichž odkazování je blokováno",
 	"right-abusefilter-bypass-blocked-external-domains": "Obejít seznam blokovaných externích domén",
-	"action-abusefilter-bypass-blocked-external-domains": "obejít seznam blokovaných externích domén"
+	"action-abusefilter-bypass-blocked-external-domains": "obejít seznam blokovaných externích domén",
+	"abusefilter-protected-vars-log-name": "Protokol proměnných chráněných filtrem proti zneužití",
+	"abusefilter-protected-vars-log-header": "Toto je protokol:\n# Zobrazení chráněných proměnných v podrobnostech protokolu\n# Změn úrovní přístupu uživatelů pro prohlížení chráněných proměnných",
+	"log-action-filter-abusefilter-protected-vars": "Typ akce:"
 }

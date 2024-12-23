@@ -80,6 +80,10 @@ class Notifier {
 					return false;
 				}
 			}
+		} elseif ( $event->getExtraParam( 'noemail' ) ) {
+			// Could be set for API triggered notifications were email is not
+			// requested in API request params
+			return false;
 		}
 
 		$hookRunner = new HookRunner( $services->getHookContainer() );

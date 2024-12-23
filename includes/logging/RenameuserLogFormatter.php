@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Message\Message;
 use MediaWiki\Title\Title;
 
 /**
@@ -32,6 +33,11 @@ class RenameuserLogFormatter extends LogFormatter {
 			// See comments above
 			$params[4] = $params[3];
 			$params[3] = $this->entry->getTarget()->getText();
+		}
+
+		if ( isset( $params[5] ) ) {
+			// Make sure number of edits is formatted
+			$params[5] = Message::numParam( $params[5] );
 		}
 
 		// Nice link to old user page
@@ -85,11 +91,14 @@ class RenameuserLogFormatter extends LogFormatter {
 
 		// Very old log format, everything in comment
 		if ( !isset( $params[3] ) ) {
+			// Message: logentry-renameuser-renameuser-legaciest
 			return "$key-legaciest";
 		} elseif ( !isset( $params[5] ) ) {
+			// Message: logentry-renameuser-renameuser-legacier
 			return "$key-legacier";
 		}
 
+		// Message: logentry-renameuser-renameuser
 		return $key;
 	}
 

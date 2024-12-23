@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"DannyS712",
 			"Matma Rex",
-			"Purodha",
-			"DannyS712"
+			"Purodha"
 		]
 	},
 	"abusefilter-desc": "Dä Meßbruchsfelter deit Änderunge aan Sigge met Heurestikke pröfe.",
@@ -192,7 +192,7 @@
 	"abusefilter-edit-builder-op-bool-not": "nit, et Jäjedeil (<code>!</code>)",
 	"abusefilter-edit-builder-op-bool-and": "un, „beeds“ (<code>&</code>)",
 	"abusefilter-edit-builder-op-bool-or": "ov, udder, „et ein, udder et ander, udder beeds“ (<code>|</code>)",
-	"abusefilter-edit-builder-op-bool-xor": "XOR, exklusief-udder, „et ein, udder et ander, ävver nit beeds“ (^)",
+	"abusefilter-edit-builder-op-bool-xor": "XOR, exklusief-udder, „et ein, udder et ander, ävver nit beeds“ ($1)",
 	"abusefilter-edit-builder-group-misc": "Söns jet",
 	"abusefilter-edit-builder-misc-in": "en dä Bochstave-Reih enthallde (<code lang=\"en\">in</code>)",
 	"abusefilter-edit-builder-misc-contains": "Dat Woot odder dä Ußdrock op de rääschte Sigk eß en däm op de lenke Sigk änthallde (<code lang=\"en\">contains</code>)",
@@ -222,7 +222,7 @@
 	"abusefilter-edit-builder-funcs-rescape": "Dä <i lang=\"en\">escape string</i> als nomaale Täx en enem rejolähre Ußdrok (<code lang=\"en>rescape</code>)",
 	"abusefilter-edit-builder-funcs-set_var": "Don dä Varijable ene Wäät jevve (<code lang=\"en\">set_var</code>)",
 	"abusefilter-edit-builder-group-vars": "Varrijabelle",
-	"abusefilter-edit-builder-vars-timestamp": "Dä Änderong iere <code lang=\"en\">Unix</code>-Zick_Schtämpel ",
+	"abusefilter-edit-builder-vars-timestamp": "Dä Änderong iere <code lang=\"en\">Unix</code>-Zick_Schtämpel",
 	"abusefilter-edit-builder-vars-accountname": "Däm Metmaacher singe Name — wi hä ennjeresht wood",
 	"abusefilter-edit-builder-vars-action": "Akßjuhn",
 	"abusefilter-edit-builder-vars-addedlines": "De Reije, di bemm Ändere dobeij jekumme sen",

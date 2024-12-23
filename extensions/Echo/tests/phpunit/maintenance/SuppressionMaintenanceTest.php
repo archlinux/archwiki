@@ -1,7 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Maintenance;
+
 use MediaWiki\Extension\Notifications\SuppressionRowUpdateGenerator;
 use MediaWiki\Title\Title;
+use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -136,7 +139,7 @@ class SuppressionMaintenanceTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provider_updateRow
 	 */
-	public function testUpdateRow( $message, array $expected, array $input, callable $callable = null ) {
+	public function testUpdateRow( $message, array $expected, array $input, ?callable $callable = null ) {
 		$gen = new SuppressionRowUpdateGenerator;
 		if ( $callable ) {
 			call_user_func( $callable, $this, $gen );

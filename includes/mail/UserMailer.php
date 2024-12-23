@@ -1,8 +1,5 @@
 <?php
-
 /**
- * Classes used to send e-mails
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -35,9 +32,17 @@ use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
 
 /**
+ * @defgroup Mail Mail
+ */
+
+/**
  * Collection of static functions for sending mail
+ *
+ * @since 1.12
+ * @ingroup Mail
  */
 class UserMailer {
+	/** @var string */
 	private static $mErrorString;
 
 	/**
@@ -84,11 +89,16 @@ class UserMailer {
 	}
 
 	/**
-	 * This function will perform a direct (authenticated) login to
-	 * a SMTP Server to use for mail relaying if 'wgSMTP' specifies an
-	 * array of parameters. It requires PEAR:Mail to do that.
-	 * Otherwise it just uses the standard PHP 'mail' function.
+	 * Send a raw email via SMTP (if $wgSMTP is set) or otherwise via PHP mail().
 	 *
+	 * This function perform a direct (authenticated) login to a SMTP server,
+	 * to use for mail relaying, if 'wgSMTP' specifies an array of parameters.
+	 * This uses the pear/mail package.
+	 *
+	 * Otherwise it uses the standard PHP 'mail' function, which in turn relies
+	 * on the server's sendmail configuration.
+	 *
+	 * @since 1.12
 	 * @param MailAddress|MailAddress[] $to Recipient's email (or an array of them)
 	 * @param MailAddress $from Sender's email
 	 * @param string $subject Email's subject.
@@ -441,21 +451,6 @@ class UserMailer {
 	 */
 	public static function sanitizeHeaderValue( $val ) {
 		return strtr( $val, [ "\r" => '', "\n" => '' ] );
-	}
-
-	/**
-	 * Converts a string into a valid RFC 822 "phrase", such as is used for the sender name
-	 * @deprecated 1.38 This method has not been used by anything
-	 * @param string $phrase
-	 * @return string
-	 */
-	public static function rfc822Phrase( $phrase ) {
-		wfDeprecated( __METHOD__, '1.38' );
-		// Remove line breaks
-		$phrase = self::sanitizeHeaderValue( $phrase );
-		// Remove quotes
-		$phrase = str_replace( '"', '', $phrase );
-		return '"' . $phrase . '"';
 	}
 
 	/**

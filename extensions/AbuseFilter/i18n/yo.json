@@ -3,12 +3,13 @@
 		"authors": [
 			"Demmy",
 			"Fitoschido",
-			"Wikicology",
-			"SolutionTomi"
+			"SolutionTomi",
+			"Wikicology"
 		]
 	},
 	"abusefilter-disallowed": "Ìgbéṣe yìí ti jẹ́ dídámọ̀ fúnrararẹ̀ bíi eléwu, bíi bẹ́ẹ̀ ó ti jẹ́ dídílọ́nà.\nTí ẹ bá nígbàgbọ́ pé àtúnṣe yín jẹ́ awúlò, ẹ jọ̀wọ́ ẹ fi tó olùmójútó kan létí ohun tí ẹ fẹ́ ṣe.\nÌjúwe ní sókí òfin ìbàjẹ́ tí ó bá ìgbéṣe yín mu ni: $1",
 	"abusefilter-blocked-display": "Ìgbéṣe yìí ti jẹ́ dídámọ̀ fúnrararẹ̀ bíi eléwu, bíi bẹ́ẹ̀ ẹ ti jẹ́ dídílọ́nà láti ṣeé.\nBákannáà láti dá àbò bo {{SITENAME}}, àpamọ́ oníṣe yín àti gbogbo àwọn àdírẹ́sì IP tí wọ́n jọṣe mọ́ọn ti jẹ́ dídílọ́nà láti ṣàtúnṣe.\nTó bá jẹ́ pé àsìṣe ló ṣẹlẹ̀, ẹ jọ̀wọ́ ẹ fi tó olùmójútó kan létí.\nÌjúwe ní sókí òfin ìbàjẹ́ tí ó bá ìgbéṣe yín mu ni: $1",
+	"action-abusefilter-protected-vars-log": "Wo àwọn àkọ́lẹ̀ tí ó ṣàfihàn nǹkan onírúurú ti a fi pamọ́",
 	"abusefilter-log-search-user": "Oníṣe:",
 	"abusefilter-log-search-filter": "Nọ́mbà Ìdámọ̀ Ajọ̀:",
 	"abusefilter-log-search-title": "Àkọlé:",
@@ -75,5 +76,7 @@
 	"abusefilter-test-page": "Àwọn ìyípadà tó ṣẹlẹ̀ sí ojúewé:",
 	"abusefilter-changeslist-examine": "ṣàgbéwò",
 	"abusefilter-examine-legend": "Àṣàyàn àwọn ìyípadà",
-	"abusefilter-examine-submit": "Ṣàwárí"
+	"abusefilter-examine-submit": "Ṣàwárí",
+	"abusefilter-protected-vars-log-header": "Èyí ni àkọ́lẹ̀ ti:\n\n# wíwò nǹkan onírúurú ti a fi pamọ́\n\n# ṣíṣe àyípadà sí ìpele ìbáwolé fún àwọn olùṣàmúlò fún wíwò nǹkan onírúurú ti a fi pamọ́",
+	"log-action-filter-abusefilter-protected-vars": "Irú iṣẹ́ àgbéṣe"
 }

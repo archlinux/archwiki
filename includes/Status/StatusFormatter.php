@@ -20,18 +20,20 @@
 
 namespace MediaWiki\Status;
 
-use ApiMessage;
-use ApiRawMessage;
-use Language;
+use MediaWiki\Api\ApiMessage;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Message;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\StubObject\StubUserLang;
 use MessageCache;
 use MessageLocalizer;
-use MessageSpecifier;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 use StatusValue;
 use UnexpectedValueException;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Formatter for StatusValue objects.
@@ -44,10 +46,16 @@ class StatusFormatter {
 
 	private MessageLocalizer $messageLocalizer;
 	private MessageCache $messageCache;
+	private LoggerInterface $logger;
 
-	public function __construct( MessageLocalizer $messageLocalizer, MessageCache $messageCache ) {
+	public function __construct(
+		MessageLocalizer $messageLocalizer,
+		MessageCache $messageCache,
+		LoggerInterface $logger
+	) {
 		$this->messageLocalizer = $messageLocalizer;
 		$this->messageCache = $messageCache;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -72,6 +80,13 @@ class StatusFormatter {
 	/**
 	 * Get the error list as a wikitext formatted list
 	 *
+	 * All message parameters that were provided as strings will be escaped with wfEscapeWikiText.
+	 * This is mostly a historical accident and often undesirable (T368821).
+	 * - To avoid this behavior when producing the Status, pass MessageSpecifier objects to methods
+	 *   such as `$status->fatal()`, instead of separate key and params parameters.
+	 * - To avoid this behavior when consuming the Status, use the `$status->getMessages()` method
+	 *   instead, and display each message separately (or combine then with `Message::listParams()`).
+	 *
 	 * @param StatusValue $status
 	 * @param array $options An array of options, supporting the following keys:
 	 * - 'shortContext' (string|false|null) A short enclosing context message name, to
@@ -90,16 +105,18 @@ class StatusFormatter {
 		$rawErrors = $status->getErrors();
 		if ( count( $rawErrors ) === 0 ) {
 			if ( $status->isOK() ) {
-				$status->fatal(
-					'internalerror_info',
-					__METHOD__ . " called for a good result, this is incorrect\n"
-				);
+				$errMsg = __METHOD__ . " called for a good result, this is incorrect\n";
 			} else {
-				$status->fatal(
-					'internalerror_info',
-					__METHOD__ . ": Invalid result object: no error text but not OK\n"
-				);
+				$errMsg = __METHOD__ . ": Invalid result object: no error text but not OK\n";
 			}
+
+			$status->fatal(
+				'internalerror_info',
+				$errMsg
+			);
+
+			$this->logger->warning( $errMsg, [ 'exception' => new RuntimeException() ] );
+
 			$rawErrors = $status->getErrors(); // just added a fatal
 		}
 
@@ -115,7 +132,7 @@ class StatusFormatter {
 			foreach ( $errors as &$error ) {
 				$error = $error->plain();
 			}
-			$s = '* ' . implode( "\n* ", $errors ) . "\n";
+			$s = "<ul>\n<li>\n" . implode( "\n</li>\n<li>\n", $errors ) . "\n</li>\n</ul>\n";
 			if ( $longContext ) {
 				$s = $this->msgInLang( $longContext, $lang, $s )->plain();
 			} elseif ( $shortContext ) {
@@ -127,6 +144,13 @@ class StatusFormatter {
 
 	/**
 	 * Get a bullet list of the errors as a Message object.
+	 *
+	 * All message parameters that were provided as strings will be escaped with wfEscapeWikiText.
+	 * This is mostly a historical accident and often undesirable (T368821).
+	 * - To avoid this behavior when producing the Status, pass MessageSpecifier objects to methods
+	 *   such as `$status->fatal()`, instead of separate key and params parameters.
+	 * - To avoid this behavior when consuming the Status, use the `$status->getMessages()` method
+	 *   instead, and display each message separately (or combine then with `Message::listParams()`).
 	 *
 	 * $shortContext and $longContext can be used to wrap the error list in some text.
 	 * $shortContext will be preferred when there is a single error; $longContext will be
@@ -158,16 +182,18 @@ class StatusFormatter {
 		$rawErrors = $status->getErrors();
 		if ( count( $rawErrors ) === 0 ) {
 			if ( $status->isOK() ) {
-				$status->fatal(
-					'internalerror_info',
-					__METHOD__ . " called for a good result, this is incorrect\n"
-				);
+				$errMsg = __METHOD__ . " called for a good result, this is incorrect\n";
 			} else {
-				$status->fatal(
-					'internalerror_info',
-					__METHOD__ . ": Invalid result object: no error text but not OK\n"
-				);
+				$errMsg = __METHOD__ . ": Invalid result object: no error text but not OK\n";
 			}
+
+			$status->fatal(
+				'internalerror_info',
+				$errMsg
+			);
+
+			$this->logger->warning( $errMsg, [ 'exception' => new RuntimeException() ] );
+
 			$rawErrors = $status->getErrors(); // just added a fatal
 		}
 		if ( count( $rawErrors ) === 1 ) {
@@ -214,7 +240,6 @@ class StatusFormatter {
 			// identical to getMessage( false, false, 'en' ) when there's just one error
 			$message = $this->getErrorMessage( $errors[0], [ 'lang' => 'en' ] );
 
-			$text = null;
 			if ( in_array( get_class( $message ), [ Message::class, ApiMessage::class ], true ) ) {
 				// Fall back to getWikiText for rawmessage, which is just a placeholder for non-translated text.
 				// Turning the entire message into a context parameter wouldn't be useful.
@@ -223,8 +248,10 @@ class StatusFormatter {
 				}
 				// $1,$2... will be left as-is when no parameters are provided.
 				$text = $this->msgInLang( $message->getKey(), 'en' )->plain();
-			} elseif ( in_array( get_class( $message ), [ RawMessage::class, ApiRawMessage::class ], true ) ) {
-				$text = $message->getKey();
+				$params = $message->getParams();
+			} elseif ( $message instanceof RawMessage ) {
+				$text = $message->getTextOfRawMessage();
+				$params = $message->getParamsOfRawMessage();
 			} else {
 				// Unknown Message subclass, we can't be sure how it marks parameters. Fall back to getWikiText.
 				return [ $this->getWikiText( $status, $options ), [] ];
@@ -232,10 +259,9 @@ class StatusFormatter {
 
 			$context = [];
 			$i = 1;
-			foreach ( $message->getParams() as $param ) {
-				if ( is_array( $param ) && count( $param ) === 1 ) {
-					// probably Message::numParam() or similar
-					$param = reset( $param );
+			foreach ( $params as $param ) {
+				if ( $param instanceof MessageParam ) {
+					$param = $param->getValue();
 				}
 				if ( is_int( $param ) || is_float( $param ) || is_string( $param ) ) {
 					$context["parameter$i"] = $param;
@@ -302,6 +328,13 @@ class StatusFormatter {
 
 	/**
 	 * Get the error message as HTML. This is done by parsing the wikitext error message
+	 *
+	 * All message parameters that were provided as strings will be escaped with wfEscapeWikiText.
+	 * This is mostly a historical accident and often undesirable (T368821).
+	 * - To avoid this behavior when producing the Status, pass MessageSpecifier objects to methods
+	 *   such as `$status->fatal()`, instead of separate key and params parameters.
+	 * - To avoid this behavior when consuming the Status, use the `$status->getMessages()` method
+	 *   instead, and display each message separately (or combine then with `Message::listParams()`).
 	 *
 	 * @param StatusValue $status
 	 * @param array $options An array of options, supporting the following keys:

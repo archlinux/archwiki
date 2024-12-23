@@ -9,7 +9,7 @@
 QUnit.module( 've.init.ConflictableStorage', {
 	beforeEach: function () {
 		// Fake time in seconds
-		var mockNow = 1000000;
+		const mockNow = 1000000;
 		this.now = Date.now;
 		this.mockNow = mockNow;
 		Date.now = function () {
@@ -21,8 +21,8 @@ QUnit.module( 've.init.ConflictableStorage', {
 	}
 } );
 
-QUnit.test( 'Basic methods', function ( assert ) {
-	var store = {},
+QUnit.test( 'Basic methods', ( assert ) => {
+	const store = {},
 		storage = ve.init.platform.createSessionStorage( store );
 
 	// Basic methods still work
@@ -40,7 +40,7 @@ QUnit.test( 'Basic methods', function ( assert ) {
 } );
 
 QUnit.test( 'Conflict handling', function ( assert ) {
-	var store = {},
+	const store = {},
 		conflictableKeys = {
 			foo: true,
 			bar: true,
@@ -50,7 +50,7 @@ QUnit.test( 'Conflict handling', function ( assert ) {
 		storageB = ve.init.platform.createSessionStorage( store, true );
 
 	function getData( s ) {
-		var copy = ve.copy( s );
+		const copy = ve.copy( s );
 		// eslint-disable-next-line no-underscore-dangle
 		delete copy.__conflictId;
 		return copy;

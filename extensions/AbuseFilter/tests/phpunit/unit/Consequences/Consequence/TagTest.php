@@ -9,14 +9,10 @@ use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWikiUnitTestCase;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Tag
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Tag
  */
 class TagTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute() {
 		$tagsToAdd = [ 'tag1', 'tag2' ];
 		$specifier = $this->createMock( ActionSpecifier::class );

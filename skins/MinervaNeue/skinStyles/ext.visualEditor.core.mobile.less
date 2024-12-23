@@ -1,0 +1,25 @@
+@import 'mediawiki.skin.variables.less';
+
+@media screen {
+	.skin-theme-clientpref-night {
+		/**
+		* FIXME: Can be removed when T369092 is resolved
+		*/
+		.ve-ce-branchNode-blockSlug,
+		body p.ve-ce-branchNode-newSlug {
+			background-color: rgba( 241, 247, 251, 0.1 );
+		}
+	}
+}
+
+@media screen and ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		/**
+		 * FIXME: Can be removed when T369092 is resolved
+		 */
+		.ve-ce-branchNode-blockSlug,
+		body p.ve-ce-branchNode-newSlug {
+			background-color: rgba( 241, 247, 251, 0.1 );
+		}
+	}
+}

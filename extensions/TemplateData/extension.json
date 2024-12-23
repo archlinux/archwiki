@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"APIModules": {
 		"templatedata": "MediaWiki\\Extension\\TemplateData\\Api\\ApiTemplateData"
@@ -144,7 +144,6 @@
 				"templatedata-modal-button-importParams",
 				"templatedata-modal-button-map",
 				"templatedata-modal-button-removemap",
-				"templatedata-modal-button-restoreparam",
 				"templatedata-modal-button-saveparam",
 				"templatedata-modal-confirmcancel",
 				"templatedata-modal-current-language",

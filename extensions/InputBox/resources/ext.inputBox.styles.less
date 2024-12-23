@@ -4,10 +4,19 @@
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+
+	.cdx-checkbox__icon {
+		text-align: initial;
+	}
+}
+
+.bodySearchWrap {
+	display: flex;
 }
 
 .mw-inputbox-inline {
-	display: inline;
+	display: inline-flex;
+	min-width: auto;
 }
 
 .mw-inputbox-element.mw-inputbox-element {
@@ -19,10 +28,49 @@
 	margin-bottom: 0.5em;
 }
 
-.mw-inputbox-createbox:required:invalid ~ .mw-ui-button {
-	// appear like .mw-ui-input:disabled
-	background-color: @background-color-disabled;
-	color: @color-inverted;
-	border-color: @border-color-disabled;
-	cursor: @cursor-base--disabled;
+/* Allow support for the size attribute if it was set */
+.mw-inputbox-input[ size ],
+.mw-inputbox-createbox[ size ] {
+	width: auto !important;
+}
+
+form.mw-inputbox-form-inline {
+	display: flex;
+	justify-content: center;
+	column-gap: 4px;
+
+	.cdx-text-input {
+		min-width: auto !important;
+	}
+}
+
+form.mw-inputbox-form {
+	line-height: 0.6;
+
+	.cdx-text-input {
+		display: flex;
+		justify-content: center;
+	}
+
+	.mw-inputbox-label {
+		display: flex;
+		align-items: center;
+	}
+
+	.mw-inputbox-inline {
+		.cdx-text-input {
+			display: inline-flex;
+			min-width: auto;
+		}
+	}
+}
+
+form.createbox {
+	&:invalid .cdx-button {
+		// appear like .mw-ui-input:disabled
+		background-color: @background-color-disabled !important;
+		color: @color-inverted !important;
+		border-color: @border-color-disabled !important;
+		cursor: @cursor-base--disabled !important;
+	}
 }

@@ -15,15 +15,8 @@ use MediaWikiIntegrationTestCase;
 class UnblockUserTest extends MediaWikiIntegrationTestCase {
 	use MockAuthorityTrait;
 
-	/**
-	 * @var User
-	 */
-	private $user;
-
-	/**
-	 * @var UnblockUserFactory
-	 */
-	private $unblockUserFactory;
+	private User $user;
+	private UnblockUserFactory $unblockUserFactory;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -39,7 +32,7 @@ class UnblockUserTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Block\UnblockUser::unblock
 	 */
 	public function testValidUnblock() {
-		$performer = $this->mockAnonUltimateAuthority();
+		$performer = $this->mockRegisteredUltimateAuthority();
 		$block = new DatabaseBlock( [
 			'address' => $this->user->getName(),
 			'by' => $performer->getUser()

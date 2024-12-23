@@ -9,11 +9,11 @@
  *
  * @class
  * @extends OO.ui.ProcessDialog
- * @mixins ve.ui.FragmentWindow
+ * @mixes ve.ui.FragmentWindow
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {boolean} [padded=true] Inspector form area has padding,
+ * @param {boolean} [config.padded=true] Inspector form area has padding,
  *      set to false for edge-to-edge layouts, e.g. IndexLayout
  */
 ve.ui.FragmentInspector = function VeUiFragmentInspector( config ) {
@@ -109,15 +109,15 @@ ve.ui.FragmentInspector.prototype.initialize = function () {
  */
 ve.ui.FragmentInspector.prototype.getActionProcess = function ( action ) {
 	if ( action === 'done' ) {
-		return new OO.ui.Process( function () {
+		return new OO.ui.Process( () => {
 			this.close( { action: 'done' } );
-		}, this );
+		} );
 	}
 	return ve.ui.FragmentInspector.super.prototype.getActionProcess.call( this, action );
 };
 
 /**
- * @inheritdoc OO.ui.Dialog
+ * @inheritdoc
  */
 ve.ui.FragmentInspector.prototype.getActionWidgetConfig = function ( config ) {
 	// Mixin method
@@ -131,7 +131,7 @@ ve.ui.FragmentInspector.prototype.getActionWidgetConfig = function ( config ) {
  */
 ve.ui.FragmentInspector.prototype.getSetupProcess = function ( data ) {
 	// Parent method
-	var process = ve.ui.FragmentInspector.super.prototype.getSetupProcess.call( this, data );
+	const process = ve.ui.FragmentInspector.super.prototype.getSetupProcess.call( this, data );
 	// Mixin method
 	return ve.ui.FragmentWindow.prototype.getSetupProcess.call( this, data, process );
 };
@@ -141,7 +141,7 @@ ve.ui.FragmentInspector.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.FragmentInspector.prototype.getTeardownProcess = function ( data ) {
 	// Parent method
-	var process = ve.ui.FragmentInspector.super.prototype.getTeardownProcess.call( this, data );
+	const process = ve.ui.FragmentInspector.super.prototype.getTeardownProcess.call( this, data );
 	// Mixin method
 	return ve.ui.FragmentWindow.prototype.getTeardownProcess.call( this, data, process );
 };

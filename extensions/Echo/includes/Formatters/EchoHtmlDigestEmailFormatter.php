@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Language;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\User;
@@ -152,9 +152,9 @@ EOF;
 
 	/**
 	 * @param EchoEventPresentationModel[] $models
-	 * @return array [ 'category name' => EchoEventPresentationModel[] ]
+	 * @return array<string,EchoEventPresentationModel[]> [ 'category name' => EchoEventPresentationModel[] ]
 	 */
-	private function groupByCategory( array $models ) {
+	private function groupByCategory( array $models ): array {
 		$eventsByCategory = [];
 		foreach ( $models as $model ) {
 			$eventsByCategory[$model->getCategory()][] = $model;

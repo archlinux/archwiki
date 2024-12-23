@@ -14,7 +14,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "זה חוק מוסתר.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "החוק הזה משפיע על כותרת הדף.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "קוד שפה",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<בלתי־תקין>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>בלתי־תקין</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "שפה",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "מקור",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "יעד",

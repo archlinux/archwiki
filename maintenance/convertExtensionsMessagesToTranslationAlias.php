@@ -1,6 +1,10 @@
 <?php
 
+use MediaWiki\Json\FormatJson;
+
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Convert existing ExtensionMessagesFiles to JSON files in different language codes that can be used as
@@ -76,5 +80,7 @@ class ConvertExtensionsMessagesToTranslationAlias extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ConvertExtensionsMessagesToTranslationAlias::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

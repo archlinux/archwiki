@@ -1,6 +1,8 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Language\LanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
 use Wikimedia\TestingAccessWrapper;
@@ -8,13 +10,10 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group large
  * @group Language
- * @coversDefaultClass \MediaWiki\Languages\LanguageConverterFactory
+ * @covers \MediaWiki\Languages\LanguageConverterFactory
  */
 class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 	/**
-	 * @covers ::__construct
-	 * @covers ::instantiateConverter
-	 * @covers ::getLanguageConverter
 	 * @dataProvider codeProvider
 	 */
 	public function testLanguageConverters(
@@ -56,11 +55,6 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::instantiateConverter
-	 * @covers ::getLanguageConverter
-	 */
 	public function testCreateFromCodeEnPigLatin() {
 		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$factory = new LanguageConverterFactory(
@@ -94,9 +88,6 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
-	 * @covers ::instantiateConverter
-	 * @covers ::getLanguageConverter
 	 * @dataProvider booleanProvider
 	 */
 	public function testDisabledBooleans( $pigLatinDisabled, $conversionDisabled, $titleDisabled ) {
@@ -141,11 +132,6 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::instantiateConverter
-	 * @covers ::getLanguageConverter
-	 */
 	public function testDefaultContentLanguageFallback() {
 		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$factory = new LanguageConverterFactory(
@@ -246,7 +232,7 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 			'kw', 'ky', 'la', 'lad', 'lb', 'lbe', 'lez', 'lfn', 'lg', 'li', 'lij', 'liv',
 			'lki', 'lmo', 'ln', 'lo', 'lrc', 'loz', 'lt', 'ltg', 'lus', 'luz', 'lv',
 			'lzh', 'lzz', 'mai', 'map-bms', 'mdf', 'mg', 'mh', 'mhr', 'mi', 'min', 'mk',
-			'ml', 'mn', 'mni', 'mnw', 'mo', 'mr', 'mrj', 'ms', 'mt', 'mus', 'mwl', 'my',
+			'ml', 'mn', 'mnw', 'mo', 'mr', 'mrj', 'ms', 'mt', 'mus', 'mwl', 'my',
 			'myv', 'mzn', 'na', 'nah', 'nan', 'nap', 'nb', 'nds', 'nds-nl', 'ne', 'new',
 			'ng', 'niu', 'nl', 'nl-informal', 'nn', 'no', 'nov', 'nqo', 'nrm', 'nso',
 			'nv', 'ny', 'nys', 'oc', 'olo', 'om', 'or', 'os', 'pa', 'pag', 'pam', 'pap',
@@ -262,7 +248,7 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 			'tt-cyrl', 'tt-latn', 'tum', 'tw', 'ty', 'tyv', 'tzm', 'udm', 'ug', 'ug-arab',
 			'ug-latn', 'uk', 'ur', 'uz-cyrl', 'uz-latn', 've', 'vec', 'vep', 'vi', 'vls',
 			'vmf', 'vo', 'vot', 'vro', 'wa', 'war', 'wo', 'wuu-hans', 'wuu-hant', 'xal',
-			'xh', 'xmf', 'xsy', 'yi', 'yo', 'yue', 'yue-hans', 'yue-hant', 'za', 'zea', 'zgh',
+			'xh', 'xmf', 'xsy', 'yi', 'yo', 'yue', 'yue-hans', 'yue-hant', 'za', 'zea',
 			'zh-classical', 'zh-cn', 'zh-hans', 'zh-hant', 'zh-hk', 'zh-min-nan', 'zh-mo',
 			'zh-my', 'zh-sg', 'zh-tw', 'zu',
 		];
@@ -342,6 +328,17 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 				'ku' => 'bidirectional',
 				'ku-arab' => 'bidirectional',
 				'ku-latn' => 'bidirectional'
+			]
+		];
+
+		yield 'mni' => [
+			'mni', 'mni', MniConverter::class,
+			[ 'mni', 'mni-beng' ],
+			[
+				'mni-beng' => 'mni'
+			], [], [], [
+				'mni' => 'bidirectional',
+				'mni-beng' => 'bidirectional'
 			]
 		];
 
@@ -445,6 +442,15 @@ class LanguageConverterFactoryTest extends MediaWikiLangTestCase {
 				'wuu' => 'disable',
 				'wuu-hans' => 'bidirectional',
 				'wuu-hant' => 'bidirectional'
+			]
+		];
+
+		yield 'zgh' => [
+			'zgh', 'zgh', ZghConverter::class,
+			[ 'zgh', 'zgh-latn' ],
+			[], [], [], [
+				'zgh' => 'bidirectional',
+				'zgh-latn' => 'bidirectional'
 			]
 		];
 

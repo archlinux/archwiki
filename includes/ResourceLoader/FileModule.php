@@ -24,7 +24,6 @@ namespace MediaWiki\ResourceLoader;
 
 use CSSJanus;
 use Exception;
-use ExtensionRegistry;
 use FileContentsHasher;
 use InvalidArgumentException;
 use LogicException;
@@ -32,7 +31,7 @@ use MediaWiki\Languages\LanguageFallback;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
-use ObjectCache;
+use MediaWiki\Registration\ExtensionRegistry;
 use RuntimeException;
 use Wikimedia\Minify\CSSMin;
 use Wikimedia\RequestTimeout\TimeoutException;
@@ -171,8 +170,8 @@ class FileModule extends Module {
 	 */
 	public function __construct(
 		array $options = [],
-		string $localBasePath = null,
-		string $remoteBasePath = null
+		?string $localBasePath = null,
+		?string $remoteBasePath = null
 	) {
 		// Flag to decide whether to automagically add the mediawiki.template module
 		$hasTemplates = false;
@@ -282,10 +281,8 @@ class FileModule extends Module {
 		// The different ways these checks are done, and their ordering, look very silly,
 		// but were preserved for backwards-compatibility just in case. Tread lightly.
 
-		if ( $remoteBasePath === null ) {
-			$remoteBasePath = MediaWikiServices::getInstance()->getMainConfig()
-				->get( MainConfigNames::ResourceBasePath );
-		}
+		$remoteBasePath ??= MediaWikiServices::getInstance()->getMainConfig()
+			->get( MainConfigNames::ResourceBasePath );
 
 		if ( isset( $options['remoteExtPath'] ) ) {
 			$extensionAssetsPath = MediaWikiServices::getInstance()->getMainConfig()
@@ -485,7 +482,7 @@ class FileModule extends Module {
 	 * @param Context|null $context
 	 * @return string[] List of module names
 	 */
-	public function getDependencies( Context $context = null ) {
+	public function getDependencies( ?Context $context = null ) {
 		return $this->dependencies;
 	}
 
@@ -551,8 +548,9 @@ class FileModule extends Module {
 		$expandedPackageFiles = $this->expandPackageFiles( $context );
 		if ( $expandedPackageFiles ) {
 			foreach ( $expandedPackageFiles['files'] as $fileInfo ) {
-				$filePath = $fileInfo['filePath'] ?? $fileInfo['versionFilePath'] ?? null;
-				if ( $filePath instanceof FilePath ) {
+				if ( isset( $fileInfo['filePath'] ) ) {
+					/** @var FilePath $filePath */
+					$filePath = $fileInfo['filePath'];
 					$files[] = $filePath->getLocalPath();
 				}
 			}
@@ -1025,6 +1023,7 @@ class FileModule extends Module {
 				/* $swapLtrRtlInURL = */ true,
 				/* $swapLeftRightInURL = */ false
 			);
+			$this->hasGeneratedStyles = true;
 		}
 
 		$localDir = dirname( $localPath );
@@ -1089,7 +1088,8 @@ class FileModule extends Module {
 		static $cache;
 		// @TODO: dependency injection
 		if ( !$cache ) {
-			$cache = ObjectCache::getLocalServerInstance( CACHE_ANYTHING );
+			$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()
+				->getLocalServerInstance( CACHE_ANYTHING );
 		}
 
 		$skinName = $context->getSkin();
@@ -1101,11 +1101,14 @@ class FileModule extends Module {
 
 		$vars = $this->getLessVars( $context );
 		// Construct a cache key from a hash of the LESS source, and a hash digest
-		// of the LESS variables used for compilation.
+		// of the LESS variables and import dirs used for compilation.
 		ksort( $vars );
 		$compilerParams = [
 			'vars' => $vars,
 			'importDirs' => $importDirs,
+			// CodexDevelopmentDir affects import path mapping in ResourceLoader::getLessCompiler(),
+			// so take that into account too
+			'codexDevDir' => $this->getConfig()->get( MainConfigNames::CodexDevelopmentDir )
 		];
 		$key = $cache->makeGlobalKey(
 			'resourceloader-less',
@@ -1127,7 +1130,7 @@ class FileModule extends Module {
 			// T253055: store the implicit dependency paths in a form relative to any install
 			// path so that multiple version of the application can share the cache for identical
 			// less stylesheets. This also avoids churn during application updates.
-			$files = $compiler->AllParsedFiles();
+			$files = $compiler->getParsedFiles();
 			$data = [
 				'css'   => $css,
 				'files' => Module::getRelativePaths( $files ),

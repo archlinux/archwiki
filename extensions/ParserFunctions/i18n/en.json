@@ -7,6 +7,7 @@
 	"pfunc_time_too_long": "Error: Too many #time calls.",
 	"pfunc_time_too_big": "Error: #time only supports years up to 9999.",
 	"pfunc_time_too_small": "Error: #time only supports years from 0.",
+	"pfunc_timef_bad_format": "Error: invalid format for #timef",
 	"pfunc_rel2abs_invalid_depth": "Error: Invalid depth in path: \"$1\" (tried to access a node above the root node).",
 	"pfunc_expr_stack_exhausted": "Expression error: Stack exhausted.",
 	"pfunc_expr_unexpected_number": "Expression error: Unexpected number.",

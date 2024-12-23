@@ -15,12 +15,10 @@ trait SuiteEventsTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function run( TestResult $result = null ): TestResult {
+	public function run( ?TestResult $result = null ): TestResult {
 		// setUp / tearDown handling based on code in TestSuite::run()
 		// (except in the parent only beforeClass / afterClass are run)
-		if ( $result === null ) {
-			$result = $this->createResult();
-		}
+		$result ??= $this->createResult();
 
 		// Don't run events if there are no tests (T292239)
 		if ( count( $this ) === 0 ) {

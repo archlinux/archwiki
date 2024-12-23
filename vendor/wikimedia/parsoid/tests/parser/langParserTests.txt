@@ -27,6 +27,12 @@ Template:1x
 {{{1}}}
 !! endarticle
 
+!! article
+Тест
+!! text
+sr-el article variant
+!! endarticle
+
 ## sr-ec ##
 
 !! test
@@ -221,7 +227,7 @@ wgParserEnableLegacyMediaDOM=false
 </p><p><span class="mw-default-size" typeof="mw:File"><a href="/wiki/%D0%94%D0%B0%D1%82%D0%BE%D1%82%D0%B5%D0%BA%D0%B0:Foobar.jpg" class="mw-file-description"><img alt="&quot; onload=&quot;alert(1)&quot; data-foo=&quot;" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" /></a></span>
 </p>
 !! html/parsoid
-<p><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"oneway":[{"f":"foAjrjvi","l":"sr-el","t":"\" onload=\"alert(1)\" data-foo=\""}]}'/></p>
+<p class="mw-empty-elt"><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"oneway":[{"f":"foAjrjvi","l":"sr-el","t":"\" onload=\"alert(1)\" data-foo=\""}]}'/></p>
 
 <p><span class="mw-default-size" typeof="mw:File mw:ExpandedAttrs" about="#mwt1" data-mw='{"attribs":[["alt",{"html":"alt=&lt;span typeof=\"mw:LanguageVariant\" data-mw-variant=&apos;{\"disabled\":{\"t\":\"\"}}&apos; data-parsoid=&apos;{\"fl\":[],\"dsr\":[76,80,null,2]}&apos;>&lt;/span>foAjrjvi&lt;span typeof=\"mw:LanguageVariant\" data-mw-variant=&apos;{\"disabled\":{\"t\":\"\"}}&apos; data-parsoid=&apos;{\"fl\":[],\"dsr\":[88,92,null,2]}&apos;>&lt;/span>","txt":"foAjrjvi"}]]}'><a href="./Датотека:Foobar.jpg" class="mw-file-description"><img alt="foAjrjvi" resource="./Датотека:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" data-parsoid='{"a":{"resource":"./Датотека:Foobar.jpg","height":"220","width":"1941"},"sa":{"resource":"File:Foobar.jpg"}}' class="mw-file-element"/></a></span></p>
 !! end
@@ -229,8 +235,6 @@ wgParserEnableLegacyMediaDOM=false
 ###
 ### Language variants related tests
 ###
-
-# Parsoid does not convert links; PHP will do any necessary redirects.
 
 !! test
 Self-link in language variants
@@ -242,7 +246,7 @@ Both [[Dunav]] and [[Дунав]] are names for this river.
 <p>Both <a class="mw-selflink selflink">Dunav</a> and <a class="mw-selflink selflink">Дунав</a> are names for this river.
 </p>
 !! html/parsoid
-<p>Both <a rel="mw:WikiLink" href="./Dunav" class="mw-selflink selflink">Dunav</a> and <a rel="mw:WikiLink" href="./Дунав" class="mw-selflink selflink">Дунав</a> are names for this river.</p>
+<p>Both <a rel="mw:WikiLink" href="./Dunav" class="mw-selflink selflink">Dunav</a> and <a rel="mw:WikiLink" href="./Dunav" class="mw-selflink selflink" data-parsoid='{"stx":"simple","a":{"href":"./Dunav","title":"Dunav"},"sa":{"href":"Дунав","title":"Дунав"}}'>Дунав</a> are names for this river.</p>
 !! end
 
 !! article
@@ -251,7 +255,6 @@ Both [[Dunav]] and [[Дунав]] are names for this river.
 content
 !! endarticle
 
-# T258856: Parsoid doesn't handle redlink processing correctly in this case
 !! test
 Link to another existing title shouldn't be parsed as self-link even if it's a variant of this title
 !! options
@@ -262,24 +265,22 @@ title=[[Duna]] language=sr
 <p><a href="/wiki/%D0%94%D1%83%D0%BD%D0%B0" title="Дуна">Дуна</a> is not a self-link while <a class="mw-selflink selflink">Duna</a> and <a class="mw-selflink selflink">Dуна</a> are still self-links.
 </p>
 !! html/parsoid
-<p><a rel="mw:WikiLink" href="./Дуна" title="Дуна">Дуна</a> is not a self-link while <a rel="mw:WikiLink" href="./Duna" class="mw-selflink selflink">Duna</a> and <a rel="mw:WikiLink" href="./Dуна" class="mw-selflink selflink">Dуна</a> are still self-links.</p>
+<p><a rel="mw:WikiLink" href="./Дуна" title="Дуна">Дуна</a> is not a self-link while <a rel="mw:WikiLink" href="./Duna" class="mw-selflink selflink">Duna</a> and <a rel="mw:WikiLink" href="./Duna" class="mw-selflink selflink" data-parsoid='{"stx":"simple","a":{"href":"./Duna","title":"Duna"},"sa":{"href":"Dуна","title":"Dуна"}}'>Dуна</a> are still self-links.</p>
 !! end
 
-# T258856: Parsoid doesn't handle redlink processing correctly in this case
 !! test
-Link to a section of a variant of this title shouldn't be parsed as self-link
+Link to a section of a variant of this title should be parsed as mw-selflink-fragment
 !! options
 title=[[Duna]] language=sr
 !! wikitext
-[[Dуна]] is a self-link while [[Dunа#Foo]] and [[Dуна#Foo]] are not self-links.
+[[Dуна]] is a self-link while [[Duna#Foo]] and [[Dуна#Foo]] are mw-selflink-fragments.
 !! html/php
-<p><a class="mw-selflink selflink">Dуна</a> is a self-link while <a href="/wiki/%D0%94%D1%83%D0%BD%D0%B0" title="Дуна">Dunа#Foo</a> and <a href="/wiki/%D0%94%D1%83%D0%BD%D0%B0" title="Дуна">Dуна#Foo</a> are not self-links.
+<p><a class="mw-selflink selflink">Dуна</a> is a self-link while <a class="mw-selflink-fragment" href="#Foo">Duna#Foo</a> and <a class="mw-selflink-fragment" href="#Foo">Dуна#Foo</a> are mw-selflink-fragments.
 </p>
 !! html/parsoid
-<p><a rel="mw:WikiLink" href="./Dуна" title="Dуна">Dуна</a> is a self-link while <a rel="mw:WikiLink" href="./Dunа#Foo" title="Dunа">Dunа#Foo</a> and <a rel="mw:WikiLink" href="./Dуна#Foo" title="Dуна">Dуна#Foo</a> are not self-links.</p>
+<p><a rel="mw:WikiLink" href="./Duna" class="mw-selflink selflink" data-parsoid='{"stx":"simple","a":{"href":"./Duna","title":"Duna"},"sa":{"href":"Dуна","title":"Dуна"}}'>Dуна</a> is a self-link while <a rel="mw:WikiLink" href="./Duna#Foo" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Duna#Foo","title":"Duna"},"sa":{"href":"Duna#Foo","title":"Duna"}}'>Duna#Foo</a> and <a rel="mw:WikiLink" href="./Duna#Foo" class="mw-selflink-fragment" data-parsoid='{"stx":"simple","a":{"href":"./Duna#Foo","title":"Duna"},"sa":{"href":"Dуна#Foo","title":"Dуна"}}'>Dуна#Foo</a> are mw-selflink-fragments.</p>
 !! end
 
-# T258856: Parsoid doesn't handle redlink processing correctly in this case
 !! test
 Link to pages in language variants
 !! options
@@ -290,11 +291,9 @@ Main Page can be written as [[Маин Паге]]
 <p>Main Page can be written as <a href="/wiki/Main_Page" title="Main Page">Маин Паге</a>
 </p>
 !! html/parsoid
-<p>Main Page can be written as <a rel="mw:WikiLink" href="./Маин_Паге" title="Маин Паге">Маин Паге</a></p>
+<p>Main Page can be written as <a rel="mw:WikiLink" href="./Main_Page" title="Main Page" data-parsoid='{"stx":"simple","a":{"href":"./Main_Page","title":"Main Page"},"sa":{"href":"Маин Паге","title":"Маин Паге"}}'>Маин Паге</a></p>
 !! end
 
-
-# T258856: Parsoid doesn't handle redlink processing correctly in this case
 !! test
 Multiple links to pages in language variants
 !! options
@@ -305,7 +304,7 @@ language=sr
 <p><a href="/wiki/Main_Page" title="Main Page">Main Page</a> can be written as <a href="/wiki/Main_Page" title="Main Page">Маин Паге</a> same as <a href="/wiki/Main_Page" title="Main Page">Маин Паге</a>.
 </p>
 !! html/parsoid
-<p><a rel="mw:WikiLink" href="./Main_Page" title="Main Page">Main Page</a> can be written as <a rel="mw:WikiLink" href="./Маин_Паге" title="Маин Паге">Маин Паге</a> same as <a rel="mw:WikiLink" href="./Маин_Паге" title="Маин Паге">Маин Паге</a>.</p>
+<p><a rel="mw:WikiLink" href="./Main_Page" title="Main Page" data-parsoid='{"stx":"simple","a":{"href":"./Main_Page"},"sa":{"href":"Main Page"}}'>Main Page</a> can be written as <a rel="mw:WikiLink" href="./Main_Page" title="Main Page" data-parsoid='{"stx":"simple","a":{"href":"./Main_Page","title":"Main Page"},"sa":{"href":"Маин Паге","title":"Маин Паге"}}'>Маин Паге</a> same as <a rel="mw:WikiLink" href="./Main_Page" title="Main Page" data-parsoid='{"stx":"simple","a":{"href":"./Main_Page","title":"Main Page"},"sa":{"href":"Маин Паге","title":"Маин Паге"}}'>Маин Паге</a>.</p>
 !! end
 
 !! article
@@ -926,7 +925,7 @@ language=zh htmlVariantLanguage=zh title=[[ZH]] showtitle
 <p class="mw-empty-elt">
 </p>
 !! html/parsoid
-<p><meta typeof="mw:LanguageVariant" data-parsoid='{"tSp":[6]}' data-mw-variant='{"title":true,"twoway":[{"l":"zh-cn","t":"CN"},{"l":"zh-tw","t":"TW"}]}'/></p>
+<p class="mw-empty-elt"><meta typeof="mw:LanguageVariant" data-parsoid='{"tSp":[6]}' data-mw-variant='{"title":true,"twoway":[{"l":"zh-cn","t":"CN"},{"l":"zh-tw","t":"TW"}]}'/></p>
 !! end
 
 !! test
@@ -940,7 +939,7 @@ language=zh htmlVariantLanguage=zh title=[[ZH]] showtitle
 <p class="mw-empty-elt">
 </p>
 !! html/parsoid
-<p><meta typeof="mw:LanguageVariant" data-mw-variant='{"disabled":{"t":"TW"},"title":true}'/></p>
+<p class="mw-empty-elt"><meta typeof="mw:LanguageVariant" data-mw-variant='{"disabled":{"t":"TW"},"title":true}'/></p>
 !! end
 
 !! test
@@ -1085,7 +1084,7 @@ Nested: -{zh-hans:Hi -{zh-cn:China;zh-sg:Singapore;}-;zh-hant:Hello -{zh-tw:Taiw
 <p>Nested: Hello Hong Kong!
 </p>
 !! html/parsoid
-<p>Nested: <span typeof="mw:LanguageVariant" data-parsoid='{"tSp":[7]}' data-mw-variant='{"twoway":[{"l":"zh-hans","t":"Hi &lt;span typeof=\"mw:LanguageVariant\" data-mw-variant=&apos;{\"twoway\":[{\"l\":\"zh-cn\",\"t\":\"China\"},{\"l\":\"zh-sg\",\"t\":\"Singapore\"}]}&apos; data-parsoid=&apos;{\"fl\":[],\"tSp\":[7],\"dsr\":[21,53,2,2]}&apos;>&lt;/span>"},{"l":"zh-hant","t":"Hello &lt;span typeof=\"mw:LanguageVariant\" data-mw-variant=&apos;{\"twoway\":[{\"l\":\"zh-tw\",\"t\":\"Taiwan\"},{\"l\":\"zh-hk\",\"t\":\"H&amp;lt;span typeof=\\\"mw:LanguageVariant\\\" data-mw-variant=&amp;apos;{\\\"disabled\\\":{\\\"t\\\":\\\"ong\\\"}}&amp;apos; data-parsoid=&amp;apos;{\\\"fl\\\":[],\\\"dsr\\\":[90,97,2,2]}&amp;apos;>&amp;lt;/span> K&amp;lt;span typeof=\\\"mw:LanguageVariant\\\" data-mw-variant=&amp;apos;{\\\"disabled\\\":{\\\"t\\\":\\\"\\\"}}&amp;apos; data-parsoid=&amp;apos;{\\\"fl\\\":[],\\\"dsr\\\":[99,103,2,2]}&amp;apos;>&amp;lt;/span>ong\"}]}&apos; data-parsoid=&apos;{\"fl\":[],\"tSp\":[7],\"dsr\":[68,109,2,2]}&apos;>&lt;/span>"}]}'></span>!</p>
+<p>Nested: <span typeof="mw:LanguageVariant" data-mw-variant='{"twoway":[{"l":"zh-hans","t":"Hi &lt;span typeof=\"mw:LanguageVariant\" data-mw-variant=&apos;{\"twoway\":[{\"l\":\"zh-cn\",\"t\":\"China\"},{\"l\":\"zh-sg\",\"t\":\"Singapore\"}]}&apos; data-parsoid=&apos;{\"fl\":[],\"src\":\"-{zh-cn:China;zh-sg:Singapore;}-\",\"tSp\":[7],\"dsr\":[21,53,2,2]}&apos;>&lt;/span>"},{"l":"zh-hant","t":"Hello &lt;span typeof=\"mw:LanguageVariant\" data-mw-variant=&apos;{\"twoway\":[{\"l\":\"zh-tw\",\"t\":\"Taiwan\"},{\"l\":\"zh-hk\",\"t\":\"H&amp;lt;span typeof=\\\"mw:LanguageVariant\\\" data-mw-variant=&amp;apos;{\\\"disabled\\\":{\\\"t\\\":\\\"ong\\\"}}&amp;apos; data-parsoid=&amp;apos;{\\\"fl\\\":[],\\\"src\\\":\\\"-{ong}-\\\",\\\"dsr\\\":[90,97,2,2]}&amp;apos;>&amp;lt;/span> K&amp;lt;span typeof=\\\"mw:LanguageVariant\\\" data-mw-variant=&amp;apos;{\\\"disabled\\\":{\\\"t\\\":\\\"\\\"}}&amp;apos; data-parsoid=&amp;apos;{\\\"fl\\\":[],\\\"src\\\":\\\"-{}-\\\",\\\"dsr\\\":[99,103,2,2]}&amp;apos;>&amp;lt;/span>ong\"}]}&apos; data-parsoid=&apos;{\"fl\":[],\"src\":\"-{zh-tw:Taiwan;zh-hk:H-{ong}- K-{}-ong;}-\",\"tSp\":[7],\"dsr\":[68,109,2,2]}&apos;>&lt;/span>"}]}' data-parsoid='{"fl":[],"src":"-{zh-hans:Hi -{zh-cn:China;zh-sg:Singapore;}-;zh-hant:Hello -{zh-tw:Taiwan;zh-hk:H-{ong}- K-{}-ong;}-;}-","tSp":[7]}'></span>!</p>
 !! end
 
 !! test
@@ -1098,7 +1097,7 @@ language=zh htmlVariantLanguage=zh-Hans-CN
 <p><span title="X">A</span>
 </p>
 !! html/parsoid
-<p><span typeof="mw:LanguageVariant" data-mw-variant='{"filter":{"l":["zh","zh-hans","zh-hant"],"t":"&lt;span title=\"\" about=\"#mwt1\" typeof=\"mw:ExpandedAttrs\" data-parsoid=&#39;{\"stx\":\"html\",\"a\":{\"title\":\"\"},\"sa\":{\"title\":\"-{X}-\"},\"dsr\":[21,49,20,7]}&#39; data-mw=&#39;{\"attribs\":[[{\"txt\":\"title\"},{\"html\":\"&amp;lt;span typeof=\\\"mw:LanguageVariant\\\" data-mw-variant=&amp;apos;{\\\"disabled\\\":{\\\"t\\\":\\\"X\\\"}}&amp;apos; data-parsoid=&amp;apos;{\\\"fl\\\":[],\\\"dsr\\\":[34,39,2,2]}&amp;apos;>&amp;lt;/span>\"}]]}&#39;>A&lt;/span>"}}'></span></p>
+<p><span typeof="mw:LanguageVariant" data-mw-variant='{"filter":{"l":["zh","zh-hans","zh-hant"],"t":"&lt;span title=\"\" about=\"#mwt1\" typeof=\"mw:ExpandedAttrs\" data-parsoid=&apos;{\"stx\":\"html\",\"a\":{\"title\":\"\"},\"sa\":{\"title\":\"-{X}-\"},\"dsr\":[21,49,20,7]}&apos; data-mw=&apos;{\"attribs\":[[{\"txt\":\"title\"},{\"html\":\"&amp;lt;span typeof=\\\"mw:LanguageVariant\\\" data-mw-variant=&amp;apos;{\\\"disabled\\\":{\\\"t\\\":\\\"X\\\"}}&amp;apos; data-parsoid=&amp;apos;{\\\"fl\\\":[],\\\"src\\\":\\\"-{X}-\\\",\\\"dsr\\\":[34,39,2,2]}&amp;apos;>&amp;lt;/span>\"}]]}&apos;>A&lt;/span>"}}' data-parsoid='{"fl":["zh","zh-hans","zh-hant"],"src":"-{zh;zh-hans;zh-hant|&lt;span title=\"-{X}-\">A&lt;/span>}-"}'></span></p>
 !! end
 
 !! test
@@ -1111,7 +1110,7 @@ language=zh htmlVariantLanguage=zh-Hans-CN
 <p><span title="X">A</span>
 </p>
 !! html/parsoid
-<p><span typeof="mw:LanguageVariant" data-mw-variant='{"disabled":{"t":"&lt;span title=\"\" about=\"#mwt1\" typeof=\"mw:ExpandedAttrs\" data-parsoid=&#39;{\"stx\":\"html\",\"a\":{\"title\":\"\"},\"sa\":{\"title\":\"-{X}-\"},\"dsr\":[2,30,20,7]}&#39; data-mw=&#39;{\"attribs\":[[{\"txt\":\"title\"},{\"html\":\"&amp;lt;span typeof=\\\"mw:LanguageVariant\\\" data-mw-variant=&amp;apos;{\\\"disabled\\\":{\\\"t\\\":\\\"X\\\"}}&amp;apos; data-parsoid=&amp;apos;{\\\"fl\\\":[],\\\"dsr\\\":[15,20,2,2]}&amp;apos;>&amp;lt;/span>\"}]]}&#39;>A&lt;/span>"}}'></span></p>
+<p><span typeof="mw:LanguageVariant" data-mw-variant='{"disabled":{"t":"&lt;span title=\"\" about=\"#mwt1\" typeof=\"mw:ExpandedAttrs\" data-parsoid=&apos;{\"stx\":\"html\",\"a\":{\"title\":\"\"},\"sa\":{\"title\":\"-{X}-\"},\"dsr\":[2,30,20,7]}&apos; data-mw=&apos;{\"attribs\":[[{\"txt\":\"title\"},{\"html\":\"&amp;lt;span typeof=\\\"mw:LanguageVariant\\\" data-mw-variant=&amp;apos;{\\\"disabled\\\":{\\\"t\\\":\\\"X\\\"}}&amp;apos; data-parsoid=&amp;apos;{\\\"fl\\\":[],\\\"src\\\":\\\"-{X}-\\\",\\\"dsr\\\":[15,20,2,2]}&amp;apos;>&amp;lt;/span>\"}]]}&apos;>A&lt;/span>"}}' data-parsoid='{"fl":[],"src":"-{&lt;span title=\"-{X}-\">A&lt;/span>}-"}'></span></p>
 !! end
 
 # Parsoid and PHP disagree on how to parse this example: Parsoid
@@ -1480,7 +1479,7 @@ Language converter tricky html2wt cases (5)
 language=zh htmlVariantLanguage=zh-Hans-CN
 !! html/parsoid
 <p><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"oneway":[{"f":"a:b=>c","l":"zh-cn","t":"x;foo=>zh-cn:boo"},{"f":"bar","l":"zh-cn","t":"bat;xyz=>zh-cn:abc"}]}'/>foobar</p>
-<p><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"oneway":[{"f":"A","l":"bo:g;us","t":"B"}]}'/></p>
+<p class="mw-empty-elt"><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"oneway":[{"f":"A","l":"bo:g;us","t":"B"}]}'/></p>
 <p><span typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"twoway":[{"l":"zh-tw","t":"xyz"},{"l":"zh-cn","t":"0;zh-tw:bar"}]}'></span></p>
 <p><span typeof="mw:LanguageVariant" data-mw-variant='{"twoway":[{"l":"bo:g;us","t":"xyz"},{"l":"zh-cn","t":"abc"}]}'></span></p>
 <p>a:b=>c xyz</p>
@@ -1518,7 +1517,7 @@ parsoid=wt2html,html2html
 
 </p>
 !! html/parsoid
-<p><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"twoway":[{"l":"zh-cn","t":"约翰·塞纳"},{"l":"zh-hk","t":"莊·先拿"},{"l":"zh-tw","t":"約翰·希南"}]}'/>
+<p class="mw-empty-elt"><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"twoway":[{"l":"zh-cn","t":"约翰·塞纳"},{"l":"zh-hk","t":"莊·先拿"},{"l":"zh-tw","t":"約翰·希南"}]}'/>
 <meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"twoway":[{"l":"zh-cn","t":"泰瑞斯·吉布森"},{"l":"zh-hk","t":"泰列斯·吉遜"},{"l":"zh-tw","t":"泰瑞斯·吉布森"}]}'/>
 <meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"twoway":[{"l":"zh-cn","t":"金·米尔福特"},{"l":"zh-tw","t":"金·米爾福特"}]}'/></p>
 !! end
@@ -1534,7 +1533,7 @@ parsoid=wt2html,html2html
 <p class="mw-empty-elt">
 </p>
 !! html/parsoid
-<p><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"twoway":[{"l":"zh-cn","t":"玛格特·罗比"},{"l":"zh-tw","t":"瑪格·羅比"},{"l":"zh-hk","t":"瑪歌·羅比"},{"l":"zh-sg","t":"玛格·罗比"}]}'/></p>
+<p class="mw-empty-elt"><meta typeof="mw:LanguageVariant" data-mw-variant='{"add":true,"twoway":[{"l":"zh-cn","t":"玛格特·罗比"},{"l":"zh-tw","t":"瑪格·羅比"},{"l":"zh-hk","t":"瑪歌·羅比"},{"l":"zh-sg","t":"玛格·罗比"}]}'/></p>
 !! end
 
 !! test
@@ -1675,4 +1674,20 @@ parsoid=html2wt
 <p><meta typeof="mw:LanguageVariant" data-mw-variant='{"twoway":[]}'/></p>
 !! wikitext
 -{H|}-
+!! end
+
+## Legacy parser inconsistency in the title attribute
+!! test
+Nonexistent internal link targets should be resolved using variants (T258856)
+!! options
+language=sr variant=sr-ec
+!! wikitext
+[[Test]]
+!! html/php
+<p><a href="/wiki/%D0%A2%D0%B5%D1%81%D1%82" title="Тест">Тест</a>
+</p>
+!! html/parsoid
+<p><a rel="mw:WikiLink" href="./Тест" title="Тест" data-parsoid='{"stx":"simple","a":{"href":"./Тест","title":"Тест"},"sa":{"href":"Test","title":"Test"}}'>Test</a></p>
+!! html/parsoid+langconv
+<p data-mw-variant-lang="sr-el"><a rel="mw:WikiLink" href="./Тест" title="Тест">Тест</a></p>
 !! end

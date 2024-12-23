@@ -11,14 +11,12 @@
 		 * @return {jQuery.Promise}
 		 */
 		rollback: function ( page, user, params ) {
-			return this.postWithToken( 'rollback', $.extend( {
+			return this.postWithToken( 'rollback', Object.assign( {
 				action: 'rollback',
 				title: String( page ),
 				user: user,
 				uselang: mw.config.get( 'wgUserLanguage' )
-			}, params ) ).then( function ( data ) {
-				return data.rollback;
-			} );
+			}, params ) ).then( ( data ) => data.rollback );
 		}
 	} );
 

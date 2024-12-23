@@ -2,10 +2,12 @@
 
 namespace MediaWiki\Tests\OutputTransform\Stages;
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\OutputTransform\OutputTransformStage;
 use MediaWiki\OutputTransform\Stages\HydrateHeaderPlaceholders;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Tests\OutputTransform\OutputTransformStageTestBase;
+use Psr\Log\NullLogger;
 
 /**
  * @covers \MediaWiki\OutputTransform\Stages\HydrateHeaderPlaceholders
@@ -13,7 +15,10 @@ use MediaWiki\Tests\OutputTransform\OutputTransformStageTestBase;
 class HydrateHeaderPlaceholdersTest extends OutputTransformStageTestBase {
 
 	public function createStage(): OutputTransformStage {
-		return new HydrateHeaderPlaceholders();
+		return new HydrateHeaderPlaceholders(
+			new ServiceOptions( [] ),
+			new NullLogger()
+		);
 	}
 
 	public function provideShouldRun(): array {
@@ -23,7 +28,7 @@ class HydrateHeaderPlaceholdersTest extends OutputTransformStageTestBase {
 	}
 
 	public function provideShouldNotRun(): array {
-		return [];
+		$this->markTestSkipped( 'HydrateHeaderPlaceHolders should always run' );
 	}
 
 	public function provideTransform(): array {

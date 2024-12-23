@@ -6,7 +6,7 @@
 ( function () {
 
 	/**
-	 * API Results Queue object.
+	 * @classdesc API results queue.
 	 *
 	 * @class
 	 * @mixes OO.EventEmitter
@@ -59,8 +59,7 @@
 	 * @return {jQuery.Promise} Promise that resolves into an array of items.
 	 */
 	mw.widgets.APIResultsQueue.prototype.get = function ( howMany ) {
-		var fetchingPromise = null,
-			me = this;
+		let fetchingPromise = null;
 
 		howMany = howMany || this.limit;
 
@@ -68,16 +67,14 @@
 		if ( this.queue.length < howMany + this.threshold ) {
 			// Call for more results
 			fetchingPromise = this.queryProviders( howMany + this.threshold )
-				.then( function ( items ) {
+				.then( ( items ) => {
 					// Add to the queue
-					me.queue = me.queue.concat.apply( me.queue, items );
+					this.queue = this.queue.concat.apply( this.queue, items );
 				} );
 		}
 
 		return $.when( fetchingPromise )
-			.then( function () {
-				return me.queue.splice( 0, howMany );
-			} );
+			.then( () => this.queue.splice( 0, howMany ) );
 
 	};
 
@@ -90,26 +87,24 @@
 	 *  of fetched items. Note: The promise must have an .abort() functionality.
 	 */
 	mw.widgets.APIResultsQueue.prototype.queryProviders = function ( howMany ) {
-		var queue = this;
-
 		// Make sure there are resources set up
 		return this.setup()
-			.then( function () {
+			.then( () => {
 				// Abort previous requests
-				for ( var i = 0, iLen = queue.providerPromises.length; i < iLen; i++ ) {
-					queue.providerPromises[ i ].abort();
+				for ( let i = 0, iLen = this.providerPromises.length; i < iLen; i++ ) {
+					this.providerPromises[ i ].abort();
 				}
-				queue.providerPromises = [];
+				this.providerPromises = [];
 				// Set up the query to all providers
-				for ( var j = 0, jLen = queue.providers.length; j < jLen; j++ ) {
-					if ( !queue.providers[ j ].isDepleted() ) {
-						queue.providerPromises.push(
-							queue.providers[ j ].getResults( howMany )
+				for ( let j = 0, jLen = this.providers.length; j < jLen; j++ ) {
+					if ( !this.providers[ j ].isDepleted() ) {
+						this.providerPromises.push(
+							this.providers[ j ].getResults( howMany )
 						);
 					}
 				}
 
-				return $.when.apply( $, queue.providerPromises )
+				return $.when( ...this.providerPromises )
 					.then( Array.prototype.concat.bind( [] ) );
 			} );
 	};
@@ -124,15 +119,15 @@
 	mw.widgets.APIResultsQueue.prototype.setParams = function ( params ) {
 		if ( !OO.compare( params, this.params, true ) ) {
 			this.reset();
-			this.params = $.extend( this.params, params );
+			this.params = Object.assign( this.params, params );
 			// Reset queue
 			this.queue = [];
 			// Reset promises
-			for ( var i = 0, iLen = this.providerPromises.length; i < iLen; i++ ) {
+			for ( let i = 0, iLen = this.providerPromises.length; i < iLen; i++ ) {
 				this.providerPromises[ i ].abort();
 			}
 			// Change queries
-			for ( var j = 0, jLen = this.providers.length; j < jLen; j++ ) {
+			for ( let j = 0, jLen = this.providers.length; j < jLen; j++ ) {
 				this.providers[ j ].setUserParams( this.params );
 			}
 		}
@@ -145,11 +140,11 @@
 		// Reset queue
 		this.queue = [];
 		// Reset promises
-		for ( var i = 0, iLen = this.providerPromises.length; i < iLen; i++ ) {
+		for ( let i = 0, iLen = this.providerPromises.length; i < iLen; i++ ) {
 			this.providerPromises[ i ].abort();
 		}
 		// Reset options
-		for ( var j = 0, jLen = this.providers.length; j < jLen; j++ ) {
+		for ( let j = 0, jLen = this.providers.length; j < jLen; j++ ) {
 			this.providers[ j ].reset();
 		}
 	};
@@ -170,7 +165,7 @@
 	 */
 	mw.widgets.APIResultsQueue.prototype.setProviders = function ( providers ) {
 		this.providers = providers;
-		for ( var i = 0, len = this.providers.length; i < len; i++ ) {
+		for ( let i = 0, len = this.providers.length; i < len; i++ ) {
 			this.providers[ i ].setUserParams( this.params );
 			this.providers[ i ].setLang( this.lang );
 		}
@@ -232,7 +227,7 @@
 	 */
 	mw.widgets.APIResultsQueue.prototype.setLang = function ( lang ) {
 		this.lang = lang;
-		for ( var i = 0, len = this.providers.length; i < len; i++ ) {
+		for ( let i = 0, len = this.providers.length; i < len; i++ ) {
 			this.providers[ i ].setLang( this.lang );
 		}
 	};

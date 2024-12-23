@@ -1,53 +1,61 @@
 <?php
 
+use MediaWiki\Content\JsonContent;
+use MediaWiki\Content\JsonContentHandler;
 use MediaWiki\Content\ValidationParams;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
 
+/**
+ * @covers \MediaWiki\Content\JsonContentHandler
+ */
 class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 
 	public static function provideDataAndParserText() {
 		return [
 			[
 				[],
-				'<table class="mw-json"><tbody><tr><td>' .
+				'<div class="noresize"><table class="mw-json"><tbody><tr><td>' .
 				'<table class="mw-json"><tbody><tr><td class="mw-json-empty">Empty array</td></tr>'
-				. '</tbody></table></td></tr></tbody></table>'
+				. '</tbody></table></td></tr></tbody></table></div>'
 			],
 			[
 				(object)[],
-				'<table class="mw-json"><tbody><tr><td class="mw-json-empty">Empty object</td></tr>' .
-				'</tbody></table>'
+				'<div class="noresize"><table class="mw-json"><tbody><tr><td class="mw-json-empty">Empty object</td></tr>' .
+				'</tbody></table></div>'
 			],
 			[
 				(object)[ 'foo' ],
-				'<table class="mw-json"><tbody><tr><th><span>0</span></th>' .
-				'<td class="mw-json-value">"foo"</td></tr></tbody></table>'
+				'<div class="noresize"><table class="mw-json"><tbody><tr><th><span>0</span></th>' .
+				'<td class="mw-json-value">"foo"</td></tr></tbody></table></div>'
 			],
 			[
 				(object)[ 'foo', 'bar' ],
-				'<table class="mw-json"><tbody><tr><th><span>0</span></th>' .
+				'<div class="noresize"><table class="mw-json"><tbody><tr><th><span>0</span></th>' .
 				'<td class="mw-json-value">"foo"</td></tr><tr><th><span>1</span></th>' .
-				'<td class="mw-json-value">"bar"</td></tr></tbody></table>'
+				'<td class="mw-json-value">"bar"</td></tr></tbody></table></div>'
 			],
 			[
 				(object)[ 'baz' => 'foo', 'bar' ],
-				'<table class="mw-json"><tbody><tr><th><span>baz</span></th>' .
+				'<div class="noresize"><table class="mw-json"><tbody><tr><th><span>baz</span></th>' .
 				'<td class="mw-json-value">"foo"</td></tr><tr><th><span>0</span></th>' .
-				'<td class="mw-json-value">"bar"</td></tr></tbody></table>'
+				'<td class="mw-json-value">"bar"</td></tr></tbody></table></div>'
 			],
 			[
 				(object)[ 'baz' => 1000, 'bar' ],
-				'<table class="mw-json"><tbody><tr><th><span>baz</span></th>' .
+				'<div class="noresize"><table class="mw-json"><tbody><tr><th><span>baz</span></th>' .
 				'<td class="mw-json-value">1000</td></tr><tr><th><span>0</span></th>' .
-				'<td class="mw-json-value">"bar"</td></tr></tbody></table>'
+				'<td class="mw-json-value">"bar"</td></tr></tbody></table></div>'
 			],
 			[
 				(object)[ '<script>alert("evil!")</script>' ],
-				'<table class="mw-json"><tbody><tr><th><span>0</span></th><td class="mw-json-value">"' .
+				'<div class="noresize"><table class="mw-json"><tbody><tr><th><span>0</span></th><td class="mw-json-value">"' .
 				'&lt;script>alert("evil!")&lt;/script>"' .
-				'</td></tr></tbody></table>',
+				'</td></tr></tbody></table></div>',
 			],
 			[
 				'{ broken JSON ]',
@@ -58,7 +66,6 @@ class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideDataAndParserText
-	 * @covers \JsonContentHandler::fillParserOutput
 	 */
 	public function testFillParserOutput( $data, $expected ) {
 		if ( !is_string( $data ) ) {
@@ -71,20 +78,18 @@ class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 
 		$content = new JsonContent( $data );
 		$contentRenderer = $this->getServiceContainer()->getContentRenderer();
+		$opts = ParserOptions::newFromAnon();
 		$parserOutput = $contentRenderer->getParserOutput(
 			$content,
 			$title,
 			null,
-			null,
+			$opts,
 			true
 		);
 		$this->assertInstanceOf( ParserOutput::class, $parserOutput );
-		$this->assertEquals( $expected, $parserOutput->getText() );
+		$this->assertEquals( $expected, $parserOutput->runOutputPipeline( $opts, [] )->getContentHolderText() );
 	}
 
-	/**
-	 * @covers \JsonContentHandler::validateSave
-	 */
 	public function testValidateSave() {
 		$handler = new JsonContentHandler();
 		$validationParams = new ValidationParams(

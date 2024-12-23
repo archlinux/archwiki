@@ -59,24 +59,45 @@ $job->execute();
  * @ingroup Maintenance ExternalStorage
  */
 class RecompressTracked {
+	/** @var string[] */
 	public $destClusters;
+	/** @var int */
 	public $batchSize = 1000;
+	/** @var int */
 	public $orphanBatchSize = 1000;
+	/** @var int */
 	public $reportingInterval = 10;
+	/** @var int */
 	public $numProcs = 1;
+	/** @var int */
 	public $numBatches = 0;
-	public $pageBlobClass, $orphanBlobClass;
-	public $childPipes, $childProcs, $prevChildId;
+	/** @var string */
+	public $pageBlobClass;
+	/** @var string */
+	public $orphanBlobClass;
+	/** @var resource[] */
+	public $childPipes;
+	/** @var resource[] */
+	public $childProcs;
+	/** @var int */
+	public $prevChildId;
+	/** @var bool */
 	public $copyOnly = false;
+	/** @var bool */
 	public $isChild = false;
+	/** @var int|false */
 	public $childId = false;
+	/** @var bool */
 	public $noCount = false;
-	public $debugLog, $infoLog, $criticalLog;
+	public ?string $debugLog = null;
+	public ?string $infoLog = null;
+	public ?string $criticalLog = null;
 	/** @var ExternalStoreDB */
 	public $store;
 	/** @var SqlBlobStore */
 	private $blobStore;
 
+	/** @var string[] */
 	private static $optionsWithArgs = [
 		'procs',
 		'child-id',
@@ -85,6 +106,7 @@ class RecompressTracked {
 		'critical-log'
 	];
 
+	/** @var string[] */
 	private static $cmdLineOptionMap = [
 		'no-count' => 'noCount',
 		'procs' => 'numProcs',
@@ -167,12 +189,7 @@ class RecompressTracked {
 	 * previous part of this batch process.
 	 */
 	private function syncDBs() {
-		$icp = MediaWikiServices::getInstance()->getConnectionProvider();
-		$dbw = $icp->getPrimaryDatabase();
-
-		$dbr = $icp->getReplicaDatabase();
-		$pos = $dbw->getPrimaryPos();
-		$dbr->primaryPosWait( $pos, 100_000 );
+		MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->waitForReplication( [ 'timeout' => 100_000 ] );
 	}
 
 	/**
@@ -206,14 +223,7 @@ class RecompressTracked {
 	 * @return bool
 	 */
 	private function checkTrackingTable() {
-		// TOOD: Use ICP::getConnection() – but that returns an IDatabase not a Database and so no tableExists()
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnectionRef( DB_REPLICA );
-		if ( !$dbr->tableExists( 'blob_tracking', __METHOD__ ) ) {
-			$this->critical( "Error: blob_tracking table does not exist" );
-
-			return false;
-		}
-		$row = $dbr->newSelectQueryBuilder()
+		$row = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase()->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'blob_tracking' )
 			->caller( __METHOD__ )->fetchRow();
@@ -575,21 +585,23 @@ class RecompressTracked {
 		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 
 		$dbw->begin( __METHOD__ );
-		$dbw->update( 'text',
-			[ // set
+		$dbw->newUpdateQueryBuilder()
+			->update( 'text' )
+			->set( [
 				'old_text' => $url,
 				'old_flags' => 'external,utf-8',
-			],
-			[ // where
+			] )
+			->where( [
 				'old_id' => $textId
-			],
-			__METHOD__
-		);
-		$dbw->update( 'blob_tracking',
-			[ 'bt_moved' => 1 ],
-			[ 'bt_text_id' => $textId ],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
+		$dbw->newUpdateQueryBuilder()
+			->update( 'blob_tracking' )
+			->set( [ 'bt_moved' => 1 ] )
+			->where( [ 'bt_text_id' => $textId ] )
+			->caller( __METHOD__ )
+			->execute();
 		$dbw->commit( __METHOD__ );
 	}
 
@@ -610,7 +622,7 @@ class RecompressTracked {
 		$startId = 0;
 		$conds = array_merge( $conds, [
 			'bt_moved' => 0,
-			'bt_new_url IS NOT NULL'
+			$dbr->expr( 'bt_new_url', '!=', null ),
 		] );
 		while ( true ) {
 			$res = $dbr->newSelectQueryBuilder()
@@ -696,9 +708,11 @@ class RecompressTracked {
 class CgzCopyTransaction {
 	/** @var RecompressTracked */
 	public $parent;
+	/** @var string */
 	public $blobClass;
 	/** @var ConcatenatedGzipHistoryBlob|false */
 	public $cgz;
+	/** @var string[] */
 	public $referrers;
 	/** @var array */
 	private $texts;
@@ -808,21 +822,21 @@ class CgzCopyTransaction {
 		$targetCluster = $this->parent->getTargetCluster();
 		$store = $this->parent->store;
 		$targetDB = $store->getPrimary( $targetCluster );
-		$targetDB->clearFlag( DBO_TRX ); // we manage the transactions
 		$targetDB->begin( __METHOD__ );
 		$baseUrl = $this->parent->store->store( $targetCluster, serialize( $this->cgz ) );
 
 		// Write the new URLs to the blob_tracking table
 		foreach ( $this->referrers as $textId => $hash ) {
 			$url = $baseUrl . '/' . $hash;
-			$dbw->update( 'blob_tracking',
-				[ 'bt_new_url' => $url ],
-				[
+			$dbw->newUpdateQueryBuilder()
+				->update( 'blob_tracking' )
+				->set( [ 'bt_new_url' => $url ] )
+				->where( [
 					'bt_text_id' => $textId,
 					'bt_moved' => 0, # Check for concurrent conflicting update
-				],
-				__METHOD__
-			);
+				] )
+				->caller( __METHOD__ )
+				->execute();
 		}
 
 		$targetDB->commit( __METHOD__ );

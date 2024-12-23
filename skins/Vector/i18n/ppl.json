@@ -1,13 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"A R King",
-			"TimumachtikanNawat"
+			"A R King"
 		]
 	},
-	"vector-languages": "Tajtaketzalis",
-	"vector-language-button-label": "{{PLURAL:$1|$1 taketzalis|$1 tajtaketzalis}}",
-	"vector-no-language-button-label": "Shikintali Tajtaketzalis",
 	"vector-action-addsection": "Yankwik temaj",
 	"vector-action-delete": "Shikishti",
 	"vector-action-move": "Shikijkwani",
@@ -16,21 +12,5 @@
 	"vector-view-edit": "Shikpata",
 	"vector-view-history": "Ken mupatak",
 	"vector-view-view": "Shiamatachia",
-	"vector-view-viewsource": "Shikita ne codigoj",
-	"vector-more-actions": "Ukchupi",
-	"vector-feature-limited-width-name": "Patawak",
-	"vector-feature-custom-font-size-name": "Tajtajkwilulchichin",
-	"vector-feature-limited-width-0-label": "Wey Patawak",
-	"vector-feature-limited-width-1-label": "Kia né",
-	"vector-feature-custom-font-size-0-label": "Chikitik",
-	"vector-feature-custom-font-size-1-label": "Kia né",
-	"vector-feature-custom-font-size-2-label": "Tumak",
-	"skin-theme-name": "Tay itachishka",
-	"skin-theme-os-label": "Isel muchiwa",
-	"vector-searchsuggest-containing": "Shiktemu amat iwan <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-main-menu-label": "Achtu shulun",
-	"vector-page-tools-label": "Tay iwan?",
-	"vector-page-tools-general-label": "Anmumuchi",
-	"vector-page-tools-actions-label": "Tay tiweli tikchiwa?",
-	"vector-unpin-element-label": "Shikinaya"
+	"vector-view-viewsource": "Shikita ne codigoj"
 }

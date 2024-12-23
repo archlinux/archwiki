@@ -23,7 +23,9 @@
 
 use MediaWiki\Title\Title;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that scans the deletion log and purges affected files
@@ -118,7 +120,7 @@ class PurgeChangedFiles extends Maintenance {
 
 		// Turn on verbose when dry-run is enabled
 		if ( $this->hasOption( 'dry-run' ) ) {
-			$this->mOptions['verbose'] = 1;
+			$this->setOption( 'verbose', 1 );
 		}
 
 		$this->verbose( 'Purging files that were: ' . implode( ', ', $typeList ) . "\n" );
@@ -257,5 +259,7 @@ class PurgeChangedFiles extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PurgeChangedFiles::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

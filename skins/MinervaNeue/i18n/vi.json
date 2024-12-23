@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Awdsweq123",
+			"Bluetpp",
 			"CactiStaccingCrane",
 			"Cheers!",
 			"Darcy Le",
@@ -13,8 +14,7 @@
 			"Nguyên Lê",
 			"Thienhau2003",
 			"Trần Nguyễn Minh Huy",
-			"Vinhtantran",
-			"Bluetpp"
+			"Vinhtantran"
 		]
 	},
 	"minerva-last-modified-date": "Sửa đổi lần cuối lúc $2 vào $1",
@@ -40,7 +40,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Thông tin về thể loại này",
 	"mobile-frontend-meta-data-issues-header": "Vấn đề về trang",
 	"minerva-meta-data-issues-section-header": "Vấn đề về đề mục",
-	"mobile-frontend-notifications-filter": "Bộ lọc",
 	"mobile-frontend-pageaction-edit-tooltip": "Sửa phần mở đầu của trang này",
 	"mobile-frontend-placeholder": "Tìm kiếm trên {{SITENAME}}",
 	"mobile-frontend-random-button": "Ngẫu nhiên",
@@ -60,6 +59,7 @@
 	"minerva-page-actions-overflow": "Thêm",
 	"minerva-page-actions-language-switcher": "Ngôn ngữ",
 	"minerva-page-actions-history": "Lịch sử",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Thảo luận]",
 	"minerva-skin-desc": "Giao diện ưu tiên di động mang tính phản hồi",
 	"skin-minerva-issue-learn-more": "Tìm hiểu thêm",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 giây}} trước",
@@ -70,9 +70,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 năm}} trước",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Thể loại",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Xem thể loại của trang",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Hiển thị vấn đề tại trang tốt hơn",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Vấn đề về trang (Bản mẫu:ambox) sẽ được hiển thị ngay trong bài.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Thật không may, kết quả gom nhóm theo trang không hiển thị được trên di động. Nếu bạn muốn sử dụng tính năng gom nhóm theo trang vui lòng dùng phiên bản máy tính để bàn.",
+	"skin-minerva-night-mode-unavailable": "Trang chỉ có sẵn trong chủ đề màu \"Sáng\".",
 	"minerva.css": "/* Tất cả mã CSS tại đây sẽ được tải khi người dùng sử dụng giao diện MinervaNeue */",
 	"minerva.js": "/* Tất cả mã JavaScript tại đây sẽ được tải khi người dùng sử dụng giao diện MinervaNeue */"
 }

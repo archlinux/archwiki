@@ -4,6 +4,9 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MultiConfig;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
@@ -12,8 +15,10 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Page\PageStoreRecord;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
@@ -23,6 +28,7 @@ use MediaWiki\Tests\ResourceLoader\ResourceLoaderTestCase;
 use MediaWiki\Tests\ResourceLoader\ResourceLoaderTestModule;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -98,11 +104,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	private function setupFeedLinks( $feed, $types ): OutputPage {
 		$outputPage = $this->newInstance( [
-			'AdvertisedFeedTypes' => $types,
-			'Feed' => $feed,
-			'OverrideSiteFeed' => false,
-			'Script' => '/w',
-			'Sitename' => false,
+			MainConfigNames::AdvertisedFeedTypes => $types,
+			MainConfigNames::Feed => $feed,
+			MainConfigNames::OverrideSiteFeed => false,
+			MainConfigNames::Script => '/w',
+			MainConfigNames::Sitename => false,
 		] );
 		$outputPage->setTitle( Title::makeTitle( NS_MAIN, 'Test' ) );
 		$this->overrideConfigValue( MainConfigNames::Script, '/w/index.php' );
@@ -173,25 +179,19 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	public static function provideGetHeadLinksArray() {
 		return [
 			[
-				[
-					'EnableCanonicalServerLink' => true,
-				],
+				[ MainConfigNames::EnableCanonicalServerLink => true ],
 				'https://www.example.org/xyzzy/Hello',
 				true,
 				'/xyzzy/Hello'
 			],
 			[
-				[
-					'EnableCanonicalServerLink' => true,
-				],
+				[ MainConfigNames::EnableCanonicalServerLink => true ],
 				'https://www.example.org/wikipage/My_test_page',
 				true,
 				null
 			],
 			[
-				[
-					'EnableCanonicalServerLink' => true,
-				],
+				[ MainConfigNames::EnableCanonicalServerLink => true ],
 				'https://www.mediawiki.org/wiki/Manual:FauxRequest.php',
 				false,
 				null
@@ -223,7 +223,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 * Test the generation of hreflang Tags when site language has variants
 	 */
 	public function testGetLanguageVariantUrl() {
-		$this->overrideConfigValue( 'LanguageCode', 'zh' );
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'zh' );
 
 		$op = $this->newInstance();
 		$headLinks = $op->getHeadLinksArray();
@@ -246,8 +246,8 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		# Make sure $wgVariantArticlePath work
 		# We currently use MediaWiki internal language code as the primary variant URL parameter
 		$this->overrideConfigValues( [
-			'LanguageCode' => 'zh',
-			'VariantArticlePath' => '/$2/$1',
+			MainConfigNames::LanguageCode => 'zh',
+			MainConfigNames::VariantArticlePath => '/$2/$1',
 		] );
 
 		$op = $this->newInstance();
@@ -319,10 +319,8 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'action' => $action,
 			'variant' => $urlVariant,
 		] );
-		$this->overrideConfigValues( [
-			'LanguageCode' => 'zh',
-			'Request' => $req, # LanguageConverter is using global state...
-		] );
+		$this->setRequest( $req );
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'zh' );
 		$op = $this->newInstance( [ MainConfigNames::EnableCanonicalServerLink => true ], $req );
 		$bcp47 = LanguageCode::bcp47( $altUrlLangCode );
 		$bcp47Lowercase = strtolower( $bcp47 );
@@ -652,10 +650,10 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'If-Modified-Since not per spec but we accept it anyway because strtotime does' =>
 				[ $lastModified, "@$lastModified", true ],
 			'$wgCachePages = false' =>
-				[ $lastModified, $lastModified, false, [ 'CachePages' => false ] ],
+				[ $lastModified, $lastModified, false, [ MainConfigNames::CachePages => false ] ],
 			'$wgCacheEpoch' =>
 				[ $lastModified, $lastModified, false,
-					[ 'CacheEpoch' => wfTimestamp( TS_MW, $lastModified + 1 ) ] ],
+					[ MainConfigNames::CacheEpoch => wfTimestamp( TS_MW, $lastModified + 1 ) ] ],
 			'Recently-touched user' =>
 				[ $lastModified, $lastModified, false, [],
 				function ( OutputPage $op ) {
@@ -663,7 +661,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				} ],
 			'After CDN expiry' =>
 				[ $lastModified, $lastModified, false,
-					[ 'UseCdn' => true, 'CdnMaxAge' => 3599 ] ],
+					[ MainConfigNames::UseCdn => true, MainConfigNames::CdnMaxAge => 3599 ] ],
 			'Hook allows cache use' =>
 				[ $lastModified + 1, $lastModified, true, [],
 				static function ( $op, $that ) {
@@ -685,47 +683,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider provideCdnCacheEpoch
-	 */
-	public function testCdnCacheEpoch( $params ) {
-		$out = TestingAccessWrapper::newFromObject( $this->newInstance() );
-		$reqTime = strtotime( $params['reqTime'] );
-		$pageTime = strtotime( $params['pageTime'] );
-		$actual = max( $pageTime, $out->getCdnCacheEpoch( $reqTime, $params['maxAge'] ) );
-
-		$this->assertEquals(
-			$params['expect'],
-			gmdate( DateTime::ATOM, $actual ),
-			'cdn epoch'
-		);
-	}
-
-	public static function provideCdnCacheEpoch() {
-		$base = [
-			'pageTime' => '2011-04-01T12:00:00+00:00',
-			'maxAge' => 24 * 3600,
-		];
-		return [
-			'after 1s' => [ $base + [
-				'reqTime' => '2011-04-01T12:00:01+00:00',
-				'expect' => '2011-04-01T12:00:00+00:00',
-			] ],
-			'after 23h' => [ $base + [
-				'reqTime' => '2011-04-02T11:00:00+00:00',
-				'expect' => '2011-04-01T12:00:00+00:00',
-			] ],
-			'after 24h and a bit' => [ $base + [
-				'reqTime' => '2011-04-02T12:34:56+00:00',
-				'expect' => '2011-04-01T12:34:56+00:00',
-			] ],
-			'after a year' => [ $base + [
-				'reqTime' => '2012-05-06T00:12:07+00:00',
-				'expect' => '2012-05-05T00:12:07+00:00',
-			] ],
-		];
-	}
-
 	// @todo How to test setLastModified?
 
 	public function testSetRobotPolicy() {
@@ -738,7 +695,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	public function testSetRobotsOptions() {
 		$op = $this->newInstance();
-		$op->setRobotPolicy( 'noindex, nofollow' );
+		$op->setRobotPolicy( 'nofollow' );
 		$op->setRobotsOptions( [ 'max-snippet' => '500' ] );
 		$op->setIndexPolicy( 'index' );
 
@@ -752,6 +709,25 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			$links,
 			'When index,follow (browser default) omit'
 		);
+
+		$op->setIndexPolicy( 'noindex' );
+		$links = $op->getHeadLinksArray();
+		$this->assertContains(
+			'<meta name="robots" content="noindex,follow,max-image-preview:standard,max-snippet:500">',
+			$links,
+			'noindex takes precedence over index'
+		);
+
+		// Deprecated behavior: for OutputPage (unlike ParserOutput) we can
+		// reset to 'index' after 'noindex' has been set.
+		$this->filterDeprecated( '/OutputPage::setIndexPolicy with index after noindex/' );
+		$op->setIndexPolicy( 'index' );
+		$links = $op->getHeadLinksArray();
+		$this->assertContains(
+			'<meta name="robots" content="max-image-preview:standard,max-snippet:500">',
+			$links,
+			'index can reset noindex (deprecated)'
+		);
 	}
 
 	public function testGetRobotPolicy() {
@@ -762,9 +738,33 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'noindex,follow', $policy );
 	}
 
+	/**
+	 * This test is safe to remove once ::setIndexPolicy() is removed.
+	 * @covers \MediaWiki\Output\OutputPage::setIndexPolicy
+	 */
+	public function testSetIndexPoliciesBackCompat() {
+		$op = $this->newInstance();
+		$this->assertSame( "", $op->getMetadata()->getIndexPolicy() );
+		$op->setIndexPolicy( 'index' );
+		$this->assertEquals( "index", $op->getIndexPolicy() );
+		$this->assertEquals( "index", $op->getMetadata()->getIndexPolicy() );
+		$op->setIndexPolicy( 'noindex' );
+		$this->assertEquals( "noindex", $op->getIndexPolicy() );
+		$this->assertEquals( "noindex", $op->getMetadata()->getIndexPolicy() );
+	}
+
+	/**
+	 * @covers \MediaWiki\Output\OutputPage::getMetadata
+	 * @covers \MediaWiki\Output\OutputPage::getIndexPolicy
+	 * @covers \MediaWiki\Output\OutputPage::setFollowPolicy
+	 * @covers \MediaWiki\Output\OutputPage::getHeadLinksArray
+	 */
 	public function testSetIndexFollowPolicies() {
 		$op = $this->newInstance();
-		$op->setIndexPolicy( 'noindex' );
+		$this->assertSame( "", $op->getMetadata()->getIndexPolicy() );
+		$this->assertEquals( "index", $op->getIndexPolicy() );
+		$op->getMetadata()->setIndexPolicy( 'noindex' );
+		$this->assertEquals( "noindex", $op->getIndexPolicy() );
 		$op->setFollowPolicy( 'nofollow' );
 
 		$links = $op->getHeadLinksArray();
@@ -780,11 +780,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertLessThanOrEqual( 1, count( $matches[1] ), 'More than one <title>!' );
 
-		if ( !count( $matches[1] ) ) {
-			return null;
-		}
-
-		return $matches[1][0];
+		return $matches[1][0] ?? null;
 	}
 
 	/**
@@ -880,7 +876,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		// Test set to message (deprecated unescaped)
 		$text = $this->getMsgText( $op, 'mainpage' );
 
-		$op->setPageTitle( $op->msg( 'mainpage' )->inContentLanguage() );
+		$op->setPageTitleMsg( $op->msg( 'mainpage' )->inContentLanguage() );
 		$this->assertSame( $text, $op->getPageTitle() );
 		$this->assertSame( $this->getMsgText( $op, 'pagetitle', $text ), $op->getHTMLTitle() );
 
@@ -888,16 +884,18 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$msg = ( new RawMessage( 'nope:<span>$1 yes:$2' ) )
 			->plaintextParams( '</span>' )
 			->rawParams( '<span>!</span>' );
-		// deprecated ::setPageTitle(Message), doesn't escape either
-		// the localized message or the plaintext parameters
-		$op->setPageTitle( $msg );
-		$this->assertSame( "nope:<span></span> yes:<span>!</span>", $op->getPageTitle() );
 		// preferred ::setPageTitleMsg(Msg)
 		$op->setPageTitleMsg( $msg );
 		$this->assertSame( 'nope:&lt;span&gt;&lt;/span&gt; yes:<span>!</span>', $op->getPageTitle() );
 		// Note that HTML title is unescaped plaintext, it is expected to be
 		// HTML escaped before becoming the <title> element.
 		$this->assertSame( $this->getMsgText( $op, 'pagetitle', 'nope:<span></span> yes:!' ), $op->getHTMLTitle() );
+
+		// deprecated ::setPageTitle(Message), doesn't escape either
+		// the localized message or the plaintext parameters
+		$this->filterDeprecated( '/OutputPage::setPageTitle with Message argument/' );
+		$op->setPageTitle( $msg );
+		$this->assertSame( "nope:<span></span> yes:<span>!</span>", $op->getPageTitle() );
 	}
 
 	public function testSetTitle() {
@@ -1095,7 +1093,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testSetSyndicated() {
-		$op = $this->newInstance( [ 'Feed' => true ] );
+		$op = $this->newInstance( [ MainConfigNames::Feed => true ] );
 		$this->assertFalse( $op->isSyndicated() );
 
 		$op->setSyndicated();
@@ -1112,14 +1110,14 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testFeedLinks() {
-		$op = $this->newInstance( [ 'Feed' => true ] );
+		$op = $this->newInstance( [ MainConfigNames::Feed => true ] );
 		$this->assertSame( [], $op->getSyndicationLinks() );
 
 		$op->addFeedLink( 'not a supported format', 'abc' );
 		$this->assertFalse( $op->isSyndicated() );
 		$this->assertSame( [], $op->getSyndicationLinks() );
 
-		$feedTypes = $op->getConfig()->get( 'AdvertisedFeedTypes' );
+		$feedTypes = $op->getConfig()->get( MainConfigNames::AdvertisedFeedTypes );
 
 		$op->addFeedLink( $feedTypes[0], 'def' );
 		$this->assertTrue( $op->isSyndicated() );
@@ -1173,22 +1171,26 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op = $this->newInstance();
 		$this->assertSame( [], $op->getLanguageLinks() );
 
-		$op->addLanguageLinks( [ 'fr:A', 'it:B' ] );
-		$this->assertSame( [ 'fr:A', 'it:B' ], $op->getLanguageLinks() );
+		$op->addLanguageLinks( [ 'fr:A#x', 'it:B' ] );
+		$this->assertSame( [ 'fr:A#x', 'it:B' ], $op->getLanguageLinks() );
 
-		$op->addLanguageLinks( [ 'de:C', 'es:D' ] );
-		$this->assertSame( [ 'fr:A', 'it:B', 'de:C', 'es:D' ], $op->getLanguageLinks() );
+		$op->addLanguageLinks( [
+			TitleValue::tryNew( NS_MAIN, 'C', '', 'de' ),
+			TitleValue::tryNew( NS_MAIN, 'D', '', 'es' ),
+		] );
+		$this->assertSame( [ 'fr:A#x', 'it:B', 'de:C', 'es:D' ], $op->getLanguageLinks() );
 
-		$op->setLanguageLinks( [ 'pt:E' ] );
+		$op->setLanguageLinks( [ TitleValue::tryNew( NS_MAIN, 'E', '', 'pt' ) ] );
 		$this->assertSame( [ 'pt:E' ], $op->getLanguageLinks() );
 
-		$pOut1 = $this->createParserOutputStub( 'getLanguageLinks', [ 'he:F', 'ar:G' ] );
+		$pOut1 = $this->createParserOutputStub( 'getLanguageLinks', [ 'he:F', 'ar:G#y' ] );
 		$op->addParserOutputMetadata( $pOut1 );
-		$this->assertSame( [ 'pt:E', 'he:F', 'ar:G' ], $op->getLanguageLinks() );
+		$this->assertSame( [ 'pt:E', 'he:F', 'ar:G#y' ], $op->getLanguageLinks() );
 
+		# Duplicates are removed in OutputPage (T26502)
 		$pOut2 = $this->createParserOutputStub( 'getLanguageLinks', [ 'pt:H' ] );
 		$op->addParserOutput( $pOut2 );
-		$this->assertSame( [ 'pt:E', 'he:F', 'ar:G', 'pt:H' ], $op->getLanguageLinks() );
+		$this->assertSame( [ 'pt:E', 'he:F', 'ar:G#y' ], $op->getLanguageLinks() );
 	}
 
 	// @todo Are these category links tests too abstract and complicated for what they test?  Would
@@ -1258,6 +1260,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		$op = $this->setupCategoryTests( $fakeResults, $variantLinkCallback );
 
+		$this->filterDeprecated( '/OutputPage::setCategoryLinks was deprecated/' );
 		$op->setCategoryLinks( [ 'Initial page' => 'Initial page' ] );
 		$op->setCategoryLinks( $args );
 
@@ -1296,6 +1299,39 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * @dataProvider provideGetCategories
+	 */
+	public function testOutputPageRenderCategoryLinkHook(
+		array $args, array $fakeResults, ?callable $variantLinkCallback,
+		array $expectedNormal, array $expectedHidden, array $expectedText
+	) {
+		$expectedNormal = $this->extractExpectedCategories( $expectedNormal, 'add' );
+		$expectedHidden = $this->extractExpectedCategories( $expectedHidden, 'add' );
+
+		$op = $this->setupCategoryTests( $fakeResults, $variantLinkCallback );
+
+		$tf = $this->getServiceContainer()->getTitleFormatter();
+		$this->setTemporaryHook( 'OutputPageRenderCategoryLink',
+			static function ( $outputPage, $categoryTitle, $text, &$link ) use ( $tf ) {
+				$link = 'Custom link: ' . $tf->getPrefixedText( $categoryTitle ) . ", text: ($text)";
+			}
+		);
+		$op->addCategoryLinks( $args );
+
+		$this->doCategoryAsserts( $op, $expectedNormal, $expectedHidden );
+		$this->doCategoryLinkAsserts( $op, $expectedNormal, $expectedHidden );
+		$i = 0;
+		foreach ( $op->getCategoryLinks() as $type => $actual ) {
+			foreach ( $actual as $link ) {
+				$text = $expectedText[$i++];
+				$this->assertStringContainsString( 'Custom link: Category:', $link );
+				$this->assertStringContainsString( ", text: ($text)", $link );
+			}
+		}
+		$this->assertCount( $i, $expectedText );
+	}
+
+	/**
 	 * We allow different expectations for different tests as an associative array, like
 	 * [ 'set' => [ ... ], 'default' => [ ... ] ] if setCategoryLinks() will give a different
 	 * result.
@@ -1311,7 +1347,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function setupCategoryTests(
-		array $fakeResults, callable $variantLinkCallback = null
+		array $fakeResults, ?callable $variantLinkCallback = null
 	): OutputPage {
 		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, true );
 
@@ -1321,6 +1357,9 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			$mockLanguageConverter
 				->method( 'findVariantLink' )
 				->willReturnCallback( $variantLinkCallback );
+			$mockLanguageConverter
+				->method( 'convertHtml' )
+				->willReturnCallback( 'strrev' );
 
 			$languageConverterFactory = $this
 				->createMock( LanguageConverterFactory::class );
@@ -1384,7 +1423,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	public static function provideGetCategories() {
 		return [
-			'No categories' => [ [], [], null, [], [] ],
+			'No categories' => [ [], [], null, [], [], [] ],
 			'Simple test' => [
 				[ 'Test1' => 'Some sortkey', 'Test2' => 'A different sortkey' ],
 				[ 'Test1' => (object)[ 'pp_value' => 1, 'page_title' => 'Test1' ],
@@ -1392,6 +1431,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				null,
 				[ 'Test2' ],
 				[ 'Test1' ],
+				[ 'Test1', 'Test2' ],
 			],
 			'Invalid title' => [
 				[ '[' => '[', 'Test' => 'Test' ],
@@ -1399,6 +1439,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				null,
 				[ 'Test' ],
 				[],
+				[ 'Test' ],
 			],
 			'Variant link' => [
 				[ 'Test' => 'Test', 'Estay' => 'Estay' ],
@@ -1413,6 +1454,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				// but if you add them all together the second time gets skipped.
 				[ 'onebyone' => [ 'Test', 'Test' ], 'default' => [ 'Test' ] ],
 				[],
+				[ 'tseT' ],
 			],
 		];
 	}
@@ -1601,17 +1643,17 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	private function createParserOutputStubWithFlags( array $retVals, array $flags ): ParserOutput {
 		$pOut = $this->createMock( ParserOutput::class );
 
-		$mockedGetText = false;
+		$mockedRunOutputPipeline = false;
 		foreach ( $retVals as $method => $retVal ) {
 			$pOut->method( $method )->willReturn( $retVal );
-			if ( $method === 'getText' ) {
-				$mockedGetText = true;
+			if ( $method === 'runOutputPipeline' ) {
+				$mockedRunOutputPipeline = true;
 			}
 		}
 
 		// Needed to ensure OutputPage::getParserOutputText doesn't return null
-		if ( !$mockedGetText ) {
-			$pOut->method( 'getText' )->willReturn( '' );
+		if ( !$mockedRunOutputPipeline ) {
+			$pOut->method( 'runOutputPipeline' )->willReturn( new ParserOutput( '' ) );
 		}
 
 		$arrayReturningMethods = [
@@ -1759,7 +1801,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 					'<p>* Not a list</p>',
 				], 'No section edit links' => [
 					[ '== Title ==' ],
-					"<h2><span class=\"mw-headline\" id=\"Title\">Title</span></h2>",
+					'<div class="mw-heading mw-heading2"><h2 id="Title">Title</h2></div>',
 				], 'With title at start' => [
 					[ '* {{PAGENAME}}', true, Title::makeTitle( NS_TALK, 'Some page' ) ],
 					"<ul><li>Some page</li></ul>\n",
@@ -1823,7 +1865,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	public function testAddWikiTextAsInterfaceNoTitle() {
 		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'Title is null' );
+		$this->expectExceptionMessage( 'No title' );
 
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->addWikiTextAsInterface( 'a' );
@@ -1831,7 +1873,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	public function testAddWikiTextAsContentNoTitle() {
 		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'Title is null' );
+		$this->expectExceptionMessage( 'No title' );
 
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->addWikiTextAsContent( 'a' );
@@ -1861,19 +1903,19 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	public function testNoGallery() {
 		$op = $this->newInstance();
-		$this->assertFalse( $op->mNoGallery );
+		$this->assertFalse( $op->getNoGallery() );
 		$this->assertFalse( $op->getOutputFlag( ParserOutputFlags::NO_GALLERY ) );
 
 		$stubPO1 = $this->createParserOutputStubWithFlags(
 			[ 'getNoGallery' => true ], [ ParserOutputFlags::NO_GALLERY ]
 		);
 		$op->addParserOutputMetadata( $stubPO1 );
-		$this->assertTrue( $op->mNoGallery );
+		$this->assertTrue( $op->getNoGallery() );
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::NO_GALLERY ) );
 
 		$stubPO2 = $this->createParserOutputStub( 'getNoGallery', false );
 		$op->addParserOutput( $stubPO2 );
-		$this->assertFalse( $op->mNoGallery );
+		$this->assertFalse( $op->getNoGallery() );
 		// Note that flags are OR'ed together, and not reset.
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::NO_GALLERY ) );
 	}
@@ -1892,7 +1934,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( '', $op->getHTML() );
 
 		$text = '<some text>';
-		$pOut = $this->createParserOutputStub( 'getText', $text );
+		$pOut = $this->createParserOutputStub( 'runOutputPipeline', new ParserOutput( $text ) );
 
 		$op->addParserOutputMetadata( $pOut );
 		$this->assertSame( '', $op->getHTML() );
@@ -1908,7 +1950,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $op->getOutputFlag( ParserOutputFlags::NEW_SECTION ) );
 
 		$pOut = $this->createParserOutputStubWithFlags( [
-			'getText' => '<some text>',
+			'getContentHolderText' => '<some text>',
 			'getNewSection' => true,
 		], [
 			ParserOutputFlags::NEW_SECTION,
@@ -1986,28 +2028,28 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			],
 			'No section edit links' => [
 				[ '== Header ==' ],
-				'<h2><span class="mw-headline" id="Header">Header</span></h2>',
+				'<div class="mw-heading mw-heading2"><h2 id="Header">Header</h2></div>',
 			]
 		];
 	}
 
 	public function testParseAsContentNullTitle() {
 		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'Empty $mTitle in MediaWiki\Output\OutputPage::parseInternal' );
+		$this->expectExceptionMessage( 'No title' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseAsContent( '' );
 	}
 
 	public function testParseAsInterfaceNullTitle() {
 		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'Empty $mTitle in MediaWiki\Output\OutputPage::parseInternal' );
+		$this->expectExceptionMessage( 'No title' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseAsInterface( '' );
 	}
 
 	public function testParseInlineAsInterfaceNullTitle() {
 		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'Empty $mTitle in MediaWiki\Output\OutputPage::parseInternal' );
+		$this->expectExceptionMessage( 'No title' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseInlineAsInterface( '' );
 	}
@@ -2465,8 +2507,8 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$breakFrames, $preventClickjacking, $editPageFrameOptions, $expected
 	) {
 		$op = $this->newInstance( [
-			'BreakFrames' => $breakFrames,
-			'EditPageFrameOptions' => $editPageFrameOptions,
+			MainConfigNames::BreakFrames => $breakFrames,
+			MainConfigNames::EditPageFrameOptions => $editPageFrameOptions,
 		] );
 		$op->setPreventClickjacking( $preventClickjacking );
 
@@ -3011,7 +3053,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, $options['variant'] ?? false );
 
 		$output = $this->newInstance( [
-			'UseCdn' => $options['useCdn'] ?? false,
+			MainConfigNames::UseCdn => $options['useCdn'] ?? false,
 		] );
 		$output->considerCacheSettingsFinal();
 
@@ -3063,7 +3105,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 					'Vary' => 'Accept-Encoding, Cookie, Accept-Language',
 				]
 			],
-			'Private per default' => [
+			'Private by default' => [
 				[],
 				[
 					'Cache-Control' => 'private, must-revalidate, max-age=0',
@@ -3200,7 +3242,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		] );
 		$this->setContentLang( $contLang );
 		$output = $this->newInstance(
-			[ 'LanguageCode' => $contLang ],
+			[ MainConfigNames::LanguageCode => $contLang ],
 			new FauxRequest( [ 'uselang' => $userLang ] ),
 			'notitle'
 		);
@@ -3283,12 +3325,83 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $op->userCanPreview() );
 	}
 
+	public function providePermissionStatus() {
+		yield 'no errors' => [
+			PermissionStatus::newEmpty(),
+			'',
+		];
+
+		yield 'one message' => [
+			PermissionStatus::newEmpty()->fatal( 'badaccess-group0' ),
+			'(permissionserrorstext: 1)
+
+<div class="permissions-errors"><div class="mw-permissionerror-badaccess-group0">(badaccess-group0)</div></div>',
+		];
+
+		yield 'two messages' => [
+			PermissionStatus::newEmpty()->fatal( 'badaccess-group0' )->fatal( 'foobar' ),
+			'(permissionserrorstext: 2)
+
+<ul class="permissions-errors"><li class="mw-permissionerror-badaccess-group0">(badaccess-group0)</li><li class="mw-permissionerror-foobar">(foobar)</li></ul>',
+		];
+	}
+
+	public function provideFormatPermissionStatus() {
+		yield 'RawMessage' => [
+			PermissionStatus::newEmpty()->fatal( new RawMessage( 'Foo Bar' ) ),
+			'(permissionserrorstext: 1)
+
+<div class="permissions-errors"><div class="mw-permissionerror-rawmessage">Foo Bar</div></div>',
+		];
+	}
+
+	public function provideFormatPermissionsErrorMessage() {
+		yield 'RawMessage' => [
+			PermissionStatus::newEmpty()->fatal( new RawMessage( 'Foo Bar' ) ),
+			'(permissionserrorstext: 1)
+
+<div class="permissions-errors"><div class="mw-permissionerror-rawmessage">(rawmessage: Foo Bar)</div></div>',
+		];
+	}
+
+	/**
+	 * @dataProvider providePermissionStatus
+	 * @dataProvider provideFormatPermissionStatus
+	 */
+	public function testFormatPermissionStatus( PermissionStatus $status, string $expected ) {
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'qqx' );
+
+		$actual = self::newInstance()->formatPermissionStatus( $status );
+		$this->assertEquals( $expected, $actual );
+	}
+
+	/**
+	 * @dataProvider providePermissionStatus
+	 * @dataProvider provideFormatPermissionsErrorMessage
+	 */
+	public function testFormatPermissionsErrorMessage( PermissionStatus $status, string $expected ) {
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'qqx' );
+		$this->filterDeprecated( '/OutputPage::formatPermissionsErrorMessage was deprecated/' );
+
+		// Unlike formatPermissionStatus, this method doesn't accept good statuses
+		$actual = $status->isGood() ? '' :
+			self::newInstance()->formatPermissionsErrorMessage( $status->toLegacyErrorArray() );
+		$this->assertEquals( $expected, $actual );
+	}
+
 	private function newInstance(
 		array $config = [],
-		WebRequest $request = null,
+		?WebRequest $request = null,
 		$option = null,
-		Authority $performer = null
+		?Authority $performer = null
 	): OutputPage {
+		$this->overrideConfigValues( [
+			// Avoid configured skin affecting the headings
+			MainConfigNames::ParserEnableLegacyHeadingDOM => false,
+			MainConfigNames::DefaultSkin => 'fallback',
+			MainConfigNames::HiddenPrefs => [ 'skin' ],
+		] );
+
 		$context = new RequestContext();
 
 		$context->setConfig( new MultiConfig( [

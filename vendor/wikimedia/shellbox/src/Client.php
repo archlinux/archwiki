@@ -11,6 +11,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ReflectionClass;
 use Shellbox\Command\OutputFile;
+use Shellbox\Command\OutputFileWithContents;
 use Shellbox\Command\OutputGlob;
 use Shellbox\Multipart\MultipartReader;
 use Shellbox\Multipart\MultipartUtils;
@@ -28,6 +29,8 @@ class Client implements RPCClient {
 	private $key;
 	/** @var LoggerInterface */
 	private $logger;
+	/** @var bool */
+	private $allowUrlFiles;
 
 	/**
 	 * @param ClientInterface $httpClient An object which requests an HTTP resource.
@@ -40,12 +43,22 @@ class Client implements RPCClient {
 	 *
 	 * @param UriInterface $uri The base URI of the server
 	 * @param string $key The key for HMAC authentication
+	 * @param array $options An associative array of options, which may contain:
+	 *   - allowUrlFiles: Set this to true to allow input files to be downloaded,
+	 *     and output files to be uploaded, on the server side. If this is set,
+	 *     the server configuration variable allowUrlFiles must also be set to true.
 	 */
-	public function __construct( ClientInterface $httpClient, UriInterface $uri, $key ) {
+	public function __construct(
+		ClientInterface $httpClient,
+		UriInterface $uri,
+		string $key,
+		array $options = []
+	) {
 		$this->httpClient = $httpClient;
 		$this->uri = $uri;
 		$this->key = $key;
 		$this->logger = new NullLogger;
+		$this->allowUrlFiles = $options['allowUrlFiles'] ?? false;
 	}
 
 	/**
@@ -137,7 +150,7 @@ class Client implements RPCClient {
 	 *     - "headers": An associative array of part headers.
 	 * @param OutputFile[] $outputFiles Output files. The objects will have
 	 *   their contents populated with data received from the server.
-	 * @param OutputGlob[] $outputGlobs Output globs. The objects will have
+	 * @param OutputGlob[] $outputGlobs Output globs. The objects will
 	 *   be populated with data received from the server.
 	 * @return array An associative array of output data
 	 * @throws ShellboxError
@@ -183,7 +196,7 @@ class Client implements RPCClient {
 		$data = [];
 		$outputStrings = [];
 		$partIndex = 0;
-		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $headers = $multipartReader->readPartHeaders() ) !== false ) {
 			if ( !isset( $headers['content-disposition'] ) ) {
 				throw new ShellboxError( "Part #$partIndex has no Content-Disposition" );
@@ -198,16 +211,20 @@ class Client implements RPCClient {
 				$outputStrings[$disposition['name']] = $multipartReader->readPartAsString();
 			} elseif ( $disposition['type'] === 'attachment' ) {
 				$name = $disposition['name'] ?? '';
-				if ( isset( $outputFiles[$name] ) ) {
+				if ( isset( $outputFiles[$name] )
+					&& $outputFiles[$name] instanceof OutputFileWithContents
+				) {
 					$outputFiles[$name]->readFromMultipart( $multipartReader );
 				} else {
 					$found = false;
 					foreach ( $outputGlobs as $glob ) {
 						if ( $glob->isMatch( $name ) ) {
-							$found = true;
-							$instance = $glob->getInstance( $name );
-							$instance->readFromMultipart( $multipartReader );
-							break;
+							$instance = $glob->getOutputFile( $name );
+							if ( $instance instanceof OutputFileWithContents ) {
+								$instance->readFromMultipart( $multipartReader );
+								$found = true;
+								break;
+							}
 						}
 					}
 					if ( !$found ) {
@@ -237,4 +254,16 @@ class Client implements RPCClient {
 		}
 		return hash_final( $hashContext );
 	}
+
+	/**
+	 * Whether the client can download input files and upload output files
+	 * specified with BoxedCommand::inputFileFromUrl and the like.
+	 *
+	 * @since 4.1.0
+	 * @return bool
+	 */
+	public function areUrlFilesAllowed() {
+		return $this->allowUrlFiles;
+	}
+
 }

@@ -116,7 +116,7 @@ ve.ui.MWReferencesListDialog.prototype.isModified = function () {
  */
 ve.ui.MWReferencesListDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'done' ) {
-		return new OO.ui.Process( function () {
+		return new OO.ui.Process( () => {
 
 			// Save changes
 			const refGroup = this.groupInput.getValue();
@@ -151,7 +151,7 @@ ve.ui.MWReferencesListDialog.prototype.getActionProcess = function ( action ) {
 			}
 
 			this.close( { action: action } );
-		}, this );
+		} );
 	}
 	// Parent method
 	return ve.ui.MWReferencesListDialog.super.prototype.getActionProcess.call( this, action );
@@ -162,13 +162,14 @@ ve.ui.MWReferencesListDialog.prototype.getActionProcess = function ( action ) {
  */
 ve.ui.MWReferencesListDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWReferencesListDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			if ( !( this.selectedNode instanceof ve.dm.MWReferencesListNode ) ) {
 				throw new Error( 'Cannot open dialog: references list must be selected' );
 			}
 
 			this.groupInput.setValue( this.selectedNode.getAttribute( 'refGroup' ) );
-			this.groupInput.populateMenu( this.getFragment().getDocument().getInternalList() );
+			const docRefs = ve.dm.MWDocumentReferences.static.refsForDoc( this.getFragment().getDocument() );
+			this.groupInput.populateMenu( docRefs.getAllGroupNames() );
 
 			this.responsiveCheckbox.setSelected( this.selectedNode.getAttribute( 'isResponsive' ) );
 
@@ -180,7 +181,7 @@ ve.ui.MWReferencesListDialog.prototype.getSetupProcess = function ( data ) {
 			this.responsiveCheckbox.connect( this, { change: 'onChange' } );
 
 			this.updateActions();
-		}, this );
+		} );
 };
 
 /**
@@ -188,10 +189,10 @@ ve.ui.MWReferencesListDialog.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.MWReferencesListDialog.prototype.getTeardownProcess = function ( data ) {
 	return ve.ui.MWReferencesListDialog.super.prototype.getTeardownProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.groupInput.disconnect( this );
 			this.responsiveCheckbox.disconnect( this );
-		}, this );
+		} );
 };
 
 /**
@@ -199,9 +200,9 @@ ve.ui.MWReferencesListDialog.prototype.getTeardownProcess = function ( data ) {
  */
 ve.ui.MWReferencesListDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.MWReferencesListDialog.super.prototype.getReadyProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.groupInput.focus();
-		}, this );
+		} );
 };
 
 /* Registration */

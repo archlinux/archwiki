@@ -31,20 +31,9 @@ use MediaWiki\Minerva\Menu\Group;
  * @package MediaWiki\Minerva\Menu\Main
  */
 final class AdvancedMainMenuBuilder implements IMainMenuBuilder {
-	/**
-	 * @var bool
-	 */
-	private $showMobileOptions;
-
-	/**
-	 * @var bool
-	 */
-	private $showDonateLink;
-
-	/**
-	 * @var Definitions
-	 */
-	private $definitions;
+	private bool $showMobileOptions;
+	private bool $showDonateLink;
+	private Definitions $definitions;
 
 	/**
 	 * Initialize the Default Main Menu builder

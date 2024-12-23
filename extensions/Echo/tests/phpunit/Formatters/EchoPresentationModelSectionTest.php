@@ -1,7 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Formatters;
+
 use MediaWiki\Extension\Notifications\Formatters\EchoPresentationModelSection;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWikiIntegrationTestCase;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Formatters\EchoPresentationModelSection

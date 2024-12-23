@@ -1,8 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
-			"J budissin",
-			"WTM"
+			"J budissin"
 		]
 	},
 	"discussiontools": "Diskusijne nastroje",
@@ -12,7 +11,7 @@
 	"discussiontools-defaultsummary-reply": "Wotmołwić",
 	"discussiontools-desc": "Graty k polěpšenju diskusijnych stronow.",
 	"discussiontools-emptystate-button": "Nowu diskusiju započeć",
-	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Diskusijne strony]] su městna, hdźež ludźo wo tym diskutuja, kak móžeš wobsah {{GRAMMAR:G|{{SITENAME}}}} tak derje kaž móžno wuhotować. Móžeš tutu stronu wužiwać za diskusije z druhimi wo tym, kak hodźi so [[:{{SUBJECTPAGENAME}}]] polěpšić.",
+	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Diskusijne strony]] su městna, hdźež ludźo wo tym diskutuja, kak móžeš wobsah {{GRAMMAR:G|SITENAME}} tak derje kaž móžno wuhotować. Móžeš tutu stronu wužiwać za diskusije z druhimi wo tym, kak hodźi so [[:{{SUBJECTPAGENAME}}]] polěpšić.",
 	"discussiontools-emptystate-title": "Zahaj diskusiju wo zapisku {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "Witaj na twojej diskusijnej stronje",
 	"discussiontools-emptystate-title-self-anon": "Witaj na tutej diskusijnej stronje",

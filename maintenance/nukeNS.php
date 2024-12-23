@@ -33,7 +33,9 @@
  * based on nukePage by Rob Church
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Title\Title;
 
@@ -116,12 +118,12 @@ class NukeNS extends Maintenance {
 				->from( 'site_stats' )
 				->caller( __METHOD__ )->fetchField();
 			$pages -= $n_deleted;
-			$dbw->update(
-				'site_stats',
-				[ 'ss_total_pages' => $pages ],
-				[ 'ss_row_id' => 1 ],
-				__METHOD__
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( 'site_stats' )
+				->set( [ 'ss_total_pages' => $pages ] )
+				->where( [ 'ss_row_id' => 1 ] )
+				->caller( __METHOD__ )
+				->execute();
 		}
 
 		if ( !$delete ) {
@@ -130,5 +132,7 @@ class NukeNS extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = NukeNS::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

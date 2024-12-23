@@ -3,20 +3,25 @@
 namespace MediaWiki\Specials;
 
 use MediaWiki\Html\TemplateParser;
+use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\IncludableSpecialPage;
 use MediaWiki\Specials\Contribute\ContributeFactory;
 
 /**
- * Special:Contribute, show user contribute options in the 1st tab
- *  and a list of contribution on the 2nd tab.
+ * Promote ways for editors to contribute.
+ *
+ * The cards are produced by MediaWiki\Specials\Contribute\ContributeFactory,
+ * which defaults to a single card promoting Special:Wantedpages, and is
+ * extended by extensions to add additional cards.
+ *
+ * To enable a link to this special page in the skin, which will replace the
+ * link to "Contributions" in the p-personal portlet menu, add the skin name
+ * to $wgSpecialContributeSkinsEnabled.
  *
  * @ingroup SpecialPage
  */
 class SpecialContribute extends IncludableSpecialPage {
 
-	/**
-	 * SpecialContribute constructor.
-	 */
 	public function __construct() {
 		parent::__construct( 'Contribute' );
 	}
@@ -53,10 +58,6 @@ class SpecialContribute extends IncludableSpecialPage {
 		$templateParser = new TemplateParser( __DIR__ . '/Contribute/Templates' );
 		$templateData = [
 			'cards' => $cards,
-			'userName' => $user->getName(),
-			'userPage' => $user->getUserPage(),
-			'contribute' => $this->msg( 'contribute' )->text(),
-			'viewContributions' => $this->msg( 'viewcontribs' )->text(),
 		];
 		$outputHTML = $templateParser->processTemplate(
 			'SpecialContribute',
@@ -96,7 +97,7 @@ class SpecialContribute extends IncludableSpecialPage {
 	public function isShowable(): bool {
 		return ContributeFactory::isEnabledOnCurrentSkin(
 			$this->getSkin(),
-			$this->getConfig()->get( 'SpecialContributeSkinsEnabled' )
+			$this->getConfig()->get( MainConfigNames::SpecialContributeSkinsEnabled )
 		);
 	}
 }

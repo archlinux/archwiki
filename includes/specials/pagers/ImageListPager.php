@@ -22,24 +22,26 @@
 namespace MediaWiki\Pager;
 
 use LocalRepo;
-use MediaWiki\Cache\UserCache;
+use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
+use MediaWiki\Xml\Xml;
 use RepoGroup;
 use UnexpectedValueException;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IResultWrapper;
-use Xml;
+use Wikimedia\Rdbms\Subquery;
 
 /**
  * @ingroup Pager
@@ -66,8 +68,8 @@ class ImageListPager extends TablePager {
 
 	private CommentStore $commentStore;
 	private LocalRepo $localRepo;
-	private UserCache $userCache;
 	private CommentFormatter $commentFormatter;
+	private LinkBatchFactory $linkBatchFactory;
 
 	/**
 	 * The unique sort fields for the sort options for unique paginate
@@ -84,9 +86,9 @@ class ImageListPager extends TablePager {
 	 * @param LinkRenderer $linkRenderer
 	 * @param IConnectionProvider $dbProvider
 	 * @param RepoGroup $repoGroup
-	 * @param UserCache $userCache
 	 * @param UserNameUtils $userNameUtils
 	 * @param CommentFormatter $commentFormatter
+	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param string $userName
 	 * @param string $search
 	 * @param bool $including
@@ -98,9 +100,9 @@ class ImageListPager extends TablePager {
 		LinkRenderer $linkRenderer,
 		IConnectionProvider $dbProvider,
 		RepoGroup $repoGroup,
-		UserCache $userCache,
 		UserNameUtils $userNameUtils,
 		CommentFormatter $commentFormatter,
+		LinkBatchFactory $linkBatchFactory,
 		$userName,
 		$search,
 		$including,
@@ -140,8 +142,8 @@ class ImageListPager extends TablePager {
 		parent::__construct( $context, $linkRenderer );
 		$this->commentStore = $commentStore;
 		$this->localRepo = $repoGroup->getLocalRepo();
-		$this->userCache = $userCache;
 		$this->commentFormatter = $commentFormatter;
+		$this->linkBatchFactory = $linkBatchFactory;
 	}
 
 	/**
@@ -296,11 +298,12 @@ class ImageListPager extends TablePager {
 		# Depends on $wgMiserMode
 		# Will also not happen if mShowAll is true.
 		if ( array_key_exists( 'count', $this->getFieldNames() ) ) {
-			$fields['count'] = $dbr->buildSelectSubquery(
-				'oldimage',
-				'COUNT(oi_archive_name)',
-				'oi_name = img_name',
-				__METHOD__
+			$fields['count'] = new Subquery( $dbr->newSelectQueryBuilder()
+				->select( 'COUNT(oi_archive_name)' )
+				->from( 'oldimage' )
+				->where( 'oi_name = img_name' )
+				->caller( __METHOD__ )
+				->getSQL()
 			);
 		}
 
@@ -327,7 +330,14 @@ class ImageListPager extends TablePager {
 		$this->mTableName = 'image';
 		[ $tables, $fields, $conds, $fname, $options, $join_conds ] =
 			$this->buildQueryInfo( $offset, $limit, $order );
-		$imageRes = $dbr->select( $tables, $fields, $conds, $fname, $options, $join_conds );
+		$imageRes = $dbr->newSelectQueryBuilder()
+			->tables( is_array( $tables ) ? $tables : [ $tables ] )
+			->fields( $fields )
+			->conds( $conds )
+			->caller( $fname )
+			->options( $options )
+			->joinConds( $join_conds )
+			->fetchResultSet();
 		$this->mTableName = $prevTableName;
 
 		if ( !$this->mShowAll ) {
@@ -348,7 +358,14 @@ class ImageListPager extends TablePager {
 
 		[ $tables, $fields, $conds, $fname, $options, $join_conds ] =
 			$this->buildQueryInfo( $offset, $limit, $order );
-		$oldimageRes = $dbr->select( $tables, $fields, $conds, $fname, $options, $join_conds );
+		$oldimageRes = $dbr->newSelectQueryBuilder()
+			->tables( is_array( $tables ) ? $tables : [ $tables ] )
+			->fields( $fields )
+			->conds( $conds )
+			->caller( $fname )
+			->options( $options )
+			->joinConds( $join_conds )
+			->fetchResultSet();
 
 		$this->mTableName = $prevTableName;
 		$this->mIndexField = $oldIndex;
@@ -421,15 +438,14 @@ class ImageListPager extends TablePager {
 	}
 
 	protected function doBatchLookups() {
-		$userIds = [];
 		$this->mResult->seek( 0 );
+		$batch = $this->linkBatchFactory->newLinkBatch();
 		foreach ( $this->mResult as $row ) {
-			if ( $row->actor_user ) {
-				$userIds[] = $row->actor_user;
-			}
+			$batch->add( NS_USER, $row->actor_name );
+			$batch->add( NS_USER_TALK, $row->actor_name );
+			$batch->add( NS_FILE, $row->img_name );
 		}
-		# Do a link batch query for names and userpages
-		$this->userCache->doQuery( $userIds, [ 'userpage' ], __METHOD__ );
+		$batch->execute();
 	}
 
 	/**
@@ -458,9 +474,7 @@ class ImageListPager extends TablePager {
 				return htmlspecialchars( $this->getLanguage()->userTimeAndDate( $value, $this->getUser() ) );
 			case 'img_name':
 				static $imgfile = null;
-				if ( $imgfile === null ) {
-					$imgfile = $this->msg( 'imgfile' )->text();
-				}
+				$imgfile ??= $this->msg( 'imgfile' )->text();
 
 				// Weird files can maybe exist? T24227
 				$filePage = Title::makeTitleSafe( NS_FILE, $value );
@@ -496,17 +510,10 @@ class ImageListPager extends TablePager {
 					return htmlspecialchars( $value );
 				}
 			case 'img_actor':
-				if ( $this->mCurrentRow->actor_user ) {
-					$name = $this->mCurrentRow->actor_name;
-					$link = $linkRenderer->makeLink(
-						Title::makeTitle( NS_USER, $name ),
-						$name
-					);
-				} else {
-					$link = $value !== null ? htmlspecialchars( $value ) : '';
-				}
-
-				return $link;
+				$userId = (int)$this->mCurrentRow->actor_user;
+				$userName = $this->mCurrentRow->actor_name;
+				return Linker::userLink( $userId, $userName )
+					. Linker::userToolLinks( $userId, $userName );
 			case 'img_size':
 				return htmlspecialchars( $this->getLanguage()->formatSize( (int)$value ) );
 			case 'img_description':

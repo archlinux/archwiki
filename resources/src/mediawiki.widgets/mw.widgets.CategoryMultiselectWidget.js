@@ -5,16 +5,16 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 ( function () {
-	var hasOwn = Object.prototype.hasOwnProperty,
+	const hasOwn = Object.prototype.hasOwnProperty,
 		NS_CATEGORY = mw.config.get( 'wgNamespaceIds' ).category;
 
 	/**
-	 * Category selector widget. Displays an OO.ui.MenuTagMultiselectWidget
+	 * @classdesc Displays an {@link OO.ui.MenuTagMultiselectWidget}
 	 * and autocompletes with available categories.
 	 *
 	 * @example
 	 * mw.loader.using( 'mediawiki.widgets.CategoryMultiselectWidget', function () {
-	 *   var selector = new mw.widgets.CategoryMultiselectWidget( {
+	 *   let selector = new mw.widgets.CategoryMultiselectWidget( {
 	 *     searchTypes: [
 	 *       mw.widgets.CategoryMultiselectWidget.SearchType.OpenSearch,
 	 *       mw.widgets.CategoryMultiselectWidget.SearchType.InternalSearch
@@ -32,6 +32,7 @@
 	 * @mixes OO.ui.mixin.PendingElement
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.widgets.CategoryMultiselectWidget`.
 	 * @param {Object} [config] Configuration options
 	 * @param {mw.Api} [config.api] Instance of mw.Api (or subclass thereof) to use for queries
 	 * @param {number} [config.limit=10] Maximum number of results to load
@@ -40,9 +41,10 @@
 	 */
 	mw.widgets.CategoryMultiselectWidget = function MWCategoryMultiselectWidget( config ) {
 		// Config initialization
-		config = $.extend( {
+		config = Object.assign( {
 			limit: 10,
-			searchTypes: [ mw.widgets.CategoryMultiselectWidget.SearchType.OpenSearch ]
+			searchTypes: [ mw.widgets.CategoryMultiselectWidget.SearchType.OpenSearch ],
+			placeholder: mw.msg( 'mw-widgets-categoryselector-add-category-placeholder' )
 		}, config );
 		this.limit = config.limit;
 		this.searchTypes = config.searchTypes;
@@ -53,14 +55,13 @@
 			menu: {
 				filterFromInput: false
 			},
-			placeholder: mw.msg( 'mw-widgets-categoryselector-add-category-placeholder' ),
 			// This allows the user to both select non-existent categories, and prevents the selector from
 			// being wiped from #onMenuItemsChange when we change the available options in the dropdown
 			allowArbitrary: true
 		} ) );
 
 		// Mixin constructors
-		OO.ui.mixin.PendingElement.call( this, $.extend( {}, config, { $pending: this.$handle } ) );
+		OO.ui.mixin.PendingElement.call( this, Object.assign( {}, config, { $pending: this.$handle } ) );
 
 		// Event handler to call the autocomplete methods
 		this.input.$input.on( 'change input cut paste', OO.ui.debounce( this.updateMenuItems.bind( this ), 100 ) );
@@ -87,8 +88,8 @@
 	 */
 	mw.widgets.CategoryMultiselectWidget.prototype.updateMenuItems = function () {
 		this.getMenu().clearItems();
-		this.getNewMenuItems( this.input.$input.val() ).then( function ( items ) {
-			var menu = this.getMenu();
+		this.getNewMenuItems( this.input.$input.val() ).then( ( items ) => {
+			const menu = this.getMenu();
 
 			// Never show the menu if the input lost focus in the meantime
 			if ( !this.input.$input.is( ':focus' ) ) {
@@ -96,25 +97,19 @@
 			}
 
 			// Array of strings of the data of OO.ui.MenuOptionsWidgets
-			var existingItems = menu.getItems().map( function ( item ) {
-				return item.data;
-			} );
+			const existingItems = menu.getItems().map( ( item ) => item.data );
 
 			// Remove if items' data already exists
-			var filteredItems = items.filter( function ( item ) {
-				return existingItems.indexOf( item ) === -1;
-			} );
+			let filteredItems = items.filter( ( item ) => existingItems.indexOf( item ) === -1 );
 
 			// Map to an array of OO.ui.MenuOptionWidgets
-			filteredItems = filteredItems.map( function ( item ) {
-				return new OO.ui.MenuOptionWidget( {
-					data: item,
-					label: item
-				} );
-			} );
+			filteredItems = filteredItems.map( ( item ) => new OO.ui.MenuOptionWidget( {
+				data: item,
+				label: item
+			} ) );
 
 			menu.addItems( filteredItems ).toggle( true );
-		}.bind( this ) );
+		} );
 	};
 
 	/**
@@ -135,7 +130,7 @@
 	 * @return {jQuery.Promise} Resolves with an array of categories
 	 */
 	mw.widgets.CategoryMultiselectWidget.prototype.getNewMenuItems = function ( input ) {
-		var deferred = $.Deferred();
+		const deferred = $.Deferred();
 
 		if ( input.trim() === '' ) {
 			deferred.resolve( [] );
@@ -144,37 +139,26 @@
 
 		// Abort all pending requests, we won't need their results
 		this.api.abort();
-		var promises = [];
-		for ( var i = 0; i < this.searchTypes.length; i++ ) {
+		const promises = [];
+		for ( let i = 0; i < this.searchTypes.length; i++ ) {
 			promises.push( this.searchCategories( input, this.searchTypes[ i ] ) );
 		}
 
 		this.pushPending();
 
-		$.when.apply( $, promises ).done( function () {
-			var allData = [],
-				dataSets = Array.prototype.slice.apply( arguments );
+		$.when( ...promises ).done( ( ...dataSets ) => {
+			// Flatten array
+			const allData = [].concat( ...dataSets );
 
-			// Collect values from all results
-			allData = allData.concat.apply( allData, dataSets );
-
-			var categoryNames = allData
+			const categoryNames = allData
 				// Remove duplicates
-				.filter( function ( value, index, self ) {
-					return self.indexOf( value ) === index;
-				} )
+				.filter( ( value, index, arr ) => arr.indexOf( value ) === index )
 				// Get Title objects
-				.map( function ( name ) {
-					return mw.Title.newFromText( name );
-				} )
+				.map( ( name ) => mw.Title.newFromText( name ) )
 				// Keep only titles from 'Category' namespace
-				.filter( function ( title ) {
-					return title && title.getNamespaceId() === NS_CATEGORY;
-				} )
+				.filter( ( title ) => title && title.getNamespaceId() === NS_CATEGORY )
 				// Convert back to strings, strip 'Category:' prefix
-				.map( function ( title ) {
-					return title.getMainText();
-				} );
+				.map( ( title ) => title.getMainText() );
 
 			deferred.resolve( categoryNames );
 
@@ -187,7 +171,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.CategoryMultiselectWidget.prototype.isAllowedData = function ( data ) {
-		var title = mw.Title.makeTitle( NS_CATEGORY, data );
+		const title = mw.Title.makeTitle( NS_CATEGORY, data );
 		if ( !title ) {
 			return false;
 		}
@@ -198,7 +182,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.CategoryMultiselectWidget.prototype.createTagItemWidget = function ( data ) {
-		var title = mw.Title.makeTitle( NS_CATEGORY, data );
+		const title = mw.Title.makeTitle( NS_CATEGORY, data );
 
 		return new mw.widgets.CategoryTagItemWidget( {
 			apiUrl: this.api.apiUrl || undefined,
@@ -212,7 +196,7 @@
 	mw.widgets.CategoryMultiselectWidget.prototype.findItemFromData = function ( data ) {
 		// This is a bit of a hack... We have to canonicalize the data in the same way that
 		// #createItemWidget and CategoryTagItemWidget will do, otherwise we won't find duplicates.
-		var title = mw.Title.makeTitle( NS_CATEGORY, data );
+		const title = mw.Title.makeTitle( NS_CATEGORY, data );
 		if ( !title ) {
 			return null;
 		}
@@ -226,13 +210,12 @@
 	 * @return {boolean}
 	 */
 	mw.widgets.CategoryMultiselectWidget.prototype.validateSearchTypes = function () {
-		var validSearchTypes = false,
-			searchTypeEnumCount = Object.keys( mw.widgets.CategoryMultiselectWidget.SearchType ).length;
+		let validSearchTypes = false;
+
+		const searchTypeEnumCount = Object.keys( mw.widgets.CategoryMultiselectWidget.SearchType ).length;
 
 		// Check if all values are in the SearchType enum
-		validSearchTypes = this.searchTypes.every( function ( searchType ) {
-			return searchType > -1 && searchType < searchTypeEnumCount;
-		} );
+		validSearchTypes = this.searchTypes.every( ( searchType ) => searchType > -1 && searchType < searchTypeEnumCount );
 
 		if ( validSearchTypes === false ) {
 			throw new Error( 'Unknown searchType in searchTypes' );
@@ -277,7 +260,7 @@
 	 * @return {jQuery.Promise} Resolves with an array of categories
 	 */
 	mw.widgets.CategoryMultiselectWidget.prototype.searchCategories = function ( input, searchType ) {
-		var deferred = $.Deferred(),
+		const deferred = $.Deferred(),
 			cacheKey = input + searchType.toString();
 
 		// Check cache
@@ -293,8 +276,8 @@
 					namespace: NS_CATEGORY,
 					limit: this.limit,
 					search: input
-				} ).done( function ( res ) {
-					var categories = res[ 1 ];
+				} ).done( ( res ) => {
+					const categories = res[ 1 ];
 					deferred.resolve( categories );
 				} ).fail( deferred.reject.bind( deferred ) );
 				break;
@@ -308,10 +291,8 @@
 					aplimit: this.limit,
 					apfrom: input,
 					apprefix: input
-				} ).done( function ( res ) {
-					var categories = res.query.allpages.map( function ( page ) {
-						return page.title;
-					} );
+				} ).done( ( res ) => {
+					const categories = res.query.allpages.map( ( page ) => page.title );
 					deferred.resolve( categories );
 				} ).fail( deferred.reject.bind( deferred ) );
 				break;
@@ -327,10 +308,10 @@
 					action: 'query',
 					prop: 'info',
 					titles: 'Category:' + input
-				} ).done( function ( res ) {
-					var categories = [];
+				} ).done( ( res ) => {
+					const categories = [];
 
-					res.query.pages.forEach( function ( page ) {
+					res.query.pages.forEach( ( page ) => {
 						if ( !page.missing ) {
 							categories.push( page.title );
 						}
@@ -353,10 +334,8 @@
 					cmtype: 'subcat',
 					cmlimit: this.limit,
 					cmtitle: 'Category:' + input
-				} ).done( function ( res ) {
-					var categories = res.query.categorymembers.map( function ( category ) {
-						return category.title;
-					} );
+				} ).done( ( res ) => {
+					const categories = res.query.categorymembers.map( ( category ) => category.title );
 					deferred.resolve( categories );
 				} ).fail( deferred.reject.bind( deferred ) );
 				break;
@@ -373,14 +352,12 @@
 					prop: 'categories',
 					cllimit: this.limit,
 					titles: 'Category:' + input
-				} ).done( function ( res ) {
-					var categories = [];
+				} ).done( ( res ) => {
+					const categories = [];
 
-					res.query.pages.forEach( function ( page ) {
+					res.query.pages.forEach( ( page ) => {
 						if ( !page.missing && Array.isArray( page.categories ) ) {
-							categories.push.apply( categories, page.categories.map( function ( category ) {
-								return category.title;
-							} ) );
+							categories.push( ...page.categories.map( ( category ) => category.title ) );
 						}
 					} );
 

@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use IContextSource;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MessageLocalizer;
 

@@ -1,5 +1,7 @@
 /**
  * Configuration of Dialog module for wikiEditor
+ *
+ * @private
  */
 var toolbarModule = require( './jquery.wikiEditor.toolbar.js' ),
 	InsertLinkTitleInputField = require( './insertlink/TitleInputField.js' ),
@@ -23,7 +25,10 @@ function triggerButtonClick( element ) {
 }
 
 module.exports = {
-
+	/**
+	 * @param {jQuery} $textarea
+	 * @memberof module:ext.wikiEditor
+	 */
 	replaceIcons: function ( $textarea ) {
 		$textarea
 			.wikiEditor( 'addToToolbar', {
@@ -85,6 +90,10 @@ module.exports = {
 			} );
 	},
 
+	/**
+	 * @return {Object}
+	 * @memberof module:ext.wikiEditor
+	 */
 	getDefaultConfig: function () {
 		return { dialogs: {
 			'insert-link': {
@@ -248,10 +257,10 @@ module.exports = {
 					},
 					open: function () {
 						// Obtain the server name without the protocol. wgServer may be protocol-relative
-						// eslint-disable-next-line security/detect-unsafe-regex
+
 						var serverName = mw.config.get( 'wgServer' ).replace( /^(https?:)?\/\//, '' );
 						// Cache the articlepath regex
-						// eslint-disable-next-line security/detect-non-literal-regexp
+
 						$( this ).data( 'articlePathRegex', new RegExp(
 							'^https?://' + mw.util.escapeRegExp( serverName + mw.config.get( 'wgArticlePath' ) )
 								.replace( /\\\$1/g, '(.*)' ) + '$'
@@ -546,7 +555,7 @@ module.exports = {
 
 						// Pre-fill the text fields based on the current selection
 						if ( selection !== '' ) {
-							fileData = $.extend( fileData, parseFileSyntax( selection ) );
+							fileData = Object.assign( fileData, parseFileSyntax( selection ) );
 						}
 
 						// Initialize the form fields

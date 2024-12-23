@@ -36,14 +36,14 @@ abstract class RdfWriterBase implements RdfWriter {
 	protected const STATE_FINISH = 666;
 
 	/**
-	 * @var string the current state
+	 * @var int the current state
 	 */
 	private $state = self::STATE_START;
 
 	/**
 	 * Shorthands that can be used in place of IRIs, e.g. ("a" to mean rdf:type).
 	 *
-	 * @var string[] a map of shorthand names to [ $base, $local ] pairs.
+	 * @var string[][] a map of shorthand names to [ $base, $local ] pairs.
 	 * @todo Handle "a" as a special case directly. Use for custom "variables" like %currentValue
 	 *  instead.
 	 */
@@ -78,16 +78,6 @@ abstract class RdfWriterBase implements RdfWriter {
 	public const SUBDOCUMENT_ROLE = 'sub';
 
 	/**
-	 * Role ID for writers that will generate a single inline blank node.
-	 */
-	private const BNODE_ROLE = 'bnode';
-
-	/**
-	 * Role ID for writers that will generate a single inline RDR statement.
-	 */
-	private const STATEMENT_ROLE = 'statement';
-
-	/**
 	 * @var string The writer's role, see the XXX_ROLE constants.
 	 */
 	protected $role;
@@ -104,7 +94,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $role, BNodeLabeler $labeler = null ) {
+	public function __construct( $role, ?BNodeLabeler $labeler = null ) {
 		if ( !is_string( $role ) ) {
 			throw new InvalidArgumentException( '$role must be a string' );
 		}
@@ -210,11 +200,6 @@ abstract class RdfWriterBase implements RdfWriter {
 	}
 
 	/**
-	 * Returns the writers role. The role determines the behavior of the writer with respect
-	 * to which states and transitions are possible: a BNODE_ROLE writer would for instance
-	 * not accept a call to about(), since it can only process triples about a single subject
-	 * (the blank node it represents).
-	 *
 	 * @return string A string corresponding to one of the the XXX_ROLE constants.
 	 */
 	final public function getRole() {
@@ -240,7 +225,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	 */
 	protected function expandShorthand( &$base, &$local ) {
 		if ( $local === null && isset( $this->shorthands[$base] ) ) {
-			list( $base, $local ) = $this->shorthands[$base];
+			[ $base, $local ] = $this->shorthands[$base];
 		}
 	}
 
@@ -269,7 +254,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	/**
 	 * @see RdfWriter::blank()
 	 *
-	 * @param string|null $label node label, will be generated if not given.
+	 * @param string|null $label node label; will be generated if not given.
 	 *
 	 * @return string
 	 */

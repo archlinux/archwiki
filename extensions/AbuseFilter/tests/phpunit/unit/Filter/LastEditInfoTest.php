@@ -8,15 +8,9 @@ use MediaWikiUnitTestCase;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo
+ * @covers \MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo
  */
 class LastEditInfoTest extends MediaWikiUnitTestCase {
-	/**
-	 * @covers ::__construct
-	 * @covers ::getUserID
-	 * @covers ::getUserName
-	 * @covers ::getTimestamp
-	 */
 	public function testGetters() {
 		$userID = 42;
 		$userName = 'Admin';
@@ -32,9 +26,6 @@ class LastEditInfoTest extends MediaWikiUnitTestCase {
 	 * @param mixed $value
 	 * @param string $setter
 	 * @param string $getter
-	 * @covers ::setUserID
-	 * @covers ::setUserName
-	 * @covers ::setTimestamp
 	 * @dataProvider provideSetters
 	 */
 	public function testSetters( $value, string $setter, string $getter ) {

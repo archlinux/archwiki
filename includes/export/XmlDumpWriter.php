@@ -24,6 +24,9 @@
  */
 
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
@@ -35,6 +38,7 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SuppressedDataException;
 use MediaWiki\Storage\SqlBlobStore;
 use MediaWiki\Title\Title;
+use MediaWiki\Xml\Xml;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 
@@ -272,6 +276,7 @@ class XmlDumpWriter {
 				},
 				'Failed to get redirect target of page ' . $page->getId()
 			);
+			$redirect = Title::castFromLinkTarget( $redirect );
 			if ( $redirect instanceof Title && $redirect->isValidRedirectTarget() ) {
 				$out .= '    ';
 				$out .= Xml::element( 'redirect', [ 'title' => self::canonicalTitle( $redirect ) ] );
@@ -515,26 +520,29 @@ class XmlDumpWriter {
 			if ( $isV11 ) {
 				$textAttributes['location'] = $slot->getAddress();
 			}
+			$schema = null;
 
 			if ( $isMain ) {
 				// Output the numerical text ID if possible, for backwards compatibility.
 				// Note that this is currently the ONLY reason we have a BlobStore here at all.
 				// When removing this line, check whether the BlobStore has become unused.
 				try {
-					// NOTE: this will only work for addresses of the form "tt:12345".
+					// NOTE: this will only work for addresses of the form "tt:12345" or "es:DB://cluster1/1234".
 					// If we want to support other kinds of addresses in the future,
 					// we will have to silently ignore failures here.
 					// For now, this fails for "tt:0", which is present in the WMF production
 					// database as of July 2019, due to data corruption.
-					$textId = $this->getBlobStore()->getTextIdFromAddress( $slot->getAddress() );
+					[ $schema, $textId ] = $this->getBlobStore()->splitBlobAddress( $slot->getAddress() );
 				} catch ( InvalidArgumentException $ex ) {
 					MWDebug::warning( 'Bad content address for slot ' . $slot->getRole()
 						. ' of revision ' . $slot->getRevision() . ': ' . $ex->getMessage() );
 					$textId = 0;
 				}
 
-				if ( is_int( $textId ) ) {
+				if ( $schema === 'tt' ) {
 					$textAttributes['id'] = $textId;
+				} elseif ( $schema === 'es' ) {
+					$textAttributes['id'] = bin2hex( $textId );
 				}
 			}
 

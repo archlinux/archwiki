@@ -34,7 +34,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Heqa ena kategoriye de",
 	"mobile-frontend-meta-data-issues-header": "Meseleyê pele",
 	"minerva-meta-data-issues-section-header": "Meseleyê qısımi",
-	"mobile-frontend-notifications-filter": "Parzûn",
 	"mobile-frontend-pageaction-edit-tooltip": "Qısımê serêniya ena pele bıvurne",
 	"mobile-frontend-placeholder": "{{SITENAME}} de cı geyre",
 	"mobile-frontend-random-button": "Raştameye",
@@ -57,7 +56,5 @@
 	"skin-minerva-issue-learn-more": "Tayêna bımuse",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoriyi",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Pela kategoriyan bıvêne",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Ravêrşıyayê problemê pelan weşnayış",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Xetay pela  meqaley (Şablon:ambox) bahs bıyo",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Çı heyf ke, goreyê pelan ra neticeyi rêzkerdışê cihazanê mobilan de aktif niyo. Goreyê gruba xısusiyetê pela gurenayışi rê ravêrê sita normale."
 }

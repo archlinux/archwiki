@@ -29,6 +29,13 @@
 	"cite_error_empty_references_define": "Таг <code><ref></code> с име „$1“, дефиниран в <code><references></code> в група „$2“, няма съдържание.",
 	"cite-tracking-category-cite-error": "Страници с грешка в източник",
 	"cite-tracking-category-cite-error-desc": "Страниците в тази категория имат грешки при използването на таговете за източници.",
+	"cite-tracking-category-ref-extends": "Страници, които използват разширени източници",
+	"cite-tracking-category-ref-extends-desc": "Страниците в тази категория използват атрибут „extends“ на таг &lt;ref&gt;.",
+	"cite-reference-previews-reference": "Източник",
+	"cite-reference-previews-book": "Източник от книга",
+	"cite-reference-previews-journal": "Източник от периодичен печат",
+	"cite-reference-previews-news": "Източник от новина",
+	"cite-reference-previews-web": "Източник от уеб сайт",
 	"cite_references_link_accessibility_label": "Нагоре",
 	"cite_references_link_many_accessibility_label": "Нагоре към:",
 	"cite_references_link_accessibility_back_label": "Обратно нагоре",
@@ -40,5 +47,6 @@
 	"cite-wikieditor-help-content-reference-description": "Източник",
 	"cite-wikieditor-help-content-named-reference-description": "Наименован източник/бележка",
 	"cite-wikieditor-help-content-rereference-description": "Множествена употреба на един и същ източник",
-	"cite-wikieditor-help-content-showreferences-description": "Извеждане на източниците"
+	"cite-wikieditor-help-content-showreferences-description": "Извеждане на източниците",
+	"popups-refpreview-user-preference-label": "Включване на преглед на източници (бърз преглед на бележките, докато четете страница)"
 }

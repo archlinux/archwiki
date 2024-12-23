@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Mostlinked
- *
  * Copyright © 2005 Ævar Arnfjörð Bjarmason, 2006 Rob Church
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,9 +18,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
- * @author Rob Church <robchur@gmail.com>
  */
 
 namespace MediaWiki\Specials;
@@ -41,9 +36,11 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * A special page to show pages ordered by the number of pages linking to them.
+ * List of pages ordered by the number of pages linking to them.
  *
  * @ingroup SpecialPage
+ * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
+ * @author Rob Church <robchur@gmail.com>
  */
 class SpecialMostLinked extends QueryPage {
 
@@ -74,27 +71,20 @@ class SpecialMostLinked extends QueryPage {
 	}
 
 	public function getQueryInfo() {
-		$tableFields = $this->linksMigration->getTitleFields( 'pagelinks' );
-		$fields = [
-			'namespace' => $tableFields[0],
-			'title' => $tableFields[1],
-		];
+		[ $ns, $title ] = $this->linksMigration->getTitleFields( 'pagelinks' );
 		$queryInfo = $this->linksMigration->getQueryInfo( 'pagelinks' );
 		return [
-			'tables' => array_merge( $queryInfo['tables'], [ 'page' ] ),
-			'fields' => array_merge( [ 'value' => 'COUNT(*)', 'page_namespace' ], $fields ),
+			'tables' => $queryInfo['tables'],
+			'fields' => [
+				'namespace' => $ns,
+				'title' => $title,
+				'value' => 'COUNT(*)'
+			],
 			'options' => [
 				'HAVING' => 'COUNT(*) > 1',
-				'GROUP BY' => array_merge( $tableFields, [ 'page_namespace' ] )
+				'GROUP BY' => [ $ns, $title ],
 			],
-			'join_conds' => array_merge( $queryInfo['joins'], [
-				'page' => [
-					'LEFT JOIN',
-					[
-						'page_namespace = ' . $fields['namespace'],
-						'page_title = ' . $fields['title']
-					]
-				] ] )
+			'join_conds' => $queryInfo['joins'],
 		];
 	}
 

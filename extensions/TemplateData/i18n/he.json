@@ -68,7 +68,6 @@
 	"templatedata-modal-button-map": "עריכת מפות",
 	"templatedata-modal-button-importParams": "יבוא פרמטרים",
 	"templatedata-modal-button-removemap": "הסרת מפה",
-	"templatedata-modal-button-restoreparam": "שחזור פרמטר",
 	"templatedata-modal-button-saveparam": "שמירה",
 	"templatedata-modal-confirmcancel": "האם {{GENDER:|אתה בטוח שאתה רוצה|את בטוחה שאת רוצה|ברצונך באמת}} לזרוק את השינויים שלך?",
 	"templatedata-modal-current-language": "שפה נוכחית: $1",

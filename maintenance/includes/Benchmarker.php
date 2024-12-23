@@ -26,6 +26,8 @@
  * @ingroup Benchmark
  */
 
+namespace MediaWiki\Maintenance;
+
 use Wikimedia\RunningStat;
 
 // @codeCoverageIgnoreStart
@@ -38,6 +40,7 @@ require_once __DIR__ . '/../Maintenance.php';
  * @ingroup Benchmark
  */
 abstract class Benchmarker extends Maintenance {
+	/** @var int */
 	protected $defaultCount = 100;
 
 	public function __construct() {
@@ -231,3 +234,6 @@ abstract class Benchmarker extends Maintenance {
 		return $content;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( Benchmarker::class, 'Benchmarker' );

@@ -25,6 +25,8 @@
 
 namespace Wikimedia\Minify;
 
+use ReflectionClass;
+
 /**
  * JavaScript Minifier
  *
@@ -41,13 +43,13 @@ namespace Wikimedia\Minify;
  * output.
  *
  * This class has limited support for 8.0 spec ("ECMAScript 2017"), specifically, the await
- * keyword and most kinds of async functions are implemented. Other new parsing features of ES2017
+ * keyword, and most kinds of async functions are implemented. Other new parsing features of ES2017
  * are not yet supported.
  *
  * See also:
- * - <https://262.ecma-international.org/8.0/>
  * - <https://262.ecma-international.org/7.0/>
- * - <https://262.ecma-international.org/6.0/>
+ * - <https://262.ecma-international.org/8.0/>
+ * - <https://262.ecma-international.org/11.0/>
  */
 class JavaScriptMinifier {
 
@@ -89,45 +91,104 @@ class JavaScriptMinifier {
 	private const TEMPLATE_STRING_HEAD          = 26;
 	private const TEMPLATE_STRING_TAIL          = 27;
 	private const PAREN_EXPRESSION_OP_NO_NL     = 28;
+	private const EXPRESSION_TERNARY_NO_NL      = 29;
+	private const PAREN_EXPRESSION_NO_NL        = 30;
+	private const PROPERTY_EXPRESSION_NO_NL     = 31;
 
 	/* Token types */
-	private const TYPE_UN_OP         = 101; // unary operators
-	private const TYPE_INCR_OP       = 102; // ++ and --
-	private const TYPE_BIN_OP        = 103; // binary operators (except .)
-	private const TYPE_ADD_OP        = 104; // + and - which can be either unary or binary ops
-	private const TYPE_DOT           = 105; // .
-	private const TYPE_HOOK          = 106; // ?
-	private const TYPE_COLON         = 107; // :
-	private const TYPE_COMMA         = 108; // ,
-	private const TYPE_SEMICOLON     = 109; // ;
-	private const TYPE_BRACE_OPEN    = 110; // {
-	private const TYPE_BRACE_CLOSE   = 111; // }
-	private const TYPE_PAREN_OPEN    = 112; // ( and [
-	private const TYPE_PAREN_CLOSE   = 113; // ) and ]
-	private const TYPE_ARROW         = 114; // =>
-	private const TYPE_RETURN        = 115; // keywords: break, continue, return, throw
-	private const TYPE_IF            = 116; // keywords: catch, for, with, switch, while, if
-	private const TYPE_DO            = 117; // keywords: case, finally, else, do, try
-	private const TYPE_VAR           = 118; // keywords: var, let, const
-	private const TYPE_YIELD         = 119; // keywords: yield
-	private const TYPE_FUNC          = 120; // keywords: function
-	private const TYPE_CLASS         = 121; // keywords: class
-	private const TYPE_LITERAL       = 122; // all literals, identifiers, unrecognised tokens, and other keywords
-	private const TYPE_SPECIAL       = 123; // For special treatment of tokens that usually mean something else
-	private const TYPE_ASYNC         = 124; // keywords: async
-	private const TYPE_AWAIT         = 125; // keywords: await
 
-	private const ACTION_GOTO = 201; // Go to another state
-	private const ACTION_PUSH = 202; // Push a state to the stack
-	private const ACTION_POP = 203; // Pop the state from the top of the stack, and go to that state
+	/** @var int unary operators */
+	private const TYPE_UN_OP = 101;
 
-	// Limit to avoid excessive memory usage
+	/** @var int ++ and -- */
+	private const TYPE_INCR_OP = 102;
+
+	/** @var int binary operators (except .) */
+	private const TYPE_BIN_OP = 103;
+
+	/** @var int + and - which can be either unary or binary ops */
+	private const TYPE_ADD_OP = 104;
+
+	/** @var int . */
+	private const TYPE_DOT = 105;
+
+	/** @var int ? */
+	private const TYPE_HOOK = 106;
+
+	/** @var int : */
+	private const TYPE_COLON = 107;
+
+	/** @var int , */
+	private const TYPE_COMMA = 108;
+
+	/** @var int ; */
+	private const TYPE_SEMICOLON = 109;
+
+	/** @var int { */
+	private const TYPE_BRACE_OPEN = 110;
+
+	/** @var int } */
+	private const TYPE_BRACE_CLOSE = 111;
+
+	/** @var int ( and [ */
+	private const TYPE_PAREN_OPEN = 112;
+
+	/** @var int ) and ] */
+	private const TYPE_PAREN_CLOSE = 113;
+
+	/** @var int => */
+	private const TYPE_ARROW = 114;
+
+	/** @var int keywords: break, continue, return, throw (and yield, if we're in a generator) */
+	private const TYPE_RETURN = 115;
+
+	/** @var int keywords: catch, for, with, switch, while, if */
+	private const TYPE_IF = 116;
+
+	/** @var int keywords: case, finally, else, do, try */
+	private const TYPE_DO = 117;
+
+	/** @var int keywords: var, let, const */
+	private const TYPE_VAR = 118;
+
+	/** @var int keywords: yield */
+	private const TYPE_YIELD = 119;
+
+	/** @var int keywords: function */
+	private const TYPE_FUNC = 120;
+
+	/** @var int keywords: class */
+	private const TYPE_CLASS = 121;
+
+	/** @var int all literals, identifiers, unrecognised tokens, and other keywords */
+	private const TYPE_LITERAL = 122;
+
+	/** @var int For special treatment of tokens that usually mean something else */
+	private const TYPE_SPECIAL = 123;
+
+	/** @var int keywords: async */
+	private const TYPE_ASYNC = 124;
+
+	/** @var int keywords: await */
+	private const TYPE_AWAIT = 125;
+
+	/** @var int Go to another state */
+	private const ACTION_GOTO = 201;
+
+	/** @var int Push a state to the stack */
+	private const ACTION_PUSH = 202;
+
+	/** @var int Pop the state from the top of the stack, and go to that state */
+	private const ACTION_POP = 203;
+
+	/** @var int Limit to avoid excessive memory usage */
 	private const STACK_LIMIT = 1000;
 
-	// Length of the longest token in $tokenTypes made of punctuation characters,
-	// as defined in $opChars. Update this if you add longer tokens to $tokenTypes.
-	//
-	// Currently the longest punctuation token is `>>>=`, which is 4 characters.
+	/** Length of the longest token in $tokenTypes made of punctuation characters,
+	 * as defined in $opChars. Update this if you add longer tokens to $tokenTypes.
+	 *
+	 * Currently, the longest punctuation token is `>>>=`, which is 4 characters.
+	 */
 	private const LONGEST_PUNCTUATION_TOKEN = 4;
 
 	/**
@@ -144,18 +205,22 @@ class JavaScriptMinifier {
 	 */
 	private static $maxLineLength = 1000;
 
-	private static $expandedStates = false;
+	private static bool $expandedStates = false;
 
 	/**
 	 * @var array $opChars
 	 *
 	 * Characters which can be combined without whitespace between them.
+	 * Unlike the ECMAScript spec, we define these as individual symbols, not sequences.
 	 */
 	private static $opChars = [
-		// ECMAScript 6.0 § 11.7 Punctuators
-		// Unlike the spec, these are individual symbols, not sequences.
+		// ECMAScript 7.0 § 11.7 Punctuators
+		//
+		//    Punctuator
+		//    DivPunctuator
+		//    RightBracePunctuator
+		//
 		'{' => true,
-		'}' => true,
 		'(' => true,
 		')' => true,
 		'[' => true,
@@ -179,10 +244,13 @@ class JavaScriptMinifier {
 		'?' => true,
 		':' => true,
 		'/' => true,
-		// ECMAScript 6.0 § 11.8.4 String Literals
+		'}' => true,
+
+		// ECMAScript 7.0 § 11.8.4 String Literals
 		'"' => true,
 		"'" => true,
-		// ECMAScript 6.0 § 11.8.6 Template Literal Lexical Components
+
+		// ECMAScript 7.0 § 11.8.6 Template Literal Lexical Components
 		'`' => true,
 	];
 
@@ -192,60 +260,133 @@ class JavaScriptMinifier {
 	 * Tokens and their types.
 	 */
 	private static $tokenTypes = [
-		// ECMAScript 6.0 § 12.5 Unary Operators
-		// UnaryExpression includes PostfixExpression, which includes 'new'.
+		// ECMAScript 7.0 § 12.2 Primary Expression
+		//
+		//    ...BindingIdentifier
+		//
+		'...'        => self::TYPE_UN_OP,
+
+		// ECMAScript 7.0 § 12.3 Left-Hand-Side Expressions
+		//
+		//    MemberExpression
+		//
+		// A dot can also be part of a DecimalLiteral, but in that case we handle the entire
+		// DecimalLiteral as one token. A separate '.' token is always part of a MemberExpression.
+		'.'          => self::TYPE_DOT,
+
+		// ECMAScript 7.0 § 12.4 Update Expressions
+		//
+		//    LeftHandSideExpression [no LineTerminator here] ++
+		//    LeftHandSideExpression [no LineTerminator here] --
+		//    ++ UnaryExpression
+		//    -- UnaryExpression
+		//
+		// This is given a separate type from TYPE_UN_OP,
+		// because `++` and `--` require special handling
+		// around new lines and semicolon insertion.
+		//
+		'++'         => self::TYPE_INCR_OP,
+		'--'         => self::TYPE_INCR_OP,
+
+		// ECMAScript 7.0 § 12.5 Unary Operators
+		//
+		//    UnaryExpression
+		//        includes UpdateExpression
+		//            includes NewExpression, which defines 'new'
+		//
 		'new'        => self::TYPE_UN_OP,
 		'delete'     => self::TYPE_UN_OP,
 		'void'       => self::TYPE_UN_OP,
 		'typeof'     => self::TYPE_UN_OP,
 		'~'          => self::TYPE_UN_OP,
 		'!'          => self::TYPE_UN_OP,
-		// ECMAScript 8.0 § 14.6 AwaitExpression
+
+		// These operators can be either binary or unary depending on context,
+		// and thus require separate type from TYPE_UN_OP and TYPE_BIN_OP.
 		//
-		//    await UnaryExpression
+		//     var z = +y;    // unary (convert to number)
+		//     var z = x + y; // binary (add operation)
 		//
-		'await'      => self::TYPE_AWAIT,
-		// ECMAScript 6.0 § 12.2 Primary Expression, among others
-		'...'        => self::TYPE_UN_OP,
-		// ECMAScript 6.0 § 12.7 Additive Operators
-		'++'         => self::TYPE_INCR_OP,
-		'--'         => self::TYPE_INCR_OP,
+		// ECMAScript 7.0 § 12.5 Unary Operators
+		//
+		//     + UnaryExpression
+		//     - UnaryExpression
+		//
+		// ECMAScript 7.0 § 12.8 Additive Operators
+		//
+		//     Expression + Expression
+		//     Expression - Expression
+		//
 		'+'          => self::TYPE_ADD_OP,
 		'-'          => self::TYPE_ADD_OP,
-		// ECMAScript 6.0 § 12.6 Multiplicative Operators
+
+		// These operators can be treated the same as binary operators.
+		// They are all defined in one of these two forms, and do
+		// not require special handling for preserving whitespace or
+		// line breaks.
+		//
+		//     Expression operator Expression
+		//
+		// Defined in:
+		// - ECMAScript 7.0 § 12.6 Exponentiation Operator
+		//   ExponentiationExpression
+		// - ECMAScript 7.0 § 12.7 Multiplicative Operators
+		//   MultiplicativeOperator
+		// - ECMAScript 7.0 § 12.9 Bitwise Shift Operators
+		//   ShiftExpression
+		// - ECMAScript 7.0 § 12.10 Relational Operators
+		//   RelationalExpression
+		// - ECMAScript 7.0 § 12.11 Equality Operators
+		//   EqualityExpression
+		'**'         => self::TYPE_BIN_OP,
 		'*'          => self::TYPE_BIN_OP,
 		'/'          => self::TYPE_BIN_OP,
 		'%'          => self::TYPE_BIN_OP,
-		// ECMAScript 7.0 § 12.6 Exponentiation Operator
-		'**'         => self::TYPE_BIN_OP,
-		// ECMAScript 6.0 § 12.8 Bitwise Shift Operators
 		'<<'         => self::TYPE_BIN_OP,
 		'>>'         => self::TYPE_BIN_OP,
 		'>>>'        => self::TYPE_BIN_OP,
-		// ECMAScript 6.0 § 12.9 Relational Operators
 		'<'          => self::TYPE_BIN_OP,
 		'>'          => self::TYPE_BIN_OP,
 		'<='         => self::TYPE_BIN_OP,
 		'>='         => self::TYPE_BIN_OP,
 		'instanceof' => self::TYPE_BIN_OP,
 		'in'         => self::TYPE_BIN_OP,
-		// ECMAScript 6.0 § 12.10 Equality Operators
 		'=='         => self::TYPE_BIN_OP,
 		'!='         => self::TYPE_BIN_OP,
 		'==='        => self::TYPE_BIN_OP,
 		'!=='        => self::TYPE_BIN_OP,
-		// ECMAScript 6.0 § 12.11 Binary Bitwise Operators
+
+		// ECMAScript 7.0 § 12.12 Binary Bitwise Operators
+		//
+		//    BitwiseANDExpression
+		//    BitwiseXORExpression
+		//    BitwiseORExpression
+		//
 		'&'          => self::TYPE_BIN_OP,
 		'^'          => self::TYPE_BIN_OP,
 		'|'          => self::TYPE_BIN_OP,
-		// ECMAScript 6.0 § 12.12 Binary Logical Operators
+
+		// ECMAScript 7.0 § 12.13 Binary Logical Operators
+		//
+		//    LogicalANDExpression
+		//    LogicalORExpression
+		//
 		'&&'         => self::TYPE_BIN_OP,
 		'||'         => self::TYPE_BIN_OP,
-		// ECMAScript 6.0 § 12.13 Conditional Operator
+
+		// ECMAScript 11.0 § 12.13 Binary Logical Operators
+		'??'         => self::TYPE_BIN_OP,
+
+		// ECMAScript 7.0 § 12.14 Conditional Operator
+		//
+		//    ConditionalExpression:
+		//        LogicalORExpression ? AssignmentExpression : AssignmentExpression
+		//
 		// Also known as ternary.
 		'?'          => self::TYPE_HOOK,
 		':'          => self::TYPE_COLON,
-		// ECMAScript 6.0 § 12.14 Assignment Operators
+
+		// ECMAScript 7.0 § 12.15 Assignment Operators
 		'='          => self::TYPE_BIN_OP,
 		'*='         => self::TYPE_BIN_OP,
 		'/='         => self::TYPE_BIN_OP,
@@ -258,112 +399,132 @@ class JavaScriptMinifier {
 		'&='         => self::TYPE_BIN_OP,
 		'^='         => self::TYPE_BIN_OP,
 		'|='         => self::TYPE_BIN_OP,
-		// ECMAScript 6.0 § 12.15 Comma Operator
+		'**='        => self::TYPE_BIN_OP,
+
+		// ECMAScript 7.0 § 12.16 Comma Operator
 		','          => self::TYPE_COMMA,
 
-		// The keywords that disallow LineTerminator before their
-		// (sometimes optional) Expression or Identifier.
+		// ECMAScript 7.0 § 11.9.1 Rules of Automatic Semicolon Insertion
+		//
+		// These keywords disallow LineTerminator before their (sometimes optional)
+		// Expression or Identifier. They are similar enough that we can treat
+		// them all the same way that we treat return, with regards to new line
+		// and semicolon insertion.
 		//
 		//    keyword ;
 		//    keyword [no LineTerminator here] Identifier ;
 		//    keyword [no LineTerminator here] Expression ;
 		//
-		// See also ECMAScript 6.0 § 11.9.1 Rules of Automatic Semicolon Insertion
+		// See also ECMAScript 7.0:
+		// - § 13.8 The continue Statement
+		// - § 13.9 The break Statement
+		// - § 13.10 The return Statement
+		// - § 13.14 The throw Statement
+		// - § 14.4 Generator Function Definitions (yield)
 		'continue'   => self::TYPE_RETURN,
 		'break'      => self::TYPE_RETURN,
 		'return'     => self::TYPE_RETURN,
 		'throw'      => self::TYPE_RETURN,
-		// yield is only a keyword inside generator functions, otherwise it's an identifier
+		// "yield" only counts as a keyword if when inside inside a generator functions,
+		// otherwise it is a regular identifier.
 		// This is handled with the negative states hack: if the state is negative, TYPE_YIELD
 		// is treated as TYPE_RETURN, if it's positive it's treated as TYPE_LITERAL
 		'yield'      => self::TYPE_YIELD,
 
-		// The keywords require a parenthesised Expression or Identifier
-		// before the next Statement.
+		// These keywords require a parenthesised Expression or Identifier before the
+		// next Statement. They are similar enough to all treat like "if".
 		//
 		//     keyword ( Expression ) Statement
 		//     keyword ( Identifier ) Statement
 		//
-		// See also ECMAScript 6.0:
+		// See also ECMAScript 7.0:
 		// - § 13.6 The if Statement
-		// - § 13.7 Iteration Statements (do, while, for)
-		// - § 12.10 The with Statement
-		// - § 12.11 The switch Statement
-		// - § 12.13 The throw Statement
+		// - § 13.7 Iteration Statements (while, for)
+		// - § 13.11 The with Statement
+		// - § 13.12 The switch Statement
+		// - § 13.15 The try Statement (catch)
 		'if'         => self::TYPE_IF,
-		'catch'      => self::TYPE_IF,
 		'while'      => self::TYPE_IF,
 		'for'        => self::TYPE_IF,
-		'switch'     => self::TYPE_IF,
 		'with'       => self::TYPE_IF,
+		'switch'     => self::TYPE_IF,
+		'catch'      => self::TYPE_IF,
 
 		// The keywords followed by a Statement, Expression, or Block.
 		//
-		//     else Statement
-		//     do Statement
-		//     case Expression
-		//     try Block
-		//     finally Block
+		//     keyword Statement
+		//     keyword Expression
+		//     keyword Block
 		//
-		// See also ECMAScript 6.0:
+		// See also ECMAScript 7.0:
 		// - § 13.6 The if Statement (else)
-		// - § 13.7 Iteration Statements (do, while, for)
+		// - § 13.7 Iteration Statements (do)
 		// - § 13.12 The switch Statement (case)
-		// - § 13.15 The try Statement
+		// - § 13.15 The try Statement (try, finally)
 		'else'       => self::TYPE_DO,
 		'do'         => self::TYPE_DO,
 		'case'       => self::TYPE_DO,
 		'try'        => self::TYPE_DO,
 		'finally'    => self::TYPE_DO,
 
-		// Keywords followed by a variable declaration
-		// This is different from the group above, because a { begins
-		// object destructuring, rather than a block
+		// ECMAScript 7.0 § 13.3 Declarations and the Variable Statement
+		//
+		//    LetOrConst
+		//    VariableStatement
+		//
+		// These keywords are followed by a variable declaration statement.
+		// This needs to be treated differently from the TYPE_DO group,
+		// because for TYPE_VAR, when we see an "{" open curly brace, it
+		// begins object destructuring (ObjectBindingPattern), not a block.
 		'var'        => self::TYPE_VAR,
 		'let'        => self::TYPE_VAR,
 		'const'      => self::TYPE_VAR,
 
-		// ECMAScript 6.0 § 14.1 Function Definitions
+		// ECMAScript 7.0 § 14.1 Function Definitions
 		'function'   => self::TYPE_FUNC,
-		// ECMAScript 6.0 § 14.2 Arrow Function Definitions
+
+		// ECMAScript 7.0 § 14.2 Arrow Function Definitions
 		'=>'         => self::TYPE_ARROW,
 
-		// Class declaration or expression:
+		// ECMAScript 7.0 § 14.5 Class Definitions
+		//
 		//     class Identifier { ClassBody }
 		//     class { ClassBody }
 		//     class Identifier extends Expression { ClassBody }
 		//     class extends Expression { ClassBody }
+		//
 		'class'      => self::TYPE_CLASS,
 
-		// ECMAScript 6.0 § 12.3 Left-Hand-Side Expressions (MemberExpression)
-		// A dot can also be part of a DecimalLiteral, but in that case we handle the entire
-		// DecimalLiteral as one token. A separate '.' token is always part of a MemberExpression.
-		'.'          => self::TYPE_DOT,
+		// ECMAScript 8.0 § 14.6 AwaitExpression
+		//
+		//    await UnaryExpression
+		//
+		'await'      => self::TYPE_AWAIT,
 
 		// Can be one of:
-		// - Block (ECMAScript 6.0 § 13.2 Block)
-		// - ObjectLiteral (ECMAScript 6.0 § 12.2 Primary Expression)
+		// - Block (ECMAScript 7.0 § 13.2 Block)
+		// - ObjectLiteral (ECMAScript 7.0 § 12.2 Primary Expression)
 		'{'          => self::TYPE_BRACE_OPEN,
 		'}'          => self::TYPE_BRACE_CLOSE,
 
 		// Can be one of:
 		// - Parenthesised Identifier or Expression after a
 		//   TYPE_IF or TYPE_FUNC keyword.
-		// - PrimaryExpression (ECMAScript 6.0 § 12.2 Primary Expression)
-		// - CallExpression (ECMAScript 6.0 § 12.3 Left-Hand-Side Expressions)
-		// - Beginning of an ArrowFunction (ECMAScript 6.0 § 14.2 Arrow Function Definitions)
+		// - PrimaryExpression (ECMAScript 7.0 § 12.2 Primary Expression)
+		// - CallExpression (ECMAScript 7.0 § 12.3 Left-Hand-Side Expressions)
+		// - Beginning of an ArrowFunction (ECMAScript 7.0 § 14.2 Arrow Function Definitions)
 		'('          => self::TYPE_PAREN_OPEN,
 		')'          => self::TYPE_PAREN_CLOSE,
 
 		// Can be one of:
-		// - ArrayLiteral (ECMAScript 6.0 § 12.2 Primary Expressions)
-		// - ComputedPropertyName (ECMAScript 6.0 § 12.2.6 Object Initializer)
+		// - ArrayLiteral (ECMAScript 7.0 § 12.2 Primary Expressions)
+		// - ComputedPropertyName (ECMAScript 7.0 § 12.2.6 Object Initializer)
 		'['          => self::TYPE_PAREN_OPEN,
 		']'          => self::TYPE_PAREN_CLOSE,
 
 		// Can be one of:
 		// - End of any statement
-		// - EmptyStatement (ECMAScript 6.0 § 13.4 Empty Statement)
+		// - EmptyStatement (ECMAScript 7.0 § 13.4 Empty Statement)
 		';'          => self::TYPE_SEMICOLON,
 
 		// ECMAScript 8.0 § 14.6 Async Function Definitions
@@ -540,11 +701,16 @@ class JavaScriptMinifier {
 			self::TYPE_ASYNC => [
 				self::ACTION_GOTO => self::EXPRESSION_OP,
 			],
+			// 'return' can't appear here, but 'yield' can
+			self::TYPE_RETURN => [
+				self::ACTION_GOTO => self::EXPRESSION_NO_NL,
+			],
 		],
-		// An expression immediately after return/throw/break/continue, where a newline
+		// An expression immediately after return/throw/break/continue/yield, where a newline
 		// is not allowed. This state is identical to EXPRESSION, except that semicolon
-		// insertion can happen here, and we never stay here: in cases where EXPRESSION would
-		// do nothing, we go to EXPRESSION.
+		// insertion can happen here, and we (almost) never stay here: in cases where EXPRESSION
+		// would do nothing, we go to EXPRESSION. We only stay here if there's a double yield,
+		// because 'yield yield foo' is a valid expression.
 		self::EXPRESSION_NO_NL => [
 			self::TYPE_UN_OP => [
 				self::ACTION_GOTO => self::EXPRESSION,
@@ -590,6 +756,11 @@ class JavaScriptMinifier {
 			],
 			self::TYPE_AWAIT => [
 				self::ACTION_GOTO => self::EXPRESSION,
+			],
+			// 'return' can't appear here, because 'return return' isn't allowed
+			// But 'yield' can appear here, because 'yield yield' is allowed
+			self::TYPE_RETURN => [
+				self::ACTION_GOTO => self::EXPRESSION_NO_NL,
 			],
 		],
 		// Place in an expression after an operand, where we expect an operator
@@ -776,6 +947,51 @@ class JavaScriptMinifier {
 			self::TYPE_LITERAL => [
 				self::ACTION_GOTO => self::EXPRESSION_TERNARY_OP,
 			],
+			// 'return' can't appear here, but 'yield' can
+			self::TYPE_RETURN => [
+				self::ACTION_GOTO => self::EXPRESSION_TERNARY_NO_NL,
+			],
+		],
+		// Like EXPRESSION_TERNARY, except that semicolon insertion can happen
+		// See also EXPRESSION_NO_NL
+		self::EXPRESSION_TERNARY_NO_NL => [
+			self::TYPE_BRACE_OPEN => [
+				self::ACTION_PUSH => self::EXPRESSION_TERNARY_OP,
+				self::ACTION_GOTO => self::PROPERTY_ASSIGNMENT,
+			],
+			self::TYPE_PAREN_OPEN => [
+				self::ACTION_PUSH => self::EXPRESSION_TERNARY_OP,
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+			self::TYPE_FUNC => [
+				self::ACTION_PUSH => self::EXPRESSION_TERNARY_OP,
+				self::ACTION_GOTO => self::FUNC,
+			],
+			self::TYPE_CLASS => [
+				self::ACTION_PUSH => self::EXPRESSION_TERNARY_OP,
+				self::ACTION_GOTO => self::CLASS_DEF,
+			],
+			self::TYPE_LITERAL => [
+				self::ACTION_GOTO => self::EXPRESSION_TERNARY_OP,
+			],
+			// 'yield' can appear here, because 'yield yield' is allowed
+			self::TYPE_RETURN => [
+				self::ACTION_GOTO => self::EXPRESSION_TERNARY_NO_NL,
+			],
+			self::TYPE_UN_OP => [
+				self::ACTION_GOTO => self::EXPRESSION_TERNARY,
+			],
+			self::TYPE_INCR_OP => [
+				self::ACTION_GOTO => self::EXPRESSION_TERNARY,
+			],
+			// BIN_OP seems impossible at the start of an expression, but it can happen in
+			// yield *foo
+			self::TYPE_BIN_OP => [
+				self::ACTION_GOTO => self::EXPRESSION_TERNARY,
+			],
+			self::TYPE_ADD_OP => [
+				self::ACTION_GOTO => self::EXPRESSION_TERNARY,
+			],
 		],
 		// Like EXPRESSION_OP, but for ternaries, see EXPRESSION_TERNARY
 		self::EXPRESSION_TERNARY_OP => [
@@ -898,6 +1114,60 @@ class JavaScriptMinifier {
 			],
 			self::TYPE_ASYNC => [
 				self::ACTION_GOTO => self::PAREN_EXPRESSION_OP_NO_NL,
+			],
+			// 'return' can't appear here, but 'yield' can
+			self::TYPE_RETURN => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION_NO_NL,
+			],
+		],
+		// Like PAREN_EXPRESSION, except that semicolon insertion can happen
+		// See also EXPRESSION_NO_NL
+		self::PAREN_EXPRESSION_NO_NL => [
+			self::TYPE_BRACE_OPEN => [
+				self::ACTION_PUSH => self::PAREN_EXPRESSION_OP,
+				self::ACTION_GOTO => self::PROPERTY_ASSIGNMENT,
+			],
+			self::TYPE_PAREN_OPEN => [
+				self::ACTION_PUSH => self::PAREN_EXPRESSION_OP,
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+			self::TYPE_PAREN_CLOSE => [
+				self::ACTION_POP => true,
+			],
+			self::TYPE_FUNC => [
+				self::ACTION_PUSH => self::PAREN_EXPRESSION_OP,
+				self::ACTION_GOTO => self::FUNC,
+			],
+			self::TYPE_CLASS => [
+				self::ACTION_PUSH => self::PAREN_EXPRESSION_OP,
+				self::ACTION_GOTO => self::CLASS_DEF,
+			],
+			self::TYPE_LITERAL => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION_OP,
+			],
+			self::TYPE_ASYNC => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION_OP_NO_NL,
+			],
+			// 'yield' can appear here, because 'yield yield' is allowed
+			self::TYPE_RETURN => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION_NO_NL,
+			],
+			self::TYPE_UN_OP => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+			self::TYPE_INCR_OP => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+			// BIN_OP seems impossible at the start of an expression, but it can happen in
+			// yield *foo
+			self::TYPE_BIN_OP => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+			self::TYPE_ADD_OP => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+			self::TYPE_AWAIT => [
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
 			],
 		],
 		// Like EXPRESSION_OP, but in parentheses, see PAREN_EXPRESSION
@@ -1059,6 +1329,54 @@ class JavaScriptMinifier {
 			],
 			self::TYPE_LITERAL => [
 				self::ACTION_GOTO => self::PROPERTY_EXPRESSION_OP,
+			],
+			// 'return' can't appear here, but 'yield' can
+			self::TYPE_RETURN => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION_NO_NL,
+			],
+		],
+		// Like PROPERTY_EXPRESSION, except that semicolon insertion can happen
+		// See also EXPRESSION_NO_NL
+		self::PROPERTY_EXPRESSION_NO_NL => [
+			self::TYPE_BRACE_OPEN => [
+				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
+				self::ACTION_GOTO => self::PROPERTY_ASSIGNMENT,
+			],
+			self::TYPE_BRACE_CLOSE => [
+				self::ACTION_POP => true,
+			],
+			self::TYPE_PAREN_OPEN => [
+				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+			self::TYPE_FUNC => [
+				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
+				self::ACTION_GOTO => self::FUNC,
+			],
+			self::TYPE_CLASS => [
+				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
+				self::ACTION_GOTO => self::CLASS_DEF,
+			],
+			self::TYPE_LITERAL => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION_OP,
+			],
+			// 'yield' can appear here, because 'yield yield' is allowed
+			self::TYPE_RETURN => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION_NO_NL,
+			],
+			self::TYPE_UN_OP => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION,
+			],
+			self::TYPE_INCR_OP => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION,
+			],
+			// BIN_OP seems impossible at the start of an expression, but it can happen in
+			// yield *foo
+			self::TYPE_BIN_OP => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION,
+			],
+			self::TYPE_ADD_OP => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION,
 			],
 		],
 		// Like EXPRESSION_OP, but in a property expression, see PROPERTY_EXPRESSION
@@ -1237,6 +1555,60 @@ class JavaScriptMinifier {
 			self::TYPE_LITERAL => true,
 			self::TYPE_ASYNC => true,
 		],
+		self::EXPRESSION_TERNARY_NO_NL => [
+			self::TYPE_UN_OP => true,
+			// BIN_OP seems impossible at the start of an expression, but it can happen in
+			// yield *foo
+			self::TYPE_BIN_OP => true,
+			self::TYPE_INCR_OP => true,
+			self::TYPE_ADD_OP => true,
+			self::TYPE_BRACE_OPEN => true,
+			self::TYPE_PAREN_OPEN => true,
+			self::TYPE_RETURN => true,
+			self::TYPE_IF => true,
+			self::TYPE_DO => true,
+			self::TYPE_VAR => true,
+			self::TYPE_FUNC => true,
+			self::TYPE_CLASS => true,
+			self::TYPE_LITERAL => true,
+			self::TYPE_ASYNC => true,
+		],
+		self::PAREN_EXPRESSION_NO_NL => [
+			self::TYPE_UN_OP => true,
+			// BIN_OP seems impossible at the start of an expression, but it can happen in
+			// yield *foo
+			self::TYPE_BIN_OP => true,
+			self::TYPE_INCR_OP => true,
+			self::TYPE_ADD_OP => true,
+			self::TYPE_BRACE_OPEN => true,
+			self::TYPE_PAREN_OPEN => true,
+			self::TYPE_RETURN => true,
+			self::TYPE_IF => true,
+			self::TYPE_DO => true,
+			self::TYPE_VAR => true,
+			self::TYPE_FUNC => true,
+			self::TYPE_CLASS => true,
+			self::TYPE_LITERAL => true,
+			self::TYPE_ASYNC => true,
+		],
+		self::PROPERTY_EXPRESSION_NO_NL => [
+			self::TYPE_UN_OP => true,
+			// BIN_OP seems impossible at the start of an expression, but it can happen in
+			// yield *foo
+			self::TYPE_BIN_OP => true,
+			self::TYPE_INCR_OP => true,
+			self::TYPE_ADD_OP => true,
+			self::TYPE_BRACE_OPEN => true,
+			self::TYPE_PAREN_OPEN => true,
+			self::TYPE_RETURN => true,
+			self::TYPE_IF => true,
+			self::TYPE_DO => true,
+			self::TYPE_VAR => true,
+			self::TYPE_FUNC => true,
+			self::TYPE_CLASS => true,
+			self::TYPE_LITERAL => true,
+			self::TYPE_ASYNC => true,
+		],
 		self::EXPRESSION_OP => [
 			self::TYPE_UN_OP => true,
 			self::TYPE_INCR_OP => true,
@@ -1299,20 +1671,26 @@ class JavaScriptMinifier {
 		// These negative states represent states inside generator functions. When in these states,
 		// TYPE_YIELD is treated as TYPE_RETURN, otherwise as TYPE_LITERAL
 		foreach ( self::$model as $state => $transitions ) {
-			if ( $state !== self::FUNC && $state !== self::GENFUNC ) {
-				foreach ( $transitions as $tokenType => $actions ) {
-					foreach ( $actions as $action => $target ) {
-						if ( is_array( $target ) ) {
-							foreach ( $target as $subaction => $subtarget ) {
-								self::$model[-$state][$tokenType][$action][$subaction] =
-									$subtarget === self::FUNC || $subtarget === true || $subtarget === self::GENFUNC
-									? $subtarget : -$subtarget;
-							}
-						} else {
-							self::$model[-$state][$tokenType][$action] =
-								$target === self::FUNC || $target === true || $target === self::GENFUNC
-								? $target : -$target;
-						}
+			if ( $state === self::FUNC || $state === self::GENFUNC ) {
+				continue;
+			}
+			foreach ( $transitions as $tokenType => $actions ) {
+				foreach ( $actions as $action => $target ) {
+					if ( !is_array( $target ) ) {
+						self::$model[-$state][$tokenType][$action] = (
+							$target === self::FUNC ||
+							$target === true ||
+							$target === self::GENFUNC
+						) ? $target : -$target;
+						continue;
+					}
+
+					foreach ( $target as $subaction => $subtarget ) {
+						self::$model[-$state][$tokenType][$action][$subaction] = (
+							$subtarget === self::FUNC ||
+							$subtarget === true ||
+							$subtarget === self::GENFUNC
+						) ? $subtarget : -$subtarget;
 					}
 				}
 			}
@@ -1333,11 +1711,13 @@ class JavaScriptMinifier {
 	/**
 	 * Returns minified JavaScript code.
 	 *
+	 * @see MinifierState::setErrorHandler
 	 * @param string $s JavaScript code to minify
-	 * @return string|bool Minified code or false on failure
+	 * @param callable|null $onError Called with a ParseError object
+	 * @return string Minified code
 	 */
-	public static function minify( $s ) {
-		return self::minifyInternal( $s );
+	public static function minify( $s, $onError = null ) {
+		return self::minifyInternal( $s, null, $onError );
 	}
 
 	/**
@@ -1389,13 +1769,15 @@ class JavaScriptMinifier {
 	 *
 	 * @param string $s
 	 * @param MappingsGenerator|null $mapGenerator
-	 * @return bool|string
+	 * @param callable|null $onError
+	 * @return string
 	 */
-	public static function minifyInternal( $s, $mapGenerator = null ) {
+	public static function minifyInternal( $s, $mapGenerator = null, $onError = null ) {
 		self::ensureExpandedStates();
 
 		// Here's where the minifying takes place: Loop through the input, looking for tokens
 		// and output them to $out, taking actions to the above defined rules when appropriate.
+		$error = null;
 		$out = '';
 		$pos = 0;
 		$length = strlen( $s );
@@ -1405,8 +1787,10 @@ class JavaScriptMinifier {
 		$newlineFound = true;
 		$state = self::STATEMENT;
 		$stack = [];
-		$topOfStack = null; // Optimization: calling end( $stack ) repeatedly is expensive
-		$last = ';'; // Pretend that we have seen a semicolon yet
+		// Optimization: calling end( $stack ) repeatedly is expensive
+		$topOfStack = null;
+		// Pretend that we have seen a semicolon yet
+		$last = ';';
 		while ( $pos < $length ) {
 			// First, skip over any whitespace and multiline comments, recording whether we
 			// found any newline character
@@ -1578,13 +1962,13 @@ class JavaScriptMinifier {
 				&& ( $pos + 1 < $length ) && ( $s[$pos + 1] === 'x' || $s[$pos + 1] === 'X' )
 			) {
 				// Hex numeric literal
-				$end++; // x or X
+				// x or X
+				$end++;
 				$len = strspn( $s, '0123456789ABCDEFabcdef', $end );
-				if ( !$len ) {
-					return self::parseError(
-						$s,
+				if ( !$len && !$error ) {
+					$error = new ParseError(
+						'Expected a hexadecimal number but found ' . substr( $s, $pos, 5 ),
 						$pos,
-						'Expected a hexadecimal number but found ' . substr( $s, $pos, 5 ) . '...'
 					);
 				}
 				$end += $len;
@@ -1601,8 +1985,8 @@ class JavaScriptMinifier {
 				$end += strspn( $s, '0123456789', $end );
 				$decimal = strspn( $s, '.', $end );
 				if ( $decimal ) {
-					if ( $decimal > 2 ) {
-						return self::parseError( $s, $end, 'The number has too many decimal points' );
+					if ( $decimal > 2 && !$error ) {
+						$error = new ParseError( 'Too many decimal points', $end );
 					}
 					$end += strspn( $s, '0123456789', $end + 1 ) + $decimal;
 				} else {
@@ -1610,19 +1994,18 @@ class JavaScriptMinifier {
 				}
 				$exponent = strspn( $s, 'eE', $end );
 				if ( $exponent ) {
-					if ( $exponent > 1 ) {
-						return self::parseError( $s, $end, 'Number with several E' );
+					if ( $exponent > 1 && !$error ) {
+						$error = new ParseError( 'Number with several E', $end );
 					}
-					$end++;
+					$end += $exponent;
 
 					// + sign is optional; - sign is required.
 					$end += strspn( $s, '-+', $end );
 					$len = strspn( $s, '0123456789', $end );
-					if ( !$len ) {
-						return self::parseError(
-							$s,
-							$pos,
-							'No decimal digits after e, how many zeroes should be added?'
+					if ( !$len && !$error ) {
+						$error = new ParseError(
+							'Missing decimal digits after exponent',
+							$pos
 						);
 					}
 					$end += $len;
@@ -1645,7 +2028,8 @@ class JavaScriptMinifier {
 			}
 
 			// Now get the token type from our type array
-			$token = substr( $s, $pos, $end - $pos ); // so $end - $pos == strlen( $token )
+			// so $end - $pos == strlen( $token )
+			$token = substr( $s, $pos, $end - $pos );
 			$type = isset( self::$model[$state][self::TYPE_SPECIAL][$token] )
 				? self::TYPE_SPECIAL
 				: self::$tokenTypes[$token] ?? self::TYPE_LITERAL;
@@ -1698,7 +2082,7 @@ class JavaScriptMinifier {
 			}
 			$out .= $pad;
 			$out .= $token;
-			$lineLength += $end - $pos; // += strlen( $token )
+			$lineLength += $end - $pos;
 			$last = $s[$end - 1];
 			$pos = $end;
 			$newlineFound = false;
@@ -1722,18 +2106,10 @@ class JavaScriptMinifier {
 				$state = $actions[self::ACTION_GOTO];
 			}
 		}
+		if ( $onError && $error ) {
+			$onError( $error );
+		}
 		return $out;
-	}
-
-	/**
-	 * @param string $fullJavascript
-	 * @param int $position
-	 * @param string $errorMsg
-	 * @return bool
-	 */
-	public static function parseError( $fullJavascript, $position, $errorMsg ) {
-		// TODO: Handle the error: trigger_error, throw exception, return false...
-		return false;
 	}
 
 	/**
@@ -1749,8 +2125,7 @@ class JavaScriptMinifier {
 		int $state, string $ch, string $token, int $type
 	) {
 		static $first = true;
-		$self = new \ReflectionClass( self::class );
-		$constants = $self->getConstants();
+		$self = new ReflectionClass( self::class );
 
 		foreach ( $self->getConstants() as $name => $value ) {
 			if ( $value === $top ) {

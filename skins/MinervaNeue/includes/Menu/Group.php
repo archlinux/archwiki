@@ -27,15 +27,9 @@ use MediaWiki\Minerva\Menu\Entries\IMenuEntry;
  * Model for a menu that can be presented in a skin.
  */
 final class Group {
-	/**
-	 * @var IMenuEntry[]
-	 */
-	private $entries = [];
-
-	/**
-	 * @var string
-	 */
-	private $id;
+	/** @var IMenuEntry[] */
+	private array $entries = [];
+	private string $id;
 
 	/**
 	 * @param string $id of the menu defaults to null (optional)
@@ -49,7 +43,7 @@ final class Group {
 	 *
 	 * @return string
 	 */
-	public function getId() {
+	public function getId(): string {
 		return $this->id;
 	}
 
@@ -58,7 +52,7 @@ final class Group {
 	 *
 	 * @return bool
 	 */
-	public function hasEntries() {
+	public function hasEntries(): bool {
 		return count( $this->entries ) > 0;
 	}
 
@@ -67,7 +61,7 @@ final class Group {
 	 *
 	 * @return array
 	 */
-	public function getEntries() {
+	public function getEntries(): array {
 		$entryPresenter = static function ( IMenuEntry $entry ) {
 			$result = [
 				'name' => $entry->getName(),
@@ -90,7 +84,7 @@ final class Group {
 	 * @param string $name
 	 * @throws DomainException When the entry already exists
 	 */
-	private function throwIfNotUnique( $name ) {
+	private function throwIfNotUnique( string $name ): void {
 		try {
 			$this->search( $name );
 		} catch ( DomainException $exception ) {
@@ -104,7 +98,7 @@ final class Group {
 	 * @param IMenuEntry $entry
 	 * @throws DomainException When the entry already exists
 	 */
-	public function prependEntry( IMenuEntry $entry ) {
+	public function prependEntry( IMenuEntry $entry ): void {
 		$this->throwIfNotUnique( $entry->getName() );
 		array_unshift( $this->entries, $entry );
 	}
@@ -114,7 +108,7 @@ final class Group {
 	 * @param IMenuEntry $entry
 	 * @throws DomainException When the entry already exists
 	 */
-	public function insertEntry( IMenuEntry $entry ) {
+	public function insertEntry( IMenuEntry $entry ): void {
 		$this->throwIfNotUnique( $entry->getName() );
 		$this->entries[] = $entry;
 	}
@@ -126,7 +120,7 @@ final class Group {
 	 * @return int If the menu entry exists, then the 0-based index of the entry; otherwise, -1
 	 * @throws DomainException
 	 */
-	private function search( $name ) {
+	private function search( string $name ): int {
 		$count = count( $this->entries );
 
 		for ( $i = 0; $i < $count; ++$i ) {
@@ -142,7 +136,7 @@ final class Group {
 	 * @return IMenuEntry
 	 * @throws DomainException
 	 */
-	public function getEntryByName( $targetName ): IMenuEntry {
+	public function getEntryByName( string $targetName ): IMenuEntry {
 		$index = $this->search( $targetName );
 		return $this->entries[$index];
 	}
@@ -151,7 +145,7 @@ final class Group {
 	 * Serialize the group for use in a template
 	 * @return array{entries:array,id:string}
 	 */
-	public function serialize() {
+	public function serialize(): array {
 		return [
 			'entries' => $this->getEntries(),
 			'id' => $this->getId(),

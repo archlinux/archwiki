@@ -1,6 +1,6 @@
 <?php
 
-namespace TextExtracts;
+namespace MediaWiki\Extension\TextExtracts;
 
 use MediaWiki\MediaWikiServices;
 

@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Cite\Parsoid;
 
+use MediaWiki\Config\Config;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Ext\DOMProcessor;
@@ -13,6 +14,11 @@ use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
  * @license GPL-2.0-or-later
  */
 class RefProcessor extends DOMProcessor {
+	private Config $mainConfig;
+
+	public function __construct( Config $mainConfig ) {
+		$this->mainConfig = $mainConfig;
+	}
 
 	/**
 	 * @inheritDoc
@@ -21,10 +27,11 @@ class RefProcessor extends DOMProcessor {
 		ParsoidExtensionAPI $extApi, Node $node, array $options
 	): void {
 		$refsData = new ReferencesData();
-		References::processRefs( $extApi, $refsData, $node );
-		References::insertMissingReferencesIntoDOM( $extApi, $refsData, $node );
+		$references = new References( $this->mainConfig );
+		$references->processRefs( $extApi, $refsData, $node );
+		$references->insertMissingReferencesIntoDOM( $extApi, $refsData, $node );
 		if ( $refsData->embeddedErrors ) {
-			References::addEmbeddedErrors( $extApi, $refsData, $node );
+			$references->addEmbeddedErrors( $extApi, $refsData, $node );
 		}
 	}
 

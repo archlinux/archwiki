@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Araceletorres",
 			"Cainamarques",
 			"Dr03ramos",
@@ -13,8 +14,7 @@
 			"Jefersonmoraes",
 			"Luckas",
 			"Luk3",
-			"Opraco",
-			555
+			"Opraco"
 		]
 	},
 	"templatedata-desc": "Implementa o armazenamento de dados para os parâmetros das predefinições (em JSON)",
@@ -78,7 +78,6 @@
 	"templatedata-modal-button-map": "Editar mapas",
 	"templatedata-modal-button-importParams": "Importar parâmetros",
 	"templatedata-modal-button-removemap": "Remover mapa",
-	"templatedata-modal-button-restoreparam": "Restaurar parâmetro",
 	"templatedata-modal-button-saveparam": "Salvar",
 	"templatedata-modal-confirmcancel": "Tem certeza de que deseja descartar suas alterações?",
 	"templatedata-modal-current-language": "Idioma atual: $1",

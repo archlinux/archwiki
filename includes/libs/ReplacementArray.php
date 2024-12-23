@@ -18,11 +18,13 @@
  * @file
  */
 
+namespace MediaWiki\Language;
+
 /**
  * Wrapper around strtr() that holds replacements
  */
 class ReplacementArray {
-	private $data;
+	private array $data;
 
 	/**
 	 * Create an object with the specified replacement array
@@ -102,3 +104,6 @@ class ReplacementArray {
 		return strtr( $subject, $this->data );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ReplacementArray::class, 'ReplacementArray' );

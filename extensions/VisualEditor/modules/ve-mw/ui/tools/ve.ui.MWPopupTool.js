@@ -15,7 +15,7 @@
  * @param {string} title
  * @param {OO.ui.ToolGroup} toolGroup
  * @param {Object} [config]
- * @cfg {number} [width] Popup width. Upstream default is 320.
+ * @param {number} [config.width] Popup width. Upstream default is 320.
  */
 ve.ui.MWPopupTool = function VeUiMWPopupTool( title, toolGroup, config ) {
 	// Configuration initialization
@@ -105,8 +105,7 @@ ve.ui.MWNoticesPopupTool.static.autoAddToCatchall = false;
  * @param {string[]} notices A (non-empty) list of notices
  */
 ve.ui.MWNoticesPopupTool.prototype.setNotices = function ( notices ) {
-	var tool = this,
-		count = notices.length;
+	const count = notices.length;
 
 	this.popup.setLabel( ve.msg(
 		'visualeditor-editnotices-tool',
@@ -120,19 +119,19 @@ ve.ui.MWNoticesPopupTool.prototype.setNotices = function ( notices ) {
 	this.$items = $( '<div>' ).addClass( 've-ui-mwNoticesPopupTool-items' );
 	this.noticeItems = [];
 
-	notices.forEach( function ( item ) {
+	notices.forEach( ( item ) => {
 		// eslint-disable-next-line no-jquery/no-html
-		var $element = $( '<div>' )
+		const $element = $( '<div>' )
 			.addClass( 've-ui-mwNoticesPopupTool-item' )
 			.html( typeof item === 'string' ? item : item.message );
 		ve.targetLinksToNewWindow( $element[ 0 ] );
 
-		tool.noticeItems.push( {
+		this.noticeItems.push( {
 			$element: $element,
 			type: item.type
 		} );
 
-		tool.$items.append( $element );
+		this.$items.append( $element );
 	} );
 
 	this.popup.$body.append( this.$items );
@@ -148,7 +147,7 @@ ve.ui.MWNoticesPopupTool.prototype.setNotices = function ( notices ) {
  * @inheritdoc
  */
 ve.ui.MWNoticesPopupTool.prototype.getTitle = function () {
-	var items = this.toolbar.getTarget().getEditNotices();
+	const items = this.toolbar.getTarget().getEditNotices();
 
 	// eslint-disable-next-line mediawiki/msg-doc
 	return ve.msg( this.constructor.static.title, items.length );

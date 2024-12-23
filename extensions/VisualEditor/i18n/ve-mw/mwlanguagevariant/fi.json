@@ -18,7 +18,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Tämä on piilotettu sääntö.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Tämä sääntö vaikuttaa sivun otsikkoon.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Kielikoodi",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Virheellinen>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Virheellinen</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Kieli",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Lähtökieli",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Kohdekieli",

@@ -33,14 +33,14 @@ ve.ce.TableDeleteKeyDownHandler.static.supportedSelections = [ 'table' ];
 /* Static methods */
 
 /**
- * @inheritdoc
- *
  * Handle delete and backspace key down events with a table selection.
  *
  * Performs a strip-delete removing all the cell contents but not altering the structure.
+ *
+ * @inheritdoc
  */
 ve.ce.TableDeleteKeyDownHandler.static.execute = function ( surface, e ) {
-	var surfaceModel = surface.getModel(),
+	const surfaceModel = surface.getModel(),
 		documentModel = surfaceModel.getDocument(),
 		fragments = [],
 		cells = surfaceModel.getSelection().getMatrixCells( documentModel );
@@ -53,15 +53,14 @@ ve.ce.TableDeleteKeyDownHandler.static.execute = function ( surface, e ) {
 		return true;
 	}
 
-	var i, l;
-	for ( i = 0, l = cells.length; i < l; i++ ) {
+	for ( let i = 0, l = cells.length; i < l; i++ ) {
 		if ( cells[ i ].node.isCellEditable() ) {
 			// Create auto-updating fragments from ranges
 			fragments.push( surfaceModel.getLinearFragment( cells[ i ].node.getRange(), true ) );
 		}
 	}
 
-	for ( i = 0, l = fragments.length; i < l; i++ ) {
+	for ( let i = 0, l = fragments.length; i < l; i++ ) {
 		// Replace contents with empty wrapper paragraphs
 		fragments[ i ].insertContent( [
 			{ type: 'paragraph', internal: { generated: 'wrapper' } },

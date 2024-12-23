@@ -5,26 +5,22 @@
 			"Crt",
 			"Nike",
 			"Pyscowicz",
+			"Samoasambia",
 			"Stryn",
 			"Valtlai",
-			"Valtlait",
-			"Samoasambia"
+			"Valtlait"
 		]
 	},
 	"syntaxhighlight-desc": "Mahdollistaa syntaksin korostuksen [http://pygments.org/ Pygments - Python -syntaksin korostimella]",
 	"syntaxhighlight-error-category": "Sivut, joissa on syntaksin korostusvirhe",
-	"syntaxhighlight-error-category-desc": "Virhe yritettäessä korostaa sivulla olevaa koodia.",
-	"syntaxhighlight-enclose-category": "Sivut, joissa käytetään vanhentuneita enclose-attribuutteja",
-	"syntaxhighlight-enclose-category-desc": "Sivulla oleva syntaksin korostus käyttää vanhentunutta enclose-syntaksia.",
-	"syntaxhighlight-source-category": "Sivut, joissa käytetään vanhentuneita source-merkintöjä",
-	"syntaxhighlight-source-category-desc": "Sivulla oleva syntaksin korostus käyttää vanhentuneita source-merkintöjä.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Koodi",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Kieli",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Ei mitään)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Ei mikään)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Näytä rivinumerot",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Alkaen riviltä",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Koodipätkä",
-	"syntaxhighlight-error-pygments-invocation-failure": "Pygmentsin kutsuminen epäonnistui",
 	"syntaxhighlight-error-unknown-language": "Tuntematon kieli: ”$1”",
-	"syntaxhighlight-error-exceeds-size-limit": "Koodin koko $1 {{PLURAL:$1|tavu|tavua}} ylittää suurimman sallitun $2 {{PLURAL:$2|tavu|tavua}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Koodin koko $1 {{PLURAL:$1|tavu|tavua}} ylittää suurimman sallitun $2 {{PLURAL:$2|tavu|tavua}}",
+	"syntaxhighlight-button-copy": "Kopioi",
+	"syntaxhighlight-button-copied": "Kopioitu!"
 }

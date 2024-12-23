@@ -2,6 +2,7 @@
 
 namespace Shellbox;
 
+use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 use Shellbox\Command\LocalBoxedExecutor;
 use Shellbox\Command\UnboxedExecutor;
@@ -23,10 +24,21 @@ class Shellbox {
 	 *   - firejailProfile: The path to the firejail profile
 	 *   - cgroup: A writable cgroup path which can be used for manual memory
 	 *     limiting
+	 *   - urlFileConcurrency: The maximum number of HTTP requests to have in
+	 *     flight, if BoxedCommand::inputFileFromUrl() and outputFileToUrl() were
+	 *     used.
 	 * @param LoggerInterface|null $logger
+	 * @param ClientInterface|null $urlFileClient An HTTP client to use to
+	 *   implement BoxedCommand::inputFileFromUrl() and outputFileToUrl().
+	 *   If this is null, using those features will result in an exception
+	 *   being thrown.
 	 * @return LocalBoxedExecutor
 	 */
-	public static function createBoxedExecutor( $config = [], LoggerInterface $logger = null ) {
+	public static function createBoxedExecutor(
+		$config = [],
+		?LoggerInterface $logger = null,
+		?ClientInterface $urlFileClient = null
+	) {
 		$tempDirManager = self::createTempDirManager( $config['tempDir'] ?? null );
 		$unboxedExecutor = new UnboxedExecutor;
 		$unboxedExecutor->setTempDirManager( $tempDirManager );
@@ -36,6 +48,14 @@ class Shellbox {
 			$executor->setLogger( $logger );
 			$unboxedExecutor->setLogger( $logger );
 			$tempDirManager->setLogger( $logger );
+		}
+		if ( $urlFileClient ) {
+			$executor->setUrlFileClient(
+				$urlFileClient,
+				[
+					'concurrency' => $config['urlFileConcurrency'] ?? 1
+				]
+			 );
 		}
 		return $executor;
 	}
@@ -59,7 +79,7 @@ class Shellbox {
 	 * @param LoggerInterface|null $logger
 	 * @return UnboxedExecutor
 	 */
-	public static function createUnboxedExecutor( $config = [], LoggerInterface $logger = null ) {
+	public static function createUnboxedExecutor( $config = [], ?LoggerInterface $logger = null ) {
 		$executor = new UnboxedExecutor( $config['tempDir'] ?? null );
 		$executor->addWrappersFromConfiguration( $config );
 		if ( $logger ) {
@@ -255,6 +275,20 @@ class Shellbox {
 			}
 		}
 		return $path;
+	}
+
+	/**
+	 * Check an extension for path traversal safety and cross-platform file
+	 * name compliance. Throw an exception if it is not acceptable.
+	 *
+	 * @since 4.1.0
+	 * @param string $extension
+	 * @throws ShellboxError
+	 */
+	public static function checkExtension( $extension ) {
+		if ( !preg_match( '/^[0-9a-zA-Z\-_]*$/', $extension ) ) {
+			throw new ShellboxError( "invalid extension \"$extension\"" );
+		}
 	}
 
 }

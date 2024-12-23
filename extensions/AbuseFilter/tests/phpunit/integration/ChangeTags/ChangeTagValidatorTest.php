@@ -17,13 +17,13 @@ class ChangeTagValidatorTest extends MediaWikiIntegrationTestCase {
 	 * @todo When the above is possible, use mocks to test canAddTagsAccompanyingChange and canCreateTag
 	 * @param string $tag The tag to validate
 	 * @param string|null $expectedError
-	 * @covers \MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagValidator::validateTag
+	 * @covers \MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagValidator
 	 * @dataProvider provideTags
 	 */
 	public function testValidateTag( string $tag, ?string $expectedError ) {
 		$validator = AbuseFilterServices::getChangeTagValidator();
 		$status = $validator->validateTag( $tag );
-		$actualError = $status->isGood() ? null : $status->getErrors()[0]['message'];
+		$actualError = $status->isGood() ? null : $status->getMessages()[0]->getKey();
 		$this->assertSame( $expectedError, $actualError );
 	}
 

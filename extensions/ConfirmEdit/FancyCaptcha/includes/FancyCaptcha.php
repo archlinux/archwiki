@@ -2,11 +2,10 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\FancyCaptcha;
 
-use FileBackend;
-use FSFileBackend;
 use InvalidArgumentException;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Html\Html;
@@ -15,17 +14,18 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
 use NullLockManager;
-use ObjectCache;
-use RequestContext;
-use StatusValue;
 use UnderflowException;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFileBackend;
 
 /**
  * FancyCaptcha for displaying captchas precomputed by captcha.py
  */
 class FancyCaptcha extends SimpleCaptcha {
-	// used for fancycaptcha-edit, fancycaptcha-addurl, fancycaptcha-badlogin,
-	// fancycaptcha-accountcreate, fancycaptcha-create, fancycaptcha-sendemail via getMessage()
+	/**
+	 * @var string used for fancycaptcha-edit, fancycaptcha-addurl, fancycaptcha-badlogin,
+	 * fancycaptcha-accountcreate, fancycaptcha-create, fancycaptcha-sendemail via getMessage()
+	 */
 	protected static $messagePrefix = 'fancycaptcha-';
 
 	/**
@@ -223,7 +223,7 @@ class FancyCaptcha extends SimpleCaptcha {
 		}
 
 		$backend = $this->getBackend();
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 
 		$key = $cache->makeGlobalKey(
 			'fancycaptcha-dirlist',
@@ -283,7 +283,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	 */
 	protected function pickImageFromDir( $directory, &$lockouts ) {
 		$backend = $this->getBackend();
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 
 		$key = $cache->makeGlobalKey(
 			'fancycaptcha-filelist',
@@ -341,7 +341,7 @@ class FancyCaptcha extends SimpleCaptcha {
 		}
 
 		$backend = $this->getBackend();
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 
 		// pick a random file
 		$place = mt_rand( 0, count( $files ) - 1 );
@@ -386,7 +386,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @return bool|StatusValue
+	 * @return bool
 	 */
 	public function showImage() {
 		$context = RequestContext::getMain();
@@ -448,15 +448,11 @@ class FancyCaptcha extends SimpleCaptcha {
 	protected function passCaptcha( $index, $word ) {
 		global $wgCaptchaDeleteOnSolve;
 
-		if ( !$wgCaptchaDeleteOnSolve || $index === null ) {
-			return parent::passCaptcha( $index, $word, $user );
-		}
-
 		// get the captcha info before it gets deleted
 		$info = $this->retrieveCaptcha( $index );
 		$pass = parent::passCaptcha( $index, $word );
 
-		if ( $pass ) {
+		if ( $pass && $wgCaptchaDeleteOnSolve ) {
 			$this->getBackend()->quickDelete( [
 				'src' => $this->imagePath( $info['salt'], $info['hash'] )
 			] );

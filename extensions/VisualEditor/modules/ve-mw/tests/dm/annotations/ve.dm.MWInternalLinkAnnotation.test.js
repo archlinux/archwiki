@@ -181,7 +181,7 @@ QUnit.test( 'toDataElement', ( assert ) => {
 		}
 	];
 
-	articlePaths.forEach( function ( pathData ) {
+	for ( const pathData of articlePaths ) {
 		// Set up global state (site configuration)
 		mw.config.set( pathData.config );
 
@@ -196,57 +196,45 @@ QUnit.test( 'toDataElement', ( assert ) => {
 		converter.fromClipboard = true;
 
 		// Generate test cases for this site configuration
-		const cases = getCases();
-		for ( let i = 0; i < cases.length; i++ ) {
+		for ( const caseItem of getCases() ) {
 			assert.deepEqual(
-				ve.dm.MWInternalLinkAnnotation.static.toDataElement( [ cases[ i ].element ], converter ),
-				cases[ i ].expected,
-				cases[ i ].msg + ': ' + pathData.msg
+				ve.dm.MWInternalLinkAnnotation.static.toDataElement( [ caseItem.element ], converter ),
+				caseItem.expected,
+				caseItem.msg + ': ' + pathData.msg
 			);
 		}
-	} );
+	}
 } );
 
-QUnit.test( 'getFragment', ( assert ) => {
-	const cases = [
-			{
-				msg: 'No fragment returns null',
-				original: 'Foo',
-				expected: null
-			},
-			{
-				msg: 'Invalid title returns null',
-				original: 'A%20B',
-				expected: null
-			},
-			{
-				msg: 'Blank fragment returns empty string',
-				original: 'Foo#',
-				expected: ''
-			},
-			{
-				msg: 'Extant fragment returns same string',
-				original: 'Foo#bar',
-				expected: 'bar'
-			},
-			{
-				msg: 'Hash-bang works returns full string',
-				original: 'Foo#!bar',
-				expected: '!bar'
-			},
-			{
-				msg: 'Double-hash returns everything after the first hash',
-				original: 'Foo##bar',
-				expected: '#bar'
-			},
-			{
-				msg: 'Multi-fragment returns everything after the first hash',
-				original: 'Foo#bar#baz#bat',
-				expected: 'bar#baz#bat'
-			}
-		];
-
-	for ( let i = 0; i < cases.length; i++ ) {
-		assert.strictEqual( ve.dm.MWInternalLinkAnnotation.static.getFragment( cases[ i ].original ), cases[ i ].expected, cases[ i ].msg );
+QUnit.test.each( 'getFragment', {
+	'No fragment returns null': {
+		original: 'Foo',
+		expected: null
+	},
+	'Invalid title returns null': {
+		original: 'A%20B',
+		expected: null
+	},
+	'Blank fragment returns empty string': {
+		original: 'Foo#',
+		expected: ''
+	},
+	'Extant fragment returns same string': {
+		original: 'Foo#bar',
+		expected: 'bar'
+	},
+	'Hash-bang works returns full string': {
+		original: 'Foo#!bar',
+		expected: '!bar'
+	},
+	'Double-hash returns everything after the first hash': {
+		original: 'Foo##bar',
+		expected: '#bar'
+	},
+	'Multi-fragment returns everything after the first hash': {
+		original: 'Foo#bar#baz#bat',
+		expected: 'bar#baz#bat'
 	}
+}, ( assert, { original, expected } ) => {
+	assert.strictEqual( ve.dm.MWInternalLinkAnnotation.static.getFragment( original ), expected );
 } );

@@ -69,7 +69,6 @@
 	"templatedata-modal-button-map": "नक्शे सम्पादित करें",
 	"templatedata-modal-button-importParams": "पैरामीटर्स आयात करें",
 	"templatedata-modal-button-removemap": "नक्शा हटाएँ",
-	"templatedata-modal-button-restoreparam": "पैरामीटर पुनर्स्थापित करें",
 	"templatedata-modal-button-saveparam": "सहेजें",
 	"templatedata-modal-confirmcancel": "क्या आप सच में अपने बदलाव रद्द करना चाहते हैं?",
 	"templatedata-modal-current-language": "वर्तमान भाषा: $1",

@@ -2,18 +2,19 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use Language;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Notifications\Formatters\EchoEventFormatter;
 use MediaWiki\Extension\Notifications\Formatters\EchoFlyoutFormatter;
 use MediaWiki\Extension\Notifications\Formatters\EchoModelFormatter;
 use MediaWiki\Extension\Notifications\Formatters\SpecialNotificationsFormatter;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\Notification;
+use MediaWiki\Language\Language;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
-use RequestContext;
 
 /**
  * Utility class that formats a notification in the format specified
@@ -22,7 +23,7 @@ use RequestContext;
 class DataOutputFormatter {
 
 	/**
-	 * @var string[] type => class
+	 * @var array<string,class-string<EchoEventFormatter>> type => class
 	 */
 	protected static $formatters = [
 		'flyout' => EchoFlyoutFormatter::class,
@@ -81,10 +82,10 @@ class DataOutputFormatter {
 		if ( $timeDiff > 172800 ) {
 			$date = self::getDateHeader( $user, $timestampMw );
 		// 'Today'
-		} elseif ( substr( self::getUserLocalTime( $user, $now ), 0, 8 ) === $dateFormat ) {
+		} elseif ( str_starts_with( self::getUserLocalTime( $user, $now ), $dateFormat ) ) {
 			$date = wfMessage( 'echo-date-today' )->escaped();
 		// 'Yesterday'
-		} elseif ( substr( self::getUserLocalTime( $user, $now - 86400 ), 0, 8 ) === $dateFormat ) {
+		} elseif ( str_starts_with( self::getUserLocalTime( $user, $now - 86400 ), $dateFormat ) ) {
 			$date = wfMessage( 'echo-date-yesterday' )->escaped();
 		} else {
 			$date = self::getDateHeader( $user, $timestampMw );
@@ -223,13 +224,13 @@ class DataOutputFormatter {
 	/**
 	 * Helper function for converting UTC timezone to a user's timezone
 	 *
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param string|int $ts
 	 * @param int $format output format
 	 *
 	 * @return string
 	 */
-	public static function getUserLocalTime( User $user, $ts, $format = TS_MW ) {
+	public static function getUserLocalTime( UserIdentity $user, $ts, $format = TS_MW ) {
 		$timestamp = new MWTimestamp( $ts );
 		$timestamp->offsetForUser( $user );
 

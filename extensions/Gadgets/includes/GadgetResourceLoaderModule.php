@@ -113,7 +113,7 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	 * @param RL\Context|null $context
 	 * @return string[] Names of resources this module depends on
 	 */
-	public function getDependencies( RL\Context $context = null ) {
+	public function getDependencies( ?RL\Context $context = null ) {
 		return $this->getGadget()->getDependencies();
 	}
 

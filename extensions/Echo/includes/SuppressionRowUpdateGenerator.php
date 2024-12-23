@@ -57,7 +57,7 @@ class SuppressionRowUpdateGenerator implements RowUpdateGenerator {
 	 * @param stdClass $row A row from the database
 	 * @return array All updates required for this row
 	 */
-	protected function updatePageIdFromTitle( $row ) {
+	protected function updatePageIdFromTitle( $row ): array {
 		$update = [];
 		$title = $this->newTitleFromNsAndText( $row->event_page_namespace, $row->event_page_title );
 		if ( $title !== null ) {
@@ -88,7 +88,7 @@ class SuppressionRowUpdateGenerator implements RowUpdateGenerator {
 	 *
 	 * @return array All updates required for this row
 	 */
-	protected function updatePageLinkedExtraData( $row, array $update ) {
+	protected function updatePageLinkedExtraData( $row, array $update ): array {
 		$extra = $this->extra( $row, $update );
 
 		if ( isset( $extra['link-from-title'] ) && isset( $extra['link-from-namespace'] ) ) {
@@ -115,7 +115,7 @@ class SuppressionRowUpdateGenerator implements RowUpdateGenerator {
 	 * @param array $update Updates that need to be applied to the database row
 	 * @return array The event extra data
 	 */
-	protected function extra( $row, array $update = [] ) {
+	protected function extra( $row, array $update = [] ): array {
 		if ( isset( $update['event_extra'] ) ) {
 			return unserialize( $update['event_extra'] );
 		}

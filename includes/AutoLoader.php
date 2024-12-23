@@ -68,8 +68,10 @@ class AutoLoader {
 		'MediaWiki\\Mail\\' => __DIR__ . '/mail/',
 		'MediaWiki\\Page\\' => __DIR__ . '/page/',
 		'MediaWiki\\Parser\\' => __DIR__ . '/parser/',
+		'MediaWiki\\Password\\' => __DIR__ . '/password/',
 		'MediaWiki\\PoolCounter\\' => __DIR__ . '/poolcounter/',
 		'MediaWiki\\Preferences\\' => __DIR__ . '/preferences/',
+		'MediaWiki\\RCFeed\\' => __DIR__ . '/recentchanges/RCFeed/',
 		'MediaWiki\\Search\\' => __DIR__ . '/search/',
 		'MediaWiki\\Search\\SearchWidgets\\' => __DIR__ . '/search/searchwidgets/',
 		'MediaWiki\\Session\\' => __DIR__ . '/session/',
@@ -176,6 +178,7 @@ class AutoLoader {
 		if ( !$filename && strpos( $className, '\\' ) !== false ) {
 			// This class is namespaced, so look in the namespace map
 			$prefix = $className;
+			// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 			while ( ( $pos = strrpos( $prefix, '\\' ) ) !== false ) {
 				// Check to see if this namespace prefix is in the map
 				$prefix = substr( $className, 0, $pos + 1 );

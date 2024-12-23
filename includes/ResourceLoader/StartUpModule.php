@@ -21,6 +21,7 @@
  */
 namespace MediaWiki\ResourceLoader;
 
+use DomainException;
 use Exception;
 use MediaWiki\MainConfigNames;
 use Wikimedia\RequestTimeout\TimeoutException;
@@ -49,6 +50,7 @@ class StartUpModule extends Module {
 	 */
 	private const STORAGE_VERSION = '2';
 
+	/** @var int[] */
 	private $groupIds = [
 		// These reserved numbers MUST start at 0 and not skip any. These are preset
 		// for forward compatibility so that they can be safely referenced by mediawiki.js,
@@ -251,7 +253,12 @@ class StartUpModule extends Module {
 		self::compileUnresolvedDependencies( $registryData );
 
 		// Register sources
-		$out = ResourceLoader::makeLoaderSourcesScript( $context, $resourceLoader->getSources() );
+		$sources = $oldSources = $resourceLoader->getSources();
+		$this->getHookRunner()->onResourceLoaderModifyEmbeddedSourceUrls( $sources );
+		if ( array_keys( $sources ) !== array_keys( $oldSources ) ) {
+			throw new DomainException( 'ResourceLoaderModifyEmbeddedSourceUrls hook must not add or remove sources' );
+		}
+		$out = ResourceLoader::makeLoaderSourcesScript( $context, $sources );
 
 		// Figure out the different call signatures for mw.loader.register
 		$registrations = [];
@@ -355,7 +362,6 @@ class StartUpModule extends Module {
 
 		$startupCode = file_get_contents( "$IP/resources/src/startup/startup.js" );
 
-		// The files read here MUST be kept in sync with maintenance/jsduck/eg-iframe.html.
 		$mwLoaderCode = file_get_contents( "$IP/resources/src/startup/mediawiki.js" ) .
 			file_get_contents( "$IP/resources/src/startup/mediawiki.loader.js" ) .
 			file_get_contents( "$IP/resources/src/startup/mediawiki.requestIdleCallback.js" );

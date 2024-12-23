@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Interwiki;
 
 use LogFormatter;
-use Message;
+use MediaWiki\Message\Message;
 
 /**
  * Needed to pass the URL as a raw parameter, because it contains $1

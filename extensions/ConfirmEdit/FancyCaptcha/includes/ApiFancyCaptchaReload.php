@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\FancyCaptcha;
 
-use ApiBase;
+use MediaWiki\Api\ApiBase;
 
 /**
  * Api module to reload FancyCaptcha

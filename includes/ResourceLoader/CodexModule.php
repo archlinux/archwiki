@@ -20,12 +20,13 @@
 
 namespace MediaWiki\ResourceLoader;
 
-use ExtensionRegistry;
 use InvalidArgumentException;
 use MediaWiki\Config\Config;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\HtmlJsCode;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Registration\ExtensionRegistry;
+use RuntimeException;
 
 /**
  * Module for codex that has direction-specific style files and a static helper
@@ -37,7 +38,7 @@ use MediaWiki\MainConfigNames;
  * @internal
  */
 class CodexModule extends FileModule {
-	protected const CODEX_MODULE_DIR = 'resources/lib/codex/modules/';
+	protected const CODEX_DEFAULT_LIBRARY_DIR = 'resources/lib/codex';
 	private const CODEX_MODULE_DEPENDENCIES = [ 'vue' ];
 
 	/** @var array<string,string>|null */
@@ -160,12 +161,38 @@ class CodexModule extends FileModule {
 	 * @return array
 	 */
 	public static function getIcons( Context $context, Config $config, array $iconNames = [] ): array {
-		global $IP;
-		static $allIcons = null;
-		if ( $allIcons === null ) {
-			$allIcons = json_decode( file_get_contents( "$IP/resources/lib/codex-icons/codex-icons.json" ), true );
+		static $cachedIcons = null;
+		static $cachedIconFilePath = null;
+
+		$iconFile = self::getIconFilePath( $config );
+		if ( $cachedIcons === null || $cachedIconFilePath !== $iconFile ) {
+			$cachedIcons = json_decode( file_get_contents( $iconFile ), true );
+			$cachedIconFilePath = $iconFile;
 		}
-		return array_intersect_key( $allIcons, array_flip( $iconNames ) );
+
+		return array_intersect_key( $cachedIcons, array_flip( $iconNames ) );
+	}
+
+	private static function getIconFilePath( Config $config ) {
+		$devDir = $config->get( MainConfigNames::CodexDevelopmentDir );
+		$iconsDir = $devDir !== null ?
+			"$devDir/packages/codex-icons/dist" :
+			MW_INSTALL_PATH . '/resources/lib/codex-icons';
+		return "$iconsDir/codex-icons.json";
+	}
+
+	public function getMessages() {
+		$messages = parent::getMessages();
+
+		// Add messages used inside Codex Vue components. The message keys are defined in the
+		// "messageKeys.json" file from the Codex package
+		if ( $this->codexFullLibrary || ( !$this->isStyleOnly && count( $this->codexComponents ) > 0 ) ) {
+			$messageKeyFilePath = $this->makeFilePath( 'messageKeys.json' )->getLocalPath();
+			$messageKeys = json_decode( file_get_contents( $messageKeyFilePath ), true );
+			$messages = array_merge( $messages, $messageKeys );
+		}
+
+		return $messages;
 	}
 
 	// These 3 public methods are the entry points to this class; depending on the
@@ -181,15 +208,24 @@ class CodexModule extends FileModule {
 		return parent::getStyleFiles( $context );
 	}
 
+	protected function processStyle( $style, $styleLang, $path, Context $context ) {
+		$pathAsString = $path instanceof FilePath ? $path->getLocalPath() : $path;
+		if ( str_starts_with( $pathAsString, $this->getCodexDirectory() ) ) {
+			// This is a Codex style file, don't do any processing.
+			// We need to avoid CSSJanus flipping in particular, because we're using RTL-specific
+			// files instead. Note that we're bypassing all of processStyle() when we really just
+			// care about bypassing flipping; that's fine for now, but could be a problem if
+			// processStyle() is ever expanded to do more than Less compilation, RTL flipping and
+			// image URL remapping.
+			return $style;
+		}
+
+		return parent::processStyle( $style, $styleLang, $path, $context );
+	}
+
 	public function getDefinitionSummary( Context $context ) {
 		$this->setupCodex( $context );
 		return parent::getDefinitionSummary( $context );
-	}
-
-	public function getFlip( Context $context ) {
-		// Never flip styles for Codex modules, because we already provide separate style files
-		// for LTR vs RTL
-		return false;
 	}
 
 	public function supportsURLLoading() {
@@ -218,6 +254,82 @@ class CodexModule extends FileModule {
 	}
 
 	/**
+	 * Build a FilePath object representing the path to a Codex file.
+	 *
+	 * If $wgCodexDevelopmentDir is set, the returned FilePath object points to
+	 * $wgCodexDevelopmentDir/$file. Otherwise, it points to resources/lib/codex/$file.
+	 *
+	 * @param string $file File name
+	 */
+	private function makeFilePath( string $file ): FilePath {
+		$remoteBasePath = $this->getConfig()->get( MainConfigNames::ResourceBasePath );
+		$devDir = $this->getConfig()->get( MainConfigNames::CodexDevelopmentDir );
+		if ( $devDir === null ) {
+			$filePath = new FilePath(
+				static::CODEX_DEFAULT_LIBRARY_DIR . '/' . $file,
+				MW_INSTALL_PATH,
+				$remoteBasePath
+			);
+			if ( !file_exists( $filePath->getLocalPath() ) ) {
+				throw new RuntimeException( "Could not find Codex file `{$filePath->getLocalPath()}`" );
+			}
+			return $filePath;
+		}
+
+		$modulesDir = $devDir . '/packages/codex/dist/modules';
+		if ( !file_exists( $modulesDir ) ) {
+			throw new RuntimeException(
+				"Could not find Codex development build, `$modulesDir` does not exist. " .
+				"You may need to run `npm run build-all` in the `$devDir` directory, " .
+				"or disable Codex development mode by setting \$wgCodexDevelopmentDir = null;"
+			);
+		}
+		$path = $devDir . '/packages/codex/dist/' . $file;
+		if ( !file_exists( $path ) ) {
+			throw new RuntimeException(
+				"Could not find Codex file `$path`. " .
+				"You may need to run `npm run build-all` in the `$devDir` directory, " .
+				"or you may be using a version of Codex that is too old for this version of MediaWiki."
+			);
+		}
+
+		// Return a modified FilePath object that bypasses LocalBasePath
+		// HACK: We do have to set LocalBasePath to a non-null value, otherwise
+		// FileModule::getLocalPath() will still prepend its own base path
+		return new class ( $path, '' ) extends FilePath {
+			public function getLocalPath(): string {
+				return $this->getPath();
+			}
+		};
+	}
+
+	/**
+	 * Get the path to the directory that contains the Codex files.
+	 *
+	 * In production mode this is resources/lib/codex, but in development mode it can be
+	 * somewhere else.
+	 *
+	 * @return string
+	 */
+	private function getCodexDirectory() {
+		// Reuse the logic in makeFilePath by passing in an empty path
+		return $this->makeFilePath( '' )->getLocalPath();
+	}
+
+	private function isDevelopmentMode() {
+		return $this->getConfig()->get( MainConfigNames::CodexDevelopmentDir ) !== null;
+	}
+
+	private function getDevelopmentWarning() {
+		return $this->isDevelopmentMode() ?
+			Html::encodeJsCall( 'mw.log.warn', [
+				"You are using a local development version of Codex, which may not match the latest version. " .
+				"To disable this, set \$wgCodexDevelopmentDir = null;"
+			] ) :
+			'';
+	}
+
+	/**
 	 * Decide which manifest file to use, based on the theme and the direction (LTR or RTL).
 	 *
 	 * @param Context $context
@@ -230,12 +342,12 @@ class CodexModule extends FileModule {
 				'rtl' => 'manifest-rtl.json',
 			],
 			'wikimedia-ui-legacy' => [
-				'ltr' => 'manifest-legacy.json',
-				'rtl' => 'manifest-legacy-rtl.json',
+				'ltr' => 'manifest.json',
+				'rtl' => 'manifest-rtl.json',
 			],
 			'experimental' => [
-				'ltr' => 'manifest-experimental.json',
-				'rtl' => 'manifest-experimental-rtl.json',
+				'ltr' => 'manifest.json',
+				'rtl' => 'manifest-rtl.json',
 			]
 		];
 
@@ -245,8 +357,8 @@ class CodexModule extends FileModule {
 			throw new InvalidArgumentException( "Unknown Codex theme $theme" );
 		}
 		$manifestFile = $themeManifestNames[ $theme ][ $direction ];
-		$manifestFilePath = MW_INSTALL_PATH . '/' . static::CODEX_MODULE_DIR . $manifestFile;
-		return $manifestFilePath;
+		$manifestFilePath = $this->makeFilePath( "modules/$manifestFile" );
+		return $manifestFilePath->getLocalPath();
 	}
 
 	/**
@@ -392,7 +504,6 @@ class CodexModule extends FileModule {
 	 * @param Context $context
 	 */
 	private function addComponentFiles( Context $context ) {
-		$remoteBasePath = $this->getConfig()->get( MainConfigNames::ResourceBasePath );
 		$codexFiles = $this->getCodexFiles( $context );
 
 		$requestedFiles = array_map( static function ( $component ) use ( $codexFiles ) {
@@ -409,13 +520,13 @@ class CodexModule extends FileModule {
 		// Add the CSS files to the module's package file (unless this is a script-only module)
 		if ( !$this->isScriptOnly ) {
 			foreach ( $styles as $fileName ) {
-				$this->styles[] = new FilePath( static::CODEX_MODULE_DIR .
-					$fileName, MW_INSTALL_PATH, $remoteBasePath );
+				$this->styles[] = $this->makeFilePath( "modules/$fileName" );
 			}
 		}
 
 		// Add the JS files to the module's package file (unless this is a style-only module).
 		if ( !$this->isStyleOnly ) {
+			// Add a synthetic top-level "exports" file
 			$exports = [];
 			foreach ( $this->codexComponents as $component ) {
 				$componentFile = $codexFiles[ 'components' ][ $component ];
@@ -424,8 +535,10 @@ class CodexModule extends FileModule {
 				);
 			}
 
-			// Add a synthetic top-level "exports" file
 			$syntheticExports = Html::encodeJsVar( HtmlJsCode::encodeObject( $exports ) );
+
+			// Add a console warning in development mode
+			$devWarning = $this->getDevelopmentWarning();
 
 			// Proxy the synthetic exports object so that we can throw a useful error if a component
 			// is not defined in the module definition
@@ -442,6 +555,7 @@ class CodexModule extends FileModule {
 					return target[ prop ];
 				}
 			} );
+			$devWarning
 			JAVASCRIPT;
 
 			$this->packageFiles[] = [
@@ -453,7 +567,7 @@ class CodexModule extends FileModule {
 			foreach ( $scripts as $fileName ) {
 				$this->packageFiles[] = [
 					'name' => "_codex/$fileName",
-					'file' => new FilePath( static::CODEX_MODULE_DIR . $fileName, MW_INSTALL_PATH, $remoteBasePath )
+					'file' => $this->makeFilePath( "modules/$fileName" )
 				];
 			}
 		}
@@ -465,14 +579,28 @@ class CodexModule extends FileModule {
 	 * @param Context $context
 	 */
 	private function loadFullCodexLibrary( Context $context ) {
-		$remoteBasePath = $this->getConfig()->get( MainConfigNames::ResourceBasePath );
-
 		// Add all Codex JS files to the module's package
 		if ( !$this->isStyleOnly ) {
-			$this->packageFiles[] = [
-				'name' => 'codex.js',
-				'file' => new FilePath( 'resources/lib/codex/codex.umd.cjs', MW_INSTALL_PATH, $remoteBasePath )
-			];
+			$jsFilePath = $this->makeFilePath( 'codex.umd.cjs' );
+
+			// Add a console warning in development mode
+			$devWarning = $this->getDevelopmentWarning();
+			if ( $devWarning ) {
+				$this->packageFiles[] = [
+					'name' => 'codex.js',
+					'callback' => static function () use ( $jsFilePath, $devWarning ) {
+						return $devWarning . ';' . file_get_contents( $jsFilePath->getLocalPath() );
+					},
+					'versionCallback' => static function () use ( $jsFilePath ) {
+						return $jsFilePath;
+					}
+				];
+			} else {
+				$this->packageFiles[] = [
+					'name' => 'codex.js',
+					'file' => $jsFilePath
+				];
+			}
 		}
 
 		// Add all Codex CSS files to the module's package
@@ -480,27 +608,30 @@ class CodexModule extends FileModule {
 			// Theme-specific + direction style files
 			$themeStyles = [
 				'wikimedia-ui' => [
-					'ltr' => 'resources/lib/codex/codex.style.css',
-					'rtl' => 'resources/lib/codex/codex.style-rtl.css'
+					'ltr' => 'codex.style.css',
+					'rtl' => 'codex.style-rtl.css'
 				],
 				'wikimedia-ui-legacy' => [
-					'ltr' => 'resources/lib/codex/codex.style-legacy.css',
-					'rtl' => 'resources/lib/codex/codex.style-legacy-rtl.css'
+					'ltr' => 'codex.style.css',
+					'rtl' => 'codex.style-rtl.css'
 				],
 				'experimental' => [
-					'ltr' => 'resources/lib/codex/codex.style-experimental.css',
-					'rtl' => 'resources/lib/codex/codex.style-experimental-rtl.css'
+					'ltr' => 'codex.style.css',
+					'rtl' => 'codex.style-rtl.css'
 				]
 			];
 
 			$theme = $this->getTheme( $context );
 			$direction = $context->getDirection();
 			$styleFile = $themeStyles[ $theme ][ $direction ];
-			$this->styles[] = new FilePath(
-				$styleFile,
-				MW_INSTALL_PATH,
-				$remoteBasePath
-			);
+			$this->styles[] = $this->makeFilePath( $styleFile );
 		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getType(): string {
+		return $this->isStyleOnly ? self::LOAD_STYLES : self::LOAD_GENERAL;
 	}
 }

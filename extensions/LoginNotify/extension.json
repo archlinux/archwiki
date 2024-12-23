@@ -9,7 +9,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.42",
+		"MediaWiki": ">= 1.43",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -116,12 +116,12 @@
 			"value": 5184000
 		},
 		"LoginNotifyUseCheckUser": {
-			"description": "Use the CheckUser cu_changes table if it is available. This is redundant with LoginNotify's own table, available with MediaWiki 1.41. Setting this to true will be deprecated in a later release. Defaults to true temporarily during WMF pilot.",
-			"value": true
+			"description": "Use the CheckUser cu_changes table if it is available. This is redundant with LoginNotify's own table, available with MediaWiki 1.41. Since 1.43, setting this to true is deprecated and when set to true this method may be missing data due to CheckUser schema changes.",
+			"value": false
 		},
 		"LoginNotifyUseSeenTable": {
-			"description": "Use the loginnotify_seen_net table. This is redundant with LoginNotifyUseCheckUser although both can be enabled during migration. Defaults to false temporarily during WMF pilot.",
-			"value": false
+			"description": "Use the loginnotify_seen_net table. This is redundant with LoginNotifyUseCheckUser although both can be enabled during migration.",
+			"value": true
 		},
 		"LoginNotifyUseCentralId": {
 			"description": "Use central user IDs in the loginnotify_seen_net table. This should be set to true if the loginnotify_seen_net is in a shared database. CentralAuth should be installed and all users should be attached to it.",

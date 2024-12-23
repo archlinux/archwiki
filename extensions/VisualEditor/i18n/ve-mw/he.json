@@ -18,11 +18,11 @@
 			"דולב",
 			"חיים",
 			"מיכי י-ם",
+			"מקף",
 			"ערן",
 			"פוילישער",
 			"קיפודנחש",
-			"תומר ט",
-			"מקף"
+			"תומר ט"
 		]
 	},
 	"collabpad-doctitle": "פנקס שיתופי: $1",
@@ -50,7 +50,6 @@
 	"visualeditor-autosave-recovered-text": "השינויים הלא־שמורים שלך שוחזרו אוטומטית.",
 	"visualeditor-autosave-recovered-title": "השינויים האבודים שוחזרו",
 	"visualeditor-backbutton-tooltip": "חזרה",
-	"visualeditor-browserwarning": "העורך הזה אינו נתמך באופן רשמי בדפדפן שלך.",
 	"visualeditor-ca-createlocaldescriptionsource": "הוספת תיאור מקומי בקוד מקור",
 	"visualeditor-ca-createsource": "יצירת קוד מקור",
 	"visualeditor-ca-editlocaldescriptionsource": "עריכת מקור תיאור מקומי",
@@ -66,6 +65,7 @@
 	"visualeditor-changedesc-mwtransclusion": "פרמטרי תבנית השתנו",
 	"visualeditor-desc": "עורך חזותי למדיה־ויקי",
 	"visualeditor-descriptionpagelink": "Project:עורך חזותי",
+	"visualeditor-dialog-extension-abandonedit": "האם לסגור את תיבת הדו־שיח הזאת מבלי להחיל את השינויים שלך?",
 	"visualeditor-dialog-media-alttext-checkbox": "להשתמש בכיתוב כטקסט חלופי",
 	"visualeditor-dialog-media-alttext-section": "טקסט חלופי",
 	"visualeditor-dialog-media-alttext-section-help": "אפשר להשתמש בזה כדי לכתוב תיאור טקסט בשביל אנשים שאינם יכולים לראות את הפריט. התיאור צריך להיות מספיק בשביל להבין את המטרה של פריט המדיה ואת המידע שהוא מספק. זה חיוני למשתמשים עיוורים ולמשתמשים אחרים שמשתמשים בתכנה להקראת מסך או בדפדפני טקסט.",
@@ -272,6 +272,7 @@
 	"visualeditor-linkinspector-educationpopup-text": "{{GENDER:|קשר|קשרי}} מילים חשובות לדפי ויקי אחרים או אפילו אתרים אחרים. זה יעזור לקוראים להבין את ההקשר.",
 	"visualeditor-linkinspector-educationpopup-title": "קישורים",
 	"visualeditor-linkinspector-illegal-title": "שם דף בלתי־תקין",
+	"visualeditor-linkinspector-invalid-blocked": "אנשים בוויקי הזה החליטו לחסום קישורים לאתר הזה. נא לנסות קישור אחר.",
 	"visualeditor-linkinspector-invalid-external": "יש להזין כתובת URL מלאה, למשל https://example.org",
 	"visualeditor-linknodeinspector-add-label": "הוספת תווית",
 	"visualeditor-linknodeinspector-title": "קישור פשוט",

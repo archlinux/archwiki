@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Tests\Structure;
 
-use HashBagOStuff;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
@@ -11,6 +10,7 @@ use MediaWiki\ResourceLoader\DerivativeContext;
 use MediaWiki\ResourceLoader\Module;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\DependencyStore\KeyValueDependencyStore;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
 
@@ -96,7 +96,7 @@ abstract class BundleSizeTestBase extends MediaWikiIntegrationTestCase {
 	 * @return string Skin name
 	 */
 	public function getSkinName(): string {
-		return MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::DefaultSkin );
+		return $this->getConfVar( MainConfigNames::DefaultSkin );
 	}
 
 }

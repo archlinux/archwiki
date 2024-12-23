@@ -4,6 +4,7 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStoreRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -125,5 +126,20 @@ trait MockTitleTrait {
 		} );
 
 		return $title;
+	}
+
+	private function makeMockTitleFactory(): TitleFactory {
+		$factory = $this->createNoOpMock(
+			TitleFactory::class,
+			[ 'newFromText' ]
+		);
+
+		$factory->method( 'newFromText' )->willReturnCallback(
+			function ( $text ) {
+				return $this->makeMockTitle( $text );
+			}
+		);
+
+		return $factory;
 	}
 }

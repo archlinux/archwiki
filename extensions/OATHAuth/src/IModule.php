@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use IContextSource;
 use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
-use Message;
+use MediaWiki\Message\Message;
 
 interface IModule {
 	/**

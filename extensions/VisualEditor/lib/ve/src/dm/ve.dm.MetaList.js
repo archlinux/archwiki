@@ -8,7 +8,7 @@
  * DataModel meta list.
  *
  * @class
- * @mixins OO.EventEmitter
+ * @mixes OO.EventEmitter
  *
  * @constructor
  * @param {ve.dm.Document} doc Document model
@@ -37,12 +37,12 @@ OO.mixinClass( ve.dm.MetaList, OO.EventEmitter );
 /* Events */
 
 /**
- * @event insert
+ * @event ve.dm.MetaList#insert
  * @param {ve.dm.MetaItem} item Item that was inserted
  */
 
 /**
- * @event remove
+ * @event ve.dm.MetaList#remove
  * @param {ve.dm.MetaItem} item Item that was removed
  */
 
@@ -54,11 +54,9 @@ OO.mixinClass( ve.dm.MetaList, OO.EventEmitter );
  * @param {ve.dm.Node} node The node that was attached
  */
 ve.dm.MetaList.prototype.onNodeAttached = function ( node ) {
-	var offsetPath = node.getOffsetPath();
+	const offsetPath = node.getOffsetPath();
 	if ( node instanceof ve.dm.MetaItem ) {
-		var i = OO.binarySearch( this.items, function searchFunc( other ) {
-			return ve.compareTuples( offsetPath, other.getOffsetPath() );
-		}, true );
+		const i = OO.binarySearch( this.items, ( other ) => ve.compareTuples( offsetPath, other.getOffsetPath() ), true );
 		this.items.splice( i, 0, node );
 		this.emit( 'insert', node );
 	}
@@ -71,7 +69,7 @@ ve.dm.MetaList.prototype.onNodeAttached = function ( node ) {
  */
 ve.dm.MetaList.prototype.onNodeDetached = function ( node ) {
 	if ( node instanceof ve.dm.MetaItem ) {
-		var i = this.items.indexOf( node );
+		const i = this.items.indexOf( node );
 		if ( i !== -1 ) {
 			this.items.splice( i, 1 );
 			this.emit( 'remove', node );
@@ -80,7 +78,7 @@ ve.dm.MetaList.prototype.onNodeDetached = function ( node ) {
 };
 
 ve.dm.MetaList.prototype.indexOf = function ( item, group ) {
-	var items = group ? this.getItemsInGroup( group ) : this.items;
+	const items = group ? this.getItemsInGroup( group ) : this.items;
 	return items.indexOf( item );
 };
 
@@ -94,9 +92,7 @@ ve.dm.MetaList.prototype.indexOf = function ( item, group ) {
  * @return {ve.dm.MetaItem[]} Array of items in the group (shallow copy)
  */
 ve.dm.MetaList.prototype.getItemsInGroup = function ( group ) {
-	return this.items.filter( function ( item ) {
-		return item.getGroup() === group;
-	} );
+	return this.items.filter( ( item ) => item.getGroup() === group );
 };
 
 /**

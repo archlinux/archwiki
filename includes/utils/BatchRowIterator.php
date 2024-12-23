@@ -100,7 +100,6 @@ class BatchRowIterator implements RecursiveIterator {
 	 * @param string|array $table The name or names of the table to read from
 	 * @param string|array $primaryKey The name or names of the primary key columns
 	 * @param int $batchSize The number of rows to fetch per iteration
-	 * @throws InvalidArgumentException
 	 */
 	public function __construct( IReadableDatabase $db, $table, $primaryKey, $batchSize ) {
 		if ( $batchSize < 1 ) {
@@ -236,17 +235,16 @@ class BatchRowIterator implements RecursiveIterator {
 			$caller .= " (for {$this->caller})";
 		}
 
-		$res = $this->db->select(
-			$this->table,
-			$this->fetchColumns,
-			$this->buildConditions(),
-			$caller,
-			[
-				'LIMIT' => $this->batchSize,
-				'ORDER BY' => $this->orderBy,
-			] + $this->options,
-			$this->joinConditions
-		);
+		$res = $this->db->newSelectQueryBuilder()
+			->tables( is_array( $this->table ) ? $this->table : [ $this->table ] )
+			->fields( $this->fetchColumns )
+			->where( $this->buildConditions() )
+			->caller( $caller )
+			->limit( $this->batchSize )
+			->orderBy( $this->orderBy )
+			->options( $this->options )
+			->joinConds( $this->joinConditions )
+			->fetchResultSet();
 
 		// The iterator is converted to an array because in addition to
 		// returning it in self::current() we need to use the end value

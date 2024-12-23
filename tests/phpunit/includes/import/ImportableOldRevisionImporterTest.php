@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
@@ -15,7 +16,7 @@ class ImportableOldRevisionImporterTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		ChangeTags::defineTag( 'tag1' );
+		$this->getServiceContainer()->getChangeTagsStore()->defineTag( 'tag1' );
 	}
 
 	public static function provideTestCases() {
@@ -49,7 +50,7 @@ class ImportableOldRevisionImporterTest extends MediaWikiIntegrationTestCase {
 		$result = $importer->import( $revision );
 		$this->assertTrue( $result );
 
-		$tags = ChangeTags::getTags(
+		$tags = $this->getServiceContainer()->getChangeTagsStore()->getTags(
 			$this->getDb(),
 			null,
 			$title->getLatestRevID()

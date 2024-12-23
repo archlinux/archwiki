@@ -4,8 +4,8 @@
 			"Anakmalaysia",
 			"Aviator",
 			"CyberTroopers",
-			"Izzudin",
 			"Hakimi97",
+			"Izzudin",
 			"Tofeiku"
 		]
 	},
@@ -33,6 +33,15 @@
 	"cite_error_empty_references_define": "Tag <code>&lt;ref&gt;</code> dengan nama dengan nama \"$1\" yang ditentukan dalam kumpulan <code>&lt;references&gt;</code> \"$2\" tidak mempunyai kandungan.",
 	"cite-tracking-category-cite-error": "Laman dengan ralat rujukan",
 	"cite-tracking-category-cite-error-desc": "Laman dalam kategori ini mempunyai ralat dari segi penggunaan tag rujukan.",
+	"cite-tracking-category-ref-extends": "Lamab yang menggunakan rujukan lanjutan",
+	"cite-tracking-category-ref-extends-desc": "Laman dalam kategori ini menggunakan atribut \"lanjutan\" bagi tag <ref>.",
+	"cite-reference-previews-reference": "Rujukan",
+	"cite-reference-previews-book": "Rujukan buku",
+	"cite-reference-previews-journal": "Rujukan jurnal",
+	"cite-reference-previews-news": "Rujukan berita",
+	"cite-reference-previews-note": "Catatan",
+	"cite-reference-previews-web": "Rujukan web",
+	"cite-reference-previews-collapsible-placeholder": "Rujukan ini termasuk angka yang tidak dapat disesuaikan dalam pralihat.",
 	"cite_references_link_accessibility_label": "Panjat",
 	"cite_references_link_many_accessibility_label": "Panjat ke:",
 	"cite_references_link_accessibility_back_label": "Kembali ke atas",
@@ -44,8 +53,14 @@
 	"cite-wikieditor-help-content-reference-description": "Rujukan",
 	"cite-wikieditor-help-content-named-reference-description": "Rujukan bernama",
 	"cite-wikieditor-help-content-rereference-description": "Penggunaan rujukan sama",
+	"cite-wikieditor-help-content-extended-reference-description": "Penggunaan tambahan rujukan yang sama, dengan butiran tambahan",
 	"cite-wikieditor-help-content-showreferences-description": "Paparkan senarai rujukan",
 	"cite-wikieditor-help-content-reference-example-text1": "Teks laman.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Teks pautan], teks tambahan.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teks pautan]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teks pautan]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Butiran tambahan",
+	"popups-prefs-navpopups-gadget-conflict-info": "Anda mempunyai gajet [[$1|kotak timbul navigasi]], jadi anda tidak akan nampak pralihat yang disediakan oleh ciri ini. Bergantung pada wiki anda, beberapa alat mungkin mempunyai nama yang sedikit berbeza. Jika anda terus mengalami masalah, sila semak alat dan skrip pengguna anda, termasuk yang global.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Anda mempunyai gajet [[$1|kotak timbul navigasi]] dan gajet [[$1|Reference Tooltips]], jadi anda tidak akan nampak pralihat yang disediakan oleh ciri ini. Bergantung pada wiki anda, beberapa alat mungkin mempunyai nama yang sedikit berbeza. Jika anda terus mengalami masalah, sila semak alat dan skrip pengguna anda, termasuk yang global.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Anda mempunyai gajet [[$1|Reference Tooltips]], jadi anda tidak akan nampak pralihat yang disediakan oleh ciri ini. Bergantung pada wiki anda, beberapa alat mungkin mempunyai nama yang sedikit berbeza. Jika anda terus mengalami masalah, sila semak alat dan skrip pengguna anda, termasuk yang global.",
+	"popups-refpreview-user-preference-label": "Dayakan pralihat rujukan (dapat pralihat pantas berkaitan sesebuah rujukan apabila sedang membaca suatu laman)"
 }

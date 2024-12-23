@@ -104,7 +104,11 @@ ve.ui.EditCheckInspector.prototype.initialize = function () {
 };
 
 ve.ui.EditCheckInspector.prototype.updateActions = function () {
-	this.answerConfirm.setDisabled( !this.answerRadioSelect.findSelectedItem() );
+	const isSelected = !!this.answerRadioSelect.findSelectedItem();
+	// desktop
+	this.answerConfirm.setDisabled( !isSelected );
+	// mobile
+	this.actions.setAbilities( { continue: isSelected } );
 };
 
 /**
@@ -127,6 +131,7 @@ ve.ui.EditCheckInspector.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.EditCheckInspector.super.prototype.getReadyProcess.call( this, data )
 		.first( function () {
 			this.actions.setMode( OO.ui.isMobile() ? 'mobile' : 'desktop' );
+			this.updateActions();
 		}, this );
 };
 

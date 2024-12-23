@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
-use Message;
 
 class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 
@@ -42,6 +42,7 @@ class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 			$msg->params( $this->getViewingUserForGender() );
 			return $msg;
 		} else {
+			// Messages: notification-header-edit-user-page
 			$msg = parent::getHeaderMessage();
 			$msg->params( $this->getViewingUserForGender() );
 			return $msg;
@@ -61,7 +62,7 @@ class EchoEditUserPagePresentationModel extends EchoEventPresentationModel {
 			$summary = MediaWikiServices::getInstance()->getCommentFormatter()->format( $summary );
 			$summary = Sanitizer::stripAllTags( $summary );
 		} else {
-			$summary = false;
+			$summary = $this->msg( 'rev-deleted-comment' )->text();
 		}
 		if ( !$this->isBundled() ) {
 			return new RawMessage( '$1', [ Message::plaintextParam( $summary ) ] );

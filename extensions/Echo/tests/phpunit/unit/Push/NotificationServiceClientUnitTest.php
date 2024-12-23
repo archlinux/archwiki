@@ -1,7 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Unit;
+
 use MediaWiki\Extension\Notifications\Push\NotificationServiceClient;
 use MediaWiki\Extension\Notifications\Push\Subscription;
+use MediaWikiUnitTestCase;
 
 /** @covers \MediaWiki\Extension\Notifications\Push\NotificationServiceClient */
 class NotificationServiceClientUnitTest extends MediaWikiUnitTestCase {

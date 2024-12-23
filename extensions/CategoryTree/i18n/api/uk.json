@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ignatgg",
 			"Piramidion",
-			"Ата",
-			"Ignatgg"
+			"Ата"
 		]
 	},
 	"apihelp-categorytree-summary": "Внутрішній модуль для розширення CategoryTree.",

@@ -21,9 +21,9 @@
 
 namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 
-use ExtensionRegistry;
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\BetaFeatures\BetaFeatures;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;

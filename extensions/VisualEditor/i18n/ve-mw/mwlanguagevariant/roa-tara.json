@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Joetaras"
 		]
 	},
@@ -14,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Queste jè 'a regola scunnute.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Sta regole 'mbatte sus a 'u titole d'a pàgene.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Codece d'a lènghe",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Invalide>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Invalide</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Lènghe",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Sorgende",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destinazione",

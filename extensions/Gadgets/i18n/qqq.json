@@ -10,14 +10,14 @@
 			"Mormegil",
 			"Nike",
 			"Pikne",
+			"Pppery",
 			"Purodha",
 			"Robby",
 			"SPQRobin",
 			"Shirayuki",
 			"Siebrand",
 			"The Evil IP address",
-			"Umherirrender",
-			"Pppery"
+			"Umherirrender"
 		]
 	},
 	"gadgets-desc": "{{desc|name=Gadgets|url=https://www.mediawiki.org/wiki/Extension:Gadgets}}",
@@ -56,7 +56,7 @@
 	"gadgets-export-download": "Use the verb for this message. Submit button.\n{{Identical|Download}}",
 	"gadgets-requires-es6": "Message shown on [[Special:Gadgets]] for gadgets that only run on browsers that support ES6 (ES6 is a version of the JavaScript programming language).",
 	"gadgets-validate-notset": "Error message shown if a required property is not set. Parameters:\n* $1 - name of the property, e.g. settings.rights .",
-	"gadgets-validate-wrongtype": "Error message shown if a property is set to the wrong type.\n* $1 is the name of the property, e.g. <code>settings.rights</code> or <code>module.messages[3]</code>.\n* $2 is the type that this property is expected to have\n* $3 is the type it actually had",
+	"gadgets-validate-wrongtype": "Error message shown if a property is set to the wrong type. Parameters:\n* $1 - name of the property, e.g. <code>settings.rights</code> or <code>module.messages[3]</code>.\n* $2 - the expected JSON type for this property, e.g. <code>array</code> or <code>string</code>",
 	"gadgets-validate-json": "Warning message to indicate that JSON files cannot be used as they are only valid in package gadgets",
 	"gadgets-validate-es6default": "Warning message to indicate that gadget requiring ES6 cannot be default.",
 	"gadgets-validate-noentrypoint": "Warning message to indicate that package flag will be ignored as no script files are specified.",

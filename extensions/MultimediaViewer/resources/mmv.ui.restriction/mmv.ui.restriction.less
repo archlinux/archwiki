@@ -1,0 +1,77 @@
+@import 'mediawiki.skin.variables.less';
+
+.restriction-mask( @restriction-image ) {
+	background-color: @color-base;
+	mask-size: 16px;
+	-webkit-mask-image: @restriction-image;
+	mask-image: @restriction-image;
+}
+
+.mw-mmv-restriction-2257 {
+	/* @embed */
+	.restriction-mask( url( img/restrict-2257.svg ) );
+}
+
+.mw-mmv-restriction-aus-reserve {
+	/* @embed */
+	.restriction-mask( url( img/restrict-aus-reserve.svg ) );
+}
+
+.mw-mmv-restriction-communist {
+	/* @embed */
+	.restriction-mask( url( img/restrict-communist.svg ) );
+}
+
+.mw-mmv-restriction-costume {
+	/* @embed */
+	.restriction-mask( url( img/restrict-costume.svg ) );
+}
+
+.mw-mmv-restriction-currency {
+	/* @embed */
+	.restriction-mask( url( img/restrict-currency.svg ) );
+}
+
+.mw-mmv-restriction-design {
+	/* @embed */
+	.restriction-mask( url( img/restrict-design.svg ) );
+}
+
+.mw-mmv-restriction-fan-art {
+	/* @embed */
+	.restriction-mask( url( img/restrict-fan-art.svg ) );
+}
+
+.mw-mmv-restriction-ihl {
+	/* @embed */
+	.restriction-mask( url( img/restrict-ihl.svg ) );
+}
+
+.mw-mmv-restriction-insignia {
+	/* @embed */
+	.restriction-mask( url( img/restrict-insignia.svg ) );
+}
+
+.mw-mmv-restriction-ita-mibac {
+	/* @embed */
+	.restriction-mask( url( img/restrict-ita-mibac.svg ) );
+}
+
+.mw-mmv-restriction-nazi {
+	/* @embed */
+	.restriction-mask( url( img/restrict-nazi.svg ) );
+}
+
+.mw-mmv-restriction-personality {
+	/* @embed */
+	.restriction-mask( url( img/restrict-personality.svg ) );
+}
+
+.mw-mmv-restriction-trademarked::after {
+	content: '\002122';
+}
+
+.mw-mmv-restriction-default {
+	/* @embed */
+	.restriction-mask( url( img/restrict-default.svg ) );
+}

@@ -21,11 +21,15 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to import all scripts in the MediaWiki namespace from a
@@ -121,5 +125,7 @@ class ImportSiteScripts extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ImportSiteScripts::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

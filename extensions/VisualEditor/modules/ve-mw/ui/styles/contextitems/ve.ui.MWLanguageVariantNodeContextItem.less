@@ -4,6 +4,7 @@
  * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
+@import 'mediawiki.skin.variables.less';
 
 .ve-ui-mwLanguageVariantNodeContextItem-rule-table {
 	width: 100%;
@@ -12,21 +13,21 @@
 
 	th {
 		white-space: nowrap;
-		border-bottom: 1px solid #c8ccd1;
+		border-bottom: 1px solid @border-color-subtle;
 		text-align: left;
 	}
 
 	th,
 	td {
 		padding: 0.75em 1em;
-		border-bottom: 1px solid #fff;
+		border-bottom: 1px solid @background-color-base;
 	}
 
 	tr:nth-child( odd ) td {
-		background: #eaecf0;
+		background: @background-color-neutral;
 	}
 
 	tr:nth-child( even ) td {
-		background: #f8f9fa;
+		background: @background-color-neutral-subtle;
 	}
 }

@@ -8,15 +8,15 @@ QUnit.module( 've.ui.ContentAction' );
 
 /* Tests */
 
-QUnit.test( 'insert/remove/select/selectAll', function ( assert ) {
-	var cases = [
+QUnit.test( 'insert/remove/select/selectAll', ( assert ) => {
+	const cases = [
 		{
 			rangeOrSelection: new ve.Range( 3, 4 ),
 			method: 'insert',
 			args: [ 'Foo' ],
 			expectedData: function ( data ) {
 				data.splice( 3, 1,
-					'F', 'o', 'o'
+					...'Foo'
 				);
 			},
 			expectedRangeOrSelection: new ve.Range( 3, 6 ),
@@ -44,7 +44,7 @@ QUnit.test( 'insert/remove/select/selectAll', function ( assert ) {
 			args: [ 'Foo', false, true ],
 			expectedData: function ( data ) {
 				data.splice( 3, 1,
-					'F', 'o', 'o'
+					...'Foo'
 				);
 			},
 			expectedRangeOrSelection: new ve.Range( 6 ),
@@ -99,13 +99,12 @@ QUnit.test( 'insert/remove/select/selectAll', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runActionTest(
-			'content', assert, caseItem.html, caseItem.createView, caseItem.method, caseItem.args, caseItem.rangeOrSelection, caseItem.msg,
+			assert,
 			{
-				expectedData: caseItem.expectedData,
-				expectedRangeOrSelection: caseItem.expectedRangeOrSelection,
-				undo: caseItem.undo
+				actionName: 'content',
+				...caseItem
 			}
 		);
 	} );

@@ -4,17 +4,17 @@
 	 *
 	 * @class
 	 * @extends OO.ui.Widget
-	 * @mixins OO.ui.mixin.LabelElement
+	 * @mixes OO.ui.mixin.LabelElement
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration object
-	 * @cfg {string} [link] A link that this widget leads to.
+	 * @param {string} [config.link] A link that this widget leads to.
 	 */
 	mw.echo.ui.PlaceholderItemWidget = function MwEchoUiPlaceholderItemWidget( config ) {
 		config = config || {};
 
 		// Parent constructor
-		mw.echo.ui.PlaceholderItemWidget.super.call( this, $.extend( { data: null }, config ) );
+		mw.echo.ui.PlaceholderItemWidget.super.call( this, Object.assign( { data: null }, config ) );
 
 		// Mixin constructor
 		OO.ui.mixin.LabelElement.call( this, config );
@@ -34,7 +34,7 @@
 	 */
 	mw.echo.ui.PlaceholderItemWidget.prototype.setLink = function ( url ) {
 		if ( url ) {
-			var $link = $( '<a>' )
+			const $link = $( '<a>' )
 				.addClass( 'mw-echo-ui-placeholderItemWidget-link' )
 				.attr( 'href', url );
 			this.$element.html( $link.append( this.$label ) );

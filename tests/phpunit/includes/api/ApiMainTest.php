@@ -2,21 +2,21 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiBase;
-use ApiContinuationManager;
-use ApiErrorFormatter;
-use ApiErrorFormatter_BackCompat;
-use ApiMain;
-use ApiRawMessage;
-use ApiUsageException;
-use FormatJson;
 use Generator;
 use InvalidArgumentException;
 use LogicException;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiContinuationManager;
+use MediaWiki\Api\ApiErrorFormatter;
+use MediaWiki\Api\ApiErrorFormatter_BackCompat;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiRawMessage;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MultiConfig;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
@@ -30,7 +30,6 @@ use MediaWiki\User\User;
 use MWExceptionHandler;
 use StatusValue;
 use UnexpectedValueException;
-use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -42,24 +41,20 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group Database
  * @group medium
  *
- * @covers \ApiMain
+ * @covers \MediaWiki\Api\ApiMain
  */
 class ApiMainTest extends ApiTestCase {
 	use MockAuthorityTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->mergeMwGlobalArrayValue(
-			'wgGroupPermissions',
-			[
-				'*' => [
-					'read' => true,
-					'edit' => true,
-					'writeapi' => true,
-					'apihighlimits' => false,
-				],
-			]
-		);
+		$this->setGroupPermissions( [
+			'*' => [
+				'read' => true,
+				'edit' => true,
+				'apihighlimits' => false,
+			],
+		] );
 	}
 
 	/**
@@ -372,7 +367,7 @@ class ApiMainTest extends ApiTestCase {
 	private function doTestCheckMaxLag( $lag ) {
 		$mockLB = $this->createMock( ILoadBalancer::class );
 		$mockLB->method( 'getMaxLag' )->willReturn( [ 'somehost', $lag ] );
-		$mockLB->method( 'getConnectionRef' )->willReturn( $this->createMock( DBConnRef::class ) );
+		$mockLB->method( 'getConnection' )->willReturn( $this->createMock( IDatabase::class ) );
 		$this->setService( 'DBLoadBalancer', $mockLB );
 
 		$req = new FauxRequest();
@@ -746,19 +741,6 @@ class ApiMainTest extends ApiTestCase {
 			'text' => 'Some text',
 			'token' => '+\\',
 		] ) );
-		$main->execute();
-	}
-
-	public function testCheckExecutePermissionWriteApiProhibited() {
-		$this->expectApiErrorCode( 'writeapidenied' );
-		$this->setGroupPermissions( '*', 'writeapi', false );
-
-		$main = new ApiMain( new FauxRequest( [
-			'action' => 'edit',
-			'title' => 'Some page',
-			'text' => 'Some text',
-			'token' => '+\\',
-		] ), /* enableWrite = */ true );
 		$main->execute();
 	}
 
@@ -1192,6 +1174,32 @@ class ApiMainTest extends ApiTestCase {
 	}
 
 	/**
+	 * Common test code for tests that cover ApiMain::sendCacheHeaders.
+	 *
+	 * @param TestingAccessWrapper $api An ApiMain instance, wrapped in a TestingAccessWrapper.
+	 * @param FauxRequest $req
+	 * @param bool $isError
+	 * @param string $cacheMode
+	 * @param string|null $expectedVary
+	 * @param string $expectedCacheControl
+	 */
+	private function commonTestCacheHeaders(
+		TestingAccessWrapper $api,
+		FauxRequest $req,
+		bool $isError,
+		string $cacheMode,
+		?string $expectedVary,
+		string $expectedCacheControl
+	) {
+		$api->setCacheMode( $cacheMode );
+		$this->assertSame( $cacheMode, $api->mCacheMode, 'Cache mode precondition' );
+		$api->sendCacheHeaders( $isError );
+
+		$this->assertSame( $expectedVary, $req->response()->getHeader( 'Vary' ), 'Vary' );
+		$this->assertSame( $expectedCacheControl, $req->response()->getHeader( 'Cache-Control' ), 'Cache-Control' );
+	}
+
+	/**
 	 * @param string $cacheMode
 	 * @param string|null $expectedVary
 	 * @param string $expectedCacheControl
@@ -1204,7 +1212,7 @@ class ApiMainTest extends ApiTestCase {
 		?string $expectedVary,
 		string $expectedCacheControl,
 		array $requestData = [],
-		Config $config = null
+		?Config $config = null
 	) {
 		$req = new FauxRequest( $requestData );
 		$ctx = new RequestContext();
@@ -1215,12 +1223,7 @@ class ApiMainTest extends ApiTestCase {
 		/** @var ApiMain|TestingAccessWrapper $api */
 		$api = TestingAccessWrapper::newFromObject( new ApiMain( $ctx ) );
 
-		$api->setCacheMode( $cacheMode );
-		$this->assertSame( $cacheMode, $api->mCacheMode, 'Cache mode precondition' );
-		$api->sendCacheHeaders( false );
-
-		$this->assertSame( $expectedVary, $req->response()->getHeader( 'Vary' ), 'Vary' );
-		$this->assertSame( $expectedCacheControl, $req->response()->getHeader( 'Cache-Control' ), 'Cache-Control' );
+		$this->commonTestCacheHeaders( $api, $req, false, $cacheMode, $expectedVary, $expectedCacheControl );
 	}
 
 	public static function provideCacheHeaders(): Generator {
@@ -1236,5 +1239,33 @@ class ApiMainTest extends ApiTestCase {
 			'Accept-Encoding, Treat-as-Untrusted, Cookie',
 			'private, must-revalidate, max-age=0'
 		];
+	}
+
+	/** @dataProvider provideCacheHeaders */
+	public function testCacheHeadersOnIsErrorAsTrue(
+		string $cacheMode,
+		?string $expectedVary,
+		string $expectedCacheControl,
+		array $requestData = []
+	) {
+		$req = new FauxRequest( $requestData );
+		$ctx = new RequestContext();
+		$ctx->setRequest( $req );
+		/** @var ApiMain|TestingAccessWrapper $api */
+		$api = TestingAccessWrapper::newFromObject( new ApiMain( $ctx ) );
+
+		// Create a mock ApiBase object that throws an ApiUsageException from ::isWriteMode. This will be used as the
+		// mModule property of $api, and will test that ::isWriteMode is either never called or properly wrapped in
+		// a try block in the method we are testing (T363133).
+		$module = $this->getMockBuilder( ApiBase::class )
+			->setConstructorArgs( [ $api->object, 'mock' ] )
+			->onlyMethods( [ 'isWriteMode' ] )
+			->getMockForAbstractClass();
+		$module->method( 'isWriteMode' )
+			->willThrowException( new ApiUsageException( $module, StatusValue::newFatal( 'test' ) ) );
+		$api->mModule = $module;
+
+		// This will test that ::isWriteMode will not be called if $isError is true.
+		$this->commonTestCacheHeaders( $api, $req, true, $cacheMode, $expectedVary, $expectedCacheControl );
 	}
 }

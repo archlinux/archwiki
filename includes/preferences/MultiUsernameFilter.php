@@ -37,7 +37,7 @@ class MultiUsernameFilter implements Filter {
 	 * @param Authority|int $authorityOrAudience
 	 */
 	public function __construct(
-		CentralIdLookup $lookup = null,
+		?CentralIdLookup $lookup = null,
 		$authorityOrAudience = CentralIdLookup::AUDIENCE_PUBLIC
 	) {
 		$this->lookup = $lookup;
@@ -64,7 +64,7 @@ class MultiUsernameFilter implements Filter {
 	 * @inheritDoc
 	 */
 	public function filterForForm( $value ) {
-		$ids = is_string( $value ) ? self::splitIds( $value ) : [];
+		$ids = self::splitIds( $value );
 		$names = $ids ? $this->getLookup()->namesFromCentralIds( $ids, $this->authorityOrAudience ) : [];
 		return implode( "\n", $names );
 	}

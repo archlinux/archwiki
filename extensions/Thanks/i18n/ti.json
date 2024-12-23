@@ -5,6 +5,5 @@
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ኣመስግን|ኣመስግኒ}}}}",
-	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|ኣመስግን|ኣመስግኒ}}}}",
-	"thanks-button-action-cancel": "ኣትርፍ"
+	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|ኣመስግን|ኣመስግኒ}}}}"
 }

@@ -1,3 +1,5 @@
+@import 'mediawiki.skin.variables.less';
+
 .ve-ui-expandableContent {
 	&-collapsible {
 		overflow: hidden;
@@ -15,12 +17,12 @@
 	}
 
 	&-toggle {
-		background-color: #fff;
+		background-color: @background-color-base;
 		pointer-events: auto;
 	}
 
 	&-fade {
-		background: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0, #fff 90% );
+		background: linear-gradient( to right, transparent 0, @background-color-base 90% );
 		width: 50px;
 		height: 100%;
 	}

@@ -22,9 +22,9 @@
 
 namespace MediaWiki\Status;
 
-use Language;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\StubObject\StubUserLang;
@@ -200,6 +200,13 @@ class Status extends StatusValue {
 	/**
 	 * Get the error list as a wikitext formatted list
 	 *
+	 * All message parameters that were provided as strings will be escaped with wfEscapeWikiText.
+	 * This is mostly a historical accident and often undesirable (T368821).
+	 * - To avoid this behavior when producing the Status, pass MessageSpecifier objects to methods
+	 *   such as `$status->fatal()`, instead of separate key and params parameters.
+	 * - To avoid this behavior when consuming the Status, use the `$status->getMessages()` method
+	 *   instead, and display each message separately (or combine then with `Message::listParams()`).
+	 *
 	 * @deprecated since 1.42, use StatusFormatter instead.
 	 *
 	 * @param string|false $shortContext A short enclosing context message name, to
@@ -219,6 +226,13 @@ class Status extends StatusValue {
 
 	/**
 	 * Get a bullet list of the errors as a Message object.
+	 *
+	 * All message parameters that were provided as strings will be escaped with wfEscapeWikiText.
+	 * This is mostly a historical accident and often undesirable (T368821).
+	 * - To avoid this behavior when producing the Status, pass MessageSpecifier objects to methods
+	 *   such as `$status->fatal()`, instead of separate key and params parameters.
+	 * - To avoid this behavior when consuming the Status, use the `$status->getMessages()` method
+	 *   instead, and display each message separately (or combine then with `Message::listParams()`).
 	 *
 	 * $shortContext and $longContext can be used to wrap the error list in some text.
 	 * $shortContext will be preferred when there is a single error; $longContext will be
@@ -264,6 +278,14 @@ class Status extends StatusValue {
 
 	/**
 	 * Get the error message as HTML. This is done by parsing the wikitext error message
+	 *
+	 * All message parameters that were provided as strings will be escaped with wfEscapeWikiText.
+	 * This is mostly a historical accident and often undesirable (T368821).
+	 * - To avoid this behavior when producing the Status, pass MessageSpecifier objects to methods
+	 *   such as `$status->fatal()`, instead of separate key and params parameters.
+	 * - To avoid this behavior when consuming the Status, use the `$status->getMessages()` method
+	 *   instead, and display each message separately (or combine then with `Message::listParams()`).
+	 *
 	 * @deprecated since 1.42, use StatusFormatter instead.
 	 *
 	 * @param string|false $shortContext A short enclosing context message name, to
@@ -284,6 +306,7 @@ class Status extends StatusValue {
 	/**
 	 * Get the list of errors (but not warnings)
 	 *
+	 * @deprecated since 1.43 Use `->getMessages( 'error' )` instead
 	 * @return array[] A list in which each entry is an array with a message key as its first element.
 	 *         The remaining array elements are the message parameters.
 	 * @phan-return non-empty-array[]
@@ -295,6 +318,7 @@ class Status extends StatusValue {
 	/**
 	 * Get the list of warnings (but not errors)
 	 *
+	 * @deprecated since 1.43 Use `->getMessages( 'warning' )` instead
 	 * @return array[] A list in which each entry is an array with a message key as its first element.
 	 *         The remaining array elements are the message parameters.
 	 * @phan-return non-empty-array[]

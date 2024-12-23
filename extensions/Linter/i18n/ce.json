@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Умар",
-			"Исмаил Садуев"
+			"Исмаил Садуев",
+			"Умар"
 		]
 	},
 	"linterrors": "Статикин анализаторан гӀалаташ",
@@ -21,6 +21,7 @@
 	"linter-category-missing-end-tag": "ДӀакъовлуш йолу тег йац",
 	"linter-category-missing-end-tag-desc": "ХӀокху агӀонашкахь тоьуш йац дӀакъовлуш йолу тегаш.",
 	"linter-category-missing-end-tag-in-heading": "Коьртехь йац чаккхенан тег",
+	"linter-category-missing-image-alt-text": "(alt) суьртан куьйган текст йац",
 	"linter-category-multi-colon-escape": "Дукхазза экраняр ши тӀадамца",
 	"linter-category-multi-colon-escape-desc": "ХӀокху агӀонашкахь йу хьажоргаш, хьалхахь массийта ши тӀадам хӀоттина йолу.",
 	"linter-category-multiline-html-table-in-list": "ДукхамогӀалин таблица могӀаман чохь",
@@ -74,6 +75,7 @@
 	"linter-pager-misnested-tag-details": "Чуйиллина нийса йоцу тег, нисйан йезаш йолу",
 	"linter-pager-missing-end-tag-details": "ДӀакъовлуш йолу тег йац",
 	"linter-pager-missing-end-tag-in-heading-details": "Коьртехь йац чаккхенан тег",
+	"linter-pager-missing-image-alt-text-details": "(alt) суьртан куьйган текст йац",
 	"linter-pager-multi-colon-escape-details": "Дукхазза экраняр ши тӀадамца",
 	"linter-pager-multiline-html-table-in-list-details": "ДукхамогӀалин таблица HTML5 могӀаман чохь, тайп-тайпана гуш йу HTML5 а, Tidy а чохь",
 	"linter-pager-multiple-unclosed-formatting-tags-details": "АгӀонгахь массийта къоьвлина йоцу форматан тегаш",

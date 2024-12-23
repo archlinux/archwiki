@@ -6,14 +6,14 @@
 			"Base",
 			"DDPAT",
 			"Ice bulldog",
+			"Ignatgg",
 			"Microcell",
 			"Movses",
 			"Piramidion",
 			"Yasen igra",
 			"Ата",
 			"Максим Підліснюк",
-			"Пан Хаунд",
-			"Ignatgg"
+			"Пан Хаунд"
 		]
 	},
 	"minerva-last-modified-date": "Останнє редагування: $1, $2",
@@ -39,7 +39,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Про цю категорію",
 	"mobile-frontend-meta-data-issues-header": "Проблеми сторінки",
 	"minerva-meta-data-issues-section-header": "Проблеми з розділом",
-	"mobile-frontend-notifications-filter": "Фільтр",
 	"mobile-frontend-pageaction-edit-tooltip": "Редагувати вступний розділ цієї сторінки",
 	"mobile-frontend-placeholder": "Шукати у {{GRAMMAR:genitive|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Випадкова",
@@ -59,7 +58,7 @@
 	"minerva-page-actions-overflow": "Більше",
 	"minerva-page-actions-language-switcher": "Мови",
 	"minerva-page-actions-history": "Історія",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Обговорення]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Обговорення]",
 	"minerva-skin-desc": "Перша адаптивна мобільна тема оформлення",
 	"skin-minerva-issue-learn-more": "Дізнатися більше",
 	"skin-minerva-time-ago-seconds": "$1 {{PLURAL:$1|секунду|секунди|секунд}} тому",
@@ -70,8 +69,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 рік|$1 роки|$1 років}} тому",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категорії",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Переглянути категорії сторінок",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Поліпшене вирішення проблем сторінки",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Проблеми сторінки (шаблон:ambox) буде прописано в статті.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "На жаль, групування результатів за сторінками не доступне у мобільному вигляді. Якщо ви хочете скористатися функцією групування за сторінками, будь ласка, відкрийте стаціонарну версію сайту.",
 	"minerva.css": "/* Усі CSS тут будуть завантажені для користувачів скіна MinervaNeue */",
 	"minerva.js": "/* Усі JavaScript тут будуть завантажені для користувачів скіна MinervaNeue */"

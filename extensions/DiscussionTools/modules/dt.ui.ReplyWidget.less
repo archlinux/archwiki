@@ -14,6 +14,20 @@
 	}
 }
 
+.skin-vector-2022 {
+	.ext-discussiontools-ui-newTopic,
+	.ext-discussiontools-ui-replyWidget {
+		font-size: 0.875rem;
+		line-height: 1.5714285;
+	}
+
+	.ext-discussiontools-ui-replyWidget-bodyWrapper,
+	.ext-discussiontools-ui-newTopic-sectionTitle-field > .oo-ui-fieldLayout-body {
+		font-size: var( --font-size-medium );
+		line-height: var( --line-height-medium );
+	}
+}
+
 // @supports does not work when nested
 @supports ( display: flow-root ) {
 	.ext-discussiontools-ui-replyWidget {
@@ -27,6 +41,7 @@
 		// (in particular, `overflow: hidden` cuts off VE inspectors), so we must use this relatively
 		// recent property, and only apply this fix on supporting browsers, notably excluding Safari <13
 		// (https://caniuse.com/?search=flow-root)
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		display: flow-root;
 		min-width: 20em;
 		clear: none;
@@ -205,8 +220,12 @@
 		flex-basis: 20em;
 		// Stretch to all available space
 		flex-grow: 1;
-		font-size: 0.75em;
+		font-size: @font-size-x-small;
 		color: @color-subtle;
+
+		> p {
+			margin-bottom: 0.5em;
+		}
 
 		> * {
 			&:first-child {
@@ -295,11 +314,24 @@
 		// ... and expand sections
 		.collapsible-block[ hidden ] { /* stylelint-disable-line selector-class-pattern */
 			// If hidden=until-found is supported, this will set content-visibility: hidden;
+			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 			content-visibility: visible;
 			// otherwise it will set display: none;
 			display: block;
 		}
 		// TODO: Consider doing this via's Toggler.js's APIs, rather than CSS overrides.
+
+		@media screen {
+			html.skin-theme-clientpref-night & {
+				background: @background-color-interactive-subtle;
+			}
+		}
+
+		@media screen and ( prefers-color-scheme: dark ) {
+			html.skin-theme-clientpref-os & {
+				background: @background-color-interactive-subtle;
+			}
+		}
 	}
 
 	&-bodyWrapper {
@@ -458,7 +490,7 @@
 	}
 
 	&-advancedToggle {
-		font-size: 0.75em;
+		font-size: @font-size-x-small;
 
 		.oo-ui-indicatorElement-indicator {
 			min-width: auto;

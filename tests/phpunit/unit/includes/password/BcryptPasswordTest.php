@@ -1,11 +1,13 @@
 <?php
 
+use MediaWiki\Password\BcryptPassword;
+
 /**
  * @group large
- * @covers \BcryptPassword
- * @covers \ParameterizedPassword
- * @covers \Password
- * @covers \PasswordFactory
+ * @covers \MediaWiki\Password\BcryptPassword
+ * @covers \MediaWiki\Password\ParameterizedPassword
+ * @covers \MediaWiki\Password\Password
+ * @covers \MediaWiki\Password\PasswordFactory
  */
 class BcryptPasswordTest extends PasswordTestCase {
 	protected function getTypeConfigs() {

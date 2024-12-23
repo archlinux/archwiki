@@ -24,6 +24,7 @@
 namespace MediaWiki\SpecialPage;
 
 use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Request\DerivativeRequest;
 use MediaWiki\Status\Status;
@@ -39,7 +40,7 @@ use UserBlockedError;
  */
 abstract class FormSpecialPage extends SpecialPage {
 	/**
-	 * The sub-page of the special page.
+	 * The subpage of the special page.
 	 * @var string|null
 	 */
 	protected $par = null;
@@ -76,19 +77,21 @@ abstract class FormSpecialPage extends SpecialPage {
 
 	/**
 	 * Add pre-text to the form
-	 * @return string HTML which will be sent to $form->addPreText()
-	 * @deprecated since 1.38, use preHtml() instead
+	 * @return string HTML which will be sent to $form->addPreHtml()
+	 * @deprecated since 1.38, use preHtml() instead, hard-deprecated since 1.43
 	 */
 	protected function preText() {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->preHtml();
 	}
 
 	/**
 	 * Add post-text to the form
-	 * @return string HTML which will be sent to $form->addPostText()
-	 * @deprecated since 1.38, use postHtml() instead
+	 * @return string HTML which will be sent to $form->addPostHtml()
+	 * @deprecated since 1.38, use postHtml() instead, hard-deprecated since 1.43
 	 */
 	protected function postText() {
+		wfDeprecated( __METHOD__, '1.38' );
 		return $this->postHtml();
 	}
 
@@ -160,17 +163,24 @@ abstract class FormSpecialPage extends SpecialPage {
 
 		$headerMsg = $this->msg( $this->getMessagePrefix() . '-text' );
 		if ( !$headerMsg->isDisabled() ) {
-			$form->addHeaderText( $headerMsg->parseAsBlock() );
+			$form->addHeaderHtml( $headerMsg->parseAsBlock() );
 		}
 
 		// preText / postText are deprecated, but we need to keep calling them until the end of
 		// the deprecation process so a subclass overriding *Text and *Html both work
-		$form->addPreText( $this->preText() );
-		$form->addPostText( $this->postText() );
+		$form->addPreHtml( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'preText', '1.38' )
+			? $this->preText()
+			: $this->preHtml()
+		);
+		$form->addPostHtml( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'postText', '1.38' )
+			? $this->postText()
+			: $this->postHtml()
+		);
 
 		// Give precedence to subpage syntax
 		$field = $this->getSubpageField();
-		if ( $this->par && $field ) {
+		// cast to string so that "0" is not thrown away
+		if ( strval( $this->par ) !== '' && $field ) {
 			$this->getRequest()->setVal( $form->getField( $field )->getName(), $this->par );
 			$form->setTitle( $this->getPageTitle() );
 		}

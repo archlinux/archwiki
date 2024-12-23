@@ -10,7 +10,7 @@
  * @param {mw.rcfilters.dm.FilterItem} showLinkedToModel model this widget is bound to
  * @param {Object} [config] Configuration object
  */
-var RclToOrFromWidget = function MwRcfiltersUiRclToOrFromWidget(
+const RclToOrFromWidget = function MwRcfiltersUiRclToOrFromWidget(
 	controller, showLinkedToModel, config
 ) {
 	config = config || {};
@@ -25,7 +25,7 @@ var RclToOrFromWidget = function MwRcfiltersUiRclToOrFromWidget(
 	} );
 
 	// Parent
-	RclToOrFromWidget.super.call( this, $.extend( {
+	RclToOrFromWidget.super.call( this, Object.assign( {
 		classes: [ 'mw-rcfilters-ui-rclToOrFromWidget' ],
 		menu: { items: [ this.showLinkedFrom, this.showLinkedTo ] }
 	}, config ) );

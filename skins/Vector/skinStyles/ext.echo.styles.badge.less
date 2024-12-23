@@ -2,6 +2,8 @@
 
 .mixin-notification-badge() {
 	position: relative;
+	background-position: center;
+	background-repeat: no-repeat;
 
 	// When 99+ allow counter so spill outside icon
 	&.cdx-button {
@@ -12,8 +14,8 @@
 		position: absolute;
 		left: 55%;
 		top: 43%;
-		font-size: unit( ( 12 / 16 ) * @font-size-base, rem );
-		padding: 0 unit( ( 4 / 16 ) * @font-size-base, rem );
+		font-size: unit( ( 12 / 16 ) * @font-size-small, rem );
+		padding: 0 unit( ( 4 / 16 ) * @font-size-small, rem );
 		border: 1px solid #fff;
 		border-radius: @border-radius-base;
 		background-color: #72777d;
@@ -47,6 +49,13 @@
 	display: inline-flex;
 	margin: 0;
 	opacity: 1;
+	// Workaround T343838.
+	// The OOUI icon uses the ::after pseudo element so will not work with mask image.
+	// Because of this we disable the mask image rule.
+	/* stylelint-disable declaration-no-important */
+	-webkit-mask-image: none !important;
+	mask-image: none !important;
+	/* stylelint-enable declaration-no-important */
 	// T341490 We are incorrectly applying Codex icon and button styles on the
 	// same element because ULS frequently overwrites the contents of the element
 	// so it is too difficult to maintain the correct markup. Because we are mixing

@@ -10,7 +10,7 @@
  * A platform must be constructed first. See ve.init.sa.Platform for an example.
  *
  *     @example
- *     ve.init.platform.initialize().done( function () {
+ *     ve.init.platform.initialize().done( () => {
  *         var target = new ve.init.sa.DesktopTarget();
  *         target.addSurface(
  *             ve.dm.converter.getModelFromDom(
@@ -26,7 +26,7 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {Object} [toolbarConfig] Configuration options for the toolbar
+ * @param {Object} [config.toolbarConfig] Configuration options for the toolbar
  */
 ve.init.sa.Target = function VeInitSaTarget( config ) {
 	config = config || {};
@@ -48,11 +48,11 @@ OO.inheritClass( ve.init.sa.Target, ve.init.Target );
 
 /**
  * @inheritdoc
- * @fires surfaceReady
+ * @fires ve.init.Target#surfaceReady
  */
 ve.init.sa.Target.prototype.addSurface = function () {
 	// Parent method
-	var surface = ve.init.sa.Target.super.prototype.addSurface.apply( this, arguments );
+	const surface = ve.init.sa.Target.super.prototype.addSurface.apply( this, arguments );
 
 	this.$element.append( $( '<div>' ).addClass( 've-init-sa-target-surfaceWrapper' ).append( surface.$element ) );
 	if ( !this.getSurface() ) {

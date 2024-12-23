@@ -9,9 +9,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\JSON;
 
+use JsonException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Core\ContentModelHandler;
-use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\DOMUtils;
@@ -149,33 +150,23 @@ class JSON extends ContentModelHandler implements ExtensionModule {
 	 * Implementation matches that from includes/content/JsonContent.php in
 	 * mediawiki core, except that we distinguish value types.
 	 * @param ParsoidExtensionAPI $extApi
+	 * @param ?SelectiveUpdateData $selectiveUpdateData
 	 * @return Document
 	 */
-	public function toDOM( ParsoidExtensionAPI $extApi ): Document {
+	public function toDOM(
+		ParsoidExtensionAPI $extApi, ?SelectiveUpdateData $selectiveUpdateData = null
+	): Document {
 		// @phan-suppress-next-line PhanDeprecatedFunction not ready for this yet
 		$jsonText = $extApi->getPageConfig()->getPageMainContent();
 		$document = $extApi->getTopLevelDoc();
 		$body = DOMCompat::getBody( $document );
 
-		// PORT-FIXME: When production moves to PHP 7.3, re-enable this try
-		// catch code
-
-		// try {
-		// 	$src = json_decode( $jsonText, false, 6, JSON_THROW_ON_ERROR );
-		// 	self::rootValueTable( $body, $src );
-		// } catch ( JsonException $e ) {
-		// 	DOMCompat::setInnerHTML( $body, self::PARSE_ERROR_HTML );
-		// }
-
-		$src = json_decode( $jsonText, false, 6 );
-		if ( $src === null && json_last_error() !== JSON_ERROR_NONE ) {
-			DOMCompat::setInnerHTML( $body, self::PARSE_ERROR_HTML );
-		} else {
+		try {
+			$src = json_decode( $jsonText, false, 6, JSON_THROW_ON_ERROR );
 			self::rootValueTable( $body, $src );
+		} catch ( JsonException $e ) {
+			DOMCompat::setInnerHTML( $body, self::PARSE_ERROR_HTML );
 		}
-
-		// end of PHP 7.2 compatible error handling code, remove whem enabling
-		// 7.3+ try catch code
 
 		// We're responsible for running the standard DOMPostProcessor on our
 		// resulting document.
@@ -314,11 +305,11 @@ class JSON extends ContentModelHandler implements ExtensionModule {
 	/**
 	 * DOM to JSON.
 	 * @param ParsoidExtensionAPI $extApi
-	 * @param ?SelserData $selserData
+	 * @param ?SelectiveUpdateData $selectiveUpdateData
 	 * @return string
 	 */
 	public function fromDOM(
-		ParsoidExtensionAPI $extApi, ?SelserData $selserData = null
+		ParsoidExtensionAPI $extApi, ?SelectiveUpdateData $selectiveUpdateData = null
 	): string {
 		$body = DOMCompat::getBody( $extApi->getTopLevelDoc() );
 		$t = $body->firstChild;

@@ -7,6 +7,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use PHPUnit\TextUI\Command;
 
 class PHPUnitMaintClass {
@@ -94,9 +95,7 @@ class PHPUnitMaintClass {
 			// or when T227900 is resolved.
 			$args[] = '--configuration=' . __DIR__ . '/suite.xml';
 		}
-		if ( !isset( $knownOpts['bootstrap'] ) ) {
-			$args[] = '--bootstrap=' . __DIR__ . '/bootstrap.maintenance.php';
-		}
+		$args[] = '--bootstrap=' . __DIR__ . '/bootstrap.maintenance.php';
 		$command->run( $args, true );
 	}
 }

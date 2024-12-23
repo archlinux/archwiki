@@ -20,7 +20,7 @@ const { Repo, ForeignApiRepo, ForeignDbRepo } = require( 'mmv' );
 ( function () {
 	QUnit.module( 'mmv.model.Repo', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Repo constructor sense check', function ( assert ) {
+	QUnit.test( 'Repo constructor sense check', ( assert ) => {
 		const displayName = 'Wikimedia Commons';
 		const favicon = '//commons.wikimedia.org/favicon.ico';
 		const apiUrl = '//commons.wikimedia.org/w/api.php';
@@ -38,7 +38,7 @@ const { Repo, ForeignApiRepo, ForeignDbRepo } = require( 'mmv' );
 		assert.true( foreignDbRepo instanceof ForeignDbRepo, 'Foreign DB repo creation works' );
 	} );
 
-	QUnit.test( 'getArticlePath()', function ( assert ) {
+	QUnit.test( 'getArticlePath()', ( assert ) => {
 		const displayName = 'Wikimedia Commons';
 		const favicon = '//commons.wikimedia.org/favicon.ico';
 		const apiUrl = '//commons.wikimedia.org/w/api.php';
@@ -70,7 +70,7 @@ const { Repo, ForeignApiRepo, ForeignDbRepo } = require( 'mmv' );
 		mw.config.set( 'wgServer', oldWgServer );
 	} );
 
-	QUnit.test( 'getSiteLink()', function ( assert ) {
+	QUnit.test( 'getSiteLink()', ( assert ) => {
 		const displayName = 'Wikimedia Commons';
 		const favicon = '//commons.wikimedia.org/favicon.ico';
 		const apiUrl = '//commons.wikimedia.org/w/api.php';

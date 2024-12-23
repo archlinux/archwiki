@@ -2,7 +2,7 @@
 
 namespace Cite\ResourceLoader;
 
-use ExtensionRegistry;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\FileModule;
 use MediaWiki\ResourceLoader\Module;
 

@@ -37,5 +37,9 @@
 	"categorytree-no-pages": "ingen sider eller underkategorier",
 	"categorytree-not-found": "Kategorien <i>$1</i> ikke funnet",
 	"categorytree-error": "problem under datalasting.",
-	"categorytree-retry": "Vent en stund og prøv igjen."
+	"categorytree-retry": "Vent en stund og prøv igjen.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Parameteren <code>onlyroot</code> er foreldet. Bruk <code>depth=\"0\"</code> i stedet.",
+	"categorytree-deprecation-warning": "'''Advarsel:''' Denne siden bruker <code>&lt;categorytree&gt;</code> med en foreldet parameter.",
+	"categorytree-deprecation-category": "Sider som bruker foreldede categorytree-parametre",
+	"categorytree-deprecation-category-desc": "Siden bruker foreldede categorytree-parametre, som <code>onlyroot</code>."
 }

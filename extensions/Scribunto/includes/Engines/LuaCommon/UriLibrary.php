@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
-use CoreParserFunctions;
+use MediaWiki\Parser\CoreParserFunctions;
 use MediaWiki\Title\Title;
 
 class UriLibrary extends LibraryBase {

@@ -11,7 +11,7 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|feilâ|feeilâ|feilâd}})",
 	"linter-page-history": "historjá",
 	"linter-pager-inline-media-caption-details": "Uáinimettum kovetekstâ",
-	"linter-pager-title-header": "Sijđonommâ",
+	"linter-pager-missing-image-alt-text-details": "Kove alt-tekstâ váilu",
 	"linter-pager-wikilink-in-extlink-details": "Liiŋkah liiŋkâin",
 	"linterrors-subpage": "Lint-feeilah: $1",
 	"pageinfo-linter": "Lint-feeilah"

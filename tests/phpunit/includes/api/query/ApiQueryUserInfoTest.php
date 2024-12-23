@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Tests\Api\Query;
 
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -11,7 +12,7 @@ use MediaWiki\Utils\MWTimestamp;
  * @group API
  * @group Database
  * @group medium
- * @covers \ApiQueryUserInfo
+ * @covers MediaWiki\Api\ApiQueryUserInfo
  */
 class ApiQueryUserInfoTest extends ApiTestCase {
 
@@ -19,7 +20,7 @@ class ApiQueryUserInfoTest extends ApiTestCase {
 	use MockAuthorityTrait;
 
 	/**
-	 * @covers \ApiQueryUserInfo::getLatestContributionTime
+	 * @covers MediaWiki\Api\ApiQueryUserInfo::getLatestContributionTime
 	 */
 	public function testTimestamp() {
 		$clock = MWTimestamp::convert( TS_UNIX, '20100101000000' );
@@ -97,7 +98,7 @@ class ApiQueryUserInfoTest extends ApiTestCase {
 			'action' => 'query',
 			'meta' => 'userinfo',
 		];
-		$user = $this->getServiceContainer()->getTempUserCreator()->create()->getUser();
+		$user = $this->getServiceContainer()->getTempUserCreator()->create( null, new FauxRequest() )->getUser();
 		$apiResult = $this->doApiRequest( $params, null, false, $user );
 
 		// Verify that the temp flag is set.

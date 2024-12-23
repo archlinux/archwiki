@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"NMW03"
+			"Amire80",
+			"NMW03",
+			"Nemoralis"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "Variant dəyişmə deaktiv edildi",
@@ -14,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Bu gizli qaydadır.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Bu qayda səhifə başlığına təsir edir.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Dil kodu",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Yanlış>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Yanlış</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Dil",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Mənbə",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Hədəf",

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Papuass"
 		]
 	},
@@ -14,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Šis ir slēpts noteikums.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Šis noteikums ietekmē lapas nosaukumu.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Valodas&nbsp;kods",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Nederīgs>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Nederīgs</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Valoda",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Avots",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Mērķis",

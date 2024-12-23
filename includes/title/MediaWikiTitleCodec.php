@@ -24,10 +24,10 @@
 namespace MediaWiki\Title;
 
 use InvalidArgumentException;
-use Language;
 use LogicException;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\Interwiki\InterwikiLookup;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\PageReference;
@@ -46,20 +46,12 @@ use Wikimedia\IPUtils;
  * @since 1.23
  */
 class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
-	/** @var Language */
-	protected $language;
-
-	/** @var GenderCache */
-	protected $genderCache;
-
+	protected Language $language;
+	protected GenderCache $genderCache;
 	/** @var string[] */
-	protected $localInterwikis;
-
-	/** @var InterwikiLookup */
-	protected $interwikiLookup;
-
-	/** @var NamespaceInfo */
-	protected $nsInfo;
+	protected array $localInterwikis;
+	protected InterwikiLookup $interwikiLookup;
+	protected NamespaceInfo $nsInfo;
 
 	/**
 	 * The code here can throw MalformedTitleException, which cannot be created in
@@ -185,7 +177,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	 * Parses the given text and constructs a TitleValue.
 	 *
 	 * @param string $text The text to parse
-	 * @param int $defaultNamespace Namespace to assume per default (usually NS_MAIN)
+	 * @param int $defaultNamespace Namespace to assume by default (usually NS_MAIN)
 	 *
 	 * @throws MalformedTitleException
 	 * @return TitleValue

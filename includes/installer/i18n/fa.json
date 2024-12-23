@@ -11,6 +11,7 @@
 			"Beginneruser",
 			"Danialbehzadi",
 			"Darafsh",
+			"Ebrahim",
 			"Ebraminio",
 			"FarsiNevis",
 			"Hamisun",
@@ -25,8 +26,7 @@
 			"Seb35",
 			"Sunfyre",
 			"درفش کاویانی",
-			"กิ๊ฟ เลิกล่ะ สายแข็ง",
-			"Ebrahim"
+			"กิ๊ฟ เลิกล่ะ สายแข็ง"
 		]
 	},
 	"config-desc": "نصب‌کنندهٔ مدیاویکی",
@@ -80,7 +80,6 @@
 	"config-memory-bad": "'''هشدار:''' PHP's <code>memory_limit</code> نسخهٔ $1 است.\nاین ممکن است خیلی پایین باشد.\nممکن است نصب با مشکل رو‌به‌رو شود.",
 	"config-apc": "[https://www.php.net/apc APC] نصب شده است.",
 	"config-apcu": "[https://www.php.net/apcu APCu] نصب شده است",
-	"config-wincache": "[https://www.iis.net/downloads/microsoft/wincache-extension WinCache] نصب شده است.",
 	"config-no-cache-apcu": "<strong>هشدار:</strong> پیوند [https://www.php.net/apcu APCu] یا [https://www.iis.net/downloads/microsoft/wincache-extension WinCache] یافت نشد. ذخیره شی فعال نیست.",
 	"config-mod-security": "'''هشدار:''' وب‌سرور شما [https://modsecurity.org/ mod_security] فعال است.اگر اشتباه پیکربندی شده‌‌ باشد،می تواند باعث ایجاد مشکلاتی برای مدیاویکی یا دیگر نرم‌افزاری شود که به کاربران اجازه می‌دهد پیام دلخواه بفرستند.\nبه [https://modsecurity.org/documentation/ mod_security documentation] مراجعه کنید یا اگر با خطاهای اتفاقی مواجه شدید، با پشتیبانی میزبان خود در تماس باشید.",
 	"config-diff3-bad": "ابزار مقایسه متن تفاوت۳ گنو پیدا نشد. می‌توانید فعلاً این پیام را نادیده بگیرید، اما ممکن است به دفعات بیشتری دچار تعارض ویرایشی شوید.",
@@ -260,7 +259,6 @@
 	"config-install-schema": "در حال ایجاد طرحواره",
 	"config-install-pg-schema-not-exist": "طرح کلی PostgreSQL وجود ندارد.",
 	"config-install-pg-schema-failed": "ایجاد جدول‌ها با شکست روبه‌رو شد.\nمطمئن شوید که کاربر \"$1\" می‌تواند طرح کلی \"$2\" را بنویسد.",
-	"config-install-pg-commit": "ارسال تغییرات",
 	"config-install-pg-plpgsql": "بررسی زبان پی‌ال/پی‌جی‌اس‌کیو‌ال",
 	"config-pg-no-plpgsql": "شما ملزم به نصب زبان پی‌ال/پی‌جی‌اس‌کیو‌ال در پایگاه اطلاعاتی $1 هستید",
 	"config-pg-no-create-privs": "حسابی که شما برای نصب تعیین کردید، امتیازات کافی برای ایجاد یک حساب را ندارد.",
@@ -276,9 +274,6 @@
 	"config-install-tables": "ایجاد جدول‌ها، گام نخست",
 	"config-install-tables-exist": "'''هشدار:''' جداول مدیاویکی به نظر می‌رسد در حال حاضر وجود دارد.\nصرف نظر از ایجاد.",
 	"config-install-tables-failed": "'''خطا:''' ایجاد جدول با خطای زیر به شکست مواجه شد: $1",
-	"config-install-tables-manual": "ایجاد جدول‌ها، گام دوم",
-	"config-install-manual-tables-exist": "<strong>هشدار:</strong> جداول مدیاویکی به نظر می‌رسد در حال حاضر وجود دارد.\nصرف نظر از ایجاد.",
-	"config-install-manual-tables-failed": "<strong>خطا:</strong> ایجاد جدول با خطای زیر به شکست مواجه شد: $1",
 	"config-install-interwiki": "قرار دادن پیش‌فرض جدول میان‌ویکی",
 	"config-install-interwiki-list": "پوشهٔ <code>interwiki.list</code> نتوانست خوانده شود.",
 	"config-install-interwiki-exists": "'''هشدار:''' به نظر می‌رسد جدول میان‌ویکی در حال حاضر دارای مقداری اطلاعات است.\nنادیده گرفتن فهرست پیش‌فرض.",

@@ -10,7 +10,7 @@
 	 */
 	mw.echo.ui.ReadStateButtonSelectWidget = function MwEchoUiReadStateButtonSelectWidget( config ) {
 		// Parent constructor
-		mw.echo.ui.ReadStateButtonSelectWidget.super.call( this, $.extend( config, {
+		mw.echo.ui.ReadStateButtonSelectWidget.super.call( this, Object.assign( {}, config, {
 			items: [
 				new OO.ui.ButtonOptionWidget( {
 					data: 'all',
@@ -40,7 +40,7 @@
 	/* Events */
 
 	/**
-	 * @event filter
+	 * @event mw.echo.ui.ReadStateButtonSelectWidget#filter
 	 * @param {string} readState The chosen read state
 	 */
 
@@ -50,10 +50,10 @@
 	 * Respond to choose event
 	 *
 	 * @param {OO.ui.ButtonOptionWidget} item Chosen item
-	 * @fires filter
+	 * @fires mw.echo.ui.ReadStateButtonSelectWidget#filter
 	 */
 	mw.echo.ui.ReadStateButtonSelectWidget.prototype.onChoose = function ( item ) {
-		var data = item && item.getData();
+		const data = item && item.getData();
 
 		if ( data ) {
 			this.emit( 'filter', data );

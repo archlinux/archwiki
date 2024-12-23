@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Diskdance",
+			"GuoPC",
 			"Liuxinyu970226",
-			"Shizhao",
-			"Diskdance"
+			"Shizhao"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "已禁用变体转换",
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "这是隐藏规则。",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "此规则影响页面标题。",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "语言代码",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<无效>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>无效</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "语言",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "来源",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "目标",

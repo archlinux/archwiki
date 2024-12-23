@@ -7,6 +7,7 @@ use MediaWiki\Block\SystemBlock;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Message\Message;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\LoadBalancer;
@@ -47,9 +48,8 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 
 		$lb = $this->createNoOpMock(
 			LoadBalancer::class,
-			[ 'getConnectionRef', 'getConnection' ]
+			[ 'getConnection' ]
 		);
-		$lb->method( 'getConnectionRef' )->willReturn( $db );
 		$lb->method( 'getConnection' )->willReturn( $db );
 
 		$lbFactory = $this->createNoOpMock(

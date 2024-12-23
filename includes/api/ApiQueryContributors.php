@@ -23,6 +23,8 @@
  * @since 1.23
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -52,18 +54,9 @@ class ApiQueryContributors extends ApiQueryBase {
 	private GroupPermissionsLookup $groupPermissionsLookup;
 	private TempUserConfig $tempUserConfig;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param RevisionStore $revisionStore
-	 * @param ActorMigration $actorMigration
-	 * @param UserGroupManager $userGroupManager
-	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 * @param TempUserConfig $tempUserConfig
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		RevisionStore $revisionStore,
 		ActorMigration $actorMigration,
 		UserGroupManager $userGroupManager,
@@ -307,9 +300,12 @@ class ApiQueryContributors extends ApiQueryBase {
 	}
 
 	protected function getSummaryMessage() {
-		if ( $this->tempUserConfig->isEnabled() ) {
+		if ( $this->tempUserConfig->isKnown() ) {
 			return 'apihelp-query+contributors-summary-tempusers-enabled';
 		}
 		return parent::getSummaryMessage();
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryContributors::class, 'ApiQueryContributors' );

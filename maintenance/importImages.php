@@ -32,13 +32,17 @@
  * @author Mij <mij@bitchx.it>
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Specials\SpecialUpload;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use Wikimedia\FileBackend\FSFile\FSFile;
 
 class ImportImages extends Maintenance {
 
@@ -200,7 +204,10 @@ class ImportImages extends Maintenance {
 		$license = $this->getOption( 'license', '' );
 		$sourceWikiUrl = $this->getOption( 'source-wiki-url' );
 
-		$tags = in_array( ChangeTags::TAG_SERVER_SIDE_UPLOAD, ChangeTags::getSoftwareTags() )
+		$tags = in_array(
+			ChangeTags::TAG_SERVER_SIDE_UPLOAD,
+			$this->getServiceContainer()->getChangeTagsStore()->getSoftwareTags()
+		)
 			? [ ChangeTags::TAG_SERVER_SIDE_UPLOAD ]
 			: [];
 
@@ -429,7 +436,7 @@ class ImportImages extends Maintenance {
 	 * @param string $dir Path to directory to search
 	 * @param array $exts Array of lowercase extensions to search for
 	 * @param bool $recurse Search subdirectories recursively
-	 * @return Generator<string> Generator that iterating filenames
+	 * @return \Generator<string> Generator that iterating filenames
 	 */
 	private function findFiles( $dir, $exts, $recurse = false ) {
 		$dhl = is_dir( $dir ) ? opendir( $dir ) : false;
@@ -437,6 +444,7 @@ class ImportImages extends Maintenance {
 			return;
 		}
 
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $file = readdir( $dhl ) ) !== false ) {
 			if ( is_file( $dir . '/' . $file ) ) {
 				$ext = pathinfo( $file, PATHINFO_EXTENSION );
@@ -523,5 +531,7 @@ class ImportImages extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ImportImages::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

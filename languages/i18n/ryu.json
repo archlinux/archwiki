@@ -8,7 +8,6 @@
 			"春春眠眠"
 		]
 	},
-	"tog-underline": "リンクぬ下線",
 	"sunday": "日曜日",
 	"monday": "月曜日",
 	"tuesday": "火曜日",
@@ -284,7 +283,6 @@
 	"group-sysop": "管理者",
 	"grouppage-bot": "{{ns:project}}:ボット",
 	"grouppage-sysop": "{{ns:project}}:管理者",
-	"right-writeapi": "かちゅんくみん API 使用",
 	"rightslog": "利用者権限ぬ変更記録",
 	"action-edit": "くぬページぬ直すん",
 	"action-createaccount": "くぬ利用者アカウントぬちゅくゆん",
@@ -431,7 +429,6 @@
 	"contributions-title": "$1ぬ利用者貢献",
 	"mycontris": "貢献",
 	"anoncontribs": "貢献",
-	"contribsub2": "利用者: {{GENDER:$3|$1}} ($2)",
 	"nocontribs": "くりらぬ条件んかい一致すん変更ー見ちかやびらんたん。",
 	"uctop": "なま",
 	"month": "くぬちち以前:",

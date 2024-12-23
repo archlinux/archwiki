@@ -149,6 +149,36 @@ class MMLParsingUtil {
 		return self::matchAlphanumeric( $inputString, $map );
 	}
 
+	public static function mapToFrakturUnicode( $inputString ): string {
+		$res = '';
+		$specialCases = [ 'C' => '&#x0212D;',
+			'H' => '&#x0210C;',
+			'I' => '&#x02111;',
+			'R' => '&#x0211C;',
+			'Z' => '&#x02124;' ];
+		foreach ( mb_str_split( $inputString ) as $chr ) {
+			// see https://www.w3.org/TR/mathml-core/#fraktur-mappings
+			if ( isset( $specialCases[$chr] ) ) {
+				$res .= $specialCases[$chr];
+				continue;
+			}
+			if ( $chr >= 'A' && $chr <= 'Z' ) {
+				$code = self::addToChr( $chr, '1D4C3' );
+				$res .= '&#x' . $code . ';';
+			} elseif ( $chr >= 'a' && $chr <= 'z' ) {
+				$code = self::addToChr( $chr, '1D4BD' );
+				$res .= '&#x' . $code . ';';
+			} else {
+				$res .= $chr;
+			}
+		}
+		return $res;
+	}
+
+	private static function addToChr( $chr, $base ): string {
+		return strtoupper( dechex( mb_ord( $chr ) + hexdec( $base ) ) );
+	}
+
 	public static function matchAlphanumeric( $inputString, $map ) {
 		// Replace each character in the input string with its caligraphic Unicode equivalent
 		return preg_replace_callback( '/[A-Za-z0-9]/u', static function ( $matches ) use ( $map ) {
@@ -226,7 +256,7 @@ class MMLParsingUtil {
 		}
 		if ( $useFoundNodes ) {
 			$foundNodes = $xml->xpath( $elementTag );
-			if ( !( isset( $foundNodes ) && count( $foundNodes ) >= 1 ) ) {
+			if ( !( $foundNodes !== null && count( $foundNodes ) >= 1 ) ) {
 				return $renderedMML;
 			}
 		}

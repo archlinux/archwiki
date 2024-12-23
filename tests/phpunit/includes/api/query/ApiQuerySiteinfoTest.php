@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Tests\Api\Query;
 
-use ExtensionRegistry;
-use LanguageCode;
-use LanguageConverter;
+use MediaWiki\Language\LanguageCode;
+use MediaWiki\Language\LanguageConverter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Message\Message;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SiteStats\SiteStats;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -22,11 +22,12 @@ use Wikimedia\TestingAccessWrapper;
  * @group medium
  * @group Database
  *
- * @covers \ApiQuerySiteinfo
+ * @covers MediaWiki\Api\ApiQuerySiteinfo
  */
 class ApiQuerySiteinfoTest extends ApiTestCase {
 	use TempUserTestTrait;
 
+	/** @var array[]|null */
 	private $originalRegistryLoaded = null;
 
 	protected function tearDown(): void {
@@ -193,29 +194,27 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 			MainConfigNames::ScriptPath => '/w',
 		] );
 
-		$this->getDb()->insert(
-			'interwiki',
-			[
-				[
-					'iw_prefix' => 'self',
-					'iw_url' => 'https://local.example/w/index.php?title=$1',
-					'iw_api' => 'https://local.example/w/api.php',
-					'iw_wikiid' => 'somedbname',
-					'iw_local' => true,
-					'iw_trans' => true,
-				],
-				[
-					'iw_prefix' => 'foreign',
-					'iw_url' => '//foreign.example/wiki/$1',
-					'iw_api' => '',
-					'iw_wikiid' => '',
-					'iw_local' => false,
-					'iw_trans' => false,
-				],
-			],
-			__METHOD__,
-			'IGNORE'
-		);
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'interwiki' )
+			->ignore()
+			->row( [
+				'iw_prefix' => 'self',
+				'iw_url' => 'https://local.example/w/index.php?title=$1',
+				'iw_api' => 'https://local.example/w/api.php',
+				'iw_wikiid' => 'somedbname',
+				'iw_local' => true,
+				'iw_trans' => true,
+			] )
+			->row( [
+				'iw_prefix' => 'foreign',
+				'iw_url' => '//foreign.example/wiki/$1',
+				'iw_api' => '',
+				'iw_wikiid' => '',
+				'iw_local' => false,
+				'iw_trans' => false,
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		$this->getServiceContainer()->getMessageCache()->enable();
 
@@ -378,7 +377,7 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 	}
 
 	public function testAutoCreateTempUser() {
-		$this->disableAutoCreateTempUser();
+		$this->disableAutoCreateTempUser( [ 'reservedPattern' => null ] );
 		$this->assertSame(
 			[ 'enabled' => false ],
 			$this->doQuery( 'autocreatetempuser' ),
@@ -391,11 +390,7 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		$this->assertArrayEquals(
 			[
 				'enabled' => true,
-				'actions' => [ 'edit' ],
-				'genPattern' => '~$1',
-				'matchPattern' => '~$1',
-				'serialProvider' => [ 'type' => 'local', 'useYear' => true ],
-				'serialMapping' => [ 'type' => 'plain-numeric' ],
+				'matchPatterns' => [ '~$1' ],
 			],
 			$this->doQuery( 'autocreatetempuser' ),
 			false,
@@ -516,7 +511,6 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 	public function testRightsInfo( $page, $url, $text, $expectedUrl, $expectedText ) {
 		$this->overrideConfigValues( [
 			MainConfigNames::Server => 'https://local.example',
-			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::RightsPage => $page,
 			MainConfigNames::RightsUrl => $url,
 			MainConfigNames::RightsText => $text,

@@ -2,9 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Consequences\Consequence;
 
-use BagOStuff;
 use Generator;
-use HashBagOStuff;
 use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Throttle;
@@ -20,22 +18,23 @@ use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\NullLogger;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Throttle
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Throttle
  */
 class ThrottleTest extends MediaWikiUnitTestCase {
 
 	private function getThrottle(
 		array $throttleParams = [],
-		BagOStuff $cache = null,
+		?BagOStuff $cache = null,
 		bool $globalFilter = false,
-		UserIdentity $user = null,
-		Title $title = null,
-		UserEditTracker $editTracker = null,
-		string $ip = null
+		?UserIdentity $user = null,
+		?Title $title = null,
+		?UserEditTracker $editTracker = null,
+		?string $ip = null
 	) {
 		$specifier = new ActionSpecifier(
 			'some-action',
@@ -61,9 +60,6 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::execute
-	 */
 	public function testExecute_notPrechecked() {
 		$throttle = $this->getThrottle();
 		$this->expectException( ConsequenceNotPrecheckedException::class );
@@ -90,10 +86,6 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::shouldDisableOtherConsequences
-	 * @covers ::isThrottled
-	 * @covers ::throttleKey
-	 * @covers ::throttleIdentifier
 	 * @dataProvider provideThrottle
 	 */
 	public function testShouldDisableOtherConsequences( Throttle $throttle, bool $shouldDisable ) {
@@ -101,13 +93,9 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::execute
-	 * @covers ::setThrottled
-	 * @covers ::throttleKey
-	 * @covers ::throttleIdentifier
 	 * @dataProvider provideThrottle
 	 */
-	public function testExecute( Throttle $throttle, bool $shouldDisable, MockObject $cache = null ) {
+	public function testExecute( Throttle $throttle, bool $shouldDisable, ?MockObject $cache = null ) {
 		if ( $cache ) {
 			/** @var Throttle $wrapper */
 			$wrapper = TestingAccessWrapper::newFromObject( $throttle );
@@ -119,7 +107,6 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::throttleIdentifier
 	 * @dataProvider provideThrottleDataForIdentifiers
 	 */
 	public function testThrottleIdentifier(
@@ -128,7 +115,7 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		string $ip,
 		Title $title,
 		UserIdentity $user,
-		UserEditTracker $editTracker = null
+		?UserEditTracker $editTracker = null
 	) {
 		$throttle = $this->getThrottle( [], null, false, $user, $title, $editTracker, $ip );
 		/** @var Throttle $throttleWrapper */

@@ -20,6 +20,9 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -33,7 +36,7 @@ class ApiQueryTags extends ApiQueryBase {
 
 	private ChangeTagsStore $changeTagsStore;
 
-	public function __construct( ApiQuery $query, $moduleName, ChangeTagsStore $changeTagsStore ) {
+	public function __construct( ApiQuery $query, string $moduleName, ChangeTagsStore $changeTagsStore ) {
 		parent::__construct( $query, $moduleName, 'tg' );
 		$this->changeTagsStore = $changeTagsStore;
 	}
@@ -174,3 +177,6 @@ class ApiQueryTags extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Tags';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryTags::class, 'ApiQueryTags' );

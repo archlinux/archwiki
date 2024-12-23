@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Math;
 
 use InvalidArgumentException;
 use MediaWiki\Extension\Math\Render\RendererFactory;
+use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPage;
 
 /**
@@ -63,11 +64,10 @@ class SpecialMathShowImage extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgMathEnableExperimentalInputFormats;
 		$request = $this->getRequest();
 		$hash = $request->getText( 'hash', '' );
 		$tex = $request->getText( 'tex', '' );
-		if ( $wgMathEnableExperimentalInputFormats ) {
+		if ( $this->getConfig()->get( 'MathEnableExperimentalInputFormats' ) ) {
 			$asciimath = $request->getText( 'asciimath', '' );
 		} else {
 			$asciimath = '';
@@ -129,7 +129,6 @@ class SpecialMathShowImage extends SpecialPage {
 	 * @return string xml svg image with the error message
 	 */
 	private function printSvgError( $msg ) {
-		global $wgDebugComments;
 		$result = <<<SVG
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 4" preserveAspectRatio="xMidYMid meet" >
 <text text-anchor="start" fill="red" y="2">
@@ -137,7 +136,7 @@ $msg
 </text>
 </svg>
 SVG;
-		if ( $wgDebugComments ) {
+		if ( $this->getConfig()->get( MainConfigNames::DebugComments ) ) {
 			$result .= '<!--' . var_export( $this->renderer, true ) . '-->';
 		}
 		return $result;

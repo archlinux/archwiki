@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"B3rnas",
 			"Hamilton Abreu",
 			"He7d3r",
 			"Helder.wiki",
@@ -10,8 +11,7 @@
 			"Mansil",
 			"Mansil alfalb",
 			"Ti4goc",
-			"Vitorvicentevalente",
-			"B3rnas"
+			"Vitorvicentevalente"
 		]
 	},
 	"math-desc": "Faz a composição gráfica ''(rendering)'' das fórmulas matemáticas entre os elementos <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",

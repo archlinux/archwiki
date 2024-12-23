@@ -43,11 +43,6 @@ class UserNotificationGateway {
 	 */
 	private $config;
 
-	/**
-	 * @param UserIdentity $user
-	 * @param DbFactory $dbFactory
-	 * @param Config $config
-	 */
 	public function __construct( UserIdentity $user, DbFactory $dbFactory, Config $config ) {
 		$this->user = $user;
 		$this->dbFactory = $dbFactory;
@@ -78,16 +73,17 @@ class UserNotificationGateway {
 		foreach (
 			array_chunk( $eventIDs, $this->config->get( 'UpdateRowsPerQuery' ) ) as $batch
 		) {
-			$success = $dbw->update(
-				self::$notificationTable,
-				[ 'notification_read_timestamp' => $dbw->timestamp( wfTimestampNow() ) ],
-				[
+			$dbw->newUpdateQueryBuilder()
+				->update( self::$notificationTable )
+				->set( [ 'notification_read_timestamp' => $dbw->timestamp( wfTimestampNow() ) ] )
+				->where( [
 					'notification_user' => $this->user->getId(),
 					'notification_event' => $batch,
 					'notification_read_timestamp' => null,
-				],
-				__METHOD__
-			) && $success;
+				] )
+				->caller( __METHOD__ )
+				->execute();
+			$success = $dbw->affectedRows() && $success;
 		}
 
 		return $success;
@@ -113,16 +109,17 @@ class UserNotificationGateway {
 		foreach (
 			array_chunk( $eventIDs, $this->config->get( 'UpdateRowsPerQuery' ) ) as $batch
 		) {
-			$success = $dbw->update(
-				self::$notificationTable,
-				[ 'notification_read_timestamp' => null ],
-				[
+			$dbw->newUpdateQueryBuilder()
+				->update( self::$notificationTable )
+				->set( [ 'notification_read_timestamp' => null ] )
+				->where( [
 					'notification_user' => $this->user->getId(),
 					'notification_event' => $batch,
-					'notification_read_timestamp IS NOT NULL'
-				],
-				__METHOD__
-			) && $success;
+					$dbw->expr( 'notification_read_timestamp', '!=', null ),
+				] )
+				->caller( __METHOD__ )
+				->execute();
+			$success = $dbw->affectedRows() && $success;
 		}
 		return $success;
 	}
@@ -138,15 +135,15 @@ class UserNotificationGateway {
 			return false;
 		}
 
-		$dbw->update(
-			self::$notificationTable,
-			[ 'notification_read_timestamp' => $dbw->timestamp( wfTimestampNow() ) ],
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( self::$notificationTable )
+			->set( [ 'notification_read_timestamp' => $dbw->timestamp( wfTimestampNow() ) ] )
+			->where( [
 				'notification_user' => $this->user->getId(),
 				'notification_read_timestamp' => null,
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		return true;
 	}
@@ -173,24 +170,19 @@ class UserNotificationGateway {
 		}
 
 		$db = $this->getDB( $dbSource );
-		return $db->selectRowCount(
-			[
-				self::$notificationTable,
-				self::$eventTable
-			],
-			'1',
-			[
+		return $db->newSelectQueryBuilder()
+			->select( '1' )
+			->from( self::$notificationTable )
+			->leftJoin( self::$eventTable, null, 'notification_event=event_id' )
+			->where( [
 				'notification_user' => $this->user->getId(),
 				'notification_read_timestamp' => null,
 				'event_deleted' => 0,
 				'event_type' => $eventTypesToLoad,
-			],
-			__METHOD__,
-			[ 'LIMIT' => $cap ],
-			[
-				'echo_event' => [ 'LEFT JOIN', 'notification_event=event_id' ],
-			]
-		);
+			] )
+			->limit( $cap )
+			->caller( __METHOD__ )
+			->fetchRowCount();
 	}
 
 	/**
@@ -202,27 +194,22 @@ class UserNotificationGateway {
 	 */
 	public function getUnreadNotifications( $type ) {
 		$dbr = $this->getDB( DB_REPLICA );
-		$res = $dbr->select(
-			[
-				self::$notificationTable,
-				self::$eventTable
-			],
-			[ 'notification_event' ],
-			[
+		$res = $dbr->newSelectQueryBuilder()
+			->select( 'notification_event' )
+			->from( self::$notificationTable )
+			->join( self::$eventTable, null, 'notification_event = event_id' )
+			->where( [
 				'notification_user' => $this->user->getId(),
 				'notification_read_timestamp' => null,
 				'event_deleted' => 0,
 				'event_type' => $type,
-				'notification_event = event_id'
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$eventIds = [];
-		if ( $res ) {
-			foreach ( $res as $row ) {
-				$eventIds[$row->notification_event] = $row->notification_event;
-			}
+		foreach ( $res as $row ) {
+			$eventIds[$row->notification_event] = $row->notification_event;
 		}
 
 		return $eventIds;

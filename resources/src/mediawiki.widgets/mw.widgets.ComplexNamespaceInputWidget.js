@@ -7,13 +7,14 @@
 ( function () {
 
 	/**
-	 * Namespace input widget. Displays a dropdown box with the choice of available namespaces, plus
-	 * two checkboxes to include associated namespace or to invert selection.
+	 * @classdesc Displays a dropdown box with the choice of available namespaces,
+	 * plus two checkboxes to include associated namespace or to invert selection.
 	 *
 	 * @class
 	 * @extends OO.ui.Widget
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.widgets.ComplexNamespaceInputWidget`.
 	 * @param {Object} [config] Configuration options
 	 * @param {Object} config.namespace Configuration for the NamespaceInputWidget dropdown with list
 	 *     of namespaces
@@ -32,7 +33,7 @@
 	 */
 	mw.widgets.ComplexNamespaceInputWidget = function MwWidgetsComplexNamespaceInputWidget( config ) {
 		// Configuration initialization
-		config = $.extend(
+		config = Object.assign(
 			{
 				// Config options for nested widgets
 				namespace: {},
@@ -52,28 +53,28 @@
 
 		this.namespace = new mw.widgets.NamespaceInputWidget( config.namespace );
 		if ( config.associated !== null ) {
-			this.associated = new OO.ui.CheckboxInputWidget( $.extend(
+			this.associated = new OO.ui.CheckboxInputWidget( Object.assign(
 				{ value: '1' },
 				config.associated
 			) );
 			// TODO Should use a LabelWidget? But they don't work like HTML <label>s yet
 			this.associatedLabel = new OO.ui.FieldLayout(
 				this.associated,
-				$.extend(
+				Object.assign(
 					{ align: 'inline' },
 					config.associatedLabel
 				)
 			);
 		}
 		if ( config.invert !== null ) {
-			this.invert = new OO.ui.CheckboxInputWidget( $.extend(
+			this.invert = new OO.ui.CheckboxInputWidget( Object.assign(
 				{ value: '1' },
 				config.invert
 			) );
 			// TODO Should use a LabelWidget? But they don't work like HTML <label>s yet
 			this.invertLabel = new OO.ui.FieldLayout(
 				this.invert,
-				$.extend(
+				Object.assign(
 					{ align: 'inline' },
 					config.invertLabel
 				)
@@ -106,7 +107,7 @@
 	 * @private
 	 */
 	mw.widgets.ComplexNamespaceInputWidget.prototype.updateCheckboxesState = function () {
-		var disabled = this.namespace.getValue() === this.namespace.allValue;
+		const disabled = this.namespace.getValue() === this.namespace.allValue;
 		if ( this.invert ) {
 			this.invert.setDisabled( disabled );
 		}

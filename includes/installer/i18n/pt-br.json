@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"555",
 			"Almondega",
 			"Amgauna",
 			"Anaclaudiaml",
@@ -29,8 +30,7 @@
 			"Tuliouel",
 			"Walesson",
 			"Warley Felipe C.",
-			"YuriNikolai",
-			555
+			"YuriNikolai"
 		]
 	},
 	"config-desc": "O instalador do MediaWiki",
@@ -86,7 +86,6 @@
 	"config-memory-bad": "<strong>Aviso:</strong> A configuração <code>memory_limit</code> do PHP é $1.\nIsso provavelmente é muito baixo.\nA instalação pode falhar!",
 	"config-apc": "[https://www.php.net/apc APC] está instalado",
 	"config-apcu": "[https://www.php.net/apcu APCu] está instalado",
-	"config-wincache": "[https://www.iis.net/downloads/microsoft/wincache-extension WinCache] está instalado",
 	"config-no-cache-apcu": "<strong>Aviso:</strong> Não foram encontrados o [https://www.php.net/manual/pt_BR/book.apcu.php APCu], ou o [https://www.iis.net/downloads/microsoft/wincache-extension WinCache].\nA cache de objetos não está ativa.",
 	"config-mod-security": "<strong>Aviso:</strong> Seu servidor web tem [https://modsecurity.org/ mod_security2] habilitado. Muitas configurações comuns de módulo podem causar problemas para o MediaWiki ou outro software que permite aos usuários postar conteúdo arbitrário.\nSe possível, ele dever ser desativad. Consulte a [https://modsecurity.org/documentation/ documentação do mod_security] ou entre em contato com o suporte do seu host se você encontrar erros aleatórios.",
 	"config-diff3-bad": "Utilitário de comparação de texto do GNU diff3 não encontrado. Você pode ignorar isso por enquanto, mas pode se deparar com conflitos de edição com mais frequência.",
@@ -279,7 +278,6 @@
 	"config-install-schema": "Criando esquema",
 	"config-install-pg-schema-not-exist": "O esquema ''(schema)'' PostgreSQL não existe.",
 	"config-install-pg-schema-failed": "A criação de tabelas falhou.\nCertifique-se de que o usuário \"$1\" possa escrever no esquema \"$2\".",
-	"config-install-pg-commit": "Enviando alterações",
 	"config-install-pg-plpgsql": "Verificando por linguagem PL/pgSQL",
 	"config-pg-no-plpgsql": "Você precisa instalar a linguagem PL/pgSQL no banco de dados $1",
 	"config-pg-no-create-privs": "A conta que você especificou para a instalação não tem privilégios suficientes para criar uma conta.",
@@ -295,9 +293,6 @@
 	"config-install-tables": "Criando tabelas, etapa um",
 	"config-install-tables-exist": "<strong>Aviso:</strong> As tabelas do MediaWiki parecem já existir.\nA criação das tabelas será pulada.",
 	"config-install-tables-failed": "<strong>Error:</strong> A criação das tabelas falhou com o seguinte erro: $1",
-	"config-install-tables-manual": "Criando tabelas, etapa dois",
-	"config-install-manual-tables-exist": "<strong>Aviso:</strong> As tabelas do MediaWiki parecem já existir.\nA criação das tabelas será pulada.",
-	"config-install-manual-tables-failed": "<strong>Error:</strong> A criação das tabelas falhou com o seguinte erro: $1",
 	"config-install-interwiki": "Preenchendo a tabela padrão de interwiki",
 	"config-install-interwiki-list": "Não foi possível ler o arquivo <code>interwiki.list</code>.",
 	"config-install-interwiki-exists": "<strong>Aviso:</strong> A tabela de interwiki parece já ter entradas.\\NPulando lista padrão.",

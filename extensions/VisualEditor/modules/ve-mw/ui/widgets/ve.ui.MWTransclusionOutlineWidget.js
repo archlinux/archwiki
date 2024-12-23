@@ -26,7 +26,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineWidget, OO.ui.Widget );
 /* Events */
 
 /**
- * @event filterPagesByName
+ * @event ve.ui.MWTransclusionOutlineWidget#filterPagesByName
  * @param {Object.<string,boolean>} visibility Keyed by unique id of the {@see OO.ui.BookletLayout}
  *  page, e.g. something like "part_1/param1".
  */
@@ -34,7 +34,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineWidget, OO.ui.Widget );
 /**
  * Respond to the intent to select a sidebar item
  *
- * @event sidebarItemSelected
+ * @event ve.ui.MWTransclusionOutlineWidget#sidebarItemSelected
  * @param {string} pageName Unique id of the {@see OO.ui.BookletLayout} page, e.g. something like
  *  "part_1" or "part_1/param1".
  * @param {boolean} [soft] If true, don't focus the content pane.  Defaults to false.
@@ -60,7 +60,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.onReplacePart = function ( removed, 
  * Handle spacebar in a part header
  *
  * @param {string} pageName
- * @fires sidebarItemSelected
+ * @fires ve.ui.MWTransclusionOutlineWidget#sidebarItemSelected
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.onTransclusionPartSoftSelected = function ( pageName ) {
 	this.emit( 'sidebarItemSelected', pageName, true );
@@ -71,7 +71,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.onTransclusionPartSoftSelected = fun
  * @param {ve.dm.MWTransclusionPartModel} part
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.removePartWidget = function ( part ) {
-	var id = part.getId();
+	const id = part.getId();
 	if ( id in this.partWidgets ) {
 		this.partWidgets[ id ]
 			.disconnect( this )
@@ -85,17 +85,17 @@ ve.ui.MWTransclusionOutlineWidget.prototype.removePartWidget = function ( part )
  * @param {ve.dm.MWTransclusionPartModel} part
  * @param {number} [newPosition]
  * @param {ve.dm.MWTransclusionPartModel|null} [removed]
- * @fires filterPagesByName
+ * @fires ve.ui.MWTransclusionOutlineWidget#filterPagesByName
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.addPartWidget = function ( part, newPosition, removed ) {
-	var keys = Object.keys( this.partWidgets ),
+	const keys = Object.keys( this.partWidgets ),
 		onlyPart = keys.length === 1 && this.partWidgets[ keys[ 0 ] ];
 	if ( onlyPart instanceof ve.ui.MWTransclusionOutlineTemplateWidget ) {
 		// To recalculate the height of the sticky header when we enter multi-part mode
 		onlyPart.recalculateStickyHeaderHeight();
 	}
 
-	var widget;
+	let widget;
 	if ( part instanceof ve.dm.MWTemplateModel ) {
 		widget = new ve.ui.MWTransclusionOutlineTemplateWidget( part, removed instanceof ve.dm.MWTemplatePlaceholderModel );
 		// This forwards events from the nested ve.ui.MWTransclusionOutlineTemplateWidget upwards.
@@ -127,8 +127,8 @@ ve.ui.MWTransclusionOutlineWidget.prototype.addPartWidget = function ( part, new
 };
 
 ve.ui.MWTransclusionOutlineWidget.prototype.hideAllUnusedParameters = function () {
-	for ( var id in this.partWidgets ) {
-		var partWidget = this.partWidgets[ id ];
+	for ( const id in this.partWidgets ) {
+		const partWidget = this.partWidgets[ id ];
 		if ( partWidget instanceof ve.ui.MWTransclusionOutlineTemplateWidget &&
 			partWidget.toggleUnusedWidget
 		) {
@@ -138,8 +138,8 @@ ve.ui.MWTransclusionOutlineWidget.prototype.hideAllUnusedParameters = function (
 };
 
 ve.ui.MWTransclusionOutlineWidget.prototype.initializeAllStickyHeaderHeights = function () {
-	for ( var id in this.partWidgets ) {
-		var partWidget = this.partWidgets[ id ];
+	for ( const id in this.partWidgets ) {
+		const partWidget = this.partWidgets[ id ];
 		if ( partWidget instanceof ve.ui.MWTransclusionOutlineTemplateWidget ) {
 			partWidget.recalculateStickyHeaderHeight();
 		}
@@ -152,11 +152,11 @@ ve.ui.MWTransclusionOutlineWidget.prototype.initializeAllStickyHeaderHeights = f
  * @param {string} [pageName] Symbolic name of page. Omit to remove current selection.
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.setSelectionByPageName = function ( pageName ) {
-	var selectedPartId = pageName ? pageName.split( '/', 1 )[ 0 ] : null,
+	const selectedPartId = pageName ? pageName.split( '/', 1 )[ 0 ] : null,
 		isParameter = pageName ? pageName.length > selectedPartId.length : false;
 
-	for ( var partId in this.partWidgets ) {
-		var partWidget = this.partWidgets[ partId ],
+	for ( const partId in this.partWidgets ) {
+		const partWidget = this.partWidgets[ partId ],
 			selected = partId === pageName;
 
 		partWidget.setSelected( selected );
@@ -165,7 +165,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.setSelectionByPageName = function ( 
 		}
 
 		if ( partWidget instanceof ve.ui.MWTransclusionOutlineTemplateWidget ) {
-			var selectedParamName = ( partId === selectedPartId && isParameter ) ?
+			const selectedParamName = ( partId === selectedPartId && isParameter ) ?
 				pageName.slice( selectedPartId.length + 1 ) : null;
 			partWidget.setParameter( selectedParamName );
 		}
@@ -177,7 +177,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.setSelectionByPageName = function ( 
  * @param {boolean} hasValue
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.toggleHasValueByPageName = function ( pageName, hasValue ) {
-	var idParts = pageName.split( '/', 2 ),
+	const idParts = pageName.split( '/', 2 ),
 		templatePartWidget = this.partWidgets[ idParts[ 0 ] ];
 
 	templatePartWidget.toggleHasValue( idParts[ 1 ], hasValue );
@@ -193,8 +193,8 @@ ve.ui.MWTransclusionOutlineWidget.prototype.toggleHasValueByPageName = function 
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.findPartIdContainingElement = function ( element ) {
 	if ( element ) {
-		for ( var id in this.partWidgets ) {
-			var part = this.partWidgets[ id ];
+		for ( const id in this.partWidgets ) {
+			const part = this.partWidgets[ id ];
 			if ( $.contains( part.$element[ 0 ], element ) ) {
 				return id;
 			}
@@ -206,7 +206,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.findPartIdContainingElement = functi
  * Removes all {@see ve.ui.MWTransclusionOutlinePartWidget}, i.e. empties the list.
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.clear = function () {
-	for ( var id in this.partWidgets ) {
+	for ( const id in this.partWidgets ) {
 		this.partWidgets[ id ]
 			.disconnect( this )
 			.$element.remove();
@@ -217,7 +217,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.clear = function () {
 /**
  * @private
  * @param {Object.<string,boolean>} visibility
- * @fires filterPagesByName
+ * @fires ve.ui.MWTransclusionOutlineWidget#filterPagesByName
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.onFilterParametersByName = function ( visibility ) {
 	this.emit( 'filterPagesByName', visibility );

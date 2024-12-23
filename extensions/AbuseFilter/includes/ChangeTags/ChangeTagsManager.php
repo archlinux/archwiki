@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\AbuseFilter\ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LBFactory;
@@ -88,14 +88,13 @@ class ChangeTagsManager {
 			$where['af_global'] = 1;
 		}
 
-		$res = $dbr->select(
-			[ 'abuse_filter_action', 'abuse_filter' ],
-			'afa_parameters',
-			$where,
-			__METHOD__,
-			[],
-			[ 'abuse_filter' => [ 'INNER JOIN', 'afa_filter=af_id' ] ]
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( 'afa_parameters' )
+			->from( 'abuse_filter_action' )
+			->join( 'abuse_filter', null, 'afa_filter=af_id' )
+			->where( $where )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$tags = [];
 		foreach ( $res as $row ) {

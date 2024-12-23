@@ -21,6 +21,10 @@
  * @ingroup Content
  */
 
+namespace MediaWiki\Content;
+
+use LogicException;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 
@@ -45,7 +49,7 @@ abstract class CodeContentHandler extends TextContentHandler {
 	 *
 	 * @see ContentHandler::getPageLanguage()
 	 */
-	public function getPageLanguage( Title $title, Content $content = null ) {
+	public function getPageLanguage( Title $title, ?Content $content = null ) {
 		return MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
 	}
 
@@ -61,7 +65,7 @@ abstract class CodeContentHandler extends TextContentHandler {
 	 *
 	 * @see ContentHandler::getPageViewLanguage()
 	 */
-	public function getPageViewLanguage( Title $title, Content $content = null ) {
+	public function getPageViewLanguage( Title $title, ?Content $content = null ) {
 		return MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
 	}
 
@@ -71,3 +75,5 @@ abstract class CodeContentHandler extends TextContentHandler {
 	}
 
 }
+/** @deprecated class alias since 1.43 */
+class_alias( CodeContentHandler::class, 'CodeContentHandler' );

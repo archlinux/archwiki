@@ -33,7 +33,7 @@ ve.dm.MWNoEditSectionMetaItem.static.matchTagNames = [ 'meta' ];
 ve.dm.MWNoEditSectionMetaItem.static.matchRdfaTypes = [ 'mw:PageProp/noeditsection' ];
 
 ve.dm.MWNoEditSectionMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	var meta = doc.createElement( 'meta' );
+	const meta = doc.createElement( 'meta' );
 	meta.setAttribute( 'property', 'mw:PageProp/noeditsection' );
 	return [ meta ];
 };

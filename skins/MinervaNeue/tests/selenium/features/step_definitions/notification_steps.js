@@ -7,7 +7,7 @@ const iHaveNoNotifications = () => {
 	ArticlePage.notifications_button_element.waitForDisplayed();
 	// This is somewhat hacky, but we don't want this test making use of
 	// Echo's APIs which may change
-	browser.execute( '$( function () { $( ".notification-count span" ).hide(); } );' );
+	browser.execute( '$( () => { $( ".notification-count span" ).hide(); } );' );
 };
 
 const iClickOnTheNotificationIcon = () => {

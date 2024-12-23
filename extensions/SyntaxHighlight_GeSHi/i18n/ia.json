@@ -19,5 +19,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloco de codice",
 	"syntaxhighlight-error-pygments-invocation-failure": "Error al invocar Pygments",
 	"syntaxhighlight-error-unknown-language": "Lingua \"$1\" incognite",
-	"syntaxhighlight-error-exceeds-size-limit": "Le grandor del codice de $1 byte{{PLURAL:$1||s}} excede le maximo permittite de $2 byte{{PLURAL:$2||s}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Le grandor del codice de $1 byte{{PLURAL:$1||s}} excede le maximo permittite de $2 byte{{PLURAL:$2||s}}",
+	"syntaxhighlight-button-copy": "Copiar",
+	"syntaxhighlight-button-copied": "Copiate!"
 }

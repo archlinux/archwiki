@@ -17,8 +17,7 @@
 		[ ' ', true ],
 		[ '0', true ],
 		[ '\nfoo', true ]
-	].forEach( ( [ wikitext, expected ] ) =>
-		QUnit.test( 'containsValuableData: ' + wikitext, ( assert ) => {
+	].forEach( ( [ wikitext, expected ] ) => QUnit.test( 'containsValuableData: ' + wikitext, ( assert ) => {
 			const model = new ve.dm.MWTransclusionContentModel( createTransclusionModel(), wikitext );
 
 			assert.strictEqual( model.containsValuableData(), expected );

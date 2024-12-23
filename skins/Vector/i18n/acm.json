@@ -5,7 +5,7 @@
 			"MRidhaAJ"
 		]
 	},
-	"vector-skin-desc": "توفر نسختين من مظهر فيكتور:\n* 2021 - النسخة الحديثة من مظهر مونوبوك بمظهر أحدث وتحسينات لسهولة الاستخدام.\n* 2022 - نسخة فيكتور المبنيّة كجزءٍ من مشروع مؤسسة ويكيميديا [[mw:Desktop Improvements|لتحسينات نسخة سطح المكتب]].",
+	"vector-skin-desc": "اكو نسختين من مظهر فيكتور:\n* 2011 - النسخه الحديثه من مظهر مونوبوك بمظهر أحدث وتحسينات تخلي استخدامه سهل.\n* 2022 - نسخة فيكتور المبنيه كجزء من مشروع مؤسسه ويكيميديا [https://www.mediawiki.org/wiki/Desktop_Improvements|لتحسينات نسخة سطح المكتب].",
 	"prefs-vector-enable-vector-1-label": "استخدم النسخة القديمة لفيكتور",
 	"prefs-vector-enable-vector-1-help": "على مدار السنوات القليلة الجاية، راح نحدث واجهة فيكتور بشكل تدريجي. راح تسمحلك النسخة القديمة لفيكتور  بمشاهدة الإصدار القديم من فيكتور (اعتبارا من ديسمبر 2019). حتى تعرف بعد على التحديثات، انتقل إلى [[mw:Reading/Web/Desktop_Improvements|صفحة المشروع]].",
 	"vector-opt-out": "التبديل للشكل القديم",
@@ -32,15 +32,19 @@
 	"vector-jumptosearch": "اطفر للبحث",
 	"vector-jumptocontent": "اطفر للمحتوى",
 	"vector-more-actions": "بعد هواي",
+	"vector-appearance-label": "اللوك",
 	"vector-feature-limited-width-name": "العرض",
-	"vector-feature-custom-font-size-name": "الخط",
 	"vector-feature-limited-width-0-label": "عريض",
 	"vector-feature-limited-width-1-label": "نص ونص",
+	"vector-feature-custom-font-size-name": "الخط",
 	"vector-feature-custom-font-size-0-label": "صغير",
 	"vector-feature-custom-font-size-1-label": "نص ونص",
 	"vector-feature-custom-font-size-2-label": "جبير",
 	"skin-theme-name": "اللون",
+	"skin-theme-day-label": "فاتح",
+	"skin-theme-night-label": "غامق",
 	"skin-theme-os-label": "اوتوماتيك",
+	"skin-theme-exclusion-notice": "هاي الصفحه دايما لون فاتح.",
 	"vector-search-loader": "تحميل اقتراحات البحث",
 	"vector-searchsuggest-containing": "ابحث صفحات بيهه <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:مقدمة",
@@ -55,7 +59,7 @@
 	"vector-toc-collapsible-button-label": "تبديل عرض جدول المحتوى",
 	"vector-site-nav-label": "الموقع",
 	"vector-main-menu-label": "الصفحه الرئيسيه",
-	"vector-limited-width-toggle": "تبديل عرض المحتوى المحدود",
+	"vector-feature-custom-font-size-exclusion-notice": "هاي الصفحه دايما خطهه صغير",
 	"vector-page-tools-label": "شغلات",
 	"vector-page-tools-general-label": "عام",
 	"vector-page-tools-actions-label": "سوايات",
@@ -68,5 +72,6 @@
 	"empty-language-selector-body": "محتوى الصفحه مو موجود بغير لغات",
 	"vector-toc-unpinned-popup": "جدول المحتوى شال هنا.",
 	"vector-page-tools-unpinned-popup": "قائمة الأدوات شالت هنا",
-	"vector-main-menu-unpinned-popup": "الصفحه الرئيسيه شالت هنا."
+	"vector-main-menu-unpinned-popup": "الصفحه الرئيسيه شالت هنا.",
+	"vector-night-mode-beta-tag": "(بيتا)"
 }

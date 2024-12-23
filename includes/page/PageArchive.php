@@ -34,8 +34,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  */
 class PageArchive {
 
-	/** @var Title */
-	protected $title;
+	protected Title $title;
 
 	/**
 	 * @param Title $title
@@ -165,7 +164,7 @@ class PageArchive {
 	 * The deletion log will be updated with an undeletion notice.
 	 *
 	 * @since 1.35
-	 * @deprecated since 1.38, use UndeletePage instead
+	 * @deprecated since 1.38, use UndeletePage instead, hard-deprecated since 1.43
 	 *
 	 * @param array $timestamps Pass an empty array to restore all revisions,
 	 *   otherwise list the ones to undelete.
@@ -186,6 +185,7 @@ class PageArchive {
 		$unsuppress = false,
 		$tags = null
 	) {
+		wfDeprecated( __METHOD__, '1.43' );
 		$services = MediaWikiServices::getInstance();
 		$page = $services->getWikiPageFactory()->newFromTitle( $this->title );
 		$user = $services->getUserFactory()->newFromUserIdentity( $user );

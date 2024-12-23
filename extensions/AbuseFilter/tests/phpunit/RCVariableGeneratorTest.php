@@ -5,6 +5,7 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyLoadedVariable;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
@@ -15,12 +16,13 @@ use MediaWiki\Utils\MWTimestamp;
  * @group AbuseFilter
  * @group AbuseFilterGeneric
  * @group Database
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\VariableGenerator\RCVariableGenerator
+ * @covers \MediaWiki\Extension\AbuseFilter\VariableGenerator\RCVariableGenerator
  * @todo Make this a unit test?
  */
 class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 	use AbuseFilterCreateAccountTestTrait;
 	use AbuseFilterUploadTestTrait;
+	use TempUserTestTrait;
 
 	/**
 	 * @inheritDoc
@@ -39,7 +41,11 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\AbuseFilter\VariableGenerator\RCVariableGenerator
 	 * @dataProvider provideRCRowTypes
 	 */
-	public function testGetVarsFromRCRow( string $type, string $action, UserIdentity $userIdentity = null ) {
+	public function testGetVarsFromRCRow( string $type, string $action, ?UserIdentity $userIdentity = null ) {
+		if ( $userIdentity && !$userIdentity->isRegistered() ) {
+			// If we are testing anonymous user, make sure we disable temp accounts.
+			$this->disableAutoCreateTempUser();
+		}
 		$timestamp = '1514700000';
 		MWTimestamp::setFakeTime( $timestamp );
 		if ( $userIdentity !== null ) {
@@ -67,6 +73,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 				$expectedValues['page_id'] = 0;
 				$expectedValues['old_wikitext'] = '';
 				$expectedValues['old_content_model'] = '';
+				$expectedValues['page_last_edit_age'] = null;
 			// Fallthrough
 			case 'edit':
 				$status = $this->editPage( $title, 'Some new text for testing RC vars.', $summary, NS_MAIN, $user );
@@ -205,10 +212,6 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ::addEditVars
-	 * @covers ::addDerivedEditVars
-	 * @covers ::addEditVarsForRow
-	 * @covers ::addGenericVars
 	 * @covers \MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer
 	 */
 	public function testAddEditVarsForRow() {
@@ -239,7 +242,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertNotNull( $rc, 'RC item found' );
 
-		// one more tick to reliably test page_age
+		// one more tick to reliably test page_age etc.
 		MWTimestamp::setFakeTime( $timestamp + 10 );
 
 		$generator = AbuseFilterServices::getVariableGeneratorFactory()->newRCGenerator(
@@ -251,6 +254,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 
 		$expected = [
 			'page_age' => 10,
+			'page_last_edit_age' => 10,
 			'old_wikitext' => $oldText,
 			'old_size' => strlen( $oldText ),
 			'old_content_model' => 'wikitext',

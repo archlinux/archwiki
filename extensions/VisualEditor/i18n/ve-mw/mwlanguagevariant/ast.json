@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Xuacu"
 		]
 	},
@@ -14,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Esta ye una regla tapecida.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Esta regla afeuta al títulu de la páxina.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Códigu&nbsp;de&nbsp;llingua",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Inválidu>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Inválidu</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Llingua",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Fonte",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destín",

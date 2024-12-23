@@ -3,7 +3,6 @@
 namespace MediaWiki\Tests\Rest\Handler;
 
 use Exception;
-use HashBagOStuff;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Hook\ParserLogLinterDataHook;
 use MediaWiki\MainConfigNames;
@@ -16,6 +15,7 @@ use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\StreamInterface;
 use Wikimedia\Message\MessageValue;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Parsoid;
@@ -36,8 +36,7 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 
 	private const HTML = '>World</';
 
-	/** @var HashBagOStuff */
-	private $parserCacheBagOStuff;
+	private HashBagOStuff $parserCacheBagOStuff;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -60,7 +59,7 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		} else {
 			// ParserOutputAccess has a localCache which can return stale content.
 			// Resetting ensures that ParsoidCachePrewarmJob gets a fresh copy
-			// of ParserOutputAccess and ParsoidOutputAccess without these problems!
+			// of ParserOutputAccess without these problems!
 			$this->resetServices();
 		}
 
@@ -248,7 +247,7 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		string $expectedContentLanguage,
 		string $expectedVaryHeader
 	) {
-		$this->overrideConfigValue( 'UsePigLatinVariant', true );
+		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, true );
 		$page = $this->getExistingTestPage( 'HtmlVariantConversion' );
 		$this->assertStatusGood( $this->editPage( $page, '<p>test language conversion</p>' ),
 			'Edited a page'

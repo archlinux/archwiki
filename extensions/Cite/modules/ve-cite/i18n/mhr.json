@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Lifeway",
-			"Валентина Семёнова",
-			"Mxalexandrov86"
+			"Mxalexandrov86",
+			"Валентина Семёнова"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Книга",
@@ -22,10 +22,8 @@
 	"cite-ve-citationneeded-reason": "Ончыктымо амал:",
 	"cite-ve-citationneeded-title": "Важыш кылвер кӱлеш",
 	"cite-ve-dialog-reference-editing-extends": "Тиде вес кылверым шуйымаш.",
-	"cite-ve-dialog-reference-editing-extends-long": "Тиде вес \"$1\" кылверым шуйымаш",
 	"cite-ve-dialog-reference-options-group-label": "Тиде тӱшкам кучылташ",
 	"cite-ve-dialog-reference-options-group-placeholder": "Тӱҥ кылвер-влак",
-	"cite-ve-dialog-reference-options-name-label": "Тиде лӱм дене угыч кучылтмаш",
 	"cite-ve-dialog-reference-options-responsive-label": "Келыштарыме столбец макетым кучылташ",
 	"cite-ve-dialog-reference-options-section": "Параметр-влак",
 	"cite-ve-dialog-reference-title": "Палемдымаш",

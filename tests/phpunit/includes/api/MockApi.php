@@ -2,9 +2,10 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiBase;
+use MediaWiki\Api\ApiBase;
 
 class MockApi extends ApiBase {
+	/** @var array */
 	public $warnings = [];
 
 	public function execute() {

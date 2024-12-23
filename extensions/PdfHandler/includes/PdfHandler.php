@@ -3,10 +3,10 @@
 namespace MediaWiki\Extension\PdfHandler;
 
 use File;
-use IContextSource;
 use ImageHandler;
 use MediaTransformError;
 use MediaTransformOutput;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use ThumbnailImage;

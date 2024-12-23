@@ -1,21 +1,29 @@
 <?php
 
+use MediaWiki\Content\FileContentHandler;
+use MediaWiki\Content\WikitextContent;
+use MediaWiki\Content\WikitextContentHandler;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * See also unit tests at \MediaWiki\Tests\Unit\WikitextContentHandlerTest
  *
  * @group ContentHandler
+ * @covers \MediaWiki\Content\WikitextContentHandler
+ * @covers \MediaWiki\Content\TextContentHandler
+ * @covers \MediaWiki\Content\ContentHandler
  */
 class WikitextContentHandlerTest extends MediaWikiLangTestCase {
-	/** @var WikitextContentHandler */
-	private $handler;
+	private WikitextContentHandler $handler;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -58,7 +66,6 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider dataMerge3
-	 * @covers \WikitextContentHandler::merge3
 	 */
 	public function testMerge3( $old, $mine, $yours, $expected ) {
 		$this->markTestSkippedIfNoDiff3();
@@ -124,7 +131,6 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider dataGetAutosummary
-	 * @covers \WikitextContentHandler::getAutosummary
 	 */
 	public function testGetAutosummary( $old, $new, $flags, $expected ) {
 		$oldContent = $old === null ? null : new WikitextContent( $old );
@@ -216,7 +222,6 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider dataGetChangeTag
-	 * @covers \WikitextContentHandler::getChangeTag
 	 */
 	public function testGetChangeTag( $old, $new, $flags, $expected ) {
 		$this->overrideConfigValue( MainConfigNames::SoftwareTags, [
@@ -236,9 +241,25 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 		$this->assertSame( $expected, $tag );
 	}
 
-	/**
-	 * @covers \WikitextContentHandler::getDataForSearchIndex
-	 */
+	public function testGetFieldsForSearchIndex() {
+		$searchEngine = $this->createMock( SearchEngine::class );
+
+		$searchEngine->method( 'makeSearchFieldMapping' )
+			->willReturnCallback( static function ( $name, $type ) {
+				return new DummySearchIndexFieldDefinition( $name, $type );
+			} );
+
+		$this->hideDeprecated( 'MediaWiki\\Content\\ContentHandler::getForModelID' );
+
+		$fields = $this->handler->getFieldsForSearchIndex( $searchEngine );
+
+		$this->assertArrayHasKey( 'category', $fields );
+		$this->assertArrayHasKey( 'external_link', $fields );
+		$this->assertArrayHasKey( 'outgoing_link', $fields );
+		$this->assertArrayHasKey( 'template', $fields );
+		$this->assertArrayHasKey( 'content_model', $fields );
+	}
+
 	public function testDataIndexFieldsFile() {
 		$mockEngine = $this->createMock( SearchEngine::class );
 		$title = Title::makeTitle( NS_FILE, 'Somefile.jpg' );
@@ -269,9 +290,6 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 		$this->assertEquals( 'This is file content', $data['file_text'] );
 	}
 
-	/**
-	 * @covers \WikitextContentHandler::fillParserOutput
-	 */
 	public function testHadSignature() {
 		$services = $this->getServiceContainer();
 

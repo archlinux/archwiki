@@ -50,7 +50,7 @@ class DatabaseMySQL extends Database {
 	private $sslCAPath;
 	/**
 	 * Open SSL cipher list string
-	 * @see https://www.openssl.org/docs/man1.0.2/man1/ciphers.html
+	 * @see https://docs.openssl.org/3.3/man1/openssl-ciphers/
 	 * @var string|null
 	 */
 	private $sslCiphers;
@@ -138,11 +138,11 @@ class DatabaseMySQL extends Database {
 
 		try {
 			$this->currentDomain = new DatabaseDomain(
-				$db && strlen( $db ) ? $db : null,
+				( $db !== '' ) ? $db : null,
 				null,
 				$tablePrefix
 			);
-			$this->platform->setPrefix( $tablePrefix );
+			$this->platform->setCurrentDomain( $this->currentDomain );
 
 			$set = [];
 			if ( !$this->flagsHolder->getFlag( self::DBO_GAUGE ) ) {
@@ -191,7 +191,7 @@ class DatabaseMySQL extends Database {
 				null,
 				$domain->getTablePrefix()
 			);
-			$this->platform->setPrefix( $domain->getTablePrefix() );
+			$this->platform->setCurrentDomain( $this->currentDomain );
 
 			return true;
 		}
@@ -208,7 +208,7 @@ class DatabaseMySQL extends Database {
 
 		// Update that domain fields on success (no exception thrown)
 		$this->currentDomain = $domain;
-		$this->platform->setPrefix( $domain->getTablePrefix() );
+		$this->platform->setCurrentDomain( $domain );
 
 		return true;
 	}
@@ -230,8 +230,8 @@ class DatabaseMySQL extends Database {
 		return $error;
 	}
 
-	protected function isInsertSelectSafe( array $insertOptions, array $selectOptions ) {
-		$row = $this->replicationReporter->getReplicationSafetyInfo( $this );
+	protected function isInsertSelectSafe( array $insertOptions, array $selectOptions, $fname ) {
+		$row = $this->replicationReporter->getReplicationSafetyInfo( $this, $fname );
 		// For row-based-replication, the resulting changes will be relayed, not the query
 		if ( $row->binlog_format === 'ROW' ) {
 			return true;
@@ -282,19 +282,6 @@ class DatabaseMySQL extends Database {
 		}
 	}
 
-	/**
-	 * Estimate rows in dataset
-	 * Returns estimated count, based on EXPLAIN output
-	 * Takes same arguments as Database::select()
-	 *
-	 * @param string|array $tables
-	 * @param string|array $var
-	 * @param string|array $conds
-	 * @param string $fname
-	 * @param string|array $options
-	 * @param array $join_conds
-	 * @return int|false
-	 */
 	public function estimateRowCount(
 		$tables,
 		$var = '*',
@@ -302,7 +289,7 @@ class DatabaseMySQL extends Database {
 		$fname = __METHOD__,
 		$options = [],
 		$join_conds = []
-	) {
+	): int {
 		$conds = $this->platform->normalizeConditions( $conds, $fname );
 		$column = $this->platform->extractSingleFieldFromList( $var );
 		if ( is_string( $column ) && !in_array( $column, [ '*', '1' ] ) ) {
@@ -312,7 +299,7 @@ class DatabaseMySQL extends Database {
 		$options['EXPLAIN'] = true;
 		$res = $this->select( $tables, $var, $conds, $fname, $options, $join_conds );
 		if ( $res === false ) {
-			return false;
+			return -1;
 		}
 		if ( !$res->numRows() ) {
 			return 0;
@@ -327,25 +314,17 @@ class DatabaseMySQL extends Database {
 	}
 
 	public function tableExists( $table, $fname = __METHOD__ ) {
-		$components = $this->platform->qualifiedTableComponents( $table );
-		if ( count( $components ) === 1 ) {
-			$db = $this->currentDomain->getDatabase();
-			$tableName = $components[0];
-		} elseif ( count( $components ) === 2 ) {
-			[ $db, $tableName ] = $components;
-		} else {
-			throw new DBLanguageError( 'Too many table components' );
-		}
-
-		if ( isset( $this->sessionTempTables[$tableName] ) ) {
+		[ $db, $pt ] = $this->platform->getDatabaseAndTableIdentifier( $table );
+		if ( isset( $this->sessionTempTables[$db][$pt] ) ) {
 			return true; // already known to exist and won't be found in the query anyway
 		}
+
 		return (bool)$this->newSelectQueryBuilder()
 			->select( '1' )
 			->from( 'information_schema.tables' )
 			->where( [
 				'table_schema' => $db,
-				'table_name' => $tableName,
+				'table_name' => $pt,
 			] )
 			->caller( $fname )
 			->fetchField();
@@ -371,15 +350,6 @@ class DatabaseMySQL extends Database {
 		return $res->getInternalFieldInfo( $field );
 	}
 
-	/**
-	 * Get information about an index into an object
-	 * Returns false if the index does not exist
-	 *
-	 * @param string $table
-	 * @param string $index
-	 * @param string $fname
-	 * @return bool|array|null False or null on failure
-	 */
 	public function indexInfo( $table, $index, $fname = __METHOD__ ) {
 		# https://dev.mysql.com/doc/mysql/en/SHOW_INDEX.html
 		$index = $this->platform->indexName( $index );
@@ -390,19 +360,13 @@ class DatabaseMySQL extends Database {
 		);
 		$res = $this->query( $query, $fname );
 
-		if ( !$res ) {
-			return null;
-		}
-
-		$result = [];
-
 		foreach ( $res as $row ) {
-			if ( $row->Key_name == $index ) {
-				$result[] = $row;
+			if ( $row->Key_name === $index ) {
+				return [ 'unique' => !$row->Non_unique ];
 			}
 		}
 
-		return $result ?: false;
+		return false;
 	}
 
 	/**
@@ -537,10 +501,6 @@ class DatabaseMySQL extends Database {
 		return ( $row->released == 1 );
 	}
 
-	public function namedLocksEnqueue() {
-		return true;
-	}
-
 	protected function doFlushSession( $fname ) {
 		// Note that RELEASE_ALL_LOCKS() is not supported well enough to use here.
 		// https://mariadb.com/kb/en/release_all_locks/
@@ -599,25 +559,6 @@ class DatabaseMySQL extends Database {
 		$this->query( $query, $fname );
 		// Do not count deletions of conflicting rows toward the change count
 		$this->lastQueryAffectedRows = min( $this->lastQueryAffectedRows, count( $rows ) );
-	}
-
-	/**
-	 * Determines if the last failure was due to a deadlock
-	 *
-	 * @return bool
-	 */
-	public function wasDeadlock() {
-		return $this->lastErrno() == 1213;
-	}
-
-	/**
-	 * Determines if the last failure was due to the database being read-only.
-	 *
-	 * @return bool
-	 */
-	public function wasReadOnlyError() {
-		return $this->lastErrno() == 1223 ||
-			( $this->lastErrno() == 1290 && strpos( $this->lastError(), '--read-only' ) !== false );
 	}
 
 	protected function isConnectionError( $errno ) {
@@ -692,42 +633,15 @@ class DatabaseMySQL extends Database {
 		return $qb->fetchFieldValues();
 	}
 
-	/**
-	 * Lists VIEWs in the database
-	 *
-	 * @since 1.22
-	 * @deprecated since 1.42
-	 *
-	 * @param string|null $prefix Only show VIEWs with this prefix, eg.
-	 * unit_test_, or $wgDBprefix. Default: null, would return all views.
-	 * @param string $fname Name of calling function
-	 * @return array
-	 */
-	public function listViews( $prefix = null, $fname = __METHOD__ ) {
-		wfDeprecated( __METHOD__, '1.42' );
-		$qb = $this->newSelectQueryBuilder()
-			->select( 'table_name' )
-			->from( 'information_schema.views' )
-			->where( [ 'table_schema' => $this->currentDomain->getDatabase() ] )
-			->caller( $fname );
-
-		if ( $prefix !== null && $prefix !== '' ) {
-			$qb->andWhere( $this->expr(
-				'table_name', IExpression::LIKE, new LikeValue( $prefix, $this->anyString() )
-			) );
-		}
-		return $qb->fetchFieldValues();
-	}
-
 	public function selectSQLText(
-		$table,
+		$tables,
 		$vars,
 		$conds = '',
 		$fname = __METHOD__,
 		$options = [],
 		$join_conds = []
 	) {
-		$sql = parent::selectSQLText( $table, $vars, $conds, $fname, $options, $join_conds );
+		$sql = parent::selectSQLText( $tables, $vars, $conds, $fname, $options, $join_conds );
 		// https://dev.mysql.com/doc/refman/5.7/en/optimizer-hints.html
 		// https://mariadb.com/kb/en/library/aborting-statements/
 		$timeoutMsec = intval( $options['MAX_EXECUTION_TIME'] ?? 0 );

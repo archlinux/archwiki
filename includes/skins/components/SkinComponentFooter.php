@@ -6,12 +6,15 @@ use Action;
 use Article;
 use CreditsAction;
 use MediaWiki\Config\Config;
+use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 
 class SkinComponentFooter implements SkinComponent {
+	use ProtectedHookAccessorTrait;
+
 	/** @var SkinComponentRegistryContext */
 	private $skinContext;
 
@@ -34,10 +37,10 @@ class SkinComponentFooter implements SkinComponent {
 			),
 			'places' => $this->getSiteFooterLinks(),
 		];
+		$skin = $this->skinContext->getContextSource()->getSkin();
 		foreach ( $data as $key => $existingItems ) {
 			$newItems = [];
-			$this->skinContext->runHook( 'onSkinAddFooterLinks', [ $key, &$newItems ] );
-			// @phan-suppress-next-line PhanEmptyForeach False positive as hooks modify
+			$this->getHookRunner()->onSkinAddFooterLinks( $skin, $key, $newItems );
 			foreach ( $newItems as $index => $linkHTML ) {
 				$data[ $key ][ $index ] = [
 					'id' => 'footer-' . $key . '-' . $index,
@@ -216,11 +219,19 @@ class SkinComponentFooter implements SkinComponent {
 				$html = htmlspecialchars( $icon['alt'] ?? '' );
 			}
 			if ( $url ) {
-				$html = Html::rawElement( 'a', [
-					'href' => $url,
-					'target' => $config->get( MainConfigNames::ExternalLinkTarget ),
-				],
-				$html );
+				$html = Html::rawElement(
+					'a',
+					[
+						'href' => $url,
+						// Using a fake Codex link button, as this is the long-expected UX; our apologies.
+						'class' => [
+							'cdx-button', 'cdx-button--fake-button',
+							'cdx-button--size-large', 'cdx-button--fake-button--enabled'
+						],
+						'target' => $config->get( MainConfigNames::ExternalLinkTarget ),
+					],
+					$html
+				);
 			}
 		}
 		return $html;

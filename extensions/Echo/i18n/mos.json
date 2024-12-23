@@ -2,8 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Raizkgh",
-			"Soumaya",
-			"Matma Rex"
+			"Soumaya"
 		]
 	},
 	"echo-desc": "Sõng-n-taag sẽn yaa sõma",
@@ -25,8 +24,8 @@
 	"echo-pref-push": "Appãrã",
 	"echo-pref-email-frequency-never": "Da tʋm-y-m-la sɛb-zõos ye",
 	"echo-pref-email-frequency-immediately": "B sẽn wa n wa n togs ned kam fãa, b na n maana woto",
-	"echo-pref-email-frequency-daily": "A daily summary of notifications",
-	"echo-pref-email-frequency-weekly": "A weekly summary of notifications",
+	"echo-pref-email-frequency-daily": "Sõsg ning b sẽn kõ-dã",
+	"echo-pref-email-frequency-weekly": "Sõsg ning b sẽn kõ-dã",
 	"echo-pref-email-format-html": "HTML wã",
 	"echo-pref-email-format-plain-text": "sõsg sẽn yaa vẽenega",
 	"echo-pref-cross-wiki-notifications": "Wilg-y bũmb nins sẽn be wiki-rãmbã pʋgẽ wã",

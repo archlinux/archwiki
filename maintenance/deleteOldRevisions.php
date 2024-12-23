@@ -22,7 +22,9 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that deletes old (non-current) revisions from the database.
@@ -34,12 +36,12 @@ class DeleteOldRevisions extends Maintenance {
 		parent::__construct();
 		$this->addDescription( 'Delete old (non-current) revisions from the database' );
 		$this->addOption( 'delete', 'Actually perform the deletion' );
-		$this->addOption( 'page_id', 'List of page ids to work on', false );
+		$this->addArg( 'page_id', 'List of page ids to work on', false, true );
 	}
 
 	public function execute() {
 		$this->output( "Delete old revisions\n\n" );
-		$this->doDelete( $this->hasOption( 'delete' ), $this->getArgs() );
+		$this->doDelete( $this->hasOption( 'delete' ), $this->getArgs( 'page_id' ) );
 	}
 
 	private function doDelete( $delete = false, $pageIds = [] ) {
@@ -114,5 +116,7 @@ class DeleteOldRevisions extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DeleteOldRevisions::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

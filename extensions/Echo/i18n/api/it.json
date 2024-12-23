@@ -7,6 +7,9 @@
 			"Matteocng"
 		]
 	},
+	"apihelp-echocreateevent-example": "Invia una notifica",
+	"apihelp-echocreateevent-param-header": "Contenuto dell'intestazione della notifica",
+	"apihelp-echocreateevent-param-content": "Contenuto del corpo della notifica",
 	"apihelp-echomarkread-summary": "Contrassegna tutte le notifiche come lette per l'utente attuale.",
 	"apihelp-echomarkread-param-list": "Un elenco di ID notifiche da contrassegnare come lette.",
 	"apihelp-echomarkread-param-unreadlist": "Un elenco di ID notifiche da contrassegnare come non lette.",

@@ -35,6 +35,7 @@ use MediaWiki\Page\PageReferenceValue;
  * MediaWikiServices::getInstance()->getJobQueueGroup()->push( $job )
  * @endcode
  *
+ * @newable
  * @since 1.23
  * @ingroup JobQueue
  */
@@ -60,7 +61,7 @@ class JobSpecification implements IJobSpecification {
 	 * @param PageReference|null $page
 	 */
 	public function __construct(
-		$type, array $params, array $opts = [], PageReference $page = null
+		$type, array $params, array $opts = [], ?PageReference $page = null
 	) {
 		$params += [
 			'requestId' => Telemetry::getInstance()->getRequestId(),

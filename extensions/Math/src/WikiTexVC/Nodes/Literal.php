@@ -19,7 +19,9 @@ class Literal extends TexNode {
 
 	/** @var string */
 	private $arg;
+	/** @var string[] */
 	private $literals;
+	/** @var string[] */
 	private $extendedLiterals;
 
 	public function __construct( string $arg ) {
@@ -32,7 +34,7 @@ class Literal extends TexNode {
 
 	public function changeUnicodeFontInput( $input, $state ) {
 		/**
-		 * In some font modifications, it is required to explicitly use unicode
+		 * In some font modifications, it is required to explicitly use Unicode
 		 * characters instead of (only) attributes in MathML to indicate the font.
 		 * This is mostly because of Chrome behaviour. I.e. see: https://phabricator.wikimedia.org/T352196
 		 */
@@ -40,6 +42,8 @@ class Literal extends TexNode {
 			return MMLParsingUtil::mapToDoubleStruckUnicode( $input );
 		} elseif ( isset( $state["calligraphic"] ) ) {
 			return MMLParsingUtil::mapToCaligraphicUnicode( $input );
+		} elseif ( isset( $state["fraktur"] ) ) {
+			return MMLParsingUtil::mapToFrakturUnicode( $input );
 		}
 		return $input;
 	}
@@ -84,11 +88,14 @@ class Literal extends TexNode {
 			return $mi->encapsulateRaw( $operatorContent["foundOC"] );
 		}
 
-		$inputP = MMLutil::inputPreparation( $input );
+		$inputP = $input;
 
 		// Sieve for Operators
 		$bm = new BaseMethods();
-		$ret = $bm->checkAndParseOperator( $inputP, $this, $arguments, $operatorContent, $state, false );
+		$noStretchArgs = $arguments;
+		// Delimiters and operators should not be stretchy by default when used as literals
+		$noStretchArgs['stretchy'] ??= 'false';
+		$ret = $bm->checkAndParseOperator( $inputP, $this, $noStretchArgs, $operatorContent, $state, false );
 		if ( $ret ) {
 			return $ret;
 		}
@@ -105,7 +112,7 @@ class Literal extends TexNode {
 			return $ret;
 		}
 		// Sieve for Delimiters
-		$ret = $bm->checkAndParseDelimiter( $input, $this, $arguments, $operatorContent );
+		$ret = $bm->checkAndParseDelimiter( $input, $this, $noStretchArgs, $operatorContent );
 		if ( $ret ) {
 			return $ret;
 		}
@@ -114,8 +121,7 @@ class Literal extends TexNode {
 		$ret = BaseMethods::checkAndParse( $inputP, $arguments,
 			array_merge( $operatorContent ?? [], $state ?? [] ),
 			$this, false );
-		if ( $ret ) {
-
+		if ( $ret || $ret === '' ) {
 			return $ret;
 		}
 

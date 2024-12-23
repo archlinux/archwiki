@@ -10,6 +10,7 @@
  * This style sheet is used by the Monobook and Vector skins.
  */
 
+@import 'mediawiki.mixins.less';
 @import 'mediawiki.skin.variables.less';
 
 /* stylelint-disable selector-class-pattern */
@@ -19,31 +20,23 @@ a {
 	text-decoration: none;
 	color: @color-link;
 	background: none;
-}
 
-a:not( [ href ] ) {
-	cursor: pointer; /* Always cursor:pointer even without href */
-}
+	&:not( [ href ] ) {
+		cursor: pointer; /* Always cursor:pointer even without href */
+	}
 
-a:visited {
-	color: @color-link--visited;
-}
+	&:visited {
+		color: @color-link--visited;
+	}
 
-a:active {
-	color: @color-link--active;
-}
+	&:active {
+		color: @color-link--active;
+	}
 
-a:hover,
-a:focus {
-	text-decoration: underline;
-}
-
-a:lang( ar ),
-a:lang( kk-arab ),
-a:lang( mzn ),
-a:lang( ps ),
-a:lang( ur ) {
-	text-decoration: none;
+	&:hover,
+	&:focus {
+		text-decoration: underline;
+	}
 }
 
 /* Inline Elements */
@@ -74,7 +67,13 @@ h6 {
 	margin: 0;
 	padding-top: 0.5em;
 	padding-bottom: 0.17em;
-	overflow: hidden;
+	// Create a "block formatting context" so that the bottom border on headings
+	// don't overlap floated content like infoboxes or thumbnails.
+	// In addition, word-break:break-word forces heading to span multiple lines.
+	// Together, these two rules are a substitute for overflow: hidden.
+	// https://developer.mozilla.org/en-US/docs/Web/CSS/display#flow-root
+	display: flow-root;
+	word-break: break-word;
 }
 
 .mw-heading1,
@@ -147,21 +146,30 @@ h6 {
 
 p {
 	margin: 0.4em 0 0.5em 0;
-}
 
-p img {
-	margin: 0;
+	img {
+		margin: 0;
+	}
 }
 
 ul {
-	margin: 0.3em 0 0 1.6em;
+	margin-top: 0.3em;
+	margin-bottom: 0;
+	.margin-inline( 1.6em, 0 );
 	padding: 0;
 }
 
 ol {
-	margin: 0.3em 0 0 3.2em;
+	margin-top: 0.3em;
+	margin-bottom: 0;
+	.margin-inline( 3.2em, 0 );
 	padding: 0;
 	list-style-image: none;
+}
+
+dd {
+	margin-bottom: 0.1em;
+	.margin-inline( 1.6em, 0 );
 }
 
 li {
@@ -176,11 +184,6 @@ dt {
 dl {
 	margin-top: 0.2em;
 	margin-bottom: 0.5em;
-}
-
-dd {
-	margin-left: 1.6em;
-	margin-bottom: 0.1em;
 }
 
 /* FIXME: Duplicated ruleset if skins using ResourceLoaderSkinModule
@@ -264,8 +267,8 @@ textarea {
 /* Small for tables and similar */
 .small {
 	font-size: 94%;
-}
 
-table.small {
-	font-size: 100%;
+	table& {
+		font-size: 100%;
+	}
 }

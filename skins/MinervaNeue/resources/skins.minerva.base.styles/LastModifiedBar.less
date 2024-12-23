@@ -2,28 +2,19 @@
 @import '../../minerva.less/minerva.mixins.less';
 @import 'mediawiki.mixins.less';
 
-.last-modified-bar {
+a.last-modified-bar {
 	display: block;
 	border-bottom: @border-subtle;
-	background-color: var( --background-color-interactive );
-	color: var( --color-subtle );
+	background-color: @background-color-interactive;
+	color: @color-subtle !important;
 	padding-top: @icon-padding-medium;
 	padding-bottom: @icon-padding-medium;
 	font-size: @font-size-minerva-small;
 	transition-property: background-color, color;
 	transition-duration: @transition-duration-medium;
 
-	// .last-modified-bar is itself a link.
-	&:visited,
-	a,
-	a:visited,
-	.last-modified-text-accent {
-		// Note: This can be progressively enhanced in skins.minerva.scripts to provide 'recently edited' state.
-		color: var( --color-subtle );
-	}
-
 	.minerva-icon {
-		background-color: var( --color-subtle );
+		background-color: @color-subtle;
 	}
 }
 
@@ -42,7 +33,7 @@
 	.text-overflow( @visible: false );
 }
 
-@media ( max-width: @width-breakpoint-tablet ) {
+@media ( max-width: @max-width-breakpoint-mobile ) {
 	.last-modified-bar__text {
 		padding-right: 1em;
 	}

@@ -31,10 +31,6 @@ class TexVC {
 		$this->tu = TexUtil::getInstance();
 	}
 
-	private function strStartsWith( $haystack, $needle ): bool {
-		return strpos( $haystack, $needle ) === 0;
-	}
-
 	/**
 	 * Usually this step is done implicitly within the check-method.
 	 * @param string $input tex-string as input for the grammar
@@ -139,8 +135,8 @@ class TexVC {
 			return $result;
 		} catch ( Exception $ex ) {
 			if ( $ex instanceof SyntaxError && !$options['oldtexvc']
-					&& $this->strStartsWith( $ex->getMessage(), 'Deprecation' ) ) {
-
+				&& str_starts_with( $ex->getMessage(), 'Deprecation' )
+			) {
 				$warnings[] = [
 					'type' => 'texvc-deprecation',
 					'details' => $this->handleTexError( $ex, $options )

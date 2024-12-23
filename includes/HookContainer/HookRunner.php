@@ -4,16 +4,21 @@ namespace MediaWiki\HookContainer;
 
 use Article;
 use File;
-use JsonContent;
 use MailAddress;
 use ManualLogEntry;
+use MediaWiki\Auth\AuthenticationResponse;
+use MediaWiki\Auth\AuthManager;
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Content\JsonContent;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Mail\UserEmailContact;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\RenameUser\RenameuserSQL;
@@ -23,10 +28,11 @@ use MediaWiki\Session\Session;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use ParserOptions;
+use SearchEngine;
 use Skin;
 use StatusValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use WikiPage;
 
 /**
  * This class provides an implementation of the core hook interfaces,
@@ -43,7 +49,10 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  */
 class HookRunner implements
 	\MediaWiki\Actions\Hook\GetActionNameHook,
+	\MediaWiki\Auth\Hook\AuthManagerFilterProvidersHook,
 	\MediaWiki\Auth\Hook\AuthManagerLoginAuthenticateAuditHook,
+	\MediaWiki\Auth\Hook\AuthManagerVerifyAuthenticationHook,
+	\MediaWiki\Auth\Hook\AuthPreserveQueryParamsHook,
 	\MediaWiki\Auth\Hook\ExemptFromAccountCreationThrottleHook,
 	\MediaWiki\Auth\Hook\LocalUserCreatedHook,
 	\MediaWiki\Auth\Hook\ResetPasswordExpirationHook,
@@ -53,6 +62,7 @@ class HookRunner implements
 	\MediaWiki\Block\Hook\GetAllBlockActionsHook,
 	\MediaWiki\Block\Hook\GetUserBlockHook,
 	\MediaWiki\Block\Hook\PerformRetroactiveAutoblockHook,
+	\MediaWiki\Block\Hook\SpreadAnyEditBlockHook,
 	\MediaWiki\Cache\Hook\BacklinkCacheGetConditionsHook,
 	\MediaWiki\Cache\Hook\BacklinkCacheGetPrefixHook,
 	\MediaWiki\Cache\Hook\HtmlCacheUpdaterAppendUrlsHook,
@@ -277,6 +287,7 @@ class HookRunner implements
 	\MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook,
 	\MediaWiki\Output\Hook\OutputPageMakeCategoryLinksHook,
 	\MediaWiki\Output\Hook\OutputPageParserOutputHook,
+	\MediaWiki\Output\Hook\OutputPageRenderCategoryLinkHook,
 	\MediaWiki\Hook\PageHistoryBeforeListHook,
 	\MediaWiki\Hook\PageHistoryLineEndingHook,
 	\MediaWiki\Hook\PageHistoryPager__doBatchLookupsHook,
@@ -332,6 +343,7 @@ class HookRunner implements
 	\MediaWiki\Hook\SkinAfterContentHook,
 	\MediaWiki\Hook\SkinBuildSidebarHook,
 	\MediaWiki\Hook\SkinCopyrightFooterHook,
+	\MediaWiki\Hook\SkinCopyrightFooterMessageHook,
 	\MediaWiki\Hook\SkinEditSectionLinksHook,
 	\MediaWiki\Hook\SkinPreloadExistenceHook,
 	\MediaWiki\Hook\SkinSubPageSubtitleHook,
@@ -373,6 +385,7 @@ class HookRunner implements
 	\MediaWiki\Hook\SpecialUploadCompleteHook,
 	\MediaWiki\Hook\SpecialVersionVersionUrlHook,
 	\MediaWiki\Hook\SpecialWatchlistGetNonRevisionTypesHook,
+	\MediaWiki\Hook\SpecialWhatLinksHereQueryHook,
 	\MediaWiki\Hook\TestCanonicalRedirectHook,
 	\MediaWiki\Hook\ThumbnailBeforeProduceHTMLHook,
 	\MediaWiki\Hook\TempUserCreatedRedirectHook,
@@ -567,7 +580,8 @@ class HookRunner implements
 	\MediaWiki\User\Hook\UserSetEmailHook,
 	\MediaWiki\User\Hook\User__mailPasswordInternalHook,
 	\MediaWiki\User\Options\Hook\LoadUserOptionsHook,
-	\MediaWiki\User\Options\Hook\SaveUserOptionsHook
+	\MediaWiki\User\Options\Hook\SaveUserOptionsHook,
+	\MediaWiki\User\Options\Hook\ConditionalDefaultOptionsAddConditionHook
 {
 	/** @var HookContainer */
 	private $container;
@@ -885,12 +899,38 @@ class HookRunner implements
 		);
 	}
 
+	public function onAuthManagerFilterProviders( array &$providers ): void {
+		$this->container->run(
+			'AuthManagerFilterProviders',
+			[ &$providers ],
+			[ 'abortable' => false ]
+		);
+	}
+
 	public function onAuthManagerLoginAuthenticateAudit( $response, $user,
 		$username, $extraData
 	) {
 		return $this->container->run(
 			'AuthManagerLoginAuthenticateAudit',
 			[ $response, $user, $username, $extraData ]
+		);
+	}
+
+	public function onAuthManagerVerifyAuthentication(
+		?UserIdentity $user,
+		AuthenticationResponse &$response,
+		AuthManager $authManager,
+		array $info
+	): bool {
+		return $this->container->run(
+			'AuthManagerVerifyAuthentication',
+			[ $user, &$response, $authManager, $info ],
+		);
+	}
+
+	public function onAuthPreserveQueryParams( &$params, $options ) {
+		return $this->container->run(
+			'AuthPreserveQueryParams', [ &$params, $options ]
 		);
 	}
 
@@ -2734,6 +2774,19 @@ class HookRunner implements
 		);
 	}
 
+	public function onOutputPageRenderCategoryLink(
+		OutputPage $outputPage,
+		ProperPageIdentity $categoryTitle,
+		string $text,
+		?string &$link
+	): void {
+		$this->container->run(
+			'OutputPageRenderCategoryLink',
+			[ $outputPage, $categoryTitle, $text, &$link ],
+			[ 'abortable' => false ]
+		);
+	}
+
 	public function onPageContentLanguage( $title, &$pageLang, $userLang ) {
 		return $this->container->run(
 			'PageContentLanguage',
@@ -3326,8 +3379,8 @@ class HookRunner implements
 		);
 	}
 
-	public function onSearchDataForIndex2( array &$fields, \ContentHandler $handler,
-		\WikiPage $page, ParserOutput $output, \SearchEngine $engine, RevisionRecord $revision
+	public function onSearchDataForIndex2( array &$fields, ContentHandler $handler,
+		WikiPage $page, ParserOutput $output, SearchEngine $engine, RevisionRecord $revision
 	) {
 		return $this->container->run(
 			'SearchDataForIndex2',
@@ -3377,7 +3430,7 @@ class HookRunner implements
 		);
 	}
 
-	public function onSearchResultProvideThumbnail( array $pageIdentities, &$thumbnails, int $size = null ) {
+	public function onSearchResultProvideThumbnail( array $pageIdentities, &$thumbnails, ?int $size = null ) {
 		return $this->container->run(
 			'SearchResultProvideThumbnail',
 			[ $pageIdentities, &$thumbnails, $size ]
@@ -3542,6 +3595,13 @@ class HookRunner implements
 		return $this->container->run(
 			'SkinCopyrightFooter',
 			[ $title, $type, &$msg, &$link ]
+		);
+	}
+
+	public function onSkinCopyrightFooterMessage( $title, $type, &$msg ) {
+		return $this->container->run(
+			'SkinCopyrightFooterMessage',
+			[ $title, $type, &$msg ]
 		);
 	}
 
@@ -3900,6 +3960,21 @@ class HookRunner implements
 		);
 	}
 
+	public function onSpreadAnyEditBlock( $user, bool &$blockWasSpread ) {
+		return $this->container->run(
+			'SpreadAnyEditBlock',
+			[ $user, &$blockWasSpread ]
+		);
+	}
+
+	public function onSpecialWhatLinksHereQuery( $table, $data, $queryBuilder ): void {
+		$this->container->run(
+			'SpecialWhatLinksHereQuery',
+			[ $table, $data, $queryBuilder ],
+			[ 'abortable' => false ]
+		);
+	}
+
 	public function onTempUserCreatedRedirect(
 		Session $session,
 		UserIdentity $user,
@@ -4214,6 +4289,14 @@ class HookRunner implements
 		return $this->container->run(
 			'UserGetDefaultOptions',
 			[ &$defaultOptions ]
+		);
+	}
+
+	public function onConditionalDefaultOptionsAddCondition( &$extraConditions ): void {
+		$this->container->run(
+			'ConditionalDefaultOptionsAddCondition',
+			[ &$extraConditions ],
+			[ 'abortable' => false ]
 		);
 	}
 

@@ -2,7 +2,7 @@
 	{{>MainMenuPinned}}
 	{{#data-toc}}
 	<div class="vector-sticky-pinned-container">
-		<nav id="mw-panel-toc" role="navigation" aria-label="{{ msg-vector-toc-label }}" data-event-name="ui.sidebar-toc" class="mw-table-of-contents-container vector-toc-landmark">
+		<nav id="mw-panel-toc" aria-label="{{ msg-vector-toc-label }}" data-event-name="ui.sidebar-toc" class="mw-table-of-contents-container vector-toc-landmark">
 			{{! T313060 Additional container div needed to prevent the sticky element from being siblings with the footer }}
 			{{#data-toc-pinnable-container}}
 			{{>PinnableContainer/Pinned/Open}}

@@ -1,9 +1,15 @@
 <?php
 
+use MediaWiki\Content\CssContentHandler;
+use MediaWiki\Content\JavaScriptContentHandler;
+use MediaWiki\Content\JsonContentHandler;
+use MediaWiki\Content\TextContentHandler;
+use MediaWiki\Content\WikitextContentHandler;
 use MediaWiki\MainConfigNames;
 
 /**
  * @group ContentHandlerFactory
+ * @covers \MediaWiki\MediaWikiServices::getContentHandlerFactory
  */
 class RegistrationContentHandlerFactoryToMediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 
@@ -37,9 +43,6 @@ class RegistrationContentHandlerFactoryToMediaWikiServicesTest extends MediaWiki
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\MediaWikiServices::getContentHandlerFactory
-	 */
 	public function testCallFromService_get_ok(): void {
 		$this->assertInstanceOf(
 			\MediaWiki\Content\IContentHandlerFactory::class,
@@ -60,9 +63,6 @@ class RegistrationContentHandlerFactoryToMediaWikiServicesTest extends MediaWiki
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\MediaWikiServices::getContentHandlerFactory
-	 */
 	public function testCallFromService_second_same(): void {
 		$this->assertSame(
 			$this->getServiceContainer()->getContentHandlerFactory(),
@@ -70,9 +70,6 @@ class RegistrationContentHandlerFactoryToMediaWikiServicesTest extends MediaWiki
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\MediaWikiServices::getContentHandlerFactory
-	 */
 	public function testCallFromService_afterCustomDefine_same(): void {
 		$factory = $this->getServiceContainer()->getContentHandlerFactory();
 		$factory->defineContentHandler(

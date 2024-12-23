@@ -1,5 +1,7 @@
 /**
  * Toolbar module for wikiEditor
+ *
+ * @memberof module:ext.wikiEditor
  */
 var toolbarModule = {
 
@@ -228,7 +230,7 @@ var toolbarModule = {
 					}
 					context.$textarea.textSelection(
 						'encapsulateSelection',
-						$.extend( {}, action.options, parts, { replace: replace } )
+						Object.assign( {}, action.options, parts, { replace: replace } )
 					);
 					break;
 				case 'callback':
@@ -397,7 +399,7 @@ var toolbarModule = {
 						}
 					}
 					$select.append( $( '<a>' )
-						.addClass( 'label' )
+						.addClass( 'label skin-invert' )
 						.text( label )
 						.data( 'options', $options )
 						.attr( { role: 'button', tabindex: 0, 'aria-expanded': false, 'aria-controls': menuId, 'aria-haspopup': 'menu' } )
@@ -610,6 +612,7 @@ var toolbarModule = {
 			var $link =
 				$( '<a>' )
 					.addClass( selected === id ? 'current' : null )
+					.addClass( 'skin-invert' )
 					.attr( {
 						tabindex: 0,
 						role: 'button',

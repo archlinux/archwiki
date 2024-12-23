@@ -20,17 +20,24 @@
  * @file
  */
 
+namespace Wikimedia\Stats;
+
+use Exception;
+use InvalidArgumentException;
 use Liuggio\StatsdClient\Entity\StatsdData;
 use Liuggio\StatsdClient\Entity\StatsdDataInterface;
 use Liuggio\StatsdClient\StatsdClient;
+use LogicException;
 use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
  * A statsd client that applies the sampling rate to the data items before sending them.
  *
+ * @deprecated since 1.43 No longer used after $wgSamplingStatsdClient was removed.
  * @since 1.26
  */
 class SamplingStatsdClient extends StatsdClient {
+	/** @var array */
 	protected $samplingRates = [];
 
 	/**
@@ -129,7 +136,6 @@ class SamplingStatsdClient extends StatsdClient {
 	 * Throw away some of the data according to the sample rate.
 	 * @param StatsdDataInterface[] $data
 	 * @return StatsdDataInterface[]
-	 * @throws LogicException
 	 */
 	protected function sampleData( $data ) {
 		$newData = [];
@@ -161,3 +167,6 @@ class SamplingStatsdClient extends StatsdClient {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( SamplingStatsdClient::class, 'SamplingStatsdClient' );

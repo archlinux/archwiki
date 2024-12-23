@@ -10,7 +10,7 @@
  *
  * @class
  * @extends ve.dm.BranchNode
- * @mixins ve.dm.FocusableNode
+ * @mixes ve.dm.FocusableNode
  *
  * @constructor
  * @param {Object} [element] Reference to element in linear model
@@ -43,7 +43,7 @@ ve.dm.MWGalleryNode.static.disallowedAnnotationTypes = [ 'link' ];
 
 ve.dm.MWGalleryNode.static.cloneElement = function () {
 	// Parent method
-	var clone = ve.dm.LeafNode.static.cloneElement.apply( this, arguments );
+	const clone = ve.dm.LeafNode.static.cloneElement.apply( this, arguments );
 	delete clone.attributes.originalMw;
 	return clone;
 };
@@ -56,7 +56,7 @@ ve.dm.MWGalleryNode.static.getHashObject = function ( dataElement ) {
 };
 
 ve.dm.MWGalleryNode.static.toDataElement = function ( domElements ) {
-	var mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+	const mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
 
 	return {
@@ -69,7 +69,7 @@ ve.dm.MWGalleryNode.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.MWGalleryNode.static.toDomElements = function ( data, doc ) {
-	var ul = doc.createElement( 'ul' );
+	const ul = doc.createElement( 'ul' );
 
 	// Build ul
 	ul.setAttribute( 'typeof', 'mw:Extension/gallery' );
@@ -112,7 +112,7 @@ ve.dm.MWGalleryNode.prototype.isDiffedAsDocument = function () {
  * @return {ve.dm.MWImageCaptionNode|null} Caption node, if present
  */
 ve.dm.MWGalleryNode.prototype.getCaptionNode = function () {
-	var node = this.children[ 0 ];
+	const node = this.children[ 0 ];
 	return node instanceof ve.dm.MWGalleryCaptionNode ? node : null;
 };
 
@@ -122,9 +122,7 @@ ve.dm.MWGalleryNode.prototype.getCaptionNode = function () {
  * @return {ve.dm.MWGalleryImageNode[]} Gallery image nodes (may be empty if none are present)
  */
 ve.dm.MWGalleryNode.prototype.getImageNodes = function () {
-	var images = this.children.filter( function ( child ) {
-		return child instanceof ve.dm.MWGalleryImageNode;
-	} );
+	const images = this.children.filter( ( child ) => child instanceof ve.dm.MWGalleryImageNode );
 	return images;
 };
 

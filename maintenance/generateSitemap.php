@@ -32,7 +32,9 @@ use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that generates a sitemap for the site.
@@ -175,6 +177,12 @@ class GenerateSitemap extends Maintenance {
 			false,
 			true
 		);
+		$this->addOption(
+			'namespaces',
+			'Only include pages in these namespaces in the sitemap, ' .
+			'defaults to the value of wgSitemapNamespaces if not defined.',
+			false, true, false, true
+		);
 	}
 
 	/**
@@ -213,7 +221,7 @@ class GenerateSitemap extends Maintenance {
 
 		// Custom main namespaces
 		$this->priorities[self::GS_MAIN] = '0.5';
-		// Custom talk namesspaces
+		// Custom talk namespaces
 		$this->priorities[self::GS_TALK] = '0.1';
 		// MediaWiki standard namespaces
 		$this->priorities[NS_MAIN] = '1.0';
@@ -254,6 +262,14 @@ class GenerateSitemap extends Maintenance {
 	 * Generate a one-dimensional array of existing namespaces
 	 */
 	private function generateNamespaces() {
+		// Use the namespaces passed in via command line arguments if they are set.
+		$sitemapNamespacesFromConfig = $this->getOption( 'namespaces' );
+		if ( is_array( $sitemapNamespacesFromConfig ) && count( $sitemapNamespacesFromConfig ) > 0 ) {
+			$this->namespaces = $sitemapNamespacesFromConfig;
+
+			return;
+		}
+
 		// Only generate for specific namespaces if $wgSitemapNamespaces is an array.
 		$sitemapNamespaces = $this->getConfig()->get( MainConfigNames::SitemapNamespaces );
 		if ( is_array( $sitemapNamespaces ) ) {
@@ -320,6 +336,7 @@ class GenerateSitemap extends Maintenance {
 		$services = $this->getServiceContainer();
 		$contLang = $services->getContentLanguage();
 		$langConverter = $services->getLanguageConverterFactory()->getLanguageConverter( $contLang );
+		$serverUrl = $services->getUrlUtils()->getServer( PROTO_CANONICAL ) ?? '';
 
 		fwrite( $this->findex, $this->openIndex() );
 
@@ -356,7 +373,7 @@ class GenerateSitemap extends Maintenance {
 					$filename = $this->sitemapFilename( $namespace, $smcount++ );
 					$this->file = $this->open( $this->fspath . $filename, 'wb' );
 					$this->write( $this->file, $this->openFile() );
-					fwrite( $this->findex, $this->indexEntry( $filename ) );
+					fwrite( $this->findex, $this->indexEntry( $filename, $serverUrl ) );
 					$this->output( "\t$this->fspath$filename\n" );
 					$length = $this->limit[0];
 					$i = 1;
@@ -492,11 +509,12 @@ class GenerateSitemap extends Maintenance {
 	 * Return the XML for a single sitemap indexfile entry
 	 *
 	 * @param string $filename The filename of the sitemap file
+	 * @param string $serverUrl Current server url
 	 * @return string
 	 */
-	private function indexEntry( $filename ) {
+	private function indexEntry( $filename, $serverUrl ) {
 		return "\t<sitemap>\n" .
-			"\t\t<loc>" . wfGetServerUrl( PROTO_CANONICAL ) .
+			"\t\t<loc>" . $serverUrl .
 				( substr( $this->urlpath, 0, 1 ) === "/" ? "" : "/" ) .
 				"{$this->urlpath}$filename</loc>\n" .
 			"\t\t<lastmod>{$this->timestamp}</lastmod>\n" .
@@ -568,5 +586,7 @@ class GenerateSitemap extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GenerateSitemap::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

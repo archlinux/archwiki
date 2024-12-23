@@ -25,9 +25,16 @@
  * @ingroup Maintenance
  */
 
+namespace MediaWiki\Maintenance;
+
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/BackupDumper.php';
 require_once __DIR__ . '/../../includes/export/WikiExporter.php';
+// @codeCoverageIgnoreEnd
 
+use BaseDump;
+use Exception;
+use ExportProgressFilter;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Shell\Shell;
@@ -35,8 +42,14 @@ use MediaWiki\Storage\BlobAccessException;
 use MediaWiki\Storage\BlobStore;
 use MediaWiki\Storage\SqlBlobStore;
 use MediaWiki\WikiMap\WikiMap;
+use MediaWiki\Xml\Xml;
+use MWException;
+use MWUnknownContentModelException;
+use RuntimeException;
+use WikiExporter;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
+use XmlDumpWriter;
 
 /**
  * @ingroup Maintenance
@@ -630,11 +643,7 @@ TEXT
 						(int)$this->thisPage,
 						(int)$this->thisRev,
 						trim( $this->thisRole )
-					);
-
-					if ( $text === null ) {
-						$text = false;
-					}
+					) ?? false;
 
 					if ( is_string( $text ) && $model !== null ) {
 						// Apply export transformation to text coming from an old dump.
@@ -837,7 +846,7 @@ TEXT
 		}
 		$this->spawnErr = false;
 		if ( $this->spawnProc ) {
-			proc_close( $this->spawnProc );
+			pclose( $this->spawnProc );
 		}
 		$this->spawnProc = false;
 		AtEase::restoreWarnings();
@@ -1082,3 +1091,6 @@ TEXT
 	}
 
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( TextPassDumper::class, 'TextPassDumper' );

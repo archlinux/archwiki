@@ -3,9 +3,9 @@
  */
 
 ( function () {
-	var jqXhr, $multipageimage, $spinner,
-		cache = {},
+	let jqXhr, $multipageimage, $spinner,
 		cacheOrder = [];
+	const cache = {};
 
 	/* Fetch the next page, caching up to 10 last-loaded pages.
 	 * @param {string} url
@@ -28,12 +28,10 @@
 
 		// TODO Don't fetch the entire page. Ideally we'd only fetch the content portion or the data
 		// (thumbnail urls) and update the interface manually.
-		jqXhr = $.ajax( url ).then( function ( data ) {
-			return $( data ).find( '.mw-filepage-multipage' ).contents();
-		} );
+		jqXhr = $.ajax( url ).then( ( data ) => $( data ).find( '.mw-filepage-multipage' ).contents() );
 
 		// Handle cache updates
-		jqXhr.done( function ( $contents ) {
+		jqXhr.done( ( $contents ) => {
 			jqXhr = undefined;
 
 			// Cache the newly loaded page
@@ -57,7 +55,7 @@
 	 */
 	function switchPage( url, hist ) {
 		// Start fetching data (might be cached)
-		var promise = fetchPageData( url );
+		const promise = fetchPageData( url );
 
 		// Add a new spinner if one doesn't already exist and the data is not already ready
 		if ( !$spinner && promise.state() !== 'resolved' ) {
@@ -75,7 +73,7 @@
 			$multipageimage.empty().append( $spinner );
 		}
 
-		promise.done( function ( $contents ) {
+		promise.done( ( $contents ) => {
 			$spinner = undefined;
 
 			// Replace table contents
@@ -96,12 +94,10 @@
 
 	function bindPageNavigation( $container ) {
 		$container.find( '.mw-filepage-multipage-navigation' ).one( 'click', 'a', function ( e ) {
-			var page, url;
-
 			// Generate the same URL on client side as the one generated in ImagePage::openShowImage.
 			// We avoid using the URL in the link directly since it could have been manipulated (T68608)
-			page = mw.util.getParamValue( 'page', this.href );
-			url = mw.util.getUrl( null, page ? { page: page } : {} );
+			const page = mw.util.getParamValue( 'page', this.href );
+			const url = mw.util.getUrl( null, page ? { page: page } : {} );
 
 			switchPage( url );
 			e.preventDefault();
@@ -113,7 +109,7 @@
 		} );
 	}
 
-	$( function () {
+	$( () => {
 		if ( mw.config.get( 'wgCanonicalNamespace' ) !== 'File' ) {
 			return;
 		}
@@ -126,8 +122,8 @@
 
 		// Update the url using the History API
 		history.replaceState( { tag: 'mw-pagination' }, '' );
-		$( window ).on( 'popstate', function ( e ) {
-			var state = e.originalEvent.state;
+		$( window ).on( 'popstate', ( e ) => {
+			const state = e.originalEvent.state;
 			if ( state && state.tag === 'mw-pagination' ) {
 				switchPage( location.href, true );
 			}

@@ -299,6 +299,13 @@ class MaintenanceRunner {
 		return [ null, $script ];
 	}
 
+	/**
+	 * @return string The value of the constant MW_INSTALL_PATH. This method mocked in unit tests.
+	 */
+	protected function getMwInstallPath(): string {
+		return MW_INSTALL_PATH;
+	}
+
 	private function expandScriptFile( string $scriptName, ?array $extension ): string {
 		// Append ".php" if not present
 		$scriptFile = $scriptName;
@@ -314,7 +321,7 @@ class MaintenanceRunner {
 				$scriptFile = dirname( $extension['path'] ) . "/maintenance/{$scriptFile}";
 			} else {
 				// It's a core script.
-				$scriptFile = MW_INSTALL_PATH . "/maintenance/{$scriptFile}";
+				$scriptFile = $this->getMwInstallPath() . "/maintenance/{$scriptFile}";
 			}
 		}
 
@@ -356,15 +363,14 @@ class MaintenanceRunner {
 			return;
 		}
 
+		$scriptClass = $this->expandScriptClass( $scriptName, null );
 		$scriptFile = $this->expandScriptFile( $scriptName, null );
 
-		$scriptClass = null;
-		if ( file_exists( $scriptFile ) ) {
-			$scriptClass = $this->loadScriptFile( $scriptFile );
-		}
-
-		if ( !$scriptClass ) {
-			$scriptClass = $this->expandScriptClass( $scriptName, null );
+		if ( !class_exists( $scriptClass ) && file_exists( $scriptFile ) ) {
+			$scriptFileClass = $this->loadScriptFile( $scriptFile );
+			if ( $scriptFileClass ) {
+				$scriptClass = $scriptFileClass;
+			}
 		}
 
 		// NOTE: class_exists will trigger auto-loading, so file-level code in the script file will run.
@@ -414,15 +420,14 @@ class MaintenanceRunner {
 			$extension = null;
 		}
 
+		$scriptClass = $this->expandScriptClass( $scriptName, $extension );
 		$scriptFile = $this->expandScriptFile( $scriptName, $extension );
 
-		$scriptClass = null;
-		if ( file_exists( $scriptFile ) ) {
-			$scriptClass = $this->loadScriptFile( $scriptFile );
-		}
-
-		if ( !$scriptClass ) {
-			$scriptClass = $this->expandScriptClass( $scriptName, $extension );
+		if ( !class_exists( $scriptClass ) && file_exists( $scriptFile ) ) {
+			$scriptFileClass = $this->loadScriptFile( $scriptFile );
+			if ( $scriptFileClass ) {
+				$scriptClass = $scriptFileClass;
+			}
 		}
 
 		if ( !class_exists( $scriptClass ) ) {

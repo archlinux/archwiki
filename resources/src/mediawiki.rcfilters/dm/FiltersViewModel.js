@@ -1,7 +1,6 @@
-var FilterGroup = require( './FilterGroup.js' ),
+const FilterGroup = require( './FilterGroup.js' ),
 	FilterItem = require( './FilterItem.js' ),
-	utils = require( '../utils.js' ),
-	FiltersViewModel;
+	utils = require( '../utils.js' );
 
 /**
  * View model for the filters selection and display.
@@ -10,9 +9,8 @@ var FilterGroup = require( './FilterGroup.js' ),
  * @ignore
  * @mixes OO.EventEmitter
  * @mixes OO.EmitterList
- *
  */
-FiltersViewModel = function MwRcfiltersDmFiltersViewModel() {
+const FiltersViewModel = function MwRcfiltersDmFiltersViewModel() {
 	// Mixin constructor
 	OO.EventEmitter.call( this );
 	OO.EmitterList.call( this );
@@ -78,31 +76,28 @@ OO.mixinClass( FiltersViewModel, OO.EmitterList );
  *  method will go over the state of all items
  */
 FiltersViewModel.prototype.reassessFilterInteractions = function ( item ) {
-	var allSelected,
-		model = this,
+	const model = this,
 		iterationItems = item !== undefined ? [ item ] : this.getItems();
 
-	iterationItems.forEach( function ( checkedItem ) {
-		var allCheckedItems = checkedItem.getSubset().concat( [ checkedItem.getName() ] ),
+	iterationItems.forEach( ( checkedItem ) => {
+		const allCheckedItems = checkedItem.getSubset().concat( [ checkedItem.getName() ] ),
 			groupModel = checkedItem.getGroupModel();
 
 		// Check for subsets (included filters) plus the item itself:
-		allCheckedItems.forEach( function ( filterItemName ) {
-			var itemInSubset = model.getItemByName( filterItemName );
+		allCheckedItems.forEach( ( filterItemName ) => {
+			const itemInSubset = model.getItemByName( filterItemName );
 
 			itemInSubset.toggleIncluded(
 				// If any of itemInSubset's supersets are selected, this item
 				// is included
-				itemInSubset.getSuperset().some( function ( supersetName ) {
-					return ( model.getItemByName( supersetName ).isSelected() );
-				} )
+				itemInSubset.getSuperset().some( ( supersetName ) => ( model.getItemByName( supersetName ).isSelected() ) )
 			);
 		} );
 
 		// Update coverage for the changed group
 		if ( groupModel.isFullCoverage() ) {
-			allSelected = groupModel.areAllSelected();
-			groupModel.getItems().forEach( function ( filterItem ) {
+			const allSelected = groupModel.areAllSelected();
+			groupModel.getItems().forEach( ( filterItem ) => {
 				filterItem.toggleFullyCovered( allSelected );
 			} );
 		}
@@ -113,13 +108,13 @@ FiltersViewModel.prototype.reassessFilterInteractions = function ( item ) {
 	// conflicts are bidirectional and depend not only on
 	// individual items, but also on the selected states of
 	// the groups they're in.
-	this.getItems().forEach( function ( filterItem ) {
-		var inConflict = false,
-			filterItemGroup = filterItem.getGroupModel();
+	this.getItems().forEach( ( filterItem ) => {
+		let inConflict = false;
+		const filterItemGroup = filterItem.getGroupModel();
 
 		// For each item, see if that item is still conflicting
 		// eslint-disable-next-line no-jquery/no-each-util
-		$.each( model.groups, function ( groupName, groupModel ) {
+		$.each( model.groups, ( groupName, groupModel ) => {
 			if ( filterItem.getGroupName() === groupName ) {
 				// Check inside the group
 				inConflict = groupModel.areAnySelectedInConflictWith( filterItem );
@@ -159,9 +154,7 @@ FiltersViewModel.prototype.reassessFilterInteractions = function ( item ) {
 					groupModel.areAllSelectedInConflictWith( filterItem ) &&
 					// Every selected member of the item's own group is also
 					// in conflict with the other group
-					filterItemGroup.findSelectedItems().every( function ( otherGroupItem ) {
-						return groupModel.areAllSelectedInConflictWith( otherGroupItem );
-					} )
+					filterItemGroup.findSelectedItems().every( ( otherGroupItem ) => groupModel.areAllSelectedInConflictWith( otherGroupItem ) )
 				);
 			}
 
@@ -182,9 +175,7 @@ FiltersViewModel.prototype.reassessFilterInteractions = function ( item ) {
  * @return {boolean} There is a conflict
  */
 FiltersViewModel.prototype.hasConflict = function () {
-	return this.getItems().some( function ( filterItem ) {
-		return filterItem.isSelected() && filterItem.isConflicted();
-	} );
+	return this.getItems().some( ( filterItem ) => filterItem.isSelected() && filterItem.isConflicted() );
 };
 
 /**
@@ -194,9 +185,9 @@ FiltersViewModel.prototype.hasConflict = function () {
  * @return {mw.rcfilters.dm.FilterItem|undefined} Conflicted item or undefined when not found
  */
 FiltersViewModel.prototype.getFirstConflictedItem = function () {
-	var i, filterItem, items = this.getItems();
-	for ( i = 0; i < items.length; i++ ) {
-		filterItem = items[ i ];
+	const items = this.getItems();
+	for ( let i = 0; i < items.length; i++ ) {
+		const filterItem = items[ i ];
 		if ( filterItem.isSelected() && filterItem.isConflicted() ) {
 			return filterItem;
 		}
@@ -230,9 +221,7 @@ FiltersViewModel.prototype.getFirstConflictedItem = function () {
  *  }
  */
 FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) {
-	var filterConflictResult, groupConflictResult,
-		allViews,
-		model = this,
+	const model = this,
 		items = [],
 		groupConflictMap = {},
 		filterConflictMap = {},
@@ -247,22 +236,21 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 		 * @return {Object} Expanded conflict definition
 		 */
 		expandConflictDefinitions = function ( obj ) {
-			var result = {};
+			const result = {};
 
 			// eslint-disable-next-line no-jquery/no-each-util
-			$.each( obj, function ( key, conflicts ) {
-				var filterName,
-					adjustedConflicts = {};
+			$.each( obj, ( key, conflicts ) => {
+				const adjustedConflicts = {};
 
-				conflicts.forEach( function ( conflict ) {
-					var filter;
+				conflicts.forEach( ( conflict ) => {
+					let filter;
 
 					if ( conflict.filter ) {
-						filterName = model.groups[ conflict.group ].getPrefixedName( conflict.filter );
+						const filterName = model.groups[ conflict.group ].getPrefixedName( conflict.filter );
 						filter = model.getItemByName( filterName );
 
 						// Rename
-						adjustedConflicts[ filterName ] = $.extend(
+						adjustedConflicts[ filterName ] = Object.assign(
 							{},
 							conflict,
 							{
@@ -275,9 +263,9 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 						// represent each filter
 
 						// Get the relevant group items
-						model.groups[ conflict.group ].getItems().forEach( function ( groupItem ) {
+						model.groups[ conflict.group ].getItems().forEach( ( groupItem ) => {
 							// Rebuild the conflict
-							adjustedConflicts[ groupItem.getName() ] = $.extend(
+							adjustedConflicts[ groupItem.getName() ] = Object.assign(
 								{},
 								conflict,
 								{
@@ -304,8 +292,8 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 	filterGroups = OO.copy( filterGroups );
 
 	// Normalize definition from the server
-	filterGroups.forEach( function ( data ) {
-		var i;
+	filterGroups.forEach( ( data ) => {
+		let i;
 		// What's this information needs to be normalized
 		data.whatsThis = {
 			body: data.whatsThisBody,
@@ -329,7 +317,7 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 	} );
 
 	// Collect views
-	allViews = $.extend( true, {
+	const allViews = $.extend( true, {
 		default: {
 			title: mw.msg( 'rcfilters-filterlist-title' ),
 			groups: filterGroups
@@ -338,7 +326,7 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 
 	// Go over all views
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( allViews, function ( viewName, viewData ) {
+	$.each( allViews, ( viewName, viewData ) => {
 		// Define the view
 		model.views[ viewName ] = {
 			name: viewData.name,
@@ -347,8 +335,8 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 		};
 
 		// Go over groups
-		viewData.groups.forEach( function ( groupData ) {
-			var group = groupData.name;
+		viewData.groups.forEach( ( groupData ) => {
+			const group = groupData.name;
 
 			if ( !model.groups[ group ] ) {
 				model.groups[ group ] = new FilterGroup(
@@ -358,7 +346,7 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 			}
 
 			model.groups[ group ].initializeFilters( groupData.filters, groupData.default );
-			items = items.concat( model.groups[ group ].getItems() );
+			items.push( ...model.groups[ group ].getItems() );
 
 			// Prepare conflicts
 			if ( groupData.conflicts ) {
@@ -366,8 +354,8 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 				groupConflictMap[ group ] = groupData.conflicts;
 			}
 
-			groupData.filters.forEach( function ( itemData ) {
-				var filterItem = model.groups[ group ].getItemByParamName( itemData.name );
+			groupData.filters.forEach( ( itemData ) => {
+				const filterItem = model.groups[ group ].getItemByParamName( itemData.name );
 				// Filter conflicts
 				if ( itemData.conflicts ) {
 					filterConflictMap[ filterItem.getName() ] = itemData.conflicts;
@@ -380,33 +368,33 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
 	this.addItems( items );
 
 	// Expand conflicts
-	groupConflictResult = expandConflictDefinitions( groupConflictMap );
-	filterConflictResult = expandConflictDefinitions( filterConflictMap );
+	const groupConflictResult = expandConflictDefinitions( groupConflictMap );
+	const filterConflictResult = expandConflictDefinitions( filterConflictMap );
 
 	// Set conflicts for groups
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( groupConflictResult, function ( group, conflicts ) {
+	$.each( groupConflictResult, ( group, conflicts ) => {
 		model.groups[ group ].setConflicts( conflicts );
 	} );
 
 	// Set conflicts for items
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( filterConflictResult, function ( filterName, conflicts ) {
-		var filterItem = model.getItemByName( filterName );
+	$.each( filterConflictResult, ( filterName, conflicts ) => {
+		const filterItem = model.getItemByName( filterName );
 		// set conflicts for items in the group
 		filterItem.setConflicts( conflicts );
 	} );
 
 	// Create a map between known parameters and their models
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.groups, function ( group, groupModel ) {
+	$.each( this.groups, ( group, groupModel ) => {
 		if (
 			groupModel.getType() === 'send_unselected_if_any' ||
 			groupModel.getType() === 'boolean' ||
 			groupModel.getType() === 'any_value'
 		) {
 			// Individual filters
-			groupModel.getItems().forEach( function ( filterItem ) {
+			groupModel.getItems().forEach( ( filterItem ) => {
 				model.parameterMap[ filterItem.getParamName() ] = filterItem;
 			} );
 		} else if (
@@ -432,23 +420,22 @@ FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) 
  * @param {Object} params Parameters object
  */
 FiltersViewModel.prototype.updateStateFromParams = function ( params ) {
-	var filtersValue;
 	// For arbitrary numeric single_option values make sure the values
 	// are normalized to fit within the limits
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.getFilterGroups(), function ( groupName, groupModel ) {
+	$.each( this.getFilterGroups(), ( groupName, groupModel ) => {
 		params[ groupName ] = groupModel.normalizeArbitraryValue( params[ groupName ] );
 	} );
 
 	// Update filter values
-	filtersValue = this.getFiltersFromParameters( params );
-	Object.keys( filtersValue ).forEach( function ( filterName ) {
+	const filtersValue = this.getFiltersFromParameters( params );
+	Object.keys( filtersValue ).forEach( ( filterName ) => {
 		this.getItemByName( filterName ).setValue( filtersValue[ filterName ] );
-	}.bind( this ) );
+	} );
 
 	// Update highlight state
-	this.getItemsSupportingHighlights().forEach( function ( filterItem ) {
-		var color = params[ filterItem.getName() + '_color' ];
+	this.getItemsSupportingHighlights().forEach( ( filterItem ) => {
+		const color = params[ filterItem.getName() + '_color' ];
 		if ( color ) {
 			filterItem.setHighlightColor( color );
 		} else {
@@ -486,20 +473,20 @@ FiltersViewModel.prototype.getEmptyParameterState = function () {
  * @return {Object} Empty parameter state
  */
 FiltersViewModel.prototype.getMinimizedParamRepresentation = function ( parameters ) {
-	var result = {};
+	const result = {};
 
 	parameters = parameters ? $.extend( true, {}, parameters ) : this.getCurrentParameterState();
 
 	// Params
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.getEmptyParameterState(), function ( param, value ) {
+	$.each( this.getEmptyParameterState(), ( param, value ) => {
 		if ( parameters[ param ] !== undefined && parameters[ param ] !== value ) {
 			result[ param ] = parameters[ param ];
 		}
 	} );
 
 	// Highlights
-	Object.keys( this.getEmptyHighlightParameters() ).forEach( function ( param ) {
+	Object.keys( this.getEmptyHighlightParameters() ).forEach( ( param ) => {
 		if ( parameters[ param ] ) {
 			// If a highlight parameter is not undefined and not null
 			// add it to the result
@@ -531,7 +518,7 @@ FiltersViewModel.prototype.getExpandedParamRepresentation = function () {
  * @return {Object} Parameter representation of the current state of the model
  */
 FiltersViewModel.prototype.getCurrentParameterState = function ( removeStickyParams ) {
-	var state = this.getMinimizedParamRepresentation( $.extend(
+	let state = this.getMinimizedParamRepresentation( $.extend(
 		true,
 		{},
 		this.getParametersFromFilters( this.getSelectedState() ),
@@ -552,7 +539,7 @@ FiltersViewModel.prototype.getCurrentParameterState = function ( removeStickyPar
  * @return {Object} Parameter state without sticky parameters
  */
 FiltersViewModel.prototype.removeStickyParams = function ( paramState ) {
-	this.getStickyParams().forEach( function ( paramName ) {
+	this.getStickyParams().forEach( ( paramName ) => {
 		delete paramState[ paramName ];
 	} );
 
@@ -582,12 +569,12 @@ FiltersViewModel.prototype.getFilterGroups = function () {
  * @return {Object} Filter groups matching a display group
  */
 FiltersViewModel.prototype.getFilterGroupsByView = function ( view ) {
-	var result = {};
+	const result = {};
 
 	view = view || this.getCurrentView();
 
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.groups, function ( groupName, groupModel ) {
+	$.each( this.groups, ( groupName, groupModel ) => {
 		if ( groupModel.getView() === view ) {
 			result[ groupName ] = groupModel;
 		}
@@ -604,16 +591,15 @@ FiltersViewModel.prototype.getFilterGroupsByView = function ( view ) {
  * @return {mw.rcfilters.dm.FilterItem} Filter items matching the group
  */
 FiltersViewModel.prototype.getFiltersByView = function ( view ) {
-	var groups,
-		result = [];
+	const result = [];
 
 	view = view || this.getCurrentView();
 
-	groups = this.getFilterGroupsByView( view );
+	const groups = this.getFilterGroupsByView( view );
 
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( groups, function ( groupName, groupModel ) {
-		result = result.concat( groupModel.getItems() );
+	$.each( groups, ( groupName, groupModel ) => {
+		result.push( ...groupModel.getItems() );
 	} );
 
 	return result;
@@ -646,11 +632,10 @@ FiltersViewModel.prototype.getParamValue = function ( name ) {
  * @return {Object} Filters selected state
  */
 FiltersViewModel.prototype.getSelectedState = function ( onlySelected ) {
-	var i,
-		items = this.getItems(),
+	const items = this.getItems(),
 		result = {};
 
-	for ( i = 0; i < items.length; i++ ) {
+	for ( let i = 0; i < items.length; i++ ) {
 		if ( !onlySelected || items[ i ].getValue() ) {
 			result[ items[ i ].getName() ] = items[ i ].getValue();
 		}
@@ -665,11 +650,10 @@ FiltersViewModel.prototype.getSelectedState = function ( onlySelected ) {
  * @return {Object} Filters full state
  */
 FiltersViewModel.prototype.getFullState = function () {
-	var i,
-		items = this.getItems(),
+	const items = this.getItems(),
 		result = {};
 
-	for ( i = 0; i < items.length; i++ ) {
+	for ( let i = 0; i < items.length; i++ ) {
 		result[ items[ i ].getName() ] = {
 			selected: items[ i ].isSelected(),
 			conflicted: items[ i ].isConflicted(),
@@ -686,11 +670,11 @@ FiltersViewModel.prototype.getFullState = function () {
  * @return {Object} Default parameter values
  */
 FiltersViewModel.prototype.getDefaultParams = function () {
-	var result = {};
+	const result = {};
 
 	// Get default filter state
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.groups, function ( name, model ) {
+	$.each( this.groups, ( name, model ) => {
 		if ( !model.isSticky() ) {
 			$.extend( true, result, model.getDefaultParams() );
 		}
@@ -705,18 +689,16 @@ FiltersViewModel.prototype.getDefaultParams = function () {
  * @return {Object} Sticky parameter values
  */
 FiltersViewModel.prototype.getStickyParams = function () {
-	var result = [];
+	let result = [];
 
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.groups, function ( name, model ) {
+	$.each( this.groups, ( name, model ) => {
 		if ( model.isSticky() ) {
 			if ( model.isPerGroupRequestParameter() ) {
 				result.push( name );
 			} else {
 				// Each filter is its own param
-				result = result.concat( model.getItems().map( function ( filterItem ) {
-					return filterItem.getParamName();
-				} ) );
+				result = result.concat( model.getItems().map( ( filterItem ) => filterItem.getParamName() ) );
 			}
 		}
 	} );
@@ -730,10 +712,10 @@ FiltersViewModel.prototype.getStickyParams = function () {
  * @return {Object} Sticky parameter values
  */
 FiltersViewModel.prototype.getStickyParamsValues = function () {
-	var result = {};
+	const result = {};
 
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.groups, function ( name, model ) {
+	$.each( this.groups, ( name, model ) => {
 		if ( model.isSticky() ) {
 			$.extend( true, result, model.getParamRepresentation() );
 		}
@@ -751,8 +733,8 @@ FiltersViewModel.prototype.getStickyParamsValues = function () {
  * @return {Object} Parameter state object
  */
 FiltersViewModel.prototype.getParametersFromFilters = function ( filterDefinition ) {
-	var groupItemDefinition,
-		result = {},
+	let groupItemDefinition;
+	const result = {},
 		groupItems = this.getFilterGroups();
 
 	if ( filterDefinition ) {
@@ -763,15 +745,15 @@ FiltersViewModel.prototype.getParametersFromFilters = function ( filterDefinitio
 		// back into groupings so we can "feed" it to the
 		// loop below, and we need to expand it so it includes
 		// all filters (set to false)
-		this.getItems().forEach( function ( filterItem ) {
+		this.getItems().forEach( ( filterItem ) => {
 			groupItemDefinition[ filterItem.getGroupName() ] = groupItemDefinition[ filterItem.getGroupName() ] || {};
 			groupItemDefinition[ filterItem.getGroupName() ][ filterItem.getName() ] = filterItem.coerceValue( filterDefinition[ filterItem.getName() ] );
 		} );
 	}
 
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( groupItems, function ( group, model ) {
-		$.extend(
+	$.each( groupItems, ( group, model ) => {
+		Object.assign(
 			result,
 			model.getParamRepresentation(
 				groupItemDefinition ?
@@ -791,9 +773,9 @@ FiltersViewModel.prototype.getParametersFromFilters = function ( filterDefinitio
  * @return {Object} Filter state object
  */
 FiltersViewModel.prototype.getFiltersFromParameters = function ( params ) {
-	var groupMap = {},
-		model = this,
-		result = {};
+	const groupMap = {},
+		model = this;
+	let result = {};
 
 	// Go over the given parameters, break apart to groupings
 	// The resulting object represents the group with its parameter
@@ -807,12 +789,11 @@ FiltersViewModel.prototype.getFiltersFromParameters = function ( params ) {
 	//    group2: "param4|param5"
 	// }
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( params, function ( paramName, paramValue ) {
-		var groupName,
-			itemOrGroup = model.parameterMap[ paramName ];
+	$.each( params, ( paramName, paramValue ) => {
+		const itemOrGroup = model.parameterMap[ paramName ];
 
 		if ( itemOrGroup ) {
-			groupName = itemOrGroup instanceof FilterItem ?
+			const groupName = itemOrGroup instanceof FilterItem ?
 				itemOrGroup.getGroupName() : itemOrGroup.getName();
 
 			groupMap[ groupName ] = groupMap[ groupName ] || {};
@@ -823,7 +804,7 @@ FiltersViewModel.prototype.getFiltersFromParameters = function ( params ) {
 	// Go over all groups, so we make sure we get the complete output
 	// even if the parameters don't include a certain group
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.groups, function ( groupName, groupModel ) {
+	$.each( this.groups, ( groupName, groupModel ) => {
 		result = $.extend( true, {}, result, groupModel.getFilterRepresentation( groupMap[ groupName ] ) );
 	} );
 
@@ -837,10 +818,10 @@ FiltersViewModel.prototype.getFiltersFromParameters = function ( params ) {
  *                  are the selected highlight colors.
  */
 FiltersViewModel.prototype.getHighlightParameters = function () {
-	var highlightEnabled = this.isHighlightEnabled(),
+	const highlightEnabled = this.isHighlightEnabled(),
 		result = {};
 
-	this.getItems().forEach( function ( filterItem ) {
+	this.getItems().forEach( ( filterItem ) => {
 		if ( filterItem.isHighlightSupported() ) {
 			result[ filterItem.getName() + '_color' ] = highlightEnabled && filterItem.isHighlighted() ?
 				filterItem.getHighlightColor() :
@@ -857,9 +838,9 @@ FiltersViewModel.prototype.getHighlightParameters = function () {
  * @return {Object} Object containing all the highlight parameters set to their negative value
  */
 FiltersViewModel.prototype.getEmptyHighlightParameters = function () {
-	var result = {};
+	const result = {};
 
-	this.getItems().forEach( function ( filterItem ) {
+	this.getItems().forEach( ( filterItem ) => {
 		if ( filterItem.isHighlightSupported() ) {
 			result[ filterItem.getName() + '_color' ] = null;
 		}
@@ -874,11 +855,11 @@ FiltersViewModel.prototype.getEmptyHighlightParameters = function () {
  * @return {string[]} Currently applied highlight colors
  */
 FiltersViewModel.prototype.getCurrentlyUsedHighlightColors = function () {
-	var result = [];
+	const result = [];
 
 	if ( this.isHighlightEnabled() ) {
-		this.getHighlightedItems().forEach( function ( filterItem ) {
-			var color = filterItem.getHighlightColor();
+		this.getHighlightedItems().forEach( ( filterItem ) => {
+			const color = filterItem.getHighlightColor();
 
 			if ( result.indexOf( color ) === -1 ) {
 				result.push( color );
@@ -900,9 +881,7 @@ FiltersViewModel.prototype.getCurrentlyUsedHighlightColors = function () {
  * @return {string[]} Array of valid values
  */
 FiltersViewModel.prototype.sanitizeStringOptionGroup = function ( groupName, valueArray ) {
-	var validNames = this.getGroupFilters( groupName ).map( function ( filterItem ) {
-		return filterItem.getParamName();
-	} );
+	const validNames = this.getGroupFilters( groupName ).map( ( filterItem ) => filterItem.getParamName() );
 
 	return utils.normalizeParamOptions( valueArray, validNames );
 };
@@ -918,8 +897,8 @@ FiltersViewModel.prototype.sanitizeStringOptionGroup = function ( groupName, val
 FiltersViewModel.prototype.areVisibleFiltersEmpty = function () {
 	// Check if there are either any selected items or any items
 	// that have highlight enabled
-	return !this.getItems().some( function ( filterItem ) {
-		var visible = !filterItem.getGroupModel().isSticky() && !filterItem.getGroupModel().isHidden(),
+	return !this.getItems().some( ( filterItem ) => {
+		const visible = !filterItem.getGroupModel().isSticky() && !filterItem.getGroupModel().isHidden(),
 			active = ( filterItem.isSelected() || filterItem.isHighlighted() );
 		return visible && active;
 	} );
@@ -937,9 +916,7 @@ FiltersViewModel.prototype.areVisibleFiltersEmpty = function () {
  */
 FiltersViewModel.prototype.areNamespacesEffectivelyInverted = function () {
 	return this.getNamespacesInvertModel().isSelected() &&
-		this.findSelectedItems().some( function ( itemModel ) {
-			return itemModel.getGroupModel().getName() === 'namespace';
-		} );
+		this.findSelectedItems().some( ( itemModel ) => itemModel.getGroupModel().getName() === 'namespace' );
 };
 
 /**
@@ -954,9 +931,7 @@ FiltersViewModel.prototype.areNamespacesEffectivelyInverted = function () {
  */
 FiltersViewModel.prototype.areTagsEffectivelyInverted = function () {
 	return this.getTagsInvertModel().isSelected() &&
-		this.findSelectedItems().some( function ( itemModel ) {
-			return itemModel.getGroupModel().getName() === 'tagfilter';
-		} );
+		this.findSelectedItems().some( ( itemModel ) => itemModel.getGroupModel().getName() === 'tagfilter' );
 };
 
 /**
@@ -967,9 +942,7 @@ FiltersViewModel.prototype.areTagsEffectivelyInverted = function () {
  * @return {mw.rcfilters.dm.FilterItem} Filter item
  */
 FiltersViewModel.prototype.getItemByName = function ( name ) {
-	return this.getItems().filter( function ( item ) {
-		return name === item.getName();
-	} )[ 0 ];
+	return this.getItems().filter( ( item ) => name === item.getName() )[ 0 ];
 };
 
 /**
@@ -977,11 +950,11 @@ FiltersViewModel.prototype.getItemByName = function ( name ) {
  * This is equivalent to display all.
  */
 FiltersViewModel.prototype.emptyAllFilters = function () {
-	this.getItems().forEach( function ( filterItem ) {
+	this.getItems().forEach( ( filterItem ) => {
 		if ( !filterItem.getGroupModel().isSticky() ) {
 			this.toggleFilterSelected( filterItem.getName(), false );
 		}
-	}.bind( this ) );
+	} );
 };
 
 /**
@@ -991,7 +964,7 @@ FiltersViewModel.prototype.emptyAllFilters = function () {
  * @param {boolean} [isSelected] Filter selected state
  */
 FiltersViewModel.prototype.toggleFilterSelected = function ( name, isSelected ) {
-	var item = this.getItemByName( name );
+	const item = this.getItemByName( name );
 
 	if ( item ) {
 		item.toggleSelected( isSelected );
@@ -1004,9 +977,9 @@ FiltersViewModel.prototype.toggleFilterSelected = function ( name, isSelected ) 
  * @param {Object} filterDef Filter definitions
  */
 FiltersViewModel.prototype.toggleFiltersSelected = function ( filterDef ) {
-	Object.keys( filterDef ).forEach( function ( name ) {
+	Object.keys( filterDef ).forEach( ( name ) => {
 		this.toggleFilterSelected( name, filterDef[ name ] );
-	}.bind( this ) );
+	} );
 };
 
 /**
@@ -1043,9 +1016,7 @@ FiltersViewModel.prototype.getGroupFilters = function ( groupName ) {
  *  arranged by their group names
  */
 FiltersViewModel.prototype.findMatches = function ( query, returnFlat ) {
-	var i, searchIsEmpty,
-		groupTitle,
-		result = {},
+	const result = {},
 		flatResult = [],
 		view = this.getViewByTrigger( query.slice( 0, 1 ) ),
 		items = this.getFiltersByView( view );
@@ -1061,10 +1032,10 @@ FiltersViewModel.prototype.findMatches = function ( query, returnFlat ) {
 
 	// Check if the search if actually empty; this can be a problem when
 	// we use prefixes to denote different views
-	searchIsEmpty = query.length === 0;
+	const searchIsEmpty = query.length === 0;
 
 	// item label starting with the query string
-	for ( i = 0; i < items.length; i++ ) {
+	for ( let i = 0; i < items.length; i++ ) {
 		if (
 			searchIsEmpty ||
 			items[ i ].getLabel().toLowerCase().indexOf( query ) === 0 ||
@@ -1082,8 +1053,8 @@ FiltersViewModel.prototype.findMatches = function ( query, returnFlat ) {
 
 	if ( $.isEmptyObject( result ) ) {
 		// item containing the query string in their label, description, or group title
-		for ( i = 0; i < items.length; i++ ) {
-			groupTitle = items[ i ].getGroupModel().getTitle();
+		for ( let i = 0; i < items.length; i++ ) {
+			const groupTitle = items[ i ].getGroupModel().getTitle();
 			if (
 				searchIsEmpty ||
 				items[ i ].getLabel().toLowerCase().indexOf( query ) > -1 ||
@@ -1112,10 +1083,8 @@ FiltersViewModel.prototype.findMatches = function ( query, returnFlat ) {
  * @return {mw.rcfilters.dm.FilterItem[]} Highlighted items
  */
 FiltersViewModel.prototype.getHighlightedItems = function () {
-	return this.getItems().filter( function ( filterItem ) {
-		return filterItem.isHighlightSupported() &&
-			filterItem.getHighlightColor();
-	} );
+	return this.getItems().filter( ( filterItem ) => filterItem.isHighlightSupported() &&
+			filterItem.getHighlightColor() );
 };
 
 /**
@@ -1125,9 +1094,7 @@ FiltersViewModel.prototype.getHighlightedItems = function () {
  * @return {mw.rcfilters.dm.FilterItem[]} Items supporting highlights
  */
 FiltersViewModel.prototype.getItemsSupportingHighlights = function () {
-	return this.getItems().filter( function ( filterItem ) {
-		return filterItem.isHighlightSupported();
-	} );
+	return this.getItems().filter( ( filterItem ) => filterItem.isHighlightSupported() );
 };
 
 /**
@@ -1137,10 +1104,10 @@ FiltersViewModel.prototype.getItemsSupportingHighlights = function () {
  * @return {mw.rcfilters.dm.FilterItem[]} Selected items
  */
 FiltersViewModel.prototype.findSelectedItems = function () {
-	var allSelected = [];
+	let allSelected = [];
 
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.getFilterGroups(), function ( groupName, groupModel ) {
+	$.each( this.getFilterGroups(), ( groupName, groupModel ) => {
 		allSelected = allSelected.concat( groupModel.findSelectedItems() );
 	} );
 
@@ -1175,10 +1142,10 @@ FiltersViewModel.prototype.getViewTitle = function ( viewName ) {
  * @return {string} Name of view
  */
 FiltersViewModel.prototype.getViewByTrigger = function ( trigger ) {
-	var result = 'default';
+	let result = 'default';
 
 	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( this.views, function ( name, data ) {
+	$.each( this.views, ( name, data ) => {
 		if ( data.trigger === trigger ) {
 			result = name;
 		}
@@ -1221,7 +1188,7 @@ FiltersViewModel.prototype.getViewFromString = function ( str ) {
  * @fires searchChange
  */
 FiltersViewModel.prototype.setSearch = function ( searchQuery ) {
-	var visibleGroups, visibleGroupNames;
+	let visibleGroups, visibleGroupNames;
 
 	if ( this.searchQuery !== searchQuery ) {
 		// Check if the view changed
@@ -1232,7 +1199,7 @@ FiltersViewModel.prototype.setSearch = function ( searchQuery ) {
 
 		// Update visibility of items and groups
 		// eslint-disable-next-line no-jquery/no-each-util
-		$.each( this.getFilterGroups(), function ( groupName, groupModel ) {
+		$.each( this.getFilterGroups(), ( groupName, groupModel ) => {
 			// Check if the group is visible at all
 			groupModel.toggleVisible( visibleGroupNames.indexOf( groupName ) !== -1 );
 			groupModel.setVisibleItems( visibleGroups[ groupName ] || [] );

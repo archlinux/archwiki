@@ -1,11 +1,14 @@
 <?php
 
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use Wikimedia\Rdbms\ReadOnlyMode;
@@ -15,12 +18,15 @@ use Wikimedia\Rdbms\ReadOnlyMode;
  * that they result in failures as expected
  *
  * @covers \MediaWiki\EditPage\EditPage::internalAttemptSave
+ * @covers \MediaWiki\EditPage\EditPage::internalAttemptSavePrivate
  *
  * @group Editing
  * @group Database
  * @group medium
  */
 class EditPageConstraintsTest extends MediaWikiLangTestCase {
+
+	use TempUserTestTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -81,9 +87,7 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
 		$page = $wikiPageFactory->newFromTitle( $title );
 
-		if ( $user == null ) {
-			$user = $this->getTestUser()->getUser();
-		}
+		$user ??= $this->getTestUser()->getUser();
 
 		if ( $baseText !== null ) {
 			$content = ContentHandler::makeContent( $baseText, $title );
@@ -139,12 +143,8 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 		$ep->setContextTitle( $title );
 		$ep->importFormData( $req );
 
-		$bot = !empty( $edit['bot'] );
-
 		// this is where the edit happens!
-		// Note: don't want to use EditPage::attemptSave, because it messes with $wgOut
-		// and throws exceptions like PermissionsError
-		$status = $ep->internalAttemptSave( $result, $bot );
+		$status = $ep->attemptSave( $result );
 
 		// check edit code
 		$this->assertSame(
@@ -201,15 +201,15 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 		);
 	}
 
-	/** AutoSummaryMissingSummaryConstraint integration */
-	public function testAutoSummaryMissingSummaryConstraint() {
+	/** ExistingSectionEditConstraint integration */
+	public function testExistingSectionEditConstraint() {
 		// Require the summary
 		$this->mergeMwGlobalArrayValue(
 			'wgDefaultUserOptions',
 			[ 'forceeditsummary' => 1 ]
 		);
 
-		$page = $this->getExistingTestPage( 'AutoSummaryMissingSummaryConstraint page does exist' );
+		$page = $this->getExistingTestPage( 'ExistingSectionEditConstraint page does exist' );
 		$title = $page->getTitle();
 
 		$user = $this->getTestUser()->getUser();
@@ -406,6 +406,7 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 	 */
 	public function testEditRightConstraint( $anon, $expectedErrorCode ) {
 		if ( $anon ) {
+			$this->disableAutoCreateTempUser();
 			$user = $this->getServiceContainer()->getUserFactory()->newAnonymous( '127.0.0.1' );
 		} else {
 			$user = $this->getTestUser()->getUser();
@@ -440,6 +441,7 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 	 */
 	public function testImageRedirectConstraint( $anon, $expectedErrorCode ) {
 		if ( $anon ) {
+			$this->disableAutoCreateTempUser();
 			$user = $this->getServiceContainer()->getUserFactory()->newAnonymous( '127.0.0.1' );
 		} else {
 			$user = $this->getTestUser()->getUser();

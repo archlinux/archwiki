@@ -120,7 +120,6 @@
 	"notification-bundle-header-edit-user-talk-v2": "Existas {{PLURAL:$1|1 nova mesajo|$1 nova mesaji|100=plu kam 99 nova mesaji}} en <strong>{{GENDER:$3|vua}} diskuto-pagino</strong>.",
 	"echo-email-batch-subject-daily": "Vu havas {{PLURAL:$2|nova avizo|nova avizi}} che {{SITENAME}}",
 	"echo-email-batch-subject-weekly": "Vu havas {{PLURAL:$2|nova avizo|nova avizi}} de {{SITENAME}} ca semano",
-	"echo-email-batch-body-intro-weekly": "Saluto $1,\nYen rezumo por vu pri l'aktiveso dum ca semano che retosituo {{SITENAME}}.",
 	"echo-email-batch-link-text-view-all-notifications": "Montrez omna avizi",
 	"notification-header-foreign-alert": "Plusa avizi de {{PLURAL:$5|altra Wiki|$5 altra Wiki}}",
 	"notification-header-foreign-notice": "Altra avizi de {{PLURAL:$5|altra Wiki|$5 altra Wiki}}",

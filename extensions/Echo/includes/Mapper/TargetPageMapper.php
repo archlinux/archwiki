@@ -29,7 +29,11 @@ class TargetPageMapper extends AbstractMapper {
 
 		$row = $targetPage->toDbArray();
 
-		$dbw->insert( 'echo_target_page', $row, __METHOD__ );
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'echo_target_page' )
+			->row( $row )
+			->caller( __METHOD__ )
+			->execute();
 
 		return true;
 	}

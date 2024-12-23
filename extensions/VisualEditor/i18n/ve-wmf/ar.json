@@ -20,11 +20,8 @@
 			"아라"
 		]
 	},
-	"tag-editcheck-newcontent-description": "يعتقد EditCheck أنه تمت إضافة محتوى جديد إلى الصفحة",
-	"tag-editcheck-newreference-description": "تمت إضافة مرجع إلى الصفحة",
 	"tag-editcheck-references-description": "يعتقد (إديت تشيك) أنّه قد يكون هناك حاجة إلى مرجع",
 	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|فحص التحرير (أداة التحقق) مفعلّة]]",
-	"tag-editcheck-references-activated-description": "يعتقد EditCheck أنه ربما كان هناك حاجة إلى مرجع، وتم عرض واجهة المستخدم",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|تحرير مرئي]]",
 	"tag-visualeditor-description": "تم التعديل باستخدام [[{{MediaWiki:visualeditor-descriptionpagelink}}|المحرر المرئي]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|المحرر المرئي: تحقق]]",
@@ -36,7 +33,6 @@
 	"visualeditor-feedback-link": "Project:المحرر المرئي/تعليقات",
 	"visualeditor-feedback-tool": "اترك تعليقًا حول هذا البرنامج",
 	"visualeditor-help-label": "اقرأ دليل المستخدم",
-	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
 	"visualeditor-welcomedialog-action": "بدء التعديل",
 	"visualeditor-welcomedialog-content": "بإمكان الجميع التحرير، وكل تحسين يُساعد.",
 	"visualeditor-welcomedialog-content-thanks": "شكرًا لك لمساعدة العالم على اكتشاف المزيد!",

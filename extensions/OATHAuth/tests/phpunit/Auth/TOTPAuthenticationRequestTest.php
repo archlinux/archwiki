@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\OATHAuth\Tests\Auth;
 
-use MediaWiki\Auth\AuthenticationRequestTestCase;
 use MediaWiki\Extension\OATHAuth\Auth\TOTPAuthenticationRequest;
+use MediaWiki\Tests\Auth\AuthenticationRequestTestCase;
 
 /**
  * @covers \MediaWiki\Extension\OATHAuth\Auth\TOTPAuthenticationRequest

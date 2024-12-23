@@ -20,8 +20,10 @@
 
 namespace MediaWiki\Linter;
 
-use DatabaseUpdater;
+use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
+use MediaWiki\Linter\Maintenance\MigrateNamespace;
+use MediaWiki\Linter\Maintenance\MigrateTagTemplate;
 
 class SchemaHooks implements LoadExtensionSchemaUpdatesHook {
 	/**
@@ -45,5 +47,8 @@ class SchemaHooks implements LoadExtensionSchemaUpdatesHook {
 		$updater->modifyExtensionField( 'linter', 'linter_params',
 			"{$dir}/sql/{$dbType}/patch-linter-fix-params-null-definition.sql"
 		);
+		// 1.43
+		$updater->addPostDatabaseUpdateMaintenance( MigrateNamespace::class );
+		$updater->addPostDatabaseUpdateMaintenance( MigrateTagTemplate::class );
 	}
 }

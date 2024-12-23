@@ -4,15 +4,22 @@ namespace Cite\Tests\Unit;
 
 use Cite\Cite;
 use Cite\Hooks\CiteParserTagHooks;
-use Parser;
-use ParserOutput;
-use PPFrame;
+use MediaWiki\Config\Config;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\PPFrame;
 
 /**
  * @covers \Cite\Hooks\CiteParserTagHooks
  * @license GPL-2.0-or-later
  */
 class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
+
+	private function newCiteParserTagHooks() {
+		return new CiteParserTagHooks(
+			$this->createNoOpMock( Config::class )
+		);
+	}
 
 	public function testRegister() {
 		$parser = $this->createNoOpMock( Parser::class, [ 'setHook' ] );
@@ -24,7 +31,8 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 				unset( $expectedTags[$tag] );
 			} );
 
-		CiteParserTagHooks::register( $parser );
+		$citeParserTagHooks = $this->newCiteParserTagHooks();
+		$citeParserTagHooks->register( $parser );
 	}
 
 	public function testRef_fails() {
@@ -37,7 +45,8 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 
 		$frame = $this->createMock( PPFrame::class );
 
-		$html = CiteParserTagHooks::ref( null, [], $parser, $frame );
+		$citeParserTagHooks = $this->newCiteParserTagHooks();
+		$html = $citeParserTagHooks->ref( null, [], $parser, $frame );
 		$this->assertSame( '&lt;ref&gt;&lt;/ref&gt;', $html );
 	}
 
@@ -60,7 +69,8 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 
 		$frame = $this->createMock( PPFrame::class );
 
-		$html = CiteParserTagHooks::ref( null, [], $parser, $frame );
+		$citeParserTagHooks = $this->newCiteParserTagHooks();
+		$html = $citeParserTagHooks->ref( null, [], $parser, $frame );
 		$this->assertSame( '<HTML>', $html );
 	}
 
@@ -74,7 +84,8 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 
 		$frame = $this->createMock( PPFrame::class );
 
-		$html = CiteParserTagHooks::references( null, [], $parser, $frame );
+		$citeParserTagHooks = $this->newCiteParserTagHooks();
+		$html = $citeParserTagHooks->references( null, [], $parser, $frame );
 		$this->assertSame( '&lt;references/&gt;', $html );
 	}
 
@@ -89,7 +100,8 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 
 		$frame = $this->createMock( PPFrame::class );
 
-		$html = CiteParserTagHooks::references( null, [], $parser, $frame );
+		$citeParserTagHooks = $this->newCiteParserTagHooks();
+		$html = $citeParserTagHooks->references( null, [], $parser, $frame );
 		$this->assertSame( '<HTML>', $html );
 	}
 

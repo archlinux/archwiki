@@ -26,7 +26,7 @@ function init() {
 	// Bind callback functions to animate our drop down menu in and out
 	// and then call the collapsibleTabs function on the menu
 	$tabContainer
-		.on( 'beforeTabCollapse', function () {
+		.on( 'beforeTabCollapse', () => {
 			let expandedWidth;
 			// If the dropdown was hidden, show it
 			if ( !mw.util.isPortletVisible( cactionsId ) ) {
@@ -42,7 +42,7 @@ function init() {
 					.animate( { width: expandedWidth }, 'normal' );
 			}
 		} )
-		.on( 'beforeTabExpand', function () {
+		.on( 'beforeTabExpand', () => {
 			// If we're removing the last child node right now, hide the dropdown
 			if ( $cactions.find( 'li' ).length === 1 ) {
 				// eslint-disable-next-line no-jquery/no-animate
@@ -98,7 +98,7 @@ function init() {
 				// 3. and, the left-navigation and right-navigation are overlapping
 				//    each other, e.g. when making the window very narrow, or if a gadget
 				//    added a lot of tabs.
-				$tabContainer.children( 'li.collapsible' ).each( function ( _index, element ) {
+				$tabContainer.children( 'li.collapsible' ).each( ( _index, element ) => {
 					collapsibleWidth += $( element ).width() || 0;
 					if ( collapsibleWidth > initialCactionsWidth() ) {
 						// We've found one or more collapsible links that are wider

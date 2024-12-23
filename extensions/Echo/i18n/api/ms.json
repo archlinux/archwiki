@@ -4,6 +4,14 @@
 			"Hakimi97"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Mencetus pemberitahuan kepada pengguna secara manual",
+	"apihelp-echocreateevent-example": "Hantar satu pemberitahuan",
+	"apihelp-echocreateevent-param-user": "Pengguna sasaran pemberitahuan itu dihantar",
+	"apihelp-echocreateevent-param-header": "Kandungan pengepala pemberitahuan",
+	"apihelp-echocreateevent-param-content": "Kandungan isi pemberitahuan",
+	"apihelp-echocreateevent-param-page": "Laman untuk dipaut dalam pemberitahuan",
+	"apihelp-echocreateevent-param-section": "Bahagian untuk dihantar pemberitahuan",
+	"apihelp-echocreateevent-param-email": "Sama ada ingin juga hantar sebuah e-mel",
 	"apihelp-echomarkread-summary": "Tandakan pemberitahuan sebagai telah dibaca untuk pengguna semasa.",
 	"apihelp-echomarkread-param-list": "Senarai ID pemberitahuan untuk ditandakan sebagai telah dibaca.",
 	"apihelp-echomarkread-param-unreadlist": "Senarai ID pemberitahuan untuk ditandakan sebagai belum dibaca.",

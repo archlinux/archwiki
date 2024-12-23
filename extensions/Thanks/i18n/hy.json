@@ -15,7 +15,6 @@
 	"thanks-thanked": "{{GENDER:$1|մասնակցին շնորհակալություն է հայտնված}}",
 	"thanks-button-thank": "{{GENDER:$1|Շնորհակալություն հայտնել}}",
 	"thanks-button-thanked": "{{GENDER:$1|մասնակցին շնորհակալություն  է հայտնված:}}",
-	"thanks-button-action-cancel": "Չեղարկել",
 	"thanks-error-undefined": "Չստացվեց շնորհակալություն հայտնել։ Փորձեք կրկին։",
 	"thanks-error-invalidrevision": "Խմբագրման համարանիշը վավեր չէ։",
 	"thanks-error-ratelimited": "{{GENDER:$1|Դուք}} շատ եք շնորհակալություն հայտնել։ Սպասեք որոշ ժամանակ և նորից փորձեք։",

@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use IDBAccessObject;
 use MediaWiki\Extension\AbuseFilter\Filter\ClosestFilterVersionNotFoundException;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\Filter\FilterNotFoundException;
@@ -13,7 +12,8 @@ use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
 use MediaWiki\Extension\AbuseFilter\Filter\Specs;
 use RuntimeException;
 use stdClass;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -225,12 +225,12 @@ class FilterLookup implements IDBAccessObject {
 	 * @return array
 	 */
 	private function getActionsFromDB( IReadableDatabase $db, string $fname, int $id ): array {
-		$res = $db->select(
-			'abuse_filter_action',
-			[ 'afa_consequence', 'afa_parameters' ],
-			[ 'afa_filter' => $id ],
-			$fname
-		);
+		$res = $db->newSelectQueryBuilder()
+			->select( [ 'afa_consequence', 'afa_parameters' ] )
+			->from( 'abuse_filter_action' )
+			->where( [ 'afa_filter' => $id ] )
+			->caller( $fname )
+			->fetchResultSet();
 
 		$actions = [];
 		foreach ( $res as $actionRow ) {
@@ -330,12 +330,12 @@ class FilterLookup implements IDBAccessObject {
 	public function getFirstFilterVersionID( int $filterID ): int {
 		if ( !isset( $this->firstVersionCache[$filterID] ) ) {
 			$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
-			$historyID = $dbr->selectField(
-				'abuse_filter_history',
-				'MIN(afh_id)',
-				[ 'afh_filter' => $filterID ],
-				__METHOD__
-			);
+			$historyID = $dbr->newSelectQueryBuilder()
+				->select( 'MIN(afh_id)' )
+				->from( 'abuse_filter_history' )
+				->where( [ 'afh_filter' => $filterID ] )
+				->caller( __METHOD__ )
+				->fetchField();
 			if ( $historyID === false ) {
 				throw new FilterNotFoundException( $filterID, false );
 			}
@@ -384,6 +384,20 @@ class FilterLookup implements IDBAccessObject {
 	}
 
 	/**
+	 * @param array $flags
+	 * @return int
+	 */
+	private function getPrivacyLevelFromFlags( $flags ): int {
+		$hidden = in_array( 'hidden', $flags, true ) ?
+			Flags::FILTER_HIDDEN :
+			0;
+		$protected = in_array( 'protected', $flags, true ) ?
+			Flags::FILTER_USES_PROTECTED_VARS :
+			0;
+		return $hidden | $protected;
+	}
+
+	/**
 	 * Note: this is private because no external caller should access DB rows directly.
 	 * @param stdClass $row
 	 * @return HistoryFilter
@@ -405,7 +419,7 @@ class FilterLookup implements IDBAccessObject {
 			new Flags(
 				in_array( 'enabled', $flags, true ),
 				in_array( 'deleted', $flags, true ),
-				in_array( 'hidden', $flags, true ),
+				$this->getPrivacyLevelFromFlags( $flags ),
 				in_array( 'global', $flags, true )
 			),
 			$actions,
@@ -438,7 +452,7 @@ class FilterLookup implements IDBAccessObject {
 			new Flags(
 				(bool)$row->af_enabled,
 				(bool)$row->af_deleted,
-				(bool)$row->af_hidden,
+				(int)$row->af_hidden,
 				(bool)$row->af_global
 			),
 			$actions,

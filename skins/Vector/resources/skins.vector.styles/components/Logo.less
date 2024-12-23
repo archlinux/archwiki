@@ -22,15 +22,9 @@
 	// This will be ignored in flexbox browsers.
 	float: left;
 	margin-right: 10px;
-	// Hide mobile icon at lower resolutions and defer to wordmark
-	display: none;
 	@size-mw-logo-icon: unit( 50 / @font-size-browser, em );
 	width: @size-mw-logo-icon;
 	height: @size-mw-logo-icon;
-
-	@media ( min-width: @min-width-breakpoint-tablet ) {
-		display: block;
-	}
 }
 
 .mw-logo-container {

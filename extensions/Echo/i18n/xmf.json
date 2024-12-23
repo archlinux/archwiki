@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Silovan",
-			"Narazeni"
+			"Narazeni",
+			"Silovan"
 		]
 	},
 	"echo-desc": "გინაფეფიშ დო მოლინეფიშ სისტემა",
@@ -113,6 +113,7 @@
 	"notification-link-thank-you-edit": "{{GENDER:$1|თქვანი}} რედაქტირაფა",
 	"notification-link-text-view-edit": "რედაქტირაფაშ ძირაფა",
 	"notification-link-article-reminder": "ხასჷლაშ ძირაფა",
+	"notification-link-api-triggered": "ხასჷლაშ ძირაფა",
 	"notification-header-emailuser": "მახვარებუქ $1 {{GENDER:$2|მოიჯღონეს}} ელექტრონული ნაჭარა.",
 	"notification-edit-talk-page-email-subject2": "$1-ქ {{GENDER:$3|თქვა}} {{GENDER:$2|მორჭარეს}} {{SITENAME}}-ს",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 წამ.}}",

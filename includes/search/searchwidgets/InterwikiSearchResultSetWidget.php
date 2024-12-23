@@ -6,6 +6,7 @@ use ISearchResultSet;
 use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Specials\SpecialSearch;
 use MediaWiki\Title\Title;
@@ -21,7 +22,7 @@ class InterwikiSearchResultSetWidget implements SearchResultSetWidget {
 	protected $specialSearch;
 	/** @var SearchResultWidget */
 	protected $resultWidget;
-	/** @var string[]|null */
+	/** @var array<string,string>|null */
 	protected $customCaptions;
 	/** @var LinkRenderer */
 	protected $linkRenderer;
@@ -47,7 +48,7 @@ class InterwikiSearchResultSetWidget implements SearchResultSetWidget {
 		$this->iwLookup = $iwLookup;
 		$this->output = $specialSearch->getOutput();
 		$this->showMultimedia = $showMultimedia;
-		$this->iwLogoOverrides = $this->specialSearch->getConfig()->get( 'InterwikiLogoOverride' );
+		$this->iwLogoOverrides = $this->specialSearch->getConfig()->get( MainConfigNames::InterwikiLogoOverride );
 	}
 
 	/**
@@ -128,11 +129,12 @@ class InterwikiSearchResultSetWidget implements SearchResultSetWidget {
 		);
 
 		$interwiki = $this->iwLookup->fetch( $iwPrefix );
-		$parsed = wfParseUrl( wfExpandUrl( $interwiki ? $interwiki->getURL() : '/' ) );
+		// This is false if the lookup fails, or if the other wiki is on the same
+		// domain name (i.e. /en-wiki/ and /de-wiki/)
+		$iwHost = $interwiki ? parse_url( $interwiki->getURL(), PHP_URL_HOST ) : false;
 
-		$caption = $this->customCaptions[$iwPrefix] ?? $parsed['host'];
-
-		$searchLink = Html::rawElement( 'a', [ 'href' => $href, 'target' => '_blank' ], $caption );
+		$captionText = $this->customCaptions[$iwPrefix] ?? $iwHost ?: $iwPrefix;
+		$searchLink = Html::element( 'a', [ 'href' => $href, 'target' => '_blank' ], $captionText );
 
 		return Html::rawElement( 'div',
 			[ 'class' => 'iw-result__header' ],
@@ -151,12 +153,8 @@ class InterwikiSearchResultSetWidget implements SearchResultSetWidget {
 			[ 'search' => $term, 'fulltext' => 1 ]
 		);
 
-		$interwiki = $this->iwLookup->fetch( $iwPrefix );
-		$parsed = wfParseUrl( wfExpandUrl( $interwiki ? $interwiki->getURL() : '/' ) );
-
-		$caption = $this->specialSearch->msg( 'search-interwiki-resultset-link', $parsed['host'] )->escaped();
-
-		$searchLink = Html::rawElement( 'a', [ 'href' => $href, 'target' => '_blank' ], $caption );
+		$captionText = $this->specialSearch->msg( 'search-interwiki-resultset-link' )->text();
+		$searchLink = Html::element( 'a', [ 'href' => $href, 'target' => '_blank' ], $captionText );
 
 		return Html::rawElement( 'div',
 			[ 'class' => 'iw-result__footer' ],
@@ -169,7 +167,7 @@ class InterwikiSearchResultSetWidget implements SearchResultSetWidget {
 		}
 
 		$this->customCaptions = [];
-		$customLines = explode( "\n", $this->specialSearch->msg( 'search-interwiki-custom' )->escaped() );
+		$customLines = explode( "\n", $this->specialSearch->msg( 'search-interwiki-custom' )->text() );
 		foreach ( $customLines as $line ) {
 			$parts = explode( ':', $line, 2 );
 			if ( count( $parts ) === 2 ) {
@@ -227,7 +225,8 @@ class InterwikiSearchResultSetWidget implements SearchResultSetWidget {
 	 * @return OOUI\IconWidget
 	 */
 	protected function generateIconFromFavicon( $logoUrl ) {
-		$parsed = wfParseUrl( wfExpandUrl( $logoUrl ) );
+		$parsed = wfGetUrlUtils()->parse( (string)wfGetUrlUtils()->expand( $logoUrl, PROTO_CURRENT ) );
+		'@phan-var array $parsed'; // Valid URL
 		$iwIconUrl = $parsed['scheme'] .
 			$parsed['delimiter'] .
 			$parsed['host'] .

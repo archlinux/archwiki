@@ -32,7 +32,7 @@ ve.dm.MWAlienExtensionNode.static.allowedRdfaTypes = null;
 
 ve.dm.MWAlienExtensionNode.static.toDataElement = function ( domElements, converter ) {
 	// 'Parent' method
-	var element = ve.dm.MWExtensionNode.static.toDataElement.call( this, domElements, converter ),
+	const element = ve.dm.MWExtensionNode.static.toDataElement.call( this, domElements, converter ),
 		isInline = this.isHybridInline( domElements, converter );
 
 	element.type = isInline ? 'mwAlienInlineExtension' : 'mwAlienBlockExtension';

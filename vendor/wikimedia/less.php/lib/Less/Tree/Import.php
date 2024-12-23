@@ -154,25 +154,8 @@ class Less_Tree_Import extends Less_Tree {
 	public function compile( $env ) {
 		$features = ( $this->features ? $this->features->compile( $env ) : null );
 
-		// TODO: Upstream doesn't do path resolution here. The reason we need it here is
-		// because skip() takes a $path_and_uri argument. Once the TODO in ImportVisitor
-		// about Less_Tree_Import::PathAndUri() is fixed, this can be removed by letting
-		// skip() call $this->PathAndUri() on its own.
-		// get path & uri
-		$path_and_uri = $env->callImportCallback( $this );
-
-		if ( !$path_and_uri ) {
-			$path_and_uri = Less_FileManager::getFilePath( $this->getPath(), $this->currentFileInfo );
-		}
-		if ( $path_and_uri ) {
-			[ $full_path, $uri ] = $path_and_uri;
-		} else {
-			$full_path = $uri = $this->getPath();
-		}
-		'@phan-var string $full_path';
-
 		// import once
-		if ( $this->skip( $full_path, $env ) ) {
+		if ( $this->skip( $env ) ) {
 			return [];
 		}
 
@@ -208,21 +191,26 @@ class Less_Tree_Import extends Less_Tree {
 	/**
 	 * Should the import be skipped?
 	 *
-	 * @param string|null $path
 	 * @param Less_Environment $env
 	 * @return bool|null
 	 */
-	public function skip( $path, $env ) {
+	public function skip( $env ) {
+		$path = $this->getPath();
+		// TODO: Since our Import->getPath() varies from upstream Less.js (ours can return null).
+		// we therefore need an empty string fallback here. Remove this fallback once getPath()
+		// is in sync with upstream.
+		$fullPath = Less_FileManager::getFilePath( $path, $this->currentFileInfo )[0] ?? $path ?? '';
+
 		if ( $this->doSkip !== null ) {
 			return $this->doSkip;
 		}
 
 		// @see less-2.5.3.js#ImportVisitor.prototype.onImported
-		if ( isset( $env->importVisitorOnceMap[$path] ) ) {
+		if ( isset( $env->importVisitorOnceMap[$fullPath] ) ) {
 			return true;
 		}
 
-		$env->importVisitorOnceMap[$path] = true;
+		$env->importVisitorOnceMap[$fullPath] = true;
 		return false;
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
-use Parser;
+use MediaWiki\Parser\Parser;
 
 class HtmlLibrary extends LibraryBase {
 	public function register() {

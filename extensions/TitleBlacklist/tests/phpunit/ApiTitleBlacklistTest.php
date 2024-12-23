@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\TitleBlacklist\TitleBlacklist;
+use MediaWiki\Tests\Api\ApiTestCase;
 
 /**
  * @group medium
@@ -13,7 +14,7 @@ class ApiTitleBlacklistTest extends ApiTestCase {
 		parent::setUp();
 
 		TitleBlacklist::destroySingleton();
-		$this->setMwGlobals( 'wgTitleBlacklistSources', [
+		$this->overrideConfigValue( 'TitleBlacklistSources', [
 			[
 				'type' => 'file',
 				'src'  => __DIR__ . '/testSource.txt',
@@ -105,9 +106,7 @@ class ApiTitleBlacklistTest extends ApiTestCase {
 	 * Tests integration with the AntiSpoof extension
 	 */
 	public function testAntiSpoofIntegration() {
-		if ( !ExtensionRegistry::getInstance()->isLoaded( 'AntiSpoof' ) ) {
-			$this->markTestSkipped( "This test requires the AntiSpoof extension" );
-		}
+		$this->markTestSkippedIfExtensionNotLoaded( 'AntiSpoof' );
 
 		$listed = $this->doApiRequest( [
 			'action' => 'titleblacklist',

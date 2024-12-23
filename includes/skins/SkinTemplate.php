@@ -20,16 +20,20 @@
  * @file
  */
 
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Skin\SkinComponentUtils;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Specials\Contribute\ContributeFactory;
 use MediaWiki\Title\Title;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Base class for QuickTemplate-based skins.
@@ -46,12 +50,17 @@ class SkinTemplate extends Skin {
 	 */
 	public $template;
 
+	/** @var string */
 	public $thispage;
+	/** @var string */
 	public $titletxt;
+	/** @var string */
 	public $userpage;
-	// TODO: Rename this to $isRegistered (but that's a breaking change)
+	/** @var bool TODO: Rename this to $isRegistered (but that's a breaking change) */
 	public $loggedin;
+	/** @var string */
 	public $username;
+	/** @var array */
 	public $userpageUrlDetails;
 
 	/** @var bool */
@@ -60,6 +69,10 @@ class SkinTemplate extends Skin {
 	/** @var bool */
 	private $isNamedUser;
 
+	/** @var bool */
+	private $isAnonUser;
+
+	/** @var bool */
 	private $templateContextSet = false;
 	/** @var array|null */
 	private $contentNavigationCached;
@@ -119,6 +132,7 @@ class SkinTemplate extends Skin {
 		$this->username = $user->getName();
 		$this->isTempUser = $user->isTemp();
 		$this->isNamedUser = $this->loggedin && !$this->isTempUser;
+		$this->isAnonUser = $user->isAnon();
 
 		if ( $this->isNamedUser ) {
 			$this->userpageUrlDetails = self::makeUrlDetails( $userpageTitle );
@@ -136,10 +150,7 @@ class SkinTemplate extends Skin {
 	 * render method can rewrite this method, for example to use
 	 * TemplateParser::processTemplate
 	 * @since 1.35
-	 * @return string of complete skin HTML to output to the page. This varies based on
-	 *  the skin option bodyOnly (see Skin::getOptions):
-	 *    - If true, HTML includes `<!DOCTYPE>` and opening and closing html tags
-	 *    - If false, HTML is the contents of the body tag.
+	 * @return string HTML is the contents of the body tag e.g. <body>...</body>
 	 */
 	public function generateHTML() {
 		$tpl = $this->prepareQuickTemplate();
@@ -150,13 +161,6 @@ class SkinTemplate extends Skin {
 		$tpl->execute();
 		$html = ob_get_contents();
 		ob_end_clean();
-
-		// If skin is using bodyOnly mode, for now we must output head and tail.
-		// In future when this is the default,
-		// this logic will be moved into the OutputPage::output method.
-		if ( $options['bodyOnly'] ) {
-			$html = $out->headElement( $this ) . $html . $out->tailElement( $this );
-		}
 
 		return $html;
 	}
@@ -235,8 +239,6 @@ class SkinTemplate extends Skin {
 		$tpl->set( 'articlepath', $config->get( MainConfigNames::ArticlePath ) );
 		$tpl->set( 'scriptpath', $config->get( MainConfigNames::ScriptPath ) );
 		$tpl->set( 'serverurl', $config->get( MainConfigNames::Server ) );
-		$logos = RL\SkinModule::getAvailableLogos( $config );
-		$tpl->set( 'logopath', $logos['1x'] );
 		$tpl->set( 'sitename', $config->get( MainConfigNames::Sitename ) );
 
 		$userLang = $this->getLanguage();
@@ -246,6 +248,9 @@ class SkinTemplate extends Skin {
 		$tpl->set( 'lang', $userLangCode );
 		$tpl->set( 'dir', $userLangDir );
 		$tpl->set( 'rtl', $userLang->isRTL() );
+
+		$logos = RL\SkinModule::getAvailableLogos( $config, $userLangCode );
+		$tpl->set( 'logopath', $logos['1x'] );
 
 		$tpl->set( 'showjumplinks', true ); // showjumplinks preference has been removed
 		$tpl->set( 'username', $this->loggedin ? $this->username : null );
@@ -324,10 +329,6 @@ class SkinTemplate extends Skin {
 		$tpl->set( 'sidebar', $this->buildSidebar() );
 		$tpl->set( 'nav_urls', $this->buildNavUrls() );
 
-		// Set the head scripts near the end, in case the above actions resulted in added scripts
-		$tpl->set( 'headelement', $out->headElement( $this ) );
-		$tpl->deprecate( 'headelement', '1.39' );
-
 		$tpl->set( 'debug', '' );
 		$tpl->set( 'debughtml', MWDebug::getHTMLDebugLog() );
 
@@ -361,18 +362,14 @@ class SkinTemplate extends Skin {
 	 * @return string
 	 */
 	public function makePersonalToolsList( $personalTools = null, $options = [] ) {
+		$personalTools ??= $this->getPersonalToolsForMakeListItem(
+			$this->buildPersonalUrls()
+		);
+
 		$html = '';
-
-		if ( $personalTools === null ) {
-			$personalTools = $this->getPersonalToolsForMakeListItem(
-				$this->buildPersonalUrls()
-			);
-		}
-
 		foreach ( $personalTools as $key => $item ) {
 			$html .= $this->makeListItem( $key, $item, $options );
 		}
-
 		return $html;
 	}
 
@@ -404,7 +401,9 @@ class SkinTemplate extends Skin {
 		$services = MediaWikiServices::getInstance();
 		$authManager = $services->getAuthManager();
 		$groupPermissionsLookup = $services->getGroupPermissionsLookup();
+		$tempUserConfig = $services->getTempUserConfig();
 		$returnto = SkinComponentUtils::getReturnToParam( $title, $request, $authority );
+		$shouldHideUserLinks = $this->isAnonUser && $tempUserConfig->isKnown();
 
 		/* set up the default links for the personal toolbar */
 		$personal_urls = [];
@@ -445,7 +444,7 @@ class SkinTemplate extends Skin {
 			# We need to do an explicit check for Special:Contributions, as we
 			# have to match both the title, and the target, which could come
 			# from request values (Special:Contributions?target=Jimbo_Wales)
-			# or be specified in "sub page" form
+			# or be specified in "subpage" form
 			# (Special:Contributions/Jimbo_Wales). The plot
 			# thickens, because the Title object is altered for special pages,
 			# so it doesn't contain the original alias-with-subpage.
@@ -467,8 +466,7 @@ class SkinTemplate extends Skin {
 			if ( $request->getSession()->canSetUser() ) {
 				$personal_urls['logout'] = $this->buildLogoutLinkData();
 			}
-		} else {
-			$tempUserConfig = $services->getTempUserConfig();
+		} elseif ( !$shouldHideUserLinks ) {
 			$canEdit = $authority->isAllowed( 'edit' );
 			$canEditWithTemp = $tempUserConfig->isAutoCreateAction( 'edit' );
 			// No need to show Talk and Contributions to anons if they can't contribute!
@@ -497,6 +495,7 @@ class SkinTemplate extends Skin {
 				$personal_urls = $this->makeContributionsLink( $personal_urls, 'anoncontribs', null, false );
 			}
 		}
+
 		if ( !$this->loggedin ) {
 			$useCombinedLoginLink = $this->useCombinedLoginLink();
 			$login_url = $this->buildLoginData( $returnto, $useCombinedLoginLink );
@@ -785,12 +784,17 @@ class SkinTemplate extends Skin {
 			$classes[] = 'selected';
 		}
 		$exists = true;
+		$services = MediaWikiServices::getInstance();
+		$linkClass = $services->getLinkRenderer()->getLinkClasses( $title );
 		if ( $checkEdit && !$title->isKnown() ) {
 			// Selected tabs should not show as red link. It doesn't make sense
 			// to show a red link on a page the user has already navigated to.
 			// https://phabricator.wikimedia.org/T294129#7451549
 			if ( !$selected ) {
+				// For historic reasons we add to the LI element
 				$classes[] = 'new';
+				// but adding the class to the A element is more appropriate.
+				$linkClass .= ' new';
 			}
 			$exists = false;
 			if ( $query !== '' ) {
@@ -799,9 +803,6 @@ class SkinTemplate extends Skin {
 				$query = 'action=edit&redlink=1';
 			}
 		}
-
-		$services = MediaWikiServices::getInstance();
-		$linkClass = $services->getLinkRenderer()->getLinkClasses( $title );
 
 		if ( $message instanceof MessageSpecifier ) {
 			$msg = new Message( $message );
@@ -829,7 +830,7 @@ class SkinTemplate extends Skin {
 			'exists' => $exists,
 			'primary' => true ];
 		if ( $linkClass !== '' ) {
-			$result['link-class'] = $linkClass;
+			$result['link-class'] = trim( $linkClass );
 		}
 
 		return $result;
@@ -1419,7 +1420,7 @@ class SkinTemplate extends Skin {
 		}
 		$special->setContext( $this );
 		$associatedNavigationLinks = $special->getAssociatedNavigationLinks();
-		// If no sub pages we should not render.
+		// If there are no subpages, we should not render
 		if ( count( $associatedNavigationLinks ) === 0 ) {
 			return [];
 		}
@@ -1439,16 +1440,6 @@ class SkinTemplate extends Skin {
 			];
 		}
 		return $specialAssociatedNavigationLinks;
-	}
-
-	/**
-	 * Wrapper for private buildContentNavigationUrlsInternal
-	 * @deprecated since 1.38 skins can use runOnSkinTemplateNavigationHooks instead.
-	 * @return array
-	 */
-	protected function buildContentNavigationUrls() {
-		wfDeprecated( __METHOD__, '1.38' );
-		return $this->buildContentNavigationUrlsInternal();
 	}
 
 	/**
@@ -1568,31 +1559,11 @@ class SkinTemplate extends Skin {
 		// Skin::makeSearchInput. To avoid infinite recursion create a
 		// new instance of the search component here.
 		$searchBox = $this->getComponent( 'search-box' );
-		$data = $searchBox->getTemplateData();
+		$searchData = $searchBox->getTemplateData();
 
-		return self::makeSearchButtonInternal(
-			$mode,
-			$data,
-			$attrs
-		);
-	}
-
-	/**
-	 * @deprecated 1.38 see @internal note.
-	 * @param string $mode representing the type of button wanted
-	 *  either `go`, `fulltext` or `image`
-	 * @param array $searchData Skin data returned by Skin::getTemplateData()['data-search-box']
-	 * @param array $attrs (optional)
-	 * @internal Please use SkinTemplate::makeSearchButton.
-	 *  For usage only inside Skin class to support deprecated Skin::makeSearchButton method.
-	 *  This should be merged with SkinTemplate::makeSearchButton when
-	 *  Skin::makeSearchButton method is removed.
-	 * @return string of HTML button
-	 */
-	public static function makeSearchButtonInternal( $mode, $searchData, $attrs = [] ) {
 		switch ( $mode ) {
 			case 'go':
-				$attrs['value'] ??= wfMessage( 'searcharticle' )->text();
+				$attrs['value'] ??= $this->msg( 'searcharticle' )->text();
 				return Html::element(
 					'input',
 					array_merge(
@@ -1600,7 +1571,7 @@ class SkinTemplate extends Skin {
 					)
 				);
 			case 'fulltext':
-				$attrs['value'] ??= wfMessage( 'searchbutton' )->text();
+				$attrs['value'] ??= $this->msg( 'searchbutton' )->text();
 				return Html::element(
 					'input',
 					array_merge(
@@ -1623,7 +1594,7 @@ class SkinTemplate extends Skin {
 				unset( $buttonAttrs['height'] );
 				$imgAttrs = [
 					'src' => $attrs['src'],
-					'alt' => $attrs['alt'] ?? wfMessage( 'searchbutton' )->text(),
+					'alt' => $attrs['alt'] ?? $this->msg( 'searchbutton' )->text(),
 					'width' => $attrs['width'] ?? null,
 					'height' => $attrs['height'] ?? null,
 				];
@@ -1639,7 +1610,7 @@ class SkinTemplate extends Skin {
 	private function isSpecialContributeShowable(): bool {
 		return ContributeFactory::isEnabledOnCurrentSkin(
 			$this,
-			$this->getConfig()->get( 'SpecialContributeSkinsEnabled' )
+			$this->getConfig()->get( MainConfigNames::SpecialContributeSkinsEnabled )
 		);
 	}
 
@@ -1659,7 +1630,18 @@ class SkinTemplate extends Skin {
 	): array {
 		$isSpecialContributeShowable = $this->isSpecialContributeShowable();
 		$subpage = $userName ?? false;
-		if ( $isSpecialContributeShowable ) {
+		$user = $this->getUser();
+		// If the "Contribute" page is showable and the user is anon. or has no edit count,
+		// direct them to the "Contribute" page instead of the "Contributions" or "Mycontributions" pages.
+		// Explanation:
+		// a. For logged-in users: In wikis where the "Contribute" page is enabled, we only want
+		// to navigate logged-in users to the "Contribute", when they have done no edits. Otherwise, we
+		// want to navigate them to the "Mycontributions" page to easily access their edits/contributions.
+		// Currently, the "Contribute" page is used as target for all logged-in users.
+		// b. For anon. users: In wikis where the "Contribute" page is enabled, we still navigate the
+		// anonymous users to the "Contribute" page.
+		// Task: T369041
+		if ( $isSpecialContributeShowable && (int)$user->getEditCount() === 0 ) {
 			$href = SkinComponentUtils::makeSpecialUrlSubpage(
 				'Contribute',
 				false

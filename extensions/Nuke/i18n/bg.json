@@ -6,8 +6,7 @@
 			"ShockD",
 			"Spiritia",
 			"StanProg",
-			"Termininja",
-			"Ted Masters"
+			"Termininja"
 		]
 	},
 	"nuke": "Масово изтриване",
@@ -25,7 +24,7 @@
 	"nuke-deletion-queued": "Страница ''' $1 ''' е добавена към опашката за изтриване.",
 	"nuke-delete-more": "[[Special:Nuke|Изтриване на още страници]]",
 	"nuke-pattern": "Заместващ символ за SQL LIKE (напр. %) за заглавието на страницата:",
-	"nuke-viewchanges": "преглед на промените",
+	"nuke-viewchanges": "история",
 	"nuke-namespace": "Ограничение по именно пространство:",
 	"nuke-linkoncontribs": "масово изтриване",
 	"nuke-linkoncontribs-text": "Масово изтриване на страници, на които {{GENDER:$1|потребителят}} е единствен автор"

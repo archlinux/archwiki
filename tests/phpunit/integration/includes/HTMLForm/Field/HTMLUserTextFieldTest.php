@@ -19,8 +19,8 @@ class HTMLUserTextFieldTest extends MediaWikiIntegrationTestCase {
 	public function testInputs( array $config, string $value, $expected ) {
 		$origUserFactory = $this->getServiceContainer()->getUserFactory();
 		$userFactory = $this->createMock( UserFactory::class );
-		$userFactory->method( 'newFromName' )->willReturnCallback( static function () use ( $origUserFactory ) {
-			$user = $origUserFactory->newFromName( ...func_get_args() );
+		$userFactory->method( 'newFromName' )->willReturnCallback( static function ( ...$params ) use ( $origUserFactory ) {
+			$user = $origUserFactory->newFromName( ...$params );
 			if ( $user ) {
 				$user->mId = 0;
 				$user->setItemLoaded( 'id' );
@@ -71,6 +71,31 @@ class HTMLUserTextFieldTest extends MediaWikiIntegrationTestCase {
 				[ 'ipallowed' => true ],
 				'1.2.3.456',
 				'htmlform-user-not-valid'
+			],
+			'valid usemod IP' => [
+				[ 'usemodwiki-ipallowed' => true, 'ipallowed' => true, 'exists' => true ],
+				'1.2.3.xxx',
+				true,
+			],
+			'valid usemod IP, but not allowed' => [
+				[ 'usemodwiki-ipallowed' => false, 'ipallowed' => true, 'exists' => true ],
+				'1.2.3.xxx',
+				'htmlform-user-not-valid',
+			],
+			'invalid usemod IP because not enough "x"' => [
+				[ 'usemodwiki-ipallowed' => true, 'ipallowed' => true, 'exists' => true ],
+				'1.2.3.x',
+				'htmlform-user-not-exists',
+			],
+			'invalid usemod IP because capital "x"' => [
+				[ 'usemodwiki-ipallowed' => true, 'ipallowed' => true, 'exists' => true ],
+				'1.2.3.XXX',
+				'htmlform-user-not-exists',
+			],
+			'invalid usemod IP because first part not valid IPv4' => [
+				[ 'usemodwiki-ipallowed' => true, 'ipallowed' => true, 'exists' => true ],
+				'1.2.456.xxx',
+				'htmlform-user-not-valid',
 			],
 			'valid IP range' => [
 				[ 'iprange' => true ],

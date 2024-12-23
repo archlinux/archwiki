@@ -1,7 +1,11 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Unit;
+
+use ArrayIterator;
 use MediaWiki\Extension\Notifications\Iterator\CallbackIterator;
 use MediaWiki\Extension\Notifications\Iterator\FilteredSequentialIterator;
+use MediaWikiUnitTestCase;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Iterator\CallbackIterator

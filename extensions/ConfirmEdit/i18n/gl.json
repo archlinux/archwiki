@@ -35,5 +35,6 @@
 	"confirmedit-preview-validity": "Validez",
 	"confirmedit-preview-valid": "válida",
 	"confirmedit-preview-invalid": "non válida",
-	"confirmedit-preview-description": "A táboa seguinte amosa a lista de liñas nesta páxina e se é un enderezo IP válido ou un rango de enderezos IP. Se a liña é un enderezo IP válido ou rango de enderezos IP, quedará excluída das comprobacións do CAPTCHA, pero as liñas non válidas serán ignoradas. Un exemplo dun rango de enderezos IP válido sería: 69.208.0.0/16 que vai desde 69.208.0.0 ata 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Máis información] sobre como calcular un rango de enderezos IP."
+	"confirmedit-preview-description": "A táboa seguinte amosa a lista de liñas nesta páxina e se é un enderezo IP válido ou un rango de enderezos IP. Se a liña é un enderezo IP válido ou rango de enderezos IP, quedará excluída das comprobacións do CAPTCHA, pero as liñas non válidas serán ignoradas. Un exemplo dun rango de enderezos IP válido sería: 69.208.0.0/16 que vai desde 69.208.0.0 ata 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Máis información] sobre como calcular un rango de enderezos IP.",
+	"abusefilter-edit-action-showcaptcha": "Obrigar a que o usuario complete un CAPTCHA para continuar coa acción. Os usuarios con permiso para omitir o CAPTCHA quedan exentos."
 }

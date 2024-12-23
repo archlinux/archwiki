@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dragoniez",
 			"Shirayuki",
 			"SkyDaisy9",
-			"Yusuke1109",
-			"Dragoniez"
+			"Yusuke1109"
 		]
 	},
 	"apihelp-query+gadgetcategories-summary": "ガジェットのカテゴリの一覧を返します。",

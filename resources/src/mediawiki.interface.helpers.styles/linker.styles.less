@@ -11,7 +11,7 @@
 /** Class is added by ChangesList::flag */
 .unpatrolled {
 	font-weight: bold;
-	color: #d73333;
+	color: @color-destructive;
 }
 
 /** Class is added by ChangesList::flag */
@@ -32,8 +32,7 @@
 
 /** Class is added by Linker::userLink */
 .mw-tempuserlink {
-	// @background-color-interactive
-	background-color: #eaecf0;
+	background-color: @background-color-interactive;
 	padding: 2px 8px;
 	border-radius: @border-radius-base;
 }
@@ -53,21 +52,21 @@ span.comment {
 .autocomment,
 .autocomment a,
 .autocomment a:visited {
-	color: #72777d;
+	color: @color-subtle;
 }
 
 /** rev_deleted stuff */
 li span.deleted,
 span.history-deleted {
 	text-decoration: line-through;
-	color: #72777d;
+	color: @color-subtle;
 	font-style: italic;
 }
 
 span.mw-history-suppressed {
 	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	text-decoration-style: double;
-	color: #202122;
+	color: @color-base;
 }
 
 /* (show/hide) revision deletion links */

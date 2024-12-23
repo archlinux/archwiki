@@ -35,7 +35,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Пра гэтую катэгорыю",
 	"mobile-frontend-meta-data-issues-header": "Праблемы старонкі",
 	"minerva-meta-data-issues-section-header": "Праблемы раздзелу",
-	"mobile-frontend-notifications-filter": "Фільтр",
 	"mobile-frontend-pageaction-edit-tooltip": "Правіць вядучы раздзел старонкі",
 	"mobile-frontend-placeholder": "Знайсці ў {{GRAMMAR:месны|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Выпадкова",
@@ -60,7 +59,5 @@
 	"skin-minerva-issue-learn-more": "Даведацца больш",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Катэгорыі",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Праглядзець катэгорыі старонак",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Палепшанае вырашэнне праблемаў старонкі",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Праблемы старонкі (Template:ambox) будуць уведзены ў артыкул.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "На жаль, групоўка вынікаў па старонках недаступная на мабільным тэлефоне. Калі вы хочаце выкарыстоўваць функцыю групоўкі па старонках, калі ласка, наведайце стацыянарную пляцоўку."
 }

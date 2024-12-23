@@ -29,7 +29,7 @@ OO.inheritClass( ve.ui.MWInternalLinkAnnotationWidget, ve.ui.LinkAnnotationWidge
  * @inheritdoc
  */
 ve.ui.MWInternalLinkAnnotationWidget.static.getAnnotationFromText = function ( value ) {
-	var trimmed = value.trim(),
+	const trimmed = value.trim(),
 		title = mw.Title.newFromText( trimmed );
 
 	if ( !title ) {
@@ -54,7 +54,7 @@ ve.ui.MWInternalLinkAnnotationWidget.static.getTextFromAnnotation = function ( a
  * @return {OO.ui.TextInputWidget} Text input widget
  */
 ve.ui.MWInternalLinkAnnotationWidget.prototype.createInputWidget = function ( config ) {
-	var input = new mw.widgets.TitleSearchWidget( ve.extendObject( {
+	const input = new mw.widgets.TitleSearchWidget( ve.extendObject( {
 		icon: 'search',
 		excludeCurrentPage: true,
 		showImages: mw.config.get( 'wgVisualEditorConfig' ).usePageImages,
@@ -96,7 +96,7 @@ ve.ui.MWInternalLinkAnnotationWidget.prototype.getTextInputWidget = function () 
  * @inheritdoc
  */
 ve.ui.MWInternalLinkAnnotationWidget.prototype.onTextChange = function ( value ) {
-	var htmlDoc = this.getElementDocument(),
+	const htmlDoc = this.getElementDocument(),
 		namespacesWithSubpages = mw.config.get( 'wgVisualEditorConfig' ).namespacesWithSubpages,
 		basePageObj = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
 	// Specific thing we want to check: has a valid URL for an internal page
@@ -104,7 +104,7 @@ ve.ui.MWInternalLinkAnnotationWidget.prototype.onTextChange = function ( value )
 	// page title. This has to happen /here/ because a URL can reference a
 	// valid page while not being a valid Title (e.g. if it contains a "%").
 	if ( ve.init.platform.getExternalLinkUrlProtocolsRegExp().test( value ) ) {
-		var targetData = mw.libs.ve.getTargetDataFromHref(
+		const targetData = mw.libs.ve.getTargetDataFromHref(
 			value,
 			htmlDoc
 		);

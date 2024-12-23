@@ -1,6 +1,6 @@
-var checkboxShift = require( './checkboxShift.js' );
-var config = require( './config.json' );
-var teleportTarget = require( './teleportTarget.js' );
+const checkboxShift = require( './checkboxShift.js' );
+const config = require( './config.json' );
+const teleportTarget = require( './teleportTarget.js' );
 
 // Break out of framesets
 if ( mw.config.get( 'wgBreakFrames' ) ) {
@@ -12,10 +12,10 @@ if ( mw.config.get( 'wgBreakFrames' ) ) {
 	}
 }
 
-mw.hook( 'wikipage.content' ).add( function ( $content ) {
-	var modules = [];
+mw.hook( 'wikipage.content' ).add( ( $content ) => {
+	const modules = [];
 
-	var $collapsible;
+	let $collapsible;
 	if ( config.collapsible ) {
 		$collapsible = $content.find( '.mw-collapsible' );
 		if ( $collapsible.length ) {
@@ -23,7 +23,7 @@ mw.hook( 'wikipage.content' ).add( function ( $content ) {
 		}
 	}
 
-	var $sortable;
+	let $sortable;
 	if ( config.sortable ) {
 		$sortable = $content.find( 'table.sortable' );
 		if ( $sortable.length ) {
@@ -33,7 +33,7 @@ mw.hook( 'wikipage.content' ).add( function ( $content ) {
 
 	if ( modules.length ) {
 		// Both modules are preloaded by Skin::getDefaultModules()
-		mw.loader.using( modules ).then( function () {
+		mw.loader.using( modules ).then( () => {
 			// For tables that are both sortable and collapsible,
 			// it must be made sortable first and collapsible second.
 			// This is because jquery.tablesorter stumbles on the
@@ -57,34 +57,38 @@ mw.hook( 'wikipage.content' ).add( function ( $content ) {
 require( './toggleAllCollapsibles.js' );
 
 // Handle elements outside the wikipage content
-$( function () {
+$( () => {
 	/**
 	 * There is a bug on iPad and maybe other browsers where if initial-scale is not set
 	 * the page cannot be zoomed. If the initial-scale is set on the server side, this will result
-	 * in an unwanted zoom on mobile devices. To avoid this we check innerWidth and set the initial-scale
-	 * on the client where needed. The width must be synced with the value in Skin::initPage.
+	 * in an unwanted zoom on mobile devices. To avoid this we check innerWidth and set the
+	 * initial-scale on the client where needed. The width must be synced with the value in
+	 * Skin::initPage.
 	 * More information on this bug in [[phab:T311795]].
 	 *
 	 * @ignore
 	 */
 	function fixViewportForTabletDevices() {
-		var $viewport = $( 'meta[name=viewport]' );
-		var content = $viewport.attr( 'content' );
-		var scale = window.outerWidth / window.innerWidth;
+		const $viewport = $( 'meta[name=viewport]' );
+		const content = $viewport.attr( 'content' );
+		const scale = window.outerWidth / window.innerWidth;
 		// This adjustment is limited to tablet devices. It must be a non-zero value to work.
-		// (these values correspond to @width-breakpoint-tablet and @width-breakpoint-desktop
-		if ( window.innerWidth >= 720 && window.innerWidth <= 1000 &&
+		// (these values correspond to @min-width-breakpoint-tablet and @min-width-breakpoint-desktop
+		// See https://doc.wikimedia.org/codex/main/design-tokens/breakpoint.html
+		if ( window.innerWidth >= 640 && window.innerWidth < 1120 &&
 			content && content.indexOf( 'initial-scale' ) === -1
 		) {
-			// Note: If the value is 1 the font-size adjust feature will not work on iPad
-			$viewport.attr( 'content', 'width=1000,initial-scale=' + scale );
+			// Note:
+			// - The `width` value must be equal to @min-width-breakpoint-desktop above
+			// - If `initial-scale` value is 1 the font-size adjust feature will not work on iPad
+			$viewport.attr( 'content', 'width=1120,initial-scale=' + scale );
 		}
 	}
 
 	// Add accesskey hints to the tooltips
 	$( '[accesskey]' ).updateTooltipAccessKeys();
 
-	var node = document.querySelector( '.mw-indicators' );
+	const node = document.querySelector( '.mw-indicators' );
 	if ( node && node.children.length ) {
 		/**
 		 * Fired when a page's status indicators are being added to the DOM.
@@ -97,7 +101,7 @@ $( function () {
 		mw.hook( 'wikipage.indicators' ).fire( $( node.children ) );
 	}
 
-	var $content = $( '#mw-content-text' );
+	const $content = $( '#mw-content-text' );
 	// Avoid unusable events, and the errors they cause, for custom skins that
 	// do not display any content (T259577).
 	if ( $content.length ) {
@@ -118,7 +122,7 @@ $( function () {
 		mw.hook( 'wikipage.content' ).fire( $content );
 	}
 
-	var $nodes = $( '.catlinks[data-mw="interface"]' );
+	let $nodes = $( '.catlinks[data-mw="interface"]' );
 	if ( $nodes.length ) {
 		/**
 		 * Fired when categories are being added to the DOM.
@@ -153,12 +157,12 @@ $( function () {
 		mw.hook( 'wikipage.diff' ).fire( $nodes.eq( 0 ) );
 	}
 
-	$( '#t-print a' ).on( 'click', function ( e ) {
+	$( '#t-print a' ).on( 'click', ( e ) => {
 		window.print();
 		e.preventDefault();
 	} );
 
-	var $permanentLink = $( '#t-permalink a' );
+	const $permanentLink = $( '#t-permalink a' );
 	function updatePermanentLinkHash() {
 		if ( mw.util.getTargetFromFragment() ) {
 			$permanentLink[ 0 ].hash = location.hash;
@@ -175,26 +179,33 @@ $( function () {
 	 * Fired when a trusted UI element to perform a logout has been activated.
 	 *
 	 * This will end the user session, and either redirect to the given URL
-	 * on success, or queue an error message via mw.notification.
+	 * on success, or queue an error message via {@link mw.notification}.
 	 *
 	 * @event ~'skin.logout'
 	 * @memberof Hooks
 	 * @param {string} href Full URL
 	 */
-	var LOGOUT_EVENT = 'skin.logout';
+	const LOGOUT_EVENT = 'skin.logout';
 	function logoutViaPost( href ) {
 		mw.notify(
 			mw.message( 'logging-out-notify' ),
 			{ tag: 'logout', autoHide: false }
 		);
-		var api = new mw.Api();
+		const api = new mw.Api();
+		if ( mw.user.isTemp() ) {
+			// Indicate to the success page that the user was previously a temporary account, so that the success
+			// message can be customised appropriately.
+			const url = new URL( href );
+			url.searchParams.append( 'wasTempUser', 1 );
+			href = url;
+		}
 		api.postWithToken( 'csrf', {
 			action: 'logout'
 		} ).then(
-			function () {
+			() => {
 				location.href = href;
 			},
-			function ( err, data ) {
+			( err, data ) => {
 				mw.notify(
 					api.getErrorMessage( data ),
 					{ type: 'error', tag: 'logout', autoHide: false }
@@ -237,11 +248,12 @@ function loadSearchModule( moduleName ) {
 	// Vue search isn't loaded through this function so we are only collecting
 	// legacy search performance metrics here.
 
-	var shouldTestSearch = !!( moduleName === 'mediawiki.searchSuggest' &&
+	const shouldTestSearch = !!( moduleName === 'mediawiki.searchSuggest' &&
 		mw.config.get( 'skin' ) === 'vector' &&
 		window.performance &&
 		performance.mark &&
 		performance.measure &&
+
 		performance.getEntriesByName ),
 		loadStartMark = 'mwVectorLegacySearchLoadStart',
 		loadEndMark = 'mwVectorLegacySearchLoadEnd';
@@ -250,7 +262,7 @@ function loadSearchModule( moduleName ) {
 		if ( shouldTestSearch ) {
 			performance.mark( loadStartMark );
 		}
-		mw.loader.using( moduleName, function () {
+		mw.loader.using( moduleName, () => {
 			if ( shouldTestSearch && performance.getEntriesByName( loadStartMark ).length ) {
 				performance.mark( loadEndMark );
 				performance.measure( 'mwVectorLegacySearchLoadStartToLoadEnd', loadStartMark, loadEndMark );

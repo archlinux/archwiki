@@ -39,7 +39,9 @@ use Wikimedia\Rdbms\DBConnectionError;
  */
 class SqliteInstaller extends DatabaseInstaller {
 
+	/** @inheritDoc */
 	public static $minimumVersion = '3.8.0';
+	/** @inheritDoc */
 	protected static $notMinimumVersionMessage = 'config-outdated-sqlite';
 
 	/**
@@ -47,6 +49,7 @@ class SqliteInstaller extends DatabaseInstaller {
 	 */
 	public $db;
 
+	/** @inheritDoc */
 	protected $globalNames = [
 		'wgDBname',
 		'wgSQLiteDataDir',
@@ -159,12 +162,22 @@ class SqliteInstaller extends DatabaseInstaller {
 	}
 
 	/**
+	 * @param string $type
 	 * @return ConnectionStatus
 	 */
-	public function openConnection() {
+	public function openConnection( string $type ) {
 		$status = new ConnectionStatus;
 		$dir = $this->getVar( 'wgSQLiteDataDir' );
 		$dbName = $this->getVar( 'wgDBname' );
+
+		// Don't implicitly create the file
+		$file = DatabaseSqlite::generateFileName( $dir, $dbName );
+		if ( !file_exists( $file ) ) {
+			$status->fatal( 'config-sqlite-connection-error',
+				'file does not exist' );
+			return $status;
+		}
+
 		try {
 			$db = MediaWikiServices::getInstance()->getDatabaseFactory()->create(
 				'sqlite', [ 'dbname' => $dbName, 'dbDirectory' => $dir ]
@@ -175,21 +188,6 @@ class SqliteInstaller extends DatabaseInstaller {
 		}
 
 		return $status;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function needsUpgrade() {
-		$dir = $this->getVar( 'wgSQLiteDataDir' );
-		$dbName = $this->getVar( 'wgDBname' );
-		// Don't create the data file yet
-		if ( !file_exists( DatabaseSqlite::generateFileName( $dir, $dbName ) ) ) {
-			return false;
-		}
-
-		// If the data file exists, look inside it
-		return parent::needsUpgrade();
 	}
 
 	/**
@@ -226,7 +224,6 @@ class SqliteInstaller extends DatabaseInstaller {
 		$this->setVar( 'wgDBserver', '' );
 		$this->setVar( 'wgDBuser', '' );
 		$this->setVar( 'wgDBpassword', '' );
-		$this->setupSchemaVars();
 
 		# Create the l10n cache DB
 		try {
@@ -283,7 +280,7 @@ EOT;
 		}
 
 		# Open the main DB
-		$mainConnStatus = $this->getConnection();
+		$mainConnStatus = $this->getConnection( self::CONN_CREATE_TABLES );
 		// Use WAL mode. This has better performance
 		// when the DB is being read and written concurrently.
 		// This causes the DB to be created in this mode
@@ -322,16 +319,7 @@ EOT;
 	 */
 	public function createTables() {
 		$status = parent::createTables();
-		if ( $status->isGood() ) {
-			$status = parent::createManualTables();
-		}
-
 		return $this->setupSearchIndex( $status );
-	}
-
-	public function createManualTables() {
-		// Already handled above. Do nothing.
-		return Status::newGood();
 	}
 
 	/**

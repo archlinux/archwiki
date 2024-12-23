@@ -2,6 +2,8 @@
 
 namespace Wikimedia\Rdbms;
 
+use InvalidArgumentException;
+
 /**
  * Shared code between SelectQueryBuilder and JoinGroup to represent tables and join conditions.
  *
@@ -14,15 +16,15 @@ abstract class JoinGroupBase {
 	/** @var array */
 	protected $joinConds = [];
 
+	/** @var string|null */
 	protected $lastAlias;
 
 	/**
 	 * Add a single table or a single parenthesized group.
 	 *
-	 * @param string|JoinGroup|SelectQueryBuilder $table The table to add. If
-	 *   this is a string, it is the table name. If it is a JoinGroup created
-	 *   by SelectQueryBuilder::newJoinGroup(), the group will be added. If it
-	 *   is a SelectQueryBuilder, a table subquery will be added.
+	 * @param string|JoinGroup|SelectQueryBuilder $table The unqualified name of a table,
+	 *   a table name of the form "information_schema.<unquoted identifier>", a JoinGroup
+	 *   containing multiple tables, or a SelectQueryBuilder representing a subquery.
 	 * @param-taint $table exec_sql
 	 * @param string|null $alias The table alias, or null for no alias
 	 * @param-taint $alias exec_sql
@@ -37,11 +39,11 @@ abstract class JoinGroupBase {
 			$table = new Subquery( $table->getSQL() );
 		} elseif ( $table instanceof Subquery ) {
 			if ( $alias === null ) {
-				throw new \InvalidArgumentException( __METHOD__ .
+				throw new InvalidArgumentException( __METHOD__ .
 					': Subquery as table must provide an alias.' );
 			}
 		} elseif ( !is_string( $table ) ) {
-			throw new \InvalidArgumentException( __METHOD__ .
+			throw new InvalidArgumentException( __METHOD__ .
 				': $table must be either string, JoinGroup or SelectQueryBuilder' );
 		}
 		if ( $alias === null ) {
@@ -57,9 +59,9 @@ abstract class JoinGroupBase {
 	/**
 	 * Left join a table or group of tables. This should be called after table().
 	 *
-	 * @param string|JoinGroup|SelectQueryBuilder $table The table name, or a
-	 *   JoinGroup containing multiple tables, or a SelectQueryBuilder
-	 *   representing a subquery.
+	 * @param string|JoinGroup|SelectQueryBuilder $table The unqualified name of a table,
+	 *   a table name of the form "information_schema.<unquoted identifier>", a JoinGroup
+	 *   containing multiple tables, or a SelectQueryBuilder representing a subquery.
 	 * @param string|null $alias The alias name, or null to automatically
 	 *   generate an alias which will be unique to this builder
 	 * @param string|array $conds The conditions for the ON clause
@@ -73,9 +75,9 @@ abstract class JoinGroupBase {
 	/**
 	 * Inner join a table or group of tables. This should be called after table().
 	 *
-	 * @param string|JoinGroup|SelectQueryBuilder $table The table name, or a
-	 *   JoinGroup containing multiple tables, or a SelectQueryBuilder
-	 *   representing a subquery.
+	 * @param string|JoinGroup|SelectQueryBuilder $table The unqualified name of a table,
+	 *   a table name of the form "information_schema.<unquoted identifier>", a JoinGroup
+	 *   containing multiple tables, or a SelectQueryBuilder representing a subquery.
 	 * @param string|null $alias The alias name, or null to automatically
 	 *   generate an alias which will be unique to this builder
 	 * @param string|array $conds The conditions for the ON clause
@@ -89,9 +91,9 @@ abstract class JoinGroupBase {
 	/**
 	 * Straight join a table or group of tables. This should be called after table().
 	 *
-	 * @param string|JoinGroup|SelectQueryBuilder $table The table name, or a
-	 *   JoinGroup containing multiple tables, or a SelectQueryBuilder
-	 *   representing a subquery.
+	 * @param string|JoinGroup|SelectQueryBuilder $table The unqualified name of a table,
+	 *   a table name of the form "information_schema.<unquoted identifier>", a JoinGroup
+	 *   containing multiple tables, or a SelectQueryBuilder representing a subquery.
 	 * @param string|null $alias The alias name, or null to automatically
 	 *   generate an alias which will be unique to this builder
 	 * @param string|array $conds The conditions for the ON clause
@@ -139,7 +141,7 @@ abstract class JoinGroupBase {
 		} elseif ( is_string( $table ) ) {
 			$this->tables[$alias] = $table;
 		} else {
-			throw new \InvalidArgumentException( __METHOD__ .
+			throw new InvalidArgumentException( __METHOD__ .
 				': $table must be either string, JoinGroup or SelectQueryBuilder' );
 		}
 		$this->joinConds[$alias] = [ $type, $joinConds ];

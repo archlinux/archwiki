@@ -12,6 +12,7 @@ use MediaWikiUnitTestCase;
  * @group Stub
  */
 class ChemRegressionTest extends MediaWikiUnitTestCase {
+	/** @var TexVC */
 	private $texVC;
 	private const CHUNK_SIZE = 100;
 

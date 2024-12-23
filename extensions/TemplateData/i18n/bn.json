@@ -64,7 +64,6 @@
 	"templatedata-modal-button-map": "মানচিত্র সম্পাদনা করুন",
 	"templatedata-modal-button-importParams": "প্যারামিটার আমদানি",
 	"templatedata-modal-button-removemap": "মানচিত্র সরান",
-	"templatedata-modal-button-restoreparam": "প্যারামিটার পুনঃস্থাপন করুন",
 	"templatedata-modal-button-saveparam": "সংরক্ষণ",
 	"templatedata-modal-confirmcancel": "আপনি কি নিশ্চিত যে আপনি আপনার পরিবর্তনগুলি পরিত্যাগ করতে ইচ্ছুক?",
 	"templatedata-modal-current-language": "বর্তমান ভাষা: $1",

@@ -57,7 +57,6 @@
 	"templatedata-modal-button-map": "మ్యాపులను సవరించండి",
 	"templatedata-modal-button-importParams": "పరామితుల దిగుమతి",
 	"templatedata-modal-button-removemap": "మ్యాపును తీసివెయ్యండి",
-	"templatedata-modal-button-restoreparam": "పరామితిని పునస్థాపించు",
 	"templatedata-modal-button-saveparam": "భద్రపరుచు",
 	"templatedata-modal-confirmcancel": "మీ మార్పులను తోసిపుచ్చాలనే మీరు నిశ్చయించుకున్నారా?",
 	"templatedata-modal-current-language": "ప్రస్తుత భాష: $1",

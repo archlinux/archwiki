@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Arystanbek",
+			"Casserium",
 			"Darzz",
 			"TMg",
 			"Нұрлан Рахымжанов",
-			"СеніңШешең",
-			"Casserium"
+			"СеніңШешең"
 		]
 	},
 	"tooltip-ca-ve-edit": "Бұл бетті өңдеу",
@@ -18,7 +18,6 @@
 	"visualeditor-autosave-modified-prompt-reject": "Жаңа өңдеме жасау",
 	"visualeditor-autosave-modified-prompt-title": "{{GENDER:|Өңдеуді}} жалғастырғыңыз келе ме?",
 	"visualeditor-backbutton-tooltip": "Артқа қайту",
-	"visualeditor-browserwarning": "Сіздің қолданып отырған шолғышыңызды VisualEditor ресми түрде қолдамайды.",
 	"visualeditor-ca-createlocaldescriptionsource": "Жергілікті сипаттама көзін қосу",
 	"visualeditor-ca-createsource": "Қайнарын құру",
 	"visualeditor-ca-editlocaldescriptionsource": "Жергілікті сипаттама қайнарын өңдеу",

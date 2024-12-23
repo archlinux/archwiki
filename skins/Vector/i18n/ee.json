@@ -4,8 +4,8 @@
 			"Aguve",
 			"Amuzujoe",
 			"Azorbli",
-			"Natsubee",
-			"E4Esau"
+			"E4Esau",
+			"Natsubee"
 		]
 	},
 	"vector-languages": "Gbegbɔgblɔwo",
@@ -21,14 +21,17 @@
 	"vector-view-view": "Xlẽ",
 	"vector-view-viewsource": "Kpɔ alesi woŋlɔe",
 	"vector-more-actions": "Bubuwo",
+	"vector-appearance-label": "Dzedzeme",
 	"vector-feature-custom-font-size-name": "Nuŋɔɖi",
 	"vector-feature-custom-font-size-0-label": "Sue",
 	"vector-feature-custom-font-size-1-label": "Dzidzenu",
 	"vector-feature-custom-font-size-2-label": "Lolo",
 	"skin-theme-name": "Amadede",
+	"skin-theme-day-label": "Kekeli",
 	"skin-theme-os-label": "Ewɔa nu le eɖokui si",
 	"vector-searchsuggest-containing": "Di axa siwo me<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> le",
 	"vector-main-menu-label": "Menu vevitɔ",
+	"vector-feature-custom-font-size-exclusion-notice": "Axa sia zãa ŋɔŋlɔdzesi suewo ɣesiaɣi",
 	"vector-page-tools-label": "Dɔwɔnuwo",
 	"vector-page-tools-general-label": "Gbadza",
 	"vector-unpin-element-label": "ɣla"

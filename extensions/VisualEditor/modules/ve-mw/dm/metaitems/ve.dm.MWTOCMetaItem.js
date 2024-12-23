@@ -6,7 +6,7 @@
  */
 
 /**
- * DataModel TOC meta item (for __FORCETOC__ and __NOTOC__).
+ * DataModel TOC meta item (for `__FORCETOC__` and `__NOTOC__`).
  *
  * @class
  * @extends ve.dm.MWFlaggedMetaItem

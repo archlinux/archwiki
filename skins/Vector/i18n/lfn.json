@@ -3,8 +3,8 @@
 		"authors": [
 			"Cgboeree",
 			"Chabi",
-			"Katxis",
-			"Elefentiste"
+			"Elefentiste",
+			"Katxis"
 		]
 	},
 	"vector-languages": "Linguas",
@@ -19,17 +19,21 @@
 	"vector-view-history": "Mostra istoria",
 	"vector-view-view": "Leje",
 	"vector-more-actions": "Plu",
+	"vector-appearance-label": "Aspeta",
 	"vector-feature-limited-width-name": "Largia",
-	"vector-feature-custom-font-size-name": "Testo",
 	"vector-feature-limited-width-0-label": "Larga",
 	"vector-feature-limited-width-1-label": "Normal",
+	"vector-feature-custom-font-size-name": "Testo",
 	"vector-feature-custom-font-size-0-label": "Peti",
 	"vector-feature-custom-font-size-1-label": "Normal",
 	"vector-feature-custom-font-size-2-label": "Grande",
 	"skin-theme-name": "Color",
+	"skin-theme-day-label": "Pal",
+	"skin-theme-night-label": "Oscur",
 	"skin-theme-os-label": "Automata",
 	"vector-toc-beginning": "Comensa",
 	"vector-main-menu-label": "Menu xef",
+	"vector-feature-custom-font-size-exclusion-notice": "Esta paje usa sempre tipo peti",
 	"vector-page-tools-label": "Utiles",
 	"vector-page-tools-general-label": "Jeneral",
 	"vector-unpin-element-label": "asconde"

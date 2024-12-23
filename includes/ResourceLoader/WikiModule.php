@@ -22,9 +22,9 @@
 
 namespace MediaWiki\ResourceLoader;
 
-use Content;
 use CSSJanus;
-use FormatJson;
+use MediaWiki\Content\Content;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -100,7 +100,7 @@ class WikiModule extends Module {
 	 * @param array|null $options For back-compat, this can be omitted in favour of overwriting
 	 *  getPages.
 	 */
-	public function __construct( array $options = null ) {
+	public function __construct( ?array $options = null ) {
 		if ( $options === null ) {
 			return;
 		}
@@ -352,8 +352,7 @@ class WikiModule extends Module {
 
 	/**
 	 * @param Context $context
-	 * @return array
-	 * @phan-return array{main:string,files:string[][]}
+	 * @return array{main:?string,files:array<string,array>}
 	 */
 	private function getPackageFiles( Context $context ): array {
 		$main = null;
@@ -373,9 +372,7 @@ class WikiModule extends Module {
 						'content' => $script,
 					];
 					// First script becomes the "main" script
-					if ( $main === null ) {
-						$main = $fileKey;
-					}
+					$main ??= $fileKey;
 				} elseif ( $options['type'] === 'data' ) {
 					$data = FormatJson::decode( $content );
 					if ( $data == null ) {
@@ -541,7 +538,7 @@ class WikiModule extends Module {
 	/**
 	 * @param IReadableDatabase $db
 	 * @param string[] $pages
-	 * @param string $fname
+	 * @param string $fname @phan-mandatory-param
 	 * @return array
 	 */
 	protected static function fetchTitleInfo( IReadableDatabase $db, array $pages, $fname = __METHOD__ ) {

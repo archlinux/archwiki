@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Bgo eiu",
+			"Cabal",
 			"Jagseer S Sidhu",
-			"Kuldeepburjbhalaike",
-			"Cabal"
+			"Kuldeepburjbhalaike"
 		]
 	},
 	"discussiontools": "ਚਰਚਾ ਸੰਦ",
@@ -31,7 +31,6 @@
 	"discussiontools-findcomment-results-transcluded": "(ਇੱਕ ਹੋਰ ਸਫ਼ੇ ਤੋਂ ਸੰਯੋਇਆ ਗਿਆ)",
 	"discussiontools-findcomment-title": "ਟਿੱਪਣੀ ਲੱਭੋ",
 	"discussiontools-ledesection-button": "ਇਸ ਸਫ਼ੇ ਬਾਰੇ ਹੋਰ ਜਾਣੋ",
-	"discussiontools-ledesection-title": "ਇਸ ਗੱਲਬਾਤ ਸਫ਼ੇ ਬਾਰੇ",
 	"discussiontools-newtopic-placeholder-title": "ਵਿਸ਼ਾ",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "ਗਾਹਕ ਬਣੋ",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "ਗਾਹਕੀ ਰੱਦ ਕਰੋ",
@@ -54,7 +53,6 @@
 	"discussiontools-replywidget-abandontopic-keep": "ਲਿਖਣਾ ਜਾਰੀ ਰੱਖੋ",
 	"discussiontools-replywidget-advanced": "ਉੱਨਤ",
 	"discussiontools-replywidget-cancel": "ਰੱਦ ਕਰੋ",
-	"discussiontools-replywidget-loading": "ਲੱਦ ਰਿਹਾ ਹੈ...",
 	"discussiontools-replywidget-mention-tool-header": "ਵਰਤੋਂਕਾਰ ਲੱਭੋ: $1",
 	"discussiontools-replywidget-mention-tool-title": "ਇੱਕ ਵਰਤੋਂਕਾਰ ਦਾ ਜ਼ਿਕਰ ਕਰੋ",
 	"discussiontools-replywidget-mode-source": "ਸਰੋਤ",
@@ -80,12 +78,10 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "ਗਾਹਕ ਬਣੋ",
 	"discussiontools-topicsubscription-button-unsubscribe": "ਗਾਹਕੀ ਰੱਦ ਕਰੋ",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "ਗਾਹਕੀ ਰੱਦ ਕਰੋ",
-	"discussiontools-topicsubscription-error-not-found-title": "ਗਾਹਕੀ ਨਹੀਂ ਲੱਭੀ",
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|ਤੁਸੀਂ}} ਇਸ ਵਿਸ਼ੇ ਵਿੱਚ ਨਵੀਆਂ ਟਿੱਪਣੀਆਂ ਬਾਰੇ ਸੂਚਨਾਵਾਂ ਪ੍ਰਾਪਤ ਕਰੋਂਗੇ।",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|ਤੁਸੀਂ}} ਇਸਦੇ ਗਾਹਕ ਬਣੇ!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|ਤੁਸੀਂ}} ਹੁਣ ਇਸ ਵਿਸ਼ੇ ਵਿੱਚ ਨਵੀਆਂ ਟਿੱਪਣੀਆਂ ਬਾਰੇ ਸੂਚਨਾਵਾਂ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰੋਂਗੇ।",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|ਤੁਸੀਂ}} ਇਸਦੀ ਗਾਹਕੀ ਹਟਾ ਦਿੱਤੀ ਹੈ।",
-	"discussiontools-topicsubscription-pager-actions": "ਕਾਰਵਾਈਆਂ",
 	"discussiontools-topicsubscription-pager-newtopics-label": "ਨਵੇਂ ਵਿਸ਼ੇ",
 	"discussiontools-topicsubscription-pager-notified": "ਤਾਜ਼ਾ ਸੂਚਨਾ",
 	"discussiontools-topicsubscription-pager-notified-never": "ਕਦੇ ਨਹੀਂ",

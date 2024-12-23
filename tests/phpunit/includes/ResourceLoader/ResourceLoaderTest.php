@@ -2,14 +2,13 @@
 
 namespace MediaWiki\Tests\ResourceLoader;
 
-use EmptyResourceLoader;
 use Exception;
-use ExtensionRegistry;
 use InvalidArgumentException;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Html\HtmlJsCode;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\FileModule;
@@ -17,12 +16,12 @@ use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\ResourceLoader\SkinModule;
 use MediaWiki\ResourceLoader\StartUpModule;
 use MediaWiki\User\Options\StaticUserOptionsLookup;
-use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
 use UnexpectedValueException;
 use Wikimedia\Minify\IdentityMinifierState;
+use Wikimedia\Stats\NullStatsdDataFactory;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -228,8 +227,20 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 				'expected' => "$basePath/import-codex-icons.css"
 			],
 			[
+				'input' => "$basePath/import-codex-icons.less",
+				'expected' => "$basePath/import-codex-icons-devmode.css",
+				'exception' => null,
+				'devmode' => true
+			],
+			[
 				'input' => "$basePath/import-codex-tokens.less",
 				'expected' => "$basePath/import-codex-tokens.css"
+			],
+			[
+				'input' => "$basePath/import-codex-tokens.less",
+				'expected' => "$basePath/import-codex-tokens-devmode.css",
+				'exception' => null,
+				'devmode' => true
 			],
 			[
 				'input' => "$basePath/import-codex-tokens-npm.less",
@@ -246,8 +257,20 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 	/**
 	 * @dataProvider provideLessImportRemappingCases
 	 */
-	public function testLessImportRemapping( $input, $expected, $exception = null ) {
-		$rl = new EmptyResourceLoader();
+	public function testLessImportRemapping( $input, $expected, $exception = null, $devmode = false ) {
+		$configOverrides = [];
+		if ( $devmode ) {
+			$devDir = MW_INSTALL_PATH . '/tests/phpunit/data/resourceloader/codex-devmode';
+			$configOverrides += [
+				MainConfigNames::CodexDevelopmentDir => $devDir
+			];
+		}
+
+		$this->overrideConfigValues( $configOverrides );
+		// Unfortunately the EmptyResourceLoader constructor doesn't pick up the overridden config
+		// values, we have to do that separately
+		$baseConfig = static::getSettings();
+		$rl = new EmptyResourceLoader( new HashConfig( $configOverrides + $baseConfig ) );
 		$lc = $rl->getLessCompiler();
 
 		if ( $exception !== null ) {
@@ -302,6 +325,7 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 			'localBasePath' => __DIR__ . '/../../data/less',
 			'styles' => [ 'use-variables.less' ],
 		] );
+		$module->setConfig( $context->getResourceLoader()->getConfig() );
 		$module->setName( 'test.less' );
 		$styles = $module->getStyles( $context );
 		$this->assertStringEqualsFile( $expectedFile, $styles['all'] );
@@ -664,7 +688,7 @@ END
 
 	protected function getFailFerryMock( $getter = 'getScript' ) {
 		$mock = $this->getMockBuilder( ResourceLoaderTestModule::class )
-					 ->onlyMethods( [ $getter, 'getName' ] )
+			->onlyMethods( [ $getter, 'getName' ] )
 			->getMock();
 		$mock->method( $getter )->willThrowException(
 			new Exception( 'Ferry not found' )
@@ -675,7 +699,7 @@ END
 
 	protected function getSimpleModuleMock( $script = '' ) {
 		$mock = $this->getMockBuilder( ResourceLoaderTestModule::class )
-					 ->onlyMethods( [ 'getScript', 'getName' ] )
+			->onlyMethods( [ 'getScript', 'getName' ] )
 			->getMock();
 		$mock->method( 'getScript' )->willReturn( $script );
 		$mock->method( 'getName' )->willReturn( __METHOD__ );
@@ -684,7 +708,7 @@ END
 
 	protected function getSimpleStyleModuleMock( $styles = '' ) {
 		$mock = $this->getMockBuilder( ResourceLoaderTestModule::class )
-					 ->onlyMethods( [ 'getStyles', 'getName' ] )
+			->onlyMethods( [ 'getStyles', 'getName' ] )
 			->getMock();
 		$mock->method( 'getStyles' )->willReturn( [ '' => $styles ] );
 		$mock->method( 'getName' )->willReturn( __METHOD__ );
@@ -1174,7 +1198,7 @@ END
 		$rl->respond( $context );
 	}
 
-	private function getResourceLoaderWithTestModules( Config $config = null ) {
+	private function getResourceLoaderWithTestModules( ?Config $config = null ) {
 		$localBasePath = __DIR__ . '/../../data/resourceloader';
 		$remoteBasePath = '/w';
 		$rl = new EmptyResourceLoader( $config );

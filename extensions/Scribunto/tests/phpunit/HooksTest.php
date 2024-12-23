@@ -16,12 +16,12 @@ class HooksTest extends TestCase {
 
 	public static function provideContentHandlerDefaultModelFor() {
 		return [
-			[ 'Module:Foo', CONTENT_MODEL_SCRIBUNTO, true ],
-			[ 'Module:Foo/doc', null, true ],
-			[ 'Module:Foo/styles.css', 'sanitized-css', true, 'sanitized-css' ],
-			[ 'Module:Foo.json', CONTENT_MODEL_JSON, true ],
-			[ 'Module:Foo/subpage.json', CONTENT_MODEL_JSON, true ],
-			[ 'Main Page', null, true ],
+			[ 'Module:Foo', CONTENT_MODEL_SCRIBUNTO ],
+			[ 'Module:Foo/doc', null ],
+			[ 'Module:Foo/styles.css', 'sanitized-css', 'sanitized-css' ],
+			[ 'Module:Foo.json', CONTENT_MODEL_JSON ],
+			[ 'Module:Foo/subpage.json', CONTENT_MODEL_JSON ],
+			[ 'Main Page', null ],
 		];
 	}
 
@@ -29,14 +29,13 @@ class HooksTest extends TestCase {
 	 * @dataProvider provideContentHandlerDefaultModelFor
 	 */
 	public function testContentHandlerDefaultModelFor( $name, $expected,
-		$retVal, $before = null
+		$before = null
 	) {
 		$title = Title::newFromText( $name );
 		$model = $before;
-		$ret = ( new Hooks(
+		( new Hooks(
 			MediaWikiServices::getInstance()->getMainConfig()
 		) )->onContentHandlerDefaultModelFor( $title, $model );
-		$this->assertSame( $retVal, $ret );
 		$this->assertSame( $expected, $model );
 	}
 }

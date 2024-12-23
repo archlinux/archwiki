@@ -15,18 +15,7 @@ const { TYPE_REFERENCE } = require( './constants.js' );
  * @return {boolean|null} Null when there is no way the popup type can be enabled at run-time.
  */
 function isReferencePreviewsEnabled( user, isPreviewTypeEnabled, config ) {
-	// TODO: This and the final `mw.user.options` check are currently redundant. Only this here
-	// should be removed when the wgPopupsReferencePreviews feature flag is not needed any more.
-	if ( !config.get( 'wgPopupsReferencePreviews' ) ) {
-		return null;
-	}
-
-	// T265872: Unavailable when in conflict with (one of the) reference tooltips gadgets.
-	if ( config.get( 'wgPopupsConflictsWithRefTooltipsGadget' ) ||
-		config.get( 'wgPopupsConflictsWithNavPopupGadget' ) ||
-		// T243822: Temporarily disabled in the mobile skin
-		config.get( 'skin' ) === 'minerva'
-	) {
+	if ( !config.get( 'wgCiteReferencePreviewsActive' ) ) {
 		return null;
 	}
 
@@ -34,8 +23,7 @@ function isReferencePreviewsEnabled( user, isPreviewTypeEnabled, config ) {
 		return isPreviewTypeEnabled( TYPE_REFERENCE );
 	}
 
-	// Registered users never can enable popup types at run-time.
-	return user.options.get( 'popups-reference-previews' ) === '1' ? true : null;
+	return true;
 }
 
 module.exports = isReferencePreviewsEnabled;

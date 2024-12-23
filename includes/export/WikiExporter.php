@@ -28,6 +28,7 @@
  */
 
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
@@ -66,7 +67,7 @@ class WikiExporter {
 	public const TEXT = XmlDumpWriter::WRITE_CONTENT;
 	public const STUB = XmlDumpWriter::WRITE_STUB;
 
-	protected const BATCH_SIZE = 50000;
+	protected const BATCH_SIZE = 10000;
 
 	/** @var int */
 	public $text;
@@ -333,32 +334,23 @@ class WikiExporter {
 
 		$commentQuery = $this->commentStore->getJoin( 'log_comment' );
 
-		$tables = array_merge(
-			[ 'logging', 'actor' ], $commentQuery['tables']
-		);
-		$fields = [
-			'log_id', 'log_type', 'log_action', 'log_timestamp', 'log_namespace',
-			'log_title', 'log_params', 'log_deleted', 'actor_user', 'actor_name'
-		] + $commentQuery['fields'];
-		$options = [
-			'ORDER BY' => 'log_id',
-			'USE INDEX' => [ 'logging' => 'PRIMARY' ],
-			'LIMIT' => self::BATCH_SIZE,
-		];
-		$joins = [
-			'actor' => [ 'JOIN', 'actor_id=log_actor' ]
-		] + $commentQuery['joins'];
-
 		$lastLogId = 0;
 		while ( true ) {
-			$result = $this->db->select(
-				$tables,
-				$fields,
-				array_merge( $where, [ 'log_id > ' . intval( $lastLogId ) ] ),
-				__METHOD__,
-				$options,
-				$joins
-			);
+			$result = $this->db->newSelectQueryBuilder()
+				->select( [
+					'log_id', 'log_type', 'log_action', 'log_timestamp', 'log_namespace',
+					'log_title', 'log_params', 'log_deleted', 'actor_user', 'actor_name'
+				] )
+				->from( 'logging' )
+				->join( 'actor', null, 'actor_id=log_actor' )
+				->where( $where )
+				->andWhere( $this->db->expr( 'log_id', '>', intval( $lastLogId ) ) )
+				->orderBy( 'log_id' )
+				->useIndex( [ 'logging' => 'PRIMARY' ] )
+				->limit( self::BATCH_SIZE )
+				->queryInfo( $commentQuery )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 
 			if ( !$result->numRows() ) {
 				break;
@@ -471,19 +463,18 @@ class WikiExporter {
 				$done = true;
 			}
 
-			$queryConds = $conds;
-			$queryConds[] = 'rev_page>' . intval( $revPage ) . ' OR (rev_page=' .
-				intval( $revPage ) . ' AND rev_id' . $op . intval( $revId ) . ')';
-
 			# Do the query and process any results, remembering max ids for the next iteration.
-			$result = $this->db->select(
-				$tables,
-				$fields,
-				$queryConds,
-				__METHOD__,
-				$opts,
-				$join
-			);
+			$result = $this->db->newSelectQueryBuilder()
+				->tables( $tables )
+				->fields( $fields )
+				->where( $conds )
+				->andWhere( $this->db->expr( 'rev_page', '>', intval( $revPage ) )->orExpr(
+					$this->db->expr( 'rev_page', '=', intval( $revPage ) )->and( 'rev_id', $op, intval( $revId ) )
+				) )
+				->caller( __METHOD__ )
+				->options( $opts )
+				->joinConds( $join )
+				->fetchResultSet();
 			if ( $result->numRows() > 0 ) {
 				$lastRow = $this->outputPageStreamBatch( $result, $lastRow );
 				$rowCount += $result->numRows();
@@ -583,6 +574,8 @@ class WikiExporter {
 			$carry = null;
 		}
 
+		// Reading further rows from the result set for the same rev id
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $row = $results->fetchObject() ) {
 			if ( $prev && $prev->rev_id !== $row->rev_id ) {
 				$carry = $row;

@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Kimberli Mäkäräinen (WMNO)",
+			"Muotâ",
 			"Seipinne",
 			"Trondtr",
-			"Yupik",
-			"Muotâ"
+			"Yupik"
 		]
 	},
 	"vector-opt-out": "Molso puáris olgoháámán",
@@ -26,15 +26,19 @@
 	"vector-jumptosearch": "Njuškii ucâmân",
 	"vector-jumptocontent": "Njuškii siskáldâsân",
 	"vector-more-actions": "Eenâb",
+	"vector-appearance-label": "Olgoldâshäämi",
 	"vector-feature-limited-width-name": "Kobdodâh",
-	"vector-feature-custom-font-size-name": "Tekstâ",
 	"vector-feature-limited-width-0-label": "Viijđes",
 	"vector-feature-limited-width-1-label": "Táválâš",
+	"vector-feature-custom-font-size-name": "Tekstâ",
 	"vector-feature-custom-font-size-0-label": "Ucce",
 	"vector-feature-custom-font-size-1-label": "Táválâš",
 	"vector-feature-custom-font-size-2-label": "Styeres",
 	"skin-theme-name": "Ivne",
+	"skin-theme-day-label": "Kuovgâd",
+	"skin-theme-night-label": "Tevkkâd",
 	"skin-theme-os-label": "Automaatlâš",
+	"skin-theme-exclusion-notice": "Taat siijđo lii ain kuovgâd.",
 	"vector-searchsuggest-containing": "Uusâ siijđoid, moh siskeldeh <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Siskáldâslisto",
 	"vector-toc-beginning": "Algâttâs",
@@ -42,6 +46,7 @@
 	"vector-anon-user-menu-pages-learn": "luuvâ lase",
 	"vector-main-menu-tooltip": "Uáivivaljiittâh",
 	"vector-main-menu-label": "Uáivivaljiittâh",
+	"vector-feature-custom-font-size-exclusion-notice": "Taan siijđost lii ain uccâ fonttâ",
 	"vector-page-tools-label": "Tyejiniävuh",
 	"vector-page-tools-general-label": "Almolâš",
 	"vector-page-tools-actions-label": "Tooimah",

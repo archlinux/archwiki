@@ -35,48 +35,46 @@ class UserMergeHooks implements
 				// Select notifications that are now sent to the same user
 				$dbw = DbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
 				$attributeManager = Services::getInstance()->getAttributeManager();
-				$selfIds = $dbw->selectFieldValues(
-					[ 'echo_notification', 'echo_event' ],
-					'event_id',
-					[
+				$selfIds = $dbw->newSelectQueryBuilder()
+					->select( 'event_id' )
+					->from( 'echo_notification' )
+					->join( 'echo_event', null, 'notification_event = event_id' )
+					->where( [
 						'notification_user' => $newUser->getId(),
-						'notification_event = event_id',
 						'notification_user = event_agent_id',
-						'event_type NOT IN (' . $dbw->makeList( $attributeManager->getNotifyAgentEvents() ) . ')'
-					],
-					$method
-				) ?: [];
+						$dbw->expr( 'event_type', '!=', $attributeManager->getNotifyAgentEvents() ),
+					] )
+					->caller( $method )
+					->fetchFieldValues();
 
 				// Select newer welcome notification(s)
-				$welcomeIds = $dbw->selectFieldValues(
-					[ 'echo_notification', 'echo_event' ],
-					'event_id',
-					[
+				$welcomeIds = $dbw->newSelectQueryBuilder()
+					->select( 'event_id' )
+					->from( 'echo_event' )
+					->join( 'echo_notification', null, 'notification_event = event_id' )
+					->where( [
 						'notification_user' => $newUser->getId(),
-						'notification_event = event_id',
 						'event_type' => 'welcome',
-					],
-					$method,
-					[
-						'ORDER BY' => 'notification_timestamp ASC',
-						'OFFSET' => 1,
-					]
-				) ?: [];
+					] )
+					->orderBy( 'notification_timestamp' )
+					->offset( 1 )
+					->caller( $method )
+					->fetchFieldValues();
 
 				// Select newer milestone notifications (per milestone level)
 				$counts = [];
 				$thankYouIds = [];
-				$thankYouRows = $dbw->select(
-					[ 'echo_notification', 'echo_event' ],
-					Event::selectFields(),
-					[
+				$thankYouRows = $dbw->newSelectQueryBuilder()
+					->select( Event::selectFields() )
+					->from( 'echo_event' )
+					->join( 'echo_notification', null, 'notification_event = event_id' )
+					->where( [
 						'notification_user' => $newUser->getId(),
-						'notification_event = event_id',
 						'event_type' => 'thank-you-edit',
-					],
-					$method,
-					[ 'ORDER BY' => 'notification_timestamp ASC' ]
-				) ?: [];
+					] )
+					->orderBy( 'notification_timestamp' )
+					->caller( $method )
+					->fetchResultSet();
 				foreach ( $thankYouRows as $row ) {
 					$event = Event::newFromRow( $row );
 					$editCount = $event ? $event->getExtraParam( 'editCount' ) : null;
@@ -92,14 +90,14 @@ class UserMergeHooks implements
 				// Delete notifications
 				$ids = array_merge( $selfIds, $welcomeIds, $thankYouIds );
 				if ( $ids !== [] ) {
-					$dbw->delete(
-						'echo_notification',
-						[
+					$dbw->newDeleteQueryBuilder()
+						->deleteFrom( 'echo_notification' )
+						->where( [
 							'notification_user' => $newUser->getId(),
 							'notification_event' => $ids
-						],
-						$method
-					);
+						] )
+						->caller( $method )
+						->execute();
 				}
 			}
 

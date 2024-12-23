@@ -1,7 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Unit;
+
 use MediaWiki\Extension\Notifications\Bundler;
 use MediaWiki\Extension\Notifications\Model\Notification;
+use MediaWikiUnitTestCase;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Bundler

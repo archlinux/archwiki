@@ -20,7 +20,13 @@
  * @since 1.28
  */
 
+namespace MediaWiki\Api;
+
+use LogicException;
 use MediaWiki\Context\IContextSource;
+use SearchEngine;
+use SearchEngineConfig;
+use SearchEngineFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -51,6 +57,7 @@ trait SearchApi {
 	 * a valid option for an array for PARAM_TYPE, so we'll use a fake name
 	 * that can't possibly be a class name and describes what the null behavior
 	 * does
+	 * @var string
 	 */
 	private static $BACKEND_NULL_PARAM = 'database-backed';
 
@@ -172,7 +179,7 @@ trait SearchApi {
 	 * ApiBase::extractRequestParams() before)
 	 * @return SearchEngine
 	 */
-	public function buildSearchEngine( array $params = null ) {
+	public function buildSearchEngine( ?array $params = null ) {
 		$this->checkDependenciesSet();
 
 		if ( $params == null ) {
@@ -211,3 +218,6 @@ trait SearchApi {
 	 */
 	abstract public function getContext();
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( SearchApi::class, 'SearchApi' );

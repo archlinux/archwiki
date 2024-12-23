@@ -19,9 +19,12 @@
  * @ingroup RevisionDelete
  */
 
+use MediaWiki\Api\ApiResult;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\RevisionList\RevisionListBase;
+use MediaWiki\Xml\Xml;
 
 /**
  * Item class for a live revision table row

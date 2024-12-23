@@ -8,9 +8,9 @@
 ( function () {
 
 	/**
-	 * Creates an mw.widgets.CalendarWidget object.
+	 * @classdesc Calendar widget.
 	 *
-	 * You will most likely want to use mw.widgets.DateInputWidget instead of CalendarWidget directly.
+	 * You will most likely want to use {@link mw.widgets.DateInputWidget} instead of CalendarWidget directly.
 	 *
 	 * @class
 	 * @extends OO.ui.Widget
@@ -19,6 +19,7 @@
 	 * @mixes OO.ui.mixin.ClippableElement
 	 *
 	 * @constructor
+	 * @description Creates an mw.widgets.CalendarWidget object.
 	 * @param {Object} [config] Configuration options
 	 * @param {boolean} [config.lazyInitOnToggle=false] Don't build most of the interface until
 	 *     `.toggle( true )` is called. Meant to be used when the calendar is not immediately visible.
@@ -38,8 +39,8 @@
 		mw.widgets.CalendarWidget.super.call( this, config );
 
 		// Mixin constructors
-		OO.ui.mixin.TabIndexedElement.call( this, $.extend( {}, config, { $tabIndexed: this.$element } ) );
-		OO.ui.mixin.ClippableElement.call( this, $.extend( { $clippable: this.$element }, config ) );
+		OO.ui.mixin.TabIndexedElement.call( this, Object.assign( {}, config, { $tabIndexed: this.$element } ) );
+		OO.ui.mixin.ClippableElement.call( this, Object.assign( { $clippable: this.$element }, config ) );
 		OO.ui.mixin.FloatableElement.call( this, config );
 
 		// Flipping implementation derived from MenuSelectWidget
@@ -157,7 +158,7 @@
 	 *     'next' depending on whether the current date is later or earlier than the previous.
 	 */
 	mw.widgets.CalendarWidget.prototype.updateUI = function ( fade ) {
-		var $bodyWrapper = this.$bodyWrapper;
+		const $bodyWrapper = this.$bodyWrapper;
 
 		if ( this.lazyInitOnToggle ) {
 			// We're being called from the constructor and not being shown yet, do nothing
@@ -186,7 +187,7 @@
 			}
 		}
 
-		var items = [];
+		let items = [];
 		if ( this.$oldBody ) {
 			this.$oldBody.remove();
 		}
@@ -198,8 +199,8 @@
 			.toggleClass( 'mw-widget-calendarWidget-body-year', this.displayLayer === 'year' )
 			.toggleClass( 'mw-widget-calendarWidget-body-duodecade', this.displayLayer === 'duodecade' );
 
-		var today = moment();
-		var selected = moment( this.getDate(), this.getDateFormat() );
+		const today = moment();
+		const selected = moment( this.getDate(), this.getDateFormat() );
 
 		switch ( this.displayLayer ) {
 			case 'month':
@@ -210,11 +211,12 @@
 				// First week displayed is the first week spanned by the month, unless it begins on Monday, in
 				// which case first week displayed is the previous week. This makes the calendar "balanced"
 				// and also neatly handles 28-day February sometimes spanning only 4 weeks.
-				var currentDay = moment( this.moment ).startOf( 'month' ).subtract( 1, 'day' ).startOf( 'week' );
+				// eslint-disable-next-line no-case-declarations
+				const currentDay = moment( this.moment ).startOf( 'month' ).subtract( 1, 'day' ).startOf( 'week' );
 
 				// Day-of-week labels. Localisation-independent: works with weeks starting on Saturday, Sunday
 				// or Monday.
-				for ( var w = 0; w < 7; w++ ) {
+				for ( let w = 0; w < 7; w++ ) {
 					items.push(
 						$( '<div>' )
 							.addClass( 'mw-widget-calendarWidget-day-heading' )
@@ -226,7 +228,7 @@
 
 				// Actual calendar month. Always displays 6 weeks, for consistency (months can span 4 to 6
 				// weeks).
-				for ( var i = 0; i < 42; i++ ) {
+				for ( let i = 0; i < 42; i++ ) {
 					items.push(
 						$( '<div>' )
 							.addClass( 'mw-widget-calendarWidget-item mw-widget-calendarWidget-day' )
@@ -247,8 +249,9 @@
 				this.labelButton.toggle( true );
 				this.upButton.toggle( true );
 
-				var currentMonth = moment( this.moment ).startOf( 'year' );
-				for ( var m = 0; m < 12; m++ ) {
+				// eslint-disable-next-line no-case-declarations
+				const currentMonth = moment( this.moment ).startOf( 'year' );
+				for ( let m = 0; m < 12; m++ ) {
 					items.push(
 						$( '<div>' )
 							.addClass( 'mw-widget-calendarWidget-item mw-widget-calendarWidget-month' )
@@ -279,13 +282,14 @@
 				this.labelButton.setLabel( null );
 				this.labelButton.toggle( false );
 				this.upButton.toggle( false );
-				var currentYear;
+				// eslint-disable-next-line no-case-declarations
+				let currentYear;
 				if ( this.duoDecade === 'prev' ) {
 					currentYear = moment( { year: Math.floor( ( this.moment.year() - 10 ) / 10 ) * 10 } );
 				} else if ( this.duoDecade === 'next' ) {
 					currentYear = moment( { year: Math.floor( this.moment.year() / 10 ) * 10 } );
 				}
-				for ( var y = 0; y < 20; y++ ) {
+				for ( let y = 0; y < 20; y++ ) {
 					items.push(
 						$( '<div>' )
 							.addClass( 'mw-widget-calendarWidget-item mw-widget-calendarWidget-year' )
@@ -298,7 +302,7 @@
 				break;
 		}
 
-		this.$body.append.apply( this.$body, items );
+		this.$body.append( ...items );
 
 		$bodyWrapper
 			.removeClass( 'mw-widget-calendarWidget-body-wrapper-fade-up' )
@@ -306,7 +310,7 @@
 			.removeClass( 'mw-widget-calendarWidget-body-wrapper-fade-previous' )
 			.removeClass( 'mw-widget-calendarWidget-body-wrapper-fade-next' );
 
-		var needsFade = this.previousDisplayLayer !== this.displayLayer;
+		let needsFade = this.previousDisplayLayer !== this.displayLayer;
 		if ( this.displayLayer === 'month' ) {
 			needsFade = needsFade || !this.moment.isSame( this.previousMoment, 'month' );
 		} else if ( this.displayLayer === 'year' ) {
@@ -326,7 +330,7 @@
 			} else if ( fade === 'next' || fade === 'down' ) {
 				this.$body.insertAfter( this.$oldBody );
 			}
-			setTimeout( function () {
+			setTimeout( () => {
 				// The following classes are used here:
 				// * mw-widget-calendarWidget-body-wrapper-fade-up
 				// * mw-widget-calendarWidget-body-wrapper-fade-down
@@ -397,7 +401,7 @@
 	 * @private
 	 */
 	mw.widgets.CalendarWidget.prototype.onUpButtonClick = function () {
-		var
+		const
 			layers = this.getDisplayLayers(),
 			currentLayer = layers.indexOf( this.displayLayer );
 		if ( currentLayer !== layers.length - 1 ) {
@@ -458,7 +462,7 @@
 	 * @param {jQuery.Event} e Click event
 	 */
 	mw.widgets.CalendarWidget.prototype.onBodyClick = function ( e ) {
-		var
+		const
 			$target = $( e.target ),
 			layers = this.getDisplayLayers(),
 			currentLayer = layers.indexOf( this.displayLayer );
@@ -489,7 +493,7 @@
 	 *     is not changed.
 	 */
 	mw.widgets.CalendarWidget.prototype.setDate = function ( date ) {
-		var mom = date !== null ? moment( date, this.getDateFormat() ) : moment();
+		const mom = date !== null ? moment( date, this.getDateFormat() ) : moment();
 		if ( mom.isValid() ) {
 			this.moment = mom;
 			if ( date !== null ) {
@@ -532,7 +536,7 @@
 	mw.widgets.CalendarWidget.prototype.setDateFromMoment = function () {
 		// Switch to English locale to avoid number formatting. We want the internal value to be
 		// '2015-07-24' and not '٢٠١٥-٠٧-٢٤' even if the UI language is Arabic.
-		var newDate = moment( this.moment ).locale( 'en' ).format( this.getDateFormat() );
+		const newDate = moment( this.moment ).locale( 'en' ).format( this.getDateFormat() );
 		if ( this.date !== newDate ) {
 			this.date = newDate;
 			this.emit( 'change', this.date );
@@ -564,7 +568,7 @@
 	 *
 	 * @private
 	 * @param {jQuery.Event} e Mouse click event
-	 * @return {boolean} False to cancel the default event
+	 * @return {boolean|undefined} False to cancel the default event
 	 */
 	mw.widgets.CalendarWidget.prototype.onClick = function ( e ) {
 		if ( !this.isDisabled() && e.which === 1 ) {
@@ -578,14 +582,15 @@
 	 *
 	 * @private
 	 * @param {jQuery.Event} e Key down event
-	 * @return {boolean} False to cancel the default event
+	 * @return {boolean|undefined} False to cancel the default event
 	 */
 	mw.widgets.CalendarWidget.prototype.onKeyDown = function ( e ) {
-		var
+		const
 			dir = OO.ui.Element.static.getDir( this.$element ),
 			nextDirectionKey = dir === 'ltr' ? OO.ui.Keys.RIGHT : OO.ui.Keys.LEFT,
-			prevDirectionKey = dir === 'ltr' ? OO.ui.Keys.LEFT : OO.ui.Keys.RIGHT,
-			changed = true;
+			prevDirectionKey = dir === 'ltr' ? OO.ui.Keys.LEFT : OO.ui.Keys.RIGHT;
+
+		let changed = true;
 
 		if ( !this.isDisabled() ) {
 			switch ( e.which ) {
@@ -626,7 +631,7 @@
 	 */
 	mw.widgets.CalendarWidget.prototype.toggle = function ( visible ) {
 		visible = visible === undefined ? !this.visible : !!visible;
-		var change = visible !== this.isVisible();
+		const change = visible !== this.isVisible();
 		if ( this.lazyInitOnToggle && visible ) {
 			this.lazyInitOnToggle = false;
 			this.buildHeaderButtons();
@@ -653,14 +658,14 @@
 				this.originalVerticalPosition !== 'center'
 			) {
 				// If opening the menu in one direction causes it to be clipped, flip it
-				var originalHeight = this.$element.height();
+				const originalHeight = this.$element.height();
 				this.setVerticalPosition(
 					this.constructor.static.flippedPositions[ this.originalVerticalPosition ]
 				);
 				if ( this.isClippedVertically() || this.isFloatableOutOfView() ) {
 					// If flipping also causes it to be clipped, open in whichever direction
 					// we have more space
-					var flippedHeight = this.$element.height();
+					const flippedHeight = this.$element.height();
 					if ( originalHeight > flippedHeight ) {
 						this.setVerticalPosition( this.originalVerticalPosition );
 					}

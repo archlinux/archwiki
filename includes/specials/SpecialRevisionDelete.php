@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Revisiondelete
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -36,12 +33,12 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\Xml\Xml;
 use PermissionsError;
 use RepoGroup;
 use RevDelList;
 use RevisionDeleter;
 use UserBlockedError;
-use Xml;
 
 /**
  * Special page allowing users with the appropriate permissions to view
@@ -377,17 +374,16 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 				$lang->userDate( $oimage->getTimestamp(), $user ),
 				$lang->userTime( $oimage->getTimestamp(), $user ) );
 			$this->getOutput()->addHTML(
-				Xml::openElement( 'form', [
+				Html::rawElement( 'form', [
 					'method' => 'POST',
 					'action' => $this->getPageTitle()->getLocalURL( [
 							'target' => $this->targetObj->getPrefixedDBkey(),
 							'file' => $archiveName,
 							'token' => $user->getEditToken( $archiveName ),
 						] )
-					]
-				) .
-				Xml::submitButton( $this->msg( 'revdelete-show-file-submit' )->text() ) .
-				'</form>'
+					],
+					Xml::submitButton( $this->msg( 'revdelete-show-file-submit' )->text() )
+				)
 			);
 
 			return;

@@ -2,35 +2,42 @@
 
 namespace Shellbox\Command;
 
-use Psr\Http\Message\StreamInterface;
+use Shellbox\ShellboxError;
 
 /**
  * The base class for input files
- * @internal
  */
 abstract class InputFile {
-	/**
-	 * Copy the contents of the input file to a fully-qualified path
-	 *
-	 * @param string $destPath
-	 */
-	abstract public function copyTo( $destPath );
+	use UserDataTrait;
 
 	/**
-	 * Get the contents of the file as either a PSR-7 StreamInterface or a
-	 * string.
+	 * Get data for JSON serialization by the client.
 	 *
-	 * @return StreamInterface|string
+	 * @internal
+	 * @return array
 	 */
-	abstract public function getStreamOrString();
+	public function getClientData() {
+		return [];
+	}
 
 	/**
 	 * Get an InputFile object to represent a file already created by the server.
 	 *
+	 * @internal
 	 * @param array $data
-	 * @return InputFilePlaceholder
+	 * @return InputFile
 	 */
 	public static function newFromClientData( $data ) {
+		if ( ( $data['type'] ?? '' ) === 'url' ) {
+			if ( !isset( $data['url'] ) ) {
+				throw new ShellboxError( 'Missing required parameter for URL file: "url"' );
+			}
+			$file = new InputFileFromUrl( $data['url'] );
+			if ( isset( $data['headers'] ) ) {
+				$file->headers( $data['headers'] );
+			}
+			return $file;
+		}
 		return new InputFilePlaceholder;
 	}
 }

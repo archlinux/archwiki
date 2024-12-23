@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use BagOStuff;
+use Wikimedia\ObjectCache\BagOStuff;
 
 /**
  * Helper class for EmergencyWatcher. Wrapper around cache which tracks hits of recently

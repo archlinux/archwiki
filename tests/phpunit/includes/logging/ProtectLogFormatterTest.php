@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkRendererFactory;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
@@ -481,11 +482,11 @@ class ProtectLogFormatterTest extends LogFormatterTestCase {
 		$context = new RequestContext();
 		$context->setAuthority( $user );
 		$context->setLanguage( 'en' );
-		$formatter = LogFormatter::newFromRow( $row );
+		$formatter = $this->getServiceContainer()->getLogFormatterFactory()->newFromRow( $row );
 		$formatter->setContext( $context );
 		$titleFactory = $this->createMock( TitleFactory::class );
-		$titleFactory->method( 'makeTitle' )->willReturnCallback( static function () {
-			$ret = Title::makeTitle( ...func_get_args() );
+		$titleFactory->method( 'makeTitle' )->willReturnCallback( static function ( ...$params ) {
+			$ret = Title::makeTitle( ...$params );
 			$ret->resetArticleID( 0 );
 			return $ret;
 		} );

@@ -25,32 +25,15 @@ use MessageLocalizer;
  */
 class LanguageSelectorEntry implements IMenuEntry {
 
-	/**
-	 * @var MessageLocalizer
-	 */
-	private $messageLocalizer;
-	/**
-	 * @var Title
-	 */
-	private $title;
-	/**
-	 * @var bool
-	 */
-	private $doesPageHaveLanguages;
-	/**
-	 * @var string Associated icon name
-	 */
-	private $icon;
-
-	/**
-	 * @var string A translatable label used as text and title
-	 */
-	private $label;
-
-	/**
-	 * @var string additional classes
-	 */
-	private $classes;
+	private MessageLocalizer $messageLocalizer;
+	private Title $title;
+	private bool $doesPageHaveLanguages;
+	/** @var string Associated icon name */
+	private string $icon;
+	/** @var string A translatable label used as text and title */
+	private string $label;
+	/** @var string additional classes */
+	private string $classes;
 
 	/**
 	 * LanguageSelectorEntry constructor.
@@ -73,7 +56,7 @@ class LanguageSelectorEntry implements IMenuEntry {
 		$this->title = $title;
 		$this->doesPageHaveLanguages = $doesPageHaveLanguages;
 		$this->messageLocalizer = $messageLocalizer;
-		$this->icon = 'language-base20';
+		$this->icon = 'language';
 		$this->label = $label;
 		$this->classes = $classes;
 	}
@@ -81,7 +64,7 @@ class LanguageSelectorEntry implements IMenuEntry {
 	/**
 	 * @inheritDoc
 	 */
-	public function getName() {
+	public function getName(): string {
 		return 'language-selector';
 	}
 
@@ -126,10 +109,6 @@ class LanguageSelectorEntry implements IMenuEntry {
 					[
 						'key' => 'data-event-name',
 						'value' => 'menu.languages',
-					],
-					[
-						'key' => 'role',
-						'value' => 'button',
 					],
 					[
 						'key' => 'title',

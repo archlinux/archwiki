@@ -27,14 +27,13 @@
 	}
 }
 
-@media all and ( min-width: @width-breakpoint-tablet ) {
+// Calculate padding based off icon and branding box widths,
+// accounting for `box-sizing: border-box` on the icon
+@spacing-search-horizontal-ems: unit( @spacing-horizontal-button / @font-size-browser, ems );
+
+@media all and ( min-width: @min-width-breakpoint-tablet ) {
 	.overlay.search-overlay {
-		// TODO: update @size-icon and @width-icon-gutter to reflect new icon button specs
-		@size-icon-updated: 1.25em; // 20px icon width
-		@width-icon-gutter-updated: 0.75em; // 12px padding width
-		@border-width-icon: 0.125em; // 1px border width * 2
-		// Calculate padding based off icon and branding box widths, accounting for `box-sizing: border-box` on the icon
-		@searchPadding: (@size-icon-updated + @width-icon-gutter-updated + @border-width-icon) + @width-branding-box;
+		@searchPadding: @min-size-interactive-touch-ems + @min-width-branding-box-ems - @spacing-search-horizontal-ems;
 
 		.search-box,
 		.search-content,
@@ -54,12 +53,11 @@
 
 		.overlay-title {
 			width: auto;
-			padding-left: 0;
 		}
 
 		.overlay-content {
 			// Override default width styles
-			width: 100%;
+			width: 90%;
 			max-width: none;
 		}
 
@@ -70,7 +68,28 @@
 	}
 }
 
-@media screen and ( min-width: @width-breakpoint-desktop ) {
+/* Keeps search input aligned */
+@media all and ( min-width: @min-width-breakpoint-tablet ) and ( max-width: @min-width-breakpoint-desktop ) {
+	.overlay-title {
+		padding-left: 0 !important;
+	}
+}
+
+/* FIXME: Remove when T366859 has been addressed */
+@media screen and ( min-width: 720px ) {
+	.overlay.search-overlay {
+		@T366859-searchPadding: @min-size-interactive-touch-ems + @T366859-min-width-branding-box-ems - @spacing-search-horizontal-ems;
+
+		.search-box,
+		.search-content,
+		.spinner-container,
+		.results {
+			margin-left: @T366859-searchPadding;
+		}
+	}
+}
+
+@media screen and ( min-width: @min-width-breakpoint-desktop ) {
 	.overlay.search-overlay {
 		// Normally .overlay-content would have these styles by default
 		// But since we need to account for .heading-container padding in .overlay-content,

@@ -89,13 +89,15 @@ module.exports = function () {
 
 		if ( $primaryBtn.length ) {
 			// We only bind the click event to the first language switcher in page
-			$primaryBtn.on( 'click', function ( ev ) {
+			$primaryBtn.on( 'click', ( ev ) => {
 				ev.preventDefault();
 
 				if ( $primaryBtn.attr( 'href' ) || $primaryBtn.find( 'a' ).length ) {
 					router.navigate( '/languages' );
 				} else {
-					mw.notify( mw.msg( 'mobile-frontend-languages-not-available' ) );
+					mw.notify( mw.msg( 'mobile-frontend-languages-not-available' ), {
+						tag: 'languages-not-available'
+					} );
 				}
 			} );
 		}
@@ -133,22 +135,16 @@ module.exports = function () {
 
 	// Routes
 	overlayManager.add( /^\/media\/(.+)$/, makeMediaViewerOverlayIfNeeded );
-	overlayManager.add( /^\/languages$/, function () {
-		return ms.languages.languageOverlay();
-	} );
+	overlayManager.add( /^\/languages$/, () => ms.languages.languageOverlay() );
 	// Register a LanguageInfo overlay which has no built-in functionality;
 	// a hook is fired when a language is selected, and extensions can respond
 	// to that hook. See GrowthExperiments WelcomeSurvey feature (in gerrit
 	// Ib558dc7c46cc56ff667957f9126bbe0471d25b8e for example usage).
-	overlayManager.add( /^\/languages\/all$/, function () {
-		return ms.languages.languageInfoOverlay( api, true );
-	} );
-	overlayManager.add( /^\/languages\/all\/no-suggestions$/, function () {
-		return ms.languages.languageInfoOverlay( api, false );
-	} );
+	overlayManager.add( /^\/languages\/all$/, () => ms.languages.languageInfoOverlay( api, true ) );
+	overlayManager.add( /^\/languages\/all\/no-suggestions$/, () => ms.languages.languageInfoOverlay( api, false ) );
 
 	// Setup
-	$( function () {
+	$( () => {
 		initButton();
 	} );
 
@@ -232,8 +228,8 @@ module.exports = function () {
 	 */
 	function initModifiedInfo() {
 		// eslint-disable-next-line no-jquery/no-global-selector
-		$( '.modified-enhancement' ).each( function () {
-			initHistoryLink( $( this ) );
+		$( '.modified-enhancement' ).each( ( _i, el ) => {
+			initHistoryLink( $( el ) );
 		} );
 		Array.prototype.forEach.call( document.querySelectorAll( '.mw-diff-timestamp' ), ( tsNode ) => {
 			const ts = tsNode.dataset.timestamp;
@@ -289,8 +285,8 @@ module.exports = function () {
 	 */
 	function initRegistrationInfo() {
 		// eslint-disable-next-line no-jquery/no-global-selector
-		$( '#tagline-userpage' ).each( function () {
-			initRegistrationDate( $( this ) );
+		$( '#tagline-userpage' ).each( ( _i, el ) => {
+			initRegistrationDate( $( el ) );
 		} );
 	}
 
@@ -325,10 +321,10 @@ module.exports = function () {
 	 * @param {jQuery} $redLinks
 	 */
 	function initUserRedLinks( $redLinks ) {
-		$redLinks.filter( function ( _, element ) {
+		$redLinks.filter(
 			// Filter out non-User namespace pages.
-			return isUserUri( element.href );
-		} ).each( function ( _, element ) {
+			( _, element ) => isUserUri( element.href )
+		).each( ( _, element ) => {
 			const uri = new mw.Uri( element.href );
 			if ( uri.query.action !== 'edit' ) {
 				// Nothing to strip.
@@ -349,7 +345,7 @@ module.exports = function () {
 	function setupEcho() {
 		const echoBtn = document.querySelector( '.minerva-notifications .mw-echo-notification-badge-nojs' );
 		if ( echoBtn ) {
-			echoBtn.addEventListener( 'click', function ( ev ) {
+			echoBtn.addEventListener( 'click', ( ev ) => {
 				router.navigate( '#/notifications' );
 				// prevent navigation to original Special:Notifications URL
 				// DO NOT USE stopPropagation or you'll break click tracking in WikimediaEvents
@@ -365,7 +361,7 @@ module.exports = function () {
 		}
 	}
 
-	$( function () {
+	$( () => {
 		// eslint-disable-next-line no-jquery/no-global-selector
 		const $watch = $( '#page-actions-watch' );
 		const toolbarElement = document.querySelector( Toolbar.selector );
@@ -381,7 +377,7 @@ module.exports = function () {
 		$( document.body ).addClass( 'minerva-animations-ready' );
 
 		// eslint-disable-next-line no-jquery/no-global-selector
-		$( '.mw-mf-page-center__mask' ).on( 'click', function ( ev ) {
+		$( '.mw-mf-page-center__mask' ).on( 'click', ( ev ) => {
 			const path = router.getPath();
 			// avoid jumping to the top of the page and polluting history by avoiding the
 			// resetting of the hash unless the hash is being utilised (T237015).
@@ -436,7 +432,7 @@ module.exports = function () {
 		// If MobileFrontend installed we add a table of contents icon to the table of contents.
 		// This should probably be done in the parser.
 		// setup toc icons
-		mw.hook( 'wikipage.content' ).add( function ( $container ) {
+		mw.hook( 'wikipage.content' ).add( ( $container ) => {
 			// If the MMV module is missing or disabled from the page, initialise our version
 			if ( desktopMMV === null || desktopMMV === 'registered' ) {
 				initMediaViewer( $container[ 0 ] );
@@ -450,10 +446,10 @@ module.exports = function () {
 			// Init red links.
 			const $redLinks = currentPageHTMLParser.getRedLinks();
 			ctaDrawers.initRedlinksCta(
-				$redLinks.filter( function ( _, element ) {
+				$redLinks.filter(
 					// Filter out local User namespace pages.
-					return !isUserUri( element.href );
-				} )
+					( _, element ) => !isUserUri( element.href )
+				)
 			);
 			initUserRedLinks( $redLinks );
 		} );

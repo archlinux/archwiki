@@ -2,7 +2,7 @@
 /* eslint no-underscore-dangle: "off" */
 ( function () {
 	const rcfilters = require( 'mediawiki.rcfilters.filters.ui' );
-	var mockFilterStructure = [ {
+	const mockFilterStructure = [ {
 			name: 'group1',
 			title: 'Group 1',
 			type: 'send_unselected_if_any',
@@ -43,8 +43,8 @@
 
 	QUnit.module( 'mediawiki.rcfilters - UriProcessor' );
 
-	QUnit.test( 'getVersion', function ( assert ) {
-		var uriProcessor = new rcfilters.UriProcessor( new rcfilters.dm.FiltersViewModel() );
+	QUnit.test( 'getVersion', ( assert ) => {
+		const uriProcessor = new rcfilters.UriProcessor( new rcfilters.dm.FiltersViewModel() );
 
 		assert.strictEqual(
 			uriProcessor.getVersion( { param1: 'foo', urlversion: '2' } ),
@@ -59,17 +59,16 @@
 		);
 	} );
 
-	QUnit.test( 'getUpdatedUri', function ( assert ) {
-		var uriProcessor,
-			filtersModel = new rcfilters.dm.FiltersViewModel(),
+	QUnit.test( 'getUpdatedUri', ( assert ) => {
+		const filtersModel = new rcfilters.dm.FiltersViewModel(),
 			makeUri = function ( queryParams ) {
-				var uri = new mw.Uri( 'http://server/wiki/Special:RC' );
+				const uri = new mw.Uri( 'http://server/wiki/Special:RC' );
 				uri.query = queryParams;
 				return uri;
 			};
 
 		filtersModel.initializeFilters( mockFilterStructure );
-		uriProcessor = new rcfilters.UriProcessor( filtersModel );
+		const uriProcessor = new rcfilters.UriProcessor( filtersModel );
 
 		assert.deepEqual(
 			( uriProcessor.getUpdatedUri( makeUri( {} ) ) ).query,
@@ -102,12 +101,11 @@
 		);
 	} );
 
-	QUnit.test( 'updateModelBasedOnQuery', function ( assert ) {
-		var uriProcessor,
-			filtersModel = new rcfilters.dm.FiltersViewModel();
+	QUnit.test( 'updateModelBasedOnQuery', ( assert ) => {
+		const filtersModel = new rcfilters.dm.FiltersViewModel();
 
 		filtersModel.initializeFilters( mockFilterStructure );
-		uriProcessor = new rcfilters.UriProcessor( filtersModel );
+		const uriProcessor = new rcfilters.UriProcessor( filtersModel );
 
 		uriProcessor.updateModelBasedOnQuery( {} );
 		assert.deepEqual(
@@ -131,9 +129,8 @@
 		);
 	} );
 
-	QUnit.test( 'isNewState', function ( assert ) {
-		var uriProcessor,
-			filtersModel = new rcfilters.dm.FiltersViewModel(),
+	QUnit.test( 'isNewState', ( assert ) => {
+		const filtersModel = new rcfilters.dm.FiltersViewModel(),
 			cases = [
 				{
 					states: {
@@ -186,9 +183,9 @@
 			];
 
 		filtersModel.initializeFilters( mockFilterStructure );
-		uriProcessor = new rcfilters.UriProcessor( filtersModel );
+		const uriProcessor = new rcfilters.UriProcessor( filtersModel );
 
-		cases.forEach( function ( testCase ) {
+		cases.forEach( ( testCase ) => {
 			assert.strictEqual(
 				uriProcessor.isNewState( testCase.states.curr, testCase.states.new ),
 				testCase.result,
@@ -197,52 +194,8 @@
 		} );
 	} );
 
-	QUnit.test( 'doesQueryContainRecognizedParams', function ( assert ) {
-		var uriProcessor,
-			filtersModel = new rcfilters.dm.FiltersViewModel(),
-			cases = [
-				{
-					query: {},
-					result: false,
-					message: 'Empty query is not valid for load.'
-				},
-				{
-					query: { highlight: '1' },
-					result: false,
-					message: 'Highlight state alone is not valid for load'
-				},
-				{
-					query: { urlversion: '2' },
-					result: true,
-					message: 'urlversion=2 state alone is valid for load as an empty state'
-				},
-				{
-					query: { filter1: '1', foo: 'bar' },
-					result: true,
-					message: 'Existence of recognized parameters makes the query valid for load'
-				},
-				{
-					query: { foo: 'bar', debug: true },
-					result: false,
-					message: 'Only unrecognized parameters makes the query invalid for load'
-				}
-			];
-
-		filtersModel.initializeFilters( mockFilterStructure );
-		uriProcessor = new rcfilters.UriProcessor( filtersModel );
-
-		cases.forEach( function ( testCase ) {
-			assert.strictEqual(
-				uriProcessor.doesQueryContainRecognizedParams( testCase.query ),
-				testCase.result,
-				testCase.message
-			);
-		} );
-	} );
-
-	QUnit.test( '_getNormalizedQueryParams', function ( assert ) {
-		var uriProcessor,
-			filtersModel = new rcfilters.dm.FiltersViewModel(),
+	QUnit.test( '_getNormalizedQueryParams', ( assert ) => {
+		const filtersModel = new rcfilters.dm.FiltersViewModel(),
 			cases = [
 				{
 					query: {},
@@ -267,9 +220,9 @@
 			];
 
 		filtersModel.initializeFilters( mockFilterStructure );
-		uriProcessor = new rcfilters.UriProcessor( filtersModel );
+		const uriProcessor = new rcfilters.UriProcessor( filtersModel );
 
-		cases.forEach( function ( testCase ) {
+		cases.forEach( ( testCase ) => {
 			assert.deepEqual(
 				uriProcessor._getNormalizedQueryParams( testCase.query ),
 				testCase.result,
@@ -278,8 +231,8 @@
 		} );
 	} );
 
-	QUnit.test( '_normalizeTargetInUri', function ( assert ) {
-		var cases = [
+	QUnit.test( '_normalizeTargetInUri', ( assert ) => {
+		const cases = [
 			{
 				input: 'http://host/wiki/Special:RecentChangesLinked/Moai',
 				output: 'http://host/wiki/Special:RecentChangesLinked?target=Moai',
@@ -333,8 +286,8 @@
 			}
 		];
 
-		cases.forEach( function ( testCase ) {
-			var uriProcessor = new rcfilters.UriProcessor(
+		cases.forEach( ( testCase ) => {
+			const uriProcessor = new rcfilters.UriProcessor(
 				null,
 				{
 					normalizeTarget: testCase.normalizeTarget === undefined ?

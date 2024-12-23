@@ -2,13 +2,30 @@
 
 namespace MediaWiki\Tests\Integration\HTMLForm;
 
-use HTMLForm;
 use InvalidArgumentException;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWikiIntegrationTestCase;
 
 abstract class HTMLFormFieldTestCase extends MediaWikiIntegrationTestCase {
+	/** @var string|null */
 	protected $className = null;
+
+	/**
+	 * Augment assertEquals a little bit by stripping newlines and tabs from $expected.
+	 * This allows $expected to be expressed as a heredoc string.
+	 *
+	 * @param string $expected HTML
+	 * @param string $actual HTML
+	 * @param string $msg Optional message
+	 */
+	private function assertHTMLEqualStrippingWhitespace( $expected, $actual, $msg = '' ) {
+		$this->assertEquals(
+			str_replace( [ "\n", "\t" ], '', $expected ),
+			str_replace( [ "\n", "\t" ], '', $actual ),
+			$msg
+		);
+	}
 
 	public function constructField( array $params ): HTMLFormField {
 		if ( $this->className === null ) {
@@ -31,7 +48,7 @@ abstract class HTMLFormFieldTestCase extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetInputHtml( $params, $value, $expected ) {
 		$field = $this->constructField( $params );
-		$this->assertHTMLEquals( $expected, $field->getInputHtml( $value ) );
+		$this->assertHTMLEqualStrippingWhitespace( $expected, $field->getInputHtml( $value ) );
 	}
 
 	public static function provideInputOOUI() {
@@ -45,7 +62,7 @@ abstract class HTMLFormFieldTestCase extends MediaWikiIntegrationTestCase {
 		\OOUI\Theme::setSingleton( new \OOUI\BlankTheme() );
 
 		$field = $this->constructField( $params );
-		$this->assertHTMLEquals( $expected, $field->getInputOOUI( $value ) );
+		$this->assertHTMLEqualStrippingWhitespace( $expected, $field->getInputOOUI( $value ) );
 	}
 
 	public static function provideInputCodex() {
@@ -57,12 +74,7 @@ abstract class HTMLFormFieldTestCase extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetInputCodex( $params, $value, $hasError, $expected ) {
 		$field = $this->constructField( $params );
-		$this->assertHTMLEquals(
-			// assertHTMLEquals is pretty basic; augment it a little bit by stripping newlines and
-			// tabs from $expected. This allows $expected to be expressed as a heredoc string
-			str_replace( [ "\n", "\t" ], '', $expected ),
-			$field->getInputCodex( $value, $hasError )
-		);
+		$this->assertHTMLEqualStrippingWhitespace( $expected, $field->getInputCodex( $value, $hasError ) );
 	}
 
 }

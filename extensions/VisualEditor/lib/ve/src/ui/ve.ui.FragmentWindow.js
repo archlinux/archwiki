@@ -34,8 +34,9 @@ ve.ui.FragmentWindow.prototype.getFragment = function () {
 	return this.fragment;
 };
 
+// eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
 /**
- * @inheritdoc OO.ui.Dialog
+ * @see OO.ui.Dialog
  */
 ve.ui.FragmentWindow.prototype.getActionWidgetConfig = function ( config ) {
 	if ( config.action === 'done' && OO.ui.isMobile() ) {
@@ -48,13 +49,14 @@ ve.ui.FragmentWindow.prototype.getActionWidgetConfig = function ( config ) {
 	return config;
 };
 
+// eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
 /**
- * @inheritdoc OO.ui.Window
+ * @see OO.ui.Window
  * @throws {Error} If fragment was not provided through data parameter
  */
 ve.ui.FragmentWindow.prototype.getSetupProcess = function ( data, process ) {
 	data = data || {};
-	return process.first( function () {
+	return process.first( () => {
 		if ( !( data.fragment instanceof ve.dm.SurfaceFragment ) ) {
 			throw new Error( 'Cannot open dialog: opening data must contain a fragment' );
 		}
@@ -63,25 +65,26 @@ ve.ui.FragmentWindow.prototype.getSetupProcess = function ( data, process ) {
 		this.selectFragmentOnClose = data.selectFragmentOnClose !== false;
 		// Prefer this.initialFragment.getSelection() to this.previousSelection
 		this.previousSelection = this.fragment.getSelection();
-	}, this ).next( function () {
+	} ).next( () => {
 		// Don't allow windows to be opened for insertion in readonly mode
 		if ( !this.isEditing() && this.isReadOnly() ) {
 			return ve.createDeferred().reject().promise();
 		}
 		this.actions.setMode( this.getMode() );
-	}, this );
+	} );
 };
 
+// eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
 /**
- * @inheritdoc OO.ui.Window
+ * @see OO.ui.Window
  */
 ve.ui.FragmentWindow.prototype.getTeardownProcess = function ( data, process ) {
 	ve.track( 'activity.' + this.constructor.static.name, { action: 'dialog-' + ( data && data.action || 'abort' ) } );
-	return process.next( function () {
+	return process.next( () => {
 		this.fragment = null;
 		this.initialFragment = null;
 		this.previousSelection = null;
-	}, this );
+	} );
 };
 
 /**
@@ -90,7 +93,7 @@ ve.ui.FragmentWindow.prototype.getTeardownProcess = function ( data, process ) {
  * @return {boolean} Fragment's surface is readOnly
  */
 ve.ui.FragmentWindow.prototype.isReadOnly = function () {
-	var fragment = this.getFragment(),
+	const fragment = this.getFragment(),
 		surface = fragment && fragment.getSurface();
 
 	return surface && surface.isReadOnly();

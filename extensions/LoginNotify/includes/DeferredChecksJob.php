@@ -15,7 +15,7 @@ class DeferredChecksJob extends Job {
 	public const TYPE_LOGIN_FAILED = 'failed';
 	public const TYPE_LOGIN_SUCCESS = 'success';
 
-	private $userFactory;
+	private UserFactory $userFactory;
 
 	/**
 	 * @param Title $title

@@ -26,13 +26,17 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Base class for iterating over a dump.
@@ -214,5 +218,7 @@ class SearchDump extends DumpIterator {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = SearchDump::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

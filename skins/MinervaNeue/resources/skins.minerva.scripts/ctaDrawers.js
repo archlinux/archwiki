@@ -18,7 +18,7 @@ const CtaDrawer = mobile.CtaDrawer;
  * will be red. In both cases, another user follows this link, not to edit create a page for
  * that user but to obtain information on them.
  *
- * @ignore
+ * @private
  * @param {jQuery} $redLinks
  */
 function initRedlinksCta( $redLinks ) {
@@ -51,22 +51,23 @@ function initRedlinksCta( $redLinks ) {
  * A CtaDrawer should show for anonymous users.
  *
  * @param {jQuery} $watchstar
+ * @ignore
  */
 function initWatchstarCta( $watchstar ) {
 	let watchCtaDrawer;
 	// show a CTA for anonymous users
-	$watchstar.on( 'click', function ( ev ) {
+	$watchstar.on( 'click', ( ev ) => {
 		if ( !watchCtaDrawer ) {
 			watchCtaDrawer = CtaDrawer( {
 				content: mw.msg( 'minerva-watchlist-cta' ),
 				queryParams: {
-					warning: 'mobile-frontend-watchlist-purpose',
+					notice: 'mobile-frontend-watchlist-purpose',
 					campaign: 'mobile_watchPageActionCta',
 					returntoquery: 'article_action=watch'
 				},
 				onBeforeHide: drawers.discardDrawer,
 				signupQueryParams: {
-					warning: 'mobile-frontend-watchlist-signup-action'
+					notice: 'mobile-frontend-watchlist-signup-action'
 				}
 			} );
 		}

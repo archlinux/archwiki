@@ -8,14 +8,13 @@ QUnit.module( 've.ce.LinearEscapeKeyDownHandler', {
 	// See https://github.com/platinumazure/eslint-plugin-qunit/issues/68
 	// eslint-disable-next-line qunit/resolve-async
 	beforeEach: function ( assert ) {
-		var done = assert.async();
+		const done = assert.async();
 		return ve.init.platform.getInitializedPromise().then( done );
 	}
 } );
 
-QUnit.test( 'special key down: linear escape', function ( assert ) {
-	var done = assert.async(),
-		promise = Promise.resolve(),
+QUnit.test( 'special key down: linear escape', ( assert ) => {
+	const done = assert.async(),
 		noChange = function () {},
 		mergedCellsDoc = ve.dm.example.createExampleDocument( 'mergedCells' ),
 		cases = [
@@ -46,10 +45,9 @@ QUnit.test( 'special key down: linear escape', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		promise = promise.then( function () {
-			return ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem );
-		} );
+	let promise = Promise.resolve();
+	cases.forEach( ( caseItem ) => {
+		promise = promise.then( () => ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem ) );
 	} );
 
 	promise.finally( () => done() );

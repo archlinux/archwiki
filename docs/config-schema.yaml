@@ -115,7 +115,7 @@ config-schema:
             use: [ScriptPath]
             callback: [MediaWiki\MainConfigSchema, getDefaultRestPath]
         description: |-
-            The URL path to the REST API
+            The URL path to the REST API.
             Defaults to "{$wgScriptPath}/rest.php"
             @since 1.34
     StylePath:
@@ -1984,29 +1984,16 @@ config-schema:
             If you want to get another db in the main cluster, just omit 'cluster'. For example:
              [ 'centralauth' => [ 'db' => 'centralauth' ] ]
             @since 1.41
-    TemplateLinksSchemaMigrationStage:
-        default: 768
-        type: integer
-        description: |-
-            Templatelinks table schema migration stage, for normalizing tl_namespace and tl_title fields.
-            Use the SCHEMA_COMPAT_XXX flags. Supported values:
-              - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
-              - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_NEW
-              - SCHEMA_COMPAT_NEW
-            History:
-              - 1.38: Added
-              - 1.39: Default has changed to SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
-                and support for SCHEMA_COMPAT_OLD is dropped.
     PageLinksSchemaMigrationStage:
-        default: 3
+        default: 768
         type: integer
         description: |-
             Pagelinks table schema migration stage, for normalizing pl_namespace and pl_title fields.
             Use the SCHEMA_COMPAT_XXX flags. Supported values:
-              - SCHEMA_COMPAT_WRITE_OLD | SCHEMA_COMPAT_READ_OLD
-              - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
+              - SCHEMA_COMPAT_WRITE_NEW | SCHEMA_COMPAT_READ_NEW (SCHEMA_COMPAT_NEW)
             History:
               - 1.41: Added
+              - 1.43: Default has changed to SCHEMA_COMPAT_NEW.
     ExternalLinksDomainGaps:
         default: {  }
         type: object
@@ -2026,12 +2013,12 @@ config-schema:
               - 1.41: Added
     ContentHandlers:
         default:
-            wikitext: { class: WikitextContentHandler, services: [TitleFactory, ParserFactory, GlobalIdGenerator, LanguageNameUtils, LinkRenderer, MagicWordFactory, ParsoidParserFactory] }
-            javascript: JavaScriptContentHandler
-            json: JsonContentHandler
-            css: CssContentHandler
-            text: TextContentHandler
-            unknown: FallbackContentHandler
+            wikitext: { class: MediaWiki\Content\WikitextContentHandler, services: [TitleFactory, ParserFactory, GlobalIdGenerator, LanguageNameUtils, LinkRenderer, MagicWordFactory, ParsoidParserFactory] }
+            javascript: MediaWiki\Content\JavaScriptContentHandler
+            json: MediaWiki\Content\JsonContentHandler
+            css: MediaWiki\Content\CssContentHandler
+            text: MediaWiki\Content\TextContentHandler
+            unknown: MediaWiki\Content\FallbackContentHandler
         type: object
         description: |-
             Plugins for page content model handling.
@@ -2119,6 +2106,15 @@ config-schema:
         description: |-
             Revision text may be cached in the main WAN cache to reduce load on external
             storage servers and object extraction overhead for frequently-loaded revisions.
+            Set to 0 to disable, or number of seconds before cache expiry.
+    RevisionSlotsCacheExpiry:
+        default:
+            local: 3600
+            WAN: 86400
+        type: object
+        description: |-
+            Revision slots may be cached in the main WAN cache and/or the local server cache
+            to reduce load on the database.
             Set to 0 to disable, or number of seconds before cache expiry.
     PageLanguageUseDB:
         default: false
@@ -2347,7 +2343,7 @@ config-schema:
             - CACHE_NONE:       Do not cache
             - CACHE_DB:         Store cache objects in the DB
             - CACHE_MEMCACHED:  MemCached, must specify servers in $wgMemCachedServers
-            - CACHE_ACCEL:      APC, APCU or WinCache
+            - CACHE_ACCEL:      APC or APCu
             - (other):          A string may be used which identifies a cache
                                 configuration in $wgObjectCaches.
             For a multi-datacenter setup, the underlying service should be configured
@@ -2400,14 +2396,13 @@ config-schema:
             @since 1.20
     ObjectCaches:
         default:
-            0: { class: EmptyBagOStuff, reportDupes: false }
+            0: { class: Wikimedia\ObjectCache\EmptyBagOStuff, reportDupes: false }
             1: { class: SqlBagOStuff, loggroup: SQLBagOStuff }
-            memcached-php: { class: MemcachedPhpBagOStuff, loggroup: memcached }
-            memcached-pecl: { class: MemcachedPeclBagOStuff, loggroup: memcached }
-            hash: { class: HashBagOStuff, reportDupes: false }
-            apc: { class: APCUBagOStuff, reportDupes: false }
-            apcu: { class: APCUBagOStuff, reportDupes: false }
-            wincache: { class: WinCacheBagOStuff, reportDupes: false }
+            memcached-php: { class: Wikimedia\ObjectCache\MemcachedPhpBagOStuff, loggroup: memcached }
+            memcached-pecl: { class: Wikimedia\ObjectCache\MemcachedPeclBagOStuff, loggroup: memcached }
+            hash: { class: Wikimedia\ObjectCache\HashBagOStuff, reportDupes: false }
+            apc: { class: Wikimedia\ObjectCache\APCUBagOStuff, reportDupes: false }
+            apcu: { class: Wikimedia\ObjectCache\APCUBagOStuff, reportDupes: false }
         type: object
         description: |-
             Advanced object cache configuration.
@@ -2452,14 +2447,11 @@ config-schema:
                  between 0 and shards-1. The number of digits used in the suffix is the minimum number
                  required to hold the largest shard index. Data is distributed among the tables via
                  key hashing. This helps mitigate MySQL bugs 61735 and 61736.
-              - replicaOnly: Whether to only use replica servers and only support read operations.
-                 This option requires the use of LoadBalancer and should only be used by
-                 ReplicatedBagOStuff.
               - writeBatchSize: Default maximum number of rows to change in each query for write
                  operations that can be chunked into a set of smaller writes.
             For MemcachedPhpBagOStuff parameters see {@link MemcachedPhpBagOStuff::__construct}
             For MemcachedPeclBagOStuff parameters see {@link MemcachedPeclBagOStuff::__construct}
-            For RedisBagOStuff parameters see {@link RedisBagOStuff::__construct}
+            For RedisBagOStuff parameters see {@link Wikimedia\ObjectCache\RedisBagOStuff::__construct}
     WANObjectCache:
         default: {  }
         type: object
@@ -2477,15 +2469,23 @@ config-schema:
             This store should be optimized for ephemeral data, and should be able to handle
             a high volume of writes and reads. The dataset access scope should be across
             all servers that serve the application.
-            Note that the TTL of the data written to the store must be respected completely
+            Note that the TTL of the data written to this store must be respected completely
             before the data gets evicted from the store (whether the data is used or not).
-            Thus, the store should not evict data before the TTL expires.
-            Properties of the backend should be:
-            1.) the data written to the store should be short-lived,
-            2.) it should be evicted ONLY after the TTL elapses (reliably persist),
-            3.) should be accessed by all servers that serve the application,
-            4.) should be able to handle a high volume of writes and reads.
-            @see \BagOStuff
+            The store must not evict data based on LRU or popularity before the TTL expires.
+            Expectations for sysadmins:
+            1. The data written to this store is generally short-lived (seconds/minutes),
+            2. This store must reliably persist and should not evict data until the TTL expires,
+            3. The same store must be accessed by all application servers (i.e. no visible lag or
+               split reality),
+            4. This store should handle a high volume of both writes and reads,
+               with reads completing with consistently low latencies.
+            Examples users:
+            - {@link MediaWiki::Permissions::RateLimiter RateLimiter} (via RStatsFactory)
+            - {@link Wikimedia::Rdbms::ChronologyProtector ChronologyProtector}
+               See also [ChronologyProtector requirements](@ref ChronologyProtector-storage-requirements),
+               for more detailed system administrator requirements for multi-DC operations.
+            Valid options are the keys of {@link $wgObjectCaches}, e.g. CACHE_* constants.
+            @see \Wikimedia\ObjectCache\BagOStuff
             @since 1.42
     MainStash:
         default: 1
@@ -2508,7 +2508,7 @@ config-schema:
             and violations of linearizability (e.g. during timeouts). Modules that can never handle
             these kinds of anomalies should use other storage mediums.
             Valid options are the keys of {@link $wgObjectCaches}, e.g. CACHE_* constants.
-            @see \BagOStuff
+            @see \Wikimedia\ObjectCache\BagOStuff
             @since 1.26
     ParsoidCacheConfig:
         type: object
@@ -2522,20 +2522,29 @@ config-schema:
             - StashType: The type of object store to be used by the ParsoidOutputStash service,
                   which stores the base state of HTML based edits.
                   Valid options are the keys of {@link $wgObjectCaches}, e.g. CACHE_* constants.
-                  Per default, the value of the MainStash setting will be used.
+                  By default, the value of the MainStash setting will be used.
                   This should be an object store that provides fairly solid persistence guarantees,
                   since losing an entry from the stash may mean that the user can't save their edit.
                   If null, the value of the MainStash configuration setting will be used.
             - StashDuration: The number of seconds for which an entry in the stash should be kept.
                   Should be long enough for users to finish editing,
                   since losing an entry from the stash may mean that the user can't save their edit.
-                  This is set to one day per default.
+                  This is set to one day by default.
             - WarmParsoidParserCache: Setting this to true will pre-populate the parsoid parser cache
                   with parsoid outputs on page edits. This speeds up loading HTML into Visual Editor.
             @since 1.39
             @unstable Per MediaWiki 1.39, the structure of this configuration is still subject to
                       change.
         default: null
+    ParsoidSelectiveUpdateSampleRate:
+        type: integer
+        default: 0
+        description: |-
+            Sample rate for collecting statistics on Parsoid selective update.
+            Zero disables collection; 1000 means "1 in every 1000 parses will
+            be sampled".
+            @warning This is EXPERIMENTAL and will disappear once analysis is
+            complete.
     ParserCacheFilterConfig:
         type: object
         default:
@@ -2558,21 +2567,6 @@ config-schema:
             If no filter options are defined for a given namespace, the filter options
             under the "default" key will be used for pages in that namespace.
             @since 1.42
-    ChronologyProtectorStash:
-        default: null
-        type:
-            - string
-            - 'null'
-        description: |-
-            The object store type for the
-            {@link Wikimedia::Rdbms::ChronologyProtector ChronologyProtector} store.
-            This should be a fast storage system optimized for lightweight ephemeral data.
-            Data stored should be readable by all application servers in the local datacenter.
-            See [ChronologyProtector requirements](@ref ChronologyProtector-storage-requirements)
-            for more detailed system administrator requirements (especially for multi-dc operations).
-            Valid options are the keys of {@link $wgObjectCaches}, e.g. CACHE_* constants.
-            Defaults to {@link $wgMainCacheType} (in ServiceWiring.php).
-            @since 1.36
     ChronologyProtectorSecret:
         default: ''
         type: string
@@ -3132,6 +3126,13 @@ config-schema:
             Message names must be given with underscores rather than spaces and with lowercase first
             letter.
             @since 1.32
+    AllowRawHtmlCopyrightMessages:
+        default: true
+        type: boolean
+        description: |-
+            Whether on-wiki overrides for the 'copyright' and 'history_copyright' messages, which allow raw
+            HTML, will be used.
+            @since 1.43
     Localtimezone:
         dynamicDefault:
             callback: [MediaWiki\MainConfigSchema, getDefaultLocaltimezone]
@@ -3718,10 +3719,10 @@ config-schema:
             @see \MediaWiki\ResourceLoader\ResourceLoader::__construct
             @since 1.35
     ResourceLoaderUseObjectCacheForDeps:
-        default: false
+        default: true
         description: |-
             Use the main stash instead of the module_deps table for indirect dependency tracking
-            @unstable EXPERIMENTAL
+            @deprecated since 1.43; This will be removed in 1.44
             @since 1.35
     ResourceLoaderDebug:
         default: false
@@ -3795,6 +3796,17 @@ config-schema:
             Even when this is disabled, using ResourceLoader's debug mode (?debug=true)
             will cause the development version to be loaded.
             @since 1.35
+    CodexDevelopmentDir:
+        default: null
+        description: |-
+            If this is set, MediaWiki will look for Codex files in this directory
+            instead of in resources/lib/codex/ and friends.
+            To use a local development version of Codex, set this to the full file
+            path of the root directory of a local clone of the Codex repository, and
+            run `npm run build-all` in the Codex root directory. Rerun this command
+            after making any changes.
+            This should be disabled for production installations.
+            @since 1.43
     MetaNamespace:
         default: false
         dynamicDefault:
@@ -3884,7 +3896,7 @@ config-schema:
                 'Help' => 100,
             ];
             ```
-            @see \Language::getNamespaceAliases for accessing the full list of aliases,
+            @see \MediaWiki\Language\Language::getNamespaceAliases for accessing the full list of aliases,
             including those defined by other means.
     LegalTitleChars:
         default: ' %!"$&''()*,\-.\/0-9:;=?@A-Z\\^_`a-z~\x80-\xFF+'
@@ -3922,7 +3934,7 @@ config-schema:
         type: object
         description: |-
             @since 1.16 - This can now be set per-namespace. Some special namespaces (such as Special,
-                see NamespaceInfo::$alwaysCapitalizedNamespaces for the full list) must be true by
+                see NamespaceInfo::ALWAYS_CAPITALIZED_NAMESPACES for the full list) must be true by
                 default (and setting them has no effect), due to various things that require them to be
                 so. Also, since Talk namespaces need to directly mirror their associated content
                 namespaces, the values for those are ignored in favor of the subject namespace's
@@ -4117,12 +4129,12 @@ config-schema:
             - //
         type: array
         description: |-
-            URL schemes that should be recognized as valid by wfParseUrl().
+            URL schemes that should be recognized as valid by UrlUtils::parse().
             WARNING: Do not add 'file:' to this or internal file links will be broken.
             Instead, if you want to support file links, add 'file://'. The same applies
             to any other protocols with the same name as a namespace. See task T46011 for
             more information.
-            @see \wfParseUrl
+            @see \MediaWiki\Utils\UrlUtils::parse()
     CleanSignatures:
         default: true
         description: 'If true, removes (by substituting) templates in signatures.'
@@ -4185,6 +4197,16 @@ config-schema:
             https://www.mediawiki.org/wiki/Parsing/Media_structure
             @deprecated since 1.41
             @since 1.36
+    ParserEnableLegacyHeadingDOM:
+        default: true
+        description: |-
+            Enable legacy HTML structure for headings in the output from the Parser.
+            The legacy structure includes section edit links (and other markup added
+            by some extensions) inside the headings rather than outside them, leading
+            to poor accessibility. This doesn't affect headings on special pages.
+            Note that each skin also has to indicate support for the new structure.
+            More information: https://www.mediawiki.org/wiki/Heading_HTML_changes
+            @since 1.43
     UseContentMediaStyles:
         default: false
         deprecated: 'since 1.41'
@@ -4288,6 +4310,15 @@ config-schema:
             Enable the magic links feature of automatically turning ISBN xxx,
             PMID xxx, RFC xxx into links
             @since 1.28
+    ParserEnableUserLanguage:
+        default: false
+        description: |-
+            Set this to true to allow the {{USERLANGUAGE}} magic word to return the
+            actual user language. If it is false, {{USERLANGUAGE}} will return the
+            page language. Setting this to true is discouraged since the page
+            language should typically be used in the content area. Accessing the user
+            language using this feature reduces the efficiency of the parser cache.
+            @since 1.43
     ArticleCountMethod:
         default: link
         description: |-
@@ -4382,7 +4413,7 @@ config-schema:
     PasswordPolicy:
         default:
             policies: { bureaucrat: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, sysop: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, interface-admin: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, bot: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, default: { MinimalPasswordLength: { value: 8, suggestChangeOnLogin: true }, PasswordCannotBeSubstringInUsername: { value: true, suggestChangeOnLogin: true }, PasswordCannotMatchDefaults: { value: true, suggestChangeOnLogin: true }, MaximalPasswordLength: { value: 4096, suggestChangeOnLogin: true }, PasswordNotInCommonList: { value: true, suggestChangeOnLogin: true } } }
-            checks: { MinimalPasswordLength: 'PasswordPolicyChecks::checkMinimalPasswordLength', MinimumPasswordLengthToLogin: 'PasswordPolicyChecks::checkMinimumPasswordLengthToLogin', PasswordCannotBeSubstringInUsername: 'PasswordPolicyChecks::checkPasswordCannotBeSubstringInUsername', PasswordCannotMatchDefaults: 'PasswordPolicyChecks::checkPasswordCannotMatchDefaults', MaximalPasswordLength: 'PasswordPolicyChecks::checkMaximalPasswordLength', PasswordNotInCommonList: 'PasswordPolicyChecks::checkPasswordNotInCommonList' }
+            checks: { MinimalPasswordLength: [MediaWiki\Password\PasswordPolicyChecks, checkMinimalPasswordLength], MinimumPasswordLengthToLogin: [MediaWiki\Password\PasswordPolicyChecks, checkMinimumPasswordLengthToLogin], PasswordCannotBeSubstringInUsername: [MediaWiki\Password\PasswordPolicyChecks, checkPasswordCannotBeSubstringInUsername], PasswordCannotMatchDefaults: [MediaWiki\Password\PasswordPolicyChecks, checkPasswordCannotMatchDefaults], MaximalPasswordLength: [MediaWiki\Password\PasswordPolicyChecks, checkMaximalPasswordLength], PasswordNotInCommonList: [MediaWiki\Password\PasswordPolicyChecks, checkPasswordNotInCommonList] }
         type: object
         mergeStrategy: array_replace_recursive
         description: |-
@@ -4441,7 +4472,7 @@ config-schema:
             The check message receives the policy value as a parameter, the flag message
             receives the flag value (or values if it's an array).
             @since 1.26
-            @see \PasswordPolicyChecks
+            @see \MediaWiki\Password\PasswordPolicyChecks
             @see \MediaWiki\User\User::checkPasswordValidity()
     AuthManagerConfig:
         default: null
@@ -4576,13 +4607,13 @@ config-schema:
             @since 1.24
     PasswordConfig:
         default:
-            A: { class: MWOldPassword }
-            B: { class: MWSaltedPassword }
-            pbkdf2-legacyA: { class: LayeredParameterizedPassword, types: [A, pbkdf2] }
-            pbkdf2-legacyB: { class: LayeredParameterizedPassword, types: [B, pbkdf2] }
-            bcrypt: { class: BcryptPassword, cost: 9 }
-            pbkdf2: { factory: [AbstractPbkdf2Password, newInstance], algo: sha512, cost: '30000', length: '64' }
-            argon2: { class: Argon2Password, algo: auto }
+            A: { class: MediaWiki\Password\MWOldPassword }
+            B: { class: MediaWiki\Password\MWSaltedPassword }
+            pbkdf2-legacyA: { class: MediaWiki\Password\LayeredParameterizedPassword, types: [A, pbkdf2] }
+            pbkdf2-legacyB: { class: MediaWiki\Password\LayeredParameterizedPassword, types: [B, pbkdf2] }
+            bcrypt: { class: MediaWiki\Password\BcryptPassword, cost: 9 }
+            pbkdf2: { class: MediaWiki\Password\Pbkdf2PasswordUsingOpenSSL, algo: sha512, cost: '30000', length: '64' }
+            argon2: { class: MediaWiki\Password\Argon2Password, algo: auto }
         type: object
         description: |-
             Configuration for built-in password types.
@@ -4770,6 +4801,7 @@ config-schema:
               * CUDCOND_AFTER: user registered after given timestamp (args: string $timestamp)
               * CUDCOND_ANON: allows specifying a default for anonymous (logged-out, non-temporary) users
               * CUDCOND_NAMED: allows specifying a default for named (registered, non-temporary) users
+              * CUDCOND_USERGROUP: users with a specific user group
             @since 1.42
             @see self::DefaultUserOptions
     HiddenPrefs:
@@ -4820,14 +4852,9 @@ config-schema:
             used. Keys in the array are ignored; the class name is conventionally
             used as the key to avoid collisions. Order is not significant.
             @since 1.27
-    AllowRequiringEmailForResets:
-        default: false
-        description: |-
-            Whether users will see a checkbox allowing them to require providing email during password resets.
-            @unstable EXPERIMENTAL This feature is under development, don't assume this flag's existence
-            or function outside of Wikimedia Foundation wikis.
     AutoCreateTempUser:
         properties:
+            known: { type: boolean, default: false }
             enabled: { type: boolean, default: false }
             actions: { type: array, default: [edit] }
             genPattern: { type: string, default: ~$1 }
@@ -4835,7 +4862,7 @@ config-schema:
             reservedPattern: { type: [string, 'null'], default: ~$1 }
             serialProvider: { type: object, default: { type: local, useYear: true } }
             serialMapping: { type: object, default: { type: plain-numeric } }
-            expireAfterDays: { type: [integer, 'null'], default: 365 }
+            expireAfterDays: { type: [integer, 'null'], default: 90 }
             notifyBeforeExpirationDays: { type: [integer, 'null'], default: 10 }
         type: object
         description: |-
@@ -4844,7 +4871,15 @@ config-schema:
             do not explicitly create an account.
             @warning This is EXPERIMENTAL, enabling may break extensions.
             An associative array with the following keys:
-              - enabled: (bool) Whether auto-creation is enabled.
+              - known: (bool) Whether auto-creation is known about. Set this to 'true' if
+                temp accounts have been created on this wiki already. This setting allows
+                temp users to be recognized even if auto-creation is currently disabled.
+                If auto-creation is enabled via the 'enabled' property, then 'known' is
+                overriden to true.
+              - enabled: (bool) Whether auto-creation is enabled. If changing this
+                value from 'true' to 'false', you should also set 'known' to true, so
+                that relevant code can continue to identify temporary accounts as
+                visually and conceptually distinct from anonymous accounts and named accounts.
               - actions: (array) A list of actions for which the feature is enabled.
                 Currently only "edit" is supported.
               - genPattern: (string) The pattern used when generating new usernames.
@@ -4888,7 +4923,7 @@ config-schema:
                   - uppercase: (bool) With "filtered-radix", whether to use uppercase
                     letters, default false.
                   - offset: (int) With "plain-numeric", a constant to add to the stored index.
-               - expireAfterDays: (int|null, default 365) If not null, how many days should the temporary
+               - expireAfterDays: (int|null, default 90) If not null, how many days should the temporary
                  accounts expire? Requires expireTemporaryAccounts.php to be periodically executed in
                  order to work.
                - notifyBeforeExpirationDays: (int|null, default 10) If not null, how many days before the
@@ -4942,7 +4977,7 @@ config-schema:
             If this is false, the number of blocks of a given target is limited to only 1.
             @since 1.42
     BlockTargetMigrationStage:
-        default: 3
+        default: 768
         type: integer
         description: |4-
              Ipblocks table schema migration stage, for normalizing ipb_address field and
@@ -4953,6 +4988,9 @@ config-schema:
               - SCHEMA_COMPAT_NEW
             History:
               - 1.42: Added
+              - 1.43: Default changed from SCHEMA_COMPAT_OLD to SCHEMA_COMPAT_NEW
+              - 1.43: Deprecated, ignored, SCHEMA_COMPAT_NEW is implied
+            @deprecated since 1.43
     WhitelistRead:
         default: false
         description: |-
@@ -5008,10 +5046,10 @@ config-schema:
             additionalProperties: { type: boolean }
         mergeStrategy: array_plus_2d
         default:
-            '*': { createaccount: true, read: true, edit: true, createpage: true, createtalk: true, writeapi: true, viewmyprivateinfo: true, editmyprivateinfo: true, editmyoptions: true }
-            user: { move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, movefile: true, read: true, edit: true, createpage: true, createtalk: true, writeapi: true, upload: true, reupload: true, reupload-shared: true, minoredit: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true, editmyuserjsredirect: true, sendemail: true, applychangetags: true, changetags: true, editcontentmodel: true, viewmywatchlist: true, editmywatchlist: true }
+            '*': { createaccount: true, read: true, edit: true, createpage: true, createtalk: true, viewmyprivateinfo: true, editmyprivateinfo: true, editmyoptions: true }
+            user: { move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, movefile: true, read: true, edit: true, createpage: true, createtalk: true, upload: true, reupload: true, reupload-shared: true, minoredit: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true, editmyuserjsredirect: true, sendemail: true, applychangetags: true, changetags: true, editcontentmodel: true, viewmywatchlist: true, editmywatchlist: true }
             autoconfirmed: { autoconfirmed: true, editsemiprotected: true }
-            bot: { bot: true, autoconfirmed: true, editsemiprotected: true, nominornewtalk: true, autopatrol: true, suppressredirect: true, apihighlimits: true, writeapi: true }
+            bot: { bot: true, autoconfirmed: true, editsemiprotected: true, nominornewtalk: true, autopatrol: true, suppressredirect: true, apihighlimits: true }
             sysop: { block: true, createaccount: true, delete: true, bigdelete: true, deletedhistory: true, deletedtext: true, undelete: true, editinterface: true, editsitejson: true, edituserjson: true, import: true, importupload: true, move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, patrol: true, autopatrol: true, protect: true, editprotected: true, rollback: true, upload: true, reupload: true, reupload-shared: true, unwatchedpages: true, autoconfirmed: true, editsemiprotected: true, ipblock-exempt: true, blockemail: true, markbotedits: true, apihighlimits: true, browsearchive: true, noratelimit: true, movefile: true, unblockself: true, suppressredirect: true, mergehistory: true, managechangetags: true, deletechangetags: true }
             interface-admin: { editinterface: true, editsitecss: true, editsitejson: true, editsitejs: true, editusercss: true, edituserjson: true, edituserjs: true }
             bureaucrat: { userrights: true, noratelimit: true, renameuser: true }
@@ -5266,8 +5304,7 @@ config-schema:
             ```
             [ event => criteria, ... ]
             ```
-            Where event is either:
-               - 'onEdit' (when user edits)
+            The only recognised value for event is 'onEdit' (when the user edits).
             Criteria has the same format as $wgAutopromote
             @see self::Autopromote
             @since 1.18
@@ -5400,6 +5437,37 @@ config-schema:
             @see self::AccountCreationThrottle for the regular account version of this throttle.
             @warning Requires $wgMainCacheType to be enabled
             @since 1.42
+    TempAccountNameAcquisitionThrottle:
+        default:
+            - { count: 60, seconds: 86400 }
+        type: array
+        description: |-
+            Number of temporary accounts usernames each IP address may acquire per specified period(s).
+            This should be set to a higher value than TempAccountCreationThrottle.
+            On editing, we first attempt to acquire a temp username before proceeding with saving an edit
+            and potentially creating a temp account if the edit save is successful.
+            Some edits may fail (due to core or extensions denying an edit); this throttle ensures that
+            there are limits to the number of temporary account names that can be acquired and stored in
+            the database.
+            **Example:**
+            ```
+            $wgTempAccountNameAcquisitionThrottle = [
+             // no more than 100 per month
+             [
+              'count' => 100,
+              'seconds' => 30*86400,
+             ],
+             // no more than 60 per day
+             [
+              'count' => 60,
+              'seconds' => 86400,
+             ],
+            ];
+            ```
+            @see self::TempAccountCreationThrottle Make sure that TempAccountNameAcquisitionThrottle is greater than or
+              equal to TempAccountCreationThrottle
+            @warning Requires $wgMainCacheType to be enabled
+            @since 1.42
     SpamRegex:
         default: []
         type: array
@@ -5421,7 +5489,8 @@ config-schema:
             proxies
             @since 1.16
     DnsBlacklistUrls:
-        default: []
+        default:
+            - http.dnsbl.sorbs.net.
         type: array
         description: |-
             List of DNS blacklists to use, if $wgEnableDnsBlacklist is true.
@@ -5563,10 +5632,10 @@ config-schema:
             @warning Requires $wgMainCacheType to be enabled
     GrantPermissions:
         default:
-            basic: { autocreateaccount: true, autoconfirmed: true, autopatrol: true, editsemiprotected: true, ipblock-exempt: true, nominornewtalk: true, patrolmarks: true, read: true, writeapi: true, unwatchedpages: true }
+            basic: { autocreateaccount: true, autoconfirmed: true, autopatrol: true, editsemiprotected: true, ipblock-exempt: true, nominornewtalk: true, patrolmarks: true, read: true, unwatchedpages: true }
             highvolume: { bot: true, apihighlimits: true, noratelimit: true, markbotedits: true }
             import: { import: true, importupload: true }
-            editpage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true }
+            editpage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, pagelang: true }
             editprotected: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editprotected: true }
             editmycssjs: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true }
             editmyoptions: { editmyoptions: true, editmyuserjson: true }
@@ -5828,30 +5897,6 @@ config-schema:
             This should be set in LocalSettings.php, otherwise $wgSecretKey will
             be used.
             @since 1.27
-    SessionInsecureSecrets:
-        default: false
-        description: |-
-            If for some reason you can't install the PHP OpenSSL extension,
-            you can set this to true to make MediaWiki work again at the cost of storing
-            sensitive session data insecurely. But it would be much more secure to just
-            install the OpenSSL extension.
-            @since 1.27
-    HKDFSecret:
-        default: false
-        description: |-
-            Secret for hmac-based key derivation function (fast,
-            cryptographically secure random numbers).
-            This should be set in LocalSettings.php, otherwise $wgSecretKey will
-            be used.
-            See also: $wgHKDFAlgorithm
-            @since 1.24
-    HKDFAlgorithm:
-        default: sha256
-        description: |-
-            Algorithm for hmac-based key derivation function (fast,
-            cryptographically secure random numbers).
-            See also: $wgHKDFSecret
-            @since 1.24
     CookieExpiration:
         default: 2592000
         description: 'Default cookie lifetime, in seconds. Setting to 0 makes all cookies session-only.'
@@ -6150,16 +6195,8 @@ config-schema:
         description: |-
             Prefix for metric names sent to $wgStatsdServer.
             @see \MediaWiki\MediaWikiServices::getInstance()->getStatsdDataFactory
-            @see \BufferingStatsdDataFactory
+            @see \Wikimedia\Stats\BufferingStatsdDataFactory
             @since 1.25
-    StatsdSamplingRates:
-        default: {  }
-        type: object
-        description: |-
-            Sampling rate for statsd metrics as an associative array of patterns and rates.
-            Patterns are Unix shell patterns (e.g. 'MediaWiki.api.*').
-            Rates are sampling probabilities (e.g. 0.1 means 1 in 10 events are sampled).
-            @since 1.28
     StatsTarget:
         default: null
         type:
@@ -6190,6 +6227,28 @@ config-schema:
             Defaults to: 'mediawiki'
             Note: this only affects metrics instantiated by the StatsFactory service
             @since 1.41
+    OpenTelemetryConfig:
+        default: null
+        type:
+            - object
+            - 'null'
+        description: |-
+            Configuration for OpenTelemetry instrumentation, or `null` to disable it.
+            Possible keys:
+            - `samplingProbability`: probability in % of sampling a trace for which no sampling decision has been
+            taken yet. Must be between 0 and 100.
+            - `serviceName`: name of the service being instrumented.
+            - `endpoint`: URL of the OpenTelemetry collector to send trace data to.
+            This has to be an endpoint accepting OTLP data over HTTP (not gRPC).
+            An example config to send data to a local OpenTelemetry or Jaeger collector instance:
+            ```
+            $wgOpenTelemetryConfig = [
+             'samplingProbability' => 0.1,
+             'serviceName' => 'mediawiki-local',
+             'endpoint' => 'http://127.0.0.1:4318/v1/traces',
+            ];
+            ```
+            @since 1.43
     PageInfoTransclusionLimit:
         default: 50
         description: |-
@@ -6528,8 +6587,8 @@ config-schema:
             @since 1.22
     RCEngines:
         default:
-            redis: RedisPubSubFeedEngine
-            udp: UDPRCFeedEngine
+            redis: MediaWiki\RCFeed\RedisPubSubFeedEngine
+            udp: MediaWiki\RCFeed\UDPRCFeedEngine
         type: object
         description: |-
             Used by RecentChange::getEngine to find the correct engine for a given URI scheme.
@@ -6856,7 +6915,7 @@ config-schema:
     XmlDumpSchemaVersion:
         default: '0.11'
         description: |-
-            The schema to use per default when generating XML dumps. This allows sites to control
+            The schema to use by default when generating XML dumps. This allows sites to control
             explicitly when to make breaking changes to their export and dump format.
     WikiFarmSettingsDirectory:
         default: null
@@ -6938,7 +6997,7 @@ config-schema:
             **Simple example**: extension.json
             ```
             "TranslationAliasesDirs": {
-              "TranslationNotificationsAlias": "i18n/aliases/"
+              "TranslationNotificationsAlias": "i18n/aliases"
             }
             ```
             **Complex example**: extension.json
@@ -7090,19 +7149,19 @@ config-schema:
             recentChangesUpdate: RecentChangesUpdateJob
             refreshLinksPrioritized: RefreshLinksJob
             refreshLinksDynamic: RefreshLinksJob
-            activityUpdateJob: ActivityUpdateJob
+            activityUpdateJob: MediaWiki\Watchlist\ActivityUpdateJob
             categoryMembershipChange: CategoryMembershipChangeJob
-            clearUserWatchlist: ClearUserWatchlistJob
-            watchlistExpiry: WatchlistExpiryJob
+            clearUserWatchlist: MediaWiki\Watchlist\ClearUserWatchlistJob
+            watchlistExpiry: MediaWiki\Watchlist\WatchlistExpiryJob
             cdnPurge: CdnPurgeJob
             userGroupExpiry: UserGroupExpiryJob
-            clearWatchlistNotifications: ClearWatchlistNotificationsJob
+            clearWatchlistNotifications: MediaWiki\Watchlist\ClearWatchlistNotificationsJob
             userOptionsUpdate: UserOptionsUpdateJob
             revertedTagUpdate: RevertedTagUpdateJob
             'null': NullJob
             userEditCountInit: UserEditCountInitJob
-            parsoidCachePrewarm: { class: ParsoidCachePrewarmJob, services: [ParsoidOutputAccess, PageStore, RevisionLookup], needsPage: false }
-            renameUser: { class: RenameUserJob, services: [MainConfig, DBLoadBalancerFactory] }
+            parsoidCachePrewarm: { class: ParsoidCachePrewarmJob, services: [ParserOutputAccess, PageStore, RevisionLookup, ParsoidSiteConfig], needsPage: false }
+            renameUser: { class: MediaWiki\RenameUser\RenameUserJob, services: [MainConfig, DBLoadBalancerFactory] }
         type: object
         description: |-
             Maps jobs to their handlers; extensions
@@ -7224,6 +7283,14 @@ config-schema:
             - collation: (string) The collation to use for cl_sortkey
             - fakeCollation: (string) The collation name to insert into cl_collation
             @since 1.38
+    SortedCategories:
+        default: false
+        type: boolean
+        description: |-
+            Whether to sort categories in OutputPage for display.
+            The value of CategoryCollation is used for sorting.
+            @unstable EXPERIMENTAL This feature is used for Parsoid development,
+            but its future as a core feature will depend on community uptake.
     TrackingCategories:
         default: []
         type: array
@@ -7613,6 +7680,7 @@ config-schema:
             This should be lower than the 'max lag' value in $wgLBFactoryConf.
     APIRequestLog:
         default: false
+        deprecated: 'since 1.43; use api or api-request $wgDebugLogGroups channel'
         description: |-
             Log file or URL (TCP or UDP) to log API requests to, or false to disable
             API request logging
@@ -7678,6 +7746,26 @@ config-schema:
         description: |-
             Additional REST API Route files.
             A common usage is to enable development/experimental endpoints only on test wikis.
+    RestSandboxSpecs:
+        default: {  }
+        type: object
+        additionalProperties:
+            type: object
+            properties: { url: { type: string, format: url }, name: { type: string }, msg: { type: string, description: 'a message key' } }
+            required: [url]
+        description: |-
+            A list of OpenAPI specs to be made available for exploration on
+            Special:RestSandbox. If none are given, Special:RestSandbox is disabled.
+            This is an associative array, arbitrary spec IDs to spec descriptions.
+            Each spec description is an array with the following keys:
+            - url: the URL that will return the OpenAPI spec.
+            - name: the name of the API, to be shown on Special:RestSandbox.
+              Ignored if msg is given.
+            - msg: a message key for the name of the API, to be shown on
+              Special:RestSandbox.
+            @unstable Introduced in 1.43. We may want to rename or change this to
+            accommodate the need to list external APIs in a central discovery
+            document.
     MaxShellMemory:
         default: 307200
         description: 'Maximum amount of virtual memory available to shell processes under linux, in KiB.'
@@ -7983,7 +8071,7 @@ config-schema:
         default: []
         type: array
         description: |-
-            List of skins to not show the Special:Contribute page
+            List of skins that show a link to the Special:Contribute page
             @since 1.40
     EnableEditRecovery:
         default: false
@@ -8010,3 +8098,16 @@ config-schema:
             Whether to display a confirmation screen during user log out.
             @unstable Temporary feature flag, T357484
             @since 1.42
+    EnableProtectionIndicators:
+        default: false
+        type: boolean
+        description: |-
+            Whether to show indicators on a page when it is protected.
+            @since 1.43
+    OutputPipelineStages:
+        default: {  }
+        type: object
+        description: |-
+            OutputPipelineStages to add to the DefaultOutputPipeline.
+            @unstable EXPERIMENTAL
+            @since 1.43

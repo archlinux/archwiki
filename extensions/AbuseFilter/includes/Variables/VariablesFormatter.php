@@ -5,7 +5,6 @@ namespace MediaWiki\Extension\AbuseFilter\Variables;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Html\Html;
 use MessageLocalizer;
-use Xml;
 
 /**
  * Pretty-prints the content of a VariableHolder for use e.g. in AbuseLog hit details
@@ -51,34 +50,21 @@ class VariablesFormatter {
 
 		$output = '';
 
-		$output .=
-			Xml::openElement( 'table', [ 'class' => 'mw-abuselog-details' ] ) .
-			Xml::openElement( 'tbody' ) .
-			"\n";
-
-		$header =
-			Xml::element( 'th', null, $this->messageLocalizer->msg( 'abusefilter-log-details-var' )->text() ) .
-			Xml::element( 'th', null, $this->messageLocalizer->msg( 'abusefilter-log-details-val' )->text() );
-		$output .= Xml::tags( 'tr', null, $header ) . "\n";
-
-		if ( !count( $vars ) ) {
-			$output .= Xml::closeElement( 'tbody' ) . Xml::closeElement( 'table' );
-
-			return $output;
-		}
-
 		// Now, build the body of the table.
 		foreach ( $vars as $key => $value ) {
 			$key = strtolower( $key );
 
 			$varMsgKey = $this->keywordsManager->getMessageKeyForVar( $key );
 			if ( $varMsgKey ) {
-				$keyDisplay = $this->messageLocalizer->msg( $varMsgKey )->parse() . ' ' .
-					Html::element(
-						'code',
-						[],
-						$this->messageLocalizer->msg( 'parentheses' )->rawParams( $key )->text()
-					);
+				$varMsg = $this->messageLocalizer->msg( $varMsgKey );
+				$arg = Html::element( 'code', [], $key );
+				if ( str_contains( $varMsg->plain(), '$1' ) ) {
+					$keyDisplay = $varMsg->params( $arg )->parse();
+				} else {
+					// workaround due to 1904cf8 (temporary?)
+					$keyDisplay = $varMsg->parse() . ' '
+						. $this->messageLocalizer->msg( 'parentheses' )->rawParams( $arg )->escaped();
+				}
 			} else {
 				$keyDisplay = Html::element( 'code', [], $key );
 			}
@@ -90,17 +76,27 @@ class VariablesFormatter {
 			);
 
 			$trow =
-				Xml::tags( 'td', [ 'class' => 'mw-abuselog-var' ], $keyDisplay ) .
-				Xml::tags( 'td', [ 'class' => 'mw-abuselog-var-value' ], $value );
+				Html::rawElement( 'td', [ 'class' => 'mw-abuselog-var' ], $keyDisplay ) .
+				Html::rawElement( 'td', [ 'class' => 'mw-abuselog-var-value' ], $value );
 			$output .=
-				Xml::tags( 'tr',
+				Html::rawElement( 'tr',
 					[ 'class' => "mw-abuselog-details-$key mw-abuselog-value" ], $trow
 				) . "\n";
 		}
 
-		$output .= Xml::closeElement( 'tbody' ) . Xml::closeElement( 'table' );
-
-		return $output;
+		return Html::rawElement( 'table', [ 'class' => 'mw-abuselog-details' ],
+			Html::rawElement( 'thead', [],
+				Html::rawElement( 'tr', [],
+					Html::element( 'th', [],
+						$this->messageLocalizer->msg( 'abusefilter-log-details-var' )->text()
+					) .
+					Html::element( 'th', [],
+						$this->messageLocalizer->msg( 'abusefilter-log-details-val' )->text()
+					)
+				)
+			) .
+			Html::rawElement( 'tbody', [], $output )
+		);
 	}
 
 	/**

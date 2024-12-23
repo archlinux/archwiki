@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use HTMLForm;
 use MediaWiki\Extension\Notifications\NotifUser;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\SpecialPage\SpecialPage;
 

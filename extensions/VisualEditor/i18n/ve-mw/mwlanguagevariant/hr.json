@@ -10,7 +10,7 @@
 	"visualeditor-mwlanguagevariant-twoway": "Jezična pretvorba: $1",
 	"visualeditor-mwlanguagevariant-unknown": "Jezična inačica",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Jezični kôd",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Neispravno>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Neispravan</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Jezik",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Izvor",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Odredište",

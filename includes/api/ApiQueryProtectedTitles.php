@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\MainConfigNames;
@@ -37,15 +39,9 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 	private CommentStore $commentStore;
 	private RowCommentFormatter $commentFormatter;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param CommentStore $commentStore
-	 * @param RowCommentFormatter $commentFormatter
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		CommentStore $commentStore,
 		RowCommentFormatter $commentFormatter
 	) {
@@ -274,3 +270,6 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Protectedtitles';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryProtectedTitles::class, 'ApiQueryProtectedTitles' );

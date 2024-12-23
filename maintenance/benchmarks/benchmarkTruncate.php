@@ -1,6 +1,8 @@
 <?php
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../includes/Benchmarker.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that benchmarks TRUNCATE versus DELETE queries.
@@ -12,7 +14,7 @@ class BenchmarkTruncate extends Benchmarker {
 		$fname = __METHOD__;
 		$dbw = $this->getDB( DB_PRIMARY );
 
-		$dbw->dropTable( 'benchmark_perm_test' );
+		$dbw->dropTable( 'benchmark_perm_test', $fname );
 		$permTable = $dbw->tableName( 'benchmark_perm_test', 'raw' );
 		$dbw->duplicateTableStructure(
 			$dbw->tableName( 'page', 'raw' ),
@@ -21,7 +23,7 @@ class BenchmarkTruncate extends Benchmarker {
 			$fname
 		);
 
-		$dbw->dropTable( 'benchmark_temp_test' );
+		$dbw->dropTable( 'benchmark_temp_test', $fname );
 		$tempTable = $dbw->tableName( 'benchmark_temp_test', 'raw' );
 		$dbw->duplicateTableStructure(
 			$dbw->tableName( 'page', 'raw' ),
@@ -51,5 +53,7 @@ class BenchmarkTruncate extends Benchmarker {
 		$dbw->dropTable( 'benchmark_temp_test', $fname );
 	}
 }
+// @codeCoverageIgnoreStart
 $maintClass = BenchmarkTruncate::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

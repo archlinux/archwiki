@@ -1,8 +1,8 @@
 ( function () {
 
-	var NOW = 9012, // miliseconds
+	let jqcookie;
+	const NOW = 9012, // miliseconds
 		DEFAULT_DURATION = 5678, // seconds
-		jqcookie,
 		defaults = {
 			prefix: 'mywiki',
 			domain: 'example.org',
@@ -29,8 +29,8 @@
 		}
 	} );
 
-	QUnit.test( 'set( key, value )', function ( assert ) {
-		var call;
+	QUnit.test( 'set( key, value )', ( assert ) => {
+		let call;
 
 		// Simple case
 		mw.cookie.set( 'foo', 'bar' );
@@ -62,8 +62,8 @@
 		assert.strictEqual( call[ 1 ], '0', '0 is value' );
 	} );
 
-	QUnit.test( 'set( key, value, expires )', function ( assert ) {
-		var date, options;
+	QUnit.test( 'set( key, value, expires )', ( assert ) => {
+		let date, options;
 
 		date = new Date();
 		date.setTime( 1234 );
@@ -89,7 +89,7 @@
 
 		// Per MainConfigSchema, if the CookieExpiration setting is 0,
 		// then the default should be session cookies
-		setDefaults( $.extend( {}, defaults, { expires: 0 } ) );
+		setDefaults( Object.assign( {}, defaults, { expires: 0 } ) );
 
 		mw.cookie.set( 'foo', 'bar' );
 		options = jqcookie.lastCall.args[ 2 ];
@@ -100,9 +100,7 @@
 		assert.strictEqual( options.expires, date, 'custom expiration (with wgCookieExpiration=0)' );
 	} );
 
-	QUnit.test( 'set( key, value, options )', function ( assert ) {
-		var date, call;
-
+	QUnit.test( 'set( key, value, options )', ( assert ) => {
 		mw.cookie.set( 'foo', 'bar', {
 			prefix: 'myPrefix',
 			domain: 'myDomain',
@@ -110,7 +108,7 @@
 			secure: true
 		} );
 
-		call = jqcookie.lastCall.args;
+		let call = jqcookie.lastCall.args;
 		assert.strictEqual( call[ 0 ], 'myPrefixfoo' );
 		assert.deepEqual( call[ 2 ], {
 			expires: expiryDate,
@@ -119,7 +117,7 @@
 			secure: true
 		}, 'Options (without expires)' );
 
-		date = new Date();
+		const date = new Date();
 		date.setTime( 1234 );
 
 		mw.cookie.set( 'foo', 'bar', {
@@ -141,8 +139,8 @@
 		}, 'Options (incl. expires)' );
 	} );
 
-	QUnit.test( 'get( key ) - no values', function ( assert ) {
-		var key, value;
+	QUnit.test( 'get( key ) - no values', ( assert ) => {
+		let key, value;
 
 		mw.cookie.get( 'foo' );
 
@@ -168,36 +166,18 @@
 		assert.strictEqual( value, 'bar', 'Custom default value' );
 	} );
 
-	QUnit.test( 'get( key ) - with value', function ( assert ) {
-		var value;
-
+	QUnit.test( 'get( key ) - with value', ( assert ) => {
 		jqcookie.returns( 'bar' );
 
-		value = mw.cookie.get( 'foo' );
+		const value = mw.cookie.get( 'foo' );
 		assert.strictEqual( value, 'bar', 'Return value of cookie' );
 	} );
 
-	QUnit.test( 'get( key, prefix )', function ( assert ) {
-		var key;
-
+	QUnit.test( 'get( key, prefix )', ( assert ) => {
 		mw.cookie.get( 'foo', 'bar' );
 
-		key = jqcookie.lastCall.args[ 0 ];
+		const key = jqcookie.lastCall.args[ 0 ];
 		assert.strictEqual( key, 'barfoo' );
-	} );
-
-	QUnit.test( 'getCrossSite( key, prefix )', function ( assert ) {
-		jqcookie.withArgs( 'barfoo' ).returns( 'x' );
-		jqcookie.withArgs( 'barss0-foo' ).returns( 'y' );
-		assert.strictEqual( mw.cookie.getCrossSite( 'foo', 'bar', 'def' ), 'x' );
-
-		jqcookie.withArgs( 'barfoo' ).returns( null );
-		jqcookie.withArgs( 'barss0-foo' ).returns( 'z' );
-		assert.strictEqual( mw.cookie.getCrossSite( 'foo', 'bar', 'def' ), 'z' );
-
-		jqcookie.withArgs( 'barfoo' ).returns( null );
-		jqcookie.withArgs( 'barss0-foo' ).returns( null );
-		assert.strictEqual( mw.cookie.getCrossSite( 'foo', 'bar', 'def' ), 'def' );
 	} );
 
 }() );

@@ -3,7 +3,9 @@
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . "/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that migrates rows from ipblocks to block and block_target.
@@ -39,8 +41,15 @@ class MigrateBlocks extends LoggedUpdateMaintenance {
 
 	protected function doDBUpdates() {
 		$this->dbw = $this->getDB( DB_PRIMARY );
-		if ( !$this->dbw->tableExists( 'block', __METHOD__ ) || !$this->dbw->tableExists( 'block_target' ) ) {
+		if (
+			!$this->dbw->tableExists( 'block', __METHOD__ ) ||
+			!$this->dbw->tableExists( 'block_target', __METHOD__ )
+		) {
 			$this->fatalError( "Run update.php to create the block and block_target tables." );
+		}
+		if ( !$this->dbw->tableExists( 'ipblocks', __METHOD__ ) ) {
+			$this->output( "No ipblocks table, skipping migration to block_target.\n" );
+			return true;
 		}
 
 		$this->output( "Populating the block and block_target tables\n" );
@@ -168,5 +177,7 @@ class MigrateBlocks extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MigrateBlocks::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

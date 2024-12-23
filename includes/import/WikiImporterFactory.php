@@ -23,6 +23,7 @@ use MediaWiki\Config\Config;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Language\Language;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\SlotRoleRegistry;
@@ -78,7 +79,7 @@ class WikiImporterFactory {
 	 *     If you want to also log the import actions, see ImportReporter.
 	 * @return WikiImporter
 	 */
-	public function getWikiImporter( ImportSource $source, Authority $performer = null ): WikiImporter {
+	public function getWikiImporter( ImportSource $source, ?Authority $performer = null ): WikiImporter {
 		if ( !$performer ) {
 			wfDeprecated( __METHOD__ . ' without $performer', '1.42' );
 			$performer = RequestContext::getMain()->getAuthority();

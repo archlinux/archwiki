@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Newpages
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -41,10 +38,13 @@ use MediaWiki\SpecialPage\IncludableSpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\TempUser\TempUserConfig;
 
 /**
- * A special page that list newly created pages
+ * List of newly created pages
  *
+ * @see SpecialRecentChanges
+ * @see SpecialNewFiles
  * @ingroup SpecialPage
  */
 class SpecialNewPages extends IncludableSpecialPage {
@@ -55,6 +55,7 @@ class SpecialNewPages extends IncludableSpecialPage {
 	/** @var array[] */
 	protected $customFilters;
 
+	/** @var bool */
 	protected $showNavigation = false;
 
 	private LinkBatchFactory $linkBatchFactory;
@@ -65,6 +66,7 @@ class SpecialNewPages extends IncludableSpecialPage {
 	private UserOptionsLookup $userOptionsLookup;
 	private RowCommentFormatter $rowCommentFormatter;
 	private ChangeTagsStore $changeTagsStore;
+	private TempUserConfig $tempUserConfig;
 
 	/**
 	 * @param LinkBatchFactory $linkBatchFactory
@@ -74,6 +76,8 @@ class SpecialNewPages extends IncludableSpecialPage {
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param UserOptionsLookup $userOptionsLookup
 	 * @param RowCommentFormatter $rowCommentFormatter
+	 * @param ChangeTagsStore $changeTagsStore
+	 * @param TempUserConfig $tempUserConfig
 	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
@@ -83,7 +87,8 @@ class SpecialNewPages extends IncludableSpecialPage {
 		NamespaceInfo $namespaceInfo,
 		UserOptionsLookup $userOptionsLookup,
 		RowCommentFormatter $rowCommentFormatter,
-		ChangeTagsStore $changeTagsStore
+		ChangeTagsStore $changeTagsStore,
+		TempUserConfig $tempUserConfig
 	) {
 		parent::__construct( 'Newpages' );
 		$this->linkBatchFactory = $linkBatchFactory;
@@ -94,6 +99,7 @@ class SpecialNewPages extends IncludableSpecialPage {
 		$this->userOptionsLookup = $userOptionsLookup;
 		$this->rowCommentFormatter = $rowCommentFormatter;
 		$this->changeTagsStore = $changeTagsStore;
+		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	/**
@@ -134,6 +140,13 @@ class SpecialNewPages extends IncludableSpecialPage {
 		$opts->fetchValuesFromRequest( $this->getRequest() );
 		if ( $par ) {
 			$this->parseParams( $par );
+		}
+
+		// The hideliu option is only available when anonymous users can create pages, as if specified when they
+		// cannot create pages it always would produce no results. Therefore, if anon users cannot create pages
+		// then set hideliu as false overriding the value provided by the user.
+		if ( !$this->canAnonymousUsersCreatePages() ) {
+			$opts->setValue( 'hideliu', false, true );
 		}
 
 		$opts->validateIntBounds( 'limit', 0, 5000 );
@@ -389,6 +402,7 @@ class SpecialNewPages extends IncludableSpecialPage {
 			$this->changeTagsStore,
 			$this->rowCommentFormatter,
 			$this->contentHandlerFactory,
+			$this->tempUserConfig,
 			$this->opts,
 		);
 	}
@@ -485,9 +499,25 @@ class SpecialNewPages extends IncludableSpecialPage {
 			nl2br( htmlspecialchars( $content->serialize() ) ) . "</div>";
 	}
 
-	private function canAnonymousUsersCreatePages() {
-		return $this->groupPermissionsLookup->groupHasPermission( '*', 'createpage' ) ||
-			$this->groupPermissionsLookup->groupHasPermission( '*', 'createtalk' );
+	/**
+	 * @return bool Whether any users classed anonymous can create pages (when temporary accounts are enabled, then
+	 *   this definition includes temporary accounts).
+	 */
+	private function canAnonymousUsersCreatePages(): bool {
+		// Get all the groups which anon users can be in.
+		$anonGroups = [ '*' ];
+		if ( $this->tempUserConfig->isKnown() ) {
+			$anonGroups[] = 'temp';
+		}
+		// Check if any of the groups have the createpage or createtalk right.
+		foreach ( $anonGroups as $group ) {
+			$anonUsersCanCreatePages = $this->groupPermissionsLookup->groupHasPermission( $group, 'createpage' ) ||
+				$this->groupPermissionsLookup->groupHasPermission( $group, 'createtalk' );
+			if ( $anonUsersCanCreatePages ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected function getGroupName() {

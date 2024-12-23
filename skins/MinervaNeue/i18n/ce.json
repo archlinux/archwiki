@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "ХӀокху категорех лаьцна",
 	"mobile-frontend-meta-data-issues-header": "АгӀонан проблемаш",
 	"minerva-meta-data-issues-section-header": "Проблемаш бухара дакъошкахь",
-	"mobile-frontend-notifications-filter": "Луьттург",
 	"mobile-frontend-pageaction-edit-tooltip": "ХӀокху агӀонан коьрта дакъа хийца",
 	"mobile-frontend-placeholder": "{{grammar:prepositional|{{SITENAME}}}} чохь лаха",
 	"mobile-frontend-random-button": "Нисйелларг",
@@ -48,7 +47,7 @@
 	"minerva-page-actions-overflow": "Кхин а",
 	"minerva-page-actions-language-switcher": "Меттанаш",
 	"minerva-page-actions-history": "Истори",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Дийцар]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Дийцар]",
 	"minerva-skin-desc": "Дуьххьара адаптан телефонан кечйаран тема.",
 	"skin-minerva-issue-learn-more": "Цул совнаха хаа",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 секунд}} хьалха",
@@ -59,7 +58,6 @@
 	"skin-minerva-time-ago-years": "$1 {{PLURAL:$1|шо}} хьалха",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категореш",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "АгӀонийн категореш хьажа",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "АгӀонан проблемаш карор аттадар",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "(Кеп:ambox) агӀонан проблемаш йаззаман чу йаздира йу.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "АгӀонгахь карийнарш тобанашка йекъар телефонаш тӀехь тӀекхочуш йац. Хьайна и функци лело лаахь, дехар ду шуьйрачу версин тӀе гӀо."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "АгӀонгахь карийнарш тобанашка йекъар телефонаш тӀехь тӀекхочуш йац. Хьайна и функци лело лаахь, дехар ду шуьйрачу версин тӀе гӀо.",
+	"skin-minerva-night-mode-unavailable": "АгӀо «Серлонан басарийн» теманехь бен тӀекхочуш йац."
 }

@@ -21,14 +21,15 @@
 
 namespace MediaWiki\Parser\Parsoid\Config;
 
-use Language;
-use LanguageCode;
-use LanguageConverter;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\MutableConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Interwiki\InterwikiLookup;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageCode;
+use MediaWiki\Language\LanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
@@ -36,6 +37,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\MagicWordArray;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\NamespaceInfo;
@@ -43,8 +45,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\WikiMap\WikiMap;
-use ParserFactory;
-use PrefixingStatsdDataFactoryProxy;
+use MWUnknownContentModelException;
 use Psr\Log\LoggerInterface;
 use UnexpectedValueException;
 use Wikimedia\Bcp47Code\Bcp47Code;
@@ -53,6 +54,8 @@ use Wikimedia\Parsoid\Config\SiteConfig as ISiteConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Utils\Utils;
+use Wikimedia\Stats\PrefixingStatsdDataFactoryProxy;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * Site-level configuration for Parsoid
@@ -102,6 +105,7 @@ class SiteConfig extends ISiteConfig {
 	private array $parsoidSettings;
 	private Language $contLang;
 	private StatsdDataFactoryInterface $stats;
+	private StatsFactory $statsFactory;
 	private MagicWordFactory $magicWordFactory;
 	private NamespaceInfo $namespaceInfo;
 	private SpecialPageFactory $specialPageFactory;
@@ -113,6 +117,7 @@ class SiteConfig extends ISiteConfig {
 	private LanguageConverterFactory $languageConverterFactory;
 	private LanguageNameUtils $languageNameUtils;
 	private UrlUtils $urlUtils;
+	private IContentHandlerFactory $contentHandlerFactory;
 	private ?string $baseUri = null;
 	private ?string $relativeLinkPrefix = null;
 	private ?array $interwikiMap = null;
@@ -126,6 +131,7 @@ class SiteConfig extends ISiteConfig {
 	 * @param ObjectFactory $objectFactory
 	 * @param Language $contentLanguage Content language.
 	 * @param StatsdDataFactoryInterface $stats
+	 * @param StatsFactory $statsFactory
 	 * @param MagicWordFactory $magicWordFactory
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param SpecialPageFactory $specialPageFactory
@@ -135,6 +141,7 @@ class SiteConfig extends ISiteConfig {
 	 * @param LanguageConverterFactory $languageConverterFactory
 	 * @param LanguageNameUtils $languageNameUtils
 	 * @param UrlUtils $urlUtils
+	 * @param IContentHandlerFactory $contentHandlerFactory
 	 * @param array $extensionParsoidModules
 	 * @param ParserFactory $parserFactory
 	 * @param Config $mwConfig
@@ -146,6 +153,7 @@ class SiteConfig extends ISiteConfig {
 		ObjectFactory $objectFactory,
 		Language $contentLanguage,
 		StatsdDataFactoryInterface $stats,
+		StatsFactory $statsFactory,
 		MagicWordFactory $magicWordFactory,
 		NamespaceInfo $namespaceInfo,
 		SpecialPageFactory $specialPageFactory,
@@ -155,6 +163,7 @@ class SiteConfig extends ISiteConfig {
 		LanguageConverterFactory $languageConverterFactory,
 		LanguageNameUtils $languageNameUtils,
 		UrlUtils $urlUtils,
+		IContentHandlerFactory $contentHandlerFactory,
 		array $extensionParsoidModules,
 		// $parserFactory is temporary and may be removed once a better solution is found.
 		ParserFactory $parserFactory, // T268776
@@ -171,6 +180,7 @@ class SiteConfig extends ISiteConfig {
 		$this->objectFactory = $objectFactory;
 		$this->contLang = $contentLanguage;
 		$this->stats = $stats;
+		$this->statsFactory = $statsFactory;
 		$this->magicWordFactory = $magicWordFactory;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->specialPageFactory = $specialPageFactory;
@@ -181,6 +191,7 @@ class SiteConfig extends ISiteConfig {
 		$this->languageConverterFactory = $languageConverterFactory;
 		$this->languageNameUtils = $languageNameUtils;
 		$this->urlUtils = $urlUtils;
+		$this->contentHandlerFactory = $contentHandlerFactory;
 
 		// Override parent default
 		if ( isset( $this->parsoidSettings['linting'] ) ) {
@@ -217,17 +228,63 @@ class SiteConfig extends ISiteConfig {
 		return $this->logger;
 	}
 
+	/**
+	 * Get stats prefix
+	 * @param bool $trimmed Trim trailing dot on prefix name
+	 * @return string
+	 */
+	private function getStatsPrefix( bool $trimmed = false ): string {
+		$component = $this->parsoidSettings['metricsPrefix'] ?? 'Parsoid.';
+		if ( $trimmed ) {
+			$component = rtrim( $component, '.' );
+		}
+		return $component;
+	}
+
 	public function metrics(): ?StatsdDataFactoryInterface {
 		// TODO: inject
 		static $prefixedMetrics = null;
-		if ( $prefixedMetrics === null ) {
-			$prefixedMetrics = new PrefixingStatsdDataFactoryProxy(
-				// Our stats will also get prefixed with 'MediaWiki.'
-				$this->stats,
-				$this->parsoidSettings['metricsPrefix'] ?? 'Parsoid.'
-			);
-		}
+		$prefixedMetrics ??= new PrefixingStatsdDataFactoryProxy(
+			// Our stats will also get prefixed with 'MediaWiki.'
+			$this->stats,
+			$this->getStatsPrefix()
+		);
 		return $prefixedMetrics;
+	}
+
+	/**
+	 * Create a prefixed StatsFactory for parsoid stats
+	 * @return StatsFactory
+	 */
+	public function prefixedStatsFactory(): StatsFactory {
+		$component = $this->getStatsPrefix( true );
+		return $this->statsFactory->withComponent( $component );
+	}
+
+	/**
+	 * Record a timing metric
+	 * @param string $name
+	 * @param float $value A time value in milliseconds
+	 * @param array $labels
+	 * @return void
+	 */
+	public function observeTiming( string $name, float $value, array $labels ) {
+		$this->prefixedStatsFactory()->getTiming( $name )
+			->setLabels( $labels )
+			->observe( $value );
+	}
+
+	/**
+	 * Increment a counter metric
+	 * @param string $name
+	 * @param array $labels
+	 * @param float $amount
+	 * @return void
+	 */
+	public function incrementCounter( string $name, array $labels, float $amount = 1 ) {
+		$this->prefixedStatsFactory()->getCounter( $name )
+			->setLabels( $labels )
+			->incrementBy( $amount );
 	}
 
 	public function galleryOptions(): array {
@@ -267,7 +324,7 @@ class SiteConfig extends ISiteConfig {
 		if ( empty( $bits['path'] ) ) {
 			$path = '/';
 		} else {
-			$path = wfRemoveDotSegments( $bits['path'] );
+			$path = UrlUtils::removeDotSegments( $bits['path'] );
 		}
 
 		$relParts = [ 'query' => true, 'fragment' => true ];
@@ -278,8 +335,8 @@ class SiteConfig extends ISiteConfig {
 		$base['path'] = substr( $path, 0, $i + 1 );
 		$rel['path'] = '.' . substr( $path, $i );
 
-		$this->baseUri = wfAssembleUrl( $base );
-		$this->relativeLinkPrefix = wfAssembleUrl( $rel );
+		$this->baseUri = UrlUtils::assemble( $base );
+		$this->relativeLinkPrefix = UrlUtils::assemble( $rel );
 	}
 
 	public function baseURI(): string {
@@ -569,9 +626,14 @@ class SiteConfig extends ISiteConfig {
 	 * values are arrays with two fields:
 	 *   - base: (string) Base language code (e.g. "zh") (MediaWiki-internal)
 	 *   - fallbacks: (string[]) Fallback variants (MediaWiki-internal codes)
-	 * @deprecated Use ::variantsFor() (T320662)
+	 * @deprecated since 1.43; use ::variantsFor() (T320662)
 	 */
 	public function variants(): array {
+		// Deprecated for all external callers; to make private and remove this warning.
+		if ( wfGetCaller() !== __CLASS__ . '->variantsFor' ) {
+			wfDeprecated( __METHOD__, '1.43' );
+		}
+
 		if ( $this->variants !== null ) {
 			return $this->variants;
 		}
@@ -758,4 +820,33 @@ class SiteConfig extends ISiteConfig {
 	public function getExternalLinkTarget() {
 		return $this->config->get( MainConfigNames::ExternalLinkTarget );
 	}
+
+	// MW-specific helper
+
+	/**
+	 * Returns true iff Parsoid natively supports the given content model.
+	 * @param string $model content model identifier
+	 * @return bool
+	 */
+	public function supportsContentModel( string $model ): bool {
+		if ( $model === CONTENT_MODEL_WIKITEXT ) {
+			return true;
+		}
+
+		// Check if the content model serializes to wikitext.
+		// NOTE: We could use isSupportedFormat( CONTENT_FORMAT_WIKITEXT ) if PageContent::getContent()
+		//       would specify the format when calling serialize().
+		try {
+			$handler = $this->contentHandlerFactory->getContentHandler( $model );
+			if ( $handler->getDefaultFormat() === CONTENT_FORMAT_WIKITEXT ) {
+				return true;
+			}
+		} catch ( MWUnknownContentModelException $ex ) {
+			// If the content model is not known, it can't be supported.
+			return false;
+		}
+
+		return $this->getContentModelHandler( $model ) !== null;
+	}
+
 }

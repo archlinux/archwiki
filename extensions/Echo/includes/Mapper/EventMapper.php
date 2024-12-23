@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Notifications\Mapper;
 
 use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Model\Event;
-use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
 
 /**
  * Database mapper for Event model, which is an immutable class, there should
@@ -23,7 +23,11 @@ class EventMapper extends AbstractMapper {
 
 		$row = $event->toDbArray();
 
-		$dbw->insert( 'echo_event', $row, __METHOD__ );
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'echo_event' )
+			->row( $row )
+			->caller( __METHOD__ )
+			->execute();
 
 		$id = $dbw->insertId();
 
@@ -45,7 +49,12 @@ class EventMapper extends AbstractMapper {
 	public function fetchById( $id, $fromPrimary = false ) {
 		$db = $fromPrimary ? $this->dbFactory->getEchoDb( DB_PRIMARY ) : $this->dbFactory->getEchoDb( DB_REPLICA );
 
-		$row = $db->selectRow( 'echo_event', Event::selectFields(), [ 'event_id' => $id ], __METHOD__ );
+		$row = $db->newSelectQueryBuilder()
+			->select( Event::selectFields() )
+			->from( 'echo_event' )
+			->where( [ 'event_id' => $id ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 
 		// If the row was not found, fall back on the primary database if it makes sense to do so
 		if ( !$row && !$fromPrimary && $this->dbFactory->canRetryPrimary() ) {
@@ -66,17 +75,17 @@ class EventMapper extends AbstractMapper {
 
 		$selectDeleted = $deleted ? 0 : 1;
 		$setDeleted = $deleted ? 1 : 0;
-		$dbw->update(
-			'echo_event',
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'echo_event' )
+			->set( [
 				'event_deleted' => $setDeleted,
-			],
-			[
+			] )
+			->where( [
 				'event_deleted' => $selectDeleted,
 				'event_id' => $eventIds,
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 	/**
@@ -91,18 +100,16 @@ class EventMapper extends AbstractMapper {
 		$dbr = $this->dbFactory->getEchoDb( DB_REPLICA );
 
 		// From echo_event
-		$res = $dbr->select(
-			[ 'echo_event' ],
-			Event::selectFields(),
-			[ 'event_page_id' => $pageId ],
-			__METHOD__
-		);
-		if ( $res ) {
-			foreach ( $res as $row ) {
-				$event = Event::newFromRow( $row );
-				$events[] = $event;
-				$seenEventIds[] = $event->getId();
-			}
+		$res = $dbr->newSelectQueryBuilder()
+			->select( Event::selectFields() )
+			->from( 'echo_event' )
+			->where( [ 'event_page_id' => $pageId ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
+		foreach ( $res as $row ) {
+			$event = Event::newFromRow( $row );
+			$events[] = $event;
+			$seenEventIds[] = $event->getId();
 		}
 
 		// From echo_target_page
@@ -110,20 +117,18 @@ class EventMapper extends AbstractMapper {
 		if ( $seenEventIds ) {
 			// Some events have both a title and target page(s).
 			// Skip the events that were already found in the echo_event table (the query above).
-			$conds[] = 'event_id NOT IN ( ' . $dbr->makeList( $seenEventIds ) . ' )';
+			$conds[] = $dbr->expr( 'event_id', '!=', $seenEventIds );
 		}
-		$res = $dbr->select(
-			[ 'echo_event', 'echo_target_page' ],
-			Event::selectFields(),
-			$conds,
-			__METHOD__,
-			[ 'DISTINCT' ],
-			[ 'echo_target_page' => [ 'INNER JOIN', 'event_id=etp_event' ] ]
-		);
-		if ( $res ) {
-			foreach ( $res as $row ) {
-				$events[] = Event::newFromRow( $row );
-			}
+		$res = $dbr->newSelectQueryBuilder()
+			->select( Event::selectFields() )
+			->distinct()
+			->from( 'echo_event' )
+			->join( 'echo_target_page', null, 'event_id=etp_event' )
+			->where( $conds )
+			->caller( __METHOD__ )
+			->fetchResultSet();
+		foreach ( $res as $row ) {
+			$events[] = Event::newFromRow( $row );
 		}
 
 		return $events;
@@ -149,30 +154,27 @@ class EventMapper extends AbstractMapper {
 	/**
 	 * Fetch events unread by a user and associated with a page
 	 *
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param int $pageId
 	 * @return Event[]
 	 */
-	public function fetchUnreadByUserAndPage( User $user, $pageId ) {
+	public function fetchUnreadByUserAndPage( UserIdentity $user, $pageId ) {
 		$dbr = $this->dbFactory->getEchoDb( DB_REPLICA );
 		$fields = array_merge( Event::selectFields(), [ 'notification_timestamp' ] );
 
-		$res = $dbr->select(
-			[ 'echo_event', 'echo_notification', 'echo_target_page' ],
-			$fields,
-			[
+		$res = $dbr->newSelectQueryBuilder()
+			->select( $fields )
+			->from( 'echo_event' )
+			->join( 'echo_notification', null, 'notification_event=event_id' )
+			->join( 'echo_target_page', null, 'etp_event=event_id' )
+			->where( [
 				'event_deleted' => 0,
 				'notification_user' => $user->getId(),
 				'notification_read_timestamp' => null,
 				'etp_page' => $pageId,
-			],
-			__METHOD__,
-			[],
-			[
-				'echo_target_page' => [ 'INNER JOIN', 'etp_event=event_id' ],
-				'echo_notification' => [ 'INNER JOIN', [ 'notification_event=event_id' ] ],
-			]
-		);
+			] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$data = [];
 		foreach ( $res as $row ) {
@@ -206,34 +208,41 @@ class EventMapper extends AbstractMapper {
 		$emailJoinConds = [];
 		if ( $ignoreUserId !== null ) {
 			if ( $ignoreUserTable === null || $ignoreUserTable === 'echo_notification' ) {
-				$notifJoinConds[] = 'notification_user != ' . $dbr->addQuotes( $ignoreUserId );
+				$notifJoinConds[] = $dbr->expr( 'notification_user', '!=', $ignoreUserId );
 			}
 			if ( $ignoreUserTable === null || $ignoreUserTable === 'echo_email_batch' ) {
-				$emailJoinConds[] = 'eeb_user_id != ' . $dbr->addQuotes( $ignoreUserId );
+				$emailJoinConds[] = $dbr->expr( 'eeb_user_id', '!=', $ignoreUserId );
 			}
 		}
-		$orphanedEventIds = $dbr->selectFieldValues(
-			[ 'echo_event', 'echo_notification', 'echo_email_batch' ],
-			'event_id',
-			[
+		$orphanedEventIds = $dbr->newSelectQueryBuilder()
+			->select( 'event_id' )
+			->from( 'echo_event' )
+			->leftJoin( 'echo_notification', null, array_merge(
+				[ 'notification_event=event_id' ],
+				$notifJoinConds
+			) )
+			->leftJoin( 'echo_email_batch', null, array_merge(
+				[ 'eeb_event_id=event_id' ],
+				$emailJoinConds
+			) )
+			->where( [
 				'event_id' => $eventIds,
 				'notification_timestamp' => null,
 				'eeb_user_id' => null
-			],
-			__METHOD__,
-			[],
-			[
-				'echo_notification' => [ 'LEFT JOIN', array_merge( [
-					'notification_event=event_id'
-				], $notifJoinConds ) ],
-				'echo_email_batch' => [ 'LEFT JOIN', array_merge( [
-					'eeb_event_id=event_id'
-				], $emailJoinConds ) ]
-			]
-		);
+			] )
+			->caller( __METHOD__ )
+			->fetchFieldValues();
 		if ( $orphanedEventIds ) {
-			$dbw->delete( 'echo_event', [ 'event_id' => $orphanedEventIds ], __METHOD__ );
-			$dbw->delete( 'echo_target_page', [ 'etp_event' => $orphanedEventIds ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'echo_event' )
+				->where( [ 'event_id' => $orphanedEventIds ] )
+				->caller( __METHOD__ )
+				->execute();
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'echo_target_page' )
+				->where( [ 'etp_event' => $orphanedEventIds ] )
+				->caller( __METHOD__ )
+				->execute();
 		}
 	}
 

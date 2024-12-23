@@ -20,12 +20,21 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use File;
+use FormatMetadata;
+use MediaTransformError;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\File\BadFileLookup;
 use MediaWiki\Specials\SpecialUpload;
 use MediaWiki\Title\Title;
+use OldLocalFile;
+use RepoGroup;
+use UploadBase;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -36,6 +45,7 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryImageInfo extends ApiQueryBase {
 	public const TRANSFORM_LIMIT = 50;
+	/** @var int */
 	private static $transformCount = 0;
 
 	private RepoGroup $repoGroup;
@@ -52,7 +62,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		$prefixOrRepoGroup = null,
 		$repoGroupOrContentLanguage = null,
 		$contentLanguageOrBadFileLookup = null,
@@ -616,7 +626,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		}
 
 		if ( $sha1 && $exists ) {
-			$vals['sha1'] = Wikimedia\base_convert( $file->getSha1(), 36, 16, 40 );
+			$vals['sha1'] = \Wikimedia\base_convert( $file->getSha1(), 36, 16, 40 );
 		}
 
 		if ( $meta && $exists ) {
@@ -848,3 +858,6 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Imageinfo';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryImageInfo::class, 'ApiQueryImageInfo' );

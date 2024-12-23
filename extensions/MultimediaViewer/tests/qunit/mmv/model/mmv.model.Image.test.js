@@ -20,7 +20,7 @@ const { ImageModel, License } = require( 'mmv' );
 ( function () {
 	QUnit.module( 'mmv.model.Image', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Image model constructor sense check', function ( assert ) {
+	QUnit.test( 'Image model constructor sense check', ( assert ) => {
 		const title = mw.Title.newFromText( 'File:Foobar.jpg' );
 		const name = 'Foo bar';
 		const size = 100;
@@ -79,7 +79,7 @@ const { ImageModel, License } = require( 'mmv' );
 		assert.true( $.isPlainObject( imageData.thumbUrls ), 'Thumb URL cache is set up properly' );
 	} );
 
-	QUnit.test( 'hasCoords()', function ( assert ) {
+	QUnit.test( 'hasCoords()', ( assert ) => {
 		const firstImageData = new ImageModel(
 			mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
 			10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
@@ -98,7 +98,7 @@ const { ImageModel, License } = require( 'mmv' );
 		assert.strictEqual( secondImageData.hasCoords(), true, 'Coordinates present means hasCoords returns true.' );
 	} );
 
-	QUnit.test( 'parseExtmeta()', function ( assert ) {
+	QUnit.test( 'parseExtmeta()', ( assert ) => {
 		const stringData = { value: 'foo' };
 		const plaintextData = { value: 'fo<b>o</b>' };
 		const integerData = { value: 3 };
@@ -147,7 +147,7 @@ const { ImageModel, License } = require( 'mmv' );
 		assert.strictEqual( ImageModel.parseExtmeta( { value: '1926<div style="display: none;">date QS:P571,+1926-00-00T00:00:00Z/9</div>' }, 'datetime' ), '1926',
 			'Extmeta year is extracted from hidden div.' );
 
-		assert.throws( function () {
+		assert.throws( () => {
 			ImageModel.parseExtmeta( stringData, 'strong' );
 		}, 'Exception is thrown on invalid argument' );
 	} );

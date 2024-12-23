@@ -1,6 +1,8 @@
 <?php
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that cleans unused rows in linktarget table
@@ -31,6 +33,7 @@ class PruneUnusedLinkTargetRows extends Maintenance {
 		$maxLtId = (int)$dbr->newSelectQueryBuilder()
 			->select( 'MAX(lt_id)' )
 			->from( 'linktarget' )
+			->caller( __METHOD__ )
 			->fetchField();
 		// To avoid race condition of newly added linktarget rows
 		// being deleted before getting a chance to be used, let's ignore the newest ones.
@@ -110,5 +113,7 @@ class PruneUnusedLinkTargetRows extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PruneUnusedLinkTargetRows::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

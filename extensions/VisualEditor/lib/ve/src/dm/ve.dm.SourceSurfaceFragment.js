@@ -26,21 +26,19 @@ OO.inheritClass( ve.dm.SourceSurfaceFragment, ve.dm.SurfaceFragment );
  * @inheritdoc
  */
 ve.dm.SourceSurfaceFragment.prototype.annotateContent = function () {
-	var args = arguments,
-		fragment = this,
-		text = this.getText( true );
+	const text = this.getText( true );
 
-	this.pushPending( this.convertFromSource( text ).then( function ( selectionDocument ) {
-		var tempSurfaceModel = new ve.dm.Surface( selectionDocument );
-		var tempFragment = tempSurfaceModel.getLinearFragment(
+	this.pushPending( this.convertFromSource( text ).then( ( selectionDocument ) => {
+		const tempSurfaceModel = new ve.dm.Surface( selectionDocument );
+		const tempFragment = tempSurfaceModel.getLinearFragment(
 			// TODO: Find content offsets
 			selectionDocument.getDocumentRange()
 		);
-		tempFragment.annotateContent.apply( tempFragment, args );
+		tempFragment.annotateContent.apply( tempFragment, arguments );
 
-		fragment.clearPending();
-		fragment.insertDocument( tempFragment.getDocument() );
-		return fragment.getPending();
+		this.clearPending();
+		this.insertDocument( tempFragment.getDocument() );
+		return this.getPending();
 	} ) );
 
 	return this;
@@ -58,21 +56,19 @@ ve.dm.SourceSurfaceFragment.prototype.getAnnotations = function () {
  * @inheritdoc
  */
 ve.dm.SourceSurfaceFragment.prototype.convertNodes = function () {
-	var args = arguments,
-		fragment = this,
-		text = this.getText( true );
+	const text = this.getText( true );
 
-	this.pushPending( this.convertFromSource( text ).then( function ( selectionDocument ) {
-		var tempSurfaceModel = new ve.dm.Surface( selectionDocument );
-		var tempFragment = tempSurfaceModel.getLinearFragment(
+	this.pushPending( this.convertFromSource( text ).then( ( selectionDocument ) => {
+		const tempSurfaceModel = new ve.dm.Surface( selectionDocument );
+		const tempFragment = tempSurfaceModel.getLinearFragment(
 			// TODO: Find content offsets
 			selectionDocument.getDocumentRange()
 		);
-		tempFragment.convertNodes.apply( tempFragment, args );
+		tempFragment.convertNodes.apply( tempFragment, arguments );
 
-		fragment.clearPending();
-		fragment.insertDocument( tempFragment.getDocument() );
-		return fragment.getPending();
+		this.clearPending();
+		this.insertDocument( tempFragment.getDocument() );
+		return this.getPending();
 	} ) );
 
 	return this;
@@ -83,10 +79,10 @@ ve.dm.SourceSurfaceFragment.prototype.convertNodes = function () {
  */
 ve.dm.SourceSurfaceFragment.prototype.insertContent = function ( content, annotate ) {
 	if ( typeof content !== 'string' ) {
-		var data = new ve.dm.ElementLinearData( new ve.dm.HashValueStore(), content );
+		const data = new ve.dm.ElementLinearData( new ve.dm.HashValueStore(), content );
 		// Pass `annotate` as `ignoreCoveringAnnotations`. If matching the target annotation (plain text) strip covering annotations.
 		if ( !data.isPlainText( null, false, [ 'paragraph' ], annotate ) ) {
-			this.insertDocument( new ve.dm.Document( content.concat( [ { type: 'internalList' }, { type: '/internalList' } ] ) ) );
+			this.insertDocument( new ve.dm.Document( content.concat( { type: 'internalList' }, { type: '/internalList' } ) ) );
 			return this;
 		}
 	} else {
@@ -101,8 +97,7 @@ ve.dm.SourceSurfaceFragment.prototype.insertContent = function ( content, annota
  * @inheritdoc
  */
 ve.dm.SourceSurfaceFragment.prototype.insertDocument = function ( doc, newDocRange, annotate ) {
-	var range = this.getSelection().getCoveringRange(),
-		fragment = this;
+	const range = this.getSelection().getCoveringRange();
 
 	if ( !range ) {
 		return this;
@@ -115,8 +110,8 @@ ve.dm.SourceSurfaceFragment.prototype.insertDocument = function ( doc, newDocRan
 
 	// Pass `annotate` as `ignoreCoveringAnnotations`. If matching the target annotation (plain text) strip covering annotations.
 	if ( doc.data.isPlainText( newDocRange, false, [ 'paragraph' ], annotate ) ) {
-		var data = doc.data.getDataSlice( newDocRange );
-		for ( var i = 0, l = data.length; i < l; i++ ) {
+		const data = doc.data.getDataSlice( newDocRange );
+		for ( let i = 0, l = data.length; i < l; i++ ) {
 			// Remove any text annotations, as we have determined them to be covering
 			if ( Array.isArray( data[ i ] ) ) {
 				data[ i ] = data[ i ][ 0 ];
@@ -142,8 +137,8 @@ ve.dm.SourceSurfaceFragment.prototype.insertDocument = function ( doc, newDocRan
 
 	this.pushPending(
 		this.convertToSource( doc ).then(
-			function ( source ) {
-				fragment.insertContent( source.trim() );
+			( source ) => {
+				this.insertContent( source.trim() );
 			},
 			function () {
 				ve.error( 'Failed to convert document', arguments );
@@ -159,8 +154,7 @@ ve.dm.SourceSurfaceFragment.prototype.insertDocument = function ( doc, newDocRan
  * @inheritdoc
  */
 ve.dm.SourceSurfaceFragment.prototype.wrapAllNodes = function ( wrapOuter, wrapEach ) {
-	var content,
-		range = this.getSelection().getCoveringRange();
+	const range = this.getSelection().getCoveringRange();
 
 	if ( !range ) {
 		return this;
@@ -187,17 +181,16 @@ ve.dm.SourceSurfaceFragment.prototype.wrapAllNodes = function ( wrapOuter, wrapE
 		wrapEach = [ wrapEach ];
 	}
 
-	var nodes = this.getSelectedLeafNodes();
+	const nodes = this.getSelectedLeafNodes();
 
-	content = wrapOuter.map( getOpening );
-	for ( var i = 0; i < nodes.length; i++ ) {
-		var node = nodes[ i ];
-		content = content
-			.concat( wrapEach.map( getOpening ) )
-			.concat( this.getSurface().getLinearFragment( node.getRange() ).getText().split( '' ) )
-			.concat( wrapEach.reverse().map( getClosing ) );
+	const content = wrapOuter.map( getOpening );
+	for ( let i = 0; i < nodes.length; i++ ) {
+		const node = nodes[ i ];
+		ve.batchPush( content, wrapEach.map( getOpening ) );
+		ve.batchPush( content, this.getSurface().getLinearFragment( node.getRange() ).getText().split( '' ) );
+		ve.batchPush( content, wrapEach.reverse().map( getClosing ) );
 	}
-	content = content.concat( wrapOuter.reverse().map( getClosing ) );
+	ve.batchPush( content, wrapOuter.reverse().map( getClosing ) );
 
 	this.insertContent( content );
 
@@ -239,7 +232,7 @@ ve.dm.SourceSurfaceFragment.prototype.convertToSource = function ( doc ) {
  * @return {jQuery.Promise} Promise which resolves with document model
  */
 ve.dm.SourceSurfaceFragment.prototype.convertFromSource = function ( source ) {
-	var lang = this.getDocument().getLang(),
+	const lang = this.getDocument().getLang(),
 		dir = this.getDocument().getDir();
 
 	if ( !source ) {

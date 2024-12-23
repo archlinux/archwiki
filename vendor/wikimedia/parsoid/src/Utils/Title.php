@@ -100,8 +100,9 @@ class Title implements LinkTarget {
 		$m = [];
 		if ( preg_match( $prefixRegexp, $title, $m ) ) {
 			$p = $m[1];
-			$nsId = $siteConfig->canonicalNamespaceId( $p ) ??
-				$siteConfig->namespaceId( $p );
+			$pLower = mb_strtolower( $p );
+			$nsId = $siteConfig->canonicalNamespaceId( $pLower ) ??
+				$siteConfig->namespaceId( $pLower );
 			if ( $nsId !== null ) {
 				$title = $m[2];
 				$ns = $nsId;
@@ -110,22 +111,23 @@ class Title implements LinkTarget {
 					$nsId === $siteConfig->canonicalNamespaceId( 'talk' ) &&
 					preg_match( $prefixRegexp, $title, $x )
 				) {
-					if ( $siteConfig->namespaceId( $x[1] ) ) {
+					$xLower = mb_strtolower( $x[1] );
+					if ( $siteConfig->namespaceId( $xLower ) ) {
 						// Disallow Talk:File:x type titles.
 						throw new TitleException(
 							"Invalid Talk namespace title \"$origTitle\"", 'title-invalid-talk-namespace', $title
 						);
-					} elseif ( $siteConfig->interwikiMapNoNamespaces()[$x[1]] ?? null ) {
+					} elseif ( $siteConfig->interwikiMapNoNamespaces()[$xLower] ?? null ) {
 						// Disallow Talk:Interwiki:x type titles.
 						throw new TitleException(
 							"Invalid Talk namespace title \"$origTitle\"", 'title-invalid-talk-namespace', $title
 						);
 					}
 				}
-			} elseif ( $siteConfig->interwikiMapNoNamespaces()[$p] ?? null ) {
+			} elseif ( $siteConfig->interwikiMapNoNamespaces()[$pLower] ?? null ) {
 				# Interwiki link
 				$title = $m[2];
-				$interwiki = strtolower( $p );
+				$interwiki = $pLower;
 
 				# We don't check for a redundant interwiki prefix to the
 				# local wiki, like core does here in
@@ -246,6 +248,7 @@ class Title implements LinkTarget {
 	 *
 	 * @return string
 	 * @see ::getDBkey()
+	 * @deprecated
 	 */
 	public function getKey(): string {
 		if ( $this->interwiki ) {
@@ -273,9 +276,11 @@ class Title implements LinkTarget {
 	 */
 	public function getPrefixedDBKey(): string {
 		if ( $this->prefixedDBKey === null ) {
-			$this->prefixedDBKey = $this->namespaceName === '' ? '' :
+			$this->prefixedDBKey = $this->interwiki === '' ? '' :
+				( $this->interwiki . ':' );
+			$this->prefixedDBKey .= $this->namespaceName === '' ? '' :
 				( strtr( $this->namespaceName, ' ', '_' ) . ':' );
-			$this->prefixedDBKey .= $this->getKey();
+			$this->prefixedDBKey .= $this->getDBkey();
 		}
 		return $this->prefixedDBKey;
 	}
@@ -286,11 +291,27 @@ class Title implements LinkTarget {
 	 */
 	public function getPrefixedText(): string {
 		if ( $this->prefixedText === null ) {
-			$this->prefixedText = $this->namespaceName === '' ? '' :
+			$this->prefixedText = $this->interwiki === '' ? '' :
+				( $this->interwiki . ':' );
+			$this->prefixedText .= $this->namespaceName === '' ? '' :
 				( $this->namespaceName . ':' );
-			$this->prefixedText .= strtr( $this->getKey(), '_', ' ' );
+			$this->prefixedText .= $this->getText();
 		}
 		return $this->prefixedText;
+	}
+
+	/**
+	 * Get the prefixed title with spaces, plus any fragment
+	 * (part beginning with '#')
+	 *
+	 * @return string The prefixed title, with spaces and the fragment, including '#'
+	 */
+	public function getFullText(): string {
+		$text = $this->getPrefixedText();
+		if ( $this->hasFragment() ) {
+			$text .= '#' . $this->getFragment();
+		}
+		return $text;
 	}
 
 	/**
@@ -327,7 +348,8 @@ class Title implements LinkTarget {
 	 */
 	public function equals( Title $title ) {
 		return $this->getNamespace() === $title->getNamespace() &&
-			$this->getKey() === $title->getKey();
+			$this->getInterwiki() === $title->getInterwiki() &&
+			$this->getDBkey() === $title->getDBkey();
 	}
 
 	/**

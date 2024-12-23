@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Kareyac",
 			"Դավիթ Սարոյան"
 		]
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Սա թաքնված կանոն է։",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Այս կանոնը ազդում է էջի վերնագրի վրա։",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Լեզվի կոդը",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Սխալ>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Սխալ</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Լեզու",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Աղբյուր",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Նպատակակետ",

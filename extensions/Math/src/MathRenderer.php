@@ -11,16 +11,16 @@
 
 namespace MediaWiki\Extension\Math;
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Math\InputCheck\BaseChecker;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
-use Message;
-use Parser;
 use Psr\Log\LoggerInterface;
-use RequestContext;
 use StringUtils;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * Abstract base class with static methods for rendering the <math> tags using
@@ -143,9 +143,10 @@ abstract class MathRenderer {
 	abstract public function render();
 
 	/**
+	 * @param bool $svg
 	 * @return string Html output that is embedded in the page
 	 */
-	abstract public function getHtmlOutput();
+	abstract public function getHtmlOutput( bool $svg = true ): string;
 
 	/**
 	 * texvc error messages

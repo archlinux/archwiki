@@ -23,7 +23,7 @@
 	 * @param {string} filter Filter name
 	 */
 	mw.echo.Controller.prototype.setFilter = function ( filter ) {
-		var filtersModel = this.manager.getFiltersModel(),
+		const filtersModel = this.manager.getFiltersModel(),
 			values = Array.prototype.slice.call( arguments );
 
 		values.shift();
@@ -80,16 +80,15 @@
 	 *  model is updated with the unread notification count per page per wiki
 	 */
 	mw.echo.Controller.prototype.fetchUnreadPagesByWiki = function () {
-		var controller = this,
-			filterModel = this.manager.getFiltersModel(),
+		const filterModel = this.manager.getFiltersModel(),
 			sourcePageModel = filterModel.getSourcePagesModel();
 
 		return this.api.fetchUnreadNotificationPages()
-			.then( function ( data ) {
-				var result = {},
+			.then( ( data ) => {
+				const result = {},
 					foreignSources = {};
 
-				for ( var source in data ) {
+				for ( const source in data ) {
 					if ( source !== mw.config.get( 'wgWikiID' ) ) {
 						// Collect sources for API
 						foreignSources[ source ] = data[ source ].source;
@@ -98,7 +97,7 @@
 				}
 
 				// Register the foreign sources in the API
-				controller.api.registerForeignSources( foreignSources, false );
+				this.api.registerForeignSources( foreignSources, false );
 
 				// Register pages
 				sourcePageModel.setAllSources( result );
@@ -115,8 +114,7 @@
 	 *  days and the items are item IDs.
 	 */
 	mw.echo.Controller.prototype.fetchLocalNotificationsByDate = function ( page ) {
-		var controller = this,
-			pagination = this.manager.getPaginationModel(),
+		const pagination = this.manager.getPaginationModel(),
 			filters = this.manager.getFiltersModel(),
 			currentSource = filters.getSourcePagesModel().getCurrentSource(),
 			continueValue = pagination.getPageContinue( page || pagination.getCurrPageIndex() );
@@ -132,16 +130,16 @@
 				titles: filters.getSourcePagesModel().getGroupedPagesForCurrentTitle()
 			}
 		)
-			.then( function ( data ) {
-				var dateItemIds = {},
+			.then( ( data ) => {
+				const dateItemIds = {},
 					dateItems = {},
 					models = {};
 
 				data = data || { list: [] };
 
 				// Go over the data
-				for ( var i = 0; i < data.list.length; i++ ) {
-					var notifData = data.list[ i ];
+				for ( let i = 0; i < data.list.length; i++ ) {
+					const notifData = data.list[ i ];
 
 					// Set source's seenTime
 					// TODO: This query brings up mixed alert and message notifications.
@@ -151,22 +149,22 @@
 					// either alert or notice and updating both, since the page gives
 					// us a mixed view which will update both seenTime to be the same
 					// anyways.
-					var maxSeenTime = data.seenTime.alert < data.seenTime.notice ?
+					const maxSeenTime = data.seenTime.alert < data.seenTime.notice ?
 						data.seenTime.notice : data.seenTime.alert;
-					controller.manager.getSeenTimeModel().setSeenTime(
+					this.manager.getSeenTimeModel().setSeenTime(
 						maxSeenTime
 					);
 
 					// Collect common data
-					var newNotifData = controller.createNotificationData( notifData );
+					const newNotifData = this.createNotificationData( notifData );
 					if ( notifData.type !== 'foreign' ) {
-						var localizedDate = moment.utc( newNotifData.timestamp ).local().format( 'YYYYMMDD' );
+						const localizedDate = moment.utc( newNotifData.timestamp ).local().format( 'YYYYMMDD' );
 
 						newNotifData.modelName = 'local_' + localizedDate;
 						newNotifData.source = currentSource;
 
 						// Single notifications
-						var itemModel = new mw.echo.dm.NotificationItem(
+						const itemModel = new mw.echo.dm.NotificationItem(
 							notifData.id,
 							newNotifData
 						);
@@ -180,12 +178,12 @@
 				}
 
 				// Fill in the models
-				for ( var date in dateItems ) {
-					var symbolicName = 'local_' + date;
+				for ( const date in dateItems ) {
+					const symbolicName = 'local_' + date;
 
 					// Set up model
 					models[ symbolicName ] = new mw.echo.dm.NotificationsList( {
-						type: controller.manager.getTypes(),
+						type: this.manager.getTypes(),
 						name: symbolicName,
 						source: currentSource,
 						title: date,
@@ -208,27 +206,25 @@
 				}
 
 				// Register local sources
-				controller.api.registerLocalSources( Object.keys( models ) );
+				this.api.registerLocalSources( Object.keys( models ) );
 
 				// Update the manager
-				controller.manager.setNotificationModels( models );
+				this.manager.setNotificationModels( models );
 
 				// Update the pagination
 				pagination.setNextPageContinue( data.continue );
 
 				// Update the local counter
-				controller.manager.getLocalCounter().update();
+				this.manager.getLocalCounter().update();
 
 				return dateItemIds;
 			} )
 			.then(
 				null,
-				function ( errCode, errObj ) {
-					return {
-						errCode: errCode,
-						errInfo: OO.getProp( errObj, 'error', 'info' )
-					};
-				}
+				( errCode, errObj ) => ( {
+					errCode: errCode,
+					errInfo: OO.getProp( errObj, 'error', 'info' )
+				} )
 			);
 	};
 	/**
@@ -241,9 +237,8 @@
 	 * @return {jQuery.Promise} A promise that resolves with an array of notification IDs
 	 */
 	mw.echo.Controller.prototype.fetchLocalNotifications = function ( isForced ) {
-		var controller = this,
-			// Create a new local list model
-			localListModel = new mw.echo.dm.NotificationsList( {
+		// Create a new local list model
+		const localListModel = new mw.echo.dm.NotificationsList( {
 				type: this.manager.getTypes()
 			} ),
 			localItems = [],
@@ -259,10 +254,10 @@
 		return this.api.fetchNotifications( this.manager.getTypeString(), 'local', !!isForced, { unreadFirst: true, bundle: true } /* filters */ )
 			.then(
 				// Success
-				function ( data ) {
-					var allModels = { local: localListModel },
-						createBundledNotification = function ( modelName, rawBundledNotifData ) {
-							var bundleNotifData = controller.createNotificationData( rawBundledNotifData );
+				( data ) => {
+					const allModels = { local: localListModel },
+						createBundledNotification = ( modelName, rawBundledNotifData ) => {
+							const bundleNotifData = this.createNotificationData( rawBundledNotifData );
 							bundleNotifData.bundled = true;
 							bundleNotifData.modelName = modelName;
 							return new mw.echo.dm.NotificationItem(
@@ -274,33 +269,32 @@
 					data = data || { list: [] };
 
 					// Go over the data
-					for ( var i = 0; i < data.list.length; i++ ) {
-						var notifData = data.list[ i ];
+					for ( let i = 0; i < data.list.length; i++ ) {
+						const notifData = data.list[ i ];
 
 						// Set source's seenTime
-						controller.manager.getSeenTimeModel().setSeenTime(
-							controller.getTypes().length > 1 ?
+						this.manager.getSeenTimeModel().setSeenTime(
+							this.getTypes().length > 1 ?
 								(
 									data.seenTime.alert < data.seenTime.notice ?
 										data.seenTime.notice : data.seenTime.alert
 								) :
-								data.seenTime[ controller.getTypeString() ]
+								data.seenTime[ this.getTypeString() ]
 						);
 
-						var itemModel;
 						// Collect common data
-						var newNotifData = controller.createNotificationData( notifData );
+						const newNotifData = this.createNotificationData( notifData );
 						if ( notifData.type === 'foreign' ) {
 							// x-wiki notification multi-group
 							// We need to request a new list model
 							newNotifData.name = 'xwiki';
-							var foreignListModel = allModels.xwiki = new mw.echo.dm.CrossWikiNotificationItem( notifData.id, newNotifData );
+							const foreignListModel = allModels.xwiki = new mw.echo.dm.CrossWikiNotificationItem( notifData.id, newNotifData );
 							foreignListModel.setForeign( true );
 
 							// Register foreign sources
-							controller.api.registerForeignSources( notifData.sources, true );
+							this.api.registerForeignSources( notifData.sources, true );
 							// Add the lists according to the sources
-							for ( var source in notifData.sources ) {
+							for ( const source in notifData.sources ) {
 								foreignListModel.getList().addGroup(
 									source,
 									notifData.sources[ source ]
@@ -310,7 +304,7 @@
 						} else if ( Array.isArray( newNotifData.bundledNotifications ) ) {
 							// local bundle
 							newNotifData.modelName = 'bundle_' + notifData.id;
-							itemModel = new mw.echo.dm.BundleNotificationItem(
+							const itemModel = new mw.echo.dm.BundleNotificationItem(
 								notifData.id,
 								newNotifData.bundledNotifications.map( createBundledNotification.bind( null, newNotifData.modelName ) ),
 								newNotifData
@@ -318,7 +312,7 @@
 							allModels[ newNotifData.modelName ] = itemModel;
 						} else {
 							// Local single notifications
-							itemModel = new mw.echo.dm.NotificationItem(
+							const itemModel = new mw.echo.dm.NotificationItem(
 								notifData.id,
 								newNotifData
 							);
@@ -341,16 +335,16 @@
 					// Refresh local items
 					localListModel.addItems( localItems );
 
-					// Update the controller
-					controller.manager.setNotificationModels( allModels );
+					// Update the this
+					this.manager.setNotificationModels( allModels );
 
 					return idArray;
 				},
 				// Failure
-				function ( errCode, errObj ) {
-					if ( !controller.manager.getNotificationModel( 'local' ) ) {
-						// Update the controller
-						controller.manager.setNotificationModels( { local: localListModel } );
+				( errCode, errObj ) => {
+					if ( !this.manager.getNotificationModel( 'local' ) ) {
+						// Update the this
+						this.manager.setNotificationModels( { local: localListModel } );
 					}
 					return {
 						errCode: errCode,
@@ -368,15 +362,15 @@
 	 * @return {Object} Notification config data object
 	 */
 	mw.echo.Controller.prototype.createNotificationData = function ( apiData ) {
-		var content = apiData[ '*' ] || {};
+		const content = apiData[ '*' ] || {};
 
-		var utcTimestamp;
+		let utcTimestamp;
 		if ( apiData.timestamp.utciso8601 ) {
 			utcTimestamp = apiData.timestamp.utciso8601;
 		} else {
 			// Temporary until c05133283af0486e08c9a97a468bc075e238f2d2 rolls out to the
 			// whole WMF cluster
-			var utcIsoMoment = moment.utc( apiData.timestamp.utcunix * 1000 );
+			const utcIsoMoment = moment.utc( apiData.timestamp.utcunix * 1000 );
 			utcTimestamp = utcIsoMoment.format( 'YYYY-MM-DD[T]HH:mm:ss[Z]' );
 		}
 
@@ -397,7 +391,7 @@
 				compactHeader: content.compactHeader,
 				body: content.body
 			},
-			iconURL: content.iconUrl,
+			iconUrl: content.iconUrl,
 			iconType: content.icon,
 			primaryUrl: OO.getProp( content.links, 'primary', 'url' ),
 			secondaryUrls: OO.getProp( content.links, 'secondary' ) || [],
@@ -419,7 +413,7 @@
 	 *  were marked as read.
 	 */
 	mw.echo.Controller.prototype.markEntireListModelRead = function ( modelName, isRead ) {
-		var itemIds = [],
+		const itemIds = [],
 			model = this.manager.getNotificationModel( modelName || 'local' );
 
 		if ( !model ) {
@@ -430,9 +424,9 @@
 		// Default to true
 		isRead = isRead === undefined ? true : isRead;
 
-		var items = model.getItems();
-		for ( var i = 0; i < items.length; i++ ) {
-			var item = items[ i ];
+		const items = model.getItems();
+		for ( let i = 0; i < items.length; i++ ) {
+			const item = items[ i ];
 			if ( item.isRead() !== isRead ) {
 				itemIds.push( item.getId() );
 			}
@@ -451,21 +445,20 @@
 	 *  all notifications for the given source were marked as read
 	 */
 	mw.echo.Controller.prototype.markAllRead = function ( source ) {
-		var controller = this,
-			itemIds = [],
+		const itemIds = [],
 			readState = this.manager.getFiltersModel().getReadState(),
 			localCounter = this.manager.getLocalCounter();
 
 		source = source || this.manager.getFiltersModel().getSourcePagesModel().getCurrentSource();
 
-		this.manager.getNotificationsBySource( source ).forEach( function ( notification ) {
+		this.manager.getNotificationsBySource( source ).forEach( ( notification ) => {
 			if ( !notification.isRead() ) {
-				itemIds = itemIds.concat( notification.getAllIds() );
+				itemIds.push( ...notification.getAllIds() );
 				notification.toggleRead( true );
 
 				if ( readState === 'unread' ) {
 					// Remove the items if we are in 'unread' filter state
-					var model = controller.manager.getNotificationModel( notification.getModelName() );
+					const model = this.manager.getNotificationModel( notification.getModelName() );
 					model.discardItems( notification );
 				}
 			}
@@ -492,14 +485,14 @@
 	 *  local notifications have been marked as read.
 	 */
 	mw.echo.Controller.prototype.markLocalNotificationsRead = function () {
-		var readState = this.manager.getFiltersModel().getReadState(),
+		const readState = this.manager.getFiltersModel().getReadState(),
 			modelItems = {};
 
-		this.manager.getLocalNotifications().forEach( function ( notification ) {
+		this.manager.getLocalNotifications().forEach( ( notification ) => {
 			if ( !notification.isRead() ) {
 				notification.toggleRead( true );
 
-				var modelName = notification.getModelName();
+				const modelName = notification.getModelName();
 				modelItems[ modelName ] = modelItems[ modelName ] || [];
 				modelItems[ modelName ].push( notification );
 			}
@@ -507,8 +500,8 @@
 
 		// Remove the items if we are in 'unread' filter state
 		if ( readState === 'unread' ) {
-			for ( var name in modelItems ) {
-				var model = this.manager.getNotificationModel( name );
+			for ( const name in modelItems ) {
+				const model = this.manager.getNotificationModel( name );
 				model.discardItems( modelItems[ name ] );
 			}
 		}
@@ -528,8 +521,7 @@
 	 *  model.
 	 */
 	mw.echo.Controller.prototype.fetchCrossWikiNotifications = function () {
-		var controller = this,
-			xwikiModel = this.manager.getNotificationModel( 'xwiki' );
+		const xwikiModel = this.manager.getNotificationModel( 'xwiki' );
 
 		if ( !xwikiModel ) {
 			// There is no xwiki notifications model, so we can't
@@ -539,18 +531,16 @@
 
 		return this.api.fetchNotificationGroups( xwikiModel.getSourceNames(), this.manager.getTypeString(), true )
 			.then(
-				function ( groupList ) {
-					var items = [];
+				( groupList ) => {
+					for ( const group in groupList ) {
+						const listModel = xwikiModel.getItemBySource( group );
+						const groupItems = groupList[ group ];
 
-					for ( var group in groupList ) {
-						var listModel = xwikiModel.getItemBySource( group );
-						var groupItems = groupList[ group ];
-
-						items = [];
-						for ( var i = 0; i < groupItems.length; i++ ) {
-							var notifData = controller.createNotificationData( groupItems[ i ] );
+						const items = [];
+						for ( let i = 0; i < groupItems.length; i++ ) {
+							const notifData = this.createNotificationData( groupItems[ i ] );
 							items.push(
-								new mw.echo.dm.NotificationItem( groupItems[ i ].id, $.extend( notifData, {
+								new mw.echo.dm.NotificationItem( groupItems[ i ].id, Object.assign( notifData, {
 									modelName: 'xwiki',
 									source: group,
 									bundled: true,
@@ -562,14 +552,12 @@
 						listModel.setItems( items );
 					}
 				},
-				function ( errCode, errObj ) {
-					return {
-						errCode: errCode,
-						errInfo: errCode === 'http' ?
-							mw.msg( 'echo-api-failure-cross-wiki' ) :
-							OO.getProp( errObj, 'error', 'info' )
-					};
-				}
+				( errCode, errObj ) => ( {
+					errCode: errCode,
+					errInfo: errCode === 'http' ?
+						mw.msg( 'echo-api-failure-cross-wiki' ) :
+						OO.getProp( errObj, 'error', 'info' )
+				} )
 			);
 	};
 
@@ -585,7 +573,7 @@
 	 *  for the set type of this controller, in the given source.
 	 */
 	mw.echo.Controller.prototype.markItemsRead = function ( itemIds, modelName, isRead ) {
-		var model = this.manager.getNotificationModel( modelName ),
+		const model = this.manager.getNotificationModel( modelName ),
 			readState = this.manager.getFiltersModel().getReadState(),
 			allIds = [];
 
@@ -594,7 +582,7 @@
 		// Default to true
 		isRead = isRead === undefined ? true : isRead;
 
-		var items = model.findByIds( itemIds );
+		const items = model.findByIds( itemIds );
 
 		// If we are only looking at specific read state,
 		// then we need to make sure the items are removed
@@ -611,8 +599,8 @@
 			// to reflect the new pagination? etc.
 		}
 
-		items.forEach( function ( notification ) {
-			allIds = allIds.concat( notification.getAllIds() );
+		items.forEach( ( notification ) => {
+			allIds.push( ...notification.getAllIds() );
 			if ( readState === 'all' ) {
 				notification.toggleRead( isRead );
 			}
@@ -641,7 +629,7 @@
 	 *  for the set type of this controller, in the given source.
 	 */
 	mw.echo.Controller.prototype.markCrossWikiItemsRead = function ( itemIds, source ) {
-		var allIds = [],
+		const allIds = [],
 			xwikiModel = this.manager.getNotificationModel( 'xwiki' );
 
 		if ( !xwikiModel ) {
@@ -649,14 +637,14 @@
 		}
 		itemIds = Array.isArray( itemIds ) ? itemIds : [ itemIds ];
 
-		var sourceModel = xwikiModel.getList().getGroupByName( source );
-		var notifs = sourceModel.findByIds( itemIds );
+		const sourceModel = xwikiModel.getList().getGroupByName( source );
+		const notifs = sourceModel.findByIds( itemIds );
 		sourceModel.discardItems( notifs );
 		// Update pagination count
 		this.manager.updateCurrentPageItemCount();
 
-		notifs.forEach( function ( notif ) {
-			allIds = allIds.concat( notif.getAllIds() );
+		notifs.forEach( ( notif ) => {
+			allIds.push( ...notif.getAllIds() );
 		} );
 		this.manager.getUnreadCounter().estimateChange( -allIds.length );
 		return this.api.markItemsRead( allIds, source, true )
@@ -670,8 +658,7 @@
 	 *  are marked as read
 	 */
 	mw.echo.Controller.prototype.markEntireCrossWikiItemAsRead = function () {
-		var controller = this,
-			xwikiModel = this.manager.getNotificationModel( 'xwiki' );
+		const xwikiModel = this.manager.getNotificationModel( 'xwiki' );
 
 		if ( !xwikiModel ) {
 			return $.Deferred().reject().promise();
@@ -680,30 +667,29 @@
 		this.manager.getUnreadCounter().estimateChange( -xwikiModel.getCount() );
 
 		return this.api.fetchNotificationGroups( xwikiModel.getSourceNames(), this.manager.getTypeString() )
-			.then( function ( groupList ) {
-				var promises = [],
-					idArray = [];
+			.then( ( groupList ) => {
+				const promises = [];
 
-				for ( var group in groupList ) {
-					var listModel = xwikiModel.getItemBySource( group );
-					var groupItems = groupList[ group ];
+				for ( const group in groupList ) {
+					const listModel = xwikiModel.getItemBySource( group );
+					const groupItems = groupList[ group ];
 
-					idArray = [];
-					for ( var i = 0; i < groupItems.length; i++ ) {
-						idArray = idArray.concat( groupItems[ i ].id ).concat( groupItems[ i ].bundledIds || [] );
+					const idArray = [];
+					for ( let i = 0; i < groupItems.length; i++ ) {
+						idArray.push( groupItems[ i ].id, ...( groupItems[ i ].bundledIds || [] ) );
 					}
 
 					// Mark items as read in the API
 					promises.push(
-						controller.api.markItemsRead( idArray, listModel.getName(), true )
+						this.api.markItemsRead( idArray, listModel.getName(), true )
 					);
 				}
 
 				// Synchronously remove this model from the widget
-				controller.removeCrossWikiItem();
+				this.removeCrossWikiItem();
 
 				return mw.echo.api.NetworkHandler.static.waitForAllPromises( promises ).then(
-					controller.refreshUnreadCount.bind( controller )
+					this.refreshUnreadCount.bind( this )
 				);
 			} );
 	};
@@ -732,16 +718,14 @@
 	 *  seenTime was updated for all the controller's types and sources.
 	 */
 	mw.echo.Controller.prototype.updateSeenTime = function () {
-		var controller = this;
-
 		return this.api.updateSeenTime(
 			this.getTypes(),
 			// For consistency, use current source, though seenTime
 			// will be updated globally
 			this.manager.getFiltersModel().getSourcePagesModel().getCurrentSource()
 		)
-			.then( function ( time ) {
-				controller.manager.getSeenTimeModel().setSeenTime( time );
+			.then( ( time ) => {
+				this.manager.getSeenTimeModel().setSeenTime( time );
 			} );
 	};
 

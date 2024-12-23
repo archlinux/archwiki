@@ -10,6 +10,14 @@
 			"Sjoerddebruin"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Handmatig een melding aan een gebruiker activeren",
+	"apihelp-echocreateevent-example": "Een melding sturen",
+	"apihelp-echocreateevent-param-user": "Gebruiker naar wie de melding moet worden gestuurd",
+	"apihelp-echocreateevent-param-header": "Kop-inhoud van de melding",
+	"apihelp-echocreateevent-param-content": "Tekstinhoud van de melding",
+	"apihelp-echocreateevent-param-page": "Pagina waarnaar moet worden gekoppeld in de melding",
+	"apihelp-echocreateevent-param-section": "Sectie waar de melding moet worden afgeleverd",
+	"apihelp-echocreateevent-param-email": "Of er ook een e-mail moet worden verzonden",
 	"apihelp-echomarkread-summary": "Meldingen van de huidige gebruiker markeren als gelezen.",
 	"apihelp-echomarkread-param-list": "Een lijst van ID's van meldingen om te markeren als gelezen.",
 	"apihelp-echomarkread-param-unreadlist": "Lijst van meldings-ID's om die als ongelezen gemarkeerd moeten worden.",

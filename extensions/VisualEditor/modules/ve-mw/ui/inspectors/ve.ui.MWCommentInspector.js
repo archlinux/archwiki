@@ -42,7 +42,7 @@ ve.ui.MWCommentInspector.prototype.initialize = function () {
 };
 
 ve.ui.MWCommentInspector.prototype.onCopy = function ( e ) {
-	var clipboardData = e.originalEvent.clipboardData,
+	const clipboardData = e.originalEvent.clipboardData,
 		selection = ( e.target.value ).slice( e.target.selectionStart, e.target.selectionEnd );
 	if ( ve.isClipboardDataFormatsSupported( e, true ) ) {
 		// We are in an environment where setting text/x-wiki will work

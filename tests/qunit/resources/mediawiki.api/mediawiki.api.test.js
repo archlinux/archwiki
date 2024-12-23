@@ -1,22 +1,22 @@
-QUnit.module( 'mediawiki.api', function ( hooks ) {
+QUnit.module( 'mediawiki.api', ( hooks ) => {
 	hooks.beforeEach( function () {
 		this.server = this.sandbox.useFakeServer();
 		this.server.respondImmediately = true;
 	} );
 
 	function sequence( responses ) {
-		var i = 0;
+		let i = 0;
 		return function ( request ) {
-			var response = responses[ i ];
+			const response = responses[ i ];
 			if ( response ) {
 				i++;
-				request.respond.apply( request, response );
+				request.respond( ...response );
 			}
 		};
 	}
 
 	function sequenceBodies( status, headers, bodies ) {
-		bodies.forEach( function ( body, i ) {
+		bodies.forEach( ( body, i ) => {
 			bodies[ i ] = [ status, headers, body ];
 		} );
 		return sequence( bodies );
@@ -24,62 +24,62 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 
 	// Utility to make inline use with an assert easier
 	function match( text, pattern ) {
-		var m = text.match( pattern );
+		const m = text.match( pattern );
 		return m && m[ 1 ] || null;
 	}
 
 	QUnit.test( 'get()', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respond( [ 200, { 'Content-Type': 'application/json' }, '[]' ] );
 
-		return api.get( {} ).then( function ( data ) {
+		return api.get( {} ).then( ( data ) => {
 			assert.deepEqual( data, [], 'If request succeeds without errors, resolve deferred' );
 		} );
 	} );
 
 	QUnit.test( 'post()', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respond( [ 200, { 'Content-Type': 'application/json' }, '[]' ] );
 
-		return api.post( {} ).then( function ( data ) {
+		return api.post( {} ).then( ( data ) => {
 			assert.deepEqual( data, [], 'Simple POST request' );
 		} );
 	} );
 
 	QUnit.test( 'API error errorformat=bc', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respond( [ 200, { 'Content-Type': 'application/json' },
 			'{ "error": { "code": "unknown_action" } }'
 		] );
 
 		api.get( { action: 'doesntexist' } )
-			.fail( function ( errorCode ) {
+			.fail( ( errorCode ) => {
 				assert.strictEqual( errorCode, 'unknown_action', 'API error should reject the deferred' );
 			} )
 			.always( assert.async() );
 	} );
 
 	QUnit.test( 'API error errorformat!=bc', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respond( [ 200, { 'Content-Type': 'application/json' },
 			'{ "errors": [ { "code": "unknown_action", "key": "unknown-error", "params": [] } ] }'
 		] );
 
 		api.get( { action: 'doesntexist' } )
-			.fail( function ( errorCode ) {
+			.fail( ( errorCode ) => {
 				assert.strictEqual( errorCode, 'unknown_action', 'API error should reject the deferred' );
 			} )
 			.always( assert.async() );
 	} );
 
 	QUnit.test( 'FormData support', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			if ( window.FormData ) {
 				assert.false( /action=/.test( request.url ), 'Request has no query string' );
 				assert.true( request.requestBody instanceof FormData, 'Request uses FormData body' );
@@ -94,9 +94,9 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'Converting arrays to pipe-separated (string)', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.strictEqual( match( request.url, /test=([^&]+)/ ), 'foo%7Cbar%7Cbaz', 'Pipe-separated value was submitted' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
 		} );
@@ -105,9 +105,9 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'Converting arrays to pipe-separated (mw.Title)', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.strictEqual( match( request.url, /test=([^&]+)/ ), 'Foo%7CBar', 'Pipe-separated value was submitted' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
 		} );
@@ -116,9 +116,9 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'Converting arrays to pipe-separated (misc primitives)', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.strictEqual( match( request.url, /test=([^&]+)/ ), 'true%7Cfalse%7C%7C%7C0%7C1.2', 'Pipe-separated value was submitted' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
 		} );
@@ -128,9 +128,9 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'Omitting false booleans', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.false( /foo/.test( request.url ), 'foo query parameter is not present' );
 			assert.true( /bar=true/.test( request.url ), 'bar query parameter is present with value true' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
@@ -140,7 +140,9 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'getToken() - cached', async function ( assert ) {
-		var api = new mw.Api();
+		mw.Api.resetTokenCacheForTest();
+
+		const api = new mw.Api();
 
 		// Get csrfToken for local wiki, this should not make
 		// a request as it should be retrieved from mw.user.tokens.
@@ -151,7 +153,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'getToken() - uncached', async function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respondWith( /type=testuncached/, [ 200, { 'Content-Type': 'application/json' },
 			'{ "query": { "tokens": { "testuncachedtoken": "good" } } }'
@@ -170,7 +172,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'getToken() - error', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respondWith( /type=testerror/, sequenceBodies( 200, { 'Content-Type': 'application/json' },
 			[
@@ -181,18 +183,18 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 
 		// Don't cache error (T67268)
 		return api.getToken( 'testerror' )
-			.catch( function ( err ) {
+			.catch( ( err ) => {
 				assert.strictEqual( err, 'bite-me', 'Expected error' );
 
 				return api.getToken( 'testerror' );
 			} )
-			.then( function ( token ) {
+			.then( ( token ) => {
 				assert.strictEqual( token, 'good', 'The token' );
 			} );
 	} );
 
 	QUnit.test( 'getToken() - no query', function ( assert ) {
-		var api = new mw.Api(),
+		const api = new mw.Api(),
 			// Same-origin warning and missing query in response.
 			serverRsp = {
 				warnings: {
@@ -207,10 +209,10 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 		] );
 
 		return api.getToken( 'testnoquery' )
-			.then( function () {
+			.then( () => {
 				assert.fail( 'Expected response missing a query to be rejected' );
 			} )
-			.catch( function ( err, rsp ) {
+			.catch( ( err, rsp ) => {
 				assert.strictEqual( err, 'query-missing', 'Expected no query error code' );
 				assert.deepEqual( rsp, serverRsp );
 			} );
@@ -218,7 +220,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 
 	QUnit.test( 'getToken() - deprecated', async function ( assert ) {
 		// Cache API endpoint from default to avoid cachehit in mw.user.tokens
-		var api = new mw.Api( { ajax: { url: '/postWithToken/api.php' } } );
+		const api = new mw.Api( { ajax: { url: '/postWithToken/api.php' } } );
 
 		this.server.respondWith( /type=csrf/, [ 200, { 'Content-Type': 'application/json' },
 			'{ "query": { "tokens": { "csrftoken": "csrfgood" } } }'
@@ -232,7 +234,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'badToken()', async function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respondWith( /type=testbad/, sequenceBodies( 200, { 'Content-Type': 'application/json' },
 			[
@@ -250,7 +252,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'badToken( legacy )', async function ( assert ) {
-		var api = new mw.Api( { ajax: { url: '/badTokenLegacy/api.php' } } );
+		const api = new mw.Api( { ajax: { url: '/badTokenLegacy/api.php' } } );
 
 		this.server.respondWith( /type=csrf/, sequenceBodies( 200, { 'Content-Type': 'application/json' },
 			[
@@ -268,12 +270,12 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'postWithToken( tokenType, params )', function ( assert ) {
-		var api = new mw.Api( { ajax: { url: '/postWithToken/api.php' } } );
+		const api = new mw.Api( { ajax: { url: '/postWithToken/api.php' } } );
 
 		this.server.respondWith( 'GET', /type=testpost/, [ 200, { 'Content-Type': 'application/json' },
 			'{ "query": { "tokens": { "testposttoken": "good" } } }'
 		] );
-		this.server.respondWith( 'POST', /api/, function ( request ) {
+		this.server.respondWith( 'POST', /api/, ( request ) => {
 			if ( request.requestBody.includes( 'token=good' ) ) {
 				request.respond( 200, { 'Content-Type': 'application/json' },
 					'{ "example": { "foo": "quux" } }'
@@ -282,13 +284,13 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 		} );
 
 		return api.postWithToken( 'testpost', { action: 'example', key: 'foo' } )
-			.then( function ( data ) {
+			.then( ( data ) => {
 				assert.deepEqual( data, { example: { foo: 'quux' } } );
 			} );
 	} );
 
 	QUnit.test( 'postWithToken( tokenType, params with assert )', async function ( assert ) {
-		var api = new mw.Api( { ajax: { url: '/postWithToken/api.php' } } );
+		const api = new mw.Api( { ajax: { url: '/postWithToken/api.php' } } );
 
 		this.server.respondWith( /assert=user/, [ 200, { 'Content-Type': 'application/json' },
 			'{ "error": { "code": "assertuserfailed", "info": "Assertion failed" } }'
@@ -302,7 +304,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'postWithToken( tokenType, params, ajaxOptions )', async function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respond( [ 200, { 'Content-Type': 'application/json' }, '{ "example": "quux" }' ] );
 
@@ -319,7 +321,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 		let called = 0;
 		const data = await api.postWithToken( 'csrf',
 			{ action: 'example' },
-			function () {
+			() => {
 				called++;
 			}
 		);
@@ -329,7 +331,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 	} );
 
 	QUnit.test( 'postWithToken() - badtoken', function ( assert ) {
-		var api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respondWith( /type=testbadtoken/, sequenceBodies( 200, { 'Content-Type': 'application/json' },
 			[
@@ -337,7 +339,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 				'{ "query": { "tokens": { "testbadtokentoken": "good" } } }'
 			]
 		) );
-		this.server.respondWith( 'POST', /api/, function ( request ) {
+		this.server.respondWith( 'POST', /api/, ( request ) => {
 			if ( request.requestBody.includes( 'token=bad' ) ) {
 				request.respond( 200, { 'Content-Type': 'application/json' },
 					'{ "error": { "code": "badtoken" } }'
@@ -355,14 +357,13 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 		// - Request: new token -> good
 		// - Request: action=example -> success
 		return api.postWithToken( 'testbadtoken', { action: 'example', key: 'foo' } )
-			.then( function ( data ) {
+			.then( ( data ) => {
 				assert.deepEqual( data, { example: { foo: 'quux' } } );
 			} );
 	} );
 
 	QUnit.test( 'postWithToken() - badtoken-cached', function ( assert ) {
-		var sequenceA,
-			api = new mw.Api();
+		const api = new mw.Api();
 
 		this.server.respondWith( /type=testonce/, sequenceBodies( 200, { 'Content-Type': 'application/json' },
 			[
@@ -370,13 +371,13 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 				'{ "query": { "tokens": { "testoncetoken": "good-B" } } }'
 			]
 		) );
-		sequenceA = sequenceBodies( 200, { 'Content-Type': 'application/json' },
+		const sequenceA = sequenceBodies( 200, { 'Content-Type': 'application/json' },
 			[
 				'{ "example": { "value": "A" } }',
 				'{ "error": { "code": "badtoken" } }'
 			]
 		);
-		this.server.respondWith( 'POST', /api/, function ( request ) {
+		this.server.respondWith( 'POST', /api/, ( request ) => {
 			if ( request.requestBody.includes( 'token=good-A' ) ) {
 				sequenceA( request );
 			} else if ( request.requestBody.includes( 'token=good-B' ) ) {
@@ -389,7 +390,7 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 		// - Request: new token -> A
 		// - Request: action=example
 		return api.postWithToken( 'testonce', { action: 'example', key: 'foo' } )
-			.then( function ( data ) {
+			.then( ( data ) => {
 				assert.deepEqual( data, { example: { value: 'A' } } );
 
 				// - Request: action=example w/ token A -> badtoken error
@@ -397,19 +398,17 @@ QUnit.module( 'mediawiki.api', function ( hooks ) {
 				// - Request: action=example w/ token B -> success
 				return api.postWithToken( 'testonce', { action: 'example', key: 'bar' } );
 			} )
-			.then( function ( data ) {
+			.then( ( data ) => {
 				assert.deepEqual( data, { example: { value: 'B' } } );
 			} );
 	} );
 
 	QUnit.test( '#abort', function ( assert ) {
-		this.sandbox.stub( $, 'ajax', function ( options ) {
-			return $.Deferred().promise( {
-				abort: function () {
-					assert.step( options.type + ' aborted' );
-				}
-			} );
-		} );
+		this.sandbox.stub( $, 'ajax', ( options ) => $.Deferred().promise( {
+			abort: function () {
+				assert.step( options.type + ' aborted' );
+			}
+		} ) );
 		const api = new mw.Api();
 		api.get( { a: 1 } );
 		api.post( { b: 2 } );

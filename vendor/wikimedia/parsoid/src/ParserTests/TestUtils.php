@@ -20,6 +20,17 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 
+/**
+ * This class contains helper functions which should not be directly used
+ * outside of Parsoid.
+ *
+ * Per T332457, most of the code in Wikimedia\Parsoid\ParserTests is
+ * "for use in parser test runners only", including the core parser
+ * test runner, but this file is "more internal" than that: core's
+ * parser test runner should not use these helpers directly.
+ *
+ * @internal
+ */
 class TestUtils {
 	/** @var mixed */
 	private static $consoleColor;
@@ -156,8 +167,7 @@ class TestUtils {
 		$out = preg_replace( $attribTroubleRE . "'[^']*\\\\?'/u", '', $out ); // single-quoted variant
 		// strip typeof last
 		$out = preg_replace( '/ typeof="[^\"]*"/u', '', $out );
-		// replace mwt ids
-		$out = preg_replace( '/ id="mw((t\d+)|([\w-]{2,}))"/u', '', $out );
+		$out = self::stripParsoidIds( $out );
 		$out = preg_replace( '/<span[^>]+about="[^"]*"[^>]*>/u', '', $out );
 		$out = preg_replace( '#(\s)<span>\s*</span>\s*#u', '$1', $out );
 		$out = preg_replace( '#<span>\s*</span>#u', '', $out );
@@ -171,6 +181,15 @@ class TestUtils {
 			'#(src="[^"]*?)/thumb(/[0-9a-f]/[0-9a-f]{2}/[^/]+)/[0-9]+px-[^"/]+(?=")#u', '$1$2',
 			$out
 		);
+	}
+
+	/**
+	 * Strip Parsoid ID attributes (id="mwXX", used to associate NodeData) from an HTML string
+	 * @param string $s
+	 * @return string
+	 */
+	public static function stripParsoidIds( string $s ): string {
+		return preg_replace( '/ id="mw([-\w]{2,})"/u', '', $s );
 	}
 
 	private static function cleanSpans(
@@ -413,7 +432,7 @@ class TestUtils {
 			// Attempt to instantiate this class to determine if the
 			// (optional) php-console-color library is installed.
 			try {
-				self::$consoleColor = new \JakubOnderka\PhpConsoleColor\ConsoleColor();
+				self::$consoleColor = new \PHP_Parallel_Lint\PhpConsoleColor\ConsoleColor();
 			} catch ( Error $e ) {
 				/* fall back to no-color mode */
 			}

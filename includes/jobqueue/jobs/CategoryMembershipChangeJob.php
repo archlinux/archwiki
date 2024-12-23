@@ -24,7 +24,9 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\RawSQLExpression;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -50,14 +52,16 @@ class CategoryMembershipChangeJob extends Job {
 	/**
 	 * @param PageIdentity $page the page for which to update category membership.
 	 * @param string $revisionTimestamp The timestamp of the new revision that triggered the job.
+	 * @param bool $forImport Whether the new revision that triggered the import was imported
 	 * @return JobSpecification
 	 */
-	public static function newSpec( PageIdentity $page, $revisionTimestamp ) {
+	public static function newSpec( PageIdentity $page, $revisionTimestamp, bool $forImport ) {
 		return new JobSpecification(
 			'categoryMembershipChange',
 			[
 				'pageId' => $page->getId(),
 				'revTimestamp' => $revisionTimestamp,
+				'forImport' => $forImport,
 			],
 			[
 				'removeDuplicates' => true,
@@ -84,7 +88,7 @@ class CategoryMembershipChangeJob extends Job {
 		$services = MediaWikiServices::getInstance();
 		$lbFactory = $services->getDBLoadBalancerFactory();
 		$lb = $lbFactory->getMainLB();
-		$dbw = $lb->getConnectionRef( DB_PRIMARY );
+		$dbw = $lb->getConnection( DB_PRIMARY );
 
 		$this->ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
 
@@ -95,7 +99,7 @@ class CategoryMembershipChangeJob extends Job {
 		}
 
 		// Cut down on the time spent in waitForPrimaryPos() in the critical section
-		$dbr = $lb->getConnectionRef( DB_REPLICA );
+		$dbr = $lb->getConnection( DB_REPLICA );
 		if ( !$lb->waitForPrimaryPos( $dbr ) ) {
 			$this->setLastError( "Timed out while pre-waiting for replica DB to catch up" );
 			return false;
@@ -134,7 +138,7 @@ class CategoryMembershipChangeJob extends Job {
 			->from( 'revision' )
 			->where( [ 'rev_page' => $page->getId() ] )
 			->andWhere( $dbr->expr( 'rev_timestamp', '>=', $dbr->timestamp( $cutoffUnix ) ) )
-			->andWhere( 'EXISTS (' . $subQuery->caller( __METHOD__ )->getSQL() . ')' )
+			->andWhere( new RawSQLExpression( 'EXISTS (' . $subQuery->getSQL() . ')' ) )
 			->orderBy( [ 'rev_timestamp', 'rev_id' ], SelectQueryBuilder::SORT_DESC )
 			->caller( __METHOD__ )->fetchRow();
 
@@ -204,7 +208,7 @@ class CategoryMembershipChangeJob extends Job {
 		}
 
 		$blc = $services->getBacklinkCacheFactory()->getBacklinkCache( $title );
-		$catMembChange = new CategoryMembershipChange( $title, $blc, $newRev );
+		$catMembChange = new CategoryMembershipChange( $title, $blc, $newRev, $this->params['forImport'] ?? false );
 		$catMembChange->checkTemplateLinks();
 
 		$batchSize = $services->getMainConfig()->get( MainConfigNames::UpdateRowsPerQuery );
@@ -228,7 +232,7 @@ class CategoryMembershipChangeJob extends Job {
 	}
 
 	private function getExplicitCategoriesChanges(
-		WikiPage $page, RevisionRecord $newRev, RevisionRecord $oldRev = null
+		WikiPage $page, RevisionRecord $newRev, ?RevisionRecord $oldRev = null
 	) {
 		// Inject the same timestamp for both revision parses to avoid seeing category changes
 		// due to time-based parser functions. Inject the same page title for the parses too.

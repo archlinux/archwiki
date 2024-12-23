@@ -68,7 +68,6 @@
 	"templatedata-modal-button-map": "แก้ไขผัง",
 	"templatedata-modal-button-importParams": "นำเข้าพารามิเตอร์",
 	"templatedata-modal-button-removemap": "ลบแมป",
-	"templatedata-modal-button-restoreparam": "เรียกคืนพารามิเตอร์",
 	"templatedata-modal-button-saveparam": "บันทึก",
 	"templatedata-modal-confirmcancel": "คุณต้องการยกเลิกการเปลี่ยนแปลงหรือไม่?",
 	"templatedata-modal-current-language": "ภาษาปัจจุบัน: $1",

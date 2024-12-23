@@ -2,21 +2,21 @@
 
 namespace MediaWiki\Tests\Api;
 
-use FSFileBackend;
 use LocalRepo;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
-use MimeAnalyzer;
 use RepoGroup;
+use Wikimedia\FileBackend\FSFileBackend;
+use Wikimedia\Mime\MimeAnalyzer;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers \ApiUpload
+ * @covers MediaWiki\Api\ApiUpload
  */
 class ApiUploadTest extends ApiUploadTestCase {
 	private ?Authority $uploader = null;

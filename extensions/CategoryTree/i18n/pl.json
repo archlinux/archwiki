@@ -5,11 +5,11 @@
 			"Chrumps",
 			"Derbeth",
 			"Matma Rex",
+			"Msz2001",
 			"Rail",
 			"Railfail536",
 			"Sp5uhe",
-			"Woytecr",
-			"Msz2001"
+			"Woytecr"
 		]
 	},
 	"categorytree": "Drzewo kategorii",
@@ -39,5 +39,9 @@
 	"categorytree-no-pages": "brak artykułów lub podkategorii.",
 	"categorytree-not-found": "Kategoria <i>$1</i> nie została znaleziona",
 	"categorytree-error": "Problem z ładowaniem danych.",
-	"categorytree-retry": "Poczekaj chwilę i spróbuj ponownie – kliknij ten napis."
+	"categorytree-retry": "Poczekaj chwilę i spróbuj ponownie – kliknij ten napis.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Parametr <code>onlyroot</code> jest przestarzały. Zamiast niego użyj <code>depth=\"0\"</code>.",
+	"categorytree-deprecation-warning": "'''Uwaga:''' Strona korzysta z <code>&lt;categorytree&gt;</code> zawierającego przestarzały parametr.",
+	"categorytree-deprecation-category": "Strony korzystające z przestarzałych parametrów drzewa kategorii",
+	"categorytree-deprecation-category-desc": "Strona korzysta z przestarzałego parametru drzewa kategorii takiego jak <code>onlyroot</code>."
 }

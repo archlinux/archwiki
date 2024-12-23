@@ -11,13 +11,9 @@ use MediaWikiUnitTestCase;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Filter\HistoryFilter
+ * @covers \MediaWiki\Extension\AbuseFilter\Filter\HistoryFilter
  */
 class HistoryFilterTest extends MediaWikiUnitTestCase {
-	/**
-	 * @covers ::__construct
-	 * @covers ::getHistoryID
-	 */
 	public function testGetID() {
 		$historyID = 163;
 		$filter = new HistoryFilter(

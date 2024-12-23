@@ -2,10 +2,11 @@
 
 namespace MediaWiki\HTMLForm\Field;
 
+use InvalidArgumentException;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWiki\Parser\Sanitizer;
-use Xml;
+use MediaWiki\Xml\Xml;
 
 /**
  * Radio checkbox fields.
@@ -69,7 +70,7 @@ class HTMLRadioField extends HTMLFormField {
 		if (
 			isset( $this->mParams['option-descriptions'] ) ||
 			isset( $this->mParams['option-descriptions-messages'] ) ) {
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				"Non-Codex HTMLForms do not support the 'option-descriptions' parameter for radio buttons"
 			);
 		}
@@ -83,7 +84,7 @@ class HTMLRadioField extends HTMLFormField {
 		if (
 			isset( $this->mParams['option-descriptions'] ) ||
 			isset( $this->mParams['option-descriptions-messages'] ) ) {
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				"Non-Codex HTMLForms do not support the 'option-descriptions' parameter for radio buttons"
 			);
 		}
@@ -176,7 +177,7 @@ class HTMLRadioField extends HTMLFormField {
 
 			// HTML markup for CSS-only Codex Radio.
 			$radio = Html::rawElement(
-				'span',
+				'div',
 				[ 'class' => 'cdx-radio' ],
 				$radioInput . $radioIcon . $radioLabelWrapper
 			);

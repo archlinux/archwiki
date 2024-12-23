@@ -3,65 +3,53 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\NodeData;
 
-use JsonSerializable;
-use stdClass;
+use Wikimedia\JsonCodec\JsonCodecable;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
 use Wikimedia\Parsoid\Tokens\KVSourceRange;
 
-class ParamInfo implements JsonSerializable {
+class ParamInfo implements JsonCodecable {
+	use JsonCodecableTrait;
+
 	/**
 	 * The parameter key
-	 * @var string
 	 */
-	public $k;
+	public string $k;
 
 	/**
 	 * The key source wikitext, if different from $k
-	 * @var string|null
 	 */
-	public $keyWt;
+	public ?string $keyWt = null;
 
 	/**
 	 * The parameter value source wikitext
-	 * @var string|null
 	 */
-	public $valueWt;
+	public ?string $valueWt = null;
 
-	/**
-	 * @var KVSourceRange|null
-	 */
-	public $srcOffsets;
+	public ?KVSourceRange $srcOffsets = null;
 
-	/**
-	 * @var bool
-	 */
-	public $named = false;
+	public bool $named = false;
 
 	/**
 	 * @var string[]|null
 	 */
-	public $spc;
+	public ?array $spc = null;
 
-	/** @var string|null */
-	public $html;
+	public ?string $html = null;
 
-	/**
-	 * @param string $key
-	 * @param KVSourceRange|null $srcOffsets
-	 */
-	public function __construct( $key, $srcOffsets = null ) {
+	public function __construct( string $key, ?KVSourceRange $srcOffsets = null ) {
 		$this->k = $key;
 		$this->srcOffsets = $srcOffsets;
 	}
 
 	/**
 	 * Create an object from unserialized data-parsoid.pi
-	 * @param stdClass $data
+	 * @param array $data
 	 * @return self
 	 */
-	public static function newFromJson( stdClass $data ) {
-		$info = new self( $data->k ?? '' );
-		$info->named = $data->named ?? false;
-		$info->spc = $data->spc ?? null;
+	public static function newFromJsonArray( array $data ): ParamInfo {
+		$info = new self( $data['k'] ?? '' );
+		$info->named = $data['named'] ?? false;
+		$info->spc = $data['spc'] ?? null;
 		return $info;
 	}
 
@@ -71,7 +59,7 @@ class ParamInfo implements JsonSerializable {
 	 *
 	 * @return array
 	 */
-	public function jsonSerialize(): array {
+	public function toJsonArray(): array {
 		$ret = [ 'k' => $this->k ];
 		if ( $this->named ) {
 			$ret['named'] = true;

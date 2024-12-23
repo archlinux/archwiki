@@ -36,7 +36,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Pri ĉi tiu kategorio",
 	"mobile-frontend-meta-data-issues-header": "Problemoj pri paĝo",
 	"minerva-meta-data-issues-section-header": "Problemoj pri paragrafo",
-	"mobile-frontend-notifications-filter": "Filtrilo",
 	"mobile-frontend-pageaction-edit-tooltip": "Redakti la unuan sekcion de ĉi tiu paĝo.",
 	"mobile-frontend-placeholder": "Serĉi tra {{SITENAME}}",
 	"mobile-frontend-random-button": "Hazarde",
@@ -67,7 +66,5 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|antaŭ $1 jaro|antaŭ $1 jaroj}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorioj",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vidi kategoriojn de paĝoj",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Pli bona traktado de paĝaj problemoj",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Paĝaj problemoj (Ŝablono:ambox) estos enkorpigitaj en la artikolon.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Bedaŭrinde, grupigado de rezultoj laŭ paĝo ne estas havebla je poŝaparata retpaĝo. Se vi volas uzi tiun funkcion, bonvolu uzi la retpaĝon por surtablaj komputiloj."
 }

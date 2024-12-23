@@ -23,6 +23,7 @@
 
 use MediaWiki\MediaWikiServices;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\ObjectCache\MediumSpecificBagOStuff;
 use Wikimedia\Rdbms\Blob;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBConnectionError;
@@ -31,7 +32,9 @@ use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Rdbms\ServerInfo;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -74,8 +77,6 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 	protected $writeBatchSize = 100;
 	/** @var string */
 	protected $tableName = 'objectcache';
-	/** @var bool Whether to use replicas instead of primaries (if using LoadBalancer) */
-	protected $replicaOnly;
 	/** @var bool Whether multi-primary mode is enabled */
 	protected $multiPrimaryMode;
 
@@ -138,7 +139,6 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 	 *   - purgeLimit: int
 	 *   - tableName: string
 	 *   - shards: int
-	 *   - replicaOnly: bool
 	 *   - writeBatchSize: int
 	 */
 	public function __construct( $params ) {
@@ -174,7 +174,6 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 		$this->tableName = $params['tableName'] ?? $this->tableName;
 		$this->numTableShards = intval( $params['shards'] ?? $this->numTableShards );
 		$this->writeBatchSize = intval( $params['writeBatchSize'] ?? $this->writeBatchSize );
-		$this->replicaOnly = $params['replicaOnly'] ?? false;
 		$this->multiPrimaryMode = $params['multiPrimaryMode'] ?? false;
 
 		$this->attrMap[self::ATTR_DURABILITY] = self::QOS_DURABILITY_RDBMS;
@@ -377,6 +376,11 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 	 * @return array (server index, table name)
 	 */
 	private function getKeyLocation( $key ) {
+		// Pick the same shard for sister keys
+		// Using the same hash stop as mc-router for consistency
+		if ( str_contains( $key, '|#|' ) ) {
+			$key = explode( '|#|', $key )[0];
+		}
 		if ( $this->useLB ) {
 			// LoadBalancer based configuration
 			$shardIndex = 0;
@@ -534,9 +538,9 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 			try {
 				if (
 					// Random purging is enabled
-					$this->purgePeriod &&
+					$this->purgePeriod >= 1 &&
 					// Only purge on one in every $this->purgePeriod writes
-					mt_rand( 0, $this->purgePeriod - 1 ) == 0 &&
+					mt_rand( 1, $this->purgePeriod ) == 1 &&
 					// Avoid repeating the delete within a few seconds
 					( $this->getCurrentTime() - $this->lastGarbageCollect ) > self::GC_DELAY_SEC
 				) {
@@ -1075,7 +1079,7 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 		$seconds = (int)$mtime;
 		[ , $microseconds ] = explode( '.', sprintf( '%.6F', $mtime ) );
 
-		$id = $db->getTopologyBasedServerId() ?? sprintf( '%u', crc32( $db->getServerName() ) );
+		$id = sprintf( '%u', crc32( $db->getServerName() ) );
 
 		$token = implode( '', [
 			// 67 bit integral portion of UNIX timestamp, qualified
@@ -1173,11 +1177,11 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 					$updateExpression,
 					$column
 				);
-				$set[] = "{$column}=" . trim( $rhs );
+				$set[$column] = new RawSQLValue( $rhs );
 			}
 		} else {
 			foreach ( $expressionsByColumn as $column => $updateExpression ) {
-				$set[] = "{$column}={$updateExpression}";
+				$set[$column] = new RawSQLValue( $updateExpression );
 			}
 		}
 
@@ -1225,7 +1229,7 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 				$updateExpression,
 				$initExpression
 			);
-			$set[] = "{$column}=" . trim( $rhs );
+			$set[$column] = new RawSQLValue( $rhs );
 		}
 
 		return $set;
@@ -1362,9 +1366,9 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 
 	public function deleteObjectsExpiringBefore(
 		$timestamp,
-		callable $progress = null,
+		?callable $progress = null,
 		$limit = INF,
-		string $tag = null
+		?string $tag = null
 	) {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$silenceScope = $this->silenceTransactionProfiler();
@@ -1435,7 +1439,7 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 		$timestamp,
 		$limit,
 		&$keysDeletedCount = 0,
-		array $progress = null
+		?array $progress = null
 	) {
 		$cutoffUnix = ConvertibleTimestamp::convert( TS_UNIX, $timestamp );
 		if ( $this->multiPrimaryMode ) {
@@ -1669,14 +1673,14 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 	private function getConnectionViaLoadBalancer() {
 		$lb = $this->getLoadBalancer();
 
-		if ( $lb->getServerAttributes( $lb->getWriterIndex() )[Database::ATTR_DB_LEVEL_LOCKING] ) {
+		if ( $lb->getServerAttributes( ServerInfo::WRITER_INDEX )[Database::ATTR_DB_LEVEL_LOCKING] ) {
 			// Use the main connection to avoid transaction deadlocks
 			$conn = $lb->getMaintenanceConnectionRef( DB_PRIMARY, [], $this->dbDomain );
 		} else {
 			// If the RDBMS has row/table/page level locking, then use separate auto-commit
 			// connection to avoid needless contention and deadlocks.
 			$conn = $lb->getMaintenanceConnectionRef(
-				$this->replicaOnly ? DB_REPLICA : DB_PRIMARY,
+				DB_PRIMARY,
 				[],
 				$this->dbDomain,
 				$lb::CONN_TRX_AUTOCOMMIT
@@ -1697,9 +1701,9 @@ class SqlBagOStuff extends MediumSpecificBagOStuff {
 	private function getConnectionFromServerInfo( $shardIndex, array $server ) {
 		if ( !isset( $this->conns[$shardIndex] ) ) {
 			$server['logger'] = $this->logger;
-			// Make sure this handle always uses autocommit mode, even if DBO_TRX is
-			// configured.
-			$server['flags'] &= ~DBO_TRX;
+			// Always use autocommit mode, even if DBO_TRX is configured
+			$server['flags'] ??= 0;
+			$server['flags'] &= ~( IDatabase::DBO_TRX | IDatabase::DBO_DEFAULT );
 
 			/** @var IMaintainableDatabase $conn Auto-commit connection to the server */
 			$conn = MediaWikiServices::getInstance()->getDatabaseFactory()

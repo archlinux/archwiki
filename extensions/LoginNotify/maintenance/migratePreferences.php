@@ -3,7 +3,7 @@
 namespace LoginNotify\Maintenance;
 
 use BatchRowIterator;
-use LoggedUpdateMaintenance;
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;

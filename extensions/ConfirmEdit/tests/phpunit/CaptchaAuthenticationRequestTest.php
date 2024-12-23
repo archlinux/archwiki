@@ -1,10 +1,10 @@
 <?php
 
-use MediaWiki\Auth\AuthenticationRequestTestCase;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Extension\ConfirmEdit\Store\CaptchaHashStore;
 use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
+use MediaWiki\Tests\Auth\AuthenticationRequestTestCase;
 
 /**
  * @covers \MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest
@@ -12,9 +12,9 @@ use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
 class CaptchaAuthenticationRequestTest extends AuthenticationRequestTestCase {
 	public function setUp(): void {
 		parent::setUp();
-		$this->setMwGlobals( [
-			'wgCaptchaClass' => SimpleCaptcha::class,
-			'wgCaptchaStorageClass' => CaptchaHashStore::class,
+		$this->overrideConfigValues( [
+			'CaptchaClass' => SimpleCaptcha::class,
+			'CaptchaStorageClass' => CaptchaHashStore::class,
 		] );
 		CaptchaStore::unsetInstanceForTests();
 		CaptchaStore::get()->clearAll();

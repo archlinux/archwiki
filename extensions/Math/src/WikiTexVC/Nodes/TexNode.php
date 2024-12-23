@@ -75,12 +75,8 @@ class TexNode {
 		return true;
 	}
 
-	public function getLength(): ?int {
-		if ( isset( $this->args[0] ) ) {
-			return count( $this->args );
-		} else {
-			return 0;
-		}
+	public function getLength(): int {
+		return count( $this->args ?? [] );
 	}
 
 	/**
@@ -204,4 +200,9 @@ class TexNode {
 
 		return false;
 	}
+
+	public function isCurly(): bool {
+		return false;
+	}
+
 }

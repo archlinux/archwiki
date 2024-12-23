@@ -20,13 +20,13 @@
 
 namespace MediaWiki\Linter\Test;
 
-use MediaWiki\Linter\Database;
 use MediaWiki\Linter\LintError;
 use MediaWiki\Linter\RecordLintJob;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Rdbms\UpdateQueryBuilder;
 
 /**
  * @group Database
@@ -34,12 +34,18 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  */
 class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 
+	private function getDatabase() {
+		return $this->getServiceContainer()->get( 'Linter.Database' );
+	}
+
 	private function newRecordLintJob( PageReference $page, array $params ) {
 		$services = $this->getServiceContainer();
 		return new RecordLintJob(
 			$page,
 			$params,
-			$services->getMainWANObjectCache()
+			$services->get( 'Linter.TotalsLookup' ),
+			$this->getDatabase(),
+			$services->get( 'Linter.CategoryManager' )
 		);
 	}
 
@@ -107,6 +113,21 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 		return $queryLinterPageNamespace->fetchField();
 	}
 
+	/**
+	 * Set just the linter_namespace field value from the linter table for a page
+	 *
+	 * @param int $pageId
+	 */
+	private function setNamespaceForPageToNull( int $pageId ) {
+		$queryLinterPageNamespace = new UpdateQueryBuilder( $this->db );
+		$queryLinterPageNamespace
+			->update( 'linter' )
+			->set( [ 'linter_namespace' => null ] )
+			->where( [ 'linter_page' => $pageId ] )
+			->caller( __METHOD__ )
+			->execute();
+	}
+
 	public function testRun() {
 		$error = [
 			'type' => 'fostered',
@@ -120,8 +141,8 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 			'revision' => $titleAndPage[ 'revID' ]
 		] );
 		$this->assertTrue( $job->run() );
-		$db = new Database( $titleAndPage[ 'pageID' ] );
-		$errorsFromDb = array_values( $db->getForPage() );
+		$db = $this->getDatabase();
+		$errorsFromDb = array_values( $db->getForPage( $titleAndPage[ 'pageID' ] ) );
 		$this->assertCount( 1, $errorsFromDb );
 		$this->assertInstanceOf( LintError::class, $errorsFromDb[ 0 ] );
 		$this->assertEquals( $error[ 'type' ], $errorsFromDb[ 0 ]->category );
@@ -130,7 +151,6 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testWriteTagAndTemplate() {
-		$this->overrideConfigValue( 'LinterWriteTagAndTemplateColumnsStage', true );
 		$error = [
 			'type' => 'obsolete-tag',
 			'location' => [ 0, 10 ],
@@ -147,8 +167,8 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 		] );
 		$this->assertTrue( $job->run() );
 		$pageId = $titleAndPage[ 'pageID' ];
-		$db = new Database( $pageId );
-		$errorsFromDb = array_values( $db->getForPage() );
+		$db = $this->getDatabase();
+		$errorsFromDb = array_values( $db->getForPage( $pageId ) );
 		$this->assertCount( 1, $errorsFromDb );
 		$this->assertInstanceOf( LintError::class, $errorsFromDb[0] );
 		$this->assertEquals( $error[ 'type' ], $errorsFromDb[0]->category );
@@ -161,8 +181,6 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testWriteTagAndTemplateLengthExceeded() {
-		$this->overrideConfigValue( 'LinterWriteTagAndTemplateColumnsStage', true );
-
 		// Verify special case test for write code encountering params with tag and template string lengths exceeded
 		$tagWithMoreThan30Characters = "center tag exceeding 30 characters";
 		$tagTruncated = "center tag exceeding 30 charac";
@@ -187,8 +205,8 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 		] );
 		$this->assertTrue( $job->run() );
 		$pageId = $titleAndPage[ 'pageID' ];
-		$db = new Database( $pageId );
-		$errorsFromDb = array_values( $db->getForPage() );
+		$db = $this->getDatabase();
+		$errorsFromDb = array_values( $db->getForPage( $pageId ) );
 		$this->assertCount( 1, $errorsFromDb );
 		$this->assertInstanceOf( LintError::class, $errorsFromDb[0] );
 		$this->assertEquals( $error[ 'type' ], $errorsFromDb[0]->category );
@@ -223,17 +241,20 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @param array $namespaceIds
-	 * @param array $writeEnables
+	 * @param array $setToID
 	 * @return array
 	 */
-	private function createPagesWithNamespace( array $namespaceIds, array $writeEnables ): array {
+	private function createPagesWithNamespace( array $namespaceIds, array $setToID ): array {
 		$titleAndPages = [];
 		foreach ( $namespaceIds as $index => $namespaceId ) {
-			// enable/disable writing the namespace field in the linter table during page creation
-			$this->overrideConfigValue( 'LinterWriteNamespaceColumnStage', $writeEnables[ $index ] );
-			$titleAndPages[] = $this->createTitleAndPageAndRunJob(
+			$titleAndPage = $this->createTitleAndPageAndRunJob(
 				'TestPageNamespace' . $index,
 				intval( $namespaceId ) );
+			$titleAndPages[] = $titleAndPage;
+			// To test the migration code, set some namespaces to null to simulate having a mix of valid and null values
+			if ( !$setToID[ $index ] ) {
+				$this->setNamespaceForPageToNull( $titleAndPage['pageID'] );
+			}
 		}
 		return $titleAndPages;
 	}
@@ -255,9 +276,9 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 	public function testMigrateNamespace() {
 		// Create groups of records that do not need migrating to ensure batching works properly
 		$namespaceIds = [ '0', '1', '2', '3', '4', '5', '4', '3', '2', '1', '0', '1', '2' ];
-		$writeEnables = [ false, true, true, true, false, false, true, true, false, false, false, true, false ];
+		$setToID = [ false, true, true, true, false, false, true, true, false, false, false, true, false ];
 
-		$titleAndPages = $this->createPagesWithNamespace( $namespaceIds, $writeEnables );
+		$titleAndPages = $this->createPagesWithNamespace( $namespaceIds, $setToID );
 
 		// Verify the create page function did not populate the linter_namespace field for TestPageNamespace0
 		$pageId = $titleAndPages[ 0 ][ 'pageID' ];
@@ -265,7 +286,8 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 		$this->assertNull( $namespace );
 
 		// migrate unpopulated namespace_id(s) from the page table to linter table
-		Database::migrateNamespace( 2, 3, 0, true );
+		$database = $this->getDatabase();
+		$database->migrateNamespace( 2, 3, 0 );
 
 		// Verify all linter records now have proper namespace IDs in the linter_namespace field
 		$this->checkPagesNamespace( $titleAndPages, $namespaceIds );
@@ -287,6 +309,22 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * Set the linter_tag and linter_template field values to an empty string for a page
+	 * to test that the database migration code handles existing records with fields set
+	 * and records where the fields are not yet set, and need migration.
+	 * @param int $pageId
+	 */
+	private function setTagAndTemplateForPageToEmptyString( int $pageId ) {
+		$queryLinterPageNamespace = new UpdateQueryBuilder( $this->db );
+		$queryLinterPageNamespace
+			->update( 'linter' )
+			->set( [ 'linter_template' => '', 'linter_tag' => '' ] )
+			->where( [ 'linter_page' => $pageId ] )
+			->caller( __METHOD__ )
+			->execute();
+	}
+
+	/**
 	 * @param array $writeEnables
 	 * @param array $error
 	 * @return array
@@ -294,9 +332,12 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 	private function createPagesWithTagAndTemplate( array $writeEnables, array $error ): array {
 		$titleAndPages = [];
 		foreach ( $writeEnables as $index => $enable ) {
-			// enable/disable writing the tag and template fields in the linter table during page creation
-			$this->overrideConfigValue( 'LinterWriteTagAndTemplateColumnsStage', $enable );
-			$titleAndPages[] = $this->createTitleAndPageForTagsAndRunJob( 'TestPage' . $index, $error );
+			$titleAndPage = $this->createTitleAndPageForTagsAndRunJob( 'TestPage' . $index, $error );
+			$titleAndPages[] = $titleAndPage;
+			// clear the tag and template field data for select test records
+			if ( !$enable ) {
+				$this->setTagAndTemplateForPageToEmptyString( $titleAndPage[ 'pageID' ] );
+			}
 		}
 		return $titleAndPages;
 	}
@@ -329,7 +370,6 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 		$titleAndPages = $this->createPagesWithTagAndTemplate( $writeEnables, $error );
 
 		// Create special case test of migrate code encountering brackets - linter_params = '[]'
-		$this->overrideConfigValue( 'LinterWriteTagAndTemplateColumnsStage', false );
 		$error = [
 			'type' => 'wikilink-in-extlink',
 			'location' => [ 0, 10 ],
@@ -373,7 +413,8 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( "", $template );
 
 		// Migrate unpopulated tag and template info from the params field
-		Database::migrateTemplateAndTagInfo( 3, 0, true );
+		$database = $this->getDatabase();
+		$database->migrateTemplateAndTagInfo( 3, 0 );
 
 		// Verify all linter records have the proper tag and template field info migrated from the params field
 		$this->checkPagesTagAndTemplate( $titleAndPages );
@@ -415,7 +456,7 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 			'revision' => $titleAndPage[ 'revID' ]
 		] );
 		$this->assertTrue( $job->run() );
-		$errorsFromDb = array_values( ( new Database( $titleAndPage['pageID'] ) )->getForPage() );
+		$errorsFromDb = array_values( $this->getDatabase()->getForPage( $titleAndPage['pageID'] ) );
 		$this->assertCount( 0, $errorsFromDb );
 	}
 }

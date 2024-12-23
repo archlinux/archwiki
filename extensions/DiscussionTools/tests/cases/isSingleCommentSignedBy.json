@@ -42,6 +42,13 @@
 		"expected": true
 	},
 	{
+		"msg": "Already signed [with heading, prefixed by unsigned text]",
+		"title": "Talk:A",
+		"user": "X",
+		"html": "<p>foo\n</p><h2><span class=\"mw-headline\" id=\"Foo\">Foo</span></h2>\n<p>bar <a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>) 00:01, 1 January 2020 (UTC)\n</p>",
+		"expected": true
+	},
+	{
 		"msg": "Already signed [indented]",
 		"title": "Talk:A",
 		"user": "X",
@@ -63,21 +70,21 @@
 		"expected": true
 	},
 	{
-		"msg": "Signed with 5 tildes",
+		"msg": "Incorrectly signed (with 5 tildes)",
 		"title": "Talk:A",
 		"user": "X",
 		"html": "<p>Foo bar 00:01, 1 January 2020 (UTC)\n</p>",
 		"expected": false
 	},
 	{
-		"msg": "Signed with 3 tildes",
+		"msg": "Incorrectly signed (with 3 tildes)",
 		"title": "Talk:A",
 		"user": "X",
 		"html": "<p>Foo bar <a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>)\n</p>",
 		"expected": false
 	},
 	{
-		"msg": "Already signed by the wrong user",
+		"msg": "Incorrectly signed (by the wrong user)",
 		"title": "Talk:A",
 		"user": "Y",
 		"html": "<p>Foo bar <a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>) 00:01, 1 January 2020 (UTC)\n</p>",
@@ -95,6 +102,13 @@
 		"title": "Talk:A",
 		"user": "X",
 		"html": "<p>(Foo bar <a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>) 00:01, 1 January 2020 (UTC))\n</p>",
+		"expected": true
+	},
+	{
+		"msg": "Already signed (not at the end, with more text following on the same line)",
+		"title": "Talk:A",
+		"user": "X",
+		"html": "<p>Foo bar <a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>) 00:01, 1 January 2020 (UTC) Ceterum censeo Carthaginem esse delendam.\n</p>",
 		"expected": true
 	},
 	{
@@ -119,6 +133,20 @@
 		"expected": true
 	},
 	{
+		"msg": "Already signed (wrapper with trailers)",
+		"title": "Talk:A",
+		"user": "X",
+		"html": "<table>\n<tbody><tr>\n<td>Foo bar <a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>) 00:01, 1 January 2020 (UTC)\n</td></tr></tbody></table> <!-- Template:Foo -->\n<link rel=\"mw:PageProp/Category\" href=\"./Category:Foo\"/>",
+		"expected": true
+	},
+	{
+		"msg": "Incorrectly signed (wrapper, with more text following on another line)",
+		"title": "Talk:A",
+		"user": "X",
+		"html": "<table>\n<tbody><tr>\n<td>Foo bar <a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>) 00:01, 1 January 2020 (UTC)\n</td></tr></tbody></table>\nCeterum censeo Carthaginem esse delendam.",
+		"expected": false
+	},
+	{
 		"msg": "Already signed (multi-line)",
 		"title": "Talk:A",
 		"user": "X",
@@ -133,14 +161,14 @@
 		"expected": true
 	},
 	{
-		"msg": "Already signed (not at the end, multiline)",
+		"msg": "Incorrectly signed (multiline, with more text following on another line)",
 		"title": "Talk:A",
 		"user": "X",
 		"html": "<p>Foo\n</p><p><a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>) 00:01, 1 January 2020 (UTC)\n</p><p>bar\n</p>",
 		"expected": false
 	},
 	{
-		"msg": "Already signed (not at the end, multiline) [indented]",
+		"msg": "Incorrectly signed (multiline, with more text following on another line) [indented]",
 		"title": "Talk:A",
 		"user": "X",
 		"html": "<dl><dd>Foo</dd>\n<dd><a href=\"/wiki/User:X\" title=\"User:X\">X</a> (<a href=\"/wiki/User_talk:X\" title=\"User talk:X\">talk</a>) 00:01, 1 January 2020 (UTC)</dd>\n<dd>bar</span></dd></dl>",

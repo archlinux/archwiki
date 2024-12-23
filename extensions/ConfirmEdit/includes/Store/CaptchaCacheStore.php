@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\Store;
 
-use BagOStuff;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\ObjectCache\BagOStuff;
 
 class CaptchaCacheStore extends CaptchaStore {
 	/** @var BagOStuff */

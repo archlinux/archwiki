@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.42.0"
+		"MediaWiki": ">= 1.43"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Math\\": "src/"
@@ -27,7 +27,7 @@
 		"MediaWiki\\Extension\\Math\\WikiTexVC\\MMLmappings\\Util\\MMLComparator": "tests/phpunit/unit/WikiTexVC/MMLComparator.php"
 	},
 	"DefaultUserOptions": {
-		"math": "mathml",
+		"math": "native",
 		"math-popups": "1"
 	},
 	"ExtensionMessagesFiles": {
@@ -60,7 +60,10 @@
 			]
 		},
 		"main": {
-			"class": "MediaWiki\\Extension\\Math\\Hooks"
+			"class": "MediaWiki\\Extension\\Math\\Hooks",
+			"services": [
+				"UserOptionsManager"
+			]
 		},
 		"schema": {
 			"class": "MediaWiki\\Extension\\Math\\HookHandlers\\SchemaHooksHandler"
@@ -158,7 +161,8 @@
 			"description": "To access this at run-time, use MathConfig::getValidRenderingModes(). Do not use the non-normalized configuration directly.",
 			"value": [
 				"source",
-				"mathml"
+				"native",
+				"mathjax"
 			]
 		},
 		"MathEnableWikibaseDataType": {
@@ -373,7 +377,12 @@
 				"Math.RendererFactory"
 			]
 		},
-		"MathWikibase": "MediaWiki\\Extension\\Math\\SpecialMathWikibase"
+		"MathWikibase": {
+			"class": "MediaWiki\\Extension\\Math\\SpecialMathWikibase",
+			"services": [
+				"Math.WikibaseConnector"
+			]
+		}
 	},
 	"TrackingCategories": [
 		"math-tracking-category-error",

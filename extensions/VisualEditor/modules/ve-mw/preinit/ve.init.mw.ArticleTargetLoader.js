@@ -16,33 +16,32 @@
  *
  * @class mw.libs.ve.targetLoader
  * @singleton
+ * @hideconstructor
  */
 ( function () {
-	var conf = mw.config.get( 'wgVisualEditorConfig' ),
+	const conf = mw.config.get( 'wgVisualEditorConfig' ),
 		pluginCallbacks = [],
-		modules = [ 'ext.visualEditor.articleTarget' ]
+		modules = [
+			'ext.visualEditor.articleTarget',
 			// Add modules from $wgVisualEditorPluginModules
-			.concat( conf.pluginModules.filter( mw.loader.getState ) );
+			...conf.pluginModules.filter( mw.loader.getState )
+		];
 
-	var url = new URL( location.href );
+	const url = new URL( location.href );
 	// Provide the new wikitext editor
 	if (
-		conf.enableWikitext &&
-		(
-			mw.user.options.get( 'visualeditor-newwikitext' ) ||
-			url.searchParams.get( 'veaction' ) === 'editsource'
-		) &&
-		mw.loader.getState( 'ext.visualEditor.mwwikitext' )
+		mw.user.options.get( 'visualeditor-newwikitext' ) ||
+		url.searchParams.get( 'veaction' ) === 'editsource'
 	) {
 		modules.push( 'ext.visualEditor.mwwikitext' );
 	}
 
 	// A/B test enrollment for edit check (T342930)
 	if ( conf.editCheckABTest ) {
-		var inABTest;
+		let inABTest;
 		if ( mw.user.isAnon() ) {
 			// can't just use mw.user.sessionId() because we need this to last across sessions
-			var token = mw.cookie.get( 'VEECid', '', mw.user.generateRandomSessionId() );
+			const token = mw.cookie.get( 'VEECid', '', mw.user.generateRandomSessionId() );
 			// Store the token so our state is consistent across pages
 			mw.cookie.set( 'VEECid', token, { path: '/', expires: 90 * 86400, prefix: '' } );
 			inABTest = parseInt( token.slice( 0, 8 ), 16 ) % 2 === 1;
@@ -54,18 +53,16 @@
 		mw.config.set( 'wgVisualEditorEditCheckABTestBucket', '2024-02-editcheck-reference-' + ( inABTest ? 'test' : 'control' ) );
 	}
 
-	var editCheck = conf.editCheck || !!url.searchParams.get( 'ecenable' ) || !!window.MWVE_FORCE_EDIT_CHECK_ENABLED;
+	const editCheck = conf.editCheck || !!url.searchParams.get( 'ecenable' ) || !!window.MWVE_FORCE_EDIT_CHECK_ENABLED;
 	if ( conf.editCheckTagging || editCheck ) {
 		modules.push( 'ext.visualEditor.editCheck' );
 	}
 
-	var namespaces = mw.config.get( 'wgNamespaceIds' );
+	const namespaces = mw.config.get( 'wgNamespaceIds' );
 	// Load signature tool if *any* namespace supports it.
 	// It will be shown disabled on namespaces that don't support it.
 	if (
-		Object.keys( namespaces ).some( function ( name ) {
-			return mw.Title.wantSignaturesNamespace( namespaces[ name ] );
-		} )
+		Object.keys( namespaces ).some( ( name ) => mw.Title.wantSignaturesNamespace( namespaces[ name ] ) )
 	) {
 		modules.push( 'ext.visualEditor.mwsignature' );
 	}
@@ -106,11 +103,11 @@
 			mw.hook( 've.loadModules' ).fire( this.addPlugin.bind( this ) );
 			ve.track( 'trace.moduleLoad.enter', { mode: mode } );
 			return mw.loader.using( modules )
-				.then( function () {
+				.then( () => {
 					ve.track( 'trace.moduleLoad.exit', { mode: mode } );
 					pluginCallbacks.push( ve.init.platform.getInitializedPromise.bind( ve.init.platform ) );
 					// Execute plugin callbacks and collect promises
-					return $.when.apply( $, pluginCallbacks.map( function ( callback ) {
+					return $.when.apply( $, pluginCallbacks.map( ( callback ) => {
 						try {
 							return callback();
 						} catch ( e ) {
@@ -130,13 +127,13 @@
 		 *  checkboxesByName (keyed object of OO.ui.CheckboxInputWidget).
 		 */
 		createCheckboxFields: function ( checkboxesDef, widgetConfig ) {
-			var checkboxFields = [],
+			const checkboxFields = [],
 				checkboxesByName = {};
 
 			if ( checkboxesDef ) {
-				Object.keys( checkboxesDef ).forEach( function ( name ) {
-					var options = checkboxesDef[ name ],
-						accesskey = null,
+				Object.keys( checkboxesDef ).forEach( ( name ) => {
+					const options = checkboxesDef[ name ];
+					let accesskey = null,
 						title = null;
 
 					// The messages documented below are just the ones defined in core.
@@ -159,9 +156,9 @@
 					// The following messages are used here:
 					// * minoredit
 					// * watchthis
-					var $label = mw.message( options[ 'label-message' ] ).parseDom();
+					const $label = mw.message( options[ 'label-message' ] ).parseDom();
 
-					var config = $.extend( {
+					const config = $.extend( {
 						accessKey: accesskey,
 						// The following classes are used here:
 						// * ve-ui-mwSaveDialog-checkbox-wpMinoredit
@@ -170,7 +167,7 @@
 						classes: [ 've-ui-mwSaveDialog-checkbox-' + name ]
 					}, widgetConfig );
 
-					var checkbox;
+					let checkbox;
 					switch ( options.class ) {
 						case 'OOUI\\DropdownInputWidget':
 							checkbox = new OO.ui.DropdownInputWidget( $.extend( config, {
@@ -227,22 +224,22 @@
 		 */
 		requestPageData: function ( mode, pageName, options ) {
 			options = options || {};
-			var apiRequest = mode === 'source' ?
+			const apiRequest = mode === 'source' ?
 				this.requestWikitext.bind( this, pageName, options ) :
 				this.requestParsoidData.bind( this, pageName, options );
 
 			if ( options.sessionStore ) {
-				var sessionState;
+				let sessionState;
 				try {
 					// ve.init.platform.getSessionObject is not available yet
 					sessionState = JSON.parse( mw.storage.session.get( 've-docstate' ) );
 				} catch ( e ) {}
 
 				if ( sessionState ) {
-					var request = sessionState.request || {};
+					const request = sessionState.request || {};
 					// Check true section editing is in use
-					var enableVisualSectionEditing = conf.enableVisualSectionEditing;
-					var section = request.mode === 'source' || enableVisualSectionEditing === true || enableVisualSectionEditing === options.targetName ?
+					const enableVisualSectionEditing = conf.enableVisualSectionEditing;
+					const section = request.mode === 'source' || enableVisualSectionEditing === true || enableVisualSectionEditing === options.targetName ?
 						options.section : null;
 					// Check the requested page, mode and section match the stored one
 					if (
@@ -252,7 +249,7 @@
 						// NB we don't cache by oldid so that cached results can be recovered
 						// even if the page has been since edited
 					) {
-						var dataPromise = $.Deferred().resolve( {
+						const dataPromise = $.Deferred().resolve( {
 							visualeditor: $.extend(
 								{ content: mw.storage.session.get( 've-dochtml' ) },
 								sessionState.response,
@@ -269,23 +266,21 @@
 							// This prompt will throw off all of our timing data, so just disable tracking
 							// for this session
 							ve.track = function () {};
-							return mw.loader.using( 'oojs-ui-windows' ).then( function () {
-								return OO.ui.confirm( mw.msg( 'visualeditor-autosave-modified-prompt-message' ), {
-									title: mw.msg( 'visualeditor-autosave-modified-prompt-title' ),
-									actions: [
-										{ action: 'accept', label: mw.msg( 'visualeditor-autosave-modified-prompt-accept' ), flags: [ 'primary', 'progressive' ] },
-										{ action: 'reject', label: mw.msg( 'visualeditor-autosave-modified-prompt-reject' ), flags: 'destructive' }
-									] }
-								).then( function ( confirmed ) {
-									if ( confirmed ) {
-										return dataPromise;
-									} else {
-										// If they requested the latest version, invalidate the autosave state
-										mw.storage.session.remove( 've-docstate' );
-										return apiRequest();
-									}
-								} );
-							} );
+							return mw.loader.using( 'oojs-ui-windows' ).then( () => OO.ui.confirm( mw.msg( 'visualeditor-autosave-modified-prompt-message' ), {
+								title: mw.msg( 'visualeditor-autosave-modified-prompt-title' ),
+								actions: [
+									{ action: 'accept', label: mw.msg( 'visualeditor-autosave-modified-prompt-accept' ), flags: [ 'primary', 'progressive' ] },
+									{ action: 'reject', label: mw.msg( 'visualeditor-autosave-modified-prompt-reject' ), flags: 'destructive' }
+								] }
+							).then( ( confirmed ) => {
+								if ( confirmed ) {
+									return dataPromise;
+								} else {
+									// If they requested the latest version, invalidate the autosave state
+									mw.storage.session.remove( 've-docstate' );
+									return apiRequest();
+								}
+							} ) );
 						}
 					}
 				}
@@ -306,13 +301,11 @@
 		 * @return {jQuery.Promise} Abortable promise resolved with a JSON object
 		 */
 		requestParsoidData: function ( pageName, options, noRestbase, noMetadata ) {
-			var section = options.section !== undefined ? options.section : null,
-				useRestbase = !noRestbase && ( conf.fullRestbaseUrl || conf.restbaseUrl ) && section === null,
-				switched = false,
-				fromEditedState = false;
+			const section = options.section !== undefined ? options.section : null,
+				useRestbase = !noRestbase && ( conf.fullRestbaseUrl || conf.restbaseUrl ) && section === null;
 
 			options = options || {};
-			var data = {
+			const data = {
 				action: 'visualeditor',
 				paction: useRestbase ? 'metadata' : 'parse',
 				page: pageName,
@@ -332,10 +325,12 @@
 				data.oldid = options.oldId;
 			}
 			// Load DOM
-			var start = ve.now();
+			const start = ve.now();
 			ve.track( 'trace.apiLoad.enter', { mode: 'visual' } );
 
-			var apiXhr, apiPromise;
+			let apiXhr, apiPromise;
+			let switched = false,
+				fromEditedState = false;
 			if ( !useRestbase && options.wikitext !== undefined ) {
 				// Non-RESTBase custom wikitext parse
 				data.paction = 'parse';
@@ -354,7 +349,7 @@
 				}
 			}
 			if ( !apiPromise ) {
-				apiPromise = apiXhr.then( function ( response ) {
+				apiPromise = apiXhr.then( ( response ) => {
 					ve.track( 'trace.apiLoad.exit', { mode: 'visual' } );
 					mw.track( 'timing.ve.' + options.targetName + '.performance.system.apiLoad',
 						ve.now() - start );
@@ -366,18 +361,18 @@
 				} );
 			}
 
-			var dataPromise, abort;
+			let dataPromise, abort;
 			if ( useRestbase ) {
 				ve.track( 'trace.restbaseLoad.enter', { mode: 'visual' } );
 
-				var headers = {
+				const headers = {
 					// Should be synchronised with DirectParsoidClient.php
 					Accept: 'text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.8.0"',
 					'Accept-Language': mw.config.get( 'wgVisualEditor' ).pageLanguageCode,
 					'Api-User-Agent': 'VisualEditor-MediaWiki/' + mw.config.get( 'wgVersion' )
 				};
 
-				var restbaseXhr, pageHtmlUrl;
+				let restbaseXhr, pageHtmlUrl;
 				// Convert specified Wikitext to HTML
 				if (
 					// wikitext can be an empty string
@@ -422,14 +417,14 @@
 						dataType: 'text'
 					} );
 				}
-				var restbasePromise = restbaseXhr.then(
-					function ( response, status, jqxhr ) {
+				const restbasePromise = restbaseXhr.then(
+					( response, status, jqxhr ) => {
 						ve.track( 'trace.restbaseLoad.exit', { mode: 'visual' } );
 						mw.track( 'timing.ve.' + options.targetName + '.performance.system.restbaseLoad',
 							ve.now() - start );
 						return [ response, jqxhr.getResponseHeader( 'etag' ) ];
 					},
-					function ( xhr, code, _ ) {
+					( xhr, code, _ ) => {
 						if ( xhr.status === 404 ) {
 							// Page does not exist, so let the user start with a blank document.
 							return $.Deferred().resolve( [ '', undefined ] ).promise();
@@ -441,7 +436,7 @@
 				);
 
 				dataPromise = $.when( apiPromise, restbasePromise )
-					.then( function ( apiData, restbaseData ) {
+					.then( ( apiData, restbaseData ) => {
 						if ( apiData.visualeditor ) {
 							if ( restbaseData[ 0 ] || !apiData.visualeditor.content ) {
 								// If we have actual content loaded, use it.
@@ -469,9 +464,9 @@
 				}
 			}
 
-			return dataPromise.then( function ( resp ) {
+			return dataPromise.then( ( resp ) => {
 				// Adapted from RESTBase mwUtil.parseETag()
-				var etagRegexp = /^(?:W\/)?"?([^"/]+)(?:\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))(?:\/([^"]+))?"?$/;
+				const etagRegexp = /^(?:W\/)?"?([^"/]+)(?:\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))(?:\/([^"]+))?"?$/;
 
 				// `etag` is expected to be undefined when creating a new page.
 				// We can detect that case by `content` being empty, and not retry.
@@ -502,7 +497,7 @@
 		 */
 		requestWikitext: function ( pageName, options ) {
 			options = options || {};
-			var data = {
+			const data = {
 				action: 'visualeditor',
 				paction: 'wikitext',
 				page: pageName,
@@ -522,8 +517,8 @@
 				data.oldid = options.oldId;
 			}
 
-			var dataPromise = new mw.Api().get( data );
-			return dataPromise.then( function ( resp ) {
+			const dataPromise = new mw.Api().get( data );
+			return dataPromise.then( ( resp ) => {
 				resp.veMode = 'source';
 				return resp;
 			} ).promise( { abort: dataPromise.abort } );

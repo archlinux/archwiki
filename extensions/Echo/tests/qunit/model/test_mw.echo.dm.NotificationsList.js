@@ -22,8 +22,8 @@ QUnit.test.each( 'Constructing the model', {
 			isForeign: true
 		}
 	}
-}, function ( assert, data ) {
-	var defaultValues = {
+}, ( assert, data ) => {
+	const defaultValues = {
 		getAllItemIds: [],
 		getAllItemIdsByType: [],
 		getTitle: '',
@@ -35,10 +35,10 @@ QUnit.test.each( 'Constructing the model', {
 		hasUnseen: false,
 		isForeign: false
 	};
-	var expected = $.extend( true, {}, defaultValues, data.expected );
-	var model = new mw.echo.dm.NotificationsList( data.config );
+	const expected = $.extend( true, {}, defaultValues, data.expected );
+	const model = new mw.echo.dm.NotificationsList( data.config );
 
-	for ( var method in expected ) {
+	for ( const method in expected ) {
 		assert.deepEqual(
 			// Run the method
 			model[ method ](),
@@ -50,9 +50,9 @@ QUnit.test.each( 'Constructing the model', {
 	}
 } );
 
-QUnit.test( 'Handling notification items', function ( assert ) {
-	var model = new mw.echo.dm.NotificationsList( { timestamp: '200101010000' } );
-	var items = [
+QUnit.test( 'Handling notification items', ( assert ) => {
+	const model = new mw.echo.dm.NotificationsList( { timestamp: '200101010000' } );
+	const items = [
 		new mw.echo.dm.NotificationItem( 0, { type: 'alert', timestamp: '201609190000', read: false, seen: false } ),
 		new mw.echo.dm.NotificationItem( 1, { type: 'message', timestamp: '201609190100', read: false, seen: true } ),
 		new mw.echo.dm.NotificationItem( 2, { type: 'alert', timestamp: '201609190200', read: true, seen: true } ),
@@ -137,10 +137,10 @@ QUnit.test( 'Handling notification items', function ( assert ) {
 
 } );
 
-QUnit.test( 'Intercepting events', function ( assert ) {
-	var model = new mw.echo.dm.NotificationsList();
-	var result = [];
-	var items = [
+QUnit.test( 'Intercepting events', ( assert ) => {
+	const model = new mw.echo.dm.NotificationsList();
+	const result = [];
+	const items = [
 		new mw.echo.dm.NotificationItem( 0, { timestamp: '201609190000', read: false, seen: false } ),
 		new mw.echo.dm.NotificationItem( 1, { timestamp: '201609190100', read: false, seen: true } ),
 		new mw.echo.dm.NotificationItem( 2, { timestamp: '201609190200', read: true, seen: true } ),
@@ -151,13 +151,13 @@ QUnit.test( 'Intercepting events', function ( assert ) {
 
 	// Listen to events
 	model
-		.on( 'update', function ( itms ) {
+		.on( 'update', ( itms ) => {
 			result.push( 'update:' + itms.length );
 		} )
-		.on( 'discard', function ( item ) {
+		.on( 'discard', ( item ) => {
 			result.push( 'discard:' + item.getId() );
 		} )
-		.on( 'itemUpdate', function ( item ) {
+		.on( 'itemUpdate', ( item ) => {
 			result.push( 'itemUpdate:' + item.getId() );
 		} );
 

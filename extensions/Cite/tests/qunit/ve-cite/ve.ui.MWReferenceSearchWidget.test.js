@@ -1,50 +1,83 @@
 'use strict';
 
-QUnit.module( 've.ui.MWReferenceSearchWidget (Cite)', ve.test.utils.newMwEnvironment() );
+( function () {
+	QUnit.module( 've.ui.MWReferenceSearchWidget (Cite)', ve.test.utils.newMwEnvironment() );
 
-QUnit.test( 'buildIndex', function ( assert ) {
-	const widget = new ve.ui.MWReferenceSearchWidget();
-	widget.internalList = { getNodeGroups: () => ( {} ) };
-	assert.false( widget.built );
+	function getDocRefsMock( hasNode ) {
+		const listKey = 'literal/foo';
+		const node = hasNode ? {
+			getAttribute: ( name ) => {
+				switch ( name ) {
+					case 'listKey': return listKey;
+					default: return undefined;
+				}
+			},
+			getAttributes: () => ( {} ),
+			getInternalItem: () => ( {} ),
+			getDocument: () => ( new ve.dm.Document() )
+		} : {};
+		const groups = hasNode ? {
+			'mwReference/': {
+				indexOrder: [ 0 ],
+				firstNodes: [ node ],
+				keyedNodes: { [ listKey ]: [ node ] }
+			}
+		} : {};
+		const docRefsMock = {
+			getAllGroupNames: () => ( Object.keys( groups ) ),
+			getIndexLabel: () => ( '1' ),
+			getItemNode: () => ( node ),
+			getGroupRefs: ( groupName ) => ( ve.dm.MWGroupReferences.static.makeGroupRefs( groups[ groupName ] ) ),
+			hasRefs: () => ( !!hasNode )
+		};
 
-	widget.buildIndex();
-	assert.true( widget.built );
-	assert.deepEqual( widget.index, [] );
+		return docRefsMock;
+	}
 
-	widget.onInternalListUpdate( [ 'mwReference/' ] );
-	assert.false( widget.built );
-	assert.deepEqual( widget.index, [] );
+	QUnit.test( 'buildIndex', ( assert ) => {
+		const widget = new ve.ui.MWReferenceSearchWidget();
+		widget.setDocumentRefs( getDocRefsMock() );
 
-	widget.buildIndex();
-	assert.true( widget.built );
-	assert.deepEqual( widget.index, [] );
+		assert.strictEqual( widget.index, null );
+		widget.buildIndex();
+		assert.deepEqual( widget.index, [] );
+	} );
 
-	widget.onListNodeUpdate();
-	assert.false( widget.built );
-	assert.deepEqual( widget.index, [] );
-} );
+	QUnit.test( 'buildSearchIndex when empty', ( assert ) => {
+		const widget = new ve.ui.MWReferenceSearchWidget();
+		widget.setDocumentRefs( getDocRefsMock() );
 
-QUnit.test( 'isIndexEmpty', function ( assert ) {
-	const widget = new ve.ui.MWReferenceSearchWidget();
-	assert.true( widget.isIndexEmpty() );
+		const index = widget.buildSearchIndex();
+		assert.deepEqual( index, [] );
+	} );
 
-	// XXX: This is a regression test with a fragile setup. Please feel free to delete this test
-	// when you feel like it doesn't make sense to update it.
-	const internalList = {
-		connect: () => null,
-		getListNode: () => ( { connect: () => null } ),
-		getNodeGroups: () => ( { 'mwReference/': { indexOrder: [ 0 ] } } )
-	};
-	widget.setInternalList( internalList );
-	assert.false( widget.isIndexEmpty() );
-} );
+	QUnit.test( 'buildSearchIndex', ( assert ) => {
+		const widget = new ve.ui.MWReferenceSearchWidget();
+		widget.setDocumentRefs( getDocRefsMock( true ) );
 
-QUnit.test( 'addResults', function ( assert ) {
-	const widget = new ve.ui.MWReferenceSearchWidget();
-	widget.getQuery().setValue( 'a' );
-	widget.index = [ { text: 'a' }, { text: 'b' } ];
+		const index = widget.buildSearchIndex();
+		assert.deepEqual( index.length, 1 );
+		assert.deepEqual( index[ 0 ].footnoteLabel, '1' );
+		assert.deepEqual( index[ 0 ].name, 'foo' );
+		assert.deepEqual( index[ 0 ].searchableText, '1 foo' );
+	} );
 
-	assert.strictEqual( widget.getResults().getItemCount(), 0 );
-	widget.addResults();
-	assert.strictEqual( widget.getResults().getItemCount(), 1 );
-} );
+	QUnit.test( 'isIndexEmpty', ( assert ) => {
+		const widget = new ve.ui.MWReferenceSearchWidget();
+		widget.setDocumentRefs( getDocRefsMock() );
+		assert.true( widget.isIndexEmpty() );
+
+		widget.setDocumentRefs( getDocRefsMock( true ) );
+		assert.false( widget.isIndexEmpty() );
+	} );
+
+	QUnit.test( 'buildSearchResults', ( assert ) => {
+		const widget = new ve.ui.MWReferenceSearchWidget();
+		widget.index = [ { searchableText: 'a', reference: 'model-a' }, { searchableText: 'b' } ];
+
+		assert.strictEqual( widget.getResults().getItemCount(), 0 );
+		const results = widget.buildSearchResults( 'A' );
+		assert.strictEqual( results.length, 1 );
+		assert.strictEqual( results[ 0 ].getData(), 'model-a' );
+	} );
+}() );

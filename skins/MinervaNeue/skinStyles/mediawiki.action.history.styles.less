@@ -38,12 +38,16 @@
 
 	&.action-history #pagehistory li {
 		.history-user a {
-			color: var( --color-subtle );
+			color: @color-subtle;
 
 			bdi {
 				word-break: break-word;
 			}
 		}
+	}
+
+	.mw-history-histlinks-previous {
+		.changeslist-make-row-linkable();
 	}
 }
 
@@ -65,7 +69,7 @@
 
 	// The large "Compare selected revisions" button container
 	.mw-history-compareselectedversions {
-		background: var( --background-color-base );
+		background: @background-color-base;
 		.position-sticky();
 		top: 0;
 		z-index: @z-index-above-content;
@@ -117,7 +121,7 @@
 
 	// "Change visibility of selected revisions" button (for admins only)
 	.mw-history-revisiondelete-button {
-		background-color: var( --background-color-interactive-subtle );
+		background-color: @background-color-interactive-subtle;
 		margin-bottom: 1em;
 	}
 
@@ -190,7 +194,7 @@
 	}
 
 	abbr {
-		background: var( --background-color-interactive );
+		background: @background-color-interactive;
 		border-radius: 2px;
 		font-size: 0.9em;
 		font-weight: bold;

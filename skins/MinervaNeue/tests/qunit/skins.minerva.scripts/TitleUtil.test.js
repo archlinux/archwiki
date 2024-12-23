@@ -1,5 +1,5 @@
 ( function () {
-	const TitleUtil = require( '../../../resources/skins.minerva.scripts/TitleUtil.js' );
+	const TitleUtil = require( 'skins.minerva.scripts/TitleUtil.js' );
 	const mwUriOrg = mw.Uri;
 
 	QUnit.module( 'Minerva TitleUtil', QUnit.newMwEnvironment( {
@@ -75,7 +75,7 @@
 	QUnit.test.each( '.newFromUri() authority', {
 		empty: '',
 		metawiki: 'https://meta.wikimedia.org'
-	}, function ( assert, authority ) {
+	}, ( assert, authority ) => {
 		const validateReadOnlyLink = { validateReadOnlyLink: true };
 		assert.strictEqual(
 			TitleUtil.newFromUri( authority + '/w/index.php?title=Title' ).getPrefixedDb(),
@@ -157,7 +157,7 @@
 
 	QUnit.test.each( '.newFromUri() bad input', [
 		'%', null, undefined, '', ' ', '/', {}, '\\', '/wiki/%', '/w/index.php?title=%'
-	], function ( assert, input ) {
+	], ( assert, input ) => {
 		assert.strictEqual(
 			TitleUtil.newFromUri( input ),
 			null,
@@ -165,7 +165,7 @@
 		);
 	} );
 
-	QUnit.test( '.newFromUri() misc', function ( assert ) {
+	QUnit.test( '.newFromUri() misc', ( assert ) => {
 		// Parameters are passed to Uri's constructor.
 		assert.strictEqual(
 			TitleUtil.newFromUri( { protocol: 'https',

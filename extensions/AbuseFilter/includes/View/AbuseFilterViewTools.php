@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use HTMLForm;
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\EditBox\EditBoxBuilderFactory;
 use MediaWiki\Extension\AbuseFilter\EditBox\EditBoxField;
+use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
-use Xml;
 
 class AbuseFilterViewTools extends AbuseFilterView {
 
@@ -75,7 +75,7 @@ class AbuseFilterViewTools extends AbuseFilterView {
 			->setWrapperLegendMsg( 'abusefilter-tools-expr' )
 			->setSubmitTextMsg( 'abusefilter-tools-submitexpr' )
 			->setSubmitID( 'mw-abusefilter-submitexpr' )
-			->setFooterHtml( Xml::element( 'pre', [ 'id' => 'mw-abusefilter-expr-result' ], ' ' ) )
+			->setFooterHtml( Html::element( 'pre', [ 'id' => 'mw-abusefilter-expr-result' ], ' ' ) )
 			->prepareForm()
 			->displayForm( false );
 

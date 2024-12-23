@@ -23,13 +23,13 @@
 
 namespace MediaWiki\Session;
 
-use BagOStuff;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SessionHandlerInterface;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\PhpSessionSerializer;
 
 /**
@@ -135,6 +135,7 @@ class PHPSessionHandler implements SessionHandlerInterface {
 
 			// Tell PHP not to mess with cookies itself
 			ini_set( 'session.use_cookies', 0 );
+			ini_set( 'session.use_trans_sid', 0 );
 
 			// T124510: Disable automatic PHP session related cache headers.
 			// MediaWiki adds its own headers and the default PHP behavior may

@@ -8,8 +8,8 @@ QUnit.module( 've.dm.TableSelection' );
 
 /* Tests */
 
-QUnit.test( 'Construction and getters (getDocument, getRanges, getOuterRanges, getTableNode)', function ( assert ) {
-	var doc = ve.dm.example.createExampleDocument( 'mergedCells' ),
+QUnit.test( 'Construction and getters (getDocument, getRanges, getOuterRanges, getTableNode)', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument( 'mergedCells' ),
 		tableNode = doc.getBranchNodeFromOffset( 1 ),
 		tableRange = tableNode.getOuterRange(),
 		cases = [
@@ -58,7 +58,7 @@ QUnit.test( 'Construction and getters (getDocument, getRanges, getOuterRanges, g
 			{
 				msg: 'multi cell selection (expanded)',
 				selection: ( function () {
-					var sel = new ve.dm.TableSelection( tableRange, 1, 2, 0, 1 );
+					let sel = new ve.dm.TableSelection( tableRange, 1, 2, 0, 1 );
 					sel = sel.expand( doc );
 					return sel;
 				}() ),
@@ -87,8 +87,8 @@ QUnit.test( 'Construction and getters (getDocument, getRanges, getOuterRanges, g
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		var selection = caseItem.selection;
+	cases.forEach( ( caseItem ) => {
+		const selection = caseItem.selection;
 		assert.strictEqual( selection.getTableNode( doc ), tableNode, 'getTableNode' );
 		assert.strictEqual( selection.getName(), 'table', 'getName' );
 		assert.deepEqual( selection.getRanges( doc ), caseItem.ranges, caseItem.msg + ': getRanges' );
@@ -105,15 +105,16 @@ QUnit.test( 'Construction and getters (getDocument, getRanges, getOuterRanges, g
 
 } );
 
-QUnit.test( 'Basic methods (expand, collapse*, getRange(s), isCollased, isSingleCell, equals, isNull, isFullRow/Col, getRow/ColCount)', function ( assert ) {
-	var doc = ve.dm.example.createExampleDocument( 'mergedCells' ),
+QUnit.test( 'Basic methods (expand, collapse*, getRange(s), isCollased, isSingleCell, equals, isNull, isFullRow/Col, getRow/ColCount)', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument( 'mergedCells' ),
 		tableRange = doc.getBranchNodeFromOffset( 1 ).getOuterRange(),
-		selection = new ve.dm.TableSelection( tableRange, 1, 2, 0, 1 ),
 		startSelection = new ve.dm.TableSelection( tableRange, 0, 1 ),
 		endSelection = new ve.dm.TableSelection( tableRange, 2, 2 ),
-		mergedSingleCell = new ve.dm.TableSelection( tableRange, 1, 3, 3, 5 ),
 		largeSelection = new ve.dm.TableSelection( tableRange, 0, 0, 3, 6 ),
 		otherTableSelection = new ve.dm.TableSelection( new ve.Range( 100, 200 ), 0, 0, 3, 6 );
+
+	let selection = new ve.dm.TableSelection( tableRange, 1, 2, 0, 1 ),
+		mergedSingleCell = new ve.dm.TableSelection( tableRange, 1, 3, 3, 5 );
 
 	selection = selection.expand( doc );
 	mergedSingleCell = mergedSingleCell.expand( doc );
@@ -134,14 +135,14 @@ QUnit.test( 'Basic methods (expand, collapse*, getRange(s), isCollased, isSingle
 	assert.strictEqual( largeSelection.isFullCol( doc ), true, 'isFullCol' );
 	assert.strictEqual( largeSelection.isFullRow( doc ), false, 'isFullRow' );
 
-	var matrixCell = startSelection.getMatrixCells( doc )[ 0 ];
+	const matrixCell = startSelection.getMatrixCells( doc )[ 0 ];
 	assert.strictEqual( largeSelection.containsCell( matrixCell ), true, '[1,3;3,5] contains [0,1]' );
 	assert.strictEqual( endSelection.containsCell( matrixCell ), false, '[2,2] doesn\'t contain [0,1]' );
 	assert.strictEqual( otherTableSelection.containsCell( matrixCell ), false, 'Selection in other table doesn\'t contain cell' );
 } );
 
-QUnit.test( 'Factory methods & serialization (newFromJSON, toJSON, getDescription)', function ( assert ) {
-	var doc = ve.dm.example.createExampleDocument( 'mergedCells' ),
+QUnit.test( 'Factory methods & serialization (newFromJSON, toJSON, getDescription)', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument( 'mergedCells' ),
 		tableRange = doc.getBranchNodeFromOffset( 1 ).getOuterRange(),
 		selection = new ve.dm.TableSelection( tableRange, 1, 2, 3, 4 ),
 		json = {

@@ -21,7 +21,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
@@ -240,10 +242,12 @@ TEXT
 					$this->writeToReport(
 						"$idField={$row->id}: updating '{$row->title}' to '$newTitle'\n" );
 
-					$dbw->update( $table,
-						[ $titleField => $newTitle ],
-						[ $idField => $row->id ],
-						__METHOD__ );
+					$dbw->newUpdateQueryBuilder()
+						->update( $table )
+						->set( [ $titleField => $newTitle ] )
+						->where( [ $idField => $row->id ] )
+						->caller( __METHOD__ )
+						->execute();
 					$affectedRowCount += $dbw->affectedRows();
 				}
 				$this->waitForReplication();
@@ -333,5 +337,7 @@ TEXT
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CleanupInvalidDbKeys::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\CodeEditor;
 
 use ErrorPageError;
-use ExtensionRegistry;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\CodeEditor\Hooks\HookRunner;
 use MediaWiki\Hook\EditPage__showEditForm_initialHook;
@@ -11,6 +10,7 @@ use MediaWiki\Hook\EditPage__showReadOnlyForm_initialHook;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
@@ -23,16 +23,9 @@ class Hooks implements
 	EditPage__showEditForm_initialHook,
 	EditPage__showReadOnlyForm_initialHook
 {
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
+	private UserOptionsLookup $userOptionsLookup;
+	private HookRunner $hookRunner;
 
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/**
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param HookContainer $hookContainer
-	 */
 	public function __construct(
 		UserOptionsLookup $userOptionsLookup,
 		HookContainer $hookContainer
@@ -41,13 +34,7 @@ class Hooks implements
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
-	/**
-	 * @param Title $title
-	 * @param string $model
-	 * @param string $format
-	 * @return null|string
-	 */
-	private function getPageLanguage( Title $title, $model, $format ) {
+	private function getPageLanguage( Title $title, string $model, string $format ): ?string {
 		if ( $model === CONTENT_MODEL_JAVASCRIPT ) {
 			return 'javascript';
 		} elseif ( $model === CONTENT_MODEL_CSS ) {

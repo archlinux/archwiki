@@ -9,7 +9,9 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use Wikimedia\Rdbms\IExpression;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 class RenameUsersMatchingPattern extends Maintenance {
 	/** @var UserFactory */
@@ -78,8 +80,7 @@ class RenameUsersMatchingPattern extends Maintenance {
 			$performer = $this->userFactory->newFromName( $this->getOption( 'performer' ) );
 		}
 		if ( !$performer ) {
-			$this->error( "Unable to get performer account" );
-			return false;
+			$this->fatalError( "Unable to get performer account" );
 		}
 		$this->performer = $performer;
 
@@ -213,14 +214,15 @@ class RenameUsersMatchingPattern extends Maintenance {
 			$status->merge( $movePage->moveSubpages(
 				$this->performer, $logMessage, !$this->suppressRedirect ) );
 			if ( !$status->isGood() ) {
-				$this->output( "Failed to rename user page: " .
-					$status->getWikiText( false, false, 'en' ) .
-					"\n" );
+				$this->output( "Failed to rename user page\n" );
+				$this->error( $status );
 			}
 		}
 		return true;
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RenameUsersMatchingPattern::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

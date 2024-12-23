@@ -1,3 +1,3 @@
-mw.hook( 've.activationComplete' ).add( function () {
+mw.hook( 've.activationComplete' ).add( () => {
 	ve.collab.join();
 } );

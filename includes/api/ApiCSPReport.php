@@ -20,9 +20,13 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\ContentSecurityPolicy;
+use MediaWiki\Utils\UrlUtils;
 use Psr\Log\LoggerInterface;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -39,6 +43,17 @@ class ApiCSPReport extends ApiBase {
 	 * These reports should be small. Ignore super big reports out of paranoia
 	 */
 	private const MAX_POST_SIZE = 8192;
+
+	private UrlUtils $urlUtils;
+
+	public function __construct(
+		ApiMain $main,
+		string $action,
+		UrlUtils $urlUtils
+	) {
+		parent::__construct( $main, $action );
+		$this->urlUtils = $urlUtils;
+	}
 
 	/**
 	 * Logs a content-security-policy violation report from web browser.
@@ -133,10 +148,14 @@ class ApiCSPReport extends ApiBase {
 			return true;
 		}
 
-		$bits = wfParseUrl( $url );
+		$bits = $this->urlUtils->parse( $url );
+		if ( !$bits ) {
+			return false;
+		}
+
 		unset( $bits['user'], $bits['pass'], $bits['query'], $bits['fragment'] );
 		$bits['path'] = '';
-		$serverUrl = wfAssembleUrl( $bits );
+		$serverUrl = UrlUtils::assemble( $bits );
 		if ( isset( $patterns[$serverUrl] ) ) {
 			// The origin of the url matches a pattern,
 			// e.g. "https://example.org" matches "https://example.org/foo/b?a#r"
@@ -185,10 +204,7 @@ class ApiCSPReport extends ApiBase {
 		}
 		$status = FormatJson::parse( $postBody, FormatJson::FORCE_ASSOC );
 		if ( !$status->isGood() ) {
-			$msg = $status->getErrors()[0]['message'];
-			if ( $msg instanceof Message ) {
-				$msg = $msg->getKey();
-			}
+			$msg = $status->getMessages()[0]->getKey();
 			$this->error( $msg, __METHOD__ );
 		}
 
@@ -230,11 +246,11 @@ class ApiCSPReport extends ApiBase {
 	 * @return string
 	 */
 	private function originFromUrl( $url ) {
-		$bits = wfParseUrl( $url );
+		$bits = $this->urlUtils->parse( $url ) ?? [];
 		unset( $bits['user'], $bits['pass'], $bits['query'], $bits['fragment'] );
 		$bits['path'] = '';
 		// e.g. "https://example.org" from "https://example.org/foo/b?a#r"
-		return wfAssembleUrl( $bits );
+		return UrlUtils::assemble( $bits );
 	}
 
 	/**
@@ -299,3 +315,6 @@ class ApiCSPReport extends ApiBase {
 		return false;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiCSPReport::class, 'ApiCSPReport' );

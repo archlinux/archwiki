@@ -8,7 +8,7 @@ use MediaWiki\Output\OutputPage;
  * This is a hook handler interface, see docs/Hooks.md.
  * Use the hook name "OutputPageMakeCategoryLinks" to register handlers implementing this interface.
  *
- * @stable to implement
+ * @deprecated since 1.43, use OutputPageRenderCategoryLinkHook instead.
  * @ingroup Hooks
  */
 interface OutputPageMakeCategoryLinksHook {
@@ -28,5 +28,5 @@ interface OutputPageMakeCategoryLinksHook {
 	public function onOutputPageMakeCategoryLinks( $out, $categories, &$links );
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( OutputPageMakeCategoryLinksHook::class, 'MediaWiki\Hook\OutputPageMakeCategoryLinksHook' );

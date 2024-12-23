@@ -23,15 +23,15 @@ namespace MediaWiki\Tests\Unit\Content\Renderer;
 
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
+use MediaWiki\Content\WikitextContent;
+use MediaWiki\Content\WikitextContentHandler;
 use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWikiUnitTestCase;
-use ParserOptions;
 use Wikimedia\UUID\GlobalIdGenerator;
-use WikitextContent;
-use WikitextContentHandler;
 
 /**
  * @group Renderer
@@ -46,11 +46,6 @@ class ContentRendererTest extends MediaWikiUnitTestCase {
 		parent::setUp();
 		$this->contentHandlerFactory = $this->createMock( IContentHandlerFactory::class );
 		$this->globalIdGenerator = $this->createMock( GlobalIdGenerator::class );
-	}
-
-	public function testConstructor() {
-		$renderer = new ContentRenderer( $this->contentHandlerFactory, $this->globalIdGenerator );
-		$this->assertInstanceOf( ContentRenderer::class, $renderer );
 	}
 
 	/**

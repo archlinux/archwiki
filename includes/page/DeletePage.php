@@ -3,18 +3,16 @@
 namespace MediaWiki\Page;
 
 use BadMethodCallException;
-use BagOStuff;
 use ChangeTags;
-use Content;
 use DeletePageJob;
 use Exception;
-use IDBAccessObject;
 use JobQueueGroup;
 use LogicException;
 use ManualLogEntry;
 use MediaWiki\Cache\BacklinkCacheFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\Content;
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
@@ -40,6 +38,8 @@ use StatusValue;
 use Wikimedia\IPUtils;
 use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Message\MessageValue;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\RequestTimeout\TimeoutException;
 use WikiPage;
@@ -64,43 +64,8 @@ class DeletePage {
 	public const PAGE_BASE = 'base';
 	public const PAGE_TALK = 'talk';
 
-	/** @var HookRunner */
-	private $hookRunner;
-	/** @var RevisionStore */
-	private $revisionStore;
-	/** @var LBFactory */
-	private $lbFactory;
-	/** @var JobQueueGroup */
-	private $jobQueueGroup;
-	/** @var CommentStore */
-	private $commentStore;
-	/** @var ServiceOptions */
-	private $options;
-	/** @var BagOStuff */
-	private $recentDeletesCache;
-	/** @var string */
-	private $localWikiID;
-	/** @var string */
-	private $webRequestID;
-	/** @var UserFactory */
-	private $userFactory;
-	/** @var BacklinkCacheFactory */
-	private $backlinkCacheFactory;
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-	/** @var ITextFormatter */
-	private $contLangMsgTextFormatter;
-
 	/** @var bool */
 	private $isDeletePageUnitTest = false;
-
-	/** @var WikiPage */
-	private $page;
-	/** @var Authority */
-	private $deleter;
-
 	/** @var bool */
 	private $suppress = false;
 	/** @var string[] */
@@ -130,24 +95,26 @@ class DeletePage {
 	/** @var bool Whether a deletion was attempted */
 	private $attemptedDeletion = false;
 
+	private HookRunner $hookRunner;
+	private RevisionStore $revisionStore;
+	private LBFactory $lbFactory;
+	private JobQueueGroup $jobQueueGroup;
+	private CommentStore $commentStore;
+	private ServiceOptions $options;
+	private BagOStuff $recentDeletesCache;
+	private string $localWikiID;
+	private string $webRequestID;
+	private WikiPageFactory $wikiPageFactory;
+	private UserFactory $userFactory;
+	private BacklinkCacheFactory $backlinkCacheFactory;
+	private NamespaceInfo $namespaceInfo;
+	private ITextFormatter $contLangMsgTextFormatter;
+	private RedirectStore $redirectStore;
+	private WikiPage $page;
+	private Authority $deleter;
+
 	/**
 	 * @internal Create via the PageDeleteFactory service.
-	 * @param HookContainer $hookContainer
-	 * @param RevisionStore $revisionStore
-	 * @param LBFactory $lbFactory
-	 * @param JobQueueGroup $jobQueueGroup
-	 * @param CommentStore $commentStore
-	 * @param ServiceOptions $serviceOptions
-	 * @param BagOStuff $recentDeletesCache
-	 * @param string $localWikiID
-	 * @param string $webRequestID
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param UserFactory $userFactory
-	 * @param BacklinkCacheFactory $backlinkCacheFactory
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param ITextFormatter $contLangMsgTextFormatter
-	 * @param ProperPageIdentity $page
-	 * @param Authority $deleter
 	 */
 	public function __construct(
 		HookContainer $hookContainer,
@@ -164,6 +131,7 @@ class DeletePage {
 		BacklinkCacheFactory $backlinkCacheFactory,
 		NamespaceInfo $namespaceInfo,
 		ITextFormatter $contLangMsgTextFormatter,
+		RedirectStore $redirectStore,
 		ProperPageIdentity $page,
 		Authority $deleter
 	) {
@@ -185,6 +153,7 @@ class DeletePage {
 
 		$this->page = $wikiPageFactory->newFromTitle( $page );
 		$this->deleter = $deleter;
+		$this->redirectStore = $redirectStore;
 	}
 
 	/**
@@ -703,6 +672,9 @@ class DeletePage {
 		);
 		$this->successfulDeletionsIDs[$pageRole] = $logid;
 
+		// Clear any cached redirect status for the now-deleted page.
+		$this->redirectStore->clearCache( $page );
+
 		// Show log excerpt on 404 pages rather than just a link
 		$key = $this->recentDeletesCache->makeKey( 'page-recent-delete', md5( $logTitle->getPrefixedText() ) );
 		$this->recentDeletesCache->set( $key, 1, BagOStuff::TTL_DAY );
@@ -760,14 +732,13 @@ class DeletePage {
 		$deleteBatchSize = $this->options->get( MainConfigNames::DeleteRevisionsBatchSize );
 		// Get as many of the page revisions as we are allowed to.  The +1 lets us recognize the
 		// unusual case where there were exactly $deleteBatchSize revisions remaining.
-		$res = $dbw->select(
-			$revQuery['tables'],
-			$revQuery['fields'],
-			[ 'rev_page' => $id ],
-			__METHOD__,
-			[ 'ORDER BY' => 'rev_timestamp ASC, rev_id ASC', 'LIMIT' => $deleteBatchSize + 1 ],
-			$revQuery['joins']
-		);
+		$res = $dbw->newSelectQueryBuilder()
+			->queryInfo( $revQuery )
+			->where( [ 'rev_page' => $id ] )
+			->orderBy( [ 'rev_timestamp', 'rev_id' ] )
+			->limit( $deleteBatchSize + 1 )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		// Build their equivalent archive rows
 		$rowsInsert = [];

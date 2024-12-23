@@ -22,5 +22,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Codeblock",
 	"syntaxhighlight-error-pygments-invocation-failure": "Fehler beim Aufrufen von Pygments",
 	"syntaxhighlight-error-unknown-language": "Unbekannte Sprache „$1“",
-	"syntaxhighlight-error-exceeds-size-limit": "Die Codegröße von {{PLURAL:$1|einem Byte|$1 Bytes}} überschreitet das erlaubte Maximum von {{PLURAL:$2|einem Byte|$2 Bytes}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Die Codegröße von {{PLURAL:$1|einem Byte|$1 Bytes}} überschreitet das erlaubte Maximum von {{PLURAL:$2|einem Byte|$2 Bytes}}",
+	"syntaxhighlight-button-copy": "Kopieren",
+	"syntaxhighlight-button-copied": "Kopiert!"
 }

@@ -3,12 +3,10 @@
 namespace MediaWiki\Tests\Rest\Handler;
 
 use Exception;
-use HashBagOStuff;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Parser\Parsoid\ParsoidParser;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
@@ -23,9 +21,11 @@ use MediaWikiIntegrationTestCase;
 use Psr\Http\Message\StreamInterface;
 use ReflectionClass;
 use Wikimedia\Message\MessageValue;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Parsoid;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * @covers \MediaWiki\Rest\Handler\RevisionHTMLHandler
@@ -39,8 +39,7 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 
 	private const HTML = '>World<';
 
-	/** @var HashBagOStuff */
-	private $parserCacheBagOStuff;
+	private HashBagOStuff $parserCacheBagOStuff;
 
 	/** @var int */
 	private static $uuidCounter = 0;
@@ -57,20 +56,11 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	private function newHandler(): RevisionHTMLHandler {
 		$services = $this->getServiceContainer();
 		$config = [
-			'RightsUrl' => 'https://example.com/rights',
-			'RightsText' => 'some rights',
-			'ParsoidCacheConfig' =>
+			MainConfigNames::RightsUrl => 'https://example.com/rights',
+			MainConfigNames::RightsText => 'some rights',
+			MainConfigNames::ParsoidCacheConfig =>
 				MainConfigSchema::getDefaultValue( MainConfigNames::ParsoidCacheConfig )
 		];
-
-		$parsoidOutputAccess = new ParsoidOutputAccess(
-			$services->getParsoidParserFactory(),
-			$services->getParserOutputAccess(),
-			$services->getPageStore(),
-			$services->getRevisionLookup(),
-			$services->getParsoidSiteConfig(),
-			$services->getContentHandlerFactory()
-		);
 
 		$helperFactory = $this->createNoOpMock(
 			PageRestHelperFactory::class,
@@ -82,18 +72,33 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 				new ServiceOptions( RevisionContentHelper::CONSTRUCTOR_OPTIONS, $config ),
 				$services->getRevisionLookup(),
 				$services->getTitleFormatter(),
-				$services->getPageStore()
+				$services->getPageStore(),
+				$services->getTitleFactory(),
+				$services->getConnectionProvider(),
+				$services->getChangeTagsStore()
 			) );
 
+		$parsoidOutputStash = $this->getParsoidOutputStash();
 		$helperFactory->method( 'newHtmlOutputRendererHelper' )
-			->willReturn( new HtmlOutputRendererHelper(
-				$this->getParsoidOutputStash(),
-				$services->getStatsdDataFactory(),
-				$parsoidOutputAccess,
-				$services->getHtmlTransformFactory(),
-				$services->getContentHandlerFactory(),
-				$services->getLanguageFactory()
-			) );
+			->willReturnCallback( static function ( $page, $parameters, $authority, $revision, $lenientRevHandling ) use ( $services, $parsoidOutputStash ) {
+				return new HtmlOutputRendererHelper(
+					$parsoidOutputStash,
+					StatsFactory::newNull(),
+					$services->getParserOutputAccess(),
+					$services->getPageStore(),
+					$services->getRevisionLookup(),
+					$services->getRevisionRenderer(),
+					$services->getParsoidSiteConfig(),
+					$services->getHtmlTransformFactory(),
+					$services->getContentHandlerFactory(),
+					$services->getLanguageFactory(),
+					$page,
+					$parameters,
+					$authority,
+					$revision,
+					$lenientRevHandling
+				);
+			} );
 
 		$handler = new RevisionHTMLHandler(
 			$helperFactory

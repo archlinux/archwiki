@@ -25,16 +25,24 @@ use MediaWiki\Revision\SlotRecord;
 use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 class TrackBlobs extends Maintenance {
-	public $clusters, $textClause;
+	/** @var string[] */
+	public $clusters;
+	/** @var IExpression|null */
+	public $textClause;
+	/** @var bool */
 	public $doBlobOrphans;
+	/** @var array */
 	public $trackedBlobs = [];
 
+	/** @var int */
 	public $batchSize = 1000;
+	/** @var int */
 	public $reportingInterval = 10;
 
 	public function __construct() {
@@ -113,7 +121,7 @@ class TrackBlobs extends Maintenance {
 					new LikeValue( "DB://$cluster/", $dbr->anyString() )
 				);
 			}
-			$this->textClause = new OrExpressionGroup( ...$conds );
+			$this->textClause = $dbr->orExpr( $conds );
 		}
 
 		return $this->textClause;
@@ -160,7 +168,7 @@ class TrackBlobs extends Maintenance {
 		$slotRoleStore = $this->getServiceContainer()->getSlotRoleStore();
 
 		$conds = array_merge( [
-			'slot_role_id=' . $slotRoleStore->getId( SlotRecord::MAIN ),
+			'slot_role_id' => $slotRoleStore->getId( SlotRecord::MAIN ),
 			'SUBSTRING(content_address, 1, 3)=' . $dbr->addQuotes( 'tt:' ),
 		], $conds );
 
@@ -229,8 +237,7 @@ class TrackBlobs extends Maintenance {
 		# Wait until the blob_tracking table is available in the replica DB
 		$dbw = $this->getPrimaryDB();
 		$dbr = $this->getReplicaDB();
-		$pos = $dbw->getPrimaryPos();
-		$dbr->primaryPosWait( $pos, 100_000 );
+		$this->getServiceContainer()->getDBLoadBalancerFactory()->waitForReplication( [ 'timeout' => 100_000 ] );
 
 		$textClause = $this->getTextClause();
 		$startId = 0;
@@ -324,6 +331,8 @@ class TrackBlobs extends Maintenance {
 
 		$dbw = $this->getPrimaryDB();
 		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
+		$dbStore = $this->getServiceContainer()->getExternalStoreFactory()->getStore( 'DB' );
+		'@phan-var ExternalStoreDB $dbStore'; /** @var ExternalStoreDB $dbStore */
 
 		foreach ( $this->clusters as $cluster ) {
 			echo "Searching for orphan blobs in $cluster...\n";
@@ -338,7 +347,7 @@ class TrackBlobs extends Maintenance {
 				}
 				continue;
 			}
-			$table = $extDB->getLBInfo( 'blobs table' ) ?? 'blobs';
+			$table = $dbStore->getTable( $cluster );
 			if ( !$extDB->tableExists( $table, __METHOD__ ) ) {
 				echo "No blobs table on cluster $cluster\n";
 				continue;
@@ -416,5 +425,7 @@ class TrackBlobs extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = TrackBlobs::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

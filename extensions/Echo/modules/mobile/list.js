@@ -1,11 +1,14 @@
-var mobile = require( 'mobile.startup' ),
+const mobile = require( 'mobile.startup' ),
 	View = mobile.View,
 	promisedView = mobile.promisedView;
 
 /**
- * This callback is displayed as a global member.
- *
- * @callback FunctionCountChangeCallback
+ * @module module:ext.echo.mobile
+ */
+
+/**
+ * @typedef {Function} FunctionCountChangeCallback
+ * @memberof module:ext.echo.mobile
  * @param {number} count a capped (0-99 or 99+) count
  */
 
@@ -15,11 +18,11 @@ var mobile = require( 'mobile.startup' ),
  * @param {mw.echo} echo class
  * @param {OO.ui.ButtonWidget} markAllReadButton - a button that will be associated with the
  *  read status of the notifications list.
- * @param {FunctionCountChangeCallback} onCountChange callback.
+ * @param {module:ext.echo.mobile.FunctionCountChangeCallback} onCountChange callback.
  * @return {View}
  */
 function notificationsList( echo, markAllReadButton, onCountChange ) {
-	var maxNotificationCount = require( './config.json' ).EchoMaxNotificationCount,
+	const maxNotificationCount = require( './config.json' ).EchoMaxNotificationCount,
 		echoApi = new echo.api.EchoApi(),
 		unreadCounter = new echo.dm.UnreadNotificationCounter( echoApi, 'all', maxNotificationCount ),
 		modelManager = new echo.dm.ModelManager( unreadCounter, { type: [ 'message', 'alert' ] } ),
@@ -45,32 +48,32 @@ function notificationsList( echo, markAllReadButton, onCountChange ) {
 
 	echo.config.maxPrioritizedActions = 1;
 
-	var wrapperWidget = new echo.ui.NotificationsWrapper( controller, modelManager, {
+	const wrapperWidget = new echo.ui.NotificationsWrapper( controller, modelManager, {
 		$overlay: $moreOptions
 	} );
 
 	// Events
-	unreadCounter.on( 'countChange', function ( count ) {
+	unreadCounter.on( 'countChange', ( count ) => {
 		onCountChange(
 			controller.manager.getUnreadCounter().getCappedNotificationCount( count )
 		);
 		markAsReadHandler();
 	} );
-	markAllReadButton.on( 'click', function () {
-		var numNotifications = controller.manager.getLocalUnread().length;
+	markAllReadButton.on( 'click', () => {
+		const numNotifications = controller.manager.getLocalUnread().length;
 
 		controller.markLocalNotificationsRead()
-			.then( function () {
+			.then( () => {
 				mw.notify( mw.msg( 'echo-mark-all-as-read-confirmation', numNotifications ) );
 				markAllReadButton.toggle( false );
-			}, function () {
+			}, () => {
 				markAllReadButton.toggle( false );
 			} );
 	} );
 
 	return promisedView(
 		// Populate notifications
-		wrapperWidget.populate().then( function () {
+		wrapperWidget.populate().then( () => {
 			controller.updateSeenTime();
 			markAsReadHandler();
 			// Connect event here as we know that everything loaded correctly

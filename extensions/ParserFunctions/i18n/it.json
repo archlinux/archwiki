@@ -13,6 +13,7 @@
 	"pfunc_time_too_long": "Errore: troppe chiamate a #time.",
 	"pfunc_time_too_big": "Errore: #time supporta solo fino all'anno 9999.",
 	"pfunc_time_too_small": "Errore: #time supporta solo dall'anno 0.",
+	"pfunc_timef_bad_format": "Errore: formato non valido per #timef",
 	"pfunc_rel2abs_invalid_depth": "Errore: profondità non valida nel percorso \"$1\" (si è tentato di accedere a un nodo superiore alla radice).",
 	"pfunc_expr_stack_exhausted": "Errore nell'espressione: stack esaurito.",
 	"pfunc_expr_unexpected_number": "Errore nell'espressione: numero inatteso.",

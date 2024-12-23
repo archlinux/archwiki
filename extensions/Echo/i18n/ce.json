@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Macofe",
+			"TMg",
 			"Исмаил Садуев",
-			"Умар",
-			"TMg"
+			"Умар"
 		]
 	},
 	"echo-desc": "Декъашхойн хиларг а, хаамаш а болу дӀахаийтаран система",
@@ -32,7 +32,7 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Цхьалхе текст",
 	"echo-pref-cross-wiki-notifications": "Кхечу викиш чуьра хаамаш гайта",
-	"echo-pref-notifications-blacklist": "ХӀокху декъашхошкара хаамаш ма гайта. ([[mw:Special:MyLanguage/Help:Notifications#mute|мадарра]])",
+	"echo-pref-notifications-blacklist": "ХӀокху декъашхошкара хаамаш ма гайта. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#muteмадарра])",
 	"echo-pref-notifications-page-linked-title-muted-list": "Ма гайта дӀахаийтарш  \"Хьажорг агӀонгахь\" хӀокху агӀонашна. ([[mw:Special:MyLanguage/Help:Notifications#mute|мадарра]])",
 	"echo-pref-dont-email-read-notifications": "Кхоьхьуьйтуш болу хаамашна, йукъа ма тоха бешна санна билгалбинарш",
 	"echo-learn-more": "Цул совнаха хаа",
@@ -184,6 +184,7 @@
 	"notification-link-thank-you-edit": "{{GENDER:$1|Хьан}} нисдар",
 	"notification-link-text-view-edit": "Нисдаре хьажар",
 	"notification-link-article-reminder": "АгӀоне хьажар",
+	"notification-link-api-triggered": "АгӀоне хьажа",
 	"notification-header-reverted": "{{PLURAL:$4|АгӀонехь $3 хьан нисдар}} {{GENDER:$2|йухадаькхина}}.",
 	"notification-header-emailuser": "$1 {{GENDER:$2|баийтина}} хьога хаам.",
 	"notification-edit-user-page-email-subject": "$1 {{GENDER:$2|хийцам бина}} {{GENDER:$3|хьан долара агӀонна}} {{GRAMMAR:locative|{{SITENAME}}}} тӀехь",

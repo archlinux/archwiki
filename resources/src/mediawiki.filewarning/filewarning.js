@@ -5,7 +5,7 @@
  * @since 1.25
  */
 ( function () {
-	var warningConfig = mw.config.get( 'wgFileWarning' ),
+	const warningConfig = mw.config.get( 'wgFileWarning' ),
 		warningMessages = warningConfig.messages,
 		warningLink = warningConfig.link,
 		$origMimetype = $( '.fullMedia .fileInfo .mime-type' ),
@@ -59,6 +59,10 @@
 				$info.attr( 'href', warningLink );
 			}
 		}
+
+		// Position the popup relative to $button rather than the default $element, so that it isn't
+		// pushed away by padding added to .mediawiki-filewarning-anchor in CSS. (T363157)
+		dialog.getPopup().setFloatableContainer( dialog.$button );
 
 		// Make OOUI open the dialog, it won't appear until the user
 		// hovers over the warning.

@@ -31,7 +31,6 @@
 	"mobile-frontend-meta-data-issues-categories": "O ovoj kategoriji",
 	"mobile-frontend-meta-data-issues-header": "Problemi stranice",
 	"minerva-meta-data-issues-section-header": "Problemi odeljka",
-	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "Uredite uvodni odeljak ove stranice",
 	"mobile-frontend-placeholder": "Pretražite {{GRAMMAR:akuzativ|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Slučajna",
@@ -55,8 +54,6 @@
 	"skin-minerva-issue-learn-more": "Saznajte više",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorije",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Prikazuje kategorije stranica",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Poboljšan tretman problema sa stranicom",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemi sa stranicom (Šablon:ambox) biće umetnuti u članak.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Grupisanje rezultata po stranici nije dostupno na mobilnim uređajima. Ako želite da koristite funkciju, posetite sajt za računare.",
 	"minerva.css": "/* CSS postavljen ovde učitaće se svim korisnicima Minerva (novo) teme */",
 	"minerva.js": "/* JavaScript postavljen ovde učitaće se svim korisnicima Minerva (novo) teme */"

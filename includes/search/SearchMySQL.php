@@ -36,8 +36,10 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * @ingroup Search
  */
 class SearchMySQL extends SearchDatabase {
+	/** @var bool */
 	protected $strictMatching = true;
 
+	/** @var int|null */
 	private static $mMinSearchLength;
 
 	/**
@@ -329,7 +331,7 @@ class SearchMySQL extends SearchDatabase {
 			->row( [
 				'si_page' => $id,
 				'si_title' => $this->normalizeText( $title ),
-				 'si_text' => $this->normalizeText( $text )
+				'si_text' => $this->normalizeText( $text )
 			] )
 			->caller( __METHOD__ )->execute();
 	}

@@ -21,12 +21,15 @@
  * @ingroup Parser
  */
 
+namespace MediaWiki\Parser;
+
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\Sanitizer;
+use StringUtils;
+use UnexpectedValueException;
 
 /**
  * Various tag hooks, registered in every Parser
@@ -85,7 +88,6 @@ class CoreTagHooks {
 			[ '&gt;', '&lt;' ],
 			$content
 		);
-		// @phan-suppress-next-line SecurityCheck-XSS Ad-hoc escaping above.
 		return Html::rawElement( 'pre', $attribs, $content );
 	}
 
@@ -253,3 +255,6 @@ class CoreTagHooks {
 	}
 
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( CoreTagHooks::class, 'CoreTagHooks' );

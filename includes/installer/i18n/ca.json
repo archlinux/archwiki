@@ -13,8 +13,7 @@
 			"SMP",
 			"Toniher",
 			"Xavier Dengra",
-			"පසිඳු කාවින්ද",
-			"Krinkle"
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"config-desc": "L'instal·lador del MediaWiki",
@@ -70,7 +69,6 @@
 	"config-memory-bad": "<strong>Avís:</strong> El <code>memory_limit</code> del PHP és $1.\nAixò és probablement massa baix.\nLa instal·lació pot fallar!",
 	"config-apc": "L'[https://www.php.net/apc APC] està instal·lat",
 	"config-apcu": "L'[https://www.php.net/apcu APCu] està instal·lat",
-	"config-wincache": "[https://www.iis.net/downloads/microsoft/wincache-extension WinCache] està instal·lat",
 	"config-no-cache-apcu": "<strong>Avís:</strong> no s'ha pogut trobar [https://www.php.net/apcu APCu] o [https://www.iis.net/downloads/microsoft/wincache-extension WinCache].\nNo s'habilitarà la memòria cau d'objectes.",
 	"config-mod-security": "<strong>Avís:</strong> El vostre servidor web té habilitat [https://modsecurity.org/ mod_security]/mod_security2. Moltes configuracions habituals poden ocasionar problemes amb MediaWiki i altre programari, que permeten enviar contingut arbitrari.\nSi fos possible, s'hauria d'inhabilitar. Altrament, referiu-vos a la [https://modsecurity.org/documentation/ documentació de mod_security] o contacteu amb el proveïdor del vostre servidor si us trobeu amb errors inesperats.",
 	"config-diff3-bad": "No s'ha trobat el GNU diff3. Podeu ignorar-ho per ara, però us podeu trobar amb conflictes d'edició més habitualment.",
@@ -264,7 +262,6 @@
 	"config-install-schema": "S'està creant l'esquema",
 	"config-install-pg-schema-not-exist": "No existeix un esquema PostgreSQL.",
 	"config-install-pg-schema-failed": "La creació de les taules ha fallat.\nAssegureu-vos que l'usuari «$1» pot escriure a l'esquema «$2».",
-	"config-install-pg-commit": "S'estan trametent els canvis",
 	"config-install-pg-plpgsql": "S'està comprovant si hi ha llenguatge PL/pgSQL",
 	"config-pg-no-plpgsql": "Necessiteu instal·lar l'idioma PL/pgSQL a la base de dades $1",
 	"config-pg-no-create-privs": "El compte que heu especificat per a la instal·lació no té suficients permisos per crear un compte.",
@@ -280,9 +277,6 @@
 	"config-install-tables": "S'estan creant les taules, primer pas",
 	"config-install-tables-exist": "'''Avís:''' sembla que les taules del MediaWiki tables ja existeixen. Se n'omet la creació.",
 	"config-install-tables-failed": "'''Error:''' la creació de la taula ha fallat amb l'error següent: $1",
-	"config-install-tables-manual": "S'estan creant les taules, segon pas",
-	"config-install-manual-tables-exist": "<strong>Avís</strong>: les taules de MediaWiki sembla que ja existeixen.\nSe n'omet la creació.",
-	"config-install-manual-tables-failed": "<strong>Error:</strong> La creació de les taules ha fallat amb l'error següent: $1",
 	"config-install-interwiki": "S'està emplenant la taula per defecte d'interwiki",
 	"config-install-interwiki-list": "No s'ha pogut llegir el fitxer <code>interwiki.list</code>.",
 	"config-install-interwiki-exists": "'''Avís:''' La taula d'interwiki sembla que ja té entrades. S'omet la llista per defecte.",

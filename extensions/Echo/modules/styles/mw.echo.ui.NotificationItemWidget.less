@@ -25,22 +25,35 @@
 		cursor: inherit;
 	}
 
-	&:hover {
-		text-decoration: none;
-		background-color: #ececec;
-	}
-
 	&:focus {
 		text-decoration: none;
 		box-shadow: @box-shadow-inset-medium @box-shadow-color-progressive--focus;
 		outline: @outline-base--focus;
 	}
 
+	&:hover {
+		text-decoration: none;
+		// FIXME: Non-standard design token. Replace with a standard token and revise skin-theme rules.
+		background-color: #ececec;
+
+		.skin-theme-clientpref-night & {
+			@media screen {
+				background-color: @background-color-interactive-subtle;
+			}
+		}
+
+		.skin-theme-clientpref-os & {
+			@media screen and ( prefers-color-scheme: dark ) {
+				background-color: @background-color-interactive-subtle;
+			}
+		}
+	}
+
 	&-unread {
 		background-color: @background-color-base;
 
 		&:hover {
-			background-color: #f8f9fa;
+			background-color: @background-color-interactive-subtle;
 		}
 	}
 

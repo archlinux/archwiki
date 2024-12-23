@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Assilidjoe",
 			"Ebenoffen1",
 			"Gregorynelsonmensah1",
-			"Leonard Nketsia",
-			"Assilidjoe"
+			"Leonard Nketsia"
 		]
 	},
 	"vector-languages": "Kasahorow",
@@ -19,18 +19,23 @@
 	"vector-view-history": "Hwɛ abakɔsɛm",
 	"vector-view-view": "Kenkan",
 	"vector-more-actions": "Pii",
+	"vector-appearance-label": "Bɔbew",
 	"vector-feature-limited-width-name": "Tɛtɛr mu",
-	"vector-feature-custom-font-size-name": "Akyerɛwsɛm",
 	"vector-feature-limited-width-0-label": "Kɛse",
 	"vector-feature-limited-width-1-label": "Pɛpɛɛpɛryɛ",
+	"vector-feature-custom-font-size-name": "Akyerɛwsɛm",
 	"vector-feature-custom-font-size-0-label": "Kakraba",
 	"vector-feature-custom-font-size-2-label": "Kɛse",
 	"skin-theme-name": "Ahosu",
+	"skin-theme-day-label": "Kandza",
+	"skin-theme-night-label": "Sum",
 	"skin-theme-os-label": "Otomateke",
+	"skin-theme-exclusion-notice": "Dabiara dɛm krataafa yi wɔ kandza tsebea mu.",
 	"vector-searchsuggest-containing": "Hwehwɛ nkrataafa a <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> wɔ mu",
 	"vector-toc-label": "Dza ɔwɔ mu",
 	"vector-toc-beginning": "Ahyɛase",
 	"vector-main-menu-label": "Krataafa tsitsir",
+	"vector-feature-custom-font-size-exclusion-notice": "Dɛm krataafa yi dze akyerɛwamba nkakramba dzi dwuma dabiara",
 	"vector-page-tools-label": "Edwumadze",
 	"vector-page-tools-general-label": "Kɛsemu",
 	"vector-page-tools-actions-label": "Ndzeyɛɛ",

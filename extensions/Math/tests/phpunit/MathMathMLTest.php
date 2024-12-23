@@ -3,6 +3,7 @@
 use MediaWiki\Extension\Math\MathMathML;
 use MediaWiki\Extension\Math\MathRestbaseInterface;
 use MediaWiki\Extension\Math\Tests\MathMockHttpTrait;
+use MediaWiki\Parser\Parser;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -19,7 +20,7 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->setMwGlobals( 'wgMathoidCli', false );
+		$this->overrideConfigValue( 'MathoidCli', false );
 	}
 
 	/**
@@ -55,9 +56,7 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testMakeRequestInvalid() {
 		$url = 'http://example.com/invalid';
-		$this->setMwGlobals( [
-			'wgMathMathMLUrl' => $url,
-		] );
+		$this->overrideConfigValue( 'MathMathMLUrl', $url );
 		$this->installMockHttp(
 			$this->makeFakeHttpRequest( 'Method Not Allowed', 405 )
 		);
@@ -94,9 +93,7 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testMakeRequestTimeout() {
 		$url = 'http://example.com/timeout';
-		$this->setMwGlobals( [
-			'wgMathMathMLUrl' => $url,
-		] );
+		$this->overrideConfigValue( 'MathMathMLUrl', $url );
 		$this->installMockHttp(
 			$this->makeFakeTimeoutRequest()
 		);
@@ -168,7 +165,7 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 
 	public function testWarning() {
 		$this->setupGoodMathRestBaseMockHttp();
-		$this->setMwGlobals( "wgMathDisableTexFilter", 'always' );
+		$this->overrideConfigValue( 'MathDisableTexFilter', 'always' );
 
 		$renderer = new MathMathML();
 		$rbi = $this->getMockBuilder( MathRestbaseInterface::class )
@@ -198,6 +195,14 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 		$math = new MathMathML( "a+b", [ "qid" => "123" ] );
 		$out = $math->getHtmlOutput();
 		$this->assertStringNotContainsString( "data-qid", $out );
+	}
+
+	public function testGetHtmlOutputNoSvg() {
+		$math = new MathMathML( "a+b" );
+		$out = $math->getHtmlOutput( false );
+		$this->assertStringNotContainsString( "<svg", $out );
+		$this->assertStringNotContainsString( "mwe-math-mathml-a11y", $out );
+		$this->assertStringContainsString( "mwe-math-mathml-", $out );
 	}
 
 	public function testEmpty() {

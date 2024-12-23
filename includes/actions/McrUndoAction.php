@@ -11,6 +11,7 @@ use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionStatus;
@@ -42,7 +43,9 @@ use Wikimedia\Rdbms\ReadOnlyMode;
  */
 class McrUndoAction extends FormAction {
 
-	protected $undo = 0, $undoafter = 0, $cur = 0;
+	protected int $undo = 0;
+	protected int $undoafter = 0;
+	protected int $cur = 0;
 
 	/** @var RevisionRecord|null */
 	protected $curRev = null;
@@ -317,10 +320,11 @@ class McrUndoAction extends FormAction {
 			$parserOutput = $this->revisionRenderer
 				->getRenderedRevision( $rev, $parserOptions, $this->getAuthority() )
 				->getRevisionParserOutput();
-			$previewHTML = $parserOutput->getText( [
+			// TODO T371004 move runOutputPipeline out of $parserOutput
+			$previewHTML = $parserOutput->runOutputPipeline( $parserOptions, [
 				'enableSectionEditLinks' => false,
 				'includeDebugInfo' => true,
-			] );
+			] )->getContentHolderText();
 
 			$out->addParserOutputMetadata( $parserOutput );
 			if ( count( $parserOutput->getWarnings() ) ) {
@@ -394,7 +398,7 @@ class McrUndoAction extends FormAction {
 
 					return $status;
 				} elseif ( !$status->isOK() ) {
-					if ( !$status->getErrors() ) {
+					if ( !$status->getMessages() ) {
 						$status->error( 'hookaborted' );
 					}
 					return $status;

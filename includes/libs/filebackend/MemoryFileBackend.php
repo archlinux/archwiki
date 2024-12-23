@@ -21,6 +21,8 @@
  * @ingroup FileBackend
  */
 
+namespace Wikimedia\FileBackend;
+
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -297,3 +299,6 @@ class MemoryFileBackend extends FileBackendStore {
 		return ( $relPath !== '' ) ? "$fullCont/$relPath" : $fullCont;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( MemoryFileBackend::class, 'MemoryFileBackend' );

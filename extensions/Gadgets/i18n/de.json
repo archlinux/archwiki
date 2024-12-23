@@ -12,8 +12,7 @@
 			"The Evil IP address",
 			"Tiin",
 			"Umherirrender",
-			"✓",
-			"McDutchie"
+			"✓"
 		]
 	},
 	"gadgets-desc": "Ermöglicht es Benutzern, in ihren [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] vordefinierte [[Special:Gadgets|CSS- und JavaScript-Helferlein]] zu aktivieren",
@@ -51,7 +50,7 @@
 	"gadgets-export-download": "Herunterladen",
 	"gadgets-requires-es6": "Dieses Helferlein wird nur von ES6-kompatiblen Browsern unterstützt",
 	"gadgets-validate-notset": "Die Eigenschaft <code>$1</code> ist nicht festgelegt.",
-	"gadgets-validate-wrongtype": "Die Eigenschaft <code>$1</code> muss <code>$2</code> sein anstatt <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Die Eigenschaft <code>$1</code> muss vom Typ <code>$2</code> sein.",
 	"gadgets-validate-json": "JSON-Dateien werden angegeben, aber nicht verwendet. Sie sind nur in gepackten Helferlein gültig.",
 	"gadgets-validate-es6default": "Helferlein, die ES6 erfordern, können standardmäßig nicht aktiviert werden.",
 	"gadgets-validate-noentrypoint": "Paketflag wird ignoriert, da keine Skriptdateien angegeben sind.",

@@ -41,7 +41,7 @@ ve.ui.MWMagicLinkNodeContextItem.static.clearable = false;
 
 ve.ui.MWMagicLinkNodeContextItem.prototype.setup = function () {
 	// Set up label
-	var msg = 'visualeditor-magiclinknodeinspector-title-' +
+	const msg = 'visualeditor-magiclinknodeinspector-title-' +
 		this.model.getMagicType().toLowerCase();
 
 	// The following messages are used here:

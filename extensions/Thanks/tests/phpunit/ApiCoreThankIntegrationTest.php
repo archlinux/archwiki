@@ -1,6 +1,8 @@
 <?php
 
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\User\User;
 
 /**
@@ -97,13 +99,12 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 		$this->setGroupPermissions( [
 			'logdeleter' => [
 				'read' => true,
-				'writeapi' => true,
 				'deletelogentry' => true
 			]
 		] );
 
 		// Mark our test log entry as deleted.
-		// To do this we briefly switch to a different test user.
+		// To do this, we briefly switch to a different test user.
 		$logdeleter = $this->getTestUser( [ 'logdeleter' ] )->getUser();
 		$this->doApiRequestWithToken( [
 			'action' => 'revisiondelete',

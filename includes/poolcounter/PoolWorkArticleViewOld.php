@@ -21,12 +21,14 @@
 namespace MediaWiki\PoolCounter;
 
 use MediaWiki\Logger\Spi as LoggerSpi;
+use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Status\Status;
-use ParserOptions;
 
 /**
  * PoolWorkArticleView for an old revision of a page, using a simple cache.
@@ -64,10 +66,20 @@ class PoolWorkArticleViewOld extends PoolWorkArticleView {
 	 * @return Status
 	 */
 	public function doWork() {
+		// T371713: Temporary statistics collection code to determine
+		// feasibility of Parsoid selective update
+		$sampleRate = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::ParsoidSelectiveUpdateSampleRate
+		);
+		$doSample = ( $sampleRate && mt_rand( 1, $sampleRate ) === 1 );
+
 		// Reduce effects of race conditions for slow parses (T48014)
 		$cacheTime = wfTimestampNow();
 
-		$status = $this->renderRevision();
+		$status = $this->renderRevision(
+			null, /* don't attempt Parsoid selective updates on this path */
+			$doSample, 'PoolWorkArticleViewOld'
+		);
 		/** @var ParserOutput|null $output */
 		$output = $status->getValue();
 
@@ -89,5 +101,5 @@ class PoolWorkArticleViewOld extends PoolWorkArticleView {
 
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( PoolWorkArticleViewOld::class, 'PoolWorkArticleViewOld' );

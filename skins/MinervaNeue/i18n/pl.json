@@ -9,10 +9,10 @@
 			"Msz2001",
 			"Rail",
 			"Railfail536",
-			"WTM",
-			"Woytecr",
+			"Tar Lócesilion",
 			"Tsca",
-			"Tar Lócesilion"
+			"WTM",
+			"Woytecr"
 		]
 	},
 	"minerva-last-modified-date": "Ostatnio edytowano $1 o $2",
@@ -38,7 +38,6 @@
 	"mobile-frontend-meta-data-issues-categories": "O tej kategorii",
 	"mobile-frontend-meta-data-issues-header": "Problemy ze stroną",
 	"minerva-meta-data-issues-section-header": "Problemy z sekcją",
-	"mobile-frontend-notifications-filter": "Filtruj",
 	"mobile-frontend-pageaction-edit-tooltip": "Edycja głównej sekcji tej strony",
 	"mobile-frontend-placeholder": "Przeszukaj {{GRAMMAR:B.lp|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Losuj",
@@ -58,7 +57,7 @@
 	"minerva-page-actions-overflow": "Więcej",
 	"minerva-page-actions-language-switcher": "Języki",
 	"minerva-page-actions-history": "Historia",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|dyskusja]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue dyskusja]",
 	"minerva-skin-desc": "Responsywna skórka przeznaczona dla urządzeń mobilnych",
 	"skin-minerva-issue-learn-more": "Dowiedz się więcej",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekundę|$1 sekundy|$1 sekund}} temu",
@@ -69,10 +68,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 rok|$1 lata|$1 lat}} temu",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorie",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Zobacz kategorie stron",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Ulepszone rozwiązywanie problemów ze stroną",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemy ze stroną (Szablon:ambox) będą wyświetlane wewnątrz artykułu.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Niestety, grupowanie wyników według stron nie jest dostępne w wersji mobilnej. Jeżeli chcesz korzystać z tej funkcji, przejdź do wersji standardowej strony.",
-	"skin-minerva-night-mode-unavailable": "Ta strona jest dostępna wyłącznie w motywie „dziennym”.",
+	"skin-minerva-night-mode-unavailable": "Ta strona jest dostępna wyłącznie w motywie jasnym.",
 	"minerva.css": "/* Umieszczony tutaj kod CSS zostanie załadowany przez użytkowników korzystających ze skórki MinervaNeue */",
 	"minerva.js": "/* Umieszczony tutaj kod JavaScript zostanie załadowany przez użytkowników korzystających ze skórki MinervaNeue */"
 }

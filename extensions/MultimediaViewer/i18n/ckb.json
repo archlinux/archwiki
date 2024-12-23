@@ -28,7 +28,6 @@
 	"multimediaviewer-restriction-ihl": "ئەم وێنەیە بڕێک نیشانەی تێدایە کە لە لایەن یاسای نێودەوڵەتیی مرۆڤایەتییەوە قەدەغە کراوە.",
 	"multimediaviewer-restriction-nazi": "ئەم وێنەیە ئاڵای نازی یان ناوەرۆکی فاشیستیی تری تێدایە کە ڕەنگە لە بڕێک وڵاتەکاندا قەدەغەکراو بێت.",
 	"multimediaviewer-restriction-default": "ڕەنگە ئەم وێنەیە کێشەی یاسایی ببێت سەبارەت بە مافی کۆپی کردنەوە. بۆ زانیاریی زیاتر پەڕەی وەسفی فایلەکە ببینە.",
-	"multimediaviewer-optin-mmv": "چالاککردنی نیشاندەری میدیا",
 	"multimediaviewer-geolocation": "شوێن: $1",
 	"multimediaviewer-reuse-loading-placeholder": "بارکردن...",
 	"multimediaviewer-download-link": "ئەم پەڕگەیە دابگرە",
@@ -44,7 +43,6 @@
 	"multimediaviewer-credit-popup-text-more": "بەرھەمھێنەر و سەرچاوە بە تەواوی ببینە",
 	"multimediaviewer-download-attribution-cta": "نیشانم بدە چۆن",
 	"multimediaviewer-attr-plain": "ئاسایی",
-	"multimediaviewer-options-learn-more": "زۆرتر بزانە",
 	"multimediaviewer-enable-dialog-header": "چالاککردنی نیشاندەری میدیا؟",
 	"multimediaviewer-enable-submit-button": "چالاککردنی نیشاندەری میدیا"
 }

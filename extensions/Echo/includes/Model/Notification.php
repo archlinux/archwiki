@@ -144,7 +144,7 @@ class Notification extends AbstractEntity implements Bundleable {
 	 * @param TargetPage[]|null $targetPages An array of TargetPage instances, or null if not loaded.
 	 * @return Notification|false False if failed to load/unserialize
 	 */
-	public static function newFromRow( $row, array $targetPages = null ) {
+	public static function newFromRow( $row, ?array $targetPages = null ) {
 		$notification = new Notification();
 
 		if ( property_exists( $row, 'event_type' ) ) {

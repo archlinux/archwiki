@@ -25,8 +25,12 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\UndoLog;
 use MediaWiki\Storage\SqlBlobStore;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 class MoveToExternal extends Maintenance {
 	/** @var ResolveStubs */
@@ -82,13 +86,10 @@ class MoveToExternal extends Maintenance {
 		$this->esLocation = $this->getArg( 1 ); // e.g. "cluster12" or "global-swift"
 		$dbw = $this->getPrimaryDB();
 
-		$maxID = $this->getOption( 'end' );
-		if ( $maxID === null ) {
-			$maxID = $dbw->newSelectQueryBuilder()
-				->select( 'MAX(old_id)' )
-				->from( 'text' )
-				->caller( __METHOD__ )->fetchField();
-		}
+		$maxID = $this->getOption( 'end' ) ?? $dbw->newSelectQueryBuilder()
+			->select( 'MAX(old_id)' )
+			->from( 'text' )
+			->caller( __METHOD__ )->fetchField();
 		$this->maxID = (int)$maxID;
 		$this->minID = (int)$this->getOption( 'start', 1 );
 
@@ -320,8 +321,10 @@ class MoveToExternal extends Maintenance {
 
 	protected function getConditions( $blockStart, $blockEnd, $dbr ) {
 		return [
-			"old_id BETWEEN $blockStart AND $blockEnd",
-			'old_flags NOT ' . $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() ),
+			$dbr->expr( 'old_id', '>=', $blockStart ),
+			$dbr->expr( 'old_id', '>=', $blockEnd ),
+			$dbr->expr( 'old_flags', IExpression::NOT_LIKE,
+				new LikeValue( $dbr->anyString(), 'external', $dbr->anyString() ) ),
 		];
 	}
 
@@ -330,5 +333,7 @@ class MoveToExternal extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MoveToExternal::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

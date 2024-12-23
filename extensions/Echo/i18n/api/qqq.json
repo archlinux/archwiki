@@ -11,6 +11,15 @@
 			"Umherirrender"
 		]
 	},
+	"apihelp-echocreateevent-description": "{{doc-apihelp-description|echocreateevent}}",
+	"apihelp-echocreateevent-summary": "{{doc-apihelp-summary|echocreateevent}}",
+	"apihelp-echocreateevent-example": "{{doc-apihelp-example|echocreateevent}}",
+	"apihelp-echocreateevent-param-user": "{{doc-apihelp-param|echocreateevent}}",
+	"apihelp-echocreateevent-param-header": "{{doc-apihelp-param|echocreateevent}}",
+	"apihelp-echocreateevent-param-content": "{{doc-apihelp-param|echocreateevent}}",
+	"apihelp-echocreateevent-param-page": "{{doc-apihelp-param|echocreateevent}}",
+	"apihelp-echocreateevent-param-section": "{{doc-apihelp-param|echocreateevent}}",
+	"apihelp-echocreateevent-param-email": "{{doc-apihelp-param|echocreateevent}}",
 	"apihelp-echomarkread-summary": "{{doc-apihelp-summary|echomarkread}}",
 	"apihelp-echomarkread-param-list": "{{doc-apihelp-param|echomarkread|list}}",
 	"apihelp-echomarkread-param-unreadlist": "{{doc-apihelp-param|echomarkread|unreadlist}}",

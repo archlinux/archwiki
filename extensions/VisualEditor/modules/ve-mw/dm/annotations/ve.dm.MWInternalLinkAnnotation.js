@@ -36,9 +36,9 @@ ve.dm.MWInternalLinkAnnotation.static.matchRdfaTypes = [ 'mw:WikiLink', 'mw:Medi
 ve.dm.MWInternalLinkAnnotation.static.allowedRdfaTypes = [ 'mw:Error', 'mw:LocalizedAttrs' ];
 
 ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, converter ) {
-	var resource = domElements[ 0 ].getAttribute( 'resource' );
+	const resource = domElements[ 0 ].getAttribute( 'resource' );
 
-	var targetData;
+	let targetData;
 	if ( resource ) {
 		targetData = mw.libs.ve.parseParsoidResourceName( resource );
 	} else {
@@ -69,13 +69,13 @@ ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, co
  * @return {Object} The element.
  */
 ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title ) {
-	var target = title.toText();
+	let target = title.toText();
 
 	if ( title.getFragment() ) {
 		target += '#' + title.getFragment();
 	}
 
-	var element = {
+	const element = {
 		type: this.name,
 		attributes: {
 			title: target,
@@ -94,20 +94,20 @@ ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title ) 
  * @return {ve.dm.MWInternalLinkAnnotation} The annotation.
  */
 ve.dm.MWInternalLinkAnnotation.static.newFromTitle = function ( title ) {
-	var element = this.dataElementFromTitle( title );
+	const element = this.dataElementFromTitle( title );
 
 	return new ve.dm.MWInternalLinkAnnotation( element );
 };
 
 ve.dm.MWInternalLinkAnnotation.static.toDomElements = function () {
-	var parentResult = ve.dm.LinkAnnotation.static.toDomElements.apply( this, arguments );
+	const parentResult = ve.dm.LinkAnnotation.static.toDomElements.apply( this, arguments );
 	// we just created that link so the 'rel' attribute should be safe
 	parentResult[ 0 ].setAttribute( 'rel', 'mw:WikiLink' );
 	return parentResult;
 };
 
 ve.dm.MWInternalLinkAnnotation.static.getHref = function ( dataElement ) {
-	var title = dataElement.attributes.title;
+	let title = dataElement.attributes.title;
 
 	if ( title.slice( 0, 1 ) === '#' ) {
 		// Special case: For a newly created link to a #fragment with
@@ -127,7 +127,7 @@ ve.dm.MWInternalLinkAnnotation.static.getHref = function ( dataElement ) {
  * @return {string} Normalized title, or the original string if it is invalid
  */
 ve.dm.MWInternalLinkAnnotation.static.normalizeTitle = function ( original ) {
-	var title = original instanceof mw.Title ? original : mw.Title.newFromText( original );
+	const title = original instanceof mw.Title ? original : mw.Title.newFromText( original );
 	if ( !title ) {
 		return original;
 	}
@@ -141,7 +141,7 @@ ve.dm.MWInternalLinkAnnotation.static.normalizeTitle = function ( original ) {
  * @return {string} Normalized title, or the original string if it is invalid
  */
 ve.dm.MWInternalLinkAnnotation.static.getLookupTitle = function ( original ) {
-	var title = original instanceof mw.Title ? original : mw.Title.newFromText( original );
+	const title = original instanceof mw.Title ? original : mw.Title.newFromText( original );
 	if ( !title ) {
 		return original;
 	}
@@ -156,7 +156,7 @@ ve.dm.MWInternalLinkAnnotation.static.getLookupTitle = function ( original ) {
  * @return {string|null} Fragment for the title, or null if it was invalid or missing
  */
 ve.dm.MWInternalLinkAnnotation.static.getFragment = function ( original ) {
-	var title = original instanceof mw.Title ? original : mw.Title.newFromText( original );
+	const title = original instanceof mw.Title ? original : mw.Title.newFromText( original );
 	if ( !title ) {
 		return null;
 	}

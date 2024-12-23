@@ -21,7 +21,11 @@
  * @since 1.22
  */
 
+namespace MediaWiki\Api;
+
+use FileRepo;
 use MediaWiki\MainConfigNames;
+use RepoGroup;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -34,14 +38,9 @@ class ApiQueryFileRepoInfo extends ApiQueryBase {
 
 	private RepoGroup $repoGroup;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param RepoGroup $repoGroup
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		RepoGroup $repoGroup
 	) {
 		parent::__construct( $query, $moduleName, 'fri' );
@@ -128,3 +127,6 @@ class ApiQueryFileRepoInfo extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Filerepoinfo';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryFileRepoInfo::class, 'ApiQueryFileRepoInfo' );

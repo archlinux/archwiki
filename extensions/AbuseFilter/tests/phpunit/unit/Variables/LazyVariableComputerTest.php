@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
 use Generator;
-use Language;
 use LogicException;
 use MediaWiki\Block\SystemBlock;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
@@ -12,8 +11,11 @@ use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyLoadedVariable;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Language\Language;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -24,15 +26,13 @@ use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use ParserFactory;
 use Psr\Log\NullLogger;
 use UnexpectedValueException;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\LBFactory;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer
  */
 class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 
@@ -66,9 +66,6 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		};
 	}
 
-	/**
-	 * @covers ::compute
-	 */
 	public function testWikiNameVar() {
 		$fakeID = 'some-wiki-ID';
 		$var = new LazyLoadedVariable( 'get-wiki-name', [] );
@@ -79,9 +76,6 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::compute
-	 */
 	public function testWikiLanguageVar() {
 		$fakeCode = 'foobar';
 		$fakeLang = $this->createMock( Language::class );
@@ -94,9 +88,6 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::compute
-	 */
 	public function testCompute_invalidName() {
 		$computer = $this->getComputer();
 		$this->expectException( UnexpectedValueException::class );
@@ -107,9 +98,6 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::compute
-	 */
 	public function testInterceptVariableHook() {
 		$expected = new AFPData( AFPData::DSTRING, 'foobar' );
 		$handler = static function ( $method, $vars, $params, &$result ) use ( $expected ) {
@@ -125,9 +113,6 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $actual );
 	}
 
-	/**
-	 * @covers ::compute
-	 */
 	public function testComputeVariableHook() {
 		$expected = new AFPData( AFPData::DSTRING, 'foobar' );
 		$handler = static function ( $method, $vars, $params, &$result ) use ( $expected ) {
@@ -147,7 +132,6 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 	 * @param LazyLoadedVariable $var
 	 * @param mixed $expected
 	 * @param array $services
-	 * @covers ::compute
 	 * @dataProvider provideUserRelatedVars
 	 */
 	public function testUserRelatedVars(
@@ -167,7 +151,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		$getUserVar = static function ( $user, $method ): LazyLoadedVariable {
 			return new LazyLoadedVariable(
 				$method,
-				[ 'user' => $user, 'user-identity' => $user ]
+				[ 'user' => $user, 'user-identity' => $user, 'rc' => null ]
 			);
 		};
 
@@ -211,6 +195,30 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		$user->method( 'getName' )->willReturn( 'Non-existing user 1234' );
 		$var = $getUserVar( $user, 'user-type' );
 		yield 'user_type for unregistered username' => [ $var, 'unknown' ];
+
+		$request = $this->createMock( WebRequest::class );
+		$request->method( 'getIP' )->willReturn( '127.0.0.1' );
+		$user = $this->createMock( User::class );
+		$user->method( 'getRequest' )->willReturn( $request );
+		$user->method( 'getName' )->willReturn( '127.0.0.1' );
+		$var = $getUserVar( $user, 'user-unnamed-ip' );
+		yield 'user_unnamed_ip for an anonymous user' => [ $var, '127.0.0.1' ];
+
+		$user = $this->createMock( User::class );
+		$user->method( 'getName' )->willReturn( 'Test User' );
+		$var = $getUserVar( $user, 'user-unnamed-ip' );
+		yield 'user_unnamed_ip for a user' => [ $var, null ];
+
+		$mockUserIdentityUtils = $this->createMock( UserIdentityUtils::class );
+		$mockUserIdentityUtils->method( 'isTemp' )->with( $user )->willReturn( true );
+		$request = $this->createMock( WebRequest::class );
+		$request->method( 'getIP' )->willReturn( '127.0.0.1' );
+		$user = $this->createMock( User::class );
+		$user->method( 'getRequest' )->willReturn( $request );
+		$var = $getUserVar( $user, 'user-unnamed-ip' );
+		yield 'user_unnamed_ip for a temp user' => [
+			$var, '127.0.0.1', [ 'UserIdentityUtils' => $mockUserIdentityUtils ]
+		];
 
 		$user = $this->createMock( User::class );
 		$groups = [ '*', 'group1', 'group2' ];
@@ -263,7 +271,6 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 	 * @param LazyLoadedVariable $var
 	 * @param mixed $expected
 	 * @param array $services
-	 * @covers ::compute
 	 * @dataProvider provideTitleRelatedVars
 	 */
 	public function testTitleRelatedVars(

@@ -2,12 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"पर्वत सुबेदी",
-			"बिप्लब आनन्द",
-			"बडा काजी"
+			"बडा काजी",
+			"बिप्लब आनन्द"
 		]
 	},
 	"cite_error": "उद्दरण त्रुटी: $1",
 	"cite_error_references_no_text": "अवैध <code>&lt;ref&gt;</code>चिनो; <code>$1</code> नामको सन्दर्भका लागि कुनै पाठ प्रदान गरिएको छैन",
+	"cite-reference-previews-reference": "सन्दर्भ",
+	"cite-reference-previews-book": "पुस्तक सन्दर्भ",
+	"cite-reference-previews-journal": "जर्नल सन्दर्भ",
+	"cite-reference-previews-news": "समाचार सन्दर्भ",
+	"cite-reference-previews-note": "टिप्पणी",
+	"cite-reference-previews-web": "वेब सन्दर्भ",
 	"cite_section_preview_references": "सन्दर्भहरूको पुर्वावलोकन",
 	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> <code>ट्याग $1</code> सँग पूर्वावलोकन गर्न सकिँदैन किनभने यो हालको खण्ड बाहिर परिभाषित गरिएको छ वा परिभाषित गरिएको छैन।",
 	"cite-wikieditor-tool-reference": "सन्दर्भ",

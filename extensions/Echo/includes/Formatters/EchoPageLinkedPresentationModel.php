@@ -128,9 +128,7 @@ class EchoPageLinkedPresentationModel extends EchoEventPresentationModel {
 		$msg->params( $this->getTruncatedTitleText( $this->getPageFrom(), true ) );
 		$count =
 			$this->getNotificationCountForOutput( true, [ $this, 'getLinkedPageId' ] );
-
-		// Repeat is B/C until unused parameter is removed from translations
-		$msg->numParams( $count, $count );
+		$msg->numParams( $count );
 		return $msg;
 	}
 

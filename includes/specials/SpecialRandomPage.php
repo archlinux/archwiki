@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Randompage
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,8 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Rob Church <robchur@gmail.com>, Ilmari Karonen
  */
 
 namespace MediaWiki\Specials;
@@ -30,14 +26,18 @@ use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
- * Special page to direct the user to a random page
+ * Redirect to a random page
  *
  * @ingroup SpecialPage
+ * @author Rob Church <robchur@gmail.com>, Ilmari Karonen
  */
 class SpecialRandomPage extends SpecialPage {
-	private $namespaces; // namespaces to select pages from
-	protected $isRedir = false; // should the result be a redirect?
-	protected $extra = []; // Extra SQL statements
+	/** @var int[] namespaces to select pages from */
+	private $namespaces;
+	/** @var bool should the result be a redirect? */
+	protected $isRedir = false;
+	/** @var array Extra SQL statements */
+	protected $extra = [];
 
 	private IConnectionProvider $dbProvider;
 
@@ -176,7 +176,7 @@ class SpecialRandomPage extends SpecialPage {
 		 * causes anyway.  Trust me, I'm a mathematician. :)
 		 */
 		if ( !$row ) {
-			$row = $this->selectRandomPageFromDB( "0", __METHOD__ );
+			$row = $this->selectRandomPageFromDB( 0, __METHOD__ );
 		}
 
 		if ( $row ) {
@@ -187,12 +187,13 @@ class SpecialRandomPage extends SpecialPage {
 	}
 
 	protected function getQueryInfo( $randstr ) {
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$redirect = $this->isRedirect() ? 1 : 0;
 		$tables = [ 'page' ];
 		$conds = array_merge( [
 			'page_namespace' => $this->namespaces,
 			'page_is_redirect' => $redirect,
-			'page_random >= ' . $randstr
+			$dbr->expr( 'page_random', '>=', $randstr ),
 		], $this->extra );
 		$joinConds = [];
 
@@ -211,20 +212,14 @@ class SpecialRandomPage extends SpecialPage {
 		];
 	}
 
-	private function selectRandomPageFromDB( $randstr, $fname = __METHOD__ ) {
+	private function selectRandomPageFromDB( $randstr, $fname ) {
 		$dbr = $this->dbProvider->getReplicaDatabase();
 
 		$query = $this->getQueryInfo( $randstr );
-		$res = $dbr->select(
-			$query['tables'],
-			$query['fields'],
-			$query['conds'],
-			$fname,
-			$query['options'],
-			$query['join_conds']
-		);
-
-		return $res->fetchObject();
+		return $dbr->newSelectQueryBuilder()
+			->queryInfo( $query )
+			->caller( $fname )
+			->fetchRow();
 	}
 
 	protected function getGroupName() {

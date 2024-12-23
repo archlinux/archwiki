@@ -2,46 +2,67 @@
 @import '../mmv.variables.less';
 @import '../mmv.mixins.less';
 
-@background-color: #fff;
+@background-color: @background-color-base;
 @dialog-width: 450px;
-@box-shadow-dialog: 0 2px 2px 0 darken( @background-color, 33.3% );
 
+/* Flexbox gap not supported in all browsers */
+/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 .mw-mmv-dialog {
 	position: fixed;
-	right: 58px;
+	right: @buttons-offset-edge + @buttons-offset-each + ( @arrow-size / 2 );
 	display: none;
 	width: @dialog-width;
 	height: @dialog-height;
 	background-color: @background-color;
-	box-shadow: @box-shadow-dialog;
-	border-radius: @border-radius-base;
+	box-shadow: @box-shadow-drop-xx-large;
 	z-index: 1004;
 
 	.mw-mmv-dialog-down-arrow {
-		right: 48px;
+		right: @buttons-offset-edge + @buttons-offset-each;
 		background-color: @background-color;
 		width: @arrow-size;
 		height: @arrow-size;
-		.rotate( -45deg );
+		transform: rotate( -45deg );
 		position: fixed;
 	}
 
-	.mw-mmv-dialog-copy {
-		/* @embed */
-		background-image: url( img/pasting.svg );
-		background-size: contain;
-		background-position: right center;
-		background-repeat: no-repeat;
-		cursor: pointer;
-
-		&:hover {
-			/* @embed */
-			background-image: url( img/pasting-hover.svg );
-			text-decoration: none;
-		}
+	.mw-mmv-dialog-warning {
+		background-color: @background-color-warning-subtle;
 	}
 
-	.mw-mmv-dialog-warning {
-		background-color: @dialog-warning-color;
+	.mw-mmv-pt-0 {
+		padding-top: 0;
+	}
+
+	.mw-mmv-pb-0 {
+		padding-bottom: 0;
+	}
+
+	.mw-mmv-mt-75 {
+		margin-top: @spacing-75;
+	}
+
+	.mw-mmv-mb-75 {
+		margin-bottom: @spacing-75;
+	}
+
+	.mw-mmv-pb-150 {
+		padding-bottom: @spacing-150;
+	}
+
+	.mw-mmv-gap-50 {
+		gap: @spacing-50;
+	}
+
+	.mw-mmv-flex {
+		display: flex;
+	}
+
+	.mw-mmv-flex-grow-1 {
+		flex-grow: 1;
+	}
+
+	.cdx-button__icon--copy {
+		.cdx-mixin-css-icon( @cdx-icon-copy, @param-is-button-icon: true );
 	}
 }

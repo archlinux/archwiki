@@ -19,7 +19,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|padėkojo}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Padėkoti}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Padėkojo}}}}",
-	"thanks-button-action-completed": "Jūs {{GENDER:$1|{{GENDER:$2|padėkojote}}}} $1",
 	"thanks-error-undefined": "Padėkoti nepavyko (klaidos kodas: $1). Prašome pabandyti dar kartą.",
 	"thanks-error-invalidrevision": "Netinkamas versijos ID",
 	"thanks-error-revdeleted": "Neįmanoma padėkoti, nes ši versija buvo ištrinta.",

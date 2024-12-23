@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use ApiBase;
-use ApiMain;
-use ApiUsageException;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\VisualEditor\VisualEditorParsoidClientFactory;
 use MediaWiki\Revision\RevisionLookup;
@@ -33,6 +33,37 @@ class ApiDiscussionToolsCompare extends ApiBase {
 	}
 
 	/**
+	 * @throws ApiUsageException
+	 */
+	private function getRevision( array $params, string $prefix ): RevisionRecord {
+		if ( isset( $params["{$prefix}rev"] ) ) {
+			$rev = $this->revisionLookup->getRevisionById( $params["{$prefix}rev"] );
+			if ( !$rev ) {
+				$this->dieWithError( [ 'apierror-nosuchrevid', $params["{$prefix}rev"] ] );
+			}
+
+		} else {
+			$title = Title::newFromText( $params["{$prefix}title"] );
+			if ( !$title ) {
+				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params["{$prefix}title"] ) ] );
+			}
+			$rev = $this->revisionLookup->getRevisionByTitle( $title );
+			if ( !$rev ) {
+				$this->dieWithError(
+					[ 'apierror-missingrev-title', wfEscapeWikiText( $title->getPrefixedText() ) ],
+					'nosuchrevid'
+				);
+			}
+		}
+		// To keep things simple, don't allow viewing deleted revisions through this API
+		// (even if the current user could view them if we checked with userCan()).
+		if ( !$rev->audienceCan( RevisionRecord::DELETED_TEXT, RevisionRecord::FOR_PUBLIC ) ) {
+			$this->dieWithError( [ 'apierror-missingcontent-revid', $rev->getId() ], 'missingcontent' );
+		}
+		return $rev;
+	}
+
+	/**
 	 * @inheritDoc
 	 * @throws ApiUsageException
 	 */
@@ -42,25 +73,7 @@ class ApiDiscussionToolsCompare extends ApiBase {
 		$this->requireOnlyOneParameter( $params, 'fromtitle', 'fromrev' );
 		$this->requireOnlyOneParameter( $params, 'totitle', 'torev' );
 
-		if ( isset( $params['torev'] ) ) {
-			$toRev = $this->revisionLookup->getRevisionById( $params['torev'] );
-			if ( !$toRev ) {
-				$this->dieWithError( [ 'apierror-nosuchrevid', $params['torev'] ] );
-			}
-
-		} else {
-			$toTitle = Title::newFromText( $params['totitle'] );
-			if ( !$toTitle ) {
-				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params['totitle'] ) ] );
-			}
-			$toRev = $this->revisionLookup->getRevisionByTitle( $toTitle );
-			if ( !$toRev ) {
-				$this->dieWithError(
-					[ 'apierror-missingrev-title', wfEscapeWikiText( $toTitle->getPrefixedText() ) ],
-					'nosuchrevid'
-				);
-			}
-		}
+		$toRev = $this->getRevision( $params, 'to' );
 
 		// When polling for new comments this is an important optimisation,
 		// as usually there is no new revision.
@@ -69,25 +82,7 @@ class ApiDiscussionToolsCompare extends ApiBase {
 			return;
 		}
 
-		if ( isset( $params['fromrev'] ) ) {
-			$fromRev = $this->revisionLookup->getRevisionById( $params['fromrev'] );
-			if ( !$fromRev ) {
-				$this->dieWithError( [ 'apierror-nosuchrevid', $params['fromrev'] ] );
-			}
-
-		} else {
-			$fromTitle = Title::newFromText( $params['fromtitle'] );
-			if ( !$fromTitle ) {
-				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params['fromtitle'] ) ] );
-			}
-			$fromRev = $this->revisionLookup->getRevisionByTitle( $fromTitle );
-			if ( !$fromRev ) {
-				$this->dieWithError(
-					[ 'apierror-missingrev-title', wfEscapeWikiText( $fromTitle->getPrefixedText() ) ],
-					'nosuchrevid'
-				);
-			}
-		}
+		$fromRev = $this->getRevision( $params, 'from' );
 
 		if ( $fromRev->hasSameContent( $toRev ) ) {
 			$this->addResult( $fromRev, $toRev );

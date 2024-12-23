@@ -21,17 +21,17 @@ ve.ce.nodeFactory.register( ve.ce.LeafNodeStub );
 
 /* Tests */
 
-QUnit.test( 'splitOnEnter', function ( assert ) {
-	var node = new ve.ce.LeafNodeStub( new ve.dm.LeafNodeStub() );
+QUnit.test( 'splitOnEnter', ( assert ) => {
+	const node = new ve.ce.LeafNodeStub( new ve.dm.LeafNodeStub() );
 	assert.strictEqual( node.splitOnEnter(), false );
 } );
 
-QUnit.test( 'canHaveChildren', function ( assert ) {
-	var node = new ve.ce.LeafNodeStub( new ve.dm.LeafNodeStub() );
+QUnit.test( 'canHaveChildren', ( assert ) => {
+	const node = new ve.ce.LeafNodeStub( new ve.dm.LeafNodeStub() );
 	assert.strictEqual( node.canHaveChildren(), false );
 } );
 
-QUnit.test( 'canHaveChildrenNotContent', function ( assert ) {
-	var node = new ve.ce.LeafNodeStub( new ve.dm.LeafNodeStub() );
+QUnit.test( 'canHaveChildrenNotContent', ( assert ) => {
+	const node = new ve.ce.LeafNodeStub( new ve.dm.LeafNodeStub() );
 	assert.strictEqual( node.canHaveChildrenNotContent(), false );
 } );

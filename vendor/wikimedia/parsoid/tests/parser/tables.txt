@@ -96,7 +96,7 @@ foo
 
 # This is unlikely to ever be used in any production wikipage
 # since it doesn't make any sense embedding tables in links.
-# FIXME: Note that the PHP parser and Parsoid differ on this!
+# FIXME: Note that the legacy parser and Parsoid differ on this!
 !! test
 Tables with multiple newlines after individual lines embedded in links
 !! options
@@ -900,8 +900,11 @@ parsoid={
 </td></tr></tbody></table>
 !! end
 
+# This test introduces a newline in a fosterable position which tangentially
+# tests template-wrapping behavior more explicitly tested by the # next test
+# ("2b: Delete ...").
 !! test
-2. Template-generated table cell attributes and cell content
+2a. Template-generated table cell attributes and cell content
 !! wikitext
 {|
 |{{table_attribs_2}}
@@ -916,8 +919,30 @@ parsoid={
 </td></tr></tbody></table>
 !! html/parsoid
 <table>
-<tbody><tr><td about="#mwt1" typeof="mw:Transclusion" data-sort-value="" style="color:red;" data-mw='{"parts":["|",{"template":{"target":{"wt":"table_attribs_2","href":"./Template:Table_attribs_2"},"params":{},"i":0}}]}'>Foo</td>
-<td about="#mwt1">Bar</td><td about="#mwt1">Baz</td></tr>
+<tbody><tr><td about="#mwt1" typeof="mw:Transclusion" data-sort-value="" style="color:red;" data-mw='{"parts":["|",{"template":{"target":{"wt":"table_attribs_2","href":"./Template:Table_attribs_2"},"params":{},"i":0}}]}'>Foo</td><td about="#mwt1">Bar</td><td about="#mwt1">Baz</td></tr>
+</tbody></table>
+!! end
+
+!! test
+2b: Delete whitespace/comments if found in fosterable position while template-wrapping
+!! options
+!! wikitext
+<table>
+<tr>
+<td>hi</td>
+{{1x|<td>ho</td>
+<!--comment-->
+<td>hi</td>}}
+<td>ho</td>
+</tr>
+</table>
+!! html/parsoid
+<table data-parsoid='{"stx":"html"}'>
+<tbody><tr>
+<td data-parsoid='{"stx":"html"}'>hi</td>
+<td about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;td>ho&lt;/td>\n&lt;!--comment-->\n&lt;td>hi&lt;/td>"}},"i":0}}]}'>ho</td><td about="#mwt1">hi</td>
+<td>ho</td>
+</tr>
 </tbody></table>
 !! end
 
@@ -1271,7 +1296,7 @@ parsoid={ "modes": ["wt2html","selser"], "suppressErrors": true }
 </table>
 !! html/parsoid
 <ul data-parsoid='{"fostered":true,"autoInsertedEnd":true}'><li>a</li><li>b</li></ul><table>
-<tbody><tr data-parsoid='{"startTagSrc":"|-"}'>
+<tbody><tr class="mw-empty-elt" data-parsoid='{"startTagSrc":"|-"}'>
 
 </tr></tbody></table>
 !! end
@@ -1897,3 +1922,42 @@ parsoid={
 |}
 !! end
 
+!! test
+Spec syntactic differences in parsing of !! compared to ||
+!! options
+parsoid=wt2html,wt2wt
+!! wikitext
+{|
+<!--cmt-->!!foo
+{{1x|!!foo}}
+<!--cmt-->!!foo!!bar
+{{1x|!!foo}}{{1x|!!bar}}
+|}
+!! html/php
+<table>
+<tbody><tr>
+<th>!foo
+</th>
+<th>!foo
+</th>
+<th>!foo</th>
+<th>bar
+</th>
+<th>!foo</th>
+<th>bar
+</th></tr></tbody></table>
+!! html/parsoid+integrated
+<table><!--cmt-->
+<tbody>
+<tr>
+<th>!foo</th>
+<th about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"!!foo"}},"i":0}}]}'>!foo</th>
+<!--cmt-->
+<th>!foo</th>
+<th>bar</th>
+<th about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"!!foo"}},"i":0}}]}'>!foo</th>
+<th about="#mwt3" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"!!bar"}},"i":0}}]}'>bar</th>
+</tr>
+</tbody>
+</table>
+!! end

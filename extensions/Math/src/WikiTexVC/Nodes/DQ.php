@@ -8,6 +8,7 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseParsing;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmsub;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmunder;
+use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 
 class DQ extends TexNode {
 	/** @var TexNode */
@@ -47,7 +48,7 @@ class DQ extends TexNode {
 
 		$emptyMrow = "";
 		// In cases with empty curly preceding like: "{}_pF_q"
-		if ( $this->getBase() instanceof Curly && $this->getBase()->isEmpty() ) {
+		if ( $this->getBase()->isCurly() && $this->getBase()->isEmpty() ) {
 			$mrow = new MMLmrow();
 			$emptyMrow = $mrow->getEmpty();
 		}
@@ -57,6 +58,12 @@ class DQ extends TexNode {
 				$outer = new MMLmunder();
 			} else {
 				$outer = new MMLmsub();
+				if ( ( $state['styleargs']['displaystle'] ?? 'true' ) === 'true' ) {
+					$tu = TexUtil::getInstance();
+					if ( $tu->operator( trim( $this->base->render() ) ) ) {
+						$outer = new MMLmunder();
+					}
+				}
 			}
 			// Otherwise use default fallback
 			$mmlMrow = new MMLmrow();

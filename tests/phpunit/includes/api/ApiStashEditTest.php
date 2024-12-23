@@ -2,23 +2,23 @@
 
 namespace MediaWiki\Tests\Api;
 
-use CssContent;
-use HashBagOStuff;
+use MediaWiki\Content\CssContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Storage\PageEditStash;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
-use NullStatsdDataFactory;
 use Psr\Log\NullLogger;
 use stdClass;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
-use WikitextContent;
 
 /**
- * @covers \ApiStashEdit
+ * @covers MediaWiki\Api\ApiStashEdit
  * @covers \MediaWiki\Storage\PageEditStash
  * @group API
  * @group medium
@@ -42,7 +42,7 @@ class ApiStashEditTest extends ApiTestCase {
 			new HashBagOStuff( [] ),
 			$this->getServiceContainer()->getConnectionProvider(),
 			new NullLogger(),
-			new NullStatsdDataFactory(),
+			StatsFactory::newNull(),
 			$this->getServiceContainer()->getUserEditTracker(),
 			$this->getServiceContainer()->getUserFactory(),
 			$this->getServiceContainer()->getWikiPageFactory(),
@@ -61,7 +61,7 @@ class ApiStashEditTest extends ApiTestCase {
 	 * @return array
 	 */
 	protected function doStash(
-		array $params = [], User $user = null, $expectedResult = 'stashed'
+		array $params = [], ?User $user = null, $expectedResult = 'stashed'
 	) {
 		$params = array_merge( [
 			'action' => 'stashedit',
@@ -134,7 +134,7 @@ class ApiStashEditTest extends ApiTestCase {
 	 * @param User|null $user User who made edit
 	 * @return string
 	 */
-	protected function getStashKey( $title = self::CLASS_NAME, $text = 'Content', User $user = null ) {
+	protected function getStashKey( $title = self::CLASS_NAME, $text = 'Content', ?User $user = null ) {
 		$titleObj = Title::newFromText( $title );
 		$content = new WikitextContent( $text );
 		if ( !$user ) {
@@ -460,11 +460,11 @@ class ApiStashEditTest extends ApiTestCase {
 		$this->markTestSkipped();
 
 		$key = $this->getStashKey();
-		$this->db->lock( $key, __METHOD__, 0 );
+		$this->getDb()->lock( $key, __METHOD__, 0 );
 		try {
 			$this->doStash( [], null, 'busy' );
 		} finally {
-			$this->db->unlock( $key, __METHOD__ );
+			$this->getDb()->unlock( $key, __METHOD__ );
 		}
 	}
 }

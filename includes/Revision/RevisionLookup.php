@@ -22,9 +22,9 @@
 
 namespace MediaWiki\Revision;
 
-use IDBAccessObject;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Service for looking up page revisions.
@@ -52,7 +52,7 @@ interface RevisionLookup {
 	 *
 	 * @return RevisionRecord|null
 	 */
-	public function getRevisionById( $id, $flags = 0, PageIdentity $page = null );
+	public function getRevisionById( $id, $flags = 0, ?PageIdentity $page = null );
 
 	/**
 	 * Load either the current, or a specified, revision

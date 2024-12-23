@@ -29,15 +29,8 @@ use MediaWiki\Title\Title;
 
 class UserNamespaceOverflowBuilder extends DefaultOverflowBuilder {
 
-	/**
-	 * @var IContextSource
-	 */
-	private $context;
-
-	/**
-	 * @var LanguagesHelper
-	 */
-	private $languagesHelper;
+	private IContextSource $context;
+	private LanguagesHelper $languagesHelper;
 
 	/**
 	 * Initialize the overflow menu visible on the User namespace

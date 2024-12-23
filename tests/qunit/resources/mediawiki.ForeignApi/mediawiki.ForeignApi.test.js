@@ -1,5 +1,5 @@
-QUnit.module( 'mediawiki.ForeignApi', function ( hooks ) {
-	var CoreForeignApi = require( 'mediawiki.ForeignApi.core' ).ForeignApi;
+QUnit.module( 'mediawiki.ForeignApi', ( hooks ) => {
+	const CoreForeignApi = require( 'mediawiki.ForeignApi.core' ).ForeignApi;
 
 	hooks.beforeEach( function () {
 		this.server = this.sandbox.useFakeServer();
@@ -7,9 +7,9 @@ QUnit.module( 'mediawiki.ForeignApi', function ( hooks ) {
 	} );
 
 	QUnit.test( 'origin is included in GET requests', function ( assert ) {
-		var api = new CoreForeignApi( '//localhost:4242/w/api.php' );
+		const api = new CoreForeignApi( '//localhost:4242/w/api.php' );
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.true( /origin=/.test( request.url ), 'origin is included in GET requests' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
 		} );
@@ -18,9 +18,9 @@ QUnit.module( 'mediawiki.ForeignApi', function ( hooks ) {
 	} );
 
 	QUnit.test( 'origin is included in POST requests', function ( assert ) {
-		var api = new CoreForeignApi( '//localhost:4242/w/api.php' );
+		const api = new CoreForeignApi( '//localhost:4242/w/api.php' );
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.true( /origin=/.test( request.requestBody ), 'origin is included in POST request body' );
 			assert.true( /origin=/.test( request.url ), 'origin is included in POST request URL, too' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
@@ -30,10 +30,10 @@ QUnit.module( 'mediawiki.ForeignApi', function ( hooks ) {
 	} );
 
 	QUnit.test( 'origin is not included in same-origin GET requests', function ( assert ) {
-		var apiUrl = location.protocol + '//' + location.host + '/w/api.php',
+		const apiUrl = location.protocol + '//' + location.host + '/w/api.php',
 			api = new CoreForeignApi( apiUrl );
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.strictEqual( request.url.match( /origin=.*?(?:&|$)/ ), null, 'origin is not included in GET requests' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
 		} );
@@ -42,10 +42,10 @@ QUnit.module( 'mediawiki.ForeignApi', function ( hooks ) {
 	} );
 
 	QUnit.test( 'origin is not included in same-origin POST requests', function ( assert ) {
-		var apiUrl = location.protocol + '//' + location.host + '/w/api.php',
+		const apiUrl = location.protocol + '//' + location.host + '/w/api.php',
 			api = new CoreForeignApi( apiUrl );
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.strictEqual( request.requestBody.match( /origin=.*?(?:&|$)/ ), null, 'origin is not included in POST request body' );
 			assert.strictEqual( request.url.match( /origin=.*?(?:&|$)/ ), null, 'origin is not included in POST request URL, either' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );

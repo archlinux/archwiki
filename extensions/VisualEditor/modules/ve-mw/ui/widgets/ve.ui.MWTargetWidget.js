@@ -14,7 +14,7 @@
  *
  * @constructor
  * @param {Object} config
- * @cfg {string[]} [surfaceClasses] Surface classes to apply
+ * @param {string[]} [config.surfaceClasses] Surface classes to apply
  */
 ve.ui.MWTargetWidget = function VeUiMWTargetWidget( config ) {
 	this.surfaceClasses = ve.copy( config.surfaceClasses ) || [];

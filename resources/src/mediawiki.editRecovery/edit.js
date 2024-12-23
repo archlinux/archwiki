@@ -6,15 +6,18 @@
 const storage = require( './storage.js' );
 const LoadNotification = require( './LoadNotification.js' );
 
+const pageName = mw.config.get( 'wgPageName' );
+const section = $( 'input[name="wpSection"]' ).val() || null;
 const inputFields = {};
 const fieldNamePrefix = 'field_';
-var originalData = {};
-var changeDebounceTimer = null;
+let originalData = {};
+let changeDebounceTimer = null;
 
 // Number of miliseconds to debounce form input.
 const debounceTime = 5000;
 
 // This module is loaded for every edit form, but not all should have Edit Recovery functioning.
+const wasPosted = mw.config.get( 'wgEditRecoveryWasPosted' );
 const isUndo = $( 'input[name="wpUndoAfter"]' ).length > 0;
 const isOldRevision = $( 'input[name="oldid"]' ).val() > 0;
 const isConflict = mw.config.get( 'wgEditMessage' ) === 'editconflict';
@@ -36,7 +39,7 @@ function onLoadHandler( $editForm ) {
 	// Monitor all text-entry inputs for changes/typing.
 	const inputsToMonitorSelector = 'textarea, select, input:not([type="hidden"], [type="submit"])';
 	const $inputsToMonitor = $editForm.find( inputsToMonitorSelector );
-	$inputsToMonitor.each( function ( _i, field ) {
+	$inputsToMonitor.each( ( _i, field ) => {
 		if ( field.classList.contains( 'oo-ui-inputWidget-input' ) ) {
 			try {
 				inputFields[ field.name ] = OO.ui.infuse( field.closest( '.oo-ui-widget' ) );
@@ -48,16 +51,16 @@ function onLoadHandler( $editForm ) {
 		}
 	} );
 	// Save the contents of all of those, as well as the following hidden inputs.
-	const inputsToSaveNames = [ 'wpSection', 'editRevId', 'oldid', 'parentRevId', 'format', 'model', 'mode' ];
+	const inputsToSaveNames = [ 'wpSection', 'editRevId', 'oldid', 'parentRevId', 'format', 'model' ];
 	const $inputsToSave = $editForm.find( '[name="' + inputsToSaveNames.join( '"], [name="' ) + '"]' );
-	$inputsToSave.each( function ( _i, field ) {
+	$inputsToSave.each( ( _i, field ) => {
 		inputFields[ field.name ] = field;
 	} );
 
 	// Store the original data for later comparing to the data-to-save. Use the defaultValue/defaultChecked in order to
 	// avoid using any data remembered by the browser. Note that we have to be careful to store with the same types as
 	// it will be done later, in order to correctly compare it (e.g. checkboxes as booleans).
-	Object.keys( inputFields ).forEach( function ( fieldName ) {
+	Object.keys( inputFields ).forEach( ( fieldName ) => {
 		const field = inputFields[ fieldName ];
 		if ( field.nodeName === 'INPUT' || field.nodeName === 'TEXTAREA' ) {
 			if ( field.type === 'checkbox' ) {
@@ -79,14 +82,12 @@ function onLoadHandler( $editForm ) {
 		}
 	} );
 
-	// Open indexedDB database and load any saved data that might be there.
-	const pageName = mw.config.get( 'wgPageName' );
-	const section = inputFields.wpSection.value || null;
 	// Set a short-lived (5m / see postEdit.js) localStorage item to indicate which section is being edited.
 	if ( section ) {
 		mw.storage.session.set( pageName + '-editRecoverySection', section, 300 );
 	}
-	storage.openDatabase().then( function () {
+	// Open indexedDB database and load any saved data that might be there.
+	storage.openDatabase().then( () => {
 		// Check for and delete any expired data for any page, before loading any saved data for the current page.
 		storage.deleteExpiredData().then( () => {
 			storage.loadData( pageName, section ).then( onLoadData );
@@ -95,13 +96,13 @@ function onLoadHandler( $editForm ) {
 
 	// Set up cancel handler to delete data.
 	const cancelButton = OO.ui.infuse( $editForm.find( '#mw-editform-cancel' )[ 0 ] );
-	cancelButton.on( 'click', function () {
-		windowManager.openWindow( 'abandonedit' ).closed.then( function ( data ) {
+	cancelButton.on( 'click', () => {
+		windowManager.openWindow( 'abandonedit' ).closed.then( ( data ) => {
 			if ( data && data.action === 'discard' ) {
 				// Note that originalData is used below in onLoadData() but that's always called before this method.
 				// Here we set originalData to null in order to signal to saveFormData() to deleted the stored data.
 				originalData = null;
-				storage.deleteData( pageName, section ).finally( function () {
+				storage.deleteData( pageName, section ).finally( () => {
 					mw.storage.session.remove( pageName + '-editRecoverySection' );
 					// Release the beforeunload handler from mediawiki.action.edit.editWarning,
 					// per the documentation there
@@ -119,14 +120,12 @@ function track( metric, value ) {
 }
 
 function onLoadData( pageData ) {
-	const wasPosted = mw.config.get( 'wgEditRecoveryWasPosted' );
 	if ( wasPosted ) {
 		// If this is a POST request, save the current data (e.g. from a preview).
 		saveFormData();
 	}
 	// If there is data stored, load it into the form.
 	if ( !wasPosted && pageData !== undefined && !isSameAsOriginal( pageData, true ) ) {
-		loadData( pageData );
 		const loadNotification = new LoadNotification( {
 			differentRev: originalData.field_parentRevId !== pageData.field_parentRevId
 		} );
@@ -135,14 +134,17 @@ function onLoadData( pageData ) {
 		track( 'show', 1 );
 
 		const notification = loadNotification.getNotification();
-		// On 'show changes'.
-		loadNotification.getDiffButton().on( 'click', function () {
-			$( '#wpDiff' ).trigger( 'click' );
+		// On 'restore changes'.
+		loadNotification.getRecoverButton().on( 'click', () => {
+			loadData( pageData );
+			notification.close();
+			// statsv: Track the number of times the edit recovery data is recovered.
+			track( 'recover', 1 );
 		} );
 		// On 'discard changes'.
-		loadNotification.getDiscardButton().on( 'click', function () {
+		loadNotification.getDiscardButton().on( 'click', () => {
 			loadData( originalData );
-			storage.deleteData( mw.config.get( 'wgPageName' ) ).then( function () {
+			storage.deleteData( pageName, section ).then( () => {
 				notification.close();
 			} );
 			// statsv: Track the number of times the edit recovery data is discarded.
@@ -151,7 +153,7 @@ function onLoadData( pageData ) {
 	}
 
 	// Add change handlers.
-	Object.keys( inputFields ).forEach( function ( fieldName ) {
+	Object.keys( inputFields ).forEach( ( fieldName ) => {
 		const field = inputFields[ fieldName ];
 		if ( field.nodeName !== undefined && field.nodeName === 'TEXTAREA' ) {
 			field.addEventListener( 'input', fieldChangeHandler );
@@ -178,7 +180,7 @@ function onLoadData( pageData ) {
 }
 
 function loadData( pageData ) {
-	Object.keys( inputFields ).forEach( function ( fieldName ) {
+	Object.keys( inputFields ).forEach( ( fieldName ) => {
 		if ( pageData[ fieldNamePrefix + fieldName ] === undefined ) {
 			return;
 		}
@@ -212,7 +214,7 @@ function fieldChangeHandler() {
  *
  * @ignore
  * @param {Object} pageData The page data to compare to the original.
- * @param {boolean} ignoreRevIds Do not use parent revision info when determining similarity.
+ * @param {boolean} [ignoreRevIds=false] Do not use parent revision info when determining similarity.
  * @return {boolean}
  */
 function isSameAsOriginal( pageData, ignoreRevIds = false ) {
@@ -237,12 +239,18 @@ function isSameAsOriginal( pageData, ignoreRevIds = false ) {
 }
 
 function saveFormData() {
-	const pageName = mw.config.get( 'wgPageName' );
-	const section = inputFields.wpSection.value !== undefined ? inputFields.wpSection.value : null;
 	const pageData = getFormData();
-	storage.saveData( pageName, section, pageData );
-	// Flag the data for deletion in the postEdit handler in ./postEdit.js
-	mw.storage.session.set( 'EditRecovery-data-saved', true, 300 );
+	if ( ( originalData === null || isSameAsOriginal( pageData ) ) && !wasPosted ) {
+		// Delete the stored data if there's no change,
+		// or if we've flagged originalData as irrelevant,
+		// or if we can't determine this because this page was POSTed.
+		storage.deleteData( pageName, section );
+		mw.storage.session.remove( 'EditRecovery-data-saved' );
+	} else {
+		storage.saveData( pageName, section, pageData );
+		// Flag the data for deletion in the postEdit handler in ./postEdit.js
+		mw.storage.session.set( 'EditRecovery-data-saved', true, 300 );
+	}
 }
 
 /**
@@ -253,9 +261,9 @@ function saveFormData() {
  */
 function getFormData() {
 	const formData = {};
-	Object.keys( inputFields ).forEach( function ( fieldName ) {
+	Object.keys( inputFields ).forEach( ( fieldName ) => {
 		const field = inputFields[ fieldName ];
-		var newValue = null;
+		let newValue = null;
 		if ( !( field instanceof OO.ui.Widget ) && field.nodeName !== undefined && field.nodeName === 'TEXTAREA' ) {
 			// Text areas.
 			newValue = $( field ).textSelection( 'getContents' );

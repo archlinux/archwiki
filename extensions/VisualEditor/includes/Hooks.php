@@ -11,50 +11,51 @@
 namespace MediaWiki\Extension\VisualEditor;
 
 use Article;
-use Config;
-use DeferredUpdates;
-use ExtensionRegistry;
-use Html;
-use HTMLForm;
-use IContextSource;
-use Language;
 use MediaWiki\Actions\ActionEntryPoint;
 use MediaWiki\Auth\Hook\UserLoggedInHook;
 use MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook;
 use MediaWiki\ChangeTags\Hook\ListDefinedTagsHook;
+use MediaWiki\Config\Config;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook;
 use MediaWiki\Diff\Hook\TextSlotDiffRendererTablePrefixHook;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Extension\VisualEditor\EditCheck\ApiEditCheckReferenceUrl;
 use MediaWiki\Hook\BeforeInitializeHook;
-use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\CustomEditorHook;
 use MediaWiki\Hook\EditPage__showEditForm_fieldsHook;
-use MediaWiki\Hook\MakeGlobalVariablesScriptHook;
-use MediaWiki\Hook\OutputPageBodyAttributesHook;
 use MediaWiki\Hook\ParserTestGlobalsHook;
 use MediaWiki\Hook\RecentChange_saveHook;
 use MediaWiki\Hook\SkinEditSectionLinksHook;
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
+use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
+use MediaWiki\Output\Hook\MakeGlobalVariablesScriptHook;
+use MediaWiki\Output\Hook\OutputPageBodyAttributesHook;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Preferences\Hook\PreferencesFormPreSaveHook;
+use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\SpecialPage\Hook\RedirectSpecialArticleRedirectParamsHook;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use OOUI\ButtonGroupWidget;
 use OOUI\ButtonWidget;
-use OutputPage;
 use RecentChange;
-use RequestContext;
 use Skin;
 use SkinTemplate;
-use SpecialPage;
 use TextSlotDiffRenderer;
-use User;
-use WebRequest;
 
 /**
  * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
@@ -117,7 +118,7 @@ class Hooks implements
 	 * namespaces to it. This will run after LocalSettings.php is processed.
 	 * Also ensure Parsoid extension is loaded when necessary.
 	 */
-	public static function onRegistration() {
+	public static function onRegistration(): void {
 		global $wgVisualEditorAvailableNamespaces, $wgContentNamespaces;
 
 		foreach ( $wgContentNamespaces as $contentNamespace ) {
@@ -188,26 +189,33 @@ class Hooks implements
 
 	/**
 	 * @internal For internal use in extension.json only.
-	 * @return array
 	 */
-	public static function getDataForDesktopArticleTargetInitModule() {
+	public static function getDataForDesktopArticleTargetInitModule(): array {
 		return [
 			'unsupportedEditParams' => self::UNSUPPORTED_EDIT_PARAMS,
 		];
 	}
 
-	/** @inheritDoc */
-	public function onDifferenceEngineViewHeader( $differenceEngine ) {
-		$output = $differenceEngine->getContext()->getOutput();
+	/**
+	 * Load modules required for a diff page
+	 *
+	 * @param OutputPage $output Output page
+	 */
+	private function loadDiffModules( OutputPage $output ) {
 		$output->addModuleStyles( [
 			'ext.visualEditor.diffPage.init.styles',
 			'oojs-ui.styles.icons-accessibility',
 			'oojs-ui.styles.icons-editing-advanced'
 		] );
-		// T344596: Must load this module unconditionally. The TextSlotDiffRendererTablePrefix hook
-		// below doesn't run when the diff is e.g. a log entry with no change to the content.
 		$output->addModules( 'ext.visualEditor.diffPage.init' );
 		$output->enableOOUI();
+	}
+
+	/** @inheritDoc */
+	public function onDifferenceEngineViewHeader( $differenceEngine ) {
+		// T344596: Must load this module unconditionally. The TextSlotDiffRendererTablePrefix hook
+		// below doesn't run when the diff is e.g. a log entry with no change to the content.
+		$this->loadDiffModules( $differenceEngine->getContext()->getOutput() );
 	}
 
 	/**
@@ -235,6 +243,9 @@ class Hooks implements
 			return;
 		}
 
+		// onDifferenceEngineViewHeader may not run, so load modules here as well for styling (T361775)
+		$this->loadDiffModules( $output );
+
 		$parts['50_ve-init-mw-diffPage-diffMode'] = '<div class="ve-init-mw-diffPage-diffMode">' .
 			// Will be replaced by a ButtonSelectWidget in JS
 			new ButtonGroupWidget( [
@@ -257,55 +268,12 @@ class Hooks implements
 	}
 
 	/**
-	 * Detect incompatible browsers which we can't expect to load VE
-	 *
-	 * @param WebRequest $req The web request to check the details of
-	 * @param Config $config VE config object
-	 * @return bool The User Agent is unsupported
-	 */
-	private static function isUAUnsupported( WebRequest $req, $config ) {
-		if ( $req->getVal( 'vesupported' ) ) {
-			return false;
-		}
-		$unsupportedList = $config->get( 'VisualEditorBrowserUnsupportedList' );
-		$ua = strtolower( $req->getHeader( 'User-Agent' ) );
-		foreach ( $unsupportedList as $uaSubstr => $rules ) {
-			if ( !strpos( $ua, $uaSubstr . '/' ) ) {
-				continue;
-			}
-			if ( !is_array( $rules ) ) {
-				return true;
-			}
-
-			$matches = [];
-			$ret = preg_match( '/' . $uaSubstr . '\/([0-9\.]*) ?/i', $ua, $matches );
-			if ( $ret !== 1 ) {
-				continue;
-			}
-			$version = $matches[1];
-			foreach ( $rules as $rule ) {
-				[ $op, $matchVersion ] = $rule;
-				if (
-					( $op === '<' && $version < $matchVersion ) ||
-					( $op === '>' && $version > $matchVersion ) ||
-					( $op === '<=' && $version <= $matchVersion ) ||
-					( $op === '>=' && $version >= $matchVersion )
-				) {
-					return true;
-				}
-			}
-
-		}
-		return false;
-	}
-
-	/**
 	 * @param Title $title
 	 * @param User $user
 	 * @param WebRequest $req
 	 * @return bool
 	 */
-	private static function isSupportedEditPage( Title $title, User $user, WebRequest $req ) {
+	private static function isSupportedEditPage( Title $title, User $user, WebRequest $req ): bool {
 		if (
 			$req->getVal( 'action' ) !== 'edit' ||
 			!MediaWikiServices::getInstance()->getPermissionManager()->quickUserCan( 'edit', $user, $title )
@@ -330,10 +298,10 @@ class Hooks implements
 	}
 
 	/**
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @return bool
 	 */
-	private static function enabledForUser( $user ) {
+	private static function enabledForUser( UserIdentity $user ): bool {
 		$services = MediaWikiServices::getInstance();
 		$veConfig = $services->getConfigFactory()->makeConfig( 'visualeditor' );
 		$userOptionsLookup = $services->getUserOptionsLookup();
@@ -348,10 +316,10 @@ class Hooks implements
 	/**
 	 * @param Title $title
 	 * @param WebRequest $req
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @return bool
 	 */
-	private static function isVisualAvailable( $title, $req, $user ) {
+	private static function isVisualAvailable( Title $title, WebRequest $req, UserIdentity $user ): bool {
 		$veConfig = MediaWikiServices::getInstance()->getConfigFactory()
 			->makeConfig( 'visualeditor' );
 
@@ -371,10 +339,10 @@ class Hooks implements
 
 	/**
 	 * @param Title $title
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @return bool
 	 */
-	private static function isWikitextAvailable( $title, $user ) {
+	private static function isWikitextAvailable( Title $title, UserIdentity $user ): bool {
 		$services = MediaWikiServices::getInstance();
 		$userOptionsLookup = $services->getUserOptionsLookup();
 		return $userOptionsLookup->getOption( $user, 'visualeditor-newwikitext' ) &&
@@ -386,7 +354,7 @@ class Hooks implements
 	 * @param string $key
 	 * @param string $value
 	 */
-	private static function deferredSetUserOption( UserIdentity $user, string $key, string $value ) {
+	private static function deferredSetUserOption( UserIdentity $user, string $key, string $value ): void {
 		DeferredUpdates::addCallableUpdate( static function () use ( $user, $key, $value ) {
 			$services = MediaWikiServices::getInstance();
 			if ( $services->getReadOnlyMode()->isReadOnly() ) {
@@ -409,6 +377,7 @@ class Hooks implements
 	public function onCustomEditor( $article, $user ) {
 		$req = $article->getContext()->getRequest();
 		$services = MediaWikiServices::getInstance();
+		$urlUtils = $services->getUrlUtils();
 		$veConfig = $services->getConfigFactory()->makeConfig( 'visualeditor' );
 
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
@@ -419,10 +388,7 @@ class Hooks implements
 			}
 		}
 
-		if (
-			!self::enabledForUser( $user ) ||
-			self::isUAUnsupported( $req, $veConfig )
-		) {
+		if ( !self::enabledForUser( $user ) ) {
 			return true;
 		}
 
@@ -444,7 +410,7 @@ class Hooks implements
 			$out = $article->getContext()->getOutput();
 			$titleMsg = $title->exists() ? 'editing' : 'creating';
 			$out->setPageTitleMsg( wfMessage( $titleMsg, $title->getPrefixedText() ) );
-			$out->showPendingTakeover( $url, 'visualeditor-toload', wfExpandUrl( $url ) );
+			$out->showPendingTakeover( $url, 'visualeditor-toload', $urlUtils->expand( $url ) );
 
 			$out->setRevisionId( $req->getInt( 'oldid', $article->getRevIdFetched() ) );
 			return false;
@@ -457,7 +423,7 @@ class Hooks implements
 	 * @param WebRequest $req
 	 * @return string 'wikitext' or 'visual'
 	 */
-	private static function getEditPageEditor( User $user, WebRequest $req ) {
+	private static function getEditPageEditor( User $user, WebRequest $req ): string {
 		$config = MediaWikiServices::getInstance()->getConfigFactory()
 			->makeConfig( 'visualeditor' );
 		if ( $config->get( 'VisualEditorDisableForAnons' ) && !$user->isRegistered() ) {
@@ -479,8 +445,8 @@ class Hooks implements
 	 * @return string 'wikitext' or 'visual'
 	 */
 	public static function getPreferredEditor(
-		User $user, WebRequest $req, $useWikitextInMultiTab = false
-	) {
+		User $user, WebRequest $req, bool $useWikitextInMultiTab = false
+	): string {
 		// VisualEditor shouldn't even call this method when it's disabled, but it is a public API for
 		// other extensions (e.g. DiscussionTools), and the editor preferences might have surprising
 		// values if the user has tried VisualEditor in the past and then disabled it. (T257234)
@@ -514,7 +480,7 @@ class Hooks implements
 	 * @param WebRequest $req
 	 * @return string
 	 */
-	private static function getLastEditor( User $user, WebRequest $req ) {
+	private static function getLastEditor( User $user, WebRequest $req ): string {
 		// This logic matches getLastEditor in:
 		// modules/ve-mw/init/targets/ve.init.mw.DesktopArticleTarget.init.js
 		$editor = $req->getCookie( 'VEE', '' );
@@ -916,7 +882,15 @@ class Hooks implements
 			$veEditSectionHint = $tabMessages['editsectionhint'];
 
 			$attribs = $result['editsection']['attribs'];
-			$attribs['class'] = ( $attribs['class'] ?? '' ) . ' mw-editsection-visualeditor';
+			// class goes to SkinComponentLink which will accept a string or
+			// an array, and either might be provided at this point.
+			$class = $attribs['class'] ?? '';
+			if ( is_array( $class ) ) {
+				$class[] = 'mw-editsection-visualeditor';
+			} else {
+				$class .= ' mw-editsection-visualeditor';
+			}
+			$attribs['class'] = $class;
 			$attribs['title'] = $skin->msg( $veEditSectionHint )
 				->plaintextParams( $tooltip )
 				->inLanguage( $lang )->text();
@@ -1171,7 +1145,6 @@ class Hooks implements
 			),
 			'thumbLimits' => $coreConfig->get( 'ThumbLimits' ),
 			'galleryOptions' => $coreConfig->get( 'GalleryOptions' ),
-			'unsupportedList' => $veConfig->get( 'VisualEditorBrowserUnsupportedList' ),
 			'tabPosition' => $veConfig->get( 'VisualEditorTabPosition' ),
 			'tabMessages' => array_filter( $veConfig->get( 'VisualEditorTabMessages' ) ),
 			'singleEditTab' => $veConfig->get( 'VisualEditorUseSingleEditTab' ),
@@ -1185,6 +1158,7 @@ class Hooks implements
 			'editCheckTagging' => $veConfig->get( 'VisualEditorEditCheckTagging' ),
 			'editCheck' => $veConfig->get( 'VisualEditorEditCheck' ),
 			'editCheckABTest' => $veConfig->get( 'VisualEditorEditCheckABTest' ),
+			'editCheckReliabilityAvailable' => ApiEditCheckReferenceUrl::isAvailable(),
 			'namespacesWithSubpages' => $namespacesWithSubpagesEnabled,
 			'specialBooksources' => urldecode( SpecialPage::getTitleFor( 'Booksources' )->getPrefixedURL() ),
 			'rebaserUrl' => $coreConfig->get( 'VisualEditorRebaserURL' ),

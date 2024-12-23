@@ -6,11 +6,11 @@
 			"KuboF",
 			"Mirin",
 			"Ochilov",
+			"Pppery",
 			"Robin van der Vliet",
 			"Tlustulimu",
 			"Yekrats",
-			"YvesNevelsteen",
-			"Pppery"
+			"YvesNevelsteen"
 		]
 	},
 	"config-desc": "La instalilo de MediaWiki",
@@ -45,7 +45,6 @@
 	"config-memory-raised": "La parametro <code>memory_limit</code> de PHP estis $1, ŝanĝita al $2.",
 	"config-apc": "[https://www.php.net/apc APC] estas instalita",
 	"config-apcu": "[https://www.php.net/apcu APCu] estas instalita",
-	"config-wincache": "[https://www.iis.net/downloads/microsoft/wincache-extension WinCache] estas instalita",
 	"config-diff3-bad": "GNU diff3 ne estis trovita.",
 	"config-using-server": "Uzante servilonomon \"<nowiki>$1</nowiki>\".",
 	"config-using-uri": "Uzante servilan retadreson \"<nowiki>$1$2</nowiki>\".",

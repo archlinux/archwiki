@@ -21,6 +21,11 @@
  * @ingroup FileBackend
  */
 
+namespace Wikimedia\FileBackend\FileOps;
+
+use StatusValue;
+use Wikimedia\FileBackend\FileBackend;
+
 /**
  * Delete a file at the given storage path from the backend.
  * Parameters for this operation are outlined in FileBackend::doOperations().
@@ -71,3 +76,6 @@ class DeleteFileOp extends FileOp {
 		return [ $this->params['src'] ];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( DeleteFileOp::class, 'DeleteFileOp' );

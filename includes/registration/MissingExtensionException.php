@@ -1,5 +1,11 @@
 <?php
+
+namespace MediaWiki\Registration;
+
+use Exception;
+use HttpStatus;
 use MediaWiki\Html\TemplateParser;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
 
 /**
  * Thrown when ExtensionRegistry cannot open the extension.json or skin.json file.
@@ -120,3 +126,6 @@ class MissingExtensionException extends Exception {
 		return $path . $suffix;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( MissingExtensionException::class, 'MissingExtensionException' );

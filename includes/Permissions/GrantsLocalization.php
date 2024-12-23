@@ -21,8 +21,8 @@
 namespace MediaWiki\Permissions;
 
 use HtmlArmor;
-use Language;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -37,24 +37,11 @@ use MediaWiki\SpecialPage\SpecialPage;
  * @since 1.38
  */
 class GrantsLocalization {
-	/** @var GrantsInfo */
-	private $grantsInfo;
+	private GrantsInfo $grantsInfo;
+	private LinkRenderer $linkRenderer;
+	private LanguageFactory $languageFactory;
+	private Language $contentLanguage;
 
-	/** @var LinkRenderer */
-	private $linkRenderer;
-
-	/** @var LanguageFactory */
-	private $languageFactory;
-
-	/** @var Language */
-	private $contentLanguage;
-
-	/**
-	 * @param GrantsInfo $grantsInfo
-	 * @param LinkRenderer $linkRenderer
-	 * @param LanguageFactory $languageFactory
-	 * @param Language $contentLanguage
-	 */
 	public function __construct(
 		GrantsInfo $grantsInfo,
 		LinkRenderer $linkRenderer,

@@ -23,7 +23,7 @@ trait NormalizedExceptionTrait {
 	 * @stable to call
 	 * @param string $normalizedMessage A message string with zero or more
 	 *   {}-wrapped tokens in it.
-	 * @param array $context An array maping tokens (without the braces) to
+	 * @param array $context An array mapping tokens (without the braces) to
 	 *   values. Fields not used in the message are allowed. Values that are
 	 *   used in the message should be scalars or have a __toString() method.
 	 * @return string

@@ -1,4 +1,5 @@
 /**
+ * @private
  * @param {jQuery} $item The added list item, or null if no element was added.
  * @return {Object} of arrays with mandatory class names for list item elements.
  */
@@ -34,7 +35,7 @@ function getClassesForItem( $item ) {
 		return {
 			li: [ 'minerva__tab' ],
 			span: [],
-			a: []
+			a: [ 'minerva__tab-text' ]
 		};
 	} else {
 		return {
@@ -48,6 +49,7 @@ function getClassesForItem( $item ) {
 /**
  * Insert icon into the portlet link.
  *
+ * @private
  * @param {jQuery} $link
  * @param {string|undefined} id for icon
  */
@@ -67,6 +69,7 @@ function insertIcon( $link, id ) {
 /**
  * @param {HTMLElement|null} listItem The added list item, or null if no element was added.
  * @param {Object} data
+ * @ignore
  */
 function hookHandler( listItem, data ) {
 	if ( listItem && !listItem.dataset.minervaPortlet ) {
@@ -94,11 +97,13 @@ function hookHandler( listItem, data ) {
 /**
  * Init portlet link items added by gadgets prior to Minerva
  * loading.
+ *
+ * @ignore
  */
 function init() {
 	Array.prototype.forEach.call(
 		document.querySelectorAll( '.mw-list-item-js' ),
-		function ( item ) {
+		( item ) => {
 			hookHandler( item, {
 				id: item.getAttribute( 'id' )
 			} );
@@ -106,6 +111,6 @@ function init() {
 	);
 }
 module.exports = {
-	init: init,
-	hookHandler: hookHandler
+	init,
+	hookHandler
 };

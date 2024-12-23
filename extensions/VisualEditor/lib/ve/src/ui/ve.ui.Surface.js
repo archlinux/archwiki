@@ -15,24 +15,24 @@
  * @param {ve.init.Target} target Target the surface belongs to
  * @param {HTMLDocument|Array|ve.dm.ElementLinearData|ve.dm.Document|ve.dm.Surface} dataOrDocOrSurface Document data, document model, or surface model to edit
  * @param {Object} [config] Configuration options
- * @cfg {ve.dm.BranchNode} [attachedRoot] Node to surface, if ve.dm.Document passed in
- * @cfg {string} mode Editing mode, either "visual" or "source"
- * @cfg {jQuery} [$scrollContainer] The scroll container of the surface
- * @cfg {jQuery} [$scrollListener] The scroll listener of the surface
- * @cfg {jQuery} [$overlayContainer] Clipping container for local overlays, defaults to surface view
- * @cfg {number} [overlayPadding] Padding beween local overlays and clipping container
- * @cfg {ve.ui.CommandRegistry} [commandRegistry] Command registry to use
- * @cfg {ve.ui.SequenceRegistry} [sequenceRegistry] Sequence registry to use
- * @cfg {ve.ui.DataTransferHandlerFactory} [dataTransferHandlerFactory] Data transfer handler factory to use
- * @cfg {string[]|null} [includeCommands] List of commands to include, null for all registered commands
- * @cfg {string[]} [excludeCommands] List of commands to exclude
- * @cfg {Object} [importRules={}] Import rules
- * @cfg {boolean} [multiline=true] Multi-line surface
- * @cfg {string} [placeholder] Placeholder text to display when the surface is empty
- * @cfg {string} [readOnly=false] Surface is read-only
- * @cfg {string} [nullSelectionOnBlur=true] Surface selection is set to null on blur
- * @cfg {string} [inDialog=''] The name of the dialog this surface is in
- * @cfg {boolean} [inTargetWidget=false] The surface is in a target widget
+ * @param {ve.dm.BranchNode} [config.attachedRoot] Node to surface, if ve.dm.Document passed in
+ * @param {string} config.mode Editing mode, either "visual" or "source"
+ * @param {jQuery} [config.$scrollContainer] The scroll container of the surface
+ * @param {jQuery} [config.$scrollListener] The scroll listener of the surface
+ * @param {jQuery} [config.$overlayContainer] Clipping container for local overlays, defaults to surface view
+ * @param {number} [config.overlayPadding] Padding beween local overlays and clipping container
+ * @param {ve.ui.CommandRegistry} [config.commandRegistry] Command registry to use
+ * @param {ve.ui.SequenceRegistry} [config.sequenceRegistry] Sequence registry to use
+ * @param {ve.ui.DataTransferHandlerFactory} [config.dataTransferHandlerFactory] Data transfer handler factory to use
+ * @param {string[]|null} [config.includeCommands] List of commands to include, null for all registered commands
+ * @param {string[]} [config.excludeCommands] List of commands to exclude
+ * @param {Object} [config.importRules={}] Import rules
+ * @param {boolean} [config.multiline=true] Multi-line surface
+ * @param {string} [config.placeholder] Placeholder text to display when the surface is empty
+ * @param {string} [config.readOnly=false] Surface is read-only
+ * @param {string} [config.nullSelectionOnBlur=true] Surface selection is set to null on blur
+ * @param {string} [config.inDialog=''] The name of the dialog this surface is in
+ * @param {boolean} [config.inTargetWidget=false] The surface is in a target widget
  */
 ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 	config = config || {};
@@ -68,7 +68,7 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 	if ( dataOrDocOrSurface instanceof ve.dm.Surface ) {
 		this.model = dataOrDocOrSurface;
 	} else {
-		var documentModel;
+		let documentModel;
 		if ( dataOrDocOrSurface instanceof ve.dm.Document ) {
 			// ve.dm.Document
 			documentModel = dataOrDocOrSurface;
@@ -108,10 +108,8 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config ) {
 		bottom: 0,
 		left: 0
 	};
-	this.toolbarDialogs = new ve.ui.ToolbarDialogWindowManager( this, {
-		factory: ve.ui.windowFactory,
-		modal: false
-	} );
+	// Intiailised on first use
+	this.toolbarDialogs = {};
 
 	// Events
 	this.getModel().connect( this, {
@@ -159,38 +157,38 @@ OO.inheritClass( ve.ui.Surface, OO.ui.Widget );
 /**
  * When a surface has been initialized
  *
- * @event ready
+ * @event ve.ui.Surface#ready
  */
 
 /**
  * When a surface is destroyed.
  *
- * @event destroy
+ * @event ve.ui.Surface#destroy
  */
 
 /**
  * The surface was scrolled programmatically
  * as a result of a native selection change
  *
- * @event scroll
+ * @event ve.ui.Surface#scroll
  */
 
 /**
  * The surface has been submitted by user action, e.g. Ctrl+Enter
  *
- * @event submit
+ * @event ve.ui.Surface#submit
  */
 
 /**
  * The surface has been cancelled by user action, e.g. Escape
  *
- * @event cancel
+ * @event ve.ui.Surface#cancel
  */
 
 /**
  * The surface read-only state has changed
  *
- * @event readOnly
+ * @event ve.ui.Surface#readOnly
  * @param {boolean} readOnly The surface is read-only
  */
 
@@ -201,13 +199,15 @@ OO.inheritClass( ve.ui.Surface, OO.ui.Widget );
  *
  * @return {ve.ui.Surface}
  * @chainable
- * @fires destroy
+ * @fires ve.ui.Surface#destroy
  */
 ve.ui.Surface.prototype.destroy = function () {
 	// Destroy the ce.Surface, the ui.Context and window managers
 	this.context.destroy();
 	this.dialogs.destroy();
-	this.toolbarDialogs.destroy();
+	for ( const side in this.toolbarDialogs ) {
+		this.toolbarDialogs[ side ].destroy();
+	}
 	this.view.destroy();
 	if ( this.debugBar ) {
 		this.debugBar.destroy();
@@ -234,6 +234,7 @@ ve.ui.Surface.prototype.destroy = function () {
  *
  * @return {ve.ui.Surface}
  * @chainable
+ * @fires ve.ui.Surface#ready
  */
 ve.ui.Surface.prototype.initialize = function () {
 	$( OO.ui.getTeleportTarget() ).append( this.globalOverlay.$element );
@@ -361,14 +362,14 @@ ve.ui.Surface.prototype.getBoundingClientRect = function () {
  * @return {Object|null} Object with top, left, bottom, and height properties. Null if the surface is not attached.
  */
 ve.ui.Surface.prototype.getViewportDimensions = function () {
-	var rect = this.getBoundingClientRect();
+	const rect = this.getBoundingClientRect();
 
 	if ( !rect ) {
 		return null;
 	}
 
-	var top = Math.max( this.padding.top - rect.top, 0 );
-	var bottom = $( this.getElementWindow() ).height() - rect.top;
+	const top = Math.max( this.getPadding().top - rect.top, 0 );
+	const bottom = $( this.getElementWindow() ).height() - rect.top;
 
 	return {
 		top: top,
@@ -417,10 +418,17 @@ ve.ui.Surface.prototype.getDialogs = function () {
 /**
  * Get toolbar dialogs window set.
  *
+ * @param {string} [position='side'] Get the toolbar dialogs window set for a specific position
  * @return {ve.ui.WindowManager} Toolbar dialogs window set
  */
-ve.ui.Surface.prototype.getToolbarDialogs = function () {
-	return this.toolbarDialogs;
+ve.ui.Surface.prototype.getToolbarDialogs = function ( position ) {
+	position = position || 'side';
+	this.toolbarDialogs[ position ] = this.toolbarDialogs[ position ] ||
+		new ve.ui.ToolbarDialogWindowManager( this, {
+			factory: ve.ui.windowFactory,
+			modal: false
+		} );
+	return this.toolbarDialogs[ position ];
 };
 
 /**
@@ -458,6 +466,7 @@ ve.ui.Surface.prototype.setDisabled = function ( disabled ) {
  * Set the read-only state of the surface
  *
  * @param {boolean} readOnly Make surface read-only
+ * @fires ve.ui.Surface#readOnly
  */
 ve.ui.Surface.prototype.setReadOnly = function ( readOnly ) {
 	this.readOnly = !!readOnly;
@@ -510,7 +519,11 @@ ve.ui.Surface.prototype.onModelSelect = function () {
 		// occurs (or any event other 'selectionchange') so the flag is unset.
 		return;
 	}
-	this.scrollSelectionIntoViewDebounced();
+	const synchronizer = this.getModel().synchronizer;
+	// Don't scroll to this user's cursor due to another user's changes being applied
+	if ( !( synchronizer && synchronizer.applying ) ) {
+		this.scrollSelectionIntoViewDebounced();
+	}
 };
 
 /**
@@ -523,21 +536,19 @@ ve.ui.Surface.prototype.onModelSelect = function () {
  *
  * @param {ve.dm.Selection} [selectionModel] Optional selection model, defaults to current selection
  * @param {Object} [scrollConfig] Scroll config options, passed to ve.scrollIntoView
- * @fires scroll
+ * @fires ve.ui.Surface#scroll
  */
 ve.ui.Surface.prototype.scrollSelectionIntoView = function ( selectionModel, scrollConfig ) {
 	selectionModel = selectionModel || this.getModel().getSelection();
 
-	var animate = true,
-		view = this.getView(),
+	const view = this.getView(),
 		selectionView = view.getSelection( selectionModel ),
-		surface = this,
 		isNative = selectionView.isNativeCursor();
 
 	// We only care about the focus end of the selection, the anchor never
 	// moves and should be allowed off screen.
-	var clientRect = selectionView.getSelectionFocusRect();
-	var surfaceRect = this.getBoundingClientRect();
+	let clientRect = selectionView.getSelectionFocusRect();
+	const surfaceRect = this.getBoundingClientRect();
 	if ( !clientRect || !surfaceRect ) {
 		return;
 	}
@@ -545,15 +556,16 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function ( selectionModel, scr
 	// We want viewport-relative coordinates, so we need to translate it
 	clientRect = ve.translateRect( clientRect, surfaceRect.left, surfaceRect.top );
 
-	var padding = ve.copy( this.padding );
+	const padding = ve.copy( this.getPadding() );
 
+	let animate = true;
 	if ( isNative ) {
 		animate = false;
 		if (
 			OO.ui.isMobile() &&
 			!selectionModel.isCollapsed()
 		) {
-			var profile = $.client.profile();
+			const profile = $.client.profile();
 			// Assume that if the selection has been expanded, then a context menu is visible
 			// above the selection. We don't want this to obscure the toolbar so add on an
 			// estimate of its height.
@@ -574,7 +586,7 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function ( selectionModel, scr
 	} else {
 		// Don't attempt to scroll non-native selections into view if they
 		// are taller than the viewport (T305862).
-		var viewportDimensions = this.getViewportDimensions();
+		const viewportDimensions = this.getViewportDimensions();
 		if ( clientRect.height > viewportDimensions.height ) {
 			return;
 		}
@@ -590,11 +602,11 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function ( selectionModel, scr
 		animate: animate,
 		scrollContainer: this.$scrollContainer[ 0 ],
 		padding: padding
-	}, scrollConfig ) ).then( function () {
+	}, scrollConfig ) ).then( () => {
 		if ( isNative ) {
 			// TODO: This event has only even been emitted for native selection
 			// scroll changes. Perhaps rename it.
-			surface.emit( 'scroll' );
+			this.emit( 'scroll' );
 		}
 	} );
 };
@@ -612,7 +624,7 @@ ve.ui.Surface.prototype.setPlaceholder = function ( placeholder ) {
 	if ( this.placeholder ) {
 		this.$placeholder.prependTo( this.$element );
 		this.updatePlaceholder();
-		var documentView = this.getView().getDocument();
+		const documentView = this.getView().getDocument();
 		this.$placeholder.prop( {
 			dir: documentView.getDir(),
 			lang: documentView.getLang()
@@ -629,15 +641,15 @@ ve.ui.Surface.prototype.setPlaceholder = function ( placeholder ) {
  * Update placeholder rendering
  */
 ve.ui.Surface.prototype.updatePlaceholder = function () {
-	var hasContent = this.getModel().getDocument().data.hasContent();
+	const hasContent = this.getModel().getDocument().data.hasContent();
 
 	this.$placeholder.toggleClass( 'oo-ui-element-hidden', hasContent );
 	this.placeholderVisible = !hasContent;
 	if ( !hasContent ) {
 		// Use a clone of the first node in the document so the placeholder
 		// styling matches the text the users sees when they start typing
-		var firstNode = this.getView().attachedRoot.children[ 0 ];
-		var $wrapper;
+		const firstNode = this.getView().attachedRoot.children[ 0 ];
+		let $wrapper;
 		if ( firstNode ) {
 			$wrapper = firstNode.$element.clone();
 			if ( ve.debug ) {
@@ -655,13 +667,21 @@ ve.ui.Surface.prototype.updatePlaceholder = function () {
 
 /**
  * Handle position events from the view
+ *
+ * @param {boolean} [wasSynchronizing]
  */
-ve.ui.Surface.prototype.onViewPosition = function () {
-	var padding = this.toolbarDialogs.getSurfacePadding();
-	if ( padding ) {
+ve.ui.Surface.prototype.onViewPosition = function ( wasSynchronizing ) {
+	const padding = {};
+	for ( const side in this.toolbarDialogs ) {
+		ve.extendObject( padding, this.toolbarDialogs[ side ].getSurfacePadding() );
+	}
+	if ( Object.keys( padding ).length ) {
 		this.setPadding( padding );
 		this.adjustVisiblePadding();
-		this.scrollSelectionIntoView();
+		// Don't scroll to this user's cursor due to another user's changes being applied
+		if ( !wasSynchronizing ) {
+			this.scrollSelectionIntoView();
+		}
 	}
 	if ( this.placeholderVisible ) {
 		this.getView().$element.css( 'min-height', this.$placeholder.outerHeight() );
@@ -684,11 +704,11 @@ ve.ui.Surface.prototype.getCommands = function () {
  *
  * @param {ve.ui.Trigger|string} triggerOrAction Trigger or symbolic name of action
  * @param {string} [method] Action method name
- * @param {...Mixed} [args] Additional arguments for action
+ * @param {...any} [args] Additional arguments for action
  * @return {boolean} Action or command was executed
  */
-ve.ui.Surface.prototype.execute = function ( triggerOrAction, method ) {
-	return this.executeWithSource.apply( this, [ triggerOrAction, method, false ].concat( Array.prototype.slice.call( arguments, 2 ) ) );
+ve.ui.Surface.prototype.execute = function ( triggerOrAction, method, ...args ) {
+	return this.executeWithSource( triggerOrAction, method, false, ...args );
 };
 
 /**
@@ -697,12 +717,12 @@ ve.ui.Surface.prototype.execute = function ( triggerOrAction, method ) {
  * @param {ve.ui.Trigger|string} triggerOrAction Trigger or symbolic name of action
  * @param {string} [method] Action method name
  * @param {string} [source] Action source, for logging
- * @param {...Mixed} [args] Additional arguments for action
+ * @param {...any} [args] Additional arguments for action
  * @return {boolean} Action or command was executed
  */
-ve.ui.Surface.prototype.executeWithSource = function ( triggerOrAction, method, source ) {
+ve.ui.Surface.prototype.executeWithSource = function ( triggerOrAction, method, source, ...args ) {
 	if ( triggerOrAction instanceof ve.ui.Trigger ) {
-		var command = this.triggerListener.getCommandByTrigger( triggerOrAction.toString() );
+		const command = this.triggerListener.getCommandByTrigger( triggerOrAction.toString() );
 		if ( command ) {
 			// Have command call execute with action arguments
 			return command.execute( this, false, source );
@@ -711,8 +731,8 @@ ve.ui.Surface.prototype.executeWithSource = function ( triggerOrAction, method, 
 		// Validate method
 		if ( ve.ui.actionFactory.doesActionSupportMethod( triggerOrAction, method ) ) {
 			// Create an action object and execute the method on it
-			var obj = ve.ui.actionFactory.create( triggerOrAction, this, source );
-			var ret = obj[ method ].apply( obj, Array.prototype.slice.call( arguments, 3 ) );
+			const obj = ve.ui.actionFactory.create( triggerOrAction, this, source );
+			const ret = obj[ method ]( ...args );
 			return ret === undefined || !!ret;
 		}
 	}
@@ -726,7 +746,7 @@ ve.ui.Surface.prototype.executeWithSource = function ( triggerOrAction, method, 
  * @return {boolean} The command was executed
  */
 ve.ui.Surface.prototype.executeCommand = function ( commandName ) {
-	var command = this.commandRegistry.lookup( commandName );
+	const command = this.commandRegistry.lookup( commandName );
 	if ( command ) {
 		return command.execute( this );
 	}
@@ -739,14 +759,22 @@ ve.ui.Surface.prototype.setToolbarHeight = function ( toolbarHeight ) {
 };
 
 /**
+ * @typedef {Object} Padding
+ * @memberof ve.ui.Surface
+ * @property {number} [top] Top padding
+ * @property {number} [right] Right padding
+ * @property {number} [bottom] Bottom padding
+ * @property {number} [left] Left padding
+ */
+
+/**
  * Set content area padding.
  *
  * When UI components obscure the surface (e.g. the toolbar),
  * set the appropriate amount of padding here so that
  * scroll-into-view calculations can be adjusted.
  *
- * @param {Object} padding Padding object containing top, right, bottom
- *  and/or left values. Omit properties to leave unchanged.
+ * @param {ve.ui.Surface.Padding} padding Padding object. Omit properties to leave unchanged.
  */
 ve.ui.Surface.prototype.setPadding = function ( padding ) {
 	ve.extendObject( this.padding, padding );
@@ -755,10 +783,27 @@ ve.ui.Surface.prototype.setPadding = function ( padding ) {
 };
 
 /**
+ * Get the current content area padding
+ *
+ * Padding in this context means areas of the surface which are
+ * rendered but are obsured by some other UI element, e.g. a
+ * floating toolbar (but not a static toolbar).
+ *
+ * This can be used when deciding how to position other floating
+ * UI elements, e.g. to avoid rendering a context menu under
+ * a floating toolbar.
+ *
+ * @return {ve.ui.Surface.Padding}
+ */
+ve.ui.Surface.prototype.getPadding = function () {
+	return this.padding;
+};
+
+/**
  * Handle resize events from the context
  */
 ve.ui.Surface.prototype.onContextResize = function () {
-	var padding = this.context.getSurfacePadding();
+	const padding = this.context.getSurfacePadding();
 	if ( padding ) {
 		this.setPadding( padding );
 		this.adjustVisiblePadding();
@@ -793,16 +838,16 @@ ve.ui.Surface.prototype.onViewActivation = function () {
  */
 ve.ui.Surface.prototype.adjustVisiblePadding = function () {
 	if ( OO.ui.isMobile() && !this.inTargetWidget ) {
-		var keyboardShown = this.getView().hasNativeCursorSelection();
-		var bottom;
+		const keyboardShown = this.getView().hasNativeCursorSelection();
+		let bottom;
 		if ( ve.init.platform.constructor.static.isIos() && keyboardShown ) {
 			// iOS needs a whole extra page of padding when the virtual keyboard is shown.
 			// Note: we keep this padding when surface is deactivated-but-shown-as-activated
 			// so that the view doesn't shift when e.g. opening a toolbar toolgroup popup.
-			bottom = $( window ).height() - this.padding.top;
+			bottom = $( window ).height() - this.getPadding().top;
 		} else {
 			// otherwise just add padding to account for the context
-			bottom = this.padding.bottom;
+			bottom = this.getPadding().bottom;
 		}
 		this.getView().$attachedRootNode.css( 'padding-bottom', bottom );
 		this.scrollSelectionIntoView();
@@ -818,7 +863,7 @@ ve.ui.Surface.prototype.adjustVisiblePadding = function () {
  * @return {jQuery.Promise} Promise which resolves with a progress bar widget and fails if cancelled
  */
 ve.ui.Surface.prototype.createProgress = function ( progressCompletePromise, label, nonCancellable ) {
-	var progressBarDeferred = ve.createDeferred();
+	const progressBarDeferred = ve.createDeferred();
 
 	this.progresses.push( {
 		label: label,
@@ -833,7 +878,7 @@ ve.ui.Surface.prototype.createProgress = function ( progressCompletePromise, lab
 };
 
 ve.ui.Surface.prototype.showProgress = function () {
-	var progresses = this.progresses;
+	const progresses = this.progresses;
 
 	this.dialogs.openWindow( 'progress', { progresses: progresses, $returnFocusTo: null } );
 	this.progresses = [];

@@ -29,7 +29,9 @@ use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * @ingroup Maintenance
@@ -47,7 +49,7 @@ The new option is NOT validated.' );
 		$this->addOption(
 			'old',
 			'The value to look for. If it is a default value for the option, pass --old-is-default as well.',
-			false, true
+			false, true, false, true
 		);
 		$this->addOption( 'old-is-default', 'If passed, --old is interpreted as a default value.' );
 		$this->addOption( 'new', 'New value to update users with', false, true );
@@ -111,6 +113,10 @@ The new option is NOT validated.' );
 		$userOptionsLookup = $this->getServiceContainer()->getUserOptionsLookup();
 		$defaultOptions = $userOptionsLookup->getDefaultOptions();
 
+		if ( $option && !array_key_exists( $option, $defaultOptions ) ) {
+			$this->fatalError( "Invalid user option. Use --list to see valid choices\n" );
+		}
+
 		// We list user by user_id from one of the replica DBs
 		$dbr = $this->getServiceContainer()->getConnectionProvider()->getReplicaDatabase();
 
@@ -124,12 +130,8 @@ The new option is NOT validated.' );
 
 			// Get the options and update stats
 			if ( $option ) {
-				if ( !array_key_exists( $option, $defaultOptions ) ) {
-					$this->fatalError( "Invalid user option. Use --list to see valid choices\n" );
-				}
-
 				$userValue = $userOptionsLookup->getOption( $user, $option );
-				if ( $userValue <> $defaultOptions[$option] ) {
+				if ( $userValue != $defaultOptions[$option] ) {
 					$ret[$option][$userValue] = ( $ret[$option][$userValue] ?? 0 ) + 1;
 				}
 			} else {
@@ -166,13 +168,14 @@ The new option is NOT validated.' );
 		// range so convert it.
 		$fromUserId = (int)$this->getOption( 'fromuserid', 1 ) - 1;
 		$toUserId = (int)$this->getOption( 'touserid', 0 ) ?: null;
+		$fromAsText = implode( '|', $from );
 
 		if ( !$dryRun ) {
 			$forUsers = ( $fromUserId || $toUserId ) ? "some users (ID $fromUserId-$toUserId)" : 'ALL USERS';
 			$this->warn(
 				<<<WARN
 The script is about to change the options for $forUsers in the database.
-Users with option <$option> = '$from' will be made to use '$to'.
+Users with option <$option> = '$fromAsText' will be made to use '$to'.
 
 Abort with control-c in the next five seconds....
 WARN
@@ -182,8 +185,7 @@ WARN
 		$userOptionsManager = $this->getServiceContainer()->getUserOptionsManager();
 		$tempUserConfig = $this->getServiceContainer()->getTempUserConfig();
 		$dbr = $this->getReplicaDB();
-		$queryBuilderTemplate = new SelectQueryBuilder( $dbr );
-		$queryBuilderTemplate
+		$queryBuilderTemplate = $dbr->newSelectQueryBuilder()
 			->table( 'user' )
 			->leftJoin( 'user_properties', null, [
 				'user_id = up_user',
@@ -198,10 +200,10 @@ WARN
 			->limit( $this->getBatchSize() )
 			->caller( __METHOD__ );
 		if ( $toUserId ) {
-			$queryBuilderTemplate->andWhere( "user_id <= $toUserId " );
+			$queryBuilderTemplate->andWhere( $dbr->expr( 'user_id', '<=', $toUserId ) );
 		}
 
-		if ( $tempUserConfig->isEnabled() ) {
+		if ( $tempUserConfig->isKnown() ) {
 			$queryBuilderTemplate->andWhere(
 				$tempUserConfig->getMatchCondition( $dbr, 'user_name', IExpression::NOT_LIKE )
 			);
@@ -209,10 +211,11 @@ WARN
 
 		do {
 			$queryBuilder = clone $queryBuilderTemplate;
-			$queryBuilder->andWhere( "user_id > $fromUserId" );
+			$queryBuilder->andWhere( $dbr->expr( 'user_id', '>', $fromUserId ) );
 			$result = $queryBuilder->fetchResultSet();
 			foreach ( $result as $row ) {
 				$fromUserId = (int)$row->user_id;
+				$oldOptionIsDefault = true;
 
 				$user = UserIdentityValue::newRegistered( $row->user_id, $row->user_name );
 				if ( $fromIsDefault ) {
@@ -220,13 +223,19 @@ WARN
 					// NOTE: This is intentionally a loose comparison. $from is always a string
 					// (coming from the command line), but the default value might be of a
 					// different type.
-					if ( $from != $userOptionsManager->getDefaultOption( $option, $user ) ) {
-						continue;
+					$oldOptionMatchingDefault = null;
+					foreach ( $from as $oldOption ) {
+						$oldOptionIsDefault = $oldOption != $userOptionsManager->getDefaultOption( $option, $user );
+						if ( $oldOptionIsDefault ) {
+							$oldOptionMatchingDefault = $oldOption;
+							break;
+						}
 					}
+					$fromAsText = $oldOptionMatchingDefault ?? $fromAsText;
 				}
 
-				$this->output( "$settingWord {$option} for {$row->user_name} from '{$from}' to '{$to}'\n" );
-				if ( !$dryRun ) {
+				$this->output( "$settingWord {$option} for {$row->user_name} from '{$fromAsText}' to '{$to}'\n" );
+				if ( !$dryRun && $oldOptionIsDefault ) {
 					$userOptionsManager->setOption( $user, $option, $to );
 					$userOptionsManager->saveOptions( $user );
 				}
@@ -266,13 +275,17 @@ WARN
 			$queryBuilder = $dbr->newSelectQueryBuilder()
 				->select( 'up_user' )
 				->from( 'user_properties' )
-				->where( [ 'up_property' => $option, "up_user > $minUserId" ] );
+				->where( [ 'up_property' => $option, $dbr->expr( 'up_user', '>', $minUserId ) ] );
 			if ( $this->hasOption( 'touserid' ) ) {
-				$queryBuilder->andWhere( "up_user < $toUserId" );
+				$queryBuilder->andWhere( $dbr->expr( 'up_user', '<', $toUserId ) );
 			}
 			if ( $this->hasOption( 'old' ) ) {
 				$queryBuilder->andWhere( [ 'up_value' => $old ] );
 			}
+			// need to order by ID so we can use ID ranges for query continuation
+			$queryBuilder
+				->orderBy( 'up_user', SelectQueryBuilder::SORT_ASC )
+				->limit( $this->getBatchSize() );
 
 			$userIds = $queryBuilder->caller( __METHOD__ )->fetchFieldValues();
 			if ( $userIds === [] ) {
@@ -329,8 +342,8 @@ WARN
 		$dbr = $this->getDB( DB_REPLICA );
 		$dbw = $this->getDB( DB_PRIMARY );
 
-		$queryBuilderTemplate = new SelectQueryBuilder( $dbr );
-		$queryBuilderTemplate->select( [ 'user_id', 'user_name', 'up_value' ] )
+		$queryBuilderTemplate = $dbr->newSelectQueryBuilder()
+			->select( [ 'user_id', 'user_name', 'up_value' ] )
 			->from( 'user_properties' )
 			->join( 'user', null, [ 'up_user = user_id' ] )
 			->where( [ 'up_property' => $option ] )
@@ -376,5 +389,7 @@ WARN
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = UserOptionsMaintenance::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

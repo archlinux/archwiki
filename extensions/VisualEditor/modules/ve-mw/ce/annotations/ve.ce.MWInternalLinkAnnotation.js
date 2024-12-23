@@ -48,12 +48,12 @@ ve.ce.MWInternalLinkAnnotation.static.getDescription = function ( model ) {
  * Update CSS classes form model state
  */
 ve.ce.MWInternalLinkAnnotation.prototype.updateClasses = function () {
-	var model = this.getModel();
+	const model = this.getModel();
 
 	if ( model.element.originalDomElementsHash ) {
 		// If the link came from Parsoid, use the 'new' class to
 		// determine if this is a 'missing' link.
-		var entry = {};
+		const entry = {};
 		entry[ model.getAttribute( 'lookupTitle' ) ] = {
 			// eslint-disable-next-line no-jquery/no-class-state
 			missing: this.$anchor.hasClass( 'new' )

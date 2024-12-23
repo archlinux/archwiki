@@ -5,6 +5,7 @@
 	"apierror-discussiontools-commentid-notfound": "Kommentar mit der ID „$1“ nicht gefunden.",
 	"apierror-discussiontools-commentname-ambiguous": "Mehrere Kommentare mit dem Namen „$1“ gefunden, <var>commentid</var> ist erforderlich.",
 	"apierror-discussiontools-commentname-notfound": "Kommentar mit dem Namen „$1“ nicht gefunden.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Die Seite hat nie Diskussionen enthalten.",
 	"apierror-discussiontools-formtoken-used": "Der Kommentar wurde bereits abgeschickt. Lade die Seite neu, um ihn zu sehen.",
 	"apierror-discussiontools-subscription-failed-add": "Dieses Thema konnte nicht abonniert werden.",
 	"apierror-discussiontools-subscription-failed-remove": "Dieses Thema konnte nicht abbestellt werden.",
@@ -38,5 +39,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Name des Themas, das abonniert (oder abbestellt) werden soll",
 	"apihelp-discussiontoolssubscribe-param-page": "Eine Seite, auf der das Thema erscheint",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "true zum Abonnieren, false zum Abbestellen",
-	"apihelp-discussiontoolssubscribe-summary": "Abonnieren (oder abbestellen), um Benachrichtigungen über ein Thema zu erhalten."
+	"apihelp-discussiontoolssubscribe-summary": "Abonnieren (oder abbestellen), um Benachrichtigungen über ein Thema zu erhalten.",
+	"apihelp-discussiontoolsthank-param-commentid": "ID des Kommentars, für den gedankt werden soll.",
+	"apihelp-discussiontoolsthank-summary": "Senden einer öffentliche Dankesbenachrichtigung für einen Kommentar."
 }

@@ -13,16 +13,14 @@
 	"oathauth-disabledoath": "Diweradekaet an dilesadur div-elfenn.",
 	"oathauth-prefs-label": "Dilesadur div-elfenn :",
 	"oathauth-step1": "Pazenn 1: Pellkargit ur meziant dilesañ div-elfenn.",
-	"oathauth-step3": "Pazenn 3 : Skrivit ar c'hodoù restaoler",
 	"oathauth-disable-for-user": "Diweradekaat an dilesadur div-elfenn evit un implijer",
 	"action-oathauth-disable-for-user": "diweradekaat an dilesadur div-elfenn evit un implijer",
 	"action-oathauth-view-log": "gwelout marilh ar c’hemmoù an dilesadur div-elfenn",
 	"oathauth-enterverifyreason": "Abeg evit gwiriañ :",
 	"oathauth-user-not-does-not-have-oath-enabled": "Implijer n’en deus ket gweredekaet an dilesadur div-elfenn, neuze netra da vezañ diweradekaet.",
 	"action-oathauth-enable": "gweradekaat an dilesadur div-elfenn",
-	"oathauth-auth-token-label": "Kod div-elfenn pe kod restaoler",
+	"oathauth-auth-token-label": "Jetouer",
 	"oathauth-auth-token-help": "Ar ger-tremen a dalv ur wech hepken implijet evel eil elfenn an dilesadur div-elfenn.",
-	"oathauth-auth-token-help-ui": "Merkit ur c’hod eus ho’ch ardivink dilesañ, pe ur c’hod restaoler",
 	"oathauth-auth-ui": "Roit ur c’hod gwiriañ eus hoc’h ardivink dilesañ mar plij.",
 	"oathauth-login-failed": "Gwiriañ c’hwitet",
 	"oathauth-describe-provider": "Dilesadur div-elfenn (OATH).",
@@ -33,9 +31,5 @@
 	"oathauth-ui-manage": "Merañ",
 	"oathmanage": "Merañ an dilesadur div-elfenn",
 	"oathauth-ui-enabled-module": "Doare dilesadur gwiriedekaet",
-	"oathauth-disable-generic": "Diwiriekaat",
-	"oathauth-totp-disable-warning": "Ne c’halloc’h ket implijout an ardivink dilesañ enrollet gant ar gont-mañ ken. Diweredekaet e vo an holl godoù restaoler stag ouzh ar gont-mañ.",
-	"notification-body-oathauth-oathauth-recoverycodesleft": "Chom a ra {{GENDER:$2|deoc’h}} $3 {{PLURAL:$3| kod}} restaoler. Marteze e fell deoc'h diweredekaat ha gweredekaat en-dro an dilesadenn div-elfenn evit ma vo aozet $4 {{PLURAL:$4|kod}} restaoler nevez  da implijout en amzer da zont.",
-	"oathauth-notifications-recoverycodesleft-help": "Skoazell",
-	"oathauth-notifications-recoverycodesleft-primary": "Gwiriit ho arventennoù dilesañ div-elfenn"
+	"oathauth-disable-generic": "Diwiriekaat"
 }

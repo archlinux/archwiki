@@ -14,12 +14,9 @@ class Hooks implements ResourceLoaderGetConfigVarsHook {
 	 * @param Config $config
 	 */
 	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
-		global $wgTurnstileSiteKey;
-		global $wgCaptchaClass;
-
-		if ( $wgCaptchaClass === Turnstile::class ) {
+		if ( $config->get( 'CaptchaClass' ) === Turnstile::class ) {
 			$vars['wgConfirmEditConfig'] = [
-				'turnstileSiteKey' => $wgTurnstileSiteKey,
+				'turnstileSiteKey' => $config->get( 'TurnstileSiteKey' ),
 				'turnstileScriptURL' => 'https://challenges.cloudflare.com/turnstile/v0/api.js'
 			];
 		}

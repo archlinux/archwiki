@@ -2,20 +2,21 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use HTMLForm;
-use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
+use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\FilterProfiler;
 use MediaWiki\Extension\AbuseFilter\Pager\AbuseFilterPager;
 use MediaWiki\Extension\AbuseFilter\Pager\GlobalAbuseFilterPager;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use OOUI;
 use StringUtils;
-use Xml;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * The default view used in Special:AbuseFilter
@@ -24,6 +25,9 @@ class AbuseFilterViewList extends AbuseFilterView {
 
 	/** @var LinkBatchFactory */
 	private $linkBatchFactory;
+
+	/** @var IConnectionProvider */
+	private $dbProvider;
 
 	/** @var FilterProfiler */
 	private $filterProfiler;
@@ -36,6 +40,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 
 	/**
 	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param IConnectionProvider $dbProvider
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param FilterProfiler $filterProfiler
 	 * @param SpecsFormatter $specsFormatter
@@ -47,6 +52,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
+		IConnectionProvider $dbProvider,
 		AbuseFilterPermissionManager $afPermManager,
 		FilterProfiler $filterProfiler,
 		SpecsFormatter $specsFormatter,
@@ -58,6 +64,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
 		$this->linkBatchFactory = $linkBatchFactory;
+		$this->dbProvider = $dbProvider;
 		$this->filterProfiler = $filterProfiler;
 		$this->specsFormatter = $specsFormatter;
 		$this->specsFormatter->setMessageLocalizer( $context );
@@ -146,13 +153,18 @@ class AbuseFilterViewList extends AbuseFilterView {
 			$conds['af_enabled'] = 1;
 		}
 		if ( in_array( 'hideprivate', $furtherOptions ) ) {
-			$conds['af_hidden'] = 0;
+			$conds['af_hidden'] = Flags::FILTER_PUBLIC;
 		}
 
 		if ( $scope === 'local' ) {
 			$conds['af_global'] = 0;
 		} elseif ( $scope === 'global' ) {
 			$conds['af_global'] = 1;
+		}
+
+		if ( !$this->afPermManager->canViewProtectedVariables( $performer ) ) {
+			$dbr = $this->dbProvider->getReplicaDatabase();
+			$conds[] = $dbr->bitAnd( 'af_hidden', Flags::FILTER_USES_PROTECTED_VARS ) . ' = 0';
 		}
 
 		if ( $searchmode !== null ) {
@@ -167,9 +179,9 @@ class AbuseFilterViewList extends AbuseFilterView {
 
 			if ( $error !== null ) {
 				$out->addHTML(
-					Xml::tags(
+					Html::rawElement(
 						'p',
-						null,
+						[],
 						Html::errorBox( $this->msg( $error )->escaped() )
 					)
 				);
@@ -202,7 +214,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 		$centralDB = $config->get( 'AbuseFilterCentralDB' );
 		$dbIsCentral = $config->get( 'AbuseFilterIsCentral' );
 		$this->getOutput()->addHTML(
-			Xml::tags( 'h2', null, $this->msg( 'abusefilter-list' )->parse() )
+			Html::rawElement( 'h2', [], $this->msg( 'abusefilter-list' )->parse() )
 		);
 
 		$deleted = $optarray['deleted'];
@@ -357,7 +369,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 					$matchPercent
 				)->parse();
 
-			$status = Xml::tags( 'p', [ 'class' => 'mw-abusefilter-status' ], $status );
+			$status = Html::rawElement( 'p', [ 'class' => 'mw-abusefilter-status' ], $status );
 			$this->getOutput()->addHTML( $status );
 		}
 	}

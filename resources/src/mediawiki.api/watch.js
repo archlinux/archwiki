@@ -18,8 +18,8 @@
 	function doWatchInternal( pages, addParams ) {
 		// XXX: Parameter addParams is undocumented because we inherit this
 		// documentation in the public method...
-		var apiPromise = this.postWithToken( 'watch',
-			$.extend(
+		const apiPromise = this.postWithToken( 'watch',
+			Object.assign(
 				{
 					formatversion: 2,
 					action: 'watch',
@@ -30,10 +30,10 @@
 		);
 
 		return apiPromise
-			.then( function ( data ) {
+			.then(
 				// If a single page was given (not an array) respond with a single item as well.
-				return Array.isArray( pages ) ? data.watch : data.watch[ 0 ];
-			} )
+				( data ) => Array.isArray( pages ) ? data.watch : data.watch[ 0 ]
+			)
 			.promise( { abort: apiPromise.abort } );
 	}
 

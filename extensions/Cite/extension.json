@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.42.0"
+		"MediaWiki": ">= 1.43"
 	},
 	"MessagesDirs": {
 		"Cite": [
@@ -26,23 +26,31 @@
 	"Hooks": {
 		"APIQuerySiteInfoGeneralInfo": "main",
 		"ContentHandlerDefaultModelFor": "main",
+		"GetPreferences": "main",
 		"ParserAfterParse": "parser",
 		"ParserClearState": "parser",
 		"ParserCloned": "parser",
 		"ParserFirstCallInit": "parser",
 		"EditPage::showEditForm:initial": "main",
+		"MakeGlobalVariablesScript": "main",
 		"ResourceLoaderGetConfigVars": "main",
-		"ResourceLoaderRegisterModules": "main"
+		"ResourceLoaderRegisterModules": "main",
+		"UserGetDefaultOptions": "main"
 	},
 	"HookHandlers": {
 		"main": {
 			"class": "Cite\\Hooks\\CiteHooks",
 			"services": [
+				"Cite.ReferencePreviewsContext",
+				"Cite.GadgetsIntegration",
 				"UserOptionsLookup"
 			]
 		},
 		"parser": {
-			"class": "Cite\\Hooks\\CiteParserHooks"
+			"class": "Cite\\Hooks\\CiteParserHooks",
+			"services": [
+				"MainConfig"
+			]
 		}
 	},
 	"ResourceModules": {
@@ -61,12 +69,17 @@
 			"localBasePath": "modules/parsoid-styles",
 			"remoteExtPath": "Cite/modules/parsoid-styles",
 			"class": "Cite\\ResourceLoader\\CiteCSSFileModule",
-			"styles": "ext.cite.parsoid.styles.less"
+			"styles": "ext.cite.parsoid.styles.less",
+			"skinStyles": {
+				"minerva": "ext.cite.parsoid.styles.minerva.less"
+			}
 		},
 		"ext.cite.visualEditor.core": {
 			"localBasePath": "modules/ve-cite",
 			"remoteExtPath": "Cite/modules/ve-cite",
 			"scripts": [
+				"ve.dm.MWDocumentReferences.js",
+				"ve.dm.MWGroupReferences.js",
 				"ve.dm.MWReferenceModel.js",
 				"ve.dm.MWReferencesListNode.js",
 				"ve.dm.MWReferenceNode.js",
@@ -75,8 +88,7 @@
 				"ve.ui.MWReferencesListCommand.js"
 			],
 			"styles": [
-				"ve.ce.MWReferencesListNode.less",
-				"ve.ce.MWReferenceNode.less"
+				"ve.ce.MWReferencesListNode.less"
 			],
 			"dependencies": [
 				"ext.visualEditor.mwcore",
@@ -85,6 +97,7 @@
 			"messages": [
 				"cite-ve-referenceslist-isempty",
 				"cite-ve-referenceslist-isempty-default",
+				"cite-ve-referenceslist-missing-parent",
 				"cite-ve-referenceslist-missingref",
 				"cite-ve-referenceslist-missingref-in-list",
 				"cite-ve-referenceslist-missingreflist"
@@ -106,19 +119,23 @@
 				"ve.ui.MWReferencesListDialog.js",
 				"ve.ui.MWReferenceDialog.js",
 				"ve.ui.MWReferenceDialogTool.js",
+				"ve.ui.MWReferenceEditPanel.js",
 				"ve.ui.MWCitationDialogTool.js",
 				"ve.ui.MWReferenceContextItem.js",
 				"ve.ui.MWReferencesListContextItem.js",
 				"ve.ui.MWCitationContextItem.js",
 				"ve.ui.MWCitationAction.js",
 				"ve.ui.MWReference.init.js",
-				"ve.ui.MWCitationNeededContextItem.js"
+				"ve.ui.MWCitationNeededContextItem.js",
+				{
+					"name": "ve.ui.contentLanguage.js",
+					"callback": "Cite\\ResourceLoader\\ContentLanguage::makeScript"
+				}
 			],
 			"styles": [
 				"ve.ui.MWReferenceDialog.less",
 				"ve.ui.MWReferenceContextItem.less",
 				"ve.ui.MWReferenceResultWidget.less",
-				"ve.ui.MWReferenceSearchWidget.less",
 				"ve.ui.MWCitationDialogTool.less"
 			],
 			"dependencies": [
@@ -145,17 +162,24 @@
 				"cite-ve-citationneeded-description",
 				"cite-ve-citationneeded-reason",
 				"cite-ve-citationneeded-title",
+				"cite-ve-dialog-reference-contextitem-extends",
+				"cite-ve-dialog-reference-editing-add-details",
+				"cite-ve-dialog-reference-editing-add-details-placeholder",
 				"cite-ve-dialog-reference-editing-reused",
 				"cite-ve-dialog-reference-editing-reused-long",
 				"cite-ve-dialog-reference-editing-extends",
+				"cite-ve-dialog-reference-extend-long-tool",
+				"cite-ve-dialog-reference-missing-parent-ref",
 				"cite-ve-dialog-reference-options-group-label",
 				"cite-ve-dialog-reference-options-group-placeholder",
-				"cite-ve-dialog-reference-options-name-label",
 				"cite-ve-dialog-reference-options-responsive-label",
 				"cite-ve-dialog-reference-options-section",
 				"cite-ve-dialog-reference-placeholder",
 				"cite-ve-dialog-reference-title",
+				"cite-ve-dialog-reference-title-add-details",
+				"cite-ve-dialog-reference-title-edit-details",
 				"cite-ve-dialog-reference-useexisting-tool",
+				"cite-ve-dialog-reference-useexisting-long-tool",
 				"cite-ve-dialog-referenceslist-contextitem-description-general",
 				"cite-ve-dialog-referenceslist-contextitem-description-named",
 				"cite-ve-dialog-referenceslist-title",
@@ -190,14 +214,17 @@
 				"cite-wikieditor-help-content-reference-example-text2",
 				"cite-wikieditor-help-content-reference-example-text3",
 				"cite-wikieditor-help-content-reference-example-ref-id",
+				"cite-wikieditor-help-content-reference-example-extra-details",
 				"cite-wikieditor-help-content-reference-example-ref-normal",
 				"cite-wikieditor-help-content-reference-example-ref-named",
 				"cite-wikieditor-help-content-reference-example-ref-reuse",
+				"cite-wikieditor-help-content-reference-example-ref-extends",
 				"cite-wikieditor-help-content-reference-example-ref-result",
 				"cite-wikieditor-help-content-reference-example-reflist",
 				"cite-wikieditor-help-content-reference-description",
 				"cite-wikieditor-help-content-named-reference-description",
 				"cite-wikieditor-help-content-rereference-description",
+				"cite-wikieditor-help-content-extended-reference-description",
 				"cite-wikieditor-help-content-showreferences-description",
 				"cite_reference_backlink_symbol"
 			]
@@ -225,12 +252,17 @@
 		"localBasePath": "modules",
 		"remoteExtPath": "Cite/modules"
 	},
+	"ServiceWiringFiles": [
+		"src/ServiceWiring.php"
+	],
 	"QUnitTestModule": {
 		"localBasePath": "",
 		"remoteExtPath": "Cite",
 		"scripts": [
 			"tests/qunit/ve-cite/ve.dm.citeExample.js",
 			"tests/qunit/ve-cite/ve.dm.Converter.test.js",
+			"tests/qunit/ve-cite/ve.dm.MWDocumentReferences.test.js",
+			"tests/qunit/ve-cite/ve.dm.MWGroupReferences.test.js",
 			"tests/qunit/ve-cite/ve.dm.InternalList.test.js",
 			"tests/qunit/ve-cite/ve.dm.MWReferenceModel.test.js",
 			"tests/qunit/ve-cite/ve.dm.MWReferenceNode.test.js",
@@ -239,7 +271,7 @@
 			"tests/qunit/ve-cite/ve.ui.DiffElement.test.js",
 			"tests/qunit/ve-cite/ve.ui.MWCitationDialogTool.test.js",
 			"tests/qunit/ve-cite/ve.ui.MWReferenceContextItem.test.js",
-			"tests/qunit/ve-cite/ve.ui.MWReferenceDialog.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWReferenceEditPanel.test.js",
 			"tests/qunit/ve-cite/ve.ui.MWReferenceGroupInputWidget.test.js",
 			"tests/qunit/ve-cite/ve.ui.MWReferenceResultWidget.test.js",
 			"tests/qunit/ve-cite/ve.ui.MWReferenceSearchWidget.test.js",
@@ -248,8 +280,7 @@
 			"tests/qunit/ve-cite/ve.ui.MWWikitextStringTransferHandler.test.js",
 			"tests/qunit/ext.cite.referencePreviews/createReferenceGateway.test.js",
 			"tests/qunit/ext.cite.referencePreviews/isReferencePreviewsEnabled.test.js",
-			"tests/qunit/ext.cite.referencePreviews/renderer.test.js",
-			"tests/qunit/ext.cite.referencePreviews/setUserConfigFlags.test.js"
+			"tests/qunit/ext.cite.referencePreviews/renderer.test.js"
 		],
 		"dependencies": [
 			"ext.cite.visualEditor",
@@ -265,6 +296,11 @@
 			"TagModes": {
 				"ref": "text/mediawiki",
 				"references": "text/mediawiki"
+			}
+		},
+		"EventLogging": {
+			"Schemas": {
+				"ReferencePreviewsPopups": "/analytics/legacy/referencepreviewspopups/1.1.0"
 			}
 		},
 		"Popups": {
@@ -293,9 +329,26 @@
 			"value": false
 		},
 		"CiteResponsiveReferences": {
-			"description": "If long <references /> lists with more than 10 references should behave responsive by default and be displayed in two or more columns. This can also be toggled individually with <references responsive /> to enable and <references responsive=\"0\" /> to disable it.",
+			"description": "If long <references /> lists with more than $wgCiteResponsiveReferencesThreshold references should behave responsive by default and be displayed in two or more columns. This can also be toggled individually with <references responsive /> to enable and <references responsive=\"0\" /> to disable it.",
 			"public": true,
 			"value": true
+		},
+		"CiteResponsiveReferencesThreshold": {
+			"description": "The number of references at which CiteResponsiveReferences is enabled.",
+			"public": true,
+			"value": 10
+		},
+		"CiteReferencePreviews": {
+			"description": "Feature flag to enable or disable the popups provided by the Popups extension for <ref> tags.",
+			"value": true
+		},
+		"CiteReferencePreviewsConflictingNavPopupsGadgetName": {
+			"description": "@var string: Name of a gadget that would cause duplicate reference preview popups. Should usually be identical to wgPopupsConflictingNavPopupsGadgetName in the Popups extension.",
+			"value": "Navigation_popups"
+		},
+		"CiteReferencePreviewsConflictingRefTooltipsGadgetName": {
+			"description": "@var string: Name of a gadget that would cause duplicate reference preview popups. Known conflicting gadgets include \"ReferenceTooltips\", \"CiteTooltip\" alias \"RefTooltip\", \"ReferencePopups\", and \"tooltipRef\" (see T274353).",
+			"value": "ReferenceTooltips"
 		}
 	},
 	"AutoloadNamespaces": {
@@ -305,37 +358,52 @@
 		"Cite\\Tests\\": "tests/phpunit/"
 	},
 	"TrackingCategories": [
-		"cite-tracking-category-cite-error"
+		"cite-tracking-category-cite-error",
+		"cite-tracking-category-ref-extends"
 	],
-	"ParsoidModules": [ {
-		"name": "Cite",
-		"domProcessors": [
-			"Cite\\Parsoid\\RefProcessor"
-		],
-		"tags": [
-			{
-				"name": "ref",
-				"handler": "Cite\\Parsoid\\Ref",
-				"options": {
-					"wt2html": {
-						"unpackOutput": false,
-						"embedsHTMLInAttributes": true
-					},
-					"outputHasCoreMwDomSpecMarkup": true
+	"ParsoidModules": [
+		{
+			"name": "Cite",
+			"domProcessors": [
+				{
+					"class": "Cite\\Parsoid\\RefProcessor",
+					"services": [
+						"MainConfig"
+					]
 				}
-			},
-			{
-				"name": "references",
-				"handler": "Cite\\Parsoid\\References",
-				"options": {
-					"wt2html": {
-						"embedsHTMLInAttributes": true
+			],
+			"tags": [
+				{
+					"name": "ref",
+					"handler": "Cite\\Parsoid\\Ref",
+					"options": {
+						"wt2html": {
+							"unpackOutput": false,
+							"embedsHTMLInAttributes": true
+						},
+						"outputHasCoreMwDomSpecMarkup": true
+					}
+				},
+				{
+					"name": "references",
+					"handler": {
+						"class": "Cite\\Parsoid\\References",
+						"services": [
+							"MainConfig"
+						]
 					},
-					"html2wt": { "format": "block" },
-					"outputHasCoreMwDomSpecMarkup": true
+					"options": {
+						"wt2html": {
+							"embedsHTMLInAttributes": true
+						},
+						"html2wt": {
+							"format": "block"
+						},
+						"outputHasCoreMwDomSpecMarkup": true
+					}
 				}
-			}
-		]
-	} ],
+			]
+		}
+	],
 	"manifest_version": 2
 }

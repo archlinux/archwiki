@@ -11,7 +11,7 @@ InputBox type=search
 type=search
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox" action="/wiki/Special:Search"><input class="mw-inputbox-input mw-searchInput searchboxInput mw-ui-input mw-ui-input-inline" name="search" placeholder="" size="50" dir="ltr" /><br /><input type="submit" name="go" value="Try exact match" class="mw-ui-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="mw-ui-button" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
 !! end
 
 !! test
@@ -21,7 +21,7 @@ InputBox type=create
 type=create
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -32,7 +32,7 @@ type=create
 minor=1
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="1" name="minor" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="1" name="minor" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -43,7 +43,7 @@ type=create
 minor=0
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="0" name="minor" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="0" name="minor" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -55,7 +55,7 @@ preloadparams[]=param1
 preloadparams[]=param2
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="param1" name="preloadparams[]" /><input type="hidden" value="param2" name="preloadparams[]" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="param1" name="preloadparams[]" /><input type="hidden" value="param2" name="preloadparams[]" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -67,7 +67,7 @@ preloadparams[]=
 preloadparams[]=
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="preloadparams[]" /><input type="hidden" name="preloadparams[]" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="preloadparams[]" /><input type="hidden" name="preloadparams[]" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -78,7 +78,7 @@ type=create
 editintro=MediaWiki:Test
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="MediaWiki:Test" name="editintro" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="MediaWiki:Test" name="editintro" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -89,7 +89,7 @@ type=create
 editintro=
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="editintro" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="editintro" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -100,7 +100,7 @@ type=create
 summary=Summary test
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="Summary test" name="summary" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="Summary test" name="summary" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -111,7 +111,7 @@ type=create
 summary=
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="summary" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="summary" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -122,7 +122,7 @@ type=create
 nosummary=true
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="true" name="nosummary" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="true" name="nosummary" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -133,7 +133,7 @@ type=create
 nosummary=
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="nosummary" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="nosummary" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -144,7 +144,7 @@ type=create
 prefix=Test/
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="Test/" name="prefix" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="Test/" name="prefix" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -155,7 +155,7 @@ type=create
 prefix=
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -166,7 +166,7 @@ type=create
 preload=test
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="test" name="preload" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="test" name="preload" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -177,7 +177,7 @@ type=create
 preload=
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="preload" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Create page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" name="preload" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Create page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -187,7 +187,7 @@ InputBox type=comment
 type=comment
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="new" name="section" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" placeholder="" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="New section" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="new" name="section" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="New section" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -197,7 +197,7 @@ InputBox type=commenttitle
 type=commenttitle
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="commentbox" class="commentbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input name="preloadtitle" class="mw-inputbox-input commentboxInput mw-ui-input mw-ui-input-inline" placeholder="" size="50" dir="ltr" /><input type="hidden" value="new" name="section" /><input type="hidden" name="title" /><br /><input type="submit" name="create" value="New section" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="commentbox" class="commentbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><div class="cdx-text-input"><input name="preloadtitle" class="mw-inputbox-input commentboxInput cdx-text-input__input" placeholder="" size="50" dir="ltr" /></div><input type="hidden" value="new" name="section" /><input type="hidden" name="title" /><br /><input type="submit" name="create" value="New section" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -207,7 +207,7 @@ InputBox type=fulltext
 type=fulltext
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox" action="/wiki/Special:Search"><input class="mw-inputbox-input mw-searchInput searchboxInput mw-ui-input mw-ui-input-inline" name="search" placeholder="" size="50" dir="ltr" /><br /><input type="submit" name="fulltext" value="Search full text" class="mw-ui-button" /><input type="hidden" value="Search" name="fulltext" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" name="fulltext" value="Search full text" class="cdx-button" /><input type="hidden" value="Search" name="fulltext" /></form></div>
 !! end
 
 !! test
@@ -217,7 +217,7 @@ InputBox type=move
 type=move
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="movebox" class="mw-movebox" action="/index.php" method="get"><input type="hidden" value="Special:MovePage/" name="title" /><input type="hidden" name="wpReason" /><input type="hidden" name="prefix" /><input name="wpNewTitle" class="mw-inputbox-input mw-moveboxInput mw-ui-input mw-ui-input-inline" placeholder="" size="50" dir="ltr" /><br /><input type="submit" value="Move page" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="movebox" class="mw-movebox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="Special:MovePage/" name="title" /><input type="hidden" name="wpReason" /><input type="hidden" name="prefix" /><div class="cdx-text-input"><input name="wpNewTitle" class="mw-inputbox-input mw-moveboxInput cdx-text-input__input" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" value="Move page" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -228,7 +228,7 @@ type=search
 tour=test
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox" action="/wiki/Special:Search"><input class="mw-inputbox-input mw-searchInput searchboxInput mw-ui-input mw-ui-input-inline" name="search" placeholder="" size="50" dir="ltr" /><input type="hidden" value="test" name="tour" /><br /><input type="submit" name="go" value="Try exact match" class="mw-ui-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="mw-ui-button" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><input type="hidden" value="test" name="tour" /><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
 !! end
 
 !! test
@@ -242,7 +242,7 @@ default=-{sr-Latn: Some latin; sr-Cyrl: Not latin }-
 placeholder=-{sr-Latn: Latn; sr-Cyrl: Cyrl}-
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input name="title" class="mw-inputbox-input mw-inputbox-createbox mw-ui-input mw-ui-input-inline" value="Some latin" placeholder="Latn" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" value="Napravi stranicu" class="mw-ui-button mw-ui-progressive" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" value="Some latin" placeholder="Latn" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="Napravi stranicu" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
 !! end
 
 !! test
@@ -253,5 +253,5 @@ type=search
 arialabel=Search this wiki
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox" action="/wiki/Special:Search"><input class="mw-inputbox-input mw-searchInput searchboxInput mw-ui-input mw-ui-input-inline" name="search" placeholder="" size="50" dir="ltr" aria-label="Search this wiki" /><br /><input type="submit" name="go" value="Try exact match" class="mw-ui-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="mw-ui-button" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" aria-label="Search this wiki" /></div><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
 !! end

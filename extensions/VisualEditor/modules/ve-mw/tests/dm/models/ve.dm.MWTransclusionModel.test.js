@@ -31,7 +31,7 @@
 			} );
 	};
 
-	QUnit.test( 'nextUniquePartId', function ( assert ) {
+	QUnit.test( 'nextUniquePartId', ( assert ) => {
 		const transclusion = new ve.dm.MWTransclusionModel();
 		assert.strictEqual( transclusion.nextUniquePartId(), 'part_0' );
 		assert.strictEqual( transclusion.nextUniquePartId(), 'part_1' );

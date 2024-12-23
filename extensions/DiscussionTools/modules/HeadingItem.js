@@ -1,6 +1,6 @@
-var ThreadItem = require( './ThreadItem.js' );
+const ThreadItem = require( './ThreadItem.js' );
 // Placeholder headings must have a level higher than real headings (1-6)
-var PLACEHOLDER_HEADING_LEVEL = 99;
+const PLACEHOLDER_HEADING_LEVEL = 99;
 
 /**
  * A heading item
@@ -22,12 +22,11 @@ function HeadingItem( range, headingLevel ) {
 OO.inheritClass( HeadingItem, ThreadItem );
 
 HeadingItem.prototype.getLinkableTitle = function () {
-	var title = '';
+	let title = '';
 	// If this comment is in 0th section, there's no section title for the edit summary
 	if ( !this.placeholderHeading ) {
-		// <span class="mw-headline" …>, or <hN …> in Parsoid HTML
-		var headline = this.range.startContainer;
-		var id = headline.getAttribute( 'id' );
+		const headline = this.range.startContainer;
+		const id = headline.getAttribute( 'id' );
 		if ( id ) {
 			// Replace underscores with spaces to undo Sanitizer::escapeIdInternal().
 			// This assumes that $wgFragmentMode is [ 'html5', 'legacy' ] or [ 'html5' ],

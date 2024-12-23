@@ -29,6 +29,13 @@
 	"cite_error_empty_references_define": "Тэг <code>&lt;ref&gt;</code> з назвай „$1“, вызначаны ў <code>&lt;references&gt;</code> групы „$2“, ня мае зьместу.",
 	"cite-tracking-category-cite-error": "Старонкі з памылкамі ў крыніцах",
 	"cite-tracking-category-cite-error-desc": "Старонкі ў гэтай катэгорыі маюць памылкі ў спасылках на крыніцы.",
+	"cite-reference-previews-reference": "Зноска",
+	"cite-reference-previews-book": "Зноска на кнігу",
+	"cite-reference-previews-journal": "Зноска на часопіс",
+	"cite-reference-previews-news": "Зноска на навіну",
+	"cite-reference-previews-note": "Камэнтар",
+	"cite-reference-previews-web": "Вэб-спасылка",
+	"cite-reference-previews-collapsible-placeholder": "У гэтай зносцы знаходзіцца фігура, якая не зьмяшчаецца ў папярэдні прагляд.",
 	"cite_references_link_accessibility_label": "Угару",
 	"cite_references_link_many_accessibility_label": "Угару да:",
 	"cite_references_link_accessibility_back_label": "Вярнуцца назад",
@@ -39,5 +46,9 @@
 	"cite-wikieditor-help-page-references": "Зноскі",
 	"cite-wikieditor-help-content-reference-description": "Зноска",
 	"cite-wikieditor-help-content-rereference-description": "Паўторнае выкарыстаньне той жа зноскі",
-	"cite-wikieditor-help-content-showreferences-description": "Паказваць зноскі"
+	"cite-wikieditor-help-content-showreferences-description": "Паказваць зноскі",
+	"popups-prefs-navpopups-gadget-conflict-info": "У вас уключаны інструмэнт [[$1|Выплыўныя вокны]], таму вы ня ўбачыце папярэдніх праглядаў, якія забясьпечвае гэтая функцыя. У залежнасьці ад вікі назва інструмэнту можа троху адрозьнівацца. Калі праблемы застануцца, праглядзіце свае інструмэнты і карыстальніцкія сцэнары, улучна з глябальнымі.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "У вас уключаныя інструмэнты [[$1|Выплыўныя вокны]] і [[$1|Выплыўныя падказкі]], таму вы ня ўбачыце папярэдніх праглядаў, якія забясьпечвае гэтая функцыя. У залежнасьці ад вікі назва інструмэнту можа троху адрозьнівацца. Калі праблемы застануцца, праглядзіце свае інструмэнты і карыстальніцкія сцэнары, улучна з глябальнымі.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "У вас уключаны інструмэнт [[$1|Выплыўныя падказкі]], таму вы ня ўбачыце папярэдніх праглядаў крыніцаў, але будзеце бачыць перадпрагляды старонак. У залежнасьці ад вікі назва інструмэнту можа троху адрозьнівацца. Калі праблемы застануцца, праглядзіце свае інструмэнты і карыстальніцкія сцэнары, улучна з глябальнымі.",
+	"popups-refpreview-user-preference-label": "Уключыць папярэдні прагляд зносак (паказваць хуткі прагляд зносак пад час чытаньня старонкі.)"
 }

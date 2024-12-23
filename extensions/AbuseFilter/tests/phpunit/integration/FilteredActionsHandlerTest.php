@@ -2,7 +2,8 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
-use Content;
+use MediaWiki\Content\Content;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\AbuseFilter\BlockedDomainFilter;
 use MediaWiki\Extension\AbuseFilter\BlockedDomainStorage;
 use MediaWiki\Extension\AbuseFilter\EditRevUpdater;
@@ -14,15 +15,14 @@ use MediaWiki\Extension\AbuseFilter\VariableGenerator\RunVariableGenerator;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Message\Message;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use Message;
-use NullStatsdDataFactory;
-use RequestContext;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Hooks\Handlers\FilteredActionsHandler
+ * @covers \MediaWiki\Extension\AbuseFilter\Hooks\Handlers\FilteredActionsHandler
  * @group Database
  */
 class FilteredActionsHandlerTest extends \MediaWikiIntegrationTestCase {
@@ -31,11 +31,10 @@ class FilteredActionsHandlerTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideOnEditFilterMergedContent
-	 * @covers ::onEditFilterMergedContent
 	 * @covers \MediaWiki\Extension\AbuseFilter\BlockedDomainFilter
 	 */
 	public function testOnEditFilterMergedContent( $urlsAdded, $expected ) {
-		$this->setMwGlobals( 'wgAbuseFilterEnableBlockedExternalDomain', true );
+		$this->overrideConfigValue( 'AbuseFilterEnableBlockedExternalDomain', true );
 
 		$filteredActionsHandler = $this->getFilteredActionsHandler( $urlsAdded );
 		$context = RequestContext::getMain();
@@ -60,7 +59,7 @@ class FilteredActionsHandlerTest extends \MediaWikiIntegrationTestCase {
 			// If it's failing, it should report the URL somewhere
 			$this->assertStringContainsString(
 				'foo.com',
-				$status->getErrors()[0]['message']->toString( Message::FORMAT_PLAIN )
+				wfMessage( $status->getMessages()[0] )->toString( Message::FORMAT_PLAIN )
 			);
 		}
 	}

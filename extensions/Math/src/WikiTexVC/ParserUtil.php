@@ -4,27 +4,7 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\WikiTexVC;
 
-use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
-
 class ParserUtil {
-
-	/**
-	 * @param TexArray|null $l
-	 * @return TexArray
-	 */
-	public static function lst2arr( $l ) {
-		$arr = new TexArray();
-
-		while ( $l !== null ) {
-			$first = $l->first();
-			if ( $first !== null ) {
-				$arr->push( $l->first() );
-			}
-			$l = $l->second();
-		}
-
-		return $arr;
-	}
 
 	/**
 	 * @param array|null $options

@@ -1,13 +1,12 @@
 'use strict';
 
-const assert = require( 'assert' );
 const BlankPage = require( './../BlankPage' );
 
-describe( 'BlankPage', function () {
-	it( 'should have its title @daily', async function () {
+describe( 'BlankPage', () => {
+	it( 'should have its title @daily', async () => {
 		await BlankPage.open();
 
 		// check
-		assert.strictEqual( await BlankPage.heading.getText(), 'Blank page' );
+		await expect( await BlankPage.heading ).toHaveText( 'Blank page' );
 	} );
 } );

@@ -43,6 +43,7 @@
 	"notification-welcome-linktext": "ست بسم اللہ",
 	"notification-link-text-view-edit": "تبدیلی ݙیکھو",
 	"notification-link-article-reminder": "ورقہ ݙیکھو",
+	"notification-link-api-triggered": "ورقہ ݙیکھو",
 	"notification-timestamp-ago-seconds": "\n{{PLURAL:$1|$1s}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1m}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1h}}",

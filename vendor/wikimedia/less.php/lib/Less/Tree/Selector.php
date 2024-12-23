@@ -102,7 +102,7 @@ class Less_Tree_Selector extends Less_Tree {
 				continue;
 			}
 
-			if ( isset( $v->value->value ) && !is_object( $v->value->value ) ) {
+			if ( isset( $v->value->value ) && is_scalar( $v->value->value ) ) {
 				$css .= $v->value->value;
 				continue;
 			}

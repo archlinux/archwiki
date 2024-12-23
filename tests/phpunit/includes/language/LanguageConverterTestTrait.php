@@ -1,11 +1,14 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
 
 trait LanguageConverterTestTrait {
 
+	/** @var string */
 	private $codeRegex = '/^(.+)ConverterTest$/';
 
 	/** @var LanguageConverterFactory */

@@ -1,36 +1,37 @@
 {
 	"@metadata": {
 		"authors": [
-			"Zakaria Tunsung",
-			"Fadia"
+			"Fadia",
+			"Zakaria Tunsung"
 		]
 	},
 	"vector-languages": "Kɔkɔɛ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 kɔkɔre|$1 kɔkɔɛ}}",
 	"vector-no-language-button-label": "Paahi kɔkɔɛ",
 	"vector-action-addsection": "Paahi yeliju",
-	"vector-action-delete": "Ihi bahi",
 	"vector-action-move": "Gaa",
-	"vector-action-protect": "gu",
 	"vector-view-create": "Maali",
 	"vector-view-history": "Kaa yelikori",
 	"vector-more-actions": "mine meŋ",
+	"vector-appearance-label": "Woree",
 	"vector-feature-limited-width-name": "Yɛliŋu",
-	"vector-feature-custom-font-size-name": "Seure",
 	"vector-feature-limited-width-0-label": "Yaari",
 	"vector-feature-limited-width-1-label": "bung paalisigihaa",
+	"vector-feature-custom-font-size-name": "Seure",
 	"vector-feature-custom-font-size-0-label": "Bile",
 	"vector-feature-custom-font-size-1-label": "bung paalisigihaa",
 	"vector-feature-custom-font-size-2-label": "Kpoŋ",
 	"skin-theme-name": "Kala",
+	"skin-theme-day-label": "Kyaaŋ",
+	"skin-theme-night-label": "Soɔbu",
 	"skin-theme-os-label": "Tuna meŋaŋ",
+	"skin-theme-exclusion-notice": "A peeji ŋa maŋ kyaayɛŋ.",
 	"vector-searchsuggest-containing": "Bɔ peejihi aŋ tare <strong class=\"cdx-sɛgebozu-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "puo buuhu",
 	"vector-toc-beginning": "Piilee",
-	"vector-anon-user-menu-pages": "Kpɛ kyɛ yi sɛosɛoreba Peegyihi",
 	"vector-main-menu-label": "Yoe jumeŋa",
+	"vector-feature-custom-font-size-exclusion-notice": "A peeji ŋa maŋ tuŋ yɛ tuma ne seubilii",
 	"vector-page-tools-label": "Tuntuŋ buuhu",
 	"vector-page-tools-general-label": "Yeli jaa lantaa",
-	"vector-page-tools-actions-label": "Tuma tumbu",
 	"vector-unpin-element-label": "Sɔgele"
 }

@@ -12,16 +12,10 @@ use MediaWikiUnitTestCase;
  * @group AbuseFilter
  * @group AbuseFilterParser
  *
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Parser\ParserStatus
+ * @covers \MediaWiki\Extension\AbuseFilter\Parser\ParserStatus
  */
 class ParserStatusTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::getException
-	 * @covers ::getWarnings
-	 * @covers ::getCondsUsed
-	 */
 	public function testGetters() {
 		$exc = $this->createMock( UserVisibleException::class );
 		$warnings = [ new UserVisibleWarning( 'foo', 1, [] ) ];
@@ -32,17 +26,11 @@ class ParserStatusTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $condsUsed, $status->getCondsUsed() );
 	}
 
-	/**
-	 * @covers ::isValid
-	 */
 	public function testIsValid_true() {
 		$status = new ParserStatus( null, [], 42 );
 		$this->assertTrue( $status->isValid() );
 	}
 
-	/**
-	 * @covers ::isValid
-	 */
 	public function testIsValid_false() {
 		$status = new ParserStatus( $this->createMock( UserVisibleException::class ), [], 42 );
 		$this->assertFalse( $status->isValid() );

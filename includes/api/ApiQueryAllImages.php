@@ -24,16 +24,21 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use File;
+use LocalFile;
+use LocalRepo;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\Title\Title;
+use RepoGroup;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * Query module to enumerate all images.
@@ -49,15 +54,9 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 
 	private GroupPermissionsLookup $groupPermissionsLookup;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param RepoGroup $repoGroup
-	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		RepoGroup $repoGroup,
 		GroupPermissionsLookup $groupPermissionsLookup
 	) {
@@ -249,7 +248,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 			if ( !$this->validateSha1Hash( $sha1 ) ) {
 				$this->dieWithError( 'apierror-invalidsha1hash' );
 			}
-			$sha1 = Wikimedia\base_convert( $sha1, 16, 36, 31 );
+			$sha1 = \Wikimedia\base_convert( $sha1, 16, 36, 31 );
 		} elseif ( isset( $params['sha1base36'] ) ) {
 			$sha1 = strtolower( $params['sha1base36'] );
 			if ( !$this->validateSha1Base36Hash( $sha1 ) ) {
@@ -273,7 +272,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 						->and( 'img_minor_mime', '=', $minor );
 			}
 			if ( count( $mimeConds ) > 0 ) {
-				$this->addWhere( new OrExpressionGroup( ...$mimeConds ) );
+				$this->addWhere( $db->orExpr( $mimeConds ) );
 			} else {
 				// no MIME types, no files
 				$this->getResult()->addValue( 'query', $this->getModuleName(), [] );
@@ -360,12 +359,12 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 				ParamValidator::PARAM_TYPE => 'timestamp'
 			],
 			'prop' => [
-				ParamValidator::PARAM_TYPE => ApiQueryImageInfo::getPropertyNames( $this->propertyFilter ),
+				ParamValidator::PARAM_TYPE => ApiQueryImageInfo::getPropertyNames( self::PROPERTY_FILTER ),
 				ParamValidator::PARAM_DEFAULT => 'timestamp|url',
 				ParamValidator::PARAM_ISMULTI => true,
 				ApiBase::PARAM_HELP_MSG => 'apihelp-query+imageinfo-param-prop',
 				ApiBase::PARAM_HELP_MSG_PER_VALUE =>
-					ApiQueryImageInfo::getPropertyMessages( $this->propertyFilter ),
+					ApiQueryImageInfo::getPropertyMessages( self::PROPERTY_FILTER ),
 			],
 			'prefix' => null,
 			'minsize' => [
@@ -407,7 +406,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 		return $ret;
 	}
 
-	private $propertyFilter = [ 'archivename', 'thumbmime', 'uploadwarning' ];
+	private const PROPERTY_FILTER = [ 'archivename', 'thumbmime', 'uploadwarning' ];
 
 	protected function getExamplesMessages() {
 		return [
@@ -428,3 +427,6 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Allimages';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryAllImages::class, 'ApiQueryAllImages' );

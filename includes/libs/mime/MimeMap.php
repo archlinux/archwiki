@@ -138,7 +138,10 @@ class MimeMap {
 		'application/zip' =>
 			[ 'zip', 'jar', 'xpi', 'sxc', 'stc', 'sxd', 'std', 'sxi', 'sti', 'sxm', 'stm', 'sxw', 'stw' ],
 		'application/x-rar' => [ 'rar' ],
-		'font/sfnt' => [ 'ttf' ],
+		'font/collection' => [ 'ttc' ],
+		'font/otf' => [ 'ttf', 'otf' ],
+		'font/sfnt' => [ 'ttf', 'otf' ],
+		'font/ttf' => [ 'ttf', 'otf' ],
 		'application/font-sfnt' => [ 'ttf' ],
 		'font/woff' => [ 'woff' ],
 		'application/font-woff' => [ 'woff' ],
@@ -524,5 +527,10 @@ class MimeMap {
 		'image/jpeg2000' => 'image/jp2',
 		'image/jpeg2000-image' => 'image/jp2',
 		'image/x-jpeg2000-image' => 'image/jp2',
+		'application/csv' => 'text/csv',
+		'application/x-csv' => 'text/csv',
+		'text/x-csv' => 'text/csv',
+		'text/comma-separated-values' => 'text/csv',
+		'text/x-comma-separated-values' => 'text/csv',
 	];
 }

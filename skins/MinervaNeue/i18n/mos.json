@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Sõng-kãngã wɛɛngẽ",
 	"mobile-frontend-meta-data-issues-header": "Neng yɛla",
 	"minerva-meta-data-issues-section-header": "Sõsg ning sẽn be sullã pʋgẽ",
-	"mobile-frontend-notifications-filter": "Wilgre",
 	"mobile-frontend-pageaction-edit-tooltip": "Tek-y neng kada sula",
 	"mobile-frontend-placeholder": "Vɛɛse {{SITENAME}}",
 	"mobile-frontend-random-button": "Yaare",
@@ -59,7 +58,5 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 hour|$1 hours}} n loge",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Sulli-sullisi",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Ges-y sul-sulisa nensa",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Sõng-y nenga yɛl ne tɩbgo",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Neng yɛla(Template:ambox) nan be ne sõsga pʋge",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Ka yi neere,pobtãble neng pong ka be-yẽ.Y san baod n nan nong tʋm-tʋmda sul nenga yɛla kẽng-y desktop-wã ziiga."
 }

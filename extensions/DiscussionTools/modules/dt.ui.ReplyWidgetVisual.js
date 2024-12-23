@@ -1,4 +1,4 @@
-var CommentTargetWidget = require( './dt-ve/CommentTargetWidget.js' );
+const CommentTargetWidget = require( './dt-ve/CommentTargetWidget.js' );
 
 require( './dt-ve/dt.ui.MWSignatureContextItem.js' );
 require( './dt-ve/dt.dm.MWSignatureNode.js' );
@@ -39,7 +39,7 @@ OO.inheritClass( ReplyWidgetVisual, require( './dt.ui.ReplyWidget.js' ) );
  * @inheritdoc
  */
 ReplyWidgetVisual.prototype.createReplyBodyWidget = function ( config ) {
-	return new CommentTargetWidget( this, $.extend( {
+	return new CommentTargetWidget( this, Object.assign( {
 		defaultMode: this.defaultMode
 	}, config ) );
 };
@@ -73,7 +73,7 @@ ReplyWidgetVisual.prototype.clear = function ( preserveStorage ) {
  * @inheritdoc
  */
 ReplyWidgetVisual.prototype.isEmpty = function () {
-	var surface = this.replyBodyWidget.target.getSurface();
+	const surface = this.replyBodyWidget.target.getSurface();
 	return !( surface && surface.getModel().getDocument().data.hasContent() );
 };
 
@@ -90,12 +90,11 @@ ReplyWidgetVisual.prototype.getMode = function () {
  * @inheritdoc
  */
 ReplyWidgetVisual.prototype.setup = function ( data, suppressNotifications ) {
-	var widget = this,
-		target = this.replyBodyWidget.target;
+	const target = this.replyBodyWidget.target;
 
 	data = data || {};
 
-	var htmlOrDoc;
+	let htmlOrDoc;
 	if ( this.storage.get( 'saveable' ) ) {
 		htmlOrDoc = this.storage.get( 've-dochtml' );
 		target.recovered = true;
@@ -110,19 +109,19 @@ ReplyWidgetVisual.prototype.setup = function ( data, suppressNotifications ) {
 
 	this.replyBodyWidget.setDocument( htmlOrDoc );
 
-	target.once( 'surfaceReady', function () {
-		target.getSurface().getView().connect( widget, {
+	target.once( 'surfaceReady', () => {
+		target.getSurface().getView().connect( this, {
 			focus: [ 'emit', 'bodyFocus' ]
 		} );
 
 		target.initAutosave( {
 			suppressNotifications: suppressNotifications,
-			storage: widget.storage
+			storage: this.storage
 		} );
-		widget.afterSetup();
+		this.afterSetup();
 
 		// This needs to bind after surfaceReady so any initial population doesn't trigger it early:
-		widget.replyBodyWidget.once( 'change', widget.onFirstChange.bind( widget ) );
+		this.replyBodyWidget.once( 'change', this.onFirstChange.bind( this ) );
 	} );
 
 	// Parent method
@@ -153,8 +152,8 @@ ReplyWidgetVisual.prototype.teardown = function () {
  * @inheritdoc
  */
 ReplyWidgetVisual.prototype.focus = function () {
-	var targetWidget = this.replyBodyWidget;
-	setTimeout( function () {
+	const targetWidget = this.replyBodyWidget;
+	setTimeout( () => {
 		// Check surface still exists after timeout
 		if ( targetWidget.getSurface() ) {
 			targetWidget.getSurface().getView().selectLastSelectableContentOffset();

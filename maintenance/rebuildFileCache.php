@@ -22,13 +22,16 @@
  */
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Title\Title;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that builds the file cache.
@@ -36,6 +39,7 @@ require_once __DIR__ . '/Maintenance.php';
  * @ingroup Maintenance
  */
 class RebuildFileCache extends Maintenance {
+	/** @var bool */
 	private $enabled = true;
 
 	public function __construct() {
@@ -126,7 +130,10 @@ class RebuildFileCache extends Maintenance {
 				->from( 'page' )
 				->useIndex( 'PRIMARY' )
 				->where( $where )
-				->andWhere( [ "page_id BETWEEN " . (int)$blockStart . " AND " . (int)$blockEnd ] )
+				->andWhere( [
+					$dbr->expr( 'page_id', '>=', (int)$blockStart ),
+					$dbr->expr( 'page_id', '<=', (int)$blockEnd ),
+				] )
 				->orderBy( 'page_id', SelectQueryBuilder::SORT_ASC )
 				->caller( __METHOD__ )->fetchResultSet();
 
@@ -205,5 +212,7 @@ class RebuildFileCache extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RebuildFileCache::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -1,12 +1,17 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Unit\MockBlockTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
@@ -20,6 +25,7 @@ use MediaWiki\User\UserIdentityValue;
 class SkinTest extends MediaWikiIntegrationTestCase {
 	use MockAuthorityTrait;
 	use MockBlockTrait;
+	use TempUserTestTrait;
 
 	/**
 	 * @covers \Skin
@@ -584,5 +590,154 @@ class SkinTest extends MediaWikiIntegrationTestCase {
 		$clock += 0.01;
 		$this->assertArrayContains( [ 'myhook' => 'foo 1' ], $foo2->buildSidebar(), 'cache hit' );
 		$this->assertArrayContains( [ 'myhook' => 'bar 2' ], $bar->buildSidebar(), 'cache miss' );
+	}
+
+	public function testBuildSidebarWithUserAddedContent() {
+		$this->overrideConfigValues( [
+			MainConfigNames::UseDatabaseMessages => true,
+			MainConfigNames::EnableSidebarCache => false
+		] );
+		$foo1 = new class( 'foo' ) extends Skin {
+			public function outputPage() {
+			}
+		};
+		$this->editPage( 'MediaWiki:Sidebar', <<<EOS
+		* navigation
+		** mainpage|mainpage-description
+		** recentchanges-url|recentchanges
+		** randompage-url|randompage
+		** helppage|help-mediawiki
+		* SEARCH
+		* TOOLBOX
+		** A|B
+		* LANGUAGES
+		** C|D
+		EOS );
+
+		$context = RequestContext::newExtraneousContext( Title::makeTitle( NS_MAIN, 'Main Page' ) );
+		$foo1->setContext( $context );
+
+		$this->assertArrayContains( [ [ 'id' => 'n-B', 'text' => 'B' ] ], $foo1->buildSidebar()['TOOLBOX'], 'Toolbox has user defined links' );
+
+		$hasUserDefinedLinks = false;
+		$languageLinks = $foo1->buildSidebar()['LANGUAGES'];
+		foreach ( $languageLinks as $languageLink ) {
+			if ( $languageLink['id'] === 'n-D' ) {
+				$hasUserDefinedLinks = true;
+				break;
+			}
+		}
+
+		$this->assertSame( false, $hasUserDefinedLinks, 'Languages does not support user defined links' );
+	}
+
+	public function testBuildSidebarForContributionsPageOfTemporaryAccount() {
+		// Don't allow extensions to modify the TOOLBOX array as we assert pretty strictly against it.
+		$this->clearHook( 'SidebarBeforeOutput' );
+
+		$this->overrideConfigValues( [
+			MainConfigNames::UploadNavigationUrl => false,
+			MainConfigNames::EnableUploads => false,
+			MainConfigNames::EnableSpecialMute => true,
+		] );
+		$foo1 = new class( 'foo' ) extends Skin {
+			public function outputPage() {
+			}
+		};
+
+		// Simulate the settings and context for Special:Contributions for a temporary account
+		// (no article related and relevant user set).
+		$this->enableAutoCreateTempUser();
+		$tempUser = $this->getServiceContainer()->getTempUserCreator()
+			->create( null, new FauxRequest() )->getUser();
+		$context = RequestContext::newExtraneousContext(
+			Title::makeTitle( NS_SPECIAL, 'Contributions/' . $tempUser->getName() )
+		);
+		$context->setUser( $this->getTestSysop()->getUser() );
+		$foo1->setContext( $context );
+		$foo1->setRelevantUser( $tempUser );
+		$foo1->getOutput()->setArticleRelated( false );
+
+		// Verify that the "userrights" key is not present, by checking that the list of keys is as expected.
+		$this->assertArrayEquals(
+			[ 'contributions', 'log', 'blockip', 'mute', 'print', 'specialpages' ],
+			array_keys( $foo1->buildSidebar()['TOOLBOX'] )
+		);
+	}
+
+	public function testGetLanguagesHidden() {
+		$this->overrideConfigValues( [
+			MainConfigNames::HideInterlanguageLinks => true,
+		] );
+		$skin = new class extends Skin {
+			public function outputPage() {
+			}
+		};
+		$this->assertSame( [], $skin->getLanguages() );
+	}
+
+	public function testGetLanguages() {
+		$this->overrideConfigValues( [
+			MainConfigNames::HideInterlanguageLinks => false,
+			MainConfigNames::InterlanguageLinkCodeMap => [ 'talk' => 'fr' ],
+			MainConfigNames::LanguageCode => 'qqx',
+		] );
+
+		$mockOutputPage = $this->createMock( OutputPage::class );
+		$mockOutputPage->method( 'getLanguageLinks' )
+			// The 'talk' interwiki is a deliberate conflict with the
+			// Talk namespace (T363538)
+			->willReturn( [ 'en:Foo', 'talk:Page' ] );
+
+		$fakeContext = new RequestContext();
+		$fakeContext->setTitle( Title::makeTitle( NS_MAIN, 'Test' ) );
+		$fakeContext->setOutput( $mockOutputPage );
+		$fakeContext->setLanguage( 'en' );
+
+		$hookContainer = $this->createMock( HookContainer::class );
+		$this->setService( 'HookContainer', $hookContainer );
+
+		$mockIwLookup = $this->createMock( InterwikiLookup::class );
+		$mockIwLookup->method( 'isValidInterwiki' )->willReturn( true );
+		$mockIwLookup->method( 'fetch' )->willReturnCallback( static function ( string $prefix ) {
+			return new Interwiki(
+				$prefix,
+				"https://$prefix.example.com/$1"
+			);
+		} );
+		$this->setService( 'InterwikiLookup', $mockIwLookup );
+
+		$skin = new class extends Skin {
+			public function outputPage() {
+			}
+		};
+		$skin->setContext( $fakeContext );
+
+		$this->assertSame( [
+			[
+				'href' => 'https://en.example.com/Foo',
+				'text' => 'English',
+				'title' => 'Foo – English',
+				'class' => 'interlanguage-link interwiki-en',
+				'link-class' => 'interlanguage-link-target',
+				'lang' => 'en',
+				'hreflang' => 'en',
+				'data-title' => 'Foo',
+				'data-language-autonym' => 'English',
+				'data-language-local-name' => 'English',
+			],
+			[
+				'href' => 'https://talk.example.com/Page',
+				'text' => 'Français',
+				'title' => 'Page – français',
+				'class' => 'interlanguage-link interwiki-talk',
+				'link-class' => 'interlanguage-link-target',
+				'lang' => 'fr',
+				'hreflang' => 'fr',
+				'data-title' => 'Page',
+				'data-language-autonym' => 'Français',
+				'data-language-local-name' => 'français',
+			],
+		], $skin->getLanguages() );
 	}
 }

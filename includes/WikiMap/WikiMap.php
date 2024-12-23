@@ -20,9 +20,9 @@
 
 namespace MediaWiki\WikiMap;
 
-use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Site\MediaWikiSite;
+use MediaWiki\SpecialPage\SpecialPage;
 use Wikimedia\Rdbms\DatabaseDomain;
 
 /**
@@ -33,7 +33,7 @@ class WikiMap {
 	/**
 	 * Get a WikiReference object for $wikiID
 	 *
-	 * @param string $wikiID Wiki'd id (generally database name)
+	 * @param string $wikiID Wiki's id (generally database name)
 	 * @return WikiReference|null WikiReference object or null if the wiki was not found
 	 */
 	public static function getWiki( $wikiID ) {
@@ -95,8 +95,8 @@ class WikiMap {
 			return null;
 		}
 
-		$urlParts = wfParseUrl( $site->getPageUrl() );
-		if ( $urlParts === false || !isset( $urlParts['path'] ) || !isset( $urlParts['host'] ) ) {
+		$urlParts = wfGetUrlUtils()->parse( $site->getPageUrl() );
+		if ( $urlParts === null || !isset( $urlParts['path'] ) || !isset( $urlParts['host'] ) ) {
 			// We can't create a meaningful WikiReference without URLs
 			return null;
 		}
@@ -120,7 +120,7 @@ class WikiMap {
 	 * Convenience to get the wiki's display name
 	 *
 	 * @todo We can give more info than just the wiki id!
-	 * @param string $wikiID Wiki'd id (generally database name)
+	 * @param string $wikiID Wiki's id (generally database name)
 	 * @return string Wiki's name or $wiki_id if the wiki was not found
 	 */
 	public static function getWikiName( $wikiID ) {
@@ -129,9 +129,9 @@ class WikiMap {
 	}
 
 	/**
-	 * Convenience to get a link to a user page on a foreign wiki
+	 * Convenience method to get a link to a user page on a foreign wiki
 	 *
-	 * @param string $wikiID Wiki'd id (generally database name)
+	 * @param string $wikiID Wiki's id (generally database name)
 	 * @param string $user User name (must be normalised before calling this function!)
 	 * @param string|null $text Link's text; optional, default to "User:$user"
 	 * @return string HTML link or false if the wiki was not found
@@ -141,14 +141,16 @@ class WikiMap {
 	}
 
 	/**
-	 * Convenience to get a link to a page on a foreign wiki
+	 * Convenience method to get a link to a page on a foreign wiki
 	 *
-	 * @param string $wikiID Wiki'd id (generally database name)
+	 * @param string $wikiID Wiki's id (generally database name)
 	 * @param string $page Page name (must be normalised before calling this function!)
 	 * @param string|null $text Link's text; optional, default to $page
 	 * @return string|false HTML link or false if the wiki was not found
 	 */
 	public static function makeForeignLink( $wikiID, $page, $text = null ) {
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
+		global $wgTitle;
 		if ( !$text ) {
 			$text = $page;
 		}
@@ -158,13 +160,18 @@ class WikiMap {
 			return false;
 		}
 
-		return Linker::makeExternalLink( $url, $text );
+		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		return $linkRenderer->makeExternalLink(
+			$url,
+			$text,
+			$wgTitle ?? SpecialPage::getTitleFor( 'Badtitle' )
+		);
 	}
 
 	/**
-	 * Convenience to get a url to a page on a foreign wiki
+	 * Convenience method to get a url to a page on a foreign wiki
 	 *
-	 * @param string $wikiID Wiki'd id (generally database name)
+	 * @param string $wikiID Wiki's id (generally database name)
 	 * @param string $page Page name (must be normalised before calling this function!)
 	 * @param string|null $fragmentId
 	 *
@@ -202,14 +209,14 @@ class WikiMap {
 				$wikiId = self::getCurrentWikiId();
 				$infoMap[$wikiId] = [
 					'url' => $wgCanonicalServer,
-					'parts' => wfParseUrl( $wgCanonicalServer )
+					'parts' => wfGetUrlUtils()->parse( $wgCanonicalServer )
 				];
 
 				foreach ( $wgLocalDatabases as $wikiId ) {
 					$wikiReference = self::getWiki( $wikiId );
 					if ( $wikiReference ) {
 						$url = $wikiReference->getCanonicalServer();
-						$infoMap[$wikiId] = [ 'url' => $url, 'parts' => wfParseUrl( $url ) ];
+						$infoMap[$wikiId] = [ 'url' => $url, 'parts' => wfGetUrlUtils()->parse( $url ) ];
 					}
 				}
 
@@ -232,8 +239,8 @@ class WikiMap {
 			return self::getCurrentWikiId();
 		}
 
-		$urlPartsCheck = wfParseUrl( $url );
-		if ( $urlPartsCheck === false ) {
+		$urlPartsCheck = wfGetUrlUtils()->parse( $url );
+		if ( $urlPartsCheck === null ) {
 			return false;
 		}
 

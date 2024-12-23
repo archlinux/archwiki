@@ -205,7 +205,7 @@
 	"abusefilter-edit-builder-op-bool-not": "Ne (!)",
 	"abusefilter-edit-builder-op-bool-and": "I (&)",
 	"abusefilter-edit-builder-op-bool-or": "Ili (|)",
-	"abusefilter-edit-builder-op-bool-xor": "Više/ili (^)",
+	"abusefilter-edit-builder-op-bool-xor": "Više/ili ($1)",
 	"abusefilter-edit-builder-group-misc": "Različito",
 	"abusefilter-edit-builder-misc-in": "Nalazi se u liniji (in)",
 	"abusefilter-edit-builder-misc-contains": "Lijevi string sadrži desni string (contains)",

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"BadDog"
+			"BadDog",
+			"Winston Sung"
 		]
 	},
 	"echo-desc": "Sistem za obavještavanje korisnika o događajima i porukama",

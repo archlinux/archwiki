@@ -29,5 +29,6 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "구독(또는 구독 해지)할 주제의 이름",
 	"apihelp-discussiontoolssubscribe-param-page": "주제가 표시되는 페이지",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "true는 구독이며, false는 구독 해지임",
-	"apihelp-discussiontoolssubscribe-summary": "주제에 관한 알림을 수신하기 위해 구독(또는 구독 해지)을 합니다."
+	"apihelp-discussiontoolssubscribe-summary": "주제에 관한 알림을 수신하기 위해 구독(또는 구독 해지)을 합니다.",
+	"apihelp-discussiontoolsthank-summary": "의견에 대해 공개적인 감사 표현 알림을 보냅니다."
 }

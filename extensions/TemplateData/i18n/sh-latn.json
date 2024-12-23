@@ -46,7 +46,6 @@
 	"templatedata-modal-button-delparam": "Ukloni informacije o parametrima",
 	"templatedata-modal-button-done": "Gotovo",
 	"templatedata-modal-button-importParams": "Uvezi parametre",
-	"templatedata-modal-button-restoreparam": "Povrati parametar",
 	"templatedata-modal-button-saveparam": "Snimi",
 	"templatedata-modal-confirmcancel": "Da li sigurno želite odbaciti promjene?",
 	"templatedata-modal-current-language": "Trenutni jezik: $1",

@@ -29,7 +29,6 @@
 	"mobile-frontend-meta-data-issues-categories": "ഈ വർഗ്ഗത്തെക്കുറിച്ച്",
 	"mobile-frontend-meta-data-issues-header": "താളിലെ പ്രശ്നങ്ങൾ",
 	"minerva-meta-data-issues-section-header": "ഭാഗത്തിലെ പ്രശ്നങ്ങൾ",
-	"mobile-frontend-notifications-filter": "അരിപ്പ",
 	"mobile-frontend-pageaction-edit-tooltip": "ഈ താളിലെ പ്രധാന ഭാഗം തിരുത്തുക",
 	"mobile-frontend-placeholder": "{{SITENAME}} സംരംഭത്തിൽ തിരയുക",
 	"mobile-frontend-random-button": "ക്രമരഹിതം",
@@ -43,12 +42,9 @@
 	"mobile-frontend-user-page-contributions": "സംഭാവനകൾ",
 	"mobile-frontend-user-page-member-since": "$1 {{GENDER:$2|ചേർന്നു}}",
 	"mobile-frontend-user-page-talk": "സംവാദം",
-	"minerva-page-actions-overflow": "കൂടുതൽ",
 	"skinname-minerva": "മിനെർവ",
 	"minerva-skin-desc": "മൊബൈൽ മുൻഗണനയുള്ള പ്രതികരണക്ഷമമായ ദൃശ്യരൂപം.",
 	"skin-minerva-issue-learn-more": "കൂടുതൽ അറിയുക",
 	"skin-minerva-mobile-option-MinervaShowCategories": "വർഗ്ഗങ്ങൾ",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "താളുകളുടെ വർഗ്ഗങ്ങൾ കാണുക",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "താളിലെ പ്രശ്നങ്ങളുടെ മെച്ചപ്പെട്ട കൈകാര്യം",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "താളിലെ പ്രശ്നങ്ങൾ (Template:ambox) ലേഖനത്തിൽ ഉൾപ്പെടുത്തും."
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "താളുകളുടെ വർഗ്ഗങ്ങൾ കാണുക"
 }

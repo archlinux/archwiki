@@ -19,6 +19,10 @@
  * @ingroup Parser
  */
 
+namespace MediaWiki\Parser;
+
+use RuntimeException;
+
 /**
  * Stack class to help Preprocessor::preprocessToObj()
  * @ingroup Parser
@@ -36,10 +40,10 @@ class PPDStack_Hash {
 	 * @var PPDStackElement_Hash|false
 	 */
 	public $top;
+	/** @var string|null */
 	public $out;
+	/** @var string */
 	public $elementClass = PPDStackElement_Hash::class;
-
-	public static $false = false;
 
 	public function __construct() {
 		$this->stack = [];
@@ -91,7 +95,7 @@ class PPDStack_Hash {
 			$this->top = $this->stack[count( $this->stack ) - 1];
 			$this->accum =& $this->top->getAccum();
 		} else {
-			$this->top = self::$false;
+			$this->top = false;
 			$this->accum =& $this->rootAccum;
 		}
 		return $temp;
@@ -117,3 +121,6 @@ class PPDStack_Hash {
 		}
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( PPDStack_Hash::class, 'PPDStack_Hash' );

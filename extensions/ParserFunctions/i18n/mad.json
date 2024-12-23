@@ -1,29 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Boesenbergia",
-			"Munajad.MH"
+			"Boesenbergia"
 		]
 	},
-	"pfunc_desc": "Nyekkar'aghi parsèr kalabân fungsi logis",
-	"pfunc_time_error": "Kaklèrowan: bâkto ta' teppa'",
-	"pfunc_time_too_long": "Kaklèrowan: Panembhâliyân #time talèbât bânnya'",
-	"pfunc_time_too_big": "Alar: #time ghun nyènḍinè taon ghân 9999",
-	"pfunc_time_too_small": "Alar: #time ghun nyènḍin taon ḍâri 0",
-	"pfunc_rel2abs_invalid_depth": "Kaklèrowan: arongan path ta' valid: \"$1\" (ngoddhi araghây bhughel è aṭṭas bhughel ramo')",
-	"pfunc_expr_stack_exhausted": "Kaklèrowan èkspresi: Stack bhânas",
-	"pfunc_expr_unexpected_number": "Kaklèrowan èkspresi: Angka sè ghumandhâghân",
-	"pfunc_expr_preg_match_failure": "Kaklèrowan èkspresi: kaburungan preg_match ghumandhâghân",
-	"pfunc_expr_unrecognised_word": "Kaklèrowan èksprèsi: Oca' \"$1\" ta' èkaonèng.",
-	"pfunc_expr_unexpected_operator": "Klèro èksprèsi: Operator $1 ghumandhâghân",
-	"pfunc_expr_missing_operand": "Kaklèrowan èksprèsi: Operand ta' ètemmoè ghâbây $1",
-	"pfunc_expr_unexpected_closing_bracket": "Kaklèrowan èkspresi: Bhâncang èntep ghumandhâghân",
+	"pfunc_time_error": "Kasala'an: bâkto ta' teppa'",
+	"pfunc_expr_unrecognised_word": "Kasala'an èksprèsi: Oca' \"$1\" ta' èkennal.",
+	"pfunc_expr_unexpected_operator": "Sala èksprèsi: Operator $1 ta takèḍhâ'",
+	"pfunc_expr_missing_operand": "Kasala'an èksprèsi: Operand ta' ètemmoè ghâbây $1",
 	"pfunc_expr_unrecognised_punctuation": "Kasala'an èksprèsi: Tanḍhâ bâca \"$1\" ta' èkennal.",
-	"pfunc_expr_unclosed_bracket": "Kaklèrowan èkspresi: Bhâncang tahpa èntep",
-	"pfunc_expr_division_by_zero": "Èbâgi bi' ennol",
-	"pfunc_expr_invalid_argument": "Argumen ta' valid ka'angghuy $1: bhâncang ḍâri -1 otabâ mèlaghis rajâ ḍâri 1.",
-	"pfunc_expr_invalid_argument_ln": "Argumen ta' valid ka'angghuy ln: bhâncang ḍâri/otabâ paḍâ kelabân 0.",
-	"pfunc_expr_unknown_error": "Kaklèrowan èkspresi: Kaklèrowan ta' èkaonèng ($1)",
-	"pfunc_expr_not_a_number": "Ḍâ' $1: Hasèlla bennè angka",
-	"pfunc_string_too_long": "Kaklèrowan: String mèlaghisè limit $1 karakter"
+	"pfunc_expr_division_by_zero": "Èbâgi bi' ennol"
 }

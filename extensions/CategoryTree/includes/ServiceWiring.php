@@ -33,7 +33,7 @@ use MediaWiki\MediaWikiServices;
 return [
 	'CategoryTree.CategoryCache' => static function ( MediaWikiServices $services ): CategoryCache {
 		return new CategoryCache(
-			$services->getDBLoadBalancer()
+			$services->getConnectionProvider()
 		);
 	},
 ];

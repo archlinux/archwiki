@@ -46,33 +46,24 @@
 			margin-left: 0;
 		}
 
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		.oo-ui-labelElement-label::selection {
 			/* Don't draw selection highlight inside block slug after selecting across it */
-			background: transparent;
-		}
-
-		/* stylelint-disable-next-line selector-no-vendor-prefix */
-		.oo-ui-labelElement-label::-moz-selection {
-			/* Must be in a separate block, because otherwise entire rule is ignored
-			 * by browsers that don't know ::-moz-selection */
 			background: transparent;
 		}
 	}
 
 	/* stylelint-disable-next-line no-descending-specificity */
 	&-blockSlug,
-	&-newSlug {
+	/* Increased specificity to override possible skin styles */
+	html body p&-newSlug {
 		margin: -0.3em 0 -0.1em 0;
 		outline: 1px dashed #c8ccd1;
-		/* rgba( #f1f7fb, 0.75 ) */
-		background-color: rgba( 241, 247, 251, 0.75 );
+		background-color: fade( #f1f7fb, 75% );
 	}
 
 	&-newSlug {
-		margin: 5px 0 6px 0;
-
 		&-open {
-			margin: 1em 0;
 			background-color: transparent;
 			outline-color: transparent;
 			outline-offset: 1em;

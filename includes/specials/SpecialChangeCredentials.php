@@ -16,16 +16,22 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 
 /**
- * Special change to change credentials (such as the password).
+ * Change user credentials, such as the password.
  *
- * Also does most of the work for SpecialRemoveCredentials.
+ * This is also powers most of the SpecialRemoveCredentials subclass.
+ *
+ * @see SpecialChangePassword
+ * @ingroup SpecialPage
+ * @ingroup Auth
  */
 class SpecialChangeCredentials extends AuthManagerSpecialPage {
+	/** @inheritDoc */
 	protected static $allowedActions = [ AuthManager::ACTION_CHANGE ];
 
+	/** @var string */
 	protected static $messagePrefix = 'changecredentials';
 
-	/** Change action needs user data; remove action does not */
+	/** @var bool Change action needs user data; remove action does not */
 	protected static $loadUserData = true;
 
 	/**
@@ -51,16 +57,6 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 
 	protected function getDefaultAction( $subPage ) {
 		return AuthManager::ACTION_CHANGE;
-	}
-
-	protected function getPreservedParams( $withToken = false ) {
-		$request = $this->getRequest();
-		$params = parent::getPreservedParams( $withToken );
-		$params += [
-			'returnto' => $request->getVal( 'returnto' ),
-			'returntoquery' => $request->getVal( 'returntoquery' ),
-		];
-		return $params;
 	}
 
 	public function execute( $subPage ) {

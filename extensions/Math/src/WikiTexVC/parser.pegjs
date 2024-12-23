@@ -13,9 +13,8 @@ $this->options = ParserUtil::createOptions($options);
 start
   = _ t:tex_expr
     {
-        # assert.ok($t instanceof TexArray);
         assert($t instanceof TexArray);
-        return ParserUtil::lst2arr($t);
+        return $t;
     }
 
 // the PEG grammar doesn't automatically ignore whitespace when tokenizing.
@@ -34,7 +33,7 @@ tex_expr
   = e:expr EOF
     { return $e; }
   / e1:ne_expr name:FUN_INFIX e2:ne_expr EOF
-    { return new TexArray(new Infix($name, ParserUtil::lst2arr($e1), ParserUtil::lst2arr($e2))); }
+    { return new TexArray( new Infix($name, $e1, $e2)); }
 
 expr
   = ne_expr
@@ -43,11 +42,11 @@ expr
 
 ne_expr
   = h:lit_aq t:expr
-    { return new TexArray($h, $t); }
+    { return $t->unshift($h); }
   / h:litsq_aq t:expr
-    { return new TexArray($h, $t); }
+    { return $t->unshift($h); }
   / d:DECLh e:expr
-    { return new TexArray(new Declh($d->getFname(), ParserUtil::lst2arr($e))); }
+    { return new TexArray(new Declh($d->getFname(), $e)); }
 litsq_aq
   = litsq_fq
   / litsq_dq
@@ -69,7 +68,7 @@ litsq_zq
     { return new Literal( "]"); }
 expr_nosqc
   = l:lit_aq e:expr_nosqc
-    { return new TexArray($l, $e); }
+    { return $e ->unshift( $l ); }
   / "" /* */
     { return new TexArray(); }
 lit_aq
@@ -123,14 +122,14 @@ lit
    {
      $parser = new Parser();
      $ast = $parser->parse($this->tu->nullary_macro_aliase($f), $this->options);
-     assert($ast instanceof TexArray && count($ast->getArgs()) === 1);
+     assert($ast instanceof TexArray && $ast->getLength() === 1);
      return $ast->first();
    }
   / f:generic_func &{ return $this->tu->deprecated_nullary_macro_aliase($f); } _ // from Texutil.find(...)
    {
      $parser = new Parser();
      $ast = $parser->parse($this->tu->deprecated_nullary_macro_aliase($f), $this->options);
-     assert($ast instanceof TexArray && count($ast->getArgs()) === 1);
+     assert($ast instanceof TexArray && $ast->getLength() === 1);
      if ($this->options['oldtexvc']){
        return $ast->first();
      } else {
@@ -138,49 +137,59 @@ lit
             $this->line(), $this->column());
      }
    }
+   / f:generic_func &{ return $this->tu->mediawiki_function_names($f); } _
+         {
+             if(is_array($f)) {
+                 // This is an unexpected case, but covers the ambiguity of slice in javascript.
+                 $fProcessed = implode(array_slice($f, 1));
+             } else {
+                 $fProcessed = substr($f,1);
+             }
+             return new Fun1nb( '\\operatorname', new Literal( $fProcessed ) );
+         }
   / r:DELIMITER                 { return new Literal($r); }
   / b:BIG r:DELIMITER           { return new Big($b, $r); }
   / b:BIG SQ_CLOSE              { return new Big($b,  "]"); }
-  / l:left e:expr r:right       {return new Lr($l, $r, ParserUtil::lst2arr($e)); }
+  / l:left e:expr r:right       {return new Lr($l, $r, $e); }
   / name:FUN_AR1opt e:expr_nosqc SQ_CLOSE l:lit /* must be before FUN_AR1 */
-    { return new Fun2sq($name, new Curly(ParserUtil::lst2arr($e)), $l); }
+    { return new Fun2sq($name, $e->setCurly(), $l); }
   / name:FUN_AR1 l:lit          { return new Fun1($name, $l); }
-  / name:FUN_AR1nb l:lit        {return new Fun1nb($name, $l); }
+  / name:FUN_AR1nb l:lit        { return new Fun1nb($name, $l); }
   / name:FUN_MHCHEM l:chem_lit  { return new Mhchem($name, $l); }
   / name:FUN_AR2 l1:lit l2:lit  { return new Fun2($name, $l1, $l2); }
   / name:FUN_AR4_MHCHEM_TEXIFIED l1:lit l2:lit l3:lit l4:lit  { return new Fun4($name, $l1, $l2, $l3, $l4); }
   / name:FUN_AR2nb l1:lit l2:lit { return new Fun2nb($name, $l1, $l2); }
   / BOX
   / CURLY_OPEN e:expr CURLY_CLOSE
-    { return new Curly(ParserUtil::lst2arr($e)); }
+    { return $e->setCurly(); }
   / CURLY_OPEN e1:ne_expr name:FUN_INFIX e2:ne_expr CURLY_CLOSE
-    { return new Infix($name, ParserUtil::lst2arr($e1), ParserUtil::lst2arr($e2)); }
+    { return new Infix($name, $e1, $e2); }
   / BEGIN_MATRIX   m:(array/matrix) END_MATRIX
-    { return new Matrix("matrix", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'matrix' ); }
   / BEGIN_PMATRIX  m:(array/matrix) END_PMATRIX
-    { return new Matrix("pmatrix", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'pmatrix' ); }
   / BEGIN_BMATRIX  m:(array/matrix) END_BMATRIX
-    { return new Matrix("bmatrix", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'bmatrix' ); }
   / BEGIN_BBMATRIX m:(array/matrix) END_BBMATRIX
-    { return new Matrix("Bmatrix", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'Bmatrix' ); }
   / BEGIN_VMATRIX  m:(array/matrix) END_VMATRIX
-    { return new Matrix("vmatrix", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'vmatrix' ); }
   / BEGIN_VVMATRIX m:(array/matrix) END_VVMATRIX
-    { return new Matrix("Vmatrix", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'Vmatrix' ); }
   / BEGIN_ARRAY    opt_pos m:array END_ARRAY
-    { return new Matrix("array", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'array' ); }
   / BEGIN_ALIGN    opt_pos m:matrix END_ALIGN
-    { return new Matrix("aligned", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'aligned' ); }
   / BEGIN_ALIGNED  opt_pos m:matrix END_ALIGNED // parse what we emit
-    { return new Matrix("aligned", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'aligned' ); }
   / BEGIN_ALIGNAT  m:alignat END_ALIGNAT
-    { return new Matrix("alignedat", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'alignedat' ); }
   / BEGIN_ALIGNEDAT m:alignat END_ALIGNEDAT // parse what we emit
-    { return new Matrix("alignedat", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'alignedat' ); }
   / BEGIN_SMALLMATRIX m:(array/matrix) END_SMALLMATRIX
-    { return new Matrix("smallmatrix", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'smallmatrix' ); }
   / BEGIN_CASES    m:matrix END_CASES
-    { return new Matrix("cases", ParserUtil::lst2arr($m)); }
+    { return $m->setTop( 'cases' ); }
   / "\\begin{" alpha+ "}" /* better error messages for unknown environments */
     { throw new SyntaxError("Illegal TeX function", [], $this->text(), $this->offset(),
                             $this->line(), $this->column()); }
@@ -191,23 +200,18 @@ lit
 // "array" requires mandatory column specification
 array
   = cs:column_spec m:matrix
-    {
-        if ($m->getLength() ) {
-            $m->first()->first()->unshift($cs);
-            return $m;
-        }
-        return new TexArray(new TexArray($cs));
-    }
+    { return $m->setColumnSpecs( $cs ); }
 
 // "alignat" requires mandatory # of columns
 alignat
   = as:alignat_spec m:matrix
-    { $m->first()->first()->unshift($as); return $m; }
+    { return $m->setColumnSpecs( $as ); }
 
 // "matrix" does not require column specification
 matrix
-  = l:line_start tail:( NEXT_ROW m:matrix { return $m; } )?
-    { return new TexArray( ParserUtil::lst2arr($l), $tail ); }
+  = l:line_start tail:( r:NEXT_ROW m:matrix { return [$m,$r]; } )?
+    { if ($tail === null) { return new Matrix( 'matrix', new TexArray( $l ) ); }
+     return new Matrix( 'matrix', $tail[0]->unshift($l), $tail[1] ); }
 line_start
   = f:HLINE l:line_start
     {
@@ -218,11 +222,14 @@ line_start
   / line
 line
   = e:expr tail:( NEXT_CELL l:line { return $l; } )?
-    { return new TexArray($e, $tail); }
+    {
+    if ($tail === null) { return new TexArray( $e )  ; }
+    return $tail->unshift($e);
+    }
 
 column_spec
   = CURLY_OPEN cs:(one_col+ { return $this->text(); }) CURLY_CLOSE
-    { return new Curly(new TexArray(new Literal($cs))); }
+    { return TexArray::newCurly(new Literal($cs)); }
 
 one_col
   = [lrc] _
@@ -237,7 +244,7 @@ one_col
 
 alignat_spec
   = CURLY_OPEN num:([0-9]+ { return $this->text(); }) _ CURLY_CLOSE
-    { return new Curly(new TexArray(new Literal($num))); }
+    { return TexArray::newCurly(new Literal($num)); }
 
 opt_pos
   = "[" _ [tcb] _ "]" _
@@ -249,7 +256,7 @@ opt_pos
 
 
 chem_lit
-  = CURLY_OPEN e:chem_sentence CURLY_CLOSE               { return new Curly(ParserUtil::lst2arr($e)); }
+  = CURLY_OPEN e:chem_sentence CURLY_CLOSE               { return $e->setCurly(); }
 
 chem_sentence =
     _ p:chem_phrase " " s:chem_sentence                  { return new TexArray($p,new TexArray(new Literal(" "),$s)); } /
@@ -275,19 +282,19 @@ chem_char =
 
 chem_char_nl =
     m:chem_script                                        { return $m;} /
-    CURLY_OPEN c:chem_text CURLY_CLOSE                   { return new Curly(new TexArray($c)); } /
-    BEGIN_MATH c:expr END_MATH                           { return new Dollar(ParserUtil::lst2arr($c)); }/
+    CURLY_OPEN c:chem_text CURLY_CLOSE                   { return TexArray::newCurly($c); } /
+    BEGIN_MATH c:expr END_MATH                           { return new Dollar($c); }/
     name:CHEM_BONDI l:chem_bond                           { return new Fun1($name, $l); } /
     m:chem_macro                                         { return $m; } /
     c:CHEM_NONLETTER                                     { return new Literal($c); }
 
 chem_bond
- = CURLY_OPEN e:CHEM_BOND_TYPE CURLY_CLOSE               { return new Curly(new TexArray(new Literal($e))); }
+ = CURLY_OPEN e:CHEM_BOND_TYPE CURLY_CLOSE               { return TexArray::newCurly(new Literal($e)); }
 
 chem_script =
     a:CHEM_SUPERSUB b:CHEM_SCRIPT_FOLLOW                 { return new ChemWord(new Literal($a), new Literal($b)); } /
     a:CHEM_SUPERSUB b:chem_lit                           { return new ChemWord(new Literal($a), $b); } /
-    a:CHEM_SUPERSUB BEGIN_MATH b:expr END_MATH           { return new ChemWord(new Literal($a), new Dollar(ParserUtil::lst2arr($b))); }
+    a:CHEM_SUPERSUB BEGIN_MATH b:expr END_MATH           { return new ChemWord(new Literal($a), new Dollar($b)); }
 
 // TODO \color is a not documented feature of mhchem for MathJax, at the moment named colors are accepted
 chem_macro =
@@ -312,8 +319,6 @@ literal_uf_op =   [-+*=]
 delimiter_uf_op = [\/|]
 boxchars // match only valid UTF-16 sequences
  = [-0-9a-zA-Z+*,=():\/;?.!'` \[\]\[\u0080-\ud7ff\]\[\ue000-\uffff\]]
- / l:[\ud800-\udbff] h:[\udc00-\udfff] { return $this->text(); }
-//aboxchars = [-0-9a-zA-Z+*,=():\/;?.!'` ]
 
 BOX
  = b:generic_func &{ return $this->tu->box_functions($b); } _ "{" cs:boxchars+ "}" _
@@ -322,17 +327,6 @@ BOX
 LITERAL
  = c:( literal_id / literal_mn / literal_uf_lt / "-" / literal_uf_op ) _
    { return $c; }
- / f:generic_func &{ return $this->tu->mediawiki_function_names($f); } _
-   c:( "(" / "[" / "\\{" / "" { return " ";}) _
-    {
-        if(is_array($f)) {
-            // This is an unexpected case, but covers the ambiguity of slice in javascript.
-            $fProcessed = implode(array_slice($f, 1));
-        } else {
-            $fProcessed = substr($f,1);
-        }
-        return "\\operatorname {" . $fProcessed . "}" . $c;
-    }
  / f:generic_func &{ return $this->tu->nullary_macro($f); } _ // from Texutil.find(...)
    { return $f . " "; }
  / f:generic_func &{ return $this->options['usemathrm'] && $this->tu->nullary_macro_in_mbox($f); } _ // from Texutil.find(...)
@@ -390,8 +384,36 @@ FUN_AR1opt
 NEXT_CELL
  = "&" _
 
+LATEX_LENGTH
+  = s:LATEX_SIGN? n:LATEX_NUMBER u:LATEX_UNIT { return new LengthSpec($s, $n, $u); }
+
+LATEX_SIGN
+  = [+-]
+
+LATEX_NUMBER
+  = literal_mn+ "."? literal_mn*
+  / "." literal_mn+
+
+// from http://latexref.xyz/Units-of-length.html
+LATEX_UNIT
+  = "pt"
+  / "pc"
+  / "in"
+  / "bp"
+  / "cm"
+  / "mm"
+  / "dd"
+  / "cc"
+  / "sp"
+  / "em"
+  / "ex"
+  / "mu"
+
+  / "nd"
+  / "nc"
+
 NEXT_ROW
- = "\\\\" _
+ = ("\\\\" s:("[" l:LATEX_LENGTH "]" { return $l; })?  _  {return $s; })
 
 BEGIN
  = "\\begin" _

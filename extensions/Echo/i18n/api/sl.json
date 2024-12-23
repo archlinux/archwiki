@@ -5,6 +5,14 @@
 			"Janezdrilc"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Ročna sprožitev obvestila uporabnika",
+	"apihelp-echocreateevent-example": "Pošlji obvestilo",
+	"apihelp-echocreateevent-param-user": "Uporabnik, ki mu želite poslati obvestilo",
+	"apihelp-echocreateevent-param-header": "Vsebina glave obvestila",
+	"apihelp-echocreateevent-param-content": "Vsebina telesa obvestila",
+	"apihelp-echocreateevent-param-page": "Stran za povezavo v obvestilu",
+	"apihelp-echocreateevent-param-section": "Razdelek, v katerega naj se pošlje obvestilo",
+	"apihelp-echocreateevent-param-email": "Ali naj se pošlje tudi e-pošta",
 	"apihelp-echomarkread-summary": "Označi obvestila kot prebrana za trenutnega uporabnika.",
 	"apihelp-echomarkread-param-list": "Seznam ID-jev obvestil za označitev kot prebranih.",
 	"apihelp-echomarkread-param-unreadlist": "Seznam ID-jev obvestil, ki bodo označena kot neprebrana.",

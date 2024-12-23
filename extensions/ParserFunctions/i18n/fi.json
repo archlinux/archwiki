@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"01miki10",
 			"Agony",
 			"Cimon Avaro",
 			"Linnea",
 			"Nike",
+			"Samoasambia",
 			"Valtlai",
 			"Valtlait",
-			"VezonThunder",
-			"01miki10"
+			"VezonThunder"
 		]
 	},
 	"pfunc_desc": "Laajentaa jäsennintä loogisilla funktiolla.",
@@ -16,6 +17,7 @@
 	"pfunc_time_too_long": "Virhe: liian monta #time-kutsua",
 	"pfunc_time_too_big": "Virhe: #time tukee vuosilukuja vain vuoteen 9999 asti.",
 	"pfunc_time_too_small": "Virhe: #time tukee vain vuosia 0:sta eteenpäin.",
+	"pfunc_timef_bad_format": "Virhe: #timef-operaattorin muoto on virheellinen",
 	"pfunc_rel2abs_invalid_depth": "Virhe: Virheellinen syvyys polussa: $1 (ei juurisolmun sisällä)",
 	"pfunc_expr_stack_exhausted": "Virhe lausekkeessa: pino loppui",
 	"pfunc_expr_unexpected_number": "Virhe lausekkeessa: odottamaton numero",

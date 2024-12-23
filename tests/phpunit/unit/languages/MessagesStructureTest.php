@@ -1,11 +1,15 @@
 <?php
 
+use MediaWiki\Language\Language;
+
 /**
  * Validate the Messages*.php files
  * @coversNothing -- no way to cover non-class files
  */
 class MessagesStructureTest extends MediaWikiUnitTestCase {
+	/** @var string */
 	private $langCode;
+	/** @var array */
 	private static $enData;
 
 	public static function provideMessagesFiles() {

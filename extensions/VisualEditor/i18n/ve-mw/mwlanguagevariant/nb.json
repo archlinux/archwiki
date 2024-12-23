@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Jon Harald Søby"
 		]
 	},
@@ -14,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Dette er en skjult regel.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Denne regelen påvirker sidetittelen.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Språkkode",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Ugyldig>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Ugyldig</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Språk",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Kilde",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Mål",

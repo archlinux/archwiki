@@ -25,6 +25,13 @@
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code>ত দিয়া <code>&lt;ref&gt;</code> টেগৰ কোনো নাম আবণ্টন নাই।",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>ত দিয়া \"$1\" নামৰ <code>&lt;ref&gt;</code> টেগৰ কোনো সমল নাই।",
 	"cite-tracking-category-cite-error": "তথ্যসূত্ৰৰ ত্ৰুটি থকা পৃষ্ঠা",
+	"cite-reference-previews-reference": "তথ্যসূত্ৰ",
+	"cite-reference-previews-book": "কিতাপৰ তথ্যসূত্ৰ",
+	"cite-reference-previews-journal": "জাৰ্নেলৰ তথ্যসূত্ৰ",
+	"cite-reference-previews-news": "বাতৰিৰ তথ্যসূত্ৰ",
+	"cite-reference-previews-note": "টোকা",
+	"cite-reference-previews-web": "ৱেব তথ্যসূত্ৰ",
+	"cite-reference-previews-collapsible-placeholder": "এই তথ্যসূত্ৰত এটি চিত্ৰ আছে যাক প্ৰাকদৰ্শনত প্ৰদৰ্শন কৰিব পৰা নাযায়।",
 	"cite_references_link_accessibility_label": "যাওক",
 	"cite_references_link_many_accessibility_label": "ইয়ালৈ যাওক:",
 	"cite_section_preview_references": "তথ্যসূত্ৰৰ প্ৰাক্‌দৰ্শন",
@@ -33,5 +40,9 @@
 	"cite-wikieditor-help-page-references": "তথ্যসংগ্ৰহ",
 	"cite-wikieditor-help-content-reference-description": "তথ্যসংগ্ৰহ",
 	"cite-wikieditor-help-content-rereference-description": "এটা তথ্য উত্সৰ একাধিক ব্যৱহাৰ",
-	"cite-wikieditor-help-content-showreferences-description": "তথ্যসংগ্ৰহ প্ৰদৰ্শন কৰক"
+	"cite-wikieditor-help-content-showreferences-description": "তথ্যসংগ্ৰহ প্ৰদৰ্শন কৰক",
+	"popups-prefs-navpopups-gadget-conflict-info": "আপুনি [[$1|নেভিগেচন পপআপ]] গেজেট সক্ষম কৰি থৈছে, গতিকে আপুনি এই বৈশিষ্ট্যৰ দ্বাৰা প্ৰদান কৰা প্ৰাকদৰ্শনসমূহ দেখা নাপাব। আপোনাৰ ৱিকিৰ ওপৰত নিৰ্ভৰ কৰি গেজেটটোৰ নাম অলপ বেলেগ হ'ব পাৰে। যদি আপুনি সমস্যাৰ সন্মুখীন হৈছে, অনুগ্ৰহ কৰি গোলকীয়সমূহ অন্তৰ্ভুক্তসমূহকো ধৰি আপোনাৰ গেজেটসমূহ আৰু ব্যৱহাৰকাৰী স্ক্ৰিপ্টসমূহ পৰ্যালোচনা কৰক।",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "আপুনি [[$1|নেভিগেচন পপআপ]] আৰু [[$1|তথ্যসূত্ৰ টুলটিপ]] গেজেট সক্ষম কৰি থৈছে, গতিকে আপুনি এই বৈশিষ্ট্যৰ দ্বাৰা প্ৰদান কৰা প্ৰাকদৰ্শনসমূহ দেখা নাপাব। আপোনাৰ ৱিকিৰ ওপৰত নিৰ্ভৰ কৰি গেজেটসমূহৰ নাম অলপ বেলেগ হ'ব পাৰে। যদি আপুনি সমস্যাৰ সন্মুখীন হৈছে, অনুগ্ৰহ কৰি গোলকীয়সমূহ অন্তৰ্ভুক্তসমূহকো ধৰি আপোনাৰ গেজেটসমূহ আৰু ব্যৱহাৰকাৰী স্ক্ৰিপ্টসমূহ পৰ্যালোচনা কৰক।",
+	"popups-prefs-reftooltips-gadget-conflict-info": "আপুনি [[$1|তথ্যসূত্ৰ টুলটিপ]] গেজেট সক্ষম কৰি থৈছে, গতিকে আপুনি এই বৈশিষ্ট্যৰ দ্বাৰা প্ৰদান কৰা তথ্যসূত্ৰ প্ৰাকদৰ্শনসমূহ দেখা নাপাব। আপোনাৰ ৱিকিৰ ওপৰত নিৰ্ভৰ কৰি গেজেটটোৰ নাম অলপ বেলেগ হ'ব পাৰে। যদি আপুনি সমস্যাৰ সন্মুখীন হৈছে, অনুগ্ৰহ কৰি গোলকীয়সমূহ অন্তৰ্ভুক্তসমূহকো ধৰি আপোনাৰ গেজেটসমূহ আৰু ব্যৱহাৰকাৰী স্ক্ৰিপ্টসমূহ পৰ্যালোচনা কৰক।",
+	"popups-refpreview-user-preference-label": "তথ্যসূত্ৰৰ পূৰ্বলোকন সক্ষম কৰক (পৃষ্ঠা এটা পঢ়ি থাকোঁতে তথ্যসূত্ৰ এটাৰ দ্ৰুত পূৰ্বলোকন চাওক)"
 }

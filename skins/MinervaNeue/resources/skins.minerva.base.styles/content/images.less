@@ -111,3 +111,37 @@
 		}
 	}
 }
+
+.dark-mode-image-styles() {
+	/* Desktop legacy HTML */
+	.mw-parser-output,
+	/* Parsoid HTML (mobile) */
+	section .mw-heading ~ div,
+	/* Parsoid HTML (desktop) and mobile legacy HTML */
+	section,
+	/* e.g. https://en.wikipedia.org/wiki/Pullback_(category_theory)#Universal_property */
+	dd,
+	/* For targeting p span.mw-default-size */
+	p {
+		> span.mw-default-size,
+		> figure[ typeof='mw:File' ],
+		> figure[ typeof='mw:File/Thumb' ],
+		> figure[ typeof='mw:File/Frameless' ] {
+			img {
+				background-color: #c8ccd1;
+			}
+		}
+	}
+}
+
+@media screen {
+	html.skin-theme-clientpref-night {
+		.dark-mode-image-styles();
+	}
+}
+
+@media screen and ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		.dark-mode-image-styles();
+	}
+}

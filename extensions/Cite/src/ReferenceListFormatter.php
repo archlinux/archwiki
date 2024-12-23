@@ -3,7 +3,7 @@
 namespace Cite;
 
 use MediaWiki\Html\Html;
-use Parser;
+use MediaWiki\Parser\Parser;
 
 /**
  * Renderer for the actual list of references in place of the <references /> tag at the end of an
@@ -55,6 +55,7 @@ class ReferenceListFormatter {
 
 		$wikitext = $this->formatRefsList( $parser, $groupRefs, $isSectionPreview );
 		$html = $parser->recursiveTagParse( $wikitext );
+		$html = Html::rawElement( 'ol', [ 'class' => 'references' ], $html );
 
 		if ( $responsive ) {
 			$wrapClasses = [ 'mw-references-wrap' ];
@@ -119,7 +120,7 @@ class ReferenceListFormatter {
 			$parserInput .= $this->formatListItem( $parser, $key, $ref, $isSectionPreview ) . "\n";
 		}
 		$parserInput .= $this->closeIndention( $indented );
-		return Html::rawElement( 'ol', [ 'class' => 'references' ], $parserInput );
+		return $parserInput;
 	}
 
 	/**
@@ -146,20 +147,21 @@ class ReferenceListFormatter {
 	private function formatListItem(
 		Parser $parser, $key, ReferenceStackItem $ref, bool $isSectionPreview
 	): string {
-		$text = $this->referenceText( $parser, $key, $ref, $isSectionPreview );
-		$extraAttributes = '';
-
-		if ( isset( $ref->dir ) ) {
-			// The following classes are generated here:
-			// * mw-cite-dir-ltr
-			// * mw-cite-dir-rtl
-			$extraAttributes = Html::expandAttributes( [ 'class' => 'mw-cite-dir-' . $ref->dir ] );
-		}
+		$text = $this->renderTextAndWarnings( $parser, $key, $ref, $isSectionPreview );
 
 		// Special case for an incomplete follow="…". This is valid e.g. in the Page:… namespace on
 		// Wikisource. Note this returns a <p>, not an <li> as expected!
 		if ( isset( $ref->follow ) ) {
 			return '<p id="' . $this->anchorFormatter->jumpLinkTarget( $ref->follow ) . '">' . $text . '</p>';
+		}
+
+		// Parameter $4 in the cite_references_link_one and cite_references_link_many messages
+		$extraAttributes = '';
+		if ( isset( $ref->dir ) ) {
+			// The following classes are generated here:
+			// * mw-cite-dir-ltr
+			// * mw-cite-dir-rtl
+			$extraAttributes = Html::expandAttributes( [ 'class' => 'mw-cite-dir-' . $ref->dir ] );
 		}
 
 		if ( $ref->count === 1 ) {
@@ -180,21 +182,22 @@ class ReferenceListFormatter {
 			)->plain();
 		}
 
-		// Named references with >1 occurrences
 		$backlinks = [];
 		for ( $i = 0; $i < $ref->count; $i++ ) {
+			$numericLabel = $this->referencesFormatEntryNumericBacklinkLabel(
+				$ref->number . ( $ref->extendsIndex ? '.' . $ref->extendsIndex : '' ),
+				$i,
+				$ref->count
+			);
 			$backlinks[] = $this->messageLocalizer->msg(
 				'cite_references_link_many_format',
 				$this->anchorFormatter->backLink( $key, $ref->key . '-' . $i ),
-				$this->referencesFormatEntryNumericBacklinkLabel(
-					$ref->number .
-						( isset( $ref->extendsIndex ) ? '.' . $ref->extendsIndex : '' ),
-					$i,
-					$ref->count
-				),
-				$this->referencesFormatEntryAlternateBacklinkLabel( $parser, $i )
+				$numericLabel,
+				$this->referencesFormatEntryAlternateBacklinkLabel( $parser, $i ) ?? $numericLabel
 			)->plain();
 		}
+
+		// The parent of a subref might actually be unused and therefor have zero backlinks
 		$linkTargetId = $ref->count > 0 ?
 			$this->anchorFormatter->jumpLinkTarget( $key . '-' . $ref->key ) : '';
 		return $this->messageLocalizer->msg(
@@ -214,17 +217,17 @@ class ReferenceListFormatter {
 	 *
 	 * @return string Wikitext
 	 */
-	private function referenceText(
+	private function renderTextAndWarnings(
 		Parser $parser, $key, ReferenceStackItem $ref, bool $isSectionPreview
 	): string {
-		$text = $ref->text ?? null;
-		if ( $text === null ) {
+		if ( !isset( $ref->text ) ) {
 			return $this->errorReporter->plain( $parser,
 				$isSectionPreview
 					? 'cite_warning_sectionpreview_no_text'
 					: 'cite_error_references_no_text', $key );
 		}
 
+		$text = $ref->text ?? '';
 		foreach ( $ref->warnings as $warning ) {
 			// @phan-suppress-next-line PhanParamTooFewUnpack
 			$text .= ' ' . $this->errorReporter->plain( $parser, ...$warning );
@@ -240,14 +243,14 @@ class ReferenceListFormatter {
 	 * offset, e.g. $base = 1, $offset = 2; = 1.2
 	 * Since bug #5525, it correctly does 1.9 -> 1.10 as well as 1.099 -> 1.100
 	 *
-	 * @param int|string $base
+	 * @param string $base
 	 * @param int $offset
 	 * @param int $max Maximum value expected.
 	 *
 	 * @return string
 	 */
 	private function referencesFormatEntryNumericBacklinkLabel(
-		$base,
+		string $base,
 		int $offset,
 		int $max
 	): string {
@@ -266,12 +269,16 @@ class ReferenceListFormatter {
 	 */
 	private function referencesFormatEntryAlternateBacklinkLabel(
 		Parser $parser, int $offset
-	): string {
-		$this->backlinkLabels ??= preg_split(
-			'/\s+/',
-			$this->messageLocalizer->msg( 'cite_references_link_many_format_backlink_labels' )
-				->plain()
-		);
+	): ?string {
+		if ( !isset( $this->backlinkLabels ) ) {
+			$msg = $this->messageLocalizer->msg( 'cite_references_link_many_format_backlink_labels' );
+			$this->backlinkLabels = $msg->isDisabled() ? [] : preg_split( '/\s+/', $msg->plain() );
+		}
+
+		// Disabling the message just disables the feature
+		if ( !$this->backlinkLabels ) {
+			return null;
+		}
 
 		return $this->backlinkLabels[$offset]
 			?? $this->errorReporter->plain( $parser, 'cite_error_references_no_backlink_label' );

@@ -1,11 +1,6 @@
 import querystring from 'querystring';
 
-export function waitForVEToLoad() {
-	cy.get( '.ve-init-mw-desktopArticleTarget-toolbar-open', { timeout: 7000 } )
-		.should( 'be.visible' );
-}
-
-function clickUntilVisible( clickElement, expectedSelector, timeout = 5000 ) {
+export function clickUntilVisible( clickElement, expectedSelector, timeout = 5000 ) {
 	const timeoutTime = Date.now() + timeout;
 
 	function clickUntilVisibleWithinTime() {
@@ -39,12 +34,30 @@ export function waitForMWLoader() {
 		.and( 'have.property', 'using' );
 }
 
+export function waitForModuleReady( moduleName ) {
+	cy.window()
+		.should( 'have.property', 'mw' )
+		.and( 'have.property', 'loader' )
+		.and( 'have.property', 'getState' );
+	cy.window()
+		.should(
+			( win ) => expect( win.mw.loader.getState( moduleName ) ).to.eq( 'ready' )
+		);
+}
+
 export function editPage( title, wikiText ) {
+	visitTitle( '' );
 	waitForMWLoader();
 	cy.window().then( async ( win ) => {
 		await win.mw.loader.using( 'mediawiki.api' );
-		const response = await new win.mw.Api().create( title, {}, wikiText );
-		expect( response.result ).to.equal( 'Success' );
+		const response = await new win.mw.Api().postWithEditToken( {
+			action: 'edit',
+			title: title,
+			text: wikiText,
+			formatversion: '2'
+		} );
+
+		expect( response.edit.result ).to.equal( 'Success' );
 	} );
 }
 
@@ -53,10 +66,6 @@ export function loginAsAdmin() {
 	cy.get( '#wpName1' ).type( cy.config( 'mediawikiAdminUsername' ) );
 	cy.get( '#wpPassword1' ).type( cy.config( 'mediawikiAdminPassword' ) );
 	cy.get( '#wpLoginAttempt' ).click();
-}
-
-export function getMWSuccessNotification() {
-	return cy.get( '.mw-notification-visible .oo-ui-icon-success' );
 }
 
 export function getReference( num ) {
@@ -77,60 +86,7 @@ export function getCiteSingleBacklink( num ) {
 }
 
 export function getFragmentFromLink( linkElement ) {
-	return linkElement.invoke( 'attr', 'href' ).then( ( href ) => {
-		return href.split( '#' )[ 1 ];
-	} );
-}
-export function getVEFootnoteMarker( refName, sequenceNumber, index ) {
-	return cy.get( `sup.ve-ce-mwReferenceNode#cite_ref-${ refName }_${ sequenceNumber }-${ index - 1 }` );
-}
-
-export function getVEReferenceContextItem() {
-	return cy.get( '.ve-ui-context-menu .ve-ui-mwReferenceContextItem' );
-}
-
-export function getVEReferenceContextItemEdit() {
-	return cy.get( '.ve-ui-context-menu .ve-ui-mwReferenceContextItem .oo-ui-buttonElement-button' );
-}
-
-export function getVEReferenceEditDialog() {
-	return cy.get( '.ve-ui-mwReferenceDialog' );
-}
-
-export function openVECiteReuseDialog() {
-	clickUntilVisible(
-		cy.get( '.ve-ui-toolbar-group-cite' ),
-		'.ve-ui-toolbar .oo-ui-tool-name-reference-existing'
-	);
-	cy.get( '.ve-ui-toolbar .oo-ui-tool-name-reference-existing' ).click();
-}
-
-export function getVEUIToolbarSaveButton() {
-	return cy.get( '.ve-ui-toolbar-saveButton' );
-}
-
-export function getSaveChangesDialogConfirmButton() {
-	return cy.get( '.ve-ui-mwSaveDialog .oo-ui-processDialog-actions-primary .oo-ui-buttonWidget' );
-}
-
-export function getCiteReuseDialogRefResult( rowNumber ) {
-	return cy.get( '.ve-ui-mwReferenceSearchWidget .ve-ui-mwReferenceResultWidget' )
-		.eq( rowNumber - 1 );
-}
-
-export function getCiteReuseDialogRefResultName( rowNumber ) {
-	return cy.get( '.ve-ui-mwReferenceSearchWidget .ve-ui-mwReferenceResultWidget .ve-ui-mwReferenceSearchWidget-name' )
-		.eq( rowNumber - 1 );
-}
-
-export function getCiteReuseDialogRefResultCitation( rowNumber ) {
-	return cy.get( '.ve-ui-mwReferenceSearchWidget .ve-ui-mwReferenceResultWidget .ve-ui-mwReferenceSearchWidget-citation' )
-		.eq( rowNumber - 1 );
-}
-
-export function getCiteReuseDialogRefText( rowNumber ) {
-	return cy.get( '.oo-ui-widget.oo-ui-widget-enabled .ve-ui-mwReferenceResultWidget .ve-ce-paragraphNode' )
-		.eq( rowNumber - 1 );
+	return linkElement.invoke( 'attr', 'href' ).then( ( href ) => href.split( '#' )[ 1 ] );
 }
 
 export function backlinksIdShouldMatchFootnoteId( supIndex, backlinkIndex, rowNumber ) {

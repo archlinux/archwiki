@@ -6,7 +6,8 @@
 	font-size: @font-size-minerva-small;
 	padding: 0.9em 1em;
 	background-color: @background-color-toast-notification;
-	color: var( --color-inverted );
+	// the text should be white in both modes
+	color: @color-inverted-fixed;
 	margin: 0 10% 20px;
 	width: 80%;
 	text-align: center;
@@ -35,7 +36,7 @@
 	}
 
 	a {
-		color: var( --color-inverted );
+		color: @color-inverted-fixed;
 		text-decoration: underline;
 	}
 }
@@ -59,7 +60,8 @@
 	opacity: 0;
 	transition: transform @transition-duration-medium, opacity @transition-duration-medium, visibility @transition-duration-medium;
 
-	&.visible, &.mw-notification-visible {
+	&.visible,
+	&.mw-notification-visible {
 		visibility: visible;
 		opacity: 1;
 		transform: translate( 0, 0 );

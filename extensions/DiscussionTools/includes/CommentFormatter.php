@@ -2,9 +2,8 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use IContextSource;
-use Language;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookRunner;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
@@ -12,16 +11,16 @@ use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ThreadItem;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use MWExceptionHandler;
-use ParserOutput;
 use Throwable;
-use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -73,8 +72,10 @@ class CommentFormatter {
 
 		$duration = microtime( true ) - $start;
 
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
-		$stats->timing( 'discussiontools.addReplyLinks', $duration * 1000 );
+		MediaWikiServices::getInstance()->getStatsFactory()
+			->getTiming( 'discussiontools_addreplylinks_seconds' )
+			->copyToStatsdAt( 'discussiontools.addReplyLinks' )
+			->observe( $duration * 1000 );
 
 		// How long this method took, in seconds
 		$pout->setLimitReportData(
@@ -115,9 +116,13 @@ class CommentFormatter {
 		) ) {
 			// Do not add the wrapper if the heading has attributes generated from wikitext (T353489).
 			// Only allow reserved attributes (e.g. 'data-mw', which can't be used in wikitext, but which
-			// are used internally by our own code and by Parsoid) and the 'id' attribute used by Parsoid.
+			// are used internally by our own code and by Parsoid) and the 'id', 'about', and 'typeof'
+			// attributes used by Parsoid.
 			foreach ( $headingElement->attributes as $attr ) {
-				if ( $attr->name !== 'id' && !Sanitizer::isReservedDataAttribute( $attr->name ) ) {
+				if (
+					!in_array( $attr->name, [ 'id', 'about', 'typeof' ], true ) &&
+					!Sanitizer::isReservedDataAttribute( $attr->name )
+				) {
 					return $headingElement;
 				}
 			}
@@ -319,11 +324,10 @@ class CommentFormatter {
 			// Start marker is added after reply link to keep reverse DOM order
 
 			if ( $threadItem instanceof ContentHeadingItem ) {
-				// <span class="mw-headline" …>, or <hN …> in Parsoid HTML
-				$headline = $threadItem->getRange()->endContainer;
-				Assert::precondition( $headline instanceof Element, 'HeadingItem refers to an element node' );
+				$headline = $threadItem->getHeadlineNode();
 				$headline->setAttribute( 'data-mw-thread-id', $threadItem->getId() );
 				if ( $threadItem->getHeadingLevel() === 2 ) {
+					// Hack for tests (T363031), $headline should already be a <h2>
 					$headingElement = CommentUtils::closestElement( $headline, [ 'h2' ] );
 
 					if ( $headingElement ) {
@@ -406,9 +410,12 @@ class CommentFormatter {
 				->addTrackingCategory( $pout, 'discussiontools-comments-before-first-heading-category', $title );
 		}
 
-		if ( count( $threadItems ) === 0 ) {
-			$pout->setExtensionData( 'DiscussionTools-isEmptyTalkPage', true );
-		}
+		// FIXME: Similar to `setJsConfigVar` below, this will eventually throw
+		// from Parsoid's calls to the legacy parser for extension content parsing
+		$pout->setExtensionData(
+			'DiscussionTools-isEmptyTalkPage',
+			count( $threadItems ) === 0
+		);
 
 		$threadsJSON = array_map( static function ( ContentThreadItem $item ) {
 			return $item->jsonSerialize( true );
@@ -416,8 +423,9 @@ class CommentFormatter {
 
 		// Temporary hack to deal with T351461#9358034: this should be a
 		// call to `setJsConfigVar` but Parsoid is currently reprocessing
-		// content from extensions.
-		$pout->addJsConfigVars( 'wgDiscussionToolsPageThreads', $threadsJSON );
+		// content from extensions. (T372592)
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		@$pout->addJsConfigVars( 'wgDiscussionToolsPageThreads', $threadsJSON );
 
 		// Like DOMCompat::getInnerHTML(), but disable 'smartQuote' for compatibility with
 		// ParserOutput::EDITSECTION_REGEX matching 'mw:editsection' tags (T274709)
@@ -455,8 +463,6 @@ class CommentFormatter {
 		] );
 
 		$text = preg_replace( '/<!--__DTELLIPSISBUTTON__(.*?)-->/', '', $text );
-		// No longer used, this can be removed once parser cache expires:
-		$text = preg_replace( '/<!--__DTSUBSCRIBELINK__(.*?)-->/', '', $text );
 		$text = preg_replace( '/<!--__DTSUBSCRIBEBUTTON(DESKTOP|MOBILE)__(.*?)-->/', '', $text );
 
 		return $text;
@@ -470,9 +476,6 @@ class CommentFormatter {
 		SubscriptionStore $subscriptionStore, bool $isMobile, bool $useButtons
 	): string {
 		$doc = DOMCompat::newDocument( true );
-
-		// No longer used, this can be removed once parser cache expires:
-		$text = preg_replace( '/<!--__DTSUBSCRIBELINK__(.*?)-->/', '', $text );
 
 		$matches = [];
 		$itemDataByName = [];
@@ -920,15 +923,6 @@ class CommentFormatter {
 	 */
 	public static function isEmptyTalkPage( ParserOutput $pout ): bool {
 		return $pout->getExtensionData( 'DiscussionTools-isEmptyTalkPage' ) === true;
-	}
-
-	/**
-	 * Append content to an empty talk page
-	 */
-	public static function appendToEmptyTalkPage( ParserOutput $pout, string $content ): void {
-		$text = $pout->getRawText();
-		$text .= $content;
-		$pout->setText( $text );
 	}
 
 	/**

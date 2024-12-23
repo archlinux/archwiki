@@ -48,7 +48,7 @@
 	"minerva-page-actions-overflow": "Veel",
 	"minerva-page-actions-language-switcher": "Keeled",
 	"minerva-page-actions-history": "Ajalugu",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|arutelu]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue arutelu]",
 	"minerva-skin-desc": "Isereguleeruva paigutusega esikujundus mobiilile",
 	"skin-minerva-issue-learn-more": "Lisateave",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekundi}} eest",
@@ -60,6 +60,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategooriad",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Näita lehekülgede kategooriaid.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Mobiilivaates kahjuks ei saa tulemusi lehekülje kaupa rühmitada. Kui soovid lehekülje kaupa rühmitamise funktsiooni kasutada, siis palun külasta saiti lauaarvuti vaates.",
+	"skin-minerva-night-mode-unavailable": "Lehekülg on saadaval ainult heleda kujundusega.",
 	"minerva.css": "/* Siin asuv kaskaadilaadistik laaditakse kõigi kujunduse MinervaNeue kasutajate jaoks. */",
 	"minerva.js": "/* Siin asuv JavaScript laaditakse kõigi kujunduse MinervaNeue kasutajate jaoks. */"
 }

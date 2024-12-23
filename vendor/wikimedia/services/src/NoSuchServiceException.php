@@ -36,7 +36,7 @@ class NoSuchServiceException extends RuntimeException
 	 * @param string $serviceName
 	 * @param Exception|null $previous
 	 */
-	public function __construct( string $serviceName, Exception $previous = null ) {
+	public function __construct( string $serviceName, ?Exception $previous = null ) {
 		parent::__construct( "No such service: $serviceName", 0, $previous );
 	}
 

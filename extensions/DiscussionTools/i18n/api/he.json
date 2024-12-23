@@ -8,6 +8,7 @@
 	"apierror-discussiontools-commentid-notfound": "תגובה עם המזהה '$1' לא נמצאה.",
 	"apierror-discussiontools-commentname-ambiguous": "נמצאו כמה תגובות עם השם \"$1\", נדרש <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "תגובה עם השם '$1' לא נמצאה.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "הדף מעולם לא הכיל שום דיונים.",
 	"apierror-discussiontools-formtoken-used": "התגובה כבר נשלחה. יש לרענן את הדף כדי לראות אותה.",
 	"apierror-discussiontools-subscription-failed-add": "לא היה אפשר להירשם לנושא הזה.",
 	"apierror-discussiontools-subscription-failed-remove": "לא היה אפשר לבטל את הרישום לנושא הזה.",
@@ -41,5 +42,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "שם הנושא שהמשתמש רוצה לעקוב אחריו (או להפסיק לעקוב אחריו)",
 	"apihelp-discussiontoolssubscribe-param-page": "הדף שהנושא מופיע בו",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "true בשביל להירשם, false בשביל לבטל רישום",
-	"apihelp-discussiontoolssubscribe-summary": "להירשם (או לבטל רישום) לקבלת התראות על נושא"
+	"apihelp-discussiontoolssubscribe-summary": "להירשם (או לבטל רישום) לקבלת התראות על נושא",
+	"apihelp-discussiontoolsthank-param-commentid": "מזהה התגובה שרצים להודות עליה.",
+	"apihelp-discussiontoolsthank-summary": "לשלוח התראה על הודעת תודה פומבית על תגובה."
 }
