@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joao Xavier"
+		]
+	},
+	"editcheck-dialog-addref-reject-common-knowledge": "L'informo quan me adjuntes esas ample konocata",
+	"tag-editcheck-reference-decline-common-knowledge": "Kontrolo di redakturi (referi) refuzita (ordinara konoco)",
+	"tag-editcheck-reference-decline-irrelevant": "Kontrolo di redakturi (referi) refuzita (senimporta)",
+	"tag-editcheck-reference-decline-other": "Kontrolo di redakturi (referi) refuzita (altra motivo)",
+	"tag-editcheck-reference-decline-uncertain": "Kontrolo di redakturi (referi) refuzita (necerta)"
+}

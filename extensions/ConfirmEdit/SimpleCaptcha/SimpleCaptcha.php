@@ -928,7 +928,7 @@ class SimpleCaptcha {
 
 	/**
 	 * @param WebRequest $request
-	 * @return array [ captcha ID, captcha solution ]
+	 * @return string[]|null[] [ captcha ID, captcha solution ]
 	 */
 	protected function getCaptchaParamsFromRequest( WebRequest $request ) {
 		$index = $request->getVal( 'wpCaptchaId' );
@@ -940,8 +940,8 @@ class SimpleCaptcha {
 	 * Checks, if the user reached the amount of false CAPTCHAs and give him some vacation
 	 * or run self::passCaptcha() and clear counter if correct.
 	 *
-	 * @param string $index Captcha idenitifier
-	 * @param string $word Captcha solution
+	 * @param string|null $index Captcha identifier
+	 * @param string|null $word Captcha solution
 	 * @param User $user User for throttling captcha solving attempts
 	 * @return bool
 	 * @see self::passCaptcha()
@@ -978,8 +978,8 @@ class SimpleCaptcha {
 	/**
 	 * Given a required captcha run, test form input for correct
 	 * input on the open session.
-	 * @param string $index Captcha idenitifier
-	 * @param string $word Captcha solution
+	 * @param string|null $index Captcha identifier
+	 * @param string|null $word Captcha solution
 	 * @return bool if passed, false if failed or new session
 	 */
 	protected function passCaptcha( $index, $word ) {
@@ -987,6 +987,12 @@ class SimpleCaptcha {
 		// if the CAPTCHA was already checked - Bug T94276
 		if ( $this->captchaSolved !== null ) {
 			return $this->captchaSolved;
+		}
+
+		if ( $index === null ) {
+			$this->log( "new captcha session" );
+			// If no captcha ID was passed, we need to start a new session (T384858).
+			return false;
 		}
 
 		$info = $this->retrieveCaptcha( $index );

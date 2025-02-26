@@ -21,7 +21,7 @@
 	"math-tracking-category-texvc-deprecation-desc": "Ar pajennoù implijet er rummad-mañ a ra gant ur furmad dispredet eus an tikedennoù metematik",
 	"math_unknown_error": "fazi dianav",
 	"math_unknown_function": "arc'hwel dianav \"$1\"",
-	"mw-math-mathml": "MathML gant kiladenn PNG (gallout a ra MathML bezañ gweredekaat gant ur plugin merdeer)",
+	"mw-math-mathml": "SVG (gallout a ra MathML bezañ gweredekaet gant ur plugin merdeer)",
 	"mw-math-native": "MathML (arnodel; skeudenn ebet)",
 	"mw-math-source": "Leuskel ar c'hod LaTeX orin",
 	"prefs-math": "Tres jedoniel",

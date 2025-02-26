@@ -6,7 +6,7 @@
 		]
 	},
 	"thanks-desc": "Nyèmbu'aghi pranala ghuna amator kaso'on ḍâ' pangangghuy ka'dinto atas beccè'an, kanḍhâ, bân satemolèna.",
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|mator kaso'on}}}}",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ngoca' kaso'on}}}}",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|matorè kaso'on}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|mator kaso'on}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|akaso'on}}}}",

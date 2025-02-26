@@ -33,7 +33,8 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"وهراني"
+			"وهراني",
+			"Cigaryno"
 		]
 	},
 	"abusefilter-desc": "يطبق قواعد آلية على التعديلات.",
@@ -220,6 +221,7 @@
 	"abusefilter-add": "إضافة مرشح إساءة",
 	"abusefilter-edit": "تعديل مرشح الإساءة",
 	"abusefilter-edit-specific": "تعديل مرشح الإساءة $1: $2",
+	"abusefilter-view-specific": "عرض مرشح الإساءة $1: $2",
 	"abusefilter-edit-subtitle": "تعديل المرشح $1",
 	"abusefilter-edit-subtitle-new": "أنشئ مُرشِّحًا",
 	"abusefilter-edit-token-not-match": "لم يتم حفظ التعديل! يُرجَى الحفظ مرة أخرى.",

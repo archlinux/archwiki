@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aristorkle"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Contestacion",
+	"discussiontools-replylink": "{{GENDER:|responde}}",
+	"discussiontools-replywidget-cancel": "Cancela",
+	"discussiontools-replywidget-mode-source": "Codigo",
+	"discussiontools-replywidget-reply": "{{GENDER:|Responde}}"
+}

@@ -7,9 +7,14 @@
 	"timeless-anonymous": "Anonyma",
 	"timeless-notloggedin": "It leat čálihuvvon sisa",
 	"timeless-userpage": "{{GENDER:$1|Geavaheaddji}}siidu",
+	"timeless-pagelog": "Siidologgat",
+	"timeless-sitetools": "Wiki-reaiddut",
+	"timeless-pageactions": "Siidoreaiddut",
+	"timeless-action-addsection": "Ođđa fáddá",
 	"timeless-view-view": "Loga",
 	"timeless-namespaces": "Nammagomuvuođat",
 	"timeless-languages": "Gielat",
+	"timeless-projects": "Eará prošeavttat",
 	"timeless-view-history": "Historjá",
 	"timeless-action-undelete": "Máhcat {{PLURAL:$1|ovtta rievdadusa|$1 rievdadusa}}"
 }

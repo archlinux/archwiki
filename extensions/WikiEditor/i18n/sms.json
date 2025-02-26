@@ -8,6 +8,9 @@
 	"wikieditor-toolbar-tool-link": "Liŋkk",
 	"wikieditor-toolbar-tool-link-title": "Lââʹzzet liiŋk",
 	"wikieditor-toolbar-tool-link-int": "wikisijddu",
+	"wikieditor-toolbar-tool-link-int-target-tooltip": "Seiddnõmm leʹbe URL",
+	"wikieditor-toolbar-tool-link-int-text": "Liŋkkteʹkstt:",
+	"wikieditor-toolbar-tool-link-ext-text": "Liŋkkteʹkstt:",
 	"wikieditor-toolbar-tool-link-insert": "Lââʹzzet liiŋk",
 	"wikieditor-toolbar-tool-link-cancel": "Jõõsk",
 	"wikieditor-toolbar-tool-file-title": "Lââʹzzet teâttõõzz",
@@ -31,5 +34,7 @@
 	"wikieditor-toolbar-tool-replace-search": "Ooʒʒ:",
 	"wikieditor-toolbar-section-characters": "Spesiaalmiârk",
 	"wikieditor-toolbar-help-page-link": "Liiŋk",
+	"wikieditor-toolbar-help-content-ilink-example": "[[Seiddnõmm]]\n[[Seiddnõmm|Liŋkkteʹkstt]]",
+	"wikieditor-toolbar-help-content-xlink-example-label": "Liŋkkteʹkstt",
 	"wikieditor-toolbar-help-content-signature-username": "Õõʹnninõmm"
 }

@@ -448,11 +448,15 @@ class FancyCaptcha extends SimpleCaptcha {
 	protected function passCaptcha( $index, $word ) {
 		global $wgCaptchaDeleteOnSolve;
 
+		if ( !$wgCaptchaDeleteOnSolve || $index === null ) {
+			return parent::passCaptcha( $index, $word, $user );
+		}
+
 		// get the captcha info before it gets deleted
 		$info = $this->retrieveCaptcha( $index );
 		$pass = parent::passCaptcha( $index, $word );
 
-		if ( $pass && $wgCaptchaDeleteOnSolve ) {
+		if ( $pass ) {
 			$this->getBackend()->quickDelete( [
 				'src' => $this->imagePath( $info['salt'], $info['hash'] )
 			] );

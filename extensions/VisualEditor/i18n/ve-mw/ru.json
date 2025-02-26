@@ -59,7 +59,8 @@
 			"Синкретик",
 			"Туллук",
 			"Умар",
-			"Ядерный Трамвай"
+			"Ядерный Трамвай",
+			"Novichev"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -297,7 +298,7 @@
 	"visualeditor-includes-includeonly-description": "Когда содержание этой страницы используется на другой странице, то следующее дополнительное содержание будет внесено сюда:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Узнать больше о частичном включении]",
 	"visualeditor-languages-tool": "Языки",
-	"visualeditor-linkinspector-button-link-external": "Внешний вебсайт",
+	"visualeditor-linkinspector-button-link-external": "Внешний веб-сайт",
 	"visualeditor-linkinspector-button-link-internal": "Поиск внутренних страниц",
 	"visualeditor-linkinspector-convert-link-isbn": "Превратить в ISBN-ссылку",
 	"visualeditor-linkinspector-convert-link-pmid": "Превратить в PMID-ссылку",

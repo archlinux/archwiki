@@ -14,7 +14,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Topi-maso",
 	"wikieditor-toolbar-tool-table-insert": "Hampiditra",
 	"wikieditor-toolbar-tool-table-cancel": "Aoka ihany",
-	"wikieditor-toolbar-tool-table-toomany": "Tsy afaka ataon'ity fitaovana ity ny mampiditra tabilao manana sela mahery ny 1000.",
+	"wikieditor-toolbar-tool-table-toomany": "Tsy afaka ataon'ity fitaovana ity ny mampiditra tabilao manana {{PLURAL:$1|sela}} mahery ny $1.",
 	"wikieditor-toolbar-section-characters": "Tarehintsoratra manokana",
 	"wikieditor-toolbar-section-help": "Fanoroana",
 	"wikieditor-toolbar-help-heading-description": "Famisavisana",

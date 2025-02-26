@@ -201,7 +201,7 @@
 	"notification-header-watchlist-multiuser-restored": "<strong>$1</strong>，一個在{{GENDER:$2|您的}}監視清單上的頁面已被恢復了 $3 {{PLURAL:$3|次}}。",
 	"notification-body-watchlist-once": "除非在登入時{{GENDER:$1|您有訪問}}此頁面，否則在往後進一步活動時不會有其他電子郵件通知您。",
 	"notification-welcome-linktext": "歡迎",
-	"notification-header-thank-you-1-edit": "{{GENDER:$2|您}}剛剛作出了{{GENDER:$2|您的}}第一次編輯。謝謝您並歡迎{{GENDER:$2|您}}！",
+	"notification-header-thank-you-1-edit": "{{GENDER:$2|您}}剛剛作出了第一筆編輯；感謝，歡迎隨時再來！",
 	"notification-header-thank-you-10-edit": "{{GENDER:$2|您}}剛剛作出了{{GENDER:$2|您的}}第十次編輯。謝謝您，請繼續努力！",
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|您}}剛剛作出了{{GENDER:$2|您的}}第一百次編輯。謝謝{{GENDER:$2|您}}！",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|您}}剛剛作出了{{GENDER:$2|您的}}第一千次編輯。很感謝{{GENDER:$2|您}}的貢獻！",

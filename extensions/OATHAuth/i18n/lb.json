@@ -21,7 +21,7 @@
 	"oathauth-ui-no-module": "Net aktivéiert",
 	"oathauth-enable-generic": "Aschalten",
 	"oathauth-disable-generic": "Ausschalten",
-	"oathauth-invalidrequest": "Net-valabel Ufro",
+	"oathauth-invalidrequest": "Ongülteg Ufro",
 	"notification-header-oathauth-disable": "Zwee-Facteur-Authentifikatioun gouf fir {{GENDER:$2|Äre Benotzerkont}} desaktivéiert.",
 	"notification-body-oathauth-disable-other": "Wann {{GENDER:$2|Dir}} dëst net gefrot hutt, da sollt {{GENDER:$2|Dir}} en Administrateur kontaktéieren.",
 	"oathauth-notifications-disable-help": "Hëllef",

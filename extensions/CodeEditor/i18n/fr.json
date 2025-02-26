@@ -14,7 +14,7 @@
 	"codeeditor-desc": "Coloration syntaxique lors de la modification de pages écrites en JavaScript et CSS, en utilisant l’[https://ace.c9.io/ éditeur Ace]",
 	"codeeditor-next-annotation": "Aller à la prochaine annotation",
 	"codeeditor-toolbar-toggle": "Activer / désactiver l’éditeur de code",
-	"codeeditor-save-with-errors": "Le document contient des erreurs. Êtes-vous sûr{{GENDER:||e}} de vouloir le publier ?",
+	"codeeditor-save-with-errors": "Le document contient des erreurs. Êtes-vous {{GENDER:|sûr|sûre}} de vouloir le publier ?",
 	"codeeditor-invisibleChars-toggle": "Afficher / masquer les caractères invisibles",
 	"codeeditor-lineWrapping-toggle": "Activer / désactiver le repli de ligne",
 	"codeeditor-searchReplace-toggle": "Afficher / masquer l’outil de recherche et de remplacement",

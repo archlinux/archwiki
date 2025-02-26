@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Valentine Badu",
-			"Elliot one"
+			"Elliot one",
+			"Yaw tuba"
 		]
 	},
 	"mobile-frontend-history": "Nea mukeleka ne ɛzalɛ nwo edwɛkɛ",
@@ -12,5 +13,6 @@
 	"mobile-frontend-main-menu-nearby": "Ɔbikye",
 	"mobile-frontend-main-menu-settings": "Kakyideɛ",
 	"mobile-frontend-placeholder": "Kpondɛ {{SITENAME}}",
-	"mobile-frontend-random-button": "Kpondɛ ye biala"
+	"mobile-frontend-random-button": "Kpondɛ ye biala",
+	"minerva-page-actions-overflow": "Dɔɔnwo"
 }

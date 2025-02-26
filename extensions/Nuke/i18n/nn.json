@@ -17,7 +17,7 @@
 	"nuke-submit-user": "Gå",
 	"nuke-submit-delete": "Slett valde",
 	"right-nuke": "Masseslett sider",
-	"nuke-userorip": "Brukarnamn, IP-adresse eller tomt:",
+	"nuke-userorip": "Brukarnamn eller IP-adresse (kan stå tomt):",
 	"nuke-maxpages": "Høgste talet på sider:",
 	"nuke-editby": "Oppretta av [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Sida '''$1''' vart sletta.",

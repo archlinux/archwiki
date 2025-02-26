@@ -18,7 +18,8 @@
 			"محمد أحمد عبد الفتاح",
 			"Mohanad",
 			"Mohanad Kh",
-			"Matma Rex"
+			"Matma Rex",
+			"XIDME"
 		]
 	},
 	"discussiontools": "أدوات النقاش",
@@ -137,7 +138,7 @@
 	"discussiontools-replywidget-advanced": "خيارات متقدمة",
 	"discussiontools-replywidget-anon-warning": "<strong>لم تقوموا بتسجيل الدخول.</strong> لتلقّي تنبيه عندما يردّ شخص وللحصول على إسناد باسمك بدلا من عنوان الآي بي الخاص بك، يمكنكم [$1 تسجيل الدخول] أو [$2 إنشاء حساب].",
 	"discussiontools-replywidget-autocreate-warning": "<strong>لم تقوموا بتسجيل الدخول.</strong> بمجرد إجراء التعديل، سيتم إنشاء حساب مؤقت لك. [[$3|معرفة المزيد]]. [$1 تسجيل الدخول] أو [$2 إنشاء حساب] لتلقّي تنبيه عندما يردّ شخص ما بعد انتهاء صَلاحِيَة هذا الحساب، وللوصول إلى المزايا الأخرى.",
-	"discussiontools-replywidget-cancel": "ألغ",
+	"discussiontools-replywidget-cancel": "إلغاء",
 	"discussiontools-replywidget-feedback": "{{GENDER:|شارك|شاركي}} برأيك حول هذه المِيزة",
 	"discussiontools-replywidget-feedback-link": "https://ar.wikipedia.org/wiki/%D9%86%D9%82%D8%A7%D8%B4_%D9%88%D9%8A%D9%83%D9%8A%D8%A8%D9%8A%D8%AF%D9%8A%D8%A7:%D9%85%D8%B4%D8%B1%D9%88%D8%B9_%D8%A3%D8%AF%D9%88%D8%A7%D8%AA_%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AF%D8%AB%D8%A7%D8%AA_(%D8%A7%D9%84%D8%AA%D9%86%D8%B3%D9%8A%D9%82)",
 	"discussiontools-replywidget-keyboard-shortcut-submit": "يمكنك الضغط على $1 لإرسال تعليقك",
@@ -174,7 +175,7 @@
 	"discussiontools-topicsubscription-action-subscribe-button": "اشتراك",
 	"discussiontools-topicsubscription-action-subscribe-prompt": "الاشتراك في هذا الموضوع؟",
 	"discussiontools-topicsubscription-action-subscribe-prompt-newtopics": "الاشتراك في الإشعارات حول المواضيع جديدة في هذه الصفحة؟",
-	"discussiontools-topicsubscription-action-unsubscribe-button": "ألغ الاشتراك",
+	"discussiontools-topicsubscription-action-unsubscribe-button": "إلفاء الإشتراك",
 	"discussiontools-topicsubscription-action-unsubscribe-prompt": "إلغاء الاشتراك في هذا الموضوع؟",
 	"discussiontools-topicsubscription-action-unsubscribe-prompt-newtopics": "إلغاء الاشتراك في الإشعارات حول المواضيع الجديدة في هذه الصفحة؟",
 	"discussiontools-topicsubscription-button-subscribe": "اشتراك",

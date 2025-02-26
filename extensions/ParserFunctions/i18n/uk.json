@@ -4,7 +4,8 @@
 			"AS",
 			"Ahonc",
 			"Base",
-			"Piramidion"
+			"Piramidion",
+			"Ата"
 		]
 	},
 	"pfunc_desc": "Покращений синтаксичний аналізатор з логічними функціями",
@@ -23,8 +24,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Помилка виразу: незрозумілий розділовий знак «$1»",
 	"pfunc_expr_unclosed_bracket": "Помилка виразу: незакрита дужка",
 	"pfunc_expr_division_by_zero": "Ділення на нуль",
-	"pfunc_expr_invalid_argument": "Неправильний аргумент для $1: < -1 або > 1",
-	"pfunc_expr_invalid_argument_ln": "Помилковий аргумент логарифма (має бути більший від нуля)",
+	"pfunc_expr_invalid_argument": "Недійсний аргумент для $1: менше ніж -1 або більше ніж 1.",
+	"pfunc_expr_invalid_argument_ln": "Недійсний аргумент для ln: менше або дорівнює 0.",
 	"pfunc_expr_unknown_error": "Помилка виразу: невідома помилка ($1)",
 	"pfunc_expr_not_a_number": "У $1: результат не є числом",
 	"pfunc_string_too_long": "Помилка: довжина рядка перевищує межу в {{PLURAL:$1|$1 символ|$1 символи|$1 символів}}"

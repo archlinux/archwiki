@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Grzesiek11"
+		]
+	},
+	"turnstile-desc": "Dodaje wsparcie dla Cloudflare Turnstile dla ConfirmEdit",
+	"turnstile-edit": "W celu ochrony przed zautomatyzowanym spamem edycyjnym prosimy rozwiązać poniższą captchę:",
+	"turnstile-addurl": "Wprowadzony przez Ciebie tekst zawiera nowe linki zewnętrzne. W celu ochrony przed zautomatyzowanym spamem prosimy rozwiązać poniższą captchę:",
+	"turnstile-badlogin": "W celu ochrony przed zautomatyzowanym łamaniem haseł prosimy rozwiązać poniższą captchę:",
+	"turnstile-createaccount": "W celu ochrony przed zautomatyzowanym tworzeniem kont prosimy rozwiązać poniższą captchę:",
+	"turnstile-createaccount-fail": "Wygląda na to, że nie rozwiązałeś captchy.",
+	"turnstile-create": "W celu ochrony przed zautomatyzowanym tworzeniem stron prosimy rozwiązać poniższą captchę:",
+	"turnstile-help": "Rozwiąż zadanie Turnstile i zwróć wynik jako captchaWord."
+}

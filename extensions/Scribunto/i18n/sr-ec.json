@@ -7,15 +7,18 @@
 			"Сербијана"
 		]
 	},
+	"content-model-scribunto": "Scribunto модул",
 	"scribunto-line": "на линији $1",
 	"scribunto-parser-dialog-title": "Грешка у скрипти",
 	"scribunto-error-short": "Грешка у скрипти: $1",
+	"scribunto-error-long": "Грешке у скрипти: \n\n$1",
 	"scribunto-doc-page-name": "Module:$1/док",
 	"scribunto-doc-page-does-not-exist": "''Документацију овог модула можете да направите на страници [[$1]]''",
 	"scribunto-doc-page-header": "'''Ово је документациона подстраница за [[$1]]'''",
 	"scribunto-console-clear": "Очисти",
 	"scribunto-common-error-category": "Странице са грешкама у скрипти",
 	"scribunto-common-nosuchmodule": "Грешка у скрипти: Не постоји модул „$2”.",
+	"scribunto-common-notafunction": "Грешка у скрипти: „$2” није функција.",
 	"scribunto-common-timeout": "Време издвојено за покретање скрипти је истекло.",
 	"scribunto-common-no-details": "Није доступно више информација.",
 	"scribunto-lua-error-location": "Lua грешка $1: $2.",

@@ -8,6 +8,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 harshe|$1 bòo}}",
 	"vector-no-language-button-label": "Sauwadi yare",
 	"vector-action-addsection": "Sawwai labar",
+	"vector-action-delete": "Gogo",
 	"vector-action-move": "Zame",
 	"vector-action-protect": "deito",
 	"vector-view-create": "Algino",

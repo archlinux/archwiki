@@ -111,5 +111,10 @@
 	"abusefilter-topnav-log": "Boasttugeavahanlogga",
 	"abusefilter-log-name": "Boasttugeavahansilli logga",
 	"abusefilter-log-noresults": "Eai bohtosat",
-	"abusefilter-diff-info": "Vuođđodieđut"
+	"abusefilter-diff-info": "Vuođđodieđut",
+	"abusefilter-blocked-domains-add-submit": "Sádde",
+	"abusefilter-blocked-domains-domain-header": "Domena",
+	"abusefilter-blocked-domains-remove": "sihko",
+	"abusefilter-blocked-domains-remove-reason": "Sivva",
+	"abusefilter-blocked-domains-remove-submit": "Sihko"
 }

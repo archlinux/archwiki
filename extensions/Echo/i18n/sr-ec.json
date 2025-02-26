@@ -196,7 +196,7 @@
 	"notification-link-text-view-edit": "Прикажи измену",
 	"notification-link-article-reminder": "Прикажи страницу",
 	"notification-header-reverted": "$2 je {{GENDER:$2|опозвао|опозвала}} {{PLURAL:$4|Вашу измену странице <strong>$3</strong>|Ваше измене странице <strong>$3</strong>}}.",
-	"notification-header-emailuser": "$1 Вам {{GENDER:$2|шаље}} имејл.",
+	"notification-header-emailuser": "$1 Вам је {{GENDER:$2|послао|послала}} имејл",
 	"notification-edit-user-page-email-subject": "$1 је {{GENDER:$2|уредио|уредила}} Вашу {{GENDER:$3|корисничку}} страницу на {{SITENAME}}",
 	"notification-edit-talk-page-email-subject2": "$1 {{GENDER:$3|Вам}} је {{GENDER:$2|оставио|оставила}} поруку на {{SITENAME}}",
 	"notification-page-linked-email-subject": "Страница коју {{GENDER:$3|сте}} направили је повезана на {{SITENAME}}",

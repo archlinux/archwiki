@@ -18,14 +18,15 @@
 			"Sayginer",
 			"Sezgin İbiş",
 			"Talha Samil Cakir",
-			"TurkishStyles"
+			"TurkishStyles",
+			"Leo"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck sayfaya yeni içerik eklendiğini düşünüyor",
 	"tag-editcheck-newreference-description": "Sayfaya bir kaynak eklendi",
 	"tag-editcheck-references-description": "EditCheck bir kaynağın gerekli olabileceğini düşünüyor",
 	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Düzenleme Denetimi (kaynakça) etkinleştirildi]]",
-	"tag-editcheck-references-activated-description": "EditCheck bir kaynağın gerekebileceğini düşünüyor ve kullanıcı arayüzü gösteriliyor",
+	"tag-editcheck-references-activated-description": "DüzenlemeKontrolü bir kaynağın gerekebileceğini ve kullanıcı arayüzünün gösterildiğini düşünüyor",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Görsel düzenleme]]",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Görsel düzenleyiciyi]] kullanarak düzenleyin",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Görsel düzenleme: Doğrula]]",

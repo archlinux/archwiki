@@ -4,6 +4,9 @@
 			"Jagwar"
 		]
 	},
+	"vector-languages": "Fiteny",
+	"vector-language-button-label": "{{PLURAL:$1|fiteny tokana|fiteny $1}}",
+	"vector-no-language-button-label": "Hanampy fiteny",
 	"vector-action-addsection": "Hanampy lohahevitra",
 	"vector-action-delete": "Fafana",
 	"vector-action-move": "Hanolo anarana",
@@ -15,5 +18,23 @@
 	"vector-view-history": "Hijery ny tantara",
 	"vector-view-view": "Hamaky",
 	"vector-view-viewsource": "Hijery fango",
-	"vector-more-actions": "Be kokoa"
+	"vector-more-actions": "Be kokoa",
+	"vector-feature-limited-width-name": "Halalaka",
+	"vector-feature-custom-font-size-name": "Soratra",
+	"vector-feature-limited-width-0-label": "Malalaka",
+	"vector-feature-limited-width-1-label": "Mahazatra",
+	"vector-feature-custom-font-size-0-label": "Kely",
+	"vector-feature-custom-font-size-1-label": "Mahazatra",
+	"vector-feature-custom-font-size-2-label": "Lehibe",
+	"skin-theme-name": "Loko",
+	"skin-theme-os-label": "Natao ho azy",
+	"vector-searchsuggest-containing": "Hikaroka ireo pejy misy <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Vontoatiny",
+	"vector-toc-beginning": "Fiandohana",
+	"vector-anon-user-menu-pages": "Pejy ho an'ny mpikambana tsy niditra",
+	"vector-main-menu-label": "Menio fotony",
+	"vector-page-tools-label": "Fitaovana",
+	"vector-page-tools-general-label": "Ankapobe",
+	"vector-page-tools-actions-label": "Asa ho atao",
+	"vector-unpin-element-label": "afenina"
 }

@@ -26,7 +26,7 @@
 	"replacetext_choosepagesformove": "Erlec'hiañ  \"$1\" gant \"$2\" e titl{{PLURAL:$3| ar bajenn da heul|où ar bajennoù da heul}} :",
 	"replacetext_cannotmove": "Ne c'hell ket bezañ fiñvet ar bajenn{{PLURAL:$1||où}} da heul :",
 	"replacetext_formovedpages": "Evit ar pajennoù dilec'hiet :",
-	"replacetext_savemovedpages": "Enrollañ an titloù kozh evel adkasoù davet an titloù nevez",
+	"replacetext_savemovedpages": "Enrollañ an titloù kozh evel adkasoù war-du an titloù nevez",
 	"replacetext_watchmovedpages": "Evezhiañ ar pajennoù-mañ",
 	"replacetext_invertselections": "Eilpennañ an diuzadennoù",
 	"replacetext_replace": "Erlec'hiañ",

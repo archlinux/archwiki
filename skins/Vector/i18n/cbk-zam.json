@@ -1,11 +1,27 @@
 {
 	"@metadata": {
 		"authors": [
-			"WikiEditor50"
+			"WikiEditor50",
+			"Aristorkle"
 		]
 	},
-	"vector-view-create": "Crea",
+	"vector-languages": "Maga lenguaje",
+	"vector-action-addsection": "Omenta asunto",
+	"vector-action-delete": "Borra",
+	"vector-action-move": "Mobé",
+	"vector-view-create": "Hace",
 	"vector-view-edit": "Revisa",
+	"vector-view-history": "Mira el historia",
 	"vector-view-view": "Lee",
-	"vector-more-actions": "Mas"
+	"vector-more-actions": "Mas",
+	"vector-feature-custom-font-size-name": "Texto",
+	"vector-feature-limited-width-0-label": "Ancho",
+	"vector-feature-custom-font-size-0-label": "Diutay",
+	"vector-feature-custom-font-size-2-label": "Grande",
+	"skin-theme-name": "Color",
+	"skin-theme-os-label": "Automatico",
+	"vector-searchsuggest-containing": "Busca con el maga pagina aquel tiene <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-beginning": "Principia",
+	"vector-page-tools-label": "Herramientas",
+	"vector-unpin-element-label": "esconde"
 }

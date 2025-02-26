@@ -9,7 +9,9 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 kɔkɔre|$1 kɔkɔɛ}}",
 	"vector-no-language-button-label": "Paahi kɔkɔɛ",
 	"vector-action-addsection": "Paahi yeliju",
+	"vector-action-delete": "Ihi bahi",
 	"vector-action-move": "Gaa",
+	"vector-action-protect": "gu",
 	"vector-view-create": "Maali",
 	"vector-view-history": "Kaa yelikori",
 	"vector-more-actions": "mine meŋ",
@@ -25,8 +27,10 @@
 	"vector-searchsuggest-containing": "Bɔ peejihi aŋ tare <strong class=\"cdx-sɛgebozu-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "puo buuhu",
 	"vector-toc-beginning": "Piilee",
+	"vector-anon-user-menu-pages": "Kpɛ kyɛ yi sɛosɛoreba Peegyihi",
 	"vector-main-menu-label": "Yoe jumeŋa",
 	"vector-page-tools-label": "Tuntuŋ buuhu",
 	"vector-page-tools-general-label": "Yeli jaa lantaa",
+	"vector-page-tools-actions-label": "Tuma tumbu",
 	"vector-unpin-element-label": "Sɔgele"
 }

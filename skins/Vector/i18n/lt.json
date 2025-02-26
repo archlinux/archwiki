@@ -48,6 +48,7 @@
 	"vector-searchsuggest-containing": "Ieškoti puslapių, turinčių <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Turinys",
 	"vector-toc-beginning": "Pradžia",
+	"vector-anon-user-menu-pages": "Puslapiai atsijungusiems redaktoriams",
 	"vector-anon-user-menu-pages-learn": "sužinoti daugiau",
 	"vector-main-menu-tooltip": "Pagrindinis meniu",
 	"vector-toc-menu-tooltip": "Turinys",

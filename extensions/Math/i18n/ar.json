@@ -78,6 +78,7 @@
 	"math-form-tex-help": "اختبر باستخدام مدخلات TeX الخاصة بك. راجع [[{{int:math-helppage}}|صفحة المساعدة لصيغ الرياضيات]] لمزيد من المساعدة.",
 	"math-form-type-label": "نوع المدخلات",
 	"math-form-type-tex": "tex (إدخال عادي)",
+	"math-form-type-chem": "chem (إدخال مع دعم كيميائي؛ على سبيل المثال <code>\\ce{H2O}</code> للمياه)",
 	"math-form-display-label": "وضع عرض الرياضيات",
 	"math-helppage": "Help:عرض صيغة رياضية",
 	"math_failure": "خطأ رياضيات",

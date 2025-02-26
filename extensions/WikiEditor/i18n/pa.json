@@ -111,7 +111,7 @@
 	"wikieditor-toolbar-tool-replace-nomatch": "ਤੁਹਾਡੀ ਖੋਜ ਨੇ ਕਿਸੇ ਨਾਲ਼ ਮੇਲ ਨਹੀਂ ਖਾਧਾ।",
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|ਥਾਂ-ਬਦਲੀ ਕੀਤੀ ਗਈ|ਥਾਂ-ਬਦਲੀ ਕੀਤੀਆਂ ਗਈਆਂ}}।",
 	"wikieditor-toolbar-tool-replace-emptysearch": "ਤੁਸੀਂ ਲੱਭਣ ਲਈ ਕੁਝ ਨਹੀਂ ਭਰਿਆ।",
-	"wikieditor-toolbar-tool-replace-invalidregex": "ਤੁਹਾਡੇ ਦੁਆਰਾ ਦਿੱਤਾ ਗਿਆ ਨਿਯਮਤ ਸਮੀਕਰਨ ਗਲਤ ਹੈ: $1",
+	"wikieditor-toolbar-tool-replace-invalidregex": "ਤੁਹਾਡੇ ਵੱਲੋਂ ਦਿੱਤਾ ਗਿਆ ਆਮ ਸਮੀਕਰਨ ਗਲਤ ਹੈ: $1",
 	"wikieditor-toolbar-tool-replace-word": "ਪੂਰੇ ਸ਼ਬਦ ਨਾਲ ਮੇਲ ਕਰੋ",
 	"wikieditor-toolbar-section-characters": "ਖ਼ਾਸ ਅੱਖਰ",
 	"wikieditor-toolbar-section-help": "ਮਦਦ",

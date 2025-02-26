@@ -114,7 +114,7 @@
 	"templatedata-modal-table-param-importoption": "Добавить $1 {{PLURAL:$1|предложенный параметр|предложенных параметра|предложенных параметров}}",
 	"templatedata-modal-table-param-importoption-subtitle": "Включая: $1",
 	"templatedata-modal-table-param-label": "Обозначение ($1)",
-	"templatedata-modal-table-param-name": "Имя",
+	"templatedata-modal-table-param-name": "Название",
 	"templatedata-modal-table-param-required": "Обязательный",
 	"templatedata-modal-table-param-suggested": "Предложенный",
 	"templatedata-modal-table-param-suggestedvalues": "Предлагаемые значения",

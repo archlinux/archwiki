@@ -56,7 +56,7 @@ class SpecialMathWikibase extends SpecialPage {
 		);
 
 		// Get request
-		$requestId = $request->getText( self::PARAMETER, $par );
+		$requestId = $request->getText( self::PARAMETER, $par ?? '' );
 
 		// if there is no id requested, show the request form
 		if ( !$requestId ) {
@@ -154,7 +154,7 @@ class SpecialMathWikibase extends SpecialPage {
 		// if 'instance of' is specified, it can be found in the description before a colon
 		// FIXME: There are other reasons to have a colon in an Item's description, e.g.
 		// https://www.wikidata.org/wiki/Special:MathWikibase?qid=Q6203
-		if ( preg_match( '/(.*):\s*(.*)/', $info->getDescription(), $matches ) ) {
+		if ( preg_match( '/(.*):\s*(.*)/', $info->getDescription() ?? '', $matches ) ) {
 			$output->setSubtitle( $matches[1] );
 		}
 
@@ -190,7 +190,7 @@ class SpecialMathWikibase extends SpecialPage {
 
 			$description = $matches[2];
 		} else {
-			$description = $info->getDescription();
+			$description = $info->getDescription() ?? '';
 		}
 		$labelDesc = $this->msg(
 			'math-wikibase-formula-header-format',

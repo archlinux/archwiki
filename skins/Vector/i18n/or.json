@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Jnanaranjan Sahu",
-			"Psubhashish"
+			"Psubhashish",
+			"Chinmayee Mishra"
 		]
 	},
 	"vector-specialversion-name": "ଭେକ୍ଟର",
-	"vector-opt-out": "ପୁରୁଣା ରୂପକୁ ବଦଳନ୍ତୁ",
+	"vector-opt-out": "ପୁରୁଣା ରୂପକୁ ବଦଳାନ୍ତୁ",
 	"vector-action-toggle-sidebar": "ପାଖପଟି ବଦଳାନ୍ତୁ",
 	"vector-languages": "ଭାଷାସମୂହ",
 	"vector-language-button-label": "{{PLURAL:$1|$1ଟି ଭାଷା}}",
@@ -40,6 +41,7 @@
 	"vector-intro-page": "Help:Introduction",
 	"vector-toc-label": "ବିଷୟସୂଚୀ",
 	"vector-toc-beginning": "ଆରମ୍ଭ",
+	"vector-anon-user-menu-pages": "ଲଗ ଆଉଟ ଥିବା ଅବଦାନକାରୀମାନଙ୍କ ପାଇଁ ପୃଷ୍ଠାଗୁଡ଼ିକ",
 	"vector-main-menu-label": "ମୁଖ୍ୟ ସୂଚୀ",
 	"vector-page-tools-label": "ଉପକରଣ",
 	"vector-page-tools-general-label": "ସାଧାରଣ",

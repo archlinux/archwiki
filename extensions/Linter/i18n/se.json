@@ -11,6 +11,7 @@
 	"linter-form-namespace": "Nammagomuvuohta:",
 	"linter-numerrors": "($1 {{PLURAL:$1|meattáhus|meattáhusa}})",
 	"linter-pager-inline-media-caption-details": "Oaidnemeahttun govvateaksta",
+	"linter-pager-title-header": "Siidonamma",
 	"linter-pager-wikilink-in-extlink-details": "Liŋkkat liŋkkain",
 	"linterrors-subpage": "Lint-feaillat: $1",
 	"pageinfo-linter": "Lint-feaillat"

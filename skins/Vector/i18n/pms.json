@@ -1,9 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Borichèt"
+			"Borichèt",
+			"Dragonòt"
 		]
 	},
+	"vector-languages": "Lenghe",
+	"vector-language-button-label": "{{PLURAL:$1|$1 lenga|$1 lenghe}}",
+	"vector-no-language-button-label": "Gionté dle lenghe",
 	"vector-action-addsection": "Gionté n'argoment",
 	"vector-action-delete": "Scancelé",
 	"vector-action-move": "Tramudé",
@@ -15,5 +19,23 @@
 	"vector-view-history": "Smon-e la stòria",
 	"vector-view-view": "Lese",
 	"vector-view-viewsource": "Vëdde la sorgiss",
-	"vector-more-actions": "Ëd pi"
+	"vector-more-actions": "Ëd pi",
+	"vector-feature-limited-width-name": "Larghëssa",
+	"vector-feature-custom-font-size-name": "Test",
+	"vector-feature-limited-width-0-label": "Largh",
+	"vector-feature-limited-width-1-label": "Stàndard",
+	"vector-feature-custom-font-size-0-label": "Cit",
+	"vector-feature-custom-font-size-1-label": "Stàndard",
+	"vector-feature-custom-font-size-2-label": "Grand",
+	"skin-theme-name": "Color",
+	"skin-theme-os-label": "Automàtich",
+	"vector-searchsuggest-containing": "Serca le pàgine ch'a conten-o <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Contnù",
+	"vector-toc-beginning": "Prinsipi",
+	"vector-anon-user-menu-pages": "Pàgine për utent surtì dal sistema",
+	"vector-main-menu-label": "Mnu prinsipal",
+	"vector-page-tools-label": "Utiss",
+	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Assion",
+	"vector-unpin-element-label": "stërmé"
 }

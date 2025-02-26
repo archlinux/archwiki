@@ -13,7 +13,7 @@
 			"Samoasambia"
 		]
 	},
-	"action-tboverride": "Ohittaa kiellettyjen sivunnimien tai käyttäjänimien listaa",
+	"action-tboverride": "ohittaa kiellettyjen sivunnimien tai käyttäjänimien listaa",
 	"action-tboverride-account": "ohittaa kiellettyjen sivunnimien tai käyttäjänimien listaa",
 	"action-titleblacklistlog": "tarkastella kiellettyjen nimien listan lokia",
 	"log-name-titleblacklist": "Kiellettyjen nimien listan loki",

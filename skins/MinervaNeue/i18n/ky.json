@@ -17,11 +17,13 @@
 	"mobile-frontend-language-article-heading": "Башка тилинде окуу",
 	"mobile-frontend-main-menu-button-tooltip": "Башбаракты ачуу",
 	"mobile-frontend-main-menu-login": "Кирүү",
+	"mobile-frontend-main-menu-logout": "Чыгуу",
 	"mobile-frontend-main-menu-nearby": "Жакынкы",
 	"mobile-frontend-main-menu-settings": "Параметрлер",
 	"mobile-frontend-main-menu-watchlist": "Көзөмөл тизмеси",
 	"mobile-frontend-placeholder": "{{SITENAME}} издөө",
 	"mobile-frontend-random-button": "Туш келди",
 	"mobile-frontend-user-page-talk": "Талкуу",
+	"minerva-page-actions-overflow": "Көбүрөөк",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категориялар"
 }

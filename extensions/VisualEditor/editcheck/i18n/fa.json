@@ -3,5 +3,25 @@
 		"authors": [
 			"Jeeputer"
 		]
-	}
+	},
+	"editcheck-dialog-action-no": "خیر",
+	"editcheck-dialog-action-yes": "بله",
+	"editcheck-dialog-addref-description": "با افزودن یک یادکرد، به مخاطبان در یافتن مبدأ این اطلاعات کمک کنید.",
+	"editcheck-dialog-addref-reject-question": "چرا نمی‌خواهید یادکرد اضافه کنید؟",
+	"editcheck-dialog-addref-reject-description": "سایر ویرایشگران ممکن است بخواهند از دلیل تصمیم شما برای رد کردن یادکرد آگاه شوند.",
+	"editcheck-dialog-addref-reject-irrelevant": "معتقدم یادکردها با تغییراتی که اعمال کرده‌ام مرتبط نیستند",
+	"editcheck-dialog-addref-reject-common-knowledge": "اطلاعاتی که اضافه کرده‌ام به‌طور گسترده‌ای محرز است",
+	"editcheck-dialog-addref-reject-uncertain": "از این که چه یادکردی باید اضافه کنم، مطمئن نیستم",
+	"editcheck-dialog-addref-reject-other": "سایر",
+	"editcheck-dialog-addref-success-notify": "بابت افزودن یادکرد از شما ممنونیم!",
+	"editcheck-dialog-addref-title": "افزودن یک یادکرد",
+	"editcheck-dialog-title": "پیش از انتشار",
+	"tag-editcheck-reference-decline-common-knowledge": "بررسی ویرایش (ارجاعات) رد شد (دانش عمومی)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "ارجاع بررسی ویرایش تحت عنوان دانش عمومی رد شد",
+	"tag-editcheck-reference-decline-irrelevant": "بررسی ویرایش (ارجاعات) رد شد (نامرتبط)",
+	"tag-editcheck-reference-decline-irrelevant-description": "ارجاع بررسی ویرایش تحت عنوان نامرتبط رد شد",
+	"tag-editcheck-reference-decline-other": "بررسی ویرایش (ارجاعات) رد شد (سایر)",
+	"tag-editcheck-reference-decline-other-description": "ارجاع بررسی ویرایش به دلیل که در فهرست موجود نیست، رد شد",
+	"tag-editcheck-reference-decline-uncertain": "بررسی ویرایش (ارجاعات) رد شد (نامطمئن)",
+	"tag-editcheck-reference-decline-uncertain-description": "ارجاع بررسی ویرایش تحت عنوان مطمئن نبودن رد شد"
 }

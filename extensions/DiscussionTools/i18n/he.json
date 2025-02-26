@@ -114,7 +114,7 @@
 	"discussiontools-preference-visualenhancements": "הצגת פעילות דיון",
 	"discussiontools-preference-visualenhancements-help": "זה יפעיל מראה חדש של דף השיחה שכולל מידע על פעילות בכל דיון.",
 	"discussiontools-replybutton": "{{GENDER:|תגובה}}",
-	"discussiontools-replylink": "{{GENDER:|תגובה}}",
+	"discussiontools-replylink": "{{GENDER:|תגובה|תגובה}}",
 	"discussiontools-replywidget-abandon": "האם {{GENDER:|אתה באמת רוצה|את באמת רוצה|ברצונך באמת}} לזרוק את התגובה {{GENDER:|שאתה כותב|שאת כותבת|שהתחלת לכתוב}}?",
 	"discussiontools-replywidget-abandon-discard": "לזרוק את התגובה",
 	"discussiontools-replywidget-abandon-keep": "להמשיך לכתוב",

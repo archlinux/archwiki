@@ -6,11 +6,12 @@
 			"ANNAN JEREMIAH SELBY",
 			"Cyprex",
 			"Mis delay",
-			"Ruth Alhassan"
+			"Ruth Alhassan",
+			"Yaw tuba"
 		]
 	},
 	"vector-languages": "Aneɛ",
-	"vector-language-button-label": "aneɛ-aneɛ aneɛ $1",
+	"vector-language-button-label": "{{PLURAL:$1|$1 aneɛ|$1 aneɛ anu}}",
 	"vector-no-language-button-label": "Fa aneɛ ngakyile boka nwolɛ",
 	"vector-action-addsection": "Fa tidwɛkɛ boka nwo",
 	"vector-action-delete": "Twikyi",
@@ -35,5 +36,6 @@
 	"vector-main-menu-label": "Mɛnu mumua ne ɛhakyilɛ",
 	"vector-page-tools-label": "Gyimalilɛ ninyɛne",
 	"vector-page-tools-general-label": "Ɛleka biala",
+	"vector-page-tools-actions-label": "Nyɛleɛ",
 	"vector-unpin-element-label": "Fa fia"
 }

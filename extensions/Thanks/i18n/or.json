@@ -23,6 +23,7 @@
 	"notification-header-creation-thank": "$1 <strong>$3</strong> ତିଆରି କରିବା ସକାଶେ {{GENDER:$4|ଆପଣଙ୍କୁ}} {{GENDER:$2|ସାଧୁବାଦ ଦେଲେ}} ।",
 	"log-description-thanks": "ବାକି ବ୍ୟବହାରକାରୀଙ୍କ ଦ୍ୱାରା ସାଧୁବାଦ ପାଇଥିବା ସଭ୍ୟଙ୍କ ତାଲିକା ।",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|ସାଧୁବାଦ ଦେଲେ}} {{GENDER:$4|$3}}",
+	"thanks-confirmation-special-rev": "ଏହି ସମ୍ପାଦନା ପାଇଁ ସାଧାରଣରେ ସାଧୁବାଦ ଦେବେ?",
 	"flow-thanks-confirmation-special": "ଏହି ମତ ପାଇଁ ସାଧାରଣରେ ସାଧୁବାଦ ଜଣାଇବେ?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|ଆପଣ}} $1ଙ୍କୁ for {{GENDER:$2|ତାଙ୍କ|ତାଙ୍କ|ତାଙ୍କ}} ମତ ପାଇଁ ସାଧୁବାଦ ଦେଲେ ।",
 	"ipb-action-thanks": "ସାଧୁବାଦ ଜଣାଉଛି"

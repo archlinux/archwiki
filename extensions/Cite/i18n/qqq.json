@@ -17,7 +17,8 @@
 			"The Evil IP address",
 			"Umherirrender",
 			"Xiplus",
-			"Kimberli Mäkäräinen (WMNO)"
+			"Kimberli Mäkäräinen (WMNO)",
+			"Matma Rex"
 		]
 	},
 	"cite-desc": "{{desc|name=Cite|url=https://www.mediawiki.org/wiki/Extension:Cite}}",
@@ -44,7 +45,7 @@
 	"cite_error_empty_references_define": "Error message shown when there is a <code>&lt;ref&gt;</code> inside <code>&lt;references&gt;</code>, but it does not have any content, e.g.\n<pre>\n<references>\n<ref name=\"foo\" />\n</references>\n</pre>\nParameters:\n* $1 - the <code><nowiki>name</nowiki></code> of the erroneous <code>&lt;ref&gt;</code> (in the above example, “foo”)",
 	"cite-tracking-category-cite-error": "{{tracking category name}}\nTracking category name.",
 	"cite-tracking-category-cite-error-desc": "Tracking category description.",
-	"cite_reference_backlink_symbol": "{{optional}}\nSymbol used for the reference section, used to link back to where the reference is used.",
+	"cite_reference_backlink_symbol": "{{optional}}\nHow the up-arrow symbol that links back to where a reference is used looks like. Used for the previews in the WikiEditor help panel. Please make sure this is the same symbol as in {{msg-mw|cite_references_link_one}} and {{msg-mw|cite_references_link_many}}.",
 	"cite_reference_link": "{{notranslate}}\n\nParameters:\n* $1 - ref key\n* $2 - references key\n* $3 - link label",
 	"cite_references_link_one": "{{notranslate}}\n\nParameters:\n* $1 - references key\n* $2 - ref key\n* $3 - reference text\n* $4 - optional CSS class for direction",
 	"cite_references_link_many": "{{notranslate}}\n\nParameters:\n* $1 - references key\n* $2 - list of links\n* $3 - reference text\n* $4 - optional CSS class for direction",

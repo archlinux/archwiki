@@ -13,7 +13,8 @@
 			"Macofe",
 			"MarcoAurelio",
 			"No se",
-			"Eulalio"
+			"Eulalio",
+			"Aleator"
 		]
 	},
 	"linterrors": "Errores de sintaxis",
@@ -109,7 +110,7 @@
 	"linter-pager-wikilink-in-extlink-details": "Enlaces en enlaces",
 	"linter-prefix-search-subpage": "Páginas con errores de sintaxis que coinciden con el prefijo del título o el título completo: $1",
 	"linterrors-subpage": "Errores de sintaxis: $1",
-	"linterrors-summary": "<strong>Nota:</strong> los recuentos de los categorías no son precisos, ya que se basan en estimaciones.",
+	"linterrors-summary": "<strong>Nota:</strong> los recuentos de las categorías no son precisos, ya que se basan en estimaciones.",
 	"multi-part-template-block": "Salida proporcionada por más de una plantilla",
 	"pageinfo-linter": "Errores de sintaxis",
 	"pageinfo-linter-moreinfo": "Ver información detallada sobre los errores de sintaxis."

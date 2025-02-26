@@ -59,5 +59,13 @@
 	"gadgets-validate-nopeer": "\"$1\" peer qadceti nəzərə alınmır, çünki o, mövcud deyil.",
 	"gadgets-validate-invalidpeer": "\"$1\" peer qadceti nəzərə alınmır, çünki o, yalnız üslub qadceti deyil.",
 	"gadgets-validate-invalidactions": "Aşağıdakı {{PLURAL:$2|fəaliyyət|fəaliyyətlər}} tanınmır: $1",
-	"gadgets-validate-invalidcontentmodels": "Aşağıdakı məzmun {{PLURAL:$2|modeli|modelləri}} mövcud deyil: $1"
+	"gadgets-validate-invalidcontentmodels": "Aşağıdakı məzmun {{PLURAL:$2|modeli|modelləri}} mövcud deyil: $1",
+	"gadgets-validate-invalidnamespaces": "Aşağıdakı ad fəzası {{PLURAL:$2|nömrəsi|nömrələri}} mövcud deyil: $1",
+	"gadgets-validate-invalidskins": "Aşağıdakı {{PLURAL:$2|dizayn|dizaynlar}} mövcud deyil: $1",
+	"gadgets-validate-invalidrights": "Aşağıdakı {{PLURAL:$2|hüquq|hüquqlar}} mövcud deyil: $1",
+	"gadgets-validate-invalidtitle": "\"$1\" səhifə başlığı etibarsızdır",
+	"gadgets-validate-unknownpages": ".js, .css və ya .json şəkilçisi olmayan bir və ya bir neçə səhifədən ibarətdir. Onlardan istifadə olunmayacaqlar.",
+	"gadgets-validate-duplicate": "$1 qadcetinin ikinci tərifi aşkar edildi və nəzərə alınmayacaq",
+	"gadgets-validate-nopage": "\"$1\" səhifəsi mövcud deyil.",
+	"gadgets-supports-urlload": "Bu qadcet <code>?withgadget</code> sorğu parametri ilə URL vasitəsilə yükləməni dəstəkləyir."
 }

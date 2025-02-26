@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Cigaryno"
+		]
+	},
+	"turnstile-desc": "يضيف دعم لـ Cloudflare Turnstile إلى ConfirmEdit",
+	"turnstile-edit": "لحماية الويكي من التحرير الآلي للبريد العشوائي ، نطلب منك التفضل بحل Captcha التالي:",
+	"turnstile-addurl": "يتضمن تعديلك روابط خارجية جديدة. لحماية الويكي من البريد العشوائي الآلي ، نطلب منك التفضل بحل اختبار Captcha التالي:",
+	"turnstile-badlogin": "لحماية الويكي من الاختراق الآلي لكلمات المرور ، نطلب منك التفضل بحل Captcha التالي:",
+	"turnstile-createaccount": "لحماية الويكي من الإنشاء الآلي للحساب ، نطلب منك التفضل بحل Captcha التالي:",
+	"turnstile-createaccount-fail": "يبدو أنك لم تحل Captcha.",
+	"turnstile-create": "لحماية الويكي من الإنشاء الآلي للصفحة ، نطلب منك التفضل بحل Captcha التالي:",
+	"turnstile-help": "يرجى حل تحدي Turnstile وإرجاع قيمة الاستجابة كـ captchaWord."
+}

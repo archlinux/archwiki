@@ -11,8 +11,10 @@
 	"abusefilter-log-search-submit": "Ooʒʒ",
 	"abusefilter-log-detailedentry-global": "riâžldõkveiddsõs siʹllʼjeei $1",
 	"abusefilter-log-detailedentry-local": "siʹllʼjeei $1",
+	"abusefilter-log-detailslink": "lââʹssteâđ",
 	"abusefilter-log-diff": "jeäʹrdõs",
 	"abusefilter-log-details-val": "Ärvv",
+	"abusefilter-log-details-checkuser": "Čujuhusaid dárkkisteapmi",
 	"abusefilter-log-hide-reason": "Mäinn:",
 	"abusefilter-log-hide-reason-other": "Jeeʹres mäinn leʹbe lââʹssmäinn:",
 	"abusefilter-log-hide-show": "Čuäʹjet",
@@ -75,5 +77,10 @@
 	"abusefilter-log-noresults": "Ij käunnʼjam ni mii",
 	"abusefilter-diff-info": "Vuâđđteâđ",
 	"abusefilter-group-default": "Aaibšemjoukk",
+	"abusefilter-blocked-domains-add-submit": "Vuõlttâd",
+	"abusefilter-blocked-domains-domain-header": "Domeeʹn",
+	"abusefilter-blocked-domains-remove": "jaukkâd",
+	"abusefilter-blocked-domains-remove-reason": "Mäinn",
+	"abusefilter-blocked-domains-remove-submit": "Jaukkâd",
 	"notification-link-text-show-filter": "Čuäʹjet siʹllʼjeei"
 }
