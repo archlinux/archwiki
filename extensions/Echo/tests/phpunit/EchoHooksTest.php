@@ -1,15 +1,19 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
 use MediaWiki\Extension\Notifications\Hooks as EchoHooks;
 use MediaWiki\Extension\Notifications\Services;
+use MediaWiki\MainConfigNames;
+use MediaWikiIntegrationTestCase;
 
 class EchoHooksTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers \MediaWiki\Extension\Notifications\Hooks::onUserGetDefaultOptions()
 	 */
 	public function testOnUserGetDefaultOptions() {
-		$this->setMwGlobals( [
-			'wgEchoNotificationCategories' => [
+		$this->overrideConfigValues( [
+			'EchoNotificationCategories' => [
 				'emailuser' => [
 					'priority' => 9,
 					'tooltip' => 'echo-pref-tooltip-emailuser',
@@ -28,7 +32,7 @@ class EchoHooksTest extends MediaWikiIntegrationTestCase {
 					'priority' => 9001,
 				],
 			],
-			'wgAllowHTMLEmail' => true,
+			MainConfigNames::AllowHTMLEmail => true,
 		] );
 
 		$defaults = [
@@ -68,7 +72,7 @@ class EchoHooksTest extends MediaWikiIntegrationTestCase {
 			$services->getNamespaceInfo(),
 			$services->getPermissionManager(),
 			$services->getRevisionStore(),
-			$services->getStatsdDataFactory(),
+			$services->getStatsFactory(),
 			$services->getTalkPageNotificationManager(),
 			$services->getUserEditTracker(),
 			$services->getUserFactory(),

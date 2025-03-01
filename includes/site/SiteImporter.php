@@ -85,7 +85,6 @@ class SiteImporter {
 	/**
 	 * @param string $xml
 	 *
-	 * @throws InvalidArgumentException
 	 */
 	public function importFromXML( $xml ) {
 		$document = new DOMDocument();
@@ -270,5 +269,5 @@ class SiteImporter {
 
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( SiteImporter::class, 'SiteImporter' );

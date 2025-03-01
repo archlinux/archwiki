@@ -14,7 +14,7 @@
  * @constructor
  * @param {ve.dm.Node} [model]
  * @param {Object} [config]
- * @cfg {boolean} [useView=false] Use the view HTML, and don't bother generating model HTML, which
+ * @param {boolean} [config.useView=false] Use the view HTML, and don't bother generating model HTML, which
  *  is a bit slower
  */
 ve.ui.MWPreviewElement = function VeUiMwPreviewElement() {
@@ -40,10 +40,10 @@ ve.ui.MWPreviewElement.prototype.beforeAppend = function ( element ) {
 
 	// Remove any TemplateStyles stylesheets already present on the page, to avoid
 	// very slow repaints (T330781)
-	Array.prototype.forEach.call( element.querySelectorAll( 'style[data-mw-deduplicate]' ), function ( style ) {
-		var key = style.getAttribute( 'data-mw-deduplicate' );
+	Array.prototype.forEach.call( element.querySelectorAll( 'style[data-mw-deduplicate]' ), ( style ) => {
+		const key = style.getAttribute( 'data-mw-deduplicate' );
 
-		var duplicate = element.querySelector( 'style[data-mw-deduplicate="' + key + '"]' );
+		const duplicate = element.querySelector( 'style[data-mw-deduplicate="' + key + '"]' );
 		if ( duplicate ) {
 			style.parentNode.removeChild( style );
 		}

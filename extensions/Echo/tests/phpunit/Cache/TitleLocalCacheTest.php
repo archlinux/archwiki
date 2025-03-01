@@ -1,11 +1,14 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Cache;
+
 use MediaWiki\Extension\Notifications\Cache\TitleLocalCache;
 use MediaWiki\Title\Title;
+use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers MediaWiki\Extension\Notifications\Cache\TitleLocalCache
+ * @covers \MediaWiki\Extension\Notifications\Cache\TitleLocalCache
  * @group Database
  */
 class TitleLocalCacheTest extends MediaWikiIntegrationTestCase {

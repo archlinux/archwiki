@@ -3,10 +3,10 @@
 namespace MediaWiki\Parser\Parsoid;
 
 use Composer\Semver\Semver;
-use Content;
-use ContentHandler;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use LogicException;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
@@ -29,7 +29,7 @@ use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Utils\Timing;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * This class allows HTML to be transformed to a page content source format such as wikitext.
@@ -50,7 +50,7 @@ class HtmlToContentTransform {
 	private bool $docHasBeenProcessed = false;
 	private ?Document $doc = null;
 	private ?Element $originalBody = null;
-	protected ?StatsdDataFactoryInterface $metrics = null;
+	protected ?StatsFactory $metrics = null;
 	private PageBundle $modifiedPageBundle;
 	private PageBundle $originalPageBundle;
 	private ?PageConfig $pageConfig = null;
@@ -86,15 +86,28 @@ class HtmlToContentTransform {
 	}
 
 	/**
-	 * @param StatsdDataFactoryInterface $metrics
+	 * Set metrics sink.
+	 *
+	 * @note Passing a StatsdDataFactoryInterface here has been deprecated
+	 * since 1.43.
+	 *
+	 * @param StatsFactory|StatsdDataFactoryInterface $metrics
 	 */
-	public function setMetrics( StatsdDataFactoryInterface $metrics ): void {
+	public function setMetrics( $metrics ): void {
+		if ( $metrics instanceof StatsdDataFactoryInterface ) {
+			wfDeprecated( __METHOD__ . ' with StatsdDataFactoryInterface', '1.43' );
+			return;
+		}
 		$this->metrics = $metrics;
 	}
 
-	private function incrementMetrics( string $key ) {
+	private function incrementMetrics( string $key, array $labels, ?string $statsdKey ) {
 		if ( $this->metrics ) {
-			$this->metrics->increment( $key );
+			$counter = $this->metrics->getCounter( $key )->setLabels( $labels );
+			if ( $statsdKey ) {
+				$counter = $counter->copyToStatsdAt( $statsdKey );
+			}
+			$counter->increment();
 		}
 	}
 
@@ -440,7 +453,11 @@ class HtmlToContentTransform {
 		$inputContentVersion = $this->modifiedPageBundle->version;
 
 		if ( !$inputContentVersion ) {
-			$this->incrementMetrics( 'html2wt.original.version.notinline' );
+			$this->incrementMetrics(
+				'html2wt_original_version_total',
+				[ 'input_content_version' => 'none' ],
+				'html2wt.original.version.notinline'
+			);
 			$inputContentVersion = $this->originalPageBundle->version ?: Parsoid::defaultHTMLVersion();
 		}
 
@@ -506,12 +523,19 @@ class HtmlToContentTransform {
 		}
 
 		$this->incrementMetrics(
+			"downgrade_total",
+			[ 'from' => $downgrade['from'], 'to' => $downgrade['to'] ],
 			"downgrade.from.{$downgrade['from']}.to.{$downgrade['to']}"
 		);
-		$downgradeTiming = Timing::start( $this->metrics );
-		Parsoid::downgrade( $downgrade, $pb );
-		$downgradeTiming->end( 'downgrade.time' );
 
+		$downgradeTime = microtime( true );
+		Parsoid::downgrade( $downgrade, $pb );
+		if ( $this->metrics ) {
+			$this->metrics
+				->getTiming( 'downgrade_time_ms' )
+				->copyToStatsdAt( 'downgrade.time' )
+				->observe( ( microtime( true ) - $downgradeTime ) * 1000 );
+		}
 		// NOTE: Set $this->originalBody to null so getOriginalBody() will re-generate it.
 		// XXX: Parsoid::downgrade operates on the parsed Document, would be nice
 		//      if we could get that instead of getting back HTML which we have to
@@ -617,9 +641,11 @@ class HtmlToContentTransform {
 				'htmlSize' => $htmlSize, // used to trigger status 413 if the input is too big
 			], $selserData );
 		} catch ( ClientError $e ) {
-			throw new HttpException( $e->getMessage(), 400 );
+			throw new LocalizedHttpException( new MessageValue( "rest-parsoid-error", [ $e->getMessage() ] ), 400 );
 		} catch ( ResourceLimitExceededException $e ) {
-			throw new HttpException( $e->getMessage(), 413 );
+			throw new LocalizedHttpException(
+				new MessageValue( "rest-parsoid-resource-exceeded", [ $e->getMessage() ] ), 413
+			);
 		}
 
 		return $text;

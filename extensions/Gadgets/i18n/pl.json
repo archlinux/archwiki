@@ -11,8 +11,7 @@
 			"Railfail536",
 			"Sovq",
 			"Sp5uhe",
-			"Woytecr",
-			"PanWor"
+			"Woytecr"
 		]
 	},
 	"gadgets-desc": "Pozwala użytkownikom wybrać [[Special:Gadgets|gadżety CSS i JavaScript]] na [[Special:Preferences#mw-prefsection-gadgets|stronie preferencji]]",
@@ -50,7 +49,7 @@
 	"gadgets-export-download": "Pobierz",
 	"gadgets-requires-es6": "Ten gadżet jest obsługiwany tylko w przeglądarkach wspierających ES6",
 	"gadgets-validate-notset": "Właściwość <code>$1</code> nie jest ustawiona.",
-	"gadgets-validate-wrongtype": "Właściwość <code>$1</code> musi być <code>$2</code> zamiast <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Właściwość <code>$1</code> musi być typu <code>$2</code>.",
 	"gadgets-validate-json": "Pliki JSON zostały określone, ale są niewykorzystywane. Mogą być wykorzystywane jedynie w spakowanych gadżetach.",
 	"gadgets-validate-es6default": "Gadżety wymagające wsparcia ES6 nie mogą być domyślnie włączone.",
 	"gadgets-validate-noentrypoint": "Flaga <code>package</code> została zignorowana, ponieważ nie określono skryptów.",

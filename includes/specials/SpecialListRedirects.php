@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Listredirects
- *
  * Copyright © 2006 Rob Church
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,13 +18,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Rob Church <robchur@gmail.com>
  */
 
 namespace MediaWiki\Specials;
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Html\Html;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\SpecialPage\QueryPage;
@@ -38,8 +35,10 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * Special:Listredirects - Lists all the redirects on the wiki.
+ * Lists all the redirecting pages on the wiki.
+ *
  * @ingroup SpecialPage
+ * @author Rob Church <robchur@gmail.com>
  */
 class SpecialListRedirects extends QueryPage {
 
@@ -169,8 +168,10 @@ class SpecialListRedirects extends QueryPage {
 		if ( $target ) {
 			# Make a link to the destination page
 			$lang = $this->getLanguage();
-			$arr = $lang->getArrow() . $lang->getDirMark();
+			$arr = $lang->getArrow();
+			$rd_link = Html::rawElement( 'bdi', [ 'dir' => $lang->getDir() ], $rd_link );
 			$targetLink = $linkRenderer->makeLink( $target, $target->getFullText() );
+			$targetLink = Html::rawElement( 'bdi', [ 'dir' => $lang->getDir() ], $targetLink );
 
 			return "$rd_link $arr $targetLink";
 		} else {

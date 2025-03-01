@@ -80,6 +80,7 @@ class XMLSerializer {
 		if ( !isset( $attrs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] ) ) {
 			return;
 		}
+		$codec = DOMDataUtils::getCodec( $node->ownerDocument );
 		$nd = DOMDataUtils::getNodeData( $node );
 		$pd = $nd->parsoid_diff ?? null;
 		if ( $pd && $storeDiffMark ) {
@@ -92,11 +93,15 @@ class XMLSerializer {
 				// @phan-suppress-next-line PhanTypeObjectUnsetDeclaredProperty
 				unset( $dp->tmp );
 			}
-			$attrs['data-parsoid'] = PHPUtils::jsonEncode( $dp );
+			$attrs['data-parsoid'] = $codec->toJsonString(
+				$dp, DOMDataUtils::getCodecHints()['data-parsoid']
+			);
 		}
 		$dmw = $nd->mw;
 		if ( $dmw ) {
-			$attrs['data-mw'] = PHPUtils::jsonEncode( $dmw );
+			$attrs['data-mw'] = $codec->toJsonString(
+				$dmw, DOMDataUtils::getCodecHints()['data-mw']
+			);
 		}
 		unset( $attrs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] );
 	}
@@ -332,8 +337,6 @@ class XMLSerializer {
 		if ( !$options['innerXML'] && DOMCompat::nodeName( $node ) === 'html' && $options['addDoctype'] ) {
 			$out['html'] = "<!DOCTYPE html>\n" . $out['html'];
 		}
-		// Verify UTF-8 soundness (transitional check for PHP port)
-		PHPUtils::assertValidUTF8( $out['html'] );
 		// Drop the bookkeeping
 		unset( $out['start'], $out['uid'], $out['last'] );
 		if ( !$options['captureOffsets'] ) {

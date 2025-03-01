@@ -7,7 +7,7 @@ function init() {
 		return;
 	}
 
-	mw.hook( 'ext.echo.NotificationBadgeWidget.onInitialize' ).add( function ( badge ) {
+	mw.hook( 'ext.echo.NotificationBadgeWidget.onInitialize' ).add( ( badge ) => {
 		const element = badge.$element[ 0 ];
 		element.classList.add( 'mw-list-item' );
 		const anchor = /** @type {HTMLElement} */ ( element.querySelector( 'a' ) );
@@ -23,12 +23,13 @@ function init() {
 		// which directly sets the contents of the anchor element every update
 		// which would clear out any icon children that we define
 		if ( element.id === 'pt-notifications-alert' ) {
-			anchor.classList.add( 'vector-icon', 'mw-ui-icon-wikimedia-bell' );
+			anchor.classList.add( 'vector-icon' );
 		}
 		if ( element.id === 'pt-notifications-notice' ) {
-			anchor.classList.add( 'vector-icon', 'mw-ui-icon-wikimedia-tray' );
+			anchor.classList.add( 'vector-icon' );
 		}
-		anchor.classList.remove( 'oo-ui-icon-bell', 'oo-ui-icon-tray' );
+		// Workaround T343838
+		anchor.classList.add( 'skin-invert' );
 	} );
 }
 

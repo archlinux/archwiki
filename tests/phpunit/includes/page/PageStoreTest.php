@@ -2,7 +2,6 @@
 namespace MediaWiki\Tests\Page;
 
 use Exception;
-use IDBAccessObject;
 use InvalidArgumentException;
 use LinkCacheTestTrait;
 use MediaWiki\Config\ServiceOptions;
@@ -18,7 +17,10 @@ use MediaWikiIntegrationTestCase;
 use MockTitleTrait;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\LoadBalancer;
+use Wikimedia\Stats\Metrics\MetricInterface;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * @group Database
@@ -27,6 +29,16 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 
 	use MockTitleTrait;
 	use LinkCacheTestTrait;
+
+	private StatsFactory $statsFactory;
+	private MetricInterface $linkCacheAccesses;
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->statsFactory = StatsFactory::newNull();
+
+		$this->linkCacheAccesses = $this->statsFactory->getCounter( 'pagestore_linkcache_accesses_total' );
+	}
 
 	/**
 	 * @param array $options
@@ -41,8 +53,8 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		$serviceOptions = new ServiceOptions(
 			PageStore::CONSTRUCTOR_OPTIONS,
 			$options + [
-				'LanguageCode' => $services->getContentLanguage()->getCode(),
-				'PageLanguageUseDB' => true
+				MainConfigNames::LanguageCode => $services->getContentLanguage()->getCode(),
+				MainConfigNames::PageLanguageUseDB => true,
 			]
 		);
 
@@ -54,7 +66,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 			array_key_exists( 'linkCache', $params )
 				? $params['linkCache']
 				: $services->getLinkCache(),
-			$services->getStatsdDataFactory(),
+			$this->statsFactory,
 			$params['wikiId'] ?? WikiAwareEntity::LOCAL
 		);
 	}
@@ -119,7 +131,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Page\PageStore::getPageForLink
 	 */
 	public function testGetPageForLink_crossWiki() {
-		$wikiId = $this->db->getDomainID(); // pretend sister site
+		$wikiId = $this->getDb()->getDomainID(); // pretend sister site
 
 		$nonexistingPage = $this->getNonexistingTestPage();
 		$pageStore = $this->getPageStore( [], [ 'wikiId' => $wikiId, 'linkCache' => null ] );
@@ -202,6 +214,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 
 		$linkCache = $this->getServiceContainer()->getLinkCache();
 		$this->assertSame( $page->getId(), $linkCache->getGoodLinkID( $page ) );
+		$this->assertSame( 0, $this->linkCacheAccesses->getSampleCount() );
 	}
 
 	/**
@@ -241,6 +254,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertNull( $page );
 		$this->assertTrue( $linkCache->isBadLink( $nonexistingPage ) );
+		$this->assertSame( 1, $this->linkCacheAccesses->getSampleCount() );
 	}
 
 	/**
@@ -278,6 +292,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $row->page_namespace, $page->getNamespace() );
 		$this->assertSame( $row->page_title, $page->getDBkey() );
 		$this->assertSame( $row->page_latest, $page->getLatest() );
+		$this->assertSame( 1, $this->linkCacheAccesses->getSampleCount() );
 	}
 
 	/**
@@ -302,6 +317,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 8, $page->getId() );
 		$this->assertSame( $nonexistingPage->getNamespace(), $page->getNamespace() );
 		$this->assertSame( $nonexistingPage->getDBkey(), $page->getDBkey() );
+		$this->assertSame( 1, $this->linkCacheAccesses->getSampleCount() );
 	}
 
 	/**
@@ -647,7 +663,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		$existingPage = $this->getExistingTestPage();
 		$pageStore = $this->getPageStore();
 
-		$row = $this->db->newSelectQueryBuilder()
+		$row = $this->getDb()->newSelectQueryBuilder()
 			->select( $pageStore->getSelectFields() )
 			->from( 'page' )
 			->where( [ 'page_id' => $existingPage->getId() ] )
@@ -707,8 +723,8 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 
 		$pageStore = $this->getPageStore(
 			[
-				'LanguageCode' => 'qxx',
-				'PageLanguageUseDB' => true
+				MainConfigNames::LanguageCode => 'qxx',
+				MainConfigNames::PageLanguageUseDB => true,
 			],
 			[ 'dbLoadBalancer' => $lb ]
 		);

@@ -2,7 +2,7 @@
 
 // This file is loaded from wmf-config's CommonSettings.php
 
-$wgReadOnly = "Scandium access is read-only for Parsoid testing. " .
+$wgReadOnly = "parsoidtest1001 access is read-only for Parsoid testing. " .
 	"You shouldn't need to write anything from here.";
 
 // EVIL(ish) hack:
@@ -27,10 +27,5 @@ $wgParsoidSettings['useSelser'] = true;
 // Linting during rt testing is useful to catch errors and crashers,
 // but we don't want to save lints to the production db.
 $wgParsoidSettings['linting'] = (bool)$wgReadOnly;
-
-// Disabled for now so porting the dev api isn't on the critical path
-// These endpoints are occasionally useful while investigating rt testing
-// diffs on the server.
-// $wgParsoidSettings['devAPI'] = true;
 
 $wgParsoidSettings['metricsPrefix'] = 'Parsoid-Tests.';

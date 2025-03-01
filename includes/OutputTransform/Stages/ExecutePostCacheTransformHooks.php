@@ -2,11 +2,13 @@
 
 namespace MediaWiki\OutputTransform\Stages;
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\OutputTransform\ContentTextTransformStage;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
-use ParserOptions;
+use Psr\Log\LoggerInterface;
 
 /**
  * @internal
@@ -17,7 +19,10 @@ class ExecutePostCacheTransformHooks extends ContentTextTransformStage {
 	private HookContainer $hookContainer;
 	private HookRunner $hookRunner;
 
-	public function __construct( HookContainer $hookContainer ) {
+	public function __construct(
+		ServiceOptions $options, LoggerInterface $logger, HookContainer $hookContainer
+	) {
+		parent::__construct( $options, $logger );
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->hookContainer = $hookContainer;
 	}

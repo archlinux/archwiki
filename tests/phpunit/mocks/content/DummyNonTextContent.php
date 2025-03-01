@@ -1,7 +1,11 @@
 <?php
 
+use MediaWiki\Content\AbstractContent;
+use MediaWiki\Content\Content;
+
 class DummyNonTextContent extends AbstractContent {
 
+	/** @var mixed */
 	private $data;
 
 	public function __construct( $data ) {

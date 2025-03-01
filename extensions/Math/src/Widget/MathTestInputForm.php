@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Math\Widget;
 use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Extension\Math\SpecialMathStatus;
-use OOUIHTMLForm;
+use MediaWiki\HTMLForm\OOUIHTMLForm;
 
 class MathTestInputForm extends OOUIHTMLForm {
 
@@ -54,7 +54,7 @@ class MathTestInputForm extends OOUIHTMLForm {
 					// Messages that can be used here:
 					// * math-form-type-tex
 					// * math-form-type-chem
-					$txt = wfMessage( $optionLabelPrefix[$key] . $value )->parseAsBlock();
+					$txt = wfMessage( $optionLabelPrefix[$key] . $value )->parse();
 					$options[$txt] = $value;
 				}
 				$form[$key]['options'] = $options;

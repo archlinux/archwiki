@@ -22,6 +22,11 @@
 
 declare( strict_types = 1 );
 
+namespace MediaWiki\Password;
+
+use InvalidArgumentException;
+use RuntimeException;
+
 /**
  * Represents a password hash for use in authentication
  *
@@ -91,7 +96,7 @@ abstract class Password {
 	 * @param array $config Array of engine configuration options for hashing
 	 * @param string|null $hash The raw hash, including the type
 	 */
-	final public function __construct( PasswordFactory $factory, array $config, string $hash = null ) {
+	final public function __construct( PasswordFactory $factory, array $config, ?string $hash = null ) {
 		if ( !$this->isSupported() ) {
 			throw new RuntimeException( 'PHP support not found for ' . get_class( $this ) );
 		}
@@ -205,3 +210,6 @@ abstract class Password {
 	 */
 	abstract public function crypt( string $password ): void;
 }
+
+/** @deprecated since 1.43 use MediaWiki\\Password\\PasswordFactory */
+class_alias( Password::class, 'Password' );

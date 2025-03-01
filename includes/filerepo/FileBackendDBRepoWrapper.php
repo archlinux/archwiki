@@ -19,7 +19,9 @@
  */
 
 use MediaWiki\Output\StreamFile;
-use Wikimedia\Rdbms\DBConnRef;
+use Shellbox\Command\BoxedCommand;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * Proxy backend that manages file layout rewriting for FileRepo.
@@ -44,7 +46,7 @@ class FileBackendDBRepoWrapper extends FileBackend {
 	protected $dbHandleFunc;
 	/** @var MapCacheLRU */
 	protected $resolvedPathCache;
-	/** @var DBConnRef[] */
+	/** @var IDatabase[] */
 	protected $dbs;
 
 	public function __construct( array $config ) {
@@ -229,6 +231,13 @@ class FileBackendDBRepoWrapper extends FileBackend {
 		return $this->translateSrcParams( __FUNCTION__, $params );
 	}
 
+	public function addShellboxInputFile( BoxedCommand $command, string $boxedName,
+		array $params
+	) {
+		$params['src'] = $this->getBackendPath( $params['src'], !empty( $params['latest'] ) );
+		return $this->backend->addShellboxInputFile( $command, $boxedName, $params );
+	}
+
 	public function directoryExists( array $params ) {
 		return $this->backend->directoryExists( $params );
 	}
@@ -245,7 +254,7 @@ class FileBackendDBRepoWrapper extends FileBackend {
 		return $this->backend->getFeatures();
 	}
 
-	public function clearCache( array $paths = null ) {
+	public function clearCache( ?array $paths = null ) {
 		$this->backend->clearCache( null ); // clear all
 	}
 
@@ -282,7 +291,7 @@ class FileBackendDBRepoWrapper extends FileBackend {
 	 * Get a connection to the repo file registry DB
 	 *
 	 * @param int $index
-	 * @return DBConnRef
+	 * @return IDatabase
 	 */
 	protected function getDB( $index ) {
 		if ( !isset( $this->dbs[$index] ) ) {

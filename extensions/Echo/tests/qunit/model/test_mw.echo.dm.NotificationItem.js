@@ -1,5 +1,5 @@
-QUnit.module( 'ext.echo.dm - NotificationItem', function ( hooks ) {
-	var fakeData = {
+QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
+	const fakeData = {
 		type: 'alert',
 		read: true,
 		seen: true,
@@ -25,8 +25,8 @@ QUnit.module( 'ext.echo.dm - NotificationItem', function ( hooks ) {
 			}
 		]
 	};
-	var now = 1234567890000;
-	var nowFormatted = '2009-02-13T23:31:30Z';
+	const now = 1234567890000;
+	const nowFormatted = '2009-02-13T23:31:30Z';
 
 	hooks.beforeEach( function () {
 		this.sandbox.useFakeTimers( now );
@@ -67,8 +67,8 @@ QUnit.module( 'ext.echo.dm - NotificationItem', function ( hooks ) {
 				]
 			}
 		}
-	}, function ( assert, data ) {
-		var defaultValues = {
+	}, ( assert, data ) => {
+		const defaultValues = {
 			getId: undefined,
 			getContentHeader: '',
 			getContentBody: '',
@@ -80,21 +80,21 @@ QUnit.module( 'ext.echo.dm - NotificationItem', function ( hooks ) {
 			isBundled: false,
 			getTimestamp: nowFormatted,
 			getPrimaryUrl: undefined,
-			getIconURL: undefined,
+			getIconUrl: undefined,
 			getIconType: undefined,
 			getSecondaryUrls: [],
 			getModelName: 'local',
 			getAllIds: []
 		};
-		var expected = $.extend( true, {}, defaultValues, data.expected );
+		const expected = $.extend( true, {}, defaultValues, data.expected );
 
-		var itemModel = new mw.echo.dm.NotificationItem(
+		const itemModel = new mw.echo.dm.NotificationItem(
 			data.params.id,
 			data.params.config
 		);
 
-		var methods = ( data.methods === 'all' ? Object.keys( expected ) : data.methods );
-		methods.forEach( function ( method ) {
+		const methods = ( data.methods === 'all' ? Object.keys( expected ) : data.methods );
+		methods.forEach( ( method ) => {
 			assert.deepEqual(
 				// Run the method
 				itemModel[ method ](),
@@ -106,12 +106,12 @@ QUnit.module( 'ext.echo.dm - NotificationItem', function ( hooks ) {
 		} );
 	} );
 
-	QUnit.test( 'Emitting update event', function ( assert ) {
-		var results = [];
-		var itemModel = new mw.echo.dm.NotificationItem( 0, $.extend( true, {}, fakeData, { seen: false, read: false } ) );
+	QUnit.test( 'Emitting update event', ( assert ) => {
+		const results = [];
+		const itemModel = new mw.echo.dm.NotificationItem( 0, $.extend( true, {}, fakeData, { seen: false, read: false } ) );
 
 		// Listen to update event
-		itemModel.on( 'update', function () {
+		itemModel.on( 'update', () => {
 			results.push( [
 				itemModel.isRead(),
 				itemModel.isSeen()

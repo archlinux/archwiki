@@ -2,13 +2,13 @@
  * JavaScript for Special:Preferences: mobileLayout.
  */
 ( function () {
-	var nav = require( './nav.js' );
+	const nav = require( './nav.js' );
 	nav.insertHints( mw.msg( 'prefs-sections-navigation-hint' ) );
 
 	// Define a window manager to control the dialogs
-	var dialogFactory = new OO.Factory();
-	var windowManager = new OO.ui.WindowManager( { factory: dialogFactory } );
-	windowManager.on( 'opening', function ( win ) {
+	const dialogFactory = new OO.Factory();
+	const windowManager = new OO.ui.WindowManager( { factory: dialogFactory } );
+	windowManager.on( 'opening', ( win ) => {
 		if ( !win.$body.data( 'mw-section-infused' ) ) {
 			win.$body.removeClass( 'mw-htmlform-autoinfuse-lazy' );
 			mw.hook( 'htmlform.enhance' ).fire( win.$body );
@@ -17,19 +17,19 @@
 	} );
 
 	// Navigation callback
-	var setSection = function ( sectionName, fieldset ) {
+	const setSection = function ( sectionName, fieldset ) {
 		// strip possible prefixes from the section to normalize it
-		var section = sectionName.replace( 'mw-prefsection-', '' ).replace( 'mw-mobile-prefs-', '' );
-		var win = windowManager.getCurrentWindow();
+		const section = sectionName.replace( 'mw-prefsection-', '' ).replace( 'mw-mobile-prefs-', '' );
+		const win = windowManager.getCurrentWindow();
 		if ( win && win.constructor.static.name !== 'mw-mobile-prefs-' + section ) {
 			windowManager.closeWindow( win );
 		}
 		// Work in the window isn't necessarily done when 'then` fires
-		windowManager.openWindow( 'mw-mobile-prefs-' + section ).opened.then( function () {
+		windowManager.openWindow( 'mw-mobile-prefs-' + section ).opened.then( () => {
 			// Scroll to a fieldset if provided.
 			if ( fieldset ) {
 				// setTimout is ie11-compatible and queues up tasks for async exec
-				setTimeout( function () {
+				setTimeout( () => {
 					fieldset.scrollIntoView( { behavior: 'smooth' } );
 				} );
 			}
@@ -45,7 +45,7 @@
 	 */
 	function createSectionDialog( sectionId, sectionTitle, sectionBody ) {
 		function PrefDialog() {
-			var conf = { classes: [ 'overlay-content', 'mw-mobile-pref-window' ] };
+			const conf = { classes: [ 'overlay-content', 'mw-mobile-pref-window' ] };
 			PrefDialog.super.call( this, conf );
 		}
 
@@ -65,9 +65,9 @@
 			this.$body.addClass( 'mw-mobile-pref-dialog-body' );
 		};
 		PrefDialog.prototype.getActionProcess = function ( action ) {
-			var dialog = this;
+			const dialog = this;
 			if ( action ) {
-				return new OO.ui.Process( function () {
+				return new OO.ui.Process( () => {
 					dialog.close( { action: action } );
 				} );
 			}
@@ -82,18 +82,18 @@
 	 */
 	function initDialogs() {
 		// Query the document once, then query that returned element afterwards.
-		var preferencesForm = document.getElementById( 'mw-prefs-form' );
-		var prefButtons = preferencesForm.querySelector( '.mw-htmlform-submit-buttons' );
-		var sections = preferencesForm.querySelectorAll( '.mw-mobile-prefsection' );
+		const preferencesForm = document.getElementById( 'mw-prefs-form' );
+		const prefButtons = preferencesForm.querySelector( '.mw-htmlform-submit-buttons' );
+		const sections = preferencesForm.querySelectorAll( '.mw-mobile-prefsection' );
 
 		// Move the form buttons (such as save) into the dialog after opening.
-		windowManager.on( 'opening', function ( win, opened ) {
+		windowManager.on( 'opening', ( win, opened ) => {
 			if ( opened ) {
 				win.$foot[ 0 ].appendChild( prefButtons );
 			}
 		} );
 		// Move the form buttons (such as save) back to the main form while closing.
-		windowManager.on( 'closing', function ( _win, closed ) {
+		windowManager.on( 'closing', ( _win, closed ) => {
 			document.getElementById( 'preferences' ).appendChild( prefButtons );
 			if ( closed ) {
 				location.hash = '';
@@ -102,23 +102,23 @@
 		// Add the window manager to the form
 		$( preferencesForm ).append( windowManager.$element );
 		// Add event listeners and register a dialog for each section
-		Array.prototype.forEach.call( sections, function ( section ) {
-			var sectionContent = document.getElementById( section.id + '-content' );
-			var sectionBody = sectionContent.querySelector( 'div > div.oo-ui-widget' );
-			var sectionText = sectionContent.querySelector( '.mw-prefs-title' ).textContent;
+		Array.prototype.forEach.call( sections, ( section ) => {
+			const sectionContent = document.getElementById( section.id + '-content' );
+			const sectionBody = sectionContent.querySelector( 'div > div.oo-ui-widget' );
+			const sectionText = sectionContent.querySelector( '.mw-prefs-title' ).textContent;
 			createSectionDialog( section.id, sectionText, sectionBody );
 		} );
-		var prefSelect = OO.ui.infuse( $( '.mw-mobile-prefs-sections' ) );
+		const prefSelect = OO.ui.infuse( $( '.mw-mobile-prefs-sections' ) );
 		prefSelect.aggregate( {
 			click: 'itemClick'
 		} );
-		prefSelect.on( 'itemClick', function ( button ) {
+		prefSelect.on( 'itemClick', ( button ) => {
 			setSection( button.getData() );
 		} );
 
 	}
 	// DOM-dependant code
-	$( function () {
+	$( () => {
 		initDialogs();
 		nav.onLoad( setSection );
 	} );

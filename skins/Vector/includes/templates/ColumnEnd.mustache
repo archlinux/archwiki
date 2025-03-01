@@ -8,13 +8,13 @@
 			{{>PinnableContainer/Close}}
 			{{/data-page-tools}}
 		</nav>
-		<nav class="vector-client-prefs-landmark" aria-label="{{msg-vector-client-prefs-label}}">
-			{{#data-client-prefs}}
+		<nav class="vector-appearance-landmark" aria-label="{{msg-vector-appearance-label}}">
+			{{#data-appearance}}
 			{{>PinnableContainer/Pinned/Open}}
-				{{! Use `#vector-client-prefs-pinned-container .vector-client-prefs` to target styles at this element}}
-				{{#is-pinned}}{{>ClientPreferences}}{{/is-pinned}}
+				{{! Use `#vector-appearance-pinned-container .vector-appearance` to target styles at this element}}
+				{{#is-pinned}}{{>Appearance}}{{/is-pinned}}
 			{{>PinnableContainer/Close}}
-			{{/data-client-prefs}}
+			{{/data-appearance}}
 		</nav>
 	</div>
 </div>

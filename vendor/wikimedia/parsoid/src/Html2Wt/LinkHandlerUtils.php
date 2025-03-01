@@ -82,7 +82,7 @@ class LinkHandlerUtils {
 		$href = DOMCompat::getAttribute( $node, 'href' ) ?? '';
 		if ( ( $href[0] ?? '' ) === '/' && ( $href[1] ?? '' ) !== '/' ) {
 			// protocol-less but absolute.  let's find a base href
-			foreach ( $env->getSiteConfig()->interwikiMapNoNamespaces() as $prefix => $interwikiInfo ) {
+			foreach ( $env->getSiteConfig()->interwikiMapNoNamespaces() as $interwikiInfo ) {
 				if ( isset( $interwikiInfo['localinterwiki'] ) && isset( $interwikiInfo['url'] ) ) {
 					$base = $interwikiInfo['url'];
 
@@ -885,51 +885,26 @@ class LinkHandlerUtils {
 
 		$siteConfig = $state->getEnv()->getSiteConfig();
 
-		// TODO: match vs. interwikis too
-		$magicLinkMatch = $siteConfig->getExtResourceURLPatternMatcher()(
-			Utils::decodeURI( $linkData->origHref )
-		);
 		$pureHashMatch = substr( $urlStr, 0, 1 ) === '#';
 		// Fully serialize the content
 		$contentStr = $state->serializeLinkChildrenToString(
 			$node,
 			[ $state->serializer->wteHandlers, $pureHashMatch ? 'wikilinkHandler' : 'aHandler' ]
 		);
-		// First check for ISBN/RFC/PMID links. We rely on selser to
-		// preserve non-minimal forms.
-		if ( $magicLinkMatch ) {
-			$serialized = $siteConfig->makeExtResourceURL(
-				$magicLinkMatch, $target['value'], $contentStr
-			);
-			if ( $serialized[0] === '[' ) {
-				// Serialization as a magic link failed (perhaps the
-				// content string wasn't appropriate).
-				$state->emitChunk(
-					( $magicLinkMatch[0] === 'ISBN' ) ?
-					new WikiLinkText( $serialized, $node, $siteConfig, 'mw:WikiLink' ) :
-					new ExtLinkText( $serialized, $node, $siteConfig, 'mw:ExtLink' ),
-					$node
-				);
-			} else {
-				$state->emitChunk( new MagicLinkText( $serialized, $node ), $node );
-			}
-			return;
+
+		// serialize as auto-numbered external link
+		// [http://example.com]
+		$linktext = null;
+		$class = null;
+		// If it's just anchor text, serialize as an internal link.
+		if ( $pureHashMatch ) {
+			$class = WikiLinkText::class;
+			$linktext = '[[' . $urlStr . ( ( $contentStr ) ? '|' . $contentStr : '' ) . ']]';
 		} else {
-			// serialize as auto-numbered external link
-			// [http://example.com]
-			$linktext = null;
-			$class = null;
-			// If it's just anchor text, serialize as an internal link.
-			if ( $pureHashMatch ) {
-				$class = WikiLinkText::class;
-				$linktext = '[[' . $urlStr . ( ( $contentStr ) ? '|' . $contentStr : '' ) . ']]';
-			} else {
-				$class = ExtLinkText::class;
-				$linktext = '[' . $urlStr . ( ( $contentStr ) ? ' ' . $contentStr : '' ) . ']';
-			}
-			$state->emitChunk( new $class( $linktext, $node, $siteConfig, $linkData->type ), $node );
-			return;
+			$class = ExtLinkText::class;
+			$linktext = '[' . $urlStr . ( ( $contentStr ) ? ' ' . $contentStr : '' ) . ']';
 		}
+		$state->emitChunk( new $class( $linktext, $node, $siteConfig, $linkData->type ), $node );
 	}
 
 	/**
@@ -948,9 +923,32 @@ class LinkHandlerUtils {
 		// Get the rt data from the token and tplAttrs
 		$linkData = self::getLinkRoundTripData( $env, $node, $state );
 		$linkType = $linkData->type;
-		if ( $siteConfig->getExtResourceURLPatternMatcher()( Utils::decodeURI( $linkData->origHref ) ) ) {
-			// Override the 'rel' type if this is a magic link
-			$linkType = 'mw:ExtLink';
+		// If this could be a magic link, serialize it as a magic link by
+		// changing the link type to ExtLink. (If magic links are disabled, then
+		// the ExtResourceURLPatternMatcher() will return false.)
+		$magicLinkMatch = $siteConfig->getExtResourceURLPatternMatcher()( Utils::decodeURI( $linkData->origHref ) );
+		if ( $magicLinkMatch !== false ) {
+			if (
+				$magicLinkMatch[0] === 'PMID' &&
+				DOMUtils::matchRel( $node, '|^mw:WikiLink/Interwiki\b|' ) !== null &&
+				$linkType === 'mw:WikiLink'
+			) {
+				// Round-trip PMIDs as interwikis if that's how they were
+				// originally. (Don't change the link type.)
+			} else {
+				$contentStr = $state->serializeLinkChildrenToString(
+					$node,
+					[ $state->serializer->wteHandlers, 'aHandler' ]
+				);
+				$serialized = $siteConfig->makeExtResourceURL(
+					$magicLinkMatch, $linkData->origHref, $contentStr
+				);
+				if ( $serialized[0] !== '[' ) {
+					// Successfully serialized as a magic link
+					$state->emitChunk( new MagicLinkText( $serialized, $node ), $node );
+					return;
+				}
+			}
 		}
 		if ( $linkType !== null && isset( $linkData->target['value'] ) ) {
 			// We have a type and target info
@@ -1137,11 +1135,11 @@ class LinkHandlerUtils {
 		$linkFromDataMw = WTSUtils::getAttrFromDataMw( $outerDMW, 'link', true );
 		if ( $linkFromDataMw !== null ) {
 			// "link" attribute on the `outerElt` takes precedence
-			if ( isset( $linkFromDataMw[1]->html ) ) {
+			if ( isset( $linkFromDataMw->value['html'] ) ) {
 				$link = $state->serializer->getAttributeValueAsShadowInfo( $outerElt, 'link' );
 			} else {
 				$link = [
-					'value' => "link={$linkFromDataMw[1]->txt}",
+					'value' => "link={$linkFromDataMw->value['txt']}",
 					'modified' => false,
 					'fromsrc' => false,
 					'fromDataMW' => true
@@ -1377,7 +1375,7 @@ class LinkHandlerUtils {
 			if ( $v === null ) {
 				$a = WTSUtils::getAttrFromDataMw( $outerDMW, $o['ck'], true );
 				if ( $a !== null ) {
-					if ( isset( $a[1]->html ) ) {
+					if ( isset( $a->value['html'] ) ) {
 						$si = $state->serializer->getAttributeValueAsShadowInfo( $outerElt, $o['ck'] );
 						if ( isset( $si['value'] ) ) {
 							$nopts[] = [
@@ -1387,7 +1385,7 @@ class LinkHandlerUtils {
 							continue;
 						}
 					} else {
-						$v = $a[1]->txt;
+						$v = $a->value['txt'];
 					}
 				}
 			}

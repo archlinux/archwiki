@@ -33,7 +33,7 @@ class RevisionContentHelperTest extends MediaWikiIntegrationTestCase {
 	 */
 	private function newHelper(
 		array $params = [],
-		Authority $authority = null
+		?Authority $authority = null
 	): RevisionContentHelper {
 		$helper = new RevisionContentHelper(
 			new ServiceOptions(
@@ -45,7 +45,10 @@ class RevisionContentHelperTest extends MediaWikiIntegrationTestCase {
 			),
 			$this->getServiceContainer()->getRevisionLookup(),
 			$this->getServiceContainer()->getTitleFormatter(),
-			$this->getServiceContainer()->getPageStore()
+			$this->getServiceContainer()->getPageStore(),
+			$this->getServiceContainer()->getTitleFactory(),
+			$this->getServiceContainer()->getConnectionProvider(),
+			$this->getServiceContainer()->getChangeTagsStore()
 		);
 
 		$authority = $authority ?: $this->mockRegisteredUltimateAuthority();

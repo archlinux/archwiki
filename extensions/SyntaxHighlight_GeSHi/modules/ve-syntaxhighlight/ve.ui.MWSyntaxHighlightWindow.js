@@ -32,7 +32,7 @@ ve.ui.MWSyntaxHighlightWindow.static.dir = 'ltr';
  * @inheritdoc
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.initialize = function () {
-	var noneMsg = ve.msg( 'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none' );
+	const noneMsg = ve.msg( 'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none' );
 
 	this.languageValid = null;
 
@@ -40,9 +40,8 @@ ve.ui.MWSyntaxHighlightWindow.prototype.initialize = function () {
 		$overlay: this.$overlay,
 		menu: {
 			filterFromInput: true,
-			items: ve.dm.MWSyntaxHighlightNode.static.getLanguages().map( function ( lang ) {
-				return new OO.ui.MenuOptionWidget( { data: lang, label: lang || noneMsg } );
-			} )
+			items: ve.dm.MWSyntaxHighlightNode.static.getLanguages().map( ( lang ) => new OO.ui.MenuOptionWidget( { data: lang, label: lang || noneMsg } )
+			)
 		},
 		validate: function ( input ) {
 			return ve.dm.MWSyntaxHighlightNode.static.isLanguageSupported( input );
@@ -88,11 +87,10 @@ ve.ui.MWSyntaxHighlightWindow.prototype.initialize = function () {
  * @param {string} value New value
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange = function () {
-	var inspector = this;
-	var validity = this.language.getValidity();
-	validity.always( function () {
-		inspector.languageValid = validity.state() === 'resolved';
-		inspector.updateActions();
+	const validity = this.language.getValidity();
+	validity.always( () => {
+		this.languageValid = validity.state() === 'resolved';
+		this.updateActions();
 	} );
 };
 
@@ -102,7 +100,7 @@ ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange = function () {
  * @param {boolean} value Widget value
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.onShowLinesCheckboxChange = function () {
-	var showLines = this.showLinesCheckbox.isSelected();
+	const showLines = this.showLinesCheckbox.isSelected();
 	this.input.toggleLineNumbers( showLines );
 	this.startLineNumber.setDisabled( !showLines );
 	this.updateActions();
@@ -114,13 +112,12 @@ ve.ui.MWSyntaxHighlightWindow.prototype.onShowLinesCheckboxChange = function () 
  * @param {string} value Widget value
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.onStartLineNumberChange = function ( value ) {
-	var inspector = this,
-		input = this.input;
+	const input = this.input;
 
-	input.loadingPromise.done( function () {
+	input.loadingPromise.done( () => {
 		input.editor.setOption( 'firstLineNumber', value !== '' ? +value : 1 );
-	} ).always( function () {
-		inspector.updateActions();
+	} ).always( () => {
+		this.updateActions();
 	} );
 };
 
@@ -128,22 +125,22 @@ ve.ui.MWSyntaxHighlightWindow.prototype.onStartLineNumberChange = function ( val
  * @inheritdoc OO.ui.Window
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.getReadyProcess = function ( data, process ) {
-	return process.next( function () {
+	return process.next( () => {
 		this.language.getMenu().toggle( false );
 		if ( !this.language.getValue() ) {
 			this.language.focus();
 		} else {
 			this.input.focus();
 		}
-	}, this );
+	} );
 };
 
 /**
  * @inheritdoc OO.ui.Window
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess = function ( data, process ) {
-	return process.next( function () {
-		var attrs = this.selectedNode ? this.selectedNode.getAttribute( 'mw' ).attrs : {},
+	return process.next( () => {
+		const attrs = this.selectedNode ? this.selectedNode.getAttribute( 'mw' ).attrs : {},
 			language = attrs.lang ? attrs.lang.toLowerCase() : '',
 			showLines = attrs.line !== undefined,
 			startLine = attrs.start,
@@ -153,7 +150,7 @@ ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess = function ( data, proce
 
 		this.showLinesCheckbox.setSelected( showLines ).setDisabled( isReadOnly );
 		this.startLineNumber.setValue( startLine ).setReadOnly( isReadOnly );
-	}, this );
+	} );
 };
 
 /**
@@ -174,7 +171,7 @@ ve.ui.MWSyntaxHighlightWindow.prototype.updateActions = function () {
  * @inheritdoc ve.ui.MWExtensionWindow
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.updateMwData = function ( mwData ) {
-	var language = this.language.getValue(),
+	const language = this.language.getValue(),
 		showLines = this.showLinesCheckbox.isSelected(),
 		startLine = this.startLineNumber.getValue();
 

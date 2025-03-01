@@ -2,15 +2,15 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use IApiMessage;
+use MediaWiki\Api\IApiMessage;
 use MediaWiki\Config\Config;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\WebResponse;
-use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\TokenAwareHandlerTrait;
+use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\TitleFormatter;
@@ -24,36 +24,12 @@ use Wikimedia\Message\MessageValue;
 abstract class EditHandler extends ActionModuleBasedHandler {
 	use TokenAwareHandlerTrait;
 
-	/** @var Config */
-	protected $config;
+	protected Config $config;
+	protected IContentHandlerFactory $contentHandlerFactory;
+	protected TitleParser $titleParser;
+	protected TitleFormatter $titleFormatter;
+	protected RevisionLookup $revisionLookup;
 
-	/**
-	 * @var IContentHandlerFactory
-	 */
-	protected $contentHandlerFactory;
-
-	/**
-	 * @var TitleParser
-	 */
-	protected $titleParser;
-
-	/**
-	 * @var TitleFormatter
-	 */
-	protected $titleFormatter;
-
-	/**
-	 * @var RevisionLookup
-	 */
-	protected $revisionLookup;
-
-	/**
-	 * @param Config $config
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param TitleParser $titleParser
-	 * @param TitleFormatter $titleFormatter
-	 * @param RevisionLookup $revisionLookup
-	 */
 	public function __construct(
 		Config $config,
 		IContentHandlerFactory $contentHandlerFactory,
@@ -82,6 +58,14 @@ abstract class EditHandler extends ActionModuleBasedHandler {
 	/**
 	 * @inheritDoc
 	 */
+	public function validate( Validator $restValidator ) {
+			parent::validate( $restValidator );
+			$this->validateToken( true );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	protected function mapActionModuleResult( array $data ) {
 		if ( isset( $data['error'] ) ) {
 			throw new LocalizedHttpException( new MessageValue( 'apierror-' . $data['error'] ), 400 );
@@ -94,7 +78,10 @@ abstract class EditHandler extends ActionModuleBasedHandler {
 		if ( $data['edit']['result'] !== 'Success' ) {
 			// Probably an edit conflict
 			// TODO: which code for null edits?
-			throw new HttpException( $data['edit']['result'], 409 );
+			throw new LocalizedHttpException(
+				new MessageValue( "rest-edit-conflict", [ $data['edit']['result'] ] ),
+				409
+			);
 		}
 
 		$title = $this->titleParser->parseTitle( $data['edit']['title'] );

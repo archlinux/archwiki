@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Math\Hooks;
 
 use MediaWiki\Extension\Math\MathRenderer;
 use MediaWiki\HookContainer\HookContainer;
-use Parser;
+use MediaWiki\Parser\Parser;
 use stdClass;
 
 /**

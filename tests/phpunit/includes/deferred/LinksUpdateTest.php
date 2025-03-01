@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Content\WikitextContent;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Deferred\LinksUpdate\LinksTable;
 use MediaWiki\Deferred\LinksUpdate\LinksTableGroup;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
@@ -7,6 +9,8 @@ use MediaWiki\Interwiki\ClassicInterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,6 +35,7 @@ use Wikimedia\TestingAccessWrapper;
  * @group Database
  */
 class LinksUpdateTest extends MediaWikiLangTestCase {
+	/** @var int */
 	protected static $testingPageId;
 
 	protected function setUp(): void {
@@ -53,12 +58,6 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			ClassicInterwikiLookup::buildCdbHash( $testInterwikis, $GLOBAL_SCOPE ),
 			MainConfigNames::RCWatchCategoryMembership => true,
 		] );
-		// Reset title services after interwiki prefixes change
-		$services = MediaWikiServices::getInstance();
-		$services->resetServiceForTesting( 'InterwikiLookup' );
-		$services->resetServiceForTesting( '_MediaWikiTitleCodec' );
-		$services->resetServiceForTesting( 'TitleFormatter' );
-		$services->resetServiceForTesting( 'TitleParser' );
 	}
 
 	public function addDBDataOnce() {
@@ -106,7 +105,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$t,
 			$po,
 			'pagelinks',
-			[ 'pl_namespace', 'pl_title' ],
+			[ 'lt_namespace', 'lt_title' ],
 			[ 'pl_from' => self::$testingPageId ],
 			[
 				[ NS_MAIN, 'Bar' ],
@@ -114,9 +113,14 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			]
 		);
 		$this->assertArrayEquals( [
-			Title::makeTitle( NS_MAIN, 'Foo' ), // newFromText doesn't yield the same internal state....
-			Title::makeTitle( NS_MAIN, 'Bar' ),
-		], $update->getAddedLinks() );
+			[ NS_MAIN, 'Foo' ],
+			[ NS_MAIN, 'Bar' ],
+		], array_map(
+			static function ( PageReference $pageReference ) {
+				return [ $pageReference->getNamespace(), $pageReference->getDbKey() ];
+			},
+			$update->getPageReferenceArray( 'pagelinks', LinksTable::INSERTED )
+		) );
 
 		$po = new ParserOutput();
 		$po->setTitleText( $t->getPrefixedText() );
@@ -129,7 +133,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$t,
 			$po,
 			'pagelinks',
-			[ 'pl_namespace', 'pl_title' ],
+			[ 'lt_namespace', 'lt_title' ],
 			[ 'pl_from' => self::$testingPageId ],
 			[
 				[ NS_MAIN, 'Bar' ],
@@ -138,12 +142,22 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			]
 		);
 		$this->assertArrayEquals( [
-			Title::makeTitle( NS_MAIN, 'Baz' ),
-			Title::makeTitle( NS_TALK, 'Baz' ),
-		], $update->getAddedLinks() );
+			[ NS_MAIN, 'Baz' ],
+			[ NS_TALK, 'Baz' ],
+		], array_map(
+			static function ( PageReference $pageReference ) {
+				return [ $pageReference->getNamespace(), $pageReference->getDbKey() ];
+			},
+			$update->getPageReferenceArray( 'pagelinks', LinksTable::INSERTED )
+		) );
 		$this->assertArrayEquals( [
-			Title::makeTitle( NS_MAIN, 'Foo' ),
-		], $update->getRemovedLinks() );
+			[ NS_MAIN, 'Foo' ],
+		], array_map(
+			static function ( PageReference $pageReference ) {
+				return [ $pageReference->getNamespace(), $pageReference->getDbKey() ];
+			},
+			$update->getPageReferenceArray( 'pagelinks', LinksTable::DELETED )
+		) );
 	}
 
 	public function testUpdate_pagelinks_move() {
@@ -154,7 +168,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$t,
 			$po,
 			'pagelinks',
-			[ 'pl_namespace', 'pl_title', 'pl_from_namespace' ],
+			[ 'lt_namespace', 'lt_title', 'pl_from_namespace' ],
 			[ 'pl_from' => self::$testingPageId ],
 			[
 				[ NS_MAIN, 'Foo', NS_MAIN ],
@@ -168,7 +182,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			new PageIdentityValue( 2, 0, "Foo", false ),
 			$po,
 			'pagelinks',
-			[ 'pl_namespace', 'pl_title', 'pl_from_namespace' ],
+			[ 'lt_namespace', 'lt_title', 'pl_from_namespace' ],
 			[ 'pl_from' => self::$testingPageId ],
 			[
 				[ NS_MAIN, 'Foo', NS_USER ],
@@ -581,8 +595,8 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			[ 'tl_target_id' ],
 			[ 'tl_from' => self::$testingPageId ],
 			[
-				[ $linkTargetLookup->acquireLinkTargetId( $target1, $this->db ) ],
-				[ $linkTargetLookup->acquireLinkTargetId( $target2, $this->db ) ],
+				[ $linkTargetLookup->acquireLinkTargetId( $target1, $this->getDb() ) ],
+				[ $linkTargetLookup->acquireLinkTargetId( $target2, $this->getDb() ) ],
 			]
 		);
 
@@ -599,8 +613,8 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			[ 'tl_target_id' ],
 			[ 'tl_from' => self::$testingPageId ],
 			[
-				[ $linkTargetLookup->acquireLinkTargetId( $target2, $this->db ) ],
-				[ $linkTargetLookup->acquireLinkTargetId( $target3, $this->db ) ],
+				[ $linkTargetLookup->acquireLinkTargetId( $target2, $this->getDb() ) ],
+				[ $linkTargetLookup->acquireLinkTargetId( $target3, $this->getDb() ) ],
 			]
 		);
 	}
@@ -738,6 +752,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			// ::setUnsortedPageProperty
 			$indexedPageProperty = 'setPageProperty';
 			$setUnsortedPageProperty = 'setPageProperty';
+			MWDebug::filterDeprecationForTest( '/::setPageProperty with non-string value/' );
 		}
 
 		$po->$setNumericPageProperty( 'deleted', 1 );
@@ -837,7 +852,14 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 
 		$update->doUpdate();
 
-		$this->assertSelect( $table, $fields, $condition, $expectedRows );
+		$qb = $this->newSelectQueryBuilder()
+			->select( $fields )
+			->from( $table )
+			->where( $condition );
+		if ( $table === 'pagelinks' ) {
+			$qb->join( 'linktarget', null, 'pl_target_id=lt_id' );
+		}
+		$qb->assertResultSet( $expectedRows );
 		return $update;
 	}
 
@@ -858,10 +880,12 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 
 	private function runAllRelatedJobs() {
 		$queueGroup = $this->getServiceContainer()->getJobQueueGroup();
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $job = $queueGroup->pop( 'refreshLinksPrioritized' ) ) {
 			$job->run();
 			$queueGroup->ack( $job );
 		}
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $job = $queueGroup->pop( 'categoryMembershipChange' ) ) {
 			$job->run();
 			$queueGroup->ack( $job );
@@ -893,6 +917,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		if ( $useDeprecatedApi ) {
 			$setNumericPageProperty = 'setPageProperty';
 			$setUnsortedPageProperty = 'setPageProperty';
+			MWDebug::filterDeprecationForTest( '/::setPageProperty with non-string value/' );
 		}
 
 		/** @var ParserOutput $po */
@@ -910,7 +935,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		if ( $useDeprecatedApi ) {
 			$po->setPageProperty( 'true', true );
 			$po->setPageProperty( 'false', false );
-			$this->expectDeprecationAndContinue( '/::setPageProperty with non-scalar value/' );
+			$this->expectDeprecationAndContinue( '/::setPageProperty with null value/' );
 			$po->setPageProperty( 'null', null );
 		} else {
 			$po->$setUnsortedPageProperty( 'null', '' );

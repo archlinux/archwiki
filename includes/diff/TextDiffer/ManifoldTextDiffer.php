@@ -3,7 +3,8 @@
 namespace MediaWiki\Diff\TextDiffer;
 
 use DomainException;
-use Language;
+use InvalidArgumentException;
+use MediaWiki\Language\Language;
 use MediaWiki\Output\OutputPage;
 use MessageLocalizer;
 use UnexpectedValueException;
@@ -69,7 +70,7 @@ class ManifoldTextDiffer implements TextDiffer {
 
 	public function render( string $oldText, string $newText, string $format ): string {
 		if ( !in_array( $format, $this->getFormats(), true ) ) {
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				'The requested format is not supported by this engine' );
 		}
 		$results = $this->renderBatch( $oldText, $newText, [ $format ] );
@@ -147,7 +148,7 @@ class ManifoldTextDiffer implements TextDiffer {
 	private function getDifferForFormat( $format ) {
 		$differs = $this->getDiffersByFormat();
 		if ( !isset( $differs[$format] ) ) {
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				"Unknown format \"$format\""
 			);
 		}

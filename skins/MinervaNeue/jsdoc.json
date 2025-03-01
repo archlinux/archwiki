@@ -2,13 +2,13 @@
 	"opts": {
 		"destination": "docs/js",
 		"package": "package.json",
-		"pedantic": true,
+		"pedantic": false,
 		"readme": "README.md",
 		"recurse": true,
 		"template": "node_modules/jsdoc-wmf-theme"
 	},
 	"plugins": [
-		"plugins/markdown"
+		"node_modules/jsdoc-wmf-theme/plugins/default"
 	],
 	"source": {
 		"include": [ "resources" ]
@@ -19,14 +19,19 @@
 			"useLongnameInNav": true
 		},
 		"wmf": {
+			"repository": "https://gerrit.wikimedia.org/g/mediawiki/skins/MinervaNeue/",
+			"prefixMap": {
+				"mw.": "https://doc.wikimedia.org/mediawiki-core/master/js/{type}.html"
+			},
 			"linkMap": {
-				"Overlay": "https://doc.wikimedia.org/MobileFrontend/master/js/js/Overlay.html",
-				"Window": "https://developer.mozilla.org/en-US/docs/Web/API/Window",
-				"Element": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
-				"HTMLElement": "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement",
-				"jQuery": "https://api.jquery.com/Types/#jQuery",
+				"jQuery": "https://api.jquery.com/jQuery/",
+				"Node": "https://developer.mozilla.org/docs/Web/API/Node",
+				"Element": "https://developer.mozilla.org/docs/Web/API/Element",
+				"HTMLElement": "https://developer.mozilla.org/docs/Web/API/HTMLElement",
 				"Drawer": "https://doc.wikimedia.org/MobileFrontend/master/js/js/Drawer.html",
 				"Icon": "https://doc.wikimedia.org/MobileFrontend/master/js/js/Icon.html",
+				"Overlay": "https://doc.wikimedia.org/MobileFrontend/master/js/js/Overlay.html",
+				"Page": "https://doc.wikimedia.org/MobileFrontend/master/js/js/Page.html",
 				"View": "https://doc.wikimedia.org/MobileFrontend/master/js/js/View.html"
 			}
 		}

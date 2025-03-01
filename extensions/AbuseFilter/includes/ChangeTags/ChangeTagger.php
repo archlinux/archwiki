@@ -98,6 +98,7 @@ class ChangeTagger {
 
 		$logType = $recentChange->getAttribute( 'rc_log_type' ) ?: 'edit';
 		if ( $logType === 'newusers' ) {
+			// XXX: as of 1.43, the following is never true
 			$action = $recentChange->getAttribute( 'rc_log_action' ) === 'autocreate' ?
 				'autocreateaccount' :
 				'createaccount';

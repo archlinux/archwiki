@@ -20,7 +20,10 @@
 
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\JobQueueEnqueueUpdate;
+use MediaWiki\MediaWikiServices;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ReadOnlyMode;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\UUID\GlobalIdGenerator;
 
 /**
@@ -75,6 +78,7 @@ class JobQueueGroup {
 	 * @param IBufferingStatsdDataFactory $statsdDataFactory
 	 * @param WANObjectCache $wanCache
 	 * @param GlobalIdGenerator $globalIdGenerator
+	 *
 	 */
 	public function __construct(
 		$domain,
@@ -162,7 +166,7 @@ class JobQueueGroup {
 			}
 		}
 
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 		$cache->set(
 			$cache->makeGlobalKey( 'jobqueue', $this->domain, 'hasjobs', self::TYPE_ANY ),
 			'true',
@@ -333,7 +337,7 @@ class JobQueueGroup {
 	 * @return bool
 	 */
 	public function queuesHaveJobs( $type = self::TYPE_ANY ) {
-		$cache = ObjectCache::getLocalClusterInstance();
+		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 		$key = $cache->makeGlobalKey( 'jobqueue', $this->domain, 'hasjobs', $type );
 
 		$value = $cache->get( $key );
@@ -437,12 +441,11 @@ class JobQueueGroup {
 
 	/**
 	 * @param array $jobs
-	 * @throws InvalidArgumentException
 	 */
 	private function assertValidJobs( array $jobs ) {
 		foreach ( $jobs as $job ) {
 			if ( !( $job instanceof IJobSpecification ) ) {
-				$type = is_object( $job ) ? get_class( $job ) : gettype( $job );
+				$type = get_debug_type( $job );
 				throw new InvalidArgumentException( "Expected IJobSpecification objects, got " . $type );
 			}
 		}

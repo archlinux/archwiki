@@ -1,7 +1,10 @@
 <?php
 
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Content\ContentModelChange;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RateLimiter;
@@ -9,11 +12,13 @@ use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * TODO convert to a pure unit test
  *
  * @group Database
+ * @covers \MediaWiki\Content\ContentModelChange
  *
  * @author DannyS712
  * @method ContentModelChange newServiceInstance(string $serviceClass, array $parameterOverrides)
@@ -43,8 +48,6 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test that the content model needs to change
-	 *
-	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testChangeNeeded() {
 		$wikipage = $this->getExistingTestPage( 'ExistingPage' );
@@ -69,8 +72,6 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test that the content needs to be valid for the requested model
-	 *
-	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testInvalidContent() {
 		$invalidJSON = 'Foo\nBar\nEaster egg\nT22281';
@@ -102,8 +103,6 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test the EditFilterMergedContent hook can be intercepted
-	 *
-	 * @covers \ContentModelChange::doContentModelChange
 	 *
 	 * @dataProvider provideTestEditFilterMergedContent
 	 * @param string|bool $customMessage Hook message, or false
@@ -148,8 +147,6 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test the ContentModelCanBeUsedOn hook can be intercepted
-	 *
-	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testContentModelCanBeUsedOn() {
 		$wikipage = $this->getExistingTestPage( 'ExistingPage' );
@@ -187,14 +184,16 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test that content handler must support direct editing
-	 *
-	 * @covers \ContentModelChange::doContentModelChange
 	 */
 	public function testNoDirectEditing() {
 		$title = Title::newFromText( 'Dummy:NoDirectEditing' );
 		$wikipage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
-		$dummyContent = ContentHandler::getForModelID( 'testing' )->makeEmptyContent();
+		$dummyContent = $this->getServiceContainer()
+			->getContentHandlerFactory()
+			->getContentHandler( 'testing' )
+			->makeEmptyContent();
+
 		$wikipage->doUserEditContent(
 			$dummyContent,
 			$this->getTestSysop()->getUser(),
@@ -223,11 +222,8 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \ContentModelChange::setTags
-	 */
 	public function testCannotApplyTags() {
-		ChangeTags::defineTag( 'edit content model tag' );
+		$this->getServiceContainer()->getChangeTagsStore()->defineTag( 'edit content model tag' );
 
 		$change = $this->newContentModelChange(
 			$this->mockRegisteredAuthorityWithoutPermissions( [ 'applychangetags' ] ),
@@ -241,10 +237,6 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \ContentModelChange::authorizeChange
-	 * @covers \ContentModelChange::probablyCanChange
-	 */
 	public function testCheckPermissions() {
 		$wikipage = $this->getExistingTestPage( 'ExistingPage' );
 		$title = $wikipage->getTitle();
@@ -282,12 +274,15 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 			return true;
 		} );
 
+		$wpFactory = $this->createMock( WikiPageFactory::class );
+		$wpFactory->method( 'newFromTitle' )->willReturn( $wikipage );
 		$change = $this->newServiceInstance(
 			ContentModelChange::class,
 			[
 				'performer' => $performer,
 				'page' => $wikipage,
-				'newModel' => $newContentModel
+				'newModel' => $newContentModel,
+				'wikiPageFactory' => $wpFactory,
 			]
 		);
 
@@ -305,9 +300,6 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	/**
-	 * @covers \ContentModelChange::doContentModelChange
-	 */
 	public function testCheckPermissionsThrottle() {
 		$user = $this->getTestUser()->getUser();
 

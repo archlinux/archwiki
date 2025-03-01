@@ -6,9 +6,10 @@ use Cite\Cite;
 use Cite\ErrorReporter;
 use Cite\ReferenceListFormatter;
 use Cite\ReferenceStack;
-use Language;
-use Parser;
-use ParserOptions;
+use MediaWiki\Language\Language;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -19,7 +20,7 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->overrideConfigValue( 'LanguageCode', 'qqx' );
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'qqx' );
 	}
 
 	/**
@@ -36,7 +37,7 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 		);
 
 		$referenceStack = new ReferenceStack();
-		TestingAccessWrapper::newFromObject( $referenceStack )->refs = $initialRefs;
+		TestingAccessWrapper::newFromObject( $referenceStack )->refs = TestUtils::refGroupsFromArray( $initialRefs );
 
 		$formatter = $this->createMock( ReferenceListFormatter::class );
 		$formatter->method( 'formatReferences' )->willReturn( '<references />' );
@@ -93,7 +94,8 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$mockParser = $this->createNoOpMock( Parser::class, [ 'getOptions', 'getContentLanguage' ] );
 		$mockParser->method( 'getOptions' )->willReturn( $mockOptions );
 		$mockParser->method( 'getContentLanguage' )->willReturn( $language );
-		return new Cite( $mockParser );
+		$config = $this->getServiceContainer()->getMainConfig();
+		return new Cite( $mockParser, $config );
 	}
 
 }

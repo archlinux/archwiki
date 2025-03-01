@@ -4,7 +4,7 @@ Date: 2024-01-11
 
 ## Status
 
-In discussion.
+Accepted.
 
 ## Context
 
@@ -19,7 +19,7 @@ will want to make use of this code.
 
 ## Decision
 
-For now, we will publish a library @wikimedia/mediawiki.skins.clientpreferences that
+For now, we will publish a library @wikimedia/mediawiki.skins.clientpreferences to npmjs.org that
 will be used inside MobileFrontend.
 
 When we make significant changes to the the code in Vector, we will update the

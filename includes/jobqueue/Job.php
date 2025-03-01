@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\Http\Telemetry;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
@@ -26,10 +27,7 @@ use MediaWiki\Title\Title;
 /**
  * Describe and execute a background job.
  *
- * Push jobs onto queues via the JobQueueGroup service.
- *
- * Job objects must implement IJobSpecification to allow JobQueue to store the job,
- * and later re-constructing the object from storage in a JobRunner.
+ * Callers should use JobQueueGroup to enqueue jobs for deferred execution.
  *
  * See [the architecture doc](@ref jobqueuearch) for more information.
  *
@@ -69,7 +67,6 @@ abstract class Job implements RunnableJob {
 	 *
 	 * @param string $command Job command
 	 * @param array|PageReference $params Job parameters
-	 * @throws InvalidArgumentException
 	 * @return Job
 	 */
 	public static function factory( $command, $params = [] ) {
@@ -383,7 +380,7 @@ abstract class Job implements RunnableJob {
 					foreach ( $value as $k => $v ) {
 						$json = FormatJson::encode( $v );
 						if ( $json === false || mb_strlen( $json ) > 512 ) {
-							$filteredValue[$k] = gettype( $v ) . '(...)';
+							$filteredValue[$k] = get_debug_type( $v ) . '(...)';
 						} else {
 							$filteredValue[$k] = $v;
 						}
@@ -394,7 +391,7 @@ abstract class Job implements RunnableJob {
 						$value = "array(" . count( $value ) . ")";
 					}
 				} elseif ( is_object( $value ) && !method_exists( $value, '__toString' ) ) {
-					$value = "object(" . get_class( $value ) . ")";
+					$value = get_debug_type( $value );
 				}
 
 				$flatValue = (string)$value;

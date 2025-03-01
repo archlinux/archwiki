@@ -35,16 +35,19 @@ Usage: lessc [options] sources [destination]
  -x, --compress        Compress output by removing some whitespaces.
  --include-path=PATHS  Set include paths. Separated by `:'. Use `;' on Windows.
  --strict-imports      Force evaluation of imports.
- -sm=on|off            Turn on or off strict math, where in strict mode, math
- --strict-math=on|off  requires brackets. This option may default to on and then
-                       be removed in the future.
+ -m=, --math=
+    always             Less will eagerly perform math operations always.
+    parens-division    Math performed except for division (/) operator
+    parens | strict    Math only performed inside parentheses');
  -su=on|off            Allow mixed units, e.g. 1px+1em or 1px*1px which have units
  --strict-units=on|off that cannot be represented.
  -ru, --relative-urls  re-write relative urls to the base less file.
  -rp, --rootpath=URL   Set rootpath for url rewriting in relative imports and urls.
                        Works with or without the relative-urls option.
  -w, --watch           Watch input files for changes.
-
+ -------------------------- Deprecated ----------------
+ -sm=on|off            Legacy parens-only math. Use --math instead.
+ --strict-math=on|off
 
 EOD;
 				exit;
@@ -86,7 +89,13 @@ EOD;
 
 			case 'sm':
 			case 'strict-math':
-				$env['strictMath'] = ($value === 'on');
+				fwrite( STDERR, "lessc: The --strict-math option has been deprecated. Use --math=parens\n" );
+				$env['strictMath'] = ( $value === "on" );
+				break;
+
+			case 'm':
+			case 'math':
+				$env['math'] = $value;
 				break;
 
 			case 'x':

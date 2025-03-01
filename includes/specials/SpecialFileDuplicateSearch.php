@@ -1,8 +1,5 @@
 <?php
-
 /**
- * Implements Special:FileDuplicateSearch
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,16 +16,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
- * @author Raimond Spekking, based on Special:MIMESearch by Ævar Arnfjörð Bjarmason
  */
 
 namespace MediaWiki\Specials;
 
 use File;
-use ILanguageConverter;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\Linker;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -37,10 +32,11 @@ use RepoGroup;
 use SearchEngineFactory;
 
 /**
- * Searches the database for files of the requested hash, comparing this with the
+ * Search the database for files of the requested hash, comparing this with the
  * 'img_sha1' field in the image table.
  *
  * @ingroup SpecialPage
+ * @author Raimond Spekking, based on Special:MIMESearch by Ævar Arnfjörð Bjarmason
  */
 class SpecialFileDuplicateSearch extends SpecialPage {
 	/**

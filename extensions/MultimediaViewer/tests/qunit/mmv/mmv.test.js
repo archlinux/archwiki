@@ -1,4 +1,4 @@
-const { MultimediaViewer, Thumbnail } = require( 'mmv' );
+const { MultimediaViewer } = require( 'mmv' );
 const { getMultimediaViewer } = require( './mmv.testhelpers.js' );
 const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 
@@ -10,7 +10,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		}
 	} ) );
 
-	QUnit.test( 'eachPreloadableLightboxIndex()', function ( assert ) {
+	QUnit.test( 'eachPreloadableLightboxIndex()', ( assert ) => {
 		const viewer = getMultimediaViewer();
 		let expectedIndices;
 		let i;
@@ -26,14 +26,14 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		viewer.currentIndex = 2;
 		i = 0;
 		expectedIndices = [ 2, 3, 1, 4, 0, 5 ];
-		viewer.eachPreloadableLightboxIndex( function ( index ) {
+		viewer.eachPreloadableLightboxIndex( ( index ) => {
 			assert.strictEqual( index, expectedIndices[ i++ ], 'preload on left edge' );
 		} );
 
 		viewer.currentIndex = 9;
 		i = 0;
 		expectedIndices = [ 9, 10, 8, 7, 6 ];
-		viewer.eachPreloadableLightboxIndex( function ( index ) {
+		viewer.eachPreloadableLightboxIndex( ( index ) => {
 			assert.strictEqual( index, expectedIndices[ i++ ], 'preload on right edge' );
 		} );
 	} );
@@ -42,8 +42,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		const imageDeferred = $.Deferred();
 		const viewer = getMultimediaViewer();
 		const fakeImage = {
-			filePageTitle: new mw.Title( 'File:Stuff.jpg' ),
-			extraStatsDeferred: $.Deferred().reject()
+			filePageTitle: new mw.Title( 'File:Stuff.jpg' )
 		};
 		// custom clock ensures progress handlers execute in correct sequence
 		const clock = this.sandbox.useFakeTimers();
@@ -52,14 +51,11 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		viewer.displayPlaceholderThumbnail = function () {};
 		viewer.setImage = function () {};
 		viewer.scroll = function () {};
-		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.fetchSizeIndependentLightboxInfo = () => $.Deferred().resolve( {} );
 		viewer.ui = {
 			setFileReuseData: function () {},
 			setupForLoad: function () {},
 			canvas: { set: function () {},
-				unblurWithAnimation: function () {},
-				unblur: function () {},
 				getCurrentImageWidths: function () {
 					return { real: 0 };
 				},
@@ -86,7 +82,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 
 		// loadImage will call setupProgressBar, which will attach done, fail &
 		// progress handlers
-		viewer.loadImage( fakeImage, new Image() );
+		viewer.loadImage( fakeImage );
 		clock.tick( 10 );
 		assert.strictEqual( viewer.ui.panel.progressBar.jumpTo.lastCall.calledWith( 0 ), true,
 			'Percentage correctly reset by loadImage' );
@@ -113,26 +109,20 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		const secondImageDeferred = $.Deferred();
 		const firstImage = {
 			index: 1,
-			filePageTitle: new mw.Title( 'File:First.jpg' ),
-			extraStatsDeferred: $.Deferred().reject()
+			filePageTitle: new mw.Title( 'File:First.jpg' )
 		};
 		const secondImage = {
 			index: 2,
-			filePageTitle: new mw.Title( 'File:Second.jpg' ),
-			extraStatsDeferred: $.Deferred().reject()
+			filePageTitle: new mw.Title( 'File:Second.jpg' )
 		};
 		const viewer = getMultimediaViewer();
 		// custom clock ensures progress handlers execute in correct sequence
 		const clock = this.sandbox.useFakeTimers();
 
-		// animation would keep running, conflict with other tests
-		this.sandbox.stub( $.fn, 'animate' ).returnsThis();
-
 		viewer.thumbs = [];
 		viewer.displayPlaceholderThumbnail = function () {};
 		viewer.setImage = function () {};
 		viewer.scroll = function () {};
-		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.preloadImagesMetadata = function () {};
 		viewer.preloadThumbnails = function () {};
 		viewer.fetchSizeIndependentLightboxInfo = () => $.Deferred().resolve( {} );
@@ -140,8 +130,6 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 			setFileReuseData: function () {},
 			setupForLoad: function () {},
 			canvas: { set: function () {},
-				unblurWithAnimation: function () {},
-				unblur: function () {},
 				getCurrentImageWidths: function () {
 					return { real: 0 };
 				},
@@ -168,7 +156,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 
 		// load some image
 		viewer.imageProvider.get = this.sandbox.stub().returns( firstImageDeferred );
-		viewer.loadImage( firstImage, new Image() );
+		viewer.loadImage( firstImage );
 		clock.tick( 10 );
 		assert.strictEqual( viewer.ui.panel.progressBar.jumpTo.getCall( 0 ).calledWith( 0 ), true,
 			'Percentage correctly reset for new first image' );
@@ -183,7 +171,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 
 		// change to another image
 		viewer.imageProvider.get = this.sandbox.stub().returns( secondImageDeferred );
-		viewer.loadImage( secondImage, new Image() );
+		viewer.loadImage( secondImage );
 		clock.tick( 10 );
 		assert.strictEqual( viewer.ui.panel.progressBar.jumpTo.getCall( 1 ).calledWith( 0 ), true,
 			'Percentage correctly reset for second new image' );
@@ -210,7 +198,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 
 		// change back to first image
 		viewer.imageProvider.get = this.sandbox.stub().returns( firstImageDeferred );
-		viewer.loadImage( firstImage, new Image() );
+		viewer.loadImage( firstImage );
 		clock.tick( 10 );
 		assert.strictEqual( viewer.ui.panel.progressBar.jumpTo.getCall( 2 ).calledWith( 40 ), true,
 			'Percentage jumps to right value when changing images' );
@@ -222,7 +210,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 
 		// change back to second image, which has finished loading
 		viewer.imageProvider.get = this.sandbox.stub().returns( secondImageDeferred );
-		viewer.loadImage( secondImage, new Image() );
+		viewer.loadImage( secondImage );
 		clock.tick( 10 );
 		assert.strictEqual( viewer.ui.panel.progressBar.hide.called, true,
 			'Progress bar hidden when switching to finished image' );
@@ -232,22 +220,16 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		viewer.close();
 	} );
 
-	QUnit.test( 'resetBlurredThumbnailStates', function ( assert ) {
+	QUnit.test( 'resetThumbnailStates', ( assert ) => {
 		const viewer = getMultimediaViewer();
 
-		// animation would keep running, conflict with other tests
-		this.sandbox.stub( $.fn, 'animate' ).returnsThis();
-
 		assert.strictEqual( viewer.realThumbnailShown, false, 'Real thumbnail state is correct' );
-		assert.strictEqual( viewer.blurredThumbnailShown, false, 'Placeholder state is correct' );
 
 		viewer.realThumbnailShown = true;
-		viewer.blurredThumbnailShown = true;
 
-		viewer.resetBlurredThumbnailStates();
+		viewer.resetThumbnailStates();
 
 		assert.strictEqual( viewer.realThumbnailShown, false, 'Real thumbnail state is correct' );
-		assert.strictEqual( viewer.blurredThumbnailShown, false, 'Placeholder state is correct' );
 	} );
 
 	QUnit.test( 'Placeholder first, then real thumbnail', function ( assert ) {
@@ -255,23 +237,18 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 
 		viewer.setImage = function () {};
 		viewer.ui = { canvas: {
-			unblurWithAnimation: function () {},
-			unblur: function () {},
 			maybeDisplayPlaceholder: function () {
-				return true;
 			}
 		} };
 		viewer.imageInfoProvider.get = this.sandbox.stub();
 
 		viewer.displayPlaceholderThumbnail( { originalWidth: 100, originalHeight: 100 }, undefined, undefined );
 
-		assert.strictEqual( viewer.blurredThumbnailShown, true, 'Placeholder state is correct' );
 		assert.strictEqual( viewer.realThumbnailShown, false, 'Real thumbnail state is correct' );
 
 		viewer.displayRealThumbnail( { url: undefined } );
 
 		assert.strictEqual( viewer.realThumbnailShown, true, 'Real thumbnail state is correct' );
-		assert.strictEqual( viewer.blurredThumbnailShown, true, 'Placeholder state is correct' );
 	} );
 
 	QUnit.test( 'Placeholder first, then real thumbnail - missing size', function ( assert ) {
@@ -280,64 +257,36 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		viewer.currentIndex = 1;
 		viewer.setImage = function () {};
 		viewer.ui = { canvas: {
-			unblurWithAnimation: function () {},
-			unblur: function () {},
 			maybeDisplayPlaceholder: function () {
-				return true;
 			}
 		} };
 		viewer.imageInfoProvider.get = this.sandbox.stub().returns( $.Deferred().resolve( { width: 100, height: 100 } ) );
 
 		viewer.displayPlaceholderThumbnail( { index: 1 }, undefined, undefined );
 
-		assert.strictEqual( viewer.blurredThumbnailShown, true, 'Placeholder state is correct' );
 		assert.strictEqual( viewer.realThumbnailShown, false, 'Real thumbnail state is correct' );
 
 		viewer.displayRealThumbnail( { url: undefined } );
 
 		assert.strictEqual( viewer.realThumbnailShown, true, 'Real thumbnail state is correct' );
-		assert.strictEqual( viewer.blurredThumbnailShown, true, 'Placeholder state is correct' );
 	} );
 
-	QUnit.test( 'Real thumbnail first, then placeholder', function ( assert ) {
+	QUnit.test( 'Real thumbnail first, then placeholder', ( assert ) => {
 		const viewer = getMultimediaViewer();
 
 		viewer.setImage = function () {};
 		viewer.ui = {
 			showImage: function () {},
-			canvas: {
-				unblurWithAnimation: function () {},
-				unblur: function () {}
-			} };
+			canvas: {}
+		};
 
 		viewer.displayRealThumbnail( { url: undefined } );
 
 		assert.strictEqual( viewer.realThumbnailShown, true, 'Real thumbnail state is correct' );
-		assert.strictEqual( viewer.blurredThumbnailShown, false, 'Placeholder state is correct' );
 
 		viewer.displayPlaceholderThumbnail( {}, undefined, undefined );
 
 		assert.strictEqual( viewer.realThumbnailShown, true, 'Real thumbnail state is correct' );
-		assert.strictEqual( viewer.blurredThumbnailShown, false, 'Placeholder state is correct' );
-	} );
-
-	QUnit.test( 'displayRealThumbnail', function ( assert ) {
-		const viewer = getMultimediaViewer();
-
-		viewer.setImage = function () {};
-		viewer.ui = { canvas: {
-			unblurWithAnimation: this.sandbox.stub(),
-			unblur: function () {}
-		} };
-		viewer.blurredThumbnailShown = true;
-
-		// Should not result in an unblurWithAnimation animation (image cache from cache)
-		viewer.displayRealThumbnail( { url: undefined }, undefined, undefined, 5 );
-		assert.strictEqual( viewer.ui.canvas.unblurWithAnimation.called, false, 'There should not be an unblurWithAnimation animation' );
-
-		// Should result in an unblurWithAnimation (image didn't come from cache)
-		viewer.displayRealThumbnail( { url: undefined }, undefined, undefined, 1000 );
-		assert.strictEqual( viewer.ui.canvas.unblurWithAnimation.called, true, 'There should be an unblurWithAnimation animation' );
 	} );
 
 	QUnit.test( 'New image loaded while another one is loading', function ( assert ) {
@@ -348,18 +297,15 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		const secondLigthboxInfoDeferred = $.Deferred();
 		const firstImage = {
 			filePageTitle: new mw.Title( 'File:Foo.jpg' ),
-			index: 0,
-			extraStatsDeferred: $.Deferred().reject()
+			index: 0
 		};
 		const secondImage = {
 			filePageTitle: new mw.Title( 'File:Bar.jpg' ),
-			index: 1,
-			extraStatsDeferred: $.Deferred().reject()
+			index: 1
 		};
 		// custom clock ensures progress handlers execute in correct sequence
 		const clock = this.sandbox.useFakeTimers();
 
-		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.fetchSizeIndependentLightboxInfo = this.sandbox.stub();
 		viewer.ui = {
 			setFileReuseData: function () {},
@@ -396,14 +342,14 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 
 		viewer.imageProvider.get.returns( firstImageDeferred.promise() );
 		viewer.fetchSizeIndependentLightboxInfo.returns( firstLigthboxInfoDeferred.promise() );
-		viewer.loadImage( firstImage, new Image() );
+		viewer.loadImage( firstImage );
 		clock.tick( 10 );
 		assert.strictEqual( viewer.animateMetadataDivOnce.called, false, 'Metadata of the first image should not be animated' );
 		assert.strictEqual( viewer.ui.panel.setImageInfo.called, false, 'Metadata of the first image should not be shown' );
 
 		viewer.imageProvider.get.returns( secondImageDeferred.promise() );
 		viewer.fetchSizeIndependentLightboxInfo.returns( secondLigthboxInfoDeferred.promise() );
-		viewer.loadImage( secondImage, new Image() );
+		viewer.loadImage( secondImage );
 		clock.tick( 10 );
 
 		viewer.ui.panel.progressBar.animateTo.reset();
@@ -449,16 +395,13 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		viewer.imageProvider.get = () => $.Deferred().reject();
 		viewer.imageInfoProvider.get = () => $.Deferred().reject();
 		viewer.thumbnailInfoProvider.get = () => $.Deferred().reject();
-		viewer.fileRepoInfoProvider.get = () => $.Deferred().reject();
 
-		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.initWithThumbs( [] );
 
 		viewer.loadImage(
 			{
 				filePageTitle: new mw.Title( 'File:Stuff.jpg' ),
-				thumbnail: new Thumbnail( 'foo', 10, 10 ),
-				extraStatsDeferred: $.Deferred().reject()
+				thumbnail: new Image( 10, 10 )
 			},
 			new Image()
 		);
@@ -507,13 +450,31 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		}
 	} );
 
-	QUnit.test( 'Refuse to load too-big thumbnails', function ( assert ) {
+	QUnit.test( 'Viewer is closed then navigating to #foo/bar/baz (page section including slash)', function ( assert ) {
+		location.hash = '#/media/foo';
+
+		const viewer = getMultimediaViewer();
+		viewer.isOpen = true;
+		viewer.ui = undefined;
+		this.sandbox.stub( viewer, 'close' );
+
+		location.hash = '#foo/bar/baz';
+
+		// Wait for route event handler to execute
+		const done = assert.async();
+		setTimeout( () => {
+			assert.true( viewer.close.called, 'The viewer was closed' );
+			done();
+		}, 100 );
+	} );
+
+	QUnit.test( 'Refuse to load too-big thumbnails', ( assert ) => {
 		let expectedWidth;
 		const reuestedWidth = 1000;
 		const originalWidth = 50;
 		const viewer = getMultimediaViewer();
 
-		viewer.thumbnailInfoProvider.get = function ( fileTitle, width ) {
+		viewer.thumbnailInfoProvider.get = function ( fileTitle, sampleUrl, width ) {
 			assert.strictEqual( width, expectedWidth );
 			return $.Deferred().reject();
 		};
@@ -536,13 +497,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		let promise;
 		let useThumbnailGuessing;
 		const viewer = new MultimediaViewer( {
-			imageQueryParameter: function () {},
-			language: function () {},
-			recordVirtualViewBeaconURI: function () {},
-			extensions: function () {
-				return { jpg: 'default' };
-			},
-			useThumbnailGuessing: () => useThumbnailGuessing
+			language: function () {}
 		} );
 		const sandbox = this.sandbox;
 		const file = new mw.Title( 'File:Copyleft.svg' );
@@ -567,7 +522,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		guessedThumbnailInfoStub.returns( $.Deferred().resolve( { url: 'guessedURL' } ) );
 		thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
 		imageStub.returns( $.Deferred().resolve( image ) );
-		promise = viewer.fetchThumbnail( file, width );
+		promise = viewer.fetchThumbnail( file, width, '', originalWidth, originalHeight, useThumbnailGuessing );
 		clock.tick( 10 );
 		assert.strictEqual( guessedThumbnailInfoStub.called, false, 'When we lack sample URL and original dimensions, GuessedThumbnailInfoProvider is not called' );
 		assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When we lack sample URL and original dimensions, ThumbnailInfoProvider is called once' );
@@ -580,7 +535,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		guessedThumbnailInfoStub.returns( $.Deferred().reject() );
 		thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
 		imageStub.returns( $.Deferred().resolve( image ) );
-		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight );
+		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
 		clock.tick( 10 );
 		assert.strictEqual( guessedThumbnailInfoStub.calledOnce, true, 'When the guesser bails out, GuessedThumbnailInfoProvider is called once' );
 		assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When the guesser bails out, ThumbnailInfoProvider is called once' );
@@ -593,7 +548,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		guessedThumbnailInfoStub.returns( $.Deferred().resolve( { url: 'guessedURL' } ) );
 		thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
 		imageStub.returns( $.Deferred().resolve( image ) );
-		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight );
+		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
 		clock.tick( 10 );
 		assert.strictEqual( guessedThumbnailInfoStub.calledOnce, true, 'When the guesser returns an URL, GuessedThumbnailInfoProvider is called once' );
 		assert.strictEqual( thumbnailInfoStub.called, false, 'When the guesser returns an URL, ThumbnailInfoProvider is not called' );
@@ -607,7 +562,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
 		imageStub.withArgs( 'guessedURL' ).returns( $.Deferred().reject() );
 		imageStub.withArgs( 'apiURL' ).returns( $.Deferred().resolve( image ) );
-		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight );
+		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
 		clock.tick( 10 );
 		assert.strictEqual( guessedThumbnailInfoStub.calledOnce, true, 'When the guesser returns an URL, but that returns 404, GuessedThumbnailInfoProvider is called once' );
 		assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When the guesser returns an URL, but that returns 404, ThumbnailInfoProvider is called once' );
@@ -622,7 +577,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
 		imageStub.withArgs( 'guessedURL' ).returns( $.Deferred().reject() );
 		imageStub.withArgs( 'apiURL' ).returns( $.Deferred().reject() );
-		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight );
+		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
 		clock.tick( 10 );
 		assert.strictEqual( guessedThumbnailInfoStub.calledOnce, true, 'When even the retry fails, GuessedThumbnailInfoProvider is called once' );
 		assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When even the retry fails, ThumbnailInfoProvider is called once' );
@@ -638,7 +593,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		guessedThumbnailInfoStub.returns( $.Deferred().resolve( { url: 'guessedURL' } ) );
 		thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
 		imageStub.returns( $.Deferred().resolve( image ) );
-		promise = viewer.fetchThumbnail( file, width );
+		promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
 		clock.tick( 10 );
 		assert.strictEqual( guessedThumbnailInfoStub.called, false, 'When guessing is disabled, GuessedThumbnailInfoProvider is not called' );
 		assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When guessing is disabled, ThumbnailInfoProvider is called once' );
@@ -656,7 +611,7 @@ const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
 		const oldDocumentTitle = document.title;
 
 		this.sandbox.stub( mw.loader, 'using' ).returns( $.Deferred().resolve( viewer ) );
-		viewer.currentImageFileTitle = title;
+		viewer.currentImage = { filePageTitle: title };
 		bootstrap.setupEventHandlers();
 		viewer.setTitle();
 

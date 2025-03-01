@@ -4,6 +4,7 @@
  * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
+@import 'mediawiki.skin.variables.less';
 
 .ve-ui-mwSaveDialog {
 	&-summaryLabel {
@@ -13,7 +14,7 @@
 	&-summary {
 		width: 100%;
 		max-width: none;
-		background-color: #fff;
+		background-color: @background-color-base;
 
 		textarea {
 			height: 4em;
@@ -26,8 +27,8 @@
 
 	&-options {
 		position: relative;
-		background-color: #f8f9fa;
-		border: 1px solid #c8ccd1;
+		background-color: @background-color-neutral-subtle;
+		border: 1px solid @border-color-subtle;
 		border-top: 0;
 		display: none;
 
@@ -60,10 +61,10 @@
 		right: 0;
 		top: 0;
 		bottom: 0;
-		border-left: 1px solid #eaecf0;
+		border-left: 1px solid @border-color-muted;
 		line-height: 3em;
 		padding: 0 1em;
-		color: #54595d;
+		color: @color-subtle;
 
 		&:empty {
 			visibility: hidden;
@@ -75,7 +76,7 @@
 		line-height: 1.4em;
 		padding: 0;
 		margin: 0;
-		color: #54595d;
+		color: @color-subtle;
 	}
 
 	&-messages {
@@ -105,7 +106,7 @@
 	}
 
 	&-no-changes {
-		color: #72777d;
+		color: @color-disabled;
 		font-style: italic;
 	}
 

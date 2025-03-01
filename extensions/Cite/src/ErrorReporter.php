@@ -2,11 +2,13 @@
 
 namespace Cite;
 
-use Language;
+use InvalidArgumentException;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
+use MediaWiki\Message\Message;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\Sanitizer;
-use Message;
-use Parser;
 use StatusValue;
 
 /**
@@ -65,27 +67,26 @@ class ErrorReporter {
 	 * @return Message
 	 */
 	private function msg( Parser $parser, string $key, ...$params ): Message {
-		$language = $this->getInterfaceLanguageAndSplitCache( $parser );
+		$language = $this->getInterfaceLanguageAndSplitCache( $parser->getOptions() );
 		$msg = $this->messageLocalizer->msg( $key, ...$params )->inLanguage( $language );
 
-		[ $type ] = $this->parseTypeAndIdFromMessageKey( $msg->getKey() );
+		[ $type ] = $this->parseTypeAndIdFromMessageKey( $key );
 
 		if ( $type === 'error' ) {
 			// Take care; this is a sideeffect that might not belong to this class.
 			$parser->addTrackingCategory( 'cite-tracking-category-cite-error' );
 		}
 
-		// Messages: cite_error, cite_warning
-		return $this->messageLocalizer->msg( "cite_$type", $msg->plain() )->inLanguage( $language );
+		// Optional wrapper messages: cite_error, cite_warning
+		$wrapper = $this->messageLocalizer->msg( "cite_$type", $msg->plain() )->inLanguage( $language );
+		return $wrapper->isDisabled() ? $msg : $wrapper;
 	}
 
 	/**
 	 * Note the startling side effect of splitting ParserCache by user interface language!
 	 */
-	private function getInterfaceLanguageAndSplitCache( Parser $parser ): Language {
-		if ( !$this->cachedInterfaceLanguage ) {
-			$this->cachedInterfaceLanguage = $parser->getOptions()->getUserLangObj();
-		}
+	private function getInterfaceLanguageAndSplitCache( ParserOptions $parserOptions ): Language {
+		$this->cachedInterfaceLanguage ??= $parserOptions->getUserLangObj();
 		return $this->cachedInterfaceLanguage;
 	}
 
@@ -116,10 +117,13 @@ class ErrorReporter {
 	/**
 	 * @param string $messageKey Expected to be a message key like "cite_error_ref_numeric_key"
 	 *
-	 * @return string[] Two elements, e.g. "error" and "ref_too_many_keys"
+	 * @return string[] Two elements, e.g. "error" and "ref_numeric_key"
 	 */
 	private function parseTypeAndIdFromMessageKey( string $messageKey ): array {
-		return array_slice( explode( '_', str_replace( '-', '_', $messageKey ), 3 ), 1 );
+		if ( !preg_match( '/^cite.(error|warning).(.+)/i', $messageKey, $matches ) ) {
+			throw new InvalidArgumentException( 'Unexpected message key' );
+		}
+		return array_slice( $matches, 1 );
 	}
 
 }

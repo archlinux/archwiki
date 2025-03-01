@@ -22,15 +22,15 @@
 
 namespace MediaWiki\Revision;
 
-use Content;
 use InvalidArgumentException;
 use LogicException;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Permissions\Authority;
-use ParserOptions;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Wikimedia\Assert\Assert;
@@ -76,7 +76,7 @@ class RenderedRevision implements SlotRenderingProvider {
 
 	/**
 	 * @var callable Callback for combining slot output into revision output.
-	 *      Signature: function ( RenderedRevision $this ): ParserOutput.
+	 *      Signature: function ( RenderedRevision $this, array $hints ): ParserOutput.
 	 */
 	private $combineOutput;
 
@@ -102,7 +102,7 @@ class RenderedRevision implements SlotRenderingProvider {
 	 * @param ParserOptions $options
 	 * @param ContentRenderer $contentRenderer
 	 * @param callable $combineOutput Callback for combining slot output into revision output.
-	 *        Signature: function ( RenderedRevision $this ): ParserOutput.
+	 *        Signature: function ( RenderedRevision $this, array $hints ): ParserOutput.
 	 * @param int $audience Use RevisionRecord::FOR_PUBLIC, FOR_THIS_USER, or RAW.
 	 * @param Authority|null $performer Required if $audience is FOR_THIS_USER.
 	 */
@@ -112,7 +112,7 @@ class RenderedRevision implements SlotRenderingProvider {
 		ContentRenderer $contentRenderer,
 		callable $combineOutput,
 		$audience = RevisionRecord::FOR_PUBLIC,
-		Authority $performer = null
+		?Authority $performer = null
 	) {
 		$this->options = $options;
 
@@ -214,10 +214,14 @@ class RenderedRevision implements SlotRenderingProvider {
 	 * @param array $hints Hints given as an associative array. Known keys:
 	 *      - 'generate-html' => bool: Whether the caller is interested in output HTML (as opposed
 	 *        to just meta-data). Default is to generate HTML.
-	 * @phan-param array{generate-html?:bool} $hints
+	 *      - 'previous-output' => ?ParserOutput: An optional "previously parsed"
+	 *        version of this slot; used to allow Parsoid selective updates.
+	 * @phan-param array{generate-html?:bool,previous-output?:?ParserOutput} $hints
 	 *
 	 * @throws SuppressedDataException if the content is not accessible for the audience
 	 *         specified in the constructor.
+	 * @throws BadRevisionException
+	 * @throws RevisionAccessException
 	 * @return ParserOutput
 	 */
 	public function getSlotParserOutput( $role, array $hints = [] ) {
@@ -229,7 +233,7 @@ class RenderedRevision implements SlotRenderingProvider {
 			$content = $this->revision->getContentOrThrow( $role, $this->audience, $this->performer );
 
 			// XXX: allow SlotRoleHandler to control the ParserOutput?
-			$output = $this->getSlotParserOutputUncached( $content, $withHtml );
+			$output = $this->getSlotParserOutputUncached( $content, $hints );
 
 			if ( $withHtml && !$output->hasText() ) {
 				throw new LogicException(
@@ -252,16 +256,16 @@ class RenderedRevision implements SlotRenderingProvider {
 	/**
 	 * @note This method exists to make duplicate parses easier to see during profiling
 	 * @param Content $content
-	 * @param bool $withHtml
+	 * @param array{generate-html?:bool,previous-output?:?ParserOutput} $hints
 	 * @return ParserOutput
 	 */
-	private function getSlotParserOutputUncached( Content $content, $withHtml ) {
+	private function getSlotParserOutputUncached( Content $content, array $hints ): ParserOutput {
 		return $this->contentRenderer->getParserOutput(
 			$content,
 			$this->revision->getPage(),
 			$this->revision,
 			$this->options,
-			$withHtml
+			$hints
 		);
 	}
 

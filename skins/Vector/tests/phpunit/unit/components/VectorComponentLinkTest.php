@@ -21,9 +21,9 @@
 
 namespace MediaWiki\Skins\Vector\Tests\Unit\Components;
 
+use MediaWiki\Message\Message;
 use MediaWiki\Skins\Vector\Components\VectorComponentLink;
 use MediaWikiUnitTestCase;
-use Message;
 use MessageLocalizer;
 
 /**

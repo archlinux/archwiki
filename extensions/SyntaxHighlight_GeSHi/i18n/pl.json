@@ -24,5 +24,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kodu",
 	"syntaxhighlight-error-pygments-invocation-failure": "Nie udało się wywołać Pygments",
 	"syntaxhighlight-error-unknown-language": "Nierozpoznany język „$1”",
-	"syntaxhighlight-error-exceeds-size-limit": "Rozmiar kodu równy $1 {{PLURAL:$1|bajt|bajtów}} przekracza dozwolone maksimum $2 {{PLURAL:$2|bajt|bajtów}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Rozmiar kodu równy $1 {{PLURAL:$1|bajt|bajtów}} przekracza dozwolone maksimum $2 {{PLURAL:$2|bajt|bajtów}}",
+	"syntaxhighlight-button-copy": "Kopiuj",
+	"syntaxhighlight-button-copied": "Skopiowano!"
 }

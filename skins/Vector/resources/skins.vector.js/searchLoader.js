@@ -96,7 +96,7 @@ function initSearchLoader( document ) {
 		return;
 	}
 
-	Array.prototype.forEach.call( searchBoxes, function ( searchBox ) {
+	Array.prototype.forEach.call( searchBoxes, ( searchBox ) => {
 		const searchInner = searchBox.querySelector( 'form > div' ),
 			searchInput = searchBox.querySelector( 'input[name="search"]' ),
 			isPrimarySearch = searchInput && searchInput.getAttribute( 'id' ) === 'searchInput';
@@ -111,7 +111,7 @@ function initSearchLoader( document ) {
 			'skins.vector.search',
 			isPrimarySearch ? LOAD_START_MARK : null,
 			// Note, loading Vue.js will remove the element from the DOM.
-			function () {
+			() => {
 				if ( isPrimarySearch ) {
 					markLoadEnd( LOAD_START_MARK, LOAD_END_MARK, LOAD_MEASURE );
 				}

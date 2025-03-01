@@ -26,6 +26,7 @@ use MediaWiki\Feed\FeedItem;
 use MediaWiki\Feed\FeedUtils;
 use MediaWiki\Feed\RSSFeed;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Pager\HistoryPager;
@@ -192,7 +193,6 @@ class HistoryAction extends FormlessAction {
 		$out->addModules( 'mediawiki.action.history' );
 		$out->addModuleStyles( [
 			'mediawiki.interface.helpers.styles',
-			'codex-search-styles',
 			'mediawiki.action.history.styles',
 			'mediawiki.special.changeslist',
 		] );
@@ -205,10 +205,11 @@ class HistoryAction extends FormlessAction {
 		}
 
 		$this->addHelpLink(
-			'https://meta.wikimedia.org/wiki/Special:MyLanguage/Help:Page_history',
+			'https://www.mediawiki.org/wiki/Special:MyLanguage/Help:History',
 			true
 		);
 
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
 		// Fail nicely if article doesn't exist.
 		if ( !$this->getWikiPage()->exists() ) {
 			$send404Code = $config->get( MainConfigNames::Send404Code );
@@ -217,12 +218,10 @@ class HistoryAction extends FormlessAction {
 			}
 			$out->addWikiMsg( 'nohistory' );
 
-			$dbr = $services->getConnectionProvider()->getReplicaDatabase();
-
 			# show deletion/move log if there is an entry
 			LogEventsList::showLogExtract(
 				$out,
-				[ 'delete', 'move', 'protect' ],
+				[ 'delete', 'move', 'protect', 'merge' ],
 				$this->getTitle(),
 				'',
 				[ 'lim' => 10,
@@ -242,7 +241,7 @@ class HistoryAction extends FormlessAction {
 		 * Option to show only revisions that have been (partially) hidden via RevisionDelete
 		 */
 		if ( $request->getBool( 'deleted' ) ) {
-			$conds = [ 'rev_deleted != 0' ];
+			$conds = [ $dbr->expr( 'rev_deleted', '!=', 0 ) ];
 		} else {
 			$conds = [];
 		}
@@ -332,7 +331,7 @@ class HistoryAction extends FormlessAction {
 			$pager->getBody() .
 			$pager->getNavigationBar()
 		);
-		$out->setPreventClickjacking( $pager->getPreventClickjacking() );
+		$out->getMetadata()->setPreventClickjacking( $pager->getPreventClickjacking() );
 
 		return null;
 	}

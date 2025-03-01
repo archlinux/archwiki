@@ -32,16 +32,29 @@ class ConfigHelper {
 	 *
 	 * @return bool
 	 */
-	public static function shouldDisable( array $options, WebRequest $request, Title $title = null ) {
-		$canonicalTitle = $title != null ? $title->getRootTitle() : null;
+	public static function shouldDisable( array $options, WebRequest $request, ?Title $title = null ) {
+		$canonicalTitle = $title ? $title->getRootTitle() : null;
 
 		$exclusions = $options[ 'exclude' ] ?? [];
-		$inclusions = $options['include'] ?? [];
+		$inclusions = $options[ 'include' ] ?? [];
 
-		if ( $title != null && $title->isMainPage() ) {
+		$excludeQueryString = $exclusions[ 'querystring' ] ?? [];
+		foreach ( $excludeQueryString as $param => $excludedParamPattern ) {
+			$paramValue = $request->getRawVal( $param );
+			if ( $paramValue !== null ) {
+				if ( $excludedParamPattern === '*' ) {
+					// Backwards compatibility for the '*' wildcard.
+					$excludedParamPattern = '.+';
+				}
+				return (bool)preg_match( "/$excludedParamPattern/", $paramValue );
+			}
+		}
+
+		if ( $title && $title->isMainPage() ) {
 			// only one check to make
 			return $exclusions[ 'mainpage' ] ?? false;
-		} elseif ( $canonicalTitle != null && $canonicalTitle->isSpecialPage() ) {
+		}
+		if ( $canonicalTitle && $canonicalTitle->isSpecialPage() ) {
 			$spFactory = MediaWikiServices::getInstance()->getSpecialPageFactory();
 			[ $canonicalName, $par ] = $spFactory->resolveAlias( $canonicalTitle->getDBKey() );
 			if ( $canonicalName ) {
@@ -70,10 +83,9 @@ class ConfigHelper {
 		foreach ( $pageTitles as $titleText ) {
 			// use strtolower to make sure the config passed for special pages
 			// is case insensitive, so it does not generate a wrong special page title
-			$titleText = $canonicalTitle->isSpecialPage() ? strtolower( $titleText ) : $titleText;
 			$excludedTitle = Title::newFromText( $titleText );
 
-			if ( $canonicalTitle != null && $canonicalTitle->equals( $excludedTitle ) ) {
+			if ( $canonicalTitle && $canonicalTitle->equals( $excludedTitle ) ) {
 				return true;
 			}
 		}
@@ -83,22 +95,6 @@ class ConfigHelper {
 		// If nothing matches the exclusions to determine what should happen
 		//
 		$excludeNamespaces = $exclusions[ 'namespaces' ] ?? [];
-		if ( $title != null && $title->inNamespaces( $excludeNamespaces ) ) {
-			return true;
-		}
-
-		$excludeQueryString = $exclusions[ 'querystring' ] ?? [];
-		foreach ( $excludeQueryString as $param => $excludedParamPattern ) {
-			$paramValue = $request->getRawVal( $param );
-			if ( $paramValue !== null ) {
-				if ( $excludedParamPattern === '*' ) {
-					// Backwards compatibility for the '*' wildcard.
-					$excludedParamPattern = '.+';
-				}
-				return (bool)preg_match( "/$excludedParamPattern/", $paramValue );
-			}
-		}
-
-		return false;
+		return $title && $title->inNamespaces( $excludeNamespaces );
 	}
 }

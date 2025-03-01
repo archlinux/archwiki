@@ -82,7 +82,7 @@ class WebRequest {
 
 	/**
 	 * Lazy-init response object
-	 * @var WebResponse
+	 * @var WebResponse|null
 	 */
 	protected ?WebResponse $response = null;
 
@@ -492,11 +492,11 @@ class WebRequest {
 	 *
 	 * @since 1.28
 	 * @param string $name
-	 * @param string|null $default
+	 * @param string|null $default Deprecated since 1.43. Use ?? $default instead.
 	 * @return string|null The value, or $default if none set
 	 * @return-taint tainted
 	 */
-	public function getRawVal( $name, $default = null ) {
+	public function getRawVal( $name, $default = null ): ?string {
 		$name = strtr( $name, '.', '_' ); // See comment in self::getGPCVal()
 		if ( isset( $this->data[$name] ) && !is_array( $this->data[$name] ) ) {
 			$val = $this->data[$name];
@@ -635,8 +635,7 @@ class WebRequest {
 	 * @return int
 	 */
 	public function getInt( $name, $default = 0 ): int {
-		// @phan-suppress-next-line PhanTypeMismatchArgument getRawVal does not return null here
-		return intval( $this->getRawVal( $name, $default ) );
+		return intval( $this->getRawVal( $name ) ?? $default );
 	}
 
 	/**
@@ -663,8 +662,7 @@ class WebRequest {
 	 * @return float
 	 */
 	public function getFloat( $name, $default = 0.0 ): float {
-		// @phan-suppress-next-line PhanTypeMismatchArgument getRawVal does not return null here
-		return floatval( $this->getRawVal( $name, $default ) );
+		return floatval( $this->getRawVal( $name ) ?? $default );
 	}
 
 	/**
@@ -677,8 +675,7 @@ class WebRequest {
 	 * @return bool
 	 */
 	public function getBool( $name, $default = false ): bool {
-		// @phan-suppress-next-line PhanTypeMismatchArgument getRawVal does not return null here
-		return (bool)$this->getRawVal( $name, $default );
+		return (bool)( $this->getRawVal( $name ) ?? $default );
 	}
 
 	/**
@@ -712,7 +709,7 @@ class WebRequest {
 	public function getCheck( $name ): bool {
 		# Checkboxes and buttons are only present when clicked
 		# Presence connotes truth, absence false
-		return $this->getRawVal( $name, null ) !== null;
+		return $this->getRawVal( $name ) !== null;
 	}
 
 	/**
@@ -910,6 +907,13 @@ class WebRequest {
 		// Work around mangling of $_COOKIE
 		$name = strtr( $name, '.', '_' );
 		if ( isset( $_COOKIE[$name] ) ) {
+			// For duplicate cookies in the format of name[]=value;name[]=value2,
+			// PHP will assign an array value for the 'name' cookie in $_COOKIE.
+			// Neither RFC 6265 nor its preceding RFCs define such behavior,
+			// and MediaWiki does not rely on it either, so treat the cookie as absent if so (T363980).
+			if ( is_array( $_COOKIE[$name] ) ) {
+				return $default;
+			}
 			return $_COOKIE[$name];
 		} else {
 			return $default;
@@ -1004,13 +1008,14 @@ class WebRequest {
 	 * @return-taint tainted
 	 */
 	public function getFullRequestURL() {
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
 		// Pass an explicit PROTO constant instead of PROTO_CURRENT so that we
 		// do not rely on state from the global $wgRequest object (which it would,
-		// via wfGetServerUrl/UrlUtils::expand()/$wgRequest->protocol).
+		// via UrlUtils::getServer()/UrlUtils::expand()/$wgRequest->protocol).
 		if ( $this->getProtocol() === 'http' ) {
-			return wfGetServerUrl( PROTO_HTTP ) . $this->getRequestURL();
+			return ( $urlUtils->getServer( PROTO_HTTP ) ?? '' ) . $this->getRequestURL();
 		} else {
-			return wfGetServerUrl( PROTO_HTTPS ) . $this->getRequestURL();
+			return ( $urlUtils->getServer( PROTO_HTTPS ) ?? '' ) . $this->getRequestURL();
 		}
 	}
 

@@ -22,7 +22,11 @@ namespace Wikimedia\Rdbms\Platform;
 use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeMatch;
+use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\Subquery;
+
+// Very long type annotations :(
+// phpcs:disable Generic.Files.LineLength
 
 /**
  * Interface for query language.
@@ -33,44 +37,55 @@ use Wikimedia\Rdbms\Subquery;
  */
 interface ISQLPlatform {
 
-	/** @var int Combine list with comma delimiters */
+	/** Combine list with comma delimiters */
 	public const LIST_COMMA = 0;
-	/** @var int Combine list with AND clauses */
+	/** Combine list with AND clauses */
 	public const LIST_AND = 1;
-	/** @var int Convert map into a SET clause */
+	/** Convert map into a SET clause */
 	public const LIST_SET = 2;
-	/** @var int Treat as field name and do not apply value escaping */
+	/** Treat as field name and do not apply value escaping */
 	public const LIST_NAMES = 3;
-	/** @var int Combine list with OR clauses */
+	/** Combine list with OR clauses */
 	public const LIST_OR = 4;
 
-	/** @var string Unconditional update/delete of whole table */
+	/** Unconditional update/delete of whole table */
 	public const ALL_ROWS = '*';
 
-	/** @var int Idiom for "no special flags" */
+	/** Idiom for "no special flags" */
 	public const QUERY_NORMAL = 0;
-	/** @var int Ignore query errors and return false when they happen */
+	/** Ignore query errors and return false when they happen */
 	public const QUERY_SILENCE_ERRORS = 1; // b/c for 1.32 query() argument; (int)true = 1
 	/** Track a TEMPORARY table CREATE as if it was for a permanent table (for testing) */
 	public const QUERY_PSEUDO_PERMANENT = 2;
-	/** @var int Enforce that a query does not make effective writes */
+	/** Enforce that a query does not make effective writes */
 	public const QUERY_REPLICA_ROLE = 4;
-	/** @var int Ignore the current presence of any DBO_TRX flag */
+	/** Ignore the current presence of any DBO_TRX flag */
 	public const QUERY_IGNORE_DBO_TRX = 8;
-	/** @var int Do not try to retry the query if the connection was lost */
+	/** Do not try to retry the query if the connection was lost */
 	public const QUERY_NO_RETRY = 16;
-	/** @var int Query is a read-only Data Query Language query */
+	/** Query is a read-only Data Query Language query */
 	public const QUERY_CHANGE_NONE = 32;
-	/** @var int Query is a Transaction Control Language command (BEGIN, USE, SET, ...) */
-	public const QUERY_CHANGE_TRX = 64 | self::QUERY_IGNORE_DBO_TRX;
-	/** @var int Query is a Data Manipulation Language command (INSERT, DELETE, LOCK, ...) */
+	/** Query is a Transaction Control Language command (BEGIN, USE, SET, ...) */
+	public const QUERY_CHANGE_TRX = 64;
+	/** Query is a Data Manipulation Language command (INSERT, DELETE, LOCK, ...) */
 	public const QUERY_CHANGE_ROWS = 128;
-	/** @var int Query is a Data Definition Language command */
-	public const QUERY_CHANGE_SCHEMA = 256 | self::QUERY_IGNORE_DBO_TRX;
-	/** @var int Query is a command for advisory locks */
-	public const QUERY_CHANGE_LOCKS = 512 | self::QUERY_IGNORE_DBO_TRX;
-	/** @var int Query creates a temporary table */
-	public const QUERY_CREATE_TEMP = 1024;
+	/** Query is a Data Definition Language command */
+	public const QUERY_CHANGE_SCHEMA = 256;
+	/** Query is a command for advisory locks */
+	public const QUERY_CHANGE_LOCKS = 512;
+
+	/**
+	 * Special value for ->caller() / $fname parameter used when providing a caller is not
+	 * expected, because we're formatting a subquery that won't be executed directly.
+	 * @since 1.43
+	 */
+	public const CALLER_SUBQUERY = 'subquery';
+
+	/**
+	 * Special value for ->caller() / $fname parameter used when a caller is not provided.
+	 * @since 1.43
+	 */
+	public const CALLER_UNKNOWN = 'unknown';
 
 	/**
 	 * @param string|int $field
@@ -407,7 +422,8 @@ interface ISQLPlatform {
 	 *
 	 * This doesn't need to be overridden unless CASE isn't supported in the RDBMS.
 	 *
-	 * @param string|array|IExpression $cond SQL condition expression (yields a boolean)
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>>|array<int,string|IExpression> $cond
+	 *  SQL condition expression (yields a boolean)
 	 * @param string $caseTrueExpression SQL expression to return when the condition is true
 	 * @param string $caseFalseExpression SQL expression to return when the condition is false
 	 * @return string SQL fragment
@@ -470,7 +486,7 @@ interface ISQLPlatform {
 	 * Calling this twice will completely clear any old table aliases. Also, note that
 	 * callers are responsible for making sure the schemas and databases actually exist.
 	 *
-	 * @param array[] $aliases Map of (table => (dbname, schema, prefix) map)
+	 * @param array[] $aliases Map of (unqualified name of table => (dbname, schema, prefix) map)
 	 * @since 1.28 in IDatabase, moved to ISQLPlatform in 1.39
 	 */
 	public function setTableAliases( array $aliases );
@@ -505,13 +521,15 @@ interface ISQLPlatform {
 	 *
 	 * @see IDatabase::select()
 	 *
-	 * @param string|array $table Table name(s)
-	 * @param-taint $table exec_sql
+	 * @param string|array $tables Table reference(s), using the unqualified name of tables
+	 *   or of the form "information_schema.<identifier>".
+	 * @param-taint $tables exec_sql
 	 * @param string|array $vars Field names
 	 * @param-taint $vars exec_sql
-	 * @param string|array $conds Conditions
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
+	 *   Conditions
 	 * @param-taint $conds exec_sql_numkey
-	 * @param string $fname Caller function name
+	 * @param string $fname Caller function name @phan-mandatory-param
 	 * @param-taint $fname exec_sql
 	 * @param string|array $options Query options
 	 * @param-taint $options none This is special-cased in MediaWikiSecurityCheckPlugin
@@ -521,7 +539,7 @@ interface ISQLPlatform {
 	 * @return-taint onlysafefor_sql
 	 */
 	public function selectSQLText(
-		$table,
+		$tables,
 		$vars,
 		$conds = '',
 		$fname = __METHOD__,
@@ -539,14 +557,21 @@ interface ISQLPlatform {
 	 * themselves. Pass the canonical name to such functions. This is only needed
 	 * when calling {@link query()} directly.
 	 *
+	 * The provided name should not qualify the database nor the schema, unless the name
+	 * is of the form "information_schema.<identifier>". Unlike information_schema tables,
+	 * regular tables can receive writes and are subject to configuration regarding table
+	 * aliases, virtual domains, and LBFactory sharding. Callers needing to access remote
+	 * databases should use appropriate connection factory methods.
+	 *
 	 * @note This function does not sanitize user input. It is not safe to use
 	 *   this function to escape user input.
-	 * @param string $name Database table name
+	 * @param string $name The unqualified name of a table (no quotes, db, schema, nor table
+	 *   prefix), or a table name of the form "information_schema.<unquoted identifier>".
 	 * @param string $format One of:
 	 *   quoted - Automatically pass the table name through addIdentifierQuotes()
 	 *            so that it can be used in a query.
-	 *   raw - Do not add identifier quotes to the table name
-	 * @return string Full database name
+	 *   raw - Do not add identifier quotes to the table name.
+	 * @return string Qualified table name (includes any applicable prefix or foreign db/schema)
 	 */
 	public function tableName( string $name, $format = 'quoted' );
 
@@ -590,6 +615,8 @@ interface ISQLPlatform {
 	 *
 	 * @param string ...$tables
 	 * @return array
+	 * @deprecated Since 1.43; if you must format table names,
+	 *  write several calls to {@link tableName}.
 	 */
 	public function tableNamesN( ...$tables );
 
@@ -602,15 +629,17 @@ interface ISQLPlatform {
 	 * Code using the results may need to use the PHP unique() or sort() methods.
 	 *
 	 * @param string $delim Glue to bind the results together
-	 * @param string|array $table Table name
+	 * @param string|array $tables Table reference(s), using the unqualified name of tables
+	 *   or of the form "information_schema.<identifier>". {@see select} for details.
 	 * @param string $field Field name
-	 * @param string|array $conds Conditions
+	 * @param string|IExpression|array<string,?scalar|non-empty-array<int,?scalar>|RawSQLValue>|array<int,string|IExpression> $conds
+	 *   Conditions
 	 * @param string|array $join_conds Join conditions
 	 * @return string SQL text
 	 * @since 1.23
 	 */
 	public function buildGroupConcatField(
-		$delim, $table, $field, $conds = '', $join_conds = []
+		$delim, $tables, $field, $conds = '', $join_conds = []
 	);
 
 	/**
@@ -618,17 +647,18 @@ interface ISQLPlatform {
 	 *
 	 * @see IDatabase::selectSQLText()
 	 *
-	 * @param string|array $table Table name
+	 * @param string|array $tables Table reference(s), using the unqualified name of tables
+	 *   or of the form "information_schema.<identifier>". {@see select} for details.
 	 * @param string|array $vars Field names
 	 * @param string|array $conds Conditions
-	 * @param string $fname Caller function name
+	 * @param string $fname Caller function name @phan-mandatory-param
 	 * @param string|array $options Query options
 	 * @param string|array $join_conds Join conditions
 	 * @return Subquery
 	 * @since 1.31
 	 */
 	public function buildSelectSubquery(
-		$table,
+		$tables,
 		$vars,
 		$conds = '',
 		$fname = __METHOD__,

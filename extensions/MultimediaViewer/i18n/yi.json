@@ -21,9 +21,6 @@
 	"multimediaviewer-permission-link": "באקוקן טערמינען",
 	"multimediaviewer-permission-link-hide": "באהאלטן באדינגונגען",
 	"multimediaviewer-permission-viewmore": "ווײזן נאך",
-	"multimediaviewer-about-mmv": "וועגן דעם אייבערפֿלאך",
-	"multimediaviewer-optin-mmv": "אקטיווירן מעדיע־ווייזער",
-	"multimediaviewer-optin-help": "מען וועט ניצן מעדיע־באקוקער צו ווײַזן בילדער.",
 	"multimediaviewer-geolocation": "לאקאציע: $1",
 	"multimediaviewer-reuse-loading-placeholder": "לאָדנדיק…",
 	"multimediaviewer-share-tab": "טיילן",
@@ -48,6 +45,5 @@
 	"multimediaviewer-view-config": "קאנפֿיגוראציע",
 	"multimediaviewer-title-popup-text": "באַשרײבונג",
 	"multimediaviewer-download-attribution-cta": "ווײַז מיך וויאזוי",
-	"multimediaviewer-attr-plain": "קלארטעקסט",
-	"multimediaviewer-option-cancel-button": "אַנולירן"
+	"multimediaviewer-attr-plain": "קלארטעקסט"
 }

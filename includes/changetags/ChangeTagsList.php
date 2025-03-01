@@ -16,18 +16,19 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Change tagging
  */
 
 use MediaWiki\Context\IContextSource;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\RevisionList\RevisionListBase;
 use MediaWiki\Status\Status;
 
 /**
  * Generic list for change tagging.
  *
+ * @ingroup ChangeTags
  * @property ChangeTagsLogItem $current
  * @method ChangeTagsLogItem next()
  * @method ChangeTagsLogItem reset()
@@ -40,7 +41,7 @@ abstract class ChangeTagsList extends RevisionListBase {
 	}
 
 	/**
-	 * Creates a ChangeTags*List of the requested type.
+	 * Create a ChangeTagsList instance of the given type.
 	 *
 	 * @param string $typeName 'revision' or 'logentry'
 	 * @param IContextSource $context

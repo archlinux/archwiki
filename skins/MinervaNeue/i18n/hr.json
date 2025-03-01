@@ -30,7 +30,6 @@
 	"mobile-frontend-meta-data-issues-categories": "O ovoj kategoriji",
 	"mobile-frontend-meta-data-issues-header": "Nedostatci stranice",
 	"minerva-meta-data-issues-section-header": "Nedostatci odlomka",
-	"mobile-frontend-notifications-filter": "Filtar",
 	"mobile-frontend-pageaction-edit-tooltip": "Uredi prvi odlomak ove stranice",
 	"mobile-frontend-placeholder": "Pretražite projekt {{SITENAME}}",
 	"mobile-frontend-random-button": "Slučajna stranica",
@@ -55,7 +54,5 @@
 	"skin-minerva-issue-learn-more": "Saznajte više",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorije",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vidi kategorije na stranicama",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Poboljšan tretman problema sa stranicom",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemi sa stranicom (Template:ambox) bit će uključeni u članak.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Nažalost, grupiranje rezultata po stranici nije omogućeno u prikazu za mobilne uređaje. Ako želite rabiti mogućnost grupiranja po stranici, molimo Vas otvorite klasični (računalni) prikaz."
 }

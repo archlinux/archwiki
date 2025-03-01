@@ -1,6 +1,6 @@
-QUnit.module( 'mediawiki.ForeignRest', function ( hooks ) {
-	var CoreForeignApi = require( 'mediawiki.ForeignApi.core' ).ForeignApi;
-	var CoreForeignRest = require( 'mediawiki.ForeignApi.core' ).ForeignRest;
+QUnit.module( 'mediawiki.ForeignRest', ( hooks ) => {
+	const CoreForeignApi = require( 'mediawiki.ForeignApi.core' ).ForeignApi;
+	const CoreForeignRest = require( 'mediawiki.ForeignApi.core' ).ForeignRest;
 
 	hooks.beforeEach( function () {
 		this.server = this.sandbox.useFakeServer();
@@ -9,23 +9,23 @@ QUnit.module( 'mediawiki.ForeignRest', function ( hooks ) {
 	} );
 
 	QUnit.test( 'get()', function ( assert ) {
-		var api = new CoreForeignRest( 'http://test.example.com/rest.php', this.actionApi );
+		const api = new CoreForeignRest( 'http://test.example.com/rest.php', this.actionApi );
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.strictEqual( request.method, 'GET' );
 			assert.strictEqual( request.url, 'http://test.example.com/rest.php/test/rest/path' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '{}' );
 		} );
 
-		return api.get( '/test/rest/path' ).then( function ( data ) {
+		return api.get( '/test/rest/path' ).then( ( data ) => {
 			assert.deepEqual( data, {}, 'If request succeeds without errors, resolve deferred' );
 		} );
 	} );
 
 	QUnit.test( 'post()', function ( assert ) {
-		var api = new CoreForeignRest( 'http://test.example.com/rest.php', this.actionApi );
+		const api = new CoreForeignRest( 'http://test.example.com/rest.php', this.actionApi );
 
-		this.server.respond( function ( request ) {
+		this.server.respond( ( request ) => {
 			assert.strictEqual( request.method, 'POST', 'Method should be POST' );
 			assert.strictEqual( request.url, 'http://test.example.com/rest.php/test/bla/bla/bla', 'Url should be correct' );
 			assert.true( /^application\/json/.test( request.requestHeaders[ 'Content-Type' ] ), 'Should set JSON content-type' );
@@ -38,18 +38,18 @@ QUnit.module( 'mediawiki.ForeignRest', function ( hooks ) {
 			param: 'value'
 		}, {
 			authorization: 'my_token'
-		} ).then( function ( data ) {
+		} ).then( ( data ) => {
 			assert.deepEqual( data, {}, 'If request succeeds without errors, resolve deferred' );
 		} );
 	} );
 
 	QUnit.test( 'http error', function ( assert ) {
-		var api = new CoreForeignRest( 'http://test.example.com/rest.php', this.actionApi );
+		const api = new CoreForeignRest( 'http://test.example.com/rest.php', this.actionApi );
 
 		this.server.respond( [ 404, {}, 'FAIL' ] );
 
 		api.get( '/test/rest/path' )
-			.fail( function ( errorCode ) {
+			.fail( ( errorCode ) => {
 				assert.strictEqual( errorCode, 'http', 'API error should reject the deferred' );
 			} )
 			.always( assert.async() );

@@ -2,24 +2,23 @@
  * JavaScript for diff inline toggle
  */
 module.exports = function ( $inlineToggleSwitchLayout ) {
-	var $wikitextDiffContainer, $wikitextDiffHeader, $wikitextDiffBody,
-		$wikitextDiffBodyInline, $wikitextDiffBodyTable,
-		url = new URL( location.href ),
+	const url = new URL( location.href ),
 		api = new mw.Api(),
 		$inlineLegendContainer = $( '.mw-diff-inline-legend' ),
 		inlineToggleSwitchLayout = OO.ui.FieldLayout.static.infuse( $inlineToggleSwitchLayout ),
 		inlineToggleSwitch = inlineToggleSwitchLayout.getField();
 
-	inlineToggleSwitch.on( 'change', function ( e ) {
+	inlineToggleSwitch.on( 'change', ( e ) => {
 		onDiffTypeInlineChange( e, true );
 	} );
 	inlineToggleSwitch.on( 'disable', onDiffTypeInlineDisabled );
 
-	$wikitextDiffContainer = $( 'table.diff[data-mw="interface"]' );
-	$wikitextDiffHeader = $wikitextDiffContainer.find( 'tr.diff-title' )
+	const $wikitextDiffContainer = $( 'table.diff[data-mw="interface"]' );
+	const $wikitextDiffHeader = $wikitextDiffContainer.find( 'tr.diff-title' )
 		.add( $wikitextDiffContainer.find( 'td.diff-multi, td.diff-notice' ).parent() );
-	$wikitextDiffBody = $wikitextDiffContainer.find( 'tr' ).not( $wikitextDiffHeader );
+	let $wikitextDiffBody = $wikitextDiffContainer.find( 'tr' ).not( $wikitextDiffHeader );
 
+	let $wikitextDiffBodyInline, $wikitextDiffBodyTable;
 	if ( inlineToggleSwitch.getValue() ) {
 		$wikitextDiffBodyInline = $wikitextDiffBody;
 	} else {
@@ -42,7 +41,7 @@ module.exports = function ( $inlineToggleSwitchLayout ) {
 
 		if ( saveDiffTypeOption ) {
 			api.saveOption( 'diff-type', isInline ? 'inline' : 'table' )
-				.fail( function ( error ) {
+				.fail( ( error ) => {
 					if ( error === 'notloggedin' ) {
 						// Can't save preference, so use query parameter stickiness
 						switchQueryParams( isInline );
@@ -76,7 +75,7 @@ module.exports = function ( $inlineToggleSwitchLayout ) {
 	function switchQueryParams( isInline ) {
 		$( '#differences-prevlink, #differences-nextlink' )
 			.each( function () {
-				var linkUrl;
+				let linkUrl;
 				try {
 					linkUrl = new URL( this.href );
 				} catch ( e ) {
@@ -113,11 +112,11 @@ module.exports = function ( $inlineToggleSwitchLayout ) {
 	 * @param {boolean} isInline
 	 */
 	function fetchDiff( isInline ) {
-		var apiParams, oldPageName, newPageName,
-			diffType = isInline ? 'inline' : 'table',
+		const diffType = isInline ? 'inline' : 'table',
 			oldRevId = mw.config.get( 'wgDiffOldId' ),
 			newRevId = mw.config.get( 'wgDiffNewId' );
 
+		let oldPageName, newPageName;
 		if ( mw.config.get( 'wgCanonicalSpecialPageName' ) !== 'ComparePages' ) {
 			oldPageName = newPageName = mw.config.get( 'wgRelevantPageName' );
 		} else {
@@ -125,7 +124,7 @@ module.exports = function ( $inlineToggleSwitchLayout ) {
 			newPageName = url.searchParams.get( 'page2' );
 		}
 
-		apiParams = {
+		const apiParams = {
 			action: 'compare',
 			fromtitle: oldPageName,
 			totitle: newPageName,
@@ -134,7 +133,7 @@ module.exports = function ( $inlineToggleSwitchLayout ) {
 			difftype: diffType
 		};
 
-		api.get( apiParams ).done( function ( diffData ) {
+		api.get( apiParams ).done( ( diffData ) => {
 			if ( isInline ) {
 				$wikitextDiffBodyInline = $( diffData.compare[ '*' ] );
 			} else {

@@ -29,7 +29,7 @@ ve.dm.MWGalleryImageCaptionNode.static.matchTagNames = [];
 ve.dm.MWGalleryImageCaptionNode.static.parentNodeTypes = [ 'mwGalleryImage' ];
 
 ve.dm.MWGalleryImageCaptionNode.static.toDomElements = function ( dataElement, doc ) {
-	var div = doc.createElement( 'div' );
+	const div = doc.createElement( 'div' );
 	div.classList.add( 'gallerytext' );
 	return [ div ];
 };

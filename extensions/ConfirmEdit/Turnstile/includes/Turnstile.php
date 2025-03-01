@@ -2,24 +2,27 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\Turnstile;
 
-use ApiBase;
-use FormatJson;
-use Html;
+use MediaWiki\Api\ApiBase;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Html\Html;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
-use Message;
-use Status;
-use WebRequest;
+use MediaWiki\Message\Message;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Status\Status;
 
 class Turnstile extends SimpleCaptcha {
-	// used for turnstile-edit, turnstile-addurl, turnstile-badlogin, turnstile-createaccount,
-	// turnstile-create, turnstile-sendemail via getMessage()
+	/**
+	 * @var string used for turnstile-edit, turnstile-addurl, turnstile-badlogin, turnstile-createaccount,
+	 * turnstile-create, turnstile-sendemail via getMessage()
+	 */
 	protected static $messagePrefix = 'turnstile-';
 
+	/** @var string|null */
 	private $error = null;
 
 	/**

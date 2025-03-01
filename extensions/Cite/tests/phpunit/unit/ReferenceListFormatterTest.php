@@ -7,8 +7,8 @@ use Cite\ErrorReporter;
 use Cite\ReferenceListFormatter;
 use Cite\ReferenceMessageLocalizer;
 use Cite\Tests\TestUtils;
-use Message;
-use Parser;
+use MediaWiki\Message\Message;
+use MediaWiki\Parser\Parser;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -174,9 +174,9 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 	public function testCloseIndention( $closingLi, $expectedOutput ) {
 		/** @var ReferenceListFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferenceListFormatter(
-			$this->createMock( ErrorReporter::class ),
-			$this->createMock( AnchorFormatter::class ),
-			$this->createMock( ReferenceMessageLocalizer::class )
+			$this->createNoOpMock( ErrorReporter::class ),
+			$this->createNoOpMock( AnchorFormatter::class ),
+			$this->createNoOpMock( ReferenceMessageLocalizer::class )
 		) );
 
 		$output = $formatter->closeIndention( $closingLi );
@@ -199,9 +199,7 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 		string $expectedOutput
 	) {
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
-		$mockErrorReporter->method( 'plain' )->willReturnCallback(
-			static fn ( $parser, ...$args ) => '(' . implode( '|', $args ) . ')'
-		);
+		$mockErrorReporter->method( 'plain' )->willReturnArgument( 1 );
 
 		$anchorFormatter = $this->createMock( AnchorFormatter::class );
 		$anchorFormatter->method( 'backLink' )->willReturnCallback(
@@ -291,9 +289,9 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 				'expectedOutput' => '(cite_references_link_many|1-5|(cite_references_link_many_format|1+5-0|3.0|' .
 				'(cite_references_link_many_format_backlink_labels))' .
 				'(cite_references_link_many_sep)(cite_references_link_many_format|1+5-1|3.1|' .
-				'(cite_error_references_no_backlink_label))(cite_references_link_many_and)' .
-				'(cite_references_link_many_format|1+5-2|3.2|(cite_error_references_no_backlink_label' .
-				'))|<span class="reference-text">t</span>' . "\n|)"
+				'cite_error_references_no_backlink_label)(cite_references_link_many_and)' .
+				'(cite_references_link_many_format|1+5-2|3.2|cite_error_references_no_backlink_label' .
+				')|<span class="reference-text">t</span>' . "\n|)"
 			],
 		];
 	}
@@ -314,13 +312,13 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 		/** @var ReferenceListFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferenceListFormatter(
 			$mockErrorReporter,
-			$this->createMock( AnchorFormatter::class ),
-			$this->createMock( ReferenceMessageLocalizer::class )
+			$this->createNoOpMock( AnchorFormatter::class ),
+			$this->createNoOpMock( ReferenceMessageLocalizer::class )
 		) );
 
 		$parser = $this->createNoOpMock( Parser::class );
 		$ref = TestUtils::refFromArray( [ 'text' => $text ] );
-		$output = $formatter->referenceText( $parser, 1, $ref, $isSectionPreview );
+		$output = $formatter->renderTextAndWarnings( $parser, 1, $ref, $isSectionPreview );
 		$this->assertSame( $expectedOutput, $output );
 	}
 
@@ -353,55 +351,53 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 	 * @dataProvider provideReferencesFormatEntryAlternateBacklinkLabel
 	 */
 	public function testReferencesFormatEntryAlternateBacklinkLabel(
-		?string $expectedLabel, ?string $labelList, int $offset
+		?string $expectedLabel, string $labelList, int $offset
 	) {
-		$mockMessage = $this->createMock( Message::class );
-		$mockMessage->method( 'exists' )->willReturn( (bool)$labelList );
-		$mockMessage->method( 'plain' )->willReturn( $labelList ?? '<missing-junk>' );
+		$mockMessage = $this->createNoOpMock( Message::class, [ 'isDisabled', 'plain' ] );
+		$mockMessage->method( 'isDisabled' )->willReturn( !$labelList );
+		$mockMessage->method( 'plain' )->willReturn( $labelList );
 
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
 		$mockMessageLocalizer->method( 'msg' )
 			->willReturn( $mockMessage );
 
 		$errorReporter = $this->createMock( ErrorReporter::class );
-		$errorReporter->expects( $expectedLabel ? $this->never() : $this->once() )
-			->method( 'plain' );
+		$errorReporter->method( 'plain' )->willReturnArgument( 1 );
 
 		/** @var ReferenceListFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferenceListFormatter(
 			$errorReporter,
-			$this->createMock( AnchorFormatter::class ),
+			$this->createNoOpMock( AnchorFormatter::class ),
 			$mockMessageLocalizer
 		) );
 
 		$parser = $this->createNoOpMock( Parser::class );
 		$label = $formatter->referencesFormatEntryAlternateBacklinkLabel( $parser, $offset );
-		if ( $expectedLabel !== null ) {
-			$this->assertSame( $expectedLabel, $label );
-		}
+		$this->assertSame( $expectedLabel, $label );
 	}
 
 	public static function provideReferencesFormatEntryAlternateBacklinkLabel() {
 		yield [ 'aa', 'aa ab ac', 0 ];
 		yield [ 'ab', 'aa ab ac', 1 ];
 		yield [ 'å', 'å b c', 0 ];
-		yield [ null, 'a b c', 10 ];
+		yield [ 'cite_error_references_no_backlink_label', 'a b c', 10 ];
+		yield [ null, '', 0 ];
 	}
 
 	/**
 	 * @dataProvider provideReferencesFormatEntryNumericBacklinkLabel
 	 */
 	public function testReferencesFormatEntryNumericBacklinkLabel(
-		string $expectedLabel, int $base, int $offset, int $max
+		string $expectedLabel, string $base, int $offset, int $max
 	) {
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
-		$mockMessageLocalizer->method( 'localizeSeparators' )->willReturnArgument( 0 );
+		$mockMessageLocalizer->method( 'localizeSeparators' )->willReturn( ',' );
 		$mockMessageLocalizer->method( 'localizeDigits' )->willReturnArgument( 0 );
 
 		/** @var ReferenceListFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferenceListFormatter(
-			$this->createMock( ErrorReporter::class ),
-			$this->createMock( AnchorFormatter::class ),
+			$this->createNoOpMock( ErrorReporter::class ),
+			$this->createNoOpMock( AnchorFormatter::class ),
 			$mockMessageLocalizer
 		) );
 
@@ -410,11 +406,12 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 	}
 
 	public static function provideReferencesFormatEntryNumericBacklinkLabel() {
-		yield [ '1.2', 1, 2, 9 ];
-		yield [ '1.02', 1, 2, 99 ];
-		yield [ '1.002', 1, 2, 100 ];
-		yield [ '1.50005', 1, 50005, 50005 ];
-		yield [ '2.1', 2, 1, 1 ];
+		yield [ '1,2', '1', 2, 9 ];
+		yield [ '1,02', '1', 2, 99 ];
+		yield [ '1,002', '1', 2, 100 ];
+		yield [ '1,50005', '1', 50005, 50005 ];
+		yield [ '2,1', '2', 1, 1 ];
+		yield [ '3.2,1', '3.2', 1, 1 ];
 	}
 
 	/**
@@ -432,8 +429,8 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 
 		/** @var ReferenceListFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferenceListFormatter(
-			$this->createMock( ErrorReporter::class ),
-			$this->createMock( AnchorFormatter::class ),
+			$this->createNoOpMock( ErrorReporter::class ),
+			$this->createNoOpMock( AnchorFormatter::class ),
 			$mockMessageLocalizer
 		) );
 		$this->assertSame( $expected, $formatter->listToText( $list ) );

@@ -1,0 +1,67 @@
+a {
+	.cdx-mixin-link-base();
+	/* T373989 */
+	border-radius: 0;
+}
+
+// Red links
+a.new {
+	.cdx-mixin-link-red();
+}
+
+// External links
+// Use of `a` element selector for limiting generic class scope due to `.external` widespread usage.
+.mw-parser-output {
+	a {
+		// Deal with long links (T327334, inspired by Minerva solution T62387)
+		word-wrap: break-word;
+	}
+
+	a.external {
+		// Use copy of Codex/OOUI WikimediaUI theme's 'linkExternal' icon in progressive color.
+		// Note that CSSJanus is flipping the `ltr` in the URL to `rtl`.
+		// Therefore make sure that both icons are available and up-to-date.
+		background-image: url( images/link-external-small-ltr-progressive.svg );
+		background-position: center right;
+		background-repeat: no-repeat;
+		// Equivalent of `12px` at calculation base of `14px` is `0.857em`.
+		background-size: 0.857em;
+		padding-right: 1em;
+
+		// See T330712 for better understanding of this class and any future changes.
+		&.free {
+			word-break: break-all;
+		}
+	}
+}
+
+/**
+ * The following styles are copied from content.links.less
+ */
+
+/* self links */
+a.mw-selflink {
+	color: inherit;
+	font-weight: bold;
+	text-decoration: inherit;
+
+	&:hover {
+		cursor: inherit;
+	}
+}
+
+/* Underline preference */
+.mw-underline-always a {
+	text-decoration: underline;
+}
+
+.mw-underline-never a {
+	text-decoration: none;
+}
+
+/* Plainlinks - this can be used to switch
+ * off special external link styling */
+.plainlinks a.external {
+	background: none !important; /* stylelint-disable-line declaration-no-important */
+	padding: 0 !important; /* stylelint-disable-line declaration-no-important */
+}

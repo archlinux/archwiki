@@ -35,6 +35,13 @@
 	"cite_error_empty_references_define": "Η ετικέτα <code>&lt;ref&gt;</code> με όνομα \"$1\"που ορίζεται μέσα στην <code>&lt;references&gt;</code> ομάδα \"$2\"  δεν έχει καθόλου περιεχόμενο.",
 	"cite-tracking-category-cite-error": "Σελίδες με σφάλματα αναφορών",
 	"cite-tracking-category-cite-error-desc": "Οι σελίδες αυτής της κατηγορίας έχουν σφάλματα στη χρήση ετικετών αναφοράς.",
+	"cite-reference-previews-reference": "Παραπομπή",
+	"cite-reference-previews-book": "Παραπομπή σε βιβλίο",
+	"cite-reference-previews-journal": "Παραπομπή σε περιοδικό",
+	"cite-reference-previews-news": "Παραπομπή σε είδηση",
+	"cite-reference-previews-note": "Σημείωση",
+	"cite-reference-previews-web": "Παραπομπή σε ιστοσελίδα",
+	"cite-reference-previews-collapsible-placeholder": "Αυτή η παραπομπή περιλαμβάνει ένα σχήμα που δεν χωράει στην προεπισκόπηση.",
 	"cite_references_link_accessibility_label": "Άλμα πάνω",
 	"cite_references_link_many_accessibility_label": "Άλμα πάνω, στο:",
 	"cite_references_link_accessibility_back_label": "Πήδηξε πίσω",
@@ -49,5 +56,9 @@
 	"cite-wikieditor-help-content-showreferences-description": "Εμφάνιση παραπομπών",
 	"cite-wikieditor-help-content-reference-example-text1": "Κείμενο σελίδας.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Κείμενο συνδέσμου], πρόσθετο κείμενο.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Κείμενο συνδέσμου]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Κείμενο συνδέσμου]",
+	"popups-prefs-navpopups-gadget-conflict-info": "Έχετε ενεργοποιημένο το πρόσθετο [[$1|Navigation popups]], κι έτσι δεν θα βλέπετε προεπισκοπήσεις που παρέχει αυτή η λειτουργία. Ανάλογα με το wiki σας, το πρόσθετο μπορεί να έχει λίγο διαφορετικό όνομα. Εάν συνεχίσετε να αντιμετωπίζετε προβλήματα, ελέγξτε τα πρόσθετο και τα σκριπτ χρήστη, συμπεριλαμβανομένων των παγκόσμιων.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Έχετε ενεργοποιημένα τα πρόσθετα [[$1|Navigation popups]] και [[$1|Reference Tooltips]], κι έτσι δεν θα βλέπετε προεπισκοπήσεις που παρέχει αυτή η λειτουργία. Ανάλογα με το wiki σας, τα πρόσθετα μπορεί να έχουν λίγο διαφορετικά ονόματα. Εάν συνεχίσετε να αντιμετωπίζετε προβλήματα, ελέγξτε τα πρόσθετο και τα σκριπτ χρήστη, συμπεριλαμβανομένων των παγκόσμιων.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Έχετε ενεργοποιημένο το πρόσθετο [[$1|Reference Tooltips]], κι έτσι δεν θα βλέπετε προεπισκοπήσεις αλλά θα εξακολουθείτε να βλέπετε προεπισκοπήσεις σελίδων. Ανάλογα με το wiki σας, το πρόσθετο μπορεί να έχει λίγο διαφορετικό όνομα. Εάν συνεχίσετε να αντιμετωπίζετε προβλήματα, ελέγξτε τα πρόσθετο και τα σκριπτ χρήστη, συμπεριλαμβανομένων των παγκόσμιων.",
+	"popups-refpreview-user-preference-label": "Ενεργοποίηση προεπισκοπήσεων παραπομπών (λάβετε γρήγορες προεπισκοπήσεις παραπομπών κατά την ανάγνωση μιας σελίδας)"
 }

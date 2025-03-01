@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Lifeway",
+			"Mxalexandrov86",
 			"Валентина Семёнова",
-			"Санюн Вадик",
-			"Mxalexandrov86"
+			"Санюн Вадик"
 		]
 	},
 	"categorytree": "Категорий пушеҥге",
@@ -33,5 +33,6 @@
 	"categorytree-no-pages": "статья але категорий укш уке",
 	"categorytree-not-found": "<i>$1</i> категорйым мумо огыл",
 	"categorytree-error": "Данный вераҥдымаште нелылык.",
-	"categorytree-retry": "Порылий, вучалте да эше ик гана тӧчен ончо."
+	"categorytree-retry": "Порылий, вучалте да эше ик гана тӧчен ончо.",
+	"categorytree-deprecation-category": "Тоштемше categorytree параметрым кучылтшо велыжла"
 }

@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiBase;
-use ApiBlockInfoTrait;
-use ApiMain;
-use ApiMessage;
-use ApiUsageException;
 use DomainException;
 use Exception;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiBlockInfoTrait;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiMessage;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Api\Validator\SubmoduleDef;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Context\DerivativeContext;
@@ -20,9 +20,9 @@ use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use MessageSpecifier;
 use MWException;
 use StatusValue;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -35,23 +35,19 @@ use WikiPage;
  * @group Database
  * @group medium
  *
- * @covers \ApiBase
+ * @covers \MediaWiki\Api\ApiBase
  */
 class ApiBaseTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->mergeMwGlobalArrayValue(
-			'wgGroupPermissions',
-			[
-				'*' => [
-					'read' => true,
-					'edit' => true,
-					'writeapi' => true,
-					'apihighlimits' => false,
-				],
-			]
-		);
+		$this->setGroupPermissions( [
+			'*' => [
+				'read' => true,
+				'edit' => true,
+				'apihighlimits' => false,
+			],
+		] );
 	}
 
 	/**
@@ -361,7 +357,7 @@ class ApiBaseTest extends ApiTestCase {
 					? [ $warn->getKey(), ...$warn->getParams() ]
 					: $warn;
 			}, $mock->warnings );
-			$this->assertSame( $warnings, $actualWarnings );
+			$this->assertEquals( $warnings, $actualWarnings );
 		}
 
 		if ( !empty( $paramSettings[ParamValidator::PARAM_SENSITIVE] ) ||
@@ -1400,7 +1396,7 @@ class ApiBaseTest extends ApiTestCase {
 					ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 				],
 				'messages' => new MWException(
-					'Internal error in ApiBase::getFinalParamDescription: '
+					'Internal error in ' . ApiBase::class . '::getFinalParamDescription: '
 					. 'ApiBase::PARAM_HELP_MSG_PER_VALUE may only be used when '
 					. "ParamValidator::PARAM_TYPE is an array or it is 'string' "
 					. 'and ParamValidator::PARAM_ISMULTI is true'
@@ -1410,6 +1406,8 @@ class ApiBaseTest extends ApiTestCase {
 	}
 
 	public function testErrorArrayToStatus() {
+		$this->expectDeprecationAndContinue( '/errorArrayToStatus/' );
+
 		$mock = new MockApi();
 
 		$msg = new Message( 'mainpage' );
@@ -1425,7 +1423,6 @@ class ApiBaseTest extends ApiTestCase {
 		$expect->fatal( 'systemblockedtext' );
 		$expect->fatal( 'mainpage' );
 		$expect->fatal( $msg );
-		$expect->fatal( $msg, 'foobar' );
 		$expect->fatal( 'parentheses', 'foobar' );
 		$this->assertEquals( $expect, $mock->errorArrayToStatus( [
 			[ 'blockedtext' ],
@@ -1433,7 +1430,6 @@ class ApiBaseTest extends ApiTestCase {
 			[ 'systemblockedtext' ],
 			'mainpage',
 			$msg,
-			[ $msg, 'foobar' ],
 			[ 'parentheses', 'foobar' ],
 		] ) );
 
@@ -1461,7 +1457,6 @@ class ApiBaseTest extends ApiTestCase {
 		$expect->fatal( ApiMessage::create( 'systemblockedtext', 'blocked', $blockinfo ) );
 		$expect->fatal( 'mainpage' );
 		$expect->fatal( $msg );
-		$expect->fatal( $msg, 'foobar' );
 		$expect->fatal( 'parentheses', 'foobar' );
 		$this->assertEquals( $expect, $mock->errorArrayToStatus( [
 			[ 'blockedtext' ],
@@ -1469,7 +1464,6 @@ class ApiBaseTest extends ApiTestCase {
 			[ 'systemblockedtext' ],
 			'mainpage',
 			$msg,
-			[ $msg, 'foobar' ],
 			[ 'parentheses', 'foobar' ],
 		], $user ) );
 	}
@@ -1492,7 +1486,6 @@ class ApiBaseTest extends ApiTestCase {
 		$expect->fatal( 'systemblockedtext' );
 		$expect->fatal( 'mainpage' );
 		$expect->fatal( $msg );
-		$expect->fatal( $msg, 'foobar' );
 		$expect->fatal( 'parentheses', 'foobar' );
 		$test = clone $expect;
 		$mock->addBlockInfoToStatus( $test );
@@ -1522,7 +1515,6 @@ class ApiBaseTest extends ApiTestCase {
 		$expect->fatal( ApiMessage::create( 'systemblockedtext', 'blocked', $blockinfo ) );
 		$expect->fatal( 'mainpage' );
 		$expect->fatal( $msg );
-		$expect->fatal( $msg, 'foobar' );
 		$expect->fatal( 'parentheses', 'foobar' );
 		$test = Status::newGood();
 		$test->fatal( 'blockedtext' );
@@ -1530,7 +1522,6 @@ class ApiBaseTest extends ApiTestCase {
 		$test->fatal( 'systemblockedtext' );
 		$test->fatal( 'mainpage' );
 		$test->fatal( $msg );
-		$test->fatal( $msg, 'foobar' );
 		$test->fatal( 'parentheses', 'foobar' );
 		$mock->addBlockInfoToStatus( $test, $user );
 		$this->assertEquals( $expect, $test );
@@ -1588,7 +1579,7 @@ class ApiBaseTest extends ApiTestCase {
 	}
 
 	/**
-	 * @covers \ApiBase::extractRequestParams
+	 * @covers \MediaWiki\Api\ApiBase::extractRequestParams
 	 */
 	public function testExtractRequestParams() {
 		$request = new FauxRequest( [

@@ -21,10 +21,12 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Parser\Sanitizer;
-use MediaWiki\Status\Status;
+use MediaWiki\Password\PasswordFactory;
 use MediaWiki\User\User;
 
 /**
@@ -76,23 +78,25 @@ class ResetUserEmail extends Maintenance {
 				'retype' => $password,
 			] );
 			if ( !$status->isGood() ) {
-				$this->error( "Password couldn't be reset because:\n"
-					. $status->getMessage( false, false, 'en' )->text() );
+				$this->error( "Password couldn't be reset because:" );
+				$this->error( $status );
 			}
 		}
 
 		if ( $this->hasOption( 'email-password' ) ) {
 			$passReset = $this->getServiceContainer()->getPasswordReset();
 			$sysUser = User::newSystemUser( 'Maintenance script', [ 'steal' => true ] );
-			$status = Status::wrap( $passReset->execute( $sysUser, $user->getName(), $email ) );
+			$status = $passReset->execute( $sysUser, $user->getName(), $email );
 			if ( !$status->isGood() ) {
-				$this->error( "Email couldn't be sent because:\n"
-					. $status->getMessage( false, false, 'en' )->text() );
+				$this->error( "Email couldn't be sent because:" );
+				$this->error( $status );
 			}
 		}
 		$this->output( "Done!\n" );
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ResetUserEmail::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

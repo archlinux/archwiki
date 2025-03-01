@@ -31,8 +31,7 @@
 	"mobile-frontend-meta-data-issues": "בעיות בדף",
 	"mobile-frontend-meta-data-issues-categories": "על הקטגוריה הזאת",
 	"mobile-frontend-meta-data-issues-header": "בעיות בדף",
-	"minerva-meta-data-issues-section-header": "בעיות בפרק",
-	"mobile-frontend-notifications-filter": "סינון",
+	"minerva-meta-data-issues-section-header": "בעיות בפסקה",
 	"mobile-frontend-pageaction-edit-tooltip": "עריכת פרק הפתיחה של הדף הזה",
 	"mobile-frontend-placeholder": "חיפוש באתר {{SITENAME}}",
 	"mobile-frontend-random-button": "אקראי",
@@ -52,7 +51,7 @@
 	"minerva-page-actions-overflow": "עוד",
 	"minerva-page-actions-language-switcher": "שפות",
 	"minerva-page-actions-history": "היסטוריה",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|דיון]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue דיון]",
 	"skinname-minerva": "מינרווה נויה",
 	"minerva-skin-desc": "ערכת עיצוב מסתגלת לסוג המכשיר ומפותחת ראשית למכשירים מיידים",
 	"skin-minerva-issue-learn-more": "מידע נוסף",
@@ -64,8 +63,6 @@
 	"skin-minerva-time-ago-years": "לפני {{PLURAL:$1|שנה|שנתיים|$1 שנה|$1 שנים}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "קטגוריות",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "הצגת קטגוריות של דפים",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "שיפור בטיפול בבעיות בדף",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "תבנית עם בעיות בדף יוצגו בתוך גוף הערך.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "למרבה הצער, הקבצת תוצאות לפי דף אינה זמינה במכשירים ניידים. אם ברצונך להשתמש באפשרות הקבצת תוצאות לפי דף, נא לבקר בדף למחשבים.",
-	"skin-minerva-night-mode-unavailable": "הדף זמין רק בערכת הצבעים \"יום\"."
+	"skin-minerva-night-mode-unavailable": "הדף זמין רק בערכת הצבעים \"בהירה\"."
 }

@@ -4,9 +4,9 @@ namespace MediaWiki\Tests\Api;
 
 namespace MediaWiki\Tests\Api;
 
-use ApiMain;
-use ApiOptions;
-use ApiUsageException;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiOptions;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
@@ -23,7 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
  * @group Database
  * @group medium
  *
- * @covers \ApiOptions
+ * @covers \MediaWiki\Api\ApiOptions
  */
 class ApiOptionsTest extends ApiTestCase {
 	use MockAuthorityTrait;
@@ -34,11 +34,12 @@ class ApiOptionsTest extends ApiTestCase {
 	private $userOptionsManagerMock;
 	/** @var ApiOptions */
 	private $mTested;
+	/** @var array */
 	private $mSession;
 	/** @var DerivativeContext */
 	private $mContext;
 
-	private static $Success = [ 'options' => 'success' ];
+	private const SUCCESS = [ 'options' => 'success' ];
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -64,16 +65,18 @@ class ApiOptionsTest extends ApiTestCase {
 
 		$this->userOptionsManagerMock = $this->createNoOpMock(
 			UserOptionsManager::class,
-			[ 'getOptions', 'listOptionKinds', 'getOptionKinds', 'resetOptions', 'setOption' ]
+			[ 'getOptions', 'resetOptionsByName', 'setOption', 'isOptionGlobal' ]
 		);
 		// Needs to return something
 		$this->userOptionsManagerMock->method( 'getOptions' )->willReturn( [] );
 
-		// Set up callback for UserOptionsManager::getOptionKinds
-		$this->userOptionsManagerMock->method( 'getOptionKinds' )
-			->willReturnCallback( [ $this, 'getOptionKinds' ] );
-
-		$this->userOptionsManagerMock->method( 'listOptionKinds' )->willReturn(
+		$preferencesFactory = $this->createNoOpMock(
+			DefaultPreferencesFactory::class,
+			[ 'getFormDescriptor', 'listResetKinds', 'getResetKinds', 'getOptionNamesForReset' ]
+		);
+		$preferencesFactory->method( 'getFormDescriptor' )
+			->willReturnCallback( [ $this, 'getPreferencesFormDescription' ] );
+		$preferencesFactory->method( 'listResetKinds' )->willReturn(
 			[
 				'registered',
 				'registered-multiselect',
@@ -83,13 +86,10 @@ class ApiOptionsTest extends ApiTestCase {
 				'unused'
 			]
 		);
-
-		$preferencesFactory = $this->createNoOpMock(
-			DefaultPreferencesFactory::class,
-			[ 'getFormDescriptor' ]
-		);
-		$preferencesFactory->method( 'getFormDescriptor' )
-			->willReturnCallback( [ $this, 'getPreferencesFormDescription' ] );
+		$preferencesFactory->method( 'getResetKinds' )
+			->willReturnCallback( [ $this, 'getResetKinds' ] );
+		$preferencesFactory->method( 'getOptionNamesForReset' )
+			->willReturn( [] );
 
 		$this->mTested = new ApiOptions( $main, 'options', $this->userOptionsManagerMock, $preferencesFactory );
 
@@ -141,7 +141,7 @@ class ApiOptionsTest extends ApiTestCase {
 	 *
 	 * @return array
 	 */
-	public function getOptionKinds( $unused, IContextSource $context, $options = null ) {
+	public function getResetKinds( $unused, IContextSource $context, $options = null ) {
 		// Match with above.
 		$kinds = [
 			'name' => 'registered',
@@ -236,7 +236,7 @@ class ApiOptionsTest extends ApiTestCase {
 		$this->mUserMock->method( 'isRegistered' )->willReturn( true );
 		$this->mUserMock->method( 'isNamed' )->willReturn( true );
 		$this->userOptionsManagerMock->expects( $this->never() )
-			->method( 'resetOptions' );
+			->method( 'resetOptionsByName' );
 
 		$this->userOptionsManagerMock->expects( $this->never() )
 			->method( 'setOption' );
@@ -270,11 +270,11 @@ class ApiOptionsTest extends ApiTestCase {
 		$this->mUserMock->method( 'isNamed' )->willReturn( $isNamed );
 
 		if ( $expectException ) {
-			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptions' );
+			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
 			$this->mUserMock->expects( $this->never() )->method( 'saveSettings' );
 		} else {
-			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptions' );
+			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
 			$this->mUserMock->expects( $this->once() )->method( 'saveSettings' );
 		}
@@ -284,7 +284,7 @@ class ApiOptionsTest extends ApiTestCase {
 			if ( $expectException ) {
 				$this->fail( 'Expected a "notloggedin" error.' );
 			} else {
-				$this->assertEquals( self::$Success, $response );
+				$this->assertEquals( self::SUCCESS, $response );
 			}
 		} catch ( ApiUsageException $e ) {
 			if ( !$expectException ) {
@@ -303,10 +303,10 @@ class ApiOptionsTest extends ApiTestCase {
 		$this->mUserMock->method( 'isNamed' )->willReturn( $isNamed );
 		if ( $expectException ) {
 			$this->mUserMock->expects( $this->never() )->method( 'saveSettings' );
-			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptions' );
+			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
 		} else {
-			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptions' );
+			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
 			$this->mUserMock->expects( $this->once() )->method( 'saveSettings' );
 		}
@@ -316,7 +316,7 @@ class ApiOptionsTest extends ApiTestCase {
 			if ( $expectException ) {
 				$this->fail( "Expected an ApiUsageException" );
 			} else {
-				$this->assertEquals( self::$Success, $response );
+				$this->assertEquals( self::SUCCESS, $response );
 			}
 		} catch ( ApiUsageException $e ) {
 			if ( !$expectException ) {
@@ -335,11 +335,11 @@ class ApiOptionsTest extends ApiTestCase {
 		$this->mUserMock->method( 'isNamed' )->willReturn( $isNamed );
 
 		if ( $expectException ) {
-			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptions' );
+			$this->userOptionsManagerMock->expects( $this->never() )->method( 'resetOptionsByName' );
 			$this->userOptionsManagerMock->expects( $this->never() )->method( 'setOption' );
 			$this->mUserMock->expects( $this->never() )->method( 'saveSettings' );
 		} else {
-			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptions' );
+			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptionsByName' );
 			$expectedOptions = [
 				'willBeHappy' => 'Happy',
 				'name' => 'value',
@@ -368,7 +368,7 @@ class ApiOptionsTest extends ApiTestCase {
 			if ( $expectException ) {
 				$this->fail( "Expected an ApiUsageException" );
 			} else {
-				$this->assertEquals( self::$Success, $response );
+				$this->assertEquals( self::SUCCESS, $response );
 			}
 		} catch ( ApiUsageException $e ) {
 			if ( !$expectException ) {
@@ -382,13 +382,13 @@ class ApiOptionsTest extends ApiTestCase {
 	/**
 	 * @dataProvider provideOptionManupulation
 	 */
-	public function testOptionManupulation( array $params, array $setOptions, array $result = null,
+	public function testOptionManupulation( array $params, array $setOptions, ?array $result = null,
 		$message = ''
 	) {
 		$this->mUserMock->method( 'isRegistered' )->willReturn( true );
 		$this->mUserMock->method( 'isNamed' )->willReturn( true );
 		$this->userOptionsManagerMock->expects( $this->never() )
-			->method( 'resetOptions' );
+			->method( 'resetOptionsByName' );
 
 		$expectedOptions = [];
 		foreach ( $setOptions as [ $opt, $val ] ) {
@@ -415,7 +415,7 @@ class ApiOptionsTest extends ApiTestCase {
 		$response = $this->executeQuery( $request );
 
 		if ( !$result ) {
-			$result = self::$Success;
+			$result = self::SUCCESS;
 		}
 		$this->assertEquals( $result, $response, $message );
 	}

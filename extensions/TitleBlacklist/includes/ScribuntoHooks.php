@@ -20,7 +20,7 @@ class ScribuntoHooks implements ScribuntoExternalLibrariesHook {
 	 */
 	public function onScribuntoExternalLibraries( string $engine, array &$extraLibraries ) {
 		if ( $engine === 'lua' ) {
-			$extraLibraries['mw.ext.TitleBlacklist'] = Scribunto_LuaTitleBlacklistLibrary::class;
+			$extraLibraries['mw.ext.TitleBlacklist'] = LuaTitleBlacklistLibrary::class;
 		}
 	}
 }

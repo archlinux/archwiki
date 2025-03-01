@@ -6,8 +6,8 @@
 			"Kimberli Mäkäräinen (WMNO)",
 			"Lea-Christine Sara",
 			"Trondtr",
-			"Yupik",
 			"WMNO sámeprošeakta",
+			"Yupik",
 			"Jon Harald Søby"
 		]
 	},
@@ -36,7 +36,6 @@
 	"visualeditor-autosave-recovered-text": "Du vurkekeahtes rievdadusat leat máhcahuvvon automáhtalaččat.",
 	"visualeditor-autosave-recovered-title": "Rievdadusat máhcahuvvon",
 	"visualeditor-backbutton-tooltip": "Ruovttoluotta",
-	"visualeditor-browserwarning": "Dát rievdadanprográmma ii vealtakeahttá doaimma albmaláhkai dáinna neahttalohkkiin.",
 	"visualeditor-ca-createlocaldescriptionsource": "Lasit báikkálaš govvádusa gáldu",
 	"visualeditor-ca-createsource": "Ráhkat wikiteavsttain",
 	"visualeditor-ca-editlocaldescriptionsource": "Rievdat báikkálaš govvádusa gáldu",
@@ -52,6 +51,7 @@
 	"visualeditor-changedesc-mwtransclusion": "Málleparamehterat leat rievdaduvvon",
 	"visualeditor-desc": "MediaWiki visuála rievdadanprográmma",
 	"visualeditor-descriptionpagelink": "Project:Visuála rievdadanprográmma",
+	"visualeditor-dialog-extension-abandonedit": "Háliidatgo duođaid giddet dán láseža nu ahte it váldde atnui iežat rievdadusaid?",
 	"visualeditor-dialog-media-alttext-checkbox": "Geavat govvateavstta molssaevttolaš teakstan",
 	"visualeditor-dialog-media-alttext-section": "Molssaevttolaš teaksta",
 	"visualeditor-dialog-media-alttext-section-help": "Fealta geavahuvvo bagadallat mediaobjeavtta geavaheddjiide geat eai oainne dan. Bagadallan berre leat dan mađe dárkil ahte ipmirduvvojit dat oaivilat ja dieđut mat addojuvvojit. Dát lea dehálaš čalmmehemiide ja earáide geat geavahit šearbmalohkanprográmmaid dahje teakstavuđot neahttalohkkiid.",

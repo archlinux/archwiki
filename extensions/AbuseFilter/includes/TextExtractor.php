@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use Content;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
-use TextContent;
 
 /**
  * This service provides an interface to convert RevisionRecord and Content objects to some text

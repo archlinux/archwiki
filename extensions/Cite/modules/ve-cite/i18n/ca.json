@@ -43,7 +43,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "Aquesta referència s'utilitza {{PLURAL:$1|una vegada|2=dues vegades|$1 vegades}} en aquesta pàgina. Els canvis fets aquí seran aplicats novament arreu on la referència es reutilitzi.",
 	"cite-ve-dialog-reference-options-group-label": "Utilitza aquest grup",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referències generals",
-	"cite-ve-dialog-reference-options-name-label": "Reutilitza amb aquest nom",
 	"cite-ve-dialog-reference-options-responsive-label": "Utilitza la disposició de columnes adaptatives",
 	"cite-ve-dialog-reference-options-section": "Opcions",
 	"cite-ve-dialog-reference-placeholder": "Escriviu o enganxeu la vostra referència aquí, o inseriu una plantilla de citació.",

@@ -1,0 +1,44 @@
+{
+	"opts": {
+		"encoding": "utf8",
+		"destination": "docs",
+		"package": "package.json",
+		"readme": "README.md",
+		"pedantic": false,
+		"private": true,
+		"recurse": true,
+		"template": "node_modules/jsdoc-wmf-theme",
+		"class-hierarchy": {
+			"showList": true
+		}
+	},
+	"plugins": [
+		"node_modules/jsdoc-wmf-theme/plugins/default"
+	],
+	"source": {
+		"include": [ "modules/ve-mw", "modules/ve-mw-collab" ],
+		"exclude": [ "modules/ve-mw/tests" ]
+	},
+	"templates": {
+		"cleverLinks": true,
+		"default": {
+			"useLongnameInNav": true
+		},
+		"wmf": {
+			"maintitle": "VisualEditor-MediaWiki",
+			"repository": "https://gerrit.wikimedia.org/g/mediawiki/extensions/VisualEditor/",
+			"prefixMap": {
+				"ve.": "https://doc.wikimedia.org/visualeditor-standalone/master/{type}.html",
+				"mw.": "https://doc.wikimedia.org/mediawiki-core/master/js/{type}.html",
+				"ve.ce.MW": true,
+				"ve.dm.MW": true,
+				"ve.init.mw.": true,
+				"ve.ui.MW": true,
+				"mw.libs.ve.": true
+			},
+			"linkMap": {
+				"VisualEditorOverlay": "https://doc.wikimedia.org/MobileFrontend/master/js/js/VisualEditorOverlay.html"
+			}
+		}
+	}
+}

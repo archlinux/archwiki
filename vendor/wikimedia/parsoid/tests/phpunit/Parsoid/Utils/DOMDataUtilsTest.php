@@ -3,8 +3,7 @@
 namespace Test\Parsoid\Utils;
 
 use Wikimedia\Parsoid\Core\PageBundle;
-use Wikimedia\Parsoid\Mocks\MockEnv;
-use Wikimedia\Parsoid\NodeData\DataBag;
+use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -18,6 +17,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	 * @covers ::injectPageBundle
 	 */
 	public function testInjectPageBundle() {
+		// Note that injectPageBundle does not need a "prepared" document.
 		$doc = DOMUtils::parseHTML( "Hello, world" );
 		DOMDataUtils::injectPageBundle( $doc,
 			new PageBundle(
@@ -37,11 +37,9 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	 * @covers ::storeInPageBundle
 	 */
 	public function testStoreInPageBundle() {
-		$env = new MockEnv( [] );
-		$doc = DOMUtils::parseHTML( "<p>Hello, world</p>" );
-		$doc->bag = new DataBag(); // see Env::createDocument
+		$doc = ContentUtils::createDocument( "<p>Hello, world</p>" );
 		$p = DOMCompat::querySelector( $doc, 'p' );
-		DOMDataUtils::storeInPageBundle( $p, $env, (object)[
+		DOMDataUtils::storeInPageBundle( $p, (object)[
 			'parsoid' => [ 'go' => 'team' ],
 			'mw' => [ 'test' => 'me' ],
 		], DOMDataUtils::usedIdIndex( $p ) );

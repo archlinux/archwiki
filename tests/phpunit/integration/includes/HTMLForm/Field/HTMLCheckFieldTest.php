@@ -1,13 +1,15 @@
 <?php
 namespace MediaWiki\Tests\Integration\HTMLForm\Field;
 
+use MediaWiki\HTMLForm\Field\HTMLCheckField;
 use MediaWiki\Tests\Integration\HTMLForm\HTMLFormFieldTestCase;
 
 /**
  * @covers MediaWiki\HTMLForm\Field\HTMLCheckField
  */
 class HTMLCheckFieldTest extends HTMLFormFieldTestCase {
-	protected $className = 'HTMLCheckField';
+	/** @inheritDoc */
+	protected $className = HTMLCheckField::class;
 
 	public static function provideInputCodex() {
 		yield 'Basic checkbox' => [

@@ -25,23 +25,16 @@
  */
 class KuConverter extends LanguageConverterSpecific {
 
-	/**
-	 * @var string[]
-	 */
-	public $mArabicToLatin = [
+	private const ARABIC_TO_LATIN = [
 		'ب' => 'b', 'ج' => 'c', 'چ' => 'ç', 'د' => 'd', 'ف' => 'f', 'گ' => 'g', 'ھ' => 'h',
 		'ہ' => 'h', 'ه' => 'h', 'ح' => 'h', 'ژ' => 'j', 'ك' => 'k', 'ک' => 'k', 'ل' => 'l',
 		'م' => 'm', 'ن' => 'n', 'پ' => 'p', 'ق' => 'q', 'ر' => 'r', 'س' => 's', 'ش' => 'ş',
 		'ت' => 't', 'ڤ' => 'v', 'خ' => 'x', 'غ' => 'x', 'ز' => 'z',
 
-		// ک و => ku -- ist richtig
-		//  و ك=> ku -- ist auch richtig
-
-		/* Doppel- und Halbvokale */
+		/* full and semi-vowel */
 		'ڵ' => 'll', # ll
 		'ڕ' => 'rr', # rr
 		'ا' => 'a',
-		# 'ئێ' => 'ê', # initial e
 		'ە' => 'e',
 		'ه‌' => 'e', # with one non-joiner
 		'ه‌‌' => 'e', # with two non-joiners
@@ -70,10 +63,7 @@ class KuConverter extends LanguageConverterSpecific {
 		'٩' => '9', # U+0669
 	];
 
-	/**
-	 * @var string[]
-	 */
-	public $mLatinToArabic = [
+	private const LATIN_TO_ARABIC = [
 		'b' => 'ب', 'c' => 'ج', 'ç' => 'چ', 'd' => 'د', 'f' => 'ف', 'g' => 'گ',
 		'h' => 'ه', 'j' => 'ژ', 'k' => 'ک', 'l' => 'ل',
 		'm' => 'م', 'n' => 'ن', 'p' => 'پ', 'q' => 'ق', 'r' => 'ر', 's' => 'س', 'ş' => 'ش',
@@ -85,13 +75,6 @@ class KuConverter extends LanguageConverterSpecific {
 		'M' => 'م', 'N' => 'ن', 'P' => 'پ', 'Q' => 'ق', 'R' => 'ر', 'S' => 'س', 'Ş' => 'ش',
 		'T' => 'ت', 'V' => 'ڤ', 'W' => 'و', 'X' => 'خ',
 		'Y' => 'ی', 'Z' => 'ز',
-
-		/* Doppelkonsonanten */
-		# 'll' => 'ڵ', # wenn es geht, doppel-l und l getrennt zu behandeln
-		# 'rr' => 'ڕ', # selbiges für doppel-r
-
-		/* Einzelne Großbuchstaben */
-		// ' C' => 'ج',
 
 		/* Vowels */
 		'a' => 'ا',
@@ -128,24 +111,7 @@ class KuConverter extends LanguageConverterSpecific {
 		' O' => 'ئۆ ',
 		' U' => 'ئو ',
 		' Û' => 'ئوو ',
-		# eyn erstmal deaktivieren, einfache Anführungsstriche sind einfach zu
-		# häufig, um sie als eyn zu interpretieren.
-		# '\'' => 'ع',
-
-/*		# deactivated for now, breaks links i.e. in header of Special:Recentchanges :-(
-		# digits
-		'0' => '٠', # U+0660
-		'1' => '١', # U+0661
-		'2' => '٢', # U+0662
-		'3' => '٣', # U+0663
-		'4' => '٤', # U+0664
-		'5' => '٥', # U+0665
-		'6' => '٦', # U+0666
-		'7' => '٧', # U+0667
-		'8' => '٨', # U+0668
-		'9' => '٩', # U+0669
-*/
-		];
+	];
 
 	public function getMainCode(): string {
 		return 'ku';
@@ -165,8 +131,8 @@ class KuConverter extends LanguageConverterSpecific {
 
 	protected function loadDefaultTables(): array {
 		return [
-			'ku-latn' => new ReplacementArray( $this->mArabicToLatin ),
-			'ku-arab' => new ReplacementArray( $this->mLatinToArabic ),
+			'ku-latn' => new ReplacementArray( self::ARABIC_TO_LATIN ),
+			'ku-arab' => new ReplacementArray( self::LATIN_TO_ARABIC ),
 			'ku' => new ReplacementArray()
 		];
 	}

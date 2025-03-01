@@ -68,6 +68,7 @@ class ParamType {
 	/**
 	 * For arbitrary stringable objects
 	 * @since 1.38
+	 * @deprecated since 1.43
 	 */
 	public const OBJECT = 'object';
 
@@ -95,4 +96,24 @@ class ParamType {
 	 * as to represent plain text rather than any sort of markup.
 	 */
 	public const PLAINTEXT = 'plaintext';
+
+	public static function cases(): array {
+		return [
+			self::TEXT,
+			self::NUM,
+			self::DURATION_LONG,
+			self::DURATION_SHORT,
+			self::EXPIRY,
+			self::DATETIME,
+			self::DATE,
+			self::TIME,
+			self::GROUP,
+			self::OBJECT,
+			self::SIZE,
+			self::BITRATE,
+			self::LIST,
+			self::RAW,
+			self::PLAINTEXT,
+		];
+	}
 }

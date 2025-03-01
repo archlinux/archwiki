@@ -19,8 +19,12 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Language\Language;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
+use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -28,8 +32,12 @@ use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Diff\ArrayDiffFormatter;
 use Wikimedia\Diff\ComplexityException;
 use Wikimedia\Diff\Diff;
+use Wikimedia\Stats\NullStatsdDataFactory;
+use Wikimedia\Stats\StatsFactory;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that compares variant conversion output between Parser and
@@ -79,23 +87,35 @@ class CompareLanguageConverterOutput extends Maintenance {
 		$parsoidOutput = $this->getParsoidOutput( $pageTitle, $targetVariant, $user );
 		$converterUsed = $this->getConverterUsed( $parsoidOutput );
 
-		$this->compareOutput( $parserOutput, $parsoidOutput, $converterUsed );
-
+		$this->compareOutput( $parserOutput->getContentHolderText(),
+			$parsoidOutput->getText( [ 'deduplicateStyles' => false ] ), $converterUsed );
 		return true;
 	}
 
-	private function newHtmlOutputRendererHelper(): HtmlOutputRendererHelper {
+	private function newPageRestHelperFactory(): PageRestHelperFactory {
 		$services = $this->getServiceContainer();
 
-		$helper = new HtmlOutputRendererHelper(
+		$factory = new PageRestHelperFactory(
+			new ServiceOptions( PageRestHelperFactory::CONSTRUCTOR_OPTIONS, $services->getMainConfig() ),
+			$services->getRevisionLookup(),
+			$services->getRevisionRenderer(),
+			$services->getTitleFormatter(),
+			$services->getPageStore(),
 			$services->getParsoidOutputStash(),
 			new NullStatsdDataFactory(),
-			$services->getParsoidOutputAccess(),
+			$services->getParserOutputAccess(),
+			$services->getParsoidSiteConfig(),
 			$services->getHtmlTransformFactory(),
 			$services->getContentHandlerFactory(),
-			$services->getLanguageFactory()
+			$services->getLanguageFactory(),
+			$services->getRedirectStore(),
+			$services->getLanguageConverterFactory(),
+			$services->getTitleFactory(),
+			$services->getConnectionProvider(),
+			$services->getChangeTagsStore(),
+			StatsFactory::newNull()
 		);
-		return $helper;
+		return $factory;
 	}
 
 	private function getParserOptions( Language $language ): ParserOptions {
@@ -130,7 +150,11 @@ class CompareLanguageConverterOutput extends Maintenance {
 			->getContent( SlotRecord::MAIN );
 		$wikiContent = ( $content instanceof TextContent ) ? $content->getText() : '';
 
-		return $parser->parse( $wikiContent, $pageTitle, $parserOptions );
+		$po = $parser->parse( $wikiContent, $pageTitle, $parserOptions );
+		// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
+		$pipeline = $mwInstance->getDefaultOutputPipeline();
+		$options = [ 'deduplicateStyles' => false ];
+		return $pipeline->run( $po, $parserOptions, $options );
 	}
 
 	private function getParsoidOutput(
@@ -138,8 +162,7 @@ class CompareLanguageConverterOutput extends Maintenance {
 		Bcp47Code $targetVariant,
 		User $user
 	): ParserOutput {
-		$htmlOutputRendererHelper = $this->newHtmlOutputRendererHelper();
-		$htmlOutputRendererHelper->init( $pageTitle, [
+		$htmlOutputRendererHelper = $this->newPageRestHelperFactory()->newHtmlOutputRendererHelper( $pageTitle, [
 			'stash' => false,
 			'flavor' => 'view',
 		], $user );
@@ -168,13 +191,10 @@ class CompareLanguageConverterOutput extends Maintenance {
 	}
 
 	private function compareOutput(
-		ParserOutput $parserOutput,
-		ParserOutput $parsoidOutput,
+		string $parserText,
+		string $parsoidText,
 		string $converterUsed
 	): void {
-		$parsoidText = $parsoidOutput->getText( [ 'deduplicateStyles' => false ] );
-		$parserText = $parserOutput->getText( [ 'deduplicateStyles' => false ] );
-
 		$parsoidWords = $this->getWords( $this->getBody( $parsoidText ) );
 		$parserWords = $this->getWords( $parserText );
 
@@ -270,5 +290,7 @@ class CompareLanguageConverterOutput extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CompareLanguageConverterOutput::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

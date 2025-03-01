@@ -61,7 +61,7 @@ final class UserPreferenceRequirement implements Requirement {
 		string $optionName,
 		string $requirementName,
 		WebRequest $request,
-		Title $title = null
+		?Title $title = null
 	) {
 		$this->user = $user;
 		$this->userOptionsLookup = $userOptionsLookup;

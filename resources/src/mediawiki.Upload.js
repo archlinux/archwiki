@@ -1,12 +1,8 @@
 ( function () {
-	var UP;
-
 	/**
-	 * Used to represent an upload in progress on the frontend.
-	 *
-	 * @classdesc Most of the functionality is implemented in {@link mw.Api#upload} and friends,
-	 * but this model class will tie it together as well as let you perform
-	 * actions in a logical way.
+	 * @classdesc Upload to a wiki. Most of the functionality is implemented
+	 * in {@link mw.Api#upload} and friends, but this model class will tie it
+	 * together as well as let you perform actions in a logical way.
 	 *
 	 * A simple example:
 	 * ```
@@ -22,8 +18,8 @@
 	 *
 	 * $( document.body ).append( file.$element, button.$element );
 	 * ```
-	 * You can also choose to {@link #uploadToStash stash the upload} and
-	 * {@link #finishStashUpload finalize} it later:
+	 * You can also choose to {@link mw.Upload#uploadToStash stash the upload}
+	 * and {@link mw.Upload#finishStashUpload finalize} it later:
 	 * ```
 	 * var file, // Some file object
 	 *   upload = new mw.Upload,
@@ -45,6 +41,7 @@
 	 * @class mw.Upload
 	 *
 	 * @constructor
+	 * @description Used to represent an upload in progress on the frontend.
 	 * @param {Object|mw.Api} [apiconfig] A mw.Api object (or subclass), or configuration
 	 *     to pass to the constructor of mw.Api.
 	 */
@@ -61,7 +58,7 @@
 		this.imageinfo = undefined;
 	}
 
-	UP = Upload.prototype;
+	const UP = Upload.prototype;
 
 	/**
 	 * Get the mw.Api instance used by this Upload object.
@@ -104,21 +101,20 @@
 	 * @param {string} filekey
 	 */
 	UP.setFilekey = function ( filekey ) {
-		var upload = this;
+		const upload = this;
 
 		this.setState( Upload.State.STASHED );
-		this.stashPromise = $.Deferred().resolve( function ( data ) {
-			return upload.api.uploadFromStash( filekey, data );
-		} );
+		this.stashPromise = $.Deferred().resolve( ( data ) => upload.api.uploadFromStash( filekey, data ) );
 	};
 
 	/**
 	 * Sets the filename based on the filename as it was on the upload.
+	 *
 	 * @name mw.Upload.prototype.setFilenameFromFile
 	 * @method
 	 */
 	UP.setFilenameFromFile = function () {
-		var file = this.getFile();
+		const file = this.getFile();
 		if ( !file ) {
 			return;
 		}
@@ -301,7 +297,7 @@
 	 * @return {jQuery.Promise}
 	 */
 	UP.upload = function () {
-		var upload = this;
+		const upload = this;
 
 		if ( !this.getFile() ) {
 			return $.Deferred().reject( 'No file to upload. Call setFile to add one.' );
@@ -318,11 +314,11 @@
 			comment: this.getComment(),
 			filename: this.getFilename(),
 			text: this.getText()
-		} ).then( function ( result ) {
+		} ).then( ( result ) => {
 			upload.setState( Upload.State.UPLOADED );
 			upload.imageinfo = result.upload.imageinfo;
 			return result;
-		}, function ( errorCode, result ) {
+		}, ( errorCode, result ) => {
 			if ( result && result.upload && result.upload.warnings ) {
 				upload.setState( Upload.State.WARNING, result );
 			} else {
@@ -340,7 +336,7 @@
 	 * @return {jQuery.Promise}
 	 */
 	UP.uploadToStash = function () {
-		var upload = this;
+		const upload = this;
 
 		if ( !this.getFile() ) {
 			return $.Deferred().reject( 'No file to upload. Call setFile to add one.' );
@@ -355,10 +351,10 @@
 		this.stashPromise = this.api.chunkedUploadToStash( this.getFile(), {
 			ignorewarnings: true,
 			filename: this.getFilename()
-		} ).then( function ( finishStash ) {
+		} ).then( ( finishStash ) => {
 			upload.setState( Upload.State.STASHED );
 			return finishStash;
-		}, function ( errorCode, result ) {
+		}, ( errorCode, result ) => {
 			if ( result && result.upload && result.upload.warnings ) {
 				upload.setState( Upload.State.WARNING, result );
 			} else {
@@ -378,13 +374,13 @@
 	 * @return {jQuery.Promise}
 	 */
 	UP.finishStashUpload = function () {
-		var upload = this;
+		const upload = this;
 
 		if ( !this.stashPromise ) {
 			return $.Deferred().reject( 'This upload has not been stashed, please upload it to the stash first.' );
 		}
 
-		return this.stashPromise.then( function ( finishStash ) {
+		return this.stashPromise.then( ( finishStash ) => {
 			upload.setState( Upload.State.UPLOADING );
 
 			return finishStash( {
@@ -393,11 +389,11 @@
 				comment: upload.getComment(),
 				filename: upload.getFilename(),
 				text: upload.getText()
-			} ).then( function ( result ) {
+			} ).then( ( result ) => {
 				upload.setState( Upload.State.UPLOADED );
 				upload.imageinfo = result.upload.imageinfo;
 				return result;
-			}, function ( errorCode, result ) {
+			}, ( errorCode, result ) => {
 				if ( result && result.upload && result.upload.warnings ) {
 					upload.setState( Upload.State.WARNING, result );
 				} else {

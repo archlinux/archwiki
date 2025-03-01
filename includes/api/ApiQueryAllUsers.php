@@ -20,8 +20,12 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -41,28 +45,23 @@ class ApiQueryAllUsers extends ApiQueryBase {
 	private UserGroupManager $userGroupManager;
 	private GroupPermissionsLookup $groupPermissionsLookup;
 	private Language $contentLanguage;
+	private TempUserConfig $tempUserConfig;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param UserFactory $userFactory
-	 * @param UserGroupManager $userGroupManager
-	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 * @param Language $contentLanguage
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		UserFactory $userFactory,
 		UserGroupManager $userGroupManager,
 		GroupPermissionsLookup $groupPermissionsLookup,
-		Language $contentLanguage
+		Language $contentLanguage,
+		TempUserConfig $tempUserConfig
 	) {
 		parent::__construct( $query, $moduleName, 'au' );
 		$this->userFactory = $userFactory;
 		$this->userGroupManager = $userGroupManager;
 		$this->groupPermissionsLookup = $groupPermissionsLookup;
 		$this->contentLanguage = $contentLanguage;
+		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	/**
@@ -125,6 +124,22 @@ class ApiQueryAllUsers extends ApiQueryBase {
 			);
 		}
 
+		$excludeNamed = $params['excludenamed'];
+		$excludeTemp = $params['excludetemp'];
+
+		if ( $this->tempUserConfig->isKnown() ) {
+			if ( $excludeTemp ) {
+				$this->addWhere(
+					$this->tempUserConfig->getMatchCondition( $db, 'user_name', IExpression::NOT_LIKE )
+				);
+			}
+			if ( $excludeNamed ) {
+				$this->addWhere(
+					$this->tempUserConfig->getMatchCondition( $db, 'user_name', IExpression::LIKE )
+				);
+			}
+		}
+
 		if ( $params['rights'] !== null && count( $params['rights'] ) ) {
 			$groups = [];
 			// TODO: this does not properly account for $wgRevokePermissions
@@ -171,7 +186,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 					[
 						'ug1.ug_user=user_id',
 						'ug1.ug_group' => $params['group'],
-						'ug1.ug_expiry IS NULL OR ug1.ug_expiry >= ' . $db->addQuotes( $db->timestamp() )
+						$db->expr( 'ug1.ug_expiry', '=', null )->or( 'ug1.ug_expiry', '>=', $db->timestamp() ),
 					]
 				]
 			] );
@@ -186,7 +201,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 			$this->addJoinConds( [ 'ug1' => [ 'LEFT JOIN',
 				[
 					'ug1.ug_user=user_id',
-					'ug1.ug_expiry IS NULL OR ug1.ug_expiry >= ' . $db->addQuotes( $db->timestamp() ),
+					$db->expr( 'ug1.ug_expiry', '=', null )->or( 'ug1.ug_expiry', '>=', $db->timestamp() ),
 					'ug1.ug_group' => $params['excludegroup'],
 				]
 			] ] );
@@ -194,17 +209,21 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		}
 
 		if ( $params['witheditsonly'] ) {
-			$this->addWhere( 'user_editcount > 0' );
+			$this->addWhere( $db->expr( 'user_editcount', '>', 0 ) );
 		}
 
 		$this->addDeletedUserFilter();
 
 		if ( $fld_groups || $fld_rights ) {
 			$this->addFields( [ 'groups' =>
-				$db->buildGroupConcatField( '|', 'user_groups', 'ug_group', [
-					'ug_user=user_id',
-					$db->expr( 'ug_expiry', '=', null )->or( 'ug_expiry', '>=', $db->timestamp() )
-				] )
+				$db->newSelectQueryBuilder()
+					->table( 'user_groups' )
+					->field( 'ug_group' )
+					->where( [
+						'ug_user=user_id',
+						$db->expr( 'ug_expiry', '=', null )->or( 'ug_expiry', '>=', $db->timestamp() )
+					] )
+					->buildGroupConcatField( '|' )
 			] );
 		}
 
@@ -232,7 +251,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 					'actor_user = user_id',
 					$db->expr( 'rc_type', '!=', RC_EXTERNAL ), // no wikidata
 					$db->expr( 'rc_log_type', '=', null )
-					   ->or( 'rc_log_type', '!=', 'newusers' ),
+						->or( 'rc_log_type', '!=', 'newusers' ),
 					$db->expr( 'rc_timestamp', '>=', $timestamp ),
 				] );
 			$this->addFields( [
@@ -425,6 +444,12 @@ class ApiQueryAllUsers extends ApiQueryBase {
 				],
 			],
 			'attachedwiki' => null,
+			'excludenamed' => [
+				ParamValidator::PARAM_TYPE => 'boolean',
+			],
+			'excludetemp' => [
+				ParamValidator::PARAM_TYPE => 'boolean',
+			],
 		];
 	}
 
@@ -439,3 +464,6 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Allusers';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryAllUsers::class, 'ApiQueryAllUsers' );

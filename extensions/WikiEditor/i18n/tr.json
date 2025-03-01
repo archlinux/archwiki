@@ -20,8 +20,7 @@
 			"SaldırganSincap",
 			"Srhat",
 			"Sucsuzz",
-			"Vito Genovese",
-			"Leo"
+			"Vito Genovese"
 		]
 	},
 	"wikieditor": "Gelişmiş vikimetin düzenleme arayüzü",
@@ -177,7 +176,7 @@
 	"wikieditor-toolbar-help-content-indent1": "Normal metin",
 	"wikieditor-toolbar-help-content-indent2": "Girintili metin",
 	"wikieditor-toolbar-help-content-indent3": "Girintili metin",
-	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010 vikimetin düzenleyici) kullanılarak yapılan düzenleme",
+	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] kullanılarak yapılan düzenleme (2010 vikimetin düzenleyici)",
 	"wikieditor-realtimepreview-preview": "Önizleme",
 	"wikieditor-realtimepreview-error": "Önizleme yüklenemiyor",
 	"wikieditor-realtimepreview-reload": "Yeniden yükle",

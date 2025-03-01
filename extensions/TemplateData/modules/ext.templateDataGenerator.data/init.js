@@ -1,4 +1,4 @@
-var Model = require( './Model.js' ),
+const Model = require( './Model.js' ),
 	SourceHandler = require( './SourceHandler.js' );
 
 module.exports = {

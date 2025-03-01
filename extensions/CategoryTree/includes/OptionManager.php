@@ -24,25 +24,18 @@
 
 namespace MediaWiki\Extension\CategoryTree;
 
-use FormatJson;
 use InvalidArgumentException;
 use MediaWiki\Config\Config;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MediaWikiServices;
 
 /**
  * Core functions to handle the options
  */
 class OptionManager {
-	/** @var array */
-	private $mOptions = [];
+	private array $mOptions = [];
+	private Config $config;
 
-	/** @var Config */
-	private $config;
-
-	/**
-	 * @param array $options
-	 * @param Config $config
-	 */
 	public function __construct( array $options, Config $config ) {
 		$this->config = $config;
 
@@ -76,10 +69,7 @@ class OptionManager {
 		}
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getOptions() {
+	public function getOptions(): array {
 		return $this->mOptions;
 	}
 
@@ -87,14 +77,11 @@ class OptionManager {
 	 * @param string $name
 	 * @return mixed
 	 */
-	public function getOption( $name ) {
+	public function getOption( string $name ) {
 		return $this->mOptions[$name];
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function isInverse() {
+	public function isInverse(): bool {
 		return $this->getOption( 'mode' ) === CategoryTreeMode::PARENTS;
 	}
 
@@ -182,11 +169,11 @@ class OptionManager {
 	 * Helper function to convert a string to a boolean value.
 	 * Perhaps make this a global function in MediaWiki proper
 	 * @param mixed $value
-	 * @return bool|null|string
+	 * @return bool
 	 */
-	public static function decodeBoolean( $value ) {
+	public static function decodeBoolean( $value ): bool {
 		if ( $value === null ) {
-			return null;
+			return false;
 		}
 		if ( is_bool( $value ) ) {
 			return $value;
@@ -204,12 +191,6 @@ class OptionManager {
 			|| $value === 'true' || $value === 't' || $value === 'on'
 		) {
 			return true;
-		} elseif ( $value === 'no' || $value === 'n'
-			|| $value === 'false' || $value === 'f' || $value === 'off'
-		) {
-			return false;
-		} elseif ( $value === 'null' || $value === 'default' || $value === 'none' || $value === 'x' ) {
-			return null;
 		} else {
 			return false;
 		}
@@ -263,7 +244,7 @@ class OptionManager {
 	 * @param string $enc
 	 * @return mixed
 	 */
-	private static function encodeOptions( array $options, $enc ) {
+	private static function encodeOptions( array $options, string $enc ) {
 		if ( $enc === 'mode' || $enc === '' ) {
 			$opt = $options['mode'];
 		} elseif ( $enc === 'json' ) {
@@ -279,7 +260,7 @@ class OptionManager {
 	 * @param int|null $depth
 	 * @return string
 	 */
-	public function getOptionsAsCacheKey( $depth = null ) {
+	public function getOptionsAsCacheKey( ?int $depth = null ): string {
 		$key = '';
 
 		foreach ( $this->mOptions as $k => $v ) {
@@ -299,7 +280,7 @@ class OptionManager {
 	 * @param int|null $depth
 	 * @return mixed
 	 */
-	public function getOptionsAsJsStructure( $depth = null ) {
+	public function getOptionsAsJsStructure( ?int $depth = null ) {
 		$opt = $this->mOptions;
 		if ( $depth !== null ) {
 			$opt['depth'] = $depth;
@@ -311,15 +292,10 @@ class OptionManager {
 	/**
 	 * Internal function to cap depth
 	 * @param int $depth
-	 * @return int|mixed
+	 * @return int
 	 */
-	public function capDepth( $depth ) {
-		if ( !is_numeric( $depth ) ) {
-			return 1;
-		}
-
+	public function capDepth( int $depth ): int {
 		$mode = $this->getOption( 'mode' );
-		$depth = intval( $depth );
 		$maxDepth = $this->config->get( 'CategoryTreeMaxDepth' );
 
 		if ( is_array( $maxDepth ) ) {

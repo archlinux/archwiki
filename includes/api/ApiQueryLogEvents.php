@@ -20,10 +20,17 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use DatabaseLogEntry;
+use LogEventsList;
+use LogFormatterFactory;
+use LogPage;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Storage\NameTableAccessException;
@@ -46,37 +53,38 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	private CommentFormatter $commentFormatter;
 	private NameTableStore $changeTagDefStore;
 	private UserNameUtils $userNameUtils;
+	private LogFormatterFactory $logFormatterFactory;
 
 	/** @var string[]|null */
 	private $formattedComments;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param CommentStore $commentStore
-	 * @param RowCommentFormatter $commentFormatter
-	 * @param NameTableStore $changeTagDefStore
-	 * @param UserNameUtils $userNameUtils
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		CommentStore $commentStore,
 		RowCommentFormatter $commentFormatter,
 		NameTableStore $changeTagDefStore,
-		UserNameUtils $userNameUtils
+		UserNameUtils $userNameUtils,
+		LogFormatterFactory $logFormatterFactory
 	) {
 		parent::__construct( $query, $moduleName, 'le' );
 		$this->commentStore = $commentStore;
 		$this->commentFormatter = $commentFormatter;
 		$this->changeTagDefStore = $changeTagDefStore;
 		$this->userNameUtils = $userNameUtils;
+		$this->logFormatterFactory = $logFormatterFactory;
 	}
 
-	private $fld_ids = false, $fld_title = false, $fld_type = false,
-		$fld_user = false, $fld_userid = false,
-		$fld_timestamp = false, $fld_comment = false, $fld_parsedcomment = false,
-		$fld_details = false, $fld_tags = false;
+	private bool $fld_ids = false;
+	private bool $fld_title = false;
+	private bool $fld_type = false;
+	private bool $fld_user = false;
+	private bool $fld_userid = false;
+	private bool $fld_timestamp = false;
+	private bool $fld_comment = false;
+	private bool $fld_parsedcomment = false;
+	private bool $fld_details = false;
+	private bool $fld_tags = false;
 
 	public function execute() {
 		$params = $this->extractRequestParams();
@@ -101,10 +109,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			$this->addWhere( $hideLogs );
 		}
 
-		$this->addTables( [ 'logging', 'actor' ] );
-		$this->addJoinConds( [
-			'actor' => [ 'JOIN', 'actor_id=log_actor' ],
-		] );
+		$this->addTables( 'logging' );
 
 		$this->addFields( [
 			'log_id',
@@ -113,6 +118,19 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			'log_timestamp',
 			'log_deleted',
 		] );
+
+		$user = $params['user'];
+		if ( $this->fld_user || $this->fld_userid || $user !== null ) {
+			$this->addTables( 'actor' );
+			$this->addJoinConds( [
+				'actor' => [ 'JOIN', 'actor_id=log_actor' ],
+			] );
+			$this->addFieldsIf( [ 'actor_name', 'actor_user' ], $this->fld_user );
+			$this->addFieldsIf( 'actor_user', $this->fld_userid );
+			if ( $user !== null ) {
+				$this->addWhereFld( 'actor_name', $user );
+			}
+		}
 
 		if ( $this->fld_ids ) {
 			$this->addTables( 'page' );
@@ -126,8 +144,6 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			// scenarios, e.g. deletion, recreation.
 			$this->addFields( [ 'page_id', 'log_page' ] );
 		}
-		$this->addFieldsIf( [ 'actor_name', 'actor_user' ], $this->fld_user );
-		$this->addFieldsIf( 'actor_user', $this->fld_userid );
 		$this->addFieldsIf(
 			[ 'log_namespace', 'log_title' ],
 			$this->fld_title || $this->fld_parsedcomment
@@ -142,7 +158,10 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		}
 
 		if ( $this->fld_tags ) {
-			$this->addFields( [ 'ts_tags' => ChangeTags::makeTagSummarySubquery( 'logging' ) ] );
+			$this->addFields( [
+				'ts_tags' => MediaWikiServices::getInstance()->getChangeTagsStore()
+					->makeTagSummarySubquery( 'logging' )
+			] );
 		}
 
 		if ( $params['tag'] !== null ) {
@@ -206,11 +225,6 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 		$limit = $params['limit'];
 		$this->addOption( 'LIMIT', $limit + 1 );
-
-		$user = $params['user'];
-		if ( $user !== null ) {
-			$this->addWhereFld( 'actor_name', $user );
-		}
 
 		$title = $params['title'];
 		if ( $title !== null ) {
@@ -348,7 +362,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 					}
 				}
 				if ( $this->fld_details ) {
-					$vals['params'] = LogFormatter::newFromEntry( $logEntry )->formatParametersForApi();
+					$vals['params'] = $this->logFormatterFactory->newFromEntry( $logEntry )->formatParametersForApi();
 				}
 			}
 		}
@@ -537,3 +551,6 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Logevents';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryLogEvents::class, 'ApiQueryLogEvents' );

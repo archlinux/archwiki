@@ -20,6 +20,9 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use ChangeTags;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Specials\SpecialPageLanguage;
@@ -39,15 +42,9 @@ class ApiSetPageLanguage extends ApiBase {
 	private IConnectionProvider $dbProvider;
 	private LanguageNameUtils $languageNameUtils;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param IConnectionProvider $dbProvider
-	 * @param LanguageNameUtils $languageNameUtils
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		IConnectionProvider $dbProvider,
 		LanguageNameUtils $languageNameUtils
 	) {
@@ -177,3 +174,6 @@ class ApiSetPageLanguage extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:SetPageLanguage';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiSetPageLanguage::class, 'ApiSetPageLanguage' );

@@ -35,7 +35,7 @@ class ContainerDisabledException extends RuntimeException
 	/**
 	 * @param Exception|null $previous
 	 */
-	public function __construct( Exception $previous = null ) {
+	public function __construct( ?Exception $previous = null ) {
 		parent::__construct( 'Container disabled!', 0, $previous );
 	}
 

@@ -20,11 +20,12 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * This is a three-in-one module to query:
@@ -46,11 +47,20 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	 */
 	private $linksMigration;
 
+	/** @var array */
 	private $params;
 	/** @var array */
 	private $cont;
+	/** @var bool */
 	private $redirect;
-	private $bl_ns, $bl_from, $bl_from_ns, $bl_table, $bl_code, $bl_title, $hasNS;
+
+	private string $bl_ns;
+	private string $bl_from;
+	private string $bl_from_ns;
+	private string $bl_table;
+	private string $bl_code;
+	private string $bl_title;
+	private bool $hasNS;
 
 	/** @var string */
 	private $helpUrl;
@@ -61,9 +71,12 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	 * @var array
 	 */
 	private $pageMap = [];
+	/** @var array */
 	private $resultArr;
 
+	/** @var array */
 	private $redirTitles = [];
+	/** @var string|null */
 	private $continueStr = null;
 
 	/** @var string[][] output element name, database column field prefix, database table */
@@ -88,12 +101,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		]
 	];
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param LinksMigration $linksMigration
-	 */
-	public function __construct( ApiQuery $query, $moduleName, LinksMigration $linksMigration ) {
+	public function __construct( ApiQuery $query, string $moduleName, LinksMigration $linksMigration ) {
 		$settings = $this->backlinksSettings[$moduleName];
 		$prefix = $settings['prefix'];
 		$code = $settings['code'];
@@ -273,7 +281,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 			$allRedirNs[$redirNs] = true;
 			$allRedirDBkey[$redirDBkey] = true;
 		}
-		$this->addWhere( new OrExpressionGroup( ...$titleWhere ) );
+		$this->addWhere( $db->orExpr( $titleWhere ) );
 		$this->addWhereFld( 'page_namespace', $this->params['namespace'] );
 
 		if ( count( $this->cont ) >= 6 ) {
@@ -628,3 +636,6 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		return $this->helpUrl;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryBacklinks::class, 'ApiQueryBacklinks' );

@@ -1,14 +1,12 @@
-var sequence,
-	controller = require( 'ext.discussionTools.init' ).controller;
+const controller = require( 'ext.discussionTools.init' ).controller;
+let sequence = null;
 
 function sortAuthors( a, b ) {
 	return a.username < b.username ? -1 : ( a.username === b.username ? 0 : 1 );
 }
 
 function hasUser( authors, username ) {
-	return authors.some( function ( author ) {
-		return author.username === username;
-	} );
+	return authors.some( ( author ) => author.username === username );
 }
 
 /**
@@ -23,8 +21,6 @@ function hasUser( authors, username ) {
  * @param {string} [source]
  */
 function MWUsernameCompletionAction() {
-	var action = this;
-
 	// Parent constructor
 	MWUsernameCompletionAction.super.apply( this, arguments );
 
@@ -33,15 +29,15 @@ function MWUsernameCompletionAction() {
 	this.searchedPrefixes = {};
 	this.localUsers = [];
 	this.ipUsers = [];
-	this.surface.authors.forEach( function ( author ) {
+	this.surface.authors.forEach( ( author ) => {
 		if ( mw.util.isIPAddress( author.username ) ) {
-			action.ipUsers.push( author );
+			this.ipUsers.push( author );
 		} else if ( author.username !== mw.user.getName() ) {
-			action.localUsers.push( author );
+			this.localUsers.push( author );
 		}
 	} );
 	// On user talk pages, always list the "owner" of the talk page
-	var relevantUserName = mw.config.get( 'wgRelevantUserName' );
+	const relevantUserName = mw.config.get( 'wgRelevantUserName' );
 	if (
 		relevantUserName &&
 		relevantUserName !== mw.user.getName() &&
@@ -71,8 +67,8 @@ MWUsernameCompletionAction.static.methods.push( 'insertAndOpen' );
 /* Methods */
 
 MWUsernameCompletionAction.prototype.insertAndOpen = function () {
-	var inserted = false,
-		surfaceModel = this.surface.getModel(),
+	let inserted = false;
+	const surfaceModel = this.surface.getModel(),
 		fragment = surfaceModel.getFragment();
 
 	// This is opening a window in a slightly weird way, so the normal logging
@@ -87,9 +83,8 @@ MWUsernameCompletionAction.prototype.insertAndOpen = function () {
 	// if we already have the sequence inserted at the
 	// current offset.
 	if ( fragment.getSelection().isCollapsed() ) {
-		inserted = this.surface.getView().findMatchingSequences().some( function ( item ) {
-			return item.sequence === sequence;
-		} );
+		inserted = this.surface.getView().findMatchingSequences()
+			.some( ( item ) => item.sequence === sequence );
 	}
 
 	if ( !inserted ) {
@@ -111,12 +106,12 @@ MWUsernameCompletionAction.prototype.getSequenceLength = function () {
 };
 
 MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
-	var title = mw.Title.makeTitle( mw.config.get( 'wgNamespaceIds' ).user, input ),
+	const title = mw.Title.makeTitle( mw.config.get( 'wgNamespaceIds' ).user, input ),
 		validatedInput = title ? input : '',
 		action = this;
 
 	this.api.abort(); // Abort all unfinished API requests
-	var apiPromise;
+	let apiPromise;
 	if ( input.length > 0 && !this.searchedPrefixes[ input ] ) {
 		apiPromise = this.api.get( {
 			action: 'query',
@@ -127,22 +122,20 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 			// Fetch twice as many results as we need so we can filter
 			// blocked users and still probably have some suggestions left
 			aulimit: this.constructor.static.defaultLimit * 2
-		} ).then( function ( response ) {
-			var suggestions = response.query.allusers.filter( function ( user ) {
+		} ).then( ( response ) => {
+			const suggestions = response.query.allusers.filter(
 				// API doesn't return IPs
-				return !hasUser( action.localUsers, user.name ) &&
+				( user ) => !hasUser( action.localUsers, user.name ) &&
 					!hasUser( action.remoteUsers, user.name ) &&
 					// Exclude users with indefinite sitewide blocks:
 					// The only place such users could reply is on their
 					// own user talk page, and in that case the user
 					// will be included in localUsers.
-					!( user.blockexpiry === 'infinite' && !user.blockpartial );
-			} ).map( function ( user ) {
-				return {
-					username: user.name,
-					displayNames: []
-				};
-			} );
+					!( user.blockexpiry === 'infinite' && !user.blockpartial )
+			).map( ( user ) => ( {
+				username: user.name,
+				displayNames: []
+			} ) );
 
 			action.remoteUsers.push.apply( action.remoteUsers, suggestions );
 			action.remoteUsers.sort( sortAuthors );
@@ -153,11 +146,11 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 		apiPromise = ve.createDeferred().resolve().promise();
 	}
 
-	return apiPromise.then( function () {
+	return apiPromise.then(
 		// By concatenating on-thread authors and remote-fetched authors, both
 		// sorted alphabetically, we'll get our suggestion popup sorted so all
 		// on-thread matches come first.
-		return action.filterSuggestionsForInput(
+		() => action.filterSuggestionsForInput(
 			action.localUsers
 				// Show no remote users if no input provided
 				.concat( input.length > 0 ? action.remoteUsers : [] ),
@@ -166,19 +159,18 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 			// * Let users know that mentioning an IP will not create a notification?
 			// .concat( this.ipUsers )
 			validatedInput
-		);
-	} );
+		)
+	);
 };
 
 /**
  * @inheritdoc
  */
 MWUsernameCompletionAction.prototype.compareSuggestionToInput = function ( suggestion, normalizedInput ) {
-	var normalizedSuggestion = suggestion.username.toLowerCase(),
+	const normalizedSuggestion = suggestion.username.toLowerCase(),
 		normalizedSearchIndex = normalizedSuggestion + ' ' +
-		suggestion.displayNames.map( function ( displayName ) {
-			return displayName.toLowerCase();
-		} ).join( ' ' );
+		suggestion.displayNames
+			.map( ( displayName ) => displayName.toLowerCase() ).join( ' ' );
 
 	return {
 		isMatch: normalizedSearchIndex.indexOf( normalizedInput ) !== -1,
@@ -190,7 +182,7 @@ MWUsernameCompletionAction.prototype.compareSuggestionToInput = function ( sugge
  * Create a suggestion from an input
  *
  * @param {string} input User input
- * @return {Mixed} Suggestion data, string by default
+ * @return {any} Suggestion data, string by default
  */
 MWUsernameCompletionAction.prototype.createSuggestion = function ( input ) {
 	return {
@@ -205,13 +197,13 @@ MWUsernameCompletionAction.prototype.getMenuItemForSuggestion = function ( sugge
 
 MWUsernameCompletionAction.prototype.getHeaderLabel = function ( input, suggestions ) {
 	if ( suggestions === undefined ) {
-		var $query = $( '<span>' ).text( input );
+		const $query = $( '<span>' ).text( input );
 		return mw.message( 'discussiontools-replywidget-mention-tool-header', $query ).parseDom();
 	}
 };
 
 MWUsernameCompletionAction.prototype.insertCompletion = function ( word, range ) {
-	var prefix = mw.msg( 'discussiontools-replywidget-mention-prefix' ),
+	const prefix = mw.msg( 'discussiontools-replywidget-mention-prefix' ),
 		suffix = mw.msg( 'discussiontools-replywidget-mention-suffix' ),
 		title = mw.Title.newFromText( word, mw.config.get( 'wgNamespaceIds' ).user );
 
@@ -221,7 +213,7 @@ MWUsernameCompletionAction.prototype.insertCompletion = function ( word, range )
 		return MWUsernameCompletionAction.super.prototype.insertCompletion.call( this, word, range );
 	}
 
-	var fragment = this.surface.getModel().getLinearFragment( range, true );
+	const fragment = this.surface.getModel().getLinearFragment( range, true );
 	fragment.removeContent().insertContent( [
 		{ type: 'mwPing', attributes: { user: word } },
 		{ type: '/mwPing' }
@@ -246,11 +238,11 @@ MWUsernameCompletionAction.prototype.shouldAbandon = function ( input ) {
 
 ve.ui.actionFactory.register( MWUsernameCompletionAction );
 
-var openCommand = new ve.ui.Command(
+const openCommand = new ve.ui.Command(
 	'openMWUsernameCompletions', MWUsernameCompletionAction.static.name, 'open',
 	{ supportedSelections: [ 'linear' ] }
 );
-var insertAndOpenCommand = new ve.ui.Command(
+const insertAndOpenCommand = new ve.ui.Command(
 	'insertAndOpenMWUsernameCompletions', MWUsernameCompletionAction.static.name, 'insertAndOpen',
 	{ supportedSelections: [ 'linear' ] }
 );

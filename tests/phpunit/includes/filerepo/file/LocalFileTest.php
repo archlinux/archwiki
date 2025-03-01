@@ -12,6 +12,9 @@ use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\FileBackend\FSFileBackend;
+use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -289,8 +292,8 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function providePermissionChecks() {
-		$capablePerformer = $this->mockAnonAuthorityWithPermissions( [ 'deletedhistory', 'deletedtext' ] );
-		$incapablePerformer = $this->mockAnonAuthorityWithoutPermissions( [ 'deletedhistory', 'deletedtext' ] );
+		$capablePerformer = $this->mockRegisteredAuthorityWithPermissions( [ 'deletedhistory', 'deletedtext' ] );
+		$incapablePerformer = $this->mockRegisteredAuthorityWithoutPermissions( [ 'deletedhistory', 'deletedtext' ] );
 		yield 'Deleted, RAW' => [
 			'performer' => $incapablePerformer,
 			'audience' => File::RAW,
@@ -333,9 +336,9 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 		UserIdentity $uploader,
 		int $deletedFlags
 	): OldLocalFile {
-		$this->db->insert(
-			'oldimage',
-			[
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'oldimage' )
+			->row( [
 				'oi_name' => 'Random-11m.png',
 				'oi_archive_name' => 'Random-11m.png',
 				'oi_size' => 10816824,
@@ -348,15 +351,16 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 				'oi_minor_mime' => 'png',
 				'oi_description_id' => $this->getServiceContainer()
 					->getCommentStore()
-					->createComment( $this->db, 'comment' )->id,
+					->createComment( $this->getDb(), 'comment' )->id,
 				'oi_actor' => $this->getServiceContainer()
 					->getActorStore()
-					->acquireActorId( $uploader, $this->db ),
-				'oi_timestamp' => $this->db->timestamp( '20201105235242' ),
+					->acquireActorId( $uploader, $this->getDb() ),
+				'oi_timestamp' => $this->getDb()->timestamp( '20201105235242' ),
 				'oi_sha1' => 'sy02psim0bgdh0jt4vdltuzoh7j80ru',
 				'oi_deleted' => $deletedFlags,
-			]
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 		$file = OldLocalFile::newFromTitle(
 			Title::makeTitle( NS_FILE, 'Random-11m.png' ),
 			$this->getServiceContainer()->getRepoGroup()->getLocalRepo(),
@@ -386,13 +390,13 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 				'fa_minor_mime' => 'png',
 				'fa_description_id' => $this->getServiceContainer()
 					->getCommentStore()
-					->createComment( $this->db, 'comment' )->id,
+					->createComment( $this->getDb(), 'comment' )->id,
 				'fa_actor' => $this->getServiceContainer()
 					->getActorStore()
-					->acquireActorId( $uploader, $this->db ),
+					->acquireActorId( $uploader, $this->getDb() ),
 				'fa_user' => $uploader->getId(),
 				'fa_user_text' => $uploader->getName(),
-				'fa_timestamp' => $this->db->timestamp( '20201105235242' ),
+				'fa_timestamp' => $this->getDb()->timestamp( '20201105235242' ),
 				'fa_sha1' => 'sy02psim0bgdh0jt4vdltuzoh7j80ru',
 				'fa_deleted' => $deletedFlags,
 			]
@@ -596,9 +600,9 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 			'sha1' => 'sy02psim0bgdh0jt4vdltuzoh7j80ru'
 		];
 
-		$dbw->insert(
-			'image',
-			[
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'image' )
+			->row( [
 				'img_name' => 'Random-11m.png',
 				'img_size' => 10816824,
 				'img_width' => 1000,
@@ -612,8 +616,9 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 				'img_actor' => $actorId,
 				'img_timestamp' => $dbw->timestamp( '20201105235242' ),
 				'img_sha1' => 'sy02psim0bgdh0jt4vdltuzoh7j80ru',
-			]
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 		$repo = $services->getRepoGroup()->getLocalRepo();
 		$file = $repo->findFile( $title );
 
@@ -867,7 +872,10 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 			$path,
 			'comment',
 			'page text',
-			0
+			0,
+			false,
+			false,
+			$this->getTestUser()->getUser()
 		);
 		$this->assertStatusGood( $status );
 
@@ -878,7 +886,10 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 			$path,
 			'comment',
 			'page text',
-			0
+			0,
+			false,
+			false,
+			$this->getTestUser()->getUser()
 		);
 		$this->assertStatusGood( $status );
 	}
@@ -915,9 +926,9 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 		$actorId = $norm->acquireActorId( $user, $dbw );
 		$comment = $services->getCommentStore()->createComment( $dbw, 'comment' );
 
-		$dbw->insert(
-			'image',
-			[
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'image' )
+			->row( [
 				'img_name' => 'Test.pdf',
 				'img_size' => 1,
 				'img_width' => 1,
@@ -931,8 +942,9 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 				'img_actor' => $actorId,
 				'img_timestamp' => $dbw->timestamp( '20201105235242' ),
 				'img_sha1' => 'hhhh',
-			]
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		$repo = new LocalRepo( [
 			'class' => LocalRepo::class,
@@ -989,9 +1001,9 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 		$actorId = $norm->acquireActorId( $user, $dbw );
 		$comment = $services->getCommentStore()->createComment( $dbw, 'comment' );
 
-		$dbw->insert(
-			'image',
-			[
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'image' )
+			->row( [
 				'img_name' => 'Png-native-test.png',
 				'img_size' => 1,
 				'img_width' => 1,
@@ -1005,8 +1017,9 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 				'img_actor' => $actorId,
 				'img_timestamp' => $dbw->timestamp( '20201105235242' ),
 				'img_sha1' => 'hhhh',
-			]
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		$title = Title::makeTitle( NS_FILE, 'Png-native-test.png' );
 		$file = new LocalFile( $title, $repo );

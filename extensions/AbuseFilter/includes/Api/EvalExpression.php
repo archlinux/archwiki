@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Api;
 
-use ApiBase;
-use ApiMain;
-use ApiResult;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiResult;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
@@ -56,7 +56,7 @@ class EvalExpression extends ApiBase {
 
 		$status = $this->evaluateExpression( $params['expression'] );
 		if ( !$status->isGood() ) {
-			$this->dieWithError( $status->getErrors()[0] );
+			$this->dieStatus( $status );
 		} else {
 			$res = $status->getValue();
 			$res = $params['prettyprint'] ? VariablesFormatter::formatVar( $res ) : $res;

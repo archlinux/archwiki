@@ -16,13 +16,13 @@
 			"Pxos",
 			"Pyscowicz",
 			"Rönttönen",
+			"Samoasambia",
 			"Silvonen",
 			"Str4nd",
 			"Stryn",
 			"Syreeni",
 			"VezonThunder",
-			"ZeiP",
-			"Samoasambia"
+			"ZeiP"
 		]
 	},
 	"wikieditor": "Edistynyt wikitekstin muokkauskäyttöliittymä",
@@ -70,7 +70,7 @@
 	"wikieditor-toolbar-file-format-none": "ei mitään",
 	"wikieditor-toolbar-tool-file-insert": "Lisää",
 	"wikieditor-toolbar-tool-file-cancel": "Peruuta",
-	"wikieditor-toolbar-tool-file-upload": "Tiedoston tallennus",
+	"wikieditor-toolbar-tool-file-upload": "Tiedostotallennus",
 	"wikieditor-toolbar-tool-signature": "Allekirjoitus ja aikaleima",
 	"wikieditor-toolbar-section-advanced": "Laajennettu",
 	"wikieditor-toolbar-tool-heading": "Otsikko",

@@ -22,16 +22,14 @@ const createPages = ( pages ) => {
 			password: browser.options.password,
 			apiUrl: `${ browser.options.baseUrl }/api.php`
 		} )
-			.then( () => {
-				return bot.batch(
-					pages.map( ( page ) => [ 'create' ].concat( page ).concat( [ summary ] ) )
-				).catch( ( err ) => {
-					if ( err.code === 'articleexists' ) {
-						return;
-					}
-					throw err;
-				} );
-			} )
+			.then( () => bot.batch(
+				pages.map( ( page ) => [ 'create' ].concat( page ).concat( [ summary ] ) )
+			).catch( ( err ) => {
+				if ( err.code === 'articleexists' ) {
+					return;
+				}
+				throw err;
+			} ) )
 			.catch( ( err ) => {
 				throw err;
 			} );
@@ -71,24 +69,20 @@ const iAmLoggedIntoTheMobileWebsite = async () => {
 };
 
 const pageExists = async ( title ) => {
-	await browser.call( async () =>
-		await createPage( title, 'Page created by Selenium browser test.' )
+	await browser.call( async () => await createPage( title, 'Page created by Selenium browser test.' )
 	);
 	// wait 2 seconds so the change can propogate.
 	await waitForPropagation( 2000 );
 };
 
 const pageExistsWithText = ( title, text ) => {
-	browser.call( () =>
-		createPage( title, text )
+	browser.call( () => createPage( title, text )
 	);
 	// wait 2 seconds so the change can propogate.
 	waitForPropagation( 2000 );
 };
 
-const iAmOnAPageThatDoesNotExist = () => {
-	return iAmOnPage( `NewPage ${ new Date() }` );
-};
+const iAmOnAPageThatDoesNotExist = () => iAmOnPage( `NewPage ${ new Date() }` );
 
 const iShouldSeeAToastNotification = async () => {
 	await ArticlePage.notification_element.waitForDisplayed();

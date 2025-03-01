@@ -56,7 +56,7 @@
 	"discussiontools-limitreport-errorreqid": "ID вимага гришку DiscussionTools",
 	"discussiontools-limitreport-timeusage": "Час хаснованя DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|секунда|секунди}}",
-	"discussiontools-newtopic-missing-title": "Наведзце наслов за {{GENDER:|вашу}} тему дискусиї. Кед кликнєце на \"{{int:discussiontools-replywidget-newtopic}}\", ваша тема будзе додата без наслова.",
+	"discussiontools-newtopic-missing-title": "Модлїме вас, наведзце наслов за {{GENDER:|вашу}} тему дискусиї.",
 	"discussiontools-newtopic-placeholder-title": "Тема",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Подписац ше",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Подписац ше же би ше доставало информациї кед на тим боку будзе розпочата нова тема.",

@@ -56,7 +56,6 @@
 	"templatedata-modal-button-delparam": "Fjarlægja upplýsingar um gildi",
 	"templatedata-modal-button-done": "Lokið",
 	"templatedata-modal-button-importParams": "Flytja inn gildi",
-	"templatedata-modal-button-restoreparam": "Endurvekja gildi",
 	"templatedata-modal-button-saveparam": "Vista",
 	"templatedata-modal-current-language": "Núverandi tungumál: $1",
 	"templatedata-modal-errormsg": "Villur fundust. Vinsamlegast athugaðu hvort það séu tóm eða afrituð gildi og að nafn gildisins innihaldi ekki „$1”, „$2” eða „$3”.",

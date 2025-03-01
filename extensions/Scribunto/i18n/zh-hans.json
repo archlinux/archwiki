@@ -7,12 +7,12 @@
 			"GuoPC",
 			"Lakejason0",
 			"Liangent",
+			"LittlePaw365",
 			"Liuxinyu970226",
 			"SolidBlock",
 			"Winston Sung",
 			"Xiaomingyan",
 			"Yfdyh000",
-			"LittlePaw365",
 			"沈澄心"
 		]
 	},
@@ -75,5 +75,7 @@
 	"scribunto-limitreport-profile-percent": "$1%",
 	"scribunto-limitreport-logs": "Lua日志",
 	"nstab-module": "模块",
-	"tooltip-ca-nstab-module": "查看模块页面"
+	"tooltip-ca-nstab-module": "查看模块页面",
+	"namespaceinfo-description-ns828": "可从wiki页面调用的Lua代码模块及其文档的命名空间",
+	"namespaceinfo-description-ns829": "模块及其文档的讨论页面"
 }

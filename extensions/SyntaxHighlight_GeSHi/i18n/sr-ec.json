@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"BadDog",
+			"Milicevic01",
 			"Millosh",
 			"Obsuser",
 			"Prevodim",
 			"Rancher",
 			"Sasa Stefanovic",
-			"Сербијана",
-			"Milicevic01"
+			"Сербијана"
 		]
 	},
 	"syntaxhighlight-desc": "Омогућава истицање синтаксе <code>&lt;syntaxhighlight&gt;</code> коришћењем алатке [http://pygments.org/ Pygments — Пајтон истицач синтаксе]",
@@ -22,5 +22,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Рачунарски код",
 	"syntaxhighlight-error-pygments-invocation-failure": "Нисам успео да позовем Pygments",
 	"syntaxhighlight-error-unknown-language": "Непознат језик „$1“",
-	"syntaxhighlight-error-exceeds-size-limit": "Тренутна величина кода  ($1 {{PLURAL:$1|бајт|бајта|бајтова}}) прекорачава горњу границу од $2 {{PLURAL:$1|бајт|бајта|бајтова}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Тренутна величина кода  ($1 {{PLURAL:$1|бајт|бајта|бајтова}}) прекорачава горњу границу од $2 {{PLURAL:$1|бајт|бајта|бајтова}}",
+	"syntaxhighlight-button-copy": "Копирај",
+	"syntaxhighlight-button-copied": "Копирано!"
 }

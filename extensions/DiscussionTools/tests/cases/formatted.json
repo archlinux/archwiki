@@ -226,5 +226,17 @@
 		},
 		"config": "../data/enwiki-config.json",
 		"data": "../data/enwiki-data.json"
+	},
+	{
+		"name": "Heading with Parsoid template attributes",
+		"title": "Talk:Templated_heading",
+		"dom": "cases/heading-templated-parsoid/heading-templated-parsoid.html",
+		"expected": {
+			"legacy": "cases/heading-templated-parsoid/heading-templated-parsoid-formatted-legacy.html",
+			"desktop": "cases/heading-templated-parsoid/heading-templated-parsoid-formatted-desktop.html",
+			"mobile": "cases/heading-templated-parsoid/heading-templated-parsoid-formatted-mobile.html"
+		},
+		"config": "../data/enwiki-config.json",
+		"data": "../data/enwiki-data.json"
 	}
 ]

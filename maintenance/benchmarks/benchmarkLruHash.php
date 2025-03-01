@@ -19,7 +19,12 @@
  * @ingroup Benchmark
  */
 
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\HashBagOStuff;
+
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../includes/Benchmarker.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that benchmarks HashBagOStuff and MapCacheLRU.
@@ -27,6 +32,7 @@ require_once __DIR__ . '/../includes/Benchmarker.php';
  * @ingroup Benchmark
  */
 class BenchmarkLruHash extends Benchmarker {
+	/** @inheritDoc */
 	protected $defaultCount = 1000;
 
 	public function __construct() {
@@ -125,5 +131,7 @@ class BenchmarkLruHash extends Benchmarker {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = BenchmarkLruHash::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

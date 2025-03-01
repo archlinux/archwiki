@@ -1,5 +1,4 @@
 const languageButton = require( './languageButton.js' ),
-	limitedWidthToggle = require( './limitedWidthToggle.js' ),
 	pinnableElement = require( './pinnableElement.js' ),
 	searchToggle = require( './searchToggle.js' ),
 	echo = require( './echo.js' ),
@@ -8,10 +7,12 @@ const languageButton = require( './languageButton.js' ),
 	initSearchLoader = require( './searchLoader.js' ).initSearchLoader,
 	portletsManager = require( './portlets.js' ),
 	dropdownMenus = require( './dropdownMenus.js' ).dropdownMenus,
+	tables = require( './tables.js' ).init,
 	watchstar = require( './watchstar.js' ).init,
 	setupIntersectionObservers = require( './setupIntersectionObservers.js' ),
 	menuTabs = require( './menuTabs.js' ),
-	legacyMessageBoxStyles = require( './legacyMessageBoxStyles.js' ),
+	userPreferences = require( './userPreferences.js' ),
+	{ isNightModeGadgetEnabled, disableNightModeForGadget, alterExclusionMessage, removeBetaNotice } = require( './disableNightModeIfGadget.js' ),
 	teleportTarget = /** @type {HTMLElement} */require( /** @type {string} */ ( 'mediawiki.page.ready' ) ).teleportTarget;
 
 /**
@@ -57,7 +58,6 @@ function main( window ) {
 	echo();
 	portletsManager.main();
 	watchstar();
-	limitedWidthToggle();
 	// Initialize the search toggle for the main header only. The sticky header
 	// toggle is initialized after Codex search loads.
 	const searchToggleElement = document.querySelector( '.mw-header .search-toggle' );
@@ -71,9 +71,9 @@ function main( window ) {
 	teleportTarget.classList.add( 'vector-body' );
 
 	// Load client preferences
-	const clientPreferenceSelector = '#vector-client-prefs';
-	const clientPreferenceExists = document.querySelectorAll( clientPreferenceSelector ).length > 0;
-	if ( clientPreferenceExists ) {
+	const appearanceMenuSelector = '#vector-appearance';
+	const appearanceMenuExists = document.querySelectorAll( appearanceMenuSelector ).length > 0;
+	if ( appearanceMenuExists ) {
 		mw.loader.using( [
 			'skins.vector.clientPreferences',
 			'skins.vector.search.codex.styles',
@@ -86,7 +86,21 @@ function main( window ) {
 				// @ts-ignore issues relating to delete operator are not relevant here.
 				delete clientPreferenceConfig[ 'skin-theme' ];
 			}
-			clientPreferences.render( clientPreferenceSelector, clientPreferenceConfig );
+
+			// while we're in beta, temporarily check if the night mode gadget is installed and
+			// disable our night mode if so
+			if ( isNightModeGadgetEnabled() ) {
+				disableNightModeForGadget();
+				clientPreferences.render(
+					appearanceMenuSelector, clientPreferenceConfig, userPreferences
+				);
+				alterExclusionMessage();
+				removeBetaNotice();
+			} else {
+				clientPreferences.render(
+					appearanceMenuSelector, clientPreferenceConfig, userPreferences
+				);
+			}
 		} );
 	}
 
@@ -94,6 +108,7 @@ function main( window ) {
 	// menuTabs should follow `dropdownMenus` as that can move menu items from a
 	// tab menu to a dropdown.
 	menuTabs();
+	tables();
 }
 
 /**
@@ -102,7 +117,6 @@ function main( window ) {
  */
 function init( window ) {
 	const now = mw.now();
-	legacyMessageBoxStyles();
 	// This is the earliest time we can run JS for users (and bucket anonymous
 	// users for A/B tests).
 	// Where the browser supports it, for a 10% sample of users
@@ -112,7 +126,7 @@ function init( window ) {
 	// When EventLogging is not available this will reject.
 	// This code can be removed by the end of the Desktop improvements project.
 	// https://www.mediawiki.org/wiki/Desktop_improvements
-	mw.loader.using( 'ext.eventLogging' ).then( function () {
+	mw.loader.using( 'ext.eventLogging' ).then( () => {
 		if (
 			mw.eventLog &&
 			mw.eventLog.eventInSample( 100 /* 1 in 100 */ ) &&
@@ -133,7 +147,7 @@ if ( document.readyState === 'interactive' || document.readyState === 'complete'
 	main( window );
 } else {
 	// This is needed when document.readyState === 'loading'.
-	document.addEventListener( 'DOMContentLoaded', function () {
+	document.addEventListener( 'DOMContentLoaded', () => {
 		main( window );
 	} );
 }
@@ -141,6 +155,7 @@ if ( document.readyState === 'interactive' || document.readyState === 'complete'
 // Provider of skins.vector.js module:
 /**
  * skins.vector.js
+ *
  * @stable for use inside WikimediaEvents ONLY.
  */
 module.exports = { pinnableElement };

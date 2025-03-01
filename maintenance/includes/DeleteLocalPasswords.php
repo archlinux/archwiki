@@ -21,11 +21,18 @@
  * @ingroup Maintenance
  */
 
+namespace MediaWiki\Maintenance;
+
+use MediaWiki\Password\InvalidPassword;
+use MediaWiki\Password\PasswordFactory;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\RawSQLValue;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Delete unused local passwords.
@@ -126,19 +133,26 @@ ERROR
 		} elseif ( $this->getOption( 'prefix' ) ) {
 			$dbw->newUpdateQueryBuilder()
 				->update( 'user' )
-				->set( [ 'user_password = ' . $dbw->buildConcat( [ $dbw->addQuotes( ':null:' ),
-						'user_password' ] ) ] )
+				->set( [
+					'user_password' => new RawSQLValue(
+						$dbw->buildConcat( [ $dbw->addQuotes( ':null:' ), 'user_password' ] )
+					)
+				] )
 				->where( [
-					'NOT (user_password ' . $dbw->buildLike( ':null:', $dbw->anyString() ) . ')',
+					$dbw->expr( 'user_password', IExpression::NOT_LIKE, new LikeValue( ':null:', $dbw->anyString() ) ),
 					$dbw->expr( 'user_password', '!=', PasswordFactory::newInvalidPassword()->toString() ),
-					'user_password IS NOT NULL',
+					$dbw->expr( 'user_password', '!=', null ),
 					'user_name' => $userBatch,
 				] )
 				->caller( __METHOD__ )->execute();
 		} elseif ( $this->getOption( 'unprefix' ) ) {
 			$dbw->newUpdateQueryBuilder()
 				->update( 'user' )
-				->set( [ 'user_password = ' . $dbw->buildSubString( 'user_password', strlen( ':null:' ) + 1 ) ] )
+				->set( [
+					'user_password' => new RawSQLValue(
+						$dbw->buildSubString( 'user_password', strlen( ':null:' ) + 1 )
+					)
+				] )
 				->where( [
 					$dbw->expr( 'user_password', IExpression::LIKE, new LikeValue( ':null:', $dbw->anyString() ) ),
 					'user_name' => $userBatch,
@@ -156,7 +170,7 @@ ERROR
 	 * Subclasses should reimplement this and locate users who use the specific authentication
 	 * method. The default implementation just iterates through all users. Extensions that work
 	 * with wikifarm should also update self::getUserDB() as necessary.
-	 * @return Generator
+	 * @return \Generator
 	 */
 	protected function getUserBatches() {
 		if ( $this->user !== null ) {
@@ -183,3 +197,6 @@ ERROR
 		} while ( count( $users ) === $this->getBatchSize() );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( DeleteLocalPasswords::class, 'DeleteLocalPasswords' );

@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Aursani",
+			"Charoo",
 			"Kaleem Bhatti",
 			"Mehtab ahmed",
-			"Tweety",
-			"Charoo"
+			"Tweety"
 		]
 	},
 	"echo-desc": "واپرائيندڙن کي واقعن ۽ پيغامن جو اطلاع ڏيڻ لاءِ سرشتو",
@@ -33,8 +33,8 @@
 	"echo-pref-email-format-html": "ايڇ.ٽي.ايم.ايل",
 	"echo-pref-email-format-plain-text": "سادو متن",
 	"echo-pref-cross-wiki-notifications": "ٻين وڪين جا اطلاع ڏيکاريو",
-	"echo-pref-notifications-blacklist": "هنن واپرائيندڙ جا اطلاع نہ ڏيو. ([[mw:Special:MyLanguage/Help:Notifications#mute|وڌيڪ ڄاڻيو]])",
-	"echo-pref-notifications-page-linked-title-muted-list": "ھنن صفحن لاءِ \"صفحي ڳنڍڻي\" جا اطلاع  نہ ڏيکاريو. ([[mw:Special:MyLanguage/Help:Notifications#mute|وڌيڪ ڄاڻيو]])",
+	"echo-pref-notifications-blacklist": "هنن واپرائيندڙ جا اطلاع نہ ڏيو. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute|وڌيڪ ڄاڻيو])",
+	"echo-pref-notifications-page-linked-title-muted-list": "ھنن صفحن لاءِ \"صفحي ڳنڍڻي\" جا اطلاع  نہ ڏيکاريو. ([https://www.mediawiki.org/wiki/Special\n:MyLanguage/Help:Notifications#mute|وڌيڪ ڄاڻيو])",
 	"echo-learn-more": "وڌيڪ ڄاڻيو",
 	"echo-log": "عوامي لاگ",
 	"echo-new-messages": "توھان لاءِ بحث صفحي تي ھڪ نئون نياپو آھي",

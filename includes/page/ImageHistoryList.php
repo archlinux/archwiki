@@ -35,27 +35,13 @@ use MediaWiki\Title\Title;
 class ImageHistoryList extends ContextSource {
 	use ProtectedHookAccessorTrait;
 
-	/**
-	 * @var Title
-	 */
-	protected $title;
+	protected Title $title;
+	protected File $img;
+	protected ImagePage $imagePage;
+	protected File $current;
 
-	/**
-	 * @var File
-	 */
-	protected $img;
-
-	/**
-	 * @var ImagePage
-	 */
-	protected $imagePage;
-
-	/**
-	 * @var File
-	 */
-	protected $current;
-
-	protected $repo, $showThumb;
+	protected bool $showThumb;
+	/** @var bool */
 	protected $preventClickjacking = false;
 
 	/**
@@ -261,13 +247,13 @@ class ImageHistoryList extends ContextSource {
 		// Uploading user
 		$row .= Html::openElement( 'td' );
 		// Hide deleted usernames
-		if ( $uploader && $local ) {
+		if ( $uploader ) {
 			$row .= Linker::userLink( $uploader->getId(), $uploader->getName() );
-			$row .= Html::rawElement( 'span', [ 'style' => 'white-space: nowrap;' ],
-				Linker::userToolLinks( $uploader->getId(), $uploader->getName() )
-			);
-		} elseif ( $uploader ) {
-			$row .= htmlspecialchars( $uploader->getName() );
+			if ( $local ) {
+				$row .= Html::rawElement( 'span', [ 'style' => 'white-space: nowrap;' ],
+					Linker::userToolLinks( $uploader->getId(), $uploader->getName() )
+				);
+			}
 		} else {
 			$row .= Html::element( 'span', [ 'class' => 'history-deleted' ],
 				$this->msg( 'rev-deleted-user' )->text()

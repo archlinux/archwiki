@@ -1,6 +1,9 @@
 <?php
 
+use MediaWiki\Installer\DatabaseUpdater;
+use MediaWiki\Maintenance\FakeMaintenance;
 use Psr\Log\NullLogger;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DatabaseSqlite;
 use Wikimedia\Rdbms\TransactionProfiler;
@@ -24,8 +27,8 @@ class DatabaseSqliteUpgradeTest extends \MediaWikiIntegrationTestCase {
 			$this->markTestSkipped( 'No SQLite support detected' );
 		}
 		$this->db = $this->newMockDb();
-		if ( version_compare( $this->db->getServerVersion(), '3.6.0', '<' ) ) {
-			$this->markTestSkipped( "SQLite at least 3.6 required, {$this->db->getServerVersion()} found" );
+		if ( version_compare( $this->getDb()->getServerVersion(), '3.6.0', '<' ) ) {
+			$this->markTestSkipped( "SQLite at least 3.6 required, {$this->getDb()->getServerVersion()} found" );
 		}
 	}
 
@@ -156,13 +159,13 @@ class DatabaseSqliteUpgradeTest extends \MediaWikiIntegrationTestCase {
 
 	public static function provideSupportedVersions() {
 		return [
-			[ '1.35' ],
 			[ '1.36' ],
 			[ '1.37' ],
 			[ '1.38' ],
 			[ '1.39' ],
 			[ '1.40' ],
 			[ '1.41' ],
+			[ '1.42' ],
 		];
 	}
 

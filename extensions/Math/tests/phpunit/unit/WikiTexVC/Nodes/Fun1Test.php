@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC\Nodes;
 
 use ArgumentCountError;
-use MediaWiki\Extension\Math\WikiTexVC\Nodes\Curly;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\DQ;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\FQ;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun1;
@@ -108,28 +107,28 @@ class Fun1Test extends MediaWikiUnitTestCase {
 	}
 
 	public function testMathRmCurly() {
-		$f = new Fun1( '\\mathrm', new Curly( new TexArray(
+		$f = new Fun1( '\\mathrm', TexArray::newCurly(
 			new Literal( 'a' ),
 			new Literal( 'b' ),
-		) ) );
+		) );
 		$rendering = $f->renderMML();
 		preg_match_all( '/mathvariant="normal"/', $rendering, $matches );
 		$this->assertCount( 2, $matches[0] );
 	}
 
 	public function testMathRmDq() {
-		$f = new Fun1( '\\mathrm', new Curly( new TexArray(
+		$f = new Fun1( '\\mathrm', TexArray::newCurly(
 			new DQ( new Literal( 'a' ), new Literal( 'b' ) )
-		) ) );
+		) );
 		$rendering = $f->renderMML();
 		preg_match_all( '/mathvariant="normal"/', $rendering, $matches );
 		$this->assertCount( 2, $matches[0] );
 	}
 
 	public function testMathRmFq() {
-		$f = new Fun1( '\\mathrm', new Curly( new TexArray(
+		$f = new Fun1( '\\mathrm', TexArray::newCurly(
 			new FQ( new Literal( 'a' ), new Literal( 'b' ), new Literal( 'c' ) )
-		) ) );
+		) );
 		$rendering = $f->renderMML();
 		preg_match_all( '/mathvariant="normal"/', $rendering, $matches );
 		$this->assertCount( 2, $matches[0] );

@@ -36,8 +36,8 @@ class TurtleRdfWriter extends N3RdfWriterBase {
 	 */
 	public function __construct(
 		$role = parent::DOCUMENT_ROLE,
-		BNodeLabeler $labeler = null,
-		N3Quoter $quoter = null
+		?BNodeLabeler $labeler = null,
+		?N3Quoter $quoter = null
 	) {
 		parent::__construct( $role, $labeler, $quoter );
 		$this->transitionTable[self::STATE_OBJECT] = [

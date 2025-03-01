@@ -24,5 +24,5 @@
 	"abusefilter-log-search-entries-all": "Kaunyin entri",
 	"abusefilter-edit-flags": "Tanda:",
 	"abusefilter-edit-builder-group-op-arithmetic": "Oparator aritmatika",
-	"abusefilter-edit-builder-vars-wiki-language": "Kode bahasa wiki"
+	"abusefilter-edit-builder-vars-wiki-language": "Kode bahasa wiki ($1)"
 }

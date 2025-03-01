@@ -63,10 +63,8 @@ QUnit.module( 'jquery.makeCollapsible', () => {
 		const seq = [
 			{ init: $content.css( 'display' ) }
 		];
-		$collapsible.on( 'afterCollapse.mw-collapsible', () =>
-			seq.push( { afterCollapse: $content.css( 'display' ) } ) );
-		$collapsible.on( 'afterExpand.mw-collapsible', () =>
-			seq.push( { afterExpand: $content.css( 'display' ) } ) );
+		$collapsible.on( 'afterCollapse.mw-collapsible', () => seq.push( { afterCollapse: $content.css( 'display' ) } ) );
+		$collapsible.on( 'afterExpand.mw-collapsible', () => seq.push( { afterExpand: $content.css( 'display' ) } ) );
 
 		$toggle.trigger( 'click' ); // Collapse
 		$toggle.trigger( 'click' ); // Expand
@@ -94,10 +92,8 @@ QUnit.module( 'jquery.makeCollapsible', () => {
 		const seq = [
 			'init', { header: $header.css( 'display' ), content: $content.css( 'display' ) }
 		];
-		$collapsible.on( 'afterCollapse.mw-collapsible', () =>
-			seq.push( 'afterCollapse', { header: $header.css( 'display' ), content: $content.css( 'display' ) } ) );
-		$collapsible.on( 'afterExpand.mw-collapsible', () =>
-			seq.push( 'afterExpand', { header: $header.css( 'display' ), content: $content.css( 'display' ) } ) );
+		$collapsible.on( 'afterCollapse.mw-collapsible', () => seq.push( 'afterCollapse', { header: $header.css( 'display' ), content: $content.css( 'display' ) } ) );
+		$collapsible.on( 'afterExpand.mw-collapsible', () => seq.push( 'afterExpand', { header: $header.css( 'display' ), content: $content.css( 'display' ) } ) );
 
 		$toggle.trigger( 'click' ); // Collapse
 		$toggle.trigger( 'click' ); // Expand
@@ -174,10 +170,8 @@ QUnit.module( 'jquery.makeCollapsible', () => {
 		const seq = [
 			'init', { toggle: $toggleItem.css( 'display' ), content: $content.css( 'display' ) }
 		];
-		$collapsible.on( 'afterCollapse.mw-collapsible', () =>
-			seq.push( 'afterCollapse', { toggle: $toggleItem.css( 'display' ), content: $content.css( 'display' ) } ) );
-		$collapsible.on( 'afterExpand.mw-collapsible', () =>
-			seq.push( 'afterExpand', { toggle: $toggleItem.css( 'display' ), content: $content.css( 'display' ) } ) );
+		$collapsible.on( 'afterCollapse.mw-collapsible', () => seq.push( 'afterCollapse', { toggle: $toggleItem.css( 'display' ), content: $content.css( 'display' ) } ) );
+		$collapsible.on( 'afterExpand.mw-collapsible', () => seq.push( 'afterExpand', { toggle: $toggleItem.css( 'display' ), content: $content.css( 'display' ) } ) );
 
 		$toggle.trigger( 'click' );
 		$toggle.trigger( 'click' );
@@ -374,6 +368,30 @@ QUnit.module( 'jquery.makeCollapsible', () => {
 		$clone.find( '.mw-collapsible-toggle' ).trigger( 'click' );
 	} );
 
+	QUnit.test( 'collapsibles in cloned elements are controlled by toggle clones', ( assert ) => {
+		const $original = $( $.parseHTML( (
+			'<div>' +
+			'<div class="mw-collapsible mw-collapsed">' + loremIpsum + '</div>' +
+			'</div>'
+		) ) ).appendTo( '#qunit-fixture' );
+		const $originalCollapsible = $original.find( '.mw-collapsible' )
+			.makeCollapsible();
+		const $originalContent = $original.find( '.mw-collapsible-content' );
+
+		// clone with data and events
+		const $clone = $original.clone( true ).appendTo( '#qunit-fixture' );
+		const $cloneCollapsible = $clone.find( '.mw-collapsible' );
+		const $cloneContent = $clone.find( '.mw-collapsible-content' );
+		assert.strictEqual( $cloneContent.css( 'display' ), 'none', 'clone of content is hidden' );
+
+		$cloneCollapsible.add( $originalCollapsible ).on( 'afterExpand.mw-collapsible', () => {
+			assert.notStrictEqual( $cloneContent.css( 'display' ), 'none', 'after expanding clone: clone of content is visible' );
+			assert.strictEqual( $originalContent.css( 'display' ), 'none', 'after expanding clone: original content is hidden' );
+		} );
+
+		$clone.find( '.mw-collapsible-toggle' ).trigger( 'click' );
+	} );
+
 	QUnit.test( 'reveal hash fragment', ( assert ) => {
 		const $collapsible = prepareCollapsible(
 			'<div class="mw-collapsible mw-collapsed">' + loremIpsum + '<div id="español,a:nth-child(even)">' + loremIpsum + '</div></div>'
@@ -448,5 +466,40 @@ QUnit.module( 'jquery.makeCollapsible', () => {
 			assert.false( $toggleOuter.hasClass( 'mw-collapsible-toggle-collapsed' ) );
 		} );
 		$toggleInner.find( 'a' ).trigger( 'click' );
+	} );
+
+	QUnit.test( 'T364712 - toggle moved outside of collapsible should still work', ( assert ) => {
+		const $wrapper = $( $.parseHTML( (
+			'<div>' +
+				'<p>' + loremIpsum + '</p>' +
+				'<dl>' +
+					'<dt>' + loremIpsum + '</dt>' +
+					'<dd>' + loremIpsum + '</dd>' +
+				'</dl>' +
+			'</div>'
+		) ) ).appendTo( '#qunit-fixture' );
+
+		const $collapsible = $wrapper.find( 'dl' ).makeCollapsible( {
+			collapsed: true
+		} );
+		$collapsible.children( '.mw-collapsible-toggle' ).each( function () {
+			const $this = $( this );
+			$this.parent().prev( 'p' ).append( $this );
+		} );
+
+		const $p = $wrapper.find( 'p' );
+		const $toggle = $p.find( '.mw-collapsible-toggle' );
+		const $content = $collapsible.find( '.mw-collapsible-content' );
+
+		assert.strictEqual( $toggle.length, 1, 'toggle moved to p' );
+		assert.strictEqual( $content.length, 1, 'content exists' );
+
+		assert.true( $collapsible.hasClass( 'mw-collapsed' ) );
+		assert.strictEqual( $content.css( 'display' ), 'none', 'content is hidden' );
+
+		$toggle.trigger( 'click' );
+
+		assert.false( $collapsible.hasClass( 'mw-collapsed' ), 'after expanding: toggle works after move' );
+		assert.notStrictEqual( $content.css( 'display' ), 'none', 'after expanding: content is visible' );
 	} );
 } );

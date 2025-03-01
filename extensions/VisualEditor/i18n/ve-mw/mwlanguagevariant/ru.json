@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Helpau",
 			"Okras",
 			"Stjn"
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Это скрытое правило.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Это правило затрагивает заголовок страницы.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Код языка",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Недопустимое>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Недопустимый</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Язык",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Источник",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Цель",

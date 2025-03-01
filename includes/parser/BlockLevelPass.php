@@ -23,11 +23,22 @@
  * @ingroup Parser
  * @internal
  */
+
+namespace MediaWiki\Parser;
+
+use LogicException;
+use StringUtils;
+
 class BlockLevelPass {
+	/** @var bool */
 	private $DTopen = false;
+	/** @var bool */
 	private $inPre = false;
+	/** @var string */
 	private $lastParagraph = '';
+	/** @var bool */
 	private $lineStart;
+	/** @var string */
 	private $text;
 
 	# State constants for the definition list colon extraction
@@ -602,3 +613,6 @@ class BlockLevelPass {
 		return false;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( BlockLevelPass::class, 'BlockLevelPass' );

@@ -1,14 +1,16 @@
 <?php
 
+namespace MediaWiki\Linter\Maintenance;
+
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
+
 /**
  * Maintenance script that migrates the page table page_namespace field values
  * to the linter table linter_namespace field to improve linter search performance.
- * note: This should be run once the namespace write functionality in linter
- *   recordLintJob has been enabled by setting LinterWriteNamespaceColumnStage true.
- * note: This code is based on migrateRevisionActorTemp.php and migrateLinksTable.php
+ * Note: The schema migration "patch-linter-add-namespace.json" is expected to have been done.
+ * The extension now populates this new field by default. This script will migrate any data
+ * in existing records to this new field.
  */
-
-use MediaWiki\Linter\Database;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
@@ -41,19 +43,12 @@ class MigrateNamespace extends LoggedUpdateMaintenance {
 	 * @inheritDoc
 	 */
 	protected function doDBUpdates() {
-		$config = $this->getConfig();
-		$enableMigrateNamespaceStage = $config->get( 'LinterWriteNamespaceColumnStage' );
-		if ( !$enableMigrateNamespaceStage ) {
-			$this->output( "LinterWriteNamespaceColumnStage config value is false, code is disabled, exiting\n" );
-			return false;
-		}
-
 		$this->output( "Running linter migrate namespace function, this may take a while\n" );
 
 		$batchSize = $this->getBatchSize();
 		$sleep = (int)$this->getOption( 'sleep', 1 );
 
-		$dbw = self::getDB( DB_PRIMARY );
+		$dbw = $this->getDB( DB_PRIMARY );
 		if ( !$dbw->fieldExists( 'linter', 'linter_namespace', __METHOD__ ) ) {
 			$this->output( "Run update.php to add linter_namespace field to the linter table.\n" );
 			return false;
@@ -61,7 +56,8 @@ class MigrateNamespace extends LoggedUpdateMaintenance {
 
 		$this->output( "Migrating the page table page_namespace field to the linter table...\n" );
 
-		$updated = Database::migrateNamespace( $batchSize, $batchSize, $sleep, false );
+		$database = $this->getServiceContainer()->get( 'Linter.Database' );
+		$updated = $database->migrateNamespace( $batchSize, $batchSize, $sleep );
 
 		$this->output( "Completed migration of page_namespace data to the linter table, $updated rows updated.\n" );
 

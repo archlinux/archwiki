@@ -1,11 +1,11 @@
 <?php
 namespace MediaWiki\Extension\Thanks;
 
-use DBAccessObjectUtils;
-use IDBAccessObject;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\Rdbms\DBAccessObjectUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Query module

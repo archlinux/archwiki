@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"A2093064",
+			"Cookai1205",
 			"Cwlin0416",
 			"Kanashimi",
 			"Kly",
@@ -10,8 +11,7 @@
 			"Xiplus",
 			"捍粵者",
 			"沈澄心",
-			"蘭斯特",
-			"Cookai1205"
+			"蘭斯特"
 		]
 	},
 	"linterrors": "Lint錯誤",
@@ -21,8 +21,12 @@
 	"linter-category-large-tables-desc": "這些頁面的表格難以在行動裝置上檢視",
 	"linter-category-deletable-table-tag": "應被刪除的表格標籤",
 	"linter-category-deletable-table-tag-desc": "這些頁面擁有應被刪除的表格標籤。",
+	"linter-category-duplicate-ids": "重複ID",
+	"linter-category-duplicate-ids-desc": "這些頁面含有重複 id 屬性的元素。",
 	"linter-category-fostered": "表格不合法內容",
 	"linter-category-fostered-desc": "這些頁面的表格中含有不合法內容。",
+	"linter-category-fostered-transparent": "不合法透明內容渲染",
+	"linter-category-fostered-transparent-desc": "這些頁面有不合法的透明內容渲染。",
 	"linter-category-html5-misnesting": "在HTML5和HTML4中對錯誤嵌套的標籤有不同的渲染",
 	"linter-category-html5-misnesting-desc": "與HTML4相比，這些錯誤嵌套的標籤在HTML5中的行為將不同。",
 	"linter-category-night-mode-unaware-background-color": "存在行內樣式背景顏色規則，但沒有對應的文字顏色",
@@ -35,6 +39,8 @@
 	"linter-category-missing-end-tag-desc": "這些頁面有遺失的結束標籤。",
 	"linter-category-missing-end-tag-in-heading": "標題中缺少結束標籤",
 	"linter-category-missing-end-tag-in-heading-desc": "這些頁面的標題缺少結束標籤。",
+	"linter-category-missing-image-alt-text": "缺少圖片替代文字",
+	"linter-category-missing-image-alt-text-desc": "這些頁面的圖像沒有無障礙替代文字。",
 	"linter-category-multi-colon-escape": "多餘的冒號",
 	"linter-category-multi-colon-escape-desc": "這些頁面的連結在字首使用了多個冒號。",
 	"linter-category-multiline-html-table-in-list": "清單裡多行表格",
@@ -83,7 +89,9 @@
 	"linter-pager-category-header": "分類",
 	"linter-pager-deletable-table-tag-details": "應被刪除的表格標籤",
 	"linter-pager-details-header": "額外資訊",
+	"linter-pager-duplicate-ids-details": "重複ID",
 	"linter-pager-fostered-details": "表格不合法內容",
+	"linter-pager-fostered-transparent-details": "不合法透明內容渲染",
 	"linter-pager-html5-misnesting-details": "錯誤（現已中斷）",
 	"linter-pager-inline-media-caption-details": "圖片說明不可見",
 	"linter-pager-large-tables-details": "對行動視圖來說很大的表格",
@@ -91,6 +99,7 @@
 	"linter-pager-misnested-tag-details": "應當正確嵌套卻錯誤嵌套的標籤",
 	"linter-pager-missing-end-tag-details": "缺少結束標籤",
 	"linter-pager-missing-end-tag-in-heading-details": "標題中缺少結束標籤",
+	"linter-pager-missing-image-alt-text-details": "缺少圖片替代文字",
 	"linter-pager-multi-colon-escape-details": "多餘的冒號",
 	"linter-pager-multiline-html-table-in-list-details": "清單內的多行HTML5表格",
 	"linter-pager-multiple-unclosed-formatting-tags-details": "頁面上有多處未閉合的格式化標籤",

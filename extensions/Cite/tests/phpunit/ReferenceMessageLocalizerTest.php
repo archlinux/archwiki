@@ -3,7 +3,6 @@
 namespace Cite\Tests;
 
 use Cite\ReferenceMessageLocalizer;
-use LanguageQqx;
 
 /**
  * @covers \Cite\ReferenceMessageLocalizer
@@ -12,7 +11,8 @@ use LanguageQqx;
 class ReferenceMessageLocalizerTest extends \MediaWikiIntegrationTestCase {
 
 	public function testMsg() {
-		$localizer = new ReferenceMessageLocalizer( new LanguageQqx() );
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'qqx' );
+		$localizer = new ReferenceMessageLocalizer( $lang );
 		$this->assertSame(
 			'(cite-desc)',
 			$localizer->msg( 'cite-desc' )->plain() );

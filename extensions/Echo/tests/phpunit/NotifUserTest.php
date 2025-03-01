@@ -1,5 +1,8 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
+use Exception;
 use MediaWiki\Extension\Notifications\EmailFormat;
 use MediaWiki\Extension\Notifications\Gateway\UserNotificationGateway;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
@@ -7,11 +10,14 @@ use MediaWiki\Extension\Notifications\Mapper\TargetPageMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\Extension\Notifications\NotifUser;
+use MediaWiki\MainConfigNames;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TalkPageNotificationManager;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
+use MediaWikiIntegrationTestCase;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
@@ -58,9 +64,9 @@ class NotifUserTest extends MediaWikiIntegrationTestCase {
 		$this->setService( 'UserOptionsLookup', $userOptionsLookup );
 		$notifUser = NotifUser::newFromUser( $user );
 
-		$this->setMwGlobals( 'wgAllowHTMLEmail', true );
+		$this->overrideConfigValue( MainConfigNames::AllowHTMLEmail, true );
 		$this->assertEquals( $notifUser->getEmailFormat(), $pref );
-		$this->setMwGlobals( 'wgAllowHTMLEmail', false );
+		$this->overrideConfigValue( MainConfigNames::AllowHTMLEmail, false );
 		$this->assertEquals( EmailFormat::PLAIN_TEXT, $notifUser->getEmailFormat() );
 	}
 

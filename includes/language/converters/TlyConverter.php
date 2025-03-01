@@ -26,13 +26,12 @@
  */
 class TlyConverter extends LanguageConverter {
 	/**
-	 * @var string[]
 	 * The conversion table.
 	 * The Cyrillic sequence is based on Pireyko's 1976 Talysh—Russian dictionary,
 	 * with practical additions.
 	 * The toCyrillic table is built by flipping this one.
 	 */
-	private $toLatin = [
+	private const TO_LATIN = [
 		'а' => 'a', 'А' => 'A',
 		'б' => 'b', 'Б' => 'B',
 		'в' => 'v', 'В' => 'V',
@@ -67,12 +66,6 @@ class TlyConverter extends LanguageConverter {
 		'ш' => 'ş', 'Ш' => 'Ş',
 	];
 
-	/**
-	 * @var string[]
-	 * Filled with data in loadDefaultTables by flipping $toLatin.
-	 */
-	private $toCyrillic = [];
-
 	public function getMainCode(): string {
 		return 'tly';
 	}
@@ -88,11 +81,9 @@ class TlyConverter extends LanguageConverter {
 	}
 
 	protected function loadDefaultTables(): array {
-		$this->toCyrillic = array_flip( $this->toLatin );
-
 		return [
-			'tly-cyrl' => new ReplacementArray( $this->toCyrillic ),
-			'tly' => new ReplacementArray( $this->toLatin ),
+			'tly-cyrl' => new ReplacementArray( array_flip( self::TO_LATIN ) ),
+			'tly' => new ReplacementArray( self::TO_LATIN ),
 		];
 	}
 }

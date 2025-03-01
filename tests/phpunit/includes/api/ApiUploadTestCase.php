@@ -3,11 +3,11 @@
 namespace MediaWiki\Tests\Api;
 
 use Exception;
-use FSFile;
-use IDBAccessObject;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\File\FileDeleteForm;
 use MediaWiki\Title\Title;
+use Wikimedia\FileBackend\FSFile\FSFile;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Abstract class to support upload tests
@@ -152,7 +152,7 @@ abstract class ApiUploadTestCase extends ApiTestCase {
 			'type' => $type,
 			'tmp_name' => $tmpName,
 			'size' => $size,
-			'error' => null
+			'error' => UPLOAD_ERR_OK,
 		];
 	}
 

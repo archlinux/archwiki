@@ -153,17 +153,15 @@ class Sanitizer {
 	 * @internal
 	 */
 	public static function getRecognizedTagData( array $extratags = [], array $removetags = [] ): array {
-		static $commonCase, $staticInitialised;
+		static $commonCase, $staticInitialised = false;
 		$isCommonCase = ( $extratags === [] && $removetags === [] );
-		if ( $staticInitialised === false && $isCommonCase && $commonCase ) {
+		if ( $staticInitialised && $isCommonCase && $commonCase ) {
 			return $commonCase;
 		}
 
 		static $htmlpairsStatic, $htmlsingle, $htmlsingleonly, $htmlnest, $tabletags,
 			$htmllist, $listtags, $htmlsingleallowed, $htmlelementsStatic;
 
-		// Base our staticInitialised variable off of the global config state so that if the globals
-		// are changed (like in the screwed up test system) we will re-initialise the settings.
 		if ( !$staticInitialised ) {
 			$htmlpairsStatic = [ # Tags that must be closed
 				'b', 'bdi', 'del', 'i', 'ins', 'u', 'font', 'big', 'small', 'sub', 'sup', 'h1',
@@ -213,7 +211,7 @@ class Sanitizer {
 			foreach ( $vars as $var ) {
 				$$var = array_fill_keys( $$var, true );
 			}
-			$staticInitialised = false;
+			$staticInitialised = true;
 		}
 
 		# Populate $htmlpairs and $htmlelements with the $extratags and $removetags arrays
@@ -237,45 +235,6 @@ class Sanitizer {
 			$commonCase = $result;
 		}
 		return $result;
-	}
-
-	/**
-	 * Cleans up HTML, removes dangerous tags and attributes, and
-	 * removes HTML comments; BEWARE there may be unmatched HTML
-	 * tags in the result.
-	 *
-	 * @note Callers are recommended to use `::removeSomeTags()`
-	 * instead of this method.  `Sanitizer::removeSomeTags()` is safer
-	 * and will always return well-formed HTML; however, it is
-	 * significantly slower (especially for short strings where setup
-	 * costs predominate).  This method, although faster, should only
-	 * be used where we know the result be cleaned up in a subsequent
-	 * tidy pass.
-	 *
-	 * @param string $text Original string; see T268353 for why untainted.
-	 * @param-taint $text none
-	 * @param callable|null $processCallback Callback to do any variable or
-	 *   parameter replacements in HTML attribute values.
-	 *   This argument should be considered @internal.
-	 * @param-taint $processCallback exec_shell
-	 * @param array|bool $args Arguments for the processing callback
-	 * @param-taint $args none
-	 * @param array $extratags For any extra tags to include
-	 * @param-taint $extratags tainted
-	 * @param array $removetags For any tags (default or extra) to exclude
-	 * @param-taint $removetags none
-	 * @return string
-	 * @return-taint escaped
-	 * @deprecated since 1.38. Use ::removeSomeTags(), which always gives
-	 * balanced/tidy HTML.
-	 */
-	public static function removeHTMLtags( string $text, ?callable $processCallback = null,
-		$args = [], array $extratags = [], array $removetags = []
-	): string {
-		wfDeprecated( __METHOD__, '1.38' );
-		return self::internalRemoveHtmlTags(
-			$text, $processCallback, $args, $extratags, $removetags
-		);
 	}
 
 	/**
@@ -428,6 +387,7 @@ class Sanitizer {
 	 * trailing spaces and one of the newlines.
 	 */
 	public static function removeHTMLcomments( string $text ): string {
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $start = strpos( $text, '<!--' ) ) !== false ) {
 			$end = strpos( $text, '-->', $start + 4 );
 			if ( $end === false ) {
@@ -533,7 +493,8 @@ class Sanitizer {
 			wfDeprecated( __METHOD__ . ' with sequential array', '1.35' );
 			$allowed = array_fill_keys( $allowed, true );
 		}
-		$hrefExp = '/^(' . wfUrlProtocols() . ')[^\s]+$/';
+		$validProtocols = MediaWikiServices::getInstance()->getUrlUtils()->validProtocols();
+		$hrefExp = '/^(' . $validProtocols . ')[^\s]+$/';
 
 		$out = [];
 		foreach ( $attribs as $attribute => $value ) {
@@ -738,6 +699,8 @@ class Sanitizer {
 	 * clever input strings. These character references must
 	 * be escaped before the return value is embedded in HTML.
 	 *
+	 * @warning This method is intended to sanitize style attributes on
+	 *  html tags only. It is not safe to use on full CSS files.
 	 * @param string $value
 	 * @return string
 	 */
@@ -755,6 +718,7 @@ class Sanitizer {
 				| -o-link-source\s*:
 				| -o-replace\s*:
 				| url\s*\(
+				| src\s*\(
 				| image\s*\(
 				| image-set\s*\(
 				| attr\s*\([^)]+[\s,]+url
@@ -898,8 +862,9 @@ class Sanitizer {
 		] );
 
 		# Stupid hack
+		$validProtocols = MediaWikiServices::getInstance()->getUrlUtils()->validProtocols();
 		$encValue = preg_replace_callback(
-			'/((?i)' . wfUrlProtocols() . ')/',
+			'/((?i)' . $validProtocols . ')/',
 			static function ( $matches ) {
 				return str_replace( ':', '&#58;', $matches[1] );
 			},

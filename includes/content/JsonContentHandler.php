@@ -18,10 +18,13 @@
  * @file
  */
 
+namespace MediaWiki\Content;
+
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
-use MediaWiki\Content\ValidationParams;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutput;
+use StatusValue;
 
 /**
  * Content handler for JSON text.
@@ -120,7 +123,25 @@ class JsonContentHandler extends CodeContentHandler {
 		// As such, native data may be invalid (though output is discarded later in that case).
 		if ( $cpoParams->getGenerateHtml() ) {
 			if ( $content->isValid() ) {
-				$parserOutput->setRawText( $content->rootValueTable( $content->getData()->getValue() ) );
+				$parserOptions = $cpoParams->getParserOptions();
+				if ( $cpoParams->getParserOptions()->getUseParsoid() ) {
+					$title = MediaWikiServices::getInstance()->getTitleFactory()
+						->newFromPageReference( $cpoParams->getPage() );
+					$parser = MediaWikiServices::getInstance()->getParsoidParserFactory()
+						->create();
+					$parserOutput = $parser->parse(
+						// It is necessary to pass a Content rather than a
+						// string in order for Parsoid to handle the
+						// contentmodel correctly.
+						$content, $title, $parserOptions,
+						true, true, $cpoParams->getRevId()
+					);
+					// Register the use of the 'parsoid' option again, since
+					// we have a new $parserOutput now.
+					$parserOptions->getUseParsoid();
+				} else {
+					$parserOutput->setRawText( $content->rootValueTable( $content->getData()->getValue() ) );
+				}
 			} else {
 				$error = wfMessage( 'invalid-json-data' )->parse();
 				$parserOutput->setRawText( $error );
@@ -132,3 +153,5 @@ class JsonContentHandler extends CodeContentHandler {
 		}
 	}
 }
+/** @deprecated class alias since 1.43 */
+class_alias( JsonContentHandler::class, 'JsonContentHandler' );

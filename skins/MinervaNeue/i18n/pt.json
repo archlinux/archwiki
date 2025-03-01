@@ -8,8 +8,8 @@
 			"Hamilton Abreu",
 			"Macofe",
 			"Mansil alfalb",
-			"Vitorvicentevalente",
-			"Tar Lócesilion"
+			"Tar Lócesilion",
+			"Vitorvicentevalente"
 		]
 	},
 	"minerva-last-modified-date": "Última edição a $1, às $2",
@@ -35,7 +35,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Sobre esta categoria",
 	"mobile-frontend-meta-data-issues-header": "Problemas da página",
 	"minerva-meta-data-issues-section-header": "Problemas na secção",
-	"mobile-frontend-notifications-filter": "Filtrar",
 	"mobile-frontend-pageaction-edit-tooltip": "Editar a introdução desta página",
 	"mobile-frontend-placeholder": "Pesquisar na wiki {{SITENAME}}",
 	"mobile-frontend-random-button": "Aleatório",
@@ -55,7 +54,7 @@
 	"minerva-page-actions-overflow": "Mais",
 	"minerva-page-actions-language-switcher": "Línguas",
 	"minerva-page-actions-history": "Histórico",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussão]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Discussão]",
 	"minerva-skin-desc": "Um tema inicial de resposta rápida para telemóveis",
 	"skin-minerva-issue-learn-more": "Saiba mais",
 	"skin-minerva-time-ago-seconds": "há {{PLURAL:$1|um segundo|$1 segundos}}",
@@ -66,9 +65,8 @@
 	"skin-minerva-time-ago-years": "há {{PLURAL:$1|um ano|$1 anos}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorias",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Mostra as categorias das páginas",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tratamento melhorado de problemas de páginas",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemas de páginas (Template:ambox) serão incluídos nas linhas do artigo.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Infelizmente, o agrupamento de resultados por página não está disponível na versão de acesso móvel. Se pretende usar a funcionalidade de agrupamento por página visite a versão do ''site'' para acesso por computador de secretária.",
+	"skin-minerva-night-mode-unavailable": "Página só disponível no tema de cores \"Claro\".",
 	"minerva.css": "/* Todo o código CSS colocado aqui será carregado para os utilizadores do tema MinervaNeue */",
 	"minerva.js": "/* Todo o código Javascript colocado aqui será carregado para os utilizadores do tema MinervaNeue */"
 }

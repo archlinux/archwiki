@@ -12,13 +12,10 @@ use Wikimedia\Rdbms\LBFactory;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesLookup
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesLookup
  * @todo Write unit tests (non-trivial because the class is tied to a DB)
  */
 class ConsequencesLookupTest extends MediaWikiUnitTestCase {
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstructor() {
 		$this->assertInstanceOf(
 			ConsequencesLookup::class,

@@ -23,12 +23,13 @@
  * @since 1.24
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * This implements prop=redirects, prop=linkshere, prop=catmembers,
@@ -83,14 +84,9 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 
 	private LinksMigration $linksMigration;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param LinksMigration $linksMigration
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		LinksMigration $linksMigration
 	) {
 		parent::__construct( $query, $moduleName, self::$settings[$moduleName]['code'] );
@@ -108,7 +104,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 	/**
 	 * @param ApiPageSet|null $resultPageSet
 	 */
-	private function run( ApiPageSet $resultPageSet = null ) {
+	private function run( ?ApiPageSet $resultPageSet = null ) {
 		$settings = self::$settings[$this->getModuleName()];
 
 		$db = $this->getDB();
@@ -252,7 +248,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 					$where[] = $db->expr( $bl_title, '=', $t->getDBkey() );
 				}
 			}
-			$this->addWhere( new OrExpressionGroup( ...$where ) );
+			$this->addWhere( $db->orExpr( $where ) );
 		}
 
 		if ( $params['show'] !== null ) {
@@ -463,3 +459,6 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		return "https://www.mediawiki.org/wiki/Special:MyLanguage/API:{$name}";
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryBacklinksprop::class, 'ApiQueryBacklinksprop' );

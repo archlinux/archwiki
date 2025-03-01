@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
+			"Diskdance",
 			"Kly",
-			"Liuxinyu970226",
-			"Diskdance"
+			"Liuxinyu970226"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "變體轉換已停用",
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "此為隱藏規則。",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "此規則會影響頁面標題。",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "語言代碼",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<無效>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>無效</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "語言",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "來源",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "目標",

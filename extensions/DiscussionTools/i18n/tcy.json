@@ -4,11 +4,13 @@
 			"BHARATHESHA ALASANDEMAJALU",
 			"ChiK",
 			"Chidananda Kampa",
-			"Vishwanatha Badikana",
-			"Mahaveer Indra"
+			"Mahaveer Indra",
+			"Vishwanatha Badikana"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "ಪ್ರತಿಕ್ರಿಯೆ",
+	"discussiontools-newtopic-missing-title": "{{GENDER:|ಈರೆ}}ನ ಪಾತೆರ ಕತೆಗ್ ಒಂಜಿ ಪುದರ್ ಕೊರ್ಲೆ.",
+	"discussiontools-newtopic-missing-title-prompt": "{{GENDER:|ಇರೆ}}ನ ಪಾತೆರಕತೆಕ್ ಪುದರ್ ಕೊರ್ತಿಜರ್. {{GENDER:|ಇರ್}} ಪುದರ್ ಕೊರಂದೆ ದುಂಬರಿಪರಾ?",
 	"discussiontools-replylink": "{{GENDER:|ಉತ್ತರೊ}}",
 	"discussiontools-replywidget-advanced": "ಸುದಾರ್ತಿನ",
 	"discussiontools-replywidget-cancel": "ವಜಾ ಮಲ್ಪುಲೆ",

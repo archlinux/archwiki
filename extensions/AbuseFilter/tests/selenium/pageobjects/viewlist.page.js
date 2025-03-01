@@ -12,7 +12,7 @@ class ViewListPage extends Page {
 	}
 
 	get filterSavedNotice() {
-		return $( '.mw-message-box-success' );
+		return $( '.cdx-message--success' );
 	}
 
 	async savedFilterID() {

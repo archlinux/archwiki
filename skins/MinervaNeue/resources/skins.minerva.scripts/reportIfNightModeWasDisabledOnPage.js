@@ -1,4 +1,5 @@
 /**
+ * @private
  * @return {boolean}
  */
 function reportDisabled() {
@@ -7,9 +8,9 @@ function reportDisabled() {
 }
 
 /**
+ * @ignore
  * @param {Document} doc
  * @return {boolean} whether it was reported as disabled.
- * @ignore
  */
 function reportIfNightModeWasDisabledOnPage( doc ) {
 	if ( !doc.classList.contains( 'skin-night-mode-page-disabled' ) ) {

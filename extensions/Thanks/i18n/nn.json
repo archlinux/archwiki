@@ -10,8 +10,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|takka}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Takk}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Takka}}}}",
-	"thanks-button-action-queued": "{{GENDER:$1|{{GENDER:$2|Takkar}}}} $1 …",
-	"thanks-button-action-completed": "Du {{GENDER:$1|{{GENDER:$2|takka}}}} $1",
 	"thanks-error-undefined": "Takkehandlinga gjekk ikkje (feilkode: $1). Freist om att.",
 	"thanks-error-invalidrevision": "Versjons-ID-en er ikkje gild",
 	"thanks-error-invalidrecipient-bot": "Robotar kan ikkje takkast",

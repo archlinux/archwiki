@@ -5,10 +5,10 @@
 			"Dağlı95",
 			"Interfase",
 			"NMW03",
+			"Nemoralis",
 			"PPerviz",
 			"Toghrul Rahimli",
-			"Wertuose",
-			"Nemoralis"
+			"Wertuose"
 		]
 	},
 	"minerva-last-modified-date": "Sonuncu redaktə $2, $1 tarixində redaktə edilib",
@@ -34,7 +34,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Bu kateqoriya haqqında",
 	"mobile-frontend-meta-data-issues-header": "Səhifədəki problemlər",
 	"minerva-meta-data-issues-section-header": "Bölmə problemləri",
-	"mobile-frontend-notifications-filter": "Filtr",
 	"mobile-frontend-pageaction-edit-tooltip": "Bu səhifənin giriş hissəsini redaktə et",
 	"mobile-frontend-placeholder": "{{SITENAME}} layihəsində axtar",
 	"mobile-frontend-random-button": "Təsadüfi",
@@ -54,7 +53,7 @@
 	"minerva-page-actions-overflow": "Daha çox",
 	"minerva-page-actions-language-switcher": "Dillər",
 	"minerva-page-actions-history": "Tarixçə",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Müzakirə]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Müzakirə]",
 	"minerva-skin-desc": "Responsiv mobil dizayn",
 	"skin-minerva-issue-learn-more": "Daha ətraflı",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 saniyə}} əvvəl",
@@ -65,8 +64,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 il}} əvvəl",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kateqoriyalar",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Səhifələrin kateqoriyalarına baxmaq",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Təkmilləşdirilmiş səhifə problemləri yaxşılaşdırılması",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Səhifə problemləri (Şablon:ambox) məqaləyə daxil ediləcək.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Təəssüf ki, nəticələrin səhifəyə görə qruplaşdırılması mobil cihazlar üçün mövcud deyil. Əgər səhifəyə görə qruplaşdırma funksiyasından istifadə etmək istəyirsinizsə, xahiş olunur, saytın iş masası versiyasına daxil olun.",
 	"skin-minerva-night-mode-unavailable": "Səhifə yalnız \"Gündüz\" temasında mövcuddur.",
 	"minerva.css": "/* Buradakı bütün CSS MinervaNeue istifadəçiləri üçün yüklənəcək */",

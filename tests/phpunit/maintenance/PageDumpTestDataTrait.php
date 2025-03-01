@@ -3,15 +3,17 @@
 namespace MediaWiki\Tests\Maintenance;
 
 use Exception;
+use MediaWiki\Content\WikitextContent;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use RevisionDeleter;
 use RuntimeException;
 use Wikimedia\Rdbms\IDatabase;
-use WikitextContent;
 
 /**
  * Trait for creating a know set of test pages in the database,
@@ -23,31 +25,38 @@ trait PageDumpTestDataTrait {
 	// We'll add several pages, revision and texts. The following variables hold the
 	// corresponding ids.
 
+	// phpcs:ignore MediaWiki.Commenting.PropertyDocumentation.WrongStyle
+	private int $pageId1;
+	private int $pageId2;
+	private int $pageId3;
+	private int $pageId4;
+	private int $pageId5;
+
+	private Title $pageTitle1;
+	private Title $pageTitle2;
+	private Title $pageTitle3;
+	private Title $pageTitle4;
+	private Title $pageTitle5;
+
 	/** @var int */
-	private $pageId1, $pageId2, $pageId3, $pageId4, $pageId5;
-
-	/** @var Title */
-	private $pageTitle1, $pageTitle2, $pageTitle3, $pageTitle4, $pageTitle5;
-
 	private static $numOfPages = 4;
+	/** @var int */
 	private static $numOfRevs = 8;
 
-	/** @var RevisionRecord */
-	private $rev1_1;
-	/** @var RevisionRecord */
-	private $rev2_1, $rev2_2;
-	/** @var RevisionRecord */
-	private $rev2_3, $rev2_4;
-	/** @var RevisionRecord */
-	private $rev3_1, $rev3_2;
-	/** @var RevisionRecord */
-	private $rev4_1;
-	/** @var RevisionRecord */
-	private $rev5_1;
+	private RevisionRecord $rev1_1;
+	private RevisionRecord $rev2_1;
+	private RevisionRecord $rev2_2;
+	private RevisionRecord $rev2_3;
+	private RevisionRecord $rev2_4;
+	private RevisionRecord $rev3_1;
+	private RevisionRecord $rev3_2;
+	private RevisionRecord $rev4_1;
+	private RevisionRecord $rev5_1;
 
-	private $namespace, $talk_namespace;
+	private int $namespace;
+	private int $talk_namespace;
 
-	protected function addTestPages() {
+	protected function addTestPages( User $sysopUser ) {
 		// be sure, titles created here using english namespace names
 		$this->setContentLang( 'en' );
 
@@ -87,7 +96,9 @@ trait PageDumpTestDataTrait {
 				"BackupDumperTestP2Summary4 extra " );
 			$this->pageId2 = $page->getId();
 
-			$context = RequestContext::getMain();
+			$context = new DerivativeContext( RequestContext::getMain() );
+			$context->setUser( $sysopUser );
+
 			$revDel = RevisionDeleter::createList(
 				'revision',
 				$context,
@@ -129,7 +140,7 @@ trait PageDumpTestDataTrait {
 				"BackupDumperTestP5 Summary1" );
 			$this->pageId5 = $page->getId();
 
-			$this->rev5_1 = $this->corruptRevisionData( $this->db, $this->rev5_1 );
+			$this->rev5_1 = $this->corruptRevisionData( $this->getDb(), $this->rev5_1 );
 		} catch ( Exception $e ) {
 			// We'd love to pass $e directly. However, ... see
 			// documentation of exceptionFromAddDBData in
@@ -142,8 +153,8 @@ trait PageDumpTestDataTrait {
 		// class), we have to assert, that the page id are consecutively
 		// increasing
 		$this->assertEquals(
-			[ $this->pageId2, $this->pageId3, $this->pageId4 ],
 			[ $this->pageId1 + 1, $this->pageId1 + 2, $this->pageId1 + 3 ],
+			[ $this->pageId2, $this->pageId3, $this->pageId4 ],
 			"Page ids increasing without holes" );
 	}
 

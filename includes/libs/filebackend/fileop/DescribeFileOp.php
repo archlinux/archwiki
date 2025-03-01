@@ -21,6 +21,11 @@
  * @ingroup FileBackend
  */
 
+namespace Wikimedia\FileBackend\FileOps;
+
+use StatusValue;
+use Wikimedia\FileBackend\FileBackend;
+
 /**
  * Change metadata for a file at the given storage path in the backend.
  * Parameters for this operation are outlined in FileBackend::doOperations().
@@ -73,3 +78,6 @@ class DescribeFileOp extends FileOp {
 		return [ $this->params['src'] ];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( DescribeFileOp::class, 'DescribeFileOp' );

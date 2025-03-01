@@ -1,21 +1,21 @@
 <?php
 
-namespace TextExtracts;
+namespace MediaWiki\Extension\TextExtracts;
 
-use ApiBase;
-use ApiMain;
-use ApiQueryBase;
-use ApiUsageException;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiQuery;
+use MediaWiki\Api\ApiQueryBase;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPageFactory;
-use MediaWiki\Request\FauxRequest;
-use MediaWiki\Title\Title;
-use ParserOptions;
-use WANObjectCache;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Title\TitleFormatter;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\ParamValidator\ParamValidator;
 use WikiPage;
 
@@ -52,6 +52,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 * @var WikiPageFactory
 	 */
 	private $wikiPageFactory;
+	private TitleFormatter $titleFormatter;
 
 	// TODO: Allow extensions to hook into this to opt-in.
 	// This is partly for security reasons; see T107170.
@@ -61,12 +62,13 @@ class ApiQueryExtracts extends ApiQueryBase {
 	private $supportedContentModels = [ 'wikitext' ];
 
 	/**
-	 * @param \ApiQuery $query API query module object
+	 * @param ApiQuery $query API query module object
 	 * @param string $moduleName Name of this query module
 	 * @param ConfigFactory $configFactory
 	 * @param WANObjectCache $cache
 	 * @param LanguageConverterFactory $langConvFactory
 	 * @param WikiPageFactory $wikiPageFactory
+	 * @param TitleFormatter $titleFormatter
 	 */
 	public function __construct(
 		$query,
@@ -74,13 +76,15 @@ class ApiQueryExtracts extends ApiQueryBase {
 		ConfigFactory $configFactory,
 		WANObjectCache $cache,
 		LanguageConverterFactory $langConvFactory,
-		WikiPageFactory $wikiPageFactory
+		WikiPageFactory $wikiPageFactory,
+		TitleFormatter $titleFormatter
 	) {
 		parent::__construct( $query, $moduleName, self::PREFIX );
 		$this->config = $configFactory->makeConfig( 'textextracts' );
 		$this->cache = $cache;
 		$this->langConvFactory = $langConvFactory;
 		$this->wikiPageFactory = $wikiPageFactory;
+		$this->titleFormatter = $titleFormatter;
 	}
 
 	/**
@@ -88,7 +92,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 * and sets up the result
 	 */
 	public function execute() {
-		$titles = $this->getPageSet()->getGoodTitles();
+		$titles = $this->getPageSet()->getGoodPages();
 		if ( $titles === [] ) {
 			return;
 		}
@@ -110,14 +114,14 @@ class ApiQueryExtracts extends ApiQueryBase {
 		}
 		$count = 0;
 		$titleInFileNamespace = false;
-		/** @var Title $t */
+		/** @var PageIdentity $t */
 		foreach ( $titles as $id => $t ) {
 			if ( ++$count > $limit ) {
 				$this->setContinueEnumParameter( 'continue', $continue + $count - 1 );
 				break;
 			}
 
-			if ( $t->inNamespace( NS_FILE ) ) {
+			if ( $t->getNamespace() === NS_FILE ) {
 				$text = '';
 				$titleInFileNamespace = true;
 			} else {
@@ -159,21 +163,21 @@ class ApiQueryExtracts extends ApiQueryBase {
 
 	/**
 	 * Returns a processed, but not trimmed extract
-	 * @param Title $title
+	 * @param PageIdentity $title
 	 * @return string
 	 */
-	private function getExtract( Title $title ) {
-		$contentModel = $title->getContentModel();
+	private function getExtract( PageIdentity $title ) {
+		$page = $this->wikiPageFactory->newFromTitle( $title );
+
+		$contentModel = $page->getContentModel();
 		if ( !in_array( $contentModel, $this->supportedContentModels, true ) ) {
 			$this->addWarning( [
 				'apiwarn-textextracts-unsupportedmodel',
-				wfEscapeWikiText( $title->getPrefixedText() ),
+				wfEscapeWikiText( $this->titleFormatter->getPrefixedText( $title ) ),
 				$contentModel
 			] );
 			return '';
 		}
-
-		$page = $this->wikiPageFactory->newFromTitle( $title );
 
 		$introOnly = $this->params['intro'];
 		$text = $this->getFromCache( $page, $introOnly );
@@ -252,74 +256,31 @@ class ApiQueryExtracts extends ApiQueryBase {
 	/**
 	 * Returns page HTML
 	 * @param WikiPage $page
-	 * @return string|null
+	 * @return string
 	 * @throws ApiUsageException
 	 */
 	private function parse( WikiPage $page ) {
-		$apiException = null;
-		$parserOptions = ParserOptions::newFromAnon();
-
-		// first try finding full page in parser cache
-		if ( $page->shouldCheckParserCache( $parserOptions, 0 ) ) {
-			// TODO inject ParserCache
-			$pout = MediaWikiServices::getInstance()->getParserCache()->get( $page, $parserOptions );
-			if ( $pout ) {
-				$text = $pout->getText( [ 'unwrap' => true ] );
-				if ( $this->params['intro'] ) {
-					$text = $this->getFirstSection( $text, false );
-				}
-				return $text;
+		$parserOutputAccess = MediaWikiServices::getInstance()->getParserOutputAccess();
+		$status = $parserOutputAccess->getParserOutput(
+			$page->toPageRecord(),
+			ParserOptions::newFromAnon()
+		);
+		if ( $status->isOK() ) {
+			$pout = $status->getValue();
+			$text = $pout->getText( [ 'unwrap' => true ] );
+			if ( $this->params['intro'] ) {
+				$text = $this->getFirstSection( $text, false );
 			}
-		}
-		$request = [
-			'action' => 'parse',
-			'page' => $page->getTitle()->getPrefixedText(),
-			'prop' => 'text',
-			// Invokes special handling when using partial wikitext (T168743)
-			'sectionpreview' => 1,
-			'wrapoutputclass' => '',
-		];
-		if ( $this->params['intro'] ) {
-			$request['section'] = 0;
-		}
-		// in case of cache miss, render just the needed section
-		$api = new ApiMain( new FauxRequest( $request ) );
-		try {
-			$api->execute();
-			$data = $api->getResult()->getResultData( null, [
-				'BC' => [],
-				'Types' => [],
-			] );
-		} catch ( ApiUsageException $e ) {
-			$apiException = $e->__toString();
-			if ( $e->getStatusValue()->hasMessage( 'apierror-nosuchsection' ) ) {
-				// Looks like we tried to get the intro to a page without
-				// sections!  Lets just grab what we can get.
-				unset( $request['section'] );
-				$api = new ApiMain( new FauxRequest( $request ) );
-				$api->execute();
-				$data = $api->getResult()->getResultData( null, [
-					'BC' => [],
-					'Types' => [],
-				] );
-			} else {
-				// Some other unexpected error - lets just report it to the user
-				// on the off chance that is the right thing.
-				throw $e;
-			}
-		}
-		if ( !array_key_exists( 'parse', $data ) ) {
+			return $text;
+		} else {
 			LoggerFactory::getInstance( 'textextracts' )->warning(
-				'API Parse request failed while generating text extract', [
+				'Parse attempt failed while generating text extract', [
 					'title' => $page->getTitle()->getFullText(),
 					'url' => $this->getRequest()->getFullRequestURL(),
-					'exception' => $apiException,
-					'request' => $request
+					'reason' => $status->getWikiText( false, false, 'en' )
 				] );
-			return null;
+			$this->dieStatus( $status );
 		}
-
-		return $data['parse']['text']['*'];
 	}
 
 	/**

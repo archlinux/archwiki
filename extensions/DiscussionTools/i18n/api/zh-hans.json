@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"AYZ04",
+			"Anterdc99",
 			"GuoPC",
 			"Lakejason0",
 			"LittlePaw365",
@@ -15,6 +16,7 @@
 	"apierror-discussiontools-commentid-notfound": "未找到ID为“$1”的留言。",
 	"apierror-discussiontools-commentname-ambiguous": "找到多个名称为“$1”的留言，必须提供<var>commentid</var>。",
 	"apierror-discussiontools-commentname-notfound": "未找到名称为“$1”的留言。",
+	"apierror-discussiontools-findcomment-pagenevertalk": "页面从未包含任何讨论。",
 	"apierror-discussiontools-formtoken-used": "留言已发布。重新加载页面即可看到。",
 	"apierror-discussiontools-subscription-failed-add": "无法订阅此话题。",
 	"apierror-discussiontools-subscription-failed-remove": "无法取消订阅此话题。",
@@ -48,5 +50,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "要订阅（或取消订阅）的话题的名称",
 	"apihelp-discussiontoolssubscribe-param-page": "该话题出现的页面",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "true为订阅，false为取消订阅",
-	"apihelp-discussiontoolssubscribe-summary": "订阅（或取消订阅）来接收有关话题的通知。"
+	"apihelp-discussiontoolssubscribe-summary": "订阅（或取消订阅）来接收有关话题的通知。",
+	"apihelp-discussiontoolsthank-param-commentid": "要感谢的留言ID。",
+	"apihelp-discussiontoolsthank-summary": "发送公开的感谢留言通知。"
 }

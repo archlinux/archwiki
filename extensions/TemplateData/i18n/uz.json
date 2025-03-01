@@ -43,7 +43,6 @@
 	"templatedata-modal-button-map": "Xaritani tahrirlash",
 	"templatedata-modal-button-importParams": "Parametrlarni import qilish",
 	"templatedata-modal-button-removemap": "Xaritani olib tashlash",
-	"templatedata-modal-button-restoreparam": "Parametrni tiklash",
 	"templatedata-modal-button-saveparam": "Saqlash",
 	"templatedata-modal-current-language": "Joriy til: $1",
 	"templatedata-modal-format-block": "Blok",

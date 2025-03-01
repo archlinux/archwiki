@@ -2,9 +2,10 @@
 
 namespace MediaWiki\Skins\Vector\Tests\Integration;
 
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Skins\Vector\ConfigHelper;
-use RequestContext;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * @coversDefaultClass \MediaWiki\Skins\Vector\ConfigHelper
@@ -35,6 +36,39 @@ class ConfigHelperTest extends \MediaWikiIntegrationTestCase {
 		$title = Title::makeTitle( NS_MAIN, 'Main Page' );
 
 		$this->assertSame( ConfigHelper::shouldDisable( $config, $request, $title ), $disable );
+	}
+
+	/**
+	 * @covers ::shouldDisable for the main page
+	 */
+	public function testShouldDisableMainPageWithQueryString() {
+		$config = [
+			'exclude' => [
+				'mainpage' => false,
+				'querystring' => [
+					'diff' => '*',
+				]
+			],
+		];
+		$request = new FauxRequest( [
+			'title' => 'Main_Page',
+			'diff' => '1223300368',
+			'oldid' => '1212457119',
+		] );
+		$title = Title::makeTitle( NS_MAIN, 'Main_Page' );
+
+		$this->assertSame( true, ConfigHelper::shouldDisable( $config, $request, $title ) );
+	}
+
+	/**
+	 * @covers ::shouldDisable page title exclusion
+	 */
+	public function testShouldDisablePageTitlesRespectCase() {
+		$config = [ 'exclude' => [ 'pagetitles' => [ 'Special:AbuseLog' ] ] ];
+		$request = RequestContext::getMain()->getRequest();
+		$title = Title::makeTitle( NS_MAIN, 'Special:AbuseLog' );
+
+		$this->assertTrue( ConfigHelper::shouldDisable( $config, $request, $title ), true );
 	}
 
 	/**

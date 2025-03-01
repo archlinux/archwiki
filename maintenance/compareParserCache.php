@@ -19,7 +19,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Title\Title;
 use Wikimedia\Diff\Diff;
@@ -64,7 +66,7 @@ class CompareParserCache extends Maintenance {
 				->where( [
 					'page_namespace' => $this->getOption( 'namespace' ),
 					'page_is_redirect' => 0,
-					'page_random >= ' . wfRandom()
+					$dbr->expr( 'page_random', '>=', wfRandom() ),
 				] )
 				->orderBy( 'page_random' )
 				->caller( __METHOD__ )->fetchRow();
@@ -78,7 +80,6 @@ class CompareParserCache extends Maintenance {
 			$page = $wikiPageFactory->newFromTitle( $title );
 			$revision = $page->getRevisionRecord();
 			$parserOptions = $page->makeParserOptions( 'canonical' );
-
 			$parserOutputOld = $parserCache->get( $page, $parserOptions );
 
 			if ( $parserOutputOld ) {
@@ -93,8 +94,10 @@ class CompareParserCache extends Maintenance {
 
 				$this->output( "Found cache entry found for '{$title->getPrefixedText()}'..." );
 
-				$oldHtml = trim( preg_replace( '#<!-- .+-->#Us', '', $parserOutputOld->getText() ) );
-				$newHtml = trim( preg_replace( '#<!-- .+-->#Us', '', $parserOutputNew->getText() ) );
+				$oldHtml = trim( preg_replace( '#<!-- .+-->#Us', '',
+					$parserOutputOld->getRawText() ) );
+				$newHtml = trim( preg_replace( '#<!-- .+-->#Us', '',
+					$parserOutputNew->getRawText() ) );
 				$diffs = new Diff( explode( "\n", $oldHtml ), explode( "\n", $newHtml ) );
 				$formatter = new UnifiedDiffFormatter();
 				$unifiedDiff = $formatter->format( $diffs );
@@ -118,5 +121,7 @@ class CompareParserCache extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CompareParserCache::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

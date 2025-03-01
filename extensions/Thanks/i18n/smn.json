@@ -10,7 +10,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|kijttum}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Kijte}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Kijttum}}}}",
-	"thanks-button-action-cancel": "Jooskâ",
 	"thanks-thank-tooltip": "{{GENDER:$1|Vuolgât}} kijttosijd taan {{GENDER:$2|kevttei}}",
 	"thanks": "Vuolgât kijttosijd",
 	"thanks-submit": "Vuolgât kijttosijd",

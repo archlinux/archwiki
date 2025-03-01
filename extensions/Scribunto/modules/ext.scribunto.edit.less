@@ -1,0 +1,46 @@
+@import 'mediawiki.skin.variables.less';
+
+/* Preserve line breaks, but wrap too if browser supports it */
+/* stylelint-disable-next-line selector-max-id */
+#mw-scribunto-output {
+	white-space: pre;
+	white-space: pre-wrap;
+}
+
+/* stylelint-disable-next-line selector-max-id */
+#mw-scribunto-input {
+	width: 100%;
+	border: 1px solid @border-color-subtle;
+	overflow: auto;
+	background: @background-color-notice-subtle;
+}
+
+.mw-scribunto-input {
+	color: @color-progressive--active;
+	font: inherit;
+	font-weight: bold;
+	margin-top: 0.5em;
+}
+
+.mw-scribunto-normalOutput {
+	color: @color-base;
+}
+
+.mw-scribunto-print {
+	color: @color-content-removed;
+}
+
+.mw-scribunto-error {
+	color: @color-error;
+}
+
+.mw-scribunto-message {
+	color: @color-content-added;
+}
+
+.mw-scribunto-clear {
+	color: @color-error;
+	text-align: center;
+	margin-top: 1em;
+	border-bottom: 1px solid @color-error;
+}

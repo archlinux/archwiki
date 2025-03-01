@@ -16,11 +16,11 @@
  * @param {ve.dm.MWTemplateModel} template Template model
  * @param {string} name Unique symbolic name of page
  * @param {Object} [config] Configuration options
- * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
- * @cfg {boolean} [isReadOnly] Page is read-only
+ * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
+ * @param {boolean} [config.isReadOnly] Page is read-only
  */
 ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
-	var link = template.getTemplateDataQueryTitle();
+	const link = template.getTemplateDataQueryTitle();
 
 	// Configuration initialization
 	config = ve.extendObject( {
@@ -41,7 +41,7 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	} );
 
 	// Initialization
-	var description = this.spec.getDescription();
+	const description = this.spec.getDescription();
 	if ( description ) {
 		this.$description.append(
 			$( '<p>' ).text( description )
@@ -52,16 +52,16 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	// for other reasons (T68724). In that case we can't tell the user what the
 	// template is called, nor link to the template page. However, if we know for
 	// certain that the template doesn't exist, be explicit about it (T162694).
-	var linkData = ve.init.platform.linkCache.getCached( '_missing/' + link ),
+	const linkData = ve.init.platform.linkCache.getCached( '_missing/' + link ),
 		knownAsMissing = link && linkData && linkData.missing;
 
-	var key,
+	let key,
 		messageStyle = 've-ui-mwTemplatePage-description-missing';
 	if ( description ) {
 		key = 'visualeditor-dialog-transclusion-see-template';
 		messageStyle = 've-ui-mwTemplatePage-description-extra';
 	} else if ( !link || knownAsMissing ) {
-		var title;
+		let title;
 		try {
 			title = link && new mw.Title( link );
 		} catch ( e ) {
@@ -75,13 +75,13 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	}
 
 	if ( key ) {
-		var $addMessageHere = $( '<p>' );
+		const $addMessageHere = $( '<p>' );
 		// The following messages are used here:
 		// * visualeditor-dialog-transclusion-no-template-description
 		// * visualeditor-dialog-transclusion-see-template
 		// * visualeditor-dialog-transclusion-template-title-modifier
 		// * visualeditor-dialog-transclusion-template-title-nonexistent
-		var $msg = mw.message( key, this.spec.getLabel(), link ).parseDom();
+		const $msg = mw.message( key, this.spec.getLabel(), link ).parseDom();
 		// The following classes are used here:
 		// * ve-ui-mwTemplatePage-description-extra
 		// * ve-ui-mwTemplatePage-description-missing
@@ -91,7 +91,7 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	}
 
 	this.$description.find( 'a[href]' )
-		.on( 'click', function () {
+		.on( 'click', () => {
 			ve.track( 'activity.transclusion', { action: 'template-doc-link-click' } );
 		} );
 
@@ -99,7 +99,7 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 		.append( this.$description );
 
 	if ( !knownAsMissing ) {
-		var noticeWidget;
+		let noticeWidget;
 
 		if ( this.template.getSpec().getDocumentedParameterOrder().length &&
 			!this.template.getSpec().isDocumented()

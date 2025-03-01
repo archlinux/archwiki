@@ -3,6 +3,7 @@
 		"authors": [
 			"A Retired User",
 			"Anakmalaysia",
+			"Anterdc99",
 			"Bencmq",
 			"Bo77le",
 			"Byfserag",
@@ -16,6 +17,7 @@
 			"GraceL",
 			"GuoPC",
 			"Hanyanbo98",
+			"Huajing",
 			"Hudafu",
 			"Hydra",
 			"Hzy980512",
@@ -54,9 +56,7 @@
 			"沈澄心",
 			"神樂坂秀吉",
 			"铁桶",
-			"飞舞回堂前",
-			"Anterdc99",
-			"Huajing"
+			"飞舞回堂前"
 		]
 	},
 	"collabpad-doctitle": "协作板：$1",
@@ -84,7 +84,6 @@
 	"visualeditor-autosave-recovered-text": "您未保存的更改已自动恢复。",
 	"visualeditor-autosave-recovered-title": "更改已恢复",
 	"visualeditor-backbutton-tooltip": "返回",
-	"visualeditor-browserwarning": "此编辑器不支持您正在使用的浏览器。",
 	"visualeditor-ca-createlocaldescriptionsource": "添加本地描述源代码",
 	"visualeditor-ca-createsource": "创建源代码",
 	"visualeditor-ca-editlocaldescriptionsource": "编辑本地描述源代码",
@@ -100,6 +99,7 @@
 	"visualeditor-changedesc-mwtransclusion": "模板参数已更改",
 	"visualeditor-desc": "MediaWiki的可视化编辑器",
 	"visualeditor-descriptionpagelink": "Project:可视化编辑器",
+	"visualeditor-dialog-extension-abandonedit": "您确定要关闭此对话框而不应用更改吗？",
 	"visualeditor-dialog-media-alttext-checkbox": "使用说明作为替代文本",
 	"visualeditor-dialog-media-alttext-section": "替代文本",
 	"visualeditor-dialog-media-alttext-section-help": "您可以使用此功能给视障人士撰写媒体对象的文字描述。描述应足以让他们理解媒体对象的目的和所提供的信息。这对盲人用户和其他使用屏幕阅读器软件或纯文本浏览器的人们至关重要。",
@@ -308,6 +308,7 @@
 	"visualeditor-linkinspector-educationpopup-text": "将重要的文字链接至其他wiki的条目，甚至是其他网站。它将帮助读者理解上下文。",
 	"visualeditor-linkinspector-educationpopup-title": "链接",
 	"visualeditor-linkinspector-illegal-title": "无效的页面标题",
+	"visualeditor-linkinspector-invalid-blocked": "本Wiki的用户决定封禁指向该网站的链接。请尝试访问其他链接。",
 	"visualeditor-linkinspector-invalid-external": "输入完整的URL，如https://example.org",
 	"visualeditor-linknodeinspector-add-label": "添加标签",
 	"visualeditor-linknodeinspector-title": "简单链接",

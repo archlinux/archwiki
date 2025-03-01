@@ -11,6 +11,7 @@
 	"pfunc_time_too_long": "Feil: #time brukt for mange ganger",
 	"pfunc_time_too_big": "Feil: #time støtter kun år opp til 9999",
 	"pfunc_time_too_small": "Feil: #time støtter bare år fra 0.",
+	"pfunc_timef_bad_format": "Feil: Ugyldig format for #timef",
 	"pfunc_rel2abs_invalid_depth": "Feil: Ugyldig dybde i sti: «$1» (prøvde å få tilgang til en node over rotnoden)",
 	"pfunc_expr_stack_exhausted": "Uttrykksfeil: Stakk utbrukt",
 	"pfunc_expr_unexpected_number": "Uttrykksfeil: Uventet nummer",

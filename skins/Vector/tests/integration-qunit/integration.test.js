@@ -7,7 +7,7 @@ const clientPreferences = require( 'skins.vector.clientPreferences' );
  * This should only be used to test APIs that Vector depends on to work.
  * For unit tests please see tests/jest.
  */
-QUnit.module( 'Vector (integration)', function () {
+QUnit.module( 'Vector (integration)', () => {
 	QUnit.test( 'Client preferences: Behaves same for all users', function ( assert ) {
 		const sandbox = this.sandbox;
 		const helper = ( feature, isNamedReturnValue ) => {

@@ -21,12 +21,15 @@
  * @ingroup Upload
  */
 
+use MediaWiki\Api\ApiResult;
+use MediaWiki\Api\ApiUpload;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
@@ -37,6 +40,12 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFile\FSFile;
+use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\Mime\XmlTypeCheck;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * @defgroup Upload Upload related
@@ -92,7 +101,7 @@ abstract class UploadBase {
 	/** @var string|false */
 	protected $mSVGNSError;
 
-	protected static $safeXmlEncodings = [
+	private const SAFE_XML_ENCONDINGS = [
 		'UTF-8',
 		'US-ASCII',
 		'ISO-8859-1',
@@ -1226,7 +1235,7 @@ abstract class UploadBase {
 	 * @param User|null $user
 	 * @return UploadStashFile Stashed file
 	 */
-	protected function doStashFile( User $user = null ) {
+	protected function doStashFile( ?User $user = null ) {
 		$stash = MediaWikiServices::getInstance()->getRepoGroup()
 			->getLocalRepo()->getUploadStash( $user );
 		$file = $stash->stashFile( $this->mTempPath, $this->getSourceType(), $this->mFileProps );
@@ -1476,7 +1485,7 @@ abstract class UploadBase {
 
 		if ( preg_match( "!<\?xml\b(.*?)\?>!si", $contents, $matches ) ) {
 			if ( preg_match( $encodingRegex, $matches[1], $encMatch )
-				&& !in_array( strtoupper( $encMatch[1] ), self::$safeXmlEncodings )
+				&& !in_array( strtoupper( $encMatch[1] ), self::SAFE_XML_ENCONDINGS )
 			) {
 				wfDebug( __METHOD__ . ": Found unsafe XML encoding '{$encMatch[1]}'" );
 
@@ -1496,7 +1505,7 @@ abstract class UploadBase {
 		}
 
 		// It's possible the file is encoded with multibyte encoding, so re-encode attempt to
-		// detect the encoding in case it specifies an encoding not allowed in self::$safeXmlEncodings
+		// detect the encoding in case it specifies an encoding not allowed in self::SAFE_XML_ENCONDINGS
 		$attemptEncodings = [ 'UTF-16', 'UTF-16BE', 'UTF-32', 'UTF-32BE' ];
 		foreach ( $attemptEncodings as $encoding ) {
 			AtEase::suppressWarnings();
@@ -1504,7 +1513,7 @@ abstract class UploadBase {
 			AtEase::restoreWarnings();
 			if ( $str != '' && preg_match( "!<\?xml\b(.*?)\?>!si", $str, $matches ) ) {
 				if ( preg_match( $encodingRegex, $matches[1], $encMatch )
-					&& !in_array( strtoupper( $encMatch[1] ), self::$safeXmlEncodings )
+					&& !in_array( strtoupper( $encMatch[1] ), self::SAFE_XML_ENCONDINGS )
 				) {
 					wfDebug( __METHOD__ . ": Found unsafe XML encoding '{$encMatch[1]}'" );
 
@@ -1886,11 +1895,7 @@ abstract class UploadBase {
 			}
 		}
 
-		if ( preg_match( '/[\000-\010\013\016-\037\177]/', $value ) ) {
-			return true;
-		}
-
-		return false;
+		return (bool)preg_match( '/[\000-\010\013\016-\037\177]/', $value );
 	}
 
 	/**
@@ -2244,10 +2249,7 @@ abstract class UploadBase {
 		$maxUploadSize = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::MaxUploadSize );
 
 		if ( is_array( $maxUploadSize ) ) {
-			if ( $forType !== null && isset( $maxUploadSize[$forType] ) ) {
-				return $maxUploadSize[$forType];
-			}
-			return $maxUploadSize['*'];
+			return $maxUploadSize[$forType] ?? $maxUploadSize['*'];
 		}
 		return intval( $maxUploadSize );
 	}

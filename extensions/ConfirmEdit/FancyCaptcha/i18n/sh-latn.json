@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"BadDog"
+			"BadDog",
+			"Winston Sung"
 		]
 	},
 	"fancycaptcha-desc": "Obogaćen generator slikovnog koda za potvrdu uređivanja",

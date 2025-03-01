@@ -2,7 +2,10 @@
 
 namespace MediaWiki\Rest\Handler\Helper;
 
+use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\ExistingPageRecord;
@@ -19,16 +22,28 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SuppressedDataException;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use MediaWiki\Title\TitleFormatter;
-use TextContent;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
-use WikitextContent;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @internal for use by core REST infrastructure
  */
 class PageContentHelper {
+
+	/**
+	 * The maximum cache duration for page content.
+	 *
+	 * If this is set to a value higher than about 60 seconds, active purging
+	 * will have to be employed to make sure clients do not receive overly stale
+	 * content. This is especially important to avoid distributing vandalized
+	 * content for too long.
+	 *
+	 * Active purging can be enabled by adding the relevant URLs to
+	 * HTMLCacheUpdater. See T365630 for more discussion.
+	 */
 	private const MAX_AGE_200 = 5;
 
 	/**
@@ -39,17 +54,13 @@ class PageContentHelper {
 		MainConfigNames::RightsText,
 	];
 
-	/** @var ServiceOptions */
-	protected $options;
-
-	/** @var RevisionLookup */
-	protected $revisionLookup;
-
-	/** @var TitleFormatter */
-	protected $titleFormatter;
-
-	/** @var PageLookup */
-	protected $pageLookup;
+	protected ServiceOptions $options;
+	protected RevisionLookup $revisionLookup;
+	protected TitleFormatter $titleFormatter;
+	protected PageLookup $pageLookup;
+	private TitleFactory $titleFactory;
+	private IConnectionProvider $connectionProvider;
+	private ChangeTagsStore $changeTagStore;
 
 	/** @var Authority|null */
 	protected $authority = null;
@@ -66,22 +77,22 @@ class PageContentHelper {
 	/** @var PageIdentity|false|null */
 	private $pageIdentity = false;
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param RevisionLookup $revisionLookup
-	 * @param TitleFormatter $titleFormatter
-	 * @param PageLookup $pageLookup
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		RevisionLookup $revisionLookup,
 		TitleFormatter $titleFormatter,
-		PageLookup $pageLookup
+		PageLookup $pageLookup,
+		TitleFactory $titleFactory,
+		IConnectionProvider $connectionProvider,
+		ChangeTagsStore $changeTagStore
 	) {
 		$this->options = $options;
 		$this->revisionLookup = $revisionLookup;
 		$this->titleFormatter = $titleFormatter;
 		$this->pageLookup = $pageLookup;
+		$this->titleFactory = $titleFactory;
+		$this->connectionProvider = $connectionProvider;
+		$this->changeTagStore = $changeTagStore;
 	}
 
 	/**
@@ -244,16 +255,7 @@ class PageContentHelper {
 	 * @return array
 	 */
 	public function constructMetadata(): array {
-		if ( $this->useDefaultSystemMessage() ) {
-			$title = Title::newFromText( $this->getTitleText() );
-			$content = new WikitextContent( $title->getDefaultMessageText() );
-			$revision = new MutableRevisionRecord( $title );
-			$revision->setPageId( 0 );
-			$revision->setId( 0 );
-			$revision->setContent( SlotRecord::MAIN, $content );
-		} else {
-			$revision = $this->getTargetRevision();
-		}
+		$revision = $this->getRevisionRecordForMetadata();
 
 		$page = $revision->getPage();
 		return [
@@ -270,6 +272,53 @@ class PageContentHelper {
 				'url' => $this->options->get( MainConfigNames::RightsUrl ),
 				'title' => $this->options->get( MainConfigNames::RightsText )
 			],
+		];
+	}
+
+	/**
+	 * @return array
+	 */
+	public function constructRestbaseCompatibleMetadata(): array {
+		$revision = $this->getRevisionRecordForMetadata();
+
+		$page = $revision->getPage();
+		$title = $this->titleFactory->newFromPageIdentity( $page );
+
+		$tags = $this->changeTagStore->getTags(
+			$this->connectionProvider->getReplicaDatabase(),
+			null, $revision->getId(), null
+		);
+
+		$restrictions = [];
+
+		if ( $revision->isDeleted( RevisionRecord::DELETED_COMMENT ) ) {
+			$restrictions[] = 'commenthidden';
+		}
+
+		if ( $revision->isDeleted( RevisionRecord::DELETED_USER ) ) {
+			$restrictions[] = 'userhidden';
+		}
+
+		return [
+			'title' => $title->getPrefixedDBkey(),
+			'page_id' => $page->getId(),
+			'rev' => $revision->getId(),
+
+			// We could look up the tid from a ParserOutput, but it's expensive,
+			// and the tid can't be used for anything anymore anyway.
+			// Don't use an empty string though, that may break routing when the
+			// value is used as a path parameter.
+			'tid' => 'DUMMY',
+
+			'namespace' => $page->getNamespace(),
+			'user_id' => $revision->getUser( RevisionRecord::RAW )->getId(),
+			'user_text' => $revision->getUser( RevisionRecord::FOR_PUBLIC )->getName(),
+			'timestamp' => wfTimestampOrNull( TS_ISO_8601, $revision->getTimestamp() ),
+			'comment' => $revision->getComment()->text,
+			'tags' => $tags,
+			'restrictions' => $restrictions,
+			'page_language' => $title->getPageLanguage()->getCode(),
+			'redirect' => $title->isRedirect()
 		];
 	}
 
@@ -296,7 +345,7 @@ class PageContentHelper {
 	 * @param ResponseInterface $response
 	 * @param int|null $expiry
 	 */
-	public function setCacheControl( ResponseInterface $response, int $expiry = null ) {
+	public function setCacheControl( ResponseInterface $response, ?int $expiry = null ) {
 		if ( $expiry === null ) {
 			$maxAge = self::MAX_AGE_200;
 		} else {
@@ -379,6 +428,27 @@ class PageContentHelper {
 	public function checkAccess() {
 		$this->checkHasContent(); // Status 404: Not Found
 		$this->checkAccessPermission(); // Status 403: Forbidden
+	}
+
+	/**
+	 * @return MutableRevisionRecord|RevisionRecord|null
+	 */
+	private function getRevisionRecordForMetadata() {
+		if ( $this->useDefaultSystemMessage() ) {
+			$title = Title::newFromText( $this->getTitleText() );
+			$content = new WikitextContent( $title->getDefaultMessageText() );
+			$revision = new MutableRevisionRecord( $title );
+			$revision->setPageId( 0 );
+			$revision->setId( 0 );
+			$revision->setContent(
+				SlotRecord::MAIN,
+				$content
+			);
+		} else {
+			$revision = $this->getTargetRevision();
+		}
+
+		return $revision;
 	}
 
 }

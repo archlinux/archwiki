@@ -18,6 +18,11 @@
  * @file
  */
 
+namespace MediaWiki\Debug;
+
+use ReflectionFunction;
+use ReflectionProperty;
+
 /**
  * Trait for issuing warnings on deprecated access.
  *
@@ -156,8 +161,8 @@ trait DeprecationHelper {
 	 */
 	protected function deprecateDynamicPropertiesAccess(
 		string $version,
-		string $class = null,
-		string $component = null
+		?string $class = null,
+		?string $component = null
 	) {
 		$this->dynamicPropertiesAccessDeprecated = [ $version, $class ?: __CLASS__, $component ];
 	}
@@ -191,6 +196,13 @@ trait DeprecationHelper {
 	}
 
 	public function __get( $name ) {
+		if ( get_object_vars( $this ) === [] ) {
+			// Object is being destructed, all bets are off (T363492);
+			// in particular, we can't check $this->dynamicPropertiesAccessDeprecated anymore.
+			// Just get the property and hope for the best...
+			return $this->$name;
+		}
+
 		if ( isset( self::$deprecatedPublicProperties[$name] ) ) {
 			[ $version, $class, $component, $getter ] = self::$deprecatedPublicProperties[$name];
 			$qualifiedName = $class . '::$' . $name;
@@ -220,6 +232,14 @@ trait DeprecationHelper {
 	}
 
 	public function __set( $name, $value ) {
+		if ( get_object_vars( $this ) === [] ) {
+			// Object is being destructed, all bets are off (T363492);
+			// in particular, we can't check $this->dynamicPropertiesAccessDeprecated anymore.
+			// Just set the property and hope for the best...
+			$this->$name = $value;
+			return;
+		}
+
 		if ( isset( self::$deprecatedPublicProperties[$name] ) ) {
 			[ $version, $class, $component, , $setter ] = self::$deprecatedPublicProperties[$name];
 			$qualifiedName = $class . '::$' . $name;
@@ -295,3 +315,5 @@ trait DeprecationHelper {
 		$setter( $value );
 	}
 }
+/** @deprecated class alias since 1.43 */
+class_alias( DeprecationHelper::class, 'DeprecationHelper' );

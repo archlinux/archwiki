@@ -1,7 +1,7 @@
 /**
- * A RowWidget is used in conjunction with {@link mw.widgets.TableWidget table widgets}
- * and should not be instantiated by themselves. They group together
- * {@link OO.ui.TextInputWidget text input widgets} to form a unified row of
+ * @classdesc Table row widget. A RowWidget is used in conjunction with
+ * {@link mw.widgets.TableWidget table widgets} and should not be instantiated by themselves.
+ * They group together {@link OO.ui.TextInputWidget text input widgets} to form a unified row of
  * editable data.
  *
  * @class
@@ -9,6 +9,7 @@
  * @mixes OO.ui.mixin.GroupElement
  *
  * @constructor
+ * @description Create an instance of `mw.widgets.RowWidget`.
  * @param {Object} [config] Configuration options
  * @param {Array} [config.data] The data of the cells
  * @param {Array} [config.keys] An array of keys for easy cell selection
@@ -121,7 +122,7 @@ OO.mixinClass( mw.widgets.RowWidget, OO.ui.mixin.GroupElement );
  * @inheritdoc
  */
 mw.widgets.RowWidget.prototype.addItems = function ( items, index ) {
-	var i, len;
+	let i, len;
 
 	OO.ui.mixin.GroupElement.prototype.addItems.call( this, items, index );
 
@@ -135,12 +136,10 @@ mw.widgets.RowWidget.prototype.addItems = function ( items, index ) {
  * @inheritdoc
  */
 mw.widgets.RowWidget.prototype.removeItems = function ( items ) {
-	var i, len, cells;
-
 	OO.ui.mixin.GroupElement.prototype.removeItems.call( this, items );
 
-	cells = this.getItems();
-	for ( i = 0, len = cells.length; i < len; i++ ) {
+	const cells = this.getItems();
+	for ( let i = 0, len = cells.length; i < len; i++ ) {
 		cells[ i ].setData( i );
 	}
 };
@@ -170,7 +169,7 @@ mw.widgets.RowWidget.prototype.setIndex = function ( index ) {
  * @return {string} The row label
  */
 mw.widgets.RowWidget.prototype.getLabel = function () {
-	var props = this.model.getRowProperties();
+	const props = this.model.getRowProperties();
 
 	if ( props.label === null ) {
 		return '';
@@ -275,10 +274,9 @@ mw.widgets.RowWidget.prototype.onRemoveCell = function ( index ) {
  * Handle clear requests.
  */
 mw.widgets.RowWidget.prototype.onClear = function () {
-	var i, len,
-		cells = this.getItems();
+	const cells = this.getItems();
 
-	for ( i = 0, len = cells.length; i < len; i++ ) {
+	for ( let i = 0, len = cells.length; i < len; i++ ) {
 		cells[ i ].setValue( '' );
 	}
 };
@@ -305,9 +303,8 @@ mw.widgets.RowWidget.prototype.onCellChange = function ( input, value ) {
 	// fed from the cells within.
 	// Right now, the table can't know if it's valid or not because the events
 	// don't get passed through.
-	var self = this;
-	input.getValidity().done( function () {
-		self.model.setValue( input.getData(), value );
+	input.getValidity().done( () => {
+		this.model.setValue( input.getData(), value );
 	} );
 };
 
@@ -336,7 +333,7 @@ mw.widgets.RowWidget.prototype.setDisabled = function ( disabled ) {
 		this.deleteButton.setDisabled( disabled );
 	}
 
-	this.getItems().forEach( function ( cell ) {
+	this.getItems().forEach( ( cell ) => {
 		cell.setDisabled( disabled );
 	} );
 };

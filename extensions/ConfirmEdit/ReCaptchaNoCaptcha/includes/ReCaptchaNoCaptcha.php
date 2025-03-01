@@ -2,24 +2,27 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\ReCaptchaNoCaptcha;
 
-use ApiBase;
-use FormatJson;
+use MediaWiki\Api\ApiBase;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Html\Html;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
-use Message;
 
 class ReCaptchaNoCaptcha extends SimpleCaptcha {
-	// used for renocaptcha-edit, renocaptcha-addurl, renocaptcha-badlogin, renocaptcha-createaccount,
-	// renocaptcha-create, renocaptcha-sendemail via getMessage()
+	/**
+	 * @var string used for renocaptcha-edit, renocaptcha-addurl, renocaptcha-badlogin, renocaptcha-createaccount,
+	 * renocaptcha-create, renocaptcha-sendemail via getMessage()
+	 */
 	protected static $messagePrefix = 'renocaptcha-';
 
+	/** @var string|null */
 	private $error = null;
 
 	/**

@@ -51,8 +51,14 @@ class PageSourceHandler extends SimpleHandler {
 	 * @return string
 	 */
 	private function constructHtmlUrl( PageReference $page ): string {
+		// TODO: once legacy "v1" routes are removed, just use the path prefix from the module.
+		$pathPrefix = $this->getModule()->getPathPrefix();
+		if ( strlen( $pathPrefix ) == 0 ) {
+			$pathPrefix = 'v1';
+		}
+
 		return $this->getRouter()->getRouteUrl(
-			'/v1/page/{title}/html',
+			'/' . $pathPrefix . '/page/{title}/html',
 			[ 'title' => $this->titleFormatter->getPrefixedText( $page ) ]
 		);
 	}
@@ -91,6 +97,9 @@ class PageSourceHandler extends SimpleHandler {
 
 		$outputMode = $this->getOutputMode();
 		switch ( $outputMode ) {
+			case 'restbase': // compatibility for restbase migration
+				$body = [ 'items' => [ $this->contentHelper->constructRestbaseCompatibleMetadata() ] ];
+				break;
 			case 'bare':
 				$body = $this->contentHelper->constructMetadata();
 				$body['html_url'] = $this->constructHtmlUrl( $page );
@@ -137,6 +146,9 @@ class PageSourceHandler extends SimpleHandler {
 	}
 
 	private function getOutputMode(): string {
+		if ( $this->getRouter()->isRestbaseCompatEnabled( $this->getRequest() ) ) {
+			return 'restbase';
+		}
 		return $this->getConfig()['format'];
 	}
 

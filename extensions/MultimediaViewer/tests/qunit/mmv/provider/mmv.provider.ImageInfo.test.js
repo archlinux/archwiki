@@ -77,14 +77,14 @@ const { ImageInfo } = require( 'mmv' );
 		}
 	} ) );
 
-	QUnit.test( 'ImageInfo constructor sense check', function ( assert ) {
+	QUnit.test( 'ImageInfo constructor sense check', ( assert ) => {
 		const api = { get: function () {} };
 		const imageInfoProvider = new ImageInfo( api );
 
 		assert.true( imageInfoProvider instanceof ImageInfo );
 	} );
 
-	QUnit.test( 'ImageInfo get test', function ( assert ) {
+	QUnit.test( 'ImageInfo get test', ( assert ) => {
 		let apiCallCount = 0;
 		const api = { get: function () {
 			apiCallCount++;
@@ -200,7 +200,7 @@ const { ImageInfo } = require( 'mmv' );
 		const file = new mw.Title( 'File:Stuff.jpg' );
 		const imageInfoProvider = new ImageInfo( api );
 
-		return imageInfoProvider.get( file ).then( function ( image ) {
+		return imageInfoProvider.get( file ).then( ( image ) => {
 			assert.strictEqual( image.title.getPrefixedDb(), 'File:Stuff.jpg', 'title is set correctly' );
 			assert.strictEqual( image.name, 'Some stuff', 'name is set correctly' );
 			assert.strictEqual( image.size, 346684, 'size is set correctly' );
@@ -229,15 +229,15 @@ const { ImageInfo } = require( 'mmv' );
 			assert.strictEqual( image.latitude, 90, 'latitude is set correctly' );
 			assert.strictEqual( image.longitude, 180, 'longitude is set correctly' );
 			assert.deepEqual( image.restrictions, [ 'trademarked', 'insignia' ], 'restrictions is set correctly' );
-		} ).then( function () {
+		} ).then(
 			// call the data provider a second time to check caching
-			return imageInfoProvider.get( file );
-		} ).then( function () {
+			() => imageInfoProvider.get( file )
+		).then( () => {
 			assert.strictEqual( apiCallCount, 1 );
 		} );
 	} );
 
-	QUnit.test( 'ImageInfo fail test', function ( assert ) {
+	QUnit.test( 'ImageInfo fail test', ( assert ) => {
 		const api = { get: function () {
 			return $.Deferred().resolve( {} );
 		} };
@@ -245,13 +245,13 @@ const { ImageInfo } = require( 'mmv' );
 		const done = assert.async();
 		const imageInfoProvider = new ImageInfo( api );
 
-		imageInfoProvider.get( file ).fail( function () {
+		imageInfoProvider.get( file ).fail( () => {
 			assert.true( true, 'promise rejected when no data is returned' );
 			done();
 		} );
 	} );
 
-	QUnit.test( 'ImageInfo fail test 2', function ( assert ) {
+	QUnit.test( 'ImageInfo fail test 2', ( assert ) => {
 		const api = { get: function () {
 			return $.Deferred().resolve( {
 				query: {
@@ -267,13 +267,13 @@ const { ImageInfo } = require( 'mmv' );
 		const done = assert.async();
 		const imageInfoProvider = new ImageInfo( api );
 
-		imageInfoProvider.get( file ).fail( function () {
+		imageInfoProvider.get( file ).fail( () => {
 			assert.true( true, 'promise rejected when imageinfo is missing' );
 			done();
 		} );
 	} );
 
-	QUnit.test( 'ImageInfo missing page test', function ( assert ) {
+	QUnit.test( 'ImageInfo missing page test', ( assert ) => {
 		const api = { get: function () {
 			return $.Deferred().resolve( {
 				query: {
@@ -291,7 +291,7 @@ const { ImageInfo } = require( 'mmv' );
 		const done = assert.async();
 		const imageInfoProvider = new ImageInfo( api );
 
-		imageInfoProvider.get( file ).fail( function ( errorMessage ) {
+		imageInfoProvider.get( file ).fail( ( errorMessage ) => {
 			assert.strictEqual( errorMessage, 'file does not exist: File:Stuff.jpg',
 				'error message is set correctly for missing file' );
 			done();

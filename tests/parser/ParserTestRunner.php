@@ -26,19 +26,23 @@
  * @ingroup Testing
  */
 
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Permissions\UltimateAuthority;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -51,6 +55,8 @@ use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\NullLogger;
 use Wikimedia\Assert\Assert;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFileBackend;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
@@ -71,6 +77,7 @@ use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
@@ -168,7 +175,6 @@ class ParserTestRunner {
 	 */
 	public const DB_PREFIX = 'parsertest_';
 
-	/** @var string */
 	private const FILTER_MSG = "Test doesn't match filter";
 
 	/**
@@ -392,15 +398,6 @@ class ParserTestRunner {
 		$setup['wgMetaNamespace'] = "TestWiki";
 		$setup['wgServer'] = 'http://example.org';
 		$setup['wgServerName'] = 'example.org';
-		$setup['wgScriptPath'] = '';
-		$setup['wgScript'] = '/index.php';
-		$setup['wgResourceBasePath'] = '';
-		$setup['wgStylePath'] = '/skins';
-		$setup['wgExtensionAssetsPath'] = '/extensions';
-		$setup['wgArticlePath'] = '/wiki/$1';
-		$setup['wgActionPaths'] = [];
-		$setup['wgVariantArticlePath'] = false;
-		$setup['wgUploadNavigationUrl'] = false;
 		$setup['wgCapitalLinks'] = true;
 		$setup['wgNoFollowLinks'] = true;
 		$setup['wgNoFollowDomainExceptions'] = [ 'no-nofollow.org' ];
@@ -468,7 +465,7 @@ class ParserTestRunner {
 		$setup['wgSVGConverters'] = [ 'null' => 'echo "1">$output' ];
 
 		// Fake constant timestamp
-		MediaWikiServices::getInstance()->getHookContainer()->register(
+		$teardown[] = $this->registerHook(
 			'ParserGetVariableValueTs',
 			function ( $parser, &$ts ) {
 				$ts = $this->getFakeTimestamp();
@@ -476,9 +473,16 @@ class ParserTestRunner {
 			}
 		);
 
-		$teardown[] = static function () {
-			MediaWikiServices::getInstance()->getHookContainer()->clear( 'ParserGetVariableValueTs' );
-		};
+		// Fake specific translated language names, for testing {{#language}}
+		$teardown[] = $this->registerHook(
+			'LanguageGetTranslatedLanguageNames',
+			static function ( &$names, $code ) {
+				if ( $code === 'en' || $code === 'simple' ) {
+					$names['ar'] = 'Arabic';
+					$names['de-formal'] = 'German (formal address)';
+				}
+			}
+		);
 
 		$this->appendNamespaceSetup( $setup, $teardown );
 
@@ -640,6 +644,14 @@ class ParserTestRunner {
 				ScopedCallback::consume( $nextTeardown );
 			}
 		} );
+	}
+
+	protected function registerHook( string $name, callable $handler ) {
+		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
+		$reset = $hookContainer->scopedRegister( $name, $handler );
+		return static function () use ( &$reset ) {
+			ScopedCallback::consume( $reset );
+		};
 	}
 
 	/**
@@ -1135,8 +1147,7 @@ class ParserTestRunner {
 				if ( $modeStr === 'selser' && $test->changetree === null ) {
 					// This is an auto-edit test with either a CLI changetree
 					// or a change tree that should be generated
-					$changetree = $runner->options['changetree'] ? json_decode( $runner->options['changetree'] ) : null;
-					$mode = new ParserTestMode( 'selser-auto', $changetree );
+					$mode = new ParserTestMode( 'selser-auto', json_decode( $runner->options['changetree'] ) );
 				}
 				$result = $this->runTestInternal( $test, $mode );
 				$ok = $ok && $result->isSuccess();
@@ -1306,7 +1317,7 @@ class ParserTestRunner {
 		$options->setTimestamp(
 			MWTimestamp::convert( TS_MW, $revProps['timestamp'] )
 		);
-		$options->setUserLang( $context->getLanguage() );
+		$options->setUserLang( $opts['userlanguage'] ?? $context->getLanguage() );
 
 		if ( isset( $opts['lastsavedrevision'] ) ) {
 			$oldCallback = $options->getCurrentRevisionRecordCallback();
@@ -1457,11 +1468,14 @@ class ParserTestRunner {
 			if ( isset( $opts['nohtml'] ) ) {
 				$out = '';
 			} else {
-				$out = $output->getText( [
+				// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
+				// This may be a case where it may be reasonable to keep accessing the pipeline directly.
+				$pipeline = MediaWikiServices::getInstance()->getDefaultOutputPipeline();
+				$out = $pipeline->run( $output, $options, [
 					'allowTOC' => !isset( $opts['notoc'] ),
 					'unwrap' => !isset( $opts['wrap'] ),
 					'skin' => $this->getSkin( $opts['skin'] ?? 'fallback' ),
-				] );
+				] )->getContentHolderText();
 				$out = rtrim( $out );
 			}
 		}
@@ -1526,6 +1540,7 @@ class ParserTestRunner {
 	) {
 		$before = [];
 		$after = [];
+		$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
 		// The "before" entries may contain HTML.
 		if ( isset( $opts['showtitle'] ) ) {
 			if ( $output->getTitleText() ) {
@@ -1534,7 +1549,7 @@ class ParserTestRunner {
 				// TitleFormatter doesn't (yet) take ParsoidLinkTarget
 				// (which is identical to core's LinkTarget, but phan doesn't
 				// know that), so go through TitleValue for now.
-				$titleText = MediaWikiServices::getInstance()->getTitleFormatter()->getPrefixedText(
+				$titleText = $titleFormatter->getPrefixedText(
 					TitleValue::newFromLinkTarget( $title )
 				);
 			}
@@ -1547,15 +1562,57 @@ class ParserTestRunner {
 			}
 		}
 
-		if ( isset( $opts['ill'] ) ) {
-			$after[] = implode( ' ', $output->getLanguageLinks() );
-		}
-
 		if ( isset( $opts['cat'] ) ) {
 			$defaultSortKey = $output->getPageProperty( 'defaultsort' ) ?? '';
 			foreach ( $output->getCategoryNames() as $name ) {
 				$sortkey = $output->getCategorySortKey( $name ) ?: $defaultSortKey;
 				$after[] = "cat=$name sort=$sortkey";
+			}
+		}
+
+		if ( isset( $opts['extlinks'] ) ) {
+			foreach ( $output->getExternalLinks() as $url => $ignore ) {
+				$after[] = "extlink=$url";
+			}
+		}
+
+		if ( isset( $opts['ill'] ) ) {
+			foreach ( $output->getLanguageLinks() as $ll ) {
+				$after[] = "ill=$ll";
+			}
+		}
+
+		if ( isset( $opts['iwl'] ) ) {
+			foreach ( $output->getInterwikiLinks() as $prefix => $arr ) {
+				foreach ( $arr as $dbk => $ignore ) {
+					$after[] = "iwl=$prefix:$dbk";
+				}
+			}
+		}
+
+		if ( isset( $opts['links'] ) ) {
+			foreach ( $output->getLinks() as $ns => $arr ) {
+				foreach ( $arr as $dbk => $page_id ) {
+					$nsName = $titleFormatter->getNamespaceName( $ns, $dbk );
+					$t = $nsName ? "$nsName:$dbk" : $dbk;
+					$after[] = "link=$t";
+				}
+			}
+		}
+
+		if ( isset( $opts['special'] ) ) {
+			foreach ( $output->getLinksSpecial() as $dbk => $ignore ) {
+				$after[] = "special=Special:$dbk";
+			}
+		}
+
+		if ( isset( $opts['templates'] ) ) {
+			foreach ( $output->getTemplates() as $ns => $arr ) {
+				foreach ( $arr as $dbk => $page_id ) {
+					$nsName = $titleFormatter->getNamespaceName( $ns, $dbk );
+					$t = $nsName ? "$nsName:$dbk" : $dbk;
+					$after[] = "template=$t";
+				}
 			}
 		}
 
@@ -1654,9 +1711,13 @@ class ParserTestRunner {
 		} else {
 			$expectedFailure = $test->knownFailures["$mode"] ?? null;
 		}
+		if ( $expectedFailure !== null ) {
+			$expectedFailure = $test->normalizeKnownFailure( $expectedFailure );
+		}
+		$rawActualFailure = $test->normalizeKnownFailure( $rawActual );
 
 		$expectedToFail = $expectedFailure !== null;
-		$knownFailureChanged = $expectedToFail && $expectedFailure !== $rawActual;
+		$knownFailureChanged = $expectedToFail && $expectedFailure !== $rawActualFailure;
 
 		if ( is_callable( $rawExpected ) ) {
 			$rawExpected = $rawExpected();
@@ -1669,6 +1730,8 @@ class ParserTestRunner {
 
 		if ( $unexpectedPass ) {
 			$this->recorder->warning( "{$test->testName}: $mode: EXPECTED TO FAIL, BUT PASSED!" );
+		} elseif ( $knownFailureChanged ) {
+			$this->recorder->warning( "{$test->testName}: $mode: UNEXPECTED CHANGE TO KNOWN FAILURE OUTPUT" );
 		}
 
 		if ( $this->options['updateKnownFailures'] && (
@@ -1677,10 +1740,7 @@ class ParserTestRunner {
 			if ( $unexpectedPass ) {
 				unset( $test->knownFailures["$mode"] );
 			} else {
-				if ( $knownFailureChanged ) {
-					$this->recorder->warning( "{$test->testName}: $mode: KNOWN FAILURE CHANGED!" );
-				}
-				$test->knownFailures["$mode"] = $rawActual;
+				$test->knownFailures["$mode"] = $rawActualFailure;
 			}
 		}
 
@@ -1692,10 +1752,10 @@ class ParserTestRunner {
 			if ( !$this->options['updateKnownFailures'] ) {
 				$this->unexpectedTestPasses = true;
 			}
-		} elseif ( $expectedToFail && !$knownFailureChanged ) {
-			// Don't flag failures noisily when nothing really changed
+		} elseif ( $expectedToFail ) {
+			'@phan-var string $expectedFailure'; // non-null implied by $expectedToFail
 			$expected = $expectedFailure;
-			$actual = $rawActual;
+			$actual = $rawActualFailure;
 		}
 
 		return new ParserTestResult( $test, $mode, $expected, $actual );
@@ -2268,6 +2328,8 @@ class ParserTestRunner {
 			self::getOptionValue( 'wgMaxTocLevel', $opts, 999 );
 		$linkHolderBatchSize =
 			self::getOptionValue( 'wgLinkHolderBatchSize', $opts, 1000 );
+		$timezone =
+			self::getOptionValue( 'wgLocaltimezone', $opts, 'UTC' );
 
 		$setup = [
 			'wgEnableUploads' => self::getOptionValue( 'wgEnableUploads', $opts, true ),
@@ -2288,6 +2350,9 @@ class ParserTestRunner {
 				+ [ 'ISBN' => true, 'PMID' => true, 'RFC' => true ],
 			// Test with legacy encoding by default until HTML5 is very stable and default
 			'wgFragmentMode' => [ 'legacy' ],
+			// Use legacy headings for a while until tests in extensions are updated
+			'wgParserEnableLegacyHeadingDOM' => true,
+			'wgLocaltimezone' => $timezone,
 		];
 
 		if ( isset( $opts['externallinktarget'] ) ) {
@@ -2322,6 +2387,8 @@ class ParserTestRunner {
 			$mwServices->resetServiceForTesting( 'ParserFactory' );
 			// Depends on $wgParserEnableLegacyMediaDOM
 			$mwServices->resetServiceForTesting( 'Tidy' );
+			// Depends on $wgParserEnableLegacyHeadingDOM
+			$mwServices->resetServiceForTesting( 'DefaultOutputPipeline' );
 			// The SiteConfig depends on various services that reset above,
 			// so reset it as well.
 			// T310283: be more selective about resetting SiteConfig if
@@ -2548,6 +2615,26 @@ class ParserTestRunner {
 				'mime' => 'image/jpeg',
 				'metadata' => [],
 				'sha1' => Wikimedia\base_convert( '3', 16, 36, 31 ),
+				'fileExists' => true
+			],
+			$this->db->timestamp( '20010115123500' )
+		);
+
+		$image = $localRepo->newFile( new TitleValue( NS_FILE, 'Hi-ho.jpg' ) );
+		$image->recordUpload3(
+			'',
+			'Hi',
+			'ho',
+			$performer,
+			[
+				'size' => 7881,
+				'width' => 1941,
+				'height' => 220,
+				'bits' => 8,
+				'media_type' => MEDIATYPE_BITMAP,
+				'mime' => 'image/jpeg',
+				'metadata' => [],
+				'sha1' => Wikimedia\base_convert( '1', 16, 36, 31 ),
 				'fileExists' => true
 			],
 			$this->db->timestamp( '20010115123500' )

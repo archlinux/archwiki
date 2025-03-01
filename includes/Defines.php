@@ -28,12 +28,13 @@ use Wikimedia\Rdbms\IDatabase;
 /**
  * The running version of MediaWiki.
  *
- * This replaces the $wgVersion global found in earlier versions. When updating,
- * remember to also bump the stand-alone duplicate of this in PHPVersionCheck.
+ * This replaces the $wgVersion global found in earlier versions. When updating
+ * the XX part of 1.XX.YY, please remember to also bump the stand-alone duplicate
+ * of this in PHPVersionCheck.
  *
  * @since 1.35 (also backported to 1.33.3 and 1.34.1)
  */
-define( 'MW_VERSION', '1.42.5' );
+define( 'MW_VERSION', '1.43.0' );
 
 /** @{
  * Obsolete IDatabase::makeList() constants
@@ -86,7 +87,7 @@ define( 'CACHE_ANYTHING', -1 ); // Use anything, as long as it works
 define( 'CACHE_NONE', 0 ); // Do not cache
 define( 'CACHE_DB', 1 ); // Store cache objects in the DB
 define( 'CACHE_MEMCACHED', 'memcached-php' ); // Backwards-compatability alias for Memcached
-define( 'CACHE_ACCEL', 3 ); // APC or WinCache
+define( 'CACHE_ACCEL', 3 ); // APC or APCu
 define( 'CACHE_HASH', 'hash' ); // A HashBagOStuff, mostly useful for testing. Not configurable
 /** @} */
 
@@ -193,6 +194,7 @@ define( 'APCOND_ISBOT', 9 );
 define( 'CUDCOND_AFTER', 'registered-after' );
 define( 'CUDCOND_ANON', 'anonymous-user' );
 define( 'CUDCOND_NAMED', 'named-user' );
+define( 'CUDCOND_USERGROUP', 'usergroup' );
 /** @} */
 
 /** @{

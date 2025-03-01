@@ -12,6 +12,7 @@
  *
  * @class mw.libs.ve.targetSaver
  * @singleton
+ * @hideconstructor
  */
 ( function () {
 	mw.libs.ve = mw.libs.ve || {};
@@ -32,9 +33,7 @@
 		 * @return {jQuery.Promise} Promise resolved with deflated HTML
 		 */
 		deflate: function ( html ) {
-			return mw.loader.using( 'mediawiki.deflate' ).then( function () {
-				return mw.deflate( html );
-			} );
+			return mw.loader.using( 'mediawiki.deflate' ).then( () => mw.deflate( html ) );
 
 		},
 
@@ -51,14 +50,14 @@
 		 */
 		getHtml: function ( newDoc, oldDoc ) {
 			function copyAttributes( from, to ) {
-				Array.prototype.forEach.call( from.attributes, function ( attr ) {
+				Array.prototype.forEach.call( from.attributes, ( attr ) => {
 					to.setAttribute( attr.name, attr.value );
 				} );
 			}
 
 			if ( oldDoc ) {
 				// Copy the head from the old document
-				for ( var i = 0, len = oldDoc.head.childNodes.length; i < len; i++ ) {
+				for ( let i = 0, len = oldDoc.head.childNodes.length; i < len; i++ ) {
 					newDoc.head.appendChild( oldDoc.head.childNodes[ i ].cloneNode( true ) );
 				}
 				// Copy attributes from the old document for the html, head and body
@@ -73,7 +72,7 @@
 					'script', // T54884, T65229, T96533, T103430
 					'noscript', // T144891
 					'object', // T65229
-					'style:not( [ data-mw ] )', // T55252, but allow <style data-mw/> e.g. TemplateStyles T188143
+					'style:not( [ data-mw ] ):not( [ data-mw-deduplicate ] )', // T55252, but allow <style data-mw(-deduplicate)/> e.g. TemplateStyles T188143
 					'embed', // T53521, T54791, T65121
 					'a[href^="javascript:"]', // T200971
 					'img[src^="data:"]', // T192392
@@ -85,17 +84,17 @@
 					'div.donut-container', // Web of Trust (T189148)
 					'div.shield-container' // Web of Trust (T297862)
 				].join( ',' ) )
-				.each( function () {
+				.each( ( j, el ) => {
 					function truncate( text, l ) {
 						return text.length > l ? text.slice( 0, l ) + '…' : text;
 					}
-					var errorMessage = 'DOM content matching deny list found:\n' + truncate( this.outerHTML, 100 ) +
-						'\nContext:\n' + truncate( this.parentNode.outerHTML, 200 );
+					const errorMessage = 'DOM content matching deny list found:\n' + truncate( el.outerHTML, 100 ) +
+						'\nContext:\n' + truncate( el.parentNode.outerHTML, 200 );
 					mw.log.error( errorMessage );
-					var err = new Error( errorMessage );
+					const err = new Error( errorMessage );
 					err.name = 'VeDomDenyListWarning';
 					mw.errorLogger.logError( err, 'error.visualeditor' );
-					$( this ).remove();
+					$( el ).remove();
 				} );
 
 			// data-mw-section-id is copied to headings by mw.libs.ve.unwrapParsoidSections
@@ -134,15 +133,12 @@
 		 * @return {jQuery.Promise} Promise which resolves if the post was successful
 		 */
 		saveDoc: function ( doc, extraData, options ) {
-			var saver = this;
-			return this.deflateDoc( doc ).then( function ( html ) {
-				return saver.postHtml(
-					html,
-					null,
-					extraData,
-					options
-				);
-			} );
+			return this.deflateDoc( doc ).then( ( html ) => this.postHtml(
+				html,
+				null,
+				extraData,
+				options
+			) );
 		},
 
 		/**
@@ -176,10 +172,8 @@
 		 * @return {jQuery.Promise} Promise which resolves with API save data, or rejects with error details
 		 */
 		postHtml: function ( html, cacheKey, extraData, options ) {
-			var saver = this;
-
 			options = options || {};
-			var data;
+			let data;
 			if ( cacheKey ) {
 				data = $.extend( { cachekey: cacheKey }, extraData );
 			} else {
@@ -187,14 +181,14 @@
 			}
 			return this.postContent( data, options ).then(
 				null,
-				function ( code, response ) {
+				( code, response ) => {
 					// This cache key is evidently bad, clear it
 					if ( options.onCacheKeyFail ) {
 						options.onCacheKeyFail();
 					}
 					if ( code === 'badcachekey' ) {
 						// If the cache key failed, try again without the cache key
-						return saver.postHtml(
+						return this.postHtml(
 							html,
 							null,
 							extraData,
@@ -223,9 +217,9 @@
 		 */
 		postContent: function ( data, options ) {
 			options = options || {};
-			var api = options.api || new mw.Api();
+			const api = options.api || new mw.Api();
 
-			var start;
+			let start;
 			if ( options.now ) {
 				start = options.now();
 			}
@@ -245,29 +239,29 @@
 				data
 			);
 
-			var action = data.action;
+			const action = data.action;
 
-			var request = api.postWithToken( 'csrf', data, {
+			const request = api.postWithToken( 'csrf', data, {
 				contentType: 'multipart/form-data',
 				trackEditAttemptStepSessionId: true
 			} );
 
 			return request.then(
-				function ( response, jqxhr ) {
-					var responseData = response[ action ];
+				( response, jqxhr ) => {
+					const responseData = response[ action ];
 
 					// Log data about the request if eventName was set
 					if ( options.track && options.eventName ) {
-						var eventData = {
+						const eventData = {
 							bytes: require( 'mediawiki.String' ).byteLength( jqxhr.responseText ),
 							duration: options.now() - start
 						};
-						var fullEventName = 'performance.system.' + options.eventName +
+						const fullEventName = 'performance.system.' + options.eventName +
 							( responseData.cachekey ? '.withCacheKey' : '.withoutCacheKey' );
 						options.track( fullEventName, eventData );
 					}
 
-					var error;
+					let error;
 					if ( !responseData ) {
 						error = {
 							code: 'invalidresponse',
@@ -306,15 +300,15 @@
 					}
 					return responseData;
 				},
-				function ( code, response ) {
-					var responseText = OO.getProp( response, 'xhr', 'responseText' );
+				( code, response ) => {
+					const responseText = OO.getProp( response, 'xhr', 'responseText' );
 
 					if ( responseText && options.track && options.eventName ) {
-						var eventData = {
+						const eventData = {
 							bytes: require( 'mediawiki.String' ).byteLength( responseText ),
 							duration: options.now() - start
 						};
-						var fullEventName;
+						let fullEventName;
 						if ( code === 'badcachekey' ) {
 							fullEventName = 'performance.system.' + options.eventName + '.badCacheKey';
 						} else {

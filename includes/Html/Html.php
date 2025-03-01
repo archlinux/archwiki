@@ -25,7 +25,7 @@
 
 namespace MediaWiki\Html;
 
-use FormatJson;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\ContentSecurityPolicy;
@@ -404,18 +404,11 @@ class Html {
 			}
 		}
 		if ( $element === 'select' && isset( $attribs['size'] ) ) {
-			if ( in_array( 'multiple', $attribs )
-				|| ( isset( $attribs['multiple'] ) && $attribs['multiple'] !== false )
-			) {
-				// A multi-select
-				if ( strval( $attribs['size'] ) == '4' ) {
-					unset( $attribs['size'] );
-				}
-			} else {
-				// Single select
-				if ( strval( $attribs['size'] ) == '1' ) {
-					unset( $attribs['size'] );
-				}
+			$multiple = ( $attribs['multiple'] ?? false ) !== false ||
+				in_array( 'multiple', $attribs );
+			$default = $multiple ? 4 : 1;
+			if ( (int)$attribs['size'] === $default ) {
+				unset( $attribs['size'] );
 			}
 		}
 
@@ -695,6 +688,7 @@ class Html {
 	 * Return the HTML for a message box.
 	 * @since 1.31
 	 * @param string $html of contents of box
+	 * @param-taint $html tainted
 	 * @param string|array $className corresponding to box
 	 * @param string $heading (optional)
 	 * @param string $iconClassName (optional) corresponding to box icon
@@ -705,7 +699,6 @@ class Html {
 			$html = self::element( 'h2', [], $heading ) . $html;
 		}
 		$coreClasses = [
-			'mw-message-box',
 			'cdx-message',
 			'cdx-message--block'
 		];
@@ -732,6 +725,7 @@ class Html {
 	 * Return the HTML for a notice message box.
 	 * @since 1.38
 	 * @param string $html of contents of notice
+	 * @param-taint $html tainted
 	 * @param string|array $className corresponding to notice
 	 * @param string $heading (optional)
 	 * @param string|array $iconClassName (optional) corresponding to notice icon
@@ -739,7 +733,6 @@ class Html {
 	 */
 	public static function noticeBox( $html, $className, $heading = '', $iconClassName = '' ) {
 		return self::messageBox( $html, [
-			'mw-message-box-notice',
 			'cdx-message--notice',
 			$className
 		], $heading, $iconClassName );
@@ -750,12 +743,12 @@ class Html {
 	 * @since 1.31
 	 * @since 1.34 $className optional parameter added
 	 * @param string $html of contents of box
+	 * @param-taint $html tainted
 	 * @param string $className (optional) corresponding to box
 	 * @return string of HTML representing a warning box.
 	 */
 	public static function warningBox( $html, $className = '' ) {
 		return self::messageBox( $html, [
-			'mw-message-box-warning',
 			'cdx-message--warning', $className ] );
 	}
 
@@ -764,13 +757,13 @@ class Html {
 	 * @since 1.31
 	 * @since 1.34 $className optional parameter added
 	 * @param string $html of contents of error box
+	 * @param-taint $html tainted
 	 * @param string $heading (optional)
 	 * @param string $className (optional) corresponding to box
 	 * @return string of HTML representing an error box.
 	 */
 	public static function errorBox( $html, $heading = '', $className = '' ) {
 		return self::messageBox( $html, [
-			'mw-message-box-error',
 			'cdx-message--error', $className ], $heading );
 	}
 
@@ -779,12 +772,12 @@ class Html {
 	 * @since 1.31
 	 * @since 1.34 $className optional parameter added
 	 * @param string $html of contents of box
+	 * @param-taint $html tainted
 	 * @param string $className (optional) corresponding to box
 	 * @return string of HTML representing a success box.
 	 */
 	public static function successBox( $html, $className = '' ) {
 		return self::messageBox( $html, [
-			'mw-message-box-success',
 			'cdx-message--success', $className ] );
 	}
 
@@ -1232,6 +1225,31 @@ class Html {
 		}
 
 		return $optionsOoui;
+	}
+
+	/**
+	 * Convert options for a drop-down box into a format accepted by OOUI\DropdownInputWidget etc.
+	 *
+	 * TODO Find a better home for this function.
+	 *
+	 * @param array $options Options, as returned e.g. by Html::listDropdownOptions()
+	 * @return array
+	 */
+	public static function listDropdownOptionsCodex( $options ) {
+		$optionsCodex = [];
+
+		foreach ( $options as $text => $value ) {
+			if ( is_array( $value ) ) {
+				// No support for optgroups in Codex yet (T367241)
+				$optionsCodex[] = [ 'label' => (string)$text, 'value' => '', 'disabled' => true ];
+				foreach ( $value as $text2 => $value2 ) {
+					$optionsCodex[] = [ 'label' => (string)$text2, 'value' => (string)$value2 ];
+				}
+			} else {
+				$optionsCodex[] = [ 'label' => (string)$text, 'value' => (string)$value ];
+			}
+		}
+		return $optionsCodex;
 	}
 }
 

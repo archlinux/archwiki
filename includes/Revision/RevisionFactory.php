@@ -22,8 +22,8 @@
 
 namespace MediaWiki\Revision;
 
-use IDBAccessObject;
 use MediaWiki\Page\PageIdentity;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
@@ -53,7 +53,7 @@ interface RevisionFactory {
 	public function newRevisionFromRow(
 		$row,
 		$queryFlags = IDBAccessObject::READ_NORMAL,
-		PageIdentity $page = null
+		?PageIdentity $page = null
 	);
 
 	/**
@@ -79,7 +79,7 @@ interface RevisionFactory {
 	public function newRevisionFromArchiveRow(
 		$row,
 		$queryFlags = IDBAccessObject::READ_NORMAL,
-		PageIdentity $page = null,
+		?PageIdentity $page = null,
 		array $overrides = []
 	);
 

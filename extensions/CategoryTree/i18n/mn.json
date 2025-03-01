@@ -3,8 +3,7 @@
 		"authors": [
 			"Chinneeb",
 			"MongolWiki",
-			"Sembuk",
-			"Enkhsaihan2005"
+			"Sembuk"
 		]
 	},
 	"categorytree": "Ангиллын мод",
@@ -15,7 +14,7 @@
 	"categorytree-go": "Модыг үзүүлэх",
 	"categorytree-parents": "Эх ангиллууд",
 	"categorytree-mode-categories": "Зөвхөн ангиллууд",
-	"categorytree-mode-pages": "зурагнаас бусад хуудаснууд",
+	"categorytree-mode-pages": "зурагнаас бусад хуудсууд",
 	"categorytree-mode-all": "бүх хуудас",
 	"categorytree-collapse": "буулгах",
 	"categorytree-expand": "дэлгэх",

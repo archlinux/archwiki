@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\Poem;
 
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Html\Html;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\PPFrame;
 use MediaWiki\Parser\Sanitizer;
-use Parser;
-use PPFrame;
 
 /**
  * This class handles formatting poems in WikiText, specifically anything within

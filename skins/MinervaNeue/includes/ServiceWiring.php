@@ -19,17 +19,14 @@
  * @file
  */
 
-use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Minerva\LanguagesHelper;
 use MediaWiki\Minerva\Menu\Definitions;
-use MediaWiki\Minerva\Menu\PageActions as PageActionsMenu;
+use MediaWiki\Minerva\Menu\PageActions\PageActions;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
 use MediaWiki\Minerva\Permissions\MinervaPagePermissions;
 use MediaWiki\Minerva\SkinOptions;
-use MediaWiki\Minerva\Skins\SkinMinerva;
 use MediaWiki\Minerva\Skins\SkinUserPageHelper;
-use MediaWiki\SpecialPage\SpecialPage;
 
 return [
 	'Minerva.Menu.Definitions' => static function ( MediaWikiServices $services ): Definitions {
@@ -37,69 +34,15 @@ return [
 			$services->getSpecialPageFactory()
 		);
 	},
-	'Minerva.Menu.PageActionsDirector' =>
-		static function ( MediaWikiServices $services ): PageActionsMenu\PageActionsDirector {
-			/**
-			 * @var SkinOptions $skinOptions
-			 * @var SkinMinerva $skin
-			 * @var SkinUserPageHelper $userPageHelper
-			 */
-			$skinOptions = $services->getService( 'Minerva.SkinOptions' );
-			// FIXME: RequestContext should not be accessed in service container.
-			$context = RequestContext::getMain();
-			$title = $context->getTitle();
-			if ( !$title ) {
-				$title = SpecialPage::getTitleFor( 'Badtitle' );
-			}
-			$user = $context->getUser();
-			$userPageHelper = $services->getService( 'Minerva.SkinUserPageHelper' )
-				->setContext( $context )
-				->setTitle( $title->inNamespace( NS_USER_TALK ) ?
-					$context->getSkin()->getRelevantTitle()->getSubjectPage() :
-					$title
-				);
-			$languagesHelper = $services->getService( 'Minerva.LanguagesHelper' );
-
-			$permissions = $services->getService( 'Minerva.Permissions' )
-				->setContext( $context );
-
-			$watchlistManager = $services->getWatchlistManager();
-
-			$toolbarBuilder = new PageActionsMenu\ToolbarBuilder(
-				$title,
-				$user,
-				$context,
-				$permissions,
-				$skinOptions,
-				$userPageHelper,
-				$languagesHelper,
-				new ServiceOptions( PageActionsMenu\ToolbarBuilder::CONSTRUCTOR_OPTIONS,
-					$services->getMainConfig() ),
-				$watchlistManager
-			);
-			if ( $skinOptions->get( SkinOptions::TOOLBAR_SUBMENU ) ) {
-				$overflowBuilder = $userPageHelper->isUserPage() ?
-					new PageActionsMenu\UserNamespaceOverflowBuilder(
-						$title,
-						$context,
-						$permissions,
-						$languagesHelper
-					) :
-					new PageActionsMenu\DefaultOverflowBuilder(
-						$title,
-						$context,
-						$permissions
-					);
-			} else {
-				$overflowBuilder = new PageActionsMenu\EmptyOverflowBuilder();
-			}
-
-			return new PageActionsMenu\PageActionsDirector(
-				$toolbarBuilder,
-				$overflowBuilder,
-				$context
-			);
-		},
+	'Minerva.Menu.PageActions' => static function ( MediaWikiServices $services ): PageActions {
+		return new PageActions(
+			$services->getService( 'Minerva.LanguagesHelper' ),
+			$services->getService( 'Minerva.Permissions' ),
+			$services->getService( 'Minerva.SkinOptions' ),
+			$services->getService( 'Minerva.SkinUserPageHelper' ),
+			$services->getWatchlistManager()
+		);
+	},
 	'Minerva.SkinUserPageHelper' => static function ( MediaWikiServices $services ): SkinUserPageHelper {
 		return new SkinUserPageHelper(
 			$services->getUserFactory(),

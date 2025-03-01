@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Recentchanges
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -40,22 +37,25 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\Utils\MWTimestamp;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
+use MediaWiki\Xml\Xml;
 use MessageCache;
 use OOUI\ButtonWidget;
 use OOUI\HtmlSnippet;
 use RecentChange;
-use WatchedItemStoreInterface;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
-use Xml;
+use Wikimedia\Rdbms\RawSQLExpression;
 
 /**
- * A special page that lists last changes made to the wiki
+ * List of the last changes made to the wiki
  *
+ * @ingroup RecentChanges
  * @ingroup SpecialPage
  */
 class SpecialRecentChanges extends ChangesListSpecialPage {
 
+	/** @var array */
 	private $watchlistFilterGroupDefinition;
 
 	private WatchedItemStoreInterface $watchedItemStore;
@@ -75,12 +75,12 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	 * @param TempUserConfig|null $tempUserConfig
 	 */
 	public function __construct(
-		WatchedItemStoreInterface $watchedItemStore = null,
-		MessageCache $messageCache = null,
-		UserOptionsLookup $userOptionsLookup = null,
-		ChangeTagsStore $changeTagsStore = null,
-		UserIdentityUtils $userIdentityUtils = null,
-		TempUserConfig $tempUserConfig = null
+		?WatchedItemStoreInterface $watchedItemStore = null,
+		?MessageCache $messageCache = null,
+		?UserOptionsLookup $userOptionsLookup = null,
+		?ChangeTagsStore $changeTagsStore = null,
+		?UserIdentityUtils $userIdentityUtils = null,
+		?TempUserConfig $tempUserConfig = null
 	) {
 		// This class is extended and therefor fallback to global state - T265310
 		$services = MediaWikiServices::getInstance();
@@ -139,16 +139,18 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 				IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds, $selectedValues
 			) {
 				sort( $selectedValues );
-				$notwatchedCond = 'wl_user IS NULL';
-				$watchedCond = 'wl_user IS NOT NULL';
+				$notwatchedCond = $dbr->expr( 'wl_user', '=', null );
+				$watchedCond = $dbr->expr( 'wl_user', '!=', null );
 				if ( $this->getConfig()->get( MainConfigNames::WatchlistExpiry ) ) {
 					// Expired watchlist items stay in the DB after their expiry time until they're purged,
 					// so it's not enough to only check for wl_user.
-					$quotedNow = $dbr->addQuotes( $dbr->timestamp() );
-					$notwatchedCond = "wl_user IS NULL OR ( we_expiry IS NOT NULL AND we_expiry < $quotedNow )";
-					$watchedCond = "wl_user IS NOT NULL AND ( we_expiry IS NULL OR we_expiry >= $quotedNow )";
+					$dbNow = $dbr->timestamp();
+					$notwatchedCond = $notwatchedCond
+						->orExpr( $dbr->expr( 'we_expiry', '!=', null )->and( 'we_expiry', '<', $dbNow ) );
+					$watchedCond = $watchedCond
+						->andExpr( $dbr->expr( 'we_expiry', '=', null )->or( 'we_expiry', '>=', $dbNow ) );
 				}
-				$newCond = 'rc_timestamp >= wl_notificationtimestamp';
+				$newCond = new RawSQLExpression( 'rc_timestamp >= wl_notificationtimestamp' );
 
 				if ( $selectedValues === [ 'notwatched' ] ) {
 					$conds[] = $notwatchedCond;
@@ -161,10 +163,8 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 				}
 
 				if ( $selectedValues === [ 'watchednew' ] ) {
-					$conds[] = $dbr->makeList( [
-						$watchedCond,
-						$newCond
-					], LIST_AND );
+					$conds[] = $watchedCond
+						->andExpr( $newCond );
 					return;
 				}
 
@@ -174,13 +174,11 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 				}
 
 				if ( $selectedValues === [ 'notwatched', 'watchednew' ] ) {
-					$conds[] = $dbr->makeList( [
-						$notwatchedCond,
-						$dbr->makeList( [
-							$watchedCond,
-							$newCond
-						], LIST_AND )
-					], LIST_OR );
+					$conds[] = $notwatchedCond
+						->orExpr(
+							$watchedCond
+								->andExpr( $newCond )
+						);
 					return;
 				}
 
@@ -221,7 +219,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		}
 
 		$this->addHelpLink(
-			'https://meta.wikimedia.org/wiki/Special:MyLanguage/Help:Recent_changes',
+			'https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Recent_changes',
 			true
 		);
 		parent::execute( $subpage );
@@ -444,18 +442,15 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		// MediaWiki 1.26 this used to use the plus operator instead, which meant
 		// that extensions weren't able to change these conditions
 		$query_options = array_merge( $orderByAndLimit, $query_options );
-		$query_options['MAX_EXECUTION_TIME'] =
-			$this->getConfig()->get( MainConfigNames::MaxExecutionTimeForExpensiveQueries );
-		$rows = $dbr->select(
-			$tables,
-			$fields,
-			$conds,
-			__METHOD__,
-			$query_options,
-			$join_conds
-		);
-
-		return $rows;
+		return $dbr->newSelectQueryBuilder()
+			->tables( $tables )
+			->fields( $fields )
+			->conds( $conds )
+			->caller( __METHOD__ )
+			->options( $query_options )
+			->joinConds( $join_conds )
+			->setMaxExecutionTime( $this->getConfig()->get( MainConfigNames::MaxExecutionTimeForExpensiveQueries ) )
+			->fetchResultSet();
 	}
 
 	/**

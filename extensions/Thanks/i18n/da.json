@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Christian List",
+			"Dipsacus fullonum",
 			"EeveeSylveon",
 			"Kranix",
 			"Palnatoke",
@@ -10,8 +11,7 @@
 			"Simeondahl",
 			"SimmeD",
 			"Thomsen",
-			"Weblars",
-			"Dipsacus fullonum"
+			"Weblars"
 		]
 	},
 	"thanks-desc": "Tilføjer links til at takke brugerne for ændringer, kommentarer, osv.",
@@ -19,9 +19,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|takkede}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Tak}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Takkede}}}}",
-	"thanks-button-action-queued": "{{GENDER:$1|{{GENDER:$2|Takker}}}} $1…",
-	"thanks-button-action-cancel": "Annullér",
-	"thanks-button-action-completed": "Du {{GENDER:$1|{{GENDER:$2|takkede}}}} $1",
 	"thanks-error-undefined": "Takkehandlingen mislykkedes (fejlkode: $1). Prøv venligst igen.",
 	"thanks-error-invalidrevision": "Versions-ID er ikke gyldigt.",
 	"thanks-error-invalidrecipient": "Ingen gyldig modtager fundet",

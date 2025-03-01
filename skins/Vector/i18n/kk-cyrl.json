@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amankel'dy",
 			"Arystanbek",
 			"Daniyar",
 			"Darzz",
@@ -10,7 +11,6 @@
 			"Nurlan",
 			"U.ayaao.p",
 			"СеніңШешең",
-			"Amankel'dy",
 			"Casserium"
 		]
 	},
@@ -46,16 +46,20 @@
 	"vector-jumptosearch": "Іздеуге өту",
 	"vector-jumptocontent": "Мазмұнға өту",
 	"vector-more-actions": "Тағы",
+	"vector-appearance-label": "Көрініс",
 	"vector-feature-limited-width-name": "Ені",
-	"vector-feature-custom-font-size-name": "Мәтін",
 	"vector-feature-limited-width-0-label": "Кең",
 	"vector-feature-limited-width-1-label": "Қалыпты",
+	"vector-feature-custom-font-size-name": "Мәтін",
 	"vector-feature-custom-font-size-0-label": "Ұсақ",
 	"vector-feature-custom-font-size-1-label": "Орташа",
 	"vector-feature-custom-font-size-2-label": "Ірі",
 	"skin-theme-name": "Түс",
 	"skin-theme-description": "[Эксперименттік нұсқа, мәселелер туындау ықтималдығы жоғары] Құрылғы экранынан шығатын жарықты азайтады.",
+	"skin-theme-day-label": "Жарық",
+	"skin-theme-night-label": "Қараңғы",
 	"skin-theme-os-label": "Өздігінен",
+	"skin-theme-exclusion-notice": "Бұл бет үнемі жарық күйде көрінеді.",
 	"vector-search-loader": "Іздеу ұсыныстары жүктелуде",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">«$1»</strong> бар беттерді іздеу",
 	"vector-intro-page": "Жәрдем:Таныстыру",
@@ -70,7 +74,7 @@
 	"vector-toc-collapsible-button-label": "Мазмұнды көрсету/жасыру",
 	"vector-site-nav-label": "Сайт",
 	"vector-main-menu-label": "Басты мәзір",
-	"vector-limited-width-toggle": "Шектеулі мазмұн енін ауыстырып-қосу",
+	"vector-feature-custom-font-size-exclusion-notice": "Бұл бетте үнемі кіші қаріп қолданылады",
 	"vector-page-tools-label": "Құралдар",
 	"vector-page-tools-general-label": "Жалпы",
 	"vector-page-tools-actions-label": "Әрекеттер",

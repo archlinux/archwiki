@@ -21,7 +21,9 @@
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\JobQueue\JobFactory;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\RequestTimeout\TimeoutException;
+use Wikimedia\Stats\NullStatsdDataFactory;
 use Wikimedia\UUID\GlobalIdGenerator;
 
 /**

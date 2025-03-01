@@ -1,9 +1,9 @@
-export PORT := '8081'
+export PORT := '9091'
 
 export UID := `id -u`
 export GID := `id -g`
 
-COMPOSE := 'docker-compose -f docker/app.yml -p archwiki'
+COMPOSE := 'docker compose -f docker/app.yml -p archwiki'
 COMPOSE-RUN := COMPOSE + ' run --rm'
 PHP-DB-RUN := COMPOSE-RUN + ' app'
 PHP-RUN := COMPOSE-RUN + ' --no-deps app'

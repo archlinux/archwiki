@@ -20,47 +20,20 @@
 
 namespace MediaWiki\Minerva\Skins;
 
-use IContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 
 class SkinUserPageHelper {
-	/**
-	 * @var UserFactory
-	 */
 	private UserFactory $userFactory;
-
-	/**
-	 * @var UserNameUtils
-	 */
 	private UserNameUtils $userNameUtils;
-
-	/**
-	 * @var IContextSource
-	 */
 	private IContextSource $context;
-
-	/**
-	 * @var Title|null
-	 */
 	private ?Title $title;
+	private bool $fetchedData = false;
+	private ?User $pageUser = null;
 
-	/**
-	 * @var bool
-	 */
-	private $fetchedData = false;
-
-	/**
-	 * @var User|null
-	 */
-	private $pageUser;
-
-	/**
-	 * @param UserFactory $userFactory
-	 * @param UserNameUtils $userNameUtils
-	 */
 	public function __construct(
 		UserFactory $userFactory,
 		UserNameUtils $userNameUtils
@@ -69,30 +42,23 @@ class SkinUserPageHelper {
 		$this->userNameUtils = $userNameUtils;
 	}
 
-	/**
-	 * @param IContextSource $context
-	 * @return $this
-	 */
-	public function setContext( IContextSource $context ) {
+	public function setContext( IContextSource $context ): self {
 		$this->context = $context;
 		return $this;
 	}
 
-	/**
-	 * @param Title|null $title
-	 * @return $this
-	 */
-	public function setTitle( ?Title $title ) {
+	public function setTitle( ?Title $title ): self {
 		$this->title = $title;
+		$this->fetchedData = false;
+		$this->pageUser = null;
 		return $this;
 	}
 
 	/**
 	 * Fetch user data and store locally for performance improvement
-	 * @return User|null
 	 */
-	private function fetchData() {
-		if ( $this->fetchedData === false ) {
+	private function fetchData(): ?User {
+		if ( !$this->fetchedData ) {
 			if ( $this->title && $this->title->inNamespace( NS_USER ) && !$this->title->isSubpage() ) {
 				$this->pageUser = $this->buildPageUserObject( $this->title );
 			}
@@ -103,10 +69,8 @@ class SkinUserPageHelper {
 
 	/**
 	 * Return new User object based on username or IP address.
-	 * @param Title $title
-	 * @return User|null
 	 */
-	private function buildPageUserObject( Title $title ) {
+	private function buildPageUserObject( Title $title ): ?User {
 		$titleText = $title->getText();
 
 		if ( $this->userNameUtils->isIP( $titleText ) ) {
@@ -121,24 +85,15 @@ class SkinUserPageHelper {
 		return null;
 	}
 
-	/**
-	 * @return User|null
-	 */
-	public function getPageUser() {
+	public function getPageUser(): ?User {
 		return $this->fetchData();
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function isUserPage() {
+	public function isUserPage(): bool {
 		return $this->fetchData() !== null;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function isUserPageAccessibleToCurrentUser() {
+	public function isUserPageAccessibleToCurrentUser(): bool {
 		$pageUser = $this->fetchData();
 		$isHidden = $pageUser && $pageUser->isHidden();
 		$canViewHidden = $this->context && $this->context->getAuthority()->isAllowed( 'hideuser' );

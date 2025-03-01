@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"NGC 54"
+			"NGC 54",
+			"Paloi Sciurala"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Comentariul cu ID-ul „$1” nu a fost găsit.",
 	"apierror-discussiontools-commentname-ambiguous": "Au fost găsite ai multe comentarii cu numele „$1”, este necesar <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "Comentariul cu numele „$1” nu a fost găsit.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Pagina nu a conținut niciodată discuții.",
 	"apierror-discussiontools-formtoken-used": "Comentariu a fost deja publicat. Reîncărcați pagina pentru a îl vedea.",
 	"apierror-discussiontools-subscription-failed-add": "Nu se poate abona la acest subiect.",
 	"apierror-discussiontools-subscription-failed-remove": "Nu se poate dezabona de la acest subiect.",
@@ -40,5 +42,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Numele subiectului la care să vă abonați (sau de la care să vă dezabonați)",
 	"apihelp-discussiontoolssubscribe-param-page": "O pagină pe care apare subiectul",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Adevărat pentru abonare, fals pentru dezabonare.",
-	"apihelp-discussiontoolssubscribe-summary": "Abonați-vă (sau dezabonați-vă) pentru a primi notificări despre un subiect."
+	"apihelp-discussiontoolssubscribe-summary": "Abonați-vă (sau dezabonați-vă) pentru a primi notificări despre un subiect.",
+	"apihelp-discussiontoolsthank-param-commentid": "ID-ul comentariului căruia să i se mulțumească.",
+	"apihelp-discussiontoolsthank-summary": "Trimiteți o notificare publică de mulțumire pentru un comentariu."
 }

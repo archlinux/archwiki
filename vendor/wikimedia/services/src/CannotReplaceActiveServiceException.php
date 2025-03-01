@@ -36,7 +36,7 @@ class CannotReplaceActiveServiceException extends RuntimeException
 	 * @param string $serviceName
 	 * @param Exception|null $previous
 	 */
-	public function __construct( string $serviceName, Exception $previous = null ) {
+	public function __construct( string $serviceName, ?Exception $previous = null ) {
 		parent::__construct( "Cannot replace an active service: $serviceName", 0, $previous );
 	}
 

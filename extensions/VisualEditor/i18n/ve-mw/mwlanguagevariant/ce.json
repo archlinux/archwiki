@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Умар",
-			"Amire80"
+			"Amire80",
+			"Умар"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "Йоза хийцар дӀадайина",
@@ -15,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "ХӀара къайлайаьккхина бакъо йу.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "ХӀокху бакъоно Ӏаткъам бо агӀонан цӀарна.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Меттан код",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Ца магийнарг>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Ца магийнарг</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Мотт",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Хьост",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Ӏалашо",

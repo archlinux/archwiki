@@ -30,27 +30,26 @@ class TemplateDataNormalizer {
 		$data->sets ??= [];
 		$data->maps ??= (object)[];
 		$data->format ??= null;
+		$data->params ??= (object)[];
 
 		$this->normaliseInterfaceText( $data->description );
 		foreach ( $data->sets as $setObj ) {
 			$this->normaliseInterfaceText( $setObj->label );
 		}
 
-		if ( isset( $data->params ) ) {
-			foreach ( $data->params as $param ) {
-				if ( isset( $param->inherits ) && isset( $data->params->{ $param->inherits } ) ) {
-					$parent = $data->params->{ $param->inherits };
-					foreach ( $parent as $key => $value ) {
-						if ( !isset( $param->$key ) ) {
-							$param->$key = is_object( $parent->$key ) ?
-								clone $parent->$key :
-								$parent->$key;
-						}
+		foreach ( $data->params as $param ) {
+			if ( isset( $param->inherits ) && isset( $data->params->{ $param->inherits } ) ) {
+				$parent = $data->params->{ $param->inherits };
+				foreach ( $parent as $key => $value ) {
+					if ( !isset( $param->$key ) ) {
+						$param->$key = is_object( $parent->$key ) ?
+							clone $parent->$key :
+							$parent->$key;
 					}
-					unset( $param->inherits );
 				}
-				$this->normalizeParameter( $param );
+				unset( $param->inherits );
 			}
+			$this->normalizeParameter( $param );
 		}
 	}
 

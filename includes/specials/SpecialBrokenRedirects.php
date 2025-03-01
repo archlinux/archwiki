@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Brokenredirects
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -33,8 +30,10 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * A special page listing redirects to non existent page. Those should be
- * fixed to point to an existing page.
+ * List of redirects to non-existent pages.
+ *
+ * Editors are encouraged to fix these by editing them to redirect to
+ * an existing page instead.
  *
  * @ingroup SpecialPage
  */
@@ -93,7 +92,7 @@ class SpecialBrokenRedirects extends QueryPage {
 			'conds' => [
 				// Exclude pages that don't exist locally as wiki pages, but aren't "broken" either: special
 				// pages and interwiki links.
-				'rd_namespace >= 0',
+				$dbr->expr( 'rd_namespace', '>=', 0 ),
 				'rd_interwiki' => '',
 				'p2.page_namespace' => null,
 			],

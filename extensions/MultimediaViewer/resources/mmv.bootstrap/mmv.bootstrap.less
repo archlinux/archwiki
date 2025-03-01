@@ -8,45 +8,43 @@
 	bottom: 0;
 	z-index: 1000;
 	background-color: #000;
+	display: flex;
+	justify-items: center;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+
+	.cdx-progress-bar {
+		max-width: 80vw;
+		min-width: 20vw;
+		width: 20rem;
+	}
 }
 
 body.mw-mmv-lightbox-open {
 	overflow-y: auto;
+
+	// This is to ensure the background area for the safe areas (notch) is black in fullscreen mode
+	// Separate from above as not all browsers that we support, support has().
+	background-color: #000;
 
 	// Stop the article from scrolling in the background
 	> *:not( .mw-notification-area-overlay ) {
 		display: none;
 	}
 
-	> .mw-mmv-overlay,
+	> .mw-mmv-overlay {
+		display: flex;
+	}
+
 	> .mw-mmv-wrapper {
 		display: block;
 	}
 }
 
-.mw-mmv-filepage-buttons {
-	margin-top: 5px;
-
-	.cdx-button:nth-child(n + 2) {
-		border-left: none;
-	}
-
-	.mw-mmv-view-expanded .cdx-button__icon {
+.mw-mmv-view-expanded {
+	.cdx-button__icon {
 		.cdx-mixin-css-icon( @cdx-icon-image-gallery, @param-is-button-icon: true,
 			@param-size-icon: @size-icon-small );
 	}
-
-	.mw-mmv-view-config .cdx-button__icon {
-		.cdx-mixin-css-icon( @cdx-icon-settings, @param-is-button-icon: true,
-			@param-size-icon: @size-icon-small );
-	}
-}
-
-.mw-mmv-button {
-	background-color: transparent;
-	min-width: 0;
-	border: 0;
-	padding: 0;
-	overflow-x: hidden;
-	text-indent: -9999em;
 }

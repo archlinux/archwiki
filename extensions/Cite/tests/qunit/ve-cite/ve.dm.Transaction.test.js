@@ -10,7 +10,7 @@
 QUnit.module( 've.dm.Transaction (Cite)', ve.test.utils.newMwEnvironment() );
 
 // FIXME: Duplicates test runner; should be using a data provider
-QUnit.test( 'newFromDocumentInsertion with references', function ( assert ) {
+QUnit.test( 'newFromDocumentInsertion with references', ( assert ) => {
 	const complexDoc = ve.dm.citeExample.createExampleDocument( 'complexInternalData' ),
 		withReference = [
 			{ type: 'paragraph' },
@@ -70,7 +70,7 @@ QUnit.test( 'newFromDocumentInsertion with references', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		const doc = ve.dm.citeExample.createExampleDocument( caseItem.doc );
 		let doc2, removalOps;
 		if ( caseItem.newDocData ) {
@@ -97,9 +97,7 @@ QUnit.test( 'newFromDocumentInsertion with references', function ( assert ) {
 		);
 
 		const expectedStoreItems = caseItem.expectedStoreItems || [];
-		const actualStoreItems = expectedStoreItems.map( function ( item ) {
-			return doc.store.value( OO.getHash( item ) );
-		} );
+		const actualStoreItems = expectedStoreItems.map( ( item ) => doc.store.value( OO.getHash( item ) ) );
 		assert.deepEqual( actualStoreItems, expectedStoreItems, caseItem.msg + ': store items' );
 	} );
 } );

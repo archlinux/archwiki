@@ -15,6 +15,7 @@
 	"apierror-discussiontools-commentid-notfound": "لم يُعثَر على التعليق ذي المُعرِّف '$1'.",
 	"apierror-discussiontools-commentname-ambiguous": "عُثر على العديد من التعليقات ذات الاسم '$1'، نحتاج إلى <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "لم يًعثر على التعليق مع الاسم '$1'.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "الصفحة لم تحتوي على أي مناقشات على الإطلاق.",
 	"apierror-discussiontools-formtoken-used": "نُشر التعليق فعلًا. أعد تحميل الصفحة لرؤيته.",
 	"apierror-discussiontools-subscription-failed-add": "تعذَّر الاشتراك في هذا الموضوع.",
 	"apierror-discussiontools-subscription-failed-remove": "لا يمكن إلغاء الاشتراك في هذا الموضوع.",
@@ -22,7 +23,7 @@
 	"apihelp-discussiontoolsedit-param-commentid": "معرّف التعليق المراد الردّ عليه. يُستعمل فقط حين يكون <var>paction</var> هو <var>addcomment</var>. يعيد كتابة المُتغيِّر <var>commentname</var>.",
 	"apihelp-discussiontoolsedit-param-commentname": "اسم التعليق المُراد الردّ عليه. يستعمل فقط حين يكون <var>paction</var> هو <var>addcomment</var>.",
 	"apihelp-discussiontoolsedit-param-autosubscribe": "الاشتراك الآلي للمستخدم في خيط صفحة النقاش؟",
-	"apihelp-discussiontoolsedit-param-formtoken": "معرف فريد اختياري يتم إنشاؤه في العميل لمنع النشر المزدوج.",
+	"apihelp-discussiontoolsedit-param-formtoken": "An optional unique ID generated in the client to prevent double-posting.",
 	"apihelp-discussiontoolsedit-param-html": "محتوى للنشر بصيغة HTML. لا يُمكِن استخدامه مع <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} تستخدم فقط حين يكون <var>paction</var> هو <var>addtopic</var>.",
 	"apihelp-discussiontoolsedit-param-allownosectiontitle": "السماح بنشر قسم جديد بدون عنوان.",
@@ -48,5 +49,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "عنوان الموضوع الذي تريدون الاشتراك فيه (أو إلغاء الاشتراك منه)",
 	"apihelp-discussiontoolssubscribe-param-page": "صفحة يظهر عليها الموضوع",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "صح للاشتراك، خطأ لإلغاء الاشتراك",
-	"apihelp-discussiontoolssubscribe-summary": "اشتراك (أو إلغاء الاشتراك) لتلقّي إخطارات حول موضوع."
+	"apihelp-discussiontoolssubscribe-summary": "اشتراك (أو إلغاء الاشتراك) لتلقّي إخطارات حول موضوع.",
+	"apihelp-discussiontoolsthank-param-commentid": "معرف التعليق المراد شكره.",
+	"apihelp-discussiontoolsthank-summary": "إرسال إشعار شكر عام على تعليق."
 }

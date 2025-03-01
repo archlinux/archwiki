@@ -3,12 +3,15 @@
 		"options": [ "0", "1", "2" ],
 		"preferenceKey": "vector-font-size"
 	},
-	"skin-theme": {
-		"options": [ "os", "day", "night" ],
-		"preferenceKey": "vector-theme"
-	},
 	"vector-feature-limited-width": {
 		"options": [ "1", "0" ],
 		"preferenceKey": "vector-limited-width"
+	},
+	"skin-theme": {
+		"options": [ "os", "day", "night" ],
+		"preferenceKey": "vector-theme",
+		"betaMessage": "vector-night-mode-beta-tag",
+		"linkLabelMessage": "vector-night-mode-issue-reporting-link-label",
+		"linkLabelUrl": "vector-night-mode-issue-reporting-notice-url"
 	}
 }

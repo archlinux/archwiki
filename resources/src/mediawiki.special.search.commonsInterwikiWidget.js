@@ -1,12 +1,9 @@
 ( function () {
 
-	var api = new mw.Api(),
-		pageUrl = new mw.Uri();
-
 	function itemTemplate( results ) {
 
-		return results.map( function ( result ) {
-			var imageThumbnailSrc = result.thumbnail ? result.thumbnail.source : '';
+		return results.map( ( result ) => {
+			const imageThumbnailSrc = result.thumbnail ? result.thumbnail.source : '';
 
 			return $( '<div>' ).addClass( 'iw-result__mini-gallery' ).append(
 				$( '<a>' )
@@ -45,10 +42,13 @@
 
 	}
 
+	const api = new mw.Api();
+	const pageUrl = new URL( location.href );
+
 	api.get( {
 		action: 'query',
 		generator: 'search',
-		gsrsearch: pageUrl.query.search,
+		gsrsearch: pageUrl.searchParams.get( 'search' ),
 		gsrnamespace: mw.config.get( 'wgNamespaceIds' ).file,
 		gsrlimit: 3,
 		prop: 'pageimages',
@@ -56,21 +56,21 @@
 		piprop: 'thumbnail',
 		pithumbsize: 300,
 		formatversion: 2
-	} ).done( function ( resp ) {
-		var results = resp.query && resp.query.pages || false,
-			multimediaWidgetTemplate;
+	} ).done( ( resp ) => {
+		const results = resp.query && resp.query.pages || false;
 
 		if ( !results ) {
 			return;
 		}
 
-		results.sort( function ( a, b ) {
-			return a.index - b.index;
-		} );
+		results.sort( ( a, b ) => a.index - b.index );
 
-		multimediaWidgetTemplate = itemWrapperTemplate( pageUrl.query.search, itemTemplate( results ) );
+		const multimediaWidgetTemplate = itemWrapperTemplate(
+			pageUrl.searchParams.get( 'search' ),
+			itemTemplate( results )
+		);
 		/* we really only need to wait for document ready for DOM manipulation */
-		$( function () {
+		$( () => {
 			$( '.iw-results' ).append( multimediaWidgetTemplate );
 		} );
 	} );

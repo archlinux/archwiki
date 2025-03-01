@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Extension\ParserFunctions;
 
-use Config;
-use LinkCache;
+use MediaWiki\Cache\LinkCache;
+use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Parser\Parser;
 use MediaWiki\SpecialPage\SpecialPageFactory;
-use Parser;
 use RepoGroup;
 
 class Hooks implements
@@ -84,6 +84,8 @@ class Hooks implements
 		$parser->setFunctionHook( 'iferror', [ $this->parserFunctions, 'iferror' ], Parser::SFH_OBJECT_ARGS );
 		$parser->setFunctionHook( 'time', [ $this->parserFunctions, 'time' ], Parser::SFH_OBJECT_ARGS );
 		$parser->setFunctionHook( 'timel', [ $this->parserFunctions, 'localTime' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'timef', [ $this->parserFunctions, 'timef' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'timefl', [ $this->parserFunctions, 'timefl' ], Parser::SFH_OBJECT_ARGS );
 
 		$parser->setFunctionHook( 'expr', [ $this->parserFunctions, 'expr' ] );
 		$parser->setFunctionHook( 'rel2abs', [ $this->parserFunctions, 'rel2abs' ] );

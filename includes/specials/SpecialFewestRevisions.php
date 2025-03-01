@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Fewestrevisions
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,15 +16,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
 use HtmlArmor;
-use ILanguageConverter;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\Linker;
 use MediaWiki\SpecialPage\QueryPage;
@@ -39,7 +36,7 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * Special page for listing the articles with the fewest revisions.
+ * List articles with the fewest revisions.
  *
  * @ingroup SpecialPage
  * @author Martin Drashkov
@@ -87,7 +84,7 @@ class SpecialFewestRevisions extends QueryPage {
 			'conds' => [
 				'page_namespace' => $this->namespaceInfo->getContentNamespaces(),
 				'page_id = rev_page',
-				'page_is_redirect = 0',
+				'page_is_redirect' => 0,
 			],
 			'options' => [
 				'GROUP BY' => [ 'page_namespace', 'page_title' ]

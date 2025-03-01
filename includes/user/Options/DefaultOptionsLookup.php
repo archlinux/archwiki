@@ -20,17 +20,17 @@
 
 namespace MediaWiki\User\Options;
 
-use IDBAccessObject;
-use Language;
-use LanguageConverter;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\LanguageCode;
+use MediaWiki\Language\LanguageConverter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\UserIdentity;
 use Skin;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * A service class to control default user options
@@ -48,7 +48,7 @@ class DefaultOptionsLookup extends UserOptionsLookup {
 	];
 
 	private ServiceOptions $serviceOptions;
-	private Language $contentLang;
+	private LanguageCode $contentLang;
 	private NamespaceInfo $nsInfo;
 	private ConditionalDefaultsLookup $conditionalDefaultsLookup;
 
@@ -59,14 +59,14 @@ class DefaultOptionsLookup extends UserOptionsLookup {
 
 	/**
 	 * @param ServiceOptions $options
-	 * @param Language $contentLang
+	 * @param LanguageCode $contentLang
 	 * @param HookContainer $hookContainer
 	 * @param NamespaceInfo $nsInfo
 	 * @param ConditionalDefaultsLookup $conditionalUserOptionsDefaultsLookup
 	 */
 	public function __construct(
 		ServiceOptions $options,
-		Language $contentLang,
+		LanguageCode $contentLang,
 		HookContainer $hookContainer,
 		NamespaceInfo $nsInfo,
 		ConditionalDefaultsLookup $conditionalUserOptionsDefaultsLookup
@@ -94,7 +94,7 @@ class DefaultOptionsLookup extends UserOptionsLookup {
 		// Default language setting
 		// NOTE: don't use the content language code since the static default variant would
 		//  NOT always be the same as the content language code.
-		$contentLangCode = $this->contentLang->getCode();
+		$contentLangCode = $this->contentLang->toString();
 		$LangsWithStaticDefaultVariant = LanguageConverter::$languagesWithStaticDefaultVariant;
 		$staticDefaultVariant = $LangsWithStaticDefaultVariant[$contentLangCode] ?? $contentLangCode;
 		$this->defaultOptions['language'] = $contentLangCode;
@@ -192,5 +192,5 @@ class DefaultOptionsLookup extends UserOptionsLookup {
 	}
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( DefaultOptionsLookup::class, 'MediaWiki\\User\\DefaultOptionsLookup' );

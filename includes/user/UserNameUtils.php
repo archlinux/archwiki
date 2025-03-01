@@ -23,10 +23,10 @@
 namespace MediaWiki\User;
 
 use InvalidArgumentException;
-use Language;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\TitleParser;
@@ -57,10 +57,9 @@ class UserNameUtils implements UserRigorOptions {
 	 */
 	private const IPV4_ADDRESS = '\d{1,3}\.\d{1,3}\.\d{1,3}\.(?:xxx|\d{1,3})';
 
-	/**
-	 * RIGOR_* constants are inherited from UserRigorOptions
-	 */
+	// RIGOR_* constants are inherited from UserRigorOptions
 
+	// phpcs:ignore MediaWiki.Commenting.PropertyDocumentation.WrongStyle
 	private ServiceOptions $options;
 	private Language $contentLang;
 	private LoggerInterface $logger;
@@ -193,10 +192,14 @@ class UserNameUtils implements UserRigorOptions {
 			return false;
 		}
 
-		// Check if the name is reserved by the temp user system (actual temp
-		// users are allowed). This is necessary to ensure that CentralAuth
-		// auto-creation will be denied (T342475).
-		if ( $this->isTempReserved( $name ) && !$this->isTemp( $name ) ) {
+		// Treat this name as not usable if it is reserved by the temp user system and either:
+		// * Temporary account creation is disabled
+		// * The name is not a temporary account
+		// This is necessary to ensure that CentralAuth auto-creation will be denied (T342475).
+		if (
+			$this->isTempReserved( $name ) &&
+			( !$this->tempUserConfig->isEnabled() || !$this->isTemp( $name ) )
+		) {
 			return false;
 		}
 

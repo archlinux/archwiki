@@ -19,8 +19,12 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\Revision\RevisionStore;
+use RecentChange;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
@@ -37,16 +41,9 @@ class ApiTag extends ApiBase {
 	private RevisionStore $revisionStore;
 	private ChangeTagsStore $changeTagsStore;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param IConnectionProvider $dbProvider
-	 * @param RevisionStore $revisionStore
-	 * @param ChangeTagsStore $changeTagsStore
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
 		ChangeTagsStore $changeTagsStore
@@ -256,3 +253,6 @@ class ApiTag extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Tag';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiTag::class, 'ApiTag' );

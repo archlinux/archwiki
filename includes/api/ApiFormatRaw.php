@@ -20,20 +20,24 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 /**
  * Formatter that spits out anything you like with any desired MIME type
  * @ingroup API
  */
 class ApiFormatRaw extends ApiFormatBase {
 
+	/** @var ApiFormatBase|null */
 	private $errorFallback;
+	/** @var bool */
 	private $mFailWithHTTPError = false;
 
 	/**
 	 * @param ApiMain $main
 	 * @param ApiFormatBase|null $errorFallback Object to fall back on for errors
 	 */
-	public function __construct( ApiMain $main, ApiFormatBase $errorFallback = null ) {
+	public function __construct( ApiMain $main, ?ApiFormatBase $errorFallback = null ) {
 		parent::__construct( $main, 'raw' );
 		$this->errorFallback = $errorFallback ?:
 			$main->createPrinterByName( $main->getParameter( 'format' ) );
@@ -111,3 +115,6 @@ class ApiFormatRaw extends ApiFormatBase {
 		$this->mFailWithHTTPError = $fail;
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiFormatRaw::class, 'ApiFormatRaw' );

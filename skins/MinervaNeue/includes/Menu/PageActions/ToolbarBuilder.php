@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Minerva\Menu\PageActions;
 
-use ExtensionRegistry;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Minerva\LanguagesHelper;
@@ -31,6 +30,7 @@ use MediaWiki\Minerva\Menu\Group;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
 use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Minerva\Skins\SkinUserPageHelper;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -40,46 +40,18 @@ use SpecialMobileHistory;
 
 class ToolbarBuilder {
 
-	/**
-	 * @var User Currently logged in user
-	 */
-	private $user;
-	/**
-	 * @var Title Article title user is currently browsing
-	 */
-	private $title;
-
+	/** @var Title Article title user is currently browsing */
+	private Title $title;
+	/** @var User Currently logged in user */
+	private User $user;
 	private IContextSource $context;
-
-	/**
-	 * @var IMinervaPagePermissions
-	 */
-	private $permissions;
-
-	/**
-	 * @var SkinOptions
-	 */
-	private $skinOptions;
-
-	/**
-	 * @var SkinUserPageHelper
-	 */
-	private $relevantUserPageHelper;
-
-	/**
-	 * @var LanguagesHelper
-	 */
-	private $languagesHelper;
-
-	/**
-	 * @var bool Correlates to $wgWatchlistExpiry feature flag.
-	 */
-	private $watchlistExpiryEnabled;
-
-	/**
-	 * @var WatchlistManager
-	 */
-	private $watchlistManager;
+	private IMinervaPagePermissions $permissions;
+	private SkinOptions $skinOptions;
+	private SkinUserPageHelper $relevantUserPageHelper;
+	private LanguagesHelper $languagesHelper;
+	/** @var bool Correlates to $wgWatchlistExpiry feature flag. */
+	private bool $watchlistExpiryEnabled;
+	private WatchlistManager $watchlistManager;
 
 	/**
 	 * ServiceOptions needed.
@@ -166,12 +138,11 @@ class ToolbarBuilder {
 			$group->insertEntry( $this->getHistoryPageAction( $historyView ) );
 		}
 
-		$isUserPage = $this->relevantUserPageHelper->isUserPage();
+		$user = $this->relevantUserPageHelper->getPageUser();
 		$isUserPageAccessible = $this->relevantUserPageHelper->isUserPageAccessibleToCurrentUser();
-		if ( $isUserPage && $isUserPageAccessible ) {
+		if ( $user && $isUserPageAccessible ) {
 			// T235681: Contributions icon should be added to toolbar on user pages
 			// and user talk pages for all users
-			$user = $this->relevantUserPageHelper->getPageUser();
 			$group->insertEntry( $this->createContributionsPageAction( $user ) );
 		}
 
@@ -227,7 +198,7 @@ class ToolbarBuilder {
 		);
 		$iconFallback = $key === 'viewsource' ? 'editLock' : 'edit';
 		$icon = $editAction['icon'] ?? $iconFallback;
-		$entry->setIcon( $icon . '-base20' )
+		$entry->setIcon( $icon )
 			->trackClicks( $key )
 			->setTitle( $this->context->msg( 'tooltip-' . $id ) )
 			->setNodeID( $id );
@@ -252,9 +223,6 @@ class ToolbarBuilder {
 			$this->permissions->isAllowed( IMinervaPagePermissions::WATCH )
 		);
 		$icon = $watchData['icon'] ?? '';
-		if ( $icon ) {
-			$icon .= $watchKey === 'unwatch' ? '-progressive' : '-base20';
-		}
 		return $entry->trackClicks( $watchKey )
 			->setIcon( $icon )
 			->setTitle( $this->context->msg( $watchKey ) )
@@ -275,7 +243,7 @@ class ToolbarBuilder {
 			$historyAction['href'],
 		);
 		$icon = $historyAction['icon'] ?? 'history';
-		$entry->setIcon( $icon . '-base20' )
+		$entry->setIcon( $icon )
 			->trackClicks( 'history' );
 		return $entry;
 	}
@@ -287,7 +255,7 @@ class ToolbarBuilder {
 	 * @param Title $title The Title object of the page being viewed
 	 * @return string
 	 */
-	protected function getHistoryUrl( Title $title ) {
+	protected function getHistoryUrl( Title $title ): string {
 		return ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
 			   SpecialMobileHistory::shouldUseSpecialHistory( $title, $this->user ) ?
 			SpecialPage::getTitleFor( 'History', $title )->getLocalURL() :
@@ -299,7 +267,7 @@ class ToolbarBuilder {
 	 * @param array $query
 	 * @return string
 	 */
-	private function getLoginUrl( $query ) {
+	private function getLoginUrl( $query ): string {
 		return SpecialPage::getTitleFor( 'Userlogin' )->getLocalURL( $query );
 	}
 }

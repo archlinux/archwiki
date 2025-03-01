@@ -15,6 +15,7 @@
 	"pfunc_time_too_long": "Used as error message.\n\nSee also:\n* {{msg-mw|Pfunc time error}}\n* {{msg-mw|Pfunc time too big}}\n* {{msg-mw|Pfunc time too small}}",
 	"pfunc_time_too_big": "Used as error message.\n\nSee also:\n* {{msg-mw|Pfunc time error}}\n* {{msg-mw|Pfunc time too long}}\n* {{msg-mw|Pfunc time too small}}",
 	"pfunc_time_too_small": "Used as error message.\n\nSee also:\n* {{msg-mw|Pfunc time error}}\n* {{msg-mw|Pfunc time too long}}\n* {{msg-mw|Pfunc time too big}}",
+	"pfunc_timef_bad_format": "Used as error message.",
 	"pfunc_rel2abs_invalid_depth": "Used as error message. Parameters:\n* $1 - full path",
 	"pfunc_expr_stack_exhausted": "Used as error message.\n{{Related|Pfunc expr}}",
 	"pfunc_expr_unexpected_number": "Used as error message.\n{{Related|Pfunc expr}}",

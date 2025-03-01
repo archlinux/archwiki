@@ -23,7 +23,11 @@
  * @author Antoine Musso <hashar@free.fr>
  */
 
+use MediaWiki\Json\FormatJson;
+
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Print serialized output of MediaWiki config vars
@@ -32,15 +36,17 @@ require_once __DIR__ . '/Maintenance.php';
  */
 class GetConfiguration extends Maintenance {
 
+	/** @var string|null */
 	protected $regex = null;
 
+	/** @var array */
 	protected $settings_list = [];
 
 	/**
 	 * List of format output internally supported.
 	 * Each item MUST be lower case.
 	 */
-	protected static $outFormats = [
+	private const OUT_FORMATS = [
 		'json',
 		'php',
 		'serialize',
@@ -53,7 +59,7 @@ class GetConfiguration extends Maintenance {
 		$this->addOption( 'regex', 'regex to filter variables with', false, true );
 		$this->addOption( 'iregex', 'same as --regex but case insensitive', false, true );
 		$this->addOption( 'settings', 'Space-separated list of wg* variables', false, true );
-		$this->addOption( 'format', implode( ', ', self::$outFormats ), false, true );
+		$this->addOption( 'format', implode( ', ', self::OUT_FORMATS ), false, true );
 		$this->addOption(
 			'json-partial-output-on-error',
 			'Use JSON_PARTIAL_OUTPUT_ON_ERROR flag with json_encode(). This allows for partial response to ' .
@@ -68,7 +74,7 @@ class GetConfiguration extends Maintenance {
 		# Get the format and make sure it is set to a valid default value
 		$format = strtolower( $this->getOption( 'format', 'PHP' ) );
 
-		$validFormat = in_array( $format, self::$outFormats );
+		$validFormat = in_array( $format, self::OUT_FORMATS );
 		if ( !$validFormat ) {
 			$this->error( "--format set to an unrecognized format" );
 			$error_out = true;
@@ -197,5 +203,7 @@ class GetConfiguration extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GetConfiguration::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

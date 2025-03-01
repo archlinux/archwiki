@@ -83,7 +83,6 @@
 	"templatedata-modal-button-map": "编辑映射",
 	"templatedata-modal-button-importParams": "导入参数",
 	"templatedata-modal-button-removemap": "移除映射",
-	"templatedata-modal-button-restoreparam": "还原参数",
 	"templatedata-modal-button-saveparam": "保存",
 	"templatedata-modal-confirmcancel": "您确定要放弃您的更改吗？",
 	"templatedata-modal-current-language": "当前语言：$1",

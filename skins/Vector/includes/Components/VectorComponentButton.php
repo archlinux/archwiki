@@ -57,11 +57,11 @@ class VectorComponentButton implements VectorComponent {
 		$this->href = $href;
 
 		// Weight can only be normal, primary, or quiet
-		if ( $this->weight != 'primary' && $this->weight != 'quiet' ) {
+		if ( $this->weight !== 'primary' && $this->weight !== 'quiet' ) {
 			$this->weight = 'normal';
 		}
 		// Action can only be default, progressive or destructive
-		if ( $this->action != 'progressive' && $this->action != 'destructive' ) {
+		if ( $this->action !== 'progressive' && $this->action !== 'destructive' ) {
 			$this->action = 'default';
 		}
 	}

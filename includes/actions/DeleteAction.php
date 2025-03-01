@@ -22,6 +22,7 @@ use MediaWiki\Cache\BacklinkCacheFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -29,6 +30,7 @@ use MediaWiki\Message\Message;
 use MediaWiki\Page\DeletePage;
 use MediaWiki\Page\DeletePageFactory;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Session\CsrfTokenSet;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\TitleFactory;
@@ -36,6 +38,7 @@ use MediaWiki\Title\TitleFormatter;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\RequestTimeout\TimeoutException;
 
@@ -162,9 +165,15 @@ class DeleteAction extends FormAction {
 			return;
 		}
 
+		$hasValidCsrfToken = $this->getContext()
+			->getCsrfTokenSet()
+			->matchTokenField(
+				CsrfTokenSet::DEFAULT_FIELD_NAME,
+				[ 'delete', $title->getPrefixedText() ]
+			);
+
 		# If we are not processing the results of the deletion confirmation dialog, show the form
-		$token = $request->getVal( 'wpEditToken' );
-		if ( !$request->wasPosted() || !$user->matchEditToken( $token, [ 'delete', $title->getPrefixedText() ] ) ) {
+		if ( !$request->wasPosted() || !$hasValidCsrfToken ) {
 			$this->tempConfirmDelete();
 			return;
 		}

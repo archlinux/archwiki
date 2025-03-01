@@ -17,12 +17,8 @@ use MediaWiki\Revision\RevisionRecord;
  */
 class RevisionSourceHandler extends SimpleHandler {
 
-	/** @var RevisionContentHelper */
-	private $contentHelper;
+	private RevisionContentHelper $contentHelper;
 
-	/**
-	 * @param PageRestHelperFactory $helperFactory
-	 */
 	public function __construct( PageRestHelperFactory $helperFactory ) {
 		$this->contentHelper = $helperFactory->newRevisionContentHelper();
 	}
@@ -36,8 +32,14 @@ class RevisionSourceHandler extends SimpleHandler {
 	 * @return string
 	 */
 	private function constructHtmlUrl( RevisionRecord $rev ): string {
+		// TODO: once legacy "v1" routes are removed, just use the path prefix from the module.
+		$pathPrefix = $this->getModule()->getPathPrefix();
+		if ( strlen( $pathPrefix ) == 0 ) {
+			$pathPrefix = 'v1';
+		}
+
 		return $this->getRouter()->getRouteUrl(
-			'/v1/revision/{id}/html',
+			'/' . $pathPrefix . '/revision/{id}/html',
 			[ 'id' => $rev->getId() ]
 		);
 	}
@@ -51,6 +53,9 @@ class RevisionSourceHandler extends SimpleHandler {
 
 		$outputMode = $this->getOutputMode();
 		switch ( $outputMode ) {
+			case 'restbase': // compatibility for restbase migration
+				$body = [ 'items' => [ $this->contentHelper->constructRestbaseCompatibleMetadata() ] ];
+				break;
 			case 'bare':
 				$revisionRecord = $this->contentHelper->getTargetRevision();
 				$body = $this->contentHelper->constructMetadata();
@@ -74,10 +79,9 @@ class RevisionSourceHandler extends SimpleHandler {
 		return $response;
 	}
 
-	protected function getResponseBodySchema(): array {
-		$schema = $this->contentHelper->getResponseBodySchema();
-		// TODO: add fields based on the output mode
-		return $schema;
+	protected function getResponseBodySchemaFileName( string $method ): ?string {
+		// TODO: add fields based on the output mode to the schema
+		return 'includes/Rest/Handler/Schema/RevisionMetaData.json';
 	}
 
 	/**
@@ -95,6 +99,9 @@ class RevisionSourceHandler extends SimpleHandler {
 	}
 
 	private function getOutputMode(): string {
+		if ( $this->getRouter()->isRestbaseCompatEnabled( $this->getRequest() ) ) {
+			return 'restbase';
+		}
 		return $this->getConfig()['format'];
 	}
 

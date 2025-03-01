@@ -35,5 +35,9 @@
 	"categorytree-no-pages": "non hai páxinas nin subcategorías",
 	"categorytree-not-found": "Non se atopou a categoría \"<i>$1</i>\"",
 	"categorytree-error": "Problema coa carga de datos.",
-	"categorytree-retry": "Agarde un momento e inténteo de novo."
+	"categorytree-retry": "Agarde un momento e inténteo de novo.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: O parámetro <code>onlyroot</code> está obsoleto. Use <code>depth=\"0\"</code> no seu lugar.",
+	"categorytree-deprecation-warning": "'''Aviso:''' Esta páxina usa <code>&lt;categorytree&gt;</code> cun parámetro obsoleto.",
+	"categorytree-deprecation-category": "Páxinas que usan parámetros obsoletos de categorytree",
+	"categorytree-deprecation-category-desc": "A páxina usa parámetros obsoletos de categorytree, como <code>onlyroot</code>."
 }

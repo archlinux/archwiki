@@ -31,11 +31,6 @@ use MediaWikiUnitTestCase;
  */
 class LanguageServiceTest extends MediaWikiUnitTestCase {
 
-	public function testConstructor() {
-		$languageService = new LanguageService();
-		$this->assertInstanceOf( LanguageService::class, $languageService );
-	}
-
 	public function provideSplittableLanguages(): array {
 		return [
 			[ 'en', true ],

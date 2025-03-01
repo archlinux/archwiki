@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\Notifications\Model;
 
 use Exception;
-use IDBAccessObject;
 use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Bundleable;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
@@ -20,6 +19,7 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use RuntimeException;
 use stdClass;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Immutable class to represent an event.

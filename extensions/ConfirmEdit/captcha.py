@@ -25,21 +25,18 @@
 # Tweaks by Greg Sabino Mullane <greg@turnstep.com>:
 # 2008-01-06: Add regex check to skip words containing other than a-z
 
-import random
-import math
-import hashlib
 from optparse import OptionParser
-import os
-import sys
-import re
+import hashlib
+import json
+import math
 import multiprocessing
+import os
+import random
+import re
+import sys
 
 try:
-    from PIL import Image
-    from PIL import ImageFont
-    from PIL import ImageDraw
-    from PIL import ImageEnhance
-    from PIL import ImageOps
+    from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageOps
 except ImportError:
     sys.exit(
         "This script requires the Python Imaging Library - http://www.pythonware.com/products/pil/"
@@ -262,6 +259,7 @@ def run_in_thread(object):
     opts = object[3]
     font = object[4]
     fontsize = object[5]
+    jsonmap = object[6]
 
     for i in range(count):
         word = pick_word(
@@ -283,6 +281,9 @@ def run_in_thread(object):
             filename = os.path.join(subdir, filename)
         if opts.verbose:
             print(filename)
+        if opts.jsonmap:
+            jsonmap[filename] = word
+
         gen_captcha(word, font, fontsize, os.path.join(opts.output, filename))
 
 
@@ -297,7 +298,9 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.realpath(__file__))
     parser = OptionParser()
     parser.add_option(
-        "--wordlist", help="A list of words (required)", metavar="WORDS.txt"
+        "--wordlist",
+        help="A list of words (required)",
+        metavar="WORDS.txt"
     )
     parser.add_option(
         "--random",
@@ -305,14 +308,20 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_option(
-        "--key", help="The passphrase set as $wgCaptchaSecret (required)", metavar="KEY"
+        "--key",
+        help="The passphrase set as $wgCaptchaSecret (required)",
+        metavar="KEY"
     )
     parser.add_option(
         "--output",
         help="The directory to put the images in - $wgCaptchaDirectory (required)",
         metavar="DIR",
     )
-    parser.add_option("--font", help="The font to use (required)", metavar="FONT.ttf")
+    parser.add_option(
+        "--font",
+        help="The font to use (required)",
+        metavar="FONT.ttf"
+    )
     parser.add_option(
         "--font-size",
         help="The font size (default 40)",
@@ -346,7 +355,10 @@ if __name__ == "__main__":
         type="int",
     )
     parser.add_option(
-        "--verbose", "-v", help="Show debugging information", action="store_true"
+        "--verbose",
+        "-v",
+        help="Show debugging information",
+        action="store_true"
     )
     parser.add_option(
         "--number-words",
@@ -368,9 +380,14 @@ if __name__ == "__main__":
     )
     parser.add_option(
         "--threads",
-        help="Maximum number of threads to be used to generate captchas.",
+        help="Maximum number of threads to be used to generate captchas",
         type="int",
         default=1,
+    )
+    parser.add_option(
+        "--jsonmap",
+        help="Outputs \"filename\": \"word\" mapping for test/debug purposes",
+        action="store_true"
     )
 
     opts, args = parser.parse_args()
@@ -427,7 +444,13 @@ if __name__ == "__main__":
         "Generating %s CAPTCHA images separated in %s image(s) per chunk run by %s threads..."
         % (count, chunks, threads)
     )
+    jsonmap = multiprocessing.Manager().dict()
     for i in range(0, threads):
-        data.append([chunks, words, badwordlist, opts, font, fontsize])
+        data.append([chunks, words, badwordlist, opts, font, fontsize, jsonmap])
 
-    p.map(run_in_thread, data)
+    result = p.map_async(run_in_thread, data)
+    result.wait()
+
+    if opts.jsonmap:
+        with open("map.json", "w") as outfile:
+            json.dump(jsonmap.copy(), outfile, indent=4)

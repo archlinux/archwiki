@@ -14,8 +14,8 @@
 			"Sujiniku",
 			"Suyama",
 			"Takot",
-			"春春眠眠",
-			"Waki285"
+			"Waki285",
+			"春春眠眠"
 		]
 	},
 	"thanks-desc": "利用者の編集やコメントなどに感謝を示すリンクを追加する",
@@ -23,9 +23,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|感謝を示しました}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|感謝}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|感謝を示しました}}}}",
-	"thanks-button-action-queued": "$1に{{GENDER:$1|{{GENDER:$2|感謝を示しています}}}}…",
-	"thanks-button-action-cancel": "キャンセル",
-	"thanks-button-action-completed": "$1に{{GENDER:$1|{{GENDER:$2|感謝を示しました}}}}",
 	"thanks-error-undefined": "感謝の操作に失敗しました (エラーコード: $1)。もう一度やり直してください。",
 	"thanks-error-invalid-log-id": "記録が見つかりません",
 	"thanks-error-invalid-log-type": "記録タイプ「$1」は、許可された記録タイプのリストにありません。",

@@ -1,7 +1,7 @@
 /** @interface MwApi */
 
-let /** @type {MwApi} */ api;
 const debounce = require( /** @type {string} */ ( 'mediawiki.util' ) ).debounce;
+const userPreferences = require( './userPreferences.js' );
 
 /**
  * Saves preference to user preferences and/or cookies.
@@ -14,8 +14,8 @@ function save( feature, enabled ) {
 		switch ( feature ) {
 			case 'toc-pinned':
 			case 'limited-width':
+			case 'appearance-pinned':
 				// Save the setting under the new system
-				// @ts-ignore https://github.com/wikimedia/typescript-types/pull/44
 				mw.user.clientPrefs.set( `vector-feature-${ feature }`, enabled ? '1' : '0' );
 				break;
 			default:
@@ -23,9 +23,10 @@ function save( feature, enabled ) {
 				break;
 		}
 	} else {
-		debounce( function () {
-			api = api || new mw.Api();
-			api.saveOption( 'vector-' + feature, enabled ? 1 : 0 );
+		debounce( () => {
+			userPreferences.saveOptions( {
+				[ `vector-${ feature }` ]: enabled ? 1 : 0
+			} );
 		}, 500 )();
 	}
 }
@@ -33,24 +34,23 @@ function save( feature, enabled ) {
 /**
  * @param {string} name feature name
  * @param {boolean} [override] option to force enabled or disabled state.
- * @param {boolean} [isLegacy] should we search for legacy classes
- *   FIXME: this is for supporting cached HTML,
- *   this should be removed 1-4 weeks after the patch has been in production.
+ * @param {boolean} [isNotClientPreference] the feature is not a client preference,
+ *  so does not persist for logged out users.
  * @return {boolean} The new feature state (false=disabled, true=enabled).
  * @throws {Error} if unknown feature toggled.
  */
-function toggleDocClasses( name, override, isLegacy ) {
-	const suffixEnabled = isLegacy ? 'enabled' : 'clientpref-1';
-	const suffixDisabled = isLegacy ? 'disabled' : 'clientpref-0';
+function toggleDocClasses( name, override, isNotClientPreference ) {
+	const suffixEnabled = isNotClientPreference ? 'enabled' : 'clientpref-1';
+	const suffixDisabled = isNotClientPreference ? 'disabled' : 'clientpref-0';
 	const featureClassEnabled = `vector-feature-${ name }-${ suffixEnabled }`,
 		classList = document.documentElement.classList,
 		featureClassDisabled = `vector-feature-${ name }-${ suffixDisabled }`,
 		// If neither of the classes can be found it is a legacy feature
-		isLegacyFeature = !classList.contains( featureClassDisabled ) &&
+		isLoggedInOnlyFeature = !classList.contains( featureClassDisabled ) &&
 			!classList.contains( featureClassEnabled );
 
 	// Check in legacy mode.
-	if ( isLegacyFeature && !isLegacy ) {
+	if ( isLoggedInOnlyFeature && !isNotClientPreference ) {
 		// try again using the legacy classes
 		return toggleDocClasses( name, override, true );
 	} else if ( classList.contains( featureClassDisabled ) || override === true ) {
@@ -91,16 +91,15 @@ function isEnabled( name ) {
  *
  * @param {string} name
  * @param {boolean} featureEnabled
- * @param {boolean} [isLegacy] FIXME: this is for supporting cached HTML,
- *   but also features using the old feature class structure.
+ * @param {boolean} [isClientPreference] whether the feature is also a client preference
  * @return {string}
  */
-function getClass( name, featureEnabled, isLegacy ) {
+function getClass( name, featureEnabled, isClientPreference ) {
 	if ( featureEnabled ) {
-		const suffix = isLegacy ? 'enabled' : 'clientpref-1';
+		const suffix = isClientPreference ? 'clientpref-1' : 'enabled';
 		return `vector-feature-${ name }-${ suffix }`;
 	} else {
-		const suffix = isLegacy ? 'disabled' : 'clientpref-0';
+		const suffix = isClientPreference ? 'clientpref-0' : 'disabled';
 		return `vector-feature-${ name }-${ suffix }`;
 	}
 }

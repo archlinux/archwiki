@@ -1,27 +1,27 @@
 ( function () {
 
 	// Dummy variables
-	var funky = function () {};
-	var arry = [];
+	const funky = function () {};
+	const arry = [];
 
 	QUnit.module( 'mw.Map' );
 
-	QUnit.test( 'Store simple string key', function ( assert ) {
-		var conf = new mw.Map();
+	QUnit.test( 'Store simple string key', ( assert ) => {
+		const conf = new mw.Map();
 
 		assert.true( conf.set( 'foo', 'Bar' ), 'set' );
 		assert.strictEqual( conf.get( 'foo' ), 'Bar', 'get' );
 	} );
 
-	QUnit.test( 'Store number-like key', function ( assert ) {
-		var conf = new mw.Map();
+	QUnit.test( 'Store number-like key', ( assert ) => {
+		const conf = new mw.Map();
 
 		assert.true( conf.set( '42', 'X' ), 'set' );
 		assert.strictEqual( conf.get( '42' ), 'X', 'get' );
 	} );
 
-	QUnit.test( 'get()', function ( assert ) {
-		var conf = new mw.Map();
+	QUnit.test( 'get()', ( assert ) => {
+		let conf = new mw.Map();
 
 		assert.strictEqual( conf.get( 'example' ), null, 'default fallback' );
 		assert.strictEqual( conf.get( 'example', arry ), arry, 'array fallback' );
@@ -62,16 +62,16 @@
 	} );
 
 	// Expose 'values' getter with all values, for developer convenience on the console
-	QUnit.test( 'values', function ( assert ) {
-		var conf = new mw.Map();
+	QUnit.test( 'values', ( assert ) => {
+		const conf = new mw.Map();
 		conf.set( { num: 7, num2: 42 } );
 		conf.set( 'foo', 'bar' );
 
 		assert.propEqual( conf.values, { num: 7, num2: 42, foo: 'bar' } );
 	} );
 
-	QUnit.test( 'set()', function ( assert ) {
-		var conf = new mw.Map();
+	QUnit.test( 'set()', ( assert ) => {
+		const conf = new mw.Map();
 
 		// There should not be an implied default value
 		assert.false( conf.set( 'no-value' ), 'reject without value argument' );
@@ -92,8 +92,8 @@
 		assert.deepEqual( conf.get( 'key2' ), [ 'y' ] );
 	} );
 
-	QUnit.test( 'exists()', function ( assert ) {
-		var conf = new mw.Map();
+	QUnit.test( 'exists()', ( assert ) => {
+		const conf = new mw.Map();
 
 		assert.false( conf.exists( 'doesNotExist' ), 'unknown' );
 
@@ -105,26 +105,22 @@
 	} );
 
 	// Confirm protection against Object.prototype inheritance
-	QUnit.test( 'Avoid prototype pollution', function ( assert ) {
-		var conf = new mw.Map();
+	QUnit.test( 'Avoid prototype pollution', ( assert ) => {
+		const conf = new mw.Map();
 
 		assert.strictEqual( conf.get( 'constructor' ), null, 'Get unknown "constructor"' );
 		assert.strictEqual( conf.get( 'hasOwnProperty' ), null, 'Get unkonwn "hasOwnProperty"' );
 
 		conf.set(
 			'hasOwnProperty',
-			function () {
-				return true;
-			}
+			() => true
 		);
 		assert.strictEqual( conf.get( 'example', 'missing' ), 'missing', 'Use original hasOwnProperty method (positive)' );
 
 		conf.set( 'example', 'Foo' );
 		conf.set(
 			'hasOwnProperty',
-			function () {
-				return false;
-			}
+			() => false
 		);
 		assert.strictEqual( conf.get( 'example' ), 'Foo', 'Use original hasOwnProperty method (negative)' );
 

@@ -29,7 +29,7 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
-use Maintenance;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\User;
 use MWException;
 
@@ -47,17 +47,27 @@ require_once "$IP/maintenance/Maintenance.php";
  * @SuppressWarnings(LongVariable)
  */
 class ReplaceAll extends Maintenance {
+	/** @var User */
 	private $user;
+	/** @var string[] */
 	private $target;
+	/** @var string[] */
 	private $replacement;
+	/** @var int[] */
 	private $namespaces;
+	/** @var string */
 	private $category;
+	/** @var string */
 	private $prefix;
+	/** @var int */
 	private $pageLimit;
+	/** @var bool[] */
 	private $useRegex;
-	private $titles;
+	/** @var bool */
 	private $defaultContinue;
+	/** @var bool */
 	private $botEdit;
+	/** @var bool */
 	private $rename;
 
 	public function __construct() {

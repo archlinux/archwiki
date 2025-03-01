@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Meno25",
 			"محمد أحمد عبد الفتاح"
 		]
@@ -15,7 +16,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "هذه قاعدة مخفاة.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "هذه القاعدة تؤثر على عنوان الصفحة.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "كود&nbsp;اللغة",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<غير صحيح>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>غير صحيح</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "اللغة",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "المصدر",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "الوجهة",

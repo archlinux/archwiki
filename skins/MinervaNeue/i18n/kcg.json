@@ -26,7 +26,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Tazwa sa jini",
 	"mobile-frontend-meta-data-issues-header": "A̱fi̱fa wat",
 	"minerva-meta-data-issues-section-header": "A̱fi̱fa tamm",
-	"mobile-frontend-notifications-filter": "Kyangcyam",
 	"mobile-frontend-pageaction-edit-tooltip": "Jhyuk tamm a̱zanson wat huni",
 	"mobile-frontend-placeholder": "Zop {{SITENAME}}",
 	"mobile-frontend-random-button": "Sa̱nseang",
@@ -44,7 +43,7 @@
 	"minerva-page-actions-overflow": "Nkyang njhyang",
 	"minerva-page-actions-language-switcher": "Lilyem",
 	"minerva-page-actions-history": "Nkhang",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Bwoi a̱lyiat]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Bwoi a̱lyiat]",
 	"skin-minerva-issue-learn-more": "Myiam nkyang njhyang",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Si̱sa",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Nwuan si̱sa ngwat jini"

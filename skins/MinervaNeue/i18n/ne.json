@@ -38,7 +38,6 @@
 	"mobile-frontend-meta-data-issues-categories": "यस श्रेणीकाे बारेमा",
 	"mobile-frontend-meta-data-issues-header": "पृष्ठमा समस्या",
 	"minerva-meta-data-issues-section-header": "खण्डमा समस्या",
-	"mobile-frontend-notifications-filter": "छनाेट",
 	"mobile-frontend-pageaction-edit-tooltip": "यस पृष्ठको मुख्य खण्ड सम्पादन गर्नुहोस्",
 	"mobile-frontend-placeholder": "{{SITENAME}}मा खोज्नुहोस्",
 	"mobile-frontend-random-button": "कुनै पनि एक लेख हेर्नुहोस्",
@@ -66,5 +65,6 @@
 	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 महिना|$1 महिनाहरू}} पहिले",
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 वर्ष|$1 वर्षहरू}} पहिले",
 	"skin-minerva-mobile-option-MinervaShowCategories": "श्रेणीहरू",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "पृष्ठहरूको श्रेणीहरू हेर्नुहोस्"
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "पृष्ठहरूको श्रेणीहरू हेर्नुहोस्",
+	"skin-minerva-night-mode-unavailable": "पृष्ठ \"हल्का\" रङ विषयवस्तुमा मात्र उपलब्ध छ।"
 }

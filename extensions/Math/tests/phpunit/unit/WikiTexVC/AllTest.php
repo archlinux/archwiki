@@ -12,11 +12,8 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\ParserUtil
  */
 class AllTest extends MediaWikiUnitTestCase {
-	private $testCases;
+	/** @var TexVC */
 	private $texVC;
-	private $DELIMITERS1;
-	private $DELIMITERS2;
-	private $DELIMITERS3;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -72,11 +69,18 @@ class AllTest extends MediaWikiUnitTestCase {
 			],
 			'MediaWiki functions' => [
 				[
-					'input' => '\\arccot\\arcsec\\arccsc\\sgn\\sen',
+					'input' => '\\arccot \\arcsec \\arccsc \\sgn \\sen ',
 					'output' =>
 						'\\operatorname {arccot} \\operatorname {arcsec} ' .
 						'\\operatorname {arccsc} \\operatorname {sgn} ' .
 						'\\operatorname {sen} '
+				]
+			],
+			'MediaWiki functions args' => [
+				[
+					'input' => '\\arccot(x)\\sen(x)\\sen{x}',
+					'output' =>
+						'\\operatorname {arccot} (x)\\operatorname {sen} (x)\\operatorname {sen} {x}'
 				]
 			],
 			'Literals (1)' => [
@@ -567,7 +571,7 @@ class AllTest extends MediaWikiUnitTestCase {
 				'oldtexvc' => $tc['oldtexvc'] ?? false
 			] );
 			$this->assertEquals( '+', $result['status'], $message );
-			$this->assertEquals( $result['output'], $tc['output'], $message );
+			$this->assertEquals( $tc['output'], $result['output'], $message );
 		}
 		if ( !array_key_exists( 'skipReparse', $tc ) || !$tc['skipReparse'] ) {
 			// verify that the output doesn't change if we feed it

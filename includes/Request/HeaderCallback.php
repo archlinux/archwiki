@@ -9,7 +9,9 @@ use RuntimeException;
  * @since 1.29
  */
 class HeaderCallback {
+	/** @var RuntimeException */
 	private static $headersSentException;
+	/** @var bool */
 	private static $messageSent = false;
 
 	/**
@@ -90,7 +92,7 @@ class HeaderCallback {
 	public static function warnIfHeadersSent() {
 		if ( headers_sent() && !self::$messageSent ) {
 			self::$messageSent = true;
-			\MWDebug::warning( 'Headers already sent, should send headers earlier than ' .
+			\MediaWiki\Debug\MWDebug::warning( 'Headers already sent, should send headers earlier than ' .
 				wfGetCaller( 3 ) );
 			$logger = \MediaWiki\Logger\LoggerFactory::getInstance( 'headers-sent' );
 			$logger->error( 'Warning: headers were already sent from the location below', [

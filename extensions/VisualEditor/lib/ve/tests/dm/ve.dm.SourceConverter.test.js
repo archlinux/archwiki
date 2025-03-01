@@ -8,15 +8,15 @@ QUnit.module( 've.dm.SourceConverter' );
 
 /* Tests */
 
-QUnit.test( 'conversion', function ( assert ) {
-	var cases = [
+QUnit.test( 'conversion', ( assert ) => {
+	const cases = [
 		{
 			msg: 'Simple text with language options',
 			text: 'foo',
 			textFromDataRange: 'foo\n',
 			data: [
 				{ type: 'paragraph' },
-				'f', 'o', 'o',
+				...'foo',
 				{ type: '/paragraph' }
 			],
 			options: {
@@ -30,12 +30,12 @@ QUnit.test( 'conversion', function ( assert ) {
 			textFromDataRange: 'foo \n\n\tbar\n\n',
 			data: [
 				{ type: 'paragraph' },
-				'f', 'o', 'o', ' ',
+				...'foo ',
 				{ type: '/paragraph' },
 				{ type: 'paragraph' },
 				{ type: '/paragraph' },
 				{ type: 'paragraph' },
-				'\t', 'b', 'a', 'r',
+				...'\tbar',
 				{ type: '/paragraph' },
 				{ type: 'paragraph' },
 				{ type: '/paragraph' }
@@ -47,27 +47,27 @@ QUnit.test( 'conversion', function ( assert ) {
 			textFromDataRange: 'asd\nasd\nasd\nasd\n',
 			data: [
 				{ type: 'paragraph' },
-				'a', 's', 'd',
+				...'asd',
 				{ type: '/paragraph' },
 				{ type: 'paragraph' },
-				'a', 's', 'd',
+				...'asd',
 				{ type: '/paragraph' },
 				{ type: 'paragraph' },
-				'a', 's', 'd',
+				...'asd',
 				{ type: '/paragraph' },
 				{ type: 'paragraph' },
-				'a', 's', 'd',
+				...'asd',
 				{ type: '/paragraph' }
 			],
 			textRoundtrip: 'asd\nasd\nasd\nasd'
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
-		var doc = ve.dm.sourceConverter.getModelFromSourceText( caseItem.text, caseItem.options );
+	cases.forEach( ( caseItem ) => {
+		const doc = ve.dm.sourceConverter.getModelFromSourceText( caseItem.text, caseItem.options );
 		assert.deepEqual(
 			doc.data.data,
-			[].concat( caseItem.data, [ { type: 'internalList' }, { type: '/internalList' } ] ),
+			[ ...caseItem.data, { type: 'internalList' }, { type: '/internalList' } ],
 			caseItem.msg + ': getModelFromSourceText (data)'
 		);
 		if ( caseItem.options ) {

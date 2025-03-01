@@ -4,13 +4,13 @@
 	 *
 	 * @param {mw.echo.dm.ModelManager} manager Model manager
 	 * @param {Object} config Configuration object
-	 * @cfg {string} [prefLink] Link to preferences page
+	 * @param {string} [config.prefLink] Link to preferences page
 	 */
 	mw.echo.ui.SpecialHelpMenuWidget = function MwEchoUiSpecialHelpMenuWidget( manager, config ) {
 		config = config || {};
 
 		// Parent constructor
-		mw.echo.ui.SpecialHelpMenuWidget.super.call( this, $.extend( {
+		mw.echo.ui.SpecialHelpMenuWidget.super.call( this, Object.assign( {
 			icon: 'settings',
 			label: mw.msg( 'echo-specialpage-special-help-menu-widget-aria-label' ),
 			indicator: 'down',
@@ -64,9 +64,9 @@
 	/* Events */
 
 	/**
-	 * @event markAllRead
-	 *
 	 * Mark all notifications as read in the selected wiki
+	 *
+	 * @event mw.echo.ui.SpecialHelpMenuWidget#markAllRead
 	 */
 
 	/* Methods */
@@ -75,7 +75,7 @@
 	 * Respond to source page change
 	 */
 	mw.echo.ui.SpecialHelpMenuWidget.prototype.onSourcePageUpdate = function () {
-		var sourcePagesModel = this.manager.getFiltersModel().getSourcePagesModel(),
+		const sourcePagesModel = this.manager.getFiltersModel().getSourcePagesModel(),
 			source = sourcePagesModel.getCurrentSource(),
 			sourcePages = sourcePagesModel.getSourcePages( source ),
 			currentPage = sourcePagesModel.getCurrentPage(),
@@ -100,9 +100,10 @@
 	 * Handle menu choose events
 	 *
 	 * @param {OO.ui.MenuOptionWidget} item Chosen item
+	 * @fires mw.echo.ui.SpecialHelpMenuWidget#markAllRead
 	 */
 	mw.echo.ui.SpecialHelpMenuWidget.prototype.onMenuChoose = function ( item ) {
-		var data = item.getData();
+		const data = item.getData();
 		if ( data.href ) {
 			location.href = data.href;
 		} else if ( data === 'markAllRead' ) {
@@ -117,7 +118,7 @@
 	 * @return {string} Mark all read button label
 	 */
 	mw.echo.ui.SpecialHelpMenuWidget.prototype.getMarkAllReadOptionLabel = function ( count ) {
-		var pageModel = this.manager.getFiltersModel().getSourcePagesModel(),
+		const pageModel = this.manager.getFiltersModel().getSourcePagesModel(),
 			source = pageModel.getCurrentSource(),
 			sourceTitle = pageModel.getSourceTitle( source );
 

@@ -1,6 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\Integration\Push;
+
 use MediaWiki\Extension\Notifications\Push\Utils;
+use MediaWikiIntegrationTestCase;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Push\Utils

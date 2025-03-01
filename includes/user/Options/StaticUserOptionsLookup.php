@@ -2,8 +2,8 @@
 
 namespace MediaWiki\User\Options;
 
-use IDBAccessObject;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * A UserOptionsLookup that's just an array. Useful for testing and creating staging environments.
@@ -65,5 +65,5 @@ class StaticUserOptionsLookup extends UserOptionsLookup {
 	}
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( StaticUserOptionsLookup::class, 'MediaWiki\User\StaticUserOptionsLookup' );

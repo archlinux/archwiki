@@ -1,13 +1,13 @@
 /* global moment */
-var
-	api,
-	seenAutoTopicSubPopup = !!+mw.user.options.get( 'discussiontools-seenautotopicsubpopup' ),
+const
 	STATE_UNSUBSCRIBED = 0,
 	STATE_SUBSCRIBED = 1,
 	STATE_AUTOSUBSCRIBED = 2,
 	utils = require( './utils.js' ),
 	CommentItem = require( './CommentItem.js' ),
-	HeadingItem = require( './HeadingItem.js' ),
+	HeadingItem = require( './HeadingItem.js' );
+let api,
+	seenAutoTopicSubPopup = !!+mw.user.options.get( 'discussiontools-seenautotopicsubpopup' ),
 	linksByName = {},
 	buttonsByName = {};
 
@@ -74,16 +74,14 @@ function updateSubscribeButton( button, state ) {
  * @return {jQuery.Promise} Promise which resolves after change of state
  */
 function changeSubscription( title, commentName, subscribe, isNewTopics ) {
-	var promise = api.postWithToken( 'csrf', {
+	const promise = api.postWithToken( 'csrf', {
 		action: 'discussiontoolssubscribe',
 		page: title,
 		commentname: commentName,
 		subscribe: subscribe
-	} ).then( function ( response ) {
-		return OO.getProp( response, 'discussiontoolssubscribe' ) || {};
-	} );
+	} ).then( ( response ) => OO.getProp( response, 'discussiontoolssubscribe' ) || {} );
 
-	promise.then( function ( result ) {
+	promise.then( ( result ) => {
 		mw.notify(
 			mw.msg(
 				result.subscribe ?
@@ -114,7 +112,7 @@ function changeSubscription( title, commentName, subscribe, isNewTopics ) {
 				)
 			}
 		);
-	}, function ( code, data ) {
+	}, ( code, data ) => {
 		mw.notify( api.getErrorMessage( data ), { type: 'error' } );
 	} );
 
@@ -147,22 +145,22 @@ function initTopicSubscriptions( $container, threadItemSet ) {
 	initApi();
 
 	// Subscription buttons (visual enhancements)
-	$container.find( '.ext-discussiontools-init-section-subscribeButton' ).each( function () {
+	$container.find( '.ext-discussiontools-init-section-subscribeButton' ).each( ( i, element ) => {
 		// These attributes will be lost when infusing
 		// TODO: Could also be fixed by subclassing ButtonWidget in PHP
-		var subscribedStateTemp = getSubscribedStateFromElement( this );
+		const subscribedStateTemp = getSubscribedStateFromElement( element );
 
-		var id = $( this ).closest( '.ext-discussiontools-init-section' )
+		const id = $( element ).closest( '.ext-discussiontools-init-section' )
 			.find( '[data-mw-comment-start]' ).attr( 'id' );
-		var headingItem = threadItemSet.findCommentById( id );
+		const headingItem = threadItemSet.findCommentById( id );
 
 		if ( !( headingItem instanceof HeadingItem ) ) {
 			// This should never happen
 			return;
 		}
 
-		var name = headingItem.name;
-		var button = OO.ui.infuse( this );
+		const name = headingItem.name;
+		const button = OO.ui.infuse( element );
 		buttonsByName[ name ] = button;
 
 		// Restore data attribute
@@ -170,41 +168,41 @@ function initTopicSubscriptions( $container, threadItemSet ) {
 			button.$element[ 0 ].setAttribute( 'data-mw-subscribed', String( subscribedStateTemp ) );
 		}
 
-		var title = mw.config.get( 'wgRelevantPageName' ) + '#' + headingItem.getLinkableTitle();
+		const title = mw.config.get( 'wgRelevantPageName' ) + '#' + headingItem.getLinkableTitle();
 
-		button.on( 'click', function () {
+		button.on( 'click', () => {
 			// Get latest subscribedState
-			var subscribedState = getSubscribedStateFromElement( button.$element[ 0 ] );
+			const subscribedState = getSubscribedStateFromElement( button.$element[ 0 ] );
 
 			button.setDisabled( true );
 			changeSubscription( title, name, !subscribedState )
-				.then( function ( result ) {
+				.then( ( result ) => {
 					updateSubscribeButton( button, result.subscribe ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED );
 				} )
-				.always( function () {
+				.always( () => {
 					button.setDisabled( false );
 				} );
 		} );
 	} );
 
 	// Subscription links (no visual enhancements)
-	$container.find( '.ext-discussiontools-init-section-subscribe-link' ).each( function () {
-		var $link = $( this );
-		var id = $link.closest( '.ext-discussiontools-init-section' )
+	$container.find( '.ext-discussiontools-init-section-subscribe-link' ).each( ( i, link ) => {
+		const $link = $( link );
+		const id = $link.closest( '.ext-discussiontools-init-section' )
 			.find( '[data-mw-comment-start]' ).attr( 'id' );
-		var headingItem = threadItemSet.findCommentById( id );
+		const headingItem = threadItemSet.findCommentById( id );
 
 		if ( !( headingItem instanceof HeadingItem ) ) {
 			// This should never happen
 			return;
 		}
 
-		var itemName = headingItem.name;
-		var title = mw.config.get( 'wgRelevantPageName' ) + '#' + headingItem.getLinkableTitle();
+		const itemName = headingItem.name;
+		const title = mw.config.get( 'wgRelevantPageName' ) + '#' + headingItem.getLinkableTitle();
 
-		linksByName[ itemName ] = this;
+		linksByName[ itemName ] = link;
 
-		$link.on( 'click keypress', function ( e ) {
+		$link.on( 'click keypress', ( e ) => {
 			if ( e.type === 'keypress' && e.which !== OO.ui.Keys.ENTER && e.which !== OO.ui.Keys.SPACE ) {
 				// Only handle keypresses on the "Enter" or "Space" keys
 				return;
@@ -217,14 +215,14 @@ function initTopicSubscriptions( $container, threadItemSet ) {
 			e.preventDefault();
 
 			// Get latest subscribedState
-			var subscribedState = getSubscribedStateFromElement( $link[ 0 ] );
+			const subscribedState = getSubscribedStateFromElement( $link[ 0 ] );
 
 			$link.addClass( 'ext-discussiontools-init-section-subscribe-link-pending' );
 			changeSubscription( title, itemName, !subscribedState )
-				.then( function ( result ) {
+				.then( ( result ) => {
 					updateSubscribeLink( $link[ 0 ], result.subscribe ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED );
 				} )
-				.always( function () {
+				.always( () => {
 					$link.removeClass( 'ext-discussiontools-init-section-subscribe-link-pending' );
 				} );
 		} );
@@ -243,7 +241,7 @@ function initTopicSubscriptions( $container, threadItemSet ) {
  * page actions like live-preview can still reach this point.
  */
 function initNewTopicsSubscription() {
-	var $button, $label, $icon;
+	let $button, $label, $icon;
 
 	initApi();
 
@@ -254,7 +252,7 @@ function initNewTopicsSubscription() {
 		$icon = $button.find( '.minerva-icon' );
 		// HACK: We can't set data-mw-subscribed intially in Minerva, so work it out from the icon
 		// eslint-disable-next-line no-jquery/no-class-state
-		var initialState = $icon.hasClass( 'minerva-icon--bell' ) ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED;
+		const initialState = $icon.hasClass( 'minerva-icon--bell' ) ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED;
 		$button.attr( 'data-mw-subscribed', String( initialState ) );
 	} else {
 		// eslint-disable-next-line no-jquery/no-global-selector
@@ -263,16 +261,16 @@ function initNewTopicsSubscription() {
 		$icon = $( [] );
 	}
 
-	var titleObj = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
-	var name = utils.getNewTopicsSubscriptionId( titleObj );
+	const titleObj = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
+	const name = utils.getNewTopicsSubscriptionId( titleObj );
 
-	$button.off( '.mw-dt-topicsubscriptions' ).on( 'click.mw-dt-topicsubscriptions', function ( e ) {
+	$button.off( '.mw-dt-topicsubscriptions' ).on( 'click.mw-dt-topicsubscriptions', ( e ) => {
 		e.preventDefault();
 		// Get latest subscribedState
-		var subscribedState = getSubscribedStateFromElement( $button[ 0 ] );
+		const subscribedState = getSubscribedStateFromElement( $button[ 0 ] );
 
 		changeSubscription( titleObj.getPrefixedText(), name, !subscribedState, true )
-			.then( function ( result ) {
+			.then( ( result ) => {
 				updateSubscribeLink( $button[ 0 ], result.subscribe ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED, $label[ 0 ], true );
 				$icon.toggleClass( 'minerva-icon--bell', !!result.subscribe );
 				$icon.toggleClass( 'minerva-icon--bellOutline', !result.subscribe );
@@ -285,15 +283,15 @@ function initSpecialTopicSubscriptions() {
 
 	// Unsubscribe links on special page
 	// eslint-disable-next-line no-jquery/no-global-selector
-	$( '.ext-discussiontools-special-unsubscribe-button' ).each( function () {
-		var button = OO.ui.infuse( this );
-		var data = button.getData();
-		var subscribedState = STATE_SUBSCRIBED;
+	$( '.ext-discussiontools-special-unsubscribe-button' ).each( ( i, element ) => {
+		const button = OO.ui.infuse( element );
+		const data = button.getData();
+		let subscribedState = STATE_SUBSCRIBED;
 
-		button.on( 'click', function () {
+		button.on( 'click', () => {
 			button.setDisabled( true );
 			changeSubscription( data.title, data.item, !subscribedState )
-				.then( function ( result ) {
+				.then( ( result ) => {
 					button.setLabel( mw.msg(
 						result.subscribe ?
 							'discussiontools-topicsubscription-button-unsubscribe-label' :
@@ -302,7 +300,7 @@ function initSpecialTopicSubscriptions() {
 					button.clearFlags();
 					button.setFlags( [ result.subscribe ? 'destructive' : 'progressive' ] );
 					subscribedState = result.subscribe ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED;
-				} ).always( function () {
+				} ).always( () => {
 					button.setDisabled( false );
 				} );
 		} );
@@ -313,7 +311,7 @@ function initSpecialTopicSubscriptions() {
  * Show the first time popup for auto topic subscriptions, if required
  */
 function maybeShowFirstTimeAutoTopicSubPopup() {
-	var lastHighlightComment = require( './highlighter.js' ).getLastHighlightedPublishedComment();
+	const lastHighlightComment = require( './highlighter.js' ).getLastHighlightedPublishedComment();
 
 	if ( !lastHighlightComment || seenAutoTopicSubPopup ) {
 		return;
@@ -323,16 +321,16 @@ function maybeShowFirstTimeAutoTopicSubPopup() {
 	mw.user.options.set( 'discussiontools-seenautotopicsubpopup', '1' );
 	api.saveOption( 'discussiontools-seenautotopicsubpopup', '1' );
 
-	var $popupContent, popup;
+	let popup = null;
 
 	function close() {
 		popup.$element.removeClass( 'ext-discussiontools-autotopicsubpopup-fadein' );
-		setTimeout( function () {
+		setTimeout( () => {
 			popup.$element.detach();
 		}, 1000 );
 	}
 
-	$popupContent = $( '<div>' )
+	const $popupContent = $( '<div>' )
 		.append(
 			$( '<strong>' )
 				.addClass( 'ext-discussiontools-autotopicsubpopup-title' )
@@ -422,13 +420,13 @@ function updateSubscriptionStates( $container, headingsToUpdate ) {
 	// If the topic is already marked as auto-subscribed, there's nothing to do.
 	// (Except maybe show the first-time popup.)
 	// If the topic is marked as having never been subscribed, check if they are auto-subscribed now.
-	var topicsToCheck = [];
-	var pendingLinks = [];
-	var pendingButtons = [];
-	for ( var headingName in headingsToUpdate ) {
-		var link = linksByName[ headingName ];
-		var button = buttonsByName[ headingName ];
-		var subscribedState = getSubscribedStateFromElement( link || button.$element[ 0 ] );
+	const topicsToCheck = [];
+	const pendingLinks = [];
+	const pendingButtons = [];
+	for ( const headingName in headingsToUpdate ) {
+		const link = linksByName[ headingName ];
+		const button = buttonsByName[ headingName ];
+		const subscribedState = getSubscribedStateFromElement( link || button.$element[ 0 ] );
 
 		if ( subscribedState === STATE_AUTOSUBSCRIBED ) {
 			maybeShowFirstTimeAutoTopicSubPopup();
@@ -443,7 +441,7 @@ function updateSubscriptionStates( $container, headingsToUpdate ) {
 		}
 	}
 	$( pendingLinks ).addClass( 'ext-discussiontools-init-section-subscribe-link-pending' );
-	pendingButtons.forEach( function ( b ) {
+	pendingButtons.forEach( ( b ) => {
 		b.setDisabled( true );
 	} );
 
@@ -454,26 +452,24 @@ function updateSubscriptionStates( $container, headingsToUpdate ) {
 	api.get( {
 		action: 'discussiontoolsgetsubscriptions',
 		commentname: topicsToCheck
-	} ).then( function ( response ) {
+	} ).then( ( response ) => {
 		if ( $.isEmptyObject( response.subscriptions ) ) {
 			// If none of the topics has an auto-subscription yet, wait a moment and check again.
 			// updateSubscriptionStates() method is only called if we're really expecting one to be there.
 			// (There are certainly neater ways to implement this, involving push notifications or at
 			// least long-polling or something. But this is the simplest one!)
-			var wait = $.Deferred();
+			const wait = $.Deferred();
 			setTimeout( wait.resolve, 5000 );
-			return wait.then( function () {
-				return api.get( {
-					action: 'discussiontoolsgetsubscriptions',
-					commentname: topicsToCheck
-				} );
-			} );
+			return wait.then( () => api.get( {
+				action: 'discussiontoolsgetsubscriptions',
+				commentname: topicsToCheck
+			} ) );
 		}
 		return response;
-	} ).then( function ( response ) {
+	} ).then( ( response ) => {
 		// Update state of each topic for which there is a subscription
-		for ( var subItemName in response.subscriptions ) {
-			var state = response.subscriptions[ subItemName ];
+		for ( const subItemName in response.subscriptions ) {
+			const state = response.subscriptions[ subItemName ];
 			if ( linksByName[ subItemName ] ) {
 				updateSubscribeLink( linksByName[ subItemName ], state );
 			}
@@ -484,9 +480,9 @@ function updateSubscriptionStates( $container, headingsToUpdate ) {
 				maybeShowFirstTimeAutoTopicSubPopup();
 			}
 		}
-	} ).always( function () {
+	} ).always( () => {
 		$( pendingLinks ).removeClass( 'ext-discussiontools-init-section-subscribe-link-pending' );
-		pendingButtons.forEach( function ( b ) {
+		pendingButtons.forEach( ( b ) => {
 			b.setDisabled( false );
 		} );
 	} );
@@ -500,8 +496,8 @@ function updateSubscriptionStates( $container, headingsToUpdate ) {
  * @param {string} [threadItemId] Just-posted comment ID (or NEW_TOPIC_COMMENT_ID)
  */
 function updateAutoSubscriptionStates( $container, threadItemSet, threadItemId ) {
-	var recentComments = [];
-	var headingsToUpdate = {};
+	const recentComments = [];
+	const headingsToUpdate = {};
 	if ( threadItemId ) {
 		// Edited by using the reply tool or new topic tool. Only check the edited topic.
 		if ( threadItemId === utils.NEW_TOPIC_COMMENT_ID ) {
@@ -511,7 +507,7 @@ function updateAutoSubscriptionStates( $container, threadItemSet, threadItemId )
 		}
 	} else if ( mw.config.get( 'wgPostEdit' ) ) {
 		// Edited by using wikitext editor. Check topics with their own comments within last minute.
-		for ( var i = 0; i < threadItemSet.threadItems.length; i++ ) {
+		for ( let i = 0; i < threadItemSet.threadItems.length; i++ ) {
 			if (
 				threadItemSet.threadItems[ i ] instanceof CommentItem &&
 				threadItemSet.threadItems[ i ].author === mw.user.getName() &&
@@ -521,8 +517,8 @@ function updateAutoSubscriptionStates( $container, threadItemSet, threadItemId )
 			}
 		}
 	}
-	recentComments.forEach( function ( recentComment ) {
-		var headingItem = recentComment.getSubscribableHeading();
+	recentComments.forEach( ( recentComment ) => {
+		const headingItem = recentComment.getSubscribableHeading();
 		if ( headingItem ) {
 			// Use names as object keys to deduplicate if there are multiple comments in a topic.
 			headingsToUpdate[ headingItem.name ] = headingItem;

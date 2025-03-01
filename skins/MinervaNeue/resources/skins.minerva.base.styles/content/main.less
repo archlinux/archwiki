@@ -5,6 +5,10 @@
 // Content formatting and typography
 //
 // Our content is predominately text, hence visual hierarchy must be clear.
+html {
+	/* We do not support browsers that render at widths below 320px */
+	min-width: 320px;
+}
 
 body {
 	font-family: @font-family-base;
@@ -31,17 +35,6 @@ body {
 	}
 }
 
-// Feature phones < 320px viewport receive smaller font.
-@media all and ( max-width: @width-breakpoint-mobile - 1 ) {
-	html {
-		font-size: @font-size-root--feature-phone;
-	}
-
-	.content {
-		margin: 0 12px;
-	}
-}
-
 .nomobile {
 	// No mobile should trump any other class. e.g. .content table { display: table; }
 	display: none !important;
@@ -56,19 +49,13 @@ body {
 	}
 
 	// Most iOS browsers' default font size is 16px but Dynamic Type's default
-	// font size is 17px. We need to scale down @font-size-root and
-	// @font-size-root--feature-phone by this ratio in order to make them relative to these
-	// browsers' defaults again. By doing this, the default Dynamic Type text size
+	// font size is 17px. We need to scale down @font-size-root by this ratio
+	// in order to make them relative to these browsers' defaults again.
+	// By doing this, the default Dynamic Type text size
 	// will appear identical to the browser's default text size.
-	@dynamic-type-scaling-factor: 16 / 17;
+	@dynamic-type-scaling-factor: ( 16 / 17 );
 
 	body {
 		font-size: @font-size-root * @dynamic-type-scaling-factor;
-	}
-
-	@media all and ( max-width: @width-breakpoint-mobile - 1 ) {
-		body {
-			font-size: @font-size-root--feature-phone * @dynamic-type-scaling-factor;
-		}
 	}
 }

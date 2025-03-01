@@ -2,7 +2,10 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Maintenance;
 
-use Maintenance;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Maintenance\Maintenance;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
 // @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
@@ -15,8 +18,11 @@ require_once "$IP/maintenance/Maintenance.php";
 class SearchFilters extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->addDescription( 'Find all filters matching a regular expression pattern' );
-		$this->addOption( 'pattern', 'Regular expression pattern', true, true );
+		$this->addDescription(
+			'Find all filters matching a regular expression pattern and/or that have given consequence'
+		);
+		$this->addOption( 'pattern', 'Regular expression pattern', false, true );
+		$this->addOption( 'consequence', 'The consequence that the filter should have', false, true );
 
 		$this->requireExtension( 'Abuse Filter' );
 	}
@@ -25,22 +31,17 @@ class SearchFilters extends Maintenance {
 	 * @see Maintenance:execute()
 	 */
 	public function execute() {
-		global $wgConf, $wgDBtype;
+		global $wgConf;
 
-		if ( $wgDBtype !== 'mysql' ) {
-			// Code using exit() cannot be tested (T272241)
-			// @codeCoverageIgnoreStart
+		if ( $this->getConfig()->get( MainConfigNames::DBtype ) !== 'mysql' ) {
 			$this->fatalError( 'This maintenance script only works with MySQL databases' );
-			// @codeCoverageIgnoreEnd
+		}
+
+		if ( !$this->getOption( 'pattern' ) && !$this->getOption( 'consequence' ) ) {
+			$this->fatalError( 'One of --consequence or --pattern should be specified.' );
 		}
 
 		$this->output( "wiki\tfilter\n" );
-		if ( $this->getOption( 'pattern' ) === '' ) {
-			// Code using exit() cannot be tested (T272241)
-			// @codeCoverageIgnoreStart
-			$this->fatalError( 'Pattern cannot be empty' );
-			// @codeCoverageIgnoreEnd
-		}
 
 		if ( count( $wgConf->wikis ) > 0 ) {
 			foreach ( $wgConf->wikis as $dbname ) {
@@ -57,15 +58,23 @@ class SearchFilters extends Maintenance {
 	private function getMatchingFilters( $dbname = false ) {
 		$dbr = $this->getDB( DB_REPLICA, [], $dbname );
 		$pattern = $dbr->addQuotes( $this->getOption( 'pattern' ) );
+		$consequence = $this->getOption( 'consequence' );
 
-		if ( $dbr->tableExists( 'abuse_filter' ) ) {
-			$rows = $dbr->select(
-				'abuse_filter',
-				[ 'dbname' => 'DATABASE()', 'af_id' ],
-				[
-					"af_pattern RLIKE $pattern"
-				]
-			);
+		if ( $dbr->tableExists( 'abuse_filter', __METHOD__ ) ) {
+			$queryBuilder = $dbr->newSelectQueryBuilder()
+				->select( [ 'dbname' => 'DATABASE()', 'af_id' ] )
+				->from( 'abuse_filter' );
+			if ( $this->getOption( 'pattern' ) ) {
+				$queryBuilder->where( "af_pattern RLIKE $pattern" );
+			}
+			if ( $consequence ) {
+				$queryBuilder->where( $dbr->expr(
+					'af_actions',
+					IExpression::LIKE,
+					new LikeValue( $dbr->anyString(), $consequence, $dbr->anyString() )
+				) );
+			}
+			$rows = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
 			foreach ( $rows as $row ) {
 				$this->output( $row->dbname . "\t" . $row->af_id . "\n" );

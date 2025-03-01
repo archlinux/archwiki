@@ -60,7 +60,6 @@
 	"templatedata-modal-button-done": "Fet",
 	"templatedata-modal-button-map": "Editar mapes",
 	"templatedata-modal-button-importParams": "Importa paràmeters",
-	"templatedata-modal-button-restoreparam": "Restaura el paràmetre",
 	"templatedata-modal-button-saveparam": "Desa",
 	"templatedata-modal-confirmcancel": "Esteu segurs que voleu descartar els canvis?",
 	"templatedata-modal-current-language": "Llengua actual: $1",

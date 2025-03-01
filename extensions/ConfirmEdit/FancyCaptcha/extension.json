@@ -30,11 +30,10 @@
 		},
 		"ext.confirmEdit.fancyCaptcha": {
 			"scripts": "ext.confirmEdit.fancyCaptcha.js",
-			"dependencies": "mediawiki.api"
-		},
-		"ext.confirmEdit.fancyCaptchaMobile": {
-			"scripts": "ext.confirmEdit.fancyCaptcha.js",
-			"dependencies": "mobile.startup"
+			"dependencies": [
+				"ext.confirmEdit.fancyCaptcha.styles",
+				"mediawiki.api"
+			]
 		}
 	},
 	"ResourceFileModulePaths": {

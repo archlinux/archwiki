@@ -9,6 +9,11 @@ class ProgressBarWidget extends Widget {
 	protected $progress;
 
 	/**
+	 * @var bool
+	 */
+	protected $inline;
+
+	/**
 	 * @var Tag
 	 */
 	protected $bar;
@@ -17,6 +22,8 @@ class ProgressBarWidget extends Widget {
 	 * @param array $config Configuration options
 	 *      - bool|int $config['progress'] Numeric value between 0 and 100 (the percent complete)
 	 *          for determinate progress bar, or `false` for indeterminate progress bar
+	 *          (default: false)
+	 *      - bool $config['inline'] Use a smaller inline variant on the progress bar
 	 *          (default: false)
 	 */
 	public function __construct( array $config = [] ) {
@@ -35,6 +42,12 @@ class ProgressBarWidget extends Widget {
 				] )
 			->addClasses( [ 'oo-ui-progressBarWidget' ] )
 			->appendContent( $this->bar );
+
+		$this->inline = $config['inline'] ?? false;
+
+		if ( $this->inline ) {
+			$this->addClasses( [ 'oo-ui-progressBarWidget-inline' ] );
+		}
 	}
 
 	/**
@@ -64,6 +77,9 @@ class ProgressBarWidget extends Widget {
 	public function getConfig( &$config ) {
 		if ( $this->progress !== null ) {
 			$config['progress'] = $this->progress;
+		}
+		if ( $this->inline ) {
+			$config['inline'] = $this->inline;
 		}
 		return parent::getConfig( $config );
 	}

@@ -2,13 +2,13 @@
 
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
 use MediaWiki\MainConfigNames;
+use Wikimedia\Mime\XmlTypeCheck;
 
 /**
  * @group Upload
  */
 class UploadBaseTest extends MediaWikiIntegrationTestCase {
 
-	/** @var string */
 	protected const UPLOAD_PATH = "/tests/phpunit/data/upload/";
 
 	/** @var UploadTestHandler */

@@ -85,15 +85,15 @@ ul.mw-contributions-list li > * {
  * Colored watchlist and recent changes numbers.
  */
 .mw-plusminus-pos {
-	color: var( --minerva-diff-addedline );
+	color: @color-content-added;
 }
 
 .mw-plusminus-neg {
-	color: var( --minerva-diff-deletedline );
+	color: @color-content-removed;
 }
 
 .mw-plusminus-null {
-	color: var( --color-subtle );
+	color: @color-disabled;
 }
 
 /*
@@ -105,29 +105,6 @@ ul.mw-contributions-list li > * {
 .mw-plusminus-null {
 	unicode-bidi: -moz-isolate;
 	unicode-bidi: isolate;
-}
-
-/**
- * "pill" style tags meant to emulate the OOUI ".oo-ui-tagItemWidget" style.
- */
-
-.mw-tag-markers {
-	margin: 0 0 0.5em 0;
-}
-
-.mw-tag-marker {
-	// due to the extra space afforded by padding,
-	// we can make the font-size a bit smaller to save space.
-	font-size: @font-size-tag-line;
-	display: inline-block;
-	box-sizing: border-box;
-	height: 1.6em;
-	border: @border-base;
-	border-radius: @border-radius-pill;
-	line-height: 1.6em;
-	padding: 0 0.6em;
-	vertical-align: middle;
-	white-space: nowrap;
 }
 
 ul.mw-contributions-list li .mw-rollback-link {
@@ -146,6 +123,10 @@ ul.mw-contributions-list li .mw-rollback-link {
 	display: block;
 }
 
+.mw-special-Watchlist .mw-userlink {
+	padding-top: 0.5em;
+}
+
 // On Watchlist and RecentChanges the user is on a separate line per T236328.
 // This does not apply to the history page.
 // It is unnecessary on Special:Contributions since all contributions are by the same user.
@@ -154,6 +135,7 @@ ul.mw-contributions-list li .mw-rollback-link {
 	.mw-userlink,
 	.mw-usertoollinks {
 		float: none;
+		clear: both;
 	}
 
 	.mw-userlink::before,
@@ -170,8 +152,8 @@ ul.mw-contributions-list li .mw-rollback-link {
 		// Since the user link is split over two lines,
 		// add the background color on the bdi instead
 		bdi {
-			// var(--background-color-interactive)
-			background-color: var( --background-color-interactive );
+			// @background-color-interactive
+			background-color: @background-color-interactive;
 			padding: 2px 8px 2px 8px;
 			border-radius: @border-radius-base;
 		}
@@ -204,23 +186,25 @@ ul.mw-contributions-list li .mw-rollback-link {
 		}
 
 		.mw-title {
-			/* Negative margin to counteract &lrm; tags providing enforced spacing. */
-			margin: 0 0 -1em;
 			display: block;
 			float: none;
 
 			a {
-				color: var( --color-subtle );
+				color: @color-subtle;
 			}
 		}
 
 		.mw-userlink {
-			color: var( --color-subtle );
+			color: @color-subtle;
 			display: block;
 
 			bdi {
 				word-break: break-word;
 			}
+		}
+
+		.mw-changeslist-links > span {
+			display: none;
 		}
 
 		/* disable pseudo UI */
@@ -231,17 +215,11 @@ ul.mw-contributions-list li .mw-rollback-link {
 
 		.mw-history-histlinks-previous,
 		.mw-changeslist-diff {
-			position: absolute;
-			right: 0;
-			left: 0;
-			top: 0;
-			bottom: 0;
-			color: transparent;
-			z-index: @z-index-above-content;
+			.changeslist-make-row-linkable();
 		}
 
 		/** Reduce clutter on mobile devices. Users can use "Use desktop site" to reveal these. */
-		@media all and ( max-width: @width-breakpoint-tablet ) {
+		@media all and ( max-width: @max-width-breakpoint-mobile ) {
 			/* Reduce space at top of page */
 			.mw-rcfilters-ui-filterWrapperWidget-bottom-mobile,
 			.mw-rcfilters-ui-watchlistTopSectionWidget,
@@ -290,7 +268,7 @@ ul.mw-contributions-list li .mw-rollback-link {
 			.comment {
 				-webkit-line-clamp: 2;
 				max-height: 2.6em;
-				color: var( --color-subtle );
+				color: @color-subtle;
 				line-height: 1.4;
 				white-space: normal;
 				display: -webkit-box;
@@ -303,16 +281,16 @@ ul.mw-contributions-list li .mw-rollback-link {
 
 			.mw-userlink::before {
 				content: '';
-				.cdx-mixin-css-icon( @cdx-icon-user-avatar, var(--color-subtle) );
+				.cdx-mixin-css-icon( @cdx-icon-user-avatar, @color-subtle );
 				margin-right: 8px;
 			}
 
 			.mw-anonuserlink::before {
-				.cdx-mixin-css-icon( @cdx-icon-user-anonymous, var(--color-subtle) );
+				.cdx-mixin-css-icon( @cdx-icon-user-anonymous, @color-subtle );
 			}
 
 			.mw-tempuserlink::before {
-				.cdx-mixin-css-icon( @cdx-icon-user-temporary, var(--color-subtle) );
+				.cdx-mixin-css-icon( @cdx-icon-user-temporary, @color-subtle );
 			}
 		}
 	}

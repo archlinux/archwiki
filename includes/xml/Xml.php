@@ -20,12 +20,16 @@
  * @file
  */
 
+namespace MediaWiki\Xml;
+
 use MediaWiki\Html\Html;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Utils\MWTimestamp;
+use UtfNormal\Validator;
 
 /**
  * Module of static functions for generating XML
@@ -96,7 +100,7 @@ class Xml {
 	 */
 	public static function elementClean( $element, $attribs = [], $contents = '' ) {
 		if ( $attribs ) {
-			$attribs = array_map( [ UtfNormal\Validator::class, 'cleanUp' ], $attribs );
+			$attribs = array_map( [ Validator::class, 'cleanUp' ], $attribs );
 		}
 		if ( $contents ) {
 			$contents =
@@ -221,7 +225,7 @@ class Xml {
 	 * @deprecated since 1.42
 	 */
 	public static function languageSelector( $selected, $customisedOnly = true,
-		$inLanguage = null, $overrideAttrs = [], Message $msg = null
+		$inLanguage = null, $overrideAttrs = [], ?Message $msg = null
 	) {
 		wfDeprecated( __METHOD__, '1.42' );
 		$languageCode = MediaWikiServices::getInstance()->getMainConfig()
@@ -254,9 +258,7 @@ class Xml {
 		$attrs = [ 'id' => 'wpUserLanguage', 'name' => 'wpUserLanguage' ];
 		$attrs = array_merge( $attrs, $overrideAttrs );
 
-		if ( $msg === null ) {
-			$msg = wfMessage( 'yourlanguage' );
-		}
+		$msg ??= wfMessage( 'yourlanguage' );
 		return [
 			self::label( $msg->text(), $attrs['id'] ),
 			self::tags( 'select', $attrs, $options )
@@ -906,3 +908,5 @@ class Xml {
 		return $s;
 	}
 }
+/** @deprecated class alias since 1.43 */
+class_alias( Xml::class, 'Xml' );

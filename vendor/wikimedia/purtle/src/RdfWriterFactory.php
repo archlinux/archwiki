@@ -97,7 +97,7 @@ class RdfWriterFactory {
 	 * @throws InvalidArgumentException if $format is not a canonical format name
 	 * @return RdfWriter the format object, or null if not found.
 	 */
-	public function getWriter( $format, BNodeLabeler $labeler = null ) {
+	public function getWriter( $format, ?BNodeLabeler $labeler = null ) {
 		switch ( strtolower( $format ) ) {
 			case 'n3':
 				// falls through to turtle

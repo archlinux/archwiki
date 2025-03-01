@@ -4,10 +4,10 @@ namespace Cite\Tests\Unit;
 
 use Cite\ErrorReporter;
 use Cite\ReferenceMessageLocalizer;
-use Language;
-use Message;
-use Parser;
-use ParserOptions;
+use MediaWiki\Language\Language;
+use MediaWiki\Message\Message;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 
 /**
  * @covers \Cite\ErrorReporter
@@ -29,6 +29,17 @@ class ErrorReporterTest extends \MediaWikiUnitTestCase {
 		$this->assertSame(
 			$expectedHtml,
 			$reporter->plain( $mockParser, $key, 'first param' ) );
+	}
+
+	public function testDisabledWrapperMessages() {
+		$language = $this->createLanguage();
+		$reporter = $this->createReporter( $language, true );
+		$mockParser = $this->createParser( $language );
+		$this->assertSame(
+			'<span class="warning mw-ext-cite-warning mw-ext-cite-warning-a" lang="qqx" ' .
+				'dir="rtl">(cite_warning_a)</span>',
+			$reporter->plain( $mockParser, 'cite_warning_a' )
+		);
 	}
 
 	public function testHalfParsed() {
@@ -55,6 +66,13 @@ class ErrorReporterTest extends \MediaWikiUnitTestCase {
 					'dir="rtl">(cite_warning|(cite_warning_example|first param))</span>',
 				'expectedCategory' => null,
 			],
+			'Optional support for messages with dashes' => [
+				'key' => 'cite-warning-with-dashes',
+				'expectedHtml' => '<span class="warning mw-ext-cite-warning ' .
+					'mw-ext-cite-warning-with-dashes" lang="qqx" dir="rtl">' .
+					'(cite_warning|(cite-warning-with-dashes|first param))</span>',
+				'expectedCategory' => null,
+			],
 		];
 	}
 
@@ -65,11 +83,12 @@ class ErrorReporterTest extends \MediaWikiUnitTestCase {
 		return $language;
 	}
 
-	private function createReporter( Language $language ): ErrorReporter {
+	private function createReporter( Language $language, bool $disabled = false ): ErrorReporter {
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
 		$mockMessageLocalizer->method( 'msg' )->willReturnCallback(
-			function ( ...$args ) use ( $language ) {
+			function ( ...$args ) use ( $language, $disabled ) {
 				$message = $this->createMock( Message::class );
+				$message->method( 'isDisabled' )->willReturn( $disabled );
 				$message->method( 'getKey' )->willReturn( $args[0] );
 				$message->method( 'plain' )->willReturn( '(' . implode( '|', $args ) . ')' );
 				$message->method( 'inLanguage' )->with( $language )->willReturnSelf();
@@ -81,7 +100,7 @@ class ErrorReporterTest extends \MediaWikiUnitTestCase {
 		return new ErrorReporter( $mockMessageLocalizer );
 	}
 
-	private function createParser( Language $language, string $expectedCategory = null ): Parser {
+	private function createParser( Language $language, ?string $expectedCategory = null ): Parser {
 		$parserOptions = $this->createMock( ParserOptions::class );
 		$parserOptions->method( 'getUserLangObj' )->willReturn( $language );
 

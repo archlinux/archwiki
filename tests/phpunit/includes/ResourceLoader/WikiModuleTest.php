@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Tests\ResourceLoader;
 
-use Content;
-use CssContent;
-use EmptyResourceLoader;
-use JavaScriptContent;
-use JavaScriptContentHandler;
 use LinkCacheTestTrait;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\CssContent;
+use MediaWiki\Content\JavaScriptContent;
+use MediaWiki\Content\JavaScriptContentHandler;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
@@ -26,7 +26,6 @@ use RuntimeException;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
-use WikitextContent;
 
 /**
  * @group ResourceLoader
@@ -241,8 +240,8 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 		$this->editPage( 'MediaWiki:TestEmpty.css', '', 'Empty' );
 		$this->editPage( 'MediaWiki:TestB.css', '.mw-second {}', 'Second' );
 		$rl = new EmptyResourceLoader();
-		$rl->getConfig()->set( 'UseSiteJs', true );
-		$rl->getConfig()->set( 'UseSiteCss', true );
+		$rl->getConfig()->set( MainConfigNames::UseSiteJs, true );
+		$rl->getConfig()->set( MainConfigNames::UseSiteCss, true );
 		$rl->register( 'testmodule1', [
 			'class' => TestResourceLoaderWikiModule::class,
 			'styles' => [
@@ -284,8 +283,8 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 		// Set up
 		TestResourceLoaderWikiModule::$returnFetchTitleInfo = [];
 		$rl = new EmptyResourceLoader();
-		$rl->getConfig()->set( 'UseSiteJs', true );
-		$rl->getConfig()->set( 'UseSiteCss', true );
+		$rl->getConfig()->set( MainConfigNames::UseSiteJs, true );
+		$rl->getConfig()->set( MainConfigNames::UseSiteCss, true );
 		$rl->register( 'testmodule', [
 			'class' => TestResourceLoaderWikiModule::class,
 			// Covers preloadTitleInfo branch for invalid page name
@@ -347,7 +346,7 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 	/**
 	 * @dataProvider provideGetContent
 	 */
-	public function testGetContent( $expected, $title, Content $contentObj = null ) {
+	public function testGetContent( $expected, $title, ?Content $contentObj = null ) {
 		$context = $this->getResourceLoaderContext( [], new EmptyResourceLoader );
 		$module = $this->getMockBuilder( WikiModule::class )
 			->onlyMethods( [ 'getContentObj' ] )->getMock();
@@ -457,6 +456,7 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 }
 
 class TestResourceLoaderWikiModule extends WikiModule {
+	/** @var array|null */
 	public static $returnFetchTitleInfo = null;
 
 	protected static function fetchTitleInfo( IReadableDatabase $db, array $pages, $fname = null ) {

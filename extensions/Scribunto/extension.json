@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later AND MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"APIModules": {
 		"scribunto-console": {
@@ -73,7 +73,7 @@
 		},
 		"ext.scribunto.edit": {
 			"scripts": "ext.scribunto.edit.js",
-			"styles": "ext.scribunto.edit.css",
+			"styles": "ext.scribunto.edit.less",
 			"dependencies": [
 				"mediawiki.api",
 				"jquery.spinner"

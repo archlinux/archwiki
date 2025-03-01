@@ -20,21 +20,21 @@
  * @since 1.23
  */
 
+namespace MediaWiki\Api;
+
+use SearchEngine;
+use SearchEngineConfig;
+use SearchEngineFactory;
+
 /**
  * @ingroup API
  */
 class ApiQueryPrefixSearch extends ApiQueryGeneratorBase {
-	use SearchApi;
+	use \MediaWiki\Api\SearchApi;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param SearchEngineConfig $searchEngineConfig
-	 * @param SearchEngineFactory $searchEngineFactory
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		SearchEngineConfig $searchEngineConfig,
 		SearchEngineFactory $searchEngineFactory
 	) {
@@ -134,3 +134,6 @@ class ApiQueryPrefixSearch extends ApiQueryGeneratorBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Prefixsearch';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryPrefixSearch::class, 'ApiQueryPrefixSearch' );

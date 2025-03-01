@@ -6,12 +6,12 @@
 * @author mflaschen@wikimedia.org
 */
 /**
- * @typedef {string|string[]} jQueryPlugins~Replacements
+ * @typedef {string|string[]} module:mediawiki.jqueryMsg~Replacements
  * @ignore
  */
 /**
- * @callback {Function} jQueryPlugins~MessageFormatterFunction
- * @param {Array<jQueryPlugins~Replacements>} replacements Optional variable replacements (variadically or an array).
+ * @callback {Function} module:mediawiki.jqueryMsg~MessageFormatterFunction
+ * @param {Array<module:mediawiki.jqueryMsg~Replacements>} replacements Optional variable replacements (variadically or an array).
  *   This is a mixed array of strings or arrays of string. This is equivalent to Array<string|string[]> but cannot be documented until the
  *   jsdoc theme has been patched (T354716).
  * @return {jQuery} Rendered HTML.
@@ -20,11 +20,11 @@
 
 /**
  * @callback {Function} MessageFormatterFunctionGenerator
- * @return {jQueryPlugins~MessageFormatterFunction}
+ * @return {module:mediawiki.jqueryMsg~MessageFormatterFunction}
  * @ignore
  */
 
-var slice = Array.prototype.slice,
+const slice = Array.prototype.slice,
 	util = require( 'mediawiki.util' ),
 	mwString = require( 'mediawiki.String' ),
 	parserDefaults = {
@@ -32,7 +32,8 @@ var slice = Array.prototype.slice,
 		magic: {
 			PAGENAME: mw.config.get( 'wgPageName' ),
 			PAGENAMEE: util.wikiUrlencode( mw.config.get( 'wgPageName' ) ),
-			SERVERNAME: mw.config.get( 'wgServerName' )
+			SERVERNAME: mw.config.get( 'wgServerName' ),
+			CONTENTLANGUAGE: mw.config.get( 'wgContentLanguage' )
 		},
 		// Whitelist for allowed HTML elements in wikitext.
 		// Self-closing tags are not currently supported.
@@ -90,7 +91,7 @@ $.extend( true, parserDefaults, require( './parserDefaults.json' ) );
  * @return {jQuery} $parent
  */
 function appendWithoutParsing( $parent, children ) {
-	var i, len;
+	let i, len;
 
 	if ( !Array.isArray( children ) ) {
 		children = [ children ];
@@ -153,13 +154,13 @@ function textify( input ) {
  */
 function getFailableParserFn( options ) {
 	return function ( args ) {
-		var parser = new Parser( options ),
+		const parser = new Parser( options ),
 			key = args[ 0 ],
 			argsArray = Array.isArray( args[ 1 ] ) ? args[ 1 ] : slice.call( args, 1 );
 		try {
 			return parser.parse( key, argsArray );
 		} catch ( e ) {
-			var fallback = parser.settings.messages.get( key );
+			const fallback = parser.settings.messages.get( key );
 			mw.log.warn( 'mediawiki.jqueryMsg: ' + key + ': ' + e.message );
 			mw.track( 'mediawiki.jqueryMsg.error', {
 				messageKey: key,
@@ -180,7 +181,7 @@ function getFailableParserFn( options ) {
  * @param {Object} data New data to extend parser defaults with
  */
 const setParserDefaults = function ( data ) {
-	$.extend( parserDefaults, data );
+	Object.assign( parserDefaults, data );
 };
 
 /**
@@ -192,7 +193,7 @@ const setParserDefaults = function ( data ) {
  * @return {Object}
  */
 const getParserDefaults = function () {
-	return $.extend( {}, parserDefaults );
+	return Object.assign( {}, parserDefaults );
 };
 
 /**
@@ -200,10 +201,10 @@ const getParserDefaults = function () {
  *
  * @ignore
  * @param {Object} options parser options
- * @return {jQueryPlugins~MessageFormatterFunction}
+ * @return {module:mediawiki.jqueryMsg~MessageFormatterFunction}
  */
 const defaultMessageFunction = function ( options ) {
-	var failableParserFn, format;
+	let failableParserFn, format;
 
 	if ( options && options.format !== undefined ) {
 		format = options.format;
@@ -215,7 +216,7 @@ const defaultMessageFunction = function ( options ) {
 		if ( !failableParserFn ) {
 			failableParserFn = getFailableParserFn( options );
 		}
-		var $result = failableParserFn( arguments );
+		const $result = failableParserFn( arguments );
 		if ( format === 'text' || format === 'escaped' ) {
 			return $result.text();
 		} else {
@@ -232,7 +233,7 @@ let messageFunction = defaultMessageFunction;
 /**
  * @ignore
  * @param {Object} options parser options
- * @return {jQueryPlugins~MessageFormatterFunction} options
+ * @return {module:mediawiki.jqueryMsg~MessageFormatterFunction} options
  */
 const getMessageFunction = function ( options ) {
 	return messageFunction( options );
@@ -257,16 +258,16 @@ const setMessageFunction = function ( msgFunction ) {
  *
  * @ignore
  * @param {Object} [options] Parser options
- * @return {jQueryPlugins~MessageFormatterFunction}
+ * @return {module:mediawiki.jqueryMsg~MessageFormatterFunction}
  */
 const getPlugin = function ( options ) {
-	var failableParserFn;
+	let failableParserFn;
 
 	return function () {
 		if ( !failableParserFn ) {
 			failableParserFn = getFailableParserFn( options );
 		}
-		var $result = failableParserFn( arguments );
+		const $result = failableParserFn( arguments );
 		return this.empty().append( $result.contents() );
 	};
 };
@@ -280,7 +281,7 @@ const getPlugin = function ( options ) {
  * @param {Object} options
  */
 function Parser( options ) {
-	this.settings = $.extend( {}, parserDefaults, options );
+	this.settings = Object.assign( {}, parserDefaults, options );
 	this.settings.onlyCurlyBraceTransform = ( this.settings.format === 'text' || this.settings.format === 'escaped' );
 	this.astCache = {};
 
@@ -298,7 +299,7 @@ Parser.prototype = {
 	 * @return {jQuery}
 	 */
 	parse: function ( key, replacements ) {
-		var ast = this.getAst( key, replacements );
+		const ast = this.getAst( key, replacements );
 		return this.emitter.emit( ast, replacements );
 	},
 
@@ -312,10 +313,11 @@ Parser.prototype = {
 	 */
 	getAst: function ( key, replacements ) {
 		if ( !Object.prototype.hasOwnProperty.call( this.astCache, key ) ) {
-			var wikiText = this.settings.messages.get( key );
+			let wikiText = this.settings.messages.get( key );
+			// Keep this synchronised with Message#parser in mediawiki.base.js
 			if (
 				mw.config.get( 'wgUserLanguage' ) === 'qqx' &&
-				wikiText === '(' + key + ')'
+				( !wikiText || wikiText === '(' + key + ')' )
 			) {
 				wikiText = '(' + key + '$*)';
 			} else if ( typeof wikiText !== 'string' ) {
@@ -338,21 +340,12 @@ Parser.prototype = {
 	 * @return {any} abstract syntax tree
 	 */
 	wikiTextToAst: function ( input ) {
-		var pos,
-			regularLiteral, regularLiteralWithoutBar, regularLiteralWithoutSpace, regularLiteralWithSquareBrackets,
-			doubleQuote, singleQuote, backslash, anyCharacter, asciiAlphabetLiteral,
-			escapedOrLiteralWithoutSpace, escapedOrLiteralWithoutBar, escapedOrRegularLiteral,
-			whitespace, dollar, digits, htmlDoubleQuoteAttributeValue, htmlSingleQuoteAttributeValue,
-			htmlAttributeEquals, openHtmlStartTag, optionalForwardSlash, openHtmlEndTag, closeHtmlTag,
-			openExtlink, closeExtlink, wikilinkContents, openWikilink, closeWikilink, pipe, colon,
-			templateContents, openTemplate, closeTemplate,
-			nonWhitespaceExpression, paramExpression, expression, curlyBraceTransformExpression, res,
-			settings = this.settings,
-			concat = Array.prototype.concat;
+		let nonWhitespaceExpression = null, expression = null, templateContents = null, paramExpression = null, colon = null;
+		const settings = this.settings;
 
 		// Indicates current position in input as we parse through it.
 		// Shared among all parsing functions below.
-		pos = 0;
+		let pos = 0;
 
 		// =========================================================
 		// parsing combinators - could be a library on its own
@@ -367,7 +360,7 @@ Parser.prototype = {
 		 */
 		function choice( ps ) {
 			return function () {
-				var i, result;
+				let i, result;
 				for ( i = 0; i < ps.length; i++ ) {
 					result = ps[ i ]();
 					if ( result !== null ) {
@@ -387,11 +380,10 @@ Parser.prototype = {
 		 * @return {string[]|null}
 		 */
 		function sequence( ps ) {
-			var i, r,
-				originalPos = pos,
+			const originalPos = pos,
 				result = [];
-			for ( i = 0; i < ps.length; i++ ) {
-				r = ps[ i ]();
+			for ( let i = 0; i < ps.length; i++ ) {
+				const r = ps[ i ]();
 				if ( r === null ) {
 					pos = originalPos;
 					return null;
@@ -412,9 +404,9 @@ Parser.prototype = {
 		 */
 		function nOrMore( n, p ) {
 			return function () {
-				var originalPos = pos,
-					result = [],
-					parsed = p();
+				const originalPos = pos,
+					result = [];
+				let parsed = p();
 				while ( parsed !== null ) {
 					result.push( parsed );
 					parsed = p();
@@ -435,9 +427,9 @@ Parser.prototype = {
 		 * @return {Function} that will return {string|null}
 		 */
 		function makeStringParser( s ) {
-			var len = s.length;
+			const len = s.length;
 			return function () {
-				var result = null;
+				let result = null;
 				if ( input.slice( pos, pos + len ) === s ) {
 					result = s;
 					pos += len;
@@ -457,7 +449,7 @@ Parser.prototype = {
 		 */
 		function makeRegexParser( regex ) {
 			return function () {
-				var matches = input.slice( pos ).match( regex );
+				const matches = input.slice( pos ).match( regex );
 				if ( matches === null ) {
 					return null;
 				}
@@ -482,57 +474,57 @@ Parser.prototype = {
 		// This may be because, to save code, memoization was removed
 
 		/* eslint-disable no-useless-escape */
-		regularLiteral = makeRegexParser( /^[^{}\[\]$<\\]/ );
-		regularLiteralWithoutBar = makeRegexParser( /^[^{}\[\]$\\|]/ );
-		regularLiteralWithoutSpace = makeRegexParser( /^[^{}\[\]$\s]/ );
+		const regularLiteral = makeRegexParser( /^[^{}\[\]$<\\]/ );
+		const regularLiteralWithoutBar = makeRegexParser( /^[^{}\[\]$\\|]/ );
+		const regularLiteralWithoutSpace = makeRegexParser( /^[^{}\[\]$\s]/ );
 		/* eslint-enable no-useless-escape */
 
-		backslash = makeStringParser( '\\' );
-		anyCharacter = makeRegexParser( /^./ );
+		const backslash = makeStringParser( '\\' );
+		const anyCharacter = makeRegexParser( /^./ );
 		function escapedLiteral() {
-			var result = sequence( [
+			const result = sequence( [
 				backslash,
 				anyCharacter
 			] );
 			return result === null ? null : result[ 1 ];
 		}
-		escapedOrLiteralWithoutSpace = choice( [
+		const escapedOrLiteralWithoutSpace = choice( [
 			escapedLiteral,
 			regularLiteralWithoutSpace
 		] );
-		escapedOrLiteralWithoutBar = choice( [
+		const escapedOrLiteralWithoutBar = choice( [
 			escapedLiteral,
 			regularLiteralWithoutBar
 		] );
-		escapedOrRegularLiteral = choice( [
+		const escapedOrRegularLiteral = choice( [
 			escapedLiteral,
 			regularLiteral
 		] );
 		// Used to define "literals" without spaces, in space-delimited situations
 		function literalWithoutSpace() {
-			var result = nOrMore( 1, escapedOrLiteralWithoutSpace )();
+			const result = nOrMore( 1, escapedOrLiteralWithoutSpace )();
 			return result === null ? null : result.join( '' );
 		}
 		// Used to define "literals" within template parameters. The pipe character is the parameter delimeter, so by default
 		// it is not a literal in the parameter
 		function literalWithoutBar() {
-			var result = nOrMore( 1, escapedOrLiteralWithoutBar )();
+			const result = nOrMore( 1, escapedOrLiteralWithoutBar )();
 			return result === null ? null : result.join( '' );
 		}
 
 		function literal() {
-			var result = nOrMore( 1, escapedOrRegularLiteral )();
+			const result = nOrMore( 1, escapedOrRegularLiteral )();
 			return result === null ? null : result.join( '' );
 		}
 
-		asciiAlphabetLiteral = makeRegexParser( /^[A-Za-z]+/ );
+		const asciiAlphabetLiteral = makeRegexParser( /^[A-Za-z]+/ );
 
-		whitespace = makeRegexParser( /^\s+/ );
+		const whitespace = makeRegexParser( /^\s+/ );
 
-		dollar = makeStringParser( '$' );
-		digits = makeRegexParser( /^\d+/ );
+		const dollar = makeStringParser( '$' );
+		const digits = makeRegexParser( /^\d+/ );
 		function replacement() {
-			var result = sequence( [
+			const result = sequence( [
 				dollar,
 				digits
 			] );
@@ -541,11 +533,11 @@ Parser.prototype = {
 			}
 			return [ 'REPLACE', parseInt( result[ 1 ], 10 ) - 1 ];
 		}
-		openExtlink = makeStringParser( '[' );
-		closeExtlink = makeStringParser( ']' );
+		const openExtlink = makeStringParser( '[' );
+		const closeExtlink = makeStringParser( ']' );
 		// this extlink MUST have inner contents, e.g. [foo] not allowed; [foo bar] [foo <i>bar</i>], etc. are allowed
 		function extlink() {
-			var parsedResult = sequence( [
+			const parsedResult = sequence( [
 				openExtlink,
 				nOrMore( 1, nonWhitespaceExpression ),
 				whitespace,
@@ -559,7 +551,7 @@ Parser.prototype = {
 			// passing fancy parameters (like a whole jQuery object or a function) to use for the
 			// link. Check only if it's a single match, since we can either do CONCAT or not for
 			// singles with the same effect.
-			var target = parsedResult[ 1 ].length === 1 ?
+			const target = parsedResult[ 1 ].length === 1 ?
 				parsedResult[ 1 ][ 0 ] :
 				[ 'CONCAT' ].concat( parsedResult[ 1 ] );
 			return [
@@ -568,12 +560,12 @@ Parser.prototype = {
 				[ 'CONCAT' ].concat( parsedResult[ 3 ] )
 			];
 		}
-		pipe = makeStringParser( '|' );
+		const pipe = makeStringParser( '|' );
 
-		openTemplate = makeStringParser( '{{' );
-		closeTemplate = makeStringParser( '}}' );
+		const openTemplate = makeStringParser( '{{' );
+		const closeTemplate = makeStringParser( '}}' );
 		function template() {
-			var result = sequence( [
+			const result = sequence( [
 				openTemplate,
 				templateContents,
 				closeTemplate
@@ -584,60 +576,48 @@ Parser.prototype = {
 		function templateName() {
 			// see $wgLegalTitleChars
 			// not allowing : due to the need to catch "PLURAL:$1"
-			var templateNameRegex = makeRegexParser( /^[ !"$&'()*,./0-9;=?@A-Z^_`a-z~\x80-\xFF+-]+/ );
-			var result = templateNameRegex();
+			const templateNameRegex = makeRegexParser( /^#?[ !"$&'()*,./0-9;=?@A-Z^_`a-z~\x80-\xFF+-]+/ );
+			const result = templateNameRegex();
 			return result === null ? null : result.toString();
 		}
 
 		function templateParam() {
-			var result = sequence( [
+			const result = sequence( [
 				pipe,
 				nOrMore( 0, paramExpression )
 			] );
 			if ( result === null ) {
 				return null;
 			}
-			var expr = result[ 1 ];
+			const expr = result[ 1 ];
 			// use a CONCAT operator if there are multiple nodes, otherwise return the first node, raw.
 			return expr.length > 1 ? [ 'CONCAT' ].concat( expr ) : expr[ 0 ];
 		}
 
-		function templateWithReplacement() {
-			var result = sequence( [
+		function templateNameWithParam() {
+			const result = sequence( [
 				templateName,
 				colon,
-				replacement
+				nOrMore( 0, paramExpression )
 			] );
-			return result === null ? null : [ result[ 0 ], result[ 2 ] ];
-		}
-		function templateWithOutReplacement() {
-			var result = sequence( [
-				templateName,
-				colon,
-				paramExpression
-			] );
-			return result === null ? null : [ result[ 0 ], result[ 2 ] ];
-		}
-		function templateWithOutFirstParameter() {
-			var result = sequence( [
-				templateName,
-				colon
-			] );
-			return result === null ? null : [ result[ 0 ], '' ];
+			if ( result === null ) {
+				return null;
+			}
+			const expr = result[ 2 ];
+			// use a CONCAT operator if there are multiple nodes, otherwise return the first node, raw.
+			return [ result[ 0 ], expr.length > 1 ? [ 'CONCAT' ].concat( expr ) : expr[ 0 ] ];
 		}
 		colon = makeStringParser( ':' );
 		templateContents = choice( [
 			function () {
-				var result = sequence( [
-					// templates can have placeholders for dynamic replacement eg: {{PLURAL:$1|one car|$1 cars}}
-					// or no placeholders eg: {{GRAMMAR:genitive|{{SITENAME}}}
-					choice( [ templateWithReplacement, templateWithOutReplacement, templateWithOutFirstParameter ] ),
+				const result = sequence( [
+					templateNameWithParam,
 					nOrMore( 0, templateParam )
 				] );
 				return result === null ? null : result[ 0 ].concat( result[ 1 ] );
 			},
 			function () {
-				var result = sequence( [
+				const result = sequence( [
 					templateName,
 					nOrMore( 0, templateParam )
 				] );
@@ -649,7 +629,7 @@ Parser.prototype = {
 		] );
 
 		function pipedWikilink() {
-			var result = sequence( [
+			const result = sequence( [
 				nOrMore( 1, paramExpression ),
 				pipe,
 				nOrMore( 1, expression )
@@ -661,7 +641,7 @@ Parser.prototype = {
 		}
 
 		function unpipedWikilink() {
-			var result = sequence( [
+			const result = sequence( [
 				nOrMore( 1, paramExpression )
 			] );
 			return result === null ? null : [
@@ -669,15 +649,15 @@ Parser.prototype = {
 			];
 		}
 
-		wikilinkContents = choice( [
+		const wikilinkContents = choice( [
 			pipedWikilink,
 			unpipedWikilink
 		] );
 
-		openWikilink = makeStringParser( '[[' );
-		closeWikilink = makeStringParser( ']]' );
+		const openWikilink = makeStringParser( '[[' );
+		const closeWikilink = makeStringParser( ']]' );
 		function wikilink() {
-			var parsedResult = sequence( [
+			const parsedResult = sequence( [
 				openWikilink,
 				wikilinkContents,
 				closeWikilink
@@ -686,10 +666,10 @@ Parser.prototype = {
 		}
 
 		// TODO: Support data- if appropriate
-		doubleQuote = makeStringParser( '"' );
-		htmlDoubleQuoteAttributeValue = makeRegexParser( /^[^"]*/ );
+		const doubleQuote = makeStringParser( '"' );
+		const htmlDoubleQuoteAttributeValue = makeRegexParser( /^[^"]*/ );
 		function doubleQuotedHtmlAttributeValue() {
-			var parsedResult = sequence( [
+			const parsedResult = sequence( [
 				doubleQuote,
 				htmlDoubleQuoteAttributeValue,
 				doubleQuote
@@ -697,10 +677,10 @@ Parser.prototype = {
 			return parsedResult === null ? null : parsedResult[ 1 ];
 		}
 
-		singleQuote = makeStringParser( '\'' );
-		htmlSingleQuoteAttributeValue = makeRegexParser( /^[^']*/ );
+		const singleQuote = makeStringParser( '\'' );
+		const htmlSingleQuoteAttributeValue = makeRegexParser( /^[^']*/ );
 		function singleQuotedHtmlAttributeValue() {
-			var parsedResult = sequence( [
+			const parsedResult = sequence( [
 				singleQuote,
 				htmlSingleQuoteAttributeValue,
 				singleQuote
@@ -708,9 +688,9 @@ Parser.prototype = {
 			return parsedResult === null ? null : parsedResult[ 1 ];
 		}
 
-		htmlAttributeEquals = makeRegexParser( /^\s*=\s*/ );
+		const htmlAttributeEquals = makeRegexParser( /^\s*=\s*/ );
 		function htmlAttribute() {
-			var parsedResult = sequence( [
+			const parsedResult = sequence( [
 				whitespace,
 				asciiAlphabetLiteral,
 				htmlAttributeEquals,
@@ -730,6 +710,7 @@ Parser.prototype = {
 		 * @param {Object} attributes array of consecutive key value pairs,
 		 *  with index 2 * n being a name and 2 * n + 1 the associated value
 		 * @return {boolean} true if this is HTML is allowed, false otherwise
+		 * @ignore
 		 */
 		function isAllowedHtml( startTagName, endTagName, attributes ) {
 			startTagName = startTagName.toLowerCase();
@@ -738,10 +719,10 @@ Parser.prototype = {
 				return false;
 			}
 
-			var badStyle = /[\000-\010\013\016-\037\177]|expression|filter\s*:|accelerator\s*:|-o-link\s*:|-o-link-source\s*:|-o-replace\s*:|url\s*\(|image\s*\(|image-set\s*\(/i;
+			const badStyle = /[\000-\010\013\016-\037\177]|expression|filter\s*:|accelerator\s*:|-o-link\s*:|-o-link-source\s*:|-o-replace\s*:|url\s*\(|image\s*\(|image-set\s*\(/i;
 
-			var attributeName;
-			for ( var i = 0, len = attributes.length; i < len; i += 2 ) {
+			let attributeName;
+			for ( let i = 0, len = attributes.length; i < len; i += 2 ) {
 				attributeName = attributes[ i ];
 				if ( settings.allowedHtmlCommonAttributes.indexOf( attributeName ) === -1 &&
 					( settings.allowedHtmlAttributesByElement[ startTagName ] || [] ).indexOf( attributeName ) === -1 ) {
@@ -757,15 +738,15 @@ Parser.prototype = {
 		}
 
 		function htmlAttributes() {
-			var parsedResult = nOrMore( 0, htmlAttribute )();
+			const parsedResult = nOrMore( 0, htmlAttribute )();
 			// Un-nest attributes array due to structure of jQueryMsg operations (see emit).
-			return concat.apply( [ 'HTMLATTRIBUTES' ], parsedResult );
+			return [ 'HTMLATTRIBUTES' ].concat( ...parsedResult );
 		}
 
-		openHtmlStartTag = makeStringParser( '<' );
-		optionalForwardSlash = makeRegexParser( /^\/?/ );
-		openHtmlEndTag = makeStringParser( '</' );
-		closeHtmlTag = makeRegexParser( /^\s*>/ );
+		const openHtmlStartTag = makeStringParser( '<' );
+		const optionalForwardSlash = makeRegexParser( /^\/?/ );
+		const openHtmlEndTag = makeStringParser( '</' );
+		const closeHtmlTag = makeRegexParser( /^\s*>/ );
 		// Subset of allowed HTML markup.
 		// Most elements and many attributes allowed on the server are not supported yet.
 		function html() {
@@ -775,8 +756,8 @@ Parser.prototype = {
 			// 3. openHtmlEnd through close
 			// This will allow recording the positions to reconstruct if HTML is to be treated as text.
 
-			var startOpenTagPos = pos;
-			var parsedOpenTagResult = sequence( [
+			const startOpenTagPos = pos;
+			const parsedOpenTagResult = sequence( [
 				openHtmlStartTag,
 				asciiAlphabetLiteral,
 				htmlAttributes,
@@ -788,13 +769,13 @@ Parser.prototype = {
 				return null;
 			}
 
-			var endOpenTagPos = pos;
-			var startTagName = parsedOpenTagResult[ 1 ];
+			const endOpenTagPos = pos;
+			const startTagName = parsedOpenTagResult[ 1 ];
 
-			var parsedHtmlContents = nOrMore( 0, expression )();
+			const parsedHtmlContents = nOrMore( 0, expression )();
 
-			var startCloseTagPos = pos;
-			var parsedCloseTagResult = sequence( [
+			const startCloseTagPos = pos;
+			const parsedCloseTagResult = sequence( [
 				openHtmlEndTag,
 				asciiAlphabetLiteral,
 				closeHtmlTag
@@ -806,10 +787,10 @@ Parser.prototype = {
 					.concat( parsedHtmlContents );
 			}
 
-			var endCloseTagPos = pos;
-			var endTagName = parsedCloseTagResult[ 1 ];
-			var wrappedAttributes = parsedOpenTagResult[ 2 ];
-			var attributes = wrappedAttributes.slice( 1 );
+			const endCloseTagPos = pos;
+			const endTagName = parsedCloseTagResult[ 1 ];
+			const wrappedAttributes = parsedOpenTagResult[ 2 ];
+			const attributes = wrappedAttributes.slice( 1 );
 			if ( isAllowedHtml( startTagName, endTagName, attributes ) ) {
 				return [ 'HTMLELEMENT', startTagName, wrappedAttributes ]
 					.concat( parsedHtmlContents );
@@ -832,7 +813,7 @@ Parser.prototype = {
 
 		// <nowiki>...</nowiki> tag. The tags are stripped and the contents are returned unparsed.
 		function nowiki() {
-			var parsedResult = sequence( [
+			const parsedResult = sequence( [
 				makeStringParser( '<nowiki>' ),
 				// We use a greedy non-backtracking parser, so we must ensure here that we don't take too much
 				makeRegexParser( /^.*?(?=<\/nowiki>)/ ),
@@ -866,14 +847,14 @@ Parser.prototype = {
 			literal
 		] );
 
-		regularLiteralWithSquareBrackets = makeRegexParser( /^[^{}$\\]/ );
+		const regularLiteralWithSquareBrackets = makeRegexParser( /^[^{}$\\]/ );
 		function curlyBraceTransformExpressionLiteral() {
-			var result = nOrMore( 1, regularLiteralWithSquareBrackets )();
+			const result = nOrMore( 1, regularLiteralWithSquareBrackets )();
 			return result === null ? null : result.join( '' );
 		}
 		// Used when only {{-transformation is wanted, for 'text'
 		// or 'escaped' formats
-		curlyBraceTransformExpression = choice( [
+		const curlyBraceTransformExpression = choice( [
 			template,
 			replacement,
 			curlyBraceTransformExpressionLiteral
@@ -884,9 +865,10 @@ Parser.prototype = {
 		 *
 		 * @param {Function} rootExpression Root parse function
 		 * @return {Array|null}
+		 * @ignore
 		 */
 		function start( rootExpression ) {
-			var result = nOrMore( 0, rootExpression )();
+			const result = nOrMore( 0, rootExpression )();
 			if ( result === null ) {
 				return null;
 			}
@@ -896,7 +878,7 @@ Parser.prototype = {
 		// I am deferring the work of turning it into prototypes & objects. It's quite fast enough
 		// finally let's do some actual work...
 
-		res = start( this.settings.onlyCurlyBraceTransform ? curlyBraceTransformExpression : expression );
+		const res = start( this.settings.onlyCurlyBraceTransform ? curlyBraceTransformExpression : expression );
 
 		/*
 		 * For success, the p must have gotten to the end of the input
@@ -916,14 +898,14 @@ Parser.prototype = {
  *
  * @private
  * @class
- * @param {Object} language
- * @param {Object} [magic]
+ * @param {mw.language} language
+ * @param {Object.<string,string>} [magic]
  */
 function HtmlEmitter( language, magic ) {
-	var jmsg = this;
+	const jmsg = this;
 	this.language = language;
-	Object.keys( magic || {} ).forEach( function ( key ) {
-		var val = magic[ key ];
+	Object.keys( magic || {} ).forEach( ( key ) => {
+		const val = magic[ key ];
 		jmsg[ key.toLowerCase() ] = function () {
 			return val;
 		};
@@ -944,18 +926,17 @@ function HtmlEmitter( language, magic ) {
 				return node;
 
 			// typeof returns object for arrays
-			case 'object':
+			case 'object': {
 				// node is an array of nodes
 				// eslint-disable-next-line no-jquery/no-map-util
-				var subnodes = $.map( node.slice( 1 ), function ( n ) {
-					return jmsg.emit( n, replacements );
-				} );
-				var operation = node[ 0 ].toLowerCase();
+				const subnodes = $.map( node.slice( 1 ), ( n ) => jmsg.emit( n, replacements ) );
+				const operation = node[ 0 ].toLowerCase();
 				if ( typeof jmsg[ operation ] === 'function' ) {
 					return jmsg[ operation ]( subnodes, replacements );
 				} else {
 					throw new Error( 'Unknown operation "' + operation + '"' );
 				}
+			}
 
 			case 'undefined':
 				// Parsing the empty string (as an entire expression, or as a paramExpression in a template) results in undefined
@@ -979,7 +960,7 @@ function HtmlEmitter( language, magic ) {
 // Generated by UnicodeJS (see tools/strongDir) from the UCD; see
 // https://gerrit.wikimedia.org/g/unicodejs .
 // eslint-disable-next-line no-misleading-character-class
-var strongDirRegExp = new RegExp(
+const strongDirRegExp = new RegExp(
 	'(?:' +
 		'(' +
 			'[\u0041-\u005a\u0061-\u007a\u00aa\u00b5\u00ba\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u02b8\u02bb-\u02c1\u02d0\u02d1\u02e0-\u02e4\u02ee\u0370-\u0373\u0376\u0377\u037a-\u037d\u037f\u0386\u0388-\u038a\u038c\u038e-\u03a1\u03a3-\u03f5\u03f7-\u0482\u048a-\u052f\u0531-\u0556\u0559-\u055f\u0561-\u0587\u0589\u0903-\u0939\u093b\u093d-\u0940\u0949-\u094c\u094e-\u0950\u0958-\u0961\u0964-\u0980\u0982\u0983\u0985-\u098c\u098f\u0990\u0993-\u09a8\u09aa-\u09b0\u09b2\u09b6-\u09b9\u09bd-\u09c0\u09c7\u09c8\u09cb\u09cc\u09ce\u09d7\u09dc\u09dd\u09df-\u09e1\u09e6-\u09f1\u09f4-\u09fa\u0a03\u0a05-\u0a0a\u0a0f\u0a10\u0a13-\u0a28\u0a2a-\u0a30\u0a32\u0a33\u0a35\u0a36\u0a38\u0a39\u0a3e-\u0a40\u0a59-\u0a5c\u0a5e\u0a66-\u0a6f\u0a72-\u0a74\u0a83\u0a85-\u0a8d\u0a8f-\u0a91\u0a93-\u0aa8\u0aaa-\u0ab0\u0ab2\u0ab3\u0ab5-\u0ab9\u0abd-\u0ac0\u0ac9\u0acb\u0acc\u0ad0\u0ae0\u0ae1\u0ae6-\u0af0\u0af9\u0b02\u0b03\u0b05-\u0b0c\u0b0f\u0b10\u0b13-\u0b28\u0b2a-\u0b30\u0b32\u0b33\u0b35-\u0b39\u0b3d\u0b3e\u0b40\u0b47\u0b48\u0b4b\u0b4c\u0b57\u0b5c\u0b5d\u0b5f-\u0b61\u0b66-\u0b77\u0b83\u0b85-\u0b8a\u0b8e-\u0b90\u0b92-\u0b95\u0b99\u0b9a\u0b9c\u0b9e\u0b9f\u0ba3\u0ba4\u0ba8-\u0baa\u0bae-\u0bb9\u0bbe\u0bbf\u0bc1\u0bc2\u0bc6-\u0bc8\u0bca-\u0bcc\u0bd0\u0bd7\u0be6-\u0bf2\u0c01-\u0c03\u0c05-\u0c0c\u0c0e-\u0c10\u0c12-\u0c28\u0c2a-\u0c39\u0c3d\u0c41-\u0c44\u0c58-\u0c5a\u0c60\u0c61\u0c66-\u0c6f\u0c7f\u0c82\u0c83\u0c85-\u0c8c\u0c8e-\u0c90\u0c92-\u0ca8\u0caa-\u0cb3\u0cb5-\u0cb9\u0cbd-\u0cc4\u0cc6-\u0cc8\u0cca\u0ccb\u0cd5\u0cd6\u0cde\u0ce0\u0ce1\u0ce6-\u0cef\u0cf1\u0cf2\u0d02\u0d03\u0d05-\u0d0c\u0d0e-\u0d10\u0d12-\u0d3a\u0d3d-\u0d40\u0d46-\u0d48\u0d4a-\u0d4c\u0d4e\u0d57\u0d5f-\u0d61\u0d66-\u0d75\u0d79-\u0d7f\u0d82\u0d83\u0d85-\u0d96\u0d9a-\u0db1\u0db3-\u0dbb\u0dbd\u0dc0-\u0dc6\u0dcf-\u0dd1\u0dd8-\u0ddf\u0de6-\u0def\u0df2-\u0df4\u0e01-\u0e30\u0e32\u0e33\u0e40-\u0e46\u0e4f-\u0e5b\u0e81\u0e82\u0e84\u0e87\u0e88\u0e8a\u0e8d\u0e94-\u0e97\u0e99-\u0e9f\u0ea1-\u0ea3\u0ea5\u0ea7\u0eaa\u0eab\u0ead-\u0eb0\u0eb2\u0eb3\u0ebd\u0ec0-\u0ec4\u0ec6\u0ed0-\u0ed9\u0edc-\u0edf\u0f00-\u0f17\u0f1a-\u0f34\u0f36\u0f38\u0f3e-\u0f47\u0f49-\u0f6c\u0f7f\u0f85\u0f88-\u0f8c\u0fbe-\u0fc5\u0fc7-\u0fcc\u0fce-\u0fda\u1000-\u102c\u1031\u1038\u103b\u103c\u103f-\u1057\u105a-\u105d\u1061-\u1070\u1075-\u1081\u1083\u1084\u1087-\u108c\u108e-\u109c\u109e-\u10c5\u10c7\u10cd\u10d0-\u1248\u124a-\u124d\u1250-\u1256\u1258\u125a-\u125d\u1260-\u1288\u128a-\u128d\u1290-\u12b0\u12b2-\u12b5\u12b8-\u12be\u12c0\u12c2-\u12c5\u12c8-\u12d6\u12d8-\u1310\u1312-\u1315\u1318-\u135a\u1360-\u137c\u1380-\u138f\u13a0-\u13f5\u13f8-\u13fd\u1401-\u167f\u1681-\u169a\u16a0-\u16f8\u1700-\u170c\u170e-\u1711\u1720-\u1731\u1735\u1736\u1740-\u1751\u1760-\u176c\u176e-\u1770\u1780-\u17b3\u17b6\u17be-\u17c5\u17c7\u17c8\u17d4-\u17da\u17dc\u17e0-\u17e9\u1810-\u1819\u1820-\u1877\u1880-\u18a8\u18aa\u18b0-\u18f5\u1900-\u191e\u1923-\u1926\u1929-\u192b\u1930\u1931\u1933-\u1938\u1946-\u196d\u1970-\u1974\u1980-\u19ab\u19b0-\u19c9\u19d0-\u19da\u1a00-\u1a16\u1a19\u1a1a\u1a1e-\u1a55\u1a57\u1a61\u1a63\u1a64\u1a6d-\u1a72\u1a80-\u1a89\u1a90-\u1a99\u1aa0-\u1aad\u1b04-\u1b33\u1b35\u1b3b\u1b3d-\u1b41\u1b43-\u1b4b\u1b50-\u1b6a\u1b74-\u1b7c\u1b82-\u1ba1\u1ba6\u1ba7\u1baa\u1bae-\u1be5\u1be7\u1bea-\u1bec\u1bee\u1bf2\u1bf3\u1bfc-\u1c2b\u1c34\u1c35\u1c3b-\u1c49\u1c4d-\u1c7f\u1cc0-\u1cc7\u1cd3\u1ce1\u1ce9-\u1cec\u1cee-\u1cf3\u1cf5\u1cf6\u1d00-\u1dbf\u1e00-\u1f15\u1f18-\u1f1d\u1f20-\u1f45\u1f48-\u1f4d\u1f50-\u1f57\u1f59\u1f5b\u1f5d\u1f5f-\u1f7d\u1f80-\u1fb4\u1fb6-\u1fbc\u1fbe\u1fc2-\u1fc4\u1fc6-\u1fcc\u1fd0-\u1fd3\u1fd6-\u1fdb\u1fe0-\u1fec\u1ff2-\u1ff4\u1ff6-\u1ffc\u200e\u2071\u207f\u2090-\u209c\u2102\u2107\u210a-\u2113\u2115\u2119-\u211d\u2124\u2126\u2128\u212a-\u212d\u212f-\u2139\u213c-\u213f\u2145-\u2149\u214e\u214f\u2160-\u2188\u2336-\u237a\u2395\u249c-\u24e9\u26ac\u2800-\u28ff\u2c00-\u2c2e\u2c30-\u2c5e\u2c60-\u2ce4\u2ceb-\u2cee\u2cf2\u2cf3\u2d00-\u2d25\u2d27\u2d2d\u2d30-\u2d67\u2d6f\u2d70\u2d80-\u2d96\u2da0-\u2da6\u2da8-\u2dae\u2db0-\u2db6\u2db8-\u2dbe\u2dc0-\u2dc6\u2dc8-\u2dce\u2dd0-\u2dd6\u2dd8-\u2dde\u3005-\u3007\u3021-\u3029\u302e\u302f\u3031-\u3035\u3038-\u303c\u3041-\u3096\u309d-\u309f\u30a1-\u30fa\u30fc-\u30ff\u3105-\u312d\u3131-\u318e\u3190-\u31ba\u31f0-\u321c\u3220-\u324f\u3260-\u327b\u327f-\u32b0\u32c0-\u32cb\u32d0-\u32fe\u3300-\u3376\u337b-\u33dd\u33e0-\u33fe\u3400-\u4db5\u4e00-\u9fd5\ua000-\ua48c\ua4d0-\ua60c\ua610-\ua62b\ua640-\ua66e\ua680-\ua69d\ua6a0-\ua6ef\ua6f2-\ua6f7\ua722-\ua787\ua789-\ua7ad\ua7b0-\ua7b7\ua7f7-\ua801\ua803-\ua805\ua807-\ua80a\ua80c-\ua824\ua827\ua830-\ua837\ua840-\ua873\ua880-\ua8c3\ua8ce-\ua8d9\ua8f2-\ua8fd\ua900-\ua925\ua92e-\ua946\ua952\ua953\ua95f-\ua97c\ua983-\ua9b2\ua9b4\ua9b5\ua9ba\ua9bb\ua9bd-\ua9cd\ua9cf-\ua9d9\ua9de-\ua9e4\ua9e6-\ua9fe\uaa00-\uaa28\uaa2f\uaa30\uaa33\uaa34\uaa40-\uaa42\uaa44-\uaa4b\uaa4d\uaa50-\uaa59\uaa5c-\uaa7b\uaa7d-\uaaaf\uaab1\uaab5\uaab6\uaab9-\uaabd\uaac0\uaac2\uaadb-\uaaeb\uaaee-\uaaf5\uab01-\uab06\uab09-\uab0e\uab11-\uab16\uab20-\uab26\uab28-\uab2e\uab30-\uab65\uab70-\uabe4\uabe6\uabe7\uabe9-\uabec\uabf0-\uabf9\uac00-\ud7a3\ud7b0-\ud7c6\ud7cb-\ud7fb\ue000-\ufa6d\ufa70-\ufad9\ufb00-\ufb06\ufb13-\ufb17\uff21-\uff3a\uff41-\uff5a\uff66-\uffbe\uffc2-\uffc7\uffca-\uffcf\uffd2-\uffd7\uffda-\uffdc]|\ud800[\udc00-\udc0b]|\ud800[\udc0d-\udc26]|\ud800[\udc28-\udc3a]|\ud800\udc3c|\ud800\udc3d|\ud800[\udc3f-\udc4d]|\ud800[\udc50-\udc5d]|\ud800[\udc80-\udcfa]|\ud800\udd00|\ud800\udd02|\ud800[\udd07-\udd33]|\ud800[\udd37-\udd3f]|\ud800[\uddd0-\uddfc]|\ud800[\ude80-\ude9c]|\ud800[\udea0-\uded0]|\ud800[\udf00-\udf23]|\ud800[\udf30-\udf4a]|\ud800[\udf50-\udf75]|\ud800[\udf80-\udf9d]|\ud800[\udf9f-\udfc3]|\ud800[\udfc8-\udfd5]|\ud801[\udc00-\udc9d]|\ud801[\udca0-\udca9]|\ud801[\udd00-\udd27]|\ud801[\udd30-\udd63]|\ud801\udd6f|\ud801[\ude00-\udf36]|\ud801[\udf40-\udf55]|\ud801[\udf60-\udf67]|\ud804\udc00|\ud804[\udc02-\udc37]|\ud804[\udc47-\udc4d]|\ud804[\udc66-\udc6f]|\ud804[\udc82-\udcb2]|\ud804\udcb7|\ud804\udcb8|\ud804[\udcbb-\udcc1]|\ud804[\udcd0-\udce8]|\ud804[\udcf0-\udcf9]|\ud804[\udd03-\udd26]|\ud804\udd2c|\ud804[\udd36-\udd43]|\ud804[\udd50-\udd72]|\ud804[\udd74-\udd76]|\ud804[\udd82-\uddb5]|\ud804[\uddbf-\uddc9]|\ud804\uddcd|\ud804[\uddd0-\udddf]|\ud804[\udde1-\uddf4]|\ud804[\ude00-\ude11]|\ud804[\ude13-\ude2e]|\ud804\ude32|\ud804\ude33|\ud804\ude35|\ud804[\ude38-\ude3d]|\ud804[\ude80-\ude86]|\ud804\ude88|\ud804[\ude8a-\ude8d]|\ud804[\ude8f-\ude9d]|\ud804[\ude9f-\udea9]|\ud804[\udeb0-\udede]|\ud804[\udee0-\udee2]|\ud804[\udef0-\udef9]|\ud804\udf02|\ud804\udf03|\ud804[\udf05-\udf0c]|\ud804\udf0f|\ud804\udf10|\ud804[\udf13-\udf28]|\ud804[\udf2a-\udf30]|\ud804\udf32|\ud804\udf33|\ud804[\udf35-\udf39]|\ud804[\udf3d-\udf3f]|\ud804[\udf41-\udf44]|\ud804\udf47|\ud804\udf48|\ud804[\udf4b-\udf4d]|\ud804\udf50|\ud804\udf57|\ud804[\udf5d-\udf63]|\ud805[\udc80-\udcb2]|\ud805\udcb9|\ud805[\udcbb-\udcbe]|\ud805\udcc1|\ud805[\udcc4-\udcc7]|\ud805[\udcd0-\udcd9]|\ud805[\udd80-\uddb1]|\ud805[\uddb8-\uddbb]|\ud805\uddbe|\ud805[\uddc1-\udddb]|\ud805[\ude00-\ude32]|\ud805\ude3b|\ud805\ude3c|\ud805\ude3e|\ud805[\ude41-\ude44]|\ud805[\ude50-\ude59]|\ud805[\ude80-\udeaa]|\ud805\udeac|\ud805\udeae|\ud805\udeaf|\ud805\udeb6|\ud805[\udec0-\udec9]|\ud805[\udf00-\udf19]|\ud805\udf20|\ud805\udf21|\ud805\udf26|\ud805[\udf30-\udf3f]|\ud806[\udca0-\udcf2]|\ud806\udcff|\ud806[\udec0-\udef8]|\ud808[\udc00-\udf99]|\ud809[\udc00-\udc6e]|\ud809[\udc70-\udc74]|\ud809[\udc80-\udd43]|\ud80c[\udc00-\udfff]|\ud80d[\udc00-\udc2e]|\ud811[\udc00-\ude46]|\ud81a[\udc00-\ude38]|\ud81a[\ude40-\ude5e]|\ud81a[\ude60-\ude69]|\ud81a\ude6e|\ud81a\ude6f|\ud81a[\uded0-\udeed]|\ud81a\udef5|\ud81a[\udf00-\udf2f]|\ud81a[\udf37-\udf45]|\ud81a[\udf50-\udf59]|\ud81a[\udf5b-\udf61]|\ud81a[\udf63-\udf77]|\ud81a[\udf7d-\udf8f]|\ud81b[\udf00-\udf44]|\ud81b[\udf50-\udf7e]|\ud81b[\udf93-\udf9f]|\ud82c\udc00|\ud82c\udc01|\ud82f[\udc00-\udc6a]|\ud82f[\udc70-\udc7c]|\ud82f[\udc80-\udc88]|\ud82f[\udc90-\udc99]|\ud82f\udc9c|\ud82f\udc9f|\ud834[\udc00-\udcf5]|\ud834[\udd00-\udd26]|\ud834[\udd29-\udd66]|\ud834[\udd6a-\udd72]|\ud834\udd83|\ud834\udd84|\ud834[\udd8c-\udda9]|\ud834[\uddae-\udde8]|\ud834[\udf60-\udf71]|\ud835[\udc00-\udc54]|\ud835[\udc56-\udc9c]|\ud835\udc9e|\ud835\udc9f|\ud835\udca2|\ud835\udca5|\ud835\udca6|\ud835[\udca9-\udcac]|\ud835[\udcae-\udcb9]|\ud835\udcbb|\ud835[\udcbd-\udcc3]|\ud835[\udcc5-\udd05]|\ud835[\udd07-\udd0a]|\ud835[\udd0d-\udd14]|\ud835[\udd16-\udd1c]|\ud835[\udd1e-\udd39]|\ud835[\udd3b-\udd3e]|\ud835[\udd40-\udd44]|\ud835\udd46|\ud835[\udd4a-\udd50]|\ud835[\udd52-\udea5]|\ud835[\udea8-\udeda]|\ud835[\udedc-\udf14]|\ud835[\udf16-\udf4e]|\ud835[\udf50-\udf88]|\ud835[\udf8a-\udfc2]|\ud835[\udfc4-\udfcb]|\ud836[\udc00-\uddff]|\ud836[\ude37-\ude3a]|\ud836[\ude6d-\ude74]|\ud836[\ude76-\ude83]|\ud836[\ude85-\ude8b]|\ud83c[\udd10-\udd2e]|\ud83c[\udd30-\udd69]|\ud83c[\udd70-\udd9a]|\ud83c[\udde6-\ude02]|\ud83c[\ude10-\ude3a]|\ud83c[\ude40-\ude48]|\ud83c\ude50|\ud83c\ude51|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6]|\ud869[\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34]|\ud86d[\udf40-\udfff]|\ud86e[\udc00-\udc1d]|\ud86e[\udc20-\udfff]|[\ud86f-\ud872][\udc00-\udfff]|\ud873[\udc00-\udea1]|\ud87e[\udc00-\ude1d]|[\udb80-\udbbe][\udc00-\udfff]|\udbbf[\udc00-\udffd]|[\udbc0-\udbfe][\udc00-\udfff]|\udbff[\udc00-\udffd]' +
@@ -1004,7 +985,7 @@ var strongDirRegExp = new RegExp(
  * @return {string|null} Directionality (either 'ltr' or 'rtl')
  */
 function strongDirFromContent( text ) {
-	var m = text.match( strongDirRegExp );
+	const m = text.match( strongDirRegExp );
 	if ( !m ) {
 		return null;
 	}
@@ -1030,9 +1011,9 @@ HtmlEmitter.prototype = {
 	 * @return {jQuery}
 	 */
 	concat: function ( nodes ) {
-		var $span = $( '<span>' ).addClass( 'mediaWiki_htmlEmitter' );
+		const $span = $( '<span>' ).addClass( 'mediaWiki_htmlEmitter' );
 		// Use Array.from since mixed parameter.
-		Array.from( nodes ).forEach( function ( node ) {
+		Array.from( nodes ).forEach( ( node ) => {
 			// Let jQuery append nodes, arrays of nodes and jQuery objects
 			// other things (strings, numbers, ..) are appended as text nodes (not as HTML strings)
 			appendWithoutParsing( $span, node );
@@ -1059,7 +1040,7 @@ HtmlEmitter.prototype = {
 	 * @return {string|jQuery} replacement
 	 */
 	replace: function ( nodes, replacements ) {
-		var index = parseInt( nodes[ 0 ], 10 );
+		const index = parseInt( nodes[ 0 ], 10 );
 
 		if ( index < replacements.length ) {
 			if ( typeof replacements[ index ] === 'object' ) {
@@ -1111,15 +1092,15 @@ HtmlEmitter.prototype = {
 	 * @return {jQuery}
 	 */
 	wikilink: function ( nodes ) {
-		var page = textify( nodes[ 0 ] );
+		let page = textify( nodes[ 0 ] );
 		// Strip leading ':', which is used to suppress special behavior in wikitext links,
 		// e.g. [[:Category:Foo]] or [[:File:Foo.jpg]]
 		if ( page.charAt( 0 ) === ':' ) {
 			page = page.slice( 1 );
 		}
-		var url = util.getUrl( page );
+		const title = new mw.Title( page );
 
-		var anchor;
+		let anchor;
 		if ( nodes.length === 1 ) {
 			// [[Some Page]] or [[Namespace:Some Page]]
 			anchor = page;
@@ -1128,9 +1109,9 @@ HtmlEmitter.prototype = {
 			anchor = nodes[ 1 ];
 		}
 
-		var $el = $( '<a>' ).attr( {
-			title: page,
-			href: url
+		const $el = $( '<a>' ).attr( {
+			title: title.getPrefixedText() || null,
+			href: title.getUrl()
 		} );
 		return appendWithoutParsing( $el, anchor );
 	},
@@ -1143,8 +1124,8 @@ HtmlEmitter.prototype = {
 	 * @return {Object} Object mapping attribute name to attribute value
 	 */
 	htmlattributes: function ( nodes ) {
-		var i, len, mapping = {};
-		for ( i = 0, len = nodes.length; i < len; i += 2 ) {
+		const mapping = {};
+		for ( let i = 0, len = nodes.length; i < len; i += 2 ) {
 			mapping[ nodes[ i ] ] = decodePrimaryHtmlEntities( nodes[ i + 1 ] );
 		}
 		return mapping;
@@ -1157,10 +1138,10 @@ HtmlEmitter.prototype = {
 	 * @return {jQuery}
 	 */
 	htmlelement: function ( nodes ) {
-		var tagName = nodes.shift();
-		var attributes = nodes.shift();
-		var contents = nodes;
-		var $element = $( document.createElement( tagName ) ).attr( attributes );
+		const tagName = nodes.shift();
+		const attributes = nodes.shift();
+		const contents = nodes;
+		const $element = $( document.createElement( tagName ) ).attr( attributes );
 		return appendWithoutParsing( $element, contents );
 	},
 
@@ -1178,9 +1159,9 @@ HtmlEmitter.prototype = {
 	 * @return {jQuery}
 	 */
 	extlink: function ( nodes ) {
-		var $el,
-			arg = nodes[ 0 ],
+		const arg = nodes[ 0 ],
 			contents = nodes[ 1 ];
+		let $el;
 		if ( arg instanceof $ && !arg.hasClass( 'mediaWiki_htmlEmitter' ) ) {
 			$el = arg;
 		} else {
@@ -1198,8 +1179,8 @@ HtmlEmitter.prototype = {
 					}
 				} );
 			} else {
-				var target = textify( arg );
-				// eslint-disable-next-line security/detect-non-literal-regexp
+				const target = textify( arg );
+
 				if ( target.search( new RegExp( '^(/|' + mw.config.get( 'wgUrlProtocols' ) + ')' ) ) !== -1 ) {
 					$el.attr( 'href', target );
 					if ( target.search( '^' + mw.config.get( 'wgArticlePath' ).replace( /\$1/g, '.+?' ) + '$' ) === -1 ) {
@@ -1218,6 +1199,27 @@ HtmlEmitter.prototype = {
 	},
 
 	/**
+	 * Transform formal syntax
+	 *
+	 * @param {string[]} nodes List of nodes
+	 * @return {string|jQuery} selected (in)formal form according to the current language
+	 */
+	'#formal': function ( nodes ) {
+		const formalityIndex = this.language.getData(
+			mw.config.get( 'wgUserLanguage' ),
+			'formalityIndex'
+		);
+
+		if ( nodes.length === 0 ) {
+			return '';
+		} else if ( nodes.length === 1 ) {
+			return nodes[ 0 ];
+		}
+
+		return nodes[ formalityIndex ];
+	},
+
+	/**
 	 * Transform parsed structure into pluralization
 	 * n.b. The first node may be a non-integer (for instance, a string representing an Arabic number).
 	 * So convert it back with the current language's convertNumber.
@@ -1226,21 +1228,20 @@ HtmlEmitter.prototype = {
 	 * @return {string|jQuery} selected pluralized form according to current language
 	 */
 	plural: function ( nodes ) {
-		var firstChild, firstChildText, explicitPluralFormNumber, formIndex, form,
-			explicitPluralForms = {};
+		const explicitPluralForms = {};
 
-		var count = parseFloat( this.language.convertNumber( textify( nodes[ 0 ] ), true ) );
-		var forms = nodes.slice( 1 );
-		for ( formIndex = 0; formIndex < forms.length; formIndex++ ) {
-			form = forms[ formIndex ];
+		const count = parseFloat( this.language.convertNumber( textify( nodes[ 0 ] ), true ) );
+		let forms = nodes.slice( 1 );
+		for ( let formIndex = 0; formIndex < forms.length; formIndex++ ) {
+			const form = forms[ formIndex ];
 
 			if ( form instanceof $ && form.hasClass( 'mediaWiki_htmlEmitter' ) ) {
 				// This is a nested node, may be an explicit plural form like 5=[$2 linktext]
-				firstChild = form.contents().get( 0 );
+				const firstChild = form.contents().get( 0 );
 				if ( firstChild && firstChild.nodeType === Node.TEXT_NODE ) {
-					firstChildText = firstChild.textContent;
+					const firstChildText = firstChild.textContent;
 					if ( /^\d+=/.test( firstChildText ) ) {
-						explicitPluralFormNumber = parseInt( firstChildText.split( /=/ )[ 0 ], 10 );
+						const explicitPluralFormNumber = parseInt( firstChildText.split( /=/ )[ 0 ], 10 );
 						// Use the digit part as key and rest of first text node and
 						// rest of child nodes as value.
 						firstChild.textContent = firstChildText.slice( firstChildText.indexOf( '=' ) + 1 );
@@ -1250,7 +1251,7 @@ HtmlEmitter.prototype = {
 				}
 			} else if ( /^\d+=/.test( form ) ) {
 				// Simple explicit plural forms like 12=a dozen
-				explicitPluralFormNumber = parseInt( form.split( /=/ )[ 0 ], 10 );
+				const explicitPluralFormNumber = parseInt( form.split( /=/ )[ 0 ], 10 );
 				explicitPluralForms[ explicitPluralFormNumber ] = form.slice( form.indexOf( '=' ) + 1 );
 				forms[ formIndex ] = undefined;
 			}
@@ -1258,9 +1259,7 @@ HtmlEmitter.prototype = {
 
 		// Remove explicit plural forms from the forms. They were set undefined in the above loop.
 		// eslint-disable-next-line no-jquery/no-map-util
-		forms = $.map( forms, function ( f ) {
-			return f;
-		} );
+		forms = $.map( forms, ( f ) => f );
 
 		return this.language.convertPlural( count, forms, explicitPluralForms );
 	},
@@ -1280,14 +1279,14 @@ HtmlEmitter.prototype = {
 	 * @return {string|jQuery} Selected gender form according to current language
 	 */
 	gender: function ( nodes ) {
-		var gender,
-			maybeUser = nodes[ 0 ],
-			forms = nodes.slice( 1 );
+		const forms = nodes.slice( 1 );
 
+		let maybeUser = nodes[ 0 ];
 		if ( maybeUser === '' ) {
 			maybeUser = mw.user;
 		}
 
+		let gender;
 		// If we are passed a mw.user-like object, check their gender.
 		// Otherwise, assume the gender string itself was passed .
 		if ( maybeUser && maybeUser.options instanceof mw.Map ) {
@@ -1318,7 +1317,7 @@ HtmlEmitter.prototype = {
 	 * @return {string} Wrapped String of content as needed.
 	 */
 	bidi: function ( nodes ) {
-		var dir = strongDirFromContent( nodes[ 0 ] );
+		const dir = strongDirFromContent( nodes[ 0 ] );
 		if ( dir === 'ltr' ) {
 			// Wrap in LEFT-TO-RIGHT EMBEDDING ... POP DIRECTIONAL FORMATTING
 			return '\u202A' + nodes[ 0 ] + '\u202C';
@@ -1339,7 +1338,7 @@ HtmlEmitter.prototype = {
 	 * @return {string|jQuery} selected grammatical form according to current language
 	 */
 	grammar: function ( nodes ) {
-		var form = nodes[ 0 ],
+		const form = nodes[ 0 ],
 			word = nodes[ 1 ];
 		// These could be jQuery objects (passed as message parameters),
 		// in which case we can't transform them (like rawParams() in PHP).
@@ -1359,7 +1358,7 @@ HtmlEmitter.prototype = {
 	 * @return {string} Other message
 	 */
 	int: function ( nodes ) {
-		var msg = textify( nodes[ 0 ] );
+		const msg = textify( nodes[ 0 ] );
 		return getMessageFunction()( mwString.lcFirst( msg ) );
 	},
 
@@ -1371,7 +1370,7 @@ HtmlEmitter.prototype = {
 	 * @return {string} Localized namespace name
 	 */
 	ns: function ( nodes ) {
-		var ns = textify( nodes[ 0 ] ).trim();
+		let ns = textify( nodes[ 0 ] ).trim();
 		if ( !/^\d+$/.test( ns ) ) {
 			ns = mw.config.get( 'wgNamespaceIds' )[ ns.replace( / /g, '_' ).toLowerCase() ];
 		}
@@ -1388,7 +1387,7 @@ HtmlEmitter.prototype = {
 	 * @return {number|string|jQuery} Formatted number
 	 */
 	formatnum: function ( nodes ) {
-		var isInteger = !!nodes[ 1 ] && nodes[ 1 ] === 'R',
+		const isInteger = !!nodes[ 1 ] && nodes[ 1 ] === 'R',
 			number = nodes[ 0 ];
 
 		// These could be jQuery objects (passed as message parameters),
@@ -1426,7 +1425,7 @@ HtmlEmitter.prototype = {
 	 * @return {string} The given text, with the first character in lowercase
 	 */
 	lcfirst: function ( nodes ) {
-		var text = textify( nodes[ 0 ] );
+		const text = textify( nodes[ 0 ] );
 		return mwString.lcFirst( text );
 	},
 
@@ -1437,20 +1436,25 @@ HtmlEmitter.prototype = {
 	 * @return {string} The given text, with the first character in uppercase
 	 */
 	ucfirst: function ( nodes ) {
-		var text = textify( nodes[ 0 ] );
+		const text = textify( nodes[ 0 ] );
 		return mwString.ucFirst( text );
 	}
 };
 
 /**
+ * Provides a {@link jQuery} plugin that parses messages.
+ *
+ * @module mediawiki.jqueryMsg
+ */
+/**
  * Parses the message in the message key, doing replacements optionally, and appends the nodes to
  * the current selector. Bindings to passed-in jquery elements are preserved. Functions become click handlers for [$1 linktext] links.
  *
- * @memberof jQueryPlugins
- * @name msg
+ * To use this {@link jQuery} plugin, load the `mediawiki.jqueryMsg` module with {@link mw.loader}.
+ *
+ * @memberof module:mediawiki.jqueryMsg
  * @param {string} message key
  * @param {...string[]} arguments
- * @method
  * @example
  * mw.loader.using('mediawiki.jqueryMsg' ).then(() => {
  *        var $userlink = $( '<a>' ).click( function () { alert( "hello!!" ) } );
@@ -1467,7 +1471,7 @@ HtmlEmitter.prototype = {
 $.fn.msg = getPlugin();
 
 // Replace the default message parser with jqueryMsg
-var oldParser = mw.Message.prototype.parser;
+const oldParser = mw.Message.prototype.parser;
 mw.Message.prototype.parser = function ( format ) {
 	// Fall back to mw.msg's simple parser where possible
 	if (
@@ -1477,9 +1481,7 @@ mw.Message.prototype.parser = function ( format ) {
 			// jqueryMsg parser is needed for messages containing wikitext
 			!/\{\{|[<>[&]/.test( this.map.get( this.key ) ) &&
 			// jqueryMsg parser is needed when jQuery objects or DOM nodes are passed in as parameters
-			!this.parameters.some( function ( param ) {
-				return param instanceof $ || ( param && param.nodeType !== undefined );
-			} )
+			!this.parameters.some( ( param ) => param instanceof $ || ( param && param.nodeType !== undefined ) )
 		)
 	) {
 		return oldParser.call( this, format );
@@ -1499,6 +1501,7 @@ mw.Message.prototype.parser = function ( format ) {
  * Parse the message to DOM nodes, rather than HTML string like {@link mw.Message#parse}.
  *
  * This method is only available when jqueryMsg is loaded.
+ *
  * @example
  * const msg = mw.message( 'key' );
  * mw.loader.using(`mediawiki.jqueryMsg`).then(() => {
@@ -1514,13 +1517,13 @@ mw.Message.prototype.parser = function ( format ) {
  * @return {jQuery}
  */
 mw.Message.prototype.parseDom = ( function () {
-	var failableParserFn;
+	let failableParserFn;
 
 	return function () {
 		if ( !failableParserFn ) {
 			failableParserFn = getFailableParserFn();
 		}
-		var $result = failableParserFn( [ this.key, this.parameters ] );
+		const $result = failableParserFn( [ this.key, this.parameters ] );
 		return $result.contents();
 	};
 }() );
@@ -1529,6 +1532,7 @@ mw.Message.prototype.parseDom = ( function () {
  * Check whether the message contains only syntax supported by jqueryMsg.
  *
  * This method is only available when jqueryMsg is loaded.
+ *
  * @example
  * const msg = mw.message( 'key' );
  * mw.loader.using(`mediawiki.jqueryMsg`).then(() => {
@@ -1543,7 +1547,7 @@ mw.Message.prototype.parseDom = ( function () {
  * @return {boolean}
  */
 mw.Message.prototype.isParseable = function () {
-	var parser = new Parser();
+	const parser = new Parser();
 	try {
 		parser.parse( this.key, this.parameters );
 		return true;

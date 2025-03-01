@@ -2,9 +2,10 @@
 
 namespace MediaWiki\Tests\Storage;
 
-use ChangeTags;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Content\WikitextContent;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -15,7 +16,6 @@ use MediaWikiIntegrationTestCase;
 use MockTitleTrait;
 use Wikimedia\Rdbms\IDatabase;
 use WikiPage;
-use WikitextContent;
 
 /**
  * @covers \MediaWiki\Storage\EditResultBuilder
@@ -94,12 +94,8 @@ class EditResultBuilderDbTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function getLatestTestRevision(): RevisionRecord {
-		if ( $this->latestTestRevision !== null ) {
-			return $this->latestTestRevision;
-		}
-		return $this->revisionStore->getRevisionByPageId(
-			$this->wikiPage->getId()
-		);
+		return $this->latestTestRevision ??
+			$this->revisionStore->getRevisionByPageId( $this->wikiPage->getId() );
 	}
 
 	/**
@@ -330,12 +326,12 @@ class EditResultBuilderDbTest extends MediaWikiIntegrationTestCase {
 	private function getEditResultBuilder( int $manualRevertSearchRadius = 15 ) {
 		$options = new ServiceOptions(
 			EditResultBuilder::CONSTRUCTOR_OPTIONS,
-			[ 'ManualRevertSearchRadius' => $manualRevertSearchRadius ]
+			[ MainConfigNames::ManualRevertSearchRadius => $manualRevertSearchRadius ]
 		);
 
 		return new EditResultBuilder(
 			$this->getServiceContainer()->getRevisionStore(),
-			ChangeTags::listSoftwareDefinedTags(),
+			$this->getServiceContainer()->getChangeTagsStore()->listSoftwareDefinedTags(),
 			$options
 		);
 	}

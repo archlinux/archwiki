@@ -25,10 +25,9 @@
 namespace MediaWiki\Extension\Scribunto;
 
 use Article;
-use Content;
-use EmptyBagOStuff;
-use IContextSource;
 use MediaWiki\Config\Config;
+use MediaWiki\Content\Content;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Hook\EditFilterMergedContentHook;
 use MediaWiki\Hook\EditPage__showReadOnlyForm_initialHook;
@@ -44,18 +43,18 @@ use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\ArticleViewHeaderHook;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\PPFrame;
+use MediaWiki\Parser\PPNode;
 use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
-use ObjectCache;
-use Parser;
-use PPFrame;
 use UtfNormal\Validator;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\PSquare;
-use Xml;
 
 /**
  * Hooks for the Scribunto extension.
@@ -106,33 +105,30 @@ class Hooks implements
 	 * Register parser hooks.
 	 *
 	 * @param Parser $parser
-	 * @return bool
+	 * @return void
 	 */
 	public function onParserFirstCallInit( $parser ) {
 		$parser->setFunctionHook( 'invoke', [ $this, 'invokeHook' ], Parser::SFH_OBJECT_ARGS );
-		return true;
 	}
 
 	/**
 	 * Called when the interpreter is to be reset.
 	 *
 	 * @param Parser $parser
-	 * @return bool
+	 * @return void
 	 */
 	public function onParserClearState( $parser ) {
 		Scribunto::resetParserEngine( $parser );
-		return true;
 	}
 
 	/**
 	 * Called when the parser is cloned
 	 *
 	 * @param Parser $parser
-	 * @return bool
+	 * @return void
 	 */
 	public function onParserCloned( $parser ) {
 		$parser->scribunto_engine = null;
-		return true;
 	}
 
 	/**
@@ -140,7 +136,7 @@ class Hooks implements
 	 *
 	 * @param Parser $parser
 	 * @param PPFrame $frame
-	 * @param array $args
+	 * @param PPNode[] $args
 	 * @return string
 	 */
 	public function invokeHook( Parser $parser, PPFrame $frame, array $args ) {
@@ -227,7 +223,7 @@ class Hooks implements
 			$parserError = htmlspecialchars( $e->getMessage() );
 
 			// #iferror-compatible error element
-			return "<strong class=\"error\"><span class=\"scribunto-error\" id=\"$id\">" .
+			return "<strong class=\"error\"><span class=\"scribunto-error $id\">" .
 				$parserError . "</span></strong>";
 		}
 	}
@@ -249,9 +245,10 @@ class Hooks implements
 			return;
 		}
 
+		$objectcachefactory = MediaWikiServices::getInstance()->getObjectCacheFactory();
 		static $cache;
 		if ( !$cache ) {
-			$cache = ObjectCache::getLocalServerInstance( CACHE_NONE );
+			$cache = $objectcachefactory->getLocalServerInstance( CACHE_NONE );
 
 		}
 
@@ -280,11 +277,13 @@ class Hooks implements
 
 		static $stats;
 		if ( !$stats ) {
-			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+			$stats = MediaWikiServices::getInstance()->getStatsFactory();
 		}
-
-		$metricKey = sprintf( 'scribunto.traces.%s__%s__%s', WikiMap::getCurrentWikiId(), $moduleName, $functionName );
-		$stats->timing( $metricKey, $timing );
+		$statAction = WikiMap::getCurrentWikiId() . '__' . $moduleName . '__' . $functionName;
+		$stats->getTiming( 'scribunto_traces_seconds' )
+			->setLabel( 'action', $statAction )
+			->copyToStatsdAt( 'scribunto.traces.' . $statAction )
+			->observe( $timing );
 	}
 
 	/**
@@ -292,12 +291,12 @@ class Hooks implements
 	 *
 	 * @param Title $title
 	 * @param string &$model
-	 * @return bool
+	 * @return void
 	 */
 	public function onContentHandlerDefaultModelFor( $title, &$model ) {
 		if ( $model === 'sanitized-css' ) {
 			// Let TemplateStyles override Scribunto
-			return true;
+			return;
 		}
 		if ( $title->getNamespace() === NS_MODULE ) {
 			if ( str_ends_with( $title->getText(), '.json' ) ) {
@@ -305,9 +304,7 @@ class Hooks implements
 			} elseif ( !Scribunto::isDocPage( $title ) ) {
 				$model = CONTENT_MODEL_SCRIBUNTO;
 			}
-			return true;
 		}
-		return true;
 	}
 
 	/**
@@ -315,14 +312,13 @@ class Hooks implements
 	 *
 	 * @param Parser $parser
 	 * @param ParserOutput $parserOutput
-	 * @return bool
+	 * @return void
 	 */
 	public function onParserLimitReportPrepare( $parser, $parserOutput ) {
 		if ( Scribunto::isParserEnginePresent( $parser ) ) {
 			$engine = Scribunto::getParserEngine( $parser );
 			$engine->reportLimitData( $parserOutput );
 		}
-		return true;
 	}
 
 	/**
@@ -346,14 +342,13 @@ class Hooks implements
 	 * @param EditPage $editor
 	 * @param OutputPage $output
 	 * @param int &$tab Current tabindex
-	 * @return bool
+	 * @return void
 	 */
 	public function onEditPage__showStandardInputs_options( $editor, $output, &$tab ) {
 		if ( $editor->getTitle()->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
 			$output->addModules( 'ext.scribunto.edit' );
 			$editor->editFormTextAfterTools .= '<div id="mw-scribunto-console"></div>';
 		}
-		return true;
 	}
 
 	/**
@@ -361,14 +356,13 @@ class Hooks implements
 	 *
 	 * @param EditPage $editor
 	 * @param OutputPage $output
-	 * @return bool
+	 * @return void
 	 */
 	public function onEditPage__showReadOnlyForm_initial( $editor, $output ) {
 		if ( $editor->getTitle()->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
 			$output->addModules( 'ext.scribunto.edit' );
 			$editor->editFormTextAfterContent .= '<div id="mw-scribunto-console"></div>';
 		}
-		return true;
 	}
 
 	/**
@@ -377,13 +371,12 @@ class Hooks implements
 	 * @param EditPage $editor
 	 * @param array &$buttons Button array
 	 * @param int &$tabindex Current tabindex
-	 * @return bool
+	 * @return void
 	 */
 	public function onEditPageBeforeEditButtons( $editor, &$buttons, &$tabindex ) {
 		if ( $editor->getTitle()->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
 			unset( $buttons['preview'] );
 		}
-		return true;
 	}
 
 	/**
@@ -419,7 +412,7 @@ class Hooks implements
 			$line = $validateStatus->value->params['line'];
 			if ( $module === $title->getPrefixedDBkey() && preg_match( '/^\d+$/', $line ) ) {
 				$out = $context->getOutput();
-				$out->addInlineScript( 'window.location.hash = ' . Xml::encodeJsVar( "#mw-ce-l$line" ) );
+				$out->addInlineScript( 'window.location.hash = ' . Html::encodeJsVar( "#mw-ce-l$line" ) );
 			}
 		}
 		if ( !$status->isOK() ) {
@@ -435,7 +428,7 @@ class Hooks implements
 	 * @param Article $article
 	 * @param bool|ParserOutput|null &$outputDone
 	 * @param bool &$pcache
-	 * @return bool
+	 * @return void
 	 */
 	public function onArticleViewHeader( $article, &$outputDone, &$pcache ) {
 		$title = $article->getTitle();
@@ -444,6 +437,5 @@ class Hooks implements
 				wfMessage( 'scribunto-doc-page-header', $forModule->getPrefixedText() )->parseAsBlock()
 			);
 		}
-		return true;
 	}
 }

@@ -11,9 +11,9 @@
 	 * @param {mw.echo.dm.ModelManager} manager Model manager
 	 * @param {Object} [config] Configuration object
 	 *  marked as read when they are seen.
-	 * @cfg {string} [timestamp=0] A timestamp representing the latest item in
+	 * @param {string} [config.timestamp=0] A timestamp representing the latest item in
 	 *  the list.
-	 * @cfg {jQuery} [$overlay] A jQuery element functioning as an overlay
+	 * @param {jQuery} [config.$overlay] A jQuery element functioning as an overlay
 	 *  for popups.
 	 */
 	mw.echo.ui.NotificationsListWidget = function MwEchoUiNotificationsListWidget( controller, manager, config ) {
@@ -22,7 +22,7 @@
 		mw.echo.ui.NotificationsListWidget.super.call(
 			this,
 			// Sorting callback
-			function ( a, b ) {
+			( a, b ) => {
 				if ( !a.isRead() && b.isRead() ) {
 					return -1; // Unread items are always above read items
 				} else if ( a.isRead() && !b.isRead() ) {
@@ -76,24 +76,24 @@
 	/* Events */
 
 	/**
-	 * @event modified
-	 *
 	 * The content of this list has changed.
 	 * This event is to state that not only has the content changed
 	 * but the actual DOM has been manipulated.
+	 *
+	 * @event mw.echo.ui.NotificationsListWidget#modified
 	 */
 
 	/* Methods */
 
 	mw.echo.ui.NotificationsListWidget.prototype.onModelManagerDiscard = function ( modelName ) {
-		var items = this.getItems();
+		const items = this.getItems();
 
 		// For the moment, this is only relevant for xwiki bundles.
 		// Local single items will not get their entire model removed, but
 		// local bundles may - when that happens, the condition below should
 		// also deal with local bundles and removing them specifically
 		if ( modelName === 'xwiki' ) {
-			for ( var i = 0; i < items.length; i++ ) {
+			for ( let i = 0; i < items.length; i++ ) {
 				if ( items[ i ] instanceof mw.echo.ui.CrossWikiNotificationItemWidget ) {
 					this.removeItems( [ items[ i ] ] );
 					this.checkForEmptyNotificationsList();
@@ -112,26 +112,25 @@
 	 *
 	 * @param {Object} models Object of new models to populate the
 	 *  list.
-	 * @fires modified
+	 * @fires mw.echo.ui.NotificationsListWidget#modified
 	 */
 	mw.echo.ui.NotificationsListWidget.prototype.resetDataFromModel = function ( models ) {
-		var itemWidgets = [],
-			$elements = $();
+		const itemWidgets = [];
+		let $elements = $();
 
-		var modelId;
 		// Detach all attached models
-		for ( modelId in this.models ) {
+		for ( const modelId in this.models ) {
 			this.detachModel( modelId );
 		}
 
 		// Attach and process new models
-		for ( modelId in models ) {
-			var model = models[ modelId ];
+		for ( const modelId in models ) {
+			const model = models[ modelId ];
 			this.attachModel( modelId, model );
 
-			var widget;
 			// Build widgets based on the data in the model
 			if ( model.isGroup() ) {
+				let widget;
 				if ( model.isForeign() ) {
 					// One Widget to Rule Them All
 					widget = new mw.echo.ui.CrossWikiNotificationItemWidget(
@@ -157,11 +156,11 @@
 				itemWidgets.push( widget );
 				$elements = $elements.add( widget.$element );
 			} else {
-				var subItems = model.getItems();
+				const subItems = model.getItems();
 				// Separate widgets per item
-				for ( var i = 0; i < subItems.length; i++ ) {
-					var subItem = subItems[ i ];
-					widget = new mw.echo.ui.SingleNotificationItemWidget(
+				for ( let i = 0; i < subItems.length; i++ ) {
+					const subItem = subItems[ i ];
+					const widget = new mw.echo.ui.SingleNotificationItemWidget(
 						this.controller,
 						subItem,
 						{
@@ -213,7 +212,7 @@
 	 *
 	 * @param {string} [label] Label for the option widget
 	 * @param {string} [link] Link for the option widget
-	 * @fires modified
+	 * @fires mw.echo.ui.NotificationsListWidget#modified
 	 */
 	mw.echo.ui.NotificationsListWidget.prototype.resetLoadingOption = function ( label, link ) {
 		this.loadingOptionWidget.setLabel( label || '' );
@@ -236,9 +235,9 @@
 	 * Reset the 'initiallyUnseen' state of all items
 	 */
 	mw.echo.ui.NotificationsListWidget.prototype.resetInitiallyUnseenItems = function () {
-		var itemWidgets = this.getItems();
+		const itemWidgets = this.getItems();
 
-		for ( var i = 0; i < itemWidgets.length; i++ ) {
+		for ( let i = 0; i < itemWidgets.length; i++ ) {
 			itemWidgets[ i ].resetInitiallyUnseen();
 		}
 	};

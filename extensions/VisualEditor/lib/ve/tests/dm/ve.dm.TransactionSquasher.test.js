@@ -6,23 +6,21 @@
 
 QUnit.module( 've.dm.TransactionSquasher' );
 
-QUnit.test( 'squash', function ( assert ) {
-	var boldHash = 'hfbe3cfe099b83e1e',
+QUnit.test( 'squash', ( assert ) => {
+	const boldHash = 'hfbe3cfe099b83e1e',
 		italicHash = 'he4e7c54e2204d10ba';
 
 	function insertionTxList( before, itemSequence, after ) {
-		return itemSequence.split( '' ).map( function ( item, n ) {
-			return [ before + n, [ '', item ], after ];
-		} );
+		return itemSequence.split( '' ).map( ( item, n ) => [ before + n, [ '', item ], after ] );
 	}
 
 	function annotationTx( allData, start, stop, length, method, hash, spliceAt ) {
-		var oldData = Array.prototype.slice.call( allData, start, stop );
+		const oldData = Array.prototype.slice.call( allData, start, stop );
 
-		var newData;
+		let newData;
 		if ( method === 'set' ) {
-			newData = oldData.map( function ( item ) {
-				var ch, hashList;
+			newData = oldData.map( ( item ) => {
+				let ch, hashList;
 				if ( Array.isArray( item ) ) {
 					ch = item[ 0 ];
 					hashList = item[ 1 ];
@@ -38,9 +36,9 @@ QUnit.test( 'squash', function ( assert ) {
 				return [ ch, hashList ];
 			} );
 		} else {
-			newData = oldData.map( function ( item ) {
-				var ch = item[ 0 ],
-					hashList = item[ 1 ];
+			newData = oldData.map( ( item ) => {
+				const ch = item[ 0 ];
+				let hashList = item[ 1 ];
 				hashList = [].concat(
 					hashList.slice( 0, spliceAt ),
 					hashList.slice( spliceAt + 1 )
@@ -55,14 +53,11 @@ QUnit.test( 'squash', function ( assert ) {
 		return [ start, [ oldData, newData ], length - stop ];
 	}
 
-	function sequence( data ) {
-		var hashList = Array.prototype.slice.call( arguments, 1 );
-		return Array.prototype.map.call( data, function ( item ) {
-			return hashList.length === 0 ? item : [ item, hashList ];
-		} );
+	function sequence( data, ...hashList ) {
+		return data.split( '' ).map( ( item ) => hashList.length === 0 ? item : [ item, hashList ] );
 	}
 
-	var cases = [
+	const cases = [
 		{
 			message: 'Empty transaction list',
 			transactions: [],
@@ -286,19 +281,17 @@ QUnit.test( 'squash', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
-		var transactions = caseItem.transactions.map( function ( txData ) {
-			return ve.dm.Transaction.static.deserialize( txData );
-		} );
+	cases.forEach( ( caseItem ) => {
+		const transactions = caseItem.transactions.map( ( txData ) => ve.dm.Transaction.static.deserialize( txData ) );
 		ve.deepFreeze( transactions );
 		if ( caseItem.error ) {
-			assert.throws( function () {
+			assert.throws( () => {
 				ve.dm.TransactionSquasher.static.squash( transactions );
 			}, Error, caseItem.message );
 			// eslint-disable-next-line qunit/no-early-return
 			return;
 		}
-		var squashed = ve.dm.Transaction.static.deserialize( caseItem.squashed );
+		const squashed = ve.dm.Transaction.static.deserialize( caseItem.squashed );
 
 		assert.deepEqual(
 			ve.dm.TransactionSquasher.static.squash( transactions ).operations,
@@ -306,9 +299,9 @@ QUnit.test( 'squash', function ( assert ) {
 			caseItem.message + ': squash all'
 		);
 
-		for ( var j = 1, jLen = transactions.length - 1; j < jLen; j++ ) {
-			var squashedBefore = ve.dm.TransactionSquasher.static.squash( transactions.slice( 0, j ) );
-			var squashedAfter = ve.dm.TransactionSquasher.static.squash( transactions.slice( j ) );
+		for ( let j = 1, jLen = transactions.length - 1; j < jLen; j++ ) {
+			const squashedBefore = ve.dm.TransactionSquasher.static.squash( transactions.slice( 0, j ) );
+			const squashedAfter = ve.dm.TransactionSquasher.static.squash( transactions.slice( j ) );
 			assert.deepEqual(
 				ve.dm.TransactionSquasher.static.squash( [
 					squashedBefore,

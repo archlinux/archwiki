@@ -16,14 +16,14 @@ class CiteCSSFileModuleTest extends \MediaWikiIntegrationTestCase {
 
 		$this->setService(
 			'ContentLanguage',
-			$this->getServiceContainer()->getLanguageFactory()->getLanguage( 'fa' )
+			$this->getServiceContainer()->getLanguageFactory()->getLanguage( 'wa' )
 		);
 	}
 
 	public function testModule() {
 		$module = new CiteCSSFileModule( [], __DIR__ . '/../../modules/parsoid-styles' );
 		$styles = $module->getStyleFiles( $this->createMock( Context::class ) );
-		$this->assertSame( [ 'ext.cite.style.fa.css' ], $styles['all'] );
+		$this->assertSame( [ 'ext.cite.style.fr.less' ], $styles['all'] );
 	}
 
 }

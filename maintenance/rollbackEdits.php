@@ -25,7 +25,9 @@
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to rollback all edits by a given user or IP provided
@@ -53,8 +55,8 @@ class RollbackEdits extends Maintenance {
 		$user = $this->getOption( 'user' );
 		$services = $this->getServiceContainer();
 		$userNameUtils = $services->getUserNameUtils();
-		$username = $userNameUtils->isIP( $user ) ? $user : $userNameUtils->getCanonical( $user );
-		if ( !$username ) {
+		$user = $userNameUtils->isIP( $user ) ? $user : $userNameUtils->getCanonical( $user );
+		if ( !$user ) {
 			$this->fatalError( 'Invalid username' );
 		}
 
@@ -81,7 +83,7 @@ class RollbackEdits extends Maintenance {
 		}
 
 		$doer = User::newSystemUser( User::MAINTENANCE_SCRIPT_USER, [ 'steal' => true ] );
-		$byUser = $services->getUserIdentityLookup()->getUserIdentityByName( $username );
+		$byUser = $services->getUserIdentityLookup()->getUserIdentityByName( $user );
 
 		if ( !$byUser ) {
 			$this->fatalError( 'Unknown user.' );
@@ -129,5 +131,7 @@ class RollbackEdits extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RollbackEdits::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

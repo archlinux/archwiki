@@ -4,8 +4,8 @@ QUnit.test.each( '.getCappedNotificationCount()', [
 	{ input: 5, output: 5 },
 	{ input: 20, output: 11 },
 	{ input: 10, output: 10 }
-], function ( assert, data ) {
-	var model = new mw.echo.dm.UnreadNotificationCounter(
+], ( assert, data ) => {
+	const model = new mw.echo.dm.UnreadNotificationCounter(
 		null,
 		'all', // type
 		10 // max
@@ -17,8 +17,8 @@ QUnit.test.each( '.getCappedNotificationCount()', [
 	);
 } );
 
-QUnit.test( '.estimateChange()', function ( assert ) {
-	var model = new mw.echo.dm.UnreadNotificationCounter(
+QUnit.test( '.estimateChange()', ( assert ) => {
+	const model = new mw.echo.dm.UnreadNotificationCounter(
 		null,
 		'all', // type
 		99 // max
@@ -48,16 +48,16 @@ QUnit.test( '.estimateChange()', function ( assert ) {
 	);
 } );
 
-QUnit.test( '.setCount()', function ( assert ) {
-	var results = [];
-	var model = new mw.echo.dm.UnreadNotificationCounter(
+QUnit.test( '.setCount()', ( assert ) => {
+	const results = [];
+	const model = new mw.echo.dm.UnreadNotificationCounter(
 		null,
 		'all', // type
 		99 // max
 	);
 
 	// Listen to event
-	model.on( 'countChange', function ( count ) {
+	model.on( 'countChange', ( count ) => {
 		results.push( count );
 	} );
 

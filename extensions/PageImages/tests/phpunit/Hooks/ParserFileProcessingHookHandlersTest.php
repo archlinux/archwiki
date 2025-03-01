@@ -3,18 +3,20 @@
 namespace PageImages\Tests\Hooks;
 
 use File;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Linker\LinksMigration;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWikiIntegrationTestCase;
 use PageImages\Hooks\ParserFileProcessingHookHandlers;
 use PageImages\PageImageCandidate;
 use PageImages\PageImages;
-use Parser;
-use ParserOptions;
 use RepoGroup;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
 
@@ -27,14 +29,6 @@ use Wikimedia\TestingAccessWrapper;
  * @author Thiemo Kreuz
  */
 class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase {
-
-	public function setUp(): void {
-		parent::setUp();
-
-		// Force LinksUpdateHookHandler::getPageImageCandidates to look at all
-		// sections.
-		$this->setMwGlobals( 'wgPageImagesLeadSectionOnly', false );
-	}
 
 	/**
 	 * @param array[] $images
@@ -80,12 +74,15 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		return $repoGroup;
 	}
 
-	private function getHandler( $images ) {
-		return new class ( $images ) extends ParserFileProcessingHookHandlers {
+	private function getHandler( $images, $leadOnly = false ) {
+		return new class ( $images, $leadOnly ) extends ParserFileProcessingHookHandlers {
 			private $images;
 			private $isFreeMap;
 
-			public function __construct( $images ) {
+			public function __construct( $images, $leadOnly ) {
+				$this->config = new HashConfig( [
+					'PageImagesLeadSectionOnly' => $leadOnly,
+				] );
 				$this->images = $images;
 				foreach ( $images as $image ) {
 					$this->isFreeMap[$image['filename']] = $image['isFree'];
@@ -176,7 +173,6 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 	 * @covers \PageImages\Hooks\ParserFileProcessingHookHandlers::onParserAfterTidy
 	 */
 	public function testDoParserAfterTidy_lead( $leadOnly ) {
-		$this->setMwGlobals( 'wgPageImagesLeadSectionOnly', $leadOnly );
 		$candidates = [
 			[ 'filename' => 'A.jpg', 'score' => 100, 'isFree' => false ],
 			[ 'filename' => 'B.jpg', 'score' => 90, 'isFree' => true ],
@@ -184,7 +180,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 
 		$parser = $this->getParser( $candidates );
 		$html = $this->getHtml( array_keys( $candidates ), 1 );
-		$handler = $this->getHandler( $candidates );
+		$handler = $this->getHandler( $candidates, $leadOnly );
 		$handler->onParserAfterTidy( $parser, $html );
 		if ( $leadOnly ) {
 			$this->assertNull(
@@ -213,6 +209,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		$mock = TestingAccessWrapper::newFromObject(
 			$this->getMockBuilder( ParserFileProcessingHookHandlers::class )
 				->setConstructorArgs( [
+					$this->getServiceContainer()->getMainConfig(),
 					$this->getRepoGroup(),
 					$this->createMock( WANObjectCache::class ),
 					$this->createMock( HttpRequestFactory::class ),
@@ -288,6 +285,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		/** @var ParserFileProcessingHookHandlers $handlerWrapper */
 		$handlerWrapper = TestingAccessWrapper::newFromObject(
 			new ParserFileProcessingHookHandlers(
+				$this->createMock( Config::class ),
 				$this->getRepoGroup(),
 				$this->createMock( WANObjectCache::class ),
 				$this->createMock( HttpRequestFactory::class ),
@@ -302,8 +300,6 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 	}
 
 	public static function provideScoreFromTable() {
-		global $wgPageImagesScores;
-
 		return [
 			'no match' => [ [], 100, 0 ],
 			'float' => [ [ 0.5 ], 0, 0.5 ],
@@ -320,29 +316,29 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 			'above second last' => [ [ 200 => 2, 400 => 3, 800 => 1 ], 401, 1 ],
 
 			// These test cases use the default values from extension.json
-			[ $wgPageImagesScores['width'], 100, -100 ],
-			[ $wgPageImagesScores['width'], 119, -100 ],
-			[ $wgPageImagesScores['width'], 300, 10 ],
-			[ $wgPageImagesScores['width'], 400, 10 ],
-			[ $wgPageImagesScores['width'], 500, 5 ],
-			[ $wgPageImagesScores['width'], 600, 5 ],
-			[ $wgPageImagesScores['width'], 601, 0 ],
-			[ $wgPageImagesScores['width'], 999, 0 ],
-			[ $wgPageImagesScores['galleryImageWidth'], 99, -100 ],
-			[ $wgPageImagesScores['galleryImageWidth'], 100, 0 ],
-			[ $wgPageImagesScores['galleryImageWidth'], 500, 0 ],
-			[ $wgPageImagesScores['ratio'], 1, -100 ],
-			[ $wgPageImagesScores['ratio'], 3, -100 ],
-			[ $wgPageImagesScores['ratio'], 4, 0 ],
-			[ $wgPageImagesScores['ratio'], 5, 0 ],
-			[ $wgPageImagesScores['ratio'], 10, 5 ],
-			[ $wgPageImagesScores['ratio'], 20, 5 ],
-			[ $wgPageImagesScores['ratio'], 25, 0 ],
-			[ $wgPageImagesScores['ratio'], 30, 0 ],
-			[ $wgPageImagesScores['ratio'], 31, -100 ],
-			[ $wgPageImagesScores['ratio'], 40, -100 ],
+			[ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 100, -100 ],
+			[ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 119, -100 ],
+			[ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 300, 10 ],
+			[ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 400, 10 ],
+			[ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 500, 5 ],
+			[ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 600, 5 ],
+			[ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 601, 0 ],
+			[ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 999, 0 ],
+			[ [ 99 => -100, 100 => 0 ], 99, -100 ],
+			[ [ 99 => -100, 100 => 0 ], 100, 0 ],
+			[ [ 99 => -100, 100 => 0 ], 500, 0 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 1, -100 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 3, -100 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 4, 0 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 5, 0 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 10, 5 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 20, 5 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 25, 0 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 30, 0 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 31, -100 ],
+			[ [ 3 => -100, 5 => 0, 20 => 5, 30 => 0, 31 => -100 ], 40, -100 ],
 
-			'T212013' => [ $wgPageImagesScores['width'], 0, -100 ],
+			'T212013' => [ [ 119 => -100, 400 => 10, 600 => 5, 601 => 0 ], 0, -100 ],
 		];
 	}
 
@@ -354,6 +350,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		$mock = TestingAccessWrapper::newFromObject(
 			$this->getMockBuilder( ParserFileProcessingHookHandlers::class )
 				->setConstructorArgs( [
+					$this->getServiceContainer()->getMainConfig(),
 					$this->getRepoGroup(),
 					$this->createMock( WANObjectCache::class ),
 					$this->createMock( HttpRequestFactory::class ),

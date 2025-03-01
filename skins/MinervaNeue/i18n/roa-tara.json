@@ -27,7 +27,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Sus a sta categorije",
 	"mobile-frontend-meta-data-issues-header": "Probbleme cu 'a pàgene",
 	"minerva-meta-data-issues-section-header": "Probbleme cu 'a sezione",
-	"mobile-frontend-notifications-filter": "Filtre",
 	"mobile-frontend-pageaction-edit-tooltip": "Cange 'a sezione prengepàle de sta pàgene",
 	"mobile-frontend-placeholder": "Cirche {{SITENAME}}",
 	"mobile-frontend-random-button": "A uecchije",
@@ -50,8 +49,6 @@
 	"skin-minerva-issue-learn-more": "'Mbare de cchiù",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorije",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "'Ndruche le categorije de sta pàgene",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Pàgena migliorate trattaminde pe l'errore",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Probbleme d'a pàgene (Template:ambox) onna essere mise in linèe jndr'à vôsce.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sfortunatamende, le resultate raggruppate pe pàgene non ge sò disponibbele sus a 'u mobbile. Ce vuè ccu ause 'a funzione de le gruppe pe pàgene pe piacere 'ndruche 'u site in versione desktop.",
 	"minerva.css": "/* Tutte le CSS aqquà avène carecate pe le utinde ca ausane 'a masckere MinervaNeue */",
 	"minerva.js": "/* Tutte le JavaScript aqquà avène carecate pe le utinde ca ausane 'a masckere MinervaNeue */"

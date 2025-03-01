@@ -21,9 +21,11 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\Status\Status;
+use Wikimedia\FileBackend\FileBackend;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Copy all files in one container of one backend to another.
@@ -263,7 +265,7 @@ class CopyFileBackend extends Maintenance {
 			// Note: prepare() is usually fast for key/value backends
 			$status = $dst->prepare( [ 'dir' => dirname( $dstPath ), 'bypassReadOnly' => true ] );
 			if ( !$status->isOK() ) {
-				$this->error( Status::wrap( $status )->getMessage( false, false, 'en' )->text() );
+				$this->error( $status );
 				$this->fatalError( "$domainId: Could not copy $srcPath to $dstPath." );
 			}
 			$ops[] = [ 'op' => 'store',
@@ -280,7 +282,7 @@ class CopyFileBackend extends Maintenance {
 		}
 		$elapsed_ms = floor( ( microtime( true ) - $t_start ) * 1000 );
 		if ( !$status->isOK() ) {
-			$this->error( Status::wrap( $status )->getMessage( false, false, 'en' )->text() );
+			$this->error( $status );
 			$this->fatalError( "$domainId: Could not copy file batch." );
 		} elseif ( count( $copiedRel ) ) {
 			$this->output( "\n\tCopied these file(s) [{$elapsed_ms}ms]:\n\t" .
@@ -317,7 +319,7 @@ class CopyFileBackend extends Maintenance {
 		}
 		$elapsed_ms = floor( ( microtime( true ) - $t_start ) * 1000 );
 		if ( !$status->isOK() ) {
-			$this->error( Status::wrap( $status )->getMessage( false, false, 'en' )->text() );
+			$this->error( $status );
 			$this->fatalError( "$domainId: Could not delete file batch." );
 		} elseif ( count( $deletedRel ) ) {
 			$this->output( "\n\tDeleted these file(s) [{$elapsed_ms}ms]:\n\t" .
@@ -374,5 +376,7 @@ class CopyFileBackend extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CopyFileBackend::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

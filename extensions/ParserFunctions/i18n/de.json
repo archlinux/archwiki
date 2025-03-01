@@ -17,6 +17,7 @@
 	"pfunc_time_too_long": "Fehler: Zu viele #time-Aufrufe",
 	"pfunc_time_too_big": "Fehler: #time unterstützt nur Jahre bis 9999",
 	"pfunc_time_too_small": "Fehler: #time unterstützt nur Jahre ab 0.",
+	"pfunc_timef_bad_format": "Fehler: ungültiges Format für #timef",
 	"pfunc_rel2abs_invalid_depth": "Fehler: Ungültige Pfadtiefe: „$1“ (Zugriff auf einen Knotenpunkt oberhalb des Hauptknotenpunktes ist empfohlen)",
 	"pfunc_expr_stack_exhausted": "Expression-Fehler: Stacküberlauf",
 	"pfunc_expr_unexpected_number": "Expression-Fehler: Unerwartete Zahl",

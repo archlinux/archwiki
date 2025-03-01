@@ -1,9 +1,8 @@
 [
 	{
 		"path": "/",
-		"class": "MediaWiki\\Rest\\Handler\\RootSpecHandler",
-		"services": [
-			"MainConfig"
-		]
+		"redirect": {
+			"path": "/specs/v0/discovery"
+		}
 	}
 ]

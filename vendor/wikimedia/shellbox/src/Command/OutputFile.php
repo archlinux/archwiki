@@ -2,49 +2,51 @@
 
 namespace Shellbox\Command;
 
-use Shellbox\Multipart\MultipartReader;
 use Shellbox\ShellboxError;
 
 /**
- * The base class for encapsulated output files
+ * The base class for encapsulated output files.
  *
- * @internal
+ * An OutputFile object is a declaration of a file expected to be created by a
+ * command. These objects are created on the client side before command
+ * execution, then they are serialized, sent to the server, unserialized,
+ * populated with contents, then sent back to the client where the contents
+ * will be put into its declared destination.
  */
-abstract class OutputFile extends OutputEntity {
+abstract class OutputFile {
+	use UserDataTrait;
+
 	/** @var bool */
 	protected $received = false;
+	/** @var callable[] */
+	private $receivedListeners = [];
+	/** @var int|null */
+	private $requiredExitCode;
 
-	public function getInstance( $boxedName ) {
+	/**
+	 * Add a callback to call after the file is received
+	 *
+	 * @since 4.1.0
+	 * @param callable $callback
+	 * @return $this
+	 */
+	public function onReceived( callable $callback ) {
+		$this->receivedListeners[] = $callback;
 		return $this;
 	}
 
 	/**
-	 * Copy from the specified source path to the registered destination
-	 * location, which may be either a string or a path outside the working
-	 * directory.
+	 * Upload/return the file only if the command returns the specified exit
+	 * code.
 	 *
-	 * @param string $sourcePath
+	 * @since 4.1.0
+	 * @param ?int $status
+	 * @return $this
 	 */
-	abstract public function copyFromFile( $sourcePath );
-
-	/**
-	 * Get the contents of the output file from its final destination. This
-	 * should be called after copyFromFile() or readFromMultipart(). It will
-	 * throw if the file is not readable.
-	 *
-	 * @return string
-	 * @throws ShellboxError
-	 */
-	abstract public function getContents();
-
-	/**
-	 * Copy from the MultipartReader to the registered destination location.
-	 * The MultipartReader must be at the appropriate place in the input stream.
-	 * Used by the client.
-	 *
-	 * @param MultipartReader $multipartReader
-	 */
-	abstract public function readFromMultipart( MultipartReader $multipartReader );
+	public function requireExitCode( ?int $status = 0 ) {
+		$this->requiredExitCode = $status;
+		return $this;
+	}
 
 	/**
 	 * Return true if the file was received from the command or server.
@@ -55,8 +57,38 @@ abstract class OutputFile extends OutputEntity {
 		return $this->received;
 	}
 
+	/**
+	 * Set the received flag to true and notify the listeners
+	 *
+	 * @internal
+	 */
+	protected function setReceived() {
+		$this->received = true;
+		foreach ( $this->receivedListeners as $listener ) {
+			$listener();
+		}
+	}
+
+	/**
+	 * Get data for JSON serialization by the client.
+	 *
+	 * @internal
+	 * @return array
+	 */
 	public function getClientData() {
-		return [];
+		$data = [];
+		if ( $this->requiredExitCode !== null ) {
+			$data['requiredExitCode'] = $this->requiredExitCode;
+		}
+		return $data;
+	}
+
+	/**
+	 * @internal
+	 * @return int|null
+	 */
+	public function getRequiredExitCode() {
+		return $this->requiredExitCode;
 	}
 
 	/**
@@ -64,10 +96,28 @@ abstract class OutputFile extends OutputEntity {
 	 * It doesn't need to actually be functional since the server is responsible
 	 * for reading output files.
 	 *
+	 * @internal
 	 * @param array $data
-	 * @return OutputFilePlaceholder
+	 * @return OutputFile
 	 */
 	public static function newFromClientData( $data ) {
-		return new OutputFilePlaceholder;
+		if ( ( $data['type'] ?? '' ) === 'url' ) {
+			if ( !isset( $data['url'] ) ) {
+				throw new ShellboxError( 'Missing required parameter for URL file: "url"' );
+			}
+			$file = new OutputFileToUrl( $data['url'] );
+			if ( isset( $data['headers'] ) ) {
+				$file->headers( $data['headers'] );
+			}
+			if ( isset( $data['mwContentHash'] ) ) {
+				$file->enableMwContentHash( $data['mwContentHash'] );
+			}
+		} else {
+			$file = new OutputFilePlaceholder;
+		}
+		if ( isset( $data['requiredExitCode'] ) ) {
+			$file->requireExitCode( $data['requiredExitCode'] );
+		}
+		return $file;
 	}
 }

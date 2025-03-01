@@ -2,13 +2,12 @@
 
 namespace MediaWiki\Settings;
 
-use BagOStuff;
-use ExtensionRegistry;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\IterableConfig;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\Cache\CacheableSource;
 use MediaWiki\Settings\Cache\CachedSource;
 use MediaWiki\Settings\Config\ConfigBuilder;
@@ -23,6 +22,7 @@ use MediaWiki\Settings\Source\SettingsIncludeLocator;
 use MediaWiki\Settings\Source\SettingsSource;
 use RuntimeException;
 use StatusValue;
+use Wikimedia\ObjectCache\BagOStuff;
 use function array_key_exists;
 
 /**
@@ -202,7 +202,7 @@ class SettingsBuilder {
 		ExtensionRegistry $extensionRegistry,
 		ConfigBuilder $configSink,
 		PhpIniSink $phpIniSink,
-		BagOStuff $cache = null
+		?BagOStuff $cache = null
 	) {
 		$this->baseDir = $baseDir;
 		$this->extensionRegistry = $extensionRegistry;

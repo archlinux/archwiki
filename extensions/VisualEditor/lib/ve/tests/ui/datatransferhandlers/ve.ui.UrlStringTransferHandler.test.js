@@ -9,8 +9,7 @@ QUnit.module( 've.ui.UrlStringTransferHandler' );
 /* Tests */
 
 ve.test.utils.runUrlStringHandlerTest = function ( assert, string, htmlString, mimeType, expectedDataFunc, base, msg ) {
-	var handler,
-		done = assert.async(),
+	const done = assert.async(),
 		item = ve.ui.DataTransferItem.static.newFromString( string, mimeType, htmlString ),
 		doc = ve.dm.example.createExampleDocument( null, null, base ),
 		mockSurface = {
@@ -28,23 +27,23 @@ ve.test.utils.runUrlStringHandlerTest = function ( assert, string, htmlString, m
 		};
 
 	// Invoke the handler
-	handler = ve.ui.dataTransferHandlerFactory.create( 'urlString', mockSurface, item );
+	const handler = ve.ui.dataTransferHandlerFactory.create( 'urlString', mockSurface, item );
 
-	handler.getInsertableData().done( function ( actualData ) {
+	handler.getInsertableData().done( ( actualData ) => {
 		ve.dm.example.postprocessAnnotations( actualData, doc.getStore() );
 		assert.equalLinearData( actualData, expectedDataFunc( makeLinkAnnotation ), msg + ': data match' );
 		done();
 	} );
 };
 
-QUnit.test( 'paste', function ( assert ) {
-	var cases = [
+QUnit.test( 'paste', ( assert ) => {
+	const cases = [
 		{
 			msg: 'Simple external link',
 			pasteString: 'http://example.com',
 			pasteType: 'text/plain',
 			expectedData: function ( makeAnnotation ) {
-				var a = makeAnnotation( 'http://example.com' );
+				const a = makeAnnotation( 'http://example.com' );
 				return [
 					[ 'h', [ a ] ],
 					[ 't', [ a ] ],
@@ -72,7 +71,7 @@ QUnit.test( 'paste', function ( assert ) {
 			pasteString: '#comment\nhttp://example.com\n',
 			pasteType: 'text/uri-list',
 			expectedData: function ( makeAnnotation ) {
-				var a = makeAnnotation( 'http://example.com' );
+				const a = makeAnnotation( 'http://example.com' );
 				return [
 					[ 'h', [ a ] ],
 					[ 't', [ a ] ],
@@ -101,7 +100,7 @@ QUnit.test( 'paste', function ( assert ) {
 			pasteType: 'text/uri-list',
 			pasteHtml: '<a href="http://example.com/foo">Foo</a>',
 			expectedData: function ( makeAnnotation ) {
-				var a = makeAnnotation( 'http://example.com/foo' );
+				const a = makeAnnotation( 'http://example.com/foo' );
 				return [
 					[ 'F', [ a ] ],
 					[ 'o', [ a ] ],
@@ -114,7 +113,7 @@ QUnit.test( 'paste', function ( assert ) {
 			pasteString: 'http://example.com\n[[Foo]]\nhttp://example.org\nBar',
 			pasteType: 'text/x-moz-url',
 			expectedData: function ( makeAnnotation ) {
-				var a1 = makeAnnotation( 'http://example.com' ),
+				const a1 = makeAnnotation( 'http://example.com' ),
 					a2 = makeAnnotation( 'http://example.org' );
 				return [
 					[ '[', [ a1 ] ],
@@ -133,7 +132,7 @@ QUnit.test( 'paste', function ( assert ) {
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runUrlStringHandlerTest( assert, caseItem.pasteString, caseItem.pasteHtml, caseItem.pasteType, caseItem.expectedData, ve.dm.example.baseUri, caseItem.msg );
 	} );
 } );

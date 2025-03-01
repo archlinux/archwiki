@@ -1,11 +1,13 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\FileRepo\ThumbnailEntryPoint;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\FileRepo\TestRepoTrait;
 use MediaWiki\Tests\MockEnvironment;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 
 /**
@@ -22,20 +24,25 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 
 	private const IMAGES_DIR = __DIR__ . '/../../data/media';
 
-	// Counter for getting unique width values
+	/** @var int Counter for getting unique width values */
 	private static $uniqueWidth = 20;
+
+	private ?MockEnvironment $environment = null;
 
 	/**
 	 * will be called only once per test class
 	 */
 	public function addDBDataOnce() {
+		// Set a named user account for the request context as the default,
+		// so that these tests do not fail with temp accounts enabled
+		RequestContext::getMain()->setUser( $this->getTestUser()->getUser() );
 		// Create mock repo with test files
 		$this->initTestRepoGroup();
 
 		$this->importFileToTestRepo( self::IMAGES_DIR . '/greyscale-png.png', 'Test.png' );
 		$this->importFileToTestRepo( self::IMAGES_DIR . '/test.jpg', 'Icon.jpg' );
 
-		// Create a second version of Test.png
+		// Create a second version of Test.png and Icon.jpg
 		$this->importFileToTestRepo( self::IMAGES_DIR . '/greyscale-na-png.png', 'Test.png' );
 		$this->importFileToTestRepo( self::IMAGES_DIR . '/portrait-rotated.jpg', 'Icon.jpg' );
 
@@ -48,7 +55,7 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 		$history = $file->getHistory();
 		$oldFile = $history[0];
 
-		$this->db->newUpdateQueryBuilder()
+		$this->getDb()->newUpdateQueryBuilder()
 			->table( 'oldimage' )
 			->set( [ 'oi_deleted' => 1 ] )
 			->where( [ 'oi_archive_name' => $oldFile->getArchiveName() ] )
@@ -66,6 +73,10 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 
 		$this->overrideConfigValue( MainConfigNames::ThumbLimits, [ 16, 24 ] );
 		$this->installTestRepoGroup();
+	}
+
+	private function recordHeader( string $header ) {
+		$this->environment->getFauxResponse()->header( $header );
 	}
 
 	/**
@@ -87,7 +98,8 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 			$request->setRequestURL( '/w/img.php' );
 		}
 
-		return new MockEnvironment( $request );
+		$this->environment = new MockEnvironment( $request );
+		return $this->environment;
 	}
 
 	/**
@@ -97,7 +109,7 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 	 * @return ThumbnailEntryPoint
 	 */
 	private function getEntryPoint(
-		MockEnvironment $environment = null,
+		?MockEnvironment $environment = null,
 		$request = null
 	) {
 		if ( !$request && $environment ) {
@@ -161,8 +173,9 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 		$entryPoint->run();
 		$output = $entryPoint->getCapturedOutput();
 
-		// TODO: Assert Content-Type and Content-Length headers.
-		//       Needs FileStreamer to use WebResponse.
+		$response = $env->getFauxResponse();
+		$this->assertSame( 'image/png', $response->getHeader( 'Content-Type' ) );
+		$this->assertGreaterThan( 500, (int)$response->getHeader( 'Content-Length' ) );
 
 		$env->assertStatusCode( 200, $output );
 
@@ -229,13 +242,42 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 		$env->assertStatusCode( 400, $output );
 	}
 
-	public function testTransformError() {
+	public static function provideTransformError() {
+		yield 'MediaTransformError' => [
+			new MediaTransformError( 'testing', 200, 100 ),
+			500
+		];
+
+		yield 'thumbnail_image-failure-limit' => [
+			new MediaTransformError( 'thumbnail_image-failure-limit', 200, 100 ),
+			429
+		];
+
+		yield 'no thumb' => [
+			false,
+			500
+		];
+
+		yield 'no file path' => [
+			new ThumbnailImage(
+				new UnregisteredLocalFile( false, false, 'dummy' ),
+				'',
+				false,
+				[ 'width' => 1, 'height' => 1 ]
+			),
+			500
+		];
+	}
+
+	/**
+	 * @dataProvider provideTransformError
+	 */
+	public function testTransformError( $transformOutput, $expectedCode ) {
 		// Mock transformations to return an error
 		$handler = $this->getMockBuilder( BitmapHandler::class )
 			->onlyMethods( [ 'doTransform' ] )
 			->getMock();
 
-		$transformOutput = new MediaTransformError( 'testing', 200, 100 );
 		$handler->method( 'doTransform' )->willReturn( $transformOutput );
 
 		$factory = $this->createNoOpMock( MediaHandlerFactory::class, [ 'getHandler' ] );
@@ -253,13 +295,10 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 		$entryPoint->run();
 		$output = $entryPoint->getCapturedOutput();
 
-		$env->assertStatusCode( 500, $output );
+		$env->assertStatusCode( $expectedCode, $output );
 	}
 
 	public function testContentDisposition() {
-		// TODO...
-		$this->markTestSkipped( 'Needs refactoring of HTTPFileStreamer to capture headers' );
-
 		$env = $this->makeEnvironment(
 			[
 				'f' => 'Test.png',
@@ -275,7 +314,10 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 		$env->assertStatusCode( 200 );
 		$this->assertThumbnail( [ 'magic' => self::PNG_MAGIC, ], $output );
 
-		$env->assertHeaderValue( 'attachment', 'Content-Disposition' );
+		$env->assertHeaderValue(
+			'attachment;filename*=UTF-8\'\'Test.png',
+			'Content-Disposition'
+		);
 	}
 
 	public static function provideThumbNameParam() {
@@ -320,13 +362,7 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 
 	public function testAccessDenied() {
 		// Make the wiki non-public
-		$groupPermissions = $this->getConfVar( MainConfigNames::GroupPermissions );
-		$groupPermissions['*']['read'] = false;
-
-		$this->overrideConfigValue(
-			'GroupPermissions',
-			$groupPermissions
-		);
+		$this->setGroupPermissions( '*', 'read', false );
 
 		// Make the user have no rights
 		$authority = new SimpleAuthority(
@@ -361,13 +397,7 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 
 	public function testAccessOnPrivateWiki() {
 		// Make the wiki non-public, so we don't use the short-circuit code
-		$groupPermissions = $this->getConfVar( MainConfigNames::GroupPermissions );
-		$groupPermissions['*']['read'] = false;
-
-		$this->overrideConfigValue(
-			'GroupPermissions',
-			$groupPermissions
-		);
+		$this->setGroupPermissions( '*', 'read', false );
 
 		// Make a user who is allowed to read
 		$authority = new SimpleAuthority(
@@ -721,13 +751,24 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideRepoCouldNotStreamFile() {
-		// The width must match the one generated by testGenerateAndStreamThumbnail
-		// This error comes from FileBackend::doStreamFile.
-		yield 'existing thumbnail' => [ 12, 'xyzzy-error' ];
+		// TODO: figure out how to provoke an error in
+		// MediaTransformOutput::streamFileWithStatus.
+		// The below causes an error to be triggered too early.
+		// Since MediaTransformOutput uses StreamFile directly, we have to also
+		// sabotage transformations in the handler to return a ThumbnailImage
+		// with no path. This is unfortunately brittle to implementation changes.
 
-		// TODO: also test the case where we fail to stream a newly created
-		// thumbnail. In that case, the expected error comes from
-		// MediaTransformOutput::streamFileWithStatus, not FileBackend::doStreamFile.
+		// The width must match the one generated by testGenerateAndStreamThumbnail
+		/*yield 'existing thumbnail' => [
+			12,
+			'Could not stream the file',
+		];*/
+
+		// The specific error message may change as the code evolves
+		yield 'non-existing thumbnail' => [
+			self::$uniqueWidth++,
+			'No path supplied in thumbnail object',
+		];
 	}
 
 	/**
@@ -735,23 +776,6 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 	 * @depends testGenerateAndStreamThumbnail
 	 */
 	public function testRepoCouldNotStreamFile( int $width, string $expectedError ) {
-		// Sabotage streaming in file backend
-		$backend = $this->createFileBackend( [
-			'overrides' => [
-				'doStreamFile' => Status::newFatal( 'xyzzy-error' )
-			]
-		] );
-
-		$this->installTestRepoGroup(
-			[ 'backend' => $backend ]
-		);
-
-		// TODO: figure out how to provoke an error in
-		// MediaTransformOutput::streamFileWithStatus.
-		// The below causes an error to be triggered too early.
-		// Since MediaTransformOutput uses StreamFile directly, we have to also
-		// sabotage transformations in the handler to return a ThumbnailImage
-		// with no path. This is unfortunately brittle to implementation changes.
 		$handler = $this->getMockBuilder( BitmapHandler::class )
 			->onlyMethods( [ 'doTransform' ] )
 			->getMock();
@@ -783,8 +807,7 @@ class ThumbnailEntryPointTest extends MediaWikiIntegrationTestCase {
 			'Content-Type'
 		);
 
-		// TODO: check the log for the specific error.
-		$this->assertStringContainsString( 'Could not stream the file', $output );
+		$this->assertStringContainsString( $expectedError, $output );
 	}
 
 	/**

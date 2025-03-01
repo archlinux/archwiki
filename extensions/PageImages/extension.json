@@ -6,7 +6,7 @@
 	"license-name": "WTFPL",
 	"type": "api",
 	"requires": {
-		"MediaWiki": ">= 1.42.0"
+		"MediaWiki": ">= 1.43"
 	},
 	"APIPropModules": {
 		"pageimages": {
@@ -42,6 +42,7 @@
 		"main": {
 			"class": "PageImages\\PageImages",
 			"services": [
+				"MainConfig",
 				"DBLoadBalancerFactory",
 				"RepoGroup",
 				"UserOptionsLookup"
@@ -50,6 +51,7 @@
 		"parser": {
 			"class": "PageImages\\Hooks\\ParserFileProcessingHookHandlers",
 			"services": [
+				"MainConfig",
 				"RepoGroup",
 				"MainWANObjectCache",
 				"HttpRequestFactory",

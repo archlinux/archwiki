@@ -1,11 +1,14 @@
-/** @typedef {Object.<string, IssueSummary[]>} IssueSummaryMap */
+/**
+ * @typedef {Object.<string, IssueSummary[]>} IssueSummaryMap
+ * @ignore
+ */
 
 const PageHTMLParser = require( 'mobile.startup' ).PageHTMLParser;
 const KEYWORD_ALL_SECTIONS = 'all';
-const config = mw.config;
-const NS_MAIN = 0;
-const NS_CATEGORY = 14;
-const CURRENT_NS = config.get( 'wgNamespaceNumber' );
+const namespaceIds = mw.config.get( 'wgNamespaceIds' );
+const NS_MAIN = namespaceIds[ '' ];
+const NS_CATEGORY = namespaceIds.category;
+const CURRENT_NS = mw.config.get( 'wgNamespaceNumber' );
 const features = mw.config.get( 'wgMinervaFeatures', {} );
 const pageIssuesParser = require( './parser.js' );
 const pageIssuesOverlay = require( './overlay/pageIssuesOverlay.js' );
@@ -46,11 +49,11 @@ function insertBannersOrNotice( pageHTMLParser, labelText, section, inline, over
 		pageHTMLParser.findChildInSectionLead( parseInt( section, 10 ), selector );
 	// clean it up a little
 	$metadata.find( '.NavFrame' ).remove();
-	$metadata.each( function () {
-		const $this = $( this );
+	$metadata.each( ( _i, el ) => {
+		const $el = $( el );
 
-		if ( $this.find( selector ).length === 0 ) {
-			const issueSummary = pageIssuesParser.extract( $this );
+		if ( $el.find( selector ).length === 0 ) {
+			const issueSummary = pageIssuesParser.extract( $el );
 			// Some issues after "extract" has been run will have no text.
 			// For example in Template:Talk header the table will be removed and no issue found.
 			// These should not be rendered.
@@ -61,7 +64,7 @@ function insertBannersOrNotice( pageHTMLParser, labelText, section, inline, over
 	} );
 
 	if ( inline ) {
-		issueSummaries.forEach( function ( issueSummary, i ) {
+		issueSummaries.forEach( ( issueSummary, i ) => {
 			const isGrouped = issueSummary.issue.grouped;
 			const lastIssueIsGrouped = issueSummaries[ i - 1 ] &&
 				issueSummaries[ i - 1 ].issue.grouped;
@@ -88,7 +91,9 @@ function insertBannersOrNotice( pageHTMLParser, labelText, section, inline, over
 /**
  * Obtains the list of issues for the current page and provided section
  *
- * @param {IssueSummaryMap} allIssues mapping section {number} to {IssueSummary}
+ * @ignore
+ * @param {IssueSummaryMap} allIssues Mapping section {number}
+ *  to {IssueSummary}
  * @param {number|string} section either KEYWORD_ALL_SECTIONS or a number relating to the
  *                                section the issues belong to
  * @return {jQuery[]} array of all issues.
@@ -101,9 +106,7 @@ function getIssues( allIssues, section ) {
 	// It will only exist when Minerva has been run in desktop mode.
 	// If it's absent, we'll reduce all the other lists into one.
 	return allIssues[ KEYWORD_ALL_SECTIONS ] || Object.keys( allIssues ).reduce(
-		function ( all, key ) {
-			return all.concat( allIssues[ key ] );
-		},
+		( all, key ) => all.concat( allIssues[ key ] ),
 		[]
 	);
 }
@@ -122,7 +125,7 @@ function initPageIssues( overlayManager, pageHTMLParser ) {
 	const allIssues = {};
 	const $lead = pageHTMLParser.getLeadSectionElement();
 	const issueOverlayShowAll = CURRENT_NS === NS_CATEGORY || !$lead;
-	const inline = newTreatmentEnabled && CURRENT_NS === 0;
+	const inline = newTreatmentEnabled && CURRENT_NS === NS_MAIN;
 
 	// set A-B test class.
 	// When wgMinervaPageIssuesNewTreatment is the default this can be removed.
@@ -155,7 +158,7 @@ function initPageIssues( overlayManager, pageHTMLParser ) {
 				// parse other sections but only in group B. In treatment A no issues are shown
 				// for sections.
 				pageHTMLParser.$el.find( PageHTMLParser.HEADING_SELECTOR ).each(
-					function ( i, headingEl ) {
+					( i, headingEl ) => {
 						const $headingEl = $( headingEl );
 						// section number is absent on protected pages, when this is the case
 						// use i, otherwise icon will not show (T340910)
@@ -180,11 +183,9 @@ function initPageIssues( overlayManager, pageHTMLParser ) {
 	}
 
 	// Setup the overlay route.
-	overlayManager.add( new RegExp( '^/issues/(\\d+|' + KEYWORD_ALL_SECTIONS + ')$' ), function ( s ) {
-		return pageIssuesOverlay(
-			getIssues( allIssues, s ), s, CURRENT_NS
-		);
-	} );
+	overlayManager.add( new RegExp( '^/issues/(\\d+|' + KEYWORD_ALL_SECTIONS + ')$' ), ( s ) => pageIssuesOverlay(
+		getIssues( allIssues, s ), s, CURRENT_NS
+	) );
 }
 
 module.exports = {

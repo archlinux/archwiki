@@ -4,8 +4,8 @@
 	/*!
 	 * Echo Special:Notifications page initialization
 	 */
-	$( function () {
-		var limitNotifications = 50,
+	$( () => {
+		const limitNotifications = 50,
 			links = mw.config.get( 'wgNotificationsSpecialPageLinks' ),
 			// FIXME: Use CSS transition
 			// eslint-disable-next-line no-jquery/no-global-selector
@@ -32,7 +32,7 @@
 		// For general purpose we have 2, for mobile only 1
 		mw.echo.config.maxPrioritizedActions = mw.config.get( 'skin' ) === 'minerva' ? 1 : 2;
 
-		var specialPageContainer = new mw.echo.ui.NotificationsInboxWidget(
+		const specialPageContainer = new mw.echo.ui.NotificationsInboxWidget(
 			controller,
 			modelManager,
 			{

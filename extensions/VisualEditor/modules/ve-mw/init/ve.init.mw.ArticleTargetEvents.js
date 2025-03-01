@@ -132,7 +132,7 @@ ve.init.mw.ArticleTargetEvents.prototype.onSaveComplete = function ( data ) {
  */
 ve.init.mw.ArticleTargetEvents.prototype.trackSaveError = function ( code ) {
 	// Maps error codes to editAttemptStep types
-	var typeMap = {
+	const typeMap = {
 			badtoken: 'userBadToken',
 			assertanonfailed: 'userNewUser',
 			assertuserfailed: 'userNewUser',
@@ -149,7 +149,7 @@ ve.init.mw.ArticleTargetEvents.prototype.trackSaveError = function ( code ) {
 		// (for historical reasons; this sucks)
 		specialTypes = [ 'editconflict' ];
 
-	var key = 'performance.user.saveError';
+	let key = 'performance.user.saveError';
 	if ( specialTypes.indexOf( code ) !== -1 ) {
 		key += '.' + code;
 	}

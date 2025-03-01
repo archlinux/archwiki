@@ -104,7 +104,7 @@ class MappingsGenerator {
 	}
 
 	/**
-	 * Notify the source map generator of the generated output of text which
+	 * Notify the source map generator of the generated text output, which
 	 * should not generate a mapping segment.
 	 *
 	 * @param string $out
@@ -122,7 +122,7 @@ class MappingsGenerator {
 	}
 
 	/**
-	 * Notify the source map generator of the generated output of text which
+	 * Notify the source map generator of the generated text output, which
 	 * should generate a mapping segment. Append the mapping segment to the
 	 * internal buffer.
 	 *

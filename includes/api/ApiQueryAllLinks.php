@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
@@ -37,27 +39,27 @@ use Wikimedia\Rdbms\LikeValue;
  */
 class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 
-	private $table, $tablePrefix, $indexTag;
+	private string $table;
+	private string $tablePrefix;
+	private string $indexTag;
+	/** @var string */
 	private $fieldTitle = 'title';
+	/** @var int */
 	private $dfltNamespace = NS_MAIN;
+	/** @var bool */
 	private $hasNamespace = true;
+	/** @var string|null */
 	private $useIndex = null;
+	/** @var array */
 	private $props = [];
 
 	private NamespaceInfo $namespaceInfo;
 	private GenderCache $genderCache;
 	private LinksMigration $linksMigration;
 
-	/**
-	 * @param ApiQuery $query
-	 * @param string $moduleName
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param GenderCache $genderCache
-	 * @param LinksMigration $linksMigration
-	 */
 	public function __construct(
 		ApiQuery $query,
-		$moduleName,
+		string $moduleName,
 		NamespaceInfo $namespaceInfo,
 		GenderCache $genderCache,
 		LinksMigration $linksMigration
@@ -75,7 +77,6 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 				$this->table = 'templatelinks';
 				$this->tablePrefix = 'tl_';
 				$this->dfltNamespace = NS_TEMPLATE;
-				$this->useIndex = 'tl_namespace';
 				$this->indexTag = 't';
 				break;
 			case 'allfileusages':
@@ -380,3 +381,6 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 		return "https://www.mediawiki.org/wiki/Special:MyLanguage/API:{$name}";
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryAllLinks::class, 'ApiQueryAllLinks' );

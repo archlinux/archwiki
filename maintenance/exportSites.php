@@ -1,11 +1,13 @@
 <?php
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Site\SiteExporter;
 
 /**
- * Maintenance script for exporting site definitions from XML into the sites table.
+ * Maintenance script for exporting site definitions from the sites table to XML.
  *
  * @since 1.25
  *
@@ -17,7 +19,7 @@ class ExportSites extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 
-		$this->addDescription( 'Exports site definitions the sites table to XML file' );
+		$this->addDescription( 'Exports site definitions from the sites table to XML file' );
 
 		$this->addArg( 'file', 'A file to write the XML to (see docs/sitelist.md). ' .
 			'Use "php://stdout" to write to stdout.', true
@@ -52,5 +54,7 @@ class ExportSites extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ExportSites::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

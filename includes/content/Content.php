@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\Content;
+
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Title\Title;
 
@@ -223,7 +225,7 @@ interface Content {
 	 *
 	 * @return bool True if this Content object is equal to $that, false otherwise.
 	 */
-	public function equals( Content $that = null );
+	public function equals( ?Content $that = null );
 
 	/**
 	 * Return a copy of this Content object. The following must be true for the
@@ -372,3 +374,6 @@ interface Content {
 	//   [12:00] <vvv> And default it to a DummyHighlighter
 
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( Content::class, 'Content' );

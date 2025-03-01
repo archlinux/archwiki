@@ -36,7 +36,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Σχετικά με αυτή τη κατηγορία",
 	"mobile-frontend-meta-data-issues-header": "Ζητήματα με τη σελίδα",
 	"minerva-meta-data-issues-section-header": "Προβλήματα ενότητας",
-	"mobile-frontend-notifications-filter": "Φίλτρο",
 	"mobile-frontend-pageaction-edit-tooltip": "Επεξεργαστείτε το εισαγωγικό τμήμα αυτής της σελίδας",
 	"mobile-frontend-placeholder": "Αναζήτηση σε {{SITENAME}}",
 	"mobile-frontend-random-button": "Τυχαίο",
@@ -56,7 +55,7 @@
 	"minerva-page-actions-overflow": "Περισσότερα",
 	"minerva-page-actions-language-switcher": "Γλώσσες",
 	"minerva-page-actions-history": "Ιστορικό",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Συζήτηση]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Συζήτηση]",
 	"minerva-skin-desc": "Ένα responsive θέμα κινητού",
 	"skin-minerva-issue-learn-more": "Μάθετε περισσότερα",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 δευτερόλεπτο|$1 δευτερόλεπτα}} πριν",
@@ -67,9 +66,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 έτος|$1 έτη}} πριν",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Κατηγορίες",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Προβολή κατηγοριών των σελίδων",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Προβλήματα διαχείρησης για βελτίωση σελίδας",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Τυχόν προβλήματα με την σελίδα (Template:ambox) θα υπογραμμιστούν στο άρθρο.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Δυστυχώς, η ομαδοποίηση αποτελεσμάτων ανά σελίδα δεν είναι διαθέσιμη σε κινητά. Εάν θέλετε να χρησιμοποιήσετε τη δυνατότητα ομάδας ανά σελίδα, επισκεφτείτε τον ιστότοπο για υπολογιστές.",
+	"skin-minerva-night-mode-unavailable": "Η σελίδα είναι διαθέσιμη μόνο με θέμα χρώματος «Φωτεινό».",
 	"minerva.css": "/* Όλα τα CSS εδώ θα φορτώσουν για χρήστες του MinervaNeue skin */",
 	"minerva.js": "/* Όλη η JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το MinervaNeue skin */"
 }

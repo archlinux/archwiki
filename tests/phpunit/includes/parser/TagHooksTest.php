@@ -3,30 +3,30 @@
 namespace MediaWiki\Tests\Parser;
 
 use InvalidArgumentException;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use ParserOptions;
 
 /**
  * @group Database
  * @group Parser
  *
- * @covers \Parser
- * @covers \BlockLevelPass
- * @covers \StripState
+ * @covers \MediaWiki\Parser\Parser
+ * @covers \MediaWiki\Parser\BlockLevelPass
+ * @covers \MediaWiki\Parser\StripState
  *
- * @covers \Preprocessor_Hash
- * @covers \PPDStack_Hash
- * @covers \PPDStackElement_Hash
- * @covers \PPDPart_Hash
- * @covers \PPFrame_Hash
- * @covers \PPTemplateFrame_Hash
- * @covers \PPCustomFrame_Hash
- * @covers \PPNode_Hash_Tree
- * @covers \PPNode_Hash_Text
- * @covers \PPNode_Hash_Array
- * @covers \PPNode_Hash_Attr
+ * @covers \MediaWiki\Parser\Preprocessor_Hash
+ * @covers \MediaWiki\Parser\PPDStack_Hash
+ * @covers \MediaWiki\Parser\PPDStackElement_Hash
+ * @covers \MediaWiki\Parser\PPDPart_Hash
+ * @covers \MediaWiki\Parser\PPFrame_Hash
+ * @covers \MediaWiki\Parser\PPTemplateFrame_Hash
+ * @covers \MediaWiki\Parser\PPCustomFrame_Hash
+ * @covers \MediaWiki\Parser\PPNode_Hash_Tree
+ * @covers \MediaWiki\Parser\PPNode_Hash_Text
+ * @covers \MediaWiki\Parser\PPNode_Hash_Array
+ * @covers \MediaWiki\Parser\PPNode_Hash_Attr
  */
 class TagHooksTest extends MediaWikiIntegrationTestCase {
 	public static function provideValidNames() {
@@ -61,7 +61,7 @@ class TagHooksTest extends MediaWikiIntegrationTestCase {
 			Title::makeTitle( NS_MAIN, 'Test' ),
 			$this->getParserOptions()
 		);
-		$this->assertEquals( "<p>FooOneBaz\n</p>", $parserOutput->getText( [ 'unwrap' => true ] ) );
+		$this->assertEquals( "<p>FooOneBaz\n</p>", $parserOutput->getRawText() );
 	}
 
 	/**

@@ -68,7 +68,6 @@
 	"templatedata-modal-button-map": "Sửa tham chiếu",
 	"templatedata-modal-button-importParams": "Nhập tham số",
 	"templatedata-modal-button-removemap": "Xóa tham chiếu",
-	"templatedata-modal-button-restoreparam": "Phục hồi tham số",
 	"templatedata-modal-button-saveparam": "Lưu",
 	"templatedata-modal-confirmcancel": "Bạn có chắc chắn muốn hủy bỏ các thay đổi của bạn?",
 	"templatedata-modal-current-language": "Ngôn ngữ hiện tại: $1",

@@ -46,16 +46,14 @@
 		 * @return {jQuery.Promise} API response
 		 */
 		create: function ( title, params, content ) {
-			return this.postWithEditToken( $.extend( this.assertCurrentUser( {
+			return this.postWithEditToken( Object.assign( this.assertCurrentUser( {
 				action: 'edit',
 				title: String( title ),
 				text: content,
 				formatversion: '2',
 				// Protect against conflicts
 				createonly: true
-			} ), params ) ).then( function ( data ) {
-				return data.edit;
-			} );
+			} ), params ) ).then( ( data ) => data.edit );
 		},
 
 		/**
@@ -116,11 +114,11 @@
 		 * @return {jQuery.Promise} Edit API response
 		 */
 		edit: function ( title, transform ) {
-			var basetimestamp, curtimestamp,
-				api = this;
+			const api = this;
 
 			title = String( title );
 
+			let basetimestamp, curtimestamp;
 			return api.get( {
 				action: 'query',
 				prop: 'revisions',
@@ -129,19 +127,18 @@
 				formatversion: '2',
 				curtimestamp: true
 			} )
-				.then( function ( data ) {
-					var page, revision;
+				.then( ( data ) => {
 					if ( !data.query || !data.query.pages ) {
 						return $.Deferred().reject( 'unknown' );
 					}
-					page = data.query.pages[ 0 ];
+					const page = data.query.pages[ 0 ];
 					if ( !page || page.invalid ) {
 						return $.Deferred().reject( 'invalidtitle' );
 					}
 					if ( page.missing ) {
 						return $.Deferred().reject( 'nocreate-missing' );
 					}
-					revision = page.revisions[ 0 ];
+					const revision = page.revisions[ 0 ];
 					basetimestamp = revision.timestamp;
 					curtimestamp = data.curtimestamp;
 					return transform( {
@@ -149,9 +146,9 @@
 						content: revision.content
 					} );
 				} )
-				.then( function ( params ) {
-					var editParams = typeof params === 'object' ? params : { text: String( params ) };
-					return api.postWithEditToken( $.extend( {
+				.then( ( params ) => {
+					const editParams = typeof params === 'object' ? params : { text: String( params ) };
+					return api.postWithEditToken( Object.assign( {
 						action: 'edit',
 						title: title,
 						formatversion: '2',
@@ -163,9 +160,7 @@
 						nocreate: true
 					}, editParams ) );
 				} )
-				.then( function ( data ) {
-					return data.edit;
-				} );
+				.then( ( data ) => data.edit );
 		},
 
 		/**
@@ -179,7 +174,7 @@
 		 * @return {jQuery.Promise}
 		 */
 		newSection: function ( title, header, message, additionalParams ) {
-			return this.postWithEditToken( $.extend( {
+			return this.postWithEditToken( Object.assign( {
 				action: 'edit',
 				section: 'new',
 				title: String( title ),

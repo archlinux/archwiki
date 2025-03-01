@@ -1,4 +1,5 @@
 @import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
 
 /* stylelint-disable no-descending-specificity */
 span[ data-mw-comment-start ] {
@@ -9,7 +10,7 @@ span[ data-mw-comment-start ] {
 	margin-top: -1em;
 }
 
-// stylelint-disable-next-line stylistic/selector-list-comma-newline-after
+// stylelint-disable-next-line @stylistic/selector-list-comma-newline-after
 h1, h2, h3, h4, h5, h6 {
 	span[ data-mw-comment-end ] {
 		// Support: Safari
@@ -25,6 +26,8 @@ h1, h2, h3, h4, h5, h6 {
 
 	// If a site has text-indent set on content, it would be inherited here and cause excessive padding
 	text-indent: 0;
+	// Keep all buttons on one line
+	white-space: nowrap;
 
 	// Add space before the buttons using actual spaces rather than margin, so that they may collapse
 	// when the buttons wrap to a new line (T325416).
@@ -57,20 +60,12 @@ h1, h2, h3, h4, h5, h6 {
 		&-bracket {
 			color: @color-subtle;
 
-			.mw-content-ltr &:not( :last-child ),
-			.mw-content-rtl .mw-content-ltr &:not( :last-child ),
-			.mw-content-rtl &:last-child,
-			.mw-content-ltr .mw-content-rtl &:last-child {
-				/* @noflip */
-				margin-right: 0.25em;
+			&:not( :last-child ) {
+				.margin-inline( 0, 0.25em );
 			}
 
-			.mw-content-ltr &:last-child,
-			.mw-content-rtl .mw-content-ltr &:last-child,
-			.mw-content-rtl &:not( :last-child ),
-			.mw-content-ltr .mw-content-rtl &:not( :last-child ), {
-				/* @noflip */
-				margin-left: 0.25em;
+			&:last-child {
+				.margin-inline( 0.25em, 0 );
 			}
 		}
 	}
@@ -114,7 +109,7 @@ h1, h2, h3, h4, h5, h6 {
 	&,
 	&:visited,
 	&:active {
-		color: #72777d;
+		color: @color-placeholder;
 	}
 }
 
@@ -130,6 +125,18 @@ h1, h2, h3, h4, h5, h6 {
 	// Support: Safari
 	// Safari doesn't blend this overlay with the text unless GPU rendering is forced.
 	transform: translateZ( 0 );
+
+	@media screen {
+		html.skin-theme-clientpref-night & {
+			mix-blend-mode: lighten;
+		}
+	}
+
+	@media screen and ( prefers-color-scheme: dark ) {
+		html.skin-theme-clientpref-os & {
+			mix-blend-mode: lighten;
+		}
+	}
 }
 
 .ext-discussiontools-init-highlight-fadein {
@@ -142,13 +149,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ext-discussiontools-init-publishedcomment {
-	background-color: #ffe29e;
+	// T368086
+	background-color: @background-color-success-subtle;
 }
 
 .ext-discussiontools-init-targetcomment {
-	// Same color as the :target selector for references (from Cite).
-	// Not sure if that's a good idea, but it should be different from -publishedcomment.
-	background-color: #eaf3ff;
+	// T368086
+	background-color: @background-color-progressive-subtle;
 }
 
 // Topic subscriptions (both kinds)
@@ -222,20 +229,12 @@ h1, h2, h3, h4, h5, h6 {
 	&-bracket {
 		color: @color-subtle;
 
-		.mw-content-ltr &:first-child,
-		.mw-content-rtl .mw-content-ltr &:first-child,
-		.mw-content-rtl &:last-child,
-		.mw-content-ltr .mw-content-rtl &:last-child {
-			/* @noflip */
-			margin-right: 0.25em;
+		&:first-child {
+			.margin-inline( 0, 0.25em );
 		}
 
-		.mw-content-ltr &:last-child,
-		.mw-content-rtl .mw-content-ltr &:last-child,
-		.mw-content-rtl &:first-child,
-		.mw-content-ltr .mw-content-rtl &:first-child {
-			/* @noflip */
-			margin-left: 0.25em;
+		&:last-child {
+			.margin-inline( 0.25em, 0 );
 		}
 	}
 
@@ -296,6 +295,15 @@ h1, h2, h3, h4, h5, h6 {
 	display: none;
 }
 
+.skin-vector-2022 {
+	.ext-discussiontools-init-section-bar,
+	.ext-discussiontools-init-replybutton.oo-ui-buttonElement,
+	.ext-discussiontools-init-section-subscribe,
+	.ext-discussiontools-init-section-subscribeButton {
+		font-size: 0.875rem;
+	}
+}
+
 .ext-discussiontools-init-pageframe-latestcomment {
 	color: @color-subtle;
 }
@@ -347,14 +355,13 @@ h1, h2, h3, h4, h5, h6 {
 
 // Page frame sub-feature
 .ext-discussiontools-visualenhancements_pageframe-enabled {
-	.mw-page-title-separator {
-		// Support IE: We could use :after { content: ' '; } but IE doesn't follow
-		// the spec and inserts the space into the clipboard when copied.
-		margin-right: 0.25em;
+	.mw-page-title-separator::after {
+		content: ' ';
 	}
 
 	.ext-discussiontools-init-pageframe-latestcomment {
 		display: block;
+		word-wrap: break-word;
 	}
 
 	.ext-discussiontools-init-sidebar-meta {
@@ -457,6 +464,7 @@ h1, h2, h3, h4, h5, h6 {
 	// This needs to be a separate rule, because the :has() selector is not yet supported by all browsers
 	// Support: Firefox <= 120, Chrome <= 105, Safari <= 15.3 (https://caniuse.com/css-has)
 	/* Our section heading is the first element on the page, except for invisible TOC placeholder */
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	.mw-parser-output > section:first-child:has( > meta:only-child ) + section > .ext-discussiontools-init-section {
 		border-top: 0;
 		margin-top: 0;
@@ -484,7 +492,7 @@ h1, h2, h3, h4, h5, h6 {
 		// The tap-highlight is an odd shape and shows even for cancelled events on -actions,
 		// just hide it.
 		-webkit-tap-highlight-color: transparent;
-		border-top: @border-width-base @border-style-base #eaecf0;
+		border-top: @border-width-base @border-style-base @border-color-muted;
 
 		h2 {
 			width: auto;
@@ -575,10 +583,6 @@ h1, h2, h3, h4, h5, h6 {
 				display: block;
 			}
 		}
-
-		.mw-ui-icon + span {
-			margin-left: 0;
-		}
 	}
 
 	&.mw-mf .ext-discussiontools-init-section-overflowMenu {
@@ -636,12 +640,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ext-discussiontools-init-replylink-open {
+	/* stylelint-disable selector-class-pattern */
 	.ext-discussiontools-emptystate,
-	.mw-body-content > .mw-message-box-warning {
+	.mw-body-content > .cdx-message--warning {
 		// Top level warnings, such as "User account --- is not registered" will re-apppear
 		// in the new topic tool, so we can hide the original. (T289354#7312789)
 		display: none;
 	}
+	/* stylelint-enable selector-class-pattern */
 }
 
 .mw-mf.ext-discussiontools-emptystate-shown {
@@ -703,10 +709,22 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
 	&-image {
-		/* @embed */
 		background: url( autotopicsubpopup-image.svg ) center center no-repeat;
 		width: 200px;
 		height: 200px;
+
+		// Add dark mode images (T369834)
+		@media screen {
+			html.skin-theme-clientpref-night & {
+				background-image: url( autotopicsubpopup-image-dark.svg );
+			}
+		}
+
+		@media screen and ( prefers-color-scheme: dark ) {
+			html.skin-theme-clientpref-os & {
+				background-image: url( autotopicsubpopup-image-dark.svg );
+			}
+		}
 	}
 
 	// Desktop
@@ -790,7 +808,7 @@ h1, h2, h3, h4, h5, h6 {
 	box-sizing: content-box;
 	color: @color-progressive;
 	background: @background-color-interactive-subtle;
-	border-top: @border-width-base @border-style-base #eaecf0;
+	border-top: @border-width-base @border-style-base @border-color-muted;
 	text-align: center;
 
 	// Match Minerva styles

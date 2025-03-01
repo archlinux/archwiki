@@ -58,4 +58,13 @@ abstract class BoxedExecutor {
 		}
 		$this->validator->validate( $command );
 	}
+
+	/**
+	 * Whether the executor can download input files and upload output files
+	 * specified with BoxedCommand::inputFileFromUrl and the like.
+	 *
+	 * @since 4.1.0
+	 * @return bool
+	 */
+	abstract public function areUrlFilesAllowed();
 }

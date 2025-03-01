@@ -22,10 +22,7 @@ abstract class AbstractMapper {
 	 */
 	protected $listeners;
 
-	/**
-	 * @param DbFactory|null $dbFactory
-	 */
-	public function __construct( DbFactory $dbFactory = null ) {
+	public function __construct( ?DbFactory $dbFactory = null ) {
 		$this->dbFactory = $dbFactory ?? DbFactory::newFromDefault();
 	}
 

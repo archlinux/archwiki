@@ -1,6 +1,7 @@
 {
 	"\\AA": {
-		"nullary_macro_in_mbox": true
+		"nullary_macro_in_mbox": true,
+		"unicode_char": "00C5"
 	},
 	"\\Alpha": {
 		"mhchem_single_macro": true,
@@ -65,7 +66,8 @@
 	},
 	"\\Coppa": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03D8"
 	},
 	"\\Cup": {
 		"ams_required": true,
@@ -88,7 +90,8 @@
 	},
 	"\\Digamma": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03DC"
 	},
 	"\\Doteq": {
 		"nullary_macro_aliase": "\\doteqdot"
@@ -138,7 +141,8 @@
 	},
 	"\\Koppa": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03DE"
 	},
 	"\\Lambda": {
 		"is_literal": true,
@@ -212,7 +216,8 @@
 		"nullary_macro": true
 	},
 	"\\Pr": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\Psi": {
 		"is_literal": true,
@@ -255,7 +260,8 @@
 	},
 	"\\Sampi": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03E0"
 	},
 	"\\Sigma": {
 		"is_literal": true,
@@ -264,7 +270,8 @@
 	},
 	"\\Stigma": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03DA"
 	},
 	"\\Subset": {
 		"ams_required": true,
@@ -417,6 +424,10 @@
 		"nullary_macro": true
 	},
 	"\\bcancel": {
+		"callback": [
+			"cancel",
+			"downdiagonalstrike"
+		],
 		"cancel_required": true,
 		"fun_ar1": true,
 		"is_letter_mod": true
@@ -476,13 +487,16 @@
 		"big_literals": true
 	},
 	"\\bigcap": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigcirc": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigcup": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigg": {
 		"big_literals": true
@@ -497,38 +511,48 @@
 		"big_literals": true
 	},
 	"\\bigodot": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigoplus": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigotimes": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigr": {
 		"big_literals": true
 	},
 	"\\bigsqcup": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigstar": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigtriangledown": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigtriangleup": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\biguplus": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigvee": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\bigwedge": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\binom": {
 		"ams_required": true,
@@ -617,11 +641,19 @@
 		"declh_function": true
 	},
 	"\\cancel": {
+		"callback": [
+			"cancel",
+			"updiagonalstrike"
+		],
 		"cancel_required": true,
 		"fun_ar1": true,
 		"is_letter_mod": true
 	},
 	"\\cancelto": {
+		"callback": [
+			"cancelTo",
+			"updiagonalstrike downdiagonalstrike northeastarrow"
+		],
 		"cancel_required": true,
 		"fun_ar2": true
 	},
@@ -722,10 +754,12 @@
 	},
 	"\\coppa": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03D9"
 	},
 	"\\coprod": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\cos": {
 		"latex_function_names": true
@@ -813,7 +847,8 @@
 		"nullary_macro": true
 	},
 	"\\det": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\dfrac": {
 		"ams_required": true,
@@ -967,7 +1002,8 @@
 	},
 	"\\euro": {
 		"euro_required": true,
-		"nullary_macro_in_mbox": true
+		"nullary_macro_in_mbox": true,
+		"unicode_char": "20AC"
 	},
 	"\\exist": {
 		"nullary_macro_aliase": "\\exists"
@@ -1002,22 +1038,26 @@
 		"nullary_macro": true
 	},
 	"\\gcd": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\ge": {
 		"nullary_macro_aliase": "\\geq"
 	},
 	"\\geneuro": {
 		"euro_required": true,
-		"nullary_macro_in_mbox": true
+		"nullary_macro_in_mbox": true,
+		"unicode_char": "20AC"
 	},
 	"\\geneuronarrow": {
 		"euro_required": true,
-		"nullary_macro_in_mbox": true
+		"nullary_macro_in_mbox": true,
+		"unicode_char": "20AC"
 	},
 	"\\geneurowide": {
 		"euro_required": true,
-		"nullary_macro_in_mbox": true
+		"nullary_macro_in_mbox": true,
+		"unicode_char": "20AC"
 	},
 	"\\geq": {
 		"nullary_macro": true
@@ -1144,15 +1184,18 @@
 	},
 	"\\iiiint": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\iiint": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\iint": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\image": {
 		"nullary_macro_aliase": "\\Im"
@@ -1169,7 +1212,8 @@
 		"nullary_macro": true
 	},
 	"\\inf": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\infin": {
 		"nullary_macro_aliase": "\\infty"
@@ -1179,17 +1223,21 @@
 	},
 	"\\injlim": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\int": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\intBar": {
 		"nullary_macro": true,
+		"operator": true,
 		"stix_required": true
 	},
 	"\\intbar": {
 		"nullary_macro": true,
+		"operator": true,
 		"stix_required": true
 	},
 	"\\intent": {
@@ -1199,7 +1247,8 @@
 	"\\intercal": {
 		"ams_required": true,
 		"is_literal": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\iota": {
 		"is_literal": true,
@@ -1230,7 +1279,8 @@
 	},
 	"\\koppa": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03DF"
 	},
 	"\\lArr": {
 		"nullary_macro_aliase": "\\Leftarrow"
@@ -1355,13 +1405,15 @@
 		"latex_function_names": true
 	},
 	"\\liminf": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\limits": {
 		"nullary_macro": true
 	},
 	"\\limsup": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\ll": {
 		"nullary_macro": true
@@ -1542,7 +1594,8 @@
 		"is_letter_mod": true
 	},
 	"\\max": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\mbox": {
 		"box_functions": true
@@ -1560,7 +1613,8 @@
 		"nullary_macro": true
 	},
 	"\\min": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\mkern": {
 		"fun_ar1": true,
@@ -1784,7 +1838,8 @@
 	},
 	"\\officialeuro": {
 		"euro_required": true,
-		"nullary_macro_in_mbox": true
+		"nullary_macro_in_mbox": true,
+		"unicode_char": "20AC"
 	},
 	"\\oiiint": {
 		"mathoid_required": true,
@@ -1946,11 +2001,13 @@
 		"nullary_macro": true
 	},
 	"\\prod": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\projlim": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\propto": {
 		"nullary_macro": true
@@ -2064,7 +2121,8 @@
 	},
 	"\\sampi": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03E1"
 	},
 	"\\scriptscriptstyle": {
 		"nullary_macro": true
@@ -2191,7 +2249,8 @@
 	},
 	"\\stigma": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03DB"
 	},
 	"\\sub": {
 		"nullary_macro_aliase": "\\subset"
@@ -2248,10 +2307,12 @@
 		"nullary_macro": true
 	},
 	"\\sum": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\sup": {
-		"latex_function_names": true
+		"latex_function_names": true,
+		"operator": true
 	},
 	"\\supe": {
 		"nullary_macro_aliase": "\\supseteq"
@@ -2323,7 +2384,8 @@
 		"is_letter_mod": true
 	},
 	"\\textvisiblespace": {
-		"nullary_macro_in_mbox": true
+		"nullary_macro_in_mbox": true,
+		"unicode_char": "2423"
 	},
 	"\\tfrac": {
 		"ams_required": true,
@@ -2496,7 +2558,8 @@
 	},
 	"\\varinjlim": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\varkappa": {
 		"ams_required": true,
@@ -2506,11 +2569,13 @@
 	},
 	"\\varliminf": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\varlimsup": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\varnothing": {
 		"ams_required": true,
@@ -2533,7 +2598,8 @@
 	},
 	"\\varprojlim": {
 		"ams_required": true,
-		"nullary_macro": true
+		"nullary_macro": true,
+		"operator": true
 	},
 	"\\varpropto": {
 		"ams_required": true,
@@ -2551,7 +2617,8 @@
 	},
 	"\\varstigma": {
 		"nullary_macro_in_mbox": true,
-		"teubner_required": true
+		"teubner_required": true,
+		"unicode_char": "03DB"
 	},
 	"\\varsubsetneq": {
 		"ams_required": true,
@@ -2638,6 +2705,10 @@
 		"nullary_macro": true
 	},
 	"\\xcancel": {
+		"callback": [
+			"cancel",
+			"updiagonalstrike downdiagonalstrike"
+		],
 		"cancel_required": true,
 		"fun_ar1": true,
 		"is_letter_mod": true

@@ -25,14 +25,14 @@ const { Permission } = require( 'mmv' );
 		}
 	} ) );
 
-	QUnit.test( 'Constructor sense check', function ( assert ) {
+	QUnit.test( 'Constructor sense check', ( assert ) => {
 		const $qf = $( '#qunit-fixture' );
 		const permission = new Permission( $qf );
 
 		assert.true( permission instanceof Permission, 'constructor does not throw error' );
 	} );
 
-	QUnit.test( 'set()', function ( assert ) {
+	QUnit.test( 'set()', ( assert ) => {
 		const $qf = $( '#qunit-fixture' );
 		const permission = new Permission( $qf );
 		const text = 'Nothing to see here.';
@@ -48,7 +48,7 @@ const { Permission } = require( 'mmv' );
 		assert.strictEqual( permission.$close.is( ':visible' ), false, 'close button is not visible' );
 	} );
 
-	QUnit.test( 'set() with html', function ( assert ) {
+	QUnit.test( 'set() with html', ( assert ) => {
 		const $qf = $( '#qunit-fixture' );
 		const permission = new Permission( $qf );
 		const text = '<b>Nothing</b> to see here.';
@@ -59,7 +59,7 @@ const { Permission } = require( 'mmv' );
 		assert.strictEqual( permission.$html.find( 'b' ).length, 1, 'permission html has html' );
 	} );
 
-	QUnit.test( 'empty()', function ( assert ) {
+	QUnit.test( 'empty()', ( assert ) => {
 		const $qf = $( '#qunit-fixture' );
 		const permission = new Permission( $qf );
 		const text = 'Nothing to see here.';
@@ -72,7 +72,7 @@ const { Permission } = require( 'mmv' );
 		assert.strictEqual( permission.$close.is( ':visible' ), false, 'close button is not visible' );
 	} );
 
-	QUnit.test( 'grow()', function ( assert ) {
+	QUnit.test( 'grow()', ( assert ) => {
 		const $qf = $( '#qunit-fixture' );
 		const permission = new Permission( $qf );
 		const text = 'Nothing to see here.';
@@ -85,7 +85,7 @@ const { Permission } = require( 'mmv' );
 		assert.strictEqual( permission.$close.is( ':visible' ), true, 'close button is visible' );
 	} );
 
-	QUnit.test( 'shrink()', function ( assert ) {
+	QUnit.test( 'shrink()', ( assert ) => {
 		const $qf = $( '#qunit-fixture' );
 		const permission = new Permission( $qf );
 		const text = 'Nothing to see here.';
@@ -99,7 +99,7 @@ const { Permission } = require( 'mmv' );
 		assert.strictEqual( permission.$close.is( ':visible' ), false, 'close button is not visible' );
 	} );
 
-	QUnit.test( 'isFullSize()', function ( assert ) {
+	QUnit.test( 'isFullSize()', ( assert ) => {
 		const $qf = $( '#qunit-fixture' );
 		const permission = new Permission( $qf );
 		const text = 'Nothing to see here.';

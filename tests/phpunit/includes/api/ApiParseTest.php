@@ -23,7 +23,8 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiUsageException;
+use MediaWiki\Api\ApiUsageException;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
@@ -37,12 +38,14 @@ use SkinFallback;
  * @group Database
  * @group medium
  *
- * @covers \ApiParse
+ * @covers MediaWiki\Api\ApiParse
  */
 class ApiParseTest extends ApiTestCase {
 	use DummyServicesTrait;
 
+	/** @var int */
 	protected static $pageId;
+	/** @var int[] */
 	protected static $revIds = [];
 
 	public function addDBDataOnce() {
@@ -61,6 +64,10 @@ class ApiParseTest extends ApiTestCase {
 		$status = $this->editPage( $page, 'Test for latest' );
 		self::$revIds['latest'] = $status->getNewRevision()->getId();
 
+		// Set a user for modifying the visibility, this is needed because
+		// setVisibility generates a log, which cannot be an anonymous user actor
+		// when temporary accounts are enabled.
+		RequestContext::getMain()->setUser( $this->getTestUser()->getUser() );
 		$this->revisionDelete( self::$revIds['revdel'] );
 		$this->revisionDelete(
 			self::$revIds['suppressed'],
@@ -107,9 +114,9 @@ class ApiParseTest extends ApiTestCase {
 
 		$html = substr( $html, strlen( $expectedStart ) );
 
-		# Parsoid-based transformations may add an ID attribute to the
-		# wrapper div
-		$possibleIdAttr = '/^( id="[^"]+")?>/';
+		# Parsoid-based transformations may add ID and data-mw-parsoid-version
+		# attributes to the wrapper div
+		$possibleIdAttr = '/^( (id|data-mw[^=]*)="[^"]+")*>/';
 		$html = preg_replace( $possibleIdAttr, '', $html );
 
 		$possibleParserCache = '/\n<!-- Saved in (?>parser cache|RevisionOutputCache) (?>.*?\n -->)\n/';
@@ -147,22 +154,31 @@ class ApiParseTest extends ApiTestCase {
 	 * Set up an interwiki entry for testing.
 	 */
 	protected function setupInterwiki() {
-		$this->getDb()->insert(
-			'interwiki',
-			[
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'interwiki' )
+			->ignore()
+			->row( [
 				'iw_prefix' => 'madeuplanguage',
 				'iw_url' => "https://example.com/wiki/$1",
 				'iw_api' => '',
 				'iw_wikiid' => '',
 				'iw_local' => false,
-			],
-			__METHOD__,
-			'IGNORE'
-		);
+			] )
+			// This deliberately conflicts with the Talk namespace
+			// (T204792/T363538)
+			->row( [
+				'iw_prefix' => 'talk',
+				'iw_url' => "https://talk.example.com/wiki/$1",
+				'iw_api' => '',
+				'iw_wikiid' => '',
+				'iw_local' => false,
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		$this->overrideConfigValue(
 			MainConfigNames::ExtraInterlanguageLinkPrefixes,
-			[ 'madeuplanguage' ]
+			[ 'madeuplanguage', 'talk' ]
 		);
 	}
 
@@ -289,7 +305,7 @@ class ApiParseTest extends ApiTestCase {
 			'section' => 1,
 		] );
 
-		$this->assertParsedToRegExp( '!<h2>.*Section 1.*</h2>\n<p>Content 1\n</p>!', $res );
+		$this->assertParsedToRegExp( '!<h2[^>]*>.*Section 1.*</h2>.*\n<p>Content 1\n</p>!', $res );
 	}
 
 	public function testInvalidSection() {
@@ -309,7 +325,11 @@ class ApiParseTest extends ApiTestCase {
 
 		$this->expectApiErrorCode( 'missingcontent-pageid' );
 
-		$this->db->delete( 'revision', [ 'rev_id' => $status->getNewRevision()->getId() ] );
+		$this->getDb()->newDeleteQueryBuilder()
+			->deleteFrom( 'revision' )
+			->where( [ 'rev_id' => $status->getNewRevision()->getId() ] )
+			->caller( __METHOD__ )
+			->execute();
 
 		// Ignore warning from WikiPage::getContentModel
 		@$this->doApiRequest( [
@@ -511,7 +531,7 @@ class ApiParseTest extends ApiTestCase {
 			'text' => 'Content',
 		] );
 
-		$this->assertParsedToRegExp( '!<h2>.*Title.*</h2>\n<p>Content\n</p>!', $res );
+		$this->assertParsedToRegExp( '!<h2[^>]*>.*Title.*</h2>.*\n<p>Content\n</p>!', $res );
 	}
 
 	public function testExistingSection() {
@@ -522,7 +542,7 @@ class ApiParseTest extends ApiTestCase {
 			'text' => "Intro\n\n== Section 1 ==\n\nContent\n\n== Section 2 ==\n\nMore content",
 		] );
 
-		$this->assertParsedToRegExp( '!<h2>.*Section 1.*</h2>\n<p>Content\n</p>!', $res );
+		$this->assertParsedToRegExp( '!<h2[^>]*>.*Section 1.*</h2>.*\n<p>Content\n</p>!', $res );
 	}
 
 	public function testNoPst() {
@@ -609,6 +629,34 @@ class ApiParseTest extends ApiTestCase {
 		yield [ true, true, $expected ];
 	}
 
+	/** @dataProvider providerTestParsoid */
+	public function testUseArticle( $parsoid, $existing, $expected ) {
+		# For simplicity, ensure that [[Foo]] isn't a redlink.
+		$this->editPage( "Foo", __FUNCTION__ );
+		# Use an ArticleParserOptions hook to set the useParsoid option
+		$this->setTemporaryHook( 'ArticleParserOptions',
+			static function ( $unused, $po ) use ( $parsoid ) {
+				if ( $parsoid ) {
+					$po->setUseParsoid();
+				}
+			}
+		);
+
+		$res = $this->doApiRequest( [
+			# check that we're using the contents of 'text' not the contents of
+			# [[<title>]] by using pre-existing title __CLASS__ sometimes
+			'title' => $existing ? __CLASS__ : 'Bar',
+			'action' => 'parse',
+			'text' => "[[Foo]]",
+			'contentmodel' => 'wikitext',
+			'usearticle' => true,
+			# Note that we're not passing the 'parsoid' parameter here.
+			'disablelimitreport' => true,
+		] );
+
+		$this->assertParsedToRegexp( $expected, $res );
+	}
+
 	public function testHeadHtml() {
 		$res = $this->doApiRequest( [
 			'action' => 'parse',
@@ -662,6 +710,12 @@ class ApiParseTest extends ApiTestCase {
 	 * @param array $arr Extra params to add to API request
 	 */
 	private function doTestLangLinks( array $arr = [] ) {
+		$this->setTemporaryHook( 'ParserAfterParse',
+			static function ( $parser ) {
+				$parserOutput = $parser->getOutput();
+				$parserOutput->addLanguageLink( 'talk:Page' ); // T363538
+			}
+		);
 		$res = $this->doApiRequest( array_merge( [
 			'action' => 'parse',
 			'title' => 'Omelette',
@@ -671,10 +725,13 @@ class ApiParseTest extends ApiTestCase {
 
 		$langLinks = $res[0]['parse']['langlinks'];
 
-		$this->assertCount( 1, $langLinks );
+		$this->assertCount( 2, $langLinks );
 		$this->assertSame( 'madeuplanguage', $langLinks[0]['lang'] );
 		$this->assertSame( 'Omelette', $langLinks[0]['title'] );
 		$this->assertSame( 'https://example.com/wiki/Omelette', $langLinks[0]['url'] );
+		$this->assertSame( 'talk', $langLinks[1]['lang'] );
+		$this->assertSame( 'Page', $langLinks[1]['title'] );
+		$this->assertSame( 'https://talk.example.com/wiki/Page', $langLinks[1]['url'] );
 		$this->assertArrayNotHasKey( 'warnings', $res[0] );
 	}
 
@@ -729,10 +786,11 @@ class ApiParseTest extends ApiTestCase {
 	public function testModules() {
 		$this->setTemporaryHook( 'ParserAfterParse',
 			static function ( $parser ) {
-				$output = $parser->getOutput();
-				$output->addModules( [ 'foo', 'bar' ] );
-				$output->addModuleStyles( [ 'aaa', 'zzz' ] );
-				$output->addJsConfigVars( [ 'x' => 'y', 'z' => -3 ] );
+				$parserOutput = $parser->getOutput();
+				$parserOutput->addModules( [ 'foo', 'bar' ] );
+				$parserOutput->addModuleStyles( [ 'aaa', 'zzz' ] );
+				$parserOutput->setJsConfigVar( 'x', 'y' );
+				$parserOutput->setJsConfigVar( 'z', -3 );
 			}
 		);
 		$res = $this->doApiRequest( [

@@ -5,8 +5,12 @@ namespace Wikimedia\Parsoid\Wt2Html;
 
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Tokens\SourceRange;
+use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 
 /**
@@ -14,31 +18,21 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
  */
 
 class ParserPipeline {
-	/** @var int */
-	private $id;
-
-	/** @var string */
-	private $outputType;
-
-	/** @var string */
-	private $pipelineType;
-
-	/** @var array */
-	private $stages;
-
-	/** @var Env */
-	private $env;
-
-	/** @var string */
-	private $cacheKey;
-
-	/** @var Frame */
-	private $frame;
+	private bool $alwaysToplevel;
+	private bool $atTopLevel;
+	private int $id;
+	private string $outputType;
+	private string $pipelineType;
+	private array $stages;
+	private Env $env;
+	private string $cacheKey;
+	private Frame $frame;
 
 	public function __construct(
-		string $type, string $outType, string $cacheKey, array $stages, Env $env
+		bool $alwaysToplevel, string $type, string $outType, string $cacheKey, array $stages, Env $env
 	) {
 		$this->id = -1;
+		$this->alwaysToplevel = $alwaysToplevel;
 		$this->cacheKey = $cacheKey;
 		$this->pipelineType = $type;
 		$this->outputType = $outType;
@@ -112,8 +106,8 @@ class ParserPipeline {
 	 * in case that first stage is the source of input chunks we are processing
 	 * in the rest of the pipeline)
 	 *
-	 * @param array|string|Document $input wikitext string or array of tokens or Document
-	 * @param array $opts
+	 * @param string|Token|array<Token|string>|Element $input
+	 * @param array{sol:bool} $opts
 	 *  - sol (bool) Whether tokens should be processed in start-of-line context.
 	 *  - chunky (bool) Whether we are processing the input chunkily.
 	 *                  If so, the first stage will be skipped
@@ -139,7 +133,7 @@ class ParserPipeline {
 			$this->env->popProfile();
 			$profile->end();
 
-			if ( isset( $opts['atTopLevel'] ) ) {
+			if ( $this->atTopLevel ) {
 				$body = $output;
 				$body->appendChild( $body->ownerDocument->createTextNode( "\n" ) );
 				$body->appendChild( $body->ownerDocument->createComment( $profile->print() ) );
@@ -154,7 +148,7 @@ class ParserPipeline {
 	 * Parse input in chunks
 	 *
 	 * @param string $input Input wikitext
-	 * @param array $opts
+	 * @param array{sol:bool} $opts
 	 *  - atTopLevel: (bool) Whether we are processing the top-level document
 	 *  - sol: (bool) Whether input should be processed in start-of-line context
 	 * @return Document|array final DOM or array of token chnks
@@ -177,7 +171,7 @@ class ParserPipeline {
 			$this->env->popProfile();
 			$profile->end();
 
-			if ( isset( $opts['atTopLevel'] ) ) {
+			if ( $this->atTopLevel ) {
 				Assert::invariant( $this->outputType === 'DOM', 'Expected top-level output to be DOM' );
 				$body = $ret[0];
 				$body->appendChild( $body->ownerDocument->createTextNode( "\n" ) );
@@ -191,20 +185,36 @@ class ParserPipeline {
 	}
 
 	/**
-	 * @param array $initialState Once the pipeline is retrieved / constructed
-	 *   it will be initialized with this state.
+	 * Selective update parts of the old DOM based on $options
+	 * $options has additional info about what needs updating.
+	 * FIXME: Doucment $options array here.
+	 */
+	public function selectiveParse(
+		SelectiveUpdateData $selparData, array $options
+	): Document {
+		$dom = $selparData->revDOM;
+		$this->parse( DOMCompat::getBody( $dom ), [ 'selparData' => $selparData ] + $options );
+		return $dom;
+	}
+
+	/**
+	 * @param array $initialState Once the pipeline is retrieved / constructed,
+	 * it will be initialized with this state.
 	 */
 	public function init( array $initialState = [] ) {
 		// Reset pipeline state once per top-level doc.
 		// This clears state from any per-doc global state
 		// maintained across all pipelines used by the document.
 		// (Ex: Cite state)
-		$toplevel = $initialState['toplevel'];
-		$this->resetState( [ 'toplevel' => $toplevel ] );
+		$this->atTopLevel = $this->alwaysToplevel ?: $initialState['toplevel'];
+		$this->resetState( [
+			'toplevel' => $this->atTopLevel,
+			'toFragment' => $initialState['toFragment'] ?? true,
+		] );
 
 		// Set frame
 		$frame = $initialState['frame'];
-		if ( !$toplevel ) {
+		if ( !$this->atTopLevel ) {
 			$tplArgs = $initialState['tplArgs'] ?? null;
 			$srcText = $initialState['srcText'] ?? null;
 			if ( isset( $tplArgs['title'] ) ) {

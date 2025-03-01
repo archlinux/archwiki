@@ -26,6 +26,13 @@
 	"cite_error_empty_references_define": "Tenger <code>&lt;ref&gt;</code> dengen nama \"$1\" nyang diterangin di kelompok <code>&lt;references&gt;</code> \"$2\" kaga' punya isi.",
 	"cite-tracking-category-cite-error": "Halaman dengen kengabluan tukilan",
 	"cite-tracking-category-cite-error-desc": "Halaman di ni bangsaan ngelah kengabluan pemakéan tenger tukilan.",
+	"cite-reference-previews-reference": "Ruju'an",
+	"cite-reference-previews-book": "Ruju'an kitab",
+	"cite-reference-previews-journal": "Ruju'an majalah ilmiah",
+	"cite-reference-previews-news": "Ruju'an berita",
+	"cite-reference-previews-note": "Catetan",
+	"cite-reference-previews-web": "Ruju'an jala",
+	"cite-reference-previews-collapsible-placeholder": "Ni ruju'an nyerèntain gambar bèbèr nyang kaga' muat di terawangan.",
 	"cite_references_link_accessibility_label": "Taèk",
 	"cite_references_link_many_accessibility_label": "Taèk ke:",
 	"cite_references_link_accessibility_back_label": "Balik ke atas",
@@ -40,5 +47,6 @@
 	"cite-wikieditor-help-content-showreferences-description": "Pampangin ruju'an",
 	"cite-wikieditor-help-content-reference-example-text1": "Halaman tèks.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Tèks sènggètan], tèks tambahan.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Tèks sènggètan]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Tèks sènggètan]",
+	"popups-refpreview-user-preference-label": "Nyalain terawangan halaman (dapetin terawangan lekas deri ruju'an pas ngebaca halaman)"
 }

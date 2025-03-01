@@ -1,11 +1,14 @@
 <?php
 
+use MediaWiki\Deferred\AutoCommitUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\WebRequestUpload;
 use MediaWiki\Status\Status;
 use MediaWiki\User\User;
 use Psr\Log\LoggerInterface;
+use Wikimedia\FileBackend\FileBackend;
 
 /**
  * Backend for uploading files from chunks.
@@ -43,9 +46,13 @@ class UploadFromChunks extends UploadFromFile {
 	/** @var User */
 	public $user;
 
+	/** @var int|null */
 	protected $mOffset;
+	/** @var int|null */
 	protected $mChunkIndex;
+	/** @var string */
 	protected $mFileKey;
+	/** @var string|null */
 	protected $mVirtualTempPath;
 
 	private LoggerInterface $logger;
@@ -97,7 +104,7 @@ class UploadFromChunks extends UploadFromFile {
 	 * @param User|null $user
 	 * @return UploadStashFile Stashed file
 	 */
-	protected function doStashFile( User $user = null ) {
+	protected function doStashFile( ?User $user = null ) {
 		// Stash file is the called on creating a new chunk session:
 		$this->mChunkIndex = 0;
 		$this->mOffset = 0;
@@ -399,11 +406,7 @@ class UploadFromChunks extends UploadFromFile {
 	 * @return int Index of the current chunk
 	 */
 	private function getChunkIndex() {
-		if ( $this->mChunkIndex !== null ) {
-			return $this->mChunkIndex;
-		}
-
-		return 0;
+		return $this->mChunkIndex ?? 0;
 	}
 
 	/**
@@ -411,11 +414,7 @@ class UploadFromChunks extends UploadFromFile {
 	 * @return int Current byte offset of the chunk file set
 	 */
 	public function getOffset() {
-		if ( $this->mOffset !== null ) {
-			return $this->mOffset;
-		}
-
-		return 0;
+		return $this->mOffset ?? 0;
 	}
 
 	/**

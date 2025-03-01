@@ -11,7 +11,7 @@ class EchoModelFormatter extends EchoEventFormatter {
 	 * @param EchoEventPresentationModel $model
 	 * @return array
 	 */
-	protected function formatModel( EchoEventPresentationModel $model ) {
+	protected function formatModel( EchoEventPresentationModel $model ): array {
 		$data = $model->jsonSerialize();
 		$data['iconUrl'] = EchoIcon::getUrl( $model->getIconType(), $this->language->getDir() );
 

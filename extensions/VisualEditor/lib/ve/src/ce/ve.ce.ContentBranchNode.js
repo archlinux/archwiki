@@ -43,12 +43,11 @@ OO.inheritClass( ve.ce.ContentBranchNode, ve.ce.BranchNode );
 /* Static Members */
 
 /**
- * Whether Enter splits this node type. Must be true for ContentBranchNodes.
+ * @property {boolean} Whether Enter splits this node type. Must be true for ContentBranchNodes.
  *
  * Warning: overriding this to false in a subclass will cause crashes on Enter key handling.
  *
  * @static
- * @property {boolean}
  * @inheritable
  */
 ve.ce.ContentBranchNode.static.splitOnEnter = true;
@@ -65,8 +64,8 @@ ve.ce.ContentBranchNode.static.autoFocus = true;
  */
 ve.ce.ContentBranchNode.static.appendRenderedContents = function ( container, wrapper ) {
 	function resolveOriginals( domElement ) {
-		for ( var i = 0, len = domElement.childNodes.length; i < len; i++ ) {
-			var child = domElement.childNodes[ i ];
+		for ( let i = 0, len = domElement.childNodes.length; i < len; i++ ) {
+			const child = domElement.childNodes[ i ];
 			if ( child.veOrigNode ) {
 				domElement.replaceChild( child.veOrigNode, child );
 			} else if ( child.childNodes && child.childNodes.length ) {
@@ -143,7 +142,7 @@ ve.ce.ContentBranchNode.prototype.onChildUpdate = function ( transaction ) {
 /**
  * @inheritdoc
  */
-ve.ce.ContentBranchNode.prototype.onSplice = function ( index, howmany ) {
+ve.ce.ContentBranchNode.prototype.onSplice = function ( index, deleteCount, ...nodes ) {
 	// Parent method
 	ve.ce.ContentBranchNode.super.prototype.onSplice.apply( this, arguments );
 
@@ -156,7 +155,7 @@ ve.ce.ContentBranchNode.prototype.onSplice = function ( index, howmany ) {
 		this.root instanceof ve.ce.DocumentNode &&
 		this.root.getSurface().isRenderingLocked
 	) {
-		this.slugNodes.splice.apply( this.slugNodes, [ index, howmany ].concat( new Array( arguments.length - 2 ) ) );
+		this.slugNodes.splice( index, deleteCount, ...new Array( nodes.length ) );
 	}
 
 	// Rerender to make sure annotations are applied correctly
@@ -198,33 +197,45 @@ ve.ce.ContentBranchNode.prototype.setupInlineSlugs = function () {
 };
 
 /**
+ * @typedef {Object} UnicornInfo
+ * @memberof ve.ce.ContentBranchNode
+ * @property {boolean} hasCursor
+ * @property {ve.dm.AnnotationSet|null} annotations
+ * @property {HTMLElement[]|null} unicorns
+ */
+
+/**
+ * @typedef {HTMLElement} HTMLElementWithUnicorn
+ * @memberof ve.ce.ContentBranchNode
+ * @property {ve.ce.ContentBranchNode.UnicornInfo} unicornInfo Unicorn information
+ */
+
+/**
  * Get an HTML rendering of the contents.
  *
  * If you are actually going to append the result to a DOM, you need to
  * do this with #appendRenderedContents, which resolves the cloned
  * nodes returned by this function back to their originals.
  *
- * @return {HTMLElement} Wrapper containing rendered contents
- * @return {Object} return.unicornInfo Unicorn information
+ * @return {ve.ce.ContentBranchNode.HTMLElementWithUnicorn} Wrapper containing rendered contents
  */
 ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
-	var annotationsChanged,
-		store = this.model.doc.getStore(),
+	const store = this.model.doc.getStore(),
 		annotationSet = new ve.dm.AnnotationSet( store ),
-		annotatedHtml = [],
 		doc = this.getElementDocument(),
 		wrapper = doc.createElement( 'div' ),
-		current = wrapper,
+		annotatedHtml = [],
 		annotationStack = [],
 		nodeStack = [],
 		unicornInfo = {
 			hasCursor: false,
 			annotations: null,
 			unicorns: null
-		},
-		buffer = '',
-		node = this;
+		};
 
+	let annotationsChanged,
+		current = wrapper,
+		buffer = '';
 	// Source mode optimization
 	if ( this.getModel().getDocument().sourceMode ) {
 		wrapper.appendChild(
@@ -236,8 +247,7 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 		return wrapper;
 	}
 
-	function openAnnotation( annotation ) {
-		var ann;
+	const openAnnotation = ( annotation ) => {
 		annotationsChanged = true;
 		if ( buffer !== '' ) {
 			if ( current.nodeType === Node.TEXT_NODE ) {
@@ -249,15 +259,14 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 		}
 		// Create a new DOM node and descend into it
 		annotation.store = store;
-		ann = ve.ce.annotationFactory.create( annotation.getType(), annotation, node );
+		const ann = ve.ce.annotationFactory.create( annotation.getType(), annotation, this );
 		ann.appendTo( current );
 		annotationStack.push( ann );
 		nodeStack.push( current );
 		current = ann.getContentContainer();
-	}
+	};
 
-	function closeAnnotation() {
-		var ann;
+	const closeAnnotation = () => {
 		annotationsChanged = true;
 		if ( buffer !== '' ) {
 			if ( current.nodeType === Node.TEXT_NODE ) {
@@ -268,43 +277,43 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 			buffer = '';
 		}
 		// Traverse up
-		ann = annotationStack.pop();
+		const ann = annotationStack.pop();
 		ann.attachContents();
 		current = nodeStack.pop();
-	}
+	};
 
-	var i, ilen;
 	// Gather annotated HTML from the child nodes
-	for ( i = 0, ilen = this.children.length; i < ilen; i++ ) {
-		annotatedHtml = annotatedHtml.concat( this.children[ i ].getAnnotatedHtml() );
+	for ( let i = 0, ilen = this.children.length; i < ilen; i++ ) {
+		ve.batchPush( annotatedHtml, this.children[ i ].getAnnotatedHtml() );
 	}
 
 	// Set relCursor to collapsed selection offset, or -1 if none
 	// (in which case we don't need to worry about preannotation)
-	var relCursor = -1;
-	var dmSurface;
+	let relCursor = -1;
+	let dmSurface;
 	if ( this.getRoot() ) {
-		var ceSurface = this.getRoot().getSurface();
+		const ceSurface = this.getRoot().getSurface();
 		dmSurface = ceSurface.getModel();
 		// TODO: dmSurface is used again later but might not be set
-		var dmSelection = dmSurface.getTranslatedSelection();
+		const dmSelection = dmSurface.getTranslatedSelection();
 		if ( dmSelection instanceof ve.dm.LinearSelection && dmSelection.isCollapsed() ) {
 			// Subtract 1 for CBN opening tag
 			relCursor = dmSelection.getRange().start - this.getOffset() - 1;
 		}
 	}
 
-	var unicorn;
+	let unicorn;
 	// Set cursor status for renderContents. If hasCursor, splice unicorn marker at the
 	// collapsed selection offset. It will be rendered later if it is needed, else ignored
 	if ( relCursor < 0 || relCursor > this.getLength() ) {
 		unicornInfo.hasCursor = false;
 	} else {
 		unicornInfo.hasCursor = true;
-		var offset = 0;
+		let offset = 0;
+		let i, ilen;
 		for ( i = 0, ilen = annotatedHtml.length; i < ilen; i++ ) {
-			var htmlItem = annotatedHtml[ i ][ 0 ];
-			var childLength = ( typeof htmlItem === 'string' ) ? 1 : 2;
+			const htmlItem = annotatedHtml[ i ][ 0 ];
+			const childLength = ( typeof htmlItem === 'string' ) ? 1 : 2;
 			if ( offset <= relCursor && relCursor < offset + childLength ) {
 				unicorn = [
 					{}, // Unique object, for testing object equality later
@@ -326,9 +335,9 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 	}
 
 	// Render HTML with annotations
-	for ( i = 0, ilen = annotatedHtml.length; i < ilen; i++ ) {
-		var item;
-		var itemAnnotations;
+	for ( let i = 0, ilen = annotatedHtml.length; i < ilen; i++ ) {
+		let item;
+		let itemAnnotations;
 		if ( Array.isArray( annotatedHtml[ i ] ) ) {
 			item = annotatedHtml[ i ][ 0 ];
 			itemAnnotations = new ve.dm.AnnotationSet( store, annotatedHtml[ i ][ 1 ] );
@@ -352,8 +361,8 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 					current.appendChild( doc.createTextNode( buffer ) );
 					buffer = '';
 				}
-				var preUnicorn = doc.createElement( 'img' );
-				var postUnicorn = doc.createElement( 'img' );
+				const preUnicorn = doc.createElement( 'img' );
+				const postUnicorn = doc.createElement( 'img' );
 				preUnicorn.className = 've-ce-unicorn ve-ce-pre-unicorn';
 				postUnicorn.className = 've-ce-unicorn ve-ce-post-unicorn';
 				$( preUnicorn ).data( 'modelOffset', ( this.getOffset() + 1 + i ) );
@@ -381,9 +390,9 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 				buffer = '';
 			}
 			// DOM equivalent of $( current ).append( item.clone() );
-			for ( var j = 0, jlen = item.length; j < jlen; j++ ) {
+			for ( let j = 0, jlen = item.length; j < jlen; j++ ) {
 				// Append a clone so as to not relocate the original node
-				var clone = item[ j ].cloneNode( true );
+				const clone = item[ j ].cloneNode( true );
 				// Store a reference to the original node in a property
 				clone.veOrigNode = item[ j ];
 				current.appendChild( clone );
@@ -414,7 +423,6 @@ ve.ce.ContentBranchNode.prototype.onModelDetach = function () {
  * @return {boolean} Whether the contents have changed
  */
 ve.ce.ContentBranchNode.prototype.renderContents = function () {
-	var node = this;
 	// TODO fix the use of ve.ce.DocumentNode and getSurface
 	if (
 		this.root instanceof ve.ce.DocumentNode &&
@@ -427,8 +435,8 @@ ve.ce.ContentBranchNode.prototype.renderContents = function () {
 		this.root.getSurface().setContentBranchNodeChanged();
 	}
 
-	var rendered = this.getRenderedContents();
-	var unicornInfo = rendered.unicornInfo;
+	let rendered = this.getRenderedContents();
+	const unicornInfo = rendered.unicornInfo;
 
 	// Return if unchanged. Test by building the new version and checking DOM-equality.
 	// However we have to normalize to cope with consecutive text nodes. We can't normalize
@@ -436,7 +444,7 @@ ve.ce.ContentBranchNode.prototype.renderContents = function () {
 	// this checking if this node has never rendered before.
 
 	if ( this.rendered ) {
-		var oldWrapper = this.$element[ 0 ].cloneNode( true );
+		const oldWrapper = this.$element[ 0 ].cloneNode( true );
 		$( oldWrapper )
 			.find( '.ve-ce-annotation-active' )
 			.removeClass( 've-ce-annotation-active' );
@@ -446,7 +454,7 @@ ve.ce.ContentBranchNode.prototype.renderContents = function () {
 			.unwrap()
 			.filter( '.ve-ce-chimera' )
 			.remove();
-		var newWrapper = this.$element[ 0 ].cloneNode( false );
+		const newWrapper = this.$element[ 0 ].cloneNode( false );
 		while ( rendered.firstChild ) {
 			newWrapper.appendChild( rendered.firstChild );
 		}
@@ -463,8 +471,8 @@ ve.ce.ContentBranchNode.prototype.renderContents = function () {
 	this.unicorns = unicornInfo.unicorns || null;
 
 	// Detach all child nodes from this.$element
-	for ( var i = 0, len = this.$element.length; i < len; i++ ) {
-		var element = this.$element[ i ];
+	for ( let i = 0, len = this.$element.length; i < len; i++ ) {
+		const element = this.$element[ i ];
 		while ( element.firstChild ) {
 			element.removeChild( element.firstChild );
 		}
@@ -490,8 +498,8 @@ ve.ce.ContentBranchNode.prototype.renderContents = function () {
 	// Highlight the node in debug mode
 	if ( ve.inputDebug ) {
 		this.$element.css( 'backgroundColor', '#eee' );
-		setTimeout( function () {
-			node.$element.css( 'backgroundColor', '' );
+		setTimeout( () => {
+			this.$element.css( 'backgroundColor', '' );
 		}, 300 );
 	}
 

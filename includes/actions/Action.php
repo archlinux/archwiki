@@ -22,6 +22,7 @@
 use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
@@ -30,6 +31,7 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * @defgroup Actions Actions
@@ -88,7 +90,7 @@ abstract class Action implements MessageLocalizer {
 	final public static function factory(
 		string $action,
 		Article $article,
-		IContextSource $context = null
+		?IContextSource $context = null
 	) {
 		return MediaWikiServices::getInstance()
 			->getActionFactory()
@@ -324,10 +326,7 @@ abstract class Action implements MessageLocalizer {
 		$right = $this->getRestriction();
 		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
 		if ( $right !== null ) {
-			$errors = $permissionManager->getPermissionErrors( $right, $user, $this->getTitle() );
-			if ( count( $errors ) ) {
-				throw new PermissionsError( $right, $errors );
-			}
+			$permissionManager->throwPermissionErrors( $right, $user, $this->getTitle() );
 		}
 
 		// If the action requires an unblock, explicitly check the user's block.
@@ -359,10 +358,19 @@ abstract class Action implements MessageLocalizer {
 	}
 
 	/**
-	 * Whether this action requires the wiki not to be locked
+	 * Indicates whether this action page write access to the wiki.
 	 *
-	 * Implementations of this methods must always return the same value, regardless
-	 * of parameters passed to the constructor or system state.
+	 * Subclasses must override this method to return true if the operation they will
+	 * perform is not "safe" per RFC 7231 section 4.2.1. A subclass's operation is "safe"
+	 * if it is essentially read-only, i.e. the client does not request nor expect any
+	 * state change that would be observable in the responses to future requests.
+	 *
+	 * Implementations of this method must always return the same value, regardless of the
+	 * parameters passed to the constructor or system state.
+	 *
+	 * When handling GET/HEAD requests, subclasses should only perform "safe" operations.
+	 * Note that subclasses handling POST requests might still implement "safe" operations,
+	 * particularly in the case where large input parameters are required.
 	 *
 	 * @since 1.17
 	 * @stable to override
@@ -475,7 +483,20 @@ abstract class Action implements MessageLocalizer {
 	}
 
 	/**
-	 * Indicates whether this action may perform database writes
+	 * Indicates whether POST requests handled by this action require write access to the wiki.
+	 *
+	 * Subclasses must override this method to return true if any of the operations that
+	 * they perform on POST requests are not "safe" per RFC 7231 section 4.2.1. A subclass's
+	 * operation is "safe" if it is essentially read-only, i.e. the client does not request
+	 * nor expect any state change that would be observable in the responses to future requests.
+	 *
+	 * Implementations of this method must always return the same value, regardless of the
+	 * parameters passed to the constructor or system state.
+	 *
+	 * When handling GET/HEAD requests, subclasses should only perform "safe" operations.
+	 * Note that some subclasses might only perform "safe" operations even for POST requests,
+	 * particularly in the case where large input parameters are required.
+	 *
 	 * @return bool
 	 * @since 1.27
 	 * @stable to override

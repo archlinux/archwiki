@@ -23,13 +23,12 @@
 	/**
 	 * Prioritize a promise
 	 *
-	 * @external Promise
 	 * @param {jQuery.Promise|Promise} promise Promise
 	 * @return {jQuery.Promise} The main deferred object that resolves
 	 *  or rejects when the latest promise is resolved or rejected.
 	 */
 	mw.echo.api.PromisePrioritizer.prototype.prioritize = function ( promise ) {
-		var previousPromise = this.promise;
+		const previousPromise = this.promise;
 
 		promise
 			.then(
@@ -54,14 +53,12 @@
 	 *  latest prioritized promise.
 	 */
 	mw.echo.api.PromisePrioritizer.prototype.setSuccess = function ( promise ) {
-		var prioritizer = this;
-
 		if ( this.promise === promise ) {
-			this.promise.done( function () {
-				prioritizer.deferred.resolve.apply( prioritizer.deferred, arguments );
+			this.promise.done( ( ...args ) => {
+				this.deferred.resolve( ...args );
 
-				prioritizer.promise = null;
-				prioritizer.deferred = $.Deferred();
+				this.promise = null;
+				this.deferred = $.Deferred();
 			} );
 		}
 	};
@@ -75,14 +72,12 @@
 	 *  latest prioritized promise
 	 */
 	mw.echo.api.PromisePrioritizer.prototype.setFailure = function ( promise ) {
-		var prioritizer = this;
-
 		if ( this.promise === promise ) {
-			this.promise.fail( function () {
-				prioritizer.deferred.reject.apply( prioritizer.deferred, arguments );
+			this.promise.fail( ( ...args ) => {
+				this.deferred.reject( ...args );
 
-				prioritizer.promise = null;
-				prioritizer.deferred = $.Deferred();
+				this.promise = null;
+				this.deferred = $.Deferred();
 			} );
 		}
 	};

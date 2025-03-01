@@ -18,6 +18,9 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use Exception;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RevisionLookup;
@@ -26,6 +29,7 @@ use MediaWiki\Storage\PageEditStash;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * Prepare an edit in shared cache so that it can be reused on edit
@@ -45,29 +49,18 @@ class ApiStashEdit extends ApiBase {
 	private IContentHandlerFactory $contentHandlerFactory;
 	private PageEditStash $pageEditStash;
 	private RevisionLookup $revisionLookup;
-	private IBufferingStatsdDataFactory $statsdDataFactory;
+	private StatsFactory $stats;
 	private WikiPageFactory $wikiPageFactory;
 	private TempUserCreator $tempUserCreator;
 	private UserFactory $userFactory;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param PageEditStash $pageEditStash
-	 * @param RevisionLookup $revisionLookup
-	 * @param IBufferingStatsdDataFactory $statsdDataFactory
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param TempUserCreator $tempUserCreator
-	 * @param UserFactory $userFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		IContentHandlerFactory $contentHandlerFactory,
 		PageEditStash $pageEditStash,
 		RevisionLookup $revisionLookup,
-		IBufferingStatsdDataFactory $statsdDataFactory,
+		StatsFactory $statsFactory,
 		WikiPageFactory $wikiPageFactory,
 		TempUserCreator $tempUserCreator,
 		UserFactory $userFactory
@@ -77,7 +70,7 @@ class ApiStashEdit extends ApiBase {
 		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->pageEditStash = $pageEditStash;
 		$this->revisionLookup = $revisionLookup;
-		$this->statsdDataFactory = $statsdDataFactory;
+		$this->stats = $statsFactory;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->tempUserCreator = $tempUserCreator;
 		$this->userFactory = $userFactory;
@@ -201,7 +194,10 @@ class ApiStashEdit extends ApiBase {
 			$this->pageEditStash->stashInputText( $text, $textHash );
 		}
 
-		$this->statsdDataFactory->increment( "editstash.cache_stores.$status" );
+		$this->stats->getCounter( 'editstash_cache_stores_total' )
+			->setLabel( 'status', $status )
+			->copyToStatsdAt( "editstash.cache_stores.$status" )
+			->increment();
 
 		$ret = [ 'status' => $status ];
 		// If we were rate-limited, we still return the pre-existing valid hash if one was passed
@@ -281,3 +277,6 @@ class ApiStashEdit extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Stashedit';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiStashEdit::class, 'ApiStashEdit' );

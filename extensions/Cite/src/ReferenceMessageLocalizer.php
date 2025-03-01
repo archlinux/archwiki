@@ -2,10 +2,10 @@
 
 namespace Cite;
 
-use Language;
-use Message;
+use MediaWiki\Language\Language;
+use MediaWiki\Message\Message;
 use MessageLocalizer;
-use MessageSpecifier;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Interface abstracts everything a Cite needs to do with languages.

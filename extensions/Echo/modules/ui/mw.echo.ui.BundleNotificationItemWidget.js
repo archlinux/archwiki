@@ -11,7 +11,7 @@
 	 * @param {mw.echo.Controller} controller Echo notifications controller
 	 * @param {mw.echo.dm.BundleNotificationItem} model Notification group model
 	 * @param {Object} [config] Configuration object
-	 * @cfg {boolean} [animateSorting=false] Animate the sorting of items
+	 * @param {boolean} [config.animateSorting=false] Animate the sorting of items
 	 */
 	mw.echo.ui.BundleNotificationItemWidget = function MwEchoUiBundleNotificationItemWidget( controller, model, config ) {
 		config = config || {};
@@ -23,7 +23,7 @@
 
 		this.listWidget = new mw.echo.ui.SortedListWidget(
 			// Sorting callback
-			function ( a, b ) {
+			( ( a, b ) => {
 				// Reverse sorting
 				if ( b.getTimestamp() < a.getTimestamp() ) {
 					return -1;
@@ -33,7 +33,7 @@
 
 				// Fallback on IDs
 				return b.getId() - a.getId();
-			},
+			} ),
 			// Config
 			{
 				classes: [ 'mw-echo-ui-bundleNotificationItemWidget-group' ],
@@ -50,11 +50,11 @@
 			.css( 'display', 'none' );
 
 		// Prevent clicks on the list padding area from activating the primary link
-		this.listWidget.$element.on( 'click', function ( e ) {
+		this.listWidget.$element.on( 'click', ( e ) => {
 			if ( e.target.closest( 'a' ) === this.$element[ 0 ] ) {
 				e.preventDefault();
 			}
-		}.bind( this ) );
+		} );
 
 		// Initialize closed
 		this.expanded = false;
@@ -114,21 +114,20 @@
 	 * in the model
 	 */
 	mw.echo.ui.BundleNotificationItemWidget.prototype.populateFromModel = function () {
-		var widget = this;
-		this.getList().addItems( this.model.getList().getItems().map( function ( singleNotifModel ) {
-			return new mw.echo.ui.SingleNotificationItemWidget(
-				widget.controller,
-				singleNotifModel,
-				{
-					$overlay: widget.$overlay,
-					bundle: true
-				}
-			);
-		} ) );
+		this.getList().addItems( this.model.getList().getItems().map( ( singleNotifModel ) => new mw.echo.ui.SingleNotificationItemWidget(
+			this.controller,
+			singleNotifModel,
+			{
+				$overlay: this.$overlay,
+				bundle: true
+			}
+		) ) );
 	};
 
 	/**
 	 * Update item state when the item model changes.
+	 *
+	 * @fires OO.EventEmitter#sortChange
 	 */
 	mw.echo.ui.BundleNotificationItemWidget.prototype.updateDataFromModel = function () {
 		this.toggleRead( this.model.isRead() );

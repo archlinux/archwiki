@@ -32,16 +32,16 @@ ve.dm.MWNowikiAnnotation.static.name = 'mwNowiki';
 ve.dm.MWNowikiAnnotation.static.matchRdfaTypes = [ 'mw:Nowiki' ];
 
 ve.dm.MWNowikiAnnotation.static.toDomElements = function ( dataElement, doc, converter, childDomElements ) {
-	var originalDomElements = converter.getStore().value( dataElement.originalDomElementsHash ),
+	const originalDomElements = converter.getStore().value( dataElement.originalDomElementsHash ),
 		originalChildren = originalDomElements && originalDomElements[ 0 ] && originalDomElements[ 0 ].childNodes,
-		contentsChanged = false,
 		domElement = document.createElement( 'span' );
 
+	let contentsChanged = false;
 	// Determine whether the contents changed
 	if ( !originalChildren || childDomElements.length !== originalChildren.length ) {
 		contentsChanged = true;
 	} else {
-		for ( var i = 0, len = originalChildren.length; i < len; i++ ) {
+		for ( let i = 0, len = originalChildren.length; i < len; i++ ) {
 			if ( !originalChildren[ i ].isEqualNode( childDomElements[ i ] ) ) {
 				contentsChanged = true;
 				break;

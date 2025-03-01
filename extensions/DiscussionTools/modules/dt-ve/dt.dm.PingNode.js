@@ -40,13 +40,12 @@ DmMWPingNode.static.matchFunction = function () {
 DmMWPingNode.static.disallowedAnnotationTypes = [ 'link' ];
 
 DmMWPingNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	var domElements,
-		prefix = mw.msg( 'discussiontools-replywidget-mention-prefix' ),
+	const prefix = mw.msg( 'discussiontools-replywidget-mention-prefix' ),
 		suffix = mw.msg( 'discussiontools-replywidget-mention-suffix' ),
 		title = mw.Title.makeTitle( mw.config.get( 'wgNamespaceIds' ).user, dataElement.attributes.user );
 
 	dataElement = ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle( title );
-	domElements = ve.dm.MWInternalLinkAnnotation.static.toDomElements( dataElement, doc, converter );
+	const domElements = ve.dm.MWInternalLinkAnnotation.static.toDomElements( dataElement, doc, converter );
 	domElements[ 0 ].appendChild(
 		doc.createTextNode( title.getMainText() )
 	);

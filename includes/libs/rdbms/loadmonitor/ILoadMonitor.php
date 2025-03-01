@@ -19,10 +19,10 @@
  */
 namespace Wikimedia\Rdbms;
 
-use BagOStuff;
 use Psr\Log\LoggerAwareInterface;
-use StatsdAwareInterface;
-use WANObjectCache;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\Stats\StatsdAwareInterface;
 
 /**
  * Database load monitoring interface
@@ -42,14 +42,14 @@ interface ILoadMonitor extends LoggerAwareInterface, StatsdAwareInterface {
 	 * @param BagOStuff $sCache Local server memory cache
 	 * @param WANObjectCache $wCache Local cluster memory cache
 	 * @param array $options Additional parameters include:
-	 *   - maxConnCount: maximum number of connections before logging a warning [default: 500]
+	 *   - maxConnCount: maximum number of connections before circuit breaking to kick in [default: infinity]
 	 */
 	public function __construct( ILoadBalancer $lb, BagOStuff $sCache, WANObjectCache $wCache, $options );
 
 	/**
 	 * Perform load ratio adjustment before deciding which server to use
 	 *
-	 * @param int[] &$weightByServer Map of (server index => float weight)
+	 * @param array<int,int|float> &$weightByServer Map of (server index => weight)
 	 */
 	public function scaleLoads( array &$weightByServer );
 }

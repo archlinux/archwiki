@@ -2,6 +2,7 @@
 
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Language\LanguageCode;
 use MediaWiki\MainConfigNames;
 use MediaWiki\User\Options\DefaultOptionsLookup;
 use MediaWiki\User\Options\UserOptionsLookup;
@@ -57,7 +58,7 @@ abstract class UserOptionsLookupTestBase extends MediaWikiIntegrationTestCase {
 	}
 
 	protected function getAnon(
-		string $name = 'anon'
+		string $name = '127.0.0.1'
 	): UserIdentity {
 		return new UserIdentityValue( 0, $name );
 	}
@@ -71,8 +72,7 @@ abstract class UserOptionsLookupTestBase extends MediaWikiIntegrationTestCase {
 		string $langCode = 'qqq',
 		array $defaultOptionsOverrides = []
 	): DefaultOptionsLookup {
-		$lang = $this->createMock( Language::class );
-		$lang->method( 'getCode' )->willReturn( $langCode );
+		$lang = new LanguageCode( $langCode );
 		return new DefaultOptionsLookup(
 			new ServiceOptions(
 				DefaultOptionsLookup::CONSTRUCTOR_OPTIONS,

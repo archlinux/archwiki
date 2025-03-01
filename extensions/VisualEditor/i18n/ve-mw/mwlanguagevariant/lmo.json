@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Salvemm el lombard"
 		]
 	},
@@ -14,7 +15,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Questa chì l'è una regola sconduda",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Sta regola chì la rivarda el titol de la pagina.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Codes de la lengua",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<No valid>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>No valid</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Lengua",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Sorgent",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destinazzion",

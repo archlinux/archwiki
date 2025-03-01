@@ -17,7 +17,7 @@
  * @param {ve.dm.MWTemplatePlaceholderModel} placeholder Template placeholder
  * @param {string} name Unique symbolic name of page
  * @param {Object} [config] Configuration options
- * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
+ * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
  */
 ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeholder, name, config ) {
 	// Configuration initialization
@@ -53,7 +53,7 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 	} )
 		.connect( this, { click: 'onAddTemplate' } );
 
-	var addTemplateActionFieldLayout = new OO.ui.ActionFieldLayout(
+	const addTemplateActionFieldLayout = new OO.ui.ActionFieldLayout(
 		this.addTemplateInput,
 		this.addTemplateButton,
 		{
@@ -62,11 +62,11 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 		}
 	);
 
-	var dialogTitle = this.placeholder.getTransclusion().isSingleTemplate() ?
+	const dialogTitle = this.placeholder.getTransclusion().isSingleTemplate() ?
 		'visualeditor-dialog-transclusion-template-search' :
 		'visualeditor-dialog-transclusion-add-template';
 
-	var addTemplateFieldsetConfig = {
+	const addTemplateFieldsetConfig = {
 		// The following messages are used here:
 		// * visualeditor-dialog-transclusion-template-search
 		// * visualeditor-dialog-transclusion-add-template
@@ -106,13 +106,13 @@ ve.ui.MWTemplatePlaceholderPage.prototype.focus = function () {
  * @private
  */
 ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
-	var transclusion = this.placeholder.getTransclusion(),
+	const transclusion = this.placeholder.getTransclusion(),
 		menu = this.addTemplateInput.getLookupMenu();
 
 	if ( menu.isVisible() ) {
 		menu.chooseItem( menu.findSelectedItem() );
 	}
-	var name = this.addTemplateInput.getMWTitle();
+	const name = this.addTemplateInput.getMWTitle();
 	if ( !name ) {
 		// Invalid titles return null, so abort here.
 		return;
@@ -120,19 +120,19 @@ ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
 
 	// TODO tracking will only be implemented temporarily to answer questions on
 	// template usage for the Technical Wishes topic area see T258917
-	var event = {
+	const event = {
 		action: 'add-template',
 		// eslint-disable-next-line camelcase
 		template_names: [ name.getPrefixedText() ]
 	};
-	var editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
+	const editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
 	if ( editCountBucket !== null ) {
 		// eslint-disable-next-line camelcase
 		event.user_edit_count_bucket = editCountBucket;
 	}
 	mw.track( 'event.VisualEditorTemplateDialogUse', event );
 
-	var part = ve.dm.MWTemplateModel.newFromName( transclusion, name );
+	const part = ve.dm.MWTemplateModel.newFromName( transclusion, name );
 	transclusion.replacePart( this.placeholder, part ).then(
 		transclusion.addPromptedParameters.bind( transclusion )
 	);

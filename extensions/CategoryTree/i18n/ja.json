@@ -9,10 +9,9 @@
 			"Mfuji",
 			"Otokoume",
 			"Shirayuki",
-			"Whym",
-			"Yusuke1109",
 			"Waki285",
-			"Ant176"
+			"Whym",
+			"Yusuke1109"
 		]
 	},
 	"categorytree": "カテゴリツリー",
@@ -42,5 +41,9 @@
 	"categorytree-no-pages": "ページや下位カテゴリがありません",
 	"categorytree-not-found": "カテゴリ「<i>$1</i>」はありません",
 	"categorytree-error": "データの読み込み中に問題が発生しました。",
-	"categorytree-retry": "時間をおいてからもう一度試してください。"
+	"categorytree-retry": "時間をおいてからもう一度試してください。",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: 引数 <code>onlyroot</code> は非推奨です。代わりに <code>depth=\"0\"</code> を使用してください。",
+	"categorytree-deprecation-warning": "'''警告:''' このページでは、非推奨の引数を持つ<code>&lt;categorytree&lt;</code>を使用しています。",
+	"categorytree-deprecation-category": "非推奨のcategorytree引数を使用しているページ",
+	"categorytree-deprecation-category-desc": "このページでは、 <code>onlyroot</code>などの非推奨の categorytree 引数を使用しています。"
 }

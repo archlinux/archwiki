@@ -21,7 +21,7 @@
 namespace MediaWiki\Site;
 
 use InvalidArgumentException;
-use Xml;
+use MediaWiki\Xml\Xml;
 
 /**
  * Utility for exporting site entries to XML.
@@ -119,5 +119,5 @@ class SiteExporter {
 
 }
 
-/** @deprecated class alias since 1.41 */
+/** @deprecated class alias since 1.42 */
 class_alias( SiteExporter::class, 'SiteExporter' );

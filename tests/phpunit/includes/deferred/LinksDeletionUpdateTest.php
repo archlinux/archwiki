@@ -2,6 +2,7 @@
 
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\TitleValue;
 
 /**
@@ -38,7 +39,7 @@ class LinksDeletionUpdateTest extends MediaWikiLangTestCase {
 		$po->addLink( new TitleValue( 0, 'foo', '', 'iwprefix' ) );
 		$po->addLanguageLink( new TitleValue( 0, 'Francais', '', 'fr' ) );
 		$po->addLink( new TitleValue( 0, 'Target' ) );
-		$po->setPageProperty( 'int', 1 );
+		$po->setNumericPageProperty( 'int', 1 );
 		$po->addTemplate( new TitleValue( NS_TEMPLATE, '!' ), 1, 1 );
 
 		$linksUpdate = new LinksUpdate( $title, $po, false );
@@ -58,7 +59,7 @@ class LinksDeletionUpdateTest extends MediaWikiLangTestCase {
 			'templatelinks' => 'tl_from',
 		];
 		foreach ( $tables as $table => $fromField ) {
-			$res = $this->db->newSelectQueryBuilder()
+			$res = $this->getDb()->newSelectQueryBuilder()
 				->select( [ 1 ] )
 				->from( $table )
 				->where( [ $fromField => $id ] )
@@ -73,7 +74,7 @@ class LinksDeletionUpdateTest extends MediaWikiLangTestCase {
 		$linksDeletionUpdate->doUpdate();
 
 		foreach ( $tables as $table => $fromField ) {
-			$res = $this->db->newSelectQueryBuilder()
+			$res = $this->getDb()->newSelectQueryBuilder()
 				->select( [ 1 ] )
 				->from( $table )
 				->where( [ $fromField => $id ] )

@@ -7,18 +7,19 @@
 ( function () {
 
 	/**
-	 * Creates an mw.widgets.MediaSearchWidget object.
+	 * @classdesc Media search widget.
 	 *
 	 * @class
 	 * @extends OO.ui.SearchWidget
 	 *
 	 * @constructor
+	 * @description Creates an mw.widgets.MediaSearchWidget object.
 	 * @param {Object} [config] Configuration options
 	 * @param {number} [size] Vertical size of thumbnails
 	 */
 	mw.widgets.MediaSearchWidget = function MwWidgetsMediaSearchWidget( config ) {
 		// Configuration initialization
-		config = $.extend( {
+		config = Object.assign( {
 			placeholder: mw.msg( 'mw-widgets-mediasearch-input-placeholder' )
 		}, config );
 
@@ -29,7 +30,7 @@
 		this.providers = {};
 		this.lastQueryValue = '';
 
-		var queueConfig = {
+		const queueConfig = {
 			limit: this.constructor.static.limit,
 			threshold: this.constructor.static.threshold
 		};
@@ -42,7 +43,6 @@
 		this.promises = [];
 		this.$panels = config.$panels;
 
-		// eslint-disable-next-line security/detect-non-literal-regexp
 		this.externalLinkUrlProtocolsRegExp = new RegExp(
 			'^(' + mw.config.get( 'wgUrlProtocols' ) + ')',
 			'i'
@@ -105,7 +105,7 @@
 	 * be updated.
 	 */
 	mw.widgets.MediaSearchWidget.prototype.afterResultsResize = function () {
-		var items = this.currentItemCache;
+		const items = this.currentItemCache;
 
 		if (
 			items.length > 0 &&
@@ -149,7 +149,7 @@
 	 * @method
 	 */
 	mw.widgets.MediaSearchWidget.prototype.queryMediaQueue = function () {
-		var search = this,
+		const search = this,
 			value = this.getQueryValue();
 
 		if ( value === '' ) {
@@ -173,7 +173,7 @@
 		search.noItemsMessage.toggle( false );
 
 		this.currentQueue.get( this.constructor.static.limit )
-			.then( function ( items ) {
+			.then( ( items ) => {
 				if ( items.length > 0 ) {
 					search.processQueueResults( items );
 					search.currentItemCache = search.currentItemCache.concat( items );
@@ -195,7 +195,7 @@
 	 * @param {Object[]} items Given items by the media queue
 	 */
 	mw.widgets.MediaSearchWidget.prototype.processQueueResults = function ( items ) {
-		var resultWidgets = [],
+		const resultWidgets = [],
 			inputSearchQuery = this.getQueryValue(),
 			queueSearchQuery = this.searchQueue.getSearchQuery();
 
@@ -206,8 +206,8 @@
 			return;
 		}
 
-		for ( var i = 0, len = items.length; i < len; i++ ) {
-			var title = new mw.Title( items[ i ].title ).getMainText();
+		for ( let i = 0, len = items.length; i < len; i++ ) {
+			const title = new mw.Title( items[ i ].title ).getMainText();
 			// Do not insert duplicates
 			if ( !Object.prototype.hasOwnProperty.call( this.itemCache, title ) ) {
 				this.itemCache[ title ] = true;
@@ -232,7 +232,7 @@
 	 * @return {string} Query value
 	 */
 	mw.widgets.MediaSearchWidget.prototype.getQueryValue = function () {
-		var queryValue = this.query.getValue().trim();
+		let queryValue = this.query.getValue().trim();
 
 		if ( queryValue.match( this.externalLinkUrlProtocolsRegExp ) ) {
 			queryValue = queryValue.match( /.+\/([^/]+)/ )[ 1 ];
@@ -247,7 +247,7 @@
 	 */
 	mw.widgets.MediaSearchWidget.prototype.onQueryChange = function () {
 		// Get the sanitized query value
-		var queryValue = this.getQueryValue();
+		const queryValue = this.getQueryValue();
 
 		if ( queryValue === this.lastQueryValue ) {
 			return;
@@ -280,7 +280,7 @@
 	 * @param {jQuery.Event} e Scroll event
 	 */
 	mw.widgets.MediaSearchWidget.prototype.onResultsScroll = function () {
-		var position = this.$results.scrollTop() + this.$results.outerHeight(),
+		const position = this.$results.scrollTop() + this.$results.outerHeight(),
 			threshold = this.results.$element.outerHeight() - this.rowHeight * 3;
 
 		// Check if we need to ask for more results
@@ -295,13 +295,13 @@
 	 * Lazy-load the images that are visible.
 	 */
 	mw.widgets.MediaSearchWidget.prototype.lazyLoadResults = function () {
-		var items = this.results.getItems(),
+		const items = this.results.getItems(),
 			resultsScrollTop = this.$results.scrollTop(),
 			position = resultsScrollTop + this.$results.outerHeight();
 
 		// Lazy-load results
-		for ( var i = 0; i < items.length; i++ ) {
-			var elementTop = items[ i ].$element.position().top;
+		for ( let i = 0; i < items.length; i++ ) {
+			const elementTop = items[ i ].$element.position().top;
 			if ( elementTop <= position && !items[ i ].hasSrc() ) {
 				// Load the image
 				items[ i ].lazyLoad();
@@ -314,7 +314,7 @@
 	 * the rows array.
 	 */
 	mw.widgets.MediaSearchWidget.prototype.resetRows = function () {
-		for ( var i = 0, len = this.rows.length; i < len; i++ ) {
+		for ( let i = 0, len = this.rows.length; i < len; i++ ) {
 			this.rows[ i ].$element.remove();
 		}
 
@@ -329,7 +329,7 @@
 	 * @return {number} Row index
 	 */
 	mw.widgets.MediaSearchWidget.prototype.getAvailableRow = function () {
-		var row;
+		let row;
 
 		if ( this.rows.length === 0 ) {
 			row = 0;
@@ -383,66 +383,64 @@
 	 * @param {mw.widgets.MediaResultWidget[]} items An array of item elements
 	 */
 	mw.widgets.MediaSearchWidget.prototype.onResultsChange = function ( items ) {
-		var search = this;
-
 		if ( !items.length ) {
 			return;
 		}
 
 		// Add method to a queue; this queue will only run when the widget
 		// is visible
-		this.layoutQueue.push( function () {
-			var maxRowWidth = search.results.$element.width() - 15;
+		this.layoutQueue.push( () => {
+			const maxRowWidth = this.results.$element.width() - 15;
 
 			// Go over the added items
-			var row = search.getAvailableRow();
-			for ( var i = 0, ilen = items.length; i < ilen; i++ ) {
+			let row = this.getAvailableRow();
+			for ( let i = 0, ilen = items.length; i < ilen; i++ ) {
 
 				// Check item has just been added
 				if ( items[ i ].row !== null ) {
 					continue;
 				}
 
-				var itemWidth = items[ i ].$element.outerWidth( true );
+				const itemWidth = items[ i ].$element.outerWidth( true );
 
 				// Add items to row until it is full
-				if ( search.rows[ row ].width + itemWidth >= maxRowWidth ) {
+				if ( this.rows[ row ].width + itemWidth >= maxRowWidth ) {
 					// Mark this row as full
-					search.rows[ row ].isFull = true;
-					search.rows[ row ].$element.attr( 'data-full', true );
+					this.rows[ row ].isFull = true;
+					this.rows[ row ].$element.attr( 'data-full', true );
 
 					// Find the resize factor
-					var effectiveWidth = search.rows[ row ].width;
-					var resizeFactor = maxRowWidth / effectiveWidth;
+					const effectiveWidth = this.rows[ row ].width;
+					const resizeFactor = maxRowWidth / effectiveWidth;
 
-					search.rows[ row ].$element.attr( 'data-effectiveWidth', effectiveWidth );
-					search.rows[ row ].$element.attr( 'data-resizeFactor', resizeFactor );
-					search.rows[ row ].$element.attr( 'data-row', row );
+					this.rows[ row ].$element.attr( 'data-effectiveWidth', effectiveWidth );
+					this.rows[ row ].$element.attr( 'data-resizeFactor', resizeFactor );
+					this.rows[ row ].$element.attr( 'data-row', row );
 
 					// Resize all images in the row to fit the width
-					for ( var j = 0, jlen = search.rows[ row ].items.length; j < jlen; j++ ) {
-						search.rows[ row ].items[ j ].resizeThumb( resizeFactor );
+					for ( let j = 0, jlen = this.rows[ row ].items.length; j < jlen; j++ ) {
+						this.rows[ row ].items[ j ].resizeThumb( resizeFactor );
 					}
 
 					// find another row
-					row = search.getAvailableRow();
+					row = this.getAvailableRow();
 				}
 
 				// Add the cumulative
-				search.rows[ row ].width += itemWidth;
+				this.rows[ row ].width += itemWidth;
 
 				// Store reference to the item and to the row
-				search.rows[ row ].items.push( items[ i ] );
+				this.rows[ row ].items.push( items[ i ] );
 				items[ i ].setRow( row );
 
 				// Append the item
-				search.rows[ row ].$element.append( items[ i ].$element );
+				this.rows[ row ].$element.append( items[ i ].$element );
 
 			}
 
 			// If we have less than 4 rows, call for more images
-			if ( search.rows.length < 4 ) {
-				search.queryMediaQueue();
+			if ( this.rows.length < 4 ) {
+				this.queryMediaQueue();
 			}
 		} );
 		this.runLayoutQueue();
@@ -454,7 +452,7 @@
 	mw.widgets.MediaSearchWidget.prototype.runLayoutQueue = function () {
 		// eslint-disable-next-line no-jquery/no-sizzle
 		if ( this.$element.is( ':visible' ) ) {
-			for ( var i = 0, len = this.layoutQueue.length; i < len; i++ ) {
+			for ( let i = 0, len = this.layoutQueue.length; i < len; i++ ) {
 				this.layoutQueue.pop()();
 			}
 		}

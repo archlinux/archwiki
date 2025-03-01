@@ -1,18 +1,17 @@
 <?php
 namespace MediaWiki\Skins\Vector\Tests\Integration;
 
-use LinkCache;
+use MediaWiki\Cache\LinkCache;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Skins\Vector\SkinVectorLegacy;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TalkPageNotificationManager;
 use MediaWikiIntegrationTestCase;
-use RequestContext;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * Class VectorTemplateTest
- * @package MediaWiki\Skins\Vector\Tests\Unit
  * @group Vector
  * @group Skins
  */

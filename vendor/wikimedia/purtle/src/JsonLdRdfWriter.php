@@ -18,7 +18,7 @@ class JsonLdRdfWriter extends RdfWriterBase {
 	 *
 	 * @see https://www.w3.org/TR/json-ld/#the-context
 	 *
-	 * @var string[]
+	 * @var array[]
 	 */
 	protected $context = [];
 
@@ -35,13 +35,13 @@ class JsonLdRdfWriter extends RdfWriterBase {
 	/**
 	 * The JSON-LD "@graph", which lists all the nodes described by this JSON-LD object.
 	 * We apply an optimization eliminating the "@graph" entry if it consists
-	 * of a single node; in that case we will set $this->graph to null in
+	 * of a single node; in that case, we will set $this->graph to null in
 	 * #finishJson() to ensure that the deferred callback in #finishDocument()
 	 * doesn't later emit "@graph".
 	 *
 	 * @see https://www.w3.org/TR/json-ld/#named-graphs
 	 *
-	 * @var array[]|null
+	 * @var array|null
 	 */
 	private $graph = [];
 
@@ -97,7 +97,7 @@ class JsonLdRdfWriter extends RdfWriterBase {
 	 * @param string $role
 	 * @param BNodeLabeler|null $labeler
 	 */
-	public function __construct( $role = parent::DOCUMENT_ROLE, BNodeLabeler $labeler = null ) {
+	public function __construct( $role = parent::DOCUMENT_ROLE, ?BNodeLabeler $labeler = null ) {
 		parent::__construct( $role, $labeler );
 
 		// The following named methods are protected, not private, so we
@@ -152,7 +152,7 @@ class JsonLdRdfWriter extends RdfWriterBase {
 		} else {
 			if ( $base !== '_' && isset( $this->prefixes[ $base ] ) ) {
 				if ( $base === '' ) {
-					// Empty prefix not supported; use full IRI
+					// Empty prefixes are not supported; use full IRI
 					return $this->prefixes[ $base ] . $local;
 				}
 				if ( !isset( $this->context[ $base ] ) ) {
@@ -191,7 +191,7 @@ class JsonLdRdfWriter extends RdfWriterBase {
 	 * @return string
 	 */
 	private function getCurrentTerm() {
-		list( $base, $local ) = $this->currentPredicate;
+		[ $base, $local ] = $this->currentPredicate;
 		$predIRI = $this->toIRI( $base, $local );
 		if ( $predIRI === self::RDF_TYPE_IRI ) {
 			return $predIRI;

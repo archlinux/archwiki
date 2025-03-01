@@ -1,20 +1,20 @@
 /*!
  * JavaScript for signup form.
  */
-var HtmlformChecker = require( './HtmlformChecker.js' );
+const HtmlformChecker = require( './HtmlformChecker.js' );
 
 // When sending password by email, hide the password input fields.
-$( function () {
+$( () => {
 	// Always required if checked, otherwise it depends, so we use the original
-	var $emailLabel = $( 'label[for="wpEmail"] .cdx-label__label__text' ),
+	const $emailLabel = $( 'label[for="wpEmail"] .cdx-label__label__text' ),
 		originalText = $emailLabel.text(),
 		requiredText = mw.msg( 'createacct-emailrequired' ),
 		$createByMailCheckbox = $( '#wpCreateaccountMail' ),
-		$beforePwds = $( '.mw-row-password' ).first().prev(),
-		$pwds;
+		$beforePwds = $( '.mw-row-password' ).first().prev();
+	let $pwds;
 
 	function updateForCheckbox() {
-		var checked = $createByMailCheckbox.prop( 'checked' );
+		const checked = $createByMailCheckbox.prop( 'checked' );
 		if ( checked ) {
 			$pwds = $( '.mw-row-password' ).detach();
 			// TODO when this uses the optional flag, show/hide that instead of changing the text
@@ -33,24 +33,22 @@ $( function () {
 } );
 
 // Check if the username is invalid or already taken; show username normalisation warning
-mw.hook( 'htmlform.enhance' ).add( function ( $root ) {
-	var $usernameInput = $root.find( '#wpName2' ),
+mw.hook( 'htmlform.enhance' ).add( ( $root ) => {
+	const $usernameInput = $root.find( '#wpName2' ),
 		$passwordInput = $root.find( '#wpPassword2' ),
 		$emailInput = $root.find( '#wpEmail' ),
 		$realNameInput = $root.find( '#wpRealName' ),
-		api = new mw.Api(),
-		usernameChecker, passwordChecker;
+		api = new mw.Api();
 
 	function checkUsername( username ) {
 		// We could just use .then() if we didn't have to pass on .abort()…
-		var d, apiPromise;
 
 		// Leading/trailing/multiple whitespace characters are always stripped in usernames,
 		// this should not require a warning. We do warn about underscores.
 		username = username.replace( / +/g, ' ' ).trim();
 
-		d = $.Deferred();
-		apiPromise = api.get( {
+		const d = $.Deferred();
+		const apiPromise = api.get( {
 			action: 'query',
 			list: 'users',
 			ususers: username,
@@ -60,8 +58,8 @@ mw.hook( 'htmlform.enhance' ).add( function ( $root ) {
 			errorsuselocal: true,
 			uselang: mw.config.get( 'wgUserLanguage' )
 		} )
-			.done( function ( resp ) {
-				var userinfo = resp.query.users[ 0 ];
+			.done( ( resp ) => {
+				const userinfo = resp.query.users[ 0 ];
 
 				if ( resp.query.users.length !== 1 || userinfo.invalid ) {
 					d.resolve( { valid: false, messages: [ mw.message( 'noname' ).parseDom() ] } );
@@ -70,9 +68,7 @@ mw.hook( 'htmlform.enhance' ).add( function ( $root ) {
 				} else if ( !userinfo.cancreate ) {
 					d.resolve( {
 						valid: false,
-						messages: userinfo.cancreateerror ? userinfo.cancreateerror.map( function ( m ) {
-							return m.html;
-						} ) : []
+						messages: userinfo.cancreateerror ? userinfo.cancreateerror.map( ( m ) => m.html ) : []
 					} );
 				} else if ( userinfo.name !== username ) {
 					d.resolve( { valid: true, messages: [
@@ -89,15 +85,14 @@ mw.hook( 'htmlform.enhance' ).add( function ( $root ) {
 
 	function checkPassword() {
 		// We could just use .then() if we didn't have to pass on .abort()…
-		var apiPromise,
-			d = $.Deferred();
+		const d = $.Deferred();
 
 		if ( $usernameInput.val().trim() === '' ) {
 			d.resolve( { valid: true, messages: [] } );
 			return d.promise();
 		}
 
-		apiPromise = api.post( {
+		const apiPromise = api.post( {
 			action: 'validatepassword',
 			user: $usernameInput.val(),
 			password: $passwordInput.val(),
@@ -108,14 +103,12 @@ mw.hook( 'htmlform.enhance' ).add( function ( $root ) {
 			errorsuselocal: true,
 			uselang: mw.config.get( 'wgUserLanguage' )
 		} )
-			.done( function ( resp ) {
-				var pwinfo = resp.validatepassword || {};
+			.done( ( resp ) => {
+				const pwinfo = resp.validatepassword || {};
 
 				d.resolve( {
 					valid: pwinfo.validity === 'Good',
-					messages: pwinfo.validitymessages ? pwinfo.validitymessages.map( function ( m ) {
-						return m.html;
-					} ) : []
+					messages: pwinfo.validitymessages ? pwinfo.validitymessages.map( ( m ) => m.html ) : []
 				} );
 			} )
 			.fail( d.reject );
@@ -123,9 +116,9 @@ mw.hook( 'htmlform.enhance' ).add( function ( $root ) {
 		return d.promise( { abort: apiPromise.abort } );
 	}
 
-	usernameChecker = new HtmlformChecker( $usernameInput, checkUsername );
+	const usernameChecker = new HtmlformChecker( $usernameInput, checkUsername );
 	usernameChecker.attach();
 
-	passwordChecker = new HtmlformChecker( $passwordInput, checkPassword );
+	const passwordChecker = new HtmlformChecker( $passwordInput, checkPassword );
 	passwordChecker.attach( $usernameInput.add( $emailInput ).add( $realNameInput ) );
 } );

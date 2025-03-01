@@ -64,5 +64,7 @@
 	"scribunto-limitreport-profile-ms": "$1 מ\"ש",
 	"scribunto-limitreport-logs": "יומני לואה",
 	"nstab-module": "יחידה",
-	"tooltip-ca-nstab-module": "צפייה בדף היחידה"
+	"tooltip-ca-nstab-module": "צפייה בדף היחידה",
+	"namespaceinfo-description-ns828": "מרחב שם ליחידות קוד בשפת לורה, שאפשר לקרוא להן מתוך דפי ויקי, ולדפט התיעוד שלהן.",
+	"namespaceinfo-description-ns829": "דפי שיחה ליחידות ולתיעוד"
 }

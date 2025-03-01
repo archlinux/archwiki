@@ -22,7 +22,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
@@ -55,12 +57,14 @@ class DeleteDefaultMessages extends Maintenance {
 
 		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_namespace', 'page_title' ] )
-			->tables( [ 'page', 'revision' ] + $actorQuery['tables'] )
+			->from( 'page' )
+			->join( 'revision', null, 'page_latest=rev_id' )
+			->tables( $actorQuery['tables'] )
 			->where( [
 				'page_namespace' => NS_MEDIAWIKI,
 				$actorQuery['conds'],
 			] )
-			->joinConds( [ 'revision' => [ 'JOIN', 'page_latest=rev_id' ] ] + $actorQuery['joins'] )
+			->joinConds( $actorQuery['joins'] )
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
@@ -110,5 +114,7 @@ class DeleteDefaultMessages extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = DeleteDefaultMessages::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -20,11 +20,18 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use Article;
+use ChangeTags;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Request\DerivativeRequest;
@@ -36,7 +43,9 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
+use MWContentSerializationException;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -72,34 +81,21 @@ class ApiEditPage extends ApiBase {
 	 * Sends a cookie so anons get talk message notifications, mirroring SubmitAction (T295910)
 	 */
 	private function persistGlobalSession() {
-		MediaWiki\Session\SessionManager::getGlobalSession()->persist();
+		\MediaWiki\Session\SessionManager::getGlobalSession()->persist();
 	}
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param IContentHandlerFactory|null $contentHandlerFactory
-	 * @param RevisionLookup|null $revisionLookup
-	 * @param WatchedItemStoreInterface|null $watchedItemStore
-	 * @param WikiPageFactory|null $wikiPageFactory
-	 * @param WatchlistManager|null $watchlistManager
-	 * @param UserOptionsLookup|null $userOptionsLookup
-	 * @param RedirectLookup|null $redirectLookup
-	 * @param TempUserCreator|null $tempUserCreator
-	 * @param UserFactory|null $userFactory
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
-		IContentHandlerFactory $contentHandlerFactory = null,
-		RevisionLookup $revisionLookup = null,
-		WatchedItemStoreInterface $watchedItemStore = null,
-		WikiPageFactory $wikiPageFactory = null,
-		WatchlistManager $watchlistManager = null,
-		UserOptionsLookup $userOptionsLookup = null,
-		RedirectLookup $redirectLookup = null,
-		TempUserCreator $tempUserCreator = null,
-		UserFactory $userFactory = null
+		string $moduleName,
+		?IContentHandlerFactory $contentHandlerFactory = null,
+		?RevisionLookup $revisionLookup = null,
+		?WatchedItemStoreInterface $watchedItemStore = null,
+		?WikiPageFactory $wikiPageFactory = null,
+		?WatchlistManager $watchlistManager = null,
+		?UserOptionsLookup $userOptionsLookup = null,
+		?RedirectLookup $redirectLookup = null,
+		?TempUserCreator $tempUserCreator = null,
+		?UserFactory $userFactory = null
 	) {
 		parent::__construct( $mainModule, $moduleName );
 
@@ -479,6 +475,7 @@ class ApiEditPage extends ApiBase {
 		// This is kind of a hack but it's the best we can do to make extensions work
 		$requestArray += $this->getRequest()->getValues();
 
+		// phpcs:ignore MediaWiki.Usage.ExtendClassUsage.FunctionVarUsage,MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
 		global $wgTitle, $wgRequest;
 
 		$req = new DerivativeRequest( $this->getRequest(), $requestArray, true );
@@ -532,12 +529,14 @@ class ApiEditPage extends ApiBase {
 
 		// Fake $wgRequest for some hooks inside EditPage
 		// @todo FIXME: This interface SUCKS
+		// phpcs:disable MediaWiki.Usage.ExtendClassUsage.FunctionVarUsage
 		$oldRequest = $wgRequest;
 		$wgRequest = $req;
 
 		$status = $ep->attemptSave( $result );
 		$statusValue = is_int( $status->value ) ? $status->value : 0;
 		$wgRequest = $oldRequest;
+		// phpcs:enable MediaWiki.Usage.ExtendClassUsage.FunctionVarUsage
 
 		$r = [];
 		switch ( $statusValue ) {
@@ -549,7 +548,7 @@ class ApiEditPage extends ApiBase {
 					$apiResult->addValue( null, $this->getModuleName(), $r );
 					return;
 				}
-				if ( !$status->getErrors() ) {
+				if ( !$status->getMessages() ) {
 					// This appears to be unreachable right now, because all
 					// code paths will set an error.  Could change, though.
 					$status->fatal( 'hookaborted' ); // @codeCoverageIgnore
@@ -604,12 +603,22 @@ class ApiEditPage extends ApiBase {
 				}
 				$this->persistGlobalSession();
 
-				if ( isset( $result['savedTempUser'] ) ) {
+				// If the temporary account was created in this request,
+				// or if the temporary account has zero edits (implying
+				// that the account was created during a failed edit
+				// attempt in a previous request), perform the top-level
+				// redirect to ensure the account is attached.
+				// Note that the temp user could already have performed
+				// the top-level redirect if this a first edit on
+				// a wiki that is not the user's home wiki.
+				$shouldRedirectForTempUser = isset( $result['savedTempUser'] ) ||
+					( $user->isTemp() && ( $user->getEditCount() === 0 ) );
+				if ( $shouldRedirectForTempUser ) {
 					$r['tempusercreated'] = true;
 					$params['returnto'] ??= $titleObj->getPrefixedDBkey();
 					$redirectUrl = $this->getTempUserRedirectUrl(
 						$params,
-						$result['savedTempUser']
+						$result['savedTempUser'] ?? $user
 					);
 					if ( $redirectUrl ) {
 						$r['tempusercreatedredirect'] = $redirectUrl;
@@ -619,7 +628,7 @@ class ApiEditPage extends ApiBase {
 				break;
 
 			default:
-				if ( !$status->getErrors() ) {
+				if ( !$status->getMessages() ) {
 					// EditPage sometimes only sets the status code without setting
 					// any actual error messages. Supply defaults for those cases.
 					switch ( $statusValue ) {
@@ -804,3 +813,6 @@ class ApiEditPage extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Edit';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiEditPage::class, 'ApiEditPage' );

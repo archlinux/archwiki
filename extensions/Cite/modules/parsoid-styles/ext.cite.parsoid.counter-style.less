@@ -1,0 +1,23 @@
+.mw-ref > a[ style~='mw-Ref' ]::after {
+	content: '[' counter( mw-Ref, var( --cite-counter-style ) ) ']';
+}
+
+.mw-ref > a[ style~='mw-Ref' ][ data-mw-group ]::after {
+	content: '[' attr( data-mw-group ) ' ' counter( mw-Ref, var( --cite-counter-style ) ) ']';
+}
+
+span[ rel='mw:referencedBy' ] > a::before {
+	content: counter( mw-references, var( --cite-counter-style ) ) var( --cite-backlink-separator ) counter( mw-ref-linkback, var( --cite-counter-style ) );
+}
+
+/* Upstream bug in stylelint makes it complain aboout the case of 'mw-Ref' */
+
+.mw-ref > a[ style~='mw-Ref' ] {
+	/* Hide the default rendering in browsers that support content
+	 * generation by selecting for :after pseudo-element. */
+	/* stylelint-disable-next-line selector-type-no-unknown */
+	x-thereisnoelementwiththisname::after,
+	span.mw-reflink-text {
+		display: none;
+	}
+}

@@ -18,31 +18,29 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use ChangeTags;
 use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleFactory;
+use RepoGroup;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * @ingroup API
  */
 class ApiImageRotate extends ApiBase {
+	/** @var ApiPageSet|null */
 	private $mPageSet = null;
 
 	private RepoGroup $repoGroup;
 	private TempFSFileFactory $tempFSFileFactory;
 	private TitleFactory $titleFactory;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param RepoGroup $repoGroup
-	 * @param TempFSFileFactory $tempFSFileFactory
-	 * @param TitleFactory $titleFactory
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		RepoGroup $repoGroup,
 		TempFSFileFactory $tempFSFileFactory,
 		TitleFactory $titleFactory
@@ -223,3 +221,6 @@ class ApiImageRotate extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Imagerotate';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiImageRotate::class, 'ApiImageRotate' );

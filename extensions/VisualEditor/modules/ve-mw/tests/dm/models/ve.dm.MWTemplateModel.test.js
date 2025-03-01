@@ -44,8 +44,7 @@
 		[ '/unexpected_prefix', '/unexpected prefix' ],
 		[ './Template:%C3%9Cnicode%5Fexample/subpage', 'Template:Ünicode example/subpage' ],
 		[ './Template:Possibly_invalid%5B%5D', 'Template:Possibly invalid[]' ]
-	].forEach( ( [ href, expected ] ) =>
-		QUnit.test( 'getTitle: ' + href, ( assert ) => {
+	].forEach( ( [ href, expected ] ) => QUnit.test( 'getTitle: ' + href, ( assert ) => {
 			const transclusion = { nextUniquePartId: () => '' },
 				template = new ve.dm.MWTemplateModel( transclusion, { href } );
 			assert.strictEqual( template.getTitle(), expected );
@@ -200,8 +199,7 @@
 			},
 			expected: [ 'foo', 'bar', 'Bar', 'empty' ]
 		}
-	].forEach( ( { name, spec, expected } ) =>
-		QUnit.test( name, ( assert ) => {
+	].forEach( ( { name, spec, expected } ) => QUnit.test( name, ( assert ) => {
 			const template = newTemplateModel();
 
 			template.getSpec().setTemplateData( spec );
@@ -322,8 +320,7 @@
 				''
 			]
 		}
-	].forEach( ( { name, spec, expected } ) =>
-		QUnit.test( 'getOrderedParameterNames: ' + name, ( assert ) => {
+	].forEach( ( { name, spec, expected } ) => QUnit.test( 'getOrderedParameterNames: ' + name, ( assert ) => {
 			const template = newTemplateModel();
 
 			if ( spec ) {
@@ -459,8 +456,7 @@
 				''
 			]
 		}
-	].forEach( ( { name, spec, expected } ) =>
-		QUnit.test( 'getAllParametersOrdered: ' + name, ( assert ) => {
+	].forEach( ( { name, spec, expected } ) => QUnit.test( 'getAllParametersOrdered: ' + name, ( assert ) => {
 			const template = newTemplateModel();
 
 			if ( spec ) {
@@ -490,11 +486,10 @@
 		[ '{{a}}', 'subst:b', 'subst:b', 'falls back to unmodified getTitle' ],
 		[ 'subst:a', 'b', 'Template:A', 'strips subst:' ],
 		[ 'safesubst:a', 'b', 'Template:A', 'strips safesubst:' ],
-		[ ' SUBST: a', 'b', 'Template:A', 'ignores capitalization and whitespace' ],
+		[ ' SUBST: a\n', 'b', 'Template:A', 'ignores capitalization and whitespace' ],
 		[ 'subst :a', 'b', 'Template:Subst :a', 'leaves bad whitespace untouched' ],
 		[ 'int:a', 'b', 'Template:Int:a', 'leaves other prefixes untouched' ]
-	].forEach( ( [ wt, href, expected, message ] ) =>
-		QUnit.test( 'getTemplateDataQueryTitle: ' + message, ( assert ) => {
+	].forEach( ( [ wt, href, expected, message ] ) => QUnit.test( 'getTemplateDataQueryTitle: ' + message, ( assert ) => {
 			const transclusion = { nextUniquePartId: () => '' },
 				data = { target: { wt, href } },
 				model = ve.dm.MWTemplateModel.newFromData( transclusion, data );
@@ -512,8 +507,7 @@
 		[ { p1: { wt: ' ' } }, true, 'space' ],
 		[ { p1: { wt: '0' } }, true, '0' ],
 		[ { p1: { wt: '\nfoo' } }, true, 'newline' ]
-	].forEach( ( [ params, expected, message ] ) =>
-		QUnit.test( 'containsValuableData: ' + message, ( assert ) => {
+	].forEach( ( [ params, expected, message ] ) => QUnit.test( 'containsValuableData: ' + message, ( assert ) => {
 			const transclusion = { nextUniquePartId: () => '' },
 				data = { target: {}, params },
 				model = ve.dm.MWTemplateModel.newFromData( transclusion, data );

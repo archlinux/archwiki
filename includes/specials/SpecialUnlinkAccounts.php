@@ -11,7 +11,12 @@ use MediaWiki\SpecialPage\AuthManagerSpecialPage;
 use MediaWiki\Status\Status;
 use StatusValue;
 
+/**
+ * @ingroup SpecialPage
+ * @ingroup Auth
+ */
 class SpecialUnlinkAccounts extends AuthManagerSpecialPage {
+	/** @inheritDoc */
 	protected static $allowedActions = [ AuthManager::ACTION_UNLINK ];
 
 	/**

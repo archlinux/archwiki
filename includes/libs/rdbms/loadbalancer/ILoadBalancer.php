@@ -122,27 +122,23 @@ interface ILoadBalancer {
 	 */
 	public const DB_PRIMARY = -2;
 
-	// phpcs:disable MediaWiki.Usage.DeprecatedConstantUsage.DB_MASTER
-	/**
-	 * Request a primary, write-enabled DB connection
-	 * @deprecated since 1.36, Use DB_PRIMARY instead
-	 */
-	public const DB_MASTER = self::DB_PRIMARY;
-	// phpcs:enable MediaWiki.Usage.DeprecatedConstantUsage.DB_MASTER
-
 	/** Domain specifier when no specific database needs to be selected */
 	public const DOMAIN_ANY = '';
 	/** The generic query group */
 	public const GROUP_GENERIC = '';
 
-	/** Yield an untracked, low-timeout, autocommit-mode handle (to gauge server health) */
-	public const CONN_UNTRACKED_GAUGE = 1;
 	/** Yield a tracked autocommit-mode handle (reuse existing ones) */
-	public const CONN_TRX_AUTOCOMMIT = 2;
-	/** Yield null on connection failure instead of throwing an exception */
+	public const CONN_TRX_AUTOCOMMIT = 1;
+	/**
+	 * Yield an untracked, low-timeout, autocommit-mode handle (to gauge server health)
+	 * @internal
+	 */
+	public const CONN_UNTRACKED_GAUGE = 2;
+	/**
+	 * Yield null on connection failure instead of throwing an exception
+	 * @internal
+	 */
 	public const CONN_SILENCE_ERRORS = 4;
-	/** Caller is requesting the primary DB server for possibly writes */
-	public const CONN_INTENT_WRITABLE = 8;
 
 	/**
 	 * Get the name of the overall cluster of database servers managing the dataset
@@ -219,7 +215,7 @@ interface ILoadBalancer {
 	 *      weights. If a query group list is provided in $groups, then each recognized group
 	 *      will be tried, left-to-right, until server index selection succeeds or all groups
 	 *      have been tried, in which case the generic group will be tried.
-	 *   - DB_PRIMARY: the primary server index will be used; the same as getWriterIndex().
+	 *   - DB_PRIMARY: the primary server index will be used; the same as ServerInfo::WRITER_INDEX.
 	 *      The value of $groups should be [] when using this server index.
 	 *   - Specific server index: a positive integer can be provided to use the server with
 	 *      that index. An error will be thrown in no such server index is recognized. This
@@ -243,7 +239,6 @@ interface ILoadBalancer {
 	 *
 	 * CONN_UNTRACKED_GAUGE and CONN_TRX_AUTOCOMMIT are incompatible.
 	 *
-	 * @see ILoadBalancer::reuseConnection()
 	 * @see ILoadBalancer::getServerAttributes()
 	 *
 	 * @param int $i Specific (overrides $groups) or virtual (DB_PRIMARY/DB_REPLICA) server index
@@ -271,16 +266,10 @@ interface ILoadBalancer {
 	 * @param int $i Specific server index
 	 * @param string $domain Resolved DB domain
 	 * @param int $flags Bitfield of class CONN_* constants
-	 * @return IDatabase|false This returns false on failure if CONN_SILENCE_ERRORS is set
+	 * @return IDatabaseForOwner|false This returns false on failure if CONN_SILENCE_ERRORS is set
 	 * @throws DBError If no DB handle could be obtained and CONN_SILENCE_ERRORS is not set
 	 */
 	public function getServerConnection( $i, $domain, $flags = 0 );
-
-	/**
-	 * @deprecated since 1.39 noop
-	 * @param IDatabase $conn
-	 */
-	public function reuseConnection( IDatabase $conn );
 
 	/**
 	 * @deprecated since 1.39, use ILoadBalancer::getConnection() instead.
@@ -290,7 +279,7 @@ interface ILoadBalancer {
 	 * @param int $flags Bitfield of CONN_* class constants (e.g. CONN_TRX_AUTOCOMMIT)
 	 * @return DBConnRef
 	 */
-	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): IDatabase;
+	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef;
 
 	/**
 	 * @internal Only to be used by DBConnRef
@@ -321,19 +310,6 @@ interface ILoadBalancer {
 	 * @return DBConnRef
 	 */
 	public function getMaintenanceConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef;
-
-	/**
-	 * Get the specific server index of the "writer server"
-	 *
-	 * The "writer server" is the server that should be used to source writes and critical reads
-	 * originating from the local datacenter. The "writer server" will be one of the following:
-	 *   - The primary, for single-primary setups (even if it resides in a remote datacenter)
-	 *   - The "preferred" co-primary relative to the local datacenter, for multi-primary setups
-	 *   - The "preferred" static clone, for static clone server setups (e.g. no replication)
-	 *
-	 * @return int Specific server index
-	 */
-	public function getWriterIndex();
 
 	/**
 	 * Get the number of servers defined in configuration
@@ -444,19 +420,10 @@ interface ILoadBalancer {
 	public function hasOrMadeRecentPrimaryChanges( $age = null );
 
 	/**
-	 * Whether a highly "lagged" replica database connection was queried.
-	 *
-	 * @note This method will never cause a new DB connection
-	 * @return bool
-	 */
-	public function laggedReplicaUsed();
-
-	/**
 	 * @note This method may trigger a DB connection if not yet done
-	 * @param string|false $domain DB domain ID or false (unused and deprecated since 1.40)
 	 * @return string|false Reason the primary is read-only or false if it is not
 	 */
-	public function getReadOnlyReason( $domain = false );
+	public function getReadOnlyReason();
 
 	/**
 	 * @return bool
@@ -505,7 +472,7 @@ interface ILoadBalancer {
 	 * @param string $name Callback name
 	 * @param callable|null $callback
 	 */
-	public function setTransactionListener( $name, callable $callback = null );
+	public function setTransactionListener( $name, ?callable $callback = null );
 
 	/**
 	 * Make certain table names use their own database, schema, and table prefix

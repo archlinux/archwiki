@@ -315,33 +315,29 @@ class CommentUtils {
 	/**
 	 * Given a heading node, return the node on which the ID attribute is set.
 	 *
-	 * Also returns the offset within that node where the heading text starts.
-	 *
 	 * @param Element $heading Heading node (`<h1>`-`<h6>`)
-	 * @return array Array containing a 'node' (Element) and offset (int)
+	 * @return Element Headline node, normally also a `<h1>`-`<h6>` element.
+	 *   In integration tests and in JS, it can be a `<span class="mw-headline">` (see T363031).
 	 */
-	public static function getHeadlineNodeAndOffset( Element $heading ): array {
+	public static function getHeadlineNode( Element $heading ): Element {
 		// This code assumes that $wgFragmentMode is [ 'html5', 'legacy' ] or [ 'html5' ]
 		$headline = $heading;
-		$offset = 0;
 
 		if ( $headline->hasAttribute( 'data-mw-comment-start' ) ) {
+			// HACK: For contaminated integration tests only (see T363031)
 			$headline = $headline->parentNode;
 			Assert::precondition( $headline !== null, 'data-mw-comment-start was attached to a heading' );
 		}
 
 		if ( !$headline->getAttribute( 'id' ) && !$headline->getAttribute( 'data-mw-anchor' ) ) {
-			// PHP HTML: Find the child with .mw-headline
+			// HACK: For outdated integration tests only (see T363031)
 			$headline = DOMCompat::querySelector( $headline, '.mw-headline' );
 			if ( !$headline ) {
 				$headline = $heading;
 			}
 		}
 
-		return [
-			'node' => $headline,
-			'offset' => $offset,
-		];
+		return $headline;
 	}
 
 	/**
@@ -503,7 +499,7 @@ class CommentUtils {
 		) . '/';
 		$matches = null;
 		if ( preg_match( $articlePathRegexp, $path, $matches ) ) {
-			return urldecode( $matches[1] );
+			return rawurldecode( $matches[1] );
 		}
 		return null;
 	}
@@ -727,8 +723,7 @@ class CommentUtils {
 	}
 
 	/**
-	 * Assuming that the thread item set contains exactly one comment (or multiple comments with
-	 * identical signatures, plus optional heading), check whether that comment is properly signed by
+	 * Check whether the last item in the thread item set is a properly signed comment by
 	 * the expected author (that is: there is a signature, and either there's nothing following the
 	 * signature, or there's some text within the same paragraph that was detected as part of the same
 	 * comment).
@@ -747,19 +742,20 @@ class CommentUtils {
 				return false;
 			}
 
-			// Range covering all of the detected items (to account for a heading, and for multiple
-			// signatures resulting in multiple comments)
-			$commentsRange = new ImmutableRange(
-				$items[0]->getRange()->startContainer,
-				$items[0]->getRange()->startOffset,
-				$lastItem->getRange()->endContainer,
-				$lastItem->getRange()->endOffset
-			);
+			$commentRange = $lastItem->getRange();
 			$bodyRange = new ImmutableRange(
 				$rootNode, 0, $rootNode, count( $rootNode->childNodes )
 			);
 
-			if ( static::compareRanges( $commentsRange, $bodyRange ) === 'equal' ) {
+			// Only check that the end of the comment range is at the end of the body range.
+			// We don't care about preceding headings, comments, or other content (T363285).
+			// This is a simplified fragment of static::compareRanges().
+			$cmp = $commentRange->compareBoundaryPoints( ImmutableRange::END_TO_END, $bodyRange );
+			if (
+				$cmp === 0 ||
+				( $cmp < 0 && static::compareRangesAlmostEqualBoundaries( $commentRange, $bodyRange, 'end' ) ) ||
+				( $cmp > 0 && static::compareRangesAlmostEqualBoundaries( $bodyRange, $commentRange, 'end' ) )
+			) {
 				// New comment includes a signature in the proper place
 				return true;
 			}

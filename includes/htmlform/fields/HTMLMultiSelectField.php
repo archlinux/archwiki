@@ -7,8 +7,8 @@ use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWiki\HTMLForm\HTMLNestedFilterable;
 use MediaWiki\HTMLForm\OOUIHTMLForm;
 use MediaWiki\Request\WebRequest;
+use MediaWiki\Xml\Xml;
 use RuntimeException;
-use Xml;
 
 /**
  * Multi-select field
@@ -16,7 +16,7 @@ use Xml;
  * @stable to extend
  */
 class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable {
-	/* @var string */
+	/** @var string */
 	private $mPlaceholder;
 
 	/**
@@ -88,10 +88,6 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 	 * @stable to override
 	 */
 	public function getInputHTML( $value ) {
-		if ( isset( $this->mParams['dropdown'] ) ) {
-			$this->mParent->getOutput()->addModules( 'jquery.chosen' );
-		}
-
 		$value = HTMLFormField::forceToStringRecursive( $value );
 		$html = $this->formatOptions( $this->getOptions(), $value );
 

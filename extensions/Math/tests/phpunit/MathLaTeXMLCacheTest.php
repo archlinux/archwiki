@@ -10,6 +10,7 @@ use MediaWiki\Extension\Math\MathLaTeXML;
  * @license GPL-2.0-or-later
  */
 class MathLaTeXMLCacheTest extends MediaWikiIntegrationTestCase {
+	/** @var MathLaTeXML */
 	public $renderer;
 	private const SOME_TEX = "a+b";
 	private const SOME_MATHML = "iℏ∂_tΨ=H^Ψ<mrow><\ci>";

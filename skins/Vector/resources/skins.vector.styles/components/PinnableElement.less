@@ -20,14 +20,19 @@
 	}
 }
 
+.vector-column-start,
+.vector-column-end {
+	// Support: Chrome
+	// Work around sticky-positioned layers disabling subpixel text rendering (T327460, T373066).
+	// This must be applied to the possible parent elements of .vector-sticky-pinned-container.
+	contain: paint;
+}
+
 .vector-sticky-pinned-container {
 	.mixin-vector-scrollable-with-fade();
 	// Applies styles for making a pinned element sticky
 	position: sticky;
 	top: @grid-row-gap;
-	// Support: Chrome
-	// Work around sticky-positioned layers disabling subpixel text rendering (T327460).
-	contain: paint;
 	// Border-box changes the height calculation.
 	box-sizing: border-box;
 	// Height is viewport height - row gap above and below the container.

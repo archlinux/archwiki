@@ -20,12 +20,15 @@
 
 use MediaWiki\Json\JsonCodec;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../includes/Benchmarker.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * @ingroup Benchmark
  */
 class BenchmarkJsonCodec extends Benchmarker {
+	/** @inheritDoc */
 	protected $defaultCount = 100;
 
 	public function __construct() {
@@ -57,9 +60,9 @@ class BenchmarkJsonCodec extends Benchmarker {
 				},
 				'args' => [ $codec, $data ]
 			],
-			"JsonCodec::unserialize ($file)" => [
+			"JsonCodec::deserialize ($file)" => [
 				'function' => static function ( JsonCodec $codec, $bytes ) {
-					$codec->unserialize( $bytes );
+					$codec->deserialize( $bytes );
 				},
 				'args' => [ $codec, $bytes ]
 			],
@@ -92,5 +95,7 @@ class BenchmarkJsonCodec extends Benchmarker {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = BenchmarkJsonCodec::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

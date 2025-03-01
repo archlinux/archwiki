@@ -8,7 +8,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-describe": "ഇത് വിശദീകരിച്ചിട്ടുള്ള നിയമമാണ്.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "ഇത് മറയ്ക്കപ്പെട്ടുള്ള നിയമമാണ്.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "ഭാഷയുടെ കോഡ്",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<അസാധു>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>അസാധു</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "ഭാഷ",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "സ്രോതസ്സ്",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "ലക്ഷ്യം",

@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Glacious",
 			"Glaisher",
-			"Ushau97",
 			"MAL MALDIVE",
-			"Glacious"
+			"Ushau97"
 		]
 	},
 	"vector-languages": "ބަސްބަސް",
@@ -21,10 +21,12 @@
 	"vector-view-viewsource": "މަސްދަރު ބައްލަވާ",
 	"vector-more-actions": "އިތުރަށް",
 	"vector-feature-limited-width-name": "ފުޅާމިން",
-	"vector-feature-custom-font-size-name": "ލިޔުން",
 	"vector-feature-limited-width-0-label": "ފޮރުވާ",
+	"vector-feature-custom-font-size-name": "ލިޔުން",
 	"vector-feature-custom-font-size-0-label": "ކުޑަ",
 	"skin-theme-name": "ކުލަ",
+	"skin-theme-day-label": "އަލި",
+	"skin-theme-night-label": "އަނދިރި",
 	"skin-theme-os-label": "އޮޓޮމެޓިކް",
 	"vector-toc-label": "ފިހުރިސްތު",
 	"vector-toc-beginning": "ފެށުން",

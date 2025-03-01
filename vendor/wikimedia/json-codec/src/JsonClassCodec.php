@@ -71,8 +71,9 @@ interface JsonClassCodec {
 	 *
 	 * @param class-string<T> $className The class we're looking for a hint for
 	 * @param string $keyName The name of the array key we'd like a hint on
-	 * @return class-string|string|null A class string, a class string suffixed
-	 *   with `[]`, or null
+	 * @return class-string|string|Hint|null A class string, Hint or null.
+	 *   For backward compatibility, a class string suffixed with `[]` can
+	 *   also be returned, but that is deprecated.
 	 */
-	public function jsonClassHintFor( string $className, string $keyName ): ?string;
+	public function jsonClassHintFor( string $className, string $keyName );
 }

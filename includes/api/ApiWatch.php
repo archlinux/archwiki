@@ -20,6 +20,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Title\Title;
@@ -35,6 +37,7 @@ use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
  * @ingroup API
  */
 class ApiWatch extends ApiBase {
+	/** @var ApiPageSet|null */
 	private $mPageSet = null;
 
 	/** @var bool Whether watchlist expiries are enabled. */
@@ -48,7 +51,7 @@ class ApiWatch extends ApiBase {
 
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		WatchlistManager $watchlistManager,
 		TitleFormatter $titleFormatter
 	) {
@@ -245,3 +248,6 @@ class ApiWatch extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Watch';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiWatch::class, 'ApiWatch' );

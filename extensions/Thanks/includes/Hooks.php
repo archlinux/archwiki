@@ -4,32 +4,35 @@
 
 namespace MediaWiki\Extension\Thanks;
 
-use ApiModuleManager;
 use Article;
 use DatabaseLogEntry;
 use DifferenceEngine;
-use ExtensionRegistry;
-use GenderCache;
-use IContextSource;
 use LogEventsList;
 use LogPage;
+use MediaWiki\Api\ApiModuleManager;
 use MediaWiki\Api\Hook\ApiMain__moduleManagerHook;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
 use MediaWiki\Block\Hook\GetAllBlockActionsHook;
+use MediaWiki\Cache\GenderCache;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook;
 use MediaWiki\Diff\Hook\DiffToolsHook;
 use MediaWiki\Extension\Thanks\Api\ApiFlowThank;
-use MediaWiki\Hook\BeforePageDisplayHook;
+use MediaWiki\Hook\ChangesListInitRowsHook;
 use MediaWiki\Hook\GetLogTypesOnUserHook;
 use MediaWiki\Hook\HistoryToolsHook;
 use MediaWiki\Hook\LogEventsListLineEndingHook;
 use MediaWiki\Hook\PageHistoryBeforeListHook;
+use MediaWiki\Hook\PageHistoryPager__doBatchLookupsHook;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -38,7 +41,6 @@ use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use RequestContext;
 use Skin;
 
 /**
@@ -57,7 +59,9 @@ class Hooks implements
 	HistoryToolsHook,
 	LocalUserCreatedHook,
 	LogEventsListLineEndingHook,
-	PageHistoryBeforeListHook
+	PageHistoryBeforeListHook,
+	PageHistoryPager__doBatchLookupsHook,
+	ChangesListInitRowsHook
 {
 	private Config $config;
 	private GenderCache $genderCache;
@@ -271,6 +275,7 @@ class Hooks implements
 				'class' => $class,
 				'href' => SpecialPage::getTitleFor( 'Thanks', $subpage . $id )->getFullURL(),
 				'title' => $tooltip,
+				'role' => 'button',
 				'data-' . $type . '-id' => $id,
 				'data-recipient-gender' => $this->genderCache->getGenderOf( $recipient->getName(), __METHOD__ ),
 			],
@@ -297,6 +302,32 @@ class Hooks implements
 	public function onPageHistoryBeforeList( $page, $context ) {
 		if ( $context->getUser()->isRegistered() ) {
 			$this->addThanksModule( $context->getOutput() );
+		}
+	}
+
+	public function onPageHistoryPager__doBatchLookups( $pager, $result ) {
+		$userNames = [];
+		foreach ( $result as $row ) {
+			if ( $row->user_name !== null ) {
+				$userNames[] = $row->user_name;
+			}
+		}
+		if ( $userNames ) {
+			// Batch lookup for the use of GenderCache::getGenderOf in self::generateThankElement
+			$this->genderCache->doQuery( $userNames, __METHOD__ );
+		}
+	}
+
+	public function onChangesListInitRows( $changesList, $rows ) {
+		$userNames = [];
+		foreach ( $rows as $row ) {
+			if ( $row->rc_user_text !== null ) {
+				$userNames[] = $row->rc_user_text;
+			}
+		}
+		if ( $userNames ) {
+			// Batch lookup for the use of GenderCache::getGenderOf in self::generateThankElement
+			$this->genderCache->doQuery( $userNames, __METHOD__ );
 		}
 	}
 
@@ -381,7 +412,8 @@ class Hooks implements
 					"class" => ApiFlowThank::class,
 					"services" => [
 						"PermissionManager",
-						"ThanksLogStore"
+						"ThanksLogStore",
+						"UserFactory",
 					]
 				]
 			);
@@ -404,9 +436,9 @@ class Hooks implements
 	) {
 		$user = $page->getUser();
 
-		// Don't thank if anonymous or blocked or if user is deleted from the log entry
+		// Don't provide thanks link if not named, blocked or if user is deleted from the log entry
 		if (
-			$user->isAnon()
+			!$user->isNamed()
 			|| $entry->isDeleted( LogPage::DELETED_USER )
 			|| $this->isUserBlockedFromTitle( $user, $entry->getTarget() )
 			|| self::isUserBlockedFromThanks( $user )

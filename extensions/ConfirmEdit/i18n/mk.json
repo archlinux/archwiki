@@ -34,5 +34,6 @@
 	"confirmedit-preview-validity": "Полноважност",
 	"confirmedit-preview-valid": "важечка",
 	"confirmedit-preview-invalid": "неважечка",
-	"confirmedit-preview-description": "Следнава табела прикажува список на редови во страницата и дали е важечка IP-адреса или опсег. Ако опегот е таков, ќе биде изземен од проверка со CAPTCHA, но неважечките редови ќе се занемарат. Пример за важечки IP-опсег: 69.208.0.0/16 кој се движи од 69.208.0.0 до 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Повеќе информации] за пресметување на опсези на IP-адреси."
+	"confirmedit-preview-description": "Следнава табела прикажува список на редови во страницата и дали е важечка IP-адреса или опсег. Ако опегот е таков, ќе биде изземен од проверка со CAPTCHA, но неважечките редови ќе се занемарат. Пример за важечки IP-опсег: 69.208.0.0/16 кој се движи од 69.208.0.0 до 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Повеќе информации] за пресметување на опсези на IP-адреси.",
+	"abusefilter-edit-action-showcaptcha": "Барај од корисникот да пополни CAPTCHA за да продолжи со дејството. Корисниците со дозвола за прескокнување на CAPTCHA се изземени."
 }

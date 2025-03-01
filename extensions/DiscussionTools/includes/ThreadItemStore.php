@@ -10,7 +10,7 @@ use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseCommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseThreadItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\HeadingItem;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Language\Language;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -44,6 +44,7 @@ class ThreadItemStore {
 	private RevisionStore $revStore;
 	private TitleFormatter $titleFormatter;
 	private ActorStore $actorStore;
+	private Language $language;
 
 	public function __construct(
 		ConfigFactory $configFactory,
@@ -52,7 +53,8 @@ class ThreadItemStore {
 		PageStore $pageStore,
 		RevisionStore $revStore,
 		TitleFormatter $titleFormatter,
-		ActorStore $actorStore
+		ActorStore $actorStore,
+		Language $language
 	) {
 		$this->config = $configFactory->makeConfig( 'discussiontools' );
 		$this->dbProvider = $dbProvider;
@@ -61,6 +63,7 @@ class ThreadItemStore {
 		$this->revStore = $revStore;
 		$this->titleFormatter = $titleFormatter;
 		$this->actorStore = $actorStore;
+		$this->language = $language;
 	}
 
 	/**
@@ -84,6 +87,7 @@ class ThreadItemStore {
 			return [];
 		}
 
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$queryBuilder = $this->getIdsNamesBuilder()
 			->caller( __METHOD__ )
 			->where( [
@@ -91,7 +95,7 @@ class ThreadItemStore {
 				// Disallow querying for headings of sections that contain no comments.
 				// They all share the same name, so this would return a huge useless list on most wikis.
 				// (But we still store them, as we might need this data elsewhere.)
-				"it_itemname != 'h-'",
+				$dbr->expr( 'it_itemname', '!=', 'h-' ),
 			] );
 
 		if ( $limit !== null ) {
@@ -138,10 +142,11 @@ class ThreadItemStore {
 			// It might scan a bunch of rows...
 			// ->limit( 1 );
 
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$queryBuilder
 			->where( [
 				'it_itemname IN (' . $itemNameQueryBuilder->getSQL() . ')',
-				"it_itemname != 'h-'",
+				$dbr->expr( 'it_itemname', '!=', 'h-' ),
 			] );
 
 		if ( $limit !== null ) {
@@ -165,7 +170,7 @@ class ThreadItemStore {
 	 * Find heading items matching some text which:
 	 *
 	 *  1. appeared at some point in the history of the targetpage, or if this returns no results:
-	 *  2. currently appear on a sub-page of the target page, or if this returns no results:
+	 *  2. currently appear on a subpage of the target page, or if this returns no results:
 	 *  3. currently appears on any page, but only if it is a unique match
 	 *
 	 * @param string|string[] $heading Heading text to match
@@ -181,8 +186,8 @@ class ThreadItemStore {
 			return [];
 		}
 
-		$language = MediaWikiServices::getInstance()->getContentLanguage();
-		$heading = $language->truncateForDatabase( $heading, 80, '' );
+		// Mirrors CommentParser::truncateForId
+		$heading = trim( $this->language->truncateForDatabase( $heading, 80, '' ), '_' );
 
 		$dbw = $this->dbProvider->getPrimaryDatabase();
 
@@ -208,7 +213,7 @@ class ThreadItemStore {
 
 		// 2. If the thread item's database hasn't been back-filled with historical revisions
 		//    then approach (1) may not work, instead look for matching headings the currently
-		//    appear on sub-pages, which matches the archiving convention on most wikis.
+		//    appear on subpages, which matches the archiving convention on most wikis.
 		$itemIdInSubPageQueryBuilder = $this->getIdsNamesBuilder()
 			->caller( __METHOD__ . ' case 2' )
 			->join( 'page', null, [ 'page_id = itp_page_id' ] )
@@ -247,6 +252,32 @@ class ThreadItemStore {
 		$itemIds = $itemIdInAnyPageQueryBuilder->fetchFieldValues();
 		if ( count( $itemIds ) === 1 ) {
 			return $this->findNewestRevisionsByQuery( __METHOD__ . ' case 3', $itemIds[ 0 ] );
+		}
+
+		// 4. If there are no matches, check if the "talk" page has ever had any discussions
+		//    on it (comments, not just headings). If not then throw an error instead of
+		//    returning an empty list. This prevents the "topic could not be found" message
+		//    from showing in the frontend. (T374598)
+		$anyItemsInPageHistoryQueryBuilder = $this->getIdsNamesBuilder()
+			->caller( __METHOD__ . ' case 4' )
+			->join( 'revision', null, [ 'rev_id = itr_revision_id' ] )
+			// Only comments, as non-talk headings are recorded
+			->where( $dbw->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
+				'c-',
+				$dbw->anyString()
+			) ) )
+			// On the specified page ID
+			->where( [ 'rev_page' => $articleId ] )
+			->field( 'itid_itemid' )
+			->limit( 1 );
+
+		// Check there is only one result in the sub-query
+		$itemIds = $anyItemsInPageHistoryQueryBuilder->fetchFieldValues();
+		if ( count( $itemIds ) === 0 ) {
+			throw new PageNeverHadThreadsException(
+				"Page {page} has never contained any discussions",
+				[ 'page' => $articleId ]
+			);
 		}
 
 		return [];
@@ -421,8 +452,8 @@ class ThreadItemStore {
 			return new DatabaseThreadItemSet();
 		}
 
-		$queryBuilder = $this->getIdsNamesBuilder();
-		$queryBuilder
+		$queryBuilder = $this->getIdsNamesBuilder()
+			->caller( __METHOD__ )
 			->where( [ 'itr_revision_id' => $revId ] )
 			// We must process parents before their children in the loop later
 			->orderBy( 'itr_id', SelectQueryBuilder::SORT_ASC );
@@ -526,10 +557,21 @@ class ThreadItemStore {
 		foreach ( $threadItemSet->getThreadItems() as $item ) {
 			$itemIdsId = $this->findOrInsertId(
 				static function ( IReadableDatabase $dbw ) use ( $item, $method ) {
+					$ids = [ $item->getId() ];
+					if ( $item->getLegacyId() !== null ) {
+						// Avoid duplicates if the item exists under the legacy ID
+						// (i.e. with trailing underscores in the title part).
+						// The actual fixing of IDs is done by a maintenance script
+						// FixTrailingWhitespaceIds, as archived talk pages are unlikely
+						// to be edited again in the future.
+						// Once FixTrailingWhitespaceIds has run on and enough time has
+						// passed, we can remove all legacy ID code (again).
+						$ids[] = $item->getLegacyId();
+					}
 					return $dbw->newSelectQueryBuilder()
 						->from( 'discussiontools_item_ids' )
 						->field( 'itid_id' )
-						->where( [ 'itid_itemid' => $item->getId() ] )
+						->where( [ 'itid_itemid' => $ids ] )
 						->caller( $method )
 						->fetchField();
 				},
@@ -617,6 +659,7 @@ class ThreadItemStore {
 						'itp_items_id' => $itemsIds[ $item->getId() ],
 						'itp_page_id' => $rev->getPageId(),
 					] )
+					->caller( $method )
 					->fetchRow();
 				if ( $itemPagesRow === false ) {
 					$dbw->newInsertQueryBuilder()

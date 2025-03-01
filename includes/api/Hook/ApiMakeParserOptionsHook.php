@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Api\Hook;
 
-use ApiBase;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\Title;
-use ParserOptions;
 use Wikimedia\ScopedCallback;
 
 /**

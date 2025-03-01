@@ -51,5 +51,9 @@
 	"categorytree-no-pages": "Indicates that there are no pages or subcategories to be shown",
 	"categorytree-not-found": "Indicates that the given category ($1) was not found. Parameters:\n* $1 - category name",
 	"categorytree-error": "Indicates that an error has occurred while loading the node's content",
-	"categorytree-retry": "Instruction to try again later."
+	"categorytree-retry": "Instruction to try again later.",
+	"categorytree-onlyroot-message": "Indicates that the deprecated parameter <code>onlyroot</code> is used.",
+	"categorytree-deprecation-warning": "Warning message on preview if a deprecated parameter is used.",
+	"categorytree-deprecation-category": "{{tracking category name}}\nThis message is used as a category name for a [[mw:Special:MyLanguage/Help:Tracking categories|tracking category]] where pages are placed automatically if they use a deprecate categorytree parameter like <code>onlyroot</code>.",
+	"categorytree-deprecation-category-desc": "Deprecated categorytree parameters category description. Shown on [[Special:TrackingCategories]].\n\nSee also:\n* {{msg-mw|categorytree-deprecation-category}}"
 }

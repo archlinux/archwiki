@@ -23,8 +23,10 @@
 	"cite-wikieditor-help-content-reference-description": "Ӑнлантару",
 	"cite-wikieditor-help-content-named-reference-description": "Ят панӑ ӑнлантару",
 	"cite-wikieditor-help-content-rereference-description": "Ҫав каҫӑпах тепӗр хут усӑ курни",
+	"cite-wikieditor-help-content-extended-reference-description": "Ҫак каҫӑпах хушма информаци кӗртсе тепӗр хут усӑ курни",
 	"cite-wikieditor-help-content-showreferences-description": "Ӑнлантарусене кӑтартмалла",
 	"cite-wikieditor-help-content-reference-example-text1": "Страница тексчӗ.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 каҫӑ тексчӗ], хушма текст.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Каҫӑ тексчӗ]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Каҫӑ тексчӗ]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Тӗплӗнрех кӑтартмалла"
 }

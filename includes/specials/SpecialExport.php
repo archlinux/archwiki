@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Export
- *
  * Copyright © 2003-2008 Brooke Vibber <bvibber@wikimedia.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,30 +18,35 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
-use HTMLTextAreaField;
 use MediaWiki\Export\WikiExporterFactory;
+use MediaWiki\HTMLForm\Field\HTMLTextAreaField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
 use WikiExporter;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * A special page that allows users to export pages in a XML file
  *
  * @ingroup SpecialPage
+ * @ingroup Dump
  */
 class SpecialExport extends SpecialPage {
-	protected $curonly, $doExport, $pageLinkDepth, $templates;
+	protected bool $curonly;
+	protected bool $doExport;
+	protected int $pageLinkDepth;
+	protected bool $templates;
 
 	private IConnectionProvider $dbProvider;
 	private WikiExporterFactory $wikiExporterFactory;
@@ -105,8 +108,7 @@ class SpecialExport extends SpecialPage {
 					}
 				}
 			}
-		} elseif ( $request->getCheck( 'addns' ) &&
-		$config->get( MainConfigNames::ExportFromNamespaces ) ) {
+		} elseif ( $request->getCheck( 'addns' ) && $config->get( MainConfigNames::ExportFromNamespaces ) ) {
 			$page = $request->getText( 'pages' );
 			$nsindex = $request->getText( 'nsindex', '' );
 
@@ -119,8 +121,7 @@ class SpecialExport extends SpecialPage {
 					$page .= "\n" . implode( "\n", $nspages );
 				}
 			}
-		} elseif ( $request->getCheck( 'exportall' ) &&
-		$config->get( MainConfigNames::ExportAllowAll ) ) {
+		} elseif ( $request->getCheck( 'exportall' ) && $config->get( MainConfigNames::ExportAllowAll ) ) {
 			$this->doExport = true;
 			$exportall = true;
 
@@ -316,8 +317,7 @@ class SpecialExport extends SpecialPage {
 			],
 		];
 
-		if ( $config->get( MainConfigNames::ExportMaxLinkDepth ) ||
-		$this->userCanOverrideExportDepth() ) {
+		if ( $config->get( MainConfigNames::ExportMaxLinkDepth ) || $this->userCanOverrideExportDepth() ) {
 			$formDescriptor += [
 				'pagelink-depth' => [
 					'type' => 'text',
@@ -446,13 +446,13 @@ class SpecialExport extends SpecialPage {
 	}
 
 	/**
-	 * @param Title $title
+	 * @param PageIdentity $page
 	 * @return string[]
 	 */
-	protected function getPagesFromCategory( $title ) {
+	protected function getPagesFromCategory( PageIdentity $page ) {
 		$maxPages = $this->getConfig()->get( MainConfigNames::ExportPagelistLimit );
 
-		$name = $title->getDBkey();
+		$name = $page->getDBkey();
 
 		$dbr = $this->dbProvider->getReplicaDatabase();
 		$res = $dbr->newSelectQueryBuilder()
@@ -505,14 +505,15 @@ class SpecialExport extends SpecialPage {
 	protected function getTemplates( $inputPages, $pageSet ) {
 		[ $nsField, $titleField ] = $this->linksMigration->getTitleFields( 'templatelinks' );
 		$queryInfo = $this->linksMigration->getQueryInfo( 'templatelinks' );
-		return $this->getLinks( $inputPages, $pageSet,
-			$queryInfo['tables'],
-			[ 'namespace' => $nsField, 'title' => $titleField ],
-			array_merge(
-				[ 'templatelinks' => [ 'JOIN', [ 'page_id=tl_from' ] ] ],
-				$queryInfo['joins']
-			)
-		);
+		$dbr = $this->dbProvider->getReplicaDatabase();
+		$queryBuilder = $dbr->newSelectQueryBuilder()
+			->caller( __METHOD__ )
+			->select( [ 'namespace' => $nsField, 'title' => $titleField ] )
+			->from( 'page' )
+			->join( 'templatelinks', null, 'page_id=tl_from' )
+			->tables( array_diff( $queryInfo['tables'], [ 'templatelinks' ] ) )
+			->joinConds( $queryInfo['joins'] );
+		return $this->getLinks( $inputPages, $pageSet, $queryBuilder );
 	}
 
 	/**
@@ -567,11 +568,15 @@ class SpecialExport extends SpecialPage {
 		for ( ; $depth > 0; --$depth ) {
 			[ $nsField, $titleField ] = $this->linksMigration->getTitleFields( 'pagelinks' );
 			$queryInfo = $this->linksMigration->getQueryInfo( 'pagelinks' );
-			$pageSet = $this->getLinks(
-				$inputPages, $pageSet, $queryInfo['tables'],
-				[ 'namespace' => $nsField, 'title' => $titleField ],
-				array_merge( [ 'pagelinks' => [ 'JOIN', [ 'page_id=pl_from' ] ] ], $queryInfo['joins'] )
-			);
+			$dbr = $this->dbProvider->getReplicaDatabase();
+			$queryBuilder = $dbr->newSelectQueryBuilder()
+				->caller( __METHOD__ )
+				->select( [ 'namespace' => $nsField, 'title' => $titleField ] )
+				->from( 'page' )
+				->join( 'pagelinks', null, 'page_id=pl_from' )
+				->tables( array_diff( $queryInfo['tables'], [ 'pagelinks' ] ) )
+				->joinConds( $queryInfo['joins'] );
+			$pageSet = $this->getLinks( $inputPages, $pageSet, $queryBuilder );
 			$inputPages = array_keys( $pageSet );
 		}
 
@@ -582,32 +587,22 @@ class SpecialExport extends SpecialPage {
 	 * Expand a list of pages to include items used in those pages.
 	 * @param array $inputPages Array of page titles
 	 * @param array $pageSet
-	 * @param string[] $table
-	 * @param array $fields Array of field names
-	 * @param array $join
+	 * @param SelectQueryBuilder $queryBuilder
 	 * @return array
 	 */
-	protected function getLinks( $inputPages, $pageSet, $table, $fields, $join ) {
-		$dbr = $this->dbProvider->getReplicaDatabase();
-		$table[] = 'page';
-
+	protected function getLinks( $inputPages, $pageSet, SelectQueryBuilder $queryBuilder ) {
 		foreach ( $inputPages as $page ) {
 			$title = Title::newFromText( $page );
 			if ( $title ) {
 				$pageSet[$title->getPrefixedText()] = true;
 				/// @todo FIXME: May or may not be more efficient to batch these
 				///        by namespace when given multiple input pages.
-				$result = $dbr->select(
-					$table,
-					$fields,
-					[
+				$result = ( clone $queryBuilder )
+					->where( [
 						'page_namespace' => $title->getNamespace(),
 						'page_title' => $title->getDBkey()
-					],
-					__METHOD__,
-					[],
-					$join
-				);
+					] )
+					->fetchResultSet();
 
 				foreach ( $result as $row ) {
 					$template = Title::makeTitle( $row->namespace, $row->title );

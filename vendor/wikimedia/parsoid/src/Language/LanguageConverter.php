@@ -33,6 +33,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Language;
 
+use DOMDocument;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\LangConv\ReplacementMachine;
 use Wikimedia\Parsoid\Config\Env;
@@ -185,14 +186,13 @@ class LanguageConverter {
 	 *
 	 * @param Env $env
 	 * @param Document $doc The input document.
-	 * @param string|Bcp47Code|null $htmlVariantLanguage The desired output variant.
-	 *   MediaWiki-internal code string (deprecated), or a BCP 47 language object, or null.
-	 * @param string|Bcp47Code|null $wtVariantLanguage The variant used by convention when
+	 * @param ?Bcp47Code $htmlVariantLanguage The desired output variant.
+	 * @param ?Bcp47Code $wtVariantLanguage The variant used by convention when
 	 *   authoring pages, if there is one; otherwise left null.
-	 *   MediaWiki-internal code string (deprecated), or a BCP 47 language object, or null.
 	 */
 	public static function maybeConvert(
-		Env $env, Document $doc, $htmlVariantLanguage, $wtVariantLanguage
+		Env $env, Document $doc,
+		?Bcp47Code $htmlVariantLanguage, ?Bcp47Code $wtVariantLanguage
 	): void {
 		// language converter must be enabled for the pagelanguage
 		if ( !$env->langConverterEnabled() ) {
@@ -201,17 +201,6 @@ class LanguageConverter {
 		// htmlVariantLanguage must be specified, and a language-with-variants
 		if ( $htmlVariantLanguage === null ) {
 			return;
-		}
-		// Back-compat w/ old string-passing parameter convention
-		if ( is_string( $htmlVariantLanguage ) ) {
-			$htmlVariantLanguage = Utils::mwCodeToBcp47(
-				$htmlVariantLanguage, true, $env->getSiteConfig()->getLogger()
-			);
-		}
-		if ( is_string( $wtVariantLanguage ) ) {
-			$wtVariantLanguage = Utils::mwCodeToBcp47(
-				$wtVariantLanguage, true, $env->getSiteConfig()->getLogger()
-			);
 		}
 		$variants = $env->getSiteConfig()->variantsFor( $htmlVariantLanguage );
 		if ( $variants === null ) {
@@ -301,6 +290,10 @@ class LanguageConverter {
 		if ( $metrics ) {
 			$metrics->increment( 'langconv.count' );
 			$metrics->increment( "langconv." . $htmlVariantLanguageMw . ".count" );
+			$env->getSiteConfig()->incrementCounter(
+				'langconv_count_total',
+				[ 'variant' => $htmlVariantLanguageMw ]
+			);
 		}
 
 		// XXX Eventually we'll want to consult some wiki configuration to
@@ -352,5 +345,70 @@ class LanguageConverter {
 			&& array_key_exists( $htmlVariantLanguageMw, $langconv->getMachine()->getCodes() );
 
 		return $validTarget;
+	}
+
+	/**
+	 * Convert a string in an unknown variant of the page language to all its possible variants.
+	 *
+	 * @param Env $env
+	 * @param DOMDocument $doc
+	 * @param string $text
+	 * @return string[] map of converted variants keyed by variant language
+	 */
+	public static function autoConvertToAllVariants(
+		Env $env,
+		DOMDocument $doc,
+		string $text
+	): array {
+		$pageLangCode = $env->getPageConfig()->getPageLanguageBcp47();
+
+		// Parsoid's Chinese language converter implementation is not performant enough,
+		// so disable it explicitly (T346657).
+		if ( $pageLangCode->toBcp47Code() === 'zh' ) {
+			return [];
+		}
+
+		if ( $env->getSiteConfig()->variantsFor( $pageLangCode ) === null ) {
+			// Optimize for the common case where the page language has no variants.
+			return [];
+		}
+
+		$languageClass = self::loadLanguage( $env, $pageLangCode );
+		$lang = new $languageClass();
+		$langconv = $lang->getConverter();
+
+		if ( $langconv === null || $langconv->getMachine() === null ) {
+			return [];
+		}
+
+		$machine = $langconv->getMachine();
+		$codes = $machine->getCodes();
+		$textByVariant = [];
+
+		foreach ( $codes as $destCode ) {
+			foreach ( $codes as $invertCode ) {
+				if ( !$machine->isValidCodePair( $destCode, $invertCode ) ) {
+					continue;
+				}
+
+				$fragment = $machine->convert(
+					$doc,
+					$text,
+					$destCode,
+					$invertCode
+				);
+
+				$converted = $fragment->textContent;
+
+				if ( $converted !== $text ) {
+					$textByVariant[$destCode] = $converted;
+					// Move on to the next code once we found a candidate conversion,
+					// to match behavior with the old LanguageConverter.
+					break;
+				}
+			}
+		}
+
+		return $textByVariant;
 	}
 }

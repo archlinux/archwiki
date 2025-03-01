@@ -66,28 +66,26 @@ body {
 }
 
 #p-logo-text {
+	padding-right: 1em;
+	box-sizing: border-box;
 	max-width: @column-left-size;
 	text-align: center;
 	line-height: 1;
 
 	a {
-		padding: 0.1em 1em 0.2em;
+		display: flex;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
 		color: @text;
 		font-family: @fonts-secondary;
 		font-variant: small-caps;
 		font-size: 1.85em;
-		display: block;
 
 		/* 13+ character names */
 		&.long {
 			font-size: 1.5em;
-			padding: 0 0.75em 0 0;
 			line-height: 0.8;
-		}
-
-		/* images */
-		&.wordmark {
-			padding: 0 0.5em 0 0;
 		}
 	}
 }
@@ -672,10 +670,6 @@ ul {
 	margin: 0.3em 0 0 1.6em;
 }
 
-/* body */ .mw-hide-empty-elt .mw-parser-output:not( .mw-show-empty-elt ) .mw-empty-elt {
-	display: none;
-}
-
 .center {
 	margin-right: auto;
 	margin-left: auto;
@@ -816,6 +810,7 @@ body :not( :checked ) > .toctogglespan::after {
 .mw-datatable {
 	color: @text;
 	.box;
+	padding: 1.25em 1.75em;
 }
 
 .mw-body .mw-search-profile-tabs {

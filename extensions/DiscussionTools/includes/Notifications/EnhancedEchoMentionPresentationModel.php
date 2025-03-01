@@ -9,7 +9,7 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
-use EchoMentionPresentationModel;
+use MediaWiki\Extension\Notifications\Formatters\EchoMentionPresentationModel;
 use Wikimedia\Timestamp\TimestampException;
 
 class EnhancedEchoMentionPresentationModel extends EchoMentionPresentationModel {

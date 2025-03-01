@@ -5,18 +5,20 @@ namespace MediaWiki\Tests\Api\Query;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
-use WatchedItemQueryService;
+use MediaWiki\Watchlist\WatchedItemQueryService;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers \ApiQueryWatchlistRaw
+ * @covers MediaWiki\Api\ApiQueryWatchlistRaw
  */
 class ApiQueryWatchlistRawIntegrationTest extends ApiTestCase {
 	// TODO: This test should use Authority, but can't due to User::saveSettings
+	/** @var User */
 	private $loggedInUser;
+	/** @var User */
 	private $notLoggedInUser;
 
 	protected function setUp(): void {

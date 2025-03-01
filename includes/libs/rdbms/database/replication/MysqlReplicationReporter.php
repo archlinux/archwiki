@@ -85,7 +85,7 @@ class MysqlReplicationReporter extends ReplicationReporter {
 			null,
 			'SHOW SLAVE STATUS'
 		);
-		$res = $conn->query( $query );
+		$res = $conn->query( $query, __METHOD__ );
 		$row = $res ? $res->fetchObject() : false;
 		// If the server is not replicating, there will be no row
 		if ( $row && strval( $row->Seconds_Behind_Master ) !== '' ) {
@@ -163,7 +163,7 @@ class MysqlReplicationReporter extends ReplicationReporter {
 			"SELECT TIMESTAMPDIFF(MICROSECOND,ts,UTC_TIMESTAMP(6)) AS us_ago " .
 			"FROM heartbeat.heartbeat WHERE ? ORDER BY ts DESC LIMIT 1",
 		);
-		$res = $conn->query( $query );
+		$res = $conn->query( $query, __METHOD__ );
 		$row = $res ? $res->fetchObject() : false;
 
 		return $row ? ( $row->us_ago / 1e6 ) : null;
@@ -189,9 +189,10 @@ class MysqlReplicationReporter extends ReplicationReporter {
 
 	/**
 	 * @param IDatabase $conn To make queries
+	 * @param string $fname
 	 * @return stdClass Process cached row
 	 */
-	public function getReplicationSafetyInfo( IDatabase $conn ) {
+	public function getReplicationSafetyInfo( IDatabase $conn, $fname ) {
 		if ( $this->replicationInfoRow === null ) {
 			$this->replicationInfoRow = $conn->selectRow(
 				[],
@@ -200,7 +201,7 @@ class MysqlReplicationReporter extends ReplicationReporter {
 					'binlog_format' => '@@binlog_format',
 				],
 				[],
-				__METHOD__
+				$fname
 			);
 		}
 		return $this->replicationInfoRow;
@@ -414,15 +415,6 @@ class MysqlReplicationReporter extends ReplicationReporter {
 	}
 
 	/**
-	 * @inheritDoc
-	 * @param IDatabase $conn To make queries
-	 * @return string|null 32 bit integer ID; null if not applicable or unknown
-	 */
-	public function getTopologyBasedServerId( IDatabase $conn ) {
-		return $this->getServerId( $conn );
-	}
-
-	/**
 	 * @param IDatabase $conn To make queries
 	 * @return string Value of server_id (32-bit integer, unique to the replication topology)
 	 * @throws DBQueryError
@@ -478,7 +470,7 @@ class MysqlReplicationReporter extends ReplicationReporter {
 	 * @param string $fname
 	 * @return string[]
 	 */
-	protected function getServerGTIDs( IDatabase $conn, $fname = __METHOD__ ) {
+	protected function getServerGTIDs( IDatabase $conn, $fname ) {
 		$map = [];
 
 		$flags = ISQLPlatform::QUERY_IGNORE_DBO_TRX | ISQLPlatform::QUERY_CHANGE_NONE;
@@ -517,7 +509,7 @@ class MysqlReplicationReporter extends ReplicationReporter {
 	 * @param string $fname
 	 * @return array<string,mixed>|null Latest available server status row; false on failure
 	 */
-	protected function getServerRoleStatus( IDatabase $conn, $role, $fname = __METHOD__ ) {
+	protected function getServerRoleStatus( IDatabase $conn, $role, $fname ) {
 		$query = new Query(
 			"SHOW $role STATUS",
 			ISQLPlatform::QUERY_SILENCE_ERRORS | ISQLPlatform::QUERY_IGNORE_DBO_TRX | ISQLPlatform::QUERY_CHANGE_NONE,

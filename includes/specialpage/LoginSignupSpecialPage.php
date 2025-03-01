@@ -32,6 +32,7 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
+use MediaWiki\Auth\UsernameAuthenticationRequest;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
@@ -44,7 +45,6 @@ use MediaWiki\Message\Message;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Status\Status;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use PermissionsError;
@@ -57,23 +57,56 @@ use Wikimedia\ScopedCallback;
  * Holds shared logic for login and account creation pages.
  *
  * @ingroup SpecialPage
+ * @ingroup Auth
  */
 abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
-	protected $mReturnTo;
-	protected $mPosted;
-	protected $mAction;
-	protected $mLanguage;
-	protected $mVariant;
-	protected $mReturnToQuery;
-	protected $mToken;
-	protected $mStickHTTPS;
-	protected $mFromHTTP;
-	protected $mEntryError = '';
-	protected $mEntryErrorType = 'error';
 
+	/**
+	 * The title of the page to return to after authentication finishes, or the empty string
+	 * when there is no return target.
+	 * Typically comes from the 'returnto' URL parameter. Validating and normalizing is the
+	 * caller's responsibility.
+	 * @var string
+	 */
+	protected string $mReturnTo;
+	/**
+	 * The query string part of the URL to return to after authentication finishes.
+	 * Typically comes from the 'returntoquery' URL parameter.
+	 * @var string
+	 */
+	protected string $mReturnToQuery;
+	/**
+	 * The fragment part of the URL to return to after authentication finishes.
+	 * When not empty, should include the '#' character.
+	 * Typically comes from the 'returntoanchor' URL parameter.
+	 * @var string
+	 */
+	protected string $mReturnToAnchor;
+
+	/** @var bool */
+	protected $mPosted;
+	/** @var string|null */
+	protected $mAction;
+	/** @var string */
+	protected $mToken;
+	/** @var bool */
+	protected $mStickHTTPS;
+	/** @var bool */
+	protected $mFromHTTP;
+	/** @var string */
+	protected $mEntryError = '';
+	/** @var string */
+	protected $mEntryErrorType = 'error';
+	/** @var string */
+	protected $mDisplay = 'page';
+
+	/** @var bool */
 	protected $mLoaded = false;
+	/** @var bool */
 	protected $mLoadedRequest = false;
+	/** @var string|null */
 	protected $mSecureLoginUrl;
+	/** @var string|true|null */
 	private $reasonValidatorResult = null;
 
 	/** @var string */
@@ -128,10 +161,12 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$this->mStickHTTPS = $this->getConfig()->get( MainConfigNames::ForceHTTPS )
 			|| ( !$this->mFromHTTP && $request->getProtocol() === 'https' )
 			|| $request->getBool( 'wpForceHttps', false );
-		$this->mLanguage = $request->getText( 'uselang' );
-		$this->mVariant = $request->getText( 'variant' );
 		$this->mReturnTo = $request->getVal( 'returnto', '' );
 		$this->mReturnToQuery = $request->getVal( 'returntoquery', '' );
+		$this->mReturnToAnchor = $request->getVal( 'returntoanchor', '' );
+		if ( $request->getVal( 'display' ) === 'popup' ) {
+			$this->mDisplay = 'popup';
+		}
 	}
 
 	/**
@@ -160,37 +195,37 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 
 		$this->mToken = $request->getVal( $this->getTokenName() );
 
-		// Show an error or warning passed on from a previous page
+		// Show an error or warning or a notice passed on from a previous page
 		$entryError = $this->msg( $request->getVal( 'error', '' ) );
 		$entryWarning = $this->msg( $request->getVal( 'warning', '' ) );
+		$entryNotice = $this->msg( $request->getVal( 'notice', '' ) );
 		// bc: provide login link as a parameter for messages where the translation
 		// was not updated
 		$loginreqlink = $this->getLinkRenderer()->makeKnownLink(
 			$this->getPageTitle(),
 			$this->msg( 'loginreqlink' )->text(),
 			[],
-			[
-				'returnto' => $this->mReturnTo,
-				'returntoquery' => $this->mReturnToQuery,
-				'uselang' => $this->mLanguage ?: null,
-				'variant' => $this->mVariant ?: null,
-				'fromhttp' => $this->getConfig()->get( MainConfigNames::SecureLogin ) &&
-					$this->mFromHTTP ? '1' : null,
-			]
+			$this->getPreservedParams( [ 'reset' => true ] )
 		);
 
 		// Only show valid error or warning messages.
+		$validErrorMessages = LoginHelper::getValidErrorMessages();
 		if ( $entryError->exists()
-			&& in_array( $entryError->getKey(), LoginHelper::getValidErrorMessages(), true )
+			&& in_array( $entryError->getKey(), $validErrorMessages, true )
 		) {
 			$this->mEntryErrorType = 'error';
 			$this->mEntryError = $entryError->rawParams( $loginreqlink )->parse();
 
 		} elseif ( $entryWarning->exists()
-			&& in_array( $entryWarning->getKey(), LoginHelper::getValidErrorMessages(), true )
+			&& in_array( $entryWarning->getKey(), $validErrorMessages, true )
 		) {
 			$this->mEntryErrorType = 'warning';
 			$this->mEntryError = $entryWarning->rawParams( $loginreqlink )->parse();
+		} elseif ( $entryNotice->exists()
+			&& in_array( $entryNotice->getKey(), $validErrorMessages, true )
+		) {
+			$this->mEntryErrorType = 'notice';
+			$this->mEntryError = $entryNotice->parse();
 		}
 
 		# 1. When switching accounts, it sucks to get automatically logged out
@@ -206,16 +241,35 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		}
 	}
 
-	protected function getPreservedParams( $withToken = false ) {
-		$params = parent::getPreservedParams( $withToken );
-		$params += [
-			'returnto' => $this->mReturnTo ?: null,
-			'returntoquery' => $this->mReturnToQuery ?: null,
+	/** @inheritDoc */
+	protected function getPreservedParams( $options = [] ) {
+		$params = parent::getPreservedParams( $options );
+
+		// Override returnto* with their property-based values, to account for the
+		// special-casing in load().
+		$this->loadRequestParameters();
+		$properties = [
+			'returnto' => 'mReturnTo',
+			'returntoquery' => 'mReturnToQuery',
+			'returntoanchor' => 'mReturnToAnchor',
 		];
+		foreach ( $properties as $key => $prop ) {
+			$value = $this->$prop;
+			if ( $value !== '' ) {
+				$params[$key] = $value;
+			} else {
+				unset( $params[$key] );
+			}
+		}
+
 		if ( $this->getConfig()->get( MainConfigNames::SecureLogin ) && !$this->isSignup() ) {
 			$params['fromhttp'] = $this->mFromHTTP ? '1' : null;
 		}
-		return $params;
+		if ( $this->mDisplay !== 'page' ) {
+			$params['display'] = $this->mDisplay;
+		}
+
+		return array_filter( $params, fn ( $val ) => $val !== null );
 	}
 
 	protected function beforeExecute( $subPage ) {
@@ -252,6 +306,16 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$this->getOutput()->disableClientCache();
 
 		$this->load( $subPage );
+
+		// Do this early, so that it affects how error pages are rendered too
+		if ( $this->mDisplay === 'popup' ) {
+			// Replace the default skin with a "micro-skin" that omits most of the interface. (T362706)
+			// In the future, we might allow normal skins to serve this mode too, if they advise that
+			// they support it by setting a skin option, so that colors and fonts could stay consistent.
+			$skinFactory = MediaWikiServices::getInstance()->getSkinFactory();
+			$this->getContext()->setSkin( $skinFactory->makeSkin( 'authentication-popup' ) );
+		}
+
 		$this->setHeaders();
 		$this->checkPermissions();
 
@@ -296,7 +360,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		// If logging in and not on HTTPS, either redirect to it or offer a link.
 		if ( $this->getRequest()->getProtocol() !== 'https' ) {
 			$title = $this->getFullTitle();
-			$query = $this->getPreservedParams( false ) + [
+			$query = $this->getPreservedParams() + [
 					'title' => null,
 					( $this->mEntryErrorType === 'error' ? 'error'
 						: 'warning' ) => $this->mEntryError,
@@ -347,7 +411,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$response = $status->getValue();
 
 		$returnToUrl = $this->getPageTitle( 'return' )
-			->getFullURL( $this->getPreservedParams( true ), false, PROTO_HTTPS );
+			->getFullURL( $this->getPreservedParams( [ 'withToken' => true ] ), false, PROTO_HTTPS );
 		switch ( $response->status ) {
 			case AuthenticationResponse::PASS:
 				$this->logAuthResult( true );
@@ -371,8 +435,14 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 				}
 
 				if ( !$this->proxyAccountCreation ) {
+					$context = RequestContext::getMain();
+					$localContext = $this->getContext();
+					if ( $context !== $localContext ) {
+						// remove AuthManagerSpecialPage context hack
+						$this->setContext( $context );
+					}
 					// Ensure that the context user is the same as the session user.
-					$this->setSessionUserForCurrentRequest();
+					$this->getAuthManager()->setRequestContextUserFromSessionUser();
 				}
 
 				$this->successfulAction( true );
@@ -479,51 +549,8 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$out->addHTML( $injected_html );
 
 		$helper = new LoginHelper( $this->getContext() );
-		$helper->showReturnToPage( $type, $this->mReturnTo, $this->mReturnToQuery, $this->mStickHTTPS );
-	}
-
-	/**
-	 * Add a "return to" link or redirect to it.
-	 * Extensions can use this to reuse the "return to" logic after
-	 * inject steps (such as redirection) into the login process.
-	 *
-	 * @param string $type One of the following:
-	 *    - error: display a return to link ignoring $wgRedirectOnLogin
-	 *    - signup: display a return to link using $wgRedirectOnLogin if needed
-	 *    - success: display a return to link using $wgRedirectOnLogin if needed
-	 *    - successredirect: send an HTTP redirect using $wgRedirectOnLogin if needed
-	 * @param string $returnTo
-	 * @param array|string $returnToQuery
-	 * @param bool $stickHTTPS Keep redirect link on HTTPS
-	 * @since 1.22
-	 */
-	public function showReturnToPage(
-		$type, $returnTo = '', $returnToQuery = '', $stickHTTPS = false
-	) {
-		$helper = new LoginHelper( $this->getContext() );
-		$helper->showReturnToPage( $type, $returnTo, $returnToQuery, $stickHTTPS );
-	}
-
-	/**
-	 * Replace some globals to make sure the fact that the user has just been logged in is
-	 * reflected in the current request.
-	 */
-	protected function setSessionUserForCurrentRequest() {
-		global $wgLang;
-
-		$context = RequestContext::getMain();
-		$localContext = $this->getContext();
-		if ( $context !== $localContext ) {
-			// remove AuthManagerSpecialPage context hack
-			$this->setContext( $context );
-		}
-
-		$user = $context->getRequest()->getSession()->getUser();
-
-		StubGlobalUser::setUser( $user );
-		$context->setUser( $user );
-
-		$wgLang = $context->getLanguage();
+		$helper->showReturnToPage( $type, $this->mReturnTo, $this->mReturnToQuery,
+			$this->mStickHTTPS, $this->mReturnToAnchor );
 	}
 
 	/**
@@ -557,10 +584,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			'mediawiki.special.userlogin.common.styles'
 		] );
 		if ( $this->isSignup() ) {
-			// XXX hack pending RL or JS parse() support for complex content messages T27349
-			$out->addJsConfigVars( 'wgCreateacctImgcaptchaHelp',
-				$this->msg( 'createacct-imgcaptcha-help' )->parse() );
-
 			// Additional styles and scripts for signup form
 			$out->addModules( 'mediawiki.special.createaccount' );
 			$out->addModuleStyles( [
@@ -638,21 +661,19 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			$this->getHookRunner()->onSpecialCreateAccountBenefits(
 				$benefitsContainerHtml, $info, $options
 			);
-			if ( $benefitsContainerHtml === null ) {
-				$benefitsContainerHtml = $this->getBenefitsContainerHtml();
-			}
+			$benefitsContainerHtml ??= $this->getBenefitsContainerHtml();
 			$formAndBenefits = $options['beforeForm']
 				? ( $benefitsContainerHtml . $formBlock )
 				: ( $formBlock . $benefitsContainerHtml );
 		}
 
-		return Html::rawElement( 'div', [ 'class' => 'mw-ui-container' ],
-			$loginPrompt
+		return $loginPrompt
 			. $languageLinks
 			. $signupStart
 			. $noticeHtml
-			. $formAndBenefits
-		);
+			. Html::rawElement( 'div', [ 'class' => 'mw-ui-container' ],
+				$formAndBenefits
+			);
 	}
 
 	/**
@@ -677,7 +698,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					$headUnescaped = $this->msg( "createacct-benefit-head$benefitIdx" )->text();
 					$iconClass = $this->msg( "createacct-benefit-icon$benefitIdx" )->text();
 					$benefitList .= Html::rawElement( 'div', [ 'class' => "mw-number-text $iconClass" ],
-						Html::rawElement( 'h3', [],
+						Html::rawElement( 'span', [],
 							$this->msg( "createacct-benefit-head$benefitIdx" )->escaped()
 						)
 						. Html::rawElement( 'p', [],
@@ -686,7 +707,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					);
 				}
 				$benefitsContainer = Html::rawElement( 'div', [ 'class' => 'mw-createacct-benefits-container' ],
-					Html::rawElement( 'h2', [], $this->msg( 'createacct-benefit-heading' )->escaped() )
+					Html::rawElement( 'div', [ 'class' => 'mw-createacct-benefits-heading' ],
+						$this->msg( 'createacct-benefit-heading' )->escaped()
+					)
 					. Html::rawElement( 'div', [ 'class' => 'mw-createacct-benefits-list' ], $benefitList )
 				);
 			} else {
@@ -770,12 +793,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$form = HTMLForm::factory( 'codex', $formDescriptor, $context );
 
 		$form->addHiddenField( 'authAction', $this->authAction );
-		if ( $this->mLanguage ) {
-			$form->addHiddenField( 'uselang', $this->mLanguage );
-		}
-		if ( $this->mVariant ) {
-			$form->addHiddenField( 'variant', $this->mVariant );
-		}
 		$form->addHiddenField( 'force', $this->securityLevel );
 		$form->addHiddenField( $this->getTokenName(), $this->getToken()->toString() );
 		$config = $this->getConfig();
@@ -788,8 +805,10 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			}
 		}
 
-		// set properties of the form itself
-		$form->setAction( $this->getPageTitle()->getLocalURL( $this->getReturnToQueryStringFragment() ) );
+		$form->setAction( $this->getPageTitle()->getLocalURL( $this->getPreservedParams(
+			// We have manually set authAction above, so we don't need it in the action URL.
+			[ 'reset' => true ]
+		) ) );
 		$form->setName( 'userlogin' . ( $this->isSignup() ? '2' : '' ) );
 		if ( $this->isSignup() ) {
 			$form->setId( 'userlogin2' );
@@ -807,7 +826,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		array $requests, array $fieldInfo, array &$formDescriptor, $action
 	) {
 		$formDescriptor = self::mergeDefaultFormDescriptor( $fieldInfo, $formDescriptor,
-			$this->getFieldDefinitions( $fieldInfo ) );
+			$this->getFieldDefinitions( $fieldInfo, $requests ) );
 	}
 
 	/**
@@ -823,10 +842,13 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 
 	/**
 	 * Create a HTMLForm descriptor for the core login fields.
+	 *
 	 * @param array $fieldInfo
+	 * @param array $requests
+	 *
 	 * @return array
 	 */
-	protected function getFieldDefinitions( array $fieldInfo ) {
+	protected function getFieldDefinitions( array $fieldInfo, array $requests ) {
 		$isLoggedIn = $this->getUser()->isRegistered();
 		$continuePart = $this->isContinued() ? 'continue-' : '';
 		$anotherPart = $isLoggedIn ? 'another-' : '';
@@ -835,10 +857,11 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$expirationDays = ceil( $expiration / ( 3600 * 24 ) );
 		$secureLoginLink = '';
 		if ( $this->mSecureLoginUrl ) {
-			$secureLoginLink = Html::element( 'a', [
+			$secureLoginLink = Html::rawElement( 'a', [
 				'href' => $this->mSecureLoginUrl,
 				'class' => 'mw-login-flush-right mw-secure',
-			], $this->msg( 'userlogin-signwithsecure' )->text() );
+			], Html::element( 'span', [ 'class' => 'mw-secure--icon' ] ) .
+				$this->msg( 'userlogin-signwithsecure' )->parse() );
 		}
 		$usernameHelpLink = '';
 		if ( !$this->msg( 'createacct-helpusername' )->isDisabled() ) {
@@ -851,14 +874,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			$config = $this->getConfig();
 			$hideIf = isset( $fieldInfo['mailpassword'] ) ? [ 'hide-if' => [ '===', 'mailpassword', '1' ] ] : [];
 			$fieldDefinitions = [
-				'statusarea' => [
-					// Used by the mediawiki.special.createaccount module for error display.
-					// FIXME: Merge this with HTMLForm's normal status (error) area
-					'type' => 'info',
-					'raw' => true,
-					'default' => Html::element( 'div', [ 'id' => 'mw-createacct-status-area' ] ),
-					'weight' => -105,
-				],
 				'username' => [
 					'label-raw' => $this->msg( 'userlogin-yourname' )->escaped() . $usernameHelpLink,
 					'id' => 'wpName2',
@@ -1067,22 +1082,31 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			];
 		}
 
-		$fieldDefinitions['username'] += [
-			'type' => 'text',
-			'name' => 'wpName',
-			'cssclass' => 'loginText mw-userlogin-username',
-			'size' => 20,
-			'autocomplete' => 'username',
-			// 'required' => true,
-		];
-		$fieldDefinitions['password'] += [
-			'type' => 'password',
-			// 'label-message' => 'userlogin-yourpassword', // would override the changepassword label
-			'name' => 'wpPassword',
-			'cssclass' => 'loginPassword mw-userlogin-password',
-			'size' => 20,
-			// 'required' => true,
-		];
+		// T369641: We want to ensure that this transformation to the username and/or
+		// password fields are applied only when we have matching requests within the
+		// authentication manager.
+		$isUsernameOrPasswordRequest =
+			AuthenticationRequest::getRequestByClass( $requests, UsernameAuthenticationRequest::class ) ||
+			AuthenticationRequest::getRequestByClass( $requests, PasswordAuthenticationRequest::class );
+
+		if ( $isUsernameOrPasswordRequest ) {
+			$fieldDefinitions['username'] += [
+				'type' => 'text',
+				'name' => 'wpName',
+				'cssclass' => 'loginText mw-userlogin-username',
+				'size' => 20,
+				'autocomplete' => 'username',
+				// 'required' => true,
+			];
+			$fieldDefinitions['password'] += [
+				'type' => 'password',
+				// 'label-message' => 'userlogin-yourpassword', // would override the changepassword label
+				'name' => 'wpPassword',
+				'cssclass' => 'loginPassword mw-userlogin-password',
+				'size' => 20,
+				// 'required' => true,
+			];
+		}
 
 		if ( $this->mEntryError ) {
 			$defaultHtml = '';
@@ -1090,6 +1114,8 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 				$defaultHtml = Html::errorBox( $this->mEntryError );
 			} elseif ( $this->mEntryErrorType === 'warning' ) {
 				$defaultHtml = Html::warningBox( $this->mEntryError );
+			} elseif ( $this->mEntryErrorType === 'notice' ) {
+				$defaultHtml = Html::noticeBox( $this->mEntryError, '' );
 			}
 			$fieldDefinitions['entryError'] = [
 				'type' => 'info',
@@ -1138,14 +1164,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			if ( $this->showCreateAccountLink() ) {
 				// link to the other action
 				$linkTitle = $this->getTitleFor( $this->isSignup() ? 'Userlogin' : 'CreateAccount' );
-				$linkq = $this->getReturnToQueryStringFragment();
-				// Pass any language selection on to the mode switch link
-				if ( $this->mLanguage ) {
-					$linkq .= '&uselang=' . urlencode( $this->mLanguage );
-				}
-				if ( $this->mVariant ) {
-					$linkq .= '&variant=' . urlencode( $this->mVariant );
-				}
+				$linkq = wfArrayToCgi( $this->getPreservedParams( [ 'reset' => true ] ) );
 				$isLoggedIn = $this->getUser()->isRegistered()
 					&& !$this->getUser()->isTemp();
 
@@ -1158,14 +1177,19 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 							. 'cdx-button--fake-button cdx-button--fake-button--enabled';
 
 						return Html::rawElement( 'div',
+							// The following element IDs are used here:
+							// mw-createaccount, mw-createaccount-cta
 							[ 'id' => 'mw-createaccount' . ( !$isLoggedIn ? '-cta' : '' ),
 								'class' => ( $isLoggedIn ? 'mw-form-related-link-container' : 'mw-ui-vform-field' ) ],
 							( $isLoggedIn ? '' : $this->msg( 'userlogin-noaccount' )->escaped() )
 							. Html::element( 'a',
 								[
+									// The following element IDs are used here:
+									// mw-createaccount-join, mw-createaccount-join-loggedin
 									'id' => 'mw-createaccount-join' . ( $isLoggedIn ? '-loggedin' : '' ),
 									'href' => $linkTitle->getLocalURL( $params['linkQuery'] ),
-									'class' => $isLoggedIn ? '' : $buttonClasses,
+									'class' => [ 'mw-authentication-popup-link', $buttonClasses => !$isLoggedIn ],
+									'target' => '_self',
 									'tabindex' => 100,
 								],
 								$this->msg(
@@ -1192,25 +1216,10 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 * @return bool
 	 */
 	protected function hasSessionCookie() {
-		$config = $this->getConfig();
-		return $config->get( 'InitialSessionId' ) &&
-			$this->getRequest()->getSession()->getId() === (string)$config->get( 'InitialSessionId' );
-	}
+		global $wgInitialSessionId;
 
-	/**
-	 * Returns a string that can be appended to the URL (without encoding) to preserve the
-	 * return target. Does not include leading '?'/'&'.
-	 * @return string
-	 */
-	protected function getReturnToQueryStringFragment() {
-		$returnto = '';
-		if ( $this->mReturnTo !== '' ) {
-			$returnto = 'returnto=' . wfUrlencode( $this->mReturnTo );
-			if ( $this->mReturnToQuery !== '' ) {
-				$returnto .= '&returntoquery=' . wfUrlencode( $this->mReturnToQuery );
-			}
-		}
-		return $returnto;
+		return $wgInitialSessionId &&
+			$this->getRequest()->getSession()->getId() === (string)$wgInitialSessionId;
 	}
 
 	/**
@@ -1261,27 +1270,18 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 * @return string
 	 */
 	protected function makeLanguageSelectorLink( $text, $lang ) {
-		$services = MediaWikiServices::getInstance();
-
-		if ( $this->getLanguage()->getCode() == $lang
-			|| !$services->getLanguageNameUtils()->isValidCode( $lang )
-		) {
+		if ( $this->getLanguage()->getCode() == $lang ) {
 			// no link for currently used language
-			// or invalid language code
 			return htmlspecialchars( $text );
 		}
-		$query = [ 'uselang' => $lang ];
-		if ( $this->mVariant ) {
-			$query['variant'] = $this->mVariant;
-		}
-		if ( $this->mReturnTo !== '' ) {
-			$query['returnto'] = $this->mReturnTo;
-			$query['returntoquery'] = $this->mReturnToQuery;
-		}
+		$query = $this->getPreservedParams();
+		$query['uselang'] = $lang;
 
 		$attr = [];
-		$targetLanguage = $services->getLanguageFactory()->getLanguage( $lang );
+		$targetLanguage = MediaWikiServices::getInstance()->getLanguageFactory()
+			->getLanguage( $lang );
 		$attr['lang'] = $attr['hreflang'] = $targetLanguage->getHtmlCode();
+		$attr['class'] = 'mw-authentication-popup-link';
 
 		return $this->getLinkRenderer()->makeKnownLink(
 			$this->getPageTitle(),
@@ -1347,7 +1347,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$noticeContent = $this->msg( 'createacct-temp-warning', $this->getUser()->getName() )->parse();
 		return Html::noticeBox(
 			$noticeContent,
-			'',
+			'mw-createaccount-temp-warning',
 			'',
 			'mw-userLogin-icon--user-temporary'
 		);

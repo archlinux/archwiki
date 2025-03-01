@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\Math\Tests;
 
 use MockHttpTrait;
-use MultiHttpClient;
 use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\Http\MultiHttpClient;
 
 trait MathMockHttpTrait {
 	use MockHttpTrait;

@@ -41,6 +41,7 @@
 #
 # The following fields are shared by all package types:
 # * `license` : SPDX license identifier
+# * `purl` : [optional] package-url specifier ( https://github.com/package-url/purl-spec )
 # * `homepage` : [optional] Homepage URL of library, to be shown on Special:Version
 # * `authors` : [optional] Authors string of library, to be shown on Special:Version
 # * `version` : [optional] Version string of library, to be shown on Special:Version
@@ -51,7 +52,6 @@
 # * `src`: Full URL to the remote resource.
 # * `integrity`: Cryptographic hash (integrity metadata format per <https://www.w3.org/TR/SRI/>).
 # * `dest`: [optional] The file name to use in the module directory. Default: Basename of URL.
-# * `transforms`: [optional] File transformations (see below).
 #
 # For example, the following would produce resources/lib/mymodule/x.js:
 #
@@ -64,7 +64,6 @@
 #
 # Besides the shared ones, the following fields are used:
 # * `files`: An object mapping destination paths to `src` and `integrity` keys.
-# * `transforms`: [optional] File transformations (see below).
 #
 # For example:
 #
@@ -89,8 +88,6 @@
 #    to easily inspect an npm package, like <https://unpkg.com/jquery-client@2.0.2/>.
 #    This field can also be used to extract files to a subdirectory (by default the files and
 #    directories listed in "dest" are extracted to the module directory root).
-# * `transforms`: [optional] File transformations (see below). This field is experimental
-#    and might end up being removed.
 #
 # For example:
 #
@@ -113,30 +110,13 @@
 # manual build step). manageForeignResources.php will ignore these records, but they will still
 # be shown on Special:Version. Only the shared fields are used.
 #
-# ### File transformations
-#
-# Modification of upstream files is discouraged but sometimes unavoidable. The `transforms` key
-# lets you define per-file transformations, to be applied after fetching the upstream file.
-# It takes a map where the keys are destination file names, and the values are transformation
-# definitions or arrays of transformation definitions.
-#
-# IMPORTANT: File transformations are experimental and might end up being removed. Using them
-# is not recommended at this point.
-#
-# Currently only one transformation is supported: adding /*@nomin*/ to the beginning of a file
-# (which prevents the ResourceLoader minifier from touching it). Example:
-#
-# mymodule:
-#   ...
-#   transforms:
-#     foo.min.js: nomin
-#
 
 CLDRPluralRuleParser:
   license: MIT
   homepage: https://github.com/santhoshtr/CLDRPluralRuleParser
   authors: Santhosh Thottingal
   version: 1.3.1-0dda851
+  purl: pkg:github/santhoshtr/CLDRPluralRuleParser@0dda851#src/CLDRPluralRuleParser.js
   type: file
   src: https://raw.githubusercontent.com/santhoshtr/CLDRPluralRuleParser/0dda851/src/CLDRPluralRuleParser.js
   integrity: sha384-M4taeYYG2+9Ob1/La16iO+zlRRmBV5lBR3xUKkQT6kfkJ0aLbCi6yc0RYI1BDzdh
@@ -144,11 +124,12 @@ CLDRPluralRuleParser:
 codex:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
-  authors: Design Systems team, Wikimedia Foundation
-  version: 1.3.6
+  authors: Design System team, Wikimedia Foundation
+  version: 1.14.0
+  purl: pkg:npm/@wikimedia/codex@1.14.0
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-1.3.6.tgz
-  integrity: sha384-7qDs2QEc9v/G07vhQow6FkK4LARI/MpAiOFMkB7v8YpUFY85fFTWUbevYwXMwkWs
+  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-1.14.0.tgz
+  integrity: sha384-o8NvdWUn15pb7fzwPohTiifUab8UGVslAI8VGcAjPizeJeYwZ/Gmiajvck3D+Rz4
   dest:
     package/dist/codex.cjs:
     package/dist/codex.js:
@@ -156,6 +137,7 @@ codex:
     package/dist/codex.*.css:
     package/dist/modules/*: modules
     package/dist/mixins/*: mixins
+    package/dist/messageKeys.json:
     package/LICENSE:
     package/README.md:
     package/CHANGELOG.md:
@@ -163,25 +145,28 @@ codex:
 codex-design-tokens:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
-  authors: Design Systems team, Wikimedia Foundation
-  version: 1.3.6
+  authors: Design System team, Wikimedia Foundation
+  version: 1.14.0
+  purl: pkg:npm/@wikimedia/codex-design-tokens@1.14.0
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-1.3.6.tgz
-  integrity: sha384-dm62tinMLu1ZzR0L0Ero5DDh8dR/aelbP7Y9Z6YErVRDHub8CNUnKOZyX7BQQAUe
+  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-1.14.0.tgz
+  integrity: sha384-9+A0bemVWjCetPN9hBgrg+A9+oFH743oIV6I4ODYp3GHZ5P2ede17y4TR2tZlJON
   dest:
     package/dist/theme-*.less:
-    package/dist/theme-*-experimental.css:
+    package/dist/theme-wikimedia-ui-root.css:
+    package/dist/theme-wikimedia-ui-mode-dark.css:
     package/LICENSE:
     package/README.md:
 
 codex-icons:
   license: MIT
   homepage: https://doc.wikimedia.org/codex/
-  authors: Design Systems team, Wikimedia Foundation
-  version: 1.3.6
+  authors: Design System team, Wikimedia Foundation
+  version: 1.14.0
+  purl: pkg:npm/@wikimedia/codex-icons@1.14.0
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-1.3.6.tgz
-  integrity: sha384-mjlS1mr1i2ChG8+DTJHk6EQywwEjA4KlrPfI+GxpSdJPfoOMaM5EtyFQ9bLi2LnM
+  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-1.14.0.tgz
+  integrity: sha384-heGnyT3UdMvqIJ/BzDxVVyuLWcBajYUATVAqIG/48249BJJvfmGgDXdYHK0aYbJ1
   dest:
     package/dist/codex-icons.json:
     package/dist/codex-icon-paths.less:
@@ -193,6 +178,7 @@ url:
   homepage: https://github.com/mrhenry/polyfill-library
   authors: Financial Times
   version: 3.111.0-0ece79ce32
+  purl: pkg:github/mrhenry/polyfill-library@0ece79ce32
   type: multi-file
   files:
     URL.js:
@@ -223,6 +209,7 @@ intersection-observer:
   homepage: https://github.com/GoogleChromeLabs/intersection-observer
   authors: Philip Walton
   version: 0.12.0
+  purl: pkg:npm/intersection-observer@0.12.0
   type: tar
   src: https://registry.npmjs.org/intersection-observer/-/intersection-observer-0.12.0.tgz
   integrity: sha384-zCaiM7krKokKgwmrn87MtEtBUfsddhfofL0x+6KiGr+nHRa4b/ZdcfkBUSEtuEUw
@@ -247,6 +234,7 @@ jquery.chosen:
   homepage: https://harvesthq.github.io/chosen/
   authors: Patrick Filler for Harvest, Matthew Lettini, Patrick Filler, Ken Earley, Christophe Coevoet, Koen Punt, and T.J. Schuck.
   version: 1.8.2
+  purl: pkg:github/harvesthq/chosen@1.8.2
   type: multi-file
   files:
     LICENSE:
@@ -274,6 +262,7 @@ jquery.client:
   homepage: https://www.npmjs.com/package/jquery-client
   authors: Trevor Parscal, Timo Tijhof, and Roan Kattouw
   version: 3.0.0
+  purl: pkg:npm/jquery-client@3.0.0
   type: tar
   src: https://registry.npmjs.org/jquery-client/-/jquery-client-3.0.0.tgz
   integrity: sha256-BRPTsJn7fViZ2ip0YUBT9L90wJ8s0BFE17ccpmLfPUk=
@@ -287,10 +276,11 @@ jquery.i18n:
   license: MIT OR GPL-2.0-or-later
   homepage: https://github.com/wikimedia/jquery.i18n
   authors: Language Engineering team, Wikimedia Foundation
-  version: 1.0.7
+  version: 1.0.10
+  purl: pkg:github/wikimedia/jquery.i18n@1.0.10
   type: tar
-  src: https://codeload.github.com/wikimedia/jquery.i18n/tar.gz/70b5ee20a638cb8fe36baef8d51ac2eb577ce012
-  integrity: sha384-/Upo+6ih5h5v7/GW4zzuaMNZfAHmV7cYVhORdjwT9qFTHzmIStN9mPQ+VD0niknE
+  src: https://codeload.github.com/wikimedia/jquery.i18n/tar.gz/72c45cd91d8c5cdb4c3ee7e341e54ebb194e71e2
+  integrity: sha384-zP2+HbmfoQ+fSMuj3Auh9dlqk/FEVV76i38CabjTPnl5Rp41G+IfHeaGKRNPTGyn
   dest:
     jquery.i18n-*/CODE_OF_CONDUCT.md:
     jquery.i18n-*/CREDITS:
@@ -312,6 +302,7 @@ moment:
   homepage: https://momentjs.com
   authors: JS Foundation and other contributors
   version: 2.25.2
+  purl: pkg:github/moment/moment@2.25.2
   type: tar
   src: https://codeload.github.com/moment/moment/tar.gz/2.25.2
   integrity: sha384-Kdi8+psMUggMYwnp+uBCuy03sBfDbKFyjzdLWJks/4O8x4DwOFWzYbtm7RbJ4ISU
@@ -327,6 +318,7 @@ mustache:
   homepage: https://github.com/janl/mustache.js
   authors: Michael Jackson, Jan Lehnardt, Phillip Johnsen, and other contributors
   version: 4.2.0
+  purl: pkg:npm/mustache@4.2.0
   type: tar
   src: https://registry.npmjs.org/mustache/-/mustache-4.2.0.tgz
   integrity: sha384-JKpbW4FTGK4zdRNitERF8271K0N5EMpnxY9/yrm8CEUPUE+DZsiBstkkzGd89uJG
@@ -339,6 +331,7 @@ oojs:
   homepage: https://www.mediawiki.org/wiki/OOjs
   authors: OOjs Team and other contributors
   version: 7.0.1
+  purl: pkg:npm/oojs@7.0.1
   type: tar
   src: https://registry.npmjs.org/oojs/-/oojs-7.0.1.tgz
   integrity: sha384-2O0mmkNNV9RilbKtQjCL8wUfIf3Eb+/5CKQEsC4yCbf1NAV1MM67O2GxcC1/cj9Q
@@ -348,28 +341,15 @@ oojs:
     package/LICENSE-MIT:
     package/README.md:
 
-oojs-router:
-  license: MIT
-  homepage: https://www.mediawiki.org/wiki/OOjs_Router
-  authors: OOjs Team and other contributors
-  version: 0.5.0
-  type: tar
-  src: https://registry.npmjs.org/oojs-router/-/oojs-router-0.5.0.tgz
-  integrity: sha384-DhU20g/ayQzVWBjtflLRbk+deM1YBsIvYzjFthUOfQCXrYWJLH9bgm12eQZsC1gy
-  dest:
-    package/dist/oojs-router.js:
-    package/LICENSE:
-    package/AUTHORS.txt:
-    package/History.md:
-
 ooui:
   license: MIT
   homepage: https://www.mediawiki.org/wiki/OOUI
   authors: OOUI Team and other contributors
-  version: 0.49.0
+  version: 0.51.2
+  purl: pkg:npm/oojs-ui@0.51.2
   type: tar
-  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.49.1.tgz
-  integrity: sha384-A+rqZuEBs57mX/Q5XApnmUG+jbQvq6GwA0Wi6Fipc7gpLqRORooUlm5aT3hFav75
+  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.51.2.tgz
+  integrity: sha384-g6cWXC5OOcrrOpbgmi5fMTYH+v2/LeHB03EnFgZjwxt4Mzu5a1jJ6EOFB6JSqPIg
 
   dest:
     # Main stuff
@@ -383,8 +363,6 @@ ooui:
     package/dist/oojs-ui-windows-{wikimediaui,apex}.css:
     package/dist/oojs-ui-{wikimediaui,apex}.js{,.map.json}:
     package/dist/i18n:
-    # For jsduck/eg-iframe
-    package/dist/oojs-ui-images-wikimediaui.css:
     # WikimediaUI theme
     package/dist/themes/wikimediaui/images/icons/*.{svg,png}: themes/wikimediaui/images/icons
     package/dist/themes/wikimediaui/images/indicators/*.{svg,png}: themes/wikimediaui/images/indicators
@@ -403,6 +381,7 @@ pako:
   homepage: https://github.com/nodeca/pako
   authors: Andrei Tuputcyn, Vitaly Puzrin, Friedel Ziegelmayer, Kirill Efimov, Jean-loup Gailly, and Mark Adler
   version: 2.1.0
+  purl: pkg:github/nodeca/pako@2.1.0
   type: multi-file
   files:
     pako_deflate.js:
@@ -423,6 +402,7 @@ pinia:
   homepage: https://pinia.vuejs.org/
   authors: Eduardo San Martin Morote
   version: 2.0.16
+  purl: pkg:npm/pinia@2.0.16
   type: tar
   src: https://registry.npmjs.org/pinia/-/pinia-2.0.16.tgz
   integrity: sha512-9/LMVO+/epny1NBfC77vnps4g3JRezxhhoF1xLUk8mZkUIxVnwfEAIRiAX8mYBTD/KCwZqnDMqXc8w3eU0FQGg==
@@ -458,14 +438,47 @@ sinonjs:
   integrity: sha384-wR63Jwy75KqwBfzCmXd6gYws6uj3qV/XMAybzXrkEYGYG3AQ58ZWwr1fVpkHa5e8
   dest: sinon.js
 
+swagger-ui:
+  license: Apache-2.0
+  homepage: https://swagger.io/tools/swagger-ui/
+  version: 4.15.5
+  authors: Kyle Shockey, Tony Tam, Vladimír Gorej, and others
+  type: tar
+  src: https://codeload.github.com/swagger-api/swagger-ui/tar.gz/refs/tags/v4.15.5
+  integrity: sha384-pOwNNBDnfD+zlf8LtM3994vvCyIaaFpiyRhCRs3FI2GJ/ESZcfZ2YbJ8E4ECf+R7
+  dest:
+    swagger-ui-4.15.5/README.md:
+    swagger-ui-4.15.5/LICENSE:
+    swagger-ui-4.15.5/dist/swagger-ui-bundle.js:
+    swagger-ui-4.15.5/dist/swagger-ui-bundle.js.map:
+    swagger-ui-4.15.5/dist/swagger-ui-standalone-preset.js:
+    swagger-ui-4.15.5/dist/swagger-ui-standalone-preset.js.map:
+    swagger-ui-4.15.5/dist/swagger-ui.css:
+    swagger-ui-4.15.5/dist/swagger-ui.css.map:
+
+vue-demi:
+  license: MIT
+  homepage: https://github.com/vueuse/vue-demi/
+  authors: Anthony Fu
+  version: 0.14.7
+  purl: pkg:npm/vue-demi@0.14.7
+  type: tar
+  src: https://registry.npmjs.org/vue-demi/-/vue-demi-0.14.7.tgz
+  integrity: sha384-QtuGGEowk/dEp/TbptrrLsk775PREnaIEH9eORfmFEy2r6uj71NS0BtNmuU0ITS6
+  dest:
+    package/README.md:
+    package/LICENSE:
+    package/lib/v3/index.cjs:
+
 vue:
   license: MIT
   homepage: https://vuejs.org/
   authors: Yuxi (Evan) You
-  version: 3.3.9
+  version: 3.4.27
+  purl: pkg:npm/vue@3.4.27
   type: tar
-  src: https://registry.npmjs.org/vue/-/vue-3.3.9.tgz
-  integrity: sha512-sy5sLCTR8m6tvUk1/ijri3Yqzgpdsmxgj6n6yl7GXXCXqVbmW2RCXe9atE4cEI6Iv7L89v5f35fZRRr5dChP9w==
+  src: https://registry.npmjs.org/vue/-/vue-3.4.27.tgz
+  integrity: sha384-NI/upbRDNmqZCbvCtpncGt32Iw2gOsS6j/l3D4wSfz9IVnSXqLhO5mHLbVblRHet
   dest:
     package/README.md:
     package/LICENSE:
@@ -477,6 +490,7 @@ vuex:
   homepage: https://vuex.vuejs.org/
   authors: Yuxi (Evan) You
   version: 4.0.2
+  purl: pkg:npm/vuex@4.0.2
   type: tar
   src: https://registry.npmjs.org/vuex/-/vuex-4.0.2.tgz
   integrity: sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q==

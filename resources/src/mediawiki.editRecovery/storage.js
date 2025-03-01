@@ -7,7 +7,7 @@ const dbName = mw.config.get( 'wgDBname' ) + '_editRecovery';
 const editRecoveryExpiry = config.EditRecoveryExpiry;
 const objectStoreName = 'unsaved-page-data';
 
-var db = null;
+let db = null;
 
 // TODO: Document Promise objects as native promises, not jQuery ones.
 
@@ -36,7 +36,7 @@ function openDatabaseLocal() {
  */
 function upgradeDatabase( versionChangeEvent ) {
 	const keyPathParts = [ 'pageName', 'section' ];
-	var objectStore;
+	let objectStore;
 
 	db = versionChangeEvent.target.result;
 	if ( !db.objectStoreNames.contains( objectStoreName ) ) {
@@ -153,22 +153,8 @@ function deleteData( pageName, section ) {
 		const transaction = db.transaction( objectStoreName, 'readwrite' );
 		const objectStore = transaction.objectStore( objectStoreName );
 
-		const request = objectStore.openCursor();
-
-		request.addEventListener( 'success', ( event ) => {
-			const cursor = event.target.result;
-			if ( cursor ) {
-				const key = cursor.key;
-				const deleteSection = ( !section && key[ 1 ] === '' ) || section === key[ 1 ];
-				if ( key[ 0 ] === pageName && deleteSection ) {
-					objectStore.delete( key );
-				}
-				cursor.continue();
-			} else {
-				resolve();
-			}
-		} );
-
+		const request = objectStore.delete( [ pageName, section || '' ] );
+		request.addEventListener( 'success', resolve );
 		request.addEventListener( 'error', () => {
 			reject( 'Error opening cursor' );
 		} );

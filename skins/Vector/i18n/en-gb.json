@@ -4,5 +4,8 @@
 			"Reedy"
 		]
 	},
-	"skin-theme-name": "Colour"
+	"vector-appearance-tooltip": "Change the appearance of the page's font size, width, and colour",
+	"skin-theme-name": "Colour",
+	"vector-night-mode-issue-reporting-notice-tooltip": "Report when dark mode colours make things difficult to read.",
+	"vector-night-mode-issue-reporting-preload-content": "<!--\nInstructions\nPlease describe how the dark mode colours are making Wikipedia difficult to read.\nPlease include the section of the article where you found the issue.\n-->\n'''Issue Description'''"
 }

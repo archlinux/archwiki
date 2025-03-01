@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
+use MediaWiki\MainConfigNames;
+
 /**
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaCommon\UriLibrary
  */
@@ -13,14 +15,14 @@ class UriLibraryTest extends LuaEngineTestBase {
 		parent::setUp();
 
 		$this->overrideConfigValues( [
-			'Server' => '//wiki.local',
-			'CanonicalServer' => 'http://wiki.local',
-			'UsePathInfo' => true,
-			'ActionPaths' => [],
-			'Script' => '/w/index.php',
-			'ScriptPath' => '/w',
-			'ArticlePath' => '/wiki/$1',
-			'FragmentMode' => [ 'legacy', 'html5' ],
+			MainConfigNames::Server => '//wiki.local',
+			MainConfigNames::CanonicalServer => 'http://wiki.local',
+			MainConfigNames::UsePathInfo => true,
+			MainConfigNames::ActionPaths => [],
+			MainConfigNames::Script => '/w/index.php',
+			MainConfigNames::ScriptPath => '/w',
+			MainConfigNames::ArticlePath => '/wiki/$1',
+			MainConfigNames::FragmentMode => [ 'legacy', 'html5' ],
 		] );
 	}
 

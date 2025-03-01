@@ -19,9 +19,14 @@
  *
  * @file
  */
+
+namespace MediaWiki\Api;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\EditPage\IntroMessageBuilder;
 use MediaWiki\EditPage\PreloadedContentBuilder;
+use MediaWiki\Language\ILanguageConverter;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Linker\LinkTarget;
@@ -40,6 +45,9 @@ use MediaWiki\Title\TitleValue;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
 use MediaWiki\Utils\UrlUtils;
+use MediaWiki\Watchlist\WatchedItem;
+use MediaWiki\Watchlist\WatchedItemStore;
+use MessageLocalizer;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 
@@ -65,13 +73,20 @@ class ApiQueryInfo extends ApiQueryBase {
 	private RevisionLookup $revisionLookup;
 	private UrlUtils $urlUtils;
 
-	private $fld_protection = false, $fld_talkid = false,
-		$fld_subjectid = false, $fld_url = false,
-		$fld_readable = false, $fld_watched = false,
-		$fld_watchers = false, $fld_visitingwatchers = false,
-		$fld_notificationtimestamp = false,
-		$fld_preload = false, $fld_preloadcontent = false, $fld_editintro = false,
-		$fld_displaytitle = false, $fld_varianttitles = false;
+	private bool $fld_protection = false;
+	private bool $fld_talkid = false;
+	private bool $fld_subjectid = false;
+	private bool $fld_url = false;
+	private bool $fld_readable = false;
+	private bool $fld_watched = false;
+	private bool $fld_watchers = false;
+	private bool $fld_visitingwatchers = false;
+	private bool $fld_notificationtimestamp = false;
+	private bool $fld_preload = false;
+	private bool $fld_preloadcontent = false;
+	private bool $fld_editintro = false;
+	private bool $fld_displaytitle = false;
+	private bool $fld_varianttitles = false;
 
 	/**
 	 * @var bool Whether to include link class information for the
@@ -84,20 +99,62 @@ class ApiQueryInfo extends ApiQueryBase {
 	 */
 	private $fld_associatedpage = false;
 
+	/** @var array */
 	private $params;
 
-	/** @var PageIdentity[] */
+	/** @var array<int,PageIdentity> */
 	private $titles;
-	/** @var PageIdentity[] */
+	/** @var array<int,PageIdentity> */
 	private $missing;
-	/** @var PageIdentity[] */
+	/** @var array<int,PageIdentity> */
 	private $everything;
 
-	private $pageIsRedir, $pageIsNew, $pageTouched,
-		$pageLatest, $pageLength;
+	/**
+	 * @var array<int,bool> [page_id] => page_is_redirect database field, guaranteed to be
+	 * initialized via execute()
+	 */
+	private $pageIsRedir;
+	/**
+	 * @var array<int,bool> [page_id] => page_is_new database field, guaranteed to be
+	 * initialized via execute()
+	 */
+	private $pageIsNew;
+	/**
+	 * @var array<int,int> [page_id] => page_touched database field, guaranteed to be
+	 * initialized via execute()
+	 */
+	private $pageTouched;
+	/**
+	 * @var array<int,int> [page_id] => page_latest database field, guaranteed to be
+	 * initialized via execute()
+	 */
+	private $pageLatest;
+	/**
+	 * @var array<int,int> [page_id] => page_len database field, guaranteed to be
+	 * initialized via execute()
+	 */
+	private $pageLength;
 
-	private $protections, $restrictionTypes, $watched, $watchers, $visitingwatchers,
-		$notificationtimestamps, $talkids, $subjectids, $displaytitles, $variantTitles;
+	/** @var array[][][] */
+	private $protections;
+	/** @var string[][][] */
+	private $restrictionTypes;
+	/** @var bool[][] */
+	private $watched;
+	/** @var int[][] */
+	private $watchers;
+	/** @var int[][] */
+	private $visitingwatchers;
+	/** @var string[][] */
+	private $notificationtimestamps;
+	/** @var int[][] */
+	private $talkids;
+	/** @var int[][] */
+	private $subjectids;
+	/** @var string[][] */
+	private $displaytitles;
+	/** @var string[][] */
+	private $variantTitles;
 
 	/**
 	 * Watchlist expiries that corresponds with the $watched property. Keyed by namespace and title.
@@ -111,32 +168,15 @@ class ApiQueryInfo extends ApiQueryBase {
 	 */
 	private $linkClasses;
 
+	/** @var bool */
 	private $showZeroWatchers = false;
 
+	/** @var int */
 	private $countTestedActions = 0;
 
-	/**
-	 * @param ApiQuery $queryModule
-	 * @param string $moduleName
-	 * @param Language $contentLanguage
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param TitleFactory $titleFactory
-	 * @param TitleFormatter $titleFormatter
-	 * @param WatchedItemStore $watchedItemStore
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param RestrictionStore $restrictionStore
-	 * @param LinksMigration $linksMigration
-	 * @param TempUserCreator $tempUserCreator
-	 * @param UserFactory $userFactory
-	 * @param IntroMessageBuilder $introMessageBuilder
-	 * @param PreloadedContentBuilder $preloadedContentBuilder
-	 * @param RevisionLookup $revisionLookup
-	 * @param UrlUtils $urlUtils
-	 */
 	public function __construct(
 		ApiQuery $queryModule,
-		$moduleName,
+		string $moduleName,
 		Language $contentLanguage,
 		LinkBatchFactory $linkBatchFactory,
 		NamespaceInfo $namespaceInfo,
@@ -1073,3 +1113,6 @@ class ApiQueryInfo extends ApiQueryBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Info';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryInfo::class, 'ApiQueryInfo' );

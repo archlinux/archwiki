@@ -1,7 +1,7 @@
 /*
  * Loads Echo on CentralAuth autologin
  */
-mw.hook( 'centralauth-p-personal-reset' ).add( function () {
+mw.hook( 'centralauth-p-personal-reset' ).add( () => {
 	mw.loader.using( [
 		'ext.echo.init',
 		'ext.echo.styles.badge',

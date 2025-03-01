@@ -18,6 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\Debug;
+
+use LogicException;
+use MediaWiki\Api\ApiResult;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LegacyLogger;
@@ -25,6 +29,8 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Utils\GitInfo;
+use ReflectionMethod;
+use UtfNormal;
 use Wikimedia\WrappedString;
 use Wikimedia\WrappedStringList;
 
@@ -286,7 +292,7 @@ class MWDebug {
 	 * - Debug toolbar, with one item per function and caller, if $wgDebugToolbar
 	 *   is set to true.
 	 * - PHP's error log, with level E_USER_DEPRECATED, if $wgDevelopmentWarnings
-	 *   is set to true. This is the case in phpunit tests per default, and will
+	 *   is set to true. This is the case in phpunit tests by default, and will
 	 *   cause tests to fail.
 	 * - MediaWiki's debug log, if $wgDevelopmentWarnings is set to false.
 	 *
@@ -774,3 +780,6 @@ class MWDebug {
 		];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( MWDebug::class, 'MWDebug' );

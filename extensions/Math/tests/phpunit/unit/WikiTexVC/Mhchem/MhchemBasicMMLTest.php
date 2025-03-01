@@ -56,7 +56,7 @@ final class MhchemBasicMMLTest extends MediaWikiUnitTestCase {
 		$mml = $res['input']->renderMML();
 		$this->assertStringContainsString( '<mi', $mml );
 		$this->assertStringContainsString( $result . '</mi>', $mml );
-		$this->assertStringContainsString( '<mo>&#x223C;</mo>', $mml );
+		$this->assertStringContainsString( '&#x223C;</mo>', $mml );
 	}
 
 	public function testHarpoonsLeftRight() {
@@ -77,7 +77,7 @@ final class MhchemBasicMMLTest extends MediaWikiUnitTestCase {
 		$warnings = [];
 		$res = $texVC->check( $input, $options, $warnings, true );
 		$mml = $res['input']->renderMML();
-		$this->assertStringContainsString( '<mo>&#x2212;</mo>', $mml );
+		$this->assertStringContainsString( '&#x2212;</mo>', $mml );
 		$this->assertStringContainsString( '&#x21C0;', $mml );
 		$this->assertStringContainsString( '<mpadded height="0" depth="0">', $mml );
 		$this->assertStringContainsString( '<mspace ', $mml );
@@ -212,7 +212,7 @@ final class MhchemBasicMMLTest extends MediaWikiUnitTestCase {
 		$warnings = [];
 		$checkRes = $texVC->check( $input, [ "usemhchem" => true, "usemhchemtexified" => true ],
 			$warnings, true );
-		$this->assertStringContainsString( '<mpadded width="0"><mo>&#x2212;</mo></mpadded>',
+		$this->assertStringContainsString( '&#x2212;</mo></mpadded>',
 			$checkRes["input"]->renderMML() );
 	}
 

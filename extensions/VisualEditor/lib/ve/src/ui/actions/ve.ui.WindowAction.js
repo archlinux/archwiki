@@ -40,9 +40,8 @@ ve.ui.WindowAction.static.methods = [ 'open', 'close', 'toggle' ];
  */
 ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 	data = data || {};
-	var windowAction = this,
-		windowType = this.getWindowType( name ),
-		windowManager = windowType && this.getWindowManager( windowType ),
+	const windowType = this.getWindowType( name ),
+		windowManager = this.getWindowManager( windowType ),
 		currentWindow = windowManager.getCurrentWindow(),
 		autoClosePromises = [],
 		surface = this.surface,
@@ -52,7 +51,7 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 		isFragmentWindow = !!windowClass.prototype.getFragment,
 		mayRequireFragment = isFragmentWindow ||
 			// HACK: Pass fragment to toolbar dialogs as well
-			windowType === 'toolbar',
+			windowType.name === 'toolbar',
 		// TODO: Add 'doesHandleSource' method to factory
 		sourceMode = surface.getMode() === 'source' && !windowClass.static.handlesSource,
 		openDeferred = ve.createDeferred(),
@@ -67,16 +66,16 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 		return false;
 	}
 
-	var fragmentPromise;
-	var originalFragment;
+	let fragmentPromise;
+	let originalFragment;
 	if ( !mayRequireFragment ) {
 		fragmentPromise = ve.createDeferred().resolve().promise();
 	} else if ( sourceMode ) {
-		var text = surfaceFragment.getText( true );
+		const text = surfaceFragment.getText( true );
 		originalFragment = surfaceFragment;
 
-		fragmentPromise = surfaceFragment.convertFromSource( text ).then( function ( selectionDocument ) {
-			var tempSurfaceModel = new ve.dm.Surface( selectionDocument ),
+		fragmentPromise = surfaceFragment.convertFromSource( text ).then( ( selectionDocument ) => {
+			const tempSurfaceModel = new ve.dm.Surface( selectionDocument ),
 				tempFragment = tempSurfaceModel.getLinearFragment(
 					// TODO: Select all content using content offset methods
 					new ve.Range(
@@ -93,7 +92,7 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 
 	data = ve.extendObject( { dir: dir }, data, { surface: surface, $returnFocusTo: null } );
 
-	if ( windowType === 'toolbar' || windowType === 'inspector' ) {
+	if ( windowType.name === 'toolbar' || windowType.name === 'inspector' ) {
 		// Auto-close the current window if it is different to the one we are
 		// trying to open.
 		// TODO: Make auto-close a window manager setting
@@ -103,20 +102,20 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 	}
 
 	// If we're opening a dialog, close all inspectors first
-	if ( windowType === 'dialog' ) {
-		var inspectorWindowManager = windowAction.getWindowManager( 'inspector' );
-		var currentInspector = inspectorWindowManager.getCurrentWindow();
+	if ( windowType.name === 'dialog' ) {
+		const inspectorWindowManager = this.getWindowManager( { name: 'inspector' } );
+		const currentInspector = inspectorWindowManager.getCurrentWindow();
 		if ( currentInspector ) {
 			autoClosePromises.push( inspectorWindowManager.closeWindow( currentInspector ).closed );
 		}
 	}
 
-	fragmentPromise.then( function ( fragment ) {
+	fragmentPromise.then( ( fragment ) => {
 		ve.extendObject( data, { fragment: fragment } );
 
-		ve.promiseAll( autoClosePromises ).always( function () {
-			windowManager.getWindow( name ).then( function ( win ) {
-				var instance = windowManager.openWindow( win, data );
+		ve.promiseAll( autoClosePromises ).always( () => {
+			windowManager.getWindow( name ).then( ( win ) => {
+				const instance = windowManager.openWindow( win, data );
 
 				if ( sourceMode ) {
 					win.sourceMode = sourceMode;
@@ -126,14 +125,14 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 					surface.getView().deactivate( false );
 				}
 
-				instance.opened.then( function () {
+				instance.opened.then( () => {
 					if ( sourceMode ) {
 						// HACK: initialFragment/previousSelection is assumed to be in the visible surface
 						win.initialFragment = null;
 						win.previousSelection = null;
 					}
 				} );
-				instance.opened.always( function () {
+				instance.opened.always( () => {
 					// This uses .always() so that the action is executed even if the window is already open
 					// (in which case opening it again fails). Hopefully we'll never have a situation where
 					// it's closed, the opening fails for some reason, and then weird things happen.
@@ -144,7 +143,7 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 				} );
 
 				if ( !win.constructor.static.activeSurface ) {
-					windowManager.once( 'closing', function () {
+					windowManager.once( 'closing', () => {
 						// Collapsed mobile selection: We need to re-activate the surface in case an insertion
 						// annotation was generated. We also need to do it during the same event cycle otherwise
 						// the device may not open the virtual keyboard, so use the 'closing' event. (T203517)
@@ -153,7 +152,7 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 						} else {
 							// Otherwise use the `closed` promise to wait until the dialog has performed its actions,
 							// such as creating new annotations or moving focus, before re-activating.
-							instance.closed.then( function () {
+							instance.closed.then( () => {
 								// Don't activate if mobile and expanded
 								if ( !( OO.ui.isMobile() && !surface.getModel().getSelection().isCollapsed() ) ) {
 									surface.getView().activate();
@@ -163,7 +162,7 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 					} );
 				}
 
-				instance.closed.then( function ( closedData ) {
+				instance.closed.then( ( closedData ) => {
 					// Sequence-triggered window closed without action, undo
 					if ( data.strippedSequence && !( closedData && closedData.action ) ) {
 						surface.getModel().undo();
@@ -193,8 +192,8 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
  * @return {boolean} Action was executed
  */
 ve.ui.WindowAction.prototype.close = function ( name, data ) {
-	var windowType = this.getWindowType( name ),
-		windowManager = windowType && this.getWindowManager( windowType );
+	const windowType = this.getWindowType( name ),
+		windowManager = this.getWindowManager( windowType );
 
 	if ( !windowManager ) {
 		return false;
@@ -212,14 +211,14 @@ ve.ui.WindowAction.prototype.close = function ( name, data ) {
  * @return {boolean} Action was executed
  */
 ve.ui.WindowAction.prototype.toggle = function ( name, data ) {
-	var windowType = this.getWindowType( name ),
-		windowManager = windowType && this.getWindowManager( windowType );
+	const windowType = this.getWindowType( name ),
+		windowManager = this.getWindowManager( windowType );
 
 	if ( !windowManager ) {
 		return false;
 	}
 
-	var win = windowManager.getCurrentWindow();
+	const win = windowManager.getCurrentWindow();
 	if ( !win || win.constructor.static.name !== name ) {
 		this.open( name, data );
 	} else {
@@ -229,35 +228,48 @@ ve.ui.WindowAction.prototype.toggle = function ( name, data ) {
 };
 
 /**
+ * @typedef {Object} WindowType
+ * @memberof ve.ui.WindowAction
+ * @property {string|null} name Window name ('inspector', 'toolbar', 'dialog' or null)
+ * @property {string} [position] Window position (for toolbar dialogs)
+ */
+
+/**
  * Get the specified window type
  *
  * @param {string} name Window name
- * @return {string|null} Window type: 'inspector', 'toolbar' or 'dialog'
+ * @return {ve.ui.WindowAction.WindowType}
  */
 ve.ui.WindowAction.prototype.getWindowType = function ( name ) {
-	var windowClass = ve.ui.windowFactory.lookup( name );
-	if ( windowClass.prototype instanceof ve.ui.FragmentInspector ) {
-		return 'inspector';
-	} else if ( windowClass.prototype instanceof ve.ui.ToolbarDialog ) {
-		return 'toolbar';
-	} else if ( windowClass.prototype instanceof OO.ui.Dialog ) {
-		return 'dialog';
+	const windowClass = ve.ui.windowFactory.lookup( name );
+	if ( !windowClass ) {
+		throw new Error( 'No window class registered with the name "' + name + '"' );
 	}
-	return null;
+	if ( windowClass.prototype instanceof ve.ui.FragmentInspector ) {
+		return { name: 'inspector' };
+	} else if ( windowClass.prototype instanceof ve.ui.ToolbarDialog ) {
+		return {
+			name: 'toolbar',
+			position: windowClass.static.position
+		};
+	} else if ( windowClass.prototype instanceof OO.ui.Dialog ) {
+		return { name: 'dialog' };
+	}
+	return { name: null };
 };
 
 /**
  * Get the window manager for a specified window type
  *
- * @param {Function} windowType Window type: 'inspector', 'toolbar', or 'dialog'
+ * @param {ve.ui.WindowAction.WindowType} windowType Window type object. See #getWindowType
  * @return {ve.ui.WindowManager|null} Window manager
  */
 ve.ui.WindowAction.prototype.getWindowManager = function ( windowType ) {
-	switch ( windowType ) {
+	switch ( windowType.name ) {
 		case 'inspector':
 			return this.surface.getContext().getInspectors();
 		case 'toolbar':
-			return this.surface.getToolbarDialogs();
+			return this.surface.getToolbarDialogs( windowType.position );
 		case 'dialog':
 			return this.surface.getDialogs();
 	}

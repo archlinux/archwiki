@@ -1,4 +1,4 @@
-var registries = require( './dt.ui.registries.js' );
+const registries = require( './dt.ui.registries.js' );
 
 /**
  * DiscussionTools-specific target, inheriting from the stand-alone target
@@ -128,7 +128,7 @@ CommentTarget.prototype.attachToolbar = function () {
 	this.replyWidget.$headerWrapper.append(
 		this.getToolbar().$element.append( this.replyWidget.modeTabSelect ? this.replyWidget.modeTabSelect.$element : null )
 	);
-	this.getToolbar().$element.prepend( this.getSurface().getToolbarDialogs().$element );
+	this.getToolbar().$element.prepend( this.getSurface().getToolbarDialogs( 'above' ).$element );
 };
 
 CommentTarget.prototype.getSurfaceConfig = function ( config ) {

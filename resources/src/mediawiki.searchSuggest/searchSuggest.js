@@ -3,7 +3,7 @@
  */
 ( function () {
 	// eslint-disable-next-line no-jquery/no-map-util
-	var searchNS = $.map( mw.config.get( 'wgFormattedNamespaces' ), function ( nsName, nsID ) {
+	const searchNS = $.map( mw.config.get( 'wgFormattedNamespaces' ), ( nsName, nsID ) => {
 			if ( nsID >= 0 && mw.user.options.get( 'searchNs' + nsID ) ) {
 			// Cast string key to number
 				return Number( nsID );
@@ -16,6 +16,7 @@
 			window.performance &&
 			performance.mark &&
 			performance.measure &&
+
 			performance.getEntriesByName &&
 			performance.clearMarks ),
 
@@ -28,6 +29,7 @@
 	/**
 	 * Convenience library for making searches for titles that match a string.
 	 * Loaded via the `mediawiki.searchSuggest` ResourceLoader library.
+	 *
 	 * @example
 	 * mw.loader.using('mediawiki.searchSuggest').then(() => {
 	 *   var api = new mw.Api();
@@ -66,7 +68,7 @@
 				search: query,
 				namespace: namespace || searchNS,
 				limit
-			} ).done( function ( data, jqXHR ) {
+			} ).done( ( data, jqXHR ) => {
 				response( data[ 1 ], {
 					type: jqXHR.getResponseHeader( 'X-OpenSearch-Type' ),
 					searchId: jqXHR.getResponseHeader( 'X-Search-ID' ),
@@ -76,24 +78,23 @@
 		}
 	};
 
-	$( function () {
-		var api, searchboxesSelectors,
-			// Region where the suggestions box will appear directly below
-			// (using the same width). Can be a container element or the input
-			// itself, depending on what suits best in the environment.
-			// For Vector the suggestion box should align with the simpleSearch
-			// container's borders, in other skins it should align with the input
-			// element (not the search form, as that would leave the buttons
-			// vertically between the input and the suggestions).
-			$searchRegion = $( '#simpleSearch, #searchInput' ).first(),
-			$searchInput = $( '#searchInput' ),
-			previousSearchText = $searchInput.val();
+	$( () => {
+		let api;
+		// Region where the suggestions box will appear directly below
+		// (using the same width). Can be a container element or the input
+		// itself, depending on what suits best in the environment.
+		// For Vector the suggestion box should align with the simpleSearch
+		// container's borders, in other skins it should align with the input
+		// element (not the search form, as that would leave the buttons
+		// vertically between the input and the suggestions).
+		const $searchRegion = $( '#simpleSearch, #searchInput' ).first(),
+			$searchInput = $( '#searchInput' );
+		let previousSearchText = $searchInput.val();
 
 		function serializeObject( fields ) {
-			var i,
-				obj = {};
+			const obj = {};
 
-			for ( i = 0; i < fields.length; i++ ) {
+			for ( let i = 0; i < fields.length; i++ ) {
 				obj[ fields[ i ].name ] = fields[ i ].value;
 			}
 
@@ -102,16 +103,14 @@
 
 		// Compute form data for search suggestions functionality.
 		function getFormData( context ) {
-			var $form, baseHref, linkParams;
-
 			if ( !context.formData ) {
 				// Compute common parameters for links' hrefs
-				$form = context.config.$region.closest( 'form' );
+				const $form = context.config.$region.closest( 'form' );
 
-				baseHref = $form.attr( 'action' ) || '';
+				let baseHref = $form.attr( 'action' ) || '';
 				baseHref += baseHref.indexOf( '?' ) > -1 ? '&' : '?';
 
-				linkParams = serializeObject( $form.serializeArray() );
+				const linkParams = serializeObject( $form.serializeArray() );
 
 				context.formData = {
 					textParam: context.data.$textbox.attr( 'name' ),
@@ -130,7 +129,7 @@
 		 * @ignore
 		 */
 		function onBeforeUpdate() {
-			var searchText = this.val();
+			const searchText = this.val();
 
 			if ( searchText && searchText !== previousSearchText ) {
 				mw.track( 'mediawiki.searchSuggest', {
@@ -180,7 +179,7 @@
 		 * @param {Object} metadata
 		 */
 		function onAfterUpdate( metadata ) {
-			var context = this.data( 'suggestionsContext' );
+			const context = this.data( 'suggestionsContext' );
 
 			mw.track( 'mediawiki.searchSuggest', {
 				action: 'impression-results',
@@ -197,8 +196,8 @@
 				// execute before the rendering steps happen (e.g. layout and paint). A
 				// nested rAF will execute after these rendering steps have completed
 				// and ensure the search results are visible to the user.
-				requestAnimationFrame( function () {
-					requestAnimationFrame( function () {
+				requestAnimationFrame( () => {
+					requestAnimationFrame( () => {
 						if ( !performance.getEntriesByName( queryMark ).length ) {
 							return;
 						}
@@ -224,7 +223,7 @@
 
 		// The function used to render the suggestions.
 		function renderFunction( text, context ) {
-			var formData = getFormData( context ),
+			const formData = getFormData( context ),
 				textboxConfig = context.data.$textbox.data( 'mw-searchsuggest' ) || {};
 
 			// linkParams object is modified and reused
@@ -254,7 +253,7 @@
 
 		// The function used when the user makes a selection
 		function selectFunction( $input, source ) {
-			var context = $input.data( 'suggestionsContext' ),
+			const context = $input.data( 'suggestionsContext' ),
 				text = $input.val(),
 				url = $( this ).parent( 'a' ).attr( 'href' );
 
@@ -287,7 +286,7 @@
 		}
 
 		function specialRenderFunction( query, context ) {
-			var $el = this,
+			const $el = this,
 				formData = getFormData( context );
 
 			// linkParams object is modified and reused
@@ -328,7 +327,7 @@
 		}
 
 		// Generic suggestions functionality for all search boxes
-		searchboxesSelectors = [
+		const searchboxesSelectors = [
 			// Primary searchbox on every page in standard skins
 			'#searchInput',
 			// Generic selector for skins with multiple searchboxes (used by CologneBlue)
@@ -338,14 +337,14 @@
 		$( searchboxesSelectors.join( ', ' ) )
 			.suggestions( {
 				fetch: function ( query, response, maxRows ) {
-					var node = this[ 0 ];
+					const node = this[ 0 ];
 
 					api = api || new mw.Api();
 
 					$.data( node, 'request', mw.searchSuggest.request( api, query, response, maxRows ) );
 				},
 				cancel: function () {
-					var node = this[ 0 ],
+					const node = this[ 0 ],
 						request = $.data( node, 'request' );
 
 					if ( request ) {
@@ -376,7 +375,7 @@
 			// (they use 2 elements to get a sensible font-height). So, instead of making exceptions for
 			// each skin or adding more stylesheets, just copy it from the active element so auto-fit.
 			.each( function () {
-				var $this = $( this );
+				const $this = $( this );
 				$this
 					.data( 'suggestions-context' )
 					.data.$container.css( 'fontSize', $this.css( 'fontSize' ) );
@@ -403,7 +402,7 @@
 			special: {
 				render: specialRenderFunction,
 				select: function ( $input, source ) {
-					var context = $input.data( 'suggestionsContext' ),
+					const context = $input.data( 'suggestionsContext' ),
 						text = $input.val();
 					if ( source === 'mouse' ) {
 						// mouse click won't trigger form submission, so we need to send a click event
@@ -429,13 +428,13 @@
 			$region: $searchRegion
 		} );
 
-		var $searchForm = $searchInput.closest( 'form' );
+		const $searchForm = $searchInput.closest( 'form' );
 		$searchForm
 			// Track the form submit event.
 			// Note that the form is mainly submitted for manual user input;
 			// selecting a suggestion is tracked as a click instead (see selectFunction()).
-			.on( 'submit', function () {
-				var context = $searchInput.data( 'suggestionsContext' );
+			.on( 'submit', () => {
+				const context = $searchInput.data( 'suggestionsContext' );
 				mw.track( 'mediawiki.searchSuggest', {
 					action: 'submit-form',
 					numberOfResults: context.config.suggestions.length,

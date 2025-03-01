@@ -2,10 +2,9 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use HTMLForm;
-use IContextSource;
 use LogEventsList;
 use LogPage;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\EditBox\EditBoxBuilderFactory;
@@ -13,11 +12,13 @@ use MediaWiki\Extension\AbuseFilter\EditBox\EditBoxField;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use RecentChange;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class AbuseFilterViewTestBatch extends AbuseFilterView {
 	/**
@@ -88,6 +89,22 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		}
 
 		$this->loadParameters();
+
+		// Check if a loaded test pattern uses protected variables and if the user has the right
+		// to view protected variables. If they don't and protected variables are present, unset
+		// the test pattern to avoid leaking PII and notify the user.
+		// This is done as early as possible so that a filter with PII the user cannot access is
+		// never loaded.
+		if ( $this->testPattern !== '' ) {
+			$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
+			$usedVars = $ruleChecker->getUsedVars( $this->testPattern );
+			if ( $this->afPermManager->getForbiddenVariables( $this->getAuthority(), $usedVars ) ) {
+				$this->testPattern = '';
+				$out->addHtml(
+					Html::errorBox( $this->msg( 'abusefilter-test-protectedvarerr' )->parse() )
+				);
+			}
+		}
 
 		$out->setPageTitleMsg( $this->msg( 'abusefilter-test' ) );
 		$out->addHelpLink( 'Extension:AbuseFilter/Rules format' );
@@ -204,11 +221,11 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 
 		$startTS = strtotime( $formData['TestPeriodStart'] );
 		if ( $startTS ) {
-			$conds[] = 'rc_timestamp>=' . $dbr->addQuotes( $dbr->timestamp( $startTS ) );
+			$conds[] = $dbr->expr( 'rc_timestamp', '>=', $dbr->timestamp( $startTS ) );
 		}
 		$endTS = strtotime( $formData['TestPeriodEnd'] );
 		if ( $endTS ) {
-			$conds[] = 'rc_timestamp<=' . $dbr->addQuotes( $dbr->timestamp( $endTS ) );
+			$conds[] = $dbr->expr( 'rc_timestamp', '<=', $dbr->timestamp( $endTS ) );
 		}
 		if ( $formData['TestPage'] !== '' ) {
 			// The form validates the input for us, so this shouldn't throw.
@@ -225,14 +242,15 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$conds[] = $this->buildTestConditions( $dbr, $action );
 		$conds = array_merge( $conds, $this->buildVisibilityConditions( $dbr, $this->getAuthority() ) );
 
-		$res = $dbr->select(
-			$rcQuery['tables'],
-			$rcQuery['fields'],
-			$conds,
-			__METHOD__,
-			[ 'LIMIT' => self::$mChangeLimit, 'ORDER BY' => 'rc_timestamp desc' ],
-			$rcQuery['joins']
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->tables( $rcQuery['tables'] )
+			->fields( $rcQuery['fields'] )
+			->conds( $conds )
+			->caller( __METHOD__ )
+			->limit( self::$mChangeLimit )
+			->orderBy( 'rc_timestamp', SelectQueryBuilder::SORT_DESC )
+			->joinConds( $rcQuery['joins'] )
+			->fetchResultSet();
 
 		// Get our ChangesList
 		$changesList = new AbuseFilterChangesList( $this->getContext(), $this->testPattern );
@@ -307,11 +325,12 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 			&& is_numeric( $this->mParams[1] )
 		) {
 			$dbr = $this->lbFactory->getReplicaDatabase();
-			$pattern = $dbr->selectField( 'abuse_filter',
-				'af_pattern',
-				[ 'af_id' => intval( $this->mParams[1] ) ],
-				__METHOD__
-			);
+			$pattern = $dbr->newSelectQueryBuilder()
+				->select( 'af_pattern' )
+				->from( 'abuse_filter' )
+				->where( [ 'af_id' => intval( $this->mParams[1] ) ] )
+				->caller( __METHOD__ )
+				->fetchField();
 			if ( $pattern !== false ) {
 				$this->testPattern = $pattern;
 			}

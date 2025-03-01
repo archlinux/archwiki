@@ -37,6 +37,9 @@ class RemoteBoxedExecutor extends BoxedExecutor {
 	}
 
 	public function executeValid( BoxedCommand $command ) {
+		$this->checkForUrlFiles( $command );
+
+		// Compile the binary parts
 		$parts = [ [
 			'name' => 'json-data',
 			'headers' => [
@@ -49,15 +52,17 @@ class RemoteBoxedExecutor extends BoxedExecutor {
 			] )
 		] ];
 		foreach ( $command->getInputFiles() as $boxedName => $file ) {
-			$parts[] = [
-				'name' => $boxedName,
-				'headers' => [
-					'Content-Disposition' =>
-						"attachment; name=\"$boxedName\"; filename=\"$boxedName\"",
-					'Content-Type' => 'application/octet-stream',
-				],
-				'contents' => $file->getStreamOrString()
-			];
+			if ( $file instanceof InputFileWithContents ) {
+				$parts[] = [
+					'name' => $boxedName,
+					'headers' => [
+						'Content-Disposition' =>
+							"attachment; name=\"$boxedName\"; filename=\"$boxedName\"",
+						'Content-Type' => 'application/octet-stream',
+					],
+					'contents' => $file->getStreamOrString()
+				];
+			}
 		}
 		$stdin = $command->getStdin();
 		if ( $stdin !== '' ) {
@@ -73,6 +78,7 @@ class RemoteBoxedExecutor extends BoxedExecutor {
 		$files = $command->getOutputFiles();
 		$globs = $command->getOutputGlobs();
 
+		// Send the request
 		$resultData = $this->client->sendRequest(
 			'shell/' . $command->getRouteName(),
 			$parts,
@@ -80,10 +86,12 @@ class RemoteBoxedExecutor extends BoxedExecutor {
 			$globs
 		);
 
+		// Validate the response
 		if ( !isset( $resultData['exitCode'] ) ) {
 			throw new ShellboxError( 'Server result is missing the exit code' );
 		}
 
+		// Forward log entries
 		foreach ( $resultData['log'] ?? [] as $logEntry ) {
 			$this->logger->log(
 				$logEntry['level'],
@@ -92,13 +100,15 @@ class RemoteBoxedExecutor extends BoxedExecutor {
 			);
 		}
 
+		// Construct the result
 		$result = ( new BoxedResult )
 			->exitCode( $resultData['exitCode'] )
 			->stdout( $resultData['stdout'] ?? null )
 			->stderr( $resultData['stderr'] ?? null );
 
+		$uploadedFiles = array_fill_keys( $resultData['uploadedFiles'] ?? [], true );
 		foreach ( $files as $boxedName => $file ) {
-			if ( $file->wasReceived() ) {
+			if ( $file->wasReceived() || isset( $uploadedFiles[$boxedName] ) ) {
 				$result->addOutputFile( $boxedName, $file );
 			}
 		}
@@ -110,5 +120,46 @@ class RemoteBoxedExecutor extends BoxedExecutor {
 		}
 
 		return $result;
+	}
+
+	public function areUrlFilesAllowed() {
+		return $this->client->areUrlFilesAllowed();
+	}
+
+	/**
+	 * If URL files are not allowed by client configuration, throw an exception
+	 * if the specified command has any such files.
+	 *
+	 * Applications should check areUrlFilesAllowed() before calling
+	 * inputFileFromUrl() etc. to avoid an exception from this method.
+	 *
+	 * @param BoxedCommand $command
+	 * @throws ShellboxError
+	 */
+	private function checkForUrlFiles( BoxedCommand $command ) {
+		if ( $this->areUrlFilesAllowed() ) {
+			return;
+		}
+		foreach ( $command->getInputFiles() as $boxedName => $file ) {
+			if ( $file instanceof InputFileFromUrl ) {
+				throw new ShellboxError(
+					"Can't download input file \"$boxedName\" when " .
+					"allowUrlFiles is not set in the Client options" );
+			}
+		}
+		foreach ( $command->getOutputFiles() as $boxedName => $outputFile ) {
+			if ( $outputFile instanceof OutputFileToUrl ) {
+				throw new ShellboxError(
+					"Can't upload output file \"$boxedName\" when " .
+					"allowUrlOutput is not set in the Client options" );
+			}
+		}
+		foreach ( $command->getOutputGlobs() as $id => $outputGlob ) {
+			if ( $outputGlob instanceof OutputGlobToUrl ) {
+				throw new ShellboxError(
+					"Can't upload output glob \"$id\" when " .
+					"allowUrlOutput is not set in the Client options" );
+			}
+		}
 	}
 }

@@ -29,7 +29,7 @@ use Closure;
 use Error;
 use InvalidArgumentException;
 use LogicException;
-use MWDebug;
+use MediaWiki\Debug\MWDebug;
 use UnexpectedValueException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\NonSerializable\NonSerializableTrait;
@@ -457,6 +457,7 @@ class HookContainer implements SalvageableService {
 	/**
 	 * Get handler callbacks.
 	 *
+	 * @deprecated since 1.41.
 	 * @internal For use by FauxHookHandlerArray. Delete when no longer needed.
 	 * @param string $hook Name of hook
 	 * @return callable[]
@@ -641,7 +642,7 @@ class HookContainer implements SalvageableService {
 	 *
 	 * @return void
 	 */
-	private function checkDeprecation( string $hook, $handler, array $deprecationInfo = null ): void {
+	private function checkDeprecation( string $hook, $handler, ?array $deprecationInfo = null ): void {
 		if ( !$deprecationInfo ) {
 			$deprecatedHooks = $this->registry->getDeprecatedHooks();
 			$deprecationInfo = $deprecatedHooks->getDeprecationInfo( $hook );

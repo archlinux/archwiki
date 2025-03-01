@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:BotPasswords
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,19 +16,20 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
 use ErrorPageError;
-use HTMLRestrictionsField;
-use InvalidPassword;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\Field\HTMLRestrictionsField;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Password\InvalidPassword;
+use MediaWiki\Password\PasswordError;
+use MediaWiki\Password\PasswordFactory;
 use MediaWiki\Permissions\GrantsInfo;
 use MediaWiki\Permissions\GrantsLocalization;
 use MediaWiki\SpecialPage\FormSpecialPage;
@@ -38,8 +37,6 @@ use MediaWiki\Status\Status;
 use MediaWiki\User\BotPassword;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
-use PasswordError;
-use PasswordFactory;
 use Psr\Log\LoggerInterface;
 
 /**

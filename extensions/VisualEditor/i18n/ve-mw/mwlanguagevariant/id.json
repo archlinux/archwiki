@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Gombang",
 			"Rachmat04",
 			"William Surya Permana"
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Ini adalah aturan tersembunyi.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Aturan ini akan mempengaruhi judul halaman.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Kode bahasa",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Tidak sah>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Tidak sah</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Bahasa",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Sumber",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Tujuan",

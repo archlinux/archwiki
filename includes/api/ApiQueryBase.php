@@ -20,10 +20,13 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use stdClass;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -42,7 +45,8 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 abstract class ApiQueryBase extends ApiBase {
 	use ApiQueryBlockInfoTrait;
 
-	private $mQueryModule, $mDb;
+	private ApiQuery $mQueryModule;
+	private ?IReadableDatabase $mDb;
 
 	/**
 	 * @var SelectQueryBuilder|null
@@ -55,7 +59,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * @param string $moduleName
 	 * @param string $paramPrefix
 	 */
-	public function __construct( ApiQuery $queryModule, $moduleName, $paramPrefix = '' ) {
+	public function __construct( ApiQuery $queryModule, string $moduleName, $paramPrefix = '' ) {
 		parent::__construct( $queryModule->getMain(), $moduleName, $paramPrefix );
 		$this->mQueryModule = $queryModule;
 		$this->mDb = null;
@@ -384,7 +388,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 *  ApiQueryBaseProcessRow hook will be expected.
 	 * @return IResultWrapper
 	 */
-	protected function select( $method, $extraQuery = [], array &$hookData = null ) {
+	protected function select( $method, $extraQuery = [], ?array &$hookData = null ) {
 		$queryBuilder = clone $this->getQueryBuilder();
 		if ( isset( $extraQuery['tables'] ) ) {
 			$queryBuilder->rawTables( (array)$extraQuery['tables'] );
@@ -592,7 +596,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 *
 	 * @param IResultWrapper $res Result set to work on.
 	 *  The result set must have _namespace and _title fields with the provided field prefix
-	 * @param string $fname The caller function name, always use __METHOD__
+	 * @param string $fname The caller function name, always use __METHOD__ @phan-mandatory-param
 	 * @param string $fieldPrefix Prefix for fields to check gender for
 	 */
 	protected function executeGenderCacheFromResultWrapper(
@@ -628,3 +632,6 @@ abstract class ApiQueryBase extends ApiBase {
 
 	// endregion -- end of utility methods
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiQueryBase::class, 'ApiQueryBase' );

@@ -1,14 +1,18 @@
-var mobile = require( 'mobile.startup' );
+const mobile = require( 'mobile.startup' );
 
 /**
- * @fires echo.mobile every time the notifications overlay is opened
+ * @module module:ext.echo.mobile
+ */
+
+/**
+ * @fires module:ext.echo.mobile#echo.mobile every time the notifications overlay is opened
  */
 function onOpenNotificationsOverlay() {
 	mw.hook( 'echo.mobile' ).fire( true );
 }
 
 /**
- * @fires echo.mobile every time the notifications overlay is closed
+ * @fires module:ext.echo.mobile#echo.mobile every time the notifications overlay is closed
  */
 function onCloseNotificationsOverlay() {
 	mw.hook( 'echo.mobile' ).fire( false );
@@ -19,15 +23,13 @@ function onCloseNotificationsOverlay() {
  * with the Toast notifications defined by common/toast.js.
  */
 function init() {
-	var
-		notificationsFilterOverlay = require( './notificationsFilterOverlay.js' ),
+	const notificationsFilterOverlay = require( './notificationsFilterOverlay.js' ),
 		notificationsOverlay = require( './overlay.js' ),
-		overlayManager = mobile.getOverlayManager(),
-		initialized = false;
+		overlayManager = mobile.getOverlayManager();
 
 	function showNotificationOverlay() {
-		var overlay = notificationsOverlay(
-			function ( exit ) {
+		const overlay = notificationsOverlay(
+			( exit ) => {
 				onCloseNotificationsOverlay();
 				exit();
 			} );
@@ -36,9 +38,10 @@ function init() {
 		return overlay;
 	}
 
+	let initialized = false;
 	// Once the DOM is loaded add the overlay and overlay manager. Minerva will handle the
 	// notification button that will link to Special:Notifications.
-	$( function () {
+	$( () => {
 		overlayManager.add( /^\/notifications$/, showNotificationOverlay );
 
 		/**
@@ -49,7 +52,7 @@ function init() {
 		 */
 		function addFilterButton() {
 			// Create filter button once the notifications overlay has been loaded
-			var filterStatusButton = new OO.ui.ButtonWidget(
+			const filterStatusButton = new OO.ui.ButtonWidget(
 				{
 					href: '#/notifications-filter',
 					classes: [ 'mw-echo-ui-notificationsInboxWidget-main-toolbar-nav-filter-placeholder' ],
@@ -70,9 +73,9 @@ function init() {
 		// The code is bundled here since it makes use of loadModuleScript. This also allows
 		// the possibility of invoking the filter from outside the Special page in future.
 		// Once the 'ext.echo.special.onInitialize' hook has fired, load notification filter.
-		mw.hook( 'ext.echo.special.onInitialize' ).add( function () {
+		mw.hook( 'ext.echo.special.onInitialize' ).add( () => {
 			// eslint-disable-next-line no-jquery/no-global-selector
-			var $crossWikiUnreadFilter = $( '.mw-echo-ui-crossWikiUnreadFilterWidget' ),
+			const $crossWikiUnreadFilter = $( '.mw-echo-ui-crossWikiUnreadFilterWidget' ),
 				// eslint-disable-next-line no-jquery/no-global-selector
 				$notifReadState = $( '.mw-echo-ui-notificationsInboxWidget-main-toolbar-readState' );
 
@@ -87,7 +90,7 @@ function init() {
 			addFilterButton();
 
 			// setup route
-			overlayManager.add( /^\/notifications-filter$/, function () {
+			overlayManager.add( /^\/notifications-filter$/, () => {
 				onOpenNotificationsOverlay();
 				return notificationsFilterOverlay( {
 					onBeforeExit: function ( exit ) {

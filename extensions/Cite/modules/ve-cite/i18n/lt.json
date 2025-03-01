@@ -28,7 +28,6 @@
 	"cite-ve-dialog-reference-editing-reused-long": "Ši nuoroda naudojama {{PLURAL:$1|kartą|2=du kartus|$1 kartus}} šiame puslapyje. Čia atlikti pakeitimai bus taikomi visose vietose, kur ši nuoroda naudojama pakartotinai.",
 	"cite-ve-dialog-reference-options-group-label": "Naudoti šią grupę",
 	"cite-ve-dialog-reference-options-group-placeholder": "Bendrosios nuorodos",
-	"cite-ve-dialog-reference-options-name-label": "Pakartotinai naudoti pagal pavadinimą",
 	"cite-ve-dialog-reference-options-responsive-label": "Naudoti interaktyvų stulpelių išdėstymą",
 	"cite-ve-dialog-reference-options-section": "Parinktys",
 	"cite-ve-dialog-reference-placeholder": "Rašykite ar įklijuokite savo nuorodą čia arba įterpkite citatos šabloną.",

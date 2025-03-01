@@ -20,9 +20,6 @@
 	"multimediaviewer-permission-link": "shartlarni koʻrish",
 	"multimediaviewer-permission-link-hide": "shartlarni yashirish",
 	"multimediaviewer-permission-viewmore": "Koʻproq koʻrish",
-	"multimediaviewer-about-mmv": "Media Viewer haqida",
-	"multimediaviewer-optout-mmv": "Media Viewerni oʻchirib qoʻyish",
-	"multimediaviewer-optin-mmv": "Media Viewermi yoqish",
 	"multimediaviewer-geoloc-north": "Shi",
 	"multimediaviewer-geoloc-east": "Sha",
 	"multimediaviewer-geoloc-south": "J",
@@ -53,11 +50,6 @@
 	"multimediaviewer-prev-image-alt-text": "Avvalgi tasvirni koʻrsatish",
 	"multimediaviewer-title-popup-text": "Tavsif",
 	"multimediaviewer-title-popup-text-more": "Toʻliq tavsifni koʻrish",
-	"multimediaviewer-options-tooltip": "Media Viewerni yoqish yoki oʻchirish",
-	"multimediaviewer-options-dialog-header": "Media Viewer oʻchirib qoʻyilsinmi?",
-	"multimediaviewer-options-learn-more": "Batafsil maʼlumot",
-	"multimediaviewer-option-submit-button": "Media Viewerni oʻchirib qoʻyish",
-	"multimediaviewer-option-cancel-button": "Bekor qilish",
 	"multimediaviewer-enable-dialog-header": "Media Viewer yoqilsinmi?",
 	"multimediaviewer-enable-submit-button": "Media Viewermi yoqish"
 }

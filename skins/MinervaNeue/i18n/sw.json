@@ -3,8 +3,8 @@
 		"authors": [
 			"Kipala",
 			"Kwisha",
-			"Stephenwanjau",
-			"Sheilawangari"
+			"Sheilawangari",
+			"Stephenwanjau"
 		]
 	},
 	"minerva-last-modified-date": "Ilihaririwa mwisho mnamo $1, $2",
@@ -60,7 +60,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|mwaka mmoja|miaka $1}} iliyopita",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoria",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Tazama kategoria za kurasa",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Matibabu ya masuala ya ukurasa yaliyoboreshwa",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Masuala ya ukurasa (Kigezo:ambox) yatawekwa mstari kwenye kifungu.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Kwa bahati mbaya, kupanga matokeo kwa ukurasa hakupatikani kwenye simu ya mkononi. Ikiwa ungependa kutumia kipengele cha kikundi kwa ukurasa tafadhali tembelea tovuti ya eneo-kazi."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Kwa bahati mbaya, kupanga matokeo kwa ukurasa hakupatikani kwenye simu ya mkononi. Ikiwa ungependa kutumia kipengele cha kikundi kwa ukurasa tafadhali tembelea tovuti ya eneo-kazi.",
+	"skin-minerva-night-mode-unavailable": "Ukurasa unapatikana tu katika mandhari ya rangi \"Nyepesi\"."
 }

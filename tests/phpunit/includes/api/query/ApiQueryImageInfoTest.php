@@ -2,16 +2,18 @@
 
 namespace MediaWiki\Tests\Api\Query;
 
-use ApiQueryImageInfo;
 use File;
+use MediaWiki\Api\ApiQueryImageInfo;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
+use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
 
 /**
- * @covers \ApiQueryImageInfo
+ * @covers \MediaWiki\Api\ApiQueryImageInfo
  * @group API
  * @group medium
  * @group Database
@@ -36,7 +38,9 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 	private const IMAGE_2_TIMESTAMP = '20230101000000';
 	private const IMAGE_2_SIZE = 12345;
 
+	/** @var UserIdentity */
 	private $testUser = null;
+	/** @var User */
 	private $tempUser = null;
 
 	public function addDBData() {
@@ -45,10 +49,10 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 
 		$actorId = $this->getServiceContainer()
 			->getActorStore()
-			->acquireActorId( $this->testUser, $this->db );
-		$this->db->insert(
-			'image',
-			[
+			->acquireActorId( $this->testUser, $this->getDb() );
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'image' )
+			->row( [
 				'img_name' => 'Random-11m.png',
 				'img_size' => self::NEW_IMAGE_SIZE,
 				'img_width' => 1000,
@@ -60,15 +64,16 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 				'img_minor_mime' => 'png',
 				'img_description_id' => $this->getServiceContainer()
 					->getCommentStore()
-					->createComment( $this->db, "'''comment'''" )->id,
+					->createComment( $this->getDb(), "'''comment'''" )->id,
 				'img_actor' => $actorId,
-				'img_timestamp' => $this->db->timestamp( self::NEW_IMAGE_TIMESTAMP ),
+				'img_timestamp' => $this->getDb()->timestamp( self::NEW_IMAGE_TIMESTAMP ),
 				'img_sha1' => 'sy02psim0bgdh0jt4vdltuzoh7j80ru',
-			]
-		);
-		$this->db->insert(
-			'oldimage',
-			[
+			] )
+			->caller( __METHOD__ )
+			->execute();
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'oldimage' )
+			->row( [
 				'oi_name' => 'Random-11m.png',
 				'oi_archive_name' => self::OLD_IMAGE_TIMESTAMP . 'Random-11m.png',
 				'oi_size' => self::OLD_IMAGE_SIZE,
@@ -81,16 +86,13 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 				'oi_minor_mime' => 'png',
 				'oi_description_id' => $this->getServiceContainer()
 					->getCommentStore()
-					->createComment( $this->db, 'deleted comment' )->id,
+					->createComment( $this->getDb(), 'deleted comment' )->id,
 				'oi_actor' => $actorId,
-				'oi_timestamp' => $this->db->timestamp( self::OLD_IMAGE_TIMESTAMP ),
+				'oi_timestamp' => $this->getDb()->timestamp( self::OLD_IMAGE_TIMESTAMP ),
 				'oi_sha1' => 'sy02psim0bgdh0jt4vdltuzoh7j80ru',
 				'oi_deleted' => File::DELETED_FILE | File::DELETED_COMMENT | File::DELETED_USER,
-			]
-		);
-		$this->db->insert(
-			'oldimage',
-			[
+			] )
+			->row( [
 				'oi_name' => 'Random-11m.png',
 				'oi_archive_name' => self::NO_COMMENT_TIMESTAMP . 'Random-11m.png',
 				'oi_size' => self::OLD_IMAGE_SIZE,
@@ -103,25 +105,26 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 				'oi_minor_mime' => 'png',
 				'oi_description_id' => $this->getServiceContainer()
 					->getCommentStore()
-					->createComment( $this->db, '' )->id,
+					->createComment( $this->getDb(), '' )->id,
 				'oi_actor' => $actorId,
-				'oi_timestamp' => $this->db->timestamp( self::NO_COMMENT_TIMESTAMP ),
+				'oi_timestamp' => $this->getDb()->timestamp( self::NO_COMMENT_TIMESTAMP ),
 				'oi_sha1' => 'sy02psim0bgdh0jt4vdltuzoh7j80ru',
 				'oi_deleted' => 0,
-			]
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		// Set up temp user config
 		$this->enableAutoCreateTempUser();
 		$this->tempUser = $this->getServiceContainer()
 			->getTempUserCreator()
-			->create()->getUser();
+			->create( null, new FauxRequest() )->getUser();
 		$tempActorId = $this->getServiceContainer()
 			->getActorStore()
-			->acquireActorId( $this->tempUser, $this->db );
-		$this->db->insert(
-			'image',
-			[
+			->acquireActorId( $this->tempUser, $this->getDb() );
+		$this->getDb()->newInsertQueryBuilder()
+			->insertInto( 'image' )
+			->row( [
 				'img_name' => self::IMAGE_2_NAME,
 				'img_size' => self::IMAGE_2_SIZE,
 				'img_width' => 1000,
@@ -133,12 +136,13 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 				'img_minor_mime' => 'png',
 				'img_description_id' => $this->getServiceContainer()
 					->getCommentStore()
-					->createComment( $this->db, "'''comment'''" )->id,
+					->createComment( $this->getDb(), "'''comment'''" )->id,
 				'img_actor' => $tempActorId,
-				'img_timestamp' => $this->db->timestamp( self::IMAGE_2_TIMESTAMP ),
+				'img_timestamp' => $this->getDb()->timestamp( self::IMAGE_2_TIMESTAMP ),
 				'img_sha1' => 'aaaaasim0bgdh0jt4vdltuzoh7',
-			]
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 	private function getImageInfoFromResult( array $result ) {

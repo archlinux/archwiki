@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use IContextSource;
 use InvalidArgumentException;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseThreadItem;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
@@ -264,7 +264,7 @@ class TopicSubscriptionsPager extends TablePager {
 			],
 			'conds' => [
 				'sub_user' => $this->getUser()->getId(),
-				'sub_state != ' . SubscriptionStore::STATE_UNSUBSCRIBED,
+				$this->getDatabase()->expr( 'sub_state', '!=', SubscriptionStore::STATE_UNSUBSCRIBED ),
 			],
 		];
 	}

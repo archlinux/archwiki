@@ -23,12 +23,16 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * API interface for setting the wl_notificationtimestamp field
@@ -36,6 +40,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
  */
 class ApiSetNotificationTimestamp extends ApiBase {
 
+	/** @var ApiPageSet|null */
 	private $mPageSet = null;
 
 	private RevisionStore $revisionStore;
@@ -44,18 +49,9 @@ class ApiSetNotificationTimestamp extends ApiBase {
 	private TitleFormatter $titleFormatter;
 	private TitleFactory $titleFactory;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param IConnectionProvider $dbProvider
-	 * @param RevisionStore $revisionStore
-	 * @param WatchedItemStoreInterface $watchedItemStore
-	 * @param TitleFormatter $titleFormatter
-	 * @param TitleFactory $titleFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
 		WatchedItemStoreInterface $watchedItemStore,
@@ -301,3 +297,6 @@ class ApiSetNotificationTimestamp extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:SetNotificationTimestamp';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiSetNotificationTimestamp::class, 'ApiSetNotificationTimestamp' );

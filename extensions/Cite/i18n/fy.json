@@ -28,6 +28,13 @@
 	"cite_error_empty_references_define": "De <code>&lt;ref&gt;</code>-oantsjutting definiearre yn <code>&lt;references&gt;</code> mei de namme \"$1\" hat gjin ynhâld.",
 	"cite-tracking-category-cite-error": "Siden mei referinsjeflaters",
 	"cite-tracking-category-cite-error-desc": "De siden yn dizze kategory hawwe flaters yn de oantsjutting fan 'e referinsjes.",
+	"cite-reference-previews-reference": "Referinsje",
+	"cite-reference-previews-book": "Boekreferinsje",
+	"cite-reference-previews-journal": "Tydskriftreferinsje",
+	"cite-reference-previews-news": "Nijsreferinsje",
+	"cite-reference-previews-note": "Noat",
+	"cite-reference-previews-web": "Webreferinsje",
+	"cite-reference-previews-collapsible-placeholder": "Dizze referinsje befettet in yllustraasje dy't net yn it proefbyld past.",
 	"cite_references_link_accessibility_label": "Omheechspringe",
 	"cite_references_link_many_accessibility_label": "Omheechspringe nei:",
 	"cite_references_link_accessibility_back_label": "Wer omheechspringe",
@@ -39,5 +46,9 @@
 	"cite-wikieditor-help-content-reference-description": "Referinsje",
 	"cite-wikieditor-help-content-named-reference-description": "Neamde referinsje",
 	"cite-wikieditor-help-content-rereference-description": "Fierder gebrûk fan deselde referinsje",
-	"cite-wikieditor-help-content-showreferences-description": "Referinsjes werjaan"
+	"cite-wikieditor-help-content-showreferences-description": "Referinsjes werjaan",
+	"popups-prefs-navpopups-gadget-conflict-info": "Jo hawwe it 'lytsark' [[$1|Navigation popups]] ynskeakele, dat jo sille de proefbylden fan dizze funksje net sjen. Ofhinklik fan jo wiki, kin it lytsark in wat oare namme hawwe. At jo fierders noch problemen ûnderfine, besjoch dan jo lytsark- en meidoggerskripts, ek dy't globaal binne.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Jo hawwe it 'lytsark' [[$1|Navigation popups]] en [[$1|Reference Tooltips]] ynskeakele, dat jo sille de proefbylden fan dizze funksje net sjen. Ofhinklik fan jo wiki, kin it lytsark wat oare nammen hawwe. At jo fierders noch problemen ûnderfine, besjoch dan jo lytsark- en meidoggerskripts, ek dy't globaal binne.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Jo hawwe it 'lytsark' [[$1|Reference Tooltips]] ynskeakele, dat jo sille de referinsjeproefbylden net sjen mar de sideproefbylden al. Ofhinklik fan jo wiki, kin it lytsark in wat oare namme hawwe. At jo fierders noch problemen ûnderfine, besjoch dan jo lytsark- en meidoggerskripts, ek dy't globaal binne.",
+	"popups-refpreview-user-preference-label": "Proefbylden fan referinsjes ynskeakelje (jout flugge foarfertoanings fan referinsjes ûnder it lêzen)"
 }

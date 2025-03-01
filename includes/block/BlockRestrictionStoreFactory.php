@@ -29,25 +29,13 @@ use Wikimedia\Rdbms\LBFactory;
  * @since 1.38
  */
 class BlockRestrictionStoreFactory {
-	/** @var LBFactory */
-	private $loadBalancerFactory;
+	private LBFactory $loadBalancerFactory;
 
 	/** @var BlockRestrictionStore[] */
-	private $storeCache = [];
+	private array $storeCache = [];
 
-	/** @var int */
-	private $blockTargetMigrationStage;
-
-	/**
-	 * @param LBFactory $loadBalancerFactory
-	 * @param int $blockTargetMigrationStage
-	 */
-	public function __construct(
-		LBFactory $loadBalancerFactory,
-		$blockTargetMigrationStage
-	) {
+	public function __construct( LBFactory $loadBalancerFactory ) {
 		$this->loadBalancerFactory = $loadBalancerFactory;
-		$this->blockTargetMigrationStage = $blockTargetMigrationStage;
 	}
 
 	/**
@@ -63,7 +51,6 @@ class BlockRestrictionStoreFactory {
 		if ( !isset( $this->storeCache[$storeCacheKey] ) ) {
 			$this->storeCache[$storeCacheKey] = new BlockRestrictionStore(
 				$this->loadBalancerFactory,
-				$this->blockTargetMigrationStage,
 				$wikiId
 			);
 		}

@@ -5,8 +5,9 @@
 
 /* stylelint-disable selector-class-pattern */
 
-@import 'mediawiki.skin.variables';
+@import 'mediawiki.skin.variables.less';
 @import 'content.variables.less';
+@import 'mediawiki.mixins.less';
 
 /* @noflip */
 div.tright,
@@ -14,6 +15,13 @@ div.floatright,
 table.floatright {
 	clear: right;
 	float: right;
+
+	body.skin--responsive & {
+		@media all and ( max-width: @max-width-breakpoint-mobile ) {
+			clear: both;
+			float: none;
+		}
+	}
 }
 
 /* @noflip */
@@ -22,18 +30,26 @@ div.floatleft,
 table.floatleft {
 	float: left;
 	clear: left;
+
+	@media all and ( max-width: @max-width-breakpoint-mobile ) {
+		body.skin--responsive & {
+			clear: both;
+			float: none;
+		}
+	}
 }
 
-/* @noflip */
-div.floatright,
-table.floatright {
-	margin: @margin-floatright;
-}
+div,
+table {
+	&.floatright {
+		/* @noflip */
+		margin: @margin-floatright;
+	}
 
-/* @noflip */
-div.floatleft,
-table.floatleft {
-	margin: @margin-floatleft;
+	&.floatleft {
+		/* @noflip */
+		margin: @margin-floatleft;
+	}
 }
 
 div.thumb {
@@ -53,7 +69,7 @@ div.tright {
 }
 
 .thumbcaption {
-	text-align: left;
+	text-align: start;
 	line-height: @line-height-thumbcaption;
 	padding: 3px;
 
@@ -68,4 +84,25 @@ div.thumbinner {
 	/* new block formatting context,
 	 * to clear background from floating content */
 	overflow: hidden;
+}
+
+// When rendering two images side by side, ensure they always appear side by side as intended
+// Avoid image child overflowing the container (T200518)/
+// T38030 and T148505
+
+@media all and ( max-width: @max-width-breakpoint-mobile ) {
+	body.skin--responsive & {
+		.mw-parser-output {
+			.thumb .thumbinner {
+				.flex-display();
+				place-content: flex-start center;
+				flex-flow: column wrap;
+
+				> .thumbcaption {
+					.flex( 1, 0, 100% );
+					display: block;
+				}
+			}
+		}
+	}
 }

@@ -14,7 +14,7 @@
  * @constructor
  * @param {string} name Unique symbolic name of page
  * @param {Object} [config] Configuration options
- * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
+ * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
  */
 ve.ui.MWLanguagesPage = function VeUiMWLanguagesPage() {
 	// Parent constructor
@@ -52,7 +52,7 @@ ve.ui.MWLanguagesPage.prototype.setupOutlineItem = function () {
 };
 
 ve.ui.MWLanguagesPage.prototype.onLoadLanguageData = function ( languages ) {
-	var $languagesTable = $( '<table>' ),
+	const $languagesTable = $( '<table>' ),
 		languageslength = languages.length;
 
 	$languagesTable
@@ -72,7 +72,7 @@ ve.ui.MWLanguagesPage.prototype.onLoadLanguageData = function ( languages ) {
 			)
 		);
 
-	for ( var i = 0; i < languageslength; i++ ) {
+	for ( let i = 0; i < languageslength; i++ ) {
 		languages[ i ].safelang = languages[ i ].lang;
 		languages[ i ].dir = 'auto';
 		if ( $.uls ) {
@@ -103,10 +103,10 @@ ve.ui.MWLanguagesPage.prototype.onLoadLanguageData = function ( languages ) {
  * @param {Object} response API response
  */
 ve.ui.MWLanguagesPage.prototype.onAllLanguageItemsSuccess = function ( deferred, response ) {
-	var languages = [],
+	const languages = [],
 		langlinks = OO.getProp( response, 'query', 'pages', 0, 'langlinks' );
 	if ( langlinks ) {
-		for ( var i = 0, iLen = langlinks.length; i < iLen; i++ ) {
+		for ( let i = 0, iLen = langlinks.length; i < iLen; i++ ) {
 			languages.push( {
 				lang: langlinks[ i ].lang,
 				langname: langlinks[ i ].autonym,
@@ -140,13 +140,13 @@ ve.ui.MWLanguagesPage.prototype.getLanguageItemFromMetaListItem = function ( met
  * @return {Object[]} items
  */
 ve.ui.MWLanguagesPage.prototype.getLocalLanguageItems = function () {
-	var items = [],
+	const items = [],
 		languages = this.metaList.getItemsInGroup( 'mwLanguage' ),
 		languageslength = languages.length;
 
 	// Loop through MWLanguages and build out items
 
-	for ( var i = 0; i < languageslength; i++ ) {
+	for ( let i = 0; i < languageslength; i++ ) {
 		items.push( this.getLanguageItemFromMetaListItem( languages[ i ] ) );
 	}
 	return items;
@@ -158,7 +158,7 @@ ve.ui.MWLanguagesPage.prototype.getLocalLanguageItems = function () {
  * @return {jQuery.Promise}
  */
 ve.ui.MWLanguagesPage.prototype.getAllLanguageItems = function () {
-	var deferred = ve.createDeferred();
+	const deferred = ve.createDeferred();
 	// TODO: Detect paging token if results exceed limit
 	ve.init.target.getContentApi().get( {
 		action: 'query',

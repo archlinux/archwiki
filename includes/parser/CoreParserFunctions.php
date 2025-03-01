@@ -21,20 +21,24 @@
  * @ingroup Parser
  */
 
+namespace MediaWiki\Parser;
+
+use InvalidArgumentException;
 use MediaWiki\Category\Category;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageCode;
+use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\MagicWordFactory;
-use MediaWiki\Parser\Parser;
-use MediaWiki\Parser\ParserOutputFlags;
-use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Message\Message;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SiteStats\SiteStats;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\RemexHtml\Tokenizer\Attributes;
 use Wikimedia\RemexHtml\Tokenizer\PlainAttributes;
 
@@ -75,8 +79,8 @@ class CoreParserFunctions {
 		$noHashFunctions = [
 			'ns', 'nse', 'urlencode', 'lcfirst', 'ucfirst', 'lc', 'uc',
 			'localurl', 'localurle', 'fullurl', 'fullurle', 'canonicalurl',
-			'canonicalurle', 'formatnum', 'grammar', 'gender', 'plural', 'bidi',
-			'numberingroup', 'language',
+			'canonicalurle', 'formatnum', 'grammar', 'gender', 'plural', 'formal',
+			'bidi', 'numberingroup', 'language',
 			'padleft', 'padright', 'anchorencode', 'defaultsort', 'filepath',
 			'pagesincategory', 'pagesize', 'protectionlevel', 'protectionexpiry',
 			# The following are the "parser function" forms of magic
@@ -115,6 +119,11 @@ class CoreParserFunctions {
 			'numberofpages',
 			'numberofadmins',
 			'numberofedits',
+
+			# These magic words already contain the hash, and the no-args form
+			# is the same as passing an empty first argument
+			'bcp47',
+			'dir',
 		];
 		foreach ( $noHashFunctions as $func ) {
 			$parser->setFunctionHook( $func, [ __CLASS__, $func ], Parser::SFH_NO_HASH );
@@ -444,6 +453,11 @@ class CoreParserFunctions {
 		return $parser->getTargetLanguage()->convertPlural( $text, $forms );
 	}
 
+	public static function formal( Parser $parser, string ...$forms ): string {
+		$index = $parser->getTargetLanguage()->getFormalityIndex();
+		return $forms[$index] ?? $forms[0];
+	}
+
 	/**
 	 * @param Parser $parser
 	 * @param string $text
@@ -581,7 +595,7 @@ class CoreParserFunctions {
 	 * @return string
 	 */
 	public static function formatRaw(
-		$num, $raw, $language, MagicWordFactory $magicWordFactory = null
+		$num, $raw, $language, ?MagicWordFactory $magicWordFactory = null
 	) {
 		if ( $raw !== null && $raw !== '' ) {
 			if ( !$magicWordFactory ) {
@@ -988,16 +1002,74 @@ class CoreParserFunctions {
 	 * Gives language names.
 	 * @param Parser $parser
 	 * @param string $code Language code (of which to get name)
-	 * @param string $inLanguage Language code (in which to get name)
+	 * @param string $inLanguage Language code (in which to get name);
+	 *   if missing or empty, the language's autonym will be returned.
 	 * @return string
 	 */
 	public static function language( $parser, $code = '', $inLanguage = '' ) {
-		$code = strtolower( $code );
-		$inLanguage = strtolower( $inLanguage );
+		if ( $code === '' ) {
+			$code = $parser->getTargetLanguage()->getCode();
+		}
+		if ( $inLanguage === '' ) {
+			$inLanguage = LanguageNameUtils::AUTONYMS;
+		}
 		$lang = MediaWikiServices::getInstance()
 			->getLanguageNameUtils()
 			->getLanguageName( $code, $inLanguage );
 		return $lang !== '' ? $lang : LanguageCode::bcp47( $code );
+	}
+
+	/**
+	 * Gives direction of script of a language given a language code.
+	 * @param Parser $parser
+	 * @param string $code a language code. If missing, the parser target
+	 *  language will be used.
+	 * @param string $arg If this optional argument matches the
+	 *  `language_option_bcp47` magic word, the language code will be treated
+	 *  as a BCP-47 code.
+	 * @return string 'rtl' if the language code is recognized as
+	 *  right-to-left, otherwise returns 'ltr'
+	 */
+	public static function dir( Parser $parser, string $code = '', string $arg = '' ): string {
+		static $magicWords = null;
+		$languageFactory = MediaWikiServices::getInstance()->getLanguageFactory();
+
+		if ( $code === '' ) {
+			$lang = $parser->getTargetLanguage();
+		} else {
+			if ( $arg !== '' ) {
+				if ( $magicWords === null ) {
+					$magicWords = $parser->getMagicWordFactory()->newArray( [ 'language_option_bcp47' ] );
+				}
+				if ( $magicWords->matchStartToEnd( $arg ) === 'language_option_bcp47' ) {
+					// Prefer the BCP-47 interpretation of this code.
+					$code = new Bcp47CodeValue( $code );
+				}
+			}
+			try {
+				$lang = $languageFactory->getLanguage( $code );
+			} catch ( InvalidArgumentException $ex ) {
+				$parser->addTrackingCategory( 'bad-language-code-category' );
+				return 'ltr';
+			}
+		}
+		return $lang->getDir();
+	}
+
+	/**
+	 * Gives the BCP-47 code for a language given the mediawiki internal
+	 * language code.
+	 * @param Parser $parser
+	 * @param string $code a language code. If missing, the parser target
+	 *  language will be used.
+	 * @return string the corresponding BCP-47 code
+	 */
+	public static function bcp47( Parser $parser, string $code = '' ): string {
+		if ( $code === '' ) {
+			return $parser->getTargetLanguage()->toBcp47Code();
+		} else {
+			return LanguageCode::bcp47( $code );
+		}
 	}
 
 	/**
@@ -1134,10 +1206,10 @@ class CoreParserFunctions {
 		if ( $argA == 'nowiki' ) {
 			// {{filepath: | option [| size] }}
 			$isNowiki = true;
-			$parsedWidthParam = Parser::parseWidthParam( $argB );
+			$parsedWidthParam = $parser->parseWidthParam( $argB );
 		} else {
 			// {{filepath: [| size [|option]] }}
-			$parsedWidthParam = Parser::parseWidthParam( $argA );
+			$parsedWidthParam = $parser->parseWidthParam( $argA );
 			$isNowiki = ( $argB == 'nowiki' );
 		}
 
@@ -1150,7 +1222,8 @@ class CoreParserFunctions {
 				// ... and we can
 				if ( $mto && !$mto->isError() ) {
 					// ... change the URL to point to a thumbnail.
-					$url = wfExpandUrl( $mto->getUrl(), PROTO_RELATIVE );
+					$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
+					$url = $urlUtils->expand( $mto->getUrl(), PROTO_RELATIVE ) ?? false;
 				}
 			}
 			if ( $isNowiki ) {
@@ -1609,3 +1682,6 @@ class CoreParserFunctions {
 		return '';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( CoreParserFunctions::class, 'CoreParserFunctions' );

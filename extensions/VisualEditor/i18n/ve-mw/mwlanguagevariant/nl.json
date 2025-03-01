@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Mainframe98",
 			"McDutchie",
 			"Romaine"
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Dit is een verborgen regel.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Deze regel heeft invloed op de paginatitel.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Taalcode",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Ongeldig>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Ongeldig</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Taal",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Bron",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Bestemming",

@@ -9,13 +9,13 @@
 	 * @constructor
 	 * @param {mw.echo.dm.PaginationModel} paginationModel Pagination model
 	 * @param {Object} [config] Configuration object
-	 * @cfg {number} [itemsPerPage=25] Number of items per page
-	 * @cfg {number} [showFirstButton=true] Show a button that allows the user
+	 * @param {number} [config.itemsPerPage=25] Number of items per page
+	 * @param {number} [config.showFirstButton=true] Show a button that allows the user
 	 *  to go back to the first page.
-	 * @cfg {number} [showFirstButtonAfter=2] Pick the number of pages that it
+	 * @param {number} [config.showFirstButtonAfter=2] Pick the number of pages that it
 	 *  takes to show the button that takes the user back to the first set
 	 *  of results.
-	 * @cfg {string} [startButtonLabel] The label used for the start button
+	 * @param {string} [config.startButtonLabel] The label used for the start button
 	 */
 	mw.echo.ui.PaginationWidget = function MwEchoUiPaginationWidget( paginationModel, config ) {
 		config = config || {};
@@ -81,11 +81,11 @@
 	/* Events */
 
 	/**
-	 * @event change
+	 * Pagination changed
+	 *
+	 * @event mw.echo.ui.PaginationWidget#change
 	 * @param {string} direction Direction of movement 'prev',
 	 * 'next' or 'start'
-	 *
-	 * Pagination changed
 	 */
 
 	/* Methods */
@@ -94,10 +94,10 @@
 	 * Respond to dir select widget choose event
 	 *
 	 * @param {OO.ui.ButtonOptionWidget} item Chosen button
-	 * @fires change
+	 * @fires mw.echo.ui.PaginationWidget#change
 	 */
 	mw.echo.ui.PaginationWidget.prototype.onDirSelectWidgetChoose = function ( item ) {
-		var dir = item && item.getData();
+		const dir = item && item.getData();
 
 		if ( dir ) {
 			this.emit( 'change', dir );
@@ -132,6 +132,7 @@
 	 *
 	 * @param {boolean} disabled Disable widget
 	 * @chainable
+	 * @return {mw.echo.ui.PaginationWidget}
 	 */
 	mw.echo.ui.PaginationWidget.prototype.setDisabled = function ( disabled ) {
 		// Parent method
@@ -153,11 +154,11 @@
 	 * per page, and the number of notifications on the current page.
 	 */
 	mw.echo.ui.PaginationWidget.prototype.updateLabel = function () {
-		var itemsInPage = this.model.getCurrentPageItemCount(),
+		const itemsInPage = this.model.getCurrentPageItemCount(),
 			firstNotifNum = this.model.getCurrPageIndex() * this.itemsPerPage,
 			lastNotifNum = firstNotifNum + itemsInPage;
 
-		var label;
+		let label;
 		if ( itemsInPage === 0 ) {
 			label = '';
 		} else if ( !this.model.hasPrevPage() && !this.model.hasNextPage() ) {

@@ -22,6 +22,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
@@ -29,9 +30,10 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to rename titles affected by changes to Unicode (or
@@ -66,8 +68,8 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 	/** @var array|null */
 	private $namespaces = null;
 
-	/** @var string|null */
-	private $prefix = null, $suffix = null;
+	private ?string $prefix = null;
+	private ?string $suffix = null;
 
 	/** @var int|null */
 	private $prefixNs = null;
@@ -222,12 +224,12 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 				new LikeValue( $from, $db->anyString() )
 			);
 			if ( count( $likes ) >= $batchSize ) {
-				$ret[] = new OrExpressionGroup( ...$likes );
+				$ret[] = $db->orExpr( $likes );
 				$likes = [];
 			}
 		}
 		if ( $likes ) {
-			$ret[] = new OrExpressionGroup( ...$likes );
+			$ret[] = $db->orExpr( $likes );
 		}
 		return $ret;
 	}
@@ -403,10 +405,8 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 		$movePage = $mpFactory->newMovePage( $oldTitle, $newTitle );
 		$status = $movePage->isValidMove();
 		if ( !$status->isOK() ) {
-			$this->error(
-				"Invalid move {$oldTitle->getPrefixedText()} → {$newTitle->getPrefixedText()}: "
-				. $status->getMessage( false, false, 'en' )->useDatabase( false )->plain()
-			);
+			$this->error( "Invalid move {$oldTitle->getPrefixedText()} → {$newTitle->getPrefixedText()}:" );
+			$this->error( $status );
 			return false;
 		}
 
@@ -424,26 +424,24 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 
 		$status = $movePage->move( $this->user, $this->reason, false, $this->tags );
 		if ( !$status->isOK() ) {
-			$this->error(
-				"Move {$oldTitle->getPrefixedText()} → {$newTitle->getPrefixedText()} failed: "
-				. $status->getMessage( false, false, 'en' )->useDatabase( false )->plain()
-			);
+			$this->error( "Move {$oldTitle->getPrefixedText()} → {$newTitle->getPrefixedText()} failed:" );
+			$this->error( $status );
 		}
 		$this->output( "Renamed {$oldTitle->getPrefixedText()} → {$newTitle->getPrefixedText()}\n" );
 
 		// The move created a log entry under the old invalid title. Fix it.
-		$db->update(
-			'logging',
-			[
+		$db->newUpdateQueryBuilder()
+			->update( 'logging' )
+			->set( [
 				'log_title' => $this->charmap[$char] . mb_substr( $title, 1 ),
-			],
-			[
+			] )
+			->where( [
 				'log_namespace' => $oldTitle->getNamespace(),
 				'log_title' => $oldTitle->getDBkey(),
 				'log_page' => $newTitle->getArticleID(),
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		if ( $deletionReason !== null ) {
 			$page = $services->getWikiPageFactory()->newFromTitle( $newTitle );
@@ -452,10 +450,8 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 				->forceImmediate( true )
 				->deleteUnsafe( $deletionReason );
 			if ( !$status->isOK() ) {
-				$this->error(
-					"Deletion of {$newTitle->getPrefixedText()} failed: "
-					. $status->getMessage( false, false, 'en' )->useDatabase( false )->plain()
-				);
+				$this->error( "Deletion of {$newTitle->getPrefixedText()} failed:" );
+				$this->error( $status );
 				return false;
 			}
 			$this->output( "Deleted {$newTitle->getPrefixedText()}\n" );
@@ -544,15 +540,15 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 		}
 
 		if ( $this->run ) {
-			$db->update(
-				$table,
-				array_merge(
+			$db->newUpdateQueryBuilder()
+				->update( $table )
+				->set( array_merge(
 					is_int( $nsField ) ? [] : [ $nsField => $newTitle->getNamespace() ],
 					[ $titleField => $newTitle->getDBkey() ]
-				),
-				(array)$row,
-				__METHOD__
-			);
+				) )
+				->where( (array)$row )
+				->caller( __METHOD__ )
+				->execute();
 			$r = json_encode( $row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 			$this->output( "Set $r to {$newTitle->getPrefixedText()}\n" );
 		} else {
@@ -713,5 +709,7 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = UppercaseTitlesForUnicodeTransition::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

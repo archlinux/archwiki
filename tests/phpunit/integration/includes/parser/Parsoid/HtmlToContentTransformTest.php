@@ -3,9 +3,9 @@
 namespace MediaWiki\Tests\Parser\Parsoid;
 
 use Composer\Semver\Semver;
-use JsonContent;
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use LogicException;
+use MediaWiki\Content\JsonContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Page\PageIdentityValue;
@@ -14,12 +14,15 @@ use MediaWiki\Parser\Parsoid\HtmlToContentTransform;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWikiIntegrationTestCase;
+use Psr\Log\NullLogger;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\SelserData;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Utils\ContentUtils;
+use Wikimedia\Stats\Emitters\NullEmitter;
+use Wikimedia\Stats\StatsCache;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
-use WikitextContent;
 
 /**
  * @covers \MediaWiki\Parser\Parsoid\HtmlToContentTransform
@@ -66,15 +69,13 @@ class HtmlToContentTransformTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	private function createHtmlToContentTransformWithOriginalData( $html = '', array $options = null ) {
+	private function createHtmlToContentTransformWithOriginalData( $html = '', ?array $options = null ) {
 		$transform = $this->createHtmlToContentTransform( $html );
 
-		if ( $options === null ) {
-			$options = [
-				'contentmodel' => 'wikitext',
-				'offsetType' => 'byte',
-			];
-		}
+		$options ??= [
+			'contentmodel' => 'wikitext',
+			'offsetType' => 'byte',
+		];
 
 		// Set some options to assert on $transform object.
 		$transform->setOptions( $options );
@@ -280,6 +281,7 @@ class HtmlToContentTransformTest extends MediaWikiIntegrationTestCase {
 	public function testDowngrade() {
 		$html = $this->getTextFromFile( 'Minimal.html' ); // Uses profile version 2.4.0
 		$transform = $this->createHtmlToContentTransform( $html );
+		$transform->setMetrics( StatsFactory::newNull() );
 
 		$transform->setOriginalSchemaVersion( '999.0.0' );
 		$transform->setOriginalHtml( $html );
@@ -314,13 +316,21 @@ class HtmlToContentTransformTest extends MediaWikiIntegrationTestCase {
 		$html = '<html><body>xyz</body></html>'; // no schema version!
 		$transform = $this->createHtmlToContentTransform( $html );
 
-		$metrics = $this->createNoOpMock( StatsdDataFactoryInterface::class, [ 'increment' ] );
-		$metrics->expects( $this->atLeastOnce() )->method( 'increment' );
-		$transform->setMetrics( $metrics );
+		$statsCache = new StatsCache();
+		$statsFactory = new StatsFactory( $statsCache, new NullEmitter(), new NullLogger() );
+		$transform->setMetrics( $statsFactory );
 
 		// getSchemaVersion should ioncrement the html2wt.original.version.notinline counter
 		// because the input HTML doesn't contain a schema version.
 		$transform->getSchemaVersion();
+		$this->assertCount( 1, $statsCache->getAllMetrics() );
+		$this->assertNotNull(
+			$statsCache->get(
+				'',
+				'html2wt_original_version_total',
+				'Wikimedia\Stats\Metrics\CounterMetric'
+			)->getName()
+		);
 	}
 
 	public function testHtmlSize() {

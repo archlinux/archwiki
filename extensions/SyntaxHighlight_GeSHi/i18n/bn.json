@@ -25,5 +25,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "কোড ব্লক",
 	"syntaxhighlight-error-pygments-invocation-failure": "Pygments আবাহন করতে ব্যর্থ হয়েছে",
 	"syntaxhighlight-error-unknown-language": "অজানা ভাষা \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "কোডের আকার $1 {{PLURAL:$1|বাইট}} যা সর্বাধিক অনুমোদিত পরিমাণ $2 {{PLURAL:$2|বাইটকে}} অতিক্রম করেছে।"
+	"syntaxhighlight-error-exceeds-size-limit": "কোডের আকার $1 {{PLURAL:$1|বাইট}} যা সর্বাধিক অনুমোদিত পরিমাণ $2 {{PLURAL:$2|বাইটকে}} অতিক্রম করেছে।",
+	"syntaxhighlight-button-copy": "অনুলিপি",
+	"syntaxhighlight-button-copied": "অনুলিপি করা হয়েছে!"
 }

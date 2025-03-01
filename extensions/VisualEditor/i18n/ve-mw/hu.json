@@ -5,6 +5,7 @@
 			"Csega",
 			"Dj",
 			"Einstein2",
+			"Ewithu",
 			"Kishajnalka",
 			"Macofe",
 			"Misibacsi",
@@ -14,8 +15,7 @@
 			"Tacsipacsi",
 			"Teemeah",
 			"Tgr",
-			"ViDam",
-			"Ewithu"
+			"ViDam"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -30,9 +30,6 @@
 	"tooltip-ca-createsource": "Az oldal forráskódjának létrehozása",
 	"tooltip-ca-createsource-local": "A helyi leírólap forráskódjának létrehozása",
 	"visualeditor-advancedsettings-tool": "Haladó beállítások",
-	"visualeditor-annotations-default-description": "A lapnak ez a része egy annotált tartományhoz tartozik.",
-	"visualeditor-annotations-default-end": "Az annotált tartomány vége",
-	"visualeditor-annotations-default-start": "Az annotált tartomány kezdete",
 	"visualeditor-autosave-modified-prompt-accept": "Szerkesztés folytatása",
 	"visualeditor-autosave-modified-prompt-message": "Valaki megváltoztatta a lapot, mióta elkezdted szerkeszteni. Szeretnéd folytatni a régi változat szerkesztését, vagy szeretnél új szerkesztést kezdeni a legújabb változat alapján?",
 	"visualeditor-autosave-modified-prompt-reject": "Új szerkesztés kezdése",
@@ -42,7 +39,6 @@
 	"visualeditor-autosave-recovered-text": "Az elmentetlen változtatásaidat automatikusan helyreállítottuk.",
 	"visualeditor-autosave-recovered-title": "Változtatások helyreállítva",
 	"visualeditor-backbutton-tooltip": "Visszalépés",
-	"visualeditor-browserwarning": "Az általad használt böngészőt ez a szerkesztő hivatalosan nem támogatja.",
 	"visualeditor-ca-createlocaldescriptionsource": "Helyi leírás forrásszövegének hozzáadása",
 	"visualeditor-ca-createsource": "Forrásszöveg létrehozása",
 	"visualeditor-ca-editlocaldescriptionsource": "Helyi leírás forrásszövegének szerkesztése",

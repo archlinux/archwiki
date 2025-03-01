@@ -26,6 +26,7 @@ namespace MediaWiki\Title;
 use InvalidArgumentException;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageReference;
+use Stringable;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\ParameterAssertionException;
 use Wikimedia\Assert\ParameterTypeException;
@@ -43,7 +44,7 @@ use Wikimedia\Parsoid\Core\LinkTargetTrait;
  * @see https://www.mediawiki.org/wiki/Manual:Modeling_pages
  * @since 1.23
  */
-class TitleValue implements LinkTarget {
+class TitleValue implements Stringable, LinkTarget {
 	use LinkTargetTrait;
 
 	/** @var int */
@@ -82,7 +83,6 @@ class TitleValue implements LinkTarget {
 	 * @param string $interwiki The interwiki component.
 	 *   No validation or normalization is applied.
 	 * @return TitleValue|null
-	 * @throws InvalidArgumentException
 	 */
 	public static function tryNew( $namespace, $title, $fragment = '', $interwiki = '' ) {
 		if ( !is_int( $namespace ) ) {
@@ -163,7 +163,6 @@ class TitleValue implements LinkTarget {
 	 *   No validation or normalization is applied.
 	 * @param string $interwiki The interwiki component.
 	 *   No validation or normalization is applied.
-	 * @throws InvalidArgumentException
 	 */
 	public function __construct( $namespace, $title, $fragment = '', $interwiki = '' ) {
 		self::assertValidSpec( $namespace, $title, $fragment, $interwiki );

@@ -10,6 +10,14 @@
 			"忒有钱"
 		]
 	},
+	"apihelp-echocreateevent-summary": "手动触发给用户的通知",
+	"apihelp-echocreateevent-example": "发送通知",
+	"apihelp-echocreateevent-param-user": "要发送通知的用户",
+	"apihelp-echocreateevent-param-header": "通知标题的内容",
+	"apihelp-echocreateevent-param-content": "通知正文的内容",
+	"apihelp-echocreateevent-param-page": "要在通知内链接的页面",
+	"apihelp-echocreateevent-param-section": "通知要送达的分组",
+	"apihelp-echocreateevent-param-email": "是否同时发送电子邮件",
 	"apihelp-echomarkread-summary": "把当前用户的通知标记为已读。",
 	"apihelp-echomarkread-param-list": "要标记为已读的通知ID列表。",
 	"apihelp-echomarkread-param-unreadlist": "要标记为未读的通知ID列表。",

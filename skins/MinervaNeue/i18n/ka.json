@@ -4,10 +4,10 @@
 			"BRUTE",
 			"David1010",
 			"MIKHEIL",
+			"Mehman (WMF)",
 			"SHOTHA",
 			"Tokoko",
-			"Გიო ოქრო",
-			"Mehman (WMF)"
+			"Გიო ოქრო"
 		]
 	},
 	"minerva-last-modified-date": "ბოლოს დარედაქტირდა $1-ში, $2-ზე",
@@ -33,7 +33,6 @@
 	"mobile-frontend-meta-data-issues-categories": "ამ კატეგორიის შესახებ",
 	"mobile-frontend-meta-data-issues-header": "გვერდის პრობლემები",
 	"minerva-meta-data-issues-section-header": "სექციის პრობლემები",
-	"mobile-frontend-notifications-filter": "ფილტრი",
 	"mobile-frontend-pageaction-edit-tooltip": "გვერდის მოწინავე სექციის რედაქტირება",
 	"mobile-frontend-placeholder": "ძიება {{GRAMMAR:წინდებულიანი|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "შემთხვევითი",
@@ -53,7 +52,7 @@
 	"minerva-page-actions-overflow": "მეტი",
 	"minerva-page-actions-language-switcher": "ენები",
 	"minerva-page-actions-history": "ისტორია",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|განხილვა]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue განხილვა]",
 	"minerva-skin-desc": "პირველი ადაპტური მობილური იერსახე",
 	"skin-minerva-issue-learn-more": "გაიგეთ მეტი",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 წამის|$1 წამის}} წინ",
@@ -64,9 +63,8 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 წლის|$1 წლის}} წინ",
 	"skin-minerva-mobile-option-MinervaShowCategories": "კატეგორიები",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "გვერდების კატეგორიების ხილვა",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "გვერდების პრობლემათა გაუმჯობესებული გამოვლენა",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "გვერდის პრობლემები (თარგი:ambox) წარმოდგენილი იქნება სტატიაში.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "სამწუხაროდ, გვერდის მიხედვით შედეგების დაჯგუფება მობილური ვერსიისათვის ხელმისაწვდომი არ არის. თუკი ამ ფუნქციის გამოყენება გსურთ, ეწვიეთ დესკტოპის ვერსიას.",
+	"skin-minerva-night-mode-unavailable": "გვერდი ხელმისაწვდომია მხოლოდ „ნათელ“ ფერში.",
 	"minerva.css": "/* აქ მოცემული ყველა CSS ჩაიტვირთება MinervaNeue გარეკანის ყველა მომხმარებლისათვის */",
 	"minerva.js": "/* აქ მოცემული ყველა JavaScript ჩაიტვირთება MinervaNeue გარეკანის ყველა მომხმარებლისათვის */"
 }

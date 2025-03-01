@@ -24,9 +24,9 @@ class NormalizedException extends Exception implements INormalizedException {
 	 */
 	public function __construct(
 		string $normalizedMessage,
-		array $messageContext,
+		array $messageContext = [],
 		int $code = 0,
-		Throwable $previous = null
+		?Throwable $previous = null
 	) {
 		$this->normalizedMessage = $normalizedMessage;
 		$this->messageContext = $messageContext;

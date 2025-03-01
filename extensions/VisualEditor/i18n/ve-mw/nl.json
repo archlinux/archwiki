@@ -45,8 +45,7 @@
 			"Sjoerddebruin",
 			"Southparkfan",
 			"TheDJ",
-			"सरोज कुमार ढकाल",
-			"Jeroen N"
+			"सरोज कुमार ढकाल"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -74,7 +73,6 @@
 	"visualeditor-autosave-recovered-text": "Uw niet-opgeslagen wijzigingen zijn automatisch hersteld.",
 	"visualeditor-autosave-recovered-title": "Wijzigingen hersteld",
 	"visualeditor-backbutton-tooltip": "Terug",
-	"visualeditor-browserwarning": "U gebruikt een browser die niet officieel door deze editor wordt ondersteund.",
 	"visualeditor-ca-createlocaldescriptionsource": "Lokale beschrijving toevoegen (brontekstmodus)",
 	"visualeditor-ca-createsource": "Broncode aanmaken",
 	"visualeditor-ca-editlocaldescriptionsource": "Lokale beschrijving bewerken (brontekstmodus)",
@@ -90,6 +88,7 @@
 	"visualeditor-changedesc-mwtransclusion": "Sjabloonparameters gewijzigd",
 	"visualeditor-desc": "Visuele tekstverwerker voor MediaWiki",
 	"visualeditor-descriptionpagelink": "Project:Visuele tekstverwerker",
+	"visualeditor-dialog-extension-abandonedit": "Weet u zeker dat u dit dialoogvenster wilt sluiten zonder uw wijzigingen toe te passen?",
 	"visualeditor-dialog-media-alttext-checkbox": "Het bijschrift als de alternatieve tekst gebruiken",
 	"visualeditor-dialog-media-alttext-section": "Alternatieve tekst",
 	"visualeditor-dialog-media-alttext-section-help": "Hiermee kunt u een tekstbeschrijving opgeven voor mensen die het item niet kunnen zien. De beschrijving moet goed genoeg zijn om te kunnen snappen waar het voor is en waar het over gaat. Dit is van vitaal belang voor blinde en andere gebruikers van schermlezers of tekstbrowsers.",
@@ -289,7 +288,7 @@
 	"visualeditor-includes-includeonly-description": "Wanneer inhoud van deze pagina door een andere pagina wordt gebruikt, wordt hier de volgende aanvullende inhoud opgenomen:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Meer informatie over gedeeltelijke transclusie]",
 	"visualeditor-languages-tool": "Talen",
-	"visualeditor-linkinspector-button-link-external": "Externe koppeling",
+	"visualeditor-linkinspector-button-link-external": "Uitwendige pagina",
 	"visualeditor-linkinspector-button-link-internal": "Interne pagina's doorzoeken",
 	"visualeditor-linkinspector-convert-link-isbn": "Omzetten naar ISBN-koppeling",
 	"visualeditor-linkinspector-convert-link-pmid": "Omzetten naar PMID-koppeling",
@@ -297,6 +296,7 @@
 	"visualeditor-linkinspector-educationpopup-text": "Koppel belangrijke woorden aan andere pagina's in de wiki of zelfs andere websites. Hierdoor zijn lezers in de gelegenheid de context te begrijpen.",
 	"visualeditor-linkinspector-educationpopup-title": "Koppelingen",
 	"visualeditor-linkinspector-illegal-title": "Ongeldige paginanaam",
+	"visualeditor-linkinspector-invalid-blocked": "Koppelingen naar deze site zijn op deze wiki geblokkeerd. Probeer een andere koppeling.",
 	"visualeditor-linkinspector-invalid-external": "Voeg een volledige URL in, bijvoorbeeld https://example.org",
 	"visualeditor-linknodeinspector-add-label": "Label toevoegen",
 	"visualeditor-linknodeinspector-title": "Eenvoudige koppeling",

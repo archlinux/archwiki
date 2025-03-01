@@ -227,7 +227,7 @@ class MhchemTexify {
 			default:
 				$res = null;
 		}
-		if ( isset( $res ) ) {
+		if ( $res !== null ) {
 			return $res;
 		}
 

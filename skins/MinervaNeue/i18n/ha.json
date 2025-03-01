@@ -32,7 +32,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Game da wannan rukuni",
 	"mobile-frontend-meta-data-issues-header": "Batutuwan shafi",
 	"minerva-meta-data-issues-section-header": "Batutuwan sashi",
-	"mobile-frontend-notifications-filter": "Tace",
 	"mobile-frontend-pageaction-edit-tooltip": "Gyara sashen sama na wannan shafin",
 	"mobile-frontend-placeholder": "Binciko {{SITENAME}}",
 	"mobile-frontend-random-button": "Kai tsaye",
@@ -55,7 +54,5 @@
 	"skin-minerva-issue-learn-more": "Ƙara koya",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Rukuni",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Duba rukunonin shafuka",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Magance matsalolin shafukan da aka inganta",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Matsalolin (Template:ambox) zasu zama akan hanya acikin maƙalar.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Ba tsammani, dunƙule sakamako akan shafi babu shi akan wayar hannu. Idan kuna son yin amfani da ƙungiya da fasalin shafi, yi hakuri ziyarci siffar kumputa."
 }

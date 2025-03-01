@@ -10,8 +10,8 @@
 			"MemphisA5",
 			"Nuevo Paso",
 			"Ykhwong",
-			"아라",
-			"렌즈"
+			"렌즈",
+			"아라"
 		]
 	},
 	"spam-blacklist": " #<!-- 이 줄은 그대로 두십시오 --> <pre>\n# 이 필터에 해당하는 URL을 문서에 넣을 경우 해당 편집의 저장을 자동으로 막습니다.\n# 이 필터는 여기 위키 내에서만 적용됩니다. 광역 차단 목록 기능이 있을 경우 해당 목록도 작동합니다.\n# 설명서에 대해서는 https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist 문서를 참고하세요\n# \n# 문법은 다음과 같습니다:\n#   * \"\"#\" 문자에서 줄의 끝까지는 주석입니다\n#   * 각 줄은 정규 표현식으로, URL 문장을 검사하는 데에 사용됩니다\n\n #</pre> <!-- 이 줄은 그대로 두십시오 -->",

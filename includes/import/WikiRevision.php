@@ -24,6 +24,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\MutableRevisionSlots;
 use MediaWiki\Revision\SlotRecord;
@@ -628,7 +630,7 @@ class WikiRevision implements ImportableUploadRevision, ImportableOldRevision {
 
 	/**
 	 * @since 1.4.1
-	 * @deprecated in 1.31. Use OldRevisionImporter::import
+	 * @deprecated since 1.31. Use OldRevisionImporter::import
 	 * @return bool
 	 */
 	public function importOldRevision() {

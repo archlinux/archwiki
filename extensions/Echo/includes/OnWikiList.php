@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications;
 
+use MediaWiki\Content\TextContent;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
-use TextContent;
 
 /**
  * Implements ContainmentList interface for sourcing a list of items from a wiki

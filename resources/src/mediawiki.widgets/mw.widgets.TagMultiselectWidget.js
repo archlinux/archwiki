@@ -6,8 +6,7 @@
  */
 ( function () {
 	/**
-	 * TagMultiselectWidget can be used to input list of tags in a single
-	 * line.
+	 * @classdesc Input list of tags in a single line.
 	 *
 	 * This extends TagMultiselectWidget by adding an invisible textarea
 	 * element which will be used to submit the values of the tags
@@ -19,12 +18,13 @@
 	 * @extends OO.ui.TagMultiselectWidget
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.widgets.TagMultiselectWidget`.
 	 * @param {Object} [config] Configuration options
 	 * @param {string} [config.name] Name of input to submit results (when used in HTML forms)
 	 */
 	mw.widgets.TagMultiselectWidget = function MwWidgetsTagMultiselectWidget( config ) {
 		// Parent constructor
-		mw.widgets.TagMultiselectWidget.super.call( this, $.extend( {}, config, {} ) );
+		mw.widgets.TagMultiselectWidget.super.call( this, Object.assign( {}, config, {} ) );
 
 		if ( 'name' in config ) {
 			// Use this instead of <input type="hidden">, because hidden inputs do not have separate

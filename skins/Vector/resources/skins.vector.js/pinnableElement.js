@@ -152,7 +152,7 @@ function setFocusAfterToggle( pinnableElementId ) {
  */
 function bindPinnableToggleButtons( header ) {
 	const toggleButtons = header.querySelectorAll( '.vector-pinnable-header-toggle-button' );
-	toggleButtons.forEach( function ( button ) {
+	toggleButtons.forEach( ( button ) => {
 		button.addEventListener( 'click', pinnableElementClickHandler.bind( null, header ) );
 	} );
 }
@@ -169,7 +169,7 @@ function bindPinnableBreakpoint( header ) {
 		return;
 	}
 
-	const pinnableBreakpoint = window.matchMedia( '(max-width: 999px)' );
+	const pinnableBreakpoint = window.matchMedia( '(max-width: 1119px)' );
 	// Set saved pinned state for narrow breakpoint behaviour.
 	setSavedPinnableState( header );
 	// Check the breakpoint in case an override is needed on pageload.
@@ -197,6 +197,7 @@ function isPinned( header ) {
 /**
  * Ensures the header classes are in sync with the pinnable headers state
  * in the case that it's moved via movePinnableElement().
+ *
  * @param {HTMLElement} pinnableElement
  */
 function updatePinnableHeaderClass( pinnableElement ) {
@@ -239,12 +240,29 @@ function movePinnableElement( pinnableElementId, newContainerId ) {
 	popupNotification.hideAll();
 }
 
+/**
+ * Update the pinnable element location in the DOM based off of whether its pinned or not.
+ * This is only necessary with pinnable elements that use client preferences (i.e. appearance menu)
+ * as all other pinnable elements should be serverside rendered in the correct location
+ *
+ * @param {HTMLElement} header
+ */
+function updatePinnableElementLocation( header ) {
+	const newContainerId = isPinned( header ) ?
+		header.dataset.pinnedContainerId :
+		header.dataset.unpinnedContainerId;
+	if ( header.dataset.pinnableElementId && newContainerId ) {
+		movePinnableElement( header.dataset.pinnableElementId, newContainerId );
+	}
+}
+
 function initPinnableElement() {
 	const pinnableHeader = /** @type {NodeListOf<HTMLElement>} */ ( document.querySelectorAll( '.vector-pinnable-header' ) );
 	pinnableHeader.forEach( ( header ) => {
 		if ( header.dataset.featureName && header.dataset.pinnableElementId ) {
 			bindPinnableToggleButtons( header );
 			bindPinnableBreakpoint( header );
+			updatePinnableElementLocation( header );
 		}
 	} );
 }
@@ -259,9 +277,9 @@ function initPinnableElement() {
 function hasPinnedElements() {
 	const suffixesToCheck = [ 'pinned-clientpref-1', 'pinned-enabled' ];
 	const htmlElement = document.documentElement;
-	return Array.from( htmlElement.classList ).some( ( className ) => {
-		return suffixesToCheck.some( ( suffix ) => className.endsWith( suffix ) );
-	} );
+	return Array.from( htmlElement.classList ).some(
+		( className ) => suffixesToCheck.some( ( suffix ) => className.endsWith( suffix ) )
+	);
 }
 
 /**

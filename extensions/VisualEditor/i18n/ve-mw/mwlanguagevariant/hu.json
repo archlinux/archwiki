@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Bencemac",
 			"Tacsipacsi",
 			"Tgr"
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Ez egy rejtett szabály.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Ez a szabály a lap címére is kiterjed.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Nyelvkód",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<érvénytelen>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Érvénytelen</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Nyelv",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Forrás",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Cél",

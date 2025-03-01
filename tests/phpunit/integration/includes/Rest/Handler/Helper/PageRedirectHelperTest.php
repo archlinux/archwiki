@@ -41,7 +41,7 @@ class PageRedirectHelperTest extends MediaWikiIntegrationTestCase {
 
 		$responseFactory = new ResponseFactory( [] );
 
-		$router = $this->newRouter( 'https://example.test', '/api' );
+		$router = $this->newRouterForPageHandler( 'https://example.test', '/api' );
 		$request = new RequestData( [ 'queryParams' => $queryParams, 'headers' => $headers ] );
 
 		return new PageRedirectHelper(
@@ -207,7 +207,7 @@ class PageRedirectHelperTest extends MediaWikiIntegrationTestCase {
 	public function testWikiRedirectDisabled() {
 		$page = new PageIdentityValue( 7, NS_MAIN, 'Redirect_to_foo', false );
 
-		// We assume that wiki redirect handling is disabled per default.
+		// We assume that wiki redirect handling is disabled by default.
 		$helper = $this->newRedirectHelper();
 
 		$target = $helper->getWikiRedirectTargetUrl( $page );

@@ -11,7 +11,7 @@
  * @class
  * @abstract
  * @extends ve.ce.MWBlockExtensionNode
- * @mixins ve.ce.MWAlienExtensionNode
+ * @mixes ve.ce.MWAlienExtensionNode
  *
  * @constructor
  * @param {ve.dm.MWAlienBlockExtensionNode} model Model to observe

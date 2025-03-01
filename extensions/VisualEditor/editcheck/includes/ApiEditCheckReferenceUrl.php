@@ -2,21 +2,23 @@
 
 namespace MediaWiki\Extension\VisualEditor\EditCheck;
 
-use ApiBase;
-use ApiMain;
-use ApiUsageException;
-use ExtensionRegistry;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Extension\AbuseFilter\BlockedDomainStorage;
 use MediaWiki\Extension\SpamBlacklist\BaseBlacklist;
+use MediaWiki\Registration\ExtensionRegistry;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiEditCheckReferenceUrl extends ApiBase {
 
+	/** @phan-suppress-next-line PhanUndeclaredTypeProperty */
 	private ?BlockedDomainStorage $blockedDomainStorage;
 
 	public function __construct(
 		ApiMain $main,
 		string $name,
+		// @phan-suppress-next-line PhanUndeclaredTypeParameter
 		?BlockedDomainStorage $blockedDomainStorage
 	) {
 		parent::__construct( $main, $name );
@@ -46,7 +48,9 @@ class ApiEditCheckReferenceUrl extends ApiBase {
 			return false;
 		}
 
+		// @phan-suppress-next-line PhanUndeclaredClassMethod
 		$domain = $this->blockedDomainStorage->validateDomain( $url );
+		// @phan-suppress-next-line PhanUndeclaredClassMethod
 		$blockedDomains = $this->blockedDomainStorage->loadComputed();
 		return !empty( $blockedDomains[ $domain ] );
 	}
@@ -60,6 +64,7 @@ class ApiEditCheckReferenceUrl extends ApiBase {
 			$url = 'https://' . $url;
 		}
 
+		// @phan-suppress-next-line PhanUndeclaredClassMethod
 		$matches = BaseBlacklist::getSpamBlacklist()->filter(
 			[ $url ],
 			null,
@@ -68,6 +73,17 @@ class ApiEditCheckReferenceUrl extends ApiBase {
 		);
 
 		return $matches !== false;
+	}
+
+	/**
+	 * Check if the required extensions are available for this API to be usable
+	 *
+	 * @return bool
+	 */
+	public static function isAvailable(): bool {
+		return ExtensionRegistry::getInstance()->isLoaded( 'SpamBlacklist' ) ||
+			// BlockedExternalDomains is within AbuseFilter:
+			ExtensionRegistry::getInstance()->isLoaded( 'Abuse Filter' );
 	}
 
 	/**

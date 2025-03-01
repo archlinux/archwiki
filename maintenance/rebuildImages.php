@@ -30,8 +30,11 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
+use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
 use MediaWiki\Specials\SpecialUpload;
 use MediaWiki\User\User;
 use Wikimedia\Rdbms\IMaintainableDatabase;
@@ -150,7 +153,7 @@ class ImageBuilder extends Maintenance {
 		flush();
 	}
 
-	private function buildTable( $table, $queryInfo, $callback ) {
+	private function buildTable( $table, $queryBuilder, $callback ) {
 		$count = $this->dbw->newSelectQueryBuilder()
 			->select( 'count(*)' )
 			->from( $table )
@@ -158,9 +161,7 @@ class ImageBuilder extends Maintenance {
 		$this->init( $count, $table );
 		$this->output( "Processing $table...\n" );
 
-		$result = $this->getReplicaDB()->select(
-			$queryInfo['tables'], $queryInfo['fields'], [], __METHOD__, [], $queryInfo['joins']
-		);
+		$result = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
 		foreach ( $result as $row ) {
 			$update = call_user_func( $callback, $row );
@@ -175,7 +176,7 @@ class ImageBuilder extends Maintenance {
 
 	private function buildImage() {
 		$callback = [ $this, 'imageCallback' ];
-		$this->buildTable( 'image', LocalFile::getQueryInfo(), $callback );
+		$this->buildTable( 'image', FileSelectQueryBuilder::newForFile( $this->getReplicaDB() ), $callback );
 	}
 
 	private function imageCallback( $row ) {
@@ -187,7 +188,7 @@ class ImageBuilder extends Maintenance {
 	}
 
 	private function buildOldImage() {
-		$this->buildTable( 'oldimage', OldLocalFile::getQueryInfo(),
+		$this->buildTable( 'oldimage', FileSelectQueryBuilder::newForOldFile( $this->getReplicaDB() ),
 			[ $this, 'oldimageCallback' ] );
 	}
 
@@ -267,5 +268,7 @@ class ImageBuilder extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = ImageBuilder::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

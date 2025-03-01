@@ -8,8 +8,8 @@ QUnit.module( 've.ui.AnnotationAction' );
 
 /* Tests */
 
-QUnit.test( 'toggle', function ( assert ) {
-	var newBold = { type: 'textStyle/bold' },
+QUnit.test( 'toggle', ( assert ) => {
+	const newBold = { type: 'textStyle/bold' },
 		html = '<p>Foo<b>bar</b><strong>baz</strong><i>quux</i> white\u3000space</p>',
 		cases = [
 			{
@@ -32,7 +32,7 @@ QUnit.test( 'toggle', function ( assert ) {
 				method: 'toggle',
 				args: [ 'textStyle/bold' ],
 				expectedData: function ( data ) {
-					data.splice( 7, 3, 'b', 'a', 'z' );
+					data.splice( 7, 3, ...'baz' );
 				},
 				msg: 'toggle bold on strong text'
 			},
@@ -42,7 +42,7 @@ QUnit.test( 'toggle', function ( assert ) {
 				method: 'toggle',
 				args: [ 'textStyle/bold' ],
 				expectedData: function ( data ) {
-					data.splice( 4, 6, 'b', 'a', 'r', 'b', 'a', 'z' );
+					data.splice( 4, 6, ...'barbaz' );
 				},
 				msg: 'toggle bold on bold then strong text'
 			},
@@ -95,8 +95,8 @@ QUnit.test( 'toggle', function ( assert ) {
 				method: 'toggle',
 				args: [ 'textStyle/bold' ],
 				expectedData: function ( data ) {
-					data.splice( 5, 3, 'F', 'o', 'o' );
-					data.splice( 12, 3, 'B', 'a', 'r' );
+					data.splice( 5, 3, ...'Foo' );
+					data.splice( 12, 3, ...'Bar' );
 				},
 				msg: 'toggle bold on comparable bold annotations spanning multiple table cells'
 			},
@@ -136,12 +136,12 @@ QUnit.test( 'toggle', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runActionTest(
-			'annotation', assert, caseItem.html, false, caseItem.method, caseItem.args, caseItem.rangeOrSelection, caseItem.msg,
+			assert,
 			{
-				expectedData: caseItem.expectedData,
-				expectedRangeOrSelection: caseItem.expectedRangeOrSelection
+				actionName: 'annotation',
+				...caseItem
 			}
 		);
 	} );

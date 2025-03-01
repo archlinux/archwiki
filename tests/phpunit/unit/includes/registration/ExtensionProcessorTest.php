@@ -3,21 +3,22 @@
 namespace MediaWiki\Tests\Registration;
 
 use Exception;
-use ExtensionProcessor;
-use ExtensionRegistry;
-use FormatJson;
 use InvalidArgumentException;
+use MediaWiki\Json\FormatJson;
+use MediaWiki\Registration\ExtensionProcessor;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWikiUnitTestCase;
 use RuntimeException;
 use UnexpectedValueException;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \ExtensionProcessor
+ * @covers \MediaWiki\Registration\ExtensionProcessor
  */
 class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 
-	private $extensionPath, $dirname;
+	private string $extensionPath;
+	private string $dirname;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -723,16 +724,28 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider provideExtractExtensionMessagesFiles
-	 */
-	public function testExtractExtensionMessagesFiles( $input, $expected ) {
-		$processor = new ExtensionProcessor();
-		$processor->extractInfo( $this->extensionPath, $input + self::$default, 1 );
-		$out = $processor->getExtractedInfo();
-		foreach ( $expected as $key => $value ) {
-			$this->assertEquals( $value, $out['globals'][$key] );
-		}
+	public static function provideExtractRestModuleFiles() {
+		$dir = dirname( self::getExtensionPath() );
+		return [
+			[
+				[ 'RestModuleFiles' => [ 'FooBar.json' ] ],
+				[ 'wgRestAPIAdditionalRouteFiles' => [ $dir . '/FooBar.json' ] ]
+			],
+			[
+				[
+					'RestModuleFiles' => [
+						'FooBar.json',
+						'Xyzzy.json',
+					],
+				],
+				[
+					'wgRestAPIAdditionalRouteFiles' => [
+						$dir . '/FooBar.json',
+						$dir . '/Xyzzy.json',
+					],
+				],
+			],
+		];
 	}
 
 	public static function provideExtractMessagesDirs() {
@@ -750,9 +763,11 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
+	 * @dataProvider provideExtractExtensionMessagesFiles
+	 * @dataProvider provideExtractRestModuleFiles
 	 * @dataProvider provideExtractMessagesDirs
 	 */
-	public function testExtractMessagesDirs( $input, $expected ) {
+	public function testExtractFilesAndDirs( $input, $expected ) {
 		$processor = new ExtensionProcessor();
 		$processor->extractInfo( $this->extensionPath, $input + self::$default, 1 );
 		$out = $processor->getExtractedInfo();
@@ -1259,6 +1274,23 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 
 		$this->assertEquals( [], $missing,
 			"The following global settings are not documented in docs/extension.schema.json" );
+	}
+
+	/**
+	 * Verify that extension.schema.v1.json is unchanged
+	 *
+	 * Frozen since MediaWiki 1.43; see T258668 for details.
+	 *
+	 * @coversNothing
+	 */
+	public function testVersion1SchemaIsFrozen() {
+		global $IP;
+
+		$schemaFileHash = md5_file( "$IP/docs/extension.schema.v1.json", false );
+
+		$this->assertTrue(
+			$schemaFileHash === '197fc9db288765d17a76a826e879ac6b',
+			"Manifest_version 1 is frozen and should not be changed or given new features" );
 	}
 
 	public function testGetCoreAttribsMerging() {

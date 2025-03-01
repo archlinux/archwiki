@@ -61,14 +61,14 @@ ve.ui.DiffDialog.prototype.initialize = function () {
  */
 ve.ui.DiffDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.DiffDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.diffElement = new ve.ui.DiffElement( new ve.dm.VisualDiff( data.oldDoc, data.newDoc ) );
 			ve.targetLinksToNewWindow( this.diffElement.$document[ 0 ] );
 
 			this.content.$element.append(
 				this.diffElement.$element
 			);
-		}, this );
+		} );
 };
 
 /**
@@ -76,9 +76,9 @@ ve.ui.DiffDialog.prototype.getSetupProcess = function ( data ) {
  */
 ve.ui.DiffDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.DiffDialog.super.prototype.getReadyProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.positionDiffElement();
-		}, this );
+		} );
 };
 
 /**
@@ -99,15 +99,14 @@ ve.ui.DiffDialog.prototype.setDimensions = function () {
  * Should be called whenever the diff element's container has changed width.
  */
 ve.ui.DiffDialog.prototype.positionDiffElement = function () {
-	var dialog = this;
-	setTimeout( function () {
-		dialog.withoutSizeTransitions( function () {
-			dialog.positioning = true;
-			if ( dialog.diffElement && dialog.isVisible() ) {
-				dialog.diffElement.positionDescriptions();
-				dialog.updateSize();
+	setTimeout( () => {
+		this.withoutSizeTransitions( () => {
+			this.positioning = true;
+			if ( this.diffElement && this.isVisible() ) {
+				this.diffElement.positionDescriptions();
+				this.updateSize();
 			}
-			dialog.positioning = false;
+			this.positioning = false;
 		} );
 	}, OO.ui.theme.getDialogTransitionDuration() );
 };
@@ -117,9 +116,9 @@ ve.ui.DiffDialog.prototype.positionDiffElement = function () {
  */
 ve.ui.DiffDialog.prototype.getTeardownProcess = function ( data ) {
 	return ve.ui.DiffDialog.super.prototype.getTeardownProcess.call( this, data )
-		.next( function () {
+		.next( () => {
 			this.diffElement.$element.remove();
-		}, this );
+		} );
 };
 
 /* Registration */

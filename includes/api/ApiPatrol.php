@@ -22,7 +22,11 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use ChangeTags;
 use MediaWiki\Revision\RevisionStore;
+use RecentChange;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -32,14 +36,9 @@ use Wikimedia\ParamValidator\ParamValidator;
 class ApiPatrol extends ApiBase {
 	private RevisionStore $revisionStore;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param RevisionStore $revisionStore
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		RevisionStore $revisionStore
 	) {
 		parent::__construct( $main, $action );
@@ -80,10 +79,10 @@ class ApiPatrol extends ApiBase {
 			}
 		}
 
-		$retval = $rc->doMarkPatrolled( $user, false, $tags );
+		$status = $rc->markPatrolled( $user, $tags );
 
-		if ( $retval ) {
-			$this->dieStatus( $this->errorArrayToStatus( $retval, $user ) );
+		if ( !$status->isGood() ) {
+			$this->dieStatus( $status );
 		}
 
 		$result = [ 'rcid' => (int)$rc->getAttribute( 'rc_id' ) ];
@@ -131,3 +130,6 @@ class ApiPatrol extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Patrol';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiPatrol::class, 'ApiPatrol' );

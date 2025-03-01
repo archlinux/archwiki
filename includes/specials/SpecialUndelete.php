@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Undelete
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -28,7 +25,6 @@ use ChangesList;
 use ChangeTags;
 use ErrorPageError;
 use File;
-use IDBAccessObject;
 use LocalRepo;
 use LogEventsList;
 use LogPage;
@@ -37,9 +33,11 @@ use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\UndeletePage;
@@ -47,6 +45,7 @@ use MediaWiki\Page\UndeletePageFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\ArchivedRevisionLookup;
+use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionArchiveRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
@@ -60,6 +59,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\Watchlist\WatchlistManager;
+use MediaWiki\Xml\Xml;
 use OOUI\ActionFieldLayout;
 use OOUI\ButtonInputWidget;
 use OOUI\CheckboxInputWidget;
@@ -77,11 +77,10 @@ use PageArchive;
 use PermissionsError;
 use RepoGroup;
 use SearchEngineFactory;
-use TextContent;
 use UserBlockedError;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IResultWrapper;
-use Xml;
 
 /**
  * Special page allowing users with the appropriate permissions to view
@@ -97,19 +96,29 @@ class SpecialUndelete extends SpecialPage {
 	 */
 	private const REVISION_HISTORY_LIMIT = 500;
 
+	/** @var string|null */
 	private $mAction;
+	/** @var string */
 	private $mTarget;
+	/** @var string */
 	private $mTimestamp;
+	/** @var bool */
 	private $mRestore;
+	/** @var bool */
 	private $mRevdel;
+	/** @var bool */
 	private $mInvert;
+	/** @var string */
 	private $mFilename;
 	/** @var string[] */
 	private $mTargetTimestamp = [];
+	/** @var bool */
 	private $mAllowed;
+	/** @var bool */
 	private $mCanView;
 	/** @var string */
 	private $mComment = '';
+	/** @var string */
 	private $mToken;
 	/** @var bool|null */
 	private $mPreview;
@@ -291,8 +300,8 @@ class SpecialUndelete extends SpecialPage {
 	 * @param User|null $user
 	 * @return bool
 	 */
-	protected function isAllowed( $permission, User $user = null ) {
-		$user = $user ?: $this->getUser();
+	protected function isAllowed( $permission, ?User $user = null ) {
+		$user ??= $this->getUser();
 		$block = $user->getBlock();
 
 		if ( $this->mTargetObj !== null ) {
@@ -648,11 +657,15 @@ class SpecialUndelete extends SpecialPage {
 		$t = $lang->userTime( $timestamp, $user );
 		$userLink = Linker::revUserTools( $revRecord );
 
-		$content = $revRecord->getContent(
-			SlotRecord::MAIN,
-			RevisionRecord::FOR_THIS_USER,
-			$user
-		);
+		try {
+			$content = $revRecord->getContent(
+				SlotRecord::MAIN,
+				RevisionRecord::FOR_THIS_USER,
+				$user
+			);
+		} catch ( RevisionAccessException $e ) {
+			$content = null;
+		}
 
 		// TODO: MCR: this will have to become something like $hasTextSlots and $hasNonTextSlots
 		$isText = ( $content instanceof TextContent );
@@ -701,20 +714,23 @@ class SpecialUndelete extends SpecialPage {
 
 			$popts = $out->parserOptions();
 
-			$rendered = $this->revisionRenderer->getRenderedRevision(
-				$revRecord,
-				$popts,
-				$user,
-				[ 'audience' => RevisionRecord::FOR_THIS_USER, 'causeAction' => 'undelete-preview' ]
-			);
+			try {
+				$rendered = $this->revisionRenderer->getRenderedRevision(
+					$revRecord,
+					$popts,
+					$user,
+					[ 'audience' => RevisionRecord::FOR_THIS_USER, 'causeAction' => 'undelete-preview' ]
+				);
 
-			// Fail hard if the audience check fails, since we already checked
-			// at the beginning of this method.
-			$pout = $rendered->getRevisionParserOutput();
+				// Fail hard if the audience check fails, since we already checked
+				// at the beginning of this method.
+				$pout = $rendered->getRevisionParserOutput();
 
-			$out->addParserOutput( $pout, [
-				'enableSectionEditLinks' => false,
-			] );
+				$out->addParserOutput( $pout, [
+					'enableSectionEditLinks' => false,
+				] );
+			} catch ( RevisionAccessException $e ) {
+			}
 		}
 
 		$out->enableOOUI();
@@ -906,17 +922,16 @@ class SpecialUndelete extends SpecialPage {
 			$lang->userDate( $file->getTimestamp(), $user ),
 			$lang->userTime( $file->getTimestamp(), $user ) );
 		$out->addHTML(
-			Xml::openElement( 'form', [
+			Html::rawElement( 'form', [
 					'method' => 'POST',
 					'action' => $this->getPageTitle()->getLocalURL( [
 						'target' => $this->mTarget,
 						'file' => $key,
 						'token' => $user->getEditToken( $key ),
 					] ),
-				]
-			) .
-				Xml::submitButton( $this->msg( 'undelete-show-file-submit' )->text() ) .
-				'</form>'
+				],
+				Xml::submitButton( $this->msg( 'undelete-show-file-submit' )->text() )
+			)
 		);
 	}
 
@@ -1461,11 +1476,11 @@ class SpecialUndelete extends SpecialPage {
 	 * Fetch revision text link if it's available to all users
 	 *
 	 * @param RevisionRecord $revRecord
-	 * @param Title $titleObj
+	 * @param LinkTarget $target
 	 * @param string $ts Timestamp
 	 * @return string
 	 */
-	private function getPageLink( RevisionRecord $revRecord, $titleObj, $ts ) {
+	private function getPageLink( RevisionRecord $revRecord, LinkTarget $target, $ts ) {
 		$user = $this->getUser();
 		$time = $this->getLanguage()->userTimeAndDate( $ts, $user );
 
@@ -1479,7 +1494,7 @@ class SpecialUndelete extends SpecialPage {
 		}
 
 		$link = $this->getLinkRenderer()->makeKnownLink(
-			$titleObj,
+			$target,
 			$time,
 			[],
 			[
@@ -1500,13 +1515,13 @@ class SpecialUndelete extends SpecialPage {
 	 * Fetch image view link if it's available to all users
 	 *
 	 * @param File|ArchivedFile $file
-	 * @param Title $titleObj
+	 * @param LinkTarget $target
 	 * @param string $ts A timestamp
 	 * @param string $key A storage key
 	 *
 	 * @return string HTML fragment
 	 */
-	private function getFileLink( $file, $titleObj, $ts, $key ) {
+	private function getFileLink( $file, LinkTarget $target, $ts, $key ) {
 		$user = $this->getUser();
 		$time = $this->getLanguage()->userTimeAndDate( $ts, $user );
 
@@ -1520,7 +1535,7 @@ class SpecialUndelete extends SpecialPage {
 
 		if ( $file->exists() ) {
 			$link = $this->getLinkRenderer()->makeKnownLink(
-				$titleObj,
+				$target,
 				$time,
 				[],
 				[

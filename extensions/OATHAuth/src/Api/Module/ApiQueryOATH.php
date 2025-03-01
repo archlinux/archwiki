@@ -18,10 +18,10 @@
 
 namespace MediaWiki\Extension\OATHAuth\Api\Module;
 
-use ApiQuery;
-use ApiQueryBase;
-use ApiResult;
 use ManualLogEntry;
+use MediaWiki\Api\ApiQuery;
+use MediaWiki\Api\ApiQueryBase;
+use MediaWiki\Api\ApiResult;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\ParamValidator\ParamValidator;

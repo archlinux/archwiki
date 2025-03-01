@@ -13,31 +13,15 @@
 @import 'mediawiki.skin.defaults.less';
 
 /**
- * Codex experiment design tokens. This imports Less variables, some of which refer to CSS variables.
+ * Codex design tokens. This imports Less variables, some of which refer to CSS variables.
  * The CSS variable values are imported in CSSCustomProperties.less.
  */
-@import 'mediawiki.skin.codex-design-tokens/theme-codex-wikimedia-experimental.less';
+@import 'mediawiki.skin.codex-design-tokens/theme-wikimedia-ui.less';
 
 // Overrides for Codex tokens:
-
-@font-size-base: 1em; // Codex: 16px
 
 // == Typography ==
 // Body content uses the user setting in browser / the system default sans-serif font:
 // Arial on Windows, Roboto on Android.
 // FIXME: Use WikimediaUI Base's OS specific default sans-serif fonts.
 @font-family-sans: @font-family-sans--fallback;
-
-/**
- * == Non-standard variable names ==
- * These variables don't correspond to Codex variables.
- * TODO: Determine whether any of these are actually used in practice.
- **/
-@color-link: var( --color-progressive );
-@color-link--visited: var( --color-visited);
-@color-link--active: var(--color-progressive--active);
-@color-link-new: var(--color-link-red);
-@color-link-new--visited: var(--color-link-red--visited);
-@color-link-external: var( --color-progressive );
-@color-link-external--visited: var( --color-visited );
-@color-link-external--active:  var(--color-progressive--active);

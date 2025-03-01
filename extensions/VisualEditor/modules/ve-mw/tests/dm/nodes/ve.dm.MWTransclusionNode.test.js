@@ -7,12 +7,8 @@
 
 QUnit.module( 've.dm.MWTransclusionNode' );
 
-/* Tests */
-
-QUnit.test( 'getWikitext', ( assert ) => {
-	const cases = [
-		{
-			msg: 'mix of numbered and named parameters',
+QUnit.test.each( 'getWikitext', {
+		'mix of numbered and named parameters': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -22,8 +18,7 @@ QUnit.test( 'getWikitext', ( assert ) => {
 			},
 			wikitext: '{{foo|1=bar|baz=quux}}'
 		},
-		{
-			msg: 'parameter with self-closing nowiki',
+		'parameter with self-closing nowiki': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -32,8 +27,7 @@ QUnit.test( 'getWikitext', ( assert ) => {
 			},
 			wikitext: '{{foo|bar=l\'<nowiki />\'\'\'Étranger\'\'\'}}'
 		},
-		{
-			msg: 'parameter with self-closing nowiki without space',
+		'parameter with self-closing nowiki without space': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -42,8 +36,7 @@ QUnit.test( 'getWikitext', ( assert ) => {
 			},
 			wikitext: '{{foo|bar=l\'<nowiki/>\'\'\'Étranger\'\'\'}}'
 		},
-		{
-			msg: 'parameter with spanning-nowiki',
+		'parameter with spanning-nowiki': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -52,8 +45,7 @@ QUnit.test( 'getWikitext', ( assert ) => {
 			},
 			wikitext: '{{foo|bar=You should use <nowiki>\'\'\'</nowiki> to make things bold.}}'
 		},
-		{
-			msg: 'parameter with spanning-nowiki and nested transclusion',
+		'parameter with spanning-nowiki and nested transclusion': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -62,8 +54,7 @@ QUnit.test( 'getWikitext', ( assert ) => {
 			},
 			wikitext: '{{foo|bar=You should try using <nowiki>{{ping|foo=bar|2=1}}</nowiki> as a transclusion!}}'
 		},
-		{
-			msg: 'parameter containing another template invocation',
+		'parameter containing another template invocation': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -72,8 +63,7 @@ QUnit.test( 'getWikitext', ( assert ) => {
 			},
 			wikitext: '{{foo|bar={{ping|foo=bar|2=1}}}}'
 		},
-		{
-			msg: 'parameter containing another parameter',
+		'parameter containing another parameter': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -82,8 +72,7 @@ QUnit.test( 'getWikitext', ( assert ) => {
 			},
 			wikitext: '{{foo|bar={{{1}}}}}'
 		},
-		{
-			msg: 'parameter containing unmatched close brackets and floating pipes',
+		'parameter containing unmatched close brackets and floating pipes': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -92,8 +81,7 @@ QUnit.test( 'getWikitext', ( assert ) => {
 			},
 			wikitext: '{{foo|bar=<nowiki>}}</nowiki> <nowiki>|</nowiki> {{a|{{b}}}} <nowiki>|</nowiki>}}'
 		},
-		{
-			msg: 'parameter containing piped link',
+		'parameter containing piped link': {
 			mw: {
 				target: { wt: 'foo' },
 				params: {
@@ -101,12 +89,11 @@ QUnit.test( 'getWikitext', ( assert ) => {
 				}
 			},
 			wikitext: '{{foo|bar=[[baz|quux]]}}'
-		} ];
-
-	for ( let i = 0; i < cases.length; i++ ) {
+		}
+	}, ( assert, caseItem ) => {
 		const node = new ve.dm.MWTransclusionNode(
-			{ type: 'mwTransclusion', attributes: { mw: cases[ i ].mw } }
+			{ type: 'mwTransclusion', attributes: { mw: caseItem.mw } }
 		);
-		assert.strictEqual( node.getWikitext(), cases[ i ].wikitext, cases[ i ].msg );
+		assert.strictEqual( node.getWikitext(), caseItem.wikitext );
 	}
-} );
+);

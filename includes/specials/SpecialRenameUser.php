@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Specials;
 
-use Language;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\RenameUser\RenameuserSQL;
@@ -23,12 +23,12 @@ use UserBlockedError;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
- * Special page that allows authorised users to rename
- * user accounts
+ * Rename a user account.
+ *
+ * @ingroup SpecialPage
  */
 class SpecialRenameUser extends SpecialPage {
 	private IConnectionProvider $dbConns;
-	private Language $contentLanguage;
 	private MovePageFactory $movePageFactory;
 	private PermissionManager $permissionManager;
 	private TitleFactory $titleFactory;
@@ -38,7 +38,6 @@ class SpecialRenameUser extends SpecialPage {
 
 	/**
 	 * @param IConnectionProvider $dbConns
-	 * @param Language $contentLanguage
 	 * @param MovePageFactory $movePageFactory
 	 * @param PermissionManager $permissionManager
 	 * @param TitleFactory $titleFactory
@@ -48,7 +47,6 @@ class SpecialRenameUser extends SpecialPage {
 	 */
 	public function __construct(
 		IConnectionProvider $dbConns,
-		Language $contentLanguage,
 		MovePageFactory $movePageFactory,
 		PermissionManager $permissionManager,
 		TitleFactory $titleFactory,
@@ -59,7 +57,6 @@ class SpecialRenameUser extends SpecialPage {
 		parent::__construct( 'Renameuser', 'renameuser' );
 
 		$this->dbConns = $dbConns;
-		$this->contentLanguage = $contentLanguage;
 		$this->movePageFactory = $movePageFactory;
 		$this->permissionManager = $permissionManager;
 		$this->titleFactory = $titleFactory;
@@ -111,7 +108,7 @@ class SpecialRenameUser extends SpecialPage {
 		$origNewName = trim( str_replace( '_', ' ', $origNewName ) );
 		// Force uppercase of new username, otherwise wikis
 		// with wgCapitalLinks=false can create lc usernames
-		$newTitle = $this->titleFactory->makeTitleSafe( NS_USER, $this->contentLanguage->ucfirst( $origNewName ) );
+		$newTitle = $this->titleFactory->makeTitleSafe( NS_USER, $this->getContentLanguage()->ucfirst( $origNewName ) );
 		$newName = $newTitle ? $newTitle->getText() : '';
 
 		$reason = $request->getText( 'reason' );
@@ -193,7 +190,7 @@ class SpecialRenameUser extends SpecialPage {
 
 		// Check for the existence of lowercase old username in database.
 		// Until r19631 it was possible to rename a user to a name with first character as lowercase
-		if ( $oldName !== $this->contentLanguage->ucfirst( $oldName ) ) {
+		if ( $oldName !== $this->getContentLanguage()->ucfirst( $oldName ) ) {
 			// old username was entered as lowercase -> check for existence in table 'user'
 			$dbr = $this->dbConns->getReplicaDatabase();
 			$uid = $dbr->newSelectQueryBuilder()
@@ -203,7 +200,7 @@ class SpecialRenameUser extends SpecialPage {
 				->caller( __METHOD__ )
 				->fetchField();
 			if ( $uid === false ) {
-				if ( !$this->getConfig()->get( 'CapitalLinks' ) ) {
+				if ( !$this->getConfig()->get( MainConfigNames::CapitalLinks ) ) {
 					$uid = 0; // We are on a lowercase wiki but lowercase username does not exist
 				} else {
 					// We are on a standard uppercase wiki, use normal

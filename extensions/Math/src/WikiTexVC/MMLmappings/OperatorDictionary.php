@@ -12,9 +12,11 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLutil;
  */
 class OperatorDictionary {
 
+	/** @var self|null */
 	private static $instance = null;
 
 	private const INFIX = [ // Implemented elements have [something, true] for custom parsing
+		'!' => [ "1, 0, TEXCLASS.CLOSE, null" ], // exclamation mark
 		'!=' => [ " exports.MO.BIN4" ],
 		'#' => [ " exports.MO.ORD" ],
 		'$' => [ " exports.MO.ORD" ],
@@ -32,7 +34,8 @@ class OperatorDictionary {
 		'-=' => [ " exports.MO.BIN4" ],
 		'->' => [ " exports.MO.BIN5" ],
 		'.' => [ " [0, 3], MmlNode_js_1.TEXCLASS.PUNCT\"], { separator=> [ true }]" ],
-		'/' => [ " exports.MO.ORD11" ],
+		':' => [ " [1, 2], MmlNode_js_1.TEXCLASS.REL\"], null]" ],
+		'/' => [ " exports.MO.ORD11", true ],
 		'//' => [ " OPDEF(1\"], 1)" ],
 		'/=' => [ " exports.MO.BIN4" ],
 		'=>' => [ " [1, 2], MmlNode_js_1.TEXCLASS.REL\"], null]" ],
@@ -964,18 +967,12 @@ class OperatorDictionary {
 	}
 
 	public static function getInstance() {
-		if ( self::$instance == null ) {
-			self::$instance = new OperatorDictionary();
-		}
-
+		self::$instance ??= new OperatorDictionary();
 		return self::$instance;
 	}
 
 	public static function getEntryFromList( $keylist, $key ) {
-		if ( isset( self::ALL[$keylist][$key] ) ) {
-			return self::ALL[$keylist][$key];
-		}
-		return null;
+		return self::ALL[$keylist][$key] ?? null;
 	}
 
 	public static function getOperatorByKey( $key ) {

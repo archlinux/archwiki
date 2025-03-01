@@ -11,13 +11,9 @@ use MediaWikiUnitTestCase;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter
+ * @covers \MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter
  */
 class ExistingFilterTest extends MediaWikiUnitTestCase {
-	/**
-	 * @covers ::__construct
-	 * @covers ::getID
-	 */
 	public function testGetID() {
 		$id = 163;
 		$filter = new ExistingFilter(

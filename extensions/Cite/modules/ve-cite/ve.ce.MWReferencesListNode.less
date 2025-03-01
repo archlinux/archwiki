@@ -5,6 +5,8 @@
  * @license MIT
  */
 
+@import 'mediawiki.skin.variables.less';
+
 .ve-ce-mwReferencesListNode {
 	// Remove the styling of the preview wrapper, and any
 	// generated paragraph wrappers
@@ -19,7 +21,7 @@
 	}
 
 	&-muted {
-		color: #72777d;
+		color: @color-subtle;
 		font-style: italic;
 	}
 
@@ -32,6 +34,10 @@
 		> * {
 			pointer-events: none;
 		}
+	}
+
+	.mw-references li::marker {
+		content: var( --footnote-number ) ' ';
 	}
 
 	&-missingRef {

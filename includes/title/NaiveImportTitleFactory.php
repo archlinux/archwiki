@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Title;
 
-use Language;
+use MediaWiki\Language\Language;
 
 /**
  * A class to convert page titles on a foreign wiki (ForeignTitle objects) into
@@ -34,20 +34,10 @@ use Language;
  * main namespace as a last resort.
  */
 class NaiveImportTitleFactory implements ImportTitleFactory {
-	/** @var Language */
-	private $contentLanguage;
+	private Language $contentLanguage;
+	private NamespaceInfo $namespaceInfo;
+	private TitleFactory $titleFactory;
 
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var TitleFactory */
-	private $titleFactory;
-
-	/**
-	 * @param Language $contentLanguage
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param TitleFactory $titleFactory
-	 */
 	public function __construct(
 		Language $contentLanguage,
 		NamespaceInfo $namespaceInfo,

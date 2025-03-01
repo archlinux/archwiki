@@ -6,6 +6,7 @@ use ArrayIterator;
 use Exception;
 use InvalidArgumentException;
 use MediaWiki\Rest\HttpException;
+use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RedirectException;
 use MediaWiki\Rest\ResponseException;
 use MediaWiki\Rest\ResponseFactory;
@@ -84,6 +85,18 @@ class ResponseFactoryTest extends MediaWikiUnitTestCase {
 			$rf->createLegacyTemporaryRedirect( 'http://www.example.com/' );
 		$this->assertSame( [ 'http://www.example.com/' ], $response->getHeader( 'Location' ) );
 		$this->assertSame( 302, $response->getStatusCode() );
+	}
+
+	/** @dataProvider provideUseException */
+	public function testCreateRedirect( $useException ) {
+		$rf = $this->createResponseFactory();
+		$response = $useException ?
+			$rf->createFromException( new RedirectException(
+				333, 'http://www.example.com/'
+			) ) :
+			$rf->createRedirect( 'http://www.example.com/', 333 );
+		$this->assertSame( [ 'http://www.example.com/' ], $response->getHeader( 'Location' ) );
+		$this->assertSame( 333, $response->getStatusCode() );
 	}
 
 	/** @dataProvider provideUseException */
@@ -166,6 +179,17 @@ class ResponseFactoryTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $wrapped, $response );
 	}
 
+	public function testCreateFromExceptionWithExtraData() {
+		$rf = $this->createResponseFactory();
+		$e = new LocalizedHttpException( new MessageValue( 'rftest' ), 404 );
+		$response = $rf->createFromException( $e, [ 'foo' => 'bar' ] );
+		$body = $response->getBody();
+		$body->rewind();
+		$data = json_decode( $body->getContents(), true );
+		$this->assertArrayHasKey( 'foo', $data );
+		$this->assertSame( 'bar', $data['foo'] );
+	}
+
 	public static function provideCreateFromReturnValue() {
 		return [
 			[ 'hello', '{"value":"hello"}' ],
@@ -202,5 +226,29 @@ class ResponseFactoryTest extends MediaWikiUnitTestCase {
 		$this->assertSame(
 			'{"messageTranslations":{"qqx":"rftest"},"httpCode":404,"httpReason":"Not Found"}',
 			$body->getContents() );
+	}
+
+	public function testFormatMessage() {
+		$rf = $this->createResponseFactory();
+		$mv = new MessageValue( 'rftest' );
+		$ret = $rf->formatMessage( $mv );
+		$this->assertIsArray( $ret );
+		$this->assertArrayHasKey( 'messageTranslations', $ret );
+		$this->assertIsArray( $ret['messageTranslations'] );
+		$this->assertArrayHasKey( 'qqx', $ret['messageTranslations'] );
+		$this->assertSame( 'rftest', $ret['messageTranslations']['qqx'] );
+	}
+
+	public function testGetFormattedMessage() {
+		$rf = $this->createResponseFactory();
+		$mv = new MessageValue( 'rftest' );
+
+		$ret = $rf->getFormattedMessage( $mv );
+		$this->assertIsString( $ret );
+		$this->assertSame( 'rftest', $ret );
+
+		$ret = $rf->getFormattedMessage( $mv, 'doesnotexist' );
+		$this->assertIsString( $ret );
+		$this->assertSame( 'rftest', $ret );
 	}
 }

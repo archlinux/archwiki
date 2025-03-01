@@ -2,6 +2,7 @@
 
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\UsernameAuthenticationRequest;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaPreAuthenticationProvider;
 use MediaWiki\Extension\ConfirmEdit\Auth\LoginAttemptCounter;
@@ -23,11 +24,11 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->setMwGlobals( [
-			'wgCaptchaClass' => SimpleCaptcha::class,
-			'wgCaptchaBadLoginAttempts' => 1,
-			'wgCaptchaBadLoginPerUserAttempts' => 1,
-			'wgCaptchaStorageClass' => CaptchaHashStore::class,
+		$this->overrideConfigValues( [
+			'CaptchaClass' => SimpleCaptcha::class,
+			'CaptchaBadLoginAttempts' => 1,
+			'CaptchaBadLoginPerUserAttempts' => 1,
+			'CaptchaStorageClass' => CaptchaHashStore::class,
 		] );
 		CaptchaStore::unsetInstanceForTests();
 		CaptchaStore::get()->clearAll();
@@ -35,8 +36,10 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 
 	public function tearDown(): void {
 		parent::tearDown();
+		/** @var Hooks $req */
+		$req = TestingAccessWrapper::newFromClass( Hooks::class );
 		// make sure $wgCaptcha resets between tests
-		TestingAccessWrapper::newFromClass( Hooks::class )->instanceCreated = false;
+		$req->instanceCreated = false;
 	}
 
 	/**
@@ -101,10 +104,12 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 			[ 'username' => 'Foo' ] );
 
 		$this->assertCount( 1, $reqs );
-		$this->assertInstanceOf( CaptchaAuthenticationRequest::class, $reqs[0] );
+		/** @var CaptchaAuthenticationRequest $req */
+		$req = $reqs[0];
+		$this->assertInstanceOf( CaptchaAuthenticationRequest::class, $req );
 
-		$id = $reqs[0]->captchaId;
-		$data = TestingAccessWrapper::newFromObject( $reqs[0] )->captchaData;
+		$id = $req->captchaId;
+		$data = $req->captchaData;
 		$this->assertEquals( $captcha->retrieveCaptcha( $id ), $data + [ 'index' => $id ] );
 	}
 
@@ -240,6 +245,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		);
 		$provider = new CaptchaPreAuthenticationProvider();
 		$this->initProvider( $provider, null, null, $this->getServiceContainer()->getAuthManager() );
+		/** @var CaptchaPreAuthenticationProvider $providerAccess */
 		$providerAccess = TestingAccessWrapper::newFromObject( $provider );
 
 		$disablePingLimiter = false;
@@ -307,7 +313,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		$captchaTriggers = array_combine( $types, array_map( static function ( $type ) use ( $triggers ) {
 			return in_array( $type, $triggers, true );
 		}, $types ) );
-		$this->setMwGlobals( 'wgCaptchaTriggers', $captchaTriggers );
+		$this->overrideConfigValue( 'CaptchaTriggers', $captchaTriggers );
 	}
 
 	private function getProvider(): CaptchaPreAuthenticationProvider {

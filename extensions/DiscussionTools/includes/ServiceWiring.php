@@ -44,7 +44,8 @@ return [
 			$services->getPageStore(),
 			$services->getRevisionStore(),
 			$services->getTitleFormatter(),
-			$services->getActorStore()
+			$services->getActorStore(),
+			$services->getContentLanguage()
 		);
 	},
 	'DiscussionTools.ThreadItemFormatter' => static function ( MediaWikiServices $services ): ThreadItemFormatter {

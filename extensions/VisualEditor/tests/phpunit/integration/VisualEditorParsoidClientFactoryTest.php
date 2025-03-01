@@ -8,7 +8,7 @@ use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWikiIntegrationTestCase;
-use MultiHttpClient;
+use Wikimedia\Http\MultiHttpClient;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\VisualEditor\VisualEditorParsoidClientFactory
@@ -25,7 +25,7 @@ class VisualEditorParsoidClientFactoryTest extends MediaWikiIntegrationTestCase 
 		$this->assertInstanceOf( VisualEditorParsoidClientFactory::class, $veParsoidClientFactory );
 	}
 
-	private function newClientFactory() {
+	private function newClientFactory(): VisualEditorParsoidClientFactory {
 		$httpRequestFactory = $this->createNoOpMock( HttpRequestFactory::class, [ 'createMultiClient' ] );
 		$httpRequestFactory->method( 'createMultiClient' )->willReturn(
 			$this->createNoOpMock( MultiHttpClient::class )

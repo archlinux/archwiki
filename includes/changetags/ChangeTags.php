@@ -1,7 +1,5 @@
 <?php
 /**
- * Recent changes tagging.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,16 +16,17 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Change tagging
  */
 
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
@@ -35,8 +34,27 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Xml\XmlSelect;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IReadableDatabase;
 
+/**
+ * @defgroup ChangeTags Change tagging
+ * Tagging for revisions, log entries, or recent changes.
+ *
+ * These can be built-in tags from MediaWiki core, or applied by extensions
+ * via edit filters (e.g. AbuseFilter), or applied by extensions via hooks
+ * (e.g. onRecentChange_save), or manually by authorized users via the
+ * SpecialEditTags interface.
+ *
+ * @see RecentChanges
+ */
+
+/**
+ * Recent changes tagging.
+ *
+ * @ingroup ChangeTags
+ */
 class ChangeTags {
 	/**
 	 * The tagged edit changes the content model of the page.
@@ -146,7 +164,7 @@ class ChangeTags {
 	 *   - classes: Array of strings: CSS classes used in the generated html, one class for each tag
 	 * @return-taint onlysafefor_htmlnoent
 	 */
-	public static function formatSummaryRow( $tags, $unused, MessageLocalizer $localizer = null ) {
+	public static function formatSummaryRow( $tags, $unused, ?MessageLocalizer $localizer = null ) {
 		if ( $tags === '' || $tags === null ) {
 			return [ '', [] ];
 		}
@@ -224,12 +242,33 @@ class ChangeTags {
 	}
 
 	/**
+	 * Get the tag's help link.
+	 *
+	 * Checks if message key "mediawiki:tag-$tag-helppage" exists in content language. If it does,
+	 * and contains a URL or a page title, return a (possibly relative) link URL that points there.
+	 * Otherwise return null.
+	 *
+	 * @since 1.43
+	 * @param string $tag
+	 * @param MessageLocalizer $context
+	 * @return string|null Tag link, or null if not provided or invalid
+	 */
+	public static function tagHelpLink( $tag, MessageLocalizer $context ) {
+		$msg = $context->msg( "tag-$tag-helppage" )->inContentLanguage();
+		if ( $msg->exists() && !$msg->isDisabled() ) {
+			$url = Skin::makeInternalOrExternalUrl( $msg->text() );
+			if ( $url ) {
+				return $url;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get a short description for a tag.
 	 *
-	 * Checks if message key "mediawiki:tag-$tag" exists. If it does not,
-	 * returns the HTML-escaped tag name. Uses the message if the message
-	 * exists, provided it is not disabled. If the message is disabled,
-	 * we consider the tag hidden, and return false.
+	 * The description combines the label from tagShortDescriptionMessage() with the link from
+	 * tagHelpLink() (unless the label already contains some links).
 	 *
 	 * @param string $tag
 	 * @param MessageLocalizer $context
@@ -238,6 +277,14 @@ class ChangeTags {
 	 */
 	public static function tagDescription( $tag, MessageLocalizer $context ) {
 		$msg = self::tagShortDescriptionMessage( $tag, $context );
+		$link = self::tagHelpLink( $tag, $context );
+		if ( $msg && $link ) {
+			$label = $msg->parse();
+			// Avoid invalid HTML caused by link wrapping if the label already contains a link
+			if ( !str_contains( $label, '<a ' ) ) {
+				return Html::rawElement( 'a', [ 'href' => $link ], $label );
+			}
+		}
 		return $msg ? $msg->parse() : false;
 	}
 
@@ -282,7 +329,7 @@ class ChangeTags {
 	 * @return bool False if no changes are made, otherwise true
 	 */
 	public static function addTags( $tags, $rc_id = null, $rev_id = null,
-		$log_id = null, $params = null, RecentChange $rc = null
+		$log_id = null, $params = null, ?RecentChange $rc = null
 	) {
 		return MediaWikiServices::getInstance()->getChangeTagsStore()->addTags(
 			$tags, $rc_id, $rev_id, $log_id, $params, $rc
@@ -320,8 +367,8 @@ class ChangeTags {
 	 * @since 1.25
 	 */
 	public static function updateTags( $tagsToAdd, $tagsToRemove, &$rc_id = null,
-		&$rev_id = null, &$log_id = null, $params = null, RecentChange $rc = null,
-		UserIdentity $user = null
+		&$rev_id = null, &$log_id = null, $params = null, ?RecentChange $rc = null,
+		?UserIdentity $user = null
 	) {
 		return MediaWikiServices::getInstance()->getChangeTagsStore()->updateTags(
 			$tagsToAdd, $tagsToRemove, $rc_id, $rev_id, $log_id, $params, $rc, $user
@@ -397,7 +444,7 @@ class ChangeTags {
 	 */
 	public static function canAddTagsAccompanyingChange(
 		array $tags,
-		Authority $performer = null,
+		?Authority $performer = null,
 		$checkBlock = true
 	) {
 		$user = null;
@@ -447,7 +494,7 @@ class ChangeTags {
 	public static function canUpdateTags(
 		array $tagsToAdd,
 		array $tagsToRemove,
-		Authority $performer = null
+		?Authority $performer = null
 	) {
 		if ( $performer !== null ) {
 			if ( !$performer->isDefinitelyAllowed( 'changetags' ) ) {
@@ -681,7 +728,7 @@ class ChangeTags {
 	 * @return array an array of (label, selector)
 	 */
 	public static function buildTagFilterSelector(
-		$selected = '', $ooui = false, IContextSource $context = null
+		$selected = '', $ooui = false, ?IContextSource $context = null
 	) {
 		if ( !$context ) {
 			$context = RequestContext::getMain();
@@ -761,7 +808,7 @@ class ChangeTags {
 	 * @return Status
 	 * @since 1.25
 	 */
-	public static function canActivateTag( $tag, Authority $performer = null ) {
+	public static function canActivateTag( $tag, ?Authority $performer = null ) {
 		if ( $performer !== null ) {
 			if ( !$performer->isAllowed( 'managechangetags' ) ) {
 				return Status::newFatal( 'tags-manage-no-permission' );
@@ -836,7 +883,7 @@ class ChangeTags {
 	 * @return Status
 	 * @since 1.25
 	 */
-	public static function canDeactivateTag( $tag, Authority $performer = null ) {
+	public static function canDeactivateTag( $tag, ?Authority $performer = null ) {
 		if ( $performer !== null ) {
 			if ( !$performer->isAllowed( 'managechangetags' ) ) {
 				return Status::newFatal( 'tags-manage-no-permission' );
@@ -936,7 +983,7 @@ class ChangeTags {
 	 * @return Status
 	 * @since 1.25
 	 */
-	public static function canCreateTag( $tag, Authority $performer = null ) {
+	public static function canCreateTag( $tag, ?Authority $performer = null ) {
 		$user = null;
 		$services = MediaWikiServices::getInstance();
 		if ( $performer !== null ) {
@@ -1039,7 +1086,7 @@ class ChangeTags {
 	 * @return Status
 	 * @since 1.25
 	 */
-	public static function canDeleteTag( $tag, Authority $performer = null, int $flags = 0 ) {
+	public static function canDeleteTag( $tag, ?Authority $performer = null, int $flags = 0 ) {
 		$user = null;
 		$services = MediaWikiServices::getInstance();
 		if ( $performer !== null ) {
@@ -1225,6 +1272,7 @@ class ChangeTags {
 	 * - descriptionMsg: Long description message (Message object)
 	 * - description: Long description message (raw message contents)
 	 * - cssClass: CSS class to use for RC entries with this tag
+	 * - helpLink: Link to a help page describing this tag (string or null)
 	 * - hits: Number of RC entries that have this tag
 	 *
 	 * This data is consumed by the `mediawiki.rcfilters.filters.ui` module,
@@ -1253,6 +1301,7 @@ class ChangeTags {
 					}
 
 					$labelMsg = self::tagShortDescriptionMessage( $tagName, $localizer );
+					$helpLink = self::tagHelpLink( $tagName, $localizer );
 					$descriptionMsg = self::tagLongDescriptionMessage( $tagName, $localizer );
 					// Don't cache the message object, use the correct MessageLocalizer to parse later.
 					$result[] = [
@@ -1261,6 +1310,7 @@ class ChangeTags {
 						'label' => $labelMsg ? $labelMsg->plain() : $tagName,
 						'descriptionMsg' => (bool)$descriptionMsg,
 						'description' => $descriptionMsg ? $descriptionMsg->plain() : '',
+						'helpLink' => $helpLink,
 						'cssClass' => Sanitizer::escapeClass( 'mw-tag-' . $tagName ),
 					];
 				}

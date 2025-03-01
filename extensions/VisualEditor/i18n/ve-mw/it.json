@@ -44,9 +44,9 @@
 			"Supernino",
 			"Toa",
 			"Una giornata uggiosa '94",
+			"Valepert",
 			"Vivbod",
 			"Wikitoni",
-			"Valepert",
 			"ZandDev"
 		]
 	},
@@ -64,7 +64,6 @@
 	"visualeditor-autosave-recovered-text": "Le tue modifiche non salvate sono state automaticamente ripristinate.",
 	"visualeditor-autosave-recovered-title": "Modifiche ripristinate",
 	"visualeditor-backbutton-tooltip": "Indietro",
-	"visualeditor-browserwarning": "Si sta utilizzando un browser che non è ufficialmente supportato da questo editor.",
 	"visualeditor-ca-createlocaldescriptionsource": "Aggiungi descrizione locale con wikitesto",
 	"visualeditor-ca-createsource": "Crea sorgente",
 	"visualeditor-ca-editlocaldescriptionsource": "Modifica wikitesto locale",

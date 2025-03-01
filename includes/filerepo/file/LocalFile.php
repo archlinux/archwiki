@@ -19,22 +19,29 @@
  */
 
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\AutoCommitUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
 use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+use MediaWiki\Language\Language;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FileBackendError;
+use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\Rdbms\Blob;
 use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -870,7 +877,7 @@ class LocalFile extends File {
 			} else {
 				$logger = LoggerFactory::getInstance( 'LocalFile' );
 				$logger->warning( __METHOD__ . ' given invalid metadata of type ' .
-					gettype( $info['metadata'] ) );
+					get_debug_type( $info['metadata'] ) );
 				$this->metadataArray = [];
 			}
 			$this->extraDataLoaded = true;
@@ -1465,7 +1472,7 @@ class LocalFile extends File {
 	 * @param string|int|null $start Optional: Timestamp, start from
 	 * @param string|int|null $end Optional: Timestamp, end at
 	 * @param bool $inc
-	 * @return OldLocalFile[]
+	 * @return OldLocalFile[] Guaranteed to be in descending order
 	 */
 	public function getHistory( $limit = null, $start = null, $end = null, $inc = true ) {
 		if ( !$this->exists() ) {
@@ -1480,14 +1487,14 @@ class LocalFile extends File {
 		$join_conds = $oldFileQuery['joins'];
 		$conds = $opts = [];
 		$eq = $inc ? '=' : '';
-		$conds[] = "oi_name = " . $dbr->addQuotes( $this->title->getDBkey() );
+		$conds[] = $dbr->expr( 'oi_name', '=', $this->title->getDBkey() );
 
 		if ( $start ) {
-			$conds[] = "oi_timestamp <$eq " . $dbr->addQuotes( $dbr->timestamp( $start ) );
+			$conds[] = $dbr->expr( 'oi_timestamp', "<$eq", $dbr->timestamp( $start ) );
 		}
 
 		if ( $end ) {
-			$conds[] = "oi_timestamp >$eq " . $dbr->addQuotes( $dbr->timestamp( $end ) );
+			$conds[] = $dbr->expr( 'oi_timestamp', ">$eq", $dbr->timestamp( $end ) );
 		}
 
 		if ( $limit ) {
@@ -1502,7 +1509,14 @@ class LocalFile extends File {
 		$this->getHookRunner()->onLocalFile__getHistory( $this, $tables, $fields,
 			$conds, $opts, $join_conds );
 
-		$res = $dbr->select( $tables, $fields, $conds, __METHOD__, $opts, $join_conds );
+		$res = $dbr->newSelectQueryBuilder()
+			->tables( $tables )
+			->fields( $fields )
+			->conds( $conds )
+			->caller( __METHOD__ )
+			->options( $opts )
+			->joinConds( $join_conds )
+			->fetchResultSet();
 		$r = [];
 
 		foreach ( $res as $row ) {
@@ -1606,7 +1620,7 @@ class LocalFile extends File {
 	 *     archive name, or an empty string if it was a new file.
 	 */
 	public function upload( $src, $comment, $pageText, $flags = 0, $props = false,
-		$timestamp = false, Authority $uploader = null, $tags = [],
+		$timestamp = false, ?Authority $uploader = null, $tags = [],
 		$createNullRevision = true, $revert = false
 	) {
 		if ( $this->getRepo()->getReadOnlyReason() !== false ) {
@@ -1888,9 +1902,10 @@ class LocalFile extends File {
 
 		if ( $descTitle->exists() ) {
 			if ( $createNullRevision ) {
-				$revStore = MediaWikiServices::getInstance()->getRevisionStore();
+				$services = MediaWikiServices::getInstance();
+				$revStore = $services->getRevisionStore();
 				// Use own context to get the action text in content language
-				$formatter = LogFormatter::newFromEntry( $logEntry );
+				$formatter = $services->getLogFormatterFactory()->newFromEntry( $logEntry );
 				$formatter->setContext( RequestContext::newExtraneousContext( $descTitle ) );
 				$editSummary = $formatter->getPlainActionText();
 				$summary = CommentStoreComment::newUnsavedComment( $editSummary );
@@ -2373,7 +2388,7 @@ class LocalFile extends File {
 	 * @param Language|null $lang What language to get description in (Optional)
 	 * @return string|false
 	 */
-	public function getDescriptionText( Language $lang = null ) {
+	public function getDescriptionText( ?Language $lang = null ) {
 		if ( !$this->title ) {
 			return false; // Avoid hard failure when the file does not exist. T221812
 		}
@@ -2410,7 +2425,7 @@ class LocalFile extends File {
 	 * @param Authority|null $performer
 	 * @return UserIdentity|null
 	 */
-	public function getUploader( int $audience = self::FOR_PUBLIC, Authority $performer = null ): ?UserIdentity {
+	public function getUploader( int $audience = self::FOR_PUBLIC, ?Authority $performer = null ): ?UserIdentity {
 		$this->load();
 		if ( $audience === self::FOR_PUBLIC && $this->isDeleted( self::DELETED_USER ) ) {
 			return null;
@@ -2427,7 +2442,7 @@ class LocalFile extends File {
 	 * @param Authority|null $performer
 	 * @return string
 	 */
-	public function getDescription( $audience = self::FOR_PUBLIC, Authority $performer = null ) {
+	public function getDescription( $audience = self::FOR_PUBLIC, ?Authority $performer = null ) {
 		$this->load();
 		if ( $audience == self::FOR_PUBLIC && $this->isDeleted( self::DELETED_COMMENT ) ) {
 			return '';

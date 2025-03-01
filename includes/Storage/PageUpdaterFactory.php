@@ -21,14 +21,15 @@
 namespace MediaWiki\Storage;
 
 use JobQueueGroup;
-use Language;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Transform\ContentTransformer;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserCache;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Revision\RevisionStore;
@@ -40,11 +41,9 @@ use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
 use MessageCache;
-use ParserCache;
 use Psr\Log\LoggerInterface;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILBFactory;
-use WikiPage;
 
 /**
  * A factory for PageUpdater and DerivedPageDataUpdater instances.
@@ -239,8 +238,6 @@ class PageUpdaterFactory {
 		PageIdentity $page,
 		UserIdentity $user
 	): PageUpdater {
-		$page = $this->wikiPageFactory->newFromTitle( $page );
-
 		return $this->newPageUpdaterForDerivedPageDataUpdater(
 			$page,
 			$user,
@@ -252,7 +249,7 @@ class PageUpdaterFactory {
 	 * Return a PageUpdater for building an update to a page, reusing the state of
 	 * an existing DerivedPageDataUpdater.
 	 *
-	 * @param WikiPage $page
+	 * @param PageIdentity $page
 	 * @param UserIdentity $user
 	 * @param DerivedPageDataUpdater $derivedPageDataUpdater
 	 *
@@ -262,13 +259,13 @@ class PageUpdaterFactory {
 	 * @since 1.37
 	 */
 	public function newPageUpdaterForDerivedPageDataUpdater(
-		WikiPage $page,
+		PageIdentity $page,
 		UserIdentity $user,
 		DerivedPageDataUpdater $derivedPageDataUpdater
 	): PageUpdater {
 		$pageUpdater = new PageUpdater(
 			$user,
-			$page, // NOTE: eventually, PageUpdater should not know about WikiPage
+			$page,
 			$derivedPageDataUpdater,
 			$this->loadbalancerFactory,
 			$this->revisionStore,
@@ -283,7 +280,8 @@ class PageUpdaterFactory {
 				$this->options
 			),
 			$this->softwareTags,
-			$this->logger
+			$this->logger,
+			$this->wikiPageFactory
 		);
 
 		$pageUpdater->setUsePageCreationLog(
@@ -296,17 +294,17 @@ class PageUpdaterFactory {
 	}
 
 	/**
-	 * @param WikiPage $page
+	 * @param PageIdentity $page
 	 *
 	 * @return DerivedPageDataUpdater
 	 * @internal Needed by WikiPage to back the deprecated prepareContentForEdit() method.
 	 * @note Avoid direct usage of DerivedPageDataUpdater.
 	 * @see docs/pageupdater.md for more information.
 	 */
-	public function newDerivedPageDataUpdater( WikiPage $page ): DerivedPageDataUpdater {
+	public function newDerivedPageDataUpdater( PageIdentity $page ): DerivedPageDataUpdater {
 		$derivedDataUpdater = new DerivedPageDataUpdater(
 			$this->options,
-			$page, // NOTE: eventually, PageUpdater should not know about WikiPage
+			$page,
 			$this->revisionStore,
 			$this->revisionRenderer,
 			$this->slotRoleRegistry,
@@ -323,7 +321,8 @@ class PageUpdaterFactory {
 			$this->pageEditStash,
 			$this->talkPageNotificationManager,
 			$this->mainWANObjectCache,
-			$this->permissionManager
+			$this->permissionManager,
+			$this->wikiPageFactory
 		);
 
 		$derivedDataUpdater->setLogger( $this->logger );

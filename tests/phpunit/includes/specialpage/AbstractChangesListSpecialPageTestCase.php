@@ -24,24 +24,14 @@ abstract class AbstractChangesListSpecialPageTestCase extends MediaWikiIntegrati
 	 */
 	protected $changesListSpecialPage;
 
-	protected $oldPatrollersGroup;
-
 	protected function setUp(): void {
-		global $wgGroupPermissions;
-
 		parent::setUp();
 		$this->overrideConfigValues( [
 			MainConfigNames::RCWatchCategoryMembership => true,
 			MainConfigNames::UseRCPatrol => true,
 		] );
 
-		if ( isset( $wgGroupPermissions['patrollers'] ) ) {
-			$this->oldPatrollersGroup = $wgGroupPermissions['patrollers'];
-		}
-
-		$wgGroupPermissions['patrollers'] = [
-			'patrol' => true,
-		];
+		$this->setGroupPermissions( 'patrollers', 'patrol', true );
 
 		# setup the ChangesListSpecialPage (or subclass) object
 		$this->changesListSpecialPage = $this->getPageAccessWrapper();
@@ -56,16 +46,6 @@ abstract class AbstractChangesListSpecialPageTestCase extends MediaWikiIntegrati
 	 * @return ChangesListSpecialPage
 	 */
 	abstract protected function getPageAccessWrapper();
-
-	protected function tearDown(): void {
-		global $wgGroupPermissions;
-
-		if ( $this->oldPatrollersGroup !== null ) {
-			$wgGroupPermissions['patrollers'] = $this->oldPatrollersGroup;
-		}
-
-		parent::tearDown();
-	}
 
 	abstract public function provideParseParameters();
 
@@ -113,8 +93,7 @@ abstract class AbstractChangesListSpecialPageTestCase extends MediaWikiIntegrati
 			->getMock();
 		$output->method( 'redirect' )->willReturnCallback(
 			static function ( $url ) use ( &$redirectQuery, &$redirected ) {
-				$urlParts = wfParseUrl( $url );
-				$query = $urlParts[ 'query' ] ?? '';
+				$query = parse_url( $url, PHP_URL_QUERY ) ?? '';
 				parse_str( $query, $redirectQuery );
 				$redirected = true;
 			}

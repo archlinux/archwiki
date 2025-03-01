@@ -24,13 +24,13 @@
 namespace MediaWiki\SpecialPage;
 
 use ErrorPageError;
-use Language;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
@@ -45,13 +45,13 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
 use MessageLocalizer;
-use MessageSpecifier;
 use MWCryptRand;
 use PermissionsError;
 use ReadOnlyError;
 use SearchEngineFactory;
 use Skin;
 use UserNotLoggedIn;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Parent class for all special pages.
@@ -444,14 +444,18 @@ class SpecialPage implements MessageLocalizer {
 	 *
 	 * @since 1.39
 	 * @param string $reasonMsg [optional] Message key to be displayed on login page
-	 * @param string $titleMsg [optional] Passed on to UserNotLoggedIn constructor
+	 * @param string $titleMsg [optional] Passed on to UserNotLoggedIn constructor. Default 'exception-nologin'
+	 *    which is used when $titleMsg is null.
+	 * @param bool $alwaysRedirectToLoginPage [optional] Should the redirect always go to Special:UserLogin?
+	 *    If false (the default), the redirect will be to Special:CreateAccount when the user is logged in to
+	 *    a temporary account.
 	 * @throws UserNotLoggedIn
 	 */
 	public function requireNamedUser(
-		$reasonMsg = 'exception-nologin-text', $titleMsg = 'exception-nologin'
+		$reasonMsg = 'exception-nologin-text', $titleMsg = 'exception-nologin', bool $alwaysRedirectToLoginPage = false
 	) {
 		if ( !$this->getUser()->isNamed() ) {
-			throw new UserNotLoggedIn( $reasonMsg, $titleMsg );
+			throw new UserNotLoggedIn( $reasonMsg, $titleMsg, [], $alwaysRedirectToLoginPage );
 		}
 	}
 
@@ -647,7 +651,12 @@ class SpecialPage implements MessageLocalizer {
 	 * @param SearchEngineFactory|null $searchEngineFactory Provide the service
 	 * @return string[] Matching subpages
 	 */
-	protected function prefixSearchString( $search, $limit, $offset, SearchEngineFactory $searchEngineFactory = null ) {
+	protected function prefixSearchString(
+		$search,
+		$limit,
+		$offset,
+		?SearchEngineFactory $searchEngineFactory = null
+	) {
 		$title = Title::newFromText( $search );
 		if ( !$title || !$title->canExist() ) {
 			// No prefix suggestion in special and media namespace
@@ -770,7 +779,7 @@ class SpecialPage implements MessageLocalizer {
 
 	/**
 	 * Outputs a summary message on top of special pages
-	 * Per default the message key is the canonical name of the special page
+	 * By default the message key is the canonical name of the special page
 	 * May be overridden, i.e. by extensions to stick with the naming conventions
 	 * for message keys: 'extensionname-xxx'
 	 *
@@ -808,7 +817,7 @@ class SpecialPage implements MessageLocalizer {
 	}
 
 	/**
-	 * Similar to getDescription but takes into account sub pages and designed for display
+	 * Similar to getDescription, but takes into account subpages and designed for display
 	 * in tabs.
 	 *
 	 * @since 1.39
@@ -1065,7 +1074,19 @@ class SpecialPage implements MessageLocalizer {
 	}
 
 	/**
-	 * Indicates whether this special page may perform database writes
+	 * Indicates whether POST requests to this special page require write access to the wiki.
+	 *
+	 * Subclasses must override this method to return true if any of the operations that
+	 * they perform on POST requests are not "safe" per RFC 7231 section 4.2.1. A subclass's
+	 * operation is "safe" if it is essentially read-only, i.e. the client does not request
+	 * nor expect any state change that would be observable in the responses to future requests.
+	 *
+	 * Implementations of this method must always return the same value, regardless of the
+	 * parameters passed to the constructor or system state.
+	 *
+	 * When handling GET/HEAD requests, subclasses should only perform "safe" operations.
+	 * Note that some subclasses might only perform "safe" operations even for POST requests,
+	 * particularly in the case where large input parameters are required.
 	 *
 	 * @stable to override
 	 *

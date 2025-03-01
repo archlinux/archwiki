@@ -8,29 +8,23 @@
 
 /**
  * @property {boolean} debug
- * @member ve
+ * @memberof ve
  */
 ve.debug = true;
-
-/**
- * @class ve.debug
- * @override ve
- * @singleton
- */
 
 /* Methods */
 
 /**
  * Logs data to the console.
  *
- * @param {...Mixed} [data] Data to log
+ * @param {...any} [data] Data to log
  */
 ve.log = console.log;
 
 /**
  * Logs error to the console.
  *
- * @param {...Mixed} [data] Data to log
+ * @param {...any} [data] Data to log
  */
 ve.error = console.error;
 
@@ -49,7 +43,7 @@ ve.dir = console.dir;
  * @return {string} Serialization of the node and its contents
  */
 ve.serializeNodeDebug = function ( domNode ) {
-	var html = [];
+	const html = [];
 	function add( node ) {
 		if ( node.nodeType === Node.TEXT_NODE ) {
 			html.push( '<#text>', ve.escapeHtml( node.textContent ), '</#text>' );
@@ -60,10 +54,9 @@ ve.serializeNodeDebug = function ( domNode ) {
 		}
 		// else node.nodeType === Node.ELEMENT_NODE
 
-		var i, len;
 		html.push( '<', ve.escapeHtml( node.nodeName.toLowerCase() ) );
-		for ( i = 0, len = node.attributes.length; i < len; i++ ) {
-			var attr = node.attributes[ i ];
+		for ( let i = 0, len = node.attributes.length; i < len; i++ ) {
+			const attr = node.attributes[ i ];
 			html.push(
 				' ',
 				ve.escapeHtml( attr.name ),
@@ -74,7 +67,7 @@ ve.serializeNodeDebug = function ( domNode ) {
 			);
 		}
 		html.push( '>' );
-		for ( i = 0, len = node.childNodes.length; i < len; i++ ) {
+		for ( let i = 0, len = node.childNodes.length; i < len; i++ ) {
 			add( node.childNodes[ i ] );
 		}
 		html.push( '</', ve.escapeHtml( node.nodeName.toLowerCase() ), '>' );
@@ -91,7 +84,7 @@ ve.serializeNodeDebug = function ( domNode ) {
  */
 ve.summarizeTransaction = function ( tx ) {
 	function summarizeItems( items ) {
-		return '\'' + items.map( function ( item ) {
+		return '\'' + items.map( ( item ) => {
 			if ( item.type ) {
 				return '<' + item.type + '>';
 			} else if ( Array.isArray( item ) ) {
@@ -103,8 +96,8 @@ ve.summarizeTransaction = function ( tx ) {
 			}
 		} ).join( '' ) + '\'';
 	}
-	var annotations = 0;
-	return '(' + ( tx.authorId ? ( tx.authorId + ' ' ) : '' ) + tx.operations.map( function ( op ) {
+	let annotations = 0;
+	return '(' + ( tx.authorId ? ( tx.authorId + ' ' ) : '' ) + tx.operations.map( ( op ) => {
 		if ( op.type === 'retain' ) {
 			return ( annotations ? 'annotate ' : 'retain ' ) + op.length;
 		} else if ( op.type === 'replace' ) {
@@ -141,7 +134,7 @@ ve.initFilibuster = function () {
 		return;
 	}
 
-	var surface = ve.init.target.surface;
+	const surface = ve.init.target.surface;
 	ve.filibuster = new ve.Filibuster()
 		.wrapClass( ve.EventSequencer )
 		.wrapNamespace( ve.dm, 've.dm', [
@@ -156,27 +149,23 @@ ve.initFilibuster = function () {
 			ve.ui.Surface.prototype.startFilibuster,
 			ve.ui.Surface.prototype.stopFilibuster
 		] )
-		.setObserver( 'dm doc', function () {
+		// Cannot use wrapped methods here
+		.setObserver( 'dm doc', () => JSON.stringify( ve.Filibuster.static.clonePlain(
+			surface.model.documentModel.data.data
+		) ) )
+		.setObserver( 'dm selection', () => {
 			// Cannot use wrapped methods here
-			return JSON.stringify( ve.Filibuster.static.clonePlain(
-				surface.model.documentModel.data.data
-			) );
-		} )
-		.setObserver( 'dm selection', function () {
-			// Cannot use wrapped methods here
-			var selection = surface.model.selection;
+			const selection = surface.model.selection;
 			if ( !selection ) {
 				return 'null';
 			}
 			return selection.getDescription();
 		} )
-		.setObserver( 'DOM doc', function () {
+		// Cannot use wrapped methods here
+		.setObserver( 'DOM doc', () => ve.serializeNodeDebug( surface.view.$element[ 0 ] ) )
+		.setObserver( 'DOM selection', () => {
 			// Cannot use wrapped methods here
-			return ve.serializeNodeDebug( surface.view.$element[ 0 ] );
-		} )
-		.setObserver( 'DOM selection', function () {
-			// Cannot use wrapped methods here
-			var nativeSelection = surface.view.nativeSelection;
+			const nativeSelection = surface.view.nativeSelection;
 			if ( nativeSelection.focusNode === null ) {
 				return 'null';
 			}

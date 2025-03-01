@@ -2,22 +2,24 @@
 
 namespace MediaWiki\Parser\Parsoid;
 
+use MediaWiki\Content\TextContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
-use ParserFactory;
-use ParserOptions;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Parsoid;
-use Wikimedia\UUID\GlobalIdGenerator;
-use WikitextContent;
 
 /**
  * Parser implementation which uses Parsoid.
@@ -39,39 +41,23 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 	private PageConfigFactory $pageConfigFactory;
 	private LanguageConverterFactory $languageConverterFactory;
 	private ParserFactory $legacyParserFactory;
-	private GlobalIdGenerator $globalIdGenerator;
 
 	/**
 	 * @param Parsoid $parsoid
 	 * @param PageConfigFactory $pageConfigFactory
 	 * @param LanguageConverterFactory $languageConverterFactory
 	 * @param ParserFactory $legacyParserFactory
-	 * @param GlobalIdGenerator $globalIdGenerator
 	 */
 	public function __construct(
 		Parsoid $parsoid,
 		PageConfigFactory $pageConfigFactory,
 		LanguageConverterFactory $languageConverterFactory,
-		ParserFactory $legacyParserFactory,
-		GlobalIdGenerator $globalIdGenerator
+		ParserFactory $legacyParserFactory
 	) {
 		$this->parsoid = $parsoid;
 		$this->pageConfigFactory = $pageConfigFactory;
 		$this->languageConverterFactory = $languageConverterFactory;
 		$this->legacyParserFactory = $legacyParserFactory;
-		$this->globalIdGenerator = $globalIdGenerator;
-	}
-
-	/**
-	 * API users expect a ParsoidRenderID value set in the parser output's extension data.
-	 * @param PageConfig $pageConfig
-	 * @param ParserOutput $parserOutput
-	 */
-	private function setParsoidRenderID( PageConfig $pageConfig, ParserOutput $parserOutput ): void {
-		$parserOutput->setRenderId( $this->globalIdGenerator->newUUIDv1() );
-		$parserOutput->setCacheRevisionId( $pageConfig->getRevisionId() );
-		$parserOutput->setRevisionTimestamp( $pageConfig->getRevisionTimestamp() );
-		$parserOutput->setCacheTime( wfTimestampNow() );
 	}
 
 	/**
@@ -82,7 +68,7 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 	 * @return ParserOutput
 	 */
 	private function genParserOutput(
-		PageConfig $pageConfig, ParserOptions $options
+		PageConfig $pageConfig, ParserOptions $options, ?ParserOutput $previousOutput
 	): ParserOutput {
 		$parserOutput = new ParserOutput();
 
@@ -130,6 +116,30 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 				$htmlVariantLanguage = $langCode;
 			}
 		}
+		$oldPageConfig = null;
+		$oldPageBundle = null;
+
+		// T371713: Temporary statistics collection code to determine
+		// feasibility of Parsoid selective update
+		$sampleRate = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::ParsoidSelectiveUpdateSampleRate
+		);
+		$doSample = ( $sampleRate && mt_rand( 1, $sampleRate ) === 1 );
+		if ( $doSample && $previousOutput !== null && $previousOutput->getCacheRevisionId() ) {
+			// Allow fetching the old wikitext corresponding to the
+			// $previousOutput
+			$oldPageConfig = $this->pageConfigFactory->create(
+				Title::newFromLinkTarget( $pageConfig->getLinkTarget() ),
+				$options->getUserIdentity(),
+				$previousOutput->getCacheRevisionId(),
+				null,
+				$previousOutput->getLanguage(),
+			);
+			$oldPageBundle =
+				PageBundleParserOutputConverter::pageBundleFromParserOutput(
+					$previousOutput
+				);
+		}
 
 		$defaultOptions = [
 			'pageBundle' => true,
@@ -138,7 +148,11 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 			'body_only' => false,
 			'htmlVariantLanguage' => $htmlVariantLanguage,
 			'offsetType' => 'byte',
-			'outputContentVersion' => Parsoid::defaultHTMLVersion()
+			'outputContentVersion' => Parsoid::defaultHTMLVersion(),
+			'previousOutput' => $oldPageBundle,
+			'previousInput' => $oldPageConfig,
+			'sampleStats' => $doSample,
+			'renderReason' => $options->getRenderReason(),
 		];
 
 		$parserOutput->resetParseStartTime();
@@ -160,22 +174,31 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 			Title::newFromLinkTarget( $pageConfig->getLinkTarget() )->getPrefixedDBkey()
 		);
 
-		// Register a watcher again because the $parserOuptut arg
+		// Register a watcher again because the $parserOutput arg
 		// and $parserOutput return value above are different objects!
 		$options->registerWatcher( [ $parserOutput, 'recordOption' ] );
-
-		$revId = $pageConfig->getRevisionId();
-		if ( $revId !== null ) {
-			// T350538: This shouldn't be necessary so long as ContentRenderer
-			// is involved in the call chain somewhere, and should be turned
-			// into an assertion (and ::setParsoidRenderID() removed).
-			$this->setParsoidRenderID( $pageConfig, $parserOutput );
-		}
 
 		$parserOutput->setFromParserOptions( $options );
 
 		$parserOutput->recordTimeProfile();
 		$this->makeLimitReport( $options, $parserOutput );
+
+		// T371713: Collect statistics on parsing time -vs- presence of
+		// $previousOutput
+		$stats = MediaWikiServices::getInstance()->getStatsFactory();
+		$labels = [
+			'type' => $previousOutput === null ? 'full' : 'selective',
+			'wiki' => WikiMap::getCurrentWikiId(),
+			'reason' => $options->getRenderReason() ?: 'unknown',
+		];
+		$stats
+			->getCounter( 'Parsoid_parse_cpu_seconds' )
+			->setLabels( $labels )
+			->incrementBy( $parserOutput->getTimeProfile( 'cpu' ) );
+		$stats
+			->getCounter( 'Parsoid_parse_total' )
+			->setLabels( $labels )
+			->increment();
 
 		// Add Parsoid skinning module
 		$parserOutput->addModuleStyles( [ 'mediawiki.skinning.content.parsoid' ] );
@@ -186,6 +209,9 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 		$parserOutput->setExtensionData(
 			'core:parsoid-version', Parsoid::version()
 		);
+		$parserOutput->setExtensionData(
+			'core:html-version', Parsoid::defaultHTMLVersion()
+		);
 
 		return $parserOutput;
 	}
@@ -194,7 +220,7 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 	 * Convert wikitext to HTML
 	 * Do not call this function recursively.
 	 *
-	 * @param string $text Text we want to parse
+	 * @param string|TextContent $text Text we want to parse
 	 * @param-taint $text escapes_htmlnoent
 	 * @param PageReference $page
 	 * @param ParserOptions $options
@@ -204,13 +230,16 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 	 *  REVISION* magic words. 0 means that any current revision will be used. Null means
 	 *  that {{REVISIONID}}/{{REVISIONUSER}} will be empty and {{REVISIONTIMESTAMP}} will
 	 *  use the current timestamp.
+	 * @param ?ParserOutput $previousOutput The (optional) result of a
+	 *  previous parse of this page, which can be used for selective update.
 	 * @return ParserOutput
 	 * @return-taint escaped
 	 * @unstable since 1.41
 	 */
 	public function parse(
-		string $text, PageReference $page, ParserOptions $options,
-		bool $linestart = true, bool $clearState = true, ?int $revId = null
+		$text, PageReference $page, ParserOptions $options,
+		bool $linestart = true, bool $clearState = true, ?int $revId = null,
+		?ParserOutput $previousOutput = null
 	): ParserOutput {
 		Assert::invariant( $linestart, '$linestart=false is not yet supported' );
 		Assert::invariant( $clearState, '$clearState=false is not yet supported' );
@@ -219,13 +248,18 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 		if ( $lang === null && $options->getInterfaceMessage() ) {
 			$lang = $options->getUserLangObj();
 		}
-		$pageConfig = $revId === null ? null : $this->pageConfigFactory->create(
+		$pageConfig = $revId === null || $revId === 0 ? null : $this->pageConfigFactory->create(
 			$title,
 			$options->getUserIdentity(),
 			$revId,
 			null, // unused
 			$lang // defaults to title page language if null
 		);
+		$content = null;
+		if ( $text instanceof TextContent ) {
+			$content = $text;
+			$text = $content->getText();
+		}
 		if ( !( $pageConfig && $pageConfig->getPageMainContent() === $text ) ) {
 			// This is a bit awkward! But we really need to parse $text, which
 			// may or may not correspond to the $revId provided!
@@ -238,7 +272,7 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 			$revisionRecord->setSlot(
 				SlotRecord::newUnsaved(
 					SlotRecord::MAIN,
-					new WikitextContent( $text )
+					$content ?? new WikitextContent( $text )
 				)
 			);
 			$pageConfig = $this->pageConfigFactory->create(
@@ -250,7 +284,7 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 			);
 		}
 
-		return $this->genParserOutput( $pageConfig, $options );
+		return $this->genParserOutput( $pageConfig, $options, $previousOutput );
 	}
 
 	/**
@@ -268,6 +302,7 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 	public function parseFakeRevision(
 		RevisionRecord $fakeRev, PageReference $page, ParserOptions $options
 	): ParserOutput {
+		wfDeprecated( __METHOD__, '1.43' );
 		$title = Title::newFromPageReference( $page );
 		$lang = $options->getTargetLanguage();
 		if ( $lang === null && $options->getInterfaceMessage() ) {
@@ -281,7 +316,7 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 			$lang // defaults to title page language if null
 		);
 
-		return $this->genParserOutput( $pageConfig, $options );
+		return $this->genParserOutput( $pageConfig, $options, null );
 	}
 
 	/**

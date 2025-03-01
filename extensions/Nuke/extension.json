@@ -8,7 +8,7 @@
 	"descriptionmsg": "nuke-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"type": "specialpage",
 	"ExtensionMessagesFiles": {
@@ -25,7 +25,9 @@
 		}
 	},
 	"Hooks": {
-		"ContributionsToolLinks": "main"
+		"ContributionsToolLinks": "main",
+		"ListDefinedTags": "MediaWiki\\Extension\\Nuke\\Hooks::onRegisterTags",
+		"ChangeTagsListActive": "MediaWiki\\Extension\\Nuke\\Hooks::onRegisterTags"
 	},
 	"ResourceModules": {
 		"ext.nuke.confirm": {
@@ -37,6 +39,12 @@
 			],
 			"messages": [
 				"nuke-confirm"
+			]
+		},
+		"ext.nuke.styles": {
+			"localBasePath": "modules/ext.nuke.styles",
+			"styles": [
+				"nuke.less"
 			]
 		}
 	},
@@ -66,13 +74,23 @@
 				"PermissionManager",
 				"RepoGroup",
 				"UserFactory",
+				"UserOptionsLookup",
 				"UserNamePrefixSearch",
-				"UserNameUtils"
+				"UserNameUtils",
+				"NamespaceInfo",
+				"ContentLanguage",
+				"NukeIPLookup"
+			],
+			"styles": [
+				"mediawiki.special.special"
 			]
 		}
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Nuke\\": "includes/"
 	},
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
 	"manifest_version": 2
 }

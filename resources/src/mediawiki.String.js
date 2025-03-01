@@ -45,7 +45,8 @@
 	}
 
 	/**
-	 * Like String#charAt, but return the pair of UTF-16 surrogates for characters outside of BMP.
+	 * Like {@link https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String/charAt String.charAt()},
+	 * but return the pair of UTF-16 surrogates for characters outside of BMP.
 	 *
 	 * @memberof module:mediawiki.String
 	 * @param {string} string
@@ -57,7 +58,7 @@
 	function charAt( string, offset, backwards ) {
 		// We don't need to check for offsets at the beginning or end of string,
 		// String#slice will simply return a shorter (or empty) substring.
-		var maybePair = backwards ?
+		const maybePair = backwards ?
 			string.slice( offset - 1, offset + 1 ) :
 			string.slice( offset, offset + 2 );
 		if ( /^[\uD800-\uDBFF][\uDC00-\uDFFF]$/.test( maybePair ) ) {
@@ -75,7 +76,7 @@
 	 * @return {string}
 	 */
 	function lcFirst( string ) {
-		var firstChar = charAt( string, 0 );
+		const firstChar = charAt( string, 0 );
 		return firstChar.toLowerCase() + string.slice( firstChar.length );
 	}
 
@@ -87,13 +88,12 @@
 	 * @return {string}
 	 */
 	function ucFirst( string ) {
-		var firstChar = charAt( string, 0 );
+		const firstChar = charAt( string, 0 );
 		return firstChar.toUpperCase() + string.slice( firstChar.length );
 	}
 
 	function trimLength( safeVal, newVal, length, lengthFn ) {
-		var startMatches, endMatches, matchesLen, inpParts, chopOff, oldChar, newChar,
-			oldVal = safeVal;
+		const oldVal = safeVal;
 
 		// Run the hook if one was provided, but only on the length
 		// assessment. The value itself is not to be affected by the hook.
@@ -108,8 +108,8 @@
 
 		// Current input is longer than the active limit.
 		// Figure out what was added and limit the addition.
-		startMatches = 0;
-		endMatches = 0;
+		let startMatches = 0;
+		let endMatches = 0;
 
 		// It is important that we keep the search within the range of
 		// the shortest string's length.
@@ -117,13 +117,13 @@
 		// (e.g. "foo" -> "foofoo"). startMatches would be 3, but without
 		// limiting both searches to the shortest length, endMatches would
 		// also be 3.
-		matchesLen = Math.min( newVal.length, oldVal.length );
+		const matchesLen = Math.min( newVal.length, oldVal.length );
 
 		// Count same characters from the left, first.
 		// (if "foo" -> "foofoo", assume addition was at the end).
 		while ( startMatches < matchesLen ) {
-			oldChar = charAt( oldVal, startMatches, false );
-			newChar = charAt( newVal, startMatches, false );
+			const oldChar = charAt( oldVal, startMatches, false );
+			const newChar = charAt( newVal, startMatches, false );
 			if ( oldChar !== newChar ) {
 				break;
 			}
@@ -131,15 +131,15 @@
 		}
 
 		while ( endMatches < ( matchesLen - startMatches ) ) {
-			oldChar = charAt( oldVal, oldVal.length - 1 - endMatches, true );
-			newChar = charAt( newVal, newVal.length - 1 - endMatches, true );
+			const oldChar = charAt( oldVal, oldVal.length - 1 - endMatches, true );
+			const newChar = charAt( newVal, newVal.length - 1 - endMatches, true );
 			if ( oldChar !== newChar ) {
 				break;
 			}
 			endMatches += oldChar.length;
 		}
 
-		inpParts = [
+		const inpParts = [
 			// Same start
 			newVal.slice( 0, startMatches ),
 			// Inserted content
@@ -153,7 +153,7 @@
 		// Make sure to stop when there is nothing to slice (T43450).
 		while ( lengthFn( inpParts.join( '' ) ) > length && inpParts[ 1 ].length > 0 ) {
 			// Do not chop off halves of surrogate pairs
-			chopOff = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/.test( inpParts[ 1 ] ) ? 2 : 1;
+			const chopOff = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/.test( inpParts[ 1 ] ) ? 2 : 1;
 			inpParts[ 1 ] = inpParts[ 1 ].slice( 0, -chopOff );
 		}
 
@@ -184,10 +184,10 @@
 	 * @param {string} newVal New value that may have to be trimmed down.
 	 * @param {number} byteLimit Number of bytes the value may be in size.
 	 * @param {Function} [filterFunction] Function to call on the string before assessing the length.
-	 * @return {StringTrimmed}
+	 * @return {module:mediawiki.String~StringTrimmed}
 	 */
 	function trimByteLength( safeVal, newVal, byteLimit, filterFunction ) {
-		var lengthFn;
+		let lengthFn;
 		if ( filterFunction ) {
 			lengthFn = function ( val ) {
 				return byteLength( filterFunction( val ) );
@@ -212,10 +212,10 @@
 	 * @param {string} newVal New value that may have to be trimmed down.
 	 * @param {number} codePointLimit Number of characters the value may be in size.
 	 * @param {Function} [filterFunction] Function to call on the string before assessing the length.
-	 * @return {StringTrimmed}
+	 * @return {module:mediawiki.String~StringTrimmed}
 	 */
 	function trimCodePointLength( safeVal, newVal, codePointLimit, filterFunction ) {
-		var lengthFn;
+		let lengthFn;
 		if ( filterFunction ) {
 			lengthFn = function ( val ) {
 				return codePointLength( filterFunction( val ) );

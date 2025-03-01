@@ -10,9 +10,7 @@
  */
 
 @import 'mediawiki.skin.variables.less';
-
-@diffInserted: #a3d3ff;
-@diffDeleted: #ffe49c;
+@import 'mediawiki.mixins.less';
 
 /* stylelint-disable selector-class-pattern */
 
@@ -68,10 +66,7 @@
 
 .diff-lineno {
 	font-weight: bold;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	.user-select( none );
 }
 
 .mw-diff-inline-added,
@@ -87,7 +82,7 @@
 		// Show a cursor pointer to make it clear it's clickable.
 		.client-js & {
 			// Note: This currently only happens at low resolutions.
-			@media only screen and ( max-width: @width-breakpoint-tablet ) {
+			@media only screen and ( max-width: @max-width-breakpoint-tablet ) {
 				cursor: pointer;
 			}
 		}
@@ -97,13 +92,13 @@
 .mw-diff-inline-added ins,
 .mw-diff-inline-changed ins,
 .mw-diff-inline-moved ins {
-	background: @diffInserted;
+	background: @background-color-content-added;
 }
 
 .mw-diff-inline-deleted del,
 .mw-diff-inline-changed del,
 .mw-diff-inline-moved del {
-	background: @diffDeleted;
+	background: @background-color-content-removed;
 }
 
 .mw-diff-table-prefix {
@@ -122,11 +117,11 @@
 		}
 
 		.mw-diff-inline-legend-ins {
-			background: @diffInserted;
+			background: @background-color-content-added;
 		}
 
 		.mw-diff-inline-legend-del {
-			background: @diffDeleted;
+			background: @background-color-content-removed;
 		}
 	}
 
@@ -156,12 +151,10 @@
 	/* stylelint-disable-next-line declaration-property-unit-disallowed-list */
 	font-size: 13px;
 	/* Standardize tab width */
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	-moz-tab-size: 4;
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	tab-size: 4;
 	line-height: 1.6;
-	// Fallback for browsers that don't support break-spaces, mainly IE11
+	// Support Chrome <= 75, Firefox <= 68: Fallback for browsers that don't support `break-spaces`.
 	white-space: pre-wrap;
 	white-space: break-spaces;
 
@@ -193,11 +186,11 @@
 }
 
 .diff-addedline {
-	border-color: @diffInserted;
+	border-color: @background-color-content-added;
 }
 
 .diff-deletedline {
-	border-color: @diffDeleted;
+	border-color: @background-color-content-removed;
 }
 
 .diffchange {
@@ -211,11 +204,11 @@
 	}
 
 	.diff-addedline & {
-		background: #d8ecff;
+		background: @background-color-content-added;
 	}
 
 	.diff-deletedline & {
-		background: #feeec8;
+		background: @background-color-content-removed;
 	}
 }
 
@@ -266,10 +259,7 @@
 	&:active {
 		display: block;
 		color: transparent;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
+		.user-select( none );
 	}
 
 	&:hover {
@@ -279,7 +269,7 @@
 
 	&::after {
 		display: block;
-		color: #202122;
+		color: @color-base;
 		margin-top: -1.25em;
 	}
 }
@@ -306,10 +296,7 @@
 /* Lock selection to a single side */
 .diff[ data-selected-side='deleted' ] .diff-side-added,
 .diff[ data-selected-side='added' ] .diff-side-deleted {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	.user-select( none );
 	cursor: text;
 }
 
@@ -332,14 +319,14 @@
 .mw-inline-diff-newline {
 	&::after {
 		content: '@{msg-diff-newline}';
-		background: @diffInserted;
+		background: @background-color-content-added;
 	}
 }
 
 .mw-diff-inline-deleted.mw-diff-empty-line {
 	&::after {
 		content: '@{msg-diff-line-deleted}';
-		background: @diffDeleted;
+		background: @background-color-content-removed;
 	}
 }
 
@@ -364,7 +351,7 @@
 }
 
 // Hide the diff legend at lower resolutions.
-@media only screen and ( max-width: @width-breakpoint-tablet ) {
+@media only screen and ( max-width: @max-width-breakpoint-tablet ) {
 	.mw-diff-inline-legend {
 		display: none;
 	}

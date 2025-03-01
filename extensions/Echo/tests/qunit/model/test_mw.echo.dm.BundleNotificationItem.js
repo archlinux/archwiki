@@ -1,14 +1,14 @@
 QUnit.module( 'ext.echo.dm - BundleNotificationItem' );
 
-QUnit.test( 'Constructing the model', function ( assert ) {
-	var bundledItems = [
+QUnit.test( 'Constructing the model', ( assert ) => {
+	const bundledItems = [
 		new mw.echo.dm.NotificationItem( 0, { read: false, seen: false, timestamp: '201601010000' } ),
 		new mw.echo.dm.NotificationItem( 1, { read: false, seen: false, timestamp: '201601010100' } ),
 		new mw.echo.dm.NotificationItem( 2, { read: false, seen: true, timestamp: '201601010200' } ),
 		new mw.echo.dm.NotificationItem( 3, { read: false, seen: true, timestamp: '201601010300' } ),
 		new mw.echo.dm.NotificationItem( 4, { read: false, seen: true, timestamp: '201601010400' } )
 	];
-	var bundle = new mw.echo.dm.BundleNotificationItem(
+	const bundle = new mw.echo.dm.BundleNotificationItem(
 		100,
 		bundledItems,
 		{ modelName: 'foo' }
@@ -44,9 +44,7 @@ QUnit.test( 'Constructing the model', function ( assert ) {
 		'Bundle has unseen items'
 	);
 
-	var findItems = bundle.findByIds( [ 1, 4 ] ).map( function ( item ) {
-		return item.getId();
-	} );
+	const findItems = bundle.findByIds( [ 1, 4 ] ).map( ( item ) => item.getId() );
 	assert.deepEqual(
 		findItems,
 		[ 4, 1 ],
@@ -54,15 +52,15 @@ QUnit.test( 'Constructing the model', function ( assert ) {
 	);
 } );
 
-QUnit.test( 'Managing a list of items', function ( assert ) {
-	var bundledItems = [
+QUnit.test( 'Managing a list of items', ( assert ) => {
+	const bundledItems = [
 		new mw.echo.dm.NotificationItem( 0, { read: false, seen: false, timestamp: '201601010000' } ),
 		new mw.echo.dm.NotificationItem( 1, { read: false, seen: false, timestamp: '201601010100' } ),
 		new mw.echo.dm.NotificationItem( 2, { read: false, seen: true, timestamp: '201601010200' } ),
 		new mw.echo.dm.NotificationItem( 3, { read: false, seen: true, timestamp: '201601010300' } ),
 		new mw.echo.dm.NotificationItem( 4, { read: false, seen: true, timestamp: '201601010400' } )
 	];
-	var bundle = new mw.echo.dm.BundleNotificationItem(
+	const bundle = new mw.echo.dm.BundleNotificationItem(
 		100,
 		bundledItems,
 		{
@@ -77,7 +75,7 @@ QUnit.test( 'Managing a list of items', function ( assert ) {
 	);
 
 	// Mark all items as seen
-	bundledItems.forEach( function ( item ) {
+	bundledItems.forEach( ( item ) => {
 		item.toggleSeen( true );
 	} );
 
@@ -101,7 +99,7 @@ QUnit.test( 'Managing a list of items', function ( assert ) {
 	);
 
 	// Mark all items as read
-	bundledItems.forEach( function ( item ) {
+	bundledItems.forEach( ( item ) => {
 		item.toggleRead( true );
 	} );
 	assert.strictEqual(

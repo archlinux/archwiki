@@ -9,11 +9,9 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\Parser
  */
 class RenderTest extends MediaWikiUnitTestCase {
-	private $testCases;
 
-	protected function setUp(): void {
-		parent::setUp();
-		$this->testCases = [
+	public function provideTestCases() {
+		return [
 			[
 				'in' => '',
 			],
@@ -39,20 +37,19 @@ class RenderTest extends MediaWikiUnitTestCase {
 				'in' => '\\sin(x)+{}{}\\cos(x)^2 newcommand',
 				'out' => '\\sin(x)+{}{}\\cos(x)^{2}newcommand'
 			]
-
 		];
 	}
 
-	public function testRendering() {
+	/**
+	 * @dataProvider provideTestCases
+	 */
+	public function testRendering( string $in, ?string $out = null ) {
 		$parser = new Parser();
 
-		foreach ( $this->testCases as $case ) {
-			$in = $case['in'];
-			$out = $case['out'] ?? $in;
-			$result = $parser->parse( $in );
-			$rendered = $result->render();
-			$this->assertEquals( $out, $rendered, 'Error rendering input: '
-				. $in . ' rendered output is: ' . $rendered . ' should be: ' . $out );
-		}
+		$out ??= $in;
+		$result = $parser->parse( $in );
+		$rendered = $result->render();
+		$this->assertSame( $out, $rendered, 'Error rendering input: '
+			. $in . ' rendered output is: ' . $rendered . ' should be: ' . $out );
 	}
 }

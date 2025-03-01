@@ -52,7 +52,7 @@ ve.dm.Model.static.matchTagNames = null;
  * For more information about element matching, see ve.dm.ModelRegistry.
  *
  * @static
- * @property {(string|RegExp)[]|null}
+ * @property {Array.<string|RegExp>|null}
  * @inheritable
  */
 ve.dm.Model.static.matchRdfaTypes = null;
@@ -64,7 +64,7 @@ ve.dm.Model.static.matchRdfaTypes = null;
  * For more information about element matching, see ve.dm.ModelRegistry.
  *
  * @static
- * @property {(string|RegExp)[]|null}
+ * @property {Array.<string|RegExp>|null}
  * @inheritable
  */
 ve.dm.Model.static.allowedRdfaTypes = [];
@@ -214,7 +214,7 @@ ve.dm.Model.static.preserveHtmlAttributes = true;
  * @return {Object} Hash object
  */
 ve.dm.Model.static.getHashObject = function ( dataElement ) {
-	var hash = {
+	const hash = {
 		type: dataElement.type,
 		attributes: dataElement.attributes
 	};
@@ -228,7 +228,7 @@ ve.dm.Model.static.getHashObject = function ( dataElement ) {
  * Array of RDFa types that this model should be a match candidate for.
  *
  * @static
- * @return {(string|RegExp)[]|null} Array of strings or regular expressions
+ * @return {Array.<string|RegExp>|null} Array of strings or regular expressions
  */
 ve.dm.Model.static.getMatchRdfaTypes = function () {
 	return this.matchRdfaTypes;
@@ -238,7 +238,7 @@ ve.dm.Model.static.getMatchRdfaTypes = function () {
  * Extra RDFa types that the element is allowed to have.
  *
  * @static
- * @return {(string|RegExp)[]|null} Array of strings or regular expressions
+ * @return {Array.<string|RegExp>|null} Array of strings or regular expressions
  */
 ve.dm.Model.static.getAllowedRdfaTypes = function () {
 	return this.allowedRdfaTypes;
@@ -253,9 +253,9 @@ ve.dm.Model.static.getAllowedRdfaTypes = function () {
  * @return {Array} Descriptions, list of strings or Node arrays
  */
 ve.dm.Model.static.describeChanges = function ( attributeChanges ) {
-	var descriptions = [];
-	for ( var key in attributeChanges ) {
-		var change = this.describeChange( key, attributeChanges[ key ] );
+	const descriptions = [];
+	for ( const key in attributeChanges ) {
+		const change = this.describeChange( key, attributeChanges[ key ] );
 		if ( change ) {
 			descriptions.push( change );
 		}
@@ -286,13 +286,14 @@ ve.dm.Model.static.describeChange = function ( key, change ) {
 		}
 	} else {
 		// Use String() for string casting as values could be null
-		var diff = this.getAttributeDiff( String( change.from ), String( change.to ) );
+		const diff = this.getAttributeDiff( String( change.from ), String( change.to ) );
 		if ( diff ) {
 			return ve.htmlMsg( 'visualeditor-changedesc-changed-diff', key, diff );
 		} else {
 			return ve.htmlMsg( 'visualeditor-changedesc-changed', key, this.wrapText( 'del', change.from ), this.wrapText( 'ins', change.to ) );
 		}
 	}
+	return null;
 };
 
 /**
@@ -305,23 +306,22 @@ ve.dm.Model.static.describeChange = function ( key, change ) {
  * was a simple remove-insert, and allowRemoveInsert wasn't set.
  */
 ve.dm.Model.static.getAttributeDiff = function ( oldText, newText, allowRemoveInsert ) {
-	var span = document.createElement( 'span' ),
-		isRemoveInsert = true,
-		model = this,
+	const span = document.createElement( 'span' ),
 		/* global diff_match_patch */
 		// eslint-disable-next-line new-cap
 		differ = new diff_match_patch();
+	let isRemoveInsert = true;
 
-	var diff = differ.diff_main( oldText, newText );
+	const diff = differ.diff_main( oldText, newText );
 	differ.diff_cleanupEfficiency( diff );
 
-	diff.forEach( function ( part ) {
+	diff.forEach( ( part ) => {
 		switch ( part[ 0 ] ) {
 			case -1:
-				span.appendChild( model.wrapText( 'del', part[ 1 ] ) );
+				span.appendChild( this.wrapText( 'del', part[ 1 ] ) );
 				break;
 			case 1:
-				span.appendChild( model.wrapText( 'ins', part[ 1 ] ) );
+				span.appendChild( this.wrapText( 'ins', part[ 1 ] ) );
 				break;
 			case 0:
 				isRemoveInsert = false;
@@ -341,7 +341,7 @@ ve.dm.Model.static.getAttributeDiff = function ( oldText, newText, allowRemoveIn
  * @return {HTMLElement} Element wrapping text
  */
 ve.dm.Model.static.wrapText = function ( tag, text ) {
-	var wrapper = document.createElement( tag );
+	const wrapper = document.createElement( tag );
 	wrapper.appendChild( document.createTextNode( text ) );
 	return wrapper;
 };
@@ -419,7 +419,7 @@ ve.dm.Model.prototype.getType = function () {
  * Return value is by reference if array or object.
  *
  * @param {string} key Name of attribute to get
- * @return {Mixed} Value of attribute, or undefined if no such attribute exists
+ * @return {any} Value of attribute, or undefined if no such attribute exists
  */
 ve.dm.Model.prototype.getAttribute = function ( key ) {
 	return this.element && this.element.attributes ? this.element.attributes[ key ] : undefined;
@@ -434,10 +434,10 @@ ve.dm.Model.prototype.getAttribute = function ( key ) {
  * @return {Object} Attributes
  */
 ve.dm.Model.prototype.getAttributes = function ( prefix ) {
-	var attributes = this.element && this.element.attributes ? this.element.attributes : {};
+	const attributes = this.element && this.element.attributes ? this.element.attributes : {};
 	if ( prefix ) {
-		var filtered = {};
-		for ( var key in attributes ) {
+		const filtered = {};
+		for ( const key in attributes ) {
 			if ( key.indexOf( prefix ) === 0 ) {
 				filtered[ key.slice( prefix.length ) ] = attributes[ key ];
 			}

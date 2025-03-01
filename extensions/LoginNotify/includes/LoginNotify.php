@@ -8,9 +8,6 @@
 
 namespace LoginNotify;
 
-use BagOStuff;
-use ExtensionRegistry;
-use IBufferingStatsdDataFactory;
 use JobQueueGroup;
 use JobSpecification;
 use LogicException;
@@ -19,6 +16,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
@@ -29,12 +27,14 @@ use Psr\Log\LoggerInterface;
 use UnexpectedValueException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
+use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 
 /**
  * Handle sending notifications on login from unknown source.
@@ -74,26 +74,18 @@ class LoginNotify implements LoggerAwareInterface {
 	/** We don't have data to confirm or deny this is a known system */
 	public const USER_NO_INFO = 'no info';
 
-	/** @var BagOStuff */
-	private $cache;
-	/** @var ServiceOptions */
-	private $config;
-	/** @var LoggerInterface Usually instance of LoginNotify log */
-	private $log;
+	private BagOStuff $cache;
+	private ServiceOptions $config;
+	private LoggerInterface $log;
 	/** @var string Salt for cookie hash. DON'T USE DIRECTLY, use getSalt() */
 	private $salt;
 	/** @var string */
 	private $secret;
-	/** @var IBufferingStatsdDataFactory */
-	private $stats;
-	/** @var LBFactory */
-	private $lbFactory;
-	/** @var JobQueueGroup */
-	private $jobQueueGroup;
-	/** @var CentralIdLookup */
-	private $centralIdLookup;
-	/** @var AuthManager */
-	private $authManager;
+	private IBufferingStatsdDataFactory $stats;
+	private LBFactory $lbFactory;
+	private JobQueueGroup $jobQueueGroup;
+	private CentralIdLookup $centralIdLookup;
+	private AuthManager $authManager;
 	/** @var int|null */
 	private $fakeTime;
 
@@ -785,7 +777,8 @@ class LoginNotify implements LoggerAwareInterface {
 					] )
 					->caller( $fname )
 					->execute();
-			}
+			},
+			$fname
 		);
 	}
 

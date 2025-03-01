@@ -18,10 +18,8 @@
 namespace MediaWiki\Minerva\Menu\Entries;
 
 abstract class CompositeMenuEntry implements IMenuEntry {
-	/**
-	 * @var IMenuEntry[]
-	 */
-	private $entries;
+	/** @var IMenuEntry[] */
+	private array $entries;
 
 	/**
 	 * @param array $entries

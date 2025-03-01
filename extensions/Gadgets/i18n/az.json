@@ -3,12 +3,12 @@
 		"authors": [
 			"Cekli829",
 			"NMW03",
+			"Nemoralis",
 			"PPerviz",
 			"Toghrul Rahimli",
 			"Vago",
 			"Vugar 1981",
-			"Wertuose",
-			"Nemoralis"
+			"Wertuose"
 		]
 	},
 	"gadgets-desc": "İstifadəçilərə [[Special:Preferences#mw-prefsection-gadgets|nizamlamalarda ]] özəl [[Special:Gadgets|CSS və JavaScript qadcetlərini]] seçməyə imkan verir.",
@@ -46,7 +46,7 @@
 	"gadgets-export-download": "Yüklə",
 	"gadgets-requires-es6": "Bu qadcet yalnız ES6 olan brauzerlərdə dəstəklənir",
 	"gadgets-validate-notset": "<code>$1</code> parametri təyin olunmayıb.",
-	"gadgets-validate-wrongtype": "<code>$1</code> parametrinin tipi <code>$3</code> yox <code>$2</code> olmalıdır.",
+	"gadgets-validate-wrongtype": "<code>$1</code> parametrinin tipi <code>$2</code> olmalıdır.",
 	"gadgets-validate-json": "JSON faylları göstərilib, lakin istifadə edilmir. Onlar yalnız paketləşdirilmiş qadcetlərdə etibarlıdır.",
 	"gadgets-validate-es6default": "ES6 tələb edən qadcetlər defolt olaraq aktiv edilə bilməz.",
 	"gadgets-validate-noentrypoint": "Heç bir skript faylı göstərilmədiyi üçün paket bayrağı nəzərə alınmadı.",
@@ -59,13 +59,5 @@
 	"gadgets-validate-nopeer": "\"$1\" peer qadceti nəzərə alınmır, çünki o, mövcud deyil.",
 	"gadgets-validate-invalidpeer": "\"$1\" peer qadceti nəzərə alınmır, çünki o, yalnız üslub qadceti deyil.",
 	"gadgets-validate-invalidactions": "Aşağıdakı {{PLURAL:$2|fəaliyyət|fəaliyyətlər}} tanınmır: $1",
-	"gadgets-validate-invalidcontentmodels": "Aşağıdakı məzmun {{PLURAL:$2|modeli|modelləri}} mövcud deyil: $1",
-	"gadgets-validate-invalidnamespaces": "Aşağıdakı ad fəzası {{PLURAL:$2|nömrəsi|nömrələri}} mövcud deyil: $1",
-	"gadgets-validate-invalidskins": "Aşağıdakı {{PLURAL:$2|dizayn|dizaynlar}} mövcud deyil: $1",
-	"gadgets-validate-invalidrights": "Aşağıdakı {{PLURAL:$2|hüquq|hüquqlar}} mövcud deyil: $1",
-	"gadgets-validate-invalidtitle": "\"$1\" səhifə başlığı etibarsızdır",
-	"gadgets-validate-unknownpages": ".js, .css və ya .json şəkilçisi olmayan bir və ya bir neçə səhifədən ibarətdir. Onlardan istifadə olunmayacaqlar.",
-	"gadgets-validate-duplicate": "$1 qadcetinin ikinci tərifi aşkar edildi və nəzərə alınmayacaq",
-	"gadgets-validate-nopage": "\"$1\" səhifəsi mövcud deyil.",
-	"gadgets-supports-urlload": "Bu qadcet <code>?withgadget</code> sorğu parametri ilə URL vasitəsilə yükləməni dəstəkləyir."
+	"gadgets-validate-invalidcontentmodels": "Aşağıdakı məzmun {{PLURAL:$2|modeli|modelləri}} mövcud deyil: $1"
 }

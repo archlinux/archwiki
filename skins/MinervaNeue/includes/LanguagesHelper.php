@@ -49,7 +49,7 @@ class LanguagesHelper {
 	public function doesTitleHasLanguagesOrVariants(
 		OutputPage $out,
 		Title $title
-	) {
+	): bool {
 		if ( $out->getLanguageLinks() !== [] ) {
 			return true;
 		}

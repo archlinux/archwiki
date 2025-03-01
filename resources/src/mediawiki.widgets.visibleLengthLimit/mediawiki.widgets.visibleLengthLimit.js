@@ -1,8 +1,8 @@
 ( function () {
+	'use strict';
 
-	var byteLength = require( 'mediawiki.String' ).byteLength,
-		codePointLength = require( 'mediawiki.String' ).codePointLength,
-		colonSeparator = require( './contentMessages.json' ).colonSeparator;
+	const { byteLength, codePointLength } = require( 'mediawiki.String' );
+	const { colonSeparator } = require( './contentMessages.json' );
 
 	/**
 	 * @internal
@@ -17,9 +17,9 @@
 			filterFunction = undefined;
 		}
 
-		var lengthFunction = lengthLimiter === 'byteLimit' ? byteLength : codePointLength;
+		const lengthFunction = lengthLimiter === 'byteLimit' ? byteLength : codePointLength;
 		function updateCount() {
-			var value = textInputWidget.getValue(),
+			let value = textInputWidget.getValue(),
 				remaining;
 			if ( filterFunction ) {
 				value = filterFunction( value );
@@ -48,8 +48,8 @@
 	 * @param {number} [limit]
 	 */
 	function internalVisibleLimitWithDropdown( lengthLimiter, textInputWidget, dropdownInputWidget, limit ) {
-		var filterFunction = function ( input ) {
-			var comment = dropdownInputWidget.getValue();
+		const filterFunction = function ( input ) {
+			let comment = dropdownInputWidget.getValue();
 			if ( comment === 'other' ) {
 				comment = input;
 			} else if ( input !== '' ) {
@@ -62,7 +62,7 @@
 		internalVisibleLimit( lengthLimiter, textInputWidget, limit, filterFunction );
 
 		// Keep the remaining counter in sync when reason list changed
-		dropdownInputWidget.on( 'change', function () {
+		dropdownInputWidget.on( 'change', () => {
 			textInputWidget.emit( 'change' );
 		} );
 	}
@@ -72,7 +72,7 @@
 	 *
 	 * Loaded from `mediawiki.widgets.visibleLengthLimit` module.
 	 *
-	 * Uses {@link jQueryPlugins.byteLimit} to enforce the limit.
+	 * Uses {@link module:jquery.lengthLimit.$.fn.byteLimit byteLimit} to enforce the limit.
 	 *
 	 * @param {OO.ui.TextInputWidget} textInputWidget
 	 * @param {number} [limit] Byte limit, defaults to input's `maxlength` attribute
@@ -87,7 +87,7 @@
 	 *
 	 * Loaded from `mediawiki.widgets.visibleLengthLimit` module.
 	 *
-	 * Uses {@link jQueryPlugins.codePointLimit} to enforce the limit.
+	 * Uses {@link module:jquery.lengthLimit.$.fn.codePointLimit codePointLimit} to enforce the limit.
 	 *
 	 * @param {OO.ui.TextInputWidget} textInputWidget
 	 * @param {number} [limit] Code point limit, defaults to input's `maxlength` attribute
@@ -104,7 +104,7 @@
 	 *
 	 * Loaded from `mediawiki.widgets.visibleLengthLimit` module.
 	 *
-	 * Uses {@link jQueryPlugins.byteLimit} to enforce the limit.
+	 * Uses {@link module:jquery.lengthLimit.$.fn.byteLimit byteLimit} to enforce the limit.
 	 *
 	 * @param {OO.ui.TextInputWidget} textInputWidget
 	 * @param {OO.ui.DropdownInputWidget} dropdownInputWidget
@@ -121,7 +121,7 @@
 	 *
 	 * Loaded from `mediawiki.widgets.visibleLengthLimit` module.
 	 *
-	 * Uses {@link jQueryPlugins.codePointLimit} to enforce the limit.
+	 * Uses {@link module:jquery.lengthLimit.$.fn.codePointLimit codePointLimit} to enforce the limit.
 	 *
 	 * @param {OO.ui.TextInputWidget} textInputWidget
 	 * @param {OO.ui.DropdownInputWidget} dropdownInputWidget

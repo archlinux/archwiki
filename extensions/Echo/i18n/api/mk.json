@@ -4,6 +4,14 @@
 			"Bjankuloski06"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Рачно пушти известување за корисник",
+	"apihelp-echocreateevent-example": "Испрати известување",
+	"apihelp-echocreateevent-param-user": "На кој корисник да се испрати известување",
+	"apihelp-echocreateevent-param-header": "Содржина на заглавието на известувањето",
+	"apihelp-echocreateevent-param-content": "Содржина на текстот на известувањето",
+	"apihelp-echocreateevent-param-page": "Која страница да биде врска во известувањето",
+	"apihelp-echocreateevent-param-section": "Во кој оддел да се достави известувањето",
+	"apihelp-echocreateevent-param-email": "Дали воедно да се испрати е-пошта",
 	"apihelp-echomarkread-summary": "Означи ги сите известувања како прочитани за тековниот корисник.",
 	"apihelp-echomarkread-param-list": "Список на назнаки на известувањата што треба да се означат како прочитани.",
 	"apihelp-echomarkread-param-unreadlist": "Список на назнаки на известувањата што треба да се означат како непрочитани.",

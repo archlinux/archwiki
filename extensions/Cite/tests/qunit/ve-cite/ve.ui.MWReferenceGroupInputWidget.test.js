@@ -2,7 +2,7 @@
 
 QUnit.module( 've.ui.MWReferenceGroupInputWidget (Cite)', ve.test.utils.newMwEnvironment() );
 
-QUnit.test( 'Constructor', function ( assert ) {
+QUnit.test( 'Constructor', ( assert ) => {
 	const widget = new ve.ui.MWReferenceGroupInputWidget( {
 		emptyGroupName: '—'
 	} );
@@ -10,13 +10,11 @@ QUnit.test( 'Constructor', function ( assert ) {
 	assert.strictEqual( widget.getMenu().getItemCount(), 0 );
 } );
 
-QUnit.test( 'populateMenu', function ( assert ) {
-	const doc = ve.dm.citeExample.createExampleDocument( 'references' );
-
+QUnit.test( 'populateMenu', ( assert ) => {
 	const widget = new ve.ui.MWReferenceGroupInputWidget( {
 		emptyGroupName: 'empty'
 	} );
-	widget.populateMenu( doc.getInternalList() );
+	widget.populateMenu( [ 'mwReference/', 'mwReference/foo' ] );
 
 	assert.strictEqual( widget.getMenu().getItemCount(), 2 );
 

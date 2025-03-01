@@ -7,7 +7,6 @@ use FileRepo;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Parser\Parsoid\ParsoidParser;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Rest\Handler\Helper\HtmlMessageOutputHelper;
@@ -26,8 +25,9 @@ use MediaWiki\Rest\ResponseFactory;
 use MediaWiki\Rest\Router;
 use PHPUnit\Framework\MockObject\MockObject;
 use RepoGroup;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Parsoid\Parsoid;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * A trait providing utility functions for testing Page Handler classes.
@@ -35,11 +35,10 @@ use Wikimedia\Parsoid\Parsoid;
  * or MediaWikiIntegrationTestCase.
  *
  * @stable to use
- * @package MediaWiki\Tests\Rest\Handler
  */
 trait PageHandlerTestTrait {
 
-	private function newRouter( $baseUrl, $rootPath = '' ): Router {
+	private function newRouterForPageHandler( $baseUrl, $rootPath = '' ): Router {
 		$router = $this->createNoOpMock( Router::class, [ 'getRoutePath', 'getRouteUrl' ] );
 		$router->method( 'getRoutePath' )
 			->willReturnCallback( static function (
@@ -96,20 +95,11 @@ trait PageHandlerTestTrait {
 	public function newPageHtmlHandler( ?RequestInterface $request = null ) {
 		$services = $this->getServiceContainer();
 		$config = [
-			'RightsUrl' => 'https://example.com/rights',
-			'RightsText' => 'some rights',
-			'ParsoidCacheConfig' =>
+			MainConfigNames::RightsUrl => 'https://example.com/rights',
+			MainConfigNames::RightsText => 'some rights',
+			MainConfigNames::ParsoidCacheConfig =>
 				MainConfigSchema::getDefaultValue( MainConfigNames::ParsoidCacheConfig )
 		];
-
-		$parsoidOutputAccess = new ParsoidOutputAccess(
-			$services->getParsoidParserFactory(),
-			$services->getParserOutputAccess(),
-			$services->getPageStore(),
-			$services->getRevisionLookup(),
-			$services->getParsoidSiteConfig(),
-			$services->getContentHandlerFactory()
-		);
 
 		$helperFactory = $this->createNoOpMock(
 			PageRestHelperFactory::class,
@@ -121,23 +111,37 @@ trait PageHandlerTestTrait {
 				new ServiceOptions( PageContentHelper::CONSTRUCTOR_OPTIONS, $config ),
 				$services->getRevisionLookup(),
 				$services->getTitleFormatter(),
-				$services->getPageStore()
+				$services->getPageStore(),
+				$services->getTitleFactory(),
+				$services->getConnectionProvider(),
+				$services->getChangeTagsStore()
 			) );
 
 		$parsoidOutputStash = $this->getParsoidOutputStash();
 		$helperFactory->method( 'newHtmlOutputRendererHelper' )
-			->willReturn(
-				new HtmlOutputRendererHelper(
+			->willReturnCallback( static function ( $page, $parameters, $authority, $revision, $lenientRevHandling ) use ( $services, $parsoidOutputStash ) {
+				return new HtmlOutputRendererHelper(
 					$parsoidOutputStash,
-					$services->getStatsdDataFactory(),
-					$parsoidOutputAccess,
+					StatsFactory::newNull(),
+					$services->getParserOutputAccess(),
+					$services->getPageStore(),
+					$services->getRevisionLookup(),
+					$services->getRevisionRenderer(),
+					$services->getParsoidSiteConfig(),
 					$services->getHtmlTransformFactory(),
 					$services->getContentHandlerFactory(),
-					$services->getLanguageFactory()
-				)
-			);
+					$services->getLanguageFactory(),
+					$page,
+					$parameters,
+					$authority,
+					$revision,
+					$lenientRevHandling
+				);
+			} );
 		$helperFactory->method( 'newHtmlMessageOutputHelper' )
-			->willReturn( new HtmlMessageOutputHelper() );
+			->willReturnCallback( static function ( $page ) {
+				return new HtmlMessageOutputHelper( $page );
+			} );
 
 		$request ??= new RequestData( [] );
 		$responseFactory = new ResponseFactory( [] );
@@ -147,7 +151,7 @@ trait PageHandlerTestTrait {
 					$services->getRedirectStore(),
 					$services->getTitleFormatter(),
 					$responseFactory,
-					$this->newRouter( 'https://example.test/api' ),
+					$this->newRouterForPageHandler( 'https://example.test/api' ),
 					'/test/{title}',
 					$request,
 					$services->getLanguageConverterFactory()
@@ -192,7 +196,8 @@ trait PageHandlerTestTrait {
 			$services->getConnectionProvider(),
 			new WANObjectCache( [ 'cache' => $this->parserCacheBagOStuff, ] ),
 			$services->getPageStore(),
-			$services->getPageRestHelperFactory()
+			$services->getPageRestHelperFactory(),
+			$services->getTempUserConfig()
 		);
 	}
 

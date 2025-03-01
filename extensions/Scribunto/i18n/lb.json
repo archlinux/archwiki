@@ -31,12 +31,14 @@
 	"scribunto-module-with-errors-category": "Scirbunto-Moduler mat Feeler",
 	"scribunto-module-with-errors-category-desc": "De Modul huet e Feeler.",
 	"scribunto-limitreport-timeusage-value": "$1/$2 Sekonnen",
-	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|Byte}}",
-	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|Byte}}",
-	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|Byte}}",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|Byte|Byten}}",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|Byte|Byten}}",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|Byte|Byten}}",
 	"scribunto-limitreport-profile": "Lua – Profil",
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Lua-Logbicher",
 	"nstab-module": "Modul",
-	"tooltip-ca-nstab-module": "D'Modulsäit weisen"
+	"tooltip-ca-nstab-module": "D'Modulsäit weisen",
+	"namespaceinfo-description-ns828": "Nummraum fir Lua-Code-Moduler, déi vu Wikisäiten aus opgeruff kënne ginn, an hir Dokumentatiounssäiten",
+	"namespaceinfo-description-ns829": "Diskussiounssäite fir d'Moduler an d'Dokumentatioun"
 }

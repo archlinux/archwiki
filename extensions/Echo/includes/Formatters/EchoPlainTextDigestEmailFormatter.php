@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Language;
+use MediaWiki\Language\Language;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\User;

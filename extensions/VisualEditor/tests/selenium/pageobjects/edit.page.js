@@ -120,8 +120,8 @@ class EditPage extends Page {
 	}
 
 	activationComplete() {
-		return browser.executeAsync( function ( done ) {
-			mw.hook( 've.activationComplete' ).add( function () {
+		return browser.executeAsync( ( done ) => {
+			mw.hook( 've.activationComplete' ).add( () => {
 				done();
 			} );
 		} );
@@ -133,8 +133,8 @@ class EditPage extends Page {
 	}
 
 	saveComplete() {
-		return browser.executeAsync( function ( done ) {
-			ve.init.target.on( 'save', function () {
+		return browser.executeAsync( ( done ) => {
+			ve.init.target.on( 'save', () => {
 				done();
 			} );
 		} );

@@ -20,6 +20,8 @@ class ExternalStoreFactory implements LoggerAwareInterface {
 	private $localDomainId;
 	/** @var LoggerInterface */
 	private $logger;
+	/** @var ExternalStoreMedium[] */
+	private $stores = [];
 
 	/**
 	 * @param string[] $externalStores See $wgExternalStores
@@ -31,7 +33,7 @@ class ExternalStoreFactory implements LoggerAwareInterface {
 		array $externalStores,
 		array $defaultStores,
 		string $localDomainId,
-		LoggerInterface $logger = null
+		?LoggerInterface $logger = null
 	) {
 		$this->protocols = array_map( 'strtolower', $externalStores );
 		$this->writeBaseUrls = $defaultStores;
@@ -72,6 +74,10 @@ class ExternalStoreFactory implements LoggerAwareInterface {
 	 * @throws ExternalStoreException When $proto is not recognized
 	 */
 	public function getStore( $proto, array $params = [] ) {
+		$cacheKey = $proto . ':' . json_encode( $params );
+		if ( isset( $this->stores[$cacheKey] ) ) {
+			return $this->stores[$cacheKey];
+		}
 		$protoLowercase = strtolower( $proto ); // normalize
 		if ( !$this->protocols || !in_array( $protoLowercase, $this->protocols ) ) {
 			throw new ExternalStoreException( "Protocol '$proto' is not enabled." );
@@ -103,7 +109,8 @@ class ExternalStoreFactory implements LoggerAwareInterface {
 		}
 
 		// Any custom modules should be added to $wgAutoLoadClasses for on-demand loading
-		return new $class( $params );
+		$this->stores[$cacheKey] = new $class( $params );
+		return $this->stores[$cacheKey];
 	}
 
 	/**

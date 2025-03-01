@@ -3,9 +3,9 @@
 		"authors": [
 			"Matma Rex",
 			"NMW03",
+			"Nemoralis",
 			"Serkanland",
-			"Toghrul Rahimli",
-			"Nemoralis"
+			"Toghrul Rahimli"
 		]
 	},
 	"discussiontools": "Müzakirə alətləri",
@@ -59,7 +59,8 @@
 	"discussiontools-limitreport-errorreqid": "DiscussionTools xəta sorğusu ID-si",
 	"discussiontools-limitreport-timeusage": "DiscussionTools vaxtdan istifadə",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|saniyə}}",
-	"discussiontools-newtopic-missing-title": "Müzakirə mövzusu üçün başlıq təqdim edin. Əgər \"{{int:discussiontools-replywidget-newtopic}}\" klikləsəniz, mövzunuz başlıqsız əlavə olunacaq.",
+	"discussiontools-newtopic-missing-title": "Müzakirə mövzusu üçün başlıq təqdim edin.",
+	"discussiontools-newtopic-missing-title-prompt": "Müzakirə mövzusu üçün başlıq təqdim {{GENDER:|etməmisiniz}}. Bu mövzunu başlıqsız əlavə etmək istədiyinizə əminsiniz?",
 	"discussiontools-newtopic-placeholder-title": "Mövzu",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Abunə ol",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Bu səhifədə yeni mövzular açıldıqda bildirişləri almaq üçün abunə olun.",
@@ -73,6 +74,9 @@
 	"discussiontools-notification-added-topic-header-bundled": "\"<strong>$2</strong>\" səhifəsində {{PLURAL:$1|bir yeni mövzu|$1 yeni mövzu|100=99+ yeni mövzu}}",
 	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Mövzuya bax",
+	"discussiontools-notification-comment-thank-header": "$1 \"<strong>$3</strong>\" mövzusundakı şərhinizə görə {{GENDER:$4|sizə}} {{GENDER:$2|təşəkkür edib.}}",
+	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|Bir nəfər|$1 istifadəçi|100=99+ istifadəçi}} <strong>$2</strong> mövzusundakı şərhinizə görə {{GENDER:$3|sizə}} təşəkkür edib.",
+	"discussiontools-notification-comment-thank-header-compact": "$1 {{GENDER:$3|sizə}} {{GENDER:$2|təşəkkür edib}}.",
 	"discussiontools-notification-removed-topic-body": "{{GENDER:|Siz}} artıq {{PLURAL:$1|bu mövzu|bu mövzular}} haqqında bildiriş almaya bilərsiniz.",
 	"discussiontools-notification-removed-topic-header": "\"<strong>$4</strong>\" mövzusu $3 səhifəsindən çıxarılıb və ya arxivləşdirilib.",
 	"discussiontools-notification-removed-topic-header-bundled": "{{PLURAL:$1|Bir mövzu|$1 mövzu|100=99+ mövzu}}, $2 səhifəsindən silindi və ya arxivləşdirildi.",
@@ -81,6 +85,7 @@
 	"discussiontools-notification-removed-topic-disable": "Bu cür bildirişləri dayandır",
 	"discussiontools-notification-removed-topic-disabled-title": "{{GENDER:|Siz}} mövzu arxivləndikdə və ya silindikdə artıq bildirişlər almayacaqsınız.",
 	"discussiontools-notification-removed-topic-disabled-body": "Bunu [[Special:Preferences#mw-prefsection-echo-echosubscriptions|nizamlamalarınızda]] dəyişə bilərsiniz.",
+	"discussiontools-notification-topic-hidden": "(mövzu silinib)",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 \"<strong>$4</strong>\" bölməsində {{GENDER:$2|cavab verdi}}",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "\"<strong>$3</strong>\" bölməsində {{PLURAL:$1|bir yeni cavab|$1 yeni cavab|100=99+ yeni cavab}}",
 	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
@@ -152,7 +157,7 @@
 	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "Bu şərhi tapmaq mümkün olmadı. O, silinmiş və ya köçürülmüş ola bilər.",
 	"discussiontools-target-comments-missing": "Yeni şərhlər tapılmadı. Onlar silinmiş və ya köçürülmüş ola bilər.",
-	"discussiontools-target-heading-missing": "Bu mövzunu tapmaq mümkün olmadı. O, silinmiş və ya köçürülmüş ola bilər.",
+	"discussiontools-target-heading-missing": "Bu mövzunu tapmaq mümkün olmadı. O, silinmiş, köçürülmüş və ya adı dəyişdirilmiş ola bilər.",
 	"discussiontools-target-comment-found-moved": "Bu şərhi bu səhifədə tapmaq mümkün olmadı, lakin o, aşağıdakı {{PLURAL:$1|səhifədə|səhifələrdə}} mövcuddur:",
 	"discussiontools-target-heading-found-moved": "Bu mövzunu bu səhifədə tapmaq mümkün olmadı, lakin o, aşağıdakı {{PLURAL:$1|səhifədə|səhifələrdə}} mövcuddur:",
 	"discussiontools-topicheader-authorcount": "Müzakirədə $1 {{PLURAL:$1|nəfər}}",

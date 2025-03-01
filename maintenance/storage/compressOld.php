@@ -45,7 +45,9 @@ use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that compress the text of a wiki.
@@ -203,15 +205,17 @@ class CompressOld extends Maintenance {
 		}
 
 		# Update text row
-		$dbw->update( 'text',
-			[ /* SET */
+		$dbw->newUpdateQueryBuilder()
+			->update( 'text' )
+			->set( [
 				'old_flags' => $flags,
 				'old_text' => $compress
-			], [ /* WHERE */
+			] )
+			->where( [
 				'old_id' => $row->old_id
-			], __METHOD__,
-			[ 'LIMIT' => 1 ]
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		return true;
 	}
@@ -300,7 +304,7 @@ class CompressOld extends Maintenance {
 
 				return false;
 			}
-			$queryBuilderTemplate->andWhere( "rev_timestamp>'" . $beginDate . "'" );
+			$queryBuilderTemplate->andWhere( $dbr->expr( 'rev_timestamp', '>', $beginDate ) );
 		}
 		if ( $endDate ) {
 			if ( !preg_match( '/^\d{14}$/', $endDate ) ) {
@@ -308,7 +312,7 @@ class CompressOld extends Maintenance {
 
 				return false;
 			}
-			$queryBuilderTemplate->andWhere( "rev_timestamp<'" . $endDate . "'" );
+			$queryBuilderTemplate->andWhere( $dbr->expr( 'rev_timestamp', '<', $endDate ) );
 		}
 
 		for ( $pageId = $startId; $pageId <= $maxPageId; $pageId++ ) {
@@ -341,7 +345,7 @@ class CompressOld extends Maintenance {
 					// Don't operate on the current revision
 					// Use < instead of <> in case the current revision has changed
 					// since the page select, which wasn't locking
-					'rev_timestamp < ' . (int)$pageRow->rev_timestamp
+					$dbr->expr( 'rev_timestamp', '<', (int)$pageRow->rev_timestamp ),
 				] )
 				->caller( __METHOD__ )->fetchResultSet();
 
@@ -426,41 +430,47 @@ class CompressOld extends Maintenance {
 							}
 							# $stored should provide base path to a BLOB
 							$url = $stored . "/" . $stub->getHash();
-							$dbw->update( 'text',
-								[ /* SET */
+							$dbw->newUpdateQueryBuilder()
+								->update( 'text' )
+								->set( [
 									'old_text' => $url,
 									'old_flags' => 'external,utf-8',
-								], [ /* WHERE */
+								] )
+								->where( [
 									'old_id' => $stub->getReferrer(),
-								],
-								__METHOD__
-							);
+								] )
+								->caller( __METHOD__ )
+								->execute();
 						}
 					} else {
 						# Store the main object locally
-						$dbw->update( 'text',
-							[ /* SET */
+						$dbw->newUpdateQueryBuilder()
+							->update( 'text' )
+							->set( [
 								'old_text' => serialize( $chunk ),
 								'old_flags' => 'object,utf-8',
-							], [ /* WHERE */
+							] )
+							->where( [
 								'old_id' => $primaryOldid
-							],
-							__METHOD__
-						);
+							] )
+							->caller( __METHOD__ )
+							->execute();
 
 						# Store the stub objects
 						for ( $j = 1; $j < $thisChunkSize; $j++ ) {
 							# Skip if not compressing and don't overwrite the first revision
 							if ( $stubs[$j] !== false && $revs[$i + $j]->old_id != $primaryOldid ) {
-								$dbw->update( 'text',
-									[ /* SET */
+								$dbw->newUpdateQueryBuilder()
+									->update( 'text' )
+									->set( [
 										'old_text' => serialize( $stubs[$j] ),
 										'old_flags' => 'object,utf-8',
-									], [ /* WHERE */
+									] )
+									->where( [
 										'old_id' => $revs[$i + $j]->old_id
-									],
-									__METHOD__
-								);
+									] )
+									->caller( __METHOD__ )
+									->execute();
 							}
 						}
 					}
@@ -477,5 +487,7 @@ class CompressOld extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CompressOld::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

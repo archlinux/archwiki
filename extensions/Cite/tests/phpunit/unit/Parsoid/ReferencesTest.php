@@ -3,6 +3,7 @@
 namespace Cite\Tests\Unit;
 
 use Cite\Parsoid\References;
+use MediaWiki\Config\Config;
 use MediaWikiUnitTestCase;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\NodeData\DataMw;
@@ -21,7 +22,7 @@ class ReferencesTest extends MediaWikiUnitTestCase {
 		$elt = $doc->createElement( 'a' );
 		DOMDataUtils::setDataMw( $elt, new DataMw( [ 'body' => (object)[ 'html' => 'old' ] ] ) );
 
-		$refs = new References();
+		$refs = new References( $this->createNoOpMock( Config::class ) );
 		$refs->processAttributeEmbeddedHTML(
 			$this->createNoOpMock( ParsoidExtensionAPI::class ),
 			$elt,

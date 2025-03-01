@@ -9,6 +9,15 @@
 			"Stephane Bisson"
 		]
 	},
+	"apihelp-echocreateevent-description": "Manually trigger a notification to a user",
+	"apihelp-echocreateevent-summary": "Manually trigger a notification to a user",
+	"apihelp-echocreateevent-example": "Send a notification",
+	"apihelp-echocreateevent-param-user": "User to send the notification to",
+	"apihelp-echocreateevent-param-header": "Header content of the notification",
+	"apihelp-echocreateevent-param-content": "Body content of the notification",
+	"apihelp-echocreateevent-param-page": "Page to link to in the notification",
+	"apihelp-echocreateevent-param-section": "Section where notification would be delivered",
+	"apihelp-echocreateevent-param-email": "Whether to send an email as well",
 	"apihelp-echomarkread-summary": "Mark notifications as read for the current user.",
 	"apihelp-echomarkread-param-list": "A list of notification IDs to mark as read.",
 	"apihelp-echomarkread-param-unreadlist": "A list of notification IDs to mark as unread.",

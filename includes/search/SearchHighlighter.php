@@ -24,6 +24,7 @@
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Registration\ExtensionRegistry;
 
 /**
  * Highlight bits of wikitext
@@ -37,6 +38,7 @@ class SearchHighlighter {
 	public const DEFAULT_CONTEXT_LINES = 2;
 	public const DEFAULT_CONTEXT_CHARS = 75;
 
+	/** @var bool */
 	protected $mCleanWikitext = true;
 
 	/**
@@ -82,7 +84,7 @@ class SearchHighlighter {
 
 		// @todo FIXME: This should prolly be a hook or something
 		// instead of hardcoding the name of the Cite extension
-		if ( \ExtensionRegistry::getInstance()->isLoaded( 'Cite' ) ) {
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'Cite' ) ) {
 			$spat .= '|(<ref>)'; // references via cite extension
 			$endPatterns[4] = '/(<ref>)|(<\/ref>)/';
 		}

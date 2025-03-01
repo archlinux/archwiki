@@ -3,11 +3,11 @@
 	 * Source pages model for notification filtering
 	 *
 	 * @class
-	 * @mixins OO.EventEmitter
+	 * @mixes OO.EventEmitter
 	 *
 	 * @constructor
 	 * @param {Object} config Configuration object
-	 * @cfg {string} [currentSource] The selected source for the model.
+	 * @param {string} [config.currentSource] The selected source for the model.
 	 *  Defaults to the current wiki.
 	 */
 	mw.echo.dm.SourcePagesModel = function MwEchoDmSourcePagesModel( config ) {
@@ -29,9 +29,9 @@
 	/* Events */
 
 	/**
-	 * @event update
-	 *
 	 * The state of the source page model has changed
+	 *
+	 * @event mw.echo.dm.SourcePagesModel#update
 	 */
 
 	/* Methods */
@@ -41,7 +41,7 @@
 	 *
 	 * @param {string} source New source
 	 * @param {string} page New page
-	 * @fires update
+	 * @fires mw.echo.dm.SourcePagesModel#update
 	 */
 	mw.echo.dm.SourcePagesModel.prototype.setCurrentSourcePage = function ( source, page ) {
 		if (
@@ -77,10 +77,11 @@
 	 * previously set information.
 	 *
 	 * @param {Object} sourceData A detailed object about sources and pages
+	 * @fires mw.echo.dm.SourcePagesModel#update
 	 */
 	mw.echo.dm.SourcePagesModel.prototype.setAllSources = function ( sourceData ) {
 		this.reset();
-		for ( var source in sourceData ) {
+		for ( const source in sourceData ) {
 			if ( Object.prototype.hasOwnProperty.call( sourceData, source ) ) {
 				this.setSourcePagesDetails( source, sourceData[ source ] );
 			}
@@ -169,8 +170,8 @@
 			pages: {}
 		};
 
-		for ( var i = 0; i < details.pages.length; i++ ) {
-			var page = details.pages[ i ];
+		for ( let i = 0; i < details.pages.length; i++ ) {
+			const page = details.pages[ i ];
 			this.sources[ source ].pages[ page.title ] = page;
 		}
 	};

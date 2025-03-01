@@ -1,5 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test\API;
+
+use MediaWiki\Api\ApiUsageException;
+use MediaWiki\Tests\Api\ApiTestCase;
+
 /**
  * @group medium
  * @group API
@@ -8,7 +13,7 @@
 class ApiEchoPushSubscriptionsTest extends ApiTestCase {
 
 	public function testRequiresToken(): void {
-		$this->setMwGlobals( 'wgEchoEnablePush', true );
+		$this->overrideConfigValue( 'EchoEnablePush', true );
 		$params = [
 			'action' => 'echopushsubscriptions',
 			'command' => 'create',

@@ -3,7 +3,6 @@
 namespace MediaWiki\Rest\Handler;
 
 use ChangeTags;
-use IDBAccessObject;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Permissions\GroupPermissionsLookup;
@@ -23,7 +22,9 @@ use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\RawSQLExpression;
 
 /**
  * Handler class for Core REST API endpoints that perform operations on revisions
@@ -219,7 +220,7 @@ class PageHistoryHandler extends SimpleHandler {
 							'ug_group' => $this->groupPermissionsLookup->getGroupsWithPermission( 'bot' ),
 							$dbr->expr( 'ug_expiry', '=', null )->or( 'ug_expiry', '>=', $dbr->timestamp() )
 						] );
-					$queryBuilder->andWhere( 'EXISTS(' . $subquery->getSQL() . ')' );
+					$queryBuilder->andWhere( new RawSQLExpression( 'EXISTS(' . $subquery->getSQL() . ')' ) );
 					$bitmask = $this->getBitmask();
 					if ( $bitmask ) {
 						$queryBuilder->andWhere( $dbr->bitAnd( 'rev_deleted', $bitmask ) . " != $bitmask" );
@@ -242,7 +243,7 @@ class PageHistoryHandler extends SimpleHandler {
 						->select( '1' )
 						->from( 'change_tag' )
 						->where( [ 'ct_rev_id = rev_id', 'ct_tag_id' => $tagIds ] );
-					$queryBuilder->andWhere( 'EXISTS(' . $subquery->getSQL() . ')' );
+					$queryBuilder->andWhere( new RawSQLExpression( 'EXISTS(' . $subquery->getSQL() . ')' ) );
 					break;
 
 				case 'minor':

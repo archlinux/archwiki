@@ -4,7 +4,6 @@
 # minimal by design, with the idea to make it easily extensible via
 # docker-compose.override.yml. For help with doing that, please see
 # DEVELOPERS.md
-version: '3.7'
 services:
   mediawiki:
     image: docker-registry.wikimedia.org/dev/bookworm-php83-fpm:1.0.0
@@ -30,7 +29,7 @@ services:
       XHPROF_ENABLE: '${XHPROF_ENABLE:-true}'
 
   mediawiki-web:
-    image: docker-registry.wikimedia.org/dev/bookworm-apache2:1.0.1
+    image: docker-registry.wikimedia.org/dev/bookworm-apache2:1.0.0
     user: "${MW_DOCKER_UID}:${MW_DOCKER_GID}"
     ports:
       - "${MW_DOCKER_PORT:-8080}:8080"

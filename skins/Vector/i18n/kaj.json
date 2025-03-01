@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Jjnzamah",
 			"Kambai Akau",
-			"Kuzayet",
-			"Jjnzamah"
+			"Kuzayet"
 		]
 	},
 	"vector-languages": "A̱ru̱ryem",
@@ -16,19 +16,24 @@
 	"vector-view-create": "Yya",
 	"vector-view-history": "Tyyei nkkang",
 	"vector-more-actions": "Mbrang",
+	"vector-appearance-label": "Ryyi",
 	"vector-feature-limited-width-name": "Gbang",
-	"vector-feature-custom-font-size-name": "Du̱jem",
 	"vector-feature-limited-width-0-label": "pyinpyai",
 	"vector-feature-limited-width-1-label": "Kidee",
+	"vector-feature-custom-font-size-name": "Du̱jem",
 	"vector-feature-custom-font-size-0-label": "Cincong",
 	"vector-feature-custom-font-size-1-label": "Kidee",
 	"vector-feature-custom-font-size-2-label": "A̱gba̱dang",
 	"skin-theme-name": "Du̱suuk",
+	"skin-theme-day-label": "A̱sai",
+	"skin-theme-night-label": "Ryin",
 	"skin-theme-os-label": "Yyit banying",
+	"skin-theme-exclusion-notice": "Ka̱zzu̱ kani kozan ka̱ram ka̱yat a̱sai ryen ba.",
 	"vector-searchsuggest-containing": "Zop u̱ nazzu̱ na a̱kok ni for <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Nkyang nsshi",
 	"vector-toc-beginning": "Ka̱tsu̱tsrang",
 	"vector-main-menu-label": "A̱gbadang a̱mainu",
+	"vector-feature-custom-font-size-exclusion-notice": "Ka̱zzu̱ kani kozan ka̱ram an yya pfwong du̱ a̱ccwang a̱ssu̱ chei",
 	"vector-page-tools-label": "Nkyang pfwong",
 	"vector-page-tools-general-label": "Sarei kozankyai",
 	"vector-page-tools-actions-label": "Pfwong, yya kyang yaan, kutyak.",

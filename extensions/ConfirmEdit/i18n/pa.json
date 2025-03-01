@@ -2,13 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Babanwalia",
-			"Tow",
-			"Cabal"
+			"Tow"
 		]
 	},
 	"captcha-label": "ਕੈਪਚਾ",
-	"captchahelp-title": "ਕੈਪਚਾ ਮਦਦ",
-	"confirmedit-preview-content": "ਸਮੱਗਰੀ",
-	"confirmedit-preview-validity": "ਵੈਧਤਾ",
-	"confirmedit-preview-valid": "ਜਾਇਜ਼"
+	"captchahelp-title": "ਕੈਪਚਾ ਮਦਦ"
 }

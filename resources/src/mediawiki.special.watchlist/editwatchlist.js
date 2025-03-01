@@ -2,47 +2,43 @@
  * JavaScript for Special:EditWatchlist
  */
 ( function () {
-	$( function () {
-		var checkAllChangeOngoing = false;
-		var multiselectChangeOngoing = false;
+	$( () => {
+		let checkAllChangeOngoing = false;
+		let multiselectChangeOngoing = false;
 
-		var checkAllCheckboxes = $( '.mw-watchlistedit-checkall .oo-ui-checkboxInputWidget' )
+		const checkAllCheckboxes = $( '.mw-watchlistedit-checkall .oo-ui-checkboxInputWidget' )
 			.toArray()
-			.map( function ( element ) {
-				return OO.ui.infuse( element );
-			} );
+			.map( ( element ) => OO.ui.infuse( element ) );
 
-		var multiselects = $( '.mw-watchlistedit-check .oo-ui-checkboxMultiselectInputWidget' )
+		const multiselects = $( '.mw-watchlistedit-check .oo-ui-checkboxMultiselectInputWidget' )
 			.toArray()
-			.map( function ( element ) {
-				return OO.ui.infuse( element ).checkboxMultiselectWidget;
-			} );
+			.map( ( element ) => OO.ui.infuse( element ).checkboxMultiselectWidget );
 
-		checkAllCheckboxes.forEach( function ( checkbox, index ) {
-			checkbox.on( 'change', function ( isChecked ) {
+		checkAllCheckboxes.forEach( ( checkbox, index ) => {
+			checkbox.on( 'change', ( isChecked ) => {
 				if ( multiselectChangeOngoing ) {
 					return;
 				}
 				checkAllChangeOngoing = true;
 
 				// Select or de-select all the title checkboxes for this namespace
-				var multiselect = multiselects[ index ];
+				const multiselect = multiselects[ index ];
 				multiselect.selectItems( isChecked ? multiselect.items : [] );
 
 				checkAllChangeOngoing = false;
 			} );
 		} );
 
-		multiselects.forEach( function ( multiselect, index ) {
-			multiselect.on( 'change', function () {
+		multiselects.forEach( ( multiselect, index ) => {
+			multiselect.on( 'change', () => {
 				if ( checkAllChangeOngoing ) {
 					return;
 				}
 				multiselectChangeOngoing = true;
 
 				// Update the state of the check-all checkbox for this namespace
-				var checkAllCheckbox = checkAllCheckboxes[ index ];
-				var numSelectedItems = multiselect.findSelectedItems().length;
+				const checkAllCheckbox = checkAllCheckboxes[ index ];
+				const numSelectedItems = multiselect.findSelectedItems().length;
 				if ( numSelectedItems === multiselect.items.length ) {
 					checkAllCheckbox.setSelected( true );
 					checkAllCheckbox.setIndeterminate( false );

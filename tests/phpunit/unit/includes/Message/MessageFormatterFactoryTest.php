@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Message\Message;
 use MediaWiki\Message\MessageFormatterFactory;
 
 /**
@@ -20,7 +21,7 @@ class MessageFormatterFactoryTest extends MediaWikiUnitTestCase {
 	 * @param string $lang
 	 * @param string|null $format
 	 */
-	public function testGetTextFormatter( string $lang, string $format = null ) {
+	public function testGetTextFormatter( string $lang, ?string $format = null ) {
 		if ( $format ) {
 			$factory = new MessageFormatterFactory( $format );
 		} else {

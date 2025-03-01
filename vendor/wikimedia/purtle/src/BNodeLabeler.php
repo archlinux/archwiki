@@ -45,14 +45,14 @@ class BNodeLabeler {
 	}
 
 	/**
-	 * @param string|null $label node label, will be generated if not given.
+	 * @param string|null $label node label; will be generated if not given.
 	 *
 	 * @return string
 	 */
 	public function getLabel( $label = null ) {
 		if ( $label === null ) {
 			$label = $this->prefix . $this->counter;
-			$this->counter ++;
+			$this->counter++;
 		}
 
 		return $label;

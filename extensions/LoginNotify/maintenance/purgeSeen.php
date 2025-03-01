@@ -3,6 +3,7 @@
 namespace LoginNotify\Maintenance;
 
 use LoginNotify\LoginNotify;
+use MediaWiki\Maintenance\Maintenance;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
@@ -11,7 +12,7 @@ if ( $IP === false ) {
 
 require_once "$IP/maintenance/Maintenance.php";
 
-class PurgeSeen extends \Maintenance {
+class PurgeSeen extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Purge expired user IP address information stored by LoginNotify' );

@@ -6,6 +6,13 @@
 			"Tgr"
 		]
 	},
+	"apihelp-echocreateevent-example": "Értesítés küldése",
+	"apihelp-echocreateevent-param-user": "Értesítés küldése ennek a felhasználónak",
+	"apihelp-echocreateevent-param-header": "Az értesítés fejlécének tartalma",
+	"apihelp-echocreateevent-param-content": "Az értesítés szövegtörzsének tartalma",
+	"apihelp-echocreateevent-param-page": "Hivatkozás erre a lapra az értesítésben",
+	"apihelp-echocreateevent-param-section": "Az értesítés kézbesítése ebbe a szekcióba",
+	"apihelp-echocreateevent-param-email": "Az értesítés kimenjen-e e-mailben is",
 	"apihelp-echomarkread-summary": "A jelenlegi felhasználó értesítéseinek olvasottnak jelölése.",
 	"apihelp-echomarkread-param-list": "Az olvasottnak jelölendő értesítések ID-inek listája.",
 	"apihelp-echomarkread-param-unreadlist": "Olvasatlannak jelölendő értesítésazonosítók listája.",

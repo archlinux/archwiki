@@ -6,7 +6,7 @@
  */
 
 /**
- * DataModel disable title conversion meta item (for __NOTITILECONVERT__ and __NOTC__).
+ * DataModel disable title conversion meta item (for `__NOTITILECONVERT__` and `__NOTC__`).
  *
  * @class
  * @extends ve.dm.MetaItem
@@ -41,7 +41,7 @@ ve.dm.MWNoTitleConvertMetaItem.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.MWNoTitleConvertMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	var meta = doc.createElement( 'meta' );
+	const meta = doc.createElement( 'meta' );
 	meta.setAttribute(
 		'property',
 		( dataElement.attributes && dataElement.attributes.originalProperty ) || 'mw:PageProp/notitleconvert'

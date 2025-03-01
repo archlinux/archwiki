@@ -11,11 +11,11 @@
 			"Kenrick95",
 			"Naufal06",
 			"Rachmat04",
+			"Rebeccayoga",
 			"Stevannus rua",
 			"Uchup19",
 			"Veracious",
-			"William Surya Permana",
-			"Rebeccayoga"
+			"William Surya Permana"
 		]
 	},
 	"minerva-last-modified-date": "Terakhir diubah pada $1, pukul $2",
@@ -41,7 +41,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Tentang kategori ini",
 	"mobile-frontend-meta-data-issues-header": "Masalah",
 	"minerva-meta-data-issues-section-header": "Masalah bagian",
-	"mobile-frontend-notifications-filter": "Penyaring",
 	"mobile-frontend-pageaction-edit-tooltip": "Sunting bagian awal halaman ini",
 	"mobile-frontend-placeholder": "Cari di {{SITENAME}}",
 	"mobile-frontend-random-button": "Sembarang",
@@ -65,7 +64,5 @@
 	"skin-minerva-issue-learn-more": "Pelajari selengkapnya",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategori",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Lihat kategori halaman",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Perlakuan masalah halaman yang ditingkatkan",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Masalah halaman (Templat:ambox) akan disebariskan dalam artikel.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sayangnya, mengelompokkan hasil per halaman tidak tersedia pada tampilan seluler. Jika Anda ingin menggunakan fitur kelompokkan per halaman, mohon kunjungi situs desktopnya."
 }

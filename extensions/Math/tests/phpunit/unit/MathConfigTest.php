@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Math\Tests;
 
-use ExtensionRegistry;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\MathConfig;
+use MediaWiki\Registration\ExtensionRegistry;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,7 +17,7 @@ class MathConfigTest extends TestCase {
 
 	private function newMathConfig(
 		array $configOverrides,
-		ExtensionRegistry $registry = null
+		?ExtensionRegistry $registry = null
 	): MathConfig {
 		return new MathConfig(
 			new ServiceOptions( MathConfig::CONSTRUCTOR_OPTIONS, $configOverrides + [
@@ -53,6 +53,8 @@ class MathConfigTest extends TestCase {
 		yield 'mathml user option' => [ 5, MathConfig::MODE_MATHML ];
 		yield 'latexml user option' => [ 7, MathConfig::MODE_LATEXML ];
 		yield 'native user option' => [ 8, MathConfig::MODE_NATIVE_MML ];
+		yield 'mathjax option' => [ 9, MathConfig::MODE_NATIVE_JAX ];
+
 		yield 'source string' => [ 'source', MathConfig::MODE_SOURCE ];
 		yield 'mathml string' => [ 'mathml', MathConfig::MODE_MATHML ];
 		yield 'latexml string' => [ 'latexml', MathConfig::MODE_LATEXML ];
@@ -72,14 +74,13 @@ class MathConfigTest extends TestCase {
 	public function testGetValidRenderingModes() {
 		$mathConfig = $this->newMathConfig( [
 			'MathValidModes' => [
-				MathConfig::MODE_MATHML,
-				5,
+				MathConfig::MODE_NATIVE_MML,
 				MathConfig::MODE_SOURCE,
 				'this will be converted to mathml' ],
 		] );
 		$actualModes = $mathConfig->getValidRenderingModes();
 		$this->assertCount( 2, $actualModes );
-		$this->assertContains( MathConfig::MODE_MATHML, $actualModes );
+		$this->assertContains( MathConfig::MODE_NATIVE_MML, $actualModes );
 		$this->assertContains( MathConfig::MODE_SOURCE, $actualModes );
 	}
 

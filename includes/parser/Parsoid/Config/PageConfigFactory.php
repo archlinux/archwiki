@@ -19,10 +19,10 @@
 
 namespace MediaWiki\Parser\Parsoid\Config;
 
-use IDBAccessObject;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -31,8 +31,8 @@ use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Revision\SuppressedDataException;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use ParserOptions;
 use Wikimedia\Bcp47Code\Bcp47Code;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * Helper class used by MediaWiki to create Parsoid PageConfig objects.
@@ -171,6 +171,7 @@ class PageConfigFactory extends \Wikimedia\Parsoid\Config\PageConfigFactory {
 		$slotRoleHandler = $this->slotRoleRegistry->getRoleHandler( SlotRecord::MAIN );
 		if ( $pageLanguageOverride ) {
 			$pageLanguage = $this->languageFactory->getLanguage( $pageLanguageOverride );
+			$parserOptions->setTargetLanguage( $pageLanguage );
 		} else {
 			$pageLanguage = $title->getPageLanguage();
 		}

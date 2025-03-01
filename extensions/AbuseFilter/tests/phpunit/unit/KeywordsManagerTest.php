@@ -10,8 +10,7 @@ use MediaWikiUnitTestCase;
  * @group Test
  * @group AbuseFilter
  * @group AbuseFilterParser
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\KeywordsManager
- * @covers ::__construct
+ * @covers \MediaWiki\Extension\AbuseFilter\KeywordsManager
  */
 class KeywordsManagerTest extends MediaWikiUnitTestCase {
 	/**
@@ -22,9 +21,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 		return new KeywordsManager( $this->createMock( AbuseFilterHookRunner::class ) );
 	}
 
-	/**
-	 * @covers ::getDisabledVariables
-	 */
 	public function testGetDisabledVariables() {
 		$actual = $this->getKeywordsManager()->getDisabledVariables();
 		// Value should be an associative array mapping var names to i18n strings
@@ -33,9 +29,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 		$this->assertContainsOnly( 'string', array_keys( $actual ), true );
 	}
 
-	/**
-	 * @covers ::getDeprecatedVariables
-	 */
 	public function testGetDeprecatedVariables() {
 		$actual = $this->getKeywordsManager()->getDisabledVariables();
 		// Value should be an associative array mapping old names to new names
@@ -44,9 +37,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 		$this->assertContainsOnly( 'string', array_keys( $actual ), true );
 	}
 
-	/**
-	 * @covers ::getDeprecatedVariables
-	 */
 	public function testGetDeprecatedVariables_hook() {
 		$oldVarName = 'foobardeprecated';
 		$newVarName = 'foobarpleaseuseme';
@@ -60,9 +50,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $newVarName, $actual[$oldVarName] );
 	}
 
-	/**
-	 * @covers ::getBuilderValues
-	 */
 	public function testGetBuilderValues() {
 		$actual = $this->getKeywordsManager()->getBuilderValues();
 		// Value should be an associative array mapping old names to new names
@@ -75,9 +62,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 		}
 	}
 
-	/**
-	 * @covers ::getBuilderValues
-	 */
 	public function testGetBuilderValues_hook() {
 		$varName = 'magic_stuff';
 		$varMessage = 'magic-stuff';
@@ -95,7 +79,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param string $varName
 	 * @param bool $expected
-	 * @covers ::isVarDisabled
 	 * @dataProvider provideIsVarDisabled
 	 */
 	public function testIsVarDisabled( string $varName, bool $expected ) {
@@ -117,7 +100,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param string $varName
 	 * @param bool $expected
-	 * @covers ::isVarDeprecated
 	 * @dataProvider provideIsVarDeprecated
 	 */
 	public function testIsVarDeprecated( string $varName, bool $expected ) {
@@ -136,9 +118,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::isVarInUse
-	 */
 	public function testIsVarInUse() {
 		// Add a new variable to avoid relying on what's currently valid
 		$varName = 'my_new_var';
@@ -154,7 +133,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param string $varName
 	 * @param bool $expected
-	 * @covers ::varExists
 	 * @dataProvider provideVarExists
 	 */
 	public function testVarExists( string $varName, bool $expected ) {
@@ -165,7 +143,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param string $varName
 	 * @param bool $exists
-	 * @covers ::getMessageKeyForVar
 	 * @dataProvider provideVarExists
 	 */
 	public function testGetMessageKeyForVar( string $varName, bool $exists ) {
@@ -190,9 +167,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::getVarsMappings
-	 */
 	public function testGetVarsMappings() {
 		$actual = $this->getKeywordsManager()->getVarsMappings();
 		// Value should be an associative array mapping var names to i18n strings
@@ -201,9 +175,6 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 		$this->assertContainsOnly( 'string', array_keys( $actual ), true );
 	}
 
-	/**
-	 * @covers ::getCoreVariables
-	 */
 	public function testGetCoreVariables() {
 		$actual = $this->getKeywordsManager()->getCoreVariables();
 		$this->assertIsArray( $actual );

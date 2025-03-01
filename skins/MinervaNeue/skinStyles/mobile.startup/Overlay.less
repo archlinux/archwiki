@@ -14,6 +14,10 @@
 
 	.license {
 		.secondary-text();
+
+		a {
+			.cdx-mixin-link-base();
+		}
 	}
 }
 
@@ -62,10 +66,10 @@
 	}
 }
 
-@media all and ( min-width: @width-breakpoint-desktop ) {
+@media all and ( min-width: @min-width-breakpoint-desktop ) {
 	.overlay-header {
 		// Make sure the close button and secondary button icon images are aligned
 		// with the content.
-		max-width: @max-width-content-tablet + ( 2 * @width-icon-gutter );
+		max-width: calc( @max-width-content-tablet + ( 2 * @width-icon-gutter ) );
 	}
 }

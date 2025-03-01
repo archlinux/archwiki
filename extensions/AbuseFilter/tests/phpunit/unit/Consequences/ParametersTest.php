@@ -12,18 +12,9 @@ use MediaWikiUnitTestCase;
 /**
  * @group Test
  * @group AbuseFilter
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Consequences\Parameters
+ * @covers \MediaWiki\Extension\AbuseFilter\Consequences\Parameters
  */
 class ParametersTest extends MediaWikiUnitTestCase {
-	/**
-	 * @covers ::__construct
-	 * @covers ::getFilter
-	 * @covers ::getIsGlobalFilter
-	 * @covers ::getActionSpecifier
-	 * @covers ::getUser
-	 * @covers ::getTarget
-	 * @covers ::getAction
-	 */
 	public function testGetters() {
 		$filter = $this->createMock( ExistingFilter::class );
 		$global = true;

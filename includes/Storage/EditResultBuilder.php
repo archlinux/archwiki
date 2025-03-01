@@ -85,7 +85,7 @@ class EditResultBuilder {
 	/**
 	 * @param RevisionStore $revisionStore
 	 * @param string[] $softwareTags Array of currently enabled software change tags. Can be
-	 *        obtained from ChangeTags::getSoftwareTags()
+	 *        obtained from ChangeTagsStore->getSoftwareTags()
 	 * @param ServiceOptions $options Options for this instance.
 	 */
 	public function __construct(
@@ -160,7 +160,7 @@ class EditResultBuilder {
 	public function markAsRevert(
 		int $revertMethod,
 		int $newestRevertedRevId,
-		int $revertAfterRevId = null
+		?int $revertAfterRevId = null
 	) {
 		Assert::parameter(
 			in_array(

@@ -3,9 +3,18 @@
 		"authors": [
 			"Cwlin0416",
 			"Kly",
+			"Winston Sung",
 			"Winstonyin"
 		]
 	},
+	"apihelp-echocreateevent-summary": "手動觸發給使用者的通知",
+	"apihelp-echocreateevent-example": "傳送通知",
+	"apihelp-echocreateevent-param-user": "通知要發送的使用者",
+	"apihelp-echocreateevent-param-header": "通知的標頭內容",
+	"apihelp-echocreateevent-param-content": "通知的正文內容",
+	"apihelp-echocreateevent-param-page": "通知裡要連結的頁面",
+	"apihelp-echocreateevent-param-section": "通知要傳遞的部分",
+	"apihelp-echocreateevent-param-email": "是否也發送電子郵件",
 	"apihelp-echomarkread-summary": "把目前使用者的通知標記為已讀。",
 	"apihelp-echomarkread-param-list": "要標記為已讀的通知 ID 清單。",
 	"apihelp-echomarkread-param-unreadlist": "要標記為未讀的通知 ID 清單。",

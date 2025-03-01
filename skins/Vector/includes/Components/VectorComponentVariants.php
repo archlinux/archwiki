@@ -1,14 +1,15 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
-use Language;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Language\Language;
+use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\StubObject\StubUserLang;
 
 /**
  * VectorComponentVariants component
  */
 class VectorComponentVariants implements VectorComponent {
+	private LanguageConverterFactory $languageConverterFactory;
 	/** @var array */
 	private $menuData;
 	/** @var Language|StubUserLang */
@@ -17,11 +18,18 @@ class VectorComponentVariants implements VectorComponent {
 	private $ariaLabel;
 
 	/**
+	 * @param LanguageConverterFactory $languageConverterFactory
 	 * @param array $menuData
 	 * @param Language|StubUserLang $pageLang
 	 * @param string $ariaLabel
 	 */
-	public function __construct( array $menuData, $pageLang, string $ariaLabel ) {
+	public function __construct(
+		LanguageConverterFactory $languageConverterFactory,
+		array $menuData,
+		$pageLang,
+		string $ariaLabel
+	) {
+		$this->languageConverterFactory = $languageConverterFactory;
 		$this->menuData = $menuData;
 		$this->pageLang = $pageLang;
 		$this->ariaLabel = $ariaLabel;
@@ -32,8 +40,7 @@ class VectorComponentVariants implements VectorComponent {
 	 * @return string
 	 */
 	private function getDropdownLabel(): string {
-		$languageConverterFactory = MediaWikiServices::getInstance()->getLanguageConverterFactory();
-		$converter = $languageConverterFactory->getLanguageConverter( $this->pageLang );
+		$converter = $this->languageConverterFactory->getLanguageConverter( $this->pageLang );
 		return $this->pageLang->getVariantname(
 			$converter->getPreferredVariant()
 		);
@@ -45,7 +52,7 @@ class VectorComponentVariants implements VectorComponent {
 	 */
 	private function getDropdownData() {
 		$dropdown = new VectorComponentDropdown(
-			$this->menuData[ 'id' ],
+			'vector-variants-dropdown',
 			$this->getDropdownLabel(),
 			// Hide dropdown if menu is empty
 			$this->menuData[ 'is-empty' ] ? 'emptyPortlet' : ''

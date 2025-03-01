@@ -3,9 +3,12 @@
  *
  * @class
  * @extends mw.widgets.TitleOptionWidget
+ *
  * @constructor
  * @param {Object} config Configuration options.
- * @cfg {boolean} [external] Page title is an external link.
+ * @param {boolean} [config.external=false] Page title is an external link.
+ * @param {boolean} [config.disambiguation=false]
+ * @param {boolean} [config.missing=false]
  */
 function InsertLinkTitleOptionWidget( config ) {
 	this.external = config.external || false;

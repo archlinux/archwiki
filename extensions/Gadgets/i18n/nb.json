@@ -43,7 +43,7 @@
 	"gadgets-export-download": "Last ned",
 	"gadgets-requires-es6": "Denne tilleggsfunksjonen virker kun i nettlesere som har støtte for ES6",
 	"gadgets-validate-notset": "Egenskapen <code>$1</code> er ikke satt.",
-	"gadgets-validate-wrongtype": "Egenskapen <code>$1</code> må være <code>$2</code> i stedet for <code>$3</code>.",
+	"gadgets-validate-wrongtype": "Egenskapen <code>$1</code> må være av typen <code>$2</code>.",
 	"gadgets-validate-json": "JSON-filer er angitt, men brukes ikke. De er kun gyldige i pakketilleggsfunksjoner.",
 	"gadgets-validate-es6default": "Tilleggsfunksjoner som krever ES6 kan ikke aktiveres som standard",
 	"gadgets-validate-noentrypoint": "Pakkeflagg ignoreres siden ingen skriptfiler er angitt.",

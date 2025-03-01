@@ -39,5 +39,5 @@
 	"gadgets-export-text": "Каб экспартаваць гаджэт $1, націсьніце кнопку «{{int:gadgets-export-download}}», захавайце загружаны файл, зайдзіце на Special:Import у мэтавай вікі і загрузіце файл туды. Затым дадайце наступны зьмест на старонку MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nВы павінны мець адпаведныя правы ў мэтавай вікі (у тым ліку і правы на рэдагаваньне сыстэмных паведамленьняў), а ў вікі мусіць быць уключаная магчымасьць імпарту з файлаў.",
 	"gadgets-export-download": "Загрузіць",
 	"gadgets-validate-notset": "Уласьцівасьць <code>$1</code> не зададзеная.",
-	"gadgets-validate-wrongtype": "Уласьцівасьць <code>$1</code> мусіць быць тыпу <code>$2</code>, а не <code>$3</code>."
+	"gadgets-validate-wrongtype": "Уласьцівасьць <code>$1</code> мусіць быць тыпу <code>$2</code>."
 }

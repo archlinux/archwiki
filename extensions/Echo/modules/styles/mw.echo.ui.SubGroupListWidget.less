@@ -7,28 +7,14 @@
 	}
 
 	&-header {
-		display: table;
-		width: 100%;
-
 		&-row {
-			display: table-row;
-
-			&-cell {
-				display: table-cell;
-			}
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
 
 			&-title {
-				width: 100%;
-				vertical-align: bottom;
-				white-space: nowrap;
-
-				.oo-ui-labelElement-label {
-					white-space: normal;
-				}
-			}
-
-			&-markAllReadButton {
-				text-align: right;
+				flex-grow: 1;
+				align-self: end;
 			}
 		}
 	}

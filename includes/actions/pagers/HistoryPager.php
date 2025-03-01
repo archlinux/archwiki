@@ -27,7 +27,6 @@ use ChangesList;
 use ChangeTags;
 use HistoryAction;
 use HtmlArmor;
-use IDBAccessObject;
 use MapCacheLRU;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\ChangeTags\ChangeTagsStore;
@@ -45,6 +44,7 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Watchlist\WatchlistManager;
 use stdClass;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * @ingroup Pager
@@ -53,12 +53,17 @@ use stdClass;
 #[\AllowDynamicProperties]
 class HistoryPager extends ReverseChronologicalPager {
 
+	/** @inheritDoc */
 	public $mGroupByDate = true;
 
-	public $historyPage, $buttons, $conds;
+	public HistoryAction $historyPage;
+	public string $buttons;
+	public array $conds;
 
+	/** @var int */
 	protected $oldIdChecked;
 
+	/** @var bool */
 	protected $preventClickjacking = false;
 	/**
 	 * @var array
@@ -118,11 +123,11 @@ class HistoryPager extends ReverseChronologicalPager {
 		$tagFilter = '',
 		$tagInvert = false,
 		array $conds = [],
-		LinkBatchFactory $linkBatchFactory = null,
-		WatchlistManager $watchlistManager = null,
-		CommentFormatter $commentFormatter = null,
-		HookContainer $hookContainer = null,
-		ChangeTagsStore $changeTagsStore = null
+		?LinkBatchFactory $linkBatchFactory = null,
+		?WatchlistManager $watchlistManager = null,
+		?CommentFormatter $commentFormatter = null,
+		?HookContainer $hookContainer = null,
+		?ChangeTagsStore $changeTagsStore = null
 	) {
 		parent::__construct( $historyPage->getContext() );
 		$this->historyPage = $historyPage;
@@ -441,13 +446,9 @@ class HistoryPager extends ReverseChronologicalPager {
 		}
 
 		$lang = $this->getLanguage();
-		$dirmark = $lang->getDirMark();
-
-		$s .= " $link";
-		$s .= $dirmark;
+		$s .= ' ' . Html::rawElement( 'bdi', [ 'dir' => $lang->getDir() ], $link );
 		$s .= " <span class='history-user'>" .
 			Linker::revUserTools( $revRecord, true, false ) . "</span>";
-		$s .= $dirmark;
 
 		if ( $revRecord->isMinor() ) {
 			$s .= ' ' . ChangesList::flag( 'minor', $this->getContext() );

@@ -23,6 +23,9 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use ChangeTags;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Specials\SpecialUserRights;
@@ -30,9 +33,11 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
+use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
  * @ingroup API
@@ -47,17 +52,9 @@ class ApiUserrights extends ApiBase {
 	private UserGroupManager $userGroupManager;
 	private WatchedItemStoreInterface $watchedItemStore;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param UserGroupManager $userGroupManager
-	 * @param WatchedItemStoreInterface $watchedItemStore
-	 * @param WatchlistManager $watchlistManager
-	 * @param UserOptionsLookup $userOptionsLookup
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		UserGroupManager $userGroupManager,
 		WatchedItemStoreInterface $watchedItemStore,
 		WatchlistManager $watchlistManager,
@@ -140,9 +137,13 @@ class ApiUserrights extends ApiBase {
 		$r['user'] = $user->getName();
 		$r['userid'] = $user->getId( $user->getWikiId() );
 		[ $r['added'], $r['removed'] ] = $form->doSaveUserGroups(
+			$user,
+			$add,
 			// Don't pass null to doSaveUserGroups() for array params, cast to empty array
-			$user, $add, (array)$params['remove'],
-			$params['reason'], (array)$tags, $groupExpiries
+			(array)$params['remove'],
+			$params['reason'],
+			(array)$tags,
+			$groupExpiries
 		);
 
 		$watchlistExpiry = $this->getExpiryFromParams( $params );
@@ -284,3 +285,6 @@ class ApiUserrights extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:User_group_membership';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiUserrights::class, 'ApiUserrights' );

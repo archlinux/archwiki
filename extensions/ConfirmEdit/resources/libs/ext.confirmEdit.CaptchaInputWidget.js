@@ -64,8 +64,7 @@ mw.libs.confirmEdit.CaptchaInputWidget.prototype.makeCaptchaInterface = function
 			$( '<a>' ).addClass( 'fancycaptcha-reload' ).text( mw.msg( 'fancycaptcha-reload-text' ) )
 		);
 	} else {
-		if ( captchaData.type === 'simple' || captchaData.type === 'math' ) {
-			// SimpleCaptcha and MathCaptcha
+		if ( captchaData.type === 'simple' ) {
 			msg = 'captcha-edit';
 		} else if ( captchaData.type === 'question' ) {
 			// QuestyCaptcha

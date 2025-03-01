@@ -10,11 +10,11 @@
  *
  * @class
  * @extends OO.ui.Widget
- * @mixins OO.ui.mixin.DraggableGroupElement
+ * @mixes OO.ui.mixin.DraggableGroupElement
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {string} [orientation='vertical']
+ * @param {string} [config.orientation='vertical']
  */
 ve.ui.MWGalleryGroupWidget = function VeUiMWGalleryGroupWidget( config ) {
 	// Configuration initialization
@@ -41,5 +41,5 @@ OO.mixinClass( ve.ui.MWGalleryGroupWidget, OO.ui.mixin.DraggableGroupElement );
 /* Events */
 
 /**
- * @event editItem
+ * @event ve.ui.MWGalleryGroupWidget#editItem
  */

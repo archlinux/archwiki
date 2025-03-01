@@ -2,15 +2,15 @@
 
 namespace MediaWiki\Tests\Api;
 
-use ApiBase;
-use ApiErrorFormatter;
-use ApiMain;
-use ApiMessage;
-use ApiQueryTokens;
-use ApiResult;
-use ApiUsageException;
 use ArrayAccess;
 use LogicException;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiErrorFormatter;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiMessage;
+use MediaWiki\Api\ApiQueryTokens;
+use MediaWiki\Api\ApiResult;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
@@ -27,8 +27,10 @@ use ReturnTypeWillChange;
 abstract class ApiTestCase extends MediaWikiLangTestCase {
 	use MockAuthorityTrait;
 
+	/** @var string */
 	protected static $apiUrl;
 
+	/** @var ApiErrorFormatter|null */
 	protected static $errorFormatter = null;
 
 	/**
@@ -113,8 +115,8 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	 * - if $appendModule is true, the Api module $module
 	 * @throws ApiUsageException
 	 */
-	protected function doApiRequest( array $params, array $session = null,
-		$appendModule = false, Authority $performer = null, $tokenType = null,
+	protected function doApiRequest( array $params, ?array $session = null,
+		$appendModule = false, ?Authority $performer = null, $tokenType = null,
 		$paramPrefix = null
 	) {
 		global $wgRequest;
@@ -173,6 +175,7 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 		$wgRequest = $this->buildFauxRequest( $params, $sessionObj );
 		RequestContext::getMain()->setRequest( $wgRequest );
 		RequestContext::getMain()->setAuthority( $performer );
+		RequestContext::getMain()->setUser( $sessionUser );
 
 		// set up local environment
 		$context = $this->apiContext->newTestContext( $wgRequest, $performer );
@@ -217,8 +220,8 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	 * @param string|null $paramPrefix Prefix to prepend to parameters
 	 * @return array Result of the API call
 	 */
-	protected function doApiRequestWithToken( array $params, array $session = null,
-		Authority $performer = null, $tokenType = 'auto', $paramPrefix = null
+	protected function doApiRequestWithToken( array $params, ?array $session = null,
+		?Authority $performer = null, $tokenType = 'auto', $paramPrefix = null
 	) {
 		return $this->doApiRequest( $params, $session, false, $performer, $tokenType, $paramPrefix );
 	}
@@ -246,14 +249,15 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	 * ApiUsageException::newWithMessage()'s parameters.  This allows checking for an exception
 	 * whose text is given by a message key instead of text, so as not to hard-code the message's
 	 * text into test code.
-	 * @deprecated Use expectApiErrorCode() instead, it's better to test error codes than messages
+	 *
+	 * @deprecated since 1.43; use expectApiErrorCode() instead, it's better to test error codes than messages
 	 * @param string|array|Message $msg
 	 * @param string|null $code
 	 * @param array|null $data
 	 * @param int $httpCode
 	 */
 	protected function setExpectedApiException(
-		$msg, $code = null, array $data = null, $httpCode = 0
+		$msg, $code = null, ?array $data = null, $httpCode = 0
 	) {
 		$expected = ApiUsageException::newWithMessage( null, $msg, $code, $data, $httpCode );
 		$this->expectException( ApiUsageException::class );
@@ -299,7 +303,7 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 				if ( !$other instanceof ApiUsageException ) {
 					return null;
 				}
-				$errors = $other->getStatusValue()->getErrors();
+				$errors = $other->getStatusValue()->getMessages();
 				if ( count( $errors ) === 0 ) {
 					return '(no error)';
 				} elseif ( count( $errors ) > 1 ) {

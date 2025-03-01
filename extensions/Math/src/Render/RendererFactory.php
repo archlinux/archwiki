@@ -13,7 +13,7 @@ use MediaWiki\Extension\Math\MathRenderer;
 use MediaWiki\Extension\Math\MathSource;
 use MediaWiki\User\Options\UserOptionsLookup;
 use Psr\Log\LoggerInterface;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 class RendererFactory {
 

@@ -24,7 +24,9 @@
  * @author Aryeh Gregor (Simetrical)
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\NamespaceInfo;
@@ -255,18 +257,18 @@ TEXT
 				// other fields, if any, those usually only happen when upgrading old MediaWikis.)
 				$this->numRowsProcessed += ( $row->cl_sortkey !== $newSortKey );
 			} else {
-				$this->dbw->update(
-					'categorylinks',
-					[
+				$this->dbw->newUpdateQueryBuilder()
+					->update( 'categorylinks' )
+					->set( [
 						'cl_sortkey' => $newSortKey,
 						'cl_sortkey_prefix' => $prefix,
 						'cl_collation' => $this->collationName,
 						'cl_type' => $type,
 						'cl_timestamp = cl_timestamp',
-					],
-					[ 'cl_from' => $row->cl_from, 'cl_to' => $row->cl_to ],
-					__METHOD__
-				);
+					] )
+					->where( [ 'cl_from' => $row->cl_from, 'cl_to' => $row->cl_to ] )
+					->caller( __METHOD__ )
+					->execute();
 				$this->numRowsProcessed++;
 			}
 		}
@@ -393,5 +395,7 @@ TEXT
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = UpdateCollation::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

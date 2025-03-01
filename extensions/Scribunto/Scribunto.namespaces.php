@@ -184,6 +184,11 @@ $namespaceNames['dsb'] = [
 	829 => 'Modul_diskusija',
 ];
 
+$namespaceNames['dtp'] = [
+	828 => 'Modul',
+	829 => 'Pibarasan_modul',
+];
+
 $namespaceNames['dty'] = [
 	828 => 'मोड्युल',
 	829 => 'मोड्युल_कुरणि',
@@ -274,6 +279,11 @@ $namespaceNames['he'] = [
 	829 => 'שיחת_יחידה',
 ];
 
+$namespaceNames['hi'] = [
+	828 => 'मॉड्यूल',
+	829 => 'मॉड्यूल_वार्ता',
+];
+
 $namespaceNames['hr'] = [
 	828 => 'Modul',
 	829 => 'Razgovor_o_modulu',
@@ -292,6 +302,11 @@ $namespaceNames['hu'] = [
 $namespaceNames['hy'] = [
 	828 => 'Մոդուլ',
 	829 => 'Մոդուլի_քննարկում',
+];
+
+$namespaceNames['iba'] = [
+	828 => 'Modul',
+	829 => 'Randau_modul',
 ];
 
 $namespaceNames['inh'] = [
@@ -627,6 +642,11 @@ $namespaceNames['tg'] = [
 $namespaceNames['th'] = [
 	828 => 'มอดูล',
 	829 => 'คุยเรื่องมอดูล',
+];
+
+$namespaceNames['tly'] = [
+	828 => 'Modul',
+	829 => 'Moduli_no-pegət',
 ];
 
 $namespaceNames['tr'] = [

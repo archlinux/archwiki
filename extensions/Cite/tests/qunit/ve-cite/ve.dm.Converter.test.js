@@ -9,7 +9,7 @@
 
 QUnit.module( 've.dm.Converter (Cite)', ve.test.utils.newMwEnvironment() );
 
-QUnit.test( 'getModelFromDom', function ( assert ) {
+QUnit.test( 'getModelFromDom', ( assert ) => {
 	const cases = ve.dm.citeExample.domToDataCases;
 
 	for ( const msg in cases ) {
@@ -28,7 +28,7 @@ QUnit.test( 'getModelFromDom', function ( assert ) {
 	}
 } );
 
-QUnit.test( 'getDomFromModel', function ( assert ) {
+QUnit.test( 'getDomFromModel', ( assert ) => {
 	const cases = ve.dm.citeExample.domToDataCases;
 
 	for ( const msg in cases ) {

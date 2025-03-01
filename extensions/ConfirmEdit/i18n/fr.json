@@ -49,5 +49,6 @@
 	"confirmedit-preview-validity": "Validité",
 	"confirmedit-preview-valid": "valide",
 	"confirmedit-preview-invalid": "non valide",
-	"confirmedit-preview-description": "Le tableau suivant montre la liste des lignes de cette page et si c’est une adresse ou une plage d’adresses IP valide. Si la ligne est une adresse ou une plage d’adresses IP valide, elle sera exclue des vérifications de CAPTCHA, mais les lignes non valides seront ignorées. Un exemple de plage d’adresse IP valide est : 69.208.0.0/16 qui va de 69.208.0.0 à 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Plus d’informations] sur le calcul d’une plage d’adresse IP."
+	"confirmedit-preview-description": "Le tableau suivant montre la liste des lignes de cette page et si c’est une adresse ou une plage d’adresses IP valide. Si la ligne est une adresse ou une plage d’adresses IP valide, elle sera exclue des vérifications de CAPTCHA, mais les lignes non valides seront ignorées. Un exemple de plage d’adresse IP valide est : 69.208.0.0/16 qui va de 69.208.0.0 à 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Plus d’informations] sur le calcul d’une plage d’adresse IP.",
+	"abusefilter-edit-action-showcaptcha": "Nécessite que l'utilisateur doive résoudre un CAPTCHA afin de poursuivre l'action. Les utilisateurs autorisés à ignorer le CAPTCHA en sont exemptés."
 }

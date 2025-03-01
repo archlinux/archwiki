@@ -20,7 +20,12 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -36,15 +41,9 @@ class ApiExpandTemplates extends ApiBase {
 	private RevisionStore $revisionStore;
 	private ParserFactory $parserFactory;
 
-	/**
-	 * @param ApiMain $main
-	 * @param string $action
-	 * @param RevisionStore $revisionStore
-	 * @param ParserFactory $parserFactory
-	 */
 	public function __construct(
 		ApiMain $main,
-		$action,
+		string $action,
 		RevisionStore $revisionStore,
 		ParserFactory $parserFactory
 	) {
@@ -257,3 +256,6 @@ class ApiExpandTemplates extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Expandtemplates';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiExpandTemplates::class, 'ApiExpandTemplates' );

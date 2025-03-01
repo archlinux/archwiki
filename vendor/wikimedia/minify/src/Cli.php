@@ -56,29 +56,29 @@ final class Cli {
 	public function run(): void {
 		try {
 			switch ( $this->command ) {
-			case 'css':
-				$this->runCss( ...$this->params );
-				break;
-			case 'css-remap':
-				$this->runCssRemap( ...$this->params );
-				break;
-			case 'js':
-				$this->runJs( ...$this->params );
-				break;
-			case 'jsmap-web':
-				$this->runJsMapWeb( ...$this->params );
-				break;
-			case 'jsmap-raw':
-				$this->runJsMapRaw( ...$this->params );
-				break;
-			case '':
-			case 'help':
-				$this->exitCode = 1;
-				$this->help();
-				break;
-			default:
-				$this->error( 'Unknown command' );
-				break;
+				case 'css':
+					$this->runCss( ...$this->params );
+					break;
+				case 'css-remap':
+					$this->runCssRemap( ...$this->params );
+					break;
+				case 'js':
+					$this->runJs( ...$this->params );
+					break;
+				case 'jsmap-web':
+					$this->runJsMapWeb( ...$this->params );
+					break;
+				case 'jsmap-raw':
+					$this->runJsMapRaw( ...$this->params );
+					break;
+				case '':
+				case 'help':
+					$this->exitCode = 1;
+					$this->help();
+					break;
+				default:
+					$this->error( 'Unknown command' );
+					break;
 			}
 		} catch ( \Throwable $e ) {
 			$this->exitCode = 1;
@@ -104,7 +104,14 @@ final class Cli {
 
 	private function runJs( string $file = null ): void {
 		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
-		$this->output( JavaScriptMinifier::minify( $data ) );
+		$onError = function ( ParseError $error ) {
+			$this->output( 'ParseError: ' . $error->getMessage() . ' at position ' . $error->getOffset() );
+			$this->exitCode = 1;
+		};
+		$ret = JavaScriptMinifier::minify( $data, $onError );
+		if ( !$this->exitCode ) {
+			$this->output( $ret );
+		}
 	}
 
 	private function runJsMapWeb( string $file = null ): void {

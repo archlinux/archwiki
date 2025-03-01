@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Math\Tests;
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use RequestContext;
 
 /**
  * @covers \MediaWiki\Extension\Math\HookHandlers\PreferencesHooksHandler

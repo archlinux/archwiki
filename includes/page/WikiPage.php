@@ -20,6 +20,9 @@
 
 use MediaWiki\Category\Category;
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Edit\PreparedEdit;
@@ -35,6 +38,7 @@ use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageStoreRecord;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
@@ -50,7 +54,6 @@ use MediaWiki\Storage\PreparedUpdate;
 use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleArrayFromResult;
-use MediaWiki\User\ActorMigration;
 use MediaWiki\User\User;
 use MediaWiki\User\UserArrayFromResult;
 use MediaWiki\User\UserIdentity;
@@ -61,8 +64,11 @@ use Wikimedia\Assert\PreconditionException;
 use Wikimedia\NonSerializable\NonSerializableTrait;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\RawSQLValue;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * @defgroup Page Page
@@ -76,7 +82,7 @@ use Wikimedia\Rdbms\IReadableDatabase;
  *
  * @ingroup Page
  */
-class WikiPage implements Page, PageRecord {
+class WikiPage implements Stringable, Page, PageRecord {
 	use NonSerializableTrait;
 	use ProtectedHookAccessorTrait;
 	use WikiAwareEntityTrait;
@@ -100,13 +106,6 @@ class WikiPage implements Page, PageRecord {
 	 * @var bool
 	 */
 	private $mPageIsRedirectField = false;
-
-	/**
-	 * The cache of the redirect target
-	 *
-	 * @var Title|null
-	 */
-	protected $mRedirectTarget = null;
 
 	/**
 	 * @var bool
@@ -278,7 +277,6 @@ class WikiPage implements Page, PageRecord {
 	 */
 	protected function clearCacheFields() {
 		$this->mId = null;
-		$this->mRedirectTarget = null; // Title object if set
 		$this->mPageIsRedirectField = false;
 		$this->mLastRevision = null; // Latest revision
 		$this->mTouched = '19700101000000';
@@ -357,14 +355,12 @@ class WikiPage implements Page, PageRecord {
 		$this->getHookRunner()->onArticlePageDataBefore(
 			$this, $pageQuery['fields'], $pageQuery['tables'], $pageQuery['joins'] );
 
-		$row = $dbr->selectRow(
-			$pageQuery['tables'],
-			$pageQuery['fields'],
-			$conditions,
-			__METHOD__,
-			$options,
-			$pageQuery['joins']
-		);
+		$row = $dbr->newSelectQueryBuilder()
+			->queryInfo( $pageQuery )
+			->where( $conditions )
+			->caller( __METHOD__ )
+			->options( $options )
+			->fetchRow();
 
 		$this->getHookRunner()->onArticlePageDataAfter( $this, $row );
 
@@ -377,12 +373,18 @@ class WikiPage implements Page, PageRecord {
 	 *
 	 * @param IReadableDatabase $dbr
 	 * @param Title $title
-	 * @param array $options
+	 * @param int $recency
 	 * @return stdClass|false Database result resource, or false on failure
 	 */
-	public function pageDataFromTitle( $dbr, $title, $options = [] ) {
+	public function pageDataFromTitle( $dbr, $title, $recency = IDBAccessObject::READ_NORMAL ) {
 		if ( !$title->canExist() ) {
 			return false;
+		}
+		$options = [];
+		if ( ( $recency & IDBAccessObject::READ_EXCLUSIVE ) == IDBAccessObject::READ_EXCLUSIVE ) {
+			$options[] = 'FOR UPDATE';
+		} elseif ( ( $recency & IDBAccessObject::READ_LOCKING ) == IDBAccessObject::READ_LOCKING ) {
+			$options[] = 'LOCK IN SHARE MODE';
 		}
 
 		return $this->pageData( $dbr, [
@@ -422,10 +424,14 @@ class WikiPage implements Page, PageRecord {
 		}
 
 		if ( is_int( $from ) ) {
-			[ $index, $opts ] = DBAccessObjectUtils::getDBOptions( $from );
 			$loadBalancer = $this->getDBLoadBalancer();
-			$db = $loadBalancer->getConnectionRef( $index );
-			$data = $this->pageDataFromTitle( $db, $this->mTitle, $opts );
+			if ( ( $from & IDBAccessObject::READ_LATEST ) == IDBAccessObject::READ_LATEST ) {
+				$index = DB_PRIMARY;
+			} else {
+				$index = DB_REPLICA;
+			}
+			$db = $loadBalancer->getConnection( $index );
+			$data = $this->pageDataFromTitle( $db, $this->mTitle, $from );
 
 			if ( !$data
 				&& $index == DB_REPLICA
@@ -433,9 +439,8 @@ class WikiPage implements Page, PageRecord {
 				&& $loadBalancer->hasOrMadeRecentPrimaryChanges()
 			) {
 				$from = IDBAccessObject::READ_LATEST;
-				[ $index, $opts ] = DBAccessObjectUtils::getDBOptions( $from );
-				$db = $loadBalancer->getConnectionRef( $index );
-				$data = $this->pageDataFromTitle( $db, $this->mTitle, $opts );
+				$db = $loadBalancer->getConnection( DB_PRIMARY );
+				$data = $this->pageDataFromTitle( $db, $this->mTitle, $from );
 			}
 		} else {
 			// No idea from where the caller got this data, assume replica DB.
@@ -565,7 +570,13 @@ class WikiPage implements Page, PageRecord {
 	 * @return bool
 	 */
 	public function isRedirect() {
-		return $this->getRedirectTarget() !== null;
+		$this->loadPageData();
+		if ( $this->mPageIsRedirectField ) {
+			return MediaWikiServices::getInstance()->getRedirectLookup()
+					->getRedirectTarget( $this->getTitle() ) !== null;
+		}
+
+		return false;
 	}
 
 	/**
@@ -757,7 +768,7 @@ class WikiPage implements Page, PageRecord {
 	 *
 	 * @since 1.21
 	 */
-	public function getContent( $audience = RevisionRecord::FOR_PUBLIC, Authority $performer = null ) {
+	public function getContent( $audience = RevisionRecord::FOR_PUBLIC, ?Authority $performer = null ) {
 		$this->loadLastEdit();
 		if ( $this->mLastRevision ) {
 			return $this->mLastRevision->getContent( SlotRecord::MAIN, $audience, $performer );
@@ -796,7 +807,7 @@ class WikiPage implements Page, PageRecord {
 	 *   a user no fallback is provided and the RevisionRecord method will throw an error)
 	 * @return int User ID for the user that made the last article revision
 	 */
-	public function getUser( $audience = RevisionRecord::FOR_PUBLIC, Authority $performer = null ) {
+	public function getUser( $audience = RevisionRecord::FOR_PUBLIC, ?Authority $performer = null ) {
 		$this->loadLastEdit();
 		if ( $this->mLastRevision ) {
 			$revUser = $this->mLastRevision->getUser( $audience, $performer );
@@ -817,7 +828,7 @@ class WikiPage implements Page, PageRecord {
 	 *   a user no fallback is provided and the RevisionRecord method will throw an error)
 	 * @return UserIdentity|null
 	 */
-	public function getCreator( $audience = RevisionRecord::FOR_PUBLIC, Authority $performer = null ) {
+	public function getCreator( $audience = RevisionRecord::FOR_PUBLIC, ?Authority $performer = null ) {
 		$revRecord = $this->getRevisionStore()->getFirstRevision( $this->getTitle() );
 		if ( $revRecord ) {
 			return $revRecord->getUser( $audience, $performer );
@@ -836,7 +847,7 @@ class WikiPage implements Page, PageRecord {
 	 *   a user no fallback is provided and the RevisionRecord method will throw an error)
 	 * @return string Username of the user that made the last article revision
 	 */
-	public function getUserText( $audience = RevisionRecord::FOR_PUBLIC, Authority $performer = null ) {
+	public function getUserText( $audience = RevisionRecord::FOR_PUBLIC, ?Authority $performer = null ) {
 		$this->loadLastEdit();
 		if ( $this->mLastRevision ) {
 			$revUser = $this->mLastRevision->getUser( $audience, $performer );
@@ -857,7 +868,7 @@ class WikiPage implements Page, PageRecord {
 	 * @return string|null Comment stored for the last article revision, or null if the specified
 	 *  audience does not have access to the comment.
 	 */
-	public function getComment( $audience = RevisionRecord::FOR_PUBLIC, Authority $performer = null ) {
+	public function getComment( $audience = RevisionRecord::FOR_PUBLIC, ?Authority $performer = null ) {
 		$this->loadLastEdit();
 		if ( $this->mLastRevision ) {
 			$revComment = $this->mLastRevision->getComment( $audience, $performer );
@@ -955,124 +966,20 @@ class WikiPage implements Page, PageRecord {
 	 * @return Title|null Title object, or null if this page is not a redirect
 	 */
 	public function getRedirectTarget() {
-		if ( $this->mRedirectTarget !== null ) {
-			return $this->mRedirectTarget;
-		}
-		if ( !$this->mDataLoaded ) {
-			$this->loadPageData();
-		}
-		if ( !$this->mPageIsRedirectField ) {
-			return null;
-		}
-
-		// Query the redirect table
-		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
-		$row = $dbr->newSelectQueryBuilder()
-			->select( [ 'rd_namespace', 'rd_title', 'rd_fragment', 'rd_interwiki' ] )
-			->from( 'redirect' )
-			->where( [ 'rd_from' => $this->getId() ] )
-			->caller( __METHOD__ )->fetchRow();
-
-		if ( !$row ) {
-			LoggerFactory::getInstance( 'wikipage' )->info(
-				'WikiPage found inconsistent redirect status; probably the page was deleted after it was loaded'
-			);
-			return null;
-		}
-
-		$this->mRedirectTarget = self::createRedirectTarget(
-			$row->rd_namespace, $row->rd_title,
-			$row->rd_fragment, $row->rd_interwiki
-		);
-		return $this->mRedirectTarget;
-	}
-
-	/**
-	 * Truncate link fragment to maximum storable value
-	 *
-	 * @param string $fragment The link fragment (after the "#")
-	 * @return string
-	 */
-	private static function truncateFragment( $fragment ) {
-		return mb_strcut( $fragment, 0, 255 );
-	}
-
-	/**
-	 * Create a Title object appropriate for WikiPage::$mRedirectTarget
-	 *
-	 * @param int $namespace The namespace of the article
-	 * @param string $title Database key form
-	 * @param string $fragment The link fragment (after the "#")
-	 * @param string $interwiki Interwiki prefix
-	 * @return Title|null Title object, or null if this is not a valid redirect
-	 */
-	private static function createRedirectTarget( $namespace, $title, $fragment, $interwiki ): ?Title {
-		// (T203942) We can't redirect to Media namespace because it's virtual.
-		// We don't want to modify Title objects farther down the
-		// line. So, let's fix this here by changing to File namespace.
-		if ( $namespace == NS_MEDIA ) {
-			$namespace = NS_FILE;
-		}
-
-		// mimic behaviour of self::insertRedirectEntry for fragments that didn't
-		// come from the redirect table
-		$fragment = self::truncateFragment( $fragment );
-
-		// T261347: be defensive when fetching data from the redirect table.
-		// Use Title::makeTitleSafe(), and if that returns null, ignore the
-		// row. In an ideal world, the DB would be cleaned up after a
-		// namespace change, but nobody could be bothered to do that.
-		$title = Title::makeTitleSafe( $namespace, $title, $fragment, $interwiki );
-		if ( $title !== null && $title->isValidRedirectTarget() ) {
-			return $title;
-		}
-		return null;
+		$target = MediaWikiServices::getInstance()->getRedirectLookup()->getRedirectTarget( $this );
+		return Title::castFromLinkTarget( $target );
 	}
 
 	/**
 	 * Insert or update the redirect table entry for this page to indicate it redirects to $rt
+	 * @deprecated since 1.43; use {@link RedirectStore::updateRedirectTarget()} instead.
 	 * @param LinkTarget $rt Redirect target
 	 * @param int|null $oldLatest Prior page_latest for check and set
 	 * @return bool Success
 	 */
 	public function insertRedirectEntry( LinkTarget $rt, $oldLatest = null ) {
-		$rt = Title::newFromLinkTarget( $rt );
-		if ( !$rt->isValidRedirectTarget() ) {
-			// Don't put a bad redirect into the database (T278367)
-			return false;
-		}
-
-		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
-		$dbw->startAtomic( __METHOD__ );
-
-		if ( !$oldLatest || $oldLatest == $this->lockAndGetLatest() ) {
-			$truncatedFragment = self::truncateFragment( $rt->getFragment() );
-			$dbw->newInsertQueryBuilder()
-				->insertInto( 'redirect' )
-				->row( [
-					'rd_from' => $this->getId(),
-					'rd_namespace' => $rt->getNamespace(),
-					'rd_title' => $rt->getDBkey(),
-					'rd_fragment' => $truncatedFragment,
-					'rd_interwiki' => $rt->getInterwiki(),
-				] )
-				->onDuplicateKeyUpdate()
-				->uniqueIndexFields( [ 'rd_from' ] )
-				->set( [
-					'rd_namespace' => $rt->getNamespace(),
-					'rd_title' => $rt->getDBkey(),
-					'rd_fragment' => $truncatedFragment,
-					'rd_interwiki' => $rt->getInterwiki(),
-				] )
-				->caller( __METHOD__ )->execute();
-			$success = true;
-		} else {
-			$success = false;
-		}
-
-		$dbw->endAtomic( __METHOD__ );
-
-		return $success;
+		return MediaWikiServices::getInstance()->getRedirectStore()
+			->updateRedirectTarget( $this, $rt );
 	}
 
 	/**
@@ -1135,44 +1042,38 @@ class WikiPage implements Page, PageRecord {
 	public function getContributors() {
 		// @todo: This is expensive; cache this info somewhere.
 
-		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
+		$services = MediaWikiServices::getInstance();
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
+		$actorNormalization = $services->getActorNormalization();
+		$userIdentityLookup = $services->getUserIdentityLookup();
 
-		$actorMigration = ActorMigration::newMigration();
-		$actorQuery = $actorMigration->getJoin( 'rev_user' );
-
-		$tables = array_merge( [ 'revision' ], $actorQuery['tables'], [ 'user' ] );
-
-		$revactor_actor = $actorQuery['fields']['rev_actor'];
-		$fields = [
-			'user_id' => $actorQuery['fields']['rev_user'],
-			'user_name' => $actorQuery['fields']['rev_user_text'],
-			'actor_id' => "MIN($revactor_actor)",
-			'user_real_name' => 'MIN(user_real_name)',
-			'timestamp' => 'MAX(rev_timestamp)',
-		];
-
-		$conds = [ 'rev_page' => $this->getId() ];
-
-		// The user who made the top revision gets credited as "this page was last edited by
-		// John, based on contributions by Tom, Dick and Harry", so don't include them twice.
 		$user = $this->getUser()
 			? User::newFromId( $this->getUser() )
 			: User::newFromName( $this->getUserText(), false );
-		$conds[] = 'NOT(' . $actorMigration->getWhere( $dbr, 'rev_user', $user )['conds'] . ')';
 
-		// Username hidden?
-		$conds[] = "{$dbr->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER )} = 0";
-
-		$jconds = [
-			'user' => [ 'LEFT JOIN', $actorQuery['fields']['rev_user'] . ' = user_id' ],
-		] + $actorQuery['joins'];
-
-		$options = [
-			'GROUP BY' => [ $fields['user_id'], $fields['user_name'] ],
-			'ORDER BY' => 'timestamp DESC',
-		];
-
-		$res = $dbr->select( $tables, $fields, $conds, __METHOD__, $options, $jconds );
+		$res = $dbr->newSelectQueryBuilder()
+			->select( [
+				'user_id' => 'actor_user',
+				'user_name' => 'actor_name',
+				'actor_id' => 'MIN(rev_actor)',
+				'user_real_name' => 'MIN(user_real_name)',
+				'timestamp' => 'MAX(rev_timestamp)',
+			] )
+			->from( 'revision' )
+			->join( 'actor', null, 'rev_actor = actor_id' )
+			->leftJoin( 'user', null, 'actor_user = user_id' )
+			->where( [
+				'rev_page' => $this->getId(),
+				// The user who made the top revision gets credited as "this page was last edited by
+				// John, based on contributions by Tom, Dick and Harry", so don't include them twice.
+				$dbr->expr( 'rev_actor', '!=', $actorNormalization->findActorId( $user, $dbr ) ),
+				// Username hidden?
+				$dbr->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) . ' = 0',
+			] )
+			->groupBy( [ 'actor_user', 'actor_name' ] )
+			->orderBy( 'timestamp', SelectQueryBuilder::SORT_DESC )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		return new UserArrayFromResult( $res );
 	}
 
@@ -1240,7 +1141,7 @@ class WikiPage implements Page, PageRecord {
 	public function doViewUpdates(
 		Authority $performer,
 		$oldid = 0,
-		RevisionRecord $oldRev = null
+		?RevisionRecord $oldRev = null
 	) {
 		if ( MediaWikiServices::getInstance()->getReadOnlyMode()->isReadOnly() ) {
 			return;
@@ -1414,10 +1315,9 @@ class WikiPage implements Page, PageRecord {
 			}
 
 			$this->mTitle->loadFromRow( $insertedRow );
-			$this->updateRedirectOn( $dbw, $rt, $lastRevIsRedirect );
+			MediaWikiServices::getInstance()->getRedirectStore()
+				->updateRedirectTarget( $this, $rt, $lastRevIsRedirect );
 			$this->setLastEdit( $revision );
-			$this->mRedirectTarget = $rt == null ? null : self::createRedirectTarget(
-				$rt->getNamespace(), $rt->getDBkey(), $rt->getFragment(), $rt->getInterwiki() );
 			$this->mPageIsRedirectField = (bool)$rt;
 			$this->mIsNew = $isNew;
 
@@ -1433,51 +1333,12 @@ class WikiPage implements Page, PageRecord {
 	}
 
 	/**
-	 * Add row to the redirect table if this is a redirect, remove otherwise.
-	 *
-	 * @param IDatabase $dbw
-	 * @param Title|null $redirectTitle Title object pointing to the redirect target,
-	 *   or NULL if this is not a redirect
-	 * @param null|bool $lastRevIsRedirect If given, will optimize adding and
-	 *   removing rows in redirect table.
-	 * @return bool True on success, false on failure
-	 */
-	private function updateRedirectOn( $dbw, $redirectTitle, $lastRevIsRedirect = null ) {
-		// Always update redirects (target link might have changed)
-		// Update/Insert if we don't know if the last revision was a redirect or not
-		// Delete if changing from redirect to non-redirect
-		$isRedirect = $redirectTitle !== null;
-
-		if ( !$isRedirect && $lastRevIsRedirect === false ) {
-			return true;
-		}
-
-		if ( $isRedirect ) {
-			$success = $this->insertRedirectEntry( $redirectTitle );
-		} else {
-			// This is not a redirect, remove row from redirect table
-			$dbw->newDeleteQueryBuilder()
-				->deleteFrom( 'redirect' )
-				->where( [ 'rd_from' => $this->getId() ] )
-				->caller( __METHOD__ )->execute();
-			$success = true;
-		}
-
-		if ( $this->getTitle()->getNamespace() === NS_FILE ) {
-			MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo()
-				->invalidateImageRedirect( $this->getTitle() );
-		}
-
-		return $success;
-	}
-
-	/**
 	 * Helper method for checking whether two revisions have differences that go
 	 * beyond the main slot.
 	 *
 	 * MCR migration note: this method should go away!
 	 *
-	 * @deprecated Use only as a stop-gap before refactoring to support MCR.
+	 * @deprecated since 1.43; Use only as a stop-gap before refactoring to support MCR.
 	 *
 	 * @param RevisionRecord $a
 	 * @param RevisionRecord $b
@@ -1642,9 +1503,9 @@ class WikiPage implements Page, PageRecord {
 	 * @return DerivedPageDataUpdater
 	 */
 	private function getDerivedDataUpdater(
-		UserIdentity $forUser = null,
-		RevisionRecord $forRevision = null,
-		RevisionSlotsUpdate $forUpdate = null,
+		?UserIdentity $forUser = null,
+		?RevisionRecord $forRevision = null,
+		?RevisionSlotsUpdate $forUpdate = null,
 		$forEdit = false
 	) {
 		if ( !$forRevision && !$forUpdate ) {
@@ -1703,7 +1564,7 @@ class WikiPage implements Page, PageRecord {
 	 *
 	 * @return PageUpdater
 	 */
-	public function newPageUpdater( $performer, RevisionSlotsUpdate $forUpdate = null ) {
+	public function newPageUpdater( $performer, ?RevisionSlotsUpdate $forUpdate = null ) {
 		if ( $performer instanceof Authority ) {
 			// TODO: Deprecate this. But better get rid of this method entirely.
 			$performer = $performer->getUser();
@@ -2096,7 +1957,7 @@ class WikiPage implements Page, PageRecord {
 		$protect = false;
 		$changed = false;
 
-		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
+		$dbw = $services->getConnectionProvider()->getPrimaryDatabase();
 
 		foreach ( $restrictionTypes as $action ) {
 			if ( !isset( $expiry[$action] ) || $expiry[$action] === $dbw->getInfinity() ) {
@@ -2282,7 +2143,8 @@ class WikiPage implements Page, PageRecord {
 			}
 		}
 
-		$this->mTitle->flushRestrictions();
+		$services->getRestrictionStore()->flushRestrictions( $this->mTitle );
+
 		InfoAction::invalidateCache( $this->mTitle );
 
 		if ( $logAction == 'unprotect' ) {
@@ -2578,52 +2440,6 @@ class WikiPage implements Page, PageRecord {
 	}
 
 	/**
-	 * Back-end article deletion
-	 *
-	 * Only invokes batching via the job queue if necessary per $wgDeleteRevisionsBatchSize.
-	 * Deletions can often be completed inline without involving the job queue.
-	 *
-	 * Potentially called many times per deletion operation for pages with many revisions.
-	 * @deprecated since 1.37 No external caller besides DeletePageJob should use this.
-	 *
-	 * @param string $reason
-	 * @param bool $suppress
-	 * @param UserIdentity $deleter
-	 * @param string[] $tags
-	 * @param string $logsubtype
-	 * @param bool $immediate
-	 * @param string|null $webRequestId
-	 * @return Status
-	 */
-	public function doDeleteArticleBatched(
-		$reason, $suppress, UserIdentity $deleter, $tags,
-		$logsubtype, $immediate = false, $webRequestId = null
-	) {
-		wfDeprecated( __METHOD__, '1.37' );
-		$services = MediaWikiServices::getInstance();
-		$deletePage = $services->getDeletePageFactory()->newDeletePage(
-			$this,
-			$services->getUserFactory()->newFromUserIdentity( $deleter )
-		);
-
-		$status = $deletePage
-			->setSuppress( $suppress )
-			->setTags( $tags )
-			->setLogSubtype( $logsubtype )
-			->forceImmediate( $immediate )
-			->deleteInternal( $this, DeletePage::PAGE_BASE, $reason, $webRequestId );
-		if ( $status->isGood() ) {
-			// BC with old return format
-			if ( $deletePage->deletionsWereScheduled()[DeletePage::PAGE_BASE] ) {
-				$status->warning( 'delete-scheduled', wfEscapeWikiText( $this->getTitle()->getPrefixedText() ) );
-			} else {
-				$status->value = $deletePage->getSuccessfulDeletionsIDs()[DeletePage::PAGE_BASE];
-			}
-		}
-		return $status;
-	}
-
-	/**
 	 * Lock the page row for this title+id and return page_latest (or 0)
 	 *
 	 * @return int Returns 0 if no row was found with this title+id
@@ -2673,23 +2489,11 @@ class WikiPage implements Page, PageRecord {
 
 		$services->getLinkCache()->invalidateTitle( $title );
 
-		// Invalidate caches of articles which include this page
-		$jobs = [];
-		$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
-			$title,
-			'templatelinks',
-			[ 'causeAction' => 'create-page' ]
+		DeferredUpdates::addCallableUpdate(
+			static function () use ( $title, $maybeIsRedirect ) {
+				self::queueBacklinksJobs( $title, true, $maybeIsRedirect, 'create-page' );
+			}
 		);
-		// Images
-		if ( $maybeIsRedirect && $title->getNamespace() === NS_FILE ) {
-			// Process imagelinks when the file page was created as a redirect
-			$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
-				$title,
-				'imagelinks',
-				[ 'causeAction' => 'create-page' ]
-			);
-		}
-		$services->getJobQueueGroup()->lazyPush( $jobs );
 
 		if ( $title->getNamespace() === NS_CATEGORY ) {
 			// Load the Category object, which will schedule a job to create
@@ -2727,21 +2531,9 @@ class WikiPage implements Page, PageRecord {
 		}
 
 		// Invalidate caches of articles which include this page
-		$jobs = [];
-		$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
-			$title,
-			'templatelinks',
-			[ 'causeAction' => 'delete-page' ]
-		);
-		// Images
-		if ( $title->getNamespace() === NS_FILE ) {
-			$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
-				$title,
-				'imagelinks',
-				[ 'causeAction' => 'delete-page' ]
-			);
-		}
-		$services->getJobQueueGroup()->lazyPush( $jobs );
+		DeferredUpdates::addCallableUpdate( static function () use ( $title ) {
+			self::queueBacklinksJobs( $title, true, true, 'delete-page' );
+		} );
 
 		// User talk pages
 		if ( $title->getNamespace() === NS_USER_TALK ) {
@@ -2772,41 +2564,24 @@ class WikiPage implements Page, PageRecord {
 	 */
 	public static function onArticleEdit(
 		Title $title,
-		RevisionRecord $revRecord = null,
+		?RevisionRecord $revRecord = null,
 		$slotsChanged = null,
 		$maybeRedirectChanged = true
 	) {
 		// TODO: move this into a PageEventEmitter service
 
-		$jobs = [];
-		if ( $slotsChanged === null || in_array( SlotRecord::MAIN, $slotsChanged ) ) {
-			// Invalidate caches of articles which include this page.
-			// Only for the main slot, because only the main slot is transcluded.
-			// TODO: MCR: not true for TemplateStyles! [SlotHandler]
-			$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
-				$title,
-				'templatelinks',
-				[ 'causeAction' => 'edit-page' ]
-			);
-		}
-		// Images
-		if ( $maybeRedirectChanged && $title->getNamespace() === NS_FILE ) {
-			// Process imagelinks in case the redirect target has changed
-			$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
-				$title,
-				'imagelinks',
-				[ 'causeAction' => 'edit-page' ]
-			);
-		}
-		// Invalidate the caches of all pages which redirect here
-		$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
-			$title,
-			'redirect',
-			[ 'causeAction' => 'edit-page' ]
+		DeferredUpdates::addCallableUpdate(
+			static function () use ( $title, $slotsChanged, $maybeRedirectChanged ) {
+				self::queueBacklinksJobs(
+					$title,
+					$slotsChanged === null || in_array( SlotRecord::MAIN, $slotsChanged ),
+					$maybeRedirectChanged,
+					'edit-page'
+				);
+			}
 		);
-		$services = MediaWikiServices::getInstance();
-		$services->getJobQueueGroup()->lazyPush( $jobs );
 
+		$services = MediaWikiServices::getInstance();
 		$services->getLinkCache()->invalidateTitle( $title );
 
 		$hcu = MediaWikiServices::getInstance()->getHtmlCacheUpdater();
@@ -2820,6 +2595,49 @@ class WikiPage implements Page, PageRecord {
 
 		// Purge cross-wiki cache entities referencing this page
 		self::purgeInterwikiCheckKey( $title );
+	}
+
+	private static function queueBacklinksJobs(
+		Title $title, $mainSlotChanged, $maybeRedirectChanged, $causeAction
+	) {
+		$services = MediaWikiServices::getInstance();
+		$backlinkCache = $services->getBacklinkCacheFactory()->getBacklinkCache( $title );
+
+		$jobs = [];
+		if ( $mainSlotChanged
+			&& $backlinkCache->hasLinks( 'templatelinks' )
+		) {
+			// Invalidate caches of articles which include this page.
+			// Only for the main slot, because only the main slot is transcluded.
+			// TODO: MCR: not true for TemplateStyles! [SlotHandler]
+			$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
+				$title,
+				'templatelinks',
+				[ 'causeAction' => $causeAction ]
+			);
+		}
+		// Images
+		if ( $maybeRedirectChanged && $title->getNamespace() === NS_FILE
+			&& $backlinkCache->hasLinks( 'imagelinks' )
+		) {
+			// Process imagelinks in case the redirect target has changed
+			$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
+				$title,
+				'imagelinks',
+				[ 'causeAction' => $causeAction ]
+			);
+		}
+		// Invalidate the caches of all pages which redirect here
+		if ( $backlinkCache->hasLinks( 'redirect' ) ) {
+			$jobs[] = HTMLCacheUpdateJob::newForBacklinks(
+				$title,
+				'redirect',
+				[ 'causeAction' => $causeAction ]
+			);
+		}
+		if ( $jobs ) {
+			$services->getJobQueueGroup()->push( $jobs );
+		}
 	}
 
 	/**
@@ -2863,7 +2681,7 @@ class WikiPage implements Page, PageRecord {
 			return $services->getTitleFactory()->newTitleArrayFromResult( new FakeResultWrapper( [] ) );
 		}
 
-		$dbr = $services->getDBLoadBalancer()->getMaintenanceConnectionRef( DB_REPLICA );
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
 		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_title' => 'cl_to', 'page_namespace' => (string)NS_CATEGORY ] )
 			->from( 'categorylinks' )
@@ -2896,10 +2714,8 @@ class WikiPage implements Page, PageRecord {
 			->where( [ 'cl_from' => $id, 'pp_propname' => 'hiddencat', 'page_namespace' => NS_CATEGORY ] )
 			->caller( __METHOD__ )->fetchResultSet();
 
-		if ( $res !== false ) {
-			foreach ( $res as $row ) {
-				$result[] = Title::makeTitle( NS_CATEGORY, $row->cl_to );
-			}
+		foreach ( $res as $row ) {
+			$result[] = Title::makeTitle( NS_CATEGORY, $row->cl_to );
 		}
 
 		return $result;
@@ -2938,11 +2754,11 @@ class WikiPage implements Page, PageRecord {
 		$type = MediaWikiServices::getInstance()->getNamespaceInfo()->
 			getCategoryLinkType( $this->getTitle()->getNamespace() );
 
-		$addFields = [ 'cat_pages = cat_pages + 1' ];
-		$removeFields = [ 'cat_pages = cat_pages - 1' ];
+		$addFields = [ 'cat_pages' => new RawSQLValue( 'cat_pages + 1' ) ];
+		$removeFields = [ 'cat_pages' => new RawSQLValue( 'cat_pages - 1' ) ];
 		if ( $type !== 'page' ) {
-			$addFields[] = "cat_{$type}s = cat_{$type}s + 1";
-			$removeFields[] = "cat_{$type}s = cat_{$type}s - 1";
+			$addFields["cat_{$type}s"] = new RawSQLValue( "cat_{$type}s + 1" );
+			$removeFields["cat_{$type}s"] = new RawSQLValue( "cat_{$type}s - 1" );
 		}
 
 		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
@@ -3053,7 +2869,7 @@ class WikiPage implements Page, PageRecord {
 			// queue a high-priority LinksUpdate job, to ensure that we really protect all
 			// content that is currently transcluded onto the page. This is important, because
 			// wikitext supports conditional statements based on the current time, which enables
-			// transcluding of a different sub page based on which day it is, and then show that
+			// transcluding of a different subpage based on which day it is, and then show that
 			// information on the Main Page, without the Main Page itself being edited.
 			MediaWikiServices::getInstance()->getJobQueueGroup()->lazyPush(
 				RefreshLinksJob::newPrioritized( $this->mTitle, $params )
@@ -3070,7 +2886,8 @@ class WikiPage implements Page, PageRecord {
 			if ( $this->getLinksTimestamp() > $this->getTouched() ) {
 				// If a page is uncacheable, do not keep spamming a job for it.
 				// Although it would be de-duplicated, it would still waste I/O.
-				$cache = ObjectCache::getLocalClusterInstance();
+				$services = MediaWikiServices::getInstance()->getObjectCacheFactory();
+				$cache = $services->getLocalClusterInstance();
 				$key = $cache->makeKey( 'dynamic-linksupdate', 'last', $this->getId() );
 				$ttl = max( $parserOutput->getCacheExpiry(), 3600 );
 				if ( $cache->add( $key, time(), $ttl ) ) {

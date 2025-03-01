@@ -22,11 +22,17 @@
  */
 
 class Cookie {
+	/** @var string */
 	protected $name;
+	/** @var string */
 	protected $value;
+	/** @var int|false */
 	protected $expires;
+	/** @var string|null */
 	protected $path;
+	/** @var string|null */
 	protected $domain;
+	/** @var bool */
 	protected $isSessionKey = true;
 	// TO IMPLEMENT  protected $secure
 	// TO IMPLEMENT? protected $maxAge (add onto expires)
@@ -48,7 +54,6 @@ class Cookie {
 	 *        expires A date string
 	 *        path    The path this cookie is used on
 	 *        domain  Domain this cookie is used on
-	 * @throws InvalidArgumentException
 	 */
 	public function set( $value, $attr ) {
 		$this->value = $value;

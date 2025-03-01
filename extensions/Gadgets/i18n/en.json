@@ -40,7 +40,7 @@
 	"gadgets-export-download": "Download",
 	"gadgets-requires-es6": "This gadget is only supported on ES6-compliant browsers",
 	"gadgets-validate-notset": "The property <code>$1</code> is not set.",
-	"gadgets-validate-wrongtype": "The property <code>$1</code> must be <code>$2</code> instead of <code>$3</code>.",
+	"gadgets-validate-wrongtype": "The property <code>$1</code> must be of type <code>$2</code>.",
 	"gadgets-validate-json": "JSON files are specified but not used. They are only valid in packaged gadgets.",
 	"gadgets-validate-es6default": "Gadgets requiring ES6 cannot be enabled by default.",
 	"gadgets-validate-noentrypoint": "Package flag ignored as no script files are specified.",

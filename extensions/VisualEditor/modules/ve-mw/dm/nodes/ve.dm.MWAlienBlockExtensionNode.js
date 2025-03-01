@@ -11,7 +11,7 @@
  * @class
  * @abstract
  * @extends ve.dm.MWBlockExtensionNode
- * @mixins ve.dm.MWAlienExtensionNode
+ * @mixes ve.dm.MWAlienExtensionNode
  *
  * @constructor
  * @param {Object} [element] Reference to element in linear model

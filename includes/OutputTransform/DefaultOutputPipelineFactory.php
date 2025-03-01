@@ -2,9 +2,9 @@
 
 namespace MediaWiki\OutputTransform;
 
-use Language;
-use MediaWiki\HookContainer\HookContainer;
-use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\MainConfigNames;
 use MediaWiki\OutputTransform\Stages\AddRedirectHeader;
 use MediaWiki\OutputTransform\Stages\AddWrapperDivClass;
 use MediaWiki\OutputTransform\Stages\DeduplicateStyles;
@@ -15,10 +15,10 @@ use MediaWiki\OutputTransform\Stages\HandleParsoidSectionLinks;
 use MediaWiki\OutputTransform\Stages\HandleSectionLinks;
 use MediaWiki\OutputTransform\Stages\HandleTOCMarkers;
 use MediaWiki\OutputTransform\Stages\HydrateHeaderPlaceholders;
+use MediaWiki\OutputTransform\Stages\ParsoidLocalization;
 use MediaWiki\OutputTransform\Stages\RenderDebugInfo;
-use MediaWiki\Tidy\TidyDriverBase;
-use MediaWiki\Title\TitleFactory;
 use Psr\Log\LoggerInterface;
+use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
  * This class contains the default output transformation pipeline factory for wikitext. It is a postprocessor for
@@ -27,27 +27,90 @@ use Psr\Log\LoggerInterface;
  */
 class DefaultOutputPipelineFactory {
 
-	private HookContainer $hookContainer;
+	private ServiceOptions $options;
+	private Config $config;
 	private LoggerInterface $logger;
-	private TidyDriverBase $tidy;
-	private LanguageFactory $langFactory;
-	private Language $contentLang;
-	private TitleFactory $titleFactory;
+	private ObjectFactory $objectFactory;
+
+	public const CONSTRUCTOR_OPTIONS = [
+		MainConfigNames::OutputPipelineStages,
+	];
+
+	private const CORE_LIST = [
+		'ExtractBody' => [
+			'class' => ExtractBody::class,
+			'services' => [
+				'UrlUtils',
+			],
+			'optional_services' => [
+				'MobileFrontend.Context',
+			],
+		],
+		'AddRedirectHeader' => [
+			'class' => AddRedirectHeader::class,
+		],
+		'RenderDebugInfo' => [
+			'class' => RenderDebugInfo::class,
+			'services' => [
+				'HookContainer',
+			],
+		],
+		'ParsoidLocalization' => [
+			'class' => ParsoidLocalization::class,
+		],
+		'ExecutePostCacheTransformHooks' => [
+			'class' => ExecutePostCacheTransformHooks::class,
+			'services' => [
+				'HookContainer',
+			],
+		],
+		'AddWrapperDivClass' => [
+			'class' => AddWrapperDivClass::class,
+			'services' => [
+				'LanguageFactory',
+				'ContentLanguage',
+			],
+		],
+		'HandleSectionLinks' => [
+			'class' => HandleSectionLinks::class,
+			'services' => [
+				'TitleFactory',
+			],
+		],
+		'HandleParsoidSectionLinks' => [
+			'class' => HandleParsoidSectionLinks::class,
+			'services' => [
+				'TitleFactory',
+			],
+		],
+		'HandleTOCMarkers' => [
+			'class' => HandleTOCMarkers::class,
+			'services' => [
+				'Tidy',
+			],
+		],
+		'DeduplicateStyles' => [
+			'class' => DeduplicateStyles::class,
+		],
+		'ExpandToAbsoluteUrls' => [
+			'class' => ExpandToAbsoluteUrls::class,
+		],
+		'HydrateHeaderPlaceholders' => [
+			'class' => HydrateHeaderPlaceholders::class,
+		],
+	];
 
 	public function __construct(
-		HookContainer $hookContainer,
-		TidyDriverBase $tidy,
-		LanguageFactory $langFactory,
-		Language $contentLang,
+		ServiceOptions $options,
+		Config $config,
 		LoggerInterface $logger,
-		TitleFactory $titleFactory
+		ObjectFactory $objectFactory
 	) {
-		$this->hookContainer = $hookContainer;
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+		$this->options = $options;
+		$this->config = $config;
 		$this->logger = $logger;
-		$this->langFactory = $langFactory;
-		$this->contentLang = $contentLang;
-		$this->tidy = $tidy;
-		$this->titleFactory = $titleFactory;
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -57,17 +120,27 @@ class DefaultOutputPipelineFactory {
 	 * @return OutputTransformPipeline
 	 */
 	public function buildPipeline(): OutputTransformPipeline {
-		return ( new OutputTransformPipeline() )
-			->addStage( new ExtractBody() )
-			->addStage( new AddRedirectHeader() )
-			->addStage( new RenderDebugInfo( $this->hookContainer ) )
-			->addStage( new ExecutePostCacheTransformHooks( $this->hookContainer ) )
-			->addStage( new AddWrapperDivClass( $this->langFactory, $this->contentLang ) )
-			->addStage( new HandleSectionLinks( $this->titleFactory ) )
-			->addStage( new HandleParsoidSectionLinks( $this->logger, $this->titleFactory ) )
-			->addStage( new HandleTOCMarkers( $this->tidy ) )
-			->addStage( new DeduplicateStyles() )
-			->addStage( new ExpandToAbsoluteUrls() )
-			->addStage( new HydrateHeaderPlaceholders() );
+		// Add extension stages
+		$list = array_merge(
+			self::CORE_LIST,
+			$this->options->get( MainConfigNames::OutputPipelineStages )
+		);
+
+		$otp = new OutputTransformPipeline();
+		foreach ( $list as $spec ) {
+			$class = $spec['class'];
+			$svcOptions = new ServiceOptions(
+				$class::CONSTRUCTOR_OPTIONS, $this->config
+			);
+			$transform = $this->objectFactory->createObject(
+				$spec,
+				[
+					'assertClass' => OutputTransformStage::class,
+					'extraArgs' => [ $svcOptions, $this->logger ],
+				]
+			);
+			$otp->addStage( $transform );
+		}
+		return $otp;
 	}
 }

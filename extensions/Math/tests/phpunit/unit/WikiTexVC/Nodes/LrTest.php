@@ -56,4 +56,17 @@ class LrTest extends MediaWikiUnitTestCase {
 			'Should extract identifiers' );
 	}
 
+	public function testRenderA() {
+		$n = new Lr( '(', ')', new TexArray( new Literal( 'A' ) ) );
+		$mml = $n->renderMML();
+		$this->assertStringContainsString( 'A</mi>', $mml );
+		$this->assertStringContainsString( ')</mo>', $mml );
+	}
+
+	public function testRenderADeriv() {
+		$n = new Lr( '(', ')', new TexArray( new Literal( 'A' ) ) );
+		$mml = $n->renderMML( [], [ 'deriv' => 1 ] );
+		$this->assertStringNotContainsString( '&#x2032;</mo>', $mml );
+	}
+
 }

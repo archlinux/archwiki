@@ -2,11 +2,9 @@
 
 namespace Wikimedia\Tests\Stats;
 
-use IBufferingStatsdDataFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use Wikimedia\Stats\Emitters\NullEmitter;
-use Wikimedia\Stats\Exceptions\IllegalOperationException;
+use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\Stats\Metrics\BaseMetric;
 use Wikimedia\Stats\Metrics\CounterMetric;
 use Wikimedia\Stats\Metrics\NullMetric;
@@ -72,42 +70,43 @@ class MetricTest extends TestCase {
 	];
 
 	public const RESULTS = [
-		'statsd.counter.basic' => [ 'mediawiki.testComponent.test_unit.test_wiki:2|c' ],
-		'statsd.counter.invalidLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne:2|c' ],
-		'statsd.counter.oneLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne:2|c' ],
-		'statsd.counter.multiLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne.labelTwo:2|c' ],
+		'statsd.counter.basic' => [ 'mediawiki.testComponent.test_unit:2|c' ],
+		'statsd.counter.invalidLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|c' ],
+		'statsd.counter.oneLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|c' ],
+		'statsd.counter.multiLabel' => [ 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|c' ],
 		'statsd.counter.noComponent' => [ 'mediawiki.test_unit:2|c' ],
-		'statsd.gauge.basic' => [ 'mediawiki.testComponent.test_unit.test_wiki:2|g' ],
-		'statsd.gauge.invalidLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne:2|g' ],
-		'statsd.gauge.oneLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne:2|g' ],
-		'statsd.gauge.multiLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne.labelTwo:2|g' ],
+		'statsd.gauge.basic' => [ 'mediawiki.testComponent.test_unit:2|g' ],
+		'statsd.gauge.invalidLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|g' ],
+		'statsd.gauge.oneLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|g' ],
+		'statsd.gauge.multiLabel' => [ 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|g' ],
 		'statsd.gauge.noComponent' => [ 'mediawiki.test_unit:2|g' ],
-		'statsd.timing.basic' => [ 'mediawiki.testComponent.test_unit.test_wiki:2|ms' ],
-		'statsd.timing.invalidLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne:2|ms' ],
-		'statsd.timing.oneLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne:2|ms' ],
-		'statsd.timing.multiLabel' => [ 'mediawiki.testComponent.test_unit.test_wiki.labelOne.labelTwo:2|ms' ],
+		'statsd.timing.basic' => [ 'mediawiki.testComponent.test_unit:2|ms' ],
+		'statsd.timing.invalidLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|ms' ],
+		'statsd.timing.oneLabel' => [ 'mediawiki.testComponent.test_unit.labelOne:2|ms' ],
+		'statsd.timing.multiLabel' => [ 'mediawiki.testComponent.test_unit.labelOne.labelTwo:2|ms' ],
 		'statsd.timing.noComponent' => [ 'mediawiki.test_unit:2|ms' ],
 
-		'dogstatsd.counter.basic' => [ 'mediawiki.testComponent.test_unit:2|c|#wiki:test_wiki' ],
-		'dogstatsd.counter.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|c|#wiki:test_wiki,x:labelOne' ],
-		'dogstatsd.counter.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|c|#wiki:test_wiki,x:labelOne' ],
+		'dogstatsd.counter.basic' => [ 'mediawiki.testComponent.test_unit:2|c' ],
+		'dogstatsd.counter.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|c|#x:labelOne' ],
+		'dogstatsd.counter.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|c|#x:labelOne' ],
 		'dogstatsd.counter.multiLabel' => [
-			'mediawiki.testComponent.test_unit:2|c|#wiki:test_wiki,x:labelOne,y:labelTwo' ],
+			'mediawiki.testComponent.test_unit:2|c|#x:labelOne,y:labelTwo' ],
 		'dogstatsd.counter.noComponent' => [ 'mediawiki.test_unit:2|c' ],
-		'dogstatsd.gauge.basic' => [ 'mediawiki.testComponent.test_unit:2|g|#wiki:test_wiki' ],
-		'dogstatsd.gauge.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|g|#wiki:test_wiki,x:labelOne' ],
-		'dogstatsd.gauge.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|g|#wiki:test_wiki,x:labelOne' ],
+		'dogstatsd.gauge.basic' => [ 'mediawiki.testComponent.test_unit:2|g' ],
+		'dogstatsd.gauge.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|g|#x:labelOne' ],
+		'dogstatsd.gauge.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|g|#x:labelOne' ],
 		'dogstatsd.gauge.multiLabel' => [
-			'mediawiki.testComponent.test_unit:2|g|#wiki:test_wiki,x:labelOne,y:labelTwo' ],
+			'mediawiki.testComponent.test_unit:2|g|#x:labelOne,y:labelTwo' ],
 		'dogstatsd.gauge.noComponent' => [ 'mediawiki.test_unit:2|g' ],
-		'dogstatsd.timing.basic' => [ 'mediawiki.testComponent.test_unit:2|ms|#wiki:test_wiki' ],
-		'dogstatsd.timing.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|ms|#wiki:test_wiki,x:labelOne' ],
-		'dogstatsd.timing.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|ms|#wiki:test_wiki,x:labelOne' ],
+		'dogstatsd.timing.basic' => [ 'mediawiki.testComponent.test_unit:2|ms' ],
+		'dogstatsd.timing.invalidLabel' => [ 'mediawiki.testComponent.test_unit:2|ms|#x:labelOne' ],
+		'dogstatsd.timing.oneLabel' => [ 'mediawiki.testComponent.test_unit:2|ms|#x:labelOne' ],
 		'dogstatsd.timing.multiLabel' => [
-			'mediawiki.testComponent.test_unit:2|ms|#wiki:test_wiki,x:labelOne,y:labelTwo' ],
+			'mediawiki.testComponent.test_unit:2|ms|#x:labelOne,y:labelTwo' ],
 		'dogstatsd.timing.noComponent' => [ 'mediawiki.test_unit:2|ms' ],
 	];
 
+	/** @var StatsCache */
 	private $cache;
 
 	public function handleTest( $test, $type, $format ) {
@@ -120,28 +119,21 @@ class MetricTest extends TestCase {
 		$statsFactory = new StatsFactory( $this->cache, $emitter, new NullLogger );
 		if ( $config['config']['component'] !== null ) {
 			$statsFactory = $statsFactory->withComponent( $config['config']['component'] );
-			$statsFactory->addStaticLabel( 'wiki', 'test_wiki' );
 		}
 		switch ( $type ) {
 			case 'counter':
 				$metric = $statsFactory->getCounter( $config['config']['name'] );
-				foreach ( $config['labels'] as $key => $value ) {
-					$metric->setLabel( $key, $value );
-				}
+				$metric->setLabels( $config['labels'] );
 				$metric->incrementBy( $config['value'] );
 				break;
 			case 'gauge':
 				$metric = $statsFactory->getGauge( $config['config']['name'] );
-				foreach ( $config['labels'] as $key => $value ) {
-					$metric->setLabel( $key, $value );
-				}
+				$metric->setLabels( $config['labels'] );
 				$metric->set( $config['value'] );
 				break;
 			case 'timing':
 				$metric = $statsFactory->getTiming( $config['config']['name'] );
-				foreach ( $config['labels'] as $key => $value ) {
-					$metric->setLabel( $key, $value );
-				}
+				$metric->setLabels( $config['labels'] );
 				$metric->observe( $config['value'] );
 				break;
 			case 'default':
@@ -199,43 +191,6 @@ class MetricTest extends TestCase {
 			static function () use ( $m ) {
 				$m->getTiming( 'test' )->stop();
 			}
-		);
-	}
-
-	public function testErrorOnChangingStaticLabelsWithMetricsInCache() {
-		$m = StatsFactory::newNull();
-		$m->getCounter( 'testMetric' );
-		$this->expectException( IllegalOperationException::class );
-		$m->addStaticLabel( 'a', '1' );
-	}
-
-	public function testLabelCollision() {
-		$m = new StatsFactory( new StatsCache, new NullEmitter, new NullLogger, 'test' );
-		$m->addStaticLabel( 'collide', 'test' );
-		$metric = @$m->getCounter( 'testMetricCounter' )->setLabel( 'collide', 'value' );
-		$this->assertInstanceOf( NullMetric::class, $metric );
-		$metric = @$m->getGauge( 'testMetricGauge' )->setLabel( 'collide', 'value' );
-		$this->assertInstanceOf( NullMetric::class, $metric );
-		$metric = @$m->getTiming( 'testMetricTiming' )->setLabel( 'collide', 'value' );
-		$this->assertInstanceOf( NullMetric::class, $metric );
-	}
-
-	public function testStaticLabelsPrecedeWorkingLabels() {
-		$cache = new StatsCache;
-		$formatter = OutputFormats::getNewFormatter( OutputFormats::getFormatFromString( 'statsd' ) );
-		$emitter = OutputFormats::getNewEmitter( 'mediawiki', $cache, $formatter );
-		$statsFactory = new StatsFactory( $cache, $emitter, new NullLogger );
-		$statsFactory->withComponent( 'demo' )
-			->addStaticLabel( 'first', 'foo' )
-			->addStaticLabel( 'second', 'bar' )
-			->getCounter( 'testMetric_total' )
-			->setLabel( 'third', 'baz' )
-			->setLabel( 'fourth', 'qux' )
-			->increment();
-
-		$this->assertEquals(
-			'mediawiki.demo.testMetric_total.foo.bar.baz.qux:1|c',
-			TestingAccessWrapper::newFromObject( $emitter )->render()[0]
 		);
 	}
 
@@ -318,6 +273,24 @@ class MetricTest extends TestCase {
 		$this->assertEquals( [ 'test' ], $baseMetric->getStatsdNamespaces() );
 		$metric->copyToStatsdAt( [] );
 		$this->assertEquals( [], $baseMetric->getStatsdNamespaces() );
+	}
+
+	public function testStatsdDataFactoryCopyToStatsdAtWithGauge() {
+		$statsFactory = StatsFactory::newNull();
+
+		$gaugeArgs = [ 'test.gauge.1', 'test.gauge.2' ];
+		$statsdMock = $this->createMock( IBufferingStatsdDataFactory::class );
+		$statsdMock->expects( $this->exactly( 2 ) )
+			->method( 'gauge' )
+			->with( $this->callback( static function ( $key ) use ( &$gaugeArgs ) {
+				$nextKey = array_shift( $gaugeArgs );
+				return $nextKey === $key;
+			} ) );
+
+		$statsFactory = $statsFactory->withStatsdDataFactory( $statsdMock );
+		$statsFactory->getGauge( 'testMetricGauge' )
+			->copyToStatsdAt( [ 'test.gauge.1', 'test.gauge.2' ] )
+			->set( 1 );
 	}
 
 	public function testHandleInvalidStatsdNamespace() {
@@ -435,5 +408,21 @@ class MetricTest extends TestCase {
 		} finally {
 			restore_error_handler();
 		}
+	}
+
+	public function testMsConversion() {
+		$statsFactory = StatsFactory::newNull();
+		$statsFactory->getTiming( 'test_seconds' )->observeSeconds( 1 );
+		$statsFactory->getTiming( 'test_seconds' )->observeNanoseconds( 1000000 );
+		$samples = $statsFactory->getTiming( 'test_seconds' )->getSamples();
+		$this->assertEquals(
+			[ 1000, 1 ],
+			array_map(
+				static function ( $sample ) {
+					return $sample->getValue();
+				},
+				$samples
+			)
+		);
 	}
 }

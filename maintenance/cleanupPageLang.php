@@ -21,7 +21,11 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/TableCleanup.php';
+// @codeCoverageIgnoreEnd
+
+use MediaWiki\Language\LanguageCode;
 
 /**
  * Maintenance script to clean up deprecated language codes in page_lang
@@ -77,5 +81,7 @@ class CleanupPageLang extends TableCleanup {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CleanupPageLang::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

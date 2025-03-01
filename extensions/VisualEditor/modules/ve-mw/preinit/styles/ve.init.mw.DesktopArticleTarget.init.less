@@ -4,6 +4,7 @@
  * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
+@import 'mediawiki.skin.variables.less';
 
 /* stylelint-disable selector-max-id */
 
@@ -132,7 +133,7 @@
 			position: fixed;
 			top: 0;
 			z-index: 1;
-			background: #fff;
+			background: @background-color-base;
 		}
 	}
 }
@@ -145,11 +146,6 @@
 /* Section edit links */
 
 .mw-editsection {
-	/* bidi isolation: */
-	unicode-bidi: -moz-isolate;
-	unicode-bidi: -webkit-isolate;
-	unicode-bidi: isolate;
-
 	&::before {
 		content: '\200B';
 	}
@@ -157,8 +153,4 @@
 	a {
 		white-space: nowrap;
 	}
-}
-
-.mw-editsection-divider {
-	color: #54595d;
 }

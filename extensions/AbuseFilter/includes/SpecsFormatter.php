@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use Language;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
+use MediaWiki\Language\Language;
 use MediaWiki\Language\RawMessage;
-use Message;
+use MediaWiki\Message\Message;
 use MessageLocalizer;
 
 /**
@@ -147,6 +147,7 @@ class SpecsFormatter {
 			'enabled' => $filter->isEnabled(),
 			'deleted' => $filter->isDeleted(),
 			'hidden' => $filter->isHidden(),
+			'protected' => $filter->isProtected(),
 			'global' => $filter->isGlobal()
 		] );
 		$flagsDisplay = [];
@@ -155,6 +156,7 @@ class SpecsFormatter {
 			// * abusefilter-history-enabled
 			// * abusefilter-history-deleted
 			// * abusefilter-history-hidden
+			// * abusefilter-history-protected
 			// * abusefilter-history-global
 			$flagsDisplay[] = $this->messageLocalizer->msg( "abusefilter-history-$flag" )->escaped();
 		}

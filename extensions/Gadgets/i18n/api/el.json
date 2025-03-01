@@ -2,8 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Geraki",
-			"Protnet",
-			"Fotis A."
+			"Protnet"
 		]
 	},
 	"apihelp-query+gadgetcategories-summary": "Επιστρέφει λίστα με τις κατηγορίες μικροεφαρμογών.",

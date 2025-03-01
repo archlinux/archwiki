@@ -48,13 +48,6 @@ See <https://www.mediawiki.org/wiki/Manual:$wgSiteNotice>.
 ```
 Controls whether the category button should be displayed.
 
-#### $wgMinervaApplyKnownTemplateHacks
-
-* Type: `Boolean`
-* Default: `false`
-
-When enabled and hacks.less exists, hacks.less workarounds are included in stylesheet. These should only be needed for Wikimedia based wikis or wikis using common templates such as Template:Infobox on those wikis.
-
 #### $wgMinervaDonateLink
 
 * Type: `Array`
@@ -66,18 +59,6 @@ When enabled and hacks.less exists, hacks.less workarounds are included in style
 ```
 
 When enabled a donate link will be added to the main menu. The donate link uses the `sitesupport` and `sitesupport-url` mediawiki messages.
-
-#### $wgMinervaPageIssuesNewTreatment
-
-* Type: `Array`
-* Default:
-```php
-  [
-    'base' => false,
-    'beta' => true,
-  ]
-```
-Controls whether page issues should be replaced with a "Page issues" link (false) or displayed inline (true).
 
 #### $wgMinervaTalkAtTop
 
@@ -143,10 +124,6 @@ Controls whether a personal menu appears in the header chrome. This menu contain
   ]
 ```
 Controls whether the overflow link appears in the page actions menu.
-
-```
-Controls whether the share feature should be added to the page actions menu.
-
 
 #### $wgMinervaAlwaysShowLanguageButton
 

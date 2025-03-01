@@ -2,16 +2,9 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
-use MediaWiki\Config\Config;
 use MediaWiki\Extension\UserMerge\Hooks\AccountFieldsHook;
 
 class UserMergeHandler implements AccountFieldsHook {
-
-	private Config $config;
-
-	public function __construct( Config $config ) {
-		$this->config = $config;
-	}
 
 	/**
 	 * Tables that Extension:UserMerge needs to update
@@ -19,14 +12,11 @@ class UserMergeHandler implements AccountFieldsHook {
 	 * @param array[] &$updateFields
 	 */
 	public function onUserMergeAccountFields( array &$updateFields ) {
-		$actorStage = $this->config->get( 'AbuseFilterActorTableSchemaMigrationStage' );
 		$updateFields[] = [
 			'abuse_filter',
-			'af_user',
-			'af_user_text',
 			'batchKey' => 'af_id',
 			'actorId' => 'af_actor',
-			'actorStage' => $actorStage,
+			'actorStage' => SCHEMA_COMPAT_NEW,
 		];
 		$updateFields[] = [
 			'abuse_filter_log',
@@ -36,11 +26,9 @@ class UserMergeHandler implements AccountFieldsHook {
 		];
 		$updateFields[] = [
 			'abuse_filter_history',
-			'afh_user',
-			'afh_user_text',
 			'batchKey' => 'afh_id',
 			'actorId' => 'afh_actor',
-			'actorStage' => $actorStage,
+			'actorStage' => SCHEMA_COMPAT_NEW,
 		];
 	}
 

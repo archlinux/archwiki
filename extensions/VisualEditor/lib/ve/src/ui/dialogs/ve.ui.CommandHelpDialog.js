@@ -106,9 +106,8 @@ ve.ui.CommandHelpDialog.prototype.initialize = function () {
  */
 ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.CommandHelpDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
-			var dialog = this,
-				surface = data.surface,
+		.next( () => {
+			const surface = data.surface,
 				target = surface.getTarget(),
 				sequenceRegistry = surface.sequenceRegistry,
 				commandRegistry = surface.commandRegistry,
@@ -120,13 +119,13 @@ ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
 
 			this.$container.empty();
 
-			commandGroupsOrder.forEach( function ( groupName ) {
-				var hasCommand = false;
-				var commandGroup = commandGroups[ groupName ];
-				var commands = dialog.constructor.static.sortedCommandsFromGroup( groupName, commandGroup.promote, commandGroup.demote );
-				var $list = $( '<dl>' ).addClass( 've-ui-commandHelpDialog-list' );
-				commands.forEach( function ( command ) {
-					var triggerList;
+			commandGroupsOrder.forEach( ( groupName ) => {
+				let hasCommand = false;
+				const commandGroup = commandGroups[ groupName ];
+				const commands = this.constructor.static.sortedCommandsFromGroup( groupName, commandGroup.promote, commandGroup.demote );
+				const $list = $( '<dl>' ).addClass( 've-ui-commandHelpDialog-list' );
+				commands.forEach( ( command ) => {
+					let triggerList;
 					if ( command.trigger ) {
 						if (
 							!command.ignoreCommand && (
@@ -150,33 +149,31 @@ ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
 								// 'checkCommand' is not available
 								return;
 							}
-							triggerList = command.shortcuts.map( function ( shortcut ) {
-								return new ve.ui.Trigger( shortcut, true );
-							} );
+							triggerList = command.shortcuts.map( ( shortcut ) => new ve.ui.Trigger( shortcut, true ) );
 						}
 					}
 
-					var hasShortcut = false;
+					let hasShortcut = false;
 
-					var $shortcut = $( '<dt>' );
-					triggerList.forEach( function ( trigger ) {
+					const $shortcut = $( '<dt>' );
+					triggerList.forEach( ( trigger ) => {
 						// Append an array of jQuery collections from buildKeyNode
 						// eslint-disable-next-line no-jquery/no-append-html
 						$shortcut.append( $( '<kbd>' ).addClass( 've-ui-commandHelpDialog-shortcut' ).append(
-							trigger.getMessage( true ).map( dialog.constructor.static.buildKeyNode )
+							trigger.getMessage( true ).map( this.constructor.static.buildKeyNode )
 						).find( 'kbd + kbd' ).before( '+' ).end() );
 						hasShortcut = true;
 					} );
 					if ( command.sequences ) {
-						command.sequences.forEach( function ( sequenceName ) {
-							var sequence = sequenceRegistry.lookup( sequenceName );
+						command.sequences.forEach( ( sequenceName ) => {
+							const sequence = sequenceRegistry.lookup( sequenceName );
 							if ( sequence ) {
 								// Append an array of jQuery collections from buildKeyNode
 								// eslint-disable-next-line no-jquery/no-append-html
 								$shortcut.append( $( '<kbd>' ).addClass( 've-ui-commandHelpDialog-sequence' )
 									.attr( 'data-label', ve.msg( 'visualeditor-shortcuts-sequence-notice' ) )
 									.append(
-										sequence.getMessage( true ).map( dialog.constructor.static.buildKeyNode )
+										sequence.getMessage( true ).map( this.constructor.static.buildKeyNode )
 									)
 								);
 								hasShortcut = true;
@@ -192,7 +189,7 @@ ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
 					}
 				} );
 				if ( hasCommand ) {
-					dialog.$container.append(
+					this.$container.append(
 						$( '<div>' )
 							.addClass( 've-ui-commandHelpDialog-section' )
 							.append(
@@ -202,7 +199,7 @@ ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
 					);
 				}
 			} );
-		}, this );
+		} );
 };
 
 /* Static methods */
@@ -215,7 +212,7 @@ ve.ui.CommandHelpDialog.prototype.getSetupProcess = function ( data ) {
  * @return {jQuery} A kbd wrapping the key text
  */
 ve.ui.CommandHelpDialog.static.buildKeyNode = function ( key ) {
-	var $key = $( '<kbd>' );
+	const $key = $( '<kbd>' );
 	if ( key === ' ' ) {
 		// Might need to expand this if other keys show up, but currently things like
 		// the tab-character only come from Triggers and are pre-localized there into
@@ -236,7 +233,7 @@ ve.ui.CommandHelpDialog.static.buildKeyNode = function ( key ) {
  * @return {Object[]} List of commands in order
  */
 ve.ui.CommandHelpDialog.static.sortedCommandsFromGroup = function ( groupName, promote, demote ) {
-	var commands = ve.ui.commandHelpRegistry.lookupByGroup( groupName ),
+	const commands = ve.ui.commandHelpRegistry.lookupByGroup( groupName ),
 		keys = Object.keys( commands ),
 		used = {},
 		auto = [],
@@ -245,7 +242,7 @@ ve.ui.CommandHelpDialog.static.sortedCommandsFromGroup = function ( groupName, p
 	keys.sort();
 
 	if ( promote ) {
-		promote.forEach( function ( name ) {
+		promote.forEach( ( name ) => {
 			if ( !commands[ name ] ) {
 				return;
 			}
@@ -254,7 +251,7 @@ ve.ui.CommandHelpDialog.static.sortedCommandsFromGroup = function ( groupName, p
 		} );
 	}
 	if ( demote ) {
-		demote.forEach( function ( name ) {
+		demote.forEach( ( name ) => {
 			if ( used[ name ] || !commands[ name ] ) {
 				return;
 			}
@@ -262,13 +259,14 @@ ve.ui.CommandHelpDialog.static.sortedCommandsFromGroup = function ( groupName, p
 			used[ name ] = true;
 		} );
 	}
-	keys.forEach( function ( name ) {
+	keys.forEach( ( name ) => {
 		if ( used[ name ] ) {
 			return;
 		}
 		auto.push( commands[ name ] );
 	} );
-	return promoted.concat( auto, demoted );
+	promoted.push( ...auto, ...demoted );
+	return promoted;
 };
 
 /* Registration */

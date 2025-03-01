@@ -11,15 +11,15 @@
 	 * @param {mw.echo.Controller} controller Echo controller
 	 * @param {mw.echo.dm.NotificationItem} model Notification item model
 	 * @param {Object} [config] Configuration options
-	 * @cfg {jQuery} [$overlay] A jQuery element functioning as an overlay
+	 * @param {jQuery} [config.$overlay] A jQuery element functioning as an overlay
 	 *  for popups.
-	 * @cfg {boolean} [bundle=false] This notification item is part of a bundle.
+	 * @param {boolean} [config.bundle=false] This notification item is part of a bundle.
 	 */
 	mw.echo.ui.NotificationItemWidget = function MwEchoUiNotificationItemWidget( controller, model, config ) {
 		config = config || {};
 
 		// Parent constructor
-		mw.echo.ui.NotificationItemWidget.super.call( this, $.extend( { data: model.getId() }, config ) );
+		mw.echo.ui.NotificationItemWidget.super.call( this, Object.assign( { data: model.getId() }, config ) );
 
 		this.controller = controller;
 		this.model = model;
@@ -38,19 +38,27 @@
 			markAsRead: !this.model.isRead()
 		} );
 
-		var $icon;
+		let $icon;
+		const iconUrl = this.model.getIconUrl();
 		// Icon
-		if ( this.model.getIconURL() ) {
+		if ( iconUrl ) {
+			// Only invert non colored images
+			/* eslint-disable es-x/no-array-prototype-includes */
+			const invertIconClass =
+				iconUrl.includes( 'progressive' ) ||
+				iconUrl.includes( 'constructive' ) ||
+				iconUrl.includes( 'failure' ) ? '' : 'skin-invert';
+			/* eslint-disable-next-line mediawiki/class-doc */
 			$icon = $( '<div>' )
-				.addClass( 'mw-echo-ui-notificationItemWidget-icon' )
+				.addClass( `mw-echo-ui-notificationItemWidget-icon ${ invertIconClass }` )
 				.append( $( '<img>' ).attr( {
-					src: this.model.getIconURL(),
+					src: this.model.getIconUrl(),
 					role: 'presentation',
 					alt: ' '
 				} ) );
 		}
 
-		var $message = $( '<div>' ).addClass( 'mw-echo-ui-notificationItemWidget-content-message' );
+		const $message = $( '<div>' ).addClass( 'mw-echo-ui-notificationItemWidget-content-message' );
 		// Content
 		$message.append(
 			$( '<div>' )
@@ -91,7 +99,7 @@
 		// Timestamp
 		// We want to use extra-short timestamp strings; we change the locale
 		// to our echo-defined one and use that instead of the normal moment locale
-		var echoMoment = moment.utc( this.model.getTimestamp() );
+		const echoMoment = moment.utc( this.model.getTimestamp() );
 		echoMoment.locale( 'echo-shortRelativeTime' );
 		echoMoment.local();
 
@@ -124,16 +132,16 @@
 		}
 
 		// Actions
-		var outsideMenuItemCounter = 0;
-		var secondaryUrls = this.model.getSecondaryUrls();
-		for ( var i = 0; i < secondaryUrls.length; i++ ) {
-			var urlObj = secondaryUrls[ i ];
+		let outsideMenuItemCounter = 0;
+		const secondaryUrls = this.model.getSecondaryUrls();
+		for ( let i = 0; i < secondaryUrls.length; i++ ) {
+			const urlObj = secondaryUrls[ i ];
 
 			// Items are placed outside the dotdotdot menu if they are
 			// prioritized explicitly, *except* for items inside a bundle
 			// (where all actions are inside the menu) or there are more than
 			// two prioritized actions (all others go into the menu)
-			var isOutsideMenu = !this.bundle &&
+			const isOutsideMenu = !this.bundle &&
 				(
 					(
 						// Make sure we don't have too many prioritized items
@@ -146,7 +154,7 @@
 					secondaryUrls.length <= mw.echo.config.maxPrioritizedActions
 				);
 
-			var linkButton = new mw.echo.ui.MenuItemWidget( {
+			const linkButton = new mw.echo.ui.MenuItemWidget( {
 				type: urlObj.type,
 				actionData: urlObj.data,
 				icon: urlObj.icon || 'next',
@@ -200,7 +208,8 @@
 		if ( this.model.getPrimaryUrl() ) {
 			this.$element
 				.attr( 'href', this.model.getPrimaryUrl() )
-				.on( 'click', this.onPrimaryLinkClick.bind( this ) );
+				.on( 'click', this.onPrimaryLinkClick.bind( this ) )
+				.on( 'auxclick', this.onPrimaryLinkAuxclick.bind( this ) );
 		}
 	};
 
@@ -216,6 +225,24 @@
 	 * @return {boolean} true
 	 */
 	mw.echo.ui.NotificationItemWidget.prototype.onPrimaryLinkClick = function () {
+		return true;
+	};
+
+	/**
+	 * Respond to primary link middle-click by immediately marking as read,
+	 * then let the browser open the link in a new tab as normal.
+	 * Opening the link would also mark as read, but this way the user gets immediate feedback.
+	 *
+	 * @param {Event} event
+	 *
+	 * @return {boolean} true
+	 */
+	mw.echo.ui.NotificationItemWidget.prototype.onPrimaryLinkAuxclick = function ( event ) {
+		if ( event.button === 1 ) {
+			this.$element.removeClass( 'mw-echo-ui-notificationItemWidget-initiallyUnseen' );
+			this.markRead( true );
+		}
+		// Don't prevent default action, let the browser take care of opening a new tab.
 		return true;
 	};
 
@@ -236,29 +263,26 @@
 			return;
 		}
 
-		var actionData = item && item.getActionData(),
-			messages = item && item.getConfirmationMessages(),
-			widget = this;
+		const actionData = item && item.getActionData(),
+			messages = item && item.getConfirmationMessages();
 
 		// Send to controller
 		item.pushPending();
 		this.controller.performDynamicAction( actionData, this.getModel().getSource() )
-			.then( function () {
-				var $title = $( '<p>' )
+			.then( () => {
+				const $title = $( '<p>' )
 						.addClass( 'mw-echo-ui-notificationItemWidget-notify-title' )
 						.append( $.parseHTML( messages.title ) ),
 					$description = $( '<p>' )
 						.addClass( 'mw-echo-ui-notificationItemWidget-notify-description' )
-						.append( $.parseHTML( messages.description ) ),
-					$confirmation;
+						.append( $.parseHTML( messages.description ) );
 
 				// Get rid of the button
-				item.disconnect( this );
 				if ( item.isPrioritized() ) {
-					widget.actionsButtonSelectWidget.removeItems( [ item ] );
+					this.actionsButtonSelectWidget.removeItems( [ item ] );
 				} else {
 					// It's inside the popup menu
-					widget.menuPopupButtonWidget.getMenu().removeItems( [ item ] );
+					this.menuPopupButtonWidget.getMenu().removeItems( [ item ] );
 				}
 
 				// Make sure to hide either piece if it is empty
@@ -266,7 +290,7 @@
 				$description.toggle( !!$description.text() );
 
 				// Display confirmation
-				$confirmation = $( '<div>' )
+				const $confirmation = $( '<div>' )
 					.append( $title, $description );
 
 				// Send to mw.notify

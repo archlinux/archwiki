@@ -21,9 +21,9 @@ namespace MediaWiki\Extension\ReplaceText;
 
 use ErrorPageError;
 use JobQueueGroup;
-use Language;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Page\WikiPageFactory;
@@ -43,16 +43,27 @@ use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
 class SpecialReplaceText extends SpecialPage {
+	/** @var string */
 	private $target;
+	/** @var string */
 	private $targetString;
+	/** @var string */
 	private $replacement;
+	/** @var bool */
 	private $use_regex;
+	/** @var string */
 	private $category;
+	/** @var string */
 	private $prefix;
+	/** @var string|int */
 	private $pageLimit;
+	/** @var bool */
 	private $edit_pages;
+	/** @var bool */
 	private $move_pages;
+	/** @var int[] */
 	private $selected_namespaces;
+	/** @var bool */
 	private $botEdit;
 
 	/** @var HookHelper */
@@ -184,7 +195,7 @@ class SpecialReplaceText extends SpecialPage {
 
 		if ( $this->readOnlyMode->isReadOnly() ) {
 			$permissionErrors = [ [ 'readonlytext', [ $this->readOnlyMode->getReason() ] ] ];
-			$out->setPageTitle( $this->msg( 'badaccess' )->text() );
+			$out->setPageTitleMsg( $this->msg( 'badaccess' ) );
 			$out->addWikiTextAsInterface( $out->formatPermissionsErrorMessage( $permissionErrors, 'replacetext' ) );
 			return;
 		}
@@ -782,8 +793,8 @@ class SpecialReplaceText extends SpecialPage {
 				$name = $this->msg( 'blanknamespace' )->text();
 			}
 			$id = "mw-search-ns{$ns}";
-			$rows[$subj] .= Html::openElement( 'td', [ 'style' => 'white-space: nowrap' ] ) .
-				Html::input( "ns{$ns}", '1', 'checkbox', [ 'id' => $id, 'checked' => in_array( $ns, $namespaces ) ] ) .
+			$rows[$subj] .= Html::openElement( 'td' ) .
+				Html::input( "ns{$ns}", '1', 'checkbox', [ 'id' => $id, 'checked' => ( $ns == 0 ) ] ) .
 				' ' . Html::label( $name, $id ) .
 				Html::closeElement( 'td' ) . "\n";
 		}
@@ -946,7 +957,7 @@ class SpecialReplaceText extends SpecialPage {
 	 * @return string
 	 */
 	function extractContext( $text, $target, $use_regex = false ) {
-		$cw = $this->userOptionsLookup->getOption( $this->getUser(), 'contextchars', 40 );
+		$cw = $this->userOptionsLookup->getOption( $this->getUser(), 'contextchars', 40, true );
 
 		// Get all indexes
 		if ( $use_regex ) {

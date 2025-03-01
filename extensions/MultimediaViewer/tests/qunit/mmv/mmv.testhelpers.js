@@ -151,7 +151,7 @@ const { MultimediaViewer } = require( 'mmv' );
 		setTimeout( deferred.resolve );
 
 		return QUnit.whenPromisesComplete.apply( null, MTH.asyncPromises ).then(
-			function () {
+			() => {
 				MTH.asyncPromises = [];
 			}
 		);

@@ -13,11 +13,11 @@
 	},
 	{
 		"resourceModule": "skins.minerva.icons.wikimedia",
-		"maxSize": "0.7KB"
+		"maxSize": "0.5KB"
 	},
 	{
 		"resourceModule": "skins.minerva.mainMenu.icons",
-		"maxSize": "0.3KB"
+		"maxSize": "0.4KB"
 	},
 	{
 		"resourceModule": "skins.minerva.mainMenu.styles",

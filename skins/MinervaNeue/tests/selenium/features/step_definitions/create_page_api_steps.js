@@ -36,19 +36,18 @@ const iAmInAWikiThatHasCategories = ( title ) => {
 		await bot.edit( title, wikitext );
 	} );
 
-	browser.call( () => {
+	browser.call(
 		// The category overlay uses the category API
 		// which will only return results if the job queue has completed.
 		// Run before continuing!
-		return RunJobs.run();
-	} );
+		() => RunJobs.run()
+	);
 };
 
 const iAmOnAPageThatHasTheFollowingEdits = function ( table ) {
 	const randomString = Math.random().toString( 36 ).slice( 7 ),
 		pageTitle = `Selenium_diff_test_${ randomString }`,
-		edits = table.rawTable.map( ( row, i ) =>
-			[ i === 0 ? 'create' : 'edit', pageTitle, row[ 0 ] ] );
+		edits = table.rawTable.map( ( row, i ) => [ i === 0 ? 'create' : 'edit', pageTitle, row[ 0 ] ] );
 
 	browser.call( () => {
 		const bot = new MWBot();
@@ -94,9 +93,7 @@ const watch = ( title ) => {
 
 const iAmViewingAWatchedPage = () => {
 	const title = `I am on the "Selenium mobile watched page test ${ Date.now() }`;
-	browser.call( () => {
-		return createPage( title, 'watch test' );
-	} );
+	browser.call( () => createPage( title, 'watch test' ) );
 	watch( title );
 	// navigate away from page
 	iAmOnPage( 'Main Page' );

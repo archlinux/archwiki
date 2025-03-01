@@ -15,23 +15,21 @@ const iClearTheEditor = () => {
 	ArticlePageWithEditorOverlay.editor_textarea_element.setValue( '' );
 };
 const iDoNotSeeTheWikitextEditorOverlay = () => {
-	browser.waitUntil( () => {
-		return ArticlePageWithEditorOverlay.editor_overlay_element.isDisplayed() === false;
-	}, 10000 );
+	browser.waitUntil(
+		() => ArticlePageWithEditorOverlay.editor_overlay_element.isDisplayed() === false, 10000
+	);
 };
 const iTypeIntoTheEditor = ( text ) => {
 	ArticlePageWithEditorOverlay.editor_overlay_element.waitForExist();
 	ArticlePageWithEditorOverlay.editor_textarea_element.waitForExist();
 	ArticlePageWithEditorOverlay.editor_textarea_element.waitForDisplayed();
 	// Make sure the slow connection load basic button is gone (T348539)
-	browser.waitUntil( () => {
-		return ArticlePageWithEditorOverlay.editor_load_basic_element.isDisplayed() === false;
-	} );
+	browser.waitUntil(
+		() => ArticlePageWithEditorOverlay.editor_load_basic_element.isDisplayed() === false
+	);
 	ArticlePageWithEditorOverlay.editor_textarea_element.addValue( text );
-	browser.waitUntil( () => {
-		return !ArticlePageWithEditorOverlay
-			.continue_element.getAttribute( 'disabled' );
-	} );
+	browser.waitUntil( () => !ArticlePageWithEditorOverlay
+		.continue_element.getAttribute( 'disabled' ) );
 };
 const iClickContinue = () => {
 	ArticlePageWithEditorOverlay.continue_element.waitForExist();
@@ -54,8 +52,10 @@ const iSayOkayInTheConfirmDialog = () => {
 };
 const theTextOfTheFirstHeadingShouldBe = async ( title ) => {
 	await ArticlePage.first_heading_element.waitForDisplayed();
+	title = mw.util.escapeRegExp( title );
 	assert.match(
 		await ArticlePage.first_heading_element.getText(),
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		new RegExp( `.*${ title }$` )
 	);
 };

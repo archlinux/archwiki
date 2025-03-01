@@ -25,7 +25,9 @@
  * @todo document
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Deferred\SearchUpdate;
 use MediaWiki\Revision\SlotRecord;
@@ -101,8 +103,10 @@ class RebuildTextIndex extends Maintenance {
 			}
 			$end = $n + self::RTI_CHUNK_SIZE - 1;
 			$queryBuilder = clone $queryBuilderTemplate;
-			$res = $queryBuilder->where( [ "page_id BETWEEN $n AND $end", 'page_latest = rev_id' ] )
-				->caller( __METHOD__ )->fetchResultSet();
+			$res = $queryBuilder->where( [
+					$dbw->expr( 'page_id', '>=', $n )->and( 'page_id', '<=', $end ),
+					'page_latest = rev_id'
+				] )->caller( __METHOD__ )->fetchResultSet();
 
 			foreach ( $res as $s ) {
 
@@ -167,5 +171,7 @@ class RebuildTextIndex extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RebuildTextIndex::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

@@ -5,15 +5,15 @@
 		"jakobo/hotp-php": "2.0.0"
 	},
 	"require-dev": {
-		"mediawiki/mediawiki-codesniffer": "43.0.0",
+		"mediawiki/mediawiki-codesniffer": "45.0.0",
 		"mediawiki/mediawiki-phan-config": "0.14.0",
-		"mediawiki/minus-x": "1.1.1",
+		"mediawiki/minus-x": "1.1.3",
 		"php-parallel-lint/php-console-highlighter": "1.0.0",
-		"php-parallel-lint/php-parallel-lint": "1.3.2"
+		"php-parallel-lint/php-parallel-lint": "1.4.0"
 	},
 	"scripts": {
 		"lint": "parallel-lint . --exclude vendor --exclude node_modules",
-		"phpcs": "phpcs -p -s",
+		"phpcs": "phpcs -p -s --cache",
 		"fix": [
 			"minus-x fix .",
 			"phpcbf"

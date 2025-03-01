@@ -8,14 +8,13 @@ QUnit.module( 've.ce.LinearDeleteKeyDownHandler', {
 	// See https://github.com/platinumazure/eslint-plugin-qunit/issues/68
 	// eslint-disable-next-line qunit/resolve-async
 	beforeEach: function ( assert ) {
-		var done = assert.async();
+		const done = assert.async();
 		return ve.init.platform.getInitializedPromise().then( done );
 	}
 } );
 
-QUnit.test( 'special key down: linear backspace/delete', function ( assert ) {
-	var done = assert.async(),
-		promise = Promise.resolve(),
+QUnit.test( 'special key down: linear backspace/delete', ( assert ) => {
+	const done = assert.async(),
 		noChange = function () {},
 		emptyList = '<ul><li><p></p></li></ul>',
 		blockAlien = '<div rel="ve:Alien"></div>',
@@ -324,9 +323,9 @@ QUnit.test( 'special key down: linear backspace/delete', function ( assert ) {
 				rangeOrSelection: new ve.Range( 18 ),
 				keys: [ 'DELETE' ],
 				expectedData: function ( data ) {
-					var paragraph = data.splice( 14, 5 );
+					const paragraph = data.splice( 14, 5 );
 					data.splice( 13, 2 ); // Remove the empty listItem
-					data.splice.apply( data, [ 14, 0 ].concat( paragraph ) );
+					data.splice( 14, 0, ...paragraph );
 				},
 				expectedRangeOrSelection: new ve.Range( 18 ),
 				msg: 'Non-empty multi-item list at end of document unwrapped by delete'
@@ -513,10 +512,9 @@ QUnit.test( 'special key down: linear backspace/delete', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		promise = promise.then( function () {
-			return ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem );
-		} );
+	let promise = Promise.resolve();
+	cases.forEach( ( caseItem ) => {
+		promise = promise.then( () => ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem ) );
 	} );
 
 	promise.finally( () => done() );

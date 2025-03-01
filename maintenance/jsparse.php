@@ -19,7 +19,9 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Ad-hoc run ResourceLoader validation for user-supplied JavaScript.
@@ -30,12 +32,13 @@ require_once __DIR__ . '/Maintenance.php';
  * @ingroup Maintenance
  */
 class JSParseHelper extends Maintenance {
+	/** @var int */
 	public $errs = 0;
 
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Validate syntax of JavaScript files' );
-		$this->addArg( 'file(s)', 'JavaScript files or "-" to read stdin', true );
+		$this->addArg( 'file(s)', 'JavaScript files or "-" to read stdin', true, true );
 	}
 
 	public function execute() {
@@ -69,5 +72,7 @@ class JSParseHelper extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = JSParseHelper::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

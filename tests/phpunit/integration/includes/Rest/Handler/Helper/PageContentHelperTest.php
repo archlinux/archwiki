@@ -38,7 +38,7 @@ class PageContentHelperTest extends MediaWikiIntegrationTestCase {
 	 */
 	private function newHelper(
 		array $params = [],
-		Authority $authority = null
+		?Authority $authority = null
 	): PageContentHelper {
 		$helper = new PageContentHelper(
 			new ServiceOptions(
@@ -50,7 +50,10 @@ class PageContentHelperTest extends MediaWikiIntegrationTestCase {
 			),
 			$this->getServiceContainer()->getRevisionLookup(),
 			$this->getServiceContainer()->getTitleFormatter(),
-			$this->getServiceContainer()->getPageStore()
+			$this->getServiceContainer()->getPageStore(),
+			$this->getServiceContainer()->getTitleFactory(),
+			$this->getServiceContainer()->getConnectionProvider(),
+			$this->getServiceContainer()->getChangeTagsStore()
 		);
 
 		$authority = $authority ?: $this->mockRegisteredUltimateAuthority();

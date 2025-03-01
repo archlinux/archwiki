@@ -2,8 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"ChrisPtDe",
-			"Pppery",
-			"Krinkle"
+			"Pppery"
 		]
 	},
 	"config-desc": "La programeria d’enstalacion de MediaWiki",
@@ -32,7 +31,6 @@
 	"config-env-php": "PHP $1 est enstalâ.",
 	"config-memory-raised": "Lo paramètre <code>memory_limit</code> de PHP ére a $1, portâ a $2.",
 	"config-apc": "[https://www.php.net/apc APC] est enstalâ",
-	"config-wincache": "[https://www.iis.net/downloads/microsoft/wincache-extension WinCache] est enstalâ",
 	"config-diff3-bad": "GNU diff3 entrovâblo.",
 	"config-db-type": "Tipo de bâsa de balyês :",
 	"config-db-host": "Hôto de la bâsa de balyês :",
@@ -112,7 +110,6 @@
 	"config-install-database": "Crèacion de la bâsa de balyês",
 	"config-install-schema": "Crèacion de plan",
 	"config-install-pg-schema-not-exist": "Lo plan PostgreSQL ègziste pas",
-	"config-install-pg-commit": "Validacion des changements",
 	"config-install-pg-plpgsql": "Contrôlo du lengâjo PL/pgSQL",
 	"config-install-user": "Crèacion d’un usanciér de la bâsa de balyês",
 	"config-install-user-alreadyexists": "L’usanciér « $1 » ègziste ja",

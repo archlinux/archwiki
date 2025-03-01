@@ -23,30 +23,31 @@ namespace MediaWiki\EditPage;
 use Article;
 use BadMethodCallException;
 use CategoryPage;
-use Content;
-use ContentHandler;
-use DeprecationHelper;
 use ErrorPageError;
-use IDBAccessObject;
 use LogPage;
 use ManualLogEntry;
+use MediaWiki\Auth\AuthManager;
 use MediaWiki\Block\BlockErrorFormatter;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\Config;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Debug\DeprecationHelper;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\EditPage\Constraint\AccidentalRecreationConstraint;
-use MediaWiki\EditPage\Constraint\AutoSummaryMissingSummaryConstraint;
 use MediaWiki\EditPage\Constraint\ChangeTagsConstraint;
 use MediaWiki\EditPage\Constraint\ContentModelChangeConstraint;
 use MediaWiki\EditPage\Constraint\DefaultTextConstraint;
 use MediaWiki\EditPage\Constraint\EditConstraintFactory;
 use MediaWiki\EditPage\Constraint\EditConstraintRunner;
 use MediaWiki\EditPage\Constraint\EditFilterMergedContentHookConstraint;
+use MediaWiki\EditPage\Constraint\ExistingSectionEditConstraint;
 use MediaWiki\EditPage\Constraint\IEditConstraint;
 use MediaWiki\EditPage\Constraint\ImageRedirectConstraint;
 use MediaWiki\EditPage\Constraint\MissingCommentConstraint;
@@ -70,9 +71,11 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Revision\RevisionRecord;
@@ -81,7 +84,6 @@ use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
-use MediaWiki\Storage\PageUpdater;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ExternalUserNames;
 use MediaWiki\User\Options\UserOptionsLookup;
@@ -91,6 +93,7 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistManager;
 use MessageLocalizer;
 use MWContentSerializationException;
@@ -101,22 +104,21 @@ use OOUI\ButtonWidget;
 use OOUI\CheckboxInputWidget;
 use OOUI\DropdownInputWidget;
 use OOUI\FieldLayout;
-use ParserOptions;
 use PermissionsError;
 use ReadOnlyError;
 use RecentChange;
 use RuntimeException;
 use Skin;
 use stdClass;
-use TextContent;
 use ThrottledError;
 use UserBlockedError;
 use WatchAction;
-use WatchedItemStoreInterface;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 use WikiPage;
 
 /**
@@ -197,7 +199,7 @@ class EditPage implements IEditObject {
 	private $mContextTitle = null;
 
 	/**
-	 * @deprecated for public usage since 1.38 with no replacement
+	 * @deprecated since 1.38 for public usage; no replacement
 	 * @var string
 	 */
 	public $action = 'submit';
@@ -391,19 +393,29 @@ class EditPage implements IEditObject {
 
 	/** @var string Before even the preview */
 	public $editFormPageTop = '';
+	/** @var string */
 	public $editFormTextTop = '';
+	/** @var string */
 	public $editFormTextBeforeContent = '';
+	/** @var string */
 	public $editFormTextAfterWarn = '';
+	/** @var string */
 	public $editFormTextAfterTools = '';
+	/** @var string */
 	public $editFormTextBottom = '';
+	/** @var string */
 	public $editFormTextAfterContent = '';
+	/** @var string */
 	public $previewTextAfterContent = '';
 
-	/* $didSave should be set to true whenever an article was successfully altered. */
+	/** @var bool should be set to true whenever an article was successfully altered. */
 	public $didSave = false;
+	/** @var int */
 	public $undidRev = 0;
+	/** @var int */
 	private $undoAfter = 0;
 
+	/** @var bool */
 	public $suppressIntro = false;
 
 	/** @var bool */
@@ -448,6 +460,7 @@ class EditPage implements IEditObject {
 	private UserFactory $userFactory;
 	private IConnectionProvider $connectionProvider;
 	private BlockErrorFormatter $blockErrorFormatter;
+	private AuthManager $authManager;
 
 	/** @var User|null */
 	private $placeholderTempUser;
@@ -519,6 +532,7 @@ class EditPage implements IEditObject {
 		$this->connectionProvider = $services->getConnectionProvider();
 		$this->blockErrorFormatter = $services->getFormatterFactory()
 			->getBlockErrorFormatter( $this->context );
+		$this->authManager = $services->getAuthManager();
 
 		// XXX: Restore this deprecation as soon as TwoColConflict is fixed (T305028)
 		// $this->deprecatePublicProperty( 'textbox2', '1.38', __CLASS__ );
@@ -646,10 +660,10 @@ class EditPage implements IEditObject {
 		// accounts on edit.
 		$this->unableToAcquireTempName = !$this->maybeActivateTempUserCreate( !$this->firsttime )->isOK();
 
-		$permErrors = $this->getEditPermissionErrors(
+		$status = $this->getEditPermissionStatus(
 			$this->save ? PermissionManager::RIGOR_SECURE : PermissionManager::RIGOR_FULL
 		);
-		if ( $permErrors ) {
+		if ( !$status->isGood() ) {
 			wfDebug( __METHOD__ . ": User can't edit" );
 
 			$user = $this->context->getUser();
@@ -659,7 +673,7 @@ class EditPage implements IEditObject {
 					$user->spreadAnyEditBlock();
 				} );
 			}
-			$this->displayPermissionsError( $permErrors );
+			$this->displayPermissionStatus( $status );
 
 			return;
 		}
@@ -804,35 +818,27 @@ class EditPage implements IEditObject {
 	}
 
 	/**
-	 * If automatic user creation is enabled, create the user and adjust the
-	 * PageUpdater so that it has the new user/actor ID.
+	 * If automatic user creation is enabled, create the user.
 	 *
-	 * This is a helper for internalAttemptSave(). The name should have already
-	 * been acquired at this point for PST purposes, but if not, it will be
-	 * acquired here.
+	 * This is a helper for internalAttemptSavePrivate().
 	 *
 	 * If the edit is a null edit, the user will not be created.
 	 *
-	 * @param PageUpdater $pageUpdater
 	 * @return Status
 	 */
-	private function createTempUser( PageUpdater $pageUpdater ) {
+	private function createTempUser(): Status {
 		if ( !$this->tempUserCreateActive ) {
 			return Status::newGood();
 		}
-		if ( !$pageUpdater->isChange() ) {
-			$pageUpdater->preventChange();
-			return Status::newGood();
-		}
 		$status = $this->tempUserCreator->create(
-			$this->tempUserName, // acquire if null
+			$this->tempUserName,
 			$this->context->getRequest()
 		);
 		if ( $status->isOK() ) {
 			$this->placeholderTempUser = null;
 			$this->unsavedTempUser = null;
 			$this->savedTempUser = $status->getUser();
-			$pageUpdater->updateAuthor( $status->getUser() );
+			$this->authManager->setRequestContextUserFromSessionUser();
 			$this->tempUserCreateDone = true;
 		}
 		return $status;
@@ -914,36 +920,30 @@ class EditPage implements IEditObject {
 
 	/**
 	 * @param string $rigor PermissionManager::RIGOR_ constant
-	 * @return array
+	 * @return PermissionStatus
 	 */
-	private function getEditPermissionErrors( string $rigor = PermissionManager::RIGOR_SECURE ): array {
+	private function getEditPermissionStatus( string $rigor = PermissionManager::RIGOR_SECURE ): PermissionStatus {
 		$user = $this->getUserForPermissions();
-
-		$ignoredErrors = [];
-		if ( $this->preview || $this->diff ) {
-			$ignoredErrors = [ 'blockedtext', 'autoblockedtext', 'systemblockedtext' ];
-		}
-		return $this->permManager->getPermissionErrors(
+		return $this->permManager->getPermissionStatus(
 			'edit',
 			$user,
 			$this->mTitle,
-			$rigor,
-			$ignoredErrors
+			$rigor
 		);
 	}
 
 	/**
-	 * Display a permissions error page, like OutputPage::showPermissionsErrorPage(),
+	 * Display a permissions error page, like OutputPage::showPermissionStatus(),
 	 * but with the following differences:
 	 * - If redlink=1, the user will be redirected to the page
 	 * - If there is content to display or the error occurs while either saving,
 	 *   previewing or showing the difference, it will be a
 	 *   "View source for ..." page displaying the source code after the error message.
 	 *
-	 * @param array $permErrors Array of permissions errors
+	 * @param PermissionStatus $status Permissions errors
 	 * @throws PermissionsError
 	 */
-	private function displayPermissionsError( array $permErrors ): void {
+	private function displayPermissionStatus( PermissionStatus $status ): void {
 		$out = $this->context->getOutput();
 		if ( $this->context->getRequest()->getBool( 'redlink' ) ) {
 			// The edit page was reached via a red link.
@@ -962,12 +962,12 @@ class EditPage implements IEditObject {
 		if ( !$content || ( $this->firsttime && $content->isEmpty() ) ) {
 			$action = $this->mTitle->exists() ? 'edit' :
 				( $this->mTitle->isTalkPage() ? 'createtalk' : 'createpage' );
-			throw new PermissionsError( $action, $permErrors );
+			throw new PermissionsError( $action, $status );
 		}
 
 		$this->displayViewSourcePage(
 			$content,
-			$out->formatPermissionsErrorMessage( $permErrors, 'edit' )
+			$out->formatPermissionStatus( $status, 'edit' )
 		);
 	}
 
@@ -1423,15 +1423,12 @@ class EditPage implements IEditObject {
 	}
 
 	/**
-	 * @param Content|null $def_content The default value to return
-	 *
-	 * @return Content|false|null Content on success, $def_content for invalid sections
-	 *
+	 * @param Content|null $defaultContent The default value to return
+	 * @return Content|false|null Content on success, $defaultContent for invalid sections
 	 * @since 1.21
 	 */
-	protected function getContentObject( $def_content = null ) {
+	protected function getContentObject( $defaultContent = null ) {
 		$services = MediaWikiServices::getInstance();
-		$disableAnonTalk = $services->getMainConfig()->get( MainConfigNames::DisableAnonTalk );
 		$request = $this->context->getRequest();
 
 		$content = false;
@@ -1452,7 +1449,7 @@ class EditPage implements IEditObject {
 			$content = $orig ? $orig->getSection( $this->section ) : null;
 
 			if ( !$content ) {
-				$content = $def_content;
+				$content = $defaultContent;
 			}
 		} else {
 			$undoafter = $request->getInt( 'undoafter' );
@@ -1490,13 +1487,13 @@ class EditPage implements IEditObject {
 
 					if ( $undoMsg === null ) {
 						$oldContent = $this->page->getContent( RevisionRecord::RAW );
-						$popts = ParserOptions::newFromUserAndLang(
+						$parserOptions = ParserOptions::newFromUserAndLang(
 							$this->getUserForPreview(),
 							$services->getContentLanguage()
 						);
 						$contentTransformer = $services->getContentTransformer();
 						$newContent = $contentTransformer->preSaveTransform(
-							$content, $this->mTitle, $this->getUserForPreview(), $popts
+							$content, $this->mTitle, $this->getUserForPreview(), $parserOptions
 						);
 
 						if ( $newContent->getModel() !== $oldContent->getModel() ) {
@@ -1525,56 +1522,7 @@ class EditPage implements IEditObject {
 						} else {
 							# Inform the user of our success and set an automatic edit summary
 							$undoMsg = 'success';
-
-							# If we just undid one rev, use an autosummary
-							$firstrev = $this->revisionStore->getNextRevision( $oldrev );
-							if ( $firstrev && $firstrev->getId() == $undo ) {
-								$userText = $undorev->getUser() ?
-									$undorev->getUser()->getName() :
-									'';
-								if ( $userText === '' ) {
-									$undoSummary = $this->context->msg(
-										'undo-summary-username-hidden',
-										$undo
-									)->inContentLanguage()->text();
-								// Handle external users (imported revisions)
-								} elseif ( ExternalUserNames::isExternal( $userText ) ) {
-									$userLinkTitle = ExternalUserNames::getUserLinkTitle( $userText );
-									if ( $userLinkTitle ) {
-										$userLink = $userLinkTitle->getPrefixedText();
-										$undoSummary = $this->context->msg(
-											'undo-summary-import',
-											$undo,
-											$userLink,
-											$userText
-										)->inContentLanguage()->text();
-									} else {
-										$undoSummary = $this->context->msg(
-											'undo-summary-import2',
-											$undo,
-											$userText
-										)->inContentLanguage()->text();
-									}
-								} else {
-									$undoIsAnon =
-										!$undorev->getUser() ||
-										!$undorev->getUser()->isRegistered();
-									$undoMessage = ( $undoIsAnon && $disableAnonTalk ) ?
-										'undo-summary-anon' :
-										'undo-summary';
-									$undoSummary = $this->context->msg(
-										$undoMessage,
-										$undo,
-										$userText
-									)->inContentLanguage()->text();
-								}
-								if ( $this->summary === '' ) {
-									$this->summary = $undoSummary;
-								} else {
-									$this->summary = $undoSummary . $this->context->msg( 'colon-separator' )
-										->inContentLanguage()->text() . $this->summary;
-								}
-							}
+							$this->generateUndoEditSummary( $oldrev, $undo, $undorev, $services );
 							$this->undidRev = $undo;
 							$this->undoAfter = $undoafter;
 							$this->formtype = 'diff';
@@ -1606,6 +1554,71 @@ class EditPage implements IEditObject {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * When using the "undo" action, generate a default edit summary and save it
+	 * to $this->summary
+	 *
+	 * @param RevisionRecord|null $oldrev The revision in the URI "undoafter" field
+	 * @param int $undo The integer in the URI "undo" field
+	 * @param RevisionRecord|null $undorev The revision in the URI "undo" field
+	 * @param MediaWikiServices $services Service container
+	 * @return void
+	 */
+	private function generateUndoEditSummary( ?RevisionRecord $oldrev, int $undo,
+		?RevisionRecord $undorev, MediaWikiServices $services
+	) {
+		// If we just undid one rev, use an autosummary
+		$firstrev = $this->revisionStore->getNextRevision( $oldrev );
+		if ( $firstrev && $firstrev->getId() == $undo ) {
+			$userText = $undorev->getUser() ?
+				$undorev->getUser()->getName() :
+				'';
+			if ( $userText === '' ) {
+				$undoSummary = $this->context->msg(
+					'undo-summary-username-hidden',
+					$undo
+				)->inContentLanguage()->text();
+			// Handle external users (imported revisions)
+			} elseif ( ExternalUserNames::isExternal( $userText ) ) {
+				$userLinkTitle = ExternalUserNames::getUserLinkTitle( $userText );
+				if ( $userLinkTitle ) {
+					$userLink = $userLinkTitle->getPrefixedText();
+					$undoSummary = $this->context->msg(
+						'undo-summary-import',
+						$undo,
+						$userLink,
+						$userText
+					)->inContentLanguage()->text();
+				} else {
+					$undoSummary = $this->context->msg(
+						'undo-summary-import2',
+						$undo,
+						$userText
+					)->inContentLanguage()->text();
+				}
+			} else {
+				$undoIsAnon =
+					!$undorev->getUser() ||
+					!$undorev->getUser()->isRegistered();
+				$disableAnonTalk = $services->getMainConfig()->get( MainConfigNames::DisableAnonTalk );
+				$undoMessage = ( $undoIsAnon && $disableAnonTalk ) ?
+					'undo-summary-anon' :
+					'undo-summary';
+				$undoSummary = $this->context->msg(
+					$undoMessage,
+					$undo,
+					$userText
+				)->inContentLanguage()->text();
+			}
+			if ( $this->summary === '' ) {
+				$this->summary = $undoSummary;
+			} else {
+				$this->summary = $undoSummary . $this->context->msg( 'colon-separator' )
+					->inContentLanguage()->text() . $this->summary;
+			}
+		}
 	}
 
 	/**
@@ -1769,7 +1782,7 @@ class EditPage implements IEditObject {
 
 	/**
 	 * Attempt submission
-	 * @param array|false &$resultDetails See docs for $result in internalAttemptSave @phan-output-reference
+	 * @param array|false &$resultDetails See docs for $result in internalAttemptSavePrivate @phan-output-reference
 	 * @throws UserBlockedError|ReadOnlyError|ThrottledError|PermissionsError
 	 * @return Status
 	 */
@@ -1782,7 +1795,7 @@ class EditPage implements IEditObject {
 		$markAsMinor = $this->minoredit && !$this->isNew
 			&& $this->getAuthority()->isAllowed( 'minoredit' );
 
-		$status = $this->internalAttemptSave( $resultDetails, $markAsBot, $markAsMinor );
+		$status = $this->internalAttemptSavePrivate( $resultDetails, $markAsBot, $markAsMinor );
 
 		$this->getHookRunner()->onEditPage__attemptSave_after( $this, $status, $resultDetails );
 
@@ -1813,7 +1826,7 @@ class EditPage implements IEditObject {
 		$statusValue = is_int( $status->value ) ? $status->value : 0;
 
 		/**
-		 * @todo FIXME: once the interface for internalAttemptSave() is made
+		 * @todo FIXME: once the interface for internalAttemptSavePrivate() is made
 		 *   nicer, this should use the message in $status
 		 */
 		if ( $statusValue === self::AS_SUCCESS_UPDATE
@@ -1950,10 +1963,21 @@ class EditPage implements IEditObject {
 	private function doPostEditRedirect( $query, $anchor ) {
 		$out = $this->context->getOutput();
 		$url = $this->mTitle->getFullURL( $query ) . $anchor;
-		if ( $this->tempUserCreateDone ) {
+		$user = $this->getUserForSave();
+		// If the temporary account was created in this request,
+		// or if the temporary account has zero edits (implying
+		// that the account was created during a failed edit
+		// attempt in a previous request), perform the top-level
+		// redirect to ensure the account is attached.
+		// Note that the temp user could already have performed
+		// the top-level redirect if this a first edit on
+		// a wiki that is not the user's home wiki.
+		$shouldRedirectForTempUser = $this->tempUserCreateDone ||
+			( $user->isTemp() && ( $user->getEditCount() === 0 ) );
+		if ( $shouldRedirectForTempUser ) {
 			$this->getHookRunner()->onTempUserCreatedRedirect(
 				$this->context->getRequest()->getSession(),
-				$this->getUserForSave(),
+				$user,
 				$this->mTitle->getPrefixedDBkey(),
 				$query,
 				$anchor,
@@ -1992,6 +2016,21 @@ class EditPage implements IEditObject {
 	}
 
 	/**
+	 * Deprecated public access to attempting save, see documentation on
+	 * internalAttemptSavePrivate()
+	 *
+	 * @deprecated since 1.43
+	 * @param array &$result
+	 * @param bool $markAsBot
+	 * @param bool $markAsMinor
+	 * @return Status
+	 */
+	public function internalAttemptSave( &$result, $markAsBot = false, $markAsMinor = false ) {
+		wfDeprecated( __METHOD__, '1.43' );
+		return $this->internalAttemptSavePrivate( $result, $markAsBot, $markAsMinor );
+	}
+
+	/**
 	 * Attempt submission (no UI)
 	 *
 	 * @param array &$result Array to add statuses to, currently with the
@@ -2017,7 +2056,27 @@ class EditPage implements IEditObject {
 	 *   AS_BLOCKED_PAGE_FOR_USER. All that stuff needs to be cleaned up some
 	 * time.
 	 */
-	public function internalAttemptSave( &$result, $markAsBot = false, $markAsMinor = false ) {
+	private function internalAttemptSavePrivate( &$result, $markAsBot = false, $markAsMinor = false ) {
+		// If an attempt to acquire a temporary name failed, don't attempt to do anything else.
+		if ( $this->unableToAcquireTempName ) {
+			$status = Status::newFatal( 'temp-user-unable-to-acquire' );
+			$status->value = self::AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT;
+			return $status;
+		}
+		// Auto-create the temporary account user, if the feature is enabled.
+		// We create the account before any constraint checks or edit hooks fire, to ensure
+		// that we have an actor and user account that can be used for any logs generated
+		// by the edit attempt, and to ensure continuity in the user experience (if a constraint
+		// denies an edit to a logged-out user, that history should be associated with the
+		// eventually successful account creation)
+		$tempAccountStatus = $this->createTempUser();
+		if ( !$tempAccountStatus->isOK() ) {
+			return $tempAccountStatus;
+		}
+		if ( $tempAccountStatus instanceof CreateStatus ) {
+			$result['savedTempUser'] = $tempAccountStatus->getUser();
+		}
+
 		$useNPPatrol = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::UseNPPatrol );
 		$useRCPatrol = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::UseRCPatrol );
 		if ( !$this->getHookRunner()->onEditPage__attemptSave( $this ) ) {
@@ -2038,12 +2097,6 @@ class EditPage implements IEditObject {
 			# ...or the hook could be expecting us to produce an error
 			$status = Status::newFatal( 'hookaborted' );
 			$status->value = self::AS_HOOK_ERROR_EXPECTED;
-			return $status;
-		}
-
-		if ( $this->unableToAcquireTempName ) {
-			$status = Status::newFatal( 'temp-user-unable-to-acquire' );
-			$status->value = self::AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT;
 			return $status;
 		}
 
@@ -2364,39 +2417,26 @@ class EditPage implements IEditObject {
 					$pstUser
 				)
 			);
-
-			if ( $this->section === 'new' ) {
-				$constraintRunner->addConstraint(
-					new NewSectionMissingSubjectConstraint(
-						$this->sectiontitle,
-						$this->allowBlankSummary
-					)
-				);
-				$constraintRunner->addConstraint(
-					new MissingCommentConstraint( $this->textbox1 )
-				);
-			} else {
-				$originalContent = $this->getOriginalContent( $authority );
-
-				if ( $originalContent === null ) {
-					// T301947: User loses access to revision after loading
-					// The error message, rev-deleted-text-permission, is not really in use currently.
-					// It's added for completeness and in case any code path wants to know the error.
-					$status = Status::newFatal( 'rev-deleted-text-permission' );
-					$status->value = self::AS_REVISION_WAS_DELETED;
-					return $status;
-				}
-
-				$constraintRunner->addConstraint(
-					new AutoSummaryMissingSummaryConstraint(
-						$this->summary,
-						$this->autoSumm,
-						$this->allowBlankSummary,
-						$content,
-						$originalContent
-					)
-				);
-			}
+			$constraintRunner->addConstraint(
+				new NewSectionMissingSubjectConstraint(
+					$this->section,
+					$this->sectiontitle ?? '',
+					$this->allowBlankSummary
+				)
+			);
+			$constraintRunner->addConstraint(
+				new MissingCommentConstraint( $this->section, $this->textbox1 )
+			);
+			$constraintRunner->addConstraint(
+				new ExistingSectionEditConstraint(
+					$this->section,
+					$this->summary,
+					$this->autoSumm,
+					$this->allowBlankSummary,
+					$content,
+					$this->getOriginalContent( $authority )
+				)
+			);
 			// Check the constraints
 			if ( !$constraintRunner->checkConstraints() ) {
 				$failed = $constraintRunner->getFailedConstraint();
@@ -2460,15 +2500,6 @@ class EditPage implements IEditObject {
 			return Status::wrap( $failed->getLegacyStatus() );
 		}
 		// END OF MIGRATION TO EDITCONSTRAINT SYSTEM
-
-		// Auto-create the user if that is enabled
-		$status = $this->createTempUser( $pageUpdater );
-		if ( !$status->isOK() ) {
-			return $status;
-		}
-		if ( $status instanceof CreateStatus ) {
-			$result['savedTempUser'] = $status->getUser();
-		}
 
 		if ( $this->undidRev && $this->isUndoClean( $content ) ) {
 			// As the user can change the edit's content before saving, we only mark
@@ -2543,7 +2574,7 @@ class EditPage implements IEditObject {
 
 	/**
 	 * Apply the specific updates needed for the EditPage fields based on which constraint
-	 * failed, rather than interspersing this logic throughout internalAttemptSave at
+	 * failed, rather than interspersing this logic throughout internalAttemptSavePrivate at
 	 * each of the points the constraints are checked. Eventually, this will act on the
 	 * result from the backend.
 	 *
@@ -2563,7 +2594,12 @@ class EditPage implements IEditObject {
 		} elseif ( $failed instanceof EditFilterMergedContentHookConstraint ) {
 			$this->hookError = $failed->getHookError();
 		} elseif (
-			$failed instanceof AutoSummaryMissingSummaryConstraint ||
+			// ExistingSectionEditConstraint also checks for revisions deleted
+			// since the edit was loaded, which doesn't indicate a missing summary
+			(
+				$failed instanceof ExistingSectionEditConstraint
+				&& $failed->getLegacyStatus()->value === self::AS_SUMMARY_NEEDED
+			) ||
 			$failed instanceof NewSectionMissingSubjectConstraint
 		) {
 			$this->missingSummary = true;
@@ -3630,11 +3666,11 @@ class EditPage implements IEditObject {
 			$this->getHookRunner()->onEditPageGetDiffContent( $this, $newContent );
 
 			$user = $this->getUserForPreview();
-			$popts = ParserOptions::newFromUserAndLang( $user,
+			$parserOptions = ParserOptions::newFromUserAndLang( $user,
 				MediaWikiServices::getInstance()->getContentLanguage() );
 			$services = MediaWikiServices::getInstance();
 			$contentTransformer = $services->getContentTransformer();
-			$newContent = $contentTransformer->preSaveTransform( $newContent, $this->mTitle, $user, $popts );
+			$newContent = $contentTransformer->preSaveTransform( $newContent, $this->mTitle, $user, $parserOptions );
 		}
 
 		if ( ( $oldContent && !$oldContent->isEmpty() ) || ( $newContent && !$newContent->isEmpty() ) ) {
@@ -3732,7 +3768,7 @@ class EditPage implements IEditObject {
 	 * @param ParserOutput|null $output ParserOutput object from the parse
 	 * @return string HTML
 	 */
-	public static function getPreviewLimitReport( ParserOutput $output = null ) {
+	public static function getPreviewLimitReport( ?ParserOutput $output = null ) {
 		if ( !$output || !$output->getLimitReportData() ) {
 			return '';
 		}
@@ -3927,9 +3963,8 @@ class EditPage implements IEditObject {
 	private function getLastDelete(): ?stdClass {
 		$dbr = $this->connectionProvider->getReplicaDatabase();
 		$commentQuery = $this->commentStore->getJoin( 'log_comment' );
-		$data = $dbr->selectRow(
-			array_merge( [ 'logging' ], $commentQuery['tables'], [ 'actor' ] ),
-			[
+		$data = $dbr->newSelectQueryBuilder()
+			->select( [
 				'log_type',
 				'log_action',
 				'log_timestamp',
@@ -3938,19 +3973,19 @@ class EditPage implements IEditObject {
 				'log_params',
 				'log_deleted',
 				'actor_name'
-			] + $commentQuery['fields'],
-			[
+			] )
+			->from( 'logging' )
+			->join( 'actor', null, 'actor_id=log_actor' )
+			->where( [
 				'log_namespace' => $this->mTitle->getNamespace(),
 				'log_title' => $this->mTitle->getDBkey(),
 				'log_type' => 'delete',
 				'log_action' => 'delete',
-			],
-			__METHOD__,
-			[ 'ORDER BY' => [ 'log_timestamp DESC', 'log_id DESC' ] ],
-			[
-				'actor' => [ 'JOIN', 'actor_id=log_actor' ],
-			] + $commentQuery['joins']
-		);
+			] )
+			->orderBy( [ 'log_timestamp', 'log_id' ], SelectQueryBuilder::SORT_DESC )
+			->queryInfo( $commentQuery )
+			->caller( __METHOD__ )
+			->fetchRow();
 		// Quick paranoid permission checks...
 		if ( $data !== false ) {
 			if ( $data->log_deleted & LogPage::DELETED_USER ) {
@@ -4168,14 +4203,20 @@ class EditPage implements IEditObject {
 		$out = $this->context->getOutput();
 		$skin = $out->getSkin();
 		$skinOptions = $skin->getOptions();
+		// TODO T371004 move runOutputPipeline out of $parserOutput
+		// TODO T371022 ideally we clone here, but for now let's reproduce getText behaviour
+		$oldHtml = $parserOutput->getRawText();
+		$html = $parserOutput->runOutputPipeline( $parserOptions, [
+			'allowClone' => 'false',
+			'userLang' => $skin->getLanguage(),
+			'injectTOC' => $skinOptions['toc'],
+			'enableSectionEditLinks' => false,
+			'includeDebugInfo' => true,
+		] )->getContentHolderText();
+		$parserOutput->setRawText( $oldHtml );
 		return [
 			'parserOutput' => $parserOutput,
-			'html' => $parserOutput->getText( [
-				'userLang' => $skin->getLanguage(),
-				'injectTOC' => $skinOptions['toc'],
-				'enableSectionEditLinks' => false,
-				'includeDebugInfo' => true,
-			] )
+			'html' => $html
 		];
 	}
 

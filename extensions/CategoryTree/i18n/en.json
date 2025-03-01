@@ -32,5 +32,9 @@
 	"categorytree-no-pages": "no pages or subcategories",
 	"categorytree-not-found": "Category <i>$1</i> not found",
 	"categorytree-error": "Problem loading data.",
-	"categorytree-retry": "Please wait a moment and try again."
+	"categorytree-retry": "Please wait a moment and try again.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Parameter <code>onlyroot</code> is deprecated. Use <code>depth=\"0\"</code> instead.",
+	"categorytree-deprecation-warning": "'''Warning:''' This page uses <code>&lt;categorytree&gt;</code> with deprecated parameter.",
+	"categorytree-deprecation-category": "Pages using deprecated categorytree parameters",
+	"categorytree-deprecation-category-desc": "The page uses deprecated categorytree parameters like <code>onlyroot</code>."
 }

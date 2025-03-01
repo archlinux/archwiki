@@ -180,6 +180,7 @@ module.exports = function webABTest( props, token, forceInit ) {
 		if ( isInSample() ) {
 			/**
 			 * For use by WikimediaEvents only
+			 *
 			 * @event mediawiki.web_AB_test_enrollment
 			 * @internal
 			 * @property {string} context

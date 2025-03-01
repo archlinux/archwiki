@@ -14,8 +14,8 @@
 			"Waihorace",
 			"Wbxshiori",
 			"Winston Sung",
-			"乌拉跨氪",
-			"Xiplus"
+			"Xiplus",
+			"乌拉跨氪"
 		]
 	},
 	"cite-desc": "加入用於參考資料的 <code>&lt;ref&gt;</code> 與 <code>&lt;references/&gt;</code> 標籤",
@@ -42,6 +42,15 @@
 	"cite_error_empty_references_define": "group（分組）為「$2」的<code>&lt;references&gt;</code>內定義的name（名稱）為「$1」的<code>&lt;ref&gt;</code>標籤沒有內容。",
 	"cite-tracking-category-cite-error": "有參考來源錯誤的頁面",
 	"cite-tracking-category-cite-error-desc": "在此分類內的頁面在參考來源的使用上有錯誤。",
+	"cite-tracking-category-ref-extends": "使用擴充參考的頁面",
+	"cite-tracking-category-ref-extends-desc": "此分類中的頁面使用 &lt;ref&gt; 標籤的「extends」屬性。",
+	"cite-reference-previews-reference": "參考文獻",
+	"cite-reference-previews-book": "書籍參考",
+	"cite-reference-previews-journal": "期刊參考",
+	"cite-reference-previews-news": "新聞參考",
+	"cite-reference-previews-note": "備註",
+	"cite-reference-previews-web": "網站參考",
+	"cite-reference-previews-collapsible-placeholder": "此參考包含的圖片不適合用在預覽。",
 	"cite_references_link_accessibility_label": "移至",
 	"cite_references_link_many_accessibility_label": "移至：",
 	"cite_references_link_accessibility_back_label": "跳回",
@@ -53,8 +62,14 @@
 	"cite-wikieditor-help-content-reference-description": "參考來源",
 	"cite-wikieditor-help-content-named-reference-description": "已命名的參考文獻",
 	"cite-wikieditor-help-content-rereference-description": "重複使用相同參考來源",
+	"cite-wikieditor-help-content-extended-reference-description": "附加使用相同的參考，並提供額外的細節",
 	"cite-wikieditor-help-content-showreferences-description": "顯示參考來源",
 	"cite-wikieditor-help-content-reference-example-text1": "頁面文字。$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 連結文字]，其他文字。",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 連結文字]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 連結文字]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "額外細節",
+	"popups-prefs-navpopups-gadget-conflict-info": "您已啟用[[$1|導航Popup]]小工具，因此您將無法看到本功能顯示的預覽。在您的wiki上，該小工具可能具有些微不同的名稱。如果您繼續遇到問題，請檢查您的小工具和使用者指令碼（包括全域指令碼）。",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "您已啟用[[$1|導航Popup]]和[[$1|參考文獻提示]]小工具，因此您將無法看到本功能顯示的預覽。在您的wiki上，這兩個小工具可能具有些微不同的名稱。如果您繼續遇到問題，請檢查您的小工具和使用者指令碼（包括全域指令碼）。",
+	"popups-prefs-reftooltips-gadget-conflict-info": "您已啟用[[$1|參考文獻提示]]小工具，因此您將無法看到參考文獻預覽，但頁面預覽不受影響。在您的wiki上，該小工具可能具有些微不同的名稱。如果您繼續遇到問題，請檢查您的小工具和使用者指令碼（包括全域指令碼）。",
+	"popups-refpreview-user-preference-label": "啟用參考文獻預覽（在閱讀頁面時取得參考文獻的快速預覽）"
 }

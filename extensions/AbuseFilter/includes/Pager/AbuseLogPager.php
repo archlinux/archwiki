@@ -3,12 +3,14 @@
 namespace MediaWiki\Extension\AbuseFilter\Pager;
 
 use HtmlArmor;
-use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
+use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
@@ -21,7 +23,6 @@ use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
 use stdClass;
 use Wikimedia\Rdbms\IResultWrapper;
-use Xml;
 
 class AbuseLogPager extends ReverseChronologicalPager {
 	/**
@@ -179,20 +180,20 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				$filterObj = $lookup->getFilter( $filterID, true );
 				$globalDesc = $filterObj->getName();
 				$escaped_comments = Sanitizer::escapeHtmlAllowEntities( $globalDesc );
-				$filter_hidden = $filterObj->isHidden();
+				$privacyLevel = $filterObj->getPrivacyLevel();
 			} catch ( CentralDBNotAvailableException $_ ) {
 				$escaped_comments = $this->msg( 'abusefilter-log-description-not-available' )->escaped();
-				// either hide all filters, including not hidden, or show all, including hidden
+				// either hide all filters, including not hidden/protected, or show all, including hidden/protected
 				// we choose the former
-				$filter_hidden = true;
+				$privacyLevel = Flags::FILTER_HIDDEN & Flags::FILTER_USES_PROTECTED_VARS;
 			}
 		} else {
 			$escaped_comments = Sanitizer::escapeHtmlAllowEntities(
 				$row->af_public_comments ?? '' );
-			$filter_hidden = $row->af_hidden;
+			$privacyLevel = $row->af_hidden;
 		}
 
-		if ( $this->afPermissionManager->canSeeLogDetailsForFilter( $performer, $filter_hidden ) ) {
+		if ( $this->afPermissionManager->canSeeLogDetailsForFilter( $performer, $privacyLevel ) ) {
 			$actionLinks = [];
 
 			if ( $isListItem ) {
@@ -269,17 +270,17 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				$actions_taken,
 				$escaped_comments,
 				// Passing $7 to 'abusefilter-log-entry' will do nothing, as it's not used.
-				$diffLink
+				$diffLink ?: ''
 			)->params( $row->afl_user_text )->parse();
 		}
 
-		$attribs = null;
+		$attribs = [];
 		if (
 			$this->isHidingEntry( $row ) === true ||
 			// If isHidingEntry is false, we've just unhidden the row
 			( $this->isHidingEntry( $row ) === null && $row->afl_deleted )
 		) {
-			$attribs = [ 'class' => 'mw-abusefilter-log-hidden-entry' ];
+			$attribs['class'] = 'mw-abusefilter-log-hidden-entry';
 		}
 		if ( self::entryHasAssociatedDeletedRev( $row ) ) {
 			$description .= ' ' .
@@ -288,13 +289,13 @@ class AbuseLogPager extends ReverseChronologicalPager {
 
 		if ( $isListItem && !$this->hideEntries && $this->afPermissionManager->canHideAbuseLog( $performer ) ) {
 			// Checkbox for hiding multiple entries, single entries are handled above
-			$description = Xml::check( 'hideids[' . $row->afl_id . ']' ) . ' ' . $description;
+			$description = Html::check( 'hideids[' . $row->afl_id . ']' ) . ' ' . $description;
 		}
 
 		if ( $isListItem ) {
-			return Xml::tags( 'li', $attribs, $description );
+			return Html::rawElement( 'li', $attribs, $description );
 		} else {
-			return Xml::tags( 'span', $attribs, $description );
+			return Html::rawElement( 'span', $attribs, $description );
 		}
 	}
 
@@ -343,8 +344,23 @@ class AbuseLogPager extends ReverseChronologicalPager {
 		$info = [
 			'tables' => [ 'abuse_filter_log', 'abuse_filter', 'revision' ],
 			'fields' => [
-				$this->mDb->tableName( 'abuse_filter_log' ) . '.*',
-				$this->mDb->tableName( 'abuse_filter' ) . '.*',
+				'afl_id',
+				'afl_global',
+				'afl_filter_id',
+				'afl_user',
+				'afl_ip',
+				'afl_user_text',
+				'afl_action',
+				'afl_actions',
+				'afl_var_dump',
+				'afl_timestamp',
+				'afl_namespace',
+				'afl_title',
+				'afl_wiki',
+				'afl_deleted',
+				'afl_rev_id',
+				'af_public_comments',
+				'af_hidden',
 				'rev_id',
 			],
 			'conds' => $this->conds,
@@ -356,8 +372,8 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				'revision' => [
 					'LEFT JOIN',
 					[
-						'afl_wiki IS NULL',
-						'afl_rev_id IS NOT NULL',
+						'afl_wiki' => null,
+						$this->mDb->expr( 'afl_rev_id', '!=', null ),
 						'rev_id=afl_rev_id',
 					]
 				],
@@ -370,9 +386,9 @@ class AbuseLogPager extends ReverseChronologicalPager {
 			$info['join_conds']['archive'] = [
 				'LEFT JOIN',
 				[
-					'afl_wiki IS NULL',
-					'afl_rev_id IS NOT NULL',
-					'rev_id IS NULL',
+					'afl_wiki' => null,
+					$this->mDb->expr( 'afl_rev_id', '!=', null ),
+					'rev_id' => null,
 					'ar_rev_id=afl_rev_id',
 				]
 			];

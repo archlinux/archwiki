@@ -5,61 +5,77 @@ namespace MediaWiki\Extension\Gadgets\Content;
 use MediaWiki\Status\Status;
 
 /**
- * Class responsible for validating Gadget definition contents
+ * Validate the content of a gadget definition page.
  *
- * @todo maybe this should use a formal JSON schema validator or something
+ * @see MediaWikiGadgetsJsonRepo
+ * @see GadgetDefinitionContent
+ * @internal
  */
 class GadgetDefinitionValidator {
-	/**
-	 * @var array Validation metadata.
-	 * 'foo.bar.baz' => [ 'type check callback',
-	 *   'type name' [, 'member type check callback', 'member type name'] ]
-	 */
-	protected static $propertyValidation = [
-		'settings' => [ 'is_array', 'array' ],
-		'settings.actions' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'settings.categories' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'settings.category' => [ 'is_string', 'string' ],
-		'settings.contentModels' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'settings.default' => [ 'is_bool', 'boolean' ],
-		'settings.hidden' => [ 'is_bool', 'boolean' ],
-		'settings.namespaces' => [ 'is_array', 'array', 'is_int', 'integer' ],
-		'settings.package' => [ 'is_bool', 'boolean' ],
-		'settings.requiresES6' => [ 'is_bool', 'boolean' ],
-		'settings.rights' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'settings.skins' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'settings.supportsUrlLoad' => [ 'is_bool', 'boolean' ],
-
-		'module' => [ 'is_array', 'array' ],
-		'module.dependencies' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'module.messages' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'module.pages' => [ 'is_array', 'array', [ __CLASS__, 'isValidTitleSuffix' ], '.js, .css or .json page' ],
-		'module.peers' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'module.type' => [ [ __CLASS__, 'isValidType' ], 'general or styles' ],
+	private const TYPE_ARRAY = [ 'callback' => 'is_array', 'expect' => 'array' ];
+	private const TYPE_BOOL = [ 'callback' => 'is_bool', 'expect' => 'boolean' ];
+	private const TYPE_INT = [ 'callback' => 'is_int', 'expect' => 'number' ];
+	private const TYPE_STRING = [ 'callback' => 'is_string', 'expect' => 'string' ];
+	private const TYPE_PAGE_SUFFIX = [
+		'callback' => [ __CLASS__, 'isResourcePageSuffix' ], 'expect' => '.js, .css, .json'
+	];
+	private const TYPE_MODULE_TYPE = [
+		'callback' => [ __CLASS__, 'isModuleType' ], 'expect' => '"", "general", "styles"',
 	];
 
-	public static function isValidTitleSuffix( string $title ): bool {
-		return str_ends_with( $title, '.js' ) || str_ends_with( $title, '.css' ) || str_ends_with( $title, '.json' );
+	/**
+	 * @var array Schema for the definition.
+	 *
+	 * - callback: boolean check.
+	 * - expect: human-readable description for the gadgets-validate-wrongtype message.
+	 * - child: optional type+expect for each array item.
+	 */
+	protected static $schema = [
+		'settings' => self::TYPE_ARRAY,
+		'settings.actions' => self::TYPE_ARRAY + [ 'child' => self::TYPE_STRING ],
+		'settings.categories' => self::TYPE_ARRAY + [ 'child' => self::TYPE_STRING ],
+		'settings.category' => self::TYPE_STRING,
+		'settings.contentModels' => self::TYPE_ARRAY + [ 'child' => self::TYPE_STRING ],
+		'settings.default' => self::TYPE_BOOL,
+		'settings.hidden' => self::TYPE_BOOL,
+		'settings.namespaces' => self::TYPE_ARRAY + [ 'child' => self::TYPE_INT ],
+		'settings.package' => self::TYPE_BOOL,
+		'settings.requiresES6' => self::TYPE_BOOL,
+		'settings.rights' => self::TYPE_ARRAY + [ 'child' => self::TYPE_STRING ],
+		'settings.skins' => self::TYPE_ARRAY + [ 'child' => self::TYPE_STRING ],
+		'settings.supportsUrlLoad' => self::TYPE_BOOL,
+
+		'module' => self::TYPE_ARRAY,
+		'module.dependencies' => self::TYPE_ARRAY + [ 'child' => self::TYPE_STRING ],
+		'module.messages' => self::TYPE_ARRAY + [ 'child' => self::TYPE_STRING ],
+		'module.pages' => self::TYPE_ARRAY + [ 'child' => self::TYPE_PAGE_SUFFIX ],
+		'module.peers' => self::TYPE_ARRAY + [ 'child' => self::TYPE_STRING ],
+		'module.type' => self::TYPE_MODULE_TYPE,
+	];
+
+	public static function isResourcePageSuffix( $title ): bool {
+		return is_string( $title ) && (
+			str_ends_with( $title, '.js' ) || str_ends_with( $title, '.css' ) || str_ends_with( $title, '.json' )
+		);
 	}
 
-	public static function isValidType( string $type ): bool {
+	public static function isModuleType( string $type ): bool {
 		return $type === '' || $type === 'general' || $type === 'styles';
 	}
 
 	/**
-	 * Check the validity of the given properties array
-	 * @param array $properties Return value of FormatJson::decode( $blob, true )
+	 * Check the validity of known properties in a gadget definition array.
+	 *
+	 * @param array $definition
 	 * @param bool $tolerateMissing If true, don't complain about missing keys
 	 * @return Status object with error message if applicable
 	 */
-	public function validate( array $properties, $tolerateMissing = false ) {
-		foreach ( self::$propertyValidation as $property => $validation ) {
-			$path = explode( '.', $property );
-			$val = $properties;
-
-			// Walk down and verify that the path from the root to this property exists
-			foreach ( $path as $p ) {
-				if ( !array_key_exists( $p, $val ) ) {
+	public function validate( array $definition, $tolerateMissing = false ) {
+		foreach ( self::$schema as $property => $validation ) {
+			// Access the property by walking from the root to the specified property
+			$val = $definition;
+			foreach ( explode( '.', $property ) as $propName ) {
+				if ( !array_key_exists( $propName, $val ) ) {
 					if ( $tolerateMissing ) {
 						// Skip validation of this property altogether
 						continue 2;
@@ -67,30 +83,27 @@ class GadgetDefinitionValidator {
 
 					return Status::newFatal( 'gadgets-validate-notset', $property );
 				}
-				$val = $val[$p];
+				$val = $val[$propName];
 			}
 
-			// Do the actual validation of this property
-			$func = $validation[0];
-			if ( !call_user_func( $func, $val ) ) {
+			// Validate this property
+			$isValid = ( $validation['callback'] )( $val );
+			if ( !$isValid ) {
 				return Status::newFatal(
-					'gadgets-validate-wrongtype',
-					$property,
-					$validation[1],
-					gettype( $val )
+					'gadgets-validate-wrongtype', $property,
+					$validation['expect']
 				);
 			}
 
-			if ( isset( $validation[2] ) && isset( $validation[3] ) && is_array( $val ) ) {
-				// Descend into the array and check the type of each element
-				$func = $validation[2];
-				foreach ( $val as $i => $v ) {
-					if ( !call_user_func( $func, $v ) ) {
+			// Descend into the array and validate each array item
+			if ( isset( $validation['child'] ) && is_array( $val ) ) {
+				foreach ( $val as $key => $item ) {
+					$isValid = ( $validation['child']['callback'] )( $item );
+					if ( !$isValid ) {
 						return Status::newFatal(
 							'gadgets-validate-wrongtype',
-							"{$property}[{$i}]",
-							$validation[3],
-							gettype( $v )
+							"{$property}[{$key}]",
+							$validation['child']['expect']
 						);
 					}
 				}

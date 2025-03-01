@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bagas Chrisara",
 			"Bennylin",
 			"Daud I.F. Argana",
 			"Diki Ananta",
@@ -8,11 +9,10 @@
 			"Irwangatot",
 			"IvanLanin",
 			"Iwan Novirion",
+			"Leapofod",
 			"Rex",
 			"Sumbukompor",
-			"Veracious",
-			"Bagas Chrisara",
-			"Leapofod"
+			"Veracious"
 		]
 	},
 	"cite-desc": "Menambahkan tag <code>&lt;ref&gt;</code> dan <code>&lt;references&gt;</code> untuk kutipan",
@@ -37,6 +37,13 @@
 	"cite_error_empty_references_define": "Tag <code>&lt;ref&gt;</code> dengan nama \"$1\" yang didefinisikan di kelompok <code>&lt;references&gt;</code> \"$2\" tidak memiliki konten.",
 	"cite-tracking-category-cite-error": "Halaman dengan kesalahan referensi",
 	"cite-tracking-category-cite-error-desc": "Halaman dalam kategori ini memiliki kesalahan dalam penggunaan tanda referensi.",
+	"cite-reference-previews-reference": "Referensi",
+	"cite-reference-previews-book": "Referensi buku",
+	"cite-reference-previews-journal": "Referensi jurnal",
+	"cite-reference-previews-news": "Referensi berita",
+	"cite-reference-previews-note": "Catatan",
+	"cite-reference-previews-web": "Referensi web",
+	"cite-reference-previews-collapsible-placeholder": "Referensi ini menyertakan bagan yang tidak bisa dimasukkan ke dalam pratayang.",
 	"cite_references_link_accessibility_label": "Ke atas",
 	"cite_references_link_many_accessibility_label": "Lompat ke:",
 	"cite_references_link_accessibility_back_label": "Kembali ke atas",
@@ -50,5 +57,9 @@
 	"cite-wikieditor-help-content-rereference-description": "Penggunaan kembali referensi yang sama",
 	"cite-wikieditor-help-content-showreferences-description": "Menampilkan referensi",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Teks pranala], teks tambahan.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teks pranala]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teks pranala]",
+	"popups-prefs-navpopups-gadget-conflict-info": "Anda telah menyalakan perkakas [[$1|Navigation popups]], jadi Anda tidak akan melihat pratayang yang disediakan oleh fitur ini. Tergantung wiki Anda, perkakas ini mungkin memiliki nama yang sedikit berbeda. Jika Anda terus mengalami masalah, tolong lihat kembali perkakas dan skrip pengguna Anda, termasuk yang sifatnya global.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "Anda telah menyalakan perkakas [[$1|Navigation popups]] dan [[$1|Reference Tooltips]], jadi Anda tidak akan melihat pratayang yang disediakan oleh fitur ini. Tergantung wiki Anda, perkakas ini mungkin memiliki nama yang sedikit berbeda. Jika Anda terus mengalami masalah, tolong lihat kembali perkakas dan skrip pengguna Anda, termasuk yang sifatnya global.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "Anda telah menyalakan perkakas [[$1|Reference Tooltips]], jadi Anda tidak akan melihat pratayang referensi, tetapi tetap akan melihat pratayang halaman. Tergantung wiki Anda, perkakas ini mungkin memiliki nama yang sedikit berbeda. Jika Anda terus mengalami masalah, tolong lihat kembali perkakas dan skrip pengguna Anda, termasuk yang sifatnya global.",
+	"popups-refpreview-user-preference-label": "Aktifkan pratayang referensi (dapatkan pratayang referensi secara cepat ketika membaca halaman)"
 }

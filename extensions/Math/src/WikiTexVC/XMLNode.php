@@ -6,7 +6,9 @@ namespace MediaWiki\Extension\Math\WikiTexVC;
  * to load MathML Strings to PHP objects.
  */
 class XMLNode {
+	/** @var mixed */
 	public $value;
+	/** @var self[] */
 	public $children;
 
 	public function __construct( $value ) {

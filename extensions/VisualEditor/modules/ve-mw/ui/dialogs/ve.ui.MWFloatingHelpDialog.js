@@ -13,8 +13,8 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {string} label
- * @cfg {jQuery} $message
+ * @param {string} config.label
+ * @param {jQuery} config.$message
  */
 ve.ui.MWFloatingHelpDialog = function VeUiMWFloatingHelpDialog( config ) {
 	// Parent constructor
@@ -46,7 +46,7 @@ ve.ui.MWFloatingHelpDialog.static.actions = [
  */
 ve.ui.MWFloatingHelpDialog.prototype.initialize = function () {
 	ve.ui.MWFloatingHelpDialog.super.prototype.initialize.call( this );
-	var content = new OO.ui.PanelLayout( { padded: true, expanded: false } );
+	const content = new OO.ui.PanelLayout( { padded: true, expanded: false } );
 	content.$element.append( this.$message );
 	this.$body.append( content.$element );
 	this.$foot.remove();
@@ -56,13 +56,13 @@ ve.ui.MWFloatingHelpDialog.prototype.initialize = function () {
  * @inheritdoc
  */
 ve.ui.MWFloatingHelpDialog.prototype.getSetupProcess = function ( data ) {
-	return ve.ui.MWFloatingHelpDialog.super.prototype.getSetupProcess.call( this, data ).next( function () {
+	return ve.ui.MWFloatingHelpDialog.super.prototype.getSetupProcess.call( this, data ).next( () => {
 		this.title.setLabel( this.label );
-	}, this );
+	} );
 };
 
 ve.ui.MWFloatingHelpDialog.prototype.getSizeProperties = function () {
-	var sizeProps = ve.ui.MWFloatingHelpDialog.super.prototype.getSizeProperties.call( this );
+	const sizeProps = ve.ui.MWFloatingHelpDialog.super.prototype.getSizeProperties.call( this );
 	if ( !OO.ui.isMobile() ) {
 		return ve.extendObject( {}, sizeProps, { width: '350px', maxHeight: '50%' } );
 	}

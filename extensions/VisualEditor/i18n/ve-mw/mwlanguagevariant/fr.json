@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"DePlusJean",
 			"Gomoko",
 			"Thibaut120094",
@@ -18,7 +19,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Ceci est une règle cachée.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Cette règle modifie le titre de la page.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Code de langue",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Non valide>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Non valide</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Langue",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Source",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destination",

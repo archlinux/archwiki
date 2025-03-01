@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\WikiPageFactory;
@@ -37,15 +39,9 @@ class ApiPurge extends ApiBase {
 	private WikiPageFactory $wikiPageFactory;
 	private TitleFormatter $titleFormatter;
 
-	/**
-	 * @param ApiMain $mainModule
-	 * @param string $moduleName
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param TitleFormatter $titleFormatter
-	 */
 	public function __construct(
 		ApiMain $mainModule,
-		$moduleName,
+		string $moduleName,
 		WikiPageFactory $wikiPageFactory,
 		TitleFormatter $titleFormatter
 	) {
@@ -88,21 +84,22 @@ class ApiPurge extends ApiBase {
 			];
 			$page = $this->wikiPageFactory->newFromTitle( $pageIdentity );
 
-			$authStatus = PermissionStatus::newEmpty();
-			if ( $authority->authorizeAction( 'purge', $authStatus ) ) {
+			$purgeAuthStatus = PermissionStatus::newEmpty();
+			if ( $authority->authorizeAction( 'purge', $purgeAuthStatus ) ) {
 				// Directly purge and skip the UI part of purge()
 				$page->doPurge();
 				$r['purged'] = true;
 			} else {
-				if ( $authStatus->isRateLimitExceeded() ) {
+				if ( $purgeAuthStatus->isRateLimitExceeded() ) {
 					$this->addWarning( 'apierror-ratelimited' );
 				} else {
-					$this->addWarning( Status::wrap( $authStatus )->getMessage() );
+					$this->addWarning( Status::wrap( $purgeAuthStatus )->getMessage() );
 				}
 			}
 
 			if ( $forceLinkUpdate || $forceRecursiveLinkUpdate ) {
-				if ( $authority->authorizeAction( 'linkpurge', $authStatus ) ) {
+				$linkpurgeAuthStatus = PermissionStatus::newEmpty();
+				if ( $authority->authorizeAction( 'linkpurge', $linkpurgeAuthStatus ) ) {
 					# Logging to better see expensive usage patterns
 					if ( $forceRecursiveLinkUpdate ) {
 						LoggerFactory::getInstance( 'RecursiveLinkPurge' )->info(
@@ -127,12 +124,12 @@ class ApiPurge extends ApiBase {
 					] );
 					$r['linkupdate'] = true;
 				} else {
-					if ( $authStatus->isRateLimitExceeded() ) {
+					if ( $linkpurgeAuthStatus->isRateLimitExceeded() ) {
 						$this->addWarning( 'apierror-ratelimited' );
 						$forceLinkUpdate = false;
 						$forceRecursiveLinkUpdate = false;
 					} else {
-						$this->addWarning( Status::wrap( $authStatus )->getMessage() );
+						$this->addWarning( Status::wrap( $linkpurgeAuthStatus )->getMessage() );
 					}
 				}
 			}
@@ -209,3 +206,6 @@ class ApiPurge extends ApiBase {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Purge';
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiPurge::class, 'ApiPurge' );

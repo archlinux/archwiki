@@ -11,6 +11,7 @@
 			"Rxy",
 			"Shirayuki",
 			"Sujiniku",
+			"Waki285",
 			"Yuukin0248"
 		]
 	},
@@ -29,5 +30,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "コード",
 	"syntaxhighlight-error-pygments-invocation-failure": "Pygmentsの呼び出しに失敗しました",
 	"syntaxhighlight-error-unknown-language": "「$1」は不明な言語です",
-	"syntaxhighlight-error-exceeds-size-limit": "記述された$1{{PLURAL:$1|バイト}}の構文は、ハイライトの最大許容サイズである$2{{PLURAL:$2|バイト}}を超えています"
+	"syntaxhighlight-error-exceeds-size-limit": "記述された$1{{PLURAL:$1|バイト}}の構文は、ハイライトの最大許容サイズである$2{{PLURAL:$2|バイト}}を超えています",
+	"syntaxhighlight-button-copy": "コピー",
+	"syntaxhighlight-button-copied": "コピーしました"
 }

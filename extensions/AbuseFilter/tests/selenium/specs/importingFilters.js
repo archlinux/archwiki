@@ -6,7 +6,7 @@ const assert = require( 'assert' ),
 	ViewListPage = require( '../pageobjects/viewlist.page' ),
 	ViewImportPage = require( '../pageobjects/viewimport.page' );
 
-describe( 'When importing a filter', function () {
+describe( 'When importing a filter', () => {
 	const filterSpecs = {
 		name: 'My filter name',
 		comments: 'Notes go here.',
@@ -18,7 +18,7 @@ describe( 'When importing a filter', function () {
 	};
 	let importData;
 
-	before( async function () {
+	before( async () => {
 		await LoginPage.loginAdmin();
 
 		await ViewEditPage.open( 'new' );
@@ -45,38 +45,38 @@ describe( 'When importing a filter', function () {
 		importData = await ViewEditPage.exportData;
 	} );
 
-	it( 'the interface should be visible', async function () {
+	it( 'the interface should be visible', async () => {
 		await ViewImportPage.open();
 		assert( await ViewImportPage.importData.isDisplayed() );
 	} );
 
-	it( 'it should redirect to ViewEdit after submission', async function () {
+	it( 'it should redirect to ViewEdit after submission', async () => {
 		await ViewImportPage.importText( 'SOME INVALID GIBBERISH' );
 		assert( /\/new$/.test( await browser.getUrl() ) );
 	} );
 
-	it( 'bad data results in an error', async function () {
+	it( 'bad data results in an error', async () => {
 		assert( await ViewEditPage.error.isDisplayed() );
 	} );
 
-	it( 'valid data shows the editing interface', async function () {
+	it( 'valid data shows the editing interface', async () => {
 		await ViewImportPage.open();
 		await ViewImportPage.importText( importData );
 		assert( await ViewEditPage.name.isDisplayed() );
 	} );
 
-	describe( 'Data on the editing interface is correct', function () {
-		it( 'filter specs are copied', async function () {
+	describe( 'Data on the editing interface is correct', () => {
+		it( 'filter specs are copied', async () => {
 			assert.strictEqual( await ViewEditPage.name.getValue(), filterSpecs.name );
 			assert.strictEqual( await ViewEditPage.comments.getValue(), filterSpecs.comments + '\n' );
 			assert.strictEqual( await ViewEditPage.rules.getValue(), filterSpecs.rules + '\n' );
 		} );
-		it( 'filter flags are copied', async function () {
+		it( 'filter flags are copied', async () => {
 			assert.strictEqual( await ViewEditPage.enabled.isSelected(), !!filterSpecs.enabled );
 			assert.strictEqual( await ViewEditPage.hidden.isSelected(), !!filterSpecs.hidden );
 			assert.strictEqual( await ViewEditPage.deleted.isSelected(), !!filterSpecs.deleted );
 		} );
-		it( 'filter actions are copied', async function () {
+		it( 'filter actions are copied', async () => {
 			assert.strictEqual( await ViewEditPage.warnCheckbox.isSelected(), true );
 			assert.strictEqual(
 				await ViewEditPage.warnOtherMessage.getValue(),
@@ -84,7 +84,7 @@ describe( 'When importing a filter', function () {
 			);
 		} );
 
-		it( 'the imported data can be saved', async function () {
+		it( 'the imported data can be saved', async () => {
 			await ViewEditPage.submit();
 			const filterNotice = await ViewListPage.filterSavedNotice;
 			assert( filterNotice.isDisplayed() );

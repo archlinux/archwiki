@@ -27,42 +27,46 @@
 namespace MediaWiki\Installer;
 
 use AutoLoader;
-use EmptyBagOStuff;
 use Exception;
 use ExecutableFinder;
-use ExtensionDependencyError;
-use ExtensionProcessor;
-use ExtensionRegistry;
 use GuzzleHttp\Psr7\Header;
 use IntlChar;
 use InvalidArgumentException;
-use Language;
 use LogicException;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\GlobalVarConfig;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MultiConfig;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\Interwiki\NullInterwikiLookup;
+use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Registration\ExtensionDependencyError;
+use MediaWiki\Registration\ExtensionProcessor;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Status\Status;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
-use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
 use MediaWiki\User\User;
+use MediaWiki\Utils\UrlUtils;
 use MWCryptRand;
-use ParserOptions;
+use MWLBFactory;
 use RuntimeException;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\Rdbms\LBFactorySingle;
 use Wikimedia\Services\ServiceDisabledException;
-use WikitextContent;
 
 /**
  * The Installer helps admins create or upgrade their wiki.
@@ -190,8 +194,6 @@ abstract class Installer {
 	 * MediaWiki configuration globals that will eventually be passed through
 	 * to LocalSettings.php. The names only are given here, the defaults
 	 * typically come from config-schema.yaml.
-	 *
-	 * @var array
 	 */
 	private const DEFAULT_VAR_NAMES = [
 		MainConfigNames::Sitename,
@@ -289,7 +291,6 @@ abstract class Installer {
 	 */
 	protected $objectCaches = [
 		'apcu' => 'apcu_fetch',
-		'wincache' => 'wincache_ucache_get'
 	];
 
 	/**
@@ -361,14 +362,14 @@ abstract class Installer {
 	 * The parameters are like parameters to wfMessage().
 	 * The messages will be in wikitext format, which will be converted to an
 	 * output format such as HTML or text before being sent to the user.
-	 * @param string $msg
+	 * @param string|MessageSpecifier $msg
 	 * @param mixed ...$params
 	 */
 	abstract public function showMessage( $msg, ...$params );
 
 	/**
 	 * Same as showMessage(), but for displaying errors
-	 * @param string $msg
+	 * @param string|MessageSpecifier $msg
 	 * @param mixed ...$params
 	 */
 	abstract public function showError( $msg, ...$params );
@@ -479,14 +480,14 @@ abstract class Installer {
 	 * @param Config|null $installerConfig Config override. If null, the previous
 	 *        config will be inherited.
 	 * @param array $serviceOverrides Service definition overrides. Values can be null to
-	 *        disable specific overrides that would be applied per default, namely
+	 *        disable specific overrides that would be applied by default, namely
 	 *        'InterwikiLookup' and 'UserOptionsLookup'.
 	 * @param bool $disableStorage Whether MediaWikiServices::disableStorage() should be called.
 	 *
 	 * @return MediaWikiServices
 	 */
 	public function resetMediaWikiServices(
-		Config $installerConfig = null,
+		?Config $installerConfig = null,
 		$serviceOverrides = [],
 		bool $disableStorage = false
 	) {
@@ -807,10 +808,12 @@ abstract class Installer {
 
 		try {
 			$out = $parser->parse( $text, $this->parserTitle, $this->parserOptions, $lineStart );
-			$html = $out->getText( [
+			$pipeline = MediaWikiServices::getInstance()->getDefaultOutputPipeline();
+			// TODO T371008 consider if using the Content framework makes sense instead of creating the pipeline
+			$html = $pipeline->run( $out, $this->parserOptions, [
 				'enableSectionEditLinks' => false,
 				'unwrap' => true,
-			] );
+			] )->getContentHolderText();
 			$html = Parser::stripOuterParagraph( $html );
 		} catch ( ServiceDisabledException $e ) {
 			$html = '<!--DB access attempted during parse-->  ' . htmlspecialchars( $text );
@@ -848,13 +851,14 @@ abstract class Installer {
 	 * @return Status
 	 */
 	public function populateSiteStats( DatabaseInstaller $installer ) {
-		$status = $installer->getConnection();
+		$status = $installer->getConnection( DatabaseInstaller::CONN_CREATE_TABLES );
 		if ( !$status->isOK() ) {
 			return $status;
 		}
-		$status->getDB()->insert(
-			'site_stats',
-			[
+		$status->getDB()->newInsertQueryBuilder()
+			->insertInto( 'site_stats' )
+			->ignore()
+			->row( [
 				'ss_row_id' => 1,
 				'ss_total_edits' => 0,
 				'ss_good_articles' => 0,
@@ -862,10 +866,9 @@ abstract class Installer {
 				'ss_users' => 0,
 				'ss_active_users' => 0,
 				'ss_images' => 0
-			],
-			__METHOD__,
-			'IGNORE'
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 
 		return Status::newGood();
 	}
@@ -1321,6 +1324,7 @@ abstract class Installer {
 		$dh = opendir( $extDir );
 		$exts = [];
 		$status = new Status;
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $file = readdir( $dh ) ) !== false ) {
 			// skip non-dirs and hidden directories
 			if ( !is_dir( "$extDir/$file" ) || $file[0] === '.' ) {
@@ -1676,7 +1680,6 @@ abstract class Installer {
 		$coreInstallSteps = [
 			[ 'name' => 'database', 'callback' => [ $installer, 'setupDatabase' ] ],
 			[ 'name' => 'tables', 'callback' => [ $installer, 'createTables' ] ],
-			[ 'name' => 'tables-manual', 'callback' => [ $installer, 'createManualTables' ] ],
 			[ 'name' => 'interwiki', 'callback' => [ $installer, 'populateInterwikiTable' ] ],
 			[ 'name' => 'stats', 'callback' => [ $this, 'populateSiteStats' ] ],
 			[ 'name' => 'keys', 'callback' => [ $this, 'generateKeys' ] ],
@@ -1781,10 +1784,31 @@ abstract class Installer {
 	 * @return Status
 	 */
 	public function restoreServices() {
+		// Apply wgServer, so it's available for database initialization hooks.
+		$urlOptions = [
+			UrlUtils::SERVER => $GLOBALS['wgServer'],
+		];
+
+		$connection = $this->getDBInstaller()
+			->definitelyGetConnection( DatabaseInstaller::CONN_CREATE_TABLES );
+		$virtualDomains = array_merge(
+			$this->getVirtualDomains(),
+			MWLBFactory::CORE_VIRTUAL_DOMAINS
+		);
+
 		$this->resetMediaWikiServices( null, [
+			'DBLoadBalancerFactory' => static function () use ( $virtualDomains, $connection ) {
+				return LBFactorySingle::newFromConnection(
+					$connection,
+					[ 'virtualDomains' => $virtualDomains ]
+				);
+			},
+			'UrlUtils' => static function ( MediaWikiServices $services ) use ( $urlOptions ) {
+				return new UrlUtils( $urlOptions );
+			},
 			'UserOptionsLookup' => static function ( MediaWikiServices $services ) {
 				return $services->get( 'UserOptionsManager' );
-			}
+			},
 		] );
 		return Status::newGood();
 	}

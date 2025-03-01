@@ -66,9 +66,7 @@ ve.ui.SpecialCharacterDialog.prototype.initialize = function () {
 ve.ui.SpecialCharacterDialog.prototype.getSetupProcess = function ( data ) {
 	data = data || {};
 	return ve.ui.SpecialCharacterDialog.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
-			var dialog = this;
-
+		.next( () => {
 			this.surface = data.surface;
 			this.surface.getModel().connect( this, { contextChange: 'onContextChange' } );
 
@@ -78,12 +76,12 @@ ve.ui.SpecialCharacterDialog.prototype.getSetupProcess = function ( data ) {
 				this.characterListLoaded = true;
 
 				ve.init.platform.fetchSpecialCharList()
-					.then( function ( symbolData ) {
-						dialog.characterListLayout.setSymbolData( symbolData );
-						dialog.updateSize();
+					.then( ( symbolData ) => {
+						this.characterListLayout.setSymbolData( symbolData );
+						this.updateSize();
 					} );
 			}
-		}, this );
+		} );
 };
 
 /**
@@ -92,10 +90,10 @@ ve.ui.SpecialCharacterDialog.prototype.getSetupProcess = function ( data ) {
 ve.ui.SpecialCharacterDialog.prototype.getTeardownProcess = function ( data ) {
 	data = data || {};
 	return ve.ui.SpecialCharacterDialog.super.prototype.getTeardownProcess.call( this, data )
-		.first( function () {
+		.first( () => {
 			this.surface.getModel().disconnect( this );
 			this.surface = null;
-		}, this );
+		} );
 };
 
 /**
@@ -103,31 +101,31 @@ ve.ui.SpecialCharacterDialog.prototype.getTeardownProcess = function ( data ) {
  */
 ve.ui.SpecialCharacterDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.SpecialCharacterDialog.super.prototype.getReadyProcess.call( this, data )
-		.next( function () {
-			var surface = this.surface;
+		.next( () => {
+			const surface = this.surface;
 			// The dialog automatically receives focus after opening, move it back to the surface.
 			// (Make sure an existing selection is preserved. Why does focus() reset the selection? 🤦)
-			var previousSelection = surface.getModel().getSelection();
+			const previousSelection = surface.getModel().getSelection();
 			// On deactivated surfaces (e.g. those using nullSelectionOnBlur), the native selection is
 			// removed after a setTimeout to fix a bug in iOS (T293661, in ve.ce.Surface#deactivate).
 			// Ensure that we restore the selection **after** this happens, otherwise the surface will
 			// get re-blurred. (T318720)
-			setTimeout( function () {
+			setTimeout( () => {
 				surface.getView().focus();
 				if ( !previousSelection.isNull() ) {
 					surface.getModel().setSelection( previousSelection );
 				}
 			} );
-		}, this );
+		} );
 };
 
 /**
  * @inheritdoc
  */
 ve.ui.SpecialCharacterDialog.prototype.getActionProcess = function ( action ) {
-	return new OO.ui.Process( function () {
+	return new OO.ui.Process( () => {
 		this.close( { action: action } );
-	}, this );
+	} );
 };
 
 /**
@@ -143,7 +141,7 @@ ve.ui.SpecialCharacterDialog.prototype.onContextChange = function () {
  * @param {Object} character Character data
  */
 ve.ui.SpecialCharacterDialog.prototype.onCharacterListChoose = function ( character ) {
-	var fragment = this.surface.getModel().getFragment(),
+	const fragment = this.surface.getModel().getFragment(),
 		mode = this.surface.getMode();
 
 	function encode( text ) {

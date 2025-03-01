@@ -9,9 +9,9 @@ use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use MimeAnalyzer;
 use RecentChange;
 use RepoGroup;
+use Wikimedia\Mime\MimeAnalyzer;
 
 class VariableGeneratorFactory {
 	public const SERVICE_NAME = 'AbuseFilterVariableGeneratorFactory';
@@ -57,7 +57,7 @@ class VariableGeneratorFactory {
 	 * @param VariableHolder|null $holder
 	 * @return VariableGenerator
 	 */
-	public function newGenerator( VariableHolder $holder = null ): VariableGenerator {
+	public function newGenerator( ?VariableHolder $holder = null ): VariableGenerator {
 		return new VariableGenerator( $this->hookRunner, $this->userFactory, $holder );
 	}
 
@@ -67,7 +67,7 @@ class VariableGeneratorFactory {
 	 * @param VariableHolder|null $holder
 	 * @return RunVariableGenerator
 	 */
-	public function newRunGenerator( User $user, Title $title, VariableHolder $holder = null ): RunVariableGenerator {
+	public function newRunGenerator( User $user, Title $title, ?VariableHolder $holder = null ): RunVariableGenerator {
 		return new RunVariableGenerator(
 			$this->hookRunner,
 			$this->userFactory,
@@ -89,7 +89,7 @@ class VariableGeneratorFactory {
 	public function newRCGenerator(
 		RecentChange $rc,
 		User $contextUser,
-		VariableHolder $holder = null
+		?VariableHolder $holder = null
 	): RCVariableGenerator {
 		return new RCVariableGenerator(
 			$this->hookRunner,

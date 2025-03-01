@@ -4,10 +4,12 @@ namespace MediaWiki\Tests\Parser;
 
 use HtmlArmor;
 use LogicException;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
@@ -16,13 +18,11 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiLangTestCase;
 use MockTitleTrait;
-use ParserOptions;
-use WikitextContent;
 
 /**
  * @group Database
- * @covers \Parser
- * @covers \BlockLevelPass
+ * @covers \MediaWiki\Parser\Parser
+ * @covers \MediaWiki\Parser\BlockLevelPass
  */
 class ParserMethodsTest extends MediaWikiLangTestCase {
 	use MockTitleTrait;
@@ -159,7 +159,7 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers \Parser
+	 * @covers \MediaWiki\Parser\Parser
 	 * @covers \MediaWiki\Parser\ParserOutput::getSections
 	 */
 	public function testGetSections() {
@@ -263,18 +263,6 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 				'http://%5B::1%5D/foobar',
 			],
 		];
-	}
-
-	public function testWrapOutput() {
-		$title = Title::makeTitle( NS_MAIN, 'Foo' );
-		$po = ParserOptions::newFromAnon();
-		$parser = $this->getServiceContainer()->getParser();
-		$parser->parse( 'Hello World', $title, $po );
-		$text = $parser->getOutput()->getText();
-
-		$this->assertStringContainsString( 'Hello World', $text );
-		$this->assertStringContainsString( '<div', $text );
-		$this->assertStringContainsString( 'class="mw-content-ltr mw-parser-output"', $text );
 	}
 
 	public function provideRevisionAccess() {
@@ -421,7 +409,7 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 
 		$parser = $this->getServiceContainer()->getParser();
 		$parser->parse( $text, $title, $po, true, true, $revId );
-		$html = $parser->getOutput()->getText();
+		$html = $parser->getOutput()->getRawText();
 
 		$this->assertStringContainsString( $expectedInHtml, $html, 'In HTML' );
 

@@ -3,10 +3,10 @@
 		"authors": [
 			"Ajdar",
 			"Derslek",
+			"Don Alessandro",
 			"Ерней",
 			"Ильгиз",
-			"Ильнар",
-			"Don Alessandro"
+			"Ильнар"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Китап",
@@ -18,7 +18,6 @@
 	"cite-ve-dialog-reference-editing-reused": "Әлеге сылтама бу биттә $1 {{PLURAL:$1|$1 тапкыр}} кулланыла.",
 	"cite-ve-dialog-reference-options-group-label": "Бу тупламны куллану",
 	"cite-ve-dialog-reference-options-group-placeholder": "Гомуми сылтамалар",
-	"cite-ve-dialog-reference-options-name-label": "Кабаттан шушы исем белән куллану",
 	"cite-ve-dialog-reference-options-section": "Көйләнмәләр",
 	"cite-ve-dialog-reference-title": "Искәрмә",
 	"cite-ve-dialog-reference-useexisting-tool": "Яңадан куллану",

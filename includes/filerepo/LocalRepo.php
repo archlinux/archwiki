@@ -28,6 +28,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Storage\BlobStore;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
@@ -35,7 +36,6 @@ use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LikeValue;
-use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * Local repository that stores files in the local filesystem and registers them
@@ -84,7 +84,7 @@ class LocalRepo extends FileRepo {
 	/** @var bool */
 	protected $reserializeMetadata = false;
 
-	public function __construct( array $info = null ) {
+	public function __construct( ?array $info = null ) {
 		parent::__construct( $info );
 
 		$this->dbDomain = WikiMap::getCurrentWikiDbDomain();
@@ -388,7 +388,7 @@ class LocalRepo extends FileRepo {
 		if ( count( $oiConds ) ) {
 			$queryBuilder = FileSelectQueryBuilder::newForOldFile( $dbr );
 
-			$res = $queryBuilder->where( new OrExpressionGroup( ...$oiConds ) )
+			$res = $queryBuilder->where( $dbr->orExpr( $oiConds ) )
 				->caller( __METHOD__ )->fetchResultSet();
 			$applyMatchingFiles( $res, $searchSet, $finalFiles );
 		}

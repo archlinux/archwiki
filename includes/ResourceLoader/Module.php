@@ -451,7 +451,11 @@ abstract class Module implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Get the group this module is in.
+	 * Specifies the group this module is in.
+	 *
+	 * Return one of the Module::GROUP_ constants for reserved group names with special behavior,
+	 * or a freeform string.
+	 * Refer to https://www.mediawiki.org/wiki/ResourceLoader/Architecture#Groups for documentation.
 	 *
 	 * @stable to override
 	 * @return string|null Group name
@@ -485,7 +489,7 @@ abstract class Module implements LoggerAwareInterface {
 	 * @param Context|null $context
 	 * @return string[] List of module names as strings
 	 */
-	public function getDependencies( Context $context = null ) {
+	public function getDependencies( ?Context $context = null ) {
 		// Stub, override expected
 		return [];
 	}

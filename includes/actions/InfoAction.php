@@ -24,9 +24,11 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Category\Category;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\EditPage\TemplatesOnThisPageFormatter;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
@@ -47,8 +49,11 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
 
@@ -246,6 +251,7 @@ class InfoAction extends FormlessAction {
 	 * @param string $name The name of the row
 	 * @param string $value The value of the row
 	 * @param string|null $id The ID to use for the 'tr' element
+	 * @param-taint $id none
 	 * @return string HTML
 	 */
 	private function getRow( $name, $value, $id ) {
@@ -422,7 +428,8 @@ class InfoAction extends FormlessAction {
 					$value = $this->msg( 'pageinfo-few-visiting-watchers' );
 				}
 				$pageInfo['header-basic'][] = [
-					$this->msg( 'pageinfo-visiting-watchers' ),
+					$this->msg( 'pageinfo-visiting-watchers' )
+						->numParams( ceil( $config->get( MainConfigNames::WatchersMaxAge ) / 86400 ) ),
 					$value
 				];
 			}

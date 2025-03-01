@@ -7,12 +7,17 @@ use MediaWiki\MainConfigNames;
 
 /**
  * Special change to remove credentials (such as a two-factor token).
+ *
+ * @ingroup SpecialPage
  */
 class SpecialRemoveCredentials extends SpecialChangeCredentials {
+	/** @inheritDoc */
 	protected static $allowedActions = [ AuthManager::ACTION_REMOVE ];
 
+	/** @inheritDoc */
 	protected static $messagePrefix = 'removecredentials';
 
+	/** @inheritDoc */
 	protected static $loadUserData = false;
 
 	/**

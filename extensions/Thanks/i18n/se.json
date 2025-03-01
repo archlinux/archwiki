@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kimberli Mäkäräinen (WMNO)",
-			"Yupik",
-			"WMNO sámeprošeakta"
+			"WMNO sámeprošeakta",
+			"Yupik"
 		]
 	},
 	"thanks-desc": "Lasiha liŋkkaid, maiguin lea vejolaš giitit geaveheddjiid sin rievdadusaid, kommentáraid jna. ovddas.",
@@ -11,9 +11,6 @@
 	"thanks-thanked": "Don {{GENDER:$1|{{GENDER:$2|giitet}}}} dan geavaheaddji",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Giitte}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Giitet}}}}",
-	"thanks-button-action-queued": "Don {{GENDER:$1|{{GENDER:$2|giittát}}}} geavaheaddji $1…",
-	"thanks-button-action-cancel": "Gaskkalduhte",
-	"thanks-button-action-completed": "Don {{GENDER:$1|{{GENDER:$2|giitet}}}} geavaheaddji $1",
 	"thanks-error-undefined": "Giitin ii lihkostuvvan (meattáhuskoda: $1). Geahččal giitit fas.",
 	"thanks-error-invalid-log-id": "Loggamearkkastat ii gávdnon",
 	"thanks-error-invalid-log-type": "Loggašládja «$1» ii leat lobálaš loggašlájaid listtus.",

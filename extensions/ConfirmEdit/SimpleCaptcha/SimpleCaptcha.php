@@ -2,18 +2,17 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\SimpleCaptcha;
 
-use ApiBase;
-use ApiEditPage;
-use Content;
-use ExtensionRegistry;
-use HTMLForm;
-use IContextSource;
-use IDBAccessObject;
 use MailAddress;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiEditPage;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\TextContent;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
@@ -21,8 +20,12 @@ use MediaWiki\Extension\ConfirmEdit\Hooks\HookRunner;
 use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
 use MediaWiki\ExternalLinks\ExternalLinksLookup;
 use MediaWiki\ExternalLinks\LinkFilter;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Revision\RevisionAccessException;
@@ -30,25 +33,29 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use Message;
 use OOUI\FieldLayout;
 use OOUI\HiddenInputWidget;
 use OOUI\NumberInputWidget;
-use ParserOptions;
-use RequestContext;
-use TextContent;
 use UnexpectedValueException;
 use Wikimedia\IPUtils;
+use Wikimedia\Rdbms\IDBAccessObject;
 use WikiPage;
 
 /**
  * Demo CAPTCHA (not for production usage) and base class for real CAPTCHAs
  */
 class SimpleCaptcha {
+	/** @var string */
 	protected static $messagePrefix = 'captcha-';
 
+	/** @var bool Override to force showing the CAPTCHA to users who don't have "skipcaptcha" right. */
+	private bool $forceShowCaptcha = false;
+
 	/** @var bool|null Was the CAPTCHA already passed and if yes, with which result? */
-	private $captchaSolved = null;
+	private ?bool $captchaSolved = null;
+
+	/** @var bool Flag to indicate whether the onEditFilterMergedContent hook was invoked. */
+	private bool $editFilterMergedContentHandlerCalled = false;
 
 	/** @var bool[] Activate captchas status list for a pages by key */
 	private $activatedCaptchas = [];
@@ -275,7 +282,7 @@ class SimpleCaptcha {
 	public function showEditFormFields( EditPage $editPage, OutputPage $out ) {
 		$out->enableOOUI();
 		$page = $editPage->getArticle()->getPage();
-		$key = $key = CacheKeyHelper::getKeyForPage( $page );
+		$key = CacheKeyHelper::getKeyForPage( $page );
 		if ( !isset( $this->activatedCaptchas[$key] ) ) {
 			return;
 		}
@@ -471,6 +478,11 @@ class SimpleCaptcha {
 	 * @return bool True, if the action should trigger a CAPTCHA, false otherwise
 	 */
 	public function triggersCaptcha( $action, $title = null ) {
+		// Captcha was already solved, we don't need to check anything else.
+		if ( $this->isCaptchaSolved() ) {
+			return false;
+		}
+
 		global $wgCaptchaTriggers, $wgCaptchaTriggersOnNamespace;
 
 		$result = false;
@@ -490,6 +502,12 @@ class SimpleCaptcha {
 			isset( $wgCaptchaTriggersOnNamespace[$title->getNamespace()][$action] )
 		) {
 			$result = $wgCaptchaTriggersOnNamespace[$title->getNamespace()][$action];
+		}
+
+		// SimpleCaptcha has been instructed to force showing the CAPTCHA, no need to
+		// check what other hook implementations think.
+		if ( $this->shouldForceShowCaptcha() ) {
+			return true;
 		}
 
 		$hookRunner = new HookRunner(
@@ -587,9 +605,7 @@ class SimpleCaptcha {
 				}
 			} else {
 				// Get link changes in the slowest way known to man
-				if ( $oldtext === null ) {
-					$oldtext = $this->loadText( $title, $section );
-				}
+				$oldtext ??= $this->loadText( $title, $section );
 				$oldLinks = $this->findLinks( $title, $oldtext );
 				$newLinks = $this->findLinks( $title, $newtext );
 			}
@@ -613,13 +629,11 @@ class SimpleCaptcha {
 		if ( $newtext !== null && $wgCaptchaRegexes ) {
 			if ( !is_array( $wgCaptchaRegexes ) ) {
 				throw new UnexpectedValueException(
-					'$wgCaptchaRegexes is required to be an array, ' . gettype( $wgCaptchaRegexes ) . ' given.'
+					'$wgCaptchaRegexes is required to be an array, ' . get_debug_type( $wgCaptchaRegexes ) . ' given.'
 				);
 			}
 			// Custom regex checks. Reuse $oldtext if set above.
-			if ( $oldtext === null ) {
-				$oldtext = $this->loadText( $title, $section );
-			}
+			$oldtext ??= $this->loadText( $title, $section );
 
 			foreach ( $wgCaptchaRegexes as $regex ) {
 				$newMatches = [];
@@ -645,6 +659,49 @@ class SimpleCaptcha {
 		}
 
 		return false;
+	}
+
+	public function isCaptchaSolved(): ?bool {
+		return $this->captchaSolved;
+	}
+
+	protected function setCaptchaSolved( ?bool $captchaSolved ): void {
+		$this->captchaSolved = $captchaSolved;
+	}
+
+	/**
+	 * @return bool True if an override is set to force showing a CAPTCHA
+	 *  to the user. Note that users with "skipcaptcha" right may still
+	 *  bypass this override.
+	 */
+	public function shouldForceShowCaptcha(): bool {
+		return $this->forceShowCaptcha;
+	}
+
+	/**
+	 * @param bool $forceShowCaptcha True if the caller wants to force showing
+	 *  a CAPTCHA to the user. Note that users with "skipcaptcha" right may
+	 *  still bypass this override.
+	 * @return void
+	 */
+	public function setForceShowCaptcha( bool $forceShowCaptcha ): void {
+		$this->forceShowCaptcha = $forceShowCaptcha;
+	}
+
+	/**
+	 * @return bool Was the EditFilterMergedContent hook implementation already
+	 * invoked?
+	 */
+	public function editFilterMergedContentHandlerAlreadyInvoked(): bool {
+		return $this->editFilterMergedContentHandlerCalled;
+	}
+
+	/**
+	 * @return void Set a flag on the class stating that EditFilterMergedContent handler
+	 * was already run.
+	 */
+	public function setEditFilterMergedContentHandlerInvoked(): void {
+		$this->editFilterMergedContentHandlerCalled = true;
 	}
 
 	/**
@@ -824,7 +881,24 @@ class SimpleCaptcha {
 			// this can't be done for addurl trigger, because this requires one "free" save
 			// for the user, which we don't know, when he did it.
 			if ( $this->action === 'edit' ) {
-				$status->fatal( 'captcha-edit-fail' );
+				// Default message is that the user failed a CAPTCHA, so show 'captcha-edit-fail'.
+				$message = 'captcha-edit-fail';
+				if ( $this->shouldForceShowCaptcha() ) {
+					// If an extension set the forceShowCaptcha property, then it likely means
+					// that the user already submitted an edit, and so the 'captcha-edit'
+					// message is more appropriate.
+					$message = 'captcha-edit';
+					[ $_index, $word ] = $this->getCaptchaParamsFromRequest(
+						RequestContext::getMain()->getRequest()
+					);
+					// But if there's a word supplied in the request, then we should
+					// use 'captcha-edit-fail' as it indicates a failed attempt
+					// at solving the CAPTCHA by the user.
+					if ( $word ) {
+						$message = 'captcha-edit-fail';
+					}
+				}
+				$status->fatal( $message );
 			}
 			$this->addCaptchaAPI( $status->statusData );
 			$key = CacheKeyHelper::getKeyForPage( $page );
@@ -928,7 +1002,7 @@ class SimpleCaptcha {
 
 	/**
 	 * @param WebRequest $request
-	 * @return string[]|null[] [ captcha ID, captcha solution ]
+	 * @return array [ captcha ID, captcha solution ]
 	 */
 	protected function getCaptchaParamsFromRequest( WebRequest $request ) {
 		$index = $request->getVal( 'wpCaptchaId' );
@@ -940,8 +1014,8 @@ class SimpleCaptcha {
 	 * Checks, if the user reached the amount of false CAPTCHAs and give him some vacation
 	 * or run self::passCaptcha() and clear counter if correct.
 	 *
-	 * @param string|null $index Captcha identifier
-	 * @param string|null $word Captcha solution
+	 * @param string $index Captcha idenitifier
+	 * @param string $word Captcha solution
 	 * @param User $user User for throttling captcha solving attempts
 	 * @return bool
 	 * @see self::passCaptcha()
@@ -978,21 +1052,15 @@ class SimpleCaptcha {
 	/**
 	 * Given a required captcha run, test form input for correct
 	 * input on the open session.
-	 * @param string|null $index Captcha identifier
-	 * @param string|null $word Captcha solution
+	 * @param string $index Captcha idenitifier
+	 * @param string $word Captcha solution
 	 * @return bool if passed, false if failed or new session
 	 */
 	protected function passCaptcha( $index, $word ) {
 		// Don't check the same CAPTCHA twice in one session,
 		// if the CAPTCHA was already checked - Bug T94276
-		if ( $this->captchaSolved !== null ) {
-			return $this->captchaSolved;
-		}
-
-		if ( $index === null ) {
-			$this->log( "new captcha session" );
-			// If no captcha ID was passed, we need to start a new session (T384858).
-			return false;
+		if ( $this->isCaptchaSolved() !== null ) {
+			return (bool)$this->isCaptchaSolved();
 		}
 
 		$info = $this->retrieveCaptcha( $index );
@@ -1000,12 +1068,12 @@ class SimpleCaptcha {
 			if ( $this->keyMatch( $word, $info ) ) {
 				$this->log( "passed" );
 				$this->clearCaptcha( $index );
-				$this->captchaSolved = true;
+				$this->setCaptchaSolved( true );
 				return true;
 			} else {
 				$this->clearCaptcha( $index );
 				$this->log( "bad form input" );
-				$this->captchaSolved = false;
+				$this->setCaptchaSolved( false );
 				return false;
 			}
 		} else {

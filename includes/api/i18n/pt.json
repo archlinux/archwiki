@@ -13,9 +13,9 @@
 			"Mansil",
 			"Mansil alfalb",
 			"Matma Rex",
+			"McDutchie",
 			"Vitorvicentevalente",
-			"Waldir",
-			"McDutchie"
+			"Waldir"
 		]
 	},
 	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Documentação]]\n* [[mw:Special:MyLanguage/API:Etiquette|Diretrizes de etiqueta e utilização]]\n* [[mw:Special:MyLanguage/API:FAQ|FAQ]]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api.lists.wikimedia.org/ Lista de divulgação]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/ Anúncios da API]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Defeitos e pedidos]\n</div>\n<strong>Estado:</strong> A API do MediaWiki é uma interface consolidada e estável que é constantemente suportada e melhorada. Embora tentemos evitá-lo, podemos ocasionalmente realizar alterações disruptivas. Inscreva-se na [https://lists.wikimedia.org/hyperkitty/list/mediawiki-api-announce@lists.wikimedia.org/ lista de distribuição mediawiki-api-announce] para receber notificações das atualizações.\n\n<strong>Pedidos incorretos:</strong> Quando são enviados pedidos incorretos à API, será devolvido um cabeçalho HTTP com a chave \"MediaWiki-API-Error\" e depois tanto o valor desse cabeçalho como o código de erro devolvido serão definidos com o mesmo valor. Para mais informação, consulte [[mw:Special:MyLanguage/API:Errors_and_warnings|API:Erros e avisos]].\n\n<p class=\"mw-apisandbox-link\"><strong>Testes:</strong> Para testar facilmente pedidos à API, visite [[Special:ApiSandbox|Testes da API]].</p>",
@@ -353,6 +353,7 @@
 	"apihelp-options-param-change": "Listas das alterações, na forma nome=valor (isto é, skin=vector). Se não for fornecido nenhum valor (nem sequer um sinal de igualdade), por exemplo, nomedaopção|outraopção|..., a opção será reiniciada para o seu valor por omissão. Se qualquer dos valores passados contém uma barra vertical (<kbd>|</kbd>), use um [[Special:ApiHelp/main#main/datatypes|separador alternativo para valores múltiplos]] de forma a obter o comportamento correto.",
 	"apihelp-options-param-optionname": "O nome da opção que deve ser configurada com o valor dado por <var>$1optionvalue</var>.",
 	"apihelp-options-param-optionvalue": "O valor da opção especificada por <var>$1optionname</var>. Quando <var>$1optionname</var> está definido mas <var>$1optionvalue</var> é omitido, a opção será reiniciada para o seu valor por omissão.",
+	"apihelp-options-param-global": "O que fazer se a opção foi definida globalmente usando a extensão GlobalPreferences.\n\n* <kbd>ignore</kbd>: Não fazer nada. A opção permanece com o seu valor anterior.\n* <kbd>override</kbd>: Adicionar uma substituição local\n* <kbd>update</kbd>: Atualizar a opção globalmente",
 	"apihelp-options-example-reset": "Reiniciar todas as preferências.",
 	"apihelp-options-example-change": "Alterar as preferências <kbd>skin</kbd> e <kbd>hideminor</kbd>.",
 	"apihelp-options-example-complex": "Reiniciar todas as preferências e depois definir <kbd>skin</kbd> e <kbd>nickname</kbd>.",
@@ -1814,7 +1815,6 @@
 	"apierror-nosuchsection": "Não existe nenhuma secção $1.",
 	"apierror-nosuchsection-what": "Não existe nenhuma secção $1 em $2.",
 	"apierror-nosuchuserid": "Não existe nenhum utilizador com o identificador $1.",
-	"apierror-notarget": "Não especificou um destino válido para esta operação.",
 	"apierror-notpatrollable": "A revisão r$1 não pode ser patrulhada porque é demasiado antiga.",
 	"apierror-nouploadmodule": "Não foi definido nenhum módulo de carregamento.",
 	"apierror-opensearch-json-warnings": "Os avisos não podem ser representados no formato OpenSearch JSON.",
@@ -1904,6 +1904,7 @@
 	"apiwarn-deprecation-withreplacement": "<kbd>$1</kbd> foi descontinuado. Em substituição, use <kbd>$2</kbd>, por favor.",
 	"apiwarn-difftohidden": "Não foi possível criar uma lista das diferenças em relação à r$1: o conteúdo está ocultado.",
 	"apiwarn-errorprinterfailed": "A impressora de erros falhou. Será feita nova tentativa sem parâmetros.",
+	"apiwarn-global-option-ignored": "A opção <var>$1</var> foi substituída globalmente. Pode usar <kbd>global=update</kbd> para alterar a opção globalmente ou <kbd>global=override</kbd> para definir uma substituição local.",
 	"apiwarn-ignoring-invalid-templated-value": "A ignorar o valor <kbd>$2</kbd> em <var>$1</var> ao processar parâmetros modelados.",
 	"apiwarn-invalidcategory": "\"$1\" não é uma categoria.",
 	"apiwarn-invalidtitle": "\"$1\" não é um título válido.",

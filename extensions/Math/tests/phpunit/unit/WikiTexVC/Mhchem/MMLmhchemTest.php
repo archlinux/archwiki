@@ -79,7 +79,7 @@ final class MMLmhchemTest extends MediaWikiUnitTestCase {
 		if ( in_array( $tc->ctr, self::$SKIPPEDINDICES ) ) {
 			MMLTestUtilHTML::generateHTMLtableRow( self::$GENERATEDHTMLFILE, [ $tc->ctr, $tc->tex,
 				"skipped", "skipped", "skipped", "skipped" ], false, self::$GENERATEFILES );
-			$this->assertTrue( true );
+			$this->addToAssertionCount( 1 );
 			return;
 		}
 		if ( self::$GENERATEFILES ) {
@@ -109,7 +109,7 @@ final class MMLmhchemTest extends MediaWikiUnitTestCase {
 		if ( !self::$SKIPXMLVALIDATION ) {
 			$this->assertEquals( $tc->texNew, $mhchemOutput );
 		} else {
-			$this->assertTrue( true );
+			$this->addToAssertionCount( 1 );
 		}
 	}
 

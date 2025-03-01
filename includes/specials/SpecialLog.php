@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Log
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,13 +16,13 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
 
 use ChangeTags;
 use LogEventsList;
+use LogFormatterFactory;
 use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\HookContainer\HookRunner;
@@ -62,19 +60,23 @@ class SpecialLog extends SpecialPage {
 
 	private UserNameUtils $userNameUtils;
 
+	private LogFormatterFactory $logFormatterFactory;
+
 	/**
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param IConnectionProvider $dbProvider
 	 * @param ActorNormalization $actorNormalization
 	 * @param UserIdentityLookup $userIdentityLookup
 	 * @param UserNameUtils $userNameUtils
+	 * @param LogFormatterFactory $logFormatterFactory
 	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
 		ActorNormalization $actorNormalization,
 		UserIdentityLookup $userIdentityLookup,
-		UserNameUtils $userNameUtils
+		UserNameUtils $userNameUtils,
+		LogFormatterFactory $logFormatterFactory
 	) {
 		parent::__construct( 'Log' );
 		$this->linkBatchFactory = $linkBatchFactory;
@@ -82,6 +84,7 @@ class SpecialLog extends SpecialPage {
 		$this->actorNormalization = $actorNormalization;
 		$this->userIdentityLookup = $userIdentityLookup;
 		$this->userNameUtils = $userNameUtils;
+		$this->logFormatterFactory = $logFormatterFactory;
 	}
 
 	public function execute( $par ) {
@@ -203,7 +206,7 @@ class SpecialLog extends SpecialPage {
 	 * @param HookRunner|null $runner
 	 * @return array
 	 */
-	public static function getLogTypesOnUser( HookRunner $runner = null ) {
+	public static function getLogTypesOnUser( ?HookRunner $runner = null ) {
 		static $types = null;
 		if ( $types !== null ) {
 			return $types;
@@ -278,6 +281,7 @@ class SpecialLog extends SpecialPage {
 			$opts->getValue( 'logid' ),
 			$this->linkBatchFactory,
 			$this->actorNormalization,
+			$this->logFormatterFactory,
 			$opts->getValue( 'tagInvert' )
 		);
 

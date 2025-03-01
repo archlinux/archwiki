@@ -1,5 +1,5 @@
-const { License, ImageModel, Repo } = require( 'mmv' );
-const { EmbedFileFormatter } = require( 'mmv.ui.ondemandshareddependencies' );
+const { License, ImageModel } = require( 'mmv' );
+const { EmbedFileFormatter } = require( 'mmv.ui.reuse' );
 
 ( function () {
 	QUnit.module( 'mmv.EmbedFileFormatter', QUnit.newMwEnvironment() );
@@ -33,26 +33,18 @@ const { EmbedFileFormatter } = require( 'mmv.ui.ondemandshareddependencies' );
 			options.authorCount,
 			license
 		);
-		const repoInfo = {
-			displayName: options.siteName,
-			getSiteLink: function () {
-				return options.siteUrl;
-			}
-		};
-
 		return {
 			imageInfo: imageInfo,
-			repoInfo: repoInfo,
 			caption: options.caption
 		};
 	}
 
-	QUnit.test( 'EmbedFileFormatter constructor sense check', function ( assert ) {
+	QUnit.test( 'EmbedFileFormatter constructor sense check', ( assert ) => {
 		const formatter = new EmbedFileFormatter();
 		assert.true( formatter instanceof EmbedFileFormatter, 'constructor with no argument works' );
 	} );
 
-	QUnit.test( 'getByline():', function ( assert ) {
+	QUnit.test( 'getByline():', ( assert ) => {
 		const formatter = new EmbedFileFormatter();
 		const author = '<span class="mw-mmv-author">Homer</span>';
 		const source = '<span class="mw-mmv-source">Iliad</span>';
@@ -64,33 +56,22 @@ const { EmbedFileFormatter } = require( 'mmv.ui.ondemandshareddependencies' );
 
 		// Attribution present
 		byline = formatter.getByline( author, source, attribution );
-		assert.true( /Cat/.test( byline ), 'Attribution found in bylines' );
+		assert.strictEqual( byline, '<span class="mw-mmv-attr">Cat</span>', 'Attribution found in bylines' );
 
 		// Author and source present
 		byline = formatter.getByline( author, source );
-		assert.true( /Homer|Iliad/.test( byline ), 'Author and source found in bylines' );
+		assert.strictEqual( byline, '(multimediaviewer-credit: <span class="mw-mmv-author">Homer</span>, <span class="mw-mmv-source">Iliad</span>)', 'Author and source found in bylines' );
 
 		// Only author present
 		byline = formatter.getByline( author );
-		assert.true( /Homer/.test( byline ), 'Author found in bylines.' );
+		assert.strictEqual( byline, '<span class="mw-mmv-author">Homer</span>', 'Author found in bylines.' );
 
 		// Only source present
 		byline = formatter.getByline( undefined, source );
-		assert.true( /Iliad/.test( byline ), 'Source found in bylines.' );
+		assert.strictEqual( byline, '<span class="mw-mmv-source">Iliad</span>', 'Source found in bylines.' );
 	} );
 
-	QUnit.test( 'getSiteLink():', function ( assert ) {
-		const repoInfo = new Repo( 'Wikipedia', '//wikipedia.org/favicon.ico', true );
-		const info = { imageInfo: {}, repoInfo: repoInfo };
-		const formatter = new EmbedFileFormatter();
-		const siteUrl = repoInfo.getSiteLink();
-		const siteLink = formatter.getSiteLink( info );
-
-		assert.notStrictEqual( siteLink.indexOf( 'Wikipedia' ), -1, 'Site name is present in site link' );
-		assert.notStrictEqual( siteLink.indexOf( siteUrl ), -1, 'Site URL is present in site link' );
-	} );
-
-	QUnit.test( 'getThumbnailHtml():', function ( assert ) {
+	QUnit.test( 'getThumbnailHtml():', ( assert ) => {
 		const formatter = new EmbedFileFormatter();
 		const titleText = 'Music Room';
 		const title = mw.Title.newFromText( titleText );
@@ -181,7 +162,7 @@ const { EmbedFileFormatter } = require( 'mmv.ui.ondemandshareddependencies' );
 
 	} );
 
-	QUnit.test( 'getThumbnailWikitext():', function ( assert ) {
+	QUnit.test( 'getThumbnailWikitext():', ( assert ) => {
 		const formatter = new EmbedFileFormatter();
 		const title = mw.Title.newFromText( 'File:Foobar.jpg' );
 		const imgUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg';
@@ -219,113 +200,91 @@ const { EmbedFileFormatter } = require( 'mmv.ui.ondemandshareddependencies' );
 	} );
 
 	QUnit.test( 'getCreditText():', function ( assert ) {
+		const author = '<span class="mw-mmv-author">Homer</span>';
+		const source = '<span class="mw-mmv-source">Iliad</span>';
 		const formatter = new EmbedFileFormatter();
 
 		let txt = formatter.getCreditText( {
-			repoInfo: {
-				displayName: 'Localcommons'
-			},
-
-			imageInfo: {
-				author: 'Author',
-				source: 'Source',
-				descriptionShortUrl: 'link',
-				title: {
-					getNameText: function () {
-						return 'Image Title';
-					}
+			author,
+			source,
+			descriptionShortUrl: 'link',
+			title: {
+				getNameText: function () {
+					return 'Image Title';
 				}
 			}
-		} );
+		}
+		);
 
-		assert.strictEqual( txt, '(multimediaviewer-text-embed-credit-text-b: (multimediaviewer-credit: Author, Source), link)', 'Sense check' );
+		assert.strictEqual( txt, '(multimediaviewer-text-embed-credit-text-b: (multimediaviewer-credit: Homer, Iliad), link)', 'Sense check' );
 
 		txt = formatter.getCreditText( {
-			repoInfo: {
-				displayName: 'Localcommons'
-			},
-
-			imageInfo: {
-				author: 'Author',
-				source: 'Source',
-				descriptionShortUrl: 'link',
-				title: {
-					getNameText: function () {
-						return 'Image Title';
-					}
-				},
-				license: {
-					getShortName: function () {
-						return 'WTFPL v2';
-					},
-					longName: 'Do What the Fuck You Want Public License Version 2',
-					isFree: this.sandbox.stub().returns( true )
+			author,
+			source,
+			descriptionShortUrl: 'link',
+			title: {
+				getNameText: function () {
+					return 'Image Title';
 				}
+			},
+			license: {
+				getShortName: function () {
+					return 'WTFPL v2';
+				},
+				longName: 'Do What the Fuck You Want Public License Version 2',
+				isFree: this.sandbox.stub().returns( true )
 			}
-		} );
+		}
+		);
 
-		assert.strictEqual( txt, '(multimediaviewer-text-embed-credit-text-bl: (multimediaviewer-credit: Author, Source), WTFPL v2, link)', 'License message works' );
+		assert.strictEqual( txt, '(multimediaviewer-text-embed-credit-text-bl: (multimediaviewer-credit: Homer, Iliad), WTFPL v2, link)', 'License message works' );
 	} );
 
 	QUnit.test( 'getCreditHtml():', function ( assert ) {
+		const author = '<span class="mw-mmv-author">Homer</span>';
+		const source = '<span class="mw-mmv-source">Iliad</span>';
 		const formatter = new EmbedFileFormatter();
 
 		let html = formatter.getCreditHtml( {
-			repoInfo: {
-				displayName: 'Localcommons',
-				getSiteLink: function () {
-					return 'quux';
-				}
-			},
-
-			imageInfo: {
-				author: 'Author',
-				source: 'Source',
-				descriptionShortUrl: 'some link',
-				title: {
-					getNameText: function () {
-						return 'Image Title';
-					}
+			author,
+			source,
+			descriptionShortUrl: 'some link',
+			title: {
+				getNameText: function () {
+					return 'Image Title';
 				}
 			}
-		} );
+		}
+		);
 
 		assert.strictEqual(
 			html,
-			'(multimediaviewer-html-embed-credit-text-b: (multimediaviewer-credit: Author, Source), <a href="some link">(multimediaviewer-html-embed-credit-link-text)</a>)',
+			'(multimediaviewer-html-embed-credit-text-b: (multimediaviewer-credit: <span class="mw-mmv-author">Homer</span>, <span class="mw-mmv-source">Iliad</span>), <a href="some link">(multimediaviewer-html-embed-credit-link-text)</a>)',
 			'Sense check'
 		);
 
 		html = formatter.getCreditHtml( {
-			repoInfo: {
-				displayName: 'Localcommons',
-				getSiteLink: function () {
-					return 'quux';
+			author,
+			source,
+			descriptionShortUrl: 'some link',
+			title: {
+				getNameText: function () {
+					return 'Image Title';
 				}
 			},
-
-			imageInfo: {
-				author: 'Author',
-				source: 'Source',
-				descriptionShortUrl: 'some link',
-				title: {
-					getNameText: function () {
-						return 'Image Title';
-					}
+			license: {
+				getShortLink: function () {
+					return '<a href="http://www.wtfpl.net/">WTFPL v2</a>';
 				},
-				license: {
-					getShortLink: function () {
-						return '<a href="http://www.wtfpl.net/">WTFPL v2</a>';
-					},
-					longName: 'Do What the Fuck You Want Public License Version 2',
-					isFree: this.sandbox.stub().returns( true )
-				}
+				longName: 'Do What the Fuck You Want Public License Version 2',
+				isFree: this.sandbox.stub().returns( true )
 			}
-		} );
+		}
+		);
 
 		assert.strictEqual(
 			html,
-			'(multimediaviewer-html-embed-credit-text-bl: (multimediaviewer-credit: Author, Source), <a href="http://www.wtfpl.net/">WTFPL v2</a>, <a href="some link">(multimediaviewer-html-embed-credit-link-text)</a>)',
+			'(multimediaviewer-html-embed-credit-text-bl: (multimediaviewer-credit: <span class="mw-mmv-author">Homer</span>, <span class="mw-mmv-source">Iliad</span>), <a href="http://www.wtfpl.net/">WTFPL v2</a>, <a href="some link">(multimediaviewer-html-embed-credit-link-text)</a>)',
 			'Sense check'
 		);
 	} );

@@ -1,0 +1,39 @@
+{
+	"opts": {
+		"encoding": "utf8",
+		"destination": "docs",
+		"package": "package.json",
+		"readme": "README.md",
+		"pedantic": false,
+		"private": true,
+		"recurse": true,
+		"template": "node_modules/jsdoc-wmf-theme",
+		"class-hierarchy": {
+			"showList": true
+		}
+	},
+	"plugins": [
+		"node_modules/jsdoc-wmf-theme/plugins/default"
+	],
+	"source": {
+		"include": [ "modules" ]
+	},
+	"templates": {
+		"cleverLinks": true,
+		"default": {
+			"useLongnameInNav": true
+		},
+		"wmf": {
+			"maintitle": "Echo",
+			"repository": "https://gerrit.wikimedia.org/g/mediawiki/extensions/Echo/",
+			"prefixMap": {
+				"mw.": "https://doc.wikimedia.org/mediawiki-core/master/js/{type}.html",
+				"mw.echo.": true
+			},
+			"linkMap": {
+				"Overlay": "https://doc.wikimedia.org/MobileFrontend/master/js/js/Overlay.html",
+				"View": "https://doc.wikimedia.org/MobileFrontend/master/js/js/View.html"
+			}
+		}
+	}
+}

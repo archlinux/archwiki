@@ -10,11 +10,11 @@
 			"Meithal",
 			"Peter17",
 			"Sherbrooke",
+			"SleaY",
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
 			"Wladek92",
-			"SleaY",
 			"Mahabarata"
 		]
 	},
@@ -45,5 +45,9 @@
 	"categorytree-no-pages": "aucune page ou sous-catégorie",
 	"categorytree-not-found": "Catégorie <i>$1</i> introuvable",
 	"categorytree-error": "Problème de chargement des données.",
-	"categorytree-retry": "Veuillez attendre un instant puis réessayer."
+	"categorytree-retry": "Veuillez attendre un instant puis réessayer.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062] : le paramètre <code>onlyroot</code> est obsolète. Utilisez plutôt <code>depth=\"0\"</code>.",
+	"categorytree-deprecation-warning": "'''Avertissement :''' Cette page utilise <code>&lt;categorytree&gt;</code> avec un paramètre obsolète.",
+	"categorytree-deprecation-category": "Pages utilisant des paramètres categorytree obsolètes",
+	"categorytree-deprecation-category-desc": "La page utilise des paramètres categorytree obsolètes comme <code>onlyroot</code>."
 }

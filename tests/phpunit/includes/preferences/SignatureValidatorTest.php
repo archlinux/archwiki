@@ -1,7 +1,9 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Preferences\SignatureValidator;
+use MediaWiki\Registration\ExtensionRegistry;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -29,6 +31,7 @@ use Wikimedia\TestingAccessWrapper;
  */
 class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 
+	/** @var SignatureValidator */
 	private $validator;
 
 	protected function setUp(): void {
@@ -177,27 +180,6 @@ class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $result );
 	}
 
-	/**
-	 * @covers \MediaWiki\Preferences\SignatureValidator::validateSignature()
-	 * @dataProvider provideValidateSignature
-	 */
-	public function testValidateSignatureHidden( string $signature, $expected ) {
-		// For testing hidden category support in ::testValidateSignature
-		$this->overrideConfigValue( 'LinterCategories', [
-			'fostered' => [ 'priority' => 'medium' ],
-			// A hidden category, for testing.
-			'wikilink-in-extlink' => [ 'priority' => 'none' ],
-		] );
-		$this->validator = $this->getSignatureValidator();
-		$result = $this->validator->validateSignature( $signature );
-		if ( $expected === 'hidden' ) {
-			$expected = false;
-		} elseif ( is_string( $expected ) ) {
-			$expected = true;
-		}
-		$this->assertSame( $expected, $result );
-	}
-
 	public function provideValidateSignature() {
 		yield 'Perfect' => [
 			'[[User:SignatureValidatorTest|Signature]] ([[User talk:SignatureValidatorTest|talk]])',
@@ -213,13 +195,6 @@ class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 			'<font color="red">RED</font> [[User:SignatureValidatorTest|Signature]] ([[User talk:SignatureValidatorTest|talk]])',
 			// This is allowed by SignatureAllowedLintErrors
 			'allowed'
-		];
-		// Testing hidden category support; 'wikilink-in-extlink' has been
-		// made hidden.
-		yield 'Wikilink in Extlint (hidden)' => [
-			'[http://example.com [[Foo]]!] [[User:SignatureValidatorTest|Signature]] ([[User talk:SignatureValidatorTest|talk]])',
-			// This is allowed because the category is hidden
-			'hidden'
 		];
 	}
 

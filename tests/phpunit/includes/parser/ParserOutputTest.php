@@ -4,16 +4,18 @@ namespace MediaWiki\Tests\Parser;
 
 use LogicException;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Parser\ParserOutputStringSets;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiLangTestCase;
-use MWDebug;
-use ParserOptions;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\Core\TOCData;
@@ -22,7 +24,7 @@ use Wikimedia\Tests\SerializationTestTrait;
 
 /**
  * @covers \MediaWiki\Parser\ParserOutput
- * @covers \CacheTime
+ * @covers \Mediawiki\Parser\CacheTime
  * @group Database
  *        ^--- trigger DB shadowing because we are using Title magic
  */
@@ -43,7 +45,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * Overrides SerializationTestTrait::getClassToTest
 	 * @return string
 	 */
-	protected function getClassToTest(): string {
+	public static function getClassToTest(): string {
 		return ParserOutput::class;
 	}
 
@@ -51,7 +53,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * Overrides SerializationTestTrait::getSerializedDataPath
 	 * @return string
 	 */
-	protected function getSerializedDataPath(): string {
+	public static function getSerializedDataPath(): string {
 		return __DIR__ . '/../../data/ParserCache';
 	}
 
@@ -59,7 +61,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * Overrides SerializationTestTrait::getTestInstancesAndAssertions
 	 * @return array
 	 */
-	protected function getTestInstancesAndAssertions(): array {
+	public static function getTestInstancesAndAssertions(): array {
 		return ParserCacheSerializationTestCases::getParserOutputTestCases();
 	}
 
@@ -67,9 +69,9 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * Overrides SerializationTestTrait::getSupportedSerializationFormats
 	 * @return array
 	 */
-	protected function getSupportedSerializationFormats(): array {
+	public static function getSupportedSerializationFormats(): array {
 		return ParserCacheSerializationTestCases::getSupportedSerializationFormats(
-			$this->getClassToTest() );
+			self::getClassToTest() );
 	}
 
 	public static function provideIsLinkInternal() {
@@ -180,8 +182,11 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * @covers \MediaWiki\Parser\ParserOutput::getPageProperties
 	 * @dataProvider providePageProperties
 	 */
-	public function testPageProperties( string $setPageProperty, $value1, $value2 ) {
+	public function testPageProperties( string $setPageProperty, $value1, $value2, bool $expectDeprecation = false ) {
 		$po = new ParserOutput();
+		if ( $expectDeprecation ) {
+			MWDebug::filterDeprecationForTest( '/::setPageProperty with non-string value/' );
+		}
 
 		$po->$setPageProperty( 'foo', $value1 );
 
@@ -206,7 +211,7 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		yield 'Unsorted' => [ 'setUnsortedPageProperty', 'val', 'second val' ];
 		yield 'Numeric' => [ 'setNumericPageProperty', 42, 3.14 ];
 		yield 'Unsorted (old style)' => [ 'setPageProperty', 'val', 'second val' ];
-		yield 'Numeric (old style)' => [ 'setPageProperty', 123, 456 ];
+		yield 'Numeric (old style)' => [ 'setPageProperty', 123, 456, true ];
 	}
 
 	/**
@@ -261,40 +266,42 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	 * @covers \MediaWiki\Parser\ParserOutput::getWrapperDivClass
 	 * @covers \MediaWiki\Parser\ParserOutput::addWrapperDivClass
 	 * @covers \MediaWiki\Parser\ParserOutput::clearWrapperDivClass
-	 * @covers \MediaWiki\Parser\ParserOutput::getText
 	 */
 	public function testWrapperDivClass() {
 		$po = new ParserOutput();
+		$opts = ParserOptions::newFromAnon();
+		$pipeline = MediaWikiServices::getInstance()->getDefaultOutputPipeline();
 
 		$po->setRawText( 'Kittens' );
-		$this->assertStringContainsString( 'Kittens', $po->getText() );
-		$this->assertStringNotContainsString( '<div', $po->getText() );
+		$text = $pipeline->run( $po, $opts, [] )->getContentHolderText();
+		$this->assertStringContainsString( 'Kittens', $text );
+		$this->assertStringNotContainsString( '<div', $text );
 		$this->assertSame( 'Kittens', $po->getRawText() );
 
 		$po->addWrapperDivClass( 'foo' );
-		$text = $po->getText();
+		$text = $pipeline->run( $po, $opts, [] )->getContentHolderText();
 		$this->assertStringContainsString( 'Kittens', $text );
 		$this->assertStringContainsString( '<div', $text );
 		$this->assertStringContainsString( 'class="mw-content-ltr foo"', $text );
 
 		$po->addWrapperDivClass( 'bar' );
-		$text = $po->getText();
+		$text = $pipeline->run( $po, $opts, [] )->getContentHolderText();
 		$this->assertStringContainsString( 'Kittens', $text );
 		$this->assertStringContainsString( '<div', $text );
 		$this->assertStringContainsString( 'class="mw-content-ltr foo bar"', $text );
 
 		$po->addWrapperDivClass( 'bar' ); // second time does nothing, no "foo bar bar".
-		$text = $po->getText( [ 'unwrap' => true ] );
+		$text = $pipeline->run( $po, $opts, [ 'unwrap' => true ] )->getContentHolderText();
 		$this->assertStringContainsString( 'Kittens', $text );
 		$this->assertStringNotContainsString( '<div', $text );
 		$this->assertStringNotContainsString( 'class="', $text );
 
-		$text = $po->getText( [ 'wrapperDivClass' => '' ] );
+		$text = $pipeline->run( $po, $opts, [ 'wrapperDivClass' => '' ] )->getContentHolderText();
 		$this->assertStringContainsString( 'Kittens', $text );
 		$this->assertStringNotContainsString( '<div', $text );
 		$this->assertStringNotContainsString( 'class="', $text );
 
-		$text = $po->getText( [ 'wrapperDivClass' => 'xyzzy' ] );
+		$text = $pipeline->run( $po, $opts, [ 'wrapperDivClass' => 'xyzzy' ] )->getContentHolderText();
 		$this->assertStringContainsString( 'Kittens', $text );
 		$this->assertStringContainsString( '<div', $text );
 		$this->assertStringContainsString( 'class="mw-content-ltr xyzzy"', $text );
@@ -304,15 +311,15 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		$this->assertSame( 'Kittens', $text );
 
 		$po->clearWrapperDivClass();
-		$text = $po->getText();
+		$text = $pipeline->run( $po, $opts, [] )->getContentHolderText();
 		$this->assertStringContainsString( 'Kittens', $text );
 		$this->assertStringNotContainsString( '<div', $text );
 		$this->assertStringNotContainsString( 'class="', $text );
 	}
 
 	/**
-	 * This test aims at being replaced by its version in DefaultOutputTransformTest when ParserOutput::getText
-	 * gets deprecated.
+	 * This test aims at being replaced by its version in DefaultOutputPipelineFactoryTest when
+	 * ParserOutput::getText gets deprecated.
 	 * @covers \MediaWiki\Parser\ParserOutput::getText
 	 * @dataProvider provideGetText
 	 * @param array $options Options to getText()
@@ -325,7 +332,6 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		RequestContext::resetMain();
 
 		$this->overrideConfigValues( [
-			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::ScriptPath => '/w',
 			MainConfigNames::Script => '/w/index.php',
 		] );
@@ -378,16 +384,16 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 <p>Test document.
 </p>
 <meta property="mw:PageProp/toc" />
-<h2><span class="mw-headline" id="Section_1">Section 1</span><mw:editsection page="Test Page" section="1">Section 1</mw:editsection></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_1">Section 1</h2><mw:editsection page="Test Page" section="1">Section 1</mw:editsection></div>
 <p>One
 </p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><mw:editsection page="Test Page" section="2">Section 2</mw:editsection></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_2">Section 2</h2><mw:editsection page="Test Page" section="2">Section 2</mw:editsection></div>
 <p>Two
 </p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
+<div class="mw-heading mw-heading3"><h3 id="Section_2.1">Section 2.1</h3></div>
 <p>Two point one
 </p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><mw:editsection page="Test Page" section="4">Section 3</mw:editsection></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_3">Section 3</h2><mw:editsection page="Test Page" section="4">Section 3</mw:editsection></div>
 <p>Three
 </p>
 EOF;
@@ -422,16 +428,16 @@ EOF;
 </ul>
 </div>
 
-<h2><span class="mw-headline" id="Section_1">Section 1</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_1">Section 1</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 <p>One
 </p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=2" title="Edit section: Section 2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_2">Section 2</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=2" title="Edit section: Section 2">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 <p>Two
 </p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
+<div class="mw-heading mw-heading3"><h3 id="Section_2.1">Section 2.1</h3></div>
 <p>Two point one
 </p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=4" title="Edit section: Section 3">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_3">Section 3</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=4" title="Edit section: Section 3">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 <p>Three
 </p>
 EOF
@@ -452,16 +458,16 @@ EOF
 </ul>
 </div>
 
-<h2><span class="mw-headline" id="Section_1">Section 1</span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_1">Section 1</h2></div>
 <p>One
 </p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_2">Section 2</h2></div>
 <p>Two
 </p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
+<div class="mw-heading mw-heading3"><h3 id="Section_2.1">Section 2.1</h3></div>
 <p>Two point one
 </p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_3">Section 3</h2></div>
 <p>Three
 </p>
 EOF
@@ -471,16 +477,16 @@ EOF
 <div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p>Test document.
 </p>
 
-<h2><span class="mw-headline" id="Section_1">Section 1</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_1">Section 1</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 <p>One
 </p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=2" title="Edit section: Section 2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_2">Section 2</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=2" title="Edit section: Section 2">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 <p>Two
 </p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
+<div class="mw-heading mw-heading3"><h3 id="Section_2.1">Section 2.1</h3></div>
 <p>Two point one
 </p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=4" title="Edit section: Section 3">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="mw-heading mw-heading2"><h2 id="Section_3">Section 3</h2><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=4" title="Edit section: Section 3">edit</a><span class="mw-editsection-bracket">]</span></span></div>
 <p>Three
 </p></div>
 EOF
@@ -532,8 +538,8 @@ EOF
 	}
 
 	/**
-	 * This test aims at being replaced by its version in DefaultOutputTransformTest when ParserOutput::getText
-	 * gets deprecated.
+	 * This test aims at being replaced by its version in DefaultOutputPipelineFactoryTest when
+	 * ParserOutput::getText gets deprecated.
 	 * @covers \MediaWiki\Parser\ParserOutput::getText
 	 */
 	public function testGetText_failsIfNoText() {
@@ -541,44 +547,6 @@ EOF
 
 		$this->expectException( LogicException::class );
 		$po->getText();
-	}
-
-	public static function provideGetText_absoluteURLs() {
-		yield 'empty' => [
-			'text' => '',
-			'expectedText' => '',
-		];
-		yield 'no-links' => [
-			'text' => '<p>test</p>',
-			'expectedText' => '<p>test</p>',
-		];
-		yield 'simple link' => [
-			'text' => '<a href="/wiki/Test">test</a>',
-			'expectedText' => '<a href="//TEST_SERVER/wiki/Test">test</a>',
-		];
-		yield 'already absolute, relative' => [
-			'text' => '<a href="//TEST_SERVER/wiki/Test">test</a>',
-			'expectedText' => '<a href="//TEST_SERVER/wiki/Test">test</a>',
-		];
-		yield 'already absolute, https' => [
-			'text' => '<a href="https://TEST_SERVER/wiki/Test">test</a>',
-			'expectedText' => '<a href="https://TEST_SERVER/wiki/Test">test</a>',
-		];
-		yield 'external' => [
-			'text' => '<a href="https://en.wikipedia.org/wiki/Test">test</a>',
-			'expectedText' => '<a href="https://en.wikipedia.org/wiki/Test">test</a>',
-		];
-	}
-
-	/**
-	 * This test aims at being replaced by its version in DefaultOutputTransformTest when ParserOutput::getText
-	 * gets deprecated.
-	 * @dataProvider provideGetText_absoluteURLs
-	 */
-	public function testGetText_absoluteURLs( string $text, string $expectedText ) {
-		$this->overrideConfigValue( MainConfigNames::Server, '//TEST_SERVER' );
-		$parserOutput = new ParserOutput( $text );
-		$this->assertSame( $expectedText, $parserOutput->getText( [ 'absoluteURLs' => true ] ) );
 	}
 
 	/**
@@ -814,6 +782,11 @@ EOF
 			if ( $method[0] === '$' ) {
 				$field = substr( $method, 1 );
 				$actual = $po->__get( $field );
+			} elseif ( str_contains( $method, '!' ) ) {
+				[ $trimmedMethod, $ignore ] = explode( '!', $method, 2 );
+				$args = $value['_args_'] ?? [];
+				unset( $value['_args_'] );
+				$actual = $po->__call( $trimmedMethod, $args );
 			} else {
 				$actual = $po->__call( $method, [] );
 			}
@@ -833,18 +806,40 @@ EOF
 	/**
 	 * @covers \MediaWiki\Parser\ParserOutput::addLink
 	 * @covers \MediaWiki\Parser\ParserOutput::getLinks
+	 * @covers \MediaWiki\Parser\ParserOutput::getLinkList
 	 */
 	public function testAddLink() {
 		$a = new ParserOutput();
 		$a->addLink( Title::makeTitle( NS_MAIN, 'Kittens' ), 6 );
 		$a->addLink( new TitleValue( NS_TALK, 'Kittens' ), 16 );
 		$a->addLink( new TitleValue( NS_MAIN, 'Goats_786827346' ) );
+		# fragments are stripped for local links
+		$a->addLink( new TitleValue( NS_TALK, 'Puppies', 'Topic' ), 17 );
 
 		$expected = [
 			NS_MAIN => [ 'Kittens' => 6, 'Goats_786827346' => 0 ],
-			NS_TALK => [ 'Kittens' => 16 ]
+			NS_TALK => [ 'Kittens' => 16, 'Puppies' => 17 ]
 		];
 		$this->assertSame( $expected, $a->getLinks() );
+		$expected = [
+			[
+				'link' => new TitleValue( NS_MAIN, 'Kittens' ),
+				'pageid' => 6,
+			],
+			[
+				'link' => new TitleValue( NS_MAIN, 'Goats_786827346' ),
+				'pageid' => 0,
+			],
+			[
+				'link' => new TitleValue( NS_TALK, 'Kittens' ),
+				'pageid' => 16,
+			],
+			[
+				'link' => new TitleValue( NS_TALK, 'Puppies' ),
+				'pageid' => 17,
+			],
+		];
+		$this->assertEquals( $expected, $a->getLinkList( ParserOutputLinkTypes::LOCAL ) );
 	}
 
 	public static function provideMergeTrackingMetaDataFrom() {
@@ -852,19 +847,27 @@ EOF
 		$a = new ParserOutput();
 		$a->addLink( Title::makeTitle( NS_MAIN, 'Kittens' ), 6 );
 		$a->addLink( new TitleValue( NS_TALK, 'Kittens' ), 16 );
-		$a->addLink( new TitleValue( NS_MAIN, 'Goats' ), 7 );
+		# fragments are stripped in local links
+		$a->addLink( new TitleValue( NS_MAIN, 'Goats', 'Kids' ), 7 );
 
 		$a->addTemplate( Title::makeTitle( NS_TEMPLATE, 'Goats' ), 107, 1107 );
 
-		$a->addLanguageLink( new TitleValue( NS_MAIN, 'de' ) );
-		$a->addLanguageLink( new TitleValue( NS_MAIN, 'ru' ) );
+		$a->addLanguageLink( new TitleValue( NS_MAIN, 'de', '', 'de' ) );
+		# fragments are preserved in language links
+		$a->addLanguageLink( new TitleValue( NS_MAIN, 'ru', 'ru', 'ru' ) );
 		$a->addInterwikiLink( Title::makeTitle( NS_MAIN, 'Kittens DE', '', 'de' ) );
-		$a->addInterwikiLink( new TitleValue( NS_MAIN, 'Kittens RU', '', 'ru' ) );
+		# fragments are stripped in interwiki links
+		$a->addInterwikiLink( new TitleValue( NS_MAIN, 'Kittens RU', 'ru', 'ru' ) );
 		$a->addExternalLink( 'https://kittens.wikimedia.test' );
-		$a->addExternalLink( 'https://goats.wikimedia.test' );
+		# fragments are preserved in external links
+		$a->addExternalLink( 'https://goats.wikimedia.test#kids' );
 
-		$a->addCategory( 'Foo', 'X' );
-		$a->addImage( new TitleValue( NS_FILE, 'Billy.jpg' ), '20180101000013', 'DEAD' );
+		# fragments are stripped for categories (syntax is overloaded for sort)
+		$a->addCategory( new TitleValue( NS_CATEGORY, 'Foo', 'bar' ), 'X' );
+		# fragments are stripped for images
+		$a->addImage( new TitleValue( NS_FILE, 'Billy.jpg', 'fragment' ), '20180101000013', 'DEAD' );
+		# fragments are stripped for links to special pages
+		$a->addLink( new TitleValue( NS_SPECIAL, 'Version', 'section' ) );
 
 		$b = new ParserOutput();
 		$b->addLink( Title::makeTitle( NS_MAIN, 'Goats' ), 7 );
@@ -872,15 +875,16 @@ EOF
 		$b->addLink( new TitleValue( NS_MAIN, 'Dragons' ), 8 );
 		$b->addLink( new TitleValue( NS_FILE, 'Dragons.jpg' ), 28 );
 
-		$b->addTemplate( Title::makeTitle( NS_TEMPLATE, 'Dragons' ), 108, 1108 );
-		$a->addTemplate( new TitleValue( NS_MAIN, 'Dragons' ), 118, 1118 );
+		# fragments are stripped from template links
+		$b->addTemplate( Title::makeTitle( NS_TEMPLATE, 'Dragons', 'red' ), 108, 1108 );
+		$a->addTemplate( new TitleValue( NS_MAIN, 'Dragons', 'platinum' ), 118, 1118 );
 
-		$b->addLanguageLink( new TitleValue( NS_MAIN, 'fr' ) );
-		$b->addLanguageLink( new TitleValue( NS_MAIN, 'ru' ) );
+		$b->addLanguageLink( new TitleValue( NS_MAIN, 'fr', '', 'fr' ) );
+		$b->addLanguageLink( new TitleValue( NS_MAIN, 'ru', 'ru', 'ru' ) );
 		$b->addInterwikiLink( Title::makeTitle( NS_MAIN, 'Kittens FR', '', 'fr' ) );
 		$b->addInterwikiLink( new TitleValue( NS_MAIN, 'Dragons RU', '', 'ru' ) );
 		$b->addExternalLink( 'https://dragons.wikimedia.test' );
-		$b->addExternalLink( 'https://goats.wikimedia.test' );
+		$b->addExternalLink( 'https://goats.wikimedia.test#kids' );
 
 		$b->addCategory( 'Bar', 'Y' );
 		$b->addImage( new TitleValue( NS_FILE, 'Puff.jpg' ), '20180101000017', 'BEEF' );
@@ -898,6 +902,33 @@ EOF
 				],
 				NS_FILE => [
 					'Dragons.jpg' => 28,
+				],
+			],
+			'getLinkList!LOCAL' => [
+				'_args_' => [ ParserOutputLinkTypes::LOCAL ],
+				[
+					'link' => new TitleValue( NS_MAIN, 'Kittens' ),
+					'pageid' => 6,
+				],
+				[
+					'link' => new TitleValue( NS_MAIN, 'Goats' ),
+					'pageid' => 7,
+				],
+				[
+					'link' => new TitleValue( NS_MAIN, 'Dragons' ),
+					'pageid' => 8,
+				],
+				[
+					'link' => new TitleValue( NS_TALK, 'Kittens' ),
+					'pageid' => 16,
+				],
+				[
+					'link' => new TitleValue( NS_TALK, 'Goats' ),
+					'pageid' => 17,
+				],
+				[
+					'link' => new TitleValue( NS_FILE, 'Dragons.jpg' ),
+					'pageid' => 28,
 				],
 			],
 			'getTemplates' => [
@@ -918,23 +949,98 @@ EOF
 					'Goats' => 1107,
 				],
 			],
-			'getLanguageLinks' => [ 'de', 'ru', 'fr' ],
+			'getLinkList!TEMPLATE' => [
+				'_args_' => [ ParserOutputLinkTypes::TEMPLATE ],
+				[
+					'link' => new TitleValue( NS_TEMPLATE, 'Goats' ),
+					'pageid' => 107,
+					'revid' => 1107,
+				],
+				[
+					'link' => new TitleValue( NS_TEMPLATE, 'Dragons' ),
+					'pageid' => 108,
+					'revid' => 1108,
+				],
+				[
+					'link' => new TitleValue( NS_MAIN, 'Dragons' ),
+					'pageid' => 118,
+					'revid' => 1118,
+				],
+			],
+			'getLanguageLinks' => [ 'de:de', 'ru:ru#ru', 'fr:fr' ],
+			'getLinkList!LANGUAGE' => [
+				'_args_' => [ ParserOutputLinkTypes::LANGUAGE ],
+				[
+					'link' => new TitleValue( NS_MAIN, 'de', '', 'de' ),
+				],
+				[
+					'link' => new TitleValue( NS_MAIN, 'ru', 'ru', 'ru' ),
+				],
+				[
+					'link' => new TitleValue( NS_MAIN, 'fr', '', 'fr' ),
+				],
+			],
 			'getInterwikiLinks' => [
 				'de' => [ 'Kittens_DE' => 1 ],
 				'ru' => [ 'Kittens_RU' => 1, 'Dragons_RU' => 1, ],
 				'fr' => [ 'Kittens_FR' => 1 ],
 			],
+			'getLinkList!INTERWIKI' => [
+				'_args_' => [ ParserOutputLinkTypes::INTERWIKI ],
+				[
+					'link' => new TitleValue( NS_MAIN, 'Kittens_DE', '', 'de' ),
+				],
+				[
+					'link' => new TitleValue( NS_MAIN, 'Kittens_RU', '', 'ru' ),
+				],
+				[
+					'link' => new TitleValue( NS_MAIN, 'Dragons_RU', '', 'ru' ),
+				],
+				[
+					'link' => new TitleValue( NS_MAIN, 'Kittens_FR', '', 'fr' ),
+				],
+			],
 			'getCategoryMap' => [ 'Foo' => 'X', 'Bar' => 'Y' ],
+			'getLinkList!CATEGORY' => [
+				'_args_' => [ ParserOutputLinkTypes::CATEGORY ],
+				[
+					'link' => new TitleValue( NS_CATEGORY, 'Foo' ),
+					'sort' => 'X',
+				],
+				[
+					'link' => new TitleValue( NS_CATEGORY, 'Bar' ),
+					'sort' => 'Y',
+				],
+			],
 			'getImages' => [ 'Billy.jpg' => 1, 'Puff.jpg' => 1 ],
 			'getFileSearchOptions' => [
 				'Billy.jpg' => [ 'time' => '20180101000013', 'sha1' => 'DEAD' ],
 				'Puff.jpg' => [ 'time' => '20180101000017', 'sha1' => 'BEEF' ],
 			],
+			'getLinkList!MEDIA' => [
+				'_args_' => [ ParserOutputLinkTypes::MEDIA ],
+				[
+					'link' => new TitleValue( NS_FILE, 'Billy.jpg' ),
+					'time' => '20180101000013',
+					'sha1' => 'DEAD',
+				],
+				[
+					'link' => new TitleValue( NS_FILE, 'Puff.jpg' ),
+					'time' => '20180101000017',
+					'sha1' => 'BEEF',
+				],
+			],
 			'getExternalLinks' => [
 				'https://dragons.wikimedia.test' => 1,
 				'https://kittens.wikimedia.test' => 1,
-				'https://goats.wikimedia.test' => 1,
-			]
+				'https://goats.wikimedia.test#kids' => 1,
+			],
+			'getLinkList!SPECIAL' => [
+				'_args_' => [ ParserOutputLinkTypes::SPECIAL ],
+				[
+					'link' => new TitleValue( NS_SPECIAL, 'Version' ),
+				],
+			],
 		] ];
 
 		// properties ------------
@@ -996,8 +1102,22 @@ EOF
 		$this->assertFieldValues( $a, $expected );
 	}
 
+	/**
+	 * @dataProvider provideMergeTrackingMetaDataFrom
+	 * @covers \MediaWiki\Parser\ParserOutput::collectMetadata
+	 *
+	 * @param ParserOutput $a
+	 * @param ParserOutput $b
+	 * @param array $expected
+	 */
+	public function testCollectMetaData( ParserOutput $a, ParserOutput $b, $expected ) {
+		$b->collectMetadata( $a );
+
+		$this->assertFieldValues( $a, $expected );
+	}
+
 	public function provideMergeInternalMetaDataFrom() {
-		MWDebug::filterDeprecationForTest( '/^CacheTime::setCacheTime called with -1 as an argument/' );
+		$this->filterDeprecated( '/^.*CacheTime::setCacheTime called with -1 as an argument/' );
 
 		// flags & co
 		$a = new ParserOutput();
@@ -1182,7 +1302,7 @@ EOF
 	 * @param array $expected
 	 */
 	public function testMergeInternalMetaDataFrom( ParserOutput $a, ParserOutput $b, $expected ) {
-		$this->filterDeprecated( '/^CacheTime::setCacheTime called with -1 as an argument/' );
+		$this->filterDeprecated( '/^.*CacheTime::setCacheTime called with -1 as an argument/' );
 		$a->mergeInternalMetaDataFrom( $b );
 
 		$this->assertFieldValues( $a, $expected );
@@ -1326,7 +1446,7 @@ EOF
 		$po = new ParserOutput();
 		$time = $po->getCacheTime();
 
-		// Use current (fake) time per default. Ignore the last digit.
+		// Use current (fake) time by default. Ignore the last digit.
 		// Subsequent calls must yield the exact same timestamp as the first.
 		$this->assertStringStartsWith( '2010010100000', $time );
 		$this->assertSame( $time, $po->getCacheTime() );
@@ -1388,11 +1508,11 @@ EOF
 		$this->assertEquals( [ 'a' ], $po->getOutputStrings( ParserOutputStringSets::MODULE ) );
 		$this->assertEquals( [ 'b' ], $po->getOutputStrings( ParserOutputStringSets::MODULE_STYLE ) );
 		$this->assertEquals( [ 'foo.com', 'bar.com' ],
-			$po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_SCRIPT_SRC ) );
+							 $po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_SCRIPT_SRC ) );
 		$this->assertEquals( [ 'baz.com' ],
-			$po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_DEFAULT_SRC ) );
+							 $po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_DEFAULT_SRC ) );
 		$this->assertEquals( [ 'fred.com', 'xyzzy.com' ],
-			$po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_STYLE_SRC ) );
+							 $po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_STYLE_SRC ) );
 
 		$this->assertEquals( [ 'a' ], $po->getModules() );
 		$this->assertEquals( [ 'b' ], $po->getModuleStyles() );
@@ -1453,16 +1573,19 @@ EOF
 		$this->assertFalse( $pOutput->getOutputFlag( ParserOutputFlags::IS_PREVIEW ) );
 		$this->assertTrue( $pOutput->isCacheable() );
 		$this->assertFalse( $pOutput->getOutputFlag( ParserOutputFlags::NO_SECTION_EDIT_LINKS ) );
+		$this->assertFalse( $pOutput->getOutputFlag( ParserOutputFlags::COLLAPSIBLE_SECTIONS ) );
 
 		// set the various parser options and verify in parser output
 		$pOptions->setWrapOutputClass( 'test-wrapper' );
 		$pOptions->setIsPreview( true );
 		$pOptions->setSuppressSectionEditLinks();
+		$pOptions->setCollapsibleSections();
 		$pOutput = new ParserOutput;
 		$pOutput->setFromParserOptions( $pOptions );
 		$this->assertEquals( 'test-wrapper', $pOutput->getWrapperDivClass() );
 		$this->assertTrue( $pOutput->getOutputFlag( ParserOutputFlags::IS_PREVIEW ) );
 		$this->assertFalse( $pOutput->isCacheable() );
 		$this->assertTrue( $pOutput->getOutputFlag( ParserOutputFlags::NO_SECTION_EDIT_LINKS ) );
+		$this->assertTrue( $pOutput->getOutputFlag( ParserOutputFlags::COLLAPSIBLE_SECTIONS ) );
 	}
 }

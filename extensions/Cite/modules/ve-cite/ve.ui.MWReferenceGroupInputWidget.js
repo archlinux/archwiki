@@ -10,10 +10,12 @@
 /**
  * Creates an ve.ui.MWReferenceGroupInput object.
  *
- * @constructor
+ * @class
  * @extends OO.ui.ComboBoxInputWidget
- * @param {Object} config Configuration options
- * @cfg {string} emptyGroupName Label of the placeholder item
+ *
+ * @constructor
+ * @param {Object} config
+ * @param {string} config.emptyGroupName Label of the placeholder item
  */
 ve.ui.MWReferenceGroupInputWidget = function VeUiMWReferenceGroupInputWidget( config ) {
 	this.emptyGroupName = config.emptyGroupName;
@@ -36,18 +38,18 @@ OO.inheritClass( ve.ui.MWReferenceGroupInputWidget, OO.ui.ComboBoxInputWidget );
 /**
  * Populate the reference group menu
  *
- * @param {ve.dm.InternalList} internalList Internal list with which to populate the menu
+ * @param {string[]} groups Group names
  */
-ve.ui.MWReferenceGroupInputWidget.prototype.populateMenu = function ( internalList ) {
+ve.ui.MWReferenceGroupInputWidget.prototype.populateMenu = function ( groups ) {
 	const items = [ new OO.ui.MenuOptionWidget( {
 		data: '',
 		label: this.emptyGroupName
 	} ) ];
-	for ( const groupName in internalList.getNodeGroups() ) {
+	groups.forEach( ( groupName ) => {
 		const match = groupName.match( /^mwReference\/(.+)/ );
 		if ( match ) {
 			items.push( new OO.ui.MenuOptionWidget( { data: match[ 1 ], label: match[ 1 ] } ) );
 		}
-	}
+	} );
 	this.menu.clearItems().addItems( items ).toggle( false );
 };

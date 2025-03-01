@@ -6,14 +6,14 @@ use BadMethodCallException;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\MultiUsernameFilter;
 use MediaWiki\User\User;
-use WANObjectCache;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * Utilizes ContainmentList interface to provide a fluent interface to whitelist/blacklist
  * from multiple sources like global variables, wiki pages, etc.
  *
  * Initialize:
- *   $cache = ObjectCache::getLocalClusterInstance();
+ *   $cache = ObjectCacheFactory::getLocalClusterInstance();
  *   $set = new ContainmentSet;
  *   $set->addArray( $wgSomeGlobalParameter );
  *   $set->addOnWiki( NS_USER, 'Foo/bar-baz', $cache, 'some_user_specific_cache_key' );
@@ -34,9 +34,6 @@ class ContainmentSet {
 	 */
 	protected $recipient;
 
-	/**
-	 * @param User $recipient
-	 */
 	public function __construct( User $recipient ) {
 		$this->recipient = $recipient;
 	}
@@ -106,7 +103,7 @@ class ContainmentSet {
 	 * @param string $cacheKeyPrefix A prefix to be combined with the pages latest revision id and used as a cache key.
 	 */
 	public function addOnWiki(
-		$namespace, $title, WANObjectCache $cache = null, $cacheKeyPrefix = ''
+		$namespace, $title, ?WANObjectCache $cache = null, $cacheKeyPrefix = ''
 	) {
 		$list = new OnWikiList( $namespace, $title );
 		if ( $cache ) {

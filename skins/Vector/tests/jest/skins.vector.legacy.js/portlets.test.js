@@ -22,18 +22,21 @@ describe( 'portlets', () => {
 			element.appendChild( labelElement );
 		}
 		element.appendChild( document.createElement( 'ul' ) );
-		expect( portlets.addPortletHandler( element ).outerHTML.replace( /[\s\n]/gi, '' ) )
-			.toBe(
-				portletHTML.replace( /[\s\n]/gi, '' )
-					// Known Difference 1: Portlets created via JS are `div` elements not `nav`
-					.replace( /<nav/g, '<div' )
-					.replace( /nav>/g, 'div>' )
-					// Known Difference 2: Portlets created via JS have `div` elements
-					// rather than `h3 > span`
-					.replace( /<spanclass="vector-menu-heading-label">/g, '' )
-					.replace( /<h3/g, '<div' )
-					.replace( /<\/span><\/h3>/g, '</div>' )
-			);
+
+		const actual = portlets.addPortletHandler( element ).outerHTML.replace( /[\s\n]/gi, '' )
+			// Known Difference 1: `div` elements need `role="navigation"`.
+			// `nav` elements do not.
+			.replace( /role="navigation"/g, '' );
+		const expected = portletHTML.replace( /[\s\n]/gi, '' )
+			// Known Difference 2: Portlets created via JS are `div` elements not `nav`
+			.replace( /<nav/g, '<div' )
+			.replace( /nav>/g, 'div>' )
+			// Known Difference 3: Portlets created via JS have `div` elements
+			// rather than `h3 > span`
+			.replace( /<spanclass="vector-menu-heading-label">/g, '' )
+			.replace( /<h3/g, '<div' )
+			.replace( /<\/span><\/h3>/g, '</div>' );
+		expect( actual ).toBe( expected );
 	} );
 
 	test( 'portlet dropdowns that go through the hook method should match the menu template HTML (dropdown version)', () => {
@@ -57,17 +60,20 @@ describe( 'portlets', () => {
 		}
 		element.appendChild( document.createElement( 'ul' ) );
 		rNav.appendChild( element );
-		expect( portlets.addPortletHandler( element ).outerHTML.replace( /[\s\n]/gi, '' ) )
-			.toBe(
-				portletHTML.replace( /[\s\n]/gi, '' )
-					// Known Difference 1: Portlets created via JS are `div` elements not `nav`
-					.replace( /<nav/g, '<div' )
-					.replace( /nav>/g, 'div>' )
-					// Known Difference 2: Portlets created via JS
-					// have `div` elements rather than `label`
-					.replace( /<spanclass="vector-menu-heading-label">/g, '' )
-					.replace( /<label/g, '<div' )
-					.replace( /<\/span><\/label>/g, '</div>' )
-			);
+
+		const actual = portlets.addPortletHandler( element ).outerHTML.replace( /[\s\n]/gi, '' )
+			// Known Difference 1: `div` elements need `role="navigation"`.
+			// `nav` elements do not.
+			.replace( /role="navigation"/g, '' );
+		const expected = portletHTML.replace( /[\s\n]/gi, '' )
+			// Known Difference 2: Portlets created via JS are `div` elements not `nav`
+			.replace( /<nav/g, '<div' )
+			.replace( /nav>/g, 'div>' )
+			// Known Difference 3: Portlets created via JS
+			// have `div` elements rather than `label`
+			.replace( /<spanclass="vector-menu-heading-label">/g, '' )
+			.replace( /<label/g, '<div' )
+			.replace( /<\/span><\/label>/g, '</div>' );
+		expect( actual ).toBe( expected );
 	} );
 } );

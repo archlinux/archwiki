@@ -1,7 +1,5 @@
 <?php
 /**
- * Implements Special:Tags
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
 namespace MediaWiki\Specials;
@@ -29,8 +26,8 @@ use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Xml\Xml;
 use PermissionsError;
-use Xml;
 
 /**
  * A special page that lists tags for edits
@@ -124,7 +121,7 @@ class SpecialTags extends SpecialPage {
 			// If processCreateTagForm generated a redirect, there's no point
 			// continuing with this, as the user is just going to end up getting sent
 			// somewhere else. Additionally, if we keep going here, we end up
-			// populating the memcache of tag data (see ChangeTags::listDefinedTags)
+			// populating the memcache of tag data (see ChangeTagsStore->listDefinedTags)
 			// with out-of-date data from the replica DB, because the replica DB hasn't caught
 			// up to the fact that a new tag has been created as part of an implicit,
 			// as yet uncommitted transaction on primary DB.
@@ -207,12 +204,20 @@ class SpecialTags extends SpecialPage {
 		if ( $showEditLinks ) {
 			$disp .= ' ';
 			$editLink = $linkRenderer->makeLink(
-				$this->msg( "tag-$tag" )->inContentLanguage()->getTitle(),
+				$this->msg( "tag-$tag" )->getTitle(),
 				$this->msg( 'tags-edit' )->text(),
 				[],
 				[ 'action' => 'edit' ]
 			);
-			$disp .= $this->msg( 'parentheses' )->rawParams( $editLink )->escaped();
+			$helpEditLink = $linkRenderer->makeLink(
+				$this->msg( "tag-$tag-helppage" )->inContentLanguage()->getTitle(),
+				$this->msg( 'tags-helppage-edit' )->text(),
+				[],
+				[ 'action' => 'edit' ]
+			);
+			$disp .= $this->msg( 'parentheses' )->rawParams(
+				$this->getLanguage()->pipeList( [ $editLink, $helpEditLink ] )
+			)->escaped();
 		}
 		$newRow .= Xml::tags( 'td', null, $disp );
 
@@ -322,7 +327,7 @@ class SpecialTags extends SpecialPage {
 			] );
 
 			$headerText = $this->msg( 'tags-create-warnings-above', $tag,
-				count( $status->getWarningsArray() ) )->parseAsBlock() .
+				count( $status->getMessages( 'warning' ) ) )->parseAsBlock() .
 				$out->parseAsInterface( $status->getWikiText() ) .
 				$this->msg( 'tags-create-warnings-below' )->parseAsBlock();
 
@@ -470,7 +475,7 @@ class SpecialTags extends SpecialPage {
 		} elseif ( $status->isOK() && $action === 'delete' ) {
 			// deletion succeeded, but hooks raised a warning
 			$out->addWikiTextAsInterface( $this->msg( 'tags-delete-warnings-after-delete', $tag,
-				count( $status->getWarningsArray() ) )->text() . "\n" .
+				count( $status->getMessages( 'warning' ) ) )->text() . "\n" .
 				$status->getWikitext() );
 			$out->addReturnTo( $this->getPageTitle() );
 			return true;

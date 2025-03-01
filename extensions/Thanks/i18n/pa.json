@@ -4,10 +4,10 @@
 			"Aalam",
 			"Babanwalia",
 			"Bgo eiu",
+			"Cabal",
 			"Kuldeepburjbhalaike",
 			"Satdeep gill",
-			"TariButtar",
-			"Cabal"
+			"TariButtar"
 		]
 	},
 	"thanks-desc": "ਵਰਤੋਂਕਾਰਾਂ ਦੀਆਂ ਸੋਧਾਂ, ਟਿੱਪਣੀਆਂ ਆਦਿ ਲਈ ਧੰਨਵਾਦ ਕਰਨ ਲਈ ਧੰਨਵਾਦੀ ਕੜੀ ਜੋੜਦਾ ਹੈ",
@@ -15,9 +15,6 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|ਧੰਨਵਾਦ ਕੀਤਾ}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|ਧੰਨਵਾਦ}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|ਧੰਨਵਾਦ ਕੀਤਾ}}}}",
-	"thanks-button-action-queued": "$1 ਦਾ {{GENDER:$1| {{GENDER:$2|ਧੰਨਵਾਦ}}}} ਕੀਤਾ ਜਾ ਰਿਹਾ…",
-	"thanks-button-action-cancel": "ਰੱਦ ਕਰੋ",
-	"thanks-button-action-completed": "ਤੁਸੀਂ $1 ਦਾ {{GENDER:$1|{{GENDER:$2|ਧੰਨਵਾਦ}}}} ਕੀਤਾ",
 	"thanks-error-undefined": "ਧੰਨਵਾਦ ਕਾਰਵਾਈ ਅਸਫਲ ਹੋਈ (ਅਣਪਛਾਤੀ ਕੋਡ: $1)। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ ਜੀ।",
 	"thanks-error-invalid-log-id": "ਲੌਗ ਐਂਟਰੀ ਨਹੀਂ ਮਿਲੀ",
 	"thanks-error-invalidrevision": "ਸੁਧਾਈ ਪਛਾਣ ਉਚਿਤ ਨਹੀਂ ਹੈ।",

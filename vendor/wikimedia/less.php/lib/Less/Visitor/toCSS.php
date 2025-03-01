@@ -17,11 +17,11 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 		return $this->visitObj( $root );
 	}
 
-	public function visitRule( $ruleNode ) {
-		if ( $ruleNode->variable ) {
+	public function visitDeclaration( $declNode ) {
+		if ( $declNode->variable ) {
 			return [];
 		}
-		return $ruleNode;
+		return $declNode;
 	}
 
 	public function visitMixinDefinition( $mixinNode ) {
@@ -52,9 +52,9 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 		return $mediaNode;
 	}
 
-	public function visitDirective( $directiveNode, &$visitDeeper ) {
-		if ( $directiveNode->name === '@charset' ) {
-			if ( !$directiveNode->getIsReferenced() ) {
+	public function visitAtRule( $atRuleNode, &$visitDeeper ) {
+		if ( $atRuleNode->name === '@charset' ) {
+			if ( !$atRuleNode->getIsReferenced() ) {
 				return;
 			}
 			if ( isset( $this->charset ) && $this->charset ) {
@@ -64,35 +64,35 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 			$this->charset = true;
 		}
 
-		if ( $directiveNode->rules ) {
-			$this->_mergeRules( $directiveNode->rules[0]->rules );
+		if ( $atRuleNode->rules ) {
+			self::_mergeRules( $atRuleNode->rules[0]->rules );
 			// process childs
-			$directiveNode->accept( $this );
+			$atRuleNode->accept( $this );
 			$visitDeeper = false;
 
 			// the directive was directly referenced and therefore needs to be shown in the output
-			if ( $directiveNode->getIsReferenced() ) {
-				return $directiveNode;
+			if ( $atRuleNode->getIsReferenced() ) {
+				return $atRuleNode;
 			}
 
-			if ( !$directiveNode->rules ) {
+			if ( !$atRuleNode->rules ) {
 				return;
 			}
-			if ( $this->hasVisibleChild( $directiveNode ) ) {
+			if ( $this->hasVisibleChild( $atRuleNode ) ) {
 				// marking as referenced in case the directive is stored inside another directive
-				$directiveNode->markReferenced();
-				return $directiveNode;
+				$atRuleNode->markReferenced();
+				return $atRuleNode;
 			}
 				// The directive was not directly referenced and does not contain anything that
 				//was referenced. Therefore it must not be shown in output.
 				return;
 		} else {
-			if ( !$directiveNode->getIsReferenced() ) {
+			if ( !$atRuleNode->getIsReferenced() ) {
 				return;
 			}
 		}
 
-		return $directiveNode;
+		return $atRuleNode;
 	}
 
 	public function checkPropertiesInRoot( $rulesetNode ) {
@@ -101,7 +101,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 		}
 
 		foreach ( $rulesetNode->rules as $ruleNode ) {
-			if ( $ruleNode instanceof Less_Tree_Rule && !$ruleNode->variable ) {
+			if ( $ruleNode instanceof Less_Tree_Declaration && !$ruleNode->variable ) {
 				$msg = "properties must be inside selector blocks, they cannot be in the root. Index " . $ruleNode->index .
 					( $ruleNode->currentFileInfo ? ' Filename: ' . $ruleNode->currentFileInfo['filename'] : null );
 				throw new Less_Exception_Compiler( $msg );
@@ -144,7 +144,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 			if ( $rulesetNode->rules ) {
 
 				if ( count( $rulesetNode->rules ) > 1 ) {
-					$this->_mergeRules( $rulesetNode->rules );
+					self::_mergeRules( $rulesetNode->rules );
 					$this->_removeDuplicateRules( $rulesetNode->rules );
 				}
 
@@ -220,14 +220,14 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 		$ruleCache = [];
 		for ( $i = count( $rules ) - 1; $i >= 0; $i-- ) {
 			$rule = $rules[$i];
-			if ( $rule instanceof Less_Tree_Rule || $rule instanceof Less_Tree_NameValue ) {
+			if ( $rule instanceof Less_Tree_Declaration || $rule instanceof Less_Tree_NameValue ) {
 
 				if ( !isset( $ruleCache[$rule->name] ) ) {
 					$ruleCache[$rule->name] = $rule;
 				} else {
 					$ruleList =& $ruleCache[$rule->name];
 
-					if ( $ruleList instanceof Less_Tree_Rule || $ruleList instanceof Less_Tree_NameValue ) {
+					if ( $ruleList instanceof Less_Tree_Declaration || $ruleList instanceof Less_Tree_NameValue ) {
 						$ruleList = $ruleCache[$rule->name] = [ $ruleCache[$rule->name]->toCSS() ];
 					}
 
@@ -242,7 +242,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 		}
 	}
 
-	protected function _mergeRules( &$rules ) {
+	public static function _mergeRules( &$rules ) {
 		$groups = [];
 
 		// obj($rules);
@@ -251,7 +251,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 		for ( $i = 0; $i < $rules_len; $i++ ) {
 			$rule = $rules[$i];
 
-			if ( ( $rule instanceof Less_Tree_Rule ) && $rule->merge ) {
+			if ( ( $rule instanceof Less_Tree_Declaration ) && $rule->merge ) {
 
 				$key = $rule->name;
 				if ( $rule->important ) {
@@ -310,9 +310,9 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 		return new Less_Tree_Value( $mapped );
 	}
 
-	public function hasVisibleChild( $directiveNode ) {
+	public function hasVisibleChild( $atRuleNode ) {
 		// prepare list of childs
-		$rule = $bodyRules = $directiveNode->rules;
+		$rule = $bodyRules = $atRuleNode->rules;
 		// if there is only one nested ruleset and that one has no path, then it is
 		//just fake ruleset that got not replaced and we need to look inside it to
 		//get real childs

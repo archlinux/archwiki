@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\EditBox;
 
-use HTMLFormField;
+use MediaWiki\HTMLForm\HTMLFormField;
 
 /**
  * This class is used to easily wrap a filter editor box inside an HTMLForm. For now it's just a transparent

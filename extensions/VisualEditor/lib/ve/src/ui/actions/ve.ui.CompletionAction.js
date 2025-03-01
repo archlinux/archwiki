@@ -30,29 +30,26 @@ OO.inheritClass( ve.ui.CompletionAction, ve.ui.Action );
 /* Static Properties */
 
 /**
- * Length to which to limit the list of returned completions
+ * @property {number} Length to which to limit the list of returned completions
  *
  * @static
- * @property {number}
  */
 ve.ui.CompletionAction.static.defaultLimit = 8;
 
 /**
- * Length of the sequence which triggers the action
+ * @property {number} Length of the trigger sequence for the action
  *
  * This many characters will be stripped from the start of the current input by
  * CompletionWidget when triggered by a sequence, see #getSequenceLength.
  *
  * @static
- * @property {number}
  */
 ve.ui.CompletionAction.static.sequenceLength = 1;
 
 /**
- * Whether the current input should be included as a completion automatically
+ * @property {boolean} Whether the current input should be included as a completion automatically
  *
  * @static
- * @property {boolean}
  */
 ve.ui.CompletionAction.static.alwaysIncludeInput = true;
 
@@ -106,7 +103,7 @@ ve.ui.CompletionAction.prototype.getHeaderLabel = function () {
  * @param {ve.Range} range Current surface range
  */
 ve.ui.CompletionAction.prototype.chooseItem = function ( item, range ) {
-	var fragment = this.insertCompletion( item.getData(), range );
+	const fragment = this.insertCompletion( item.getData(), range );
 	fragment.collapseToEnd().select();
 };
 
@@ -151,7 +148,7 @@ ve.ui.CompletionAction.prototype.getSequenceLength = function () {
  * Make a menu item for a given suggestion
  *
  * @protected
- * @param  {Mixed} suggestion Suggestion data, string by default
+ * @param  {any} suggestion Suggestion data, string by default
  * @return {OO.ui.MenuOptionWidget}
  */
 ve.ui.CompletionAction.prototype.getMenuItemForSuggestion = function ( suggestion ) {
@@ -181,19 +178,18 @@ ve.ui.CompletionAction.prototype.updateMenuItems = function ( menuItems ) {
  * input to the list if alwaysIncludeInput and there wasn't an exact match.
  *
  * @protected
- * @param  {Mixed[]} suggestions List of valid completions, strings by default
+ * @param  {any[]} suggestions List of valid completions, strings by default
  * @param  {string} input Input to filter the suggestions to
- * @return {Mixed[]}
+ * @return {any[]}
  */
 ve.ui.CompletionAction.prototype.filterSuggestionsForInput = function ( suggestions, input ) {
-	var action = this;
 	input = input.trim();
 
-	var normalizedInput = input.toLowerCase().trim();
+	const normalizedInput = input.toLowerCase().trim();
 
-	var exact = false;
-	suggestions = suggestions.filter( function ( suggestion ) {
-		var result = action.compareSuggestionToInput( suggestion, normalizedInput );
+	let exact = false;
+	suggestions = suggestions.filter( ( suggestion ) => {
+		const result = this.compareSuggestionToInput( suggestion, normalizedInput );
 		exact = exact || result.isExact;
 		return result.isMatch;
 	} );
@@ -210,12 +206,12 @@ ve.ui.CompletionAction.prototype.filterSuggestionsForInput = function ( suggesti
 /**
  * Compare a suggestion to the normalized user input (lower case)
  *
- * @param {Mixed} suggestion Suggestion data, string by default
+ * @param {any} suggestion Suggestion data, string by default
  * @param {string} normalizedInput Noramlized user input
  * @return {Object} Match object, containing two booleans, `isMatch` and `isExact`
  */
 ve.ui.CompletionAction.prototype.compareSuggestionToInput = function ( suggestion, normalizedInput ) {
-	var normalizedSuggestion = suggestion.toLowerCase();
+	const normalizedSuggestion = suggestion.toLowerCase();
 	return {
 		isMatch: normalizedSuggestion.slice( 0, normalizedInput.length ) === normalizedInput,
 		isExact: normalizedSuggestion === normalizedInput
@@ -226,7 +222,7 @@ ve.ui.CompletionAction.prototype.compareSuggestionToInput = function ( suggestio
  * Create a suggestion from an input
  *
  * @param {string} input User input
- * @return {Mixed} Suggestion data, string by default
+ * @return {any} Suggestion data, string by default
  */
 ve.ui.CompletionAction.prototype.createSuggestion = function ( input ) {
 	return input;

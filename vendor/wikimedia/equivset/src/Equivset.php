@@ -21,8 +21,6 @@ namespace Wikimedia\Equivset;
 use ArrayIterator;
 use IteratorAggregate;
 use LogicException;
-use Throwable;
-use Wikimedia\Equivset\Exception\EquivsetException;
 
 /**
  * Default Equivset
@@ -34,27 +32,18 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	 */
 	protected array $data;
 
-	/**
-	 * @var string
-	 */
-	protected string $serializedPath;
+	protected string $dataPath;
 
 	/**
-	 * Equivset
-	 *
 	 * @param array<string,string> $data Equivalent Set
-	 * @param string $serializedPath Path of the serialized equivset array.
+	 * @param string $dataPath Path of the equivset array.
 	 */
-	public function __construct( array $data = [], string $serializedPath = '' ) {
+	public function __construct( array $data = [], string $dataPath = '' ) {
 		$this->data = $data;
-		$this->serializedPath = $serializedPath ?: __DIR__ . '/../dist/equivset.php';
+		$this->dataPath = $dataPath ?: __DIR__ . '/../dist/equivset.php';
 	}
 
-	/**
-	 * Get the equivset.
-	 *
-	 * @return array<string,string> An associative array of equivalent characters.
-	 */
+	/** {@inheritdoc} */
 	public function all(): array {
 		if ( !$this->data ) {
 			$this->data = $this->load();
@@ -63,49 +52,26 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 		return $this->data;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param string $value The string to normalize against the equivset.
-	 * @return string
-	 */
+	/** {@inheritdoc} */
 	public function normalize( string $value ): string {
 		$data = $this->all();
 
 		return strtr( $value, $data );
 	}
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param string $str1 The first string.
-	 * @param string $str2 The second string.
-	 *
-	 * @return bool
-	 */
+	/** {@inheritdoc} */
 	public function isEqual( string $str1, string $str2 ): bool {
 		return $this->normalize( $str1 ) === $this->normalize( $str2 );
 	}
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param string $key The character that was used.
-	 * @return bool If the character has an equivalent.
-	 */
+	/** {@inheritdoc} */
 	public function has( string $key ): bool {
 		$data = $this->all();
 
 		return array_key_exists( $key, $data );
 	}
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param string $key The character that was used.
-	 * @return string The equivalent character.
-	 * @throws LogicException If character does not exist.
-	 */
+	/** {@inheritdoc} */
 	public function get( string $key ): string {
 		$data = $this->all();
 
@@ -116,11 +82,7 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 		return $data[$key];
 	}
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return ArrayIterator The complete Equivset.
-	 */
+	/** {@inheritdoc} */
 	public function getIterator(): ArrayIterator {
 		return new ArrayIterator( $this->all() );
 	}
@@ -129,30 +91,10 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	 * Get the equivset.
 	 *
 	 * @return array<string,string> An associative array of equivalent characters.
-	 * @throws Throwable If the serialized equivset file is unreadable.
 	 */
 	protected function load(): array {
-		if ( pathinfo( $this->serializedPath, PATHINFO_EXTENSION ) === 'php' ) {
-			// This will naturally throw if the file does not exist, is not readable,
-			// or can't be parsed.
-			return require $this->serializedPath;
-		}
-
-		// file_get_contents() will not fail at this point since none of the
-		// conditions that can cause a failure can happen at this point.
-		// See http://php.net/manual/en/function.file-get-contents.php
-
-		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-		$contents = @file_get_contents( $this->serializedPath );
-		if ( $contents === false ) {
-			throw new EquivsetException( 'Serialized equivset file is unreadable' );
-		}
-
-		$data = unserialize( $contents );
-		if ( $data === false ) {
-			throw new EquivsetException( 'Unserializing serialized equivset failed' );
-		}
-
-		return $data;
+		// This will naturally throw if the file does not exist, is not readable,
+		// or can't be parsed.
+		return require $this->dataPath;
 	}
 }

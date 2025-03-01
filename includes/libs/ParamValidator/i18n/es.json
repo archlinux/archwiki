@@ -13,6 +13,8 @@
 	"paramvalidator-maxchars": "El valor del parámetro «$1» no puede ocupar más de $3 {{PLURAL:$3|carácter|caracteres}} (ocupa $4).",
 	"paramvalidator-missingparam": "Se debe establecer el parámetro «$1».",
 	"paramvalidator-notmulti": "El parámetro «$1» solo acepta un valor. La separación multivalor U+001F solo se pueden utilizar en parámetros multivaluados.",
+	"paramvalidator-multivalue-must-be-array": "Se debe proporcionar el parámetro multivaluado «$1» en forma de matriz.",
+	"paramvalidator-needstring": "El parámetro «$1» solo acepta un valor de tipo cadena, pero recibió $2",
 	"paramvalidator-outofrange-max": "El valor «$2» del parámetro «$1» debe ser no mayor de $4.",
 	"paramvalidator-outofrange-minmax": "El valor «$2» del parámetro «$1» debe estar entre $3 y $4.",
 	"paramvalidator-outofrange-min": "El valor «$2» del parámetro «$1» debe ser no menor de $3.",

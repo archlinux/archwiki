@@ -18,14 +18,14 @@
  * @param {number} [strip=0] Number of data elements to strip after execution
  *         (from the right)
  * @param {Object} [config] [description]
- * @cfg {boolean} [setSelection=false] Whether to set the selection to the
+ * @param {boolean} [config.setSelection=false] Whether to set the selection to the
  *       range matching the sequence before executing the command.
- * @cfg {boolean} [delayed=false] Whether to wait for the user to stop typing matching content
+ * @param {boolean} [config.delayed=false] Whether to wait for the user to stop typing matching content
  *       before executing the command. When the sequence matches typed text, it will not be executed
  *       immediately, but only after more non-matching text is added afterwards or the selection is
  *       changed. This is useful for variable-length sequences (defined with RegExps).
- * @cfg {boolean} [checkOnPaste=false] Whether the sequence should also be matched after paste.
- * @cfg {boolean} [checkOnDelete=false] Whether the sequence should also be matched after delete.
+ * @param {boolean} [config.checkOnPaste=false] Whether the sequence should also be matched after paste.
+ * @param {boolean} [config.checkOnDelete=false] Whether the sequence should also be matched after delete.
  */
 ve.ui.Sequence = function VeUiSequence( name, commandName, data, strip, config ) {
 	this.name = name;
@@ -62,7 +62,7 @@ OO.initClass( ve.ui.Sequence );
  * @return {ve.Range|null} Range corresponding to the match, or else null
  */
 ve.ui.Sequence.prototype.match = function ( data, offset, plaintext ) {
-	var i, j = offset - 1;
+	let i, j = offset - 1;
 
 	if ( this.data instanceof RegExp ) {
 		i = plaintext.search( this.data );
@@ -89,21 +89,21 @@ ve.ui.Sequence.prototype.match = function ( data, offset, plaintext ) {
  * @return {boolean} The command executed
  */
 ve.ui.Sequence.prototype.execute = function ( surface, range ) {
-	var surfaceModel = surface.getModel();
+	const surfaceModel = surface.getModel();
 
 	if ( surface.getCommands().indexOf( this.getCommandName() ) === -1 ) {
 		return false;
 	}
 
-	var command = surface.commandRegistry.lookup( this.getCommandName() );
+	const command = surface.commandRegistry.lookup( this.getCommandName() );
 
 	if ( !command ) {
 		return false;
 	}
 
-	var stripFragment;
+	let stripFragment;
 	if ( this.strip ) {
-		var stripRange = surfaceModel.getSelection().getRange();
+		const stripRange = surfaceModel.getSelection().getRange();
 		stripFragment = surfaceModel.getLinearFragment(
 			// noAutoSelect = true, excludeInsertions = true
 			new ve.Range( stripRange.end, stripRange.end - this.strip ), true, true
@@ -114,12 +114,12 @@ ve.ui.Sequence.prototype.execute = function ( surface, range ) {
 
 	// Use SurfaceFragment rather than Selection to automatically adjust the selection for any changes
 	// (additions, removals) caused by executing the command
-	var originalSelectionFragment = surfaceModel.getFragment();
+	const originalSelectionFragment = surfaceModel.getFragment();
 	if ( this.setSelection ) {
 		surfaceModel.setLinearSelection( range );
 	}
 
-	var args;
+	let args;
 	// For sequences that trigger dialogs, pass an extra flag so the window knows
 	// to un-strip the sequence if it is closed without action. See ve.ui.WindowAction.
 	if ( command.getAction() === 'window' && command.getMethod() === 'open' ) {
@@ -135,7 +135,7 @@ ve.ui.Sequence.prototype.execute = function ( surface, range ) {
 	}
 
 	// `args` can be passed undefined, and the defaults will be used
-	var executed = command.execute( surface, args, 'sequence' );
+	const executed = command.execute( surface, args, 'sequence' );
 
 	// Restore user's selection if:
 	// * This sequence was not executed after all
@@ -186,15 +186,13 @@ ve.ui.Sequence.prototype.getCommandName = function () {
  * @return {string} Message for display
  */
 ve.ui.Sequence.prototype.getMessage = function ( explode ) {
-	var data;
+	let data;
 	if ( typeof this.data === 'string' ) {
 		data = this.data.split( '' );
 	} else if ( this.data instanceof RegExp ) {
 		data = [ this.data.toString() ];
 	} else {
-		data = this.data.filter( function ( key ) {
-			return !ve.isPlainObject( key );
-		} );
+		data = this.data.filter( ( key ) => !ve.isPlainObject( key ) );
 	}
 	return explode ? data : data.join( '' );
 };

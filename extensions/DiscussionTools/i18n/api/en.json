@@ -5,6 +5,7 @@
 	"apierror-discussiontools-commentid-notfound": "Comment with the ID '$1' not found.",
 	"apierror-discussiontools-commentname-ambiguous": "Multiple comments with the name '$1' found, <var>commentid</var> is required.",
 	"apierror-discussiontools-commentname-notfound": "Comment with the name '$1' not found.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Page has never contained any discussions.",
 	"apierror-discussiontools-formtoken-used": "Comment already posted. Reload the page to see it.",
 	"apierror-discussiontools-subscription-failed-add": "Could not subscribe to this topic.",
 	"apierror-discussiontools-subscription-failed-remove": "Could not unsubscribe from this topic.",
@@ -38,5 +39,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Name of the topic to subscribe to (or unsubscribe from)",
 	"apihelp-discussiontoolssubscribe-param-page": "A page on which the topic appears",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "True to subscribe, false to unsubscribe",
-	"apihelp-discussiontoolssubscribe-summary": "Subscribe (or unsubscribe) to receive notifications about a topic."
+	"apihelp-discussiontoolssubscribe-summary": "Subscribe (or unsubscribe) to receive notifications about a topic.",
+	"apihelp-discussiontoolsthank-param-commentid": "ID of the comment to thank.",
+	"apihelp-discussiontoolsthank-summary": "Send a public thank-you notification for a comment."
 }

@@ -66,7 +66,10 @@ exports.config = {
 				'--enable-automation',
 				...( process.env.DISPLAY ? [] : [ '--headless' ] ),
 				// Chrome sandbox does not work in Docker
-				...( fs.existsSync( '/.dockerenv' ) ? [ '--no-sandbox' ] : [] )
+				...( fs.existsSync( '/.dockerenv' ) ? [ '--no-sandbox' ] : [] ),
+				// Workaround inputs not working consistently post-navigation on Chrome 90
+				// https://issuetracker.google.com/issues/42322798
+				'--allow-pre-commit-input'
 			]
 		}
 	} ],
@@ -107,7 +110,8 @@ exports.config = {
 		[ 'junit', {
 			outputDir: logPath,
 			outputFileFormat: function () {
-				return `WDIO.xunit-${ makeFilenameDate() }.xml`;
+				const random = Math.random().toString( 16 ).slice( 2, 10 );
+				return `WDIO.xunit-${ makeFilenameDate() }-${ random }.xml`;
 			}
 		} ]
 	],
@@ -119,12 +123,14 @@ exports.config = {
 	/**
 	 * Gets executed just before initializing the webdriver session and test framework.
 	 * It allows you to manipulate configurations depending on the capability or spec.
+	 *
 	 * @param {Object} config wdio configuration object
 	 * @param {Array.<Object>} capabilities list of capabilities details
 	 * @param {Array.<string>} specs List of spec file paths that are to be run
 	 */
 	// T355556: remove when T324766 is resolved
 	beforeSession: function () {
+		// eslint-disable-next-line n/no-unsupported-features/node-builtins
 		dns.setDefaultResultOrder( 'ipv4first' );
 	},
 

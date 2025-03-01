@@ -69,7 +69,6 @@
 	"templatedata-modal-button-map": "Redigér kort",
 	"templatedata-modal-button-importParams": "Importer parametre",
 	"templatedata-modal-button-removemap": "Fjern kort",
-	"templatedata-modal-button-restoreparam": "Gendan parameter",
 	"templatedata-modal-button-saveparam": "Gem",
 	"templatedata-modal-confirmcancel": "Er du sikker på at du ønsker at kassere dine ændringer?",
 	"templatedata-modal-current-language": "Nuværrende sprog: $1",

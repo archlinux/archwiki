@@ -1,6 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
 use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWikiIntegrationTestCase;
+use ReflectionClass;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
 

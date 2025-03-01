@@ -7,8 +7,8 @@
 			"GabiBil",
 			"Minisarm",
 			"NGC 54",
-			"Strainu",
-			"Paloi Sciurala"
+			"Paloi Sciurala",
+			"Strainu"
 		]
 	},
 	"minerva-last-modified-date": "Ultima modificare pe $1, la $2",
@@ -34,7 +34,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Despre această categorie",
 	"mobile-frontend-meta-data-issues-header": "Problemele paginii",
 	"minerva-meta-data-issues-section-header": "Problemele secțiunii",
-	"mobile-frontend-notifications-filter": "Filtrare",
 	"mobile-frontend-pageaction-edit-tooltip": "Modifică secțiunea de început a acestei pagini.",
 	"mobile-frontend-placeholder": "Căutare în {{SITENAME}}",
 	"mobile-frontend-random-button": "Aleatoriu",

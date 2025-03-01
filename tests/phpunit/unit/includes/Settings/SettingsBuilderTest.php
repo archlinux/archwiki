@@ -2,11 +2,10 @@
 
 namespace MediaWiki\Tests\Unit\Settings;
 
-use BagOStuff;
-use ExtensionRegistry;
 use InvalidArgumentException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\Cache\CacheableSource;
 use MediaWiki\Settings\Cache\CachedSource;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
@@ -15,6 +14,7 @@ use MediaWiki\Settings\Config\PhpIniSink;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Settings\SettingsBuilderException;
 use PHPUnit\Framework\TestCase;
+use Wikimedia\ObjectCache\BagOStuff;
 
 /**
  * @covers \MediaWiki\Settings\SettingsBuilder

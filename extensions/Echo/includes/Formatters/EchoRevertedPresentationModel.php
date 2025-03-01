@@ -16,6 +16,7 @@ class EchoRevertedPresentationModel extends EchoEventPresentationModel {
 	}
 
 	public function getHeaderMessage() {
+		// Messages: notification-header-reverted
 		$msg = parent::getHeaderMessage();
 		$msg->params( $this->getTruncatedTitleText( $this->event->getTitle(), true ) );
 		$msg->params( $this->getNumberOfEdits() );

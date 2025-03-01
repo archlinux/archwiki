@@ -36,5 +36,6 @@
 	"confirmedit-preview-content": "Sadržaj",
 	"confirmedit-preview-validity": "Valjanost",
 	"confirmedit-preview-valid": "valjan",
-	"confirmedit-preview-invalid": "nevaljan"
+	"confirmedit-preview-invalid": "nevaljan",
+	"abusefilter-edit-action-showcaptcha": "Zatraži od suradnika da ispuni CAPTCHA-u kako bi nastavio s radnjom. Izuzeti su suradnici s dopuštenjem za preskakanje CAPTCHA-e."
 }

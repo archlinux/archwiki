@@ -1,89 +1,7 @@
 /**
- * This plugin provides a generic way to add suggestions to a text box.
- * Provided by the jquery.suggestions ResourceLoader module.
+ * Provides a {@link jQuery} plugin that add suggestions to a text box.
  *
- * Set options:
- *
- *  $( '#textbox' ).suggestions( { option1: value1, option2: value2 } );
- *  $( '#textbox' ).suggestions( option, value );
- *
- * @example
- * // Initialize:
- * mw.loader.using( 'jquery.suggestions' ).then(()=> {
- *  $( '#textbox' ).suggestions();
- * });
- * @memberof jQueryPlugins
- * @method suggestions
- * @return {jQuery}
- *
- * @param {Object} options
- *
- * @param {Function} [options.fetch] Callback that should fetch suggestions and set the suggestions
- *  property. Called in context of the text box.
- * @param {string} options.fetch.query
- * @param {Function} options.fetch.response Callback to receive the suggestions with
- * @param {Array} options.fetch.response.suggestions
- * @param {number} options.fetch.maxRows
- *
- * @param {Function} [options.cancel] Callback function to call when any pending asynchronous
- *  suggestions fetches. Called in context of the text box.
- *
- * @param {Object} [options.special] Set of callbacks for rendering and selecting.
- *
- * @param {Function} options.special.render Called in context of the suggestions-special element.
- * @param {string} options.special.render.query
- * @param {Object} options.special.render.context
- *
- * @param {Function} options.special.select Called in context of the suggestions-result-current element.
- * @param {jQuery} options.special.select.$textbox
- *
- * @param {Object} [options.result] Set of callbacks for rendering and selecting
- *
- * @param {Function} options.result.render Called in context of the suggestions-result element.
- * @param {string} options.result.render.suggestion
- * @param {Object} options.result.render.context
- *
- * @param {Function} options.result.select Called in context of the suggestions-result-current element.
- * @param {jQuery} options.result.select.$textbox
- *
- * @param {Object} [options.update] Set of callbacks for listening to a change in the text input.
- *
- * @param {Function} options.update.before Called right after the user changes the textbox text.
- * @param {Function} options.update.after Called after results are updated either from the cache or
- * the API as a result of the user input.
- *
- * @param {jQuery} [options.$region=this] The element to place the suggestions below and match width of.
- *
- * @param {string[]} [options.suggestions] Array of suggestions to display.
- *
- * @param {number} [options.maxRows=10] Maximum number of suggestions to display at one time.
- *  Must be between 1 and 100.
- *
- * @param {number} [options.delay=120] Number of milliseconds to wait for the user to stop typing.
- *  Must be between 0 and 1200.
- *
- * @param {boolean} [options.cache=false] Whether to cache results from a fetch.
- *
- * @param {number} [options.cacheMaxAge=60000] Number of milliseconds to cache results from a fetch.
- *  Must be higher than 1. Defaults to 1 minute.
- *
- * @param {boolean} [options.submitOnClick=false] Whether to submit the form containing the textbox
- *  when a suggestion is clicked.
- *
- * @param {number} [options.maxExpandFactor=3] Maximum suggestions box width relative to the textbox
- *  width. If set to e.g. 2, the suggestions box will never be grown beyond 2 times the width of
- *  the textbox. Must be higher than 1.
- *
- * @param {string} [options.expandFrom=auto] Which direction to offset the suggestion box from.
- *  Values 'start' and 'end' translate to left and right respectively depending on the directionality
- *   of the current document, according to `$( document.documentElement ).css( 'direction' )`.
- *   Valid values: "left", "right", "start", "end", and "auto".
- *
- * @param {boolean} [options.positionFromLeft] Sets `expandFrom=left`, for backwards
- *  compatibility.
- *
- * @param {boolean} [options.highlightInput=false] Whether to highlight matched portions of the
- *  input or not.
+ * @module jquery.suggestions
  */
 
 ( function () {
@@ -134,9 +52,9 @@
 		// Allow custom rendering - but otherwise don't do any rendering
 		if ( typeof context.config.special.render === 'function' ) {
 			// Wait for the browser to update the value
-			setTimeout( function () {
+			setTimeout( () => {
 				// Render special
-				var $special = context.data.$container.find( '.suggestions-special' );
+				const $special = context.data.$container.find( '.suggestions-special' );
 				context.config.special.render.call( $special, context.data.$textbox.val(), context );
 			}, 1 );
 		}
@@ -157,10 +75,10 @@
 				context.config.update.before.call( context.data.$textbox );
 			}
 
-			var val = context.data.$textbox.val(),
+			const val = context.data.$textbox.val(),
 				cache = context.data.cache;
 
-			var cacheHit = false;
+			let cacheHit = false;
 			// Only fetch if the value in the textbox changed and is not empty, or if the results were hidden
 			// if the textbox is empty then clear the result div, but leave other settings intouched
 			if ( val.length === 0 ) {
@@ -189,7 +107,7 @@
 					context.config.fetch.call(
 						context.data.$textbox,
 						val,
-						function ( suggestions, metadata ) {
+						( suggestions, metadata ) => {
 							suggestions = suggestions.slice( 0, context.config.maxRows );
 							context.data.$textbox.suggestions( 'suggestions', suggestions );
 							if ( typeof context.config.update.after === 'function' ) {
@@ -232,7 +150,7 @@
 	 * @param {boolean} updateTextbox If true, put the suggestion in the textbox
 	 */
 	function highlight( context, $result, updateTextbox ) {
-		var $selected = context.data.$container.find( '.suggestions-result-current' );
+		const $selected = context.data.$container.find( '.suggestions-result-current' );
 		if ( !$result.get || $selected.get( 0 ) !== $result.get( 0 ) ) {
 			if ( $result === 'prev' ) {
 				// eslint-disable-next-line no-jquery/no-class-state
@@ -330,8 +248,8 @@
 						// Rebuild the suggestions list
 						context.data.$container.show();
 						// Update the size and position of the list
-						var regionIsFixed = ( function () {
-							var $el = context.config.$region;
+						const regionIsFixed = ( function () {
+							let $el = context.config.$region;
 							do {
 								if ( $el.css( 'position' ) === 'fixed' ) {
 									return true;
@@ -340,10 +258,10 @@
 							} while ( $el.length );
 							return false;
 						}() );
-						var regionPosition = regionIsFixed ?
+						const regionPosition = regionIsFixed ?
 							context.config.$region[ 0 ].getBoundingClientRect() :
 							context.config.$region.offset();
-						var newCSS = {
+						const newCSS = {
 							position: regionIsFixed ? 'fixed' : 'absolute',
 							top: regionPosition.top + context.config.$region.outerHeight(),
 							bottom: 'auto',
@@ -353,8 +271,7 @@
 
 						// Process expandFrom, after this it is set to left or right.
 						context.config.expandFrom = ( function ( expandFrom ) {
-							var regionWidth, docWidth, regionCenter, docCenter,
-								isRTL = $( document.documentElement ).css( 'direction' ) === 'rtl',
+							const isRTL = $( document.documentElement ).css( 'direction' ) === 'rtl',
 								$region = context.config.$region;
 
 							// Backwards compatible
@@ -371,16 +288,16 @@
 									// If the markup explicitly contains a direction, use it.
 									expandFrom = $region.data( 'searchsuggest-expand-dir' );
 								} else {
-									regionWidth = $region.outerWidth();
-									docWidth = $( document ).width();
+									const regionWidth = $region.outerWidth();
+									const docWidth = $( document ).width();
 									if ( regionWidth > ( 0.85 * docWidth ) ) {
 										// If the input size takes up more than 85% of the document horizontally
 										// expand the suggestions to the writing direction's native end.
 										expandFrom = 'start';
 									} else {
 										// Calculate the center points of the input and document
-										regionCenter = regionPosition.left + regionWidth / 2;
-										docCenter = docWidth / 2;
+										const regionCenter = regionPosition.left + regionWidth / 2;
+										const docCenter = docWidth / 2;
 										if ( Math.abs( regionCenter - docCenter ) < ( 0.10 * docCenter ) ) {
 											// If the input's center is within 10% of the document center
 											// use the writing direction's native end.
@@ -417,12 +334,12 @@
 						}
 
 						context.data.$container.css( newCSS );
-						var $results = context.data.$container.children( '.suggestions-results' );
+						const $results = context.data.$container.children( '.suggestions-results' );
 						$results.empty();
-						var expWidth = -1;
-						for ( var i = 0; i < context.config.suggestions.length; i++ ) {
-							var text = context.config.suggestions[ i ];
-							var $result = $( '<div>' )
+						let expWidth = -1;
+						for ( let i = 0; i < context.config.suggestions.length; i++ ) {
+							const text = context.config.suggestions[ i ];
+							const $result = $( '<div>' )
 								.addClass( 'suggestions-result' )
 								.attr( 'rel', i )
 								.data( 'text', context.config.suggestions[ i ] )
@@ -459,8 +376,8 @@
 							//   still report the "trimmed" width. This should not be done in regular CSS
 							//   stylesheets as we don't want this rule to apply to other <span> elements, like
 							//   the ones generated by jquery.highlightText.
-							var $spanForWidth = $result.wrapInner( '<span>' ).children();
-							var childrenWidth = $spanForWidth.css( 'position', 'absolute' ).outerWidth();
+							const $spanForWidth = $result.wrapInner( '<span>' ).children();
+							const childrenWidth = $spanForWidth.css( 'position', 'absolute' ).outerWidth();
 							$spanForWidth.contents().unwrap();
 
 							if ( childrenWidth > $result.width() && childrenWidth > expWidth ) {
@@ -471,7 +388,7 @@
 
 						// Apply new width for results box, if any
 						if ( expWidth > context.data.$container.width() ) {
-							var maxWidth = context.config.maxExpandFactor * context.data.$textbox.width();
+							const maxWidth = context.config.maxExpandFactor * context.data.$textbox.width();
 							context.data.$container.width( Math.min( expWidth, maxWidth ) );
 						}
 					}
@@ -507,8 +424,8 @@
 	 */
 	function keypress( e, context, key ) {
 		// eslint-disable-next-line no-jquery/no-sizzle
-		var wasVisible = context.data.$container.is( ':visible' ),
-			preventDefault = false;
+		const wasVisible = context.data.$container.is( ':visible' );
+		let preventDefault = false;
 
 		switch ( key ) {
 			// Arrow down
@@ -538,9 +455,9 @@
 				preventDefault = wasVisible;
 				break;
 			// Enter
-			case 13:
+			case 13: {
 				preventDefault = wasVisible;
-				var $selected = context.data.$container.find( '.suggestions-result-current' );
+				const $selected = context.data.$container.find( '.suggestions-result-current' );
 				hide( context );
 				if ( $selected.length === 0 || context.data.selectedWithMouse ) {
 					// If nothing is selected or if something was selected with the mouse
@@ -564,6 +481,7 @@
 					}
 				}
 				break;
+			}
 			default:
 				update( context, true );
 				break;
@@ -574,15 +492,103 @@
 		}
 	}
 
-	// See file header for method documentation
+	/**
+	 * Add suggestions to a text box.
+	 *
+	 * Set options:
+	 *
+	 * ```
+	 * $( '#textbox' ).suggestions( { option1: value1, option2: value2 } );
+	 * $( '#textbox' ).suggestions( option, value );
+	 * ```
+	 *
+	 * To use this {@link jQuery} plugin, load the `jquery.suggestions` module with {@link mw.loader}.
+	 *
+	 * @example
+	 * // Initialize:
+	 * mw.loader.using( 'jquery.suggestions' ).then(()=> {
+	 *  $( '#textbox' ).suggestions();
+	 * });
+	 * @memberof module:jquery.suggestions
+	 * @return {jQuery}
+	 *
+	 * @param {Object} options
+	 *
+	 * @param {Function} [options.fetch] Callback that should fetch suggestions and set the suggestions
+	 *  property. Called in context of the text box.
+	 * @param {string} options.fetch.query
+	 * @param {Function} options.fetch.response Callback to receive the suggestions with
+	 * @param {Array} options.fetch.response.suggestions
+	 * @param {number} options.fetch.maxRows
+	 *
+	 * @param {Function} [options.cancel] Callback function to call when any pending asynchronous
+	 *  suggestions fetches. Called in context of the text box.
+	 *
+	 * @param {Object} [options.special] Set of callbacks for rendering and selecting.
+	 *
+	 * @param {Function} options.special.render Called in context of the suggestions-special element.
+	 * @param {string} options.special.render.query
+	 * @param {Object} options.special.render.context
+	 *
+	 * @param {Function} options.special.select Called in context of the suggestions-result-current element.
+	 * @param {jQuery} options.special.select.$textbox
+	 *
+	 * @param {Object} [options.result] Set of callbacks for rendering and selecting
+	 *
+	 * @param {Function} options.result.render Called in context of the suggestions-result element.
+	 * @param {string} options.result.render.suggestion
+	 * @param {Object} options.result.render.context
+	 *
+	 * @param {Function} options.result.select Called in context of the suggestions-result-current element.
+	 * @param {jQuery} options.result.select.$textbox
+	 *
+	 * @param {Object} [options.update] Set of callbacks for listening to a change in the text input.
+	 *
+	 * @param {Function} options.update.before Called right after the user changes the textbox text.
+	 * @param {Function} options.update.after Called after results are updated either from the cache or
+	 * the API as a result of the user input.
+	 *
+	 * @param {jQuery} [options.$region=this] The element to place the suggestions below and match width of.
+	 *
+	 * @param {string[]} [options.suggestions] Array of suggestions to display.
+	 *
+	 * @param {number} [options.maxRows=10] Maximum number of suggestions to display at one time.
+	 *  Must be between 1 and 100.
+	 *
+	 * @param {number} [options.delay=120] Number of milliseconds to wait for the user to stop typing.
+	 *  Must be between 0 and 1200.
+	 *
+	 * @param {boolean} [options.cache=false] Whether to cache results from a fetch.
+	 *
+	 * @param {number} [options.cacheMaxAge=60000] Number of milliseconds to cache results from a fetch.
+	 *  Must be higher than 1. Defaults to 1 minute.
+	 *
+	 * @param {boolean} [options.submitOnClick=false] Whether to submit the form containing the textbox
+	 *  when a suggestion is clicked.
+	 *
+	 * @param {number} [options.maxExpandFactor=3] Maximum suggestions box width relative to the textbox
+	 *  width. If set to e.g. 2, the suggestions box will never be grown beyond 2 times the width of
+	 *  the textbox. Must be higher than 1.
+	 *
+	 * @param {string} [options.expandFrom=auto] Which direction to offset the suggestion box from.
+	 *  Values 'start' and 'end' translate to left and right respectively depending on the directionality
+	 *   of the current document, according to `$( document.documentElement ).css( 'direction' )`.
+	 *   Valid values: "left", "right", "start", "end", and "auto".
+	 *
+	 * @param {boolean} [options.positionFromLeft] Sets `expandFrom=left`, for backwards
+	 *  compatibility.
+	 *
+	 * @param {boolean} [options.highlightInput=false] Whether to highlight matched portions of the
+	 *  input or not.
+	 */
 	$.fn.suggestions = function () {
 		// Multi-context fields
-		var args = arguments;
+		const args = arguments;
 
 		$( this ).each( function () {
 			/* Construction and Loading */
 
-			var context = $( this ).data( 'suggestions-context' );
+			let context = $( this ).data( 'suggestions-context' );
 			if ( context === undefined || context === null ) {
 				context = {
 					config: {
@@ -611,7 +617,7 @@
 			if ( args.length > 0 ) {
 				if ( typeof args[ 0 ] === 'object' ) {
 					// Apply set of properties
-					for ( var key in args[ 0 ] ) {
+					for ( const key in args[ 0 ] ) {
 						configure( context, key, args[ 0 ][ key ] );
 					}
 				} else if ( typeof args[ 0 ] === 'string' ) {
@@ -652,11 +658,11 @@
 							// Can't use click() because the container div is hidden when the
 							// textbox loses focus. Instead, listen for a mousedown followed
 							// by a mouseup on the same div.
-							.on( 'mousedown', function ( e ) {
+							.on( 'mousedown', ( e ) => {
 								context.data.$mouseDownOn = $( e.target ).closest( '.suggestions-results .suggestions-result' );
 							} )
-							.on( 'mouseup', function ( e ) {
-								var $result = $( e.target ).closest( '.suggestions-results .suggestions-result' ),
+							.on( 'mouseup', ( e ) => {
+								const $result = $( e.target ).closest( '.suggestions-results .suggestions-result' ),
 									$other = context.data.$mouseDownOn;
 
 								context.data.$mouseDownOn = $( [] );
@@ -671,7 +677,7 @@
 								if ( !( e.which !== 1 || e.altKey || e.ctrlKey || e.shiftKey || e.metaKey ) ) {
 									// This will hide the link we're just clicking on, which causes problems
 									// when done synchronously in at least Firefox 3.6 (T64858).
-									setTimeout( function () {
+									setTimeout( () => {
 										hide( context );
 									} );
 								}
@@ -685,11 +691,11 @@
 							// Can't use click() because the container div is hidden when the
 							// textbox loses focus. Instead, listen for a mousedown followed
 							// by a mouseup on the same div.
-							.on( 'mousedown', function ( e ) {
+							.on( 'mousedown', ( e ) => {
 								context.data.$mouseDownOn = $( e.target ).closest( '.suggestions-special' );
 							} )
-							.on( 'mouseup', function ( e ) {
-								var $special = $( e.target ).closest( '.suggestions-special' ),
+							.on( 'mouseup', ( e ) => {
+								const $special = $( e.target ).closest( '.suggestions-special' ),
 									$other = context.data.$mouseDownOn;
 
 								context.data.$mouseDownOn = $( [] );
@@ -703,7 +709,7 @@
 								if ( !( e.which !== 1 || e.altKey || e.ctrlKey || e.shiftKey || e.metaKey ) ) {
 									// This will hide the link we're just clicking on, which causes problems
 									// when done synchronously in at least Firefox 3.6 (T64858).
-									setTimeout( function () {
+									setTimeout( () => {
 										hide( context );
 									} );
 								}
@@ -711,7 +717,7 @@
 								// if they were just typing.
 								context.data.$textbox.trigger( 'focus' );
 							} )
-							.on( 'mousemove', function ( e ) {
+							.on( 'mousemove', ( e ) => {
 								context.data.selectedWithMouse = true;
 								highlight(
 									context, $( e.target ).closest( '.suggestions-special' ), false
@@ -723,22 +729,22 @@
 				$( this )
 					// Stop browser autocomplete from interfering
 					.attr( 'autocomplete', 'off' )
-					.on( 'keydown', function ( e ) {
+					.on( 'keydown', ( e ) => {
 						// Store key pressed to handle later
 						context.data.keypressed = e.which;
 						context.data.keypressedCount = 0;
 					} )
-					.on( 'keypress', function ( e ) {
+					.on( 'keypress', ( e ) => {
 						context.data.keypressedCount++;
 						keypress( e, context, context.data.keypressed );
 					} )
-					.on( 'keyup', function ( e ) {
+					.on( 'keyup', ( e ) => {
 						// The keypress event is fired when a key is pressed down and that key normally
 						// produces a character value. We also want to handle some keys that don't
 						// produce a character value so we also attach to the keydown/keyup events.
 						// List of codes sourced from
 						// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
-						var allowed = [
+						const allowed = [
 							40, // up arrow
 							38, // down arrow
 							27, // escape
@@ -753,7 +759,7 @@
 							keypress( e, context, context.data.keypressed );
 						}
 					} )
-					.on( 'blur', function () {
+					.on( 'blur', () => {
 						// When losing focus because of a mousedown
 						// on a suggestion, don't hide the suggestions
 						if ( context.data.$mouseDownOn.length > 0 ) {

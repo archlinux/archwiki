@@ -3,14 +3,16 @@
 namespace MediaWiki\Extension\AbuseFilter\View;
 
 use ChangesList;
-use HTMLForm;
-use IContextSource;
 use LogicException;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
 use MediaWiki\Extension\AbuseFilter\EditBox\EditBoxBuilderFactory;
+use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
+use MediaWiki\Extension\AbuseFilter\FilterUtils;
 use MediaWiki\Extension\AbuseFilter\Pager\AbuseFilterExaminePager;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
@@ -18,13 +20,14 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesFormatter;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use OOUI;
 use RecentChange;
 use Wikimedia\Rdbms\LBFactory;
-use Xml;
 
 class AbuseFilterViewExamine extends AbuseFilterView {
 	/**
@@ -60,6 +63,8 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	 */
 	private $varGeneratorFactory;
 
+	private AbuseLoggerFactory $abuseLoggerFactory;
+
 	/**
 	 * @param LBFactory $lbFactory
 	 * @param AbuseFilterPermissionManager $afPermManager
@@ -69,6 +74,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	 * @param VariablesFormatter $variablesFormatter
 	 * @param VariablesManager $varManager
 	 * @param VariableGeneratorFactory $varGeneratorFactory
+	 * @param AbuseLoggerFactory $abuseLoggerFactory
 	 * @param IContextSource $context
 	 * @param LinkRenderer $linkRenderer
 	 * @param string $basePageName
@@ -83,6 +89,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		VariablesFormatter $variablesFormatter,
 		VariablesManager $varManager,
 		VariableGeneratorFactory $varGeneratorFactory,
+		AbuseLoggerFactory $abuseLoggerFactory,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName,
@@ -97,6 +104,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$this->variablesFormatter->setMessageLocalizer( $context );
 		$this->varManager = $varManager;
 		$this->varGeneratorFactory = $varGeneratorFactory;
+		$this->abuseLoggerFactory = $abuseLoggerFactory;
 	}
 
 	/**
@@ -185,11 +193,11 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 
 		$startTS = strtotime( $formData['SearchPeriodStart'] );
 		if ( $startTS ) {
-			$conds[] = 'rc_timestamp>=' . $dbr->addQuotes( $dbr->timestamp( $startTS ) );
+			$conds[] = $dbr->expr( 'rc_timestamp', '>=', $dbr->timestamp( $startTS ) );
 		}
 		$endTS = strtotime( $formData['SearchPeriodEnd'] );
 		if ( $endTS ) {
-			$conds[] = 'rc_timestamp<=' . $dbr->addQuotes( $dbr->timestamp( $endTS ) );
+			$conds[] = $dbr->expr( 'rc_timestamp', '<=', $dbr->timestamp( $endTS ) );
 		}
 		$pager = new AbuseFilterExaminePager(
 			$changesList,
@@ -245,18 +253,19 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$performer = $this->getAuthority();
 		$out = $this->getOutput();
 
-		$row = $dbr->selectRow(
-			'abuse_filter_log',
-			[
+		$row = $dbr->newSelectQueryBuilder()
+			->select( [
 				'afl_deleted',
+				'afl_ip',
 				'afl_var_dump',
 				'afl_rev_id',
 				'afl_filter_id',
 				'afl_global'
-			],
-			[ 'afl_id' => $logid ],
-			__METHOD__
-		);
+			] )
+			->from( 'abuse_filter_log' )
+			->where( [ 'afl_id' => $logid ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 
 		if ( !$row ) {
 			$out->addWikiMsg( 'abusefilter-examine-notfound' );
@@ -264,12 +273,12 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		}
 
 		try {
-			$isHidden = $this->filterLookup->getFilter( $row->afl_filter_id, $row->afl_global )->isHidden();
+			$privacyLevel = $this->filterLookup->getFilter( $row->afl_filter_id, $row->afl_global )->getPrivacyLevel();
 		} catch ( CentralDBNotAvailableException $_ ) {
-			// Conservatively assume that it's hidden, like in SpecialAbuseLog
-			$isHidden = true;
+			// Conservatively assume that it's hidden and protected, like in AbuseLogPager::doFormatRow
+			$privacyLevel = Flags::FILTER_HIDDEN & Flags::FILTER_USES_PROTECTED_VARS;
 		}
-		if ( !$this->afPermManager->canSeeLogDetailsForFilter( $performer, $isHidden ) ) {
+		if ( !$this->afPermManager->canSeeLogDetailsForFilter( $performer, $privacyLevel ) ) {
 			$out->addWikiMsg( 'abusefilter-log-cannot-see-details' );
 			return;
 		}
@@ -287,9 +296,57 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 			return;
 		}
 
-		$vars = $this->varBlobStore->loadVarDump( $row->afl_var_dump );
+		$shouldLogProtectedVarAccess = false;
+
+		// Logs that reveal the values of protected variables are gated behind:
+		// 1. the `abusefilter-access-protected-vars` right
+		// 2. agreement to the `abusefilter-protected-vars-view-agreement` preference
+		$userAuthority = $this->getAuthority();
+		$canViewProtectedVars = $this->afPermManager->canViewProtectedVariableValues( $userAuthority );
+		if ( FilterUtils::isProtected( $privacyLevel ) ) {
+			if ( !$canViewProtectedVars ) {
+				$out->addWikiMsg( 'abusefilter-examine-protected-vars-permission' );
+				return;
+			} else {
+				$shouldLogProtectedVarAccess = true;
+			}
+		}
+
+		// If a non-protected filter and a protected filter have overlapping conditions,
+		// it's possible for a hit to contain a protected variable and for that variable
+		// to be dumped and displayed on a detail page that wouldn't be considered
+		// protected (because it caught on the public filter).
+		// We shouldn't block access to the details of an otherwise public filter hit so
+		// instead only check for access to the protected variables and redact them if the
+		// user shouldn't see them.
+		$vars = $this->varBlobStore->loadVarDump( $row );
+		$varsArray = $this->varManager->dumpAllVars( $vars, true );
+
+		foreach ( $this->afPermManager->getProtectedVariables() as $protectedVariable ) {
+			if ( isset( $varsArray[$protectedVariable] ) ) {
+				if ( !$canViewProtectedVars ) {
+					$varsArray[$protectedVariable] = '';
+				} else {
+					// Protected variable in protected filters logs access in the general permission check
+					// Log access to non-protected filters that happen to expose protected variables here
+					if ( !FilterUtils::isProtected( $privacyLevel ) ) {
+						$shouldLogProtectedVarAccess = true;
+					}
+				}
+			}
+		}
+		$vars = VariableHolder::newFromArray( $varsArray );
+
+		if ( $shouldLogProtectedVarAccess ) {
+			$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
+			$logger->logViewProtectedVariableValue(
+				$userAuthority->getUser(),
+				$varsArray['user_name'] ?? $varsArray['accountname']
+			);
+		}
+
 		$out->addJsConfigVars( [
-			'wgAbuseFilterVariables' => $this->varManager->dumpAllVars( $vars, true ),
+			'wgAbuseFilterVariables' => $varsArray,
 			'abuseFilterExamine' => [ 'type' => 'log', 'id' => $logid ]
 		] );
 		$this->showExaminer( $vars );
@@ -319,12 +376,12 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 				$output
 			);
 
-			$tester = Xml::tags( 'h2', null, $this->msg( 'abusefilter-examine-test' )->parse() );
+			$tester = Html::rawElement( 'h2', [], $this->msg( 'abusefilter-examine-test' )->parse() );
 			$tester .= $boxBuilder->buildEditBox( $this->testFilter, false, false, false );
 			$tester .= $this->buildFilterLoader();
-			$html .= Xml::tags( 'div', [ 'id' => 'mw-abusefilter-examine-editor' ], $tester );
-			$html .= Xml::tags( 'p',
-				null,
+			$html .= Html::rawElement( 'div', [ 'id' => 'mw-abusefilter-examine-editor' ], $tester );
+			$html .= Html::rawElement( 'p',
+				[],
 				new OOUI\ButtonInputWidget(
 					[
 						'label' => $this->msg( 'abusefilter-examine-test-button' )->text(),
@@ -332,19 +389,19 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 						'flags' => [ 'primary', 'progressive' ]
 					]
 				) .
-				Xml::element( 'div',
+				Html::element( 'div',
 					[
 						'id' => 'mw-abusefilter-syntaxresult',
 						'style' => 'display: none;'
-					], '&#160;'
+					]
 				)
 			);
 		}
 
 		// Variable dump
-		$html .= Xml::tags(
+		$html .= Html::rawElement(
 			'h2',
-			null,
+			[],
 			$this->msg( 'abusefilter-examine-vars' )->parse()
 		);
 		$html .= $this->variablesFormatter->buildVarDumpTable( $vars );

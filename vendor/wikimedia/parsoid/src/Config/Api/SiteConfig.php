@@ -148,6 +148,7 @@ class SiteConfig extends ISiteConfig {
 		$this->linkTrailRegex = false;
 		$this->mwAliases = null;
 		$this->interwikiMapNoNamespaces = null;
+		$this->iwMatcher = null;
 	}
 
 	/**
@@ -441,6 +442,15 @@ class SiteConfig extends ISiteConfig {
 		$this->loadSiteData();
 		$alias = strtr( mb_strtoupper( $alias ), ' ', '_' );
 		return $this->specialPageNames[$alias] ?? null;
+	}
+
+	/** @inheritDoc */
+	public function magicLinkEnabled( string $which ): bool {
+		$this->loadSiteData();
+		$magic = $this->siteData['magiclinks'] ?? [];
+		// Default to true, as wikis too old to export the 'magiclinks'
+		// property always had magic links enabled.
+		return $magic[$which] ?? true;
 	}
 
 	public function interwikiMagic(): bool {
@@ -761,6 +771,30 @@ class SiteConfig extends ISiteConfig {
 			$this->metrics = new MockMetrics();
 		}
 		return $this->metrics;
+	}
+
+	/**
+	 * Increment a counter metric
+	 * @param string $name
+	 * @param array $labels
+	 * @param float $amount
+	 * @return void
+	 */
+	public function incrementCounter( string $name, array $labels, float $amount = 1 ): void {
+		// We don't use the labels for now, using MockMetrics instead
+		$this->metrics->increment( $name );
+	}
+
+	/**
+	 * Record a timing metric
+	 * @param string $name
+	 * @param float $value
+	 * @param array $labels
+	 * @return void
+	 */
+	public function observeTiming( string $name, float $value, array $labels ): void {
+		// We don't use the labels for now, using MockMetrics instead
+		$this->metrics->timing( $name, $value );
 	}
 
 	/** @inheritDoc */

@@ -20,7 +20,10 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
 use MediaWiki\Title\Title;
+use MediaWiki\Xml\Xml;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -29,9 +32,13 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class ApiFormatXml extends ApiFormatBase {
 
+	/** @var string */
 	private $mRootElemName = 'api';
+	/** @var string */
 	public static $namespace = 'http://www.mediawiki.org/xml/api/';
+	/** @var bool */
 	private $mIncludeNamespace = false;
+	/** @var string|null */
 	private $mXslt = null;
 
 	public function getMimeType() {
@@ -253,7 +260,7 @@ class ApiFormatXml extends ApiFormatBase {
 		return '_' . preg_replace_callback(
 			"/[^$nc]/uS",
 			static function ( $m ) {
-				return sprintf( '.%X.', UtfNormal\Utils::utf8ToCodepoint( $m[0] ) );
+				return sprintf( '.%X.', \UtfNormal\Utils::utf8ToCodepoint( $m[0] ) );
 			},
 			str_replace( '.', '.2E.', $name )
 		);
@@ -292,3 +299,6 @@ class ApiFormatXml extends ApiFormatBase {
 		];
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiFormatXml::class, 'ApiFormatXml' );

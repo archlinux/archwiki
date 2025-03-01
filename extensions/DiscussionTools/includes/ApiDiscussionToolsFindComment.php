@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use ApiBase;
-use ApiMain;
-use ApiUsageException;
+use MediaWiki\Api\ApiBase;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseThreadItem;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
@@ -61,13 +61,23 @@ class ApiDiscussionToolsFindComment extends ApiBase {
 				$articleId = $title->getArticleId();
 
 				if ( $articleId ) {
-					$byHeading = $this->threadItemStore->findNewestRevisionsByHeading(
-						$heading, $articleId, $title->getTitleValue()
-					);
+					try {
+						$byHeading = $this->threadItemStore->findNewestRevisionsByHeading(
+							$heading, $articleId, $title->getTitleValue()
+						);
+					} catch ( PageNeverHadThreadsException $e ) {
+						$this->dieWithError( [ 'apierror-discussiontools-findcomment-pagenevertalk' ] );
+					}
 					foreach ( $byHeading as $item ) {
 						$values[] = $this->getValue( $item, 'heading' );
 					}
+				} else {
+					// TODO: Consider if we should still search if the article ID is not found
+					$this->dieWithError( [ 'apierror-discussiontools-findcomment-pagenevertalk' ] );
 				}
+			} else {
+				// TODO: Consider if we should still search if the title is invalid
+				$this->dieWithError( [ 'apierror-discussiontools-findcomment-pagenevertalk' ] );
 			}
 		}
 

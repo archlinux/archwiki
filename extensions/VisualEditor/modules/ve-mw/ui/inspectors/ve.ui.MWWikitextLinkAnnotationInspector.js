@@ -33,7 +33,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.static.handlesSource = true;
 
 // TODO: Support [[linktrail]]s & [[pipe trick|]]
 ve.ui.MWWikitextLinkAnnotationInspector.static.internalLinkParser = ( function () {
-	var openLink = '\\[\\[',
+	const openLink = '\\[\\[',
 		closeLink = '\\]\\]',
 		noCloseLink = '(?:(?!' + closeLink + ').)*',
 		noCloseLinkOrPipe = '(?:(?!' + closeLink + ')[^|])*';
@@ -56,17 +56,17 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 	// Annotation inspector stages the annotation, so call its parent
 	// Call grand-parent
 	return ve.ui.AnnotationInspector.super.prototype.getSetupProcess.call( this, data )
-		.next( function () {
-			var wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
-				internalLinkParser = this.constructor.static.internalLinkParser,
-				fragment = this.getFragment();
+		.next( () => {
+			const wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
+				internalLinkParser = this.constructor.static.internalLinkParser;
 
 			// Only supports linear selections
 			if ( !( this.initialFragment && this.initialFragment.getSelection() instanceof ve.dm.LinearSelection ) ) {
 				return ve.createDeferred().reject().promise();
 			}
 
-			var linkMatches;
+			let fragment = this.getFragment();
+			let linkMatches;
 			// Initialize range
 			if ( !data.noExpand ) {
 				if ( !fragment.getSelection().isCollapsed() ) {
@@ -76,22 +76,22 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 				// Expand to existing link, if present
 				// Find all links in the paragraph and see which one contains
 				// the current selection.
-				var contextFragment = fragment.expandLinearSelection( 'siblings' );
-				var contextRange = contextFragment.getSelection().getCoveringRange();
-				var range = fragment.getSelection().getCoveringRange();
-				var text = contextFragment.getText();
+				const contextFragment = fragment.expandLinearSelection( 'siblings' );
+				const contextRange = contextFragment.getSelection().getCoveringRange();
+				const range = fragment.getSelection().getCoveringRange();
+				const text = contextFragment.getText();
 				internalLinkParser.lastIndex = 0;
-				var matches;
+				let matches;
 				while ( ( matches = internalLinkParser.exec( text ) ) !== null ) {
-					var matchTitle = mw.Title.newFromText( matches[ 1 ] );
+					const matchTitle = mw.Title.newFromText( matches[ 1 ] );
 					if ( !matchTitle ) {
 						continue;
 					}
-					var linkRange = new ve.Range(
+					const linkRange = new ve.Range(
 						contextRange.start + matches.index,
 						contextRange.start + matches.index + matches[ 0 ].length
 					);
-					var namespaceId = mw.Title.newFromText( matches[ 1 ] ).getNamespaceId();
+					const namespaceId = mw.Title.newFromText( matches[ 1 ] ).getNamespaceId();
 					if (
 						linkRange.containsRange( range ) && !(
 							// Ignore File:/Category:, but not :File:/:Category:
@@ -125,7 +125,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 			this.fragment = fragment;
 			this.initialLabelText = this.fragment.getText();
 
-			var title;
+			let title;
 			if ( linkMatches ) {
 				// Group 1 is the link target, group 2 is the label after | if present
 				title = mw.Title.newFromText( linkMatches[ 1 ] );
@@ -141,7 +141,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 				this.initialAnnotation = this.newInternalLinkAnnotationFromTitle( title );
 			}
 
-			var inspectorTitle = ve.msg(
+			const inspectorTitle = ve.msg(
 				this.isReadOnly() ?
 					'visualeditor-linkinspector-title' : (
 						!linkMatches ?
@@ -160,7 +160,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 			this.annotationInput.setAnnotation( this.initialAnnotation );
 
 			this.updateActions();
-		}, this );
+		} );
 };
 
 /**
@@ -170,15 +170,15 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 	data = data || {};
 	// Call grand-parent
 	return ve.ui.FragmentInspector.prototype.getTeardownProcess.call( this, data )
-		.first( function () {
-			var wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
+		.first( () => {
+			const wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
 				annotation = this.getAnnotation(),
 				fragment = this.getFragment(),
 				insertion = this.getInsertionText();
 
 			if ( data && data.action === 'done' && annotation ) {
-				var insert = this.initialSelection.isCollapsed() && insertion.length;
-				var labelText;
+				const insert = this.initialSelection.isCollapsed() && insertion.length;
+				let labelText;
 				if ( insert ) {
 					fragment.insertContent( insertion );
 					labelText = insertion;
@@ -191,16 +191,16 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 					if ( labelText.indexOf( ']]' ) !== -1 ) {
 						labelText = labelText.replace( /(\]{2,})/g, '<nowiki>$1</nowiki>' );
 					}
-					var labelTitle = mw.Title.newFromText( labelText );
-					var targetText;
+					const labelTitle = mw.Title.newFromText( labelText );
+					let targetText;
 					if ( !labelTitle || labelTitle.getPrefixedText() !== annotation.getAttribute( 'normalizedTitle' ) ) {
 						targetText = annotation.getAttribute( 'normalizedTitle' ) + '|';
 					} else {
 						targetText = '';
 					}
-					var targetTitle = mw.Title.newFromText( annotation.getAttribute( 'normalizedTitle' ) );
-					var namespaceId = targetTitle.getNamespaceId();
-					var prefix;
+					const targetTitle = mw.Title.newFromText( annotation.getAttribute( 'normalizedTitle' ) );
+					const namespaceId = targetTitle.getNamespaceId();
+					let prefix;
 					if (
 						( targetText + labelText )[ 0 ] !== ':' && (
 							namespaceId === wgNamespaceIds.file ||
@@ -222,7 +222,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 				}
 
 				// Fix selection after annotating is complete
-				fragment.getPending().then( function () {
+				fragment.getPending().then( () => {
 					if ( insert ) {
 						fragment.collapseToEnd().select();
 					} else {
@@ -233,8 +233,8 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 				// Restore selection to what it was before we expanded it
 				this.initialFragment.select();
 			}
-		}, this )
-		.next( function () {
+		} )
+		.next( () => {
 			// Reset state
 			this.initialSelection = null;
 			this.initialAnnotation = null;
@@ -243,7 +243,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 			this.allowProtocolInInternal = false;
 			this.internalAnnotationInput.setAnnotation( null );
 			this.externalAnnotationInput.setAnnotation( null );
-		}, this );
+		} );
 };
 
 /* Registration */

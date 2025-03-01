@@ -27,6 +27,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use MediaWiki\Utils\MWTimestamp;
+use Stringable;
 use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
@@ -40,7 +41,7 @@ use Wikimedia\RequestTimeout\TimeoutException;
  *
  * @since 1.37
  */
-class UserTimeCorrection {
+class UserTimeCorrection implements Stringable {
 
 	/**
 	 * @var string (default) Time correction based on the MediaWiki's system offset from UTC.
@@ -77,7 +78,7 @@ class UserTimeCorrection {
 	 */
 	public function __construct(
 		string $timeCorrection,
-		DateTime $relativeToDate = null,
+		?DateTime $relativeToDate = null,
 		int $systemOffset = 0
 	) {
 		$this->date = $relativeToDate ?? new DateTime( '@' . MWTimestamp::time() );

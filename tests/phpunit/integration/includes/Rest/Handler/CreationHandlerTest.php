@@ -2,8 +2,9 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
-use ApiUsageException;
+use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Rest\Handler\CreationHandler;
@@ -12,6 +13,7 @@ use MediaWiki\Rest\RequestData;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Session\Token;
 use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWikiIntegrationTestCase;
@@ -21,7 +23,6 @@ use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
-use WikitextContent;
 
 /**
  * @covers \MediaWiki\Rest\Handler\CreationHandler
@@ -44,7 +45,6 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 			CONTENT_MODEL_TEXT => true,
 		] );
 
-		// DummyServicesTrait::getDummyMediaWikiTitleCodec
 		$titleCodec = $this->getDummyMediaWikiTitleCodec();
 
 		/** @var RevisionLookup|MockObject $revisionLookup */
@@ -82,6 +82,7 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 	public static function provideExecute() {
 		// NOTE: Prefix hard coded in a fake for Router::getRouteUrl() in HandlerTestTrait
 		$baseUrl = 'https://wiki.example.com/rest/v1/page/';
+		$token = strval( new Token( 'TOKEN', '' ) );
 
 		yield "create with token" => [
 			[ // Request data received by CreationHandler
@@ -90,7 +91,7 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 					'Content-Type' => 'application/json',
 				],
 				'bodyContents' => json_encode( [
-					'token' => 'TOKEN',
+					'token' => $token,
 					'title' => 'Foo',
 					'source' => 'Lorem Ipsum',
 					'comment' => 'Testing'
@@ -130,7 +131,8 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 				'source' => 'Content of revision 371707'
 			],
 			$baseUrl . 'Foo',
-			false
+			false,
+			true,
 		];
 
 		yield "create with model" => [
@@ -182,7 +184,8 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 				'source' => 'Content of revision 371707'
 			],
 			$baseUrl . 'Talk:Foo',
-			true
+			true,
+			false,
 		];
 
 		yield "create without token" => [
@@ -234,7 +237,8 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 				'source' => 'Content of revision 371707'
 			],
 			$baseUrl . 'Foo%2Fbar',
-			true
+			true,
+			false,
 		];
 
 		yield "create with space" => [
@@ -284,7 +288,8 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 				'source' => 'Content of revision 371707'
 			],
 			$baseUrl . 'Foo_(ba%2Br)',
-			true
+			true,
+			false
 		];
 	}
 
@@ -297,13 +302,20 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 		$actionResult,
 		$expectedResponse,
 		$expectedRedirect,
-		$csrfSafe
+		$csrfSafe,
+		$hasToken
 	) {
 		$request = new RequestData( $requestData );
 
 		$handler = $this->newHandler( $actionResult, null, $csrfSafe );
 
-		$response = $this->executeHandler( $handler, $request, [], [], [], [], null, $this->getSession( $csrfSafe ) );
+		$session = $this->getSession( $csrfSafe );
+
+		$session->method( 'hasToken' )->willReturn( $hasToken );
+
+		$session->method( 'getToken' )->willReturn( new Token( 'TOKEN', '' ) );
+
+		$response = $this->executeHandler( $handler, $request, [], [], [], [], null, $session );
 
 		$this->assertSame( 201, $response->getStatusCode() );
 		$this->assertSame(
@@ -349,10 +361,10 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 					'content_model' => CONTENT_MODEL_WIKITEXT,
 				] ),
 			],
-			DataMessageValue::new( 'rest-body-validation-error', [
+			MessageValue::new( 'rest-body-validation-error', [
 				DataMessageValue::new( 'paramvalidator-missingparam', [], 'missingparam' )
 					->plaintextParams( 'source' )
-			], 'missingparam' ),
+			] ),
 		];
 		yield "missing comment field" => [
 			[ // Request data received by CreationHandler
@@ -367,10 +379,10 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 					'content_model' => CONTENT_MODEL_WIKITEXT,
 				] ),
 			],
-			DataMessageValue::new( 'rest-body-validation-error', [
+			MessageValue::new( 'rest-body-validation-error', [
 				DataMessageValue::new( 'paramvalidator-missingparam', [], 'missingparam' )
 					->plaintextParams( 'comment' )
-			], 'missingparam' ),
+			] ),
 		];
 		yield "missing title field" => [
 			[ // Request data received by CreationHandler
@@ -385,10 +397,10 @@ class CreationHandlerTest extends MediaWikiIntegrationTestCase {
 					'content_model' => CONTENT_MODEL_WIKITEXT,
 				] ),
 			],
-			DataMessageValue::new( 'rest-body-validation-error', [
+			MessageValue::new( 'rest-body-validation-error', [
 				DataMessageValue::new( 'paramvalidator-missingparam', [], 'missingparam' )
 					->plaintextParams( 'title' )
-			], 'missingparam' ),
+			] ),
 		];
 	}
 

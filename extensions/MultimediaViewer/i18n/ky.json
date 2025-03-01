@@ -13,7 +13,6 @@
 	"multimediaviewer-license-pd": "Коомдук энчи",
 	"multimediaviewer-license-default": "Лицензияны көрүү",
 	"multimediaviewer-permission-viewmore": "Көбүрөөк көрүү",
-	"multimediaviewer-about-mmv": "Медиа көргөзгүч тууралуу",
 	"multimediaviewer-reuse-loading-placeholder": "Жүктөлүүдө...",
 	"multimediaviewer-share-tab": "Бөлүшүү",
 	"multimediaviewer-download-link": "Бул файлды жүктөп алуу",
@@ -25,6 +24,5 @@
 	"multimediaviewer-view-config": "Параметр",
 	"multimediaviewer-next-image-alt-text": "Кийинки сүрөт",
 	"multimediaviewer-prev-image-alt-text": "Мурунку сүрөт",
-	"multimediaviewer-title-popup-text": "Сыпаттама",
-	"multimediaviewer-option-cancel-button": "Жокко чыгаруу"
+	"multimediaviewer-title-popup-text": "Сыпаттама"
 }

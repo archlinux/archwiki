@@ -2,14 +2,16 @@
 
 namespace MediaWiki\Tests\FileRepo;
 
-use FileBackend;
-use FSFileBackend;
+use InvalidArgumentException;
 use LocalRepo;
 use LogicException;
+use MediaWiki\FileBackend\FileBackendGroup;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use PHPUnit\Framework\Assert;
 use RepoGroup;
-use Title;
+use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFileBackend;
 
 trait TestRepoTrait {
 
@@ -71,12 +73,12 @@ trait TestRepoTrait {
 		}
 
 		if ( !str_starts_with( $dir, wfTempDir() ) ) {
-			throw new \InvalidArgumentException( "Not in temp dir: $dir" );
+			throw new InvalidArgumentException( "Not in temp dir: $dir" );
 		}
 
 		$name = basename( $dir );
 		if ( !str_starts_with( $name, 'mw-mock-repo-' ) ) {
-			throw new \InvalidArgumentException( "Not a mock repo dir: $dir" );
+			throw new InvalidArgumentException( "Not a mock repo dir: $dir" );
 		}
 
 		// TODO: Recursively delete the directory. Scary!
@@ -85,7 +87,10 @@ trait TestRepoTrait {
 	}
 
 	private function installTestRepoGroup( array $options = [] ) {
-		$this->setService( 'RepoGroup', $this->createTestRepoGroup( $options ) );
+		$repoGroup = $this->createTestRepoGroup( $options );
+		$this->setService( 'RepoGroup', $repoGroup );
+
+		$this->installTestBackendGroup( $repoGroup->getLocalRepo()->getBackend() );
 	}
 
 	private function createTestRepoGroup( $options = [], ?MediaWikiServices $services = null ) {
@@ -103,6 +108,27 @@ trait TestRepoTrait {
 		return $repoGroup;
 	}
 
+	private function installTestBackendGroup( FileBackend $backend ) {
+		$this->setService( 'FileBackendGroup', $this->createTestBackendGroup( $backend ) );
+	}
+
+	private function createTestBackendGroup( FileBackend $backend ) {
+		$expected = "mwstore://{$backend->getName()}/";
+
+		$backendGroup = $this->createNoOpMock( FileBackendGroup::class, [ 'backendFromPath' ] );
+		$backendGroup->method( 'backendFromPath' )->willReturnCallback(
+			static function ( $path ) use ( $expected, $backend ) {
+				if ( str_starts_with( $path, $expected ) ) {
+					return $backend;
+				}
+
+				return null;
+			}
+		);
+
+		return $backendGroup;
+	}
+
 	private function getLocalFileRepoConfig( $options = [] ): array {
 		if ( self::$mockRepoTraitDir === null ) {
 			throw new LogicException( 'Mock repo not initialized. ' .
@@ -117,7 +143,7 @@ trait TestRepoTrait {
 		$dir = $options['directory'];
 
 		$info = $options + [
-			"class" => "LocalRepo",
+			"class" => LocalRepo::class,
 			"name" => "test",
 			"domainId" => "mywiki",
 			"directory" => $dir,
@@ -132,7 +158,7 @@ trait TestRepoTrait {
 			"deletedHashLevels" => 0,
 			"updateCompatibleMetadata" => false,
 			"reserializeMetadata" => false,
-			"backend" => 'local-backend'
+			"backend" => 'local-backend',
 		];
 
 		if ( !$info['backend'] instanceof FileBackend ) {
@@ -152,6 +178,9 @@ trait TestRepoTrait {
 			'basePath' => $dir,
 			'obResetFunc' => static function () {
 				ob_end_flush();
+			},
+			'headerFunc' => function ( string $header ) {
+				$this->recordHeader( $header );
 			},
 			'containerPaths' => [
 				"$name-public" => "$dir",
@@ -210,6 +239,49 @@ trait TestRepoTrait {
 		}
 
 		return $file;
+	}
+
+	private function copyFileToTestBackend( string $src, string $dst ) {
+		$repo = self::getTestRepo();
+		$backend = $repo->getBackend();
+
+		$zone = strstr( ltrim( $dst, '/' ), '/', true );
+		$name = basename( $dst );
+
+		$dstFile = $repo->newFile( $name );
+		$dst = $dstFile->getRel();
+
+		if ( $zone !== null ) {
+			$zonePath = $repo->getZonePath( $zone );
+
+			if ( $zonePath ) {
+				$dst = "$zonePath/$dst";
+			}
+		}
+
+		$dir = dirname( $dst );
+
+		if ( $dir !== '' ) {
+			$status = $backend->prepare(
+				[ 'op' => 'prepare', 'dir' => $dir ]
+			);
+
+			if ( !$status->isOK() ) {
+				Assert::fail( "Error copying file $src to $dst: " . $status );
+			}
+		}
+
+		$status = $backend->store(
+			[ 'op' => 'store', 'src' => $src, 'dst' => $dst, ],
+		);
+
+		if ( !$status->isOK() ) {
+			Assert::fail( "Error copying file $src to $dst: " . $status );
+		}
+	}
+
+	private function recordHeader( string $header ) {
+		// no-op
 	}
 
 }

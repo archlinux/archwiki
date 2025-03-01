@@ -22,13 +22,15 @@
 
 namespace MediaWiki\User;
 
-use IDBAccessObject;
 use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
+use RuntimeException;
 use stdClass;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\ILoadBalancer;
 
@@ -49,26 +51,13 @@ class UserFactory implements UserRigorOptions {
 		MainConfigNames::SharedTables,
 	];
 
-	/** @var ServiceOptions */
-	private $options;
+	private ServiceOptions $options;
+	private ILBFactory $loadBalancerFactory;
+	private ILoadBalancer $loadBalancer;
+	private UserNameUtils $userNameUtils;
 
-	/** @var ILBFactory */
-	private $loadBalancerFactory;
+	private ?User $lastUserFromIdentity = null;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var UserNameUtils */
-	private $userNameUtils;
-
-	/** @var User|null */
-	private $lastUserFromIdentity = null;
-
-	/**
-	 * @param ServiceOptions $options
-	 * @param ILBFactory $loadBalancerFactory
-	 * @param UserNameUtils $userNameUtils
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		ILBFactory $loadBalancerFactory,
@@ -170,7 +159,7 @@ class UserFactory implements UserRigorOptions {
 	}
 
 	/**
-	 * Factory method for creation fom a given UserIdentity, replacing User::newFromIdentity
+	 * Factory method for creation from a given UserIdentity, replacing User::newFromIdentity
 	 *
 	 * @since 1.35
 	 *
@@ -192,6 +181,7 @@ class UserFactory implements UserRigorOptions {
 			$this->lastUserFromIdentity
 			&& $this->lastUserFromIdentity->getId() === $id
 			&& $this->lastUserFromIdentity->getName() === $name
+			&& $this->lastUserFromIdentity->getWikiId() === $userIdentity->getWikiId()
 		) {
 			return $this->lastUserFromIdentity;
 		}
@@ -199,7 +189,8 @@ class UserFactory implements UserRigorOptions {
 		$this->lastUserFromIdentity = $this->newFromAnyId(
 			$id === 0 ? null : $id,
 			$name === '' ? null : $name,
-			null
+			null,
+			$userIdentity->getWikiId()
 		);
 
 		return $this->lastUserFromIdentity;
@@ -229,7 +220,13 @@ class UserFactory implements UserRigorOptions {
 		// Stop-gap solution for the problem described in T222212.
 		// Force the User ID and Actor ID to zero for users loaded from the database
 		// of another wiki, to prevent subtle data corruption and confusing failure modes.
+		// FIXME this assumes the same username belongs to the same user on all wikis
 		if ( $dbDomain !== false ) {
+			LoggerFactory::getInstance( 'user' )->warning(
+				'UserFactory::newFromAnyId called with cross-wiki user data',
+				[ 'userId' => $userId, 'userName' => $userName, 'actorId' => $actorId,
+				  'dbDomain' => $dbDomain, 'exception' => new RuntimeException() ]
+			);
 			$userId = 0;
 			$actorId = 0;
 		}
@@ -283,11 +280,11 @@ class UserFactory implements UserRigorOptions {
 	public function newFromConfirmationCode(
 		string $confirmationCode,
 		int $flags = IDBAccessObject::READ_NORMAL
-	) {
+	): ?User {
 		if ( ( $flags & IDBAccessObject::READ_LATEST ) == IDBAccessObject::READ_LATEST ) {
-			$db = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+			$db = $this->loadBalancer->getConnection( DB_PRIMARY );
 		} else {
-			$db = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+			$db = $this->loadBalancer->getConnection( DB_REPLICA );
 		}
 
 		$id = $db->newSelectQueryBuilder()
@@ -314,7 +311,7 @@ class UserFactory implements UserRigorOptions {
 	 * @param array|null $data Further data to load into the object
 	 * @return User
 	 */
-	public function newFromRow( $row, $data = null ) {
+	public function newFromRow( $row, $data = null ): User {
 		return User::newFromRow( $row, $data );
 	}
 
@@ -338,7 +335,7 @@ class UserFactory implements UserRigorOptions {
 	 * @since 1.39
 	 * @return User
 	 */
-	public function newTempPlaceholder() {
+	public function newTempPlaceholder(): User {
 		$user = new User();
 		$user->setName( $this->userNameUtils->getTempPlaceholder() );
 		return $user;
@@ -351,7 +348,7 @@ class UserFactory implements UserRigorOptions {
 	 * @param ?string $name If null, a placeholder name is used
 	 * @return User
 	 */
-	public function newUnsavedTempUser( ?string $name ) {
+	public function newUnsavedTempUser( ?string $name ): User {
 		$user = new User();
 		$user->setName( $name ?? $this->userNameUtils->getTempPlaceholder() );
 		return $user;
@@ -362,7 +359,7 @@ class UserFactory implements UserRigorOptions {
 	 * @since 1.41
 	 * @param UserIdentity $userIdentity
 	 */
-	public function invalidateCache( UserIdentity $userIdentity ) {
+	public function invalidateCache( UserIdentity $userIdentity ): void {
 		if ( !$userIdentity->isRegistered() ) {
 			return;
 		}
@@ -397,7 +394,7 @@ class UserFactory implements UserRigorOptions {
 	 * @param string|false $wikiId
 	 * @return IDatabase
 	 */
-	private function getUserTableConnection( $mode, $wikiId ) {
+	private function getUserTableConnection( $mode, $wikiId ): IDatabase {
 		if ( is_string( $wikiId ) && $this->loadBalancerFactory->getLocalDomainID() === $wikiId ) {
 			$wikiId = UserIdentity::LOCAL;
 		}

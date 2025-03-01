@@ -22,7 +22,7 @@ ve.ui.MWLinkInspectorTool = function VeUiMwLinkInspectorTool() {
 	// Parent constructor
 	ve.ui.MWLinkInspectorTool.super.apply( this, arguments );
 
-	var educationPopup = new ve.ui.MWEducationPopupWidget( this.$link, {
+	const educationPopup = new ve.ui.MWEducationPopupWidget( this.$link, {
 		popupTitle: ve.msg( 'visualeditor-linkinspector-educationpopup-title' ),
 		popupText: mw.message( 'visualeditor-linkinspector-educationpopup-text' ).parseDom(),
 		popupImage: 'link',
@@ -38,11 +38,11 @@ OO.inheritClass( ve.ui.MWLinkInspectorTool, ve.ui.LinkInspectorTool );
 
 /* Static Properties */
 
-ve.ui.MWLinkInspectorTool.static.modelClasses =
-	ve.ui.MWLinkInspectorTool.super.static.modelClasses.concat( [
-		ve.dm.MWNumberedExternalLinkNode,
-		ve.dm.MWMagicLinkNode
-	] );
+ve.ui.MWLinkInspectorTool.static.modelClasses = [
+	...ve.ui.MWLinkInspectorTool.super.static.modelClasses,
+	ve.dm.MWNumberedExternalLinkNode,
+	ve.dm.MWMagicLinkNode
+];
 
 ve.ui.MWLinkInspectorTool.static.associatedWindows = [ 'link', 'linkNode', 'linkMagicNode' ];
 

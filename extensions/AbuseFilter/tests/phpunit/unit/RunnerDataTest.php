@@ -9,17 +9,10 @@ use MediaWiki\Extension\AbuseFilter\RunnerData;
 use MediaWikiUnitTestCase;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\RunnerData
+ * @covers \MediaWiki\Extension\AbuseFilter\RunnerData
  */
 class RunnerDataTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @covers ::__construct()
-	 * @covers ::getMatchesMap
-	 * @covers ::getProfilingData
-	 * @covers ::getTotalRuntime
-	 * @covers ::getTotalConditions
-	 */
 	public function testRunnerData_empty() {
 		$runnerData = new RunnerData();
 		$this->assertSame( [], $runnerData->getMatchesMap() );
@@ -28,13 +21,6 @@ class RunnerDataTest extends MediaWikiUnitTestCase {
 		$this->assertSame( 0.0, $runnerData->getTotalRuntime() );
 	}
 
-	/**
-	 * @covers ::record
-	 * @covers ::getMatchesMap
-	 * @covers ::getProfilingData
-	 * @covers ::getTotalRuntime
-	 * @covers ::getTotalConditions
-	 */
 	public function testRecord() {
 		$runnerData = new RunnerData();
 		$runnerData->record(
@@ -67,9 +53,6 @@ class RunnerDataTest extends MediaWikiUnitTestCase {
 		$this->assertSame( 35.7, $runnerData->getTotalRuntime() );
 	}
 
-	/**
-	 * @covers ::record
-	 */
 	public function testRecord_throwsOnSameFilter() {
 		$runnerData = new RunnerData();
 		$runnerData->record(
@@ -85,11 +68,6 @@ class RunnerDataTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::toArray
-	 * @covers ::fromArray
-	 */
 	public function testToArrayRoundTrip() {
 		$runnerData = new RunnerData();
 		$runnerData->record(
@@ -115,10 +93,6 @@ class RunnerDataTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $runnerData->getMatchesMap(), $newData->getMatchesMap() );
 	}
 
-	/**
-	 * @covers ::getAllFilters
-	 * @covers ::getMatchedFilters
-	 */
 	public function testGetAllAndMatchedFilters() {
 		$runnerData = new RunnerData();
 		$runnerData->record(

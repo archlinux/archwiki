@@ -7,12 +7,13 @@
 ( function () {
 
 	/**
-	 * Like TitleInputWidget, but the namespace has to be input through a separate dropdown field.
+	 * @classdesc Like TitleInputWidget, but the namespace has to be input through a separate dropdown field.
 	 *
 	 * @class
 	 * @extends OO.ui.Widget
 	 *
 	 * @constructor
+	 * @description Create an instance of `mw.widgets.ComplexTitleInputWidget`.
 	 * @param {Object} [config] Configuration options
 	 * @param {Object} config.namespace Configuration for the NamespaceInputWidget dropdown with list of
 	 *     namespaces
@@ -24,7 +25,7 @@
 
 		// Properties
 		this.namespace = new mw.widgets.NamespaceInputWidget( config.namespace );
-		this.title = new mw.widgets.TitleInputWidget( $.extend(
+		this.title = new mw.widgets.TitleInputWidget( Object.assign(
 			{},
 			config.title,
 			{
@@ -72,7 +73,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.ComplexTitleInputWidget.static.gatherPreInfuseState = function ( node, config ) {
-		var state = mw.widgets.ComplexTitleInputWidget.super.static.gatherPreInfuseState( node, config );
+		const state = mw.widgets.ComplexTitleInputWidget.super.static.gatherPreInfuseState( node, config );
 		state.namespace = mw.widgets.NamespaceInputWidget.static.gatherPreInfuseState(
 			$( node ).find( '.mw-widget-namespaceInputWidget' ),
 			config.namespace

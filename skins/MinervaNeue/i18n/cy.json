@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Afalau",
+			"Ceirios",
 			"Ham II",
 			"Lloffiwr",
 			"Robin Owain",
-			"Troswr",
-			"Ceirios"
+			"Troswr"
 		]
 	},
 	"minerva-last-modified-date": "Golygwyd ddiwethaf ar $1, am $2",
@@ -26,7 +26,6 @@
 	"mobile-frontend-main-menu-watchlist": "Rhestr wylio",
 	"mobile-frontend-meta-data-issues": "Problemau â'r dudalen",
 	"mobile-frontend-meta-data-issues-header": "Problemau'r dudalen",
-	"mobile-frontend-notifications-filter": "Hidlo",
 	"mobile-frontend-pageaction-edit-tooltip": "Golygu adran agoriadol y dudalen hon",
 	"mobile-frontend-placeholder": "Chwilio {{SITENAME}}",
 	"mobile-frontend-random-button": "Ar hap",
@@ -38,7 +37,7 @@
 	"minerva-page-actions-overflow": "Rhagor",
 	"minerva-page-actions-language-switcher": "Ieithoedd",
 	"minerva-page-actions-history": "Hanes",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Trafodaeth]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Trafodaeth]",
 	"skin-minerva-issue-learn-more": "Dysgu mwy",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorïau",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Gweld categorïau o dudalennau"

@@ -20,6 +20,7 @@
  * @ingroup Actions
  */
 
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Status\Status;
 
@@ -30,6 +31,7 @@ use MediaWiki\Status\Status;
  */
 class PurgeAction extends FormAction {
 
+	/** @var string */
 	private $redirectParams;
 
 	public function getName() {

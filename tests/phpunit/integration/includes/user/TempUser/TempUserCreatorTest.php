@@ -2,8 +2,10 @@
 
 namespace MediaWiki\Tests\Integration\User\TempUser;
 
-use ExtensionRegistry;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Auth\Throttler;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\Session;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -35,10 +37,32 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 		$tuc = $this->getServiceContainer()->getTempUserCreator();
 		$this->assertTrue( $tuc->isAutoCreateAction( 'edit' ) );
 		$this->assertTrue( $tuc->isTempName( '~1' ) );
-		$status = $tuc->create();
+
+		// Create a temporary account
+		$status = $tuc->create( null, new FauxRequest() );
 		$this->assertSame( '~1', $status->getUser()->getName() );
-		$status = $tuc->create();
+		$this->assertSame(
+			1,
+			$this->getDb()->newSelectQueryBuilder()
+				->from( 'logging' )
+				->join( 'actor', null, 'log_actor=actor_id' )
+				->where( [ 'actor_name' => '~1', 'log_action' => 'autocreate' ] )
+				->fetchRowCount(),
+			'A logging entry indicating the autocreation of ~1 was expected.'
+		);
+
+		// Repeat the test to verify that the serial number increments
+		$status = $tuc->create( null, new FauxRequest() );
 		$this->assertSame( '~2', $status->getUser()->getName() );
+		$this->assertSame(
+			1,
+			$this->getDb()->newSelectQueryBuilder()
+				->from( 'logging' )
+				->join( 'actor', null, 'log_actor=actor_id' )
+				->where( [ 'actor_name' => '~2', 'log_action' => 'autocreate' ] )
+				->fetchRowCount(),
+			'A logging entry indicating the autocreation of ~2 was expected.'
+		);
 	}
 
 	private function getTempUserCreatorUnit() {
@@ -88,7 +112,8 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 			$this->createMock( UserFactory::class ),
 			$this->createMock( AuthManager::class ),
 			$this->createMock( CentralIdLookup::class ),
-			null
+			$this->createMock( Throttler::class ),
+			$this->createMock( Throttler::class )
 		);
 		return [ $creator, [ $scope1, $scope2 ] ];
 	}
@@ -97,7 +122,10 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 		[ $creator, $scope ] = $this->getTempUserCreatorUnit();
 		/** @var TempUserCreator $creator */
 		$creator = TestingAccessWrapper::newFromObject( $creator );
-		$this->assertSame( '*Unregistered active aardvark', $creator->acquireName() );
+		$this->assertSame(
+			'*Unregistered active aardvark',
+			$creator->acquireName( '127.0.0.1' )
+		);
 	}
 
 	public function testAcquireName_db() {
@@ -108,8 +136,8 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 		$tuc = TestingAccessWrapper::newFromObject(
 			$this->getServiceContainer()->getTempUserCreator()
 		);
-		$this->assertSame( '~1', $tuc->acquireName() );
-		$this->assertSame( '~2', $tuc->acquireName() );
+		$this->assertSame( '~1', $tuc->acquireName( '127.0.0.1' ) );
+		$this->assertSame( '~2', $tuc->acquireName( '127.0.0.1' ) );
 	}
 
 	public function testAcquireName_dbWithYear() {
@@ -119,28 +147,72 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 		$tuc = TestingAccessWrapper::newFromObject(
 			$this->getServiceContainer()->getTempUserCreator()
 		);
-		$this->assertSame( '~2000-1', $tuc->acquireName() );
-		$this->assertSame( '~2000-2', $tuc->acquireName() );
+		$this->assertSame( '~2000-1', $tuc->acquireName( '127.0.0.1' ) );
+		$this->assertSame( '~2000-2', $tuc->acquireName( '127.0.0.1' ) );
 
 		ConvertibleTimestamp::setFakeTime( '20010101000000' );
-		$this->assertSame( '~2001-1', $tuc->acquireName() );
+		$this->assertSame( '~2001-1', $tuc->acquireName( '127.0.0.1' ) );
 	}
 
 	public function testAcquireNameOnDuplicate_db() {
-		$this->enableAutoCreateTempUser( [
-			'serialProvider' => [ 'type' => 'local', 'useYear' => false ],
-			'matchPattern' => '~$1',
-		] );
+		$this->enableAutoCreateTempUser();
 		$tuc = TestingAccessWrapper::newFromObject(
 			$this->getServiceContainer()->getTempUserCreator()
 		);
 		// Create a temporary account
-		$this->assertSame( '~1', $tuc->create()->value->getName() );
+		$this->assertSame( '~2024-1', $tuc->create( null, new FauxRequest() )->value->getName() );
 		// Reset the user_autocreate_serial table
 		$this->truncateTable( 'user_autocreate_serial' );
 		// Because user_autocreate_serial was truncated, the ::acquireName method should
 		// return null as the code attempts to return a temporary account that already exists.
-		$this->assertSame( null, $tuc->acquireName() );
+		$this->assertSame( null, $tuc->acquireName( '127.0.0.1' ) );
+	}
+
+	public function testCreateOnDuplicate_db() {
+		$this->enableAutoCreateTempUser();
+		$tuc = $this->getServiceContainer()->getTempUserCreator();
+		// Create a temporary account
+		$this->assertSame( '~2024-1', $tuc->create( null, new FauxRequest() )->value->getName() );
+		// Create a temporary account with an existing temporary account username.
+		$secondCreateStatus = $tuc->create( '~2024-1', new FauxRequest() );
+		$this->assertStatusError( 'temp-user-unable-to-acquire', $secondCreateStatus );
+		// Assert that only one log entry for autocreation exists for ~2024-1, as the second call should have not
+		// created a new log entry.
+		$this->assertSame(
+			1,
+			$this->getDb()->newSelectQueryBuilder()
+				->from( 'logging' )
+				->join( 'actor', null, 'log_actor=actor_id' )
+				->where( [ 'actor_name' => '~2024-1', 'log_action' => 'autocreate' ] )
+				->fetchRowCount(),
+			'Only one logging entry indicating the autocreation of ~2024-1 was expected.'
+		);
+	}
+
+	public function testCreateOnInvalidUsername() {
+		$this->enableAutoCreateTempUser();
+		$tuc = $this->getServiceContainer()->getTempUserCreator();
+		// Attempt to create the temporary account with an invalid username.
+		$secondCreateStatus = $tuc->create( 'Template:InvalidUsername#test', new FauxRequest() );
+		$this->assertStatusError( 'internalerror_info', $secondCreateStatus );
+	}
+
+	public function testAcquireNameThrottled() {
+		$this->enableAutoCreateTempUser();
+		$this->overrideConfigValue(
+			MainConfigNames::TempAccountNameAcquisitionThrottle,
+			[
+				'count' => 1,
+				'seconds' => 30 * 86400,
+			]
+		);
+		$tuc = TestingAccessWrapper::newFromObject(
+			$this->getServiceContainer()->getTempUserCreator()
+		);
+		// Create a temporary account
+		$this->assertSame( '~2024-1', $tuc->create( null, new FauxRequest() )->value->getName() );
+		// Attempt again; name acquisition should be limited
+		$this->assertStatusError( 'temp-user-unable-to-acquire', $tuc->create( null, new FauxRequest() ) );
 	}
 
 	public function testAcquireAndStashName() {
@@ -166,6 +238,10 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 
 			public function save() {
 			}
+
+			public function getRequest() {
+				return new FauxRequest();
+			}
 		};
 
 		$name = $creator->acquireAndStashName( $session );
@@ -179,19 +255,33 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 			'serialProvider' => [ 'type' => 'local', 'useYear' => false ],
 			'matchPattern' => '~$1',
 		] );
-		$this->overrideConfigValue( 'AccountCreationThrottle', [
-			'count' => 10,
-			'seconds' => 86400
-		] );
-		$this->overrideConfigValue( 'TempAccountCreationThrottle', [
-			'count' => 1,
-			'seconds' => 86400
+		$this->overrideConfigValues( [
+			MainConfigNames::AccountCreationThrottle => [
+				'count' => 10,
+				'seconds' => 86400
+			],
+			MainConfigNames::TempAccountCreationThrottle => [
+				'count' => 1,
+				'seconds' => 86400
+			],
 		] );
 		$tuc = $this->getServiceContainer()->getTempUserCreator();
 		$status = $tuc->create( null, new FauxRequest() );
 		$this->assertSame( '~1', $status->getUser()->getName() );
+
+		// Repeat creating a temporary account, and verify that this fails due to the rate limit.
 		$status = $tuc->create( null, new FauxRequest() );
 		// TODO: Use new message key (T357777, T357802)
 		$this->assertStatusError( 'acct_creation_throttle_hit', $status );
+		// If the temporary account creation failed due to the rate limit, then no log entry should have been created.
+		$this->assertSame(
+			0,
+			$this->getDb()->newSelectQueryBuilder()
+				->from( 'logging' )
+				->join( 'actor', null, 'log_actor=actor_id' )
+				->where( [ 'actor_name' => '~2', 'log_action' => 'autocreate' ] )
+				->fetchRowCount(),
+			'A logging entry indicating the autocreation of ~2 was not expected.'
+		);
 	}
 }

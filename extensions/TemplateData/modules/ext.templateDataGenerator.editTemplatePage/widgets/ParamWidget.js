@@ -12,7 +12,7 @@ function ParamWidget( data, config ) {
 	config = config || {};
 
 	// Parent constructor
-	ParamWidget.parent.call( this, $.extend( {}, config, { data: data.key, icon: 'menu' } ) );
+	ParamWidget.super.call( this, Object.assign( {}, config, { data: data.key, icon: 'menu' } ) );
 
 	// Mixin constructors
 	OO.ui.mixin.DraggableElement.call( this, $.extend( { $handle: this.$icon } ) );
@@ -52,7 +52,7 @@ ParamWidget.prototype.onKeyDown = function ( e ) {
  * Build the parameter label in the parameter select widget
  */
 ParamWidget.prototype.buildParamLabel = function () {
-	var keys = this.aliases.slice(),
+	const keys = this.aliases.slice(),
 		$paramLabel = $( '<div>' )
 			.addClass( 'tdg-templateDataParamWidget-param-name' ),
 		$aliases = $( '<div>' )
@@ -65,7 +65,7 @@ ParamWidget.prototype.buildParamLabel = function () {
 	$paramLabel.text( this.label || this.key );
 	$description.text( this.description );
 
-	keys.forEach( function ( key ) {
+	keys.forEach( ( key ) => {
 		$aliases.append(
 			$( '<span>' )
 				.addClass( 'tdg-templateDataParamWidget-param-alias' )

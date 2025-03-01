@@ -26,9 +26,10 @@
  */
 
 use MediaWiki\MainConfigNames;
-use MediaWiki\Status\Status;
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script to remove old or broken uploads from temporary uploaded
@@ -155,10 +156,12 @@ class CleanupUploadStash extends Maintenance {
 	protected function doOperations( FileRepo $tempRepo, array $ops ) {
 		$status = $tempRepo->getBackend()->doQuickOperations( $ops );
 		if ( !$status->isOK() ) {
-			$this->error( print_r( Status::wrap( $status )->getErrorsArray(), true ) );
+			$this->error( $status );
 		}
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = CleanupUploadStash::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

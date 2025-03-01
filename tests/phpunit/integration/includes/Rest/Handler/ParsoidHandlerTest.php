@@ -4,18 +4,21 @@ namespace MediaWiki\Tests\Rest\Handler;
 
 use Composer\Semver\Semver;
 use Exception;
-use ExtensionRegistry;
 use Generator;
-use JavaScriptContent;
-use Language;
-use LanguageCode;
+use MediaWiki\Content\JavaScriptContent;
+use MediaWiki\Content\WikitextContent;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageCode;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserCacheFactory;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
 use MediaWiki\Parser\Parsoid\HtmlToContentTransform;
 use MediaWiki\Parser\Parsoid\HtmlTransformFactory;
 use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\Permissions\UltimateAuthority;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Rest\Handler\Helper\HtmlInputTransformHelper;
 use MediaWiki\Rest\Handler\Helper\ParsoidFormatHelper;
 use MediaWiki\Rest\Handler\ParsoidHandler;
@@ -34,8 +37,6 @@ use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
-use NullStatsdDataFactory;
-use ParserCache;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\Config\DataAccess;
@@ -45,7 +46,7 @@ use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Parsoid;
-use WikitextContent;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * @group Database
@@ -72,7 +73,6 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			'prefix' => 'exwiki',
 			'domain' => 'wiki.example.com',
 			'pageName' => '',
-			'offsetType' => 'byte',
 			'cookie' => '',
 			'reqId' => 'test+test+test',
 			'userAgent' => 'UTAgent',
@@ -90,8 +90,8 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 	public function setUp(): void {
 		// enable Pig Latin variant conversion
 		$this->overrideConfigValues( [
-			'UsePigLatinVariant' => true,
-			'ParsoidSettings' => [
+			MainConfigNames::UsePigLatinVariant => true,
+			MainConfigNames::ParsoidSettings => [
 				'useSelser' => true,
 				'linting' => true,
 			]
@@ -283,15 +283,15 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		/** @var ResponseFactory|MockObject $responseFactory */
 		$responseFactory = new ResponseFactory( [ 'qqx' => $formatter ] );
 
-		$handler->init(
-			$router,
-			$request,
-			$config,
-			$authority,
-			$responseFactory,
-			$this->createHookContainer(),
-			$this->getSession( true )
-		);
+		if ( !$request->hasBody() && $method === 'POST' ) {
+			// Send an empty body if none was provided.
+			$request->setParsedBody( [] );
+		}
+
+		$handler->initContext( $this->newModule( [ 'router' => $router ] ), 'test', $config );
+		$handler->initServices( $authority, $responseFactory, $this->createHookContainer() );
+		$handler->initSession( $this->getSession( true ) );
+		$handler->initForExecute( $request );
 
 		return $handler;
 	}
@@ -1050,7 +1050,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$attribs,
 			$html,
 			new LocalizedHttpException(
-				new MessageValue( 'rest-html-backend-error' ),
+				new MessageValue( 'rest-html-backend-error', [ 'Content-type of original html is missing.' ] ),
 				400,
 				[ 'reason' => 'Content-type of original html is missing.' ]
 			)
@@ -1078,7 +1078,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$attribs,
 			$htmlOfMinimal,
 			new LocalizedHttpException(
-				new MessageValue( 'rest-html-backend-error' ),
+				new MessageValue( 'rest-html-backend-error', [ 'No downgrade possible from schema version 2222.0.0 to 2.4.0.' ] ),
 				400,
 				[ 'reason' => 'No downgrade possible from schema version 2222.0.0 to 2.4.0.' ]
 			)
@@ -1087,9 +1087,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		// DSR offsetType mismatch: UCS2 vs byte ///////////////////////////////
 		$attribs = [
 			'offsetType' => 'byte',
-			'envOptions' => [
-				'offsetType' => 'byte',
-			],
+			'envOptions' => [],
 			'opts' => [
 				'from' => ParsoidFormatHelper::FORMAT_PAGEBUNDLE,
 				'original' => [
@@ -1110,7 +1108,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$attribs,
 			$html,
 			new LocalizedHttpException(
-				new MessageValue( 'rest-html-backend-error' ),
+				new MessageValue( 'rest-html-backend-error', [ 'DSR offsetType mismatch: UCS2 vs byte' ] ),
 				400,
 				[ 'reason' => 'DSR offsetType mismatch: UCS2 vs byte' ]
 			)
@@ -1119,9 +1117,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		// DSR offsetType mismatch: byte vs UCS2 ///////////////////////////////
 		$attribs = [
 			'offsetType' => 'UCS2',
-			'envOptions' => [
-				'offsetType' => 'UCS2',
-			],
+			'envOptions' => [],
 			'opts' => [
 				// Enable selser
 				'from' => ParsoidFormatHelper::FORMAT_PAGEBUNDLE,
@@ -1143,7 +1139,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$attribs,
 			$html,
 			new LocalizedHttpException(
-				new MessageValue( 'rest-html-backend-error' ),
+				new MessageValue( 'rest-html-backend-error', [ 'DSR offsetType mismatch: byte vs UCS2' ] ),
 				400,
 				[ 'reason' => 'DSR offsetType mismatch: byte vs UCS2' ]
 			)
@@ -1192,8 +1188,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		yield 'should return a 400 for missing inline data-mw (2.x)' => [
 			$attribs,
 			$html,
-			new HttpException(
-				'Cannot serialize mw:Transclusion without data-mw.parts or data-parsoid.src',
+			new LocalizedHttpException( new MessageValue( 'rest-parsoid-error', [ 'Cannot serialize mw:Transclusion without data-mw.parts or data-parsoid.src' ] ),
 				400
 			)
 		];
@@ -1217,7 +1212,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$attribs,
 			$html,
 			new LocalizedHttpException(
-				new MessageValue( 'rest-html-backend-error' ),
+				new MessageValue( 'rest-html-backend-error', [ 'Invalid data-mw was provided.' ] ),
 				400,
 				[ 'reason' => 'Invalid data-mw was provided.' ]
 			)
@@ -1247,8 +1242,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		yield 'should return a 400 for missing modified data-mw' => [
 			$attribs,
 			$html,
-			new HttpException(
-				'Cannot serialize mw:Transclusion without data-mw.parts or data-parsoid.src',
+			new LocalizedHttpException( new MessageValue( 'rest-parsoid-error', [ 'Cannot serialize mw:Transclusion without data-mw.parts or data-parsoid.src' ] ),
 				400
 			)
 		];
@@ -1274,7 +1268,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$attribs,
 			$html,
 			new LocalizedHttpException(
-				new MessageValue( 'rest-html-backend-error' ),
+				new MessageValue( 'rest-html-backend-error', [ 'Invalid data-parsoid was provided.' ] ),
 				400,
 				[ 'reason' => 'Invalid data-parsoid was provided.' ]
 			)
@@ -1332,6 +1326,13 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 				);
 			}
 
+			if ( $expectedException instanceof LocalizedHttpException ) {
+				/** @var LocalizedHttpException $expectedException */
+				$this->assertInstanceOf( LocalizedHttpException::class, $e );
+				$this->assertEquals( $expectedException->getMessageValue(), $e->getMessageValue() );
+				$this->assertSame( $expectedException->getErrorData(), $e->getErrorData() );
+			}
+
 			$this->assertSame( $expectedException->getMessage(), $e->getMessage() );
 		}
 	}
@@ -1339,12 +1340,12 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 	public static function provideDom2wikitextException() {
 		yield 'ClientError' => [
 			new ClientError( 'test' ),
-			new HttpException( 'test', 400 )
+			new LocalizedHttpException( new MessageValue( 'rest-parsoid-error', [ 'test' ] ), 400 )
 		];
 
 		yield 'ResourceLimitExceededException' => [
 			new ResourceLimitExceededException( 'test' ),
-			new HttpException( 'test', 413 )
+			new LocalizedHttpException( new MessageValue( 'rest-parsoid-resource-exceeded', [ 'test' ] ), 413 )
 		];
 	}
 
@@ -1388,23 +1389,36 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		$handler = $this->newParsoidHandler( [
 			'getHtmlInputHelper' => function () use ( $factory, $page, $html ) {
 				$helper = new HtmlInputTransformHelper(
-					new NullStatsdDataFactory(),
+					StatsFactory::newNull(),
 					$factory,
 					$this->getServiceContainer()->getParsoidOutputStash(),
-					$this->getServiceContainer()->getParsoidOutputAccess()
+					$this->getServiceContainer()->getParserOutputAccess(),
+					$this->getServiceContainer()->getPageStore(),
+					$this->getServiceContainer()->getRevisionLookup(),
+					[],
+					$page,
+					[ 'html' => $html ],
+					[]
 				);
-
-				$helper->init( $page, [ 'html' => $html ], [] );
 				return $helper;
 			}
 		] );
 
-		// Check that the exception thrown by Parsoid gets converted as expected.
-		$this->expectException( get_class( $expectedException ) );
-		$this->expectExceptionCode( $expectedException->getCode() );
-		$this->expectExceptionMessage( $expectedException->getMessage() );
+		try {
+			$handler->html2wt( $page, $attribs, $html );
+			$this->fail( 'Expected exception ' . get_class( $expectedException ) . ' not thrown' );
+		} catch ( Exception $e ) {
+			$this->assertSame( $expectedException->getCode(), $e->getCode() );
+			$this->assertSame( $expectedException->getMessage(), $e->getMessage() );
 
-		$handler->html2wt( $page, $attribs, $html );
+			if ( $expectedException instanceof LocalizedHttpException ) {
+				$this->assertEquals( $expectedException->getMessageValue(), $e->getMessageValue() );
+				$this->assertSame( $expectedException->getErrorData(), $e->getErrorData() );
+
+			}
+			$this->assertSame( $expectedException->getMessage(), $e->getMessage() );
+
+		}
 	}
 
 	/** @return Generator */
@@ -1486,7 +1500,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$pageName = ( $attribs['pageName'] === '' ) ? 'Main Page' : $attribs['pageName'];
-		$this->assertSame( $pageName, $pageConfig->getTitle() );
+		$this->assertSame( $pageName, $pageConfig->getLinkTarget()->getPrefixedText() );
 
 		$this->assertSame( $expectedLanguage->getCode(), $pageConfig->getPageLanguageBcp47()->getCode() );
 	}
@@ -1958,6 +1972,34 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$lintHeaders
 		];
 
+		// should lint the given wikitext 3 ///////////////////////////////////
+
+		// Multibyte characters before lint error
+		$wikitext = "ăăă ''test";
+
+		$expectedText = [
+			'"type":"missing-end-tag"',
+			// '"dsr":[7,13,2,0]', // 'byte' offsets
+			'"dsr":[4,10,2,0]', // 'ucs2' offsets
+		];
+
+		$unexpectedText = [
+			'<html'
+		];
+
+		$attribs = [
+			'opts' => [ 'format' => ParsoidFormatHelper::FORMAT_LINT ],
+			'offsetType' => 'ucs2',
+		];
+
+		yield 'should lint the given wikitext 3' => [
+			$attribs,
+			$wikitext,
+			$expectedText,
+			$unexpectedText,
+			$lintHeaders
+		];
+
 		// should parse the given JSON ///////////////////////////////////
 		$wikitext = '{ "color": "green" }';
 
@@ -2109,11 +2151,12 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( 'Page 1 revision content', $data );
 
 		// Test 3 repeated with ParserCache to ensure nothing is written to cache!
-		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'save', 'get', 'makeParserOutputKey' ] );
+		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'save', 'get', 'getDirty', 'makeParserOutputKey' ] );
 		// This is the critical assertion -- no cache svaes for mismatched rev & page params
 		$parserCache->expects( $this->never() )->method( 'save' );
 		// Ensures there is a cache miss
 		$parserCache->method( 'get' )->willReturn( false );
+		$parserCache->method( 'getDirty' )->willReturn( false );
 		// Verify that the cache is queried
 		$parserCache->expects( $this->atLeastOnce() )->method( 'makeParserOutputKey' );
 		$parserCacheFactory = $this->createNoOpMock(
@@ -2133,12 +2176,13 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getExistingTestPage();
 		$pageConfig = $this->getPageConfig( $page );
 
-		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'save', 'get', 'makeParserOutputKey' ] );
+		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'save', 'get', 'getDirty', 'makeParserOutputKey' ] );
 
 		// This is the critical assertion in this test case: the save() method should
 		// be called exactly once!
 		$parserCache->expects( $this->once() )->method( 'save' );
 		$parserCache->method( 'get' )->willReturn( false );
+		$parserCache->method( 'getDirty' )->willReturn( false );
 		// These methods will be called by ParserOutputAccess:qa
 		$parserCache->expects( $this->atLeastOnce() )->method( 'makeParserOutputKey' );
 
@@ -2237,4 +2281,5 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		}
 		return $seen[$code];
 	}
+
 }

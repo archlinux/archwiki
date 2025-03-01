@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Gadgets\Hooks as GadgetHooks;
 use MediaWiki\Extension\Gadgets\StaticGadgetRepo;
 use MediaWiki\Output\OutputPage;

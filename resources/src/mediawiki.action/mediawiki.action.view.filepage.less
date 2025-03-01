@@ -6,6 +6,8 @@
 /* stylelint-disable selector-class-pattern */
 
 .mw-filepage-resolutioninfo {
+	// Add small top margin according to the smaller font size.
+	margin-top: @spacing-25;
 	font-size: smaller;
 }
 
@@ -135,43 +137,55 @@
 }
 
 /*
- * Classes for Exif data display
+ * Classes for Exif data display table.
  */
 .mw_metadata {
-	font-size: 0.8em;
-	margin-bottom: 0.5em;
+	font-size: @font-size-x-small;
+	margin-bottom: @spacing-100;
 	border: 0;
 	border-collapse: collapse;
 	width: 400px;
 
 	caption {
-		font-weight: bold;
+		font-weight: @font-weight-bold;
 	}
 
 	td,
 	th {
 		border: @border-base;
-		padding-left: 5px;
-		padding-right: 5px;
+		padding-left: @spacing-35;
+		padding-right: @spacing-35;
+
+		html.skin-theme-clientpref-night & {
+			@media screen {
+				background-color: @background-color-transparent;
+			}
+		}
+
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+		@media screen and ( prefers-color-scheme: dark ) {
+			html.skin-theme-clientpref-os & {
+				background-color: @background-color-transparent;
+			}
+		}
 	}
 
 	th {
-		background-color: #f8f9fa;
-		font-weight: normal;
-		text-align: center;
+		background-color: @background-color-neutral-subtle;
+		font-weight: @font-weight-normal;
+		text-align: right;
 	}
 
 	td {
-		background-color: #fcfcfc;
-		padding-top: 0.1em;
-		padding-bottom: 0.1em;
+		padding-top: @spacing-25;
+		padding-bottom: @spacing-25;
 	}
 
+	// Unordered list for cells like image description or copyright.
 	.metadata-langlist {
 		list-style: none;
-		padding-right: 5px;
-		padding-left: 5px;
 		margin: 0;
+		padding-left: 0;
 	}
 }
 
@@ -179,10 +193,25 @@
 	display: none;
 }
 
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-@supports (aspect-ratio: 16 / 9) {
+@supports ( aspect-ratio: 16 / 9 ) {
 	#file img {
 		max-width: 100%;
 		height: auto;
+	}
+}
+
+@media screen {
+	html.skin-theme-clientpref-night {
+		#file img {
+			background-color: #c8ccd1;
+		}
+	}
+}
+
+@media screen and ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		#file img {
+			background-color: #c8ccd1;
+		}
 	}
 }

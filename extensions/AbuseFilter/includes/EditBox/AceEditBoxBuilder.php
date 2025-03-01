@@ -6,13 +6,13 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\AbuseFilterTokenizer;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
+use MediaWiki\Html\Html;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MessageLocalizer;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\Widget;
-use Xml;
 
 /**
  * Class responsible for building filter edit boxes with both the Ace and the plain version
@@ -51,7 +51,7 @@ class AceEditBoxBuilder extends EditBoxBuilder {
 			'id' => 'wpAceFilterEditor',
 			'class' => 'mw-abusefilter-editor'
 		];
-		$rulesContainer = Xml::element( 'div', $attribs, $rules );
+		$rulesContainer = Html::element( 'div', $attribs, $rules );
 		$editorConfig = $this->getAceConfig( $isUserAllowed );
 		$this->output->addJsConfigVars( 'aceConfig', $editorConfig );
 		return $rulesContainer . $this->plainBuilder->getEditBox( $rules, $isUserAllowed, $externalForm );

@@ -35,7 +35,7 @@ newTagSha=$(git rev-list -n 1 "HEAD") # DEFAULT
 # Check composer version
 composer="${MW_COMPOSER:-composer}"
 composerVersion=$($composer --version 2> /dev/null | cut -d ' ' -f 3)
-readmeVersion="2.7.2"
+readmeVersion="2.8.1"
 if [ "$composerVersion" != "$readmeVersion" ]; then
 	echo "Composer ($composerVersion) should be the same version as in the vendor README ($readmeVersion)."
 	exit 1
@@ -73,8 +73,12 @@ if [ ! -d "$coreRepo" ]; then
 fi
 
 # Generate deploy log
-bash ./tools/gen_deploy_log.sh "$1" "$newTagSha" > deploy.log.txt
-cat deploy.log.txt
+deployLog=$(bash ./tools/gen_deploy_log.sh "$1" "$newTagSha")
+
+echo "{{tracked|$3}}
+$deployLog" > deploy.log.txt
+
+echo "$deployLog"
 echo "-----------------------------------------------"
 echo "^^^ These patches will be part of the new tag."
 waitForConfirmation

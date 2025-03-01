@@ -1,12 +1,12 @@
 <?php
 
-namespace TextExtracts\Test;
+namespace MediaWiki\Extension\TextExtracts\Test;
 
+use MediaWiki\Extension\TextExtracts\ExtractFormatter;
 use MediaWikiIntegrationTestCase;
-use TextExtracts\ExtractFormatter;
 
 /**
- * @covers \TextExtracts\ExtractFormatter
+ * @covers MediaWiki\Extension\TextExtracts\ExtractFormatter
  * @group TextExtracts
  *
  * @license GPL-2.0-or-later
@@ -65,6 +65,17 @@ class ExtractFormatterTest extends MediaWikiIntegrationTestCase {
 			[
 				"<span><span lang=\"qux\">quux</span></span>",
 				'<span class="foo"><span style="bar: baz;" lang="qux">quux</span></span>',
+				false,
+			],
+			[
+				// New heading markup from T13555 (T363445)
+				"<p>hello</p><h2 id=\"heading\">heading</h2><p>bye</p>",
+				'<p>hello</p>' .
+					'<div class="mw-heading mw-heading2">' .
+					'<h2 id="heading">heading</h2>' .
+					'<span class="mw-editsection">xxx</span>' .
+					'</div>' .
+					'<p>bye</p>',
 				false,
 			],
 			[

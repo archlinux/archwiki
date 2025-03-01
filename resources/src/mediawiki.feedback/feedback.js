@@ -8,36 +8,40 @@
  */
 ( function () {
 
-	var FeedbackDialog = require( './FeedbackDialog.js' );
+	const FeedbackDialog = require( './FeedbackDialog.js' );
 
 	/**
+	 * @classdesc Obtain feedback from users. Functionality is provided
+	 * by the mediawiki.feedback ResourceLoader module.
+	 *
 	 * This is a way of getting simple feedback from users. It's useful
-	 * for testing new features -- users can give you feedback without
+	 * for testing new features — users can give you feedback without
 	 * the difficulty of opening a whole new talk page. For this reason,
 	 * it also tends to collect a wider range of both positive and negative
 	 * comments. However you do need to tend to the feedback page. It will
 	 * get long relatively quickly, and you often get multiple messages
 	 * reporting the same issue.
 	 *
-	 * It takes the form of thing on your page which, when clicked, opens a small
-	 * dialog box. Submitting that dialog box appends its contents to a
+	 * It takes the form of an element on your page which, when clicked, opens
+	 * a small dialog box. Submitting that dialog box appends its contents to a
 	 * wiki page that you specify, as a new section.
 	 *
 	 * This feature works with any content model that defines a
-	 * `mw.messagePoster.MessagePoster`.
+	 * {@link mw.messagePoster.MessagePoster}.
 	 *
-	 * @example // Minimal usage example
+	 * ```
+	 * // Minimal usage example
 	 * mw.loader.using( 'mediawiki.feedback').then(() => {
 	 *     var feedback = new mw.Feedback();
 	 *     $( '#myButton' ).click( function () { feedback.launch(); } );
 	 * });
+	 * ```
 	 * You can also launch the feedback form with a prefilled subject and body.
-	 * See the docs for the #launch() method.
+	 * See the docs for the {@link mw.Feedback#launch launch() method}.
 	 *
 	 * @class mw.Feedback
-	 * @classdesc Simple mechanism for obtaining feedback from users. Functionality is provided by the mediawiki.feedback
-	 * ResourceLoader module.
 	 * @constructor
+	 * @description Create an instance of `mw.Feedback`.
 	 * @param {Object} [config] Configuration object
 	 * @param {mw.Title} [config.title="Feedback"] The title of the page where you collect
 	 *  feedback.
@@ -81,6 +85,7 @@
 	/**
 	 * mw.Feedback Dialog
 	 * See FeedbackDialog.js for documentation
+	 *
 	 * @ignore
 	 */
 	mw.Feedback.Dialog = FeedbackDialog;
@@ -103,13 +108,11 @@
 	 * @param {string} feedbackPageUrl
 	 */
 	mw.Feedback.prototype.onDialogSubmit = function ( status, feedbackPageName, feedbackPageUrl ) {
-		var dialogConfig;
-
 		if ( status !== 'submitted' ) {
 			return;
 		}
 
-		dialogConfig = {
+		const dialogConfig = {
 			title: mw.msg( 'feedback-thanks-title' ),
 			message: $( '<span>' ).msg(
 				'feedback-thanks',

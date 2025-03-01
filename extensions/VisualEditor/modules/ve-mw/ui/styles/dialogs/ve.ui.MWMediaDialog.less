@@ -4,6 +4,7 @@
  * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
+@import 'mediawiki.skin.variables.less';
 
 .ve-ui-mwMediaDialog {
 	&-panel-imageinfo {
@@ -31,7 +32,7 @@
 			margin-bottom: 1em;
 		}
 
-		&-portrait {
+		&-portrait .ve-ui-mwMediaDialog-panel-imageinfo {
 			&-thumb img {
 				margin-bottom: 1em;
 				max-height: none;
@@ -56,7 +57,7 @@
 		}
 
 		&-details {
-			color: #54595d;
+			color: @color-subtle;
 		}
 
 		&-separator {
@@ -77,8 +78,8 @@
 	&-description-link {
 		font-size: 75%;
 	}
+}
 
-	.mw-widget-mediaSearchWidget .oo-ui-searchWidget-results {
-		padding-right: 0;
-	}
+.mw-widget-mediaSearchWidget .oo-ui-searchWidget-results {
+	padding-right: 0;
 }

@@ -3,8 +3,7 @@
 		"authors": [
 			"Har-wradim",
 			"Pacha Tchernof",
-			"פוילישער",
-			"וויקיפּעדלער"
+			"פוילישער"
 		]
 	},
 	"minerva-last-modified-date": "לעצט רעדאגירט אום $1, ביי $2",
@@ -29,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "וועגן דער קאַטעגאָריע",
 	"mobile-frontend-meta-data-issues-header": "בלאט־פֿראגעס",
 	"minerva-meta-data-issues-section-header": "אָפטייל־פֿראַגעס",
-	"mobile-frontend-notifications-filter": "פֿילטער",
 	"mobile-frontend-pageaction-edit-tooltip": "רעדאקטירן דעם איינפֿיר אפטייל פון דעם בלאט",
 	"mobile-frontend-placeholder": "זוכן {{SITENAME}}",
 	"mobile-frontend-random-button": "צופֿעליג",
@@ -37,7 +35,6 @@
 	"mobile-frontend-user-newmessages": "איר האט נײַע מעלדונגען אויף אײַער שמועס־בלאט",
 	"mobile-frontend-user-page-contributions": "בײַשטײַערונגען",
 	"mobile-frontend-user-page-talk": "שמועס",
-	"minerva-page-actions-overflow": "נאך",
 	"minerva-page-actions-language-switcher": "שפּראַכן",
 	"minerva-page-actions-history": "היסטאָריע",
 	"skin-minerva-mobile-option-MinervaShowCategories": "קאַטעגאָריעס",

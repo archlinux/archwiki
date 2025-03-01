@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Clerc",
+			"Cuatro Remos",
 			"Fiestoforo",
-			"Manke ruLpa",
-			"Cuatro Remos"
+			"Manke ruLpa"
 		]
 	},
 	"vector-languages": "Zungun",
@@ -22,15 +22,19 @@
 	"vector-view-view": "Chillkatun",
 	"vector-view-viewsource": "Kimam chew küpan chi wirin",
 	"vector-more-actions": "Zoy",
+	"vector-appearance-label": "Adelngen",
 	"vector-feature-custom-font-size-name": "Wirin",
 	"vector-feature-custom-font-size-0-label": "Püchilu",
 	"vector-feature-custom-font-size-1-label": "Fey fantelu",
 	"vector-feature-custom-font-size-2-label": "Fütralu",
 	"skin-theme-name": "Ad",
+	"skin-theme-day-label": "Lig",
+	"skin-theme-night-label": "Küru",
 	"vector-searchsuggest-containing": "Kintun kom tapülh nielu <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Nielu",
 	"vector-toc-beginning": "Kom pu",
 	"vector-main-menu-label": "Rakin zugun",
+	"vector-feature-custom-font-size-exclusion-notice": "Tüfachi tapül püneniey kiñe püchi wirintukun.",
 	"vector-page-tools-label": "Küzawpeyüm",
 	"vector-page-tools-general-label": "Wünelu",
 	"vector-unpin-element-label": "ellkangepe"

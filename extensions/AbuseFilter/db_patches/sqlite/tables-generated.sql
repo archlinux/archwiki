@@ -5,9 +5,7 @@
 CREATE TABLE /*_*/abuse_filter (
   af_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   af_pattern BLOB NOT NULL,
-  af_user BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-  af_user_text BLOB DEFAULT '' NOT NULL,
-  af_actor BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+  af_actor BIGINT UNSIGNED NOT NULL,
   af_timestamp BLOB NOT NULL,
   af_enabled SMALLINT DEFAULT 1 NOT NULL,
   af_comments BLOB DEFAULT NULL,
@@ -20,8 +18,6 @@ CREATE TABLE /*_*/abuse_filter (
   af_global SMALLINT DEFAULT 0 NOT NULL,
   af_group BLOB DEFAULT 'default' NOT NULL
 );
-
-CREATE INDEX af_user ON /*_*/abuse_filter (af_user);
 
 CREATE INDEX af_actor ON /*_*/abuse_filter (af_actor);
 
@@ -81,9 +77,7 @@ CREATE INDEX afl_wiki_timestamp ON /*_*/abuse_filter_log (afl_wiki, afl_timestam
 CREATE TABLE /*_*/abuse_filter_history (
   afh_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   afh_filter BIGINT UNSIGNED NOT NULL,
-  afh_user BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-  afh_user_text BLOB DEFAULT '' NOT NULL,
-  afh_actor BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+  afh_actor BIGINT UNSIGNED NOT NULL,
   afh_timestamp BLOB NOT NULL,
   afh_pattern BLOB NOT NULL,
   afh_comments BLOB NOT NULL,
@@ -96,10 +90,6 @@ CREATE TABLE /*_*/abuse_filter_history (
 );
 
 CREATE INDEX afh_filter ON /*_*/abuse_filter_history (afh_filter);
-
-CREATE INDEX afh_user ON /*_*/abuse_filter_history (afh_user);
-
-CREATE INDEX afh_user_text ON /*_*/abuse_filter_history (afh_user_text);
 
 CREATE INDEX afh_actor ON /*_*/abuse_filter_history (afh_actor);
 

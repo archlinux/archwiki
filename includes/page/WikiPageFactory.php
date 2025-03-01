@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Page;
 
-use DBAccessObjectUtils;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\Hook\WikiPageFactoryHook;
 use MediaWiki\Title\Title;
@@ -10,6 +9,7 @@ use MediaWiki\Title\TitleFactory;
 use stdClass;
 use WikiCategoryPage;
 use WikiFilePage;
+use Wikimedia\Rdbms\DBAccessObjectUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use WikiPage;
 
@@ -19,18 +19,10 @@ use WikiPage;
  * @since 1.36
  */
 class WikiPageFactory {
-	/** @var TitleFactory */
-	private $titleFactory;
-	/** @var WikiPageFactoryHook */
-	private $wikiPageFactoryHookRunner;
-	/** @var IConnectionProvider */
-	private $dbProvider;
+	private TitleFactory $titleFactory;
+	private WikiPageFactoryHook $wikiPageFactoryHookRunner;
+	private IConnectionProvider $dbProvider;
 
-	/**
-	 * @param TitleFactory $titleFactory
-	 * @param WikiPageFactoryHook $wikiPageFactoryHookRunner
-	 * @param IConnectionProvider $dbProvider
-	 */
 	public function __construct(
 		TitleFactory $titleFactory,
 		WikiPageFactoryHook $wikiPageFactoryHookRunner,
@@ -129,10 +121,11 @@ class WikiPageFactory {
 		}
 		$db = DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, WikiPage::convertSelectType( $from ) );
 		$pageQuery = WikiPage::getQueryInfo();
-		$row = $db->selectRow(
-			$pageQuery['tables'], $pageQuery['fields'], [ 'page_id' => $id ], __METHOD__,
-			[], $pageQuery['joins']
-		);
+		$row = $db->newSelectQueryBuilder()
+			->queryInfo( $pageQuery )
+			->where( [ 'page_id' => $id ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 		if ( !$row ) {
 			return null;
 		}

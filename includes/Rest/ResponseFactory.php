@@ -4,7 +4,7 @@ namespace MediaWiki\Rest;
 
 use HttpStatus;
 use InvalidArgumentException;
-use LanguageCode;
+use MediaWiki\Language\LanguageCode;
 use MWExceptionHandler;
 use stdClass;
 use Throwable;
@@ -26,6 +26,9 @@ class ResponseFactory {
 
 	/**
 	 * @param ITextFormatter[] $textFormatters
+	 *
+	 * If there is a relative preference among the input text formatters, the formatters should
+	 * be ordered from most to least preferred.
 	 */
 	public function __construct( $textFormatters ) {
 		$this->textFormatters = $textFormatters;
@@ -107,8 +110,7 @@ class ResponseFactory {
 	 * @return Response
 	 */
 	public function createPermanentRedirect( $target ) {
-		$response = $this->createRedirectBase( $target );
-		$response->setStatus( 301 );
+		$response = $this->createRedirect( $target, 301 );
 		return $response;
 	}
 
@@ -123,8 +125,22 @@ class ResponseFactory {
 	 * @see self::createSeeOther()
 	 */
 	public function createLegacyTemporaryRedirect( $target ) {
+		$response = $this->createRedirect( $target, 302 );
+		return $response;
+	}
+
+	/**
+	 * Creates a redirect specifying the code.
+	 * This indicates that the operation the client was trying to perform can temporarily
+	 * be achieved by using a different URL. Clients will preserve the request method when
+	 * retrying the request with the new URL.
+	 * @param string $target Redirect target
+	 * @param int $code Status code
+	 * @return Response
+	 */
+	public function createRedirect( $target, $code ) {
 		$response = $this->createRedirectBase( $target );
-		$response->setStatus( 302 );
+		$response->setStatus( $code );
 		return $response;
 	}
 
@@ -137,8 +153,7 @@ class ResponseFactory {
 	 * @return Response
 	 */
 	public function createTemporaryRedirect( $target ) {
-		$response = $this->createRedirectBase( $target );
-		$response->setStatus( 307 );
+		$response = $this->createRedirect( $target, 307 );
 		return $response;
 	}
 
@@ -151,8 +166,7 @@ class ResponseFactory {
 	 * @return Response
 	 */
 	public function createSeeOther( $target ) {
-		$response = $this->createRedirectBase( $target );
-		$response->setStatus( 303 );
+		$response = $this->createRedirect( $target, 303 );
 		return $response;
 	}
 
@@ -177,7 +191,6 @@ class ResponseFactory {
 	 * @param int $errorCode HTTP error code
 	 * @param array $bodyData An array of data to be included in the JSON response
 	 * @return Response
-	 * @throws InvalidArgumentException
 	 */
 	public function createHttpError( $errorCode, array $bodyData = [] ) {
 		if ( $errorCode < 400 || $errorCode >= 600 ) {
@@ -214,23 +227,24 @@ class ResponseFactory {
 
 	/**
 	 * Turn a throwable into a JSON error response.
+	 *
 	 * @param Throwable $exception
+	 * @param array $extraData if present, used to generate a RESTbase-style response
 	 * @return Response
 	 */
-	public function createFromException( Throwable $exception ) {
+	public function createFromException( Throwable $exception, array $extraData = [] ) {
 		if ( $exception instanceof LocalizedHttpException ) {
 			$response = $this->createLocalizedHttpError(
 				$exception->getCode(),
 				$exception->getMessageValue(),
-				$exception->getErrorData() + [
+				$exception->getErrorData() + $extraData + [
 					'errorKey' => $exception->getErrorKey(),
 				]
 			);
 		} elseif ( $exception instanceof ResponseException ) {
 			return $exception->getResponse();
 		} elseif ( $exception instanceof RedirectException ) {
-			$response = $this->createRedirectBase( $exception->getTarget() );
-			$response->setStatus( $exception->getCode() );
+			$response = $this->createRedirect( $exception->getTarget(), $exception->getCode() );
 		} elseif ( $exception instanceof HttpException ) {
 			if ( in_array( $exception->getCode(), [ 204, 304 ], true ) ) {
 				$response = $this->create();
@@ -277,7 +291,7 @@ class ResponseFactory {
 		} elseif ( is_array( $value ) || $value instanceof stdClass ) {
 			$data = $value;
 		} else {
-			$type = is_object( $originalValue ) ? get_class( $originalValue ) : gettype( $originalValue );
+			$type = get_debug_type( $originalValue );
 			throw new InvalidArgumentException( __METHOD__ . ": Invalid return value type $type" );
 		}
 		$response = $this->createJson( $data );
@@ -307,7 +321,17 @@ class ResponseFactory {
 		return "<!doctype html><title>Redirect</title><a href=\"$url\">$url</a>";
 	}
 
-	public function formatMessage( MessageValue $messageValue ) {
+	/**
+	 * Tries to return the formatted string(s) for a message value object using the
+	 * response factory's text formatters. The returned array will either be empty (if there are
+	 * no text formatters), or have exactly one key, "messageTranslations", whose value
+	 * is an array of formatted strings, keyed by the associated language code.
+	 *
+	 * @param MessageValue $messageValue the message value object to format
+	 *
+	 * @return array
+	 */
+	public function formatMessage( MessageValue $messageValue ): array {
 		if ( !$this->textFormatters ) {
 			// For unit tests
 			return [];
@@ -319,6 +343,35 @@ class ResponseFactory {
 			$translations[$lang] = $messageText;
 		}
 		return [ 'messageTranslations' => $translations ];
+	}
+
+	/**
+	 * Tries to return one formatted string for a message value object. Return value will be:
+	 *   1) the formatted string for $preferredLang, if $preferredLang is supplied and the
+	 *      formatted string for that language is available.
+	 *   2) the first available formatted string, if any are available.
+	 *   3) the message key string, if no formatted strings are available.
+	 * Callers who need more specific control should call formatMessage() instead.
+	 *
+	 * @param MessageValue $messageValue the message value object to format
+	 * @param string $preferredlang preferred language for the formatted string, if available
+	 *
+	 * @return string
+	 */
+	public function getFormattedMessage(
+		MessageValue $messageValue, string $preferredlang = ''
+	): string {
+		$strings = $this->formatMessage( $messageValue );
+		if ( !$strings ) {
+			return $messageValue->getKey();
+		}
+
+		$strings = $strings['messageTranslations'];
+		if ( $preferredlang && array_key_exists( $preferredlang, $strings ) ) {
+			return $strings[ $preferredlang ];
+		} else {
+			return reset( $strings );
+		}
 	}
 
 	/**

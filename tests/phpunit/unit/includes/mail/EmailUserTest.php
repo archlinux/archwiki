@@ -22,18 +22,18 @@ use Wikimedia\Message\IMessageFormatterFactory;
 use Wikimedia\Message\ITextFormatter;
 
 /**
- * @coversDefaultClass \MediaWiki\Mail\EmailUser
- * @covers ::__construct
+ * @group Mail
+ * @covers \MediaWiki\Mail\EmailUser
  */
 class EmailUserTest extends MediaWikiUnitTestCase {
 	private function getEmailUser(
 		Authority $sender,
-		UserOptionsLookup $userOptionsLookup = null,
-		CentralIdLookup $centralIdLookup = null,
-		UserFactory $userFactory = null,
+		?UserOptionsLookup $userOptionsLookup = null,
+		?CentralIdLookup $centralIdLookup = null,
+		?UserFactory $userFactory = null,
 		array $configOverrides = [],
 		array $hooks = [],
-		IEmailer $emailer = null
+		?IEmailer $emailer = null
 	): EmailUser {
 		$options = new ServiceOptions(
 			EmailUser::CONSTRUCTOR_OPTIONS,
@@ -60,15 +60,14 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::validateTarget
 	 * @dataProvider provideValidateTarget
 	 */
 	public function testValidateTarget(
 		User $target,
 		User $sender,
 		StatusValue $expected,
-		UserOptionsLookup $userOptionsLookup = null,
-		CentralIdLookup $centralIdLookup = null
+		?UserOptionsLookup $userOptionsLookup = null,
+		?CentralIdLookup $centralIdLookup = null
 	) {
 		$userFactory = $this->createMock( UserFactory::class );
 		$userFactory->method( 'newFromAuthority' )->willReturn( $sender );
@@ -79,18 +78,18 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 
 	public function provideValidateTarget(): Generator {
 		$noopUserMock = $this->createMock( User::class );
-		$noopUserMock->method( 'getUser' )->willReturn( $noopUserMock );
+		$noopUserMock->method( 'getUser' )->willReturnSelf();
 		$validTarget = $this->getValidTarget();
 
 		$anonTarget = $this->createMock( User::class );
 		$anonTarget->expects( $this->atLeastOnce() )->method( 'getId' )->willReturn( 0 );
-		$anonTarget->method( 'getUser' )->willReturn( $anonTarget );
+		$anonTarget->method( 'getUser' )->willReturnSelf();
 		yield 'Target has user ID 0' => [ $anonTarget, $noopUserMock, StatusValue::newFatal( 'emailnotarget' ) ];
 
 		$emailNotConfirmedTarget = $this->createMock( User::class );
 		$emailNotConfirmedTarget->method( 'getId' )->willReturn( 1 );
 		$emailNotConfirmedTarget->expects( $this->atLeastOnce() )->method( 'isEmailConfirmed' )->willReturn( false );
-		$emailNotConfirmedTarget->method( 'getUser' )->willReturn( $emailNotConfirmedTarget );
+		$emailNotConfirmedTarget->method( 'getUser' )->willReturnSelf();
 		yield 'Target does not have confirmed email' => [
 			$emailNotConfirmedTarget,
 			$noopUserMock,
@@ -101,7 +100,7 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 		$cannotReceiveEmailsTarget->method( 'getId' )->willReturn( 1 );
 		$cannotReceiveEmailsTarget->method( 'isEmailConfirmed' )->willReturn( true );
 		$cannotReceiveEmailsTarget->expects( $this->atLeastOnce() )->method( 'canReceiveEmail' )->willReturn( false );
-		$cannotReceiveEmailsTarget->method( 'getUser' )->willReturn( $cannotReceiveEmailsTarget );
+		$cannotReceiveEmailsTarget->method( 'getUser' )->willReturnSelf();
 		yield 'Target cannot receive emails' => [
 			$cannotReceiveEmailsTarget,
 			$noopUserMock,
@@ -149,7 +148,6 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::authorizeSend
 	 * @dataProvider provideCanSend
 	 * @dataProvider provideAuthorizeSend
 	 */
@@ -170,7 +168,6 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::canSend
 	 * @dataProvider provideCanSend
 	 */
 	public function testCanSend(
@@ -346,7 +343,6 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::sendEmailUnsafe
 	 * @dataProvider provideSubmit
 	 */
 	public function testSubmit(
@@ -354,7 +350,7 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 		Authority $sender,
 		StatusValue $expected,
 		array $hooks = [],
-		IEmailer $emailer = null
+		?IEmailer $emailer = null
 	) {
 		$userFactory = $this->createMock( UserFactory::class );
 		$userFactory->method( 'newFromUserIdentity' )
@@ -377,7 +373,7 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 
 		$invalidTarget = $this->createMock( User::class );
 		$invalidTarget->method( 'getId' )->willReturn( 0 );
-		$invalidTarget->method( 'getUser' )->willReturn( $invalidTarget );
+		$invalidTarget->method( 'getUser' )->willReturnSelf();
 		yield 'Invalid target' => [ $invalidTarget, $validSender, StatusValue::newFatal( 'emailnotarget' ) ];
 
 		$hookStatusError = StatusValue::newFatal( 'some-hook-error' );
@@ -492,7 +488,7 @@ class EmailUserTest extends MediaWikiUnitTestCase {
 		$validTarget->method( 'getId' )->willReturn( 1 );
 		$validTarget->method( 'isEmailConfirmed' )->willReturn( true );
 		$validTarget->method( 'canReceiveEmail' )->willReturn( true );
-		$validTarget->method( 'getUser' )->willReturn( $validTarget );
+		$validTarget->method( 'getUser' )->willReturnSelf();
 		return $validTarget;
 	}
 }

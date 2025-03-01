@@ -2,6 +2,7 @@
 
 use MediaWiki\Deferred\DataUpdate;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\RefreshSecondaryDataUpdate;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Storage\DerivedPageDataUpdater;
 use MediaWiki\Title\Title;
@@ -9,7 +10,7 @@ use Psr\Log\NullLogger;
 use Wikimedia\ScopedCallback;
 
 /**
- * @covers \RefreshSecondaryDataUpdate
+ * @covers \MediaWiki\Deferred\RefreshSecondaryDataUpdate
  * @group Database
  */
 class RefreshSecondaryDataUpdateTest extends MediaWikiIntegrationTestCase {
@@ -175,7 +176,7 @@ class RefreshSecondaryDataUpdateTest extends MediaWikiIntegrationTestCase {
 		$user = $this->getTestUser()->getUser();
 
 		$fname = __METHOD__;
-		$dbw = $lbFactory->getMainLB()->getConnectionRef( DB_PRIMARY );
+		$dbw = $lbFactory->getMainLB()->getConnection( DB_PRIMARY );
 		$dbw->setFlag( DBO_TRX, $dbw::REMEMBER_PRIOR ); // make queries trigger TRX
 		$reset = new ScopedCallback( [ $dbw, 'restoreFlags' ] );
 

@@ -33,5 +33,6 @@
 	"categorytree-no-pages": "агӀонаш йа бухара категореш йац",
 	"categorytree-not-found": "Категори «$1» ца карийна.",
 	"categorytree-error": "Хаамаш чубахаран гӀалат.",
-	"categorytree-retry": "Дехар до, собар а дийна, йуха а гӀорта."
+	"categorytree-retry": "Дехар до, собар а дийна, йуха а гӀорта.",
+	"categorytree-onlyroot-message": "meter <code>onlyroot</code> is deprecated.Ih a-aparametrou 1024x768, iherr's dtepricedated хӀокхунна метта лелайе <code>depth=\"0\"</code>. Хьажийна меттиг санна лелайе \"dept=\"1."
 }

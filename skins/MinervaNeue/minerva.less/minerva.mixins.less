@@ -17,7 +17,7 @@
 
 // Mixins for history, contributions, watchlist and recent changes' changes list
 .changeslist-minor-edit() {
-	background-color: var( --background-color-interactive );
+	background-color: @background-color-interactive;
 	position: absolute;
 	bottom: 10px;
 	left: 85px;
@@ -25,6 +25,17 @@
 	padding: 0 6px 1px;
 	font-size: @font-size-minerva-small;
 	font-weight: bold;
+}
+
+.changeslist-make-row-linkable() {
+	position: absolute;
+	right: 0;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	// !important to override any link styles.
+	color: transparent !important;
+	z-index: @z-index-above-content;
 }
 
 .changeslist-meta() {
@@ -42,7 +53,7 @@
 	/* !important to override the too-specific rule .content ol li, .content ul li */
 	margin: 0 !important;
 	padding: 12px 0;
-	border-bottom: @border-width-base @border-style-base var( --border-color-muted );
+	border-bottom: @border-width-base @border-style-base @border-color-muted;
 
 	&::before,
 	&::after {
@@ -58,8 +69,8 @@
 }
 
 .changeslist-header() {
-	background-color: var( --background-color-interactive );
-	color: var( --color-subtle );
+	background-color: @background-color-interactive;
+	color: @color-subtle;
 	display: block;
 	width: 100%;
 	padding: 0.5em 16px 0.4em;
@@ -85,5 +96,5 @@ to content which may have important information. */
 	background: inherit !important;
 	color: inherit !important;
 	/* If a border is defined retain it but make it black. If no border this won't do anything. */
-	border-color: var( --border-color-subtle ) !important;
+	border-color: @border-color-subtle !important;
 }

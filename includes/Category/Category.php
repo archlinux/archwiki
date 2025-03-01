@@ -40,8 +40,9 @@ use Wikimedia\Rdbms\ReadOnlyMode;
  * Member variables are lazy-initialized.
  */
 class Category {
-	/** Name of the category, normalized to DB-key form */
+	/** @var string|null Name of the category, normalized to DB-key form */
 	private $mName = null;
+	/** @var int|null|false */
 	private $mID = null;
 	/**
 	 * Category page title
@@ -471,7 +472,7 @@ class Category {
 				->set( [
 					'cat_pages' => $result->pages,
 					'cat_subcats' => $result->subcats,
-					 'cat_files' => $result->files
+					'cat_files' => $result->files
 				] )
 				->caller( __METHOD__ )->execute();
 			// @todo: Should we update $this->mID here? Or not since Category

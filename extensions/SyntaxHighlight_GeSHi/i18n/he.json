@@ -6,7 +6,7 @@
 			"Rotem Liss"
 		]
 	},
-	"syntaxhighlight-desc": "אפשרות לסימון קוד מקור בצבעים באמצעות התג <code>&lt;syntaxhighlight&gt;</code> באמצעות [http://pygments.org/ Pygments – צובע קוד בשפת Python]",
+	"syntaxhighlight-desc": "אפשרות לסימון קוד מקור בצבעים עם התגית <code>&lt;syntaxhighlight&gt;</code> באמצעות [http://pygments.org/ Pygments – צובע קוד בשפת Python]",
 	"syntaxhighlight-error-category": "דפים עם שגיאות בצביעת קוד",
 	"syntaxhighlight-error-category-desc": "אירעה שגיאה בעת ניסיון לצבוע קוד שכלול בדף.",
 	"syntaxhighlight-enclose-category": "דפים שמשתמשים בתכונות enclose מיושנות",
@@ -21,5 +21,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "גוש קוד",
 	"syntaxhighlight-error-pygments-invocation-failure": "הרצת Pygments לא עבדה",
 	"syntaxhighlight-error-unknown-language": "השפה \"$1\" אינה ידועה",
-	"syntaxhighlight-error-exceeds-size-limit": "גודל קוד של {{PLURAL:$1|בית אחד|$1 בתים}} עובר את המגבלה של {{PLURAL:$2|בית אחד|$2 בתים}}"
+	"syntaxhighlight-error-exceeds-size-limit": "גודל קוד של {{PLURAL:$1|בית אחד|$1 בתים}} עובר את המגבלה של {{PLURAL:$2|בית אחד|$2 בתים}}",
+	"syntaxhighlight-button-copy": "העתקה",
+	"syntaxhighlight-button-copied": "הועתק!"
 }

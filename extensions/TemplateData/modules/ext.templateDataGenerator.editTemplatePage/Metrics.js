@@ -1,6 +1,6 @@
 function logEvent( eventName ) {
 	/* eslint-disable camelcase */
-	var event = {
+	const event = {
 		action: eventName,
 		page_id: mw.config.get( 'wgArticleId' ),
 		page_title: mw.config.get( 'wgTitle' ),
@@ -10,7 +10,7 @@ function logEvent( eventName ) {
 		user_id: mw.user.isNamed() ? mw.user.getId() : 0
 	};
 
-	var editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
+	const editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
 	if ( editCountBucket !== null ) {
 		event.user_edit_count_bucket = editCountBucket;
 	}

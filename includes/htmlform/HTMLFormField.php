@@ -2,20 +2,20 @@
 
 namespace MediaWiki\HTMLForm;
 
-use FormatJson;
 use HtmlArmor;
-use HTMLCheckField;
-use HTMLFormFieldCloner;
 use InvalidArgumentException;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\Field\HTMLCheckField;
+use MediaWiki\HTMLForm\Field\HTMLFormFieldCloner;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
-use MessageSpecifier;
 use StatusValue;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * The parent class to generate form fields.  Any field type should
@@ -27,28 +27,40 @@ abstract class HTMLFormField {
 	/** @var array|array[] */
 	public $mParams;
 
-	/** @var callable(mixed,array,HTMLForm):(Status|string|bool|Message) */
+	/** @var callable(mixed,array,HTMLForm):(StatusValue|string|bool|Message) */
 	protected $mValidationCallback;
+	/** @var callable(mixed,array,HTMLForm):(StatusValue|string|bool|Message) */
 	protected $mFilterCallback;
+	/** @var string */
 	protected $mName;
+	/** @var string */
 	protected $mDir;
-	protected $mLabel; # String label, as HTML. Set on construction.
+	/** @var string String label, as HTML. Set on construction. */
+	protected $mLabel;
+	/** @var string */
 	protected $mID;
+	/** @var string */
 	protected $mClass = '';
+	/** @var string */
 	protected $mVFormClass = '';
+	/** @var string|false */
 	protected $mHelpClass = false;
+	/** @var mixed */
 	protected $mDefault;
+	/** @var array */
 	private $mNotices;
 
 	/**
 	 * @var array|null|false
 	 */
 	protected $mOptions = false;
+	/** @var bool */
 	protected $mOptionsLabelsNotFromMessage = false;
 	/**
 	 * @var array Array to hold params for 'hide-if' or 'disable-if' statements
 	 */
 	protected $mCondState = [];
+	/** @var array */
 	protected $mCondStateClass = [];
 
 	/**
@@ -258,7 +270,7 @@ abstract class HTMLFormField {
 			case 'NOR':
 				foreach ( $params as $i => $p ) {
 					if ( !is_array( $p ) ) {
-						$type = gettype( $p );
+						$type = get_debug_type( $p );
 						throw $makeException( "Expected array, found $type at index $i" );
 					}
 					$this->validateCondState( $p );
@@ -1056,7 +1068,10 @@ abstract class HTMLFormField {
 			return [ $this->mParams['help-message'] ];
 		} elseif ( isset( $this->mParams['help-messages'] ) ) {
 			return $this->mParams['help-messages'];
+		} elseif ( isset( $this->mParams['help-raw'] ) ) {
+			return [ new HtmlArmor( $this->mParams['help-raw'] ) ];
 		} elseif ( isset( $this->mParams['help'] ) ) {
+			// @deprecated since 1.43, use 'help-raw' key instead
 			return [ new HtmlArmor( $this->mParams['help'] ) ];
 		}
 

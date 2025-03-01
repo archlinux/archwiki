@@ -20,6 +20,10 @@
  * @file
  */
 
+namespace MediaWiki\Api;
+
+use MediaWiki\Message\Message;
+
 /**
  * Message subclass that prepends wikitext for API help.
  *
@@ -33,8 +37,11 @@
  */
 class ApiHelpParamValueMessage extends Message {
 
+	/** @var string */
 	protected $paramValue;
+	/** @var bool */
 	protected $deprecated;
+	/** @var bool */
 	protected $internal;
 
 	/**
@@ -46,7 +53,6 @@ class ApiHelpParamValueMessage extends Message {
 	 * @param array $params Parameters for the message.
 	 * @param bool $deprecated Whether the value is deprecated
 	 * @param bool $internal Whether the value is internal
-	 * @throws InvalidArgumentException
 	 * @since 1.30 Added the `$deprecated` parameter
 	 * @since 1.35 Added the `$internal` parameter
 	 */
@@ -94,7 +100,7 @@ class ApiHelpParamValueMessage extends Message {
 	 */
 	public function fetchMessage() {
 		if ( $this->message === null ) {
-			$prefix = '';
+			$prefix = ";<span dir=\"ltr\" lang=\"en\">{$this->paramValue}</span>:";
 			if ( $this->isDeprecated() ) {
 				$prefix .= '<span class="apihelp-deprecated">' .
 					$this->subMessage( 'api-help-param-deprecated' ) .
@@ -107,19 +113,31 @@ class ApiHelpParamValueMessage extends Message {
 					'</span>' .
 					$this->subMessage( 'word-separator' );
 			}
-			$this->message = ";<span dir=\"ltr\" lang=\"en\">{$this->paramValue}</span>:"
-				. $prefix . parent::fetchMessage();
+
+			if ( $this->getLanguage()->getCode() === 'qqx' ) {
+				# Insert a list of alternative message keys for &uselang=qqx.
+				$keylist = implode( ' / ', $this->keysToTry );
+				if ( $this->overriddenKey !== null ) {
+					$keylist .= ' = ' . $this->overriddenKey;
+				}
+				$this->message = $prefix . "($keylist$*)";
+			} else {
+				$this->message = $prefix . parent::fetchMessage();
+			}
 		}
 		return $this->message;
 	}
 
 	private function subMessage( $key ) {
 		$msg = new Message( $key );
-		$msg->interface = $this->interface;
+		$msg->isInterface = $this->isInterface;
 		$msg->language = $this->language;
 		$msg->useDatabase = $this->useDatabase;
 		$msg->contextPage = $this->contextPage;
-		return $msg->fetchMessage();
+		return $msg->plain();
 	}
 
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiHelpParamValueMessage::class, 'ApiHelpParamValueMessage' );

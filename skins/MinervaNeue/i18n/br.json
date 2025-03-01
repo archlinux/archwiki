@@ -33,7 +33,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Diwar-benn ar rummad-mañ",
 	"mobile-frontend-meta-data-issues-header": "Kudennoù war ar bajenn",
 	"minerva-meta-data-issues-section-header": "Kudennoù er rann",
-	"mobile-frontend-notifications-filter": "Silañ",
 	"mobile-frontend-pageaction-edit-tooltip": "Kemmañ rann digoradur ar bajenn-mañ",
 	"mobile-frontend-placeholder": "Klask e {{SITENAME}}",
 	"mobile-frontend-random-button": "Dre zegouezh",
@@ -53,7 +52,7 @@
 	"minerva-page-actions-overflow": "Muioc'h",
 	"minerva-page-actions-language-switcher": "Yezhoù",
 	"minerva-page-actions-history": "Istor",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Kaozeal]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Kaozeadenn]",
 	"minerva-skin-desc": "Ur gwiskadur respontus aozet evit an hezoug",
 	"skin-minerva-issue-learn-more": "Gouzout hiroc'h",
 	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 eilenn}} zo",
@@ -64,7 +63,6 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 bloaz}} zo",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Rummadoù",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Gwelout rummadoù ar pajennoù",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tretamant kudennoù ar bajenn gwellaet",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Enlinnennet e vo kudennoù ar bajenn (Patrom:ambox) er pennad.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Siwazh, ne c’heller ket strollañ an disoc’hoù dre bajenn gant an hezoug. Mar kirit ober gant ar fonksionelezh strollañ dre bajenn grit mar plij gant al lec’hienn vurev."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Siwazh, ne c’heller ket strollañ an disoc’hoù dre bajenn gant an hezoug. Mar kirit ober gant ar fonksionelezh strollañ dre bajenn grit mar plij gant al lec’hienn vurev.",
+	"skin-minerva-night-mode-unavailable": "Pajenn hegerz e tem liv \"Light\" hepken."
 }

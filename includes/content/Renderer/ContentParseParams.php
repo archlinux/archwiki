@@ -2,7 +2,8 @@
 namespace MediaWiki\Content\Renderer;
 
 use MediaWiki\Page\PageReference;
-use ParserOptions;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 
 /**
  * @internal
@@ -21,16 +22,21 @@ class ContentParseParams {
 	/** @var bool */
 	private $generateHtml;
 
+	/** @var ?ParserOutput */
+	private $previousOutput;
+
 	public function __construct(
 		PageReference $page,
-		int $revId = null,
-		ParserOptions $parserOptions = null,
-		bool $generateHtml = true
+		?int $revId = null,
+		?ParserOptions $parserOptions = null,
+		bool $generateHtml = true,
+		?ParserOutput $previousOutput = null
 	) {
 		$this->page = $page;
 		$this->parserOptions = $parserOptions ?? ParserOptions::newFromAnon();
 		$this->revId = $revId;
 		$this->generateHtml = $generateHtml;
+		$this->previousOutput = $previousOutput;
 	}
 
 	/**
@@ -63,5 +69,13 @@ class ContentParseParams {
 	 */
 	public function getGenerateHtml(): bool {
 		return $this->generateHtml;
+	}
+
+	/**
+	 *
+	 * @return ?ParserOutput
+	 */
+	public function getPreviousOutput(): ?ParserOutput {
+		return $this->previousOutput;
 	}
 }

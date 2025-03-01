@@ -25,7 +25,7 @@ function addInterwikiLinkToMainMenu() {
 	);
 
 	if ( addInterlanguageLink ) {
-		addInterlanguageLink.addEventListener( 'click', function ( /** @type {Event} */ e ) {
+		addInterlanguageLink.addEventListener( 'click', ( /** @type {Event} */ e ) => {
 			e.preventDefault();
 			// redirect to the detached and original edit link
 			editLink.click();

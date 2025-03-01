@@ -14,7 +14,7 @@
  * @param {boolean} [allowInvalidPrimary] Allow invalid primary keys
  */
 ve.ui.Trigger = function VeUiTrigger( e, allowInvalidPrimary ) {
-	var keyAliases = ve.ui.Trigger.static.keyAliases,
+	const keyAliases = ve.ui.Trigger.static.keyAliases,
 		primaryKeys = ve.ui.Trigger.static.primaryKeys,
 		primaryKeyMap = ve.ui.Trigger.static.primaryKeyMap;
 
@@ -36,9 +36,9 @@ ve.ui.Trigger = function VeUiTrigger( e, allowInvalidPrimary ) {
 		this.primary = primaryKeyMap[ e.which ] || false;
 	} else if ( typeof e === 'string' ) {
 		// Normalization: remove whitespace and force lowercase
-		var parts = e.replace( /\s+/g, '' ).toLowerCase().split( '+' );
-		for ( var i = 0, len = parts.length; i < len; i++ ) {
-			var key = parts[ i ];
+		const parts = e.replace( /\s+/g, '' ).toLowerCase().split( '+' );
+		for ( let i = 0, len = parts.length; i < len; i++ ) {
+			let key = parts[ i ];
 			// Resolve key aliases
 			if ( Object.prototype.hasOwnProperty.call( keyAliases, key ) ) {
 				key = keyAliases[ key ];
@@ -62,21 +62,17 @@ OO.initClass( ve.ui.Trigger );
 /* Static Properties */
 
 /**
- * Symbolic modifier key names.
- *
- * The order of this array affects the canonical order of a trigger string.
+ * @property {string[]} Symbolic modifier key names. The order of this array affects the canonical order of a trigger string.
  *
  * @static
- * @property {string[]}
  * @inheritable
  */
 ve.ui.Trigger.static.modifierKeys = [ 'meta', 'ctrl', 'alt', 'shift' ];
 
 /**
- * Symbolic primary key names.
+ * @property {string[]} Symbolic primary key names.
  *
  * @static
- * @property {string[]}
  * @inheritable
  */
 ve.ui.Trigger.static.primaryKeys = [
@@ -169,10 +165,9 @@ ve.ui.Trigger.static.primaryKeys = [
 ];
 
 /**
- * Mappings to use when rendering string for a specific platform.
+ * @property {Object} Mappings to use when rendering string for a specific platform.
  *
  * @static
- * @property {Object}
  * @inheritable
  */
 ve.ui.Trigger.static.platformMapping = {
@@ -201,10 +196,9 @@ ve.ui.Trigger.static.platformMapping = {
 };
 
 /**
- * Symbol to use when concatenating keys in a sequence.
+ * @property {Object} Symbol to use when concatenating keys in a sequence.
  *
  * @static
- * @property {Object}
  * @inheritable
  */
 ve.ui.Trigger.static.platformStringJoiners = {
@@ -213,10 +207,9 @@ ve.ui.Trigger.static.platformStringJoiners = {
 };
 
 /**
- * Special keys which have i18n messages
+ * @property {string[]} Special keys which have i18n messages
  *
  * @static
- * @property {string[]}
  * @inheritable
  */
 ve.ui.Trigger.static.translatableKeys = [
@@ -242,10 +235,9 @@ ve.ui.Trigger.static.translatableKeys = [
 ];
 
 /**
- * Aliases for modifier or primary key names.
+ * @property {Object} Aliases for modifier or primary key names.
  *
  * @static
- * @property {Object}
  * @inheritable
  */
 ve.ui.Trigger.static.keyAliases = {
@@ -272,10 +264,9 @@ ve.ui.Trigger.static.keyAliases = {
 };
 
 /**
- * Mapping of key codes and symbolic key names.
+ * @property {Object} Mapping of key codes and symbolic key names.
  *
  * @static
- * @property {Object}
  * @inheritable
  */
 ve.ui.Trigger.static.primaryKeyMap = {
@@ -407,10 +398,10 @@ ve.ui.Trigger.prototype.isComplete = function () {
  * @return {string} Canonical trigger string
  */
 ve.ui.Trigger.prototype.toString = function () {
-	var modifierKeys = ve.ui.Trigger.static.modifierKeys,
+	const modifierKeys = ve.ui.Trigger.static.modifierKeys,
 		keys = [];
 	// Add modifier keywords in the correct order
-	for ( var i = 0, len = modifierKeys.length; i < len; i++ ) {
+	for ( let i = 0, len = modifierKeys.length; i < len; i++ ) {
 		if ( this.modifiers[ modifierKeys[ i ] ] ) {
 			keys.push( modifierKeys[ i ] );
 		}
@@ -436,50 +427,45 @@ ve.ui.Trigger.prototype.toString = function () {
  * @return {string[]|string} Seprate key messages, or a joined string
  */
 ve.ui.Trigger.prototype.getMessage = function ( explode ) {
-	var keys = this.toString().split( '+' ),
-		hasOwn = Object.prototype.hasOwnProperty,
+	const hasOwn = Object.prototype.hasOwnProperty,
 		translatableKeys = this.constructor.static.translatableKeys,
 		platformMapping = this.constructor.static.platformMapping,
 		platform = ve.getSystemPlatform();
 
+	let keys = this.toString().split( '+' );
 	// Platform mappings
 	if ( hasOwn.call( platformMapping, platform ) ) {
-		keys = keys.map( function ( key ) {
-			return hasOwn.call( platformMapping[ platform ], key ) ? platformMapping[ platform ][ key ] : key;
-		} );
+		keys = keys.map( ( key ) => hasOwn.call( platformMapping[ platform ], key ) ? platformMapping[ platform ][ key ] : key );
 	}
 
-	// i18n
-	keys = keys.map( function ( key ) {
-		// The following messages are used here:
-		// * visualeditor-key-alt
-		// * visualeditor-key-backspace
-		// * visualeditor-key-ctrl
-		// * visualeditor-key-delete
-		// * visualeditor-key-down
-		// * visualeditor-key-end
-		// * visualeditor-key-enter
-		// * visualeditor-key-escape
-		// * visualeditor-key-home
-		// * visualeditor-key-insert
-		// * visualeditor-key-left
-		// * visualeditor-key-meta
-		// * visualeditor-key-page-down
-		// * visualeditor-key-page-up
-		// * visualeditor-key-right
-		// * visualeditor-key-shift
-		// * visualeditor-key-space
-		// * visualeditor-key-tab
-		// * visualeditor-key-up
-		return translatableKeys.indexOf( key ) !== -1 ? ve.msg( 'visualeditor-key-' + key ) : key.toUpperCase();
-	} );
+	// The following messages are used here:
+	// * visualeditor-key-alt
+	// * visualeditor-key-backspace
+	// * visualeditor-key-ctrl
+	// * visualeditor-key-delete
+	// * visualeditor-key-down
+	// * visualeditor-key-end
+	// * visualeditor-key-enter
+	// * visualeditor-key-escape
+	// * visualeditor-key-home
+	// * visualeditor-key-insert
+	// * visualeditor-key-left
+	// * visualeditor-key-meta
+	// * visualeditor-key-page-down
+	// * visualeditor-key-page-up
+	// * visualeditor-key-right
+	// * visualeditor-key-shift
+	// * visualeditor-key-space
+	// * visualeditor-key-tab
+	// * visualeditor-key-up
+	keys = keys.map( ( key ) => translatableKeys.indexOf( key ) !== -1 ? ve.msg( 'visualeditor-key-' + key ) : key.toUpperCase() );
 
 	// Concatenation
 	if ( explode ) {
 		return keys;
 	} else {
-		var joiners = this.constructor.static.platformStringJoiners;
-		var joiner = hasOwn.call( joiners, platform ) ? joiners[ platform ] : joiners.default;
+		const joiners = this.constructor.static.platformStringJoiners;
+		const joiner = hasOwn.call( joiners, platform ) ? joiners[ platform ] : joiners.default;
 		return keys.join( joiner );
 	}
 };

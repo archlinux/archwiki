@@ -19,16 +19,16 @@
  */
 namespace Wikimedia\Rdbms;
 
-use BagOStuff;
-use IStoreKeyEncoder;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
-use WANObjectCache;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\IStoreKeyEncoder;
+use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * Basic DB load monitor with no external dependencies
@@ -49,7 +49,8 @@ class LoadMonitor implements ILoadMonitor {
 	protected $logger;
 	/** @var StatsdDataFactoryInterface */
 	protected $statsd;
-	private int $maxConnCount;
+	/** @var int|float */
+	private $maxConnCount;
 	private int $totalConnectionsAdjustment;
 
 	/** @var float|null */
@@ -75,7 +76,12 @@ class LoadMonitor implements ILoadMonitor {
 		$this->wanCache = $wCache;
 		$this->logger = new NullLogger();
 		$this->statsd = new NullStatsdDataFactory();
-		$this->maxConnCount = (int)( $options['maxConnCount'] ?? 500 );
+		if ( isset( $options['maxConnCount'] ) ) {
+			$this->maxConnCount = (int)( $options['maxConnCount'] );
+		} else {
+			$this->maxConnCount = INF;
+		}
+
 		$this->totalConnectionsAdjustment = (int)( $options['totalConnectionsAdjustment'] ?? 10 );
 	}
 
@@ -97,11 +103,31 @@ class LoadMonitor implements ILoadMonitor {
 		$stateByServerIndex = $this->getServerStates( $serverIndexes );
 		$totalConnections = 0;
 		$totalWeights = 0;
+		$circuitBreakingEnabled = true;
 		foreach ( $weightByServer as $i => $weight ) {
 			$serverState = $stateByServerIndex[$i];
 			$totalConnections += (int)$serverState[self::STATE_CONN_COUNT] * $serverState[self::STATE_UP];
 			$totalWeights += $weight;
+
+			// Set up circuit breaking. If at least one replica can take more connections
+			// allow the flow.
+			if (
+				$serverState[self::STATE_UP] &&
+				$weight > 0 &&
+				$serverState[self::STATE_CONN_COUNT] < $this->maxConnCount
+			) {
+				$circuitBreakingEnabled = false;
+			}
 		}
+
+		if ( $circuitBreakingEnabled ) {
+			throw new DBUnexpectedError(
+				null, 'Database servers in ' . $this->lb->getClusterName() . ' are overloaded. ' .
+				'In order to protect application servers, the circuit breaking to databases of this section ' .
+				'have been activated. Please try again a few seconds.'
+			);
+		}
+
 		foreach ( $weightByServer as $i => $weight ) {
 			if (
 				// host is down or
@@ -180,7 +206,7 @@ class LoadMonitor implements ILoadMonitor {
 			'rdbms-gauge',
 			self::VERSION,
 			$this->lb->getClusterName(),
-			$this->lb->getServerName( $this->lb->getWriterIndex() ),
+			$this->lb->getServerName( ServerInfo::WRITER_INDEX ),
 			$this->lb->getServerName( $i )
 		);
 	}

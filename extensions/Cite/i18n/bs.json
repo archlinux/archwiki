@@ -4,10 +4,10 @@
 			"CERminator",
 			"KWiki",
 			"Reedy",
+			"Semina x",
 			"Semso98",
 			"Srdjan m",
-			"Srđan",
-			"Semina x"
+			"Srđan"
 		]
 	},
 	"cite-desc": "Dodaje oznake <code>&lt;ref[ name=id]&gt;</code> i <code>&lt;references/&gt;</code> za citiranje",
@@ -28,6 +28,13 @@
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> oznaka definisana u <code>&lt;references&gt;</code> nema imenski atribut.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> s imenom \"$1\" nema nikakvog sadržaja.",
 	"cite-tracking-category-cite-error": "Stranice s greškama u referencama",
+	"cite-reference-previews-reference": "Referenca",
+	"cite-reference-previews-book": "Navedena knjiga",
+	"cite-reference-previews-journal": "Naveden časopis",
+	"cite-reference-previews-news": "Navedene vijesti",
+	"cite-reference-previews-note": "Napomena",
+	"cite-reference-previews-web": "Naveden sajt",
+	"cite-reference-previews-collapsible-placeholder": "Reference sadrži grafiku koja ne može stati u ovaj pregled.",
 	"cite_references_link_accessibility_label": "Vrati se na vrh",
 	"cite_references_link_many_accessibility_label": "Vrati se na:",
 	"cite_section_preview_references": "Pregled referenci",
@@ -37,5 +44,6 @@
 	"cite-wikieditor-help-content-reference-description": "Reference",
 	"cite-wikieditor-help-content-named-reference-description": "Imenovana referenca",
 	"cite-wikieditor-help-content-rereference-description": "Dodatna upotreba istog izvora",
-	"cite-wikieditor-help-content-showreferences-description": "Prikaži izvore"
+	"cite-wikieditor-help-content-showreferences-description": "Prikaži izvore",
+	"popups-refpreview-user-preference-label": "Pregled reference (brzi pregled futnota)"
 }

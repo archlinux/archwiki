@@ -13,7 +13,7 @@
  * @constructor
  * @param {ve.ui.Surface} surface Surface this belongs to
  * @param {Object} [config] Configuration options
- * @cfg {ve.ui.Overlay} [overlay] Overlay to use for menus
+ * @param {ve.ui.Overlay} [config.overlay] Overlay to use for menus
  */
 ve.ui.ToolbarDialogWindowManager = function VeUiToolbarDialogWindowManager( surface, config ) {
 	// Parent constructor
@@ -54,10 +54,10 @@ ve.ui.ToolbarDialogWindowManager.prototype.getTeardownDelay = function () {
 /**
  * Get an object describing the amount of padding the toolbar dialog adds to the surface.
  *
- * @return {null|Object} Padding object, or null
+ * @return {ve.ui.Surface.Padding|null} Padding object
  */
 ve.ui.ToolbarDialogWindowManager.prototype.getSurfacePadding = function () {
-	var currentWindow = this.getCurrentWindow();
+	const currentWindow = this.getCurrentWindow();
 	if ( currentWindow && currentWindow.constructor.static.position === 'below' ) {
 		return { bottom: currentWindow.$frame[ 0 ].clientHeight };
 	} else {

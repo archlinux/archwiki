@@ -1,15 +1,15 @@
 /* global moment */
-var
+const
 	testUtils = require( './testUtils.js' ),
 	Parser = require( 'ext.discussionTools.init' ).Parser;
 
 QUnit.module( 'mw.dt.Parser', QUnit.newMwEnvironment() );
 
-QUnit.test( '#getTimestampRegexp', function ( assert ) {
-	var cases = require( '../cases/timestamp-regex.json' ),
+QUnit.test( '#getTimestampRegexp', ( assert ) => {
+	const cases = require( '../cases/timestamp-regex.json' ),
 		parser = new Parser( require( '../data-en.json' ) );
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		assert.strictEqual(
 			parser.getTimestampRegexp( 'en', caseItem.format, '\\d', { UTC: 'UTC' } ),
 			caseItem.expected,
@@ -18,12 +18,12 @@ QUnit.test( '#getTimestampRegexp', function ( assert ) {
 	} );
 } );
 
-QUnit.test( '#getTimestampParser', function ( assert ) {
-	var cases = require( '../cases/timestamp-parser.json' ),
+QUnit.test( '#getTimestampParser', ( assert ) => {
+	const cases = require( '../cases/timestamp-parser.json' ),
 		parser = new Parser( require( '../data-en.json' ) );
 
-	cases.forEach( function ( caseItem ) {
-		var tsParser = parser.getTimestampParser( 'en', caseItem.format, caseItem.digits, 'UTC', { UTC: 'UTC' } ),
+	cases.forEach( ( caseItem ) => {
+		const tsParser = parser.getTimestampParser( 'en', caseItem.format, caseItem.digits, 'UTC', { UTC: 'UTC' } ),
 			expectedDate = moment( caseItem.expected );
 
 		assert.true(
@@ -33,12 +33,12 @@ QUnit.test( '#getTimestampParser', function ( assert ) {
 	} );
 } );
 
-QUnit.test( '#getTimestampParser (at DST change)', function ( assert ) {
-	var cases = require( '../cases/timestamp-parser-dst.json' ),
+QUnit.test( '#getTimestampParser (at DST change)', ( assert ) => {
+	const cases = require( '../cases/timestamp-parser-dst.json' ),
 		parser = new Parser( require( '../data-en.json' ) );
 
-	cases.forEach( function ( caseItem ) {
-		var regexp = parser.getTimestampRegexp( 'en', caseItem.format, '\\d', caseItem.timezoneAbbrs ),
+	cases.forEach( ( caseItem ) => {
+		const regexp = parser.getTimestampRegexp( 'en', caseItem.format, '\\d', caseItem.timezoneAbbrs ),
 			tsParser = parser.getTimestampParser( 'en', caseItem.format, null, caseItem.timezone, caseItem.timezoneAbbrs ),
 			date = tsParser( caseItem.sample.match( regexp ) ).date;
 
@@ -53,23 +53,23 @@ QUnit.test( '#getTimestampParser (at DST change)', function ( assert ) {
 	} );
 } );
 
-require( '../cases/comments.json' ).forEach( function ( caseItem ) {
+require( '../cases/comments.json' ).forEach( ( caseItem ) => {
 
-	var testName = '#getThreads (' + caseItem.name + ')';
-	QUnit.test( testName, function ( assert ) {
-		var dom = ve.createDocumentFromHtml( require( '../' + caseItem.dom ) ),
+	const testName = '#getThreads (' + caseItem.name + ')';
+	QUnit.test( testName, ( assert ) => {
+		const dom = ve.createDocumentFromHtml( require( '../' + caseItem.dom ) ),
 			expected = require( caseItem.expected ),
 			config = require( caseItem.config ),
 			data = require( caseItem.data );
 
 		testUtils.overrideMwConfig( config );
 
-		var container = testUtils.getThreadContainer( dom );
-		var title = mw.Title.newFromText( caseItem.title );
-		var threadItemSet = new Parser( data ).parse( container, title );
-		var threads = threadItemSet.getThreads();
+		const container = testUtils.getThreadContainer( dom );
+		const title = mw.Title.newFromText( caseItem.title );
+		const threadItemSet = new Parser( data ).parse( container, title );
+		const threads = threadItemSet.getThreads();
 
-		threads.forEach( function ( thread, i ) {
+		threads.forEach( ( thread, i ) => {
 			testUtils.serializeComments( thread, container );
 
 			assert.deepEqual(

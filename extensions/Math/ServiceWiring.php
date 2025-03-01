@@ -9,6 +9,7 @@ use MediaWiki\Extension\Math\MathWikibaseConnector;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use Wikibase\Client\WikibaseClient;
 use Wikibase\Lib\Formatters\SnakFormatter;
 

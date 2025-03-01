@@ -74,7 +74,6 @@
 	"templatedata-modal-button-map": "Upravit asociace",
 	"templatedata-modal-button-importParams": "Importovat parametry",
 	"templatedata-modal-button-removemap": "Odstranit asociaci",
-	"templatedata-modal-button-restoreparam": "Obnovit parametr",
 	"templatedata-modal-button-saveparam": "Uložit",
 	"templatedata-modal-confirmcancel": "Opravdu chcete zahodit své změny?",
 	"templatedata-modal-current-language": "Aktuální jazyk: $1",

@@ -13,10 +13,6 @@ class RevisionLocalCache extends LocalCache {
 	private IConnectionProvider $dbProvider;
 	private RevisionStore $revisionStore;
 
-	/**
-	 * @param IConnectionProvider $dbProvider
-	 * @param RevisionStore $revisionStore
-	 */
 	public function __construct(
 		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore
@@ -32,14 +28,11 @@ class RevisionLocalCache extends LocalCache {
 	protected function resolve( array $lookups ) {
 		$dbr = $this->dbProvider->getReplicaDatabase();
 		$revQuery = $this->revisionStore->getQueryInfo( [ 'page', 'user' ] );
-		$res = $dbr->select(
-			$revQuery['tables'],
-			$revQuery['fields'],
-			[ 'rev_id' => $lookups ],
-			__METHOD__,
-			[],
-			$revQuery['joins']
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->queryInfo( $revQuery )
+			->where( [ 'rev_id' => $lookups ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		foreach ( $res as $row ) {
 			yield $row->rev_id => $this->revisionStore->newRevisionFromRow( $row );
 		}

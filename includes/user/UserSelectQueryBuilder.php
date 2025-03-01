@@ -152,16 +152,16 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 			$this->userJoined = true;
 		}
 
-		$this->conds( 'user_registration ' .
-			( $direction ? '< ' : '> ' ) .
-			$this->db->addQuotes( $this->db->timestamp( $timestamp ) ) );
+		$this->conds(
+			$this->db->expr( 'user_registration', ( $direction ? '<' : '>' ), $this->db->timestamp( $timestamp ) )
+		);
 		return $this;
 	}
 
 	/**
 	 * Order results by name in $direction
 	 *
-	 * @param string $dir one of self::SORT_ACS or self::SORT_DESC
+	 * @param string $dir one of self::SORT_ASC or self::SORT_DESC
 	 * @return UserSelectQueryBuilder
 	 */
 	public function orderByName( string $dir = self::SORT_ASC ): self {
@@ -172,7 +172,7 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	/**
 	 * Order results by user id.
 	 *
-	 * @param string $dir one of self::SORT_ACS or self::SORT_DESC
+	 * @param string $dir one of self::SORT_ASC or self::SORT_DESC
 	 * @return UserSelectQueryBuilder
 	 */
 	public function orderByUserId( string $dir = self::SORT_ASC ): self {
@@ -206,8 +206,8 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	 * @return UserSelectQueryBuilder
 	 */
 	public function named(): self {
-		if ( !$this->tempUserConfig->isEnabled() ) {
-			// nothing to do: getMatchCondition throws if temp accounts aren't enabled
+		if ( !$this->tempUserConfig->isKnown() ) {
+			// nothing to do: getMatchCondition throws if temp accounts aren't known
 			return $this;
 		}
 		$this->conds( $this->tempUserConfig->getMatchCondition( $this->db, 'actor_name', IExpression::NOT_LIKE ) );
@@ -220,8 +220,8 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	 * @return UserSelectQueryBuilder
 	 */
 	public function temp(): self {
-		if ( !$this->tempUserConfig->isEnabled() ) {
-			// nothing to do: getMatchCondition throws if temp accounts aren't enabled
+		if ( !$this->tempUserConfig->isKnown() ) {
+			$this->conds( '1=0' );
 			return $this;
 		}
 		$this->conds( $this->tempUserConfig->getMatchCondition( $this->db, 'actor_name', IExpression::LIKE ) );

@@ -1,5 +1,7 @@
 /**
  * Dialog Module for wikiEditor
+ *
+ * @memberof module:ext.wikiEditor
  */
 var dialogsModule = {
 
@@ -135,7 +137,7 @@ var dialogsModule = {
 		$( '<div>' )
 			.text( body )
 			.appendTo( document.body )
-			.dialog( $.extend( {
+			.dialog( Object.assign( {
 				bgiframe: true,
 				modal: true
 			}, settings ) )

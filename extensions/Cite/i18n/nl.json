@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ciell",
 			"Dinosaur918",
 			"Elroy",
 			"Flightmare",
@@ -10,8 +11,7 @@
 			"Niels",
 			"PiefPafPier",
 			"Romaine",
-			"Siebrand",
-			"Ciell"
+			"Siebrand"
 		]
 	},
 	"cite-desc": "Voegt <code>&lt;ref&gt;</code>- en <code>&lt;references&gt;</code>-labels toe voor citaten",
@@ -38,6 +38,15 @@
 	"cite_error_empty_references_define": "Het label <code>&lt;ref&gt;</code> met de naam \"$1\", dat is gedefinieerd in de <code>&lt;references&gt;</code>-groep \"$2\", heeft geen inhoud.",
 	"cite-tracking-category-cite-error": "Pagina's met referentiefouten",
 	"cite-tracking-category-cite-error-desc": "Pagina's in deze categorie hebben fouten in het gebruik van references tags.",
+	"cite-tracking-category-ref-extends": "Pagina's die uitgebreide referenties gebruiken",
+	"cite-tracking-category-ref-extends-desc": "De pagina’s in deze categorie gebruiken het attribuut “extends” van de tag &lt;ref&gt;.",
+	"cite-reference-previews-reference": "Verwijzing",
+	"cite-reference-previews-book": "Boekreferentie",
+	"cite-reference-previews-journal": "Tijdschriftreferentie",
+	"cite-reference-previews-news": "Nieuwsreferentie",
+	"cite-reference-previews-note": "Voetnoot",
+	"cite-reference-previews-web": "Webreferentie",
+	"cite-reference-previews-collapsible-placeholder": "Deze referentie bevat een figuur dat niet in de voorvertoning past.",
 	"cite_references_link_accessibility_label": "Omhoog",
 	"cite_references_link_many_accessibility_label": "Omhoog naar:",
 	"cite_references_link_accessibility_back_label": "Weer omhoog",
@@ -49,8 +58,14 @@
 	"cite-wikieditor-help-content-reference-description": "Referentie",
 	"cite-wikieditor-help-content-named-reference-description": "Benoemde referentie",
 	"cite-wikieditor-help-content-rereference-description": "Extra gebruik van dezelfde referentie",
+	"cite-wikieditor-help-content-extended-reference-description": "Aanvullend gebruik van dezelfde referentie, met extra details",
 	"cite-wikieditor-help-content-showreferences-description": "Referenties weergeven",
 	"cite-wikieditor-help-content-reference-example-text1": "Paginatekst.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Linktekst], aanvullende tekst.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Linktekst]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Linktekst]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Extra details",
+	"popups-prefs-navpopups-gadget-conflict-info": "U heeft de gadget [[$1|Navigatiepop-ups]] ingeschakeld, dus u ziet geen voorbeelden die door deze functie worden geleverd. Afhankelijk van uw wiki kan de gadget een iets andere naam hebben. Als u problemen blijft ondervinden, controleer dan uw gadgets en gebruikersscripts, ook de projectoverstijgende.",
+	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "U hebt de gadgets [[$1|Navigatiepop-ups]] en [[$1|Referentie-tooltips]] ingeschakeld, dus u ziet geen voorbeelden die door deze functie worden geleverd. Afhankelijk van uw wiki kunnen de gadgets iets andere namen hebben. Als u problemen blijft ondervinden, controleer dan uw gadgets en gebruikersscripts, ook projectoverstijgende scripts.",
+	"popups-prefs-reftooltips-gadget-conflict-info": "U heeft de gadget [[$1|Referentie-tooltips]] ingeschakeld, dus u ziet geen referentievoorbeelden, maar wel paginavoorbeelden. Afhankelijk van uw wiki kan de gadget een iets andere naam hebben. Als u problemen blijft ondervinden, controleer dan uw gadgets en gebruikersscripts, ook projectoverstijgende scripts.",
+	"popups-refpreview-user-preference-label": "Schakel referentievoorbeelden in (krijg snelle voorbeelden van een referentie tijdens het lezen van een pagina)"
 }

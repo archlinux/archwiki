@@ -72,6 +72,7 @@
 	"discussiontools-notification-removed-topic-header-compact": "주제 \"<strong>$4</strong>\"이(가) 보존되거나 제거되었습니다.",
 	"discussiontools-notification-removed-topic-view": "문서 보기",
 	"discussiontools-notification-removed-topic-disable": "이와 같은 알림을 받지 않음",
+	"discussiontools-notification-topic-hidden": "(주제가 제거됨)",
 	"discussiontools-notification-subscribed-new-comment-header": "$1님이 \"<strong>$4</strong>\"에서 {{GENDER:$2|답변을 남겼습니다}}.",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "\"<strong>$3</strong>\"의 {{PLURAL:$1|새 답변 하나|새 답변 $1 개|100=새 답변 99+개}}.",
 	"discussiontools-notification-subscribed-new-comment-view": "댓글 보기",

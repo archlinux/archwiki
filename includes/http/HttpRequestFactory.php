@@ -26,10 +26,10 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Status\Status;
-use MultiHttpClient;
 use MWHttpRequest;
 use Profiler;
 use Psr\Log\LoggerInterface;
+use Wikimedia\Http\MultiHttpClient;
 
 /**
  * Factory creating MWHttpRequest objects.
@@ -57,7 +57,7 @@ class HttpRequestFactory {
 	public function __construct(
 		ServiceOptions $options,
 		LoggerInterface $logger,
-		Telemetry $telemetry = null
+		?Telemetry $telemetry = null
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
@@ -96,7 +96,7 @@ class HttpRequestFactory {
 	 *                          an associative array with 'ip' and 'userAgent').
 	 * @phpcs:ignore Generic.Files.LineLength
 	 * @phan-param array{timeout?:int|string,connectTimeout?:int|string,postData?:string|array,proxy?:?string,noProxy?:bool,sslVerifyHost?:bool,sslVerifyCert?:bool,caInfo?:?string,maxRedirects?:int,followRedirects?:bool,userAgent?:string,method?:string,logger?:\Psr\Log\LoggerInterface,username?:string,password?:string,originalRequest?:\MediaWiki\Request\WebRequest|array{ip:string,userAgent:string}} $options
-	 * @param string $caller The method making this request, for profiling
+	 * @param string $caller The method making this request, for profiling @phan-mandatory-param
 	 * @return MWHttpRequest
 	 * @see MWHttpRequest::__construct
 	 */
@@ -168,7 +168,7 @@ class HttpRequestFactory {
 	 * @param string $url Full URL to act on. If protocol-relative, will be expanded to an http://
 	 *  URL
 	 * @param array $options See HttpRequestFactory::create
-	 * @param string $caller The method making this request, for profiling
+	 * @param string $caller The method making this request, for profiling @phan-mandatory-param
 	 * @return string|null null on failure or a string on success
 	 */
 	public function request( $method, $url, array $options = [], $caller = __METHOD__ ) {
@@ -183,7 +183,7 @@ class HttpRequestFactory {
 		if ( $status->isOK() ) {
 			return $req->getContent();
 		} else {
-			$errors = $status->getErrorsByType( 'error' );
+			$errors = array_map( fn ( $msg ) => $msg->getKey(), $status->getMessages( 'error' ) );
 			$logger->warning( Status::wrap( $status )->getWikiText( false, false, 'en' ),
 				[ 'error' => $errors, 'caller' => $caller, 'content' => $req->getContent() ] );
 			return null;
@@ -196,7 +196,7 @@ class HttpRequestFactory {
 	 * @since 1.34
 	 * @param string $url
 	 * @param array $options
-	 * @param string $caller
+	 * @param string $caller @phan-mandatory-param
 	 * @return string|null
 	 */
 	public function get( $url, array $options = [], $caller = __METHOD__ ) {
@@ -209,7 +209,7 @@ class HttpRequestFactory {
 	 * @since 1.34
 	 * @param string $url
 	 * @param array $options
-	 * @param string $caller
+	 * @param string $caller @phan-mandatory-param
 	 * @return string|null
 	 */
 	public function post( $url, array $options = [], $caller = __METHOD__ ) {

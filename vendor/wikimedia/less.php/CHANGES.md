@@ -1,5 +1,47 @@
 # Changelog
 
+## v5.1.2
+
+Fixed:
+* Less_Functions: Fix "Implicitly nullable parameter" PHP 8.4 warning (Reedy) [T376276](https://phabricator.wikimedia.org/T376276)
+
+## v5.1.1
+
+Fixed:
+* Fix compiling of PHP-injected variables with false, null or empty string (Hannah Okwelum)
+
+## v5.1.0
+
+Added:
+* Add support for property acessors (Piotr Miazga) [T368408](https://phabricator.wikimedia.org/T368408)
+* Increase parsing flexibility around at-rule blocks and custom properties (Piotr Miazga) [T368408](https://phabricator.wikimedia.org/T368408)
+* Add support for Namespaces and Accessors (Piotr Miazga) [T368409](https://phabricator.wikimedia.org/T368409)
+
+Fixed:
+* Fix parse error when opacity is set to zero in `alpha()` function (Hannah Okwelum) [T371606](https://phabricator.wikimedia.org/T371606)
+
+## v5.0.0
+
+Added:
+* Add support for Lessjs 3.5.0 `calc()` exception (Piotr Miazga) [T367186](https://phabricator.wikimedia.org/T367186)
+* Add support for CSS Grid syntax (Dringsim) [T288498](https://phabricator.wikimedia.org/T288498)
+* Add support for `\9` escapes in CSS keyword (Dringsim) [T288498](https://phabricator.wikimedia.org/T288498)
+* Add Less_Parser "math" option, renamed from strictMath (Hannah Okwelum) [T366445](https://phabricator.wikimedia.org/T366445)
+
+Changed:
+* Change Less_Parser "math" default from "always" to "parens-division" (Hannah Okwelum) [T366445](https://phabricator.wikimedia.org/T366445)
+* Change `Less_Version::less_version` to "3.13.3". This end compatibility support of Less.js 2.5.3.
+  Less.php 5.0 and later will target Less.js 3.13.1 behaviour instead. (Piotr Miazga)
+
+Removed:
+* Remove `import_callback` Less_Parser option (Hannah Okwelum)
+* Remove backtick evaluation inside quoted strings (Bartosz Dziewoński)
+* Remove `Less_Parser::AllParsedFiles()` (Hannah Okwelum)
+* Remove Less_Parser->SetInput() public method, now private (Hannah Okwelum)
+* Remove Less_Parser->CacheFile() public method, now private (Hannah Okwelum)
+* Remove Less_Parser->UnsetInput() public method, now private (Hannah Okwelum)
+* Remove Less_Parser->save() public method, now private (Hannah Okwelum)
+
 ## v4.4.1
 
 Fixed:

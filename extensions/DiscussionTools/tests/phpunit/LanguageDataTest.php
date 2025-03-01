@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use MediaWiki\Extension\DiscussionTools\LanguageData;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 
 /**
  * @covers \MediaWiki\Extension\DiscussionTools\LanguageData
@@ -25,7 +24,7 @@ class LanguageDataTest extends IntegrationTestCase {
 
 		$expectedData = static::getJson( $expectedPath );
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$languageData = new LanguageData(
 			$services->getMainConfig(),
 			$services->getContentLanguage(),

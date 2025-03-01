@@ -4,6 +4,7 @@
  * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
+@import 'mediawiki.skin.variables.less';
 
 .ve-ui-mwInternalLinkContextItem {
 	.ve-ui-linearContextItem-body {
@@ -14,8 +15,8 @@
 	&-withImage > .oo-ui-iconElement.oo-ui-iconElement-icon {
 		float: left;
 		font-size: 2em; /* double-size icon */
-		background-color: #c8ccd1;
-		border: 0.35714em solid #c8ccd1;
+		background-color: @background-color-disabled;
+		border: 0.35714em solid @border-color-subtle;
 		opacity: 0.4;
 		margin-bottom: 0.3em;
 	}
@@ -34,7 +35,7 @@
 
 	&-description {
 		display: block;
-		color: #72777d;
+		color: @color-base--subtle;
 		margin-top: 0.5em;
 	}
 

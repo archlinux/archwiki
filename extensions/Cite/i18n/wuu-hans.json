@@ -5,5 +5,6 @@
 		]
 	},
 	"cite_error": "引用出错：$1",
-	"cite-tracking-category-cite-error": "参考资料出错个页面"
+	"cite-tracking-category-cite-error": "参考资料出错个页面",
+	"cite-reference-previews-note": "注释"
 }

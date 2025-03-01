@@ -19,7 +19,7 @@
 				action: 'query',
 				meta: 'userinfo',
 				uiprop: [ 'groups', 'rights' ]
-			} ).then( function ( data ) {
+			} ).then( ( data ) => {
 				if ( data.query && data.query.userinfo ) {
 					return data.query.userinfo;
 				}
@@ -53,7 +53,7 @@
 		 * @return {Object}
 		 */
 		assertCurrentUser: function ( query ) {
-			var user = mw.config.get( 'wgUserName' ),
+			const user = mw.config.get( 'wgUserName' ),
 				assertParams = {};
 
 			if ( user !== null ) {
@@ -63,7 +63,7 @@
 				assertParams.assert = 'anon';
 			}
 
-			return $.extend( assertParams, query );
+			return Object.assign( assertParams, query );
 		}
 
 	} );

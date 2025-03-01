@@ -5,7 +5,8 @@ const
 /**
  * IssueNotice
  *
- * @class IssueNotice
+ * @class
+ * @ignore
  * @extends View
  *
  * @param {IssueSummary} props

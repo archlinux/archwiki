@@ -21,6 +21,7 @@ abstract class LuaInterpreter {
 	 *
 	 * @param mixed $func The function object
 	 * @param mixed ...$args Arguments to the function
+	 * @return array
 	 */
 	abstract public function callFunction( $func, ...$args );
 
@@ -45,7 +46,7 @@ abstract class LuaInterpreter {
 	 * Register a library of functions.
 	 *
 	 * @param string $name The global variable name to be created or added to.
-	 * @param array $functions An associative array mapping the function name to the
+	 * @param array<string,callable> $functions An associative array mapping the function name to the
 	 *    callback. The callback may throw a LuaError, which will be
 	 *    caught and raised in the Lua code as a Lua error, catchable with
 	 *    pcall().

@@ -14,7 +14,7 @@ use MediaWikiUnitTestCase;
 use MessageLocalizer;
 
 /**
- * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Editbox\EditBoxBuilderFactory
+ * @covers \MediaWiki\Extension\AbuseFilter\Editbox\EditBoxBuilderFactory
  */
 class EditBoxBuilderFactoryTest extends MediaWikiUnitTestCase {
 
@@ -31,9 +31,7 @@ class EditBoxBuilderFactoryTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
-	 * @covers ::newEditBoxBuilder
-	 * @covers \MediaWiki\Extension\AbuseFilter\EditBox\EditBoxBuilder::__construct
+	 * @covers \MediaWiki\Extension\AbuseFilter\EditBox\EditBoxBuilder
 	 * @dataProvider provideNewEditBoxBuilder
 	 * @param bool $isCodeEditorLoaded
 	 */
@@ -55,9 +53,6 @@ class EditBoxBuilderFactoryTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::newPlainBoxBuilder
-	 */
 	public function testNewPlainBoxBuilder() {
 		$this->assertInstanceOf(
 			PlainEditBoxBuilder::class,
@@ -69,9 +64,6 @@ class EditBoxBuilderFactoryTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::newAceBoxBuilder
-	 */
 	public function testNewAceBoxBuilder() {
 		$this->assertInstanceOf(
 			AceEditBoxBuilder::class,
@@ -83,9 +75,6 @@ class EditBoxBuilderFactoryTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::newAceBoxBuilder
-	 */
 	public function testNewAceBoxBuilder__invalid() {
 		$this->expectException( LogicException::class );
 		$this->getFactory( false )->newAceBoxBuilder(

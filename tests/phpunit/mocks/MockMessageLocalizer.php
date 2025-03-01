@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Message\Message;
+use Wikimedia\Message\MessageSpecifier;
+
 /**
  * A simple {@link MessageLocalizer} implementation for use in tests.
  * By default, it sets the message language to 'qqx',

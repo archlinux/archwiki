@@ -15,10 +15,6 @@ const { defineSupportCode } = require( '@cucumber/cucumber' ),
 		iAmOnPage, iAmInBetaMode
 	} = require( './common_steps' ),
 	{
-		iShouldSeeAddedContent, iShouldSeeRemovedContent
-	} = require( './diff_steps' ),
-	{
-		iOpenTheLatestDiff,
 		iClickTheEditButton, iSeeTheWikitextEditorOverlay, iClearTheEditor,
 		iDoNotSeeTheWikitextEditorOverlay,
 		iTypeIntoTheEditor, iClickContinue, iClickSubmit, iSayOkayInTheConfirmDialog,
@@ -43,12 +39,9 @@ const { defineSupportCode } = require( '@cucumber/cucumber' ),
 	{ iHaveNoNotifications, iClickOnTheNotificationIcon,
 		iShouldSeeTheNotificationsOverlay, iClickTheNotificationsOverlayCloseButton,
 		iShouldNotSeeTheNotificationsOverlay
-	} = require( './notification_steps' ),
-	{
-		iClickOnTheHistoryLinkInTheLastModifiedBar
-	} = require( './history_steps' );
+	} = require( './notification_steps' );
 
-defineSupportCode( function ( { Then, When, Given } ) {
+defineSupportCode( ( { Then, When, Given } ) => {
 
 	// Editor steps
 	Given( /^I click the edit button$/, iClickTheEditButton );
@@ -88,15 +81,6 @@ defineSupportCode( function ( { Then, When, Given } ) {
 	Given( /^the page "(.+)" exists$/, pageExists );
 	Given( /^I am viewing a watched page$/, iAmViewingAWatchedPage );
 	Given( /^I am viewing an unwatched page$/, iAmViewingAnUnwatchedPage );
-
-	// history steps
-	When( /^I open the latest diff$/, iOpenTheLatestDiff );
-	When( /^I click on the history link in the last modified bar$/,
-		iClickOnTheHistoryLinkInTheLastModifiedBar );
-
-	// diff steps
-	Then( /^I should see "(.*?)" as added content$/, iShouldSeeAddedContent );
-	Then( /^I should see "(.*?)" as removed content$/, iShouldSeeRemovedContent );
 
 	// notifications
 	Then( /I have no notifications/, iHaveNoNotifications );

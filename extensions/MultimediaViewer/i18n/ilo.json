@@ -25,13 +25,6 @@
 	"multimediaviewer-permission-link": "kitaen dagiti termino",
 	"multimediaviewer-permission-link-hide": "ilemmeng dagiti termino",
 	"multimediaviewer-permission-viewmore": "Agkita pay ti adu",
-	"multimediaviewer-about-mmv": "Maipanggep iti daytoy nga interface",
-	"multimediaviewer-optout-mmv": "Ibaldado ti Media Viewer",
-	"multimediaviewer-optin-mmv": "Pakabaelan ti Media Viewer",
-	"multimediaviewer-optout-pending-mmv": "Ibaldadon ti Media Viewer",
-	"multimediaviewer-optin-pending-mmv": "Pakabaelanen ti Media Viewer",
-	"multimediaviewer-optout-help": "Ti Media Viewer ket saanton a mausar a mangipakita kadagiti ladawan. Ti mangusar manen, pinduten ti buton ti \"{{int:multimediaviewer-view-expanded}}\" a kadenna ti ania man a ladawan. Kalpasanna pinduten ti \"{{int:multimediaviewer-optin-mmv}}\".",
-	"multimediaviewer-optin-help": "Ti Media Viewer ket mausarto a mangipakita kadagiti ladawan.",
 	"multimediaviewer-geolocation": "Lokasion: $1",
 	"multimediaviewer-reuse-link": "Makibingay wenno usaren daytoy a papeles",
 	"multimediaviewer-reuse-loading-placeholder": "Agkarkarga...",
@@ -70,8 +63,5 @@
 	"multimediaviewer-credit-popup-text-more": "Kitaen ti napno a mannurat ken taudan",
 	"multimediaviewer-download-attribution-cta-header": "Nasken a pammadayawam ti mannurat",
 	"multimediaviewer-download-attribution-cta": "Ipakitam kaniak no kasano",
-	"multimediaviewer-attr-plain": "Naranas",
-	"multimediaviewer-options-learn-more": "Agadal pay ti adu",
-	"multimediaviewer-option-submit-button": "Ibaldado ti Media Viewer",
-	"multimediaviewer-option-cancel-button": "Ukasen"
+	"multimediaviewer-attr-plain": "Naranas"
 }

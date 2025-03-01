@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Brettchenweber",
+			"Inkowik",
 			"Kghbln",
 			"Metalhead64",
-			"TomatoCake",
-			"Inkowik"
+			"TomatoCake"
 		]
 	},
 	"linterrors": "Lint-Fehler",
@@ -15,6 +15,8 @@
 	"linter-category-large-tables-desc": "Diese Seiten haben Tabellen, die auf Mobilgeräten schwer zu sehen sind",
 	"linter-category-deletable-table-tag": "Tabellen-Tag, das gelöscht werden soll",
 	"linter-category-deletable-table-tag-desc": "Diese Seiten haben Tabellen-Tags, die gelöscht werden sollen.",
+	"linter-category-duplicate-ids": "Doppelte IDs",
+	"linter-category-duplicate-ids-desc": "Diese Seiten haben Elemente mit doppelten ID-Attributen.",
 	"linter-category-fostered": "Falsch verschachtelter Inhalt",
 	"linter-category-fostered-desc": "Diese Seiten haben falsch verschachtelte Inhalte.",
 	"linter-category-html5-misnesting": "Falsch verschachteltes Tag mit einer unterschiedlichen Darstellung in HTML5 und HTML4",
@@ -29,6 +31,8 @@
 	"linter-category-missing-end-tag-desc": "Diese Seiten haben fehlende End-Tags.",
 	"linter-category-missing-end-tag-in-heading": "Fehlendes End-Tag in der Überschrift",
 	"linter-category-missing-end-tag-in-heading-desc": "Diese Seiten haben fehlende End-Tags in Überschriften.",
+	"linter-category-missing-image-alt-text": "Fehlender Alternativtext für Bilder",
+	"linter-category-missing-image-alt-text-desc": "Diese Seiten enthalten Bilder ohne zugänglichen Alternativtext.",
 	"linter-category-multi-colon-escape": "Mehrere Doppelpunkte",
 	"linter-category-multi-colon-escape-desc": "Diese Seiten haben Links mit mehreren vorangestellten Doppelpunkten.",
 	"linter-category-multiline-html-table-in-list": "Mehrzeilentabelle in der Liste",
@@ -77,6 +81,7 @@
 	"linter-pager-category-header": "Kategorie",
 	"linter-pager-deletable-table-tag-details": "Tabellen-Tag, das gelöscht werden soll",
 	"linter-pager-details-header": "Zusätzliche Information",
+	"linter-pager-duplicate-ids-details": "Doppelte IDs",
 	"linter-pager-fostered-details": "Falsch verschachtelter Inhalt",
 	"linter-pager-html5-misnesting-details": "Missbräuchliche Verschachtelung (jetzt kaputt)",
 	"linter-pager-inline-media-caption-details": "Unsichtbare Bildunterschrift",
@@ -85,6 +90,7 @@
 	"linter-pager-misnested-tag-details": "Falsch verschachtelte Tags, die ordnungsgemäß verschachtelt werden sollten.",
 	"linter-pager-missing-end-tag-details": "Fehlendes End-Tag",
 	"linter-pager-missing-end-tag-in-heading-details": "Fehlendes End-Tag in der Überschrift",
+	"linter-pager-missing-image-alt-text-details": "Fehlender Alternativtext für Bilder",
 	"linter-pager-multi-colon-escape-details": "Mehrere Doppelpunkte",
 	"linter-pager-multiline-html-table-in-list-details": "Mehrzeilen-HTML5-Tabelle innerhalb einer Liste",
 	"linter-pager-multiple-unclosed-formatting-tags-details": "Mehrere nicht geschlossene Formatierungstags auf der Seite",

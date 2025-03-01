@@ -5,12 +5,11 @@
 			"Jango",
 			"Klutzy",
 			"Kwj2772",
+			"Markingdots",
 			"Priviet",
 			"SeoJeongHo",
 			"Ykhwong",
-			"아라",
-			"Markingdots",
-			"Whatback11"
+			"아라"
 		]
 	},
 	"content-model-scribunto": "Scribunto 모듈",
@@ -70,5 +69,7 @@
 	"scribunto-limitreport-profile-ms": "$1ms",
 	"scribunto-limitreport-logs": "Lua 기록",
 	"nstab-module": "모듈",
-	"tooltip-ca-nstab-module": "모듈 문서 보기"
+	"tooltip-ca-nstab-module": "모듈 문서 보기",
+	"namespaceinfo-description-ns828": "위키 문서로부터 호출 가능한 루아 코드 모듈, 그리고 해당 모듈의 설명 문서를 위한 이름공간",
+	"namespaceinfo-description-ns829": "모듈 및 설명 문서의 토론 문서"
 }

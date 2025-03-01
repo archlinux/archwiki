@@ -1,3 +1,5 @@
+@import 'mediawiki.skin.variables.less';
+
 // MultimediaViewer specific global variables
 // Height of the area of the metadata bar which is visible without scrolling.
 @metadatabar-above-fold-height: 86px;
@@ -9,7 +11,7 @@
 // Height of the top part of the "below-fold" content which is actually above the fold, as a scrolling affordance
 @metadatabar-below-fold-pushup-height: 30px;
 
-@panel-above-fold-background-color: #fff;
+@panel-above-fold-background-color: @background-color-base;
 
 // Height of the progress bar
 @progress-bar-height: 14px;
@@ -21,9 +23,17 @@
 @arrow-size: 20px;
 @arrow-border-size: 2px;
 
-@dialog-warning-color: #ffd36e;
-
 // Some button things that get included all over
-@navbutton-width: 18px;
-@buttons-offset-right: 5px;
-@buttons-offset-each-top: 37px;
+@buttons-size: 32px;
+@buttons-size-large: 44px;
+@buttons-gap: 10px;
+@buttons-offset-edge: 14px;
+@buttons-offset-each: @buttons-size + @buttons-gap;
+
+@buttons-icon-size: 20px; //icon size medium
+@buttons-icon-size-large: 30px;
+
+// dark mode version of --background-color-interactive-subtle
+@buttons-background-color: #202122;
+// dark mode version of --background-color-interactive-subtle: #202122;
+@buttons-background-color-faded: ~'#20212274';

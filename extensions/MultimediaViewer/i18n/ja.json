@@ -1,6 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ant176",
+			"Chqaz",
 			"Kkairri",
 			"MathXplore",
 			"Omotecho",
@@ -9,9 +11,7 @@
 			"SkyDaisy9",
 			"Sujiniku",
 			"Tmv",
-			"Whym",
-			"Ant176",
-			"Chqaz"
+			"Whym"
 		]
 	},
 	"multimediaviewer-desc": "縮小画像を全画面表示インターフェイス内に拡大表示する",
@@ -58,13 +58,6 @@
 	"multimediaviewer-restriction-trademarked": "この画像には商標法の対象になる可能性のあるものが含まれています。",
 	"multimediaviewer-restriction-default": "この画像は著作権法以外の法規定により制限を受ける可能性があります。詳細についてはファイル解説ページをご覧ください。",
 	"multimediaviewer-restriction-default-and-others": "この画像は、著作権法以外の法規定によって、著作権制限以外にさらに制限されている可能性があります。詳細はファイルの説明ページを参照してください。",
-	"multimediaviewer-about-mmv": "このメディアビューワーについて",
-	"multimediaviewer-optout-mmv": "メディアビューアーを無効にする",
-	"multimediaviewer-optin-mmv": "メディアビューアーを有効にする",
-	"multimediaviewer-optout-pending-mmv": "メディアプレーヤーを無効にしています",
-	"multimediaviewer-optin-pending-mmv": "メディアプレーヤーを有効にしています",
-	"multimediaviewer-optout-help": "今後は画像の表示にメディアビューアーを使用しません。再び使用するには、画像の隣にある「{{int:multimediaviewer-view-expanded}}」ボタンをクリックしてください。さらに「{{int:multimediaviewer-optin-mmv}}」をクリックします。",
-	"multimediaviewer-optin-help": "今後は画像の表示にメディアビューアーを使用します。",
 	"multimediaviewer-geoloc-north": "北緯",
 	"multimediaviewer-geoloc-east": "東経",
 	"multimediaviewer-geoloc-south": "南緯",
@@ -76,6 +69,7 @@
 	"multimediaviewer-reuse-loading-placeholder": "読み込み中…",
 	"multimediaviewer-share-tab": "共有",
 	"multimediaviewer-embed-tab": "埋め込み",
+	"multimediaviewer-download": "ダウンロード",
 	"multimediaviewer-download-link": "このファイルをダウンロード",
 	"multimediaviewer-download-preview-link-title": "ブラウザーで閲覧",
 	"multimediaviewer-download-original-button-name": "元のファイルをダウンロード",
@@ -121,13 +115,6 @@
 	"multimediaviewer-download-attribution-cta": "ヘルプを表示",
 	"multimediaviewer-reuse-warning-deletion": "このファイルは削除が検討されています。",
 	"multimediaviewer-reuse-warning-nonfree": "このファイルはフリーライセンスではありません。",
-	"multimediaviewer-options-tooltip": "メディアビューアーの有効/無効を切り替える",
-	"multimediaviewer-options-dialog-header": "メディアビューアーを無効にしますか?",
-	"multimediaviewer-options-text-header": "全てのファイルでこの表示機能をスキップします。",
-	"multimediaviewer-options-text-body": "後にファイルの詳細のページからそれを有効にすることができます。",
-	"multimediaviewer-options-learn-more": "詳細",
-	"multimediaviewer-option-submit-button": "メディアビューアーを無効にする",
-	"multimediaviewer-option-cancel-button": "中止",
 	"multimediaviewer-disable-confirmation-header": "メディアビューアーは無効になりました。",
 	"multimediaviewer-disable-confirmation-text": "次回$1のサムネイルをクリックすると、全てのファイルの詳細を直接閲覧できます。",
 	"multimediaviewer-enable-dialog-header": "メディアビューアーを有効にしますか？",

@@ -15,7 +15,7 @@
  * @param {mw.Title} title Page sub-title
  * @param {string} rebaserUrl Rebaser server URL
  * @param {Object} [config] Configuration options
- * @cfg {mw.Title} [importTitle] Title to import
+ * @param {mw.Title} [config.importTitle] Title to import
  */
 ve.init.mw.MobileCollabTarget = function VeInitMwMobileCollabTarget( title, rebaserUrl, config ) {
 	// Parent constructor
@@ -95,7 +95,7 @@ ve.init.mw.MobileCollabTarget.static.toolbarGroups = [
  * @inheritdoc
  */
 ve.init.mw.MobileCollabTarget.prototype.getSurfaceClasses = function () {
-	var classes = ve.init.mw.MobileCollabTarget.super.prototype.getSurfaceClasses.call( this );
+	const classes = ve.init.mw.MobileCollabTarget.super.prototype.getSurfaceClasses.call( this );
 	return classes.concat( [ 'content' ] );
 };
 

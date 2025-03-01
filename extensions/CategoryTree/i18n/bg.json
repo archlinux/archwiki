@@ -38,5 +38,7 @@
 	"categorytree-no-pages": "няма страници или подкатегории",
 	"categorytree-not-found": "Категория <i>$1</i> не беше намерена",
 	"categorytree-error": "Възникна проблем при зареждане на данните.",
-	"categorytree-retry": "Изчакайте малко и опитайте отново."
+	"categorytree-retry": "Изчакайте малко и опитайте отново.",
+	"categorytree-deprecation-category": "Страници, използващи непрепоръчителни параметри в categorytree",
+	"categorytree-deprecation-category-desc": "Страницата използва непрепоръчителен параметър в categorytree, като например <code>onlyroot</code>."
 }

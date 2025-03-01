@@ -10,7 +10,7 @@
 	"descriptionmsg": "poem-desc",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.42"
+		"MediaWiki": ">= 1.43"
 	},
 	"MessagesDirs": {
 		"Poem": [
@@ -28,20 +28,22 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Poem\\": "includes/"
 	},
-	"ParsoidModules": [ {
-		"name": "Poem",
-		"domProcessors": [
-			"MediaWiki\\Extension\\Poem\\Parsoid\\PoemProcessor"
-		],
-		"tags": [
-			{
-				"name": "poem",
-				"handler": "MediaWiki\\Extension\\Poem\\Parsoid\\Poem",
-				"options": {
-					"outputHasCoreMwDomSpecMarkup": true
+	"ParsoidModules": [
+		{
+			"name": "Poem",
+			"domProcessors": [
+				"MediaWiki\\Extension\\Poem\\Parsoid\\PoemProcessor"
+			],
+			"tags": [
+				{
+					"name": "poem",
+					"handler": "MediaWiki\\Extension\\Poem\\Parsoid\\Poem",
+					"options": {
+						"outputHasCoreMwDomSpecMarkup": true
+					}
 				}
-			}
-		]
-	} ],
+			]
+		}
+	],
 	"manifest_version": 2
 }

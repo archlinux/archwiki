@@ -3,13 +3,13 @@
 	 * Pagination model for echo notifications pages.
 	 *
 	 * @class
-	 * @mixins OO.EventEmitter
+	 * @mixes OO.EventEmitter
 	 *
 	 * @constructor
 	 * @param {Object} config Configuration object
-	 * @cfg {string} [pageNext] The continue value of the next page
-	 * @cfg {number} [itemsPerPage] The number of items per page
-	 * @cfg {number} [currentPageItemCount] The number of items that are in the
+	 * @param {string} [config.pageNext] The continue value of the next page
+	 * @param {number} [config.itemsPerPage] The number of items per page
+	 * @param {number} [config.currentPageItemCount] The number of items that are in the
 	 *  current page. If not given, the initial count defaults to the total number
 	 *  of items per page.
 	 */
@@ -41,9 +41,9 @@
 	/* Events */
 
 	/**
-	 * @event update
-	 *
 	 * Pagination information was updated
+	 *
+	 * @event mw.echo.dm.PaginationModel#update
 	 */
 
 	/* Methods */
@@ -51,7 +51,7 @@
 	/**
 	 * Reset pagination data
 	 *
-	 * @fires update
+	 * @fires mw.echo.dm.PaginationModel#update
 	 */
 	mw.echo.dm.PaginationModel.prototype.reset = function () {
 		this.pagesContinue = [];
@@ -65,6 +65,7 @@
 	 *
 	 * @param {number} page Page index
 	 * @param {string} continueVal Continue string value
+	 * @fires mw.echo.dm.PaginationModel#update
 	 */
 	mw.echo.dm.PaginationModel.prototype.setPageContinue = function ( page, continueVal ) {
 		if ( this.pagesContinue[ page ] !== continueVal ) {
@@ -95,7 +96,7 @@
 	/**
 	 * Set the current page index
 	 *
-	 * @private
+	 * @internal
 	 * @param {number} index Current page index
 	 */
 	mw.echo.dm.PaginationModel.prototype.setCurrPageIndex = function ( index ) {
@@ -105,7 +106,7 @@
 	/**
 	 * Move forward to the next page
 	 *
-	 * @fires update
+	 * @fires mw.echo.dm.PaginationModel#update
 	 */
 	mw.echo.dm.PaginationModel.prototype.forwards = function () {
 		if ( this.hasNextPage() ) {
@@ -117,7 +118,7 @@
 	/**
 	 * Move backwards to the previous page
 	 *
-	 * @fires update
+	 * @fires mw.echo.dm.PaginationModel#update
 	 */
 	mw.echo.dm.PaginationModel.prototype.backwards = function () {
 		if ( this.hasPrevPage() ) {
@@ -184,7 +185,7 @@
 	 * Set the number of items in the current page
 	 *
 	 * @param {number} count Number of items
-	 * @fires update
+	 * @fires mw.echo.dm.PaginationModel#update
 	 */
 	mw.echo.dm.PaginationModel.prototype.setCurrentPageItemCount = function ( count ) {
 		if ( this.currentPageItemCount !== count ) {

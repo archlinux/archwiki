@@ -15,11 +15,11 @@
  * @constructor
  * @param {ve.dm.MWTransclusionPartModel} part
  * @param {Object} config
- * @cfg {string} [icon=''] Symbolic name of an icon, e.g. "puzzle" or "wikiText"
- * @cfg {string} label
- * @cfg {string} ariaDescriptionUnselected
- * @cfg {string} ariaDescriptionSelected
- * @cfg {string} ariaDescriptionSelectedSingle
+ * @param {string} [config.icon=''] Symbolic name of an icon, e.g. "puzzle" or "wikiText"
+ * @param {string} config.label
+ * @param {string} config.ariaDescriptionUnselected
+ * @param {string} config.ariaDescriptionSelected
+ * @param {string} config.ariaDescriptionSelectedSingle
  */
 ve.ui.MWTransclusionOutlinePartWidget = function VeUiMWTransclusionOutlinePartWidget( part, config ) {
 	this.part = part;
@@ -75,7 +75,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlinePartWidget, OO.ui.Widget );
 /**
  * "Soft" selection with space.
  *
- * @event transclusionPartSoftSelected
+ * @event ve.ui.MWTransclusionOutlinePartWidget#transclusionPartSoftSelected
  * @param {string} partId Unique id of the {@see ve.dm.MWTransclusionPartModel}, e.g. something like
  *  "part_1".
  */
@@ -85,7 +85,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlinePartWidget, OO.ui.Widget );
  * be reflected in the content pane of the dialog. This includes e.g. selecting something that was
  * already selected.
  *
- * @event transclusionOutlineItemSelected
+ * @event ve.ui.MWTransclusionOutlinePartWidget#transclusionOutlineItemSelected
  * @param {string} pageName Unique id of the {@see OO.ui.BookletLayout} page, e.g. something like
  *  "part_1" or "part_1/param1".
  * @param {boolean} [soft] If true, focus should stay in the sidebar. Defaults to false.
@@ -96,7 +96,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlinePartWidget, OO.ui.Widget );
 /**
  * @private
  * @param {number} key
- * @fires transclusionPartSoftSelected
+ * @fires ve.ui.MWTransclusionOutlinePartWidget#transclusionPartSoftSelected
  */
 ve.ui.MWTransclusionOutlinePartWidget.prototype.onHeaderKeyPressed = function ( key ) {
 	if ( key === OO.ui.Keys.SPACE ) {

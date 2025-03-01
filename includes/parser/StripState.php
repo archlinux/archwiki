@@ -21,7 +21,10 @@
  * @ingroup Parser
  */
 
-use MediaWiki\Parser\Parser;
+namespace MediaWiki\Parser;
+
+use Closure;
+use InvalidArgumentException;
 
 /**
  * @todo document, briefly.
@@ -29,17 +32,25 @@ use MediaWiki\Parser\Parser;
  * @ingroup Parser
  */
 class StripState {
+	/** @var array[] */
 	protected $data;
+	/** @var string */
 	protected $regex;
 
-	protected $parser;
+	protected ?Parser $parser;
 
+	/** @var array */
 	protected $circularRefGuard;
+	/** @var int */
 	protected $depth = 0;
+	/** @var int */
 	protected $highestDepth = 0;
+	/** @var int */
 	protected $expandSize = 0;
 
+	/** @var int */
 	protected $depthLimit = 20;
+	/** @var int */
 	protected $sizeLimit = 5_000_000;
 
 	/**
@@ -48,7 +59,7 @@ class StripState {
 	 * @param Parser|null $parser
 	 * @param array $options
 	 */
-	public function __construct( Parser $parser = null, $options = [] ) {
+	public function __construct( ?Parser $parser = null, $options = [] ) {
 		$this->data = [
 			'nowiki' => [],
 			'general' => []
@@ -269,3 +280,6 @@ class StripState {
 		return preg_replace( $this->regex, '', $text );
 	}
 }
+
+/** @deprecated class alias since 1.43 */
+class_alias( StripState::class, 'StripState' );

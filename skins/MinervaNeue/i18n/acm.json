@@ -28,7 +28,6 @@
 	"mobile-frontend-meta-data-issues-categories": "على هاذ التصنيف",
 	"mobile-frontend-meta-data-issues-header": "مشاكل بالصفحه",
 	"minerva-meta-data-issues-section-header": "قضيات القسم",
-	"mobile-frontend-notifications-filter": "مصفي",
 	"mobile-frontend-pageaction-edit-tooltip": "تعديل مقطع المقدمه بهاي الصفحه",
 	"mobile-frontend-placeholder": "بحث ب{{SITENAME}}",
 	"mobile-frontend-random-button": "عشوآئي",
@@ -48,7 +47,7 @@
 	"minerva-page-actions-overflow": "بعد",
 	"minerva-page-actions-language-switcher": "لغات",
 	"minerva-page-actions-history": "الزمن",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|مناقشة]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue مناقشه]",
 	"minerva-skin-desc": "واجهة أولى ذات تصميم مستجيب للمحمول",
 	"skin-minerva-issue-learn-more": "افتهم زياده",
 	"skin-minerva-time-ago-seconds": "صارله {{PLURAL:$1|ثانيه وحده|ثانيتين|$1 ثواني|$1 ثانيه}}",
@@ -59,7 +58,6 @@
 	"skin-minerva-time-ago-years": "صارله {{PLURAL:$1|سنه|سنتين|$1 سنين|$1 سنه}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "تصنيفات",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "عرض تصنيفات الصفحات",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "تم تحسين معالجة مشاكل الصفحة",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "راح نضمن موضوعات الصفحة (قالب:صندوق رسالة مقالة) في المقالة.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "لسوء الحظ، تجميع النتائج حسب الصفحة مو متاح على النقال، إذا كنت ترغب في استخدام ميزة المجموعة حسب الصفحة فتُرجَى زيارة موقع سطح المكتب."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "لسوء الحظ، تجميع النتائج حسب الصفحة مو متاح على النقال، إذا كنت ترغب في استخدام ميزة المجموعة حسب الصفحة فتُرجَى زيارة موقع سطح المكتب.",
+	"skin-minerva-night-mode-unavailable": "الصفحه موجوده بس بالثيم \"الفاتح\"."
 }

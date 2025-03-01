@@ -29,7 +29,6 @@ use Wikimedia\Parsoid\Ext\JSON\JSON;
 use Wikimedia\Parsoid\Ext\LST\LST;
 use Wikimedia\Parsoid\Ext\Nowiki\Nowiki;
 use Wikimedia\Parsoid\Ext\Pre\Pre;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -194,7 +193,7 @@ abstract class SiteConfig {
 	protected $iwMatcherBatchSize = 4096;
 
 	/** @var array|null */
-	private $iwMatcher = null;
+	protected $iwMatcher = null;
 
 	/** @var bool */
 	protected $addHTMLTemplateParameters = false;
@@ -295,42 +294,6 @@ abstract class SiteConfig {
 	}
 
 	/**
-	 * Whether to enable linter Backend.
-	 * Consults the allow list and block list from ::getLinterConfig().
-	 *
-	 * @param null $type If $type is null or omitted, returns true if *any* linting
-	 *   type is enabled; otherwise returns true only if the specified
-	 *   linting type is enabled.
-	 * @return bool If $type is null or omitted, returns true if *any* linting
-	 *   type is enabled; otherwise returns true only if the specified
-	 *   linting type is enabled.
-	 */
-	final public function linting( ?string $type = null ) {
-		if ( !$this->linterEnabled ) {
-			return false;
-		}
-		$lintConfig = $this->getLinterConfig();
-		// Allow list
-		$allowList = $lintConfig['enabled'] ?? null;
-		if ( is_array( $allowList ) ) {
-			if ( $type === null ) {
-				return count( $allowList ) > 0;
-			}
-			return $allowList[$type] ?? false;
-		}
-		// Block list
-		if ( $type === null ) {
-			return true;
-		}
-		$blockList = $lintConfig['disabled'] ?? null;
-		if ( is_array( $blockList ) ) {
-			return !( $blockList[$type] ?? false );
-		}
-		// No specific configuration
-		return true;
-	}
-
-	/**
 	 * Statistics aggregator, for counting and timing.
 	 *
 	 * @return StatsdDataFactoryInterface|null
@@ -338,6 +301,29 @@ abstract class SiteConfig {
 	public function metrics(): ?StatsdDataFactoryInterface {
 		return null;
 	}
+
+	/**
+	 * Increment a counter metric
+	 * @param string $name
+	 * @param array $labels
+	 * @param float $amount
+	 * @return void
+	 */
+	abstract public function incrementCounter( string $name, array $labels, float $amount = 1 );
+
+	/**
+	 * Record a timing metric.
+	 *
+	 * Note that the value should be provided in *milliseconds* even though
+	 * the name of the metric may end (by convention) in `_seconds`.  The
+	 * metrics infrastructure will make the appropriate conversion.
+	 *
+	 * @param string $name
+	 * @param float $value A timing value *in milliseconds*
+	 * @param array $labels
+	 * @return void
+	 */
+	abstract public function observeTiming( string $name, float $value, array $labels );
 
 	/**
 	 * If enabled, bidi chars adjacent to category links will be stripped
@@ -416,7 +402,7 @@ abstract class SiteConfig {
 	 * Map a namespace name to its index
 	 *
 	 * @note This replaces canonicalNamespaces
-	 * @param string $name
+	 * @param string $name all-lowercase and with underscores rather than spaces.
 	 * @return int|null
 	 */
 	abstract public function namespaceId( string $name ): ?int;
@@ -495,7 +481,26 @@ abstract class SiteConfig {
 	abstract public function interwikiMagic(): bool;
 
 	/**
-	 * Interwiki link data
+	 * Return true if the specified magic link syntax is enabled on this
+	 * wiki.
+	 * @param string $which One of "ISBN", "PMID", or "RFC"
+	 * @return true if the specified magic link type is enabled on this wiki
+	 */
+	public function magicLinkEnabled( string $which ): bool {
+		// This should be an abstract method, but in order to provide
+		// graceful upgrades, start by defaulting to true for all link types
+		return true;
+	}
+
+	/**
+	 * Interwiki link data.
+	 *
+	 * Note that the order of the keys in this array is significant: if more
+	 * than one prefix matches a given URL during html2wt conversion, the
+	 * *first* match is used.  If you want `wikitech` to be used instead of
+	 * `labsconsole`, for example, the `'wikitech'=>[....]` key needs to
+	 * enumerate first.
+	 *
 	 * @return array<string,array> Keys are interwiki prefixes, values are arrays with the following keys:
 	 *   - prefix: (string) The interwiki prefix, same as the key.
 	 *   - url: (string) Target URL, containing a '$1' to be replaced by the interwiki target.
@@ -518,7 +523,7 @@ abstract class SiteConfig {
 		if ( $this->interwikiMapNoNamespaces === null ) {
 			$this->interwikiMapNoNamespaces = [];
 			foreach ( $this->interwikiMap() as $key => $value ) {
-				if ( $this->namespaceId( $key ) === null ) {
+				if ( $this->namespaceId( (string)$key ) === null ) {
 					$this->interwikiMapNoNamespaces[$key] = $value;
 				}
 			}
@@ -536,6 +541,7 @@ abstract class SiteConfig {
 			$keys = [ [], [] ];
 			$patterns = [ [], [] ];
 			foreach ( $this->interwikiMapNoNamespaces() as $key => $iw ) {
+				$key = (string)$key;
 				$lang = (int)( !empty( $iw['language'] ) );
 
 				$url = $iw['url'];
@@ -678,6 +684,7 @@ abstract class SiteConfig {
 	 * Lookup config
 	 * @param string $key
 	 * @return mixed|null config value for $key, if present or null, if not.
+	 * @deprecated This very broad interface is no longer needed.
 	 */
 	abstract public function getMWConfigValue( string $key );
 
@@ -740,8 +747,7 @@ abstract class SiteConfig {
 	 * @param string[] $moduleStyles
 	 * @param array<string,mixed> $jsConfigVars
 	 * @param string $htmlTitle The display title, as escaped HTML
-	 * @param string|Bcp47Code $lang a MediaWiki-internal language code string,
-	 *   or a Bcp47Code object (latter is preferred)
+	 * @param Bcp47Code $lang a Bcp47Code object
 	 */
 	protected function exportMetadataHelper(
 		Document $document,
@@ -750,15 +756,16 @@ abstract class SiteConfig {
 		array $moduleStyles,
 		array $jsConfigVars,
 		string $htmlTitle,
-		$lang
+		Bcp47Code $lang
 	): void {
-		$lang = Utils::mwCodeToBcp47( $lang, true, $this->getLogger() );
-		// Display title
-		$titleElement = DOMCompat::querySelector( $document, 'title' );
-		if ( !$titleElement ) {
-			$titleElement = DOMUtils::appendToHead( $document, 'title' );
-		}
-		DOMCompat::setInnerHTML( $titleElement, $htmlTitle );
+		// $htmlTitle contains the DISPLAYTITLE but it corresponds to the
+		// value of the ParserOutput *not* the ultimate value which would
+		// be used in the <h1> tag *nor* the plaintext value which would
+		// be used for the page <title>.  OutputPage does additional
+		// validation/stripping on the displaytitle value before using it.
+		// As such we're going to just ignore $htmlTitle for now rather
+		// than report an incorrect value in the <head> (T324431).
+
 		// JsConfigVars
 		$content = null;
 		try {
@@ -1192,14 +1199,18 @@ abstract class SiteConfig {
 			$this->getSpecialPageAliases( 'Booksources' )
 		) );
 
-		// cscott wants a mention of T145590 here ("Update Parsoid to be compatible with magic links
-		// being disabled")
 		$pats = [
 			'ISBN' => '(?:\.\.?/)*(?i:' . $nsAliases . ')(?:%3[Aa]|:)'
 				. '(?i:' . $pageAliases . ')(?:%2[Ff]|/)(?P<ISBN>\d+[Xx]?)',
 			'RFC' => '[^/]*//tools\.ietf\.org/html/rfc(?P<RFC>\w+)',
 			'PMID' => '[^/]*//www\.ncbi\.nlm\.nih\.gov/pubmed/(?P<PMID>\w+)\?dopt=Abstract',
 		];
+		// T145590: remove patterns for disabled magic links
+		foreach ( array_keys( $pats ) as $v ) {
+			if ( !$this->magicLinkEnabled( $v ) ) {
+				unset( $pats[$v] );
+			}
+		}
 		$regex = '!^(?:' . implode( '|', $pats ) . ')$!';
 		return static function ( $text ) use ( $pats, $regex ) {
 			if ( preg_match( $regex, $text, $m ) ) {
@@ -1214,12 +1225,19 @@ abstract class SiteConfig {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function linterEnabled(): bool {
+		return $this->linterEnabled;
+	}
+
+	/**
 	 * Return the desired linter configuration.  These are heuristic values
 	 * which have hardcoded defaults but could be overridden on a per-wiki
 	 * basis.
 	 * @return array{enabled?:string[],disabled?:string[],maxTableColumnHeuristic?:int,maxTableRowsToCheck?:int}
 	 */
-	public function getLinterConfig(): array {
+	public function getLinterSiteConfig(): array {
 		return [
 			// Allow list for specific lint types.
 			// Takes precedence over block list.

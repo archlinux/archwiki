@@ -62,10 +62,7 @@ abstract class LuaEngineTestBase extends MediaWikiLangTestCase {
 	public function __construct(
 		$name = null, array $data = [], $dataName = '', $engineName = null
 	) {
-		if ( $engineName === null ) {
-			$engineName = self::$staticEngineName;
-		}
-		$this->engineName = $engineName;
+		$this->engineName = $engineName ?? self::$staticEngineName;
 		parent::__construct( $name, $data, $dataName );
 	}
 
@@ -106,10 +103,7 @@ abstract class LuaEngineTestBase extends MediaWikiLangTestCase {
 	public function toString(): string {
 		// When running tests written in Lua, return a nicer representation in
 		// the failure message.
-		if ( $this->luaTestName ) {
-			return $this->engineName . ': ' . $this->luaTestName;
-		}
-		return $this->engineName . ': ' . parent::toString();
+		return $this->engineName . ': ' . ( $this->luaTestName ?: parent::toString() );
 	}
 
 	/**

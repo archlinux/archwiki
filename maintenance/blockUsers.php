@@ -20,8 +20,11 @@
  * @ingroup Maintenance
  */
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\User;
 
 class BlockUsers extends Maintenance {
@@ -119,7 +122,7 @@ class BlockUsers extends Maintenance {
 		$expiry = $this->getOption( 'expiry', 'indefinite' );
 
 		if ( $performerName ) {
-			$performer = User::newFromName( $performerName );
+			$performer = $this->getServiceContainer()->getUserFactory()->newFromName( $performerName );
 		} else {
 			$performer = User::newSystemUser( User::MAINTENANCE_SCRIPT_USER, [ 'steal' => true ] );
 		}
@@ -181,5 +184,7 @@ class BlockUsers extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = BlockUsers::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd
