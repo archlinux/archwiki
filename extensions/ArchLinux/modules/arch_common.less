@@ -18,7 +18,7 @@
 
 // general colors according to Arch definitions
 body {
-    background: @body-background-color;
+    background: var(--body-background-color);
 
     table,
     h1,
@@ -29,14 +29,14 @@ body {
     pre,
     code,
     tt {
-        color: @text-color;
+        color: var(--text-color);
     }
 }
 
 #content {
-    background: @content-background-color;
+    background: var(--content-background-color);
     border: @content-border-style;
-    border-color: @content-border-color;
+    border-color: var(--content-border-color);
 }
 
 // article Table of Contents
@@ -44,9 +44,9 @@ body {
 .toc,
 .mw-warning,
 .toccolours {
-    background-color: @toc-background-color;
+    background-color: var(--toc-background-color);
     border: @toc-border-style;
-    border-color: @toc-border-color;
+    border-color: var(--toc-border-color);
 }
 
 // general content styling
@@ -73,7 +73,7 @@ body {
 
     pre:not([class*="CodeMirror"]) {
         border: @code-border-style;
-        border-color: @code-border-color;
+        border-color: var(--code-border-color);
         overflow: auto;
         word-break: break-all;
         white-space: pre-wrap !important;
@@ -82,7 +82,7 @@ body {
     pre:not([class*="CodeMirror"]),
     code,
     tt {
-        background-color: @code-background-color;
+        background-color: var(--code-background-color);
         font-family: monospace, monospace;
     }
 
@@ -146,7 +146,7 @@ header.mw-header li:not(.new), // Vector
 /* Color of visited links for content and left column
  * (not for MediaWiki navigation elements above the page) */
 #content,
-#mw-panel li:not(.new),       // Legacy Vector
+#mw-panel li:not(.new)      // Legacy Vector
 {
   a:not(.new):not([role=button]):visited {
     color: @link-color-visited !important;
