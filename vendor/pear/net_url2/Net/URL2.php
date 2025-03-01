@@ -1198,7 +1198,7 @@ class Net_URL2
     private function _encodeData($url)
     {
         return preg_replace_callback(
-            '([\x-\x20\x22\x3C\x3E\x7F-\xFF]+)',
+            '([\x00-\x20\x22\x3C\x3E\x7F-\xFF]+)',
             array($this, '_encodeCallback'), $url
         );
     }
