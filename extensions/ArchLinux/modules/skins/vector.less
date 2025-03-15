@@ -2,7 +2,36 @@
 @import 'mediawiki.skin.variables';
 
 :root {
-  --background-color-base: @body-background-color;
+  --background-color-base: var(--body-background-color);
+  --body-background-color: @body-background-color;
+  --text-color: @text-color;
+  --content-background-color: @content-background-color;
+  --content-border-color: @content-border-color;
+  --toc-background-color: @toc-background-color;
+  --toc-border-color: @toc-border-color;
+  --code-border-color: @code-border-color;
+  --code-background-color: @code-background-color;
+}
+
+.dark-mode-colors() {
+  --body-background-color: var(--background-color-base);
+  --text-color: var(--color-base);
+  --content-background-color: var(--background-color-base);
+  --content-border-color: var(--background-color-base);
+  --toc-background-color: var(--background-color-base);
+  --code-background-color: var(--background-color-base);
+}
+
+@media screen {
+  html.skin-theme-clientpref-night {
+    .dark-mode-colors()
+  }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  html.skin-theme-clientpref-os {
+    .dark-mode-colors()
+  }
 }
 
 .mw-body {
@@ -25,9 +54,10 @@ nav.vector-menu-tabs {
     // border around the tab matches content, at the bottom we override the
     // content border with the background color
     border: @content-border-style;
-    border-bottom-color: @content-background-color;
+    border-color: var(--content-border-color);
+    border-bottom-color: var(--content-background-color);
     // background of the selected tab should match the content
-    background-color: @content-background-color;
+    background-color: var(--content-background-color);
 
     // remove background with the vertical separator
     a {
@@ -61,7 +91,7 @@ body.skin-vector.skin--responsive {
 body.skin-vector {
   // Set background color
   div.mw-page-container {
-    background-color: @body-background-color;
+    background-color: var(--content-background-color);
   }
 
   // Disable sidebar's gradient as it conflicts with the background color
@@ -96,10 +126,10 @@ body.skin-vector {
 body.skin-vector-2022 {
   // Set background color
   .vector-sticky-header {
-    background: @body-background-color;
+    background: var(--content-background-color);
   }
   .vector-header-container {
-    background-color: @body-background-color;
+    background-color: var(--content-background-color);
   }
 
   // Show the main menu and user menu in the visible area
@@ -160,6 +190,13 @@ body.skin-vector-2022 {
   .vector-page-titlebar > .mw-ui-button:last-child,
   .vector-page-titlebar > .mw-portlet-lang:last-child {
     margin-right: auto;
+  }
+
+  // Hide gradient after menus
+  @media screen {
+    .vector-sticky-pinned-container::after {
+      display: none;
+    }
   }
 }
 

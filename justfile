@@ -26,7 +26,12 @@ init: start
 		--server "http://localhost:${PORT}" \
 		"ArchWiki" \
 		"admin"
-	echo -e "\$wgVectorResponsive = true;\n\$wgVectorDefaultSkinVersion = '2';\nwfLoadExtension( 'ArchLinux' );" >> LocalSettings.php
+	echo -e "wfLoadExtension( 'ParserFunctions' );\n" >> LocalSettings.php
+	sed -E "s/^(wfLoadSkin\(\s*'(MinervaNeue|MonoBook)'\s*\);)/#\1/g" -i LocalSettings.php
+	echo -e "\$wgVectorNightMode['logged_out'] = true;" >> LocalSettings.php
+	echo -e "\$wgVectorNightMode['logged_in'] = true;" >> LocalSettings.php
+	echo -e "\$wgDefaultUserOptions['vector-theme'] = 'os';" >> LocalSettings.php
+	echo -e "\nwfLoadExtension( 'ArchLinux' );" >> LocalSettings.php
 	sed -E 's/^(\$wgDefaultSkin\s*=\s*).+/\1"vector-2022";/g' -i LocalSettings.php
 	echo -e "\$wgArchHome = 'https://www.archlinux.org/';" >> LocalSettings.php
 	echo -e "\$wgArchNavBar = ['Start' => '#', 'Wiki' => '/'];" >> LocalSettings.php
