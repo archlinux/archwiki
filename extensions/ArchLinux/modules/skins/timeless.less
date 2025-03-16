@@ -177,6 +177,14 @@ body.skin-timeless form:not( .oo-ui-layout ) {
 }
 
 
+// Assign consistent "indentation" margin to definition lists
+// (upstream rule disappeared after MediaWiki 1.43 upgrade)
+@media screen {
+    dd {
+        margin-left: 1.6em;
+    }
+}
+
 // Assign consistent vertical margin to code blocks
 .mw-parser-output pre {
     margin: 1em 0;
