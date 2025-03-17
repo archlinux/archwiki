@@ -1,27 +1,6 @@
 @import '../arch_definitions';
 @import 'mediawiki.skin.variables';
 
-:root {
-  --background-color-base: var(--body-background-color);
-  --body-background-color: @body-background-color;
-  --text-color: @text-color;
-  --content-background-color: @content-background-color;
-  --content-border-color: @content-border-color;
-  --toc-background-color: @toc-background-color;
-  --toc-border-color: @toc-border-color;
-  --code-border-color: @code-border-color;
-  --code-background-color: @code-background-color;
-}
-
-.dark-mode-colors() {
-  --body-background-color: var(--background-color-base);
-  --text-color: var(--color-base);
-  --content-background-color: var(--background-color-base);
-  --content-border-color: var(--background-color-base);
-  --toc-background-color: var(--background-color-base);
-  --code-background-color: var(--background-color-base);
-}
-
 @media screen {
   html.skin-theme-clientpref-night {
     .dark-mode-colors()
