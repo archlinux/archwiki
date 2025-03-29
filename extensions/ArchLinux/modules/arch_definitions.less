@@ -24,22 +24,23 @@
 @link-color-new: #b00;
 
 :root {
-  --background-color-base: var(--body-background-color);
-  --body-background-color: @body-background-color;
-  --text-color: @text-color;
-  --content-background-color: @content-background-color;
-  --content-border-color: @content-border-color;
-  --toc-background-color: @toc-background-color;
-  --toc-border-color: @toc-border-color;
-  --code-border-color: @code-border-color;
-  --code-background-color: @code-background-color;
+  --archwiki-background-color-base: var(--archwiki-body-background-color);
+  --archwiki-body-background-color: @body-background-color;
+  --archwiki-text-color: @text-color;
+  --archwiki-content-background-color: @content-background-color;
+  --archwiki-content-border-color: @content-border-color;
+  --archwiki-toc-background-color: @toc-background-color;
+  --archwiki-toc-border-color: @toc-border-color;
+  --archwiki-code-border-color: @code-border-color;
+  --archwiki-code-background-color: @code-background-color;
 }
 
 .dark-mode-colors() {
-  --body-background-color: var(--background-color-base);
-  --text-color: var(--color-base);
-  --content-background-color: var(--background-color-base);
-  --content-border-color: var(--background-color-base);
-  --toc-background-color: var(--background-color-base);
-  --code-background-color: var(--background-color-base);
+  // this resets to MediaWiki colors
+  --archwiki-body-background-color: var(--background-color-base);
+  --archwiki-text-color: var(--color-base);
+  --archwiki-content-background-color: var(--background-color-base);
+  --archwiki-content-border-color: var(--background-color-base);
+  --archwiki-toc-background-color: var(--background-color-base);
+  --archwiki-code-background-color: var(--background-color-base);
 }
