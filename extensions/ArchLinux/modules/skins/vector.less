@@ -32,7 +32,7 @@ nav.vector-menu-tabs {
   li.selected {
     // border around the tab matches content, at the bottom we override the
     // content border with the background color
-    border: @content-border-style;
+    border: var(--archwiki-content-border-style);
     border-color: var(--archwiki-content-border-color);
     border-bottom-color: var(--archwiki-content-background-color);
     // background of the selected tab should match the content
@@ -46,7 +46,7 @@ nav.vector-menu-tabs {
 
   // invisible border to align well with the selected tab
   ul li {
-    border: @content-border-style;
+    border: var(--archwiki-content-border-style);
   }
 }
 
@@ -54,7 +54,7 @@ nav.vector-menu-tabs {
 body.skin-vector.skin--responsive {
   nav.vector-menu-tabs {
     li.selected {
-      margin-top: -@content-border-width;
+      margin-top: calc(-1 * var(--archwiki-content-border-width));
       border-bottom: none;
     }
   }
@@ -62,7 +62,7 @@ body.skin-vector.skin--responsive {
   // Let the left border of the selected tab overlap with the vertical bar
   // coming from the background image of the previous tab.
   li:not(:first-child).selected {
-    margin-left: -1 * @content-border-width;
+    margin-left: calc(-1 * var(--archwiki-content-border-width));
   }
 }
 
@@ -197,14 +197,14 @@ body.skin-vector-legacy {
 
   // fix vertical position of tabs
   nav.vector-menu-tabs, nav.vector-menu {
-    margin-top: -2 * @content-border-width;
+    margin-top: calc(-2 * var(--archwiki-content-border-width));
   }
 
   nav.vector-menu-tabs {
     // Let the left border of the selected tab overlap with the vertical bar
     // coming from the background image of the previous tab.
     li:not(:first-child).selected {
-      margin-left: -2 * @content-border-width;
+      margin-left: calc(-2 * var(--archwiki-content-border-width));
     }
   }
 

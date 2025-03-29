@@ -36,7 +36,7 @@ body {
 
 #content {
     background: var(--archwiki-content-background-color);
-    border: @content-border-style;
+    border: var(--archwiki-content-border-style);
     border-color: var(--archwiki-content-border-color);
 }
 
@@ -46,7 +46,7 @@ body {
 .mw-warning,
 .toccolours {
     background-color: var(--archwiki-toc-background-color);
-    border: @toc-border-style;
+    border: var(--archwiki-toc-border-style);
     border-color: var(--archwiki-toc-border-color);
 }
 
@@ -73,7 +73,7 @@ body {
     }
 
     pre:not([class*="CodeMirror"]) {
-        border: @code-border-style;
+        border: var(--archwiki-code-border-style);
         border-color: var(--archwiki-code-border-color);
         overflow: auto;
         word-break: break-all;
@@ -128,18 +128,18 @@ header.mw-header li:not(.new), // Vector
   a:not([role=button]) {
     &:not(.new) {
       text-decoration: none;
-      color: @link-color-normal !important;
+      color: var(--archwiki-link-color-normal) !important;
       &:hover {
         text-decoration: underline;
         background-color: transparent;
-        color: @link-color-hover !important;
+        color: var(--archwiki-link-color-hover) !important;
       }
     }
 
     &:active, &:focus,
     /* a:hover overrides a:active, which we don't want' */
     &:active:hover, &:focus:hover {
-      color: @link-color-active !important;
+      color: var(--archwiki-link-color-active) !important;
     }
   }
 }
@@ -150,7 +150,7 @@ header.mw-header li:not(.new), // Vector
 #mw-panel li:not(.new)      // Legacy Vector
 {
   a:not(.new):not([role=button]):visited {
-    color: @link-color-visited !important;
+    color: var(--archwiki-link-color-visited) !important;
   }
 }
 
@@ -160,5 +160,5 @@ a.new:visited,
 #mw-navigation li.new a,         // Vector
 #mw-navigation li.new a:visited  // Vector
 {
-    color: @link-color-new !important;
+    color: var(--archwiki-link-color-new) !important;
 }

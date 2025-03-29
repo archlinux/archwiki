@@ -17,7 +17,7 @@ body {
 #mw-content-container {
     border-bottom: none;
     padding-top: .5em;
-    background-color: @body-background-color;
+    background-color: var(--archwiki-body-background-color);
     background-image: none;
 }
 #mw-header-hack, #mw-header-nav-hack {
@@ -25,11 +25,11 @@ body {
 }
 #mw-header-container {
     position: initial;
-    background: @body-background-color;
+    background: var(--archwiki-body-background-color);
 }
 #mw-content {
-    border: @content-border-style;
-    border-color: @content-border-color;
+    border: var(--archwiki-content-border-style);
+    border-color: var(--archwiki-content-border-color);
 }
 #content {
     border: none;
@@ -53,17 +53,17 @@ body {
     box-shadow: none;
 }
 .mw-footer-container a, a {
-    color: @link-color-normal;
+    color: var(--archwiki-link-color-normal);
     &:active {
-        color: @link-color-active;
+        color: var(--archwiki-link-color-active);
     }
     &:hover {
-        color: @link-color-hover;
+        color: var(--archwiki-link-color-hover);
     }
     &:visited {
-        color: @link-color-visited;
+        color: var(--archwiki-link-color-visited);
         &:hover {
-            color: @link-color-hover;
+            color: var(--archwiki-link-color-hover);
         }
     }
 }
@@ -78,11 +78,11 @@ body {
 /* change MediaWiki's @blue color to Arch's blue */
 .suggestions {
     .suggestions-result-current {
-        background-color: @link-color-normal;
+        background-color: var(--archwiki-link-color-normal);
     }
 }
 .tools-inline li.selected {
-    border-bottom-color: @link-color-normal;
+    border-bottom-color: var(--archwiki-link-color-normal);
 }
 
 // reset hardcoded white-on-blue colors to black-on-gray as in Vector
@@ -172,7 +172,7 @@ body.skin-timeless form:not( .oo-ui-layout ) {
     }
     /* reset background for the box with category links (placed below the content) */
     #mw-content-block {
-        background: @body-background-color;
+        background: var(--archwiki-body-background-color);
     }
 }
 
