@@ -18,7 +18,8 @@
 
 // general colors according to Arch definitions
 body {
-    background: var(--body-background-color);
+    color: var(--archwiki-text-color);
+    background: var(--archwiki-body-background-color);
 
     table,
     h1,
@@ -29,14 +30,14 @@ body {
     pre,
     code,
     tt {
-        color: var(--text-color);
+        color: var(--archwiki-text-color);
     }
 }
 
 #content {
-    background: var(--content-background-color);
-    border: @content-border-style;
-    border-color: var(--content-border-color);
+    background: var(--archwiki-content-background-color);
+    border: var(--archwiki-content-border-style);
+    border-color: var(--archwiki-content-border-color);
 }
 
 // article Table of Contents
@@ -44,9 +45,9 @@ body {
 .toc,
 .mw-warning,
 .toccolours {
-    background-color: var(--toc-background-color);
-    border: @toc-border-style;
-    border-color: var(--toc-border-color);
+    background-color: var(--archwiki-toc-background-color);
+    border: var(--archwiki-toc-border-style);
+    border-color: var(--archwiki-toc-border-color);
 }
 
 // general content styling
@@ -72,8 +73,8 @@ body {
     }
 
     pre:not([class*="CodeMirror"]) {
-        border: @code-border-style;
-        border-color: var(--code-border-color);
+        border: var(--archwiki-code-border-style);
+        border-color: var(--archwiki-code-border-color);
         overflow: auto;
         word-break: break-all;
         white-space: pre-wrap !important;
@@ -82,7 +83,7 @@ body {
     pre:not([class*="CodeMirror"]),
     code,
     tt {
-        background-color: var(--code-background-color);
+        background-color: var(--archwiki-code-background-color);
         font-family: monospace, monospace;
     }
 
@@ -127,18 +128,18 @@ header.mw-header li:not(.new), // Vector
   a:not([role=button]) {
     &:not(.new) {
       text-decoration: none;
-      color: @link-color-normal !important;
+      color: var(--archwiki-link-color-normal) !important;
       &:hover {
         text-decoration: underline;
         background-color: transparent;
-        color: @link-color-hover !important;
+        color: var(--archwiki-link-color-hover) !important;
       }
     }
 
     &:active, &:focus,
     /* a:hover overrides a:active, which we don't want' */
     &:active:hover, &:focus:hover {
-      color: @link-color-active !important;
+      color: var(--archwiki-link-color-active) !important;
     }
   }
 }
@@ -149,7 +150,7 @@ header.mw-header li:not(.new), // Vector
 #mw-panel li:not(.new)      // Legacy Vector
 {
   a:not(.new):not([role=button]):visited {
-    color: @link-color-visited !important;
+    color: var(--archwiki-link-color-visited) !important;
   }
 }
 
@@ -159,5 +160,5 @@ a.new:visited,
 #mw-navigation li.new a,         // Vector
 #mw-navigation li.new a:visited  // Vector
 {
-    color: @link-color-new !important;
+    color: var(--archwiki-link-color-new) !important;
 }

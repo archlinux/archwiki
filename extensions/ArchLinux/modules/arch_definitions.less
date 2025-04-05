@@ -4,42 +4,33 @@
  * should be added to files present in the "styles" array in extension.json.
  */
 
-@body-background-color: #f6f9fc;
-@content-background-color: #fff;
-@content-border-width: 1px;
-@content-border-style: @content-border-width solid;
-@content-border-color: #ccc;
-@text-color: #222;
-@code-background-color: #ebf1f5;
-@code-border-style: 1px solid;
-@code-border-color: #bcd;
-@toc-background-color: #f9faff;
-@toc-border-style: 1px solid;
-@toc-border-color: #d7dfe3;
-
-@link-color-normal: #07b;
-@link-color-hover: #999;
-@link-color-active: #e90;
-@link-color-visited: #795cb2;
-@link-color-new: #b00;
-
 :root {
-  --background-color-base: var(--body-background-color);
-  --body-background-color: @body-background-color;
-  --text-color: @text-color;
-  --content-background-color: @content-background-color;
-  --content-border-color: @content-border-color;
-  --toc-background-color: @toc-background-color;
-  --toc-border-color: @toc-border-color;
-  --code-border-color: @code-border-color;
-  --code-background-color: @code-background-color;
+  --archwiki-background-color-base: var(--archwiki-body-background-color);
+  --archwiki-body-background-color: #f6f9fc;
+  --archwiki-text-color: #222;
+  --archwiki-content-background-color: #fff;
+  --archwiki-content-border-width: 1px;
+  --archwiki-content-border-style: var(--archwiki-content-border-width) solid;
+  --archwiki-content-border-color: #ccc;
+  --archwiki-toc-background-color: #f9faff;
+  --archwiki-toc-border-style: 1px solid;
+  --archwiki-toc-border-color: #d7dfe3;
+  --archwiki-code-background-color: #ebf1f5;
+  --archwiki-code-border-style: 1px solid;
+  --archwiki-code-border-color: #bcd;
+  --archwiki-link-color-normal: #07b;
+  --archwiki-link-color-hover: #999;
+  --archwiki-link-color-active: #e90;
+  --archwiki-link-color-visited: #795cb2;
+  --archwiki-link-color-new: #b00;
 }
 
 .dark-mode-colors() {
-  --body-background-color: var(--background-color-base);
-  --text-color: var(--color-base);
-  --content-background-color: var(--background-color-base);
-  --content-border-color: var(--background-color-base);
-  --toc-background-color: var(--background-color-base);
-  --code-background-color: var(--background-color-base);
+  // this resets to MediaWiki colors
+  --archwiki-body-background-color: var(--background-color-base);
+  --archwiki-text-color: var(--color-base);
+  --archwiki-content-background-color: var(--background-color-base);
+  --archwiki-content-border-color: var(--background-color-base);
+  --archwiki-toc-background-color: var(--background-color-base);
+  --archwiki-code-background-color: var(--background-color-base);
 }
