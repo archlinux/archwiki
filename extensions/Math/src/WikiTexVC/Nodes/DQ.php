@@ -36,21 +36,16 @@ class DQ extends TexNode {
 		return $this->down;
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return $this->base->render() . '_' . $this->down->inCurlies();
 	}
 
-	public function renderMML( $arguments = [], $state = [] ) {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ) {
 		if ( array_key_exists( "limits", $state ) ) {
 			// A specific DQ case with preceding limits, just invoke the limits parsing manually.
 			return BaseParsing::limits( $this, $arguments, $state, "" );
-		}
-
-		$emptyMrow = "";
-		// In cases with empty curly preceding like: "{}_pF_q"
-		if ( $this->getBase()->isCurly() && $this->getBase()->isEmpty() ) {
-			$mrow = new MMLmrow();
-			$emptyMrow = $mrow->getEmpty();
 		}
 
 		if ( !$this->isEmpty() ) {
@@ -67,15 +62,21 @@ class DQ extends TexNode {
 			}
 			// Otherwise use default fallback
 			$mmlMrow = new MMLmrow();
+			$inner_state = [ 'styleargs' => $state['styleargs'] ?? [] ];
+			$baseRendering = $this->base->renderMML( $arguments, $inner_state );
+			// In cases with empty curly preceding like: "{}_pF_q" or _{1}
+			if ( trim( $baseRendering ) === "" ) {
+				$baseRendering = ( new MMLmrow() )->getEmpty();
+			}
 			return $outer->encapsulateRaw(
-				 $emptyMrow .
-				$this->base->renderMML( $arguments, [ 'styleargs' => $state['styleargs'] ?? [] ] ) .
+				$baseRendering .
 				$mmlMrow->encapsulateRaw( $this->down->renderMML( $arguments, $state ) ) );
 		}
 
 		return "";
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		$d = $this->down->extractSubscripts();
 		$b = $this->base->extractIdentifiers();
@@ -97,6 +98,7 @@ class DQ extends TexNode {
 		return parent::extractIdentifiers();
 	}
 
+	/** @inheritDoc */
 	public function extractSubscripts() {
 		$d = array_merge( [], $this->down->extractSubscripts() );
 		$b = $this->base->extractSubscripts();
@@ -106,6 +108,7 @@ class DQ extends TexNode {
 		return parent::extractSubscripts();
 	}
 
+	/** @inheritDoc */
 	public function getModIdent() {
 		$d = $this->down->extractSubscripts();
 		$b = $this->base->getModIdent();

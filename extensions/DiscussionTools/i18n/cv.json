@@ -56,7 +56,7 @@
 	"discussiontools-limitreport-errorreqid": "DiscussionTools-ра сиксе тухнӑ йӑнӑш ыйтӑвӑн идентификаторӗ",
 	"discussiontools-limitreport-timeusage": "DiscussionTools-па усӑ курнӑ вӑхӑт",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL: $1|ҫеккунт}}",
-	"discussiontools-newtopic-missing-title": "Тархасшӑн, {{GENDER:|хӑвӑрӑн}} сӳтсе явмалли темӑн ятне кӗртӗр. «{{int:discussiontools-replywidget-newtopic}}» ҫине пуссан тема ятсӑр хушӑнӗ.",
+	"discussiontools-newtopic-missing-title": "Тархасшӑн, {{GENDER:|хӑвӑрӑн}} сӳтсе явмалли темӑн ятне кӗртӗр.",
 	"discussiontools-newtopic-placeholder-title": "Тема",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Ҫырӑн",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Ку страницӑра ҫӗнӗ тема йӗркеленсен ун пирки сире систермелле пулсан ҫырӑнӑр.",

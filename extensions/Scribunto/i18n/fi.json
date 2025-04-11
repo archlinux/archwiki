@@ -10,7 +10,8 @@
 			"Stryn",
 			"Valtlai",
 			"Valtlait",
-			"VezonThunder"
+			"VezonThunder",
+			"Samoasambia"
 		]
 	},
 	"content-model-scribunto": "Scribunto-moduuli",
@@ -63,5 +64,7 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Lua-lokit",
 	"nstab-module": "Moduuli",
-	"tooltip-ca-nstab-module": "Näytä moduulisivu"
+	"tooltip-ca-nstab-module": "Näytä moduulisivu",
+	"namespaceinfo-description-ns828": "Nimiavaruus Lua-koodimoduuleille, joita voidaan kutsua wikisivuilta sekä niiden dokumentaatiosivuilta",
+	"namespaceinfo-description-ns829": "Moduulien ja dokumentaatiosivujen keskustelusivut"
 }

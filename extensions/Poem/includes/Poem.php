@@ -54,7 +54,7 @@ class Poem implements ParserFirstCallInitHook {
 					$matches[2]
 				);
 			},
-			$in
+			$in ?? ''
 		);
 
 		// replace newlines with <br /> tags unless they are at the beginning or end

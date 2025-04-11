@@ -20,7 +20,7 @@ class Matrix extends TexArray {
 
 	private ?string $alignInfo = null;
 
-	public function __construct( string $top, TexArray $mainarg, $rowSpec = null ) {
+	public function __construct( string $top, TexArray $mainarg, ?LengthSpec $rowSpec = null ) {
 		foreach ( $mainarg->args as $row ) {
 			if ( !$row instanceof TexArray ) {
 				throw new InvalidArgumentException( 'Nested arguments have to be type of TexArray' );
@@ -89,6 +89,7 @@ class Matrix extends TexArray {
 		return $this;
 	}
 
+	/** @inheritDoc */
 	public function containsFunc( $target, $args = null ) {
 		if ( $args == null ) {
 			$args = [
@@ -100,17 +101,20 @@ class Matrix extends TexArray {
 		return parent::containsFunc( $target, $args );
 	}
 
+	/** @inheritDoc */
 	public function inCurlies() {
 		return $this->render();
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		$colSpecs = $this->columnSpecs !== null ? $this->columnSpecs->render() : '';
 		return '{\\begin{' . $this->top . '}' . $colSpecs . $this->renderMatrix( $this ) . '\\end{' .
 			$this->top . '}}';
 	}
 
-	public function renderMML( $arguments = [], $state = [] ): string {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ): string {
 		return $this->parseToMML( $this->getTop(), $arguments, null );
 	}
 
@@ -126,13 +130,14 @@ class Matrix extends TexArray {
 		return $renderedLines;
 	}
 
-	private static function renderLine( $l ) {
+	private static function renderLine( TexNode $l ): string {
 		$mapped = array_map( static function ( $x ){
 			return $x->render();
 		}, $l->args );
 		return implode( '&', $mapped );
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		if ( $args == null ) {
 			$args = $this->args;
@@ -147,6 +152,10 @@ class Matrix extends TexArray {
 		return self::flatDeep( $mapped );
 	}
 
+	/**
+	 * @param array|string $a
+	 * @return array|string
+	 */
 	private static function flatDeep( $a ) {
 		if ( !is_array( $a ) ) {
 			return $a;
@@ -156,6 +165,11 @@ class Matrix extends TexArray {
 		return $reduced;
 	}
 
+	/**
+	 * @param array $acc
+	 * @param array|string $val
+	 * @return array
+	 */
 	private static function reduceCallback( $acc, $val ) {
 		// Casting to array if output is string, this is required for array_merge function.
 		$fld = self::flatDeep( $val );

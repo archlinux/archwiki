@@ -51,7 +51,7 @@
 	"apihelp-abuselogprivatedetails-example-1": "Дај лични податоци за ставката во Дневникот на злоупотреби со назнака 1, користејќи ја причината",
 	"apierror-abusefilter-canttest": "Немате дозвола да испробувате филтри на злоупотреба.",
 	"apierror-abusefilter-cantcheck": "Немате дозвола да проверувате синтакса на филтри на злоупотреба.",
-	"apierror-abusefilter-canteval": "Немате дозвола да вреднување изрази од Филтерот на злоупотреби.",
+	"apierror-abusefilter-canteval": "Немате дозвола да вреднување изрази од Филтерот за злоупотреби.",
 	"apierror-abusefilter-nosuchlogid": "Нема запис во дневникот на злоупотреби со назнака $1.",
 	"apierror-abusefilter-badsyntax": "Филтерот има неважечка синтакса."
 }

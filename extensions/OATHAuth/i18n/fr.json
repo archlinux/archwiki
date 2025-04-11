@@ -20,7 +20,8 @@
 			"Verdy p",
 			"Wladek92",
 			"Yasten",
-			"Mahabarata"
+			"Mahabarata",
+			"JLTRY"
 		]
 	},
 	"oathauth-desc": "Prend en charge l’authentification utilisant des mots de passe HMAC à utilisation unique.",
@@ -121,7 +122,8 @@
 	"notification-body-oathauth-enable": "Si {{GENDER:$2|}}vous n’avez pas fait ceci, {{GENDER:$2|}}votre compte pourrait avoir été compromis.",
 	"oathauth-notifications-enable-help": "Aide",
 	"oathauth-notifications-enable-primary": "Vérifiez vos paramètres d’authentification à deux facteurs",
-	"notification-body-oathauth-oathauth-recoverycodesleft": "{{GENDER:$2|}}Il vous reste $3 code{{PLURAL:$3||s}} de récupération. Vous pouvez envisager de désactiver et de réactiver l'authentification à deux facteurs pour retrouver un total de $4 code{{PLURAL:$4||s}} de récupération à utiliser à l'avenir.",
+	"notification-header-oathauth-recoverycodes-count": "{{GENDER:$2| Vous}} devez réinscrire {{GENDER:$2| votre compte}} pour l'authentification à deux facteurs.",
+	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|}}Il vous reste $3 code{{PLURAL:$3||s}} de récupération. Vous pouvez envisager de désactiver et de réactiver l'authentification à deux facteurs pour retrouver un total de $4 code{{PLURAL:$4||s}} de récupération à utiliser à l'avenir.",
 	"oathauth-notifications-recoverycodesleft-help": "Aide",
 	"oathauth-notifications-recoverycodesleft-primary": "Vérifiez vos paramètres d’authentification à deux facteurs",
 	"oathauth-verify-enabled": "$1{{GENDER:$1|}} a l’authentification à deux facteurs activée.",

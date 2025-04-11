@@ -1071,6 +1071,14 @@ class ParserTest extends ParserTestCase {
 		];
 	}
 
+	public function testTrailingCommasInUnrecognisedFunction() {
+		$expectedError = 'unknownfunction';
+		$code = "this_function_is_not_valid_T387649( 'trailing', 'comma', )";
+
+		$this->exceptionTest( $expectedError, $code, 'doLevelFunction' );
+		$this->exceptionTestInSkippedBlock( $expectedError, $code, 'doLevelFunction' );
+	}
+
 	/**
 	 * Ensure that an exception is thrown where there are extra commas in function calls, which
 	 * are not the kind of allowed dangling commas.

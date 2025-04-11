@@ -14,14 +14,15 @@
 			"Shirayuki",
 			"Tacsipacsi",
 			"Umherirrender",
-			"Wladek92"
+			"Wladek92",
+			"Sjoerddebruin"
 		]
 	},
 	"multimediaviewer-desc": "{{desc|name=Multimedia Viewer|url=https://www.mediawiki.org/wiki/Extension:MultimediaViewer}}",
 	"multimediaviewer-optin-pref": "Label for preference to enable the Media Viewer.",
 	"multimediaviewer-file-page": "Text for a link to the file page for an image.",
 	"multimediaviewer-repository-local": "Link to repository where the image is locally hosted.\nSee also:\n* {{msg-mw|multimediaviewer-repository}}",
-	"multimediaviewer-datetime-created": "Used in JavaScript code. Parameters:\n* $1 - time and date\nSee also:\n* {{msg-mw|Multimediaviewer-datetime-uploaded}}\n\nNote that the date comes from the description page and can have various forms (e.g. \"2000-01-01\", \"1st January 2000\", \"1492\", \"16th century\"...)\n\nAlso, this might refer to the date when the picture was taken, or the date when the depcited work was made - the usage is not consistent. You should choose a translation that works in all cases.\n{{Identical|Created}}",
+	"multimediaviewer-datetime-created": "Used in JavaScript code. Parameters:\n* $1 - time and date\nSee also:\n* {{msg-mw|Multimediaviewer-datetime-uploaded}}\n\nNote that the date comes from the description page and can have various forms (e.g. \"2000-01-01\", \"1st January 2000\", \"1492\", \"16th century\"...)\n\nAlso, this might refer to the date when the picture was taken, or the date when the depicted work was made - the usage is not consistent. You should choose a translation that works in all cases.\n{{Identical|Created}}",
 	"multimediaviewer-datetime-uploaded": "Used in JavaScript code. Parameters:\n* $1 - time and date (formatted)\nSee also:\n* {{msg-mw|Multimediaviewer-datetime-created}}\n{{Identical|Uploaded}}",
 	"multimediaviewer-credit": "{{optional}}\nCredit line for images. Parameters:\n* $1 - HTML describing the author\n* $2 - HTML describing the source\n\nNeither parameters are usernames, so GENDER is useless. Both come directly from the API, the extended metadata imageinfo prop in particular.\n\nThey will usually be derived from the HTML output from wikitext on a file description page - however, no complicated HTML, only links, will be allowed.\n\nSee also {{msg-mw|multimediaviewer-credit-fallback}}",
 	"multimediaviewer-credit-fallback": "Text shown in place of the credit line ({{msg-mw|multimediaviewer-credit}}) when neither author nor source information is available.",

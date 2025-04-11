@@ -29,18 +29,19 @@
 			"ひまり",
 			"春春眠眠",
 			"翻訳者a",
-			"青子守歌"
+			"青子守歌",
+			"Yaakiyu.jp"
 		]
 	},
 	"skinname-vector": "レガシー ベクター (2010年版)",
 	"skinname-vector-2022": "ベクター (2022年版)",
-	"vector-skin-desc": "2種類のVectorスキン（外装）を提供します。\n* 2011年版 - MonoBookのモダンバージョンで、新しい外観と多くのユーザビリティの向上が図られています。\n* 2022年版 - ウィキメディア財団による [https://www.mediawiki.org/wiki/Desktop_Improvements デスクトップ版改善]プロジェクトの一環として作られました。",
+	"vector-skin-desc": "2種類のVectorスキンを提供します。\n* 2011年版 - モノブックのモダンバージョンで、新しい外観と多くのユーザビリティの向上が図られています。\n* 2022年版 - ウィキメディア財団による [https://www.mediawiki.org/wiki/Desktop_Improvements デスクトップ版改善]プロジェクトの一環として作られました。",
 	"prefs-vector-enable-vector-1-label": "レガシーベクター外装を使用する",
 	"prefs-vector-enable-vector-1-help": "今後数年にわたり、ベクター外装を徐々に更新していく予定です。レガシーベクターでは、(2019年12月時点の) 古いベクター外装を表示できます。アップデートについての詳細は、[https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements プロジェクトページ]をご覧ください。",
 	"vector-opt-out": "以前の外観に切り替え",
 	"vector-opt-out-tooltip": "設定を変更して、昔の外装 (以前のVector) の外観に戻します",
-	"vector.css": "/* ここに記述したCSSは、Vectorスキンの利用者全てに読み込まれます */",
-	"vector.js": "/* ここに記述したJavaScriptは、Vectorスキンの利用者全てに読み込まれます */",
+	"vector.css": "/* ここに記述したCSSは、Vectorスキンの利用者に読み込まれます */",
+	"vector.js": "/* ここに記述したJavaScriptは、Vectorスキンの利用者に読み込まれます */",
 	"vector-action-toggle-sidebar": "サイドバーの切り替え",
 	"vector-languages": "言語",
 	"vector-language-button-aria-label": "特定の記事の別の言語版に移動します。 {{PLURAL:$1|利用可能な言語$1件}}",

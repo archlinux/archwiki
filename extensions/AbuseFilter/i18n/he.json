@@ -377,7 +377,7 @@
 	"abusefilter-edit-builder-funcs-contains-all": "חיפוש תת־מחרוזות מרובות במחרוזת נתונה במצב AND ($1)",
 	"abusefilter-edit-builder-funcs-equals-to-any": "בדיקה האם פרמטר נתון שווה (===) לאחד הפרמטרים הבאים ($1)",
 	"abusefilter-edit-builder-funcs-substr": "תת־מחרוזת ($1)",
-	"abusefilter-edit-builder-funcs-strpos": "מיקום תת־מחרוזת במחרוזת ($1)",
+	"abusefilter-edit-builder-funcs-strpos": "מיקום של תת־מחרוזת במחרוזת ($1)",
 	"abusefilter-edit-builder-funcs-str_replace": "החלפת תת־מחרוזת במחרוזת אחרת ($1)",
 	"abusefilter-edit-builder-funcs-str_replace_regexp": "חיפוש והחלפה עם ביטויים רגולריים ($1)",
 	"abusefilter-edit-builder-funcs-rescape": "לחלף את המחרוזת בתור מחרוזת מפורשת בביטוי רגולרי ($1)",

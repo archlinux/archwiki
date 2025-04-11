@@ -6,8 +6,9 @@ use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Extension\Math\Widget\MathTestInputForm;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Registration\ExtensionRegistry;
-use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use Psr\Log\LoggerInterface;
+use UserNotLoggedIn;
 
 /**
  * MediaWiki math extension
@@ -17,7 +18,7 @@ use Psr\Log\LoggerInterface;
  * @license GPL-2.0-or-later
  * @author Moritz Schubotz
  */
-class SpecialMathStatus extends SpecialPage {
+class SpecialMathStatus extends UnlistedSpecialPage {
 	/** @var LoggerInterface */
 	private $logger;
 
@@ -31,7 +32,7 @@ class SpecialMathStatus extends SpecialPage {
 		MathConfig $mathConfig,
 		RendererFactory $rendererFactory
 	) {
-		parent::__construct( 'MathStatus', 'purge' );
+		parent::__construct( 'MathStatus' );
 
 		$this->mathConfig = $mathConfig;
 		$this->rendererFactory = $rendererFactory;
@@ -43,6 +44,14 @@ class SpecialMathStatus extends SpecialPage {
 	 */
 	public function execute( $query ) {
 		$this->setHeaders();
+
+		if ( !( $this->getUser()->isNamed() ) ) {
+			// This page is primarily of interest to developers.
+			// This action is comparable to previewing or parsing a small snippet of wikitext.
+			// If using RESTBase instead of native MML, this page makes HTTP requests to it.
+			// Optimization: Avoid uncached math parsing for logged-out users.
+			throw new UserNotLoggedIn();
+		}
 
 		$out = $this->getOutput();
 		$enabledMathModes = $this->mathConfig->getValidRenderingModeNames();
@@ -71,19 +80,19 @@ class SpecialMathStatus extends SpecialPage {
 		$form->show();
 	}
 
-	private function runNativeTest( $modeName ) {
+	private function runNativeTest( string $modeName ) {
 		$this->getOutput()->addWikiMsgArray( 'math-test-start', [ $modeName ] );
 		$renderer = $this->rendererFactory->getRenderer( "a+b", [], MathConfig::MODE_NATIVE_MML );
 		if ( !$this->assertTrue( $renderer->render(), "Rendering of a+b in $modeName" ) ) {
 			return;
 		}
 		$real = str_replace( "\n", '', $renderer->getHtmlOutput() );
-		$expected = '<mo>+</mo>';
+		$expected = '<mo stretchy="false">+</mo>';
 		$this->assertContains( $expected, $real, "Checking the presence of '+' in the MathML output" );
 		$this->getOutput()->addWikiMsgArray( 'math-test-end', [ $modeName ] );
 	}
 
-	private function runMathMLTest( $modeName ) {
+	private function runMathMLTest( string $modeName ) {
 		$this->getOutput()->addWikiMsgArray( 'math-test-start', [ $modeName ] );
 		$this->testSpecialCaseText();
 		$this->testMathMLIntegration();
@@ -91,7 +100,7 @@ class SpecialMathStatus extends SpecialPage {
 		$this->getOutput()->addWikiMsgArray( 'math-test-end', [ $modeName ] );
 	}
 
-	private function runMathLaTeXMLTest( $modeName ) {
+	private function runMathLaTeXMLTest( string $modeName ) {
 		$this->getOutput()->addWikiMsgArray( 'math-test-start', [ $modeName ] );
 		$this->testLaTeXMLIntegration();
 		$this->testLaTeXMLLinebreak();
@@ -189,32 +198,37 @@ class SpecialMathStatus extends SpecialPage {
 			  $renderer->getLastError() );
 	}
 
-	private function assertTrue( $expression, $message = '' ) {
+	private function assertTrue( bool $expression, string $message = '' ): bool {
 		if ( $expression ) {
-			$this->getOutput()->addWikiMsgArray( 'math-test-success', $message );
+			$this->getOutput()->addWikiMsgArray( 'math-test-success', [ $message ] );
 			return true;
 		} else {
-			$this->getOutput()->addWikiMsgArray( 'math-test-fail', $message );
+			$this->getOutput()->addWikiMsgArray( 'math-test-fail', [ $message ] );
 			return false;
 		}
 	}
 
-	private function assertContains( $expected, $real, $message = '' ) {
+	private function assertContains( string $expected, string $real, string $message = '' ) {
 		if ( !$this->assertTrue( strpos( $real, $expected ) !== false, $message ) ) {
 			$this->printDiff( $expected, $real, 'math-test-contains-diff' );
 		}
 	}
 
-	private function assertEquals( $expected, $real, $message = '' ) {
+	/**
+	 * @param array|string $expected
+	 * @param array|string $real
+	 * @param string $message
+	 */
+	private function assertEquals( $expected, $real, string $message = '' ): bool {
 		if ( is_array( $expected ) ) {
 			foreach ( $expected as $alternative ) {
 				if ( $alternative === $real ) {
-					$this->getOutput()->addWikiMsgArray( 'math-test-success', $message );
+					$this->getOutput()->addWikiMsgArray( 'math-test-success', [ $message ] );
 					return true;
 				}
 			}
 			// non of the alternatives matched
-			$this->getOutput()->addWikiMsgArray( 'math-test-fail', $message );
+			$this->getOutput()->addWikiMsgArray( 'math-test-fail', [ $message ] );
 			return false;
 		}
 		if ( !$this->assertTrue( $expected === $real, $message ) ) {
@@ -224,7 +238,7 @@ class SpecialMathStatus extends SpecialPage {
 		return true;
 	}
 
-	private function printDiff( $expected, $real, $message = '' ) {
+	private function printDiff( string $expected, string $real, string $message = '' ) {
 		if ( ExtensionRegistry::getInstance()->isLoaded( "SyntaxHighlight" ) ) {
 			$expected = "<syntaxhighlight lang=\"xml\">$expected</syntaxhighlight>";
 			$real = "<syntaxhighlight lang=\"xml\">$real</syntaxhighlight>";
@@ -235,7 +249,7 @@ class SpecialMathStatus extends SpecialPage {
 		}
 	}
 
-	protected function getGroupName() {
+	protected function getGroupName(): string {
 		return 'other';
 	}
 }

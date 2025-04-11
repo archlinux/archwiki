@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ewithu"
+		]
+	},
+	"visualeditor-ca-editsource-section": "код сё̄питэн",
+	"visualeditor-dialog-media-content-filename": "файл нам",
+	"visualeditor-dialog-media-content-section": "Ёл ловинтап",
+	"visualeditor-dialog-media-search-tab-search": "Кисхатыл",
+	"visualeditor-dialog-meta-categories-category": "Категория",
+	"visualeditor-dialog-meta-categories-data-label": "Категорият",
+	"visualeditor-dialog-meta-categories-input-newcategorylabel": "Йильпи категория",
+	"visualeditor-dialog-meta-categories-section": "Категорият",
+	"visualeditor-dialog-meta-languages-code-label": "Ла̄тыӈ ко̄д",
+	"visualeditor-dialog-meta-languages-label": "Ла̄тӈыт",
+	"visualeditor-dialog-meta-languages-name-label": "Ла̄тыӈ",
+	"visualeditor-dialog-meta-languages-section": "Ла̄тӈыт",
+	"visualeditor-dialog-meta-settings-index-disable": "А̄ти",
+	"visualeditor-dialog-meta-settings-index-force": "А-а",
+	"visualeditor-dialog-meta-settings-newsectioneditlink-disable": "А̄ти",
+	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "А-а",
+	"visualeditor-expandable-less": "Мосьнув",
+	"visualeditor-expandable-more": "Са̄внув",
+	"visualeditor-languages-tool": "Ла̄тӈыт",
+	"visualeditor-media-title-image": "Хури",
+	"visualeditor-media-title-video": "Видео"
+}

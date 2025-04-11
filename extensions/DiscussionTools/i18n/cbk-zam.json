@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aristorkle"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Responde",
+	"discussiontoolsdebug-pagetitle": "Titulo del pagina",
+	"discussiontools-emptystate-button": "Escribi un mensaje",
+	"discussiontools-replylink": "{{GENDER:|responde}}",
+	"discussiontools-replywidget-cancel": "Cancela",
+	"discussiontools-replywidget-mode-source": "Codigo",
+	"discussiontools-replywidget-reply": "{{GENDER:|Responde}}",
+	"discussiontools-topicsubscription-button-subscribe": "subscribi",
+	"discussiontools-topicsubscription-button-subscribe-label": "Subscribi",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Ya subscribi {{GENDER:|tu}}!"
+}

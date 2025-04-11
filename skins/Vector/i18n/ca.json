@@ -30,7 +30,7 @@
 	"vector-languages": "Llengües",
 	"vector-language-button-aria-label": "Vés a un article en una altra llengua. Disponible en {{PLURAL:$1|$1 llengua|$1 llengües}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 llengua|$1 llengües}}",
-	"vector-no-language-button-label": "Afegeix llengües",
+	"vector-no-language-button-label": "Afegiu llengües",
 	"vector-no-language-button-aria-label": "Aquest article només existeix en aquesta llengua. Afegiu l'article per a altres llengües",
 	"vector-language-variant-switcher-label": "Canvia la variant de llengua",
 	"vector-action-addsection": "Afegeix un tema",

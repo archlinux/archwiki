@@ -1,8 +1,51 @@
 {
 	"@metadata": {
 		"authors": [
-			"Pare Mo"
+			"Pare Mo",
+			"Exec8"
 		]
 	},
-	"cite_error": "Kasaypanan sa pagsitar: $1"
+	"cite-desc": "Nagadugang <code><ref></code> kag <code><references></code> nga mga tag para sa mga sitasyon",
+	"cite_error": "Kasaypanan sa pagsitar: $1",
+	"cite_error_ref_invalid_dir": "Indi balido <code>dir=\" $1 \"</code> , dapat <code>ltr</code> ukon <code>rtl</code>",
+	"cite_error_ref_conflicting_dir": "Ang isa sa mga <code><ref></code> nga mga tag nga may ngalan nga \" $1 \" may yara sang nagasumpakilay nga dir attribute.",
+	"cite_error_ref_numeric_key": "Indi balido nga <code><ref></code> tag; ang ngalan indi mahimo nga isa ka simple nga integer. Maggamit sang nagalaragway nga titulo",
+	"cite_error_ref_no_key": "Ang nagabukas nga <code><ref></code> nga tag may diperensya ukon may malain nga ngalan",
+	"cite_error_ref_too_many_keys": "Indi balido nga parameter sa <code><ref></code> tag",
+	"cite_error_ref_no_input": "Indi balido nga <code><ref></code> tag; ang mga ref nga wala sing ngalan dapat may kaundan",
+	"cite_error_references_duplicate_key": "Indi balido nga <code><ref></code> tag; ang ngalan \" $1 \" ginhatagan kahulugan sing madamo nga beses nga may lainlain nga kaundan",
+	"cite_error_references_invalid_parameters": "Indi balido nga parameter sa <code><references></code> tag",
+	"cite_error_references_no_text": "Indi balido nga <code><ref></code> tag; wala sing teksto nga ginhatag para sa mga ref nga ginhingalanan <code>$1</code>",
+	"cite_error_included_ref": "Ang pagsira sang <code></ref></code> wala para sa <code><ref></code> nga tag",
+	"cite_error_included_references": "Nadula ang nagasira nga tag para sa <code><references></code>",
+	"cite_error_group_refs_without_references": "<code><ref></code> nga mga tag nagaluntad para sa isa ka grupo nga ginahingalanan \" $1 \", apang wala sing katumbas nga <code><references group=\" $1 \"/></code> nga tag ang nakita",
+	"cite_error_references_group_mismatch": "<code><ref></code> tag sa <code><references></code> may nagasumpakilay nga kinaiya sang grupo nga \" $1 \".",
+	"cite_error_references_missing_key": "<code><ref></code> tag nga may ngalan nga \" $1 \" nga ginhatagan kahulugan sa <code><references></code> wala ginagamit sa nauna nga teksto.",
+	"cite_error_references_no_key": "<code><ref></code> tag nga ginhatagan kahulugan sa <code><references></code> wala sing ngalan nga kinaiya.",
+	"cite_error_empty_references_define": "<code><ref></code> tag nga may ngalan nga \" $1 \" nga ginhatagan kahulugan sa <code><references></code> nga grupo \" $2 \" wala sing kaundan.",
+	"cite-tracking-category-cite-error": "Mga pahina nga may mga sayop sa reperensya",
+	"cite-tracking-category-cite-error-desc": "Ang mga pahina sa sini nga kategorya may mga sayop sa paggamit sang mga tag sang reperensya.",
+	"cite-reference-previews-reference": "Reperensya",
+	"cite-reference-previews-book": "Reperensya sa libro",
+	"cite-reference-previews-journal": "Reperensya sa journal",
+	"cite-reference-previews-news": "Balita nga reperensya",
+	"cite-reference-previews-note": "Nasambit",
+	"cite-reference-previews-web": "Reperensya sa web",
+	"cite-reference-previews-collapsible-placeholder": "Ini nga reperensya nagalakip sang isa ka numero nga indi nagakaigo sa preview.",
+	"cite_references_link_accessibility_label": "Lumpat pataas",
+	"cite_references_link_many_accessibility_label": "Maglukso sa:",
+	"cite_references_link_accessibility_back_label": "Maglukso pabalik sa ibabaw",
+	"cite_section_preview_references": "Preview sang mga reperensya",
+	"cite_warning": "Paandam: $1",
+	"cite_warning_sectionpreview_no_text": "<code><ref></code> ang tag nga may ngalan nga <code>$1</code> indi ma-preview bangod ini ginhatagan kahulugan sa guwa sang karon nga seksyon ukon wala gid ginhatagan kahulugan.",
+	"cite-wikieditor-tool-reference": "Reperensya",
+	"cite-wikieditor-help-page-references": "Mga reperensya",
+	"cite-wikieditor-help-content-reference-description": "Reperensya",
+	"cite-wikieditor-help-content-named-reference-description": "Ginhingadlan nga reperensya",
+	"cite-wikieditor-help-content-rereference-description": "Dugang nga paggamit sang amo man nga reperensya",
+	"cite-wikieditor-help-content-showreferences-description": "Ipakita ang mga reperensya",
+	"cite-wikieditor-help-content-reference-example-text1": "Teksto sang pahina. $1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Link text], dugang nga teksto.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Link text]",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Dugang nga mga detalye"
 }

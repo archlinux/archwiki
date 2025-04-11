@@ -17,7 +17,8 @@
 			"Siebrand",
 			"The Evil IP address",
 			"Umherirrender",
-			"Xiplus"
+			"Xiplus",
+			"Matma Rex"
 		]
 	},
 	"cite-desc": "{{desc|name=Cite|url=https://www.mediawiki.org/wiki/Extension:Cite}}",
@@ -53,7 +54,7 @@
 	"cite-reference-previews-note": "Heading for a popup previewing a footnote.\n{{Identical|Note}}",
 	"cite-reference-previews-web": "Heading for a popup previewing a citation from a website.\n{{Identical|Website}}",
 	"cite-reference-previews-collapsible-placeholder": "Placeholder text for collapsible tables, templates, or other large elements inside of a reference.",
-	"cite_reference_backlink_symbol": "{{optional}}\nSymbol used for the reference section, used to link back to where the reference is used.",
+	"cite_reference_backlink_symbol": "{{optional}}\nHow the up-arrow symbol that links back to where a reference is used looks like. Used for the previews in the WikiEditor help panel. Please make sure this is the same symbol as in {{msg-mw|cite_references_link_one}} and {{msg-mw|cite_references_link_many}}.",
 	"cite_reference_link": "{{notranslate}}\n\nParameters:\n* $1 - ref key\n* $2 - references key\n* $3 - link label",
 	"cite_references_link_one": "{{notranslate}}\n\nParameters:\n* $1 - references key\n* $2 - ref key\n* $3 - reference text\n* $4 - optional CSS class for direction",
 	"cite_references_link_many": "{{notranslate}}\n\nParameters:\n* $1 - references key\n* $2 - list of links\n* $3 - reference text\n* $4 - optional CSS class for direction",

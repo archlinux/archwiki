@@ -3,18 +3,23 @@
 		"authors": [
 			"David Wadie Fisher-Freberg",
 			"Iwan Novirion",
-			"Naval Scene"
+			"Naval Scene",
+			"Zhilal Darma"
 		]
 	},
 	"mobile-frontend-editor-edit": "Suntiang",
 	"mobile-frontend-history": "Caliak riwayaik suntiangan laman ko",
 	"mobile-frontend-home-button": "Palanta",
 	"mobile-frontend-language-article-heading": "Bahaso",
+	"mobile-frontend-main-menu-login": "Masuak log",
 	"mobile-frontend-main-menu-logout": "Kalua log",
+	"mobile-frontend-main-menu-nearby": "Sakitaran",
+	"mobile-frontend-main-menu-settings": "Pangaturan",
 	"mobile-frontend-pageaction-edit-tooltip": "Suntiang bagian awal laman ko",
 	"mobile-frontend-placeholder": "Cari {{SITENAME}}",
 	"mobile-frontend-random-button": "Sumbarang",
 	"mobile-frontend-user-button-tooltip": "Caliak pambaritauan ambo",
 	"mobile-frontend-user-newmessages": "Sanak ado pasan baru di laman rundiang Sanak",
-	"mobile-frontend-user-page-contributions": "Jariah"
+	"mobile-frontend-user-page-contributions": "Jariah",
+	"minerva-page-actions-overflow": "Lainnyo"
 }

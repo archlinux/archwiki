@@ -5,7 +5,8 @@
 			"Fitoschido",
 			"Jfblanc",
 			"McDutchie",
-			"Unuaiga"
+			"Unuaiga",
+			"Lhanars"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libre",
@@ -14,6 +15,7 @@
 	"visualeditor-cite-tool-name-web": "Site web",
 	"cite-ve-dialog-reference-options-group-label": "Utilizar aquel grop",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referéncias generalas",
+	"cite-ve-dialog-reference-options-responsive-label": "Utiliza la disposicion de colomnas adaptativas",
 	"cite-ve-dialog-reference-options-section": "Opcions",
 	"cite-ve-dialog-reference-title": "Referéncia",
 	"cite-ve-dialog-reference-useexisting-tool": "Reütilizar",
@@ -22,8 +24,8 @@
 	"cite-ve-dialogbutton-reference-tooltip": "De basa",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Lista de referéncias",
 	"cite-ve-reference-input-placeholder": "A qué volètz apondre una referéncia?",
-	"cite-ve-referenceslist-isempty": "I a pas de referéncia dins lo grop \"$1\" d'aquesta pagina per apondre a aquela lista.",
-	"cite-ve-referenceslist-isempty-default": "I a pas de referéncias dins aquela pagina a apondre a aquela lista.",
+	"cite-ve-referenceslist-isempty": "Non i a pas de referéncia dins lo grop \"$1\" d'aquesta pagina per apondre a aquela lista.",
+	"cite-ve-referenceslist-isempty-default": "Non i a pas de referéncias dins aquela pagina a apondre a aquela lista.",
 	"cite-ve-referenceslist-missingref": "Aquela referéncia es definida dins un modèl o un autre blòt generat, e pòt per ara èsser modificada sonque en edicion de font.",
 	"cite-ve-referenceslist-missingref-in-list": "Aquela referéncia es definida dins un modèl o un autre blòt generat, per ara e pòt èsser previsualizada sonque en edicion de font.",
 	"cite-ve-toolbar-group-label": "Citar"

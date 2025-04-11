@@ -18,17 +18,17 @@ class MathWikibaseInfo {
 	private $id;
 
 	/**
-	 * @var string the label of the item
+	 * @var string|null the label of the item
 	 */
 	private $label;
 
 	/**
-	 * @var string description of the item
+	 * @var string|null description of the item
 	 */
 	private $description;
 
 	/**
-	 * @var StringValue a symbol representing the item
+	 * @var StringValue|null a symbol representing the item
 	 */
 	private $symbol;
 
@@ -43,7 +43,7 @@ class MathWikibaseInfo {
 	private $mathFormatter;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
 	private $url;
 
@@ -106,21 +106,21 @@ class MathWikibaseInfo {
 	}
 
 	/**
-	 * @return string label
+	 * @return string|null label
 	 */
 	public function getLabel() {
 		return $this->label;
 	}
 
 	/**
-	 * @return string description
+	 * @return string|null description
 	 */
 	public function getDescription() {
 		return $this->description;
 	}
 
 	/**
-	 * @return StringValue symbol
+	 * @return StringValue|null symbol
 	 */
 	public function getSymbol() {
 		return $this->symbol;
@@ -145,7 +145,7 @@ class MathWikibaseInfo {
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getUrl() {
 		return $this->url;

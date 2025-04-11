@@ -101,7 +101,7 @@
 	"notification-body-oathauth-enable": "Ako {{GENDER:$2|vy}} ne jeste to sdělali, može byti, že někto vlomil se v {{GENDER:$2|vaše koristničsko konto}}.",
 	"oathauth-notifications-enable-help": "Pomoč",
 	"oathauth-notifications-enable-primary": "Prověrite svoje nastavjenja dvufaktornoj avtentifikacije",
-	"notification-body-oathauth-oathauth-recoverycodesleft": "{{PLURAL:$3|Ostal vam $3 kod|Ostali vam $3 kody|Ostalo vam $3 kodov}} za avtentifikaciju. {{GENDER:$2|Vy}} mogli byste izključiti i ponovno vključiti dvufaktornu avtentifikaciju za generovanje $4 {{PLURAL:$4|novogo koda|novyh kodov}} za upotrěbu v budučnosti.",
+	"notification-body-oathauth-recoverycodesleft": "{{PLURAL:$3|Ostal vam $3 kod|Ostali vam $3 kody|Ostalo vam $3 kodov}} za avtentifikaciju. {{GENDER:$2|Vy}} mogli byste izključiti i ponovno vključiti dvufaktornu avtentifikaciju za generovanje $4 {{PLURAL:$4|novogo koda|novyh kodov}} za upotrěbu v budučnosti.",
 	"oathauth-notifications-recoverycodesleft-help": "Pomoč",
 	"oathauth-notifications-recoverycodesleft-primary": "Prověrite svoje nastavjenja dvufaktornoj avtentifikacije",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} imaje vključenu dvufaktornu avtentifikaciju.",

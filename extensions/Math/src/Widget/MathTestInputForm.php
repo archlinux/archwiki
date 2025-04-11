@@ -62,7 +62,7 @@ class MathTestInputForm extends OOUIHTMLForm {
 		}
 	}
 
-	public function processInput( $formData ) {
+	public function processInput( array $formData ) {
 		$out = $this->specialPage->getOutput();
 		foreach ( $this->modes as $mode => $modeName ) {
 			$out->wrapWikiMsg( '=== $1 ===', $modeName );

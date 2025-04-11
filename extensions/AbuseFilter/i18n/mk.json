@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Bjankuloski06",
 			"Brest",
 			"Matma Rex",
@@ -598,7 +597,7 @@
 	"abusefilter-invalid-request-noid": "Неважечко барање! Мора да пристапите до личните дневнички податоци преку образецот на соодветната страница и да наведете причина.",
 	"blockedexternaldomains": "Блокирани надворешни домени",
 	"abusefilter-blocked-domains-title": "Блокирани надворешни домени",
-	"abusefilter-blocked-domains-intro": "Надворешните врски што одговараат на овој список ќе бидат блокирани кога некој ќе ги стави во страница. Овие домени се складираат во [[MediaWiki:BlockedExternalDomains.json]].",
+	"abusefilter-blocked-domains-intro": "Надворешните врски што одговараат на овој список ќе бидат блокирани кога некој ќе ги стави во страница. Овие домени се складираат во [[MediaWiki:BlockedExternalDomains.json]]. Обидите за ставање на блокирани врски се заведуваат во [[Special:Log/abusefilterblockeddomainhit]].",
 	"abusefilter-blocked-domains-add-heading": "Додај нова блокиран домен",
 	"abusefilter-blocked-domains-add-explanation": "Тука можете да додадете домен во списокот на блокирани домени.",
 	"abusefilter-blocked-domains-domain": "Домен за блокирање, на пр. wikipedia.org",
@@ -619,12 +618,12 @@
 	"abusefilter-blocked-domains-domain-added-comment": "Додај блокиран надворешен домен $1 со белешките: $2",
 	"abusefilter-blocked-domains-domain-removed-comment": "Отстрани блокиран надворешен домен $1 со белешките: $2",
 	"log-description-abusefilterprivatedetails": "Во овој дневник се прикажани навратите кога даден корисник пристапил до лични податоци во дневникот на филтерот за злоупотреби.",
-	"log-description-abusefilterblockeddomainhit": "Овие настани следат погодоци на блокирани домени.",
+	"log-description-abusefilterblockeddomainhit": "Овие настани следат погодоци на [[Special:BlockedExternalDomains|блокирани домени]].",
 	"abusefilter-noreason": "Предупредување: За да гледате лични податоци од овој дневник, ќе мора да наведете причина.",
 	"abusefilter-log-ip-not-available": "Недостапна",
 	"abusefilter-tag-reserved": "Ознаката <code>abusefilter-condition-limit</code> е резервирана за внатрешна употреба во Филтерот на злоупотреби.",
 	"tag-abusefilter-condition-limit": "достигната условната граница",
-	"tag-abusefilter-condition-limit-description": "Уредувањата или другите настани не можеа да се проверат од сите активни [[Special:AbuseFilter|филтри на злоупотреби]] ([https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Conditions услови]).",
+	"tag-abusefilter-condition-limit-description": "Уредувањата или другите настани не можеа да се проверат од сите активни [[Special:AbuseFilter|филтри на злоупотреби]] ([https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Conditions помош]).",
 	"notification-header-throttle-filter": "Филтер за злоупотреби $2 кој неодамна {{GENDER:$1|го}} изменивте беше стеснет.",
 	"notification-header-throttle-filter-actions": "Филтерот на злоупотреби $2 кој неодамна го {{GENDER:$1|изменивте}} има висок степен на погодоци, и затоа автоматски {{PLURAL:$4|е оневозможено следново дејство|се оневозможени следниве дејства}}: $3.",
 	"notification-header-throttle-filter-no-actions": "Филтерот на злоупотреби $2 кој неодамна го {{GENDER:$1|изменивте}} има висок степен на погодоци, но нема автоматски оневозможени дејства.",
@@ -643,7 +642,7 @@
 	"abusefilter-protected-vars-log-header": "Ова е дневник на:\n# Гледање на заштитени променливи во дневнички поединости\n# Менување на пристап за гледање на заштитени променливи",
 	"logentry-abusefilter-protected-vars-change-access-enable": "$1 го овозможи {{GENDER:$2|неговиот|нејзиниот|неговиот}} пристап за гледање на заштитени променливи",
 	"logentry-abusefilter-protected-vars-change-access-disable": "$1 го онеовозможи {{GENDER:$2|неговиот|нејзиниот|неговиот}} пристап за гледање на заштитени променливи",
-	"logentry-abusefilter-protected-vars-view-protected-var-value": "$1 ги погледа заштитените променливи поврзани со $3",
+	"logentry-abusefilter-protected-vars-view-protected-var-value": "$1 {{GENDER:$2|ги погледа}} заштитените променливи поврзани со $3",
 	"log-action-filter-abusefilter-protected-vars": "Вид на дејство:",
 	"log-action-filter-abusefilter-protected-vars-change-access": "Смени пристап",
 	"log-action-filter-abusefilter-protected-vars-view-protected-variable-value": "Гледање на заштитени променливи"

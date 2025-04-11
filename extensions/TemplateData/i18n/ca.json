@@ -8,7 +8,8 @@
 			"Mguix",
 			"Qllach",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Paucabot"
 		]
 	},
 	"templatedata-desc": "Implementa emmagatzematge de dades pels paràmetres de plantilles (utilitzant JSON)",
@@ -50,7 +51,7 @@
 	"templatedata-helplink": "Informació sobre les dades de la plantilla",
 	"templatedata-invalid-duplicate-value": "La propietat «$1» («$3») és un duplicat de «$2».",
 	"templatedata-invalid-empty-array": "La propietat «$1» ha de tenir com a mínim un valor en la seva matriu.",
-	"templatedata-modal-button-add-language": "Afegeix una llengua",
+	"templatedata-modal-button-add-language": "Afegiu una llengua",
 	"templatedata-modal-button-addparam": "Afegeix un paràmetre",
 	"templatedata-modal-button-apply": "Aplica",
 	"templatedata-modal-button-back": "Enrere",

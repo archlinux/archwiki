@@ -21,6 +21,7 @@ class MathLaTeXML extends MathMathML {
 	/** @var string settings for LaTeXML daemon */
 	private $LaTeXMLSettings = '';
 
+	/** @inheritDoc */
 	public function __construct( $tex = '', $params = [], $cache = null ) {
 		global $wgMathLaTeXMLUrl;
 		parent::__construct( $tex, $params, $cache );

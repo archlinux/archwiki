@@ -21,7 +21,7 @@ class MMLParsingUtil {
 		return $mo->encapsulateRaw( "&#x2061;" );
 	}
 
-	public static function getFontArgs( $name, $variant, $passedArgs ) {
+	public static function getFontArgs( string $name, ?string $variant, ?array $passedArgs ): array {
 		$args = [];
 		switch ( $name ) {
 			case "cal":
@@ -109,7 +109,7 @@ class MMLParsingUtil {
 		return $mmlMrow->encapsulateRaw( $mpadded->encapsulateRaw( $mtext->encapsulateRaw( "&#x29F8;" ) ) );
 	}
 
-	public static function mapToDoubleStruckUnicode( $inputString ) {
+	public static function mapToDoubleStruckUnicode( string $inputString ): string {
 		$map = [
 			'0' => '&#x1D7D8;', '1' => '&#x1D7D9;', '2' => '&#x1D7DA;', '3' => '&#x1D7DB;', '4' => '&#x1D7DC;',
 			'5' => '&#x1D7DD;', '6' => '&#x1D7DE;', '7' => '&#x1D7DF;', '8' => '&#x1D7E0;', '9' => '&#x1D7E1;',
@@ -129,7 +129,7 @@ class MMLParsingUtil {
 		return self::matchAlphanumeric( $inputString, $map );
 	}
 
-	public static function mapToCaligraphicUnicode( $inputString ) {
+	public static function mapToCaligraphicUnicode( string $inputString ): string {
 		$map = [
 			'0' => '&#x1D7CE;', '1' => '&#x1D7CF;', '2' => '&#x1D7D0;', '3' => '&#x1D7D1;', '4' => '&#x1D7D2;',
 			'5' => '&#x1D7D3;', '6' => '&#x1D7D4;', '7' => '&#x1D7D5;', '8' => '&#x1D7D6;', '9' => '&#x1D7D7;',
@@ -149,7 +149,7 @@ class MMLParsingUtil {
 		return self::matchAlphanumeric( $inputString, $map );
 	}
 
-	public static function mapToFrakturUnicode( $inputString ): string {
+	public static function mapToFrakturUnicode( string $inputString ): string {
 		$res = '';
 		$specialCases = [ 'C' => '&#x0212D;',
 			'H' => '&#x0210C;',
@@ -175,18 +175,38 @@ class MMLParsingUtil {
 		return $res;
 	}
 
-	private static function addToChr( $chr, $base ): string {
+	public static function mapToBoldUnicode( string $inputString ): string {
+		$res = '';
+		foreach ( mb_str_split( $inputString ) as $chr ) {
+			// see https://www.w3.org/TR/mathml-core/#bold-mappings
+			if ( $chr >= 'A' && $chr <= 'Z' ) {
+				$code = self::addToChr( $chr, '1D3BF' );
+				$res .= '&#x' . $code . ';';
+			} elseif ( $chr >= 'a' && $chr <= 'z' ) {
+				$code = self::addToChr( $chr, '1D3B9' );
+				$res .= '&#x' . $code . ';';
+			} elseif ( $chr >= '0' && $chr <= '9' ) {
+				$code = self::addToChr( $chr, '1D79E' );
+				$res .= '&#x' . $code . ';';
+			} else {
+				$res .= $chr;
+			}
+		}
+		return $res;
+	}
+
+	private static function addToChr( string $chr, string $base ): string {
 		return strtoupper( dechex( mb_ord( $chr ) + hexdec( $base ) ) );
 	}
 
-	public static function matchAlphanumeric( $inputString, $map ) {
+	public static function matchAlphanumeric( string $inputString, array $map ): string {
 		// Replace each character in the input string with its caligraphic Unicode equivalent
 		return preg_replace_callback( '/[A-Za-z0-9]/u', static function ( $matches ) use ( $map ) {
 			return $map[$matches[0]] ?? $matches[0];
 		}, $inputString );
 	}
 
-	public static function getIntentContent( ?string $input ) {
+	public static function getIntentContent( ?string $input ): ?string {
 		if ( !$input ) {
 			return null;
 		}
@@ -198,7 +218,7 @@ class MMLParsingUtil {
 		return null;
 	}
 
-	public static function getIntentParams( ?string $intentContent ) {
+	public static function getIntentParams( ?string $intentContent ): ?array {
 		if ( !$intentContent ) {
 			return null;
 		}
@@ -211,7 +231,7 @@ class MMLParsingUtil {
 		return null;
 	}
 
-	public static function getIntentArgs( ?string $input ) {
+	public static function getIntentArgs( ?string $input ): ?string {
 		if ( !$input ) {
 			return null;
 		}
@@ -249,7 +269,9 @@ class MMLParsingUtil {
 	 * @param bool $useFoundNodes use found nodes
 	 * @return string MML with added attributes
 	 */
-	public static function addAttributesToMML( $renderedMML, $intentContentAtr, $elementTag, $useFoundNodes = false ) {
+	public static function addAttributesToMML(
+		string $renderedMML, array $intentContentAtr, string $elementTag, bool $useFoundNodes = false
+	): string {
 		$xml = simplexml_load_string( $renderedMML );
 		if ( !$xml ) {
 			return "";
@@ -280,7 +302,9 @@ class MMLParsingUtil {
 		return str_replace( "\n", "", $hackyXML );
 	}
 
-	public static function forgeIntentToSpecificElement( string $renderedMML, $intentContentAtr, string $elementTag ) {
+	public static function forgeIntentToSpecificElement(
+		string $renderedMML, array $intentContentAtr, string $elementTag
+	): string {
 		if ( !$intentContentAtr || !$renderedMML || !$elementTag ) {
 			return $renderedMML;
 		}

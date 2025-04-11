@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Fierodelveneto",
-			"Woytecr"
+			"Woytecr",
+			"Candalua"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Resposta",
@@ -34,7 +35,7 @@
 	"discussiontools-preference-sourcemodetoolbar": "Abìłita instruminti sperimentałi inte łe modałità de resposta ràpida e inte łe zonte ràpide de argomentasion.",
 	"discussiontools-preference-topicsubscription": "Abìłita l'iscrision a l'argomentasion",
 	"discussiontools-preference-topicsubscription-help": "Sto cuà el te consentarà de risévar na notìfega so cominti o sìngułi argomentasion. Par savèrghene de pì védarse: [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary resunto de łe funsionałità].",
-	"discussiontools-replylink": "{{GENDER:|respondi}}",
+	"discussiontools-replylink": "{{GENDER:|respondighe}}",
 	"discussiontools-replywidget-abandon": "Seguro de vołer sbandonar el comento sensa inviar?",
 	"discussiontools-replywidget-abandon-discard": "Sbandona comento",
 	"discussiontools-replywidget-abandon-keep": "Sèvita scrìvar",
@@ -50,11 +51,11 @@
 	"discussiontools-replywidget-mention-tool-title": "Nòmena na utensa",
 	"discussiontools-replywidget-mode-source": "Sorzente",
 	"discussiontools-replywidget-mode-visual": "Vizuałe",
-	"discussiontools-replywidget-newtopic": "Zonta na argomentasion",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Zonta}} na argomentasion",
 	"discussiontools-replywidget-placeholder-newtopic": "Descrision",
 	"discussiontools-replywidget-placeholder-reply": "Respóndaghe a {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Vista prèvia del comento",
-	"discussiontools-replywidget-reply": "Respóndighe",
+	"discussiontools-replywidget-reply": "{{GENDER:|Respondighe}}",
 	"discussiontools-replywidget-signature-body": "$1 el se ga convertio inte ła to firma. Par desfar sta conversion, scrivi $2. Tègnate in ła mente che no serve pì firmar i to cominti co ła Toła de Discusion. Ła to firma ła se zènara autonomamente.",
 	"discussiontools-replywidget-signature-title": "Rinvegnesta firma",
 	"discussiontools-replywidget-summary": "Ojeto",

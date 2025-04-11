@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jagwar"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Valiny",
+	"discussiontools-replylink": "{{GENDER:|hamaly}}",
+	"discussiontools-replywidget-advanced": "Mandroso kokoa",
+	"discussiontools-replywidget-cancel": "Avela",
+	"discussiontools-replywidget-mode-source": "Loharano",
+	"discussiontools-replywidget-mode-visual": "Araky ny hita",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Hamaly}} an'i {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Topi-maso",
+	"discussiontools-replywidget-reply": "{{GENDER:|Hamaly}}",
+	"discussiontools-replywidget-summary": "Ambangovangony",
+	"discussiontools-replywidget-watchthis": "Hanampy ity pejy ity amin'ny [[Special:Watchlist|lisitry ny pejy arahanao]]",
+	"discussiontools-topicheader-authorcount": "Mpandray anjara {{PLURAL:$1|tokana|miisa $1}}",
+	"discussiontools-topicheader-commentcount": "Fanehoan-kevitra {{PLURAL:$1|iray|$1}}",
+	"discussiontools-topicheader-latestcomment": "Fanehoan-kevitra farany: $1",
+	"discussiontools-topicsubscription-button-subscribe": "hanaraka",
+	"discussiontools-topicsubscription-button-subscribe-label": "Hanaraka",
+	"discussiontools-topicsubscription-button-unsubscribe": "tsy hanaraka intsony",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Tsy hanaraka intsony",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Hahazo fampandrenesana momba ny fanehoan-kevitra vaovao amin'ity lohahevitra ity {{GENDER:|ianao}}.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Manaraka ity lohahevitra ity izao {{GENDER:|ianao}}!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Tsy hahazo fampandrenesana momba ny fanehoan-kevitra vaovao amin'ity lohahevitra ity intsony {{GENDER:|ianao}}.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Tsy manaraka ity lohahevitra ity intsony {{GENDER:|ianao}}."
+}

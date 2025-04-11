@@ -5,7 +5,8 @@
 			"Boulaur",
 			"Cedric31",
 			"Jfblanc",
-			"McDutchie"
+			"McDutchie",
+			"Lhanars"
 		]
 	},
 	"wikieditor": "Interfàcia avançada de modificacion de wikitèxte",
@@ -31,7 +32,7 @@
 	"wikieditor-toolbar-tool-link-insert": "Inserir lo ligam",
 	"wikieditor-toolbar-tool-link-cancel": "Abandonar",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "La pagina existís",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "La pagina existís pas",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Aquesta pagina non existís pas sus {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Títol invalid",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ligam extèrne",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "L'URL qu'avètz especificada sembla ligar cap a una autra pagina del wiki. Volètz utilizar un ligam intèrne a la plaça ?",
@@ -81,6 +82,7 @@
 	"wikieditor-toolbar-tool-table": "Tablèu",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Tèxte de la cellula",
 	"wikieditor-toolbar-tool-table-example-header": "Tèxte de l'entèsta",
+	"wikieditor-toolbar-tool-table-example-caption": "Tèxte de la legenda",
 	"wikieditor-toolbar-tool-table-title": "Inserir un tablèu",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Linhas",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Colomnas",
@@ -139,6 +141,7 @@
 	"wikieditor-toolbar-help-content-olist-description": "Lista numerotada",
 	"wikieditor-toolbar-help-content-file-description": "Fichièr inserit",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Exemple.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-caption": "Tèxte de la legenda",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Signatura amb data",
 	"wikieditor-toolbar-help-content-signature-description": "Signatura",
 	"wikieditor-toolbar-help-content-indent-description": "Identacion"

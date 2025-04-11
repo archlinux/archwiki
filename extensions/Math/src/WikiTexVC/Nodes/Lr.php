@@ -46,15 +46,18 @@ class Lr extends TexNode {
 		return $this->arg;
 	}
 
+	/** @inheritDoc */
 	public function inCurlies() {
 		return '{' . $this->render() . '}';
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return '\\left' . $this->left . $this->arg->render() . '\\right' . $this->right;
 	}
 
-	public function renderMML( $arguments = [], $state = [] ) {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ) {
 		// TBD  set attributes for right AND left correctly
 		$rightAttrs = [];
 		if ( $this->right == "." ) {
@@ -84,7 +87,7 @@ class Lr extends TexNode {
 		);
 	}
 
-	private function mmlTranslate( $input ) {
+	private function mmlTranslate( string $input ): string {
 		switch ( trim( $input ) ) {
 			case "\\vert":
 				return "|";
@@ -93,6 +96,7 @@ class Lr extends TexNode {
 		}
 	}
 
+	/** @inheritDoc */
 	public function containsFunc( $target, $args = null ) {
 		if ( $args == null ) {
 			$args = [ '\\left', '\\right', $this->arg ];
@@ -100,6 +104,7 @@ class Lr extends TexNode {
 		return parent::containsFunc( $target, $args );
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		if ( $args == null ) {
 			$args = [ $this->arg ];

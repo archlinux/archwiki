@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"01miki10"
+			"01miki10",
+			"Samoasambia"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Vastaus CAPTCHAan",
-	"captcha-apihelp-param-captchaid": "CAPTCHA ID edellisestä pyynnöstä"
+	"captcha-apihelp-param-captchaid": "CAPTCHA-tunnus edellisestä pyynnöstä"
 }

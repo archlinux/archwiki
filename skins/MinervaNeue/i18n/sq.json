@@ -6,7 +6,8 @@
 			"FatosMorina",
 			"Klein Muçi",
 			"Liridon",
-			"Olsi"
+			"Olsi",
+			"INNERLMNT"
 		]
 	},
 	"mobile-frontend-editor-edit": "Redakto",
@@ -21,5 +22,6 @@
 	"mobile-frontend-main-menu-watchlist": "Listë vëzhgimesh",
 	"mobile-frontend-pageaction-edit-tooltip": "Përpunoni seksionin e kryes në këtë faqe",
 	"mobile-frontend-placeholder": "Kërko te {{SITENAME}}",
-	"mobile-frontend-random-button": "Kuturu"
+	"mobile-frontend-random-button": "Kuturu",
+	"minerva-page-actions-overflow": "Më shumë"
 }

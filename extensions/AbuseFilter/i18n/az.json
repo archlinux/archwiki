@@ -15,7 +15,8 @@
 			"Wertuose",
 			"Şeyx Şamil",
 			"Əkrəm Cəfər",
-			"Gadir"
+			"Gadir",
+			"Əkrəm"
 		]
 	},
 	"abusefilter-desc": "Redaktələrə avtomatik evristikanı tətbiq edir",
@@ -90,7 +91,7 @@
 	"abusefilter-log-entry": "$1: $2 $4 səhifəsində \"$3\" fəaliyyətini {{GENDER:$8|yerinə yetirməklə}} dəyişiklik süzgəcini işə salıb.\nGörülmüş tədbirlər: $5; \nSüzgəcin təsviri: $6",
 	"abusefilter-log-entry-withdiff": "$1: $2 $4 səhifəsində \"$3\" fəaliyyətini {{GENDER:$8|yerinə yetirməklə}} dəyişiklik süzgəcini işə salıb.\nGörülmüş tədbirlər: $5; \nSüzgəcin təsviri: $6 ($7)",
 	"abusefilter-log-detailedentry-meta": "$1: $2 $5 səhifəsində \"$4\" fəaliyyətini yerinə yetirməklə $3 {{GENDER:$9|işə salıb}}.\nGörülmüş tədbirlər: $6; \nSüzgəcin təsviri: $7 ($8)",
-	"abusefilter-log-detailedentry-global": "$1 qlobal süzgəci",
+	"abusefilter-log-detailedentry-global": "$1 nömrəli qlobal süzgəci",
 	"abusefilter-log-detailedentry-local": "$1 nömrəli süzgəci",
 	"abusefilter-log-detailslink": "ətraflı",
 	"abusefilter-log-diff": "fərq",
@@ -634,7 +635,7 @@
 	"tag-abusefilter-condition-limit-description": "Bütün aktiv [[Special:AbuseFilter|dəyişiklik süzgəcləri]] tərəfindən yoxlana bilməyən redaktələr və ya digər fəaliyyətlər ([https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Conditions kömək]).",
 	"notification-header-throttle-filter": "Az öncə redaktə {{GENDER:$1|etdiyiniz}} $2 süzgəci söndürülüb.",
 	"notification-header-throttle-filter-actions": "Az öncə redaktə {{GENDER:$1|etdiyiniz}} $2 süzgəcinin yüksək uyğunlaşma nisbəti olub və aşağıdakı {{PLURAL:$4|fəaliyyət|fəaliyyətlər}} söndürülüb: $3",
-	"notification-header-throttle-filter-no-actions": "Az öncə redaktə {{GENDER:$1|etdiyiniz}} $2 süzgəcinin yüksək uyğunlaşma nisbəti olub ancaq heç bir fəaliyyət söndürülməyib.",
+	"notification-header-throttle-filter-no-actions": "Az öncə redaktə {{GENDER:$1|etdiyiniz}} $2 süzgəcinin yüksək uyğunlaşma nisbəti olub ancaq heç bir fəaliyyət avtomatik olaraq söndürülmədi.",
 	"notification-subject-throttle-filter": "Az öncə {{SITENAME}} saytında redaktə {{GENDER:$1|etdiyiniz}} süzgəc deaktiv edilib",
 	"notification-link-text-show-filter": "Süzgəci göstər",
 	"right-abusefilter-modify-blocked-external-domains": "Bloklanmış xarici domenlərin siyahısını yaratmaq və ya redaktə etmək",

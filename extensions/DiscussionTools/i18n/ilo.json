@@ -1,16 +1,37 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lam-ang"
+			"Lam-ang",
+			"Exec8"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Sungbat",
 	"discussiontools-emptystate-button": "Mangirugi iti maysa a pagtungtungan",
 	"discussiontools-emptystate-desc": "Dagiti [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|tungtungan a panid]] ket ti pagtutungtungan ti tattao no kasano ti agaramid iti mabalin a kasayaatan a linaon iti {{SITENAME}}. Mabalinmo nga usaren daytoy a panid a mangrugi iti maysa a tungtungan kadagiti dadduma no kasano ti mangpasayaat iti [[:{{SUBJECTPAGENAME}}]].",
 	"discussiontools-emptystate-title": "Mangirugi iti maysa a pagtungtungan a maipanggep iti {{SUBJECTPAGENAME}}",
+	"discussiontools-newtopic-missing-title": "Pangngaasi nga ited ti paulo para iti {{GENDER:|ti}} a topiko ti panagsasarita.",
+	"discussiontools-newtopic-placeholder-title": "Suheto",
 	"discussiontools-replylink": "{{GENDER:|sungbat}}",
+	"discussiontools-replywidget-advanced": "Naiyuna",
 	"discussiontools-replywidget-cancel": "Ukasen",
 	"discussiontools-replywidget-mode-source": "Taudan",
 	"discussiontools-replywidget-mode-visual": "Bisual",
-	"discussiontools-replywidget-placeholder-reply": "Sumungbat ken ni {{BIDI:$1}}",
-	"discussiontools-replywidget-reply": "Sungbat"
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Add}} a topiko",
+	"discussiontools-replywidget-placeholder-newtopic": "Deskripsion",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Sungbatan}} iti {{BIDI: $1 }}",
+	"discussiontools-replywidget-preview": "Ipadas",
+	"discussiontools-replywidget-reply": "{{GENDER:|Sungbatan}}",
+	"discussiontools-replywidget-summary": "Pakabuklan",
+	"discussiontools-replywidget-watchthis": "Inayon daytoy a panid iti [[Special:Watchlist|watchlist]] mo.",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1| tao|tattao}} iti diskusion",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1| comment|komento}}",
+	"discussiontools-topicheader-latestcomment": "Kaudian a komento: $1",
+	"discussiontools-topicsubscription-button-subscribe": "agsubscribe",
+	"discussiontools-topicsubscription-button-subscribe-label": "Agsubscribe",
+	"discussiontools-topicsubscription-button-unsubscribe": "i-unsubscribe ti panagsuskribir",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Ikkaten ti panagsuskribir",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Ti {{GENDER:|Sika}} ket makaawat kadagiti pakaammo maipapan kadagiti baro a komento iti daytoy a topiko.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Sika}} ti nagsuskribir!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Saanton nga umawat ti {{GENDER:|You}} kadagiti pakaammo maipapan kadagiti baro a komento iti daytoy a topiko.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Sika}} ket nag-unsubscribe."
 }

@@ -4,7 +4,8 @@
 			"Khun Kt",
 			"Ninjastrikers",
 			"လွိုင်ႏအာထင်ႏထိုထဲင်း",
-			"咽頭べさ"
+			"咽頭べさ",
+			"Matma Rex"
 		]
 	},
 	"collabpad-import-subtitle": "$1 ဒင်ႏသော့ꩻခါꩻဒျာႏ",
@@ -131,8 +132,8 @@
 	"visualeditor-mwsignature-tool": "နာꩻစူမုဲင်",
 	"visualeditor-preference-tabs": "ခြပ်ချော်ꩻမုꩻ အနယ်ꩻ:",
 	"visualeditor-preference-tabs-multi-tab": "အွောန်ႏနယ် မွဉ်းဖျင်စနိစ်နီဗာႏလွုမ်း",
-	"visualeditor-preference-tabs-prefer-ve": "မိဉ်ႏထွာနွောင်ꩻနဝ်ꩻ ဖေႏခါꩻသေႏသေႏသွော့ မွဉ်းဖျင်ထာꩻထီႏစနိစ်သြ",
-	"visualeditor-preference-tabs-prefer-wt": "မိဉ်ႏထွာနွောင်ꩻနဝ်ꩻ ဖေႏခါꩻသေႏသေႏသွော့ မွဉ်းဖျင်ထာꩻထီႏစနိစ်သြ",
+	"visualeditor-preference-tabs-prefer-ve": "Always give me the visual editor if possible",
+	"visualeditor-preference-tabs-prefer-wt": "Always give me the source editor",
 	"visualeditor-preference-tabs-remember-last": "တောင်ꩻယူႏလꩻ အဆုဲင်ꩻသွတ်ꩻ မွဉ်းဖျင်စနိစ်",
 	"visualeditor-rebase-client-export": "ဒင်ႏပသာ",
 	"visualeditor-rebase-client-import": "ဒင်ႏသွင်ꩻသော့ꩻ",

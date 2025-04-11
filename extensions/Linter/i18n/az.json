@@ -9,9 +9,9 @@
 			"Zpizza"
 		]
 	},
-	"linterrors": "Lint xətaları",
-	"linter-category-bogus-image-options": "Saxta fayl seçimləri",
-	"linter-category-bogus-image-options-desc": "Bu səhifələrdə saxta seçimləri olan fayllar var.",
+	"linterrors": "Sintaksis xətaları",
+	"linter-category-bogus-image-options": "Səhv fayl parametrləri",
+	"linter-category-bogus-image-options-desc": "Bu səhifələrdə səhv parametrləri olan fayllar var.",
 	"linter-category-large-tables": "Mobildə görünüşü çətin olan Böyük Cədvəllər",
 	"linter-category-large-tables-desc": "Bu səhifələrdə mobil cihazlarda görünüşü çətin olan cədvəllər var",
 	"linter-category-deletable-table-tag": "Silinməli olan cədvəl teqi",
@@ -57,8 +57,8 @@
 	"linter-category-unclosed-quotes-in-heading-desc": "Bu səhifələrdə başlıqda bağlanmamış dırnaq işarəsi var, bu da mündəricat da görünür.",
 	"linter-category-wikilink-in-extlink": "Keçid daxilində keçid",
 	"linter-category-wikilink-in-extlink-desc": "Bu səhifələrdə xarici keçidlərin daxilində vikilinklər var",
-	"linter-desc": "Xarici xidmətdən gələn lint xətalarını izləyin və onları istifadəçilərə göstərin",
-	"linter-lints-prefix-search-page-desc": "Səhifə başlığı prefiksi və ya tam başlığı ilə lint xətaları olan səhifələri axtarın",
+	"linter-desc": "Xarici xidmətdən gələn sintaksis xətalarını izləyin və onları istifadəçilərə göstərin",
+	"linter-lints-prefix-search-page-desc": "Səhifə başlığı prefiksi və ya tam başlığı ilə sintaksis xətaları olan səhifələri axtarın",
 	"linter-invalid-title": "Ad fəzası və/və ya səhifə adı tapılmadı və ya səhv formalaşdırıldı",
 	"linter-form-exact-match": "Müəyyən bir səhifə başlığını axtar",
 	"linter-form-prefix-match": "Başlıq prefiksinə uyğun gələn bütün səhifələri axtar",
@@ -79,7 +79,7 @@
 	"linter-page-edit": "redaktə",
 	"linter-page-history": "tarixçə",
 	"linter-page-viewsource": "mənbəyə bax",
-	"linter-pager-bogus-image-options-details": "Saxta fayl seçimi",
+	"linter-pager-bogus-image-options-details": "Səhv fayl parametri",
 	"linter-pager-category-header": "Kateqoriya",
 	"linter-pager-deletable-table-tag-details": "Silinməli olan cədvəl teqi",
 	"linter-pager-details-header": "Əlavə məlumat",
@@ -109,9 +109,9 @@
 	"linter-pager-unclosed-quotes-in-heading-details": "Mündəricatdan daşan qapalı olmayan dırnaq işarəsi",
 	"linter-pager-wikilink-in-extlink-details": "Keçid daxilində keçid",
 	"linter-prefix-search-subpage": "Başlıq prefiksi və ya tam başlığa uyğun gələn lint xətaları olan səhifələr: $1",
-	"linterrors-subpage": "Lint xətaları: $1",
+	"linterrors-subpage": "Sintaksis xətaları: $1",
 	"linterrors-summary": "<strong>Qeyd:</strong> Kateqoriyalar üçün hesablamalar dəqiq hesablamalar deyil, təxminlərə əsaslanır.",
 	"multi-part-template-block": "Xətaya tək bir şablon səbəb olmur",
-	"pageinfo-linter": "Lint xətaları",
-	"pageinfo-linter-moreinfo": "Lint xətaları haqqında ətraflı məlumata baxın."
+	"pageinfo-linter": "Sintaksis xətaları",
+	"pageinfo-linter-moreinfo": "Sintaksis xətaları haqqında ətraflı məlumata baxın."
 }

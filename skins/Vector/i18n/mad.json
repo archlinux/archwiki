@@ -7,7 +7,7 @@
 			"Munajad.MH"
 		]
 	},
-	"vector-languages": "Bhâsa",
+	"vector-languages": "Bhâsa-bhâsa",
 	"vector-language-button-label": "{{PLURAL:$1|$1 bhâsa|$1 bhâsa-bhâsa}}",
 	"vector-no-language-button-label": "Tambâ bhâsa",
 	"vector-action-addsection": "Longkang anyar",
@@ -31,14 +31,15 @@
 	"skin-theme-day-label": "Terrang",
 	"skin-theme-night-label": "Petteng",
 	"skin-theme-os-label": "Otomatis",
-	"skin-theme-exclusion-notice": "Kaca rèya ngangghuy moḍe terrang malolo.",
+	"skin-theme-exclusion-notice": "Kaca rèya ngangghuy settèlan terrang malolo.",
 	"vector-searchsuggest-containing": "Sarè kaca sè aèsse <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Èssè",
 	"vector-toc-beginning": "Mamolan",
+	"vector-anon-user-menu-pages": "Kaca sè meccè' sè la kalowar log",
 	"vector-main-menu-label": "Menu otama",
 	"vector-feature-custom-font-size-exclusion-notice": "Kaca rèya samanè ngangghuy okoran fon kènè'",
 	"vector-page-tools-label": "Pakakas",
 	"vector-page-tools-general-label": "Lomra",
-	"vector-page-tools-actions-label": "Tèngka",
+	"vector-page-tools-actions-label": "Partèngka",
 	"vector-unpin-element-label": "pangètek"
 }

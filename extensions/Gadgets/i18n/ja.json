@@ -19,7 +19,9 @@
 			"Sujiniku",
 			"Whym",
 			"Yusuke1109",
-			"青子守歌"
+			"青子守歌",
+			"Waki285",
+			"Yaakiyu.jp"
 		]
 	},
 	"gadgets-desc": "利用者が [[Special:Gadgets|CSS や JavaScript のカスタム ガジェット]]を[[Special:Preferences#mw-prefsection-gadgets|{{int:preferences}}]]で選択できるようにする",
@@ -42,7 +44,7 @@
 	"gadgets-viewdescription": "説明を表示する",
 	"gadgets-uses": "使用するファイル",
 	"gadgets-required-rights": "以下の{{PLURAL:$2|権限}}が必要です: $1",
-	"gadgets-required-skins": "{{PLURAL:$2|$1外装で利用できます|以下の外装で利用できます: $1}}。",
+	"gadgets-required-skins": "{{PLURAL:$2|$1スキンで利用できます|以下のスキンで利用できます: $1}}。",
 	"gadgets-required-actions": "{{PLURAL:$2|ページアクション「$1」に使用が制限されています。|以下のページアクションに使用が制限されています: $1}}",
 	"gadgets-required-namespaces": "{{PLURAL:$2|名前空間「$1」に使用が制限されています。|以下の名前空間に使用が制限されています: $1}}",
 	"gadgets-required-categories": "{{PLURAL:$2|カテゴリ「$1」に使用が制限されています。|以下のカテゴリに使用が制限されています: $1}}",
@@ -72,7 +74,7 @@
 	"gadgets-validate-invalidactions": "以下の{{PLURAL:$2|アクション}}は認識されていません: $1",
 	"gadgets-validate-invalidcontentmodels": "以下の{{PLURAL:$2|コンテンツモデル}}は存在しません: $1",
 	"gadgets-validate-invalidnamespaces": "以下の{{PLURAL:$2|名前空間番号}}は存在しません: $1",
-	"gadgets-validate-invalidskins": "以下の{{PLURAL:$2|外装}}は存在しません: $1",
+	"gadgets-validate-invalidskins": "以下の{{PLURAL:$2|スキン}}は存在しません: $1",
 	"gadgets-validate-invalidrights": "以下の{{PLURAL:$2|権限}}は存在しません: $1",
 	"gadgets-validate-invalidtitle": "「$1」は不正なページタイトルです",
 	"gadgets-validate-unknownpages": "指定されている.js、.css、.json拡張子を含まないページは使用されません。",

@@ -16,14 +16,15 @@
 			"Servien",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan"
+			"Southparkfan",
+			"Jeroen N"
 		]
 	},
 	"multimediaviewer-desc": "Miniatuurafbeeldingen schermvullend weergeven.",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About MediaViewer]</span> inschakelen",
 	"multimediaviewer-file-page": "Naar de bestandspagina gaan",
 	"multimediaviewer-repository-local": "Meer informatie",
-	"multimediaviewer-datetime-created": "Aangemaakt: $1",
+	"multimediaviewer-datetime-created": "Gemaakt: $1",
 	"multimediaviewer-datetime-uploaded": "Geüpload: $1",
 	"multimediaviewer-credit-fallback": "Auteursgegevens bekijken",
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|nog een auteur|nog $1 auteurs}}",

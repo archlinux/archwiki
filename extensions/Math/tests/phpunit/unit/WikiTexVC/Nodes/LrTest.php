@@ -65,7 +65,8 @@ class LrTest extends MediaWikiUnitTestCase {
 
 	public function testRenderADeriv() {
 		$n = new Lr( '(', ')', new TexArray( new Literal( 'A' ) ) );
-		$mml = $n->renderMML( [], [ 'deriv' => 1 ] );
+		$state = [ 'deriv' => 1 ];
+		$mml = $n->renderMML( [], $state );
 		$this->assertStringNotContainsString( '&#x2032;</mo>', $mml );
 	}
 

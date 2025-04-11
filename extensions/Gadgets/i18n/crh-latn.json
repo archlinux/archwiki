@@ -4,5 +4,7 @@
 			"Don Alessandro"
 		]
 	},
+	"prefs-gadgets": "Gacetler",
+	"prefs-description-gadgets": "Esabıñız içün ilâve funktsiyalarnı faalleştiriñiz.",
 	"gadgets-required-categories": "{{PLURAL:$2|$1 kategoriyasınen|$1 kategoriyalarınen}} sıñırlıdır."
 }

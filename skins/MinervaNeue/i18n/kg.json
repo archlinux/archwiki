@@ -1,14 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Cgmbo"
+			"Cgmbo",
+			"BOKOBA VEROLY"
 		]
 	},
+	"mobile-frontend-history": "View edit history of this page.",
 	"mobile-frontend-home-button": "Lutiti ya Ntete",
 	"mobile-frontend-language-article-heading": "Ndinga",
 	"mobile-frontend-main-menu-login": "Kota",
 	"mobile-frontend-main-menu-nearby": "Pene-pene",
 	"mobile-frontend-main-menu-settings": "Baparametre",
 	"mobile-frontend-placeholder": "Sosa {{SITENAME}}",
-	"mobile-frontend-random-button": "Kaka mpidina"
+	"mobile-frontend-random-button": "Kaka mpidina",
+	"minerva-page-actions-overflow": "More"
 }

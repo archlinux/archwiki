@@ -3,7 +3,8 @@
 		"authors": [
 			"Makuba",
 			"Renan",
-			"Stavanger7"
+			"Stavanger7",
+			"Lisyeng"
 		]
 	},
 	"vector-skin-desc": "Version modern del MonoBook che aspecte frisc e plu amelioramentes de usabilitá",
@@ -14,7 +15,9 @@
 	"vector.css": "/* CSS colocat ci va afectar usatores de pelle Vector */",
 	"vector.js": "/* Alquel JavaScript ci va esser cargat por usatores que usa li pelle Vector */",
 	"vector-action-toggle-sidebar": "Changear barre lateral",
+	"vector-languages": "Lingues",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lingue|$1 lingues}}",
+	"vector-no-language-button-label": "Adjunter lingues",
 	"vector-action-addsection": "Addir tema",
 	"vector-action-delete": "Deleter",
 	"vector-action-move": "Mover",
@@ -30,5 +33,14 @@
 	"vector-jumptosearch": "Saltar por sercha",
 	"vector-jumptocontent": "Saltar por contenete",
 	"vector-more-actions": "Plu",
-	"vector-search-loader": "Cargar suggestiones de sercha"
+	"vector-feature-custom-font-size-name": "Textu",
+	"skin-theme-name": "Color",
+	"skin-theme-os-label": "Automatic",
+	"vector-search-loader": "Cargar suggestiones de sercha",
+	"vector-searchsuggest-containing": "Serchar págines contenent <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Contenetes",
+	"vector-main-menu-label": "Chef menú",
+	"vector-page-tools-label": "Utensiles",
+	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Actiones"
 }

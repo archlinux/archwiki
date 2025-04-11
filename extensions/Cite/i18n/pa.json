@@ -7,9 +7,21 @@
 		]
 	},
 	"cite_error": "ਹਵਾਲੇ ਵਿੱਚ ਗ਼ਲਤੀ:$1",
+	"cite-tracking-category-cite-error": "ਹਵਾਲੇ ਦੀਆਂ ਗਲਤੀਆਂ ਵਾਲੇ ਸਫ਼ੇ",
+	"cite-reference-previews-reference": "ਹਵਾਲੇ",
+	"cite-reference-previews-book": "ਕਿਤਾਬ ਦਾ ਹਵਾਲਾ",
+	"cite-reference-previews-journal": "ਪੱਤਰ ਦਾ ਹਵਾਲਾ",
+	"cite-reference-previews-news": "ਖ਼ਬਰਾਂ ਦਾ ਹਵਾਲਾ",
+	"cite-reference-previews-note": "ਧਿਆਨ ਦਿਓ",
+	"cite-reference-previews-web": "ਵੈੱਬ ਹਵਾਲਾ",
+	"cite_section_preview_references": "ਹਵਾਲਿਆਂ ਦੀ ਝਲਕ",
+	"cite_warning": "ਖ਼ਬਰਦਾਰੀ ਦਾ ਹਵਾਲਾ ਦਿਓ: $1",
 	"cite-wikieditor-tool-reference": "ਹਵਾਲਾ",
 	"cite-wikieditor-help-page-references": "ਹਵਾਲੇ",
 	"cite-wikieditor-help-content-reference-description": "ਹਵਾਲਾ",
 	"cite-wikieditor-help-content-rereference-description": "ਉਸੇ ਹਵਾਲੇ ਦੀ ਵਧੀਕ ਵਰਤੋਂ",
-	"cite-wikieditor-help-content-showreferences-description": "ਹਵਾਲੇ ਵਿਖਾਓ"
+	"cite-wikieditor-help-content-extended-reference-description": "ਵਾਧੂ ਵੇਰਵਿਆਂ ਦੇ ਨਾਲ, ਉਸੇ ਹਵਾਲੇ ਦੀ ਵਾਧੂ ਵਰਤੋਂ",
+	"cite-wikieditor-help-content-showreferences-description": "ਹਵਾਲੇ ਵਿਖਾਓ",
+	"cite-wikieditor-help-content-reference-example-text1": "ਸਫ਼ਾ ਲਿਖਤ। $1",
+	"cite-wikieditor-help-content-reference-example-extra-details": "ਵਾਧੂ ਵੇਰਵੇ"
 }

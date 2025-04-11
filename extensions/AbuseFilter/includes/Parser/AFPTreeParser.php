@@ -10,7 +10,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Parser;
 
-use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use Psr\Log\LoggerInterface;
@@ -606,7 +605,13 @@ class AFPTreeParser {
 					$thisArg = $this->doLevelSemicolon();
 					if ( $thisArg !== null ) {
 						$args[] = $thisArg;
-					} elseif ( !$this->functionIsVariadic( $func ) ) {
+					} elseif (
+						array_key_exists( $func, FilterEvaluator::FUNC_ARG_COUNT ) &&
+						FilterEvaluator::FUNC_ARG_COUNT[$func][1] !== INF
+					) {
+						// If this function exists and is not variadic, fail now. If it does not exist, we'll fail when
+						// checking the call validity in SyntaxChecker (T387649). Trailing commas are allowed when
+						// calling variadic functions.
 						throw new UserVisibleException(
 							'unexpectedtoken',
 							$this->mPos,
@@ -723,18 +728,5 @@ class AFPTreeParser {
 		if ( $this->keywordsManager->isVarDeprecated( $varname ) ) {
 			$this->logger->debug( "Deprecated variable $varname used in filter {$this->mFilter}." );
 		}
-	}
-
-	/**
-	 * @param string $fname
-	 * @return bool
-	 */
-	private function functionIsVariadic( string $fname ): bool {
-		if ( !array_key_exists( $fname, FilterEvaluator::FUNC_ARG_COUNT ) ) {
-			// @codeCoverageIgnoreStart
-			throw new InvalidArgumentException( "Function $fname is not valid" );
-			// @codeCoverageIgnoreEnd
-		}
-		return FilterEvaluator::FUNC_ARG_COUNT[$fname][1] === INF;
 	}
 }

@@ -71,16 +71,16 @@ class ApiDiscussionToolsEdit extends ApiBase {
 		$title = Title::newFromText( $params['page'] );
 		$result = null;
 
+		if ( !$title ) {
+			$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params['page'] ) ] );
+		}
+
 		$autoSubscribe = $params['autosubscribe'] === 'yes' ||
 			( $this->config->get( 'DiscussionToolsAutoTopicSubEditor' ) === 'discussiontoolsapi' &&
 			HookUtils::shouldAddAutoSubscription( $this->getUser(), $title ) &&
 			$params['autosubscribe'] === 'default' );
 		$subscribableHeadingName = null;
 		$subscribableSectionTitle = '';
-
-		if ( !$title ) {
-			$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params['page'] ) ] );
-		}
 
 		$this->getErrorFormatter()->setContextTitle( $title );
 

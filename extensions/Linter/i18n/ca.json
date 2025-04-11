@@ -5,7 +5,8 @@
 			"Lluis Cat",
 			"SMP",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Aleator"
 		]
 	},
 	"linterrors": "Errors de lint",
@@ -56,5 +57,6 @@
 	"linter-pager-title-header": "Títol de la pàgina",
 	"linter-pager-unclosed-quotes-in-heading-details": "Cometes sense tancar que desborden la taula de continguts",
 	"linterrors-subpage": "Errors de lint: $1",
+	"linterrors-summary": "<strong>Nota:</strong> Els recomptes de les categories no són acurats, però estan basats en estimacions.",
 	"pageinfo-linter": "Errors de lint"
 }

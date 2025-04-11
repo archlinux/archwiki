@@ -48,7 +48,7 @@ class MMLComparator {
 		"mspace" => [ "width" ]
 	];
 
-	public static function functionObtainTreeInBrackets( $mml ) {
+	public static function functionObtainTreeInBrackets( string $mml ): string {
 		$xml = simplexml_load_string( $mml );
 		$nodes = self::xmlToNode( $xml );
 		return self::convertToBracketFormat( $nodes );
@@ -95,7 +95,7 @@ class MMLComparator {
 		return $compRes;
 	}
 
-	public static function xmlToNode( $xml ) {
+	public static function xmlToNode( \SimpleXMLElement $xml ): XMLNode {
 		$node = new XMLNode( $xml->getName() );
 
 		foreach ( $xml->children() as $child ) {
@@ -105,7 +105,7 @@ class MMLComparator {
 		return $node;
 	}
 
-	private function treeEditDistance( $root1, $root2 ) {
+	private function treeEditDistance( XMLNode $root1, XMLNode $root2 ): array {
 		$n = count( $root1->children );
 		$m = count( $root2->children );
 
@@ -146,7 +146,7 @@ class MMLComparator {
 		return [ "TED" => $ted, "normalizedTED" => $normalizedTED ];
 	}
 
-	public static function convertToBracketFormat( $root ) {
+	public static function convertToBracketFormat( \SimpleXMLElement $root ): string {
 		if ( empty( $root->children ) ) {
 			return "{" . $root->value . "}";
 		}
@@ -161,7 +161,7 @@ class MMLComparator {
 		return $result;
 	}
 
-	private function compareMathMLKeyArrays( &$compRes, $mbase, $mcomp ) {
+	private function compareMathMLKeyArrays( array &$compRes, array $mbase, array $mcomp ): int {
 		$intersections = 0;
 		foreach ( $mbase as $key => $baseElement ) {
 			$compElement = $mcomp[$key] ?? null;
@@ -181,7 +181,7 @@ class MMLComparator {
 		return $intersections;
 	}
 
-	private function calculateFscore( $intersection, $sumRelevant, $sumRetrieved ) {
+	private function calculateFscore( int $intersection, int $sumRelevant, int $sumRetrieved ): float {
 		if ( $sumRelevant == 0 && $sumRetrieved == 0 ) {
 			return 1.0;
 		}
@@ -204,7 +204,7 @@ class MMLComparator {
 		return 2 * ( ( $prec * $recall ) / ( $prec + $recall ) );
 	}
 
-	private function countArraySize( $arr ): array {
+	private function countArraySize( array $arr ): array {
 		$overallSize = 0;
 		$overallAttrs = 0;
 		foreach ( $arr as $element ) {
@@ -217,7 +217,7 @@ class MMLComparator {
 		return [ $overallSize, $overallAttrs ];
 	}
 
-	private function compareArrays( $base, $comp ): array {
+	private function compareArrays( array $base, array $comp ): array {
 		$sameCtr = 0;
 		$compRet = [
 			"sameCtr" => 0,
@@ -244,7 +244,7 @@ class MMLComparator {
 		return $this->addRemainingElements( $compRet, 'more', $comp );
 	}
 
-	private function addRemainingElements( $compRet, $key, $data ): array {
+	private function addRemainingElements( array $compRet, string $key, array $data ): array {
 		foreach ( $data as $el ) {
 			if ( $el !== null && $el != -1 ) {
 				$compRet[$key][] = $el;
@@ -253,7 +253,7 @@ class MMLComparator {
 		return $compRet;
 	}
 
-	private function compareTwoBaseElements( $compEl, $baseEl ): bool {
+	private function compareTwoBaseElements( array $compEl, array $baseEl ): bool {
 		// Most basic comparison, this works for elements without attributes
 		if ( $compEl === $baseEl ) {
 			return true;
@@ -266,14 +266,14 @@ class MMLComparator {
 		return false;
 	}
 
-	private function createComparisonArray( $xml ): array {
+	private function createComparisonArray( \SimpleXMLElement $xml ): array {
 		$allKeys = [];
 		$this->prepareMMLElements( $xml, $allKeys );
 		$finalMMLKeys = $this->filterKeys( $allKeys );
 		return $finalMMLKeys;
 	}
 
-	private function filterKeys( $allMMLElements ): array {
+	private function filterKeys( array $allMMLElements ): array {
 		$finalKeys = [];
 		foreach ( $allMMLElements as $key => $element ) {
 			if ( in_array( $key, self::IGNOREDELEMENTKEYS, true ) ) {
@@ -285,7 +285,7 @@ class MMLComparator {
 		return $finalKeys;
 	}
 
-	private function prepareMMLElements( $xml, &$finalArray, $alwaysSetVal = false ) {
+	private function prepareMMLElements( \SimpleXMLElement $xml, array &$finalArray, bool $alwaysSetVal = false ) {
 		foreach ( $xml as $key => $element ) {
 			if ( $element instanceof \SimpleXMLElement ) {
 				$el = $this->filterAttributes( $key, $element->attributes() );
@@ -302,7 +302,7 @@ class MMLComparator {
 		}
 	}
 
-	private function filterAttributes( $elementKey, $attributes ): array {
+	private function filterAttributes( string $elementKey, \SimpleXMLElement $attributes ): array {
 		$ignoredAttrs = self::IGNOREDATTRIBUTES[$elementKey] ?? [];
 		$finalAttributes = [];
 		foreach ( $attributes as $akey => $aval ) {
@@ -315,7 +315,7 @@ class MMLComparator {
 		return $finalAttributes;
 	}
 
-	private function checkExplicitKeys( $key, $element, array $finalKeys ): array {
+	private function checkExplicitKeys( string $key, array $element, array $finalKeys ): array {
 		$check = self::CHECKEXPLICITLY[$key] ?? null;
 		if ( $check ) {
 			foreach ( $element as $added ) {

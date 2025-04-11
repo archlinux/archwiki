@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aristorkle"
+		]
+	},
+	"cite_error": "Error de cita: $1",
+	"cite-reference-previews-reference": "Referencia",
+	"cite-reference-previews-book": "Libro de referencia",
+	"cite-reference-previews-journal": "Periodico de referencia",
+	"cite-reference-previews-news": "Noticias de referencia",
+	"cite-reference-previews-note": "Nota",
+	"cite-reference-previews-web": "Web de referencia",
+	"cite-wikieditor-tool-reference": "Referencia",
+	"cite-wikieditor-help-page-references": "Maga referencias",
+	"cite-wikieditor-help-content-reference-description": "Referencia"
+}

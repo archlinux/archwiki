@@ -3,7 +3,8 @@
 		"authors": [
 			"Har-wradim",
 			"Pacha Tchernof",
-			"פוילישער"
+			"פוילישער",
+			"וויקיפּעדלער"
 		]
 	},
 	"minerva-last-modified-date": "לעצט רעדאגירט אום $1, ביי $2",
@@ -35,6 +36,7 @@
 	"mobile-frontend-user-newmessages": "איר האט נײַע מעלדונגען אויף אײַער שמועס־בלאט",
 	"mobile-frontend-user-page-contributions": "בײַשטײַערונגען",
 	"mobile-frontend-user-page-talk": "שמועס",
+	"minerva-page-actions-overflow": "נאך",
 	"minerva-page-actions-language-switcher": "שפּראַכן",
 	"minerva-page-actions-history": "היסטאָריע",
 	"skin-minerva-mobile-option-MinervaShowCategories": "קאַטעגאָריעס",

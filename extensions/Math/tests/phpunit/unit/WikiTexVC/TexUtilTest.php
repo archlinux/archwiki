@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC;
 
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseParsing;
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 use MediaWikiUnitTestCase;
 
@@ -45,24 +46,22 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 		}
 	}
 
-	/**
-	 * Testing a checksum for the parsed object against a checksum of the json file contents.
-	 * @return void
-	 */
-	public function testChecksum() {
+	public function testBaseElements() {
 		$tu = TexUtil::getInstance();
 
-		$out = [];
 		$sets = [
 			'ams_required',
 			'big_literals',
 			'box_functions',
 			'callback',
 			'cancel_required',
+			'color',
 			'color_function',
 			'color_required',
 			'declh_function',
 			'definecolor_function',
+			'delimiter',
+			'deprecated_nullary_macro_aliase',
 			'euro_required',
 			'fun_ar1',
 			'fun_ar1nb',
@@ -73,10 +72,14 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 			'fun_infix',
 			'fun_mhchem',
 			'hline_function',
+			'identifier',
 			'ignore_identifier',
 			'intent_required',
+			'is_letter_mod',
+			'is_literal',
 			'latex_function_names',
 			'left_function',
+			'mathchar',
 			'mathoid_required',
 			'mediawiki_function_names',
 			'mhchem_bond',
@@ -85,48 +88,44 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 			'mhchem_macro_2pc',
 			'mhchem_macro_2pu',
 			'mhchem_required',
-			'mhchemtexified_required',
 			'mhchem_single_macro',
+			'mhchemtexified_required',
 			'nullary_macro',
+			'nullary_macro_aliase',
 			'nullary_macro_in_mbox',
 			'operator',
+			'operator_rendering',
 			'other_delimiters1',
 			'other_delimiters2',
+			'other_fun_ar1',
 			'over_operator',
 			'right_function',
-			'teubner_required',
 			'stix_required',
+			'teubner_required',
 			'unicode_char',
 		];
+		$baseElements = $tu->getBaseElements();
+		ksort( $baseElements );
+		$this->assertEquals( $sets, array_keys( $baseElements ) );
+	}
+
+	/**
+	 * Testing a checksum for the parsed object against a checksum of the json file contents.
+	 * @return void
+	 */
+	public function testChecksum() {
+		$tu = TexUtil::getInstance();
+
+		$out = [];
+		$baseElements = $tu->getBaseElements();
 
 		// Reading data from TexUtil.
-		foreach ( $sets as $set ) {
-			$baseElements = $tu->getBaseElements();
-			foreach ( $baseElements[$set] as $key => $value ) {
+		foreach ( $baseElements as $group => $set ) {
+			foreach ( $set as $key => $value ) {
 				if ( !array_key_exists( $key, $out ) ) {
 					$out[$key] = [];
 				}
-				$out[$key][$set] = $value;
-			}
-		}
-
-		$maps = [
-			'deprecated_nullary_macro_aliase',
-			'nullary_macro_aliase',
-			'other_delimiters2',
-			'other_fun_ar1',
-			'is_literal',
-			'is_letter_mod',
-			"intent_required"
-		];
-
-		foreach ( $maps as $map ) {
-			$baseElements = $tu->getBaseElements();
-			foreach ( $baseElements[$map] as $key => $value ) {
-				if ( !array_key_exists( $key, $out ) ) {
-					$out[$key] = [];
-				}
-				$out[$key][$map] = $value;
+				$out[$key][$group] = $value;
 			}
 		}
 
@@ -141,12 +140,54 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 		// json_encode cannot generate tabs required by WMF convention https://github.com/php/php-src/issues/8864
 		$encP = json_encode( $out, JSON_PRETTY_PRINT );
 		$encP = preg_replace( '/\n\s+/', "\n", $encP ) . "\n";
+		// unescape slashes for comparison as escaping is not allowed in the json file
+		$encP = str_replace( '\/', '/', $encP );
 		$file = preg_replace( '/\n\s+/', "\n", $file );
 		$hashOutput = $this->getHash( $encP );
 		$hashFile = $this->getHash( $file );
 		// uncomment the following lines to spot differences in your IDE
 		// $this->assertEquals( $encP, $file );
 		$this->assertEquals( $hashFile, $hashOutput );
+	}
+
+	public function testMethodNamesExist() {
+		$tu = TexUtil::getInstance();
+		$sets = [
+			'callback',
+		];
+		foreach ( $sets as $set ) {
+			$functions = $tu->getBaseElements()[ $set ];
+			foreach ( $functions as $symbol => $function ) {
+					$methodName = is_array( $function ) ? $function[0] : $function;
+
+					$this->assertTrue( method_exists( BaseParsing::class, $methodName ),
+						'Method ' . $methodName . ' for symbol ' . $symbol . ' does not exist in BaseParsing' );
+			}
+		}
+	}
+
+	public function testDataType() {
+		$types = [
+			'mathchar' => 'string',
+			'color' => 'string',
+		];
+		$tu = TexUtil::getInstance();
+		$baseElements = $tu->getBaseElements();
+		foreach ( $types as $set => $type ) {
+			foreach ( $baseElements[$set] as $key => $value ) {
+				$this->assertEquals( $type, gettype( $tu->$set( $key ) ),
+					"$set should return a $type for $key" );
+			}
+		}
+	}
+
+	public function testGetOperatorByKey() {
+		$this->assertEquals( '&#x221A;', TexUtil::getInstance()->operator_rendering( '\\surd' )[0] );
+		$this->assertEquals( '&#x2212;', TexUtil::getInstance()->operator_rendering( '-' )[0] );
+	}
+
+	public function testGetColorByKey() {
+		$this->assertEquals( '#ED1B23', TexUtil::getInstance()->color( 'Red' ) );
 	}
 
 	private function getHash( $input ) {

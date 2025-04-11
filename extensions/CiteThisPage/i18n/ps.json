@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
 	"citethispage": "د دې مخ اخځ",
-	"citethispage-link": "د دې مخ اخځ",
+	"citethispage-link": "د دې مخ سرچينه",
 	"tooltip-citethispage": "دې مخ ته د اخځ مالومات",
 	"citethispage-change-submit": "اخځ",
 	"citethispage-change-target": "مخ:",

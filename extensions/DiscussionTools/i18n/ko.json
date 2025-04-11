@@ -9,7 +9,8 @@
 			"MemphisA5",
 			"Ykhwong",
 			"렌즈",
-			"밝은소년"
+			"밝은소년",
+			"Tensama0415"
 		]
 	},
 	"discussiontools": "토론 도구",
@@ -57,7 +58,7 @@
 	"discussiontools-limitreport-errorreqid": "토론 도구 오류 요청 ID",
 	"discussiontools-limitreport-timeusage": "DiscussionTools 시간 사용",
 	"discussiontools-limitreport-timeusage-value": "$1{{PLURAL:$1|초}}",
-	"discussiontools-newtopic-missing-title": "토론 주제에 대한 제목을 정해주세요. 만약 \"{{int:discussiontools-replywidget-newtopic}}\" 버튼을 클릭한다면 주제는 제목이 없는 채로 추가됩니다.",
+	"discussiontools-newtopic-missing-title": "토론 주제에 대한 제목을 정해주세요.",
 	"discussiontools-newtopic-placeholder-title": "주제",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "구독",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "이 문서에서 새 주제가 시작될 때 알림을 받기 위해 구독합니다.",

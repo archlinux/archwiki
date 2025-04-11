@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util;
 use DOMDocument;
 use InvalidArgumentException;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmath;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexNode;
 
 /**
  * This Utility class has some methods for running
@@ -12,29 +13,32 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmath;
  * @author Johannes Stegmüller
  */
 class MMLTestUtil {
-	public static function getJSON( $filePath ) {
+	/**
+	 * @return mixed
+	 */
+	public static function getJSON( string $filePath ) {
 		if ( !file_exists( $filePath ) ) {
 			throw new InvalidArgumentException( "No testfile found at specified path: " . $filePath );
 		}
 		return json_decode( file_get_contents( $filePath ) );
 	}
 
-	public static function createJSONstartEnd( $start, $file ) {
+	public static function createJSONstartEnd( bool $start, string $file ) {
 		file_put_contents( $file, $start ? "[\n" : "\n]", FILE_APPEND );
 	}
 
-	public static function appendToJSONFile( $dataArray, $file ) {
+	public static function appendToJSONFile( array $dataArray, string $file ) {
 		$jsonData = json_encode( $dataArray, JSON_PRETTY_PRINT ) . ",";
 		file_put_contents( $file, $jsonData, FILE_APPEND );
 	}
 
-	public static function deleteFile( $file ): void {
+	public static function deleteFile( string $file ): void {
 		if ( file_exists( $file ) ) {
 			unlink( $file );
 		}
 	}
 
-	public static function prettifyXML( $xml, $replaceHeader = true ) {
+	public static function prettifyXML( string $xml, bool $replaceHeader = true ): string {
 		$dom = new DOMDocument();
 		// Initial block (must before load xml string)
 		$dom->preserveWhiteSpace = false;
@@ -49,7 +53,7 @@ class MMLTestUtil {
 		return $out;
 	}
 
-	public static function getMMLwrapped( $input ) {
+	public static function getMMLwrapped( TexNode $input ): string {
 		$math = new MMLmath();
 		$mml = $math->encapsulateRaw( $input->renderMML() );
 		return self::prettifyXML( $mml );

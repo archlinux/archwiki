@@ -7,12 +7,17 @@
 			"Macofe",
 			"Muro de Aguas",
 			"Remember the dot",
-			"Sanbec"
+			"Sanbec",
+			"Dgstranz"
 		]
 	},
 	"syntaxhighlight-desc": "Permite resaltar el código fuente usando la etiqueta <code>&lt;syntaxhighlight&gt;</code>. Esta extensión usa [http://pygments.org/ Pygments - Resaltador de sintaxis en Python]",
 	"syntaxhighlight-error-category": "Páginas con errores de resaltado de sintaxis",
 	"syntaxhighlight-error-category-desc": "Hubo un error al intentar resaltar el código que se incluye en la página.",
+	"syntaxhighlight-enclose-category": "Páginas que utilizan atributos enclose obsoletos",
+	"syntaxhighlight-enclose-category-desc": "El resaltado de sintaxis en la página utiliza una sintaxis obsoleta «enclose».",
+	"syntaxhighlight-source-category": "Páginas que utilizan etiquetas source obsoletas",
+	"syntaxhighlight-source-category-desc": "El resaltado de sintaxis en la página utiliza etiquetas obsoletas «source».",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Código",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Lenguaje",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Ninguno)",
@@ -21,5 +26,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Segmento de código",
 	"syntaxhighlight-error-pygments-invocation-failure": "Error al invocar Pygments",
 	"syntaxhighlight-error-unknown-language": "Lenguaje desconocido \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "El tamaño del código ($1 {{PLURAL:$1|bytes}}) supera el máximo permitido ($2 {{PLURAL:$2|bytes}})"
+	"syntaxhighlight-error-exceeds-size-limit": "El tamaño del código ($1 {{PLURAL:$1|bytes}}) supera el máximo permitido ($2 {{PLURAL:$2|bytes}})",
+	"syntaxhighlight-button-copy": "Copiar",
+	"syntaxhighlight-button-copied": "¡Copiado!"
 }

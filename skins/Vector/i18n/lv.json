@@ -7,7 +7,7 @@
 	},
 	"vector-skin-desc": "Nodrošina 2 Vector apdares:\n* 2011. gada — MonoBook modernā versija ar svaigu izskatu un daudziem lietojamības uzlabojumiem.\n* 2022. gada — Vector, kas pārveidots kā daļa no WMF [[mw:Desktop Improvements]] projekta.",
 	"prefs-vector-enable-vector-1-label": "Izmantot Legacy Vector",
-	"prefs-vector-enable-vector-1-help": "Dažu nākamo gadu laikā mēs pakāpeniski atjaunināsim Vector apdari. Legacy Vector ļaus skatīt veco Vector versiju (kāda tā bija 2019. gada decembrī). Lai uzzinātu vairāk par jauninājumiem, dodies uz mūsu [[mw:Reading/Web/Desktop_Improvements|projekta lapu]].",
+	"prefs-vector-enable-vector-1-help": "Dažu nākamo gadu laikā mēs pakāpeniski atjaunināsim Vector apdari. Legacy Vector ļaus skatīt veco Vector versiju (kāda tā bija 2019. gada decembrī). Lai uzzinātu vairāk par jauninājumiem, dodies uz mūsu [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements projekta lapu].",
 	"vector-opt-out": "Pārslēgties uz veco izskatu",
 	"vector-opt-out-tooltip": "Nomaini savus iestatījumus, lai atgrieztos pie vecā apdares izskata (Legacy Vector)",
 	"vector-action-toggle-sidebar": "Pārslēgt sānjoslu",
@@ -42,10 +42,10 @@
 	"vector-feature-custom-font-size-2-label": "Liels",
 	"skin-theme-name": "Krāsa",
 	"skin-theme-description": "[Eksperimentāla versija, liela problēmu iespējamība] Samazina ierīces ekrāna izstaroto gaismu.",
-	"skin-theme-day-label": "Diena",
-	"skin-theme-night-label": "Nakts",
+	"skin-theme-day-label": "Gaiša",
+	"skin-theme-night-label": "Tumša",
 	"skin-theme-os-label": "Automātiski",
-	"skin-theme-exclusion-notice": "Šī lapa vienmēr ir dienas režīmā.",
+	"skin-theme-exclusion-notice": "Šī lapa vienmēr ir gaišajā režīmā.",
 	"vector-search-loader": "Ielādē meklēšanas ieteikumus",
 	"vector-searchsuggest-containing": "Meklēt lapas, kas satur <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Vikipēdija:Ievads",
@@ -75,5 +75,8 @@
 	"vector-toc-unpinned-popup": "Satura rādītājs ir pārvietots uz šejieni.",
 	"vector-page-tools-unpinned-popup": "Rīku izvēlne ir pārvietota šeit.",
 	"vector-main-menu-unpinned-popup": "Galvenā izvēlne ir pārvietota uz šejieni.",
-	"vector-appearance-unpinned-popup": "Izskata izvēlne ir pārvietota šeit."
+	"vector-appearance-unpinned-popup": "Izskata izvēlne ir pārvietota šeit.",
+	"vector-night-mode-issue-reporting-link-label": "Ziņot par problēmu ar tumšo režīmu",
+	"vector-night-mode-issue-reporting-link-notification": "Ziņojums saņemts!",
+	"vector-night-mode-issue-reporting-preload-title": "$1 tumšā režīma kļūda"
 }

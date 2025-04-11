@@ -1,8 +1,35 @@
 {
 	"@metadata": {
 		"authors": [
-			"Danniel07"
+			"Danniel07",
+			"MysticVoyager"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "ᑭᐅᓂᖅ",
+	"discussiontools-newtopic-missing-title": "ᑐᒃᑯᓕᒋᑕᕝᕕᒃ ᑐᓴᐅᕙᒃᑐᖅ {{GENDER:|ᐊᑐᐊᓯᒪᒋᓐᓂ}} ᑭᑦᑕᖅᑲᐃᓇᕐᓄᑦ.",
+	"discussiontools-newtopic-placeholder-title": "ᐱᔾᔪᑎᖓ",
+	"discussiontools-replylink": "{{GENDER:|ᑭᐅᓂᖅ}}",
+	"discussiontools-replywidget-advanced": "ᓯᕗᕙᓯᒃᑐᖅ",
+	"discussiontools-replywidget-cancel": "ᐃᓂᖅᑎᐹ",
+	"discussiontools-replywidget-mode-source": "ᓇᑭᙶᕐᕕᒃ",
+	"discussiontools-replywidget-mode-visual": "ᑕᑯᑦᓴᐃᑦ",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|ᐃᓚᓕᐅᑎᓗᒍ}} ᐅᖃᐅᓯᒃᓴᖅ",
+	"discussiontools-replywidget-placeholder-newtopic": "ᓂᐅᖕᑕᐅᑦᑎᔭᐅᔭᕈᑎᖅ",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|ᑭᐅᔾᔪᑎ}} ᐅᕗᖓ {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "ᐅᕝᕙ ᖃᖓᓵᖑᓕᖅᑐᖅ",
+	"discussiontools-replywidget-reply": "{{GENDER:|ᑭᐅᓂᖅ}}",
+	"discussiontools-replywidget-summary": "ᓇᐃᓈᖅᓯᒪᔪᖅ",
+	"discussiontools-replywidget-watchthis": "ᐃᑲᔪᖅᑕᕆᑕᐅᔪᖅ ᐅᓇ ᑎᒍᕐᓂᖓ [[Special:Watchlist|ᐅᔾᔨᖅᓱᖅᑕᐅᔪᑦ ᑎᑎᕋᖅᓯᒪᔪᑦ]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ᐃᓄᒃ|ᐃᓄᐃᑦ}} ᐅᖃᖃᑎᒌᒍᑕᐅᔪᑦ",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ᐅᖃᐅᓯᒃᓴᖅ|ᐅᖃᐅᓯᒃᓴᑦ}}",
+	"discussiontools-topicheader-latestcomment": "ᑭᖑᓪᓕᖅᐹᖅ ᐅᖃᐅᓯᒃᓴᖅ: $1",
+	"discussiontools-topicsubscription-button-subscribe": "ᐊᑎᓕᐅᖃᑕᐅᓗᑎᑦ",
+	"discussiontools-topicsubscription-button-subscribe-label": "ᐊᑎᓕᐅᖃᑕᐅᓗᑎᑦ",
+	"discussiontools-topicsubscription-button-unsubscribe": "ᓱᖅᑑᓕᐊᕐᓂᖓ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "ᓱᖅᑑᓕᐊᕐᓂᖓ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|ᖃᓄᐃᒃ}} ᐱᕙᕐᓂᒃᓴᖅᑐᑦ ᑐᓴᒐᒃᓴᑯᓂᐅᑦ ᑭᓇᐃᒍᓯᕕᑦ ᐊᑐᕈᑎᓪᓗᒍ ᐊᒻᒪ ᑕᑯᓂᕋᖅᑐᑦ.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|ᖃᓄᐃᒃ}} ᓴᐃᔮᔨᐅᓇᖅᑐᑦ!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|ᖃᓄᐃᒃ}} ᐱᓪᓗᒋᔭᖅᑐᑦ ᑭᓇᐃᒍᓯᕕᑦ ᐊᑐᕈᑎᓪᓗᒍ ᐊᒻᒪ ᐱᓪᓗᓂᕋᖅᑐᑦ ᑐᓴᒐᒃᓴᑯᓂᐅᑦ ᓂᕈᑦᑎᑕᕆᔭᑦ.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|ᖃᓄᐃᒃ}} ᑐᑭᕋᕐᑐᑎᒋᐊᕆᒃᑯᑦ.",
 	"discussiontools-topicsubscription-pager-actions": "ᖃᓄᐃᓕᐅᕐᓃᑦ"
 }

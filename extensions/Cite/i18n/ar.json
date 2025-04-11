@@ -14,7 +14,8 @@
 			"ديفيد",
 			"زكريا",
 			"محمد أحمد عبد الفتاح",
-			"Mr. Ibrahem"
+			"Mr. Ibrahem",
+			"Cigaryno"
 		]
 	},
 	"cite-desc": "يضيف وسمي <code>&lt;ref&gt;</code> و<code>&lt;references&gt;</code> للاستشهادات",
@@ -42,6 +43,7 @@
 	"cite-tracking-category-cite-error": "صفحات بأخطاء في المراجع",
 	"cite-tracking-category-cite-error-desc": "الصفحات في هذا التصنيف بها أخطاء في استخدام وسوم المراجع.",
 	"cite-tracking-category-ref-extends": "الصفحات التي تستخدم المراجع الموسعة",
+	"cite-tracking-category-ref-extends-desc": "تستخدم الصفحات في هذه الفئة الخاصية \"extends\" للعلامة &lt;ref&gt;.",
 	"cite-reference-previews-reference": "مرجع",
 	"cite-reference-previews-book": "مرجع كتاب",
 	"cite-reference-previews-journal": "مرجع دورية",
@@ -61,10 +63,12 @@
 	"cite-wikieditor-help-content-reference-description": "مرجع",
 	"cite-wikieditor-help-content-named-reference-description": "مرجع مسمى",
 	"cite-wikieditor-help-content-rereference-description": "استخدام نفس المرجع مرة أخرى",
+	"cite-wikieditor-help-content-extended-reference-description": "استخدام إضافي لنفس المرجع، مع تفاصيل إضافية",
 	"cite-wikieditor-help-content-showreferences-description": "اعرض المراجع",
 	"cite-wikieditor-help-content-reference-example-text1": "نص الصفحة. $1",
 	"cite-wikieditor-help-content-reference-example-text2": "[ $1 نص الرابط]، نص إضافي.",
 	"cite-wikieditor-help-content-reference-example-text3": "[ نص الرابط $1 ]",
+	"cite-wikieditor-help-content-reference-example-ref-id": "اختبار",
 	"cite-wikieditor-help-content-reference-example-extra-details": "تفاصيل إضافية",
 	"popups-prefs-navpopups-gadget-conflict-info": "[[$1|إضافة المنبثقات]] مفعلة، لذلك لن ترى المعاينات التي توفرها هذه الخاصية. قد يختلف اسم الإضافة من موقع ويكي لآخر. إذا وجدت مشاكل، قد يكون سبب الخلل أحد الإضافات أو السكربتات التي تستعملها وحتى تلك المفعلة انطلاقا من ميتا.",
 	"popups-prefs-reftooltips-and-navpopups-gadget-conflict-info": "[[$1|إضافة المنبثقات وبيان المراجع]] مفعلان، لذلك لن ترى المعاينات التي توفرها هذه الخاصية. قد يختلف اسم الإضافة من موقع ويكي لآخر. إذا وجدت مشاكل، قد يكون سبب الخلل أحد الإضافات أو السكربتات التي تستعملها وحتى تلك المفعلة انطلاقا من ميتا.",

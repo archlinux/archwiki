@@ -94,7 +94,8 @@ class TokenizerTest extends ParserTestCase {
 	 */
 	public function unclosedString() {
 		return [
-			[ '"', 'readStringLiteral' ],
+			'Simple' => [ '"', 'readStringLiteral' ],
+			'Truncated escape sequence' => [ '"\\', 'readStringLiteral' ],
 		];
 	}
 

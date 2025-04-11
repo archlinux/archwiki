@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "30abf5cd06f41039201ff93ea6627627",
+    "content-hash": "0aa565c153d16b206ceb979c4a7d5a16",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -703,12 +703,12 @@
             "version": "v2.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Jakobo/hotp-php.git",
+                "url": "https://github.com/thecodedrift/hotp-php.git",
                 "reference": "ff2f13d1918001e54b3f49deb1d366bcfcc98437"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Jakobo/hotp-php/zipball/ff2f13d1918001e54b3f49deb1d366bcfcc98437",
+                "url": "https://api.github.com/repos/thecodedrift/hotp-php/zipball/ff2f13d1918001e54b3f49deb1d366bcfcc98437",
                 "reference": "ff2f13d1918001e54b3f49deb1d366bcfcc98437",
                 "shasum": ""
             },
@@ -739,8 +739,8 @@
             ],
             "description": "HOTP simplifies One Time Password systems for PHP Authentication",
             "support": {
-                "issues": "https://github.com/Jakobo/hotp-php/issues",
-                "source": "https://github.com/Jakobo/hotp-php/tree/v2.0.0"
+                "issues": "https://github.com/thecodedrift/hotp-php/issues",
+                "source": "https://github.com/thecodedrift/hotp-php/tree/v2.0.0"
             },
             "time": "2020-12-28T03:29:15+00:00"
         },
@@ -1403,16 +1403,16 @@
         },
         {
             "name": "pear/net_url2",
-            "version": "v2.2.2",
+            "version": "v2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pear/Net_URL2.git",
-                "reference": "07fd055820dbf466ee3990abe96d0e40a8791f9d"
+                "reference": "c1f2b316ed9b05e881cdb494f7550ddf817c76c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pear/Net_URL2/zipball/07fd055820dbf466ee3990abe96d0e40a8791f9d",
-                "reference": "07fd055820dbf466ee3990abe96d0e40a8791f9d",
+                "url": "https://api.github.com/repos/pear/Net_URL2/zipball/c1f2b316ed9b05e881cdb494f7550ddf817c76c8",
+                "reference": "c1f2b316ed9b05e881cdb494f7550ddf817c76c8",
                 "shasum": ""
             },
             "require": {
@@ -1441,12 +1441,12 @@
             ],
             "authors": [
                 {
-                    "name": "David Coallier",
-                    "email": "davidc@php.net"
-                },
-                {
                     "name": "Tom Klingenberg",
                     "email": "tkli@php.net"
+                },
+                {
+                    "name": "David Coallier",
+                    "email": "davidc@php.net"
                 },
                 {
                     "name": "Christian Schmidt",
@@ -1467,7 +1467,7 @@
                 "issues": "https://pear.php.net/bugs/search.php?cmd=display&package_name[]=Net_URL2",
                 "source": "https://github.com/pear/Net_URL2"
             },
-            "time": "2017-08-25T06:16:11+00:00"
+            "time": "2025-03-24T08:03:00+00:00"
         },
         {
             "name": "pear/pear-core-minimal",
@@ -1898,12 +1898,12 @@
             },
             "type": "library",
             "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/contracts",
+                    "name": "symfony/contracts"
+                },
                 "branch-alias": {
                     "dev-main": "2.5-dev"
-                },
-                "thanks": {
-                    "name": "symfony/contracts",
-                    "url": "https://github.com/symfony/contracts"
                 }
             },
             "autoload": {
@@ -1966,8 +1966,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -2046,8 +2046,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -2122,8 +2122,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -2198,8 +2198,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -2738,10 +2738,10 @@
             },
             "type": "composer-plugin",
             "extra": {
+                "class": "Wikimedia\\Composer\\Merge\\V2\\MergePlugin",
                 "branch-alias": {
                     "dev-master": "2.x-dev"
-                },
-                "class": "Wikimedia\\Composer\\Merge\\V2\\MergePlugin"
+                }
             },
             "autoload": {
                 "psr-4": {
@@ -3123,34 +3123,34 @@
         },
         {
             "name": "wikimedia/minify",
-            "version": "2.8.0",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/mediawiki-libs-Minify.git",
-                "reference": "8492d24ef5b50fff35d6ff5fa67974237db2da0a"
+                "reference": "244bbb0c0acf0c1679078cc87cbc95c79ad9f33f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-Minify/zipball/8492d24ef5b50fff35d6ff5fa67974237db2da0a",
-                "reference": "8492d24ef5b50fff35d6ff5fa67974237db2da0a",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-Minify/zipball/244bbb0c0acf0c1679078cc87cbc95c79ad9f33f",
+                "reference": "244bbb0c0acf0c1679078cc87cbc95c79ad9f33f",
                 "shasum": ""
             },
             "require": {
                 "ext-fileinfo": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "pear/net_url2": "2.2.2",
+                "pear/net_url2": "~2.2.2",
                 "php": ">=7.4.3"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "44.0.0",
-                "mediawiki/mediawiki-phan-config": "0.14.0",
+                "mediawiki/mediawiki-codesniffer": "46.0.0",
+                "mediawiki/mediawiki-phan-config": "0.15.1",
                 "mediawiki/minus-x": "1.1.3",
                 "ockcyp/covers-validator": "1.6.0",
                 "php-parallel-lint/php-console-highlighter": "1.0.0",
                 "php-parallel-lint/php-parallel-lint": "1.4.0",
-                "phpunit/phpunit": "9.6.16",
-                "wikimedia/testing-access-wrapper": "~2.0"
+                "phpunit/phpunit": "9.6.21",
+                "wikimedia/testing-access-wrapper": "~3.0.0"
             },
             "type": "library",
             "autoload": {
@@ -3186,9 +3186,9 @@
             "description": "Minification of JavaScript code and CSS stylesheets.",
             "homepage": "https://gerrit.wikimedia.org/g/mediawiki/libs/Minify",
             "support": {
-                "source": "https://github.com/wikimedia/mediawiki-libs-Minify/tree/2.8.0"
+                "source": "https://github.com/wikimedia/mediawiki-libs-Minify/tree/2.9.0"
             },
-            "time": "2024-08-20T20:54:08+00:00"
+            "time": "2025-03-26T17:40:22+00:00"
         },
         {
             "name": "wikimedia/normalized-exception",
@@ -3291,16 +3291,16 @@
         },
         {
             "name": "wikimedia/parsoid",
-            "version": "v0.20.1",
+            "version": "v0.20.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/mediawiki-services-parsoid.git",
-                "reference": "df13182980619123b586eabd609ccdbe485cb5cf"
+                "reference": "7b69b27dfa01f9180f4652e221ecd651e95c76ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/mediawiki-services-parsoid/zipball/df13182980619123b586eabd609ccdbe485cb5cf",
-                "reference": "df13182980619123b586eabd609ccdbe485cb5cf",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-services-parsoid/zipball/7b69b27dfa01f9180f4652e221ecd651e95c76ab",
+                "reference": "7b69b27dfa01f9180f4652e221ecd651e95c76ab",
                 "shasum": ""
             },
             "require": {
@@ -3329,7 +3329,7 @@
             },
             "require-dev": {
                 "ext-curl": "*",
-                "mediawiki/mediawiki-codesniffer": "44.0.0",
+                "mediawiki/mediawiki-codesniffer": "45.0.0",
                 "mediawiki/mediawiki-phan-config": "0.14.0",
                 "mediawiki/minus-x": "1.1.3",
                 "monolog/monolog": "^2.2.0",
@@ -3370,10 +3370,10 @@
             ],
             "support": {
                 "irc": "irc://irc.libera.chat/mediawiki-parsoid",
-                "source": "https://github.com/wikimedia/mediawiki-services-parsoid/tree/v0.20.1",
+                "source": "https://github.com/wikimedia/mediawiki-services-parsoid/tree/v0.20.2",
                 "wiki": "https://www.mediawiki.org/wiki/Parsoid"
             },
-            "time": "2024-10-30T13:04:03+00:00"
+            "time": "2025-03-06T02:32:43+00:00"
         },
         {
             "name": "wikimedia/php-session-serializer",

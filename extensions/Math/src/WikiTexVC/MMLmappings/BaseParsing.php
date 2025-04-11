@@ -42,6 +42,7 @@ use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Matrix;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexNode;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\UQ;
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 use MediaWiki\Extension\Math\WikiTexVC\TexVC;
 
@@ -91,7 +92,7 @@ class BaseParsing {
 		$output = "";
 		$mrow = new MMLmrow();
 		if ( $open != null ) {
-			$resDelimiter = BaseMappings::getDelimiterByKey( trim( $open ) );
+			$resDelimiter = TexUtil::getInstance()->delimiter( trim( $open ) ) ?? false;
 			if ( $resDelimiter ) {
 				// $retDelim = $bm->checkAndParseDelimiter($open, $node,$passedArgs,true);
 				$moOpen = new MMLmo( TexClass::OPEN );
@@ -109,9 +110,8 @@ class BaseParsing {
 		}
 
 		if ( $close != null ) {
-			$resDelimiter = BaseMappings::getDelimiterByKey( trim( $close ) );
+			$resDelimiter = TexUtil::getInstance()->delimiter( trim( $close ) ) ?? false;
 			if ( $resDelimiter ) {
-				// $retDelim = $bm->checkAndParseDelimiter($open, $node,$passedArgs,true);
 				$moClose = new MMLmo( TexClass::CLOSE );
 				$output .= $moClose->encapsulateRaw( $resDelimiter[0] );
 			}
@@ -366,7 +366,8 @@ class BaseParsing {
 			$mmlNot = MMLParsingUtil::createNot();
 		}
 		$passedArgs = array_merge( $passedArgs, [ Tag::CLASSTAG => TexClass::OP, "mathvariant" => Variants::NORMAL ] );
-		return $mmlNot . $node->getArg()->renderMML( $passedArgs, [ 'squashLiterals' => true ] ) . $applyFct;
+		$state = [ 'squashLiterals' => true ];
+		return $mmlNot . $node->getArg()->renderMML( $passedArgs, $state ) . $applyFct;
 	}
 
 	public static function lap( $node, $passedArgs, $operatorContent, $name ) {
@@ -385,12 +386,18 @@ class BaseParsing {
 		return $mrow->encapsulateRaw( $mpAdded->encapsulateRaw( $node->getArg()->renderMML() ) );
 	}
 
-	public static function macro( $node, $passedArgs, $operatorContent, $name, $macro, $argcount = null, $def = null ) {
+	public static function macro( $node, $passedArgs, $operatorContent, $name,
+								  $macro = '', $argcount = null, $def = null ) {
 		// Parse the Macro
+		if ( $macro == "\\text{ }" ) {
+			$mtext = new MMLmtext();
+			return $mtext->encapsulateRaw( '&#160;' );
+		}
 		switch ( trim( $name ) ) {
 			case "\\mod":
 				$mmlRow = new MMLmrow();
 				$mo = new MMLmo( "", [ "lspace" => "2.5pt", "rspace" => "2.5pt" ] );
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				$inner = $node->getArg() instanceof TexNode ? $node->getArg()->renderMML() : "";
 				return $mmlRow->encapsulateRaw( $mo->encapsulate( "mod" ) . $inner );
 			case "\\pmod":
@@ -400,6 +407,7 @@ class BaseParsing {
 				$mspace2 = new MMLmspace( "", [ "width" => "0.333em" ] );
 				$mo = new MMLmo( "", [ "stretchy" => "false" ] );
 				$mi = new MMLmi();
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				$inner = $node->getArg() instanceof TexNode ? $node->getArg()->renderMML() : "";
 
 				return $mmlRow->encapsulateRaw( $mspace->encapsulate() .
@@ -451,7 +459,9 @@ class BaseParsing {
 					);
 				} else {
 					$inner = $mover->encapsulateRaw( $mmlRowArg2->encapsulateRaw(
-							$node->getArg2()->renderMML() ) .
+						// @phan-suppress-next-line PhanUndeclaredMethod
+						$node->getArg2()->renderMML() ) .
+						// @phan-suppress-next-line PhanUndeclaredMethod
 						$mmlRow->encapsulateRaw( $node->getArg1()->renderMML() )
 					);
 				}
@@ -460,7 +470,9 @@ class BaseParsing {
 				$mo = new MMLmo( "", [ "lspace" => Sizes::THICKMATHSPACE, "rspace" => Sizes::THICKMATHSPACE ] );
 				$mmlRow = new MMLmrow( TexClass::ORD );
 				$mspace = new MMLmspace( "", [ "width" => "0.167em" ] );
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				$inner = $node->getArg() instanceof TexNode ?
+					// @phan-suppress-next-line PhanUndeclaredMethod
 					$mmlRow->encapsulateRaw( $node->getArg()->renderMML() ) : "";
 				return $mmlRow->encapsulateRaw( $mo->encapsulate( "mod" ) .
 					$inner . $mmlRow->encapsulateRaw( $mspace->getEmpty() ) );
@@ -508,6 +520,7 @@ class BaseParsing {
 						$mrowOrd->encapsulateRaw(
 							$mo->encapsulateRaw( "&#x27F6;" )
 						) ) );
+
 		}
 
 		// Removed all token based parsing, since macro resolution for the supported macros can be hardcoded in php
@@ -559,9 +572,8 @@ class BaseParsing {
 				}
 				$mtd = new MMLmtd( '', $mtdAttributes );
 
-				$resInner .= $mtd->encapsulateRaw( $usedArg->renderMML( $passedArgs, [ 'inMatrix'
-					=> true ]
-				) );
+				$state = [ 'inMatrix'	=> true ];
+				$resInner .= $mtd->encapsulateRaw( $usedArg->renderMML( $passedArgs, $state ) );
 				$colNo++;
 			}
 			$resInner .= $mtr->getEnd();
@@ -802,6 +814,9 @@ class BaseParsing {
 			case Variants::FRAKTUR:
 				$state = [ "fraktur" => true ];
 				break;
+			case Variants::BOLD:
+				$state = [ "bold" => true ];
+				break;
 		}
 
 		if ( $node instanceof Fun1nb ) {
@@ -941,16 +956,14 @@ class BaseParsing {
 			$munderOver = new MMLmunderover();
 			return $munderOver->encapsulateRaw( $opParsed . $mrow->encapsulateRaw( $node->getDown()->renderMML() )
 				. $mrow->encapsulateRaw( $node->getUp()->renderMML() ) );
-		} elseif ( $name === 'limits' || $name === 'nolimits' ) {
+		} elseif ( preg_match( '/\s*\\\\?(no)?limits\s*/', $name ) ) {
 			// Don't render limits
 			return '';
 		}
 	}
 
 	public static function setFont( $node, $passedArgs, $operatorContent, $name, $variant = null ) {
-		$mrow = new MMLmrow();
-		$args = MMLParsingUtil::getFontArgs( $name, $variant, $passedArgs );
-		return $mrow->encapsulateRaw( $mrow->encapsulateRaw( $node->getArg()->renderMML( $args ) ) );
+		return self::mathFont( $node, $passedArgs, $operatorContent, $name, $variant );
 	}
 
 	public static function sideset( $node, $passedArgs, $operatorContent, $name ) {
@@ -971,14 +984,20 @@ class BaseParsing {
 				$in2 . "<mprescripts/>" . $in1 ) );
 		}
 
-		if ( $operatorContent["sideset"] instanceof FQ ) {
+		if ( $operatorContent["sideset"] instanceof FQ ||
+			 $operatorContent["sideset"] instanceof DQ ||
+			 $operatorContent["sideset"] instanceof UQ ) {
 			$mmlMultiscripts = new MMLmmultiscripts( "", [] );
 			$mmlMunderOver = new MMLmunderover();
 			$mstyle = new MMLmstyle( "", [ "displaystyle" => "true" ] );
 			$bm = new BaseMethods();
 			if ( count( $operatorContent["sideset"]->getBase()->getArgs() ) == 1 ) {
-				$opParsed = $bm->checkAndParseOperator( $operatorContent["sideset"]->getBase()->getArgs()[0],
+				$baseOperator = $operatorContent["sideset"]->getBase()->getArgs()[0];
+				$opParsed = $bm->checkAndParseOperator( $baseOperator,
 					null, [ "largeop" => "true", "movablelimits" => "false", "symmetric" => "true" ], [], null );
+				if ( $opParsed == null ) {
+					$opParsed = $operatorContent["sideset"]->getBase()->renderMML();
+				}
 			} else {
 				$merror = new MMLmerror();
 				$opParsed = $merror->encapsulateRaw( "Sideset operator parsing not implemented yet" );
@@ -988,8 +1007,12 @@ class BaseParsing {
 			$in2 = $node->getArg2()->renderMML();
 
 			$mrowEnd = new MMLmrow( "", [] );
-			$end1 = $mrowEnd->encapsulateRaw( $operatorContent["sideset"]->getDown()->renderMML() );
-			$end2 = $mrowEnd->encapsulateRaw( $operatorContent["sideset"]->getUp()->renderMML() );
+			$down = $operatorContent["sideset"] instanceof UQ ? '<mrow />' :
+				$operatorContent["sideset"]->getDown()->renderMML();
+			$end1 = $mrowEnd->encapsulateRaw( $down );
+			$up = $operatorContent["sideset"] instanceof DQ ? '<mrow />' :
+				$operatorContent["sideset"]->getUp()->renderMML();
+			$end2 = $mrowEnd->encapsulateRaw( $up );
 
 			return $mmlMrow->encapsulateRaw( $mmlMunderOver->encapsulateRaw( $mstyle->encapsulateRaw(
 					$mmlMultiscripts->encapsulateRaw( $opParsed . $in2 . "<mprescripts/>" . $in1 ) )
@@ -1122,13 +1145,12 @@ class BaseParsing {
 				if ( isset( $operatorContent['foundOC'] ) ) {
 					$op = $operatorContent['foundOC'];
 					$macro = TexUtil::getInstance()->nullary_macro_in_mbox( $op ) ?
-						/* tested in \MediaWiki\Extension\Math\Tests\WikiTexVC\TexUtilTest::testUnicodeDefined
-						@phan-suppress-next-line PhanTypeSuspiciousStringExpression - false positive */
+						/* tested in \MediaWiki\Extension\Math\Tests\WikiTexVC\TexUtilTest::testUnicodeDefined */
 						[ '&#x' . TexUtil::getInstance()->unicode_char( $op ) . ';' ] :
-						BaseMappings::getIdentifierByKey( $op );
+						TexUtil::getInstance()->identifier( $op );
 					$input = $macro[0] ?? $op;
 					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable - false positive see above
-					return $mmlMrow->encapsulateRaw( $mo->encapsulateRaw( $input ) );
+					return $mmlMrow->encapsulateRaw( $mo->encapsulateRaw( MMLutil::uc2xNotation( $input ) ) );
 				} else {
 					$mmlMrow = new MMLmrow();
 					$mtext = new MMLmtext();
@@ -1157,8 +1179,9 @@ class BaseParsing {
 				$mmlMrow = new MMLmrow();
 				$mtext = new MMLmtext( "", MMLParsingUtil::getFontArgs( $name, null, null ) );
 
+				$state = [ "inHBox" => true ];
 				$inner = $node->getArg()->isCurly() ? $node->getArg()->renderMML(
-					[], [ "inHBox" => true ] )
+					[], $state )
 					: $node->getArg()->renderMML( [ "fromHBox" => true ] );
 				return $mmlMrow->encapsulateRaw( $mtext->encapsulateRaw( $inner ) );
 		}
@@ -1276,7 +1299,7 @@ class BaseParsing {
 		);
 	}
 
-	private static function getApplyFct( $operatorContent ): string {
+	private static function getApplyFct( array $operatorContent ): string {
 		$applyFct = "";
 		if ( array_key_exists( "foundNamedFct", $operatorContent ) ) {
 			$hasNamedFct = $operatorContent['foundNamedFct'][0];

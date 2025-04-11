@@ -18,7 +18,8 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"XIDME"
 		]
 	},
 	"thanks-desc": "تضيف وصلات لشكر المستخدمين على التعديلات والتعليقات، إلخ.",
@@ -40,7 +41,7 @@
 	"thanks-error-ratelimited": "لقد {{GENDER:$1|تجاوزت}} حد التقييم، انتظر لبعض الوقت ثم حاول مجددًا.",
 	"thanks-error-api-params": "يجب توفير معامل 'revid' أو 'logid'",
 	"thanks-thank-tooltip": "{{GENDER:$1|أرسل|أرسلي}} إشعار شكر ل{{GENDER:$2|هذا المستخدم|هذه المستخدمة}}",
-	"thanks-thank-tooltip-no": "{{GENDER:$1|ألغ|ألغي}} إخطار الشكر",
+	"thanks-thank-tooltip-no": "{{GENDER:$1|إلغاء}} إشعار الشكر",
 	"thanks-thank-tooltip-yes": "{{GENDER:$1|أرسل|أرسلي}} إخطار الشكر",
 	"thanks-confirmation2": "{{GENDER:$1|إرسال}} شكر علانية؟",
 	"thanks-thanked-notice": "{{GENDER:$3|أنت}} شكرت {{GENDER:$2|$1}}.",

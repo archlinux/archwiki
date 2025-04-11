@@ -68,7 +68,7 @@
 	"discussiontools-limitreport-errorreqid": "Ідентифікатор запиту на помилку DiscussionTools",
 	"discussiontools-limitreport-timeusage": "Використання інструментів DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|секунда|секунди|секунд}}",
-	"discussiontools-newtopic-missing-title": "Будь ласка, вкажіть назву для своєї теми в обговоренні. Якщо {{GENDER:|ви}} натиснете на «{{int:discussiontools-replywidget-newtopic}}», вашу тему буде додано без назви.",
+	"discussiontools-newtopic-missing-title": "Будь ласка, вкажіть назву для {{GENDER:|своєї}} теми в обговоренні.",
 	"discussiontools-newtopic-placeholder-title": "Тема",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Підписатись",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Підписатися, щоб отримувати сповіщення, коли на цій сторінці розпочинаються нові теми.",

@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anand.orkhon"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "ᠬᠠᠷᠢᠭᠤᠯᠬᠤ",
+	"discussiontools-replylink": "{{GENDER:|ᠬᠠᠷᠢᠭᠤ}}",
+	"discussiontools-replywidget-advanced": "ᠢᠯᠡᠭᠦᠦ",
+	"discussiontools-replywidget-cancel": "ᠴᠤᠴᠠᠯᠠᠬᠤ",
+	"discussiontools-replywidget-mode-source": "ᠡᠬᠡ ᠰᠤᠷᠪᠤᠯᠵᠢ",
+	"discussiontools-replywidget-mode-visual": "ᠬᠠᠷᠠᠭᠳᠠᠴᠠ ᠲᠠᠢ",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} ‍ᠳᠦ {{GENDER:|ᠬᠠᠷᠢᠭᠤх}}",
+	"discussiontools-replywidget-preview": "ᠤᠷᠤᠳᠢᠴᠢᠯᠠᠨ ᠬᠠᠷᠠᠭᠳᠠᠴᠠ",
+	"discussiontools-replywidget-reply": "{{GENDER:|ᠬᠠᠷᠢᠭᠤ}}",
+	"discussiontools-replywidget-summary": "ᠲᠤᠪᠴᠢ",
+	"discussiontools-replywidget-watchthis": "ᠡᠨᠡ ᠬᠠᠭᠤᠳᠠᠰᠤ ‍ᠢᠢ ᠦᠪᠡᠷ ‍ᠦᠨ [[Special:Watchlist|watchlist]] ‍ᠳᠠᠭᠠᠨ ᠨᠡᠮᠡᠬᠦ",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ᠬᠦᠮᠦᠨ|ᠬᠦᠮᠦᠰ}} ᠬᠡᠯᠡᠯᠴᠡᠭᠦᠯᠭᠡ ‍ᠳᠦ ᠪᠠᠢᠨᠠ",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ᠰᠡᠳᠬᠢᠭᠳᠡᠯ|ᠰᠡᠳᠬᠢᠭᠳᠡᠯ ‍ᠦᠳ}}",
+	"discussiontools-topicheader-latestcomment": "ᠰᠡᠭᠦᠯ ‍ᠦᠨ ᠰᠡᠳᠬᠢᠭᠳᠡᠯ᠄ $1",
+	"discussiontools-topicsubscription-button-subscribe": "ᠳᠠᠭᠠᠬᠤ",
+	"discussiontools-topicsubscription-button-subscribe-label": "ᠳᠠᠭᠠᠬᠤ",
+	"discussiontools-topicsubscription-button-unsubscribe": "ᠳᠠᠭᠠᠬᠤ ᠪᠠᠨ ᠪᠤᠯᠢᠬᠤ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "ᠳᠠᠭᠠᠬᠤ ᠪᠠᠨ ᠪᠤᠯᠢᠬᠤ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|ᠲᠠ}} ᠴᠠᠭᠠᠰᠢ ‍ᠳᠤ ᠡᠨᠡ ᠰᠡᠳᠦᠪ ‍ᠳᠡᠬᠢ ᠰᠢᠨᠡ ᠰᠡᠳᠬᠢᠭᠳᠡᠯ ‍ᠦᠨ ᠲᠠᠯᠠᠭᠠᠷ ᠮᠡᠳᠡᠭᠳᠡᠯ ᠬᠦᠯᠢᠶᠡᠨ ᠠᠪᠤᠨᠠ᠃",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|ᠲᠠ}} ᠳᠠᠭᠠᠯ᠎ᠠ!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|ᠲᠠ}} ᠴᠠᠭᠠᠰᠢ ‍ᠳᠤ ᠡᠨᠡ ᠰᠡᠳᠦᠪ ‍ᠳᠡᠬᠢ ᠰᠢᠨᠡ ᠰᠡᠳᠬᠢᠭᠳᠡᠯ ‍ᠦᠨ ᠲᠠᠯᠠᠭᠠᠷ ᠮᠡᠳᠡᠭᠳᠡᠯ ᠬᠦᠯᠢᠶᠡᠨ ᠠᠪᠬᠤ ᠦᠭᠡᠢ᠃",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|ᠲᠠ}} ᠳᠠᠭᠠᠬᠤ ᠪᠠᠨ ᠪᠤᠯᠢᠭᠰᠠᠨ᠃"
+}

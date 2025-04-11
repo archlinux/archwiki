@@ -40,6 +40,7 @@
 	"vector-jumptocontent": "Mont d’an endalc’had",
 	"vector-more-actions": "Muioc'h",
 	"vector-appearance-label": "Neuz",
+	"vector-appearance-tooltip": "Kemmañ ment, ledander ha liv font ar bajenn",
 	"vector-feature-limited-width-name": "Ledander",
 	"vector-feature-limited-width-0-label": "Ledan",
 	"vector-feature-limited-width-1-label": "Standard",
@@ -91,5 +92,6 @@
 	"vector-night-mode-issue-reporting-link-label": "Roit ur gudenn da c’houzout gant ar mod teñval",
 	"vector-night-mode-issue-reporting-link-notification": "Danevell resevetǃ",
 	"vector-night-mode-issue-reporting-preload-title": "Fazi mod teñval $1",
+	"vector-night-mode-issue-reporting-preload-content": "<!--\nKemennoù\nDeskrivit mar plij penaos e laka diaes livioù ar mod teñval lenn Wikipedia.\nLakait mar plij ar rann eus ar pennad m'hoc'h eus kavet ar gudenn.\n-->\n'''Deskrivadur ar gudenn'''",
 	"vector-night-mode-beta-tag": "(beta)"
 }

@@ -1,8 +1,38 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Rdwnnr"
+		]
 	},
-	"vector-view-create": "ᨆᨙᨅᨘ",
+	"vector-languages": "ᨅᨔ",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ᨅᨔ}}",
+	"vector-no-language-button-label": "ᨈᨅᨕᨗ ᨅᨔ",
+	"vector-action-addsection": "ᨈᨅᨕᨗ ᨅᨅ",
+	"vector-action-move": "ᨒᨙᨌᨙ",
+	"vector-view-create": "ᨕᨙᨅᨘ",
+	"vector-view-history": "ᨕᨗᨈ ᨑᨗᨓᨐ",
 	"vector-view-view": "ᨅᨌ",
-	"vector-more-actions": "ᨒᨕᨗᨊᨕᨙ"
+	"vector-more-actions": "ᨒᨙᨂᨙ",
+	"vector-appearance-label": "ᨈᨍ",
+	"vector-feature-limited-width-name": "ᨒᨛᨅ",
+	"vector-feature-limited-width-0-label": "ᨒᨛᨅ",
+	"vector-feature-limited-width-1-label": "ᨅᨗᨐᨔ",
+	"vector-feature-custom-font-size-name": "ᨕᨚᨀᨗ",
+	"vector-feature-custom-font-size-0-label": "ᨅᨗᨌᨘ",
+	"vector-feature-custom-font-size-1-label": "ᨅᨗᨐᨔ",
+	"vector-feature-custom-font-size-2-label": "ᨒᨚᨄᨚ",
+	"skin-theme-name": "ᨌᨚᨑ",
+	"skin-theme-day-label": "ᨌᨀ",
+	"skin-theme-night-label": "ᨄᨛᨈ",
+	"skin-theme-os-label": "ᨕᨕᨘᨈᨚ",
+	"vector-searchsuggest-containing": "ᨔᨄ ᨒᨛᨇᨑ ᨆᨒᨗᨔᨛ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "ᨒᨗᨔᨛ",
+	"vector-toc-beginning": "ᨄᨆᨘᨒ",
+	"vector-anon-user-menu-pages": "ᨒᨛᨇᨑ ᨀᨘ ᨄᨄᨉᨙᨌᨙ ᨈᨔᨘ ᨒᨚ",
+	"vector-main-menu-label": "ᨓᨈ ᨆᨛᨊᨘ",
+	"vector-page-tools-label": "ᨄᨀᨀᨔ",
+	"vector-page-tools-general-label": "ᨕᨘᨆᨘ",
+	"vector-page-tools-actions-label": "ᨁᨕᨀᨕᨘ",
+	"vector-unpin-element-label": "ᨔᨘᨅᨘᨓᨗ",
+	"vector-page-tools-nav-label": "ᨄᨀᨀᨔ ᨒᨛᨇ"
 }

@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toliño"
+		]
+	},
+	"apihelp-spamblacklist-example-1": "Comprobar dous enderezos URL contra a lista de bloqueos",
+	"apihelp-spamblacklist-param-url": "Enderezos URL a validar contra a lista de bloqueos.",
+	"apihelp-spamblacklist-summary": "Validar un o máis enderezos URL contra a lista de bloqueos de spam."
+}

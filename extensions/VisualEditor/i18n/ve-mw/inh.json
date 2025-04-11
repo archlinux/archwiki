@@ -30,7 +30,10 @@
 	"visualeditor-dialogbutton-media-tooltip": "Сурташи медиафайлаши",
 	"visualeditor-dialogbutton-template-tooltip": "Ло",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|хоам}}",
+	"visualeditor-editsummary": "Ӏайха даьча хувцамех лаьца язде лоацца",
 	"visualeditor-linkinspector-educationpopup-title": "Тӏатовжамаш",
 	"visualeditor-mweditmodeve-popup-body": "МоллагӀча хана юха дӀатоха йиш я хьа визуальни хувцамаш деча ражагахьа, укх хьарака тӀа тоӀабаь.",
-	"visualeditor-mweditmodeve-showagain": "Кхы хьа ма гойта ер хоам"
+	"visualeditor-mweditmodeve-showagain": "Кхы хьа ма гойта ер хоам",
+	"visualeditor-savedialog-label-review": "Хьадаь хувцамаш",
+	"visualeditor-savedialog-title-save": "ДӀаязде хьай хувцамаш"
 }

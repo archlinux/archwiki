@@ -21,7 +21,8 @@
 			"ديفيد",
 			"زكريا",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Cigaryno"
 		]
 	},
 	"minerva-last-modified-date": "آخر تعديل بتاريخ $1، في $2",
@@ -39,7 +40,7 @@
 	"mobile-frontend-main-menu-button-tooltip": "افتح القائمة الرئيسية",
 	"mobile-frontend-main-menu-contributions": "مساهمات",
 	"mobile-frontend-main-menu-login": "تسجيل الدخول",
-	"mobile-frontend-main-menu-logout": "خروج",
+	"mobile-frontend-main-menu-logout": "تسجيل الخروج",
 	"mobile-frontend-main-menu-nearby": "بالقرب من هنا",
 	"mobile-frontend-main-menu-settings": "الإعدادات",
 	"mobile-frontend-main-menu-watchlist": "قائمة المراقبة",

@@ -30,10 +30,10 @@
 	"vector-searchsuggest-containing": "Xonda tushashali totuli ko <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Byobirimo",
 	"vector-toc-beginning": "Ndangiro",
-	"vector-main-menu-label": "Ndangiriro",
+	"vector-main-menu-label": "Meni ya ndangiriro",
 	"vector-feature-custom-font-size-exclusion-notice": "Akashashali kano kanerekunekolesa maandiko makemake",
-	"vector-page-tools-label": "Bindu bye kolesa",
+	"vector-page-tools-label": "Bikai",
 	"vector-page-tools-general-label": "Ngulukulu",
-	"vector-page-tools-actions-label": "Kye kola",
+	"vector-page-tools-actions-label": "Mikolere",
 	"vector-unpin-element-label": "bisha"
 }

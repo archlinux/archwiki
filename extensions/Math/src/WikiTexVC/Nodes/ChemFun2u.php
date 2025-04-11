@@ -41,10 +41,12 @@ class ChemFun2u extends TexNode {
 		return $this->right;
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return $this->fname . $this->left->inCurlies() . '_' . $this->right->inCurlies();
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		return [];
 	}

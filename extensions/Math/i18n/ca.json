@@ -16,6 +16,7 @@
 		]
 	},
 	"math-desc": "Composa fórmules matemàtiques escrites entre les etiquetes <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"popups-settings-option-math-tooltip": "Explicar les fórmules matemàtiques en passar-hi per sobre.",
 	"math-visualeditor-mwchemdialog-title": "Fórmula química",
 	"math-visualeditor-mwlatexdialog-card-formula": "Fórmula",
 	"math-visualeditor-mwlatexdialog-card-options": "Opcions",
@@ -32,6 +33,7 @@
 	"math_unknown_error": "error desconegut",
 	"math_unknown_function": "funció '$1' desconeguda",
 	"mw-math-latexml": "LaTeXML (experimental; utilitza MathML)",
+	"mw-math-mathjax": "MathJax al costat client (per navegadors amb suport de MathML limitat)",
 	"mw-math-mathml": "MathML amb SVG o PNG alternatiu (recomanat per a navegadors moderns i eines d'accessibilitat)",
 	"mw-math-source": "Deixa com a LaTeX (per a navegadors de text)",
 	"prefs-math": "Com es mostren les fórmules",

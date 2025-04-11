@@ -44,12 +44,13 @@
 	"echo-category-title-system-emailonly": "{{PLURAL:$1|Sistem}}",
 	"echo-category-title-user-rights": "{{PLURAL:$1|Obâ'ân hak pangangghuy}}",
 	"echo-category-title-emailuser": "{{PLURAL:$1|Sorasa ḍâri pangangghuy laèn|Sorasa ḍâri para pangangghuy sepalèan}}",
-	"echo-category-title-article-reminder": "Halaman {{PLURAL:$1|Pamèmot}}",
+	"echo-category-title-article-reminder": "Kaca {{PLURAL:$1|paènga'}}",
 	"echo-category-title-thank-you-edit": "{{PLURAL:$1|riwayat}} beccè'an",
 	"echo-category-title-watchlist": "Beccè'an ḍâ' pelataran sèghârân",
 	"echo-category-title-minor-watchlist": "Beccè'an kèni' ḍâ' pelataran sèghârân",
 	"echo-category-title-api-triggered": "Pamartèlan sè èsolet API",
 	"tooltip-pt-notifications-alert": "Parèmotân {{GENDER:|Abâ'na}}",
 	"echo-displaynotificationsconfiguration": "Konfigurasi robâ pratèlan",
-	"echo-displaynotificationsconfiguration-summary": "Ariya aslèra ikhtisar konfigurasi partèlan ḍâ' ka wiki riya."
+	"echo-displaynotificationsconfiguration-summary": "Ariya aslèra ikhtisar konfigurasi partèlan ḍâ' ka wiki riya.",
+	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Partèlan anot category"
 }

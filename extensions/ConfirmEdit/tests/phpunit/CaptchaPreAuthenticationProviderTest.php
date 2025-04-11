@@ -24,6 +24,11 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 
 	public function setUp(): void {
 		parent::setUp();
+
+		// Clear any handlers of the ConfirmEditTriggersCaptcha hook for this test, as in CI their additional
+		// checks may cause the tests to fail (such as those from IPReputation).
+		$this->clearHook( 'ConfirmEditTriggersCaptcha' );
+
 		$this->overrideConfigValues( [
 			'CaptchaClass' => SimpleCaptcha::class,
 			'CaptchaBadLoginAttempts' => 1,

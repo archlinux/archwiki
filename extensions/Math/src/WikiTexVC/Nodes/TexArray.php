@@ -6,7 +6,6 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use Generator;
 use InvalidArgumentException;
-use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseMappings;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLParsingUtil;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLutil;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
@@ -22,12 +21,17 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 	protected bool $curly = false;
 	private ?LengthSpec $rowSpecs = null;
 
+	/**
+	 * @param TexNode|string ...$args
+	 * @return self
+	 */
 	public static function newCurly( ...$args ) {
 		$node = new self( ...$args );
 		$node->curly = true;
 		return $node;
 	}
 
+	/** @inheritDoc */
 	public function __construct( ...$args ) {
 		$nargs = [];
 
@@ -41,7 +45,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		parent::__construct( ...$nargs );
 	}
 
-	public function checkForStyleArgs( $node ) {
+	public function checkForStyleArgs( TexNode $node ): ?array {
 		if ( $node instanceof Literal ) {
 			$name = trim( $node->getArg() );
 			switch ( $name ) {
@@ -102,16 +106,16 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		if ( !( $currentNode instanceof Fun2nb && $currentNode->getFname() == "\\sideset" ) ) {
 			return null;
 		}
-		if ( $nextNode instanceof Literal ) {
-			return $nextNode;
-		}
-		if ( $nextNode instanceof FQ ) {
+		if ( $nextNode instanceof Literal ||
+			$nextNode instanceof DQ ||
+			$nextNode instanceof UQ ||
+			$nextNode instanceof FQ ) {
 			return $nextNode;
 		}
 		return null;
 	}
 
-	public function checkForLimits( $currentNode, $nextNode ) {
+	public function checkForLimits( TexNode $currentNode, ?TexNode $nextNode ): array {
 		// Preceding 'lim' in example: "\\lim_{x \\to 2}"
 		if ( ( $currentNode instanceof DQ || $currentNode instanceof FQ )
 			&& $currentNode->containsFunc( "\\lim" ) ) {
@@ -153,14 +157,14 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return [ $currentNode, true ];
 	}
 
-	public function checkForNot( $currentNode ): bool {
+	public function checkForNot( TexNode $currentNode ): bool {
 		if ( $currentNode instanceof Literal && trim( $currentNode->getArg() ) == "\\not" ) {
 			return true;
 		}
 		return false;
 	}
 
-	public function checkForDerivatives( $iStart, $args ): int {
+	public function checkForDerivatives( int $iStart, array $args ): int {
 		$ctr = 0;
 		for ( $i = $iStart, $count = count( $this->args ); $i < $count; $i++ ) {
 			$followUp = $args[$i];
@@ -174,7 +178,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return $ctr;
 	}
 
-	public function checkForNamedFctArgs( $currentNode, $nextNode ) {
+	public function checkForNamedFctArgs( TexNode $currentNode, ?TexNode $nextNode ): array {
 		// Check if current node is named function
 		$hasNamedFct = false;
 		if ( $currentNode instanceof TexArray && count( $currentNode->args ) == 2 ) {
@@ -194,7 +198,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 			return [ $hasNamedFct, $hasValidParameters ];
 		}
 
-		if ( $nextNode ) {
+		if ( $nextNode && !( $nextNode instanceof Literal && $nextNode->getArg() === "'" ) ) {
 			$hasValidParameters = true;
 		}
 
@@ -217,7 +221,8 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		$this->curly = false;
 	}
 
-	public function renderMML( $arguments = [], $state = [] ) {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ) {
 		// Everything here is for parsing displaystyle, probably refactored to WikiTexVC grammar later
 		$fullRenderedArray = "";
 		$mmlStyles = [];
@@ -328,7 +333,9 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return $fullRenderedArray;
 	}
 
-	private function createMMLwithContext( $currentColor, $currentNode, $state, $arguments ) {
+	private function createMMLwithContext(
+		?string $currentColor, TexNode $currentNode, array &$state, array $arguments
+	): string {
 		if ( $currentColor ) {
 			if ( array_key_exists( "colorDefinitions", $state )
 				&& is_array( $state["colorDefinitions"] )
@@ -339,8 +346,8 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 				$displayedColor = $state["colorDefinitions"][$currentColor]["hex"];
 
 			} else {
-				$resColor = BaseMappings::getColorByKey( $currentColor );
-				$displayedColor = $resColor ? $resColor[0] : $currentColor;
+				$resColor = TexUtil::getInstance()->color( ucfirst( $currentColor ) );
+				$displayedColor = $resColor ?: $currentColor;
 			}
 			$mmlStyleColor = new MMLmstyle( "", [ "mathcolor" => $displayedColor ] );
 			$ret = $mmlStyleColor->encapsulateRaw( $currentNode->renderMML( $arguments, $state ) );
@@ -354,11 +361,11 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 	/**
 	 * If derivative was recognized, add the corresponding derivative math operator
 	 * to the mml and wrap with msup element.
-	 * @param array $state state indicator which indicates derivative
+	 * @param array &$state state indicator which indicates derivative
 	 * @param string $mml mathml input
 	 * @return string mml with additional mml-elements for derivatives
 	 */
-	public function addDerivativesContext( $state, string $mml ): string {
+	public function addDerivativesContext( array &$state, string $mml ): string {
 		if ( array_key_exists( "deriv", $state ) && $state["deriv"] > 0 ) {
 			$msup = new MMLmsup();
 			$moDeriv = new MMLmo();
@@ -376,10 +383,14 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 			}
 
 			$mml = $msup->encapsulateRaw( $mml . $moDeriv->encapsulateRaw( $derInfo ) );
+			if ( ( $state['foundNamedFct'][0] ?? false ) && !( $state['foundNamedFct'][1] ?? true ) ) {
+				$mml .= MMLParsingUtil::renderApplyFunction();
+			}
 		}
 		return $mml;
 	}
 
+	/** @inheritDoc */
 	public function inCurlies() {
 		if ( isset( $this->args[0] ) && count( $this->args ) == 1 ) {
 			return $this->args[0]->inCurlies();
@@ -388,6 +399,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		}
 	}
 
+	/** @inheritDoc */
 	public function extractSubscripts() {
 		$y = [];
 
@@ -400,6 +412,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return [];
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		if ( $args == null ) {
 			$args = $this->args;
@@ -437,6 +450,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return array_slice( $list, 0, count( $list ) - $offset );
 	}
 
+	/** @inheritDoc */
 	public function getModIdent() {
 		$y = [];
 
@@ -450,7 +464,10 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return [];
 	}
 
-	public function push( ...$elements ) {
+	/**
+	 * @param TexNode|string ...$elements
+	 */
+	public function push( ...$elements ): TexArray {
 		self::checkInput( $elements );
 
 		array_push( $this->args, ...$elements );
@@ -475,6 +492,9 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return $this->args[1] ?? null;
 	}
 
+	/**
+	 * @param TexNode|string ...$elements
+	 */
 	public function unshift( ...$elements ): TexArray {
 		array_unshift( $this->args, ...$elements );
 		return $this;
@@ -504,7 +524,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return $this->curly;
 	}
 
-	public function setCurly( $curly = true ): TexArray {
+	public function setCurly( bool $curly = true ): TexArray {
 		$this->curly = $curly;
 		return $this;
 	}
@@ -523,14 +543,17 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return parent::getArgs();
 	}
 
+	/** @inheritDoc */
 	public function offsetExists( $offset ): bool {
 		return isset( $this->args[$offset] );
 	}
 
+	/** @inheritDoc */
 	public function offsetGet( $offset ): ?TexNode {
 		return $this->args[$offset] ?? null;
 	}
 
+	/** @inheritDoc */
 	public function offsetSet( $offset, $value ): void {
 		if ( !( $value instanceof TexNode ) ) {
 			throw new InvalidArgumentException( 'TexArray elements must be of type TexNode.' );
@@ -538,6 +561,7 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		$this->args[$offset] = $value;
 	}
 
+	/** @inheritDoc */
 	public function offsetUnset( $offset ): void {
 		unset( $this->args[$offset] );
 	}

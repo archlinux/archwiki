@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aristorkle"
+		]
+	},
+	"echo-category-title-other": "{{PLURAL:$1|Otro|Otros}}",
+	"echo-category-title-system": "{{PLURAL:$1|Sistema}}",
+	"echo-category-title-system-noemail": "{{PLURAL:$1|Sistema}}",
+	"echo-category-title-system-emailonly": "{{PLURAL:$1|Sistema}}",
+	"notification-link-text-expand-all": "Ancha",
+	"notification-link-text-expand-alert-count": "Mira con el {{PLURAL:$1|$1 alerta|$1 maga alerta}}",
+	"notification-link-text-expand-notice-count": "Mira con el {{PLURAL:$1|$1 aviso|$1 maga aviso}}",
+	"notification-link-text-collapse-all": "Esconde",
+	"notification-link-text-view-message": "Mira con el mensaje",
+	"notification-link-text-view-mention": "Mira con el mencion",
+	"notification-link-text-view-mention-failure": "{{PLURAL:$1|Mira con el mencion|Mira con el maga menciones}}",
+	"notification-link-text-view-changes": "{{GENDER:$1|Mira}} con el maga cambio",
+	"notification-link-text-view-page": "Mira con el pagina",
+	"notification-header-edit-user-talk": "Si $1 {{GENDER:$2|ya deja}} mensaje na <strong>{{GENDER:$3|de tuyo}} pagina de discusion</strong>.",
+	"notification-header-edit-user-talk-with-section": "Si $1 {{GENDER:$2|ya deja}} mensaje na <strong>{{GENDER:$3|de tuyo}} pagina de discusion </strong> na \"<strong>$4</strong>\".",
+	"notification-compact-header-edit-user-talk": "Si $1 {{GENDER:$3|ya}} {{GENDER:$2|deja}} contigo mensaje.",
+	"notification-compact-header-edit-user-talk-with-section": "Si $1 {{GENDER:$2|ya}} {{GENDER:$3|deja}} contigo mensaje na \"<strong>$4</strong>\".",
+	"notification-header-mention-other": "Tiene {{GENDER:$3|con}} $1 quien {{GENDER:$2|ya menciona}} na <strong>$4</strong> na \"<strong>$5</strong>\".",
+	"notification-header-mention-other-nosection": "Tiene {{GENDER:$3|con}} $1 quien {{GENDER:$2|ya menciona}} na <strong>$4</strong>.",
+	"notification-header-mention-user-talkpage-v2": "Si $1 {{GENDER:$2|ya menciona}} {{GENDER:$3|contigo}} na <strong>pagina de discusion de {{GENDER:$5|usario|usaria}} $4</strong> na \"<strong>$6</strong>\".",
+	"notification-inbox-filter-read": "Acabao lé",
+	"notification-inbox-filter-unread": "No hay pa lé",
+	"notification-inbox-filter-all": "Todo",
+	"echo-email-plain-footer": "Para controla si cosa email kame envia {{GENDER:$1|contigo}}, chequia con el {{GENDER:$1|de tuyo}} maga preferencia.",
+	"echo-email-html-footer-preference-link-text": "chequia con el {{GENDER:$1|de tuyo}} maga preferencia",
+	"echo-email-html-footer-with-link": "Para controla si cosa email kame envia {{GENDER:$2|contigo}}, $1.",
+	"echo-date-today": "Este dia",
+	"echo-date-yesterday": "Ayer",
+	"notification-bundle-header-edit-user-talk-v2": "{{PLURAL:$1|Un nuevo mensaje|$1 maga nuevo mensaje|100=99+ maga nuevo mensaje}} na <strong>{{GENDER:$3|de tuyo}} pagina de discusion</strong>."
+}

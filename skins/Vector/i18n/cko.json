@@ -1,11 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Salifu Ramatu"
+			"Salifu Ramatu",
+			"Hasslaebetch"
 		]
 	},
+	"vector-no-language-button-label": "Bukasu Danfiɛ",
+	"vector-action-move": "Cin i kɔ",
+	"vector-view-create": "Teke fɔfɔrɛ",
 	"vector-feature-limited-width-0-label": " tɛtɛlɛ",
 	"vector-feature-custom-font-size-2-label": "B'a bakan",
 	"skin-theme-name": "Nzue balasu",
-	"skin-theme-night-label": "Bilɛ"
+	"skin-theme-day-label": "Wein",
+	"skin-theme-night-label": "Bilɛ",
+	"vector-toc-label": "I kuunu jɔrɛ",
+	"vector-unpin-element-label": "Fiawa"
 }

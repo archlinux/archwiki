@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"MysticVoyager"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "kiujjuti",
+	"discussiontools-newtopic-missing-title": "tulattarvik tusaqtaujuq {{GENDER:|atuagarni}} sailiniq.",
+	"discussiontools-newtopic-placeholder-title": "pijjutinga",
+	"discussiontools-replylink": "{{GENDER:|kiujjuti}}",
+	"discussiontools-replywidget-advanced": "sivuvasiktuq",
+	"discussiontools-replywidget-cancel": "iniqtipaa",
+	"discussiontools-replywidget-mode-source": "nakinngaarvik",
+	"discussiontools-replywidget-mode-visual": "takutsait",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|ilaliutilugu}} uqausiksaq",
+	"discussiontools-replywidget-placeholder-newtopic": "ilulingit",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|kiujjuti}} ikunga {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "tavva uattiarukallauliqtuq",
+	"discussiontools-replywidget-reply": "{{GENDER:|kiujjuti}}",
+	"discussiontools-replywidget-summary": "nainaaqsimajuq",
+	"discussiontools-replywidget-watchthis": "pijittiraqtaujuq taimaittumik atuqtuq [[Special:Watchlist|ujjirijaujut titiraqsimajut]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|inuk|inuit}} uqaqatigiingniq",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|uqausiksaq|uqausiksait}}",
+	"discussiontools-topicheader-latestcomment": "kingulliqpaaq uqausiksaq: $1",
+	"discussiontools-topicsubscription-button-subscribe": "atiliuqataugit",
+	"discussiontools-topicsubscription-button-subscribe-label": "atiliuqataugit",
+	"discussiontools-topicsubscription-button-unsubscribe": "nuttiqpallianiq",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "nuttiqpallianiq",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|qanuq}} atuinnaujut tukisigiarutiksat aturlutit kiinamut maturmik ammalu takuniarnirarlutit.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|qanuq}} atiliuqsimaliqtut!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|qanuq}} qaujikkaijjutinik piqattajjaagunniiqtut nutaanik uqausiksanik tamatumunga.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|qanuq}} tukiliuqtauningagut."
+}

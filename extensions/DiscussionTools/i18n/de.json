@@ -79,7 +79,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "{{GENDER:|Du}} hast abonniert!",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "{{GENDER:|Du}} erhältst keine Benachrichtigungen mehr, wenn auf dieser Seite neue Themen gestartet werden.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|Du}} hast diese Benachrichtigung abbestellt.",
-	"discussiontools-notification-added-topic-header": "Neues Thema „<strong>$4</strong>“ erstellt am <strong>$3</strong> von $2.",
+	"discussiontools-notification-added-topic-header": "Neues Thema „<strong>$4</strong>“ erstellt auf <strong>$3</strong> von $2.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Ein neues Thema|$1 neue Themen|100=Über 99 neue Themen}} auf „<strong>$2</strong>“.",
 	"discussiontools-notification-added-topic-view": "Thema ansehen",
 	"discussiontools-notification-comment-thank-header": "$1 {{GENDER:$2|dankte}} {{GENDER:$4|dir}} für deinen Kommentar „<strong>$3</strong>“.",

@@ -88,7 +88,7 @@
 	"abusefilter-enabled": "ڕێگەپێدراو",
 	"abusefilter-deleted": "سڕدراو",
 	"abusefilter-disabled": "ڕێگەپێنەدراو",
-	"abusefilter-hitcount": "$1 جار",
+	"abusefilter-hitcount": "$1 {{PLURAL:$1|جار}}",
 	"abusefilter-new": "پاڵوێنەیەکی نوێ دروست بکە",
 	"abusefilter-import-button": "ھاوردنی پاڵوێنە",
 	"abusefilter-return": "بگەڕێوە بۆ بەڕێوبەرایەتیی پاڵوێنە",

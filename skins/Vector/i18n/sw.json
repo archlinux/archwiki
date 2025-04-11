@@ -11,7 +11,8 @@
 			"Muddyb Blast Producer",
 			"Wangombe",
 			"Yasen igra",
-			"Jon Harald Søby"
+			"Jon Harald Søby",
+			"Joeamj"
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Tumia Legacy Vector",
@@ -55,6 +56,7 @@
 	"vector-searchsuggest-containing": "Tafuta kurasa zilizo na <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Yaliyomo",
 	"vector-toc-beginning": "Mwanzo",
+	"vector-anon-user-menu-pages": "Kurasa za wahariri walioondoka",
 	"vector-anon-user-menu-pages-learn": "soma zaidi",
 	"vector-anon-user-menu-pages-label": "Soma zaidi kuhusu kuhariri",
 	"vector-main-menu-tooltip": "Menyu kuu",

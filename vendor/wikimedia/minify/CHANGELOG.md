@@ -1,6 +1,29 @@
 # Changelog
 
-## 2.8.0 (2014-08-20)
+## 2.9.0 (2025-03-25)
+
+Fixed:
+
+* Fix compat with PCRE 10.45, e.g. on Debian 13 or Ubuntu 25, and likely PHP 8.3+. (Reedy) [T388335](https://phabricator.wikimedia.org/T388335)
+
+Added:
+
+* JavaScriptMinifier: Add support for async function as property value (Hannah Okwelum) [T386139](https://phabricator.wikimedia.org/T386139)
+* JavaScriptMinifier: Add support for optional catch binding (Hannah Okwelum) [T387432](https://phabricator.wikimedia.org/T387432)
+* Cli: Add `jsdebug` command (Timo Tijhof)
+
+Changed:
+
+* JavaScriptMinifier: Update class documentation for ES2017 support (Hannah Okwelum) [T277675](https://phabricator.wikimedia.org/T277675)
+
+## 2.8.1 (2025-02-27)
+
+Fixed:
+
+* JavaScriptMinifier: Reject "5..0" as invalid syntax (Timo Tijhof)
+* JavaScriptMinifier: Remove new line insertion (Hannah Okwelum) [T368204](https://phabricator.wikimedia.org/T368204)
+
+## 2.8.0 (2024-08-20)
 
 Added:
 

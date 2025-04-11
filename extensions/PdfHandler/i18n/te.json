@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Veeven"
+			"Veeven",
+			"Chaduvari"
 		]
 	},
+	"pdf-file-page-warning-info": "ఈ సమస్య గురించి మరింత తెలుసుకోండి",
 	"pdf_page_error": "పుట సంఖ్య అవధిలో లేదు"
 }

@@ -6,7 +6,7 @@
 			"Rotem Liss"
 		]
 	},
-	"syntaxhighlight-desc": "אפשרות לסימון קוד מקור בצבעים עם התגית <code>&lt;syntaxhighlight&gt;</code> באמצעות [http://pygments.org/ Pygments – צובע קוד בשפת Python]",
+	"syntaxhighlight-desc": "אפשרות לסימון קוד מקור בצבעים באמצעות התג <code>&lt;syntaxhighlight&gt;</code> באמצעות [http://pygments.org/ Pygments – צובע קוד בשפת Python]",
 	"syntaxhighlight-error-category": "דפים עם שגיאות בצביעת קוד",
 	"syntaxhighlight-error-category-desc": "אירעה שגיאה בעת ניסיון לצבוע קוד שכלול בדף.",
 	"syntaxhighlight-enclose-category": "דפים שמשתמשים בתכונות enclose מיושנות",

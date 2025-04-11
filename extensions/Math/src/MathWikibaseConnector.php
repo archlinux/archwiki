@@ -341,7 +341,7 @@ class MathWikibaseConnector {
 					return $this->site->getPageUrl( $siteLink->getPageName() );
 				}
 			}
-		} catch ( StorageException $e ) {
+		} catch ( StorageException | RevisionedUnresolvedRedirectException $e ) {
 			$this->logger->warning(
 				"Cannot fetch URL for EntityId " . $entityId . ". Reason: " . $e->getMessage()
 			);

@@ -233,6 +233,11 @@ class AbuseFilterTokenizer {
 				$token .= substr( $code, $offset, $addLength );
 				$offset += $addLength;
 			} elseif ( $code[$offset] === '\\' ) {
+				if ( !isset( $code[$offset + 1] ) ) {
+					// Unterminated escape sequence, hence unterminated string. (T390416)
+					throw new UserVisibleException( 'unclosedstring', $offset + 1, [] );
+				}
+
 				switch ( $code[$offset + 1] ) {
 					case '\\':
 						$token .= '\\';

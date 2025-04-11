@@ -65,6 +65,9 @@ final class Cli {
 				case 'js':
 					$this->runJs( ...$this->params );
 					break;
+				case 'jsdebug':
+					$this->runJsDebug( ...$this->params );
+					break;
 				case 'jsmap-web':
 					$this->runJsMapWeb( ...$this->params );
 					break;
@@ -86,12 +89,12 @@ final class Cli {
 		}
 	}
 
-	private function runCss( string $file = null ): void {
+	private function runCss( ?string $file = null ): void {
 		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
 		$this->output( CSSMin::minify( $data ) );
 	}
 
-	private function runCssRemap( string $file = null ): void {
+	private function runCssRemap( ?string $file = null ): void {
 		if ( $file === null ) {
 			$this->error( 'Remapping requires a filepath' );
 			return;
@@ -102,7 +105,7 @@ final class Cli {
 		$this->output( CSSMin::minify( $data ) );
 	}
 
-	private function runJs( string $file = null ): void {
+	private function runJs( ?string $file = null ): void {
 		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
 		$onError = function ( ParseError $error ) {
 			$this->output( 'ParseError: ' . $error->getMessage() . ' at position ' . $error->getOffset() );
@@ -114,7 +117,47 @@ final class Cli {
 		}
 	}
 
-	private function runJsMapWeb( string $file = null ): void {
+	private function runJsDebug( ?string $file = null ): void {
+		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
+		$onError = function ( ParseError $error ) {
+			$this->output( 'ParseError: ' . $error->getMessage() . ' at position ' . $error->getOffset() );
+			$this->exitCode = 1;
+		};
+
+		$first = true;
+		$onDebug = static function ( array $frame ) use ( &$first ) {
+			if ( $first ) {
+				print sprintf( "| %-45s | %-4s | %-22s | %-17s | %-16s\n",
+					'stack', 'last', 'state', 'token', 'type' );
+				print sprintf( "| %'-45s | %'-4s | %'-22s | %'-17s | %'-16s\n",
+					'', '', '', '', '' );
+				$first = false;
+			}
+			$stackStrLen = 0;
+			$stackPieces = [];
+			$stackOverflow = 0;
+			foreach ( array_reverse( $frame['stack'] ) as $i => $state ) {
+				$stackStrLen += strlen( $state ) + 2;
+				if ( $stackStrLen < 40 ) {
+					$stackPieces[] = $state;
+				} else {
+					$stackOverflow++;
+				}
+			}
+			if ( $stackOverflow ) {
+				$stackPieces[] = "$stackOverflow ...";
+			}
+			$stack = implode( ', ', array_reverse( $stackPieces ) );
+			print sprintf( "| %-45s | %-4s | %-22s | @%-3s %-12s | %-16s\n",
+				$stack, $frame['last'], $frame['state'], $frame['pos'], $frame['token'], $frame['type'] );
+		};
+		$ret = JavaScriptMinifier::minifyInternal( $data, null, $onError, $onDebug );
+		if ( !$this->exitCode ) {
+			$this->output( $ret );
+		}
+	}
+
+	private function runJsMapWeb( ?string $file = null ): void {
 		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
 		$sourceName = $file === null ? 'file.js' : basename( $file );
 		$mapper = JavaScriptMinifier::createSourceMapState();
@@ -122,7 +165,7 @@ final class Cli {
 		$this->output( rtrim( $mapper->getSourceMap(), "\n" ) );
 	}
 
-	private function runJsMapRaw( string $file = null ): void {
+	private function runJsMapRaw( ?string $file = null ): void {
 		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
 		$sourceName = $file === null ? 'file.js' : basename( $file );
 		$mapper = JavaScriptMinifier::createSourceMapState();

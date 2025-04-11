@@ -48,11 +48,13 @@ class FQ extends TexNode {
 		return $this->down;
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return $this->base->render() . '_' . $this->down->inCurlies() . '^' . $this->up->inCurlies();
 	}
 
-	public function renderMML( $arguments = [], $state = [] ) {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ) {
 		if ( array_key_exists( "limits", $state ) ) {
 			// A specific FQ case with preceding limits, just invoke the limits parsing manually.
 			return BaseParsing::limits( $this, $arguments, $state, "" );

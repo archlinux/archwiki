@@ -18,6 +18,7 @@
 	"linter-category-deletable-table-tag": "Nadmiarowe znaczniki tabeli do usunięcia",
 	"linter-category-deletable-table-tag-desc": "Te strony zawierają nadmiarowe znaczniki tabeli, zagnieżdżone w innej tabeli, które powinny zostać usunięte.",
 	"linter-category-duplicate-ids": "Zduplikowane identyfikatory",
+	"linter-category-duplicate-ids-desc": "Te strony zawierają elementy z powielonymi wartościami atrybutu <code>id</code>.",
 	"linter-category-fostered": "Osierocona zawartość",
 	"linter-category-fostered-desc": "Na tych stronach występuje osierocona zawartość.",
 	"linter-category-fostered-transparent": "Osierocona niewidoczna zawartość",

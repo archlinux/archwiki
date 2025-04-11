@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lam-ang"
+			"Lam-ang",
+			"Exec8"
 		]
 	},
 	"mobile-frontend-editor-edit": "Urnosen",
@@ -20,5 +21,6 @@
 	"mobile-frontend-placeholder": "Agbiruk iti {{SITENAME}}",
 	"mobile-frontend-random-button": "Pugto",
 	"mobile-frontend-talk-back-to-page": "Agsubli iti panid ti \"$1\"",
-	"mobile-frontend-user-button-tooltip": "Ipakitam dagiti paammok"
+	"mobile-frontend-user-button-tooltip": "Ipakitam dagiti paammok",
+	"minerva-page-actions-overflow": "Ad-adu pay"
 }

@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Zetareyy"
+		]
+	},
+	"vector-languages": "Manga bahasa",
+	"vector-language-button-label": "{{PLURAL:$1|$1 bahasa}}",
+	"vector-no-language-button-label": "Magdugang sin bahasa",
+	"vector-action-addsection": "Magdugang sin pabissara",
+	"vector-view-create": "Paawnun",
+	"vector-view-history": "Kitaun in piyagba'guhan",
+	"vector-more-actions": "Mataud pa",
+	"vector-appearance-label": "Dagbus",
+	"vector-feature-limited-width-name": "Ablang",
+	"vector-feature-limited-width-0-label": "Maablang",
+	"vector-feature-limited-width-1-label": "Biyaksa",
+	"vector-feature-custom-font-size-name": "Text",
+	"vector-feature-custom-font-size-0-label": "Asibi'",
+	"vector-feature-custom-font-size-1-label": "Biyaksa",
+	"vector-feature-custom-font-size-2-label": "Malaggu'",
+	"skin-theme-name": "Walna'",
+	"skin-theme-day-label": "Mailaw",
+	"skin-theme-night-label": "Malindum",
+	"skin-theme-os-label": "Awtumatik",
+	"skin-theme-exclusion-notice": "Ha mode mailaw pa sadja in gikap ini.",
+	"vector-searchsuggest-containing": "Lawagun in manga gikap amu in awn <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Manga luun",
+	"vector-toc-beginning": "Pagtagna'",
+	"vector-anon-user-menu-pages": "Manga gikap ha manga magbaba'gu naka'logout",
+	"vector-main-menu-label": "Menu puun",
+	"vector-feature-custom-font-size-exclusion-notice": "Asibi' pa sadja in kalaggu' font ha gikap ini",
+	"vector-page-tools-label": "Manga panghinang",
+	"vector-page-tools-general-label": "Igma'",
+	"vector-page-tools-actions-label": "Manga kuhibal",
+	"vector-unpin-element-label": "tapukun"
+}

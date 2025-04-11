@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"MysticVoyager"
+		]
+	},
+	"mobile-frontend-history": "ᑕᑯᓗᒍ ᐋᖅᑭᒋᐊᖅᑕᐅᓯᒪᔪᖅ ᑖᔅᓱᒪ ᒪᒃᐱᒐᐅᑉ.",
+	"mobile-frontend-home-button": "ᐊᖕᖏᕋᖅ",
+	"mobile-frontend-language-article-heading": "ᐅᖃᐅᓯᖅ",
+	"mobile-frontend-main-menu-login": "ᐊᑯᓐᓇᐳᖅ",
+	"mobile-frontend-main-menu-nearby": "ᖃᓂᒋᔭᖓᓂ",
+	"mobile-frontend-main-menu-settings": "ᐋᖅᑭᒃᓯᒪᓂᖏᑦ",
+	"mobile-frontend-placeholder": "ᐃᕚᖅᐳᖅ {{SITENAME}}",
+	"mobile-frontend-random-button": "ᓇᑭᑐᐃᓐᓇᖅ",
+	"minerva-page-actions-overflow": "ᓱᓕᒃᑲᓐᓂᖅ"
+}

@@ -45,7 +45,8 @@
 			"Sjoerddebruin",
 			"Southparkfan",
 			"TheDJ",
-			"सरोज कुमार ढकाल"
+			"सरोज कुमार ढकाल",
+			"Jeroen N"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -288,7 +289,7 @@
 	"visualeditor-includes-includeonly-description": "Wanneer inhoud van deze pagina door een andere pagina wordt gebruikt, wordt hier de volgende aanvullende inhoud opgenomen:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Meer informatie over gedeeltelijke transclusie]",
 	"visualeditor-languages-tool": "Talen",
-	"visualeditor-linkinspector-button-link-external": "Uitwendige pagina",
+	"visualeditor-linkinspector-button-link-external": "Externe koppeling",
 	"visualeditor-linkinspector-button-link-internal": "Interne pagina's doorzoeken",
 	"visualeditor-linkinspector-convert-link-isbn": "Omzetten naar ISBN-koppeling",
 	"visualeditor-linkinspector-convert-link-pmid": "Omzetten naar PMID-koppeling",

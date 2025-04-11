@@ -73,7 +73,7 @@
 	"templatedata-modal-errormsg-import-noparams": "Nulle nove parametros trovate durante le importation.",
 	"templatedata-modal-format-block": "Bloco",
 	"templatedata-modal-format-custom": "Personalisate",
-	"templatedata-modal-format-inline": "Un sol linea",
+	"templatedata-modal-format-inline": "Integrate",
 	"templatedata-modal-format-null": "Non specificate",
 	"templatedata-modal-format-placeholder": "Catena de formato pro le parametro del patrono",
 	"templatedata-modal-json-error-replace": "Reimplaciar",

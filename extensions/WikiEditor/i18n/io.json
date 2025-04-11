@@ -18,6 +18,8 @@
 	"wikieditor-toolbar-tool-link-int": "A wiki-pagino",
 	"wikieditor-toolbar-tool-link-int-target": "Titulo od URL di la pagino:",
 	"wikieditor-toolbar-tool-link-int-target-tooltip": "Titulo od URL di la pagino",
+	"wikieditor-toolbar-tool-link-int-text": "Texto di la ligilo:",
+	"wikieditor-toolbar-tool-link-int-text-tooltip": "Texto por montrar",
 	"wikieditor-toolbar-tool-link-insert": "Adjuntar ligilo",
 	"wikieditor-toolbar-tool-link-cancel": "Anular",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "La pagino existas",

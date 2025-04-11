@@ -8,7 +8,8 @@
 			"Tochiprecious",
 			"Ukabia",
 			"Uzoma Ozurumba",
-			"Weather Top Wizard"
+			"Weather Top Wizard",
+			"Sayvhior"
 		]
 	},
 	"minerva-last-modified-date": "Ikpeazụ edezigharịrị na $1,na $2",
@@ -24,8 +25,9 @@
 	"mobile-frontend-main-menu-settings": "Nhaziga",
 	"mobile-frontend-main-menu-watchlist": "Ùlìle",
 	"mobile-frontend-placeholder": "Chọọ na {{SITENAME}}",
-	"mobile-frontend-random-button": "mbọ mbọ",
+	"mobile-frontend-random-button": "Mbọ mbọ",
 	"mobile-frontend-user-page-contributions": "Mmètàrà",
 	"mobile-frontend-user-page-talk": "Nkàta",
+	"minerva-page-actions-overflow": "Ọzọ",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Ụdàkọ"
 }

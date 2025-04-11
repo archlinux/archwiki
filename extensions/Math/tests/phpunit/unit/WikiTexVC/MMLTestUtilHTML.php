@@ -10,7 +10,7 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util;
  */
 class MMLTestUtilHTML {
 
-	public static function generateHTMLtableItem( $input, $bold = false ) {
+	public static function generateHTMLtableItem( string $input, bool $bold = false ): string {
 		if ( !$bold ) {
 			return "<td class=\"tg-0lax\">" . $input . "</td>";
 		} else {
@@ -18,7 +18,7 @@ class MMLTestUtilHTML {
 		}
 	}
 
-	public static function generateHTMLEnd( $filePath, $active = true ) {
+	public static function generateHTMLEnd( string $filePath, bool $active = true ) {
 		if ( !$active ) {
 			return;
 		}
@@ -27,7 +27,12 @@ class MMLTestUtilHTML {
 		fclose( $file );
 	}
 
-	public static function generateHTMLtableRow( $filePath, $rows, $bold = false, $active = true ) {
+	public static function generateHTMLtableRow(
+		string $filePath,
+		array $rows,
+		bool $bold = false,
+		bool $active = true
+	) {
 		if ( !$active ) {
 			return;
 		}
@@ -45,9 +50,9 @@ class MMLTestUtilHTML {
 	}
 
 	public static function generateHTMLstart(
-		$filePath,
-		$headrows = [ "name", "Tex-Input", "MathML(MathJax3)", "MathML(WikiTexVC)" ],
-		$active = true
+		string $filePath,
+		array $headrows = [ "name", "Tex-Input", "MathML(MathJax3)", "MathML(WikiTexVC)" ],
+		bool $active = true
 	) {
 		if ( !$active ) {
 			return;

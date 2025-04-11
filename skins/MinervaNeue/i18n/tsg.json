@@ -1,16 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tausug101"
+			"Tausug101",
+			"Zetareyy"
 		]
 	},
-	"mobile-frontend-history": "Kitaun in piyagba'guhan sin gikapan ini.",
-	"mobile-frontend-home-button": "Puunan Bāy",
+	"mobile-frontend-history": "Kitaun in piyagba'guhan sin gikap ini.",
+	"mobile-frontend-home-button": "Bāy",
 	"mobile-frontend-language-article-heading": "Bahasa",
-	"mobile-frontend-main-menu-login": "Mag-Login",
+	"mobile-frontend-main-menu-login": "Mag'login",
 	"mobile-frontend-main-menu-nearby": "Masuuk",
-	"mobile-frontend-main-menu-settings": "Pamutang",
+	"mobile-frontend-main-menu-settings": "Kahatulan",
 	"mobile-frontend-placeholder": "Lawagun ha {{SITENAME}}",
-	"mobile-frontend-random-button": "waybidda'",
+	"mobile-frontend-random-button": "Way-bidda'",
 	"minerva-page-actions-overflow": "Mataud pa"
 }

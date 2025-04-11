@@ -58,6 +58,11 @@ class DQTest extends MediaWikiUnitTestCase {
 		$this->assertStringContainsString( ( new MMLmrow() )->getEmpty(), $dq->renderMML() );
 	}
 
+	public function testRenderEmptyDisplaystyle() {
+		$dq = new DQ( new Literal( '\\displaystyle' ), new Literal( 'b' ) );
+		$this->assertStringContainsString( ( new MMLmrow() )->getEmpty(), $dq->renderMML() );
+	}
+
 	public function testBigSum() {
 		$dq = new DQ( new Literal( '\\sum' ), new Literal( 'i' ) );
 		$this->assertStringContainsString( ( new MMLmunder() )->getStart(), $dq->renderMML() );
@@ -65,9 +70,10 @@ class DQTest extends MediaWikiUnitTestCase {
 
 	public function testSmallSum() {
 		$dq = new DQ( new Literal( '\\sum' ), new Literal( 'i' ) );
+		$state = [ 'styleargs' => [ 'displaystle' => 'false' ] ];
 		$this->assertStringContainsString(
 			( new MMLmsub() )->getStart(),
-			$dq->renderMML( [], [ 'styleargs' => [ 'displaystle' => 'false' ] ] ) );
+			$dq->renderMML( [], $state ) );
 	}
 
 }

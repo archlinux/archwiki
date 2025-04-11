@@ -208,7 +208,7 @@
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "Редактировать подписки",
 	"discussiontools-topicsubscription-special-intro": "Подписки позволяют {{GENDER:|вам}} следить за темой на страницах обсуждения. Когда кто-нибудь отвечает в теме, вы будете получать уведомление.\n\nОтрегулируйте режим получения этих уведомлений в [[Special:Preferences#mw-prefsection-echo|своих персональных настройках]].",
 	"discussiontools-topicsubscription-special-title": "Подписки на темы",
-	"echo-category-title-dt-subscription": "{{PLURAL:$1|Подписка|Подписки}} на странице обсуждения",
+	"echo-category-title-dt-subscription": "{{PLURAL:$1|Подписка|Подписки}} на страницы обсуждения",
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Архивирование}} страниц обсуждений",
 	"echo-pref-tooltip-dt-subscription": "Уведомлять меня, когда кто-то публикует новое сообщение в теме, на которую я {{GENDER:|подписан|подписана}}.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Уведомлять меня, когда тема, на которую я {{GENDER:|подписан|подписана}}, архивируется или удаляется со страницы, или если уведомления о размещенных в этой теме новых комментариях не могут быть отправлены по другим причинам.",

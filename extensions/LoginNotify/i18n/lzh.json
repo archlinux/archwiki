@@ -4,12 +4,16 @@
 			"Au0727"
 		]
 	},
-	"loginnotify-desc": "告君以疑之登薄",
-	"echo-category-title-login-fail": "登薄既敗",
-	"echo-pref-tooltip-login-fail": "告吾於或登薄而未成時",
-	"echo-category-title-login-success": "陌之登薄",
-	"echo-pref-tooltip-login-success": "告吾以陌之登薄",
+	"loginnotify-desc": "示君以登薄而存疑者",
+	"echo-category-title-login-fail": "或屢登薄而未成",
+	"echo-pref-tooltip-login-fail": "告吾於登薄而未成之時",
+	"echo-category-title-login-success": "見登薄於生處",
+	"echo-pref-tooltip-login-success": "見登簿於生處之時，書信告我。",
 	"loginnotify-primary-link": "助",
-	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|屢敗}}於登{{SITENAME}}之簿以$1",
-	"notification-header-login-success": "汝之薄既見登於陌處（或為{{GENDER:$1|君}}）。然者，略此訊；否者，是以更汝符節而復檢汝薄為善。"
+	"notification-loginnotify-login-fail-email-subject": "$1之簿為錄而{{PLURAL:$2|屢敗}}於{{SITENAME}}",
+	"notification-loginnotify-login-success-email-subject": "{{GENDER:$1|君}}之簿$1既錄於未見之處",
+	"notification-header-login-success": "君薄錄於生處，是者或為{{GENDER:$1|君}}也。然，略此書；否，是以更汝符節而復驗汝薄為善。",
+	"notification-new-bundled-header-login-fail": "別離以來，或嘗{{PLURAL:$1|'''$1度'''}}登汝簿於生處而未成。是非君者，是以易強符節為善。",
+	"notification-known-header-login-fail": "別離以來，或嘗{{PLURAL:$1|'''$1度'''}}登汝簿而未成。是非君者，是以易強符節為善。",
+	"notification-new-unbundled-header-login-fail": "今汝簿{{PLURAL:$1|'''一度'''|'''屢次'''}}見登於生處而未成。是非君者，是以易強符節為善。"
 }

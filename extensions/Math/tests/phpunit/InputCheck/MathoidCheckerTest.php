@@ -8,9 +8,12 @@ use MediaWiki\Http\HttpRequestFactory;
 use MediaWikiIntegrationTestCase;
 use MockHttpTrait;
 use RuntimeException;
-use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
 
+/**
+ * @covers \MediaWiki\Extension\Math\InputCheck\MathoidChecker
+ */
 class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	use MockHttpTrait;
 
@@ -25,7 +28,6 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getCacheKey
 	 * @dataProvider provideTexExamples
 	 */
 	public function testCacheKey( string $input, string $expected ) {
@@ -34,62 +36,42 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringEndsWith( $expected, $realKey );
 	}
 
-	/**
-	 * @covers \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getCheckResponse
-	 */
 	public function testResponseFromCache() {
-		$fakeWAN = new WANObjectCache( [ 'cache' => new HashBagOStuff() ] );
-		$fakeWAN->set( self::SAMPLE_KEY,
+		$wanCache = $this->getServiceContainer()->getMainWANObjectCache();
+		$wanCache->set( self::SAMPLE_KEY,
 			[ 999, 'expected' ],
 			WANObjectCache::TTL_INDEFINITE,
-			[ 'version' => MathoidChecker::VERSION ] );
-		// double check that the fake works
-		$this->assertSame( [ 999, 'expected' ], $fakeWAN->get( self::SAMPLE_KEY ) );
-		$this->setService( 'MainWANObjectCache', $fakeWAN );
+			[ 'version' => MathoidChecker::VERSION ]
+		);
+
 		$checker = $this->getMathoidChecker();
 		$this->assertSame( [ 999, 'expected' ], $checker->getCheckResponse() );
 	}
 
-	/**
-	 * @covers \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getCheckResponse
-	 */
 	public function testResponseWithPurge() {
-		$fakeWAN = new WANObjectCache( [ 'cache' => new HashBagOStuff() ] );
-		$fakeWAN->set( self::SAMPLE_KEY,
+		$wanCache = $this->getServiceContainer()->getMainWANObjectCache();
+		$wanCache->set( self::SAMPLE_KEY,
 			[ 999, 'unexpected' ],
 			WANObjectCache::TTL_INDEFINITE,
-			[ 'version' => MathoidChecker::VERSION ] );
-		// double check that the fake works
-		$this->assertSame( [ 999, 'unexpected' ], $fakeWAN->get( self::SAMPLE_KEY ) );
+			[ 'version' => MathoidChecker::VERSION ]
+		);
+
 		$this->setFakeRequest( 200, 'expected' );
-		$this->setService( 'MainWANObjectCache', $fakeWAN );
 		$checker = $this->getMathoidChecker( '\sin x', true );
 		$this->assertSame( [ 200, 'expected' ], $checker->getCheckResponse() );
 	}
 
-	/**
-	 * @covers \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getCheckResponse
-	 */
 	public function testResponseFromResponse() {
-		$fakeWAN = WANObjectCache::newEmpty();
-		$fakeWAN->set( self::SAMPLE_KEY, 'expected' );
-		// double check that the fake does not work
-		$this->assertSame( false, $fakeWAN->get( self::SAMPLE_KEY ) );
-		$this->setService( 'MainWANObjectCache', $fakeWAN );
+		$this->setMainCache( new EmptyBagOStuff() );
+
 		$this->setFakeRequest( 200, 'expected' );
 		$checker = $this->getMathoidChecker();
 		$this->assertSame( [ 200, 'expected' ], $checker->getCheckResponse() );
 	}
 
-	/**
-	 * @covers \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getCheckResponse
-	 */
 	public function testFailedResponse() {
-		$fakeWAN = WANObjectCache::newEmpty();
-		$fakeWAN->set( self::SAMPLE_KEY, 'expected' );
-		// double check that the fake does not work
-		$this->assertSame( false, $fakeWAN->get( self::SAMPLE_KEY ) );
-		$this->setService( 'MainWANObjectCache', $fakeWAN );
+		$this->setMainCache( new EmptyBagOStuff() );
+
 		$this->setFakeRequest( 401, false );
 		$checker = $this->getMathoidChecker();
 		$this->expectException( RuntimeException::class );
@@ -97,7 +79,6 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers       \MediaWiki\Extension\Math\InputCheck\MathoidChecker::isValid
 	 * @dataProvider provideMathoidSamples
 	 * @param string $input LaTeX input to check
 	 * @param string $mockRequestBody
@@ -112,7 +93,6 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers       \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getValidTex
 	 * @dataProvider provideMathoidSamples
 	 * @param string $input LaTeX input to check
 	 * @param string $mockRequestBody
@@ -127,7 +107,6 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers       \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getError
 	 * @dataProvider provideMathoidSamples
 	 * @param string $input LaTeX input to check
 	 * @param string $mockRequestBody

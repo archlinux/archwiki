@@ -7,5 +7,7 @@
 	"editcheck-dialog-addref-reject-common-knowledge": "Informasjonen eg legg til er ålmennkunnskap",
 	"tag-editcheck-reference-decline-common-knowledge": "Endringssjekk (referansar) avvist (ålmennkunnskap)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "Endringssjekk for referansar vart avvist som ålmennkunnskap",
-	"tag-editcheck-reference-decline-other": "Endringssjekk (referansar) avvist (anna)"
+	"tag-editcheck-reference-decline-irrelevant": "Endringssjekk (referansar) avvist (irrelevant)",
+	"tag-editcheck-reference-decline-other": "Endringssjekk (referansar) avvist (anna)",
+	"tag-editcheck-reference-decline-uncertain": "Endringssjekk (referansar) avvist (uviss)"
 }

@@ -16,5 +16,6 @@
 	"mobile-frontend-main-menu-settings": "Paramets",
 	"mobile-frontend-main-menu-watchlist": "Galädalised",
 	"mobile-frontend-placeholder": "Sukön in {{SITENAME}}",
-	"mobile-frontend-random-button": "Fädik"
+	"mobile-frontend-random-button": "Fädik",
+	"minerva-page-actions-overflow": "Mödikumo"
 }

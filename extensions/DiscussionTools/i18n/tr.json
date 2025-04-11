@@ -20,7 +20,8 @@
 			"Sezgin İbiş",
 			"ToprakM",
 			"Victor Trevor",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Leo"
 		]
 	},
 	"discussiontools": "Tartışma araçları",
@@ -205,15 +206,15 @@
 	"echo-pref-tooltip-dt-subscription": "Abone olduğum bir konuda biri yeni bir yorum yaptığında {{GENDER:|bana}} bildir.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Abone olduğum konu arşivlendiğinde, silindiğinde veya başka nedenlerden dolayı yeni yanıtlarla alakalı bildirim gönderilemeyeceği durumlarda {{GENDER:|bana}} haber ver.",
 	"discussiontools-comments-before-first-heading-category-desc": "Tartışma sayfası, lede bölümünde (ilk başlıktan önce) yorumlar içerir. Bu durum özellikle taşınabilir sürümde ve taşınabilir uygulamalarda, lede ya da yorumların hatalı görüntülenmesine neden olabilir.",
-	"tag-discussiontools-added-comment-description": "Bu düzenlemeye, bir tartışma sayfası yorumu eklendi",
+	"tag-discussiontools-added-comment-description": "Bu düzenlemede bir tartışma sayfası yorumu eklendi",
 	"tag-discussiontools-description": "DiscussionTools kullanılarak yapılan düzenleme",
 	"tag-discussiontools-edit": "Düzenlenmiş yorum",
-	"tag-discussiontools-edit-description": "Kullanıcı DiscussionTools ile mevcut bir yorumu düzenledi",
+	"tag-discussiontools-edit-description": "Kullanıcı, DiscussionTools ile mevcut bir yorumu düzenledi",
 	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Yeni konu]",
 	"tag-discussiontools-newtopic-description": "Kullanıcı, DiscussionTools ile sayfaya yeni bir konu ekledi",
 	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Yanıt]",
 	"tag-discussiontools-reply-description": "Kullanıcı DiscussionTools ile bir yorumu yanıtladı",
 	"tag-discussiontools-source-description": "DiscussionTools kaynak modundaydı",
-	"tag-discussiontools-source-enhanced-description": "TartışmaAraçları araç çubuğu ile gelişmiş kaynak modunda",
+	"tag-discussiontools-source-enhanced-description": "DiscussionTools, araç çubuğu ile gelişmiş kaynak modundaydı",
 	"tag-discussiontools-visual-description": "DiscussionTools görsel modundaydı"
 }

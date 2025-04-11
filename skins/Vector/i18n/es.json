@@ -30,7 +30,8 @@
 			"Tar Lócesilion",
 			"Vivaelcelta",
 			"Zapipedia (WMF)",
-			"IZapico (WMF)"
+			"IZapico (WMF)",
+			"Superzerocool"
 		]
 	},
 	"skinname-vector": "Versión heredada de Vector (2010)",
@@ -66,6 +67,7 @@
 	"vector-jumptocontent": "Ir al contenido",
 	"vector-more-actions": "Más",
 	"vector-appearance-label": "Apariencia",
+	"vector-appearance-tooltip": "Cambiar la apariencia del tamaño, ancho y color de la fuente de la página",
 	"vector-feature-limited-width-name": "Anchura",
 	"vector-feature-limited-width-0-label": "Ancho",
 	"vector-feature-limited-width-1-label": "Estándar",

@@ -463,6 +463,8 @@
 	"abusefilter-view-privatedetails-legend": "Se private oplysninger",
 	"abusefilter-view-privatedetails-reason": "Grund for adgang til private oplysninger:",
 	"abusefilter-log-details-id": "Log ID",
+	"abusefilter-blocked-domains-intro": "Eksterne links, der matcher denne liste vil blive blokeret, når de tilføjes til en side. Disse domæner gemmes i [[MediaWiki:BlockedExternalDomains.json]]. Forsøg på at tilføje blokerede links logges på [[Special:Log/abusefilterblockeddomainhit]].",
+	"abusefilter-blocked-domains-domain-added-comment": "Tilføjer blokeret eksternt domæne $1 med noter: $2",
 	"log-description-abusefilterprivatedetails": "Denne log viser en liste over gange, hvor en bruger havde adgang til de private oplysninger i en misbrugslog.",
 	"abusefilter-noreason": "Advarsel: For at se de private oplysninger i denne log, skal du angive en grund.",
 	"abusefilter-log-ip-not-available": "Ikke tilgængelig.",

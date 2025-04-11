@@ -6,7 +6,8 @@
 			"Serkanland",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"Əkrəm Cəfər"
+			"Əkrəm Cəfər",
+			"Əkrəm"
 		]
 	},
 	"multimediaviewer-desc": "Tam ekran interfeysində kiçik şəkilləri daha böyük ölçüdə genişləndirin",
@@ -100,7 +101,7 @@
 	"multimediaviewer-download-attribution-cta-header": "Müəllifi qeyd etməlisiniz",
 	"multimediaviewer-download-optional-attribution-cta-header": "Müəllifi qeyd edə bilərsiniz",
 	"multimediaviewer-download-attribution-cta": "Necə edildiyini göstər",
-	"multimediaviewer-copy-button": "Kopyala",
+	"multimediaviewer-copy-button": "Kopiyala",
 	"multimediaviewer-download-attribution-copy": "Bu fayl üçün müəlliflik mətnini seç və surətini çıxar (əgər dəstəklənirsə).",
 	"multimediaviewer-reuse-warning-deletion": "Bu fayl silinmək üçün nəzərdə tutulub.",
 	"multimediaviewer-reuse-warning-nonfree": "Bu faylın azad lisenziyası yoxdur.",

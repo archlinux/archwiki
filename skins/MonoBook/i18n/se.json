@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kimberli Mäkäräinen (WMNO)"
+			"Kimberli Mäkäräinen (WMNO)",
+			"Yupik"
 		]
 	},
 	"monobook-jumptotop": "ruovttoluotta bajás",
 	"monobook-notifications-link-none": "Almmuhusat",
-	"monobook-view-history": "Historjá"
+	"monobook-view-history": "Historjá",
+	"monobook-action-undelete": "Máhcat {{PLURAL:$1|ovtta rievdadusa|$1 rievdadusa}}"
 }

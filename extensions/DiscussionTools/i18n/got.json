@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gothicspeaker"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "𐌰𐌽𐌳𐌰𐌷𐌰𐍆𐍄𐍃",
+	"discussiontools-replylink": "{{GENDER:|𐌰𐌽𐌳𐌷𐌰𐍆𐍄𐌴𐌹}}",
+	"discussiontools-replywidget-cancel": "𐍃𐍅𐌴𐌹𐌱",
+	"discussiontools-replywidget-mode-source": "𐌱𐍂𐌿𐌽𐌽𐌰",
+	"discussiontools-replywidget-preview": "𐍆𐌰𐌿𐍂𐌰𐍃𐌹𐌿𐌽𐍃",
+	"discussiontools-replywidget-summary": "𐌼𐌰𐌿𐍂𐌲𐌿𐍃 𐍃𐌺𐌴𐌹𐍂𐌴𐌹𐌽𐍃",
+	"discussiontools-replywidget-watchthis": "𐌰𐌽𐌰𐌰𐌹𐌰𐌿𐌺 𐌸𐌰𐌽𐌰 𐌻𐌰𐌿𐍆 𐌳𐌿 [[Special:Watchlist|watchlist]] 𐌸𐌴𐌹𐌽𐌰𐌼𐌼𐌰",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|𐌼𐌰𐌽𐌽𐌰|𐌼𐌰𐌽𐍃}} 𐌹𐌽 𐌲𐌰𐍅𐌰𐌿𐍂𐌳𐌾𐌰",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|𐍅𐌰𐌿𐍂𐌳|𐍅𐌰𐌿𐍂𐌳𐌰}}",
+	"discussiontools-topicheader-latestcomment": "𐌰𐍆𐍄𐌿𐌼𐌹𐍃𐍄 𐍅𐌰𐌿𐍂𐌳: $1",
+	"discussiontools-topicsubscription-button-subscribe": "𐌰𐌽𐌰𐌼𐌴𐌻𐌴𐌹",
+	"discussiontools-topicsubscription-button-subscribe-label": "𐌰𐌽𐌰𐌼𐌴𐌻𐌴𐌹",
+	"discussiontools-topicsubscription-button-unsubscribe": "𐌿𐍃𐌼𐌴𐌻𐌴𐌹",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "𐌿𐍃𐌼𐌴𐌻𐌴𐌹",
+	"discussiontools-topicsubscription-notify-subscribed-title": "𐌰𐌽𐌰𐌼𐌴𐌻𐌹𐌳𐌴𐍃!",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "𐌿𐍃𐌼𐌴𐌻𐌹𐌳𐌴𐍃."
+}

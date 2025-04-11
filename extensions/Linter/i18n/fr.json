@@ -89,7 +89,7 @@
 	"linter-heading-low-priority": "Priorité basse",
 	"linter-heading-medium-priority": "Priorité moyenne",
 	"linter-namespace-mismatch": "Les espaces de noms spécifiés dans la liste de sélection ne correspondent pas à celui fourni dans le texte du titre.",
-	"linter-numerrors": "($1 erreur{{PLURAL:$1||s}})",
+	"linter-numerrors": "($1 {{PLURAL:$1|erreur|erreurs}})",
 	"linter-page-edit": "modifier",
 	"linter-page-history": "historique",
 	"linter-page-title-edit": "$1 ($2)",

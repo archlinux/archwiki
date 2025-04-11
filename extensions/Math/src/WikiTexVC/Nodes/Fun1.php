@@ -39,19 +39,22 @@ class Fun1 extends TexNode {
 		return $this->arg;
 	}
 
+	/** @inheritDoc */
 	public function inCurlies() {
 		return $this->render();
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return '{' . $this->fname . ' ' . $this->arg->inCurlies() . '}';
 	}
 
-	public function renderMML( $arguments = [], $state = [] ) {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ) {
 		return $this->parseToMML( $this->fname, $arguments, null );
 	}
 
-	public function createMover( $inner, $moArgs = [] ): string {
+	public function createMover( string $inner, array $moArgs = [] ): string {
 		$mrow = new MMLmrow();
 		$mo = new MMLmo( "", $moArgs );
 		$mover = new MMLmover();
@@ -66,6 +69,7 @@ class Fun1 extends TexNode {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		if ( $args == null ) {
 			$args = [ $this->arg ];
@@ -86,15 +90,17 @@ class Fun1 extends TexNode {
 		return parent::extractIdentifiers( $args );
 	}
 
+	/** @inheritDoc */
 	public function extractSubscripts() {
 		return $this->getSubs( $this->arg->extractSubscripts() );
 	}
 
+	/** @inheritDoc */
 	public function getModIdent() {
 		return $this->getSubs( $this->arg->getModIdent() );
 	}
 
-	private function getSubs( $subs ) {
+	private function getSubs( array $subs ): array {
 		$letterMods = array_keys( $this->tu->getBaseElements()['is_letter_mod'] );
 
 		if ( isset( $subs[0] ) && in_array( $this->fname, $letterMods, true ) ) {

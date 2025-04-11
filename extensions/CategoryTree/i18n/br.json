@@ -18,7 +18,7 @@
 	"categorytree-mode-categories": "Rummadoù hepken",
 	"categorytree-mode-pages": "pajennoù hep ar skeudennoù",
 	"categorytree-mode-all": "an holl bajennoù",
-	"categorytree-collapse": "Serriñ",
+	"categorytree-collapse": "Pakañ",
 	"categorytree-expand": "Dispakañ",
 	"categorytree-member-counts": "ennañ {{PLURAL:$1|1 isrummad|$1 isrummad}}, {{PLURAL:$2|1 bajenn|$2 pajenn}}, ha {{PLURAL:$3|1 restr|$3 restr}}",
 	"categorytree-num-categories": "$1 Rum.",

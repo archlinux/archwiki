@@ -31,6 +31,7 @@
 	"discussiontools-limitreport-errorreqid": "DiscussionTools иһигэр ыйытык нүөмэрин сыыһата",
 	"discussiontools-limitreport-timeusage": "DiscussionTools туттуу кэмэ",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|сөкүүндэ}}",
+	"discussiontools-newtopic-missing-title": "Бука диэн, ырытар тиэмэҥ аатын суруй.",
 	"discussiontools-newtopic-placeholder-title": "Тиэмэ",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Сурутуу",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Сурутууттан аккаастан",

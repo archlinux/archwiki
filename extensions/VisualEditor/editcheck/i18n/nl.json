@@ -18,12 +18,12 @@
 	"editcheck-dialog-addref-success-notify": "Bedankt voor het toevoegen van een referentie!",
 	"editcheck-dialog-addref-title": "Referentie toevoegen",
 	"editcheck-dialog-title": "Voordat u dit publiceert",
-	"tag-editcheck-reference-decline-common-knowledge": "EditCheck (referenties) afgewezen (algemene kennis)",
+	"tag-editcheck-reference-decline-common-knowledge": "Edit Check (referenties) afgewezen (algemene kennis)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "De EditCheck-referentie is afgewezen als algemeen bekend",
-	"tag-editcheck-reference-decline-irrelevant": "Edit Check (referenties) afgewezen (irrelevant)",
+	"tag-editcheck-reference-decline-irrelevant": "Edit Check (referenties) afgewezen (niet relevant)",
 	"tag-editcheck-reference-decline-irrelevant-description": "De EditCheck-referentie is afgewezen omdat deze niet relevant is",
-	"tag-editcheck-reference-decline-other": "EditCheck (referenties) geweigerd (overig)",
+	"tag-editcheck-reference-decline-other": "Edit Check (referenties) afgewezen (overig)",
 	"tag-editcheck-reference-decline-other-description": "De EditCheck-referentie is geweigerd om een overige reden",
-	"tag-editcheck-reference-decline-uncertain": "EditCheck (referenties) geweigerd (onzeker)",
+	"tag-editcheck-reference-decline-uncertain": "Edit Check (referenties) afgewezen (twijfel)",
 	"tag-editcheck-reference-decline-uncertain-description": "De EditCheck-referentie is afgewezen als onzeker"
 }

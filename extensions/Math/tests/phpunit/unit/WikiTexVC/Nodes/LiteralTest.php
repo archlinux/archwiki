@@ -84,13 +84,15 @@ class LiteralTest extends MediaWikiUnitTestCase {
 
 	public function testVLineInMatrix() {
 		$n = new Literal( '\\vline' );
-		$this->assertStringContainsString( '|</mo>', $n->renderMML( [], [ 'inMatrix' => true ] ),
+		$state = [ 'inMatrix' => true ];
+		$this->assertStringContainsString( '|</mo>', $n->renderMML( [], $state ),
 			'vline should render a vertical bar operator in matrix context.' );
 	}
 
 	public function testHBoxLiterals() {
 		$n = new Literal( 'in box' );
-		$this->assertStringContainsString( 'in box', $n->renderMML( [], [ 'inHBox' => true ] ),
+		$state = [ 'inHBox' => true ];
+		$this->assertStringContainsString( 'in box', $n->renderMML( [], $state ),
 			'hboxes should not be wrapped in to mi elements.' );
 	}
 

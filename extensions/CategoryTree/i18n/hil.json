@@ -1,11 +1,40 @@
 {
 	"@metadata": {
 		"authors": [
-			"Pare Mo"
+			"Pare Mo",
+			"Exec8"
 		]
 	},
+	"categorytree": "Kahoy sang kategorya",
 	"categorytree-portlet": "Mga kategoriya",
+	"categorytree-legend": "Ipakita ang kahoy sang kategorya",
+	"categorytree-desc": "Dinamiko nga mag-navigate sa [[Special:CategoryTree|istruktura sang kategorya]]",
+	"categorytree-header": "Magsulod sang ngalan sang kategorya agud makita ang kaundan sini bilang isa ka istruktura sang kahoy. (Nagakinahanglan sang JavaScript.)",
 	"categorytree-category": "Kategoriya:",
+	"categorytree-go": "Ipakita ang kahoy",
+	"categorytree-parents": "Mga ginikanan",
+	"categorytree-mode-label": "Mode:",
+	"categorytree-mode-categories": "mga kategorya lamang",
+	"categorytree-mode-pages": "mga pahina magluwas sa mga file",
+	"categorytree-mode-all": "tanan nga pahina",
+	"categorytree-collapse": "nalipong",
 	"categorytree-expand": "palaparon",
-	"categorytree-member-counts": "May {{PLURAL:$1|1 subkategoriya|$1 subkategoriya}}, {{PLURAL:$2|1 panid|$2 panid}} kag {{PLURAL:$3|1 artsibo|$3 artsibo}}"
+	"categorytree-member-counts": "May {{PLURAL:$1|1 subkategoriya|$1 subkategoriya}}, {{PLURAL:$2|1 panid|$2 panid}} kag {{PLURAL:$3|1 artsibo|$3 artsibo}}",
+	"categorytree-num-categories": "$1 C",
+	"categorytree-num-pages": "$1 P",
+	"categorytree-num-files": "$1 F",
+	"categorytree-num-empty": "wala sulod",
+	"categorytree-load": "butangan",
+	"categorytree-loading": "nagakarga...",
+	"categorytree-nothing-found": "wala sing may nakita",
+	"categorytree-no-subcategories": "wala sing mga subkategorya",
+	"categorytree-no-parent-categories": "wala sing mga kategorya sang ginikanan",
+	"categorytree-no-pages": "wala sing mga pahina ukon mga subkategorya",
+	"categorytree-not-found": "Kategorya <i>$1</i> wala makita",
+	"categorytree-error": "Problema sa pag-load sang datos.",
+	"categorytree-retry": "Palihog hulat kag tilawi liwat.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Ang parameter <code>onlyroot</code> wala na ginagamit. Gamita <code>depth=\"0\"</code> sa baylo.",
+	"categorytree-deprecation-warning": "'''Paandam:''' Ini nga pahina nagagamit <code><categorytree></code> nga may wala na ginagamit nga parametro.",
+	"categorytree-deprecation-category": "Mga pahina nga nagagamit sang wala na ginagamit nga mga parameter sang categorytree",
+	"categorytree-deprecation-category-desc": "Ang pahina nagagamit sang mga parameter sang categorytree nga wala na ginagamit pareho sang <code>onlyroot</code> ."
 }

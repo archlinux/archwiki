@@ -61,5 +61,7 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Registros Lua",
 	"nstab-module": "Modulo",
-	"tooltip-ca-nstab-module": "Visitar le pagina del modulo"
+	"tooltip-ca-nstab-module": "Visitar le pagina del modulo",
+	"namespaceinfo-description-ns828": "Spatio de nomines pro modulos de codice Lua, le quales pote esser invocate a partir de paginas wiki, e lor paginas de documentation",
+	"namespaceinfo-description-ns829": "Paginas de discussion pro le modulos e le documentation"
 }

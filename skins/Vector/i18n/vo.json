@@ -37,9 +37,11 @@
 	"vector-searchsuggest-containing": "Suk pada ninädöl <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Ninäd",
 	"vector-toc-beginning": "Primot",
+	"vector-anon-user-menu-pages": "Pads pro redakans okis esänunädöls",
 	"vector-main-menu-label": "Padalised cifik",
 	"vector-feature-custom-font-size-exclusion-notice": "Pad at ai labon gretoti smalik tonatema.",
 	"vector-page-tools-label": "Stumem",
 	"vector-page-tools-general-label": "Lised cifik",
+	"vector-page-tools-actions-label": "Dunots",
 	"vector-unpin-element-label": "Klänedön"
 }

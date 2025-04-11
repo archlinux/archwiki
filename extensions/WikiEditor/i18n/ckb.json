@@ -120,7 +120,7 @@
 	"wikieditor-toolbar-tool-replace-button-replaceall": "ھەموویان جێگیر بکە",
 	"wikieditor-toolbar-tool-replace-close": "دایخە",
 	"wikieditor-toolbar-tool-replace-nomatch": "گەڕانەکەت لەگەڵ ھیچ شتێک نەگونجا.",
-	"wikieditor-toolbar-tool-replace-success": "$1 جێگرتنەوە کرا.",
+	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|جێگۆڕکێ}} کرا.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "ھیچ شتێکت بۆ گەڕان ڕەچاو نەکردوو.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "ئەو regular expression کە نووسیوتە گونجاو نییە: $1",
 	"wikieditor-toolbar-tool-replace-word": "ڕێک لەگەڵ وشەکە بیگونجێنە",

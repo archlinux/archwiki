@@ -292,7 +292,7 @@ class CSSMin {
 		// appears in the rule itself, e.g. in a quoted string. You are advised
 		// not to use such characters in file names. We also match start/end of
 		// the string to be consistent in edge-cases ('@import url(…)').
-		$pattern = '/(?:^|[;{])\K[^;{}]*' . self::getUrlRegex() . '[^;}]*(?=[;}]|$)/J';
+		$pattern = '/(?:^|[;{])\K[^;{}]*' . self::getUrlRegex() . '[^;}]*+(?=[;}]|$)/J';
 
 		$source = preg_replace_callback(
 			$pattern,
@@ -303,9 +303,9 @@ class CSSMin {
 				// before @embed (they have been replaced with placeholders at this point).
 				$embedAll = false;
 				$rule = preg_replace(
-					'/^((?:\s+|' .
+					'/^((?:\s++|' .
 						self::PLACEHOLDER .
-						'(\d+)x)*)' .
+						'(\d+)x)*+)' .
 						self::EMBED_REGEX .
 						'\s*/',
 					'$1',
@@ -380,14 +380,15 @@ class CSSMin {
 	private static function getUrlRegex() {
 		static $urlRegex;
 		if ( $urlRegex === null ) {
-			$urlRegex = '(' .
+			// The extra + avoid backtracking where it is not needed
+			$urlRegex = 'url\(\s*+(?:' .
 				// Unquoted url
-				'url\(\s*(?P<file>[^\s\'"][^\?\)]+?)(?P<query>\?[^\)]*?|)\s*\)' .
+				'(?P<file>[^\'"][^?)]+?)(?P<query>\?[^)]*?|)' .
 				// Single quoted url
-				'|url\(\s*\'(?P<file>[^\?\']+?)(?P<query>\?[^\']*?|)\'\s*\)' .
+				'|\'(?P<file>[^?\']++)(?P<query>\?[^\']*+|)\'' .
 				// Double quoted url
-				'|url\(\s*"(?P<file>[^\?"]+?)(?P<query>\?[^"]*?|)"\s*\)' .
-				')';
+				'|"(?P<file>[^?"]++)(?P<query>\?[^"]*+|)"' .
+				')\s*\)';
 		}
 		return $urlRegex;
 	}

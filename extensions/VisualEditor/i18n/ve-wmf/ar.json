@@ -20,8 +20,11 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "يعتقد EditCheck أنه تمت إضافة محتوى جديد إلى الصفحة",
+	"tag-editcheck-newreference-description": "تمت إضافة مرجع إلى الصفحة",
 	"tag-editcheck-references-description": "يعتقد (إديت تشيك) أنّه قد يكون هناك حاجة إلى مرجع",
 	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|فحص التحرير (أداة التحقق) مفعلّة]]",
+	"tag-editcheck-references-activated-description": "يعتقد EditCheck أنه ربما كان هناك حاجة إلى مرجع، وتم عرض واجهة المستخدم",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|تحرير مرئي]]",
 	"tag-visualeditor-description": "تم التعديل باستخدام [[{{MediaWiki:visualeditor-descriptionpagelink}}|المحرر المرئي]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|المحرر المرئي: تحقق]]",

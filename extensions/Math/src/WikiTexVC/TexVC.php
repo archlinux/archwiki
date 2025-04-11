@@ -10,6 +10,7 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLParsingUtil;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLutil;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun2;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexNode;
 use stdClass;
 
 /**
@@ -157,6 +158,10 @@ class TexVC {
 		return $this->handleTexError( $ex, $options );
 	}
 
+	/**
+	 * @param string|TexNode|null $inputTree
+	 * @return array|true
+	 */
 	private function checkTreeIntents( $inputTree ) {
 		if ( is_string( $inputTree ) ) {
 			return true;
@@ -189,7 +194,7 @@ class TexVC {
 		return true;
 	}
 
-	public static function checkIntentArg( $input ) {
+	public static function checkIntentArg( ?string $input ): bool {
 		if ( !$input ) {
 			return true;
 		}
@@ -202,7 +207,10 @@ class TexVC {
 		return false;
 	}
 
-	public function checkIntent( $input ) {
+	/**
+	 * @return true|array
+	 */
+	public function checkIntent( string $input ) {
 		// Very early intent syntax checker
 		try {
 			$parserIntent = new ParserIntent();
@@ -213,7 +221,7 @@ class TexVC {
 		}
 	}
 
-	private function handleTexError( Exception $e, $options = null ) {
+	private function handleTexError( Exception $e, ?array $options = null ): array {
 		if ( $options && $options['debug'] ) {
 			throw $e;
 		}

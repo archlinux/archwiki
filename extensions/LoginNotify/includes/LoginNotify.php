@@ -1075,10 +1075,21 @@ class LoginNotify implements LoggerAwareInterface {
 	 * Send a notice about login attempts
 	 *
 	 * @param User $user The account in question
-	 * @param string $type 'login-fail-new' or 'login-fail-known'
+	 * @param string $type 'login-fail-new', 'login-fail-known', 'login-success'
 	 * @param int|null $count [Optional] How many failed attempts
 	 */
 	private function sendNotice( User $user, $type, $count = null ) {
+		$request = $user->getRequest();
+		$this->log->info( 'Notification type {notificationtype} recorded for {user}',
+			[
+				'function' => __METHOD__,
+				'notificationtype' => $type,
+				'count' => $count,
+				'user' => $user->getName(),
+				'ip' => $request->getIP(),
+				'ua' => $request->getHeader( 'user-agent' ),
+			]
+		);
 		$extra = [];
 		if ( $count !== null ) {
 			$extra['count'] = $count;
@@ -1088,14 +1099,6 @@ class LoginNotify implements LoggerAwareInterface {
 			'extra' => $extra,
 			'agent' => $user,
 		] );
-
-		$this->log->info( 'Sending a {notificationtype} notification to {user}',
-			[
-				'function' => __METHOD__,
-				'notificationtype' => $type,
-				'user' => $user->getName(),
-			]
-		);
 	}
 
 	/**

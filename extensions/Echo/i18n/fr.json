@@ -52,7 +52,8 @@
 			"Y-M D",
 			"Yasten",
 			"Zebulon84",
-			"Mahabarata"
+			"Mahabarata",
+			"JLTRY"
 		]
 	},
 	"echo-desc": "Système pour avertir les utilisateurs des événements et messages",
@@ -198,7 +199,7 @@
 	"notification-header-mention-article-talkpage": "{{GENDER:$2|}}$1 vous a mentionné{{GENDER:$3||e}} sur la page de discussion de <strong>$4</strong> dans « <strong>$5</strong> ».",
 	"notification-header-mention-article-talkpage-nosection": "$1{{GENDER:$2|}} vous a mentionné{{GENDER:$3||e}} sur la page de discussion de <strong>$4</strong>.",
 	"notification-header-mention-failure-user-unknown": "Impossible d’envoyer {{GENDER:$2|}}votre mention à <strong>$3</strong> car un compte avec un tel nom n’existe pas.",
-	"notification-header-mention-failure-user-anonymous": "Impossible d'envoyer {{GENDER:$2|}}votre mention de <strong>$3</strong> car la personne est anonyme.",
+	"notification-header-mention-failure-user-anonymous": "Impossible de notifier <strong>$3</strong> que {{GENDER:$2|vous}} l’avez mentionné{{GENDER:$3||e}} car cette personne est anonyme.",
 	"notification-header-mention-failure-too-many": "{{GENDER:$2|}}Vous avez mentionné plus de $3 utilisateur{{PLURAL:$3||s}}. Aucun des utilisateurs mentionnés au-delà de cette limite n’a été notifié.",
 	"notification-header-mention-failure-bundle": "Concernant {{PLURAL:$3|l’utilisat{{GENDER:$2|eur|rice}} que vous avez mentionné{{GENDER:$2||e}}|les $3 utilisateurs que vous avez mentionnés}} sur la page de discussion <strong>$4</strong>, {{PLURAL:$3|une notification n’a pas pu lui être envoyée|$3 notifications n’ont pas pu leur être envoyées}}.",
 	"notification-compact-header-mention-failure-user-unknown": "<strong>Utilisateur inexistant :</strong> « $1 »",
@@ -257,7 +258,7 @@
 	"notification-inbox-filter-read": "Lus",
 	"notification-inbox-filter-unread": "Non lus",
 	"notification-inbox-filter-all": "Tous",
-	"echo-specialmute-label-mute-notifications": "Faire taire les notifications de {{GENDER:$1|cet utilisateur|cette utilisatrice}}",
+	"echo-specialmute-label-mute-notifications": "Mettre en sourdine les notifications de {{GENDER:$1|cet utilisateur|cette utilisatrice}}",
 	"echo-email-plain-footer": "Pour choisir quels courriels nous {{GENDER:$1|}}vous envoyons, vérifiez {{GENDER:$1|}}vos préférences :",
 	"echo-email-html-footer-preference-link-text": "vérifiez {{GENDER:$1|}}vos préférences",
 	"echo-email-html-footer-with-link": "Pour choisir quels courriels nous {{GENDER:$2|}}vous envoyons, $1.",

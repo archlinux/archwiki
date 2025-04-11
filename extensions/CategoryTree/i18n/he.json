@@ -10,7 +10,7 @@
 	"categorytree-portlet": "קטגוריות",
 	"categorytree-legend": "הצגת עץ קטגוריות",
 	"categorytree-desc": "ניווט דינמי ב[[Special:CategoryTree|מבנה הקטגוריות]]",
-	"categorytree-header": "נא להקליד את שם הקטגוריה כדי לראות את התוכן שלה במבנה עץ. (תכונה זו דורשת JavaScript.)",
+	"categorytree-header": "נא להקליד את שם הקטגוריה כדי לראות את התוכן שלה במבנה עץ. (נדרשת הפעלת JavaScript.)",
 	"categorytree-category": "קטגוריה:",
 	"categorytree-go": "הצגת העץ",
 	"categorytree-parents": "הורים",

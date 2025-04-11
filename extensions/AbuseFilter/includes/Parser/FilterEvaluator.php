@@ -1230,7 +1230,11 @@ class FilterEvaluator {
 	 * @return array|string
 	 */
 	private function rmspecials( $s ) {
-		return preg_replace( '/[^\p{L}\p{N}\s]/u', '', $s );
+		// (T385452) Disable JIT for this call, as it breaks sometimes
+		ini_set( 'pcre.jit', '0' );
+		$res = preg_replace( '/[^\p{L}\p{N}\s]/u', '', $s );
+		ini_restore( 'pcre.jit' );
+		return $res;
 	}
 
 	/**
@@ -1238,7 +1242,11 @@ class FilterEvaluator {
 	 * @return array|string
 	 */
 	private function rmdoubles( $s ) {
-		return preg_replace( '/(.)\1+/us', '\1', $s );
+		// (T385452) Disable JIT for this call, as it breaks sometimes
+		ini_set( 'pcre.jit', '0' );
+		$res = preg_replace( '/(.)\1+/us', '\1', $s );
+		ini_restore( 'pcre.jit' );
+		return $res;
 	}
 
 	/**

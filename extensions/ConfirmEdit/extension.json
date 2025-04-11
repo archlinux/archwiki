@@ -129,9 +129,11 @@
 			"value": false
 		},
 		"Captcha": {
+			"description": "Captcha class to be used; when enabling sub extensions (ie FancyCaptcha) this will be set for you",
 			"value": null
 		},
 		"CaptchaTriggers": {
+			"description": "Actions which can trigger a captcha",
 			"value": {
 				"edit": false,
 				"create": false,
@@ -144,38 +146,48 @@
 			"merge_strategy": "array_plus"
 		},
 		"CaptchaTriggersOnNamespace": {
+			"description": "Allows forcing/turning off Captcha in specific namespaces.",
 			"value": {},
 			"merge_strategy": "array_plus_2d"
 		},
 		"CaptchaStorageClass": {
+			"description": "PHP class used for storing Captcha related session data.",
 			"value": "MediaWiki\\Extension\\ConfirmEdit\\Store\\CaptchaSessionStore"
 		},
 		"CaptchaSessionExpiration": {
+			"description": "Number of seconds a captcha session should last in the data cache before expiring when managing through CaptchaCacheStore class.",
 			"value": 1800
 		},
 		"CaptchaBadLoginExpiration": {
+			"description": "Number of seconds after a bad login (from a specific IP address) that a captcha will be shown to that client on the login form to slow down password-guessing bots. A longer expiration time of $wgCaptchaBadLoginExpiration * 300 will also be applied against a login attempt count of $wgCaptchaBadLoginAttempts * 30.",
 			"value": 300
 		},
 		"CaptchaBadLoginPerUserExpiration": {
+			"description": "Number of seconds after a bad login (for a specific user account) that a captcha will be shown to that client on the login form to slow down password-guessing bots. A longer expiration time of $wgCaptchaBadLoginExpiration * 300 will be applied against a login attempt count of $wgCaptchaBadLoginAttempts * 30.",
 			"value": 600
 		},
 		"AllowConfirmedEmail": {
+			"description": "Allow users who have confirmed their email addresses to post URL links without being shown a captcha.",
 			"value": false
 		},
 		"CaptchaBadLoginAttempts": {
+			"description": "Number of bad login attempts (from a specific IP address) before triggering the captcha. 0 means the captcha is presented on the first login. A captcha will also be triggered if the number of failed logins exceeds $wgCaptchaBadLoginAttempts * 30 in a period of $wgCaptchaBadLoginExpiration * 300.",
 			"value": 3
 		},
 		"CaptchaBadLoginPerUserAttempts": {
+			"description": "Number of bad login attempts (for a specific user account) before triggering the captcha. 0 means the captcha is presented on the first login. A captcha will also be triggered if the number of failed logins exceeds $wgCaptchaBadLoginPerUserAttempts * 30 in a period of $wgCaptchaBadLoginPerUserExpiration * 300.",
 			"value": 20
 		},
 		"CaptchaWhitelist": {
+			"description": "Urls that won't trigger a captcha.",
 			"value": false
 		},
 		"CaptchaRegexes": {
+			"description": "Additional regexes to check for. Use full regexes; can match things other than URLs such as junk edits. If the new version matches one and the old version doesn't, show the captcha screen.",
 			"value": []
 		},
 		"ConfirmEditEnabledAbuseFilterCustomActions": {
-			"description": "Feature flag to toggle list of available custom actions to enable in AbuseFilter. See AbuseFilterHooks::onAbuseFilterCustomActions",
+			"description": "Feature flag to toggle list of available custom actions to enable in AbuseFilter. See AbuseFilterHooks::onAbuseFilterCustomActions.",
 			"value": []
 		}
 	},

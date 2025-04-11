@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
 			"Banjo",
-			"Elisardojm"
+			"Elisardojm",
+			"Toliño"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "Conversión de variante desactivada",
@@ -29,7 +29,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-title-unknown": "Variante de lingua",
 	"visualeditor-mwlanguagevariantinspector-disabled-placeholder": "Texto protexido contra a conversión en variante",
 	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Linguas",
-	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "Código da lingua",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "Código de lingua",
 	"visualeditor-mwlanguagevariantinspector-filter-text-label": "Contidos",
 	"visualeditor-mwlanguagevariantinspector-filter-text-placeholder": "Texto filtrado",
 	"visualeditor-mwlanguagevariantinspector-oneway-add-button": "Engadir novo caso",

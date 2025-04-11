@@ -72,12 +72,16 @@ class InputBoxHooks implements
 
 	/**
 	 * Render the input box
-	 * @param string $input
+	 * @param string|null $input
 	 * @param array $args
 	 * @param Parser $parser
 	 * @return string
 	 */
 	public function render( $input, $args, Parser $parser ) {
+		if ( $input === null ) {
+			return '';
+		}
+
 		// Create InputBox
 		$inputBox = new InputBox( $this->config, $parser );
 

@@ -5,7 +5,7 @@
 			"Winston Sung"
 		]
 	},
-	"discussiontools-defaultsummary-reply": "Odgovori",
+	"discussiontools-defaultsummary-reply": "odgovor",
 	"discussiontools-emptystate-button": "Započni razgovor",
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Stranice za razgovor]] služe kao mjesto za diskusiju o tome kako stvoriti najbolju moguću sadržinu na projektu {{SITENAME}}. Ovdje {{GENDER:|možete}} započeti razgovor o poboljšanjima stranice [[:{{SUBJECTPAGENAME}}]].",
 	"discussiontools-emptystate-desc-self": "Osobe na projektu {{SITENAME}} mogu rabiti ovu [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|stranicu za razgovor]] da objave javnu poruku za {{GENDER:|vas}}, o kojoj bit ćete obaviješteni.",

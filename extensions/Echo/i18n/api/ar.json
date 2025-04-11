@@ -12,6 +12,14 @@
 			"محمد أحمد عبد الفتاح"
 		]
 	},
+	"apihelp-echocreateevent-summary": "إرسال إشعار يدويا إلى المستخدم",
+	"apihelp-echocreateevent-example": "إرسال إشعار",
+	"apihelp-echocreateevent-param-user": "المستخدم لإرسال الإشعار إلى",
+	"apihelp-echocreateevent-param-header": "محتوى رأس الإشعار",
+	"apihelp-echocreateevent-param-content": "محتوى نص الإشعار",
+	"apihelp-echocreateevent-param-page": "الصفحة التي سيتم الارتباط بها في الإشعار",
+	"apihelp-echocreateevent-param-section": "القسم الذي سيتم تسليم الإشعار فيه",
+	"apihelp-echocreateevent-param-email": "هل يجب إرسال بريد إلكتروني أيضا",
 	"apihelp-echomarkread-summary": "علم الإشعارات للقراءة للمستخدم الحالي.",
 	"apihelp-echomarkread-param-list": "قائمة بأرقام الإخطارات للتعليم كمقروءة.",
 	"apihelp-echomarkread-param-unreadlist": "قائمة بأرقام الإخطارات للتعليم كغير مقروءة.",

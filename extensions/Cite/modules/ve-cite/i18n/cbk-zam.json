@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aristorkle"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Libro",
+	"visualeditor-cite-tool-name-journal": "Periodico",
+	"visualeditor-cite-tool-name-news": "Noticia",
+	"visualeditor-cite-tool-name-web": "Website",
+	"cite-ve-citationneeded-button": "Omenta un citacion",
+	"cite-ve-citationneeded-reason": "Ya dale rason:",
+	"cite-ve-dialog-reference-title": "Referencia",
+	"cite-ve-dialog-reference-title-add-details": "Omenta con el maga detalle na referencia",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Maga citacion",
+	"cite-ve-dialogbutton-reference-title": "Referencia",
+	"cite-ve-toolbar-group-label": "Cita",
+	"cite-ve-othergroup-item": "referencia $1"
+}

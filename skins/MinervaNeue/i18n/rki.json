@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aggasena",
-			"YaThaWinTha"
+			"YaThaWinTha",
+			"Tejoebāsa"
 		]
 	},
 	"mobile-frontend-history": "ဒေစာမျက်နှာ၏ တီးဖြတ်မူ ရာဇဝင်ကို ကြေ့ရန်",
@@ -12,5 +13,6 @@
 	"mobile-frontend-main-menu-nearby": "အနီးအနား",
 	"mobile-frontend-main-menu-settings": "အပြင်အဆင်တိ",
 	"mobile-frontend-placeholder": "{{SITENAME}}တွင် ယှာဖွီရန်",
-	"mobile-frontend-random-button": "ကျမိကျရာ"
+	"mobile-frontend-random-button": "အလှည့်ကျ",
+	"minerva-page-actions-overflow": "ထပ်လို့"
 }

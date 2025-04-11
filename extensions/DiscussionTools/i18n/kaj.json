@@ -2,15 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Jjnzamah",
-			"Kuzayet"
+			"Kuzayet",
+			"Kambai Akau"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Shim",
+	"discussiontools-newtopic-missing-title": "Sakut tyyei du̱ccu{{GENDER:|nwan}} du̱ccu ba̱ryat.",
+	"discussiontools-newtopic-placeholder-title": "Du̱ccu ba̱ryat",
 	"discussiontools-replylink": "((BVWAK NTYEI:|shim))",
 	"discussiontools-replywidget-advanced": "Yaka̱son",
 	"discussiontools-replywidget-cancel": "Hywat",
 	"discussiontools-replywidget-mode-source": "Nyai ke",
 	"discussiontools-replywidget-mode-visual": "Nkyang ccang",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Mbrang}} du̱ccu ba̱ryat",
+	"discussiontools-replywidget-placeholder-newtopic": "Ka̱tyyei",
 	"discussiontools-replywidget-placeholder-reply": "((BVWAK NTYEI:|SHIM)) nat di ((BIDI:$1))",
 	"discussiontools-replywidget-preview": "Yen ccang",
 	"discussiontools-replywidget-reply": "((GBVAK NTYEI:|shim))",

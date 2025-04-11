@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Rivoz",
+			"Pikne"
+		]
+	},
+	"apierror-templatedata-corrupt": "Lehekülje #$1 malliandmed sisaldavad vigaseid andmeid: $2"
+}

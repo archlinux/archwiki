@@ -7,6 +7,14 @@
 			"WikiPhoenix"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Utlös en avisering till en användare manuellt",
+	"apihelp-echocreateevent-example": "Skicka en avisering",
+	"apihelp-echocreateevent-param-user": "Användare att skicka aviseringen till",
+	"apihelp-echocreateevent-param-header": "Innehållet i aviseringens sidhuvud",
+	"apihelp-echocreateevent-param-content": "Innehållet i aviseringens brödtext",
+	"apihelp-echocreateevent-param-page": "Sida att länka till i aviseringen",
+	"apihelp-echocreateevent-param-section": "Avsnittet dit aviseringen skulle levereras",
+	"apihelp-echocreateevent-param-email": "Ifall ett e-postmeddelande också ska skickas",
 	"apihelp-echomarkread-summary": "Markera aviseringar som lästa för den aktuella användaren.",
 	"apihelp-echomarkread-param-list": "En lista över aviserings-ID att markera som lästa.",
 	"apihelp-echomarkread-param-unreadlist": "En lista över aviserings-ID att markera som olästa.",

@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Song GK"
+		]
+	},
+	"categorytree-portlet": "Kategori",
+	"categorytree-category": "Kategori:",
+	"categorytree-mode-label": "Mod:",
+	"categorytree-mode-categories": "mina kategori",
+	"categorytree-mode-pages": "lambar kelimpah ari fail",
+	"categorytree-mode-all": "semua lambar",
+	"categorytree-nothing-found": "nadai utai ditemu",
+	"categorytree-no-subcategories": "nadai subkategori"
+}

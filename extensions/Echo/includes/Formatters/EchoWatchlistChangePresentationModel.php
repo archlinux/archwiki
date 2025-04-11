@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\Title;
 
 class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 
@@ -31,7 +33,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 			// notification-header-watchlist-restored
 			$msg = $this->getMessageWithAgent( "notification-header-watchlist-" . $status );
 		}
-		$msg->params( $this->getTruncatedTitleText( $this->event->getTitle(), true ) );
+		$msg->params( $this->getTruncatedTitleText( $this->getEventTitle(), true ) );
 		$msg->params( $this->getViewingUserForGender() );
 		$msg->numParams( $this->getBundleCount() );
 		return $msg;
@@ -40,7 +42,7 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 	public function getPrimaryLink() {
 		if ( $this->isBundled() ) {
 			return [
-				'url' => $this->event->getTitle()->getLocalUrl(),
+				'url' => $this->getEventTitle()->getLocalUrl(),
 				'label' => $this->msg( 'notification-link-text-view-page' )->text()
 			];
 		}
@@ -103,11 +105,47 @@ class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 				'logid' => $this->event->getExtraParam( 'logid' )
 			] );
 		} else {
-			$url = $this->event->getTitle()->getLocalURL( [
+			$url = $this->getEventTitle()->getLocalURL( [
 				'oldid' => 'prev',
 				'diff' => $revid
 			] );
 		}
 		return $url;
+	}
+
+	/**
+	 * Returns Event's Title
+	 * Fixes bug T286192, for the events created before the patch [1] applied here
+	 * [1] - https://gerrit.wikimedia.org/r/c/mediawiki/extensions/Echo/+/736484
+	 * @return Title
+	 */
+	private function getEventTitle(): Title {
+		$title = $this->event->getTitle();
+		if ( !$title ) {
+			$pageId = $this->event->getPageId();
+			if ( $pageId ) {
+				$dbr = MediaWikiServices::getInstance()
+					->getDBLoadBalancer()
+					->getMaintenanceConnectionRef( DB_REPLICA );
+				$row = $dbr->selectRow(
+					'archive',
+					[ 'ar_title', 'ar_namespace' ],
+					[ 'ar_page_id' => $pageId ],
+					__METHOD__,
+					[ 'MAX' => 'ar_id', 'ar_id DESC' ]
+				);
+				if ( $row ) {
+					$title = Title::makeTitleSafe( $row->ar_namespace, $row->ar_title );
+				}
+			}
+			if ( !$title ) {
+				$title = Title::makeTitleSafe( NS_MAIN, 'UNKNOWN TITLE, SEE THE T286192 BUG FOR DETAILS' );
+			}
+			if ( !$title ) {
+				// The latest chance to return a Title object (paranoid mode on)
+				$title = Title::newMainPage();
+			}
+		}
+		return $title;
 	}
 }

@@ -21,7 +21,7 @@
 	"minerva-watchlist-cta": "Appears when you click watchlist icon when not logged in. First link is to login form, 2nd to sign up form. Links are created in JavaScript.",
 	"mobile-frontend-cookies-required": "Error message shown when user attempts to switch site modes and cookies are not enabled.",
 	"mobile-frontend-editor-edit": "Caption for the link showing edit form.\n{{Identical|Edit}}",
-	"minerva-download": "Caption for the download button (in the imperative mood).\n{{Identical|Download}}",
+	"minerva-download": "Caption for the download button (an action).\n{{Identical|Download}}",
 	"mobile-frontend-editor-redlink-create": "Label for a create page button.\n{{Identical|Create page}}",
 	"mobile-frontend-editor-redlink-explain": "Question for the user, if he want to edit a page, which link he clicked and that does not exist yet, or not.",
 	"mobile-frontend-editor-redlink-leave": "Used as a label for a button which the user can click to avoid editing a page which does not exist yet (red link): the question/alternative button is {{msg-mw|mobile-frontend-editor-redlink-create}}\n----\n{{Identical|No thanks}}",

@@ -44,7 +44,7 @@
 	"cite-tracking-category-cite-error": "参照エラーのあるページ",
 	"cite-tracking-category-cite-error-desc": "このカテゴリにあるページは、参照タグの使用にエラーがあります。",
 	"cite-tracking-category-ref-extends": "補参照を使用しているページ",
-	"cite-tracking-category-ref-extends-desc": "&lt;ref&gt;タグの\"extends\"属性により、補参照（脚注の再利用）を使用しているページ",
+	"cite-tracking-category-ref-extends-desc": "&lt;ref&gt;タグの\"extends\"属性により、補参照（脚注の入れ子）を使用しているページ",
 	"cite-reference-previews-reference": "参考資料",
 	"cite-reference-previews-book": "書籍の出典",
 	"cite-reference-previews-journal": "定期刊行物の出典",

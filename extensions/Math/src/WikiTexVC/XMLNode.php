@@ -11,6 +11,9 @@ class XMLNode {
 	/** @var self[] */
 	public $children;
 
+	/**
+	 * @param mixed $value
+	 */
 	public function __construct( $value ) {
 		$this->value = $value;
 		$this->children = [];

@@ -4,7 +4,8 @@
 			"Kipala",
 			"Kwisha",
 			"Sheilawangari",
-			"Stephenwanjau"
+			"Stephenwanjau",
+			"Joeamj"
 		]
 	},
 	"minerva-last-modified-date": "Ilihaririwa mwisho mnamo $1, $2",
@@ -24,7 +25,7 @@
 	"mobile-frontend-main-menu-login": "Ingia",
 	"mobile-frontend-main-menu-logout": "Toka",
 	"mobile-frontend-main-menu-nearby": "Karibu",
-	"mobile-frontend-main-menu-settings": "Mpangilio",
+	"mobile-frontend-main-menu-settings": "Mipangilio",
 	"mobile-frontend-main-menu-watchlist": "Maangalizi",
 	"mobile-frontend-meta-data-issues": "Masuala ya ukurasa",
 	"mobile-frontend-meta-data-issues-categories": "Kuhusu kategoria hii",
@@ -32,7 +33,7 @@
 	"minerva-meta-data-issues-section-header": "Masuala ya sehemu",
 	"mobile-frontend-pageaction-edit-tooltip": "Hariri sehemu inayoongoza ya ukurasa huu",
 	"mobile-frontend-placeholder": "Tafuta {{SITENAME}}",
-	"mobile-frontend-random-button": "Bahatisha",
+	"mobile-frontend-random-button": "Nasibu",
 	"mobile-frontend-redirected-from": "Elekezwa kutoka kwa \"[[$1]]\"",
 	"mobile-frontend-talk-back-to-filepage": "Rudi kwenye faili \" $1 \".",
 	"mobile-frontend-talk-back-to-page": "Rudi kwenye ukurasa wa \" $1 \".",

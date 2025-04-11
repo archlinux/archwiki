@@ -97,7 +97,7 @@
 	"wikieditor-toolbar-tool-ulist": "{{Identical|Bulleted list}}",
 	"wikieditor-toolbar-tool-ulist-example": "Used as example text when inserting an unordered list into the editbox from the toolbar",
 	"wikieditor-toolbar-tool-olist": "{{Identical|Numbered list}}",
-	"wikieditor-toolbar-tool-olist-example": "Used as example text when inserting an orderered list into the editbox from the toolbar",
+	"wikieditor-toolbar-tool-olist-example": "Used as example text when inserting an ordered list into the editbox from the toolbar",
 	"wikieditor-toolbar-tool-nowiki": "This is the text that appears when you hover the mouse over the third button from the right on the edit toolbar.",
 	"wikieditor-toolbar-tool-nowiki-example": "Used as example text when inserting a nowiki tag into the editbox from the toolbar",
 	"wikieditor-toolbar-tool-redirect": "Tooltip for icon to place wiki text for a redirect in the edit box. The label before these icons says 'Insert'. 'Redirect' is a noun here.\n{{Identical|Redirect}}",

@@ -57,7 +57,7 @@
 	"discussiontools-limitreport-errorreqid": "ID nəve de xəto bə DiscussionTools",
 	"discussiontools-limitreport-timeusage": "DiscussionTools oko doj vaxt",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sanijə}}",
-	"discussiontools-newtopic-missing-title": "Zəhmət nybu, sərnomi bynyvyštən bo {{GENDER:|yštə}} no-pegəti myžori. Əgəm šymə egətən bə «{{int:discussiontools-replywidget-newtopic}}», myžor be sərnomi əlovə kardə byəbe.",
+	"discussiontools-newtopic-missing-title": "Zəhmət nybu, sərnomi bynyvyštən bo {{GENDER:|yštə}} no-pegəti myžori.",
 	"discussiontools-newtopic-placeholder-title": "Myžor",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Nomžəj be",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Bə ym səhifədə ce nujə myžoron barədə xəbədo səj gornə  nomžəj bybən.",

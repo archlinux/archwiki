@@ -41,20 +41,24 @@ class Infix extends TexNode {
 		return $this->arg2;
 	}
 
+	/** @inheritDoc */
 	public function inCurlies() {
 		return $this->render();
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return '{' . $this->arg1->render() .
 			' ' . $this->op . ' ' .
 			$this->arg2->render() . '}';
 	}
 
-	public function renderMML( $arguments = [], $state = [] ) {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ) {
 		return $this->parseToMML( $this->op, $arguments, null );
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		if ( $args == null ) {
 			$args = [ $this->arg1, $this->arg2 ];

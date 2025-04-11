@@ -75,6 +75,7 @@
 	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 vuosi|$1 vuotta}} sitten",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Luokat",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Näytä sivun luokat",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Valitettavasti tulosten ryhmittely sivun mukaan ei ole käytettävissä mobiilisivustolla. Jos haluat käyttää ryhmittele sivun mukaan -ominaisuutta, siirry työpöytäsivustolle.",
 	"skin-minerva-night-mode-unavailable": "Sivu saatavilla vain vaaleasssa väriteemassa.",
 	"minerva.css": "/* Tämä sivu sisältää MinervaNeue-ulkoasua muuttavia tyylejä. */",
 	"minerva.js": "/* Tämän sivun JavaScript-koodi liitetään MinervaNeue-tyyliin */"

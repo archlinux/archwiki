@@ -39,6 +39,7 @@
 	"discussiontools-findcomment-noresults": "Encam tine.",
 	"discussiontools-findcomment-results-notcurrent": "(di guhartoya heyî de tine)",
 	"discussiontools-ledesection-button": "Li ser vê rûpelê zêdetir agahî bibîne",
+	"discussiontools-ledesection-title": "Derheqê vê rûpela gotûbêjê",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|saniye|saniyeyan}}",
 	"discussiontools-newtopic-missing-title": "Ji kerema xwe re sernavekî bide mijara xwe. Ku tu pê li \"{{int:discussiontools-replywidget-newtopic}}\" bikî, wê mijara te bêsernav lê were zêdekirin.",
 	"discussiontools-newtopic-placeholder-title": "Mijar",

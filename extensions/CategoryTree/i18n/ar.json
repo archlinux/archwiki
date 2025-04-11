@@ -38,5 +38,9 @@
 	"categorytree-no-pages": "لا صفحات ولا تصنيفات فرعية",
 	"categorytree-not-found": "التصنيف «$1» لم يتم العثور عليه",
 	"categorytree-error": "مشكلة في تحميل البيانات.",
-	"categorytree-retry": "من فضلك انتظر لحظة وحاول مرة أخرى."
+	"categorytree-retry": "من فضلك انتظر لحظة وحاول مرة أخرى.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: تم إيقاف استخدام المعلمة <code>onlyroot</code> . استخدم <code>depth=\"0\"</code> بدلاً من ذلك.",
+	"categorytree-deprecation-warning": "'''تحذير:''' تستخدم هذه الصفحة <code>&lt;categorytree&gt;</code> مع معلمة قديمة.",
+	"categorytree-deprecation-category": "الصفحات التي تستخدم معلمات categorytree القديمة",
+	"categorytree-deprecation-category-desc": "تستخدم الصفحة معلمات categorytree القديمة مثل <code>onlyroot</code>."
 }

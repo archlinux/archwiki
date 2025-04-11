@@ -37,18 +37,14 @@ use ReflectionClass;
  * So this class is meant to allow arbitrary (but syntactically correct) input, while being
  * fast enough to be used for on-the-fly minifying.
  *
- * This class was written with ECMA-262 7th Edition in mind ("ECMAScript 2016"). Parsing features
+ * This class was written with ECMA-262 8th Edition in mind ("ECMAScript 2017"). Parsing features
  * new to later editions of ECMAScript might not be supported. It's assumed that the input is
  * syntactically correct; if it's not, this class may not detect that, and may produce incorrect
  * output.
  *
- * This class has limited support for 8.0 spec ("ECMAScript 2017"), specifically, the await
- * keyword, and most kinds of async functions are implemented. Other new parsing features of ES2017
- * are not yet supported.
- *
  * See also:
- * - <https://262.ecma-international.org/7.0/>
  * - <https://262.ecma-international.org/8.0/>
+ * - <https://262.ecma-international.org/10.0/>
  * - <https://262.ecma-international.org/11.0/>
  */
 class JavaScriptMinifier {
@@ -94,6 +90,7 @@ class JavaScriptMinifier {
 	private const EXPRESSION_TERNARY_NO_NL      = 29;
 	private const PAREN_EXPRESSION_NO_NL        = 30;
 	private const PROPERTY_EXPRESSION_NO_NL     = 31;
+	private const PROPERTY_EXPRESSION_ASYNC     = 32;
 
 	/* Token types */
 
@@ -214,7 +211,7 @@ class JavaScriptMinifier {
 	 * Unlike the ECMAScript spec, we define these as individual symbols, not sequences.
 	 */
 	private static $opChars = [
-		// ECMAScript 7.0 § 11.7 Punctuators
+		// ECMAScript 8.0 § 11.7 Punctuators
 		//
 		//    Punctuator
 		//    DivPunctuator
@@ -246,11 +243,11 @@ class JavaScriptMinifier {
 		'/' => true,
 		'}' => true,
 
-		// ECMAScript 7.0 § 11.8.4 String Literals
+		// ECMAScript 8.0 § 11.8.4 String Literals
 		'"' => true,
 		"'" => true,
 
-		// ECMAScript 7.0 § 11.8.6 Template Literal Lexical Components
+		// ECMAScript 8.0 § 11.8.6 Template Literal Lexical Components
 		'`' => true,
 	];
 
@@ -260,13 +257,13 @@ class JavaScriptMinifier {
 	 * Tokens and their types.
 	 */
 	private static $tokenTypes = [
-		// ECMAScript 7.0 § 12.2 Primary Expression
+		// ECMAScript 8.0 § 12.2 Primary Expression
 		//
 		//    ...BindingIdentifier
 		//
 		'...'        => self::TYPE_UN_OP,
 
-		// ECMAScript 7.0 § 12.3 Left-Hand-Side Expressions
+		// ECMAScript 8.0 § 12.3 Left-Hand-Side Expressions
 		//
 		//    MemberExpression
 		//
@@ -274,7 +271,7 @@ class JavaScriptMinifier {
 		// DecimalLiteral as one token. A separate '.' token is always part of a MemberExpression.
 		'.'          => self::TYPE_DOT,
 
-		// ECMAScript 7.0 § 12.4 Update Expressions
+		// ECMAScript 8.0 § 12.4 Update Expressions
 		//
 		//    LeftHandSideExpression [no LineTerminator here] ++
 		//    LeftHandSideExpression [no LineTerminator here] --
@@ -288,7 +285,7 @@ class JavaScriptMinifier {
 		'++'         => self::TYPE_INCR_OP,
 		'--'         => self::TYPE_INCR_OP,
 
-		// ECMAScript 7.0 § 12.5 Unary Operators
+		// ECMAScript 8.0 § 12.5 Unary Operators
 		//
 		//    UnaryExpression
 		//        includes UpdateExpression
@@ -307,12 +304,12 @@ class JavaScriptMinifier {
 		//     var z = +y;    // unary (convert to number)
 		//     var z = x + y; // binary (add operation)
 		//
-		// ECMAScript 7.0 § 12.5 Unary Operators
+		// ECMAScript 8.0 § 12.5 Unary Operators
 		//
 		//     + UnaryExpression
 		//     - UnaryExpression
 		//
-		// ECMAScript 7.0 § 12.8 Additive Operators
+		// ECMAScript 8.0 § 12.8 Additive Operators
 		//
 		//     Expression + Expression
 		//     Expression - Expression
@@ -328,15 +325,15 @@ class JavaScriptMinifier {
 		//     Expression operator Expression
 		//
 		// Defined in:
-		// - ECMAScript 7.0 § 12.6 Exponentiation Operator
+		// - ECMAScript 8.0 § 12.6 Exponentiation Operator
 		//   ExponentiationExpression
-		// - ECMAScript 7.0 § 12.7 Multiplicative Operators
+		// - ECMAScript 8.0 § 12.7 Multiplicative Operators
 		//   MultiplicativeOperator
-		// - ECMAScript 7.0 § 12.9 Bitwise Shift Operators
+		// - ECMAScript 8.0 § 12.9 Bitwise Shift Operators
 		//   ShiftExpression
-		// - ECMAScript 7.0 § 12.10 Relational Operators
+		// - ECMAScript 8.0 § 12.10 Relational Operators
 		//   RelationalExpression
-		// - ECMAScript 7.0 § 12.11 Equality Operators
+		// - ECMAScript 8.0 § 12.11 Equality Operators
 		//   EqualityExpression
 		'**'         => self::TYPE_BIN_OP,
 		'*'          => self::TYPE_BIN_OP,
@@ -356,7 +353,7 @@ class JavaScriptMinifier {
 		'==='        => self::TYPE_BIN_OP,
 		'!=='        => self::TYPE_BIN_OP,
 
-		// ECMAScript 7.0 § 12.12 Binary Bitwise Operators
+		// ECMAScript 8.0 § 12.12 Binary Bitwise Operators
 		//
 		//    BitwiseANDExpression
 		//    BitwiseXORExpression
@@ -366,7 +363,7 @@ class JavaScriptMinifier {
 		'^'          => self::TYPE_BIN_OP,
 		'|'          => self::TYPE_BIN_OP,
 
-		// ECMAScript 7.0 § 12.13 Binary Logical Operators
+		// ECMAScript 8.0 § 12.13 Binary Logical Operators
 		//
 		//    LogicalANDExpression
 		//    LogicalORExpression
@@ -377,7 +374,7 @@ class JavaScriptMinifier {
 		// ECMAScript 11.0 § 12.13 Binary Logical Operators
 		'??'         => self::TYPE_BIN_OP,
 
-		// ECMAScript 7.0 § 12.14 Conditional Operator
+		// ECMAScript 8.0 § 12.14 Conditional Operator
 		//
 		//    ConditionalExpression:
 		//        LogicalORExpression ? AssignmentExpression : AssignmentExpression
@@ -386,7 +383,7 @@ class JavaScriptMinifier {
 		'?'          => self::TYPE_HOOK,
 		':'          => self::TYPE_COLON,
 
-		// ECMAScript 7.0 § 12.15 Assignment Operators
+		// ECMAScript 8.0 § 12.15 Assignment Operators
 		'='          => self::TYPE_BIN_OP,
 		'*='         => self::TYPE_BIN_OP,
 		'/='         => self::TYPE_BIN_OP,
@@ -401,10 +398,10 @@ class JavaScriptMinifier {
 		'|='         => self::TYPE_BIN_OP,
 		'**='        => self::TYPE_BIN_OP,
 
-		// ECMAScript 7.0 § 12.16 Comma Operator
+		// ECMAScript 8.0 § 12.16 Comma Operator
 		','          => self::TYPE_COMMA,
 
-		// ECMAScript 7.0 § 11.9.1 Rules of Automatic Semicolon Insertion
+		// ECMAScript 8.0 § 11.9.1 Rules of Automatic Semicolon Insertion
 		//
 		// These keywords disallow LineTerminator before their (sometimes optional)
 		// Expression or Identifier. They are similar enough that we can treat
@@ -415,7 +412,7 @@ class JavaScriptMinifier {
 		//    keyword [no LineTerminator here] Identifier ;
 		//    keyword [no LineTerminator here] Expression ;
 		//
-		// See also ECMAScript 7.0:
+		// See also ECMAScript 8.0:
 		// - § 13.8 The continue Statement
 		// - § 13.9 The break Statement
 		// - § 13.10 The return Statement
@@ -437,7 +434,7 @@ class JavaScriptMinifier {
 		//     keyword ( Expression ) Statement
 		//     keyword ( Identifier ) Statement
 		//
-		// See also ECMAScript 7.0:
+		// See also ECMAScript 8.0:
 		// - § 13.6 The if Statement
 		// - § 13.7 Iteration Statements (while, for)
 		// - § 13.11 The with Statement
@@ -456,7 +453,7 @@ class JavaScriptMinifier {
 		//     keyword Expression
 		//     keyword Block
 		//
-		// See also ECMAScript 7.0:
+		// See also ECMAScript 8.0:
 		// - § 13.6 The if Statement (else)
 		// - § 13.7 Iteration Statements (do)
 		// - § 13.12 The switch Statement (case)
@@ -467,7 +464,7 @@ class JavaScriptMinifier {
 		'try'        => self::TYPE_DO,
 		'finally'    => self::TYPE_DO,
 
-		// ECMAScript 7.0 § 13.3 Declarations and the Variable Statement
+		// ECMAScript 8.0 § 13.3 Declarations and the Variable Statement
 		//
 		//    LetOrConst
 		//    VariableStatement
@@ -480,13 +477,13 @@ class JavaScriptMinifier {
 		'let'        => self::TYPE_VAR,
 		'const'      => self::TYPE_VAR,
 
-		// ECMAScript 7.0 § 14.1 Function Definitions
+		// ECMAScript 8.0 § 14.1 Function Definitions
 		'function'   => self::TYPE_FUNC,
 
-		// ECMAScript 7.0 § 14.2 Arrow Function Definitions
+		// ECMAScript 8.0 § 14.2 Arrow Function Definitions
 		'=>'         => self::TYPE_ARROW,
 
-		// ECMAScript 7.0 § 14.5 Class Definitions
+		// ECMAScript 8.0 § 14.5 Class Definitions
 		//
 		//     class Identifier { ClassBody }
 		//     class { ClassBody }
@@ -502,29 +499,29 @@ class JavaScriptMinifier {
 		'await'      => self::TYPE_AWAIT,
 
 		// Can be one of:
-		// - Block (ECMAScript 7.0 § 13.2 Block)
-		// - ObjectLiteral (ECMAScript 7.0 § 12.2 Primary Expression)
+		// - Block (ECMAScript 8.0 § 13.2 Block)
+		// - ObjectLiteral (ECMAScript 8.0 § 12.2 Primary Expression)
 		'{'          => self::TYPE_BRACE_OPEN,
 		'}'          => self::TYPE_BRACE_CLOSE,
 
 		// Can be one of:
 		// - Parenthesised Identifier or Expression after a
 		//   TYPE_IF or TYPE_FUNC keyword.
-		// - PrimaryExpression (ECMAScript 7.0 § 12.2 Primary Expression)
-		// - CallExpression (ECMAScript 7.0 § 12.3 Left-Hand-Side Expressions)
-		// - Beginning of an ArrowFunction (ECMAScript 7.0 § 14.2 Arrow Function Definitions)
+		// - PrimaryExpression (ECMAScript 8.0 § 12.2 Primary Expression)
+		// - CallExpression (ECMAScript 8.0 § 12.3 Left-Hand-Side Expressions)
+		// - Beginning of an ArrowFunction (ECMAScript 8.0 § 14.2 Arrow Function Definitions)
 		'('          => self::TYPE_PAREN_OPEN,
 		')'          => self::TYPE_PAREN_CLOSE,
 
 		// Can be one of:
-		// - ArrayLiteral (ECMAScript 7.0 § 12.2 Primary Expressions)
-		// - ComputedPropertyName (ECMAScript 7.0 § 12.2.6 Object Initializer)
+		// - ArrayLiteral (ECMAScript 8.0 § 12.2 Primary Expressions)
+		// - ComputedPropertyName (ECMAScript 8.0 § 12.2.6 Object Initializer)
 		'['          => self::TYPE_PAREN_OPEN,
 		']'          => self::TYPE_PAREN_CLOSE,
 
 		// Can be one of:
 		// - End of any statement
-		// - EmptyStatement (ECMAScript 7.0 § 13.4 Empty Statement)
+		// - EmptyStatement (ECMAScript 8.0 § 13.4 Empty Statement)
 		';'          => self::TYPE_SEMICOLON,
 
 		// ECMAScript 8.0 § 14.6 Async Function Definitions
@@ -610,6 +607,10 @@ class JavaScriptMinifier {
 				self::ACTION_PUSH => self::STATEMENT,
 				self::ACTION_GOTO => self::PAREN_EXPRESSION,
 			],
+			self::TYPE_BRACE_OPEN => [
+				self::ACTION_PUSH => self::STATEMENT,
+				self::ACTION_GOTO => self::STATEMENT,
+			]
 		],
 		// The state after the function keyword. Waits for {, then goes to STATEMENT.
 		// The function body's closing } will pop the stack, so the state to return to
@@ -640,11 +641,13 @@ class JavaScriptMinifier {
 		// Property assignment - This is an object literal declaration.
 		// For example: `{ key: value, key2, [computedKey3]: value3, method4() { ... } }`
 		self::PROPERTY_ASSIGNMENT => [
-			// Note that keywords like if, class, var, delete, instanceof etc. can be used as keys,
-			// and should be treated as literals here, as they are in EXPRESSION_DOT. In this state,
-			// that is implicitly true because TYPE_LITERAL has no action, so it stays in this state.
-			// If we later add a state transition for TYPE_LITERAL, that same transition should
-			// also be applied to TYPE_RETURN, TYPE_IF, TYPE_DO, TYPE_VAR, TYPE_FUNC and TYPE_CLASS.
+			// Note that keywords like "if", "class", "var", "delete", "async", etc, are
+			// valid key names, and should be treated as literals here. Like in EXPRESSION_DOT.
+			// For this state, this requires no special handling because TYPE_LITERAL
+			// has no action here, so we remain in this state.
+			//
+			// If this state ever gets a transition for TYPE_LITERAL, then that same transition
+			// must apply to TYPE_IF, TYPE_CLASS, TYPE_VAR, TYPE_ASYNC, etc as well.
 			self::TYPE_COLON => [
 				self::ACTION_GOTO => self::PROPERTY_EXPRESSION,
 			],
@@ -1305,8 +1308,9 @@ class JavaScriptMinifier {
 				self::ACTION_POP => true,
 			],
 		],
-		// Expression as the value of a key in an object literal. Like EXPRESSION, except that
-		// a comma (in PROPERTY_EXPRESSION_OP) goes to PROPERTY_ASSIGNMENT instead
+		// Expression as the value of a key in an object literal.
+		// This means we're at "{ foo:".
+		// Like EXPRESSION, except that a comma (in PROPERTY_EXPRESSION_OP) goes to PROPERTY_ASSIGNMENT instead
 		self::PROPERTY_EXPRESSION => [
 			self::TYPE_BRACE_OPEN => [
 				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
@@ -1329,6 +1333,9 @@ class JavaScriptMinifier {
 			],
 			self::TYPE_LITERAL => [
 				self::ACTION_GOTO => self::PROPERTY_EXPRESSION_OP,
+			],
+			self::TYPE_ASYNC => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION_ASYNC,
 			],
 			// 'return' can't appear here, but 'yield' can
 			self::TYPE_RETURN => [
@@ -1380,6 +1387,7 @@ class JavaScriptMinifier {
 			],
 		],
 		// Like EXPRESSION_OP, but in a property expression, see PROPERTY_EXPRESSION
+		// This means we're at "{ foo: bar".
 		self::PROPERTY_EXPRESSION_OP => [
 			self::TYPE_BIN_OP => [
 				self::ACTION_GOTO => self::PROPERTY_EXPRESSION,
@@ -1409,6 +1417,60 @@ class JavaScriptMinifier {
 			self::TYPE_PAREN_OPEN => [
 				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
 				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+		],
+		// Like PROPERTY_EXPRESSION_OP, but with an added TYPE_FUNC handler.
+		// This means we're at "{ foo: async".
+		//
+		// This state exists to support "{ foo: async function() {",
+		// which can't re-use PROPERTY_EXPRESSION_OP, because handling TYPE_FUNC there
+		// would treat invalid "{ foo: bar function () {" as valid.
+		//
+		// For other cases we treat "async" like a literal key or key-less value.
+		//
+		// ```
+		// var noAsyncHere = {
+		//   async,
+		//   async: 1,
+		//   async() { return 2; },
+		//   foo: async
+		//   foo: async + 2,
+		//   foo: async(),
+		// }
+		// ```
+		self::PROPERTY_EXPRESSION_ASYNC => [
+			self::TYPE_BIN_OP => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION,
+			],
+			self::TYPE_ADD_OP => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION,
+			],
+			self::TYPE_DOT => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION_DOT,
+			],
+			self::TYPE_HOOK => [
+				self::ACTION_PUSH => self::PROPERTY_EXPRESSION,
+				self::ACTION_GOTO => self::EXPRESSION_TERNARY,
+			],
+			self::TYPE_COMMA => [
+				self::ACTION_GOTO => self::PROPERTY_ASSIGNMENT,
+			],
+			self::TYPE_ARROW => [
+				self::ACTION_GOTO => self::PROPERTY_EXPRESSION_ARROWFUNC,
+			],
+			self::TYPE_BRACE_OPEN => [
+				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
+			],
+			self::TYPE_BRACE_CLOSE => [
+				self::ACTION_POP => true,
+			],
+			self::TYPE_PAREN_OPEN => [
+				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
+				self::ACTION_GOTO => self::PAREN_EXPRESSION,
+			],
+			self::TYPE_FUNC => [
+				self::ACTION_PUSH => self::PROPERTY_EXPRESSION_OP,
+				self::ACTION_GOTO => self::FUNC,
 			],
 		],
 		// Like EXPRESSION_DOT, but in a property expression, see PROPERTY_EXPRESSION
@@ -1650,10 +1712,11 @@ class JavaScriptMinifier {
 	 * This array is augmented by self::ensureExpandedStates().
 	 */
 	private static $divStates = [
-		self::EXPRESSION_OP          => true,
-		self::EXPRESSION_TERNARY_OP  => true,
-		self::PAREN_EXPRESSION_OP    => true,
-		self::PROPERTY_EXPRESSION_OP => true
+		self::EXPRESSION_OP             => true,
+		self::EXPRESSION_TERNARY_OP     => true,
+		self::PAREN_EXPRESSION_OP       => true,
+		self::PROPERTY_EXPRESSION_OP    => true,
+		self::PROPERTY_EXPRESSION_ASYNC => true
 	];
 
 	/**
@@ -1770,9 +1833,10 @@ class JavaScriptMinifier {
 	 * @param string $s
 	 * @param MappingsGenerator|null $mapGenerator
 	 * @param callable|null $onError
+	 * @param callable|null $onDebug See augmentDebugContext() for callback parameter
 	 * @return string
 	 */
-	public static function minifyInternal( $s, $mapGenerator = null, $onError = null ) {
+	public static function minifyInternal( $s, $mapGenerator = null, $onError = null, $onDebug = null ) {
 		self::ensureExpandedStates();
 
 		// Here's where the minifying takes place: Loop through the input, looking for tokens
@@ -1985,10 +2049,22 @@ class JavaScriptMinifier {
 				$end += strspn( $s, '0123456789', $end );
 				$decimal = strspn( $s, '.', $end );
 				if ( $decimal ) {
-					if ( $decimal > 2 && !$error ) {
+					// Valid: "5." (number literal, optional fraction)
+					// Valid: "5.42" (number literal)
+					// Valid: "5..toString" (number literal "5.", followed by member expression).
+					// Invalid: "5..42"
+					// Invalid: "5...42"
+					// Invalid: "5...toString"
+					$fraction = strspn( $s, '0123456789', $end + $decimal );
+					if ( $decimal === 2 && !$fraction ) {
+						// Rewind one character, so that the member expression dot
+						// will be parsed as the next token (TYPE_DOT).
+						$decimal = 1;
+					}
+					if ( $decimal > 1 && !$error ) {
 						$error = new ParseError( 'Too many decimal points', $end );
 					}
-					$end += strspn( $s, '0123456789', $end + 1 ) + $decimal;
+					$end += $decimal + $fraction;
 				} else {
 					$dotlessNum = true;
 				}
@@ -2040,21 +2116,22 @@ class JavaScriptMinifier {
 			}
 
 			$pad = '';
+
 			if ( $newlineFound && isset( self::$semicolon[$state][$type] ) ) {
 				// This token triggers the semicolon insertion mechanism of javascript. While we
 				// could add the ; token here ourselves, keeping the newline has a few advantages.
 				$pad = "\n";
 				$state = $state < 0 ? -self::STATEMENT : self::STATEMENT;
 				$lineLength = 0;
-			} elseif ( $lineLength + $end - $pos > self::$maxLineLength &&
+			// This check adds a new line if we have exceeded the max length and only does this if
+			// a newline was found in this this position, if it wasn't, it uses the next available
+			// line break
+			} elseif ( $newlineFound &&
+				$lineLength + $end - $pos > self::$maxLineLength &&
 				!isset( self::$semicolon[$state][$type] ) &&
 				$type !== self::TYPE_INCR_OP &&
 				$type !== self::TYPE_ARROW
 			) {
-				// This line would get too long if we added $token, so add a newline first.
-				// Only do this if it won't trigger semicolon insertion and if it won't
-				// put a postfix increment operator or an arrow on its own line,
-				// which is illegal in js.
 				$pad = "\n";
 				$lineLength = 0;
 			// Check, whether we have to separate the token from the last one with whitespace
@@ -2073,7 +2150,17 @@ class JavaScriptMinifier {
 				$lineLength++;
 			}
 
-			// self::debug( $topOfStack, $last, $state, $ch, $token, $type );
+			if ( $onDebug ) {
+				$onDebug( self::augmentDebugContext( [
+					'stack' => $stack,
+					'last' => $last,
+					'state' => $state,
+					'pos' => $pos,
+					'ch' => $ch,
+					'token' => $token,
+					'type' => $type,
+				] ) );
+			}
 
 			if ( $mapGenerator ) {
 				$mapGenerator->outputSpace( $pad );
@@ -2113,40 +2200,37 @@ class JavaScriptMinifier {
 	}
 
 	/**
-	 * @param null|false|int $top
-	 * @param string $last
-	 * @param int $state
-	 * @param string $ch
-	 * @param string $token
-	 * @param int $type
+	 * Replace integer values with the corresponding class constant names
+	 *
+	 * @param array $context
+	 * - int[] 'stack' List of states (class constants)
+	 * - string 'last' Previous character from input stream
+	 * - int 'state' Current state as result of previous character (class constant)
+	 * - int 'pos' Offset of current character in input stream
+	 * - string 'ch' Current character in input stream, first character of current token
+	 * - string 'token' Current token from input stream
+	 * - int 'type' Current type as interpreted from the current character
+	 *
+	 * @return array The $context, with any integer class constants replaced by
+	 * their corresponding class constant name as a string (if found), or else
+	 * their given integer value.
 	 */
-	private static function debug(
-		$top, string $last,
-		int $state, string $ch, string $token, int $type
-	) {
-		static $first = true;
+	private static function augmentDebugContext( array $context ) {
 		$self = new ReflectionClass( self::class );
-
 		foreach ( $self->getConstants() as $name => $value ) {
-			if ( $value === $top ) {
-				$top = $name;
+			foreach ( $context['stack'] as $i => $state ) {
+				if ( $value === $state ) {
+					$context['stack'][$i] = $name;
+				}
 			}
-			if ( $value === $state ) {
-				$state = $name;
+			if ( $value === $context['state'] ) {
+				$context['state'] = $name;
 			}
-			if ( $value === $type ) {
-				$type = $name;
+			if ( $value === $context['type'] ) {
+				$context['type'] = $name;
 			}
 		}
 
-		if ( $first ) {
-			print sprintf( "| %-29s | %-4s | %-29s | %-2s | %-10s | %-29s\n",
-				'topOfStack', 'last', 'state', 'ch', 'token', 'type' );
-			print sprintf( "| %'-29s | %'-4s | %'-29s | %'-2s | %'-10s | %'-29s\n",
-				'', '', '', '', '', '' );
-			$first = false;
-		}
-		print sprintf( "| %-29s | %-4s | %-29s | %-2s | %-10s | %-29s\n",
-			(string)$top, $last, $state, $ch, $token, $type );
+		return $context;
 	}
 }

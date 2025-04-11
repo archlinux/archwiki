@@ -3,10 +3,11 @@
 		"authors": [
 			"Albinus",
 			"Manik Soren",
-			"Ramjit Tudu"
+			"Ramjit Tudu",
+			"ᱤᱧ ᱢᱟᱛᱟᱞ"
 		]
 	},
-	"fancycaptcha-captcha": "ᱥᱤᱠᱤᱣᱨᱤᱴᱤ ᱵᱤᱰᱟᱹᱣ",
+	"fancycaptcha-captcha": "ᱥᱮᱠᱭᱩᱨᱤᱴᱤ ᱪᱮᱠ",
 	"fancycaptcha-accountcreate": "ᱟᱡᱛᱮ ᱠᱷᱟᱛᱟ ᱛᱮᱭᱟᱨ ᱠᱷᱚᱱ ᱣᱤᱠᱤ ᱵᱟᱧᱪᱟᱣ ᱞᱟᱹᱜᱤᱫᱛᱮ, ᱞᱟᱛᱟᱨ ᱨᱮ ᱧᱮᱞᱚᱜ-ᱠᱟᱱ ᱵᱟᱠᱥᱟ ᱨᱮᱱᱟᱜ ᱚᱞ ᱟᱫᱮᱨ ᱞᱟᱹᱜᱤᱫ ᱞᱮ ᱱᱮᱦᱚᱸᱨᱮᱫ ᱢᱮᱭᱟ ([[Special:Captcha/help|ᱵᱟᱹᱲᱛᱤ ᱠᱟᱛᱷᱟ]]):",
 	"fancycaptcha-imgcaptcha-ph": "ᱪᱤᱛᱟᱹᱨᱨᱮ ᱡᱟᱸᱦᱟᱸᱢ ᱧᱮᱞ ᱫᱟ ᱚᱱᱟ ᱚᱞ ᱢᱮ",
 	"fancycaptcha-reload-text": "ᱯᱷᱟᱨᱱᱟᱣ"

@@ -14,10 +14,13 @@
 			"Qgustavor",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious"
+			"Waldyrious",
+			"Fúlvio"
 		]
 	},
 	"skinname-vector": "Vector antigo (2010)",
+	"skinname-vector-2022": "Vector (2022)",
+	"vector-specialversion-name": "Vector",
 	"vector-skin-desc": "Fornece 2 temas Vector:\n* 2011 - Versão moderna do MonoBook com um aspeto fresco e várias melhorias de usabilidade.\n* 2022 - O Vector criado como parte do projeto [https://www.mediawiki.org/wiki/Desktop_Improvements Melhoramentos do Ambiente de Trabalho] da WMF.",
 	"prefs-vector-enable-vector-1-label": "Usar o Vector antigo",
 	"prefs-vector-enable-vector-1-help": "Durante os próximos anos iremos atualizar gradualmente o tema Vector. O Vetor antigo permitirá ver a versão antiga do tema Vector (de dezembro de 2019). Para saber mais sobre as atualizações, consulte a [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements página do projeto].",
@@ -48,6 +51,7 @@
 	"vector-jumptocontent": "Saltar para o conteúdo",
 	"vector-more-actions": "Mais",
 	"vector-appearance-label": "Aspeto",
+	"vector-appearance-tooltip": "Alterar o aspeto do tamanho da fonte, a largura e a cor da página",
 	"vector-feature-limited-width-name": "Largura",
 	"vector-feature-limited-width-0-label": "Largo",
 	"vector-feature-limited-width-1-label": "Padrão",
@@ -91,8 +95,14 @@
 	"vector-toc-unpinned-popup": "O índice mudou para cá.",
 	"vector-page-tools-unpinned-popup": "O menu de ferramentas mudou para cá.",
 	"vector-main-menu-unpinned-popup": "O menu principal mudou para cá.",
-	"vector-appearance-unpinned-popup": "O menu de aparência mudou para cá.",
+	"vector-appearance-unpinned-popup": "O menu de aspeto mudou para cá.",
 	"vector-2022-beta-preview-label": "Acessibilidade para Leitura (Vector 2022)",
 	"vector-2022-beta-preview-description": "Obter acesso antecipado às novas funcionalidades de acessibilidade de leitura, como melhoramentos tipográficos e o modo escuro.",
-	"vector-night-mode-gadget-warning": "Está a usar um ''gadget'' de modo escuro que interfere com esta funcinalidade. [[Special:Preferences#mw-prefsection-gadgets|Desative o ''gadget'']] para usar o modo escuro."
+	"vector-night-mode-gadget-warning": "Está a usar um ''gadget'' de modo escuro que interfere com esta funcinalidade. [[Special:Preferences#mw-prefsection-gadgets|Desative o ''gadget'']] para usar o modo escuro.",
+	"vector-night-mode-issue-reporting-notice-tooltip": "Reporte quando as cores do modo escuro dificultarem a leitura.",
+	"vector-night-mode-issue-reporting-link-label": "Reportar um problema com o modo escuro",
+	"vector-night-mode-issue-reporting-link-notification": "Relatório recebido!",
+	"vector-night-mode-issue-reporting-preload-title": "Erro do modo escuro em $1",
+	"vector-night-mode-issue-reporting-preload-content": "<!--\nInstruções\nDescreva como as cores do modo escuro estão a dificultar a leitura da Wikipédia.\nInclua a secção do artigo onde encontrou o problema.\n-->\n'''Descrição do problema'''",
+	"vector-night-mode-beta-tag": "(beta)"
 }

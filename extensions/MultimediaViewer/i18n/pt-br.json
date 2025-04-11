@@ -17,13 +17,14 @@
 	"multimediaviewer-optin-pref": "Ativar <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About visualizador de mídia]</span>",
 	"multimediaviewer-file-page": "Ir para a página do arquivo correspondente",
 	"multimediaviewer-repository-local": "Mais detalhes",
-	"multimediaviewer-datetime-created": "Criada: $1",
+	"multimediaviewer-datetime-created": "Criado: $1",
 	"multimediaviewer-datetime-uploaded": "Enviado: $1",
 	"multimediaviewer-credit": "$1 - $2",
 	"multimediaviewer-credit-fallback": "Ver informações de autor",
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|mais um autor|mais $1 autores}}",
 	"multimediaviewer-multiple-authors-combine": "$1 e $2",
 	"multimediaviewer-metadata-error": "Não foi possível carregar os detalhes da imagem (error:$1)",
+	"multimediaviewer-file-not-found-error": "Desculpe, o arquivo $1 não pode ser exibido porque não está presente na página atual.",
 	"multimediaviewer-thumbnail-error": "Desculpe, o arquivo não pode ser exibido",
 	"multimediaviewer-thumbnail-error-description": "Parece haver um problema técnico. Pode $1, caso o problema continue. Erro: $2",
 	"multimediaviewer-thumbnail-error-retry": "tentar novamente",
@@ -128,6 +129,7 @@
 	"multimediaviewer-download-attribution-cta-header": "Você precisa indicar o autor",
 	"multimediaviewer-download-optional-attribution-cta-header": "Você pode indicar o autor",
 	"multimediaviewer-download-attribution-cta": "Mostre-me como",
+	"multimediaviewer-copy-button": "Copiar",
 	"multimediaviewer-download-attribution-copy": "Seleciona e copia (se suportado) o texto de atribuição para este arquivo",
 	"multimediaviewer-reuse-warning-deletion": "Este arquivo é considerado para exclusão.",
 	"multimediaviewer-reuse-warning-nonfree": "Este arquivo não possui uma licença gratuita.",
@@ -145,5 +147,6 @@
 	"multimediaviewer-enable-alert": "O visualizador multimídia agora está desativado",
 	"multimediaviewer-disable-info-title": "Você desativou o visualizador multimídia",
 	"multimediaviewer-disable-info": "Você pode ainda ver os arquivos individuais com o visualizador multimídia.",
-	"multimediaviewer-errorreport-privacywarning": "Os detalhes do erro são anexados ao relatório, que será visível publicamente. Se você não está confortável com isso, você pode editar o relatório abaixo e remover todos os dados que você não deseja compartilhar."
+	"multimediaviewer-errorreport-privacywarning": "Os detalhes do erro são anexados ao relatório, que será visível publicamente. Se você não está confortável com isso, você pode editar o relatório abaixo e remover todos os dados que você não deseja compartilhar.",
+	"multimediaviewer-loading": "Carregando o Visualizador de Mídia."
 }

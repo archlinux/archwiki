@@ -6,8 +6,28 @@
 			"Zolgoyo"
 		]
 	},
+	"prefs-echo": "Bildirmeler",
+	"prefs-description-echo": "Qaysı bildirmelerni nasıl alacağıñıznı {{GENDER:|saylañız}}.",
+	"prefs-emailsettings": "E-mail sazlamaları",
+	"prefs-echosubscriptions": "Bu vaqialar aqqında maña bildirime yolla",
+	"prefs-echocrosswiki": "Vikilerarası bildirmeler",
+	"prefs-blocknotificationslist": "Sessizge alınğan qullanıcılar",
+	"prefs-mutedpageslist": "Saife bağlantısı bildirmeleri içün sessiz saifeler",
+	"prefs-echopollupdates": "Canlı bildirmeler",
 	"echo-new-messages": "Yañı bir beyanatıñız bar",
 	"notifications": "Bildirimler",
+	"tooltip-pt-notifications-alert": "Bildirmeleriñiz",
+	"notification-link-text-expand-all": "Kenişlet",
+	"notification-link-text-expand-alert-count": "{{PLURAL:$1|$1 tenbini}} köster",
+	"notification-link-text-expand-notice-count": "{{PLURAL:$1|$1 bildirmeni}} köster",
+	"notification-link-text-expand-all-count": "{{PLURAL:$1|$1 bildirmeni}} göster",
+	"notification-link-text-collapse-all": "Tarlat",
+	"notification-link-text-view-message": "Beyanatnı köster",
+	"notification-link-text-view-mention": "Añmanı köster",
+	"notification-link-text-view-mention-failure": "{{PLURAL:$1|Añmanı|Añmalarnı}} köster",
+	"echo-notification-alert": "{{PLURAL:$1|Tenbi ($1)|Tenbiler ($1)|100=Tenbiler (99+)}}",
+	"echo-notification-alert-text-only": "Tenbiler",
 	"notification-bundle-header-edit-user-talk-v2": "{{PLURAL:$1|Yañı bir beyanat|$1 yañı beyanat|100=99+ yañı beyanat}} <strong>{{GENDER:$3|sizin}} muzakere saifeñizde tapıla</strong>.",
-	"echo-email-batch-link-text-view-all-notifications": "Bildirmelerniñ episini köster"
+	"echo-email-batch-link-text-view-all-notifications": "Bildirmelerniñ episini köster",
+	"notification-header-foreign-alert": "{{PLURAL:$5|$5 başqa viki leyhasında}} tenbileriñiz bar"
 }

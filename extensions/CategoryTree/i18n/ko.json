@@ -11,7 +11,8 @@
 			"ToePeu",
 			"Ykhwong",
 			"렌즈",
-			"아라"
+			"아라",
+			"Tensama0415"
 		]
 	},
 	"categorytree": "분류 트리",
@@ -42,7 +43,7 @@
 	"categorytree-not-found": "$1 분류가 없습니다",
 	"categorytree-error": "값을 불러오는 중 오류 발생",
 	"categorytree-retry": "잠시 후에 다시 해보세요.",
-	"categorytree-onlyroot-message": "매개변수 <code>onlyroot</code>는 사용되지 않습니다. 대신 <code>depth=\"0\"</code>를 사용하세요.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: 매개변수 <code>onlyroot</code>는 사용되지 않습니다. 대신 <code>depth=\"0\"</code>를 사용하세요.",
 	"categorytree-deprecation-warning": "'''경고:''' 이 페이지에서는 사용되지 않는 매개변수를 가진 <code><categorytree></code>를 사용하고 있습니다.",
 	"categorytree-deprecation-category": "사용되지 않는 categorytree 매개 변수를 사용하는 페이지",
 	"categorytree-deprecation-category-desc": "이 페이지에서는 <code>onlyroot</code>와 같은 사용되지 않는 categorytree 매개 변수를 사용하고 있습니다."

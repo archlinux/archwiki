@@ -2,10 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Ernác",
-			"Iltever"
+			"Iltever",
+			"Къарачайлы"
 		]
 	},
 	"cite_error": "Цитата этиуде халат: $1",
+	"cite-tracking-category-cite-error": "Белгилени кёргюзюу халатлары болгъан статьяла",
+	"cite-tracking-category-cite-error-desc": "Бу категориядагъа бетледе белги теглени хайырланыуда хата барды",
 	"cite-wikieditor-tool-reference": "Белги",
 	"cite-wikieditor-help-page-references": "Белгиле",
 	"cite-wikieditor-help-content-reference-description": "Белги",

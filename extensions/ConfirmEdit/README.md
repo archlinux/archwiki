@@ -101,13 +101,16 @@ $wgCaptchaStorageClass = 'MediaWiki\Extension\ConfirmEdit\Store\CaptchaSessionSt
  * Number of seconds a captcha session should last in the data cache
  * before expiring when managing through CaptchaCacheStore class.
  *
- * Default is a half hour.
+ * Default is a half-hour.
  */
 $wgCaptchaSessionExpiration = 30 * 60;
 
 /**
- * Number of seconds after a bad login that a captcha will be shown to
+ * Number of seconds after a bad login (from a specific IP address) that a captcha will be shown to
  * that client on the login form to slow down password-guessing bots.
+ *
+ * A longer expiration time of $wgCaptchaBadLoginExpiration * 300 will also be applied against a
+ * login attempt count of $wgCaptchaBadLoginAttempts * 30.
  *
  * Has no effect if 'badlogin' is disabled in $wgCaptchaTriggers or
  * if there is not a caching engine enabled.
@@ -117,8 +120,22 @@ $wgCaptchaSessionExpiration = 30 * 60;
 $wgCaptchaBadLoginExpiration = 5 * 60;
 
 /**
+ * Number of seconds after a bad login (for a specific user account) that a captcha will be shown to
+ * that client on the login form to slow down password-guessing bots.
+ *
+ * A longer expiration time of $wgCaptchaBadLoginExpiration * 300 will be applied against a login
+ * attempt count of $wgCaptchaBadLoginAttempts * 30.
+ *
+ * Has no effect if 'badlogin' is disabled in $wgCaptchaTriggers or
+ * if there is not a caching engine enabled.
+ *
+ * Default is 10 minutes
+ */
+$wgCaptchaBadLoginPerUserExpiration = 10 * 60;
+
+/**
  * Allow users who have confirmed their email addresses to post
- * URL links without being harassed by the captcha.
+ * URL links without being shown a captcha.
  *
  * @deprecated since 1.36
  * $wgGroupPermissions['emailconfirmed']['skipcaptcha'] = true; should be used instead.
@@ -126,13 +143,25 @@ $wgCaptchaBadLoginExpiration = 5 * 60;
 $wgAllowConfirmedEmail = false;
 
 /**
- * Number of bad login attempts before triggering the captcha.  0 means the
+ * Number of bad login attempts (from a specific IP address) before triggering the captcha. 0 means the
  * captcha is presented on the first login.
+ *
+ * A captcha will also be triggered if the number of failed logins exceeds $wgCaptchaBadLoginAttempts * 30
+ * in a period of $wgCaptchaBadLoginExpiration * 300.
  */
 $wgCaptchaBadLoginAttempts = 3;
 
 /**
- * Regex to whitelist URLs to known-good sites...
+ * Number of bad login attempts (for a specific user account) before triggering the captcha. 0 means the
+ * captcha is presented on the first login.
+ *
+ * A captcha will also be triggered if the number of failed logins exceeds $wgCaptchaBadLoginPerUserAttempts * 30
+ * in a period of $wgCaptchaBadLoginPerUserExpiration * 300.
+ */
+$wgCaptchaBadLoginPerUserAttempts = 20;
+
+/**
+ * Regex to ignore URLs to known-good sites...
  * For instance:
  * $wgCaptchaWhitelist = '#^https?://([a-z0-9-]+\\.)?(wikimedia|wikipedia)\.org/#i';
  * Local admins can define a whitelist under [[MediaWiki:captcha-addurl-whitelist]]
@@ -144,9 +173,14 @@ $wgCaptchaWhitelist = false;
  * other than URLs such as junk edits.
  *
  * If the new version matches one and the old version doesn't,
- * toss up the captcha screen.
+ * show the captcha screen.
  *
  * @fixme Add a message for local admins to add items as well.
  */
 $wgCaptchaRegexes = [];
+
+/**
+ * Feature flag to toggle list of available custom actions to enable in AbuseFilter. See AbuseFilterHooks::onAbuseFilterCustomActions
+ */
+$wgConfirmEditEnabledAbuseFilterCustomActions = [];
 ```

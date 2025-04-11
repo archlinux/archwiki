@@ -167,7 +167,26 @@ class Job extends JobParent {
 					return false;
 				}
 
-				$slot_text = $slotContent->getText();
+				// Sometimes, especially if the system is
+				// overloaded, the getText() call can
+				// lead to this error message getting placed
+				// right within the text - if that happens,
+				// try calling getText() again until the
+				// error goes away.
+				$expansionDepthLimitError = '<span class="error">Expansion depth limit exceeded</span>';
+				$numTries = 0;
+				do {
+					$slot_text = $slotContent->getText();
+					$hasError = strpos( $slot_text, $expansionDepthLimitError ) > 0;
+					$numTries++;
+				} while ( $hasError && $numTries < 10 );
+
+				if ( $hasError ) {
+					$this->error =
+						'replaceText: Encountered "Expansion depth limit exceeded"' .
+						' error for wiki page "' . $this->title->getPrefixedDBkey() . '".';
+					return false;
+				}
 
 				$target_str = $this->params['target_str'];
 				$replacement_str = $this->params['replacement_str'];

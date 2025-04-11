@@ -140,7 +140,7 @@
 	"discussiontools-replywidget-transcluded": "Оюумугъуз [[$1]] бетде сакъланныкъды.",
 	"discussiontools-replywidget-watchthis": "Бу бетни [[Special:Watchlist|къарау тизгининге]] кош",
 	"discussiontools-target-comment-missing": "Бу оюм табылырча тюлдю. Кетерилген неда башха джерге кёчюрлюген болур.",
-	"discussiontools-target-comments-missing": "Джангы оюмла табылырча тюлдюле. Ала кетерилген неда башха джерге кёчюрлген болурла.",
+	"discussiontools-target-comments-missing": "Джангы оюмла табылырча тюлдюле. Ала кетерилген неда башха джерге кёчюрюлген болурла.",
 	"discussiontools-target-heading-missing": "Бу тема табылылалмады. Кетерилглен, башха джерге кёчюрюлген неда аты тюрленген болур.",
 	"discussiontools-target-comment-found-moved": "Бу оюм, бу бетде табылырча тюлдю, алай а бу {{PLURAL:$1|бетде|бетледе}} барды:",
 	"discussiontools-target-heading-found-moved": "Бу тема, бу бетде табылырча тюлдю, алай а бу {{PLURAL:$1|бетде|бетледе}} барды:",

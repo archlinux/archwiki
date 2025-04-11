@@ -1,0 +1,40 @@
+{
+	"@metadata": {
+		"authors": [
+			"MysticVoyager"
+		]
+	},
+	"vector-languages": "ᐅᖃᕐᕕᐅᑎᔪᑦ",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ᐅᖃᐅᓯᖅ|$1 ᐅᖃᐅᓯᑦ}}",
+	"vector-no-language-button-label": "ᐅᖃᐅᓯᑦ ᐊᐃᑎᕐᓗᑎᑦ",
+	"vector-action-addsection": "ᐃᓚᓕᐅᑎᓗᒍ ᐅᖃᐅᓯᒃᓴᖅ",
+	"vector-action-delete": "ᐲᔭᖅᑕᐅᔪᖅ",
+	"vector-action-move": "ᐅᐊᔪᖅ",
+	"vector-action-protect": "ᓴᐳᔾᔨᓯᒪᓂᖅ",
+	"vector-view-create": "ᓴᓇᓗᑎᑦ",
+	"vector-view-history": "ᑕᑯᓗᒍ ᖃᓄᐃᓕᐅᕈᑕᐅᖃᑦᑕᖅᓯᒪᔪᖅ",
+	"vector-more-actions": "ᓱᓕᒃᑲᓐᓂᖅ",
+	"vector-appearance-label": "ᑕᑯᓐᓇᕐᓂᖓ",
+	"vector-feature-limited-width-name": "ᓯᕕᑐᓂᖓ",
+	"vector-feature-limited-width-0-label": "ᐃᔨᖅᐳᖅ",
+	"vector-feature-limited-width-1-label": "ᓴᐃᒻᒪᑎ",
+	"vector-feature-custom-font-size-name": "ᑎᑎᖅᑲᖅ",
+	"vector-feature-custom-font-size-0-label": "ᒥᑭᑦᑐᖅ",
+	"vector-feature-custom-font-size-1-label": "ᓴᐃᒻᒪᑎ",
+	"vector-feature-custom-font-size-2-label": "ᐅᓄᖅᑐᖅ",
+	"skin-theme-name": "ᐊᒥᐊᖅ",
+	"skin-theme-day-label": "ᐅᕿᑦᑐᖅ",
+	"skin-theme-night-label": "ᑖᖅᑐᖅ",
+	"skin-theme-os-label": "ᐊᑕᕿᑎᐅᓂᖅ",
+	"skin-theme-exclusion-notice": "ᑖᓐᓇ ᒪᒃᐱᒐᖅ ᖃᐅᒪᐃᓐᓇᐅᔭᖅᑐᖅ.",
+	"vector-searchsuggest-containing": "ᕿᓂᕐᓗᒋᑦ ᒪᒃᐱᒐᐃᑦ ᐃᓗᓕᖃᖅᑐᑦ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "ᐃᓗᓕᖏᑦ",
+	"vector-toc-beginning": "ᐱᓇᓱᐊᖅ",
+	"vector-anon-user-menu-pages": "ᒪᒃᐱᒐᐃᑦ ᐊᓂᓯᒪᔪᓄᑦ ᐋᖅᑭᒃᓱᐃᔨᓄᑦ",
+	"vector-main-menu-label": "ᓂᕆᔭᒃᓴᓪᓗᐊᑕᐃᑦ",
+	"vector-feature-custom-font-size-exclusion-notice": "ᐅᑉᓗᐊᑎᒃ ᐱᓇᓲᓇᖅ ᐅᓗᓕᕋᓛᖅᑐᖅ ᓯᕗᓕᐅᕈᑎᒃ",
+	"vector-page-tools-label": "ᓴᓇᕐᕈᑎᑦ",
+	"vector-page-tools-general-label": "ᑭᓱᑐᐃᓐᓇᑦ",
+	"vector-page-tools-actions-label": "ᖃᓄᐃᓕᐅᕈᑕᐅᔪᑦ",
+	"vector-unpin-element-label": "ᐃᔨᖅᐳᖅ"
+}

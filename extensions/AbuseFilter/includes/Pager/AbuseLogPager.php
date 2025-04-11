@@ -185,7 +185,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				$escaped_comments = $this->msg( 'abusefilter-log-description-not-available' )->escaped();
 				// either hide all filters, including not hidden/protected, or show all, including hidden/protected
 				// we choose the former
-				$privacyLevel = Flags::FILTER_HIDDEN & Flags::FILTER_USES_PROTECTED_VARS;
+				$privacyLevel = Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
 			}
 		} else {
 			$escaped_comments = Sanitizer::escapeHtmlAllowEntities(

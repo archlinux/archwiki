@@ -4,7 +4,10 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Extension\ConfirmEdit\Store\CaptchaCacheStore;
+use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -15,14 +18,69 @@ use Wikimedia\TestingAccessWrapper;
  * @covers \MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha
  */
 class CaptchaTest extends MediaWikiIntegrationTestCase {
+	private const TEST_CAPTCHA_INDEX = 127;
 
 	/** @var ScopedCallback[] */
 	private $hold = [];
+
+	protected function setUp(): void {
+		parent::setUp();
+
+		// Clear any handlers of the ConfirmEditTriggersCaptcha hook for this test, as in CI their additional
+		// checks may cause the tests to fail (such as those from IPReputation).
+		$this->clearHook( 'ConfirmEditTriggersCaptcha' );
+	}
 
 	public function tearDown(): void {
 		// Destroy any ScopedCallbacks being held
 		$this->hold = [];
 		parent::tearDown();
+	}
+
+	/**
+	 * @dataProvider providePassCaptchaLimitedFromRequest
+	 *
+	 * @param string|null $captchaId
+	 * @param string|null $captchaWord
+	 * @param bool $passed
+	 * @return void
+	 */
+	public function testPassCaptchaLimitedFromRequest(
+		?string $captchaId,
+		?string $captchaWord,
+		bool $passed
+	): void {
+		$this->setMwGlobals( 'wgCaptchaStorageClass', CaptchaCacheStore::class );
+		CaptchaStore::unsetInstanceForTests();
+
+		$params = [ 'index' => self::TEST_CAPTCHA_INDEX, 'question' => '5+3', 'answer' => 8 ];
+
+		$captcha = new SimpleCaptcha();
+		$captcha->storeCaptcha( $params );
+
+		$request = new FauxRequest( array_filter( [
+			'wpCaptchaId' => $captchaId,
+			'wpCaptchaWord' => $captchaWord,
+		] ) );
+
+		$user = $this->createMock( User::class );
+		$user->expects( $passed ? $this->once() : $this->exactly( 2 ) )
+			->method( 'pingLimiter' )
+			->willReturnMap( [
+				[ 'badcaptcha', 0, false ],
+				[ 'badcaptcha', 1, false ]
+			] );
+
+		$this->assertSame( $passed, $captcha->passCaptchaLimitedFromRequest( $request, $user ) );
+	}
+
+	public function providePassCaptchaLimitedFromRequest(): iterable {
+		yield 'new captcha session' => [ null, null, false ];
+		yield 'missing captcha ID' => [ null, '8', false ];
+		yield 'mismatched captcha ID' => [ '129', '8', false ];
+		yield 'missing answer' => [ (string)self::TEST_CAPTCHA_INDEX, null, false ];
+		yield 'wrong answer' => [ (string)self::TEST_CAPTCHA_INDEX, '7', false ];
+		yield 'correct answer' => [ (string)self::TEST_CAPTCHA_INDEX, '8', true ];
 	}
 
 	/**

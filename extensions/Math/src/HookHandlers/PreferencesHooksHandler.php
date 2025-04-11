@@ -24,6 +24,7 @@ class PreferencesHooksHandler implements
 		$this->mathConfig = $mathConfig;
 	}
 
+	/** @inheritDoc */
 	public function onUserGetDefaultOptions( &$defaultOptions ) {
 		// Normalize the default use option in case it's not a valid rendering mode. BUG 64844
 		$mode = $defaultOptions['math'] = MathConfig::normalizeRenderingMode( $defaultOptions['math'] );
@@ -38,6 +39,7 @@ class PreferencesHooksHandler implements
 		}
 	}
 
+	/** @inheritDoc */
 	public function onGetPreferences( $user, &$preferences ) {
 		$preferences['math'] = [
 			'type' => 'radio',

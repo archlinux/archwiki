@@ -2,17 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"Makuba",
-			"Renan"
+			"Renan",
+			"Lisyeng"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libre",
 	"visualeditor-cite-tool-name-journal": "Jurnale",
 	"visualeditor-cite-tool-name-news": "Information",
 	"visualeditor-cite-tool-name-web": "Website",
+	"cite-ve-citationneeded-button": "Adjunter un citation",
+	"cite-ve-citationneeded-reason": "Dat motive:",
 	"cite-ve-dialog-reference-options-group-label": "Usar ti-ci gruppe",
+	"cite-ve-dialog-reference-options-group-placeholder": "General referenties",
 	"cite-ve-dialog-reference-options-section": "Preferenties",
 	"cite-ve-dialog-reference-title": "Referentie",
 	"cite-ve-dialog-referenceslist-title": "Liste de referenties",
+	"cite-ve-dialogbutton-reference-full-label": "Basic",
 	"cite-ve-dialogbutton-reference-tooltip": "Referentie",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Liste de referenties",
 	"cite-ve-reference-input-placeholder": "Quo tu vole referentiar?",

@@ -2,12 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Kurniasan",
-			"Notanotheramy"
+			"Notanotheramy",
+			"Rdwnnr"
 		]
 	},
-	"vector-action-move": "Paléccé'",
-	"vector-view-create": "Ebbu",
-	"vector-view-edit": "Padéccéng",
+	"vector-no-language-button-label": "Tambai basabasa",
+	"vector-action-addsection": "Tambai topiq",
+	"vector-action-move": "Paléccéq",
+	"vector-action-protect": "Pallénrung",
+	"vector-view-create": "Ébbu",
+	"vector-view-edit": "Padécéng",
+	"vector-view-history": "Itai riwayaq",
 	"vector-view-view": "Baca",
-	"vector-view-viewsource": "Ita sumber"
+	"vector-view-viewsource": "Ita pabbéré",
+	"vector-more-actions": "Tamba",
+	"vector-searchsuggest-containing": "Sappa lempa malliseq <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "Pakkakkasaq",
+	"vector-page-tools-actions-label": "Gaukkauq"
 }

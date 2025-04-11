@@ -13,7 +13,8 @@
 			"Sonic Speedy",
 			"Veracious",
 			"WillsonEP09",
-			"Woytecr"
+			"Woytecr",
+			"ID Owly01"
 		]
 	},
 	"discussiontools": "Perkakas diskusi",
@@ -59,7 +60,7 @@
 	"discussiontools-limitreport-errorreqid": "ID permintaan yang mengalami galat DiscussionTools",
 	"discussiontools-limitreport-timeusage": "Waktu menjadi pengguna DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|detik}}",
-	"discussiontools-newtopic-missing-title": "Harap berikan judul pada topik diskusi Anda. Jika Anda mengeklik \"{{int:discussiontools-replywidget-newtopic}}\", topik Anda akan ditambahkan tanpa judul.",
+	"discussiontools-newtopic-missing-title": "Harap berikan judul pada topik diskusi {{GENDER:|Anda}}.",
 	"discussiontools-newtopic-placeholder-title": "Subjek",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Berlangganan",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Berhenti berlangganan",

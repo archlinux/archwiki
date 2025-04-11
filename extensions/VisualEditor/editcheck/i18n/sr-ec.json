@@ -6,5 +6,22 @@
 	},
 	"editcheck-dialog-action-no": "Не",
 	"editcheck-dialog-action-yes": "Да",
-	"editcheck-dialog-addref-reject-other": "Друго"
+	"editcheck-dialog-addref-description": "Помозите читаоцима да знају одакле информација долази додавањем референце.",
+	"editcheck-dialog-addref-reject-question": "Зашто не додајете референцу?",
+	"editcheck-dialog-addref-reject-description": "Остали уредници радо би знали зашто сте одлучили не додати референцу.",
+	"editcheck-dialog-addref-reject-irrelevant": "Референцирање је небитно за моју измену",
+	"editcheck-dialog-addref-reject-common-knowledge": "Информација коју додајем је опште позната",
+	"editcheck-dialog-addref-reject-uncertain": "Не знам коју референцу навести",
+	"editcheck-dialog-addref-reject-other": "Друго",
+	"editcheck-dialog-addref-success-notify": "Хвала на додавању референце!",
+	"editcheck-dialog-addref-title": "Додавање референце",
+	"editcheck-dialog-title": "Пре објављивања",
+	"tag-editcheck-reference-decline-common-knowledge": "Edit Check референцирање одбачено (опште знање)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Референцирање је одбачено зато што је у питању опште знање",
+	"tag-editcheck-reference-decline-irrelevant": "Edit Check референцирање одбачено (нерелевантно)",
+	"tag-editcheck-reference-decline-irrelevant-description": "Референцирање је небитно за конкретну измену",
+	"tag-editcheck-reference-decline-other": "Edit Check референцирање одбачено (друго)",
+	"tag-editcheck-reference-decline-other-description": "Референцирање је одбачено из неког другог разлога",
+	"tag-editcheck-reference-decline-uncertain": "Edit Check референцирање одбачено (нисам сигуран/на)",
+	"tag-editcheck-reference-decline-uncertain-description": "Референцирање је одбачено из незнања"
 }

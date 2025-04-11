@@ -5,7 +5,9 @@
 			"Nemoralis",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"Zpizza"
+			"Zpizza",
+			"Əkrəm Cəfər",
+			"Əkrəm"
 		]
 	},
 	"oathauth-desc": "HMAC əsaslı birdəfəlik şifrələrdən istifadə edərək autentifikasiya dəstəyi təmin edir",
@@ -20,7 +22,7 @@
 	"oathauth-recoverycodes-neveragain": "Bu kodlar bir daha heç vaxt göstərilməyəcək!",
 	"oathauth-recoverytokens-createdat": "Yaradılan bərpa kodları: $1",
 	"oathauth-recoverycodes-download": "Yüklə",
-	"oathauth-recoverycodes-copy": "Kopyala",
+	"oathauth-recoverycodes-copy": "Kopiyala",
 	"oathauth-recoverycodes-copy-success": "Bərpa kodları mübadilə buferinizə kopyalandı!",
 	"oathauth-disable": "İki faktorlu autentifikasiyanı deaktiv et",
 	"oathauth-validatedoath": "İki faktor məlumatları doğrulandı. Artıq iki faktorlu autentifikasiya tətbiq ediləcək.",
@@ -106,7 +108,8 @@
 	"notification-body-oathauth-enable": "Bunu {{GENDER:$2|siz}} etməmisinizsə, {{GENDER:$2|hesabınız}} ələ keçirilmiş ola bilər.",
 	"oathauth-notifications-enable-help": "Kömək",
 	"oathauth-notifications-enable-primary": "İki faktorlu autentifikasiya parametrlərinizi yoxlayın",
-	"notification-body-oathauth-oathauth-recoverycodesleft": "$3 bərpa {{PLURAL:$3|kodunuz}} {{GENDER:$2|qalıb}}. Gələcəkdə istifadə etmək üçün $4 yeni kod yaratmaq üçün iki faktorlu autentifikasiyanı söndürüb yenidən aktivləşdirə bilərsiniz.",
+	"notification-header-oathauth-recoverycodes-count": "İki faktorlu autentifikasiya üçün {{GENDER:$2|hesabınızı}} yenidən qeydiyyatdan keçirtməlisiniz.",
+	"notification-body-oathauth-recoverycodesleft": "$3 bərpa {{PLURAL:$3|kodunuz}} {{GENDER:$2|qalıb}}. Gələcəkdə istifadə etmək üçün $4 yeni kod yaratmaq üçün iki faktorlu autentifikasiyanı söndürüb yenidən aktivləşdirə bilərsiniz.",
 	"oathauth-notifications-recoverycodesleft-help": "Kömək",
 	"oathauth-notifications-recoverycodesleft-primary": "İki faktorlu autentifikasiya parametrlərinizi yoxlayın",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} istifadəçisi iki faktorlu autentifikasiyanı aktivləşdirib.",

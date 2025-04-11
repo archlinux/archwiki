@@ -7,7 +7,8 @@
 			"Lucas2",
 			"Matteocng",
 			"Nemo bis",
-			"Selven"
+			"Selven",
+			"Titore"
 		]
 	},
 	"captcha-edit": "Per modificare la pagina è necessario risolvere l'attività presentata di seguito e inserire la risposta nella casella\n([[Special:Captcha/help|maggiori informazioni]]):",
@@ -36,5 +37,6 @@
 	"confirmedit-preview-validity": "Validità",
 	"confirmedit-preview-valid": "valido",
 	"confirmedit-preview-invalid": "non valido",
-	"confirmedit-preview-description": "La seguente tabella mostra la lista delle linee su questa pagina e se è un indirizzo IP o un intervallo di indirizzi IP. Se la linea è un indirizzo IP valido o un intervallo di indirizzi IP, sarà escluso dal controllo del CAPTCHA, ma le linee non valide saranno ignorate. Un esempio di intervallo di indirizzi IP valido potrebbe essere: 69.208.0.0/16 che va da 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Ulteriori informazioni]  sul calcolo di un intervallo di indirizzi IP."
+	"confirmedit-preview-description": "La seguente tabella mostra la lista delle linee su questa pagina e se è un indirizzo IP o un intervallo di indirizzi IP. Se la linea è un indirizzo IP valido o un intervallo di indirizzi IP, sarà escluso dal controllo del CAPTCHA, ma le linee non valide saranno ignorate. Un esempio di intervallo di indirizzi IP valido potrebbe essere: 69.208.0.0/16 che va da 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Ulteriori informazioni]  sul calcolo di un intervallo di indirizzi IP.",
+	"abusefilter-edit-action-showcaptcha": "Richiedi all'utente di completare un CAPTCHA per poter procedere con l'azione. Gli utenti con il permesso di saltare i CAPTCHA sono esenti."
 }

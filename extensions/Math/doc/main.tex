@@ -1,0 +1,40 @@
+% !TeX spellcheck = en_US
+\documentclass[a4paper,12pt]{report}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{bbold}
+\usepackage{cancel}
+\usepackage{texvc}
+\usepackage{mhchem}
+\usepackage{stix} %intbar
+%\usepackage{MnSymbol} %strokeint
+\usepackage{arcs}
+\usepackage{url}
+\usepackage{parskip}
+\author{Moritz Schubotz}
+\title{Technical details on texvcjs}
+\begin{document}
+\maketitle
+\chapter{Technical details on texvc identifier extraction}
+\section{Introduction}
+This chapter describes which mathematical symbols are identified as identifiers.
+In general every single Latin letter [a-zA-Z] is regarded as identifier.
+In addition, we accept multi-letter-subscripts that match [0-9a-zA-Z]+, such as $a_0$ but also $\varepsilon_{ijk}$.
+Moreover, the Literals described in section~\ref{sc.lit}, and the Identifier variants (section~\ref{sc.var}) are supported.
+\section{Literals}\label{sc.lit}
+The following literals are supported:
+
+\input{literals}
+
+\section{Identifier variants}\label{sc.var}
+The following variants are supported\footnote{Note that \texttt{\textbackslash mathcal} is not available for lowercase Latin letters.}:
+
+\input{commands}
+
+\chapter{List of all commands supported}\label{ch:all}
+Chapter~\ref{ch:all} lists all commands allowed by texvcjs.
+
+\input{groups}
+
+\end{document}

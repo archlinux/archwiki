@@ -64,9 +64,12 @@
 	"vector-toc-label": "Zerrek",
 	"vector-toc-beginning": "Destpêkerdış",
 	"vector-toc-toggle-button-label": "Bınleteyê $1 bıvurnên",
+	"vector-anon-user-menu-pages": "Pelê seba vurnayoğanê cıraveciyayeyan",
 	"vector-main-menu-label": "Menuyo serek",
+	"vector-feature-custom-font-size-exclusion-notice": "Ena pele tım ebatê nusteyê werdiyi gurenena",
 	"vector-page-tools-label": "Haceti",
 	"vector-page-tools-general-label": "Umumi",
+	"vector-page-tools-actions-label": "Hereketi",
 	"vector-pin-element-label": "berê çuwa kışte",
 	"vector-unpin-element-label": "bınımne"
 }

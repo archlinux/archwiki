@@ -23,7 +23,8 @@
 			"Vigorous action",
 			"Waki285",
 			"Whym",
-			"おはぐろ蜻蛉"
+			"おはぐろ蜻蛉",
+			"TAKAHASHI Shuuji"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書籍",
@@ -49,7 +50,7 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "汎用の脚注",
 	"cite-ve-dialog-reference-options-responsive-label": "レスポンシブなコラムレイアウトを使用する",
 	"cite-ve-dialog-reference-options-section": "オプション",
-	"cite-ve-dialog-reference-placeholder": "ここに脚注を入力し、若しくは貼り付け、又は引用テンプレートを追加してください。",
+	"cite-ve-dialog-reference-placeholder": "ここに脚注を入力または貼り付けるか、引用テンプレートを挿入してください。",
 	"cite-ve-dialog-reference-title": "脚注",
 	"cite-ve-dialog-reference-useexisting-tool": "再利用",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "汎用の脚注リスト",

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ykhwong"
+			"Ykhwong",
+			"Tensama0415"
 		]
 	},
 	"hcaptcha-desc": "Confirm Edit용 [https://www.hcaptcha.com/ hCaptcha] 모듈",
@@ -10,5 +11,6 @@
 	"hcaptcha-badlogin": "자동화된 비밀번호 깨기로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:",
 	"hcaptcha-createaccount": "자동 계정 만들기로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:",
 	"hcaptcha-createaccount-fail": "hCaptcha를 풀지 못하신 것 같습니다.",
-	"hcaptcha-create": "자동 문서 만들기로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:"
+	"hcaptcha-create": "자동 문서 만들기로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:",
+	"hcaptcha-help": "hCaptcha 도전을 풀고 응답 값을 captchaWord로 반환해 주세요."
 }

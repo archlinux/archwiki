@@ -1,11 +1,40 @@
 {
 	"@metadata": {
 		"authors": [
-			"WikiEditor50"
+			"WikiEditor50",
+			"Aristorkle"
 		]
 	},
-	"vector-view-create": "Crea",
+	"vector-languages": "Maga lenguaje",
+	"vector-language-button-label": "$1 {{PLURAL:$1||maga}} lenguaje",
+	"vector-no-language-button-label": "Omenta con el maga lenguaje",
+	"vector-action-addsection": "Omenta asunto",
+	"vector-action-delete": "Borra",
+	"vector-action-move": "Mobé",
+	"vector-action-protect": "Protege",
+	"vector-view-create": "Hace",
 	"vector-view-edit": "Revisa",
+	"vector-view-history": "Mira con el historia",
 	"vector-view-view": "Lee",
-	"vector-more-actions": "Mas"
+	"vector-more-actions": "Mas",
+	"vector-appearance-label": "Ichura",
+	"vector-feature-limited-width-name": "Anchor",
+	"vector-feature-limited-width-0-label": "Ancho",
+	"vector-feature-limited-width-1-label": "Normal",
+	"vector-feature-custom-font-size-name": "Texto",
+	"vector-feature-custom-font-size-0-label": "Diutay",
+	"vector-feature-custom-font-size-1-label": "Normal",
+	"vector-feature-custom-font-size-2-label": "Grande",
+	"skin-theme-name": "Color",
+	"skin-theme-day-label": "Arde",
+	"skin-theme-night-label": "Escuro",
+	"skin-theme-os-label": "Automatico",
+	"skin-theme-exclusion-notice": "Este pagina firme na modo arde.",
+	"vector-searchsuggest-containing": "Busca con el maga pagina aquel tiene <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-beginning": "Principio",
+	"vector-main-menu-label": "Primero menu",
+	"vector-page-tools-label": "Herramientas",
+	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Maga accion",
+	"vector-unpin-element-label": "esconde"
 }

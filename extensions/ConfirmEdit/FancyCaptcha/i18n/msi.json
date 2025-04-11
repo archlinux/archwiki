@@ -5,6 +5,7 @@
 		]
 	},
 	"fancycaptcha-captcha": "Pariksa kasalamatan",
+	"fancycaptcha-accountcreate": "Untuk kasih lindung wiki dari auto buat akaun, kami minta kita kasih masuk perkataan yang nampak di bawah di kotak ([[Special:Captcha/help|lagi maklumat]]):",
 	"fancycaptcha-imgcaptcha-ph": "Kasih masuk tulisan yang kita nampak di gambar",
 	"fancycaptcha-reload-text": "Sagar balik"
 }

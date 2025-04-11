@@ -83,6 +83,7 @@
 	"discussiontools-notification-removed-topic-disable": "Loobun edaspidi sellistest teavitustest",
 	"discussiontools-notification-removed-topic-disabled-title": "Sa ei saa enam teema arhiveerimise või eemaldamise kohta teavitusi.",
 	"discussiontools-notification-removed-topic-disabled-body": "Saad seda [[Special:Preferences#mw-prefsection-echo-echosubscriptions|eelistustes]] muuta.",
+	"discussiontools-notification-topic-hidden": "(teema eemaldatud)",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|vastas}} teemale \"<strong>$4</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Üks uus vastus|$1 uut vastust|100=Üle 99 uue vastuse}} teemale \"<strong>$3</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-view": "Vaata kommentaari",

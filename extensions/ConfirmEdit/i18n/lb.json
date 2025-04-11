@@ -3,7 +3,8 @@
 		"authors": [
 			"Les Meloures",
 			"Robby",
-			"Soued031"
+			"Soued031",
+			"Volvox"
 		]
 	},
 	"captcha-edit": "Fir dës Säit z'änneren, léist wgl. déi Aufgab hei ënnendrënner a gitt d'Äntwert an d'Këscht an ([[Special:Captcha/help|méi Informatiounen]]):",
@@ -27,5 +28,5 @@
 	"confirmedit-preview-content": "Inhalt",
 	"confirmedit-preview-validity": "Validitéit",
 	"confirmedit-preview-valid": "valabel",
-	"confirmedit-preview-invalid": "net valabel"
+	"confirmedit-preview-invalid": "ongülteg"
 }

@@ -41,5 +41,9 @@
 	"categorytree-no-pages": "هیچ صفحه یا زیررده‌ای ندارد",
 	"categorytree-not-found": "ردهٔ <i>$1</i> یافت نشد",
 	"categorytree-error": "مشکل بارگیری اطلاعات.",
-	"categorytree-retry": "لطفاً یک لحظه صبر کنید و دوباره تلاش کنید."
+	"categorytree-retry": "لطفاً یک لحظه صبر کنید و دوباره تلاش کنید.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: پارامتر <code>onlyroot</code> منسوخ شده است. در عوض از <code dir=\"ltr\">depth=\"0\"</code> استفاده کنید.",
+	"categorytree-deprecation-warning": "'''هشدار:''' این صفحه از <code>&lt;categorytree&gt;</code> با پارامتر منسوخ‌شده استفاده می‌کند.",
+	"categorytree-deprecation-category": "صفحه‌هایی که از پارامترهای منسوخ درخت رده استفاده می‌کنند",
+	"categorytree-deprecation-category-desc": "این صفحه از پارامترهای منسوخ‌شدهٔ درخت رده مانند پارامتر <code>onlyroot</code> استفاده می‌کند."
 }

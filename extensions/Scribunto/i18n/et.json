@@ -41,5 +41,7 @@
 	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|bait|baiti}}",
 	"scribunto-limitreport-profile": "Lua profiil",
 	"nstab-module": "Moodul",
-	"tooltip-ca-nstab-module": "Vaata mooduli lehekülge"
+	"tooltip-ca-nstab-module": "Vaata mooduli lehekülge",
+	"namespaceinfo-description-ns828": "Nimeruum viki lehekülgede kaudu kutsutavate Lua koodi moodulite ja nende dokumentatsiooni lehekülgede jaoks",
+	"namespaceinfo-description-ns829": "Moodulite ja nende dokumentatsiooni aruteluleheküljed"
 }

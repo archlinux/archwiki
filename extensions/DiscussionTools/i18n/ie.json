@@ -4,10 +4,19 @@
 			"Ed g2s",
 			"Matma Rex",
 			"OIS",
-			"Woytecr"
+			"Woytecr",
+			"Lisyeng"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Response",
+	"discussiontools-replywidget-advanced": "Avansat",
+	"discussiontools-replywidget-cancel": "Anullar",
+	"discussiontools-replywidget-mode-source": "Fonte",
+	"discussiontools-replywidget-mode-visual": "Visual",
 	"discussiontools-replywidget-preview": "Previder",
+	"discussiontools-replywidget-reply": "{{GENDER:|Responder}}",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|person|persones}} in discussion",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|comenta|comentas}}",
 	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Tema adjuntet]",
 	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respondet]"
 }

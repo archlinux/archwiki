@@ -32,6 +32,8 @@
 	"discussiontools-error-comment-conflict": "Kumintar {{GENDER:|Pian}} kada kawa disimpan, maraga urang lain mambari kumintar pada waktu nang sama lawan Pian. Cubai pulang, atawa muat imbal laman gasan manjanak kumintar pahanyarnya.",
 	"discussiontools-error-comment-disappeared": "Kada kawa mandapati kumintar nang {{GENDER:|Pian}} balas di laman. Pinanya itu sudah dihapus atawa diugahakan ka laman lain.",
 	"discussiontools-error-comment-disappeared-reload": "Cuba {{GENDER:|muat imbal}} laman wan cubai pulang.",
+	"discussiontools-error-comment-is-transcluded": "Tautan \"{{int:discussiontools-replylink}}\" kada kawa dipakai gasan mambalas kumintar ini. Gasan mambalas, pakai éditor laman hibak lawan mangklik \"$1\".",
+	"discussiontools-error-comment-is-transcluded-title": "Tautan \"{{int:discussiontools-replylink}}\" kada kawa dipakai gasan mambalas kumintar ini maraga kumitarnya dimuat matan laman lain. Gasan mambalas, silakan baampah ka: [[$1]].",
 	"discussiontools-newtopic-missing-title": "Tulung julungakan judul pada tupik bacangkurah {{GENDER:|Pian}}. Amun Pian manikin \"{{int:discussiontools-replywidget-newtopic}}\", tupik Pian pacangan ditambahakan kada pakai judul.",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Balangganan",
 	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",

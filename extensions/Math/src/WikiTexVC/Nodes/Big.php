@@ -31,18 +31,22 @@ class Big extends TexNode {
 		return $this->arg;
 	}
 
+	/** @inheritDoc */
 	public function inCurlies() {
 		return $this->render();
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return '{' . $this->fname . ' ' . $this->arg . '}';
 	}
 
-	public function renderMML( $arguments = [], $state = [] ): string {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ): string {
 		return $this->parseToMML( $this->fname, $arguments, null );
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		return [];
 	}

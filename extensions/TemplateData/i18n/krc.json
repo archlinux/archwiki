@@ -65,7 +65,7 @@
 	"templatedata-modal-table-param-description": "Ачыкълау ($1)",
 	"templatedata-modal-table-param-importoption": "$1 теджелген {{PLURAL:$1|параметрни}} къош",
 	"templatedata-modal-table-param-importoption-subtitle": "Аланы ичинде: $1",
-	"templatedata-modal-table-param-label": "Эн ($1)",
+	"templatedata-modal-table-param-label": "Белгилеу ($1)",
 	"templatedata-modal-table-param-name": "Ат",
 	"templatedata-modal-table-param-required": "Ажымсыз",
 	"templatedata-modal-table-param-suggested": "Теджелген",

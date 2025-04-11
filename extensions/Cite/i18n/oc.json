@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"BrennodAloisi",
-			"Cedric31"
+			"Cedric31",
+			"Lhanars"
 		]
 	},
 	"cite-desc": "Apond las balisas <code>&lt;ref[ name=id]&gt;</code> e <code>&lt;references/&gt;</code>, per las citacions.",

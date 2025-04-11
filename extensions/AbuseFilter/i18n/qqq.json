@@ -48,7 +48,8 @@
 			"Translationista",
 			"Umherirrender",
 			"Verdy p",
-			"Yekrats"
+			"Yekrats",
+			"Nemoralis"
 		]
 	},
 	"abusefilter-desc": "{{desc|name=Abuse Filter|url=https://www.mediawiki.org/wiki/Extension:AbuseFilter}}",
@@ -542,13 +543,13 @@
 	"abusefilter-exception-unknownfunction": "Error message from the abuse filter parser. Parameters:\n* $1 - Position in the string\n* $2 - Name of the unknown function",
 	"abusefilter-exception-unusedvars": "Error message from the abuse filter parser. Parameters:\n* $1 - (unused)\n* $2 - Names of unused variables",
 	"abusefilter-parser-warning-match-empty-regex": "Warning message from the abuse filter parser. Parameters:\n* $1 - Position in the string",
-	"abusefilter-action-tag": "{{doc-abusefilter-action}}\n\nThe edit or change can be 'tagged' with a particular tag, which will be shown on Recent Changes, contributions, logs, new pages, history, and everywhere else. \n\nThis is a verb in the imperative form.\n\n{{Identical|Tag}}",
+	"abusefilter-action-tag": "{{doc-abusefilter-action}}\n\nThe edit or change can be 'tagged' with a particular revision tag, which will be shown on Recent Changes, contributions, logs, new pages, history, and everywhere else. \n\n{{Identical|Tag}}",
 	"abusefilter-action-throttle": "{{doc-abusefilter-action}}",
 	"abusefilter-action-warn": "{{doc-abusefilter-action}}",
 	"abusefilter-action-blockautopromote": "{{doc-abusefilter-action}}\n\n'''Revoking auto-promoted groups'''\n\nTo '''block autopromote''' means that actions matching the filter will cause the user in question to be barred from receiving any extra groups from $wgAutoPromote for 5 days. \nAdditional information available: https://www.mediawiki.org/wiki/Extension:AbuseFilter/Actions",
-	"abusefilter-action-block": "{{doc-abusefilter-action}}\n\nUsers matching the filter will be blocked indefinitely, with a descriptive block summary indicating the rule that was triggered.\n\nThis is a verb.\n{{Identical|Block}}",
-	"abusefilter-action-degroup": "{{doc-abusefilter-action}}\n\n'''Removing from privileged groups'''\n\nUsers matching the filter will be '''removed from all privileged groups''' (sysop, bureaucrat, etc). A descriptive summary will be used, detailing the rule that was triggered. \nAdditional information: https://www.mediawiki.org/wiki/Extension:AbuseFilter/Actions",
-	"abusefilter-action-rangeblock": "{{doc-abusefilter-action}}\n\n'''Range-block'''\n\nSomewhat of a 'nuclear option', the entire /16 range from which the rule was triggered will be blocked for 24 hours.\n\nThis is a verb in the imperative form.",
+	"abusefilter-action-block": "{{doc-abusefilter-action}}\n\nUsers matching the filter will be blocked indefinitely, with a descriptive block summary indicating the rule that was triggered.\n\n{{Identical|Block}}",
+	"abusefilter-action-degroup": "{{doc-abusefilter-action}}\n\n'''Removing from privileged groups'''\n\nUsers matching the filter will be '''removed from all privileged groups''' (sysop, bureaucrat, and so on). A descriptive summary will be used, detailing the rule that was triggered.\n\nAdditional information: https://www.mediawiki.org/wiki/Extension:AbuseFilter/Actions",
+	"abusefilter-action-rangeblock": "{{doc-abusefilter-action}}\n\n'''Range-block'''\n\nSomewhat of a 'nuclear option', the entire /16 range from which the rule was triggered will be blocked for 24 hours.",
 	"abusefilter-action-disallow": "{{doc-abusefilter-action}}\n\nTo '''disallow''' actions means that actions matching the filter will be '''prevented''', and a descriptive error message will be shown. Additional information: https://www.mediawiki.org/wiki/Extension:AbuseFilter/Actions\n{{Identical|Disallow}}",
 	"abusefilter-revert-title": "Used as page title of [[Special:AbuseFilter/revert/1]] (go to [[Special:AbuseFilter]], open a filter, click \"Revert actions taken by this filter\").\n\nParameters:\n* $1 - filter ID",
 	"abusefilter-revert-intro": "Parameters:\n* $1 - filter",
@@ -684,7 +685,7 @@
 	"abusefilter-protected-vars-log-header": "Appears on top of [[Special:Log/abusefilter-protected-vars]].",
 	"logentry-abusefilter-protected-vars-change-access-enable": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if a user's state of access was enabled.\n\n{{Doc-singularthey}}",
 	"logentry-abusefilter-protected-vars-change-access-disable": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if a user's state of access was disabled.",
-	"logentry-abusefilter-protected-vars-view-protected-var-value": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if user viewed the value of a protected variable.",
+	"logentry-abusefilter-protected-vars-view-protected-var-value": "{{Logentry|[[Special:Log/abusefilter-protected-vars]]}}\n\nUsed if user viewed the value of a protected variable.\n\nThis log entry message is only kept for historical logs. No new log entries are being created for this log.",
 	"log-action-filter-abusefilter-protected-vars": "{{doc-log-action-filter-type|abusefilter-protected-vars}}\n{{related|Log-action-filter}}",
 	"log-action-filter-abusefilter-protected-vars-change-access": "{{doc-log-action-filter-action|abusefilter-protected-vars|change-access}}",
 	"log-action-filter-abusefilter-protected-vars-view-protected-variable-value": "{{doc-log-action-filter-action|abusefilter-protected-vars|view-protected-variable-value}}"

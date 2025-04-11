@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Song GK"
+		]
+	},
+	"echo-desc": "Sistem kena madahka pengena pasal pengawa enggau pesan",
+	"prefs-echo": "Pemadah",
+	"prefs-description-echo": "Pilih sebarang pemadah ti {{GENDER:|nuan}} deka bulih sereta chara ngulihka nya.",
+	"prefs-emailsettings": "Pilih e-mel",
+	"prefs-echosubscriptions": "Padahka aku pasal pengawa-pengawa tu",
+	"prefs-echocrosswiki": "Pemadah peraka wiki",
+	"prefs-blocknotificationslist": "Pengena ti didiauka",
+	"prefs-mutedpageslist": "Lambar ke udah didiauka ungkup pemadah link lambar",
+	"prefs-echopollupdates": "Pemadah terus",
+	"echo-mobile-notifications-filter-title": "Pantis pemadah",
+	"echo-pref-show-poll-updates": "Ayanka pemadah baru lebuh udah datai",
+	"echo-pref-show-poll-updates-help": "Mandangka pemayuh pemadah ke bedau dibacha dalam baluh tajuk lalu mandangka pemandak ari genap iti pemadah tekala nya lebuh pemadah nya datai.",
+	"echo-pref-send-me": "Kirum ngagai aku:",
+	"echo-pref-send-to": "Kirum ngagai:",
+	"echo-pref-email-format": "Format e-mel:",
+	"echo-pref-web": "Web",
+	"echo-pref-email": "E-mel",
+	"echo-pref-push": "Aplikasyen",
+	"echo-pref-email-frequency-never": "Anang ngirum sebarang pemadah e-mel ngagai aku",
+	"echo-pref-email-frequency-immediately": "Pemadah siti-siti lebuh datai",
+	"echo-pref-email-frequency-daily": "Pemandak pemadah genap hari",
+	"echo-pref-email-frequency-weekly": "Pemandak pemadah genap minggu",
+	"echo-pref-email-format-html": "HTML",
+	"echo-pref-email-format-plain-text": "Teks biasa",
+	"echo-pref-cross-wiki-notifications": "Mandangka pemadah ari wiki ke bukai",
+	"echo-notification-markasread": "Tanda udah dibacha",
+	"echo-notification-markasunread": "Tanda bedau dibacha",
+	"echo-notification-markasread-tooltip": "Tanda udah dibacha",
+	"echo-notification-more-options-tooltip": "Pilih ke bukai"
+}

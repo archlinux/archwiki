@@ -63,6 +63,10 @@ class MhchemUtil {
 		return ( $array !== array_values( $array ) );
 	}
 
+	/**
+	 * @param array &$a
+	 * @param mixed|null $b
+	 */
 	public static function concatArray( &$a, $b ) {
 		if ( self::issetJS( $b ) ) {
 			if ( is_array( $b ) && ( self::isAssoc( $b ) ) ) {

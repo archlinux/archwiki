@@ -40,7 +40,7 @@ class MhchemStateMachines {
 	/** @var MhchemParser */
 	private MhchemParser $mhchemParser;
 
-	private static function mhchemCreateTransitions( $o ): array {
+	private static function mhchemCreateTransitions( array $o ): array {
 		$transitions = [];
 		// 1. Collect all states
 		foreach ( $o as $pattern => $d1 ) {

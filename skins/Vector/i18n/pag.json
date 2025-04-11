@@ -1,9 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lam-ang"
+			"Lam-ang",
+			"Exec8"
 		]
 	},
+	"vector-languages": "Saray lenguahe",
+	"vector-language-button-label": "{{PLURAL:$1| $1 lenguahe| $1 ya lenguahe}}",
+	"vector-no-language-button-label": "Ipasakbay iray lenguahe",
 	"vector-action-delete": "Buralen",
 	"vector-action-move": "Iyales",
 	"vector-action-protect": "Iyagel",
@@ -11,5 +15,25 @@
 	"vector-view-edit": "Dumaen",
 	"vector-view-history": "Nengnengen so awaran",
 	"vector-view-view": "Basaen",
-	"vector-more-actions": "Lalo"
+	"vector-more-actions": "Lalo",
+	"vector-appearance-label": "Say Itsura",
+	"vector-feature-limited-width-name": "Kaawang",
+	"vector-feature-limited-width-0-label": "Maawang",
+	"vector-feature-limited-width-1-label": "Estandarte",
+	"vector-feature-custom-font-size-name": "Teksto",
+	"vector-feature-custom-font-size-0-label": "Melag",
+	"vector-feature-custom-font-size-1-label": "Estandarte",
+	"vector-feature-custom-font-size-2-label": "Baleg",
+	"skin-theme-name": "Kolor",
+	"skin-theme-day-label": "Silew",
+	"skin-theme-night-label": "Ambelunget",
+	"skin-theme-os-label": "Automatiko",
+	"skin-theme-exclusion-notice": "Sayan pahina et lanang ya walad light mode.",
+	"vector-searchsuggest-containing": "Mananap na saray pahina ya wala ed <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-main-menu-label": "Manunan menu",
+	"vector-feature-custom-font-size-exclusion-notice": "Diad sayan pahina et lanang ya uusaren so melag ya font size",
+	"vector-page-tools-label": "Saray Kagawaan",
+	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Saray Aksion",
+	"vector-unpin-element-label": "iyamot"
 }

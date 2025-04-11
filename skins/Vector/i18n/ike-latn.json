@@ -1,6 +1,41 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"MysticVoyager"
+		]
 	},
-	"vector-view-edit": "Suqusiqpaa"
+	"vector-languages": "uqarviutijut",
+	"vector-language-button-label": "{{PLURAL:$1|$1 uqausiq|$1 uqausiit}}",
+	"vector-no-language-button-label": "uqausiksait kajusijut",
+	"vector-action-addsection": "ilasilutit uqausiksamik",
+	"vector-action-delete": "piijaqtaujuq",
+	"vector-action-move": "uajuq",
+	"vector-action-protect": "sapujjisimaniq",
+	"vector-view-create": "sanalutit",
+	"vector-view-edit": "Suqusiqpaa",
+	"vector-view-history": "takulugu qanuiliurutauqattaqsimajuq",
+	"vector-more-actions": "sulikkanniq",
+	"vector-appearance-label": "takunnarninga",
+	"vector-feature-limited-width-name": "sivituninga",
+	"vector-feature-limited-width-0-label": "siliktuq",
+	"vector-feature-limited-width-1-label": "saimmati",
+	"vector-feature-custom-font-size-name": "titiqqaq",
+	"vector-feature-custom-font-size-0-label": "mikittuq",
+	"vector-feature-custom-font-size-1-label": "saimmati",
+	"vector-feature-custom-font-size-2-label": "angijuq",
+	"skin-theme-name": "amiaq",
+	"skin-theme-day-label": "uqittuq",
+	"skin-theme-night-label": "taaqtuq",
+	"skin-theme-os-label": "ilagijaujjutit",
+	"skin-theme-exclusion-notice": "taanna makpigaq ikumainnaqtuq.",
+	"vector-searchsuggest-containing": "qinirlugit makpigait iluliqaqtut <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "ilulingit",
+	"vector-toc-beginning": "piliriaq",
+	"vector-anon-user-menu-pages": "makpigait anisimajunut aaqqiksuijinut",
+	"vector-main-menu-label": "nirijaksait",
+	"vector-feature-custom-font-size-exclusion-notice": "ullunga iqqanaijarnaup ulluqsiutiup nalunaiqtauninga",
+	"vector-page-tools-label": "sanarrutit",
+	"vector-page-tools-general-label": "kisutuinnat",
+	"vector-page-tools-actions-label": "qanuiliurniujut",
+	"vector-unpin-element-label": "amirainga"
 }

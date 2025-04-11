@@ -20,7 +20,8 @@
 			"Tanzun",
 			"Toghrul Rahimli",
 			"Tucvbif",
-			"Wizardist"
+			"Wizardist",
+			"Yurina Tatiana"
 		]
 	},
 	"multimediaviewer-desc": "Раскрывает эскизы в большие изображения на весь экран.",
@@ -73,6 +74,7 @@
 	"multimediaviewer-reuse-copy-embed": "Выберите и (если поддерживается) скопируйте код для встраивания этого файла",
 	"multimediaviewer-share-tab": "Поделиться",
 	"multimediaviewer-embed-tab": "Вставить на страницу",
+	"multimediaviewer-download": "Скачать",
 	"multimediaviewer-download-link": "Скачать этот файл",
 	"multimediaviewer-download-preview-link-title": "Посмотреть в браузере",
 	"multimediaviewer-download-original-button-name": "Скачать исходный файл",

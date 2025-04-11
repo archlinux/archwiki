@@ -47,6 +47,7 @@
 	"discussiontools-replywidget-feedback": "Адаслаць водгук на гэтую функцыю",
 	"discussiontools-replywidget-mode-source": "Крынічнік",
 	"discussiontools-replywidget-mode-visual": "Візуальна",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Дадаць}} тэму",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Адказаць}} на {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Налады",
 	"discussiontools-replywidget-preview": "Папярэдні прагляд",

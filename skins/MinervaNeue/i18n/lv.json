@@ -47,7 +47,7 @@
 	"minerva-page-actions-overflow": "Vairāk",
 	"minerva-page-actions-language-switcher": "Valodas",
 	"minerva-page-actions-history": "Vēsture",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Diskusija]]",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Diskusija]",
 	"minerva-skin-desc": "Responsīva apdare mobilajām iekārtām",
 	"skin-minerva-issue-learn-more": "Uzzināt vairāk",
 	"skin-minerva-time-ago-seconds": "pirms $1 {{PLURAL:$1|sekundēm|sekundes|sekundēm}}",
@@ -59,5 +59,5 @@
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorijas",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Skatīt lapu kategorijas",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Diemžēl, rezultātu grupēšana pēc lapas nav pieejama mobilajā skatā. Ja tu vēlies lietot grupēšanu pēc lapas, lūdzu, izmanto darbvirsmas skatu.",
-	"skin-minerva-night-mode-unavailable": "Lapa pieejama tikai krāsu motīvā \"Diena\"."
+	"skin-minerva-night-mode-unavailable": "Lapa pieejama tikai \"Gaišajā\" krāsu motīvā."
 }

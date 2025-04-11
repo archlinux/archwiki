@@ -105,7 +105,7 @@
 	"notification-body-oathauth-enable": "Če tega {{GENDER:$2|niste}} storili vi, je {{GENDER:$2|vaš račun}} morda kompromitiran.",
 	"oathauth-notifications-enable-help": "Pomoč",
 	"oathauth-notifications-enable-primary": "Preverite nastavitve dvofaktorske avtentikacije",
-	"notification-body-oathauth-oathauth-recoverycodesleft": "{{GENDER:$2|Imate}} še $3 {{PLURAL:$3|obnovitveno kodo|obnovitveni kodi|obnovitvene kode|obnovitvenih kod}}. Morda boste želeli razmisliti o onemogočenju in ponovnem omogočenju dvofaktorske avtentikacije, da ustvarite $4 {{PLURAL:$4|novo obnovitveno kodo|novi obnovitveni kodi|nove obnovitvene kode|novih obnovitvenih kod}} za uporabo v prihodnje.",
+	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|Imate}} še $3 {{PLURAL:$3|obnovitveno kodo|obnovitveni kodi|obnovitvene kode|obnovitvenih kod}}. Morda boste želeli razmisliti o onemogočenju in ponovnem omogočenju dvofaktorske avtentikacije, da ustvarite $4 {{PLURAL:$4|novo obnovitveno kodo|novi obnovitveni kodi|nove obnovitvene kode|novih obnovitvenih kod}} za uporabo v prihodnje.",
 	"oathauth-notifications-recoverycodesleft-help": "Pomoč",
 	"oathauth-notifications-recoverycodesleft-primary": "Preverite nastavitve dvofaktorske avtentikacije",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} ima vklopljeno dvofaktorsko avtentikacijo.",

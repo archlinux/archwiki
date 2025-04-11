@@ -2,11 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Lam-ang",
-			"Saluyot"
+			"Saluyot",
+			"Exec8"
 		]
 	},
 	"vector-skin-desc": "Moderno a bersion ti MonoBook nga addaan iti baro a langa ken adu kadagiti naserbi a panagpasayaat",
+	"vector-languages": "Dagiti pagsasao",
 	"vector-language-button-label": "{{PLURAL:$1|$1 a pagsasao|dagiti $1 a pagsasao}}",
+	"vector-no-language-button-label": "Mainayon dagiti pagsasao",
 	"vector-action-addsection": "Agnayon iti topiko",
 	"vector-action-delete": "Ikkaten",
 	"vector-action-move": "Iyalis",
@@ -21,5 +24,27 @@
 	"vector-jumptonavigation": "Darsen a mapan iti pagdaliasatan",
 	"vector-jumptosearch": "Darsen a mapan agbiruk",
 	"vector-more-actions": "Adu pay",
-	"vector-searchsuggest-containing": "Agbiruk kadagiti panid nga nga aglaon iti <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-appearance-label": "Panagparang",
+	"vector-feature-limited-width-name": "Kaakaba",
+	"vector-feature-limited-width-0-label": "Ilemmeng",
+	"vector-feature-limited-width-1-label": "Pagalagadan",
+	"vector-feature-custom-font-size-name": "Teksto",
+	"vector-feature-custom-font-size-0-label": "Bassit",
+	"vector-feature-custom-font-size-1-label": "Kadawyan",
+	"vector-feature-custom-font-size-2-label": "Dakkel",
+	"skin-theme-name": "Maris",
+	"skin-theme-day-label": "Kanawan",
+	"skin-theme-night-label": "Nasipnget",
+	"skin-theme-os-label": "Automatiko",
+	"skin-theme-exclusion-notice": "Kanayon nga adda iti light mode daytoy a panid.",
+	"vector-searchsuggest-containing": "Agbiruk kadagiti panid nga nga aglaon iti <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Linaon",
+	"vector-toc-beginning": "Rugi",
+	"vector-anon-user-menu-pages": "Dagiti panid para kadagiti nag-log out nga editor",
+	"vector-main-menu-label": "Kangrunaan a menu",
+	"vector-feature-custom-font-size-exclusion-notice": "Kanayon nga agus-usar daytoy a panid iti bassit a kadakkel ti letra",
+	"vector-page-tools-label": "Dagiti alikamen",
+	"vector-page-tools-general-label": "Sapasap",
+	"vector-page-tools-actions-label": "Dagiti tignay",
+	"vector-unpin-element-label": "aglemmeng"
 }

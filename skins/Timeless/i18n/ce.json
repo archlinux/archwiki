@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Умар"
+			"Умар",
+			"Исмаил Садуев"
 		]
 	},
 	"timeless-desc": "Timeless кечйаран тема кхоьллина Брэндон Харрисан Winter прототайпан а, тайп-тайпана Викимедиан Фондан хатӀан а тӀаьхьа.",
 	"timeless-anonymous": "Аноним",
 	"timeless-loggedinas": "Чуваьлла '''$1''' санна",
-	"timeless-notloggedin": "ХӀинца а ахьа системин чохь болх беш бац",
+	"timeless-notloggedin": "Хьо чу ца ваьлла",
 	"timeless-userpage": "{{GENDER:$1|Декъашхочун}} агӀо",
 	"timeless-talkpage": "{{GENDER:$1|Декъашхочун}} дийцар",
 	"timeless-pagelog": "АгӀонан журналаш",

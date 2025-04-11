@@ -1,13 +1,34 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kai theos en ho logos"
+			"Kai theos en ho logos",
+			"Exec8"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Magbalos",
+	"discussiontools-newtopic-missing-title": "Palihog maghatag sang titulo para sa {{GENDER:|imo}} nga topiko nga ginahambalan.",
+	"discussiontools-newtopic-placeholder-title": "Topiko",
 	"discussiontools-replylink": "{{GENDER:|sabat}}",
+	"discussiontools-replywidget-advanced": "Nauna",
 	"discussiontools-replywidget-cancel": "Kanselahon",
 	"discussiontools-replywidget-mode-source": "Ginhalinan",
 	"discussiontools-replywidget-mode-visual": "Biswal",
-	"discussiontools-replywidget-placeholder-reply": "Magsabat kay {{BIDI:$1}}",
-	"discussiontools-replywidget-reply": "Sabat"
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Idugang}} topiko",
+	"discussiontools-replywidget-placeholder-newtopic": "Paglaragway",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Reply}} to {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Ipakita subong",
+	"discussiontools-replywidget-reply": "{{GENDER:|Reply}}",
+	"discussiontools-replywidget-summary": "Sumaryo",
+	"discussiontools-replywidget-watchthis": "Idugang ini nga pahina sa imo [[Special:Watchlist|watchlist]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|tawo|mga tawo}} sa paghinun-anon",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komento|mga komento}}",
+	"discussiontools-topicheader-latestcomment": "Pinakaulihi nga komento: $1",
+	"discussiontools-topicsubscription-button-subscribe": "mag-subscribe",
+	"discussiontools-topicsubscription-button-subscribe-label": "Mag-subscribe",
+	"discussiontools-topicsubscription-button-unsubscribe": "unsubscribe",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Unsubscribe",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Ikaw}} makabaton sang mga abiso parte sa bag-o nga mga komento sa sini nga topiko.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Ikaw}} nag-subscribe!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Ikaw}} indi na makabaton sang mga abiso parte sa bag-o nga mga komento sa sini nga topiko.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Ikaw}} nag-unsubscribe."
 }

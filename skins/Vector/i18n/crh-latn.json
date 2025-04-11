@@ -6,6 +6,7 @@
 			"Zolgoyo"
 		]
 	},
+	"vector-opt-out": "Eski körünişke qayt",
 	"vector-languages": "Tiller",
 	"vector-language-button-label": "{{PLURAL:$1|$1 til|$1 tiller}}",
 	"vector-no-language-button-label": "Til qoş",
@@ -30,6 +31,7 @@
 	"vector-feature-custom-font-size-1-label": "Standart",
 	"vector-feature-custom-font-size-2-label": "Balaban",
 	"skin-theme-name": "Tüs",
+	"skin-theme-description": "[Deñev versiyası, problema çıqmasınıñ ihtimalı yüksektir] Cihaznıñ ekranı tarafından cayılğan yarığı eksilte.",
 	"skin-theme-day-label": "Yarıq",
 	"skin-theme-night-label": "Qaranlıq",
 	"skin-theme-os-label": "Avtomatik",
@@ -41,5 +43,9 @@
 	"vector-feature-custom-font-size-exclusion-notice": "Bu saife er vaqıt kiçkene yazı ölçusini qullana",
 	"vector-page-tools-label": "Aletler",
 	"vector-page-tools-general-label": "Umumiy",
-	"vector-unpin-element-label": "gizle"
+	"vector-page-tools-actions-label": "Areketler",
+	"vector-pin-element-label": "kenar paneline köçür",
+	"vector-unpin-element-label": "gizle",
+	"vector-prefs-limited-width": "Sıñırlı keñlik rejimini işlet",
+	"vector-prefs-limited-width-help": "Daa oñaytlı oqumaq içün sıñırlı keñlik rejimini işletiñiz."
 }

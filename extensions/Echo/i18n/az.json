@@ -12,7 +12,8 @@
 			"Vesely35",
 			"Wertuose",
 			"Zoranzoki21",
-			"Əkrəm Cəfər"
+			"Əkrəm Cəfər",
+			"Əkrəm"
 		]
 	},
 	"echo-desc": "İstifadəçilərə hadisələr və mesajlar barədə məlumat vermə sistemi",
@@ -171,7 +172,7 @@
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|Sizin}} istifadəçi hüquqlarınız {{GENDER:$1|dəyişdirilib}}. Artıq $2 qrupuna üzv deyilsiniz.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$4|Sizin}} istifadəçi hüquqlarınız {{GENDER:$1|dəyişdirilib}}. $2 qrupuna əlavə olunub $4 qrupundan çıxarılmısınız.",
 	"notification-header-user-rights-expiry-change": "Aşağıda qeyd olunan {{PLURAL:$3|istifadəçi qrupuna|istifadəçi qruplarına}} {{GENDER:$4|üzvlüyünüzün}} bitmə müddəti {{GENDER:$1|dəyişdirilib}}: $2",
-	"notification-header-welcome": "{{SITENAME}} saytına {{GENDER:$2|xoş gəldiniz}}, $1! Sizi burada görməyimizə çox şadıq!",
+	"notification-header-welcome": "{{SITENAME}} saytına {{GENDER:$2|xoş gəlmisiniz}}, $1! {{GENDER:$2|Sizi}} burada görməyimizə çox şadıq!",
 	"notification-header-mention-summary": "$1 {{GENDER:$3|sizi}} <strong>$4</strong> səhifəsinin qısa məzmununda {{GENDER:$2|qeyd etdi}}.",
 	"notification-header-watchlist-changed": "$1 {{GENDER:$4|izləmə siyahınızda}} olan <strong>$3</strong> səhifəsini{{PLURAL:$5|| $5 dəfə}} {{GENDER:$2|redaktə etdi}}",
 	"notification-header-watchlist-created": "$1 {{GENDER:$4|izləmə siyahınızda}} olan <strong>$3</strong> səhifəsini{{PLURAL:$5|| $5 dəfə}} {{GENDER:$2|yaratdı.}}",
@@ -222,7 +223,7 @@
 	"echo-email-html-footer-preference-link-text": "{{GENDER:$1|nizamlamalarınızı}} nəzərdən keçirin.",
 	"echo-email-html-footer-with-link": "{{GENDER:$2|Sizə}} hansı e-poçtları göndərdiyimizə nəzarət etmək üçün $1.",
 	"echo-notification-alert": "{{PLURAL:$1|Xəbərdarlıq ($1)|Xəbərdarlıqlar ($1)|100=Xəbərdarlıqlar (99+)}}",
-	"echo-notification-notice": "{{PLURAL:$1|Bildiri. ($1)|Bildirişlər ($1)|100=Bildirişlər (99+)}}",
+	"echo-notification-notice": "{{PLURAL:$1|Bildiriş ($1)|Bildirişlər ($1)|100=Bildirişlər (99+)}}",
 	"echo-notification-alert-text-only": "Xəbərdarlıqlar",
 	"echo-notification-notice-text-only": "Bildirişlər",
 	"echo-overlay-link": "Bütün bildirişlər",

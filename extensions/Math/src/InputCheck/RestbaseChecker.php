@@ -71,7 +71,7 @@ class RestbaseChecker extends BaseChecker {
 		return $this->errorObjectToMessage( $err, $host );
 	}
 
-	public function getRbi() {
+	public function getRbi(): MathRestbaseInterface {
 		return $this->restbaseInterface;
 	}
 

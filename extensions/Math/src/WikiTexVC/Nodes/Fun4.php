@@ -65,10 +65,12 @@ class Fun4 extends TexNode {
 		return $this->arg4;
 	}
 
+	/** @inheritDoc */
 	public function inCurlies() {
 		return $this->render();
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return '{' . $this->fname . ' ' .
 			$this->arg1->inCurlies() .
@@ -78,10 +80,12 @@ class Fun4 extends TexNode {
 			'}';
 	}
 
-	public function renderMML( $arguments = [], $state = [] ): string {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ): string {
 		return $this->parseToMML( $this->fname, $arguments, $state );
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		if ( $args == null ) {
 			$args = [ $this->arg1, $this->arg2, $this->arg3, $this->arg4 ];

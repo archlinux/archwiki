@@ -10,7 +10,8 @@
 			"Senator Choko",
 			"Timzy D'Great",
 			"Matma Rex",
-			"Woytecr"
+			"Woytecr",
+			"Sayvhior"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Ị ga-anata ozi mgbe mmadụ tinyere okwu ọhụụ n'ebe akpamnkata. Ị nwere ike idozi ebe ọkwa nnata ozi gi ebe mmasị gị.",
@@ -51,7 +52,7 @@
 	"discussiontools-limitreport-errorreqid": "Akọrọngwa eji akpa nkata adịghị mma nata ikike",
 	"discussiontools-limitreport-timeusage": "Oge iji Akọrọngwa eji akpa nkata",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|second|seconds}}",
-	"discussiontools-newtopic-missing-title": "Biko wepụta isiokwu ihe ị na-ekwu/ede maka ya. Ọbụrụ na -ịpịa aka na {{int:discussiontools-replywidget-newtopic}}\" A ga-agbakwụnye ihe ị dere/kwuru na-enweghị isiokwu.",
+	"discussiontools-newtopic-missing-title": "Biko wepụta aha maka {{GENDER:|isiokwu mkparịta ụka gị}}.",
 	"discussiontools-newtopic-placeholder-title": "Isiokwu",
 	"discussiontools-notification-removed-topic-body": "E nwere ike, I gaghizi anata ozi gbasara {{PLURAL:$1| isiokwu a|isiokwu ndị a}}.",
 	"discussiontools-notification-removed-topic-header": "Edobere ma ọ bụ wepụ isiokwu \" <strong>$4</strong> \" pụọ ná $3 .",
@@ -92,7 +93,7 @@
 	"discussiontools-replywidget-mention-tool-title": "Kwupụta otu aha onye ọrụ",
 	"discussiontools-replywidget-mode-source": "Ebe m si nweta",
 	"discussiontools-replywidget-mode-visual": "Nhụrụ anya",
-	"discussiontools-replywidget-newtopic": "Tinye isiokwu",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Tinye}} isiokwu",
 	"discussiontools-replywidget-placeholder-newtopic": "Nkọwa",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Zaghachi}} nye {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "mmasi",

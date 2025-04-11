@@ -44,7 +44,7 @@
 	"discussiontools-limitreport-errorreqid": "DiscussionTools kļūdas pieprasījuma ID",
 	"discussiontools-limitreport-timeusage": "DiscussionTools laika lietojums",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekundes|sekunde|sekundes}}",
-	"discussiontools-newtopic-missing-title": "Lūdzu, norādi virsrakstu savai diskusiju tēmai. Ja tu noklikšķināsi uz \"{{int:discussiontools-replywidget-newtopic}}\", tava tēma tiks pievienots bez virsraksta.",
+	"discussiontools-newtopic-missing-title": "Lūdzu, norādi virsrakstu savai diskusiju tēmai.",
 	"discussiontools-newtopic-placeholder-title": "Temats",
 	"discussiontools-notification-added-topic-view": "Skatīt tēmu",
 	"discussiontools-notification-removed-topic-body": "Iespējams, tu vairs nesaņemsi paziņojumus par {{PLURAL:$1|šīm tēmām|šo tēmu|šīm tēmām}}.",

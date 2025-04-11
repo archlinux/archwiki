@@ -22,7 +22,7 @@
 	"nuke-submit-delete": "Eliminar a selección",
 	"right-nuke": "Borrar páxinas masivamente",
 	"nuke-userorip": "Nome de usuario, enderezo IP ou en branco:",
-	"nuke-maxpages": "Número máximo de páxinas:",
+	"nuke-maxpages": "Número de páxinas a recuperar (máximo de 500):",
 	"nuke-editby": "Creado por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "A páxina \"'''$1'''\" foi borrada.",
 	"nuke-deletion-queued": "A páxina '''$1''' está na cola para a súa eliminación.",

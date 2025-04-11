@@ -8,9 +8,11 @@
 			"Saurmandal",
 			"Sfic",
 			"Siddhartha Ghai",
-			"संजीव कुमार"
+			"संजीव कुमार",
+			"Bunnypranav"
 		]
 	},
+	"tag-editcheck-newreference-description": "पृष्ठ पर एक संदर्भ जोड़ा गया था",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|यथादृश्य संपादिका]]",
 	"tag-visualeditor-description": "संपादन [[{{MediaWiki:visualeditor-descriptionpagelink}}|यथादृश्य संपादिका]] के उपयोग द्वारा किया गया",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|यथादृश्य संपादिका: जाँचें]]",

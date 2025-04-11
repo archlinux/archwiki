@@ -26,7 +26,8 @@
 			"TMg",
 			"Toniher",
 			"Unapersona",
-			"Vriullop"
+			"Vriullop",
+			"Lhanars"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -157,9 +158,11 @@
 	"visualeditor-dialog-table-wikitable": "Amb estil (Wikitable)",
 	"visualeditor-dialog-template-title": "Plantilla",
 	"visualeditor-dialog-transclusion-template-title-nonexistent": "Aquesta plantilla no existeix.",
+	"visualeditor-dialog-transclusion-add-wikitext": "Afegeix el codi wiki",
 	"visualeditor-dialog-transclusion-add-template": "Afegeix una plantilla",
 	"visualeditor-dialog-transclusion-add-template-button": "Afegeix una plantilla",
 	"visualeditor-dialog-transclusion-add-template-save": "Afegeix",
+	"visualeditor-dialog-transclusion-add-undocumented-param": "Afegeix un paràmetre no documentat.",
 	"visualeditor-dialog-transclusion-close-confirmation-prompt": "Voleu tancar l'editor de plantilles? Perdreu tots els canvis. Aquesta acció no es pot desfer.",
 	"visualeditor-dialog-transclusion-collapse-options": "Amaga les opcions",
 	"visualeditor-dialog-transclusion-confirmation-discard": "Descarta les modificacions.",
@@ -266,6 +269,8 @@
 	"visualeditor-mwpredialog-convert": "Permet estils de text",
 	"visualeditor-mwpredialog-title": "Text senzill preformatat",
 	"visualeditor-mwsignature-tool": "La vostra signatura",
+	"visualeditor-preference-visualeditor": "Activa l'editor visual",
+	"visualeditor-preference-newwikitexteditor-enable": "Utilitza el mode wikitext dins de l'editor visual, en comptes d'un editor de wikitext diferent",
 	"visualeditor-preference-tabs": "Pestanyes d'edició:",
 	"visualeditor-preference-tabs-multi-tab": "Mostra’m les dues opcions d’editor",
 	"visualeditor-preference-tabs-prefer-ve": "Sempre fes servir l’editor visual si és possible",

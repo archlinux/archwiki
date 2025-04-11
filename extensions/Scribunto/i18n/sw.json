@@ -1,8 +1,26 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yasen igra"
+			"Yasen igra",
+			"Kisare"
 		]
 	},
-	"scribunto-lua-error": "Hitilafu ya Lua: $2"
+	"content-model-scribunto": "Moduli ya Scribunto",
+	"scribunto-desc": "Mfumo wa kuingiza lugha ya hati katika kurasa za MediaWiki",
+	"scribunto-line": "kwenye mstari wa $1",
+	"scribunto-module-line": "katika $1 kwenye mstari wa $2",
+	"scribunto-parser-dialog-title": "Kosa la hati",
+	"scribunto-error-short": "Kosa la hati: $1",
+	"scribunto-error-long": "Makosa ya hati:\n\n$1",
+	"scribunto-doc-page-name": "Moduli:$1/hati",
+	"scribunto-doc-page-does-not-exist": "''Hati za moduli hii zinaweza kuanzishwa kwenye [[$1]]''",
+	"scribunto-doc-page-header": "'''Huu ndio ukurasa wa hati wa [[$1]]'''",
+	"scribunto-common-error-category": "Kurasa zenye makosa ya hati",
+	"scribunto-common-nosuchmodule": "Kosa la hati: Hakuna moduli kama \"$2\".",
+	"scribunto-common-nosuchfunction": "Kosa la hati: Hakuna husisho kama \"$2\".",
+	"scribunto-common-notafunction": "Kosa la hati: \"$2\" si husisho.",
+	"scribunto-lua-in-function": "katika husisho \"$1\"",
+	"scribunto-lua-error-location": "Kosa la Lua $1: $2.",
+	"scribunto-lua-error": "Kosa la Lua: $2",
+	"nstab-module": "Moduli"
 }

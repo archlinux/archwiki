@@ -24,7 +24,7 @@ class LocalChecker extends BaseChecker {
 	private ?MathRenderer $context = null;
 	private ?HookContainer $hookContainer = null;
 
-	public function __construct( WANObjectCache $cache, $tex = '', string $type = 'tex', bool $purge = false ) {
+	public function __construct( WANObjectCache $cache, string $tex = '', string $type = 'tex', bool $purge = false ) {
 		$this->cache = $cache;
 		parent::__construct( $tex, $purge );
 		$this->type = $type;

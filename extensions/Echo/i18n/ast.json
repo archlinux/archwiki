@@ -166,7 +166,7 @@
 	"notification-timestamp-ago-years": "$1 {{PLURAL:$1|añu|años}}",
 	"notification-timestamp-today": "Güei",
 	"notification-timestamp-yesterday": "Ayeri",
-	"notification-inbox-filter-read": "Lleer",
+	"notification-inbox-filter-read": "Lleíes",
 	"notification-inbox-filter-unread": "Non lleíes",
 	"notification-inbox-filter-all": "Toes",
 	"echo-specialmute-label-mute-notifications": "Silenciar los avisos d'{{GENDER:$1|esti usuariu|esta usuaria}}",

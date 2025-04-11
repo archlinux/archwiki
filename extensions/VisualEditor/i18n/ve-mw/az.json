@@ -13,7 +13,8 @@
 			"Vesely35",
 			"Wertuose",
 			"Şeyx Şamil",
-			"Əkrəm Cəfər"
+			"Əkrəm Cəfər",
+			"Əkrəm"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -278,13 +279,13 @@
 	"visualeditor-mweditmode-tooltip": "Redaktoru dəyiş",
 	"visualeditor-mweditmodesource-progress": "Mənbə redaktəsinə keçilir…",
 	"visualeditor-mweditmodesource-tool-current": "Mənbə kodunun redaktəsi",
-	"visualeditor-mweditmodesource-tool-unavailable": "Mənbə redaktəsi burda mövcud deyil",
+	"visualeditor-mweditmodesource-tool-unavailable": "Mənbə redaktəsi burada əlçatan deyil",
 	"visualeditor-mweditmodeve-popup-body": "İstənilən vaxt bu işarəyə klikləməklə vizual redaktəyə qayıda bilərsiniz.",
 	"visualeditor-mweditmodeve-popup-title": "Mənbə redaktəsinə keçdiniz",
 	"visualeditor-mweditmodeve-progress": "Vizual redaktəyə keçilir…",
 	"visualeditor-mweditmodeve-showagain": "Bu mesajı bir daha göstərmə",
 	"visualeditor-mweditmodeve-tool-current": "Vizual redaktə",
-	"visualeditor-mweditmodeve-tool-unavailable": "Vizual redaktə burda mövcud deyil",
+	"visualeditor-mweditmodeve-tool-unavailable": "Vizual redaktə burada əlçatan deyil",
 	"visualeditor-mweditmodewt-popup-body": "İstənilən vaxt bu işarəyə klikləməklə mənbə redaktəsinə qayıda bilərsiniz.",
 	"visualeditor-mweditmodewt-popup-title": "Siz vizual redaktəyə keçdiniz",
 	"visualeditor-mwgallerycontext-description": "$1 {{PLURAL:$1|şəkil}}",

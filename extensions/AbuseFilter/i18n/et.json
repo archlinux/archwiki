@@ -519,6 +519,7 @@
 	"abusefilter-changeslist-examine": "uuri",
 	"abusefilter-examine": "Üksikute muudatuste uurimine",
 	"abusefilter-examine-intro": "See lehekülg võimaldab uurida üksikute muudatuste jaoks tekitatud muutujaid, mille loob väärtarvitusfilter, ja neid filtrite peal katsetada.",
+	"abusefilter-examine-intro-examine-only": "See lehekülg võimaldab uurida üksikute muudatuste jaoks tekitatud muutujaid, mille loob väärtarvitusfilter.",
 	"abusefilter-examine-legend": "Vali muudatused",
 	"abusefilter-examine-submit": "Otsi",
 	"abusefilter-examine-vars": "Selle muudatusega kaasnenud muutujad",

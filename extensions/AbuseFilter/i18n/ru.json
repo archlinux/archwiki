@@ -73,7 +73,8 @@
 			"ЛингвоЧел",
 			"Сrower",
 			"Туллук",
-			"Умар"
+			"Умар",
+			"Yurina Tatiana"
 		]
 	},
 	"abusefilter-desc": "Позволяет применять автоматические эвристические фильтры к правкам",
@@ -343,6 +344,7 @@
 	"abusefilter-edit-missingfields": "Следующие поля обязательны и должны быть заполнены: $1",
 	"abusefilter-edit-deleting-enabled": "Вы не можете отметить активный фильтр как удалённый.",
 	"abusefilter-edit-restricted": "Вы не можете изменить этот фильтр, так как он содержит одно или несколько ограничивающих действий. Пожалуйста, попросите участника с соответствующими правами сделать требуемые изменения.",
+	"abusefilter-edit-protected-variable": "Вы не можете сохранить этот фильтр, поскольку у вас нет разрешения на использование следующих переменных: $1",
 	"abusefilter-edit-viewhistory": "Показать историю этого фильтра",
 	"abusefilter-edit-history": "История:",
 	"abusefilter-edit-check": "Проверить синтаксис",
@@ -667,10 +669,10 @@
 	"abusefilter-blocked-domains-attempted": "Текст, который вы хотели опубликовать, был заблокирован нашим фильтром. Добавление следующего домена заблокировано: $1",
 	"abusefilter-blocked-domains-json-error": "JSON должен быть массивом",
 	"abusefilter-blocked-domains-invalid-entry": "Запись $1 в JSON неверна: это должен быть объект, содержащий только поля 'domain' и 'notes', которые должны быть строками",
-	"abusefilter-blocked-domains-domain-added-comment": "Добавить заблокированный внешний домен $1, примечания: $2",
-	"abusefilter-blocked-domains-domain-removed-comment": "Удалить заблокированный внешний домен $1 с примечаниями: $2",
+	"abusefilter-blocked-domains-domain-added-comment": "Заблокирован внешний домен $1 с комментарием: $2",
+	"abusefilter-blocked-domains-domain-removed-comment": "Удалён заблокированный внешний домен $1 с комментарием: $2",
 	"log-description-abusefilterprivatedetails": "В этом журнале отображается список случаев, когда пользователь просматривал личные данные журнала злоупотреблений.",
-	"log-description-abusefilterblockeddomainhit": "Эти события отслеживают попадания в заблокированные домены.",
+	"log-description-abusefilterblockeddomainhit": "Эти события отслеживают попадания в [[Special:BlockedExternalDomains|заблокированные домены]].",
 	"abusefilter-noreason": "Предупреждение. Чтобы просмотреть личные данные этого журнала, вы должны указать причину.",
 	"abusefilter-log-ip-not-available": "Недоступно",
 	"abusefilter-tag-reserved": "Метка <code>abusefilter-condition-limit</code> зарезервирована для использования фильтром злоупотреблений.",
@@ -685,5 +687,10 @@
 	"action-abusefilter-modify-blocked-external-domains": "создание или изменение установки блокировки ссылок на внешние домены",
 	"right-abusefilter-bypass-blocked-external-domains": "Обход заблокированных внешних доменов",
 	"action-abusefilter-bypass-blocked-external-domains": "обход заблокированных внешних доменов",
-	"abusefilter-blocked-domains-cannot-edit-directly": "Создать или изменить, ссылки на какие внешние домены блокируются, необходимо через [[Special:BlockedExternalDomains|специальную страницу]]."
+	"abusefilter-blocked-domains-cannot-edit-directly": "Создать или изменить, ссылки на какие внешние домены блокируются, необходимо через [[Special:BlockedExternalDomains|специальную страницу]].",
+	"right-abusefilter-access-protected-vars": "Просмотр и создание фильтров с использованием защищённых переменных",
+	"action-abusefilter-access-protected-vars": "просмотр и создание фильтров, использующих защищённые переменные",
+	"prefs-abusefilter": "Фильтр злоупотреблений",
+	"log-action-filter-abusefilter-protected-vars": "Тип действия:",
+	"log-action-filter-abusefilter-protected-vars-change-access": "Изменить доступ"
 }

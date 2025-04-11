@@ -42,7 +42,7 @@
 	"vector-feature-limited-width-name": "Amba",
 	"vector-feature-limited-width-0-label": "Amba",
 	"vector-feature-limited-width-1-label": "Standar",
-	"vector-feature-custom-font-size-name": "Tèks",
+	"vector-feature-custom-font-size-name": "Tulisan",
 	"vector-feature-custom-font-size-0-label": "Cilik",
 	"vector-feature-custom-font-size-1-label": "Standar",
 	"vector-feature-custom-font-size-2-label": "Gedhé",
@@ -75,5 +75,6 @@
 	"vector-main-menu-unpinned-popup": "Menu utama dilih mréné.",
 	"vector-appearance-unpinned-popup": "Menu praèn dilih mréné.",
 	"vector-night-mode-issue-reporting-link-label": "Lapuraké masalah modhe peteng",
-	"vector-night-mode-issue-reporting-link-notification": "Lapuran ditampa!"
+	"vector-night-mode-issue-reporting-link-notification": "Lapuran ditampa!",
+	"vector-night-mode-beta-tag": "(béta)"
 }

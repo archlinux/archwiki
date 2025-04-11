@@ -34,11 +34,13 @@ class ChemWord extends TexNode {
 		return $this->right;
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return $this->left->render() . $this->right->render();
 	}
 
-	public function renderMML( $arguments = [], $state = [] ) {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ) {
 		$mmlMrow = new MMLmrow();
 		$mtextLeft = new MMLmtext( "", [ "mathcolor" => "red" ] );
 		$mtextRight = new MMLmtext();
@@ -50,6 +52,7 @@ class ChemWord extends TexNode {
 			. $mtextRight->encapsulateRaw( $right ) ) );
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		return [];
 	}

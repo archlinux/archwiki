@@ -19,8 +19,8 @@ class BaseParsingTest extends TestCase {
 	public function testAccent() {
 		$node = new Fun1(
 			'\\widetilde',
-				( new Literal( 'a' ) )
-			);
+			( new Literal( 'a' ) )
+		);
 		$result = BaseParsing::accent( $node, [], null, 'widetilde', '007E' );
 		$this->assertStringContainsString( '~', $result );
 		$this->assertStringContainsString( 'mover', $result );
@@ -214,5 +214,17 @@ f(x,y,z) & = & x + y + z
 		$node = new Literal( '\\gcd' );
 		$result = BaseParsing::namedOp( $node, [], [], '\\gcd' );
 		$this->assertStringContainsString( '>gcd</mi>', $result );
+	}
+
+	public function testSpace() {
+		$node = new Literal( '\\ ' );
+		$result = BaseParsing::macro( $node, [], [], '\\ ', '\\text{ }' );
+		$this->assertStringContainsString( '<mtext>&#160;</mtext>', $result );
+	}
+
+	public function testIgnoreMisplacedLimit() {
+		$node = new Literal( '\\limits ' );
+		$result = BaseParsing::limits( $node, [], [], '\\limits' );
+		$this->assertSame( '', $result, 'Misplaced limits should be ignored' );
 	}
 }

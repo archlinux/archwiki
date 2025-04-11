@@ -10,10 +10,12 @@ class Dollar extends TexNode {
 		parent::__construct( $value );
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return '$' . parent::render() . '$';
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		return [];
 	}

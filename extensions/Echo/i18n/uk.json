@@ -165,7 +165,7 @@
 	"notification-header-mention-agent-talkpage": "$1 згада{{GENDER:$2|в|ла}} {{GENDER:$3|Вас}} на <strong>{{GENDER:$2|своїй}} сторінці обговорення</strong> у «<strong>$4</strong>».",
 	"notification-header-mention-agent-talkpage-nosection": "$1 {{GENDER:$2|згадав|згадала}} {{GENDER:$3|Вас}} на <strong>{{GENDER:$2|своїй}} сторінці обговорення</strong>.",
 	"notification-header-mention-article-talkpage": "$1 згада{{GENDER:$2|в|ла}} {{GENDER:$3|Вас}} на сторінці обговорення <strong>$4</strong> у «<strong>$5</strong>».",
-	"notification-header-mention-article-talkpage-nosection": "$1 згада{{GENDER:$2|в|ла}} {{GENDER:$3|Вас}} на сторінці обговорення <strong>$4</strong> .",
+	"notification-header-mention-article-talkpage-nosection": "$1 згада{{GENDER:$2|в|ла}} {{GENDER:$3|Вас}} на сторінці обговорення <strong>$4</strong>.",
 	"notification-header-mention-failure-user-unknown": "Не вдалося надіслати {{GENDER:$2|Вашу}} згадку <strong>$3</strong>, бо облікового запису з таким іменем не існує.",
 	"notification-header-mention-failure-user-anonymous": "Не вдалося надіслати {{GENDER:$2|Вашу}} згадку <strong>$3</strong>, бо ця людина анонімна.",
 	"notification-header-mention-failure-too-many": "{{GENDER:$2|Ви}} спробували згадати понад $3 {{PLURAL:$3|користувача|користувачі|користувачів}}. Усі згадки вище понад цей ліміт не було надіслано.",

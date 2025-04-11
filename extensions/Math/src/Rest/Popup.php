@@ -109,7 +109,7 @@ class Popup extends SimpleHandler {
 		return $output;
 	}
 
-	public function getParamSettings() {
+	public function getParamSettings(): array {
 		return [
 			'qid' => [
 				self::PARAM_SOURCE => 'path',

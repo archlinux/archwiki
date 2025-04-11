@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"GolyatGeri"
+		]
+	},
+	"apihelp-spamblacklist-example-1": "Dı URL lista bloqeyi reti kontrol kerê",
+	"apihelp-spamblacklist-param-url": "Lista bloqebıyayayn gore arastbıyaye URL",
+	"apihelp-spamblacklist-summary": "Dustê spam lista bilmeyi gore yew ra zêde URL araşt kerdış ."
+}

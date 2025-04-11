@@ -5,7 +5,8 @@
 			"AntiCompositeNumber",
 			"Gmelfi",
 			"Pippinu",
-			"Sarvaturi"
+			"Sarvaturi",
+			"GianAntonucci"
 		]
 	},
 	"scribunto-desc": "Piattaforma pi ncurpurari linguaggi script ntê pàggini MediaWiki",
@@ -15,7 +16,7 @@
 	"scribunto-error-short": "Erruri ntô script: $1",
 	"scribunto-error-long": "Erruri ntô script:\n\n$1",
 	"scribunto-doc-page-name": "Module:$1/doc",
-	"scribunto-doc-page-does-not-exist": "''La ducumintazzioni di stu mòdulu si pò criari nta [[$1]]''",
+	"scribunto-doc-page-does-not-exist": "''Po' criari la ducumintazzioni di stu mòdulu nta [[$1]]''",
 	"scribunto-doc-page-header": "'''Chista è la pàggina di ducumintazzioni di [[$1]]'''",
 	"scribunto-console-intro": "* L'espurtazzioni dû mòdulu sù dispunìbbili ntâ variàbbili \"p\", macari li canciamenti nun sarvati.\n* Fai accumonzari na riga cu \"=\" pi valutàrila comu sprissioni, o puru adòpira print().\n* Adòpira mw.log() ntô còdici dû mòdulu pi mannari missaggi a sta  console.",
 	"scribunto-console-title": "Console pû debug",

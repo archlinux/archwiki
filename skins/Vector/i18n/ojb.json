@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aandeginini",
-			"Nibi-zhimaaganish"
+			"Nibi-zhimaaganish",
+			"Mashkawiziiwin"
 		]
 	},
 	"vector-languages": "Inwewin",
@@ -17,11 +18,24 @@
 	"vector-view-history": "Gaa'-waabam",
 	"vector-view-view": "Agindan",
 	"vector-more-actions": "Nawaj",
+	"vector-appearance-label": "Bi-naagwad",
+	"vector-feature-limited-width-name": "Mengadeyaa",
+	"vector-feature-custom-font-size-name": "Ozhibii'igan",
+	"vector-feature-custom-font-size-0-label": "Agaasaa",
+	"vector-feature-custom-font-size-1-label": "Akina giizhig",
+	"vector-feature-custom-font-size-2-label": "Gichi",
+	"skin-theme-name": "Adisan",
+	"skin-theme-day-label": "Waazakonenjigan",
+	"skin-theme-night-label": "Dibiki",
+	"skin-theme-os-label": "Ganawenindizowin",
+	"skin-theme-exclusion-notice": "Wa'aw mazina'igan ayaan mozhag biindig  waazakonenjigan bi.",
 	"vector-searchsuggest-containing": "Nandawaabam biindig mazina'igans ayaa <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Biindiged",
 	"vector-toc-beginning": "Maajii",
 	"vector-main-menu-label": "Niigaan miijim-mazina'igans",
+	"vector-feature-custom-font-size-exclusion-notice": "Wa'aw mazina'igan apane abajo' agasaja  maajiibii'amaw",
 	"vector-page-tools-label": "Aabajichiganed",
 	"vector-page-tools-general-label": "Ogimaa",
+	"vector-page-tools-actions-label": "Doodaadiwaged",
 	"vector-unpin-element-label": "gaazo"
 }

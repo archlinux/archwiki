@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aandeginini",
-			"Nibi-zhimaaganish"
+			"Nibi-zhimaaganish",
+			"Mashkawiziiwin"
 		]
 	},
 	"mobile-frontend-history": "Waabam aanji' dibaajimowin biindig mazina'iagns.",
@@ -12,5 +13,6 @@
 	"mobile-frontend-main-menu-nearby": "Besho",
 	"mobile-frontend-main-menu-settings": "Izhisidoon",
 	"mobile-frontend-placeholder": "Nandawaabam {{SITENAME}}",
-	"mobile-frontend-random-button": "Bakaan"
+	"mobile-frontend-random-button": "Bakaan",
+	"minerva-page-actions-overflow": "Nawaj"
 }

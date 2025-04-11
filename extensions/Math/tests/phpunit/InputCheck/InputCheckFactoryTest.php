@@ -1,7 +1,5 @@
 <?php
 
-namespace phpunit\InputCheck;
-
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\InputCheck\InputCheckFactory;
 use MediaWiki\Extension\Math\InputCheck\LocalChecker;
@@ -11,7 +9,6 @@ use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Message\Message;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
-use MediaWikiIntegrationTestCase;
 use Wikimedia\ObjectCache\WANObjectCache;
 
 /**

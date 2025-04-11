@@ -7,14 +7,18 @@ namespace MediaWiki\Extension\Math\WikiTexVC;
 use InvalidArgumentException;
 
 /**
- * @method is_literal(string $litArg)
- * @method latex_function_names(string $getArg)
- * @method nullary_macro(string $litArg)
- * @method operator(string $getArg)
- * @method cancel_required(string $getArg)
- * @method callback(string $getArg)
- * @method nullary_macro_in_mbox(string $getArg)
- * @method unicode_char(string $getArg)
+ * @method false|mixed callback(string $getArg)
+ * @method false|mixed is_literal(string $litArg)
+ * @method false|mixed latex_function_names(string $getArg)
+ * @method false|mixed nullary_macro(string $litArg)
+ * @method false|mixed operator(string $getArg)
+ * @method false|mixed cancel_required(string $getArg)
+ * @method false|mixed nullary_macro_in_mbox(string $getArg)
+ * @method false|mixed unicode_char(string $getArg)
+ * @method false|mixed identifier(string $getArg)
+ * @method false|mixed delimiter(string $getArg)
+ * @method false|string mathchar(string $getArg)
+ * @method false|string color(string $getArg)
  */
 class TexUtil {
 	/** @var self|null */
@@ -59,7 +63,7 @@ class TexUtil {
 		self::$instance = null;
 	}
 
-	public static function getInstance() {
+	public static function getInstance(): TexUtil {
 		if ( self::$instance == null ) {
 			self::$instance = new TexUtil();
 		}
@@ -97,17 +101,14 @@ class TexUtil {
 	 * @return false|mixed
 	 */
 	public function __call( $func, $params ) {
-		if ( array_key_exists( $func, $this->baseElements ) ) {
-			$currentFunction = $this->baseElements[$func];
-			if ( array_key_exists( $params[0], $currentFunction ) ) {
-				return $currentFunction[$params[0]];
-			} else {
-				return false;
-			}
-		} else {
+		if ( !array_key_exists( $func, $this->baseElements ) ) {
 			throw new InvalidArgumentException( "Function not defined in json " . $func );
-
 		}
+		$currentFunction = $this->baseElements[$func];
+		if ( array_key_exists( $params[0], $currentFunction ) ) {
+			return $currentFunction[$params[0]];
+		}
+		return false;
 	}
 
 	/**

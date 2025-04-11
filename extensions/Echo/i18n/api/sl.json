@@ -29,7 +29,7 @@
 	"apihelp-echomute-summary": "Izklop ali vklop obvestil določenih uporabnikov ali strani",
 	"apihelp-echomute-param-type": "Na kateri seznam utišanih naj se doda ali z njega odstrani",
 	"apihelp-echomute-param-mute": "Strani ali uporabniki, ki naj se dodajo na seznam utišanih",
-	"apihelp-echomute-param-unmute": "Strani ali uporabniki za odstranitev s spiska utišanih.",
+	"apihelp-echomute-param-unmute": "Strani ali uporabniki za odstranitev s seznama utišanih.",
 	"apihelp-echopushsubscriptions-summary": "Upravljanje potisnih naročil za trenutnega uporabnika.",
 	"apihelp-echopushsubscriptions-param-command": "Dejanje za izvedbo.",
 	"apihelp-echopushsubscriptions+create-summary": "Registracija potisnih naročil za trenutnega uporabnika.",

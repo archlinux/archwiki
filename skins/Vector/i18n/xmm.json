@@ -5,8 +5,11 @@
 		]
 	},
 	"vector-languages": "Bahasa",
+	"vector-language-button-label": "{{PLURAL:$1|$1 bahasa}}",
+	"vector-no-language-button-label": "Kase tamba bahasa",
 	"vector-action-delete": "Kase hapus",
 	"vector-action-move": "Kase pinda",
+	"vector-action-protect": "Kunci",
 	"vector-view-create": "Beking",
 	"vector-more-actions": "Yang laeng lagi",
 	"vector-appearance-label": "Rupa",
@@ -22,7 +25,7 @@
 	"skin-theme-night-label": "Galap",
 	"skin-theme-os-label": "Otomatis",
 	"vector-main-menu-label": "Menu utama",
-	"vector-feature-custom-font-size-exclusion-notice": "Ni halaman ini jaga pake tulisan ukuran kacili",
+	"vector-feature-custom-font-size-exclusion-notice": "Ni laman ini jaga pake tulisan ukuran kacili",
 	"vector-page-tools-label": "Alat-alat",
 	"vector-page-tools-general-label": "Umum",
 	"vector-unpin-element-label": "tutu"

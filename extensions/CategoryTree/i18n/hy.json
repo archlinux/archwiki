@@ -4,7 +4,8 @@
 			"Chaojoker",
 			"Teak",
 			"Xelgen",
-			"Աշոտ1997"
+			"Աշոտ1997",
+			"Դավիթ Սարոյան"
 		]
 	},
 	"categorytree": "Կատեգորիաների ծառ",
@@ -22,7 +23,7 @@
 	"categorytree-expand": "բացել",
 	"categorytree-member-counts": "պարունակում է {{PLURAL:$1|1 ենթակատեգորիա|$1 ենթակատեգորիա}}, {{PLURAL:$2|1 էջ|$2 էջ}} և {{PLURAL:$3|1 նիշք|$3 նիշք}}",
 	"categorytree-num-categories": "$1 Կ",
-	"categorytree-num-pages": "$1 Է",
+	"categorytree-num-pages": "$1 ԷՋ",
 	"categorytree-num-files": "$1 Ն",
 	"categorytree-num-empty": "դատարկ",
 	"categorytree-load": "բեռնել",

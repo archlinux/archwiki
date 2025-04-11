@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Es Krim 5 Juta Rasa"
+			"Es Krim 5 Juta Rasa",
+			"Jawadywn"
 		]
 	},
 	"visualeditor-ca-createlocaldescriptionsource": "Tambahko sumbor panjabaran lokal",
 	"visualeditor-ca-createsource": "Guway sumbor",
 	"visualeditor-ca-editsource": "Dandani sumbor",
-	"visualeditor-ca-editsource-section": "Sunting sumbor",
+	"visualeditor-ca-editsource-section": "dandani sumbor",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"
 }

@@ -5,6 +5,8 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "جواب",
+	"discussiontools-newtopic-missing-title": "{{GENDER:|شه}} نو قسمت وسّه اتا نوم بی‌یلین.",
+	"discussiontools-newtopic-placeholder-title": "موضوع",
 	"discussiontools-preference-replytool-help": "اینجه اتا کلیک هاکنین، لینکی دیار وونه که تونی گپ صفحه دله پغوم بی‌یلین",
 	"discussiontools-preference-topicsubscription-help": "اینتا شما ره اجازه دنه که هر گدر شمه بخاستی موضوعات وسر تازه پغوم برسی‌یه، سرساب بوین",
 	"discussiontools-replylink": "{{GENDER:|جواب}}",
@@ -12,6 +14,8 @@
 	"discussiontools-replywidget-cancel": "ول هاکردن",
 	"discussiontools-replywidget-mode-source": "منبع",
 	"discussiontools-replywidget-mode-visual": "هارشی‌ینی",
+	"discussiontools-replywidget-newtopic": "مبحث {{GENDER:|بی‌یشتن}}",
+	"discussiontools-replywidget-placeholder-newtopic": "توضیح",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|جواب}}، {{BIDI:$1}} ره",
 	"discussiontools-replywidget-preview": "پیش‌نمایش",
 	"discussiontools-replywidget-reply": "{{GENDER:|جواب}}",

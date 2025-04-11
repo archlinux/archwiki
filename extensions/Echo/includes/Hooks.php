@@ -1493,9 +1493,10 @@ class Hooks implements
 		$echoPerUserBlacklist = $this->config->get( ConfigNames::PerUserBlacklist );
 		if ( $echoPerUserBlacklist ) {
 			$id = $target ? $this->centralIdLookup->centralIdFromLocalUser( $target ) : 0;
-			$list = MultiUsernameFilter::splitIds(
-				$this->userOptionsManager->getOption( $user, 'echo-notifications-blacklist' )
-			);
+			$notificationList = $this->userOptionsManager->getOption( $user, 'echo-notifications-blacklist' );
+			$list = $notificationList ? MultiUsernameFilter::splitIds(
+				$notificationList
+			) : [];
 			$fields[ 'echo-notifications-blacklist'] = [
 				'type' => 'check',
 				'label-message' => [

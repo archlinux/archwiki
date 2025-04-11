@@ -12,6 +12,7 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmspace;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmstyle;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtext;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexNode;
+use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 
 /**
  * This contains the basic parsing methods for tex elements, which get invoked
@@ -30,26 +31,11 @@ class BaseMethods {
 		}
 
 		// Checking for a named parsing function
-		$resFct = BaseMappings::getMacroByKey( $input );
-		if ( $resFct == null ) {
-			$resFct = AMSMappings::getMacroByKey( $input );
-			if ( $resFct == null ) {
-				// Also check for mathtools environment, this is currently done to find some form of matrices,
-				// probably refactored later
-				$resFct = AMSMappings::getEnvironmentByKey( $input );
-				if ( $resFct == null ) {
-					$resFct = BaseMappings::getCustomByKey( $input );
-					if ( $resFct == null ) {
-						$resFct = BaseMappings::getSpecialByKey( $input );
-						if ( $resFct == null ) {
-							$resFct = BaseMappings::getCancelByKey( $input );
-							if ( $resFct == null ) {
-								$resFct = BaseMappings::getMhChemByKey( $input );
-							}
-						}
-					}
-				}
-			}
+
+		if ( $input === '\\ ' ) {
+			$resFct = [ 'macro', '\\text{ }' ];
+		} else {
+			$resFct = TexUtil::getInstance()->callback( trim( $input ) );
 		}
 		if ( $resFct == null ) {
 			return null;
@@ -73,23 +59,20 @@ class BaseMethods {
 
 	public function checkAndParseOperator( $input, $node, $passedArgs, $operatorContent,
 										   $state, $prepareInput = true ) {
-		$resOperator = BaseMappings::getOperatorByKey( $input );
+			$resOperator = TexUtil::getInstance()->operator_rendering( trim( $input ) );
 		if ( $resOperator == null ) {
-
-			$resOperator = AMSMappings::getOperatorByKey( $input );
-			if ( $resOperator == null ) {
-				$resOperator = OperatorDictionary::getOperatorByKey( $input );
-				if ( $resOperator ) {
-					if ( isset( $resOperator[1] ) ) {
-						// custom parsing here
-						return $this->parseOperatorDict( $node, $passedArgs, $operatorContent, $input, false );
-					}
-					// Atm just do simple parsing for elements in operator dictionary
-					$mmlMo = new MMLmo( '', $passedArgs );
-					return $mmlMo->encapsulateRaw( $input );
+			$resOperator = OperatorDictionary::getOperatorByKey( $input );
+			if ( $resOperator ) {
+				if ( isset( $resOperator[1] ) ) {
+					// custom parsing here
+					return $this->parseOperatorDict( $node, $passedArgs, $operatorContent, $input, false );
 				}
+				// Atm just do simple parsing for elements in operator dictionary
+				$mmlMo = new MMLmo( '', $passedArgs );
+				return $mmlMo->encapsulateRaw( $input );
 			}
 		}
+
 		// If the macro has been found, dynamically call the associated parsing function.
 		if ( is_string( $resOperator ) ) {
 			$resOperator = [ $resOperator ];
@@ -152,10 +135,8 @@ class BaseMethods {
 	}
 
 	public function checkAndParseIdentifier( $input, $node, $passedArgs, $operatorContent, $prepareInput = true ) {
-		$resIdentifier = BaseMappings::getIdentifierByKey( $input );
-		if ( $resIdentifier == null ) {
-			$resIdentifier = AMSMappings::getIdentifierByKey( $input );
-		}
+		// @phan-suppress-next-line PhanCoalescingNeverUndefined
+		$resIdentifier = TexUtil::getInstance()->identifier( trim( $input ) ) ?? null;
 		// If the macro has been found, dynamically call the associated parsing function.
 		if ( is_string( $resIdentifier ) ) {
 			$resIdentifier = [ $resIdentifier ];
@@ -165,6 +146,7 @@ class BaseMethods {
 			return null;
 		}
 		try {
+			$resIdentifier[0] = MMLutil::uc2xNotation( $resIdentifier[0] );
 			return $this->parseIdentifier( $node, $passedArgs, $operatorContent, $input, ...$resIdentifier );
 		} catch ( ArgumentCountError $errArgcount ) {
 			return null;
@@ -194,23 +176,15 @@ class BaseMethods {
 		if ( $input === null ) {
 			return null;
 		}
-		$resDelimiter = BaseMappings::getDelimiterByKey( trim( $input ) );
+		$input = trim( $input );
 
-		if ( $resDelimiter == null ) {
-			$resDelimiter = AMSMappings::getSymbolDelimiterByKey( $input );
-			if ( $resDelimiter == null ) {
-				$resDelimiter = AMSMappings::getMathDelimiterByKey( $input );
-				if ( $resDelimiter == null ) {
-					return null;
-				}
-			}
+		$resDelimiter = TexUtil::getInstance()->delimiter( $input ) ?? false;
+		if ( $resDelimiter === false || !is_string( $resDelimiter[0] ) ) {
+			return null;
 		}
-		if ( is_string( $resDelimiter ) ) {
-			$resDelimiter = [ $resDelimiter ];
-		} else {
-			if ( isset( $resDelimiter[1] ) && is_array( $resDelimiter[1] ) && !$noargs ) {
-				$passedArgs = array_merge( $resDelimiter[1], $passedArgs );
-			}
+
+		if ( isset( $resDelimiter[1] ) && is_array( $resDelimiter[1] ) && !$noargs ) {
+			$passedArgs = array_merge( $resDelimiter[1], $passedArgs );
 		}
 
 		$mo = new MMLmo( $texClass, $passedArgs );
@@ -218,7 +192,7 @@ class BaseMethods {
 	}
 
 	public function checkAndParseMathCharacter( $input, $node, $passedArgs, $operatorContent, $prepareInput = true ) {
-		$resChar = BaseMappings::getCharacterByKey( $input );
+		$resChar = TexUtil::getInstance()->mathchar( trim( $input ) );
 		if ( $resChar == null ) {
 			return null;
 		}
@@ -240,15 +214,10 @@ class BaseMethods {
 		if ( !( $input === 'color' || $input === 'pagecolor' ) ) {
 			return null;
 		}
-
-		$resColor = BaseMappings::getColorByKey( $operatorContent );
+		$resColor = TexUtil::getInstance()->color( ucfirst( $operatorContent ) );
 		if ( $resColor == null ) {
 			return null;
 		}
-		if ( is_array( $resColor ) ) {
-			$resColor = $resColor[0]; // tbd refactor or correct mappings
-		}
-
 		if ( $input === 'color' ) {
 			$mstyle = new MMLmstyle( "", [ "mathcolor" => $resColor ] );
 			return $mstyle->encapsulate();
@@ -270,7 +239,7 @@ class BaseMethods {
 		}
 	}
 
-	public static function generateMMLError( $msg ): string {
+	public static function generateMMLError( string $msg ): string {
 		return ( new MMLmerror() )->encapsulateRaw(
 			( new MMLmtext() )->encapsulate( $msg )
 		);

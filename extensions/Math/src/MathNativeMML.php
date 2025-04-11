@@ -8,30 +8,68 @@
 
 namespace MediaWiki\Extension\Math;
 
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\Math\InputCheck\LocalChecker;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmath;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use StatusValue;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * Converts LaTeX to MathML using PHP
  */
 class MathNativeMML extends MathMathML {
 	private LocalChecker $checker;
+	private Config $mainConfig;
+	private HookContainer $hookContainer;
 
-	public function __construct( $tex = '', $params = [], $cache = null ) {
-		parent::__construct( $tex, $params, $cache );
+	/** @inheritDoc */
+	public function __construct( $tex = '', $params = [], $cache = null, $mathConfig = null ) {
+		parent::__construct( $tex, $params, $cache, $mathConfig );
 		$this->setMode( MathConfig::MODE_NATIVE_MML );
+	}
+
+	public static function renderReferenceEntry(
+		array &$entry,
+		?MathConfig $mathConfig = null,
+		?HookContainer $hookContainer = null,
+		?Config $config = null ): bool {
+		$mathConfig ??= Math::getMathConfig();
+		$hookContainer ??= MediaWikiServices::getInstance()->getHookContainer();
+		$config ??= MediaWikiServices::getInstance()->getMainConfig();
+		$renderer = new MathNativeMML( $entry['input'], $entry['params'], WANObjectCache::newEmpty(), $mathConfig );
+		$renderer->setRawError( true );
+		$renderer->setHookContainer( $hookContainer );
+		$renderer->setMainConfig( $config );
+		$renderer->setChecker( new LocalChecker( WANObjectCache::newEmpty(), $entry['input'], 'tex' ) );
+		$result = $renderer->render();
+		$entry['output'] = $renderer->getMathml();
+		if ( !$result ) {
+			$entry['skipped'] = true;
+			$entry['error'] = $renderer->getLastError();
+		}
+		return $result;
+	}
+
+	public function getMainConfig(): Config {
+		$this->mainConfig ??= MediaWikiServices::getInstance()->getMainConfig();
+		return $this->mainConfig;
+	}
+
+	public function getHookContainer(): HookContainer {
+		$this->hookContainer ??= MediaWikiServices::getInstance()->getHookContainer();
+		return $this->hookContainer;
 	}
 
 	protected function doRender(): StatusValue {
 		$checker = $this->getChecker();
 		$checker->setContext( $this );
-		$checker->setHookContainer( MediaWikiServices::getInstance()->getHookContainer() );
+		$checker->setHookContainer( $this->getHookContainer() );
 		$presentation = $checker->getPresentationMathMLFragment();
-		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$config = $this->getMainConfig();
 		$attributes = [ 'class' => 'mwe-math-element' ];
 		if ( $this->getID() !== '' ) {
 			$attributes['id'] = $this->getID();
@@ -70,5 +108,17 @@ class MathNativeMML extends MathMathML {
 
 	public function writeCache() {
 		return true;
+	}
+
+	private function setHookContainer( HookContainer $hookContainer ) {
+		$this->hookContainer = $hookContainer;
+	}
+
+	private function setMainConfig( Config $config ) {
+		$this->mainConfig = $config;
+	}
+
+	private function setChecker( LocalChecker $checker ) {
+		$this->checker = $checker;
 	}
 }

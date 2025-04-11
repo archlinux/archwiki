@@ -6,6 +6,22 @@
 			"Zolgoyo"
 		]
 	},
+	"abuselog": "Suistimal süzgüçi jurnalı",
+	"abusefilter-blocker": "Suistimal süzgüçi",
+	"right-abusefilter-log": "Suistimal jurnalına baquv",
+	"right-abusefilter-log-private": "Hususiy olaraq belgilengen suistimal süzgüçi jurnal qaydlarını köster",
+	"abusefilter-log-search": "Suistimal jurnalında qıdıruv",
+	"abusefilter-log-search-user": "Qullanıcı:",
+	"abusefilter-log-search-submit": "Qıdır",
+	"abusefilter-log-linkoncontribs": "suistimal jurnalı",
+	"abusefilter-log-linkoncontribs-text": "{{GENDER:$1|Bu qullanıcı}} içün suistimal jurnalı",
+	"abusefilter-log-linkonhistory": "suistimal jurnalını köster",
+	"abusefilter-log-linkonhistory-text": "Bu saife içün suistimal jurnalını köster",
+	"abusefilter-log-linkonundelete": "suistimal jurnalını köster",
+	"abusefilter-log-linkonundelete-text": "Bu saife içün suistimal jurnalını köster",
+	"abusefilter-log-hide-selected": "{{PLURAL:$1|Saylanğan AbuseLog qaydı|Saylanğan AbuseLog qaydları}}:",
+	"abusefilter-log-hide-reason-other": "Başqa/qoşumça sebep:",
 	"abusefilter-history-foruser": "$1 tarafından yapılğan deñiştirmeler",
-	"abusefilter-topnav-home": "Baş Saife"
+	"abusefilter-topnav-home": "Baş Saife",
+	"abusefilter-topnav-log": "Suistimal jurnalı"
 }

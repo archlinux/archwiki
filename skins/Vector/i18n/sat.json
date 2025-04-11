@@ -9,13 +9,14 @@
 			"Srabony90",
 			"ᱢᱩᱨᱢᱩ",
 			"ᱤᱧ ᱢᱟᱛᱟᱞ",
-			"ᱯᱨᱚᱯᱷᱮᱥᱥᱚᱨ"
+			"ᱯᱨᱚᱯᱷᱮᱥᱥᱚᱨ",
+			"ᱥᱟᱹᱜᱩᱱ ᱗"
 		]
 	},
 	"vector-languages": "ᱯᱟᱹᱨᱥᱤᱠᱚ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ᱯᱟᱹᱨᱥᱤ|$1 ᱯᱟᱹᱨᱥᱤ ᱠᱚ}}",
 	"vector-no-language-button-label": "ᱯᱟᱹᱨᱥᱤ ᱥᱮᱞᱮᱫ",
-	"vector-action-addsection": "ᱥᱟᱛᱚᱢ ᱥᱮᱞᱮᱫ",
+	"vector-action-addsection": "ᱥᱟᱛᱟᱢ ᱥᱮᱞᱮᱫ",
 	"vector-action-delete": "ᱜᱮᱫ ᱜᱤᱰᱤ",
 	"vector-action-move": "ᱩᱪᱟᱹᱲ",
 	"vector-action-protect": "ᱨᱩᱠᱷᱤᱭᱟᱹ",
@@ -43,6 +44,7 @@
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ᱠᱚᱭ ᱫᱤᱯᱤᱞᱟᱠᱟᱫ ᱥᱟᱦᱴᱟᱠᱚ ᱥᱮᱸᱫᱽᱨᱟ",
 	"vector-toc-label": "ᱡᱤᱱᱤᱥᱠᱚ",
 	"vector-toc-beginning": "ᱮᱛᱚᱦᱚᱵ",
+	"vector-anon-user-menu-pages": "ᱞᱚᱜᱽ ᱚᱰᱚᱠ ᱟᱠᱟᱫ ᱮᱱᱮᱢᱤᱭᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱥᱟᱦᱴᱟ",
 	"vector-main-menu-label": "ᱢᱩᱬ ᱢᱮᱱᱩ",
 	"vector-feature-custom-font-size-exclusion-notice": "ᱱᱚᱶᱟ ᱥᱟᱦᱴᱟ ᱨᱮ ᱦᱩᱰᱤᱧ ᱪᱤᱠᱤ ᱵᱮᱵᱷᱟᱨᱚᱜ-ᱟ",
 	"vector-page-tools-label": "ᱥᱟᱯᱟᱯᱠᱚ",

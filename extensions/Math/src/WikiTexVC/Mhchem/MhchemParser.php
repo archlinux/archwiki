@@ -68,6 +68,10 @@ class MhchemParser {
 		return $mhchemTexifiy->go( $parsed, $type !== "tex" );
 	}
 
+	/**
+	 * @param mixed|null $input
+	 * @param mixed|null $stateMachine
+	 */
 	public function go( $input, $stateMachine ): array {
 		if ( !MhchemUtil::issetJS( $input ) ) {
 			return [];

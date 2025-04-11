@@ -51,7 +51,7 @@ class MMLutil {
 		return $input;
 	}
 
-	public static function number2xNotation( $input ): string {
+	public static function number2xNotation( string $input ): string {
 		return "&#x" . $input . ";";
 	}
 
@@ -153,7 +153,7 @@ class MMLutil {
 		return ( $matches[1] == "-" ? "-" : "" ) . $ret;
 	}
 
-	public static function createEntity( $code ): ?string {
+	public static function createEntity( string $code ): ?string {
 		return IntlChar::chr( intval( $code, 16 ) );
 	}
 
@@ -237,7 +237,7 @@ class MMLutil {
 		return $unit;
 	}
 
-	public static function removeDollarEscaping( $input ) {
+	public static function removeDollarEscaping( string $input ): string {
 		if ( $input == "\\$" ) {
 			return "\$";
 		}

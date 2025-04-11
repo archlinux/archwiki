@@ -5,7 +5,8 @@
 			"MarcoAurelio",
 			"Tokvo",
 			"Toliño",
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"linterrors": "Errores de lint",
@@ -25,7 +26,7 @@
 	"linter-category-missing-end-tag-desc": "Estes páxines tienen etiquetes a les que-yos falta'l zarramientu.",
 	"linter-category-multi-colon-escape": "Escape de dos puntos múltiples",
 	"linter-category-multi-colon-escape-desc": "Estes páxines tienen enllaces precedíos por dellos caráuteres de dos puntos.",
-	"linter-category-multiline-html-table-in-list": "Tabla con delles llinies n'una llista",
+	"linter-category-multiline-html-table-in-list": "Tabla con delles llinies nuna llista",
 	"linter-category-multiline-html-table-in-list-desc": "Tidy mueve la tabla dientro o fora de la llista, ente que HTML5 amplía la llista pol restu de la páxina.",
 	"linter-category-multiple-unclosed-formatting-tags": "Delles etiquetes de formatu sin zarrar",
 	"linter-category-multiple-unclosed-formatting-tags-desc": "Estes páxines tienen delles etiquetes de formatu ensin zarrar",
@@ -46,7 +47,13 @@
 	"linter-category-wikilink-in-extlink": "Enllaces dientro d'enllaces",
 	"linter-category-wikilink-in-extlink-desc": "Estes páxines tienen enllaces wiki dientro d'enllaces esternos y precisen correxise",
 	"linter-desc": "Siguir los errores de lint d'un serviciu esternu y amosalos a los usuarios",
+	"linter-form-exact-match": "Buscar un títulu de páxina específicu",
+	"linter-form-prefix-match": "Buscar toles páxines que coincidan col prefixu del títulu",
+	"linter-form-exact-or-prefix": "Buscar un títulu de páxina específicu, o toles páxines con un prefixu de títulu común",
 	"linter-form-namespace": "Espaciu de nomes:",
+	"linter-form-template-option-with": "Con plantíes",
+	"linter-form-template-option-without": "Ensin plantíes",
+	"linter-form-title-prefix": "Por favor, escribe un prefixu de títulu o un títulu completu:",
 	"linter-heading-high-priority": "Prioridá alta",
 	"linter-heading-low-priority": "Prioridá baxa",
 	"linter-heading-medium-priority": "Prioridá mediana",

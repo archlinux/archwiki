@@ -28,7 +28,8 @@
 			"زكريا",
 			"عبد الإله صديقي",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Cigaryno"
 		]
 	},
 	"skinname-vector": "فكتور القديم (2010)",
@@ -55,7 +56,7 @@
 	"vector-action-undelete": "ألغِ الحذف",
 	"vector-action-unprotect": "غيِّر الحماية",
 	"vector-view-create": "أنشئ",
-	"vector-view-edit": "عدِّل",
+	"vector-view-edit": "عدّل",
 	"vector-view-history": "تاريخ",
 	"vector-view-view": "اقرأ",
 	"vector-view-viewsource": "اعرض المصدر",

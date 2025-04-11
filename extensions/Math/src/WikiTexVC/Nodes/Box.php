@@ -34,15 +34,18 @@ class Box extends TexNode {
 		return $this->arg;
 	}
 
+	/** @inheritDoc */
 	public function inCurlies() {
 		return $this->render();
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return '{' . $this->fname . '{' . $this->arg . '}}';
 	}
 
-	public function renderMML( $arguments = [], $state = [] ) {
+	/** @inheritDoc */
+	public function renderMML( $arguments = [], &$state = [] ) {
 		$mrow = new MMLmrow();
 		$mtext = new MMLmtext();
 		$arg = $this->getArg();
@@ -62,6 +65,7 @@ class Box extends TexNode {
 		);
 	}
 
+	/** @inheritDoc */
 	public function extractIdentifiers( $args = null ) {
 		return [];
 	}

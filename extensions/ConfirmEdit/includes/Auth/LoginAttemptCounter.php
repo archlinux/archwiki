@@ -35,11 +35,18 @@ class LoginAttemptCounter {
 		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN ) ) {
 			$key = $this->badLoginKey( $cache );
 			$cache->incrWithInit( $key, $wgCaptchaBadLoginExpiration );
+
+			// Longer period of time
+			$key = $this->badLoginKey( $cache, true );
+			$cache->incrWithInit( $key, $wgCaptchaBadLoginExpiration * 300 );
 		}
 
 		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
 			$key = $this->badLoginPerUserKey( $username, $cache );
 			$cache->incrWithInit( $key, $wgCaptchaBadLoginPerUserExpiration );
+
+			$key = $this->badLoginPerUserKey( $username, $cache, true );
+			$cache->incrWithInit( $key, $wgCaptchaBadLoginPerUserExpiration * 300 );
 		}
 	}
 
@@ -51,6 +58,7 @@ class LoginAttemptCounter {
 		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
 			$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 			$cache->delete( $this->badLoginPerUserKey( $username, $cache ) );
+			$cache->delete( $this->badLoginPerUserKey( $username, $cache, true ) );
 		}
 	}
 
@@ -64,7 +72,10 @@ class LoginAttemptCounter {
 
 		$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 		return $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN )
-			&& (int)$cache->get( $this->badLoginKey( $cache ) ) >= $wgCaptchaBadLoginAttempts;
+			&& (
+				(int)$cache->get( $this->badLoginKey( $cache ) ) >= $wgCaptchaBadLoginAttempts ||
+				(int)$cache->get( $this->badLoginKey( $cache, true ) ) >= ( $wgCaptchaBadLoginAttempts * 30 )
+			);
 	}
 
 	/**
@@ -81,35 +92,46 @@ class LoginAttemptCounter {
 		if ( is_object( $u ) ) {
 			$u = $u->getName();
 		}
-		$badLoginPerUserKey = $this->badLoginPerUserKey( $u, $cache );
 		return $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER )
-			&& (int)$cache->get( $badLoginPerUserKey ) >= $wgCaptchaBadLoginPerUserAttempts;
+			&& (
+				(int)$cache->get( $this->badLoginPerUserKey( $u, $cache ) ) >= $wgCaptchaBadLoginPerUserAttempts ||
+				(int)$cache->get( $this->badLoginPerUserKey( $u, $cache, true ) )
+					>= ( $wgCaptchaBadLoginPerUserAttempts * 30 )
+			);
 	}
 
 	/**
 	 * Internal cache key for badlogin checks.
 	 * @param BagOStuff $cache
+	 * @param bool $long
 	 * @return string
 	 */
-	private function badLoginKey( BagOStuff $cache ) {
+	private function badLoginKey( BagOStuff $cache, $long = false ) {
 		global $wgRequest;
 		$ip = $wgRequest->getIP();
-
-		return $cache->makeGlobalKey( 'captcha', 'badlogin', 'ip', $ip );
+		if ( !$long ) {
+			return $cache->makeGlobalKey( 'captcha', 'badlogin', 'ip', $ip );
+		}
+		return $cache->makeGlobalKey( 'captcha', 'badlogin', 'ip', 'long', $ip );
 	}
 
 	/**
 	 * Cache key for badloginPerUser checks.
 	 * @param string $username
 	 * @param BagOStuff $cache
+	 * @param bool $long
 	 * @return string
 	 */
-	private function badLoginPerUserKey( $username, BagOStuff $cache ) {
+	private function badLoginPerUserKey( $username, BagOStuff $cache, $long = false ) {
 		$userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
 		$username = $userNameUtils->getCanonical( $username, UserNameUtils::RIGOR_USABLE ) ?: $username;
-
+		if ( !$long ) {
+			return $cache->makeGlobalKey(
+				'captcha', 'badlogin', 'user', md5( $username )
+			);
+		}
 		return $cache->makeGlobalKey(
-			'captcha', 'badlogin', 'user', md5( $username )
+			'captcha', 'badlogin', 'user', 'long', md5( $username )
 		);
 	}
 }

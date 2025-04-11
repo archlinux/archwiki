@@ -11,9 +11,9 @@
 	"mobile-frontend-editor-edit": "عدل",
 	"minerva-download": "نزله PDF",
 	"mobile-frontend-editor-redlink-create": "سوي الصفحه",
-	"mobile-frontend-editor-redlink-explain": "هاي الصفحه بعدهم ما مسوينها.",
+	"mobile-frontend-editor-redlink-explain": "هاي الصفحه بعدهي ما مسوايه.",
 	"mobile-frontend-editor-redlink-leave": "لا، مشكور.",
-	"mobile-frontend-history": "طلع تاريخ تعديل هاي الصفحه.",
+	"mobile-frontend-history": "طلع وكت التعديل مال هاي الصفحه.",
 	"mobile-frontend-home-button": "الصفحه الرئيسيه",
 	"mobile-frontend-language-article-heading": "لغه",
 	"mobile-frontend-languages-not-available": "هالصفحه ما متوفره بلغات ثانيه.",
@@ -58,6 +58,6 @@
 	"skin-minerva-time-ago-years": "صارله {{PLURAL:$1|سنه|سنتين|$1 سنين|$1 سنه}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "تصنيفات",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "عرض تصنيفات الصفحات",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "لسوء الحظ، تجميع النتائج حسب الصفحة مو متاح على النقال، إذا كنت ترغب في استخدام ميزة المجموعة حسب الصفحة فتُرجَى زيارة موقع سطح المكتب.",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "للأسف، تجميع النتايج حسب الصفحه ما موجود عالنقال، إذا چنت تريد تستخدم ميزه التجميع حسب الصفحه لازم تشوفه على موقع سطح المكتب.",
 	"skin-minerva-night-mode-unavailable": "الصفحه موجوده بس بالثيم \"الفاتح\"."
 }

@@ -73,7 +73,7 @@ class MathMathMLCli extends MathMathML {
 		return true;
 	}
 
-	public function renderError( $response ) {
+	public function renderError( stdClass $response ): string {
 		$msg = $response->error;
 		try {
 			switch ( $response->detail->status ) {

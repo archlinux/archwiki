@@ -22,7 +22,8 @@
 			"Smtchahal",
 			"Venky2834",
 			"Wikiuser13",
-			"संजीव कुमार"
+			"संजीव कुमार",
+			"Bunnypranav"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -312,7 +313,7 @@
 	"visualeditor-mwpredialog-convert": "टेक्स्ट स्टाइलिंग की अनुमति दें",
 	"visualeditor-mwpredialog-title": "प्रीफॉर्मेट किया गया सादा टेक्स्ट",
 	"visualeditor-mwsignature-tool": "आपका हस्ताक्षर",
-	"visualeditor-preference-newwikitexteditor-enable": "अलग विकिटेक्स्ट एडिटर की जगह यथादृश्य संपादिका के अंदर ही विकिटेक्स्ट मोड का इस्तेमाल करें।",
+	"visualeditor-preference-newwikitexteditor-enable": "अलग विकिटेक्स्ट एडिटर की जगह यथादृश्य संपादिका के अंदर ही विकिटेक्स्ट मोड का इस्तेमाल करें",
 	"visualeditor-preference-tabs": "सम्पादन मोड:",
 	"visualeditor-preference-tabs-multi-tab": "मुझे दोनों संपादक टैब दिखाएँ",
 	"visualeditor-preference-tabs-prefer-ve": "मुझे यथासंभव हमेशा यथादृश्य संपादिका दिखाएँ",
@@ -325,8 +326,8 @@
 	"visualeditor-rebase-client-title-help": "आप सहेजने से पहले बदलावों का झलक देख पाएँगे।",
 	"visualeditor-recreate": "आपके संपादन शुरू करने के बाद से पृष्ठ को हटा दिया गया है। पुनः निर्माण करने के लिए \"$1\" दबाएँ।",
 	"visualeditor-redirect-description": "$1 को अनुप्रेषण",
-	"visualeditor-savedialog-identify-anon": "क्या आप इस पृष्ठ को एक गुमनाम सदस्य की तरह सहेजना चाहेंगे? आपका IP पता पृष्ठ इतिहास में रिकॉर्ड किया जाएगा।",
-	"visualeditor-savedialog-identify-user": "आप अब [[User:$1|$1]] नाम से लॉग-इन कर चुके हैं। अगर अब आप सम्पादन सहेजते हैं तो इस सम्पादन को इस खाते से जोड़ दिया जाएगा।",
+	"visualeditor-savedialog-identify-anon": "अब आप लॉग इन नहीं हैं। यदि आप जारी रखते हैं, <strong>तो आपका IP पता इस पृष्ठ के संपादन इतिहास में दर्ज किया जाएगा</strong>।",
+	"visualeditor-savedialog-identify-user": "अब आप <strong>[[उपयोगकर्ता: $1 | $1 ]]</strong> के रूप में लॉग-इन हैं। यदि आप जारी रखते हैं, तो आपका संपादन इस खाते से संबद्ध हो जाएगा।",
 	"visualeditor-savedialog-keyboard-shortcut-submit": "आप अपने संपादन को सहेजने के लिए $1 दबा सकते हैं।",
 	"visualeditor-savedialog-label-publish-short": "प्रकाशित करें",
 	"visualeditor-savedialog-label-publish-short-start": "प्रकाशित करें…",

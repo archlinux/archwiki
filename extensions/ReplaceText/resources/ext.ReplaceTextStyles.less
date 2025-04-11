@@ -1,3 +1,5 @@
+@import 'mediawiki.skin.variables.less';
+
 .ext-replacetext-invert {
 	margin-top: 20px;
 }
@@ -10,9 +12,9 @@
 	// Support: Firefox, needs `clear: both` on `fieldset` when zoom level > 100%, see T176499
 	clear: both;
 	padding: 0.5em 0.75em 0.75em 0.75em;
-	background-color: #f8f9fa;
+	background-color: @background-color-neutral-subtle;
 	margin: -1px 0 0;
-	border: 1px solid #c8ccd1;
+	border: 1px solid @border-color-subtle;
 	border-radius: 0 0 2px 2px;
 
 	h4 {
@@ -34,7 +36,7 @@
 
 	.ext-replacetext-divider {
 		clear: both;
-		border-bottom: 1px solid #eaecf0;
+		border-bottom: 1px solid @border-color-muted;
 		padding-top: 0.5em;
 		margin-bottom: 0.5em;
 	}

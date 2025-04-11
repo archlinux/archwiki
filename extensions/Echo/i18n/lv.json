@@ -140,6 +140,7 @@
 	"notification-link-thank-you-edit": "{{GENDER:$1|Tavs}} labojums",
 	"notification-link-text-view-edit": "Apskatīt labojumu",
 	"notification-link-article-reminder": "Skatīt lapu",
+	"notification-link-api-triggered": "Skatīt lapu",
 	"notification-header-reverted": "{{PLURAL:$4|Tavi labojumi lapā <strong>$3</strong> {{GENDER:$2|tika atcelti}}|Tavs labojums lapā <strong>$3</strong> {{GENDER:$2|tika atcelts}}|Tavi labojumi lapā <strong>$3</strong> {{GENDER:$2|tika atcelti}}}}.",
 	"notification-header-emailuser": "$1 {{GENDER:$2|nosūtīja}} tev e-pastu.",
 	"notification-edit-user-page-email-subject": "$1 {{GENDER:$2|laboja}} {{GENDER:$3|tavu}} dalībnieka lapu vietnē {{SITENAME}}",

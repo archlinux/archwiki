@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Linter;
 
-use JobQueueError;
 use JobQueueGroup;
 use MediaWiki\Api\ApiQuerySiteinfo;
 use MediaWiki\Api\Hook\APIQuerySiteInfoGeneralInfoHook;
@@ -321,19 +320,7 @@ class Hooks implements
 			$this->categoryManager
 		);
 
-		try {
-			$this->jobQueueGroup->push( $job );
-		} catch ( JobQueueError $e ) {
-			// Since linting is currently tied up with read views,
-			// don't let a failure to enqueue block a parse.
-			LoggerFactory::getInstance( 'Linter' )->debug(
-				'{method}: Failed to inject job: "{msg}"!',
-				[
-					'method' => __METHOD__,
-					'msg' => $e->getMessage(),
-				]
-			);
-		}
+		$this->jobQueueGroup->lazyPush( $job );
 
 		return true;
 	}

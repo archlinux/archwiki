@@ -34,7 +34,7 @@
 	"categorytree-not-found": "Не е пронајдена категорија <i>$1</i>",
 	"categorytree-error": "Проблеми со вчитување на податоците.",
 	"categorytree-retry": "Почекајте малку, па обидете се пак.",
-	"categorytree-onlyroot-message": "Параметарот <code>onlyroot</code> е застарен. Користете го <code>depth=\"0\"</code>.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Параметарот <code>onlyroot</code> е застарен. Користете го <code>depth=\"0\"</code>.",
 	"categorytree-deprecation-warning": "'''Предупредување:''' Оваа страница користи <code>&lt;categorytree&gt;</code> со застарен параметар.",
 	"categorytree-deprecation-category": "Страници со застарени параметри за дрва на категории",
 	"categorytree-deprecation-category-desc": "Оваа страница користи застарени параметри за дрва на категории како <code>onlyroot</code>."

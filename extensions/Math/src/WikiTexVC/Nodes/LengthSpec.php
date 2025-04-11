@@ -23,6 +23,7 @@ class LengthSpec extends TexNode {
 		parent::__construct();
 	}
 
+	/** @inheritDoc */
 	public function render() {
 		return '[' . $this->sign . $this->number . $this->unit . ']';
 	}

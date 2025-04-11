@@ -173,6 +173,7 @@ class ParserHooksHandler implements
 		}
 	}
 
+	/** @inheritDoc */
 	public function onParserOptionsRegister( &$defaults, &$inCacheKey, &$lazyLoad ) {
 		$defaults['math'] = $this->userOptionsLookup->getDefaultOption( 'math' );
 		$inCacheKey['math'] = true;

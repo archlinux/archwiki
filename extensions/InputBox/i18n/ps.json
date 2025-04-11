@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
 	"inputbox-desc": "د پخوا څخه د HTML څرگند شويو فورمو کارولو اجازه ورکوي",
-	"inputbox-tryexact": "کټ مټ انډول يې وآزمويه",
+	"inputbox-tryexact": "کټ مټ انډول يې وازمويه",
 	"inputbox-searchfulltext": "بشپړ متن پلټل",
 	"inputbox-createarticle": "نوې ليکنه پيلول",
 	"inputbox-movearticle": "مخ لېږدول",

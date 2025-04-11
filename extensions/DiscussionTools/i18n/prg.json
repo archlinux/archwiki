@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tīgelika"
+			"Tīgelika",
+			"Nērtiks Jōrgesuns"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Etrāsenis",
@@ -10,17 +11,30 @@
 	"discussiontools-newtopic-placeholder-title": "Tēman",
 	"discussiontools-notification-removed-topic-view": "Wīdais pāusan",
 	"discussiontools-replybutton": "{{GENDER:|Etrātwei}}",
-	"discussiontools-replylink": "{{GENDER:|etrātwei}}",
+	"discussiontools-replylink": "{{GENDER:|etrāis}}",
+	"discussiontools-replywidget-advanced": "Ēmpirsin treppun",
 	"discussiontools-replywidget-cancel": "Naikinnais",
 	"discussiontools-replywidget-mode-source": "Aps",
 	"discussiontools-replywidget-mode-visual": "Wizuāls",
 	"discussiontools-replywidget-newtopic": "Preidāis tēman",
 	"discussiontools-replywidget-placeholder-newtopic": "Ebpeisāsenis",
-	"discussiontools-replywidget-placeholder-reply": "Etrātwei {{GENDER:$1|tērpautaju|tērpautajai}} {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "Etrāis {{GENDER:$1|tērpautaju|tērpautajai}} na kumentāran {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Pirminiskwas",
 	"discussiontools-replywidget-preview": "Pirmādira",
-	"discussiontools-replywidget-reply": "Etrātwei",
+	"discussiontools-replywidget-reply": "{{GENDER:|Etrāis}}",
 	"discussiontools-replywidget-summary": "Ebpeisāsenis",
+	"discussiontools-replywidget-watchthis": "Preidāis šan pāusan prei swajjan [[Special:Watchlist|listin stēisan nadirītan]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|zmūi|zmūnei}} en diskusiōnei",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kumentāran|kumentārai}}",
+	"discussiontools-topicheader-latestcomment": "Ukanawwaisis kumentārs: $1",
+	"discussiontools-topicsubscription-button-subscribe": "preidāis subskripciōnin",
+	"discussiontools-topicsubscription-button-subscribe-label": "Preidāis subskripciōnin",
+	"discussiontools-topicsubscription-button-unsubscribe": "āupausinais subskripciōnin",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Āupausinais subskripciōnin",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Tu}} wīrst gaūwuns pawakīsenins ezze nawwans kumentārans en šismu tēman.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Tu assei {{GENDER:|preidāwuns|preidāwusi}} subskripciōnin!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Tū}} ni wīrst tālis gaūwuns pawakīšenins ezze nawwans kumentārans en šismu tēman.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Tu assei {{GENDER:|āupausinuns|āupausinusi}}subskripciōnin.",
 	"discussiontools-topicsubscription-pager-actions": "Dīlasenei",
 	"discussiontools-topicsubscription-pager-notified-never": "nikwēigi",
 	"discussiontools-topicsubscription-pager-page": "Pāusan",

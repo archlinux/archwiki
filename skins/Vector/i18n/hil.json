@@ -4,7 +4,8 @@
 			"Anjoeli9806",
 			"Billie bb",
 			"Kai theos en ho logos",
-			"Redhotchili23"
+			"Redhotchili23",
+			"Exec8"
 		]
 	},
 	"vector-languages": "Mga Lenguahe",
@@ -23,16 +24,26 @@
 	"vector-view-viewsource": "Lantawon ang ginhalinan",
 	"vector-more-actions": "Dugang Pa",
 	"vector-appearance-label": "Makita sa hitsura",
+	"vector-feature-limited-width-name": "Kalapadon",
+	"vector-feature-limited-width-0-label": "Malapad",
+	"vector-feature-limited-width-1-label": "Istandard",
 	"vector-feature-custom-font-size-name": "Teks",
 	"vector-feature-custom-font-size-0-label": "Magamay",
 	"vector-feature-custom-font-size-1-label": "Istandard",
 	"vector-feature-custom-font-size-2-label": "Dako",
 	"skin-theme-name": "Kolor",
+	"skin-theme-day-label": "Kasanag",
+	"skin-theme-night-label": "Madulom",
 	"skin-theme-os-label": "Awtomatiko",
+	"skin-theme-exclusion-notice": "Ini nga pahina yara pirme sa light mode.",
 	"vector-searchsuggest-containing": "Mangita sang mga panid nga nagasulod sang <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Kaundan",
+	"vector-toc-beginning": "Sa umpisa",
+	"vector-anon-user-menu-pages": "Mga pahina para sa mga naka-log out nga mga editor",
 	"vector-main-menu-label": "Panguna nga menu",
 	"vector-feature-custom-font-size-exclusion-notice": "Ini nga pahina pirme nagagamit sang gamay nga kadakuon sang letra",
 	"vector-page-tools-label": "Gamit",
 	"vector-page-tools-general-label": "Kabilogan",
+	"vector-page-tools-actions-label": "Mga aksyon",
 	"vector-unpin-element-label": "panago"
 }

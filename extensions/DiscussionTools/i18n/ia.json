@@ -80,6 +80,7 @@
 	"discussiontools-notification-removed-topic-disable": "Cessar de reciper notificationes como iste",
 	"discussiontools-notification-removed-topic-disabled-title": "Tu non plus recipera notificationes quando un topico es archivate o removite.",
 	"discussiontools-notification-removed-topic-disabled-body": "Tu pote cambiar isto in [[Special:Preferences#mw-prefsection-echo-echosubscriptions|tu preferentias]].",
+	"discussiontools-notification-topic-hidden": "(topico removite)",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|ha respondite}} in \"<strong>$4</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Un nove responsa|$1 nove responsas|100=Plus de 99 nove responsas}} in \"<strong>$3</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-view": "Vider commento",

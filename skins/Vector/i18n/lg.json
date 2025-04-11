@@ -1,18 +1,45 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kizito"
+			"Kizito",
+			"Ssemmanda will"
 		]
 	},
+	"vector-opt-out": "Kyusa odde ku ndabika enkadde",
+	"vector-opt-out-tooltip": "Kyusa ensengeka zo okudda ku ndabika ya Wiki enkadde (legacy Vector)",
+	"vector-languages": "Ennimi",
+	"vector-no-language-button-label": "Gattako ennimi endala",
 	"vector-action-addsection": "Tandikawo emboozi endala",
 	"vector-action-delete": "Gyawo olupapula luno",
 	"vector-action-move": "Simbuliza",
-	"vector-action-protect": "Ssiba",
+	"vector-action-protect": "Siba",
 	"vector-action-undelete": "Zawo",
 	"vector-action-unprotect": "Kyusa ebikugizo",
 	"vector-view-create": "Lukolewo",
 	"vector-view-edit": "Kyusa",
-	"vector-view-history": "Ennanda ya fayiro eno",
+	"vector-view-history": "Laba ebyafaayo bya fayiro eno",
 	"vector-view-view": "Soma",
-	"vector-view-viewsource": "Kebera obulambike obw'ennono obw'olupapula luno"
+	"vector-view-viewsource": "Kebera obulambike obw'ennono obw'olupapula luno",
+	"vector-more-actions": "Ebirala",
+	"vector-appearance-label": "Endabika",
+	"vector-feature-limited-width-name": "Obugazi",
+	"vector-feature-limited-width-0-label": "Obugazi",
+	"vector-feature-limited-width-1-label": "Mu bunene obw'ekigero",
+	"vector-feature-custom-font-size-0-label": "Mu butono",
+	"vector-feature-custom-font-size-1-label": "Mu bunene obw'ekigero",
+	"vector-feature-custom-font-size-2-label": "Mu bunene",
+	"skin-theme-name": "Langi",
+	"skin-theme-day-label": "Entangaavu",
+	"skin-theme-night-label": "Enzirugavu",
+	"skin-theme-exclusion-notice": "Omuko guno bulijjo gubeera mu mbeera entangaavu.",
+	"vector-searchsuggest-containing": "Okunoonya empapula ezirimu <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Ebirimu",
+	"vector-toc-beginning": "W'otandikira",
+	"vector-anon-user-menu-pages": "Eby'abasunsuzi abaafuluma Wiki",
+	"vector-main-menu-label": "Omuko oguliko byonna",
+	"vector-feature-custom-font-size-exclusion-notice": "Omuko guno bulijjo gukozesa ennukuta entini",
+	"vector-page-tools-label": "Ebikozesebwa",
+	"vector-page-tools-general-label": "Ekyawamu",
+	"vector-page-tools-actions-label": "By'oyinza okukola",
+	"vector-unpin-element-label": "kweka"
 }

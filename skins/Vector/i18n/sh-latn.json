@@ -19,7 +19,7 @@
 	"vector-languages": "Jezici",
 	"vector-language-button-aria-label": "Prijedi na druge jezične varijante članka. Dostupno je na {{PLURAL:$1|$1 jeziku|$1 jezika}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
-	"vector-no-language-button-label": "Dodaj jezike",
+	"vector-no-language-button-label": "0 jezika",
 	"vector-no-language-button-aria-label": "Ovaj članak postoji samo na ovom jeziku. Dodajte druge jezike",
 	"vector-language-variant-switcher-label": "Promijeni jezičnu varijantu",
 	"vector-action-addsection": "Započni temu",
